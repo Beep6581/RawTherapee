@@ -237,6 +237,22 @@ BlackWhite::BlackWhite (): Gtk::VBox(), FoldableToolPanel(this) {
 	filterSep2 = Gtk::manage (new  Gtk::HSeparator());
 	mixerVBox->pack_start (*filterSep2);
 
+	algoHBox = Gtk::manage (new Gtk::HBox ());
+	algoHBox->set_border_width (0);
+	algoHBox->set_spacing (2);
+	algoHBox->set_tooltip_markup (M("TP_BWMIX_ALGO_TOOLTIP"));
+	
+	alLabel = Gtk::manage (new Gtk::Label (M("TP_BWMIX_ALGO")+":"));
+	algoHBox->pack_start (*alLabel, Gtk::PACK_SHRINK);
+
+	algo = Gtk::manage (new MyComboBoxText ());
+	algo->append_text (M("TP_BWMIX_ALGO_LI"));
+	algo->append_text (M("TP_BWMIX_ALGO_SP"));
+	algo->set_active (1);
+	algoHBox->pack_start (*algo);
+	mixerVBox->pack_start(*algoHBox);	
+	algoconn = algo->signal_changed().connect ( sigc::mem_fun(*this, &BlackWhite::algoChanged) );
+	
 	mixerOrange= Gtk::manage(new Adjuster (/*M("TP_BWMIX_ORANGE")*/"", -100, 200, 1, 33, imgIcon[1]));
 	if (mixerOrange->delay < 50) mixerOrange->delay = 50;
 	mixerOrange->setAdjusterListener (this);
@@ -497,6 +513,17 @@ void BlackWhite::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	autoch->set_active (pp->blackwhite.autoc);
 	lastAuto = pp->blackwhite.autoc;
 
+	algoconn.block(true);
+	if (pedited && !pedited->blackwhite.algo)
+		algo->set_active (2);
+	else if (pp->blackwhite.algo=="LI")
+		algo->set_active (0);
+	else if (pp->blackwhite.algo=="SP")
+		algo->set_active (1);
+	algoconn.block(false);
+	algoChanged();
+	
+	
 	if (pedited) {
 		luminanceCurve->setUnChanged (!pedited->blackwhite.luminanceCurve);
 		beforeCurve->setUnChanged (!pedited->blackwhite.beforeCurve);
@@ -585,6 +612,8 @@ void BlackWhite::write (ProcParams* pp, ParamsEdited* pedited) {
 		pedited->blackwhite.beforeCurve = !beforeCurve->isUnChanged ();
 		pedited->blackwhite.beforeCurveMode = beforeCurveMode->get_active_row_number() != 4;
 		pedited->blackwhite.afterCurve = !afterCurve->isUnChanged ();
+		pedited->blackwhite.algo          = algo->get_active_text()!=M("GENERAL_UNCHANGED");
+		
 //		pedited->blackwhite.afterCurveMode = afterCurveMode->get_active_row_number() != 1;
 	}
 	if (method->get_active_row_number()==0)
@@ -594,8 +623,18 @@ void BlackWhite::write (ProcParams* pp, ParamsEdited* pedited) {
 	else if (method->get_active_row_number()==2)
 		pp->blackwhite.method = "ChannelMixer";
 
+	if (algo->get_active_row_number()==0)
+		pp->blackwhite.algo = "LI";
+	else if (algo->get_active_row_number()==1)
+		pp->blackwhite.algo = "SP";
+		
 	pp->blackwhite.setting = getSettingString();
 	pp->blackwhite.filter = getFilterString();
+}
+
+void BlackWhite::algoChanged () {
+	if (listener && (multiImage||enabled->get_active()) ) {
+		listener->panelChanged (EvBWMethodalg, algo->get_active_text ());}
 }
 
 void BlackWhite::curveChanged (CurveEditor* ce) {
@@ -1049,7 +1088,7 @@ void BlackWhite::updateRGBLabel () {
 		}
 		double mixR, mixG, mixB;
 		Glib::ustring sSetting = getSettingString();
-		Color::computeBWMixerConstants(sSetting, getFilterString(), r, g, b,
+		Color::computeBWMixerConstants(sSetting, getFilterString(),getalgoString(), r, g, b,
 				mixerOrange->getValue(), mixerYellow->getValue(), mixerCyan->getValue(), mixerPurple->getValue(), mixerMagenta->getValue(),
 				autoch->get_active(), enabledcc->get_active(), kcorrec, mixR, mixG, mixB);
 		RGBLabels->set_text(
@@ -1099,6 +1138,7 @@ void BlackWhite::setBatchMode (bool batchMode) {
 	beforeCurveMode->append_text (M("GENERAL_UNCHANGED"));
 	afterCurveCEG->setBatchMode (batchMode);
 //	afterCurveMode->append_text (M("GENERAL_UNCHANGED"));
+	algo->append_text (M("GENERAL_UNCHANGED"));
 
 	showLuminance();
 	showFilter();
@@ -1194,6 +1234,8 @@ void BlackWhite::showMixer(int nChannels, bool RGBIsSensitive) {
 		mixerGreen->show(); mixerGreen->set_sensitive (RGBIsSensitive);
 		mixerBlue->show();  mixerBlue->set_sensitive (RGBIsSensitive);
 		filterSep2->hide();
+		algo->hide();
+		alLabel->hide();
 		mixerOrange->hide();
 		mixerYellow->hide();
 		mixerCyan->hide();
@@ -1206,6 +1248,8 @@ void BlackWhite::showMixer(int nChannels, bool RGBIsSensitive) {
 		mixerBlue->show();  mixerBlue->set_sensitive (true);
 		filterSep2->show();
 		mixerOrange->show();
+		algo->show();
+		alLabel->show();
 		mixerYellow->show();
 		mixerCyan->show();
 		mixerMagenta->show();
@@ -1226,6 +1270,15 @@ void BlackWhite::showGamma() {
 void BlackWhite::hideGamma() {
 	if (!batchMode)
 		gammaFrame->hide();
+}
+
+Glib::ustring BlackWhite::getalgoString() {
+	Glib::ustring retVal;
+	if (algo->get_active_row_number()==0)
+		retVal = "LI";
+	else if (algo->get_active_row_number()==1)
+		retVal = "SP";
+	return retVal;		
 }
 
 Glib::ustring BlackWhite::getSettingString() {

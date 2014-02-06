@@ -1405,3 +1405,12 @@ ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる\nショートカット: <b>f</b>
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_251;B&amp;W - Algorithm
+!TP_BWMIX_ALGO;Algorithm OYCPM
+!TP_BWMIX_ALGO_LI;Linear
+!TP_BWMIX_ALGO_SP;Special effects
+!TP_BWMIX_ALGO_TOOLTIP;Linear: will produce a normal <b>linear</b> response.\nSpecial effects: will produce special effects by mixing channels <b>non-linearly</b>.

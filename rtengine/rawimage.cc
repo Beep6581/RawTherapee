@@ -47,45 +47,113 @@ RawImage::~RawImage()
 /* Similar to dcraw scale_colors for coeff. calculation, but without actual pixels scaling.
  * need pixels in data[][] available
  */
-void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblack_, bool forceAutoWB)
+void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblack_, bool forceAutoWB) {
 
-{
 	unsigned  row, col, x, y, c, sum[8];
 	unsigned  W = this->get_width();
 	unsigned  H = this->get_height();
 	int val;
 	double dsum[8], dmin, dmax;
 
-	for (int c = 0; c < 4; c++){
-		cblack_[c] = (float) this->get_cblack(c);
-		pre_mul_[c] = this->get_pre_mul(c);
+
+
+	if ((this->get_cblack(4)+1)/2 == 1 && (this->get_cblack(5)+1)/2 == 1) {
+		for (int c = 0; c < 4; c++){
+			cblack_[FC(c/2,c%2)] = this->get_cblack(6 + c/2 % this->get_cblack(4) * this->get_cblack(5) + c%2 % this->get_cblack(5));
+			pre_mul_[c] = this->get_pre_mul(c);
+		}
+	} else {
+		for (int c = 0; c < 4; c++){
+			cblack_[c] = (float) this->get_cblack(c);
+			pre_mul_[c] = this->get_pre_mul(c);
+		}
 	}
 	if ( this->get_cam_mul(0) == -1 || forceAutoWB) {
 		memset(dsum, 0, sizeof dsum);
-		for (row = 0; row < H; row += 8)
-			for (col = 0; col < W ; col += 8) {
-				memset(sum, 0, sizeof sum);
-				for (y = row; y < row + 8 && y < H; y++)
-					for (x = col; x < col + 8 && x < W; x++)
-						for (int c = 0; c < 3; c++) {
-							if (this->isBayer()) {
-								c = FC(y, x);
-								val = data[y][x];
-							} else
-								val = data[y][3*x+c];
-							if (val > this->get_white(c) - 25)
-								goto skip_block;
-							if ((val -= cblack_[c]) < 0)
-								val = 0;
-							sum[c] += val;
-							sum[c + 4]++;
-							if ( this->isBayer())
-								break;
-						}
-				for (c = 0; c < 8; c++)
-					dsum[c] += sum[c];
-skip_block: ;
+		if (this->isBayer()) {
+			// calculate number of pixels per color
+			dsum[FC(0,0)+4] += (int)(((W+1)/2) * ((H+1)/2));
+			dsum[FC(0,1)+4] += (int)(((W/2) * ((H+1)/2)));
+			dsum[FC(1,0)+4] += (int)(((W+1)/2) * (H/2));
+			dsum[FC(1,1)+4] += (int)((W/2) * (H/2));
+
+#pragma omp parallel private(val,row,col,x,y)
+{
+			double dsumthr[8];
+			memset(dsumthr, 0, sizeof dsumthr);
+			int sum[4];
+			// make local copies of the black and white values to avoid calculations and conversions
+			int cblackint[4];
+			int whiteint[4];
+			for (int c = 0; c < 4; c++) {
+				cblackint[c] = cblack_[c];
+				whiteint[c] = this->get_white(c) - 25;
 			}
+			unsigned short *tempdata = data[0];
+#pragma omp for nowait
+			for (row = 0; row < H; row += 8) {
+				int ymax = row + 8 < H ? row + 8 : H;
+				for (col = 0; col < W ; col += 8) {
+					int xmax = col + 8 < W ? col + 8 : W;
+					memset(sum, 0, sizeof sum);
+					for (y = row; y < ymax; y++)
+						for (x = col; x < xmax; x++) {
+							int c = FC(y, x);
+							val = tempdata[y*W+x];
+							if (val > whiteint[c]) { // calculate number of pixels to be substracted from sum and skip the block
+								dsumthr[FC(row,col)+4]		+= (int)(((xmax - col + 1)/2) * ((ymax - row + 1)/2));
+								dsumthr[FC(row,col+1)+4]	+= (int)(((xmax - col)/2) * ((ymax - row + 1)/2));
+								dsumthr[FC(row+1,col)+4]	+= (int)(((xmax - col + 1)/2) * ((ymax - row)/2));
+								dsumthr[FC(row+1,col+1)+4]	+= (int)(((xmax - col)/2) * ((ymax - row)/2));
+								goto skip_block2;
+							}
+							if (val < cblackint[c])
+								val = cblackint[c];
+							sum[c] += val;
+						}
+					for (int c = 0; c < 4; c++)
+						dsumthr[c] += sum[c];
+skip_block2: ;
+				}
+			}
+#pragma omp critical
+{
+			for (int c = 0; c < 4; c++)
+				dsum[c] += dsumthr[c];
+			for (int c = 4; c < 8; c++)
+				dsum[c] -= dsumthr[c];
+	
+}
+}
+			for(int c=0;c<4;c++)
+				dsum[c] -= cblack_[c] * dsum[c+4];
+
+		} else {
+			for (row = 0; row < H; row += 8)
+				for (col = 0; col < W ; col += 8) {
+					memset(sum, 0, sizeof sum);
+					for (y = row; y < row + 8 && y < H; y++)
+						for (x = col; x < col + 8 && x < W; x++)
+							for (int c = 0; c < 3; c++) {
+								if (this->isBayer()) {
+									c = FC(y, x);
+									val = data[y][x];
+								} else
+									val = data[y][3*x+c];
+								if (val > this->get_white(c) - 25)
+									goto skip_block;
+								if ((val -= cblack_[c]) < 0)
+									val = 0;
+								sum[c] += val;
+								sum[c + 4]++;
+								if ( this->isBayer())
+									break;
+							}
+					for (c = 0; c < 8; c++)
+						dsum[c] += sum[c];
+skip_block: ;
+				}
+		}
 		for (int c = 0; c < 4; c++)
 			if (dsum[c])
 				pre_mul_[c] = dsum[c + 4] / dsum[c];
@@ -239,6 +307,8 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 		  if (cc && cc->has_rawCrop()) {
 			  int lm, tm, w, h;
 			  cc->get_rawCrop(lm, tm, w, h);
+			  if(((int)top_margin - tm) & 1) // we have an odd border difference
+				  filters = (filters << 4) | (filters >> 28); // left rotate filters by 4 bits
 			  left_margin = lm;
 			  top_margin = tm;
 			  if (w < 0) {
@@ -508,10 +578,6 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
           { 7181,-1706,-55,-3557,11409,2450,-621,2072,7533 } },
 
 
-        { "Sony DSLR-A700", 126 << dcraw_arw2_scaling_bugfix_shift, -1, /* RT */
-          { 6509,-1333,-137,-6171,13621,2824,-1490,2226,6952 } },
-        { "Sony DSLR-A900", 128 << dcraw_arw2_scaling_bugfix_shift, -1, /* RT */
-          { 5715,-1433,-410,-5603,12937,2989,-644,1247,8372 } },
         { "SONY NEX-3", 128 << dcraw_arw2_scaling_bugfix_shift, -1, /* RT - Colin Walker */
           { 5145,-741,-123,-4915,12310,2945,-794,1489,6906 } },
         { "SONY NEX-5", 128 << dcraw_arw2_scaling_bugfix_shift, -1, /* RT - Colin Walker */

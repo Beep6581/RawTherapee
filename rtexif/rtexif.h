@@ -431,7 +431,7 @@ protected:
     }
 };
 
-inline int getTypeSize( TagType type );
+inline static int getTypeSize( TagType type );
 
 extern const TagAttrib exifAttribs[];
 extern const TagAttrib gpsAttribs[];

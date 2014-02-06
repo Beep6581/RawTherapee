@@ -106,6 +106,8 @@ class Options {
     int toolPanelWidth;
     int browserToolPanelWidth;
     int browserToolPanelHeight;
+    bool browserToolPanelOpened;
+    bool browserDirPanelOpened;
     int historyPanelWidth;
     Glib::ustring font;
     int windowWidth;
@@ -266,7 +268,7 @@ class Options {
     void        setDefaults     ();
     int         readFromFile    (Glib::ustring fname);
     int         saveToFile      (Glib::ustring fname);
-    static void load            ();
+    static bool load            ();
     static void save            ();
 
     // if multiUser=false, send back the global profile path

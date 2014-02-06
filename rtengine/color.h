@@ -136,7 +136,7 @@ public:
 	static double f2xyz(double f);
 	static void calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4,double &gamma5);
 	static void trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb);
-	static void computeBWMixerConstants (const Glib::ustring &setting, const Glib::ustring &filter, float &mixerRed, float &mixerGreen,
+	static void computeBWMixerConstants (const Glib::ustring &setting, const Glib::ustring &filter, const Glib::ustring &algo, float &mixerRed, float &mixerGreen,
 										float &mixerBlue, float mixerOrange, float mixerYellow, float mixerCyan, float mixerPurple, float mixerMagenta,
 										bool autoc, bool complement, float &kcorec, double &rrm, double &ggm, double &bbm);
 

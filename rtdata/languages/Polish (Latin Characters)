@@ -1356,6 +1356,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !HISTORY_MSG_248;'HH' curve
 !HISTORY_MSG_249;CbDL - Threshold
 !HISTORY_MSG_250;NR - Enhanced
+!HISTORY_MSG_251;B&amp;W - Algorithm
 !PARTIALPASTE_CHANNELMIXERBW;Black-and-White
 !PARTIALPASTE_GRADIENT;Graduated filter
 !PARTIALPASTE_PCVIGNETTE;Vignette filter
@@ -1366,17 +1367,21 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !PROFILEPANEL_GLOBALPROFILES;Bundled profiles
 !PROFILEPANEL_MYPROFILES;My profiles
 !PROFILEPANEL_PINTERNAL;Neutral
+!TP_BWMIX_ALGO;Algorithm OYCPM
+!TP_BWMIX_ALGO_LI;Linear
+!TP_BWMIX_ALGO_SP;Special effects
+!TP_BWMIX_ALGO_TOOLTIP;Linear: will produce a normal <b>linear</b> response.\nSpecial effects: will produce special effects by mixing channels <b>non-linearly</b>.
 !TP_BWMIX_AUTOCH;Auto
-!TP_BWMIX_AUTOCH_TIP;Calculate values optimizing channel-mixer
+!TP_BWMIX_AUTOCH_TIP;Calculate values optimizing Channel Mixer.
 !TP_BWMIX_BLUE;Blue
 !TP_BWMIX_CC_ENABLED;Adjust complementary color
-!TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colors in ROYGCBPM mode
+!TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colors in ROYGCBPM mode.
 !TP_BWMIX_CHANNEL;Luminance Equalizer
 !TP_BWMIX_CURVEEDITOR1;'Before' curve
 !TP_BWMIX_CURVEEDITOR2;'After' curve
-!TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tone curve, after B&amp;W conversion, at the end of treatment
-!TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before B&amp;W conversion\nMay take into account the color components
-!TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Modify luminance in function of hue\nPay attention to extreme values that may cause artifacts
+!TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tone curve, after B&amp;W conversion, at the end of treatment.
+!TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before B&amp;W conversion.\nMay take into account the color components.
+!TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H).\nPay attention to extreme values as they may cause artifacts.
 !TP_BWMIX_CYAN;Cyan
 !TP_BWMIX_FILTER;Color Filter
 !TP_BWMIX_FILTER_BLUEGREEN;Blue-Green
@@ -1387,13 +1392,13 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !TP_BWMIX_FILTER_PURPLE;Purple
 !TP_BWMIX_FILTER_REDYELLOW;Red-Yellow
 !TP_BWMIX_FILTER_RED;Red
-!TP_BWMIX_FILTER_TOOLTIP;The color filter simulate shots taken with a colored filter placed in front of the lens. Colored filters reduce transmission of specific range of colors and correspondingly affect their lightness. E.g. a Red filter darkens Blue skies.
+!TP_BWMIX_FILTER_TOOLTIP;The color filter simulates shots taken with a colored filter placed in front of the lens. Colored filters reduce the transmission of specific color ranges and therefore affect their lightness. E.g. a red filter darkens blue skies.
 !TP_BWMIX_FILTER_YELLOW;Yellow
 !TP_BWMIX_GAMMA;Gamma Correction
 !TP_BWMIX_GAM_BLUE;Blue Channel
 !TP_BWMIX_GAM_GREEN;Green Channel
 !TP_BWMIX_GAM_RED;Red Channel
-!TP_BWMIX_GAM_TOOLTIP;Correct gamma for each channel RGB
+!TP_BWMIX_GAM_TOOLTIP;Correct gamma for each RGB channel.
 !TP_BWMIX_GREEN;Green
 !TP_BWMIX_LABEL;Black-and-White
 !TP_BWMIX_MAGENTA;Magenta
@@ -1403,15 +1408,15 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !TP_BWMIX_MET_LUMEQUAL;Luminance Equalizer
 !TP_BWMIX_MIXC;Mixer
 !TP_BWMIX_NEUTRAL;Reset mixer
-!TP_BWMIX_NEUTRAL_TIP;Reset all values (filter, channel-mixer) to default
+!TP_BWMIX_NEUTRAL_TIP;Reset all values (Color Filter, Channel Mixer) to default.
 !TP_BWMIX_ORANGE;Orange
 !TP_BWMIX_PURPLE;Purple
 !TP_BWMIX_RED;Red
 !TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
-!TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all of the mixer options\nTotal displays the sum of RGB values actually applied:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
-!TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use Presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behavior.
+!TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all the mixer options.\n"Total" displays the sum of the RGB values:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
+!TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behavior.
 !TP_BWMIX_SETTING;Presets
-!TP_BWMIX_SETTING_TOOLTIP;Different presets (films, landscape, ...) or manual settings of channel-mixer
+!TP_BWMIX_SETTING_TOOLTIP;Different presets (film, landscape, etc.) or manual Channel Mixer settings.
 !TP_BWMIX_SET_HIGHCONTAST;High contrast
 !TP_BWMIX_SET_HIGHSENSIT;High Sensitivity
 !TP_BWMIX_SET_HYPERPANCHRO;Hyper Panchromatic
@@ -1423,10 +1428,10 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !TP_BWMIX_SET_ORTHOCHRO;Orthochromatic
 !TP_BWMIX_SET_PANCHRO;Panchromatic
 !TP_BWMIX_SET_PORTRAIT;Portrait
-!TP_BWMIX_SET_RGBABS;Channel-Mixer absolute RGB
-!TP_BWMIX_SET_RGBREL;Channel-Mixer relative RGB
-!TP_BWMIX_SET_ROYGCBPMABS;Channel-Mixer absolute ROYGCBPM
-!TP_BWMIX_SET_ROYGCBPMREL;Channel-Mixer relative ROYGCBPM
+!TP_BWMIX_SET_RGBABS;Channel Mixer absolute RGB
+!TP_BWMIX_SET_RGBREL;Channel Mixer relative RGB
+!TP_BWMIX_SET_ROYGCBPMABS;Channel Mixer absolute ROYGCBPM
+!TP_BWMIX_SET_ROYGCBPMREL;Channel Mixer relative ROYGCBPM
 !TP_BWMIX_TCMODE_FILMLIKE;B&W Film-like
 !TP_BWMIX_TCMODE_SATANDVALBLENDING;B&W Saturation and Value Blending
 !TP_BWMIX_TCMODE_STANDARD;B&W Standard
@@ -1434,26 +1439,26 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !TP_BWMIX_VAL;L
 !TP_BWMIX_YELLOW;Yellow
 !TP_DIRPYRDENOISE_ENH;Enhanced mode
-!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase
-!TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
+!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase.
+!TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-components is only visible at 1:1 preview scale.
 !TP_GRADIENT_CENTER;Center
 !TP_GRADIENT_CENTER_X;Center X
-!TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge
+!TP_GRADIENT_CENTER_X_TOOLTIP;Shift gradient to the left (negative values) or right (positive values).
 !TP_GRADIENT_CENTER_Y;Center Y
-!TP_GRADIENT_CENTER_Y_TOOLTIP;Rotation anchor point Y: -100=top edge, 0=center, +100=bottom edge
+!TP_GRADIENT_CENTER_Y_TOOLTIP;Shift gradient up (negative values) or down (positive values).
 !TP_GRADIENT_DEGREE;Angle
-!TP_GRADIENT_DEGREE_TOOLTIP;Rotation angle in degrees
+!TP_GRADIENT_DEGREE_TOOLTIP;Rotation angle in degrees.
 !TP_GRADIENT_FEATHER;Feather
-!TP_GRADIENT_FEATHER_TOOLTIP;Gradient width in percent of the image diagonal
+!TP_GRADIENT_FEATHER_TOOLTIP;Gradient width in percent of the image diagonal.
 !TP_GRADIENT_LABEL;Graduated Filter
 !TP_GRADIENT_STRENGTH;Strength
-!TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops
-!TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure
+!TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops.
+!TP_HLREC_ENA_TOOLTIP;Could be activated by Auto Levels.
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
-!TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. Result can be used for calibration purposes, generation of a camera profile.
-!TP_LABCURVE_CHROMA_TOOLTIP;To apply B&amp;W toning, set Chromaticity to -100
+!TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
+!TP_LABCURVE_CHROMA_TOOLTIP;To apply B&amp;W toning, set Chromaticity to -100.
 !TP_LABCURVE_CURVEEDITOR_CL;CL
 !TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
 !TP_LABCURVE_CURVEEDITOR_HH;HH
@@ -1461,16 +1466,16 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !TP_LABCURVE_CURVEEDITOR_LH;LH
 !TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
 !TP_PCVIGNETTE_FEATHER;Feather
-!TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering: 0=corners only, 50=halfway to center, 100=to center
+!TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering:\n0 = corners only,\n50 = halfway to center,\n100 = to center.
 !TP_PCVIGNETTE_LABEL;Vignette Filter
 !TP_PCVIGNETTE_ROUNDNESS;Roundness
-!TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Roundness: 0=rectangle, 50=fitted ellipse, 100=circle
+!TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Roundness:\n0 = rectangle,\n50 = fitted ellipse,\n100 = circle.
 !TP_PCVIGNETTE_STRENGTH;Strength
-!TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filter strength in stops (reached in corners)
-!TP_SAVEDIALOG_OK_TIP;Shortcut <b>Ctrl-Enter</b>
+!TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filter strength in stops (reached in corners).
+!TP_SAVEDIALOG_OK_TIP;Shortcut: <b>Ctrl-Enter</b>
 !TP_SHADOWSHLIGHTS_SHARPMASK;Sharp mask
 !TP_WBALANCE_EQBLUERED;Blue/Red Equalizer
-!TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behavior of "white balance" by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater)\nb) are far from conditions where calibrations were performed\nc) where the matrices or ICC profiles are unsuitable
+!TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behavior of "white balance" by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater),\nb) are far from conditions where calibrations were performed,\nc) where the matrices or ICC profiles are unsuitable.
 !TP_WBALANCE_WATER1;UnderWater 1
 !TP_WBALANCE_WATER2;UnderWater 2
 !TP_WBALANCE_WATER_HEADER;UnderWater

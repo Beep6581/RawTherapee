@@ -432,7 +432,7 @@ namespace rtengine {
      * @param setting BlackWhite::setting
      * @param setting BlackWhite::filter
      */
-    void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::ustring &filter, float &mixerRed, float &mixerGreen,
+    void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::ustring &filter,  const Glib::ustring &algo, float &mixerRed, float &mixerGreen,
                   float &mixerBlue, float mixerOrange, float mixerYellow, float mixerCyan, float mixerPurple, float mixerMagenta,
                   bool autoc, bool complement, float &kcorec, double &rrm, double &ggm, double &bbm)
     {
@@ -488,24 +488,34 @@ namespace rtengine {
             float crM=0.f;
             float cgM=0.f;
             float cbM=0.f;
-
+			//printf("mixred=%f\n",mixerRed);
 
             float fcompl = 1.f;
-            if(complement) fcompl = 3.f;
+            if(complement && algo=="SP") fcompl = 3.f;//special
+			else if(complement && algo=="LI") fcompl = 1.5f;//linear
             // ponderate filters: report to R=G=B=33
             // I ponder RGB channel, not only orange or yellow or cyan, etc...it's my choice !
             if(mixerOrange != 33) {
-                if (mixerOrange >= 33) orM = fcompl*(mixerOrange*0.67f - 22.11f)/100.f; else orM = fcompl*(-0.3f*mixerOrange +9.9f)/100.f;
-                if (mixerOrange >= 33) ogM = fcompl*(-0.164f*mixerOrange+5.412f)/100.f; else ogM = fcompl*(0.4f*mixerOrange-13.2f)/100.f;
+				if (algo=="SP") {//special
+					if (mixerOrange >= 33) orM = fcompl*(mixerOrange*0.67f - 22.11f)/100.f; else orM = fcompl*(-0.3f*mixerOrange +9.9f)/100.f;
+					if (mixerOrange >= 33) ogM = fcompl*(-0.164f*mixerOrange+5.412f)/100.f; else ogM = fcompl*(0.4f*mixerOrange-13.2f)/100.f;
+			   }
+			   else if (algo=="LI") {//linear
+				orM = fcompl*(mixerOrange - 33.f)/100.f; 
+				ogM = fcompl*(0.5f*mixerOrange-16.5f)/100.f;
+				}
                 if(complement) obM =(-0.492f*mixerOrange+16.236f)/100.f;
                 mixerRed   += orM;
                 mixerGreen += ogM;
                 mixerBlue  += obM;
                 koymcp += (orM+ogM+obM);
+			//	printf("mixred+ORange=%f\n",mixerRed);
+			
             }
             if(mixerYellow != 33) {
-                yrM = fcompl*(-0.134f*mixerYellow+4.422f)/100.f;//22.4
-                ygM = fcompl*( 0.5f  *mixerYellow-16.5f )/100.f;
+                if (algo=="SP") yrM = fcompl*(-0.134f*mixerYellow+4.422f)/100.f;//22.4
+                else if (algo=="LI")yrM = fcompl*(0.5f*mixerYellow-16.5f)/100.f;//22.4
+                ygM = fcompl*(0.5f  *mixerYellow-16.5f )/100.f;
                 if(complement) ybM =(-0.492f*mixerYellow+16.236f)/100.f;
                 mixerRed   += yrM;
                 mixerGreen += ygM;
@@ -513,8 +523,14 @@ namespace rtengine {
                 koymcp += (yrM+ygM+ybM);
             }
             if(mixerMagenta != 33) {
-                if(mixerMagenta >= 33) mrM = fcompl*( 0.67f *mixerMagenta-22.11f)/100.f; else mrM = fcompl*(-0.3f*mixerMagenta +9.9f)/100.f;
-                if(mixerMagenta >= 33) mbM = fcompl*(-0.164f*mixerMagenta+5.412f)/100.f; else mbM = fcompl*( 0.4f*mixerMagenta-13.2f)/100.f;
+			 if (algo=="SP"){
+					if(mixerMagenta >= 33) mrM = fcompl*( 0.67f *mixerMagenta-22.11f)/100.f; else mrM = fcompl*(-0.3f*mixerMagenta +9.9f)/100.f;
+					if(mixerMagenta >= 33) mbM = fcompl*(-0.164f*mixerMagenta+5.412f)/100.f; else mbM = fcompl*( 0.4f*mixerMagenta-13.2f)/100.f;
+					}
+			 else if (algo=="LI"){
+				mrM = fcompl*(mixerMagenta-33.f)/100.f; 
+				mbM = fcompl*(0.5f*mixerMagenta-16.5f)/100.f; 
+				}
                 if(complement) mgM =(-0.492f*mixerMagenta+16.236f)/100.f;
                 mixerRed   += mrM;
                 mixerGreen += mgM;
@@ -522,7 +538,8 @@ namespace rtengine {
                 koymcp += (mrM+mgM+mbM);
             }
             if(mixerPurple != 33) {
-                prM = fcompl*(-0.134f*mixerPurple+4.422f)/100.f;
+				if (algo=="SP") prM = fcompl*(-0.134f*mixerPurple+4.422f)/100.f;
+                else if (algo=="LI")prM = fcompl*(0.5f*mixerPurple-16.5f)/100.f;
                 pbM = fcompl*(0.5f*mixerPurple-16.5f)/100.f;
                 if(complement) pgM = (-0.492f*mixerPurple+16.236f)/100.f;
                 mixerRed   += prM;
@@ -531,7 +548,8 @@ namespace rtengine {
                 koymcp += (prM+pgM+pbM);
             }
             if(mixerCyan != 33) {
-                cgM = fcompl*(-0.134f*mixerCyan +4.422f)/100.f;
+				if (algo=="SP")cgM = fcompl*(-0.134f*mixerCyan +4.422f)/100.f;
+                else if (algo=="LI")cgM = fcompl*(0.5f*mixerCyan -16.5f)/100.f;
                 cbM = fcompl*(0.5f*mixerCyan-16.5f)/100.f;
                 if(complement) crM = (-0.492f*mixerCyan+16.236f)/100.f;
                 mixerRed   += crM;

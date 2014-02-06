@@ -408,6 +408,7 @@ void ProcParams::setDefaults () {
     blackwhite.afterCurve.clear ();
     blackwhite.afterCurve.push_back(DCT_Linear);
     blackwhite.afterCurveMode     = BlackWhiteParams::TC_MODE_STD_BW;
+    blackwhite.algo          = "SP";
 
     resize.enabled = false;
     resize.scale  = 1.0;
@@ -620,6 +621,8 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->blackwhite.gammaRed)     keyFile.set_integer ("Black & White", "GammaRed",            blackwhite.gammaRed);
     if (!pedited || pedited->blackwhite.gammaGreen)   keyFile.set_integer ("Black & White", "GammaGreen",          blackwhite.gammaGreen);
     if (!pedited || pedited->blackwhite.gammaBlue)    keyFile.set_integer ("Black & White", "GammaBlue",           blackwhite.gammaBlue);
+    if (!pedited || pedited->blackwhite.algo)         keyFile.set_string  ("Black & White", "Algorithm",     	   blackwhite.algo);
+
     if (!pedited || pedited->blackwhite.luminanceCurve) {
         Glib::ArrayHandle<double> luminanceCurve = blackwhite.luminanceCurve;
         keyFile.set_double_list("Black & White", "LuminanceCurve", luminanceCurve);
@@ -1238,7 +1241,8 @@ if (keyFile.has_group ("Black & White")) {
     if (keyFile.has_key ("Black & White", "Setting"))             { blackwhite.setting      = keyFile.get_string  ("Black & White", "Setting"); if (pedited) pedited->blackwhite.setting = true; }
     if (keyFile.has_key ("Black & White", "LuminanceCurve"))      { blackwhite.luminanceCurve = keyFile.get_double_list ("Black & White", "LuminanceCurve"); if (pedited) pedited->blackwhite.luminanceCurve = true; }
     if (keyFile.has_key ("Black & White", "BeforeCurve"))         { blackwhite.beforeCurve    = keyFile.get_double_list ("Black & White", "BeforeCurve"); if (pedited) pedited->blackwhite.beforeCurve = true; }
-    if (keyFile.has_key ("Black & White", "BeforeCurveMode")) {
+    if (keyFile.has_key ("Black & White", "Algorithm"))    		  { blackwhite.algo          = keyFile.get_string  ("Black & White", "Algorithm"); if (pedited) pedited->blackwhite.algo = true; }
+   if (keyFile.has_key ("Black & White", "BeforeCurveMode")) {
         Glib::ustring sMode = keyFile.get_string ("Black & White", "BeforeCurveMode");
         if      (sMode == "Standard")            blackwhite.beforeCurveMode = BlackWhiteParams::TC_MODE_STD_BW;
         else if (sMode == "FilmLike")            blackwhite.beforeCurveMode = BlackWhiteParams::TC_MODE_FILMLIKE_BW;
@@ -1978,6 +1982,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& blackwhite.beforeCurveMode == other.blackwhite.beforeCurveMode
 		&& blackwhite.afterCurveMode == other.blackwhite.afterCurveMode
 		&& blackwhite.autoc == other.blackwhite.autoc
+		&& blackwhite.algo == other.blackwhite.algo
 		&& resize.scale == other.resize.scale
 		&& resize.appliesTo == other.resize.appliesTo
 		&& resize.method == other.resize.method

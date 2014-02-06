@@ -1386,17 +1386,18 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !HISTORY_MSG_234;B&amp;W - 'After' Curve Type
 !HISTORY_MSG_236;--unused--
 !HISTORY_MSG_250;NR - Enhanced
-!MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
-!MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
-!MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser with the Editor to reveal the thumbnail of the currently open image, and clear filters in File Browser \nShortcut: <b>x</b>\n\nAs above, but without clearing filters in File Browser\nShortcut: <b>y</b>\n(Note that thumbnail of the open file will not be shown if filtered out).
+!HISTORY_MSG_251;B&amp;W - Algorithm
+!MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
+!MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
+!MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser or Filmstrip with the Editor to reveal the thumbnail of the currently opened image, and clear any active filters.\nShortcut: <b>x</b>\n\nAs above, but without clearing active filters:\nShortcut: <b>y</b>\n(Note that the thumbnail of the opened image will not be shown if filtered out).
 !MAIN_MSG_OPERATIONCANCELLED;Operation cancelled
 !MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoesn't exist. Please set a correct path in the Preference window.
 !MAIN_MSG_SETPATHFIRST;You have to set a target path first in Preferences\nin order to use this function!
 !PARTIALPASTE_CHANNELMIXERBW;Black-and-White
 !PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
-!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values
+!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
 !PREFERENCES_BEHADDALL;All to 'Add'
-!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed
+!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
 !PREFERENCES_BEHSETALL;All to 'Set'
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
@@ -1408,35 +1409,39 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !PROFILEPANEL_PINTERNAL;Neutral
 !PROGRESSBAR_NOIMAGES;No images found
 !SAVEDLG_FORCEFORMATOPTS;Force saving options
+!TP_BWMIX_ALGO;Algorithm OYCPM
+!TP_BWMIX_ALGO_LI;Linear
+!TP_BWMIX_ALGO_SP;Special effects
+!TP_BWMIX_ALGO_TOOLTIP;Linear: will produce a normal <b>linear</b> response.\nSpecial effects: will produce special effects by mixing channels <b>non-linearly</b>.
 !TP_BWMIX_AUTOCH;Auto
-!TP_BWMIX_AUTOCH_TIP;Calculate values optimizing channel-mixer
+!TP_BWMIX_AUTOCH_TIP;Calculate values optimizing Channel Mixer.
 !TP_BWMIX_CURVEEDITOR1;'Before' curve
 !TP_BWMIX_CURVEEDITOR2;'After' curve
-!TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tone curve, after B&amp;W conversion, at the end of treatment
-!TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before B&amp;W conversion\nMay take into account the color components
-!TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Modify luminance in function of hue\nPay attention to extreme values that may cause artifacts
+!TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tone curve, after B&amp;W conversion, at the end of treatment.
+!TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before B&amp;W conversion.\nMay take into account the color components.
+!TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H).\nPay attention to extreme values as they may cause artifacts.
 !TP_BWMIX_CYAN;Cyan
-!TP_BWMIX_NEUTRAL_TIP;Reset all values (filter, channel-mixer) to default
+!TP_BWMIX_NEUTRAL_TIP;Reset all values (Color Filter, Channel Mixer) to default.
 !TP_BWMIX_ORANGE;Orange
 !TP_BWMIX_PURPLE;Purple
 !TP_BWMIX_RED;Red
 !TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
-!TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all of the mixer options\nTotal displays the sum of RGB values actually applied:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
-!TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use Presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behavior.
+!TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all the mixer options.\n"Total" displays the sum of the RGB values:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
+!TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behavior.
 !TP_BWMIX_TCMODE_SATANDVALBLENDING;B&W Saturation and Value Blending
 !TP_BWMIX_VAL;L
 !TP_BWMIX_YELLOW;Yellow
-!TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RT calculates an optimum value from Exif data.\nTo set the value manually, uncheck the checkbox first
+!TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RT calculates an optimum value from Exif data.\nTo set the value manually, uncheck the checkbox first.
 !TP_COLORAPP_BADPIXSL;Hot/bad pixel filter
-!TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n 0=no effect 1=median 2=gaussian.\n\nThese artifacts are due to limitations of CIECAM02. Alternatively, adjust the image to avoid very dark shadows.
+!TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n0 = no effect\n1 = median\n2 = gaussian.\n\nThese artifacts are due to limitations of CIECAM02. Alternatively, adjust the image to avoid very dark shadows.
 !TP_DIRPYRDENOISE_ENH;Enhanced mode
-!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase
-!TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
+!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase.
+!TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-components is only visible at 1:1 preview scale.
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
-!TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. Result can be used for calibration purposes, generation of a camera profile.
-!TP_LABCURVE_CHROMA_TOOLTIP;To apply B&amp;W toning, set Chromaticity to -100
+!TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
+!TP_LABCURVE_CHROMA_TOOLTIP;To apply B&amp;W toning, set Chromaticity to -100.
 !TP_LABCURVE_CURVEEDITOR_CL;CL
 !TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
 !TP_LABCURVE_CURVEEDITOR_HH;HH
@@ -1444,14 +1449,14 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !TP_LABCURVE_CURVEEDITOR_LH;LH
 !TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
 !TP_PFCURVE_CURVEEDITOR_CH;Hue
-!TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color. Higher = more, lower = less.
-!TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Try to suppress hot and dead pixels
+!TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color.\nHigher = more,\nLower = less.
+!TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Tries to suppress hot and dead pixels.
 !TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 !TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
-!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images
+!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to posterization or a washed-out look.
 !TP_RAW_LMMSEITERATIONS;LMMSE Enhancement Steps
-!TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal to noise ratio
-!TP_SAVEDIALOG_OK_TIP;Shortcut <b>Ctrl-Enter</b>
+!TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.
+!TP_SAVEDIALOG_OK_TIP;Shortcut: <b>Ctrl-Enter</b>
 !TP_SHADOWSHLIGHTS_SHARPMASK;Sharp mask
 !TP_WBALANCE_EQBLUERED;Blue/Red Equalizer
-!TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behavior of "white balance" by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater)\nb) are far from conditions where calibrations were performed\nc) where the matrices or ICC profiles are unsuitable
+!TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behavior of "white balance" by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater),\nb) are far from conditions where calibrations were performed,\nc) where the matrices or ICC profiles are unsuitable.

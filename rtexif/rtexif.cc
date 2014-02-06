@@ -569,7 +569,11 @@ TagDirectoryTable::TagDirectoryTable (TagDirectory* p, unsigned char *v,int mems
 {
     values = new unsigned char[valuesSize];
     memcpy(values,v,valuesSize);
-    for( const TagAttrib* tattr = ta; tattr->ignore != -1; tattr++){
+
+    // Security ; will avoid to read above the buffer limit if the RT's tagDirectoryTable is longer that what's in the file
+    int count = valuesSize/getTypeSize(type);
+
+    for(const TagAttrib* tattr = ta; tattr->ignore != -1 && tattr->ID<count; ++tattr){
         Tag* newTag = new Tag (this, tattr, (values + zeroOffset+ tattr->ID*getTypeSize(type)), tattr->type == AUTO ? type : tattr->type);
         tags.push_back(newTag); // Here we can insert more tag in the same offset because of bitfield meaning
     }
@@ -581,7 +585,10 @@ TagDirectoryTable::TagDirectoryTable (TagDirectory* p, FILE* f, int memsize,int 
     values = new unsigned char[valuesSize];
     fread (values, 1, valuesSize, f);
 
-    for( const TagAttrib* tattr = ta; tattr->ignore != -1; tattr++){
+    // Security ; will avoid to read above the buffer limit if the RT's tagDirectoryTable is longer that what's in the file
+    int count = valuesSize/getTypeSize(type);
+
+    for(const TagAttrib* tattr = ta; tattr->ignore != -1 && tattr->ID<count; ++tattr){
         Tag* newTag = new Tag (this, tattr, (values + zeroOffset+ tattr->ID*getTypeSize(type)), tattr->type == AUTO ? type : tattr->type);
         tags.push_back(newTag); // Here we can insert more tag in the same offset because of bitfield meaning
     }

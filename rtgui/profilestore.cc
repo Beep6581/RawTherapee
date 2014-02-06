@@ -46,6 +46,9 @@ bool ProfileStore::init () {
 
 ProfileStore::~ProfileStore () {
 
+    if (storeState == STORESTATE_NOTINITIALIZED)
+        return;
+
     // This lock prevent object's suppression while scanning the directories
     storeState = STORESTATE_DELETED;
     MyMutex::MyLock lock(*parseMutex);
