@@ -132,6 +132,10 @@ void FilePanel::setAspect () {
 	dirpaned->set_position(options.dirBrowserWidth);
 	tpcPaned->set_position(options.browserToolPanelHeight);
 	set_position(winW - options.browserToolPanelWidth);
+	if (!options.browserDirPanelOpened)
+		fileCatalog->toggleLeftPanel();
+	if (!options.browserToolPanelOpened)
+		fileCatalog->toggleRightPanel();
 }
 
 void FilePanel::init () {

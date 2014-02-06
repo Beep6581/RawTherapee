@@ -265,6 +265,8 @@ void Options::setDefaults () {
     toolPanelWidth = 390;
     browserToolPanelWidth = 430;
     browserToolPanelHeight = 600;
+    browserToolPanelOpened = true;;
+    browserDirPanelOpened = true;
     historyPanelWidth = 330;
     lastScale = 5;
     panAccelFactor = 5;
@@ -686,8 +688,10 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "SaveAsDialogWidth"))   saveAsDialogWidth        = keyFile.get_integer ("GUI", "SaveAsDialogWidth");
     if (keyFile.has_key ("GUI", "SaveAsDialogHeight"))  saveAsDialogHeight       = keyFile.get_integer ("GUI", "SaveAsDialogHeight");
     if (keyFile.has_key ("GUI", "ToolPanelWidth"))      toolPanelWidth           = keyFile.get_integer ("GUI", "ToolPanelWidth");
-    if (keyFile.has_key ("GUI", "BrowserToolPanelWidth"))browserToolPanelWidth   = keyFile.get_integer ("GUI", "BrowserToolPanelWidth");
-    if (keyFile.has_key ("GUI", "BrowserToolPanelHeight"))browserToolPanelHeight = keyFile.get_integer ("GUI", "BrowserToolPanelHeight");
+    if (keyFile.has_key ("GUI", "BrowserToolPanelWidth"))  browserToolPanelWidth  = keyFile.get_integer ("GUI", "BrowserToolPanelWidth");
+    if (keyFile.has_key ("GUI", "BrowserToolPanelHeight")) browserToolPanelHeight = keyFile.get_integer ("GUI", "BrowserToolPanelHeight");
+    if (keyFile.has_key ("GUI", "BrowserToolPanelOpened")) browserToolPanelOpened = keyFile.get_boolean ("GUI", "BrowserToolPanelOpened");
+    if (keyFile.has_key ("GUI", "BrowserDirPanelOpened"))  browserDirPanelOpened  = keyFile.get_boolean ("GUI", "BrowserDirPanelOpened");
     if (keyFile.has_key ("GUI", "HistoryPanelWidth"))   historyPanelWidth = keyFile.get_integer ("GUI", "HistoryPanelWidth");
     if (keyFile.has_key ("GUI", "LastPreviewScale"))    lastScale         = keyFile.get_integer ("GUI", "LastPreviewScale");
     if (keyFile.has_key ("GUI", "PanAccelFactor"))      panAccelFactor    = keyFile.get_integer ("GUI", "PanAccelFactor");
@@ -969,6 +973,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("GUI", "ToolPanelWidth", toolPanelWidth);
     keyFile.set_integer ("GUI", "BrowserToolPanelWidth", browserToolPanelWidth);
     keyFile.set_integer ("GUI", "BrowserToolPanelHeight", browserToolPanelHeight);
+    keyFile.set_boolean ("GUI", "BrowserToolPanelOpened", browserToolPanelOpened);
+    keyFile.set_boolean ("GUI", "BrowserDirPanelOpened", browserDirPanelOpened);
     keyFile.set_integer ("GUI", "HistoryPanelWidth", historyPanelWidth);
     keyFile.set_integer ("GUI", "LastPreviewScale", lastScale);
     keyFile.set_integer ("GUI", "PanAccelFactor", panAccelFactor);

@@ -1649,22 +1649,26 @@ void FileCatalog::tbRightPanel_1_visible (bool visible){
 void FileCatalog::tbLeftPanel_1_toggled () {
     removeIfThere (filepanel->dirpaned, filepanel->placespaned, false);
     if (tbLeftPanel_1->get_active()){
-    	filepanel->dirpaned->pack1 (*filepanel->placespaned, false, true);
+        filepanel->dirpaned->pack1 (*filepanel->placespaned, false, true);
         tbLeftPanel_1->set_image (*iLeftPanel_1_Hide);
+        options.browserDirPanelOpened = true;
     }
     else {
-    	tbLeftPanel_1->set_image (*iLeftPanel_1_Show);
+        tbLeftPanel_1->set_image (*iLeftPanel_1_Show);
+        options.browserDirPanelOpened = false;
     }
 }
 
 void FileCatalog::tbRightPanel_1_toggled () {
     if (tbRightPanel_1->get_active()){
-    	filepanel->rightBox->show();
-    	tbRightPanel_1->set_image (*iRightPanel_1_Hide);
+        filepanel->rightBox->show();
+        tbRightPanel_1->set_image (*iRightPanel_1_Hide);
+        options.browserToolPanelOpened = true;
     }
     else{
-    	filepanel->rightBox->hide();
-    	tbRightPanel_1->set_image (*iRightPanel_1_Show);
+        filepanel->rightBox->hide();
+        tbRightPanel_1->set_image (*iRightPanel_1_Show);
+        options.browserToolPanelOpened = false;
     }
 }
 
@@ -1683,6 +1687,15 @@ void FileCatalog::toggleSidePanels(){
 	tbLeftPanel_1->set_active (!bAllSidePanelsVisible);
 	tbRightPanel_1->set_active (!bAllSidePanelsVisible);
 }
+
+void FileCatalog::toggleLeftPanel() {
+	tbLeftPanel_1->set_active (!tbLeftPanel_1->get_active());
+}
+
+void FileCatalog::toggleRightPanel() {
+	tbRightPanel_1->set_active (!tbRightPanel_1->get_active());
+}
+
 
 void FileCatalog::selectImage (Glib::ustring fname, bool clearFilters) {
 
