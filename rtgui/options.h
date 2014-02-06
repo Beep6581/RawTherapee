@@ -106,6 +106,8 @@ class Options {
     int toolPanelWidth;
     int browserToolPanelWidth;
     int browserToolPanelHeight;
+    bool browserToolPanelOpened;
+    bool browserDirPanelOpened;
     int historyPanelWidth;
     Glib::ustring font;
     int windowWidth;
