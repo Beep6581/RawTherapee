@@ -683,53 +683,54 @@ class CALensInterpreter : public IntLensInterpreter< int > {
 
         virtual std::string toString (Tag* t)
         {
-        	 int lensID = t->toInt();
+        	int lensID = t->toInt();
 
-           	 it_t r;
-           	 size_t nFound = choices.count( lensID );
-             if( 1== nFound ) {
-           		 r = choices.find ( lensID );
-           		 return r->second;
-             }
+           	it_t r;
+           	size_t nFound = choices.count( lensID );
+            if(1 == nFound) {
+				r = choices.find ( lensID );
+				return r->second;
+			}
 
-        	 Tag *apertureTag = t->getParent()->getRoot()->findTag("MaxAperture");
-        	 Tag *focalLengthTag = t->getParent()->getRoot()->findTag("FocalLength");
-        	 Tag *focalLengthMaxTag = t->getParent()->getRoot()->findTag("LongFocal");
-        	 Tag *focalLengthMinTag = t->getParent()->getRoot()->findTag("ShortFocal");
-        	 Tag *unitTag = t->getParent()->getRoot()->findTag("FocalUnits");
-        	 double maxApertureAtFocal = 0.;
-        	 double focalLength = 0.;
-        	 double focalLengthMin = 0.;
-        	 double focalLengthMax = 0.;
-        	 if( apertureTag )
-        		 maxApertureAtFocal = pow(2.0, apertureTag->toDouble()/64.0);
-         	 if( unitTag ){
-         	    double unit = unitTag->toDouble();
-         	    if( unit==0. ) unit=1;
+        	Tag *apertureTag = t->getParent()->getRoot()->findTag("MaxAperture");
+        	Tag *focalLengthTag = t->getParent()->getRoot()->findTag("FocalLength");
+        	Tag *focalLengthMaxTag = t->getParent()->getRoot()->findTag("LongFocal");
+        	Tag *focalLengthMinTag = t->getParent()->getRoot()->findTag("ShortFocal");
+        	Tag *unitTag = t->getParent()->getRoot()->findTag("FocalUnits");
+        	double maxApertureAtFocal = 0.;
+        	double focalLength = 0.;
+        	double focalLengthMin = 0.;
+        	double focalLengthMax = 0.;
+        	if( apertureTag )
+				maxApertureAtFocal = pow(2.0, apertureTag->toDouble()/64.0);
+			if( unitTag ){
+				double unit = unitTag->toDouble();
+         	    if( unit==0. )
+					unit=1;
          	    if( focalLengthTag )
          	    	focalLength = focalLengthTag->toDouble();
           	    if( focalLengthMinTag )
         		   focalLengthMin = focalLengthMinTag->toDouble()/unit;
         	    if( focalLengthMaxTag )
         		   focalLengthMax = focalLengthMaxTag->toDouble()/unit;
-         	 }
+			}
 
-         	 if (0 == nFound) {
-				std::ostringstream s;
-				s << "Unknown ";
-				if (focalLengthMin > 0.)
-					s << focalLengthMin;
-				if (focalLengthMax > 0. && focalLengthMax != focalLengthMin)
-					s << "-" << focalLengthMax;
-				if (focalLengthMin > 0.)
-					s << "mm";
+			std::ostringstream s;
+			s << "Unknown ";
+			if (focalLengthMin > 0.)
+				s << focalLengthMin;
+			if (focalLengthMax > 0. && focalLengthMax != focalLengthMin)
+				s << "-" << focalLengthMax;
+			if (focalLengthMin > 0.)
+				s << "mm";
 
-				s << " (" << lensID << ")";
+			s << " (" << lensID << ")";
+         	if (0 == nFound) {
 				return s.str();
-		     }
-           	 double deltaMin = 1000.;
+			}
+           	double deltaMin = 1000.;
 
-            std::string bestMatch("Unknown");
+            std::string bestMatch(s.str());
             std::ostringstream candidates;
             for (r = choices.lower_bound(lensID); r != choices.upper_bound(lensID); r++) {
             	double a1,a2,f1,f2,lensAperture,dif;
@@ -755,7 +756,7 @@ class CALensInterpreter : public IntLensInterpreter< int > {
 						 lensAperture = exp( log(a1)+(log(a2)-log(a1))/(log(f2)-log(f1))*(log(focalLength)-log(f1)) );
 
 					 dif = abs(lensAperture - maxApertureAtFocal);
-            	}else
+            	} else
             		 dif = 0;
 
 				if( dif < deltaMin ){
