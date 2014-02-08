@@ -595,6 +595,10 @@ if(params->colorappearance.enabled) {
 				protect_red=30.0f;
 				sk=1;
 				Color::skinred(Jpro, hpro, sres, Cp, dred, protect_red,sk,rstprotection, ko, Cpro);
+				if(Jpro < 1. && Cpro > 12.) Cpro=12.;//reduce artifacts by "pseudo gamut control CIECAM"
+				else if(Jpro < 2. && Cpro > 15.) Cpro=15.;
+				else if(Jpro < 4. && Cpro > 30.) Cpro=30.;
+				else if(Jpro < 7. && Cpro > 50.) Cpro=50.;
 
 				hpro=hpro+hue;if( hpro < 0.0 ) hpro += 360.0;//hue
 			}
@@ -628,6 +632,7 @@ if(params->colorappearance.enabled) {
 				
 				
 			Jpro=(double)(Jj/327.68f);
+			if(Jpro < 1.) Jpro=1.;
 			t1L=true;
 		}
 	else if (curveMode==ColorAppearanceParams::TC_MODE_BRIGHT){
@@ -655,7 +660,9 @@ if(params->colorappearance.enabled) {
 				else if (Qq>=0.f) Qq=0.7f*(Qq-Qold)+Qold;// not zero ==>artifacts
 			Qpro=(double)(Qq*(coef)/327.68f);
 			Jpro=100.*(Qpro*Qpro)/((4.0/c)*(4.0/c)*(aw+4.0)*(aw+4.0));
-			t1B=true;		
+			t1B=true;
+			if(Jpro < 1.) Jpro=1.;
+			
 		}
 	}
 
@@ -686,6 +693,8 @@ if(params->colorappearance.enabled) {
 				else if (Jj>=0.f){if(!t1L)Jj=0.90f*(Jj-Jold)+Jold;else Jj=0.5f*(Jj-Jold)+Jold;}// not zero ==>artifacts	
 					
 			Jpro=(double)(Jj/327.68f);
+			if(Jpro < 1.) Jpro=1.;
+			
 		}
 	else if (curveMode2==ColorAppearanceParams::TC_MODE_BRIGHT){ //
 			float coef=((aw+4.f)*(4.f/c))/100.f;
@@ -723,7 +732,7 @@ if(params->colorappearance.enabled) {
 			Qpro=(double)(Qq/coef);
 			Jpro=100.*(Qpro*Qpro)/((4.0/c)*(4.0/c)*(aw+4.0)*(aw+4.0));			
 			} 
-			
+			if(Jpro < 1.) Jpro=1.;			
 			}
 	}
 
@@ -740,6 +749,11 @@ if(params->colorappearance.enabled) {
 				float sk=1;
 				float ko=1.f/coef;
 				Color::skinred(Jpro, hpro, Cc, Ccold, dred, protect_red,sk,rstprotection,ko, Cpro);
+				if(Jpro < 1. && Cpro > 12.) Cpro=12.;//reduce artifacts by "pseudo gamut control CIECAM"
+				else if(Jpro < 2. && Cpro > 15.) Cpro=15.;
+				else if(Jpro < 4. && Cpro > 30.) Cpro=30.;
+				else if(Jpro < 7. && Cpro > 50.) Cpro=50.;
+				
 			//	Cpro=Cc/coef;
 		}
 	else if (curveMode3==ColorAppearanceParams::TC_MODE_SATUR){ //
@@ -779,6 +793,12 @@ if(params->colorappearance.enabled) {
 				float ko=1.f/coef;
 				Color::skinred(Jpro, hpro, Mm, Mold, dred, protect_red,sk,rstprotection,ko, Mpro);
 				Cpro= Mpro/coe;
+				if(Jpro < 1. && Mpro > 12.*coe) Mpro=12.*coe;//reduce artifacts by "pseudo gamut control CIECAM"
+				else if(Jpro < 2. && Mpro > 15.*coe) Mpro=15.*coe;
+				else if(Jpro < 4. && Mpro > 30.*coe) Mpro=30.*coe;
+				else if(Jpro < 7. && Mpro > 50.*coe) Mpro=50.*coe;
+				
+				
 				c1co=1;
 			}
 	}
@@ -1303,6 +1323,8 @@ if(params->colorappearance.enabled) {
 	float nj,dj,nbbj,ncbj,czj,awj,flj;
 	ColorTemp::initcam2float(gamu,yb2, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj,czj, awj, flj);
 
+	printf("fl=%f   Coef=%f\n",fl,pow_F(fl,0.25f));
+	
 	
 #ifndef _DEBUG	
 #pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh,nc2,f2,c2, alg, algepd, gamu, highlight, rstprotection, pW,nj, nbbj, ncbj, flj, czj, dj, awj, n, nbb, ncb, pfl, cz)
@@ -1434,6 +1456,10 @@ if(params->colorappearance.enabled) {
 				protect_red=30.0f;
 				sk=1;
 				Color::skinredfloat(Jpro, hpro, sres, Cp, dred, protect_red,sk,rstprotection, ko, Cpro);
+				if(Jpro < 1.f && Cpro > 12.f) Cpro=12.f;//reduce artifacts by "pseudo gamut control CIECAM"
+				else if(Jpro < 2.f && Cpro > 15.f) Cpro=15.f;
+				else if(Jpro < 4.f && Cpro > 30.f) Cpro=30.f;
+				else if(Jpro < 7.f && Cpro > 50.f) Cpro=50.f;
 
 				hpro=hpro+hue;if( hpro < 0.0f ) hpro += 360.0f;//hue
 			}
@@ -1458,7 +1484,8 @@ if(params->colorappearance.enabled) {
 							}
 				else if(Jj>10.f) Jj=0.8f*(Jj-Jold)+Jold;
 				else if (Jj>=0.f) Jj=0.90f*(Jj-Jold)+Jold;// not zero ==>artifacts	
-			Jpro=(float)(Jj/327.68f);			
+			Jpro=(float)(Jj/327.68f);
+			if(Jpro<1.f) Jpro=1.f;	
 			t1L=true;
 		}
 	else if (curveMode==ColorAppearanceParams::TC_MODE_BRIGHT){
@@ -1486,6 +1513,7 @@ if(params->colorappearance.enabled) {
 				else if (Qq>=0.f) Qq=0.7f*(Qq-Qold)+Qold;// not zero ==>artifacts
 			Qpro=(float)(Qq*(coef)/327.68f);
 			Jpro=100.f*(Qpro*Qpro)/((4.0f/c)*(4.0f/c)*(aw+4.0f)*(aw+4.0f));
+			if(Jpro< 1.f) Jpro=1.f;
 			t1B=true;		
 		}
 	}
@@ -1511,6 +1539,8 @@ if(params->colorappearance.enabled) {
 				else if(Jj>10.f) {if(!t1L)Jj=0.8f*(Jj-Jold)+Jold;else Jj=0.4f*(Jj-Jold)+Jold;}
 				else if (Jj>=0.f){if(!t1L)Jj=0.90f*(Jj-Jold)+Jold;else Jj=0.5f*(Jj-Jold)+Jold;}// not zero ==>artifacts	
 			Jpro=(float)(Jj/327.68f);
+			if(Jpro< 1.f) Jpro=1.f;
+			
 		}
 	else if (curveMode2==ColorAppearanceParams::TC_MODE_BRIGHT){ //
 			float coef=((aw+4.f)*(4.f/c))/100.f;
@@ -1534,6 +1564,7 @@ if(params->colorappearance.enabled) {
 							}
 				else if(Qq>10.f) Qq=0.5f*(Qq-Qold)+Qold;
 				else if (Qq>=0.f) Qq=0.7f*(Qq-Qold)+Qold;// not zero ==>artifacts
+				
 			Qpro=(float)(Qq*(coef)/327.68f);
 			Jpro=100.f*(Qpro*Qpro)/((4.0f/c)*(4.0f/c)*(aw+4.0f)*(aw+4.0f));
 			t2B=true;
@@ -1548,7 +1579,7 @@ if(params->colorappearance.enabled) {
 			Qpro=(float)(Qq/coef);
 			Jpro=100.f*(Qpro*Qpro)/((4.0f/c)*(4.0f/c)*(aw+4.0f)*(aw+4.0f));			
 			} 
-			
+			if(Jpro < 1.f) Jpro=1.f;
 			}
 	}
 
@@ -1565,6 +1596,11 @@ if(params->colorappearance.enabled) {
 				float sk=1;
 				float ko=1.f/coef;
 				Color::skinredfloat(Jpro, hpro, Cc, Ccold, dred, protect_red,sk,rstprotection,ko, Cpro);
+				if(Jpro < 1.f && Cpro > 12.f) Cpro=12.f;//reduce artifacts by "pseudo gamut control CIECAM"
+				else if(Jpro < 2.f && Cpro > 15.f) Cpro=15.f;
+				else if(Jpro < 4.f && Cpro > 30.f) Cpro=30.f;
+				else if(Jpro < 7.f && Cpro > 50.f) Cpro=50.f;
+				
 		}
 	else if (curveMode3==ColorAppearanceParams::TC_MODE_SATUR){ //
 				float parsat=0.8f;//0.6
@@ -1603,11 +1639,16 @@ if(params->colorappearance.enabled) {
 				float ko=1.f/coef;
 				Color::skinredfloat(Jpro, hpro, Mm, Mold, dred, protect_red,sk,rstprotection,ko, Mpro);
 				Cpro= Mpro/coe;
+				if(Jpro < 1.f && Mpro > 12.f*coe) Mpro=12.f*coe;//reduce artifacts by "pseudo gamut control CIECAM"
+				else if(Jpro < 2.f && Mpro > 15.f*coe) Mpro=15.f*coe;
+				else if(Jpro < 4.f && Mpro > 30.f*coe) Mpro=30.f*coe;
+				else if(Jpro < 7.f && Mpro > 50.f*coe) Mpro=50.f*coe;
+				
 				c1co=1;
 			}
 	}
 			//to retrieve the correct values of variables
-			
+		
 			if(c1s==1) {
 				Qpro= ( 4.0f / c ) * sqrt( Jpro / 100.0f ) * ( aw + 4.0f ) ;//for saturation curve
 				Cpro=(spro*spro*Qpro)/(10000.0f);
@@ -1675,6 +1716,15 @@ if(params->colorappearance.enabled) {
 			float Ll,aa,bb;
 			//convert xyz=>lab
 			Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
+			if(Ll > 70000.f && J < 1.f) {
+#pragma omp critical
+{
+				printf("Why is Ll so big when J is so small?\n");
+				printf("J : %f, Ll : %f, xx : %f, yy : %f, zz : %f\n",J,Ll,xx,yy,zz);
+				printf("J : %f, C : %f, h : %f\n",J,C,h);
+}
+			}
+			
 			lab->L[i][j]=Ll;
 			lab->a[i][j]=aa;
 			lab->b[i][j]=bb;
