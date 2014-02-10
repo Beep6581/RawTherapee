@@ -22,9 +22,7 @@
 #include <omp.h>
 #endif
 #include "mytime.h"
-
 #include "rt_math.h"
-
 using namespace std;
 
 namespace rtengine {
@@ -236,7 +234,7 @@ void ImProcFunctions::calcVignettingParams(int oW, int oH, const VignettingParam
 	maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2.;
 
 	// vignette variables with applied strength
-	v = 1.0 - vignetting.strength * vignetting.amount * 3.0 / 400.0;
+	v = 1.0 + vignetting.strength * fabs(vignetting.amount) * 3.0 / 400.0;
 	b = 1.0 + vignetting.radius * 7.0 / 100.0;
 	mul = (1.0-v) / tanh(b);
 }
@@ -494,7 +492,6 @@ static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y) {
 }
 
 void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH, int fW, int fH) {
-
 	const bool applyVignetting = needsVignetting();
 	const bool applyGradient = needsGradient();
 	const bool applyPCVignetting = needsPCVignetting();
@@ -514,7 +511,7 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 		//fprintf(stderr, "%d %d | %d %d | %d %d | %d %d [%d %d]\n", fW, fH, oW, oH, transformed->width, transformed->height, cx, cy, params->crop.w, params->crop.h);
 		calcPCVignetteParams(fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
 	}
-
+	bool darkening = (params->vignetting.amount <= 0.0);
 	#pragma omp parallel for if (multiThread)
 	for (int y=0; y<transformed->height; y++) {
 		double vig_y_d = (double) (y + cy) - vig_h2 ;
@@ -523,7 +520,10 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 			double r = sqrt(vig_x_d*vig_x_d + vig_y_d*vig_y_d);
 			double factor = 1.0;
 			if (applyVignetting) {
-				factor /= std::max(v + mul * tanh (b*(maxRadius-r) / maxRadius), 0.001);
+				if(darkening)
+					factor /= std::max(v + mul * tanh (b*(maxRadius-r) / maxRadius), 0.001);
+				else
+					factor = v + mul * tanh (b*(maxRadius-r) / maxRadius);
 			}
 			if (applyGradient) {
 				factor *= calcGradientFactor(gp, cx+x, cy+y);
@@ -604,6 +604,7 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
             bool enableCA = enableLCPCA || needsCA();
 
 	// main cycle
+	bool darkening = (params->vignetting.amount <= 0.0);
 	#pragma omp parallel for if (multiThread)
     for (int y=0; y<transformed->height; y++) {
         for (int x=0; x<transformed->width; x++) {
@@ -667,7 +668,10 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                     // multiplier for vignetting correction
                     double vignmul = 1.0;
                     if (needsVignetting())
-                        vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
+						if(darkening)
+							vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
+						else
+							vignmul *= (v + mul * tanh (b*(maxRadius-s*r2) / maxRadius));
                     if (needsGradient()) {
                         vignmul *= calcGradientFactor(gp, cx+x, cy+y);
                     }
@@ -752,6 +756,8 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
 
 	double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0;
 
+   	bool darkening = (params->vignetting.amount <= 0.0);
+
     // main cycle
 	#pragma omp parallel for if (multiThread)
     for (int y=0; y<transformed->height; y++) {
@@ -811,7 +817,10 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
                 // multiplier for vignetting correction
                 double vignmul = 1.0;
                 if (needsVignetting())
-                    vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
+					if(darkening)
+						vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
+					else
+						vignmul = v + mul * tanh (b*(maxRadius-s*r2) / maxRadius);
                 if (needsGradient())
                     vignmul *= calcGradientFactor(gp, cx+x, cy+y);
                 if (needsPCVignetting())
