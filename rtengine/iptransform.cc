@@ -22,9 +22,8 @@
 #include <omp.h>
 #endif
 #include "mytime.h"
-
 #include "rt_math.h"
-
+#include "sleef.c"
 using namespace std;
 
 namespace rtengine {
@@ -236,7 +235,7 @@ void ImProcFunctions::calcVignettingParams(int oW, int oH, const VignettingParam
 	maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2.;
 
 	// vignette variables with applied strength
-	v = 1.0 - vignetting.strength * vignetting.amount * 3.0 / 400.0;
+	v = 1.0 + vignetting.strength * fabs(vignetting.amount) * 3.0 / 400.0;
 	b = 1.0 + vignetting.radius * 7.0 / 100.0;
 	mul = (1.0-v) / tanh(b);
 }
@@ -458,18 +457,26 @@ static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y) {
 		a = fabs((x-pcv.x1)-pcv.w*0.5);
 		b = fabs((y-pcv.y1)-pcv.h*0.5);
 	}
-	float angle = atan2f(b, a);
+	float angle = xatan2f(b, a);
 	float dist = sqrtf(a*a+b*b);
 	float dist_oe, dist_ie;
+	float2 sincosval;
+	if(dist==0.0f) {
+		sincosval.y = 1.0f;			// cos
+		sincosval.x = 0.0f;			// sin
+	} else {
+		sincosval.y = a / dist;		// cos
+		sincosval.x = b / dist;		// sin
+	}
 	if (pcv.is_super_ellipse_mode) {
-		float dist_oe1 = pcv.oe1_a*pcv.oe1_b / powf(powf(pcv.oe1_b*cosf(angle), pcv.sep) + powf(pcv.oe1_a*sinf(angle), pcv.sep), 1.0/pcv.sep);
-		float dist_oe2 = pcv.oe2_a*pcv.oe2_b / powf(powf(pcv.oe2_b*cosf(angle), pcv.sep+2) + powf(pcv.oe2_a*sinf(angle), pcv.sep+2), 1.0/(pcv.sep+2));
+		float dist_oe1 = pcv.oe1_a*pcv.oe1_b / pow_F(pow(pcv.oe1_b*sincosval.y, pcv.sep) + pow(pcv.oe1_a*sincosval.x, pcv.sep), 1.0/pcv.sep);
+		float dist_oe2 = pcv.oe2_a*pcv.oe2_b / pow_F(pow(pcv.oe2_b*sincosval.y, pcv.sep+2) + pow(pcv.oe2_a*sincosval.x, pcv.sep+2), 1.0/(pcv.sep+2));
 		float dist_ie1 = pcv.ie1_mul * dist_oe1 * (1.0 - pcv.feather);
 		float dist_ie2 = pcv.ie2_mul * dist_oe2 * (1.0 - pcv.feather);
 		dist_oe = dist_oe1 * (1.0 - pcv.sepmix) + dist_oe2 * pcv.sepmix;
 		dist_ie = dist_ie1 * (1.0 - pcv.sepmix) + dist_ie2 * pcv.sepmix;
 	} else {
-		dist_oe = pcv.oe_a*pcv.oe_b / sqrtf(pcv.oe_b*cosf(angle)*pcv.oe_b*cosf(angle) + pcv.oe_a*sinf(angle)*pcv.oe_a*sinf(angle));
+		dist_oe = pcv.oe_a*pcv.oe_b / sqrtf(SQR(pcv.oe_b*sincosval.y) + SQR(pcv.oe_a*sincosval.x));
 		dist_ie = pcv.ie_mul * dist_oe * (1.0 - pcv.feather);
 	}
 	if (dist <= dist_ie) {
@@ -481,9 +488,9 @@ static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y) {
 	} else {
 		val = (dist - dist_ie) / (dist_oe - dist_ie);
 		if (pcv.scale < 1.0) {
-			val = pow(cos(val*M_PI/2), 4);
+			val = pow(xcosf(val*M_PI/2), 4);
 		} else {
-			val = 1 - pow(sin(val*M_PI/2), 4);
+			val = 1 - pow(xsinf(val*M_PI/2), 4);
 		}
 		val = pcv.scale + val * (1.0 - pcv.scale);
 	}
@@ -494,7 +501,6 @@ static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y) {
 }
 
 void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH, int fW, int fH) {
-
 	const bool applyVignetting = needsVignetting();
 	const bool applyGradient = needsGradient();
 	const bool applyPCVignetting = needsPCVignetting();
@@ -514,7 +520,7 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 		//fprintf(stderr, "%d %d | %d %d | %d %d | %d %d [%d %d]\n", fW, fH, oW, oH, transformed->width, transformed->height, cx, cy, params->crop.w, params->crop.h);
 		calcPCVignetteParams(fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
 	}
-
+	bool darkening = (params->vignetting.amount <= 0.0);
 	#pragma omp parallel for if (multiThread)
 	for (int y=0; y<transformed->height; y++) {
 		double vig_y_d = (double) (y + cy) - vig_h2 ;
@@ -523,7 +529,10 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 			double r = sqrt(vig_x_d*vig_x_d + vig_y_d*vig_y_d);
 			double factor = 1.0;
 			if (applyVignetting) {
-				factor /= std::max(v + mul * tanh (b*(maxRadius-r) / maxRadius), 0.001);
+				if(darkening)
+					factor /= std::max(v + mul * tanh (b*(maxRadius-r) / maxRadius), 0.001);
+				else
+					factor = v + mul * tanh (b*(maxRadius-r) / maxRadius);
 			}
 			if (applyGradient) {
 				factor *= calcGradientFactor(gp, cx+x, cy+y);
@@ -604,6 +613,7 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
             bool enableCA = enableLCPCA || needsCA();
 
 	// main cycle
+	bool darkening = (params->vignetting.amount <= 0.0);
 	#pragma omp parallel for if (multiThread)
     for (int y=0; y<transformed->height; y++) {
         for (int x=0; x<transformed->width; x++) {
@@ -667,7 +677,10 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                     // multiplier for vignetting correction
                     double vignmul = 1.0;
                     if (needsVignetting())
-                        vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
+						if(darkening)
+							vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
+						else
+							vignmul *= (v + mul * tanh (b*(maxRadius-s*r2) / maxRadius));
                     if (needsGradient()) {
                         vignmul *= calcGradientFactor(gp, cx+x, cy+y);
                     }
@@ -752,6 +765,8 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
 
 	double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0;
 
+   	bool darkening = (params->vignetting.amount <= 0.0);
+
     // main cycle
 	#pragma omp parallel for if (multiThread)
     for (int y=0; y<transformed->height; y++) {
@@ -811,7 +826,10 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
                 // multiplier for vignetting correction
                 double vignmul = 1.0;
                 if (needsVignetting())
-                    vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
+					if(darkening)
+						vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
+					else
+						vignmul = v + mul * tanh (b*(maxRadius-s*r2) / maxRadius);
                 if (needsGradient())
                     vignmul *= calcGradientFactor(gp, cx+x, cy+y);
                 if (needsPCVignetting())
