@@ -23,6 +23,7 @@
 #endif
 #include "mytime.h"
 #include "rt_math.h"
+#include "sleef.c"
 using namespace std;
 
 namespace rtengine {
@@ -456,18 +457,26 @@ static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y) {
 		a = fabs((x-pcv.x1)-pcv.w*0.5);
 		b = fabs((y-pcv.y1)-pcv.h*0.5);
 	}
-	float angle = atan2f(b, a);
+	float angle = xatan2f(b, a);
 	float dist = sqrtf(a*a+b*b);
 	float dist_oe, dist_ie;
+	float2 sincosval;
+	if(dist==0.0f) {
+		sincosval.y = 1.0f;			// cos
+		sincosval.x = 0.0f;			// sin
+	} else {
+		sincosval.y = a / dist;		// cos
+		sincosval.x = b / dist;		// sin
+	}
 	if (pcv.is_super_ellipse_mode) {
-		float dist_oe1 = pcv.oe1_a*pcv.oe1_b / powf(powf(pcv.oe1_b*cosf(angle), pcv.sep) + powf(pcv.oe1_a*sinf(angle), pcv.sep), 1.0/pcv.sep);
-		float dist_oe2 = pcv.oe2_a*pcv.oe2_b / powf(powf(pcv.oe2_b*cosf(angle), pcv.sep+2) + powf(pcv.oe2_a*sinf(angle), pcv.sep+2), 1.0/(pcv.sep+2));
+		float dist_oe1 = pcv.oe1_a*pcv.oe1_b / pow_F(pow(pcv.oe1_b*sincosval.y, pcv.sep) + pow(pcv.oe1_a*sincosval.x, pcv.sep), 1.0/pcv.sep);
+		float dist_oe2 = pcv.oe2_a*pcv.oe2_b / pow_F(pow(pcv.oe2_b*sincosval.y, pcv.sep+2) + pow(pcv.oe2_a*sincosval.x, pcv.sep+2), 1.0/(pcv.sep+2));
 		float dist_ie1 = pcv.ie1_mul * dist_oe1 * (1.0 - pcv.feather);
 		float dist_ie2 = pcv.ie2_mul * dist_oe2 * (1.0 - pcv.feather);
 		dist_oe = dist_oe1 * (1.0 - pcv.sepmix) + dist_oe2 * pcv.sepmix;
 		dist_ie = dist_ie1 * (1.0 - pcv.sepmix) + dist_ie2 * pcv.sepmix;
 	} else {
-		dist_oe = pcv.oe_a*pcv.oe_b / sqrtf(pcv.oe_b*cosf(angle)*pcv.oe_b*cosf(angle) + pcv.oe_a*sinf(angle)*pcv.oe_a*sinf(angle));
+		dist_oe = pcv.oe_a*pcv.oe_b / sqrtf(SQR(pcv.oe_b*sincosval.y) + SQR(pcv.oe_a*sincosval.x));
 		dist_ie = pcv.ie_mul * dist_oe * (1.0 - pcv.feather);
 	}
 	if (dist <= dist_ie) {
@@ -479,9 +488,9 @@ static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y) {
 	} else {
 		val = (dist - dist_ie) / (dist_oe - dist_ie);
 		if (pcv.scale < 1.0) {
-			val = pow(cos(val*M_PI/2), 4);
+			val = pow(xcosf(val*M_PI/2), 4);
 		} else {
-			val = 1 - pow(sin(val*M_PI/2), 4);
+			val = 1 - pow(xsinf(val*M_PI/2), 4);
 		}
 		val = pcv.scale + val * (1.0 - pcv.scale);
 	}

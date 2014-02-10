@@ -1323,7 +1323,7 @@ if(params->colorappearance.enabled) {
 	float nj,dj,nbbj,ncbj,czj,awj,flj;
 	ColorTemp::initcam2float(gamu,yb2, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj,czj, awj, flj);
 
-	printf("fl=%f   Coef=%f\n",fl,pow_F(fl,0.25f));
+//	printf("fl=%f   Coef=%f\n",fl,pow_F(fl,0.25f));
 	
 	
 #ifndef _DEBUG	
