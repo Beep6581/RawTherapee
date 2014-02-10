@@ -2452,62 +2452,77 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
 		
 // Histogram MUST be 256 in size; gamma is applied, blackpoint and gain also
 void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) {
-	histRedRaw.clear(); histGreenRaw.clear(); histBlueRaw.clear();
-	float mult[4] = { 65535.0 / ri->get_white(0), 65535.0 / ri->get_white(1), 65535.0 / ri->get_white(2), 65535.0 / ri->get_white(3) };
 
-#pragma omp parallel
-{
-	LUTu tmphistRedRaw( 256 );
-	LUTu tmphistGreenRaw( 256 );
-	LUTu tmphistBlueRaw( 256 );
-	tmphistRedRaw.clear();
-	tmphistGreenRaw.clear();
-	tmphistBlueRaw.clear();
+	histRedRaw.clear(); histGreenRaw.clear(); histBlueRaw.clear();
+	const float mult[4] = { 65535.0 / ri->get_white(0), 65535.0 / ri->get_white(1), 65535.0 / ri->get_white(2), 65535.0 / ri->get_white(3) };
 	
+#ifdef _OPENMP
+	int numThreads;
+	// reduce the number of threads under certain conditions to avoid overhaed of too many critical regions
+	numThreads = sqrt((((H-2*border)*(W-2*border))/262144.f));
+	numThreads = std::min(std::max(numThreads,1), omp_get_max_threads());
+
+#pragma omp parallel num_threads(numThreads)
+#endif
+{
+	// we need one LUT per color and thread, which corresponds to 1 MB per thread
+	LUTu tmphist[4];
+	tmphist[0](65536);tmphist[0].clear();
+	tmphist[1](65536);tmphist[1].clear();
+	tmphist[2](65536);tmphist[2].clear();
+	tmphist[3](65536);tmphist[3].clear();
+	
+#ifdef _OPENMP	
 #pragma omp for nowait
+#endif
 	for (int i=border; i<H-border; i++) {
-		int start, end, idx;
+		int start, end;
 		getRowStartEnd (i, start, end);
 
-
 		if (ri->isBayer()) {
-			for (int j=start; j<end; j++) {
-				int c  = FC(i, j);                        // three colors,  0=R, 1=G,  2=B
-				int c4 = ( c == 1 && !(i&1) ) ? 3 : c;    // four  colors,  0=R, 1=G1, 2=B, 3=G2
-				idx = CLIP((int)Color::gamma(mult[c4]*(ri->data[i][j]-(cblacksom[c4]/*+black_lev[c4]*/))));
-
-				switch (c) {
-					case 0: tmphistRedRaw[idx>>8]++;   break;
-					case 1: tmphistGreenRaw[idx>>8]++; break;
-					case 2: tmphistBlueRaw[idx>>8]++;  break;
-				}
+			int j;
+			int c1 = FC(i,start);
+			c1 = ( c1 == 1 && !(i&1) ) ? 3 : c1;
+			int c2 = FC(i,start+1);
+			c2 = ( c2 == 1 && !(i&1) ) ? 3 : c2;
+			for (j=start; j<end-1; j+=2) {
+				tmphist[c1][ri->data[i][j]]++;
+				tmphist[c2][ri->data[i][j+1]]++;
+			}
+			if(j<end) { // last pixel of row if width is odd
+				tmphist[c1][ri->data[i][j]]++;
 			}
 		} else {
 			for (int j=start; j<end; j++) {
 				for (int c=0; c<3; c++){
-					idx = CLIP((int)Color::gamma(mult[c]*(ri->data[i][3*j+c]-cblacksom[c])));
-
-					switch (c) {
-						case 0: tmphistRedRaw[idx>>8]++;   break;
-						case 1: tmphistGreenRaw[idx>>8]++; break;
-						case 2: tmphistBlueRaw[idx>>8]++;  break;
-					}
+					tmphist[c][ri->data[i][3*j+c]]++;
 				}
 			}
 		}
 	}
+#ifdef _OPENMP
 #pragma omp critical
+#endif
 {
-	for(int i=0;i<256;i++){
-		histRedRaw[i] += tmphistRedRaw[i];
-		histGreenRaw[i] += tmphistGreenRaw[i];
-		histBlueRaw[i] += tmphistBlueRaw[i];
+	for(int i=0;i<65536;i++){
+		int idx;
+		idx = CLIP((int)Color::gamma(mult[0]*(i-(cblacksom[0]/*+black_lev[0]*/))));
+		histRedRaw[idx>>8] += tmphist[0][i];
+		idx = CLIP((int)Color::gamma(mult[1]*(i-(cblacksom[1]/*+black_lev[1]*/))));
+		histGreenRaw[idx>>8] += tmphist[1][i];
+		idx = CLIP((int)Color::gamma(mult[3]*(i-(cblacksom[3]/*+black_lev[3]*/))));
+		histGreenRaw[idx>>8] += tmphist[3][i];
+		idx = CLIP((int)Color::gamma(mult[2]*(i-(cblacksom[2]/*+black_lev[2]*/))));
+		histBlueRaw[idx>>8] += tmphist[2][i];
 	}
-}
-}
+} // end of critical region
+} // end of parallel region
 
     // since there are twice as many greens, correct for it
-    if (ri->isBayer()) for (int i=0;i<256;i++) histGreenRaw[i]>>=1;
+    if (ri->isBayer())
+		for (int i=0;i<256;i++)
+			histGreenRaw[i]>>=1;
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
