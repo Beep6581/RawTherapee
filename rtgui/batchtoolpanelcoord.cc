@@ -145,7 +145,7 @@ void BatchToolPanelCoordinator::initSession () {
 			blackwhite->setAdjusterBehavior (false,false);
 			
 			shadowshighlights->setAdjusterBehavior (false, false, false);
-			dirpyrequalizer->setAdjusterBehavior (false, false);
+			dirpyrequalizer->setAdjusterBehavior (false, false, false);
 			dirpyrdenoise->setAdjusterBehavior (false, false,false,false,false,false);
 			preprocess->setAdjusterBehavior (false, false);
 			rawcacorrection->setAdjusterBehavior (false);
@@ -176,7 +176,7 @@ void BatchToolPanelCoordinator::initSession () {
 			chmixer->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER] );
 			blackwhite->setAdjusterBehavior (options.baBehav[ADDSET_BLACKWHITE_HUES],options.baBehav[ADDSET_BLACKWHITE_GAMMA]);
 			shadowshighlights->setAdjusterBehavior (options.baBehav[ADDSET_SH_HIGHLIGHTS], options.baBehav[ADDSET_SH_SHADOWS], options.baBehav[ADDSET_SH_LOCALCONTRAST]);
-			dirpyrequalizer->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYREQ], options.baBehav[ADDSET_DIRPYREQ_THRESHOLD]);
+			dirpyrequalizer->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYREQ], options.baBehav[ADDSET_DIRPYREQ_THRESHOLD], options.baBehav[ADDSET_DIRPYREQ_SKINPROTECT]);
 			dirpyrdenoise->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYRDN_LUMA],options.baBehav[ADDSET_DIRPYRDN_LUMDET],options.baBehav[ADDSET_DIRPYRDN_CHROMA],options.baBehav[ADDSET_DIRPYRDN_CHROMARED],options.baBehav[ADDSET_DIRPYRDN_CHROMABLUE], options.baBehav[ADDSET_DIRPYRDN_GAMMA]);
 			preprocess->setAdjusterBehavior (options.baBehav[ADDSET_PREPROCESS_LINEDENOISE], options.baBehav[ADDSET_PREPROCESS_GREENEQUIL]);
 			rawcacorrection->setAdjusterBehavior (options.baBehav[ADDSET_RAWCACORR]);
@@ -262,6 +262,7 @@ void BatchToolPanelCoordinator::initSession () {
 
 			if (options.baBehav[ADDSET_DIRPYREQ]) for (int i=0; i<5; i++) pparams.dirpyrequalizer.mult[i] = 0;
 			if (options.baBehav[ADDSET_DIRPYREQ_THRESHOLD]) pparams.dirpyrequalizer.threshold = 0;
+			if (options.baBehav[ADDSET_DIRPYREQ_SKINPROTECT]) pparams.dirpyrequalizer.skinprotect = 0;
 
 			if (options.baBehav[ADDSET_DIRPYRDN_LUMA]) pparams.dirpyrDenoise.luma = 0;
 			

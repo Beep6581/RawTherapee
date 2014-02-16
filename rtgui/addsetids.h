@@ -76,8 +76,9 @@
 #define ADDSET_BLACKWHITE_HUES          68
 #define ADDSET_BLACKWHITE_GAMMA         69
 #define ADDSET_DIRPYREQ_THRESHOLD       70
+#define ADDSET_DIRPYREQ_SKINPROTECT     71
 
 // When adding items, make sure to update ADDSET_PARAM_NUM
-#define ADDSET_PARAM_NUM                71 // THIS IS USED AS A DELIMITER!!
+#define ADDSET_PARAM_NUM                72 // THIS IS USED AS A DELIMITER!!
 
 #endif

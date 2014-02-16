@@ -2,11 +2,13 @@
 #define _PPVERSION_
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 318
+#define PPVERSION 319
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
+   319  2014-02-11
+		Hue skin for Contrast by detail levels
    318  2014-02-10
 		Vignetting Correction bug makes hard transitions for positive Amount values, Issue 2241
    317  2014-01-19

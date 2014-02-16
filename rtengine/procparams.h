@@ -745,10 +745,16 @@ class DirPyrEqualizerParams {
 	
 	public:
 		bool enabled;
+		bool gamutlab;
 		double mult[5];
 		double threshold;
+		double skinprotect;
+		Threshold<int> hueskin;
+	//	Glib::ustring algo;
+
+		DirPyrEqualizerParams() : hueskin(20, 80, 2000, 1200, false) {};
 };
-	
+
 /**
  * HSV equalizer params
  */

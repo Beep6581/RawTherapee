@@ -457,6 +457,10 @@ HISTORY_MSG_248;'HH' curve
 HISTORY_MSG_249;CbDL - Threshold
 HISTORY_MSG_250;NR - Enhanced
 HISTORY_MSG_251;B&amp;W - Algorithm
+HISTORY_MSG_252;CbDL Skin Tones
+HISTORY_MSG_253;CbDL Reduce artifacts
+HISTORY_MSG_254;CbDL - Hueskin
+HISTORY_MSG_255;CbDL - Algorithm
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1075,6 +1079,16 @@ TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
 TP_DIRPYREQUALIZER_LUMAFINEST;Finest
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 TP_DIRPYREQUALIZER_THRESHOLD;Threshold
+TP_DIRPYREQUALIZER_ALGO;Algorithm Skin
+TP_DIRPYREQUALIZER_ALGO_FI;Fine
+TP_DIRPYREQUALIZER_ALGO_LA;Large
+TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts
+TP_DIRPYREQUALIZER_SKIN;Skin Tones Targetting/Protection
+TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin tones are protected while all other tones are affected.
+TP_DIRPYREQUALIZER_HUESKIN;Skin hue 
+TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected
+TP_DIRPYREQUALIZER_GAMUT;Reduce artifacts  
+TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts due to the transitions between the color (hue, chroma, luma) of the skin and the rest of the image
 TP_DISTORTION_AMOUNT;Amount
 TP_DISTORTION_AUTO;Auto Distortion Correction
 TP_DISTORTION_AUTO_TIP;Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.).

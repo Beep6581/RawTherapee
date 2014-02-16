@@ -436,8 +436,6 @@ void Options::setDefaults () {
 			0,  // ADDSET_DIRPYRDN_CHROMABLUE
 			0,  // ADDSET_DIRPYRDN_GAMMA
 			0,  // ADDSET_CHMIXER
-			0,  // ADDSET_BLACKWHITE_HUES
-			0,  // ADDSET_BLACKWHITE_GAMMA
 			0,  // ADDSET_PREPROCESS_GREENEQUIL
 			0,  // ADDSET_PREPROCESS_LINEDENOISE
 			0,  // ADDSET_RAWCACORR
@@ -455,10 +453,16 @@ void Options::setDefaults () {
 			0,  // ADDSET_CAT_DEGREE
 			0,  // ADDSET_CAT_ADAPSCEN
 			0,  // ADDSET_CAT_ADAPLUM
+			0,  // ADDSET_CAT_LIGHT
+			0,  // ADDSET_CAT_RSTPRO
 			0,  // ADDSET_CAT_BADPIX
 			0,  // ADDSET_CAT_JLIGHT
 			0,  // ADDSET_CAT_CHROMA
  			0,  // ADDSET_CAT_CONTRAST
+			0,  // ADDSET_CAT_CHROMA_S
+			0,  // ADDSET_CAT_CHROMA_M
+			0,  // ADDSET_CAT_HUE
+			0,  // ADDSET_CAT_BADPIX
 			0,  // ADDSET_WB_EQUAL
 			0,  // ADDSET_GRADIENT_DEGREE
 			0,  // ADDSET_GRADIENT_FEATHER
@@ -467,6 +471,10 @@ void Options::setDefaults () {
 			0,  // ADDSET_PCVIGNETTE_STRENGTH
 			0,  // ADDSET_PCVIGNETTE_FEATHER
 			0,  // ADDSET_PCVIGNETTE_ROUNDNESS
+			0,  // ADDSET_BLACKWHITE_HUES
+			0,  // ADDSET_BLACKWHITE_GAMMA
+			0,  // ADDSET_DIRPYREQ_THRESHOLD
+			0,  // ADDSET_DIRPYREQ_SKINPROTECT
 
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
@@ -503,6 +511,9 @@ void Options::setDefaults () {
     rtSettings.gamutICC = true;
     rtSettings.gamutLch = true;
     rtSettings.amchroma = 40;//between 20 and 140   low values increase effect..and also artefacts, high values reduces
+    rtSettings.artifact_cbdl = 4.;
+    rtSettings.level0_cbdl = 0;
+    rtSettings.level123_cbdl = 30;
 	
     rtSettings.ciecamfloat = true;
     rtSettings.protectred = 60;
@@ -733,6 +744,9 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "CRI"))            rtSettings.CRI_color            = keyFile.get_integer("Color Management", "CRI");
     if (keyFile.has_key ("Color Management", "view"))           rtSettings.viewingdevice        = keyFile.get_integer("Color Management", "view");
     if (keyFile.has_key ("Color Management", "grey"))           rtSettings.viewingdevicegrey    = keyFile.get_integer("Color Management", "grey");
+    if (keyFile.has_key ("Color Management", "CBDLArtif"))      rtSettings.artifact_cbdl        = keyFile.get_double("Color Management", "CBDLArtif");
+    if (keyFile.has_key ("Color Management", "CBDLlevel0"))     rtSettings.level0_cbdl        = keyFile.get_double("Color Management", "CBDLlevel0");
+    if (keyFile.has_key ("Color Management", "CBDLlevel123"))   rtSettings.level123_cbdl        = keyFile.get_double("Color Management", "CBDLlevel123");
 
     if (keyFile.has_key ("Color Management", "WhiteBalanceSpotSize")) whiteBalanceSpotSize      = keyFile.get_integer("Color Management", "WhiteBalanceSpotSize");
     if( keyFile.has_key ("Color Management", "GamutICC"))       rtSettings.gamutICC             = keyFile.get_boolean("Color Management", "GamutICC");
@@ -1033,6 +1047,10 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_double  ("Color Management", "ProtectRedH", rtSettings.protectredh);
     keyFile.set_integer ("Color Management", "CRI", rtSettings.CRI_color);
 //    keyFile.set_boolean ("Color Management", "Ciebadpixgauss", rtSettings.ciebadpixgauss);
+    keyFile.set_double ("Color Management", "CBDLArtif", rtSettings.artifact_cbdl);
+    keyFile.set_double ("Color Management", "CBDLlevel0", rtSettings.level0_cbdl);
+    keyFile.set_double ("Color Management", "CBDLlevel123", rtSettings.level123_cbdl);
+
 
     Glib::ArrayHandle<int> bab = baBehav;
     keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);

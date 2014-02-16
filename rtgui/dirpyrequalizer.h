@@ -23,22 +23,31 @@
 #include <gtkmm.h>
 #include "adjuster.h"
 #include "toolpanel.h"
+#include "thresholdadjuster.h"
+#include "colorprovider.h"
 
-class DirPyrEqualizer : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel
+class DirPyrEqualizer : public Gtk::VBox, public ThresholdAdjusterListener, public AdjusterListener, public FoldableToolPanel
 {
 
 protected:
 
     Gtk::CheckButton * enabled;
+    Gtk::CheckButton * gamutlab;
     Adjuster* multiplier[5]; 
     Adjuster* threshold;
+    Adjuster* skinprotect;
+    ThresholdAdjuster* hueskin;
+  //  MyComboBoxText*   algo;
+  //  sigc::connection  algoconn;
+  //  Gtk::Label*       alLabel;
+  //  Gtk::HBox*        algoHBox;
 
-    sigc::connection enaConn;
+    sigc::connection enaConn, gamutlabConn;
     sigc::connection lumaneutralPressedConn;
     sigc::connection lumacontrastPlusPressedConn;
     sigc::connection lumacontrastMinusPressedConn;
-	
-    bool lastEnabled;
+
+    bool lastEnabled, lastgamutlab;
 
 public:
 
@@ -49,11 +58,14 @@ public:
     void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
     void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode        (bool batchMode);
-    void setAdjusterBehavior (bool multiplieradd, bool thresholdadd);
+    void setAdjusterBehavior (bool multiplieradd, bool thresholdadd, bool skinadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
+    void adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
+//    void algoChanged         ();
 
     void adjusterChanged (Adjuster* a, double newval);
     void enabledToggled ();
+    void gamutlabToggled ();
     void lumaneutralPressed ();
     void lumacontrastPlusPressed ();
     void lumacontrastMinusPressed ();
