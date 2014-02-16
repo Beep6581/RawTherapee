@@ -422,13 +422,15 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
                 delete [] buffer;
                 readyphase++;
             }
+		}	
+	//	if (scale==1) {
             if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)){
-            //if(params.colorappearance.enabled && !params.colorappearance.sharpcie){
                 progress ("Pyramid equalizer...",100*readyphase/numofphases);
-                ipf.dirpyrequalizer (nprevl);
+                ipf.dirpyrequalizer (nprevl, scale);
+				//ipf.Lanczoslab (nprevl, nprevl, 1.f/scale);
                 readyphase++;
             }
-        }
+     //   }
 
         //L histo  and Chroma histo for ciecam
         // histogram well be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
@@ -491,12 +493,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             if (!CAMBrightCurveQ && (params.colorappearance.algo=="QM" || params.colorappearance.algo=="ALL"))
                 CAMBrightCurveQ(65536,0);
             if(settings->ciecamfloat){
-                ipf.ciecam_02float (ncie, float(adap), begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, execsharp, d);
+                ipf.ciecam_02float (ncie, float(adap), begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, execsharp, d, scale, 1);
                 if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*(double)d);
                 if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) acListener->adapCamChanged(adap);//real value of adapt scene luminosity
             }
             else {
-                ipf.ciecam_02 (ncie, adap, begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, execsharp, dd);
+                ipf.ciecam_02 (ncie, adap, begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, execsharp, dd, scale, 1);
                 if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*dd);
                 if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) acListener->adapCamChanged(adap);
             }

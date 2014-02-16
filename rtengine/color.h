@@ -214,6 +214,8 @@ public:
 	static void transitred (float HH, float Chprov1, float dred, float factorskin, float protect_red, float factorskinext, float deltaHH, float factorsat, float &factor);
 	static void skinred ( double J, double h, double sres, double Sp, float dred, float protect_red, int sk, float rstprotection, float ko, double &s);
 	static void skinredfloat ( float J, float h, float sres, float Sp, float dred, float protect_red, int sk, float rstprotection, float ko, float &s);
+//	static void scaleredcdbl ( float skinprot, float param, float limit, float HH, float deltaHH, float &scale,float &scaleext);
+    static void SkinSatcdbl (float lum, float hue, float chrom, float skinprot, float &scale, bool ciec, bool neg, float b_l, float t_l, float t_r, float b_r, int choice);
 
 	//void gamutmap(LabImage* );
 	static void gamutmap(float &X, float &Y, float &Z, const double p[3][3]);

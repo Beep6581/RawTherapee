@@ -69,7 +69,8 @@ class Crop : public DetailedCrop {
     public:
         Crop             (ImProcCoordinator* parent);
         virtual ~Crop    ();
-    
+        int skip2;
+
         bool hasListener () { return cropImageListener; }
         void update      (int todo);
         void setWindow   (int cx, int cy, int cw, int ch, int skip) { setCropSizes (cx, cy, cw, ch, skip, false); }

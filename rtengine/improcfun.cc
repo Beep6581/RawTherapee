@@ -250,9 +250,11 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
 void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params ,
 								const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3,
-								LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, float** buffer, bool execsharp, double &d)
+								LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, float** buffer, bool execsharp, double &d, int scalecd, int rtt)
 {
 if(params->colorappearance.enabled) {
+//int lastskip;
+//if(rtt==1) {lastskip=scalecd;} //not for Rtthumbnail
 
 #ifdef _DEBUG
 	MyTime t1e,t2e;
@@ -464,7 +466,7 @@ if(params->colorappearance.enabled) {
 
 
 #ifndef _DEBUG
-#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh,nc2,f2,c2, alg,algepd, gamu, highlight, rstprotection, pW)
+#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh,nc2,f2,c2, alg,algepd, gamu, highlight, rstprotection, pW, scalecd)
 #endif
 {	//matrix for current working space
 	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
@@ -945,17 +947,44 @@ if(settings->autocielab) {
 //all this treatments reduce artifacts, but can lead to slightly  different results
 if(params->defringe.enabled) if(execsharp) ImProcFunctions::defringecam (ncie);// 
 
-if(params->colorappearance.badpixsl > 0) if(execsharp){ int mode=params->colorappearance.badpixsl;
-											ImProcFunctions::badpixcam (ncie, 3.4, 5, mode);//for bad pixels
-										}	
+//if(params->dirpyrequalizer.enabled) if(execsharp) {
+if(params->dirpyrequalizer.enabled) {
+	if(params->dirpyrequalizer.gamutlab  /*&& execsharp*/) {
+		float b_l = static_cast<float>(params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
+		float t_l = static_cast<float>(params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
+		float b_r = static_cast<float>(params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
+		float t_r = static_cast<float>(params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
+		int choice=0;
 
+		bool alread=false;
+		float artifact=(float) settings->artifact_cbdl;
+		if(artifact>6.f) artifact=6.f;
+		if(artifact <0.f) artifact=1.f;
+		int hotbad=0;
+		float chrom=50.f;
+		{ImProcFunctions::badpixcam (ncie, artifact, 5, 2 , b_l, t_l, t_r, b_r,params->dirpyrequalizer.skinprotect , chrom, hotbad); alread=true; }//enabled remove artifacts for cbDL
+}
+}
+if(params->colorappearance.badpixsl > 0) if(execsharp) {
+	int mode=params->colorappearance.badpixsl;
+	ImProcFunctions::badpixcam (ncie, 3.4, 5, mode, 0, 0, 0, 0, 0, 0, 1);//for bad pixels CIECAM
+}
 
 if (params->sharpenMicro.enabled)if(execsharp) ImProcFunctions::MLmicrocontrastcam(ncie);
 
 if(params->sharpening.enabled)  if(execsharp) {ImProcFunctions::sharpeningcam (ncie, (float**)buffer);}			//sharpening adapted to CIECAM 
 
-if(params->dirpyrequalizer.enabled) if(execsharp) dirpyr_equalizercam(ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, true);//contrast by detail adapted to CIECAM
-
+//if(params->dirpyrequalizer.enabled) if(execsharp) {
+if(params->dirpyrequalizer.enabled /*&& (execsharp)*/) {
+	float b_l = static_cast<float>(params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
+	float t_l = static_cast<float>(params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
+	float b_r = static_cast<float>(params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
+	float t_r = static_cast<float>(params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
+	int choice=0;//not disabled in case of ! always 0
+//	if     (params->dirpyrequalizer.algo=="FI") choice=0;
+//	else if(params->dirpyrequalizer.algo=="LA") choice=1;
+	if(rtt==1) dirpyr_equalizercam(ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold,  params->dirpyrequalizer.skinprotect, true, params->dirpyrequalizer.gamutlab, b_l,t_l,t_r,b_r, choice, scalecd);//contrast by detail adapted to CIECAM
+}
 		   float Qredi= ( 4.0 / c_)  * ( a_w + 4.0 );
 		   float co_e=(pow(f_l,0.25f));
 
@@ -1115,10 +1144,13 @@ if((params->colorappearance.tonecie || (params->colorappearance.tonecie && param
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
 void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params,
 								const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3,
-								LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, float** buffer, bool execsharp, float &d)
+								LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, float** buffer, bool execsharp, float &d, int scalecd, int rtt)
 {
 if(params->colorappearance.enabled) {
-//printf("ciecam float\n");
+//int lastskip;
+//if(rtt==1) {lastskip=scalecd;} //not for Rtthumbnail
+
+
 #ifdef _DEBUG
 	MyTime t1e,t2e;
 	t1e.set();
@@ -1796,10 +1828,30 @@ if(settings->autocielab) {
 //all this treatments reduce artefacts, but can leed to slighty  different results
 
 if(params->defringe.enabled) if(execsharp) ImProcFunctions::defringecam (ncie);//defringe adapted to CIECAM
+//if(params->dirpyrequalizer.enabled) if(execsharp) {
+if(params->dirpyrequalizer.enabled)  {
+	if(params->dirpyrequalizer.gamutlab  /*&& execsharp*/) {//remove artifacts by gaussian blur - skin control
+		float b_l = static_cast<float>(params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
+		float t_l = static_cast<float>(params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
+		float b_r = static_cast<float>(params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
+		float t_r = static_cast<float>(params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
+		int choice=0;
+		bool alread=false;
+		float artifact=(float) settings->artifact_cbdl;
+		if(artifact > 6.f) artifact=6.f;
+		if(artifact <0.f) artifact=1.f;
+		
+		int hotbad=0;
+		float chrom=50.f;
+		ImProcFunctions::badpixcam (ncie, artifact, 5, 2 , b_l, t_l, t_r, b_r, params->dirpyrequalizer.skinprotect, chrom, hotbad); alread=true;//enabled remove artifacts for cbDL
+}
+}
 
-if(params->colorappearance.badpixsl > 0) if(execsharp){ int mode=params->colorappearance.badpixsl;
-											ImProcFunctions::badpixcam (ncie, 3.0, 10, mode);//for bad pixels
-										}	
+//if(params->colorappearance.badpixsl > 0) { int mode=params->colorappearance.badpixsl;
+if(params->colorappearance.badpixsl > 0) if(execsharp){
+	int mode=params->colorappearance.badpixsl;
+	ImProcFunctions::badpixcam (ncie, 3.0, 10, mode, 0, 0, 0, 0, 0, 0, 1);//for bad pixels CIECAM
+}
 
 if(params->impulseDenoise.enabled) if(execsharp) ImProcFunctions::impulsedenoisecam (ncie);//impulse adapted to CIECAM
 
@@ -1807,8 +1859,24 @@ if (params->sharpenMicro.enabled)if(execsharp) ImProcFunctions::MLmicrocontrastc
 
 if(params->sharpening.enabled)  if(execsharp) {ImProcFunctions::sharpeningcam (ncie, (float**)buffer);}			//sharpening adapted to CIECAM
 
-if(params->dirpyrequalizer.enabled) if(execsharp) dirpyr_equalizercam(ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, true);//contrast by detail adapted to CIECAM
+//if(params->dirpyrequalizer.enabled) if(execsharp) {
+if(params->dirpyrequalizer.enabled /*&& execsharp*/)  {
+	float b_l = static_cast<float>(params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
+	float t_l = static_cast<float>(params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
+	float b_r = static_cast<float>(params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
+	float t_r = static_cast<float>(params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
+	int choice=0;// I have not suppress this statement in case of !! always to 0
+//	if(params->dirpyrequalizer.algo=="FI") choice=0;
+//	else if(params->dirpyrequalizer.algo=="LA") choice=1;
 
+	if(rtt==1) dirpyr_equalizercam(ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect,  true, params->dirpyrequalizer.gamutlab, b_l,t_l,t_r,b_r, choice, scalecd);//contrast by detail adapted to CIECAM
+/*
+if(params->colorappearance.badpixsl > 0) if(execsharp){ int mode=params->colorappearance.badpixsl;
+printf("BADPIX");
+											ImProcFunctions::badpixcam (ncie, 8.0, 10, mode);//for bad pixels
+										}	
+										*/
+}
 		   float Qredi= ( 4.0f / c_)  * ( a_w + 4.0f );
 		   float co_e=(pow_F(f_l,0.25f));
 
@@ -3459,6 +3527,10 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	if (chCurve) delete chCurve;
 	if (lhCurve) delete lhCurve;
 	if (hhCurve) delete hhCurve;
+	
+  //  t2e.set();
+  //  printf("Chromil took %d µsec\n",t2e.etime(t1e));
+	
 }
 
 
@@ -3569,16 +3641,34 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 		
 	}
 	
-	void ImProcFunctions::badpixcam(CieImage* ncie, double rad, int thr, int mode){
-		if(ncie->W>=8 && ncie->H>=8) Badpixelscam(ncie, ncie, rad, thr, mode);
+	void ImProcFunctions::badpixcam(CieImage* ncie, double rad, int thr, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom, int hotbad){
+		if(ncie->W>=8 && ncie->H>=8) Badpixelscam(ncie, ncie, rad, thr, mode, b_l, t_l, t_r,b_r, skinprot, chrom, hotbad);
 	}
 
-	void ImProcFunctions::dirpyrequalizer (LabImage* lab) {
+	void ImProcFunctions::badpixlab(LabImage* lab, double rad, int thr, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom){
+		if(lab->W>=8 && lab->H>=8) BadpixelsLab(lab, lab, rad, thr, mode, b_l, t_l, t_r,b_r, skinprot, chrom);
+	}
+
+	void ImProcFunctions::dirpyrequalizer (LabImage* lab, int scale) {
 
 		if (params->dirpyrequalizer.enabled && lab->W>=8 && lab->H>=8) {
+			float b_l = static_cast<float>(params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
+			float t_l = static_cast<float>(params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
+			float b_r = static_cast<float>(params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
+			float t_r = static_cast<float>(params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
+			int choice=0;//I have  not disabled this statement in case of ! always 0
+	//		if     (params->dirpyrequalizer.algo=="FI") choice=0;
+	//		else if(params->dirpyrequalizer.algo=="LA") choice=1;
+			float artifact=(float) settings->artifact_cbdl;
+			if(artifact > 6.f) artifact =6.f;
+			if(artifact <0.f) artifact=1.f;
+			
+			float chrom = 50.f;
+			if(params->dirpyrequalizer.gamutlab)
+				ImProcFunctions::badpixlab (lab, artifact, 5, 3, b_l, t_l, t_r, b_r, params->dirpyrequalizer.skinprotect, chrom);//for artifacts
 
 			//dirpyrLab_equalizer(lab, lab, params->dirpyrequalizer.mult);
-			dirpyr_equalizer(lab->L, lab->L, lab->W, lab->H, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold);
+			dirpyr_equalizer(lab->L, lab->L, lab->W, lab->H, lab->a, lab->b, lab->a, lab->b, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect, params->dirpyrequalizer.gamutlab,  b_l,t_l,t_r,b_r, choice, scale);
 		}
 	}
 void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, float w_h, int Wid, int Hei, int begh, int endh, float minQ, float maxQ, unsigned int Iterates, int skip){

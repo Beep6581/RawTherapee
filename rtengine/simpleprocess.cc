@@ -309,7 +309,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                 delete [] buffer;
     }
 	// directional pyramid equalizer
-	if((params.colorappearance.enabled && !settings->autocielab)  || !params.colorappearance.enabled) ipf.dirpyrequalizer (labView);//TODO: this is the luminance tonecurve, not the RGB one
+	if((params.colorappearance.enabled && !settings->autocielab)  || !params.colorappearance.enabled) ipf.dirpyrequalizer (labView, 1);//TODO: this is the luminance tonecurve, not the RGB one
 	
 	//Colorappearance and tone-mapping associated
 	
@@ -357,8 +357,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 			float** buffer = new float*[fh];
 			for (int i=0; i<fh; i++)
 			buffer[i] = new float[fw];
-			if(settings->ciecamfloat) ipf.ciecam_02float (cieView, adap, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, d);
-			else ipf.ciecam_02 (cieView, ada, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, dd);
+			int sk=1;
+			if(settings->ciecamfloat) ipf.ciecam_02float (cieView, adap, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, d, sk, 1);
+			else ipf.ciecam_02 (cieView, ada, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, dd, 1, 1);
 			for (int i=0; i<fh; i++)
 			delete [] buffer[i];
 			delete [] buffer;
@@ -371,8 +372,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 			float** buffer = new float*[f_h];
 			for (int i=0; i<f_h; i++)
 			buffer[i] = new float[f_w];
-			if(settings->ciecamfloat) ipf.ciecam_02float (cieView, adap, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, d);
-			else ipf.ciecam_02 (cieView, adap, begh, endh,1, 2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, dd);
+			int sk=1;
+			if(settings->ciecamfloat) ipf.ciecam_02float (cieView, adap, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, d, sk, 1);
+			else ipf.ciecam_02 (cieView, adap, begh, endh,1, 2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, dd, 1, 1);
 
 			for (int i=0; i<f_h; i++)
 			delete [] buffer[i];

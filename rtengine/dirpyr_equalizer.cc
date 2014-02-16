@@ -22,6 +22,10 @@
 #include <cmath>
 #include "curves.h"
 #include "labimage.h"
+#include "color.h"
+#include "mytime.h"
+//#include "StopWatch.h"
+
 #include "improcfun.h"
 #include "rawimagesource.h"
 #include "array2D.h"
@@ -46,15 +50,25 @@ namespace rtengine {
 	
 	//sequence of scales
 	static const int scales[8] = {1,2,4,8,16,32,64,128};
+	extern const Settings* settings;
 	
 	//sequence of scales
-	//static const int scales[8] = {1,2,3,6,15,21,28,36};
-	//scale is spacing of directional averaging weights
 	
 	
-	void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidth, int srcheight, const double * mult, const double dirpyrThreshold )
+	void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidth, int srcheight, float ** l_a, float ** l_b, float ** dest_a, float ** dest_b,const double * mult, const double dirpyrThreshold, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, int scaleprev)
 	{
+	//	StopWatch Stop1("Dirpyr equalizer");
+
+
 		int lastlevel=maxlevel;
+		if(settings->verbose) printf("Dirpyr scaleprev=%i\n",scaleprev);
+		float atten123=(float) settings->level123_cbdl;
+		if(atten123 > 50.f) atten123=50.f;
+		if(atten123 < 0.f) atten123=0.f;
+		float atten0=(float) settings->level0_cbdl;
+		if(atten0 > 40.f) atten123=40.f;
+		if(atten0 < 0.f) atten0=0.f;
+		
 		
 		while (fabs(mult[lastlevel-1]-1)<0.001 && lastlevel>0) {
 			lastlevel--;
@@ -63,23 +77,37 @@ namespace rtengine {
 		if (lastlevel==0) return;
 		
 		int level;
+		float multi[5]={1.f,1.f,1.f,1.f,1.f};
+		float scalefl[5];
+	
+		for(int lv=0;lv<5;lv++) {
+			scalefl[lv]= ((float) scales[lv])/(float) scaleprev;
+			if(lv>=1) {if(scalefl[lv] < 1.f) multi[lv] = (atten123*((float) mult[lv] -1.f)/100.f)+1.f; else  multi[lv]=(float) mult[lv];}//modulate action if zoom < 100%
+			else  {if(scalefl[lv] < 1.f) multi[lv] = (atten0*((float) mult[lv] -1.f)/100.f)+1.f; else  multi[lv]=(float) mult[lv];}//modulate action if zoom < 100%
+			
+			}
+		if(settings->verbose) printf("CbDL mult0=%f  1=%f 2=%f 3=%f 4=%f\n",multi[0],multi[1],multi[2],multi[3],multi[4]);
 		
 		multi_array2D<float,maxlevel> dirpyrlo (srcwidth, srcheight);
 
 		level = 0;
 		
-		int scale = scales[level];
 		//int thresh = 100 * mult[5];
+		int scale = (int)(scales[level])/scaleprev;
+		if(scale < 1) scale=1;
+
 				
-		dirpyr_channel(src, dirpyrlo[0], srcwidth, srcheight, 0, scale );
+		dirpyr_channel(src, dirpyrlo[0], srcwidth, srcheight, 0, scale, l_a, l_b, false );
 		
 		level = 1;
 		
 		while(level < lastlevel)
 		{
-			scale = scales[level];
-						
-			dirpyr_channel(dirpyrlo[level-1], dirpyrlo[level], srcwidth, srcheight, level, scale );
+			
+			scale = (int)(scales[level])/scaleprev;
+			if(scale < 1) scale=1;
+			
+			dirpyr_channel(dirpyrlo[level-1], dirpyrlo[level], srcwidth, srcheight, level, scale, l_a, l_b, false );
 			
 			level ++;
 		}
@@ -89,13 +117,13 @@ namespace rtengine {
 		
 		for(int level = lastlevel - 1; level > 0; level--)
 		{
-			idirpyr_eq_channel(dirpyrlo[level], dirpyrlo[level-1], buffer, srcwidth, srcheight, level, mult, dirpyrThreshold );
+			idirpyr_eq_channel(dirpyrlo[level], dirpyrlo[level-1], buffer, srcwidth, srcheight, level, multi, dirpyrThreshold, l_a, l_b, false, skinprot, gamutlab, b_l,t_l,t_r,b_r, choice );
 		}
 		
 		
 		scale = scales[0];
 		
-		idirpyr_eq_channel(dirpyrlo[0], dst, buffer, srcwidth, srcheight, 0, mult, dirpyrThreshold );
+		idirpyr_eq_channel(dirpyrlo[0], dst, buffer, srcwidth, srcheight, 0, multi, dirpyrThreshold, l_a, l_b, false, skinprot, gamutlab, b_l,t_l,t_r,b_r, choice );
 		
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,6 +131,8 @@ namespace rtengine {
 		for (int i=0; i<srcheight; i++) 
 			for (int j=0; j<srcwidth; j++) {
 				dst[i][j] = CLIP(  buffer[i][j] );  // TODO: Really a clip necessary?
+				dest_a[i][j] = l_a[i][j];  
+				dest_b[i][j] = l_b[i][j]; 
 								
 			}
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,10 +145,20 @@ namespace rtengine {
 
 
 	
-	void ImProcFunctions :: dirpyr_equalizercam (CieImage *ncie, float ** src, float ** dst, int srcwidth, int srcheight, const double * mult, const double dirpyrThreshold, bool execdir )
+	void ImProcFunctions :: dirpyr_equalizercam (CieImage *ncie, float ** src, float ** dst, int srcwidth, int srcheight, float ** h_p, float ** C_p, const double * mult, const double dirpyrThreshold, const double skinprot, bool execdir,  const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, int scaleprev)
 	{
+		//	StopWatch Stop1("Dirpyr equalizer CAM");
+
 		int lastlevel=maxlevel;
-		
+		if(settings->verbose) printf("CAM dirpyr scaleprev=%i\n",scaleprev);
+		float atten123=(float) settings->level123_cbdl;
+		if(atten123 > 50.f) atten123=50.f;
+		if(atten123 < 0.f) atten123=0.f;
+//		printf("atten=%f\n",atten);	
+		float atten0=(float) settings->level0_cbdl;
+		if(atten0 > 40.f) atten123=40.f;
+		if(atten0 < 0.f) atten0=0.f;
+
 		while (fabs(mult[lastlevel-1]-1)<0.001 && lastlevel>0) {
 			lastlevel--;
 			//printf("last level to process %d \n",lastlevel);
@@ -126,23 +166,40 @@ namespace rtengine {
 		if (lastlevel==0) return;
 		
 		int level;
+		
+		float multi[5]={1.f,1.f,1.f,1.f,1.f};
+		float scalefl[5];
 	
+		for(int lv=0;lv<5;lv++) {
+			scalefl[lv]= ((float) scales[lv])/(float) scaleprev;
+		//	if(scalefl[lv] < 1.f) multi[lv] = 1.f; else  multi[lv]=(float) mult[lv];
+			if (lv>=1) {if(scalefl[lv] < 1.f) multi[lv] = (atten123*((float) mult[lv] -1.f)/100.f)+1.f; else  multi[lv]=(float) mult[lv];}
+			else {if(scalefl[lv] < 1.f) multi[lv] = (atten0*((float) mult[lv] -1.f)/100.f)+1.f; else  multi[lv]=(float) mult[lv];}
+
+			
+			}
+		if(settings->verbose) printf("CAM CbDL mult0=%f  1=%f 2=%f 3=%f 4=%f\n",multi[0],multi[1],multi[2],multi[3],multi[4]);
+		
+		
+		
+		
 		multi_array2D<float,maxlevel> dirpyrlo (srcwidth, srcheight);
 
 		level = 0;
 		
-		int scale = scales[level];
-		//int thresh = 100 * mult[5];
-				
-		dirpyr_channel(src, dirpyrlo[0], srcwidth, srcheight, 0, scale );
+		int scale = (int)(scales[level])/scaleprev;
+		if(scale < 1) scale=1;
+
+		dirpyr_channel(src, dirpyrlo[0], srcwidth, srcheight, 0, scale, h_p, C_p, true );
 		
 		level = 1;
 		
 		while(level < lastlevel)
 		{
-			scale = scales[level];
-						
-			dirpyr_channel(dirpyrlo[level-1], dirpyrlo[level], srcwidth, srcheight, level, scale );
+			scale = (int)(scales[level])/scaleprev;
+			if(scale < 1) scale=1;
+
+			dirpyr_channel(dirpyrlo[level-1], dirpyrlo[level], srcwidth, srcheight, level, scale, h_p, C_p, true );
 			
 			level ++;
 		}
@@ -153,17 +210,17 @@ namespace rtengine {
 		
 		for(int level = lastlevel - 1; level > 0; level--)
 		{
-			idirpyr_eq_channel(dirpyrlo[level], dirpyrlo[level-1], buffer, srcwidth, srcheight, level, mult, dirpyrThreshold );
+			idirpyr_eq_channel(dirpyrlo[level], dirpyrlo[level-1], buffer, srcwidth, srcheight, level, multi, dirpyrThreshold , h_p, C_p, true, skinprot, false, b_l,t_l,t_r,b_r, choice);
 		}
 		
 		
 		scale = scales[0];
 		
-		idirpyr_eq_channel(dirpyrlo[0], dst, buffer, srcwidth, srcheight, 0, mult, dirpyrThreshold );
+		idirpyr_eq_channel(dirpyrlo[0], dst, buffer, srcwidth, srcheight, 0, multi, dirpyrThreshold,  h_p, C_p, true, skinprot, false, b_l,t_l,t_r,b_r, choice);
 		
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		if(execdir)
+		if(execdir){
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
@@ -174,6 +231,7 @@ namespace rtengine {
 					else
 						dst[i][j]=src[i][j];
 				}
+		}
 		else
 			for (int i=0; i<srcheight; i++) 
 				for (int j=0; j<srcwidth; j++) {
@@ -184,9 +242,9 @@ namespace rtengine {
 
 
 #if defined( __SSE2__ ) && defined( WIN32 )
-__attribute__((force_align_arg_pointer)) void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, int level, int scale  )
+__attribute__((force_align_arg_pointer)) void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, int level, int scale, float ** l_a_h, float ** l_b_c, bool ciec)
 #else
-void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, int level, int scale )
+void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, int level, int scale, float ** l_a_h, float ** l_b_c, bool ciec )
 #endif
 {
 		//scale is spacing of directional averaging weights
@@ -390,11 +448,19 @@ void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, i
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	void ImProcFunctions::idirpyr_eq_channel(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult, const double dirpyrThreshold )
+	void ImProcFunctions::idirpyr_eq_channel(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[5], const double dirpyrThreshold, float ** l_a_h, float ** l_b_c, bool ciec, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r , int choice)
 	{
-		float noisehi = 1.33*noise*dirpyrThreshold/expf(level*log(3.0)), noiselo = 0.66*noise*dirpyrThreshold/expf(level*log(3.0));
-		LUTf irangefn (0x20000);
+	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
+	double wip[3][3] = {
+		{wiprof[0][0],wiprof[0][1],wiprof[0][2]},
+		{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
+		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}
+	};
+	bool highlight = params->toneCurve.hrenabled; //Get the value if "highlight reconstruction" is activated
 
+		float noisehi = 1.33f*noise*dirpyrThreshold/expf(level*log(3.0)), noiselo = 0.66f*noise*dirpyrThreshold/expf(level*log(3.0));
+		//printf("level=%i multlev=%f noisehi=%f noiselo=%f skinprot=%f\n",level,mult[level], noisehi, noiselo, skinprot);
+		LUTf irangefn (0x20000);
 		for (int i=0; i<0x20000; i++) {
 			if (abs(i-0x10000)>noisehi || mult[level]<1.0) {
 				irangefn[i] = mult[level] ;
@@ -402,7 +468,7 @@ void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, i
 				if (abs(i-0x10000)<noiselo) {
 					irangefn[i] = 1.f ;
 				} else {
-					irangefn[i] = 1.f + (mult[level]-1) * (noisehi-abs(i-0x10000))/(noisehi-noiselo+0.01) ;
+					irangefn[i] = 1.f + (mult[level]-1.f) * (noisehi-abs(i-0x10000))/(noisehi-noiselo+0.01f) ;
 				}
 			}
 		}
@@ -412,13 +478,78 @@ void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, i
 #endif
 		for(int i = 0; i < height; i++) {
 			for(int j = 0; j < width; j++) {
+				float scale=1.f;
 				float hipass = (data_fine[i][j]-data_coarse[i][j]);
-				buffer[i][j] += irangefn[hipass+0x10000] * hipass ;
+				if(ciec) {//Ciecam
+					if(skinprot >= 0.) {
+						Color::SkinSatcdbl ((data_fine[i][j])/327.68f, l_a_h[i][j] ,l_b_c[i][j], skinprot, scale, ciec, true, b_l, t_l, t_r, b_r, choice);	
+						buffer[i][j] += (1.f +(irangefn[hipass+0x10000]-1.f)*scale) * hipass ;
+						}
+					else {
+						double skinprotneg = -skinprot;
+						float correct;
+						correct=irangefn[hipass+0x10000];
+						Color::SkinSatcdbl ((data_fine[i][j])/327.68f, l_a_h[i][j],l_b_c[i][j] , skinprotneg, scale, ciec, false, b_l, t_l, t_r, b_r, choice);	
+						if (scale == 1.f) {//image hard
+							//buffer[i][j] += hipass ;
+							buffer[i][j] += (1.f +(correct-1.f)* (1.f- (float) skinprotneg/100.f)) * hipass ;
+							
+						}
+						else {//image soft
+							buffer[i][j] += (1.f +(correct-1.f)) * hipass ;	
+						}		
+					}
+			//	if(gamutlab) {
+			//	  ImProcFunctions::badpixcam (buffer[i][j], 6.0, 10, 2);//for bad pixels
+			//	}	
+						
+				}
+				else {//lab
+				float modhue=atan2(l_b_c[i][j],l_a_h[i][j]);
+				float modchro=sqrt(SQR((l_b_c[i][j])/327.68f)+SQR((l_a_h[i][j])/327.68f));
+					if(skinprot >= 0.) {
+						Color::SkinSatcdbl ((data_fine[i][j])/327.68f, modhue, modchro, skinprot, scale, ciec, true, b_l, t_l, t_r, b_r, choice);	
+						buffer[i][j] += (1.f +(irangefn[hipass+0x10000]-1.f)*scale) * hipass ;
+					}
+					else {
+						double skinprotneg = -skinprot;
+						float correct;
+						Color::SkinSatcdbl ((data_fine[i][j])/327.68f, modhue, modchro, skinprotneg, scale, ciec, false, b_l, t_l, t_r, b_r, choice);	
+						correct=irangefn[hipass+0x10000];
+						if (scale == 1.f) {//image hard
+							buffer[i][j] += (1.f +(correct-1.f)* (1.f- (float)skinprotneg/100.f)) * hipass ;
+						}
+						else {//image soft with scale < 1 ==> skin
+							buffer[i][j] += (1.f +(correct-1.f)) * hipass ;	
+						}		
+				}
+		/*		if(gamutlab) {//disabled 
+				float Lprov1=(buffer[i][j])/327.68f;
+				float R,G,B;
+#ifdef _DEBUG
+					bool neg=false;
+					bool more_rgb=false;
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(modhue,Lprov1,modchro, R, G, B, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
+#else
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(modhue,Lprov1,modchro, R, G, B, wip, highlight, 0.15f, 0.96f);
+#endif			
+		//		Color::gamutLchonly(modhue,Lprov1,modchro, R, G, B, wip, highlight, 0.15f, 0.96f);//gamut control in Lab mode ..not in CIECAM
+					buffer[i][j]=Lprov1*327.68f;
+					float2 sincosval = xsincosf(modhue);
+					l_a_h[i][j]=327.68f*modchro*sincosval.y;
+					l_b_c[i][j]=327.68f*modchro*sincosval.x;
+				}	
+				*/
+				}
 			}
 		}
 		
 	}
 	
+			//	float hipass = (data_fine[i][j]-data_coarse[i][j]);
+			//	buffer[i][j] += irangefn[hipass+0x10000] * hipass ;
 	
 #undef DIRWT_L
 #undef DIRWT_AB

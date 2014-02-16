@@ -434,8 +434,12 @@ class DirPyrEqualizerParamsEdited {
 
     public:
         bool enabled;
+        bool gamutlab;
         bool mult[5];
         bool threshold;
+        bool skinprotect;
+        bool hueskin;
+   //     bool algo;
 };
 
 class HSVEqualizerParamsEdited {

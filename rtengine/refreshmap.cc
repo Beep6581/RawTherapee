@@ -269,8 +269,12 @@ LUMINANCECURVE,   // EvLCLCurve
 LUMINANCECURVE,   // EvLLHCurve
 LUMINANCECURVE,   // EvLHHCurve
 DIRPYREQUALIZER,  // EvDirPyrEqualizerThreshold
-ALLNORAW,          // EvDPDNenhance
-RGBCURVE			//EvBWMethodalg
+ALLNORAW,         // EvDPDNenhance
+RGBCURVE,         // EvBWMethodalg
+DIRPYREQUALIZER,  // EvDirPyrEqualizerSkin
+DIRPYREQUALIZER,  // EvDirPyrEqlgamutlab
+DIRPYREQUALIZER  // EvDirPyrEqualizerHueskin
+//DIRPYREQUALIZER   // EvDirPyrEqualizeralg
 
 //LUMINANCECURVE    // EvCATsharpcie
 

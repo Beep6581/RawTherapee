@@ -38,6 +38,8 @@
 #include "rawimage.h"
 #include "jpeg.h"
 #include "../rtgui/ppversion.h"
+#include "improccoordinator.h"
+
 
 extern Options options;
 
@@ -556,7 +558,6 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 // Full thumbnail processing, second stage if complete profile exists
 IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, std::string camName, 
     double focalLen, double focalLen35mm, float focusDist, float shutter, float fnumber, float iso,std::string expcomp_, double& myscale) {
-
     // check if the WB's equalizer value has changed
     if (wbEqual < (params.wb.equal-5e-4) || wbEqual > (params.wb.equal+5e-4)) {
         wbEqual = params.wb.equal;
@@ -564,7 +565,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         ColorTemp cTemp;
         cTemp.mul2temp (redAWBMul, greenAWBMul, blueAWBMul, wbEqual, autoWBTemp, autoWBGreen);
     }
-
     // compute WB multipliers
     ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal,params.wb.method);
     if (params.wb.method=="Camera") {
@@ -847,7 +847,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 		LUTf CAMBrightCurveJ;
 		LUTf CAMBrightCurveQ;
 		float CAMMean;
-		ipf.ciecam_02float (cieView, adap, begh, endh, 1, 2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 6, (float**)buffer, execsharp, d);
+		int sk;
+		int scale;
+		sk=16;
+		int rtt=0;		
+		ipf.ciecam_02float (cieView, adap, begh, endh, 1, 2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 6, (float**)buffer, execsharp, d, sk, rtt);
 		for (int i=0; i<fh; i++)
 			delete [] buffer[i];
 		delete [] buffer; buffer=NULL;
@@ -868,7 +872,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         myscale = scale * thumbImg->height / fh;
 
     myscale = 1.0 / myscale;
-
 /*    // apply crop
     if (params.crop.enabled) {
         int ix = 0;
