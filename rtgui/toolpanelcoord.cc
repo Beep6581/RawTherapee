@@ -254,7 +254,7 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
         crop->write (params);
     }
     else if (event==rtengine::EvCTRotate) {
-        crop->rotateCrop (params->coarse.rotate);
+        crop->rotateCrop (params->coarse.rotate, params->coarse.hflip, params->coarse.vflip);
         crop->write (params);
         resize->update (params->crop.enabled, params->crop.w, params->crop.h, ipc->getFullWidth(), ipc->getFullHeight());
         resize->write (params);

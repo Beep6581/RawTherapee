@@ -109,7 +109,11 @@ void CoarsePanel::initBatchBehavior () {
 
 void CoarsePanel::rotateLeft () {
 
-    degree = (degree + 270) % 360;
+    //Rotate one way or the opposite depending if the image is already flipped or not
+    if ( (vflip->get_active()) == (hflip->get_active ()) )
+       degree = (degree + 270) % 360;
+    else
+       degree = (degree + 90) % 360;
     degreechanged = true;
     if (listener)
         listener->panelChanged (EvCTRotate, Glib::ustring::format (degree));
@@ -117,7 +121,11 @@ void CoarsePanel::rotateLeft () {
 
 void CoarsePanel::rotateRight () {
 
-    degree = (degree + 90) % 360;
+    //Rotate one way or the opposite depending if the image is already flipped or not
+    if ( (vflip->get_active()) == (hflip->get_active ()) )
+       degree = (degree + 90) % 360;
+    else
+       degree = (degree + 270) % 360;
     degreechanged = true;
     if (listener)
         listener->panelChanged (EvCTRotate, Glib::ustring::format (degree));
