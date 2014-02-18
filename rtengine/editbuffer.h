@@ -48,6 +48,7 @@ protected:
 	PlanarWhateverData<float> singlePlaneBuffer;
 
 	void                       createBuffer(int width, int height);
+	void                       resize(int newWidth, int newHeight, EditSubscriber* newSubscriber);
 	void                       resize(int newWidth, int newHeight);
 	void                       flush();
 
@@ -70,7 +71,7 @@ public:
 	// return true if the buffer has been allocated
 	bool                       bufferCreated();
 
-	unsigned short             getObjectID(const Coord& location);
+	int                        getObjectID(const Coord& location);
 	// get the pipette values
 	void                       getPipetteData(float* v, int x, int y, int squareSize);
 };

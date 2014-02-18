@@ -41,6 +41,8 @@
 #define TR_HFLIP    8
 #define TR_ROT      3
 
+#define CHECK_BOUNDS 0
+
 namespace rtengine {
 
     extern const char sImage8[];
@@ -120,9 +122,17 @@ namespace rtengine {
       protected:
         AlignedBuffer<T*> ab;
       public:
+        #if CHECK_BOUNDS
+        int width_, height_;
+        #endif
         T** ptrs;
 
-        PlanarPtr() : ptrs (NULL) {}
+        #if CHECK_BOUNDS
+        PlanarPtr() : width_(0), height_(0), ptrs (NULL) {}
+        #else
+        PlanarPtr() : ptrs (NULL){}
+        #endif
+
         bool resize(int newSize) {
             if (ab.resize(newSize)) {
                 ptrs=ab.data;
@@ -138,14 +148,43 @@ namespace rtengine {
             T** tmpsPtrs = other.ptrs;
             other.ptrs = ptrs;
             ptrs = tmpsPtrs;
+
+            #if CHECK_BOUNDS
+            int tmp = other.width_;
+            other.width_ = width_;
+            width_ = tmp;
+            tmp = other.height_;
+            other.height_ = height_;
+            height_ = tmp;
+            #endif
         }
 
-        T*&       operator() (unsigned row)                     { return ptrs[row]; }
+        T*&       operator() (unsigned row) {
+            #if CHECK_BOUNDS
+            assert (row < height_);
+            #endif
+            return ptrs[row];
+        }
         // Will send back the start of a row, starting with a red, green or blue value
-        T*        operator() (unsigned row) const               { return ptrs[row]; }
+        T*        operator() (unsigned row) const {
+            #if CHECK_BOUNDS
+            assert (row < height_);
+            #endif
+            return ptrs[row];
+        }
         // Will send back a value at a given row, col position
-        T&        operator() (unsigned row, unsigned col)       { return ptrs[row][col]; }
-        const T   operator() (unsigned row, unsigned col) const { return ptrs[row][col]; }
+        T&        operator() (unsigned row, unsigned col) {
+            #if CHECK_BOUNDS
+            assert (row < height_ && col < width_);
+            #endif
+            return ptrs[row][col];
+        }
+        const T   operator() (unsigned row, unsigned col) const {
+            #if CHECK_BOUNDS
+            assert (row < height_ && col < width_);
+            #endif
+            return ptrs[row][col];
+        }
     };
 
     template <class T>
@@ -180,6 +219,10 @@ namespace rtengine {
             int tmpHeight = other.height;
             other.height = height;
             height = tmpHeight;
+            #if CHECK_BOUNDS
+            v.width_ = width;
+            v.height_ = height;
+            #endif
         }
 
         // use as pointer to data
@@ -194,6 +237,10 @@ namespace rtengine {
 
             width=W;
             height=H;
+            #if CHECK_BOUNDS
+            v.width_ = width;
+            v.height_ = height;
+            #endif
 
             if (sizeof(T) > 1) {
                 // 128 bits memory alignment for >8bits data
@@ -222,6 +269,10 @@ namespace rtengine {
                 data = NULL;
                 v.resize(0);
                 width = height = -1;
+                #if CHECK_BOUNDS
+                v.width_ = v.height_ = -1;
+                #endif
+
                 return;
             }
 
@@ -491,6 +542,11 @@ namespace rtengine {
             int tmpHeight = other.height;
             other.height = height;
             height = tmpHeight;
+            #if CHECK_BOUNDS
+            r.width_ = width;   r.height_ = height;
+            g.width_ = width;   g.height_ = height;
+            b.width_ = width;   b.height_ = height;
+            #endif
         }
 
         // use as pointer to data
@@ -505,6 +561,11 @@ namespace rtengine {
 
             width=W;
             height=H;
+            #if CHECK_BOUNDS
+            r.width_ = width; r.height_ = height;
+            g.width_ = width; g.height_ = height;
+            b.width_ = width; b.height_ = height;
+            #endif
 
             if (sizeof(T) > 1) {
                 // 128 bits memory alignment for >8bits data
@@ -539,6 +600,11 @@ namespace rtengine {
                 g.resize(0);
                 b.resize(0);
                 width = height = -1;
+                #if CHECK_BOUNDS
+                r.width_ = r.height_ = -1;
+                g.width_ = g.height_ = -1;
+                b.width_ = b.height_ = -1;
+                #endif
                 return;
             }
 
@@ -943,7 +1009,15 @@ namespace rtengine {
         T* ptr;
         int width;
       public:
+        #if CHECK_BOUNDS
+        int width_, height_;
+        #endif
+
+#if CHECK_BOUNDS
+        ChunkyPtr() : ptr (NULL), width(-1), width_(0), height_(0) {}
+#else
         ChunkyPtr() : ptr (NULL), width(-1) {}
+#endif
         void init(T* base, int w=-1) { ptr = base; width=w; }
         void swap (ChunkyPtr<T> &other) {
             T* tmpsPtr = other.ptr;
@@ -953,13 +1027,38 @@ namespace rtengine {
             int tmpWidth = other.width;
             other.width = width;
             width = tmpWidth;
+
+            #if CHECK_BOUNDS
+            int tmp = other.width_;
+            other.width_ = width_;
+            width_ = tmp;
+            tmp = other.height_;
+            other.height_ = height_;
+            height_ = tmp;
+            #endif
+
         }
 
         // Will send back the start of a row, starting with a red, green or blue value
-        T* operator() (unsigned row) const { return &ptr[3*(row*width)]; }
+        T* operator() (unsigned row) const {
+            #if CHECK_BOUNDS
+            assert (row < height_);
+            #endif
+            return &ptr[3*(row*width)];
+        }
         // Will send back a value at a given row, col position
-        T& operator() (unsigned row, unsigned col) { return ptr[3*(row*width+col)]; }
-        const T  operator() (unsigned row, unsigned col) const { return ptr[3*(row*width+col)]; }
+        T& operator() (unsigned row, unsigned col) {
+            #if CHECK_BOUNDS
+            assert (row < height_ && col < width_);
+            #endif
+            return ptr[3*(row*width+col)];
+        }
+        const T  operator() (unsigned row, unsigned col) const {
+            #if CHECK_BOUNDS
+            assert (row < height_ && col < width_);
+            #endif
+            return ptr[3*(row*width+col)];
+        }
     };
 
     template <class T>
@@ -997,6 +1096,11 @@ namespace rtengine {
              int tmpHeight = other.height;
              other.height = height;
              height = tmpHeight;
+             #if CHECK_BOUNDS
+             r.width_ = width;   r.height_ = height;
+             g.width_ = width;   g.height_ = height;
+             b.width_ = width;   b.height_ = height;
+             #endif
          }
 
         /*
@@ -1010,6 +1114,11 @@ namespace rtengine {
 
             width=W;
             height=H;
+            #if CHECK_BOUNDS
+            r.width_ = width; r.height_ = height;
+            g.width_ = width; g.height_ = height;
+            b.width_ = width; b.height_ = height;
+            #endif
 
             abData.resize(width*height*3);
             if (!abData.isEmpty()) {
@@ -1024,6 +1133,11 @@ namespace rtengine {
                 g.init(NULL);
                 b.init(NULL);
                 width = height = -1;
+                #if CHECK_BOUNDS
+                r.width_ = r.height_ = -1;
+                g.width_ = g.height_ = -1;
+                b.width_ = b.height_ = -1;
+                #endif
             }
         }
 

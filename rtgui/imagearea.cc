@@ -181,8 +181,10 @@ bool ImageArea::on_expose_event(GdkEventExpose* event) {
     Glib::RefPtr<Gdk::Window> window = get_window();
     Cairo::RefPtr<Cairo::Context> cr = get_window()->create_cairo_context();
 
-    if (mainCropWindow)
+    if (mainCropWindow) {
+        //printf("MainCropWindow (%d x %d)\n", window->get_width(), window->get_height());
         mainCropWindow->expose (cr);
+    }
 
     if (options.showInfo==true && infotext!="") {
         int fnw, fnh;
@@ -279,10 +281,19 @@ void ImageArea::subscribe(EditSubscriber *subscriber) {
 
     if (listener && listener->getToolBar())
         listener->getToolBar()->startEditMode ();
+
+    if (subscriber->getEditingType() == ET_OBJECTS) {
+        // In this case, no need to reprocess the image, so we redraw the image to display the geometry
+        queue_draw();
+    }
 }
 
-
 void ImageArea::unsubscribe() {
+    bool wasObjectType = false;
+    EditSubscriber*  oldSubscriber = EditDataProvider::getCurrSubscriber();
+    if (oldSubscriber && oldSubscriber->getEditingType()==ET_OBJECTS)
+        wasObjectType = true;
+
     EditDataProvider::unsubscribe();
     // Ask the Crops to free-up edit mode buffers
     mainCropWindow->cropHandler.setEditSubscriber(NULL);
@@ -292,6 +303,9 @@ void ImageArea::unsubscribe() {
 
     if (listener && listener->getToolBar())
         listener->getToolBar()->stopEditMode ();
+
+    if (wasObjectType)
+        queue_draw();
 }
 
 void ImageArea::getImageSize (int &w, int&h) {

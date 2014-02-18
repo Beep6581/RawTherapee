@@ -23,7 +23,6 @@
 #include <string>
 #include "guiutils.h"
 #include "multilangmgr.h"
-#include "guiutils.h"
 #include "mycurve.h"
 #include "shcselector.h"
 #include "adjuster.h"
@@ -167,7 +166,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	loadParam->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::loadPressed) );
 	pasteParam->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::pastePressed) );
 	copyParam->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::copyPressed) );
-	editCustomConn = editParam->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::editToggled), editParam) );
+	editParamConn = editParam->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::editToggled), editParam) );
 
 	saveParam->set_tooltip_text (M("CURVEEDITOR_TOOLTIPSAVE"));
 	loadParam->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLOAD"));
