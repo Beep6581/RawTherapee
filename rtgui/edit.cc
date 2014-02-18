@@ -20,6 +20,13 @@
 #include "edit.h"
 #include "../rtengine/editbuffer.h"
 
+void Coord::setFromPolar(PolarCoord polar) {
+	while (polar.angle <   0.f) polar.angle += 360.f;
+	while (polar.angle > 360.f) polar.angle -= 360.f;
+	x = polar.radius * cos(polar.angle/180.f*M_PI);
+	y = polar.radius * sin(polar.angle/180.f*M_PI);
+}
+
 RGBColor Geometry::getInnerLineColor () {
 	RGBColor color;
 	if (flags & AUTO_COLOR) {
@@ -47,9 +54,17 @@ RGBColor Geometry::getOuterLineColor () {
 
 void Circle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem) {
 	if (flags & ACTIVE) {
+		RGBColor color;
+		if (flags & AUTO_COLOR)
+			color = getOuterLineColor();
+		else
+			color = outerLineColor;
+
+		cr->set_source_rgb (color.getR(), color.getG(), color.getB());
 		cr->set_line_width( getOuterLineWidth() );
+
 		Coord center_ = center;
-		double radius_ = radiusInImageSpace ? coordSystem.scaleValueToImage(double(radius)) : double(radius);
+		double radius_ = radiusInImageSpace ? coordSystem.scaleValueToScreen(double(radius)) : double(radius);
 		if (datum == IMAGE) {
 			coordSystem.imageCoordToScreen(center.x, center.y, center_.x, center_.y);
 		}
@@ -59,15 +74,24 @@ void Circle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, rtengine::Edit
 		else if (datum == CURSOR) {
 			center_ += editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
 		}
-		cr->set_source_rgb (outerLineColor.getR(), outerLineColor.getG(), outerLineColor.getB());
-		cr->arc(center_.x, center_.y, radius_, 0., 2.*M_PI);
+		cr->arc(center_.x+0.5, center_.y+0.5, radius_, 0., 2.*M_PI);
+		cr->stroke();
 	}
 }
 
 void Circle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem) {
 	if (flags & ACTIVE) {
+		RGBColor color;
+		if (flags & AUTO_COLOR)
+			color = getInnerLineColor();
+		else
+			color = innerLineColor;
+
+		cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+		cr->set_line_width( innerLineWidth );
+
 		Coord center_ = center;
-		double radius_ = radiusInImageSpace ? coordSystem.scaleValueToImage(double(radius)) : double(radius);
+		double radius_ = radiusInImageSpace ? coordSystem.scaleValueToScreen(double(radius)) : double(radius);
 		if (datum == IMAGE) {
 			coordSystem.imageCoordToScreen(center.x, center.y, center_.x, center_.y);
 		}
@@ -77,10 +101,8 @@ void Circle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, rtengine::Edit
 		else if (datum == CURSOR) {
 			center_ += editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
 		}
-		cr->set_source_rgb (innerLineColor.getR(), innerLineColor.getG(), innerLineColor.getB());
 		if (filled) {
-			cr->arc(center_.x, center_.y, radius_, 0., 2.*M_PI);
-			cr->set_line_width( innerLineWidth );
+			cr->arc(center_.x+0.5, center_.y+0.5, radius_, 0., 2.*M_PI);
 			if (innerLineWidth > 0.) {
 				cr->fill_preserve();
 				cr->stroke();
@@ -89,7 +111,7 @@ void Circle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, rtengine::Edit
 				cr->fill();
 		}
 		else if (innerLineWidth > 0.) {
-			cr->arc(center_.x, center_.y, radius_, 0., 2.*M_PI);
+			cr->arc(center_.x+0.5, center_.y+0.5, radius_, 0., 2.*M_PI);
 			cr->stroke();
 		}
 	}
@@ -99,9 +121,9 @@ void Circle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<C
 	if (flags & ACTIVE) {
 		cr->set_line_width( getMouseOverLineWidth() );
 		Coord center_ = center;
-		double radius_ = radiusInImageSpace ? coordSystem.scaleValueToImage(double(radius)) : double(radius);
+		double radius_ = radiusInImageSpace ? coordSystem.scaleValueToScreen(double(radius)) : double(radius);
 		if (datum == IMAGE) {
-			coordSystem.imageCoordToScreen(center.x, center.y, center_.x, center_.y);
+			coordSystem.imageCoordToCropBuffer(center.x, center.y, center_.x, center_.y);
 		}
 		else if (datum == CLICKED_POINT) {
 			center_ += editBuffer->getDataProvider()->posScreen;
@@ -113,7 +135,7 @@ void Circle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<C
 		// drawing the lower byte's value
 		unsigned short a = (id+1) & 0xFF;
 		cr->set_source_rgba (0.,0., 0., double(a)/255.);
-		cr->arc(center_.x, center_.y, radius_, 0, 2.*M_PI);
+		cr->arc(center_.x+0.5, center_.y+0.5, radius_, 0, 2.*M_PI);
 		if (filled) {
 			if (innerLineWidth > 0.) {
 				cr->fill_preserve();
@@ -129,7 +151,7 @@ void Circle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<C
 		if (editBuffer->getObjectMode() == OM_65535) {
 			a = (id+1)>>8;
 			cr2->set_source_rgba (0.,0., 0., double(a)/255.);
-			cr2->arc(center_.x, center_.y, radius_, 0, 2.*M_PI);
+			cr2->arc(center_.x+0.5, center_.y+0.5, radius_, 0, 2.*M_PI);
 			if (filled) {
 				if (innerLineWidth > 0.) {
 					cr2->fill_preserve();
@@ -146,7 +168,15 @@ void Circle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<C
 
 void Line::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem) {
 	if (flags & ACTIVE) {
+		RGBColor color;
+		if (flags & AUTO_COLOR)
+			color = getOuterLineColor();
+		else
+			color = outerLineColor;
+
+		cr->set_source_rgb (color.getR(), color.getG(), color.getB());
 		cr->set_line_width( getOuterLineWidth() );
+
 		Coord begin_ = begin;
 		Coord end_ = end;
 		if (datum == IMAGE) {
@@ -161,15 +191,23 @@ void Line::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBu
 			begin_ += editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
 			end_ += editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
 		}
-		cr->set_source_rgb (outerLineColor.getR(), outerLineColor.getG(), outerLineColor.getB());
-		cr->move_to(begin_.x, begin_.y);
-		cr->line_to(end_.x, end_.y);
+		cr->move_to(begin_.x+0.5, begin_.y+0.5);
+		cr->line_to(end_.x+0.5, end_.y+0.5);
 		cr->stroke();
 	}
 }
 
 void Line::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem) {
 	if ((flags & ACTIVE) && innerLineWidth > 0.) {
+		RGBColor color;
+		if (flags & AUTO_COLOR)
+			color = getInnerLineColor();
+		else
+			color = innerLineColor;
+
+		cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+		cr->set_line_width(innerLineWidth);
+
 		Coord begin_ = begin;
 		Coord end_ = end;
 		if (datum == IMAGE) {
@@ -184,10 +222,8 @@ void Line::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBu
 			begin_ += editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
 			end_ += editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
 		}
-		cr->set_line_width(innerLineWidth);
-		cr->set_source_rgb (innerLineColor.getR(), innerLineColor.getG(), innerLineColor.getB());
-		cr->move_to(begin_.x, begin_.y);
-		cr->line_to(end_.x, end_.y);
+		cr->move_to(begin_.x+0.5, begin_.y+0.5);
+		cr->line_to(end_.x+0.5, end_.y+0.5);
 		cr->stroke();
 	}
 }
@@ -198,8 +234,8 @@ void Line::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cai
 		Coord begin_ = begin;
 		Coord end_ = end;
 		if (datum == IMAGE) {
-			coordSystem.imageCoordToScreen(begin.x, begin.y, begin_.x, begin_.y);
-			coordSystem.imageCoordToScreen(end.x, end.y, end_.x, end_.y);
+			coordSystem.imageCoordToCropBuffer(begin.x, begin.y, begin_.x, begin_.y);
+			coordSystem.imageCoordToCropBuffer(end.x, end.y, end_.x, end_.y);
 		}
 		else if (datum == CLICKED_POINT) {
 			begin_ += editBuffer->getDataProvider()->posScreen;
@@ -213,16 +249,16 @@ void Line::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cai
 		// drawing the lower byte's value
 		unsigned short a = (id+1) & 0xFF;
 		cr->set_source_rgba (0.,0., 0., double(a)/255.);
-		cr->move_to(begin_.x, begin_.y);
-		cr->line_to(end_.x, end_.y);
+		cr->move_to(begin_.x+0.5, begin_.y+0.5);
+		cr->line_to(end_.x+0.5, end_.y+0.5);
 		cr->stroke();
 
 		// drawing the higher byte's value
 		if (editBuffer->getObjectMode() == OM_65535) {
 			a = (id+1)>>8;
 			cr2->set_source_rgba (0.,0., 0., double(a)/255.);
-			cr2->move_to(begin_.x, begin_.y);
-			cr2->line_to(end_.x, end_.y);
+			cr2->move_to(begin_.x+0.5, begin_.y+0.5);
+			cr2->line_to(end_.x+0.5, end_.y+0.5);
 			cr2->stroke();
 		}
 	}
@@ -230,45 +266,57 @@ void Line::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cai
 
 void Polyline::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem) {
 	if ((flags & ACTIVE) && points.size()>1) {
-		cr->set_source_rgb (outerLineColor.getR(), outerLineColor.getG(), outerLineColor.getB());
+		RGBColor color;
+		if (flags & AUTO_COLOR)
+			color = getOuterLineColor();
+		else
+			color = outerLineColor;
+
+		cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+		cr->set_line_width( getOuterLineWidth() );
 
 		Coord currPos;
 		for (unsigned int i=0; i<points.size(); ++i) {
-			cr->set_line_width( getOuterLineWidth() );
 			currPos  = points.at(i);
 
 			if      (datum == IMAGE)         coordSystem.imageCoordToScreen(points.at(i).x, points.at(i).y, currPos.x, currPos.y);
 			else if (datum == CLICKED_POINT) currPos += editBuffer->getDataProvider()->posScreen;
 			else if (datum == CURSOR)        currPos += editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
 
-			if (!i) cr->move_to(currPos.x, currPos.y);
-			else    cr->line_to(currPos.x, currPos.y);
+			if (!i) cr->move_to(currPos.x+0.5, currPos.y+0.5);
+			else    cr->line_to(currPos.x+0.5, currPos.y+0.5);
 		}
 		if (filled) {
 			cr->fill_preserve();
 			cr->stroke();
 		}
 		else
-			cr->fill();
+			cr->stroke();
 	}
 }
 
 void Polyline::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem) {
 	if ((flags & ACTIVE) && points.size()>1) {
-		cr->set_source_rgb (innerLineColor.getR(), innerLineColor.getG(), innerLineColor.getB());
+		RGBColor color;
+		if (flags & AUTO_COLOR)
+			color = getInnerLineColor();
+		else
+			color = innerLineColor;
+
+		cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+		cr->set_line_width( getOuterLineWidth() );
 
 		if (filled) {
 			Coord currPos;
 			for (unsigned int i=0; i<points.size(); ++i) {
-				cr->set_line_width( getOuterLineWidth() );
 				currPos  = points.at(i);
 
 				if      (datum == IMAGE)         coordSystem.imageCoordToScreen(points.at(i).x, points.at(i).y, currPos.x, currPos.y);
 				else if (datum == CLICKED_POINT) currPos += editBuffer->getDataProvider()->posScreen;
 				else if (datum == CURSOR)        currPos += editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
 
-				if (!i) cr->move_to(currPos.x, currPos.y);
-				else    cr->line_to(currPos.x, currPos.y);
+				if (!i) cr->move_to(currPos.x+0.5, currPos.y+0.5);
+				else    cr->line_to(currPos.x+0.5, currPos.y+0.5);
 			}
 
 			if (innerLineWidth > 0.) {
@@ -281,17 +329,16 @@ void Polyline::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, rtengine::Ed
 		else if (innerLineWidth > 0.) {
 			Coord currPos;
 			for (unsigned int i=0; i<points.size(); ++i) {
-				cr->set_line_width( getOuterLineWidth() );
 				currPos  = points.at(i);
 
 				if      (datum == IMAGE)         coordSystem.imageCoordToScreen(points.at(i).x, points.at(i).y, currPos.x, currPos.y);
 				else if (datum == CLICKED_POINT) currPos += editBuffer->getDataProvider()->posScreen;
 				else if (datum == CURSOR)        currPos += editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
 
-				if (!i) cr->move_to(currPos.x, currPos.y);
-				else    cr->line_to(currPos.x, currPos.y);
+				if (!i) cr->move_to(currPos.x+0.5, currPos.y+0.5);
+				else    cr->line_to(currPos.x+0.5, currPos.y+0.5);
 			}
-			cr->fill();
+			cr->stroke();
 		}
 	}
 }
@@ -307,12 +354,12 @@ void Polyline::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr
 			cr->set_line_width( getOuterLineWidth() );
 			currPos  = points.at(i);
 
-			if      (datum == IMAGE)         coordSystem.imageCoordToScreen(points.at(i).x, points.at(i).y, currPos.x, currPos.y);
+			if      (datum == IMAGE)         coordSystem.imageCoordToCropBuffer(points.at(i).x, points.at(i).y, currPos.x, currPos.y);
 			else if (datum == CLICKED_POINT) currPos += editBuffer->getDataProvider()->posScreen;
 			else if (datum == CURSOR)        currPos += editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
 
-			if (!i) cr->move_to(currPos.x, currPos.y);
-			else    cr->line_to(currPos.x, currPos.y);
+			if (!i) cr->move_to(currPos.x+0.5, currPos.y+0.5);
+			else    cr->line_to(currPos.x+0.5, currPos.y+0.5);
 		}
 		if (filled) {
 			if (innerLineWidth > 0.) {
@@ -333,12 +380,12 @@ void Polyline::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr
 				cr2->set_line_width( getOuterLineWidth() );
 				currPos  = points.at(i);
 
-				if      (datum == IMAGE)         coordSystem.imageCoordToScreen(points.at(i).x, points.at(i).y, currPos.x, currPos.y);
+				if      (datum == IMAGE)         coordSystem.imageCoordToCropBuffer(points.at(i).x, points.at(i).y, currPos.x, currPos.y);
 				else if (datum == CLICKED_POINT) currPos += editBuffer->getDataProvider()->posScreen;
 				else if (datum == CURSOR)        currPos += editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
 
-				if (!i) cr2->move_to(currPos.x, currPos.y);
-				else    cr2->line_to(currPos.x, currPos.y);
+				if (!i) cr2->move_to(currPos.x+0.5, currPos.y+0.5);
+				else    cr2->line_to(currPos.x+0.5, currPos.y+0.5);
 			}
 			if (filled) {
 				if (innerLineWidth > 0.) {
@@ -376,10 +423,16 @@ void Rectangle::setXYXY(Coord topLeft, Coord bottomRight) {
 
 void Rectangle::drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem) {
 	if ((flags & ACTIVE)) {
-		cr->set_source_rgb (outerLineColor.getR(), outerLineColor.getG(), outerLineColor.getB());
+		RGBColor color;
+		if (flags & AUTO_COLOR)
+			color = getOuterLineColor();
+		else
+			color = outerLineColor;
+
+		cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+		cr->set_line_width( getOuterLineWidth() );
 
 		Coord tl, br;
-		cr->set_line_width( getOuterLineWidth() );
 
 		if      (datum == IMAGE)         coordSystem.imageCoordToScreen(topLeft.x, topLeft.y, tl.x, tl.y);
 		else if (datum == CLICKED_POINT) tl = topLeft + editBuffer->getDataProvider()->posScreen;
@@ -389,19 +442,28 @@ void Rectangle::drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::
 		else if (datum == CLICKED_POINT) br = bottomRight + editBuffer->getDataProvider()->posScreen;
 		else if (datum == CURSOR)        br = bottomRight +editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
 
-		cr->rectangle(tl.x, tl.y, br.x-tl.x, br.y-tl.y);
+		cr->rectangle(tl.x+0.5, tl.y+0.5, br.x-tl.x, br.y-tl.y);
 
 		if (filled) {
 			cr->fill_preserve();
 			cr->stroke();
 		}
 		else
-			cr->fill();
+			cr->stroke();
 	}
 }
 
 void Rectangle::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem) {
 	if (flags & ACTIVE) {
+		RGBColor color;
+		if (flags & AUTO_COLOR)
+			color = getInnerLineColor();
+		else
+			color = innerLineColor;
+
+		cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+		cr->set_line_width( innerLineWidth );
+
 		Coord tl, br;
 		if      (datum == IMAGE)         coordSystem.imageCoordToScreen(topLeft.x, topLeft.y, tl.x, tl.y);
 		else if (datum == CLICKED_POINT) tl = topLeft + editBuffer->getDataProvider()->posScreen;
@@ -411,11 +473,8 @@ void Rectangle::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::
 		else if (datum == CLICKED_POINT) br = bottomRight + editBuffer->getDataProvider()->posScreen;
 		else if (datum == CURSOR)        br = bottomRight +editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
 
-		cr->set_source_rgb (innerLineColor.getR(), innerLineColor.getG(), innerLineColor.getB());
-
 		if (filled) {
-			cr->set_line_width( innerLineWidth );
-			cr->rectangle(tl.x, tl.y, br.x-tl.x, br.y-tl.y);
+			cr->rectangle(tl.x+0.5, tl.y+0.5, br.x-tl.x, br.y-tl.y);
 			if (innerLineWidth > 0.) {
 				cr->fill_preserve();
 				cr->stroke();
@@ -424,7 +483,7 @@ void Rectangle::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::
 				cr->fill();
 		}
 		else if (innerLineWidth > 0.) {
-			cr->rectangle(tl.x, tl.y, br.x-tl.x, br.y-tl.y);
+			cr->rectangle(tl.x+0.5, tl.y+0.5, br.x-tl.x, br.y-tl.y);
 			cr->stroke();
 		}
 	}
@@ -435,18 +494,18 @@ void Rectangle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPt
 		cr->set_line_width( getMouseOverLineWidth() );
 
 		Coord tl, br;
-		if      (datum == IMAGE)         coordSystem.imageCoordToScreen(topLeft.x, topLeft.y, tl.x, tl.y);
+		if      (datum == IMAGE)         coordSystem.imageCoordToCropBuffer(topLeft.x, topLeft.y, tl.x, tl.y);
 		else if (datum == CLICKED_POINT) tl = topLeft + editBuffer->getDataProvider()->posScreen;
 		else if (datum == CURSOR)        tl = topLeft +editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
 
-		if      (datum == IMAGE)         coordSystem.imageCoordToScreen(bottomRight.x, bottomRight.y, br.x, br.y);
+		if      (datum == IMAGE)         coordSystem.imageCoordToCropBuffer(bottomRight.x, bottomRight.y, br.x, br.y);
 		else if (datum == CLICKED_POINT) br = bottomRight + editBuffer->getDataProvider()->posScreen;
 		else if (datum == CURSOR)        br = bottomRight +editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
 
 		// drawing the lower byte's value
 		unsigned short a = (id+1) & 0xFF;
 		cr->set_source_rgba (0.,0., 0., double(a)/255.);
-		cr->rectangle(tl.x, tl.y, br.x-tl.x, br.y-tl.y);
+		cr->rectangle(tl.x+0.5, tl.y+0.5, br.x-tl.x, br.y-tl.y);
 		if (filled) {
 			if (innerLineWidth > 0.) {
 				cr->fill_preserve();
@@ -462,7 +521,7 @@ void Rectangle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPt
 		if (editBuffer->getObjectMode() == OM_65535) {
 			a = (id+1)>>8;
 			cr2->set_source_rgba (0.,0., 0., double(a)/255.);
-			cr->rectangle(tl.x, tl.y, br.x-tl.x, br.y-tl.y);
+			cr->rectangle(tl.x+0.5, tl.y+0.5, br.x-tl.x, br.y-tl.y);
 			if (filled) {
 				if (innerLineWidth > 0.) {
 					cr2->fill_preserve();
@@ -477,7 +536,7 @@ void Rectangle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPt
 	}
 }
 
-EditSubscriber::EditSubscriber () : ID(EUID_None), editingType(ET_PIPETTE), bufferType(BT_SINGLEPLANE_FLOAT), provider(NULL) {}
+EditSubscriber::EditSubscriber (EditType editType) : ID(EUID_None), editingType(editType), bufferType(BT_SINGLEPLANE_FLOAT), provider(NULL) {}
 
 void EditSubscriber::setEditProvider(EditDataProvider *provider) {
 	this->provider = provider;

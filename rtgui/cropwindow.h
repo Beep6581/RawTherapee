@@ -64,7 +64,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener, public E
         // crop frame description
         int titleHeight, sideBorderWidth, lowerBorderWidth, upperBorderWidth, sepWidth, minWidth;
         // size & position of the crop relative to the top left corner
-        // of the main preview area (to be confirmed)
+        // of the main preview area
         int xpos, ypos, width, height;
         // size & pos of the drawable area relative to the top left corner of the crop
         int imgAreaX, imgAreaY, imgAreaW, imgAreaH;
@@ -105,7 +105,9 @@ class CropWindow : public LWButtonListener, public CropHandlerListener, public E
 
         void screenCoordToCropBuffer (int phyx, int phyy, int& cropx, int& cropy);
         void screenCoordToImage (int phyx, int phyy, int& imgx, int& imgy);
+        void screenCoordToPreview (int phyx, int phyy, int& prevx, int& prevy);
         void imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy);
+        void imageCoordToCropBuffer (int imgx, int imgy, int& phyx, int& phyy);
         int scaleValueToImage (int value);
         float scaleValueToImage (float value);
         double scaleValueToImage (double value);

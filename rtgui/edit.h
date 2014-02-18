@@ -23,6 +23,7 @@
 #include "../rtengine/imagefloat.h"
 #include "editid.h"
 #include "cursormanager.h"
+#include "../rtengine/rt_math.h"
 
 class EditDataProvider;
 
@@ -59,6 +60,8 @@ class EditBuffer;
  *
  */
 
+class PolarCoord;
+
 // Do not confuse with rtengine::Coord2D, this one is for the GUI
 class Coord {
 public:
@@ -73,9 +76,17 @@ public:
 		this->y = y;
 	}
 
-	void setFromPolar(float radius, float angle) {
-		x = radius * cos(angle/(2*M_PI));
-		y = radius * sin(angle/(2*M_PI));
+	void setFromPolar(PolarCoord polar);
+
+	/// @brief Clip the coord to stay in the width x height bounds
+	/// @return true if the x or y coordinate has changed
+	bool clip(int width, int height) {
+		int trimmedX = rtengine::LIM<int>(x, 0, width);
+		int trimmedY = rtengine::LIM<int>(y, 0, height);
+		bool retval = trimmedX!=x || trimmedY!=y;
+		x = trimmedX;
+		y = trimmedY;
+		return retval;
 	}
 
 	void operator+=(const Coord & rhs) {
@@ -104,6 +115,92 @@ public:
 	}
 };
 
+class PolarCoord {
+public:
+	double radius;
+	double angle; // degree
+
+	PolarCoord() : radius(1.), angle(0.) {}
+	PolarCoord(double radius, double angle) : radius(radius), angle(angle) {}
+
+	void set (double radius, double angle) {
+		this->radius = radius;
+		this->angle = angle;
+	}
+
+	void setFromCartesian(Coord start, Coord end) {
+		Coord delta(end.x-start.x, end.y-start.y);
+		setFromCartesian(delta);
+	}
+
+	void setFromCartesian(Coord delta) {
+		if (!delta.x && !delta.y) {
+			// null vector, we set to a default value
+			radius = 1.;
+			angle = 0.;
+			return;
+		}
+		double x_ = double(delta.x);
+		double y_ = double(delta.y);
+		radius = sqrt(x_*x_+y_*y_);
+		if (delta.x>0.) {
+			if (delta.y>=0.)
+				angle = atan(y_/x_)/(2*M_PI)*360.;
+			else if (delta.y<0.)
+				angle = (atan(y_/x_)+2*M_PI)/(2*M_PI)*360.;
+		}
+		else if (delta.x<0.)
+			angle = (atan(y_/x_)+M_PI)/(2*M_PI)*360.;
+		else if (delta.x==0.) {
+			if (delta.y>0.)
+				angle = 90.;
+			else
+				angle = 270.;
+		}
+	}
+
+	void operator+=(const PolarCoord & rhs) {
+		Coord thisCoord, rhsCoord;
+		thisCoord.setFromPolar(*this);
+		rhsCoord.setFromPolar(rhs);
+		thisCoord += rhsCoord;
+		setFromCartesian(thisCoord);
+	}
+	void operator-=(const PolarCoord & rhs) {
+		Coord thisCoord, rhsCoord;
+		thisCoord.setFromPolar(*this);
+		rhsCoord.setFromPolar(rhs);
+		thisCoord -= rhsCoord;
+		setFromCartesian(thisCoord);
+	}
+	void operator*=(double scale) {
+		radius *= scale;
+	}
+	PolarCoord operator+(PolarCoord & rhs) {
+		Coord thisCoord, rhsCoord;
+		thisCoord.setFromPolar(*this);
+		rhsCoord.setFromPolar(rhs);
+		thisCoord += rhsCoord;
+		PolarCoord result;
+		result.setFromCartesian(thisCoord);
+		return result;
+	}
+	PolarCoord operator-(PolarCoord & rhs) {
+		Coord thisCoord, rhsCoord;
+		thisCoord.setFromPolar(*this);
+		rhsCoord.setFromPolar(rhs);
+		thisCoord -= rhsCoord;
+		PolarCoord result;
+		result.setFromCartesian(thisCoord);
+		return result;
+	}
+	Coord operator*(double scale) {
+		Coord result(radius*scale, angle);
+		return result;
+	}
+
+};
+
 /** @brief Coordinate system where the widgets will be drawn
  *
  * The EditCoordSystem is used to define a screen and an image coordinate system.
@@ -118,6 +215,8 @@ public:
 	virtual void screenCoordToImage (int phyx, int phyy, int& imgx, int& imgy) =0;
 	/// Convert the image coords to the widget's DrawingArea (i.e. preview area) coords
 	virtual void imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy) =0;
+	/// Convert the image coords to the edit buffer coords
+	virtual void imageCoordToCropBuffer (int imgx, int imgy, int& phyx, int& phyy) =0;
 	/// Convert a size value from the preview's scale to the image's scale
 	virtual int scaleValueToImage (int value) =0;
 	/// Convert a size value from the preview's scale to the image's scale
@@ -139,8 +238,8 @@ class RGBColor {
 
 public:
 	RGBColor () : r(0.), g(0.), b(0.) {}
-	RGBColor (double r, double g, double b) : r(r), g(g), b(b) {}
-	RGBColor (char r, char g, char b) : r(double(r)/255.), g(double(g)/255.), b(double(b)/255.) {}
+	explicit RGBColor (double r, double g, double b) : r(r), g(g), b(b) {}
+	explicit RGBColor (char r, char g, char b) : r(double(r)/255.), g(double(g)/255.), b(double(b)/255.) {}
 
 	void setColor(double r, double g, double b) {
 		this->r = r;
@@ -186,7 +285,7 @@ public:
 	Datum datum;
 	State state;  // set by the Subscriber
 
-	Geometry () : innerLineColor(), outerLineColor(), flags(ACTIVE|AUTO_COLOR), innerLineWidth(1.f), datum(IMAGE), state(NORMAL) {}
+	Geometry () : innerLineColor(char(255), char(255), char(255)), outerLineColor(char(0), char(0), char(0)), flags(ACTIVE|AUTO_COLOR), innerLineWidth(1.f), datum(IMAGE), state(NORMAL) {}
 	virtual ~Geometry() {}
 
 	void     setInnerLineColor     (double r, double g, double b) { innerLineColor.setColor(r, g, b); flags &= ~AUTO_COLOR; }
@@ -213,8 +312,8 @@ public:
 	bool radiusInImageSpace; /// If true, the radius depend on the image scale; if false, it is a fixed 'screen' size
 
 	Circle () : center(100,100), radius(10), filled(false), radiusInImageSpace(false) {}
-	Circle (Coord &center, int radius, bool filled=false) : center(center), radius(radius), filled(filled), radiusInImageSpace(false) {}
-	Circle (int centerX, int centerY, int radius, bool filled=false) : center(centerX, centerY), radius(radius), filled(filled), radiusInImageSpace(false) {}
+	Circle (Coord &center, int radius, bool filled=false, bool radiusInImageSpace=false) : center(center), radius(radius), filled(filled), radiusInImageSpace(radiusInImageSpace) {}
+	Circle (int centerX, int centerY, int radius, bool filled=false, bool radiusInImageSpace=false) : center(centerX, centerY), radius(radius), filled(filled), radiusInImageSpace(radiusInImageSpace) {}
 
 	void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
 	void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
@@ -280,7 +379,7 @@ protected:
 	std::vector<Geometry*> mouseOverGeometry;
 
 public:
-	EditSubscriber ();
+	EditSubscriber (EditType editType);
 	virtual ~EditSubscriber () {}
 
 	void              setEditProvider(EditDataProvider *provider);
@@ -293,7 +392,10 @@ public:
 	EditUniqueID      getEditID();
 	EditType          getEditingType();
 	BufferType        getEditBufferType();
-	CursorShape       getCursor(int objectID) { return CSOpenHand; }
+
+	/** @brief Get the cursor to be displayed when above handles
+	@param objectID object currently "hovered" */
+	virtual CursorShape getCursor(int objectID) { return CSOpenHand; }
 
 	/** @brief Triggered when the mouse is moving over an object
 	This method is also triggered when the cursor is moving over the image in ET_PIPETTE mode

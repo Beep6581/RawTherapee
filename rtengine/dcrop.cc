@@ -23,6 +23,7 @@
 #include "rt_math.h"
 #include "colortemp.h"
 
+// "ceil" rounding
 #define SKIPS(a,b) ((a) / (b) + ((a) % (b) > 0))
 
 namespace rtengine {
@@ -94,6 +95,13 @@ void Crop::setEditSubscriber(EditSubscriber* newSubscriber) {
         if (EditBuffer::singlePlaneBuffer.getW()!=-1) {
             EditBuffer::singlePlaneBuffer.flushData();
         }
+    }
+    if (newSubscriber == NULL  && oldSubscriber != NULL && oldSubscriber->getEditingType() == ET_OBJECTS) {
+    	printf("Free object buffers\n");
+        EditBuffer::resize(0, 0); // This will delete the objects buffer
+    }
+    else if (newSubscriber && newSubscriber->getEditingType() == ET_OBJECTS) {
+        EditBuffer::resize(cropw, croph, newSubscriber);
     }
     // If oldSubscriber == NULL && newSubscriber != NULL -> the image will be allocated when necessary
 }

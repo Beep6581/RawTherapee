@@ -31,6 +31,7 @@ private:
     void* real ;
     char alignment;
     size_t allocatedSize;
+    int unitSize;
 
 public:
     T* data ;
@@ -40,7 +41,7 @@ public:
      * @param size Number of elements of size T to allocate, i.e. allocated size will be sizeof(T)*size ; set it to 0 if you want to defer the allocation
      * @param align Expressed in bytes; SSE instructions need 128 bits alignment, which mean 16 bytes, which is the default value
      */
-    AlignedBuffer (size_t size=0, size_t align=16) : real(NULL), alignment(align), allocatedSize(0), data(NULL), inUse(false) {
+    AlignedBuffer (size_t size=0, size_t align=16) : real(NULL), alignment(align), allocatedSize(0), unitSize(0), data(NULL), inUse(false) {
         if (size)
             resize(size);
     }
@@ -69,11 +70,12 @@ public:
                 data = NULL;
                 inUse = false;
                 allocatedSize = 0;
+                unitSize = 0;
             }
             else {
-                int sSize = structSize ? structSize : sizeof(T);
+                unitSize = structSize ? structSize : sizeof(T);
                 size_t oldAllocatedSize = allocatedSize;
-                allocatedSize = size*sSize;
+                allocatedSize = size*unitSize;
 
                 // realloc were used here to limit memory fragmentation, specially when the size was smaller than the previous one.
                 // But realloc copies the content to the eventually new location, which is unnecessary. To avoid this performance penalty,
@@ -93,6 +95,7 @@ public:
                 }
                 else {
                     allocatedSize = 0;
+                    unitSize = 0;
                     data = NULL;
                     inUse = false;
                     return false;
@@ -122,6 +125,10 @@ public:
         bool tmpInUse = other.inUse;
         other.inUse = inUse;
         inUse = tmpInUse;
+    }
+
+    unsigned int getSize() {
+        return unitSize ? allocatedSize/unitSize : 0;
     }
 };
 

@@ -129,7 +129,7 @@ std::vector<double> FlatCurveEditor::getCurve () {
  * 		ceGroup = NULL or the address of the Widget that will receive the CurveTypeToggleButton
  * 		text    = (optional) label of the curve, displayed in the CurveTypeToggleButton, next to the image
  */
-CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup) {
+CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup) : EditSubscriber(ET_PIPETTE) {
 
 	bgHistValid = false;
 	remoteDrag = false;
