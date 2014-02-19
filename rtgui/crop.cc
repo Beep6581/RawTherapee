@@ -497,32 +497,34 @@ void Crop::vFlipCrop () {
     g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
 }
 
-void Crop::rotateCrop (int deg) {
+void Crop::rotateCrop (int deg, bool hflip, bool vflip) {
 
-    int tmp;
-    switch ((360+deg-lastRotationDeg)%360) {
-        case 90:
-            tmp = nx;
-            nx = maxh - ny - nh;
-            ny = tmp;
-            tmp = nw;
-            nw = nh;
-            nh = tmp;
-            break;
-        case 270:
-            tmp = ny;
-            ny = maxw - nx - nw;
-            nx = tmp;
-            tmp = nw;
-            nw = nh;
-            nh = tmp;
-            break;
-        case 180:
-            nx = maxw - nx - nw;
-            ny = maxh - ny - nh;
-            break;
-    }
-
+	int rotation = (360+deg-lastRotationDeg)%360;
+	if((hflip != vflip) && ((rotation%180)==90))
+		rotation = (rotation + 180)%360;
+	int tmp;
+	switch (rotation) {
+		case 90:
+			tmp = nx;
+			nx = maxh - ny - nh;
+			ny = tmp;
+			tmp = nw;
+			nw = nh;
+			nh = tmp;
+			break;
+		case 270:
+			tmp = ny;
+			ny = maxw - nx - nw;
+			nx = tmp;
+			tmp = nw;
+			nw = nh;
+			nh = tmp;
+			break;
+		case 180:
+			nx = maxw - nx - nw;
+			ny = maxh - ny - nh;
+			break;
+	}
     lastRotationDeg = deg;
     g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
 }

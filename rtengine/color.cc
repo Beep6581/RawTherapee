@@ -28,7 +28,7 @@ using namespace std;
 namespace rtengine {
 
     extern const Settings* settings;
-
+	
     LUTf Color::cachef;
     LUTf Color::gamma2curve;
 
@@ -826,6 +826,62 @@ namespace rtengine {
 	}
 
 
+
+    void Color::SkinSatcdbl (float lum, float hue, float chrom, float skinprot, float &scale, bool ciec, bool neg, float b_l, float t_l, float t_r, float b_r, int choice) {
+ 
+ 
+ 
+        float C9=0.0f, C8=0.0f, C7=0.0f, C4=0.0f, C3=0.0f, C2=0.0f, C1=0.0f;
+        float H9=0.0f, H8=0.0f, H7=0.0f, H4=0.0f, H3=0.0f, H2=0.0f, H1=0.0f, H10=0.0f,H11=0.0f;
+        H9=0.05f;H8=0.25f;H7=0.1f;H4=0.02f;H3=0.02f;H2=0.1f;H1=0.1f;H10=-0.2f;H11=-0.2f;//H10 and H11 are curious...H11=-0.8 ??
+        C9=8.0f;C8=15.0f;C7=12.0f;C4=7.0f;C3=5.0f;C2=5.0f;C1=5.0f;
+
+		if (ciec) {
+		float HH;
+		bool doskin;
+		if     ((float)hue>8.6f  && (float)hue<=74.f ) {HH=(1.15f/65.4f)*(float)hue-0.0012f;  doskin=true;}//H > 0.15   H<1.3
+		else if((float)hue>0.f   && (float)hue<=8.6f ) {HH=(0.19f/8.6f )*(float)hue-0.04f;    doskin=true;}//H>-0.04 H < 0.15
+		else if((float)hue>355.f && (float)hue<=360.f) {HH=(0.11f/5.0f )*(float)hue-7.96f;    doskin=true;}//H>-0.15 <-0.04
+		else if((float)hue>74.f  && (float)hue<95.f  ) {HH=(0.30f/21.0f)*(float)hue+0.24285f; doskin=true;}//H>1.3  H<1.6
+		else if((float)hue>=95.f && (float)hue<137.5f) {HH= 0.01882*(float)hue-0.18823;}// H>1.6 H<2.4
+		else if((float)hue>285.f && (float)hue<=355.f)  {HH=0.1642*(float)hue -5.982;}//HH>-1.3  HH <-0.15
+		
+		hue=HH;
+		
+		}
+        // wide area for transition
+		if((t_r-t_l)<0.55f) t_l=t_r+0.55f;//avoid too small range
+
+        if      (lum >= 92.0f && (hue > b_l && hue < t_r) && (chrom > 7.0f && chrom < (18.0f))) scale = (100.f-skinprot*0.4f)/100.1f;
+        else if (lum >= 85.0f && lum < 92.0f && (hue > b_l+0.05f && hue < t_r) && (chrom > 7.0f && chrom < (35.0f+C9))) scale = (100.f-skinprot*0.4f)/100.1f;
+        else if ((lum >= 20.f && lum < 85.f) && (hue > (b_l+0.07f + H11) && hue < t_r) && (chrom > 7.0f && chrom < (55.0f+C9) )) scale = (100.f-skinprot*0.4f)/100.1f;
+        else if (lum < 20.0f && (hue > (b_l+0.07f+H11) && hue < t_r-0.1f) && (chrom > 7.0f && chrom < (45.0f+C1) )) scale = (100.f-skinprot*0.4f)/100.1f;
+
+        // wide area  skin color, useful if not accurate colorimetry or if the user has changed hue and saturation
+
+        if      (lum >= 92.0f  && (hue > t_l+0.4f && hue < t_r) && (chrom > 7.0f && chrom < (15.0f))) scale = (100.f-skinprot*0.6f)/100.1f;
+        else if (lum >= 85.0f && lum < 92.0f  && (hue > t_l+0.4f && hue < t_r-0.3f) && (chrom > 7.0f && chrom < (26.0f+C9))) scale = (100.f-skinprot*0.6f)/100.1f;
+        else if ((lum >= 20.f && lum < 85.f) && (hue > (b_l+0.07f + H11) && hue < t_r-0.2f) && (chrom > 7.0f && chrom < (48.0f+C9) )) scale = (100.f-skinprot*0.6f)/100.1f;
+        else if (lum < 20.0f  && (hue > (b_l+0.07f+H11) && hue < t_r-0.2f) && (chrom > 7.0f && chrom < (35.0f+C1) )) scale = (100.f-skinprot*0.6f)/100.1f;
+
+        // "real" skin color : take into account a slightly usage of contrast and saturation in RT if option "skin" = 1
+
+        if       (lum >= 85.0f  && (hue > (t_l+0.53f-H9) && hue < (t_r+H9)) && (chrom > 8.0f && chrom < (14.0f+C9))) scale = (100.f-skinprot)/100.1f;
+        else if ((lum >= 70.0f && lum < 85.0f)  && (hue > t_l+0.15f && hue < (t_r-0.2f+H8)) && (chrom > 8.0f && chrom < (35.0f+C8))) scale = (100.f-skinprot)/100.1f;
+        else if ((lum >= 52.0f && lum < 70.0f)  && (hue > t_l && hue < (t_r+H7)) && (chrom > 11.0f && chrom < (35.0f+C7))) scale = (100.f-skinprot)/100.1f;
+        else if ((lum >= 35.0f && lum < 52.0f)  && (hue > t_l && hue <  (t_r+H4)) && (chrom > 13.0f && chrom < (37.0f+C4))) scale = (100.f-skinprot)/100.1f;
+        else if ((lum >= 20.0f && lum < 35.0f)  && (hue > t_l && hue < (t_r+H3)) && (chrom > 7.0f && chrom <(35.0f+C3) )) scale = (100.f-skinprot)/100.1f;
+        else if ((lum > 10.0f && lum < 20.0f)  && (hue > (t_l-0.25f + H10) && hue < (t_r-0.3f +H2)) && (chrom > 8.0f && chrom < (23.0f+C2))) scale = (100.f-skinprot)/100.1f;
+        else if ((lum < 10.0f)  && (hue > (t_l -0.2f + H10) && hue < (t_r-0.3f+H1)) && (chrom > 8.0f && chrom < (23.0f+C1))) scale = (100.f-skinprot)/100.1f;
+		
+		//extended zone for hair, beard and if user adjust high value for skinprot
+		if(skinprot > 85.f && chrom < 20.f && neg) {
+			float modula = -0.0666f*skinprot + 6.66f;
+			scale *= modula;
+		}
+    }
+
+	
 
 	void Color::scalered ( float rstprotection, float param, float limit, float HH, float deltaHH, float &scale,float &scaleext)
 	{

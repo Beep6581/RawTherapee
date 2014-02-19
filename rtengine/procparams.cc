@@ -430,11 +430,16 @@ void ProcParams::setDefaults () {
     icm.freegamma = false;
   
     dirpyrequalizer.enabled = false;
+    dirpyrequalizer.gamutlab = false;
     for(int i = 0; i < 5; i ++)
     {
         dirpyrequalizer.mult[i] = 1.0;
     }
     dirpyrequalizer.threshold = 0.2;
+    dirpyrequalizer.skinprotect = 0.;
+    dirpyrequalizer.hueskin.setValues(-5, 25, 170, 120);        //default (b_l 0, t_l 30, b_r 170, t_r 120);
+ //   dirpyrequalizer.algo = "FI";
+
     hsvequalizer.hcurve.clear ();
     hsvequalizer.hcurve.push_back (FCT_Linear);
     hsvequalizer.scurve.clear ();
@@ -1005,6 +1010,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     
     // save directional pyramid equalizer parameters
     if (!pedited || pedited->dirpyrequalizer.enabled) keyFile.set_boolean ("Directional Pyramid Equalizer", "Enabled", dirpyrequalizer.enabled);
+    if (!pedited || pedited->dirpyrequalizer.gamutlab) keyFile.set_boolean ("Directional Pyramid Equalizer", "Gamutlab", dirpyrequalizer.gamutlab);
     for(int i = 0; i < 5; i++)
     {
         std::stringstream ss;
@@ -1012,6 +1018,12 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         if (!pedited || pedited->dirpyrequalizer.mult[i]) keyFile.set_double("Directional Pyramid Equalizer", ss.str(), dirpyrequalizer.mult[i]);
     }
     if (!pedited || pedited->dirpyrequalizer.threshold) keyFile.set_double ("Directional Pyramid Equalizer", "Threshold", dirpyrequalizer.threshold);
+    if (!pedited || pedited->dirpyrequalizer.skinprotect) keyFile.set_double ("Directional Pyramid Equalizer", "Skinprotect", dirpyrequalizer.skinprotect);
+  //  if (!pedited || pedited->dirpyrequalizer.algo) keyFile.set_string ("Directional Pyramid Equalizer", "Algorithm", dirpyrequalizer.algo);
+    if (!pedited || pedited->dirpyrequalizer.hueskin) {
+        Glib::ArrayHandle<int> thresh (dirpyrequalizer.hueskin.value, 4, Glib::OWNERSHIP_NONE);
+        keyFile.set_integer_list("Directional Pyramid Equalizer",   "Hueskin", thresh);
+    }
 
     // save hsv equalizer parameters
     if (!pedited || pedited->hsvequalizer.hcurve) {
@@ -1620,7 +1632,7 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "InputProfile"))   { icm.input          = expandRelativePath(fname, "file:", keyFile.get_string ("Color Management", "InputProfile")); if (pedited) pedited->icm.input = true; }
     if (keyFile.has_key ("Color Management", "ToneCurve"))      { icm.toneCurve      = keyFile.get_boolean ("Color Management", "ToneCurve"); if (pedited) pedited->icm.toneCurve = true; }
     if (keyFile.has_key ("Color Management", "BlendCMSMatrix")) { icm.blendCMSMatrix = keyFile.get_boolean ("Color Management", "BlendCMSMatrix"); if (pedited) pedited->icm.blendCMSMatrix = true; }
-    if (keyFile.has_key ("Color Management", "DCPIlluminant")) { icm.dcpIlluminant = keyFile.get_integer ("Color Management", "DCPIlluminant"); if (pedited) pedited->icm.dcpIlluminant = true; }
+    if (keyFile.has_key ("Color Management", "DCPIlluminant"))  { icm.dcpIlluminant  = keyFile.get_integer ("Color Management", "DCPIlluminant"); if (pedited) pedited->icm.dcpIlluminant = true; }
     if (keyFile.has_key ("Color Management", "WorkingProfile")) { icm.working        = keyFile.get_string ("Color Management", "WorkingProfile"); if (pedited) pedited->icm.working = true; }
     if (keyFile.has_key ("Color Management", "OutputProfile"))  { icm.output         = keyFile.get_string ("Color Management", "OutputProfile"); if (pedited) pedited->icm.output = true; }
     if (keyFile.has_key ("Color Management", "Gammafree"))      { icm.gamma          = keyFile.get_string ("Color Management", "Gammafree"); if (pedited) pedited->icm.gamfree = true; }
@@ -1632,7 +1644,15 @@ if (keyFile.has_group ("Color Management")) {
 
     // load directional pyramid equalizer parameters
 if (keyFile.has_group ("Directional Pyramid Equalizer")) {
-    if (keyFile.has_key ("Directional Pyramid Equalizer", "Enabled")) { dirpyrequalizer.enabled = keyFile.get_boolean ("Directional Pyramid Equalizer", "Enabled"); if (pedited) pedited->dirpyrequalizer.enabled = true; }
+    if (keyFile.has_key ("Directional Pyramid Equalizer", "Enabled"))   { dirpyrequalizer.enabled = keyFile.get_boolean ("Directional Pyramid Equalizer", "Enabled"); if (pedited) pedited->dirpyrequalizer.enabled = true; }
+    if (keyFile.has_key ("Directional Pyramid Equalizer", "Gamutlab"))  { dirpyrequalizer.gamutlab = keyFile.get_boolean ("Directional Pyramid Equalizer", "Gamutlab"); if (pedited) pedited->dirpyrequalizer.gamutlab = true; }
+ //   if (keyFile.has_key ("Directional Pyramid Equalizer", "Algorithm")) { dirpyrequalizer.algo = keyFile.get_string ("Directional Pyramid Equalizer", "Algorithm"); if (pedited) pedited->dirpyrequalizer.algo = true; }
+    if (keyFile.has_key ("Directional Pyramid Equalizer", "Hueskin"))   {
+        Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Directional Pyramid Equalizer", "Hueskin");
+        dirpyrequalizer.hueskin.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
+        if (pedited) pedited->dirpyrequalizer.hueskin = true;
+    }
+
     if (ppVersion < 316) {
         for(int i = 0; i < 5; i ++) {
             std::stringstream ss;
@@ -1651,7 +1671,8 @@ if (keyFile.has_group ("Directional Pyramid Equalizer")) {
             ss << "Mult" << i;
             if(keyFile.has_key ("Directional Pyramid Equalizer", ss.str())) { dirpyrequalizer.mult[i]  = keyFile.get_double ("Directional Pyramid Equalizer", ss.str()); if (pedited) pedited->dirpyrequalizer.mult[i]   = true; }
         }
-        if(keyFile.has_key ("Directional Pyramid Equalizer", "Threshold")) { dirpyrequalizer.threshold = keyFile.get_double ("Directional Pyramid Equalizer", "Threshold"); if (pedited) pedited->dirpyrequalizer.threshold = true; }
+        if(keyFile.has_key ("Directional Pyramid Equalizer", "Threshold"))   { dirpyrequalizer.threshold = keyFile.get_double ("Directional Pyramid Equalizer", "Threshold"); if (pedited) pedited->dirpyrequalizer.threshold = true; }
+        if(keyFile.has_key ("Directional Pyramid Equalizer", "Skinprotect")) { dirpyrequalizer.skinprotect = keyFile.get_double ("Directional Pyramid Equalizer", "Skinprotect"); if (pedited) pedited->dirpyrequalizer.skinprotect = true; }
     }
 }
 
@@ -2017,6 +2038,10 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& icm.gampos == other.icm.gampos
 		&& icm.slpos == other.icm.slpos
 		&& dirpyrequalizer == other.dirpyrequalizer
+	//	&& dirpyrequalizer.algo == other.dirpyrequalizer.algo
+		&& dirpyrequalizer.hueskin == other.dirpyrequalizer.hueskin
+		&& dirpyrequalizer.threshold == other.dirpyrequalizer.threshold
+		&& dirpyrequalizer.skinprotect == other.dirpyrequalizer.skinprotect
 		&& hsvequalizer.hcurve == other.hsvequalizer.hcurve
 		&& hsvequalizer.scurve == other.hsvequalizer.scurve
 		&& hsvequalizer.vcurve == other.hsvequalizer.vcurve
