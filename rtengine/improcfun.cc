@@ -2863,12 +2863,11 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			mix[1][2] = bwb;
 			mix[2][2] = bwb;
 
-			float in[3], val[3];
-
 #ifdef _OPENMP
-#pragma omp patallel for schedule(dynamic, 5)
+#pragma omp parallel for schedule(dynamic, 5)
 #endif
 			for (int i=0; i<tH; i++) {
+				float in[3], val[3];
 				for (int j=0; j<tW; j++) {
 					in[0] = tmpImage->r(i,j);
 					in[1] = tmpImage->g(i,j);
@@ -3529,7 +3528,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	if (hhCurve) delete hhCurve;
 	
   //  t2e.set();
-  //  printf("Chromil took %d µsec\n",t2e.etime(t1e));
+  //  printf("Chromil took %d ï¿½sec\n",t2e.etime(t1e));
 	
 }
 
