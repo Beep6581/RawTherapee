@@ -291,10 +291,14 @@ void ParamsEdited::set (bool v) {
 	raw.exTwoGreen=v;
 
 	dirpyrequalizer.enabled = v;
+	dirpyrequalizer.gamutlab = v;
 	for(int i = 0; i < 5; i++) {
 		dirpyrequalizer.mult[i] = v;
 	}
 	dirpyrequalizer.threshold = v;
+	dirpyrequalizer.skinprotect = v;
+	dirpyrequalizer.hueskin = v;
+	//dirpyrequalizer.algo = v;
 	hsvequalizer.hcurve = v;
 	hsvequalizer.scurve = v;
 	hsvequalizer.vcurve = v;
@@ -575,10 +579,14 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.exTwoGreen = p.raw.twogreen == other.raw.twogreen;
 
         dirpyrequalizer.enabled = dirpyrequalizer.enabled && p.dirpyrequalizer.enabled == other.dirpyrequalizer.enabled;
+        dirpyrequalizer.gamutlab = dirpyrequalizer.gamutlab && p.dirpyrequalizer.gamutlab == other.dirpyrequalizer.gamutlab;
         for(int i = 0; i < 5; i++) {
             dirpyrequalizer.mult[i] = dirpyrequalizer.mult[i] && p.dirpyrequalizer.mult[i] == other.dirpyrequalizer.mult[i];
         }
         dirpyrequalizer.threshold = dirpyrequalizer.threshold && p.dirpyrequalizer.threshold == other.dirpyrequalizer.threshold;
+        dirpyrequalizer.skinprotect = dirpyrequalizer.skinprotect && p.dirpyrequalizer.skinprotect == other.dirpyrequalizer.skinprotect;
+    //    dirpyrequalizer.algo = dirpyrequalizer.algo && p.dirpyrequalizer.algo == other.dirpyrequalizer.algo;
+        dirpyrequalizer.hueskin = dirpyrequalizer.hueskin && p.dirpyrequalizer.hueskin == other.dirpyrequalizer.hueskin;
         hsvequalizer.hcurve = hsvequalizer.hcurve && p.hsvequalizer.hcurve == other.hsvequalizer.hcurve;
         hsvequalizer.scurve = hsvequalizer.scurve && p.hsvequalizer.scurve == other.hsvequalizer.scurve;
         hsvequalizer.vcurve = hsvequalizer.vcurve && p.hsvequalizer.vcurve == other.hsvequalizer.vcurve;
@@ -861,10 +869,14 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (raw.ff_BlurType)    toEdit.raw.ff_BlurType     = mods.raw.ff_BlurType;
 
 	if (dirpyrequalizer.enabled)	toEdit.dirpyrequalizer.enabled	= mods.dirpyrequalizer.enabled;
+	if (dirpyrequalizer.gamutlab)	toEdit.dirpyrequalizer.gamutlab	= mods.dirpyrequalizer.gamutlab;
 	for(int i = 0; i < 5; i++) {
 		if(dirpyrequalizer.mult[i])	toEdit.dirpyrequalizer.mult[i]	= dontforceSet && options.baBehav[ADDSET_DIRPYREQ] ? toEdit.dirpyrequalizer.mult[i] + mods.dirpyrequalizer.mult[i] : mods.dirpyrequalizer.mult[i];
 	}
 	if (dirpyrequalizer.threshold)  toEdit.dirpyrequalizer.threshold= dontforceSet && options.baBehav[ADDSET_DIRPYREQ_THRESHOLD] ? toEdit.dirpyrequalizer.threshold + mods.dirpyrequalizer.threshold : mods.dirpyrequalizer.threshold;
+	if (dirpyrequalizer.skinprotect)toEdit.dirpyrequalizer.skinprotect= dontforceSet && options.baBehav[ADDSET_DIRPYREQ_SKINPROTECT] ? toEdit.dirpyrequalizer.skinprotect + mods.dirpyrequalizer.skinprotect : mods.dirpyrequalizer.skinprotect;
+	if (dirpyrequalizer.hueskin)	toEdit.dirpyrequalizer.hueskin	= mods.dirpyrequalizer.hueskin;
+//	if (dirpyrequalizer.algo)		toEdit.dirpyrequalizer.algo		= mods.dirpyrequalizer.algo;
 	if (hsvequalizer.hcurve)		toEdit.hsvequalizer.hcurve		= mods.hsvequalizer.hcurve;
 	if (hsvequalizer.scurve)		toEdit.hsvequalizer.scurve		= mods.hsvequalizer.scurve;
 	if (hsvequalizer.vcurve)		toEdit.hsvequalizer.vcurve		= mods.hsvequalizer.vcurve;

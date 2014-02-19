@@ -74,6 +74,7 @@ class Crop : public DetailedCrop, public EditBuffer {
     public:
         Crop             (ImProcCoordinator* parent, EditDataProvider *editDataProvider);
         virtual ~Crop    ();
+        int skip2;
 
         void mLock       () { cropMutex.lock(); }
         void mUnlock     () { cropMutex.lock(); }

@@ -272,9 +272,14 @@ enum ProcEvent {
 	EvLLHCurve=246,
 	EvLHHCurve=247,
 	EvDirPyrEqualizerThreshold=248,
-	EvDPDNenhance=249,	
-	EvBWMethodalg=250,	
-	NUMOFEVENTS=251
+	EvDPDNenhance=249,
+	EvBWMethodalg=250,
+	EvDirPyrEqualizerSkin=251,
+	EvDirPyrEqlgamutlab=252,
+	EvDirPyrEqualizerHueskin=253,
+//	EvDirPyrEqualizeralg=254,
+	
+	NUMOFEVENTS=254
 };
 }
 #endif

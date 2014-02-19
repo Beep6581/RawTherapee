@@ -111,7 +111,7 @@ class Crop : public Gtk::VBox, public CropGUIListener, public FoldableToolPanel,
     void resizeScaleChanged (double rsc);
     void hFlipCrop          ();
     void vFlipCrop          ();
-    void rotateCrop         (int deg);
+    void rotateCrop         (int deg, bool hflip, bool vflip);
 };
 
 #endif

@@ -593,9 +593,9 @@ PIX_SORT(pp[4],pp[7]); PIX_SORT(pp[4],pp[2]); PIX_SORT(pp[6],pp[4]); \
 PIX_SORT(pp[4],pp[2]); median=pp[4];} //pp4 = median
 
 #if defined( __SSE2__ ) && defined( WIN32 )
-__attribute__((force_align_arg_pointer)) void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, double radius, int thresh, int mode)
+__attribute__((force_align_arg_pointer)) void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, double radius, int thresh, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom, int hotbad)
 #else
-void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, double radius, int thresh, int mode)
+void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, double radius, int thresh, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom, int hotbad)
 #endif
 {
 	const int halfwin = ceil(2*radius)+1;
@@ -1011,6 +1011,7 @@ float chrommed=0.f;
 #pragma omp for
 #endif
 	for(int i = 0; i < height; i++ ) {
+/*	
 #ifdef __SSE2__
 		for(j = 0; j < width-3; j+=4) {
 			interav = LVFU(tmaa[i][j]);
@@ -1025,13 +1026,23 @@ float chrommed=0.f;
 			dst->C_p[i][j]=sqrt(SQR(interb)+SQR(intera));
 		}
 #else
+*/
 		for(int j = 0; j < width; j++) {
 			float intera = tmaa[i][j];
 			float interb = tmbb[i][j];
+			float CC=sqrt(SQR(interb)+SQR(intera));
+			if(hotbad==0) {
+			if(CC < chrom && skinprot !=0.f){	
 			dst->h_p[i][j]=(xatan2f(interb,intera))/piid;
 			dst->C_p[i][j]=sqrt(SQR(interb)+SQR(intera));
+			}
+			}
+			else {
+			dst->h_p[i][j]=(xatan2f(interb,intera))/piid;
+			dst->C_p[i][j]=sqrt(SQR(interb)+SQR(intera));			
+			}
 		}
-#endif
+//#endif
 	}
 }
 
@@ -1070,6 +1081,500 @@ float chrommed=0.f;
 	
 	
 }
+
+
+#if defined( __SSE2__ ) && defined( WIN32 )
+__attribute__((force_align_arg_pointer)) void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, double radius, int thresh, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom)
+#else
+void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, double radius, int thresh, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom)
+#endif
+{
+	const int halfwin = ceil(2*radius)+1;
+    MyTime t1,t2;
+    t1.set();
+
+	const int width=src->W, height=src->H;
+//	const float piid=3.14159265f/180.f;
+	float shfabs, shmed;
+
+	int i1, j1, tot;
+	const float eps = 1.0f;
+	const float eps2 = 0.01f;
+	float shsum, dirsh, norm, sum;	
+
+	float** sraa;
+	sraa = new float*[height];
+	for (int i=0; i<height; i++)
+		sraa[i] = new float[width];
+
+	float** srbb;
+	srbb = new float*[height];
+	for (int i=0; i<height; i++)
+		srbb[i] = new float[width];
+
+	float** tmaa;
+	tmaa = new float*[height];
+	for (int i=0; i<height; i++)
+		tmaa[i] = new float[width];
+
+	float** tmbb;
+	tmbb = new float*[height];
+	for (int i=0; i<height; i++)
+		tmbb[i] = new float[width];
+
+	float* badpix = (float*)malloc(width*height*sizeof(float));
+
+	float** tmL;
+		tmL = new float*[height];
+	for (int i=0; i<height; i++) {
+			tmL[i] = new float[width];
+		}
+
+
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+//	float2 sincosval;
+#ifdef __SSE2__
+	int j;
+//	vfloat2 sincosvalv;
+//	__m128 piidv = _mm_set1_ps(piid);
+#endif // __SSE2__
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for (int i=0; i<height; i++) {
+#ifdef __SSE2__
+		for (j=0; j<width-3; j+=4) {
+			_mm_storeu_ps(&sraa[i][j],LVFU(src->a[i][j]));
+			_mm_storeu_ps(&srbb[i][j],LVFU(src->b[i][j]));
+		}		
+		for (; j<width; j++) {
+			sraa[i][j]=src->a[i][j];			
+			srbb[i][j]=src->b[i][j];
+		}		
+#else
+		for (int j=0; j<width; j++) {
+			sraa[i][j]=src->a[i][j];			
+			srbb[i][j]=src->b[i][j];
+		}		
+#endif
+	}
+}
+
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+	{
+	AlignedBufferMP<double> buffer(max(src->W,src->H));
+	//chroma a and b
+	if(mode>=2) {//choice of gaussian blur 
+		gaussHorizontal<float> (sraa, tmaa, buffer, src->W, src->H, radius);
+		gaussHorizontal<float> (srbb, tmbb, buffer, src->W, src->H, radius);
+		gaussVertical<float>   (tmaa, tmaa, buffer, src->W, src->H, radius);
+		gaussVertical<float>   (tmbb, tmbb, buffer, src->W, src->H, radius);
+	}
+	//luma sh_p
+	gaussHorizontal<float> (src->L, tmL, buffer, src->W, src->H, 2.0);//low value to avoid artifacts
+	gaussVertical<float>   (tmL, tmL, buffer, src->W, src->H, 2.0);
+	}
+
+if(mode==1){	//choice of median
+#pragma omp parallel
+	{
+	int ip,in,jp,jn;
+	float pp[9],temp;
+#pragma omp for	nowait  //nowait because next loop inside this parallel region is independent on this one
+	for (int i=0; i<height; i++) {
+		if (i<2) {ip=i+2;} else {ip=i-2;}
+		if (i>height-3) {in=i-2;} else {in=i+2;}
+		for (int j=0; j<width; j++) {
+			if (j<2) {jp=j+2;} else {jp=j-2;}
+			if (j>width-3) {jn=j-2;} else {jn=j+2;}
+			med3(sraa[ip][jp],sraa[ip][j],sraa[ip][jn],sraa[i][jp],sraa[i][j],sraa[i][jn],sraa[in][jp],sraa[in][j],sraa[in][jn],tmaa[i][j]);
+		}
+	}
+#pragma omp for		
+	for (int i=0; i<height; i++) {
+		if (i<2) {ip=i+2;} else {ip=i-2;}
+		if (i>height-3) {in=i-2;} else {in=i+2;}
+		for (int j=0; j<width; j++) {
+			if (j<2) {jp=j+2;} else {jp=j-2;}
+			if (j>width-3) {jn=j-2;} else {jn=j+2;}
+			med3(srbb[ip][jp],srbb[ip][j],srbb[ip][jn],srbb[i][jp],srbb[i][j],srbb[i][jn],srbb[in][jp],srbb[in][j],srbb[in][jn],tmbb[i][j]);
+		}
+	}
+	}
+}
+
+//luma badpixels	
+	const float sh_thr = 4.5f;//low value for luma sh_p to avoid artifacts
+	const float shthr = sh_thr / 24.0f;	      
+
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+	int j;
+#ifdef __SSE2__
+	__m128 shfabsv, shmedv;
+	__m128 shthrv = _mm_set1_ps(shthr);
+	__m128 onev = _mm_set1_ps(1.0f);
+#endif // __SSE2__
+#ifdef _OPENMP
+#pragma omp for private(shfabs, shmed,i1,j1)
+#endif
+	for (int i=0; i < height; i++) {
+		for (j=0; j < 2; j++) {
+			shfabs = fabs(src->L[i][j]-tmL[i][j]);
+			shmed=0.0f;
+			for (i1=max(0,i-2); i1<=min(i+2,height-1); i1++ )
+				for (j1=0; j1<=j+2; j1++ ) {
+					shmed += fabs(src->L[i1][j1]-tmL[i1][j1]);
+				}
+			badpix[i*width+j] = (shfabs>((shmed-shfabs)*shthr));
+		}
+		
+#ifdef __SSE2__
+		for (; j < width-5; j+=4) {
+			shfabsv = vabsf(LVFU(src->L[i][j])-LVFU(tmL[i][j]));
+			shmedv = _mm_setzero_ps();
+			for (i1=max(0,i-2); i1<=min(i+2,height-1); i1++ )
+				for (j1=j-2; j1<=j+2; j1++ ) {
+					shmedv += vabsf(LVFU(src->L[i1][j1])-LVFU(tmL[i1][j1]));
+				}
+			_mm_storeu_ps( &badpix[i*width+j], vself(vmaskf_gt(shfabsv,(shmedv - shfabsv)*shthrv), onev, _mm_setzero_ps()));
+		}
+		for (; j < width-2; j++) {
+			shfabs = fabs(src->L[i][j]-tmL[i][j]);
+			shmed=0.0f;
+			for (i1=max(0,i-2); i1<=min(i+2,height-1); i1++ )
+				for (j1=j-2; j1<=j+2; j1++ ) {
+					shmed += fabs(src->L[i1][j1]-tmL[i1][j1]);
+				}
+			badpix[i*width+j] = (shfabs>((shmed-shfabs)*shthr));
+		}
+#else
+		for (; j < width-2; j++) {
+			shfabs = fabs(src->L[i][j]-tmL[i][j]);
+			shmed=0.0f;
+			for (i1=max(0,i-2); i1<=min(i+2,height-1); i1++ )
+				for (j1=j-2; j1<=j+2; j1++ ) {
+					shmed += fabs(src->L[i1][j1]-tmL[i1][j1]);
+				}
+			badpix[i*width+j] = (shfabs>((shmed-shfabs)*shthr));
+		}
+#endif
+		for (; j < width; j++) {
+			shfabs = fabs(src->L[i][j]-tmL[i][j]);
+			shmed=0.0f;
+			for (i1=max(0,i-2); i1<=min(i+2,height-1); i1++ )
+				for (j1=j-2; j1<width; j1++ ) {
+					shmed += fabs(src->L[i1][j1]-tmL[i1][j1]);
+				}
+			badpix[i*width+j] = (shfabs>((shmed-shfabs)*shthr));
+		}
+	}
+}
+
+
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+	int j;
+#ifdef _OPENMP
+#pragma omp for private(shsum,norm,dirsh,sum,i1,j1) schedule(dynamic,16)
+#endif
+	for (int i=0; i < height; i++) {
+		for (j=0; j < 2; j++) {
+			if (!badpix[i*width+j]) continue;
+			norm=0.0f;
+			shsum=0.0f;
+			sum=0.0f;
+			tot=0;
+			for (i1=max(0,i-2); i1<=min(i+2,height-1); i1++ )
+				for (j1=0; j1<=j+2; j1++ ) {
+					if (i1==i && j1==j) continue;
+					if (badpix[i1*width+j1]) continue;
+					sum += src->L[i1][j1];
+					tot++;
+					dirsh = 1.f/(SQR(src->L[i1][j1]-src->L[i][j])+eps);
+					shsum += dirsh*src->L[i1][j1];
+					norm += dirsh;
+			}
+			if (norm > 0.f) {
+				src->L[i][j]=shsum/norm;
+			}
+			else {
+				if(tot > 0) src->L[i][j]=sum / tot;
+				}
+		}
+		for (; j < width-2; j++) {
+			if (!badpix[i*width+j]) continue;
+			norm=0.0f;
+			shsum=0.0f;
+			sum=0.0f;
+			tot=0;
+			for (i1=max(0,i-2); i1<=min(i+2,height-1); i1++ )
+				for (j1=j-2; j1<=j+2; j1++ ) {
+					if (i1==i && j1==j) continue;
+					if (badpix[i1*width+j1]) continue;
+					sum += src->L[i1][j1];
+					tot++;
+					dirsh = 1.f/(SQR(src->L[i1][j1]-src->L[i][j])+eps);
+					shsum += dirsh*src->L[i1][j1];
+					norm += dirsh;
+			}
+			if (norm > 0.f) {
+				src->L[i][j]=shsum/norm;
+			}
+			else {
+				if(tot > 0) src->L[i][j]=sum / tot;
+				}
+		}
+		for (; j < width; j++) {
+			if (!badpix[i*width+j]) continue;
+			norm=0.0f;
+			shsum=0.0f;
+			sum=0.0f;
+			tot=0;
+			for (i1=max(0,i-2); i1<=min(i+2,height-1); i1++ )
+				for (j1=j-2; j1<width; j1++ ) {
+					if (i1==i && j1==j) continue;
+					if (badpix[i1*width+j1]) continue;
+					sum += src->L[i1][j1];
+					tot++;
+					dirsh = 1.f/(SQR(src->L[i1][j1]-src->L[i][j])+eps);
+					shsum += dirsh*src->L[i1][j1];
+					norm += dirsh;
+			}
+			if (norm > 0.f) {
+				src->L[i][j]=shsum/norm;
+			}
+			else {
+				if(tot > 0) src->L[i][j]=sum / tot;
+				}
+		}
+	}
+}
+// end luma badpixels		
+
+if(mode==3) {
+// begin chroma badpixels
+float chrommed=0.f;
+#ifdef _OPENMP
+#pragma omp parallel for reduction(+:chrommed)
+#endif
+	for(int i = 0; i < height; i++ ) {
+		for(int j = 0; j < width; j++) {
+			float chroma =SQR(sraa[i][j]-tmaa[i][j])+SQR(srbb[i][j]-tmbb[i][j]);
+			chrommed += chroma;
+			badpix[i*width+j]=chroma;
+		}
+	}
+	chrommed /= (height*width);
+	float threshfactor = (thresh*chrommed)/33.f;   
+
+// now chrommed is calculated, so we postprocess badpix to reduce the number of divisions in future
+#ifdef __SSE2__
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+	int j;
+	__m128 sumv = _mm_set1_ps( chrommed + eps2 );
+	__m128 onev = _mm_set1_ps( 1.0f );
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for(int i = 0; i<height; i++) {
+		for(j=0; j < width-3; j+=4)
+			_mm_storeu_ps( &badpix[i*width+j], onev/(LVFU(badpix[i*width+j])+sumv));
+		for(; j < width; j++)
+			badpix[i*width+j] = 1.f/(badpix[i*width+j]+chrommed+eps2);
+	}
+}
+#else
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+	for(int i = 0; i<height; i++)
+		for(int j = 0; j < width; j++)
+			badpix[i*width+j] = 1.f/(badpix[i*width+j]+chrommed+eps2);
+#endif
+
+	// because we changed the values of badpix we also have to recalculate threshfactor
+	threshfactor = 1.0f/(threshfactor + chrommed + eps2);
+
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+	int j;
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic,16)
+#endif
+	for(int i = 0; i < height; i++ ) {
+		for(j = 0; j < halfwin; j++) {
+			tmaa[i][j] = sraa[i][j];
+			tmbb[i][j] = srbb[i][j];
+
+			if (badpix[i*width+j]<threshfactor) {
+				float atot=0.f;
+				float btot=0.f;
+				float norm=0.f;
+				float wt;
+				for (int i1=max(0,i-halfwin+1); i1<min(height,i+halfwin); i1++)
+					for (int j1=0; j1<j+halfwin; j1++) {
+						wt = badpix[i1*width+j1];
+						atot += wt*sraa[i1][j1];
+						btot += wt*srbb[i1][j1];
+						norm += wt;
+					}
+				if(norm > 0.f){	
+				tmaa[i][j] = (atot/norm);
+				tmbb[i][j] = (btot/norm);
+				}
+			}
+		}
+		for(; j < width-halfwin; j++) {
+			tmaa[i][j] = sraa[i][j];
+			tmbb[i][j] = srbb[i][j];
+
+			if (badpix[i*width+j]<threshfactor) {
+				float atot=0.f;
+				float btot=0.f;
+				float norm=0.f;
+				float wt;
+				for (int i1=max(0,i-halfwin+1); i1<min(height,i+halfwin); i1++)
+					for (int j1=j-halfwin+1; j1<j+halfwin; j1++) {
+						wt = badpix[i1*width+j1];
+						atot += wt*sraa[i1][j1];
+						btot += wt*srbb[i1][j1];
+						norm += wt;
+					}
+				if(norm > 0.f){	
+				tmaa[i][j] = (atot/norm);
+				tmbb[i][j] = (btot/norm);
+				}
+			}
+		}
+		for(; j < width; j++) {
+			tmaa[i][j] = sraa[i][j];
+			tmbb[i][j] = srbb[i][j];
+
+			if (badpix[i*width+j]<threshfactor) {
+				float atot=0.f;
+				float btot=0.f;
+				float norm=0.f;
+				float wt;
+				for (int i1=max(0,i-halfwin+1); i1<min(height,i+halfwin); i1++)
+					for (int j1=j-halfwin+1; j1<width; j1++) {
+						wt = badpix[i1*width+j1];
+						atot += wt*sraa[i1][j1];
+						btot += wt*srbb[i1][j1];
+						norm += wt;
+					}
+				if(norm > 0.f){	
+				tmaa[i][j] = (atot/norm);
+				tmbb[i][j] = (btot/norm);
+				}
+			}
+		}
+	}
+}
+
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+#ifdef __SSE2__
+	int j;
+	__m128 interav, interbv;
+	
+//	__m128 piidv = _mm_set1_ps(piid);
+#endif
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for(int i = 0; i < height; i++ ) {
+	/*
+#ifdef __SSE2__
+		for(j = 0; j < width-3; j+=4) {
+			interav = LVFU(tmaa[i][j]);
+			interbv = LVFU(tmbb[i][j]);
+			_mm_storeu_ps(&dst->a[i][j],(interav));
+			_mm_storeu_ps(&dst->b[i][j],(interbv));
+			}
+			
+		//	_mm_storeu_ps(&dst->C_p[i][j],_mm_sqrt_ps(SQRV(interbv)+SQRV(interav)));
+		}
+		for(; j < width; j++) {
+			float intera = tmaa[i][j];
+			float interb = tmbb[i][j];
+		
+			dst->a[i][j]=(intera);
+			dst->b[i][j]=(interb);
+		}
+#else
+*/
+		for(int j = 0; j < width; j++) {
+			float intera = tmaa[i][j];
+			float interb = tmbb[i][j];
+			float HH=xatan2f(interb,intera);
+			float CC=sqrt(SQR(interb/327.68)+SQR(intera/327.68f));	
+		//	if((HH > b_l && HH < t_r) && CC < chrom && skinprot !=0.f){	
+			if(CC < chrom && skinprot !=0.f){	
+			
+			dst->a[i][j]=intera;
+			dst->b[i][j]=interb;
+			}
+		}
+//#endif
+	}
+}
+}
+	if(src != dst) {
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+		for(int i = 0; i < height; i++ )
+			for(int j = 0; j < width; j++)
+				dst->L[i][j] = src->L[i][j];
+	}
+
+
+	for (int i=0; i<height; i++)
+		delete [] sraa[i];
+	delete [] sraa;
+	for (int i=0; i<height; i++)
+		delete [] srbb[i];
+	delete [] srbb;
+	for (int i=0; i<height; i++)
+		delete [] tmaa[i];
+	delete [] tmaa;
+	for (int i=0; i<height; i++)
+		delete [] tmbb[i];
+	delete [] tmbb;
+	for (int i=0; i<height; i++){
+		delete [] tmL[i];
+	}
+	delete [] tmL;
+
+	free(badpix);
+			
+    t2.set();
+    if( settings->verbose )
+           printf("Lab artifacts:- %d usec\n", t2.etime(t1));
+	
+	
+}
+
+
+
+
 }
 #undef PIX_SORT
 #undef med3

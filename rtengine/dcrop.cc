@@ -122,13 +122,10 @@ void Crop::update (int todo) {
 
     // re-allocate sub-images and arrays if their dimensions changed
     bool needsinitupdate = false;
-    if (!overrideWindow) {
+    if (!overrideWindow)
         needsinitupdate = setCropSizes (rqcropx, rqcropy, rqcropw, rqcroph, skip, true);
-    }
-    else {
+    else
         needsinitupdate = setCropSizes (wx, wy, ww, wh, ws, true); // this set skip=ws
-    }
-
     // it something has been reallocated, all processing steps have to be performed
     if (needsinitupdate || (todo & M_HIGHQUAL))
         todo = ALL;
@@ -151,9 +148,8 @@ void Crop::update (int todo) {
         if (params.coarse.hflip)       tr |= TR_HFLIP;
         if (params.coarse.vflip)       tr |= TR_VFLIP;
 
-        if (!needsinitupdate) {
+        if (!needsinitupdate)
             setCropSizes (rqcropx, rqcropy, rqcropw, rqcroph, skip, true);
-        }
         PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
         parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.icm, params.raw );
         //ColorTemp::CAT02 (origCrop, &params)	;
@@ -258,12 +254,17 @@ void Crop::update (int todo) {
             if((params.colorappearance.enabled && !settings->autocielab) ||(!params.colorappearance.enabled) ) {parent->ipf.defringe (labnCrop);}
             parent->ipf.MLsharpen (labnCrop);
             if((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {
-                    parent->ipf.MLmicrocontrast (labnCrop);
-                    parent->ipf.sharpening (labnCrop, (float**)cbuffer);
-                    parent->ipf.dirpyrequalizer (labnCrop);
-                    }
+                parent->ipf.MLmicrocontrast (labnCrop);
+                parent->ipf.sharpening (labnCrop, (float**)cbuffer);
+            }
         }
-
+     //   if (skip==1) {
+		
+        if((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {
+            parent->ipf.dirpyrequalizer (labnCrop, skip);
+		//	parent->ipf.Lanczoslab (labnCrop,labnCrop , 1.f/skip);
+		}
+     //   }
         if(params.colorappearance.enabled){
             float fnum = parent->imgsrc->getMetaData()->getFNumber  ();        // F number
             float fiso = parent->imgsrc->getMetaData()->getISOSpeed () ;       // ISO
@@ -286,17 +287,19 @@ void Crop::update (int todo) {
             if(skip==1) execsharp=true;
 
             if (!cieCrop)
-                cieCrop = new CieImage (cropw, croph);
+               { cieCrop = new CieImage (cropw, croph); }
 
             if(settings->ciecamfloat) {
                 float d; // not used after this block
+				skip2=skip;
                 parent->ipf.ciecam_02float (cieCrop, float(adap), begh, endh, 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
-                                            dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, 1,(float**)cbuffer, execsharp, d);
+                                            dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, 1,(float**)cbuffer, execsharp, d, skip, 1);			
             }
             else {
                 double dd; // not used after this block
+
                 parent->ipf.ciecam_02 (cieCrop,adap, begh, endh, 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
-                                       dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, 1,(float**)cbuffer, execsharp, dd);
+                                       dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, 1,(float**)cbuffer, execsharp, dd, skip, 1);
             }
         }
         else {

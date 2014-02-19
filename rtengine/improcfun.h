@@ -174,7 +174,6 @@ class ImProcFunctions {
 
 		bool iGamma; // true if inverse gamma has to be applied in rgbProc
 		double g;
-
 		static LUTf cachef;
 		float noisered;
 		float noiseblue;
@@ -205,10 +204,10 @@ class ImProcFunctions {
 		void luminanceCurve   (LabImage* lold, LabImage* lnew, LUTf &curve);
 		void ciecam_02float   (CieImage* ncie, float adap, int begh, int endh,  int pW, int pwb, LabImage* lab, const ProcParams* params,
 		                       const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3,
-		                       LUTu &histLCAM, LUTu &histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, float** buffer, bool execsharp, float &d);
+		                       LUTu &histLCAM, LUTu &histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, float** buffer, bool execsharp, float &d, int scalecd, int rtt);
 		void ciecam_02        (CieImage* ncie, double adap, int begh, int endh,  int pW, int pwb, LabImage* lab, const ProcParams* params,
 		                       const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3,
-		                       LUTu &histLCAM, LUTu &histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, float** buffer, bool execsharp, double &d);
+		                       LUTu &histLCAM, LUTu &histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, float** buffer, bool execsharp, double &d, int scalecd, int rtt);
 		void chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve,LUTf & satclcurve, LUTf &clcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histCLurve, LUTu &histLCurve, LUTu &histLurve);
 		void vibrance         (LabImage* lab);//Jacques' vibrance
 		void colorCurve       (LabImage* lold, LabImage* lnew);
@@ -218,6 +217,8 @@ class ImProcFunctions {
 		                       double focalLen, double focalLen35mm, float focusDist, int rawRotationDeg, bool fullImage);
 		void lab2monitorRgb   (LabImage* lab, Image8* image);
 		void resize           (Image16* src, Image16* dst, float dScale);
+	//	void Lanczoslab (LabImage* src, LabImage* dst, float scale);
+		
 		void deconvsharpening (LabImage* lab, float** buffer);
 		void deconvsharpeningcam (CieImage* ncie, float** buffer);
 		void MLsharpen (LabImage* lab);// Manuel's clarity / sharpening
@@ -230,7 +231,7 @@ class ImProcFunctions {
 		void impulse_nrcam (CieImage* ncie, double thresh);
 		
 		void dirpyrdenoise    (LabImage* src);//Emil's pyramid denoise
-		void dirpyrequalizer  (LabImage* lab);//Emil's equalizer
+		void dirpyrequalizer  (LabImage* lab, int scale);//Emil's equalizer
 		
 		void EPDToneMap(LabImage *lab, unsigned int Iterates = 0, int skip = 1);
 		void EPDToneMapCIE(CieImage *ncie, float a_w, float c_, float w_h, int Wid, int Hei, int begh, int endh, float minQ, float maxQ, unsigned int Iterates=0, int skip =1);
@@ -272,18 +273,20 @@ class ImProcFunctions {
 		float MadMax(float * HH_Coeffs, int &max, int datalen);
 		
 		// pyramid equalizer
-		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, const double * mult, const double dirpyrThreshold);//Emil's directional pyramid equalizer
-		void dirpyr_equalizercam    (CieImage* ncie, float ** src, float ** dst, int srcwidth, int srcheight, const double * mult, const double dirpyrThreshold, bool execdir );//Emil's directional pyramid equalizer
-		void dirpyr_channel      (float ** data_fine, float ** data_coarse, int width, int height, int level, int scale );
-		void idirpyr_eq_channel  (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult, const double dirpyrThreshold );
+		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, float ** l_a, float ** l_b, float ** dest_a, float ** dest_b, const double * mult, const double dirpyrThreshold, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice, int scale);//Emil's directional pyramid equalizer
+		void dirpyr_equalizercam    (CieImage* ncie, float ** src, float ** dst, int srcwidth, int srcheight, float ** h_p, float ** C_p,  const double * mult, const double dirpyrThreshold, const double skinprot, bool execdir, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice, int scale);//Emil's directional pyramid equalizer
+		void dirpyr_channel      (float ** data_fine, float ** data_coarse, int width, int height, int level, int scale, float ** l_a_h, float ** l_b_c, bool ciec);
+		void idirpyr_eq_channel  (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float multi[5], const double dirpyrThreshold, float ** l_a_h, float ** l_b_c, bool ciec, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice);
 
 		void defringe       (LabImage* lab);
 		void defringecam    (CieImage* ncie);
-		void badpixcam     	(CieImage* ncie, double rad, int thr, int mode);
+		void badpixcam     	(CieImage* ncie, double rad, int thr, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom, int hotbad);
+		void badpixlab     	(LabImage* lab, double rad, int thr, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom);
 		
 		void PF_correct_RT    (LabImage * src, LabImage * dst, double radius, int thresh);
 		void PF_correct_RTcam (CieImage * src, CieImage * dst, double radius, int thresh);
-		void Badpixelscam(CieImage * src, CieImage * dst, double radius, int thresh, int mode);
+		void Badpixelscam(CieImage * src, CieImage * dst, double radius, int thresh, int mode,  float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom, int hotbad);
+		void BadpixelsLab(LabImage * src, LabImage * dst, double radius, int thresh, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom);
 
 		Image8*     lab2rgb   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, bool standard_gamma);
 		Image16*    lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, Glib::ustring profi, Glib::ustring gam, bool freegamma, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6);// for gamma output		
