@@ -310,12 +310,24 @@ void Gradient::editToggled () {
 		unsubscribe();
 }
 
-// TODO
 CursorShape Gradient::getCursor(int objectID) {
-	EditDataProvider* editProvider = getEditProvider();
-	if (editProvider->object >= 0 || editProvider->object<=2)
-		return CSMove;
-	return CSOpenHand;
+	switch (objectID) {
+	case (0):
+	case (1):
+		return CSMoveRotate;
+	case (2):
+	case (3):
+		{
+		int angle = degree->getIntValue();
+		if (angle<-135 || (angle>=-45 && angle<=45) || angle>135)
+			return CSMove1DV;
+		return CSMove1DH;
+		}
+	case (4):
+		return CSMove2D;
+	default:
+		return CSOpenHand;
+	}
 }
 
 bool Gradient::mouseOver(int modifierKey) {
