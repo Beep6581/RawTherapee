@@ -53,13 +53,17 @@ Gradient::Gradient () : Gtk::VBox(), FoldableToolPanel(this), EditSubscriber(ET_
 	pack_start (*centerY);
 
 	// Instantiating the Editing geometry; positions will be initialized later
-	Line *hLine, *vLine;
+	Line *hLine, *vLine, *featherLine[2];
 	Circle *centerCircle;
 
 	// Visible geometry
 	hLine = new Line(); hLine->innerLineWidth=2;
 	vLine = new Line();
 	hLine->datum = vLine->datum = Geometry::IMAGE;
+
+	featherLine[0] = new Line();  featherLine[0]->innerLineWidth=2;
+	featherLine[1] = new Line();  featherLine[1]->innerLineWidth=2;
+	featherLine[0]->datum = featherLine[1]->datum = Geometry::IMAGE;
 
 	centerCircle = new Circle();
 	centerCircle->datum = Geometry::IMAGE;
@@ -69,12 +73,18 @@ Gradient::Gradient () : Gtk::VBox(), FoldableToolPanel(this), EditSubscriber(ET_
 
 	EditSubscriber::visibleGeometry.push_back( hLine );
 	EditSubscriber::visibleGeometry.push_back( vLine );
+	EditSubscriber::visibleGeometry.push_back( featherLine[0] );
+	EditSubscriber::visibleGeometry.push_back( featherLine[1] );
 	EditSubscriber::visibleGeometry.push_back( centerCircle );
 
 	// MouseOver geometry
 	hLine = new Line(); hLine->innerLineWidth=2;
 	vLine = new Line();
 	hLine->datum = vLine->datum = Geometry::IMAGE;
+
+	featherLine[0] = new Line();  featherLine[0]->innerLineWidth=2;
+	featherLine[1] = new Line();  featherLine[1]->innerLineWidth=2;
+	featherLine[0]->datum = featherLine[1]->datum = Geometry::IMAGE;
 
 	centerCircle = new Circle();
 	centerCircle->datum = Geometry::IMAGE;
@@ -84,6 +94,8 @@ Gradient::Gradient () : Gtk::VBox(), FoldableToolPanel(this), EditSubscriber(ET_
 
 	EditSubscriber::mouseOverGeometry.push_back( hLine );
 	EditSubscriber::mouseOverGeometry.push_back( vLine );
+	EditSubscriber::mouseOverGeometry.push_back( featherLine[0] );
+	EditSubscriber::mouseOverGeometry.push_back( featherLine[1] );
 	EditSubscriber::mouseOverGeometry.push_back( centerCircle );
 
 	show_all();
@@ -122,39 +134,57 @@ void Gradient::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 	lastEnabled = pp->gradient.enabled;
 
-	updateGeometry (pp->gradient.centerX, pp->gradient.centerY, pp->gradient.strength, pp->gradient.degree);
+	updateGeometry (pp->gradient.centerX, pp->gradient.centerY, pp->gradient.feather, pp->gradient.degree);
 
 	enableListener ();
 }
 
-void Gradient::updateGeometry(int centerX_, int centerY_, double strength_, double degree_) {
+void Gradient::updateGeometry(int centerX_, int centerY_, double feather_, double degree_) {
 	EditDataProvider* dataProvider = getEditProvider();
 	if (dataProvider) {
 		int imW, imH;
+		PolarCoord polCoord1, polCoord2;
 		dataProvider->getImageSize(imW, imH);
+		double decay = feather_ * sqrt(double(imW)*double(imW)+double(imH)*double(imH)) / 200.;
 
 		Coord origin(imW/2+centerX_*imW/200.f, imH/2+centerY_*imH/200.f);
 
 		Line *currLine;
 		Circle *currCircle;
-		// update left line
+		// update horizontal line
 		currLine = static_cast<Line*>(visibleGeometry.at(0));
-		currLine->begin.setFromPolar(PolarCoord(1500.f, float(-degree_+180)));  currLine->begin += origin;
-		currLine->end.setFromPolar  (PolarCoord(1500.f, float(-degree_    )));  currLine->end   += origin;
+		polCoord1.set(1500.f, float(-degree_+180));  currLine->begin.setFromPolar(polCoord1);  currLine->begin += origin;
+		polCoord1.set(1500.f, float(-degree_    ));  currLine->end.setFromPolar  (polCoord1);  currLine->end   += origin;
 		currLine = static_cast<Line*>(mouseOverGeometry.at(0));
-		currLine->begin.setFromPolar(PolarCoord(1500.f, float(-degree_+180)));  currLine->begin += origin;
-		currLine->end.setFromPolar  (PolarCoord(1500.f, float(-degree_    )));  currLine->end   += origin;
-		// update right line
+		polCoord1.set(1500.f, float(-degree_+180));  currLine->begin.setFromPolar(polCoord1);  currLine->begin += origin;
+		polCoord1.set(1500.f, float(-degree_    ));  currLine->end.setFromPolar  (polCoord1);  currLine->end   += origin;
+		// update vertical line
 		currLine = static_cast<Line*>(visibleGeometry.at(1));
-		currLine->begin.setFromPolar(PolarCoord( 700.f, float(-degree_+90 )));  currLine->begin += origin;
-		currLine->end.setFromPolar  (PolarCoord( 700.f, float(-degree_+270)));  currLine->end   += origin;
+		polCoord1.set( 700.f, float(-degree_+90 ));  currLine->begin.setFromPolar(polCoord1);  currLine->begin += origin;
+		polCoord1.set( 700.f, float(-degree_+270));  currLine->end.setFromPolar  (polCoord1);  currLine->end   += origin;
 		currLine = static_cast<Line*>(mouseOverGeometry.at(1));
-		currLine->begin.setFromPolar(PolarCoord( 700.f, float(-degree_+90 )));  currLine->begin += origin;
-		currLine->end.setFromPolar  (PolarCoord( 700.f, float(-degree_+270)));  currLine->end   += origin;
+		polCoord1.set( 700.f, float(-degree_+90 ));  currLine->begin.setFromPolar(polCoord1);  currLine->begin += origin;
+		polCoord1.set( 700.f, float(-degree_+270));  currLine->end.setFromPolar  (polCoord1);  currLine->end   += origin;
+		// update upper feather line
+		currLine = static_cast<Line*>(visibleGeometry.at(2));
+		polCoord2.set(decay, float(-degree_+270));
+		polCoord1.set(350.f, float(-degree_+180));  currLine->begin.setFromPolar(polCoord1+polCoord2);  currLine->begin += origin;
+		polCoord1.set(350.f, float(-degree_    ));  currLine->end.setFromPolar  (polCoord1+polCoord2);  currLine->end   += origin;
+		currLine = static_cast<Line*>(mouseOverGeometry.at(2));
+		polCoord1.set(350.f, float(-degree_+180));  currLine->begin.setFromPolar(polCoord1+polCoord2);  currLine->begin += origin;
+		polCoord1.set(350.f, float(-degree_    ));  currLine->end.setFromPolar  (polCoord1+polCoord2);  currLine->end   += origin;
+		// update lower feather line
+		currLine = static_cast<Line*>(visibleGeometry.at(3));
+		polCoord2.set(decay, float(-degree_+90));
+		polCoord1.set(350.f, float(-degree_+180));  currLine->begin.setFromPolar(polCoord1+polCoord2);  currLine->begin += origin;
+		polCoord1.set(350.f, float(-degree_    ));  currLine->end.setFromPolar  (polCoord1+polCoord2);  currLine->end   += origin;
+		currLine = static_cast<Line*>(mouseOverGeometry.at(3));
+		polCoord1.set(350.f, float(-degree_+180));  currLine->begin.setFromPolar(polCoord1+polCoord2);  currLine->begin += origin;
+		polCoord1.set(350.f, float(-degree_    ));  currLine->end.setFromPolar  (polCoord1+polCoord2);  currLine->end   += origin;
 		// update circle's position
-		currCircle = static_cast<Circle*>(visibleGeometry.at(2));
+		currCircle = static_cast<Circle*>(visibleGeometry.at(4));
 		currCircle->center = origin;
-		currCircle = static_cast<Circle*>(mouseOverGeometry.at(2));
+		currCircle = static_cast<Circle*>(mouseOverGeometry.at(4));
 		currCircle->center = origin;
 	}
 }
@@ -203,8 +233,9 @@ void Gradient::setDefaults (const ProcParams* defParams, const ParamsEdited* ped
 
 void Gradient::adjusterChanged (Adjuster* a, double newval) {
 
+	updateGeometry (int(centerX->getValue()), int(centerY->getValue()), feather->getValue(), degree->getValue());
+
 	if (listener && enabled->get_active()) {
-		updateGeometry (int(centerX->getValue()), int(centerY->getValue()), strength->getValue(), degree->getValue());
 
 		if (a == degree)
 			listener->panelChanged (EvGradientDegree, degree->getTextValue());
@@ -281,16 +312,31 @@ void Gradient::editToggled () {
 
 // TODO
 CursorShape Gradient::getCursor(int objectID) {
+	EditDataProvider* editProvider = getEditProvider();
+	if (editProvider->object >= 0 || editProvider->object<=2)
+		return CSMove;
 	return CSOpenHand;
 }
 
 bool Gradient::mouseOver(int modifierKey) {
 	EditDataProvider* editProvider = getEditProvider();
 	if (editProvider && editProvider->object!=lastObject) {
-		if (lastObject > -1)
-			EditSubscriber::visibleGeometry.at(lastObject)->state = Geometry::NORMAL;
-		if (editProvider->object > -1)
-			EditSubscriber::visibleGeometry.at(editProvider->object)->state = Geometry::PRELIGHT;
+		if (lastObject > -1) {
+			if (lastObject == 2 || lastObject == 3) {
+				EditSubscriber::visibleGeometry.at(2)->state = Geometry::NORMAL;
+				EditSubscriber::visibleGeometry.at(3)->state = Geometry::NORMAL;
+			}
+			else
+				EditSubscriber::visibleGeometry.at(lastObject)->state = Geometry::NORMAL;
+		}
+		if (editProvider->object > -1) {
+			if (editProvider->object == 2 || editProvider->object == 3) {
+				EditSubscriber::visibleGeometry.at(2)->state = Geometry::PRELIGHT;
+				EditSubscriber::visibleGeometry.at(3)->state = Geometry::PRELIGHT;
+			}
+			else
+				EditSubscriber::visibleGeometry.at(editProvider->object)->state = Geometry::PRELIGHT;
+		}
 		lastObject = editProvider->object;
 		return true;
 	}
@@ -317,14 +363,41 @@ bool Gradient::button1Pressed(int modifierKey) {
 
 		pCoord.setFromCartesian(p1, p2);
 		draggedPointOldAngle = pCoord.angle;
-		draggedPointAdjusterAngle = degree->getValue();
 		//printf("\ndraggedPointOldAngle=%.3f\n\n", draggedPointOldAngle);
+		draggedPointAdjusterAngle = degree->getValue();
+		if (lastObject==2 || lastObject==3) {
+			// Dragging a line to change the angle
+			PolarCoord draggedPoint;
+			Coord currPos;
+			currPos = provider->posImage;
+			Coord centerPos = draggedCenter;
+
+			double diagonal = sqrt(double(imW)*double(imW)+double(imH)*double(imH));
+
+			// trick to get the correct angle (clockwise/counter-clockwise)
+			int p = centerPos.y;
+			centerPos.y = currPos.y;
+			currPos.y = p;
+
+			draggedPoint.setFromCartesian(centerPos, currPos);
+			// compute the projected value of the dragged point
+			draggedFeatherOffset = draggedPoint.radius * sin((draggedPoint.angle-degree->getValue())/180.*M_PI);
+			if (lastObject==3)
+				draggedFeatherOffset = -draggedFeatherOffset;
+			draggedFeatherOffset -= (feather->getValue() / 200. * diagonal);
+		}
 		return false;
 	}
 	else {
 		// this will let this class ignore further drag events
-		if (lastObject > -1)  // should theoretically always be true
-			EditSubscriber::visibleGeometry.at(lastObject)->state = Geometry::NORMAL;
+		if (lastObject > -1) { // should theoretically always be true
+			if (lastObject == 2 || lastObject == 3) {
+				EditSubscriber::visibleGeometry.at(2)->state = Geometry::NORMAL;
+				EditSubscriber::visibleGeometry.at(3)->state = Geometry::NORMAL;
+			}
+			else
+				EditSubscriber::visibleGeometry.at(lastObject)->state = Geometry::NORMAL;
+		}
 		lastObject = -1;
 		return true;
 	}
@@ -373,13 +446,45 @@ bool Gradient::drag(int modifierKey) {
 		//printf("currAngle: %.3f = degree: %.3f + deltaAngle: %.3f %s /  draggedPointOldAngle: %.3f\n", draggedPointAdjusterAngle, degree->getValue(), deltaAngle, degree->getValue()>180.?">180":degree->getValue()<180.?"<180":"", draggedPointOldAngle);
 		if (int(draggedPointAdjusterAngle) != degree->getIntValue()) {
 			degree->setValue(draggedPointAdjusterAngle);
-			updateGeometry (int(centerX->getValue()), int(centerY->getValue()), strength->getValue(), degree->getValue());
+			updateGeometry (int(centerX->getValue()), int(centerY->getValue()), feather->getValue(), degree->getValue());
 			if (listener)
 				listener->panelChanged (EvGradientDegree, degree->getTextValue());
 			return true;
 		}
 	}
-	else if (lastObject==2) {
+	else if (lastObject==2 || lastObject==3) {
+		// Dragging the upper or lower feather bar
+		PolarCoord draggedPoint;
+		Coord currPos;
+		currPos = provider->posImage+provider->deltaImage;
+		Coord centerPos = draggedCenter;
+
+		double diagonal = sqrt(double(imW)*double(imW)+double(imH)*double(imH));
+
+		// trick to get the correct angle (clockwise/counter-clockwise)
+		int p = centerPos.y;
+		centerPos.y = currPos.y;
+		currPos.y = p;
+
+		draggedPoint.setFromCartesian(centerPos, currPos);
+		double currDraggedFeatherOffset = draggedPoint.radius * sin((draggedPoint.angle-degree->getValue())/180.*M_PI);
+		if (lastObject==2)
+			// Dragging the upper feather bar
+			currDraggedFeatherOffset -= draggedFeatherOffset;
+		else if (lastObject==3)
+			// Dragging the lower feather bar
+			currDraggedFeatherOffset = -currDraggedFeatherOffset + draggedFeatherOffset;
+		currDraggedFeatherOffset = currDraggedFeatherOffset * 200. / diagonal;
+
+		if (int(currDraggedFeatherOffset) != feather->getIntValue()) {
+			feather->setValue(double(int(currDraggedFeatherOffset)));
+			updateGeometry (centerX->getValue(), centerY->getValue(), feather->getValue(), degree->getValue());
+			if (listener)
+				listener->panelChanged (EvGradientFeather, feather->getTextValue());
+			return true;
+		}
+	}
+	else if (lastObject==4) {
 		// Dragging the circle to change the center
 		Coord currPos;
 		draggedCenter += provider->deltaPrevImage;
@@ -390,7 +495,7 @@ bool Gradient::drag(int modifierKey) {
 		if (newCenterX!=centerX->getIntValue() || newCenterY!=centerY->getIntValue()) {
 			centerX->setValue(newCenterX);
 			centerY->setValue(newCenterY);
-			updateGeometry (newCenterX, newCenterY, strength->getValue(), degree->getValue());
+			updateGeometry (newCenterX, newCenterY, feather->getValue(), degree->getValue());
 			if (listener)
 				listener->panelChanged (EvGradientCenter, Glib::ustring::compose ("X=%1\nY=%2", centerX->getTextValue(), centerY->getTextValue()));
 			return true;

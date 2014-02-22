@@ -24,6 +24,7 @@ class Gradient : public Gtk::VBox, public AdjusterListener, public FoldableToolP
     Adjuster* centerY;
     double draggedPointOldAngle;
     double draggedPointAdjusterAngle;
+    double draggedFeatherOffset;
     Coord draggedCenter;
     bool lastEnabled;
     sigc::connection enaConn, editConn;
@@ -40,7 +41,7 @@ class Gradient : public Gtk::VBox, public AdjusterListener, public FoldableToolP
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
 
-    void updateGeometry (int centerX_, int centerY_, double strength_, double degree_);
+    void updateGeometry (int centerX_, int centerY_, double feather_, double degree_);
 
     void adjusterChanged (Adjuster* a, double newval);
     void enabledChanged ();
