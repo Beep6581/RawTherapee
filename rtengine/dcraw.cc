@@ -66,7 +66,6 @@
 #ifdef WIN32
 #include <sys/utime.h>
 #include <winsock2.h>
-#pragma comment(lib, "ws2_32.lib")
 #define snprintf _snprintf
 #define strcasecmp stricmp
 #define strncasecmp strnicmp
@@ -8319,6 +8318,8 @@ dng_skip:
     raw_color = 0;
   }
   if(!strncmp(make, "Samsung", 7) && !strncmp(model, "GX20",4))
+	adobe_coeff (make, model);
+  if(!strncmp(make, "Pentax", 6) && !strncmp(model, "K10D",4))
 	adobe_coeff (make, model);
   if (raw_color) adobe_coeff (make, model);
   if (load_raw == &CLASS kodak_radc_load_raw)
