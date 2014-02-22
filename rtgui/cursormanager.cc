@@ -44,11 +44,19 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWin) {
     Glib::RefPtr<Gdk::Pixbuf> close_hand = safe_create_from_file("closedhand.png");
     Glib::RefPtr<Gdk::Pixbuf> wbpick = safe_create_from_file("gtk-color-picker-small.png");
     Glib::RefPtr<Gdk::Pixbuf> empty = safe_create_from_file("empty.png");
-    
+    Glib::RefPtr<Gdk::Pixbuf> move2D = safe_create_from_file("move-2D.png");
+    Glib::RefPtr<Gdk::Pixbuf> move1DH = safe_create_from_file("move-1D-h.png");
+    Glib::RefPtr<Gdk::Pixbuf> move1DV = safe_create_from_file("move-1D-v.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveRotate = safe_create_from_file("move-rotate.png");
+
     cHand = hand ? new Gdk::Cursor (cAdd->get_display(), hand, 10, 10) : new Gdk::Cursor (Gdk::HAND2);
     cClosedHand = close_hand ? new Gdk::Cursor (cAdd->get_display(), close_hand, 10, 10) : new Gdk::Cursor (Gdk::HAND2);
     cWB = wbpick ? new Gdk::Cursor (cAdd->get_display(), wbpick, 1, 12) : new Gdk::Cursor (Gdk::ARROW);
     cHidden = empty ? new Gdk::Cursor (cAdd->get_display(), empty, 12, 12) : new Gdk::Cursor (Gdk::FLEUR);
+    cMove2D = move2D ?  new Gdk::Cursor (cAdd->get_display(), move2D, 11, 11) : new Gdk::Cursor (Gdk::FLEUR);
+    cMove1DH = move1DH ?  new Gdk::Cursor (cAdd->get_display(), move1DH, 11, 11) : new Gdk::Cursor (Gdk::FLEUR);
+    cMove1DV = move1DV ?  new Gdk::Cursor (cAdd->get_display(), move1DV, 11, 11) : new Gdk::Cursor (Gdk::FLEUR);
+    cMoveRotate = moveRotate ?  new Gdk::Cursor (cAdd->get_display(), moveRotate, 11, 11) : new Gdk::Cursor (Gdk::CIRCLE);
 
     mainWindow = mainWin;
 }
@@ -57,7 +65,7 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWin) {
 void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape shape) {
 
     if (shape==CSArrow)
-	   // set_cursor without any arguments to select system default
+       // set_cursor without any arguments to select system default
         window->set_cursor ();
     else if (shape==CSOpenHand)
         window->set_cursor (*cHand);
@@ -79,6 +87,14 @@ void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape sha
         window->set_cursor (*cResizeBottomLeft);
     else if (shape==CSResizeBottomRight)
         window->set_cursor (*cResizeBottomRight);
+    else if (shape==CSMove2D)
+        window->set_cursor (*cMove2D);
+    else if (shape==CSMove1DH)
+        window->set_cursor (*cMove1DH);
+    else if (shape==CSMove1DV)
+        window->set_cursor (*cMove1DV);
+    else if (shape==CSMoveRotate)
+        window->set_cursor (*cMoveRotate);
     else if (shape==CSSpotWB)
         window->set_cursor (*cWB);
     else if (shape==CSCropSelect)
