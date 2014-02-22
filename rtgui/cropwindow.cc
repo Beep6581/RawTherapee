@@ -798,10 +798,14 @@ void CropWindow::updateCursor (int x, int y) {
             cursorManager.setCursor (iarea->get_window(), CSResizeWidth);
         else if (onArea (CropImage, x, y)) {
             int objectID = -1;
-            if (editSubscriber)
-                objectID = static_cast<rtengine::Crop*>(cropHandler.getCrop())->getObjectID(iarea->posImage);
-            if (objectID > -1)
-                cursorManager.setCursor (iarea->get_window(), iarea->getCursor(objectID));
+            if (editSubscriber) {
+                Coord cropPos;
+                screenCoordToCropBuffer(iarea->posScreen.x, iarea->posScreen.y, cropPos.x, cropPos.y);
+                objectID = static_cast<rtengine::Crop*>(cropHandler.getCrop())->getObjectID(cropPos);
+            }
+            if (objectID > -1) {
+                cursorManager.setCursor (iarea->get_window(), editSubscriber->getCursor(objectID));
+            }
             else if (tm==TMHand) {
                 if (onArea (CropObserved, x, y))
                     cursorManager.setCursor (iarea->get_window(), CSMove);

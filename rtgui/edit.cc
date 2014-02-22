@@ -609,6 +609,9 @@ void EditDataProvider::switchOffEditMode() {
 }
 
 CursorShape EditDataProvider::getCursor(int objectID) {
+	if (currSubscriber)
+		currSubscriber->getCursor(objectID);
+
 	return CSOpenHand;
 }
 
