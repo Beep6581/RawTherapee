@@ -226,7 +226,7 @@ void CacheManager::closeThumbnail (Thumbnail* t) {
 
     MyMutex::MyLock lock(mutex_);
 
-    t->updateCache ();
+//    t->updateCache ();
     string_thumb_map::iterator r = openEntries.find (t->getFileName());
     if (r!=openEntries.end()) 
         openEntries.erase (r);
