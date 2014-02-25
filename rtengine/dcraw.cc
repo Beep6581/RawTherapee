@@ -4568,7 +4568,8 @@ nf: order = 0x4949;
 	cam_mul[2] = get4() << 2;
       }
     }
-    if (tag == 0x15 && type == 2 && is_raw)
+    //if (tag == 0x15 && type == 2 && is_raw)
+    if (tag == 0x15 && type == 2 && is_raw && strstr(model, "Hasselblad ") != model) // RT: don't overwrite already parsed Hasselblad model
       fread (model, 64, 1, ifp);
     if (strstr(make,"PENTAX")) {
       if (tag == 0x1b) tag = 0x1018;

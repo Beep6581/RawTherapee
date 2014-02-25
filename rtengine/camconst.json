@@ -472,7 +472,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
        and white level is typically at or close to 65535. However sensors vary a bit and can be noisy around clip
        so we cut away 0.05 stop from top down to 63300 to be a bit conservative. */
     { // quality A
-        "make_model": [ "Phase One P40+", "Phase One IQ140", "Phase One P65+", "Phase One IQ160" ],
+        "make_model": [ "Phase One P40+", "Phase One IQ140", "Phase One P65+", "Phase One IQ160", "Phase One IQ260" ],
         "dcraw_matrix": [ 8035,435,-962,-6001,13872,2320,-1159,3065,5434 ],
         "ranges": { "black": 0, "white": 63300 }
     },
@@ -500,6 +500,11 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "make_model": [ "Phase One P45", "Phase One P45+" ],
         "dcraw_matrix": [ 5053,-24,-117,-5685,14077,1703,-2619,4491,5850 ],
         "ranges": { "black": 0, "white": 63300 }
+    },
+
+    { // Quality B, only raw crop fix here, dcraw hard-coded seems to handle the rest just fine
+        "make_model": [ "Hasselblad CFV-50" ],
+	"raw_crop": [ 44, 4, 8196, 6152 ]
     },
 
     // dummy test entry to test the parser and show the format with all entries active
