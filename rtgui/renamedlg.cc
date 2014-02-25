@@ -36,33 +36,35 @@ RenameDialog::RenameDialog (Gtk::Window* parent)
     names->attach (*newName, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
     get_vbox()->pack_start (*names, Gtk::PACK_SHRINK, 4);
-    
-    Gtk::HBox* tbox = Gtk::manage (new Gtk::HBox());
-    useTmpl = Gtk::manage (new Gtk::CheckButton (M("FILEBROWSER_USETEMPLATE")));
-    templates = Gtk::manage (new MyComboBox ());
-    templateModel = Gtk::ListStore::create (templateColumns);
-    templates->set_model (templateModel);
-    templates->pack_start (templateColumns.tmplName);
 
-    tbox->pack_start (*useTmpl, Gtk::PACK_SHRINK, 4);
-    tbox->pack_start (*templates);
+// Issue 316
+//    Gtk::HBox* tbox = Gtk::manage (new Gtk::HBox());
+//    useTmpl = Gtk::manage (new Gtk::CheckButton (M("FILEBROWSER_USETEMPLATE")));
+//    templates = Gtk::manage (new MyComboBox ());
+//    templateModel = Gtk::ListStore::create (templateColumns);
+//    templates->set_model (templateModel);
+//    templates->pack_start (templateColumns.tmplName);
+
+//    tbox->pack_start (*useTmpl, Gtk::PACK_SHRINK, 4);
+//    tbox->pack_start (*templates);
     
-    get_vbox()->pack_start (*tbox, Gtk::PACK_SHRINK, 4);
+//    get_vbox()->pack_start (*tbox, Gtk::PACK_SHRINK, 4);
     
     add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK);
     add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-    all = add_button ("All", RESPONSE_ALL);
+// Issue 316 
+//    all = add_button ("All", RESPONSE_ALL);
 
     newName->set_activates_default (true);
     set_default_response (Gtk::RESPONSE_OK);
- 
-    fillTemplateList ();
+// Issue 316 
+//    fillTemplateList ();
 
-    templates->set_row_separator_func (sigc::mem_fun(*this, &RenameDialog::rowSeparatorFunc));
-    templates->signal_changed().connect(sigc::mem_fun(*this, &RenameDialog::tmplSelectionChanged));
-    useTmpl->signal_toggled().connect( sigc::mem_fun(*this, &RenameDialog::useTemplToggled) );
+//    templates->set_row_separator_func (sigc::mem_fun(*this, &RenameDialog::rowSeparatorFunc));
+//    templates->signal_changed().connect(sigc::mem_fun(*this, &RenameDialog::tmplSelectionChanged));
+//    useTmpl->signal_toggled().connect( sigc::mem_fun(*this, &RenameDialog::useTemplToggled) );
     
-    useTmpl->set_active (options.renameUseTemplates);
+//    useTmpl->set_active (options.renameUseTemplates);
 
     show_all_children ();
 }
@@ -72,8 +74,9 @@ void RenameDialog::initName (const Glib::ustring& iname, const CacheImageData* c
     imageData = cid;
     oldName->set_text (iname);
     newName->set_text (iname);
-    if (useTmpl->get_active () && isTemplSelected ()) 
-        newName->set_text (applyTemplate (iname, cid, getActiveTemplate()));
+// Issue 316
+//    if (useTmpl->get_active () && isTemplSelected ()) 
+//        newName->set_text (applyTemplate (iname, cid, getActiveTemplate()));
     newName->select_region (0, newName->get_text().size());
 }
 
