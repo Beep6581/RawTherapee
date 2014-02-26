@@ -1,6 +1,6 @@
 #01 2008-01-22 Emil Ericsson
 #02 2010-2013 Updated by Johan Thor
-#04 2014-01-06 Last updated by Johan Thor
+#03 2014-02-09 Last updated by Johan Thor
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Erkännande
@@ -456,6 +456,11 @@ HISTORY_MSG_247;'LH'-kurva
 HISTORY_MSG_248;'HH'-kurva
 HISTORY_MSG_249;Kontrast genom detaljnivåer
 HISTORY_MSG_250;Brusreduceringsförbättring
+HISTORY_MSG_251;B&amp;W - Algoritm
+HISTORY_MSG_252;CbDL Hudtoner
+HISTORY_MSG_253;CbDL Reducera artefakter
+HISTORY_MSG_254;CbDL - Nyans på hudtoner
+HISTORY_MSG_255;CbDL - Algoritm
 HISTORY_NEWSNAPSHOT;Nytt
 HISTORY_NEWSNAPSHOT_TOOLTIP;Kortkommando: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Bokmärken
@@ -592,7 +597,7 @@ NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_FULL;Bredd = %1, Höjd = %2
 NAVIGATOR_XY_NA;x = -, y = -
 OPTIONS_DEFIMG_MISSING;Standardprofilen för <b>icke-råbilder</b> kunde inte hittas eller är inte angiven.\n\nVar vänlig kontrollera din profilmapp: den kanske ej finns  eller är skadad.\n\nInterna värden kommer att användas som standard.
-OPTIONS_DEFRAW_MISSING;Standardprofilen för <b>råbilder</b> kunde inte hittas eller är inte angiven.\n\nVar vänlig kontrollera din profilmapp: den kanske ej finns  eller är skadad.\n\nInterna värden kommer att användas som standard.
+OPTIONS_DEFRAW_MISSING;Standardprofilen för <b>råbilder</b> kunde inte hittas eller är den ej angiven.\n\nVar vänlig kontrollera din profilmapp: kanske finns den ej eller är filen skadad.\n\nInterna värden kommer att användas som standard.
 PARTIALPASTE_BASICGROUP;Grundläggande inställningar
 PARTIALPASTE_CACORRECTION;Reducera kromatiska abberationer
 PARTIALPASTE_CHANNELMIXERBW;Svartvitt
@@ -871,6 +876,10 @@ TOOLBAR_TOOLTIP_CROP;Välj beskärningsområde.\nKortkommando: <b>c</b>\nFlytta 
 TOOLBAR_TOOLTIP_HAND;Handverktyg.\nKortkommando:<b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Räta upp.\nKortkommando:<b>s</b>\n\nDra en linje längs antingen en vertikal eller horisontell linje i bilden för att räta upp bilden. Roterationsvinkeln visas bredvid linjen du drar. Rotationscentrum är det geometriska mittpunkten i bilden.
 TOOLBAR_TOOLTIP_WB;Mät vitbalans i bilden.\nKortkommando:<b>w</b>
+TP_BWMIX_ALGO;Algoritm OYCPM
+TP_BWMIX_ALGO_LI;Linjär
+TP_BWMIX_ALGO_SP;Specialeffekter
+TP_BWMIX_ALGO_TOOLTIP;Linjär: kommer att procudera ett normalt <b>linjärt</b> svar.\nSpecialeffekter: kommer att producera specialeffekter genom att miza kanalerna <b>icke-linjärt</b>.
 TP_BWMIX_AUTOCH;Auto
 TP_BWMIX_AUTOCH_TIP;Beräkna värden som optimerar kanalmixern
 TP_BWMIX_BLUE;Blå
@@ -890,7 +899,7 @@ TP_BWMIX_FILTER_GREENYELLOW;Grön-Gul
 TP_BWMIX_FILTER_GREEN;Grön
 TP_BWMIX_FILTER_NONE;Ingen
 TP_BWMIX_FILTER_PURPLE;Lila
-TP_BWMIX_FILTER_REDYELLOW;Röd-Gull
+TP_BWMIX_FILTER_REDYELLOW;Röd-Gul
 TP_BWMIX_FILTER_RED;Röd
 TP_BWMIX_FILTER_TOOLTIP;Färgfiltret simulerar bilder tagna med ett färgat filter placerat framför objektivet. Färgade filter reducerar transmissionen av ett specifikt spektrum av färger och påverkar deras ljushet. T. ex. mörkar ett rött filter blå himmel.
 TP_BWMIX_FILTER_YELLOW;Gul
@@ -1061,13 +1070,22 @@ TP_DIRPYRDENOISE_METHOD_TOOLTIP;För råfiler kan antingen RGB- eller Labmetoder
 TP_DIRPYRDENOISE_PERF;RGB-läge (råfiler)
 TP_DIRPYRDENOISE_RED;Krominans - Röd-Grön
 TP_DIRPYRDENOISE_RGB;RGB
+TP_DIRPYREQUALIZER_ALGO;Algoritm för hudtoner
+TP_DIRPYREQUALIZER_ALGO_FI;Fin
+TP_DIRPYREQUALIZER_ALGO_LA;Stor
+TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fin: närmre hudens färger, minimerar inverkan på andra färger\nStor: undvik än mer artefakter
+TP_DIRPYREQUALIZER_GAMUT;Reducera artefakter
+TP_DIRPYREQUALIZER_HUESKIN;Nyans på hudtoner
 TP_DIRPYREQUALIZER_LABEL;Kontrast genom detaljnivåer
 TP_DIRPYREQUALIZER_LUMACOARSEST;Grövst
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Minska kontrasten
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Öka kontrasten
 TP_DIRPYREQUALIZER_LUMAFINEST;Finast
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutralt
+TP_DIRPYREQUALIZER_SKIN;Hudtoner Mål/Skydd
+TP_DIRPYREQUALIZER_SKIN_TOOLTIP;Vid -100 påverkas hudtoner.\nVid 0 behandlas alla toner likvärdigt.\nVid +100 skyddas hudtoner medan alla andra toner är påverkade.
 TP_DIRPYREQUALIZER_THRESHOLD;Tröskelvärde
+TP_DIRPYREQUALIZER_TOOLTIP;Försöker reducera artefakter uppkomna av övergångarna mellan färgerna (nyans, kroma, luminans) på hyn och övriga i bilden
 TP_DISTORTION_AMOUNT;Mängd
 TP_DISTORTION_AUTO;Automatisk distorsionskorrigering
 TP_DISTORTION_AUTO_TIP;(Experimentell) Korrigera automatiskt objektivdistorsion för vissa kameror (M4/3, vissa kompaktkameror, etc.)
@@ -1397,8 +1415,4 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_251;B&amp;W - Algorithm
-!TP_BWMIX_ALGO;Algorithm OYCPM
-!TP_BWMIX_ALGO_LI;Linear
-!TP_BWMIX_ALGO_SP;Special effects
-!TP_BWMIX_ALGO_TOOLTIP;Linear: will produce a normal <b>linear</b> response.\nSpecial effects: will produce special effects by mixing channels <b>non-linearly</b>.
+!TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected

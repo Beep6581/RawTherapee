@@ -12,8 +12,9 @@
 #12 2013-10-28 firefly
 #13 2014-01-07 firefly
 #14 2014-01-15 firefly
+#15 2014-02-25 firefly
 
-ABOUT_TAB_BUILD;ヴァージョン
+ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
 ABOUT_TAB_LICENSE;ライセンス
 ABOUT_TAB_RELEASENOTES;リリースノート
@@ -67,28 +68,28 @@ EXIFPANEL_RESETALL;すべてリセット
 EXIFPANEL_RESETHINT;選択タグを元の値にリセット
 EXIFPANEL_RESET;リセット
 EXIFPANEL_SUBDIRECTORY;サブディレクトリ
-EXPORT_BYPASS_ALL;選択 / すべて選択解除
-EXPORT_BYPASS_COLORDENOISE;カラーノイズ低減を回避
-EXPORT_BYPASS_DEFRINGE;フリンジ低減を回避
-EXPORT_BYPASS_DIRPYRDENOISE;ノイズ低減を回避
-EXPORT_BYPASS_DIRPYREQUALIZER;ディテール・レベルのコントラストを回避
-EXPORT_BYPASS_LUMADENOISE;輝度ノイズ低減を回避
-EXPORT_BYPASS_RAW_ALL_ENHANCE;デモザイク後のアーティファクト/ノイズ低減を回避
-EXPORT_BYPASS_RAW_CA;[raw] 色収差補正を回避
-EXPORT_BYPASS_RAW_CCSTEPS;[raw] 偽色抑制を回避
-EXPORT_BYPASS_RAW_DCB_ENHANCE;[raw] DCB 拡張処理を回避
-EXPORT_BYPASS_RAW_DCB_ITERATIONS;[raw] DCB 反復を回避
-EXPORT_BYPASS_RAW_DF;[raw] ダークフレームを回避
-EXPORT_BYPASS_RAW_FF;[raw] フラットフィールドを回避
-EXPORT_BYPASS_RAW_GREENTHRESH;[raw] グリーン平衡化を回避
-EXPORT_BYPASS_RAW_LINENOISE;[raw] ラインノイズ フィルタを回避
-EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;[raw] LMMSE 拡張処理を回避
-EXPORT_BYPASS_SHARPENEDGE;エッジ・シャープ化を回避
-EXPORT_BYPASS_SHARPENING;シャープ化を回避
-EXPORT_BYPASS_SHARPENMICRO;マイクロコントラストを回避
-EXPORT_BYPASS_SH_HQ;シャドウ/ハイライト(高画質)を回避
+EXPORT_BYPASS_ALL;全て選択 / 全て解除
+EXPORT_BYPASS_COLORDENOISE;カラーノイズ低減を迂回
+EXPORT_BYPASS_DEFRINGE;フリンジ低減を迂回
+EXPORT_BYPASS_DIRPYRDENOISE;ノイズ低減を迂回
+EXPORT_BYPASS_DIRPYREQUALIZER;ディテール・レベルのコントラストを迂回
+EXPORT_BYPASS_LUMADENOISE;輝度ノイズ低減を迂回
+EXPORT_BYPASS_RAW_ALL_ENHANCE;デモザイク後のアーティファクト/ノイズ低減を迂回
+EXPORT_BYPASS_RAW_CA;[raw] 色収差補正を迂回
+EXPORT_BYPASS_RAW_CCSTEPS;[raw] 偽色抑制を迂回
+EXPORT_BYPASS_RAW_DCB_ENHANCE;[raw] DCB 拡張処理を迂回
+EXPORT_BYPASS_RAW_DCB_ITERATIONS;[raw] DCB 反復を迂回
+EXPORT_BYPASS_RAW_DF;[raw] ダークフレームを迂回
+EXPORT_BYPASS_RAW_FF;[raw] フラットフィールドを迂回
+EXPORT_BYPASS_RAW_GREENTHRESH;[raw] グリーン平衡化を迂回
+EXPORT_BYPASS_RAW_LINENOISE;[raw] ラインノイズ フィルタを迂回
+EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;[raw] LMMSE 拡張処理を迂回
+EXPORT_BYPASS_SHARPENEDGE;エッジ・シャープ化を迂回
+EXPORT_BYPASS_SHARPENING;シャープ化を迂回
+EXPORT_BYPASS_SHARPENMICRO;マイクロコントラストを迂回
+EXPORT_BYPASS_SH_HQ;シャドウ/ハイライト(高画質)を迂回
 EXPORT_FASTEXPORTOPTIONS;<b>高速書き出しオプション</b>
-EXPORT_INSTRUCTIONS;時間とリソースを消費する処理を回避し、キューの処理実行を再定義します。この方法は速度を優先する場合や、保存されている現像パラメータを変更することなく、一つまたは複数の画像をリサイズ出力し低解像度画像をより速く生成する場合に推奨されます
+EXPORT_INSTRUCTIONS;現像の設定に要する時間と手間を省くために、高速書き出しを優先させるオプションです。処理速度が優先される場合や、既定の現像パラメータを変えずに何枚ものリサイズ画像が要求される場合に奨められる方法で、低解像度画像を迅速に生成します。
 EXPORT_MAXHEIGHT;最大高: 
 EXPORT_MAXWIDTH;最大幅: 
 EXPORT_PUTTOQUEUEFAST; 高速書き出しのキューに追加
@@ -330,7 +331,7 @@ HISTORY_MSG_109;リサイズ バウンディングボックス
 HISTORY_MSG_110;リサイズ適用
 HISTORY_MSG_111;Lab　-　色ずれ回避
 HISTORY_MSG_112;--未使用--
-HISTORY_MSG_113;Lab　-　レッドと肌トーンを保護
+HISTORY_MSG_113;Lab　-　レッドと肌色トーンを保護
 HISTORY_MSG_114;DCB 反復
 HISTORY_MSG_115;偽色抑制
 HISTORY_MSG_116;DCB 拡張
@@ -369,12 +370,12 @@ HISTORY_MSG_148;マイクロコントラスト
 HISTORY_MSG_149;マイクロコントラスト - 3x3 マトリクス
 HISTORY_MSG_150;デモザイク後にアーティファクト/ノイズ低減
 HISTORY_MSG_151;自然な彩度
-HISTORY_MSG_152;自然な彩度 - 中間色トーン
+HISTORY_MSG_152;自然な彩度 - 明清色トーン
 HISTORY_MSG_153;自然な彩度 - 純色トーン
 HISTORY_MSG_154;自然な彩度 - 肌色トーンを保護
 HISTORY_MSG_155;自然な彩度 - 色ずれを回避
-HISTORY_MSG_156;自然な彩度 - 中間色と純色トーンをリンク
-HISTORY_MSG_157;自然な彩度 - 中間色/純色トーン しきい値
+HISTORY_MSG_156;自然な彩度 - 明清色と純色トーンをリンク
+HISTORY_MSG_157;自然な彩度 - 明清色/純色トーン しきい値
 HISTORY_MSG_158;強さ
 HISTORY_MSG_159;エッジ停止
 HISTORY_MSG_160;スケール
@@ -389,7 +390,7 @@ HISTORY_MSG_168;'CC' カーブ
 HISTORY_MSG_169;'CH' カーブ
 HISTORY_MSG_170;自然な彩度 - カーブ
 HISTORY_MSG_171;'LC' カーブ
-HISTORY_MSG_172;レッドと肌色トーンに対するLCの制限
+HISTORY_MSG_172;LCの適用をレッドと肌色トーンだけに制限
 HISTORY_MSG_173;ノイズ低減 - 輝度ディテール
 HISTORY_MSG_174;CIE色の見えモデル2002
 HISTORY_MSG_175;CAM02 - 色順応量
@@ -404,7 +405,7 @@ HISTORY_MSG_183;CAM02 - コントラスト (J)
 HISTORY_MSG_184;CAM02 - 暗い周囲環境を伴う撮影環境
 HISTORY_MSG_185;CAM02 - 色域制御
 HISTORY_MSG_186;CAM02 - アルゴリズム
-HISTORY_MSG_187;CAM02 - レッドと肌トーンを保護
+HISTORY_MSG_187;CAM02 - レッドと肌色トーンを保護
 HISTORY_MSG_188;CAM02 - 明るさ (Q)
 HISTORY_MSG_189;CAM02 - コントラスト (Q)
 HISTORY_MSG_190;CAM02 - 彩度 (S)
@@ -462,11 +463,16 @@ HISTORY_MSG_242;ビネットフィルター　形状
 HISTORY_MSG_243;半径
 HISTORY_MSG_244;ビネットフィルター　強さ
 HISTORY_MSG_245;ビネットフィルター　中央
-HISTORY_MSG_246;‘CL’カーブ
+HISTORY_MSG_246;"CL"カーブ
 HISTORY_MSG_247;"LH"　カーブ
 HISTORY_MSG_248;"HH"　カーブ
-HISTORY_MSG_249;ディテールコントラストのしきい値
+HISTORY_MSG_249;ディテールレベルのコントラスト - しきい値
 HISTORY_MSG_250;ノイズ低減　-　強化
+HISTORY_MSG_251;白黒 - アルゴリズム
+HISTORY_MSG_252;ディテールレベルのコントラスト　肌色トーン
+HISTORY_MSG_253;ディテールレベルのコントラスト　アーティファクトを軽減
+HISTORY_MSG_254;ディテールレベルのコントラスト　肌色の色相
+HISTORY_MSG_255;ディテールレベルのコントラスト　アルゴリズム
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;スナップショット
@@ -648,8 +654,8 @@ PARTIALPASTE_RAWCACORR_AUTO;自動色収差補正
 PARTIALPASTE_RAWCACORR_CABLUE;色収差 ブルー
 PARTIALPASTE_RAWCACORR_CARED;色収差 レッド
 PARTIALPASTE_RAWEXPOS_BLACK;黒レベル
-PARTIALPASTE_RAWEXPOS_LINEAR;Raw 白ポイント リニア補正係数
-PARTIALPASTE_RAWEXPOS_PRESER;Raw 白ポイント HLを保持したまま補正 (EV)
+PARTIALPASTE_RAWEXPOS_LINEAR;Raw ホワイトポイント リニア補正係数
+PARTIALPASTE_RAWEXPOS_PRESER;Raw ホワイトポイント ハイライトを保持したまま補正 (EV)
 PARTIALPASTE_RAWGROUP;Raw 設定
 PARTIALPASTE_RAW_ALLENHANCE;デモザイク後 アーティファクト/ノイズ低減を適用
 PARTIALPASTE_RAW_DCBENHANCE;DCB 拡張処理適用
@@ -671,10 +677,10 @@ PREFERENCES_ADD;追加
 PREFERENCES_APPLNEXTSTARTUP;要再起動
 PREFERENCES_AUTOMONPROFILE;OSのメインモニター・プロファイルを使用
 PREFERENCES_BATCH_PROCESSING;バッチ処理
-PREFERENCES_BEHADDALLHINT;すべてのパラメータを <b>追加</b>モードにします\nバッチツールパネルのパラメータの調整は、格納されている値の<b>差分</b>になります
+PREFERENCES_BEHADDALLHINT;すべてのパラメータを <b>追加</b>モードにします\nバッチツールパネルで設定される調整値が、各画像の既定値に<b>加算</b>されます
 PREFERENCES_BEHADDALL;すべて '追加'
 PREFERENCES_BEHAVIOR;ビヘイビア
-PREFERENCES_BEHSETALLHINT;すべてのパラメータを <b>設定</b>モードにします\nバッチツールパネルのパラメータの調整は<b>絶対</b>になり、実際の値が表示されます
+PREFERENCES_BEHSETALLHINT;すべてのパラメータを <b>設定</b>モードにします\nバッチツールパネルで設定される調整値が、各画像の既定値に取って代わり<b>同一</b>になります
 PREFERENCES_BEHSETALL;すべて '設定'
 PREFERENCES_BLACKBODY;タングステン
 PREFERENCES_BLINKCLIPPED;クリッピング領域の点滅
@@ -883,6 +889,10 @@ TOOLBAR_TOOLTIP_CROP;切り抜き範囲選択\nショートカット:  <b>c</b>
 TOOLBAR_TOOLTIP_HAND;手の平ツール\nショートカット:  <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>直線選択</b> / <b>角度補正</b>\nショートカット: <b>s</b>\nプレビュー画像上にガイド線を描画し、垂直または水平方向を指示します。回転角度は、ガイド線の隣に表示されます。回転の中心は、プレビュー画像の中心です
 TOOLBAR_TOOLTIP_WB;スポット・ホワイトバランス\nショートカット:  <b>w</b>
+TP_BWMIX_ALGO;アルゴリズム OYCPM
+TP_BWMIX_ALGO_LI;リニア
+TP_BWMIX_ALGO_SP;特殊効果
+TP_BWMIX_ALGO_TOOLTIP;リニア: 通常の <b>線形的</b> な効果です\n特殊効果: チャンネルミキサーによる <b>非線形的</b>な特殊効果です
 TP_BWMIX_AUTOCH;オート
 TP_BWMIX_AUTOCH_TIP;チャンネルミキサーの最適値を計算します
 TP_BWMIX_BLUE;ブルー
@@ -893,7 +903,7 @@ TP_BWMIX_CURVEEDITOR1;‘前の‘カーブ
 TP_BWMIX_CURVEEDITOR2;‘後の‘カーブ
 TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;処理最終段階で白黒変換を施した後のトーンカーブ
 TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;色の構成を変えるかもしれない\n白黒変換を施す前のトーンカーブ
-TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;色相における明度を修正\n極端な修正はアーティファクトの発生に注意します
+TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;色相における明度を補正\n極端な補正はアーティファクトの発生に注意します
 TP_BWMIX_CYAN;シアン
 TP_BWMIX_FILTER;カラーフィルター
 TP_BWMIX_FILTER_BLUEGREEN;ブルー/グリーン
@@ -1008,12 +1018,12 @@ TP_COLORAPP_LABEL_SCENE;撮影環境条件
 TP_COLORAPP_LABEL_VIEWING;観視条件
 TP_COLORAPP_LIGHT;明度 (J)
 TP_COLORAPP_LIGHT_TOOLTIP;CIECAM02の明度は LabやRGBの明度とは異なります
-TP_COLORAPP_MODEL;白ポイント・モデル
+TP_COLORAPP_MODEL;ホワイトポイント・モデル
 TP_COLORAPP_MODEL_TOOLTIP;<b>WB [RT] + [出力]:</b>\nRTのホワイトバランスは、撮影環境に使用されます。CIECAM02はD50の設定, 出力デバイスのホワイトバランスは「環境設定」の「カラーマネジメント」の設定\n\n<b>WB [RT+CAT02] + [出力]:</b>\nRTのホワイトバランス設定は、CAT02で使用され、出力デバイスのホワイトバランスは環境設定の値を使用します
-TP_COLORAPP_RSTPRO;レッドと肌トーンを保護
-TP_COLORAPP_RSTPRO_TOOLTIP;レッドと肌トーンを保護 (スライダーとカーブ)
-TP_COLORAPP_SHARPCIE;Q/C で､シャープ化、ディテールのコントラストとフリンジ低減
-TP_COLORAPP_SHARPCIE_TOOLTIP;有効にした場合、シャープ化、ディテールのコントラストとフリンジ低減は、CIECAM02を使用します
+TP_COLORAPP_RSTPRO;レッドと肌色トーンを保護
+TP_COLORAPP_RSTPRO_TOOLTIP;レッドと肌色トーンを保護 (スライダーとカーブ)
+TP_COLORAPP_SHARPCIE;Q/C で､シャープ化、ディテールレベルのコントラストとフリンジ低減
+TP_COLORAPP_SHARPCIE_TOOLTIP;有効にした場合、シャープ化、ディテールレベルのコントラストとフリンジ低減は、CIECAM02を使用します
 TP_COLORAPP_SURROUND;周囲環境
 TP_COLORAPP_SURROUND_AVER;普通
 TP_COLORAPP_SURROUND_DARK;暗い
@@ -1074,13 +1084,23 @@ TP_DIRPYRDENOISE_METHOD_TOOLTIP;RAW画像は、RGBまたはLab方式のいずれ
 TP_DIRPYRDENOISE_PERF;RGB モード(RAW画像)
 TP_DIRPYRDENOISE_RED;色差 レッド/グリーン
 TP_DIRPYRDENOISE_RGB;RGB
+TP_DIRPYREQUALIZER_ALGO;肌色用のアルゴリズム
+TP_DIRPYREQUALIZER_ALGO_FI;ファイン
+TP_DIRPYREQUALIZER_ALGO_LA;広範
+TP_DIRPYREQUALIZER_ALGO_TOOLTIP;ファイン：撮影の肌色に近い部分に働くアルゴリズム、他の色への影響を最小限に抑えます\n広範：　アーティファクトの増加を避けるアルゴリズムです
+TP_DIRPYREQUALIZER_GAMUT;アーティファクト軽減
+TP_DIRPYREQUALIZER_HUESKIN;肌色の色相
+TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;このカーブは上部ほど、アルゴリズムが効率良く働くことを示しています。\n下部ほど、色相の遷移が見られる部分です。\nコントロールポイントを左右に大きく動かす必要が生じたり、アーティファクトが生じたりする場合は、<b>ホワイトバランスが妥当ではない</b>時です。\n他の色への影響を避けるには、調整範囲を少し減らします
 TP_DIRPYREQUALIZER_LABEL;ディテールレベルのコントラスト 
 TP_DIRPYREQUALIZER_LUMACOARSEST;粗い
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;コントラスト－
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;コントラスト＋
 TP_DIRPYREQUALIZER_LUMAFINEST;細かい
 TP_DIRPYREQUALIZER_LUMANEUTRAL;ニュートラル
+TP_DIRPYREQUALIZER_SKIN;肌色トーン　目標／保護
+TP_DIRPYREQUALIZER_SKIN_TOOLTIP;-100 肌色トーンの調整が目標となります\n0 全ての色調が調整の対象です\n+100　肌色は保護され、他の色調が調整されます
 TP_DIRPYREQUALIZER_THRESHOLD;しきい値
+TP_DIRPYREQUALIZER_TOOLTIP;肌色やその他の色（色相、色度、明度）の遷移に起因するアーティファクトの軽減を試みます
 TP_DISTORTION_AMOUNT;適用量
 TP_DISTORTION_AUTO;自動歪曲収差補正
 TP_DISTORTION_AUTO_TIP;(試用) 自動レンズ収差補正 (M4/3, 一部のコンデジ, etc.)
@@ -1091,20 +1111,20 @@ TP_EPD_REWEIGHTINGITERATES;再加重反復
 TP_EPD_SCALE;スケール
 TP_EPD_STRENGTH;強さ
 TP_EPD_TOOLTIP;トーンマッピングは、Labモード(標準)またはCIECAM02モードを介して可能です\n\n CIECAM02トーンマッピングモードは以下の設定を有効にします:\n 1. CIECAM02\n 2. アルゴリズム="明るさ + 鮮やかさ (QM)"\n 3. "CIECAM02 明るさ(Q)でトーンマッピング"
-TP_EXPOSCORR_LABEL;Raw 白・黒・ポイント
+TP_EXPOSCORR_LABEL;Raw ホワイト・ブラック・ポイント
 TP_EXPOSURE_AUTOLEVELS;自動露光補正
 TP_EXPOSURE_AUTOLEVELS_TIP;画像を解析し露光補正を自動で設定をします
 TP_EXPOSURE_BLACKLEVEL;黒レベル
 TP_EXPOSURE_BRIGHTNESS;明るさ
 TP_EXPOSURE_CLIP;クリップ　％
-TP_EXPOSURE_CLIP_TIP;自動露光補正で切り捨てられるハイライトとシャドウ部分の割合
+TP_EXPOSURE_CLIP_TIP;自動露光補正によるハイライトとシャドウ部分での飽和ピクセルの割合制限
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;ハイライト圧縮 しきい値
 TP_EXPOSURE_COMPRHIGHLIGHTS;ハイライト圧縮
 TP_EXPOSURE_COMPRSHADOWS;シャドウ圧縮
 TP_EXPOSURE_CONTRAST;コントラスト
 TP_EXPOSURE_CURVEEDITOR1;トーンカーブ1
 TP_EXPOSURE_CURVEEDITOR2;トーンカーブ2
-TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;ダブルカーブで最高の結果を達成する方法を学ぶ\nマニュアルの以下の項目を参照してください：\nツールボックス＞露光タブ＞露光パネル＞トーンカーブ
+TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;2つのトーンカーブで最良の結果を得るためには、RawPediaの“露光＞トーンカーブ”を参照して下さい。
 TP_EXPOSURE_EXPCOMP;露光量補正
 TP_EXPOSURE_LABEL;露光補正
 TP_EXPOSURE_SATURATION;彩度
@@ -1188,17 +1208,17 @@ TP_LABCURVE_CHROMA_TOOLTIP;白黒トーンを適用するには、彩度を-100�
 TP_LABCURVE_CONTRAST;コントラスト
 TP_LABCURVE_CURVEEDITOR;Lab 明度カーブ
 TP_LABCURVE_CURVEEDITOR_A_RANGE1;グリーン・純色
-TP_LABCURVE_CURVEEDITOR_A_RANGE2;グリーン・中間色
-TP_LABCURVE_CURVEEDITOR_A_RANGE3;レッド・中間色
+TP_LABCURVE_CURVEEDITOR_A_RANGE2;グリーン・明清色
+TP_LABCURVE_CURVEEDITOR_A_RANGE3;レッド・明清色
 TP_LABCURVE_CURVEEDITOR_A_RANGE4;レッド・純色
 TP_LABCURVE_CURVEEDITOR_B_RANGE1;ブルー・純色
-TP_LABCURVE_CURVEEDITOR_B_RANGE2;ブルー・中間色
-TP_LABCURVE_CURVEEDITOR_B_RANGE3;イエロー・中間色
+TP_LABCURVE_CURVEEDITOR_B_RANGE2;ブルー・明清色
+TP_LABCURVE_CURVEEDITOR_B_RANGE3;イエロー・明清色
 TP_LABCURVE_CURVEEDITOR_B_RANGE4;イエロー・純色
 TP_LABCURVE_CURVEEDITOR_CC;CC
-TP_LABCURVE_CURVEEDITOR_CC_RANGE1;ニュートラル
-TP_LABCURVE_CURVEEDITOR_CC_RANGE2;濁色
-TP_LABCURVE_CURVEEDITOR_CC_RANGE3;中間色
+TP_LABCURVE_CURVEEDITOR_CC_RANGE1;中間色
+TP_LABCURVE_CURVEEDITOR_CC_RANGE2;暗清色
+TP_LABCURVE_CURVEEDITOR_CC_RANGE3;明清色
 TP_LABCURVE_CURVEEDITOR_CC_RANGE4;純色
 TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;色度に応じた色度 C=f(C)
 TP_LABCURVE_CURVEEDITOR_CH;CH
@@ -1213,9 +1233,9 @@ TP_LABCURVE_CURVEEDITOR_LH;LH
 TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;色相に応じた輝度 L=f(H)
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;輝度に応じた輝度 Lab L=f(L)
 TP_LABCURVE_LABEL;Lab 調整
-TP_LABCURVE_LCREDSK;レッドと肌トーンに対するLCを制限
-TP_LABCURVE_LCREDSK_TIP;有効の場合 LC カーブ(色度に応じた輝度)は、レッドと肌トーンを制限します\n無効の場合は、すべてのトーンに適用されます
-TP_LABCURVE_RSTPROTECTION;レッドと肌トーンを保護
+TP_LABCURVE_LCREDSK;LCの適用をレッドと肌色トーンだけに制限
+TP_LABCURVE_LCREDSK_TIP;有効の場合 LC カーブ(色度に応じた輝度)の適用は、レッドと肌色トーンだけ制限されます\n無効の場合は、すべてのトーンに適用されます
+TP_LABCURVE_RSTPROTECTION;レッドと肌色トーンを保護
 TP_LABCURVE_RSTPRO_TOOLTIP;色度スライダーとCCカーブを使用することができます
 TP_LENSGEOM_AUTOCROP;自動的に切り抜き選択
 TP_LENSGEOM_FILL;オートフィル
@@ -1330,20 +1350,20 @@ TP_SHARPENMICRO_MATRIX;3×3マトリクスの代わりに 5×5
 TP_SHARPENMICRO_UNIFORMITY;均等
 TP_VIBRANCE_AVOIDCOLORSHIFT;色ずれを回避
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
-TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;肌トーン
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;肌色トーン
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;レッド/パープル
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;レッド
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;レッド/イエロー
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;イエロー
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;色相に応じた色相　H=f(H)
 TP_VIBRANCE_LABEL;自然な彩度
-TP_VIBRANCE_PASTELS;中間色トーン
-TP_VIBRANCE_PASTSATTOG;中間色と純色トーンをリンク
+TP_VIBRANCE_PASTELS;明清色トーン
+TP_VIBRANCE_PASTSATTOG;明清色と純色トーンをリンク
 TP_VIBRANCE_PROTECTSKINS;肌色トーンを保護
-TP_VIBRANCE_PSTHRESHOLD;中間色/純色トーン しきい値
+TP_VIBRANCE_PSTHRESHOLD;明清色/純色トーン しきい値
 TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;純色トーン しきい値
-TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;縦軸は下が中間色トーン,上が純色を表し\n\n横軸は彩度の範囲を表しています
-TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;中間色/純色トーン 移行の加重
+TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;縦軸は下が明清色トーン,上が純色を表し\n\n横軸は彩度の範囲を表しています
+TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;明清色/純色トーン 移行の加重
 TP_VIBRANCE_SATURATED;純色トーン
 TP_VIGNETTING_AMOUNT;適用量
 TP_VIGNETTING_CENTER;中心位置
@@ -1405,12 +1425,3 @@ ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる\nショートカット: <b>f</b>
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_251;B&amp;W - Algorithm
-!TP_BWMIX_ALGO;Algorithm OYCPM
-!TP_BWMIX_ALGO_LI;Linear
-!TP_BWMIX_ALGO_SP;Special effects
-!TP_BWMIX_ALGO_TOOLTIP;Linear: will produce a normal <b>linear</b> response.\nSpecial effects: will produce special effects by mixing channels <b>non-linearly</b>.
