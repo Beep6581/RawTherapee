@@ -84,6 +84,8 @@ void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 	}
 	if (safe_file_test (pp->raw.ff_file, Glib::FILE_TEST_EXISTS))
 		flatFieldFile->set_filename (pp->raw.ff_file);
+	else
+		flatFieldFile_Reset();
 	hbff->set_sensitive( !pp->raw.ff_AutoSelect );
 
 	lastFFAutoSelect = pp->raw.ff_AutoSelect;
@@ -175,8 +177,12 @@ void FlatField::flatFieldFileChanged()
 void FlatField::flatFieldFile_Reset()
 {
 	ffChanged=true;
-	//flatFieldFile->set_current_name("");
-	flatFieldFile->set_filename ("");
+
+// caution: I had to make this hack, because set_current_folder() doesn't work correctly!
+//          Because szeva doesn't exist since he was committed to happy hunting ground in Issue 316
+//          we can use him now for this hack
+	flatFieldFile->set_filename (options.lastFlatfieldDir + "/szeva");
+// end of the hack
 
 	if (!options.lastFlatfieldDir.empty())
 		flatFieldFile->set_current_folder(options.lastFlatfieldDir);

@@ -62,6 +62,8 @@ void DarkFrame::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 	}
 	if (safe_file_test (pp->raw.dark_frame, Glib::FILE_TEST_EXISTS))
 		darkFrameFile->set_filename (pp->raw.dark_frame);
+	else
+		darkFrameReset();
 	hbdf->set_sensitive( !pp->raw.df_autoselect );
 
 	lastDFauto = pp->raw.df_autoselect;
@@ -137,8 +139,12 @@ void DarkFrame::darkFrameChanged()
 void DarkFrame::darkFrameReset()
 {
 	dfChanged=true;
-	//darkFrameFile->set_current_name("");
-	darkFrameFile->set_filename ("");
+
+// caution: I had to make this hack, because set_current_folder() doesn't work correctly!
+//          Because szeva doesn't exist since he was committed to happy hunting ground in Issue 316
+//          we can use him now for this hack
+	darkFrameFile->set_filename (options.lastDarkframeDir + "/szeva");
+// end of the hack
 
 	if (!options.lastDarkframeDir.empty())
 		darkFrameFile->set_current_folder(options.lastDarkframeDir);

@@ -87,6 +87,11 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
         Glib::ustring fname = fcbLCPFile->get_filename();
         if (!pp->lensProf.lcpFile.empty())
             fcbLCPFile->unselect_filename(fname);
+		else {
+			Glib::ustring lastFolder = fcbLCPFile->get_current_folder();
+			fcbLCPFile->set_filename("");
+			fcbLCPFile->set_current_folder(lastFolder);	
+		}
         updateDisabled(false);
     }
 
