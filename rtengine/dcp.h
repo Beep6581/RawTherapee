@@ -59,10 +59,13 @@ namespace rtengine {
 
         AdobeToneCurve toneCurve;
 
-        void MakeXYZCAM(ColorTemp &wb, int preferredIlluminant, double (*mXYZCAM)[3]) const;
+        void dngref_XYCoord2Temperature(const double whiteXY[2], double *temp, double *tint) const;
+        void dngref_FindXYZtoCamera(const double whiteXY[2], int preferredIlluminant, double (*xyzToCamera)[3]) const;
+        void dngref_NeutralToXY(double neutral[3], int preferredIlluminant, double XY[2]) const;
+        void MakeXYZCAM(ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], int preferredIlluminant, double (*mXYZCAM)[3]) const;
         const HSBModify* MakeHueSatMap(ColorTemp &wb, int preferredIlluminant, HSBModify **deleteHandle) const;
         void ConvertDNGMatrix2XYZCAM(const double (*mColorMatrix)[3], double (*mXYZCAM)[3]) const;
-        void ConvertDNGForwardMatrix2XYZCAM(const double (*mForwardMatrix)[3], double (*mXYZCAM)[3], ColorTemp &wb) const;
+        void ConvertDNGForwardMatrix2XYZCAM(const double (*mForwardMatrix)[3], double (*mXYZCAM)[3], const double whiteXY[2]) const;
         void HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, const float hs, const float ss, const float vs, float &h, float &s, float &v) const;
 
     public:
@@ -71,8 +74,8 @@ namespace rtengine {
 
         bool getHasToneCurve() { return hasToneCurve; }
         void getIlluminants(int &i1, double &temp1, int &i2, double &temp2, bool &willInterpolate_) { i1 = iLightSource1; i2 = iLightSource2; temp1 = temperature1, temp2 = temperature2; willInterpolate_ = willInterpolate; };
-        void Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, float rawWhiteFac=1, bool useToneCurve=false) const;
-        void Apply(Image16 *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, bool useToneCurve) const;
+        void Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, double pre_mul[3], double camMatrix[3][3], float rawWhiteFac=1, bool useToneCurve=false) const;
+        void Apply(Image16 *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, double pre_mul[3], double camMatrix[3][3], bool useToneCurve) const;
     };
 
     class DCPStore {
