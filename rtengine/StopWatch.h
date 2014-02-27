@@ -22,7 +22,7 @@
 #ifndef STOPWATCH_H
 #define	STOPWATCH_H
 #include <iostream>
-#include <sys/time.h>
+#include "mytime.h"
 
 class StopWatch {
 public:
@@ -31,14 +31,13 @@ public:
     ~StopWatch() { if(!stopped) stop(); }
     void start()
     {
-        gettimeofday(&startStruct,NULL);
+    	startTime.set();
     };
     void stop()
     {
-        gettimeofday(&stopStruct,NULL);
-        long elapsedTime = (stopStruct.tv_sec - startStruct.tv_sec) * 1000.0;      // sec to ms
-        elapsedTime += (stopStruct.tv_usec - startStruct.tv_usec)/1000;
-        std::cout << message << " took " << elapsedTime << "ms" <<std::endl;
+    	stopTime.set();
+    	long elapsedTime = stopTime.etime(startTime) / 1000;
+        std::cout << message << " took " << elapsedTime << " ms" <<std::endl;
         stopped = true;
     }
     void stop(const char *msg)
@@ -47,8 +46,8 @@ public:
     	stop();
     };
 private:
-    struct timeval startStruct;
-    struct timeval stopStruct;
+	MyTime startTime;
+	MyTime stopTime;
     const char *message;
     bool stopped;
 };
