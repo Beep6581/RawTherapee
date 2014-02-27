@@ -136,6 +136,37 @@ static void MapWhiteMatrix(const double white1[3], const double white2[3], doubl
     Multiply3x3(temp, Mb, B);
 }
 
+static void XYZtoXY(const double XYZ[3], double XY[2]) {
+    double X = XYZ[0];
+    double Y = XYZ[1];
+    double Z = XYZ[2];
+    double total = X + Y + Z;
+    if (total > 0.0) {
+        XY[0] = X / total;
+        XY[1] = Y / total;
+    } else {
+        XY[0] = 0.3457;
+        XY[1] = 0.3585;
+    }
+}
+
+static void XYtoXYZ(const double XY[2], double XYZ[3]) {
+    double temp[2] = { XY[0], XY[1] };
+    // Restrict xy coord to someplace inside the range of real xy coordinates.
+    // This prevents math from doing strange things when users specify
+    // extreme temperature/tint coordinates.
+    temp[0] = std::max(0.000001, std::min(temp[0], 0.999999));
+    temp[1] = std::max(0.000001, std::min(temp[1], 0.999999));
+    if (temp[0] + temp[1] > 0.999999) {
+        double scale = 0.999999 / (temp[0] + temp[1]);
+        temp[0] *= scale;
+        temp[1] *= scale;
+    }
+    XYZ[0] = temp[0] / temp[1];
+    XYZ[1] = 1.0;
+    XYZ[2] = (1.0 - temp[0] - temp[1]) / temp[1];
+}
+
 enum dngCalibrationIlluminant {
     lsUnknown = 0,
     lsDaylight = 1,
@@ -201,12 +232,47 @@ static double calibrationIlluminantToTemperature(int light) {
         return 0.0;
     }
 }
-
-void DCPProfile::MakeXYZCAM(ColorTemp &wb, int preferredIlluminant, double (*mXYZCAM)[3]) const
+void DCPProfile::MakeXYZCAM(ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], int preferredIlluminant, double (*mXYZCAM)[3]) const
 {
     // code adapted from dng_color_spec::FindXYZtoCamera
     // note that we do not support monochrome or colorplanes > 3 (no reductionMatrix support)
     // we do not support cameracalibration either
+
+    double neutral[3]; // same as the DNG "AsShotNeutral" tag if white balance is Camera's own
+    {
+        /* A bit messy matrixing and conversions to get the neutral[] array from RT's own white balance which is stored in
+           sRGB space, while the DCP code needs multipliers in CameraRGB space */
+        double r, g, b;
+        wb.getMultipliers(r, g, b);
+
+        // camWbMatrix == imatrices.xyz_cam
+        double cam_xyz[3][3];
+        Invert3x3(camWbMatrix, cam_xyz);
+        double cam_rgb[3][3];
+        Multiply3x3(cam_xyz, xyz_sRGB, cam_rgb);
+        double camwb_red   = cam_rgb[0][0]*r + cam_rgb[0][1]*g + cam_rgb[0][2]*b;
+        double camwb_green = cam_rgb[1][0]*r + cam_rgb[1][1]*g + cam_rgb[1][2]*b;
+        double camwb_blue  = cam_rgb[2][0]*r + cam_rgb[2][1]*g + cam_rgb[2][2]*b;
+        neutral[0] = camwb_red / pre_mul[0];
+        neutral[1] = camwb_green / pre_mul[1];
+        neutral[2] = camwb_blue / pre_mul[2];
+        double maxentry = 0;
+        for (int i = 0; i < 3; i++) {
+            if (neutral[i] > maxentry) {
+                maxentry = neutral[i];
+            }
+        }
+        for (int i = 0; i < 3; i++) {
+            neutral[i] /= maxentry;
+        }
+    }
+
+    /* Calculate what the RGB multipliers corresponds to as a white XY coordinate, based on the
+       DCP ColorMatrix or ColorMatrices if dual-illuminant. This is the DNG reference code way to
+       do it, which is a bit different from RT's own white balance model at the time of writing.
+       When RT's white balance can make use of the DCP color matrices we could use that instead. */
+    double white_xy[2];
+    dngref_NeutralToXY(neutral, preferredIlluminant, white_xy);
 
     bool hasFwd1 = hasForwardMatrix1;
     bool hasFwd2 = hasForwardMatrix2;
@@ -222,13 +288,20 @@ void DCPProfile::MakeXYZCAM(ColorTemp &wb, int preferredIlluminant, double (*mXY
 
     // mix if we have two matrices
     double mix;
-    if (wb.getTemp() <= temperature1) {
-        mix = 1.0;
-    } else if (wb.getTemp() >= temperature2) {
-        mix = 0.0;
-    } else {
-        double invT = 1.0 / wb.getTemp();
-        mix = (invT - (1.0 / temperature2)) / ((1.0 / temperature1) - (1.0 / temperature2));
+    if ((hasCol1 && hasCol2) || (hasFwd1 && hasFwd2)) {
+        double wbtemp;
+        /* DNG ref way to convert XY to temperature, which affect matrix mixing. A different model here
+           typically does not affect the result too much, ie it's probably not strictly necessary to
+           use the DNG reference code here, but we do it for now. */
+        dngref_XYCoord2Temperature(white_xy, &wbtemp, NULL);
+        if (wbtemp <= temperature1) {
+            mix = 1.0;
+        } else if (wbtemp >= temperature2) {
+            mix = 0.0;
+        } else {
+            double invT = 1.0 / wbtemp;
+            mix = (invT - (1.0 / temperature2)) / ((1.0 / temperature1) - (1.0 / temperature2));
+        }
     }
 
     if (hasFwd1 || hasFwd2) {
@@ -248,7 +321,14 @@ void DCPProfile::MakeXYZCAM(ColorTemp &wb, int preferredIlluminant, double (*mXY
         } else {
             memcpy(mFwd, mForwardMatrix2, sizeof(mFwd));
         }
-        ConvertDNGForwardMatrix2XYZCAM(mFwd,mXYZCAM,wb);
+        /*
+          The exact position of the white XY coordinate affects the result very much, thus
+          it's important that the result is very similar or the same as DNG reference code.
+          Especially important is it that the raw-embedded "AsShot" multipliers is translated
+          to the same white XY coordinate as the DNG reference code, or else third party DCPs
+          will show incorrect color.
+        */
+        ConvertDNGForwardMatrix2XYZCAM(mFwd,mXYZCAM,white_xy);
     } else {
         // Colormatrix
         double mCol[3][3];
@@ -366,7 +446,7 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
         hasForwardMatrix1 = true;
         for (int row=0;row<3;row++) { 
             for (int col=0;col<3;col++) {
-                mForwardMatrix1[col][row]=(float)tag->toDouble((col+row*3)*8);
+                mForwardMatrix1[row][col]=(float)tag->toDouble((col+row*3)*8);
             }
         }
     }
@@ -375,7 +455,7 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
         hasForwardMatrix2 = true;
         for (int row=0;row<3;row++) { 
             for (int col=0;col<3;col++) {
-                mForwardMatrix2[col][row]=(float)tag->toDouble((col+row*3)*8);
+                mForwardMatrix2[row][col]=(float)tag->toDouble((col+row*3)*8);
             }
         }
     }
@@ -391,7 +471,7 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
 
     for (int row=0;row<3;row++) { 
         for (int col=0;col<3;col++) {
-            mColorMatrix1[col][row]=(float)tag->toDouble((col+row*3)*8);
+            mColorMatrix1[row][col]=(float)tag->toDouble((col+row*3)*8);
         }
     }
 
@@ -453,7 +533,7 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
 
         for (int row=0;row<3;row++) { 
             for (int col=0;col<3;col++) {
-                mColorMatrix2[col][row]= (tag!=NULL ? (float)tag->toDouble((col+row*3)*8) : mColorMatrix1[col][row]);
+                mColorMatrix2[row][col]= (tag!=NULL ? (float)tag->toDouble((col+row*3)*8) : mColorMatrix1[row][col]);
             }
         }
 
@@ -512,7 +592,8 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
                 willInterpolate = true;
             }
         }
-    } else if (hasColorMatrix1 && hasColorMatrix2) {
+    }
+    if (hasColorMatrix1 && hasColorMatrix2) {
         if (memcmp(mColorMatrix1, mColorMatrix2, sizeof(mColorMatrix1)) != 0) {
             willInterpolate = true;
         }
@@ -537,7 +618,7 @@ void DCPProfile::ConvertDNGMatrix2XYZCAM(const double (*mColorMatrix)[3], double
     for (i=0; i<3; i++)
         for (j=0; j<3; j++)
             for (k=0; k<3; k++)
-                cam_xyz[i][j] += mColorMatrix[j][k] * (i==k);
+                cam_xyz[i][j] += mColorMatrix[k][j] * (i==k);
 
 
     // Multiply out XYZ colorspace 
@@ -696,19 +777,217 @@ void DCPProfile::HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, co
     v *= valScale;
 }
 
+struct ruvt {
+    double r;
+    double u;
+    double v;
+    double t;
+};
+
+static const double kTintScale = -3000.0;
+static const ruvt kTempTable [] =
+	{
+	{   0, 0.18006, 0.26352, -0.24341 },
+	{  10, 0.18066, 0.26589, -0.25479 },
+	{  20, 0.18133, 0.26846, -0.26876 },
+	{  30, 0.18208, 0.27119, -0.28539 },
+	{  40, 0.18293, 0.27407, -0.30470 },
+	{  50, 0.18388, 0.27709, -0.32675 },
+	{  60, 0.18494, 0.28021, -0.35156 },
+	{  70, 0.18611, 0.28342, -0.37915 },
+	{  80, 0.18740, 0.28668, -0.40955 },
+	{  90, 0.18880, 0.28997, -0.44278 },
+	{ 100, 0.19032, 0.29326, -0.47888 },
+	{ 125, 0.19462, 0.30141, -0.58204 },
+	{ 150, 0.19962, 0.30921, -0.70471 },
+	{ 175, 0.20525, 0.31647, -0.84901 },
+	{ 200, 0.21142, 0.32312, -1.0182 },
+	{ 225, 0.21807, 0.32909, -1.2168 },
+	{ 250, 0.22511, 0.33439, -1.4512 },
+	{ 275, 0.23247, 0.33904, -1.7298 },
+	{ 300, 0.24010, 0.34308, -2.0637 },
+	{ 325, 0.24702, 0.34655, -2.4681 },
+	{ 350, 0.25591, 0.34951, -2.9641 },
+	{ 375, 0.26400, 0.35200, -3.5814 },
+	{ 400, 0.27218, 0.35407, -4.3633 },
+	{ 425, 0.28039, 0.35577, -5.3762 },
+	{ 450, 0.28863, 0.35714, -6.7262 },
+	{ 475, 0.29685, 0.35823, -8.5955 },
+	{ 500, 0.30505, 0.35907, -11.324 },
+	{ 525, 0.31320, 0.35968, -15.628 },
+	{ 550, 0.32129, 0.36011, -23.325 },
+	{ 575, 0.32931, 0.36038, -40.770 },
+	{ 600, 0.33724, 0.36051, -116.45 }
+	};
+
+void DCPProfile::dngref_XYCoord2Temperature(const double whiteXY[2], double *temp, double *tint) const {
+    double fTemperature = 0;
+    double fTint = 0;
+
+    // Convert to uv space.
+    double u = 2.0 * whiteXY[0] / (1.5 - whiteXY[0] + 6.0 * whiteXY[1]);
+    double v = 3.0 * whiteXY[1] / (1.5 - whiteXY[0] + 6.0 * whiteXY[1]);
+
+    // Search for line pair coordinate is between.
+    double last_dt = 0.0;
+    double last_dv = 0.0;
+    double last_du = 0.0;
+
+    for (uint32_t index = 1; index <= 30; index++) {
+        // Convert slope to delta-u and delta-v, with length 1.
+        double du = 1.0;
+        double dv = kTempTable [index] . t;
+        double len = sqrt (1.0 + dv * dv);
+        du /= len;
+        dv /= len;
+
+        // Find delta from black body point to test coordinate.
+        double uu = u - kTempTable [index] . u;
+        double vv = v - kTempTable [index] . v;
+
+        // Find distance above or below line.
+        double dt = - uu * dv + vv * du;
+
+        // If below line, we have found line pair.
+        if (dt <= 0.0 || index == 30) {
+            // Find fractional weight of two lines.
+            if (dt > 0.0)
+                dt = 0.0;
+            dt = -dt;
+            double f;
+            if (index == 1)
+            {
+                f = 0.0;
+            }
+            else
+            {
+                f = dt / (last_dt + dt);
+            }
+
+            // Interpolate the temperature.
+            fTemperature = 1.0E6 / (kTempTable [index - 1] . r * f +
+                                    kTempTable [index    ] . r * (1.0 - f));
+
+            // Find delta from black body point to test coordinate.
+            uu = u - (kTempTable [index - 1] . u * f +
+                      kTempTable [index    ] . u * (1.0 - f));
+            vv = v - (kTempTable [index - 1] . v * f +
+                      kTempTable [index    ] . v * (1.0 - f));
+            // Interpolate vectors along slope.
+            du = du * (1.0 - f) + last_du * f;
+            dv = dv * (1.0 - f) + last_dv * f;
+            len = sqrt (du * du + dv * dv);
+            du /= len;
+            dv /= len;
+
+            // Find distance along slope.
+            fTint = (uu * du + vv * dv) * kTintScale;
+            break;
+        }
+        // Try next line pair.
+        last_dt = dt;
+        last_du = du;
+        last_dv = dv;
+    }
+    if (temp != NULL)
+        *temp = fTemperature;
+    if (tint != NULL)
+        *tint = fTint;
+}
+
+void DCPProfile::dngref_FindXYZtoCamera(const double whiteXY[2], int preferredIlluminant, double (*xyzToCamera)[3]) const {
+
+    bool hasCol1 = hasColorMatrix1;
+    bool hasCol2 = hasColorMatrix2;
+    if (preferredIlluminant == 1) {
+        if (hasCol1) hasCol2 = false;
+    } else if (preferredIlluminant == 2) {
+        if (hasCol2) hasCol1 = false;
+    }
+
+    // mix if we have two matrices
+    double mix;
+    if (hasCol1 && hasCol2) {
+        double wbtemp;
+        /*
+          Note: we're using DNG SDK reference code for XY to temperature translation to get the exact same mix as
+          the reference code does.
+        */
+        dngref_XYCoord2Temperature(whiteXY, &wbtemp, NULL);
+        if (wbtemp <= temperature1) {
+            mix = 1.0;
+        } else if (wbtemp >= temperature2) {
+            mix = 0.0;
+        } else {
+            double invT = 1.0 / wbtemp;
+            mix = (invT - (1.0 / temperature2)) / ((1.0 / temperature1) - (1.0 / temperature2));
+        }
+    }
+
+    // Interpolate the color matrix.
+    double mCol[3][3];
+    if (hasCol1 && hasCol2) {
+        // interpolate
+        if (mix >= 1.0) {
+            memcpy(mCol, mColorMatrix1, sizeof(mCol));
+        } else if (mix <= 0.0) {
+            memcpy(mCol, mColorMatrix2, sizeof(mCol));
+        } else {
+            Mix3x3(mColorMatrix1, mix, mColorMatrix2, 1.0 - mix, mCol);
+        }
+    } else if (hasCol1) {
+        memcpy(mCol, mColorMatrix1, sizeof(mCol));
+    } else {
+        memcpy(mCol, mColorMatrix2, sizeof(mCol));
+    }
+    memcpy(xyzToCamera, mCol, sizeof(mCol));
+}
+
+void DCPProfile::dngref_NeutralToXY(double neutral[3], int preferredIlluminant, double XY[2]) const {
+    const int kMaxPasses = 30;
+    double lastXY[2] = { 0.3457, 0.3585 }; // D50
+    for (int pass = 0; pass < kMaxPasses; pass++) {
+        double xyzToCamera[3][3];
+        dngref_FindXYZtoCamera(lastXY, preferredIlluminant, xyzToCamera);
+
+        double invM[3][3], nextXYZ[3], nextXY[2];
+        Invert3x3(xyzToCamera, invM);
+        Multiply3x3_v3(invM, neutral, nextXYZ);
+        XYZtoXY(nextXYZ, nextXY);
+
+        if (fabs(nextXY[0] - lastXY[0]) +
+            fabs(nextXY[1] - lastXY[1]) < 0.0000001)
+        {
+            XY[0] = nextXY[0];
+            XY[1] = nextXY[1];
+            return;
+        }
+        // If we reach the limit without converging, we are most likely
+        // in a two value oscillation.  So take the average of the last
+        // two estimates and give up.
+        if (pass == kMaxPasses - 1) {
+            nextXY[0] = (lastXY[0] + nextXY[0]) * 0.5;
+            nextXY[1] = (lastXY[1] + nextXY[1]) * 0.5;
+        }
+        lastXY[0] = nextXY[0];
+        lastXY[1] = nextXY[1];
+    }
+    XY[0] = lastXY[0];
+    XY[1] = lastXY[1];
+}
+
 // Convert DNG forward matrix to xyz_cam compatible matrix
-void DCPProfile::ConvertDNGForwardMatrix2XYZCAM(const double (*mForwardMatrix)[3], double (*mXYZCAM)[3], ColorTemp &wb) const {
+void DCPProfile::ConvertDNGForwardMatrix2XYZCAM(const double (*mForwardMatrix)[3], double (*mXYZCAM)[3], const double whiteXY[2]) const {
 
     // Convert ForwardMatrix (white-balanced CameraRGB -> XYZ D50 matrix)
     // into a ColorMatrix (XYZ -> CameraRGB)
 
-    double X, Z;
-    ColorTemp::temp2mulxyz(wb.getTemp(), wb.getGreen(), wb.getMethod(), X, Z);
+    double white_xyz[3];
+    XYtoXYZ(whiteXY, white_xyz);
 
-    const double white_xyz[3] = { X, 1, Z };
     const double white_d50[3] = { 0.3457, 0.3585, 0.2958 }; // D50
 
-    // Cancel out the white balance to get a CameraRGB -> XYZ D50 matrixx (CameraToPCS in dng terminology)
+    // Cancel out the white balance to get a CameraRGB -> XYZ D50 matrix (CameraToPCS in dng terminology)
     double whiteDiag[3][3] = {{white_xyz[0], 0, 0}, {0, white_xyz[1], 0}, {0, 0, white_xyz[2]}};
     double whiteDiagInv[3][3];
     Invert3x3(whiteDiag, whiteDiagInv);
@@ -729,12 +1008,12 @@ void DCPProfile::ConvertDNGForwardMatrix2XYZCAM(const double (*mForwardMatrix)[3
     ConvertDNGMatrix2XYZCAM(dngColorMatrix, mXYZCAM);
 }
 
-void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, float rawWhiteFac, bool useToneCurve) const {
+void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], float rawWhiteFac, bool useToneCurve) const {
 
     TMatrix mWork = iccStore->workingSpaceInverseMatrix (workingSpace);
 
     double mXYZCAM[3][3];
-    MakeXYZCAM(wb, preferredIlluminant, mXYZCAM);
+    MakeXYZCAM(wb, pre_mul, camWbMatrix, preferredIlluminant, mXYZCAM);
     HSBModify *deleteTableHandle;
     const HSBModify *deltaBase = MakeHueSatMap(wb, preferredIlluminant, &deleteTableHandle);
 
@@ -812,7 +1091,6 @@ void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring 
                     h/=6.f;  
                     Color::hsv2rgb( h, s, v, newr, newg, newb);
                 }
-
                 // tone curve
                 if (useToneCurve) toneCurve.Apply(newr, newg, newb);
 
@@ -827,11 +1105,11 @@ void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring 
 }
 
 // Integer variant is legacy, only used for thumbs. Simply take the matrix here
-void DCPProfile::Apply(Image16 *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, bool useToneCurve) const {
+void DCPProfile::Apply(Image16 *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], bool useToneCurve) const {
     TMatrix mWork = iccStore->workingSpaceInverseMatrix (workingSpace);
 
     double mXYZCAM[3][3];
-    MakeXYZCAM(wb, preferredIlluminant, mXYZCAM);
+    MakeXYZCAM(wb, pre_mul, camWbMatrix, preferredIlluminant, mXYZCAM);
 
     useToneCurve&=toneCurve;
 
