@@ -35,8 +35,13 @@ namespace rtengine {
     LUTf Color::gammatab;
     LUTf Color::igammatab_srgb;
     LUTf Color::gammatab_srgb;
- //   LUTf Color::igammatab_709;
+  //  LUTf Color::igammatab_709;
 //	LUTf Color::gammatab_709;
+    LUTf Color::igammatab_55;
+	LUTf Color::gammatab_55;
+    LUTf Color::igammatab_4;
+	LUTf Color::gammatab_4;
+	
     LUTf Color::igammatab_26_11;
     LUTf Color::gammatab_26_11;
     LUTf Color::igammatab_24_17;
@@ -138,8 +143,13 @@ namespace rtengine {
         gammatab(65536,0);
         igammatab_srgb(65536,0);
         gammatab_srgb(65536,0);
-     //   igammatab_709(65536,0);
-     //   gammatab_709(65536,0);
+      //  igammatab_709(65536,0);
+      //  gammatab_709(65536,0);
+        igammatab_55(65536,0);
+        gammatab_55(65536,0);
+        igammatab_4(65536,0);
+        gammatab_4(65536,0);
+		
         igammatab_26_11(65536,0);
         gammatab_26_11(65536,0);
         igammatab_24_17(65536,0);
@@ -151,12 +161,21 @@ namespace rtengine {
             igammatab_srgb[i] = (65535.0 * igamma2 (i/65535.0));
         for (int i=0; i<65536; i++)
             gammatab[i] = (65535.0 * pow (i/65535.0, 0.454545));
-/*
-        for (int i=0; i<65536; i++)
+
+ /*       for (int i=0; i<65536; i++)
             gammatab_709[i] = (65535.0 * gamma709 (i/65535.0));
         for (int i=0; i<65536; i++)
             igammatab_709[i] = (65535.0 * igamma709 (i/65535.0));
-*/
+*/			
+        for (int i=0; i<65536; i++)
+            gammatab_55[i] = (65535.0 * gamma55 (i/65535.0));
+        for (int i=0; i<65536; i++)
+            igammatab_55[i] = (65535.0 * igamma55 (i/65535.0));
+        for (int i=0; i<65536; i++)
+            gammatab_4[i] = (65535.0 * gamma4 (i/65535.0));
+        for (int i=0; i<65536; i++)
+            igammatab_4[i] = (65535.0 * igamma4 (i/65535.0));
+
         for (int i=0; i<65536; i++)
             gammatab_26_11[i] = (65535.0 * gamma26_11 (i/65535.0));
         for (int i=0; i<65536; i++)

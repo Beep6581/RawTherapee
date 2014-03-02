@@ -55,6 +55,8 @@ namespace rtengine {
 			double          protectredh;
 			bool			ciebadpixgauss;
 			int             CRI_color; // N� for display Lab value  ; 0 disabled
+			int				denoiselabgamma; // 0=gamma 26 11   1=gamma 40 5  2 =gamma 55 10
+			
 		//	bool			bw_complementary;
 			double			artifact_cbdl;
 			double			level0_cbdl;

@@ -102,6 +102,11 @@ public:
 	static LUTf gammatab_srgb;
 //	static LUTf igammatab_709;
 //	static LUTf gammatab_709;
+	static LUTf igammatab_55;
+	static LUTf gammatab_55;
+	static LUTf igammatab_4;
+	static LUTf gammatab_4;
+	
 	static LUTf igammatab_26_11;
 	static LUTf gammatab_26_11;
 	static LUTf igammatab_24_17;
@@ -142,19 +147,34 @@ public:
 
 
 	// standard srgb gamma and its inverse
-	static inline double gamma2     (double x) {
+	static inline double gamma2     (double x) {	//	g3					1+g4
 											return x <= 0.003041 ? x*12.92 : 1.055011*exp(log(x)/sRGBGammaCurve)-0.055011;
 									}
-	static inline double igamma2    (double x) {
+	static inline double igamma2    (double x) {	//g2
 										return x <= 0.039293 ? x/12.92 : exp(log((x+0.055011)/1.055011)*sRGBGammaCurve);
 									}
-/*	static inline double gamma709     (double x) {
+	static inline double gamma55     (double x) {	//	g3					1+g4
+											return x <= 0.013189 ? x*10.0 : 1.593503*exp(log(x)/5.5)-0.593503;// 5.5 10								
+									}
+	static inline double igamma55    (double x) {	//g2
+										return x <= 0.131889 ? x/10.0 : exp(log((x+0.593503)/1.593503)*5.5); // 5.5 10	
+									}
+	static inline double gamma4     (double x) {	//	g3					1+g4
+									return x <= 0.03089 ? x*5.0 : 1.478793*exp(log(x)/4.1)-0.478793;// 4  5	
+											
+									}
+	static inline double igamma4    (double x) {	//g2
+										return x <= 0.154449 ? x/5.0 : exp(log((x+0.478793)/1.478793)*4.1);// 4 5	
+									}
+									
+	/*								
+	static inline double gamma709     (double x) {
 											return x <= 0.0176 ? x*4.5 : 1.0954*exp(log(x)/2.2)-0.0954;
 									}
 	static inline double igamma709    (double x) {
 										return x <= 0.0795 ? x/4.5 : exp(log((x+0.0954)/1.0954)*2.2);
 									}	
-*/	
+	*/
 	static inline double gamma24_17     (double x) {
 											return x <= 0.001867 ? x*17.0 : 1.044445*exp(log(x)/2.4)-0.044445;
 									}

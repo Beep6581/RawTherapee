@@ -164,17 +164,11 @@ namespace rtengine {
 
 		const float gain = pow (2.0f, float(expcomp));
 		float incr=1.f;
-		float noisevar_Ldetail = SQR((SQR(100.f-dnparams.Ldetail) + 50.f*(100.f-dnparams.Ldetail)) * TS * 0.5f * incr);
+		float noisevar_Ldetail = SQR((float)(SQR(100.-dnparams.Ldetail) + 50.*(100.-dnparams.Ldetail)) * TS * 0.5f * incr);
 		bool enhance_denoise = dnparams.enhance;
-		noisered=1.f;//chroma red
-		if(dnparams.redchro<-0.1f) {noisered=0.001f+SQR((100.f + dnparams.redchro)/100.0f);}
-		else if(dnparams.redchro>0.1f) {noisered=1.f+SQR((dnparams.redchro));}
-		else if (dnparams.redchro>= -0.1f && dnparams.redchro<=0.1f) noisered=0.f;
-
-		noiseblue=1.f;//chroma blue
-		if(dnparams.bluechro<-0.1f) {noiseblue=0.001f+SQR((100.f + dnparams.bluechro)/100.0f);}
-		else if(dnparams.bluechro>0.1f) {noiseblue=1.f+SQR((dnparams.bluechro));}
-		else if (dnparams.bluechro>= -0.1f && dnparams.bluechro<=0.1f) noiseblue=0.f;
+		int gamlab = settings->denoiselabgamma;//gamma lab essentialy for Luminance detail
+		if(gamlab > 2) gamlab=2;
+		if(settings->verbose) printf("Denoise Lab=%i\n",gamlab);
 
 		array2D<float> tilemask_in(TS,TS);
 		array2D<float> tilemask_out(TS,TS);
@@ -324,7 +318,6 @@ namespace rtengine {
 				array2D<float> totwt(width,height,ARRAY2D_CLEAR_DATA);//weight for combining DCT blocks
 
 				//
-
 				//#ifdef _OPENMP
 				//#pragma omp parallel for
 				//#endif
@@ -332,21 +325,35 @@ namespace rtengine {
 				//fill tile from image; convert RGB to "luma/chroma"
 				if (isRAW) {//image is raw; use channel differences for chroma channels
 					if(!perf){//lab mode
+							//modification Jacques feb 2013					
 					for (int i=tiletop/*, i1=0*/; i<tilebottom; i++/*, i1++*/) {
 						int i1 = i - tiletop;
 						for (int j=tileleft/*, j1=0*/; j<tileright; j++/*, j1++*/) {
 							int j1 = j - tileleft;
-							//modification Jacques feb 2013
 							float R_ = gain*src->r(i,j);
 							float G_ = gain*src->g(i,j);
 							float B_ = gain*src->b(i,j);
-							//modify arbitrary data for Lab..I have test : nothing, gamma standard, gamma SRGB and GammaBT709...
+							//modify arbitrary data for Lab..I have test : nothing, gamma 2.6 11 - gamma 4 5 - gamma 5.5 10
 							//we can put other as gamma g=2.6 slope=11, etc.
-							// Gamma sRGB is a good compromise, but noting to do with real gamma !!!: it's only for data Lab # data RGB
-							//finally I opted fot gamma_26_11
+							// but noting to do with real gamma !!!: it's only for data Lab # data RGB
+							//finally I opted fot gamma55 and with options we can change
+							if (gamlab == 0) {// options 12/2013
 							R_ = Color::igammatab_26_11[R_];
 							G_ = Color::igammatab_26_11[G_];
 							B_ = Color::igammatab_26_11[B_];
+							}
+							else if (gamlab == 1) {
+							//other new gamma 4 5 
+							R_ = Color::igammatab_4[R_];
+							G_ = Color::igammatab_4[G_];
+							B_ = Color::igammatab_4[B_];
+							}
+							else if (gamlab == 2) {							
+							//new gamma 5.5 10 better for detail luminance..it is a compromise...which depends on the image (distribution BL, ML, HL ...)
+							R_ = Color::igammatab_55[R_];
+							G_ = Color::igammatab_55[G_];
+							B_ = Color::igammatab_55[B_];
+							}
 							//apply gamma noise	standard (slider)
 							R_ = R_<65535.0f ? gamcurve[R_] : (Color::gamman((double)R_/65535.0, gam)*32768.0f);
 							G_ = G_<65535.0f ? gamcurve[G_] : (Color::gamman((double)G_/65535.0, gam)*32768.0f);
@@ -430,7 +437,7 @@ namespace rtengine {
 
 				//initial impulse denoise
 				if (dnparams.luma>0.01) {
-					impulse_nr (labdn, MIN(50.0f,dnparams.luma)/20.0f);
+					impulse_nr (labdn, float(MIN(50.0,dnparams.luma))/20.0f);
 				}
 
 				int datalen = labdn->W * labdn->H;
@@ -440,14 +447,14 @@ namespace rtengine {
 				//and whether to subsample the image after wavelet filtering.  Subsampling is coded as
 				//binary 1 or 0 for each level, eg subsampling = 0 means no subsampling, 1 means subsample
 				//the first level only, 7 means subsample the first three levels, etc.
-				float noisevarL	 = SQR((dnparams.luma/125.0f)*(1+ dnparams.luma/25.0f));
+				float noisevarL	 = (float) (SQR((dnparams.luma/125.0)*(1.+ dnparams.luma/25.0)));
 				
-				float interm_med= dnparams.chroma/10.0f;
+				float interm_med= (float) dnparams.chroma/10.0;
 				float intermred, intermblue;
-				if(dnparams.redchro > 0.f) intermred=0.0014f*SQR(dnparams.redchro); else intermred= dnparams.redchro/7.0f;//increase slower than linear for more sensit
-				float intermred2=dnparams.redchro/7.0f;
-				if(dnparams.bluechro > 0.f) intermblue=0.0014f*SQR(dnparams.bluechro); else intermblue= dnparams.bluechro/7.0f;//increase slower than linear		
-				float intermblue2=dnparams.bluechro/7.0f;
+				if(dnparams.redchro > 0.) intermred=0.0014f* (float)SQR(dnparams.redchro); else intermred= (float) dnparams.redchro/7.0;//increase slower than linear for more sensit
+				float intermred2=(float) dnparams.redchro/7.0;
+				if(dnparams.bluechro > 0.) intermblue=0.0014f*(float) SQR(dnparams.bluechro); else intermblue= (float)dnparams.bluechro/7.0;//increase slower than linear		
+				float intermblue2=(float) dnparams.bluechro/7.0;
 				//adjust noise ab in function of sliders red and blue
 				float realred = interm_med + intermred; if (realred < 0.f) realred=0.01f;
 				float realred2 = interm_med + intermred2; if (realred2 < 0.f) realred2=0.01f;
@@ -492,7 +499,7 @@ namespace rtengine {
 
 				//second impulse denoise
 				if (dnparams.luma>0.01) {
-					impulse_nr (labdn, MIN(50.0f,dnparams.luma)/20.0f);
+					impulse_nr (labdn, MIN(50.0f,(float)dnparams.luma)/20.0f);
 				}
 				//PF_correct_RT(dst, dst, defringe.radius, defringe.threshold);
 
@@ -661,10 +668,21 @@ namespace rtengine {
 							g_ = g_<32768.0f ? igamcurve[g_] : (Color::gamman((float)g_/32768.0f, igam) * 65535.0f);
 							b_ = b_<32768.0f ? igamcurve[b_] : (Color::gamman((float)b_/32768.0f, igam) * 65535.0f);
 							//readapt arbitrary gamma (inverse from beginning)
+							if (gamlab == 0) {
 							r_ = Color::gammatab_26_11[r_];
 							g_ = Color::gammatab_26_11[g_];
 							b_ = Color::gammatab_26_11[b_];
-
+							}
+							else if (gamlab == 1) {
+							r_ = Color::gammatab_4[r_];
+							g_ = Color::gammatab_4[g_];
+							b_ = Color::gammatab_4[b_];
+							}
+							else if (gamlab == 2) {
+							r_ = Color::gammatab_55[r_];
+							g_ = Color::gammatab_55[g_];
+							b_ = Color::gammatab_55[b_];
+							}
 							float factor = Vmask[i1]*Hmask[j1]/gain;
 
 							dsttmp->r(i,j) += factor*r_;
@@ -976,7 +994,7 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 					//float skip_ab_ratio = WaveletCoeffs_a.level_stride(lvl+1)/skip_ab;
 					float skip_L_ratio =  WaveletCoeffs_L.level_stride(lvl+1)/skip_L;
 
-					if (noisevar_abr>0.01) {
+					if (noisevar_abr>0.01f  || noisevar_abb>0.01f) {
 
 						//printf("  dir=%d  mad_L=%f		mad_a=%f		mad_b=%f	\n",dir,sqrt(mad_L),sqrt(mad_a),sqrt(mad_b));
 
@@ -1005,14 +1023,14 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 								//float satfactor_a = mad_a/(mad_a+0.5*SQR(WavCoeffs_a[0][coeffloc_ab]));
 								//float satfactor_b = mad_b/(mad_b+0.5*SQR(WavCoeffs_b[0][coeffloc_ab]));
 
-								WavCoeffs_a[dir][coeffloc_ab] *= SQR(1-xexpf(-(mag_a/mad_a)-(mag_L/(9*mad_L)))/*satfactor_a*/);
-								WavCoeffs_b[dir][coeffloc_ab] *= SQR(1-xexpf(-(mag_b/mad_b)-(mag_L/(9*mad_L)))/*satfactor_b*/);
+								WavCoeffs_a[dir][coeffloc_ab] *= SQR(1.f-xexpf(-(mag_a/mad_a)-(mag_L/(9.f*mad_L)))/*satfactor_a*/);
+								WavCoeffs_b[dir][coeffloc_ab] *= SQR(1.f-xexpf(-(mag_b/mad_b)-(mag_L/(9.f*mad_L)))/*satfactor_b*/);
 
 							}
 						}//now chrominance coefficients are denoised
 					}
 
-					if (noisevar_L>0.01) {
+					if (noisevar_L>0.01f) {
 						mad_L *= noisevar_L*5/(lvl+1);
 //OpenMP here
 						for (int i=0; i<Hlvl_L; i++)
@@ -1024,7 +1042,7 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 								float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L]);
 								//float mag_Lpar = SQR(parfrac*WavPars_L[dir][coeffloc_Lpar]);
 								//float sf_L = SQR(1-expf(-(mag_L/mad_L)-(mag_Lpar/mad_L)));
-								float sf_L = mag_L/(mag_L+mad_L*xexpf(-mag_L/(9*mad_L))+eps);
+								float sf_L = mag_L/(mag_L+mad_L*xexpf(-mag_L/(9.f*mad_L))+eps);
 
 								sfave[coeffloc_L] = sf_L;
 
@@ -1047,7 +1065,7 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 
 								float edgefactor = 1;//expf(-SQR(edge[i][j])/mad_L);
 
-								float sf_L = mag_L/(mag_L + edgefactor*mad_L*xexpf(-mag_L/(9*mad_L))+eps);
+								float sf_L = mag_L/(mag_L + edgefactor*mad_L*xexpf(-mag_L/(9.f*mad_L))+eps);
 
 								//use smoothed shrinkage unless local shrinkage is much less
 								WavCoeffs_L[dir][coeffloc_L] *= (SQR(edgefactor*sfave[coeffloc_L])+SQR(sf_L))/(edgefactor*sfave[coeffloc_L]+sf_L+eps);
@@ -1134,7 +1152,7 @@ __attribute__((force_align_arg_pointer))	void ImProcFunctions::ShrinkAll(float *
 			float mad_a = mada*noisevar_abr;  // noisevar_abr between 0..2.25=default 100=middle value  ==> 582=max
 			float mad_b = madb*noisevar_abb;
 
-			if (noisevar_abr>0.01  ||  noisevar_abb>0.01) {
+			if (noisevar_abr>0.01f  ||  noisevar_abb>0.01f) {
 //OpenMP here
 
 #ifdef _OPENMP
@@ -1147,24 +1165,6 @@ __attribute__((force_align_arg_pointer))	void ImProcFunctions::ShrinkAll(float *
 						m_b=mad_b;
 						int coeffloc_ab = i*W_ab+j;
 						int coeffloc_L	= ((i*skip_L)/skip_ab)*W_L + ((j*skip_L)/skip_ab);
-						//modification Jacques feb 2013
-						/*
-						float reduc=1.f;
-						float bluuc=1.f;
-						if(noisered!=0. || noiseblue !=0.) {
-					//	float hh=xatan2(noi->b[2*i][2*j],noi->a[2*i][2*j]);
-						float hh =xatan2(WavCoeffs_b[dir][coeffloc_ab],WavCoeffs_a[dir][coeffloc_ab]);
-						//one can also use L or c (chromaticity) if necessary
-					//	if(hh > -0.4f && hh < 1.6f) reduc=noisered;//red from purple to next yellow
-					//	if(hh>-2.45f && hh <=-0.4f) bluuc=noiseblue;//blue
-						if(hh>1.3f && hh <=2.2f) bluuc=noiseblue;//blue
-						}
-						
-						mad_a*=reduc;
-						mad_a*=bluuc;
-						mad_b*=reduc;
-						mad_b*=bluuc;
-						*/
 						float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L ])+eps;
 						float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])+eps;
 						float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])+eps;
@@ -1194,26 +1194,6 @@ __attribute__((force_align_arg_pointer))	void ImProcFunctions::ShrinkAll(float *
 
 						int coeffloc_ab = i*W_ab+j;
 						int coeffloc_L	= ((i*skip_L)/skip_ab)*W_L + ((j*skip_L)/skip_ab);
-							//modification Jacques feb 2013
-						/*
-						float reduc=1.f;
-						float bluuc=1.f;
-						
-						if(noisered!=0. || noiseblue !=0.) {
-					//	float hh=xatan2(noi->b[2*i][2*j],noi->a[2*i][2*j]);
-						float hh =xatan2(WavCoeffs_b[dir][coeffloc_ab],WavCoeffs_a[dir][coeffloc_ab]);
-						
-					//	if(hh > -0.4f && hh < 1.6f) reduc=noisered;
-				//		if(hh>-2.45f && hh <=-0.4f) bluuc=noiseblue;
-						if(hh>1.3f && hh <=2.2f) bluuc=noiseblue;//blue
-						
-						}
-						
-						mad_a*=reduc;
-						mad_a*=bluuc;
-						mad_b*=reduc;
-						mad_b*=bluuc;
-						*/
 						float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L ])+eps;
 						float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])+eps;
 						float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])+eps;
@@ -1230,7 +1210,7 @@ __attribute__((force_align_arg_pointer))	void ImProcFunctions::ShrinkAll(float *
 					}//now chrominance coefficients are denoised
 			}
 
-			if (noisevar_L>0.01) {
+			if (noisevar_L>0.01f) {
 #ifdef __SSE2__
 				__m128	magv;
 				__m128  mad_Lv = _mm_set1_ps( mad_L );
@@ -1282,7 +1262,7 @@ __attribute__((force_align_arg_pointer))	void ImProcFunctions::ShrinkAll(float *
 
 
 					float mag = SQR(WavCoeffs_L[dir][i]);
-					float sf = mag/(mag+mad_L*xexpf(-mag/(9*mad_L))+eps);
+					float sf = mag/(mag+mad_L*xexpf(-mag/(9.f*mad_L))+eps);
 
 					//use smoothed shrinkage unless local shrinkage is much less
 					WavCoeffs_L[dir][i] *= (SQR(sfave[i])+SQR(sf))/(sfave[i]+sf+eps);
