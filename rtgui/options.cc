@@ -520,6 +520,8 @@ void Options::setDefaults () {
     rtSettings.protectredh = 0.3;
     rtSettings.CRI_color =0;
 	rtSettings.autocielab=true;
+	rtSettings.denoiselabgamma=2;
+	
 //	rtSettings.ciebadpixgauss=false;	
 	rtSettings.rgbcurveslumamode_gamut=true;
 	lastIccDir = rtSettings.iccDirectory;
@@ -742,6 +744,7 @@ if (keyFile.has_group ("Color Management")) {
 
     if (keyFile.has_key ("Color Management", "Intent"))         rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");
     if (keyFile.has_key ("Color Management", "CRI"))            rtSettings.CRI_color            = keyFile.get_integer("Color Management", "CRI");
+    if (keyFile.has_key ("Color Management", "DenoiseLabgamma"))rtSettings.denoiselabgamma       = keyFile.get_integer("Color Management", "DenoiseLabgamma");
     if (keyFile.has_key ("Color Management", "view"))           rtSettings.viewingdevice        = keyFile.get_integer("Color Management", "view");
     if (keyFile.has_key ("Color Management", "grey"))           rtSettings.viewingdevicegrey    = keyFile.get_integer("Color Management", "grey");
     if (keyFile.has_key ("Color Management", "CBDLArtif"))      rtSettings.artifact_cbdl        = keyFile.get_double("Color Management", "CBDLArtif");
@@ -1046,6 +1049,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("Color Management", "Amountchroma", rtSettings.amchroma);
     keyFile.set_double  ("Color Management", "ProtectRedH", rtSettings.protectredh);
     keyFile.set_integer ("Color Management", "CRI", rtSettings.CRI_color);
+    keyFile.set_integer ("Color Management", "DenoiseLabgamma", rtSettings.denoiselabgamma);
 //    keyFile.set_boolean ("Color Management", "Ciebadpixgauss", rtSettings.ciebadpixgauss);
     keyFile.set_double ("Color Management", "CBDLArtif", rtSettings.artifact_cbdl);
     keyFile.set_double ("Color Management", "CBDLlevel0", rtSettings.level0_cbdl);
