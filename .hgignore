@@ -6,6 +6,7 @@ syntax: glob
 .cproject
 .project
 .settings
+.directory
 
 CMakeFiles
 Makefile
