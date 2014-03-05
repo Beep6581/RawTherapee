@@ -27,6 +27,7 @@
 #include "cursormanager.h"
 #include "../rtengine/safegtk.h"
 #include "../rtengine/rt_math.h"
+#include "../rtengine/dcrop.h"
 
 using namespace rtengine;
 
@@ -104,20 +105,14 @@ CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_,
         titleHeight = bsh;
 
     minWidth = bsw + iw + 2*sideBorderWidth;
-    
-    cropHandler.newImage (ipc_);
 
-    cropHandler.setEnabled (true);
     cropHandler.setCropHandlerListener (this);
-
+    cropHandler.newImage (ipc_);
+    cropHandler.setEnabled (true);
 
     state = SNormal;
 }
 
-CropWindow::~CropWindow () {
-
-}
-        
 void CropWindow::setPosition (int x, int y) {
     
     if (y<0)
@@ -203,7 +198,6 @@ void CropWindow::setSize (int w, int h, bool norefresh) {
         imgAreaW = width;
         imgAreaH = height;
     }
-    
    
     if (!norefresh)
         cropHandler.setWSize (imgAreaW, imgAreaH);
@@ -227,7 +221,20 @@ bool CropWindow::isInside (int x, int y) {
     
     return x>=xpos && x<xpos+width && y>=ypos && y<ypos+height;
 }
-        
+
+void CropWindow::leaveNotify (GdkEventCrossing* event) {
+	printf("LeaveNotify\n");
+    EditSubscriber* subscriber = iarea->getCurrSubscriber();
+    if (state==SNormal && subscriber && subscriber->getEditingType()==ET_PIPETTE) {
+    	printf("Values\n");
+        iarea->pipetteVal[0] = iarea->pipetteVal[1] = iarea->pipetteVal[2] = -1.f;
+        if (subscriber->mouseOver(0)) {
+        	printf("Redraw\n");
+            iarea->redraw();
+        }
+    }
+}
+
 void CropWindow::buttonPress (int button, int type, int bstate, int x, int y) {
 
     iarea->grabFocus (this);
@@ -236,7 +243,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y) {
             if (fitZoom) {
                 state = SNormal;
                 zoomVersion = exposeVersion;
-                translateCoord (x, y, action_x, action_y);
+                screenCoordToImage (x, y, action_x, action_y);
                 changeZoom (ZOOM11INDEX, true, action_x, action_y);
                 fitZoom = false;
             }
@@ -335,6 +342,13 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y) {
             action_y = 0;
             press_x = x;
             press_y = y;
+
+            EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
+
+            if (button==1 && editSubscriber && cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) && ( (editSubscriber->getEditingType() == ET_PIPETTE && (bstate & GDK_CONTROL_MASK)) || (editSubscriber->getEditingType() == ET_OBJECTS && iarea->object>-1)) ) {
+                editSubscriber->button1Pressed(bstate);
+                state=SEditDrag;
+            }
         }
         else if (iarea->getToolMode () == TMStraighten) {
             state = SRotateSelecting;
@@ -345,12 +359,12 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y) {
             rot_deg = 0;
         }
         else if (iarea->getToolMode () == TMSpotWB) {
-            translateCoord (x, y, action_x, action_y);
+            screenCoordToImage (x, y, action_x, action_y);
             iarea->spotWBSelected (action_x, action_y);
         }
         else if (iarea->getToolMode () == TMCropSelect && cropgl) {
             state = SCropSelecting;
-            translateCoord (x, y, press_x, press_y);
+            screenCoordToImage (x, y, press_x, press_y);
             cropHandler.cropParams.enabled = true;
             cropHandler.cropParams.x = press_x;
             cropHandler.cropParams.y = press_y;
@@ -359,18 +373,23 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y) {
         }
     }
     if (button==3) {
+        iarea->pipetteVal[0] = iarea->pipetteVal[1] = iarea->pipetteVal[2] = -1.f;
+        EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
+        if (editSubscriber && editSubscriber->getEditingType()==ET_PIPETTE)
+            editSubscriber->mouseOver(0);
         state = SNormal;
         iarea->setToolHand ();
-	if (pmhlistener) {
+        if (pmhlistener) {
           pmhlistener->toggleFreeze();
-	}
-
+        }
     }
     iarea->redraw ();
     updateCursor (x, y);
 }
 
 void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y) {
+
+    EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
 
     if (state==SCropWinResize) {
         setSize (press_x + x - action_x, press_y + y - action_y);
@@ -395,6 +414,15 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y) {
         observedCropWin->remoteMoveReady ();
         state = SNormal;
     }
+    else if (state==SEditDrag) {
+        editSubscriber->button1Released();
+        iarea->object = 0;
+        iarea->deltaImage.set(0, 0);
+        iarea->deltaScreen.set(0, 0);
+        iarea->deltaPrevImage.set(0, 0);
+        iarea->deltaPrevScreen.set(0, 0);
+        state = SNormal;
+    }
     if (cropgl && (state==SCropSelecting || state==SResizeH1 || state==SResizeH2 || state==SResizeW1 || state==SResizeW2 || state==SResizeTL || state==SResizeTR || state==SResizeBL || state==SResizeBR || state==SCropMove))
     {
         cropgl->cropManipReady ();
@@ -412,7 +440,9 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y) {
     updateCursor (x, y);
 }
 
-void CropWindow::pointerMoved (int x, int y) {
+void CropWindow::pointerMoved (int bstate, int x, int y) {
+
+    EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
 
     if (state==SCropWinMove) {
         setPosition (press_x + x - action_x, press_y + y - action_y);
@@ -429,7 +459,7 @@ void CropWindow::pointerMoved (int x, int y) {
         double factor = options.panAccelFactor == 1 ? 1.0 : options.panAccelFactor * zoomSteps[cropZoom].zoom;
         // never move the preview slower than the cursor
         if (factor < 1.0)
-        	factor = 1.0;
+            factor = 1.0;
         action_x =  (press_x - x) / zoomSteps[cropZoom].zoom * factor;
         action_y =  (press_y - y) / zoomSteps[cropZoom].zoom * factor;
         for (std::list<CropWindowListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
@@ -509,7 +539,7 @@ void CropWindow::pointerMoved (int x, int y) {
         iarea->redraw ();
     }
     else if (state==SCropSelecting && cropgl) { 
-        translateCoord (x, y, action_x, action_y);
+        screenCoordToImage (x, y, action_x, action_y);
         int cx1 = press_x, cy1 = press_y;
         int cx2 = action_x, cy2 = action_y;
         cropgl->cropResized (cx1, cy1, cx2, cy2);
@@ -535,6 +565,62 @@ void CropWindow::pointerMoved (int x, int y) {
         observedCropWin->remoteMove ((x - press_x)/zoomSteps[cropZoom].zoom, (y - press_y)/zoomSteps[cropZoom].zoom);
         iarea->redraw ();
     }
+    else if (editSubscriber) {
+        rtengine::Crop* crop = static_cast<rtengine::Crop*>(cropHandler.getCrop());
+        if (state==SNormal) {
+            Coord imgPos;
+            action_x = x;
+            action_y = y;
+            screenCoordToImage (x, y, imgPos.x, imgPos.y);
+
+            iarea->posImage.set(imgPos.x, imgPos.y);
+            iarea->posScreen.set(x, y);
+
+            Coord cropPos;
+            screenCoordToCropBuffer(x, y, cropPos.x, cropPos.y);
+            if (editSubscriber->getEditingType()==ET_PIPETTE) {
+                iarea->object = onArea (CropImage, x, y) ? 1 : 0;
+                //iarea->object = cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) ? 1 : 0;
+                if (iarea->object) {
+                    crop->getPipetteData(iarea->pipetteVal, cropPos.x, cropPos.y, iarea->getPipetteRectSize());
+                    //printf("PipetteData:  %.3f  %.3f  %.3f\n", iarea->pipetteVal[0], iarea->pipetteVal[1], iarea->pipetteVal[2]);
+                }
+                else {
+                    iarea->pipetteVal[0] = iarea->pipetteVal[1] = iarea->pipetteVal[2] = -1.f;
+                }
+            }
+            else if (editSubscriber->getEditingType()==ET_OBJECTS) {
+                if (onArea (CropImage, x, y))
+                    iarea->object = crop->getObjectID(cropPos);
+                else
+                    iarea->object = -1;
+            }
+
+            if (editSubscriber->mouseOver(bstate))
+                iarea->redraw ();
+        }
+        else if (state==SEditDrag) {
+            Coord currPos;
+            action_x = x;
+            action_y = y;
+            Coord oldPosImage = iarea->posImage+iarea->deltaImage;
+            //printf(">>> IMG / ImgPrev(%d x %d) = (%d x %d) + (%d x %d)\n", oldPosImage.x, oldPosImage.y, iarea->posImage.x, iarea->posImage.y, iarea->deltaImage.x, iarea->deltaImage.y);
+            screenCoordToImage (x, y, currPos.x, currPos.y);
+            iarea->deltaImage     = currPos - iarea->posImage;
+            iarea->deltaPrevImage = currPos - oldPosImage;
+            //printf("          action_ & xy (%d x %d) -> (%d x %d) = (%d x %d) + (%d x %d) / deltaPrev(%d x %d)\n", action_x, action_y, currPos.x, currPos.y, iarea->posImage.x, iarea->posImage.y, iarea->deltaImage.x, iarea->deltaImage.y, iarea->deltaPrevImage.x, iarea->deltaPrevImage.y);
+
+            Coord oldPosScreen = iarea->posScreen+iarea->deltaScreen;
+            //printf(">>> SCR / ScrPrev(%d x %d) = (%d x %d) + (%d x %d)\n", oldPosScreen.x, oldPosScreen.y, iarea->posScreen.x, iarea->posScreen.y, iarea->deltaScreen.x, iarea->deltaScreen.y);
+            screenCoordToPreview(x, y, currPos.x, currPos.y);
+            iarea->deltaScreen     = currPos - iarea->posScreen;
+            iarea->deltaPrevScreen = currPos - oldPosScreen;
+            //printf("          action_ & xy (%d x %d) -> (%d x %d) = (%d x %d) + (%d x %d) / deltaPrev(%d x %d)\n", action_x, action_y, currPos.x, currPos.y, iarea->posScreen.x, iarea->posScreen.y, iarea->deltaScreen.x, iarea->deltaScreen.y, iarea->deltaPrevScreen.x, iarea->deltaPrevScreen.y);
+
+            if (editSubscriber->drag(bstate))
+                iarea->redraw ();
+        }
+    }
     updateCursor (x, y);
     
     bool oRA = onArea (CropResize, x, y);
@@ -545,45 +631,43 @@ void CropWindow::pointerMoved (int x, int y) {
 
     if (decorated)
         buttonSet.motionNotify (x, y);
-		
-	if (pmlistener) {
-		int mx, my;
-		translateCoord (x, y, mx, my);
-		if (!onArea (CropImage, x, y) || !cropHandler.cropPixbuf) {
+
+    if (pmlistener) {
+        int mx, my;
+        screenCoordToImage (x, y, mx, my);
+        if (!onArea (CropImage, x, y) || !cropHandler.cropPixbuf) {
             cropHandler.getFullImageSize(mx,my);
-			pmlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
+            pmlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
             if (pmhlistener) pmhlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
-                }
-		else {
-			/*MyMutex::MyLock lock(cropHandler.cimg);
+        }
+        else {
+            /*MyMutex::MyLock lock(cropHandler.cimg);
 
-			int vx = x - xpos - imgX;
-			int vy = y - ypos - imgY;
-			guint8* pix = cropHandler.cropPixbuf->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
-			if (vx < cropHandler.cropPixbuf->get_width() && vy < cropHandler.cropPixbuf->get_height())
-				pmlistener->pointerMoved (true, mx, my, pix[0], pix[1], pix[2]);
-				
-				*/
+            int vx = x - xpos - imgX;
+            int vy = y - ypos - imgY;
+            guint8* pix = cropHandler.cropPixbuf->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
+            if (vx < cropHandler.cropPixbuf->get_width() && vy < cropHandler.cropPixbuf->get_height())
+            pmlistener->pointerMoved (true, mx, my, pix[0], pix[1], pix[2]);
 
-			cropHandler.cimg.lock ();
-			int vx = x - xpos - imgX;
-			int vy = y - ypos - imgY;
-//			guint8* pix = cropHandler.cropPixbuf->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
-//			if (vx < cropHandler.cropPixbuf->get_width() && vy < cropHandler.cropPixbuf->get_height())
-//				pmlistener->pointerMoved (true, mx, my, pix[0], pix[1], pix[2]);
-			int imwidth = cropHandler.cropPixbuf->get_width();
-			int imheight = cropHandler.cropPixbuf->get_height();
-			guint8* pix = cropHandler.cropPixbuftrue->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
-			if (vx < imwidth && vy < imheight) {
-				pmlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
-		                if (pmhlistener) {
-				   pmhlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
-				}
-                        }
-			cropHandler.cimg.unlock ();
-				
-		}
-	}
+            */
+
+            cropHandler.cimg.lock ();
+            int vx = x - xpos - imgX;
+            int vy = y - ypos - imgY;
+//          guint8* pix = cropHandler.cropPixbuf->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
+//          if (vx < cropHandler.cropPixbuf->get_width() && vy < cropHandler.cropPixbuf->get_height())
+//              pmlistener->pointerMoved (true, mx, my, pix[0], pix[1], pix[2]);
+            int imwidth = cropHandler.cropPixbuf->get_width();
+            int imheight = cropHandler.cropPixbuf->get_height();
+            guint8* pix = cropHandler.cropPixbuftrue->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
+            if (vx < imwidth && vy < imheight) {
+                pmlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
+                if (pmhlistener)
+                    pmhlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
+            }
+            cropHandler.cimg.unlock ();
+        }
+    }
 }
 
 bool CropWindow::onArea (CursorArea a, int x, int y) {
@@ -602,7 +686,7 @@ bool CropWindow::onArea (CursorArea a, int x, int y) {
                 (x>=xpos+imgAreaX && y>=ypos+imgAreaY && x<xpos+imgAreaX+imgAreaW && y<ypos+imgAreaY+imgAreaH) &&
                 !(x>=xpos+imgX && y>=ypos+imgY && x<xpos+imgX+imgW && y<ypos+imgY+imgH);
         case CropTopLeft:
-            translateCoord (x, y, x1, y1);
+            screenCoordToImage (x, y, x1, y1);
             return cropHandler.cropParams.enabled && 
                 y1>=cropHandler.cropParams.y-CROPRESIZEBORDER && 
                 y1<=cropHandler.cropParams.y+CROPRESIZEBORDER &&
@@ -611,7 +695,7 @@ bool CropWindow::onArea (CursorArea a, int x, int y) {
                 x1<=cropHandler.cropParams.x+CROPRESIZEBORDER &&
                 x>=xpos+imgX;
         case CropTopRight:
-            translateCoord (x, y, x1, y1);
+            screenCoordToImage (x, y, x1, y1);
             return cropHandler.cropParams.enabled && 
                 y1>=cropHandler.cropParams.y-CROPRESIZEBORDER && 
                 y1<=cropHandler.cropParams.y+CROPRESIZEBORDER &&
@@ -620,7 +704,7 @@ bool CropWindow::onArea (CursorArea a, int x, int y) {
                 x1<=cropHandler.cropParams.x+cropHandler.cropParams.w-1+CROPRESIZEBORDER &&
                 x<xpos+imgX+imgW;
         case CropBottomLeft:
-            translateCoord (x, y, x1, y1);
+            screenCoordToImage (x, y, x1, y1);
             return cropHandler.cropParams.enabled && 
                 y1>=cropHandler.cropParams.y+cropHandler.cropParams.h-1-CROPRESIZEBORDER && 
                 y1<=cropHandler.cropParams.y+cropHandler.cropParams.h-1+CROPRESIZEBORDER &&
@@ -629,7 +713,7 @@ bool CropWindow::onArea (CursorArea a, int x, int y) {
                 x1<=cropHandler.cropParams.x+CROPRESIZEBORDER &&
                 x>=xpos+imgX;
         case CropBottomRight:
-            translateCoord (x, y, x1, y1);
+            screenCoordToImage (x, y, x1, y1);
             return cropHandler.cropParams.enabled && 
                 y1>=cropHandler.cropParams.y+cropHandler.cropParams.h-1-CROPRESIZEBORDER && 
                 y1<=cropHandler.cropParams.y+cropHandler.cropParams.h-1+CROPRESIZEBORDER &&
@@ -638,7 +722,7 @@ bool CropWindow::onArea (CursorArea a, int x, int y) {
                 x1<=cropHandler.cropParams.x+cropHandler.cropParams.w-1+CROPRESIZEBORDER &&
                 x<xpos+imgX+imgW;
         case CropTop:
-            translateCoord (x, y, x1, y1);
+            screenCoordToImage (x, y, x1, y1);
             return cropHandler.cropParams.enabled && 
                 x1>cropHandler.cropParams.x+CROPRESIZEBORDER && 
                 x1<cropHandler.cropParams.x+cropHandler.cropParams.w-1-CROPRESIZEBORDER && 
@@ -646,7 +730,7 @@ bool CropWindow::onArea (CursorArea a, int x, int y) {
                 y1<cropHandler.cropParams.y+CROPRESIZEBORDER &&
                 y>=ypos+imgY;
         case CropBottom:
-            translateCoord (x, y, x1, y1);
+            screenCoordToImage (x, y, x1, y1);
             return cropHandler.cropParams.enabled && 
                 x1>cropHandler.cropParams.x+CROPRESIZEBORDER && 
                 x1<cropHandler.cropParams.x+cropHandler.cropParams.w-1-CROPRESIZEBORDER && 
@@ -654,7 +738,7 @@ bool CropWindow::onArea (CursorArea a, int x, int y) {
                 y1<cropHandler.cropParams.y+cropHandler.cropParams.h-1+CROPRESIZEBORDER &&
                 y<ypos+imgY+imgH;
         case CropLeft:
-            translateCoord (x, y, x1, y1);
+            screenCoordToImage (x, y, x1, y1);
             return cropHandler.cropParams.enabled && 
                 y1>cropHandler.cropParams.y+CROPRESIZEBORDER && 
                 y1<cropHandler.cropParams.y+cropHandler.cropParams.h-1-CROPRESIZEBORDER && 
@@ -662,7 +746,7 @@ bool CropWindow::onArea (CursorArea a, int x, int y) {
                 x1<cropHandler.cropParams.x+CROPRESIZEBORDER &&
                 x>=xpos+imgX;
         case CropRight:
-            translateCoord (x, y, x1, y1);
+            screenCoordToImage (x, y, x1, y1);
             return cropHandler.cropParams.enabled && 
                 y1>cropHandler.cropParams.y+CROPRESIZEBORDER && 
                 y1<cropHandler.cropParams.y+cropHandler.cropParams.h-1-CROPRESIZEBORDER && 
@@ -670,7 +754,7 @@ bool CropWindow::onArea (CursorArea a, int x, int y) {
                 x1<cropHandler.cropParams.x+cropHandler.cropParams.w-1+CROPRESIZEBORDER &&
                 x<xpos+imgX+imgW;
         case CropInside:
-            translateCoord (x, y, x1, y1);
+            screenCoordToImage (x, y, x1, y1);
             return cropHandler.cropParams.enabled && 
                 y1>cropHandler.cropParams.y && 
                 y1<cropHandler.cropParams.y+cropHandler.cropParams.h-1 && 
@@ -689,9 +773,10 @@ bool CropWindow::onArea (CursorArea a, int x, int y) {
 }
 
 void CropWindow::updateCursor (int x, int y) {
-    
+
+    EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
     ToolMode tm = iarea->getToolMode ();
-    
+
     if (state==SNormal) {
         if (onArea (CropWinButtons, x, y)) 
             cursorManager.setCursor (iarea->get_window(), CSArrow);
@@ -711,8 +796,17 @@ void CropWindow::updateCursor (int x, int y) {
             cursorManager.setCursor (iarea->get_window(), CSResizeHeight);
         else if (tm==TMHand && (onArea (CropLeft, x, y) || onArea (CropRight, x, y))) 
             cursorManager.setCursor (iarea->get_window(), CSResizeWidth);
-        else if (onArea (CropImage, x, y)) { 
-            if (tm==TMHand) {
+        else if (onArea (CropImage, x, y)) {
+            int objectID = -1;
+            if (editSubscriber) {
+                Coord cropPos;
+                screenCoordToCropBuffer(iarea->posScreen.x, iarea->posScreen.y, cropPos.x, cropPos.y);
+                objectID = static_cast<rtengine::Crop*>(cropHandler.getCrop())->getObjectID(cropPos);
+            }
+            if (objectID > -1) {
+                cursorManager.setCursor (iarea->get_window(), editSubscriber->getCursor(objectID));
+            }
+            else if (tm==TMHand) {
                 if (onArea (CropObserved, x, y))
                     cursorManager.setCursor (iarea->get_window(), CSMove);
                 else
@@ -809,14 +903,14 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
             exposeVersion++;
 // PERFORMANCE BOTTLENECK STARTS HERE
     //t3.set ();
-			bool showcs = iarea->indClippedPanel->showClippedShadows();
-			bool showch = iarea->indClippedPanel->showClippedHighlights();
-			bool showR  = iarea->previewModePanel->showR(); // will show clipping if R channel is clipped
-			bool showG  = iarea->previewModePanel->showG(); // will show clipping if G channel is clipped
-			bool showB  = iarea->previewModePanel->showB(); // will show clipping if B channel is clipped
-			bool showL  = iarea->previewModePanel->showL(); // will show clipping if L value   is clipped
-			bool showFocusMask  = iarea->previewModePanel->showFocusMask();
-			bool showclippedAny = (!showR && !showG && !showB && !showL); // will show clipping if any of RGB chanels is clipped
+            bool showcs = iarea->indClippedPanel->showClippedShadows();
+            bool showch = iarea->indClippedPanel->showClippedHighlights();
+            bool showR  = iarea->previewModePanel->showR(); // will show clipping if R channel is clipped
+            bool showG  = iarea->previewModePanel->showG(); // will show clipping if G channel is clipped
+            bool showB  = iarea->previewModePanel->showB(); // will show clipping if B channel is clipped
+            bool showL  = iarea->previewModePanel->showL(); // will show clipping if L value   is clipped
+            bool showFocusMask  = iarea->previewModePanel->showFocusMask();
+            bool showclippedAny = (!showR && !showG && !showB && !showL); // will show clipping if any of RGB chanels is clipped
 
             // While the Right-side ALT is pressed, auto-enable highlight and shadow clipping indicators
             // TODO: Add linux/MacOS specific functions for alternative
@@ -826,9 +920,9 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
             }
             #endif
 
-			if (showcs || showch || showR || showG || showB || showL || showFocusMask) {
-				Glib::RefPtr<Gdk::Pixbuf> tmp = cropHandler.cropPixbuf->copy ();
-				guint8* pix = tmp->get_pixels();
+            if (showcs || showch || showR || showG || showB || showL || showFocusMask) {
+                Glib::RefPtr<Gdk::Pixbuf> tmp = cropHandler.cropPixbuf->copy ();
+                guint8* pix = tmp->get_pixels();
                 guint8* pixWrkSpace = cropHandler.cropPixbuftrue->get_pixels();
 
                 int pixRowStride = tmp->get_rowstride ();
@@ -847,12 +941,11 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                     int delta; bool changedHL; bool changedSH;
 
                     for (int j=0; j<tmp->get_width(); j++) {
-                    
-                    
+
                         if (showFocusMask){ // modulate preview to display focus mask
 
                             //*************
-                        	// Copyright (c) 2011 Michael Ezra michael@michaelezra.com
+                            // Copyright (c) 2011 Michael Ezra michael@michaelezra.com
                             // determine if pixel is in the sharp area of the image using
                             // standard deviation analysis on two different scales
                             int blur_radius, blur_radius2;
@@ -878,23 +971,23 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                             if (j>blur_radius && j<tmp->get_width()-blur_radius
                              && i>blur_radius && i<tmp->get_height()-blur_radius){ //stay within image area
                                 // calculate average in +-blur_radius pixels area around the current pixel
-                            	// speed up: calculate sum of squares in the same loops
+                                // speed up: calculate sum of squares in the same loops
 
-                            	sum_L = 0; sum_L2=0;
-                            	sumsq_L = 0; sumsq_L2 = 0;
+                                sum_L = 0; sum_L2=0;
+                                sumsq_L = 0; sumsq_L2 = 0;
                                 for (int kh=-blur_radius; kh<=blur_radius;kh++){
                                     for (int k=-blur_radius; k<=blur_radius;k++){
                                         //1 pixel step is equivalent to 3-bytes step
-                                    	currIndex = currWS+3*k + kh*pixWSRowStride;
-                                    	curL = 0.299*(currIndex)[0]+0.587*(currIndex)[1]+0.114*(currIndex)[2];
-                                    	sum_L += curL;
-                                    	sumsq_L += SQR(curL);
+                                        currIndex = currWS+3*k + kh*pixWSRowStride;
+                                        curL = 0.299*(currIndex)[0]+0.587*(currIndex)[1]+0.114*(currIndex)[2];
+                                        sum_L += curL;
+                                        sumsq_L += SQR(curL);
 
-                                    	// Band2 @ blur_radius2
-                                    	if (kh>=-blur_radius2 && kh<=blur_radius2 && k>=-blur_radius2 && k<=blur_radius2){
-                                    		sum_L2 += curL;
-                                    		sumsq_L2 += SQR(curL);
-                                    	}
+                                        // Band2 @ blur_radius2
+                                        if (kh>=-blur_radius2 && kh<=blur_radius2 && k>=-blur_radius2 && k<=blur_radius2){
+                                            sum_L2 += curL;
+                                            sumsq_L2 += SQR(curL);
+                                        }
                                     }
                                 }
                                 //*************
@@ -915,9 +1008,9 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
 /*                                if (stdDev_L2>focus_thresh2
                                 && (stdDev_L <focus_thresh)){ // this excludes false positives due to high contrast edges
 
-                                	curr[1]=255;
-                                	curr[0]=0;
-                                	curr[2]=0;
+                                    curr[1]=255;
+                                    curr[0]=0;
+                                    curr[2]=0;
 
                                 }*/
 
@@ -928,17 +1021,17 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                                                 && stdDev_L2 > stdDev_L //this is the key to select fine detail within lower contrast on larger scale
                                                             && stdDev_L > focus_thresh/10 //options.highlightThreshold
                                  ){
-                                	curr[0]=0;
-                                	curr[1]=255;
-                                	curr[2]=0;
+                                    curr[0]=0;
+                                    curr[1]=255;
+                                    curr[2]=0;
                                 }
                             }
                         }
                         
                         else {  // !showFocusMask
-                                       
+
                             // we must compare clippings in working space, since the cropPixbuf is in sRGB, with mon profile
-    
+
                             changedHL=false;
                             changedSH=false;
 
@@ -950,10 +1043,10 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                             if (showch) {
                                 delta=0; changedHL=false;
 
-                            	if (currWS[0]>=options.highlightThreshold && (showR || showclippedAny)) { delta += 255-currWS[0]; changedHL=true; }
-								if (currWS[1]>=options.highlightThreshold && (showG || showclippedAny)) { delta += 255-currWS[1]; changedHL=true; }
-								if (currWS[2]>=options.highlightThreshold && (showB || showclippedAny)) { delta += 255-currWS[2]; changedHL=true; }
-								if (currWS_L>= options.highlightThreshold && showL)                     { delta += 255-currWS_L ; changedHL=true; }
+                                if (currWS[0]>=options.highlightThreshold && (showR || showclippedAny)) { delta += 255-currWS[0]; changedHL=true; }
+                                if (currWS[1]>=options.highlightThreshold && (showG || showclippedAny)) { delta += 255-currWS[1]; changedHL=true; }
+                                if (currWS[2]>=options.highlightThreshold && (showB || showclippedAny)) { delta += 255-currWS[2]; changedHL=true; }
+                                if (currWS_L>= options.highlightThreshold && showL)                     { delta += 255-currWS_L ; changedHL=true; }
 
                                 if (changedHL) { 
                                     delta *= HighlightFac; 
@@ -969,7 +1062,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                                 if (currWS[2]<=options.shadowThreshold && (showB || showclippedAny)) { delta += currWS[2]; changedSH=true; }
                                 if (currWS_L <=options.shadowThreshold && showL)                     { delta += currWS_L ; changedSH=true; }
 
-                                if (changedSH) {                            
+                                if (changedSH) {
                                     if (showclippedAny) {
                                         delta = 255 - (delta * ShawdowFac);
                                         curr[0]=curr[1]=curr[2]=delta;      // indicate clipped shadows in gray
@@ -998,24 +1091,24 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
 
 
                         /*
-						    if (showch && (currWS[0]>=options.highlightThreshold || currWS[1]>=options.highlightThreshold || currWS[2]>=options.highlightThreshold))
-							    curr[0] = curr[1] = curr[2] = 0;
-						    else if (showcs && (currWS[0]<=options.shadowThreshold || currWS[1]<=options.shadowThreshold || currWS[2]<=options.shadowThreshold))
-							    curr[0] = curr[1] = curr[2] = 255;
-						    //if (showch && ((0.299*curr[0]+0.587*curr[1]+0.114*curr[2])>=options.highlightThreshold))
-							//    curr[0] = curr[1] = curr[2] = 0;
-						    //else if (showcs && ((0.299*curr[0]+0.587*curr[1]+0.114*curr[2])<=options.shadowThreshold))
-							//    curr[0] = curr[1] = curr[2] = 255;
+                            if (showch && (currWS[0]>=options.highlightThreshold || currWS[1]>=options.highlightThreshold || currWS[2]>=options.highlightThreshold))
+                                curr[0] = curr[1] = curr[2] = 0;
+                            else if (showcs && (currWS[0]<=options.shadowThreshold || currWS[1]<=options.shadowThreshold || currWS[2]<=options.shadowThreshold))
+                                curr[0] = curr[1] = curr[2] = 255;
+                            //if (showch && ((0.299*curr[0]+0.587*curr[1]+0.114*curr[2])>=options.highlightThreshold))
+                            //    curr[0] = curr[1] = curr[2] = 0;
+                            //else if (showcs && ((0.299*curr[0]+0.587*curr[1]+0.114*curr[2])<=options.shadowThreshold))
+                            //    curr[0] = curr[1] = curr[2] = 255;
                         */
 
                         curr+=3; currWS+=3;
-					}
+                    }
                 }
 //printf("zoomSteps[cropZoom].zoom=%d\n",zoomSteps[cropZoom].zoom);
-				iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), tmp, 0, 0, x+imgX, y+imgY, -1, -1, Gdk::RGB_DITHER_NONE, 0, 0);
-			}
-			else
-				iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), cropHandler.cropPixbuf, 0, 0, x+imgX, y+imgY, -1, -1, Gdk::RGB_DITHER_NONE, 0, 0);
+                iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), tmp, 0, 0, x+imgX, y+imgY, -1, -1, Gdk::RGB_DITHER_NONE, 0, 0);
+            }
+            else
+                iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), cropHandler.cropPixbuf, 0, 0, x+imgX, y+imgY, -1, -1, Gdk::RGB_DITHER_NONE, 0, 0);
     //t4.set ();
 // END OF BOTTLENECK
             if (cropHandler.cropParams.enabled) {
@@ -1025,9 +1118,101 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
             }
             if (observedCropWin)
                 drawObservedFrame (cr);
+
+            EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
+            rtengine::Crop* crop = static_cast<rtengine::Crop*>(cropHandler.getCrop());
+            if (editSubscriber && crop->bufferCreated()) {
+
+                // clip the region
+                if (this != iarea->mainCropWindow) {
+                    cr->set_line_width (0.);
+                    cr->rectangle (x+imgX, y+imgY, imgW, imgH);
+                    cr->clip();
+                }
+
+                // drawing Subscriber's visible geometry
+                const std::vector<Geometry*> visibleGeom = editSubscriber->getVisibleGeometry();
+                cr->set_antialias(Cairo::ANTIALIAS_DEFAULT); // ANTIALIAS_SUBPIXEL ?
+                cr->set_line_cap(Cairo::LINE_CAP_SQUARE);
+                cr->set_line_join(Cairo::LINE_JOIN_ROUND);
+
+                // drawing outer lines
+                for (std::vector<Geometry*>::const_iterator i = visibleGeom.begin(); i != visibleGeom.end(); ++i)
+                    (*i)->drawOuterGeometry(cr, crop, *this);
+
+                // drawing inner lines
+                for (std::vector<Geometry*>::const_iterator i = visibleGeom.begin(); i != visibleGeom.end(); ++i)
+                    (*i)->drawInnerGeometry(cr, crop, *this);
+
+                if (this != iarea->mainCropWindow)
+                    cr->reset_clip();
+
+                // drawing to the "mouse over" channel
+                if (editSubscriber->getEditingType() == ET_OBJECTS) {
+                    const std::vector<Geometry*> mouseOverGeom = editSubscriber->getMouseOverGeometry();
+                    if (mouseOverGeom.size()) {
+                        //printf("ObjectMap (%d x %d)\n", crop->getObjectMap()->get_width(), crop->getObjectMap()->get_height());
+                        Cairo::RefPtr<Cairo::Context> crMO = Cairo::Context::create(crop->getObjectMap());
+                        crMO->set_antialias(Cairo::ANTIALIAS_NONE);
+                        crMO->set_line_cap(Cairo::LINE_CAP_SQUARE);
+                        crMO->set_line_join(Cairo::LINE_JOIN_ROUND);
+                        crMO->set_operator(Cairo::OPERATOR_SOURCE);
+
+                        // clear the bitmap
+                        crMO->set_source_rgba(0., 0., 0., 0.);
+                        crMO->rectangle(0., 0., crop->getObjectMap()->get_width(), crop->getObjectMap()->get_height());
+                        crMO->set_line_width(0.);
+                        crMO->fill();
+
+                        Cairo::RefPtr<Cairo::Context> crMO2;
+                        if (crop->getObjectMode() > OM_255) {
+                            crMO2 = Cairo::Context::create(crop->getObjectMap2());
+                            crMO2->set_antialias(Cairo::ANTIALIAS_NONE);
+                            crMO2->set_line_cap(Cairo::LINE_CAP_SQUARE);
+                            crMO2->set_line_join(Cairo::LINE_JOIN_ROUND);
+                            crMO2->set_operator(Cairo::OPERATOR_SOURCE);
+
+                            // clear the bitmap
+                            crMO2->set_source_rgba(0., 0., 0., 0.);
+                            crMO2->rectangle(0., 0., crop->getObjectMap2()->get_width(), crop->getObjectMap2()->get_height());
+                            crMO2->set_line_width(0.);
+                            crMO2->fill();
+                        }
+                        std::vector<Geometry*>::const_iterator i;
+                        int a;
+                        for (a=0, i=mouseOverGeom.begin(); i != mouseOverGeom.end(); ++i, ++a) {
+                            (*i)->drawToMOChannel(crMO, crMO2, a, crop, *this);
+                        }
+
+                        // Debug code: save the "mouse over" image to a new file at each occurrence
+                        #if 0
+                        {
+                        static unsigned int count=0;
+                        int w = crop->getObjectMap()->get_width();
+                        int h = crop->getObjectMap()->get_height();
+                        Glib::RefPtr<Gdk::Pixbuf> img = Gdk::Pixbuf::create(Gdk::COLORSPACE_RGB, false, 8, w, h);
+                        guint8 *dst = img->get_pixels();
+                        unsigned char *src1 = crop->getObjectMap()->get_data();
+                        unsigned char *src2 = crop->getObjectMode() > OM_255 ? crop->getObjectMap()->get_data() : NULL;
+                        memcpy(dst, src1, w*h);
+                        for (int n=0, n3=0; n<w*h;) {
+                            dst[n3++] = src1[n];
+                            if (src2)
+                                dst[n3++] = src2[n];
+                            else
+                                dst[n3++] = 0;
+                            dst[n3++] = 0;
+                            ++n;
+                        }
+                        img->save(Glib::ustring::compose("mouseOverImage-%1.png", count++), "png");
+                        }
+                        #endif
+                    }
+                }
+            }
         }
         else {
-        	// cropHandler.cropPixbuf is null
+            // cropHandler.cropPixbuf is null
             int cropX, cropY;
             cropHandler.getPosition (cropX, cropY);
             Glib::RefPtr<Gdk::Pixbuf> rough = iarea->getPreviewHandler()->getRoughImage (cropX, cropY, imgAreaW, imgAreaH, zoomSteps[cropZoom].zoom);
@@ -1036,8 +1221,8 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                 if (cropHandler.cropParams.enabled) {
                     drawCrop (cr, x+imgAreaX+(imgAreaW-rough->get_width())/2, y+imgAreaY+(imgAreaH-rough->get_height())/2, rough->get_width(), rough->get_height(), cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams);
                 }
-				if (observedCropWin)
-					drawObservedFrame (cr, rough->get_width(), rough->get_height());
+                if (observedCropWin)
+                    drawObservedFrame (cr, rough->get_width(), rough->get_height());
             }
         }
     }
@@ -1060,17 +1245,22 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
     }
     if (state==SRotateSelecting) 
         drawStraightenGuide (cr);
-    if (state==SNormal && iarea->getToolMode () == TMSpotWB)
-        drawSpotWBRectangle (cr);
+    if (state==SNormal) {
+        EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
+        if (iarea->getToolMode () == TMHand && editSubscriber && editSubscriber->getEditingType()==ET_PIPETTE)
+            drawUnscaledSpotRectangle (cr, iarea->getPipetteRectSize ());
+        else if (iarea->getToolMode () == TMSpotWB)
+            drawScaledSpotRectangle (cr, iarea->getSpotWBRectSize ());
+    }
 
     //t2.set ();
 //    printf ("etime --> %d, %d\n", t2.etime (t1), t4.etime (t3));
 }
 
-// calculate the center of the zommed in/out preview given a cursor position
+// calculate the center of the zoomed in/out preview given a cursor position
 void CropWindow::findCenter  (int deltaZoom, int& x, int& y) {
 	int cursorX, cursorY;
-	translateCoord(x, y, cursorX, cursorY);
+	screenCoordToImage(x, y, cursorX, cursorY);
 
 	int cropX, cropY, cropW, cropH, skip;
 	cropHandler.getWindow (cropX, cropY, cropW, cropH, skip);
@@ -1108,7 +1298,7 @@ void CropWindow::zoomIn (bool toCursor, int cursorX, int cursorY) {
             }
             zoomVersion = exposeVersion;
         } else if (zoomVersion != exposeVersion) {
-            translateCoord(xpos+imgX+imgW/2, ypos+imgY+imgH/2, x, y);
+            screenCoordToImage(xpos+imgX+imgW/2, ypos+imgY+imgH/2, x, y);
             if (cropHandler.cropParams.enabled) {
                 // add some gravity towards crop center
                 int x1 = cropHandler.cropParams.x + cropHandler.cropParams.w / 2;
@@ -1254,12 +1444,74 @@ void CropWindow::changeZoom  (int zoom, bool notify, int centerx, int centery) {
     iarea->redraw ();
 }
 
-void CropWindow::translateCoord (int phyx, int phyy, int& imgx, int& imgy) {
+void CropWindow::screenCoordToCropBuffer (int phyx, int phyy, int& cropx, int& cropy) {
+
+    rtengine::Crop* crop = static_cast<rtengine::Crop*>(cropHandler.getCrop());
+    cropx = phyx - xpos - imgX;
+    cropy = phyy - ypos - imgY;
+    if (zoomSteps[cropZoom].zoom > 1.) {
+        cropx = int(double(cropx)/zoomSteps[cropZoom].zoom);
+        cropy = int(double(cropy)/zoomSteps[cropZoom].zoom);
+    }
+    cropx += crop->getLeftBorder();
+    cropy += crop->getUpperBorder();
+}
+
+void CropWindow::screenCoordToImage (int phyx, int phyy, int& imgx, int& imgy) {
 
     int cropX, cropY;
     cropHandler.getPosition (cropX, cropY);
     imgx = cropX + (phyx - xpos - imgX)/zoomSteps[cropZoom].zoom;
     imgy = cropY + (phyy - ypos - imgY)/zoomSteps[cropZoom].zoom;
+}
+
+void CropWindow::screenCoordToPreview (int phyx, int phyy, int& prevx, int& prevy) {
+
+    prevx = phyx - xpos - imgX;
+    prevy = phyy - ypos - imgY;
+}
+
+void CropWindow::imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy) {
+
+    int cropX, cropY;
+    rtengine::Crop* crop = static_cast<rtengine::Crop*>(cropHandler.getCrop());
+    cropHandler.getPosition (cropX, cropY);
+    phyx = (imgx - cropX)*zoomSteps[cropZoom].zoom + xpos + imgX;
+    phyy = (imgy - cropY)*zoomSteps[cropZoom].zoom + ypos + imgY;
+    //printf("imgx:%d  /  imgy:%d  /  cropX:%d  /  cropY:%d  /  xpos:%d  /  ypos:%d  /  imgX:%d  /  imgY:%d  /  leftBorder: %d  /  upperBorder:%d  /  phyx:%d  /  phyy:%d\n", imgx, imgy, cropX, cropY, xpos, ypos, imgX, imgY, crop->getLeftBorder(), crop->getUpperBorder(), phyx, phyy);
+}
+
+void CropWindow::imageCoordToCropBuffer (int imgx, int imgy, int& phyx, int& phyy) {
+    int cropX, cropY;
+    rtengine::Crop* crop = static_cast<rtengine::Crop*>(cropHandler.getCrop());
+    cropHandler.getPosition (cropX, cropY);
+    phyx = (imgx - cropX)*zoomSteps[cropZoom].zoom + /*xpos + imgX +*/ crop->getLeftBorder();
+    phyy = (imgy - cropY)*zoomSteps[cropZoom].zoom + /*ypos + imgY +*/ crop->getUpperBorder();
+    //printf("imgx:%d  /  imgy:%d  /  cropX:%d  /  cropY:%d  /  xpos:%d  /  ypos:%d  /  imgX:%d  /  imgY:%d  /  leftBorder: %d  /  upperBorder:%d  /  phyx:%d  /  phyy:%d\n", imgx, imgy, cropX, cropY, xpos, ypos, imgX, imgY, crop->getLeftBorder(), crop->getUpperBorder(), phyx, phyy);
+}
+
+int CropWindow::scaleValueToImage (int value) {
+    return int(double(value)/zoomSteps[cropZoom].zoom);
+}
+
+float CropWindow::scaleValueToImage (float value) {
+    return float(double(value)/zoomSteps[cropZoom].zoom);
+}
+
+double CropWindow::scaleValueToImage (double value) {
+    return value/zoomSteps[cropZoom].zoom;
+}
+
+int CropWindow::scaleValueToScreen (int value) {
+    return int(double(value)*zoomSteps[cropZoom].zoom);
+}
+
+float CropWindow::scaleValueToScreen (float value) {
+    return float(double(value)*zoomSteps[cropZoom].zoom);
+}
+
+double CropWindow::scaleValueToScreen (double value) {
+    return value*zoomSteps[cropZoom].zoom;
 }
 
 void CropWindow::drawDecoration (Cairo::RefPtr<Cairo::Context> cr) {
@@ -1394,13 +1646,12 @@ void CropWindow::drawStraightenGuide (Cairo::RefPtr<Cairo::Context> cr) {
     }
 }
 
-void CropWindow::drawSpotWBRectangle (Cairo::RefPtr<Cairo::Context> cr) {
+void CropWindow::drawScaledSpotRectangle (Cairo::RefPtr<Cairo::Context> cr, int rectSize) {
 
-    int rectsize = iarea->getSpotWBRectSize ();
-    int x1 = action_x/zoomSteps[cropZoom].zoom - rectsize;
-    int y1 = action_y/zoomSteps[cropZoom].zoom - rectsize;
-    int y2 = action_y/zoomSteps[cropZoom].zoom + rectsize;
-    int x2 = action_x/zoomSteps[cropZoom].zoom + rectsize;
+    int x1 = action_x/zoomSteps[cropZoom].zoom - rectSize;
+    int y1 = action_y/zoomSteps[cropZoom].zoom - rectSize;
+    int y2 = action_y/zoomSteps[cropZoom].zoom + rectSize;
+    int x2 = action_x/zoomSteps[cropZoom].zoom + rectSize;
 
     cr->set_line_width (1.0);
     cr->rectangle (xpos+imgX-0.5, ypos+imgY-0.5, imgW, imgH);
@@ -1413,6 +1664,27 @@ void CropWindow::drawSpotWBRectangle (Cairo::RefPtr<Cairo::Context> cr) {
     cr->rectangle (x1*zoomSteps[cropZoom].zoom-0.5, y1*zoomSteps[cropZoom].zoom-0.5, x2*zoomSteps[cropZoom].zoom-x1*zoomSteps[cropZoom].zoom, y2*zoomSteps[cropZoom].zoom-y1*zoomSteps[cropZoom].zoom);
     cr->stroke ();
     
+    cr->reset_clip ();
+}
+
+void CropWindow::drawUnscaledSpotRectangle (Cairo::RefPtr<Cairo::Context> cr, int rectSize) {
+
+    int x1 = action_x - rectSize;
+    int y1 = action_y - rectSize;
+    int y2 = action_y + rectSize;
+    int x2 = action_x + rectSize;
+
+    cr->set_line_width (1.0);
+    cr->rectangle (xpos+imgX-0.5, ypos+imgY-0.5, imgW, imgH);
+    cr->clip ();
+
+    cr->set_source_rgb (1.0, 1.0, 1.0);
+    cr->rectangle (x1-1.5, y1-1.5, x2-x1+2, y2-y1+2);
+    cr->stroke ();
+    cr->set_source_rgb (0.0, 0.0, 0.0);
+    cr->rectangle (x1-0.5, y1-0.5, x2-x1, y2-y1);
+    cr->stroke ();
+
     cr->reset_clip ();
 }
 
@@ -1498,4 +1770,8 @@ void CropWindow::delCropWindowListener (CropWindowListener* l) {
             i = listeners.erase (i);
         else
             i++;
+}
+
+EditDataProvider* CropWindow::getImageArea() {
+    return iarea;
 }

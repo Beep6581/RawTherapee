@@ -41,6 +41,8 @@
 #define TR_HFLIP    8
 #define TR_ROT      3
 
+#define CHECK_BOUNDS 0
+
 namespace rtengine {
 
     extern const char sImage8[];
@@ -120,9 +122,17 @@ namespace rtengine {
       protected:
         AlignedBuffer<T*> ab;
       public:
+        #if CHECK_BOUNDS
+        int width_, height_;
+        #endif
         T** ptrs;
 
-        PlanarPtr() : ptrs (NULL) {}
+        #if CHECK_BOUNDS
+        PlanarPtr() : width_(0), height_(0), ptrs (NULL) {}
+        #else
+        PlanarPtr() : ptrs (NULL){}
+        #endif
+
         bool resize(int newSize) {
             if (ab.resize(newSize)) {
                 ptrs=ab.data;
@@ -138,46 +148,68 @@ namespace rtengine {
             T** tmpsPtrs = other.ptrs;
             other.ptrs = ptrs;
             ptrs = tmpsPtrs;
+
+            #if CHECK_BOUNDS
+            int tmp = other.width_;
+            other.width_ = width_;
+            width_ = tmp;
+            tmp = other.height_;
+            other.height_ = height_;
+            height_ = tmp;
+            #endif
         }
 
-        T*&       operator() (unsigned row)                     { return ptrs[row]; }
+        T*&       operator() (unsigned row) {
+            #if CHECK_BOUNDS
+            assert (row < height_);
+            #endif
+            return ptrs[row];
+        }
         // Will send back the start of a row, starting with a red, green or blue value
-        T*        operator() (unsigned row) const               { return ptrs[row]; }
+        T*        operator() (unsigned row) const {
+            #if CHECK_BOUNDS
+            assert (row < height_);
+            #endif
+            return ptrs[row];
+        }
         // Will send back a value at a given row, col position
-        T&        operator() (unsigned row, unsigned col)       { return ptrs[row][col]; }
-        const T   operator() (unsigned row, unsigned col) const { return ptrs[row][col]; }
+        T&        operator() (unsigned row, unsigned col) {
+            #if CHECK_BOUNDS
+            assert (row < height_ && col < width_);
+            #endif
+            return ptrs[row][col];
+        }
+        const T   operator() (unsigned row, unsigned col) const {
+            #if CHECK_BOUNDS
+            assert (row < height_ && col < width_);
+            #endif
+            return ptrs[row][col];
+        }
     };
 
     template <class T>
-    class PlanarImageData : virtual public ImageDatas {
+    class PlanarWhateverData : virtual public ImageDatas {
 
       private:
         AlignedBuffer<T> abData;
 
         int rowstride;    // Plan size, in bytes (all padding bytes included)
-        int planestride;  // Row length, in bytes (padding bytes included)
 
       public:
         T* data;
-        PlanarPtr<T> r;
-        PlanarPtr<T> g;
-        PlanarPtr<T> b;
+        PlanarPtr<T> v;  // v stands for "value", whatever it represent
 
-        PlanarImageData() : rowstride(0), planestride(0), data (NULL) {}
-        PlanarImageData(int w, int h) : rowstride(0), planestride(0), data (NULL) {
+        PlanarWhateverData() : rowstride(0), data (NULL) {}
+        PlanarWhateverData(int w, int h) : rowstride(0), data (NULL) {
             allocate(w, h);
         }
 
         // Send back the row stride. WARNING: unit = byte, not element!
         int getRowStride () { return rowstride; }
-        // Send back the plane stride. WARNING: unit = byte, not element!
-        int getPlaneStride () { return planestride; }
 
-        void swap(PlanarImageData<T> &other) {
+        void swap(PlanarWhateverData<T> &other) {
             abData.swap(other.abData);
-            r.swap(other.r);
-            g.swap(other.g);
-            b.swap(other.b);
+            v.swap(other.v);
             T* tmpData = other.data;
             other.data = data;
             data = tmpData;
@@ -187,6 +219,10 @@ namespace rtengine {
             int tmpHeight = other.height;
             other.height = height;
             height = tmpHeight;
+            #if CHECK_BOUNDS
+            v.width_ = width;
+            v.height_ = height;
+            #endif
         }
 
         // use as pointer to data
@@ -201,6 +237,335 @@ namespace rtengine {
 
             width=W;
             height=H;
+            #if CHECK_BOUNDS
+            v.width_ = width;
+            v.height_ = height;
+            #endif
+
+            if (sizeof(T) > 1) {
+                // 128 bits memory alignment for >8bits data
+                rowstride = ( width*sizeof(T)+15 )/16*16;
+            }
+            else {
+                // No memory alignment for 8bits data
+                rowstride = width*sizeof(T);
+            }
+
+            // find the padding length to ensure a 128 bits alignment for each row
+            size_t size = rowstride * height;
+            if (!width) {
+                size = 0;
+                rowstride = 0;
+            }
+
+            if (size && abData.resize(size, 1)
+                     && v.resize(height) )
+            {
+                data   = abData.data;
+            }
+            else {
+                // asking for a new size of 0 is safe and will free memory, if any!
+                abData.resize(0);
+                data = NULL;
+                v.resize(0);
+                width = height = -1;
+                #if CHECK_BOUNDS
+                v.width_ = v.height_ = -1;
+                #endif
+
+                return;
+            }
+
+            char *start   = (char*)(data);
+
+            for (int i=0; i<height; ++i) {
+                int k = i*rowstride;
+                v(i) = (T*)(start   + k);
+            }
+        }
+
+        /** Copy the data to another PlanarWhateverData */
+        void copyData(PlanarWhateverData<T> *dest) {
+            assert (dest!=NULL);
+            // Make sure that the size is the same, reallocate if necessary
+            dest->allocate(width, height);
+            if (dest->width == -1) {
+                return;
+            }
+            for (int i=0; i<height; i++) {
+                memcpy (dest->v(i), v(i), width*sizeof(T));
+            }
+        }
+
+        void rotate (int deg) {
+
+          if (deg==90) {
+            PlanarWhateverData<T> rotatedImg(height, width);  // New image, rotated
+
+            for (int ny=0; ny<rotatedImg.height; ny++) {
+              int ox = ny;
+              int oy = height-1;
+              for (int nx=0; nx<rotatedImg.width; nx++) {
+                rotatedImg.v(ny,nx) = v(oy,ox);
+                --oy;
+              }
+            }
+            swap(rotatedImg);
+          }
+          else if (deg==270) {
+            PlanarWhateverData<T> rotatedImg(height, width);  // New image, rotated
+
+            for (int nx=0; nx<rotatedImg.width; nx++) {
+              int oy = nx;
+              int ox = width-1;
+              for (int ny=0; ny<rotatedImg.height; ny++) {
+                rotatedImg.v(ny,nx) = v(oy,ox);
+                --ox;
+              }
+            }
+            swap(rotatedImg);
+          }
+          else if (deg==180) {
+            int height2 = height/2 + (height & 1);
+
+            #ifdef _OPENMP
+            // difficult to find a cutoff value where parallelization is counter productive because of processor's data cache collision...
+            bool bigImage = width>32 && height>50;
+            #pragma omp parallel for schedule(static) if(bigImage)
+            #endif
+            for (int i=0; i<height2; i++) {
+              for (int j=0; j<width; j++) {
+                T tmp;
+                int x = width-1-j;
+                int y = height-1-i;
+
+                tmp = v(i,j);
+                v(i,j) = v(y,x);
+                v(y,x) = tmp;
+              }
+            }
+          }
+        }
+
+        template <class IC>
+        void resizeImgTo (int nw, int nh, TypeInterpolation interp, PlanarWhateverData<IC> *imgPtr) {
+            //printf("resizeImgTo: resizing %s image data (%d x %d) to %s (%d x %d)\n", getType(), width, height, imgPtr->getType(), imgPtr->width, imgPtr->height);
+            if (interp == TI_Nearest) {
+                for (int i=0; i<nh; i++) {
+                    int ri = i*height/nh;
+                    for (int j=0; j<nw; j++) {
+                        int ci = j*width/nw;
+                        convertTo(v(ri,ci), imgPtr->v(i,j));
+                    }
+                }
+            }
+            else if (interp == TI_Bilinear) {
+                for (int i=0; i<nh; i++) {
+                    int sy = i*height/nh;
+                    if (sy>=height) sy = height-1;
+                    float dy = float(i)*float(height)/float(nh) - float(sy);
+                    int ny = sy+1;
+                    if (ny>=height) ny = sy;
+                    for (int j=0; j<nw; j++) {
+                        int sx = j*width/nw;
+                        if (sx>=width) sx = width;
+                        float dx = float(j)*float(width)/float(nw) - float(sx);
+                        int nx = sx+1;
+                        if (nx>=width) nx = sx;
+                        convertTo(v(sy,sx)*(1.f-dx)*(1.f-dy) + v(sy,nx)*dx*(1.f-dy) + v(ny,sx)*(1.f-dx)*dy + v(ny,nx)*dx*dy, imgPtr->v(i,j));
+                    }
+                }
+            }
+            else {
+                // This case should never occur!
+                for (int i=0; i<nh; i++) {
+                    for (int j=0; j<nw; j++) {
+                        v(i,j) = 0;
+                    }
+                }
+            }
+        }
+
+        void hflip () {
+          int width2 = width/2;
+
+          #ifdef _OPENMP
+          // difficult to find a cutoff value where parallelization is counter productive because of processor's data cache collision...
+          bool bigImage = width>32 && height>50;
+          #pragma omp parallel for schedule(static) if(bigImage)
+          #endif
+          for (int i=0; i<height; i++)
+            for (int j=0; j<width2; j++) {
+              float temp;
+              int x = width-1-j;
+
+              temp = v(i,j);
+              v(i,j) = v(i,x);
+              v(i,x) = temp;
+            }
+        }
+
+        void vflip () {
+
+          int height2 = height/2;
+
+          #ifdef _OPENMP
+          // difficult to find a cutoff value where parallelization is counter productive because of processor's data cache collision...
+          bool bigImage = width>32 && height>50;
+          #pragma omp parallel for schedule(static) if(bigImage)
+          #endif
+          for (int i=0; i<height2; i++)
+            for (int j=0; j<width; j++) {
+              T temp;
+              int y = height-1-i;
+
+              temp = v(i,j);
+              v(i,j) = v(y,j);
+              v(y,j) = temp;
+            }
+        }
+
+        void calcHist(unsigned int *hist16) {
+        for (int row=0; row<height; row++)
+            for (int col=0; col<width; col++) {
+                unsigned short idx;
+                convertTo(v(row,col), idx);
+                hist16[idx]++;
+            }
+        }
+
+        void transformPixel (int x, int y, int tran, int& tx, int& ty) {
+
+            if (!tran) {
+                tx = x;
+                ty = y;
+                return;
+            }
+            int W = width;
+            int H = height;
+            int sw = W, sh = H;
+            if ((tran & TR_ROT) == TR_R90 || (tran & TR_ROT) == TR_R270) {
+                sw = H;
+                sh = W;
+            }
+
+            int ppx = x, ppy = y;
+            if (tran & TR_HFLIP)
+                ppx = sw - 1 - x;
+            if (tran & TR_VFLIP)
+                ppy = sh - 1 - y;
+
+            tx = ppx;
+            ty = ppy;
+
+            if ((tran & TR_ROT) == TR_R180) {
+                tx = W - 1 - ppx;
+                ty = H - 1 - ppy;
+            }
+            else if ((tran & TR_ROT) == TR_R90) {
+                tx = ppy;
+                ty = H - 1 - ppx;
+            }
+            else if ((tran & TR_ROT) == TR_R270) {
+                tx = W - 1 - ppy;
+                ty = ppx;
+            }
+        }
+
+        void getPipetteData (T &value, int posX, int posY, int squareSize, int tran)
+        {
+            int x; int y;
+            float accumulator = 0.f;  // using float to avoid range overflow; -> please creates specialization if necessary
+            unsigned long int n = 0;
+            int halfSquare = squareSize/2;
+            transformPixel (posX, posY, tran, x, y);
+            for (int iy=y-halfSquare; iy<y-halfSquare+squareSize; ++iy) {
+                for (int ix=x-halfSquare; ix<x-halfSquare+squareSize; ++ix) {
+                    if (ix>=0 && iy>=0 && ix<width && iy<height) {
+                        accumulator += float(this->v(iy, ix));
+                        ++n;
+                    }
+                }
+            }
+            value = n ? T(accumulator/float(n)) : T(0);
+        }
+
+        void readData   (FILE *f) {
+            for (int i=0; i<height; i++)
+                fread (v(i), sizeof(T), width, f);
+        }
+
+        void writeData  (FILE *f) {
+            for (int i=0; i<height; i++)
+                fwrite (v(i), sizeof(T), width, f);
+        }
+
+    };
+
+
+    template <class T>
+    class PlanarRGBData : virtual public ImageDatas {
+
+      private:
+        AlignedBuffer<T> abData;
+
+        int rowstride;    // Plan size, in bytes (all padding bytes included)
+        int planestride;  // Row length, in bytes (padding bytes included)
+
+      public:
+        T* data;
+        PlanarPtr<T> r;
+        PlanarPtr<T> g;
+        PlanarPtr<T> b;
+
+        PlanarRGBData() : rowstride(0), planestride(0), data (NULL) {}
+        PlanarRGBData(int w, int h) : rowstride(0), planestride(0), data (NULL) {
+            allocate(w, h);
+        }
+
+        // Send back the row stride. WARNING: unit = byte, not element!
+        int getRowStride () { return rowstride; }
+        // Send back the plane stride. WARNING: unit = byte, not element!
+        int getPlaneStride () { return planestride; }
+
+        void swap(PlanarRGBData<T> &other) {
+            abData.swap(other.abData);
+            r.swap(other.r);
+            g.swap(other.g);
+            b.swap(other.b);
+            T* tmpData = other.data;
+            other.data = data;
+            data = tmpData;
+            int tmpWidth = other.width;
+            other.width = width;
+            width = tmpWidth;
+            int tmpHeight = other.height;
+            other.height = height;
+            height = tmpHeight;
+            #if CHECK_BOUNDS
+            r.width_ = width;   r.height_ = height;
+            g.width_ = width;   g.height_ = height;
+            b.width_ = width;   b.height_ = height;
+            #endif
+        }
+
+        // use as pointer to data
+        //operator void*() { return data; };
+
+        /* If any of the required allocation fails, "width" and "height" are set to -1, and all remaining buffer are freed
+         * Can be safely used to reallocate an existing image */
+        void allocate (int W, int H) {
+
+            if (W==width && H==height)
+                return;
+
+            width=W;
+            height=H;
+            #if CHECK_BOUNDS
+            r.width_ = width; r.height_ = height;
+            g.width_ = width; g.height_ = height;
+            b.width_ = width; b.height_ = height;
+            #endif
 
             if (sizeof(T) > 1) {
                 // 128 bits memory alignment for >8bits data
@@ -215,6 +580,10 @@ namespace rtengine {
 
             // find the padding length to ensure a 128 bits alignment for each row
             size_t size = rowstride * 3*height;
+            if (!width) {
+                size = 0;
+                rowstride = 0;
+            }
 
             if (size && abData.resize(size, 1)
                      && r.resize(height)
@@ -226,10 +595,16 @@ namespace rtengine {
             else {
                 // asking for a new size of 0 is safe and will free memory, if any!
                 abData.resize(0);
+                data = NULL;
                 r.resize(0);
                 g.resize(0);
                 b.resize(0);
                 width = height = -1;
+                #if CHECK_BOUNDS
+                r.width_ = r.height_ = -1;
+                g.width_ = g.height_ = -1;
+                b.width_ = b.height_ = -1;
+                #endif
                 return;
             }
 
@@ -245,11 +620,15 @@ namespace rtengine {
             }
         }
 
-        /** Copy the data to another PlanarImageData */
-        void copyData(PlanarImageData<T> *dest) {
+        /** Copy the data to another PlanarRGBData */
+        void copyData(PlanarRGBData<T> *dest) {
             assert (dest!=NULL);
             // Make sure that the size is the same, reallocate if necessary
             dest->allocate(width, height);
+            if (dest->width == -1) {
+                printf("ERROR: PlanarRGBData::copyData >>> allocation failed!\n");
+                return;
+            }
             for (int i=0; i<height; i++) {
                 memcpy (dest->r(i), r(i), width*sizeof(T));
                 memcpy (dest->g(i), g(i), width*sizeof(T));
@@ -260,7 +639,7 @@ namespace rtengine {
         void rotate (int deg) {
 
           if (deg==90) {
-            PlanarImageData<T> rotatedImg(height, width);  // New image, rotated
+            PlanarRGBData<T> rotatedImg(height, width);  // New image, rotated
 
             for (int ny=0; ny<rotatedImg.height; ny++) {
               int ox = ny;
@@ -275,7 +654,7 @@ namespace rtengine {
             swap(rotatedImg);
           }
           else if (deg==270) {
-            PlanarImageData<T> rotatedImg(height, width);  // New image, rotated
+            PlanarRGBData<T> rotatedImg(height, width);  // New image, rotated
 
             for (int nx=0; nx<rotatedImg.width; nx++) {
               int oy = nx;
@@ -508,6 +887,11 @@ namespace rtengine {
 
         void transformPixel (int x, int y, int tran, int& tx, int& ty) {
 
+            if (!tran) {
+                tx = x;
+                ty = y;
+                return;
+            }
             int W = width;
             int H = height;
             int sw = W, sh = H;
@@ -571,6 +955,30 @@ namespace rtengine {
             }
         }
 
+        void getPipetteData (T &valueR, T &valueG, T &valueB, int posX, int posY, int squareSize, int tran)
+        {
+            int x; int y;
+            float accumulatorR = 0.f;  // using float to avoid range overflow; -> please creates specialization if necessary
+            float accumulatorG = 0.f;  //    "
+            float accumulatorB = 0.f;  //    "
+            unsigned long int n = 0;
+            int halfSquare = squareSize/2;
+            transformPixel (posX, posY, tran, x, y);
+            for (int iy=y-halfSquare; iy<y-halfSquare+squareSize; ++iy) {
+                for (int ix=x-halfSquare; ix<x-halfSquare+squareSize; ++ix) {
+                    if (ix>=0 && iy>=0 && ix<width && iy<height) {
+                        accumulatorR += float(this->r(iy, ix));
+                        accumulatorG += float(this->g(iy, ix));
+                        accumulatorB += float(this->b(iy, ix));
+                        ++n;
+                    }
+                }
+            }
+            valueR = n ? T(accumulatorR/float(n)) : T(0);
+            valueG = n ? T(accumulatorG/float(n)) : T(0);
+            valueB = n ? T(accumulatorB/float(n)) : T(0);
+        }
+
         void readData   (FILE *f) {
             for (int i=0; i<height; i++)
                 fread (r(i), sizeof(T), width, f);
@@ -601,7 +1009,15 @@ namespace rtengine {
         T* ptr;
         int width;
       public:
+        #if CHECK_BOUNDS
+        int width_, height_;
+        #endif
+
+#if CHECK_BOUNDS
+        ChunkyPtr() : ptr (NULL), width(-1), width_(0), height_(0) {}
+#else
         ChunkyPtr() : ptr (NULL), width(-1) {}
+#endif
         void init(T* base, int w=-1) { ptr = base; width=w; }
         void swap (ChunkyPtr<T> &other) {
             T* tmpsPtr = other.ptr;
@@ -611,17 +1027,42 @@ namespace rtengine {
             int tmpWidth = other.width;
             other.width = width;
             width = tmpWidth;
+
+            #if CHECK_BOUNDS
+            int tmp = other.width_;
+            other.width_ = width_;
+            width_ = tmp;
+            tmp = other.height_;
+            other.height_ = height_;
+            height_ = tmp;
+            #endif
+
         }
 
         // Will send back the start of a row, starting with a red, green or blue value
-        T* operator() (unsigned row) const { return &ptr[3*(row*width)]; }
+        T* operator() (unsigned row) const {
+            #if CHECK_BOUNDS
+            assert (row < height_);
+            #endif
+            return &ptr[3*(row*width)];
+        }
         // Will send back a value at a given row, col position
-        T& operator() (unsigned row, unsigned col) { return ptr[3*(row*width+col)]; }
-        const T  operator() (unsigned row, unsigned col) const { return ptr[3*(row*width+col)]; }
+        T& operator() (unsigned row, unsigned col) {
+            #if CHECK_BOUNDS
+            assert (row < height_ && col < width_);
+            #endif
+            return ptr[3*(row*width+col)];
+        }
+        const T  operator() (unsigned row, unsigned col) const {
+            #if CHECK_BOUNDS
+            assert (row < height_ && col < width_);
+            #endif
+            return ptr[3*(row*width+col)];
+        }
     };
 
     template <class T>
-    class ChunkyImageData : virtual public ImageDatas {
+    class ChunkyRGBData : virtual public ImageDatas {
 
       private:
         AlignedBuffer<T> abData;
@@ -632,8 +1073,8 @@ namespace rtengine {
         ChunkyPtr<T> g;
         ChunkyPtr<T> b;
 
-        ChunkyImageData() : data (NULL) {}
-        ChunkyImageData(int w, int h) : data (NULL) {
+        ChunkyRGBData() : data (NULL) {}
+        ChunkyRGBData(int w, int h) : data (NULL) {
             allocate(w, h);
         }
 
@@ -641,7 +1082,7 @@ namespace rtengine {
           * @return a pointer to the pixel data */
          const T* getData () { return data; }
 
-         void swap(ChunkyImageData<T> &other) {
+         void swap(ChunkyRGBData<T> &other) {
              abData.swap(other.abData);
              r.swap(other.r);
              g.swap(other.g);
@@ -655,6 +1096,11 @@ namespace rtengine {
              int tmpHeight = other.height;
              other.height = height;
              height = tmpHeight;
+             #if CHECK_BOUNDS
+             r.width_ = width;   r.height_ = height;
+             g.width_ = width;   g.height_ = height;
+             b.width_ = width;   b.height_ = height;
+             #endif
          }
 
         /*
@@ -668,8 +1114,14 @@ namespace rtengine {
 
             width=W;
             height=H;
+            #if CHECK_BOUNDS
+            r.width_ = width; r.height_ = height;
+            g.width_ = width; g.height_ = height;
+            b.width_ = width; b.height_ = height;
+            #endif
 
-            if (abData.resize(width*height*3)) {
+            abData.resize(width*height*3);
+            if (!abData.isEmpty()) {
                 data = abData.data;
                 r.init(data,   width);
                 g.init(data+1, width);
@@ -681,21 +1133,30 @@ namespace rtengine {
                 g.init(NULL);
                 b.init(NULL);
                 width = height = -1;
+                #if CHECK_BOUNDS
+                r.width_ = r.height_ = -1;
+                g.width_ = g.height_ = -1;
+                b.width_ = b.height_ = -1;
+                #endif
             }
         }
 
-        /** Copy the data to another ChunkyImageData */
-        void copyData(ChunkyImageData<T> *dest) {
+        /** Copy the data to another ChunkyRGBData */
+        void copyData(ChunkyRGBData<T> *dest) {
             assert (dest!=NULL);
             // Make sure that the size is the same, reallocate if necessary
             dest->allocate(width, height);
+            if (dest->width == -1) {
+                printf("ERROR: ChunkyRGBData::copyData >>> allocation failed!\n");
+                return;
+            }
             memcpy (dest->data, data, 3*width*height*sizeof(T));
         }
 
         void rotate (int deg) {
 
           if (deg==90) {
-            ChunkyImageData<T> rotatedImg(height, width);  // New image, rotated
+            ChunkyRGBData<T> rotatedImg(height, width);  // New image, rotated
 
             for (int ny=0; ny<rotatedImg.height; ny++) {
               int ox = ny;
@@ -710,7 +1171,7 @@ namespace rtengine {
             swap(rotatedImg);
           }
           else if (deg==270) {
-            ChunkyImageData<T> rotatedImg(height, width);  // New image, rotated
+            ChunkyRGBData<T> rotatedImg(height, width);  // New image, rotated
 
             for (int nx=0; nx<rotatedImg.width; nx++) {
               int oy = nx;
@@ -936,6 +1397,11 @@ namespace rtengine {
 
         void transformPixel (int x, int y, int tran, int& tx, int& ty) {
 
+            if (!tran) {
+                tx = x;
+                ty = y;
+                return;
+            }
             int W = width;
             int H = height;
             int sw = W, sh = H;
@@ -1013,61 +1479,62 @@ namespace rtengine {
 
     // --------------------------------------------------------------------
 
-  /** This class represents an image (the result of the image processing) */
+
+    /** @brief This class represents an image (the result of the image processing) */
     class IImage : virtual public ImageDimensions {
       public:
 
         virtual ~IImage() {}
-        /** Returns a mutex that can is useful in many situations. No image operations shuold be performed without locking this mutex.
+        /** @brief Returns a mutex that can is useful in many situations. No image operations shuold be performed without locking this mutex.
           * @return The mutex */
             virtual MyMutex& getMutex ()=0;
             virtual cmsHPROFILE getProfile ()=0;
-        /** Returns the bits per pixel of the image.
+        /** @brief Returns the bits per pixel of the image.
           * @return The bits per pixel of the image */
             virtual int getBitsPerPixel ()=0;
-        /** Saves the image to file. It autodetects the format (jpg, tif, png are supported).
+        /** @brief Saves the image to file. It autodetects the format (jpg, tif, png are supported).
           * @param fname is the name of the file 
             @return the error code, 0 if none */
             virtual int saveToFile (Glib::ustring fname)=0;
-        /** Saves the image to file in a png format.
+        /** @brief Saves the image to file in a png format.
           * @param fname is the name of the file 
           * @param compression is the amount of compression (0-6), -1 corresponds to the default
           * @param bps can be 8 or 16 depending on the bits per pixels the output file will have
             @return the error code, 0 if none */
             virtual int saveAsPNG  (Glib::ustring fname, int compression = -1, int bps = -1)=0;
-        /** Saves the image to file in a jpg format.
+        /** @brief Saves the image to file in a jpg format.
           * @param fname is the name of the file 
           * @param quality is the quality of the jpeg (0...100), set it to -1 to use default
             @return the error code, 0 if none */
             virtual int saveAsJPEG (Glib::ustring fname, int quality = 100, int subSamp = 3 )=0;
-        /** Saves the image to file in a tif format.
+        /** @brief Saves the image to file in a tif format.
           * @param fname is the name of the file 
           * @param bps can be 8 or 16 depending on the bits per pixels the output file will have
             @return the error code, 0 if none */
             virtual int saveAsTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false)=0;
-        /** Sets the progress listener if you want to follow the progress of the image saving operations (optional).
+        /** @brief Sets the progress listener if you want to follow the progress of the image saving operations (optional).
           * @param pl is the pointer to the class implementing the ProgressListener interface */
             virtual void setSaveProgressListener (ProgressListener* pl)=0;
-        /** Free the image */
+        /** @brief Free the image */
             virtual void free ()=0;
     };
 
-  /** This class represents an image having a float pixel planar representation.
-    The planes are stored as two dimensional arrays. All the rows have a 128 bits alignment. */
-    class IImagefloat : public IImage, public PlanarImageData<float> {
+    /** @brief This class represents an image having a float pixel planar representation.
+        The planes are stored as two dimensional arrays. All the rows have a 128 bits alignment. */
+    class IImagefloat : public IImage, public PlanarRGBData<float> {
       public:
         virtual ~IImagefloat() {}
     };
 
-    /** This class represents an image having a classical 8 bits/pixel representation */
-    class IImage8 : public IImage, public ChunkyImageData<unsigned char> {
+    /** @brief This class represents an image having a classical 8 bits/pixel representation */
+    class IImage8 : public IImage, public ChunkyRGBData<unsigned char> {
       public:
         virtual ~IImage8() {}
     };
 
-  /** This class represents an image having a 16 bits/pixel planar representation.
+    /** @brief This class represents an image having a 16 bits/pixel planar representation.
       The planes are stored as two dimensional arrays. All the rows have a 128 bits alignment. */
-    class IImage16 : public IImage, public PlanarImageData<unsigned short> {
+    class IImage16 : public IImage, public PlanarRGBData<unsigned short> {
       public:
         virtual ~IImage16() {}
     };

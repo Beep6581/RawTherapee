@@ -43,18 +43,24 @@ protected:
 	Adjuster* darks;
 	Adjuster* shadows;
 
-	Gtk::Button* saveCustom;
-	Gtk::Button* loadCustom;
-	Gtk::Button* copyCustom;
-	Gtk::Button* pasteCustom;
-	Gtk::Button* saveNURBS;
-	Gtk::Button* loadNURBS;
-	Gtk::Button* copyNURBS;
-	Gtk::Button* pasteNURBS;
-	Gtk::Button* saveParam;
-	Gtk::Button* loadParam;
-	Gtk::Button* copyParam;
-	Gtk::Button* pasteParam;
+	Gtk::Button*       saveCustom;
+	Gtk::Button*       loadCustom;
+	Gtk::Button*       copyCustom;
+	Gtk::Button*       pasteCustom;
+	Gtk::ToggleButton* editCustom;
+	sigc::connection   editCustomConn;
+	Gtk::Button*       saveNURBS;
+	Gtk::Button*       loadNURBS;
+	Gtk::Button*       copyNURBS;
+	Gtk::Button*       pasteNURBS;
+	Gtk::ToggleButton* editNURBS;
+	sigc::connection   editNURBSConn;
+	Gtk::Button*       saveParam;
+	Gtk::Button*       loadParam;
+	Gtk::Button*       copyParam;
+	Gtk::Button*       pasteParam;
+	Gtk::ToggleButton* editParam;
+	sigc::connection   editParamConn;
 
 	int activeParamControl;
 
@@ -66,6 +72,11 @@ public:
 	virtual void updateBackgroundHistogram (CurveEditor* ce);
 	void switchGUI();
 	void refresh(CurveEditor *curveToRefresh);
+	void editModeSwitchedOff ();
+	void pipetteMouseOver(EditDataProvider *provider, int modifierKey);
+	void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
+	void pipetteButton1Released(EditDataProvider *provider);
+	void pipetteDrag(EditDataProvider *provider, int modifierKey);
 
 protected:
 	void storeCurveValues (CurveEditor* ce, const std::vector<double>& p);
@@ -75,6 +86,7 @@ protected:
 	void loadPressed ();
 	void copyPressed ();
 	void pastePressed ();
+	void editToggled (Gtk::ToggleButton *button);
 	bool curveReset (int cType, double iValue);
 	void removeEditor ();
 	const std::vector<double> getCurveFromGUI (int type);

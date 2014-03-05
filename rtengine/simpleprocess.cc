@@ -217,7 +217,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	double rrm, ggm, bbm;
     float autor, autog, autob;
     autor = -9000.f; // This will ask to compute the "auto" values for the B&W tool (have to be inferior to -5000)
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
+    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
     if (settings->verbose)
         printf("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);
 
@@ -277,7 +277,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 								   hist16C, hist16C, dummy,dummy,
 								   1);
 
-	ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve,clcurve, lumacurve, utili, autili, butili, ccutili,cclutili, clcutili, dummy, dummy, dummy, dummy);
+	ipf.chromiLuminanceCurve (NULL, 1,labView, labView, curve1, curve2, satcurve,lhskcurve,clcurve, lumacurve, utili, autili, butili, ccutili,cclutili, clcutili, dummy, dummy, dummy, dummy);
 	
  	if((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled))ipf.EPDToneMap(labView,5,1);
 	

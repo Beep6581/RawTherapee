@@ -765,7 +765,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	double rrm, ggm, bbm;
     float autor, autog, autob;
     autor = autog = autob = -9000.f; // This will ask to compute the "auto" values for the B&W tool
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
+    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
 
     if (shmap)
         delete shmap;
@@ -776,7 +776,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         for (int j=0; j<fw; j++){
             hist16[CLIP((int)((labView->L[i][j])))]++;
             hist16C[CLIP((int)sqrt(labView->a[i][j]*labView->a[i][j] + labView->b[i][j]*labView->b[i][j]))]++;
-			}
+        }
     // luminance processing
 //	ipf.EPDToneMap(labView,0,6);
 	
@@ -787,17 +787,17 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	bool cclutili=false;
 	bool clcutili=false;
 	
-    CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, 
+    CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve,
         hist16, hist16, curve, dummy, 16, utili);
 	
 	CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, hist16C, dummy, 16);
 	
     CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili,params.labCurve.chromaticity, params.labCurve.rstprotection,
 								   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve, curve1, curve2, satcurve,lhskcurve,
-									hist16C, hist16C, dummy, dummy,
+								   hist16C, hist16C, dummy, dummy,
 								   16);
     //ipf.luminanceCurve (labView, labView, curve);
-    ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve, clcurve, curve, utili, autili, butili, ccutili,cclutili, clcutili, dummy, dummy, dummy, dummy);
+    ipf.chromiLuminanceCurve (NULL, 1,labView, labView, curve1, curve2, satcurve,lhskcurve, clcurve, curve, utili, autili, butili, ccutili,cclutili, clcutili, dummy, dummy, dummy, dummy);
 	
 	ipf.vibrance(labView);
 	int begh = 0, endh = labView->H;

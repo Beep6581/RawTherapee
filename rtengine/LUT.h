@@ -75,6 +75,7 @@
 #include "sleefsseavx.c"
 #endif
 #include <assert.h>
+#include "rt_math.h"
 
 template<typename T>
 class LUT {
@@ -204,15 +205,7 @@ public:
 	  }
 	// use with integer indices
 	T& operator[](int index) const {
-		if (((unsigned int)index)<size) return data[index];
-		else
-		{
-			if (index < 0)
-				return data[0];
-			else
-				return data[size - 1];
-		}
-
+		return data[ rtengine::LIM<int>(index, 0, size-1) ];
 	}
 
 #if defined( __SSE2__ ) && defined( __x86_64__ )
@@ -325,19 +318,17 @@ public:
 	// use with float indices
 	T operator[](float index) const {
 		int idx = (int)index;  // don't use floor! The difference in negative space is no problems here
-		if (((unsigned int)idx) > maxs) {
-			if (idx<0)
-			{
-				if (clip & LUT_CLIP_BELOW)
-					return data[0];
-				idx=0;
-			}
-			else
-			{
-				if (clip & LUT_CLIP_ABOVE)
-					return data[size - 1];
-				idx =maxs;
-			}
+		if (index<0.f)
+		{
+			if (clip & LUT_CLIP_BELOW)
+				return data[0];
+			idx=0;
+		}
+		else if (index > float(maxs))
+		{
+			if (clip & LUT_CLIP_ABOVE)
+				return data[size - 1];
+			idx =maxs;
 		}
 		float diff = index - (float) idx;
 		T p1 = data[idx];

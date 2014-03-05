@@ -37,6 +37,7 @@ public:
 
 	//Copies image data in Img into this instance.
 	void CopyFrom(LabImage *Img);
+	void getPipetteData (float &L, float &a, float &b, int posX, int posY, int squareSize);
 };
 
 }

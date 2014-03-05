@@ -21,11 +21,13 @@
 
 #include <cstring>
 #include "guiutils.h"
+#include "cropwindow.h"
+#include "../rtengine/dcrop.h"
 #include "../rtengine/refreshmap.h"
 
 using namespace rtengine;
 
-CropHandler::CropHandler () 
+CropHandler::CropHandler ()
     : zoom(10), cx(0), cy(0), cw(0), ch(0),
     cropX(0), cropY(0), cropW(0), cropH(0), enabled(false),
     cropimg(NULL), cropimgtrue(NULL), ipc(NULL), crop(NULL), listener(NULL) {
@@ -53,7 +55,11 @@ CropHandler::~CropHandler () {
         delete chi;
     cimg.unlock ();
 }
-        
+
+void CropHandler::setEditSubscriber (EditSubscriber* newSubscriber) {
+    (static_cast<rtengine::Crop *>(crop))->setEditSubscriber(newSubscriber);
+}
+
 void CropHandler::newImage (StagedImageProcessor* ipc_) {
 
     ipc = ipc_;
@@ -61,9 +67,13 @@ void CropHandler::newImage (StagedImageProcessor* ipc_) {
     cy = 0;
     
     if (!ipc)
-	    return;
-	
-	crop = ipc->createCrop ();
+        return;
+
+    EditDataProvider *editDataProvider = NULL;
+    CropWindow *cropWin = listener ? static_cast<CropWindow*>(listener) : NULL;
+    if (cropWin)
+        editDataProvider = cropWin->getImageArea();
+    crop = ipc->createCrop (editDataProvider);
     ipc->setSizeListener (this);
     crop->setListener (enabled ? this : NULL);
     initial = true;

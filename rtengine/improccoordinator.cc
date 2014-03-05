@@ -108,14 +108,14 @@ ImProcCoordinator::~ImProcCoordinator () {
     updaterThreadStart.unlock ();
 }
 
-DetailedCrop* ImProcCoordinator::createCrop  () { 
+DetailedCrop* ImProcCoordinator::createCrop  (::EditDataProvider *editDataProvider) {
 
-    return new Crop (this); 
+    return new Crop (this, editDataProvider);
 }
 
 
 // todo: bitmask containing desired actions, taken from changesSinceLast
-// cropCall: calling crop, used to prevent self-updates
+// cropCall: calling crop, used to prevent self-updates  ...doesn't seem to be used
 void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     MyMutex::MyLock processingLock(mProcessing);
@@ -304,7 +304,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if ((todo & M_RGBCURVE) || (todo & M_CROP)) {
         if (hListener) oprevi->calcCroppedHistogram(params, scale, histCropped);
 
-        // complexCurve also calculated pre-curves histogram dependend on crop
+        // complexCurve also calculated pre-curves histogram depending on crop
         ipf.g = imgsrc->getGamma();
         ipf.iGamma = true;
         CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0,
@@ -325,8 +325,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         double bbm=33.;
 
         // if it's just crop we just need the histogram, no image updates
-        if ( todo!=MINUPDATE ) {
-            ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
+        if ( todo & M_RGBCURVE ) {
+            ipf.rgbProc (oprevi, oprevl, NULL, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
                          rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2,beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
             if(params.blackwhite.enabled && params.blackwhite.autoc && abwListener) {
                 if (settings->verbose)
@@ -337,7 +337,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         }
 
         // compute L channel histogram
-        int x1, y1, x2, y2, pos, poscc;
+        int x1, y1, x2, y2, pos;
         params.crop.mapToResized(pW, pH, scale, x1, x2,  y1, y2); 
         lhist16.clear(); lhist16Cropped.clear();
         lhist16Clad.clear(); lhist16CLlad.clear();lhist16LLClad.clear();
@@ -380,7 +380,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
         progress ("Applying Color Boost...",100*readyphase/numofphases);
 
-        ipf.chromiLuminanceCurve (pW,nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili,cclutili,clcutili, histCCurve, histCLurve, histLLCurve, histLCurve);
+        ipf.chromiLuminanceCurve (NULL, pW,nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili,cclutili,clcutili, histCCurve, histCLurve, histLLCurve, histLCurve);
         ipf.vibrance(nprevl);
         if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) ipf.EPDToneMap(nprevl,5,1);
         // for all treatments Defringe, Sharpening, Contrast detail , Microcontrast they are activated if "CIECAM" function are disabled

@@ -181,8 +181,10 @@ bool ImageArea::on_expose_event(GdkEventExpose* event) {
     Glib::RefPtr<Gdk::Window> window = get_window();
     Cairo::RefPtr<Cairo::Context> cr = get_window()->create_cairo_context();
 
-    if (mainCropWindow)
+    if (mainCropWindow) {
+        //printf("MainCropWindow (%d x %d)\n", window->get_width(), window->get_height());
         mainCropWindow->expose (cr);
+    }
 
     if (options.showInfo==true && infotext!="") {
         int fnw, fnh;
@@ -204,11 +206,11 @@ bool ImageArea::on_expose_event(GdkEventExpose* event) {
 bool ImageArea::on_motion_notify_event (GdkEventMotion* event) {
 
     if (focusGrabber) 
-        focusGrabber->pointerMoved (event->x, event->y);
+        focusGrabber->pointerMoved (event->state, event->x, event->y);
     else {
         CropWindow* cw = getCropWindow (event->x, event->y);
         if (cw) 
-            cw->pointerMoved (event->x, event->y);
+            cw->pointerMoved (event->state, event->x, event->y);
     }
     return true;
 }
@@ -256,6 +258,64 @@ bool ImageArea::on_button_release_event (GdkEventButton* event) {
     return true;
 }
 
+bool ImageArea::on_leave_notify_event  (GdkEventCrossing* event) {
+    if (focusGrabber)
+        focusGrabber->leaveNotify (event);
+    else {
+    	printf("ImageArea::1\n");
+        CropWindow* cw = getCropWindow (event->x, event->y);
+        if (cw) {
+        	printf("ImageArea::appel\n");
+            cw->leaveNotify (event);
+        }
+    }
+    return true;
+}
+
+void ImageArea::subscribe(EditSubscriber *subscriber) {
+    mainCropWindow->cropHandler.setEditSubscriber(subscriber);
+    for (std::list<CropWindow*>::iterator i=cropWins.begin(); i!=cropWins.end(); i++)
+        (*i)->cropHandler.setEditSubscriber(subscriber);
+
+    EditDataProvider::subscribe(subscriber);
+
+    if (listener && listener->getToolBar())
+        listener->getToolBar()->startEditMode ();
+
+    if (subscriber->getEditingType() == ET_OBJECTS) {
+        // In this case, no need to reprocess the image, so we redraw the image to display the geometry
+        queue_draw();
+    }
+}
+
+void ImageArea::unsubscribe() {
+    bool wasObjectType = false;
+    EditSubscriber*  oldSubscriber = EditDataProvider::getCurrSubscriber();
+    if (oldSubscriber && oldSubscriber->getEditingType()==ET_OBJECTS)
+        wasObjectType = true;
+
+    EditDataProvider::unsubscribe();
+    // Ask the Crops to free-up edit mode buffers
+    mainCropWindow->cropHandler.setEditSubscriber(NULL);
+    for (std::list<CropWindow*>::iterator i=cropWins.begin(); i!=cropWins.end(); i++)
+        (*i)->cropHandler.setEditSubscriber(NULL);
+    setToolHand();
+
+    if (listener && listener->getToolBar())
+        listener->getToolBar()->stopEditMode ();
+
+    if (wasObjectType)
+        queue_draw();
+}
+
+void ImageArea::getImageSize (int &w, int&h) {
+    if (ipc) {
+        w = ipc->getFullWidth();
+        h = ipc->getFullHeight();
+    }
+    else
+        w = h = 0;
+}
 
 void ImageArea::grabFocus (CropWindow* cw) {
     
@@ -469,8 +529,9 @@ ToolMode ImageArea::getToolMode () {
 
 void ImageArea::setToolHand () { 
     
-    if (listener && listener->getToolBar())
-        listener->getToolBar()->setTool (TMHand); 
+    if (listener && listener->getToolBar()) {
+        listener->getToolBar()->setTool (TMHand);
+    }
 }
 
 int ImageArea::getSpotWBRectSize  () { 

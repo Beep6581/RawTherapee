@@ -644,7 +644,19 @@ void ToolPanelCoordinator::toolSelected (ToolMode tool) {
 	}
 }
 
+void ToolPanelCoordinator::editModeSwitchedOff () {
+	if (editDataProvider) {
+		editDataProvider->switchOffEditMode();
+	}
+}
+
 void ToolPanelCoordinator::dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile) {
 
     flatfield->setShortcutPath(dirname);
+}
+
+void ToolPanelCoordinator::setEditProvider(EditDataProvider *provider) {
+	editDataProvider = provider;
+	for (size_t i=0; i<toolPanels.size(); i++)
+		toolPanels.at(i)->setEditProvider(provider);
 }

@@ -23,17 +23,17 @@
 #include "rt_math.h"
 #include "colortemp.h"
 
+// "ceil" rounding
 #define SKIPS(a,b) ((a) / (b) + ((a) % (b) > 0))
 
 namespace rtengine {
 
 extern const Settings* settings;
 
-Crop::Crop (ImProcCoordinator* parent)
-    : origCrop(NULL), transCrop(NULL), laboCrop(NULL), labnCrop(NULL),
-      cropImg(NULL), cieCrop(NULL), cbuf_real(NULL), cshmap(NULL),
-      cbuffer(NULL), updating(false), newUpdatePending(false),
-      skip(10),
+Crop::Crop (ImProcCoordinator* parent, EditDataProvider *editDataProvider)
+    : EditBuffer(editDataProvider), origCrop(NULL), laboCrop(NULL), labnCrop(NULL),
+      cropImg(NULL), cbuf_real(NULL), cshmap(NULL), transCrop(NULL), cieCrop(NULL), cbuffer(NULL),
+      updating(false), newUpdatePending(false), skip(10),
       cropx(0), cropy(0), cropw(-1), croph(-1),
       trafx(0), trafy(0), trafw(-1), trafh(-1),
       rqcropx(0), rqcropy(0), rqcropw(-1), rqcroph(-1),
@@ -57,7 +57,7 @@ Crop::~Crop () {
 
 void Crop::destroy () {
     MyMutex::MyLock lock(cropMutex);
-    MyMutex::MyLock processingLock(parent->mProcessing);   /////////         RETESTER MAINTENANT QUE CE VERROU EST AJOUTE!!!
+    MyMutex::MyLock processingLock(parent->mProcessing);
     freeAll();
 }
 
@@ -69,8 +69,45 @@ void Crop::setListener (DetailedCropListener* il) {
     }
 }
 
-void Crop::update (int todo) {
+EditUniqueID Crop::getCurrEditID() {
+    EditSubscriber *subscriber = EditBuffer::dataProvider ? EditBuffer::dataProvider->getCurrSubscriber() : NULL;
+    return subscriber ? subscriber->getEditID() : EUID_None;
+}
+
+/*
+ * Delete the edit image buffer if there's no subscriber anymore.
+ * If allocation has to be done, it is deferred to Crop::update
+ */
+void Crop::setEditSubscriber(EditSubscriber* newSubscriber) {
     MyMutex::MyLock lock(cropMutex);
+
+    // At this point, editCrop.dataProvider->currSubscriber is the old subscriber
+    EditSubscriber *oldSubscriber = EditBuffer::dataProvider ? EditBuffer::dataProvider->getCurrSubscriber() : NULL;
+    if (newSubscriber == NULL || (oldSubscriber != NULL && oldSubscriber->getEditBufferType() != newSubscriber->getEditBufferType())) {
+        if (EditBuffer::imgFloatBuffer!=NULL) {
+            delete EditBuffer::imgFloatBuffer;
+            EditBuffer::imgFloatBuffer = NULL;
+        }
+        if (EditBuffer::LabBuffer!=NULL) {
+            delete EditBuffer::LabBuffer;
+            EditBuffer::LabBuffer = NULL;
+        }
+        if (EditBuffer::singlePlaneBuffer.getW()!=-1) {
+            EditBuffer::singlePlaneBuffer.flushData();
+        }
+    }
+    if (newSubscriber == NULL  && oldSubscriber != NULL && oldSubscriber->getEditingType() == ET_OBJECTS) {
+    	printf("Free object buffers\n");
+        EditBuffer::resize(0, 0); // This will delete the objects buffer
+    }
+    else if (newSubscriber && newSubscriber->getEditingType() == ET_OBJECTS) {
+        EditBuffer::resize(cropw, croph, newSubscriber);
+    }
+    // If oldSubscriber == NULL && newSubscriber != NULL -> the image will be allocated when necessary
+}
+
+void Crop::update (int todo) {
+    MyMutex::MyLock cropLock(cropMutex);
 
     ProcParams& params = parent->params;
 
@@ -126,6 +163,9 @@ void Crop::update (int todo) {
         parent->imgsrc->convertColorSpace(origCrop, params.icm, parent->currWB, params.raw);
     }
 
+    // has to be called after setCropSizes! Tools prior to this point can't handle the Edit mechanism, but that shouldn't be a problem.
+    createBuffer(cropw, croph);
+
     // transform
     if (needstransform) {
         if (!transCrop)
@@ -167,7 +207,7 @@ void Crop::update (int todo) {
     double rrm, ggm, bbm;
 
     if (todo & M_RGBCURVE)
-        parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
+        parent->ipf.rgbProc (baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
                              params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->customToneCurve1,
                              parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW,rrm, ggm, bbm,
                              parent->bwAutoR, parent->bwAutoG, parent->bwAutoB);
@@ -203,7 +243,7 @@ void Crop::update (int todo) {
         bool cclutili=parent->cclutili;
 
         LUTu dummy;
-        parent->ipf.chromiLuminanceCurve (1,labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili,cclutili, clcutili, dummy, dummy, dummy, dummy);
+        parent->ipf.chromiLuminanceCurve (this, 1,labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili,cclutili, clcutili, dummy, dummy, dummy, dummy);
         parent->ipf.vibrance (labnCrop);
         if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) parent->ipf.EPDToneMap(labnCrop,5,1);
         //parent->ipf.EPDToneMap(labnCrop, 5, 1);    //Go with much fewer than normal iterates for fast redisplay.
@@ -335,15 +375,17 @@ void Crop::freeAll () {
     if (settings->verbose) printf ("freeallcrop starts %d\n", (int)cropAllocated);
 
     if (cropAllocated) {
-        if (origCrop ) { delete    origCrop;  origCrop=NULL; }
-        if (transCrop) { delete    transCrop; transCrop=NULL; }
-        if (laboCrop ) { delete    laboCrop;  laboCrop=NULL; }
-        if (labnCrop ) { delete    labnCrop;  labnCrop=NULL; }
-        if (cropImg  ) { delete    cropImg;   cropImg=NULL; }
-        if (cieCrop  ) { delete    cieCrop;   cieCrop=NULL; }
-        if (cbuf_real) { delete [] cbuf_real; cbuf_real=NULL; }
-        if (cbuffer  ) { delete [] cbuffer;   cbuffer=NULL; }
-        if (cshmap   ) { delete    cshmap;    cshmap=NULL; }
+        if (origCrop ) { delete    origCrop;    origCrop=NULL; }
+        if (transCrop) { delete    transCrop;   transCrop=NULL; }
+        if (laboCrop ) { delete    laboCrop;    laboCrop=NULL; }
+        if (labnCrop ) { delete    labnCrop;    labnCrop=NULL; }
+        if (cropImg  ) { delete    cropImg;     cropImg=NULL; }
+        if (cieCrop  ) { delete    cieCrop;     cieCrop=NULL; }
+        if (cbuf_real) { delete [] cbuf_real;   cbuf_real=NULL; }
+        if (cbuffer  ) { delete [] cbuffer;     cbuffer=NULL; }
+        if (cshmap   ) { delete    cshmap;      cshmap=NULL; }
+
+        EditBuffer::flush();
     }
     cropAllocated = false;
 }
@@ -416,25 +458,41 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
 
     if (cw!=cropw || ch!=croph || orW!=trafw || orH!=trafh) {
 
-        freeAll ();
-    
         cropw = cw;
         croph = ch;
         trafw = orW;
         trafh = orH;
 
-        origCrop = new Imagefloat (trafw, trafh);
-		
-        //transCrop will be allocated later, if necessary
+        if (!origCrop)
+            origCrop = new Imagefloat;
+        origCrop->allocate(trafw, trafh); // Resizing the buffer (optimization)
+
+        // if transCrop doesn't exist yet, it'll be created where necessary
+        if (transCrop) transCrop->allocate(cropw, croph);
+
+        if (laboCrop) delete laboCrop;  // laboCrop can't be resized
         laboCrop = new LabImage (cropw, croph);
+
+        if (labnCrop) delete labnCrop;  // labnCrop can't be resized
         labnCrop = new LabImage (cropw, croph);
-        cropImg = new Image8 (cropw, croph);
-        //cieCrop is only used in Crop::update, it will be allocated on first use and deleted if not used anymore
+
+        if (!cropImg)
+            cropImg = new Image8;
+        cropImg->allocate(cropw, croph); // Resizing the buffer (optimization)
+
+        //cieCrop is only used in Crop::update, it is destroyed now but will be allocated on first use
+        if (cieCrop) { delete cieCrop; cieCrop=NULL; }
+
+        if (cbuffer  ) delete [] cbuffer;
+        if (cbuf_real) delete [] cbuf_real;
+        if (cshmap   ) delete    cshmap;
         cbuffer = new float*[croph];
         cbuf_real= new float[(croph+2)*cropw];
         for (int i=0; i<croph; i++)
             cbuffer[i] = cbuf_real+cropw*i+cropw;
         cshmap = new SHMap (cropw, croph, true);
+
+        EditBuffer::resize(cropw, croph);
 
         cropAllocated = true;
 

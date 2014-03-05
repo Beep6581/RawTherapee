@@ -198,7 +198,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         int getPreviewWidth ()     { return pW; }
         int getPreviewHeight ()    { return pH; }
 
-        DetailedCrop* createCrop  ();
+        DetailedCrop* createCrop  (::EditDataProvider *editDataProvider);
 
         bool getAutoWB   (double& temp, double& green, double equal);
         void getCamWB    (double& temp, double& green);
@@ -212,7 +212,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         void setAutoExpListener  (AutoExpListener* ael)  {aeListener = ael; }
         void setHistogramListener(HistogramListener *h)  {hListener = h; }
         void setAutoCamListener  (AutoCamListener* acl)  {acListener = acl; }
-        void setAutoBWListener  (AutoBWListener* abw)  {abwListener = abw; }
+        void setAutoBWListener   (AutoBWListener* abw)   {abwListener = abw; }
 
         void saveInputICCReference (const Glib::ustring& fname);
 
