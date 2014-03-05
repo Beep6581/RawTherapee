@@ -25,6 +25,7 @@ extern Glib::ustring argv0;
 extern Glib::ustring creditsPath;
 extern Glib::ustring licensePath;
 extern Glib::ustring versionString;
+extern Glib::ustring versionSuffixString;
 
 SplashImage::SplashImage () {
 
@@ -63,7 +64,10 @@ bool SplashImage::on_expose_event (GdkEventExpose* event) {
     gc_->set_foreground(*textColor);
 
     int w, h;
-    version = create_pango_layout (versionString);
+    Glib::ustring versionStr(versionString);
+    if (!versionSuffixString.empty())
+        versionStr += " "+versionSuffixString;
+    version = create_pango_layout (versionStr);
     version->get_pixel_size (w, h);  
     window->draw_layout(gc_, pixbuf->get_width() - w - 4, pixbuf->get_height() - h - 4, version);
 

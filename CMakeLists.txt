@@ -312,6 +312,7 @@ set(ABOUT_COMMAND_WITH_ARGS ${CMAKE_COMMAND}
                             -DPROC_LABEL:STRING="${PROC_LABEL}"
                             -DPROC_BIT_DEPTH:STRING="${PROC_BIT_DEPTH}"
                             -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+                            -DVERSION_SUFFIX:STRING=${VERSION_SUFFIX}
                             -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
                             -DOPTION_OMP:STRING=${OPTION_OMP}
                             -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP})
