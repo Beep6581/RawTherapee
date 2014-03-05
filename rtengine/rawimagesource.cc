@@ -39,6 +39,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+#include "opthelper.h"
 
 namespace rtengine {
 
@@ -435,7 +436,8 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 }
 
 void RawImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb, RAWParams raw) {
-    colorSpaceConversion (image, cmp, wb, raw, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
+    double pre_mul[3] = { ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2) };
+    colorSpaceConversion (image, cmp, wb, pre_mul, raw, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -994,7 +996,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 		printf( "Subtracting Darkframe:%s\n",rid->get_filename().c_str());
 	}
 	//copyOriginalPixels(ri, rid);
-	
+
 	//FLATFIELD start
 	Glib::ustring newFF = raw.ff_file;
 	RawImage *rif=NULL;
@@ -1272,7 +1274,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 			else //(raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::area_ff])
 				cfaboxblur(riFlatFile, cfablur, BS, BS);
 			
-			float refcolor[2][2],vignettecorr;
+			float refcolor[2][2];
 			//find center ave values by channel
 			for (int m=0; m<2; m++)
 				for (int n=0; n<2; n++) {
@@ -1285,13 +1287,17 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 			
 			for (int m=0; m<2; m++)
 				for (int n=0; n<2; n++) {
-					for (int row = 0; row+m < H; row+=2) 
-						for (int col = 0; col+n < W; col+=2) {
-							int c  = FC(row, col);
-							int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
-							vignettecorr = ( refcolor[m][n]/max(1e-5f,cfablur[(row+m)*W+col+n]-black[c4]) );
+#pragma omp parallel for
+					for (int row = 0; row< H-m; row+=2) {
+						int c  = FC(row, 0);
+						int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
+						for (int col = 0; col < W-n; col+=2) {
+//							int c  = FC(row, col);
+//							int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
+							float vignettecorr = ( refcolor[m][n]/max(1e-5f,cfablur[(row+m)*W+col+n]-black[c4]) );
 							rawData[row+m][col+n] = (rawData[row+m][col+n]-black[c4]) * vignettecorr + black[c4]; 	
 						}
+					}
 				}
 			
 			if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff]) {
@@ -1303,18 +1309,18 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 				cfaboxblur(riFlatFile, cfablur1, 0, 2*BS);//now do horizontal blur
 				cfaboxblur(riFlatFile, cfablur2, 2*BS, 0);//now do vertical blur
 				
-				float vlinecorr, hlinecorr;
-				
 				for (int m=0; m<2; m++)
 					for (int n=0; n<2; n++) {
-						for (int row = 0; row+m < H; row+=2) 
-							for (int col = 0; col+n < W; col+=2) {
-								int c  = FC(row, col);
-								int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
-								hlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-black[c4])/max(1e-5f,cfablur1[(row+m)*W+col+n]-black[c4]) );
-								vlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-black[c4])/max(1e-5f,cfablur2[(row+m)*W+col+n]-black[c4]) );
+#pragma omp parallel for
+						for (int row = 0; row< H-m; row+=2) {
+							int c  = FC(row, 0);
+							int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
+							for (int col = 0; col < W-n; col+=2) {
+								float hlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-black[c4])/max(1e-5f,cfablur1[(row+m)*W+col+n]-black[c4]) );
+								float vlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-black[c4])/max(1e-5f,cfablur2[(row+m)*W+col+n]-black[c4]) );
 								rawData[row+m][col+n] = ((rawData[row+m][col+n]-black[c4]) * hlinecorr * vlinecorr + black[c4]); 
 							}
+						}
 					}
 				free (cfablur1);
 				free (cfablur2);
@@ -1353,15 +1359,18 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 	}
 }
 
-void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, int boxW ) {
+SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, const int boxH, const int boxW ) {
 
 	float (*cfatmp);
 	cfatmp = (float (*)) calloc (H*W, sizeof *cfatmp);
-	float hotdeadthresh = 0.5;
-		
+//	const float hotdeadthresh = 0.5;
+
+#pragma omp parallel
+{
+#pragma omp for
 	for (int i=0; i<H; i++) {
 		int iprev,inext,jprev,jnext;
-		float p[9],temp, median;
+		int p[5],temp, median;
 		if (i<2) {iprev=i+2;} else {iprev=i-2;}
 		if (i>H-3) {inext=i-2;} else {inext=i+2;}
 		for (int j=0; j<W; j++) {
@@ -1372,7 +1381,9 @@ void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, 
 			//	   riFlatFile->data[inext][jprev], riFlatFile->data[inext][j], riFlatFile->data[inext][jnext], cfatmp[i*W+j]);
 			med5(riFlatFile->data[iprev][j], riFlatFile->data[i][jprev],riFlatFile->data[i][j],
 				 riFlatFile->data[i][jnext], riFlatFile->data[inext][j],median);
-			if (riFlatFile->data[i][j]>hotdeadthresh*median || median>hotdeadthresh*riFlatFile->data[i][j]) {
+				 
+//			if (riFlatFile->data[i][j]>hotdeadthresh*median || median>hotdeadthresh*riFlatFile->data[i][j]) {
+			if (((int)riFlatFile->data[i][j]<<1)>median || (median<<1) > riFlatFile->data[i][j]) {
 				cfatmp[i*W+j] = median;
 			} else {
 				cfatmp[i*W+j] = riFlatFile->data[i][j];
@@ -1383,6 +1394,7 @@ void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, 
 	
 	//box blur cfa image; box size = BS
 	//horizontal blur
+#pragma omp for
 	for (int row = 0; row < H; row++) {
 		int len = boxW/2 + 1;
 		cfatmp[row*W+0] = cfatmp[row*W+0]/len;
@@ -1409,6 +1421,86 @@ void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, 
 	}
 
 	//vertical blur
+#ifdef __SSE2__
+	__m128	leninitv = _mm_set1_ps( (float)((int)(boxH/2 + 1)));
+	__m128 	onev = _mm_set1_ps( 1.0f );
+	__m128	temp1v,temp2v,lenv,lenp1v,lenm1v;
+	int row;
+#pragma omp for
+	for (int col = 0; col < W-3; col+=4) {
+		lenv = leninitv;
+		temp1v = LVFU(cfatmp[0*W+col]) / lenv;
+		temp2v = LVFU(cfatmp[1*W+col]) / lenv;
+		
+		for (int i=2; i<boxH+2; i+=2) {
+			temp1v += LVFU(cfatmp[i*W+col]) / lenv;
+			temp2v += LVFU(cfatmp[(i+1)*W+col]) / lenv;
+		}
+		_mm_storeu_ps(&cfablur[0*W+col], temp1v);
+		_mm_storeu_ps(&cfablur[1*W+col], temp2v);
+		for (row=2; row<boxH+2; row+=2) {
+			lenp1v = lenv + onev;
+			temp1v = (temp1v * lenv + LVFU(cfatmp[(row+boxH)*W+col])) / lenp1v;
+			temp2v = (temp2v * lenv + LVFU(cfatmp[(row+boxH+1)*W+col])) / lenp1v;
+			_mm_storeu_ps( &cfablur[row*W+col], temp1v);
+			_mm_storeu_ps( &cfablur[(row+1)*W+col], temp2v);
+			lenv = lenp1v;
+		}
+		for (; row < H-boxH-1; row+=2) {
+			temp1v = temp1v + (LVFU(cfatmp[(row+boxH)*W+col]) - LVFU(cfatmp[(row-boxH-2)*W+col]))/lenv;
+			temp2v = temp2v + (LVFU(cfatmp[(row+1+boxH)*W+col]) - LVFU(cfatmp[(row+1-boxH-2)*W+col]))/lenv;
+			_mm_storeu_ps(&cfablur[row*W+col], temp1v);
+			_mm_storeu_ps(&cfablur[(row+1)*W+col], temp2v);
+		}
+		for(; row < H-boxH; row++) {
+			temp1v = temp1v + (LVFU(cfatmp[(row+boxH)*W+col]) - LVFU(cfatmp[(row-boxH-2)*W+col]))/lenv;
+			_mm_storeu_ps(&cfablur[row*W+col], temp1v);
+			__m128 swapv = temp1v;
+			temp1v = temp2v;
+			temp2v = swapv;
+			
+		}
+		for (; row<H-1; row+=2) {
+			lenm1v = lenv - onev;
+			temp1v = (temp1v * lenv - LVFU(cfatmp[(row-boxH-2)*W+col])) / lenm1v;
+			temp2v = (temp2v * lenv - LVFU(cfatmp[(row-boxH-1)*W+col])) / lenm1v;
+			_mm_storeu_ps(&cfablur[row*W+col], temp1v);
+			_mm_storeu_ps(&cfablur[(row+1)*W+col], temp2v);
+			lenv = lenm1v;
+		}
+		for(; row < H; row++) {
+			lenm1v = lenv - onev;
+			temp1v = (temp1v * lenv - LVFU(cfatmp[(row-boxH-2)*W+col])) / lenm1v;
+			_mm_storeu_ps(&cfablur[(row)*W+col], temp1v);
+		}
+
+	}
+	for (int col = W-(W%4); col < W; col++) {
+		int len = boxH/2 + 1;
+		cfablur[0*W+col] = cfatmp[0*W+col]/len;
+		cfablur[1*W+col] = cfatmp[1*W+col]/len;
+		for (int i=2; i<boxH+2; i+=2) {
+			cfablur[0*W+col] += cfatmp[i*W+col]/len;
+			cfablur[1*W+col] += cfatmp[(i+1)*W+col]/len;
+		}
+		for (int row=2; row<boxH+2; row+=2) {
+			cfablur[row*W+col] = (cfablur[(row-2)*W+col]*len + cfatmp[(row+boxH)*W+col])/(len+1);
+			cfablur[(row+1)*W+col] = (cfablur[(row-1)*W+col]*len + cfatmp[(row+boxH+1)*W+col])/(len+1);
+			len ++;
+		}
+		for (int row = boxH+2; row < H-boxH; row++) {
+			cfablur[row*W+col] = cfablur[(row-2)*W+col] + (cfatmp[(row+boxH)*W+col] - cfatmp[(row-boxH-2)*W+col])/len;
+		}
+		for (int row=H-boxH; row<H; row+=2) {
+			cfablur[row*W+col] = (cfablur[(row-2)*W+col]*len - cfatmp[(row-boxH-2)*W+col])/(len-1);
+			if (row+1<H) 
+				cfablur[(row+1)*W+col] = (cfablur[(row-1)*W+col]*len - cfatmp[(row-boxH-1)*W+col])/(len-1);
+			len --;
+		}
+	}
+
+#else
+#pragma omp for
 	for (int col = 0; col < W; col++) {
 		int len = boxH/2 + 1;
 		cfablur[0*W+col] = cfatmp[0*W+col]/len;
@@ -1432,8 +1524,9 @@ void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, 
 			len --;
 		}
 	}
+#endif
+}
 	free (cfatmp);
-	
 }
 	
 
@@ -1755,7 +1848,7 @@ lab2ProphotoRgbD50(float L, float A, float B, float& r, float& g, float& b)
 }
 
 // Converts raw image including ICC input profile to working space - floating point version
-void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams &cmp, ColorTemp &wb, float rawWhitePoint, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName) {
+void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams &cmp, ColorTemp &wb, double pre_mul[3], float rawWhitePoint, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName) {
 
     //MyTime t1, t2, t3;
     //t1.set ();
@@ -1768,7 +1861,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 
     if (dcpProf!=NULL) {
         // DCP processing
-        dcpProf->Apply(im, cmp.dcpIlluminant, cmp.working, wb, rawWhitePoint, cmp.toneCurve);
+        dcpProf->Apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul, camMatrix, rawWhitePoint, cmp.toneCurve);
         return;
     }
 

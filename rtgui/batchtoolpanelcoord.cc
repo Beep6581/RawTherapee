@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -140,10 +140,10 @@ void BatchToolPanelCoordinator::initSession () {
 			sharpenEdge->setAdjusterBehavior (false, false);
 			sharpenMicro->setAdjusterBehavior (false, false);
 			icm->setAdjusterBehavior (false, false);
-			
+
 			chmixer->setAdjusterBehavior (false);
 			blackwhite->setAdjusterBehavior (false,false);
-			
+
 			shadowshighlights->setAdjusterBehavior (false, false, false);
 			dirpyrequalizer->setAdjusterBehavior (false, false, false);
 			dirpyrdenoise->setAdjusterBehavior (false, false,false,false,false,false);
@@ -172,7 +172,7 @@ void BatchToolPanelCoordinator::initSession () {
 			sharpenEdge->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENEDGE_AMOUNT],options.baBehav[ADDSET_SHARPENEDGE_PASS]);
 			sharpenMicro->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENMICRO_AMOUNT],options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY]);
 			icm->setAdjusterBehavior (options.baBehav[ADDSET_FREE_OUPUT_GAMMA],options.baBehav[ADDSET_FREE_OUTPUT_SLOPE]);
-			
+
 			chmixer->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER] );
 			blackwhite->setAdjusterBehavior (options.baBehav[ADDSET_BLACKWHITE_HUES],options.baBehav[ADDSET_BLACKWHITE_GAMMA]);
 			shadowshighlights->setAdjusterBehavior (options.baBehav[ADDSET_SH_HIGHLIGHTS], options.baBehav[ADDSET_SH_SHADOWS], options.baBehav[ADDSET_SH_LOCALCONTRAST]);
@@ -235,7 +235,7 @@ void BatchToolPanelCoordinator::initSession () {
 
 			if (options.baBehav[ADDSET_FREE_OUPUT_GAMMA])  pparams.icm.gampos = 0;
 			if (options.baBehav[ADDSET_FREE_OUTPUT_SLOPE])  pparams.icm.slpos = 0;
-			
+
 			//if (options.baBehav[ADDSET_CBOOST_AMOUNT])  pparams.colorBoost.amount = 0;
 
 			//if (options.baBehav[ADDSET_CS_BLUEYELLOW])  pparams.colorShift.a = 0;
@@ -265,7 +265,7 @@ void BatchToolPanelCoordinator::initSession () {
 			if (options.baBehav[ADDSET_DIRPYREQ_SKINPROTECT]) pparams.dirpyrequalizer.skinprotect = 0;
 
 			if (options.baBehav[ADDSET_DIRPYRDN_LUMA]) pparams.dirpyrDenoise.luma = 0;
-			
+
 			if (options.baBehav[ADDSET_DIRPYRDN_CHROMA]) pparams.dirpyrDenoise.chroma = 0;
 			if (options.baBehav[ADDSET_DIRPYRDN_CHROMARED]) pparams.dirpyrDenoise.redchro = 0;
 			if (options.baBehav[ADDSET_DIRPYRDN_CHROMABLUE]) pparams.dirpyrDenoise.bluechro = 0;
@@ -300,14 +300,127 @@ void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const G
 
     somethingChanged = true;
 
-    pparamsEdited.set (false);        
+    pparamsEdited.set (false);
     // read new values from the gui
     for (size_t i=0; i<toolPanels.size(); i++)
         toolPanels[i]->write (&pparams, &pparamsEdited);
 
-    // TODO: We may update the crop on coarse rotate events here, like in ToolPanelCoordinator::panelChanged
+    // If only a single item is selected, we emulate the behaviour of the editor tool panel coordinator,
+    // otherwise we adjust the inital parameters on a per-image basis.
+    if (selected.size()==1) {
+        // Compensate rotation on flip
+        if (event==rtengine::EvCTHFlip || event==rtengine::EvCTVFlip) {
+            if (fabs(pparams.rotate.degree)>0.001) {
+                  pparams.rotate.degree *= -1;
+                rotate->read (&pparams);
+            }
+        }
 
-    if (event==rtengine::EvAutoExp || event==rtengine::EvClip) 
+        int w, h;
+        selected[0]->getFinalSize (selected[0]->getProcParams (), w, h);
+        crop->setDimensions(w, h);
+
+        // Some transformations change the crop and resize parameter for convenience.
+        if (event==rtengine::EvCTHFlip) {
+            crop->hFlipCrop ();
+            crop->write (&pparams, &pparamsEdited);
+        }
+        else if (event==rtengine::EvCTVFlip) {
+            crop->vFlipCrop ();
+            crop->write (&pparams, &pparamsEdited);
+        }
+        else if (event==rtengine::EvCTRotate) {
+            crop->rotateCrop (pparams.coarse.rotate, pparams.coarse.hflip, pparams.coarse.vflip);
+            crop->write (&pparams, &pparamsEdited);
+            resize->update (pparams.crop.enabled, pparams.crop.w, pparams.crop.h, w, h);
+            resize->write (&pparams, &pparamsEdited);
+        }
+        else if (event==rtengine::EvCrop) {
+            resize->update (pparams.crop.enabled, pparams.crop.w, pparams.crop.h);
+            resize->write (&pparams, &pparamsEdited);
+        }
+    }
+    else {
+        // Compensate rotation on flip
+        if (event==rtengine::EvCTHFlip || event==rtengine::EvCTVFlip) {
+            for (size_t i=0; i<selected.size(); i++) {
+                if (fabs(initialPP[i].rotate.degree) > 0.001) {
+                    initialPP[i].rotate.degree *= -1.0;
+
+                    pparamsEdited.rotate.degree = false;
+                }
+            }
+        }
+
+        // some transformations make the crop change for convenience
+        if (event==rtengine::EvCTHFlip) {
+            for (size_t i=0; i<selected.size(); i++) {
+                int w, h;
+                selected[i]->getFinalSize (selected[i]->getProcParams (), w, h);
+
+                rtengine::procparams::CropParams& crop = initialPP[i].crop;
+                crop.x = w - crop.x - crop.w;
+
+                pparamsEdited.crop.x = false;
+            }
+        }
+        else if (event==rtengine::EvCTVFlip) {
+            for (size_t i=0; i<selected.size(); i++) {
+                int w, h;
+                selected[i]->getFinalSize (selected[i]->getProcParams (), w, h);
+
+                rtengine::procparams::CropParams& crop = initialPP[i].crop;
+                crop.y = h - crop.y - crop.h;
+
+                pparamsEdited.crop.y = false;
+            }
+        }
+        else if (event==rtengine::EvCTRotate) {
+            int newDeg = pparams.coarse.rotate;
+            for (size_t i=0; i<selected.size(); i++) {
+                int w, h;
+                selected[i]->getFinalSize (selected[i]->getProcParams (), w, h);
+
+                int oldDeg = initialPP[i].coarse.rotate;
+
+                rtengine::procparams::CropParams& crop = initialPP[i].crop;
+                int rotation = (360 + newDeg - oldDeg) % 360;
+                ProcParams pptemp = selected[i]->getProcParams(); // Get actual procparams
+                if((pptemp.coarse.hflip != pptemp.coarse.vflip) && ((rotation%180)==90))
+                    rotation = (rotation + 180)%360;
+
+
+                switch (rotation) {
+                case 90:
+                    std::swap(crop.x, crop.y);
+                    std::swap(crop.w, crop.h);
+
+                    crop.x = h - crop.x - crop.w;
+                    break;
+                case 270:
+                    std::swap(crop.x, crop.y);
+                    std::swap(crop.w, crop.h);
+
+                    crop.y = w - crop.y - crop.h;
+                    break;
+                case 180:
+                    crop.x = w - crop.x - crop.w;
+                    crop.y = h - crop.y - crop.h;
+                    break;
+                }
+
+                initialPP[i].coarse.rotate = newDeg;
+
+            }
+            pparamsEdited.crop.x = false;
+            pparamsEdited.crop.y = false;
+            pparamsEdited.crop.w = false;
+            pparamsEdited.crop.h = false;
+            pparamsEdited.coarse.rotate = false;
+        }
+    }
+
+    if (event==rtengine::EvAutoExp || event==rtengine::EvClip)
         for (size_t i=0; i<selected.size(); i++) {
             initialPP[i].toneCurve.autoexp = pparams.toneCurve.autoexp;
             initialPP[i].toneCurve.clip = pparams.toneCurve.clip;
@@ -351,10 +464,10 @@ void BatchToolPanelCoordinator::getAutoWB (double& temp, double& green, double e
 }
 
 void BatchToolPanelCoordinator::getCamWB (double& temp, double& green) {
-    
+
     if (!selected.empty())
         selected[0]->getCamWB (temp, green);
-}    
+}
 
 void BatchToolPanelCoordinator::optionsChanged () {
 
@@ -433,7 +546,7 @@ void BatchToolPanelCoordinator::cropSelectionReady () {
 }
 
 CropGUIListener* BatchToolPanelCoordinator::startCropEditing (Thumbnail* thm) {
-    
+
     if (thm) {
         int w, h;
         thm->getFinalSize (thm->getProcParams (), w, h);

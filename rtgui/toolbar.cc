@@ -257,8 +257,11 @@ bool ToolBar::handleShortcutKey (GdkEventKey* event) {
         switch(event->keyval) {
             case GDK_w:
             case GDK_W:
-                wb_pressed ();
-                return true;
+            	if(wbTool){
+					wb_pressed ();
+					return true;
+            	}
+				return false;
             case GDK_c:
             case GDK_C:
                 crop_pressed ();

@@ -66,7 +66,6 @@
 #ifdef WIN32
 #include <sys/utime.h>
 #include <winsock2.h>
-#pragma comment(lib, "ws2_32.lib")
 #define snprintf _snprintf
 #define strcasecmp stricmp
 #define strncasecmp strnicmp
@@ -4569,7 +4568,8 @@ nf: order = 0x4949;
 	cam_mul[2] = get4() << 2;
       }
     }
-    if (tag == 0x15 && type == 2 && is_raw)
+    //if (tag == 0x15 && type == 2 && is_raw)
+    if (tag == 0x15 && type == 2 && is_raw && strstr(model, "Hasselblad ") != model) // RT: don't overwrite already parsed Hasselblad model
       fread (model, 64, 1, ifp);
     if (strstr(make,"PENTAX")) {
       if (tag == 0x1b) tag = 0x1018;
@@ -8319,6 +8319,8 @@ dng_skip:
     raw_color = 0;
   }
   if(!strncmp(make, "Samsung", 7) && !strncmp(model, "GX20",4))
+	adobe_coeff (make, model);
+  if(!strncmp(make, "Pentax", 6) && !strncmp(model, "K10D",4))
 	adobe_coeff (make, model);
   if (raw_color) adobe_coeff (make, model);
   if (load_raw == &CLASS kodak_radc_load_raw)

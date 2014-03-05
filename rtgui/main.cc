@@ -502,7 +502,7 @@ int processLineParams( int argc, char **argv )
 	if (useDefault) {
 		rawParams = new rtengine::procparams::PartialProfile(true);
 		Glib::ustring profPath = options.findProfilePath(options.defProfRaw);
-		if (options.is_defProfRawMissing() || profPath.empty() || rawParams->load(Glib::build_filename(profPath, options.defProfRaw + paramFileExtension))) {
+		if (options.is_defProfRawMissing() || profPath.empty() || rawParams->load(Glib::build_filename(profPath, Glib::path_get_basename(options.defProfRaw) + paramFileExtension))) {
 			std::cerr << "Error: default Raw procparams file not found" << std::endl;
 			rawParams->deleteInstance();
 			delete rawParams;
@@ -511,7 +511,7 @@ int processLineParams( int argc, char **argv )
 		}
 		imgParams = new rtengine::procparams::PartialProfile(true);
 		profPath = options.findProfilePath(options.defProfImg);
-		if (options.is_defProfImgMissing() || profPath.empty() || imgParams->load(Glib::build_filename(profPath, options.defProfImg + paramFileExtension))) {
+		if (options.is_defProfImgMissing() || profPath.empty() || imgParams->load(Glib::build_filename(profPath, Glib::path_get_basename(options.defProfImg) + paramFileExtension))) {
 			std::cerr << "Error: default Image procparams file not found" << std::endl;
 			imgParams->deleteInstance();
 			delete imgParams;

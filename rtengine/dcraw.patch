@@ -1,5 +1,5 @@
---- dcraw.c	2014-02-02 13:33:19 +0000
-+++ dcraw.cc	2014-02-02 12:53:32 +0000
+--- dcraw.c	2014-02-19 17:25:45.051457734 +0100
++++ dcraw.cc	2014-02-25 15:08:30.852134339 +0100
 @@ -1,3 +1,15 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -44,7 +44,15 @@
  #include <sys/types.h>
  
  #if defined(DJGPP) || defined(__MINGW32__)
-@@ -98,87 +110,38 @@
+@@ -54,7 +66,6 @@
+ #ifdef WIN32
+ #include <sys/utime.h>
+ #include <winsock2.h>
+-#pragma comment(lib, "ws2_32.lib")
+ #define snprintf _snprintf
+ #define strcasecmp stricmp
+ #define strncasecmp strnicmp
+@@ -98,87 +109,38 @@
  #define LONG_BIT (8 * sizeof (long))
  #endif
  
@@ -148,7 +156,7 @@
  #define SWAP(a,b) { a=a+b; b=a-b; a=a-b; }
  
  /*
-@@ -254,6 +217,7 @@
+@@ -254,6 +216,7 @@
  
    if (filters == 1) return filter[(row+top_margin)&15][(col+left_margin)&15];
    if (filters == 9) return xtrans[(row+top_margin+6)%6][(col+left_margin+6)%6];
@@ -156,7 +164,7 @@
    return FC(row,col);
  }
  
-@@ -296,6 +260,7 @@
+@@ -296,6 +259,7 @@
        fprintf (stderr,_("Corrupt data near 0x%llx\n"), (INT64) ftello(ifp));
    }
    data_error++;
@@ -164,7 +172,7 @@
  }
  
  ushort CLASS sget2 (uchar *s)
-@@ -369,7 +334,7 @@
+@@ -369,7 +333,7 @@
  {
    if (fread (pixel, 2, count, ifp) < count) derror();
    if ((order == 0x4949) == (ntohs(0x1234) == 0x1234))
@@ -173,7 +181,7 @@
  }
  
  void CLASS canon_600_fixed_wb (int temp)
-@@ -541,10 +506,10 @@
+@@ -541,10 +505,10 @@
    return 0;
  }
  
@@ -187,7 +195,7 @@
    unsigned c;
  
    if (nbits > 25) return 0;
-@@ -1209,14 +1174,14 @@
+@@ -1209,14 +1173,14 @@
    int i, nz;
    char tail[424];
  
@@ -204,7 +212,7 @@
  
  void CLASS ppm_thumb()
  {
-@@ -1494,10 +1459,10 @@
+@@ -1494,10 +1458,10 @@
      }
  }
  
@@ -218,7 +226,7 @@
    unsigned c;
  
    if (nbits == -1)
-@@ -1757,10 +1722,10 @@
+@@ -1757,10 +1721,10 @@
    maximum = curve[0x3ff];
  }
  
@@ -232,7 +240,7 @@
    int byte;
  
    if (!nbits) return vbits=0;
-@@ -2049,11 +2014,11 @@
+@@ -2049,11 +2013,11 @@
  METHODDEF(boolean)
  fill_input_buffer (j_decompress_ptr cinfo)
  {
@@ -246,7 +254,7 @@
    cinfo->src->next_input_byte = jpeg_buffer;
    cinfo->src->bytes_in_buffer = nbytes;
    return TRUE;
-@@ -2371,10 +2336,9 @@
+@@ -2371,10 +2335,9 @@
    maximum = (1 << (thumb_misc & 31)) - 1;
  }
  
@@ -259,7 +267,7 @@
    if (start) {
      for (p=0; p < 4; p++)
        pad[p] = key = key * 48828125 + 1;
-@@ -2462,11 +2426,13 @@
+@@ -2462,11 +2425,13 @@
  	  bit += 7;
  	}
        for (i=0; i < 16; i++, col+=2)
@@ -274,7 +282,7 @@
  }
  
  void CLASS samsung_load_raw()
-@@ -2691,7 +2657,7 @@
+@@ -2691,7 +2656,7 @@
  
  void CLASS foveon_decoder (unsigned size, unsigned code)
  {
@@ -283,7 +291,7 @@
    struct decode *cur;
    int i, len;
  
-@@ -3414,10 +3380,13 @@
+@@ -3414,10 +3379,13 @@
        }
      }
    } else {
@@ -299,7 +307,7 @@
    if (mask[0][3] > 0) goto mask_set;
    if (load_raw == &CLASS canon_load_raw ||
        load_raw == &CLASS lossless_jpeg_load_raw) {
-@@ -4011,239 +3980,8 @@
+@@ -4011,239 +3979,8 @@
      }
  }
  
@@ -540,7 +548,7 @@
  
  void CLASS cielab (ushort rgb[3], short lab[3])
  {
-@@ -4504,112 +4242,7 @@
+@@ -4504,112 +4241,7 @@
  }
  #undef fcol
  
@@ -653,7 +661,7 @@
  #undef TS
  
  void CLASS median_filter()
-@@ -4779,7 +4412,7 @@
+@@ -4779,7 +4411,7 @@
    }
  }
  
@@ -662,6 +670,16 @@
  
  void CLASS parse_makernote (int base, int uptag)
  {
+@@ -4936,7 +4568,8 @@
+ 	cam_mul[2] = get4() << 2;
+       }
+     }
+-    if (tag == 0x15 && type == 2 && is_raw)
++    //if (tag == 0x15 && type == 2 && is_raw)
++    if (tag == 0x15 && type == 2 && is_raw && strstr(model, "Hasselblad ") != model) // RT: don't overwrite already parsed Hasselblad model
+       fread (model, 64, 1, ifp);
+     if (strstr(make,"PENTAX")) {
+       if (tag == 0x1b) tag = 0x1018;
 @@ -5187,7 +4820,7 @@
    { "","DCB2","Volare","Cantare","CMost","Valeo 6","Valeo 11","Valeo 22",
      "Valeo 11p","Valeo 17","","Aptus 17","Aptus 22","Aptus 75","Aptus 65",
@@ -918,16 +936,18 @@
      width -= 46;
    } else if (!strcmp(model,"D4") ||
  	     !strcmp(model,"Df")) {
-@@ -8630,6 +8318,8 @@
+@@ -8630,6 +8318,10 @@
      memcpy (rgb_cam, cmatrix, sizeof cmatrix);
      raw_color = 0;
    }
 +  if(!strncmp(make, "Samsung", 7) && !strncmp(model, "GX20",4))
 +	adobe_coeff (make, model);
++  if(!strncmp(make, "Pentax", 6) && !strncmp(model, "K10D",4))
++	adobe_coeff (make, model);
    if (raw_color) adobe_coeff (make, model);
    if (load_raw == &CLASS kodak_radc_load_raw)
      if (raw_color) adobe_coeff ("Apple","Quicktake");
-@@ -8725,194 +8415,7 @@
+@@ -8725,194 +8417,7 @@
  }
  #endif
  
@@ -1123,7 +1143,7 @@
  
  struct tiff_tag {
    ushort tag, type;
-@@ -8935,585 +8438,12 @@
+@@ -8935,585 +8440,12 @@
    unsigned gps[26];
    char desc[512], make[64], model[64], soft[32], date[20], artist[64];
  };

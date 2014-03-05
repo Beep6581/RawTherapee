@@ -113,7 +113,10 @@ RTWindow::RTWindow ()
         gtkosx_application_ready (osxApp);
     }
 #endif
-    set_title("RawTherapee "+versionString);
+    Glib::ustring versionStr("RawTherapee "+versionString);
+    if (!versionSuffixString.empty())
+        versionStr += " "+versionSuffixString;
+    set_title(versionStr);
     property_allow_shrink() = true;
     set_default_size(options.windowWidth, options.windowHeight);
     set_modal(false);

@@ -245,7 +245,7 @@ endif (WITH_MYFILE_MMAP)
 if (OPTION_OMP)
     find_package(OpenMP)
     if (OPENMP_FOUND)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -Werror=unknown-pragmas")
     endif (OPENMP_FOUND)
 endif (OPTION_OMP)
 
@@ -312,6 +312,7 @@ set(ABOUT_COMMAND_WITH_ARGS ${CMAKE_COMMAND}
                             -DPROC_LABEL:STRING="${PROC_LABEL}"
                             -DPROC_BIT_DEPTH:STRING="${PROC_BIT_DEPTH}"
                             -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+                            -DVERSION_SUFFIX:STRING=${VERSION_SUFFIX}
                             -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
                             -DOPTION_OMP:STRING=${OPTION_OMP}
                             -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP})

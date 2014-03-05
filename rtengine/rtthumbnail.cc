@@ -670,10 +670,12 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     // if luma denoise has to be done for thumbnails, it should be right here
 
     // perform color space transformation
-    if (isRaw)
-        RawImageSource::colorSpaceConversion (baseImg, params.icm, currWB, embProfile, camProfile, cam2xyz, camName );
-    else
+    if (isRaw) {
+        double pre_mul[3] = { redMultiplier, greenMultiplier, blueMultiplier };
+        RawImageSource::colorSpaceConversion (baseImg, params.icm, currWB, pre_mul, embProfile, camProfile, cam2xyz, camName );
+    } else {
         StdImageSource::colorSpaceConversion (baseImg, params.icm, embProfile, thumbImg->getSampleFormat());
+    }
 
     int fw = baseImg->width;
     int fh = baseImg->height;

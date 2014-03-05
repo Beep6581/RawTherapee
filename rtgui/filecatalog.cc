@@ -991,8 +991,9 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
 				}
 				else {
 					success = true;
-            if (!safe_g_rename (ofname, nfname)) {
+					if (!safe_g_rename (ofname, nfname)) {
 						cacheMgr->renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
+						safe_g_remove(ofname + paramFileExtension);
 						reparseDirectory ();
 					}
 				}
