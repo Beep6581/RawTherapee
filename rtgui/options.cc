@@ -42,7 +42,8 @@ Glib::ustring Options::rtdir;
 Glib::ustring Options::cacheBaseDir;
 
 Options options;
-Glib::ustring versionString      = VERSION;
+Glib::ustring versionString       = VERSION;
+Glib::ustring versionSuffixString = VERSION_SUFFIX;
 Glib::ustring paramFileExtension = ".pp3";
 
 Options::Options () {

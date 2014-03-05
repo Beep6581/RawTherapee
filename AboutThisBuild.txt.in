@@ -1,5 +1,5 @@
 Branch: ${HG_BRANCH}
-Version: ${HG_VERSION}
+Version: ${HG_VERSION_SUFFIX}
 Changeset: ${HG_CHANGESET}
 Compiler: ${COMPILER_INFO}
 Processor: ${PROC_LABEL}

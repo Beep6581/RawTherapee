@@ -33,6 +33,12 @@ else (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
   include("${PROJECT_SOURCE_DIR}/ReleaseInfo.cmake")
 endif (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
 
+if (VERSION_SUFFIX STREQUAL "")
+  set (HG_VERSION_SUFFIX "${HG_VERSION}")
+else (VERSION_SUFFIX STREQUAL "")
+  set (HG_VERSION_SUFFIX "${HG_VERSION} ${VERSION_SUFFIX}")
+endif ()
+
 # build version.h from template
 configure_file ("${PROJECT_SOURCE_DIR}/rtgui/version.h.in" "${CMAKE_BINARY_DIR}/rtgui/version.h")
 # build AboutThisBuild.txt from template
