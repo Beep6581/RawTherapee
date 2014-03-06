@@ -47,7 +47,7 @@ while getopts "bc:np:s:t:uvh?-" opt; do
             fi ;;
         s)  movetoPatched="_${OPTARG//[^\.\-_a-zA-Z0-9]/}"
             printf "%s\n" "Suffix of destination build dir: ${movetoPatched}" ;;
-        t)  titleSuffix="${OPTARG//[^\.\-\ \+_a-zA-Z0-9]/}"
+        t)  titleSuffix="${OPTARG//[^\.\-\:\ \+_a-zA-Z0-9]/}"
             printf "%s\n" "Titlebar version suffix: ${titleSuffix}" ;;
         u)  gcVer="$(curl "http://rawtherapee.googlecode.com/hg/tools/buildRT" 2>/dev/null | grep "^#.*[vV]ersion.*")" || { echo "\"curl\" program not found, please install it first."; exit 1; }
             gcVer="${gcVer##*[[:alpha:]] }"
@@ -75,7 +75,7 @@ while getopts "bc:np:s:t:uvh?-" opt; do
             "  -s <string>" \
             "Suffix of destination build directory, so that if you have applied a patch, say \"dustremoval-1.patch\", and want to have RawTherapee compiled to a folder whose name ends with \"_dustremoval1\", you would set \"-s dustremoval1\" (the underscore is automated)." "" \
             "  -t <string>" \
-            "Suffix displayed next to the RawTherapee version in the window titlebar, e.g.: -t \"+ dustremoval-1.patch + mustafa ibrahim\"" "" \
+            "Suffix displayed next to the RawTherapee version in the window titlebar. It is recommended that you include the changeset of the newest public commit (the one you would see if you cloned the repository anew) so it is clear which commit you applied the patches to. E.g.:" "-t \": ee72ddbcfd4e + dustremoval-1.patch + mustafa ibrahim\"" "" \
             "  -u" \
             "Check for an update of buildRT on Google Code." "" \
             "  -v" \
