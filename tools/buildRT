@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# buildRT version 3.8, 2014-01-23
+# buildRT version 4.0, 2014-03-06
 # Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
 # www.rawtherapee.com
 # www.londonlight.org
@@ -25,56 +25,63 @@ esac
 
 #--- Set some variables
 unset choiceNumber choiceNumbers buildType buildTypes list branch branches repo
-version="3.8"
+version="4.0"
 movetoPatched=""
 repo="${HOME}/rawtherapee"
 procTarget=2
 
-while getopts "bc:np:uvh?-" opt; do
-  case "${opt}" in
-    b)       patched="yes"
-             movetoPatched="_patched"
-             printf "%s\n" "Buildonly flag detected, will not hg pull or update" ;;
-    c)       dCacheNameSuffix="$OPTARG"
-             #sanitize
-             dCacheNameSuffix=${dCacheNameSuffix//[^\.\-_a-zA-Z0-9]/};
-             printf "%s\n" "Cache and config name suffix: $dCacheNameSuffix" ;;
-    n)       noomp="-DOPTION_OMP=OFF"
-             printf "%s\n" "OpenMP disabled" ;;
-    p)       procTarget="$OPTARG"
-             if [[ $procTarget -lt 1 || $procTarget -gt 9 ]]; then
-               printf "%s\n" "Invalid processor target value." "Use a value from 1 to 9, e.g." "./buildRT -p 1" "See ProcessorTargets.cmake" "Aborting"
-               exit 1
-             fi ;;
-    u)       gcVer="$(curl "http://rawtherapee.googlecode.com/hg/tools/buildRT" 2>/dev/null | grep "^#.*[vV]ersion.*")" || { echo "\"curl\" program not found, please install it first."; exit 1; }
-             gcVer="${gcVer##*[[:alpha:]] }"
-             gcVer="${gcVer%%,*}"
-             latestVer="$(printf "%s\n" "$version" "$gcVer" | sort -rV | head -n 1)"
-             if [[ $version = $latestVer ]]; then
-               printf "%s\n" "You are using the latest version of buildRT, $version"
-               exit 0
-             else
-               printf "%s\n" "You are using version $version but version $gcVer is available on Google Code." "You can download the Google Code version from this URL:" "  https://rawtherapee.googlecode.com/hg/tools/buildRT" "Replace it with this script, and remember to run \"chmod +x buildRT\""
-               exit 0
-             fi ;;
-    v)       verbose=yes
-             printf "%s\n" "Verbose mode, I will spam your screen with warnings" ;;
-    h|\?|-)  printf "%s\n" "Usage:" "" \
-                             "  $0 [-b] [-c <string>] [-n] [-p <1-9>] [-v]" "" \
-                             "  -b" \
-                             "Build-only mode. buildRT uses \"hg update -C default\" to update your source code repository to the newest revision, however doing so might destroy any uncommitted or unpushed changes you made or any patches you applied. With the -b flag the script will not update the source code, so that you can easily compile RawTherapee with whatever patches you manually applied. buildRT should automatically detect if you modified the source code, but you can use this flag to force build-only mode." "Generally when compiling patched RT versions you want to keep the cache and config folders separate, so consider using \"-b -c _testing\"" "" \
-                             "  -c <string>" \
-                             "Specify a suffix to the cache and config directory names. Only alphanumerics, periods, dashes and underscores are valid. The default value is \"4\", which will result in your build of RawTherapee storing the cache in \"${HOME}/.cache/RawTherapee4\" and config in \"${HOME}/.config/RawTherapee4\". For example, use \"-c _testing\" if you want to test older or patched versions of RawTherapee without potentially damaging your \"real\" cache and config files." "" \
-                             "  -n" \
-                             "Disable OpenMP." "" \
-                             "  -p <1-9>" \
-                             "Set which processor target to use. Takes a single digit from 1 to 9. The default is 2. See ProcessorTargets.cmake" "" \
-                             "  -u" \
-                             "Check for an update of buildRT on Google Code." "" \
-                             "  -v" \
-                             "Make compilation verbose, so you see all compiler warnings." | fold -s
-             exit 0 ;;
-  esac
+while getopts "bc:np:s:t:uvh?-" opt; do
+    case "${opt}" in
+        b)  patched="yes"
+            movetoPatched="_patched"
+            printf "%s\n" "Buildonly flag detected, will not hg pull or update" ;;
+        c)  dCacheNameSuffix="$OPTARG"
+            dCacheNameSuffix=${dCacheNameSuffix//[^\.\-_a-zA-Z0-9]/};
+            printf "%s\n" "Cache and config name suffix: $dCacheNameSuffix" ;;
+        n)  noomp="-DOPTION_OMP=OFF"
+            printf "%s\n" "OpenMP disabled" ;;
+        p)  procTarget="$OPTARG"
+            if [[ $procTarget -lt 1 || $procTarget -gt 9 ]]; then
+                printf "%s\n" "Invalid processor target value." "Use a value from 1 to 9, e.g." "./buildRT -p 1" "See ProcessorTargets.cmake" "Aborting"
+                exit 1
+            fi ;;
+        s)  movetoPatched="_${OPTARG//[^\.\-_a-zA-Z0-9]/}"
+            printf "%s\n" "Suffix of destination build dir: ${movetoPatched}" ;;
+        t)  titleSuffix="${OPTARG//[^\.\-\ \+_a-zA-Z0-9]/}"
+            printf "%s\n" "Titlebar version suffix: ${titleSuffix}" ;;
+        u)  gcVer="$(curl "http://rawtherapee.googlecode.com/hg/tools/buildRT" 2>/dev/null | grep "^#.*[vV]ersion.*")" || { echo "\"curl\" program not found, please install it first."; exit 1; }
+            gcVer="${gcVer##*[[:alpha:]] }"
+            gcVer="${gcVer%%,*}"
+            latestVer="$(printf "%s\n" "$version" "$gcVer" | sort -rV | head -n 1)"
+            if [[ $version = $latestVer ]]; then
+                printf "%s\n" "You are using the latest version of buildRT, $version"
+                exit 0
+            else
+                printf "%s\n" "You are using version $version but version $gcVer is available on Google Code." "You can download the Google Code version from this URL:" "  https://rawtherapee.googlecode.com/hg/tools/buildRT" "Replace it with this script, and remember to run \"chmod +x buildRT\""
+                exit 0
+            fi ;;
+        v)  verbose=yes
+            printf "%s\n" "Verbose mode, I will spam your screen with warnings" ;;
+        h|\?|-) printf "%s\n" "Usage:" "" \
+            "  $0 [-b] [-c <string>] [-n] [-p <1-9>] [-s <string>] [-v]" "" \
+            "  -b" \
+            "Build-only mode. buildRT uses \"hg update -C default\" to update your source code repository to the newest revision, however doing so might destroy any uncommitted or unpushed changes you made or any patches you applied. With the -b flag the script will not update the source code, so that you can easily compile RawTherapee with whatever patches you manually applied. buildRT should automatically detect if you modified the source code, but you can use this flag to force build-only mode." "Generally when compiling patched RT versions you want to keep the cache and config folders separate, so consider using \"-b -c _testing\"" "" \
+            "  -c <string>" \
+            "Specify a suffix to the cache and config directory names. Only alphanumerics, periods, dashes and underscores are valid. The default value is \"4\", which will result in your build of RawTherapee storing the cache in \"${HOME}/.cache/RawTherapee4\" and config in \"${HOME}/.config/RawTherapee4\". For example, use \"-c _testing\" if you want to test older or patched versions of RawTherapee without potentially damaging your \"real\" cache and config files." "" \
+            "  -n" \
+            "Disable OpenMP." "" \
+            "  -p <1-9>" \
+            "Set which processor target to use. Takes a single digit from 1 to 9. The default is 2. See ProcessorTargets.cmake" "" \
+            "  -s <string>" \
+            "Suffix of destination build directory, so that if you have applied a patch, say \"dustremoval-1.patch\", and want to have RawTherapee compiled to a folder whose name ends with \"_dustremoval1\", you would set \"-s dustremoval1\" (the underscore is automated)." "" \
+            "  -t <string>" \
+            "Suffix displayed next to the RawTherapee version in the window titlebar, e.g.: -t \"+ dustremoval-1.patch + mustafa ibrahim\"" "" \
+            "  -u" \
+            "Check for an update of buildRT on Google Code." "" \
+            "  -v" \
+            "Make compilation verbose, so you see all compiler warnings." | fold -s
+        exit 0 ;;
+esac
 done
 shift $((OPTIND-1))
 [ "$1" = "--" ] && shift
@@ -201,13 +208,17 @@ elif [[ -z $patched ]]; then
          echo ;;
     c|C) printf "%s\n" "Retaining edited source code and compiling RT as-is." ""
          patched="yes"
-         movetoPatched="_patched" ;;
+         if [[ -z $movetoPatched ]]; then
+             movetoPatched="_patched"
+         fi ;;
     *)   printf "%s\n" "User aborted" ""
          exit 0 ;;
   esac
 else
   printf "%s\n" "Retaining edited source code and compiling RT as-is." ""
-  movetoPatched="_patched"
+  if [[ -z $movetoPatched ]]; then
+    movetoPatched="_patched"
+  fi
 fi
 hg parents --template 'Repository state:\n  Branch: {branch}\n  RawTherapee-{latesttag}.{latesttagdistance}\n  Changeset: {rev}:{node|short}\n  Latest tag: {latesttag}\n\n'
 
@@ -272,9 +283,9 @@ for choiceNumber in "${choiceNumbers[@]}"; do
   echo
   case $REPLY in
     d|D) rm -rf "${HOME}/rt_${branch}_${buildType}${movetoPatched}" || exit 1 ;;
-    r|R) printf "%s\n" "The build will be saved to \"${HOME}/rt_${branch}_${buildType}${movetoPatched}X\" where \"X\" will be replaced with whatever suffix you choose next. Only alphanumerics, dashes and underscores are valid." | fold -s
+    r|R) printf "%s\n" "The build will be saved to \"${HOME}/rt_${branch}_${buildType}_X\" where \"X\" will be replaced with whatever suffix you choose next. Only alphanumerics, dashes, underscores and periods are valid." | fold -s
          read -r -p "Suffix: "
-         movetoPatched="${REPLY//[^\.\-_a-zA-Z0-9]/}"
+         movetoPatched="_${REPLY//[^\.\-_a-zA-Z0-9]/}"
          printf "%s\n" "Build will be compiled to \"${HOME}/rt_${branch}_${buildType}${movetoPatched}\"" ;;
     a|A) printf "%s\n" "Cannot proceed if old build directory exists." "Remove it or rename it, then re-run this script." "Aborting"
          exit 0 ;;
@@ -320,7 +331,9 @@ for choiceNumber in "${choiceNumbers[@]}"; do
       -DBUILD_BUNDLE="ON" \
       -DBINDIR="." \
       -DDATADIR="." \
-      -DCACHE_NAME_SUFFIX="$dCacheNameSuffix" ../ \
+      -DCACHE_NAME_SUFFIX="$dCacheNameSuffix" \
+      -DVERSION_SUFFIX="$titleSuffix" \
+      ../ \
       || { echo "Error during cmake, exiting."; exit 1; }
   fi
   echo
