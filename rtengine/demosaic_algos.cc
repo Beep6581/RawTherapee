@@ -570,189 +570,200 @@ void RawImageSource::hphd_demosaic () {
 	(ri->prefilters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 typedef unsigned short ushort;
 void RawImageSource::vng4_demosaic () {
-  static const signed short int *cp, terms[] = {
-    -2,-2,+0,-1,0,0x01, -2,-2,+0,+0,1,0x01, -2,-1,-1,+0,0,0x01,
-    -2,-1,+0,-1,0,0x02, -2,-1,+0,+0,0,0x03, -2,-1,+0,+1,1,0x01,
-    -2,+0,+0,-1,0,0x06, -2,+0,+0,+0,1,0x02, -2,+0,+0,+1,0,0x03,
-    -2,+1,-1,+0,0,0x04, -2,+1,+0,-1,1,0x04, -2,+1,+0,+0,0,0x06,
-    -2,+1,+0,+1,0,0x02, -2,+2,+0,+0,1,0x04, -2,+2,+0,+1,0,0x04,
-    -1,-2,-1,+0,0,0x80, -1,-2,+0,-1,0,0x01, -1,-2,+1,-1,0,0x01,
-    -1,-2,+1,+0,1,0x01, -1,-1,-1,+1,0,0x88, -1,-1,+1,-2,0,0x40,
-    -1,-1,+1,-1,0,0x22, -1,-1,+1,+0,0,0x33, -1,-1,+1,+1,1,0x11,
-    -1,+0,-1,+2,0,0x08, -1,+0,+0,-1,0,0x44, -1,+0,+0,+1,0,0x11,
-    -1,+0,+1,-2,1,0x40, -1,+0,+1,-1,0,0x66, -1,+0,+1,+0,1,0x22,
-    -1,+0,+1,+1,0,0x33, -1,+0,+1,+2,1,0x10, -1,+1,+1,-1,1,0x44,
-    -1,+1,+1,+0,0,0x66, -1,+1,+1,+1,0,0x22, -1,+1,+1,+2,0,0x10,
-    -1,+2,+0,+1,0,0x04, -1,+2,+1,+0,1,0x04, -1,+2,+1,+1,0,0x04,
-    +0,-2,+0,+0,1,0x80, +0,-1,+0,+1,1,0x88, +0,-1,+1,-2,0,0x40,
-    +0,-1,+1,+0,0,0x11, +0,-1,+2,-2,0,0x40, +0,-1,+2,-1,0,0x20,
-    +0,-1,+2,+0,0,0x30, +0,-1,+2,+1,1,0x10, +0,+0,+0,+2,1,0x08,
-    +0,+0,+2,-2,1,0x40, +0,+0,+2,-1,0,0x60, +0,+0,+2,+0,1,0x20,
-    +0,+0,+2,+1,0,0x30, +0,+0,+2,+2,1,0x10, +0,+1,+1,+0,0,0x44,
-    +0,+1,+1,+2,0,0x10, +0,+1,+2,-1,1,0x40, +0,+1,+2,+0,0,0x60,
-    +0,+1,+2,+1,0,0x20, +0,+1,+2,+2,0,0x10, +1,-2,+1,+0,0,0x80,
-    +1,-1,+1,+1,0,0x88, +1,+0,+1,+2,0,0x08, +1,+0,+2,-1,0,0x40,
-    +1,+0,+2,+1,0,0x10
-  }, chood[] = { -1,-1, -1,0, -1,+1, 0,+1, +1,+1, +1,0, +1,-1, 0,-1 };
 
-  if (plistener) {
-    plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::vng4]));
-    plistener->setProgress (0.0);
-  }
+	static const signed short int *cp, terms[] = {
+		-2,-2,+0,-1,0,0x01, -2,-2,+0,+0,1,0x01, -2,-1,-1,+0,0,0x01,
+		-2,-1,+0,-1,0,0x02, -2,-1,+0,+0,0,0x03, -2,-1,+0,+1,1,0x01,
+		-2,+0,+0,-1,0,0x06, -2,+0,+0,+0,1,0x02, -2,+0,+0,+1,0,0x03,
+		-2,+1,-1,+0,0,0x04, -2,+1,+0,-1,1,0x04, -2,+1,+0,+0,0,0x06,
+		-2,+1,+0,+1,0,0x02, -2,+2,+0,+0,1,0x04, -2,+2,+0,+1,0,0x04,
+		-1,-2,-1,+0,0,0x80, -1,-2,+0,-1,0,0x01, -1,-2,+1,-1,0,0x01,
+		-1,-2,+1,+0,1,0x01, -1,-1,-1,+1,0,0x88, -1,-1,+1,-2,0,0x40,
+		-1,-1,+1,-1,0,0x22, -1,-1,+1,+0,0,0x33, -1,-1,+1,+1,1,0x11,
+		-1,+0,-1,+2,0,0x08, -1,+0,+0,-1,0,0x44, -1,+0,+0,+1,0,0x11,
+		-1,+0,+1,-2,1,0x40, -1,+0,+1,-1,0,0x66, -1,+0,+1,+0,1,0x22,
+		-1,+0,+1,+1,0,0x33, -1,+0,+1,+2,1,0x10, -1,+1,+1,-1,1,0x44,
+		-1,+1,+1,+0,0,0x66, -1,+1,+1,+1,0,0x22, -1,+1,+1,+2,0,0x10,
+		-1,+2,+0,+1,0,0x04, -1,+2,+1,+0,1,0x04, -1,+2,+1,+1,0,0x04,
+		+0,-2,+0,+0,1,0x80, +0,-1,+0,+1,1,0x88, +0,-1,+1,-2,0,0x40,
+		+0,-1,+1,+0,0,0x11, +0,-1,+2,-2,0,0x40, +0,-1,+2,-1,0,0x20,
+		+0,-1,+2,+0,0,0x30, +0,-1,+2,+1,1,0x10, +0,+0,+0,+2,1,0x08,
+		+0,+0,+2,-2,1,0x40, +0,+0,+2,-1,0,0x60, +0,+0,+2,+0,1,0x20,
+		+0,+0,+2,+1,0,0x30, +0,+0,+2,+2,1,0x10, +0,+1,+1,+0,0,0x44,
+		+0,+1,+1,+2,0,0x10, +0,+1,+2,-1,1,0x40, +0,+1,+2,+0,0,0x60,
+		+0,+1,+2,+1,0,0x20, +0,+1,+2,+2,0,0x10, +1,-2,+1,+0,0,0x80,
+		+1,-1,+1,+1,0,0x88, +1,+0,+1,+2,0,0x08, +1,+0,+2,-1,0,0x40,
+		+1,+0,+2,+1,0,0x10
+	},
+	chood[] = { -1,-1, -1,0, -1,+1, 0,+1, +1,+1, +1,0, +1,-1, 0,-1 };
 
-  float (*brow[5])[4], *pix;
-  int prow=7, pcol=1, *ip, *code[16][16], gval[8], gmin, gmax, sum[4];
-  int row, col, x, y, x1, x2, y1, y2, t, weight, grads, color, diag;
-  int g, diff, thold, num, c, width=W, height=H, colors=4;
-  float (*image)[4];
-  int lcode[16][16][32], shift, i;
+	if (plistener) {
+		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::vng4]));
+		plistener->setProgress (0.0);
+	}
 
-  image = (float (*)[4]) calloc (H*W, sizeof *image);
-  for (int ii=0; ii<H; ii++)
-    for (int jj=0; jj<W; jj++)
-        image[ii*W+jj][fc(ii,jj)] = rawData[ii][jj];
+	float (*brow[5])[4], *pix;
+	int prow=7, pcol=1, *ip, *code[16][16], gval[8], gmin, gmax, sum[4];
+	int row, col, x, y, x1, x2, y1, y2, t, weight, grads, color, diag;
+	int g, diff, thold, num, c, width=W, height=H, colors=4;
+	float (*image)[4];
+	int lcode[16][16][32], shift, i;
+
+	image = (float (*)[4]) calloc (H*W, sizeof *image);
+	for (int ii=0; ii<H; ii++)
+		for (int jj=0; jj<W; jj++)
+			image[ii*W+jj][fc(ii,jj)] = rawData[ii][jj];
 
 // first linear interpolation
-  for (row=0; row < 16; row++)
-    for (col=0; col < 16; col++) {
-      ip = lcode[row][col];
-      memset (sum, 0, sizeof sum);
-      for (y=-1; y <= 1; y++)
-	for (x=-1; x <= 1; x++) {
-	  shift = (y==0) + (x==0);
-	  if (shift == 2) continue;
-	  color = fc(row+y,col+x);
-	  *ip++ = (width*y + x)*4 + color;
-	  *ip++ = shift;
-	  *ip++ = color;
-	  sum[color] += (1 << shift);
-	}
-      FORCC
-	if (c != fc(row,col)) {
-	  *ip++ = c;
-	  *ip++ = 256 / sum[c];
-	}
-    }
+	for (row=0; row < 16; row++)
+		for (col=0; col < 16; col++) {
+			ip = lcode[row][col];
+			memset (sum, 0, sizeof sum);
+			for (y=-1; y <= 1; y++)
+				for (x=-1; x <= 1; x++) {
+					shift = (y==0) + (x==0);
+					if (shift == 2)
+						continue;
+					color = fc(row+y,col+x);
+					*ip++ = (width*y + x)*4 + color;
+					*ip++ = shift;
+					*ip++ = color;
+					sum[color] += (1 << shift);
+				}
+			FORCC
+				if (c != fc(row,col)) {
+					*ip++ = c;
+					*ip++ = 256 / sum[c];
+				}
+		}
 
-  for (row=1; row < height-1; row++)
-    for (col=1; col < width-1; col++) {
-      pix = image[row*width+col];
-      ip = lcode[row & 15][col & 15];
-      memset (sum, 0, sizeof sum);
-      for (i=8; i--; ip+=3)
-	sum[ip[2]] += pix[ip[0]] * (1 << ip[1]);
-      for (i=colors; --i; ip+=2)
-	pix[ip[0]] = sum[ip[0]] * ip[1] /256;
-    }
+	for (row=1; row < height-1; row++)
+		for (col=1; col < width-1; col++) {
+			pix = image[row*width+col];
+			ip = lcode[row & 15][col & 15];
+			memset (sum, 0, sizeof sum);
+			for (i=8; i--; ip+=3)
+				sum[ip[2]] += pix[ip[0]] * (1 << ip[1]);
+			for (i=colors; --i; ip+=2)
+				pix[ip[0]] = sum[ip[0]] * ip[1] /256;
+		}
 
 //  lin_interpolate();
 
-  ip = (int *) calloc ((prow+1)*(pcol+1), 1280);
-  for (row=0; row <= prow; row++)		/* Precalculate for VNG */
-    for (col=0; col <= pcol; col++) {
-      code[row][col] = ip;
-      for (cp=terms, t=0; t < 64; t++) {
-	y1 = *cp++;  x1 = *cp++;
-	y2 = *cp++;  x2 = *cp++;
-	weight = *cp++;
-	grads = *cp++;
-	color = fc(row+y1,col+x1);
-	if (fc(row+y2,col+x2) != color) continue;
-	diag = (fc(row,col+1) == color && fc(row+1,col) == color) ? 2:1;
-	if (abs(y1-y2) == diag && abs(x1-x2) == diag) continue;
-	*ip++ = (y1*width + x1)*4 + color;
-	*ip++ = (y2*width + x2)*4 + color;
-	*ip++ = weight;
-	for (g=0; g < 8; g++)
-	  if (grads & (1<<g)) *ip++ = g;
-	*ip++ = -1;
-      }
-      *ip++ = INT_MAX;
-      for (cp=chood, g=0; g < 8; g++) {
-	y = *cp++;  x = *cp++;
-	*ip++ = (y*width + x) * 4;
-	color = fc(row,col);
-	if (fc(row+y,col+x) != color && fc(row+y*2,col+x*2) == color)
-	  *ip++ = (y*width + x) * 8 + color;
-	else
-	  *ip++ = 0;
-      }
-    }
-  brow[4] = (float (*)[4]) calloc (width*3, sizeof **brow);
-  for (row=0; row < 3; row++)
-    brow[row] = brow[4] + row*width;
-  for (row=2; row < height-2; row++) {		/* Do VNG interpolation */
-    for (col=2; col < width-2; col++) {
-      color = fc(row,col);
-      pix = image[row*width+col];
-      ip = code[row & prow][col & pcol];
-      memset (gval, 0, sizeof gval);
-      while ((g = ip[0]) != INT_MAX) {		/* Calculate gradients */
-	diff = ABS(pix[g] - pix[ip[1]]) * (1<< ip[2]);
-	gval[ip[3]] += diff;
-	ip += 5;
-	if ((g = ip[-1]) == -1) continue;
-	gval[g] += diff;
-	while ((g = *ip++) != -1)
-	  gval[g] += diff;
-      }
-      ip++;
-      gmin = gmax = gval[0];			/* Choose a threshold */
-      for (g=1; g < 8; g++) {
-	if (gmin > gval[g]) gmin = gval[g];
-	if (gmax < gval[g]) gmax = gval[g];
-      }
-      if (gmax == 0) {
-	memcpy (brow[2][col], pix, sizeof *image);
-	continue;
-      }
-      thold = gmin + (gmax /2);
-      memset (sum, 0, sizeof sum);
-      for (num=g=0; g < 8; g++,ip+=2) {		/* Average the neighbors */
-	if (gval[g] <= thold) {
-	  FORCC
-	    if (c == color && ip[1])
-	      sum[c] += (pix[c] + pix[ip[1]]) /2;
-	    else
-	      sum[c] += pix[ip[0] + c];
-	  num++;
-	}
-      }
-      FORCC {					/* Save to buffer */
-	t = pix[color];
-	if (c != color)
-	  t += (sum[c] - sum[color]) / num;
-	brow[2][col][c] = t;
-      }
-    }
-    if (row > 3)				/* Write buffer to image */
-      memcpy (image[(row-2)*width+2], brow[0]+2, (width-4)*sizeof *image);
-    for (g=0; g < 4; g++)
-      brow[(g-1) & 3] = brow[g];
-    if (!(row%20) && plistener)
-      plistener->setProgress ((double)row / (H-2));
-  }
-  memcpy (image[(row-2)*width+2], brow[0]+2, (width-4)*sizeof *image);
-  memcpy (image[(row-1)*width+2], brow[1]+2, (width-4)*sizeof *image);
-  free (brow[4]);
-  free (code[0][0]);
+	ip = (int *) calloc ((prow+1)*(pcol+1), 1280);
+	for (row=0; row <= prow; row++)		/* Precalculate for VNG */
+		for (col=0; col <= pcol; col++) {
+			code[row][col] = ip;
+			for (cp=terms, t=0; t < 64; t++) {
+				y1 = *cp++;  x1 = *cp++;
+				y2 = *cp++;  x2 = *cp++;
+				weight = *cp++;
+				grads = *cp++;
+				color = fc(row+y1,col+x1);
+				if (fc(row+y2,col+x2) != color)
+					continue;
+				diag = (fc(row,col+1) == color && fc(row+1,col) == color) ? 2:1;
+				if (abs(y1-y2) == diag && abs(x1-x2) == diag)
+					continue;
+				*ip++ = (y1*width + x1)*4 + color;
+				*ip++ = (y2*width + x2)*4 + color;
+				*ip++ = weight;
+				for (g=0; g < 8; g++)
+					if (grads & (1<<g))
+						*ip++ = g;
+				*ip++ = -1;
+			}
+			*ip++ = INT_MAX;
+			for (cp=chood, g=0; g < 8; g++) {
+				y = *cp++;  x = *cp++;
+				*ip++ = (y*width + x) * 4;
+				color = fc(row,col);
+				if (fc(row+y,col+x) != color && fc(row+y*2,col+x*2) == color)
+					*ip++ = (y*width + x) * 8 + color;
+				else
+					*ip++ = 0;
+			}
+		}
 
-  for (int i=0; i<H; i++) {
-    for (int j=0; j<W; j++)
-        green[i][j] = (image[i*W+j][1] + image[i*W+j][3]) /2;
-  }
-  // Interpolate R and B
-  for (int i=0; i<H; i++) {
-	  if (i==0)
-		  // rm, gm, bm must be recovered
-		  //interpolate_row_rb_mul_pp (red, blue, NULL, green[i], green[i+1], i, rm, gm, bm, 0, W, 1);
-		  interpolate_row_rb_mul_pp (red[i], blue[i], NULL, green[i], green[i+1], i, 1.0, 1.0, 1.0, 0, W, 1);
-	  else if (i==H-1)
-		  interpolate_row_rb_mul_pp (red[i], blue[i], green[i-1], green[i], NULL, i, 1.0, 1.0, 1.0, 0, W, 1);
-	  else
-		  interpolate_row_rb_mul_pp (red[i], blue[i], green[i-1], green[i], green[i+1], i, 1.0, 1.0, 1.0, 0, W, 1);
-  }
-  free (image);
+	brow[4] = (float (*)[4]) calloc (width*3, sizeof **brow);
+	for (row=0; row < 3; row++)
+		brow[row] = brow[4] + row*width;
+	for (row=2; row < height-2; row++) {		/* Do VNG interpolation */
+		for (col=2; col < width-2; col++) {
+			color = fc(row,col);
+			pix = image[row*width+col];
+			ip = code[row & prow][col & pcol];
+			memset (gval, 0, sizeof gval);
+			while ((g = ip[0]) != INT_MAX) {		/* Calculate gradients */
+				diff = ABS(pix[g] - pix[ip[1]]) * (1<< ip[2]);
+				gval[ip[3]] += diff;
+				ip += 5;
+				if ((g = ip[-1]) == -1)
+					continue;
+				gval[g] += diff;
+				while ((g = *ip++) != -1)
+					gval[g] += diff;
+			}
+			ip++;
+			gmin = gmax = gval[0];			/* Choose a threshold */
+			for (g=1; g < 8; g++) {
+				if (gmin > gval[g])
+					gmin = gval[g];
+				if (gmax < gval[g])
+					gmax = gval[g];
+			}
+			if (gmax == 0) {
+				memcpy (brow[2][col], pix, sizeof *image);
+				continue;
+			}
+			thold = gmin + (gmax /2);
+			memset (sum, 0, sizeof sum);
+			for (num=g=0; g < 8; g++,ip+=2) {		/* Average the neighbors */
+				if (gval[g] <= thold) {
+				FORCC
+					if (c == color && ip[1])
+						sum[c] += (pix[c] + pix[ip[1]]) /2;
+					else
+						sum[c] += pix[ip[0] + c];
+				num++;
+				}
+			}
+			FORCC {					/* Save to buffer */
+				t = pix[color];
+				if (c != color)
+					t += (sum[c] - sum[color]) / num;
+				brow[2][col][c] = t;
+			}
+		}
+		if (row > 3)				/* Write buffer to image */
+			memcpy (image[(row-2)*width+2], brow[0]+2, (width-4)*sizeof *image);
+		for (g=0; g < 4; g++)
+			brow[(g-1) & 3] = brow[g];
+		if (!(row%20) && plistener)
+			plistener->setProgress ((double)row / (H-2));
+	}
+	memcpy (image[(row-2)*width+2], brow[0]+2, (width-4)*sizeof *image);
+	memcpy (image[(row-1)*width+2], brow[1]+2, (width-4)*sizeof *image);
+	free (brow[4]);
+	free (code[0][0]);
+
+	for (int i=0; i<H; i++) {
+		for (int j=0; j<W; j++)
+			green[i][j] = (image[i*W+j][1] + image[i*W+j][3]) /2;
+	}
+
+	// Interpolate R and B
+	for (int i=0; i<H; i++) {
+		if (i==0)
+			// rm, gm, bm must be recovered
+			//interpolate_row_rb_mul_pp (red, blue, NULL, green[i], green[i+1], i, rm, gm, bm, 0, W, 1);
+			interpolate_row_rb_mul_pp (red[i], blue[i], NULL, green[i], green[i+1], i, 1.0, 1.0, 1.0, 0, W, 1);
+		else if (i==H-1)
+			interpolate_row_rb_mul_pp (red[i], blue[i], green[i-1], green[i], NULL, i, 1.0, 1.0, 1.0, 0, W, 1);
+		else
+			interpolate_row_rb_mul_pp (red[i], blue[i], green[i-1], green[i], green[i+1], i, 1.0, 1.0, 1.0, 0, W, 1);
+	}
+	free (image);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -836,17 +847,17 @@ void RawImageSource::ppg_demosaic()
   }
 
   red(W,H);
-  for (int i=0; i<H; i++) 
+  for (int i=0; i<H; i++)
 	  for (int j=0; j<W; j++) {
         red[i][j] = image[i*W+j][0];
   }
   green(W,H);
-  for (int i=0; i<H; i++) 
+  for (int i=0; i<H; i++)
 	  for (int j=0; j<W; j++) {
         green[i][j] = image[i*W+j][1];
   }
   blue(W,H);
-  for (int i=0; i<H; i++) 
+  for (int i=0; i<H; i++)
 	  for (int j=0; j<W; j++) {
         blue[i][j] = image[i*W+j][2];
   }
@@ -913,7 +924,7 @@ int height=winh;
 				}
 			}
 		}//j
-		
+
 		for (int j=width-bord; j<width; j++) {//last few columns
 			for (int c=0; c<6; c++) sum[c]=0;
 			for (int i1=i-1; i1<i+2; i1++)
@@ -972,7 +983,7 @@ int height=winh;
 			}
 		}//j
 	}
-		
+
 	for (int i=height-bord; i<height; i++) {
 
         float sum[6];
@@ -1041,7 +1052,7 @@ void RawImageSource::jdl_interpolate_omp()  // from "Lassus"
 
 	border_interpolate(6, image);
 
-#ifdef _OPENMP	
+#ifdef _OPENMP
 #pragma omp for
 #endif
 	for (row=5; row < height-5; row++)
@@ -1156,10 +1167,10 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 	int passref;
 	if(iterations <=4) {iter = iterations-1;passref=0;}
 	else if (iterations <=6){iter=3;passref=iterations-4;}
-	else if (iterations <=8){iter=3;passref=iterations-6;}	
+	else if (iterations <=8){iter=3;passref=iterations-6;}
 	bool applyGamma=true;
 	if(iterations==0) {applyGamma=false;iter=0;} else applyGamma=true;
-	
+
 	if (plistener) {
 		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::lmmse]));
 		plistener->setProgress (0.0);
@@ -1168,12 +1179,12 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 	float maxdata=0.f;
 	image = (float (*)[3]) calloc (width*height, sizeof *image);
 	unsigned int a=0;
-#ifdef _OPENMP	
-#pragma omp parallel for 
+#ifdef _OPENMP
+#pragma omp parallel for
 #endif
 	for (int ii=0; ii<height; ii++)
 		for (int jj=0; jj<width; jj++) {
-            image[ii*width+jj][fc(ii,jj)] = CLIP(rawData[ii][jj]);			
+            image[ii*width+jj][fc(ii,jj)] = CLIP(rawData[ii][jj]);
 		}
 	maxdata=65535.f;
 	if (applyGamma)
@@ -1191,7 +1202,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 #endif
 {
 #ifdef _OPENMP
-#pragma omp for  
+#pragma omp for
 #endif
 	for (int rrr=0; rrr < rr1; rrr++)
 		for (int ccc=0, row=rrr-ba; ccc < cc1; ccc++) {
@@ -1199,7 +1210,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 			rix = qix + rrr*cc1 + ccc;
 			if ((row >= 0) & (row < height) & (col >= 0) & (col < width)) {
 				if (applyGamma)
-					rix[0][4] = Color::gammatab_24_17a[image[row*width+col][FC(row,col)]];	
+					rix[0][4] = Color::gammatab_24_17a[image[row*width+col][FC(row,col)]];
 				else
 					rix[0][4] = (float)image[row*width+col][FC(row,col)]/65535.0f;
 			}
@@ -1215,8 +1226,8 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 
 
 	// G-R(B)
-#ifdef _OPENMP	
-#pragma omp for  	
+#ifdef _OPENMP
+#pragma omp for
 #endif
 	for (int rr=2; rr < rr1-2; rr++) {
 		// G-R(B) at R(B) location
@@ -1258,8 +1269,8 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 
 
 	// apply low pass filter on differential colors
-#ifdef _OPENMP	
-#pragma omp  for 
+#ifdef _OPENMP
+#pragma omp  for
 #endif
 	for (int rr=4; rr < rr1-4; rr++)
 		for (int cc=4; cc < cc1-4; cc++) {
@@ -1276,9 +1287,9 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 
 
 	// interpolate G-R(B) at R(B)
-#ifdef _OPENMP	
-#pragma omp  for 
-#endif	
+#ifdef _OPENMP
+#pragma omp  for
+#endif
 	for (int rr=4; rr < rr1-4; rr++)
 		for (int cc=4+(FC(rr,4)&1); cc < cc1-4; cc+=2) {
 			rix = qix + rr*cc1 + cc;
@@ -1342,9 +1353,9 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 
 
 	// copy CFA values
-#ifdef _OPENMP	
-#pragma omp for 
-#endif 	
+#ifdef _OPENMP
+#pragma omp for
+#endif
 	for (int rr=0; rr < rr1; rr++)
 		for (int cc=0, row=rr-ba; cc < cc1; cc++) {
 			int col=cc-ba;
@@ -1352,7 +1363,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 			int c = FC(rr,cc);
 			if ((row >= 0) & (row < height) & (col >= 0) & (col < width)) {
 				if (applyGamma)
-					rix[0][c] = Color::gammatab_24_17a[image[row*width+col][c]];	
+					rix[0][c] = Color::gammatab_24_17a[image[row*width+col][c]];
 				else
 					rix[0][c] = (float)image[row*width+col][c]/65535.0f;
 				}
@@ -1370,9 +1381,9 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 
 	// bilinear interpolation for R/B
 	// interpolate R/B at G location
-#ifdef _OPENMP	
-#pragma omp for 
-#endif	
+#ifdef _OPENMP
+#pragma omp for
+#endif
 	for (int rr=1; rr < rr1-1; rr++)
 		for (int cc=1+(FC(rr,2)&1), c=FC(rr,cc+1); cc < cc1-1; cc+=2) {
 			rix = qix + rr*cc1 + cc;
@@ -1390,9 +1401,9 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 
 
 	// interpolate R/B at B/R location
-#ifdef _OPENMP	
+#ifdef _OPENMP
 #pragma omp  for
-#endif  	
+#endif
 	for (int rr=1; rr < rr1-1; rr++)
 		for (int cc=1+(FC(rr,1)&1), c=2-FC(rr,cc); cc < cc1-1; cc+=2) {
 			rix = qix + rr*cc1 + cc;
@@ -1454,13 +1465,13 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 	}
 
 	if (plistener) plistener->setProgress (0.8);
-#ifdef _OPENMP	
+#ifdef _OPENMP
 #pragma omp parallel firstprivate (image,rix,qix)
 #endif
 {
 	// copy result back to image matrix
-#ifdef _OPENMP	
-#pragma omp for 
+#ifdef _OPENMP
+#pragma omp for
 #endif
 	for (int row=0; row < height; row++)
 		for (int col=0, rr=row+ba; col < width; col++) {
@@ -1500,7 +1511,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 	//if(iterations > 4) refinement_lassus(passref);
 	if(iterations > 4 && iterations <=6) refinement(passref);
 	else if(iterations > 6) refinement_lassus(passref);
-	
+
 }
 
 /***
@@ -1524,7 +1535,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
 {
 	static const float eps=1e-5f, epssq=1e-5f;//mod epssq -10f =>-5f Jacques 3/2013 to prevent artifact (divide by zero)
-	
+
 	static const int h1=1, h2=2, h3=3, h5=5;
 	const int width=winw, height=winh;
 	const int v1=1*width, v2=2*width, v3=3*width, v5=5*width;
@@ -1541,7 +1552,7 @@ SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
 	chrarray	= (float (*)) calloc( width*height, sizeof( float ) );
 	chr[0] = chrarray;
 	chr[1] = chrarray + (width*height)/2;
-	
+
 	// mapped chr[2] and chr[3] to hdif and hdif, because these are out of use, when chr[2] and chr[3] are used
 	chr[2] = hdif;
 	chr[3] = vdif;
@@ -1620,7 +1631,7 @@ SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
 			egv=(epsv+(vabsf(LVFU(rgb[1][(indx+h1)>>1])-LVFU(rgb[1][(indx+h3)>>1]))+vabsf(LVFU(rgb[0][indx1])-LVFU(rgb[0][(indx1+h1)])))/c65535v);
 			wgv=(epsv+(vabsf(LVFU(rgb[1][(indx-h1)>>1])-LVFU(rgb[1][(indx-h3)>>1]))+vabsf(LVFU(rgb[0][indx1])-LVFU(rgb[0][(indx1-h1)])))/c65535v);
 			sgv=(epsv+(vabsf(LVFU(rgb[1][(indx+v1)>>1])-LVFU(rgb[1][(indx+v3)>>1]))+vabsf(LVFU(rgb[0][indx1])-LVFU(rgb[0][(indx1+v1)])))/c65535v);
-			//N,E,W,S High Order Interpolation (Li & Randhawa)  
+			//N,E,W,S High Order Interpolation (Li & Randhawa)
 			//N,E,W,S Hamilton Adams Interpolation
 			// (48.f * 65535.f) = 3145680.f
 			tempv = c40v*LVFU(rgb[0][indx1]);
@@ -1640,7 +1651,7 @@ SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
 			eg=(eps+(fabsf(rgb[1][(indx+h1)>>1]-rgb[1][(indx+h3)>>1])+fabsf(rgb[0][indx1]-rgb[0][(indx1+h1)]))/65535.f);
 			wg=(eps+(fabsf(rgb[1][(indx-h1)>>1]-rgb[1][(indx-h3)>>1])+fabsf(rgb[0][indx1]-rgb[0][(indx1-h1)]))/65535.f);
 			sg=(eps+(fabsf(rgb[1][(indx+v1)>>1]-rgb[1][(indx+v3)>>1])+fabsf(rgb[0][indx1]-rgb[0][(indx1+v1)]))/65535.f);
-			//N,E,W,S High Order Interpolation (Li & Randhawa)  
+			//N,E,W,S High Order Interpolation (Li & Randhawa)
 			//N,E,W,S Hamilton Adams Interpolation
 			// (48.f * 65535.f) = 3145680.f
 			nv=LIM(((23.0f*rgb[1][(indx-v1)>>1]+23.0f*rgb[1][(indx-v3)>>1]+rgb[1][(indx-v5)>>1]+rgb[1][(indx+v1)>>1]+40.0f*rgb[0][indx1]-32.0f*rgb[0][(indx1-v1)]-8.0f*rgb[0][(indx1-v2)]))/3145680.f, 0.0f, 1.0f);
@@ -1808,7 +1819,7 @@ SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
 	float *src1, *src2, *redsrc0, *redsrc1, *bluesrc0, *bluesrc1;
 #ifdef _OPENMP
 #pragma omp for
-#endif	
+#endif
 	for(int row=7; row<height-7; row++){
 		int col,indx,fc;
 		fc = FC(row,7)&1;
@@ -1862,7 +1873,7 @@ SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
 		}
 	}
 }// End of parallelization
-	if (plistener) plistener->setProgress (1.0);	
+	if (plistener) plistener->setProgress (1.0);
 
 	free(chrarray); free(rgbarray);
 	free(vdif); free(hdif);
@@ -1887,12 +1898,12 @@ void RawImageSource::igv_interpolate(int winw, int winh)
 	chrarray	= (float (*)) calloc(width*height*2, sizeof( float));
 	chr[0] = chrarray;
 	chr[1] = chrarray + (width*height);
-	
+
 	vdif  = (float (*))    calloc(width*height/2, sizeof *vdif);
 	hdif  = (float (*))    calloc(width*height/2, sizeof *hdif);
 
 	border_interpolate2(winw,winh,7);
-	
+
 	if (plistener) {
 		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::igv]));
 		plistener->setProgress (0.0);
@@ -1931,7 +1942,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
 			eg=(eps+(fabsf(rgb[1][indx+h1]-rgb[1][indx+h3])+fabsf(rgb[c][indx]-rgb[c][indx+h2]))/65535.f);
 			wg=(eps+(fabsf(rgb[1][indx-h1]-rgb[1][indx-h3])+fabsf(rgb[c][indx]-rgb[c][indx-h2]))/65535.f);
 			sg=(eps+(fabsf(rgb[1][indx+v1]-rgb[1][indx+v3])+fabsf(rgb[c][indx]-rgb[c][indx+v2]))/65535.f);
-			//N,E,W,S High Order Interpolation (Li & Randhawa)  
+			//N,E,W,S High Order Interpolation (Li & Randhawa)
 			//N,E,W,S Hamilton Adams Interpolation
 			// (48.f * 65535.f) = 3145680.f
 			nv=LIM(((23.0f*rgb[1][indx-v1]+23.0f*rgb[1][indx-v3]+rgb[1][indx-v5]+rgb[1][indx+v1]+40.0f*rgb[c][indx]-32.0f*rgb[c][indx-v2]-8.0f*rgb[c][indx-v4]))/3145680.f, 0.0f, 1.0f);
@@ -2071,7 +2082,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
 /*
 #ifdef _OPENMP
 #pragma omp for
-#endif	
+#endif
 	for (int row=0; row < height; row++)  //borders
 		for (int col=0; col < width; col++) {
 			if (col==7 && row >= 7 && row < height-7)
@@ -2085,7 +2096,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
 
 #ifdef _OPENMP
 #pragma omp for
-#endif	
+#endif
 	for(int row=7; row<height-7; row++)
 		for(int col=7, indx=row*width+col; col<width-7; col++, indx++) {
 			red  [row][col] = CLIP(rgb[1][indx]-65535.f*chr[0][indx]);
@@ -2305,7 +2316,7 @@ void RawImageSource::nodemosaic()
     }
 }
 
-/* 
+/*
    Refinement based on EECI demosaicing algorithm by L. Chang and Y.P. Tan
    Paul Lee
    Adapted for Rawtherapee - Jacques Desmis 04/2013
@@ -2320,7 +2331,7 @@ void RawImageSource::refinement(int PassCount)
 	int height=H;
 	int w1 = width;
 	int w2 = 2*w1;
-	
+
     image = (float(*)[3]) calloc(W*H, sizeof *image);
 #ifdef _OPENMP
 #pragma omp parallel shared(image)
@@ -2328,12 +2339,12 @@ void RawImageSource::refinement(int PassCount)
     {
 #ifdef _OPENMP
 #pragma omp for
-#endif       
+#endif
 	   for (int i=0;i<H;i++) {
             for (int j=0;j<W;j++) {
                 image[i*W+j][0] = red  [i][j];
                 image[i*W+j][1] = green[i][j];
-                image[i*W+j][2] = blue [i][j];			 
+                image[i*W+j][2] = blue [i][j];
             }
         }
         for (int b=0; b<PassCount; b++) {
@@ -2345,7 +2356,7 @@ void RawImageSource::refinement(int PassCount)
   /* Reinforce interpolated green pixels on RED/BLUE pixel locations */
  #ifdef _OPENMP
 #pragma omp for
-#endif 
+#endif
   for (int row=2; row < height-2; row++)
     for (int col=2+(FC(row,2) & 1), c=FC(row,col); col < width-2; col+=2) {
       int indx = row*width+col;
@@ -2362,7 +2373,7 @@ void RawImageSource::refinement(int PassCount)
   /* Reinforce interpolated red/blue pixels on GREEN pixel locations */
 #ifdef _OPENMP
 #pragma omp for
-#endif  
+#endif
   for (int row=2; row < height-2; row++)
     for (int col=2+(FC(row,3) & 1), c=FC(row,col+1); col < width-2; col+=2) {
       int indx = row*width+col;
@@ -2382,7 +2393,7 @@ void RawImageSource::refinement(int PassCount)
   /* Reinforce integrated red/blue pixels on BLUE/RED pixel locations */
 #ifdef _OPENMP
 #pragma omp for
-#endif  
+#endif
   for (int row=2; row < height-2; row++)
     for (int col=2+(FC(row,2) & 1), c=2-FC(row,col); col < width-2; col+=2) {
       int indx = row*width+col;
@@ -2405,10 +2416,10 @@ void RawImageSource::refinement(int PassCount)
             for (int j=0; j<W; j++) {
                 red  [i][j] =image[i*W+j][0];
                 green[i][j] =image[i*W+j][1];
-                blue [i][j] =image[i*W+j][2];			 
+                blue [i][j] =image[i*W+j][2];
             }
-		} 
-	}		
+		}
+	}
     free(image);
     t2e.set();
     if (settings->verbose) printf("Refinement Lee %d usec\n", t2e.etime(t1e));
@@ -2423,8 +2434,8 @@ void RawImageSource::refinement(int PassCount)
 //
 // Should be DISABLED if it decreases image quality by increases some image noise and generates blocky edges
 void RawImageSource::refinement_lassus(int PassCount)
-{  
-   // const int PassCount=1; 
+{
+   // const int PassCount=1;
 
    // if (settings->verbose) printf("Refinement\n");
 
@@ -2445,7 +2456,7 @@ void RawImageSource::refinement_lassus(int PassCount)
             for (int j=0;j<W;j++) {
                 image[i*W+j][0] = red  [i][j];
                 image[i*W+j][1] = green[i][j];
-                image[i*W+j][2] = blue [i][j];			 
+                image[i*W+j][2] = blue [i][j];
             }
         }
 
@@ -2466,10 +2477,10 @@ void RawImageSource::refinement_lassus(int PassCount)
                     // Cubic Spline Interpolation by Li and Randhawa, modified by Luis Sanz Rodriguez
 
                     float f[4];
-                    f[0]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[-v][c])-x0875(pix[0][c])-x0250(pix[-x][c])))+fabs(x0875(pix[u][1])-x1125(pix[-u][1])+x0250(pix[-w][1]))+fabs(x0875(pix[-w][1])-x1125(pix[-u][1])+x0250(pix[-y][1])));   
+                    f[0]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[-v][c])-x0875(pix[0][c])-x0250(pix[-x][c])))+fabs(x0875(pix[u][1])-x1125(pix[-u][1])+x0250(pix[-w][1]))+fabs(x0875(pix[-w][1])-x1125(pix[-u][1])+x0250(pix[-y][1])));
                     f[1]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[+2][c])-x0875(pix[0][c])-x0250(pix[+4][c])))+fabs(x0875(pix[1][1])-x1125(pix[-1][1])+x0250(pix[+3][1]))+fabs(x0875(pix[+3][1])-x1125(pix[+1][1])+x0250(pix[+5][1])));
                     f[2]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[-2][c])-x0875(pix[0][c])-x0250(pix[-4][c])))+fabs(x0875(pix[1][1])-x1125(pix[-1][1])+x0250(pix[-3][1]))+fabs(x0875(pix[-3][1])-x1125(pix[-1][1])+x0250(pix[-5][1])));
-                    f[3]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[+v][c])-x0875(pix[0][c])-x0250(pix[+x][c])))+fabs(x0875(pix[u][1])-x1125(pix[-u][1])+x0250(pix[+w][1]))+fabs(x0875(pix[+w][1])-x1125(pix[+u][1])+x0250(pix[+y][1]))); 
+                    f[3]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[+v][c])-x0875(pix[0][c])-x0250(pix[+x][c])))+fabs(x0875(pix[u][1])-x1125(pix[-u][1])+x0250(pix[+w][1]))+fabs(x0875(pix[+w][1])-x1125(pix[+u][1])+x0250(pix[+y][1])));
 
                     float g[4];//CLIREF avoid overflow
                     g[0]=pix[0][c]+(x0875(CLIREF(pix[-u][1]-pix[-u][c]))+x0125(CLIREF(pix[+u][1]-pix[+u][c])));
@@ -2483,7 +2494,7 @@ void RawImageSource::refinement_lassus(int PassCount)
             }
             // Reinforce interpolated red/blue pixels on GREEN pixel locations
 #ifdef _OPENMP
-#pragma omp for 
+#pragma omp for
 #endif
             for (int row=6; row<H-6; row++) {
                 for (int col=6+(FC(row,3)&1),c=FC(row,col+1); col<W-6; col+=2) {
@@ -2514,10 +2525,10 @@ void RawImageSource::refinement_lassus(int PassCount)
                     float (*pix)[3]=image+row*W+col;
 
                     float f[4];
-                    f[0]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[-v][d])-x0875(pix[0][d])-x0250(pix[-x][d])))+fabs(x0875(pix[u][1])-x1125(pix[-u][1])+x0250(pix[-w][1]))+fabs(x0875(pix[-w][1])-x1125(pix[-u][1])+x0250(pix[-y][1])));   
+                    f[0]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[-v][d])-x0875(pix[0][d])-x0250(pix[-x][d])))+fabs(x0875(pix[u][1])-x1125(pix[-u][1])+x0250(pix[-w][1]))+fabs(x0875(pix[-w][1])-x1125(pix[-u][1])+x0250(pix[-y][1])));
                     f[1]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[+2][d])-x0875(pix[0][d])-x0250(pix[+4][d])))+fabs(x0875(pix[1][1])-x1125(pix[-1][1])+x0250(pix[+3][1]))+fabs(x0875(pix[+3][1])-x1125(pix[+1][1])+x0250(pix[+5][1])));
                     f[2]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[-2][d])-x0875(pix[0][d])-x0250(pix[-4][d])))+fabs(x0875(pix[1][1])-x1125(pix[-1][1])+x0250(pix[-3][1]))+fabs(x0875(pix[-3][1])-x1125(pix[-1][1])+x0250(pix[-5][1])));
-                    f[3]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[+v][d])-x0875(pix[0][d])-x0250(pix[+x][d])))+fabs(x0875(pix[u][1])-x1125(pix[-u][1])+x0250(pix[+w][1]))+fabs(x0875(pix[+w][1])-x1125(pix[+u][1])+x0250(pix[+y][1]))); 
+                    f[3]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[+v][d])-x0875(pix[0][d])-x0250(pix[+x][d])))+fabs(x0875(pix[u][1])-x1125(pix[-u][1])+x0250(pix[+w][1]))+fabs(x0875(pix[+w][1])-x1125(pix[+u][1])+x0250(pix[+y][1])));
 
                     float g[5];
                     g[0]=(x0875((pix[-u][1]-pix[-u][c]))+x0125((pix[-v][1]-pix[-v][c])));
@@ -2556,9 +2567,9 @@ void RawImageSource::refinement_lassus(int PassCount)
             for (int j=0; j<W; j++) {
                 red  [i][j] =image[i*W+j][0];
                 green[i][j] =image[i*W+j][1];
-                blue [i][j] =image[i*W+j][2];			 
+                blue [i][j] =image[i*W+j][2];
             }
-        }  
+        }
     }
 
     free(image);
