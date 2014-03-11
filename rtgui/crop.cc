@@ -23,7 +23,6 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-extern Glib::ustring argv0;
 extern Options options;
 
 class RefreshSpinHelper {
@@ -323,11 +322,11 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
         xDirty = pedited->crop.x;
         yDirty = pedited->crop.y;
         if (!pedited->crop.ratio)
-            ratio->set_active (8);
-        if (!pedited->crop.orientation) 
-            orientation->set_active (2);
-        if (!pedited->crop.guide) 
-            guide->set_active (7);
+            ratio->set_active_text (M("GENERAL_UNCHANGED"));
+        if (!pedited->crop.orientation)
+            orientation->set_active_text (M("GENERAL_UNCHANGED"));
+        if (!pedited->crop.guide)
+            guide->set_active_text (M("GENERAL_UNCHANGED"));
         enabled->set_inconsistent (!pedited->crop.enabled);
         fixr->set_inconsistent (!pedited->crop.fixratio);
     }
@@ -386,9 +385,9 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited) {
 
     if (pedited) {
         pedited->crop.enabled       = !enabled->get_inconsistent();
-        pedited->crop.ratio         = ratio->get_active_row_number() != 9;
-        pedited->crop.orientation   = orientation->get_active_row_number() != 2;
-        pedited->crop.guide         = guide->get_active_row_number() != 9;
+        pedited->crop.ratio         = ratio->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->crop.orientation   = orientation->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->crop.guide         = guide->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->crop.fixratio      = !fixr->get_inconsistent();
         pedited->crop.w             = wDirty;
         pedited->crop.h             = hDirty;
@@ -1056,8 +1055,8 @@ void Crop::setBatchMode (bool batchMode) {
 
     ToolPanel::setBatchMode (batchMode);
 
-	ratio->append_text ("(Unchanged)");
-	orientation->append_text ("(Unchanged)");
-	guide->append_text ("(Unchanged)");
+    ratio->append_text (M("GENERAL_UNCHANGED"));
+    orientation->append_text (M("GENERAL_UNCHANGED"));
+    guide->append_text (M("GENERAL_UNCHANGED"));
     removeIfThere (this, ppibox);
 }
