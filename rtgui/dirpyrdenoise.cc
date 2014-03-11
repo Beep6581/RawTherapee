@@ -23,7 +23,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-DirPyrDenoise::DirPyrDenoise () : Gtk::VBox(), FoldableToolPanel(this)  {
+DirPyrDenoise::DirPyrDenoise () : Gtk::VBox(), FoldableToolPanel(this), lastenhance(false) {
 	
 	set_border_width(4);
 

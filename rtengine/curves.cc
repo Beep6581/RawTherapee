@@ -168,7 +168,7 @@ void CurveFactory::updatechroma (
 		if (outBeforeCCurveHistogramC /*&& histogramCropped*/)
 				histNeededC = true;	
 	}
-	for (int i=0; i<=48000; i++) {//32768*1.414  + ...
+	for (int i=0; i<48000; i++) {//32768*1.414  + ...
 		float val;
 			if (histNeededC) {
 				float hval = dCcurve[i];
@@ -266,7 +266,7 @@ void CurveFactory::curveLightBrightColor (
 			tcurve = NULL;
 		}
 	}
-	for (int i=0; i<=32768; i++) {
+	for (int i=0; i<32768; i++) {
 		float val;
 
 			if (histNeeded) {
@@ -275,7 +275,7 @@ void CurveFactory::curveLightBrightColor (
 				outBeforeCCurveHistogram[hi] += histogram[i] ;
 			}
 	}
-	for (int i=0; i<=48000; i++) {//32768*1.414  + ...
+	for (int i=0; i<48000; i++) {//32768*1.414  + ...
 		float val;
 			if (histNeededC) {
 				float hval = dCcurve[i];
@@ -336,7 +336,7 @@ void CurveFactory::curveBW (
 	}
 	// create first curve if needed
 
-	for (int i=0; i<=32768; i++) {
+	for (int i=0; i<32768; i++) {
 		float val;
 
 			if (histNeeded) {
@@ -373,7 +373,7 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 			if (dCurve && !dCurve->isIdentity())
 				{needed = true;clcutili=true;}
 		}
-		for (int i=0; i<=50000; i++) {//32768*1.414  + ...
+		for (int i=0; i<50000; i++) {//32768*1.414  + ...
 			float val;
 			if (histNeededCL) {
 				float hval = dCcurve[i];
@@ -459,7 +459,7 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 			if (dCurve && !dCurve->isIdentity())
 				{needed = true;ccutili=true;}
 		}
-		for (int i=0; i<=48000; i++) {//32768*1.414  + ...
+		for (int i=0; i<48000; i++) {//32768*1.414  + ...
 			float val;
 			if (histNeededC) {
 				float hval = dCcurve[i];
@@ -483,7 +483,7 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 			if (dCurve && !dCurve->isIdentity())
 				{needed = true;cclutili=true;}
 		}
-		for (int i=0; i<=48000; i++) {//32768*1.414  + ...
+		for (int i=0; i<48000; i++) {//32768*1.414  + ...
 			float val;
 			if (histNeededLC) {
 				float hval = dCcurve[i];

@@ -125,7 +125,7 @@ public:
         MyMutex::MyLock lock(mtx);
 
         // Find available buffer
-        for (int i;i<buffers.size();i++) {
+        for (int i=0;i<buffers.size();i++) {
             if (!buffers[i]->inUse) {
                 buffers[i]->inUse=true;
                 return buffers[i];

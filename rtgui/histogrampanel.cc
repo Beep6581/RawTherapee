@@ -547,7 +547,7 @@ void HistogramRGBArea::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
 //
 // HistogramArea
 HistogramArea::HistogramArea (FullModeListener *fml) : //needChroma unactive by default
-    valid(false), fullMode(options.histogramFullMode), myFullModeListener(fml), oldwidth(-1), needLuma(true), needRed(true), needGreen(true), needBlue(true), rawMode(false), needChroma(false) {
+    valid(false), fullMode(options.histogramFullMode), myFullModeListener(fml), oldwidth(-1), oldheight(-1), needLuma(true), needRed(true), needGreen(true), needBlue(true), rawMode(false), needChroma(false) {
 
     lhist(256);
     rhist(256);

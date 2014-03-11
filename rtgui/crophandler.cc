@@ -28,7 +28,7 @@ using namespace rtengine;
 CropHandler::CropHandler () 
     : zoom(10), cx(0), cy(0), cw(0), ch(0),
     cropX(0), cropY(0), cropW(0), cropH(0), enabled(false),
-    cropimg(NULL), cropimgtrue(NULL), ipc(NULL), crop(NULL), listener(NULL) {
+    cropimg(NULL), cropimgtrue(NULL), ipc(NULL), crop(NULL), listener(NULL), isLowUpdatePriority(false) {
 
     chi = new CropHandlerIdleHelper;
     chi->destroyed = false;
