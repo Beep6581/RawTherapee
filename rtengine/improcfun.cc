@@ -914,7 +914,7 @@ if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.to
 	if(ciedata) {
     //update histogram J
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=32768; i++) {//
+		for (int i=0; i<32768; i++) {//
 			if (jp) {
 				float hval = dLcurve[i];
 				int hi = (int)(255.0*CLIPD(hval)); //
@@ -923,7 +923,7 @@ if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.to
 		}
 	}
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=48000; i++) {//
+		for (int i=0; i<48000; i++) {//
 			if (chropC) {
 				float hvalc = dCcurve[i];
 				int hic = (int)(255.0*CLIPD(hvalc)); //
@@ -1114,7 +1114,7 @@ if((params->colorappearance.tonecie || (params->colorappearance.tonecie && param
 	if(ciedata) {
     //update histogram J and Q
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=32768; i++) {//
+		for (int i=0; i<32768; i++) {//
 			if (jp) {
 				float hval = dLcurve[i];
 				int hi = (int)(255.0*CLIPD(hval)); //
@@ -1124,7 +1124,7 @@ if((params->colorappearance.tonecie || (params->colorappearance.tonecie && param
 	}
 	//update color histogram M,s,C
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=48000; i++) {//
+		for (int i=0; i<48000; i++) {//
 			if (chropC) {
 				float hvalc = dCcurve[i];
 				int hic = (int)(255.0*CLIPD(hvalc)); //
@@ -1794,7 +1794,7 @@ if(!params->colorappearance.tonecie   || !settings->autocielab){//normal
 	if(ciedata) {
     //update histogram J
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=32768; i++) {//
+		for (int i=0; i<32768; i++) {//
 			if (jp) {
 				float hval = dLcurve[i];
 				int hi = (int)(255.0f*CLIPD(hval)); //
@@ -1803,7 +1803,7 @@ if(!params->colorappearance.tonecie   || !settings->autocielab){//normal
 		}
 	}
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=48000; i++) {//
+		for (int i=0; i<48000; i++) {//
 			if (chropC) {
 				float hvalc = dCcurve[i];
 				int hic = (int)(255.0f*CLIPD(hvalc)); //
@@ -2005,7 +2005,7 @@ if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.en
 	if(ciedata) {
     //update histogram J and Q
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=32768; i++) {//
+		for (int i=0; i<32768; i++) {//
 			if (jp) {
 				float hval = dLcurve[i];
 				int hi = (int)(255.0f*CLIPD(hval)); //
@@ -2015,7 +2015,7 @@ if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.en
 	}
 	//update color histogram M,s,C
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=48000; i++) {//
+		for (int i=0; i<48000; i++) {//
 			if (chropC) {
 				float hvalc = dCcurve[i];
 				int hic = (int)(255.0f*CLIPD(hvalc)); //
@@ -3492,7 +3492,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 } // end of parallelization
     //update histogram C  with data chromaticity and not with CC curve
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=48000; i++) {//32768*1.414  + ...
+		for (int i=0; i<48000; i++) {//32768*1.414  + ...
 			if (chrop) {
 				float hval = dCcurve[i];
 				int hi = (int)(255.0*CLIPD(hval)); //
@@ -3501,7 +3501,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 			}
 		}
 		   //update histogram L  with data luminance
-		for (int i=0; i<=65535; i++) {
+		for (int i=0; i<65535; i++) {
 			if (chrop) {
 				float hlval = dLcurve[i];
 				int hli = (int)(255.0*CLIPD(hlval));
