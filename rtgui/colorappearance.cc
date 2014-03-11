@@ -1099,7 +1099,7 @@ void ColorAppearance::algoChanged () {
 		schroma->show();
 		qbright->hide();
 		colorh->hide();
-		tonecie->hide();		
+		tonecie->hide();
 //		sharpcie->hide();
 		curveEditorG->show();
 		curveEditorG2->show();
@@ -1132,7 +1132,7 @@ void ColorAppearance::algoChanged () {
 		schroma->show();
 		qbright->show();
 		colorh->show();
-		tonecie->show();		
+		tonecie->show();
 //		sharpcie->show();
 //		sharpcie->hide();
 		curveEditorG->show();
@@ -1167,19 +1167,18 @@ void ColorAppearance::setBatchMode (bool batchMode) {
 	wbmodel->append_text (M("GENERAL_UNCHANGED"));
 	algo->append_text (M("GENERAL_UNCHANGED"));
 	toneCurveMode->append_text (M("GENERAL_UNCHANGED"));
-//	toneCurveMode2->append_text (M("GENERAL_UNCHANGED"));
-//	toneCurveMode3->append_text (M("GENERAL_UNCHANGED"));
+	toneCurveMode2->append_text (M("GENERAL_UNCHANGED"));
+	toneCurveMode3->append_text (M("GENERAL_UNCHANGED"));
 
 	curveEditorG->setBatchMode (batchMode);
-//	curveEditorG2->setBatchMode (batchMode);
-//	curveEditorG3->setBatchMode (batchMode);
+	curveEditorG2->setBatchMode (batchMode);
+	curveEditorG3->setBatchMode (batchMode);
 }
 
 void ColorAppearance::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histCLurve, LUTu & histLLCurve, LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma){
 
 	shape->updateBackgroundHistogram (histLCAM);
 	shape3->updateBackgroundHistogram (histCCAM);
-	
 }
 
 

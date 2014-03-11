@@ -450,6 +450,7 @@ void Adjuster::showEditedCB () {
         hbox->pack_start (*editedCheckBox, Gtk::PACK_SHRINK, 2);
         hbox->reorder_child (*editedCheckBox, 0);
         editedChange = editedCheckBox->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::editedToggled) );
+        editedCheckBox->show();
     }
 }
 

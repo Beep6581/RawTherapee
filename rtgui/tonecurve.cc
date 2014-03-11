@@ -599,6 +599,8 @@ void ToneCurve::waitForAutoExp () {
     saturation->setEnabled (false);
     curveEditorG->set_sensitive (false);
     toneCurveMode->set_sensitive (false);
+    curveEditorG2->set_sensitive (false);
+    toneCurveMode2->set_sensitive (false);
     hrenabled->set_sensitive(false);
     method->set_sensitive(false);
 }
@@ -633,6 +635,8 @@ void ToneCurve::enableAll () {
     saturation->setEnabled (true);
     curveEditorG->set_sensitive (true);
     toneCurveMode->set_sensitive (true);
+    curveEditorG2->set_sensitive (true);
+    toneCurveMode2->set_sensitive (true);
     hrenabled->set_sensitive(true);
     method->set_sensitive(true);
 }
@@ -682,8 +686,10 @@ void ToneCurve::setBatchMode (bool batchMode) {
     saturation->showEditedCB ();
 
     toneCurveMode->append_text (M("GENERAL_UNCHANGED"));
+    toneCurveMode2->append_text (M("GENERAL_UNCHANGED"));
 
     curveEditorG->setBatchMode (batchMode);
+    curveEditorG2->setBatchMode (batchMode);
 }
 
 void ToneCurve::setAdjusterBehavior (bool expadd, bool hlcompadd, bool hlcompthreshadd, bool bradd, bool blackadd, bool shcompadd, bool contradd, bool satadd) {
