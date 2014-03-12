@@ -199,6 +199,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	ColorAppearance customColCurve1, customColCurve2,customColCurve3 ;
 	ToneCurve customToneCurvebw1;
 	ToneCurve customToneCurvebw2;
+	//if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
 
 	ipf.g = imgsrc->getGamma();
 	ipf.iGamma = true;
@@ -422,9 +423,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         else if (params.icm.working=="Beta RGB")   ns=4;
         else if (params.icm.working=="BestRGB")    ns=5;
         else if (params.icm.working=="BruceRGB")   ns=6;
-
-
-        readyImg = ipf.lab2rgb16b (labView, cx, cy, cw, ch, params.icm.output, params.icm.working, params.icm.gamma, params.icm.freegamma, params.icm.gampos, params.icm.slpos, ga0,ga1,ga2,ga3,ga4,ga5,ga6 );
+	//	if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
+        readyImg = ipf.lab2rgb16b (labView, cx, cy, cw, ch, params.icm.output, params.icm.working, params.icm.gamma, params.icm.freegamma, params.icm.gampos, params.icm.slpos, ga0,ga1,ga2,ga3,ga4,ga5,ga6, params.blackwhite.enabled );
         customGamma = true;
 
         //or selected Free gamma
@@ -569,13 +569,22 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     else {
         // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
         // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
-        readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output);
+		
+        readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output, params.blackwhite.enabled);
         if (settings->verbose) printf("Output profile: \"%s\"\n", params.icm.output.c_str());
     }
 
     delete labView;
     labView = NULL;
-
+	
+	if(params.blackwhite.enabled) {//force BW r=g=b
+		for (int ccw=0;ccw<cw;ccw++) {
+			for (int cch=0;cch<ch;cch++) {
+			readyImg->r(cch,ccw)=readyImg->g(cch,ccw);
+			readyImg->b(cch,ccw)=readyImg->g(cch,ccw);
+			}
+		}
+	}
     if (pl) pl->setProgress (0.70);
 
     if (params.resize.enabled) {

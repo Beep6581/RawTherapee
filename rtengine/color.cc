@@ -54,10 +54,10 @@ namespace rtengine {
     const double Color::sRGBGammaCurve = 2.4;
 
     const double Color::eps_max=580.40756;  //(MAXVALF* 216.0f/24389.0);
-    const double Color::kappa=903.29630;  //24389.0/27.0;
+    const double Color::kappa=24389.0/27.0;//903.29630;
 
-    const float Color::D50x=0.96422;
-    const float Color::D50z=0.82521;
+    const float Color::D50x=0.9642f; //0.96422;
+    const float Color::D50z=0.8249f; //0.82521;
     const double Color::u0=4.0*D50x/(D50x+15+3*D50z);
     const double Color::v0=9.0/(D50x+15+3*D50z);
     const double Color::epskap=8.0;
@@ -703,7 +703,8 @@ namespace rtengine {
         const double epsilonExpInv3 = 6.0/29.0;
         const double kappaInv = 27.0/24389.0;  // inverse of kappa
 
-        return (f > epsilonExpInv3) ? f*f*f : (116 * f - 16) * kappaInv;
+        return (f > epsilonExpInv3) ? f*f*f : (116. * f - 16.) * kappaInv;
+	
     }
 
     /*
