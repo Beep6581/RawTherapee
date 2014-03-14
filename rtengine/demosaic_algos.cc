@@ -564,13 +564,9 @@ void RawImageSource::hphd_demosaic () {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-#define FORCC for (c=0; c < colors; c++)
-#define fc(row,col) \
-	(ri->prefilters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
+#define fc(row,col) (prefilters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 typedef unsigned short ushort;
 void RawImageSource::vng4_demosaic () {
-
 	static const signed short int *cp, terms[] = {
 		-2,-2,+0,-1,0,0x01, -2,-2,+0,+0,1,0x01, -2,-1,-1,+0,0,0x01,
 		-2,-1,+0,-1,0,0x02, -2,-1,+0,+0,0,0x03, -2,-1,+0,+1,1,0x01,
@@ -597,72 +593,97 @@ void RawImageSource::vng4_demosaic () {
 	},
 	chood[] = { -1,-1, -1,0, -1,+1, 0,+1, +1,+1, +1,0, +1,-1, 0,-1 };
 
-	if (plistener) {
+	double progress = 0.0;
+	const bool plistenerActive = plistener;
+
+	if (plistenerActive) {
 		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::vng4]));
-		plistener->setProgress (0.0);
+		plistener->setProgress (progress);
 	}
 
-	float (*brow[5])[4], *pix;
-	int prow=7, pcol=1, *ip, *code[16][16], gval[8], gmin, gmax, sum[4];
-	int row, col, x, y, x1, x2, y1, y2, t, weight, grads, color, diag;
-	int g, diff, thold, num, c, width=W, height=H, colors=4;
+	const unsigned prefilters = ri->prefilters;
+	const int width=W, height=H;
+	const int colors=4;
 	float (*image)[4];
-	int lcode[16][16][32], shift, i;
 
-	image = (float (*)[4]) calloc (H*W, sizeof *image);
+	image = (float (*)[4]) calloc (height*width, sizeof *image);
+	
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
 	for (int ii=0; ii<H; ii++)
 		for (int jj=0; jj<W; jj++)
 			image[ii*W+jj][fc(ii,jj)] = rawData[ii][jj];
 
+	{
+	int lcode[16][16][32];
+	float mul[16][16][8];
+	float csum[16][16][4];
+
 // first linear interpolation
-	for (row=0; row < 16; row++)
-		for (col=0; col < 16; col++) {
-			ip = lcode[row][col];
+	for (int row=0; row < 16; row++)
+		for (int col=0; col < 16; col++) {
+			int * ip = lcode[row][col];
+			int mulcount=0;
+			float sum[4];
 			memset (sum, 0, sizeof sum);
-			for (y=-1; y <= 1; y++)
-				for (x=-1; x <= 1; x++) {
-					shift = (y==0) + (x==0);
+			for (int y=-1; y <= 1; y++)
+				for (int x=-1; x <= 1; x++) {
+					int shift = (y==0) + (x==0);
 					if (shift == 2)
 						continue;
-					color = fc(row+y,col+x);
+					int color = fc(row+y,col+x);
 					*ip++ = (width*y + x)*4 + color;
-					*ip++ = shift;
+					
+					mul[row][col][mulcount] = (1 << shift);
 					*ip++ = color;
 					sum[color] += (1 << shift);
+					mulcount++;
 				}
-			FORCC
+			int colcount = 0;
+			for (int c=0; c < colors; c++)
 				if (c != fc(row,col)) {
 					*ip++ = c;
-					*ip++ = 256 / sum[c];
+					csum[row][col][colcount] = sum[c];
+					colcount ++;
 				}
 		}
 
-	for (row=1; row < height-1; row++)
-		for (col=1; col < width-1; col++) {
-			pix = image[row*width+col];
-			ip = lcode[row & 15][col & 15];
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+	for (int row=1; row < height-1; row++) {
+		for (int col=1; col < width-1; col++) {
+			float * pix = image[row*width+col];
+			int * ip = lcode[row & 15][col & 15];
+			float sum[4];
 			memset (sum, 0, sizeof sum);
-			for (i=8; i--; ip+=3)
-				sum[ip[2]] += pix[ip[0]] * (1 << ip[1]);
-			for (i=colors; --i; ip+=2)
-				pix[ip[0]] = sum[ip[0]] * ip[1] /256;
+			for (int i=0; i<8;i++, ip+=2)
+				sum[ip[1]] += pix[ip[0]] * mul[row & 15][col & 15][i];
+			for (int i=0; i<colors-1;i++, ip++)
+				pix[ip[0]] = sum[ip[0]] / csum[row & 15][col & 15][i];
 		}
+	}
+  }
 
-//  lin_interpolate();
-
-	ip = (int *) calloc ((prow+1)*(pcol+1), 1280);
-	for (row=0; row <= prow; row++)		/* Precalculate for VNG */
-		for (col=0; col <= pcol; col++) {
+	const int prow=7, pcol=1;
+	int *code[8][2];
+	int t, g;
+	int * ip = (int *) calloc ((prow+1)*(pcol+1), 1280);
+	for (int row=0; row <= prow; row++)		/* Precalculate for VNG */
+		for (int col=0; col <= pcol; col++) {
 			code[row][col] = ip;
 			for (cp=terms, t=0; t < 64; t++) {
-				y1 = *cp++;  x1 = *cp++;
-				y2 = *cp++;  x2 = *cp++;
-				weight = *cp++;
-				grads = *cp++;
-				color = fc(row+y1,col+x1);
+				int y1 = *cp++;
+				int x1 = *cp++;
+				int y2 = *cp++;
+				int x2 = *cp++;
+				int weight = *cp++;
+				int grads = *cp++;
+				int color = fc(row+y1,col+x1);
 				if (fc(row+y2,col+x2) != color)
 					continue;
-				diag = (fc(row,col+1) == color && fc(row+1,col) == color) ? 2:1;
+				int diag = (fc(row,col+1) == color && fc(row+1,col) == color) ? 2:1;
 				if (abs(y1-y2) == diag && abs(x1-x2) == diag)
 					continue;
 				*ip++ = (y1*width + x1)*4 + color;
@@ -675,9 +696,10 @@ void RawImageSource::vng4_demosaic () {
 			}
 			*ip++ = INT_MAX;
 			for (cp=chood, g=0; g < 8; g++) {
-				y = *cp++;  x = *cp++;
+				int y = *cp++;
+				int x = *cp++;
 				*ip++ = (y*width + x) * 4;
-				color = fc(row,col);
+				int color = fc(row,col);
 				if (fc(row+y,col+x) != color && fc(row+y*2,col+x*2) == color)
 					*ip++ = (y*width + x) * 8 + color;
 				else
@@ -685,26 +707,38 @@ void RawImageSource::vng4_demosaic () {
 			}
 		}
 
-	brow[4] = (float (*)[4]) calloc (width*3, sizeof **brow);
-	for (row=0; row < 3; row++)
-		brow[row] = brow[4] + row*width;
-	for (row=2; row < height-2; row++) {		/* Do VNG interpolation */
-		for (col=2; col < width-2; col++) {
-			color = fc(row,col);
-			pix = image[row*width+col];
-			ip = code[row & prow][col & pcol];
+	if(plistenerActive) {
+		progress = 0.1;
+		plistener->setProgress (progress);
+	}
+
+
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+	float gval[8], thold, sum[3];
+	int g;
+	const int progressStep = 64;
+	const double progressInc = (0.98-progress)/((height-2)/progressStep);
+#ifdef _OPENMP
+#pragma omp for nowait
+#endif
+	for (int row=2; row < height-2; row++) {		/* Do VNG interpolation */
+		for (int col=2; col < width-2; col++) {
+			float * pix = image[row*width+col];
+			int * ip = code[row & prow][col & pcol];
 			memset (gval, 0, sizeof gval);
 			while ((g = ip[0]) != INT_MAX) {		/* Calculate gradients */
-				diff = ABS(pix[g] - pix[ip[1]]) * (1<< ip[2]);
+				float diff = fabsf(pix[g] - pix[ip[1]]) * (1<< ip[2]);
 				gval[ip[3]] += diff;
-				ip += 5;
-				if ((g = ip[-1]) == -1)
-					continue;
-				gval[g] += diff;
+				ip+=4;
 				while ((g = *ip++) != -1)
 					gval[g] += diff;
 			}
 			ip++;
+			{
+			float gmin, gmax;
 			gmin = gmax = gval[0];			/* Choose a threshold */
 			for (g=1; g < 8; g++) {
 				if (gmin > gval[g])
@@ -712,58 +746,73 @@ void RawImageSource::vng4_demosaic () {
 				if (gmax < gval[g])
 					gmax = gval[g];
 			}
-			if (gmax == 0) {
-				memcpy (brow[2][col], pix, sizeof *image);
-				continue;
-			}
 			thold = gmin + (gmax /2);
+			}
 			memset (sum, 0, sizeof sum);
-			for (num=g=0; g < 8; g++,ip+=2) {		/* Average the neighbors */
-				if (gval[g] <= thold) {
-				FORCC
-					if (c == color && ip[1])
-						sum[c] += (pix[c] + pix[ip[1]]) /2;
-					else
-						sum[c] += pix[ip[0] + c];
-				num++;
+			float t1,t2;
+			int color = fc(row,col);
+			t1 = t2 = pix[color];
+			if(color&1) {
+				int num = 0;
+				for (g=0; g < 8; g++,ip+=2) {		/* Average the neighbors */
+					if (gval[g] <= thold) {
+						if(ip[1])
+							sum[0] += (t1 + pix[ip[1]])*0.5f;
+						sum[1] += pix[ip[0] + (color ^ 2)];
+						num++;
+					}
 				}
+				t1 += (sum[1] - sum[0]) / num;
+			} else {
+				int num = 0;
+				for (g=0; g < 8; g++,ip+=2) {		/* Average the neighbors */
+					if (gval[g] <= thold) {
+						sum[1] += pix[ip[0] + 1];
+						sum[2] += pix[ip[0] + 3];
+						if(ip[1])
+							sum[0] += (t1 + pix[ip[1]])*0.5f;
+						num++;
+					}
+				}
+				t1 += (sum[1] - sum[0]) / num;
+				t2 += (sum[2] - sum[0]) / num;
 			}
-			FORCC {					/* Save to buffer */
-				t = pix[color];
-				if (c != color)
-					t += (sum[c] - sum[color]) / num;
-				brow[2][col][c] = t;
-			}
+			green[row][col] = 0.5f * (t1 + t2);
 		}
-		if (row > 3)				/* Write buffer to image */
-			memcpy (image[(row-2)*width+2], brow[0]+2, (width-4)*sizeof *image);
-		for (g=0; g < 4; g++)
-			brow[(g-1) & 3] = brow[g];
-		if (!(row%20) && plistener)
-			plistener->setProgress ((double)row / (H-2));
+	if(plistenerActive) {
+		if((row % progressStep) == 0)
+#ifdef _OPENMP
+#pragma omp critical (updateprogress)
+#endif
+{
+			progress += progressInc;
+			plistener->setProgress (progress);
+}
 	}
-	memcpy (image[(row-2)*width+2], brow[0]+2, (width-4)*sizeof *image);
-	memcpy (image[(row-1)*width+2], brow[1]+2, (width-4)*sizeof *image);
-	free (brow[4]);
-	free (code[0][0]);
+  }
 
-	for (int i=0; i<H; i++) {
-		for (int j=0; j<W; j++)
-			green[i][j] = (image[i*W+j][1] + image[i*W+j][3]) /2;
-	}
+}
+  free (code[0][0]);
+  free (image);
+	if(plistenerActive)
+		plistener->setProgress (0.98);
 
-	// Interpolate R and B
-	for (int i=0; i<H; i++) {
-		if (i==0)
-			// rm, gm, bm must be recovered
-			//interpolate_row_rb_mul_pp (red, blue, NULL, green[i], green[i+1], i, rm, gm, bm, 0, W, 1);
-			interpolate_row_rb_mul_pp (red[i], blue[i], NULL, green[i], green[i+1], i, 1.0, 1.0, 1.0, 0, W, 1);
-		else if (i==H-1)
-			interpolate_row_rb_mul_pp (red[i], blue[i], green[i-1], green[i], NULL, i, 1.0, 1.0, 1.0, 0, W, 1);
-		else
-			interpolate_row_rb_mul_pp (red[i], blue[i], green[i-1], green[i], green[i+1], i, 1.0, 1.0, 1.0, 0, W, 1);
-	}
-	free (image);
+  // Interpolate R and B
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+  for (int i=0; i<H; i++) {
+	  if (i==0)
+		  // rm, gm, bm must be recovered
+		  //interpolate_row_rb_mul_pp (red, blue, NULL, green[i], green[i+1], i, rm, gm, bm, 0, W, 1);
+		  interpolate_row_rb_mul_pp (red[i], blue[i], NULL, green[i], green[i+1], i, 1.0, 1.0, 1.0, 0, W, 1);
+	  else if (i==H-1)
+		  interpolate_row_rb_mul_pp (red[i], blue[i], green[i-1], green[i], NULL, i, 1.0, 1.0, 1.0, 0, W, 1);
+	  else
+		  interpolate_row_rb_mul_pp (red[i], blue[i], green[i-1], green[i], green[i+1], i, 1.0, 1.0, 1.0, 0, W, 1);
+  }
+	if(plistenerActive)
+		plistener->setProgress (1.0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -772,6 +821,8 @@ void RawImageSource::vng4_demosaic () {
 #undef fc
 #define fc(row,col) \
 	(ri->get_filters() >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
+
+#define FORCC for (int c=0; c < colors; c++)
 
 /*
    Patterned Pixel Grouping Interpolation by Alain Desbiolles
