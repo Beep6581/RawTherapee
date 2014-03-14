@@ -8082,6 +8082,7 @@ konica_400z:
       filters = 0x16161616;
     }
   } else if (!strcmp(make,"Leica") || !strcmp(make,"Panasonic")) {
+	if(raw_width > 0) { // avoid divide by zero
     if ((flen - data_offset) / (raw_width*8/7) == raw_height)
       load_raw = &CLASS panasonic_load_raw;
     if (!load_raw) {
@@ -8099,6 +8100,7 @@ konica_400z:
       }
     filters = 0x01010101 * (uchar) "\x94\x61\x49\x16"
 	[((filters-1) ^ (left_margin & 1) ^ (top_margin << 1)) & 3];
+	}
   } else if (!strcmp(model,"C770UZ")) {
     height = 1718;
     width  = 2304;
