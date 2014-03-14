@@ -212,7 +212,7 @@ class RawImageSource : public ImageSource {
         inline  void convert_to_cielab_row  (float* ar, float* ag, float* ab, float* oL, float* oa, float* ob);
         inline  void interpolate_row_g      (float* agh, float* agv, int i);
         inline  void interpolate_row_rb     (float* ar, float* ab, float* pg, float* cg, float* ng, int i);
-        inline  void interpolate_row_rb_mul_pp (float* ar, float* ab, float* pg, float* cg, float* ng, int i, double r_mul, double g_mul, double b_mul, int x1, int width, int skip);
+        inline  void interpolate_row_rb_mul_pp (float* ar, float* ab, float* pg, float* cg, float* ng, int i, float r_mul, float g_mul, float b_mul, int x1, int width, int skip);
 
         int  LinEqSolve( int nDim, double* pfMatr, double* pfVect, double* pfSolution);//Emil's CA auto correction
         void CA_correct_RT	(double cared, double cablue);

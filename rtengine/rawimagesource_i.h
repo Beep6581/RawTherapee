@@ -219,7 +219,7 @@ inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg,
   }
 }
 
-inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, float* pg, float* cg, float* ng, int i, double r_mul, double g_mul, double b_mul, int x1, int width, int skip) {
+inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, float* pg, float* cg, float* ng, int i, float r_mul, float g_mul, float b_mul, int x1, int width, int skip) {
 
   if (ri->ISRED(i,0) || ri->ISRED(i,1)) {
     // RGRGR or GRGRGR line
@@ -228,7 +228,7 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
          // red is simple
          ar[jx] = r_mul * rawData[i][j];
          // blue: cross interpolation
-         int b = 0;
+         float b = 0;
          int n = 0;
          if (i>0 && j>0) {
            b += b_mul*rawData[i-1][j-1] - g_mul*pg[j-1];
@@ -251,7 +251,7 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
       }
       else {
         // linear R-G interp. horizontally
-        int r;
+        float r;
         if (j==0)
           r = g_mul*cg[0] + r_mul*rawData[i][1] - g_mul*cg[1];
         else if (j==W-1)
@@ -260,7 +260,7 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
           r = g_mul*cg[j] + (r_mul*rawData[i][j-1] - g_mul*cg[j-1] + r_mul*rawData[i][j+1] - g_mul*cg[j+1]) / 2;
         ar[jx] = r;
         // linear B-G interp. vertically
-        int b;
+        float b;
         if (i==0)
           b = g_mul*ng[j] + b_mul*rawData[1][j] - g_mul*cg[j];
         else if (i==H-1)
@@ -278,7 +278,7 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
          // red is simple
          ab[jx] = b_mul*rawData[i][j];
          // blue: cross interpolation
-         int r = 0;
+         float r = 0;
          int n = 0;
          if (i>0 && j>0) {
            r += r_mul*rawData[i-1][j-1] - g_mul*pg[j-1];
@@ -302,7 +302,7 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
       }
       else {
         // linear B-G interp. horizontally
-        int b;
+        float b;
         if (j==0)
           b = g_mul*cg[0] + b_mul*rawData[i][1] - g_mul*cg[1];
         else if (j==W-1)
@@ -311,7 +311,7 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
           b = g_mul*cg[j] + (b_mul*rawData[i][j-1] - g_mul*cg[j-1] + b_mul*rawData[i][j+1] - g_mul*cg[j+1]) / 2;
         ab[jx] = b;
         // linear R-G interp. vertically
-        int r;
+        float r;
         if (i==0)
           r = g_mul*ng[j] + r_mul*rawData[1][j] - g_mul*cg[j];
         else if (i==H-1)
