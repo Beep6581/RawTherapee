@@ -33,6 +33,7 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p) {
 	pmlistener = NULL;
 	pmhlistener = NULL;
     focusGrabber = NULL;
+    flawnOverWindow = NULL;
     mainCropWindow = NULL;
     previewHandler = NULL;
     lastClosedX = -1;
@@ -43,6 +44,8 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p) {
     zoomPanel = Gtk::manage (new ZoomPanel (this));
     indClippedPanel = Gtk::manage (new IndicateClippedPanel (this));
     previewModePanel =  Gtk::manage (new PreviewModePanel (this));
+
+    add_events(Gdk::LEAVE_NOTIFY_MASK);
 
     signal_style_changed().connect( sigc::mem_fun(*this, &ImageArea::styleChanged) );
     signal_size_allocate().connect( sigc::mem_fun(*this, &ImageArea::on_resized) );
@@ -209,8 +212,19 @@ bool ImageArea::on_motion_notify_event (GdkEventMotion* event) {
         focusGrabber->pointerMoved (event->state, event->x, event->y);
     else {
         CropWindow* cw = getCropWindow (event->x, event->y);
-        if (cw) 
+        if (cw) {
+            if (cw != flawnOverWindow) {
+                if (flawnOverWindow)
+                    flawnOverWindow->flawnOver(false);
+                cw->flawnOver(true);
+                flawnOverWindow = cw;
+            }
             cw->pointerMoved (event->state, event->x, event->y);
+        }
+        else if (flawnOverWindow) {
+            flawnOverWindow->flawnOver(false);
+            flawnOverWindow = NULL;
+        }
     }
     return true;
 }
@@ -259,13 +273,19 @@ bool ImageArea::on_button_release_event (GdkEventButton* event) {
 }
 
 bool ImageArea::on_leave_notify_event  (GdkEventCrossing* event) {
-    if (focusGrabber)
+    if (flawnOverWindow) {
+        flawnOverWindow->flawnOver(false);
+        flawnOverWindow = NULL;
+    }
+    if (focusGrabber) {
+        focusGrabber->flawnOver(false);
         focusGrabber->leaveNotify (event);
+    }
     else {
-    	printf("ImageArea::1\n");
         CropWindow* cw = getCropWindow (event->x, event->y);
+
         if (cw) {
-        	printf("ImageArea::appel\n");
+            cw->flawnOver(false);
             cw->leaveNotify (event);
         }
     }

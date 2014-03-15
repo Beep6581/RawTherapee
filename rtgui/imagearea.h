@@ -55,6 +55,7 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public Edi
 
     bool        dirty;
     CropWindow* focusGrabber;
+    CropWindow* flawnOverWindow;
     CropGUIListener* cropgl;
     PointerMotionListener* pmlistener;
     PointerMotionListener* pmhlistener;

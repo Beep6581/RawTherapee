@@ -19,6 +19,7 @@ Gradient::Gradient () : Gtk::VBox(), FoldableToolPanel(this), EditSubscriber(ET_
 
 	edit = Gtk::manage (new Gtk::ToggleButton());
 	edit->add (*Gtk::manage (new RTImage ("editmodehand.png")));
+	edit->set_tooltip_text(M("EDIT_OBJECT_TOOLTIP"));
 	editConn = edit->signal_toggled().connect( sigc::mem_fun(*this, &Gradient::editToggled) );
 
 	strength = Gtk::manage (new Adjuster (M("TP_GRADIENT_STRENGTH"), -5, 5, 0.01, 0));

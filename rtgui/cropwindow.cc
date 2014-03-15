@@ -223,16 +223,17 @@ bool CropWindow::isInside (int x, int y) {
 }
 
 void CropWindow::leaveNotify (GdkEventCrossing* event) {
-	printf("LeaveNotify\n");
     EditSubscriber* subscriber = iarea->getCurrSubscriber();
     if (state==SNormal && subscriber && subscriber->getEditingType()==ET_PIPETTE) {
-    	printf("Values\n");
         iarea->pipetteVal[0] = iarea->pipetteVal[1] = iarea->pipetteVal[2] = -1.f;
         if (subscriber->mouseOver(0)) {
-        	printf("Redraw\n");
             iarea->redraw();
         }
     }
+}
+
+void CropWindow::flawnOver (bool isFlawnOver) {
+    this->isFlawnOver = isFlawnOver;
 }
 
 void CropWindow::buttonPress (int button, int type, int bstate, int x, int y) {
@@ -324,11 +325,6 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y) {
             press_x = x;
             action_x = cropHandler.cropParams.w;
         }
-        else if (onArea (CropObserved, x, y)) {
-            state = SObservedMove;
-            press_x = x;
-            press_y = y;
-        }
         else if ((bstate & GDK_SHIFT_MASK) && onArea (CropInside, x, y)) {
             state = SCropMove;
             press_x = x;
@@ -345,10 +341,24 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y) {
 
             EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
 
-            if (button==1 && editSubscriber && cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) && ( (editSubscriber->getEditingType() == ET_PIPETTE && (bstate & GDK_CONTROL_MASK)) || (editSubscriber->getEditingType() == ET_OBJECTS && iarea->object>-1)) ) {
+            if      (button==1 && editSubscriber && cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) && (editSubscriber->getEditingType()==ET_OBJECTS && iarea->object>-1) ) {
                 editSubscriber->button1Pressed(bstate);
                 state=SEditDrag;
             }
+            else if (onArea (CropObserved, x, y)) {
+                state = SObservedMove;
+                press_x = x;
+                press_y = y;
+            }
+            else if (button==1 && editSubscriber && cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) && (editSubscriber->getEditingType()==ET_PIPETTE && (bstate & GDK_CONTROL_MASK)) ) {
+                editSubscriber->button1Pressed(bstate);
+                state=SEditDrag;
+            }
+        }
+        else if (onArea (CropObserved, x, y)) {
+            state = SObservedMove;
+            press_x = x;
+            press_y = y;
         }
         else if (iarea->getToolMode () == TMStraighten) {
             state = SRotateSelecting;
@@ -579,7 +589,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y) {
             Coord cropPos;
             screenCoordToCropBuffer(x, y, cropPos.x, cropPos.y);
             if (editSubscriber->getEditingType()==ET_PIPETTE) {
-                iarea->object = onArea (CropImage, x, y) ? 1 : 0;
+                iarea->object = onArea (CropImage, x, y) && !onArea (CropObserved, x, y) ? 1 : 0;
                 //iarea->object = cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) ? 1 : 0;
                 if (iarea->object) {
                     crop->getPipetteData(iarea->pipetteVal, cropPos.x, cropPos.y, iarea->getPipetteRectSize());
@@ -780,7 +790,7 @@ void CropWindow::updateCursor (int x, int y) {
     if (state==SNormal) {
         if (onArea (CropWinButtons, x, y)) 
             cursorManager.setCursor (iarea->get_window(), CSArrow);
-        else if (onArea (CropToolBar, x, y)) 
+        else if (onArea (CropToolBar, x, y))
             cursorManager.setCursor (iarea->get_window(), CSMove);
         else if (onArea (CropResize, x, y)) 
             cursorManager.setCursor (iarea->get_window(), CSResizeDiagonal);
@@ -955,9 +965,10 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                             float sum_L, sum_L2;
                             float sumsq_L, sumsq_L2; //sum of deviations squared
                             float stdDev_L, stdDev_L2;
-                            float focus_thresh, focus_thresh2;
+                            float focus_thresh;
+                            //float focus_thresh2;
                             int kernel_size, kernel_size2;// count of pixels in the blur kernel
-                            float opacity = 0.9;//TODO: implement opacity
+                            //float opacity = 0.9;//TODO: implement opacity
                             //TODO: evaluate effects of altering sampling frequency
 
 
@@ -966,7 +977,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                             focus_thresh=80;
 
                             blur_radius2 = blur_radius/4;     // Band2
-                            focus_thresh2 = focus_thresh/2;   // Band 2 threshold
+                            //focus_thresh2 = focus_thresh/2;   // Band 2 threshold
 
                             if (j>blur_radius && j<tmp->get_width()-blur_radius
                              && i>blur_radius && i<tmp->get_height()-blur_radius){ //stay within image area
@@ -1245,9 +1256,9 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
     }
     if (state==SRotateSelecting) 
         drawStraightenGuide (cr);
-    if (state==SNormal) {
+    if (state==SNormal && isFlawnOver) {
         EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
-        if (iarea->getToolMode () == TMHand && editSubscriber && editSubscriber->getEditingType()==ET_PIPETTE)
+        if (iarea->getToolMode () == TMHand && editSubscriber && editSubscriber->getEditingType()==ET_PIPETTE && iarea->object)
             drawUnscaledSpotRectangle (cr, iarea->getPipetteRectSize ());
         else if (iarea->getToolMode () == TMSpotWB)
             drawScaledSpotRectangle (cr, iarea->getSpotWBRectSize ());

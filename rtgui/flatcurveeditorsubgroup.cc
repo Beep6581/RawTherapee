@@ -58,6 +58,7 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 	loadCPoints->add (*Gtk::manage (new RTImage ("gtk-open.png")));
 	editCPoints = Gtk::manage (new Gtk::ToggleButton());
 	editCPoints->add (*Gtk::manage (new RTImage ("editmodehand.png")));
+	editCPoints->set_tooltip_text(M("EDIT_PIPETTE_TOOLTIP"));
 	editCPoints->hide();
 
 	CPointsbbox->pack_end (*pasteCPoints, Gtk::PACK_SHRINK, 0);

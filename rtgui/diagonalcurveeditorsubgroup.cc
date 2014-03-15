@@ -63,6 +63,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	loadCustom->add (*Gtk::manage (new RTImage ("gtk-open.png")));
 	editCustom = Gtk::manage (new Gtk::ToggleButton());
 	editCustom->add (*Gtk::manage (new RTImage ("editmodehand.png")));
+	editCustom->set_tooltip_text(M("EDIT_PIPETTE_TOOLTIP"));
 	editCustom->hide();
 	custombbox->pack_end (*pasteCustom, Gtk::PACK_SHRINK, 0);
 	custombbox->pack_end (*copyCustom, Gtk::PACK_SHRINK, 0);
@@ -108,6 +109,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	loadNURBS->add (*Gtk::manage (new RTImage ("gtk-open.png")));
 	editNURBS = Gtk::manage (new Gtk::ToggleButton());
 	editNURBS->add (*Gtk::manage (new RTImage ("editmodehand.png")));
+	editNURBS->set_tooltip_text(M("EDIT_PIPETTE_TOOLTIP"));
 	editNURBS->hide();
 	NURBSbbox->pack_end (*pasteNURBS, Gtk::PACK_SHRINK, 0);
 	NURBSbbox->pack_end (*copyNURBS, Gtk::PACK_SHRINK, 0);
@@ -158,6 +160,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	loadParam->add (*Gtk::manage (new RTImage ("gtk-open.png")));
 	editParam = Gtk::manage (new Gtk::ToggleButton());
 	editParam->add (*Gtk::manage (new RTImage ("editmodehand.png")));
+	editParam->set_tooltip_text(M("EDIT_PIPETTE_TOOLTIP"));
 	editParam->hide();
 	parambbox->pack_end (*pasteParam, Gtk::PACK_SHRINK, 0);
 	parambbox->pack_end (*copyParam, Gtk::PACK_SHRINK, 0);
