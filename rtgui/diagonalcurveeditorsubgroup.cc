@@ -32,6 +32,9 @@
 
 DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir) : CurveEditorSubGroup(curveDir) {
 
+	editedAdjuster = NULL;
+	editedAdjusterValue = 0;
+
 	valLinear = (int)DCT_Linear;
 	valUnchanged = (int)DCT_Unchanged;
 	parent = prt;
@@ -277,8 +280,53 @@ void DiagonalCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, i
 		customCurve->setDirty(true);
 		break;
 	case (DCT_Parametric):
+	{
 		paramCurve->pipetteMouseOver(provider, modifierKey);
 		paramCurve->setDirty(true);
+		float pipetteVal = 0.f;
+		editedAdjuster = NULL;
+		int n = 0;
+		if (provider->pipetteVal[0] != -1.f) {
+			pipetteVal += provider->pipetteVal[0];
+			++n;
+		}
+		if (provider->pipetteVal[1] != -1.f) {
+			pipetteVal += provider->pipetteVal[1];
+			++n;
+		}
+		if (provider->pipetteVal[2] != -1.f) {
+			pipetteVal += provider->pipetteVal[2];
+			++n;
+		}
+		if (n>1) {
+			pipetteVal /= n;
+		}
+		else if (!n)
+			pipetteVal = -1.f;
+
+		if (pipetteVal != -1.f) {
+			double pos[3];
+			shcSelector->getPositions(pos[0], pos[1], pos[2]);
+			if     (pipetteVal>=pos[2]) {
+				editedAdjuster = highlights;
+				paramCurve->setActiveParam(4);
+			}
+			else if(pipetteVal>=pos[1]) {
+				editedAdjuster = lights;
+				paramCurve->setActiveParam(5);
+			}
+			else if(pipetteVal>=pos[0]) {
+				editedAdjuster = darks;
+				paramCurve->setActiveParam(6);
+			}
+			else {
+				editedAdjuster = shadows;
+				paramCurve->setActiveParam(7);
+			}
+		}
+		else
+			paramCurve->setActiveParam(-1);
+	}
 		break;
 	case (DCT_NURBS):
 		NURBSCurve->pipetteMouseOver(provider, modifierKey);
@@ -297,7 +345,8 @@ void DiagonalCurveEditorSubGroup::pipetteButton1Pressed(EditDataProvider *provid
 		customCurve->pipetteButton1Pressed(provider, modifierKey);
 		break;
 	case (DCT_Parametric):
-		paramCurve->pipetteButton1Pressed(provider, modifierKey);
+		if (editedAdjuster)
+		editedAdjusterValue = editedAdjuster->getIntValue();
 		break;
 	case (DCT_NURBS):
 		NURBSCurve->pipetteButton1Pressed(provider, modifierKey);
@@ -315,7 +364,7 @@ void DiagonalCurveEditorSubGroup::pipetteButton1Released(EditDataProvider *provi
 		customCurve->pipetteButton1Released(provider);
 		break;
 	case (DCT_Parametric):
-		paramCurve->pipetteButton1Released(provider);
+		editedAdjuster = NULL;
 		break;
 	case (DCT_NURBS):
 		NURBSCurve->pipetteButton1Released(provider);
@@ -333,7 +382,13 @@ void DiagonalCurveEditorSubGroup::pipetteDrag(EditDataProvider *provider, int mo
 		customCurve->pipetteDrag(provider, modifierKey);
 		break;
 	case (DCT_Parametric):
-		paramCurve->pipetteDrag(provider, modifierKey);
+		if (editedAdjuster) {
+			int trimmedValue = editedAdjuster->trimValue(editedAdjusterValue-(provider->deltaScreen.y/2));
+			if (trimmedValue != editedAdjuster->getIntValue()) {
+				editedAdjuster->setValue(trimmedValue);
+				adjusterChanged(editedAdjuster, trimmedValue);
+			}
+		}
 		break;
 	case (DCT_NURBS):
 		NURBSCurve->pipetteDrag(provider, modifierKey);

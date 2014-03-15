@@ -102,7 +102,7 @@ class MyFlatCurve : public MyCurve {
 		enum MouseOverAreas area;
 
 		void draw ();
-		void movePoint(bool moveX, bool moveY);
+		void movePoint(bool moveX, bool moveY, bool pipetteDrag=false);
 		void defaultCurve (double iVal=0.5);
 		void interpolate ();
 		void getCursorPosition(Gdk::EventType evType, bool isHint, int evX, int evY, Gdk::ModifierType modifier);

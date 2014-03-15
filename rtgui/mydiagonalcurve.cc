@@ -854,23 +854,27 @@ void MyDiagonalCurve::pipetteButton1Released(EditDataProvider *provider) {
 }
 
 void MyDiagonalCurve::pipetteDrag(EditDataProvider *provider, int modifierKey) {
+	if (curve.type==DCT_Parametric || graphW<0 || graphH<0)
+		return;
+
+	snapToMinDistY = snapToMinDistX = 10.;
+	snapToValY = snapToValX = 0.;
+	snapToElmt = -100;
+
 	/* graphW and graphH are the size of the graph */
 	calcDimensions();
 
-	double minDistanceX = double(MIN_DISTANCE) / double(graphW-1);
-	double minDistanceY = double(MIN_DISTANCE) / double(graphH-1);
-
-	if ((graphW < 0) || (graphH < 0))
-		return;
+	//double minDistanceX = double(MIN_DISTANCE) / double(graphW-1);
+	//double minDistanceY = double(MIN_DISTANCE) / double(graphH-1);
 
 	getCursorPosition(Gdk::MOTION_NOTIFY, false, cursorX+graphX, graphY+provider->deltaScreen.y, Gdk::ModifierType(modifierKey));
 
 	// bounds of the grabbed point
-	double const bottomBound = 0.;
-	double const topBound    = 1.;
+	//double const bottomBound = 0.;
+	//double const topBound    = 1.;
 
-	double bottomDeletionBound = bottomBound - minDistanceY;
-	double topDeletionBound    = topBound    + minDistanceY;
+	//double bottomDeletionBound = bottomBound - minDistanceY;
+	//double topDeletionBound    = topBound    + minDistanceY;
 
 	// we memorize the previous position of the point, for optimization purpose
 	double prevPosX = curve.x[grab_point];
@@ -912,7 +916,7 @@ void MyDiagonalCurve::pipetteDrag(EditDataProvider *provider, int modifierKey) {
 	}
 	else {
 		// nextPosY is in the bounds
-		curve.y[grab_point] = CLAMP(ugpY, 0.0, 1.0);
+		curve.y[grab_point] = ugpY;
 	}
 
 	if (curve.x[grab_point] != prevPosX || curve.y[grab_point] != prevPosY) {
