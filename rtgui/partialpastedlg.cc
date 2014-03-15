@@ -608,7 +608,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     if (!wb->get_active ())          filterPE.wb         = falsePE.wb;
     if (!exposure->get_active ())    filterPE.toneCurve  = falsePE.toneCurve;
     if (!sh->get_active ())          filterPE.sh         = falsePE.sh;
-    if (!epd->get_active ())         filterPE.edgePreservingDecompositionUI = falsePE.edgePreservingDecompositionUI;
+    if (!epd->get_active ())         filterPE.epd        = falsePE.epd;
     if (!pcvignette->get_active ())  filterPE.pcvignette = falsePE.pcvignette;
     if (!gradient->get_active ())    filterPE.gradient   = falsePE.gradient;
     if (!labcurve->get_active ())    filterPE.labCurve   = falsePE.labCurve;

@@ -247,10 +247,10 @@ public:
 class EPDParamsEdited{
 public:
     bool enabled;
-    bool Strength;
-    bool EdgeStopping;
-    bool Scale;
-    bool ReweightingIterates;
+    bool strength;
+    bool edgeStopping;
+    bool scale;
+    bool reweightingIterates;
 };
 
 
@@ -502,7 +502,7 @@ class ParamsEdited {
         //ColorDenoiseParamsEdited      colorDenoise;
         DefringeParamsEdited          defringe;
         DirPyrDenoiseParamsEdited     dirpyrDenoise;
-        EPDParamsEdited               edgePreservingDecompositionUI;
+        EPDParamsEdited               epd;
         ImpulseDenoiseParamsEdited    impulseDenoise;
         SHParamsEdited                sh;
         CropParamsEdited              crop;

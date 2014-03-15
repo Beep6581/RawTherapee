@@ -309,11 +309,11 @@ void ProcParams::setDefaults () {
     dirpyrDenoise.gamma         = 1.7;
     dirpyrDenoise.dmethod       = "RGB";
 
-    edgePreservingDecompositionUI.enabled = false;
-    edgePreservingDecompositionUI.Strength = 0.25;
-    edgePreservingDecompositionUI.EdgeStopping = 1.4;
-    edgePreservingDecompositionUI.Scale = 1.0;
-    edgePreservingDecompositionUI.ReweightingIterates = 0;
+    epd.enabled = false;
+    epd.strength = 0.25;
+    epd.edgeStopping = 1.4;
+    epd.scale = 1.0;
+    epd.reweightingIterates = 0;
 
     sh.enabled       = false;
     sh.hq            = false;
@@ -897,12 +897,12 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->dirpyrDenoise.bluechro)keyFile.set_double ("Directional Pyramid Denoising", "Bluechro",  dirpyrDenoise.bluechro);
     if (!pedited || pedited->dirpyrDenoise.gamma)   keyFile.set_double  ("Directional Pyramid Denoising", "Gamma",   dirpyrDenoise.gamma);
 
-    //Save edgePreservingDecompositionUI.
-    if (!pedited || pedited->edgePreservingDecompositionUI.enabled)             keyFile.set_boolean ("EPD", "Enabled", edgePreservingDecompositionUI.enabled);
-    if (!pedited || pedited->edgePreservingDecompositionUI.Strength)            keyFile.set_double  ("EPD", "Strength", edgePreservingDecompositionUI.Strength);
-    if (!pedited || pedited->edgePreservingDecompositionUI.EdgeStopping)        keyFile.set_double  ("EPD", "EdgeStopping", edgePreservingDecompositionUI.EdgeStopping);
-    if (!pedited || pedited->edgePreservingDecompositionUI.Scale)               keyFile.set_double  ("EPD", "Scale", edgePreservingDecompositionUI.Scale);
-    if (!pedited || pedited->edgePreservingDecompositionUI.ReweightingIterates) keyFile.set_integer ("EPD", "ReweightingIterates", edgePreservingDecompositionUI.ReweightingIterates);
+    //Save epd.
+    if (!pedited || pedited->epd.enabled)             keyFile.set_boolean ("EPD", "Enabled", epd.enabled);
+    if (!pedited || pedited->epd.strength)            keyFile.set_double  ("EPD", "Strength", epd.strength);
+    if (!pedited || pedited->epd.edgeStopping)        keyFile.set_double  ("EPD", "EdgeStopping", epd.edgeStopping);
+    if (!pedited || pedited->epd.scale)               keyFile.set_double  ("EPD", "Scale", epd.scale);
+    if (!pedited || pedited->epd.reweightingIterates) keyFile.set_integer ("EPD", "ReweightingIterates", epd.reweightingIterates);
 
 /*
     // save lumaDenoise
@@ -1495,11 +1495,11 @@ if (keyFile.has_group ("Directional Pyramid Denoising")) {//TODO: No longer an a
 
     //Load EPD.
 if (keyFile.has_group ("EPD")) {
-    if(keyFile.has_key("EPD", "Enabled"))             { edgePreservingDecompositionUI.enabled = keyFile.get_boolean ("EPD", "Enabled"); if (pedited) pedited->edgePreservingDecompositionUI.enabled = true; }
-    if(keyFile.has_key("EPD", "Strength"))            { edgePreservingDecompositionUI.Strength = keyFile.get_double ("EPD", "Strength"); if (pedited) pedited->edgePreservingDecompositionUI.Strength = true; }
-    if(keyFile.has_key("EPD", "EdgeStopping"))        { edgePreservingDecompositionUI.EdgeStopping = keyFile.get_double ("EPD", "EdgeStopping"); if (pedited) pedited->edgePreservingDecompositionUI.EdgeStopping = true; }
-    if(keyFile.has_key("EPD", "Scale"))               { edgePreservingDecompositionUI.Scale = keyFile.get_double ("EPD", "Scale"); if (pedited) pedited->edgePreservingDecompositionUI.Scale = true; }
-    if(keyFile.has_key("EPD", "ReweightingIterates")) { edgePreservingDecompositionUI.ReweightingIterates = keyFile.get_integer ("EPD", "ReweightingIterates"); if (pedited) pedited->edgePreservingDecompositionUI.ReweightingIterates = true; }
+    if(keyFile.has_key("EPD", "Enabled"))             { epd.enabled = keyFile.get_boolean ("EPD", "Enabled"); if (pedited) pedited->epd.enabled = true; }
+    if(keyFile.has_key("EPD", "Strength"))            { epd.strength = keyFile.get_double ("EPD", "Strength"); if (pedited) pedited->epd.strength = true; }
+    if(keyFile.has_key("EPD", "EdgeStopping"))        { epd.edgeStopping = keyFile.get_double ("EPD", "EdgeStopping"); if (pedited) pedited->epd.edgeStopping = true; }
+    if(keyFile.has_key("EPD", "Scale"))               { epd.scale = keyFile.get_double ("EPD", "Scale"); if (pedited) pedited->epd.scale = true; }
+    if(keyFile.has_key("EPD", "ReweightingIterates")) { epd.reweightingIterates = keyFile.get_integer ("EPD", "ReweightingIterates"); if (pedited) pedited->epd.reweightingIterates = true; }
 }
 
     // load lumaDenoise
@@ -1918,11 +1918,11 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& dirpyrDenoise.redchro == other.dirpyrDenoise.redchro
 		&& dirpyrDenoise.bluechro == other.dirpyrDenoise.bluechro
 		&& dirpyrDenoise.gamma == other.dirpyrDenoise.gamma
-		&& edgePreservingDecompositionUI.enabled == other.edgePreservingDecompositionUI.enabled
-		&& edgePreservingDecompositionUI.Strength == other.edgePreservingDecompositionUI.Strength
-		&& edgePreservingDecompositionUI.EdgeStopping == other.edgePreservingDecompositionUI.EdgeStopping
-		&& edgePreservingDecompositionUI.Scale == other.edgePreservingDecompositionUI.Scale
-		&& edgePreservingDecompositionUI.ReweightingIterates == other.edgePreservingDecompositionUI.ReweightingIterates
+		&& epd.enabled == other.epd.enabled
+		&& epd.strength == other.epd.strength
+		&& epd.edgeStopping == other.epd.edgeStopping
+		&& epd.scale == other.epd.scale
+		&& epd.reweightingIterates == other.epd.reweightingIterates
 		&& defringe.enabled == other.defringe.enabled
 		&& defringe.radius == other.defringe.radius
 		&& defringe.threshold == other.defringe.threshold
