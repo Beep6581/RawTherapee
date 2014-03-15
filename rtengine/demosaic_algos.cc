@@ -567,7 +567,7 @@ void RawImageSource::hphd_demosaic () {
 #define fc(row,col) (prefilters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 typedef unsigned short ushort;
 void RawImageSource::vng4_demosaic () {
-	static const signed short int *cp, terms[] = {
+	const signed short int *cp, terms[] = {
 		-2,-2,+0,-1,0,0x01, -2,-2,+0,+0,1,0x01, -2,-1,-1,+0,0,0x01,
 		-2,-1,+0,-1,0,0x02, -2,-1,+0,+0,0,0x03, -2,-1,+0,+1,1,0x01,
 		-2,+0,+0,-1,0,0x06, -2,+0,+0,+0,1,0x02, -2,+0,+0,+1,0,0x03,
