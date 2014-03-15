@@ -525,10 +525,10 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 	for (int y=0; y<transformed->height; y++) {
 		double vig_y_d = (double) (y + cy) - vig_h2 ;
 		for (int x=0; x<transformed->width; x++) {
-			double vig_x_d = (double) (x + cx) - vig_w2 ;
-			double r = sqrt(vig_x_d*vig_x_d + vig_y_d*vig_y_d);
 			double factor = 1.0;
 			if (applyVignetting) {
+				double vig_x_d = (double) (x + cx) - vig_w2 ;
+				double r = sqrt(vig_x_d*vig_x_d + vig_y_d*vig_y_d);
 				if(darkening)
 					factor /= std::max(v + mul * tanh (b*(maxRadius-r) / maxRadius), 0.001);
 				else

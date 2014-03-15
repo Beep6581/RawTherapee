@@ -250,7 +250,7 @@ class ImProcFunctions {
 		//void RGB_OutputTransf(LabImage * src, Imagefloat * dst, const procparams::DirPyrDenoiseParams & dnparams);
 		//void output_tile_row (float *Lbloxrow, float ** Lhipassdn, float ** tilemask, int height, int width, int top, int blkrad );
 		void RGB_denoise(Imagefloat * src, Imagefloat * dst, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe, const double expcomp);
-		void RGBtile_denoise (float * fLblox, int vblproc, int hblproc, int numblox_H, int numblox_W, float noisevar_L );	//for DCT
+		void RGBtile_denoise (float * fLblox, int hblproc, float noisevar_L, float * nbrwt, float * blurbuffer );	//for DCT
 		void RGBoutput_tile_row (float *Lbloxrow, float ** Ldetail, float ** tilemask_out, int height, int width, int top );
 		//void WaveletDenoise(cplx_wavelet_decomposition &DualTreeCoeffs, float noisevar );
 		//void WaveletDenoise(wavelet_decomposition &WaveletCoeffs, float noisevar );
@@ -268,9 +268,10 @@ class ImProcFunctions {
 	//				   int W_L, int H_L, int W_ab, int H_ab, int W_h, int H_h, int skip_L, int skip_ab, int skip_h, float noisevar_L, float noisevar_ab, float **WavCoeffs_h, LabImage * noi);
 
 		void ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level, 
-					   int W_L, int H_L, int W_ab, int H_ab, int skip_L, int skip_ab, float noisevar_L, float noisevar_abr, float noisevar_abb,LabImage * noi);
+					   int W_L, int H_L, int W_ab, int H_ab, int skip_L, int skip_ab, float noisevar_L, float noisevar_abr, float noisevar_abb,LabImage * noi, float * madaa = NULL, float * madab = NULL, float * madaL = NULL, bool madCalculated = false);
 
 		float MadMax(float * HH_Coeffs, int &max, int datalen);
+		float Mad(float * HH_Coeffs, int datalen, int * histo);
 		
 		// pyramid equalizer
 		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, float ** l_a, float ** l_b, float ** dest_a, float ** dest_b, const double * mult, const double dirpyrThreshold, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice, int scale);//Emil's directional pyramid equalizer
@@ -289,8 +290,8 @@ class ImProcFunctions {
 		void BadpixelsLab(LabImage * src, LabImage * dst, double radius, int thresh, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom);
 
 		Image8*     lab2rgb   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, bool standard_gamma);
-		Image16*    lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, Glib::ustring profi, Glib::ustring gam, bool freegamma, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6);// for gamma output		
-		Image16*    lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);//without gamma ==>default
+		Image16*    lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, Glib::ustring profi, Glib::ustring gam, bool freegamma, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6, bool bw);// for gamma output		
+		Image16*    lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, bool bw);//without gamma ==>default
        // CieImage *ciec;    
 
 		bool transCoord       (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1, const LCPMapper *pLCPMap=NULL);

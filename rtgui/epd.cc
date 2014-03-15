@@ -39,129 +39,129 @@ EdgePreservingDecompositionUI::EdgePreservingDecompositionUI () : Gtk::VBox(), F
 
 	enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &EdgePreservingDecompositionUI::enabledChanged) );
 
-	Strength					= Gtk::manage(new Adjuster (M("TP_EPD_STRENGTH"), -2.0, 2.0, 0.01, 0.25));
-	EdgeStopping			= Gtk::manage(new Adjuster (M("TP_EPD_EDGESTOPPING"), 0.1, 4.0, 0.01, 1.4));
-	Scale						= Gtk::manage(new Adjuster (M("TP_EPD_SCALE"), 0.1, 10.0, 0.01, 1.0));
-	ReweightingIterates	= Gtk::manage(new Adjuster (M("TP_EPD_REWEIGHTINGITERATES"), 0, 9, 1, 0));
+	strength = Gtk::manage(new Adjuster (M("TP_EPD_STRENGTH"), -2.0, 2.0, 0.01, 0.25));
+	edgeStopping = Gtk::manage(new Adjuster (M("TP_EPD_EDGESTOPPING"), 0.1, 4.0, 0.01, 1.4));
+	scale = Gtk::manage(new Adjuster (M("TP_EPD_SCALE"), 0.1, 10.0, 0.01, 1.0));
+	reweightingIterates	= Gtk::manage(new Adjuster (M("TP_EPD_REWEIGHTINGITERATES"), 0, 9, 1, 0));
 
-	Strength->setAdjusterListener(this);
-	EdgeStopping->setAdjusterListener(this);
-	Scale->setAdjusterListener(this);
-	ReweightingIterates->setAdjusterListener(this);
+	strength->setAdjusterListener(this);
+	edgeStopping->setAdjusterListener(this);
+	scale->setAdjusterListener(this);
+	reweightingIterates->setAdjusterListener(this);
 
-	Strength->show();
-	EdgeStopping->show();
-	Scale->show();
-	ReweightingIterates->show();
+	strength->show();
+	edgeStopping->show();
+	scale->show();
+	reweightingIterates->show();
 
-	pack_start(*Strength);
-	pack_start(*EdgeStopping);
-	pack_start(*Scale);
-	pack_start(*ReweightingIterates);
+	pack_start(*strength);
+	pack_start(*edgeStopping);
+	pack_start(*scale);
+	pack_start(*reweightingIterates);
 }
 
 void EdgePreservingDecompositionUI::read(const ProcParams *pp, const ParamsEdited *pedited){
 	disableListener();
 
 	if(pedited){
-		Strength->setEditedState(pedited->edgePreservingDecompositionUI.Strength ? Edited : UnEdited);
-		EdgeStopping->setEditedState(pedited->edgePreservingDecompositionUI.EdgeStopping ? Edited : UnEdited);
-		Scale->setEditedState(pedited->edgePreservingDecompositionUI.Scale ? Edited : UnEdited);
-		ReweightingIterates->setEditedState(pedited->edgePreservingDecompositionUI.ReweightingIterates ? Edited : UnEdited);
+		strength->setEditedState(pedited->epd.strength ? Edited : UnEdited);
+		edgeStopping->setEditedState(pedited->epd.edgeStopping ? Edited : UnEdited);
+		scale->setEditedState(pedited->epd.scale ? Edited : UnEdited);
+		reweightingIterates->setEditedState(pedited->epd.reweightingIterates ? Edited : UnEdited);
 
-		enabled->set_inconsistent(!pedited->edgePreservingDecompositionUI.enabled);
+		enabled->set_inconsistent(!pedited->epd.enabled);
 	}
 
 	enaConn.block(true);
-	enabled->set_active(pp->edgePreservingDecompositionUI.enabled);
+	enabled->set_active(pp->epd.enabled);
 	enaConn.block (false);
 
-	lastEnabled = pp->edgePreservingDecompositionUI.enabled;
+	lastEnabled = pp->epd.enabled;
 
-	Strength->setValue(pp->edgePreservingDecompositionUI.Strength);
-	EdgeStopping->setValue(pp->edgePreservingDecompositionUI.EdgeStopping);
-	Scale->setValue(pp->edgePreservingDecompositionUI.Scale);
-	ReweightingIterates->setValue(pp->edgePreservingDecompositionUI.ReweightingIterates);
+	strength->setValue(pp->epd.strength);
+	edgeStopping->setValue(pp->epd.edgeStopping);
+	scale->setValue(pp->epd.scale);
+	reweightingIterates->setValue(pp->epd.reweightingIterates);
 
 	enableListener();
 }
 
 void EdgePreservingDecompositionUI::write(ProcParams *pp, ParamsEdited *pedited){
-	pp->edgePreservingDecompositionUI.Strength = Strength->getValue();
-	pp->edgePreservingDecompositionUI.EdgeStopping = EdgeStopping->getValue();
-	pp->edgePreservingDecompositionUI.Scale = Scale->getValue();
-	pp->edgePreservingDecompositionUI.ReweightingIterates = ReweightingIterates->getValue();
-	pp->edgePreservingDecompositionUI.enabled = enabled->get_active();
+	pp->epd.strength = strength->getValue();
+	pp->epd.edgeStopping = edgeStopping->getValue();
+	pp->epd.scale = scale->getValue();
+	pp->epd.reweightingIterates = reweightingIterates->getValue();
+	pp->epd.enabled = enabled->get_active();
 	
 	if(pedited){
-		pedited->edgePreservingDecompositionUI.Strength = Strength->getEditedState();
-		pedited->edgePreservingDecompositionUI.EdgeStopping = EdgeStopping->getEditedState();
-		pedited->edgePreservingDecompositionUI.Scale = Scale->getEditedState();
-		pedited->edgePreservingDecompositionUI.ReweightingIterates = ReweightingIterates->getEditedState();
-		pedited->edgePreservingDecompositionUI.enabled = !enabled->get_inconsistent();
+		pedited->epd.strength = strength->getEditedState();
+		pedited->epd.edgeStopping = edgeStopping->getEditedState();
+		pedited->epd.scale = scale->getEditedState();
+		pedited->epd.reweightingIterates = reweightingIterates->getEditedState();
+		pedited->epd.enabled = !enabled->get_inconsistent();
 	}
 }
 
 void EdgePreservingDecompositionUI::setDefaults(const ProcParams *defParams, const ParamsEdited *pedited){
-	Strength->setDefault(defParams->edgePreservingDecompositionUI.Strength);
-	EdgeStopping->setDefault(defParams->edgePreservingDecompositionUI.EdgeStopping);
-	Scale->setDefault(defParams->edgePreservingDecompositionUI.Scale);
-	ReweightingIterates->setDefault(defParams->edgePreservingDecompositionUI.ReweightingIterates);
+	strength->setDefault(defParams->epd.strength);
+	edgeStopping->setDefault(defParams->epd.edgeStopping);
+	scale->setDefault(defParams->epd.scale);
+	reweightingIterates->setDefault(defParams->epd.reweightingIterates);
 
 	if(pedited){
-		Strength->setDefaultEditedState(pedited->edgePreservingDecompositionUI.Strength ? Edited : UnEdited);
-		EdgeStopping->setDefaultEditedState(pedited->edgePreservingDecompositionUI.EdgeStopping ? Edited : UnEdited);
-		Scale->setDefaultEditedState(pedited->edgePreservingDecompositionUI.Scale ? Edited : UnEdited);
-		ReweightingIterates->setDefaultEditedState(pedited->edgePreservingDecompositionUI.ReweightingIterates ? Edited : UnEdited);
+		strength->setDefaultEditedState(pedited->epd.strength ? Edited : UnEdited);
+		edgeStopping->setDefaultEditedState(pedited->epd.edgeStopping ? Edited : UnEdited);
+		scale->setDefaultEditedState(pedited->epd.scale ? Edited : UnEdited);
+		reweightingIterates->setDefaultEditedState(pedited->epd.reweightingIterates ? Edited : UnEdited);
 	}else{
-		Strength->setDefaultEditedState(Irrelevant);
-		EdgeStopping->setDefaultEditedState(Irrelevant);
-		Scale->setDefaultEditedState(Irrelevant);
-		ReweightingIterates->setDefaultEditedState(Irrelevant);
+		strength->setDefaultEditedState(Irrelevant);
+		edgeStopping->setDefaultEditedState(Irrelevant);
+		scale->setDefaultEditedState(Irrelevant);
+		reweightingIterates->setDefaultEditedState(Irrelevant);
 	}
 }
 
 void EdgePreservingDecompositionUI::adjusterChanged(Adjuster* a, double newval){
 	if(listener && enabled->get_active()){
-		if(a == Strength)
+		if(a == strength)
 			listener->panelChanged(EvEPDStrength, Glib::ustring::format(std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
-		else if(a == EdgeStopping)
+		else if(a == edgeStopping)
 			listener->panelChanged(EvEPDEdgeStopping, Glib::ustring::format(std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
-		else if(a == Scale) 
+		else if(a == scale)
 			listener->panelChanged(EvEPDScale, Glib::ustring::format(std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
-		else if(a == ReweightingIterates)
+		else if(a == reweightingIterates)
 			listener->panelChanged(EvEPDReweightingIterates, Glib::ustring::format((int)a->getValue()));
 	}
 }
 
 void EdgePreservingDecompositionUI::enabledChanged(){
-    if(batchMode){
-        if(enabled->get_inconsistent()){
-            enabled->set_inconsistent (false);
-            enaConn.block (true);
-            enabled->set_active (false);
-            enaConn.block (false);
-        }
-        else if(lastEnabled)
-            enabled->set_inconsistent (true);
-		
-        lastEnabled = enabled->get_active ();
-    }
+	if(batchMode){
+		if(enabled->get_inconsistent()){
+			enabled->set_inconsistent (false);
+			enaConn.block (true);
+			enabled->set_active (false);
+			enaConn.block (false);
+		}
+		else if(lastEnabled)
+			enabled->set_inconsistent (true);
+
+		lastEnabled = enabled->get_active ();
+	}
 	
-    if(listener){
-        if(enabled->get_active ())
-            listener->panelChanged (EvEPDEnabled, M("GENERAL_ENABLED"));
-        else
-            listener->panelChanged (EvEPDEnabled, M("GENERAL_DISABLED"));
-    }  
+	if(listener){
+		if(enabled->get_active ())
+			listener->panelChanged (EvEPDEnabled, M("GENERAL_ENABLED"));
+		else
+			listener->panelChanged (EvEPDEnabled, M("GENERAL_DISABLED"));
+	}
 }
 
 void EdgePreservingDecompositionUI::setBatchMode(bool batchMode){
 	ToolPanel::setBatchMode(batchMode);
 
-	Strength->showEditedCB();
-	EdgeStopping->showEditedCB();
-	Scale->showEditedCB();
-	ReweightingIterates->showEditedCB();
+	strength->showEditedCB();
+	edgeStopping->showEditedCB();
+	scale->showEditedCB();
+	reweightingIterates->showEditedCB();
 }
 

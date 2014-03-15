@@ -41,9 +41,7 @@
 #include "rt_math.h"
 #include "mytime.h"
 #include "sleef.c"
-#ifdef __SSE2__
-	#include "sleefsseavx.c"
-#endif
+#include "opthelper.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -97,6 +95,7 @@ namespace rtengine {
 	
 		static MyMutex FftwMutex;
 		MyMutex::MyLock lock(FftwMutex);
+
 
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -190,7 +189,6 @@ namespace rtengine {
 
 			}
 		}
-
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// begin tile processing of image
@@ -297,6 +295,9 @@ namespace rtengine {
 		Lblox  = (float*) fftwf_malloc(max_numblox_W*TS*TS*sizeof(float));
 		fLblox = (float*) fftwf_malloc(max_numblox_W*TS*TS*sizeof(float));
         }
+        
+        float * nbrwt = new float[TS*TS];
+        float * blurbuffer = new float[TS*TS];
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic) collapse(2)
 #endif
@@ -317,10 +318,6 @@ namespace rtengine {
 				//pixel weight
 				array2D<float> totwt(width,height,ARRAY2D_CLEAR_DATA);//weight for combining DCT blocks
 
-				//
-				//#ifdef _OPENMP
-				//#pragma omp parallel for
-				//#endif
 				//TODO: implement using AlignedBufferMP
 				//fill tile from image; convert RGB to "luma/chroma"
 				if (isRAW) {//image is raw; use channel differences for chroma channels
@@ -527,8 +524,6 @@ namespace rtengine {
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 				// Main detail recovery algorithm: Block loop
-				//OpenMP here
-				//adding omp here leads to artifacts
                 AlignedBuffer<float> pBuf(width + TS + 2*blkrad*offset);
 				for (int vblk=0; vblk<numblox_H; vblk++) {
 					//printf("vblock=%d",vblk);
@@ -536,11 +531,7 @@ namespace rtengine {
 					int top = (vblk-blkrad)*offset;
 					float * datarow = (float*)pBuf.data +blkrad*offset;
 
-					//#ifdef _OPENMP
-					//#pragma omp parallel for
-					//#endif
 					//TODO: implement using AlignedBufferMP
-//					#pragma omp parallel for
 					for (int i=0/*, row=top*/; i<TS; i++/*, row++*/) {
 						int row = top + i;
 						int rr = row;
@@ -586,7 +577,7 @@ namespace rtengine {
 					// now process the vblk row of blocks for noise reduction
 					for (int hblk=0; hblk<numblox_W; hblk++) {
 
-						RGBtile_denoise (fLblox, vblk, hblk, numblox_H, numblox_W, noisevar_Ldetail );
+						RGBtile_denoise (fLblox, hblk, noisevar_Ldetail, nbrwt, blurbuffer );
 
 					}//end of horizontal block loop
 
@@ -644,9 +635,6 @@ namespace rtengine {
 				//convert back to RGB and write to destination array
 				if (isRAW) {
 				if(!perf) {//Lab mode
-#ifdef _OPENMP
-//#pragma omp parallel for
-#endif
 					for (int i=tiletop; i<tilebottom; i++){
 						int i1 = i-tiletop;
 						float X,Y,Z,L,a,b;
@@ -718,9 +706,6 @@ namespace rtengine {
 
 					}
 				} else {
-#ifdef _OPENMP
-//#pragma omp parallel for
-#endif
 					for (int i=tiletop; i<tilebottom; i++){
 						int i1 = i-tiletop;
 						float X,Y,Z,L,a,b;
@@ -767,7 +752,8 @@ namespace rtengine {
 		fftwf_free ( Lblox);
 		fftwf_free ( fLblox);
 }
-
+	delete [] nbrwt;
+	delete [] blurbuffer;
         }
 		//copy denoised image to output
 		memcpy (dst->data, dsttmp->data, 3*dst->width*dst->height*sizeof(float));
@@ -804,16 +790,11 @@ namespace rtengine {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-#if defined( __SSE2__ ) && defined( WIN32 )
-__attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (float * fLblox, int vblproc, int hblproc, int numblox_H, int numblox_W, float noisevar_Ldetail )	//for DCT
-#else
-	void ImProcFunctions::RGBtile_denoise (float * fLblox, int vblproc, int hblproc, int numblox_H, int numblox_W, float noisevar_Ldetail )	//for DCT
-#endif
+SSEFUNCTION	void ImProcFunctions::RGBtile_denoise (float * fLblox, int hblproc, float noisevar_Ldetail, float * nbrwt, float * blurbuffer )	//for DCT
 	{
-		float * nbrwt  = new float[TS*TS];	//for DCT
 		int blkstart = hblproc*TS*TS;
 
-		boxabsblur(fLblox+blkstart, nbrwt, 3, 3, TS, TS);//blur neighbor weights for more robust estimation	//for DCT
+		boxabsblur(fLblox+blkstart, nbrwt, 3, 3, TS, TS, blurbuffer);//blur neighbor weights for more robust estimation	//for DCT
 		
 #ifdef __SSE2__
 		__m128	tempv;
@@ -830,7 +811,6 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 			fLblox[blkstart+n] *= (1-xexpf(-SQR(nbrwt[n])/noisevar_Ldetail));
 		}//output neighbor averaged result
 #endif
-		delete[] nbrwt;
 
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		//printf("vblk=%d  hlk=%d  wsqave=%f   ||   ",vblproc,hblproc,wsqave);
@@ -851,9 +831,6 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 		int imax = bottom - top;
 
 		//add row of tiles to output image
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 		for (int hblk=0; hblk < numblox_W; hblk++) {
 			int left = (hblk-blkrad)*offset;
 			int right  = MIN(left+TS, width);
@@ -862,7 +839,7 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 			int indx = hblk*TS;
 
 			for (int i=imin; i<imax; i++)
-				for (int j=jmin; j<jmax; j++) {
+				for (int j=jmin; j<jmax; j++) {	// this loop gets auto vectorized by gcc
 					Ldetail[top+i][left+j] += tilemask_out[i][j]*bloxrow_L[(indx + i)*TS+j]*DCTnorm; //for DCT
 
 				}
@@ -914,21 +891,49 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 
 	}
 
+	float ImProcFunctions::Mad( float *  RESTRICT DataList, int datalen, int * RESTRICT histo) {
+
+		//computes Median Absolute Deviation
+		//DataList values should mostly have abs val < 65535
+
+		for (int i=0; i<65536; i++)
+			histo[i]=0;
+
+		//calculate histogram of absolute values of HH wavelet coeffs
+		for (int i=0; i<datalen; i++) {
+			histo[abs((int)DataList[i])&0xffff]++;
+		}
+
+		//find median of histogram
+		int median=0, count=0;
+		while (count<datalen/2) {
+			count += histo[median];
+			median++;
+		}
+
+		int count_ = count - histo[median-1];
+
+		// interpolate
+		return (( (median-1) + (datalen/2-count_)/((float)(count-count_)) )/0.6745);
+	}
+
+
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a,
+SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a,
 													 wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_abr, float noisevar_abb, LabImage * noi)
 	{
 		int maxlvl = WaveletCoeffs_L.maxlevel();
 		const float eps = 0.01f;
-		int max;
+//		int max;
 //		float parfrac = 0.05;
 
 		float madL[8][3], mada[8][3], madb[8][3];
 
-//OpenMP here
+
+		int * madHisto = new int[65536];
 		for (int lvl=0; lvl<maxlvl; lvl++) {
 			// compute median absolute deviation (MAD) of detail coefficients as robust noise estimator
 
@@ -943,11 +948,12 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 			float ** WavCoeffs_b = WaveletCoeffs_b.level_coeffs(lvl);
 
 			for (int dir=1; dir<4; dir++) {
-				madL[lvl][dir-1] = SQR(MadMax(WavCoeffs_L[dir], max, Wlvl_L*Hlvl_L));
-				mada[lvl][dir-1] = SQR(MadMax(WavCoeffs_a[dir], max, Wlvl_ab*Hlvl_ab));
-				madb[lvl][dir-1] = SQR(MadMax(WavCoeffs_b[dir], max, Wlvl_ab*Hlvl_ab));
+				madL[lvl][dir-1] = SQR(Mad(WavCoeffs_L[dir], Wlvl_L*Hlvl_L, madHisto));
+				mada[lvl][dir-1] = SQR(Mad(WavCoeffs_a[dir], Wlvl_ab*Hlvl_ab, madHisto));
+				madb[lvl][dir-1] = SQR(Mad(WavCoeffs_b[dir], Wlvl_ab*Hlvl_ab, madHisto));
 			}
 		}
+		delete [] madHisto;
 
 		for (int lvl=maxlvl-1; lvl>=0; lvl--) {//for levels less than max, use level diff to make edge mask
 			//for (int lvl=0; lvl<maxlvl; lvl++) {
@@ -958,18 +964,16 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 			int Wlvl_ab = WaveletCoeffs_a.level_W(lvl);
 			int Hlvl_ab = WaveletCoeffs_a.level_H(lvl);
 
-			float skip_L = WaveletCoeffs_L.level_stride(lvl);
-			float skip_ab = WaveletCoeffs_a.level_stride(lvl);
+			int skip_L = WaveletCoeffs_L.level_stride(lvl);
+			int skip_ab = WaveletCoeffs_a.level_stride(lvl);
 //			float skip_h;
 			float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
 			float ** WavCoeffs_a = WaveletCoeffs_a.level_coeffs(lvl);
 			float ** WavCoeffs_b = WaveletCoeffs_b.level_coeffs(lvl);
 
 			if (lvl==maxlvl-1) {
-			//	ShrinkAll(WavCoeffs_L, WavCoeffs_a, WavCoeffs_b, lvl, Wlvl_L, Hlvl_L, Wlvl_ab, Hlvl_ab,10,10,
-			//			  skip_L, skip_ab, skip_h, noisevar_L, noisevar_ab, NULL, NULL);//TODO: this implies redundant evaluation of MAD
 				ShrinkAll(WavCoeffs_L, WavCoeffs_a, WavCoeffs_b, lvl, Wlvl_L, Hlvl_L, Wlvl_ab, Hlvl_ab,
-						  skip_L, skip_ab, noisevar_L, noisevar_abr, noisevar_abb, noi);//TODO: this implies redundant evaluation of MAD
+						  skip_L, skip_ab, noisevar_L, noisevar_abr, noisevar_abb, noi, mada[lvl], madb[lvl], madL[lvl], true);
 
 			} else {
 
@@ -979,7 +983,9 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 
 				//simple wavelet shrinkage
 				float * sfave = new float[Wlvl_L*Hlvl_L];
-				array2D<float> edge(Wlvl_L,Hlvl_L);
+				float * WavCoeffsLtemp = new float[Hlvl_ab*Wlvl_ab];
+
+//				array2D<float> edge(Wlvl_L,Hlvl_L);
 
 				//printf("\n level=%d  \n",lvl);
 
@@ -987,27 +993,60 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 					float mad_L = madL[lvl][dir-1];
 					float mad_a = noisevar_abr*mada[lvl][dir-1];
 					float mad_b = noisevar_abb*madb[lvl][dir-1];
+
+
 					//float mad_Lpar = madL[lvl+1][dir-1];
 					//float mad_apar = mada[lvl+1][dir-1];
 					//float mad_bpar = mada[lvl+1][dir-1];
 
 					//float skip_ab_ratio = WaveletCoeffs_a.level_stride(lvl+1)/skip_ab;
-					float skip_L_ratio =  WaveletCoeffs_L.level_stride(lvl+1)/skip_L;
+//					float skip_L_ratio =  WaveletCoeffs_L.level_stride(lvl+1)/skip_L;
 
 					if (noisevar_abr>0.01f  || noisevar_abb>0.01f) {
-
+						for(int i=0;i<Hlvl_ab;i++)
+							for(int j=0;j<Wlvl_ab;j++)
+								WavCoeffsLtemp[i*Wlvl_ab+j] = WavCoeffs_L[dir][((i*skip_L)/skip_ab)*Wlvl_L + ((j*skip_L)/skip_ab)];
+#ifdef __SSE2__
+						int j;
+						__m128 onev = _mm_set1_ps(1.f);
+						__m128 mad_Lm9v = _mm_set1_ps(mad_L * 9.f);
+						__m128 mad_av = _mm_set1_ps(mad_a);
+						__m128 mad_bv = _mm_set1_ps(mad_b);
+						__m128 epsv = _mm_set1_ps(eps);
+						__m128 mag_Lv, mag_av, mag_bv;
+						__m128 tempav, tempbv;
+						for (int i=0; i<Hlvl_ab; i++) {
+							int coeffloc_ab = i*Wlvl_ab;
+							for (j=0; j<Wlvl_ab-3; j+=4, coeffloc_ab+=4) {
+								tempav = LVFU(WavCoeffs_a[dir][coeffloc_ab]);
+								tempbv = LVFU(WavCoeffs_b[dir][coeffloc_ab]);
+								mag_Lv = LVFU(WavCoeffsLtemp[coeffloc_ab]);
+								mag_av = SQRV(tempav)+epsv;
+								mag_bv = SQRV(tempbv)+epsv;
+								mag_Lv = SQRV(mag_Lv) + epsv;
+								_mm_storeu_ps(&WavCoeffs_a[dir][coeffloc_ab], tempav * SQRV((onev-xexpf(-(mag_av/mad_av)-(mag_Lv/mad_Lm9v)))));
+								_mm_storeu_ps(&WavCoeffs_b[dir][coeffloc_ab], tempbv * SQRV((onev-xexpf(-(mag_bv/mad_bv)-(mag_Lv/mad_Lm9v)))));
+							}
+							for (; j<Wlvl_ab; j++,coeffloc_ab++) {
+								float mag_L = SQR(WavCoeffsLtemp[coeffloc_ab ])+eps;
+								float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])+eps;
+								float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])+eps;
+								WavCoeffs_a[dir][coeffloc_ab] *= SQR(1.f-xexpf(-(mag_a/mad_a)-(mag_L/(9.f*mad_L)))/*satfactor_a*/);
+								WavCoeffs_b[dir][coeffloc_ab] *= SQR(1.f-xexpf(-(mag_b/mad_b)-(mag_L/(9.f*mad_L)))/*satfactor_b*/);
+							}
+						}//now chrominance coefficients are denoised
+#else
 						//printf("  dir=%d  mad_L=%f		mad_a=%f		mad_b=%f	\n",dir,sqrt(mad_L),sqrt(mad_a),sqrt(mad_b));
 
-//OpenMP here
 						for (int i=0; i<Hlvl_ab; i++) {
 							for (int j=0; j<Wlvl_ab; j++) {
 
 								int coeffloc_ab = i*Wlvl_ab+j;
 								//int coeffloc_abpar = (MAX(0,i-skip_ab)*Wlvl_ab+MAX(0,j-skip_ab))/skip_ab_ratio;
 
-								int coeffloc_L	= ((i*skip_L)/skip_ab)*Wlvl_L + ((j*skip_L)/skip_ab);
+//								int coeffloc_L	= ((i*skip_L)/skip_ab)*Wlvl_L + ((j*skip_L)/skip_ab);
 
-								float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L ])+eps;
+								float mag_L = SQR(WavCoeffsLtemp[coeffloc_ab ])+eps;
 								float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])+eps;
 								float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])+eps;
 
@@ -1028,11 +1067,29 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 
 							}
 						}//now chrominance coefficients are denoised
+#endif
 					}
 
 					if (noisevar_L>0.01f) {
-						mad_L *= noisevar_L*5/(lvl+1);
-//OpenMP here
+						mad_L *= noisevar_L*5.f/(lvl+1);
+#ifdef __SSE2__
+						int j;
+						__m128 mad_Lv = _mm_set1_ps(mad_L);
+						__m128 mad_Lm9v = _mm_set1_ps(mad_L * 9.f);
+						__m128 epsv = _mm_set1_ps(eps);
+						__m128 mag_Lv;
+						for (int i=0; i<Hlvl_L; i++) {
+							int coeffloc_L = i*Wlvl_L;
+							for (j=0; j<Wlvl_L-3; j+=4,coeffloc_L+=4) {
+								mag_Lv = SQRV(LVFU(WavCoeffs_L[dir][coeffloc_L]));
+								_mm_storeu_ps(&sfave[coeffloc_L], mag_Lv / ( mag_Lv + mad_Lv * xexpf(-mag_Lv/mad_Lm9v )+ epsv));
+							}
+							for (; j<Wlvl_L; j++, coeffloc_L++) {
+								float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L]);
+								sfave[coeffloc_L] = mag_L/(mag_L+mad_L*xexpf(-mag_L/(9.f*mad_L))+eps);
+							}
+						}
+#else
 						for (int i=0; i<Hlvl_L; i++)
 							for (int j=0; j<Wlvl_L; j++) {
 
@@ -1048,13 +1105,40 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 
 								//edge[i][j] = (WavCoeffs_L[dir][coeffloc_L] - WavPars_L[dir][coeffloc_Lpar]);
 							}
-
+#endif
 						//blur edge measure
 						//gaussHorizontal<float> (edge, edge, buffer, Wlvl_L, Hlvl_L, 1<<(lvl+1), false /*multiThread*/);
 						//gaussVertical<float>   (edge, edge, buffer, Wlvl_L, Hlvl_L, 1<<(lvl+1), false);
 
 						boxblur(sfave, sfave, lvl+2, lvl+2, Wlvl_L, Hlvl_L);//increase smoothness by locally averaging shrinkage
-//OpenMP here
+
+#ifdef __SSE2__
+						__m128 tempLv;
+						__m128 tempL2v;
+						__m128 sf_Lv;
+
+						for (int i=0; i<Hlvl_L; i++) {
+							int coeffloc_L = i*Wlvl_L;
+							for (j=0; j<Wlvl_L-3; j+=4,coeffloc_L+=4) {
+								tempLv = LVFU(WavCoeffs_L[dir][coeffloc_L]);
+								mag_Lv = SQRV(tempLv);
+								tempL2v = LVFU(sfave[coeffloc_L]);
+								sf_Lv = mag_Lv/(mag_Lv + mad_Lv*xexpf(-mag_Lv/mad_Lm9v)+epsv);
+								_mm_storeu_ps(&WavCoeffs_L[dir][coeffloc_L], tempLv * (SQRV(tempL2v)+SQRV(sf_Lv))/(tempL2v+sf_Lv+epsv));
+								//use smoothed shrinkage unless local shrinkage is much less
+
+							}//now luminance coeffs are denoised
+							for (; j<Wlvl_L; j++,coeffloc_L++) {
+								float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L]);
+								float sf_L = mag_L/(mag_L + mad_L*xexpf(-mag_L/(9.f*mad_L))+eps);
+
+								//use smoothed shrinkage unless local shrinkage is much less
+								WavCoeffs_L[dir][coeffloc_L] *= (SQR(sfave[coeffloc_L])+SQR(sf_L))/(sfave[coeffloc_L]+sf_L+eps);
+
+							}//now luminance coeffs are denoised
+						}
+
+#else
 						for (int i=0; i<Hlvl_L; i++)
 							for (int j=0; j<Wlvl_L; j++) {
 
@@ -1071,10 +1155,11 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 								WavCoeffs_L[dir][coeffloc_L] *= (SQR(edgefactor*sfave[coeffloc_L])+SQR(sf_L))/(edgefactor*sfave[coeffloc_L]+sf_L+eps);
 
 							}//now luminance coeffs are denoised
+#endif
 
 					}
-
 				}
+				delete[] WavCoeffsLtemp;
 				delete[] sfave;
 
 			}
@@ -1091,9 +1176,6 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 		int maxlvl = WaveletCoeffs_L.maxlevel();
 //       printf("maxlevel = %d\n",maxlvl);
 //omp_set_nested(true);
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 		for (int lvl=0; lvl<maxlvl; lvl++) {
 
 			int Wlvl_L = WaveletCoeffs_L.level_W(lvl);
@@ -1103,8 +1185,8 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 			int Hlvl_ab = WaveletCoeffs_a.level_H(lvl);
 
 
-			float skip_L = WaveletCoeffs_L.level_stride(lvl);
-			float skip_ab = WaveletCoeffs_a.level_stride(lvl);
+			int skip_L = WaveletCoeffs_L.level_stride(lvl);
+			int skip_ab = WaveletCoeffs_a.level_stride(lvl);
 
 			float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
 			float ** WavCoeffs_a = WaveletCoeffs_a.level_coeffs(lvl);
@@ -1121,13 +1203,9 @@ __attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#if defined( __SSE2__ ) && defined( WIN32 )
-__attribute__((force_align_arg_pointer))	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level,
-									int W_L, int H_L, int W_ab, int H_ab,int skip_L, int skip_ab, float noisevar_L, float noisevar_abr,  float noisevar_abb, LabImage * noi)
-#else
-	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level,
-									int W_L, int H_L, int W_ab, int H_ab,int skip_L, int skip_ab, float noisevar_L, float noisevar_abr, float noisevar_abb, LabImage * noi)
-#endif
+SSEFUNCTION	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level,
+									int W_L, int H_L, int W_ab, int H_ab,int skip_L, int skip_ab, float noisevar_L, float noisevar_abr, float noisevar_abb, LabImage * noi,
+									float * madaa, float * madab, float * madaL, bool madCalculated)
 
 									{
 		//simple wavelet shrinkage
@@ -1135,16 +1213,25 @@ __attribute__((force_align_arg_pointer))	void ImProcFunctions::ShrinkAll(float *
 		float * sfave = new float[W_L*H_L];
 		float * sfavea = new float[W_L*H_L];
 		float * sfaveb = new float[W_L*H_L];
+		float * WavCoeffsLtemp = new float[H_ab*W_ab];
 
-		int max;
+//		int max;
 
 		//printf("\n level=%d  \n",level);
 
 		for (int dir=1; dir<4; dir++) {
-			float madL = SQR(MadMax(WavCoeffs_L[dir], max, W_L*H_L));
-			float mada = SQR(MadMax(WavCoeffs_a[dir], max, W_ab*H_ab));
-			float madb = SQR(MadMax(WavCoeffs_b[dir], max, W_ab*H_ab));
-
+			float mada, madb, madL;
+			if(madCalculated) {
+				mada = madaa[dir-1];
+				madb = madab[dir-1];
+				madL = madaL[dir-1] ;
+			} else {
+				int * madHisto = new int[65536];
+				mada = SQR(Mad(WavCoeffs_a[dir], W_ab*H_ab, madHisto));
+				madb = SQR(Mad(WavCoeffs_b[dir], W_ab*H_ab, madHisto));
+				madL = SQR(Mad(WavCoeffs_L[dir], W_L*H_L, madHisto));
+				delete [] madHisto;
+			}
 
 		//	printf("  dir=%d  mad_L=%f	mad_a=%f	mad_b=%f  skip_ab=%i	\n",dir,sqrt(madL),sqrt(mada),sqrt(madb), skip_ab);
 
@@ -1153,16 +1240,39 @@ __attribute__((force_align_arg_pointer))	void ImProcFunctions::ShrinkAll(float *
 			float mad_b = madb*noisevar_abb;
 
 			if (noisevar_abr>0.01f  ||  noisevar_abb>0.01f) {
-//OpenMP here
+				for(int i=0;i<H_ab;i++)
+					for(int j=0;j<W_ab;j++)
+						WavCoeffsLtemp[i*W_ab+j] = WavCoeffs_L[dir][((i*skip_L)/skip_ab)*W_L + ((j*skip_L)/skip_ab)];
 
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
+#ifdef __SSE2__
+				int j;
+				__m128 onev = _mm_set1_ps(1.f);
+				__m128 madLm9v = _mm_set1_ps(madL * 9.f);
+				__m128 mad_av = _mm_set1_ps(mad_a);
+				__m128 mad_bv = _mm_set1_ps(mad_b);
+				__m128 epsv = _mm_set1_ps(eps);
+				__m128 mag_Lv, mag_av, mag_bv;
+				for (int i=0; i<H_ab; i++) {
+					int coeffloc_ab = i*W_ab;
+					for (j=0; j<W_ab-3; j+=4, coeffloc_ab+=4) {
+						mag_Lv = LVFU(WavCoeffsLtemp[coeffloc_ab]);
+						mag_av = SQRV(LVFU(WavCoeffs_a[dir][coeffloc_ab]))+epsv;
+						mag_bv = SQRV(LVFU(WavCoeffs_b[dir][coeffloc_ab]))+epsv;
+						mag_Lv = SQRV(mag_Lv) + epsv;
+						_mm_storeu_ps(&sfavea[coeffloc_ab], (onev-xexpf(-(mag_av/mad_av)-(mag_Lv/madLm9v))));
+						_mm_storeu_ps(&sfaveb[coeffloc_ab], (onev-xexpf(-(mag_bv/mad_bv)-(mag_Lv/madLm9v))));
+					}
+					for (; j<W_ab; j++,coeffloc_ab++) {
+						float mag_L = SQR(WavCoeffsLtemp[coeffloc_ab])+eps;
+						float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])+eps;
+						float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])+eps;
+						sfavea[coeffloc_ab] = (1.f-xexpf(-(mag_a/mad_a)-(mag_L/(9.f*madL))));
+						sfaveb[coeffloc_ab] = (1.f-xexpf(-(mag_b/mad_b)-(mag_L/(9.f*madL))));
+					}
+				}//now chrominance coefficients are denoised
+#else
 				for (int i=0; i<H_ab; i++) {
 					for (int j=0; j<W_ab; j++) {
-						float m_a,m_b;
-						m_a=mad_a;
-						m_b=mad_b;
 						int coeffloc_ab = i*W_ab+j;
 						int coeffloc_L	= ((i*skip_L)/skip_ab)*W_L + ((j*skip_L)/skip_ab);
 						float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L ])+eps;
@@ -1170,31 +1280,39 @@ __attribute__((force_align_arg_pointer))	void ImProcFunctions::ShrinkAll(float *
 						float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])+eps;
 						sfavea[coeffloc_ab] = (1.f-xexpf(-(mag_a/mad_a)-(mag_L/(9.f*madL))));
 						sfaveb[coeffloc_ab] = (1.f-xexpf(-(mag_b/mad_b)-(mag_L/(9.f*madL))));
-						mad_a=m_a;
-						mad_b=m_b;
 						// 'firm' threshold of chroma coefficients
 						//WavCoeffs_a[dir][coeffloc_ab] *= (1-exp(-(mag_a/mad_a)-(mag_L/(9*madL))));//(coeff_a>2*thresh_a ? 1 : (coeff_a<thresh_a ? 0 : (coeff_a/thresh_a - 1)));
 						//WavCoeffs_b[dir][coeffloc_ab] *= (1-exp(-(mag_b/mad_b)-(mag_L/(9*madL))));//(coeff_b>2*thresh_b ? 1 : (coeff_b<thresh_b ? 0 : (coeff_b/thresh_b - 1)));
-
-
 					}
 				}//now chrominance coefficients are denoised
+#endif
 
 				boxblur(sfavea, sfavea, level+2, level+2, W_ab, H_ab);//increase smoothness by locally averaging shrinkage
 				boxblur(sfaveb, sfaveb, level+2, level+2, W_ab, H_ab);//increase smoothness by locally averaging shrinkage
 
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-				for (int i=0; i<H_ab; i++)
-					for (int j=0; j<W_ab; j++) {
-						float m_a,m_b;
-						m_a=mad_a;
-						m_b=mad_b;
+#ifdef __SSE2__
+				__m128 sfav, sfbv;
+				__m128 sfaveav, sfavebv;
+				for (int i=0; i<H_ab; i++) {
+					int coeffloc_ab = i*W_ab;
+					for (j=0; j<W_ab-3; j+=4,coeffloc_ab+=4) {
+						mag_Lv = LVFU(WavCoeffsLtemp[coeffloc_ab]);
+						mag_av = SQRV(LVFU(WavCoeffs_a[dir][coeffloc_ab]))+epsv;
+						mag_bv = SQRV(LVFU(WavCoeffs_b[dir][coeffloc_ab]))+epsv;
+						mag_Lv = SQRV(mag_Lv) + epsv;
+						sfav = (onev - xexpf(-(mag_av/mad_av)-(mag_Lv/madLm9v)));
+						sfbv = (onev - xexpf(-(mag_bv/mad_bv)-(mag_Lv/madLm9v)));
+						sfaveav = LVFU(sfavea[coeffloc_ab]);
+						sfavebv = LVFU(sfaveb[coeffloc_ab]);
+						//use smoothed shrinkage unless local shrinkage is much less
+						_mm_storeu_ps( &WavCoeffs_a[dir][coeffloc_ab], LVFU(WavCoeffs_a[dir][coeffloc_ab]) * (SQRV(sfaveav)+SQRV(sfav))/(sfaveav+sfav+epsv));
+						_mm_storeu_ps( &WavCoeffs_b[dir][coeffloc_ab], LVFU(WavCoeffs_b[dir][coeffloc_ab]) * (SQRV(sfavebv)+SQRV(sfbv))/(sfavebv+sfbv+epsv));
 
-						int coeffloc_ab = i*W_ab+j;
-						int coeffloc_L	= ((i*skip_L)/skip_ab)*W_L + ((j*skip_L)/skip_ab);
-						float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L ])+eps;
+					}//now chrominance coefficients are denoised
+					for (; j<W_ab; j++,coeffloc_ab++) {
+							//modification Jacques feb 2013
+						float mag_L = SQR(WavCoeffsLtemp[coeffloc_ab])+eps;
+
 						float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])+eps;
 						float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])+eps;
 
@@ -1204,10 +1322,31 @@ __attribute__((force_align_arg_pointer))	void ImProcFunctions::ShrinkAll(float *
 						//use smoothed shrinkage unless local shrinkage is much less
 						WavCoeffs_a[dir][coeffloc_ab] *= (SQR(sfavea[coeffloc_ab])+SQR(sfa))/(sfavea[coeffloc_ab]+sfa+eps);
 						WavCoeffs_b[dir][coeffloc_ab] *= (SQR(sfaveb[coeffloc_ab])+SQR(sfb))/(sfaveb[coeffloc_ab]+sfb+eps);
-						mad_a=m_a;
-						mad_b=m_b;
 
 					}//now chrominance coefficients are denoised
+				}
+#else
+				for (int i=0; i<H_ab; i++) {
+					for (int j=0; j<W_ab; j++) {
+
+						int coeffloc_ab = i*W_ab+j;
+//						int coeffloc_L	= ((i*skip_L)/skip_ab)*W_L + ((j*skip_L)/skip_ab);
+						float mag_L = SQR(WavCoeffsLtemp[coeffloc_ab])+eps;
+
+//						float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L ])+eps;
+						float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])+eps;
+						float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])+eps;
+
+						float sfa = (1.f-xexpf(-(mag_a/mad_a)-(mag_L/(9.f*madL))));
+						float sfb = (1.f-xexpf(-(mag_b/mad_b)-(mag_L/(9.f*madL))));
+
+						//use smoothed shrinkage unless local shrinkage is much less
+						WavCoeffs_a[dir][coeffloc_ab] *= (SQR(sfavea[coeffloc_ab])+SQR(sfa))/(sfavea[coeffloc_ab]+sfa+eps);
+						WavCoeffs_b[dir][coeffloc_ab] *= (SQR(sfaveb[coeffloc_ab])+SQR(sfb))/(sfaveb[coeffloc_ab]+sfb+eps);
+
+					}//now chrominance coefficients are denoised
+				}
+#endif
 			}
 
 			if (noisevar_L>0.01f) {
@@ -1225,9 +1364,6 @@ __attribute__((force_align_arg_pointer))	void ImProcFunctions::ShrinkAll(float *
 					sfave[i] = mag/(mag+mad_L*xexpf(-mag/(9*mad_L))+eps);
 				}
 #else
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 				for (int i=0; i<W_L*H_L; i++) {
 
 					float mag = SQR(WavCoeffs_L[dir][i]);
@@ -1255,12 +1391,7 @@ __attribute__((force_align_arg_pointer))	void ImProcFunctions::ShrinkAll(float *
 				}//now luminance coefficients are denoised
 
 #else
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 				for (int i=0; i<W_L*H_L; i++) {
-
-
 					float mag = SQR(WavCoeffs_L[dir][i]);
 					float sf = mag/(mag+mad_L*xexpf(-mag/(9.f*mad_L))+eps);
 
@@ -1276,7 +1407,7 @@ __attribute__((force_align_arg_pointer))	void ImProcFunctions::ShrinkAll(float *
 		delete[] sfave;
 		delete[] sfavea;
 		delete[] sfaveb;
-
+		delete[] WavCoeffsLtemp;
 	}
 
 

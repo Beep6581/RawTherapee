@@ -888,7 +888,10 @@ class PALensTypeInterpreter : public IntLensInterpreter< int > {
                       focalLength = flt->toDouble();
               }
            }
-           return guess( lensID, focalLength, maxApertureAtFocal, liArray);
+           std::string retval = guess( lensID, focalLength, maxApertureAtFocal, liArray);
+           if(liArray)
+				delete [] liArray;
+           return retval;
         }
 };
 PALensTypeInterpreter paLensTypeInterpreter;
