@@ -108,7 +108,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         Defringe* defringe;
         ImpulseDenoise* impulsedenoise;
         DirPyrDenoise* dirpyrdenoise;
-        EdgePreservingDecompositionUI *edgePreservingDecompositionUI;
+        EdgePreservingDecompositionUI *epd;
         Sharpening* sharpening;
         SharpenEdge* sharpenEdge;
         SharpenMicro* sharpenMicro;

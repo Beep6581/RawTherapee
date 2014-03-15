@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -74,12 +74,12 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   h = Gtk::manage (new MySpinButton ());
   h->set_size_request (60, -1);
   hb2->pack_start (*h);
-  
+
   pack_start (*hb2, Gtk::PACK_SHRINK, 4);
 
   selectCrop = Gtk::manage (new Gtk::Button (M("TP_CROP_SELECTCROP")));
   selectCrop->set_image (*Gtk::manage (new RTImage ("crop.png")));
-  
+
   pack_start (*selectCrop, Gtk::PACK_SHRINK, 2);
 
   Gtk::HBox* hb3 = Gtk::manage (new Gtk::HBox ());
@@ -104,7 +104,7 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   hb31->pack_start (*guide);
 
   pack_start (*hb31, Gtk::PACK_SHRINK, 4);
-  
+
   // ppibox START
   ppibox = Gtk::manage (new Gtk::VBox());
   ppibox->pack_start (*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_SHRINK, 2);
@@ -125,13 +125,13 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   sizebox->pack_start (*sizein, Gtk::PACK_SHRINK, 4);
   sizebox->pack_start (*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_SHRINK, 6);
   sizebox->pack_start (*hb4, Gtk::PACK_SHRINK, 2);
-  
+
   ppibox->pack_start (*sizebox, Gtk::PACK_SHRINK, 1);
   pack_start (*ppibox, Gtk::PACK_SHRINK, 0);
 
   ppi->set_value (300);
   // ppibox END
-  
+
  /****************
  * Crop Ratio
  *****************/
@@ -166,7 +166,7 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   cropratio[25].label = "45:35 - ePassport";       cropratio[25].value = 45.0/35.0;
 
 
-    
+
   // populate the combobox
   for (int i=0; i<NumberOfCropRatios; i++) {
      ratio->append_text (cropratio[i].label);
@@ -250,7 +250,7 @@ void Crop::readOptions () {
 void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     disableListener ();
-    
+
     xconn.block (true);
     yconn.block (true);
     wconn.block (true);
@@ -277,7 +277,7 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
         orientation->set_active (0);
     else if (pp->crop.orientation == "Portrait")
         orientation->set_active (1);
-    
+
     if (pp->crop.guide == "None")
         guide->set_active (0);
     else if (pp->crop.guide == "Rule of thirds")
@@ -308,7 +308,7 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
     ny = pp->crop.y;
     nw = pp->crop.w;
     nh = pp->crop.h;
-    
+
     lastRotationDeg = pp->coarse.rotate;
 
     wDirty = false;
@@ -322,11 +322,11 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
         xDirty = pedited->crop.x;
         yDirty = pedited->crop.y;
         if (!pedited->crop.ratio)
-            ratio->set_active (8);
-        if (!pedited->crop.orientation) 
-            orientation->set_active (2);
-        if (!pedited->crop.guide) 
-            guide->set_active (7);
+            ratio->set_active_text (M("GENERAL_UNCHANGED"));
+        if (!pedited->crop.orientation)
+            orientation->set_active_text (M("GENERAL_UNCHANGED"));
+        if (!pedited->crop.guide)
+            guide->set_active_text (M("GENERAL_UNCHANGED"));
         enabled->set_inconsistent (!pedited->crop.enabled);
         fixr->set_inconsistent (!pedited->crop.fixratio);
     }
@@ -385,9 +385,9 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited) {
 
     if (pedited) {
         pedited->crop.enabled       = !enabled->get_inconsistent();
-        pedited->crop.ratio         = ratio->get_active_row_number() != 9;
-        pedited->crop.orientation   = orientation->get_active_row_number() != 2;
-        pedited->crop.guide         = guide->get_active_row_number() != 9;
+        pedited->crop.ratio         = ratio->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->crop.orientation   = orientation->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->crop.guide         = guide->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->crop.fixratio      = !fixr->get_inconsistent();
         pedited->crop.w             = wDirty;
         pedited->crop.h             = hDirty;
@@ -444,8 +444,19 @@ void Crop::selectPressed () {
 
 void Crop::notifyListener () {
 
-    if (listener && enabled->get_active ()) 
-        listener->panelChanged (EvCrop, Glib::ustring::compose ("%1=%2, %3=%4\n%5=%6, %7=%8", M("TP_CROP_X"), nx, M("TP_CROP_Y"), ny, M("TP_CROP_W"), nw, M("TP_CROP_H"), nh));
+    if (listener && enabled->get_active ())
+        if (nw == 1 && nh == 1) {
+            econn.block (true);
+            enabled->set_active (false);
+            econn.block (false);
+            nx = (int)x->get_value ();
+            ny = (int)x->get_value ();
+            nw = (int)w->get_value ();
+            nh = (int)h->get_value ();
+            listener->panelChanged (EvCrop, M("GENERAL_DISABLED"));
+        }
+        else
+            listener->panelChanged (EvCrop, Glib::ustring::compose ("%1=%2, %3=%4\n%5=%6, %7=%8", M("TP_CROP_X"), nx, M("TP_CROP_Y"), ny, M("TP_CROP_W"), nw, M("TP_CROP_H"), nh));
 }
 
 void Crop::enabledChanged () {
@@ -595,7 +606,7 @@ void Crop::ratioChanged () {
 // Correct current crop if it doesn't fit
 void Crop::adjustCropToRatio() {
     if (fixr->get_active() && !fixr->get_inconsistent()) {
- 
+
 //        int W = w->get_value ();
 //        int H = h->get_value ();
         int W = nw;
@@ -944,12 +955,10 @@ void Crop::cropInit (int &x, int &y, int &w, int &h) {
   nh = 1;
 
   w = 1; h = 1;
-  
+
   econn.block (true);
   enabled->set_active (1);
   econn.block (false);
-  g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
-//  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
 }
 
 void Crop::cropResized (int &x, int &y, int& x2, int& y2) {
@@ -993,21 +1002,21 @@ void Crop::cropResized (int &x, int &y, int& x2, int& y2) {
     if (y<=y2) {
       int W2max = (int)round ((maxh-Y) * r);
       if (W>W2max)
-        W = W2max;  
+        W = W2max;
     }
     else {
       int W2max = (int)round (y * r);
       if (W>W2max)
-        W = W2max;  
+        W = W2max;
     }
     H = (int)round(W / r);
     if (x<x2)
       x2 = x + W - 1;
-    else 
+    else
       x2 = x - W + 1;
-    if (y<y2) 
+    if (y<y2)
       y2 = y + H - 1;
-    else 
+    else
       y2 = y - H + 1;
   }
 
@@ -1059,8 +1068,8 @@ void Crop::setBatchMode (bool batchMode) {
 
     ToolPanel::setBatchMode (batchMode);
 
-	ratio->append_text ("(Unchanged)");
-	orientation->append_text ("(Unchanged)");
-	guide->append_text ("(Unchanged)");
+    ratio->append_text (M("GENERAL_UNCHANGED"));
+    orientation->append_text (M("GENERAL_UNCHANGED"));
+    guide->append_text (M("GENERAL_UNCHANGED"));
     removeIfThere (this, ppibox);
 }

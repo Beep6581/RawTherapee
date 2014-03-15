@@ -629,6 +629,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
     tag   = get2 (f, order);
     type  = (TagType)get2 (f, order);
     count = get4 (f, order);
+	if (!count) count = 1;
 
     makerNoteKind = NOMK;
     keep = false;
@@ -867,8 +868,9 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
     }
     else {
       // read value
-      value = new unsigned char [valuesize];
+      value = new unsigned char [valuesize+1];
       fread (value, 1, valuesize, f);
+      value[valuesize] = '\0';
     }
     // seek back to the saved position
     fseek (f, save, SEEK_SET);

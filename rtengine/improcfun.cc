@@ -832,10 +832,10 @@ if(params->colorappearance.enabled) {
 			if(ncie->Q_p[i][j]<minQ) minQ=ncie->Q_p[i][j];//minima
 			if(ncie->Q_p[i][j]>maxQ) maxQ=ncie->Q_p[i][j];//maxima
 			}
-			if(!params->colorappearance.tonecie  || !settings->autocielab  || !params->edgePreservingDecompositionUI.enabled ){						
+			if(!params->colorappearance.tonecie  || !settings->autocielab  || !params->epd.enabled ){
 			
-//			if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie  || !settings->autocielab){
-		//	if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie  || !params->colorappearance.sharpcie){
+//			if(!params->epd.enabled || !params->colorappearance.tonecie  || !settings->autocielab){
+		//	if(!params->epd.enabled || !params->colorappearance.tonecie  || !params->colorappearance.sharpcie){
 			int posl, posc;
 			double brli=327.;
 			double chsacol=327.;
@@ -907,13 +907,13 @@ if(params->colorappearance.enabled) {
 		}
 	}
 	// End of parallelization
-if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie   || !settings->autocielab){//normal
-//if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie   || !params->colorappearance.sharpcie){//normal
+if(!params->epd.enabled || !params->colorappearance.tonecie   || !settings->autocielab){//normal
+//if(!params->epd.enabled || !params->colorappearance.tonecie   || !params->colorappearance.sharpcie){//normal
 
 	if(ciedata) {
     //update histogram J
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=32768; i++) {//
+		for (int i=0; i<32768; i++) {//
 			if (jp) {
 				float hval = dLcurve[i];
 				int hi = (int)(255.0*CLIPD(hval)); //
@@ -922,7 +922,7 @@ if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.to
 		}
 	}
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=48000; i++) {//
+		for (int i=0; i<48000; i++) {//
 			if (chropC) {
 				float hvalc = dCcurve[i];
 				int hic = (int)(255.0*CLIPD(hvalc)); //
@@ -1004,11 +1004,11 @@ if(params->dirpyrequalizer.enabled /*&& (execsharp)*/) {
 			}
 }	
 
-if((params->colorappearance.tonecie || (params->colorappearance.tonecie && params->edgePreservingDecompositionUI.enabled)) || (params->sharpening.enabled && settings->autocielab)
+if((params->colorappearance.tonecie || (params->colorappearance.tonecie && params->epd.enabled)) || (params->sharpening.enabled && settings->autocielab)
 		|| (params->dirpyrequalizer.enabled && settings->autocielab) ||(params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)
 		||  (params->colorappearance.badpixsl > 0 && settings->autocielab)) {
 		
-		if(params->edgePreservingDecompositionUI.enabled  && params->colorappearance.tonecie  && algepd) ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
+		if(params->epd.enabled  && params->colorappearance.tonecie  && algepd) ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
 			//EPDToneMapCIE adapted to CIECAM
 
 	
@@ -1034,8 +1034,8 @@ if((params->colorappearance.tonecie || (params->colorappearance.tonecie && param
 			float x,y,z;
 			const float eps=0.0001;
 			float co_e=(pow(f_l,0.25f))+eps;
-	//		if(params->edgePreservingDecompositionUI.enabled) ncie->J_p[i][j]=(100.0* ncie->Q_p[i][j]*ncie->Q_p[i][j])/(w_h*w_h);
-			if(params->edgePreservingDecompositionUI.enabled) ncie->J_p[i][j]=(100.0* ncie->Q_p[i][j]*ncie->Q_p[i][j])/SQR((4./c)*(aw+4.));
+	//		if(params->epd.enabled) ncie->J_p[i][j]=(100.0* ncie->Q_p[i][j]*ncie->Q_p[i][j])/(w_h*w_h);
+			if(params->epd.enabled) ncie->J_p[i][j]=(100.0* ncie->Q_p[i][j]*ncie->Q_p[i][j])/SQR((4./c)*(aw+4.));
 			
 			ncie->C_p[i][j]	=(ncie->M_p[i][j])/co_e;
 			//show histogram in CIECAM mode (Q,J, M,s,C)
@@ -1113,7 +1113,7 @@ if((params->colorappearance.tonecie || (params->colorappearance.tonecie && param
 	if(ciedata) {
     //update histogram J and Q
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=32768; i++) {//
+		for (int i=0; i<32768; i++) {//
 			if (jp) {
 				float hval = dLcurve[i];
 				int hi = (int)(255.0*CLIPD(hval)); //
@@ -1123,7 +1123,7 @@ if((params->colorappearance.tonecie || (params->colorappearance.tonecie && param
 	}
 	//update color histogram M,s,C
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=48000; i++) {//
+		for (int i=0; i<48000; i++) {//
 			if (chropC) {
 				float hvalc = dCcurve[i];
 				int hic = (int)(255.0*CLIPD(hvalc)); //
@@ -1704,7 +1704,7 @@ if(params->colorappearance.enabled) {
 			if(ncie->Q_p[i][j]<minQ) minQ=ncie->Q_p[i][j];//minima
 			if(ncie->Q_p[i][j]>maxQ) maxQ=ncie->Q_p[i][j];//maxima
 			}
-			if(!params->colorappearance.tonecie  || !settings->autocielab || !params->edgePreservingDecompositionUI.enabled){
+			if(!params->colorappearance.tonecie  || !settings->autocielab || !params->epd.enabled){
 			int posl, posc;
 			float brli=327.f;
 			float chsacol=327.f;
@@ -1793,7 +1793,7 @@ if(!params->colorappearance.tonecie   || !settings->autocielab){//normal
 	if(ciedata) {
     //update histogram J
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=32768; i++) {//
+		for (int i=0; i<32768; i++) {//
 			if (jp) {
 				float hval = dLcurve[i];
 				int hi = (int)(255.0f*CLIPD(hval)); //
@@ -1802,7 +1802,7 @@ if(!params->colorappearance.tonecie   || !settings->autocielab){//normal
 		}
 	}
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=48000; i++) {//
+		for (int i=0; i<48000; i++) {//
 			if (chropC) {
 				float hvalc = dCcurve[i];
 				int hic = (int)(255.0f*CLIPD(hvalc)); //
@@ -1895,11 +1895,11 @@ printf("BADPIX");
 					}
 			}
 }
-if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.enabled)) || (params->sharpening.enabled && settings->autocielab) 
+if((params->colorappearance.tonecie && (params->epd.enabled)) || (params->sharpening.enabled && settings->autocielab)
 		|| (params->dirpyrequalizer.enabled && settings->autocielab) ||(params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)
 		|| (params->impulseDenoise.enabled && settings->autocielab) ||  (params->colorappearance.badpixsl >0 && settings->autocielab)){
 		
-		if(params->edgePreservingDecompositionUI.enabled  && params->colorappearance.tonecie && algepd) ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
+		if(params->epd.enabled  && params->colorappearance.tonecie && algepd) ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
 			//EPDToneMapCIE adated to CIECAM
 
 	
@@ -1924,8 +1924,8 @@ if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.en
 			float x,y,z;
 			float eps=0.0001f;
 			float co_e=(pow_F(f_l,0.25f))+eps;
-		//	if(params->edgePreservingDecompositionUI.enabled) ncie->J_p[i][j]=(100.0f* ncie->Q_p[i][j]*ncie->Q_p[i][j])/(w_h*w_h);
-			if(params->edgePreservingDecompositionUI.enabled) ncie->J_p[i][j]=(100.0f* ncie->Q_p[i][j]*ncie->Q_p[i][j])/SQR((4.f/c)*(aw+4.f));
+		//	if(params->epd.enabled) ncie->J_p[i][j]=(100.0f* ncie->Q_p[i][j]*ncie->Q_p[i][j])/(w_h*w_h);
+			if(params->epd.enabled) ncie->J_p[i][j]=(100.0f* ncie->Q_p[i][j]*ncie->Q_p[i][j])/SQR((4.f/c)*(aw+4.f));
 			
 			ncie->C_p[i][j]	=(ncie->M_p[i][j])/co_e;
 			//show histogram in CIECAM mode (Q,J, M,s,C)
@@ -2004,7 +2004,7 @@ if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.en
 	if(ciedata) {
     //update histogram J and Q
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=32768; i++) {//
+		for (int i=0; i<32768; i++) {//
 			if (jp) {
 				float hval = dLcurve[i];
 				int hi = (int)(255.0f*CLIPD(hval)); //
@@ -2014,7 +2014,7 @@ if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.en
 	}
 	//update color histogram M,s,C
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=48000; i++) {//
+		for (int i=0; i<48000; i++) {//
 			if (chropC) {
 				float hvalc = dCcurve[i];
 				int hic = (int)(255.0f*CLIPD(hvalc)); //
@@ -3690,7 +3690,7 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 
     //update histogram C  with data chromaticity and not with CC curve
 	if(pW!=1){//only with improccoordinator
-		for (int i=0; i<=48000; i++) {//32768*1.414  + ...
+		for (int i=0; i<48000; i++) {//32768*1.414  + ...
 			if (chrop) {
 				float hval = dCcurve[i];
 				int hi = (int)(255.0*CLIPD(hval)); //
@@ -3699,7 +3699,7 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 			}
 		}
 		   //update histogram L  with data luminance
-		for (int i=0; i<=65535; i++) {
+		for (int i=0; i<65535; i++) {
 			if (chrop) {
 				float hlval = dLcurve[i];
 				int hli = (int)(255.0*CLIPD(hlval));
@@ -3870,11 +3870,11 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 	}
 void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, float w_h, int Wid, int Hei, int begh, int endh, float minQ, float maxQ, unsigned int Iterates, int skip){
 
-if(!params->edgePreservingDecompositionUI.enabled) return;
-		float stren=params->edgePreservingDecompositionUI.Strength;
-		float edgest=params->edgePreservingDecompositionUI.EdgeStopping;
-		float sca=params->edgePreservingDecompositionUI.Scale;
-		float rew=params->edgePreservingDecompositionUI.ReweightingIterates;
+if(!params->epd.enabled) return;
+		float stren=params->epd.strength;
+		float edgest=params->epd.edgeStopping;
+		float sca=params->epd.scale;
+		float rew=params->epd.reweightingIterates;
 		unsigned int i, N = Wid*Hei;
 		float Qpro= ( 4.0 / c_)  * ( a_w + 4.0 ) ;//estimate Q max if J=100.0
 		float *Qpr=ncie->Q_p[0];
@@ -3952,15 +3952,15 @@ if(!params->edgePreservingDecompositionUI.enabled) return;
 //#include "EdgePreservingDecomposition.cc"
 void ImProcFunctions::EPDToneMap(LabImage *lab, unsigned int Iterates, int skip){
 	//Hasten access to the parameters.
-//	EPDParams *p = (EPDParams *)(&params->edgePreservingDecompositionUI);
+//	EPDParams *p = (EPDParams *)(&params->epd);
 
 	//Enabled? Leave now if not.
 //	if(!p->enabled) return;
-if(!params->edgePreservingDecompositionUI.enabled) return;
-float stren=params->edgePreservingDecompositionUI.Strength;
-float edgest=params->edgePreservingDecompositionUI.EdgeStopping;
-float sca=params->edgePreservingDecompositionUI.Scale;
-float rew=params->edgePreservingDecompositionUI.ReweightingIterates;
+if(!params->epd.enabled) return;
+float stren=params->epd.strength;
+float edgest=params->epd.edgeStopping;
+float sca=params->epd.scale;
+float rew=params->epd.reweightingIterates;
 	//Pointers to whole data and size of it.
 	float *L = lab->L[0];
 	float *a = lab->a[0];

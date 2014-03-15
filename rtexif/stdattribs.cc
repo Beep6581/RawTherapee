@@ -371,8 +371,10 @@ class UserCommentInterpreter : public Interpreter {
         UserCommentInterpreter () {}
         virtual std::string toString (Tag* t) {
             char *buffer = new char[t->getCount()];
-            if (!strncmp((char*)t->getValue(), "ASCII\0\0\0",8))
+            if (!strncmp((char*)t->getValue(), "ASCII\0\0\0",8)) {
                 strncpy (buffer, (char*)t->getValue()+8, t->getCount()-8);
+                buffer[t->getCount()-8] = '\0';
+            }
             else
                 buffer[0]=0;
             std::string retVal(buffer);

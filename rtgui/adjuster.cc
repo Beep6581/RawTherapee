@@ -32,7 +32,7 @@ static double one2one(double val) { return val; }
 Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon1, Gtk::Image *imgIcon2, double2double_fun slider2value_, double2double_fun value2slider_) {
 
   Gtk::HBox *hbox2=NULL;
-
+  label = NULL;
   adjusterListener = NULL;
   afterReset = false;
   blocked = false;
@@ -450,6 +450,7 @@ void Adjuster::showEditedCB () {
         hbox->pack_start (*editedCheckBox, Gtk::PACK_SHRINK, 2);
         hbox->reorder_child (*editedCheckBox, 0);
         editedChange = editedCheckBox->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::editedToggled) );
+        editedCheckBox->show();
     }
 }
 
