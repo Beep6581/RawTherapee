@@ -33,6 +33,8 @@ CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard.
 CURVEEDITOR_TOOLTIPSAVE;Save current curve.
 CURVEEDITOR_TYPE;Type:
 EDITWINDOW_TITLE;Image Edit
+EDIT_OBJECT_TOOLTIP;Click on this button to display graphical element on the preview window, that you can use to edit the/some tool's settings.
+EDIT_PIPETTE_TOOLTIP;To add or select a curve adjustment point, hold the Ctrl key while left-clicking on the image preview. While holding this button pressed, control the adjustment by moving the mouse up and down (the Ctrl key can be released).\nRight-click to exit pipette-mode.
 EXIFFILTER_APERTURE;Aperture
 EXIFFILTER_CAMERA;Camera
 EXIFFILTER_EXPOSURECOMPENSATION;Exposure Compensation (EV)

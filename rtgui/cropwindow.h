@@ -60,6 +60,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener, public E
         Glib::ustring cropLabel;
         int backColor;
         bool decorated;
+        bool isFlawnOver;
 
         // crop frame description
         int titleHeight, sideBorderWidth, lowerBorderWidth, upperBorderWidth, sepWidth, minWidth;
@@ -121,6 +122,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener, public E
         void getSize     (int& w, int& h);
 
         void leaveNotify (GdkEventCrossing* event);
+        void flawnOver   (bool isFlawnOver);
 
         // zoomlistener interface
         void zoomIn      (bool toCursor=false, int cursorX=-1, int cursorY=-1);
