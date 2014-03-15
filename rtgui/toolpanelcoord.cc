@@ -45,7 +45,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     impulsedenoise      = Gtk::manage (new ImpulseDenoise ());
     defringe            = Gtk::manage (new Defringe ());
     dirpyrdenoise       = Gtk::manage (new DirPyrDenoise ());
-    edgePreservingDecompositionUI = Gtk::manage (new EdgePreservingDecompositionUI ());
+    epd                 = Gtk::manage (new EdgePreservingDecompositionUI ());
     sharpening          = Gtk::manage (new Sharpening ());
     sharpenEdge         = Gtk::manage (new SharpenEdge ());
     sharpenMicro        = Gtk::manage (new SharpenMicro ());
@@ -90,11 +90,10 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (detailsPanel, sharpenMicro,           M("TP_SHARPENMICRO_LABEL"), true);      toolPanels.push_back (sharpenMicro);
     addPanel (colorPanel, hsvequalizer,             M("TP_HSVEQUALIZER_LABEL"));            toolPanels.push_back (hsvequalizer);
     addPanel (colorPanel, rgbcurves,                M("TP_RGBCURVES_LABEL"));               toolPanels.push_back (rgbcurves);
-    addPanel (exposurePanel, edgePreservingDecompositionUI,      M("TP_EPD_LABEL"));        toolPanels.push_back (edgePreservingDecompositionUI);
+    addPanel (exposurePanel, epd,                   M("TP_EPD_LABEL"), true);               toolPanels.push_back (epd);
     addPanel (exposurePanel, pcvignette,            M("TP_PCVIGNETTE_LABEL"));              toolPanels.push_back (pcvignette);
     addPanel (exposurePanel, gradient,              M("TP_GRADIENT_LABEL"));                toolPanels.push_back (gradient);
     addPanel (exposurePanel, lcurve,                M("TP_LABCURVE_LABEL"));                toolPanels.push_back (lcurve);
-//  addPanel (exposurePanel, edgePreservingDecompositionUI,      M("TP_EPD_LABEL"));        toolPanels.push_back (edgePreservingDecompositionUI);
     addPanel (exposurePanel, colorappearance,       M("TP_COLORAPP_LABEL"));                toolPanels.push_back (colorappearance);
     addPanel (detailsPanel, impulsedenoise,         M("TP_IMPULSEDENOISE_LABEL"), true);    toolPanels.push_back (impulsedenoise);
     addPanel (detailsPanel, dirpyrdenoise,          M("TP_DIRPYRDENOISE_LABEL"), true);     toolPanels.push_back (dirpyrdenoise);

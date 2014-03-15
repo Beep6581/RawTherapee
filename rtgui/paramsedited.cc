@@ -158,14 +158,14 @@ void ParamsEdited::set (bool v) {
 	dirpyrDenoise.Ldetail      = v;
 	dirpyrDenoise.chroma       = v;
 	dirpyrDenoise.redchro      = v;
-	dirpyrDenoise.bluechro 	   = v;
+	dirpyrDenoise.bluechro     = v;
 	dirpyrDenoise.gamma        = v;
 	dirpyrDenoise.dmethod      = v;
-	edgePreservingDecompositionUI.enabled = v;
-	edgePreservingDecompositionUI.Strength = v;
-	edgePreservingDecompositionUI.EdgeStopping = v;
-	edgePreservingDecompositionUI.Scale = v;
-	edgePreservingDecompositionUI.ReweightingIterates = v;
+	epd.enabled                = v;
+	epd.strength            = v;
+	epd.edgeStopping        = v;
+	epd.scale               = v;
+	epd.reweightingIterates = v;
 	sh.enabled       = v;
 	sh.hq            = v;
 	sh.highlights    = v;
@@ -450,11 +450,11 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         dirpyrDenoise.gamma = dirpyrDenoise.gamma && p.dirpyrDenoise.gamma == other.dirpyrDenoise.gamma;
         dirpyrDenoise.dmethod = dirpyrDenoise.dmethod && p.dirpyrDenoise.dmethod == other.dirpyrDenoise.dmethod;
 
-        edgePreservingDecompositionUI.enabled = edgePreservingDecompositionUI.enabled && p.edgePreservingDecompositionUI.enabled == other.edgePreservingDecompositionUI.enabled;
-        edgePreservingDecompositionUI.Strength = edgePreservingDecompositionUI.Strength && p.edgePreservingDecompositionUI.Strength == other.edgePreservingDecompositionUI.Strength;
-        edgePreservingDecompositionUI.EdgeStopping = edgePreservingDecompositionUI.EdgeStopping && p.edgePreservingDecompositionUI.EdgeStopping == other.edgePreservingDecompositionUI.EdgeStopping;
-        edgePreservingDecompositionUI.Scale = edgePreservingDecompositionUI.Scale && p.edgePreservingDecompositionUI.Scale == other.edgePreservingDecompositionUI.Scale;
-        edgePreservingDecompositionUI.ReweightingIterates = edgePreservingDecompositionUI.ReweightingIterates && p.edgePreservingDecompositionUI.ReweightingIterates == other.edgePreservingDecompositionUI.ReweightingIterates;
+        epd.enabled = epd.enabled && p.epd.enabled == other.epd.enabled;
+        epd.strength = epd.strength && p.epd.strength == other.epd.strength;
+        epd.edgeStopping = epd.edgeStopping && p.epd.edgeStopping == other.epd.edgeStopping;
+        epd.scale = epd.scale && p.epd.scale == other.epd.scale;
+        epd.reweightingIterates = epd.reweightingIterates && p.epd.reweightingIterates == other.epd.reweightingIterates;
 
         sh.enabled = sh.enabled && p.sh.enabled == other.sh.enabled;
         sh.hq = sh.hq && p.sh.hq == other.sh.hq;
@@ -737,11 +737,11 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 //	if (dirpyrDenoise.perform)				toEdit.dirpyrDenoise.perform 	= mods.dirpyrDenoise.perform;
 	if (dirpyrDenoise.dmethod)				toEdit.dirpyrDenoise.dmethod		= mods.dirpyrDenoise.dmethod;
 
-	if (edgePreservingDecompositionUI.enabled) toEdit.edgePreservingDecompositionUI.enabled = mods.edgePreservingDecompositionUI.enabled;
-	if (edgePreservingDecompositionUI.Strength) toEdit.edgePreservingDecompositionUI.Strength = mods.edgePreservingDecompositionUI.Strength;	
-	if (edgePreservingDecompositionUI.EdgeStopping) toEdit.edgePreservingDecompositionUI.EdgeStopping = mods.edgePreservingDecompositionUI.EdgeStopping;
-	if (edgePreservingDecompositionUI.Scale) toEdit.edgePreservingDecompositionUI.Scale = mods.edgePreservingDecompositionUI.Scale;	
-	if (edgePreservingDecompositionUI.ReweightingIterates) toEdit.edgePreservingDecompositionUI.ReweightingIterates = mods.edgePreservingDecompositionUI.ReweightingIterates;	
+	if (epd.enabled)						toEdit.epd.enabled				= mods.epd.enabled;
+	if (epd.strength)						toEdit.epd.strength				= mods.epd.strength;
+	if (epd.edgeStopping)					toEdit.epd.edgeStopping			= mods.epd.edgeStopping;
+	if (epd.scale)							toEdit.epd.scale				= mods.epd.scale;
+	if (epd.reweightingIterates)			toEdit.epd.reweightingIterates	= mods.epd.reweightingIterates;
 
 	if (sh.enabled)		    				toEdit.sh.enabled 	    = mods.sh.enabled;
 	if (sh.hq)		        				toEdit.sh.hq     	    = mods.sh.hq;
