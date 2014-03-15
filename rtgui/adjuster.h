@@ -126,9 +126,9 @@ class Adjuster : public Gtk::VBox {
     void resetValue (bool toInitial);
     void resetPressed (GdkEventButton* event);
     void editedToggled ();
-    double trimValue (double& val);
-    float trimValue (float& val);
-    int trimValue (int& val);
+    double trimValue (double val);
+    float trimValue (float val);
+    int trimValue (int val);
 };
 
 #endif

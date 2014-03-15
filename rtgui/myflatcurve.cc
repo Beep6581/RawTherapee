@@ -1062,11 +1062,11 @@ void MyFlatCurve::pipetteDrag(EditDataProvider *provider, int modifierKey) {
 	getMouseOverArea();
 
 	if (editedHandle == FCT_EditedHandle_CPointY) {
-		movePoint(false, true);
+		movePoint(false, true, true);
 	}
 }
 
-void MyFlatCurve::movePoint(bool moveX, bool moveY) {
+void MyFlatCurve::movePoint(bool moveX, bool moveY, bool pipetteDrag) {
 
 	// bounds of the grabbed point
 	double leftBound;
@@ -1186,6 +1186,10 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY) {
 
 		// we memorize the previous position of the point, for optimization purpose
 		ugpY += deltaY;
+
+		// the points stay in the bounds (and can't be deleted) in pipette drag mode
+		if (pipetteDrag)
+			ugpY = CLAMP(ugpY, 0.0, 1.0);
 
 		// snapping point to specific values
 		if (snapTo && curve.x[lit_point] != -1) {

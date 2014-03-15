@@ -471,21 +471,21 @@ void Adjuster::editedToggled () {
     eventPending = false;
 }
 
-double Adjuster::trimValue (double& val) {
+double Adjuster::trimValue (double val) {
 
     if      (val > vMax) val = vMax;  // shapeValue(vMax) ?
     else if (val < vMin) val = vMin;  // shapeValue(vMin) ?
     return val;
 }
 
-int Adjuster::trimValue (int& val) {
+int Adjuster::trimValue (int val) {
 
     if      (val > (int)vMax) val = (int)vMax;  // shapeValue(vMax) ?
     else if (val < (int)vMin) val = (int)vMin;  // shapeValue(vMin) ?
     return val;
 }
 
-float Adjuster::trimValue (float& val) {
+float Adjuster::trimValue (float val) {
 
     if      (val > (float)vMax) val = (float)vMax;  // shapeValue(vMax) ?
     else if (val < (float)vMin) val = (float)vMin;  // shapeValue(vMin) ?

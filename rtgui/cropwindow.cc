@@ -612,7 +612,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y) {
 
             Coord oldPosScreen = iarea->posScreen+iarea->deltaScreen;
             //printf(">>> SCR / ScrPrev(%d x %d) = (%d x %d) + (%d x %d)\n", oldPosScreen.x, oldPosScreen.y, iarea->posScreen.x, iarea->posScreen.y, iarea->deltaScreen.x, iarea->deltaScreen.y);
-            screenCoordToPreview(x, y, currPos.x, currPos.y);
+            currPos.set(x, y);
             iarea->deltaScreen     = currPos - iarea->posScreen;
             iarea->deltaPrevScreen = currPos - oldPosScreen;
             //printf("          action_ & xy (%d x %d) -> (%d x %d) = (%d x %d) + (%d x %d) / deltaPrev(%d x %d)\n", action_x, action_y, currPos.x, currPos.y, iarea->posScreen.x, iarea->posScreen.y, iarea->deltaScreen.x, iarea->deltaScreen.y, iarea->deltaPrevScreen.x, iarea->deltaPrevScreen.y);
@@ -1474,7 +1474,6 @@ void CropWindow::screenCoordToPreview (int phyx, int phyy, int& prevx, int& prev
 void CropWindow::imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy) {
 
     int cropX, cropY;
-    rtengine::Crop* crop = static_cast<rtengine::Crop*>(cropHandler.getCrop());
     cropHandler.getPosition (cropX, cropY);
     phyx = (imgx - cropX)*zoomSteps[cropZoom].zoom + xpos + imgX;
     phyy = (imgy - cropY)*zoomSteps[cropZoom].zoom + ypos + imgY;

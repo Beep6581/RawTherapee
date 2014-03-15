@@ -43,6 +43,9 @@ protected:
 	Adjuster* darks;
 	Adjuster* shadows;
 
+	Adjuster *editedAdjuster;
+	int editedAdjusterValue;
+
 	Gtk::Button*       saveCustom;
 	Gtk::Button*       loadCustom;
 	Gtk::Button*       copyCustom;
