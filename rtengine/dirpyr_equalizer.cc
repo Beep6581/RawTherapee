@@ -70,7 +70,7 @@ namespace rtengine {
 		if(atten0 < 0.f) atten0=0.f;
 		
 		
-		while (fabs(mult[lastlevel-1]-1)<0.001 && lastlevel>0) {
+		while (lastlevel>0 && fabs(mult[lastlevel-1]-1)<0.001) {
 			lastlevel--;
 			//printf("last level to process %d \n",lastlevel);
 		}
