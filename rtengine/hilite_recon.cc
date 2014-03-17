@@ -652,7 +652,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 			//%%%%%%%%%%%%%%%%%%%%%%%
 			//estimate recovered values using modified HLRecovery_blend algorithm
 			
-			float rgb[ColorCount], rgb_blend[ColorCount], cam[2][ColorCount], lab[2][ColorCount], sum[2], chratio;
+			float rgb[ColorCount], rgb_blend[ColorCount] = {}, cam[2][ColorCount], lab[2][ColorCount], sum[2], chratio;
 			
 			// Copy input pixel to rgb so it's easier to access in loops
 			rgb[0] = pixel[0]; rgb[1] = pixel[1]; rgb[2] = pixel[2];
