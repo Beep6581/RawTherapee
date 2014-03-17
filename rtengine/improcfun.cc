@@ -1321,6 +1321,7 @@ if(params->colorappearance.enabled) {
 		if (needQ) {
 			if (!CAMBrightCurveQ) {
 				CAMBrightCurveQ(65536,0);
+				CAMBrightCurveQ.clear();
 				CAMBrightCurveQ.dirty = false;
 			}
 			ColorTemp::curveJfloat (qbri, qcontra, 1, CAMBrightCurveQ, hist16Q);//brightness and contrast Q
