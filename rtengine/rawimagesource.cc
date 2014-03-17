@@ -88,6 +88,7 @@ RawImageSource::RawImageSource ()
 	camProfile = NULL;
 	embProfile = NULL;
 	rgbSourceModified = false;
+	hlmax[0] = hlmax[1] = hlmax[2] = hlmax[3] = 0.f;
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -973,7 +974,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     plistener=NULL; // This must be reset, because only load() is called through progressConnector
     t2.set();
     if( settings->verbose )
-       printf("Load %s: %d Âµsec\n",fname.c_str(), t2.etime(t1));
+       printf("Load %s: %d µsec\n",fname.c_str(), t2.etime(t1));
 
     return 0; // OK!
 }
