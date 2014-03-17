@@ -1590,149 +1590,174 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //blue for sky
     _5B40(maxInd2);
+    _5B40.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _5B40[i] = -2.3 + 0.0025*(i-5);
             else if (i<90 && i>=45) _5B40[i] = -2.2 + 0.00*(i-45);
         }
         //printf("5B %1.2f  %1.2f\n",_5B40[44],_5B40[89]);
     _5B50(maxInd2);
+    _5B50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _5B50[i] = -2.34 + 0.0025*(i-5);
             else if (i<90 && i>=45) _5B50[i] = -2.24+0.0003*(i-45);
         }
         //printf("5B %1.2f  %1.2f\n",_5B50[44],_5B50[89]);
     _5B60(maxInd2);
+    _5B60.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _5B60[i] = -2.4 + 0.003*(i-5);
             else if (i<90 && i>=45) _5B60[i] = -2.28+0.0005*(i-45);
         }
         //printf("5B %1.2f  %1.2f\n",_5B60[44],_5B60[89]);
     _5B70(maxInd2);
+    _5B70.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _5B70[i] = -2.41 + 0.00275*(i-5);
             else if (i<90 && i>=45) _5B70[i] = -2.30+0.00025*(i-45);
         }
         //printf("5B %1.2f  %1.2f\n",_5B70[44],_5B70[89]);
     _5B80(maxInd3);
+    _5B80.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _5B80[i] = -2.45 +0.003*(i-5);
         }
         //printf("5B %1.2f\n",_5B80[49]);
 
     _7B40(maxInd2);
+    _7B40.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _7B40[i] = -2.15 + 0.0027*(i-5);
             else if (i<90 && i>=45) _7B40[i] = -2.04 + 0.00*(i-45);
         }
         //printf("7B %1.2f  %1.2f\n",_7B40[44],_7B40[89]);
     _7B50(maxInd2);
+    _7B50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _7B50[i] = -2.20 + 0.003*(i-5);
             else if (i<90 && i>=45) _7B50[i] = -2.08 + 0.001*(i-45);
         }
         //printf("7B %1.2f  %1.2f\n",_7B50[44],_7B50[79]);
     _7B60(maxInd2);
+    _7B60.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _7B60[i] = -2.26 + 0.0035*(i-5);
             else if (i<90 && i>=45) _7B60[i] = -2.12 + 0.001*(i-45);
         }
         //printf("7B %1.2f  %1.2f\n",_7B60[44],_7B60[79]);
     _7B70(maxInd2);
+    _7B70.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _7B70[i] = -2.28 + 0.003*(i-5);
             else if (i<90 && i>=45) _7B70[i] = -2.16 + 0.0015*(i-45);
         }
         //printf("7B %1.2f  %1.2f\n",_7B70[44],_7B70[64]);
     _7B80(maxInd3);
+    _7B80.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _7B80[i] = -2.30 +0.0028*(i-5);
         }
         //printf("5B %1.2f\n",_7B80[49]);
 
     _9B40(maxInd2);
+    _9B40.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _9B40[i] = -1.99 + 0.0022*(i-5);
             else if (i<90 && i>=45) _9B40[i] = -1.90 + 0.0008*(i-45);
         }
         //printf("9B %1.2f  %1.2f\n",_9B40[44],_9B40[69]);
     _9B50(maxInd2);
+    _9B50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _9B50[i] = -2.04 + 0.0025*(i-5);
             else if (i<90 && i>=45) _9B50[i] = -1.94 + 0.0013*(i-45);
         }
         //printf("9B %1.2f  %1.2f\n",_9B50[44],_9B50[77]);
     _9B60(maxInd2);
+    _9B60.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _9B60[i] = -2.10 + 0.0033*(i-5);
             else if (i<90 && i>=45) _9B60[i] = -1.97 + 0.001*(i-45);
         }
         //printf("9B %1.2f  %1.2f\n",_9B60[44],_9B60[79]);
     _9B70(maxInd2);
+    _9B70.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _9B70[i] = -2.12 + 0.003*(i-5);
             else if (i<90 && i>=45) _9B70[i] = -2.00 + 0.001*(i-45);
         }
         //printf("9B %1.2f  %1.2f\n",_9B70[44],_9B70[54]);
     _9B80(maxInd3);
+    _9B80.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _9B80[i] = -2.16 +0.0025*(i-5);
         }
         //printf("9B %1.2f\n",_9B80[49]);
 
     _10B40(maxInd2);
+    _10B40.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _10B40[i] = -1.92 + 0.0022*(i-5);
             else if (i<90 && i>=45) _10B40[i] = -1.83 + 0.0012*(i-45);
         }
         //printf("10B %1.2f  %1.2f\n",_10B40[44],_10B40[76]);
     _10B50(maxInd2);
+    _10B50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _10B50[i] = -1.95 + 0.0022*(i-5);
             else if (i<90 && i>=45) _10B50[i] = -1.86 + 0.0008*(i-45);
         }
         //printf("10B %1.2f  %1.2f\n",_10B50[44],_10B50[85]);
     _10B60(maxInd2);
+    _10B60.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _10B60[i] = -2.01 + 0.0027*(i-5);
             else if (i<90 && i>=45) _10B60[i] = -1.90 + 0.0012*(i-45);
         }
         //printf("10B %1.2f  %1.2f\n",_10B60[44],_10B60[70]);
     _10B70(maxInd3);
+    _10B70.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _10B70[i] = -2.03 +0.0025*(i-5);
         }
         //printf("10B %1.2f\n",_10B70[49]);
     _10B80(maxInd3);
+    _10B80.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _10B80[i] = -2.08 +0.0032*(i-5);
         }
         //printf("10B %1.2f\n",_10B80[39]);
 
     _05PB40(maxInd2);
+    _05PB40.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _05PB40[i] = -1.87 + 0.0022*(i-5);
             else if (i<90 && i>=45) _05PB40[i] = -1.78 + 0.0015*(i-45);
         }
         //printf("05PB %1.2f  %1.2f\n",_05PB40[44],_05PB40[74]);
     _05PB50(maxInd2);
+    _05PB50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _05PB50[i] = -1.91 + 0.0022*(i-5);
             else if (i<90 && i>=45) _05PB50[i] = -1.82 + 0.001*(i-45);
         }
         //printf("05PB %1.2f  %1.2f\n",_05PB50[44],_05PB50[85]);
     _05PB60(maxInd2);
+    _05PB60.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _05PB60[i] = -1.96 + 0.0027*(i-5);
             else if (i<90 && i>=45) _05PB60[i] = -1.85 + 0.0013*(i-45);
         }
         //printf("05PB %1.2f  %1.2f\n",_05PB60[44],_05PB60[70]);
     _05PB70(maxInd2);
+    _05PB70.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _05PB70[i] = -1.99 + 0.0027*(i-5);
             else if (i<90 && i>=45) _05PB70[i] = -1.88 + 0.001*(i-45);
         }
         //printf("05PB %1.2f  %1.2f\n",_05PB70[44],_05PB70[54]);
     _05PB80(maxInd3);
+    _05PB80.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _05PB80[i] = -2.03 +0.003*(i-5);
         }
@@ -1746,11 +1771,13 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //15PB
     _15PB10(maxInd3);
+    _15PB10.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _15PB10[i] = -1.66 +0.0035*(i-5);
         }
         //printf("15 %1.2f\n",_15PB10[49]);
     _15PB20(maxInd2);
+    _15PB20.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _15PB20[i] = -1.71 +0.00275*(i-5);
             else if (i<90 && i>=45) _15PB20[i] = -1.60+0.0012*(i-45);
@@ -1758,6 +1785,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("15 %1.2f  %1.2f\n",_15PB20[44],_15PB20[89]);
 
     _15PB30(maxInd2);
+    _15PB30.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _15PB30[i] = -1.75 +0.0025*(i-5);
             else if (i<90 && i>=45) _15PB30[i] = -1.65+0.002*(i-45);
@@ -1765,6 +1793,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("15 %1.2f  %1.2f\n",_15PB30[44],_15PB30[89]);
 
     _15PB40(maxInd2);
+    _15PB40.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _15PB40[i] = -1.79 +0.002*(i-5);
             else if (i<90 && i>=45) _15PB40[i] = -1.71+0.002*(i-45);
@@ -1772,6 +1801,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("15 %1.2f  %1.2f\n",_15PB40[44],_15PB40[89]);
 
     _15PB50(maxInd2);
+    _15PB50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _15PB50[i] = -1.82 +0.002*(i-5);
             else if (i<90 && i>=45) _15PB50[i] = -1.74+0.0011*(i-45);
@@ -1779,17 +1809,20 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("15 %1.2f  %1.2f\n",_15PB50[44],_15PB50[89]);
 
     _15PB60(maxInd2);
+    _15PB60.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _15PB60[i] = -1.87 +0.0025*(i-5);
             else if (i<90 && i>=45) _15PB60[i] = -1.77+0.001*(i-45);
         }
         //printf("15 %1.2f  %1.2f\n",_15PB60[44],_15PB60[89]);
     _15PB70(maxInd3);
+    _15PB70.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _15PB70[i] = -1.90 +0.0027*(i-5);
         }
         //    printf("15 %1.2f\n",_15PB70[49]);
     _15PB80(maxInd3);
+    _15PB80.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _15PB80[i] = -1.93 +0.0027*(i-5);
         }
@@ -1797,6 +1830,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //3PB
     _3PB10(maxInd2);
+    _3PB10.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _3PB10[i] = -1.56 +0.005*(i-5);
             else if (i<90 && i>=45) _3PB10[i] = -1.36+0.001*(i-45);
@@ -1804,6 +1838,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("30 %1.2f  %1.2f\n",_3PB10[44],_3PB10[89]);
 
     _3PB20(maxInd2);
+    _3PB20.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _3PB20[i] = -1.59 +0.00275*(i-5);
             else if (i<90 && i>=45) _3PB20[i] = -1.48+0.003*(i-45);
@@ -1811,6 +1846,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("30 %1.2f  %1.2f\n",_3PB20[44],_3PB20[89]);
 
     _3PB30(maxInd2);
+    _3PB30.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _3PB30[i] = -1.62 +0.00225*(i-5);
             else if (i<90 && i>=45) _3PB30[i] = -1.53+0.0032*(i-45);
@@ -1818,6 +1854,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("30 %1.2f  %1.2f\n",_3PB30[44],_3PB30[89]);
 
     _3PB40(maxInd2);
+    _3PB40.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _3PB40[i] = -1.64 +0.0015*(i-5);
             else if (i<90 && i>=45) _3PB40[i] = -1.58+0.0025*(i-45);
@@ -1825,6 +1862,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("30 %1.2f  %1.2f\n",_3PB40[44],_3PB40[89]);
 
     _3PB50(maxInd2);
+    _3PB50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _3PB50[i] = -1.69 +0.00175*(i-5);
             else if (i<90 && i>=45) _3PB50[i] = -1.62+0.002*(i-45);
@@ -1832,17 +1870,20 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("30 %1.2f  %1.2f\n",_3PB50[44],_3PB50[89]);
 
     _3PB60(maxInd2);
+    _3PB60.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _3PB60[i] = -1.73 +0.002*(i-5);
             else if (i<90 && i>=45) _3PB60[i] = -1.65+0.0012*(i-45);
         }
         //printf("30 %1.2f  %1.2f\n",_3PB60[44],_3PB60[89]);
     _3PB70(maxInd3);
+    _3PB70.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _3PB70[i] = -1.76 +0.002*(i-5);
         }
         //printf("30 %1.2f\n",_3PB70[49]);
     _3PB80(maxInd3);
+    _3PB80.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _3PB80[i] = -1.78 +0.0025*(i-5);
         }
@@ -1850,6 +1891,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //45PB
     _45PB10(maxInd2);
+    _45PB10.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _45PB10[i] = -1.46 +0.0045*(i-5);
             else if (i<90 && i>=45) _45PB10[i] = -1.28+0.0025*(i-45);
@@ -1857,6 +1899,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("45 %1.2f  %1.2f\n",_45PB10[44],_45PB10[89]);
 
     _45PB20(maxInd2);
+    _45PB20.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _45PB20[i] = -1.48 +0.00275*(i-5);
             else if (i<90 && i>=45) _45PB20[i] = -1.37+0.0025*(i-45);
@@ -1864,6 +1907,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("45 %1.2f  %1.2f\n",_45PB20[44],_45PB20[89]);
 
     _45PB30(maxInd2);
+    _45PB30.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _45PB30[i] = -1.51 +0.00175*(i-5);
             else if (i<90 && i>=45) _45PB30[i] = -1.44+0.0035*(i-45);
@@ -1871,6 +1915,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("45 %1.2f  %1.2f\n",_45PB30[44],_45PB30[89]);
 
     _45PB40(maxInd2);
+    _45PB40.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _45PB40[i] = -1.52 +0.001*(i-5);
             else if (i<90 && i>=45) _45PB40[i] = -1.48+0.003*(i-45);
@@ -1878,6 +1923,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("45 %1.2f  %1.2f\n",_45PB40[44],_45PB40[89]);
 
     _45PB50(maxInd2);
+    _45PB50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _45PB50[i] = -1.55 +0.001*(i-5);
             else if (i<90 && i>=45) _45PB50[i] = -1.51+0.0022*(i-45);
@@ -1885,17 +1931,20 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("45 %1.2f  %1.2f\n",_45PB50[44],_45PB50[89]);
 
     _45PB60(maxInd2);
+    _45PB60.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _45PB60[i] = -1.6 +0.0015*(i-5);
             else if (i<90 && i>=45) _45PB60[i] = -1.54+0.001*(i-45);
         }
         //printf("45 %1.2f  %1.2f\n",_45PB60[44],_45PB60[89]);
     _45PB70(maxInd3);
+    _45PB70.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _45PB70[i] = -1.63 +0.0017*(i-5);
         }
         //printf("45 %1.2f\n",_45PB70[49]);
     _45PB80(maxInd3);
+    _45PB80.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _45PB80[i] = -1.67 +0.0025*(i-5);
         }
@@ -1903,6 +1952,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //_6PB
     _6PB10(maxInd);
+    _6PB10.clear();
         for (int i=0; i<maxInd; i++) {//i = chromaticity  0==>140
             if (i<45 && i>5) _6PB10[i] = -1.33 +0.005*(i-5);
             else if (i<85 && i>=45) _6PB10[i] = -1.13+0.0045*(i-45);
@@ -1911,6 +1961,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("60 %1.2f  %1.2f %1.2f\n",_6PB10[44],_6PB10[84],_6PB10[139]);
 
     _6PB20(maxInd);
+    _6PB20.clear();
         for (int i=0; i<maxInd; i++) {//i = chromaticity  0==>140
             if (i<45 && i>5) _6PB20[i] = -1.36 +0.004*(i-5);
             else if (i<85 && i>=45) _6PB20[i] = -1.20+0.00375*(i-45);
@@ -1919,6 +1970,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("60 %1.2f  %1.2f %1.2f\n",_6PB20[44],_6PB20[84],_6PB20[139]);
 
     _6PB30(maxInd);
+    _6PB30.clear();
         for (int i=0; i<maxInd; i++) {//i = chromaticity  0==>140
             if (i<45 && i>5) _6PB30[i] = -1.38 +0.00225*(i-5);
             else if (i<85 && i>=45) _6PB30[i] = -1.29+0.00375*(i-45);
@@ -1927,6 +1979,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("60 %1.2f  %1.2f %1.2f\n",_6PB30[44],_6PB30[84],_6PB30[139]);
 
     _6PB40(maxInd);
+    _6PB40.clear();
         for (int i=0; i<maxInd; i++) {//i = chromaticity  0==>140
             if (i<45 && i>5) _6PB40[i] = -1.39 +0.00125*(i-5);
             else if (i<85 && i>=45) _6PB40[i] = -1.34+0.00275*(i-45);
@@ -1935,6 +1988,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("60 %1.2f  %1.2f %1.2f\n",_6PB40[44],_6PB40[84],_6PB40[139]);
 
     _6PB50(maxInd2);//limits  -1.3   -1.11
+    _6PB50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _6PB50[i] = -1.43 +0.00125*(i-5);
             else if (i<90 && i>=45) _6PB50[i] = -1.38+0.00225*(i-45);
@@ -1942,17 +1996,20 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("60 %1.2f  %1.2f \n",_6PB50[44],_6PB50[89]);
 
     _6PB60(maxInd2);//limits  -1.3   -1.11
+    _6PB60.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _6PB60[i] = -1.46 +0.0012*(i-5);
             else if (i<90 && i>=45) _6PB60[i] = -1.40+0.000875*(i-45);
         }
         //printf("60 %1.2f  %1.2f\n",_6PB60[44],_6PB60[89]);
     _6PB70(maxInd3);
+    _6PB70.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _6PB70[i] = -1.49 +0.0018*(i-5);
         }
         //printf("6 %1.2f\n",_6PB70[49]);
     _6PB80(maxInd3);
+    _6PB80.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _6PB80[i] = -1.52 +0.0022*(i-5);
         }
@@ -1961,6 +2018,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //_75PB : notation Munsell for maximum deviation blue purple
     _75PB10(maxInd);//limits hue -1.23  -0.71  _75PBx   x=Luminance  eg_75PB10 for L >5 and L<=15
+    _75PB10.clear();
         for (int i=0; i<maxInd; i++) {//i = chromaticity  0==>140
             if (i<45 && i>5) _75PB10[i] = -1.23 +0.0065*(i-5);
             else if (i<85 && i>=45) _75PB10[i] = -0.97+0.00375*(i-45);
@@ -1969,6 +2027,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("75 %1.2f  %1.2f %1.2f\n",_75PB10[44],_75PB10[84],_75PB10[139]);
 
     _75PB20(maxInd);//limits -1.24  -0.79  for L>15 <=25
+    _75PB20.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _75PB20[i] = -1.24 +0.004*(i-5);
             else if (i<85 && i>=45) _75PB20[i] = -1.08+0.00425*(i-45);
@@ -1977,6 +2036,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("75 %1.2f  %1.2f %1.2f\n",_75PB20[44],_75PB20[84],_75PB20[139]);
 
     _75PB30(maxInd);//limits -1.25  -0.85
+    _75PB30.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _75PB30[i] = -1.25 +0.00275*(i-5);
             else if (i<85 && i>=45) _75PB30[i] = -1.14+0.004*(i-45);
@@ -1985,6 +2045,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("75 %1.2f  %1.2f %1.2f\n",_75PB30[44],_75PB30[84],_75PB30[139]);
 
     _75PB40(maxInd);//limits  -1.27  -0.92
+    _75PB40.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _75PB40[i] = -1.27 +0.002*(i-5);
             else if (i<85 && i>=45) _75PB40[i] = -1.19+0.003*(i-45);
@@ -1993,6 +2054,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("75 %1.2f  %1.2f %1.2f\n",_75PB40[44],_75PB40[84],_75PB40[139]);
 
     _75PB50(maxInd2);//limits  -1.3   -1.11
+    _75PB50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _75PB50[i] = -1.3 +0.00175*(i-5);
             else if (i<90 && i>=45) _75PB50[i] = -1.23+0.0025*(i-45);
@@ -2000,6 +2062,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("75 %1.2f  %1.2f\n",_75PB50[44],_75PB50[89]);
 
     _75PB60(maxInd2);
+    _75PB60.clear();
         for (int i=0; i<maxInd2; i++) {//limits -1.32  -1.17
             if (i<45 && i>5) _75PB60[i] = -1.32 +0.0015*(i-5);
             else if (i<90 && i>=45) _75PB60[i] = -1.26+0.002*(i-45);
@@ -2007,16 +2070,19 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("75 %1.2f  %1.2f \n",_75PB60[44],_75PB60[89]);
 
     _75PB70(maxInd3);
+    _75PB70.clear();
         for (int i=0; i<maxInd3; i++) {//limits  -1.34  -1.27
             if (i<50 && i>5) _75PB70[i] = -1.34 +0.002*(i-5);
         }
     _75PB80(maxInd3);
+    _75PB80.clear();
         for (int i=0; i<maxInd3; i++) {//limits -1.35  -1.29
             if (i<50 && i>5) _75PB80[i] = -1.35 +0.00125*(i-5);
         }
 
 
     _9PB10(maxInd);
+    _9PB10.clear();
         for (int i=0; i<maxInd; i++) {//i = chromaticity  0==>140
             if (i<45 && i>5) _9PB10[i] = -1.09 +0.00475*(i-5);
             else if (i<85 && i>=45) _9PB10[i] = -0.9+0.003*(i-45);
@@ -2025,6 +2091,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("90 %1.2f  %1.2f %1.2f\n",_9PB10[44],_9PB10[84],_9PB10[139]);
 
     _9PB20(maxInd);
+    _9PB20.clear();
         for (int i=0; i<maxInd; i++) {//i = chromaticity  0==>140
             if (i<45 && i>5) _9PB20[i] = -1.12 +0.0035*(i-5);
             else if (i<85 && i>=45) _9PB20[i] = -0.98+0.00325*(i-45);
@@ -2033,6 +2100,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("90 %1.2f  %1.2f %1.2f\n",_9PB20[44],_9PB20[84],_9PB20[139]);
 
     _9PB30(maxInd);
+    _9PB30.clear();
         for (int i=0; i<maxInd; i++) {//i = chromaticity  0==>140
             if (i<45 && i>5) _9PB30[i] = -1.14 +0.0028*(i-5);
             else if (i<85 && i>=45) _9PB30[i] = -1.03+0.003*(i-45);
@@ -2041,6 +2109,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("90 %1.2f  %1.2f %1.2f\n",_9PB30[44],_9PB30[84],_9PB30[139]);
 
     _9PB40(maxInd);
+    _9PB40.clear();
         for (int i=0; i<maxInd; i++) {//i = chromaticity  0==>140
             if (i<45 && i>5) _9PB40[i] = -1.16 +0.002*(i-5);
             else if (i<85 && i>=45) _9PB40[i] = -1.08+0.00275*(i-45);
@@ -2049,6 +2118,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("90 %1.2f  %1.2f %1.2f\n",_9PB40[44],_9PB40[84],_9PB40[139]);
 
     _9PB50(maxInd2);
+    _9PB50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _9PB50[i] = -1.19 +0.00175*(i-5);
             else if (i<90 && i>=45) _9PB50[i] = -1.12+0.00225*(i-45);
@@ -2056,17 +2126,20 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("90 %1.2f  %1.2f \n",_9PB50[44],_9PB50[84]);
 
     _9PB60(maxInd2);
+    _9PB60.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _9PB60[i] = -1.21 +0.0015*(i-5);
             else if (i<90 && i>=45) _9PB60[i] = -1.15+0.002*(i-45);
         }
         //printf("90 %1.2f  %1.2f \n",_9PB60[44],_9PB60[89]);
     _9PB70(maxInd3);
+    _9PB70.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _9PB70[i] = -1.23 +0.0018*(i-5);
         }
             //printf("9 %1.2f\n",_9PB70[49]);
     _9PB80(maxInd3);
+    _9PB80.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _9PB80[i] = -1.24 +0.002*(i-5);
         }
@@ -2075,6 +2148,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //10PB
     _10PB10(maxInd);
+    _10PB10.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _10PB10[i] = -1.02 +0.00425*(i-5);
             else if (i<85 && i>=45) _10PB10[i] = -0.85+0.0025*(i-45);
@@ -2083,6 +2157,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("10 %1.2f  %1.2f %1.2f\n",_10PB10[44],_10PB10[84],_10PB10[139]);
 
     _10PB20(maxInd);
+    _10PB20.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _10PB20[i] = -1.05 +0.00325*(i-5);
             else if (i<85 && i>=45) _10PB20[i] = -0.92+0.00275*(i-45);
@@ -2091,6 +2166,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("10 %1.2f  %1.2f %1.2f\n",_10PB20[44],_10PB20[84],_10PB20[139]);
 
     _10PB30(maxInd);
+    _10PB30.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _10PB30[i] = -1.07 +0.00275*(i-5);
             else if (i<85 && i>=45) _10PB30[i] = -0.96+0.0025*(i-45);
@@ -2099,6 +2175,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("10 %1.2f  %1.2f %1.2f\n",_10PB30[44],_10PB30[84],_10PB30[139]);
 
     _10PB40(maxInd);
+    _10PB40.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _10PB40[i] = -1.09 +0.002*(i-5);
             else if (i<85 && i>=45) _10PB40[i] = -1.01+0.00225*(i-45);
@@ -2107,6 +2184,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("10 %1.2f  %1.2f %1.2f\n",_10PB40[44],_10PB40[84],_10PB40[139]);
 
     _10PB50(maxInd2);
+    _10PB50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _10PB50[i] = -1.12 +0.00175*(i-5);
             else if (i<90 && i>=45) _10PB50[i] = -1.05+0.00225*(i-45);
@@ -2114,6 +2192,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("10 %1.2f  %1.2f\n",_10PB50[44],_10PB50[84]);
 
     _10PB60(maxInd2);
+    _10PB60.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _10PB60[i] = -1.14 +0.0015*(i-5);
             else if (i<90 && i>=45) _10PB60[i] = -1.08+0.00225*(i-45);
@@ -2123,6 +2202,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //1P
     _1P10(maxInd);
+    _1P10.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _1P10[i] = -0.96 +0.00375*(i-5);
             else if (i<85 && i>=45) _1P10[i] = -0.81+0.00225*(i-45);
@@ -2131,6 +2211,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("1P %1.2f  %1.2f %1.2f\n",_1P10[44],_1P10[84],_1P10[139]);
 
     _1P20(maxInd);
+    _1P20.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _1P20[i] = -1.0 +0.00325*(i-5);
             else if (i<85 && i>=45) _1P20[i] = -0.87+0.0025*(i-45);
@@ -2139,6 +2220,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("1P %1.2f  %1.2f %1.2f\n",_1P20[44],_1P20[84],_1P20[139]);
 
     _1P30(maxInd);
+    _1P30.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _1P30[i] = -1.02 +0.00275*(i-5);
             else if (i<85 && i>=45) _1P30[i] = -0.91+0.00225*(i-45);
@@ -2147,6 +2229,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("1P %1.2f  %1.2f %1.2f\n",_1P30[44],_1P30[84],_1P30[139]);
 
     _1P40(maxInd);
+    _1P40.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _1P40[i] = -1.04 +0.00225*(i-5);
             else if (i<85 && i>=45) _1P40[i] = -0.95+0.00225*(i-45);
@@ -2155,6 +2238,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("1P %1.2f  %1.2f %1.2f\n",_1P40[44],_1P40[84],_1P40[139]);
 
     _1P50(maxInd2);
+    _1P50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _1P50[i] = -1.06 +0.002*(i-5);
             else if (i<90 && i>=45) _1P50[i] = -0.98+0.00175*(i-45);
@@ -2162,6 +2246,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("1P %1.2f  %1.2f \n",_1P50[44],_1P50[89]);
 
     _1P60(maxInd2);
+    _1P60.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _1P60[i] = -1.07 +0.0015*(i-5);
             else if (i<90 && i>=45) _1P60[i] = -1.01+0.00175*(i-45);
@@ -2170,6 +2255,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
             //4P
     _4P10(maxInd);
+    _4P10.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _4P10[i] = -0.78 +0.002*(i-5);
             else if (i<85 && i>=45) _4P10[i] = -0.7+0.00125*(i-45);
@@ -2178,6 +2264,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("4P %1.2f  %1.2f %1.2f\n",_4P10[44],_4P10[84],_4P10[139]);
 
     _4P20(maxInd);
+    _4P20.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _4P20[i] = -0.84 +0.0025*(i-5);
             else if (i<85 && i>=45) _4P20[i] = -0.74+0.00175*(i-45);
@@ -2186,6 +2273,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("4P %1.2f  %1.2f %1.2f\n",_4P20[44],_4P20[84],_4P20[139]);
 
     _4P30(maxInd);
+    _4P30.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _4P30[i] = -0.85 +0.00225*(i-5);
             else if (i<85 && i>=45) _4P30[i] = -0.76+0.00125*(i-45);
@@ -2194,6 +2282,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("4P %1.2f  %1.2f %1.2f\n",_4P30[44],_4P30[84],_4P30[139]);
 
     _4P40(maxInd);
+    _4P40.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _4P40[i] = -0.87 +0.00175*(i-5);
             else if (i<85 && i>=45) _4P40[i] = -0.8+0.00175*(i-45);
@@ -2202,6 +2291,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("4P %1.2f  %1.2f %1.2f\n",_4P40[44],_4P40[84],_4P40[139]);
 
     _4P50(maxInd2);
+    _4P50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _4P50[i] = -0.88 +0.0015*(i-5);
             else if (i<90 && i>=45) _4P50[i] = -0.82+0.0015*(i-45);
@@ -2209,6 +2299,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("4P %1.2f  %1.2f \n",_4P50[44],_4P50[89]);
 
     _4P60(maxInd2);
+    _4P60.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _4P60[i] = -0.89 +0.00125*(i-5);
             else if (i<90 && i>=45) _4P60[i] = -0.84+0.00125*(i-45);
@@ -2218,30 +2309,35 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //red yellow correction
     _10YR20(maxInd2);
+    _10YR20.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _10YR20[i] = 1.22 +0.002*(i-5);
             else if (i<90 && i>=45) _10YR20[i] = 1.30+0.006*(i-45);
         }
         //printf("10YR  %1.2f  %1.2f\n",_10YR20[44],_10YR20[56]);
     _10YR30(maxInd2);
+    _10YR30.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _10YR30[i] = 1.27 +0.00175*(i-5);
             else if (i<90 && i>=45) _10YR30[i] = 1.34+0.0017*(i-45);
         }
         //printf("10YR  %1.2f  %1.2f\n",_10YR30[44],_10YR30[75]);
     _10YR40(maxInd2);
+    _10YR40.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _10YR40[i] = 1.32 +0.00025*(i-5);
             else if (i<90 && i>=45) _10YR40[i] = 1.33+0.0015*(i-45);
         }
         //printf("10YR  %1.2f  %1.2f\n",_10YR40[44],_10YR40[85]);
     _10YR50(maxInd2);
+    _10YR50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _10YR50[i] = 1.35 +0.000*(i-5);
             else if (i<90 && i>=45) _10YR50[i] = 1.35+0.0012*(i-45);
         }
         //printf("10YR  %1.2f  %1.2f\n",_10YR50[44],_10YR50[80]);
     _10YR60(maxInd);
+    _10YR60.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _10YR60[i] = 1.38 - 0.00025*(i-5);
             else if (i<85 && i>=45) _10YR60[i] = 1.37+0.0005*(i-45);
@@ -2249,6 +2345,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("10YR  %1.2f  %1.2f %1.2f\n",_10YR60[44],_10YR60[85],_10YR60[139] );
     _10YR70(maxInd);
+    _10YR70.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _10YR70[i] = 1.41 - 0.0005*(i-5);
             else if (i<85 && i>=45) _10YR70[i] = 1.39+0.000*(i-45);
@@ -2256,6 +2353,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("10YR  %1.2f  %1.2f %1.2f\n",_10YR70[44],_10YR70[85],_10YR70[139] );
     _10YR80(maxInd);
+    _10YR80.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _10YR80[i] = 1.45 - 0.00125*(i-5);
             else if (i<85 && i>=45) _10YR80[i] = 1.40+0.000*(i-45);
@@ -2263,30 +2361,35 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("10YR  %1.2f  %1.2f %1.2f\n",_10YR80[44],_10YR80[84],_10YR80[139] );
     _10YR90(maxInd2);
+    _10YR90.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _10YR90[i] = 1.48 -0.001*(i-5);
             else if (i<90 && i>=45) _10YR90[i] = 1.44-0.0009*(i-45);
         }
         //printf("10YR  %1.2f  %1.2f\n",_10YR90[45],_10YR90[80]);
     _85YR20(maxInd3);
+    _85YR20.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _85YR20[i] = 1.12 +0.004*(i-5);
         }
 
         //printf("85YR  %1.2f \n",_85YR20[44]);
     _85YR30(maxInd2);
+    _85YR30.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _85YR30[i] = 1.16 + 0.0025*(i-5);
             else if (i<90 && i>=45) _85YR30[i] = 1.26+0.0028*(i-45);
         }
         //printf("85YR  %1.2f  %1.2f\n",_85YR30[44],_85YR30[75]);
     _85YR40(maxInd2);
+    _85YR40.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _85YR40[i] = 1.20 + 0.0015*(i-5);
             else if (i<90 && i>=45) _85YR40[i] = 1.26+0.0024*(i-45);
         }
         //printf("85YR  %1.2f  %1.2f\n",_85YR40[44],_85YR40[75]);
     _85YR50(maxInd);
+    _85YR50.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _85YR50[i] = 1.24 + 0.0005*(i-5);
             else if (i<85 && i>=45) _85YR50[i] = 1.26+0.002*(i-45);
@@ -2294,6 +2397,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("85YR  %1.2f  %1.2f %1.2f\n",_85YR50[44],_85YR50[85],_85YR50[110] );
     _85YR60(maxInd);
+    _85YR60.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _85YR60[i] = 1.27 + 0.00025*(i-5);
             else if (i<85 && i>=45) _85YR60[i] = 1.28+0.0015*(i-45);
@@ -2302,6 +2406,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("85YR  %1.2f  %1.2f %1.2f\n",_85YR60[44],_85YR60[85],_85YR60[139] );
 
     _85YR70(maxInd);
+    _85YR70.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _85YR70[i] = 1.31 - 0.00025*(i-5);
             else if (i<85 && i>=45) _85YR70[i] = 1.30+0.0005*(i-45);
@@ -2309,6 +2414,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("85YR  %1.2f  %1.2f %1.2f\n",_85YR70[44],_85YR70[85],_85YR70[139] );
     _85YR80(maxInd);
+    _85YR80.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _85YR80[i] = 1.35 - 0.00075*(i-5);
             else if (i<85 && i>=45) _85YR80[i] = 1.32+0.00025*(i-45);
@@ -2316,6 +2422,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("85YR  %1.2f  %1.2f %1.2f\n",_85YR80[44],_85YR80[85],_85YR80[139] );
     _85YR90(maxInd2);
+    _85YR90.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _85YR90[i] = 1.39 - 0.00125*(i-5);
             else if (i<90 && i>=45) _85YR90[i] = 1.34+0.00*(i-45);
@@ -2324,24 +2431,28 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //7YR
     _7YR30(maxInd2);
+    _7YR30.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _7YR30[i] = 1.06 + 0.0028*(i-5);
             else if (i<90 && i>=45) _7YR30[i] = 1.17+0.0045*(i-45);
         }
         //printf("7YR  %1.2f  %1.2f\n",_7YR30[44],_7YR30[66]);
     _7YR40(maxInd2);
+    _7YR40.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _7YR40[i] = 1.10 + 0.0018*(i-5);
             else if (i<90 && i>=45) _7YR40[i] = 1.17+0.0035*(i-45);
         }
         //printf("7YR  %1.2f  %1.2f\n",_7YR40[44],_7YR40[89]);
     _7YR50(maxInd2);
+    _7YR50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _7YR50[i] = 1.14 + 0.00125*(i-5);
             else if (i<90 && i>=45) _7YR50[i] = 1.19+0.002*(i-45);
         }
         //printf("7YR  %1.2f  %1.2f\n",_7YR50[44],_7YR50[89] );
     _7YR60(maxInd);
+    _7YR60.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _7YR60[i] = 1.17 + 0.00075*(i-5);
             else if (i<85 && i>=45) _7YR60[i] = 1.20+0.00175*(i-45);
@@ -2350,6 +2461,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("7YR  %1.2f  %1.2f %1.2f\n",_7YR60[44],_7YR60[84],_7YR60[125] );
 
     _7YR70(maxInd);
+    _7YR70.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _7YR70[i] = 1.20 + 0.0005*(i-5);
             else if (i<85 && i>=45) _7YR70[i] = 1.22+0.00125*(i-45);
@@ -2357,22 +2469,26 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("7YR  %1.2f  %1.2f %1.2f\n",_7YR70[44],_7YR70[84],_7YR70[125] );
     _7YR80(maxInd3);
+    _7YR80.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _7YR80[i] = 1.29 - 0.0008*(i-5);
         }
         //printf("7YR  %1.2f \n",_7YR80[44] );
     _55YR30(maxInd3);
+    _55YR30.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _55YR30[i] = 0.96 + 0.0038*(i-5);
         }
         //printf("55YR  %1.2f \n",_55YR30[44] );
     _55YR40(maxInd2);
+    _55YR40.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _55YR40[i] = 1.01 + 0.0022*(i-5);
             else if (i<90 && i>=45) _55YR40[i] = 1.10+0.0037*(i-45);
         }
         //printf("55YR  %1.2f  %1.2f\n",_55YR40[44],_55YR40[89] );
     _55YR50(maxInd);
+    _55YR50.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _55YR50[i] = 1.06 + 0.0015*(i-5);
             else if (i<85 && i>=45) _55YR50[i] = 1.12+0.00225*(i-45);
@@ -2380,6 +2496,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("55YR  %1.2f  %1.2f %1.2f\n",_55YR50[44],_55YR50[84],_55YR50[125] );
     _55YR60(maxInd);
+    _55YR60.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _55YR60[i] = 1.08 + 0.0012*(i-5);
             else if (i<85 && i>=45) _55YR60[i] = 1.13+0.0018*(i-45);
@@ -2387,6 +2504,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("55YR  %1.2f  %1.2f %1.2f\n",_55YR60[44],_55YR60[84],_55YR60[125] );
     _55YR70(maxInd);
+    _55YR70.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _55YR70[i] = 1.11 + 0.00075*(i-5);
             else if (i<85 && i>=45) _55YR70[i] = 1.14+0.0012*(i-45);
@@ -2394,6 +2512,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("55YR  %1.2f  %1.2f %1.2f\n",_55YR70[44],_55YR70[84],_55YR70[125] );
     _55YR80(maxInd);
+    _55YR80.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _55YR80[i] = 1.16 + 0.00*(i-5);
             else if (i<85 && i>=45) _55YR80[i] = 1.16+0.00075*(i-45);
@@ -2401,30 +2520,35 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("55YR  %1.2f  %1.2f %1.2f\n",_55YR80[44],_55YR80[84],_55YR80[125] );
     _55YR90(maxInd3);
+    _55YR90.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _55YR90[i] = 1.19 - 0.0005*(i-5);
         }
         //printf("55YR  %1.2f \n",_55YR90[44] );
 
     _4YR30(maxInd2);
+    _4YR30.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _4YR30[i] = 0.87 + 0.0035*(i-5);
             else if (i<90 && i>=45) _4YR30[i] = 1.01+0.0043*(i-45);
         }
         //printf("4YR  %1.2f  %1.2f\n",_4YR30[44],_4YR30[78] );
     _4YR40(maxInd2);
+    _4YR40.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _4YR40[i] = 0.92 + 0.0025*(i-5);
             else if (i<90 && i>=45) _4YR40[i] = 1.02+0.0033*(i-45);
         }
         //printf("4YR  %1.2f  %1.2f\n",_4YR40[44],_4YR40[74] );
     _4YR50(maxInd2);
+    _4YR50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _4YR50[i] = 0.97 + 0.0015*(i-5);
             else if (i<90 && i>=45) _4YR50[i] = 1.03+0.0025*(i-45);
         }
         //printf("4YR  %1.2f  %1.2f\n",_4YR50[44],_4YR50[85] );
     _4YR60(maxInd);
+    _4YR60.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _4YR60[i] = 0.99 + 0.00125*(i-5);
             else if (i<85 && i>=45) _4YR60[i] = 1.04+0.002*(i-45);
@@ -2432,6 +2556,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("4YR  %1.2f  %1.2f %1.2f\n",_4YR60[44],_4YR60[84],_4YR60[125] );
     _4YR70(maxInd);
+    _4YR70.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _4YR70[i] = 1.02 + 0.00075*(i-5);
             else if (i<85 && i>=45) _4YR70[i] = 1.05+0.00175*(i-45);
@@ -2439,36 +2564,42 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("4YR  %1.2f  %1.2f %1.2f\n",_4YR70[44],_4YR70[84],_4YR70[125] );
     _4YR80(maxInd3);
+    _4YR80.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<50 && i>5) _4YR80[i] = 1.09 - 0.0002*(i-5);
         }
         //printf("4YR  %1.2f \n",_4YR80[41] );
 
     _25YR30(maxInd2);
+    _25YR30.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _25YR30[i] = 0.77 + 0.004*(i-5);
             else if (i<90 && i>=45) _25YR30[i] = 0.94+0.004*(i-45);
         }
         //printf("25YR  %1.2f  %1.2f\n",_25YR30[44],_25YR30[74] );
     _25YR40(maxInd2);
+    _25YR40.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _25YR40[i] = 0.82 + 0.003*(i-5);
             else if (i<90 && i>=45) _25YR40[i] = 0.94+0.002*(i-45);
         }
         //printf("25YR  %1.2f  %1.2f\n",_25YR40[44],_25YR40[84] );
     _25YR50(maxInd2);
+    _25YR50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _25YR50[i] = 0.87+ 0.002*(i-5);
             else if (i<90 && i>=45) _25YR50[i] = 0.95+0.003*(i-45);
         }
         //printf("25YR  %1.2f  %1.2f\n",_25YR50[44],_25YR50[84] );
     _25YR60(maxInd2);
+    _25YR60.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _25YR60[i] = 0.89+ 0.0015*(i-5);
             else if (i<90 && i>=45) _25YR60[i] = 0.95+0.004*(i-45);
         }
         //printf("25YR  %1.2f  %1.2f\n",_25YR60[44],_25YR60[84] );
     _25YR70(maxInd2);
+    _25YR70.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _25YR70[i] = 0.92+ 0.001*(i-5);
             else if (i<90 && i>=45) _25YR70[i] = 0.96+0.003*(i-45);
@@ -2476,24 +2607,28 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("25YR  %1.2f  %1.2f\n",_25YR70[44],_25YR70[84] );
 
     _10R30(maxInd2);
+    _10R30.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _10R30[i] = 0.62 + 0.00225*(i-5);
             else if (i<90 && i>=45) _10R30[i] = 0.71+0.003*(i-45);
         }
         //printf("10R  %1.2f  %1.2f\n",_10R30[44],_10R30[84] );
     _10R40(maxInd2);
+    _10R40.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _10R40[i] = 0.66 + 0.0025*(i-5);
             else if (i<90 && i>=45) _10R40[i] = 0.76+0.0035*(i-45);
         }
         //printf("10R  %1.2f  %1.2f\n",_10R40[44],_10R40[84] );
     _10R50(maxInd2);
+    _10R50.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _10R50[i] = 0.71 + 0.002*(i-5);
             else if (i<90 && i>=45) _10R50[i] = 0.79+0.0043*(i-45);
         }
         //printf("10R  %1.2f  %1.2f\n",_10R50[44],_10R50[84] );
     _10R60(maxInd);
+    _10R60.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _10R60[i] = 0.73 + 0.00175*(i-5);
             else if (i<85 && i>=45) _10R60[i] = 0.80 +0.0033*(i-45);
@@ -2501,6 +2636,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("10R  %1.2f  %1.2f %1.2f\n",_10R60[44],_10R60[84],_10R60[125] );
     _10R70(maxInd);
+    _10R70.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _10R70[i] = 0.75 + 0.0015*(i-5);
             else if (i<85 && i>=45) _10R70[i] = 0.81 +0.0017*(i-45);
@@ -2509,18 +2645,21 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("10R  %1.2f  %1.2f %1.2f\n",_10R70[44],_10R70[84],_10R70[125] );
 
     _9R30(maxInd2);
+    _9R30.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _9R30[i] = 0.57 + 0.002*(i-5);
             else if (i<90 && i>=45) _9R30[i] = 0.65+0.0018*(i-45);
         }
         //printf("9R  %1.2f  %1.2f\n",_9R30[44],_9R30[84] );
     _9R40(maxInd2);
+    _9R40.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _9R40[i] = 0.61 + 0.002*(i-5);
             else if (i<90 && i>=45) _9R40[i] = 0.69+0.0025*(i-45);
         }
         //printf("9R  %1.2f  %1.2f\n",_9R40[44],_9R40[84] );
     _9R50(maxInd);
+    _9R50.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _9R50[i] = 0.66 + 0.00175*(i-5);
             else if (i<85 && i>=45) _9R50[i] = 0.73 +0.0025*(i-45);
@@ -2528,6 +2667,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("9R  %1.2f  %1.2f %1.2f\n",_9R50[44],_9R50[84],_9R50[125] );
     _9R60(maxInd);
+    _9R60.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _9R60[i] = 0.68 + 0.0015*(i-5);
             else if (i<85 && i>=45) _9R60[i] = 0.74 +0.0022*(i-45);
@@ -2535,6 +2675,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("9R  %1.2f  %1.2f %1.2f\n",_9R60[44],_9R60[84],_9R60[125] );
     _9R70(maxInd2);
+    _9R70.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _9R70[i] = 0.70 + 0.0012*(i-5);
             else if (i<90 && i>=45) _9R70[i] = 0.75+0.0013*(i-45);
@@ -2542,18 +2683,21 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("9R  %1.2f  %1.2f\n",_9R70[44],_9R70[84] );
 
     _7R30(maxInd2);
+    _7R30.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _7R30[i] = 0.48 + 0.0015*(i-5);
             else if (i<90 && i>=45) _7R30[i] = 0.54-0.0005*(i-45);
         }
         //printf("7R  %1.2f  %1.2f\n",_7R30[44],_7R30[84] );
     _7R40(maxInd2);
+    _7R40.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _7R40[i] = 0.51 + 0.0015*(i-5);
             else if (i<90 && i>=45) _7R40[i] = 0.57+0.0005*(i-45);
         }
         //printf("7R  %1.2f  %1.2f\n",_7R40[44],_7R40[84] );
     _7R50(maxInd);
+    _7R50.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _7R50[i] = 0.54 + 0.0015*(i-5);
             else if (i<85 && i>=45) _7R50[i] = 0.60 +0.0005*(i-45);
@@ -2561,6 +2705,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("7R  %1.2f  %1.2f %1.2f\n",_7R50[44],_7R50[84],_7R50[125] );
     _7R60(maxInd);
+    _7R60.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _7R60[i] = 0.58 + 0.00075*(i-5);
             else if (i<85 && i>=45) _7R60[i] = 0.61 +0.00075*(i-45);
@@ -2568,6 +2713,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("7R  %1.2f  %1.2f %1.2f\n",_7R60[44],_7R60[84],_7R60[107] );
     _7R70(maxInd2);
+    _7R70.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _7R70[i] = 0.59 + 0.00075*(i-5);
             else if (i<90 && i>=45) _7R70[i] = 0.62+0.00075*(i-45);
@@ -2578,18 +2724,21 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //5R
     _5R10(maxInd2);
+    _5R10.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _5R10[i] = 0.10 - 0.0018*(i-5);
             else if (i<90 && i>=45) _5R10[i] = 0.035-0.003*(i-45);
         }
         //printf("5R  %1.2f  %1.2f\n",_5R10[44],_5R10[51] );
     _5R20(maxInd2);
+    _5R20.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _5R20[i] = 0.26 - 0.00075*(i-5);
             else if (i<90 && i>=45) _5R20[i] = 0.023-0.0002*(i-45);
         }
         //printf("5R  %1.2f  %1.2f\n",_5R20[44],_5R20[70] );
     _5R30(maxInd2);
+    _5R30.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _5R30[i] = 0.39 + 0.00075*(i-5);
             else if (i<90 && i>=45) _5R30[i] = 0.42-0.0007*(i-45);
@@ -2598,11 +2747,13 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //25R
     _25R10(maxInd3);
+    _25R10.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<45 && i>5) _25R10[i] = -0.03 - 0.002*(i-5);
         }
         //printf("25R  %1.2f \n",_25R10[44]);
     _25R20(maxInd2);
+    _25R20.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _25R20[i] = 0.13 - 0.0012*(i-5);
             else if (i<90 && i>=45) _25R20[i] = 0.08-0.002*(i-45);
@@ -2610,6 +2761,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         //printf("25R  %1.2f  %1.2f\n",_25R20[44],_25R20[69] );
         //25R30: 0.28, 0.26, 0.22
     _25R30(maxInd2);
+    _25R30.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _25R30[i] = 0.28 - 0.0005*(i-5);
             else if (i<90 && i>=45) _25R30[i] = 0.26-0.0009*(i-45);
@@ -2618,17 +2770,20 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
 
     _10RP10(maxInd3);
+    _10RP10.clear();
         for (int i=0; i<maxInd3; i++) {
             if (i<45 && i>5) _10RP10[i] = -0.16 - 0.0017*(i-5);
         }
         //printf("10RP  %1.2f \n",_10RP10[44]);
     _10RP20(maxInd2);
+    _10RP20.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _10RP20[i] = 0.0 - 0.0018*(i-5);
             else if (i<90 && i>=45) _10RP20[i] = -0.07-0.0012*(i-45);
         }
         //printf("10RP  %1.2f  %1.2f\n",_10RP20[44],_10RP20[69] );
     _10RP30(maxInd2);
+    _10RP30.clear();
         for (int i=0; i<maxInd2; i++) {
             if (i<45 && i>5) _10RP30[i] = 0.15 - 0.001*(i-5);
             else if (i<90 && i>=45) _10RP30[i] = 0.11-0.0012*(i-45);
@@ -2637,6 +2792,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //7G
     _7G30(maxInd);
+    _7G30.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _7G30[i] = 2.90 + 0.0027*(i-5);
             else if (i<85 && i>=45) _7G30[i] = 3.01+0.0005*(i-45);
@@ -2644,6 +2800,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("7G  %1.2f  %1.2f %1.2f\n",_7G30[44],_7G30[84],_7G30[125] );
     _7G40(maxInd);
+    _7G40.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _7G40[i] = 2.89 + 0.00125*(i-5);
             else if (i<85 && i>=45) _7G40[i] = 2.94+0.0015*(i-45);
@@ -2651,6 +2808,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("7G  %1.2f  %1.2f %1.2f\n",_7G40[44],_7G40[84],_7G40[125] );
     _7G50(maxInd);
+    _7G50.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _7G50[i] = 2.87 + 0.0015*(i-5);
             else if (i<85 && i>=45) _7G50[i] = 2.93+0.00125*(i-45);
@@ -2658,6 +2816,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("7G  %1.2f  %1.2f %1.2f\n",_7G50[44],_7G50[84],_7G50[125] );
     _7G60(maxInd);
+    _7G60.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _7G60[i] = 2.86 + 0.00125*(i-5);
             else if (i<85 && i>=45) _7G60[i] = 2.91+0.00125*(i-45);
@@ -2665,6 +2824,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("7G  %1.2f  %1.2f %1.2f\n",_7G60[44],_7G60[84],_7G60[125] );
     _7G70(maxInd);
+    _7G70.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _7G70[i] = 2.85 + 0.001*(i-5);
             else if (i<85 && i>=45) _7G70[i] = 2.89+0.00125*(i-45);
@@ -2672,6 +2832,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("7G  %1.2f  %1.2f %1.2f\n",_7G70[44],_7G70[84],_7G70[125] );
     _7G80(maxInd);
+    _7G80.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _7G80[i] = 2.84 + 0.001*(i-5);
             else if (i<85 && i>=45) _7G80[i] = 2.88+0.001*(i-45);
@@ -2682,6 +2843,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //5G
     _5G30(maxInd);
+    _5G30.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _5G30[i] = 2.82 + 0.00175*(i-5);
             else if (i<85 && i>=45) _5G30[i] = 2.89+0.0018*(i-45);
@@ -2689,6 +2851,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("5G  %1.2f  %1.2f %1.2f\n",_5G30[44],_5G30[84],_5G30[125] );
     _5G40(maxInd);
+    _5G40.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _5G40[i] = 2.80 + 0.0015*(i-5);
             else if (i<85 && i>=45) _5G40[i] = 2.86+0.00175*(i-45);
@@ -2696,6 +2859,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("5G  %1.2f  %1.2f %1.2f\n",_5G40[44],_5G40[84],_5G40[125] );
     _5G50(maxInd);
+    _5G50.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _5G50[i] = 2.79 + 0.001*(i-5);
             else if (i<85 && i>=45) _5G50[i] = 2.84+0.0015*(i-45);
@@ -2703,6 +2867,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("5G  %1.2f  %1.2f %1.2f\n",_5G50[44],_5G50[84],_5G50[125] );
     _5G60(maxInd);
+    _5G60.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _5G60[i] = 2.78 + 0.001*(i-5);
             else if (i<85 && i>=45) _5G60[i] = 2.82+0.00175*(i-45);
@@ -2710,6 +2875,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("5G  %1.2f  %1.2f %1.2f\n",_5G60[44],_5G60[84],_5G60[125] );
     _5G70(maxInd);
+    _5G70.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _5G70[i] = 2.77 + 0.001*(i-5);
             else if (i<85 && i>=45) _5G70[i] = 2.81+0.00125*(i-45);
@@ -2717,6 +2883,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("5G  %1.2f  %1.2f %1.2f\n",_5G70[44],_5G70[84],_5G70[125] );
     _5G80(maxInd);
+    _5G80.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _5G80[i] = 2.76 + 0.001*(i-5);
             else if (i<85 && i>=45) _5G80[i] = 2.8+0.00125*(i-45);
@@ -2726,6 +2893,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //25G
     _25G30(maxInd);
+    _25G30.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _25G30[i] = 2.68 + 0.0015*(i-5);
             else if (i<85 && i>=45) _25G30[i] = 2.74+0.0018*(i-45);
@@ -2733,6 +2901,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("25G  %1.2f  %1.2f %1.2f\n",_25G30[44],_25G30[84],_25G30[125] );
     _25G40(maxInd);
+    _25G40.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _25G40[i] = 2.68 + 0.00075*(i-5);
             else if (i<85 && i>=45) _25G40[i] = 2.71+0.0015*(i-45);
@@ -2740,6 +2909,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("25G  %1.2f  %1.2f %1.2f\n",_25G40[44],_25G40[84],_25G40[125] );
     _25G50(maxInd);
+    _25G50.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _25G50[i] = 2.65 + 0.00075*(i-5);
             else if (i<85 && i>=45) _25G50[i] = 2.68+0.00125*(i-45);
@@ -2747,6 +2917,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("25G  %1.2f  %1.2f %1.2f\n",_25G50[44],_25G50[84],_25G50[125] );
     _25G60(maxInd);
+    _25G60.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _25G60[i] = 2.64 + 0.0005*(i-5);
             else if (i<85 && i>=45) _25G60[i] = 2.66+0.001*(i-45);
@@ -2754,6 +2925,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("25G  %1.2f  %1.2f %1.2f\n",_25G60[44],_25G60[84],_25G60[125] );
     _25G70(maxInd);
+    _25G70.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _25G70[i] = 2.64 + 0.00*(i-5);
             else if (i<85 && i>=45) _25G70[i] = 2.64+0.00075*(i-45);
@@ -2761,6 +2933,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("25G  %1.2f  %1.2f %1.2f\n",_25G70[44],_25G70[84],_25G70[125] );
     _25G80(maxInd);
+    _25G80.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _25G80[i] = 2.63 + 0.00*(i-5);
             else if (i<85 && i>=45) _25G80[i] = 2.63+0.0005*(i-45);
@@ -2771,6 +2944,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //1G
     _1G30(maxInd);
+    _1G30.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _1G30[i] = 2.58 + 0.00025*(i-5);
             else if (i<85 && i>=45) _1G30[i] = 2.59+0.001*(i-45);
@@ -2778,6 +2952,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("1G  %1.2f  %1.2f %1.2f\n",_1G30[44],_1G30[84],_1G30[125] );
     _1G40(maxInd);
+    _1G40.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _1G40[i] = 2.56 - 0.00025*(i-5);
             else if (i<85 && i>=45) _1G40[i] = 2.55+0.0005*(i-45);
@@ -2785,6 +2960,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("1G  %1.2f  %1.2f %1.2f\n",_1G40[44],_1G40[84],_1G40[125] );
     _1G50(maxInd);
+    _1G50.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _1G50[i] = 2.55 - 0.00025*(i-5);
             else if (i<85 && i>=45) _1G50[i] = 2.54+0.00025*(i-45);
@@ -2792,6 +2968,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("1G  %1.2f  %1.2f %1.2f\n",_1G50[44],_1G50[84],_1G50[125] );
     _1G60(maxInd);
+    _1G60.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _1G60[i] = 2.54 - 0.0005*(i-5);
             else if (i<85 && i>=45) _1G60[i] = 2.52+0.00025*(i-45);
@@ -2799,6 +2976,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("1G  %1.2f  %1.2f %1.2f\n",_1G60[44],_1G60[84],_1G60[125] );
     _1G70(maxInd);
+    _1G70.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _1G70[i] = 2.53 - 0.0005*(i-5);
             else if (i<85 && i>=45) _1G70[i] = 2.51+0.0*(i-45);
@@ -2806,6 +2984,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("1G  %1.2f  %1.2f %1.2f\n",_1G70[44],_1G70[84],_1G70[125] );
     _1G80(maxInd);
+    _1G80.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _1G80[i] = 2.52 - 0.0005*(i-5);
             else if (i<85 && i>=45) _1G80[i] = 2.50+0.00*(i-45);
@@ -2816,6 +2995,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //10GY
     _10GY30(maxInd);
+    _10GY30.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _10GY30[i] = 2.52 - 0.001*(i-5);
             else if (i<85 && i>=45) _10GY30[i] = 2.48-0.002*(i-45);
@@ -2823,6 +3003,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("10GY  %1.2f  %1.2f %1.2f\n",_10GY30[44],_10GY30[84],_10GY30[125] );
     _10GY40(maxInd);
+    _10GY40.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _10GY40[i] = 2.48 - 0.0005*(i-5);
             else if (i<85 && i>=45) _10GY40[i] = 2.46-0.0005*(i-45);
@@ -2830,6 +3011,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("10GY  %1.2f  %1.2f %1.2f\n",_10GY40[44],_10GY40[84],_10GY40[125] );
     _10GY50(maxInd);
+    _10GY50.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _10GY50[i] = 2.48 - 0.00075*(i-5);
             else if (i<85 && i>=45) _10GY50[i] = 2.45-0.00075*(i-45);
@@ -2837,6 +3019,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("10GY  %1.2f  %1.2f %1.2f\n",_10GY50[44],_10GY50[84],_10GY50[125] );
     _10GY60(maxInd);
+    _10GY60.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _10GY60[i] = 2.47 - 0.00125*(i-5);
             else if (i<85 && i>=45) _10GY60[i] = 2.42-0.00025*(i-45);
@@ -2844,6 +3027,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("10GY  %1.2f  %1.2f %1.2f\n",_10GY60[44],_10GY60[84],_10GY60[125] );
     _10GY70(maxInd);
+    _10GY70.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _10GY70[i] = 2.46 - 0.001*(i-5);
             else if (i<85 && i>=45) _10GY70[i] = 2.42+0.0*(i-45);
@@ -2851,6 +3035,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("10GY %1.2f  %1.2f %1.2f\n",_10GY70[44],_10GY70[84],_10GY70[125] );
     _10GY80(maxInd);
+    _10GY80.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _10GY80[i] = 2.45 - 0.00075*(i-5);
             else if (i<85 && i>=45) _10GY80[i] = 2.42 - 0.0005*(i-45);
@@ -2861,18 +3046,21 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //75GY
     _75GY30(maxInd2);
+    _75GY30.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _75GY30[i] = 2.36 - 0.0025*(i-5);
             else if (i<90 && i>=45) _75GY30[i] = 2.26-0.00175*(i-45);
         }
         //printf("75GY  %1.2f  %1.2f\n",_75GY30[44],_75GY30[84] );
     _75GY40(maxInd2);
+    _75GY40.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _75GY40[i] = 2.34 - 0.00175*(i-5);
             else if (i<90 && i>=45) _75GY40[i] = 2.27-0.00225*(i-45);
         }
         //printf("75GY  %1.2f  %1.2f \n",_75GY40[44],_75GY40[84] );
     _75GY50(maxInd);
+    _75GY50.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _75GY50[i] = 2.32 - 0.0015*(i-5);
             else if (i<85 && i>=45) _75GY50[i] = 2.26-0.00175*(i-45);
@@ -2880,6 +3068,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("75GY  %1.2f  %1.2f %1.2f %1.2f\n",_75GY50[44],_75GY50[84],_75GY50[125],_75GY50[139] );
     _75GY60(maxInd);
+    _75GY60.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _75GY60[i] = 2.30 - 0.00125*(i-5);
             else if (i<85 && i>=45) _75GY60[i] = 2.25-0.001*(i-45);
@@ -2887,6 +3076,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("75GY  %1.2f  %1.2f %1.2f\n",_75GY60[44],_75GY60[84],_75GY60[125] );
     _75GY70(maxInd);
+    _75GY70.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _75GY70[i] = 2.29 - 0.00125*(i-5);
             else if (i<85 && i>=45) _75GY70[i] = 2.24-0.0015*(i-45);
@@ -2894,6 +3084,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("75GY %1.2f  %1.2f %1.2f\n",_75GY70[44],_75GY70[84],_75GY70[125] );
     _75GY80(maxInd);
+    _75GY80.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _75GY80[i] = 2.27 - 0.001*(i-5);
             else if (i<85 && i>=45) _75GY80[i] = 2.23 - 0.001*(i-45);
@@ -2904,6 +3095,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
     //55GY
     _5GY30(maxInd2);
+    _5GY30.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _5GY30[i] = 2.16 - 0.002*(i-5);
             else if (i<90 && i>=45) _5GY30[i] = 2.07-0.0025*(i-45);
@@ -2913,12 +3105,14 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
     //5GY4: 2.14,2.04, 1.96, 1.91 //95
 
     _5GY40(maxInd2);
+    _5GY40.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _5GY40[i] = 2.14 - 0.0025*(i-5);
             else if (i<90 && i>=45) _5GY40[i] = 2.04-0.003*(i-45);
         }
         //printf("5GY  %1.2f  %1.2f \n",_5GY40[44],_5GY40[84] );
     _5GY50(maxInd);
+    _5GY50.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _5GY50[i] = 2.13 - 0.00175*(i-5);
             else if (i<85 && i>=45) _5GY50[i] = 2.06-0.002*(i-45);
@@ -2926,6 +3120,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("5GY  %1.2f  %1.2f %1.2f\n",_5GY50[44],_5GY50[84],_5GY50[125] );
     _5GY60(maxInd);
+    _5GY60.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _5GY60[i] = 2.11 - 0.0015*(i-5);
             else if (i<85 && i>=45) _5GY60[i] = 2.05-0.002*(i-45);
@@ -2933,6 +3128,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("5GY  %1.2f  %1.2f %1.2f\n",_5GY60[44],_5GY60[84],_5GY60[125] );
     _5GY70(maxInd);
+    _5GY70.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _5GY70[i] = 2.09 - 0.001*(i-5);
             else if (i<85 && i>=45) _5GY70[i] = 2.05-0.00175*(i-45);
@@ -2940,6 +3136,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         }
         //printf("5GY %1.2f  %1.2f %1.2f\n",_5GY70[44],_5GY70[84],_5GY70[125] );
     _5GY80(maxInd);
+    _5GY80.clear();
         for (int i=0; i<maxInd; i++) {
             if (i<45 && i>5) _5GY80[i] = 2.07 - 0.001*(i-5);
             else if (i<85 && i>=45) _5GY80[i] = 2.03 - 0.00075*(i-45);
