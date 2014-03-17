@@ -82,7 +82,7 @@ SSEFUNCTION void RawImageSource::fast_demosaic(int winx, int winy, int winw, int
 	float (*bluetile);
 #define CLF 1
 	// assign working space
-	buffer = (char *) malloc(3*sizeof(float)*TS*TS + 3*CLF*64 + 63);
+	buffer = (char *) calloc(3*sizeof(float)*TS*TS + 3*CLF*64 + 63,1);
 	char 	*data;
 	data = (char*)( ( uintptr_t(buffer) + uintptr_t(63)) / 64 * 64);
 
