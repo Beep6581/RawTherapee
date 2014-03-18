@@ -32,7 +32,7 @@
 using namespace rtengine::procparams;
 
 EditorPanel::EditorPanel (FilePanel* filePanel) 
-    : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL), iHistoryShow(NULL), iHistoryHide(NULL), iBeforeLockON(NULL),iBeforeLockOFF(NULL), iRightPanel_1_Show(NULL), iRightPanel_1_Hide(NULL) {
+    : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL), iHistoryShow(NULL), iHistoryHide(NULL), iBeforeLockON(NULL),iBeforeLockOFF(NULL), iRightPanel_1_Show(NULL), iRightPanel_1_Hide(NULL), iTopPanel_1_Show(NULL), iTopPanel_1_Hide(NULL) {
 
     epih = new EditorPanelIdleHelper;
     epih->epanel = this;
@@ -374,8 +374,8 @@ EditorPanel::~EditorPanel () {
     if(catalogPane)
         delete catalogPane;
 
-    if (!iTopPanel_1_Show) delete iTopPanel_1_Show;
-    if (!iTopPanel_1_Hide) delete iTopPanel_1_Hide;
+    if (iTopPanel_1_Show) delete iTopPanel_1_Show;
+    if (iTopPanel_1_Hide) delete iTopPanel_1_Hide;
     if (iHistoryShow)
 		delete iHistoryShow;
     if (iHistoryHide)
