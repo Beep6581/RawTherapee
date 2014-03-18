@@ -248,9 +248,9 @@ public:
 	}
 
 	void setColor(char r, char g, char b) {
-		r = double(r)/255.;
-		g = double(g)/255.;
-		b = double(b)/255.;
+		this->r = double(r)/255.;
+		this->g = double(g)/255.;
+		this->b = double(b)/255.;
 	}
 
 	double getR() { return r; }
