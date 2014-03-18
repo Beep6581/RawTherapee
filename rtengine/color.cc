@@ -857,7 +857,7 @@ namespace rtengine {
         C9=8.0f;C8=15.0f;C7=12.0f;C4=7.0f;C3=5.0f;C2=5.0f;C1=5.0f;
 
 		if (ciec) {
-		float HH;
+		float HH = 0.f;
 		bool doskin;
 		if     ((float)hue>8.6f  && (float)hue<=74.f ) {HH=(1.15f/65.4f)*(float)hue-0.0012f;  doskin=true;}//H > 0.15   H<1.3
 		else if((float)hue>0.f   && (float)hue<=8.6f ) {HH=(0.19f/8.6f )*(float)hue-0.04f;    doskin=true;}//H>-0.04 H < 0.15
