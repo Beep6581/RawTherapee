@@ -243,7 +243,7 @@ public:
 	static inline double huelab_to_huehsv2 (float HH){
 					//hr=translate Hue Lab value  (-Pi +Pi) in approximative hr (hsv values) (0 1) [red 1/6 yellow 1/6 green 1/6 cyan 1/6 blue 1/6 magenta 1/6 ]
 				// with multi linear correspondances (I expect there is no error !!)
-				double hr;
+				double hr = 0.0;
 				//allways put h between 0 and 1
 
 				if      (HH>=0.f && HH < 0.6f) 	 hr=0.11666*(double) HH + 0.93;  //hr 0.93 1. full red

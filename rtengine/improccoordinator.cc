@@ -82,7 +82,7 @@ ImProcCoordinator::ImProcCoordinator ()
       pW(-1), pH(-1),
       plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),acListener(NULL), abwListener(NULL),
       resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false),utili(false),autili(false),
-	  butili(false),ccutili(false),cclutili(false),clcutili(false)
+	  butili(false),ccutili(false),cclutili(false),clcutili(false),fullw(1),fullh(1)
 
     {}
 
