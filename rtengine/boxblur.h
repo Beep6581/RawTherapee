@@ -29,9 +29,7 @@
 #endif
 
 #include "rt_math.h"
-#ifdef __SSE2__
-	#include "sleefsseavx.c"
-#endif
+#include "opthelper.h"
 
 //using namespace rtengine;
 
@@ -120,11 +118,8 @@ template<class T, class A> void boxblur (T** src, A** dst, int radx, int rady, i
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#if defined( __SSE2__ ) && defined( WIN32 )
-template<class T, class A> __attribute__((force_align_arg_pointer)) void boxblur (T* src, A* dst, int radx, int rady, int W, int H) {
-#else
-template<class T, class A> void boxblur (T* src, A* dst, int radx, int rady, int W, int H) {
-#endif
+template<class T, class A> SSEFUNCTION void boxblur (T* src, A* dst, int radx, int rady, int W, int H) {
+
 //printf("boxblur\n");
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//box blur image; box range = (radx,rady) i.e. box size is (2*radx+1)x(2*rady+1)
@@ -138,9 +133,6 @@ template<class T, class A> void boxblur (T* src, A* dst, int radx, int rady, int
 			}
 	} else {
 		//horizontal blur
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 		for (int row = 0; row < H; row++) {
 			int len = radx + 1;
 			temp[row*W+0] = (float)src[row*W+0];
@@ -163,9 +155,6 @@ template<class T, class A> void boxblur (T* src, A* dst, int radx, int rady, int
 	}
 	
 	if (rady==0) {
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 		for (int row=0; row<H; row++) 
 			for (int col=0; col<W; col++) {
 				dst[row*W+col] = temp[row*W+col];
@@ -216,9 +205,6 @@ template<class T, class A> void boxblur (T* src, A* dst, int radx, int rady, int
 			}
 		}
 #else
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 		for (int col = 0; col < W; col++) {
 			int len = rady + 1;
 			dst[0*W+col] = temp[0*W+col]/len;
@@ -664,32 +650,18 @@ template<class T, class A> void boxcorrelate (T* src, A* dst, int dx, int dy, in
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#if defined( __SSE2__ ) && defined( WIN32 )
-template<class T, class A> __attribute__((force_align_arg_pointer)) void boxabsblur (T* src, A* dst, int radx, int rady, int W, int H) {
-#else
-template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, int W, int H) {
-#endif
+template<class T, class A> SSEFUNCTION void boxabsblur (T* src, A* dst, int radx, int rady, int W, int H, float * temp) {
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//box blur image; box range = (radx,rady) i.e. box size is (2*radx+1)x(2*rady+1)
 	
-	AlignedBuffer<float>* buffer = new AlignedBuffer<float> (W*H);
-	float* temp = buffer->data;
-	
 	if (radx==0) {
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 		for (int row=0; row<H; row++) 
 			for (int col=0; col<W; col++) {
 				temp[row*W+col] = fabs(src[row*W+col]);
 			}
 	} else {
 		//horizontal blur
-//OpenMP here		
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 		for (int row = 0; row < H; row++) {
 			int len = radx + 1;
 			temp[row*W+0] = fabsf((float)src[row*W+0]);
@@ -712,9 +684,6 @@ template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, 
 	}
 	
 	if (rady==0) {
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 		for (int row=0; row<H; row++) 
 			for (int col=0; col<W; col++) {
 				dst[row*W+col] = temp[row*W+col];
@@ -766,11 +735,6 @@ template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, 
 	}
 
 #else
-
-//OpenMP here		
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 		for (int col = 0; col < W; col++) {
 			int len = rady + 1;
 			dst[0*W+col] = temp[0*W+col]/len;
@@ -792,8 +756,6 @@ template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, 
 #endif
 }
 
-	delete buffer;
-	
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

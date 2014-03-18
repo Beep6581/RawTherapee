@@ -488,10 +488,10 @@ class DirPyrDenoiseParams {
 class EPDParams{
     public:
         bool   enabled;
-        double Strength;
-        double EdgeStopping;
-        double Scale;
-        int    ReweightingIterates;
+        double strength;
+        double edgeStopping;
+        double scale;
+        int    reweightingIterates;
 };
 
 /**
@@ -842,7 +842,7 @@ class ProcParams {
         DefringeParams          defringe;        ///< Defringing parameters
         ImpulseDenoiseParams    impulseDenoise;  ///< Impulse denoising parameters
         DirPyrDenoiseParams     dirpyrDenoise;   ///< Directional Pyramid denoising parameters
-        EPDParams               edgePreservingDecompositionUI;
+        EPDParams               epd;             ///< Edge Preserving Decomposition parameters
         SHParams                sh;              ///< Shadow/highlight enhancement parameters
         CropParams              crop;            ///< Crop parameters
         CoarseTransformParams   coarse;          ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters

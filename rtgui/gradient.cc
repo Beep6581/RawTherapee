@@ -121,7 +121,7 @@ void Gradient::read (const ProcParams* pp, const ParamsEdited* pedited)
 		strength->setEditedState (pedited->gradient.strength ? Edited : UnEdited);
 		centerX->setEditedState (pedited->gradient.centerX ? Edited : UnEdited);
 		centerY->setEditedState (pedited->gradient.centerY ? Edited : UnEdited);
-		enabled->set_inconsistent (!pedited->gradient.enabled);
+		enabled->set_inconsistent (multiImage && !pedited->gradient.enabled);
 	}
 
 	enaConn.block (true);

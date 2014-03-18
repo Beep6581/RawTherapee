@@ -32,7 +32,7 @@
 using namespace rtengine::procparams;
 
 EditorPanel::EditorPanel (FilePanel* filePanel) 
-    : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL) {
+    : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL), iHistoryShow(NULL), iHistoryHide(NULL), iBeforeLockON(NULL),iBeforeLockOFF(NULL), iRightPanel_1_Show(NULL), iRightPanel_1_Hide(NULL) {
 
     epih = new EditorPanelIdleHelper;
     epih->epanel = this;
@@ -376,7 +376,18 @@ EditorPanel::~EditorPanel () {
 
     if (!iTopPanel_1_Show) delete iTopPanel_1_Show;
     if (!iTopPanel_1_Hide) delete iTopPanel_1_Hide;
-
+    if (iHistoryShow)
+		delete iHistoryShow;
+    if (iHistoryHide)
+		delete iHistoryHide;
+    if(iBeforeLockON)
+        delete iBeforeLockON;
+    if(iBeforeLockOFF)
+        delete iBeforeLockOFF;
+    if(iRightPanel_1_Show)
+        delete iRightPanel_1_Show;
+    if(iRightPanel_1_Hide)
+        delete iRightPanel_1_Hide;
 }
 
 void EditorPanel::leftPaneButtonReleased(GdkEventButton *event) {

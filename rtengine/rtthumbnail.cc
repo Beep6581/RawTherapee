@@ -517,7 +517,8 @@ Thumbnail::Thumbnail () :
     redMultiplier(1.0), greenMultiplier(1.0), blueMultiplier(1.0),
     defGain(1.0),
     scaleForSave(8192),
-    gammaCorrected(false) {
+    gammaCorrected(false),
+    aeHistCompression(3) {
 }
 
 Thumbnail::~Thumbnail () {

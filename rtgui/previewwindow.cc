@@ -21,7 +21,7 @@
 #include "imagearea.h"
 #include "cursormanager.h"
 
-PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL), imageArea(NULL), isMoving(false) {
+PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL), imageArea(NULL), isMoving(false), zoom(0.0) {
 
     rconn = signal_size_allocate().connect( sigc::mem_fun(*this, &PreviewWindow::on_resized) );
 }
@@ -100,7 +100,7 @@ bool PreviewWindow::on_expose_event (GdkEventExpose* event) {
             
         window->draw_drawable (get_style()->get_base_gc(Gtk::STATE_NORMAL), backBuffer, 0, 0, 0, 0, -1, -1);
 
-        if (mainCropWin) {
+        if (mainCropWin && zoom > 0.0) {
             Cairo::RefPtr<Cairo::Context> cr = get_window()->create_cairo_context();
             int x, y, w, h;
             getObservedFrameArea (x, y, w, h);

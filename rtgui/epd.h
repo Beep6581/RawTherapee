@@ -25,10 +25,10 @@
 
 class EdgePreservingDecompositionUI : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 protected:
-	Adjuster *Strength;
-	Adjuster *EdgeStopping;
-	Adjuster *Scale;
-	Adjuster *ReweightingIterates;
+	Adjuster *strength;
+	Adjuster *edgeStopping;
+	Adjuster *scale;
+	Adjuster *reweightingIterates;
 
 	Gtk::CheckButton* enabled;
 	bool lastEnabled;

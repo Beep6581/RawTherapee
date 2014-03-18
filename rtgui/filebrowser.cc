@@ -108,7 +108,7 @@ FileBrowser::FileBrowser ()
     /***********************
      * external programs
      * *********************/
-#if PROTECT_VECTORS
+#if defined(WIN32) && defined(PROTECT_VECTORS)
     Gtk::manage(miOpenDefaultViewer=new Gtk::MenuItem (M("FILEBROWSER_OPENDEFAULTVIEWER")));
 #else
     miOpenDefaultViewer=NULL;

@@ -860,7 +860,10 @@ class SALensIDInterpreter : public IntLensInterpreter< int > {
             double *liArray = NULL;
             if (lensInfoTag)
                 liArray = lensInfoTag->toDoubleArray();
-            return guess( lensID, focalLength, maxApertureAtFocal, liArray);
+            std::string retval = guess( lensID, focalLength, maxApertureAtFocal, liArray);
+            if(liArray)
+				delete [] liArray;
+            return retval;
         }
 };
 SALensIDInterpreter saLensIDInterpreter;
@@ -908,7 +911,10 @@ class SALensID2Interpreter : public IntLensInterpreter< int > {
             double *liArray = NULL;
             if (lensInfoTag)
                 liArray = lensInfoTag->toDoubleArray();
-            return guess( lensID, focalLength, maxApertureAtFocal, liArray);
+			std::string retval = guess( lensID, focalLength, maxApertureAtFocal, liArray);
+			if(liArray)
+				delete [] liArray;
+            return retval;
         }
 };
 SALensID2Interpreter saLensID2Interpreter;

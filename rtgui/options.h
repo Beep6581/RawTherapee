@@ -49,6 +49,7 @@ class SaveFormat {
         int tiffBits;
         bool tiffUncompressed;
         bool saveParams;
+        SaveFormat () : format("jpg"), jpegQuality(90), jpegSubSamp(2), pngCompression(6), pngBits(8), tiffBits(8), tiffUncompressed(true), saveParams(true) {};
 };
 
 enum ThFileType {FT_Invalid=-1, FT_None=0, FT_Raw=1, FT_Jpeg=2, FT_Tiff=3, FT_Png=4, FT_Custom=5, FT_Tiff16=6, FT_Png16=7, FT_Custom16=8}; 
