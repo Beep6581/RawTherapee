@@ -850,7 +850,7 @@ bool Thumbnail::openDefaultViewer(int destination) {
               ShellExecuteW(NULL, L"open", wfilename, NULL, NULL, SW_SHOWMAXIMIZED );
               g_free(wfilename);
             } else {
-                printf("File not found\n");
+                printf("%s not found\n",openFName.data());
                 return false;
             }
     } else {
