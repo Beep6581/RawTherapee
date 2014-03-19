@@ -154,40 +154,43 @@ int main(int argc, char **argv)
    bool consoleOpened = false;
 
    if (argc>1 || options.rtSettings.verbose){
-		bool stdoutRedirectedtoFile = (GetFileType(GetStdHandle(STD_OUTPUT_HANDLE)) == 0x0001);
-		bool stderrRedirectedtoFile = (GetFileType(GetStdHandle(STD_ERROR_HANDLE)) == 0x0001);
-		// no console, if stdout and stderr both are redirected to file
-		if( !(stdoutRedirectedtoFile && stderrRedirectedtoFile)) {
-			AllocConsole();
-			AttachConsole( GetCurrentProcessId() ) ;
-			// Don't allow CTRL-C in console to terminate RT
-			SetConsoleCtrlHandler( NULL, true );
-			// Set title of console
-			char consoletitle[128];
-			sprintf(consoletitle, "RawTherapee %s Console",VERSION);
-			SetConsoleTitle(consoletitle);
-			// increase size of screen buffer
-			COORD c;
-			c.X = 200;
-			c.Y = 1000;
-			SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), c );
-			// Disable console-Cursor
-			CONSOLE_CURSOR_INFO cursorInfo;
-			cursorInfo.dwSize = 100;
-			cursorInfo.bVisible = false;
-			SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursorInfo );
-			if(!stdoutRedirectedtoFile)
-				freopen( "CON", "w", stdout ) ;
-			if(!stderrRedirectedtoFile)
-				freopen( "CON", "w", stderr ) ;
-			freopen( "CON", "r", stdin ) ;
+		if(options.rtSettings.verbose || ( !safe_file_test( safe_filename_to_utf8(argv[1]), Glib::FILE_TEST_EXISTS ) && !safe_file_test( safe_filename_to_utf8(argv[1]), Glib::FILE_TEST_IS_DIR ))) {
+			bool stdoutRedirectedtoFile = (GetFileType(GetStdHandle(STD_OUTPUT_HANDLE)) == 0x0001);
+			bool stderrRedirectedtoFile = (GetFileType(GetStdHandle(STD_ERROR_HANDLE)) == 0x0001);
+			// no console, if stdout and stderr both are redirected to file
+			if( !(stdoutRedirectedtoFile && stderrRedirectedtoFile)) {
+				AllocConsole();
+				AttachConsole( GetCurrentProcessId() ) ;
+				// Don't allow CTRL-C in console to terminate RT
+				SetConsoleCtrlHandler( NULL, true );
+				// Set title of console
+				char consoletitle[128];
+				sprintf(consoletitle, "RawTherapee %s Console",VERSION);
+				SetConsoleTitle(consoletitle);
+				// increase size of screen buffer
+				COORD c;
+				c.X = 200;
+				c.Y = 1000;
+				SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), c );
+				// Disable console-Cursor
+				CONSOLE_CURSOR_INFO cursorInfo;
+				cursorInfo.dwSize = 100;
+				cursorInfo.bVisible = false;
+				SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursorInfo );
+				if(!stdoutRedirectedtoFile)
+					freopen( "CON", "w", stdout ) ;
+				if(!stderrRedirectedtoFile)
+					freopen( "CON", "w", stderr ) ;
+				freopen( "CON", "r", stdin ) ;
 
-			consoleOpened = true;
+				consoleOpened = true;
 
-			// printing RT's version in all case, particularly useful for the 'verbose' mode, but also for the batch processing
-			std::cout << "RawTherapee, version " << VERSION << std::endl;
-			std::cout << "WARNING: closing this window will close RawTherapee!" << std::endl << std::endl;
+				// printing RT's version in all case, particularly useful for the 'verbose' mode, but also for the batch processing
+				std::cout << "RawTherapee, version " << VERSION << std::endl;
+				std::cout << "WARNING: closing this window will close RawTherapee!" << std::endl << std::endl;
+			}
 		}
+
 		int ret = processLineParams( argc, argv);
 		if( ret <= 0 ) {
 			if(consoleOpened) {
