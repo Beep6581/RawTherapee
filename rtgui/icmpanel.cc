@@ -357,8 +357,8 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
     blendcmsconn.block(true);
 
 	if(pp->icm.input.substr(0,5) != "file:")
-		ipDialog->set_filename("");
-	
+		ipDialog->set_filename(pp->icm.input);
+
     if (pp->icm.input == "(none)" && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
         inone->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
