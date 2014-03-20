@@ -19,8 +19,9 @@
 #ifndef _ICMPANEL_
 #define _ICMPANEL_
 
+#ifndef __clang__
 #include <auto_ptr.h>
-
+#endif
 #include <gtkmm.h>
 #include "adjuster.h"
 #include "guiutils.h"
