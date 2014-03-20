@@ -130,7 +130,7 @@ Glib::ustring MultiLangMgr::getOSUserLanguage() {
         }
 #endif
 #elif defined(__linux__) || defined(__APPLE__)
-    langName = TranslateRFC2Language(std::setlocale(LC_CTYPE,""));
+    langName = TranslateRFC2Language(setlocale(LC_CTYPE,""));
 #endif
     }
 
