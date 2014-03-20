@@ -29,6 +29,7 @@ namespace rtengine {
 
     extern const Settings* settings;
 	
+    cmsToneCurve* Color::linearGammaTRC;
     LUTf Color::cachef;
     LUTf Color::gamma2curve;
 

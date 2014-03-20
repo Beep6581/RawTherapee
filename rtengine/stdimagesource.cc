@@ -27,7 +27,6 @@
 
 namespace rtengine {
 
-extern cmsToneCurve* Color::linearGammaTRC;
 extern const Settings* settings;
 
 template<class T> void freeArray (T** a, int H) {
