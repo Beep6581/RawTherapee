@@ -248,12 +248,12 @@ void FlatField::setShortcutPath(Glib::ustring path)
 			try {
 				flatFieldFile->remove_shortcut_folder(lastShortcutPath);
 			}
-			catch (Gtk::FileChooserError &err) {}
+			catch (Glib::Error &err) {}
 		}
 		lastShortcutPath = path;
 		try {
 			flatFieldFile->add_shortcut_folder(path);
 		}
-		catch (Gtk::FileChooserError &err) {}
+		catch (Glib::Error &err) {}
 	}
 }

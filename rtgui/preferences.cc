@@ -1076,7 +1076,7 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
     try {
         dir = new Glib::Dir (dirname);
     }
-    catch (const Glib::FileError& fe) {
+    catch (const Glib::Error& e) {
         return;
     }
     for (Glib::DirIterator i = dir->begin(); i!=dir->end(); ++i) {
