@@ -281,7 +281,7 @@ void CacheManager::deleteDir (const Glib::ustring& dirName) {
             safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, dirName), *i));
         delete dir;
     }
-    catch (const Glib::FileError& fe) {
+    catch (const Glib::Error& e) {
     }
 }
 

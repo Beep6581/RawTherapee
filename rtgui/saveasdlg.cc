@@ -270,7 +270,7 @@ void SaveAsDialog::setImagePath (Glib::ustring ipath) {
     try {
         fchooser->add_shortcut_folder(path);
     }
-    catch (Gtk::FileChooserError &err) {}
+    catch (Glib::Error &err) {}
 }
 
 

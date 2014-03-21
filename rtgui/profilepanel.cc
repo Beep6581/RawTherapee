@@ -224,7 +224,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
     try {
         dialog.add_shortcut_folder(options.getPreferredProfilePath());
     }
-    catch (Gtk::FileChooserError &err) {}
+    catch (Glib::Error &err) {}
     //Add the image's path to the Shortcut list
 #ifdef WIN32
     // Dirty workaround, waiting for a clean solution by using exceptions!
@@ -233,7 +233,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
     try {
         dialog.add_shortcut_folder(imagePath);
     }
-    catch (Gtk::FileChooserError &err) {}
+    catch (Glib::Error &err) {}
 
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
@@ -380,7 +380,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
     try {
         dialog.add_shortcut_folder(options.getPreferredProfilePath());
     }
-    catch (Gtk::FileChooserError &err) {}
+    catch (Glib::Error &err) {}
 
     //Add the image's path to the Shortcut list
 #ifdef WIN32
@@ -390,7 +390,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
     try {
         dialog.add_shortcut_folder(imagePath);
     }
-    catch (Gtk::FileChooserError &err) {}
+    catch (Glib::Error &err) {}
 
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
