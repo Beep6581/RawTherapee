@@ -1478,7 +1478,7 @@ void FileBrowser::openPrevImage () {
             if (selected[0]->thumbnail->getFileName()==fd[i]->filename) {// located 1-st image in current selection
                 if (i>0 && tbl) {
                     // find the first not-filtered-out (previous) image
-                    for (size_t k=i-1; k>=0; k--){
+                    for (ssize_t k=(ssize_t)i-1; k>=0; k--){
                         if (!fd[k]->filtered/*checkFilter (fd[k])*/){
                             // clear current selection
                             for (size_t j=0; j<selected.size(); j++)
