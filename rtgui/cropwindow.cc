@@ -333,26 +333,37 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y) {
             action_y = cropHandler.cropParams.y;
         }
         else if (iarea->getToolMode () == TMHand) {
-            state = SCropImgMove;
-            action_x = 0;
-            action_y = 0;
-            press_x = x;
-            press_y = y;
-
             EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
 
             if      (button==1 && editSubscriber && cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) && (editSubscriber->getEditingType()==ET_OBJECTS && iarea->object>-1) ) {
                 editSubscriber->button1Pressed(bstate);
                 state=SEditDrag;
+                press_x = x;
+                press_y = y;
+                action_x = 0;
+                action_y = 0;
             }
             else if (onArea (CropObserved, x, y)) {
                 state = SObservedMove;
                 press_x = x;
                 press_y = y;
+                action_x = 0;
+                action_y = 0;
             }
             else if (button==1 && editSubscriber && cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) && (editSubscriber->getEditingType()==ET_PIPETTE && (bstate & GDK_CONTROL_MASK)) ) {
                 editSubscriber->button1Pressed(bstate);
                 state=SEditDrag;
+                press_x = x;
+                press_y = y;
+                action_x = 0;
+                action_y = 0;
+            }
+            else if(zoomSteps[cropZoom].zoom > cropHandler.getFitZoom()) { // only allow move when image is only partial visible
+                state = SCropImgMove;
+                press_x = x;
+                press_y = y;
+                action_x = 0;
+                action_y = 0;
             }
         }
         else if (onArea (CropObserved, x, y)) {
@@ -401,11 +412,13 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y) {
 
     EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
 
+    bool needRedraw = false;
     if (state==SCropWinResize) {
         setSize (press_x + x - action_x, press_y + y - action_y);
         state = SNormal;
         for (std::list<CropWindowListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
             (*i)->cropWindowSizeChanged (this);
+        needRedraw = true;
     }
     else if (state==SCropImgMove) {
         int cropX, cropY;
@@ -415,14 +428,17 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y) {
         state = SNormal;
         for (std::list<CropWindowListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
             (*i)->cropPositionChanged (this);
+        needRedraw = true;
     }
     else if (state==SRotateSelecting) {
         iarea->straightenReady (rot_deg);
         iarea->setToolHand ();
+        needRedraw = true;
     }
     else if (state==SObservedMove) {
         observedCropWin->remoteMoveReady ();
         state = SNormal;
+        needRedraw = true;
     }
     else if (state==SEditDrag) {
         editSubscriber->button1Released();
@@ -432,11 +448,13 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y) {
         iarea->deltaPrevImage.set(0, 0);
         iarea->deltaPrevScreen.set(0, 0);
         state = SNormal;
+        needRedraw = true;
     }
     if (cropgl && (state==SCropSelecting || state==SResizeH1 || state==SResizeH2 || state==SResizeW1 || state==SResizeW2 || state==SResizeTL || state==SResizeTR || state==SResizeBL || state==SResizeBR || state==SCropMove))
     {
         cropgl->cropManipReady ();
         iarea->setToolHand ();
+        needRedraw = true;
     }
 
     if (decorated)
@@ -446,7 +464,8 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y) {
 
     state = SNormal;
     iarea->grabFocus (NULL);
-    iarea->redraw ();
+    if (needRedraw)
+        iarea->redraw ();
     updateCursor (x, y);
 }
 
