@@ -171,9 +171,14 @@ class CurveFactory {
 	{
 		if (comp>0.0) {
 			float val = level+(hlrange-65536.0);
+			if(val == 0.0f)	// to avoid division by zero
+				val = 0.000001f;
 			float Y = val*exp_scale/hlrange;
+			Y *= comp;
+			if(Y <= -1.0)	// to avoid log(<=0)
+				Y = -.999999f;
 			float R = hlrange/(val*comp);
-			return log(1.0+Y*comp)*R;
+			return log(1.0+Y)*R;
 		} else {
 			return exp_scale;
 		}
