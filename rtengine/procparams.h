@@ -526,6 +526,7 @@ class CropParams {
         Glib::ustring   orientation;
         Glib::ustring   guide;
 
+        CropParams() :enabled(false), x(0),y(0),w(0),h(0),fixratio(false) {};
         void mapToResized(int resizedWidth, int resizedHeight, int scale, int &x1, int &x2, int &y1, int &y2) const;
 };
 
