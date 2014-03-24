@@ -34,7 +34,7 @@ class Navigator : public Gtk::Frame, public PointerMotionListener {
 		Gtk::Label *H, *S, *V;
 		Gtk::Label *LAB_A, *LAB_B, *LAB_L;
 
-		void rgb2lab (Glib::ustring profile, int r, int g, int b, int &LAB_l, int &LAB_a, int &LAB_b);
+		void rgb2lab (Glib::ustring profile, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b);
 		
 		void setInvalid (int fullWidth=-1, int fullHeight=-1);
 

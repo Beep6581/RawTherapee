@@ -43,6 +43,8 @@ struct HistogramRGBAreaIdleHelper {
 
 class HistogramRGBArea : public Gtk::DrawingArea {
 
+  typedef const double (*TMatrix)[3];
+
   protected:
 
     Glib::RefPtr<Gdk::GC> rgbgc_;
@@ -83,7 +85,7 @@ class HistogramRGBArea : public Gtk::DrawingArea {
     HistogramRGBArea();
     ~HistogramRGBArea();
 
-    void renderRGBMarks (int r, int g, int b);
+    void renderRGBMarks (int r, int g, int b, Glib::ustring profile = "");
     void updateFreeze (bool f);
     bool getFreeze ();
     bool getShow ();
@@ -97,6 +99,7 @@ class HistogramRGBArea : public Gtk::DrawingArea {
     bool on_button_press_event (GdkEventButton* event);
     void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
   private:
+  	void rgb2lab (Glib::ustring profile, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b);
     // Some ...
 };
 
