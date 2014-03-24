@@ -431,7 +431,9 @@ protected:
     }
 };
 
-inline static int getTypeSize( TagType type );
+inline static int getTypeSize( TagType type ) {
+    return ("11124811248484"[type<14?type:0]-'0');
+}
 
 extern const TagAttrib exifAttribs[];
 extern const TagAttrib gpsAttribs[];
