@@ -19,9 +19,7 @@
 #ifndef _FLATFIELD_H_
 #define _FLATFIELD_H_
 
-#ifndef __clang__
-#include <auto_ptr.h>
-#endif
+#include <memory>
 #include <gtkmm.h>
 #include "adjuster.h"
 #include "toolpanel.h"
