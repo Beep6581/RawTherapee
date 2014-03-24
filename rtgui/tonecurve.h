@@ -27,7 +27,7 @@
 #include "mycurve.h"
 #include "guiutils.h"
 
-class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoExpListener,public CurveListener {
+class ToneCurve : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoExpListener,public CurveListener {
 
   protected:
     // from HLRecovery

@@ -25,7 +25,7 @@
 #include "toolpanel.h"
 #include "guiutils.h"
 
-class Resize : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public rtengine::SizeListener {
+class Resize : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::SizeListener {
 
   protected:
     Gtk::CheckButton*  enabled;

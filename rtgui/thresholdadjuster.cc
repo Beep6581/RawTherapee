@@ -79,7 +79,7 @@ void ThresholdAdjuster::initObject (Glib::ustring label, bool editedcb) {
 	// TODO: let the user chose the default value of ThresholdAdjuster::delay, for slow machines
 	delay = options.adjusterDelay;		// delay is no more static, so we can set the delay individually (useful for the RAW editor tab)
 
-	set_border_width (2);
+	set_name("ThresholdAdjuster");
 
 	hbox = Gtk::manage (new Gtk::HBox ());
 

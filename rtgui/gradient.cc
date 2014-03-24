@@ -9,10 +9,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Gradient::Gradient () : Gtk::VBox(), FoldableToolPanel(this), EditSubscriber(ET_OBJECTS), lastObject(-1), draggedPointOldAngle(-1000.)
+Gradient::Gradient () : FoldableToolPanel(this), EditSubscriber(ET_OBJECTS), lastObject(-1), draggedPointOldAngle(-1000.)
 {
-	set_border_width(4);
-
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_active (false);
 	enaConn  = enabled->signal_toggled().connect( sigc::mem_fun(*this, &Gradient::enabledChanged) );

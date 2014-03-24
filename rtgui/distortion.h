@@ -24,7 +24,7 @@
 #include "toolpanel.h"
 #include "lensgeomlistener.h"
 
-class Distortion : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class Distortion : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
   protected:
     Gtk::Button*   autoDistor;

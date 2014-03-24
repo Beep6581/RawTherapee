@@ -28,7 +28,7 @@
 #include "mycurve.h"
 #include "colorprovider.h"
 
-class BlackWhite : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoBWListener, public CurveListener, public ColorProvider{
+class BlackWhite : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoBWListener, public CurveListener, public ColorProvider{
 
   protected:
 	FlatCurveEditor*     luminanceCurve;

@@ -26,10 +26,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-DarkFrame::DarkFrame () : Gtk::VBox(), FoldableToolPanel(this)
+DarkFrame::DarkFrame () : FoldableToolPanel(this)
 {
-	set_border_width(4);
-
 	hbdf = Gtk::manage(new Gtk::HBox());
 	darkFrameFile = Gtk::manage(new MyFileChooserButton(M("TP_DARKFRAME_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
 	darkFrameFilePersister.reset(new FileChooserLastFolderPersister(darkFrameFile, options.lastDarkframeDir));

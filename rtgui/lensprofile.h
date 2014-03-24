@@ -23,7 +23,7 @@
 #include "toolpanel.h"
 #include "guiutils.h"
 
-class LensProfilePanel : public Gtk::VBox, public FoldableToolPanel {
+class LensProfilePanel : public ToolParamBlock, public FoldableToolPanel {
 
 protected:
 

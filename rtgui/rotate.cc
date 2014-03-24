@@ -21,14 +21,10 @@
 #include "guiutils.h"
 #include "rtimage.h"
 
-extern Glib::ustring argv0;
-
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Rotate::Rotate () : Gtk::VBox(), FoldableToolPanel(this) {
-
-  set_border_width(4);
+Rotate::Rotate () : FoldableToolPanel(this) {
 
   rlistener = NULL;
 

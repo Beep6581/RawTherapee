@@ -22,9 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-RGBCurves::RGBCurves () : Gtk::VBox(), FoldableToolPanel(this) {
-
-	set_border_width(4);
+RGBCurves::RGBCurves () : FoldableToolPanel(this) {
 
 	lumamode = Gtk::manage (new Gtk::CheckButton (M("TP_RGBCURVES_LUMAMODE")));
 	lumamode->set_tooltip_markup (M("TP_RGBCURVES_LUMAMODE_TOOLTIP"));

@@ -22,9 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-DirPyrEqualizer::DirPyrEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
-
-    set_border_width(4);
+DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this) {
 
    std::vector<GradientMilestone> milestones;
 

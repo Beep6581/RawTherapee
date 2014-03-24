@@ -23,9 +23,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Defringe::Defringe () : Gtk::VBox(), FoldableToolPanel(this)  {
+Defringe::Defringe () : FoldableToolPanel(this)  {
 
-  set_border_width(4);
   std::vector<GradientMilestone> bottomMilestones;
   float R, G, B;
   for (int i=0; i<7; i++) {

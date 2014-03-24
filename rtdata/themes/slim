@@ -45,7 +45,7 @@ style "clearlooks-default" {
 	GtkScrollbar::slider-width = 12
 
 	GtkMenuBar::internal-padding = 0
-	GtkExpander::expander-size = 11
+	GtkExpander::expander-size = 12
 	GtkExpander::expander-spacing = 0
 	GtkToolbar::internal-padding = 0
 	GtkTreeView::expander-size = 10
@@ -95,6 +95,15 @@ style "clearlooks-notebook" {
 	ythickness = 1
 }
 
+style "clearlooks-expander" {
+	xthickness = 0
+	ythickness = 0
+}
+
+style "clearlooks-thresholdselector" {
+	xthickness = 1
+	ythickness = 1
+}
 
 style "clearlooks-menu" {
 	xthickness = 0

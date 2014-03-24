@@ -19,7 +19,7 @@
 
 # Please keep this gtkrc in sync with the other ones from Clearlooks based themes.
 
-gtk-color-scheme = "rt_salt_pinch:#800000\nrt_base_color:#707070\nrt_fg_color:#A9A9A9\nrt_tooltip_fg_color:#A5A5A5\nrt_selected_bg_color:#562020\nrt_selected_fg_color:#E2E2E2\nrt_text_color:#C0C0C0\nrt_bg_color:#5F5F5F\nrt_tooltip_bg_color:#404040\nrt_tool_bg:#575757\nrt_tool_border:#6F6F6F"
+gtk-color-scheme = "rt_salt_pinch:#843382\nrt_base_color:#1A1A1A\nrt_fg_color:#909090\nrt_tooltip_fg_color:#1A1A1A\nrt_selected_bg_color:#5D235C\nrt_selected_fg_color:#B0B0B0\nrt_text_color:#828282\nrt_bg_color:#363636\nrt_tooltip_bg_color:#909090\nrt_tool_bg:#252525\nrt_tool_border:#484848"
 
 style "clearlooks-default" {
 	xthickness = 1
@@ -39,10 +39,10 @@ style "clearlooks-default" {
 	GtkPaned::handle-size = 6
 
 	GtkRange::trough-border = 0
-	GtkRange::slider-width = 14
-	GtkRange::stepper-size = 10
+	GtkRange::slider-width = 12
+	GtkRange::stepper-size = 16
 
-	GtkScale::slider-width = 14
+	#GtkScale::slider-width = 12
 	GtkScale::slider-length = 30
 	GtkScale::trough-side-details = 0
 
@@ -52,7 +52,7 @@ style "clearlooks-default" {
 	GtkExpander::expander-spacing = 2
 	GtkToolbar::internal-padding = 1
 	GtkTreeView::expander-size = 12
-	GtkTreeView::vertical-separator = 0
+	GtkTreeView::vertical-separator = 1
 
 	GtkMenu::horizontal-padding = 0
 	GtkMenu::vertical-padding = 0
@@ -71,8 +71,8 @@ style "clearlooks-default" {
 	bg[NORMAL]        = @rt_bg_color
 	bg[PRELIGHT]      = shade (1.02, @rt_bg_color)
 	bg[SELECTED]      = @rt_selected_bg_color
-	bg[INSENSITIVE]   = shade (0.95, @rt_bg_color)
-	bg[ACTIVE]        = shade (0.7, @rt_bg_color)
+	bg[INSENSITIVE]   = @rt_bg_color
+	bg[ACTIVE]        = shade (0.9, @rt_bg_color)
 
 	fg[NORMAL]        = @rt_fg_color
 	fg[PRELIGHT]      = @rt_fg_color
@@ -87,10 +87,10 @@ style "clearlooks-default" {
 	text[ACTIVE]      = @rt_selected_fg_color
 
 	base[NORMAL]      = @rt_base_color
-	base[PRELIGHT]    = shade (1.05, @rt_bg_color)
+	base[PRELIGHT]    = shade (0.95, @rt_bg_color)
 	base[SELECTED]    = @rt_selected_bg_color
 	base[INSENSITIVE] = @rt_bg_color
-	base[ACTIVE]      = @rt_selected_bg_color
+	base[ACTIVE]      = shade (0.9, @rt_selected_bg_color)
 
 	engine "clearlooks" {
 		colorize_scrollbar = TRUE
@@ -121,7 +121,7 @@ style "clearlooks-entry" {
 	xthickness = 3
 	ythickness = 3
 
-	bg[SELECTED] = mix (0.4, @rt_selected_bg_color, @rt_base_color)
+	bg[SELECTED] = mix (1.4, @rt_selected_bg_color, @rt_base_color)
 	fg[SELECTED] = @rt_selected_fg_color
 
 	engine "clearlooks" {
@@ -131,7 +131,7 @@ style "clearlooks-entry" {
 
 style "clearlooks-paned" {
 
-	bg[PRELIGHT] = shade (0.9, @rt_bg_color)
+	bg[PRELIGHT] = shade (0.8, @rt_bg_color)
 
 	engine "clearlooks" {
 		hint = "paned"
@@ -167,8 +167,8 @@ style "clearlooks-scale" {
 	xthickness = 2
 	ythickness = 2
 
-	bg[NORMAL]        = shade (0.96, @rt_bg_color)
-	bg[PRELIGHT]      = shade (1.06, @rt_bg_color)
+	bg[NORMAL]        = shade (1.35, @rt_bg_color)
+	bg[PRELIGHT]      = shade (1.70, @rt_bg_color)
 	# when GtkScale::trough-side-details = 1, bg[SELECTED] set the color of the slider background on the left of the knob
 	#bg[SELECTED]      = @rt_bg_color
 
@@ -205,258 +205,13 @@ style "clearlooks-hscale" {
 }
 
 style "clearlooks-scrollbar" {
+	xthickness = 2
+	ythickness = 2
 
-	#bg[SELECTED]      = shade (1.09, @rt_bg_color)
+	bg[SELECTED]      = shade (1.50, @rt_bg_color)
 
-	engine "pixmap" {
-		image
-		{
-			function			= BOX
-			detail				= "trough"
-			file				= "gray_textured/trough2.png"
-			border				= { 6,6,6,6 }
-			stretch				= TRUE
-			orientation			= VERTICAL
-		}
-		image
-		{
-			function			= BOX
-			detail				= "trough"
-			file				= "gray_textured/trough2-h.png"
-			border				= { 6,6,6,6 }
-			stretch				= TRUE
-			orientation			= HORIZONTAL
-		}
-		image
-		{
-			function			= SLIDER
-			state				= NORMAL
-			file				= "gray_textured/slider-h.png" 
-			border				= { 6,6,2,2 }
-			stretch				= TRUE
-			orientation			= HORIZONTAL
-		}
-		image
-		{
-			function			= SLIDER
-			state				= PRELIGHT
-			file				= "gray_textured/slider-h-pre.png" 
-			border				= { 6,6,2,2 }
-			stretch				= TRUE
-			orientation			= HORIZONTAL
-		}
-		image
-		{
-			function			= SLIDER
-			state				= INSENSITIVE
-			file				= "gray_textured/slider-h-ins.png"
-			border				= { 6,6,2,2 }
-			stretch				= TRUE
-			orientation			= HORIZONTAL
-		}
-		image
-		{
-			function			= SLIDER
-			state				= NORMAL
-			file				= "gray_textured/slider-v.png" 
-			border				= { 2, 2, 6, 6 }
-			stretch				= TRUE
-			orientation			= VERTICAL
-		}
-		image
-		{
-			function			= SLIDER
-			state				= PRELIGHT
-			file				= "gray_textured/slider-v-pre.png" 
-			border				= { 2, 2, 6, 6 }
-			stretch				= TRUE
-			orientation			= VERTICAL
-		}
-		image
-		{
-			function			= SLIDER
-			state				= INSENSITIVE
-			file				= "gray_textured/slider-v-ins.png"
-			border				= { 2,2,6,6 }
-			stretch				= TRUE
-			orientation			= VERTICAL
-		}
-		image
-		{
-			function			= STEPPER
-			state				= NORMAL
-			file				= "gray_textured/null.png"
-			border				= { 1,1,4,4 }
-			stretch				= TRUE
-			arrow_direction		= UP
-			overlay_file		= "gray_textured/arrow-up.png"
-			overlay_stretch		= FALSE
-		}
-		image
-		{
-			function			= STEPPER
-			state				= PRELIGHT
-			file				= "gray_textured/null.png"
-			border				= { 1,1,4,4 }
-			stretch				= TRUE
-			arrow_direction		= UP
-			overlay_file		= "gray_textured/arrow-up-pre.png"
-			overlay_stretch		= FALSE
-		}
-		image
-		{
-			function			= STEPPER
-			state				= ACTIVE
-			file				= "gray_textured/null.png"
-			border				= { 1,1,4,4 }
-			stretch				= TRUE
-			arrow_direction		= UP
-			overlay_file		= "gray_textured/arrow-up.png"
-			overlay_stretch		= FALSE
-		}
-		image
-		{
-			function			= STEPPER
-			state				= INSENSITIVE
-			file				= "gray_textured/null.png"
-			border				= { 1,1,4,4 }
-			stretch				= TRUE
-			arrow_direction		= UP
-			overlay_file		= "gray_textured/arrow-up-ins.png"
-			overlay_stretch		= FALSE
-		}
-		image
-		{
-			function			= STEPPER
-			state				= NORMAL
-			file				= "gray_textured/null.png"
-			border				= { 1,1,4,4 }
-			stretch				= TRUE
-			arrow_direction		= DOWN
-			overlay_file		= "gray_textured/arrow-down.png"
-			overlay_stretch		= FALSE
-		}
-		image
-		{
-			function			= STEPPER
-			state				= PRELIGHT
-			file				= "gray_textured/null.png"
-			border				= { 1,1,4,4 }
-			stretch				= TRUE
-			arrow_direction		= DOWN
-			overlay_file		= "gray_textured/arrow-down-pre.png"
-			overlay_stretch		= FALSE
-		}
-		image
-		{
-			function			= STEPPER
-			state				= ACTIVE
-			file				= "gray_textured/null.png"
-			border				= { 1,1,4,4 }
-			stretch				= TRUE
-			arrow_direction		= DOWN
-			overlay_file		= "gray_textured/arrow-down.png"
-			overlay_stretch		= FALSE
-		}
-		image
-		{
-			function			= STEPPER
-			state				= INSENSITIVE
-			file				= "gray_textured/null.png"
-			border				= { 1,1,4,4 }
-			stretch				= TRUE
-			arrow_direction		= DOWN
-			overlay_file		= "gray_textured/arrow-down-ins.png"
-			overlay_stretch		= FALSE
-		}
-		image
-		{
-			function			= STEPPER
-			state				= NORMAL
-			file				= "gray_textured/null.png"
-			border				= { 4,4,1,1 }
-			stretch				= TRUE
-			arrow_direction		= RIGHT
-			overlay_file		= "gray_textured/arrow-right.png"
-			overlay_stretch		= FALSE
-		}
-		image
-		{
-			function			= STEPPER
-			state				= PRELIGHT
-			file				= "gray_textured/null.png"
-			border				= { 4,4,1,1 }
-			stretch				= TRUE
-			arrow_direction		= RIGHT
-			overlay_file		= "gray_textured/arrow-right-pre.png"
-			overlay_stretch		= FALSE
-		}
-		image
-		{
-			function			= STEPPER
-			state				= ACTIVE
-			file				= "gray_textured/null.png"
-			border				= { 4,4,1,1 }
-			stretch				= TRUE
-			arrow_direction		= RIGHT
-			overlay_file		= "gray_textured/arrow-right.png"
-			overlay_stretch		= FALSE
-		}
-		image
-		{
-			function			= STEPPER
-			state				= INSENSITIVE
-			file				= "gray_textured/null.png"
-			border				= { 4,4,1,1 }
-			stretch				= TRUE
-			arrow_direction		= RIGHT
-			overlay_file		= "gray_textured/arrow-right-ins.png"
-			overlay_stretch		= FALSE
-		}
-		image
-		{
-			function			= STEPPER
-			state				= NORMAL
-			file				= "gray_textured/null.png"
-			border				= { 4,4,1,1 }
-			stretch				= TRUE
-			arrow_direction		= LEFT
-			overlay_file		= "gray_textured/arrow-left.png"
-			overlay_stretch		= FALSE
-		}
-		image
-		{
-			function			= STEPPER
-			state				= PRELIGHT
-			file				= "gray_textured/null.png"
-			border				= { 4,4,1,1 }
-			stretch				= TRUE
-			arrow_direction		= LEFT
-			overlay_file		= "gray_textured/arrow-left-pre.png"
-			overlay_stretch		= FALSE
-		}
-		image
-		{
-			function			= STEPPER
-			state				= ACTIVE
-			file				= "gray_textured/null.png"
-			border				= { 4,4,1,1 }
-			stretch				= TRUE
-			arrow_direction		= LEFT
-			overlay_file		= "gray_textured/arrow-left.png"
-			overlay_stretch		= FALSE
-		}
-		image
-		{
-			function			= STEPPER
-			state				= INSENSITIVE
-			file				= "gray_textured/null.png"
-			border				= { 4,4,1,1 }
-			stretch				= TRUE
-			arrow_direction		= LEFT
-			overlay_file		= "gray_textured/arrow-left-ins.png"
-			overlay_stretch		= FALSE
-		}
+	engine "clearlooks" {
+		hint = "scrollbar"
 	}
 }
 
@@ -474,112 +229,10 @@ style "clearlooks-vscrollbar" {
 	}
 }
 
-style "clearlooks-range" {
-
-	engine "pixmap" {
-		# image
-		# {
-		#   function		= FOCUS
-		#   file			= "gray_textured/null.png"
-		#   stretch			= TRUE
-		# }	
-		image 
-		{
-			function		= BOX
-			detail			= "trough"
-			file			= "gray_textured/pbtroughh.png"
-			border			= { 6, 6, 6, 6 }
-			stretch			= TRUE
-			orientation		= HORIZONTAL
-		}
-		image 
-		{
-			function		= BOX
-			detail			= "trough"
-			file			= "gray_textured/pbtroughv.png"
-			border			= { 6, 6, 6, 6 }
-			stretch			= TRUE
-			orientation		= VERTICAL
-		}
-		image 
-		{
-			function		= SLIDER
-			state			= NORMAL
-			file			= "gray_textured/rangeslider.png"
-			border			= { 6, 6, 6, 6 }
-			stretch			= TRUE
-			orientation		= HORIZONTAL
-		}
-		image 
-		{
-			function		= SLIDER
-			state			= PRELIGHT
-			file			= "gray_textured/rangeslider-pre.png"
-			border			= { 6, 6, 6, 6 }
-			stretch			= TRUE
-			orientation		= HORIZONTAL
-		}
-		image 
-		{
-			function		= SLIDER
-			state			= ACTIVE
-			file			= "gray_textured/rangeslider-pre.png"
-			border			= { 6, 6, 6, 6 }
-			stretch			= TRUE
-			orientation		= HORIZONTAL
-		}
-		image 
-		{
-			function		= SLIDER
-			state			= INSENSITIVE
-			file			= "gray_textured/rangeslider-ins.png"
-			border			= { 6, 6, 6, 6 }
-			stretch			= TRUE
-			orientation		= HORIZONTAL
-		}
-		image 
-		{
-			function		= SLIDER
-			state			= NORMAL
-			file			= "gray_textured/rangeslider.png"
-			border			= { 6, 6, 6, 6 }
-			stretch			= TRUE
-			orientation		= VERTICAL
-		}
-		image 
-		{
-			function		= SLIDER
-			state			= PRELIGHT
-			file			= "gray_textured/rangeslider-pre.png"
-			border			= { 6, 6, 6, 6 }
-			stretch			= TRUE
-			orientation		= VERTICAL
-		}
-		image 
-		{
-			function		= SLIDER
-			state			= ACTIVE
-			file			= "gray_textured/rangeslider-pre.png"
-			border			= { 6, 6, 6, 6 }
-			stretch			= TRUE
-			orientation		= VERTICAL
-		}
-		image 
-		{
-			function		= SLIDER
-			state			= INSENSITIVE
-			file			= "gray_textured/rangeslider-ins.png"
-			border			= { 6, 6, 6, 6 }
-			stretch			= TRUE
-			orientation		= VERTICAL
-		}
-	}
-}
-
 style "clearlooks-notebook_bg" {
 
-	bg[NORMAL]        = @rt_bg_color
-	bg[ACTIVE]        = shade (0.85, @rt_bg_color)
+	bg[NORMAL]        = shade (1.02, @rt_bg_color)
+	bg[ACTIVE]        = @rt_base_color
 }
 
 style "clearlooks-toolContainer" {
@@ -593,13 +246,13 @@ style "clearlooks-toolContainer" {
 }
 
 style "clearlooks-separator" {
-	bg[NORMAL]        = mix(0.85, @rt_tool_bg, @rt_tool_border)
-	bg[INSENSITIVE]   = mix(0.60, @rt_tool_bg, @rt_tool_border)
+	bg[NORMAL]        = shade(0.85, @rt_bg_color)
+	bg[INSENSITIVE]   = shade(0.85, @rt_bg_color)
 }
 
 style "clearlooks-frame" {
-	bg[NORMAL]        = mix(0.95, @rt_tool_bg, @rt_tool_border)
-	bg[INSENSITIVE]   = mix(0.60, @rt_tool_bg, @rt_tool_border)
+	bg[NORMAL]        = shade(0.85, @rt_bg_color)
+	bg[INSENSITIVE]   = shade(0.85, @rt_bg_color)
 }
 
 style "clearlooks-toolFrame" {
@@ -625,9 +278,9 @@ style "clearlooks-combobox" {
 
 style "clearlooks-button" {
 
-	bg[NORMAL]        = shade (0.93, @rt_tool_bg)
-	bg[PRELIGHT]      = shade (0.85, @rt_tool_bg)
-	bg[ACTIVE]        = shade (0.70, @rt_tool_bg)
+	bg[NORMAL]        = shade (1.20, @rt_bg_color)
+	bg[PRELIGHT]      = shade (1.30, @rt_bg_color)
+	bg[ACTIVE]        = shade (1.40, @rt_bg_color)
 
 	fg[NORMAL]      = @rt_fg_color
 	fg[PRELIGHT]    = shade(1.15, @rt_fg_color)
@@ -681,7 +334,7 @@ style "clearlooks-expander" {
 	fg[PRELIGHT]      = @rt_salt_pinch
 	fg[INSENSITIVE]   = @rt_salt_pinch
 
-	bg[PRELIGHT]      = mix (0.5, @rt_salt_pinch, @rt_bg_color)
+	bg[PRELIGHT]      = mix(0.8, @rt_selected_bg_color, @rt_bg_color)
 
 	base[NORMAL]      = @rt_salt_pinch
 	base[PRELIGHT]    = @rt_salt_pinch
@@ -694,8 +347,8 @@ style "clearlooks-expander" {
 
 style "clearlooks-expanderLabel" {
 
-	fg[NORMAL]        = shade (1.12, @rt_fg_color)
-	fg[PRELIGHT]      = shade (1.20, @rt_fg_color)
+	fg[NORMAL]   = shade (1.26, @rt_text_color)
+	fg[PRELIGHT] = shade (1.26, @rt_text_color)
 }
 
 style "clearlooks-menubar" {
@@ -709,7 +362,7 @@ style "clearlooks-menu" {
 	xthickness = 0
 	ythickness = 0
 
-	bg[NORMAL]        = @rt_tooltip_bg_color
+	bg[NORMAL]      = @rt_base_color
 
 	engine "clearlooks" {
 		radius = 0.0
@@ -748,7 +401,7 @@ style "clearlooks-frame_title" {
 
 style "clearlooks-partialPasteHeaderSep" {
 
-	bg[NORMAL]        = mix (0.25, @rt_fg_color, @rt_bg_color)
+	bg[NORMAL]        = mix (0.20, @rt_fg_color, @rt_bg_color)
 }
 
 style "clearlooks-checkbutton" {
@@ -769,8 +422,6 @@ style "clearlooks-checkbutton" {
 
 style "clearlooks-treeview" {
 
-	# For an unkown reason, shading 7C99AD produce a redish color, so we have to set the value manually
-	text[ACTIVE]      = @rt_selected_fg_color
 	base[ACTIVE]      = mix(0.50, @rt_selected_bg_color, @rt_base_color)
 
 	engine "clearlooks" {
@@ -831,8 +482,12 @@ class "GtkEntry" style "clearlooks-entry"
 
 class "GtkPaned" style "clearlooks-paned"
 class "GtkSpinButton" style "clearlooks-spinbutton"
-class "GtkRange" style "clearlooks-range"
+class "GtkScale" style "clearlooks-scale"
+class "GtkVScale" style "clearlooks-vscale"
+class "GtkHScale" style "clearlooks-hscale"
 class "GtkScrollbar" style "clearlooks-scrollbar"
+class "GtkHScrollbar" style "clearlooks-hscrollbar"
+class "GtkVScrollbar" style "clearlooks-vscrollbar"
 
 class "GtkExpander" style "clearlooks-expander"
 class "GtkHSV" style "clearlooks-HSV"

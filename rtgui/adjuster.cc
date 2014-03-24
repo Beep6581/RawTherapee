@@ -50,7 +50,7 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
   delay = options.adjusterDelay;		// delay is no more static, so we can set the delay individually (useful for the RAW editor tab)
 
   set_border_width (0);
-  set_spacing (2);
+  set_spacing (0);
 
   hbox = Gtk::manage (new Gtk::HBox ());
   hbox->set_border_width(0);

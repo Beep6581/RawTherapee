@@ -319,8 +319,6 @@ HistogramRGBArea::HistogramRGBArea () ://needChroma unactive by default
   harih->harea = this;
   harih->destroyed = false;
   harih->pending = 0;
-
-  signal_style_changed().connect( sigc::mem_fun(*this, &HistogramRGBArea::styleChanged) );
 }
 
 HistogramRGBArea::~HistogramRGBArea () {
@@ -536,7 +534,7 @@ bool HistogramRGBArea::on_button_press_event (GdkEventButton* event) {
   return true;
 }
 
-void HistogramRGBArea::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
+void HistogramRGBArea::on_style_changed (const Glib::RefPtr<Gtk::Style>& style) {
 
   white = get_style()->get_base(Gtk::STATE_NORMAL);
   queue_draw ();
@@ -559,8 +557,6 @@ HistogramArea::HistogramArea (FullModeListener *fml) : //needChroma unactive by 
     haih->harea = this;
     haih->destroyed = false;
     haih->pending = 0;
-
-    signal_style_changed().connect( sigc::mem_fun(*this, &HistogramArea::styleChanged) );
 }
 
 HistogramArea::~HistogramArea () {
@@ -801,7 +797,7 @@ void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
     cr->fill();
 }
 
-void HistogramArea::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
+void HistogramArea::on_style_changed (const Glib::RefPtr<Gtk::Style>& style) {
 
     white = get_style()->get_base(Gtk::STATE_NORMAL);
     queue_draw ();

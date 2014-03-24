@@ -22,10 +22,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-RawProcess::RawProcess () : Gtk::VBox(), FoldableToolPanel(this)
+RawProcess::RawProcess () : FoldableToolPanel(this)
 {
-   set_border_width(4);
-
    Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
    hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_DMETHOD") +": ")),Gtk::PACK_SHRINK, 4);
    dmethod = Gtk::manage (new MyComboBoxText ());

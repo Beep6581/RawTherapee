@@ -31,7 +31,7 @@ class DFProvider {
     // add other info here
 };
 
-class DarkFrame : public Gtk::VBox, public FoldableToolPanel {
+class DarkFrame : public ToolParamBlock, public FoldableToolPanel {
 
 protected:
 

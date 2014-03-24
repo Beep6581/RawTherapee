@@ -26,10 +26,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
-
-  set_border_width(4);
-  set_spacing(4);
+ToneCurve::ToneCurve () : FoldableToolPanel(this) {
 
   CurveListener::setMulti(true);
 

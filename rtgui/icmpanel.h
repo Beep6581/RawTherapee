@@ -34,7 +34,7 @@ class ICMPanelListener {
         virtual void saveInputICCReference (Glib::ustring fname) {}
 };
 
-class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class ICMPanel : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
     protected:
         Adjuster* gampos;

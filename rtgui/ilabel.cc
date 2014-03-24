@@ -30,8 +30,6 @@ void ILabel::on_realize() {
     int labw, labh;
     fn->get_pixel_size (labw, labh);
     set_size_request (2+labw,2+labh);
-
-    signal_style_changed().connect( sigc::mem_fun(*this, &ILabel::styleChanged) );
 }
 
 bool ILabel::on_expose_event (GdkEventExpose* event) {
@@ -53,7 +51,7 @@ bool ILabel::on_expose_event (GdkEventExpose* event) {
     return true;
 }
 
-void ILabel::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
+void ILabel::on_style_changed (const Glib::RefPtr<Gtk::Style>& style) {
 
     Glib::RefPtr<Pango::Layout> fn = create_pango_layout(label);
     fn->set_markup (label);

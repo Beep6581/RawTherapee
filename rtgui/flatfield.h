@@ -28,11 +28,12 @@
 
 class FFProvider {
   public:
+    virtual ~FFProvider() {}
     virtual rtengine::RawImage* getFF() = 0;
     // add other info here
 };
 
-class FlatField : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class FlatField : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
 protected:
 

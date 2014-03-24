@@ -33,11 +33,11 @@ using namespace rtengine::procparams;
 
 ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
 
-    exposurePanel   = Gtk::manage (new Gtk::VBox ());
-    detailsPanel    = Gtk::manage (new Gtk::VBox ());
-    colorPanel      = Gtk::manage (new Gtk::VBox ());
-    transformPanel  = Gtk::manage (new Gtk::VBox ());
-    rawPanel        = Gtk::manage (new Gtk::VBox ());
+    exposurePanel   = Gtk::manage (new ToolVBox ());
+    detailsPanel    = Gtk::manage (new ToolVBox ());
+    colorPanel      = Gtk::manage (new ToolVBox ());
+    transformPanel  = Gtk::manage (new ToolVBox ());
+    rawPanel        = Gtk::manage (new ToolVBox ());
 
     coarse              = Gtk::manage (new CoarsePanel ());
     toneCurve           = Gtk::manage (new ToneCurve ());
@@ -144,24 +144,24 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     }
 
     exposurePanelSW->add  (*exposurePanel);
-    exposurePanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,4);
+    exposurePanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,0);
     exposurePanel->pack_start (*vbPanelEnd[0],Gtk::PACK_SHRINK,4);
 
     detailsPanelSW->add   (*detailsPanel);
-    detailsPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,4);
+    detailsPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,0);
     detailsPanel->pack_start (*vbPanelEnd[1],Gtk::PACK_SHRINK,4);
 
     colorPanelSW->add     (*colorPanel);
-    colorPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,4);
+    colorPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,0);
     colorPanel->pack_start (*vbPanelEnd[2],Gtk::PACK_SHRINK,4);
 
     transformPanelSW->add (*transformPanel);
-    transformPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,4);
+    transformPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,0);
     transformPanel->pack_start (*vbPanelEnd[3],Gtk::PACK_SHRINK,4);
 
     rawPanelSW->add       (*rawPanel);
-    rawPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,4);
-    rawPanel->pack_start (*vbPanelEnd[4],Gtk::PACK_SHRINK,4);
+    rawPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,0);
+    rawPanel->pack_start (*vbPanelEnd[4],Gtk::PACK_SHRINK,0);
 
     TOITypes type = options.UseIconNoText ? TOI_ICON : TOI_TEXT;
 
@@ -203,16 +203,17 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
 
 void ToolPanelCoordinator::addPanel (Gtk::Box* where, FoldableToolPanel* panel, Glib::ustring label, bool need100Percent) {
 
-    if (where->children().size()) {
+    // no more separator!
+    /*if (where->children().size()) {
         Gtk::HSeparator *hsep = Gtk::manage (new  Gtk::HSeparator());
         where->pack_start(*hsep, Gtk::PACK_SHRINK, 0);
         hsep->show();
-    }
+    }*/
 
     panel->setParent(where);
     panel->setLabel(escapeHtmlChars(label), need100Percent);
 
-	expList.push_back (panel->exp);
+    expList.push_back (panel->exp);
     where->pack_start(*panel->exp, false, false);
 }
 

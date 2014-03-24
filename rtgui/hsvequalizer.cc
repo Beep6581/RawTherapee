@@ -25,10 +25,8 @@ using namespace rtengine::procparams;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-HSVEqualizer::HSVEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
+HSVEqualizer::HSVEqualizer () : FoldableToolPanel(this) {
 	
-	set_border_width(4);
-
 	std::vector<GradientMilestone> bottomMilestones;
 	float R, G, B;
 	// -0.1 rad < Hue < 1.6 rad

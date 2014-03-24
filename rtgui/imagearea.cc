@@ -47,7 +47,6 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p) {
 
     add_events(Gdk::LEAVE_NOTIFY_MASK);
 
-    signal_style_changed().connect( sigc::mem_fun(*this, &ImageArea::styleChanged) );
     signal_size_allocate().connect( sigc::mem_fun(*this, &ImageArea::on_resized) );
 
     dirty = false;
@@ -126,7 +125,7 @@ void ImageArea::setPreviewHandler (PreviewHandler* ph) {
     previewHandler = ph; 
 }
 
-void ImageArea::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
+void ImageArea::on_style_changed (const Glib::RefPtr<Gtk::Style>& style) {
 
     // TODO: notify all crop windows that the style has been changed
     queue_draw ();

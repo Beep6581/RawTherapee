@@ -24,9 +24,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Sharpening::Sharpening () : Gtk::VBox(), FoldableToolPanel(this) {
-
-   set_border_width(4);
+Sharpening::Sharpening () : FoldableToolPanel(this) {
 
    std::vector<GradientMilestone> milestones;
    milestones.push_back( GradientMilestone(0.0, 0.0, 0.0, 0.0) );

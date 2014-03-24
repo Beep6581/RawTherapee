@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class Vignetting : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class Vignetting : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
   protected:
     Adjuster* amount;

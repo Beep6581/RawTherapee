@@ -115,9 +115,7 @@ static double wbTemp2Slider(double temp) {
     return sval;
 }
 
-WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL), wblistener(NULL) {
-
-  set_border_width(4);
+WhiteBalance::WhiteBalance () : FoldableToolPanel(this), wbp(NULL), wblistener(NULL) {
 
   Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
   hbox->show ();

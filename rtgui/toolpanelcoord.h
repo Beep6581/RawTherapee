@@ -128,11 +128,11 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         rtengine::StagedImageProcessor* ipc;
 
         std::vector<ToolPanel*> toolPanels;
-        Gtk::VBox* exposurePanel;
-        Gtk::VBox* detailsPanel;
-        Gtk::VBox* colorPanel;
-        Gtk::VBox* transformPanel;
-        Gtk::VBox* rawPanel;
+        ToolVBox* exposurePanel;
+        ToolVBox* detailsPanel;
+        ToolVBox* colorPanel;
+        ToolVBox* transformPanel;
+        ToolVBox* rawPanel;
         Gtk::Notebook* metadataPanel;
         ExifPanel* exifpanel;
         IPTCPanel* iptcpanel;

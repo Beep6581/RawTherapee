@@ -23,9 +23,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LensGeometry::LensGeometry () : Gtk::VBox(), FoldableToolPanel(this), rlistener(NULL) {
-
-  set_border_width(4);
+LensGeometry::LensGeometry () : FoldableToolPanel(this), rlistener(NULL) {
 
   fill = Gtk::manage (new Gtk::CheckButton (M("TP_LENSGEOM_FILL")));
   pack_start (*fill);
@@ -34,7 +32,7 @@ LensGeometry::LensGeometry () : Gtk::VBox(), FoldableToolPanel(this), rlistener(
   autoCrop->set_image (*Gtk::manage (new RTImage ("crop-auto.png")));
   pack_start (*autoCrop, Gtk::PACK_SHRINK, 2);
 
-  packBox = Gtk::manage (new Gtk::VBox ());
+  packBox = Gtk::manage (new ToolParamBlock ());
   pack_start (*packBox);
 
   autoCrop->signal_pressed().connect( sigc::mem_fun(*this, &LensGeometry::autoCropPressed) );

@@ -42,8 +42,6 @@ FileBrowser::FileBrowser ()
 
     profileStore.addListener(this);
 
-    signal_style_changed().connect( sigc::mem_fun(*this, &FileBrowser::styleChanged) );
-    
     int p = 0;
     pmenu = new Gtk::Menu ();
     pmenu->attach (*Gtk::manage(open = new Gtk::MenuItem (M("FILEBROWSER_POPUPOPEN"))), 0, 1, p, p+1); p++;

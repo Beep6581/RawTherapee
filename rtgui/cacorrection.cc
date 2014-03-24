@@ -23,9 +23,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-CACorrection::CACorrection () : Gtk::VBox(), FoldableToolPanel(this) {
-
-    set_border_width(4);
+CACorrection::CACorrection () : FoldableToolPanel(this) {
 
     Gtk::Image* icaredL =   Gtk::manage (new RTImage ("ajd-ca-red1.png"));
     Gtk::Image* icaredR =   Gtk::manage (new RTImage ("ajd-ca-red2.png"));

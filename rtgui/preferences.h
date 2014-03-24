@@ -159,6 +159,8 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
     Glib::ustring initialTheme;
     Glib::ustring initialFont;
 
+    bool oldSlimUI;
+
     void fillPreferences ();
     void storePreferences ();
     void parseDir       (Glib::ustring dirname, std::vector<Glib::ustring>& items, Glib::ustring ext);

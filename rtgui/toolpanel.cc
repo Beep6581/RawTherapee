@@ -22,18 +22,95 @@
 using namespace rtengine::procparams;
 
 
-class Frame2: public Gtk::Frame
+class Frame2: public Gtk::EventBox
 {
 	Gtk::Container *pC;
+
 public:
-	Frame2( Gtk::Container *p):pC(p){}
+	Frame2( Gtk::Container *p):pC(p){ updateStyle(); }
 	~Frame2( ){ delete pC;}
+
+	void updateStyle() {
+		set_border_width(options.slimUI ? 2 : 8);  // Outer space around the tool's frame 2:7
+	}
+
+	void on_style_changed (const Glib::RefPtr<Gtk::Style>& style) { updateStyle(); }
+	bool on_expose_event(GdkEventExpose* event);
 };
+
+bool Frame2::on_expose_event(GdkEventExpose* event) {
+	bool retVal = Gtk::EventBox::on_expose_event(event);
+
+	if (!options.useSystemTheme) {
+		Glib::RefPtr<Gdk::Window> window = get_window();
+		Glib::RefPtr<Gtk::Style> style = get_style ();
+		Cairo::RefPtr<Cairo::Context> cr = window->create_cairo_context();
+
+		int x_, y_, w_, h_, foo;
+		window->get_geometry(x_, y_, w_, h_, foo);
+		double x = 0.;
+		double y = 0.;
+		double w = double(w_);
+		double h = double(h_);
+
+		cr->set_antialias (Cairo::ANTIALIAS_NONE);
+
+		// draw a frame
+		cr->set_line_width (1.0);
+		Gdk::Color c = style->get_fg (Gtk::STATE_NORMAL);
+		cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+		cr->move_to(x+0.5, y+0.5);
+		cr->line_to(x+w, y+0.5);
+		cr->line_to(x+w, y+h);
+		cr->line_to(x+0.5, y+h);
+		cr->line_to(x+0.5, y+0.5);
+		cr->stroke ();
+	}
+	return retVal;
+}
+
+ToolVBox::ToolVBox() {
+	updateStyle();
+}
+
+void ToolVBox::updateStyle() {
+	if (options.slimUI) {
+		set_spacing(3);       // Vertical space between tools
+		set_border_width(1);  // Space separating the tab's frame and the tools
+	}
+	else {
+		set_spacing(3);       // Vertical space between tools
+		set_border_width(1);  // Space separating the tab's frame and the tools  3
+	}
+}
+
+void ToolVBox::on_style_changed (const Glib::RefPtr<Gtk::Style>& style) {
+	updateStyle();
+}
+
+ToolParamBlock::ToolParamBlock() {
+	updateStyle();
+}
+
+void ToolParamBlock::updateStyle() {
+	if (options.slimUI) {
+		set_spacing(2);       // Vertical space between parameters in a single tool
+		set_border_width(6);  // Space separating the parameters of a tool and its surrounding frame  6
+	}
+	else {
+		set_spacing(4);       // Vertical space between parameters in a single tool
+		set_border_width(8);  // Space separating the parameters of a tool and its surrounding frame  8
+	}
+}
+
+void ToolParamBlock::on_style_changed (const Glib::RefPtr<Gtk::Style>& style) {
+	updateStyle();
+}
 
 FoldableToolPanel::FoldableToolPanel(Gtk::Box* content) : ToolPanel(), parentContainer(NULL), exp(NULL) {
 
 	exp = Gtk::manage (new Gtk::Expander ());
-	exp->set_border_width (4);
+	//exp->set_border_width (5);
 	exp->set_use_markup (true);
 	exp->signal_button_release_event().connect_notify( sigc::mem_fun(this, &FoldableToolPanel::foldThemAll) );
 
@@ -44,7 +121,6 @@ FoldableToolPanel::FoldableToolPanel(Gtk::Box* content) : ToolPanel(), parentCon
 	pframe->add (*content);
 
 	exp->add (*pframe);
-	pframe->set_shadow_type (Gtk::SHADOW_ETCHED_IN);
 	pframe->show ();
 	exp->show ();
 }

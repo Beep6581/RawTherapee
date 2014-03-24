@@ -9,7 +9,7 @@
 #include "toolpanel.h"
 #include "edit.h"
 
-class Gradient : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public EditSubscriber {
+class Gradient : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public EditSubscriber {
 
   private:
     int lastObject;

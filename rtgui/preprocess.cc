@@ -24,10 +24,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-PreProcess::PreProcess () : Gtk::VBox(), FoldableToolPanel(this)
+PreProcess::PreProcess () : FoldableToolPanel(this)
 {
-	set_border_width(4);
-
 	hotDeadPixel = Gtk::manage(new Gtk::CheckButton((M("TP_PREPROCESS_HOTDEADPIXFILT"))));
 	hotDeadPixel->set_tooltip_markup (M("TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP"));
 

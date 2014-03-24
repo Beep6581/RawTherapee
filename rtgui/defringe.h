@@ -27,7 +27,7 @@
 #include "curveeditorgroup.h"
 #include "colorprovider.h"
 
-class Defringe : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider{
+class Defringe : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider{
 
   protected:
     CurveEditorGroup* curveEditorPF;

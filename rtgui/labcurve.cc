@@ -24,9 +24,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
-
-	set_border_width(4);
+LCurve::LCurve () : FoldableToolPanel(this) {
 
 	std::vector<GradientMilestone> milestones;
 

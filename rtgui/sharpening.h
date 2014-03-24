@@ -24,7 +24,7 @@
 #include "thresholdadjuster.h"
 #include "toolpanel.h"
 
-class Sharpening : public Gtk::VBox, public ThresholdAdjusterListener, public AdjusterListener, public FoldableToolPanel {
+class Sharpening : public ToolParamBlock, public ThresholdAdjusterListener, public AdjusterListener, public FoldableToolPanel {
 
   protected:
     MyComboBoxText* method;

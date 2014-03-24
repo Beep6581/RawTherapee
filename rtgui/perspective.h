@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class PerspCorrection : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class PerspCorrection : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
   protected:
     Adjuster* horiz;

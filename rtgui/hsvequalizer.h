@@ -29,12 +29,10 @@
 #include "colorprovider.h"
 
 
-class HSVEqualizer : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider
+class HSVEqualizer : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider
 {
 
 protected:
-
-    Gtk::CheckButton * enabled;
 
 	CurveEditorGroup*  curveEditorG;
 	FlatCurveEditor*   hshape;

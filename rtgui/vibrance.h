@@ -26,7 +26,7 @@
 #include "curveeditorgroup.h"
 #include "toolpanel.h"
 
-class Vibrance : public Gtk::VBox, public AdjusterListener, public ThresholdCurveProvider, public ThresholdAdjusterListener,
+class Vibrance : public ToolParamBlock, public AdjusterListener, public ThresholdCurveProvider, public ThresholdAdjusterListener,
                  public FoldableToolPanel, public CurveListener
 {
 

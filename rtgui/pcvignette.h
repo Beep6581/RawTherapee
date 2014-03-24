@@ -8,7 +8,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class PCVignette : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class PCVignette : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
   protected:
     Gtk::CheckButton* enabled;

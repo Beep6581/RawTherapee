@@ -30,9 +30,8 @@ using namespace rtengine::procparams;
 
 extern Options options;
 
-ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), icmplistener(NULL), lastRefFilename("") {
+ICMPanel::ICMPanel () : FoldableToolPanel(this), iunchanged(NULL), icmplistener(NULL), lastRefFilename("") {
 
-    set_border_width(4);
     isBatchMode = lastToneCurve = lastBlendCMSMatrix = lastgamfree = false;
 
     ipDialog = Gtk::manage (new MyFileChooserButton (M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));

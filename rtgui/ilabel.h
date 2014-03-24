@@ -29,7 +29,7 @@ class ILabel : public Gtk::DrawingArea {
         ILabel (Glib::ustring lab);
         bool on_expose_event(GdkEventExpose* event);
         void on_realize();
-        void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
+        void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
 };
 
 #endif
