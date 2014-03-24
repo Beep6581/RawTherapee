@@ -24,6 +24,7 @@
 #include "../rtengine/LUT.h"
 #include "rtimage.h"
 #include "../rtengine/improccoordinator.h"
+#include "../rtengine/color.h"
 
 extern Glib::ustring argv0;
 extern Options options;
@@ -286,7 +287,7 @@ void HistogramPanel::pointerMoved (bool validPos, Glib::ustring profile, int x, 
     }
     else {
         // do something to show vertical bars
-        histogramRGBArea->renderRGBMarks(r, g, b);
+        histogramRGBArea->renderRGBMarks(r, g, b, profile);
         histogramRGBArea->queue_draw ();
     }
 }
@@ -342,7 +343,7 @@ void HistogramRGBArea::updateFreeze (bool f) {
     return;
 }
 
-void HistogramRGBArea::renderRGBMarks (int r, int g, int b) {
+void HistogramRGBArea::renderRGBMarks (int r, int g, int b, Glib::ustring profile) {
 
   if (!is_realized ())
         return;
@@ -401,23 +402,100 @@ void HistogramRGBArea::renderRGBMarks (int r, int g, int b) {
       cr->line_to((int)(b*(winw/256.0)), winh-0);
       cr->stroke();
   }
+  if(needLuma || needChroma) {
+	float Lab_L,Lab_a,Lab_b;
+	rgb2lab( profile, r,g,b,Lab_L,Lab_a,Lab_b);
     if (needLuma) {
       // Luma
       cr->set_source_rgb(1.0, 1.0, 1.0);
-      cr->move_to((int)((r+g+b)/3*(winw/256.0)), 0);
-      cr->line_to((int)((r+g+b)/3*(winw/256.0)), winh-0);
+      cr->move_to((int)((Lab_L)*(winw/100.0)), 0);
+      cr->line_to((int)((Lab_L)*(winw/100.0)), winh-0);
       cr->stroke();
     }
     if (needChroma) {
-      // Luma
-      cr->set_source_rgb(1.0, 1.0, 1.0);
-      cr->move_to((int)((r+g+b)/3*(winw/256.0)), 0);
-      cr->line_to((int)((r+g+b)/3*(winw/256.0)), winh-0);
+      // Chroma
+      float chromaval = sqrt(Lab_a*Lab_a + Lab_b*Lab_b)/1.8;
+      cr->set_source_rgb(0.0, 0.0, 0.0);
+      cr->move_to((int)(chromaval*(winw/100.0)), 0);
+      cr->line_to((int)(chromaval*(winw/100.0)), winh-0);
       cr->stroke();
     }
-	
+  }
   }
 }
+
+void HistogramRGBArea::rgb2lab (Glib::ustring profile, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b) {
+	double xyz_rgb[3][3];
+	const double ep=216.0/24389.0;
+	const double ka=24389.0/27.0;
+
+	double var_R = r / 255.0;
+	double var_G = g / 255.0;
+	double var_B = b / 255.0;
+
+	if (profile=="sRGB") {//apply sRGB inverse gamma
+
+    // 
+// if you want display = working space
+// today as the gamma output can not be configured
+// it is better that the user has the gamma of the output space
+	if ( var_R > 0.04045 ) 
+		var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+	else    
+		var_R = var_R / 12.92;
+	if ( var_G > 0.04045 ) 
+		var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+	else                   
+		var_G = var_G / 12.92;
+	if ( var_B > 0.04045 ) 
+		var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+	else    
+		var_B = var_B / 12.92;
+	} 
+// if you want display = output space
+	else 
+	if (profile=="ProPhoto") {// apply inverse gamma 1.8
+		var_R = pow ( var_R, 1.8);
+		var_G = pow ( var_G, 1.8);
+		var_B = pow ( var_B, 1.8);
+	}
+	else {// apply inverse gamma 2.2
+		var_R = pow ( var_R, 2.2);
+		var_G = pow ( var_G, 2.2);
+		var_B = pow ( var_B, 2.2);
+	}
+
+	/*for (int i=0; i<numprofiles; i++) {
+		if (profile==wpnames[i]) {
+			for (int m=0; m<3; m++) 
+				for (int n=0; n<3; n++) {
+					xyz_rgb[m][n] = wprofiles[i][m][n];
+			}
+			break;
+		}
+	}*/
+
+    TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix (profile);
+
+	for (int m=0; m<3; m++) 
+		for (int n=0; n<3; n++) {
+			xyz_rgb[m][n] = wprof[m][n];
+		}
+
+	double varxx,varyy,varzz;
+	double var_X = ( xyz_rgb[0][0]*var_R + xyz_rgb[0][1]*var_G + xyz_rgb[0][2]*var_B ) / rtengine::Color::D50x;
+	double var_Y = ( xyz_rgb[1][0]*var_R + xyz_rgb[1][1]*var_G + xyz_rgb[1][2]*var_B ) ;
+	double var_Z = ( xyz_rgb[2][0]*var_R + xyz_rgb[2][1]*var_G + xyz_rgb[2][2]*var_B ) / rtengine::Color::D50z;
+
+	varxx = var_X>ep?cbrt(var_X):( ka * var_X  +  16.0) / 116.0 ;
+	varyy = var_Y>ep?cbrt(var_Y):( ka * var_Y  +  16.0) / 116.0 ;
+	varzz = var_Z>ep?cbrt(var_Z):( ka * var_Z  +  16.0) / 116.0 ;
+	LAB_l = ( 116 * varyy ) - 16;
+	LAB_a = 500 * ( varxx - varyy );
+	LAB_b = 200 * ( varyy - varzz );
+
+}
+
 
 int histrgbupdate (void* data) {
 
@@ -641,39 +719,69 @@ void HistogramArea::renderHistogram () {
     LUTu& gh = rawMode ? ghistRaw : ghist;
     LUTu& bh = rawMode ? bhistRaw : bhist;
 
+	// make double copies of LUT, one for faster access, another one to scale down the raw histos
+	LUTu rhchanged(256),ghchanged(256),bhchanged(256);
+	unsigned int lhisttemp[256],chisttemp[256],rhtemp[256],ghtemp[256],bhtemp[256];
+	const int scale = (rawMode ? 8 : 1);
+	for(int i=0;i<256;i++) {
+		if(needLuma)
+			lhisttemp[i] = lhist[i];
+		if(needChroma)
+			chisttemp[i] = chist[i];
+		if(needRed)
+			rhchanged[i] = rhtemp[i] = rh[i] / scale;
+		if(needGreen)
+			ghchanged[i] = ghtemp[i] = gh[i] / scale;
+		if(needBlue)
+			bhchanged[i] = bhtemp[i] = bh[i] / scale;
+	}
+
     // compute height of the full histogram (realheight) and
     // does not take into account 0 and 255 values
     // them are handled separately
 
     int fullhistheight = 0;
     for (int i=1; i<255; i++) {
-        if (needLuma && lhist[i]>fullhistheight)
-	        fullhistheight = lhist[i];
-        if (needChroma && chist[i]>fullhistheight)
-	        fullhistheight = chist[i];
-        if (needRed && (rawMode?rhistRaw:rhist)[i]>fullhistheight)
-	        fullhistheight = rh[i];
-        if (needGreen && (rawMode?ghistRaw:ghist)[i]>fullhistheight)
-	        fullhistheight = gh[i];
-        if (needBlue && (rawMode?bhistRaw:bhist)[i]>fullhistheight)
-	        fullhistheight = bh[i];
+        if (needLuma && lhisttemp[i]>fullhistheight)
+	        fullhistheight = lhisttemp[i];
+        if (needChroma && chisttemp[i]>fullhistheight)
+	        fullhistheight = chisttemp[i];
+        if (needRed && rhtemp[i]>fullhistheight)
+	        fullhistheight = rhtemp[i];
+        if (needGreen && ghtemp[i]>fullhistheight)
+	        fullhistheight = ghtemp[i];
+        if (needBlue && bhtemp[i]>fullhistheight)
+	        fullhistheight = bhtemp[i];
     }
 
     int realhistheight = fullhistheight;
-
+    
+    // though much faster than before, this still takes a lot of time especially for big files if rawMode is true
     if (!fullMode) {
         int area = 0;
-        for (int i=0; i<fullhistheight; i++) {
-            for (int j=0; j<256; j++)
-                if ((needLuma && !rawMode && lhist[j]>i) || (needChroma && !rawMode && chist[j]>i) || (needRed && rh[j]>i) || (needGreen && gh[j]>i) || (needBlue && bh[j]>i))
-                    area++;
-            if ((double)area / (256*(i+1)) < 0.3) {
-                realhistheight = i;
-                break;
-            }
-        }
+        if(!rawMode)
+			for (int i=0; i<fullhistheight; i++) {
+				for (int j=0; j<256; j++)
+					if ((needLuma && lhisttemp[j]>i) || (needChroma && chisttemp[j]>i) || (needRed && rhtemp[j]>i) || (needGreen && ghtemp[j]>i) || (needBlue && bhtemp[j]>i))
+						area++;
+				if ((double)area / (256*(i+1)) < 0.3) {
+					realhistheight = i;
+					break;
+				}
+			}
+		else
+			for (int i=0; i<fullhistheight; i++) {
+				for (int j=0; j<256; j++)
+					if ((needRed && rhtemp[j]>i) || (needGreen && ghtemp[j]>i) || (needBlue && bhtemp[j]>i))
+						area++;
+				if ((double)area / (256*(i+1)) < 0.3) {
+					realhistheight = i;
+					break;
+				}
+			}
+			
     }
-    
+
     if (realhistheight<winh-2)
         realhistheight = winh-2;
 
@@ -688,7 +796,7 @@ void HistogramArea::renderHistogram () {
         cr->set_source_rgb (0.75, 0.75, 0.75);
 		cr->fill_preserve ();
         cr->set_source_rgb (0.5, 0.5, 0.5);
-   	cr->stroke ();
+		cr->stroke ();
 
         drawMarks(cr, lhist, realhistheight, winw, ui, oi);
     }
@@ -697,32 +805,30 @@ void HistogramArea::renderHistogram () {
         cr->set_source_rgb (0.6, 0.6, 0.6);
 	//	cr->fill_preserve ();
      //   cr->set_source_rgb (0.2, 0.2, 0.1);
-   	cr->stroke ();
+		cr->stroke ();
 
-        drawMarks(cr, lhist, realhistheight, winw, ui, oi);
+        drawMarks(cr, chist, realhistheight, winw, ui, oi);
     }
-	
-	
     if (needRed) {
-        drawCurve(cr, rh, realhistheight, winw, winh);
+        drawCurve(cr, rhchanged, realhistheight, winw, winh);
         cr->set_source_rgb (1.0, 0.0, 0.0);
     	cr->stroke ();
 
-        drawMarks(cr, rh, realhistheight, winw, ui, oi);
+        drawMarks(cr, rhchanged, realhistheight, winw, ui, oi);
     }
     if (needGreen) {
-        drawCurve(cr, gh, realhistheight, winw, winh);
+        drawCurve(cr, ghchanged, realhistheight, winw, winh);
         cr->set_source_rgb (0.0, 1.0, 0.0);
     	cr->stroke ();
 
-        drawMarks(cr, gh, realhistheight, winw, ui, oi);
+        drawMarks(cr, ghchanged, realhistheight, winw, ui, oi);
     }
     if (needBlue) {
-        drawCurve(cr, bh, realhistheight, winw, winh);
+        drawCurve(cr, bhchanged, realhistheight, winw, winh);
         cr->set_source_rgb (0.0, 0.0, 1.0);
     	cr->stroke ();
 
-        drawMarks(cr, bh, realhistheight, winw, ui, oi);
+        drawMarks(cr, bhchanged, realhistheight, winw, ui, oi);
     }
   }
 
@@ -829,3 +935,4 @@ bool HistogramArea::on_button_press_event (GdkEventButton* event) {
     }
     return true;
 }
+

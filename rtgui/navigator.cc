@@ -97,19 +97,18 @@ void Navigator::pointerMoved (bool validPos, Glib::ustring profile, int x, int y
 		H->set_text (Glib::ustring::compose (M("NAVIGATOR_H_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), h*360.f) + Glib::ustring("\xc2\xb0")));
 		S->set_text (Glib::ustring::compose (M("NAVIGATOR_S_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), s*100.f) + Glib::ustring("%")));
 		V->set_text (Glib::ustring::compose (M("NAVIGATOR_V_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), v*100.f) + Glib::ustring("%")));
-		int LAB_a, LAB_b, LAB_l;
+		float LAB_a, LAB_b, LAB_l;
 		//rgb2lab (r, g, b, LAB_l, LAB_a, LAB_b);
 		rgb2lab (profile, r, g, b, LAB_l, LAB_a, LAB_b);  // TODO: Really sure this function works?
 		
-		LAB_A->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_A_VALUE"), LAB_a));
-		LAB_B->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_B_VALUE"), LAB_b));
-		LAB_L->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_L_VALUE"), LAB_l));
+		LAB_A->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_A_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), LAB_a)));
+		LAB_B->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_B_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), LAB_b)));
+		LAB_L->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_L_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), LAB_l)));
 	}
 }
 
 
-void Navigator::rgb2lab (Glib::ustring profile, int r, int g, int b, int &LAB_l, int &LAB_a, int &LAB_b) {
-	
+void Navigator::rgb2lab (Glib::ustring profile, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b) {
 	double xyz_rgb[3][3];
 	const double ep=216.0/24389.0;
 	const double ka=24389.0/27.0;
@@ -172,9 +171,9 @@ void Navigator::rgb2lab (Glib::ustring profile, int r, int g, int b, int &LAB_l,
 	double var_Y = ( xyz_rgb[1][0]*var_R + xyz_rgb[1][1]*var_G + xyz_rgb[1][2]*var_B ) ;
 	double var_Z = ( xyz_rgb[2][0]*var_R + xyz_rgb[2][1]*var_G + xyz_rgb[2][2]*var_B ) / Color::D50z;
 
-	varxx = var_X>ep?pow (var_X, 1.0/3.0):( ka * var_X  +  16.0) / 116.0 ;
-	varyy = var_Y>ep?pow (var_Y, 1.0/3.0):( ka * var_Y  +  16.0) / 116.0 ;
-	varzz = var_Z>ep?pow (var_Z, 1.0/3.0):( ka * var_Z  +  16.0) / 116.0 ;
+	varxx = var_X>ep?cbrt(var_X):( ka * var_X  +  16.0) / 116.0 ;
+	varyy = var_Y>ep?cbrt(var_Y):( ka * var_Y  +  16.0) / 116.0 ;
+	varzz = var_Z>ep?cbrt(var_Z):( ka * var_Z  +  16.0) / 116.0 ;
 	LAB_l = ( 116 * varyy ) - 16;
 	LAB_a = 500 * ( varxx - varyy );
 	LAB_b = 200 * ( varyy - varzz );
