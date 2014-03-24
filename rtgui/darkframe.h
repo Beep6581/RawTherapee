@@ -19,9 +19,7 @@
 #ifndef _DARKFRAME_H_
 #define _DARKFRAME_H_
 
-#ifndef __clang__
-#include <auto_ptr.h>
-#endif
+#include <memory>
 #include <gtkmm.h>
 #include "toolpanel.h"
 #include "../rtengine/rawimage.h"
