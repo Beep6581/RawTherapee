@@ -2272,10 +2272,6 @@ short int int2_to_signed (short unsigned int i) {
   return u.s;
 }
 
-int getTypeSize( TagType type ){
-	return ("11124811248484"[type<14?type:0]-'0');
-}
-
 /* Function to parse and extract focal length and aperture information from description
  * @fullname must conform to the following formats
  * <focal>mm f/<aperture>
