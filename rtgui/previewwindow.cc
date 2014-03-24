@@ -101,17 +101,19 @@ bool PreviewWindow::on_expose_event (GdkEventExpose* event) {
         window->draw_drawable (get_style()->get_base_gc(Gtk::STATE_NORMAL), backBuffer, 0, 0, 0, 0, -1, -1);
 
         if (mainCropWin && zoom > 0.0) {
-            Cairo::RefPtr<Cairo::Context> cr = get_window()->create_cairo_context();
-            int x, y, w, h;
-            getObservedFrameArea (x, y, w, h);
-            cr->set_source_rgb (1.0, 1.0, 1.0);
-            cr->set_line_width (3);
-            cr->rectangle (x-1.5, y-1.5, w+2, h+2);
-            cr->stroke ();
-            cr->set_source_rgb (1.0, 0.0, 0.0);
-            cr->set_line_width (1);
-            cr->rectangle (x-1.5, y-1.5, w+2, h+2);
-            cr->stroke ();
+			if(mainCropWin->getZoom() > mainCropWin->cropHandler.getFitZoom()) {
+				Cairo::RefPtr<Cairo::Context> cr = get_window()->create_cairo_context();
+				int x, y, w, h;
+				getObservedFrameArea (x, y, w, h);
+				cr->set_source_rgb (1.0, 1.0, 1.0);
+				cr->set_line_width (3);
+				cr->rectangle (x-1.5, y-1.5, w+2, h+2);
+				cr->stroke ();
+				cr->set_source_rgb (1.0, 0.0, 0.0);
+				cr->set_line_width (1);
+				cr->rectangle (x-1.5, y-1.5, w+2, h+2);
+				cr->stroke ();
+			}
         }
     }
     return true;
