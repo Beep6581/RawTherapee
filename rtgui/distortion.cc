@@ -20,14 +20,10 @@
 #include <iomanip>
 #include "rtimage.h"
 
-extern Glib::ustring argv0;
-
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Distortion::Distortion (): Gtk::VBox(), FoldableToolPanel(this) {
-
-    set_border_width(4);
+Distortion::Distortion (): FoldableToolPanel(this) {
 
     rlistener = NULL;
     autoDistor = Gtk::manage (new Gtk::Button (M("TP_DISTORTION_AUTO")));

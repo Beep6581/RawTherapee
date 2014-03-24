@@ -24,7 +24,7 @@
 #include "toolpanel.h"
 #include "../rtengine/rawimage.h"
 
-class RAWExposure : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class RAWExposure : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
 protected:
 	Adjuster* PexPos;

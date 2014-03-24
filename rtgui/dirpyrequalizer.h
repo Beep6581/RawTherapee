@@ -26,7 +26,7 @@
 #include "thresholdadjuster.h"
 #include "colorprovider.h"
 
-class DirPyrEqualizer : public Gtk::VBox, public ThresholdAdjusterListener, public AdjusterListener, public FoldableToolPanel
+class DirPyrEqualizer : public ToolParamBlock, public ThresholdAdjusterListener, public AdjusterListener, public FoldableToolPanel
 {
 
 protected:

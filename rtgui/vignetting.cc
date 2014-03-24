@@ -22,9 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Vignetting::Vignetting () : Gtk::VBox(), FoldableToolPanel(this) {
-
-    set_border_width(4);
+Vignetting::Vignetting () : FoldableToolPanel(this) {
 
     amount = Gtk::manage (new Adjuster (M("TP_VIGNETTING_AMOUNT"), -100, 100, 1, 0));
     amount->setAdjusterListener (this); 

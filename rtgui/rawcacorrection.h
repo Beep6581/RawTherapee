@@ -24,7 +24,7 @@
 #include "toolpanel.h"
 #include "../rtengine/rawimage.h"
 
-class RAWCACorr : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class RAWCACorr : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
 protected:
     Gtk::CheckButton* caAutocorrect;

@@ -111,7 +111,7 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     int getEffectiveHeight ();
     
     const std::vector<ThumbBrowserEntryBase*>& getEntries () { return fd; }
-    void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
+    void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
     void redraw ();   // arrange files and draw area
     void refreshThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw
     void refreshQuickThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw

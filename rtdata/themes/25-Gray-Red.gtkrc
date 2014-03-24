@@ -19,7 +19,7 @@
 
 # Please keep this gtkrc in sync with the other ones from Clearlooks based themes.
 
-gtk-color-scheme = "rt_salt_pinch:#800000\nrt_base_color:#525252\nrt_fg_color:#979797\nrt_tooltip_fg_color:#A0A0A0\nrt_selected_bg_color:#703535\nrt_selected_fg_color:#CDCDCD\nrt_text_color:#A2A2A2\nrt_bg_color:#404040\nrt_tooltip_bg_color:#252525"
+gtk-color-scheme = "rt_salt_pinch:#800000\nrt_base_color:#525252\nrt_fg_color:#979797\nrt_tooltip_fg_color:#A0A0A0\nrt_selected_bg_color:#703535\nrt_selected_fg_color:#CDCDCD\nrt_text_color:#A2A2A2\nrt_bg_color:#404040\nrt_tooltip_bg_color:#252525\nrt_tool_bg:#3B3B3B\nrt_tool_border:#4D4D4D"
 
 style "clearlooks-default" {
 	xthickness = 1
@@ -48,8 +48,8 @@ style "clearlooks-default" {
 
 	GtkScrollbar::min-slider-length = 30
 	GtkMenuBar::internal-padding = 0
-	GtkExpander::expander-size = 18
-	GtkExpander::expander-spacing = 0
+	GtkExpander::expander-size = 12
+	GtkExpander::expander-spacing = 2
 	GtkToolbar::internal-padding = 1
 	GtkTreeView::expander-size = 12
 	GtkTreeView::vertical-separator = 0
@@ -156,8 +156,11 @@ style "clearlooks-spinbutton" {
 style "clearlooks-framelessspinbutton" {
 
 	# IMPORTANT!
-	# base[NORMAL] must have the same color than notebook bg[NORMAL]
-	base[NORMAL]       = shade (1.02, @rt_bg_color)
+	# base[NORMAL] must have the same color than clearlooks.toolContainer / bg[NORMAL]
+	base[NORMAL]       = @rt_tool_bg
+	base[INSENSITIVE]  = @rt_tool_bg
+	bg[NORMAL]         = @rt_tool_bg
+	bg[INSENSITIVE]    = @rt_tool_bg
 }
 
 style "clearlooks-scale" {
@@ -176,9 +179,15 @@ style "clearlooks-scale" {
 }
 
 style "clearlooks-thresholdselector" {
+	xthickness = 6
+	ythickness = 6
 
-	bg[ACTIVE]   = shade (1.40, @rt_bg_color)
+	bg[NORMAL]   = @rt_tool_bg
+	bg[ACTIVE]   = shade (1.45, @rt_bg_color)
 	bg[PRELIGHT] = shade (1.70, @rt_bg_color)
+	bg[SELECTED] = shade (2.00, @rt_bg_color)
+
+	fg[PRELIGHT] = shade (1.30, @rt_fg_color)
 }
 
 style "clearlooks-vscale" {
@@ -222,16 +231,46 @@ style "clearlooks-vscrollbar" {
 
 style "clearlooks-notebook_bg" {
 
-	# IMPORTANT!
-	# If you modify bg[NORMAL] here under, you must set clearlooks-framelessspinbutton -> base[NORMAL] to the very same value
 	bg[NORMAL]        = shade (1.02, @rt_bg_color)
 	bg[ACTIVE]        = shade (0.80, @rt_bg_color)
+}
+
+style "clearlooks-toolContainer" {
+	xthickness = 0
+	ythickness = 0
+
+	# IMPORTANT!
+	# If you modify bg[NORMAL] below, you must set clearlooks-framelessspinbutton -> base[NORMAL] to the very same value
+	bg[NORMAL]        = @rt_tool_bg
+	bg[INSENSITIVE]   = @rt_tool_bg
+}
+
+style "clearlooks-separator" {
+	bg[NORMAL]        = mix(0.85, @rt_tool_bg, @rt_tool_border)
+	bg[INSENSITIVE]   = mix(0.60, @rt_tool_bg, @rt_tool_border)
+}
+
+style "clearlooks-frame" {
+	bg[NORMAL]        = mix(0.85, @rt_tool_bg, @rt_tool_border)
+	bg[INSENSITIVE]   = mix(0.60, @rt_tool_bg, @rt_tool_border)
+}
+
+style "clearlooks-toolFrame" {
+	bg[NORMAL]        = @rt_tool_bg
+
+	fg[NORMAL]        = @rt_tool_border
+	fg[INSENSITIVE]   = mix(0.5, @rt_bg_color, @rt_tool_border)
+}
+
+style "clearlooks-toolExpanderBox" {
+	bg[NORMAL]        = @rt_tool_bg
+	bg[INSENSITIVE]   = @rt_tool_bg
 }
 
 style "clearlooks-combobox" {
 
 	text[NORMAL]      = @rt_fg_color
-	text[PRELIGHT]    = @rt_fg_color
+	text[PRELIGHT]    = shade(1.15, @rt_fg_color)
 	text[SELECTED]    = @rt_selected_fg_color
 	text[INSENSITIVE] = mix (0.2, @rt_fg_color, @rt_bg_color)
 	text[ACTIVE]      = @rt_fg_color
@@ -239,9 +278,15 @@ style "clearlooks-combobox" {
 
 style "clearlooks-button" {
 
-	bg[NORMAL]        = shade (0.93, @rt_bg_color)
-	bg[PRELIGHT]      = shade (0.85, @rt_bg_color)
-	bg[ACTIVE]        = shade (0.70, @rt_bg_color)
+	bg[NORMAL]        = shade (0.93, @rt_tool_bg)
+	bg[PRELIGHT]      = shade (0.85, @rt_tool_bg)
+	bg[ACTIVE]        = shade (0.70, @rt_tool_bg)
+
+	fg[NORMAL]      = @rt_fg_color
+	fg[PRELIGHT]    = shade(1.15, @rt_fg_color)
+	fg[SELECTED]    = @rt_selected_fg_color
+	fg[INSENSITIVE] = mix (0.2, @rt_fg_color, @rt_bg_color)
+	fg[ACTIVE]      = @rt_fg_color
 
 	engine "clearlooks"
 	{
@@ -282,6 +327,8 @@ style "clearlooks-comboboxentry" {
 }
 
 style "clearlooks-expander" {
+	xthickness = 3
+	ythickness = 3
 
 	fg[NORMAL]        = @rt_salt_pinch
 	fg[PRELIGHT]      = @rt_salt_pinch
@@ -355,6 +402,22 @@ style "clearlooks-frame_title" {
 style "clearlooks-partialPasteHeaderSep" {
 
 	bg[NORMAL]        = mix (0.25, @rt_fg_color, @rt_bg_color)
+}
+
+style "clearlooks-checkbutton" {
+
+	text[NORMAL]      = @rt_selected_fg_color
+	
+	fg[PRELIGHT]      = @rt_fg_color
+	
+	bg[SELECTED]      = @rt_base_color
+	bg[PRELIGHT]      = @rt_base_color
+	bg[SELECTED]      = @rt_base_color
+
+	engine "clearlooks"
+	{
+		hint	= "checkbutton"
+	}
 }
 
 style "clearlooks-treeview" {
@@ -441,13 +504,15 @@ widget_class "*<GtkNotebook>*<GtkLayout>" style "clearlooks-notebook_bg"
 widget_class "*<GtkNotebook>*<GtkViewport>" style "clearlooks-notebook_bg"
 widget_class "*<GtkNotebook>*<GtkScrolledWindow>" style "clearlooks-notebook_bg"
 
-widget_class "*<GtkButton>" style "clearlooks-button"
+widget_class "*<GtkButton>.<GtkLabel>" style "clearlooks-combobox"
+widget_class "*<GtkButton>*" style "clearlooks-button"
 widget_class "*<GtkNotebook>" style "clearlooks-notebook"
 widget_class "*<GtkStatusbar>*" style "clearlooks-statusbar"
 
 #widget_class "*<GtkComboBoxEntry>*" style "clearlooks-comboboxentry"
 widget_class "*<GtkComboBox>*" style "clearlooks-combobox"
 
+widget_class "*<GtkCheckButton>*" style "clearlooks-checkbutton"
 widget_class "*<GtkExpander>.<GtkLabel>" style "clearlooks-expanderLabel"
 widget_class "*<GtkExpander>.<GtkHBox>.<GtkLabel>" style "clearlooks-expanderLabel"
 
@@ -456,6 +521,7 @@ widget_class "*<GtkMenu>*" style "clearlooks-menu"
 widget_class "*<GtkMenuItem>*" style "clearlooks-menu_item"
 widget_class "*<GtkSeparatorMenuItem>*" style "clearlooks-separator_menu_item"
 
+widget_class "*.<GtkFrame>" style "clearlooks-frame"
 widget_class "*.<GtkFrame>.<GtkLabel>" style "clearlooks-frame_title"
 widget_class "*.<GtkTreeView>*" style "clearlooks-treeview"
 
@@ -466,12 +532,17 @@ widget_class "*.<GtkTreeView>.<GtkButton>" style "clearlooks-treeview_header"
 widget_class "*.<GtkCTree>.<GtkButton>" style "clearlooks-treeview_header"
 widget_class "*.<GtkList>.<GtkButton>" style "clearlooks-treeview_header"
 widget_class "*.<GtkCList>.<GtkButton>" style "clearlooks-treeview_header"
+widget_class "*.<GtkExpander>.*.<GtkSeparator>" style "clearlooks-separator"
+widget_class "*.<GtkExpander>.*.<GtkDrawingArea>" style "clearlooks-toolExpanderBox"
+widget_class "*.<GtkExpander>.<GtkEventBox>" style "clearlooks-toolFrame"
+widget_class "*.<GtkExpander>.<GtkEventBox>.*.<GtkEventBox>" style "clearlooks-toolExpanderBox"
 
 widget "*.partialPasteHeader.*" style "clearlooks-frame_title"
 widget "*.partialPasteHeaderSep" style "clearlooks-partialPasteHeaderSep"
 widget "*.histButton" style "clearlooks-histButton"
 widget "*.FramelessSpinButton" style "clearlooks-framelessspinbutton"
 widget "*.ThresholdSelector" style "clearlooks-thresholdselector"
+widget "*.ToolPanel" style "clearlooks-toolContainer"
 
 # The window of the tooltip is called "gtk-tooltip"
 ##################################################################

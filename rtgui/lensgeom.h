@@ -23,7 +23,7 @@
 #include "toolpanel.h"
 #include "lensgeomlistener.h"
 
-class LensGeometry : public Gtk::VBox, public FoldableToolPanel {
+class LensGeometry : public ToolParamBlock, public FoldableToolPanel {
 
   protected:
     Gtk::Button*        autoCrop;
@@ -31,7 +31,7 @@ class LensGeometry : public Gtk::VBox, public FoldableToolPanel {
     Gtk::CheckButton*   fill;
     bool                lastFill;
     sigc::connection    fillConn;
-    Gtk::VBox*			packBox;
+    ToolParamBlock*           packBox;
 
   public:
 

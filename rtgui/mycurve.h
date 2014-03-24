@@ -117,7 +117,7 @@ class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller {
 		void forceResize() { sized = RS_Force; }
 		void refresh();
 		void setCurveDirty () { curveIsDirty = true; }
-		void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
+		void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
 		virtual std::vector<double> getPoints () = 0;
 		virtual void setPoints (const std::vector<double>& p) = 0;
 		virtual bool handleEvents (GdkEvent* event) = 0;

@@ -87,15 +87,15 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public Edi
 
     // widget base events
     void on_realize ();
-    bool on_expose_event        (GdkEventExpose* event);
-    bool on_motion_notify_event (GdkEventMotion* event);
-    bool on_button_press_event  (GdkEventButton* event);
+    bool on_expose_event         (GdkEventExpose* event);
+    bool on_motion_notify_event  (GdkEventMotion* event);
+    bool on_button_press_event   (GdkEventButton* event);
     bool on_button_release_event (GdkEventButton* event);
-    bool on_scroll_event        (GdkEventScroll* event);
-    bool on_leave_notify_event  (GdkEventCrossing* event);
-    void on_resized             (Gtk::Allocation& req);
-    void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
-    void syncBeforeAfterViews       ();
+    bool on_scroll_event         (GdkEventScroll* event);
+    bool on_leave_notify_event   (GdkEventCrossing* event);
+    void on_resized              (Gtk::Allocation& req);
+    void on_style_changed        (const Glib::RefPtr<Gtk::Style>& style);
+    void syncBeforeAfterViews    ();
 
     void            setCropGUIListener       (CropGUIListener* l);
     void            setPointerMotionListener  (PointerMotionListener* pml);

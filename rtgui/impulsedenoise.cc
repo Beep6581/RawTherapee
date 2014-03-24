@@ -24,9 +24,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ImpulseDenoise::ImpulseDenoise () : Gtk::VBox(), FoldableToolPanel(this) {
-
-	set_border_width(4);
+ImpulseDenoise::ImpulseDenoise () : FoldableToolPanel(this) {
 
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_active (false);

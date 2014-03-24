@@ -32,7 +32,7 @@ class SpotWBListener {
         virtual void spotWBRequested (int size) {}
 };
 
-class WhiteBalance : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class WhiteBalance : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
     enum WB_LabelType {
         WBLT_GUI,

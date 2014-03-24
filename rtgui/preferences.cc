@@ -38,6 +38,7 @@ Preferences::Preferences  (RTWindow *rtwindow) : rprofiles(NULL), iprofiles(NULL
     set_title (M("MAIN_BUTTON_PREFERENCES"));
 
     moptions.copyFrom (&options);
+    oldSlimUI = options.slimUI;
 
     /*
      * Do not increase height, since it's not visible on e.g. smaller netbook screens
@@ -1427,8 +1428,11 @@ void Preferences::okPressed () {
 
 void Preferences::cancelPressed () {
 
+	bool currentSlimState = options.slimUI;
+	options.slimUI = oldSlimUI;
+
 	// set the initial theme back
-	if (theme->get_active_text () != options.theme) {
+	if (theme->get_active_text()!=options.theme || options.slimUI!=currentSlimState) {
 		RTImage::setPaths(options);
 		RTImage::updateImages();
 		switchThemeTo(options.theme, options.slimUI);
@@ -1580,6 +1584,9 @@ void Preferences::switchThemeTo(Glib::ustring newTheme, bool slimInterface) {
 
 	std::vector<Glib::ustring> files;
 	files.push_back (argv0+"/themes/"+newTheme+".gtkrc");
+
+	options.slimUI = slimInterface;
+
 	if (slimInterface)
 		files.push_back (argv0+"/themes/slim");
 	Gtk::RC::set_default_files (files);

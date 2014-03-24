@@ -95,7 +95,7 @@ class HistogramRGBArea : public Gtk::DrawingArea {
     void on_realize();
     bool on_expose_event(GdkEventExpose* event);
     bool on_button_press_event (GdkEventButton* event);
-    void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
+    void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
   private:
     // Some ...
 };
@@ -144,7 +144,7 @@ class HistogramArea : public Gtk::DrawingArea{
     void on_realize();
     bool on_expose_event(GdkEventExpose* event);
     bool on_button_press_event (GdkEventButton* event);
-    void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
+    void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
   private:
     void drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
 				   LUTu & data, double scale, int hsize, int vsize);

@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class EdgePreservingDecompositionUI : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class EdgePreservingDecompositionUI : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 protected:
 	Adjuster *strength;
 	Adjuster *edgeStopping;

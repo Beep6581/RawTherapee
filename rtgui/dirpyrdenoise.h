@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class DirPyrDenoise : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
   protected:
 	Adjuster* luma;

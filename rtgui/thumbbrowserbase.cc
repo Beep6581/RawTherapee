@@ -54,7 +54,6 @@ ThumbBrowserBase::ThumbBrowserBase ()
     hscroll.signal_value_changed().connect( sigc::mem_fun(*this, &ThumbBrowserBase::scrollChanged) );
 
     internal.signal_size_allocate().connect( sigc::mem_fun(*this, &ThumbBrowserBase::internalAreaResized) );
-    signal_style_changed().connect( sigc::mem_fun(*this, &ThumbBrowserBase::styleChanged) );
 }
 
 void ThumbBrowserBase::scrollChanged () {
@@ -586,7 +585,7 @@ bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_t
         return false;
 }
 
-void ThumbBrowserBase::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
+void ThumbBrowserBase::on_style_changed (const Glib::RefPtr<Gtk::Style>& style) {
     // GUI will be acquired by refreshThumbImages
     refreshThumbImages ();
 }

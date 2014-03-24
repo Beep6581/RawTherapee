@@ -38,7 +38,7 @@ class CropRatio {
         double value;
 };
 
-class Crop : public Gtk::VBox, public CropGUIListener, public FoldableToolPanel, public rtengine::SizeListener {
+class Crop : public ToolParamBlock, public CropGUIListener, public FoldableToolPanel, public rtengine::SizeListener {
 
   protected:
     Gtk::CheckButton* enabled;

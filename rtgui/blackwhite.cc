@@ -28,10 +28,8 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 
 
-BlackWhite::BlackWhite (): Gtk::VBox(), FoldableToolPanel(this) {
+BlackWhite::BlackWhite (): FoldableToolPanel(this) {
 	CurveListener::setMulti(true);
-	set_border_width(4);
-	set_spacing(4);
 
 	nextredbw = 0.3333;
 	nextgreenbw = 0.3333;

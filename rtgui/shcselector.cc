@@ -101,7 +101,10 @@ bool SHCSelector::on_expose_event(GdkEventExpose* event) {
 	else {
 		// solid background
 		c = style->get_bg (state);
-		cr->set_source_rgb (c.get_red_p()*0.85, c.get_green_p()*0.85, c.get_blue_p()*0.85);
+		if (state==Gtk::STATE_INSENSITIVE)
+			cr->set_source_rgb (c.get_red_p()*0.96, c.get_green_p()*0.96, c.get_blue_p()*0.96);
+		else
+			cr->set_source_rgb (c.get_red_p()*0.85, c.get_green_p()*0.85, c.get_blue_p()*0.85);
 
 		// draw the box's background
 		cr->rectangle (leftMargin+1, 1, w-2, int(float(h)*5.5f/7.f+0.5f));
@@ -111,8 +114,11 @@ bool SHCSelector::on_expose_event(GdkEventExpose* event) {
 	// draw the box's borders
 	cr->set_line_width (1.);
 	cr->rectangle (leftMargin+0.5, 0.5, w-1, int(float(h)*5.5f/7.f+0.5f)+1);
-    c = style->get_bg (state);
-    cr->set_source_rgb (c.get_red_p()*0.7, c.get_green_p()*0.7, c.get_blue_p()*0.7);
+	c = style->get_bg (state);
+	if (state==Gtk::STATE_INSENSITIVE)
+		cr->set_source_rgb (c.get_red_p()*0.85, c.get_green_p()*0.85, c.get_blue_p()*0.85);
+	else
+		cr->set_source_rgb (c.get_red_p()*0.7, c.get_green_p()*0.7, c.get_blue_p()*0.7);
 	cr->stroke ();
 
     // draw sliders
@@ -128,8 +134,11 @@ bool SHCSelector::on_expose_event(GdkEventExpose* event) {
 		c = style->get_bg (is_sensitive() ? Gtk::STATE_ACTIVE : Gtk::STATE_INSENSITIVE);
 		cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
 		cr->fill_preserve ();
-	    c = style->get_bg (state);
-	    cr->set_source_rgb (c.get_red_p()*0.7, c.get_green_p()*0.7, c.get_blue_p()*0.7);
+		c = style->get_bg (state);
+		if (state==Gtk::STATE_INSENSITIVE)
+			cr->set_source_rgb (c.get_red_p()*0.85, c.get_green_p()*0.85, c.get_blue_p()*0.85);
+		else
+			cr->set_source_rgb (c.get_red_p()*0.7, c.get_green_p()*0.7, c.get_blue_p()*0.7);
 		cr->stroke ();
     }
     

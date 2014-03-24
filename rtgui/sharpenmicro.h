@@ -28,7 +28,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class SharpenMicro : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class SharpenMicro : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
 protected:
 

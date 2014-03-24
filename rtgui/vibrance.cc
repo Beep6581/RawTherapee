@@ -24,9 +24,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Vibrance::Vibrance () : Gtk::VBox(), FoldableToolPanel(this) {
-
-	set_border_width(4);
+Vibrance::Vibrance () : FoldableToolPanel(this) {
 
 	std::vector<GradientMilestone> milestones;
 	float R, G, B;

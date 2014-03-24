@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class ImpulseDenoise : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class ImpulseDenoise : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
   protected:
     Adjuster* thresh;

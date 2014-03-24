@@ -229,7 +229,10 @@ bool ThresholdSelector::on_expose_event(GdkEventExpose* event) {
 	else {
 		// solid background
 		c = style->get_bg (state);
-		cr->set_source_rgb (c.get_red_p()*0.85, c.get_green_p()*0.85, c.get_blue_p()*0.85);
+		if (state==Gtk::STATE_INSENSITIVE)
+			cr->set_source_rgb (c.get_red_p()*0.96, c.get_green_p()*0.96, c.get_blue_p()*0.96);
+		else
+			cr->set_source_rgb (c.get_red_p()*0.85, c.get_green_p()*0.85, c.get_blue_p()*0.85);
 
 		// draw the box's background
 		cr->rectangle (hb+hwslider-0.5, double(int(float(h)*1.5f/7.f))+0.5, iw+1, double(int(float(h)*4.f/7.f)));
@@ -298,7 +301,7 @@ bool ThresholdSelector::on_expose_event(GdkEventExpose* event) {
 	}
 	else {
 		c = style->get_bg (Gtk::STATE_INSENSITIVE);
-		cr->set_source_rgb (c.get_red_p()*0.7, c.get_green_p()*0.7, c.get_blue_p()*0.7);
+		cr->set_source_rgb (c.get_red_p()*0.85, c.get_green_p()*0.85, c.get_blue_p()*0.85);
 	}
 	cr->set_line_width (1.5);
 	cr->stroke ();
@@ -306,8 +309,11 @@ bool ThresholdSelector::on_expose_event(GdkEventExpose* event) {
 	// draw the box's borders
 	cr->set_line_width (1.);
 	cr->rectangle (hb+hwslider-0.5, double(int(float(h)*1.5f/7.f))+0.5, iw+1, double(int(float(h)*4.f/7.f)));
-    c = style->get_bg (state);
-    cr->set_source_rgb (c.get_red_p()*0.7, c.get_green_p()*0.7, c.get_blue_p()*0.7);
+	c = style->get_bg (state);
+	if (state==Gtk::STATE_INSENSITIVE)
+		cr->set_source_rgb (c.get_red_p()*0.85, c.get_green_p()*0.85, c.get_blue_p()*0.85);
+	else
+		cr->set_source_rgb (c.get_red_p()*0.7, c.get_green_p()*0.7, c.get_blue_p()*0.7);
 	cr->stroke ();
 
 	// draw sliders
@@ -349,8 +355,11 @@ bool ThresholdSelector::on_expose_event(GdkEventExpose* event) {
 			c = style->get_bg (is_sensitive() ? Gtk::STATE_ACTIVE : Gtk::STATE_INSENSITIVE);
 			cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
 			cr->fill_preserve ();
-		    c = style->get_bg (state);
-		    cr->set_source_rgb (c.get_red_p()*0.7, c.get_green_p()*0.7, c.get_blue_p()*0.7);
+			c = style->get_bg (state);
+			if (state==Gtk::STATE_INSENSITIVE)
+				cr->set_source_rgb (c.get_red_p()*0.85, c.get_green_p()*0.85, c.get_blue_p()*0.85);
+			else
+				cr->set_source_rgb (c.get_red_p()*0.7, c.get_green_p()*0.7, c.get_blue_p()*0.7);
 			cr->stroke ();
 		}
 	}

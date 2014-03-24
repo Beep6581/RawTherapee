@@ -24,7 +24,7 @@
 #include "toolpanel.h"
 #include "../rtengine/rawimage.h"
 
-class PreProcess : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class PreProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
   protected:
 

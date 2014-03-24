@@ -45,7 +45,6 @@ MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal
 #else
     add_events(Gdk::EXPOSURE_MASK |	Gdk::POINTER_MOTION_MASK |	Gdk::POINTER_MOTION_HINT_MASK |	Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);
 #endif
-    signal_style_changed().connect( sigc::mem_fun(*this, &MyCurve::styleChanged) );
 
     mcih = new MyCurveIdleHelper;
     mcih->myCurve = this;
@@ -115,7 +114,7 @@ bool MyCurve::snapCoordinateY(double testedVal, double realVal) {
 	return false;
 }
 
-void MyCurve::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
+void MyCurve::on_style_changed (const Glib::RefPtr<Gtk::Style>& style) {
 	setDirty(true);
     queue_draw ();
 }

@@ -25,13 +25,11 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ColorAppearance::ColorAppearance () : Gtk::VBox(), FoldableToolPanel(this) {
+ColorAppearance::ColorAppearance () : FoldableToolPanel(this) {
 	CurveListener::setMulti(true);
 	std::vector<GradientMilestone> milestones;
 	milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
 	milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
-
-	set_border_width(4);
 
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_active (false);

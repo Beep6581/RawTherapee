@@ -26,7 +26,7 @@
 #include "curveeditorgroup.h"
 #include "colorprovider.h"
 
-class RGBCurves : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider {
+class RGBCurves : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider {
 
   protected:
 	CurveEditorGroup* curveEditorG;

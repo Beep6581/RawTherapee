@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class ChMixer : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class ChMixer : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
   protected:
     Adjuster *red[3];

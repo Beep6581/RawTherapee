@@ -22,11 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-extern Glib::ustring argv0;
-
-ChMixer::ChMixer (): Gtk::VBox(), FoldableToolPanel(this) {
-
-    set_border_width(4);
+ChMixer::ChMixer (): FoldableToolPanel(this) {
 
     imgIcon[0] = Gtk::manage (new RTImage ("Chanmixer-RR.png"));
     imgIcon[1] = Gtk::manage (new RTImage ("Chanmixer-RG.png"));

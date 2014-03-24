@@ -7,10 +7,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-PCVignette::PCVignette () : Gtk::VBox(), FoldableToolPanel(this)
+PCVignette::PCVignette () : FoldableToolPanel(this)
 {
-	set_border_width(4);
-
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_active (false);
 	enaConn  = enabled->signal_toggled().connect( sigc::mem_fun(*this, &PCVignette::enabledChanged) );

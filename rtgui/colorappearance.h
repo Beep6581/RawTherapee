@@ -28,7 +28,7 @@
 #include "guiutils.h"
 #include "colorprovider.h"
 
-class ColorAppearance : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoCamListener, public CurveListener,  public ColorProvider {
+class ColorAppearance : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoCamListener, public CurveListener,  public ColorProvider {
 
   protected:
     Glib::RefPtr<Gtk::Tooltip> bgTTips;

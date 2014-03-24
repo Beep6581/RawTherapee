@@ -23,10 +23,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-DirPyrDenoise::DirPyrDenoise () : Gtk::VBox(), FoldableToolPanel(this), lastenhance(false) {
+DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
 	
-	set_border_width(4);
-
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_tooltip_text (M("TP_DIRPYRDENOISE_ENABLED_TOOLTIP"));
 	
