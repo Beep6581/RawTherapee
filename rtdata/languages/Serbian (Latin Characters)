@@ -403,7 +403,7 @@ MAIN_TOOLTIP_INDCLIPPEDS;Prikazuje isečene tamne delove
 MAIN_TOOLTIP_QINFO;Osnovni podaci o slici <b>I</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Prikazuje/sakriva levu površ <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Prikazuje/sakriva desnu površ <b>Alt-l</b>
-MAIN_TOOLTIP_SHOWHIDETP1;Prikazuje/sakriva gornju površ <b>Shift-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Prikazuje/sakriva gornju površ <b>Shift-L</b>
 MAIN_TOOLTIP_TOGGLE;Prikazuje sliku pre i posle obrade <b>B</b>
 NAVIGATOR_B_NA;P = ○
 NAVIGATOR_B_VALUE;P = %1

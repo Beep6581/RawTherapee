@@ -583,7 +583,7 @@ MAIN_TOOLTIP_PREVIEWR;Просмотреть <b>канал красного</b>.
 MAIN_TOOLTIP_QINFO;Информация об изображении.\nГорячая клавиша <b>i</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Показать/скрыть левую панель <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Показать/скрыть правую панель <b>Alt-l</b>
-MAIN_TOOLTIP_SHOWHIDETP1;Показать/скрыть верхнюю панель <b>Shift-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Показать/скрыть верхнюю панель <b>Shift-L</b>
 MAIN_TOOLTIP_THRESHOLD;Порог
 MAIN_TOOLTIP_TOGGLE;Включить режим "<b>до</b>/<b>после</b>".\nГорячая клавиша <b>b</b>
 NAVIGATOR_B_NA;B = н/д

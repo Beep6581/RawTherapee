@@ -579,7 +579,7 @@ MAIN_TOOLTIP_PREVIEWR;Affichage du <b>canal Rouge</b>\nRaccourci: <b>r</b>
 MAIN_TOOLTIP_QINFO;Informations rapide sur l'image\nRaccourci: <b>i</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Montrer/Cacher le panneau gauche\nRaccourci: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Afficher/Cacher le panneau droit\nRaccourci: <b>Alt-l</b>
-MAIN_TOOLTIP_SHOWHIDETP1;Afficher/Cacher le panneau supérieur\nRaccourci: <b>Shift-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Afficher/Cacher le panneau supérieur\nRaccourci: <b>Shift-L</b>
 MAIN_TOOLTIP_THRESHOLD;Seuil
 MAIN_TOOLTIP_TOGGLE;Comparaison avant/après\nRaccourci: <b>Shift-b</b>
 NAVIGATOR_B_NA;B = n/d

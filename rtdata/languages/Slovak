@@ -916,7 +916,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
 !MAIN_TOOLTIP_SHOWHIDELP1;Show/Hide the left panel.\nShortcut: <b>l</b>
 !MAIN_TOOLTIP_SHOWHIDERP1;Show/Hide the right panel.\nShortcut: <b>Alt-l</b>
-!MAIN_TOOLTIP_SHOWHIDETP1;Show/Hide the top panel.\nShortcut: <b>Shift-l</b>
+!MAIN_TOOLTIP_SHOWHIDETP1;Show/Hide the top panel.\nShortcut: <b>Shift-L</b>
 !MAIN_TOOLTIP_THRESHOLD;Threshold
 !NAVIGATOR_LAB_A_NA;a = n/a
 !NAVIGATOR_LAB_A_VALUE;a = %1

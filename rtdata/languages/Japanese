@@ -584,7 +584,7 @@ MAIN_TOOLTIP_PREVIEWR;<b>レッド チャンネル</b>表示\nショートカッ
 MAIN_TOOLTIP_QINFO;画像の情報\nショートカット: <b>i</b>
 MAIN_TOOLTIP_SHOWHIDELP1;表示/非表示 左パネル\nショートカット: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;表示/非表示 右パネル\nショートカット: <b>Alt-l</b>
-MAIN_TOOLTIP_SHOWHIDETP1;表示/非表示 上パネル\nショートカット: <b>Shift-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;表示/非表示 上パネル\nショートカット: <b>Shift-L</b>
 MAIN_TOOLTIP_THRESHOLD;しきい値
 MAIN_TOOLTIP_TOGGLE;<b>補正前</b>/<b>補正後</b> 切り替え\nショートカット: <b>Shift-b</b>
 NAVIGATOR_B_NA;B = n/a
