@@ -403,7 +403,7 @@ MAIN_TOOLTIP_INDCLIPPEDS;Приказује исечене тамне делов
 MAIN_TOOLTIP_QINFO;Основни подаци о слици <b>И</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Приказује/сакрива леву површ <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Приказује/сакрива десну површ <b>Alt-l</b>
-MAIN_TOOLTIP_SHOWHIDETP1;Приказује/сакрива горњу површ <b>Shift-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Приказује/сакрива горњу површ <b>Shift-L</b>
 MAIN_TOOLTIP_TOGGLE;Приказује слику пре и после обраде <b>Б</b>
 NAVIGATOR_B_NA;П = ○
 NAVIGATOR_B_VALUE;П = %1

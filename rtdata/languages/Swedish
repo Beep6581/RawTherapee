@@ -573,7 +573,7 @@ MAIN_TOOLTIP_PREVIEWR;Förhandsgranska den <b>röda kanalen</b>.\nGenväg: <b>r<
 MAIN_TOOLTIP_QINFO;Visa kortfattad information om bilden\nKortkommando: <b>i</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Visa/dölj vänstra panelen <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Visa/dölj den högra panelen <b>Alt-l</b>
-MAIN_TOOLTIP_SHOWHIDETP1;Visa/dölj den översta panelen <b>Shift-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Visa/dölj den översta panelen <b>Shift-L</b>
 MAIN_TOOLTIP_THRESHOLD;Tröskelvärde
 MAIN_TOOLTIP_TOGGLE;Växla <b>före</b>/<b>efter</b> vy.\nKortkommando: <b>Shift-b</b>
 NAVIGATOR_B_NA;B = -
