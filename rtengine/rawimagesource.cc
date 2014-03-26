@@ -853,12 +853,12 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     }
 
     ri = new RawImage(fname);
-    int errCode = ri->loadRaw ();
+    int errCode = ri->loadRaw (true, true, plistener, 0.8);
     if (errCode) return errCode;
 
     ri->compress_image();
     if (plistener) {
-        plistener->setProgress (0.8);
+        plistener->setProgress (0.9);
     }
 /***** Copy once constant data extracted from raw *******/
     W = ri->get_width();

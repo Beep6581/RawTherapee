@@ -233,7 +233,7 @@ skip_block: ;
 	}
 }
 
-int RawImage::loadRaw (bool loadData, bool closeFile)
+int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistener, double progressRange)
 {
   ifname = filename.c_str();
   image = NULL;
@@ -242,6 +242,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 
   ifp = gfopen (ifname);  // Maps to either file map or direct fopen
   if (!ifp) return 3;
+  imfile_set_plistener(ifp, plistener, 0.9 * progressRange);
 
   thumb_length = 0;
   thumb_offset = 0;
@@ -256,6 +257,9 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
   if (!is_raw) {
     fclose(ifp);
     ifp=NULL;
+    if (plistener) {
+        plistener->setProgress(1.0 * progressRange);
+    }
     return 2;
   }
 
@@ -299,6 +303,9 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 	  // Load raw pixels data
 	  fseek (ifp, data_offset, SEEK_SET);
 	  (this->*load_raw)();
+          if (plistener) {
+              plistener->setProgress(0.9 * progressRange);
+          }
 
 	  CameraConstantsStore* ccs = CameraConstantsStore::getInstance();
 	  CameraConst *cc = ccs->get(make, model);
@@ -401,6 +408,9 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 
   if ( closeFile ) {
       fclose(ifp); ifp=NULL;
+  }
+  if (plistener) {
+      plistener->setProgress(1.0 * progressRange);
   }
 
   return 0;

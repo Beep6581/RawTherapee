@@ -22,13 +22,26 @@
 #include <glib/gstdio.h>
 #include <cstdio>
 #include <cstring>
+#include "rtengine.h"
 struct IMFILE {
 	int fd;
-	int pos;
-	int size;
+	ssize_t pos;
+	ssize_t size;
 	char* data;
 	bool eof;
+	rtengine::ProgressListener *plistener;
+	double progress_range;
+	ssize_t progress_next;
+	ssize_t progress_current;
 };
+
+/*
+  Functions for progress bar updates
+  Note: progress bar is not intended to be exact, eg if you read same data over and over again progress
+  will potentially reach 100% before you're finished.
+ */
+void imfile_set_plistener(IMFILE *f, rtengine::ProgressListener *plistener, double progress_range);
+void imfile_update_progress(IMFILE *f);
 
 IMFILE* fopen (const char* fname);
 IMFILE* gfopen (const char* fname);IMFILE* fopen (unsigned* buf, int size);
@@ -59,18 +72,19 @@ inline void fseek (IMFILE* f, int p, int how) {
 
 inline int fgetc (IMFILE* f) {
 
-	if (f->pos<f->size)
+	if (f->pos<f->size) {
+		if (f->plistener && ++f->progress_current >= f->progress_next) {
+			imfile_update_progress(f);
+		}
 		return (unsigned char)f->data[f->pos++];
+	}
 	f->eof = true;
 	return EOF;
 }
 
 inline int getc (IMFILE* f) {
 
-	if (f->pos<f->size)
-		return (unsigned char)f->data[f->pos++];
-	f->eof = true;
-	return EOF;
+	return fgetc(f);
 }
 
 inline int fread (void* dst, int es, int count, IMFILE* f) {
@@ -80,6 +94,12 @@ inline int fread (void* dst, int es, int count, IMFILE* f) {
 	if (s<=avail) {
 		memcpy (dst, f->data+f->pos, s);
 		f->pos += s;
+		if (f->plistener) {
+			f->progress_current += s;
+			if (f->progress_current >= f->progress_next) {
+				imfile_update_progress(f);
+			}
+		}
 		return count;
 	}
 	else {
@@ -96,5 +116,6 @@ inline unsigned char* fdata(int offset, IMFILE* f) {
 
 int fscanf (IMFILE* f, const char* s ...);
 char* fgets (char* s, int n, IMFILE* f);
+
 #endif
 

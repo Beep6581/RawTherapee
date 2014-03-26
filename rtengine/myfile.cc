@@ -353,3 +353,26 @@ char* fgets (char* s, int n, IMFILE* f) {
 	while (i<n && f->pos<f->size);
 	return s;
 }
+
+void imfile_set_plistener(IMFILE *f, rtengine::ProgressListener *plistener, double progress_range) {
+	f->plistener = plistener;
+	f->progress_range = progress_range;
+	f->progress_next = f->size / 10 + 1;
+	f->progress_current = 0;
+}
+
+void imfile_update_progress(IMFILE *f) {
+	if (!f->plistener || f->progress_current < f->progress_next) {
+		return;
+	}
+	do {
+		f->progress_next += f->size / 10 + 1;
+	} while (f->progress_next < f->progress_current);
+	double p = (double)f->progress_current / f->size;
+	if (p > 1.0) {
+		/* this can happen if same bytes are read over and over again. Progress bar is not intended
+		   to be exact, just give some progress indication for normal raw file access patterns */
+		p = 1.0;
+	}
+	f->plistener->setProgress(p * f->progress_range);
+}
