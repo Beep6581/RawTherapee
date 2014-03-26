@@ -1,5 +1,5 @@
---- dcraw.c	2014-03-14 10:56:17 +0000
-+++ dcraw.cc	2014-03-14 10:57:48 +0000
+--- dcraw.c	2014-02-19 17:25:45.051457734 +0100
++++ dcraw.cc	2014-03-25 10:57:44.977344962 +0100
 @@ -1,3 +1,15 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -172,16 +172,73 @@
  }
  
  ushort CLASS sget2 (uchar *s)
-@@ -369,7 +333,7 @@
+@@ -369,7 +333,64 @@
  {
    if (fread (pixel, 2, count, ifp) < count) derror();
    if ((order == 0x4949) == (ntohs(0x1234) == 0x1234))
 -    swab (pixel, pixel, count*2);
 +	  swab ((char*)pixel, (char*)pixel, count*2);
++}
++
++/* spline interpolation to 16 bit curve */
++void CLASS cubic_spline(const int *x_, const int *y_, const int len)
++{
++    float A[2*len][2*len], b[2*len], c[2*len], d[2*len];
++    float x[len], y[len];
++    int i, j;
++
++    memset(A, 0, sizeof(A));
++    memset(b, 0, sizeof(b));
++    memset(c, 0, sizeof(c));
++    memset(d, 0, sizeof(d));
++    for (i = 0; i < len; i++) {
++	x[i] = x_[i] / 65535.0;
++	y[i] = y_[i] / 65535.0;
++    }
++
++    for (i = len-1; i > 0; i--) {
++	b[i] = (y[i] - y[i-1]) / (x[i] - x[i-1]);
++        d[i-1] = x[i] - x[i-1];
++    }
++    for (i = 1; i < len-1; i++) {
++        A[i][i] = 2 * (d[i-1] + d[i]);
++        if (i > 1) {
++            A[i][i-1] = d[i-1];
++            A[i-1][i] = d[i-1];
++        }
++        A[i][len-1] = 6 * (b[i+1] - b[i]);
++    }
++    for(i = 1; i < len-2; i++) {
++	float v = A[i+1][i] / A[i][i];
++	for(j = 1; j <= len-1; j++) {
++	    A[i+1][j] -= v * A[i][j];
++	}
++    }
++    for(i = len-2; i > 0; i--) {
++        float acc = 0;
++        for(j = i; j <= len-2; j++) {
++            acc += A[i][j]*c[j];
++        }
++        c[i] = (A[i][len-1] - acc) / A[i][i];
++    }
++    for (i = 0; i < 0x10000; i++) {
++        float x_out = (float)(i / 65535.0);
++        float y_out = 0;
++        for (j = 0; j < len-1; j++) {
++            if (x[j] <= x_out && x_out <= x[j+1]) {
++                float v = x_out - x[j];
++                y_out = y[j] +
++		    ((y[j+1] - y[j]) / d[j] - (2 * d[j] * c[j] + c[j+1] * d[j]) / 6) * v +
++		    (c[j] * 0.5) * v*v +
++		    ((c[j+1] - c[j]) / (6 * d[j])) * v*v*v;
++            }
++        }
++        curve[i] = y_out < 0.0 ? 0 : (y_out >= 1.0 ? 65535 : (ushort)nearbyintf(y_out * 65535.0));
++    }
  }
  
  void CLASS canon_600_fixed_wb (int temp)
-@@ -541,10 +505,10 @@
+@@ -541,10 +562,10 @@
    return 0;
  }
  
@@ -195,7 +252,7 @@
    unsigned c;
  
    if (nbits > 25) return 0;
-@@ -1209,14 +1173,14 @@
+@@ -1209,14 +1230,14 @@
    int i, nz;
    char tail[424];
  
@@ -212,7 +269,207 @@
  
  void CLASS ppm_thumb()
  {
-@@ -1494,10 +1458,10 @@
+@@ -1310,14 +1331,16 @@
+ void CLASS phase_one_flat_field (int is_float, int nc)
+ {
+   ushort head[8];
+-  unsigned wide, y, x, c, rend, cend, row, col;
++  unsigned wide, high, y, x, c, rend, cend, row, col;
+   float *mrow, num, mult[4];
+ 
+   read_shorts (head, 8);
+-  wide = head[2] / head[4];
++  if (head[2] == 0 || head[3] == 0 || head[4] == 0 || head[5] == 0) return; // RT: should not really happen, but when reverse-engineering IIQ files zero'd calibration data was used, so it's nice if not crashing.
++  wide = head[2] / head[4] + (head[2] % head[4] != 0);
++  high = head[3] / head[5] + (head[3] % head[5] != 0);
+   mrow = (float *) calloc (nc*wide, sizeof *mrow);
+   merror (mrow, "phase_one_flat_field()");
+-  for (y=0; y < head[3] / head[5]; y++) {
++  for (y=0; y < high; y++) {
+     for (x=0; x < wide; x++)
+       for (c=0; c < nc; c+=2) {
+ 	num = is_float ? getreal(11) : get2()/32768.0;
+@@ -1326,14 +1349,14 @@
+       }
+     if (y==0) continue;
+     rend = head[1] + y*head[5];
+-    for (row = rend-head[5]; row < raw_height && row < rend; row++) {
++    for (row = rend-head[5]; row < raw_height && row < rend && row < head[1]+head[3]-head[5]; row++) {
+       for (x=1; x < wide; x++) {
+ 	for (c=0; c < nc; c+=2) {
+ 	  mult[c] = mrow[c*wide+x-1];
+ 	  mult[c+1] = (mrow[c*wide+x] - mult[c]) / head[4];
+ 	}
+ 	cend = head[0] + x*head[4];
+-	for (col = cend-head[4]; col < raw_width && col < cend; col++) {
++	for (col = cend-head[4]; col < raw_width && col < cend && col < head[0]+head[2]-head[4]; col++) {
+ 	  c = nc > 2 ? FC(row-top_margin,col-left_margin) : 0;
+ 	  if (!(c & 1)) {
+ 	    c = RAW(row,col) * mult[c];
+@@ -1361,6 +1384,7 @@
+       {-2,-2}, {-2,2}, {2,-2}, {2,2} };
+   float poly[8], num, cfrac, frac, mult[2], *yval[2];
+   ushort *xval[2];
++  int qmult_applied = 0, qlin_applied = 0;
+ 
+   if (half_size || !meta_length) return;
+   if (verbose) fprintf (stderr,_("Phase One correction...\n"));
+@@ -1437,6 +1461,154 @@
+ 	mindiff = diff;
+ 	off_412 = ftell(ifp) - 38;
+       }
++    } else if (tag == 0x41f && !qlin_applied) { /* Per quadrant linearization, P40+/P65+ */
++        ushort lc[2][2][16], ref[16];
++        int qr, qc;
++        /* Get curves for each quadrant (ordered  top left, top right, bottom left, bottom right) */
++        for (qr = 0; qr < 2; qr++) {
++            for (qc = 0; qc < 2; qc++) {
++                for (i = 0; i < 16; i++) {
++                    lc[qr][qc][i] = (ushort)get4();
++                }
++            }
++        }
++        /*
++          Each curve hold values along some exponential function, from ~20 to about ~50000, example:
++          28 41 64 106 172 282 462 762 1240 2353 5111 10127 17867 27385 39122 58451
++         */
++
++        /* Derive a reference curve, by taking the average value in each column. Note: seems to work well,
++	   but not 100% sure this is how the reference curve should be derived. */
++        for (i = 0; i < 16; i++) {
++            int v = 0;
++            for (qr = 0; qr < 2; qr++) {
++                for (qc = 0; qc < 2; qc++) {
++                    v += lc[qr][qc][i];
++                }
++            }
++            ref[i] = (v + 2) >> 2;
++        }
++
++        /* Interpolate full calibration curves and apply. Spline interpolation used here,
++           as the curves are so coarsely specified and would get sharp corners if linearly
++           interpolated. */
++        for (qr = 0; qr < 2; qr++) {
++            for (qc = 0; qc < 2; qc++) {
++                int cx[18];
++                int cf[18];
++                for (i = 0; i < 16; i++) {
++                    cx[1+i] = lc[qr][qc][i];
++                    cf[1+i] = ref[i];
++                }
++                cx[0] = cf[0] = 0;
++                cx[17] = cf[17] = ((unsigned int)ref[15] * 65535) / lc[qr][qc][15];
++                cubic_spline(cx, cf, 18);
++                /* Apply curve in designated quadrant */
++                for (row = (qr ? ph1.split_row : 0); row < (qr ? raw_height : ph1.split_row); row++) {
++                    for (col = (qc ? ph1.split_col : 0); col < (qc ? raw_width : ph1.split_col); col++) {
++                        RAW(row,col) = curve[RAW(row,col)];
++                    }
++                }
++            }
++        }
++        /* By some unknown reason some backs provide more than one copy of this tag, make sure
++           that we only apply this once. */
++        qlin_applied = 1;
++    } else if (tag == 0x41e && !qmult_applied) { /* Per quadrant multipliers P40+/P65+ */
++        float qmult[2][2] = { { 1, 1 }, { 1, 1 } };
++
++        /*
++          This tag has not been fully reverse-engineered, seems to be used only on P40+ and P65+ backs,
++          and will then have most values set to zero.
++
++          Layout:
++
++          - First 4 bytes contains 'II' (or 'MM' I guess if file is big endian, but don't think there are
++            any such backs produced) plus short integer 1
++          - The remaining 80 bytes seems to be 20 floats, most of them always zero. Example contents,
++            with map:
++
++            0.000000, 0.000000, 0.080410, 0.078530,
++            0.000000, 0.000000, 0.000000, 0.000000,
++            0.104100, 0.103500, 0.000000, 0.000000,
++            0.000000, 0.000000, 0.000000, 0.000000,
++            0.089540, 0.092230, 0.000000, 0.000000
++
++            noeffect, noeffect, noeffect, topleft ,
++            noeffect, TL++    , global  , noeffect,
++            noeffect, topright,         , TR++    ,
++                    , bottmlft,         , BL++    ,
++            noeffect, bottmrgt,         , BR++    ,
++
++            'noeffect' tested with no effect, empty not tested, the ++ versions are stronger effect
++            multpliers that doesn't seem to be used, the global multiplier seems to unused as well.
++
++            It seems like one quadrant always is generally used as reference, (ie value 0 => multiplier 1.0),
++            but it's not always the same quadrant for different backs.
++
++            The 'noeffect' fields which actually have values are suspicious, maybe these multipliers are
++            used in Sensor+ or at some different ISO or something? They seem to be close to the ordinary
++            multipliers though so using the 'wrong' ones in some special case should yield quite good
++            result still.
++         */
++
++        /* We only read out the multipliers that are used and seem to have any effect and are used */
++        get4(); get4(); get4(); get4();
++        qmult[0][0] = 1.0 + getreal(11);
++        get4(); get4(); get4(); get4(); get4();
++        qmult[0][1] = 1.0 + getreal(11);
++        get4(); get4(); get4();
++        qmult[1][0] = 1.0 + getreal(11);
++        get4(); get4(); get4();
++        qmult[1][1] = 1.0 + getreal(11);
++        for (row=0; row < raw_height; row++) {
++            for (col=0; col < raw_width; col++) {
++                i = qmult[row >= ph1.split_row][col >= ph1.split_col] * RAW(row,col);
++                RAW(row,col) = LIM(i,0,65535);
++            }
++        }
++        /* By some unknown reason some backs provide more than one copy of this tag, make sure
++           that we only apply this once. */
++        qmult_applied = 1;
++    } else if (tag == 0x431 && !qmult_applied) { /* Per quadrant multiplication and linearization, IQ series backs */
++        ushort lc[2][2][7], ref[7];
++        int qr, qc;
++
++        /* Read reference curve */
++        for (i = 0; i < 7; i++) {
++            ref[i] = (ushort)get4();
++        }
++
++        /* Get multipliers for each quadrant */
++        for (qr = 0; qr < 2; qr++) {
++            for (qc = 0; qc < 2; qc++) {
++                for (i = 0; i < 7; i++) {
++                    lc[qr][qc][i] = (ushort)get4();
++                }
++            }
++        }
++	/* Spline interpolation and apply in each quadrant */
++        for (qr = 0; qr < 2; qr++) {
++            for (qc = 0; qc < 2; qc++) {
++                int cx[9];
++                int cf[9];
++                for (i = 0; i < 7; i++) {
++                    cx[1+i] = ref[i];
++                    cf[1+i] = ((unsigned int)ref[i] * lc[qr][qc][i]) / 10000;
++                }
++                cx[0] = cf[0] = 0;
++                cx[8] = cf[8] = 65535;
++                cubic_spline(cx, cf, 9);
++                for (row = (qr ? ph1.split_row : 0); row < (qr ? raw_height : ph1.split_row); row++) {
++                    for (col = (qc ? ph1.split_col : 0); col < (qc ? raw_width : ph1.split_col); col++) {
++                        RAW(row,col) = curve[RAW(row,col)];
++                    }
++                }
++            }
++        }
++        /* not seen any backs that have this tag multiplied, but just to make sure */
++        qmult_applied = 1;
++        qlin_applied = 1;
+     }
+     fseek (ifp, save, SEEK_SET);
+   }
+@@ -1494,10 +1666,10 @@
      }
  }
  
@@ -226,7 +483,43 @@
    unsigned c;
  
    if (nbits == -1)
-@@ -1757,10 +1721,10 @@
+@@ -1523,8 +1695,10 @@
+   static const int length[] = { 8,7,6,9,11,10,5,12,14,13 };
+   int *offset, len[2], pred[2], row, col, i, j;
+   ushort *pixel;
+-  short (*black)[2];
++  short (*black)[2], (*black2)[2];
+ 
++  black2 = (short (*)[2]) calloc (raw_width*2, 2);
++  merror (black2, "phase_one_load_raw_c()");
+   pixel = (ushort *) calloc (raw_width + raw_height*4, 2);
+   merror (pixel, "phase_one_load_raw_c()");
+   offset = (int *) (pixel + raw_width);
+@@ -1535,6 +1709,9 @@
+   fseek (ifp, ph1.black_off, SEEK_SET);
+   if (ph1.black_off)
+     read_shorts ((ushort *) black[0], raw_height*2);
++  fseek (ifp, ph1.black_off2, SEEK_SET);
++  if (ph1.black_off2)
++    read_shorts ((ushort *) black2[0], raw_width*2);
+   for (i=0; i < 256; i++)
+     curve[i] = i*i / 3.969 + 0.5;
+   for (row=0; row < raw_height; row++) {
+@@ -1558,11 +1735,12 @@
+ 	pixel[col] = curve[pixel[col]];
+     }
+     for (col=0; col < raw_width; col++) {
+-      i = (pixel[col] << 2) - ph1.black + black[row][col >= ph1.split_col];
++      i = (pixel[col] << 2) - ph1.black + black[row][col >= ph1.split_col] + black2[col][row >= ph1.split_row];
+ 	if (i > 0) RAW(row,col) = i;
+     }
+   }
+   free (pixel);
++  free (black2);
+   maximum = 0xfffc - ph1.black;
+ }
+ 
+@@ -1757,10 +1935,10 @@
    maximum = curve[0x3ff];
  }
  
@@ -240,7 +533,7 @@
    int byte;
  
    if (!nbits) return vbits=0;
-@@ -2049,11 +2013,11 @@
+@@ -2049,11 +2227,11 @@
  METHODDEF(boolean)
  fill_input_buffer (j_decompress_ptr cinfo)
  {
@@ -254,7 +547,7 @@
    cinfo->src->next_input_byte = jpeg_buffer;
    cinfo->src->bytes_in_buffer = nbytes;
    return TRUE;
-@@ -2371,10 +2335,9 @@
+@@ -2371,10 +2549,9 @@
    maximum = (1 << (thumb_misc & 31)) - 1;
  }
  
@@ -267,7 +560,7 @@
    if (start) {
      for (p=0; p < 4; p++)
        pad[p] = key = key * 48828125 + 1;
-@@ -2462,11 +2425,13 @@
+@@ -2462,11 +2639,13 @@
  	  bit += 7;
  	}
        for (i=0; i < 16; i++, col+=2)
@@ -282,7 +575,7 @@
  }
  
  void CLASS samsung_load_raw()
-@@ -2691,7 +2656,7 @@
+@@ -2691,7 +2870,7 @@
  
  void CLASS foveon_decoder (unsigned size, unsigned code)
  {
@@ -291,7 +584,7 @@
    struct decode *cur;
    int i, len;
  
-@@ -3414,10 +3379,13 @@
+@@ -3414,10 +3593,13 @@
        }
      }
    } else {
@@ -307,7 +600,7 @@
    if (mask[0][3] > 0) goto mask_set;
    if (load_raw == &CLASS canon_load_raw ||
        load_raw == &CLASS lossless_jpeg_load_raw) {
-@@ -4011,239 +3979,8 @@
+@@ -4011,239 +4193,8 @@
      }
  }
  
@@ -358,8 +651,7 @@
 -   This algorithm is officially called:
 -
 -   "Interpolation using a Threshold-based variable number of gradients"
-+/* RT: delete interpolation functions */
- 
+-
 -   described in http://scien.stanford.edu/pages/labsite/1999/psych221/projects/99/tingchen/algodep/vargra.html
 -
 -   I've extended the basic idea to work with non-Bayer filter arrays.
@@ -503,7 +795,8 @@
 -
 -  border_interpolate(3);
 -  if (verbose) fprintf (stderr,_("PPG interpolation...\n"));
--
++/* RT: delete interpolation functions */
+ 
 -/*  Fill in the green layer with gradients and pattern recognition: */
 -  for (row=3; row < height-3; row++)
 -    for (col=3+(FC(row,3) & 1), c=FC(row,col); col < width-3; col+=2) {
@@ -548,7 +841,7 @@
  
  void CLASS cielab (ushort rgb[3], short lab[3])
  {
-@@ -4504,112 +4241,7 @@
+@@ -4504,112 +4455,7 @@
  }
  #undef fcol
  
@@ -661,7 +954,7 @@
  #undef TS
  
  void CLASS median_filter()
-@@ -4779,7 +4411,7 @@
+@@ -4779,7 +4625,7 @@
    }
  }
  
@@ -670,7 +963,7 @@
  
  void CLASS parse_makernote (int base, int uptag)
  {
-@@ -4936,7 +4568,8 @@
+@@ -4936,7 +4782,8 @@
  	cam_mul[2] = get4() << 2;
        }
      }
@@ -680,7 +973,7 @@
        fread (model, 64, 1, ifp);
      if (strstr(make,"PENTAX")) {
        if (tag == 0x1b) tag = 0x1018;
-@@ -5187,7 +4820,7 @@
+@@ -5187,7 +5034,7 @@
    { "","DCB2","Volare","Cantare","CMost","Valeo 6","Valeo 11","Valeo 22",
      "Valeo 11p","Valeo 17","","Aptus 17","Aptus 22","Aptus 75","Aptus 65",
      "Aptus 54S","Aptus 65S","Aptus 75S","AFi 5","AFi 6","AFi 7",
@@ -689,7 +982,7 @@
      "","","","","Aptus-II 10R","Aptus-II 8","","Aptus-II 12","","AFi-II 12" };
    float romm_cam[3][3];
  
-@@ -5276,6 +4909,8 @@
+@@ -5276,6 +5123,8 @@
        wbi = -2;
      }
      if (tag == 2118) wbtemp = getint(type);
@@ -698,7 +991,7 @@
      if (tag == 2130 + wbi)
        FORC3 mul[c] = getreal(type);
      if (tag == 2140 + wbi && wbi >= 0)
-@@ -5295,8 +4930,8 @@
+@@ -5295,8 +5144,8 @@
    }
  }
  
@@ -709,7 +1002,7 @@
  
  int CLASS parse_tiff_ifd (int base)
  {
-@@ -5309,7 +4944,7 @@
+@@ -5309,7 +5158,7 @@
    unsigned sony_curve[] = { 0,0,0,0,0,4095 };
    unsigned *buf, sony_offset=0, sony_length=0, sony_key=0;
    struct jhead jh;
@@ -718,7 +1011,7 @@
  
    if (tiff_nifds >= sizeof tiff_ifd / sizeof tiff_ifd[0])
      return 1;
-@@ -5660,10 +5295,21 @@
+@@ -5660,10 +5509,21 @@
        case 61450:
  	cblack[4] = cblack[5] = MIN(sqrt(len),64);
        case 50714:			/* BlackLevel */
@@ -744,7 +1037,7 @@
        case 50715:			/* BlackLevelDeltaH */
        case 50716:			/* BlackLevelDeltaV */
  	for (num=i=0; i < len; i++)
-@@ -5741,12 +5387,15 @@
+@@ -5741,12 +5601,15 @@
      fread (buf, sony_length, 1, ifp);
      sony_decrypt (buf, sony_length/4, 1, sony_key);
      sfp = ifp;
@@ -766,7 +1059,7 @@
      ifp = sfp;
      free (buf);
    }
-@@ -5770,6 +5419,7 @@
+@@ -5770,6 +5633,7 @@
  int CLASS parse_tiff (int base)
  {
    int doff;
@@ -774,7 +1067,7 @@
  
    fseek (ifp, base, SEEK_SET);
    order = get2();
-@@ -5847,7 +5497,7 @@
+@@ -5847,7 +5711,7 @@
  	  case  8: load_raw = &CLASS eight_bit_load_raw;	break;
  	  case 12: if (tiff_ifd[raw].phint == 2)
  		     load_flags = 6;
@@ -783,7 +1076,7 @@
  	  case 14: load_flags = 0;
  	  case 16: load_raw = &CLASS unpacked_load_raw;
  		   if (!strncmp(make,"OLYMPUS",7) &&
-@@ -5963,7 +5613,7 @@
+@@ -5963,7 +5827,7 @@
  {
    const char *file, *ext;
    char *jname, *jfile, *jext;
@@ -792,7 +1085,7 @@
  
    ext  = strrchr (ifname, '.');
    file = strrchr (ifname, '/');
-@@ -5985,13 +5635,14 @@
+@@ -5985,13 +5849,14 @@
    } else
      while (isdigit(*--jext)) {
        if (*jext != '9') {
@@ -809,7 +1102,16 @@
        if (verbose)
  	fprintf (stderr,_("Reading metadata from %s ...\n"), jname);
        parse_tiff (12);
-@@ -6334,7 +5985,11 @@
+@@ -6256,6 +6121,8 @@
+       case 0x21d:  ph1.black     = data;		break;
+       case 0x222:  ph1.split_col = data;		break;
+       case 0x223:  ph1.black_off = data+base;		break;
++      case 0x224:  ph1.split_row = data;		break;
++      case 0x225:  ph1.black_off2= data+base;		break;
+       case 0x301:
+ 	model[63] = 0;
+ 	fread (model, 1, 63, ifp);
+@@ -6334,7 +6201,11 @@
      order = get2();
      hlen  = get4();
      if (get4() == 0x48454150)		/* "HEAP" */
@@ -821,7 +1123,7 @@
      if (parse_tiff (save+6)) apply_tiff();
      fseek (ifp, save+len, SEEK_SET);
    }
-@@ -6586,7 +6241,8 @@
+@@ -6586,7 +6457,8 @@
  {
    static const struct {
      const char *prefix;
@@ -831,7 +1133,7 @@
    } table[] = {
      { "AgfaPhoto DC-833m", 0, 0,	/* DJC */
  	{ 11438,-3762,-1115,-2409,9914,2497,-1227,2295,5300 } },
-@@ -7457,6 +7113,27 @@
+@@ -7457,6 +7329,27 @@
        }
        break;
      }
@@ -859,7 +1161,7 @@
  }
  
  void CLASS simple_coeff (int index)
-@@ -7764,13 +7441,20 @@
+@@ -7764,13 +7657,20 @@
    fread (head, 1, 32, ifp);
    fseek (ifp, 0, SEEK_END);
    flen = fsize = ftell(ifp);
@@ -882,7 +1184,7 @@
        parse_ciff (hlen, flen-hlen, 0);
        load_raw = &CLASS canon_load_raw;
      } else if (parse_tiff(0)) apply_tiff();
-@@ -7816,6 +7500,7 @@
+@@ -7816,6 +7716,7 @@
      fseek (ifp, 100+28*(shot_select > 0), SEEK_SET);
      parse_tiff (data_offset = get4());
      parse_tiff (thumb_offset+12);
@@ -890,7 +1192,7 @@
      apply_tiff();
    } else if (!memcmp (head,"RIFF",4)) {
      fseek (ifp, 0, SEEK_SET);
-@@ -7925,15 +7610,18 @@
+@@ -7925,15 +7826,18 @@
    if (make[0] == 0) parse_smal (0, flen);
    if (make[0] == 0) {
      parse_jpeg(0);
@@ -918,7 +1220,7 @@
    }
  
    for (i=0; i < sizeof corp / sizeof *corp; i++)
-@@ -7966,7 +7654,7 @@
+@@ -7966,7 +7870,7 @@
    if (height == 3136 && width == 4864)  /* Pentax K20D and Samsung GX20 */
      { height  = 3124;   width  = 4688; filters = 0x16161616; }
    if (width == 4352 && (!strcmp(model,"K-r") || !strcmp(model,"K-x")))
@@ -927,7 +1229,7 @@
    if (width >= 4960 && !strncmp(model,"K-5",3))
      { left_margin = 10; width  = 4950; filters = 0x16161616; }
    if (width == 4736 && !strcmp(model,"K-7"))
-@@ -8112,7 +7800,7 @@
+@@ -8112,7 +8016,7 @@
      width -= 44;
    } else if (!strcmp(model,"D3200") ||
  	     !strcmp(model,"D600")  ||
@@ -936,7 +1238,7 @@
      width -= 46;
    } else if (!strcmp(model,"D4") ||
  	     !strcmp(model,"Df")) {
-@@ -8394,6 +8082,7 @@
+@@ -8394,6 +8298,7 @@
        filters = 0x16161616;
      }
    } else if (!strcmp(make,"Leica") || !strcmp(make,"Panasonic")) {
@@ -944,7 +1246,7 @@
      if ((flen - data_offset) / (raw_width*8/7) == raw_height)
        load_raw = &CLASS panasonic_load_raw;
      if (!load_raw) {
-@@ -8411,6 +8100,7 @@
+@@ -8411,6 +8316,7 @@
        }
      filters = 0x01010101 * (uchar) "\x94\x61\x49\x16"
  	[((filters-1) ^ (left_margin & 1) ^ (top_margin << 1)) & 3];
@@ -952,7 +1254,7 @@
    } else if (!strcmp(model,"C770UZ")) {
      height = 1718;
      width  = 2304;
-@@ -8630,6 +8320,10 @@
+@@ -8630,6 +8536,10 @@
      memcpy (rgb_cam, cmatrix, sizeof cmatrix);
      raw_color = 0;
    }
@@ -963,7 +1265,7 @@
    if (raw_color) adobe_coeff (make, model);
    if (load_raw == &CLASS kodak_radc_load_raw)
      if (raw_color) adobe_coeff ("Apple","Quicktake");
-@@ -8725,194 +8419,7 @@
+@@ -8725,194 +8635,7 @@
  }
  #endif
  
@@ -1159,7 +1461,7 @@
  
  struct tiff_tag {
    ushort tag, type;
-@@ -8935,585 +8442,12 @@
+@@ -8935,585 +8658,12 @@
    unsigned gps[26];
    char desc[512], make[64], model[64], soft[32], date[20], artist[64];
  };

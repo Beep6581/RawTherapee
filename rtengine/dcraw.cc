@@ -336,6 +336,63 @@ void CLASS read_shorts (ushort *pixel, int count)
 	  swab ((char*)pixel, (char*)pixel, count*2);
 }
 
+/* spline interpolation to 16 bit curve */
+void CLASS cubic_spline(const int *x_, const int *y_, const int len)
+{
+    float A[2*len][2*len], b[2*len], c[2*len], d[2*len];
+    float x[len], y[len];
+    int i, j;
+
+    memset(A, 0, sizeof(A));
+    memset(b, 0, sizeof(b));
+    memset(c, 0, sizeof(c));
+    memset(d, 0, sizeof(d));
+    for (i = 0; i < len; i++) {
+	x[i] = x_[i] / 65535.0;
+	y[i] = y_[i] / 65535.0;
+    }
+
+    for (i = len-1; i > 0; i--) {
+	b[i] = (y[i] - y[i-1]) / (x[i] - x[i-1]);
+        d[i-1] = x[i] - x[i-1];
+    }
+    for (i = 1; i < len-1; i++) {
+        A[i][i] = 2 * (d[i-1] + d[i]);
+        if (i > 1) {
+            A[i][i-1] = d[i-1];
+            A[i-1][i] = d[i-1];
+        }
+        A[i][len-1] = 6 * (b[i+1] - b[i]);
+    }
+    for(i = 1; i < len-2; i++) {
+	float v = A[i+1][i] / A[i][i];
+	for(j = 1; j <= len-1; j++) {
+	    A[i+1][j] -= v * A[i][j];
+	}
+    }
+    for(i = len-2; i > 0; i--) {
+        float acc = 0;
+        for(j = i; j <= len-2; j++) {
+            acc += A[i][j]*c[j];
+        }
+        c[i] = (A[i][len-1] - acc) / A[i][i];
+    }
+    for (i = 0; i < 0x10000; i++) {
+        float x_out = (float)(i / 65535.0);
+        float y_out = 0;
+        for (j = 0; j < len-1; j++) {
+            if (x[j] <= x_out && x_out <= x[j+1]) {
+                float v = x_out - x[j];
+                y_out = y[j] +
+		    ((y[j+1] - y[j]) / d[j] - (2 * d[j] * c[j] + c[j+1] * d[j]) / 6) * v +
+		    (c[j] * 0.5) * v*v +
+		    ((c[j+1] - c[j]) / (6 * d[j])) * v*v*v;
+            }
+        }
+        curve[i] = y_out < 0.0 ? 0 : (y_out >= 1.0 ? 65535 : (ushort)nearbyintf(y_out * 65535.0));
+    }
+}
+
 void CLASS canon_600_fixed_wb (int temp)
 {
   static const short mul[4][5] = {
@@ -1274,14 +1331,16 @@ int CLASS raw (unsigned row, unsigned col)
 void CLASS phase_one_flat_field (int is_float, int nc)
 {
   ushort head[8];
-  unsigned wide, y, x, c, rend, cend, row, col;
+  unsigned wide, high, y, x, c, rend, cend, row, col;
   float *mrow, num, mult[4];
 
   read_shorts (head, 8);
-  wide = head[2] / head[4];
+  if (head[2] == 0 || head[3] == 0 || head[4] == 0 || head[5] == 0) return; // RT: should not really happen, but when reverse-engineering IIQ files zero'd calibration data was used, so it's nice if not crashing.
+  wide = head[2] / head[4] + (head[2] % head[4] != 0);
+  high = head[3] / head[5] + (head[3] % head[5] != 0);
   mrow = (float *) calloc (nc*wide, sizeof *mrow);
   merror (mrow, "phase_one_flat_field()");
-  for (y=0; y < head[3] / head[5]; y++) {
+  for (y=0; y < high; y++) {
     for (x=0; x < wide; x++)
       for (c=0; c < nc; c+=2) {
 	num = is_float ? getreal(11) : get2()/32768.0;
@@ -1290,14 +1349,14 @@ void CLASS phase_one_flat_field (int is_float, int nc)
       }
     if (y==0) continue;
     rend = head[1] + y*head[5];
-    for (row = rend-head[5]; row < raw_height && row < rend; row++) {
+    for (row = rend-head[5]; row < raw_height && row < rend && row < head[1]+head[3]-head[5]; row++) {
       for (x=1; x < wide; x++) {
 	for (c=0; c < nc; c+=2) {
 	  mult[c] = mrow[c*wide+x-1];
 	  mult[c+1] = (mrow[c*wide+x] - mult[c]) / head[4];
 	}
 	cend = head[0] + x*head[4];
-	for (col = cend-head[4]; col < raw_width && col < cend; col++) {
+	for (col = cend-head[4]; col < raw_width && col < cend && col < head[0]+head[2]-head[4]; col++) {
 	  c = nc > 2 ? FC(row-top_margin,col-left_margin) : 0;
 	  if (!(c & 1)) {
 	    c = RAW(row,col) * mult[c];
@@ -1325,6 +1384,7 @@ void CLASS phase_one_correct()
       {-2,-2}, {-2,2}, {2,-2}, {2,2} };
   float poly[8], num, cfrac, frac, mult[2], *yval[2];
   ushort *xval[2];
+  int qmult_applied = 0, qlin_applied = 0;
 
   if (half_size || !meta_length) return;
   if (verbose) fprintf (stderr,_("Phase One correction...\n"));
@@ -1401,6 +1461,154 @@ void CLASS phase_one_correct()
 	mindiff = diff;
 	off_412 = ftell(ifp) - 38;
       }
+    } else if (tag == 0x41f && !qlin_applied) { /* Per quadrant linearization, P40+/P65+ */
+        ushort lc[2][2][16], ref[16];
+        int qr, qc;
+        /* Get curves for each quadrant (ordered  top left, top right, bottom left, bottom right) */
+        for (qr = 0; qr < 2; qr++) {
+            for (qc = 0; qc < 2; qc++) {
+                for (i = 0; i < 16; i++) {
+                    lc[qr][qc][i] = (ushort)get4();
+                }
+            }
+        }
+        /*
+          Each curve hold values along some exponential function, from ~20 to about ~50000, example:
+          28 41 64 106 172 282 462 762 1240 2353 5111 10127 17867 27385 39122 58451
+         */
+
+        /* Derive a reference curve, by taking the average value in each column. Note: seems to work well,
+	   but not 100% sure this is how the reference curve should be derived. */
+        for (i = 0; i < 16; i++) {
+            int v = 0;
+            for (qr = 0; qr < 2; qr++) {
+                for (qc = 0; qc < 2; qc++) {
+                    v += lc[qr][qc][i];
+                }
+            }
+            ref[i] = (v + 2) >> 2;
+        }
+
+        /* Interpolate full calibration curves and apply. Spline interpolation used here,
+           as the curves are so coarsely specified and would get sharp corners if linearly
+           interpolated. */
+        for (qr = 0; qr < 2; qr++) {
+            for (qc = 0; qc < 2; qc++) {
+                int cx[18];
+                int cf[18];
+                for (i = 0; i < 16; i++) {
+                    cx[1+i] = lc[qr][qc][i];
+                    cf[1+i] = ref[i];
+                }
+                cx[0] = cf[0] = 0;
+                cx[17] = cf[17] = ((unsigned int)ref[15] * 65535) / lc[qr][qc][15];
+                cubic_spline(cx, cf, 18);
+                /* Apply curve in designated quadrant */
+                for (row = (qr ? ph1.split_row : 0); row < (qr ? raw_height : ph1.split_row); row++) {
+                    for (col = (qc ? ph1.split_col : 0); col < (qc ? raw_width : ph1.split_col); col++) {
+                        RAW(row,col) = curve[RAW(row,col)];
+                    }
+                }
+            }
+        }
+        /* By some unknown reason some backs provide more than one copy of this tag, make sure
+           that we only apply this once. */
+        qlin_applied = 1;
+    } else if (tag == 0x41e && !qmult_applied) { /* Per quadrant multipliers P40+/P65+ */
+        float qmult[2][2] = { { 1, 1 }, { 1, 1 } };
+
+        /*
+          This tag has not been fully reverse-engineered, seems to be used only on P40+ and P65+ backs,
+          and will then have most values set to zero.
+
+          Layout:
+
+          - First 4 bytes contains 'II' (or 'MM' I guess if file is big endian, but don't think there are
+            any such backs produced) plus short integer 1
+          - The remaining 80 bytes seems to be 20 floats, most of them always zero. Example contents,
+            with map:
+
+            0.000000, 0.000000, 0.080410, 0.078530,
+            0.000000, 0.000000, 0.000000, 0.000000,
+            0.104100, 0.103500, 0.000000, 0.000000,
+            0.000000, 0.000000, 0.000000, 0.000000,
+            0.089540, 0.092230, 0.000000, 0.000000
+
+            noeffect, noeffect, noeffect, topleft ,
+            noeffect, TL++    , global  , noeffect,
+            noeffect, topright,         , TR++    ,
+                    , bottmlft,         , BL++    ,
+            noeffect, bottmrgt,         , BR++    ,
+
+            'noeffect' tested with no effect, empty not tested, the ++ versions are stronger effect
+            multpliers that doesn't seem to be used, the global multiplier seems to unused as well.
+
+            It seems like one quadrant always is generally used as reference, (ie value 0 => multiplier 1.0),
+            but it's not always the same quadrant for different backs.
+
+            The 'noeffect' fields which actually have values are suspicious, maybe these multipliers are
+            used in Sensor+ or at some different ISO or something? They seem to be close to the ordinary
+            multipliers though so using the 'wrong' ones in some special case should yield quite good
+            result still.
+         */
+
+        /* We only read out the multipliers that are used and seem to have any effect and are used */
+        get4(); get4(); get4(); get4();
+        qmult[0][0] = 1.0 + getreal(11);
+        get4(); get4(); get4(); get4(); get4();
+        qmult[0][1] = 1.0 + getreal(11);
+        get4(); get4(); get4();
+        qmult[1][0] = 1.0 + getreal(11);
+        get4(); get4(); get4();
+        qmult[1][1] = 1.0 + getreal(11);
+        for (row=0; row < raw_height; row++) {
+            for (col=0; col < raw_width; col++) {
+                i = qmult[row >= ph1.split_row][col >= ph1.split_col] * RAW(row,col);
+                RAW(row,col) = LIM(i,0,65535);
+            }
+        }
+        /* By some unknown reason some backs provide more than one copy of this tag, make sure
+           that we only apply this once. */
+        qmult_applied = 1;
+    } else if (tag == 0x431 && !qmult_applied) { /* Per quadrant multiplication and linearization, IQ series backs */
+        ushort lc[2][2][7], ref[7];
+        int qr, qc;
+
+        /* Read reference curve */
+        for (i = 0; i < 7; i++) {
+            ref[i] = (ushort)get4();
+        }
+
+        /* Get multipliers for each quadrant */
+        for (qr = 0; qr < 2; qr++) {
+            for (qc = 0; qc < 2; qc++) {
+                for (i = 0; i < 7; i++) {
+                    lc[qr][qc][i] = (ushort)get4();
+                }
+            }
+        }
+	/* Spline interpolation and apply in each quadrant */
+        for (qr = 0; qr < 2; qr++) {
+            for (qc = 0; qc < 2; qc++) {
+                int cx[9];
+                int cf[9];
+                for (i = 0; i < 7; i++) {
+                    cx[1+i] = ref[i];
+                    cf[1+i] = ((unsigned int)ref[i] * lc[qr][qc][i]) / 10000;
+                }
+                cx[0] = cf[0] = 0;
+                cx[8] = cf[8] = 65535;
+                cubic_spline(cx, cf, 9);
+                for (row = (qr ? ph1.split_row : 0); row < (qr ? raw_height : ph1.split_row); row++) {
+                    for (col = (qc ? ph1.split_col : 0); col < (qc ? raw_width : ph1.split_col); col++) {
+                        RAW(row,col) = curve[RAW(row,col)];
+                    }
+                }
+            }
+        }
+        /* not seen any backs that have this tag multiplied, but just to make sure */
+        qmult_applied = 1;
+        qlin_applied = 1;
     }
     fseek (ifp, save, SEEK_SET);
   }
@@ -1487,8 +1695,10 @@ void CLASS phase_one_load_raw_c()
   static const int length[] = { 8,7,6,9,11,10,5,12,14,13 };
   int *offset, len[2], pred[2], row, col, i, j;
   ushort *pixel;
-  short (*black)[2];
+  short (*black)[2], (*black2)[2];
 
+  black2 = (short (*)[2]) calloc (raw_width*2, 2);
+  merror (black2, "phase_one_load_raw_c()");
   pixel = (ushort *) calloc (raw_width + raw_height*4, 2);
   merror (pixel, "phase_one_load_raw_c()");
   offset = (int *) (pixel + raw_width);
@@ -1499,6 +1709,9 @@ void CLASS phase_one_load_raw_c()
   fseek (ifp, ph1.black_off, SEEK_SET);
   if (ph1.black_off)
     read_shorts ((ushort *) black[0], raw_height*2);
+  fseek (ifp, ph1.black_off2, SEEK_SET);
+  if (ph1.black_off2)
+    read_shorts ((ushort *) black2[0], raw_width*2);
   for (i=0; i < 256; i++)
     curve[i] = i*i / 3.969 + 0.5;
   for (row=0; row < raw_height; row++) {
@@ -1522,11 +1735,12 @@ void CLASS phase_one_load_raw_c()
 	pixel[col] = curve[pixel[col]];
     }
     for (col=0; col < raw_width; col++) {
-      i = (pixel[col] << 2) - ph1.black + black[row][col >= ph1.split_col];
+      i = (pixel[col] << 2) - ph1.black + black[row][col >= ph1.split_col] + black2[col][row >= ph1.split_row];
 	if (i > 0) RAW(row,col) = i;
     }
   }
   free (pixel);
+  free (black2);
   maximum = 0xfffc - ph1.black;
 }
 
@@ -5907,6 +6121,8 @@ void CLASS parse_phase_one (int base)
       case 0x21d:  ph1.black     = data;		break;
       case 0x222:  ph1.split_col = data;		break;
       case 0x223:  ph1.black_off = data+base;		break;
+      case 0x224:  ph1.split_row = data;		break;
+      case 0x225:  ph1.black_off2= data+base;		break;
       case 0x301:
 	model[63] = 0;
 	fread (model, 1, 63, ifp);
