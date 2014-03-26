@@ -127,7 +127,7 @@ protected:
     } tiff_ifd[10];
 
     struct ph1 {
-      int format, key_off, black, black_off, split_col, tag_21a;
+      int format, key_off, black, black_off, black_off2, split_col, split_row, tag_21a;
       float tag_210;
     } ph1;
 
@@ -170,6 +170,7 @@ unsigned getint (int type);
 float int_to_float (int i);
 double getreal (int type);
 void read_shorts (ushort *pixel, int count);
+void cubic_spline(const int *x_, const int *y_, const int len);
 void canon_600_fixed_wb (int temp);
 int canon_600_color (int ratio[2], int mar);
 void canon_600_auto_wb();
