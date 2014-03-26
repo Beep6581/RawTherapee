@@ -335,9 +335,9 @@ static float calcGradientFactor(const struct grad_params& gp, int x, int y) {
 				val = 1.0 - val;
 			}
 			if (gp.scale < 1.0) {
-				val = pow(sin(val*M_PI/2), 3);
+				val = pow(xsinf(val*M_PI/2), 3);
 			} else {
-				val = 1.0 - pow(cos(val*M_PI/2), 3);
+				val = 1.0 - pow(xcosf(val*M_PI/2), 3);
 			}
 			return gp.scale + val * (1.0 - gp.scale);
 		}
@@ -356,9 +356,9 @@ static float calcGradientFactor(const struct grad_params& gp, int x, int y) {
 				val = 1.0 - val;
 			}
 			if (gp.scale < 1.0) {
-				val = pow(sin(val*M_PI/2), 3);
+				val = pow(xsinf(val*M_PI/2), 3);
 			} else {
-				val = 1.0 - pow(cos(val*M_PI/2), 3);
+				val = 1.0 - pow(xcosf(val*M_PI/2), 3);
 			}
 			return gp.scale + val * (1.0 - gp.scale);
 		}
@@ -521,7 +521,7 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 		calcPCVignetteParams(fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
 	}
 	bool darkening = (params->vignetting.amount <= 0.0);
-	#pragma omp parallel for if (multiThread)
+	#pragma omp parallel for schedule(dynamic,16) if (multiThread)
 	for (int y=0; y<transformed->height; y++) {
 		double vig_y_d = (double) (y + cy) - vig_h2 ;
 		for (int x=0; x<transformed->width; x++) {
