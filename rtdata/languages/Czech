@@ -592,7 +592,7 @@ MAIN_TOOLTIP_PREVIEWR;Náhled <b>červeného kanálu</b>.\nZkratka: <b>r</b>
 MAIN_TOOLTIP_QINFO;Stručné informace o obrázku.\nZkratka: <b>i</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Zobrazit/skrýt levý panel.\nZkratka: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Zobrazit/skrýt pravý panel.\nZkratka: <b>Alt-l</b>
-MAIN_TOOLTIP_SHOWHIDETP1;Zobrazit/skrýt horní panel.\nZkratka: <b>Shift-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Zobrazit/skrýt horní panel.\nZkratka: <b>Shift-L</b>
 MAIN_TOOLTIP_THRESHOLD;Práh
 MAIN_TOOLTIP_TOGGLE;Přepnout pohled <b>Před</b> a <b>Po</b>.\nZkratka:  <b>Shift-b</b>
 NAVIGATOR_B_NA;B = n/a

@@ -532,7 +532,7 @@ MAIN_TOOLTIP_PREVIEWR;Podglad <b>kanalu czerwonego</b>\n<b>Skrot: r</b>
 MAIN_TOOLTIP_QINFO;Informacje o pliku
 MAIN_TOOLTIP_SHOWHIDELP1;Pokaz/Ukryj lewy panel <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Pokaz/Ukryj prawy panel <b>Alt-l</b>
-MAIN_TOOLTIP_SHOWHIDETP1;Pokaz/Ukryj gorny panel <b>Shift-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Pokaz/Ukryj gorny panel <b>Shift-L</b>
 MAIN_TOOLTIP_THRESHOLD;Prog
 MAIN_TOOLTIP_TOGGLE;Przelacz widok Przed/Po <b>B</b>
 NAVIGATOR_B_NA;B = n/a

@@ -595,7 +595,7 @@ MAIN_TOOLTIP_PREVIEWR;Bekijk het <b>Rode kanaal</b>.\nSneltoets: <b>r</b>
 MAIN_TOOLTIP_QINFO;Beknopte fotogegevens
 MAIN_TOOLTIP_SHOWHIDELP1;Toon/verberg linkerpaneel.\nSneltoets: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Toon/verberg rechterpaneel.\nSneltoets: <b>Alt-l</b>
-MAIN_TOOLTIP_SHOWHIDETP1;Toon/verberg bovenste paneel.\nSneltoets: <b>Shift-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Toon/verberg bovenste paneel.\nSneltoets: <b>Shift-L</b>
 MAIN_TOOLTIP_THRESHOLD;Drempel
 MAIN_TOOLTIP_TOGGLE;Vergelijk origineel en bewerking
 NAVIGATOR_B_NA;B = n/b
