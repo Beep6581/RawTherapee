@@ -1,0 +1,54 @@
+RAWTHERAPEE 4.1 RELEASE NOTES
+--------------------------------
+
+CAVEATS
+-------
+- Memory requirements
+TODO wiki link: Please read http://rawtherapee.com/blog/maximizing-memory-efficiency
+
+NEW FEATURES
+------------
+- dcraw 9.xx
+- Added support for
+  - Cameras
+- New DCP profiles for
+  - Cameras
+
+Refer to the RawPedia for information about these tools and how to use them:
+http://rawpedia.rawtherapee.com/
+
+DOCUMENTATION
+-------------
+http://rawtherapee.com/documentation
+http://rawpedia.rawtherapee.com/
+
+
+REPORTING BUGS
+--------------
+TODO wiki link: http://rawtherapee.com/forum/viewtopic.php?f=3&t=3639#p25814
+
+LIVE CHAT WITH RT USERS
+-----------------------
+Network: freenode
+Server: chat.freenode.net
+Channel #rawtherapee
+http://webchat.freenode.net/?randomnick=1&channels=rawtherapee&prompt=1
+TODO wiki link: http://rawtherapee.com/forum/viewtopic.php?f=1&t=945#p4603
+
+
+SOCIAL NETWORKS
+---------------
+Google+
+http://plus.google.com/106783532637761598368
+
+
+REVISION HISTORY
+----------------
+The complete change log is available at:
+https://code.google.com/p/rawtherapee/source/list
+
+
+CHANGELOG for 4.1
+----------------------------------------------------------------------
+  DATE          | CHANGESET 	| COMMITTER 	
+----------------|---------------|-------------------------------------

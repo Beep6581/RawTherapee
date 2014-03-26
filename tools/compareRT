@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# compareRT version 1.0, 2014-01-24
+# Processes all images in the current dir with two different
+# RawTherapee versions and tests for differences.
+# Run this script from the dir with the images you want to test.
+# Don't worry about non-image files.
+# In order to keep this simple, all dir names must end with /
+# CC-BY-SA 3.0 DrSlony
+
+unset rtDirs outDir pp3 imgs v i
+
+#--- Edit these as needed.
+rtDirs=("$HOME/rt_default_Release/" "$HOME/rt_default_Release_patched/")
+outDir="/tmp/compareRT/"
+pp3="$HOME/rawtherapee/rtdata/profiles/Default.pp3"
+while IFS=$'\n' read f; do
+  imgs+=("$f")
+done < <(find . -maxdepth 1 -type f -not -iname "*.txt" -not -iname "*.pp3" | sed "s_./__" | sort)
+#---
+
+abort () {
+  printf "%s\n" "" "Aborted"
+  exit 1
+}
+trap 'abort' HUP INT QUIT ABRT TERM
+
+mkdir -p "$outDir" || exit 1
+
+i=0
+for rt in "${rtDirs[@]}"; do
+  c=1
+  v+=("$(grep "Changeset:.*" "${rt}/AboutThisBuild.txt" | sed "s/Changeset: //")")
+  printf "%s\n" "Developing images using RawTherapee changeset ${v[$i]}"
+  for img in "${imgs[@]}"; do
+    printf "%s" "${c}/${#imgs[@]} - "
+    "${rt}rawtherapee" -o "${outDir}${img%.*}_${v[$i]}.tif" -p "${pp3}" -t -Y -c "$img" | grep Processing
+    ((c++))
+  done
+  ((i++))
+  echo
+done
+printf "%s\n" "Comparing images"
+hash compare 2>/dev/null || { printf "%s\n" "\"compare\" not found." "Install imagemagick (or graphicsmagick if it has \"compare\"), then re-run this script."; exit 1; }
+n=1
+for img in "${imgs[@]}"; do
+  printf "%s\n" "${n}/${c} - ${img}"
+  compare "${outDir}${img%.*}_${v[0]}.tif" "${outDir}${img%.*}_${v[1]}.tif" "${outDir}${img%.*}_compare.tif"
+  ((n++))
+done
+
+printf "%s\n" "Finished"

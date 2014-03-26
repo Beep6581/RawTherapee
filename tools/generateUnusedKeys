@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+
+# This Bash4 script checks whether each key in "default" appears in
+# a .cc or .h file. Those that do not are printed to screen, and the
+# user is asked if they should be deleted from all language files.
+#
+# Keys in commented-out sections are not skipped, so they will remain
+# in the language files.
+# It does not handle dynamically built keys:
+#   HISTORY_MSG_
+#   EXTPROGTARGET_
+#   FILEBROWSER_POPUPRANK
+#   FILEBROWSER_POPUPCOLORLABEL
+#
+# Run the script from the project root:
+#   ./tools/generateUnusedKeys
+#
+# Doublecheck the deletion before committing.
+# Run ./tools/generateTranslationDiffs after running this script.
+
+tmp=temp_file
+if [[ -w $tmp ]]; then
+  rm -v "$tmp"
+fi
+
+abort () {
+  printf "%s\n" "" "Aborted" "Removing leftover files:"
+  [[ -e "$tmp" ]] && rm "$tmp"
+  rm -v --interactive=once sed*
+  exit 1
+}
+
+trap 'abort' HUP INT QUIT ABRT TERM
+
+cd "rtdata/languages" || { printf "%s\n" "You must run this script from the root of the project."; exit 1; }
+# Build array of all interface translation files, or use user-specified ones only
+unset langFiles
+if [[ $# = 0 ]]; then
+  while read -r; do
+    langFiles+=("$REPLY")
+  done < <(find . -not -iname "LICENSE" -not -iname "README" -not -iname "*.sh"  -not -iname ".*" -not -iname "$tmp" | sort)
+else
+  langFiles=("$@")
+  for langFile in "${langFiles[@]}"; do
+    if [[ ! -w $langFile ]]; then
+      printf "%s\n" "File \"$langFile\" not found or not writable." ""
+      exit 1
+    fi
+  done
+fi
+
+dos2unix default 2>/dev/null
+
+t1="$(date +%s)"
+printf "%s\n" 'Matching keys in "default" against .cc and .h files' 'Unmatched keys follow:'
+unset delLines
+while read -r 'defLine'; do
+  grep -Irl -m1 --include=\*.{cc,h} --exclude-dir="klt" "${defLine%%;*}" ../../* &>/dev/null
+  if [[ $? = 1 ]]; then
+    printf "  %s\n" "${defLine%%;*}"
+    delLines+=("${defLine%%;*}")
+  fi
+done < <(grep -Ev "^(#|$)|HISTORY_MSG_" "default" | sed -e "s/EXTPROGTARGET_[0-9]*/EXTPROGTARGET_/" -e "s/FILEBROWSER_POPUPCOLORLABEL[0-9]*/FILEBROWSER_POPUPCOLORLABEL/" -e "s/FILEBROWSER_POPUPRANK[0-9]*/FILEBROWSER_POPUPRANK/" | sort -Vu)
+# The grep/sed line above lists keys to ignore.
+# Dynamically built keys like HISTORY_MSG_1 can't be grepped in the code,
+# so it renames KEY_1-KEY_9 to KEY_ so that they can be grepped and therefore ignored.
+
+t2="$(date +%s)"
+tt=$((t2-t1))
+printf "%s\n" "" "Scan took $tt seconds" ""
+
+read -r -p 'Write results to "unmatched"? [y/n] '
+if [[ $REPLY = y || $REPLY = Y ]]; then
+  printf "%s\n" "${delLines[@]}" > unmatched
+  printf "%s\n" ""
+fi
+
+read -r -p "Delete keys from all ${#langFiles[@]} interface language files? [y/n] "
+if [[ $REPLY = y || $REPLY = Y ]]; then
+  printf "%s\n" "Removing keys from:"
+  i=1
+  ttot1="$(date +%s)"
+  for file in "${langFiles[@]}"; do
+    printf "%02d - ${file#.*/}" "$i"
+    t1="$(date +%s)"
+    for key in "${delLines[@]}"; do
+      sed -i "/.\?$key/d" "$file"
+    done
+    t2="$(date +%s)"
+    tt=$((t2-t1))
+    printf "%s\n" " - took $tt seconds"
+    ((i++))
+  done
+  ttot2="$(date +%s)"
+  ttot=$((ttot2-ttot1))
+  tsec=$((ttot%60))
+  tmin=$((ttot/60))
+  printf "%s\n" "Finished updating ${#langFiles[@]} files." "Total time: ${tmin}m ${tsec}s"
+fi

@@ -1,0 +1,14 @@
+Branch: ${HG_BRANCH}
+Version: ${HG_VERSION_SUFFIX}
+Changeset: ${HG_CHANGESET}
+Compiler: ${COMPILER_INFO}
+Processor: ${PROC_LABEL}
+System: ${SYSTEM}
+Bit depth: ${PROC_BIT_DEPTH}
+Gtkmm: V${GTKMM_VERSION}
+Build type: ${BUILD_TYPE}
+Build flags: ${CXX_FLAGS}
+Link flags: ${LFLAGS}
+OpenMP support: ${OPTION_OMP}
+MMAP support: ${WITH_MYFILE_MMAP}
+
