@@ -2140,7 +2140,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 	const float comp = (max(0.0, expcomp) + 1.0)*hlcompr/100.0;
 	const float shoulder = ((65536.0/max(1.0f,exp_scale))*(hlcomprthresh/200.0))+0.1;
 	const float hlrange = 65536.0-shoulder;
-
+	const bool isProPhoto = (params->icm.working == "ProPhoto");
     // extracting datas from 'params' to avoid cache flush (to be confirmed)
     ToneCurveParams::eTCModeId curveMode = params->toneCurve.curveMode;
     ToneCurveParams::eTCModeId curveMode2 = params->toneCurve.curveMode2;
@@ -2665,6 +2665,23 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 					}
 				}
 			}
+
+			if (isProPhoto) { // this is a hack to avoid the blue=>black bug (Issue 2141)
+				for (int i=istart,ti=0; i<tH; i++,ti++) {
+					for (int j=jstart,tj=0; j<tW; j++,tj++) {
+						float r = rtemp[ti*TS+tj];
+						float g = gtemp[ti*TS+tj];
+						if(r == 0.0f || g == 0.0f) {
+							float b = btemp[ti*TS+tj];
+							float h,s,v;
+							Color::rgb2hsv(r,g,b,h,s,v);
+							s *= 0.99f;
+							Color::hsv2rgb(h, s, v, rtemp[ti*TS+tj], gtemp[ti*TS+tj], btemp[ti*TS+tj]);	
+						}
+					}
+				}
+			}
+
 
 			// filling the pipette buffer
 			if (editID == EUID_BlackWhiteBeforeCurve) {
