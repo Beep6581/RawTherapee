@@ -48,6 +48,7 @@ My email address is my screen name followed by @yahoo.com. I'm also known as ben
 
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include "opthelper.h"
 
