@@ -90,6 +90,7 @@ IMFILE* fopen (const char* fname)
 
 	IMFILE* mf = new IMFILE;
 
+        memset(mf, 0, sizeof(*mf));
 	mf->fd = fd;
 	mf->pos = 0;
 	mf->size = stat_buffer.st_size;
@@ -182,6 +183,7 @@ IMFILE* fopen (const char* fname) {
     if (!f)
         return NULL;
     IMFILE* mf = new IMFILE;
+        memset(mf, 0, sizeof(*mf));
 	fseek (f, 0, SEEK_END);
 	mf->size = ftell (f);
 	mf->data = new char [mf->size];
@@ -200,6 +202,7 @@ IMFILE* gfopen (const char* fname) {
     if (!f)
         return NULL;
     IMFILE* mf = new IMFILE;
+        memset(mf, 0, sizeof(*mf));
 	fseek (f, 0, SEEK_END);
 	mf->size = ftell (f);
 	mf->data = new char [mf->size];
@@ -281,6 +284,7 @@ IMFILE* gfopen (const char* fname) {
 IMFILE* fopen (unsigned* buf, int size) {
 
 	IMFILE* mf = new IMFILE;
+        memset(mf, 0, sizeof(*mf));
 	mf->fd = -1;
 	mf->size = size;
 	mf->data = new char [mf->size];
