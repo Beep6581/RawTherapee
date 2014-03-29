@@ -2245,7 +2245,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 
 	// Allocating buffer for the EditBuffer
 	float *editIFloatTmpR, *editIFloatTmpG, *editIFloatTmpB, *editWhateverTmp;
-	char *editIFBuffer = NULL;
 	if (editImgFloat) {
 		editIFloatBuffer = (char *) malloc(3*sizeof(float)*TS*TS + 20*64 + 63);
 		data = (char*)( ( uintptr_t(editIFloatBuffer) + uintptr_t(63)) / 64 * 64);

@@ -71,16 +71,19 @@ class ToolPanel {
         ToolPanel () : listener(NULL), tmp(NULL), batchMode(false), multiImage(false) {}
         virtual ~ToolPanel() {}
 
-                void setParent       (Gtk::Box* parent) {}
-           Gtk::Box* getParent       () { return NULL; }
-                void setMultiImage   (bool m) { multiImage = m; }
-                void setListener     (ToolPanelListener* tpl) { listener = tpl; }
-        virtual void setEditProvider (EditDataProvider *provider) {}
-        virtual void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL) {}
-        virtual void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL) {}
-        virtual void trimValues      (rtengine::procparams::ProcParams* pp) { return; }
-        virtual void setDefaults     (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL) {}
-        virtual void autoOpenCurve   () {}
+        virtual void           setParent       (Gtk::Box* parent) {}
+        virtual Gtk::Box*      getParent       () { return NULL; }
+        virtual Gtk::Expander* getExpander     () { return NULL; }
+        virtual void           setExpanded     (bool expanded) {}
+        virtual bool           getExpanded     () { return false; }
+                void           setMultiImage   (bool m) { multiImage = m; }
+                void           setListener     (ToolPanelListener* tpl) { listener = tpl; }
+        virtual void           setEditProvider (EditDataProvider *provider) {}
+        virtual void           read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL) {}
+        virtual void           write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL) {}
+        virtual void           trimValues      (rtengine::procparams::ProcParams* pp) { return; }
+        virtual void           setDefaults     (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL) {}
+        virtual void           autoOpenCurve   () {}
 
         /** @brief Disable the event broadcasting mechanism
          *
@@ -98,15 +101,18 @@ class ToolPanel {
 
 class FoldableToolPanel : public ToolPanel {
 
-	protected:
+    protected:
         Gtk::Box* parentContainer;
         void foldThemAll (GdkEventButton* event);
+        Gtk::Expander* exp;
 
     public:
-        Gtk::Expander* exp;
 
         FoldableToolPanel(Gtk::Box* content);
 
+        Gtk::Expander * getExpander() { return exp; }
+        void setExpanded (bool expanded) { if (exp) exp->set_expanded( expanded ); }
+        bool getExpanded () { if (exp) return exp->get_expanded(); return false; }
         void setParent (Gtk::Box* parent) { parentContainer = parent; }
         Gtk::Box* getParent () { return parentContainer; }
         void setLabel (Glib::ustring label, bool need100Percent=false);

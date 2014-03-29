@@ -21,7 +21,7 @@
 #include "imagearea.h"
 #include "cursormanager.h"
 
-PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL), imageArea(NULL), isMoving(false), zoom(0.0) {
+PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL), imageArea(NULL), isMoving(false), imgX(0), imgY(0), imgW(0), imgH(0), zoom(0.0) {
 
     rconn = signal_size_allocate().connect( sigc::mem_fun(*this, &PreviewWindow::on_resized) );
 }

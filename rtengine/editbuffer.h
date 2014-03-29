@@ -47,6 +47,8 @@ protected:
 	LabImage* LabBuffer;
 	PlanarWhateverData<float> singlePlaneBuffer;
 
+	bool ready;  // flag that indicates if the _pipette_ buffer is ready
+
 	void                       createBuffer(int width, int height);
 	void                       resize(int newWidth, int newHeight, EditSubscriber* newSubscriber);
 	void                       resize(int newWidth, int newHeight);
@@ -56,6 +58,12 @@ public:
 	EditBuffer(::EditDataProvider *dataProvider);
 	~EditBuffer();
 
+	/** @brief Getter to know if the pipette buffer is correctly filled */
+	bool                       isReady() { return ready; }
+
+	/** @brief Setter to tell that the pipette buffer is correctly filled
+	 *  You have to use this method once the pipette is filled, so it can be read. */
+	void                       setReady() { ready = true; }
 
 	void                       setObjectMode(ObjectMode newType);
 	::EditDataProvider*        getDataProvider() { return dataProvider; }

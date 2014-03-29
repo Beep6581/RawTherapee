@@ -117,32 +117,6 @@ void HSVEqualizer::write (ProcParams* pp, ParamsEdited* pedited) {
 }
 
 /*
-void HSVEqualizer::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
-	
-    for (int i = 0; i < 8; i++) {
-        sat[i]->setDefault(defParams->hsvequalizer.sat[i]);
-		val[i]->setDefault(defParams->hsvequalizer.val[i]);
-        hue[i]->setDefault(defParams->hsvequalizer.hue[i]);
-    }
-    
-    if (pedited) {
-        for (int i = 0; i < 8; i++) {
-            sat[i]->setDefaultEditedState(pedited->hsvequalizer.sat[i] ? Edited : UnEdited);
-			val[i]->setDefaultEditedState(pedited->hsvequalizer.val[i] ? Edited : UnEdited);
-            hue[i]->setDefaultEditedState(pedited->hsvequalizer.hue[i] ? Edited : UnEdited);
-        }
-    }
-    else {
-        for (int i = 0; i < 8; i++) {
-            sat[i]->setDefaultEditedState(Irrelevant);
-			val[i]->setDefaultEditedState(Irrelevant);
-            hue[i]->setDefaultEditedState(Irrelevant);
-        }
-    }
-}
-*/
-
-/*
  * Curve listener
  *
  * If more than one curve has been added, the curve listener is automatically
@@ -159,58 +133,6 @@ void HSVEqualizer::curveChanged (CurveEditor* ce) {
         	listener->panelChanged (EvHSVEqualizerV, M("HISTORY_CUSTOMCURVE"));
 	}
 }
-
-/*
-void HSVEqualizer::adjusterChanged (Adjuster* a, double newval) {
-	
-	if (listener && enabled->get_active()) {
-        std::stringstream ss;
-        ss << "(";
-        int i;		
-		if (hsvchannel->get_active_row_number()==0) {
-			for (i = 0; i < 8; i++) {
-				if (i > 0) {
-					ss << ", ";
-				}
-				if (i == 4) {
-					ss << "\n";
-				}
-				ss << static_cast<int>(sat[i]->getValue());
-			}
-			ss << ")";
-			listener->panelChanged (EvHSVEqualizerS, ss.str());
-		} 
-		else if (hsvchannel->get_active_row_number()==1) {
-			for (i = 0; i < 8; i++) {
-				if (i > 0) {
-					ss << ", ";
-				}
-				if (i == 4) {
-					ss << "\n";
-				}
-				ss << static_cast<int>(val[i]->getValue());
-			}
-			ss << ")";
-			listener->panelChanged (EvHSVEqualizerV, ss.str());
-		}
-		else if (hsvchannel->get_active_row_number()==2) {
-			for (i = 0; i < 8; i++) {
-				if (i > 0) {
-					ss << ", ";
-				}
-				if (i == 4) {
-					ss << "\n";
-				}
-				ss << static_cast<int>(hue[i]->getValue());
-			}
-			ss << ")";
-			listener->panelChanged (EvHSVEqualizerH, ss.str());
-		}
-		
-		//listener->panelChanged (EvHSVEqualizer, ss.str());
-	}
-}
-*/
 
 void HSVEqualizer::colorForValue (double valX, double valY, int callerId, ColorCaller* caller) {
 
