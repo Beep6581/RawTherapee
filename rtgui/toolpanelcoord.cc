@@ -213,8 +213,8 @@ void ToolPanelCoordinator::addPanel (Gtk::Box* where, FoldableToolPanel* panel, 
     panel->setParent(where);
     panel->setLabel(escapeHtmlChars(label), need100Percent);
 
-    expList.push_back (panel->exp);
-    where->pack_start(*panel->exp, false, false);
+    expList.push_back (panel->getExpander());
+    where->pack_start(*panel->getExpander(), false, false);
 }
 
 ToolPanelCoordinator::~ToolPanelCoordinator () {
@@ -542,18 +542,18 @@ void ToolPanelCoordinator::updateCurveBackgroundHistogram (LUTu & histToneCurve,
 
 void ToolPanelCoordinator::foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection) {
 
-	FoldableToolPanel* currentTP;
-
-	for (size_t i=0; i<toolPanels.size(); i++) {
-	currentTP = static_cast<FoldableToolPanel*>(toolPanels[i]);
-        if (currentTP->getParent() == parent) {
-            // Section in the same tab, we unfold it if it's not the one that has been clicked
-            if (currentTP != openedSection) {
-                currentTP->exp->set_expanded(false);
-            }
-            else {
-                if (!currentTP->exp->get_expanded())
-                    currentTP->exp->set_expanded(true);
+    for (size_t i=0; i<toolPanels.size(); i++) {
+        if (toolPanels[i]->getParent() != NULL) {
+            ToolPanel* currentTP = toolPanels[i];
+            if (currentTP->getParent() == parent) {
+                // Section in the same tab, we unfold it if it's not the one that has been clicked
+                if (currentTP != openedSection) {
+                    currentTP->setExpanded(false);
+                }
+                else {
+                    if (!currentTP->getExpanded())
+                        currentTP->setExpanded(true);
+                }
             }
         }
     }
@@ -561,8 +561,8 @@ void ToolPanelCoordinator::foldAllButOne (Gtk::Box* parent, FoldableToolPanel* o
 
 bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event) {
 
-    //bool ctrl = event->state & GDK_CONTROL_MASK;  temporarilly removed because unused
-    //bool shift = event->state & GDK_SHIFT_MASK;   temporarilly removed because unused
+    //bool ctrl = event->state & GDK_CONTROL_MASK;  temporarily removed because unused
+    //bool shift = event->state & GDK_SHIFT_MASK;   temporarily removed because unused
     bool alt = event->state & GDK_MOD1_MASK;
 
     if (alt){
@@ -627,16 +627,16 @@ void ToolPanelCoordinator::toolSelected (ToolMode tool) {
     GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
 	switch (tool) {
 	case TMCropSelect:
-		crop->exp->set_expanded(true);
+		crop->setExpanded(true);
 		toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*transformPanelSW));
 		break;
 	case TMSpotWB:
-		whitebalance->exp->set_expanded(true);
+		whitebalance->setExpanded(true);
 		toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*colorPanelSW));
 		break;
 	case TMStraighten:
-		lensgeom->exp->set_expanded(true);
-		rotate->exp->set_expanded(true);
+		lensgeom->setExpanded(true);
+		rotate->setExpanded(true);
 		toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*transformPanelSW));
 		break;
 	default:

@@ -751,45 +751,42 @@ void MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modi
 
 	snapToElmt = -100;
 	if (curve.type!=DCT_Parametric) {
-		snapToElmt = -100;
-		if (curve.type!=DCT_Parametric) {
-			std::vector<double>::iterator itx, ity;
-			buttonPressed = true;
+		std::vector<double>::iterator itx, ity;
+		buttonPressed = true;
 
-			// get the pointer position
-			int px = graphX + int(float(graphW)*pipetteVal);  // WARNING: converting pipetteVal from float to int, precision loss here!
-			getCursorPosition(Gdk::BUTTON_PRESS, false, px, graphY, Gdk::ModifierType(modifierKey));
-			findClosestPoint();
+		// get the pointer position
+		int px = graphX + int(float(graphW)*pipetteVal);  // WARNING: converting pipetteVal from float to int, precision loss here!
+		getCursorPosition(Gdk::BUTTON_PRESS, false, px, graphY, Gdk::ModifierType(modifierKey));
+		findClosestPoint();
 
-			if (distanceX > minDistanceX) {
-				rtengine::DiagonalCurve rtCurve(getPoints(), 200);
+		if (distanceX > minDistanceX) {
+			rtengine::DiagonalCurve rtCurve(getPoints(), 200);
 
-				/* insert a new control point */
-				if (num > 0) {
-					if (clampedX > curve.x[closest_point])
-						++closest_point;
-				}
-				itx = curve.x.begin();
-				ity = curve.y.begin();
-				for (int i=0; i<closest_point; i++) { itx++; ity++; }
-				curve.x.insert (itx, 0);
-				curve.y.insert (ity, 0);
-				num++;
-
-				// the graph is refreshed only if a new point is created (snaped to a pixel)
-				curve.x[closest_point] = clampedX;
-				curve.y[closest_point] = clampedY = rtCurve.getVal(pipetteVal);
-
-				curveIsDirty = true;
-				setDirty(true);
-				draw (closest_point);
-				notifyListener ();
+			/* insert a new control point */
+			if (num > 0) {
+				if (clampedX > curve.x[closest_point])
+					++closest_point;
 			}
-			grab_point = closest_point;
-			lit_point = closest_point;
-			ugpX = curve.x[closest_point];
-			ugpY = curve.y[closest_point];
+			itx = curve.x.begin();
+			ity = curve.y.begin();
+			for (int i=0; i<closest_point; i++) { itx++; ity++; }
+			curve.x.insert (itx, 0);
+			curve.y.insert (ity, 0);
+			num++;
+
+			// the graph is refreshed only if a new point is created (snaped to a pixel)
+			curve.x[closest_point] = clampedX;
+			curve.y[closest_point] = clampedY = rtCurve.getVal(pipetteVal);
+
+			curveIsDirty = true;
+			setDirty(true);
+			draw (closest_point);
+			notifyListener ();
 		}
+		grab_point = closest_point;
+		lit_point = closest_point;
+		ugpX = curve.x[closest_point];
+		ugpY = curve.y[closest_point];
 	}
 }
 
@@ -849,7 +846,7 @@ void MyDiagonalCurve::pipetteButton1Released(EditDataProvider *provider) {
 			draw (lit_point);
 		}
 		grab_point = -1;
-		notifyListener ();
+		//notifyListener ();
 	}
 }
 

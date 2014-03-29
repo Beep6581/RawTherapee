@@ -307,6 +307,10 @@ void Crop::update (int todo) {
             if (cieCrop) delete cieCrop; cieCrop=NULL;
         }
     }
+
+    // all pipette buffer processing should be finished now
+    EditBuffer::setReady();
+
     // switch back to rgb
     parent->ipf.lab2monitorRgb (labnCrop, cropImg);
 

@@ -23,7 +23,7 @@ namespace rtengine {
 
 EditBuffer::EditBuffer(::EditDataProvider *dataProvider) :
 	objectMap(NULL), objectMap2(NULL), objectMode(OM_255), dataProvider(dataProvider),
-	imgFloatBuffer(NULL), LabBuffer(NULL), singlePlaneBuffer() {}
+	imgFloatBuffer(NULL), LabBuffer(NULL), singlePlaneBuffer(), ready(false) {}
 
 EditBuffer::~EditBuffer() {
 	flush();
@@ -50,6 +50,7 @@ void EditBuffer::flush() {
 		LabBuffer = NULL;
 	}
 	singlePlaneBuffer.flushData();
+	ready = false;
 }
 
 /* Upgrade or downgrade the objectModeType; we're assuming that objectMap has been allocated */
@@ -155,6 +156,7 @@ void EditBuffer::resize(int newWidth, int newHeight, EditSubscriber* newSubscrib
 			if (objectMap2) objectMap2.clear();
 		}
 	}
+	ready = false;
 }
 
 bool EditBuffer::bufferCreated() {
@@ -190,29 +192,29 @@ int EditBuffer::getObjectID(const Coord& location) {
 }
 
 void EditBuffer::getPipetteData(float* v, int x, int y, int squareSize) {
-	if (dataProvider && dataProvider->getCurrSubscriber()) {
+	if (ready && dataProvider && dataProvider->getCurrSubscriber()) {
 		switch (dataProvider->getCurrSubscriber()->getEditBufferType()) {
 		case (BT_IMAGEFLOAT):
-			if (imgFloatBuffer)
+			if (imgFloatBuffer) {
 				imgFloatBuffer->getPipetteData(v[0], v[1], v[2], x, y, squareSize, 0);
-			else
-				v[0] = v[1] = v[2] = -1.f;
+				return;
+			}
 			break;
 		case (BT_LABIMAGE):
-			if (LabBuffer)
+			if (LabBuffer) {
 				LabBuffer->getPipetteData(v[0], v[1], v[2], x, y, squareSize);
-			else
-				v[0] = v[1] = v[2] = -1.f;
+				return;
+			}
 			break;
 		case (BT_SINGLEPLANE_FLOAT):
 			if (singlePlaneBuffer.data != NULL) {
 				singlePlaneBuffer.getPipetteData(v[0], x, y, squareSize, 0);
 				v[1] = v[2] = -1.f;
+				return;
 			}
-			else
-				v[0] = v[1] = v[2] = -1.f;
 		}
 	}
+	v[0] = v[1] = v[2] = -1.f;
 }
 
 }
