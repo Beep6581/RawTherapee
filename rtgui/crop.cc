@@ -177,6 +177,7 @@ Crop::Crop (): FoldableToolPanel(this) {
   orientation->set_active (0);
 
   guide->append_text (M("TP_CROP_GTNONE"));
+  guide->append_text (M("TP_CROP_GTFRAME"));
   guide->append_text (M("TP_CROP_GTRULETHIRDS"));
   guide->append_text (M("TP_CROP_GTDIAGONALS"));
   guide->append_text (M("TP_CROP_GTHARMMEANS1"));
@@ -185,7 +186,6 @@ Crop::Crop (): FoldableToolPanel(this) {
   guide->append_text (M("TP_CROP_GTHARMMEANS4"));
   guide->append_text (M("TP_CROP_GTGRID"));
   guide->append_text (M("TP_CROP_GTEPASSPORT"));
-  guide->append_text (M("TP_CROP_GTFRAME"));
   guide->set_active (0);
 
   w->set_range (0, maxw);
@@ -278,23 +278,23 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     if (pp->crop.guide == "None")
         guide->set_active (0);
-    else if (pp->crop.guide == "Rule of thirds")
-        guide->set_active (1);
-    else if (pp->crop.guide == "Rule of diagonals")
-        guide->set_active (2);
-    else if (pp->crop.guide == "Harmonic means 1")
-        guide->set_active (3);
-    else if (pp->crop.guide == "Harmonic means 2")
-        guide->set_active (4);
-    else if (pp->crop.guide == "Harmonic means 3")
-        guide->set_active (5);
-    else if (pp->crop.guide == "Harmonic means 4")
-        guide->set_active (6);
-    else if (pp->crop.guide == "Grid")
-        guide->set_active (7);
-    else if (pp->crop.guide == "ePassport")
-        guide->set_active (8);
     else if (pp->crop.guide == "Frame")
+        guide->set_active (1);
+    else if (pp->crop.guide == "Rule of thirds")
+        guide->set_active (2);
+    else if (pp->crop.guide == "Rule of diagonals")
+        guide->set_active (3);
+    else if (pp->crop.guide == "Harmonic means 1")
+        guide->set_active (4);
+    else if (pp->crop.guide == "Harmonic means 2")
+        guide->set_active (5);
+    else if (pp->crop.guide == "Harmonic means 3")
+        guide->set_active (6);
+    else if (pp->crop.guide == "Harmonic means 4")
+        guide->set_active (7);
+    else if (pp->crop.guide == "Grid")
+        guide->set_active (8);
+    else if (pp->crop.guide == "ePassport")
         guide->set_active (9);
 
     x->set_value (pp->crop.x);
@@ -363,23 +363,23 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited) {
   if (guide->get_active_row_number()==0)
     pp->crop.guide = "None";
   else if (guide->get_active_row_number()==1)
-    pp->crop.guide = "Rule of thirds";
-  else if (guide->get_active_row_number()==2)
-    pp->crop.guide = "Rule of diagonals";
-  else if (guide->get_active_row_number()==3)
-    pp->crop.guide = "Harmonic means 1";
-  else if (guide->get_active_row_number()==4)
-    pp->crop.guide = "Harmonic means 2";
-  else if (guide->get_active_row_number()==5)
-    pp->crop.guide = "Harmonic means 3";
-  else if (guide->get_active_row_number()==6)
-    pp->crop.guide = "Harmonic means 4";
-  else if (guide->get_active_row_number()==7)
-    pp->crop.guide = "Grid";
-  else if (guide->get_active_row_number()==8)
-    pp->crop.guide = "ePassport";
-  else if (guide->get_active_row_number()==9)
     pp->crop.guide = "Frame";
+  else if (guide->get_active_row_number()==2)
+    pp->crop.guide = "Rule of thirds";
+  else if (guide->get_active_row_number()==3)
+    pp->crop.guide = "Rule of diagonals";
+  else if (guide->get_active_row_number()==4)
+    pp->crop.guide = "Harmonic means 1";
+  else if (guide->get_active_row_number()==5)
+    pp->crop.guide = "Harmonic means 2";
+  else if (guide->get_active_row_number()==6)
+    pp->crop.guide = "Harmonic means 3";
+  else if (guide->get_active_row_number()==7)
+    pp->crop.guide = "Harmonic means 4";
+  else if (guide->get_active_row_number()==8)
+    pp->crop.guide = "Grid";
+  else if (guide->get_active_row_number()==9)
+    pp->crop.guide = "ePassport";
 
     if (pedited) {
         pedited->crop.enabled       = !enabled->get_inconsistent();
