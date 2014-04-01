@@ -217,17 +217,26 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this), iunchanged(NULL), icmplistener(
     filter_icc.set_name(M("TP_ICM_FILEDLGFILTERICM"));
     filter_icc.add_pattern("*.dcp");
     filter_icc.add_pattern("*.DCP");
-    filter_icc.add_pattern("*.dng");
-    filter_icc.add_pattern("*.DNG");
     filter_icc.add_pattern("*.icc");
     filter_icc.add_pattern("*.icm");
     filter_icc.add_pattern("*.ICC");
     filter_icc.add_pattern("*.ICM");
+    Gtk::FileFilter filter_iccdng;
+    filter_iccdng.set_name(M("TP_ICM_FILEDLGFILTERICMDNG"));
+    filter_iccdng.add_pattern("*.dcp");
+    filter_iccdng.add_pattern("*.DCP");
+    filter_iccdng.add_pattern("*.dng");
+    filter_iccdng.add_pattern("*.DNG");
+    filter_iccdng.add_pattern("*.icc");
+    filter_iccdng.add_pattern("*.icm");
+    filter_iccdng.add_pattern("*.ICC");
+    filter_iccdng.add_pattern("*.ICM");
     Gtk::FileFilter filter_any;
     filter_any.set_name(M("TP_ICM_FILEDLGFILTERANY"));
     filter_any.add_pattern("*");
 
     ipDialog->add_filter (filter_icc);
+    ipDialog->add_filter (filter_iccdng);
     ipDialog->add_filter (filter_any);
 
     oldip = "";
