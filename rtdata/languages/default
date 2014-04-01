@@ -1180,6 +1180,7 @@ TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
 TP_ICM_FILEDLGFILTERANY;Any files
 TP_ICM_FILEDLGFILTERICM;Color profiles
+TP_ICM_FILEDLGFILTERICMDNG;Color profiles + DNG
 TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
 TP_ICM_INPUTCAMERA;Camera standard
