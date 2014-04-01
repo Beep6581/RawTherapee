@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# buildRT version 4.0, 2014-03-06
+# buildRT version 4.1, 2014-04-01
 # Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
 # www.rawtherapee.com
 # www.londonlight.org
@@ -25,29 +25,35 @@ esac
 
 #--- Set some variables
 unset choiceNumber choiceNumbers buildType buildTypes list branch branches repo
-version="4.0"
+version="4.1"
 movetoPatched=""
 repo="${HOME}/rawtherapee"
 procTarget=2
 
-while getopts "bc:np:s:t:uvh?-" opt; do
+while getopts "bc:fnp:s:t:uvh?-" opt; do
     case "${opt}" in
         b)  patched="yes"
             movetoPatched="_patched"
             printf "%s\n" "Buildonly flag detected, will not hg pull or update" ;;
         c)  dCacheNameSuffix="$OPTARG"
             dCacheNameSuffix=${dCacheNameSuffix//[^\.\-_a-zA-Z0-9]/};
+            forceCmake="yes"
             printf "%s\n" "Cache and config name suffix: $dCacheNameSuffix" ;;
+        f)  forceCmake="yes"
+            printf "%s\n" "Will forcefully re-run CMake" ;;
         n)  noomp="-DOPTION_OMP=OFF"
+            forceCmake="yes"
             printf "%s\n" "OpenMP disabled" ;;
         p)  procTarget="$OPTARG"
             if [[ $procTarget -lt 1 || $procTarget -gt 9 ]]; then
                 printf "%s\n" "Invalid processor target value." "Use a value from 1 to 9, e.g." "./buildRT -p 1" "See ProcessorTargets.cmake" "Aborting"
                 exit 1
+            forceCmake="yes"
             fi ;;
         s)  movetoPatched="_${OPTARG//[^\.\-_a-zA-Z0-9]/}"
             printf "%s\n" "Suffix of destination build dir: ${movetoPatched}" ;;
         t)  titleSuffix="${OPTARG//[^\.\-\:\ \+_a-zA-Z0-9]/}"
+            forceCmake="yes"
             printf "%s\n" "Titlebar version suffix: ${titleSuffix}" ;;
         u)  gcVer="$(curl "http://rawtherapee.googlecode.com/hg/tools/buildRT" 2>/dev/null | grep "^#.*[vV]ersion.*")" || { echo "\"curl\" program not found, please install it first."; exit 1; }
             gcVer="${gcVer##*[[:alpha:]] }"
@@ -62,19 +68,21 @@ while getopts "bc:np:s:t:uvh?-" opt; do
             fi ;;
         v)  verbose=yes
             printf "%s\n" "Verbose mode, I will spam your screen with warnings" ;;
-        h|\?|-) printf "%s\n" "Usage:" "" \
-            "  $0 [-b] [-c <string>] [-n] [-p <1-9>] [-s <string>] [-v]" "" \
+        h|\?|-) printf "%s\n" "Usage:" "" "  $0 [-b] [-c <string>] [-f] [-n] [-p <1-9>] [-s <string>] [-t \"<string>\"] [-v]" ""
+            printf "%s\n" \
             "  -b" \
             "Build-only mode. buildRT uses \"hg update -C default\" to update your source code repository to the newest revision, however doing so might destroy any uncommitted or unpushed changes you made or any patches you applied. With the -b flag the script will not update the source code, so that you can easily compile RawTherapee with whatever patches you manually applied. buildRT should automatically detect if you modified the source code, but you can use this flag to force build-only mode." "Generally when compiling patched RT versions you want to keep the cache and config folders separate, so consider using \"-b -c _testing\"" "" \
             "  -c <string>" \
             "Specify a suffix to the cache and config directory names. Only alphanumerics, periods, dashes and underscores are valid. The default value is \"4\", which will result in your build of RawTherapee storing the cache in \"${HOME}/.cache/RawTherapee4\" and config in \"${HOME}/.config/RawTherapee4\". For example, use \"-c _testing\" if you want to test older or patched versions of RawTherapee without potentially damaging your \"real\" cache and config files." "" \
+            "  -f" \
+            "Force CMake to re-run." "" \
             "  -n" \
             "Disable OpenMP." "" \
             "  -p <1-9>" \
             "Set which processor target to use. Takes a single digit from 1 to 9. The default is 2. See ProcessorTargets.cmake" "" \
             "  -s <string>" \
             "Suffix of destination build directory, so that if you have applied a patch, say \"dustremoval-1.patch\", and want to have RawTherapee compiled to a folder whose name ends with \"_dustremoval1\", you would set \"-s dustremoval1\" (the underscore is automated)." "" \
-            "  -t <string>" \
+            "  -t \"<string>\"" \
             "Suffix displayed next to the RawTherapee version in the window titlebar. It is recommended that you include the changeset of the newest public commit (the one you would see if you cloned the repository anew) so it is clear which commit you applied the patches to. E.g.:" "-t \": ee72ddbcfd4e + dustremoval-1.patch + mustafa ibrahim\"" "" \
             "  -u" \
             "Check for an update of buildRT on Google Code." "" \
@@ -270,13 +278,9 @@ for choiceNumber in "${choiceNumbers[@]}"; do
     hg update -C "$branch" || exit 1
   fi
   echo
-  printf "%-15b %b\n" "\E[1mStarting to compile\E[0m:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget" ""
+  printf "%-15b %b\n" "\E[1mWill compile\E[0m:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget" ""
   rev="$(hg parents --template {rev})"
 
-  # Clean up leftovers from previous successful or failed builds
-  [[ -d "${repo}/${buildType}" ]] && { printf "%s\n" "Found old build directory \"${repo}/$buildType\". Removing it."; rm -rf "${repo}/${buildType}"; }
-  [[ -d "${repo}/rawtherapee" ]] && { printf "%s\n" "Found old build directory \"${repo}/rawtherapee\". Removing it."; rm -rf "${repo}/rawtherapee"; }
-  [[ -d "${repo}/build" ]] && { printf "%s\n" "Found old build directory \"${repo}/build\". Removing it."; rm -rf "${repo}/build"; }
   [[ -d "${HOME}/rt_${branch}_${buildType}${movetoPatched}" ]] && {
   printf "%s\n" "Found old build directory ${HOME}/rt_${branch}_${buildType}${movetoPatched}" "To proceed you must either delete it, or choose a suffix for the destination folder for this build."
   read -r -p "[d]elete old build, [r]ename this build destination folder, or [a]bort "
@@ -293,51 +297,70 @@ for choiceNumber in "${choiceNumbers[@]}"; do
   esac
   }
 
-  # Clean up old CMake junk
   cd "${repo}" || exit 1
-  printf "%s\n" "" "Cleaning out old CMake files"
-  make clean || { printf "%s\n" "Error while running \"make clean\", aborting." "Easiest solution: delete ${repo} and re-run buildRT."; exit 1; }
-  ./clean.sh || { printf "%s\n" "Error while running \"./clean.sh\", aborting." "Easiest solution: delete ${repo} and re-run buildRT."; exit 1; }
 
-  printf "%s\n" "" "Starting compilation:"
   verLatesttag="$(hg parents --template '{latesttag}')"
   verLatesttagdistance="$(hg parents --template '{latesttagdistance}')"
   [[ -z $dCacheNameSuffix ]] && dCacheNameSuffix="${verLatesttag%%.*}"
 
-  mkdir "${repo}/build" || exit 1
-  # As of changeset 1930:067e362c6f28 on Mon Jun 25 2012, revision number 1930, RT supports and encourages out-of-source builds.
-  if (( rev < 1930 )); then
-    cmake \
-      -DCMAKE_BUILD_TYPE="$buildType" \
-      -DPROC_TARGET_NUMBER="$procTarget" \
-      -DCMAKE_C_FLAGS="-pipe" \
-      -DCMAKE_CXX_FLAGS="$CMAKE_C_FLAGS $Wcflags" \
-      "$noomp" \
-      -DCMAKE_INSTALL_PREFIX="build" \
-      -DBUILD_BUNDLE="ON" \
-      -DBINDIR="." \
-      -DDATADIR="." \
-      -DCACHE_NAME_SUFFIX="$dCacheNameSuffix" \
-      || { echo "Error during cmake, exiting."; exit 1; }
-  else
-    cd "${repo}/build"
-    cmake \
-      -DCMAKE_BUILD_TYPE="$buildType" \
-      -DPROC_TARGET_NUMBER="$procTarget" \
-      -DCMAKE_C_FLAGS="-pipe" \
-      -DCMAKE_CXX_FLAGS="$CMAKE_C_FLAGS $Wcflags" \
-      "$noomp" \
-      -DCMAKE_INSTALL_PREFIX="build" \
-      -DBUILD_BUNDLE="ON" \
-      -DBINDIR="." \
-      -DDATADIR="." \
-      -DCACHE_NAME_SUFFIX="$dCacheNameSuffix" \
-      -DVERSION_SUFFIX="$titleSuffix" \
-      ../ \
-      || { echo "Error during cmake, exiting."; exit 1; }
+  # need to rerun cmake if buildtype changed
+  if [[ -e build/CMakeCache.txt ]]; then
+      previousBuildType="$(grep 'CMAKE_BUILD_TYPE:STRING=' build/CMakeCache.txt)"
+      previousBuildType="${previousBuildType##*=}"
+  fi
+  if [[ ! -e build/CMakeCache.txt || $previousBuildType != "$buildType" ]]; then
+      forceCmake="yes"
+  fi
+
+  if [[ ! -d "${repo}/build" || $forceCmake = yes ]]; then
+      # Clean up leftovers from previous successful or failed builds
+      [[ -d "${repo}/${buildType}" ]] && { printf "%s\n" "Found old build directory \"${repo}/$buildType\". Removing it."; rm -rf "${repo}/${buildType}"; }
+      [[ -d "${repo}/rawtherapee" ]] && { printf "%s\n" "Found old build directory \"${repo}/rawtherapee\". Removing it."; rm -rf "${repo}/rawtherapee"; }
+      [[ -d "${repo}/build" ]] && { printf "%s\n" "Found old build directory \"${repo}/build\". Removing it."; rm -rf "${repo}/build"; }
+      printf "%s\n" "" "Cleaning out old CMake files"
+      make clean || { printf "%s\n" "Error while running \"make clean\", aborting." "Easiest solution: delete ${repo} and re-run buildRT."; exit 1; }
+      ./clean.sh || { printf "%s\n" "Error while running \"./clean.sh\", aborting." "Easiest solution: delete ${repo} and re-run buildRT."; exit 1; }
+      mkdir "${repo}/build" || exit 1
+
+      # As of changeset 1930:067e362c6f28 on Mon Jun 25 2012, revision number 1930, RT supports and encourages out-of-source builds.
+      if (( rev < 1930 )); then
+          cmake \
+              -DCMAKE_BUILD_TYPE="$buildType" \
+              -DPROC_TARGET_NUMBER="$procTarget" \
+              -DCMAKE_C_FLAGS="-pipe" \
+              -DCMAKE_CXX_FLAGS="$CMAKE_C_FLAGS $Wcflags" \
+              "$noomp" \
+              -DCMAKE_INSTALL_PREFIX="build" \
+              -DBUILD_BUNDLE="ON" \
+              -DBINDIR="." \
+              -DDATADIR="." \
+              -DCACHE_NAME_SUFFIX="$dCacheNameSuffix" \
+              || { echo "Error during cmake, exiting."; exit 1; }
+      else
+          cd "${repo}/build"
+          cmake \
+              -DCMAKE_BUILD_TYPE="$buildType" \
+              -DPROC_TARGET_NUMBER="$procTarget" \
+              -DCMAKE_C_FLAGS="-pipe" \
+              -DCMAKE_CXX_FLAGS="$CMAKE_C_FLAGS $Wcflags" \
+              "$noomp" \
+              -DCMAKE_INSTALL_PREFIX="build" \
+              -DBUILD_BUNDLE="ON" \
+              -DBINDIR="." \
+              -DDATADIR="." \
+              -DCACHE_NAME_SUFFIX="$dCacheNameSuffix" \
+              -DVERSION_SUFFIX="$titleSuffix" \
+              ../ \
+              || { echo "Error during cmake, exiting."; exit 1; }
+      fi
   fi
   echo
 
+  if (( rev >= 1930 )); then
+      cd "${repo}/build" || exit 1
+  fi
+
+  printf "%s\n" "" "Starting compilation:"
   time { make -j${cpuCount} install; } || { printf "%s\n" "" "Error during make, exiting."; exit 1; }
   printf "%-15b %b\n" "" "" "RawTherapee compiled:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget" "\tCache:" "${HOME}/.cache/RawTherapee${dCacheNameSuffix}" "\tConfig:" "${HOME}/.config/RawTherapee${dCacheNameSuffix}" "" ""
 
