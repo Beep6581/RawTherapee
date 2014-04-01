@@ -3446,6 +3446,7 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 				double hr;
 				float valparam = float((hhCurve->getVal(hr=Color::huelab_to_huehsv2(HH))-0.5f) * 1.7f) +HH;//get H=f(H)  1.7 optimisation !
 				HH = valparam;
+				sincosval = xsincosf(HH);
 			}
 			
 			//simulate very approximative gamut f(L) : with pyramid transition
