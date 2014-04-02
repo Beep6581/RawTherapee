@@ -159,35 +159,45 @@ int main(int argc, char **argv)
 			bool stderrRedirectedtoFile = (GetFileType(GetStdHandle(STD_ERROR_HANDLE)) == 0x0001);
 			// no console, if stdout and stderr both are redirected to file
 			if( !(stdoutRedirectedtoFile && stderrRedirectedtoFile)) {
-				AllocConsole();
-				AttachConsole( GetCurrentProcessId() ) ;
-				// Don't allow CTRL-C in console to terminate RT
-				SetConsoleCtrlHandler( NULL, true );
-				// Set title of console
-				char consoletitle[128];
-				sprintf(consoletitle, "RawTherapee %s Console",VERSION);
-				SetConsoleTitle(consoletitle);
-				// increase size of screen buffer
-				COORD c;
-				c.X = 200;
-				c.Y = 1000;
-				SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), c );
-				// Disable console-Cursor
-				CONSOLE_CURSOR_INFO cursorInfo;
-				cursorInfo.dwSize = 100;
-				cursorInfo.bVisible = false;
-				SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursorInfo );
-				if(!stdoutRedirectedtoFile)
-					freopen( "CON", "w", stdout ) ;
-				if(!stderrRedirectedtoFile)
-					freopen( "CON", "w", stderr ) ;
-				freopen( "CON", "r", stdin ) ;
+				// check if parameter -w was passed.
+				// We have to do that in this step, because it controls whether to open a console to show the output of following steps
+				bool Console = true;
+				for(int i=1;i<argc;i++)
+					if(!strcmp(argv[i],"-w")) {
+						Console = false;
+						break;
+					}
+				if(Console) {
+					AllocConsole();
+					AttachConsole( GetCurrentProcessId() ) ;
+					// Don't allow CTRL-C in console to terminate RT
+					SetConsoleCtrlHandler( NULL, true );
+					// Set title of console
+					char consoletitle[128];
+					sprintf(consoletitle, "RawTherapee %s Console",VERSION);
+					SetConsoleTitle(consoletitle);
+					// increase size of screen buffer
+					COORD c;
+					c.X = 200;
+					c.Y = 1000;
+					SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), c );
+					// Disable console-Cursor
+					CONSOLE_CURSOR_INFO cursorInfo;
+					cursorInfo.dwSize = 100;
+					cursorInfo.bVisible = false;
+					SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursorInfo );
+					if(!stdoutRedirectedtoFile)
+						freopen( "CON", "w", stdout ) ;
+					if(!stderrRedirectedtoFile)
+						freopen( "CON", "w", stderr ) ;
+					freopen( "CON", "r", stdin ) ;
 
-				consoleOpened = true;
+					consoleOpened = true;
 
-				// printing RT's version in all case, particularly useful for the 'verbose' mode, but also for the batch processing
-				std::cout << "RawTherapee, version " << VERSION << std::endl;
-				std::cout << "WARNING: closing this window will close RawTherapee!" << std::endl << std::endl;
+					// printing RT's version in every case, particularly useful for the 'verbose' mode, but also for the batch processing
+					std::cout << "RawTherapee, version " << VERSION << std::endl;
+					std::cout << "WARNING: closing this window will close RawTherapee!" << std::endl << std::endl;
+				}
 			}
 		}
 
@@ -424,6 +434,10 @@ int processLineParams( int argc, char **argv )
 					}
 				}
 				break;
+#ifdef WIN32
+			case 'w': // This case is handled outside this function
+				break;
+#endif
 			case 'h':
 			case '?':
 			default:
@@ -433,6 +447,9 @@ int processLineParams( int argc, char **argv )
         std::cout << "  " << Glib::path_get_basename(argv[0]) << " [<selected dir>]   Start File Browser inside directory." << std::endl;
         std::cout << "  " << Glib::path_get_basename(argv[0]) << " <file>             Start Image Editor with file." << std::endl;
         std::cout << "  " << Glib::path_get_basename(argv[0]) << " -c <dir>|<files>   Convert files in batch with default parameters." << std::endl << std::endl;
+#ifdef WIN32
+        std::cout << "  -w Do not open the Windows console" << std::endl;
+#endif
         std::cout << "Other options used with -c (-c must be the last option):" << std::endl;
         std::cout << Glib::path_get_basename(argv[0]) << " [-o <output>|-O <output>] [-s|-S] [-p <files>] [-d] [-j[1-100]|-t|-t1|-n] -Y -c <input>" << std::endl;
         std::cout << "  -o <file>|<dir>  Select output file or directory." << std::endl;
