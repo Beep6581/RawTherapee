@@ -324,15 +324,21 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name) {
                     dcpIlluminant = 0;
                 }
                 if (dcpIll->get_active_row_number() == -1 && dcpIlluminant == -1) {
+					ignoreDcpSignal = true;
                     dcpIll->set_active(0);
+					ignoreDcpSignal = false;
                 } else if (dcpIlluminant >= 0 && dcpIlluminant != dcpIll->get_active_row_number()) {
+                	ignoreDcpSignal = true;
                     dcpIll->set_active(dcpIlluminant);
+                    ignoreDcpSignal = false;
                 }
                 dcpIll->set_sensitive (true);
                 dcpIllLabel->set_sensitive (true);
             } else {
                 if (dcpIll->get_active_row_number() != -1) {
+                	ignoreDcpSignal = true;
                     dcpIll->set_active(-1);
+                	ignoreDcpSignal = false;
                 }
             }
         }
