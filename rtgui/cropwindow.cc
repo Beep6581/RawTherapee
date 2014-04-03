@@ -459,8 +459,12 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y) {
 
     if (decorated)
         buttonSet.releaseNotify (x, y);
-    if (deleted)
+
+    if (deleted) {
+        iarea->flawnOverWindow = NULL;
+        delete this;
         return;
+    }
 
     state = SNormal;
     iarea->grabFocus (NULL);
