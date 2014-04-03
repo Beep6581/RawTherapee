@@ -47,11 +47,12 @@ Crop::Crop (ImProcCoordinator* parent, EditDataProvider *editDataProvider)
 Crop::~Crop () {
 
     MyMutex::MyLock cropLock(cropMutex);
-    MyMutex::MyLock processingLock(parent->mProcessing);
 
     std::vector<Crop*>::iterator i = std::find (parent->crops.begin(), parent->crops.end(), this);
     if (i!=parent->crops.end ())
         parent->crops.erase (i);
+
+    MyMutex::MyLock processingLock(parent->mProcessing);
     freeAll ();
 }
 

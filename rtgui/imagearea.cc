@@ -382,8 +382,9 @@ void ImageArea::addCropWindow () {
         cw->setPosition (col*get_width()/K + hBorder/2 + layer*30, row*get_height()/K + vBorder/2 + layer*30);
     }
     else {
-        cw->setPosition (lastClosedX, lastClosedY);
         cw->setSize(lastClosedW, lastClosedH);
+        cw->setPosition (lastClosedX, lastClosedY);
+        lastClosedX = -1;
     }
     int x0,y0,w,h,wc,hc;
     mainCropWindow->getCropRectangle(x0,y0,w,h );
@@ -414,7 +415,6 @@ void ImageArea::cropWindowClosed (CropWindow* cw) {
     std::list<CropWindow*>::iterator i = std::find (cropWins.begin(), cropWins.end(), cw);
     if (i!=cropWins.end())
         cropWins.erase (i);
-    delete cw;
     if (!cropWins.empty())
         mainCropWindow->setObservedCropWin (cropWins.front());
     else

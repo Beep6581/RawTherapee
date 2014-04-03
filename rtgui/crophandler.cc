@@ -45,7 +45,8 @@ CropHandler::~CropHandler () {
 
     setEnabled (false);
     if (crop) {
-        crop->destroy ();
+        //crop->destroy ();
+        delete crop; // will do the same than destroy, plus delete the object
         crop = NULL;
     }
     cimg.lock ();
