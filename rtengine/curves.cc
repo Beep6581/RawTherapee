@@ -874,6 +874,8 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 		if (contr>0.00001 || contr<-0.00001) {
 			utili=true;
 
+			DiagonalCurve* contrastcurve = NULL;
+
 			// compute mean luminance of the image with the curve applied
 			int sum = 0;
 			float avg = 0; 
@@ -883,31 +885,47 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 				//sqavg += dcurve[i]*dcurve[i] * histogram[i];
 				sum += histogram[i];
 			}
-			avg /= sum;
-			//sqavg /= sum;
-			//float stddev = sqrt(sqavg-avg*avg);
-			//		printf("avg=%f\n",avg);
+			if(sum) {
+				avg /= sum;
+				//sqavg /= sum;
+				//float stddev = sqrt(sqavg-avg*avg);
+				//		printf("avg=%f\n",avg);
 
-			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			std::vector<double> contrastcurvePoints;
-			contrastcurvePoints.resize(9);
-			contrastcurvePoints.at(0) = double(DCT_NURBS);
-			
-			contrastcurvePoints.at(1) = 0.; // black point.  Value in [0 ; 1] range
-			contrastcurvePoints.at(2) = 0.; // black point.  Value in [0 ; 1] range
-			
-			contrastcurvePoints.at(3) = avg-avg*(0.6-contr/250.0); // toe point
-			contrastcurvePoints.at(4) = avg-avg*(0.6+contr/250.0); // value at toe point
-			
-			contrastcurvePoints.at(5) = avg+(1-avg)*(0.6-contr/250.0); // shoulder point
-			contrastcurvePoints.at(6) = avg+(1-avg)*(0.6+contr/250.0); // value at shoulder point
-			
-			contrastcurvePoints.at(7) = 1.; // white point
-			contrastcurvePoints.at(8) = 1.; // value at white point
-			
-			DiagonalCurve* contrastcurve = new DiagonalCurve (contrastcurvePoints, CURVES_MIN_POLY_POINTS/skip);
-			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			
+				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+				std::vector<double> contrastcurvePoints;
+				contrastcurvePoints.resize(9);
+				contrastcurvePoints.at(0) = double(DCT_NURBS);
+				
+				contrastcurvePoints.at(1) = 0.; // black point.  Value in [0 ; 1] range
+				contrastcurvePoints.at(2) = 0.; // black point.  Value in [0 ; 1] range
+				
+				contrastcurvePoints.at(3) = avg-avg*(0.6-contr/250.0); // toe point
+				contrastcurvePoints.at(4) = avg-avg*(0.6+contr/250.0); // value at toe point
+				
+				contrastcurvePoints.at(5) = avg+(1-avg)*(0.6-contr/250.0); // shoulder point
+				contrastcurvePoints.at(6) = avg+(1-avg)*(0.6+contr/250.0); // value at shoulder point
+				
+				contrastcurvePoints.at(7) = 1.; // white point
+				contrastcurvePoints.at(8) = 1.; // value at white point
+				
+				contrastcurve = new DiagonalCurve (contrastcurvePoints, CURVES_MIN_POLY_POINTS/skip);
+				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			} else {
+				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+				// sum has an invalid value (next to 0, producing a division by zero, so we create a fake contrast curve, producing a white image
+				std::vector<double> contrastcurvePoints;
+				contrastcurvePoints.resize(5);
+				contrastcurvePoints.at(0) = double(DCT_NURBS);
+
+				contrastcurvePoints.at(1) = 0.; // black point.  Value in [0 ; 1] range
+				contrastcurvePoints.at(2) = 1.; // black point.  Value in [0 ; 1] range
+
+				contrastcurvePoints.at(3) = 1.; // white point
+				contrastcurvePoints.at(4) = 1.; // value at white point
+
+				contrastcurve = new DiagonalCurve (contrastcurvePoints, CURVES_MIN_POLY_POINTS/skip);
+				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			}
 			// apply contrast enhancement
 			for (int i=0; i<32768; i++) {
 				dcurve[i]  = contrastcurve->getVal (dcurve[i]);
