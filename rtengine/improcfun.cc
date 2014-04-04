@@ -4290,6 +4290,7 @@ fclose(f);*/
 		 if (expcomp<0.0)	expcomp = 0.0;*/
 		if (expcomp<-5.0)	expcomp = -5.0;
 		if (expcomp>12.0)	expcomp = 12.0;
+		bright = max(-100,min(bright,100));
 	}
 
 
