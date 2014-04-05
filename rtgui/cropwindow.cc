@@ -1751,17 +1751,17 @@ void CropWindow::drawStraightenGuide (Cairo::RefPtr<Cairo::Context> cr) {
     if (y1>=image->getHeight()) y1 = image->getHeight()-1;
 */
 
-    cr->set_line_width (1.5);
-    cr->set_source_rgb (1.0, 1.0, 1.0);
-    cr->move_to (x1, y1);
-    cr->line_to (x2, y2);
+    cr->set_line_width (1);
+    cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
+    cr->move_to (x1+0.5, y1+0.5);
+    cr->line_to (x2+0.5, y2+0.5);
     cr->stroke ();
-    cr->set_source_rgb (0.0, 0.0, 0.0);
+    cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
     std::valarray<double> ds (1);
     ds[0] = 4;
     cr->set_dash (ds, 0);
-    cr->move_to (x1, y1);
-    cr->line_to (x2, y2);
+    cr->move_to (x1+0.5, y1+0.5);
+    cr->line_to (x2+0.5, y2+0.5);
     cr->stroke ();
 
     if (press_x!=action_x && press_y!=action_y) {
