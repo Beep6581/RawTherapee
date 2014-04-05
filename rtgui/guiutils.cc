@@ -146,27 +146,27 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
         cr->set_source_rgb (1,1,1);
     
 
-    cr->rectangle (imx, imy, imw, c1y);
-    cr->rectangle (imx, imy+c2y, imw, imh-c2y);
-    cr->rectangle (imx, imy+c1y, c1x, c2y-c1y+1);
-    cr->rectangle (imx+c2x, imy+c1y, imw-c2x, c2y-c1y+1);
+    cr->rectangle (imx, imy, imw+0.5, round(c1y)+0.5);
+    cr->rectangle (imx, round(imy+c2y)+0.5, imw+0.5, round(imh-c2y)+0.5);
+    cr->rectangle (imx, round(imy+c1y)+0.5, round(c1x)+0.5, round(c2y-c1y+1)+0.5);
+    cr->rectangle (round(imx+c2x)+0.5, round(imy+c1y)+0.5, round(imw-c2x)+0.5, round(c2y-c1y+1)+0.5);
     cr->fill ();
 
     // rectangle around the cropped area and guides
     if (cparams.guide!="None") {
-        double rectx1 = c1x + imx + 0.5;
-        double recty1 = c1y + imy + 0.5;
-        double rectx2 = c2x + imx + 0.5;
-        double recty2 = c2y + imy + 0.5;
+        double rectx1 = round(c1x) + imx + 0.5;
+        double recty1 = round(c1y) + imy + 0.5;
+        double rectx2 = min(round(c2x) + imx + 0.5, imx+imw-0.5);
+        double recty2 = min(round(c2y) + imy + 0.5, imy+imh-0.5);
         cr->set_line_width (1.0);
-        cr->set_source_rgb (1.0, 1.0, 1.0);
+        cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
         cr->move_to (rectx1, recty1);
         cr->line_to (rectx2, recty1);
         cr->line_to (rectx2, recty2);
         cr->line_to (rectx1, recty2);
         cr->line_to (rectx1, recty1);
         cr->stroke ();
-        cr->set_source_rgb (0.0, 0.0, 0.0);
+        cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
         std::valarray<double> ds (1);
         ds[0] = 4;
         cr->set_dash (ds, 0);
@@ -239,41 +239,41 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
 
             // Horizontals
             for (size_t i=0; i<horiz_ratios.size(); i++) {
-                cr->set_source_rgb (1.0, 1.0, 1.0);
-                cr->move_to (rectx1, recty1 + (recty2-recty1) * horiz_ratios[i]);
-                cr->line_to (rectx2, recty1 + (recty2-recty1) * horiz_ratios[i]);
+                cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
+                cr->move_to (rectx1, recty1 + round((recty2-recty1) * horiz_ratios[i]));
+                cr->line_to (rectx2, recty1 + round((recty2-recty1) * horiz_ratios[i]));
                 cr->stroke ();
-                cr->set_source_rgb (0.0, 0.0, 0.0);
+                cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
                 std::valarray<double> ds (1);
                 ds[0] = 4;
                 cr->set_dash (ds, 0);
-                cr->move_to (rectx1, recty1 + (recty2-recty1) * horiz_ratios[i]);
-                cr->line_to (rectx2, recty1 + (recty2-recty1) * horiz_ratios[i]);
+                cr->move_to (rectx1, recty1 + round((recty2-recty1) * horiz_ratios[i]));
+                cr->line_to (rectx2, recty1 + round((recty2-recty1) * horiz_ratios[i]));
                 cr->stroke ();
                 ds.resize (0);
                 cr->set_dash (ds, 0);
             }
             // Verticals
             for (size_t i=0; i<vert_ratios.size(); i++) {
-                cr->set_source_rgb (1.0, 1.0, 1.0);
-                cr->move_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty1);
-                cr->line_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty2);
+                cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
+                cr->move_to (rectx1 + round((rectx2-rectx1) * vert_ratios[i]), recty1);
+                cr->line_to (rectx1 + round((rectx2-rectx1) * vert_ratios[i]), recty2);
                 cr->stroke ();
-                cr->set_source_rgb (0.0, 0.0, 0.0);
+                cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
                 std::valarray<double> ds (1);
                 ds[0] = 4;
                 cr->set_dash (ds, 0);
-                cr->move_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty1);
-                cr->line_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty2);
+                cr->move_to (rectx1 + round((rectx2-rectx1) * vert_ratios[i]), recty1);
+                cr->line_to (rectx1 + round((rectx2-rectx1) * vert_ratios[i]), recty2);
                 cr->stroke ();
                 ds.resize (0);
                 cr->set_dash (ds, 0);
             }           
         }
         else {
-            int corners_from[4][2];
-            int corners_to[4][2];
-            int mindim = min(rectx2-rectx1+1, recty2-recty1+1);
+            double corners_from[4][2];
+            double corners_to[4][2];
+            int mindim = min(rectx2-rectx1, recty2-recty1);
             corners_from[0][0] = rectx1;
             corners_from[0][1] = recty1;
             corners_to[0][0]   = rectx1 + mindim;
@@ -291,11 +291,11 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
             corners_to[3][0]   = rectx2 - mindim;
             corners_to[3][1]   = recty2 - mindim;
             for (int i=0; i<4; i++) {
-                cr->set_source_rgb (1.0, 1.0, 1.0);
+                cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
                 cr->move_to (corners_from[i][0], corners_from[i][1]);
                 cr->line_to (corners_to[i][0], corners_to[i][1]);
                 cr->stroke ();
-                cr->set_source_rgb (0.0, 0.0, 0.0);
+                cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
                 std::valarray<double> ds (1);
                 ds[0] = 4;
                 cr->set_dash (ds, 0);
