@@ -295,7 +295,6 @@ PREFERENCES_FILEFORMAT;Είδος αρχείου
 PREFERENCES_FORIMAGE;Για αρχεία εικόνων
 PREFERENCES_FORRAW;Για αρχεία RAW
 PREFERENCES_GIMPPATH;GIMP installation directory
-PREFERENCES_GTKTHEME;Προεπιλεγμένη GTK
 PREFERENCES_HLTHRESHOLD;Κατώφλι ψαλιδίσματος φωτεινών σημείων
 PREFERENCES_ICCDIR;Τοποθεσία των προφίλ ICC
 PREFERENCES_IMPROCPARAMS;Προεπιλεγμένες παραμέτροι επεξεργασίας εικόνας

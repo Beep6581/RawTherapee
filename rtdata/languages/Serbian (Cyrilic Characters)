@@ -533,7 +533,6 @@ PREFERENCES_FLATFIELD;Равно поље
 PREFERENCES_FORIMAGE;За датотеке са сликама
 PREFERENCES_FORRAW;За RAW датотеке
 PREFERENCES_GIMPPATH;Директоријум са инсталираним Гимпом
-PREFERENCES_GTKTHEME;ГТК тема
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Хистограм у левој површи
 PREFERENCES_HLTHRESHOLD;Праг за одсечене светле делове
 PREFERENCES_ICCDIR;ИЦЦ директоријум

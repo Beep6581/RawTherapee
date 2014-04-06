@@ -741,7 +741,6 @@ PREFERENCES_GREY23;Yb=23 CIE L#55
 PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_GREY;Luminance Yb du périphérique de sortie (%)
-PREFERENCES_GTKTHEME;GTK par défaut
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogramme dans le panneau de gauche
 PREFERENCES_HLTHRESHOLD;Seuil pour le dépassement de domaine supérieur
 PREFERENCES_ICCDIR;Dossier des profils ICC

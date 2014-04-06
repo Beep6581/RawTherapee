@@ -295,7 +295,6 @@ PREFERENCES_FILEFORMAT;Formato de arquivo
 PREFERENCES_FORIMAGE;Para arquivos de imagem
 PREFERENCES_FORRAW;Para arquivos RAW 
 PREFERENCES_GIMPPATH;Diretório de Instalação do GIMP
-PREFERENCES_GTKTHEME;Padrão do GTK 
 PREFERENCES_HLTHRESHOLD;ponto inicial para luzes recortadas
 PREFERENCES_ICCDIR;Diretório de perfis ICC
 PREFERENCES_IMPROCPARAMS;Parâmetros padrões de processamento de imagem

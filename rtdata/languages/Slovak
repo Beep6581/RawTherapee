@@ -353,7 +353,6 @@ PREFERENCES_FILEFORMAT;Formát súborov
 PREFERENCES_FORIMAGE;Pre obrazové súbory
 PREFERENCES_FORRAW;Pre RAW súbory
 PREFERENCES_GIMPPATH;Inštalačný adresár GIMPu
-PREFERENCES_GTKTHEME;GTK predvolený
 PREFERENCES_HLTHRESHOLD;Prah pre orezanie najvyšších svetiel
 PREFERENCES_ICCDIR;Adresár s ICC profilmy
 PREFERENCES_IMPROCPARAMS;Predvolené parametre spracovania obrazu
