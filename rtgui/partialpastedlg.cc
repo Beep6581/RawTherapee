@@ -624,8 +624,8 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!vibrance->get_active ())    filterPE.vibrance     = falsePE.vibrance;
     if (!chmixer->get_active ())     filterPE.chmixer      = falsePE.chmixer;
-    if (!blackwhite->get_active ())   filterPE.blackwhite    = falsePE.blackwhite;
-	if (!hsveq->get_active ())       filterPE.hsvequalizer = falsePE.hsvequalizer;
+    if (!blackwhite->get_active ())  filterPE.blackwhite   = falsePE.blackwhite;
+    if (!hsveq->get_active ())       filterPE.hsvequalizer = falsePE.hsvequalizer;
     if (!rgbcurves->get_active ())   filterPE.rgbCurves    = falsePE.rgbCurves;
     if (!icm->get_active ())         filterPE.icm          = falsePE.icm;
 
@@ -649,8 +649,8 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     if (!raw_ccSteps->get_active ())           filterPE.raw.ccSteps            = falsePE.raw.ccSteps;
     if (!raw_dcb_iterations->get_active ())    filterPE.raw.dcbIterations      = falsePE.raw.dcbIterations;
     if (!raw_dcb_enhance->get_active ())       filterPE.raw.dcbEnhance         = falsePE.raw.dcbEnhance;
-    //if (!raw_all_enhance->get_active ())       filterPE.raw.allEnhance         = falsePE.raw.allEnhance;
-    if (!raw_lmmse_iterations->get_active ())    filterPE.raw.lmmseIterations      = falsePE.raw.lmmseIterations;
+    //if (!raw_all_enhance->get_active ())     filterPE.raw.allEnhance         = falsePE.raw.allEnhance;
+    if (!raw_lmmse_iterations->get_active ())  filterPE.raw.lmmseIterations    = falsePE.raw.lmmseIterations;
 
     if (!raw_expos->get_active ())             filterPE.raw.exPos              = falsePE.raw.exPos;
     if (!raw_preser->get_active ())            filterPE.raw.exPreser           = falsePE.raw.exPreser;
