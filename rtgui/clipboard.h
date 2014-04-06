@@ -46,6 +46,7 @@ class Clipboard {
         const rtengine::procparams::PartialProfile&        getPartialProfile   () { return partProfile; };
         void                                               setProcParams       (const rtengine::procparams::ProcParams& pparams);
         const rtengine::procparams::ProcParams&            getProcParams       () { return *partProfile.pparams; }
+        const ParamsEdited&                                getParamsEdited     () { return *partProfile.pedited; }
         bool                                               hasProcParams       () { return partProfile.pparams; }
         bool                                               hasPEdited          () { return partProfile.pedited; }
 

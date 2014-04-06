@@ -425,32 +425,35 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
         bool customCreated = false;
         if (!custom) {
             custom = new PartialProfile (true);
-            custom->set(true);
             customCreated = true;
         }
-        else if (fillMode->get_active())
-            custom->pparams->setDefaults();
 
-        int err = custom->load (fname);
+        ProcParams pp;
+        ParamsEdited pe;
+        int err = pp.load (fname, &pe);
         if (!err) {
+            if (!customCreated && fillMode->get_active())
+                custom->pparams->setDefaults();
+            custom->set(true);
+
             bool prevState = changeconn.block(true);
             Gtk::TreeIter newEntry = addCustomRow();
             profiles->set_active (newEntry);
             currRow = profiles->get_active();
             changeconn.block(prevState);
 
-            if (event->state & Gdk::CONTROL_MASK) {
-                // applying partial profile
-                PartialProfile ppTemp(true);
-                // the 2 next line modify custom->pedited without modifying custom->pparams
-                partialProfileDlg->applyPaste (ppTemp.pparams, ppTemp.pedited, custom->pparams, custom->pedited);
-                if (fillMode->get_active())
-                    *custom->pparams = *ppTemp.pparams;
-                *custom->pedited = *ppTemp.pedited;
-                ppTemp.deleteInstance();
+            // Now we have procparams initialized to default if fillMode is on
+            // and paramsedited initialized to default in all cases
+
+            if (event->state & Gdk::CONTROL_MASK)
+                // custom.pparams = loadedFile.pparams filtered by ( loadedFile.pedited & partialPaste.pedited )
+                partialProfileDlg->applyPaste (custom->pparams, !fillMode->get_active()?custom->pedited:NULL, &pp, &pe);
+            else {
+                // custom.pparams = loadedFile.pparams filtered by ( loadedFile.pedited )
+                pe.combine(*custom->pparams, pp, true);
+                if (!fillMode->get_active())
+                    *custom->pedited = pe;
             }
-            if (fillMode->get_active())
-                custom->pedited->set(true);
 
             changeTo (custom, M("PROFILEPANEL_PFILE"));
         }
@@ -485,27 +488,43 @@ void ProfilePanel::paste_clicked (GdkEventButton* event) {
 
     if (!custom) {
         custom = new PartialProfile (true);
-        custom->pedited->set(true);
         profiles->set_active (addCustomRow());
         currRow = profiles->get_active();
     }
     else {
+        if (fillMode->get_active())
+            custom->pparams->setDefaults();
         profiles->set_active(getCustomRow());
         currRow = profiles->get_active();
     }
-
-    ProcParams pp = clipboard.getProcParams ();
-    *custom->pparams = pp;
+    custom->pedited->set(true);
 
     changeconn.block(prevState);
 
-    if (event->state & Gdk::CONTROL_MASK) {
-        // applying partial profile
-        PartialProfile ppTemp(true);
-        // the 2 next line modify custom->pedited without modifying custom->pparams
-        partialProfileDlg->applyPaste (ppTemp.pparams, ppTemp.pedited, custom->pparams, custom->pedited);
-        *custom->pedited = *ppTemp.pedited;
-        ppTemp.deleteInstance();
+    // Now we have procparams initialized to default if fillMode is on
+    // and paramsedited initialized to default in all cases
+
+    ProcParams pp = clipboard.getProcParams ();
+    if (clipboard.hasPEdited()) {
+        ParamsEdited pe = clipboard.getParamsEdited();
+        if (event->state & Gdk::CONTROL_MASK)
+            // custom.pparams = clipboard.pparams filtered by ( clipboard.pedited & partialPaste.pedited )
+            partialProfileDlg->applyPaste (custom->pparams, !fillMode->get_active()?custom->pedited:NULL, &pp, &pe);
+        else {
+            // custom.pparams = clipboard.pparams filtered by ( clipboard.pedited )
+            pe.combine(*custom->pparams, pp, true);
+            if (!fillMode->get_active())
+                *custom->pedited = pe;
+        }
+    }
+    else {
+        if (event->state & Gdk::CONTROL_MASK)
+            // custom.pparams = clipboard.pparams filtered by ( partialPaste.pedited )
+            partialProfileDlg->applyPaste (custom->pparams, NULL, &pp, NULL);
+        else {
+            // custom.pparams = clipboard.pparams non filtered
+            *custom->pparams = pp;
+        }
     }
 
     changeTo (custom, M("HISTORY_FROMCLIPBOARD"));
