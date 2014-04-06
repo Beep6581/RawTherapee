@@ -346,7 +346,7 @@ void Options::setDefaults () {
 
     rgbDenoiseThreadLimit = 0;
 
-    filledProfile = true;
+    filledProfile = false;
 
     showProfileSelector = true;
     FileBrowserToolbarSingleRow = false;
