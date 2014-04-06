@@ -295,7 +295,6 @@ PREFERENCES_FILEFORMAT;Tallennuksen asetukset
 PREFERENCES_FORIMAGE;Kuvatiedostoille
 PREFERENCES_FORRAW;RAW-tiedostoille
 PREFERENCES_GIMPPATH;GIMP:n asennushakemisto
-PREFERENCES_GTKTHEME;GTK oletus
 PREFERENCES_HLTHRESHOLD;Kynnysarvo vaaleille alueille
 PREFERENCES_ICCDIR;ICC-profiilien hakemisto
 PREFERENCES_IMPROCPARAMS;Oletuskäsittelyprofiilit

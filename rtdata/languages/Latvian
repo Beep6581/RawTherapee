@@ -295,7 +295,6 @@ PREFERENCES_FILEFORMAT;Faila formāts
 PREFERENCES_FORIMAGE;Attēlu failiem
 PREFERENCES_FORRAW;RAW failiem
 PREFERENCES_GIMPPATH;GIMP instalācijas direktorijs
-PREFERENCES_GTKTHEME;GTK noklusētā
 PREFERENCES_HLTHRESHOLD;Cirpto izgaismojumu slieksnis
 PREFERENCES_ICCDIR;ICC profilu mape
 PREFERENCES_IMPROCPARAMS;Noklusētie attēla apstrādes parametri

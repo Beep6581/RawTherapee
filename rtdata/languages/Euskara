@@ -295,7 +295,6 @@ PREFERENCES_FILEFORMAT;Artxiboen formatua
 PREFERENCES_FORIMAGE;Irudi artxiboetarako
 PREFERENCES_FORRAW;RAW artxiboetarako
 PREFERENCES_GIMPPATH;GIMP installation directory
-PREFERENCES_GTKTHEME;GTK default
 PREFERENCES_HLTHRESHOLD;Moztutako argien muga
 PREFERENCES_ICCDIR;ICC profilen karpeta
 PREFERENCES_IMPROCPARAMS;Irudi prozesurako aukera lehenetsiak

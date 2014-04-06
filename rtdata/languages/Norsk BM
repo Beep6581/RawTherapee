@@ -295,7 +295,6 @@ PREFERENCES_FILEFORMAT;Filformat
 PREFERENCES_FORIMAGE;For bildefiler
 PREFERENCES_FORRAW;For RAW-filer
 PREFERENCES_GIMPPATH;GIMP installasjonsmappe
-PREFERENCES_GTKTHEME;GTK standard
 PREFERENCES_HLTHRESHOLD;Terskelverdi for markerte høylys
 PREFERENCES_ICCDIR;Mappe til ICC-profiler
 PREFERENCES_IMPROCPARAMS;Standard-bildebehandlingsparametre

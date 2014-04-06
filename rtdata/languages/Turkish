@@ -295,7 +295,6 @@ PREFERENCES_FILEFORMAT;Dosya biçimi
 PREFERENCES_FORIMAGE;Gürüntü dosyaları için
 PREFERENCES_FORRAW;RAW dosyaları için
 PREFERENCES_GIMPPATH;GIMP installation directory
-PREFERENCES_GTKTHEME;GTK default
 PREFERENCES_HLTHRESHOLD;Kırpılmış parıltılar için eşik
 PREFERENCES_ICCDIR;ICC profilleri dizini
 PREFERENCES_IMPROCPARAMS;Varsayılan görüntü işleme değişkenleri

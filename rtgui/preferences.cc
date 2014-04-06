@@ -679,7 +679,6 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     Gtk::Label* themelab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTTHEME")+":") );
     theme = Gtk::manage( new Gtk::ComboBoxText () );
 
-    theme->append_text (Glib::ustring("(")+M("PREFERENCES_GTKTHEME")+")");
     theme->set_active (0);
     std::vector<Glib::ustring> themes;
     parseDir (argv0 + "/themes", themes, ".gtkrc");

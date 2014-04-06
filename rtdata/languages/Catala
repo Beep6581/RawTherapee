@@ -603,7 +603,6 @@ PREFERENCES_FLATFIELD;Camp pla
 PREFERENCES_FORIMAGE;Per a imatge no raw
 PREFERENCES_FORRAW;Per fitxers RAW
 PREFERENCES_GIMPPATH;Directori d'instal. del GIMP
-PREFERENCES_GTKTHEME;GTK per omissió
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histograma al panell esquerre
 PREFERENCES_HLTHRESHOLD;Llindar pèrdues en clars
 PREFERENCES_ICCDIR;Directori dels perfils de color
