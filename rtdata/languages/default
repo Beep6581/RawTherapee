@@ -8,7 +8,7 @@ ABOUT_TAB_LICENSE;License
 ABOUT_TAB_RELEASENOTES;Release Notes
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Reset to default
-BATCHQUEUE_AUTOSTART;Auto start
+BATCHQUEUE_AUTOSTART;Auto-start
 BATCHQUEUE_DESTFILENAME;Path and file name
 BATCH_PROCESSING;Batch Processing
 CURVEEDITOR_CURVES;Curves
@@ -69,8 +69,8 @@ EXPORT_BYPASS_RAW_CA;Bypass [raw] Chromatic Aberration Correction
 EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False Color Suppression
 EXPORT_BYPASS_RAW_DCB_ENHANCE;Bypass [raw] DCB Enhancement Steps
 EXPORT_BYPASS_RAW_DCB_ITERATIONS;Bypass [raw] DCB Iterations
-EXPORT_BYPASS_RAW_DF;Bypass [raw] Dark Frame
-EXPORT_BYPASS_RAW_FF;Bypass [raw] Flat Field
+EXPORT_BYPASS_RAW_DF;Bypass [raw] Dark-Frame
+EXPORT_BYPASS_RAW_FF;Bypass [raw] Flat-Field
 EXPORT_BYPASS_RAW_GREENTHRESH;Bypass [raw] Green Equilibration
 EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line Noise Filter
 EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
@@ -90,8 +90,8 @@ EXTPROGTARGET_2;queue-processed
 FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
 FILEBROWSER_APPLYPROFILE;Apply
 FILEBROWSER_APPLYPROFILE_PARTIAL;Apply - partial
-FILEBROWSER_AUTODARKFRAME;Auto Dark Frame
-FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
+FILEBROWSER_AUTODARKFRAME;Auto Dark-Frame
+FILEBROWSER_AUTOFLATFIELD;Auto Flat-Field
 FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path.
 FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n\nKeyboard shortcuts:\n<b>Ctrl-o</b> to focus to the path text box.\n<b>Enter</b> / <b>Ctrl-Enter</b> to browse there;\n<b>Esc</b> to clear changes.\n<b>Shift-Esc</b> to remove focus.\n\nPath shortcuts:\n<b>~</b>	- user's home directory.\n<b>!</b>	- user's pictures directory
 FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
@@ -101,7 +101,7 @@ FILEBROWSER_CLEARPROFILE;Clear
 FILEBROWSER_COLORLABEL_TOOLTIP;Color label.\n\nUse dropdown menu or shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 FILEBROWSER_COPYPROFILE;Copy
 FILEBROWSER_CURRENT_NAME;Current name:
-FILEBROWSER_DARKFRAME;Dark frame
+FILEBROWSER_DARKFRAME;Dark-frame
 FILEBROWSER_DELETEDLGLABEL;File delete confirmation
 FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
 FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected <b>%1</b> files?
@@ -109,9 +109,9 @@ FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files from trash.
 FILEBROWSER_EMPTYTRASH;Empty Trash
 FILEBROWSER_EXEC_CPB;Custom Profile Builder
 FILEBROWSER_EXTPROGMENU;Open with
-FILEBROWSER_FLATFIELD;Flat Field
-FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
-FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
+FILEBROWSER_FLATFIELD;Flat-Field
+FILEBROWSER_MOVETODARKFDIR;Move to dark-frames directory
+FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat-fields directory
 FILEBROWSER_NEW_NAME;New name:
 FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
 FILEBROWSER_PARTIALPASTEPROFILE;Paste - partial
@@ -133,8 +133,8 @@ FILEBROWSER_POPUPOPEN;Open
 FILEBROWSER_POPUPPROCESSFAST;Put to Queue (Fast export)
 FILEBROWSER_POPUPPROCESS;Put to Queue
 FILEBROWSER_POPUPPROFILEOPERATIONS;Processing Profile Operations
-FILEBROWSER_POPUPRANK0;Unkank
-FILEBROWSER_POPUPRANK1;Rank 1 * 
+FILEBROWSER_POPUPRANK0;Unrank
+FILEBROWSER_POPUPRANK1;Rank 1 *
 FILEBROWSER_POPUPRANK2;Rank 2 **
 FILEBROWSER_POPUPRANK3;Rank 3 ***
 FILEBROWSER_POPUPRANK4;Rank 4 ****
@@ -157,8 +157,8 @@ FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>Shift-4</b>
 FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>Shift-5</b>
 FILEBROWSER_RENAMEDLGLABEL;Rename file
 FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
-FILEBROWSER_SELECTDARKFRAME;Select dark frame...
-FILEBROWSER_SELECTFLATFIELD;Select flat field...
+FILEBROWSER_SELECTDARKFRAME;Select dark-frame...
+FILEBROWSER_SELECTFLATFIELD;Select flat-field...
 FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red.\nShortcut: <b>Alt-1</b>
 FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yellow.\nShortcut: <b>Alt-2</b>
 FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green.\nShortcut: <b>Alt-3</b>
@@ -281,13 +281,13 @@ HISTORY_MSG_57;Coarse Rotation
 HISTORY_MSG_58;Horizontal Flipping
 HISTORY_MSG_59;Vertical Flipping
 HISTORY_MSG_60;Rotation
-HISTORY_MSG_61;Auto fill
+HISTORY_MSG_61;Auto-fill
 HISTORY_MSG_62;Distortion Correction
 HISTORY_MSG_63;Snapshot Selected
 HISTORY_MSG_64;Crop
 HISTORY_MSG_65;CA correction
 HISTORY_MSG_66;Highlight Reconstruction
-HISTORY_MSG_67;HL Reconstruction Amount
+HISTORY_MSG_67;HR Reconstruction Amount
 HISTORY_MSG_68;HL Reconstruction Method
 HISTORY_MSG_69;Working Color Space
 HISTORY_MSG_70;Output Color Space
@@ -341,16 +341,16 @@ HISTORY_MSG_117;Raw Red CA Correction
 HISTORY_MSG_118;Raw Blue CA Correction
 HISTORY_MSG_119;Line Noise Filter
 HISTORY_MSG_120;Green Equilibration
-HISTORY_MSG_121;Raw Auto CA
-HISTORY_MSG_122;Dark Frame Auto Select
-HISTORY_MSG_123;Dark Frame File
+HISTORY_MSG_121;Raw Auto CA Correction
+HISTORY_MSG_122;Dark-Frame Auto-Select
+HISTORY_MSG_123;Dark-Frame File
 HISTORY_MSG_124;White Point Correction
 HISTORY_MSG_125;Highlight Preservation
-HISTORY_MSG_126;Flat Field File
-HISTORY_MSG_127;Flat Field Auto Select
-HISTORY_MSG_128;Flat Field Blur Radius
-HISTORY_MSG_129;Flat Field Blur Type
-HISTORY_MSG_130;Auto Distorion
+HISTORY_MSG_126;Flat-Field File
+HISTORY_MSG_127;Flat-Field Auto-Select
+HISTORY_MSG_128;Flat-Field Blur Radius
+HISTORY_MSG_129;Flat-Field Blur Type
+HISTORY_MSG_130;Auto Distorion Correction
 HISTORY_MSG_131;Noise Reduction Luma
 HISTORY_MSG_132;Noise Reduction Chroma
 HISTORY_MSG_133;Output Gamma
@@ -579,7 +579,7 @@ MAIN_TOOLTIP_HIDEHP;Show/Hide the left panel (including the history).\nShortcut:
 MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication.\nShortcut: <b>&lt;</b>
 MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication.\nShortcut: <b>&gt;</b>
 MAIN_TOOLTIP_PREVIEWB;Preview the <b>Blue channel</b>.\nShortcut: <b>b</b>
-MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-f</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels.\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom, about 10-30%.\n\nPreview is rendered slower with Focus Mask turned on.
+MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-f</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels.\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom, about 10-30%.
 MAIN_TOOLTIP_PREVIEWG;Preview the <b>Green channel</b>.\nShortcut: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Preview the <b>Luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
@@ -618,11 +618,11 @@ PARTIALPASTE_CHANNELMIXER;Channel mixer
 PARTIALPASTE_COARSETRANS;90° rotation / flipping
 PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
 PARTIALPASTE_COLORGROUP;Color Related Settings
-PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
+PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto-fill
 PARTIALPASTE_COMPOSITIONGROUP;Composition Settings
 PARTIALPASTE_CROP;Crop
-PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark frame auto selection
-PARTIALPASTE_DARKFRAMEFILE;Dark frame file
+PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark-frame auto-selection
+PARTIALPASTE_DARKFRAMEFILE;Dark-frame file
 PARTIALPASTE_DEFRINGE;Defringe
 PARTIALPASTE_DETAILGROUP;Detail Settings
 PARTIALPASTE_DIALOGLABEL;Partial paste processing profile
@@ -633,10 +633,10 @@ PARTIALPASTE_EPD;Tone mapping
 PARTIALPASTE_EVERYTHING;Everything
 PARTIALPASTE_EXIFCHANGES;Changes to Exif data
 PARTIALPASTE_EXPOSURE;Exposure
-PARTIALPASTE_FLATFIELDAUTOSELECT;Flat field auto selection
-PARTIALPASTE_FLATFIELDBLURRADIUS;Flat field blur radius
-PARTIALPASTE_FLATFIELDBLURTYPE;Flat field blur type
-PARTIALPASTE_FLATFIELDFILE;Flat field file
+PARTIALPASTE_FLATFIELDAUTOSELECT;Flat-field auto-selection
+PARTIALPASTE_FLATFIELDBLURRADIUS;Flat-field blur radius
+PARTIALPASTE_FLATFIELDBLURTYPE;Flat-field blur type
+PARTIALPASTE_FLATFIELDFILE;Flat-field file
 PARTIALPASTE_GRADIENT;Graduated filter
 PARTIALPASTE_HSVEQUALIZER;HSV equalizer
 PARTIALPASTE_ICMGAMMA;Output gamma
@@ -652,7 +652,7 @@ PARTIALPASTE_PERSPECTIVE;Perspective
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
-PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
+PARTIALPASTE_RAWCACORR_AUTO;CA auto-correction
 PARTIALPASTE_RAWCACORR_CABLUE;CA blue
 PARTIALPASTE_RAWCACORR_CARED;CA red
 PARTIALPASTE_RAWEXPOS_BLACK;Black levels
@@ -711,13 +711,13 @@ PREFERENCES_D65;6500K
 PREFERENCES_DARKFRAMEFOUND;Found
 PREFERENCES_DARKFRAMESHOTS;shots
 PREFERENCES_DARKFRAMETEMPLATES;templates
-PREFERENCES_DARKFRAME;Dark Frame
+PREFERENCES_DARKFRAME;Dark-Frame
 PREFERENCES_DATEFORMATFRAME;Date Format
 PREFERENCES_DATEFORMATHINT;You can use the following formatting strings:\n<b>%y</b>	- year\n<b>%m</b>	- month\n<b>%d</b>	- day\n\nFor example, the Hungarian date format is:\n<b>%y/%m/%d</b>
 PREFERENCES_DATEFORMAT;Date format
 PREFERENCES_DEFAULTLANG;Default Language
 PREFERENCES_DEFAULTTHEME;Default Theme
-PREFERENCES_DIRDARKFRAMES;Dark frames directory
+PREFERENCES_DIRDARKFRAMES;Dark-frames directory
 PREFERENCES_DIRHOME;Home directory
 PREFERENCES_DIRLAST;Last visited directory
 PREFERENCES_DIROTHER;Other
@@ -730,10 +730,10 @@ PREFERENCES_FBROWSEROPTS;File Browser / Thumbnail Options
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low resolution display)
 PREFERENCES_FILEFORMAT;File format
 PREFERENCES_FLATFIELDFOUND;Found
-PREFERENCES_FLATFIELDSDIR;Flat fields directory
+PREFERENCES_FLATFIELDSDIR;Flat-fields directory
 PREFERENCES_FLATFIELDSHOTS;shots
 PREFERENCES_FLATFIELDTEMPLATES;templates
-PREFERENCES_FLATFIELD;Flat Field
+PREFERENCES_FLATFIELD;Flat-Field
 PREFERENCES_FLUOF2;Fluorescent F2
 PREFERENCES_FLUOF7;Fluorescent F7
 PREFERENCES_FLUOF11;Fluorescent F11
@@ -1064,7 +1064,7 @@ TP_CROP_SELECTCROP;Select Crop
 TP_CROP_W;Width
 TP_CROP_X;X
 TP_CROP_Y;Y
-TP_DARKFRAME_AUTOSELECT;Auto selection
+TP_DARKFRAME_AUTOSELECT;Auto-selection
 TP_DARKFRAME_LABEL;Dark Frame
 TP_DEFRINGE_LABEL;Defringe
 TP_DEFRINGE_RADIUS;Radius
@@ -1118,7 +1118,7 @@ TP_EXPOSURE_AUTOLEVELS_TIP;Toggles execution of Auto Levels to automatically set
 TP_EXPOSURE_BLACKLEVEL;Black
 TP_EXPOSURE_BRIGHTNESS;Lightness
 TP_EXPOSURE_CLIP;Clip %
-TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in Auto Level's operation.
+TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in Auto Levels operation.
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight Compression Threshold
 TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight Compression
 TP_EXPOSURE_COMPRSHADOWS;Shadow Compression
@@ -1135,14 +1135,14 @@ TP_EXPOSURE_TCMODE_LABEL2;Curve mode 2
 TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Saturation and Value Blending
 TP_EXPOSURE_TCMODE_STANDARD;Standard
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
-TP_FLATFIELD_AUTOSELECT;Auto selection
+TP_FLATFIELD_AUTOSELECT;Auto-selection
 TP_FLATFIELD_BLURRADIUS;Blur Radius
 TP_FLATFIELD_BLURTYPE;Blur Type
 TP_FLATFIELD_BT_AREA;Area
 TP_FLATFIELD_BT_HORIZONTAL;Horizontal
 TP_FLATFIELD_BT_VERTHORIZ;Vertical + Horizontal
 TP_FLATFIELD_BT_VERTICAL;Vertical
-TP_FLATFIELD_LABEL;Flat Field
+TP_FLATFIELD_LABEL;Flat-Field
 TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Free gamma
 TP_GAMMA_OUTPUT;Output Gamma
@@ -1173,7 +1173,7 @@ TP_HSVEQUALIZER_LABEL;HSV Equalizer
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;Blend ICC highlights with matrix
-TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover clipped highlights when using LUT based ICC profiles.
+TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover clipped highlights when using LUT-based ICC profiles.
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
@@ -1239,8 +1239,8 @@ TP_LABCURVE_LCREDSK;Restrict LC to red and skin tones
 TP_LABCURVE_LCREDSK_TIP;If enabled, the LC Curve affects only red and skin tones.\nIf disabled, it applies to all tones.
 TP_LABCURVE_RSTPROTECTION;Red and Skin Tones Protection
 TP_LABCURVE_RSTPRO_TOOLTIP;Can be used with the Chromaticity slider and the CC curve.
-TP_LENSGEOM_AUTOCROP;Auto Crop
-TP_LENSGEOM_FILL;Auto fill
+TP_LENSGEOM_AUTOCROP;Auto-Crop
+TP_LENSGEOM_FILL;Auto-fill
 TP_LENSGEOM_LABEL;Lens / Geometry
 TP_LENSPROFILE_FILEDLGFILTERLCP;Lens correction files
 TP_LENSPROFILE_LABEL;Lens Correction Profile
@@ -1267,7 +1267,7 @@ TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Tries to suppress hot and dead pixels.
 TP_PREPROCESS_LABEL;Preprocessing
 TP_PREPROCESS_LINEDENOISE;Line Noise Filter
 TP_PREPROCESS_NO_FOUND;None found
-TP_RAWCACORR_AUTO;Auto correction
+TP_RAWCACORR_AUTO;Auto-correction
 TP_RAWCACORR_CABLUE;Blue
 TP_RAWCACORR_CARED;Red
 TP_RAWEXPOS_BLACKONE;Black Level: Red

@@ -155,7 +155,7 @@ namespace RTProfilerBuilder {
 				#region Parse input parameters
 				int argNo = 0;
 
-				// Name of RAW/JPG to process
+				// Name of raw/JPG to process
 				string sourceFile = args[argNo++];
 
 				// What the user selected as his base profile
