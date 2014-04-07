@@ -837,7 +837,7 @@ PREFERENCES_MULTITABDUALMON;Modo Editor de varias pestañas, si está disponible
 PREFERENCES_MULTITAB;Modo Editor de varias pestañas
 PREFERENCES_OUTDIRFOLDERHINT;Guardar las imágenes creadas en una carpeta elegida
 PREFERENCES_OUTDIRFOLDER;Guardar en carpeta
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Se pueden usar las variables siguientes:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEstas variables son referencias a las carpetas y subrutas de las rutas del lugar donde se encuentra la imagen RAW.\n\nPor ejemplo, si abres </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, los valores de las variables son:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi quieres guardar la imagen de salida en el lugar original, usa:\n</i><b>%p1/%f\n</b><i>\nSi quieres guardar la imagen de salida en una carpeta 'convertida' dentro de la carpeta original, usa:\n</i><b>%p1/convertida/%f\n</b><i>\nSi quieres guardar la imagen de salida en la carpeta '/home/tom/convertida' conservando la misma subcarpeta de fechas, usa:\n</i><b>%p2/convertida/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>Se pueden usar las variables siguientes:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEstas variables son referencias a las carpetas y subrutas de las rutas del lugar donde se encuentra la imagen raw.\n\nPor ejemplo, si abres </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, los valores de las variables son:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi quieres guardar la imagen de salida en el lugar original, usa:\n</i><b>%p1/%f\n</b><i>\nSi quieres guardar la imagen de salida en una carpeta 'convertida' dentro de la carpeta original, usa:\n</i><b>%p1/convertida/%f\n</b><i>\nSi quieres guardar la imagen de salida en la carpeta '/home/tom/convertida' conservando la misma subcarpeta de fechas, usa:\n</i><b>%p2/convertida/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Usar plantilla
 PREFERENCES_OUTDIR;Carpeta de salida
 PREFERENCES_OVERLAY_FILENAMES;Superponer nombres de archivo en miniaturas
@@ -1288,7 +1288,7 @@ TP_ICM_INPUTCUSTOM;A medida
 TP_ICM_INPUTCUSTOM_TOOLTIP;Seleccione su propio perfil de color DCP/ICC para la cámara
 TP_ICM_INPUTDLGLABEL;Seleccionar perfil DCP/ICC de entrada...
 TP_ICM_INPUTEMBEDDED;Usar incrustado, si es posible
-TP_ICM_INPUTEMBEDDED_TOOLTIP;Usar el perfil de color incrustado en archivos no RAW
+TP_ICM_INPUTEMBEDDED_TOOLTIP;Usar el perfil de color incrustado en archivos no raw
 TP_ICM_INPUTNONE;Sin perfil de color
 TP_ICM_INPUTNONE_TOOLTIP;No usar ningún perfil de color. Utilizar sólo en casos especiales.
 TP_ICM_INPUTPROFILE;Perfil de entrada
@@ -1563,6 +1563,20 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
+!EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
+!FILEBROWSER_POPUPCOLORLABEL0;Label: None
+!FILEBROWSER_POPUPCOLORLABEL1;Label: Red
+!FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
+!FILEBROWSER_POPUPCOLORLABEL3;Label: Green
+!FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
+!FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
+!FILEBROWSER_POPUPRANK0;Unrank
+!FILEBROWSER_POPUPRANK1;Rank 1 *
+!FILEBROWSER_POPUPRANK2;Rank 2 **
+!FILEBROWSER_POPUPRANK3;Rank 3 ***
+!FILEBROWSER_POPUPRANK4;Rank 4 ****
+!FILEBROWSER_POPUPRANK5;Rank 5 *****
 !HISTORY_MSG_251;B&amp;W - Algorithm
 !HISTORY_MSG_252;CbDL Skin Tones
 !HISTORY_MSG_253;CbDL Reduce artifacts
@@ -1582,4 +1596,5 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !TP_DIRPYREQUALIZER_SKIN;Skin Tones Targetting/Protection
 !TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin tones are protected while all other tones are affected.
 !TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts due to the transitions between the color (hue, chroma, luma) of the skin and the rest of the image
+!TP_ICM_FILEDLGFILTERICMDNG;Color profiles + DNG
 !TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.

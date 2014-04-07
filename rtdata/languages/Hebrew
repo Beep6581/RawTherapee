@@ -512,7 +512,7 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_RELEASENOTES;Release Notes
 !ABOUT_TAB_SPLASH;Splash
-!BATCHQUEUE_AUTOSTART;Auto start
+!BATCHQUEUE_AUTOSTART;Auto-start
 !BATCHQUEUE_DESTFILENAME;Path and file name
 !BATCH_PROCESSING;Batch Processing
 !CURVEEDITOR_CURVES;Curves
@@ -529,6 +529,8 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard.
 !CURVEEDITOR_TYPE;Type:
 !EDITWINDOW_TITLE;Image Edit
+!EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
+!EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
 !EXIFFILTER_EXPOSURECOMPENSATION;Exposure Compensation (EV)
 !EXIFFILTER_FILETYPE;File Type
 !EXIFFILTER_METADATAFILTER;Enable Metadata Filters
@@ -543,8 +545,8 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False Color Suppression
 !EXPORT_BYPASS_RAW_DCB_ENHANCE;Bypass [raw] DCB Enhancement Steps
 !EXPORT_BYPASS_RAW_DCB_ITERATIONS;Bypass [raw] DCB Iterations
-!EXPORT_BYPASS_RAW_DF;Bypass [raw] Dark Frame
-!EXPORT_BYPASS_RAW_FF;Bypass [raw] Flat Field
+!EXPORT_BYPASS_RAW_DF;Bypass [raw] Dark-Frame
+!EXPORT_BYPASS_RAW_FF;Bypass [raw] Flat-Field
 !EXPORT_BYPASS_RAW_GREENTHRESH;Bypass [raw] Green Equilibration
 !EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line Noise Filter
 !EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
@@ -563,8 +565,8 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !EXTPROGTARGET_2;queue-processed
 !FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
 !FILEBROWSER_APPLYPROFILE_PARTIAL;Apply - partial
-!FILEBROWSER_AUTODARKFRAME;Auto Dark Frame
-!FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
+!FILEBROWSER_AUTODARKFRAME;Auto Dark-Frame
+!FILEBROWSER_AUTOFLATFIELD;Auto Flat-Field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path.
 !FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n\nKeyboard shortcuts:\n<b>Ctrl-o</b> to focus to the path text box.\n<b>Enter</b> / <b>Ctrl-Enter</b> to browse there;\n<b>Esc</b> to clear changes.\n<b>Shift-Esc</b> to remove focus.\n\nPath shortcuts:\n<b>~</b>	- user's home directory.\n<b>!</b>	- user's pictures directory
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
@@ -572,21 +574,33 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !FILEBROWSER_CACHE;Cache
 !FILEBROWSER_COLORLABEL_TOOLTIP;Color label.\n\nUse dropdown menu or shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 !FILEBROWSER_CURRENT_NAME;Current name:
-!FILEBROWSER_DARKFRAME;Dark frame
+!FILEBROWSER_DARKFRAME;Dark-frame
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
 !FILEBROWSER_EXEC_CPB;Custom Profile Builder
 !FILEBROWSER_EXTPROGMENU;Open with
-!FILEBROWSER_FLATFIELD;Flat Field
-!FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
-!FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
+!FILEBROWSER_FLATFIELD;Flat-Field
+!FILEBROWSER_MOVETODARKFDIR;Move to dark-frames directory
+!FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat-fields directory
 !FILEBROWSER_NEW_NAME;New name:
 !FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
+!FILEBROWSER_POPUPCOLORLABEL0;Label: None
+!FILEBROWSER_POPUPCOLORLABEL1;Label: Red
+!FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
+!FILEBROWSER_POPUPCOLORLABEL3;Label: Green
+!FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
+!FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
 !FILEBROWSER_POPUPCOLORLABEL;Color label
 !FILEBROWSER_POPUPCOPYTO;Copy to...
 !FILEBROWSER_POPUPFILEOPERATIONS;File Operations
 !FILEBROWSER_POPUPMOVETO;Move to...
 !FILEBROWSER_POPUPPROCESSFAST;Put to Queue (Fast export)
 !FILEBROWSER_POPUPPROFILEOPERATIONS;Processing Profile Operations
+!FILEBROWSER_POPUPRANK0;Unrank
+!FILEBROWSER_POPUPRANK1;Rank 1 *
+!FILEBROWSER_POPUPRANK2;Rank 2 **
+!FILEBROWSER_POPUPRANK3;Rank 3 ***
+!FILEBROWSER_POPUPRANK4;Rank 4 ****
+!FILEBROWSER_POPUPRANK5;Rank 5 *****
 !FILEBROWSER_POPUPRANK;Rank
 !FILEBROWSER_POPUPREMOVEINCLPROC;Delete with output from queue
 !FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
@@ -597,8 +611,8 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
 !FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>Shift-4</b>
 !FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>Shift-5</b>
-!FILEBROWSER_SELECTDARKFRAME;Select dark frame...
-!FILEBROWSER_SELECTFLATFIELD;Select flat field...
+!FILEBROWSER_SELECTDARKFRAME;Select dark-frame...
+!FILEBROWSER_SELECTFLATFIELD;Select flat-field...
 !FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red.\nShortcut: <b>Alt-1</b>
 !FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yellow.\nShortcut: <b>Alt-2</b>
 !FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green.\nShortcut: <b>Alt-3</b>
@@ -664,16 +678,16 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !HISTORY_MSG_118;Raw Blue CA Correction
 !HISTORY_MSG_119;Line Noise Filter
 !HISTORY_MSG_120;Green Equilibration
-!HISTORY_MSG_121;Raw Auto CA
-!HISTORY_MSG_122;Dark Frame Auto Select
-!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_121;Raw Auto CA Correction
+!HISTORY_MSG_122;Dark-Frame Auto-Select
+!HISTORY_MSG_123;Dark-Frame File
 !HISTORY_MSG_124;White Point Correction
 !HISTORY_MSG_125;Highlight Preservation
-!HISTORY_MSG_126;Flat Field File
-!HISTORY_MSG_127;Flat Field Auto Select
-!HISTORY_MSG_128;Flat Field Blur Radius
-!HISTORY_MSG_129;Flat Field Blur Type
-!HISTORY_MSG_130;Auto Distorion
+!HISTORY_MSG_126;Flat-Field File
+!HISTORY_MSG_127;Flat-Field Auto-Select
+!HISTORY_MSG_128;Flat-Field Blur Radius
+!HISTORY_MSG_129;Flat-Field Blur Type
+!HISTORY_MSG_130;Auto Distorion Correction
 !HISTORY_MSG_131;Noise Reduction Luma
 !HISTORY_MSG_132;Noise Reduction Chroma
 !HISTORY_MSG_133;Output Gamma
@@ -794,6 +808,10 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !HISTORY_MSG_249;CbDL - Threshold
 !HISTORY_MSG_250;NR - Enhanced
 !HISTORY_MSG_251;B&amp;W - Algorithm
+!HISTORY_MSG_252;CbDL Skin Tones
+!HISTORY_MSG_253;CbDL Reduce artifacts
+!HISTORY_MSG_254;CbDL - Hueskin
+!HISTORY_MSG_255;CbDL - Algorithm
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
@@ -828,7 +846,7 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History.\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 !MAIN_TOOLTIP_PREVIEWB;Preview the <b>Blue channel</b>.\nShortcut: <b>b</b>
-!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-f</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels.\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom, about 10-30%.\n\nPreview is rendered slower with Focus Mask turned on.
+!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-f</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels.\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom, about 10-30%.
 !MAIN_TOOLTIP_PREVIEWG;Preview the <b>Green channel</b>.\nShortcut: <b>g</b>
 !MAIN_TOOLTIP_PREVIEWL;Preview the <b>Luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 !MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
@@ -862,19 +880,19 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !PARTIALPASTE_CHANNELMIXERBW;Black-and-White
 !PARTIALPASTE_CHANNELMIXER;Channel mixer
 !PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
-!PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
-!PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark frame auto selection
-!PARTIALPASTE_DARKFRAMEFILE;Dark frame file
+!PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto-fill
+!PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark-frame auto-selection
+!PARTIALPASTE_DARKFRAMEFILE;Dark-frame file
 !PARTIALPASTE_DEFRINGE;Defringe
 !PARTIALPASTE_DETAILGROUP;Detail Settings
 !PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 !PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
 !PARTIALPASTE_EPD;Tone mapping
 !PARTIALPASTE_EVERYTHING;Everything
-!PARTIALPASTE_FLATFIELDAUTOSELECT;Flat field auto selection
-!PARTIALPASTE_FLATFIELDBLURRADIUS;Flat field blur radius
-!PARTIALPASTE_FLATFIELDBLURTYPE;Flat field blur type
-!PARTIALPASTE_FLATFIELDFILE;Flat field file
+!PARTIALPASTE_FLATFIELDAUTOSELECT;Flat-field auto-selection
+!PARTIALPASTE_FLATFIELDBLURRADIUS;Flat-field blur radius
+!PARTIALPASTE_FLATFIELDBLURTYPE;Flat-field blur type
+!PARTIALPASTE_FLATFIELDFILE;Flat-field file
 !PARTIALPASTE_GRADIENT;Graduated filter
 !PARTIALPASTE_HSVEQUALIZER;HSV equalizer
 !PARTIALPASTE_ICMGAMMA;Output gamma
@@ -886,7 +904,7 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 !PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
-!PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
+!PARTIALPASTE_RAWCACORR_AUTO;CA auto-correction
 !PARTIALPASTE_RAWCACORR_CABLUE;CA blue
 !PARTIALPASTE_RAWCACORR_CARED;CA red
 !PARTIALPASTE_RAWEXPOS_BLACK;Black levels
@@ -929,16 +947,16 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_DARKFRAME;Dark Frame
+!PREFERENCES_DARKFRAME;Dark-Frame
 !PREFERENCES_DATEFORMATFRAME;Date Format
-!PREFERENCES_DIRDARKFRAMES;Dark frames directory
+!PREFERENCES_DIRDARKFRAMES;Dark-frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low resolution display)
 !PREFERENCES_FLATFIELDFOUND;Found
-!PREFERENCES_FLATFIELDSDIR;Flat fields directory
+!PREFERENCES_FLATFIELDSDIR;Flat-fields directory
 !PREFERENCES_FLATFIELDSHOTS;shots
 !PREFERENCES_FLATFIELDTEMPLATES;templates
-!PREFERENCES_FLATFIELD;Flat Field
+!PREFERENCES_FLATFIELD;Flat-Field
 !PREFERENCES_FLUOF2;Fluorescent F2
 !PREFERENCES_FLUOF7;Fluorescent F7
 !PREFERENCES_FLUOF11;Fluorescent F11
@@ -1169,7 +1187,7 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !TP_CROP_GTFRAME;Frame
 !TP_CROP_GTGRID;Grid
 !TP_CROP_PPI;PPI=
-!TP_DARKFRAME_AUTOSELECT;Auto selection
+!TP_DARKFRAME_AUTOSELECT;Auto-selection
 !TP_DARKFRAME_LABEL;Dark Frame
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
@@ -1190,13 +1208,23 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !TP_DIRPYRDENOISE_PERF;RGB mode (raw images)
 !TP_DIRPYRDENOISE_RED;Chrominance - Red-Green
 !TP_DIRPYRDENOISE_RGB;RGB
+!TP_DIRPYREQUALIZER_ALGO;Algorithm Skin
+!TP_DIRPYREQUALIZER_ALGO_FI;Fine
+!TP_DIRPYREQUALIZER_ALGO_LA;Large
+!TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts
+!TP_DIRPYREQUALIZER_GAMUT;Reduce artifacts
+!TP_DIRPYREQUALIZER_HUESKIN;Skin hue
+!TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected
 !TP_DIRPYREQUALIZER_LABEL;Contrast by Detail Levels
 !TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
 !TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
 !TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
 !TP_DIRPYREQUALIZER_LUMAFINEST;Finest
 !TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
+!TP_DIRPYREQUALIZER_SKIN;Skin Tones Targetting/Protection
+!TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin tones are protected while all other tones are affected.
 !TP_DIRPYREQUALIZER_THRESHOLD;Threshold
+!TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts due to the transitions between the color (hue, chroma, luma) of the skin and the rest of the image
 !TP_DISTORTION_AUTO;Auto Distortion Correction
 !TP_DISTORTION_AUTO_TIP;Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.).
 !TP_EPD_EDGESTOPPING;Edge Stopping
@@ -1207,7 +1235,7 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
 !TP_EXPOSCORR_LABEL;Raw White & Black Points
 !TP_EXPOSURE_AUTOLEVELS_TIP;Toggles execution of Auto Levels to automatically set Exposure slider values based on an image analysis.\nEnables Highlight Reconstruction if necessary.
-!TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in Auto Level's operation.
+!TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in Auto Levels operation.
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight Compression Threshold
 !TP_EXPOSURE_CURVEEDITOR1;Tone Curve 1
 !TP_EXPOSURE_CURVEEDITOR2;Tone Curve 2
@@ -1219,19 +1247,19 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Saturation and Value Blending
 !TP_EXPOSURE_TCMODE_STANDARD;Standard
 !TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
-!TP_FLATFIELD_AUTOSELECT;Auto selection
+!TP_FLATFIELD_AUTOSELECT;Auto-selection
 !TP_FLATFIELD_BLURRADIUS;Blur Radius
 !TP_FLATFIELD_BLURTYPE;Blur Type
 !TP_FLATFIELD_BT_AREA;Area
 !TP_FLATFIELD_BT_HORIZONTAL;Horizontal
 !TP_FLATFIELD_BT_VERTHORIZ;Vertical + Horizontal
 !TP_FLATFIELD_BT_VERTICAL;Vertical
-!TP_FLATFIELD_LABEL;Flat Field
+!TP_FLATFIELD_LABEL;Flat-Field
 !TP_GAMMA_CURV;Gamma
 !TP_GAMMA_FREE;Free gamma
 !TP_GAMMA_OUTPUT;Output Gamma
 !TP_GAMMA_SLOP;Slope (linear)
-!TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-components is only visible at 1:1 preview scale.
+!TP_GENERAL_11SCALE_TOOLTIP;The effects of this tool are only visible or only accurate at a preview scale of 1:1.
 !TP_GRADIENT_CENTER;Center
 !TP_GRADIENT_CENTER_X;Center X
 !TP_GRADIENT_CENTER_X_TOOLTIP;Shift gradient to the left (negative values) or right (positive values).
@@ -1252,10 +1280,11 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !TP_HSVEQUALIZER_SAT;S
 !TP_HSVEQUALIZER_VAL;V
 !TP_ICM_BLENDCMSMATRIX;Blend ICC highlights with matrix
-!TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover clipped highlights when using LUT based ICC profiles.
+!TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover clipped highlights when using LUT-based ICC profiles.
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
+!TP_ICM_FILEDLGFILTERICMDNG;Color profiles + DNG
 !TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use a simple color matrix from dcraw, an enhanced RawTherapee version (whichever is available based on camera model) or one embedded in the DNG.
@@ -1305,8 +1334,8 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !TP_LABCURVE_LCREDSK_TIP;If enabled, the LC Curve affects only red and skin tones.\nIf disabled, it applies to all tones.
 !TP_LABCURVE_RSTPROTECTION;Red and Skin Tones Protection
 !TP_LABCURVE_RSTPRO_TOOLTIP;Can be used with the Chromaticity slider and the CC curve.
-!TP_LENSGEOM_AUTOCROP;Auto Crop
-!TP_LENSGEOM_FILL;Auto fill
+!TP_LENSGEOM_AUTOCROP;Auto-Crop
+!TP_LENSGEOM_FILL;Auto-fill
 !TP_LENSGEOM_LABEL;Lens / Geometry
 !TP_LENSPROFILE_FILEDLGFILTERLCP;Lens correction files
 !TP_LENSPROFILE_LABEL;Lens Correction Profile
@@ -1333,7 +1362,7 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !TP_PREPROCESS_LABEL;Preprocessing
 !TP_PREPROCESS_LINEDENOISE;Line Noise Filter
 !TP_PREPROCESS_NO_FOUND;None found
-!TP_RAWCACORR_AUTO;Auto correction
+!TP_RAWCACORR_AUTO;Auto-correction
 !TP_RAWCACORR_CABLUE;Blue
 !TP_RAWCACORR_CARED;Red
 !TP_RAWEXPOS_BLACKONE;Black Level: Red

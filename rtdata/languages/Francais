@@ -115,13 +115,13 @@ FILEBROWSER_OPENDEFAULTVIEWER;Visualiseur par défaut de Windows (image déjà t
 FILEBROWSER_PARTIALPASTEPROFILE;Coller partiellement
 FILEBROWSER_PASTEPROFILE;Coller le profil
 FILEBROWSER_POPUPCANCELJOB;Retirer de la file de traitement
-FILEBROWSER_POPUPCOLORLABEL;Label couleur
 FILEBROWSER_POPUPCOLORLABEL0;Label: Aucun
 FILEBROWSER_POPUPCOLORLABEL1;Label: Rouge
 FILEBROWSER_POPUPCOLORLABEL2;Label: Jaune
 FILEBROWSER_POPUPCOLORLABEL3;Label: Vert
 FILEBROWSER_POPUPCOLORLABEL4;Label: Bleu
 FILEBROWSER_POPUPCOLORLABEL5;Label: Pourpre
+FILEBROWSER_POPUPCOLORLABEL;Label couleur
 FILEBROWSER_POPUPCOPYTO;Copier vers...
 FILEBROWSER_POPUPFILEOPERATIONS;Opérations sur les fichiers
 FILEBROWSER_POPUPMOVEEND;Déplacer à la fin de la file
@@ -131,13 +131,13 @@ FILEBROWSER_POPUPOPEN;Ouvrir
 FILEBROWSER_POPUPPROCESSFAST;Mettre dans la file de traitement (Export Rapide)
 FILEBROWSER_POPUPPROCESS;Mettre dans la file de traitement
 FILEBROWSER_POPUPPROFILEOPERATIONS;Opérations sur les profils
-FILEBROWSER_POPUPRANK;Rang
 FILEBROWSER_POPUPRANK0;Aucun
 FILEBROWSER_POPUPRANK1;Rang 1 * 
 FILEBROWSER_POPUPRANK2;Rang 2 **
 FILEBROWSER_POPUPRANK3;Rang 3 ***
 FILEBROWSER_POPUPRANK4;Rang 4 ****
 FILEBROWSER_POPUPRANK5;Rang 5 *****
+FILEBROWSER_POPUPRANK;Rang
 FILEBROWSER_POPUPREMOVEINCLPROC;Supprimer (y compris les sorties de la file de traitement)
 FILEBROWSER_POPUPREMOVE;Retirer du système de fichier
 FILEBROWSER_POPUPRENAME;Renommer
@@ -1411,7 +1411,22 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !HISTORY_MSG_251;B&amp;W - Algorithm
+!HISTORY_MSG_252;CbDL Skin Tones
+!HISTORY_MSG_253;CbDL Reduce artifacts
+!HISTORY_MSG_254;CbDL - Hueskin
+!HISTORY_MSG_255;CbDL - Algorithm
 !TP_BWMIX_ALGO;Algorithm OYCPM
 !TP_BWMIX_ALGO_LI;Linear
 !TP_BWMIX_ALGO_SP;Special effects
 !TP_BWMIX_ALGO_TOOLTIP;Linear: will produce a normal <b>linear</b> response.\nSpecial effects: will produce special effects by mixing channels <b>non-linearly</b>.
+!TP_DIRPYREQUALIZER_ALGO;Algorithm Skin
+!TP_DIRPYREQUALIZER_ALGO_FI;Fine
+!TP_DIRPYREQUALIZER_ALGO_LA;Large
+!TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts
+!TP_DIRPYREQUALIZER_GAMUT;Reduce artifacts
+!TP_DIRPYREQUALIZER_HUESKIN;Skin hue
+!TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected
+!TP_DIRPYREQUALIZER_SKIN;Skin Tones Targetting/Protection
+!TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin tones are protected while all other tones are affected.
+!TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts due to the transitions between the color (hue, chroma, luma) of the skin and the rest of the image
+!TP_ICM_FILEDLGFILTERICMDNG;Color profiles + DNG

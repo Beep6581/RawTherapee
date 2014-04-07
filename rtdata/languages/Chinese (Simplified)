@@ -744,6 +744,8 @@ ZOOMBAR_SMALL;小
 !CURVEEDITOR_PARAMETRIC;Parametric
 !CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard.
 !CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard.
+!EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
+!EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
 !EXIFFILTER_EXPOSURECOMPENSATION;Exposure Compensation (EV)
 !EXIFFILTER_FILETYPE;File Type
 !EXIFFILTER_METADATAFILTER;Enable Metadata Filters
@@ -757,8 +759,8 @@ ZOOMBAR_SMALL;小
 !EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False Color Suppression
 !EXPORT_BYPASS_RAW_DCB_ENHANCE;Bypass [raw] DCB Enhancement Steps
 !EXPORT_BYPASS_RAW_DCB_ITERATIONS;Bypass [raw] DCB Iterations
-!EXPORT_BYPASS_RAW_DF;Bypass [raw] Dark Frame
-!EXPORT_BYPASS_RAW_FF;Bypass [raw] Flat Field
+!EXPORT_BYPASS_RAW_DF;Bypass [raw] Dark-Frame
+!EXPORT_BYPASS_RAW_FF;Bypass [raw] Flat-Field
 !EXPORT_BYPASS_RAW_GREENTHRESH;Bypass [raw] Green Equilibration
 !EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line Noise Filter
 !EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
@@ -771,19 +773,26 @@ ZOOMBAR_SMALL;小
 !EXTPROGTARGET_2;queue-processed
 !FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
 !FILEBROWSER_APPLYPROFILE_PARTIAL;Apply - partial
-!FILEBROWSER_AUTODARKFRAME;Auto Dark Frame
-!FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
+!FILEBROWSER_AUTODARKFRAME;Auto Dark-Frame
+!FILEBROWSER_AUTOFLATFIELD;Auto Flat-Field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path.
 !FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n\nKeyboard shortcuts:\n<b>Ctrl-o</b> to focus to the path text box.\n<b>Enter</b> / <b>Ctrl-Enter</b> to browse there;\n<b>Esc</b> to clear changes.\n<b>Shift-Esc</b> to remove focus.\n\nPath shortcuts:\n<b>~</b>	- user's home directory.\n<b>!</b>	- user's pictures directory
 !FILEBROWSER_COLORLABEL_TOOLTIP;Color label.\n\nUse dropdown menu or shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
-!FILEBROWSER_DARKFRAME;Dark frame
+!FILEBROWSER_DARKFRAME;Dark-frame
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
-!FILEBROWSER_FLATFIELD;Flat Field
-!FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
-!FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
+!FILEBROWSER_FLATFIELD;Flat-Field
+!FILEBROWSER_MOVETODARKFDIR;Move to dark-frames directory
+!FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat-fields directory
+!FILEBROWSER_POPUPCOLORLABEL0;Label: None
+!FILEBROWSER_POPUPCOLORLABEL1;Label: Red
+!FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
+!FILEBROWSER_POPUPCOLORLABEL3;Label: Green
+!FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
+!FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
+!FILEBROWSER_POPUPRANK0;Unrank
 !FILEBROWSER_QUERYHINT;Type filenames to search for. Supports partial filenames. Separate search terms using commas, e.g.\n<i>1001,1004,1199</i>\n\nShortcuts:\n<b>Ctrl-f</b> - focus the Find box,\n<b>Enter</b> - search,\n<b>Esc</b> - clear the Find box,\n<b>Shift-Esc</b> - defocus the Find box.
 !FILEBROWSER_QUERYLABEL; Find:
-!FILEBROWSER_SELECTFLATFIELD;Select flat field...
+!FILEBROWSER_SELECTFLATFIELD;Select flat-field...
 !FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red.\nShortcut: <b>Alt-1</b>
 !FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yellow.\nShortcut: <b>Alt-2</b>
 !FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green.\nShortcut: <b>Alt-3</b>
@@ -836,9 +845,9 @@ ZOOMBAR_SMALL;小
 !HISTORY_MSG_117;Raw Red CA Correction
 !HISTORY_MSG_118;Raw Blue CA Correction
 !HISTORY_MSG_120;Green Equilibration
-!HISTORY_MSG_121;Raw Auto CA
+!HISTORY_MSG_121;Raw Auto CA Correction
 !HISTORY_MSG_125;Highlight Preservation
-!HISTORY_MSG_130;Auto Distorion
+!HISTORY_MSG_130;Auto Distorion Correction
 !HISTORY_MSG_131;Noise Reduction Luma
 !HISTORY_MSG_132;Noise Reduction Chroma
 !HISTORY_MSG_133;Output Gamma
@@ -983,7 +992,7 @@ ZOOMBAR_SMALL;小
 !MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History.\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 !MAIN_TOOLTIP_PREVIEWB;Preview the <b>Blue channel</b>.\nShortcut: <b>b</b>
-!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-f</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels.\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom, about 10-30%.\n\nPreview is rendered slower with Focus Mask turned on.
+!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-f</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels.\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom, about 10-30%.
 !MAIN_TOOLTIP_PREVIEWG;Preview the <b>Green channel</b>.\nShortcut: <b>g</b>
 !MAIN_TOOLTIP_PREVIEWL;Preview the <b>Luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 !MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
@@ -1018,10 +1027,10 @@ ZOOMBAR_SMALL;小
 !PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
 !PARTIALPASTE_EPD;Tone mapping
 !PARTIALPASTE_EVERYTHING;Everything
-!PARTIALPASTE_FLATFIELDAUTOSELECT;Flat field auto selection
-!PARTIALPASTE_FLATFIELDBLURRADIUS;Flat field blur radius
-!PARTIALPASTE_FLATFIELDBLURTYPE;Flat field blur type
-!PARTIALPASTE_FLATFIELDFILE;Flat field file
+!PARTIALPASTE_FLATFIELDAUTOSELECT;Flat-field auto-selection
+!PARTIALPASTE_FLATFIELDBLURRADIUS;Flat-field blur radius
+!PARTIALPASTE_FLATFIELDBLURTYPE;Flat-field blur type
+!PARTIALPASTE_FLATFIELDFILE;Flat-field file
 !PARTIALPASTE_GRADIENT;Graduated filter
 !PARTIALPASTE_HSVEQUALIZER;HSV equalizer
 !PARTIALPASTE_ICMGAMMA;Output gamma
@@ -1064,12 +1073,12 @@ ZOOMBAR_SMALL;小
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_DARKFRAME;Dark Frame
+!PREFERENCES_DARKFRAME;Dark-Frame
 !PREFERENCES_DATEFORMATFRAME;Date Format
-!PREFERENCES_DIRDARKFRAMES;Dark frames directory
+!PREFERENCES_DIRDARKFRAMES;Dark-frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low resolution display)
-!PREFERENCES_FLATFIELDSDIR;Flat fields directory
+!PREFERENCES_FLATFIELDSDIR;Flat-fields directory
 !PREFERENCES_FLATFIELDSHOTS;shots
 !PREFERENCES_FLATFIELDTEMPLATES;templates
 !PREFERENCES_FLUOF2;Fluorescent F2
@@ -1290,7 +1299,7 @@ ZOOMBAR_SMALL;小
 !TP_CROP_GTFRAME;Frame
 !TP_CROP_GTGRID;Grid
 !TP_CROP_PPI;PPI=
-!TP_DARKFRAME_AUTOSELECT;Auto selection
+!TP_DARKFRAME_AUTOSELECT;Auto-selection
 !TP_DARKFRAME_LABEL;Dark Frame
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
@@ -1335,7 +1344,7 @@ ZOOMBAR_SMALL;小
 !TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
 !TP_EXPOSCORR_LABEL;Raw White & Black Points
 !TP_EXPOSURE_AUTOLEVELS_TIP;Toggles execution of Auto Levels to automatically set Exposure slider values based on an image analysis.\nEnables Highlight Reconstruction if necessary.
-!TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in Auto Level's operation.
+!TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in Auto Levels operation.
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight Compression Threshold
 !TP_EXPOSURE_CURVEEDITOR1;Tone Curve 1
 !TP_EXPOSURE_CURVEEDITOR2;Tone Curve 2
@@ -1347,12 +1356,12 @@ ZOOMBAR_SMALL;小
 !TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Saturation and Value Blending
 !TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
 !TP_FLATFIELD_BT_VERTICAL;Vertical
-!TP_FLATFIELD_LABEL;Flat Field
+!TP_FLATFIELD_LABEL;Flat-Field
 !TP_GAMMA_CURV;Gamma
 !TP_GAMMA_FREE;Free gamma
 !TP_GAMMA_OUTPUT;Output Gamma
 !TP_GAMMA_SLOP;Slope (linear)
-!TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-components is only visible at 1:1 preview scale.
+!TP_GENERAL_11SCALE_TOOLTIP;The effects of this tool are only visible or only accurate at a preview scale of 1:1.
 !TP_GRADIENT_CENTER;Center
 !TP_GRADIENT_CENTER_X;Center X
 !TP_GRADIENT_CENTER_X_TOOLTIP;Shift gradient to the left (negative values) or right (positive values).
@@ -1373,10 +1382,11 @@ ZOOMBAR_SMALL;小
 !TP_HSVEQUALIZER_SAT;S
 !TP_HSVEQUALIZER_VAL;V
 !TP_ICM_BLENDCMSMATRIX;Blend ICC highlights with matrix
-!TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover clipped highlights when using LUT based ICC profiles.
+!TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover clipped highlights when using LUT-based ICC profiles.
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
+!TP_ICM_FILEDLGFILTERICMDNG;Color profiles + DNG
 !TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use a simple color matrix from dcraw, an enhanced RawTherapee version (whichever is available based on camera model) or one embedded in the DNG.
