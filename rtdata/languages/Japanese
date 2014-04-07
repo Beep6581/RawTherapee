@@ -13,6 +13,7 @@
 #13 2014-01-07 firefly
 #14 2014-01-15 firefly
 #15 2014-02-25 firefly
+#16 2014-04-07 firefly
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -45,6 +46,8 @@ CURVEEDITOR_TOOLTIPPASTE;クリップボードからカーブを貼り付け
 CURVEEDITOR_TOOLTIPSAVE;現在のカーブを保存
 CURVEEDITOR_TYPE;タイプ:
 EDITWINDOW_TITLE;画像編集
+EDIT_OBJECT_TOOLTIP;この機能を使うための目安に、プレビュー画面にガイドを表示する
+EDIT_PIPETTE_TOOLTIP;カーブ上に調整ポイントを追加するには、Ctrlキーを押しながら、プレビューの画像上の目標ポイントを左クリックします。\n追加されたそのポイントを調整するには、Ctrlキーを押しながら、プレビュー画像のそのポイントに当たる部分を左クリックします。それからCtrlキーを離し（微妙な調整をする場合はそのまま）、左クリックしたままマウスを画面上で上下に動かすと、それに合わせてトーンカーブが調整されます。
 EXIFFILTER_APERTURE;絞り
 EXIFFILTER_CAMERA;カメラ
 EXIFFILTER_EXPOSURECOMPENSATION;露光量補正 (EV)
@@ -127,6 +130,12 @@ FILEBROWSER_OPENDEFAULTVIEWER;Windowsのデフォルト・ビューア（キュ�
 FILEBROWSER_PARTIALPASTEPROFILE;プロファイルの貼り付け　-　一部
 FILEBROWSER_PASTEPROFILE;プロファイルの貼り付け
 FILEBROWSER_POPUPCANCELJOB;ジョブ キャンセル
+FILEBROWSER_POPUPCOLORLABEL0;ラベル：　なし
+FILEBROWSER_POPUPCOLORLABEL1;ラベル：　レッド
+FILEBROWSER_POPUPCOLORLABEL2;ラベル：　イエロー
+FILEBROWSER_POPUPCOLORLABEL3;ラベル：　グリーン
+FILEBROWSER_POPUPCOLORLABEL4;ラベル：　ブルー
+FILEBROWSER_POPUPCOLORLABEL5;ラベル：　パープル
 FILEBROWSER_POPUPCOLORLABEL;カラー・ラベル
 FILEBROWSER_POPUPCOPYTO;コピーします...
 FILEBROWSER_POPUPFILEOPERATIONS;ファイルの操作
@@ -137,6 +146,12 @@ FILEBROWSER_POPUPOPEN;開く
 FILEBROWSER_POPUPPROCESSFAST;キューに追加 (高速書き出し)
 FILEBROWSER_POPUPPROCESS;キューに追加
 FILEBROWSER_POPUPPROFILEOPERATIONS;プロファイルの操作
+FILEBROWSER_POPUPRANK0;ランクなし
+FILEBROWSER_POPUPRANK1;ランク　1　*
+FILEBROWSER_POPUPRANK2;ランク　2 **
+FILEBROWSER_POPUPRANK3;ランク　3　***
+FILEBROWSER_POPUPRANK4;ランク　4　****
+FILEBROWSER_POPUPRANK5;ランク　5　*****
 FILEBROWSER_POPUPRANK;ランク
 FILEBROWSER_POPUPREMOVEINCLPROC;ファイルシステムとバッチの結果から削除
 FILEBROWSER_POPUPREMOVE;ファイルシステムから削除
@@ -1087,17 +1102,17 @@ TP_DIRPYREQUALIZER_ALGO;肌色用のアルゴリズム
 TP_DIRPYREQUALIZER_ALGO_FI;ファイン
 TP_DIRPYREQUALIZER_ALGO_LA;広範
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;ファイン：撮影の肌色に近い部分に働くアルゴリズム、他の色への影響を最小限に抑えます\n広範：　アーティファクトの増加を避けるアルゴリズムです
-TP_DIRPYREQUALIZER_GAMUT;アーティファクト軽減
+TP_DIRPYREQUALIZER_GAMUT;アーティファクトを軽減
 TP_DIRPYREQUALIZER_HUESKIN;肌色の色相
 TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;このカーブは上部ほど、アルゴリズムが効率良く働くことを示しています。\n下部ほど、色相の遷移が見られる部分です。\nコントロールポイントを左右に大きく動かす必要が生じたり、アーティファクトが生じたりする場合は、<b>ホワイトバランスが妥当ではない</b>時です。\n他の色への影響を避けるには、調整範囲を少し減らします
-TP_DIRPYREQUALIZER_LABEL;ディテールレベルのコントラスト 
-TP_DIRPYREQUALIZER_LUMACOARSEST;粗い
-TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;コントラスト－
-TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;コントラスト＋
+TP_DIRPYREQUALIZER_LABEL;ディテールレベルのコントラスト
+TP_DIRPYREQUALIZER_LUMACONTRAST;粗い
+TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;コントラスト-
+TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;コントラスト+
 TP_DIRPYREQUALIZER_LUMAFINEST;細かい
 TP_DIRPYREQUALIZER_LUMANEUTRAL;ニュートラル
 TP_DIRPYREQUALIZER_SKIN;肌色トーン　目標／保護
-TP_DIRPYREQUALIZER_SKIN_TOOLTIP;-100 肌色トーンの調整が目標となります\n0 全ての色調が調整の対象です\n+100　肌色は保護され、他の色調が調整されます
+TP_DIRPYREQUALIZER_SKIN_TOOLTIP;-100　肌色トーンの調整が目的になります\n0 全ての色調が調整の対象です\n+100　肌色が保護され、他の色調が調整されます
 TP_DIRPYREQUALIZER_THRESHOLD;しきい値
 TP_DIRPYREQUALIZER_TOOLTIP;肌色やその他の色（色相、色度、明度）の遷移に起因するアーティファクトの軽減を試みます
 TP_DISTORTION_AMOUNT;適用量
@@ -1114,7 +1129,7 @@ TP_EXPOSCORR_LABEL;Raw ホワイト・ブラック・ポイント
 TP_EXPOSURE_AUTOLEVELS;自動露光補正
 TP_EXPOSURE_AUTOLEVELS_TIP;画像を解析し露光補正を自動で設定をします
 TP_EXPOSURE_BLACKLEVEL;黒レベル
-TP_EXPOSURE_BRIGHTNESS;明るさ
+TP_EXPOSURE_BRIGHTNESS;明度
 TP_EXPOSURE_CLIP;クリップ　％
 TP_EXPOSURE_CLIP_TIP;自動露光補正によるハイライトとシャドウ部分での飽和ピクセルの割合制限
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;ハイライト圧縮 しきい値
@@ -1176,6 +1191,7 @@ TP_ICM_DCPILLUMINANT;光源
 TP_ICM_DCPILLUMINANT_INTERPOLATED;補間
 TP_ICM_DCPILLUMINANT_TOOLTIP;埋め込まれているDCPの光源のどちらを使うか選択。デフォルトではホワイトバランスに基づいて二つの光源の中間に補間する。この設定は二つのDCPの光源が補間サポートされる、を選択している場合に有効。
 TP_ICM_FILEDLGFILTERANY;すべてのファイル
+TP_ICM_FILEDLGFILTERICMDNG:カラープロファイル＋DNG
 TP_ICM_FILEDLGFILTERICM;カラープロファイル
 TP_ICM_INPUTCAMERAICC;カメラ固有のプロファイル
 TP_ICM_INPUTCAMERAICC_TOOLTIP;RawTherapeeが持っているカメラ固有のDCP或いはICCプロファイルを使用 シンプルなマトリクスより正確だが一部のカメラだけに利用可能
@@ -1424,3 +1440,8 @@ ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる\nショートカット: <b>f</b>
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
