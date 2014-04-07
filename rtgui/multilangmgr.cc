@@ -149,27 +149,30 @@ Glib::ustring MultiLangMgr::TranslateRFC2Language(Glib::ustring rfcName) {
 
     //printf("Lang: %s - %s\n",major.c_str(),minor.c_str());
 
-    if (major=="cs") return "Czech";
     if (major=="ca") return "Catala";
-    if (major=="fr") return "Francais";
-    if (major=="de") return "Deutsch";
-    if (major=="sr") return "Serbian (Cyrilic Characters)";
     if (major=="zh")
         return (minor=="CN" || minor=="SG") ? "Chinese (Simplified)" : "Chinese (Traditional)";
+    if (major=="cs") return "Czech";
     if (major=="da") return "Dansk";
+    if (major=="de") return "Deutsch";
     if (major=="es") return "Espanol";
+    if (major=="eu") return "Euskara";
+    if (major=="fr") return "Francais";
     if (major=="el") return "Greek";
     if (major=="he") return "Hebrew";
-    if (major=="it") return "Italian";
+    if (major=="it") return "Italiano";
     if (major=="ja") return "Japanese";
+    if (major=="lv") return "Latvian";
+    if (major=="hu") return "Magyar";
     if (major=="nl") return "Nederlands";
     if (major=="nn" || major=="nb") return "Norsk BM";
     if (major=="pl") return "Polish";
     if (major=="pt") return "Portugues (Brasil)";
     if (major=="ru") return "Russian";
+    if (major=="sr") return "Serbian (Cyrilic Characters)";
     if (major=="sk") return "Slovak";
     if (major=="fi") return "Suomi";
-    if (major=="se") return "Swedish";
+    if (major=="sv") return "Swedish";
     if (major=="tr") return "Turkish";
 
     // Don't split en-US, en-GB, etc. since only default english is constantly updated
