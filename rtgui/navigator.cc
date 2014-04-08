@@ -36,6 +36,29 @@ Navigator::Navigator () {
 	position = Gtk::manage (new Gtk::Label ());
 	mbox->pack_start (*position, Gtk::PACK_SHRINK, 2);
 
+	//labels
+	lR = Gtk::manage (new Gtk::Label (M("NAVIGATOR_R")));
+	lG = Gtk::manage (new Gtk::Label (M("NAVIGATOR_G")));
+	lB = Gtk::manage (new Gtk::Label (M("NAVIGATOR_B")));
+	lH = Gtk::manage (new Gtk::Label (M("NAVIGATOR_H")));
+	lS = Gtk::manage (new Gtk::Label (M("NAVIGATOR_S")));
+	lV = Gtk::manage (new Gtk::Label (M("NAVIGATOR_V")));
+	lLAB_A = Gtk::manage (new Gtk::Label (M("NAVIGATOR_LAB_A")));
+	lLAB_B = Gtk::manage (new Gtk::Label (M("NAVIGATOR_LAB_B")));
+	lLAB_L = Gtk::manage (new Gtk::Label (M("NAVIGATOR_LAB_L")));
+
+    // left-align labels
+	lR->set_alignment(Gtk::ALIGN_LEFT);
+	lG->set_alignment(Gtk::ALIGN_LEFT);
+	lB->set_alignment(Gtk::ALIGN_LEFT);
+	lH->set_alignment(Gtk::ALIGN_LEFT);
+	lS->set_alignment(Gtk::ALIGN_LEFT);
+	lV->set_alignment(Gtk::ALIGN_LEFT);
+	lLAB_A->set_alignment(Gtk::ALIGN_LEFT);
+	lLAB_B->set_alignment(Gtk::ALIGN_LEFT);
+	lLAB_L->set_alignment(Gtk::ALIGN_LEFT);
+
+	//values
 	R = Gtk::manage (new Gtk::Label ());
 	G = Gtk::manage (new Gtk::Label ());
 	B = Gtk::manage (new Gtk::Label ());
@@ -46,19 +69,100 @@ Navigator::Navigator () {
 	LAB_B = Gtk::manage (new Gtk::Label ());
 	LAB_L = Gtk::manage (new Gtk::Label ());
 
-    Gtk::Table* table = Gtk::manage (new Gtk::Table (3, 3));
-    table->attach (*R, 0, 1, 0, 1, Gtk::EXPAND, Gtk::SHRINK, 0, 0);
-    table->attach (*G, 0, 1, 1, 2, Gtk::EXPAND, Gtk::SHRINK, 0, 0);
-    table->attach (*B, 0, 1, 2, 3, Gtk::EXPAND, Gtk::SHRINK, 0, 0);
-    table->attach (*H, 1, 2, 0, 1, Gtk::EXPAND, Gtk::SHRINK, 0, 0);
-    table->attach (*S, 1, 2, 1, 2, Gtk::EXPAND, Gtk::SHRINK, 0, 0);
-    table->attach (*V, 1, 2, 2, 3, Gtk::EXPAND, Gtk::SHRINK, 0, 0);
-    table->attach (*LAB_L, 2, 3, 0, 1, Gtk::EXPAND, Gtk::SHRINK, 0, 0);
-    table->attach (*LAB_A, 2, 3, 1, 2, Gtk::EXPAND, Gtk::SHRINK, 0, 0);
-    table->attach (*LAB_B, 2, 3, 2, 3, Gtk::EXPAND, Gtk::SHRINK, 0, 0);
+	// right-align values
+	R->set_alignment(Gtk::ALIGN_RIGHT);
+	G->set_alignment(Gtk::ALIGN_RIGHT);
+	B->set_alignment(Gtk::ALIGN_RIGHT);
+	H->set_alignment(Gtk::ALIGN_RIGHT);
+	S->set_alignment(Gtk::ALIGN_RIGHT);
+	V->set_alignment(Gtk::ALIGN_RIGHT);
+	LAB_A->set_alignment(Gtk::ALIGN_RIGHT);
+	LAB_B->set_alignment(Gtk::ALIGN_RIGHT);
+	LAB_L->set_alignment(Gtk::ALIGN_RIGHT);
 
-	mbox->pack_start (*table, Gtk::PACK_SHRINK, 2);
-	
+	// set font family and size
+/*	R->modify_font(Pango::FontDescription("monospace 8"));
+	G->modify_font(Pango::FontDescription("monospace 8"));
+	B->modify_font(Pango::FontDescription("monospace 8"));
+	H->modify_font(Pango::FontDescription("monospace 8"));
+	S->modify_font(Pango::FontDescription("monospace 8"));
+	V->modify_font(Pango::FontDescription("monospace 8"));
+	LAB_A->modify_font(Pango::FontDescription("monospace 8"));
+	LAB_B->modify_font(Pango::FontDescription("monospace 8"));
+	LAB_L->modify_font(Pango::FontDescription("monospace 8"));
+
+	lR->modify_font(Pango::FontDescription("monospace 8"));
+	lG->modify_font(Pango::FontDescription("monospace 8"));
+	lB->modify_font(Pango::FontDescription("monospace 8"));
+	lH->modify_font(Pango::FontDescription("monospace 8"));
+	lS->modify_font(Pango::FontDescription("monospace 8"));
+	lV->modify_font(Pango::FontDescription("monospace 8"));
+	lLAB_A->modify_font(Pango::FontDescription("monospace 8"));
+	lLAB_B->modify_font(Pango::FontDescription("monospace 8"));
+	lLAB_L->modify_font(Pango::FontDescription("monospace 8"));
+
+    position->modify_font(Pango::FontDescription("monospace 8"));
+*/
+
+    // setup the tables
+	Gtk::Table* table0 = Gtk::manage (new Gtk::Table (1, 3)); //rows, cols The main table container
+	// let's pack tables1,2-3 into table0
+
+
+    // RGB
+    Gtk::HBox* hbox1 = Gtk::manage (new Gtk::HBox ()); // container
+    Gtk::Table* table1 = Gtk::manage (new Gtk::Table (3, 2));
+
+		table1->attach (*lR, 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
+		table1->attach (*R,  1, 2, 0, 1, Gtk::EXPAND|Gtk::FILL, Gtk::SHRINK, 0, 0);
+
+		table1->attach (*lG, 0, 1, 1, 2, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
+		table1->attach (*G,  1, 2, 1, 2, Gtk::EXPAND|Gtk::FILL, Gtk::SHRINK, 0, 0);
+
+		table1->attach (*lB, 0, 1, 2, 3, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
+		table1->attach (*B,  1, 2, 2, 3, Gtk::EXPAND|Gtk::FILL, Gtk::SHRINK, 0, 0);
+
+    hbox1->pack_start (*table1, Gtk::PACK_EXPAND_WIDGET, 4);
+    hbox1->pack_start (*Gtk::manage (new  Gtk::VSeparator()), Gtk::PACK_SHRINK, 4);
+    table0->attach (*hbox1, 0, 1, 0, 1, Gtk::EXPAND|Gtk::FILL, Gtk::SHRINK, 0, 0);
+
+    // HSV
+    Gtk::HBox* hbox2 = Gtk::manage (new Gtk::HBox ()); // container
+    Gtk::Table* table2 = Gtk::manage (new Gtk::Table (3, 2));
+
+		table2->attach (*lH, 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
+		table2->attach (*H,  1, 2, 0, 1, Gtk::EXPAND|Gtk::FILL, Gtk::SHRINK, 0, 0);
+
+		table2->attach (*lS, 0, 1, 1, 2, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
+		table2->attach (*S,  1, 2, 1, 2, Gtk::EXPAND|Gtk::FILL, Gtk::SHRINK, 0, 0);
+
+		table2->attach (*lV, 0, 1, 2, 3, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
+		table2->attach (*V,  1, 2, 2, 3, Gtk::EXPAND|Gtk::FILL, Gtk::SHRINK, 0, 0);
+
+    hbox2->pack_start (*table2, Gtk::PACK_EXPAND_WIDGET, 4);
+    hbox2->pack_start (*Gtk::manage (new  Gtk::VSeparator()), Gtk::PACK_SHRINK, 4);
+    table0->attach (*hbox2, 1, 2, 0, 1, Gtk::EXPAND|Gtk::FILL, Gtk::SHRINK, 0, 0);
+
+    // LAB
+    Gtk::HBox* hbox3 = Gtk::manage (new Gtk::HBox ()); // container
+    Gtk::Table* table3 = Gtk::manage (new Gtk::Table (3, 2));
+
+		table3->attach (*lLAB_L, 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
+		table3->attach (*LAB_L,  1, 2, 0, 1, Gtk::EXPAND|Gtk::FILL, Gtk::SHRINK, 0, 0);
+
+		table3->attach (*lLAB_A, 0, 1, 1, 2, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
+		table3->attach (*LAB_A,  1, 2, 1, 2, Gtk::EXPAND|Gtk::FILL, Gtk::SHRINK, 0, 0);
+
+		table3->attach (*lLAB_B, 0, 1, 2, 3, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
+		table3->attach (*LAB_B,  1, 2, 2, 3, Gtk::EXPAND|Gtk::FILL, Gtk::SHRINK, 0, 0);
+
+    hbox3->pack_start (*table3, Gtk::PACK_EXPAND_WIDGET, 4);
+    hbox3->pack_start (*Gtk::manage (new  Gtk::HBox()), Gtk::PACK_SHRINK, 2);
+    table0->attach (*hbox3, 2, 3, 0, 1, Gtk::EXPAND|Gtk::FILL, Gtk::SHRINK, 0, 0);
+
+    table0->set_homogeneous(true); // all cells will be the same size as the largest cell.
+
+    mbox->pack_start (*table0, Gtk::PACK_EXPAND_WIDGET, 2);
 	add (*mbox);
 	
 	setInvalid ();
@@ -71,15 +175,15 @@ void Navigator::setInvalid (int fullWidth, int fullHeight) {
     else 
         position->set_text (M("NAVIGATOR_XY_NA"));
 
-	R->set_text (M("NAVIGATOR_R_NA"));
-	G->set_text (M("NAVIGATOR_G_NA"));
-	B->set_text (M("NAVIGATOR_B_NA"));
-	H->set_text (M("NAVIGATOR_H_NA"));
-	S->set_text (M("NAVIGATOR_S_NA"));
-	V->set_text (M("NAVIGATOR_V_NA"));
-	LAB_A->set_text (M("NAVIGATOR_LAB_A_NA"));
-	LAB_B->set_text (M("NAVIGATOR_LAB_B_NA"));
-	LAB_L->set_text (M("NAVIGATOR_LAB_L_NA"));
+	R->set_text (M("NAVIGATOR_NA"));
+	G->set_text (M("NAVIGATOR_NA"));
+	B->set_text (M("NAVIGATOR_NA"));
+	H->set_text (M("NAVIGATOR_NA"));
+	S->set_text (M("NAVIGATOR_NA"));
+	V->set_text (M("NAVIGATOR_NA"));
+	LAB_A->set_text (M("NAVIGATOR_NA"));
+	LAB_B->set_text (M("NAVIGATOR_NA"));
+	LAB_L->set_text (M("NAVIGATOR_NA"));
 }
 
 // if !validPos then x/y contain the full image size
@@ -89,21 +193,23 @@ void Navigator::pointerMoved (bool validPos, Glib::ustring profile, int x, int y
 		setInvalid (x,y);
 	else {
 		position->set_text (Glib::ustring::compose ("x = %1, y = %2", x, y));
-		R->set_text (Glib::ustring::compose (M("NAVIGATOR_R_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), r*100.f/255.f) + Glib::ustring("%")));
-		G->set_text (Glib::ustring::compose (M("NAVIGATOR_G_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), g*100.f/255.f) + Glib::ustring("%")));
-		B->set_text (Glib::ustring::compose (M("NAVIGATOR_B_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), b*100.f/255.f) + Glib::ustring("%")));
+
+		R->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), r*100.f/255.f) + Glib::ustring("%"));
+		G->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), g*100.f/255.f) + Glib::ustring("%"));
+		B->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), b*100.f/255.f) + Glib::ustring("%"));
+
 		float h, s, v;
 		Color::rgb2hsv (r*0xffff/0xff, g*0xffff/0xff, b*0xffff/0xff, h, s, v);
-		H->set_text (Glib::ustring::compose (M("NAVIGATOR_H_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), h*360.f) + Glib::ustring("\xc2\xb0")));
-		S->set_text (Glib::ustring::compose (M("NAVIGATOR_S_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), s*100.f) + Glib::ustring("%")));
-		V->set_text (Glib::ustring::compose (M("NAVIGATOR_V_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), v*100.f) + Glib::ustring("%")));
+		H->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), h*360.f) + Glib::ustring("\xc2\xb0"));
+		S->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), s*100.f) + Glib::ustring("%"));
+		V->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), v*100.f) + Glib::ustring("%"));
+
 		float LAB_a, LAB_b, LAB_l;
 		//rgb2lab (r, g, b, LAB_l, LAB_a, LAB_b);
-		rgb2lab (profile, r, g, b, LAB_l, LAB_a, LAB_b);  // TODO: Really sure this function works?
-		
-		LAB_A->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_A_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), LAB_a)));
-		LAB_B->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_B_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), LAB_b)));
-		LAB_L->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_L_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), LAB_l)));
+		rgb2lab (profile, r, g, b, LAB_l, LAB_a, LAB_b);  // TODO: Really sure this function works?		
+		LAB_A->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), LAB_a));
+		LAB_B->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), LAB_b));
+		LAB_L->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), LAB_l));
 	}
 }
 
