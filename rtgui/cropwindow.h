@@ -120,6 +120,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener, public E
         void getPosition (int& x, int& y);
         void setSize     (int w, int h, bool norefresh=false);
         void getSize     (int& w, int& h);
+        void enable      ();
 
         void leaveNotify (GdkEventCrossing* event);
         void flawnOver   (bool isFlawnOver);

@@ -93,6 +93,7 @@ void ImageArea::on_resized (Gtk::Allocation& req) {
 			mainCropWindow->setPointerMotionHListener (pmhlistener);
 			mainCropWindow->setPosition (0, 0);
 			mainCropWindow->setSize (get_width(), get_height(), false);  // this execute the refresh itself
+			mainCropWindow->enable();  // start processing !
 		}
 		else {
 			mainCropWindow->setSize (get_width(), get_height());
@@ -386,6 +387,9 @@ void ImageArea::addCropWindow () {
         cw->setPosition (lastClosedX, lastClosedY);
         lastClosedX = -1;
     }
+
+    cw->enable(); // start processing!
+
     int x0,y0,w,h,wc,hc;
     mainCropWindow->getCropRectangle(x0,y0,w,h );
     cw->getCropSize(wc,hc);

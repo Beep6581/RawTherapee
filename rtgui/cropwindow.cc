@@ -108,9 +108,12 @@ CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_,
 
     cropHandler.setCropHandlerListener (this);
     cropHandler.newImage (ipc_);
-    cropHandler.setEnabled (true);
 
     state = SNormal;
+}
+
+void CropWindow::enable() {
+    cropHandler.setEnabled (true);
 }
 
 void CropWindow::setPosition (int x, int y) {

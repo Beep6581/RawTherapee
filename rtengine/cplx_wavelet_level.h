@@ -298,8 +298,8 @@ namespace rtengine {
 			dstLo[(pitch*(i))] = 0.5*(srcbuffer[i] + srcbuffer[i+skip]);
 			dstHi[(pitch*(i))] = 0.5*(srcbuffer[i] - srcbuffer[i+skip]);
 		}
-		
-		for(size_t i = (srclen-skip); i < (srclen); i++) {
+		// Start the loop at max(srclen-skip,skip) to avoid buffer underrun
+		for(size_t i = max(srclen-skip,skip); i < (srclen); i++) {
 			dstLo[(pitch*(i))] = 0.5*(srcbuffer[i] + srcbuffer[i-skip]);
 			dstHi[(pitch*(i))] = 0.5*(srcbuffer[i] - srcbuffer[i-skip]);
 		}
