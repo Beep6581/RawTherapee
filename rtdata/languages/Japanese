@@ -14,6 +14,7 @@
 #14 2014-01-15 firefly
 #15 2014-02-25 firefly
 #16 2014-04-07 firefly
+#17 2014-04-08 firefly
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -614,6 +615,7 @@ NAVIGATOR_LAB_B_NA;b = n/a
 NAVIGATOR_LAB_B_VALUE;b = %1
 NAVIGATOR_LAB_L_NA;L = n/a
 NAVIGATOR_LAB_L_VALUE;L = %1
+NAVIGATOR_NA; --
 NAVIGATOR_R_NA;R = n/a
 NAVIGATOR_R_VALUE;R = %1
 NAVIGATOR_S_NA;S = n/a
@@ -1106,7 +1108,7 @@ TP_DIRPYREQUALIZER_GAMUT;アーティファクトを軽減
 TP_DIRPYREQUALIZER_HUESKIN;肌色の色相
 TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;このカーブは上部ほど、アルゴリズムが効率良く働くことを示しています。\n下部ほど、色相の遷移が見られる部分です。\nコントロールポイントを左右に大きく動かす必要が生じたり、アーティファクトが生じたりする場合は、<b>ホワイトバランスが妥当ではない</b>時です。\n他の色への影響を避けるには、調整範囲を少し減らします
 TP_DIRPYREQUALIZER_LABEL;ディテールレベルのコントラスト
-TP_DIRPYREQUALIZER_LUMACONTRAST;粗い
+TP_DIRPYREQUALIZER_LUMACOARSEST;粗い
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;コントラスト-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;コントラスト+
 TP_DIRPYREQUALIZER_LUMAFINEST;細かい
@@ -1440,8 +1442,3 @@ ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる\nショートカット: <b>f</b>
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
