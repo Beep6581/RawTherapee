@@ -81,28 +81,43 @@ Navigator::Navigator () {
 	LAB_L->set_alignment(Gtk::ALIGN_RIGHT);
 
 	// set font family and size
-/*	R->modify_font(Pango::FontDescription("monospace 8"));
-	G->modify_font(Pango::FontDescription("monospace 8"));
-	B->modify_font(Pango::FontDescription("monospace 8"));
-	H->modify_font(Pango::FontDescription("monospace 8"));
-	S->modify_font(Pango::FontDescription("monospace 8"));
-	V->modify_font(Pango::FontDescription("monospace 8"));
-	LAB_A->modify_font(Pango::FontDescription("monospace 8"));
-	LAB_B->modify_font(Pango::FontDescription("monospace 8"));
-	LAB_L->modify_font(Pango::FontDescription("monospace 8"));
+	Glib::ustring fontname;
 
-	lR->modify_font(Pango::FontDescription("monospace 8"));
-	lG->modify_font(Pango::FontDescription("monospace 8"));
-	lB->modify_font(Pango::FontDescription("monospace 8"));
-	lH->modify_font(Pango::FontDescription("monospace 8"));
-	lS->modify_font(Pango::FontDescription("monospace 8"));
-	lV->modify_font(Pango::FontDescription("monospace 8"));
-	lLAB_A->modify_font(Pango::FontDescription("monospace 8"));
-	lLAB_B->modify_font(Pango::FontDescription("monospace 8"));
-	lLAB_L->modify_font(Pango::FontDescription("monospace 8"));
+#ifdef WIN32
+	fontname = "Lucida Sans Typewriter";
+#endif
 
-    position->modify_font(Pango::FontDescription("monospace 8"));
-*/
+#ifdef __linux__
+	fontname = "DejaVu Sans Mono";
+#endif
+
+#ifdef __APPLE__
+	fontname="Menlo";
+#endif
+
+	if (fontname!=""){
+		R->modify_font(Pango::FontDescription(fontname));
+		G->modify_font(Pango::FontDescription(fontname));
+		B->modify_font(Pango::FontDescription(fontname));
+		H->modify_font(Pango::FontDescription(fontname));
+		S->modify_font(Pango::FontDescription(fontname));
+		V->modify_font(Pango::FontDescription(fontname));
+		LAB_A->modify_font(Pango::FontDescription(fontname));
+		LAB_B->modify_font(Pango::FontDescription(fontname));
+		LAB_L->modify_font(Pango::FontDescription(fontname));
+
+		lR->modify_font(Pango::FontDescription(fontname));
+		lG->modify_font(Pango::FontDescription(fontname));
+		lB->modify_font(Pango::FontDescription(fontname));
+		lH->modify_font(Pango::FontDescription(fontname));
+		lS->modify_font(Pango::FontDescription(fontname));
+		lV->modify_font(Pango::FontDescription(fontname));
+		lLAB_A->modify_font(Pango::FontDescription(fontname));
+		lLAB_B->modify_font(Pango::FontDescription(fontname));
+		lLAB_L->modify_font(Pango::FontDescription(fontname));
+
+		position->modify_font(Pango::FontDescription(fontname));
+	}
 
     // setup the tables
 	Gtk::Table* table0 = Gtk::manage (new Gtk::Table (1, 3)); //rows, cols The main table container
@@ -192,7 +207,7 @@ void Navigator::pointerMoved (bool validPos, Glib::ustring profile, int x, int y
 	if (!validPos)
 		setInvalid (x,y);
 	else {
-		position->set_text (Glib::ustring::compose ("x = %1, y = %2", x, y));
+		position->set_text (Glib::ustring::compose ("x: %1, y: %2", x, y));
 
 		R->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), r*100.f/255.f) + Glib::ustring("%"));
 		G->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), g*100.f/255.f) + Glib::ustring("%"));
