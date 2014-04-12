@@ -38,10 +38,10 @@ void PreviewWindow::getObservedFrameArea (int& x, int& y, int& w, int& h) {
         int cropX, cropY, cropW, cropH;
         mainCropWin->getCropRectangle (cropX, cropY, cropW, cropH);
         // translate it to screen coordinates
-        x = imgX + cropX*zoom;
-        y = imgY + cropY*zoom;
-        w = cropW * zoom;
-        h = cropH * zoom;
+        x = imgX + round(cropX*zoom);
+        y = imgY + round(cropY*zoom);
+        w = round(cropW * zoom);
+        h = round(cropH * zoom);
     }
 }
 
@@ -105,13 +105,20 @@ bool PreviewWindow::on_expose_event (GdkEventExpose* event) {
 				Cairo::RefPtr<Cairo::Context> cr = get_window()->create_cairo_context();
 				int x, y, w, h;
 				getObservedFrameArea (x, y, w, h);
-				cr->set_source_rgb (1.0, 1.0, 1.0);
-				cr->set_line_width (3);
-				cr->rectangle (x-1.5, y-1.5, w+2, h+2);
-				cr->stroke ();
-				cr->set_source_rgb (1.0, 0.0, 0.0);
+				double rectX = x + 0.5;
+				double rectY = y + 0.5;
+				double rectW = std::min(w, (int)(imgW - (x-imgX) - 1));
+				double rectH = std::min(h, (int)(imgH - (y-imgY) - 1));
+
+				// draw a black "shadow" line
+				cr->set_source_rgba (0.0, 0.0, 0.0, 0.65);
 				cr->set_line_width (1);
-				cr->rectangle (x-1.5, y-1.5, w+2, h+2);
+				cr->rectangle (rectX+1., rectY+1, rectW, rectH);
+				cr->stroke ();
+
+				// draw a "frame" line. Color of frame line can be set in preferences
+				cr->set_source_rgba(options.navGuideBrush[0], options.navGuideBrush[1], options.navGuideBrush[2], options.navGuideBrush[3]); //( 1.0, 1.0, 1.0, 1.0);
+				cr->rectangle (rectX, rectY, rectW, rectH);
 				cr->stroke ();
 			}
         }
@@ -153,17 +160,19 @@ bool PreviewWindow::on_motion_notify_event (GdkEventMotion* event) {
     if (!mainCropWin)
 		return true;
 
-	int x, y, w, h;
-	getObservedFrameArea (x, y, w, h);
-	bool inside = event->x > x-6 && event->x < x+w-1+6 && event->y > y-6 && event->y < y+h-1+6;
-	bool moreInside = event->x > x+6 && event->x < x+w-1-6 && event->y > y+6 && event->y < y+h-1-6;    
+	if(mainCropWin->getZoom() > mainCropWin->cropHandler.getFitZoom()) {
+		int x, y, w, h;
+		getObservedFrameArea (x, y, w, h);
+		bool inside = event->x > x-6 && event->x < x+w-1+6 && event->y > y-6 && event->y < y+h-1+6;
+		bool moreInside = event->x > x+6 && event->x < x+w-1-6 && event->y > y+6 && event->y < y+h-1-6;    
 
-	if (isMoving) 
-        mainCropWin->remoteMove ((event->x - press_x)/zoom, (event->y - press_y)/zoom);
-	else if (inside && !moreInside)
-        cursorManager.setCursor (get_window(), CSClosedHand);
-	else
-        cursorManager.setCursor (get_window(), CSArrow);
+		if (isMoving) 
+			mainCropWin->remoteMove ((event->x - press_x)/zoom, (event->y - press_y)/zoom);
+		else if (inside && !moreInside)
+			cursorManager.setCursor (get_window(), CSClosedHand);
+		else
+			cursorManager.setCursor (get_window(), CSArrow);
+	}
 	return true;
 }
 
@@ -172,23 +181,25 @@ bool PreviewWindow::on_button_press_event (GdkEventButton* event) {
     if (!mainCropWin)
 		return true;
 
-	int x, y, w, h;
-	getObservedFrameArea (x, y, w, h);
-	bool inside = event->x > x-6 && event->x < x+w-1+6 && event->y > y-6 && event->y < y+h-1+6;
-	bool moreInside = event->x > x+6 && event->x < x+w-1-6 && event->y > y+6 && event->y < y+h-1-6;    
+	if(mainCropWin->getZoom() > mainCropWin->cropHandler.getFitZoom()) {
+		int x, y, w, h;
+		getObservedFrameArea (x, y, w, h);
+		bool inside = event->x > x-6 && event->x < x+w-1+6 && event->y > y-6 && event->y < y+h-1+6;
+		bool moreInside = event->x > x+6 && event->x < x+w-1-6 && event->y > y+6 && event->y < y+h-1-6;    
 
-	if (!isMoving) {
-		isMoving = true;
-        if (!inside || moreInside) {
-            mainCropWin->remoteMove ((event->x - (x+w/2))/zoom, (event->y - (y+h/2))/zoom);
-    		press_x = x+w/2;
-    		press_y = y+h/2;
-    	}
-    	else {
-    		press_x = event->x;
-    		press_y = event->y;
-    	}
-        cursorManager.setCursor (get_window(), CSClosedHand);
+		if (!isMoving) {
+			isMoving = true;
+			if (!inside || moreInside) {
+				mainCropWin->remoteMove ((event->x - (x+w/2))/zoom, (event->y - (y+h/2))/zoom);
+				press_x = x+w/2;
+				press_y = y+h/2;
+			}
+			else {
+				press_x = event->x;
+				press_y = event->y;
+			}
+			cursorManager.setCursor (get_window(), CSClosedHand);
+		}
 	}
 	return true;
 }

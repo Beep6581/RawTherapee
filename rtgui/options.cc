@@ -395,6 +395,13 @@ void Options::setDefaults () {
     cutOverlayBrush = std::vector<double> (4);
     cutOverlayBrush[3] = 0.667;  // :-p
 
+    navGuideBrush = std::vector<double> (4);
+    //default to red
+    navGuideBrush[0] = 1.0;
+    navGuideBrush[1] = 0.0;
+    navGuideBrush[2] = 0.0;
+    navGuideBrush[3] = 1.0;
+
     sndEnable=true;
     sndLngEditProcDoneSecs=3.0;
 #ifdef __linux__
@@ -722,6 +729,7 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "MultiDisplayMode"))    multiDisplayMode  = keyFile.get_integer ("GUI", "MultiDisplayMode");
     //if (keyFile.has_key ("GUI", "CurvePanelsExpanded")) crvOpen           = keyFile.get_integer_list ("GUI", "CurvePanelsExpanded");
     if (keyFile.has_key ("GUI", "CutOverlayBrush"))     cutOverlayBrush     = keyFile.get_double_list ("GUI", "CutOverlayBrush");
+    if (keyFile.has_key ("GUI", "NavGuideBrush"))       navGuideBrush       = keyFile.get_double_list ("GUI", "NavGuideBrush");
     if (keyFile.has_key ("GUI", "HistogramPosition"))   histogramPosition   = keyFile.get_integer ("GUI", "HistogramPosition");
     if (keyFile.has_key ("GUI", "HistogramBar"))        histogramBar        = keyFile.get_boolean ("GUI", "HistogramBar");
     if (keyFile.has_key ("GUI", "HistogramFullMode"))   histogramFullMode   = keyFile.get_boolean ("GUI", "HistogramFullMode");
@@ -1009,6 +1017,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer_list ("GUI", "ToolPanelsExpanded", tpopen);
     keyFile.set_integer ("GUI", "MultiDisplayMode", multiDisplayMode);
     keyFile.set_double_list ("GUI", "CutOverlayBrush", cutOverlayBrush);
+    keyFile.set_double_list ("GUI", "NavGuideBrush", navGuideBrush);
     keyFile.set_integer ("GUI", "HistogramPosition", histogramPosition);
     keyFile.set_boolean ("GUI", "HistogramBar", histogramBar);
     keyFile.set_boolean ("GUI", "HistogramFullMode", histogramFullMode);

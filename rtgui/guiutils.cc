@@ -126,7 +126,7 @@ void writeFailed (Gtk::Window& parent, const std::string& filename) {
     msgd.run ();
 }
 
-void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams) {
+void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams, bool drawGuide) {
 
     cr->set_line_width (0.);
     cr->rectangle (imx, imy, imw, imh);
@@ -153,7 +153,7 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
     cr->fill ();
 
     // rectangle around the cropped area and guides
-    if (cparams.guide!="None") {
+    if (cparams.guide!="None" && drawGuide) {
         double rectx1 = round(c1x) + imx + 0.5;
         double recty1 = round(c1y) + imy + 0.5;
         double rectx2 = min(round(c2x) + imx + 0.5, imx+imw-0.5);
