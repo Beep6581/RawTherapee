@@ -83,12 +83,11 @@ CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_,
     
     titleHeight = ih;
        
-    resizeSurface = safe_create_from_png ("resize.png");
-    bZoomIn  = new LWButton (safe_create_from_png ("gtk-zoom-in.png"),  0, NULL, LWButton::Left, LWButton::Center, "Zoom In");
-    bZoomOut = new LWButton (safe_create_from_png ("gtk-zoom-out.png"), 1, NULL, LWButton::Left, LWButton::Center, "Zoom Out");
-    bZoom100 = new LWButton (safe_create_from_png ("gtk-zoom-100.png"), 2, NULL, LWButton::Left, LWButton::Center, "Zoom 100/%");
+    bZoomIn  = new LWButton (safe_create_from_png ("gtk-zoom-in-small.png"),  0, NULL, LWButton::Left, LWButton::Center, "Zoom In");
+    bZoomOut = new LWButton (safe_create_from_png ("gtk-zoom-out-small.png"), 1, NULL, LWButton::Left, LWButton::Center, "Zoom Out");
+    bZoom100 = new LWButton (safe_create_from_png ("gtk-zoom-100-small.png"), 2, NULL, LWButton::Left, LWButton::Center, "Zoom 100/%");
     //bZoomFit = new LWButton (safe_create_from_png ("gtk-zoom-fit.png"), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
-    bClose   = new LWButton (safe_create_from_png ("gtk-close.png"),    4, NULL, LWButton::Right, LWButton::Center, "Close");
+    bClose   = new LWButton (safe_create_from_png ("gtk-close-small.png"),    4, NULL, LWButton::Right, LWButton::Center, "Close");
     
     buttonSet.add (bZoomIn);
     buttonSet.add (bZoomOut);
@@ -1254,7 +1253,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
             if (cropHandler.cropParams.enabled) {
                 int cropX, cropY;
                 cropHandler.getPosition (cropX, cropY);
-                drawCrop (cr, x+imgX, y+imgY, imgW, imgH, cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams);
+                drawCrop (cr, x+imgX, y+imgY, imgW, imgH, cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams,(this == iarea->mainCropWindow));
             }
             if (observedCropWin)
                 drawObservedFrame (cr);
@@ -1359,7 +1358,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
             if (rough) {
                 iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), rough, 0, 0, x+imgAreaX+(imgAreaW-rough->get_width())/2, y+imgAreaY+(imgAreaH-rough->get_height())/2, -1, -1, Gdk::RGB_DITHER_NORMAL, 0, 0);  
                 if (cropHandler.cropParams.enabled) {
-                    drawCrop (cr, x+imgAreaX+(imgAreaW-rough->get_width())/2, y+imgAreaY+(imgAreaH-rough->get_height())/2, rough->get_width(), rough->get_height(), cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams);
+                    drawCrop (cr, x+imgAreaX+(imgAreaW-rough->get_width())/2, y+imgAreaY+(imgAreaH-rough->get_height())/2, rough->get_width(), rough->get_height(), cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams, (this == iarea->mainCropWindow));
                 }
                 if (observedCropWin)
                     drawObservedFrame (cr, rough->get_width(), rough->get_height());
@@ -1367,22 +1366,6 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
         }
     }
 
-    // if cursor stays above resize area, draw the icon
-    if (decorated && (state==SCropWinResize || onResizeArea)) {
-        int rw = resizeSurface->get_width ();
-        int rh = resizeSurface->get_height ();
-        cr->set_source_rgb (0.5,0.5,0.5);
-        cr->rectangle (x+w-1.5-rw-1, y+h-1.5-rh-1, rw+1, rh+1);
-        cr->stroke_preserve ();
-        cr->fill ();
-        cr->set_source (resizeSurface, x+w-1.5-rw, y+h-1.5-rh);
-        cr->paint ();
-        cr->set_source_rgb (0,0,0);
-        cr->move_to (x+w-2.5-rw, y+h-1.5);
-        cr->line_to (x+w-2.5-rw, y+h-2.5-rh);
-        cr->line_to (x+w-1.5, y+h-2.5-rh);
-        cr->stroke ();
-    }
     if (state==SRotateSelecting) 
         drawStraightenGuide (cr);
     if (state==SNormal && isFlawnOver) {
@@ -1655,51 +1638,35 @@ double CropWindow::scaleValueToScreen (double value) {
 
 void CropWindow::drawDecoration (Cairo::RefPtr<Cairo::Context> cr) {
 
-    int x = xpos, y = ypos;
-    // prepare label
-    Glib::RefPtr<Pango::Context> context = iarea->get_pango_context () ;
-    Pango::FontDescription fontd = context->get_font_description ();       
-    fontd.set_weight (Pango::WEIGHT_BOLD);
-    fontd.set_size(8*Pango::SCALE);
-    context->set_font_description (fontd);
-    Glib::RefPtr<Pango::Layout> cllayout = iarea->create_pango_layout(cropLabel);
-    int iw, ih;
-    cllayout->get_pixel_size (iw, ih);  
+	int x = xpos, y = ypos;
+	// prepare label
+	Glib::RefPtr<Pango::Context> context = iarea->get_pango_context () ;
+	Pango::FontDescription fontd = context->get_font_description ();       
+	fontd.set_weight (Pango::WEIGHT_BOLD);
+	fontd.set_size(8*Pango::SCALE);
+	context->set_font_description (fontd);
+	Glib::RefPtr<Pango::Layout> cllayout = iarea->create_pango_layout(cropLabel);
+	int iw, ih;
+	cllayout->get_pixel_size (iw, ih);  
 
-    // draw decoration (border)
-    int h = height, w = width;
-    cr->set_source_rgb (0,0,0);
-    cr->set_line_width (1.0);
-    cr->move_to (x+0.5, y+h-0.5);
-    cr->line_to (x+0.5, y+0.5);
-    cr->line_to (x+w-0.5, y+0.5);
-    cr->stroke ();
-    cr->set_source_rgb (1,1,1);
-    cr->move_to (x+w-0.5, y+0.5);
-    cr->line_to (x+w-0.5, y+h-0.5);
-    cr->line_to (x+0.5, y+h-0.5);
-    cr->stroke ();
-    cr->set_source_rgb (0.5,0.5,0.5);
-    cr->rectangle (x+1.5, y+1.5+titleHeight, w-3, h-titleHeight-3);
-    cr->stroke ();
-    cr->set_source_rgb (1,1,1);
-    cr->move_to (x+2.5, y+h-2.5);
-    cr->line_to (x+2.5, y+titleHeight+2.5);
-    cr->line_to (x+w-2.5, y+titleHeight+2.5);
-    cr->stroke ();
-    cr->set_source_rgb (0,0,0);
-    cr->move_to (x+w-2.5, y+titleHeight+2.5);
-    cr->line_to (x+w-2.5, y+h-2.5);
-    cr->line_to (x+2.5, y+h-2.5);
-    cr->stroke ();
-    cr->set_source_rgb (0.5,0.5,0.5);
-    cr->rectangle (x+1.5, y+1.5, w-3, titleHeight);
+	// draw decoration (border)
+	int h = height, w = width;
+
+	cr->set_source_rgb (0.1,0.1,0.1);
+	cr->set_line_width (1.0);
+	cr->move_to (x+2.5, y+titleHeight+2.5 );
+	cr->line_to (x+2.5, y+h-2.5);
+	cr->line_to (x+w-2.5, y+h-2.5);
+	cr->line_to (x+w-2.5, y+titleHeight+2.5 );
+
+    cr->set_source_rgba (0.0,0.0,0.0,0.5);
+    cr->rectangle (x+2.5, y+0.5, w-5, titleHeight+2);
     cr->stroke_preserve ();
     cr->fill ();
     
     // draw label
-    cr->set_source_rgb (1,1,1);
-    cr->move_to (x+6+sideBorderWidth+bZoomIn->getIcon()->get_width()+bZoomOut->getIcon()->get_width()+bZoom100->getIcon()->get_width(), y+upperBorderWidth+(titleHeight-ih)/2);
+    cr->set_source_rgba (1,1,1,0.5);
+    cr->move_to (x+10+sideBorderWidth+bZoomIn->getIcon()->get_width()+bZoomOut->getIcon()->get_width()+bZoom100->getIcon()->get_width(), y+1+upperBorderWidth+(titleHeight-ih)/2);
     cllayout->add_to_cairo_context (cr);
     cr->fill ();
 
@@ -1852,13 +1819,15 @@ void CropWindow::drawObservedFrame (Cairo::RefPtr<Cairo::Context> cr, int rw, in
     int x, y, w, h;
     getObservedFrameArea (x, y, w, h, rw, rh);
 
-    cr->set_source_rgb (1.0, 1.0, 1.0);
-    cr->set_line_width (4);
-    cr->rectangle (x-2, y-2, w+4, h+4);
+    // draw a black "shadow" line
+    cr->set_source_rgba( 0, 0, 0, 0.65);
+    cr->set_line_width (1);
+    cr->rectangle (x-0.5, y-0.5, w+4, h+4);
     cr->stroke ();
-    cr->set_source_rgb (1.0, 0.0, 0.0);
-    cr->set_line_width (2);
-    cr->rectangle (x-2, y-2, w+4, h+4);
+
+    // draw a "frame" line. Color of frame line can be set in preferences
+    cr->set_source_rgba(options.navGuideBrush[0], options.navGuideBrush[1], options.navGuideBrush[2], options.navGuideBrush[3]); //( 1, 1, 1, 1.0);
+    cr->rectangle (x-1.5, y-1.5, w+4, h+4);
     cr->stroke ();
 }
 

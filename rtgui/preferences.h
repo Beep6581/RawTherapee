@@ -101,6 +101,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
     Gtk::CheckButton* chUseSystemTheme;
     Gtk::FontButton* fontbutton;
     Gtk::ColorButton* butCropCol;
+    Gtk::ColorButton* butNavGuideCol;
 	
     Gtk::SpinButton*   maxThumbSize;
     Gtk::SpinButton*   maxCacheEntries;

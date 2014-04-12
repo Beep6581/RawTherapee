@@ -668,8 +668,14 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     butCropCol= Gtk::manage( new Gtk::ColorButton() );
     butCropCol->set_use_alpha(true);
 
+    Gtk::Label* navGuideLabel = Gtk::manage( new Gtk::Label (M("PREFERENCES_NAVGUIDEBRUSH") + ":") );
+    butNavGuideCol= Gtk::manage( new Gtk::ColorButton() );
+    butNavGuideCol->set_use_alpha(true);
+
     hbUseSystemTheme->pack_start(*chUseSystemTheme, Gtk::PACK_SHRINK);
     hbUseSystemTheme->pack_start (*useNextStart, Gtk::PACK_SHRINK, 0);
+    hbUseSystemTheme->pack_end (*butNavGuideCol, Gtk::PACK_SHRINK, 0);
+    hbUseSystemTheme->pack_end (*navGuideLabel, Gtk::PACK_SHRINK, 0);
     hbUseSystemTheme->pack_end (*butCropCol, Gtk::PACK_SHRINK, 0);
     hbUseSystemTheme->pack_end (*cutOverlayLabel, Gtk::PACK_SHRINK, 0);
     vbftheme->pack_start(*hbUseSystemTheme, Gtk::PACK_SHRINK, 0);
@@ -1125,6 +1131,12 @@ void Preferences::storePreferences () {
     moptions.cutOverlayBrush[2]=cropCol.get_blue_p();
     moptions.cutOverlayBrush[3]=butCropCol->get_alpha()/65535.0;
 
+    Gdk::Color NavGuideCol=butNavGuideCol->get_color();
+    moptions.navGuideBrush[0]=NavGuideCol.get_red_p();
+    moptions.navGuideBrush[1]=NavGuideCol.get_green_p();
+    moptions.navGuideBrush[2]=NavGuideCol.get_blue_p();
+    moptions.navGuideBrush[3]=butNavGuideCol->get_alpha()/65535.0;
+
     moptions.font            = fontbutton->get_font_name();
 #ifdef WIN32    
     moptions.gimpDir        = gimpDir->get_filename ();
@@ -1261,6 +1273,11 @@ void Preferences::fillPreferences () {
     cropCol.set_rgb_p(moptions.cutOverlayBrush[0],moptions.cutOverlayBrush[1],moptions.cutOverlayBrush[2]);
     butCropCol->set_color(cropCol);
     butCropCol->set_alpha ( (unsigned short)(moptions.cutOverlayBrush[3]*65535.0));
+
+    Gdk::Color NavGuideCol;
+    NavGuideCol.set_rgb_p(moptions.navGuideBrush[0],moptions.navGuideBrush[1],moptions.navGuideBrush[2]);
+    butNavGuideCol->set_color(NavGuideCol);
+    butNavGuideCol->set_alpha ( (unsigned short)(moptions.navGuideBrush[3]*65535.0));
 
     fontbutton->set_font_name(moptions.font);
     showDateTime->set_active (moptions.fbShowDateTime);

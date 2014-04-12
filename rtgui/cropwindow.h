@@ -54,7 +54,6 @@ class CropWindow : public LWButtonListener, public CropHandlerListener, public E
         bool isLowUpdatePriority;
 
         // decoration
-        Cairo::RefPtr<Cairo::ImageSurface> resizeSurface;
         LWButton *bZoomIn, *bZoomOut, *bZoom100, /**bZoomFit,*/ *bClose;
         LWButtonSet buttonSet;
         Glib::ustring cropLabel;
