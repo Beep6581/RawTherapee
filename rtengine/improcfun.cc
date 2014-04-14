@@ -3228,8 +3228,9 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 	LUTf dLcurve;
 
 	LUTu hist16Clad;
-	LUTu hist16CLlad;
-	LUTu hist16LLClad;
+//	LUTu hist16CLlad;
+//	LUTu hist16LLClad;
+	LUTu hist16Llad;
 
 	bool chrop=false;
 	float val;
@@ -3238,21 +3239,28 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 		dCcurve(65536,0);
 		dLcurve(65536,0);
 		hist16Clad(65536);
-		hist16CLlad(65536);
-		hist16LLClad(65536);
+//		hist16CLlad(65536);
+//		hist16LLClad(65536);
+		hist16Llad(65536);
+		
 		chrop = true;
 		for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
 			val = (double)i / 47999.0;
 			dCcurve[i] = CLIPD(val);
 		}
+	//	for (int i=0; i<65535; i++) {  //  a
+	//		val = (double)i / 65534.0;
+	//		dLcurve[i] = CLIPD(val);
+	//	}
 		for (int i=0; i<65535; i++) {  //  a
 			val = (double)i / 65534.0;
 			dLcurve[i] = CLIPD(val);
 		}
 
 		hist16Clad.clear();
-		hist16CLlad.clear();
-		hist16LLClad.clear();
+	//	hist16CLlad.clear();
+	//	hist16LLClad.clear();
+		hist16Llad.clear();
 
 	}
 #ifdef _DEBUG
@@ -3276,6 +3284,7 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 	else if (params->icm.working=="BestRGB")    {adjustr =       adjustbg = 1.4f;}
 	else if (params->icm.working=="BruceRGB")   {adjustr = 1.8f; adjustbg = 1.5f;}
 
+	//adjustr=1.f;
 
 	// reference to the params structure has to be done outside of the parallelization to avoid CPU cache problem
 	bool highlight = params->toneCurve.hrenabled; //Get the value if "highlight reconstruction" is activated
@@ -3361,13 +3370,20 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 			float Lin=lold->L[i][j];
 			float Lprov2=Lin/327.68f;
 
-			if (editID == EUID_Lab_LCurve)
-				editWhatever->v(i,j) = LIM01<float>(Lin/32768.0f);
+			if (editID == EUID_Lab_LCurve) 
+				editWhatever->v(i,j) = LIM01<float>(Lin/32768.0f);// Lab L pipette
 
 			lnew->L[i][j] = curve[Lin];
 
 			float Lprov1=(lnew->L[i][j])/327.68f;
 			float chromaChfactor=1.0f;
+			if (editID == EUID_Lab_aCurve){
+					float chromapipa =lold->a[i][j]+(32768.f*1.28f);
+					editWhatever->v(i,j) = LIM01<float>((chromapipa)/(65536.f*1.28f));}// Lab a pipette
+			if (editID == EUID_Lab_bCurve){
+					float chromapipb =lold->b[i][j]+(32768.f*1.28f);
+					editWhatever->v(i,j) = LIM01<float>((chromapipb)/(65536.f*1.28f));}//Lab b pipette
+			
 			float atmp = acurve[lold->a[i][j]+32768.0f]-32768.0f;// curves Lab a
 			float btmp = bcurve[lold->b[i][j]+32768.0f]-32768.0f;// curves Lab b
 			float Chprov2=Chprov1;
@@ -3375,6 +3391,13 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 			bool inRGB;
 			const float ClipLevel = 65535.0f;
 
+			if (editID == 	EUID_Lab_LHCurve || editID == 	EUID_Lab_CHCurve || editID == 	EUID_Lab_HHCurve) {//H pipette
+						float valpar =Color::huelab_to_huehsv2(HH);
+						editWhatever->v(i,j) = valpar;
+					}
+			
+			
+			
 			if (lhutili) {  // L=f(H)
 				float l_r;//Luminance Lab in 0..1
 				l_r = Lprov1/100.f;	
@@ -3457,7 +3480,7 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 			else if(Lprov1<75.0f)   dred = -3.0f*Lprov1 +265.0f;
 			else                    dred = 40.0f;
 			// end pyramid
-			if(params->dirpyrDenoise.enabled && chromaticity ==0) chromaticity = 0.5f;
+	//		if(params->dirpyrDenoise.enabled && chromaticity ==0) chromaticity = 0.5f;
 				
 			if(!bwToning){
 				float factorskin, factorsat, factor, factorskinext, interm;
@@ -3503,6 +3526,8 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 				Color::transitred ( HH, Chprov1, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);
 				atmp *= factor;
 				btmp *= factor;
+			if (editID == EUID_Lab_CLCurve) 
+				editWhatever->v(i,j) = LIM01<float>(Lprov2/100.f);// Lab C=f(L) pipette
 
 				if (clut) { // begin C=f(L)
 					float factorskin,factorsat,factor,factorskinext,interm;
@@ -3540,8 +3565,14 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 					btmp *= factor;
 				}
 				// end C=f(L)
+		//	if (editID == EUID_Lab_CLCurve) 
+		//		editWhatever->v(i,j) = LIM01<float>(Lprov2/100.f);// Lab C=f(L) pipette
 
 				// I have placed C=f(C) after all C treatments to assure maximum amplitude of "C"
+				if (editID == EUID_Lab_CCurve){
+					float chromapip = sqrt(SQR(atmp)+SQR(btmp)+0.001f);
+					editWhatever->v(i,j) = LIM01<float>((chromapip)/(48000.f));}//Lab C=f(C) pipette
+				
 				if (ccut) {
 					float factorskin,factorsat,factor,factorskinext,interm;
 					float chroma = sqrt(SQR(atmp)+SQR(btmp)+0.001f);
@@ -3579,6 +3610,10 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 					atmp *= factor;
 					btmp *= factor;
 				}
+		//		if (editID == EUID_Lab_CCurve){
+		//			float chromapip = sqrt(SQR(atmp)+SQR(btmp)+0.001f);
+		//			editWhatever->v(i,j) = LIM01<float>((chromapip)/(48000.f));}//Lab C=f(C) pipette
+				
 			}
 			// end chroma C=f(C)
 
@@ -3586,9 +3621,16 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 			if(pW!=1){//only with improccoordinator
 				posp=CLIP((int)sqrt((atmp*atmp + btmp*btmp)));
 				hist16Clad[posp]++;
-				hist16CLlad[posp]++;
+			//	hist16CLlad[posp]++;
+			//	hist16LLClad[posp]++;
+				
 			}
 
+				if (editID == EUID_Lab_LCCurve){
+					float chromapiplc = sqrt(SQR(atmp)+SQR(btmp)+0.001f);
+					editWhatever->v(i,j) = LIM01<float>((chromapiplc)/(48000.f));}//Lab L=f(C) pipette
+			
+			
 			if (!bwToning) {	//apply curve L=f(C) for skin and rd...but also for extended color ==> near green and blue (see 'curf')
 
 				const float xx=0.25f;//soft : between 0.2 and 0.4
@@ -3618,10 +3660,14 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 				Lc=(Lc-1.0f)*zz+1.0f;//reduct action
 				Lprov1*=Lc;//adjust luminance
 				}
-				//update histo L
+				//update histo LC
                 if(pW!=1){//only with improccoordinator
-					posl=CLIP((int(Lprov1*327.68f)));
-					hist16LLClad[posl]++;
+					 posl=CLIP((int(Lprov1*327.68f)));
+					int posll=CLIP((int(Chprov1*327.68f)));
+					
+					//hist16LLClad[posll]++;
+					hist16Llad[posl]++;
+					
 				}
 
 			Chprov1 = sqrt(SQR(atmp/327.68f)+SQR(btmp/327.68f));
@@ -3713,7 +3759,9 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 				float hval = dCcurve[i];
 				int hi = (int)(255.0*CLIPD(hval)); //
 				histCCurve[hi] += hist16Clad[i] ;
-				histCLurve[hi] += hist16CLlad[i] ;
+			//	histCLurve[hi] += hist16CLlad[i] ;
+			//	histLLCurve[hi] += hist16LLClad[i] ;
+				
 			}
 		}
 		   //update histogram L  with data luminance
@@ -3721,8 +3769,8 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 			if (chrop) {
 				float hlval = dLcurve[i];
 				int hli = (int)(255.0*CLIPD(hlval));
-				histLLCurve[hli] += hist16LLClad[i] ;
-				histLCurve[hli] += hist16LLClad[i] ;
+				histLCurve[hli] += hist16Llad[i] ;
+			//	histLLCurve[hli] += hist16LLClad[i] ;
 				
 			}
 		}

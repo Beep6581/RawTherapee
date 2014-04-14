@@ -793,7 +793,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	
 	CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, hist16C, dummy, 16);
 	
-    CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili,params.labCurve.chromaticity, params.labCurve.rstprotection,
+    CurveFactory::complexsgnCurve (1.f, autili, butili, ccutili, cclutili,params.labCurve.chromaticity, params.labCurve.rstprotection,
 								   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve, curve1, curve2, satcurve,lhskcurve,
 								   hist16C, hist16C, dummy, dummy,
 								   16);

@@ -370,8 +370,19 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		clcutili=false;
 
         CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, lhist16CLlad, histCLurve, scale==1 ? 1 : 16);
+		float adjustr=1.0f, adjustbg=1.0f;
 
-        CurveFactory::complexsgnCurve (autili, butili,ccutili,cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
+
+/*	if      (params.icm.working=="ProPhoto")   {adjustr =       adjustbg = 1.2f;}// 1.2 instead 1.0 because it's very rare to have C>170..
+	else if (params.icm.working=="Adobe RGB")  {adjustr = 1.8f; adjustbg = 1.4f;}
+	else if (params.icm.working=="sRGB")  	    {adjustr = 2.0f; adjustbg = 1.7f;}
+	else if (params.icm.working=="WideGamut")  {adjustr =       adjustbg = 1.2f;}
+	else if (params.icm.working=="Beta RGB")   {adjustr =       adjustbg = 1.4f;}
+	else if (params.icm.working=="BestRGB")    {adjustr =       adjustbg = 1.4f;}
+	else if (params.icm.working=="BruceRGB")   {adjustr = 1.8f; adjustbg = 1.5f;}
+*/
+		adjustr=1.f;
+        CurveFactory::complexsgnCurve (adjustr, autili, butili,ccutili,cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
                                        params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve,chroma_acurve, chroma_bcurve, satcurve,lhskcurve,
                                        lhist16Clad, lhist16LLClad, histCCurve, histLLCurve, scale==1 ? 1 : 16);
     }
@@ -535,8 +546,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             ipf.lab2monitorRgb (nprevl, previmg);
             delete workimg;
             Glib::ustring outProfile=params.icm.output;
-            if (params.icm.output=="" || params.icm.output==ColorManagementParams::NoICMString) outProfile="sRGB";
-            workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, outProfile, true);
+            Glib::ustring workProfile=params.icm.working;
+			
+			if(settings->HistogramWorking) workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, workProfile, true);
+			else {
+				if (params.icm.output=="" || params.icm.output==ColorManagementParams::NoICMString) outProfile="sRGB";
+				workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, outProfile, false);
+			}
         }
         catch(char * str)
         {
@@ -557,7 +573,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     if (hListener) {
         updateLRGBHistograms ();
-        hListener->histogramChanged (histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve,histCCurve, histCLurve, histLLCurve, histLCAM, histCCAM, histRedRaw, histGreenRaw, histBlueRaw, histChroma);
+        hListener->histogramChanged (histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve,histCCurve, /*histCLurve, histLLCurve,*/ histLCAM, histCCAM, histRedRaw, histGreenRaw, histBlueRaw, histChroma);
     }
 }
 

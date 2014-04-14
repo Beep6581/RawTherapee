@@ -742,6 +742,8 @@ PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_GREY;Output device's Yb luminance (%)
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
+PREFERENCES_HISTOGRAMWORKING;Histogram and Navigator using Working Profile
+PREFERENCES_HISTOGRAM_TOOLTIP;if enabled use Working Profile instead of Output Profile (with gamma), for Navigator and histogram display
 PREFERENCES_HLTHRESHOLD;Threshold for clipped highlights
 PREFERENCES_ICCDIR;Directory containing color profiles
 PREFERENCES_IMPROCPARAMS;Default Image Processing Parameters
