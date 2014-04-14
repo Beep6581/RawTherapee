@@ -601,6 +601,10 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     Gtk::HBox* hbworkflow2 = Gtk::manage( new Gtk::HBox () );
     ckbHistogramPositionLeft =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_HISTOGRAMPOSITIONLEFT")) );
     hbworkflow2->pack_start (*ckbHistogramPositionLeft, Gtk::PACK_SHRINK, 4);
+    ckbHistogramWorking =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_HISTOGRAMWORKING")) );
+	ckbHistogramWorking->set_tooltip_markup (M("PREFERENCES_HISTOGRAM_TOOLTIP"));
+	
+    hbworkflow2->pack_start (*ckbHistogramWorking, Gtk::PACK_SHRINK, 4);
     ckbShowProfileSelector =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SHOWPROFILESELECTOR")) );
     hbworkflow2->pack_start (*ckbShowProfileSelector, Gtk::PACK_SHRINK, 4);
     ckbSquareDetailWindow =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SQUAREDETAILWINDOW")) );
@@ -1168,6 +1172,7 @@ void Preferences::storePreferences () {
     moptions.rtSettings.viewingdevicegrey   = grey->get_active_row_number ();
   //  moptions.rtSettings.autocielab 			= cbAutocielab->get_active ();
     moptions.rtSettings.ciecamfloat 			= cbciecamfloat->get_active ();
+    moptions.rtSettings.HistogramWorking			= ckbHistogramWorking->get_active ();
 
     if (sdcurrent->get_active ()) 
         moptions.startupDir = STARTUPDIR_CURRENT;
@@ -1263,6 +1268,7 @@ void Preferences::fillPreferences () {
     grey->set_active (moptions.rtSettings.viewingdevicegrey);
 //	cbAutocielab->set_active (moptions.rtSettings.autocielab);
 	cbciecamfloat->set_active (moptions.rtSettings.ciecamfloat);
+	ckbHistogramWorking->set_active (moptions.rtSettings.HistogramWorking);
     languages->set_active_text (moptions.language);
     ckbLangAutoDetect->set_active (moptions.languageAutoDetect);
     theme->set_active_text (moptions.theme);
@@ -1348,6 +1354,7 @@ void Preferences::fillPreferences () {
         editorLayout->set_active(moptions.multiDisplayMode ? 3 : 2);
 
     ckbHistogramPositionLeft->set_active(moptions.histogramPosition==1);
+ //   ckbHistogramWorking->set_active(moptions.histogramWorking==1);
     ckbShowProfileSelector->set_active(moptions.showProfileSelector);
     ckbSquareDetailWindow->set_active(moptions.squareDetailWindow);
     ckbFileBrowserToolbarSingleRow->set_active(moptions.FileBrowserToolbarSingleRow);
@@ -1648,6 +1655,7 @@ void Preferences::workflowUpdate (){
     	// Update the position of the Histogram
     	parent->updateHistogramPosition(options.histogramPosition, moptions.histogramPosition);
     }
+	
     if(moptions.showProfileSelector != options.showProfileSelector) {
     	// Update the position of the Profile selector
     	parent->updateTPProfileSelector(moptions.showProfileSelector);

@@ -352,8 +352,13 @@ void Crop::update (int todo) {
     if (cropImageListener) {
         // this in output space held in parallel to allow analysis like shadow/highlight
         Glib::ustring outProfile=params.icm.output;
-        if (params.icm.output=="" || params.icm.output==ColorManagementParams::NoICMString) outProfile="sRGB";
-        Image8 *cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0,0,cropw,croph, outProfile, false);
+        Glib::ustring workProfile=params.icm.working;
+		Image8 *cropImgtrue;
+        if(settings->HistogramWorking)  cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0,0,cropw,croph, workProfile, false);
+		else {
+			if (params.icm.output=="" || params.icm.output==ColorManagementParams::NoICMString) outProfile="sRGB";
+			cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0,0,cropw,croph, outProfile, false);
+			}
 
         int finalW = rqcropw;
         if (cropImg->getWidth()-leftBorder < finalW)

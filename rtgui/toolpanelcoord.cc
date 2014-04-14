@@ -533,11 +533,11 @@ int ToolPanelCoordinator::getSpotWBRectSize () {
     return whitebalance->getSize ();
 }
 
-void ToolPanelCoordinator::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histCLurve, LUTu & histLLCurve, LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma) {
-    colorappearance->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histCCurve, histCLurve, histLLCurve, histLCAM,  histCCAM,histRed, histGreen, histBlue, histLuma);
-    toneCurve->updateCurveBackgroundHistogram (histToneCurve, histLCurve,histCCurve, histCLurve, histLLCurve, histLCAM,  histCCAM,histRed, histGreen, histBlue, histLuma);
-    lcurve->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histCCurve, histCLurve, histLLCurve, histLCAM, histCCAM,histRed, histGreen, histBlue, histLuma); 
-	rgbcurves->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve, histCLurve, histLLCurve, histLCAM, histCCAM,histRed,histGreen, histBlue, histLuma);
+void ToolPanelCoordinator::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, /*LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma) {
+    colorappearance->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histCCurve, /*histCLurve, histLLCurve,*/ histLCAM,  histCCAM,histRed, histGreen, histBlue, histLuma);
+    toneCurve->updateCurveBackgroundHistogram (histToneCurve, histLCurve,histCCurve,/* histCLurve, histLLCurve,*/ histLCAM,  histCCAM,histRed, histGreen, histBlue, histLuma);
+    lcurve->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histCCurve, /*histCLurve, histLLCurve,*/ histLCAM, histCCAM,histRed, histGreen, histBlue, histLuma); 
+	rgbcurves->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve,/* histCLurve, histLLCurve, */histLCAM, histCCAM,histRed,histGreen, histBlue, histLuma);
 }
 
 void ToolPanelCoordinator::foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection) {

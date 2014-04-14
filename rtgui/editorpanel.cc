@@ -1508,11 +1508,11 @@ void EditorPanel::tbBeforeLock_toggled () {
 	tbBeforeLock->get_active()? tbBeforeLock->set_image (*iBeforeLockON) : tbBeforeLock->set_image (*iBeforeLockOFF);
 }
 
-void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histCLurve, LUTu & histLLCurve, LUTu & histLCAM, LUTu & histCCAM,
+void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, /*LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM,
     LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw , LUTu & histChroma) {
 
     if (histogramPanel) histogramPanel->histogramChanged (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw, histChroma);
-    tpc->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histCCurve, histCLurve,  histLLCurve, histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma);
+    tpc->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histCCurve,/*histCLurve,  histLLCurve,*/ histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma);
 }
 
 bool EditorPanel::CheckSidePanelsVisibility() {

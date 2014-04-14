@@ -672,8 +672,16 @@ void CropWindow::pointerMoved (int bstate, int x, int y) {
         screenCoordToImage (x, y, mx, my);
         if (!onArea (CropImage, x, y) || !cropHandler.cropPixbuf) {
             cropHandler.getFullImageSize(mx,my);
-            pmlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
-            if (pmhlistener) pmhlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
+        //    pmlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
+         //   if (pmhlistener) pmhlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
+	    /*    Glib::ustring outputProfile;
+            outputProfile =cropHandler.colorParams.output ;
+            printf("Using \"%s\" output\n", outputProfile.c_str());
+			if(outputProfile=="RT_sRGB") printf("OK SRGB2");
+		*/
+            pmlistener->pointerMoved (false, cropHandler.colorParams.output,cropHandler.colorParams.working, mx, my, -1, -1, -1);
+            if (pmhlistener) pmhlistener->pointerMoved (false, cropHandler.colorParams.output,cropHandler.colorParams.working, mx, my, -1, -1, -1);
+			
         }
         else {
             /*MyMutex::MyLock lock(cropHandler.cimg);
@@ -696,9 +704,11 @@ void CropWindow::pointerMoved (int bstate, int x, int y) {
             int imheight = cropHandler.cropPixbuf->get_height();
             guint8* pix = cropHandler.cropPixbuftrue->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
             if (vx < imwidth && vy < imheight) {
-                pmlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
+          //      pmlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
+                pmlistener->pointerMoved (true, cropHandler.colorParams.output, cropHandler.colorParams.working,mx, my, pix[0], pix[1], pix[2]);
                 if (pmhlistener)
-                    pmhlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
+                //    pmhlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
+                    pmhlistener->pointerMoved (true, cropHandler.colorParams.output, cropHandler.colorParams.working,mx, my, pix[0], pix[1], pix[2]);
             }
             cropHandler.cimg.unlock ();
         }
