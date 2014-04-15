@@ -781,7 +781,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
                   directory[1] = NULL;
                   if (count == 21)       // AEInfo2
                       directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , pentaxAEInfo2Attribs, order);
-                  else if (count == 48)  // AEInfo3
+                  else if (count == 48 || count == 34)  // AEInfo3 (count == 34 actually is a hack for Issue 2345)
                       directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , pentaxAEInfo3Attribs, order);
                   else if (count <= 25)  // AEInfo
                       directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , pentaxAEInfoAttribs, order);
