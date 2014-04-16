@@ -791,13 +791,11 @@ void MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modi
 }
 
 void MyDiagonalCurve::pipetteButton1Released(EditDataProvider *provider) {
-	int num = (int)curve.x.size();
-
 	/* graphW and graphH are the size of the graph */
 	calcDimensions();
 
 	double minDistanceX = double(MIN_DISTANCE) / double(graphW-1);
-	double minDistanceY = double(MIN_DISTANCE) / double(graphH-1);
+	//double minDistanceY = double(MIN_DISTANCE) / double(graphH-1);
 
 	if ((graphW < 0) || (graphH < 0))
 		return;
@@ -805,36 +803,13 @@ void MyDiagonalCurve::pipetteButton1Released(EditDataProvider *provider) {
 	snapToElmt = -100;
 	if (curve.type!=DCT_Parametric) {
 		std::vector<double>::iterator itx, ity;
-		int src, dst;
 		buttonPressed = false;
 		/*  get the pointer position  */
-		int px = graphX + int(float(graphW)*pipetteVal);  // WARNING: converting pipetteVal from float to int, precision loss here!
 		getCursorPosition(Gdk::EventType(Gdk::BUTTON_RELEASE), false, graphY, 0, Gdk::ModifierType(0));
 		findClosestPoint();
 
 		int previous_lit_point = lit_point;
-		/* delete inactive points: */
-		itx = curve.x.begin();
-		ity = curve.y.begin();
-		for (src = dst = 0; src < num; ++src)
-			if (curve.x[src] >= 0.0) {
-				curve.x[dst] = curve.x[src];
-				curve.y[dst] = curve.y[src];
-				++dst;
-				++itx;
-				++ity;
-			}
-		if (dst < src) {
-			curve.x.erase (itx, curve.x.end());
-			curve.y.erase (ity, curve.y.end());
-			if (curve.x.empty()) {
-				curve.x.push_back (0);
-				curve.y.push_back (0);
-				curveIsDirty = true;
-				setDirty(true);
-				draw (lit_point);
-			}
-		}
+
 		if (distanceX <= minDistanceX) {
 			lit_point = closest_point;
 		}
