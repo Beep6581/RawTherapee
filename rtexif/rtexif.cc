@@ -731,10 +731,11 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
                       directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE  , sonyCameraSettingsAttribs3, INTEL);
                   else {
                       // Unknown CameraSettings
-                      delete directory;
+                      delete [] directory;
                       directory = NULL;
+                      type = INVALID;
                   }
-                  makerNoteKind = TABLESUBDIR;
+                  makerNoteKind = directory ? TABLESUBDIR : NOMK;
                   break;
               case 0x9405:
                   directory = new TagDirectory*[2];
@@ -771,26 +772,28 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
                       directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , pentaxSRInfo2Attribs, order);
                   else {
                       // Unknown SRInfo
-                      delete directory;
+                      delete [] directory;
                       directory = NULL;
+                      type = INVALID;
                   }
-                  makerNoteKind = TABLESUBDIR;
+                  makerNoteKind = directory ? TABLESUBDIR : NOMK;
                   break;
               case 0x0206:
                   directory = new TagDirectory*[2];
                   directory[1] = NULL;
                   if (count == 21)       // AEInfo2
                       directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , pentaxAEInfo2Attribs, order);
-                  else if (count == 48 || count == 34)  // AEInfo3 (count == 34 actually is a hack for Issue 2345)
+                  else if (count == 48)  // AEInfo3
                       directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , pentaxAEInfo3Attribs, order);
                   else if (count <= 25)  // AEInfo
                       directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , pentaxAEInfoAttribs, order);
                   else {
                       // Unknown AEInfo
-                      delete directory;
+                      delete [] directory;
                       directory = NULL;
+                      type = INVALID;
                   }
-                  makerNoteKind = TABLESUBDIR;
+                  makerNoteKind = directory ? TABLESUBDIR : NOMK;
                   break;
               case 0x0207:
               {   // There are 2 format pentaxLensDataAttribs
