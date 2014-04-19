@@ -351,6 +351,7 @@ void Resize::setDimensions () {
     	refw = maxw;
     	refh = maxh;
     }
+	GThreadLock lock;
     w->set_range (32, 4*refw);
     h->set_range (32, 4*refh);
 
