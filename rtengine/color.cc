@@ -699,14 +699,6 @@ namespace rtengine {
         a = (500.0 * (fx - fy) );
         b = (200.0 * (fy - fz) );
     }
-	
-    double Color::f2xyz(double f) {
-        const double epsilonExpInv3 = 6.0/29.0;
-        const double kappaInv = 27.0/24389.0;  // inverse of kappa
-
-        return (f > epsilonExpInv3) ? f*f*f : (116. * f - 16.) * kappaInv;
-	
-    }
 
     /*
      * Gamut mapping algorithm
