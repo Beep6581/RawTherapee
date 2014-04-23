@@ -205,8 +205,9 @@ void MyFlatCurve::draw () {
             cr->set_line_width (1.);
         }
     }
+
     // draw the color feedback of the control points
-    else if (colorProvider) {
+    if (colorProvider) {
 
         //if (curve.type!=FCT_Parametric)
             for (int i=0; i<(int)curve.x.size(); ++i) {
@@ -919,23 +920,27 @@ void MyFlatCurve::pipetteMouseOver (EditDataProvider *provider, int modifierKey)
 	pipetteG = provider->pipetteVal[1];
 	pipetteB = provider->pipetteVal[2];
 	pipetteVal = 0.f;
-	int n = 0;
-	if (pipetteR != -1.f) {
-		pipetteVal += pipetteR;
-		++n;
+	if (listener)
+		pipetteVal = listener->blendPipetteValues(pipetteR, pipetteG, pipetteB);
+	else {
+		int n = 0;
+		if (pipetteR != -1.f) {
+			pipetteVal += pipetteR;
+			++n;
+		}
+		if (pipetteG != -1.f) {
+			pipetteVal += pipetteG;
+			++n;
+		}
+		if (pipetteB != -1.f) {
+			pipetteVal += pipetteB;
+			++n;
+		}
+		if (n>1)
+			pipetteVal /= n;
+		else if (!n)
+			pipetteVal = -1.f;
 	}
-	if (pipetteG != -1.f) {
-		pipetteVal += pipetteG;
-		++n;
-	}
-	if (pipetteB != -1.f) {
-		pipetteVal += pipetteB;
-		++n;
-	}
-	if (n>1)
-		pipetteVal /= n;
-	else if (!n)
-		pipetteVal = -1.f;
 
 	snapToElmt = -100;
 

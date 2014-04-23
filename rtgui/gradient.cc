@@ -40,7 +40,7 @@ Gradient::Gradient () : FoldableToolPanel(this), EditSubscriber(ET_OBJECTS), las
 	centerY->set_tooltip_text (M("TP_GRADIENT_CENTER_Y_TOOLTIP"));
 	centerY->setAdjusterListener (this);
 
-	Gtk::HBox* enaBox = Gtk::manage (new Gtk::HBox());
+	enaBox = Gtk::manage (new Gtk::HBox());
 	enaBox->pack_start(*enabled);
 	enaBox->pack_end(*edit, false, false, 0);
 	pack_start(*enaBox);
@@ -289,6 +289,7 @@ void Gradient::trimValues (rtengine::procparams::ProcParams* pp)
 
 void Gradient::setBatchMode (bool batchMode)
 {
+	removeIfThere(enaBox, edit, false);
 	ToolPanel::setBatchMode (batchMode);
 	degree->showEditedCB ();
 	feather->showEditedCB ();

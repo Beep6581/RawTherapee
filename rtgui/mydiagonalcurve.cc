@@ -681,25 +681,27 @@ void MyDiagonalCurve::pipetteMouseOver (EditDataProvider *provider, int modifier
 	pipetteG = provider->pipetteVal[1];
 	pipetteB = provider->pipetteVal[2];
 	pipetteVal = 0.f;
-	int n = 0;
-	if (pipetteR != -1.f) {
-		pipetteVal += pipetteR;
-		++n;
+	if (listener)
+		pipetteVal = listener->blendPipetteValues(pipetteR, pipetteG, pipetteB);
+	else {
+		int n = 0;
+		if (pipetteR != -1.f) {
+			pipetteVal += pipetteR;
+			++n;
+		}
+		if (pipetteG != -1.f) {
+			pipetteVal += pipetteG;
+			++n;
+		}
+		if (pipetteB != -1.f) {
+			pipetteVal += pipetteB;
+			++n;
+		}
+		if (n>1)
+			pipetteVal /= n;
+		else if (!n)
+			pipetteVal = -1.f;
 	}
-	if (pipetteG != -1.f) {
-		pipetteVal += pipetteG;
-		++n;
-	}
-	if (pipetteB != -1.f) {
-		pipetteVal += pipetteB;
-		++n;
-	}
-	if (n>1)
-		pipetteVal /= n;
-	else if (!n)
-		pipetteVal = -1.f;
-
-	int num = (int)curve.x.size();
 
 	/* graphW and graphH are the size of the graph */
 	calcDimensions();
@@ -708,7 +710,6 @@ void MyDiagonalCurve::pipetteMouseOver (EditDataProvider *provider, int modifier
 		return;
 
 	double minDistanceX = double(MIN_DISTANCE) / double(graphW-1);
-	double minDistanceY = double(MIN_DISTANCE) / double(graphH-1);
 
 	if (curve.type == DCT_Linear || curve.type == DCT_Spline || curve.type == DCT_NURBS) {
 		// get the pointer position
