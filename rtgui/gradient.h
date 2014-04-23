@@ -13,6 +13,7 @@ class Gradient : public ToolParamBlock, public AdjusterListener, public Foldable
 
   private:
     int lastObject;
+    Gtk::HBox* enaBox;
 
   protected:
     Gtk::CheckButton* enabled;

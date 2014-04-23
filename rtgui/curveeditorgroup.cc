@@ -278,6 +278,17 @@ void CurveEditorGroup::curveChanged () {
 }
 
 /*
+ * Listener called when the user has modified the curve
+ */
+float CurveEditorGroup::blendPipetteValues (float chan1, float chan2, float chan3) {
+
+	if (cl)
+		return cl->blendPipetteValues(chan1, chan2, chan3);
+
+	return -1.f;
+}
+
+/*
  * Call back method when the reset button is pressed :
  * reset the currently toggled on curve editor
  */
