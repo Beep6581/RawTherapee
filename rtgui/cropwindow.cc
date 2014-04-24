@@ -444,7 +444,41 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y) {
     }
     else if (state==SEditDrag) {
         editSubscriber->button1Released();
-        iarea->object = 0;
+        if (editSubscriber) {
+            rtengine::Crop* crop = static_cast<rtengine::Crop*>(cropHandler.getCrop());
+            Coord imgPos;
+            action_x = x;
+            action_y = y;
+            screenCoordToImage (x, y, imgPos.x, imgPos.y);
+
+            iarea->posImage.set(imgPos.x, imgPos.y);
+            iarea->posScreen.set(x, y);
+
+            Coord cropPos;
+            screenCoordToCropBuffer(x, y, cropPos.x, cropPos.y);
+            if (editSubscriber->getEditingType()==ET_PIPETTE) {
+                iarea->object = onArea (CropImage, x, y) && !onArea (CropObserved, x, y) ? 1 : 0;
+                //iarea->object = cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) ? 1 : 0;
+                if (iarea->object) {
+                    crop->getPipetteData(iarea->pipetteVal, cropPos.x, cropPos.y, iarea->getPipetteRectSize());
+                    //printf("PipetteData:  %.3f  %.3f  %.3f\n", iarea->pipetteVal[0], iarea->pipetteVal[1], iarea->pipetteVal[2]);
+                }
+                else {
+                    iarea->pipetteVal[0] = iarea->pipetteVal[1] = iarea->pipetteVal[2] = -1.f;
+                }
+            }
+            else if (editSubscriber->getEditingType()==ET_OBJECTS) {
+                if (onArea (CropImage, x, y))
+                    iarea->object = crop->getObjectID(cropPos);
+                else
+                    iarea->object = -1;
+            }
+
+            if (editSubscriber->mouseOver(bstate))
+                iarea->redraw ();
+        }
+        else
+            iarea->object = 0;
         iarea->deltaImage.set(0, 0);
         iarea->deltaScreen.set(0, 0);
         iarea->deltaPrevImage.set(0, 0);
