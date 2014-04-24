@@ -212,17 +212,17 @@ void MyFlatCurve::draw () {
         //if (curve.type!=FCT_Parametric)
             for (int i=0; i<(int)curve.x.size(); ++i) {
 
-                if (curve.x[i] != -1.) {
+                if (curve.x.at(i) != -1.) {
                     int coloredLineWidth = min( max(75,graphW)/75, 8 );
 
                     cr->set_line_width (coloredLineWidth);
-                    colorProvider->colorForValue(curve.x[i], 0.5, colorCallerId, this);
+                    colorProvider->colorForValue(curve.x.at(i), 0.5, colorCallerId, this);
                     cr->set_source_rgb (ccRed, ccGreen, ccBlue);
 
                     if ( i==lit_point && (editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointX)) ) {
                         cr->set_line_width (2*coloredLineWidth);
                     }
-                    cr->move_to (double(graphX)+1 + innerW*curve.x[i], double(graphY-1));
+                    cr->move_to (double(graphX)+1 + innerW*curve.x.at(i), double(graphY-1));
                     cr->rel_line_to (0., -innerH);
                     cr->stroke ();
                     cr->set_line_width (coloredLineWidth);
@@ -236,10 +236,10 @@ void MyFlatCurve::draw () {
                                 cr->set_line_width (2*coloredLineWidth);
                             }
 
-                            colorProvider->colorForValue(curve.x[i], curve.y[i], colorCallerId, this);
+                            colorProvider->colorForValue(curve.x.at(i), curve.y.at(i), colorCallerId, this);
                             cr->set_source_rgb (ccRed, ccGreen, ccBlue);
 
-                            cr->move_to (double(graphX+1) , double(graphY-1) - innerH*curve.y[lit_point]);
+                            cr->move_to (double(graphX+1) , double(graphY-1) - innerH*curve.y.at(lit_point));
                             cr->rel_line_to (innerW, 0.);
                             cr->stroke ();
                         }
@@ -257,7 +257,7 @@ void MyFlatCurve::draw () {
             if (editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointY)) {
                 cr->set_line_width (2.0);
             }
-            cr->move_to (double(graphX)+1 + innerW*curve.x[lit_point], double(graphY-1));
+            cr->move_to (double(graphX)+1 + innerW*curve.x.at(lit_point), double(graphY-1));
             cr->rel_line_to (0., -innerH);
             cr->stroke ();
             cr->set_line_width (1.0);
@@ -266,7 +266,7 @@ void MyFlatCurve::draw () {
             if (editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointY)) {
                 cr->set_line_width (2.0);
             }
-            cr->move_to (double(graphX+1) , double(graphY-1) - innerH*curve.y[lit_point]);
+            cr->move_to (double(graphX+1) , double(graphY-1) - innerH*curve.y.at(lit_point));
             cr->rel_line_to (innerW, 0.);
             cr->stroke ();
             cr->set_line_width (1.0);
@@ -282,9 +282,9 @@ void MyFlatCurve::draw () {
     cr->stroke ();
 
     double lineMinLength = 1. / graphW * SQUARE * 0.9;
-    if (lit_point!=-1 && getHandles(lit_point) && curve.x[lit_point]!=-1.) {
-        double x = double(graphX+1) + innerW*curve.x[lit_point];
-        double y = double(graphY) - innerH*curve.y[lit_point];
+    if (lit_point!=-1 && getHandles(lit_point) && curve.x.at(lit_point)!=-1.) {
+        double x = double(graphX+1) + innerW*curve.x.at(lit_point);
+        double y = double(graphY) - innerH*curve.y.at(lit_point);
         double x2;
         double square;
         bool crossingTheFrame;
@@ -302,7 +302,7 @@ void MyFlatCurve::draw () {
             crossingTheFrame = true;
         }
         x2 = double(graphX+1) + innerW*leftTanX;
-        if (curve.x[lit_point] - leftTanX > lineMinLength || crossingTheFrame) {
+        if (curve.x.at(lit_point) - leftTanX > lineMinLength || crossingTheFrame) {
             // The left tangential vector reappear on the right side
             // draw the line
             cr->move_to (x, y);
@@ -332,7 +332,7 @@ void MyFlatCurve::draw () {
             crossingTheFrame = true;
         }
         x2 = double(graphX+1) +innerW*rightTanX;
-        if (rightTanX - curve.x[lit_point] > lineMinLength || crossingTheFrame) {
+        if (rightTanX - curve.x.at(lit_point) > lineMinLength || crossingTheFrame) {
             // The left tangential vector reappear on the right side
             // draw the line
             cr->move_to (x, y);
@@ -361,10 +361,10 @@ void MyFlatCurve::draw () {
     // draw bullets
     //if (curve.type!=FCT_Parametric)
         for (int i = 0; i < (int)curve.x.size(); ++i) {
-            if (curve.x[i] != -1.) {
+            if (curve.x.at(i) != -1.) {
                 if (i == lit_point) {
                     if (colorProvider) {
-                        colorProvider->colorForValue(curve.x[i], curve.y[i], colorCallerId, this);
+                        colorProvider->colorForValue(curve.x.at(i), curve.y.at(i), colorCallerId, this);
                         cr->set_source_rgb (ccRed, ccGreen, ccBlue);
                     }
                     else
@@ -373,13 +373,13 @@ void MyFlatCurve::draw () {
                 else if (i == snapToElmt) {
                     cr->set_source_rgb (1.0, 0.0, 0.0);
                 }
-                else if (curve.y[i] == 0.5)
+                else if (curve.y.at(i) == 0.5)
                     cr->set_source_rgb (0.0, 0.5, 0.0);
                 else
                     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
 
-                double x = double(graphX+1) + innerW * curve.x[i]; // project (curve.x[i], 0, 1, graphW);
-                double y = double(graphY-1) - innerH * curve.y[i]; // project (curve.y[i], 0, 1, graphH);
+                double x = double(graphX+1) + innerW * curve.x.at(i); // project (curve.x.at(i), 0, 1, graphW);
+                double y = double(graphY-1) - innerH * curve.y.at(i); // project (curve.y.at(i), 0, 1, graphH);
 
                 cr->arc (x, y, (double)RADIUS, 0, 2*M_PI);
                 cr->fill ();
@@ -427,24 +427,24 @@ bool MyFlatCurve::getHandles(int n) {
 
 	if (n == -1) return false;
 
-	x = curve.x[n];
-	leftTan = curve.leftTangent[n];
-	rightTan = curve.rightTangent[n];
+	x = curve.x.at(n);
+	leftTan = curve.leftTangent.at(n);
+	rightTan = curve.rightTangent.at(n);
 
 	if (!n) {
 		// first point, the left handle is then computed with the last point's right handle
-		prevX = curve.x[N-1]-1.0;
-		nextX = curve.x[n+1];
+		prevX = curve.x.at(N-1)-1.0;
+		nextX = curve.x.at(n+1);
 	}
 	else if (n == N-1) {
 		// last point, the right handle is then computed with the first point's left handle
-		prevX = curve.x[n-1];
-		nextX = curve.x[0]+1.0;
+		prevX = curve.x.at(n-1);
+		nextX = curve.x.at(0)+1.0;
 	}
 	else {
 		// last point, the right handle is then computed with the first point's left handle
-		prevX = curve.x[n-1];
-		nextX = curve.x[n+1];
+		prevX = curve.x.at(n-1);
+		nextX = curve.x.at(n+1);
 	}
 
 	if (leftTan == 0.0) leftTanX = x;
@@ -530,7 +530,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 
 					/* insert a new control point */
 					if (num > 0) {
-						if (clampedX > curve.x[closest_point])
+						if (clampedX > curve.x.at(closest_point))
 							++closest_point;
 					}
 					itx = curve.x.begin();
@@ -545,10 +545,10 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 					num++;
 
 					// the graph is refreshed only if a new point is created
-					curve.x[closest_point] = clampedX;
-					curve.y[closest_point] = clampedY;
-					curve.leftTangent[closest_point] = 0.35;
-					curve.rightTangent[closest_point] = 0.35;
+					curve.x.at(closest_point) = clampedX;
+					curve.y.at(closest_point) = clampedY;
+					curve.leftTangent.at(closest_point) = 0.35;
+					curve.rightTangent.at(closest_point) = 0.35;
 
 					curveIsDirty = true;
 					setDirty(true);
@@ -559,35 +559,35 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 
 					// point automatically activated
 					editedHandle = FCT_EditedHandle_CPoint;
-					ugpX = curve.x[lit_point];
-					ugpY = curve.y[lit_point];
+					ugpX = curve.x.at(lit_point);
+					ugpY = curve.y.at(lit_point);
 					break;
 
 				case (FCT_Area_Point):
 					new_type = CSMove;
 					editedHandle = FCT_EditedHandle_CPoint;
-					ugpX = curve.x[lit_point];
-					ugpY = curve.y[lit_point];
+					ugpX = curve.x.at(lit_point);
+					ugpY = curve.y.at(lit_point);
 					break;
 
 				case (FCT_Area_H):
 				case (FCT_Area_V):
 					new_type = CSMove;
 					editedHandle = FCT_EditedHandle_CPointUD;
-					ugpX = curve.x[lit_point];
-					ugpY = curve.y[lit_point];
+					ugpX = curve.x.at(lit_point);
+					ugpY = curve.y.at(lit_point);
 					break;
 
 				case (FCT_Area_LeftTan):
 					new_type = CSEmpty;
 					editedHandle = FCT_EditedHandle_LeftTan;
-					ugpX = curve.leftTangent[lit_point];
+					ugpX = curve.leftTangent.at(lit_point);
 					break;
 
 				case (FCT_Area_RightTan):
 					new_type = CSEmpty;
 					editedHandle = FCT_EditedHandle_RightTan;
-					ugpX = curve.rightTangent[lit_point];
+					ugpX = curve.rightTangent.at(lit_point);
 					break;
 
 				default:
@@ -614,11 +614,11 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 					itlt = curve.leftTangent.begin();
 					itrt = curve.rightTangent.begin();
 					for (src = dst = 0; src < num; ++src)
-						if (curve.x[src] >= 0.0) {
-							curve.x[dst] = curve.x[src];
-							curve.y[dst] = curve.y[src];
-							curve.leftTangent[dst] = curve.leftTangent[src];
-							curve.rightTangent[dst] = curve.rightTangent[src];
+						if (curve.x.at(src) >= 0.0) {
+							curve.x.at(dst) = curve.x.at(src);
+							curve.y.at(dst) = curve.y.at(src);
+							curve.leftTangent.at(dst) = curve.leftTangent.at(src);
+							curve.rightTangent.at(dst) = curve.rightTangent.at(src);
 							++dst;
 							++itx;
 							++ity;
@@ -729,19 +729,19 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 					// display the handles
 					tanHandlesDisplayed = true;
 
-					if (curve.x[lit_point] < 3.*minDistanceX) {
+					if (curve.x.at(lit_point) < 3.*minDistanceX) {
 						// lit_point too near of the left border -> both handles are displayed on the right of the vertical line
-						rightTanHandle.centerX  = leftTanHandle.centerX  = curve.x[lit_point] + 2.*minDistanceX;
+						rightTanHandle.centerX  = leftTanHandle.centerX  = curve.x.at(lit_point) + 2.*minDistanceX;
 						sameSide = true;
 					}
-					else if (curve.x[lit_point] > 1.-3.*minDistanceX) {
+					else if (curve.x.at(lit_point) > 1.-3.*minDistanceX) {
 						// lit_point too near of the left border -> both handles are displayed on the right of the vertical line
-						rightTanHandle.centerX = leftTanHandle.centerX = curve.x[lit_point]  - 2.*minDistanceX;
+						rightTanHandle.centerX = leftTanHandle.centerX = curve.x.at(lit_point)  - 2.*minDistanceX;
 						sameSide = true;
 					}
 					else {
-						leftTanHandle.centerX = curve.x[lit_point] - 2.*minDistanceX;
-						rightTanHandle.centerX = curve.x[lit_point] + 2.*minDistanceX;
+						leftTanHandle.centerX = curve.x.at(lit_point) - 2.*minDistanceX;
+						rightTanHandle.centerX = curve.x.at(lit_point) + 2.*minDistanceX;
 					}
 					if (sameSide) {
 						if (clampedY > 1.-2.*minDistanceY) {
@@ -822,7 +822,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 				break;
 
 			case (FCT_EditedHandle_LeftTan): {
-				double prevValue = curve.leftTangent[lit_point];
+				double prevValue = curve.leftTangent.at(lit_point);
 
 				ugpX -= deltaX*3;
 				ugpX = CLAMP(ugpX, 0., 1.);
@@ -832,13 +832,13 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 					snapCoordinateX(0.35, ugpX);
 					snapCoordinateX(0.5,  ugpX);
 					snapCoordinateX(1.0,  ugpX);
-					curve.leftTangent[lit_point] = snapToValX;
+					curve.leftTangent.at(lit_point) = snapToValX;
 				}
 				else {
-					curve.leftTangent[lit_point] = ugpX;
+					curve.leftTangent.at(lit_point) = ugpX;
 				}
 
-				if (curve.leftTangent[lit_point] != prevValue) {
+				if (curve.leftTangent.at(lit_point) != prevValue) {
 					curveIsDirty = true;
 					setDirty(true);
 					draw ();
@@ -848,7 +848,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 			}
 
 			case (FCT_EditedHandle_RightTan): {
-				double prevValue = curve.rightTangent[lit_point];
+				double prevValue = curve.rightTangent.at(lit_point);
 
 				ugpX += deltaX*3;
 				ugpX = CLAMP(ugpX, 0., 1.);
@@ -858,13 +858,13 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 					snapCoordinateX(0.35, ugpX);
 					snapCoordinateX(0.5,  ugpX);
 					snapCoordinateX(1.0,  ugpX);
-					curve.rightTangent[lit_point] = snapToValX;
+					curve.rightTangent.at(lit_point) = snapToValX;
 				}
 				else {
-					curve.rightTangent[lit_point] = ugpX;
+					curve.rightTangent.at(lit_point) = ugpX;
 				}
 
-				if (curve.rightTangent[lit_point] != prevValue) {
+				if (curve.rightTangent.at(lit_point) != prevValue) {
 					curveIsDirty = true;
 					setDirty(true);
 					draw ();
@@ -995,7 +995,7 @@ void MyFlatCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifier
 
 		/* insert a new control point */
 		if (num > 0) {
-			if (clampedX > curve.x[closest_point])
+			if (clampedX > curve.x.at(closest_point))
 				++closest_point;
 		}
 		itx = curve.x.begin();
@@ -1010,10 +1010,10 @@ void MyFlatCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifier
 		num++;
 
 		// the graph is refreshed only if a new point is created
-		curve.x[closest_point] = clampedX;
-		curve.y[closest_point] = clampedY = rtCurve.getVal(pipetteVal);
-		curve.leftTangent[closest_point] = 0.35;
-		curve.rightTangent[closest_point] = 0.35;
+		curve.x.at(closest_point) = clampedX;
+		curve.y.at(closest_point) = clampedY = rtCurve.getVal(pipetteVal);
+		curve.leftTangent.at(closest_point) = 0.35;
+		curve.rightTangent.at(closest_point) = 0.35;
 
 		curveIsDirty = true;
 		setDirty(true);
@@ -1024,14 +1024,14 @@ void MyFlatCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifier
 
 		// point automatically activated
 		editedHandle = FCT_EditedHandle_CPointY;
-		ugpX = curve.x[lit_point];
-		ugpY = curve.y[lit_point];
+		ugpX = curve.x.at(lit_point);
+		ugpY = curve.y.at(lit_point);
 		break;
 	}
 	case (FCT_Area_V):
 		editedHandle = FCT_EditedHandle_CPointY;
-		ugpX = curve.x[lit_point];
-		ugpY = curve.y[lit_point];
+		ugpX = curve.x.at(lit_point);
+		ugpY = curve.y.at(lit_point);
 		break;
 	default:
 		break;
@@ -1080,14 +1080,14 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY, bool pipetteDrag) {
 	double const topBound    = 1.;
 
 	// we memorize the previous position of the point, for optimization purpose
-	double prevPosX = curve.x[lit_point];
-	double prevPosY = curve.y[lit_point];
+	double prevPosX = curve.x.at(lit_point);
+	double prevPosY = curve.y.at(lit_point);
 
 	int nbPoints = (int)curve.x.size();
 
 	// left and right bound rely on curve periodicity
-	leftBound         = (lit_point == 0         ) ? (periodic && !snapTo ? curve.x[nbPoints-1]-1. : 0.) : curve.x[lit_point-1];
-	rightBound        = (lit_point == nbPoints-1) ? (periodic && !snapTo ? curve.x[0]+1.          : 1.) : curve.x[lit_point+1];
+	leftBound         = (lit_point == 0         ) ? (periodic && !snapTo ? curve.x.at(nbPoints-1)-1. : 0.) : curve.x.at(lit_point-1);
+	rightBound        = (lit_point == nbPoints-1) ? (periodic && !snapTo ? curve.x.at(0)+1.          : 1.) : curve.x.at(lit_point+1);
 
 	double leftDeletionBound   = leftBound   - minDistanceX;
 	double rightDeletionBound  = rightBound  + minDistanceX;
@@ -1103,11 +1103,11 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY, bool pipetteDrag) {
 			if (snapTo) {
 				if (lit_point==0) {
 					snapCoordinateX(0.0, ugpX);
-					curve.x[0] = snapToValX;
+					curve.x.at(0) = snapToValX;
 				}
 				else if (lit_point==(nbPoints-1)) {
 					snapCoordinateX(1.0, ugpX);
-					curve.x[nbPoints-1] = snapToValX;
+					curve.x.at(nbPoints-1) = snapToValX;
 				}
 			}
 			else if (lit_point==0 && ugpX<0.) {
@@ -1121,10 +1121,10 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY, bool pipetteDrag) {
 				rightDeletionBound += 1.;
 
 				// adding a copy of the first point to the tail of the list
-				curve.x.push_back(curve.x[0]);
-				curve.y.push_back(curve.y[0]);
-				curve.leftTangent.push_back(curve.leftTangent[0]);
-				curve.rightTangent.push_back(curve.rightTangent[0]);
+				curve.x.push_back(curve.x.at(0));
+				curve.y.push_back(curve.y.at(0));
+				curve.leftTangent.push_back(curve.leftTangent.at(0));
+				curve.rightTangent.push_back(curve.rightTangent.at(0));
 
 				// deleting the first point
 				itx = curve.x.begin();
@@ -1160,10 +1160,10 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY, bool pipetteDrag) {
 				curve.leftTangent.insert(itlt,0);
 				curve.rightTangent.insert(itrt,0);
 
-				curve.x[0] = curve.x[nbPoints];
-				curve.y[0] = curve.y[nbPoints];
-				curve.leftTangent[0] = curve.leftTangent[nbPoints];
-				curve.rightTangent[0] = curve.rightTangent[nbPoints];
+				curve.x.at(0) = curve.x.at(nbPoints);
+				curve.y.at(0) = curve.y.at(nbPoints);
+				curve.leftTangent.at(0) = curve.leftTangent.at(nbPoints);
+				curve.rightTangent.at(0) = curve.rightTangent.at(nbPoints);
 
 				// deleting the last point
 				curve.x.pop_back();
@@ -1177,14 +1177,14 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY, bool pipetteDrag) {
 
 		// handling limitations along X axis
 		if (ugpX >= rightDeletionBound && nbPoints>2 && !snapTo) {
-			curve.x[lit_point] = -1.;
+			curve.x.at(lit_point) = -1.;
 		}
 		else if (ugpX <= leftDeletionBound && nbPoints>2 && !snapTo) {
-			curve.x[lit_point] = -1.;
+			curve.x.at(lit_point) = -1.;
 		}
 		else
 			// nextPosX is in bounds
-			curve.x[lit_point] = CLAMP(ugpX, leftBound, rightBound);
+			curve.x.at(lit_point) = CLAMP(ugpX, leftBound, rightBound);
 	}
 
 	if (moveY) {
@@ -1197,62 +1197,62 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY, bool pipetteDrag) {
 			ugpY = CLAMP(ugpY, 0.0, 1.0);
 
 		// snapping point to specific values
-		if (snapTo && curve.x[lit_point] != -1) {
+		if (snapTo && curve.x.at(lit_point) != -1) {
 
 			// the unclamped grabbed point is brought back in the range
 			ugpY = CLAMP(ugpY, 0.0, 1.0);
 
 			if (lit_point == 0) {
 				int prevP = curve.y.size()-1;
-				if (snapCoordinateY(curve.y[prevP], ugpY)) snapToElmt = prevP;
+				if (snapCoordinateY(curve.y.at(prevP), ugpY)) snapToElmt = prevP;
 			}
 			else {
 				int prevP = lit_point-1;
-				if (snapCoordinateY(curve.y[prevP], ugpY)) snapToElmt = prevP;
+				if (snapCoordinateY(curve.y.at(prevP), ugpY)) snapToElmt = prevP;
 			}
 
 			if (curve.y.size() > 2) {
 				if (lit_point == (curve.y.size()-1)) {
-					if (snapCoordinateY(curve.y[0], ugpY)) snapToElmt = 0;
+					if (snapCoordinateY(curve.y.at(0), ugpY)) snapToElmt = 0;
 				}
 				else {
 					int nextP = lit_point+1;
-					if (snapCoordinateY(curve.y[nextP], ugpY)) snapToElmt = nextP;
+					if (snapCoordinateY(curve.y.at(nextP), ugpY)) snapToElmt = nextP;
 				}
 			}
 			if (snapCoordinateY(1.0, ugpY)) snapToElmt = -3;
 			if (snapCoordinateY(0.5, ugpY)) snapToElmt = -2;
 			if (snapCoordinateY(0.0, ugpY)) snapToElmt = -1;
 
-			curve.y[lit_point] = snapToValY;
+			curve.y.at(lit_point) = snapToValY;
 		}
 
 		// Handling limitations along Y axis
 		if (ugpY >= topDeletionBound && nbPoints>2) {
-			if (curve.x[lit_point] != -1.) {
-				deletedPointX = curve.x[lit_point];
-				curve.x[lit_point] = -1.;
-				curve.y[lit_point] = ugpY; // This is only to force the redraw of the curve
+			if (curve.x.at(lit_point) != -1.) {
+				deletedPointX = curve.x.at(lit_point);
+				curve.x.at(lit_point) = -1.;
+				curve.y.at(lit_point) = ugpY; // This is only to force the redraw of the curve
 			}
 		}
 		else if (ugpY <= bottomDeletionBound  && nbPoints>2) {
-			if (curve.x[lit_point] != -1.) {
-				deletedPointX = curve.x[lit_point];
-				curve.x[lit_point] = -1.;
-				curve.y[lit_point] = ugpY; // This is only to force the redraw of the curve
+			if (curve.x.at(lit_point) != -1.) {
+				deletedPointX = curve.x.at(lit_point);
+				curve.x.at(lit_point) = -1.;
+				curve.y.at(lit_point) = ugpY; // This is only to force the redraw of the curve
 			}
 		}
 		else {
 			// nextPosY is in the bounds
-			if (!snapTo)  curve.y[lit_point] = CLAMP(ugpY, 0.0, 1.0);
-			if (!moveX && curve.x[lit_point] == -1.) {
+			if (!snapTo)  curve.y.at(lit_point) = CLAMP(ugpY, 0.0, 1.0);
+			if (!moveX && curve.x.at(lit_point) == -1.) {
 				// bring back the X value of the point if it reappear
-				curve.x[lit_point] = deletedPointX;
+				curve.x.at(lit_point) = deletedPointX;
 			}
 		}
 	}
 
-	if (curve.x[lit_point] != prevPosX || curve.y[lit_point] != prevPosY) {
+	if (curve.x.at(lit_point) != prevPosX || curve.y.at(lit_point) != prevPosY) {
 		// we recompute the curve only if we have to
 		curveIsDirty = true;
 		setDirty(true);
@@ -1359,8 +1359,8 @@ void MyFlatCurve::getMouseOverArea () {
 		lit_point = -1;
 
 		for (int i = 0; i < (int)curve.x.size(); i++) {
-			if (curve.x[i] != -1) {
-				dX = curve.x[i] - preciseCursorX;
+			if (curve.x.at(i) != -1) {
+				dX = curve.x.at(i) - preciseCursorX;
 				absDX = dX>0 ? dX : -dX;
 				if (absDX < minDistX) {
 					minDistX = absDX;
@@ -1369,7 +1369,7 @@ void MyFlatCurve::getMouseOverArea () {
 				}
 				if (absDX <= minDistanceX) {
 					aboveVLine = true;
-					dY = curve.y[i] - preciseCursorY;
+					dY = curve.y.at(i) - preciseCursorY;
 					dist = sqrt(dX*dX + dY*dY);
 					if (dist < minDist) {
 						minDist = dist;
@@ -1399,7 +1399,7 @@ std::vector<double> MyFlatCurve::getPoints () {
     /*if (curve.type==FCT_Parametric) {
         result.push_back ((double)(Parametric));
         for (int i=0; i<(int)curve.x.size(); i++) {
-            result.push_back (curve.x[i]);
+            result.push_back (curve.x.at(i));
         }
     }
     else {*/
@@ -1410,11 +1410,11 @@ std::vector<double> MyFlatCurve::getPoints () {
             result.push_back ((double)(FCT_MinMaxCPoints));
         // then we push all the points coordinate
         for (int i=0; i<(int)curve.x.size(); i++) {
-            if (curve.x[i]>=0) {
-                result.push_back (curve.x[i]);
-                result.push_back (curve.y[i]);
-                result.push_back (curve.leftTangent[i]);
-                result.push_back (curve.rightTangent[i]);
+            if (curve.x.at(i)>=0) {
+                result.push_back (curve.x.at(i));
+                result.push_back (curve.y.at(i));
+                result.push_back (curve.leftTangent.at(i));
+                result.push_back (curve.rightTangent.at(i));
             }
         }
     //}
