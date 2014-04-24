@@ -3532,8 +3532,7 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 				if (clut) { // begin C=f(L)
 					float factorskin,factorsat,factor,factorskinext,interm;
 					float chroma = sqrt(SQR(atmp)+SQR(btmp)+0.001f);
-				//	float chromaCfactor=(clcurve[Lprov1*327.68f])/(Lprov1*327.68f);//apply C=f(L)
-					float chromaCfactor=(clcurve[Lprov2*327.68f])/(Lprov2*327.68f);//apply C=f(L)
+					float chromaCfactor=(clcurve[Lprov2*655.35f])/(Lprov2*655.35f);//apply C=f(L)
 					float curf=0.7f;//empirical coeff because curve is more progressive
 					float scale = 100.0f/100.1f;//reduction in normal zone for curve C
 					float scaleext=1.0f;//reduction in transition zone for curve C
