@@ -675,6 +675,8 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 				for (int c=1; c < ColorCount; c++)
 					sum[i2] += SQR(lab[i2][c]);
 			}
+			if(sum[0] == 0.f)		// avoid division by zero
+				sum[0] = 0.0001f;
 			chratio = sqrt(sum[1]/sum[0]);
 			
 			
