@@ -22,10 +22,12 @@
 #include "../rtengine/safegtk.h"
 #ifdef WIN32
 // Desired auto detect function is Vista+
-#define _WIN32_WINNT 0x0600
+//#define _WIN32_WINNT 0x0600 // switching to WINVER for gcc 4.8.1 support on Winx64
+#define WINVER 0x0600
 #include <windows.h>
 #include <winnls.h>
-#undef _WIN32_WINNT
+#undef WINVER
+//#undef _WIN32_WINNT
 #endif
 
 MultiLangMgr langMgr;
