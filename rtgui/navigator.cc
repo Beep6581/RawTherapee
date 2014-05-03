@@ -89,7 +89,7 @@ Navigator::Navigator () {
 #endif
 
 #ifdef __linux__
-	fontname = "DejaVu Sans Mono";
+	fontname = "Monospace";
 #endif
 
 #ifdef __APPLE__
