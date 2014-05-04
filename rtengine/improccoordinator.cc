@@ -865,8 +865,8 @@ void ImProcCoordinator::startProcessing () {
     #undef THREAD_PRIORITY_NORMAL
 
     if (!destroying) {
-        updaterThreadStart.lock ();
         if (!updaterRunning) {
+			updaterThreadStart.lock ();
             thread = NULL;
             updaterRunning = true;
             updaterThreadStart.unlock ();
@@ -876,8 +876,6 @@ void ImProcCoordinator::startProcessing () {
             thread = Glib::Thread::create(sigc::mem_fun(*this, &ImProcCoordinator::process), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
 
         }
-        else
-            updaterThreadStart.unlock ();
     }
 }
 
