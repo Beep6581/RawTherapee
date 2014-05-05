@@ -64,10 +64,17 @@ Examples:
         "ranges": { "black": 10, "white": 1000 },
 	// crop away masked sensor borders, 10 pixels left, 20 pixels top, resulting image width/height 4000x3000
 	// instead of width/height you can write a negative number which specifies how much of right/bottom border
-	// that should be removed
+	   that should be removed but keep in mind that sometimes after converting to DNG the borders are already 
+         cropped so the "negative number" way is not totally safe.
 	"raw_crop": [ 10, 20, 4000, 3000 ],
-	// same as MaskedAreas DNG tag, used for black level measuring here two areas defined
+	// Almost same as MaskedAreas DNG tag, used for black level measuring here two areas defined
 	"masked_areas": [ 51, 2, 3804, 156, 51, 5794, 3804, 5792 ],
+       The difference here is the meaning of the numbers which here are expressing the absolute distance (in pixels) 
+       of each side of each rectangular "masked area" from the top and left side of the sensor 
+       - the first number is the distance of the top edge from the sensor's top
+       - the second is the distance of the left side from the sensors left
+       - the third is the distance of the bottomn side from the sensors top
+       - the fourth is the distance of the right side from the sensor's left
     },
 
     {
@@ -171,14 +178,19 @@ we want conservative values.
 
 By conservative values we mean that if you see a white level of most often
 15760 and occassionally 15759 (ie very small variation of white level which
-is a common case), you set the white level 10 - 20 units below, say at 15750 in
-this example, this way we get a little margin from noise and camera variation.
-Since sensor raw values are linear you lose in this example log2(1-10/15760) =
--0.001 stop of detail, ie irrelevant. Thus it's better to provide RawTherapee
-with knowledge where the image clips rather than keeping that last 0.001 stop
+is a common case), you set the white level around 40-80 14bit units below or
+10-20 12bit units. Say at 15700 in this example, or 4080 instead of 4095 for 
+12bit raws. This way we get a little margin from noise and camera variation.
+Since sensor raw values are linear you lose in this example log2(1-50/15760) =
+-0.005 stop of detail, ie irrelevant. Thus it's better to provide RawTherapee
+with knowledge where the image clips rather than keeping that last 0.005 stop
 of highlight information and risking that clipping will not be detected
 properly.
 
+It is very usual for white level to be a bell distribution instead of a candle
+when the camera applies long exposure noise reduction by subtracting a black frame
+and/or when the system is destabilized due to temperature. Some models have
+always a bell distribution at WL. 
 If you have a fuzzy white level look at the linear histogram; you will probably
 see a normal/gaussian distribution (bell shape) noise peak at clipping and
 probably also a peak at a hard raw data clip level usually at or close to a
@@ -186,6 +198,9 @@ power of two - 1, such as 4095 or 16383. Then you pick a value just before the
 bell shape rises, ie to the left of the bell meaning that you cut away the
 whole fuzzy noise peak. If a little of the starting edge of the noise will be
 included it's not harmful, but 99% of it should be above.
+This would mean that it's better to measure white level on long exposure/ high temp
+raws but since this if difficult and time consuming we choose to measure on normal
+raws and cover the abnormalities whith the conservative WL values.
 
 If you have used Adobe's DNG Converter and analyzed it's output you may have
 noticed that it's very conservative regarding white levels, ie it cuts away
@@ -209,7 +224,7 @@ provided ("ranges":"white_max"). Usually you will not need a margin on
 white_max as it clips there as a result of an in-camera math operation.
 
 Note that aperture scaling can be quite small, for the 5D mark II it's only
-0.1 stop down to f/1.4 and then it can be discussed if it's worthwhile to care.
+0.2 stop down to f/1.2 and then it can be discussed if it's worthwhile to care.
 The "worst" cameras scale about 0.6 stops though, and then it's more
 valuable to compensate. If you skip aperture scaling RawTherapee will clip the
 files a little bit too early and you miss that last fraction of highlight
@@ -219,11 +234,11 @@ processing, so be careful.
 
 Scaling can vary sligthly depending on ISO (if white levels vary) so make
 sure to provide conservative scalings so regardless of ISO you don't get a
-too high white level. We recommend to keep a wider margin here than on the
-white levels, ie 0.5-1% lower or so. For example if base (conservative!)
+too high white level. We recommend to keep a small margin here also
+white levels, ie 0.5% lower or so. For example if base (not conservative!)
 white level is 15750 and the scaled is 16221 we have a scaling factor of
-16221/15750=1.0299 ie +2.9% we set the factor to 1.02 or +2% to keep a
-margin.
+16221/15750=1.0299 ie +2.9% we set the factor to 1.025 to keep a margin.
+The abnormal cases are already covered by setting conservative per ISO White levels.
 
 The scale factor you provide here is applied on the white level before black
 level subtraction (if any), ie directly on the white level value you provide in
@@ -252,7 +267,7 @@ complete info):
    though). Will do aperture and ISO scaling, but often to a lesser extent
    than Canon files, ie not as much to gain.
  - Sony ARW2: no scaling. Generally black level around 512, and white level
-   16350.
+   16350 and to be conservative say 16300.
 
 Note that some raw formats may go through a certain amount of pre-processing
 based on meta data, such as curve and levels adjustments and various
@@ -346,7 +361,6 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
 
 */
 
-
     { // quality A (only aperture scaling for f/1.2 missing)
         "make_model": "Canon EOS 5D Mark II",
         "dcraw_matrix": [ 4716,603,-830,-7798,15474,2480,-1496,1937,6651 ],
@@ -354,33 +368,34 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
             // black levels are read from raw masked pixels
 	    // white levels are same for all colors, but vary on ISO
             "white": [
-                { "iso": 50,  "levels": 15750 }, // typical: 15760
-                { "iso": 100, "levels": 15750 },
-                { "iso": 125, "levels": 15750 },
-                { "iso": 160, "levels": 12800 },
-                { "iso": 200, "levels": 15750 },
-                { "iso": 250, "levels": 15750 },
-                { "iso": 320, "levels": 12800 }, // typical: 12810
-                { "iso": 400, "levels": 15750 },
-                { "iso": 500, "levels": 15750 },
-                { "iso": 640, "levels": 12800 },
-                { "iso": 800, "levels": 15750 },
-                { "iso": 1000, "levels": 15750 },
-                { "iso": 1250, "levels": 12800 },
-                { "iso": 1600, "levels": 15750 },
-                { "iso": 2000, "levels": 15750 },
-                { "iso": 2500, "levels": 15750 },
-                { "iso": 3200, "levels": 15750 },
-                { "iso": 4000, "levels": 15750 },
-                { "iso": 5000, "levels": 15750 },
-                { "iso": 6400, "levels": 16370 }, // typical: 16383
-                { "iso": 12800, "levels": 16370 },
-                { "iso": 25600, "levels": 16370 }
+                { "iso": 50,  "levels": 15600 }, // typical: 15760
+                { "iso": 100, "levels": 15600 },
+                { "iso": 125, "levels": 15600 },
+                { "iso": 160, "levels": 12700 },
+                { "iso": 200, "levels": 15600 },
+                { "iso": 250, "levels": 15600 },
+                { "iso": 320, "levels": 12700 }, // typical: 12810
+                { "iso": 400, "levels": 15600 },
+                { "iso": 500, "levels": 15600 },
+                { "iso": 640, "levels": 12700 },
+                { "iso": 800, "levels": 15600 },
+                { "iso": 1000, "levels": 15600 },
+                { "iso": 1250, "levels": 12700 },
+                { "iso": 1600, "levels": 15600 },
+                { "iso": 2000, "levels": 15600 },
+                { "iso": 2500, "levels": 15600 },
+                { "iso": 3200, "levels": 15600 },
+                { "iso": 4000, "levels": 15600 },
+                { "iso": 5000, "levels": 15600 },
+                { "iso": 6400, "levels": 16200 }, // typical: 16383
+                { "iso": 12800, "levels": 16200 },
+                { "iso": 25600, "levels": 16200 }
             ],
 	    "white_max": 16383,
             "aperture_scaling": [
-		/* note: no scale factors known for f/1.2 and f/1.0 (had no lenses to test with), but the
-		   typical 15750 white level maxes out at "white_max" for f/1.8 and below anyway. */
+		/* note: no scale factors known for and f/1.0 (had no lenses to test with), but the
+		   typical 15700 white level maxes out at "white_max" for f/1.8 and below anyway. */
+		{ "aperture": 1.2, "scale_factor": 1.100 }, // guessed by relative 5DIII data
 		{ "aperture": 1.4, "scale_factor": 1.077 },
 		{ "aperture": 1.6, "scale_factor": 1.054 },
 		{ "aperture": 1.8, "scale_factor": 1.039 },
@@ -388,59 +403,274 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
 		{ "aperture": 2.2, "scale_factor": 1.021 },
 		{ "aperture": 2.5, "scale_factor": 1.016 },
 		{ "aperture": 2.8, "scale_factor": 1.010 },
-		{ "aperture": 3.2, "scale_factor": 1.0046 },
-		{ "aperture": 3.5, "scale_factor": 1.0031 }
+		{ "aperture": 3.2, "scale_factor": 1.004 },
+		{ "aperture": 3.5, "scale_factor": 1.003 }
             ]
         }
     },
-    { // quality B, more aperture scalings desired
+    { // quality A,
         "make_model": "Canon EOS 5D Mark III",
         "dcraw_matrix": [ 6722,-635,-963,-4287,12460,2028,-908,2162,5668 ],
         "ranges": {
             // black levels are read from raw masked pixels
-	    // white levels are same for all colors, but vary on ISO
+	      // white levels are same for all colors, but vary on ISO
             "white": [
-                { "iso": 50,  "levels": 15270 }, // typical: 15282
-                { "iso": 100, "levels": 15270 },
-                { "iso": 125, "levels": 15270 },
-                { "iso": 160, "levels": 13300 }, // typical: 13306
-                { "iso": 200, "levels": 15270 },
-                { "iso": 250, "levels": 15270 },
-                { "iso": 320, "levels": 13300 },
-                { "iso": 400, "levels": 15270 },
-                { "iso": 500, "levels": 15270 },
-                { "iso": 640, "levels": 13300 },
-                { "iso": 800, "levels": 15270 },
-                { "iso": 1000, "levels": 15270 },
-                { "iso": 1250, "levels": 13300 },
-                { "iso": 1600, "levels": 15270 },
-                { "iso": 2000, "levels": 15270 },
-                { "iso": 2500, "levels": 13300 },
-                { "iso": 3200, "levels": 15270 },
-                { "iso": 4000, "levels": 15270 },
-                { "iso": 5000, "levels": 13300 },
-                { "iso": 6400, "levels": 15270 },
-                { "iso": 8000, "levels": 15270 },
-                { "iso": 10000, "levels": 13300 }, // no data, guessed
-                { "iso": 12800, "levels": 15270 },
-                { "iso": 16000, "levels": 15270 },
-                { "iso": 20000, "levels": 15270 },
-                { "iso": 25600, "levels": 16300 },
-                { "iso": 32000, "levels": 16300 },
-                { "iso": 40000, "levels": 16300 },
-                { "iso": 51200, "levels": 16300 },
-                { "iso": 102400, "levels": 16300 }
+                { "iso": [ 50, 100, 125, 200, 250, 400, 500, 800, 1000, 1600, 2000, 3200, 4000, 6400, 8000, 12800, 16000, 20000 ], "levels": 15180 }, // typical: 15282
+                { "iso": [ 160, 320, 640, 1250, 2500, 5000, 10000 ], "levels": 13200 }, // typical: 13306
+                { "iso": [ 25600, 32000, 40000, 51200, 102400 ], "levels": 16200 }
             ],
 	    "white_max": 16383,
             "aperture_scaling": [
-	        // limited scaling info available, please provide more
-		{ "aperture": 2.0, "scale_factor": 1.024 },
-		{ "aperture": 2.8, "scale_factor": 1.010 }
+            { "aperture": 1.2, "scale_factor": 1.130 },
+            { "aperture": 1.4, "scale_factor": 1.090 },
+            { "aperture": 1.6, "scale_factor": 1.065 },
+            { "aperture": 1.8, "scale_factor": 1.040 },
+            { "aperture": 2.0, "scale_factor": 1.025 },
+            { "aperture": 2.2, "scale_factor": 1.020 },
+            { "aperture": 2.5, "scale_factor": 1.015 },
+		{ "aperture": 2.8, "scale_factor": 1.010 },
+		{ "aperture": 3.2, "scale_factor": 1.005 },
+ 		{ "aperture": 3.5, "scale_factor": 1.002 }
+           ]
+        }
+    },
+    { // Quality A, some missing scaling factors are safelly guessed - most samples by sfink16 at RT forums
+        "make_model": "Canon EOS 6D",
+        "dcraw_matrix": [ 7034,-804,-1014,-4420,12564,2058,-851,1994,5758 ],
+        "ranges": { 
+               "white": [ 
+                { "iso": [ 50, 100, 125, 200, 250, 400, 500, 800, 1000, 1600, 2000, 3200, 4000, 6400, 8000, 12800, 16000, 25600 ], "levels": 15180 }, // typical 15283
+                { "iso": [ 160, 320, 640, 1250, 2500, 5000, 10000, 20000 ], "levels": 13100 }, // typical 13225
+                { "iso": [ 51200, 102400  ], "levels": 16280 } // typical 16383 
+                        ], 
+               "white_max": 16383,
+            "aperture_scaling": [
+		/* note: no scale factors known for f/1.0 (had no lenses to test with), but the
+		   ISO 160-320... 12650 white levels maxes out at "white_max" for f/1.2 and below anyway. */
+		{ "aperture": 1.2, "scale_factor": 1.130 }, // from histogramm 1 gap in every 7 levels
+		{ "aperture": 1.4, "scale_factor": 1.090 }, // histogram 3 gaps in every 32 levels
+		{ "aperture": 1.6, "scale_factor": 1.060 }, // 16213/15283 
+		{ "aperture": 1.8, "scale_factor": 1.040 }, // guessed
+		{ "aperture": 2.0, "scale_factor": 1.030 }, // 15800/15283
+		{ "aperture": 2.2, "scale_factor": 1.020 }, // guessed
+		{ "aperture": 2.5, "scale_factor": 1.015 }, // 15541/15283
+		{ "aperture": 2.8, "scale_factor": 1.010 }, // 15437/15283
+		{ "aperture": 3.2, "scale_factor": 1.005 }, // 15361/15283
+		{ "aperture": 3.5, "scale_factor": 1.000 } // no sample
             ]
         }
     },
 
-    { // quality B, lacks aperture and ISO scaling, known to exist, but little to gain as the levels are so close to white_max
+    { // Quality A - ISO and aperture WL data by Ilias at Avclub gr forums
+        "make_model": "Canon EOS 40D",
+        "dcraw_matrix": [ 6071,-747,-856,-7653,15365,2441,-2025,2553,7315 ],
+        "raw_crop": [ 30, 18, 3908, 2602 ], 
+        "masked_areas": [ 20, 2, 2616, 20 ],
+        "ranges": { 
+               "white": [ 
+                { "iso": 100, "levels": 13700 }, // typical 13825
+                { "iso": [ 125, 250, 500, 1000, 3200 ], "levels": 16280 }, // typical 16383
+                { "iso": [ 160, 320, 640 ], "levels": 12600 }, // typical 12744
+                { "iso": [ 200, 400 ], "levels": 16100 }, // typical 16224
+                { "iso": 800, "levels": 15900 }, // gaussian histogram 15900-16224
+                { "iso": 1600, "levels": 14900 }, // gaussian histogram 14900-15750
+                { "iso": 1250, "levels": 11900 } //  gaussian histogram 11900-12500
+                        ], 
+               "white_max": 16383,
+            "aperture_scaling": [
+		/* note: no scale factors known for f/1.2 and f/1.0 (had no lenses to test with), but the
+		   typical 12700 white levels maxes out at "white_max" for f/1.4 and below anyway. */
+		{ "aperture": 1.4, "scale_factor": 1.265 }, // 16142/12744
+		{ "aperture": 1.6, "scale_factor": 1.145 }, // 15872/13825
+		{ "aperture": 1.8, "scale_factor": 1.090 }, // 15103/13825
+		{ "aperture": 2.0, "scale_factor": 1.035 }, // 14334/13825
+		{ "aperture": 2.2, "scale_factor": 1.005 }, // 13950/13825
+		{ "aperture": 2.5, "scale_factor": 1.000 } // 13825/13825
+            ]
+                  }
+    }, 
+    { // Quality A, ISO and aperture WL data by Ayshih at Magic Lantern forums
+        "make_model": "Canon EOS 50D",
+        "dcraw_matrix": [ 4920,616,-593,-6493,13964,2784,-1774,3178,7005 ],
+        "ranges": { 
+               "white": [ 
+                { "iso": [ 100, 125 ], "levels": 13300 }, // typical 13432
+                { "iso": [ 160, 320, 640, 1250 ], "levels": 12700 }, // typical 12790-12810
+                { "iso": [ 200, 250, 400, 500, 800, 1000, 1600, 2000, 2500, 3200 ], "levels": 15630 }, // typical 15763-15733
+                { "iso": [ 6400, 12800 ], "levels": 16200 } // typical 16383
+                        ], 
+               "white_max": 16383,
+            "aperture_scaling": [
+		{ "aperture": 1.4, "scale_factor": 1.270 }, 
+		{ "aperture": 1.6, "scale_factor": 1.150 }, 
+		{ "aperture": 1.8, "scale_factor": 1.090 }, 
+		{ "aperture": 2.0, "scale_factor": 1.040 }, 
+		{ "aperture": 2.2, "scale_factor": 1.020 }, 
+		{ "aperture": 2.5, "scale_factor": 1.010 },
+		{ "aperture": 2.8, "scale_factor": 1.000 },
+		{ "aperture": 3.2, "scale_factor": 1.000 }
+            ] 
+                  }
+    },
+    { // Quality A, ISO and aperture WL data by Shalrath at RawTherapee forums
+        "make_model": "Canon EOS 60D",
+        "dcraw_matrix": [ 6719,-994,-925,-4408,12426,2211,-887,2129,6051 ],
+        "ranges": { 
+               "white": [ 
+                { "iso": [ 100, 125 ], "levels": 13480 }, // typical 13583
+                { "iso": [ 160, 320, 640, 1250, 2500 ], "levels": 12550 }, // typical 12650
+                { "iso": [ 200, 250, 400, 500, 800, 1000, 1600, 2000, 3200, 4000, 5000, 6400, 12800 ], "levels": 15200 } // typical 15304 
+                        ], 
+               "white_max": 16383,
+            "aperture_scaling": [
+		/* note: no scale factors known for f/1.2 and f/1.0 (had no lenses to test with), but the
+		   typical 12650 white levels maxes out at "white_max" for f/1.4 and below anyway. */
+		{ "aperture": 1.4, "scale_factor": 1.308 }, // gaps 81of301
+		{ "aperture": 1.6, "scale_factor": 1.201 },
+		{ "aperture": 1.8, "scale_factor": 1.143 },
+		{ "aperture": 2.0, "scale_factor": 1.084 }, // gaps 1of11
+		{ "aperture": 2.2, "scale_factor": 1.060 },
+		{ "aperture": 2.5, "scale_factor": 1.050 },
+		{ "aperture": 2.8, "scale_factor": 1.033 },
+		{ "aperture": 3.2, "scale_factor": 1.016 },
+		{ "aperture": 3.5, "scale_factor": 1.000 } // no sample but it would be negligible
+            ]
+                  }
+    },
+    { // Quality B, more aperture scale factors needed
+        "make_model": "Canon EOS 70D",
+        "dcraw_matrix": [ 7034,-804,-1014,-4420,12564,2058,-851,1994,5758 ],
+        "ranges": { 
+               "white": [ 
+                { "iso": [ 100, 125 ], "levels": 13480 }, // typical 13583
+                { "iso": [ 160, 320, 640, 1250, 2500, 5000 ], "levels": 12450 }, // typical 12559
+                { "iso": [ 200, 250, 400, 500, 800, 1000, 1600, 2000, 3200, 4000, 6400, 8000, 10000 ], "levels": 15200 }, // typical 15303 - ISO 8000-10000 guessed   
+                { "iso": [ 12800, 25600 ], "levels": 16200 } // typical 16383      
+                        ], 
+               "white_max": 16383,
+            "aperture_scaling": [
+		/* note: no scale factors known for f/1.2 and f/1.0 (had no lenses to test with), but even with the
+		   12500 white levels nearly maxes out for f/1.4 and below anyway. */
+		{ "aperture": 1.4, "scale_factor": 1.240 }, // guessed
+		{ "aperture": 1.6, "scale_factor": 1.160 }, // guessed
+		{ "aperture": 1.8, "scale_factor": 1.110 }, // 31of35
+		{ "aperture": 2.0, "scale_factor": 1.060 }, // guessed 
+		{ "aperture": 2.2, "scale_factor": 1.030 }, // guessed
+		{ "aperture": 2.5, "scale_factor": 1.015 }, // guessed
+		{ "aperture": 2.8, "scale_factor": 1.008 }, // 15432/15303
+		{ "aperture": 3.2, "scale_factor": 1.000 },
+		{ "aperture": 3.5, "scale_factor": 1.000 } 
+            ]
+                  }
+    },
+
+    { // Quality b, scaling factors missing but guessed safely
+        "make_model": [ "Canon EOS 1200D", "Canon EOS Rebel T5" ],
+        "dcraw_matrix": [ 6461,-907,-882,-4300,12184,2378,-819,1944,5931 ], // dcp D65 colormatrix2
+        "ranges": { 
+               "white": [ 
+                { "iso": [ 100, 125 ], "levels": 13480 }, // typical 13583
+                { "iso": [ 160, 320, 640, 1250, 2500, 5000, 10000 ], "levels": 12550 }, // typical 12650
+                { "iso": [ 200, 250, 400, 500, 800, 1000, 1600, 2000, 3200, 4000, 6400, 8000 ], "levels": 15200 }, // typical 15303 
+                { "iso": [ 12800, 25600 ], "levels": 16200 } // typical 16383
+                        ], 
+               "white_max": 16383,
+            "aperture_scaling": [
+		/* note: no scale factors known for f/1.2 and f/1.0 (had no lenses to test with), but the
+		   typical 12650 white levels maxes out at "white_max" for f/1.4 and below anyway. */
+		{ "aperture": 1.4, "scale_factor": 1.200 }, // guessed from 650D data
+		{ "aperture": 1.6, "scale_factor": 1.080 }, // guessed
+		{ "aperture": 1.8, "scale_factor": 1.055 }, // guessed
+		{ "aperture": 2.0, "scale_factor": 1.030 }, // guessed
+		{ "aperture": 2.2, "scale_factor": 1.020 }, // guessed
+		{ "aperture": 2.5, "scale_factor": 1.020 }, // guessed
+		{ "aperture": 2.8, "scale_factor": 1.000 }, // 
+		{ "aperture": 3.2, "scale_factor": 1.000 }, // 
+		{ "aperture": 3.5, "scale_factor": 1.000 } // 
+            ]
+                  }
+    },
+
+    { // Quality A, only one scaling factor missing and guessed safely
+        "make_model": [ "Canon EOS 650D", "Canon EOS Rebel T4i" ],
+        "dcraw_matrix": [ 6602,-841,-939,-4472,12458,2247,-975,2039,6148 ],
+        "ranges": { 
+               "white": [ 
+                { "iso": [ 100, 125 ], "levels": 13480 }, // typical 13583
+                { "iso": [ 160, 320, 640, 1250, 2500, 5000, 10000 ], "levels": 12550 }, // typical 12650
+                { "iso": [ 200, 250, 400, 500, 800, 1000, 1600, 2000, 3200, 4000, 6400, 8000 ], "levels": 15200 }, // typical 15303 
+                { "iso": [ 12800, 25600 ], "levels": 16200 } // typical 16383
+                        ], 
+               "white_max": 16383,
+            "aperture_scaling": [
+		/* note: no scale factors known for f/1.2 and f/1.0 (had no lenses to test with), but the
+		   typical 12650 white levels maxes out at "white_max" for f/1.4 and below anyway. */
+		{ "aperture": 1.4, "scale_factor": 1.200 }, // 16332/13583
+		{ "aperture": 1.6, "scale_factor": 1.080 }, // guessed
+		{ "aperture": 1.8, "scale_factor": 1.055 }, // 14372/13583
+		{ "aperture": 2.0, "scale_factor": 1.030 }, // 14034/13583
+		{ "aperture": 2.2, "scale_factor": 1.025 }, // 13921/13583
+		{ "aperture": 2.5, "scale_factor": 1.020 }, // 
+		{ "aperture": 2.8, "scale_factor": 1.000 }, // 
+		{ "aperture": 3.2, "scale_factor": 1.000 }, // 
+		{ "aperture": 3.5, "scale_factor": 1.000 } // 
+            ]
+                  }
+    },
+
+    { // Quality B, only one some scaling factors missing
+        "make_model": "Canon EOS-M",
+        "dcraw_matrix": [ 6602,-841,-939,-4472,12458,2247,-975,2039,6148 ],
+        "ranges": { 
+               "white": [ 
+                { "iso": [ 100, 125 ], "levels": 13480 }, // typical 13583
+                { "iso": [ 160, 320, 640, 1250, 2500, 5000, 10000 ], "levels": 12550 }, // typical 12650
+                { "iso": [ 200, 250, 400, 500, 800, 1000, 1600, 2000, 3200, 4000, 6400, 8000 ], "levels": 15200 }, // typical 15303 
+                { "iso": [ 12800, 25600 ], "levels": 16200 } // typical 16383
+                        ], 
+               "white_max": 16383,
+            "aperture_scaling": [
+		/* note: no scale factors known for f/1.2 and f/1.0 (had no lenses to test with), but the
+		   typical 12650 white levels maxes out at "white_max" for f/1.4 and below anyway. */
+		{ "aperture": 1.4, "scale_factor": 1.200 }, // guessed
+		{ "aperture": 1.6, "scale_factor": 1.080 }, // guessed
+		{ "aperture": 1.8, "scale_factor": 1.055 }, // guessed
+		{ "aperture": 2.0, "scale_factor": 1.030 }, // 15821/15303
+		{ "aperture": 2.2, "scale_factor": 1.025 }, // 15691/15303
+		{ "aperture": 2.5, "scale_factor": 1.020 }, // 12947/12650
+		{ "aperture": 2.8, "scale_factor": 1.000 }, // 
+		{ "aperture": 3.2, "scale_factor": 1.000 }, // 
+		{ "aperture": 3.5, "scale_factor": 1.000 } // 
+                                ]
+                  }
+    },
+
+    { /*   Quality C, needs a way to auto apply 3/2 or 4/3 crops (read exif tags ..) to work better with auto distortion, 
+           for the moment just comment-uncomment the desired raw crop */
+        "make_model": "Canon PowerShot G1 X Mark II",
+        "dcraw_matrix": [ 7378,-1255,-1043,-4088,12251,2048,-876,1946,5805 ], // D65 matrix from adobe dcp
+ //       "raw_crop": [ 80, 50, 4400, 3316 ], // full frame 4480x3366 borders 80,50 - much shade in corners, no/wrong auto distortion   
+ //        "raw_crop": [ 104, 144, 4360, 3128 ], // Mixed best average frame - , width is 4352 from 3/2, height 3120 from 4/3 - auto distortion does not work correctly
+ //        "raw_crop": [ 200, 144, 4168, 3128 ], // Optional 4/3 frame 4160x3120, 4pix  borders, Left Border 204-4, Top Border 148-4
+        "raw_crop": [ 104, 252, 4360, 2912 ], // Default 3/2 frame 4352X2904, 4pix borders, Left Border 108-4, Top border 256-4
+        "masked_areas": [ 148, 2, 3340, 78 ],
+        "ranges": { "white": 16300 }
+    },
+
+    { // Quality A
+        "make_model": "Canon PowerShot S120",
+        "dcraw_matrix": [ 6961,-1685,-695,-4625,12945,1836,-1114,2152,5518 ],
+        "raw_crop": [ 120, 30, 4024, 3030 ],
+        "masked_areas": [ 32, 2, 3028, 80 ],
+        "ranges": { "white": 4050 }
+    },
+
+    { // Quality A
+        "make_model": "FUJIFILM S1",
+        "dcraw_matrix": [ 11705,-4262,-1107,-2282,10791,1709,-555,1713,4945 ] // MATRIX FROM FUJI SL1000
+    },
+
+   { // quality B, lacks aperture and ISO scaling, known to exist, but little to gain as the levels are so close to white_max
         "make_model": "Nikon D7000",
         "dcraw_matrix": [ 7530,-1942,-255,-4318,11390,3362,-926,1694,7649 ], // matrix provided by Tanveer(tsk1979)
         "ranges": {
@@ -453,18 +683,150 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
 	    // aperture scaling not measured, but known to exist, at f/1.8 the G channels hits white_max
 	}
     },
+    { // Quality A, new model, not in dcraw 9.20, conflict with D4 in dcraw 9.20, sRAW format not supported
+        "make_model": "Nikon D4s",
+        "dcraw_matrix": [ 8598,-2848,-857,-5618,13606,2195,-1002,1773,7137 ],
+        "ranges": { "black": 768, "white": 16300 }
+    },
+    { // Quality A, // correction for BL 147 to 150 and color matrix
+        "make_model": "Nikon D3300",
+        "dcraw_matrix": [ 6988,-1384,-714,-5631,13410,2447,-1485,2204,7318 ], // matrix from adobe dcp d65 
+        "ranges": { "black": 150, "white": 4095 } 
+    },
+//    { // Quality B, does not work with 12bit files - experimenting with matrices
+//        "make_model": "Nikon D5300",
+//        "dcraw_matrix": [ 6988,-1384,-714,-5631,13410,2447,-1485,2204,7318 ], // matrix from adobe dcp d65 
+//        "dcraw_matrix": [ 7009,-1699,-414,-5209,12641,2886,-1201,1904,7229 ], // Calculated from DxO d50 
+//        "ranges": { "black": 600 }
+//    },
 
-    { // quality A
-        "make_model": "Sony SLT-A77",
-        "dcraw_matrix": [ 5126,-830,-261,-4788,12196,2934,-948,1602,7068 ], // matrix provided by Colin Walker
-	// note: Sony ARW2 file format gets 14 bit values, not 12 bit like in dcraw 9.19
-        "ranges": { "black": 512, "white": 16350 }
+    { // Quality A, new model, there is a conflict with E-M1 in Dcraw.cc, raw crop correction
+        "make_model": "OLYMPUS E-M10",
+        "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 ],
+        "raw_crop": [ 0, 0, 4624, 3472 ], // largest valid - full frame is 4640x3472
+//        "raw_crop": [ 4, 4, 4616, 3464 ], // olympus jpeg crop 8, 8, 4608, 3456
+        "ranges": { "white": 4080 }
     },
-    { // quality A
-        "make_model": [ "Sony SLT-A99", "Sony SLT-A99V" ],
-        "dcraw_matrix": [ 6344,-1612,-462,-4863,12477,2681,-865,1786,6899 ],
-        "ranges": { "black": 512, "white": 16350 }
+    { // Quality A, white level correction
+        "make_model": "OLYMPUS E-PM2",
+        "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 ],
+        "ranges": { "white": 4040 } // nominal 4056
     },
+
+    { // Quality B
+        "make_model": "Panasonic DMC-LF1",
+        "dcraw_matrix": [ 9379,-3267,-816,-3227,11560,1881,-926,1928,5340 ],
+        "ranges": { "black": 143, "white": 4080 } // BL is floating and should be extracted from exif
+    },
+    { // Quality B
+        "make_model": [ "Panasonic DMC-TZ60", "Panasonic DMC-TZ61", "Panasonic DMC-ZS40", "Panasonic DMC-ZS41" ],
+        "dcraw_matrix": [ 8607,-2822,-808,-3755,11930,2049,-820,2060,5224 ], // matrix from Adobe dcp v8.4
+        "raw_crop": [ 8, 8, 4904, 3680 ], // crop according to exif 4896 X 3672 plus 4 pixels borders. RT's frame gets smaller than Dcraw but works better with auto distortion
+        "ranges": { "black": 143, "white": 4050 } // BL is floating and should be extracted from exif
+    },
+
+    { // Quality B, BL is floating and should be extracted from exif maker data
+        "make_model": "Panasonic DMC-GH3",
+        "dcraw_matrix": [ 6559,-1752,-491,-3672,11407,2586,-962,1875,5130 ], // dcp d65
+        "ranges": { 
+           "black": 144,
+           "white": [ 
+              { "iso": 125, "levels": 3500 }, // gaussian 3600-4095
+              { "iso": [ 160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 12800, 25600 ], "levels": 4080 } // nominal 4095 
+                    ] 
+                  }
+    },
+
+    { // Quality C, preliminary support, not yet supported by Dcraw or Adobe
+        "make_model": "Panasonic DMC-GH4",
+        "dcraw_matrix": [ 5545,-878,-249,-4592,12128,2709,-1225,1928,5260 ], // calculated from dxo D50 matrix 
+        "ranges": { 
+           "black": 144, // BL is floating and should be extracted from exif maker data
+           "white": [ 
+              { "iso": 100, "levels": 2700 }, // gaussian center at 2870-2920 range +/- 150
+              { "iso": 125, "levels": 3100 }, // guessed 
+              { "iso": [ 160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 12800, 25600 ], "levels": 4080 } // nominal 4095 
+                    ] 
+                  }
+    },
+
+    { // Quality B, BL is floating and should be extracted from exif maker data
+        "make_model": "Panasonic DMC-GM1",
+        "dcraw_matrix": [ 6770,-1895,-744,-5232,13145,2303,-1664,2691,5703 ],
+        "ranges": { 
+           "black": 143, 
+           "white": [
+              { "iso": 125, "levels": 3100 }, // bell shape 3150-3650 - exif 2616
+              { "iso": [ 160, 200, 250, 320, 400,500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 12800, 25600 ], "levels": 4080 } // nominal 4095
+                    ]
+                  } 
+    },
+    { // Quality B, BL is floating and should be extracted from exif maker data
+        "make_model": "Panasonic DMC-GX7",
+        "dcraw_matrix": [ 7610,-2780,-576,-4614,12195,2733,-1375,2393,6490 ],
+        "ranges": { 
+           "black": 143, 
+           "white": [
+              { "iso": 125, "levels": 3100 },
+              { "iso": [ 160, 200, 250, 320, 400,500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 12800, 25600 ], "levels": 4080 } // nominal 4095
+                    ]
+                  } 
+    },
+
+    {  // Quality A, Conflict with Samsung NX in Dcraw.c-Dcraw.cc if not included in camconst.json
+        "make_model": "Samsung NX30", 
+        "dcraw_matrix": [ 7557,-2522,-739,-4679,12949,1894,-840,1777,5311 ] // D65 matrix from Adobe's Dcp profile - DxoD50 6661,-1695,-616,-6456,14646,1913,-1417,2142,5646
+    },
+//    {  // Quality C,  new model,  
+//        "make_model": "Samsung NX mini", 
+//        "dcraw_matrix": [ 7557,-2522,-739,-4679,12949,1894,-840,1777,5311 ], // quessed
+//        "raw_crop": [ 128, 36, 5480, 3656 ] // jpeg 5472x3648 - raw 5664 x 3710 - crop 132, 40, 5604, 3688
+//    },
+
+    { // Quality A, correction for frame width
+        "make_model": "Sony NEX-5N",
+        "dcraw_matrix": [ 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 ],
+        "raw_crop": [ 0, 0, 4920, 3276 ], 
+        "ranges": { "black": 512, "white": 16300 }
+    },
+    { // Quality A, correction for frame width black level and color matrix 
+        "make_model": "Sony ILCE-3000",
+        "dcraw_matrix": [ 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 ], // adobe dcp d65
+        "ranges": { "black": 512, "white": 16300 },
+        "raw_crop": [ 0, 0, 5476, 3656 ] 
+    },
+    { // Quality A, correction for frame width
+        "make_model": "Sony ILCE-5000",
+        "dcraw_matrix": [ 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 ], // adobe dcp d65
+        "ranges": { "black": 512, "white": 16300 },
+        "raw_crop": [ 0, 0, 5476, 3656 ]
+    },
+    { // Quality A, new model not supported in dcraw 9.20
+        "make_model": "Sony ILCE-6000",
+        "dcraw_matrix": [ 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 ], // adobe dcp d65
+//        "dcraw_matrix": [ 5012,-901,-206,-4034,11428,2984,-1104,1718,6377 ], // IR_x-rite D55
+//        "dcraw_matrix": [ 4491,-737,-117,-4578,11908,3037,-1088,1686,6152 ], // DxO_D50 
+        "raw_crop": [ 0, 0, 6024, 4024 ],
+        "ranges": { "black": 512, "white": 16300 }
+    },
+    { // Quality A, correction for frame width
+        "make_model": "Sony ILCE-7R",
+        "dcraw_matrix": [ 4913,-541,-202,-6130,13513,2906,-1564,2151,7183 ],
+        "raw_crop": [ 0, 0, 7372, 4920 ],
+        "ranges": { "black": 512, "white": 16300 }
+    },
+// No need for these Sony models anymore 
+//    { // quality A
+//        "make_model": "Sony SLT-A77",
+//        "dcraw_matrix": [ 5126,-830,-261,-4788,12196,2934,-948,1602,7068 ], // matrix provided by Colin Walker
+//	// note: Sony ARW2 file format gets 14 bit values, not 12 bit like in dcraw 9.19
+//        "ranges": { "black": 512, "white": 16300 }
+//    },
+//    { // quality A
+//        "make_model": [ "Sony SLT-A99", "Sony SLT-A99V" ],
+//        "dcraw_matrix": [ 6344,-1612,-462,-4863,12477,2681,-865,1786,6899 ],
+//        "ranges": { "black": 512, "white": 16300 }
+//    },
 
     /* Phase One: color matrices borrowed from Adobe DNG Converter, black/white levels tested on actual raw files.
        Note: the dcraw decoder makes black level subtraction and various corrections to the raw values based on
