@@ -280,7 +280,7 @@ style "clearlooks-button" {
 
 	bg[NORMAL]        = shade (1.20, @rt_bg_color)
 	bg[PRELIGHT]      = shade (1.30, @rt_bg_color)
-	bg[ACTIVE]        = shade (1.40, @rt_bg_color)
+	bg[ACTIVE]        = shade (1.90, @rt_bg_color)
 
 	fg[NORMAL]      = @rt_fg_color
 	fg[PRELIGHT]    = shade(1.15, @rt_fg_color)
