@@ -68,8 +68,9 @@ bool SplashImage::on_expose_event (GdkEventExpose* event) {
     if (!versionSuffixString.empty())
         versionStr += " "+versionSuffixString;
     version = create_pango_layout (versionStr);
-    version->get_pixel_size (w, h);  
-    window->draw_layout(gc_, pixbuf->get_width() - w - 4, pixbuf->get_height() - h - 4, version);
+    version->set_markup("<span foreground=\"white\">" + versionStr + "</span>");
+    version->get_pixel_size (w, h);
+    window->draw_layout(gc_, pixbuf->get_width() - w - 32, pixbuf->get_height() - h - 20, version);
 
     return true;
 }
