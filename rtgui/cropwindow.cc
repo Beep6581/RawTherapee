@@ -416,7 +416,13 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y) {
 
     bool needRedraw = false;
     if (state==SCropWinResize) {
-        setSize (press_x + x - action_x, press_y + y - action_y);
+		int newWidth = press_x + x - action_x;
+		int newHeight = press_y + y - action_y;
+		setSize(newWidth, newHeight);
+		if (decorated) {
+			options.detailWindowWidth = newWidth;
+			options.detailWindowHeight = newHeight;
+	    }
         state = SNormal;
         for (std::list<CropWindowListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
             (*i)->cropWindowSizeChanged (this);

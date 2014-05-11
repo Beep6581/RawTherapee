@@ -259,6 +259,8 @@ void Options::setDefaults () {
     startupDir = STARTUPDIR_LAST;
     startupPath = "";
     useBundledProfiles = true;
+    detailWindowWidth = -1;
+    detailWindowHeight = -1;
     dirBrowserWidth = 260;
     dirBrowserHeight = 350;
     preferencesWidth = 800;
@@ -703,6 +705,8 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "WindowWidth"))     windowWidth     = keyFile.get_integer ("GUI", "WindowWidth");
     if (keyFile.has_key ("GUI", "WindowHeight"))    windowHeight    = keyFile.get_integer ("GUI", "WindowHeight");
     if (keyFile.has_key ("GUI", "WindowMaximized")) windowMaximized = keyFile.get_boolean ("GUI", "WindowMaximized");
+    if (keyFile.has_key ("GUI", "DetailWindowWidth"))   detailWindowWidth        = keyFile.get_integer ("GUI", "DetailWindowWidth");
+    if (keyFile.has_key ("GUI", "DetailWindowHeight"))  detailWindowHeight       = keyFile.get_integer ("GUI", "DetailWindowHeight");
     if (keyFile.has_key ("GUI", "DirBrowserWidth"))     dirBrowserWidth          = keyFile.get_integer ("GUI", "DirBrowserWidth");
     if (keyFile.has_key ("GUI", "DirBrowserHeight"))    dirBrowserHeight         = keyFile.get_integer ("GUI", "DirBrowserHeight");
     if (keyFile.has_key ("GUI", "PreferencesWidth"))    preferencesWidth         = keyFile.get_integer ("GUI", "PreferencesWidth");
@@ -993,6 +997,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("GUI", "WindowWidth", windowWidth);
     keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
     keyFile.set_boolean ("GUI", "WindowMaximized", windowMaximized);
+    keyFile.set_integer ("GUI", "DetailWindowWidth", detailWindowWidth);
+    keyFile.set_integer ("GUI", "DetailWindowHeight", detailWindowHeight);
     keyFile.set_integer ("GUI", "DirBrowserWidth", dirBrowserWidth);
     keyFile.set_integer ("GUI", "DirBrowserHeight", dirBrowserHeight);
     keyFile.set_integer ("GUI", "PreferencesWidth", preferencesWidth);

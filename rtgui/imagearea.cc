@@ -357,6 +357,14 @@ void ImageArea::addCropWindow () {
     cw->setCropGUIListener (cropgl);
     cw->setPointerMotionListener (pmlistener);
     cw->setPointerMotionHListener (pmhlistener);
+    int lastWidth = options.detailWindowWidth;
+    int lastHeight = options.detailWindowHeight;
+    if(!cropWins.empty()) {
+		CropWindow *lastCrop;
+		lastCrop = cropWins.front();
+		if(lastCrop)
+			lastCrop->getSize(lastWidth,lastHeight);
+    }
     cropWins.push_front (cw);
 
     // Position the new crop window in a checkerboard, or used the last position
@@ -370,8 +378,13 @@ void ImageArea::addCropWindow () {
         int col = K-1 - (N % (K*K)) % K;
         int cropwidth, cropheight;
         
-        cropwidth = get_width()/K - hBorder;
-        cropheight = get_height()/K - vBorder;
+        if(lastWidth == -1) {
+			cropwidth = get_width()/K - hBorder;
+			cropheight = get_height()/K - vBorder;
+        } else {
+			cropwidth = lastWidth;
+			cropheight = lastHeight;
+        }
 
         if (options.squareDetailWindow){
 			// force square CropWindow (this is faster as area is smaller)
@@ -396,7 +409,8 @@ void ImageArea::addCropWindow () {
     cw->setCropPosition(x0+w/2-wc/2,y0+h/2-hc/2);
     mainCropWindow->setObservedCropWin (cropWins.front());
 
-    ipc->startProcessing(M_HIGHQUAL);
+	if(cropWins.size()==1) // after first detail window we already have high quality
+		ipc->startProcessing(M_HIGHQUAL);
 
 //    queue_draw (); 
 }
