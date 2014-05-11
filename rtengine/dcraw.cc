@@ -5284,6 +5284,9 @@ int CLASS parse_tiff_ifd (int base)
       case 315:				/* Artist */
 	fread (artist, 64, 1, ifp);
 	break;
+      case 317:				/* Predictor */
+	tiff_ifd[ifd].predictor = getint(type);
+	break;
       case 322:				/* TileWidth */
 	tiff_ifd[ifd].tile_width = getint(type);
 	break;
@@ -5297,6 +5300,9 @@ int CLASS parse_tiff_ifd (int base)
 	  is_raw = 5;
 	}
 	break;
+      case 325:                         /* TileByteCounts */
+        tiff_ifd[ifd].bytes = len > 1 ? ftell(ifp) : get4();
+        break;
       case 330:				/* SubIFDs */
 	if (!strcmp(model,"DSLR-A100") && tiff_ifd[ifd].width == 3872) {
 	  load_raw = &CLASS sony_arw_load_raw;
@@ -5310,6 +5316,9 @@ int CLASS parse_tiff_ifd (int base)
 	  fseek (ifp, i+4, SEEK_SET);
 	}
 	break;
+      case 339:
+        tiff_ifd[ifd].sample_format = getint(type);
+        break;
       case 400:
 	strcpy (make, "Sarnoff");
 	maximum = 0xfff;
@@ -5742,6 +5751,7 @@ void CLASS apply_tiff()
 	  case 32803: load_raw = &CLASS kodak_65000_load_raw;
 	}
       case 32867: case 34892: break;
+      case 8: break;
       default: is_raw = 0;
     }
   if (!dng_version)
@@ -7889,6 +7899,7 @@ void CLASS identify()
     switch (tiff_compress) {
       case 1:     load_raw = &CLASS   packed_dng_load_raw;  break;
       case 7:     load_raw = &CLASS lossless_dng_load_raw;  break;
+      case 8:     load_raw = &CLASS  deflate_dng_load_raw;  break;
       case 34892: load_raw = &CLASS    lossy_dng_load_raw;  break;
       default:    load_raw = 0;
     }
@@ -8556,7 +8567,7 @@ dng_skip:
   if (!tiff_bps) tiff_bps = 12;
   if (!maximum) maximum = (1 << tiff_bps) - 1;
   if (!load_raw || height < 22 || width < 22 ||
-	tiff_bps > 16 || tiff_samples > 4 || colors > 4)
+	tiff_samples > 4 || colors > 4)
     is_raw = 0;
 #ifdef NO_JASPER
   if (load_raw == &CLASS redcine_load_raw) {
@@ -8634,6 +8645,267 @@ quit:
   cmsCloseProfile (hInProfile);
 }
 #endif
+
+/* RT: DNG Float */
+
+#include <zlib.h>
+#include <stdint.h>
+
+static void decodeFPDeltaRow(Bytef * src, Bytef * dst, size_t tileWidth, size_t realTileWidth, int bytesps, int factor) {
+  // DecodeDeltaBytes
+  for (size_t col = factor; col < realTileWidth*bytesps; ++col) {
+    src[col] += src[col - factor];
+  }
+  // Reorder bytes into the image
+  // 16 and 32-bit versions depend on local architecture, 24-bit does not
+  if (bytesps == 3) {
+    for (size_t col = 0; col < tileWidth; ++col) {
+      dst[col*3] = src[col];
+      dst[col*3 + 1] = src[col + realTileWidth];
+      dst[col*3 + 2] = src[col + realTileWidth*2];
+    }
+  } else {
+    if (((union { uint32_t x; uint8_t c; }){1}).c) {
+		for (size_t col = 0; col < tileWidth; ++col) {
+			for (size_t byte = 0; byte < bytesps; ++byte)
+				dst[col*bytesps + byte] = src[col + realTileWidth*(bytesps-byte-1)];  // Little endian
+		} 
+    } else {
+		for (size_t col = 0; col < tileWidth; ++col) {
+			for (size_t byte = 0; byte < bytesps; ++byte)
+				dst[col*bytesps + byte] = src[col + realTileWidth*byte];
+        }
+      }
+    }
+  
+}
+
+// From DNG SDK dng_utils.h
+static inline uint32_t DNG_HalfToFloat(uint16_t halfValue) {
+  int32_t sign     = (halfValue >> 15) & 0x00000001;
+  int32_t exponent = (halfValue >> 10) & 0x0000001f;
+  int32_t mantissa =  halfValue        & 0x000003ff;
+  if (exponent == 0) {
+    if (mantissa == 0) {
+      // Plus or minus zero
+      return (uint32_t) (sign << 31);
+    } else {
+      // Denormalized number -- renormalize it
+      while (!(mantissa & 0x00000400)) {
+        mantissa <<= 1;
+        exponent -=  1;
+      }
+      exponent += 1;
+      mantissa &= ~0x00000400;
+    }
+  } else if (exponent == 31) {
+    if (mantissa == 0) {
+      // Positive or negative infinity, convert to maximum (16 bit) values.
+      return (uint32_t) ((sign << 31) | ((0x1eL + 127 - 15) << 23) |  (0x3ffL << 13));
+    } else {
+      // Nan -- Just set to zero.
+      return 0;
+    }
+  }
+  // Normalized number
+  exponent += (127 - 15);
+  mantissa <<= 13;
+  // Assemble sign, exponent and mantissa.
+  return (uint32_t) ((sign << 31) | (exponent << 23) | mantissa);
+}
+
+static inline uint32_t DNG_FP24ToFloat(const uint8_t * input) {
+  int32_t sign     = (input [0] >> 7) & 0x01;
+  int32_t exponent = (input [0]     ) & 0x7F;
+  int32_t mantissa = (((int32_t) input [1]) << 8) | input[2];
+  if (exponent == 0) {
+    if (mantissa == 0) {
+      // Plus or minus zero
+      return (uint32_t) (sign << 31);
+    } else {
+      // Denormalized number -- renormalize it
+      while (!(mantissa & 0x00010000)) {
+        mantissa <<= 1;
+        exponent -=  1;
+      }
+      exponent += 1;
+      mantissa &= ~0x00010000;
+    }
+  } else if (exponent == 127) {
+    if (mantissa == 0) {
+      // Positive or negative infinity, convert to maximum (24 bit) values.
+      return (uint32_t) ((sign << 31) | ((0x7eL + 128 - 64) << 23) |  (0xffffL << 7));
+    } else {
+      // Nan -- Just set to zero.
+      return 0;
+    }
+  }
+  // Normalized number
+  exponent += (128 - 64);
+  mantissa <<= 7;
+  // Assemble sign, exponent and mantissa.
+  return (uint32_t) ((sign << 31) | (exponent << 23) | mantissa);
+}
+
+static void expandFloats(Bytef * dst, int tileWidth, int bytesps, float &vmax) {
+  float * dstfl = (float *) dst;
+
+  if (bytesps == 2) {
+    uint16_t * dst16 = (uint16_t *) dst;
+    uint32_t * dst32 = (uint32_t *) dst;
+	
+    for (int index = tileWidth - 1; index >= 0; --index) {
+      dst32[index] = DNG_HalfToFloat(dst16[index]);
+      float v = dstfl[index];
+      if(v>vmax)
+		vmax = v;
+    }
+  } else if (bytesps == 3) {
+    uint8_t  * dst8  = ((uint8_t *) dst) + (tileWidth - 1) * 3;
+    uint32_t * dst32 = (uint32_t *) dst;
+    for (int index = tileWidth - 1; index >= 0; --index, dst8 -= 3) {
+      dst32[index] = DNG_FP24ToFloat(dst8);
+      float v = dstfl[index];
+      if(v>vmax)
+		vmax = v;
+    }
+  } else {
+    for (int index = 0; index < tileWidth; ++index) {
+      float v = dstfl[index];
+      if(v>vmax)
+		vmax = v;
+    }
+  }
+}
+
+static void copyFloatDataToInt(float * src, ushort * dst, size_t size, float max) {
+
+  bool negative = false;
+
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+  for (size_t i = 0; i < size; ++i) {
+    // Scale and clip data, because it is used to index some LUTs
+    src[i] *= 65535.0f / max;
+    if (src[i] < 0.0f) {
+      negative = true;
+      src[i] = 0.0f;
+    }
+    // Copy the data to the integer buffer to build the thumbnail
+    dst[i] = (ushort)src[i];
+  }
+  if (negative)
+    fprintf(stderr, "DNG Float: Negative data found in input file\n");
+}
+
+void CLASS deflate_dng_load_raw() {
+  struct tiff_ifd * ifd = &tiff_ifd[0];
+  while (ifd < &tiff_ifd[tiff_nifds] && ifd->offset != data_offset) ++ifd;
+  if (ifd == &tiff_ifd[tiff_nifds]) {
+    fprintf(stderr, "DNG Deflate: Raw image not found???\n");
+    return;
+  }
+
+  int predFactor;
+  switch(ifd->predictor) {
+    case 3: predFactor = 1; break;
+    case 34894: predFactor = 2; break;
+    case 34895: predFactor = 4; break;
+	default: predFactor = 0; break;
+  }
+
+  if (ifd->sample_format == 3) {  // Floating point data
+    float_raw_image = new float[raw_width * raw_height];
+
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+    for (size_t i = 0; i < raw_width * raw_height; ++i)
+      float_raw_image[i] = 0.0f;
+    maximum = 65535; black = 0;
+  }
+
+  // NOTE: This reader is based on the official DNG SDK from Adobe.
+  // It assumes tiles without subtiles, but the standard does not say that
+  // subtiles or strips couldn't be used.
+  float maxValue = 0.0f;
+  if (tile_length < INT_MAX) {
+    size_t tilesWide = (raw_width + tile_width - 1) / tile_width;
+    size_t tilesHigh = (raw_height + tile_length - 1) / tile_length;
+    size_t tileCount = tilesWide * tilesHigh;
+    //fprintf(stderr, "%dx%d tiles, %d total\n", tilesWide, tilesHigh, tileCount);
+    size_t tileOffsets[tileCount];
+    for (size_t t = 0; t < tileCount; ++t) {
+      tileOffsets[t] = get4();
+    }
+    size_t tileBytes[tileCount];
+    uLongf maxCompressed = 0;
+    if (tileCount == 1) {
+      tileBytes[0] = maxCompressed = ifd->bytes;
+    } else {
+      fseek(ifp, ifd->bytes, SEEK_SET);
+      for (size_t t = 0; t < tileCount; ++t) {
+        tileBytes[t] = get4();
+        //fprintf(stderr, "Tile %d at %d, size %d\n", t, tileOffsets[t], tileBytes[t]);
+        if (maxCompressed < tileBytes[t])
+          maxCompressed = tileBytes[t];
+      }
+    }
+    uLongf dstLen = tile_width * tile_length * 4;
+
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+    Bytef cBuffer[maxCompressed];
+    Bytef uBuffer[dstLen];
+    float maxValuethr = 0.0f;
+
+#ifdef _OPENMP
+#pragma omp for collapse(2) nowait
+#endif
+    for (size_t y = 0; y < raw_height; y += tile_length) {
+      for (size_t x = 0; x < raw_width; x += tile_width) {
+		size_t t = (y / tile_length) * tilesWide + (x / tile_width);
+#pragma omp critical
+{
+        fseek(ifp, tileOffsets[t], SEEK_SET);
+        fread(cBuffer, 1, tileBytes[t], ifp);
+}
+        int err = uncompress(uBuffer, &dstLen, cBuffer, tileBytes[t]);
+        if (err != Z_OK) {
+          fprintf(stderr, "DNG Deflate: Failed uncompressing tile %d, with error %d\n", t, err);
+        } else if (ifd->sample_format == 3) {  // Floating point data
+          int bytesps = ifd->bps >> 3;
+          size_t thisTileLength = y + tile_length > raw_height ? raw_height - y : tile_length;
+          size_t thisTileWidth = x + tile_width > raw_width ? raw_width - x : tile_width;
+          for (size_t row = 0; row < thisTileLength; ++row) {
+            Bytef * src = uBuffer + row*tile_width*bytesps;
+            Bytef * dst = (Bytef *)&float_raw_image[(y+row)*raw_width + x];
+            if (predFactor)
+              decodeFPDeltaRow(src, dst, thisTileWidth, tile_width, bytesps, predFactor);
+            expandFloats(dst, thisTileWidth, bytesps, maxValuethr);
+          }
+        } else {  // 32-bit Integer data
+          // TODO
+        }
+      }
+    }
+#ifdef _OPENMP
+#pragma omp critical
+#endif
+{
+	if(maxValuethr > maxValue)
+		maxValue = maxValuethr;
+}
+}
+  }
+    
+  if (ifd->sample_format == 3) {  // Floating point data
+    copyFloatDataToInt(float_raw_image, raw_image, raw_width*raw_height, maxValue);
+  }
+}
 
 /* RT: removed unused functions */
 

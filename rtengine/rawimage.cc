@@ -52,7 +52,7 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
 	unsigned  row, col, x, y, c, sum[8];
 	unsigned  W = this->get_width();
 	unsigned  H = this->get_height();
-	int val;
+	float val;
 	double dsum[8], dmin, dmax;
 
 
@@ -81,15 +81,15 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
 {
 			double dsumthr[8];
 			memset(dsumthr, 0, sizeof dsumthr);
-			int sum[4];
+			float sum[4];
 			// make local copies of the black and white values to avoid calculations and conversions
-			int cblackint[4];
-			int whiteint[4];
+			float cblackfloat[4];
+			float whitefloat[4];
 			for (int c = 0; c < 4; c++) {
-				cblackint[c] = cblack_[c];
-				whiteint[c] = this->get_white(c) - 25;
+				cblackfloat[c] = cblack_[c];
+				whitefloat[c] = this->get_white(c) - 25;
 			}
-			unsigned short *tempdata = data[0];
+			float *tempdata = data[0];
 #pragma omp for nowait
 			for (row = 0; row < H; row += 8) {
 				int ymax = row + 8 < H ? row + 8 : H;
@@ -100,15 +100,15 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
 						for (x = col; x < xmax; x++) {
 							int c = FC(y, x);
 							val = tempdata[y*W+x];
-							if (val > whiteint[c]) { // calculate number of pixels to be substracted from sum and skip the block
+							if (val > whitefloat[c]) { // calculate number of pixels to be substracted from sum and skip the block
 								dsumthr[FC(row,col)+4]		+= (int)(((xmax - col + 1)/2) * ((ymax - row + 1)/2));
 								dsumthr[FC(row,col+1)+4]	+= (int)(((xmax - col)/2) * ((ymax - row + 1)/2));
 								dsumthr[FC(row+1,col)+4]	+= (int)(((xmax - col + 1)/2) * ((ymax - row)/2));
 								dsumthr[FC(row+1,col+1)+4]	+= (int)(((xmax - col)/2) * ((ymax - row)/2));
 								goto skip_block2;
 							}
-							if (val < cblackint[c])
-								val = cblackint[c];
+							if (val < cblackfloat[c])
+								val = cblackfloat[c];
 							sum[c] += val;
 						}
 					for (int c = 0; c < 4; c++)
@@ -416,21 +416,31 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
   return 0;
 }
 
-unsigned short** RawImage::compress_image()
+float** RawImage::compress_image()
 {
+	if( float_raw_image ) {
+		allocation = float_raw_image;
+		float_raw_image = NULL;
+		data = new float*[height];
+		for (int i = 0; i < height; i++)
+			data[i] = allocation + (i + top_margin) * raw_width + left_margin;
+		free(image); // we don't need this anymore
+		image=NULL;
+		return data;
+	}
 	if( !image )
 		return NULL;
 	if (filters) {
 		if (!allocation) {
-			allocation = new unsigned short[height * width];
-			data = new unsigned short*[height];
+			allocation = new float[height * width];
+			data = new float*[height];
 			for (int i = 0; i < height; i++)
 				data[i] = allocation + i * width;
 		}
 	} else {
 		if (!allocation) {
-			allocation = new unsigned short[3 * height * width];
-			data = new unsigned short*[height];
+			allocation = new float[3 * height * width];
+			data = new float*[height];
 			for (int i = 0; i < height; i++)
 				data[i] = allocation + 3 * i * width;
 		}

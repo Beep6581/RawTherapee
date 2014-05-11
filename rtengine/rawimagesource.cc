@@ -1243,7 +1243,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 				for (int col = 0; col < W; col++) {
 					int c  = FC(row, col);
 					int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
-					rawData[row][col]	= max(src->data[row][col]+black[c4] - riDark->data[row][col], 0);
+					rawData[row][col]	= max(src->data[row][col]+black[c4] - riDark->data[row][col], 0.0f);
 				}
 			}
 		}else{
@@ -1343,9 +1343,9 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 				for (int col = 0; col < W; col++) {
 					int c  = FC(row, col);
 					int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
-					rawData[row][3*col+0] = max(src->data[row][3*col+0]+black[c4] - riDark->data[row][3*col+0], 0);
-					rawData[row][3*col+1] = max(src->data[row][3*col+1]+black[c4] - riDark->data[row][3*col+1], 0);
-					rawData[row][3*col+2] = max(src->data[row][3*col+2]+black[c4] - riDark->data[row][3*col+2], 0);
+					rawData[row][3*col+0] = max(src->data[row][3*col+0]+black[c4] - riDark->data[row][3*col+0], 0.0f);
+					rawData[row][3*col+1] = max(src->data[row][3*col+1]+black[c4] - riDark->data[row][3*col+1], 0.0f);
+					rawData[row][3*col+2] = max(src->data[row][3*col+2]+black[c4] - riDark->data[row][3*col+2], 0.0f);
 				}
 			}
 		} else {
@@ -2580,16 +2580,16 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
 			int c2 = FC(i,start+1);
 			c2 = ( c2 == 1 && !(i&1) ) ? 3 : c2;
 			for (j=start; j<end-1; j+=2) {
-				tmphist[c1][ri->data[i][j]]++;
-				tmphist[c2][ri->data[i][j+1]]++;
+				tmphist[c1][(int)ri->data[i][j]]++;
+				tmphist[c2][(int)ri->data[i][j+1]]++;
 			}
 			if(j<end) { // last pixel of row if width is odd
-				tmphist[c1][ri->data[i][j]]++;
+				tmphist[c1][(int)ri->data[i][j]]++;
 			}
 		} else {
 			for (int j=start; j<end; j++) {
 				for (int c=0; c<3; c++){
-					tmphist[c][ri->data[i][3*j+c]]++;
+					tmphist[c][(int)ri->data[i][3*j+c]]++;
 				}
 			}
 		}
