@@ -114,6 +114,8 @@ class Options {
     int windowWidth;
     int windowHeight;
     bool windowMaximized;
+    int detailWindowWidth;
+    int detailWindowHeight;
     int dirBrowserWidth;
     int dirBrowserHeight;
     int preferencesWidth;
