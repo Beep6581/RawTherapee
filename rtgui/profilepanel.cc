@@ -336,7 +336,7 @@ void ProfilePanel::copy_clicked (GdkEventButton* event) {
         toSave = lastsaved; 
     else {
         const ProfileStoreEntry* entry = profiles->getSelectedEntry();
-        toSave = entry ? profileStore.getProfile (profiles->getSelectedEntry()) : NULL;
+        toSave = entry ? profileStore.getProfile (entry) : NULL;
     }
 
     // toSave has to be a complete procparams
@@ -488,6 +488,16 @@ void ProfilePanel::paste_clicked (GdkEventButton* event) {
 
     if (!custom) {
         custom = new PartialProfile (true);
+        if (isLastSavedSelected()) {
+            *custom->pparams = *lastsaved->pparams;
+        }
+        else {
+            const ProfileStoreEntry* entry = profiles->getSelectedEntry();
+            if (entry) {
+                const PartialProfile* partProfile = profileStore.getProfile (entry);
+                *custom->pparams = *partProfile->pparams;
+            }
+        }
         profiles->set_active (addCustomRow());
         currRow = profiles->get_active();
     }
