@@ -1179,6 +1179,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoesn't exist. Please set a correct path in the Preference window.
 !MAIN_MSG_SETPATHFIRST;You have to set a target path first in Preferences\nin order to use this function!
 !MAIN_MSG_WRITEFAILED;Failed to write\n\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
+!NAVIGATOR_NA; --
 !PARTIALPASTE_CHANNELMIXERBW;Black-and-White
 !PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
 !PARTIALPASTE_GRADIENT;Graduated filter
@@ -1210,6 +1211,9 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_GREY30;Yb=30 CIE L#60
 !PREFERENCES_GREY40;Yb=40 CIE L#70
 !PREFERENCES_GREY;Output device's Yb luminance (%)
+!PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
+!PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator, otherwise the gamma-corrected output profile is used.
+!PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction
 !PREFERENCES_RGBDTL_TOOLTIP;Noise Reduction requires a baseline of about 128MB RAM for a 10MPix image or 512MB for a 40MPix image, and additionally 128MB RAM per thread. The more threads run in parallel, the faster the computation. Leave the setting at "0" to automatically use as many threads as possible.
 !PREFERENCES_TAB_PERFORMANCE;Performance

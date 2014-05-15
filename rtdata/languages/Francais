@@ -1415,6 +1415,10 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_253;CbDL Reduce artifacts
 !HISTORY_MSG_254;CbDL - Hueskin
 !HISTORY_MSG_255;CbDL - Algorithm
+!NAVIGATOR_NA; --
+!PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
+!PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator, otherwise the gamma-corrected output profile is used.
+!PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !TP_BWMIX_ALGO;Algorithm OYCPM
 !TP_BWMIX_ALGO_LI;Linear
 !TP_BWMIX_ALGO_SP;Special effects
