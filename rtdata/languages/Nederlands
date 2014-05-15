@@ -1445,5 +1445,9 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!NAVIGATOR_NA; --
+!PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
+!PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator, otherwise the gamma-corrected output profile is used.
+!PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected
 !TP_ICM_FILEDLGFILTERICMDNG;Color profiles + DNG
