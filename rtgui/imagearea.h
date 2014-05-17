@@ -51,8 +51,6 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public Edi
     PreviewHandler* previewHandler;
     rtengine::StagedImageProcessor* ipc;
 
-    int lastClosedX, lastClosedY, lastClosedW, lastClosedH;
-
     bool        dirty;
     CropWindow* focusGrabber;
     CropGUIListener* cropgl;

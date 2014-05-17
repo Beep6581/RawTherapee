@@ -77,7 +77,6 @@ Preferences::Preferences  (RTWindow *rtwindow) : rprofiles(NULL), iprofiles(NULL
     buttonpanel->pack_start (*about, Gtk::PACK_SHRINK, 0);
     buttonpanel->pack_end (*ok, Gtk::PACK_SHRINK, 0);
     buttonpanel->pack_end (*cancel, Gtk::PACK_SHRINK, 0);
-
     nb->append_page (*getGeneralPanel(),        M("PREFERENCES_TAB_GENERAL"));
     nb->append_page (*getProcParamsPanel(),     M("PREFERENCES_TAB_IMPROC"));
     nb->append_page (*getFileBrowserPanel(),    M("PREFERENCES_TAB_BROWSER"));
@@ -605,12 +604,13 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 	ckbHistogramWorking->set_tooltip_markup (M("PREFERENCES_HISTOGRAM_TOOLTIP"));
 	
     hbworkflow2->pack_start (*ckbHistogramWorking, Gtk::PACK_SHRINK, 4);
-    ckbShowProfileSelector =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SHOWPROFILESELECTOR")) );
-    hbworkflow2->pack_start (*ckbShowProfileSelector, Gtk::PACK_SHRINK, 4);
-    ckbSquareDetailWindow =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SQUAREDETAILWINDOW")) );
-    hbworkflow2->pack_start (*ckbSquareDetailWindow, Gtk::PACK_SHRINK, 4);
     vbworkflow->pack_start (*hbworkflow2, Gtk::PACK_SHRINK, 4);
     
+    ckbShowProfileSelector =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SHOWPROFILESELECTOR")) );
+    Gtk::HBox* hbworkflow2d5 = Gtk::manage( new Gtk::HBox () );
+    hbworkflow2d5->pack_start (*ckbShowProfileSelector, Gtk::PACK_SHRINK, 4);
+    vbworkflow->pack_start (*hbworkflow2d5, Gtk::PACK_SHRINK, 4);
+
     Gtk::HBox* hbworkflow3 = Gtk::manage( new Gtk::HBox () );
     ckbFileBrowserToolbarSingleRow =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_FILEBROWSERTOOLBARSINGLEROW")) );
 
@@ -676,13 +676,12 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     butNavGuideCol= Gtk::manage( new Gtk::ColorButton() );
     butNavGuideCol->set_use_alpha(true);
 
+    slimUI = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SLIMUI")) );
     hbUseSystemTheme->pack_start(*chUseSystemTheme, Gtk::PACK_SHRINK);
     hbUseSystemTheme->pack_start (*useNextStart, Gtk::PACK_SHRINK, 0);
-    hbUseSystemTheme->pack_end (*butNavGuideCol, Gtk::PACK_SHRINK, 0);
-    hbUseSystemTheme->pack_end (*navGuideLabel, Gtk::PACK_SHRINK, 0);
-    hbUseSystemTheme->pack_end (*butCropCol, Gtk::PACK_SHRINK, 0);
-    hbUseSystemTheme->pack_end (*cutOverlayLabel, Gtk::PACK_SHRINK, 0);
-    vbftheme->pack_start(*hbUseSystemTheme, Gtk::PACK_SHRINK, 0);
+    hbUseSystemTheme->pack_end(*slimUI, Gtk::PACK_SHRINK, 0);
+	vbftheme->pack_start(*hbUseSystemTheme, Gtk::PACK_SHRINK, 0);
+
 
     hbtheme = Gtk::manage( new Gtk::HBox () );
     hbtheme->set_spacing (4);
@@ -706,8 +705,16 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     hbtheme->pack_start (*fontbutton);
     vbftheme->pack_start(*hbtheme, Gtk::PACK_SHRINK, 0);
 
-    slimUI = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SLIMUI")) );
-    vbftheme->pack_start(*slimUI, Gtk::PACK_SHRINK, 0);
+
+    Gtk::HBox* hbcolorchooser = Gtk::manage( new Gtk::HBox () );
+    hbcolorchooser->set_spacing(4);
+
+    hbcolorchooser->pack_start (*cutOverlayLabel, Gtk::PACK_SHRINK, 0);
+    hbcolorchooser->pack_start (*butCropCol, Gtk::PACK_SHRINK, 0);
+    hbcolorchooser->pack_end (*butNavGuideCol, Gtk::PACK_SHRINK, 0);
+    hbcolorchooser->pack_end (*navGuideLabel, Gtk::PACK_SHRINK, 0);
+    vbftheme->pack_start(*hbcolorchooser, Gtk::PACK_SHRINK, 0);
+
 
     ftheme->add (*vbftheme);
     mvbsd->pack_start (*ftheme, Gtk::PACK_SHRINK, 0);
@@ -718,11 +725,9 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     hbcd->set_spacing(4);
 
     Gtk::Frame* frl = Gtk::manage( new Gtk::Frame (M("PREFERENCES_CLIPPINGIND")));
-    blinkClipped = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_BLINKCLIPPED")) );
     Gtk::VBox* vbrl = Gtk::manage( new Gtk::VBox () );
     vbrl->set_border_width(4);
     vbrl->set_spacing (4);
-    vbrl->pack_start (*blinkClipped, Gtk::PACK_SHRINK, 0);
 
     Gtk::HBox* vbhl = Gtk::manage( new Gtk::HBox () );
     vbhl->set_spacing(4);
@@ -754,21 +759,6 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 //-----
     Gtk::VBox* dfpfvb = Gtk::manage( new Gtk::VBox () );
     dfpfvb->set_spacing (4);
-
-    Gtk::Frame* fdf = Gtk::manage( new Gtk::Frame (M("PREFERENCES_DATEFORMATFRAME")) );
-
-    Gtk::HBox* hb6 = Gtk::manage( new Gtk::HBox () );
-    hb6->set_border_width (4);
-    hb6->set_spacing (4);
-    Gtk::Label* dflab = Gtk::manage( new Gtk::Label (M("PREFERENCES_DATEFORMAT")+":", Gtk::ALIGN_LEFT));
-    dateformat = Gtk::manage( new Gtk::Entry () );
-    dateformat->set_tooltip_markup (M("PREFERENCES_DATEFORMATHINT"));
-    dflab->set_tooltip_markup (M("PREFERENCES_DATEFORMATHINT"));
-    hb6->pack_start (*dflab, Gtk::PACK_SHRINK, 0);
-    hb6->pack_end (*dateformat, Gtk::PACK_SHRINK, 0);
-    fdf->add (*hb6);
-
-    dfpfvb->pack_start (*fdf, true, true, 0);
 
 //-----
     Gtk::Frame* pff = Gtk::manage( new Gtk::Frame (M("PREFERENCES_PANFACTORFRAME")) );
@@ -900,11 +890,20 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     showExpComp = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SHOWEXPOSURECOMPENSATION")) );
     Gtk::VBox* vbro = Gtk::manage( new Gtk::VBox () );
     Gtk::HBox* hbro1 = Gtk::manage( new Gtk::HBox () );
+    Gtk::HBox* hbro0 = Gtk::manage( new Gtk::HBox () );
     overlayedFileNames = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_OVERLAY_FILENAMES")) );
 	ckbInternalThumbIfUntouched = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_INTERNALTHUMBIFUNTOUCHED")));
 
     vbro->set_border_width (4);
     vbro->pack_start (*showDateTime, Gtk::PACK_SHRINK, 0);
+    Gtk::Label* dflab = Gtk::manage( new Gtk::Label (M("PREFERENCES_DATEFORMAT")+":", Gtk::ALIGN_LEFT));
+    dateformat = Gtk::manage( new Gtk::Entry () );
+    dateformat->set_tooltip_markup (M("PREFERENCES_DATEFORMATHINT"));
+    dflab->set_tooltip_markup (M("PREFERENCES_DATEFORMATHINT"));
+    hbro0->pack_start (*dflab, Gtk::PACK_SHRINK, 4);
+    hbro0->pack_start (*dateformat, Gtk::PACK_SHRINK, 0);
+
+    vbro->pack_start (*hbro0, Gtk::PACK_SHRINK, 0);
     hbro1->pack_start (*showBasicExif, Gtk::PACK_SHRINK, 0);
     hbro1->pack_start (*showExpComp, Gtk::PACK_SHRINK, 4);
     vbro->pack_start (*hbro1, Gtk::PACK_SHRINK, 0);
@@ -1120,7 +1119,6 @@ void Preferences::storePreferences () {
     moptions.menuGroupFileOperations    = ckbmenuGroupFileOperations->get_active();
     moptions.menuGroupProfileOperations = ckbmenuGroupProfileOperations->get_active();
     moptions.menuGroupExtProg           = ckbmenuGroupExtProg->get_active();
-    moptions.blinkClipped    = blinkClipped->get_active ();
     moptions.highlightThreshold = (int)hlThresh->get_value ();
     moptions.shadowThreshold = (int)shThresh->get_value ();
     moptions.language        = languages->get_active_text ();
@@ -1220,7 +1218,6 @@ void Preferences::storePreferences () {
 
     moptions.histogramPosition = ckbHistogramPositionLeft->get_active() ? 1 : 2;
     moptions.showProfileSelector = ckbShowProfileSelector->get_active();
-    moptions.squareDetailWindow = ckbSquareDetailWindow->get_active();
     moptions.FileBrowserToolbarSingleRow = ckbFileBrowserToolbarSingleRow->get_active();
     moptions.hideTPVScrollbar = ckbHideTPVScrollbar->get_active();
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
@@ -1295,7 +1292,6 @@ void Preferences::fillPreferences () {
     ckbmenuGroupProfileOperations->set_active(moptions.menuGroupProfileOperations);
     ckbmenuGroupExtProg->set_active(moptions.menuGroupExtProg);
 
-    blinkClipped->set_active (moptions.blinkClipped);
     hlThresh->set_value (moptions.highlightThreshold);
     shThresh->set_value (moptions.shadowThreshold);
 
@@ -1356,7 +1352,6 @@ void Preferences::fillPreferences () {
     ckbHistogramPositionLeft->set_active(moptions.histogramPosition==1);
  //   ckbHistogramWorking->set_active(moptions.histogramWorking==1);
     ckbShowProfileSelector->set_active(moptions.showProfileSelector);
-    ckbSquareDetailWindow->set_active(moptions.squareDetailWindow);
     ckbFileBrowserToolbarSingleRow->set_active(moptions.FileBrowserToolbarSingleRow);
     ckbHideTPVScrollbar->set_active(moptions.hideTPVScrollbar);
     ckbUseIconNoText->set_active(moptions.UseIconNoText);

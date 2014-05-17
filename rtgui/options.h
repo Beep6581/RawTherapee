@@ -203,7 +203,6 @@ class Options {
     bool histogramBar;
     bool histogramFullMode;
     bool showProfileSelector;
-    bool squareDetailWindow;
     bool FileBrowserToolbarSingleRow;
     bool hideTPVScrollbar;
     bool UseIconNoText;
