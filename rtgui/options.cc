@@ -355,7 +355,6 @@ void Options::setDefaults () {
     hideTPVScrollbar = false;
     UseIconNoText = true;
     whiteBalanceSpotSize = 8;
-    squareDetailWindow = true;
     menuGroupRank = true;
     menuGroupLabel = true;
     menuGroupFileOperations = true;
@@ -739,7 +738,6 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "HistogramBar"))        histogramBar        = keyFile.get_boolean ("GUI", "HistogramBar");
     if (keyFile.has_key ("GUI", "HistogramFullMode"))   histogramFullMode   = keyFile.get_boolean ("GUI", "HistogramFullMode");
     if (keyFile.has_key ("GUI", "ShowProfileSelector")) showProfileSelector = keyFile.get_boolean ("GUI", "ShowProfileSelector");
-    if (keyFile.has_key ("GUI", "SquareDetailWindow"))  squareDetailWindow  = keyFile.get_boolean ("GUI", "SquareDetailWindow");
     if (keyFile.has_key ("GUI", "FileBrowserToolbarSingleRow")) FileBrowserToolbarSingleRow = keyFile.get_boolean ("GUI", "FileBrowserToolbarSingleRow");
     if (keyFile.has_key ("GUI", "HideTPVScrollbar"))    hideTPVScrollbar    = keyFile.get_boolean ("GUI", "HideTPVScrollbar");
     if (keyFile.has_key ("GUI", "UseIconNoText"))    UseIconNoText    = keyFile.get_boolean ("GUI", "UseIconNoText");
@@ -1031,7 +1029,6 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("GUI", "HistogramBar", histogramBar);
     keyFile.set_boolean ("GUI", "HistogramFullMode", histogramFullMode);
     keyFile.set_boolean ("GUI", "ShowProfileSelector", showProfileSelector);
-    keyFile.set_boolean ("GUI", "SquareDetailWindow", squareDetailWindow);
     keyFile.set_boolean ("GUI", "FileBrowserToolbarSingleRow", FileBrowserToolbarSingleRow);
     keyFile.set_boolean ("GUI", "HideTPVScrollbar", hideTPVScrollbar);
     keyFile.set_boolean ("GUI", "UseIconNoText", UseIconNoText);
