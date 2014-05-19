@@ -15,6 +15,7 @@
 #15 2014-02-25 firefly
 #16 2014-04-07 firefly
 #17 2014-04-08 firefly
+#18 2014-05-16 firefly
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -99,7 +100,7 @@ EXPORT_MAXWIDTH;最大幅:
 EXPORT_PUTTOQUEUEFAST; 高速書き出しのキューに追加
 EXPORT_RAW_DMETHOD;デモザイクの方式
 EXPORT_RESIZEMETHOD;リサイズの方式
-EXTPROGTARGET_1;RAW
+EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;キュー処理
 FILEBROWSER_ADDDELTEMPLATE;テンプレートの追加/削除...
 FILEBROWSER_APPLYPROFILE;プロファイルの適用
@@ -197,7 +198,7 @@ FILEBROWSER_STARTPROCESSING;処理開始
 FILEBROWSER_STOPPROCESSINGHINT;画像処理の中止
 FILEBROWSER_STOPPROCESSING;処理中止
 FILEBROWSER_THUMBSIZE;サムネイルのサイズ
-FILEBROWSER_TOOLTIP_STOPPROCESSING;新しいRAWファイルが送られて来たら自動的に現像処理を開始します
+FILEBROWSER_TOOLTIP_STOPPROCESSING;新しいrawファイルが送られて来たら自動的に現像処理を開始します
 FILEBROWSER_UNRANK_TOOLTIP;ランクなし\nショートカット: <b>Shift-0</b>
 FILEBROWSER_USETEMPLATE;テンプレート使用:
 FILEBROWSER_ZOOMINHINT;サムネイルサイズの拡大\nショートカット: <b>+</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt-+</b>
@@ -228,7 +229,7 @@ HISTOGRAM_TOOLTIP_CHRO;色度・ヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_FULL;完全/縮尺調整の表示切り替え
 HISTOGRAM_TOOLTIP_G;グリーン・ヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_L;CIELAB 輝度・ヒストグラム 表示/非表示
-HISTOGRAM_TOOLTIP_RAW;RAWヒストグラム 表示/非表示
+HISTOGRAM_TOOLTIP_RAW;rawヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_R;レッド・ヒストグラム 表示/非表示
 HISTORY_CHANGED;変更されました
 HISTORY_CUSTOMCURVE;カスタムカーブ
@@ -280,10 +281,10 @@ HISTORY_MSG_42;トーンカーブ 2
 HISTORY_MSG_43;トーンカーブ モード 2
 HISTORY_MSG_44;輝度ノイズ低減 半径
 HISTORY_MSG_45;輝度ノイズ低減 エッジの許容度
-HISTORY_MSG_46;カラーノイズ低減
+HISTORY_MSG_46;色ノイズ低減
 HISTORY_MSG_47;マトリクスでICCハイライト・ブレンド
 HISTORY_MSG_48;DCPトーンカーブ使用
-HISTORY_MSG_49;カラー ノイズ低減 エッジの感度
+HISTORY_MSG_49;色ノイズ低減 エッジの感度
 HISTORY_MSG_50;シャドウ/ハイライト
 HISTORY_MSG_51;ハイライト
 HISTORY_MSG_52;シャドウ
@@ -321,12 +322,12 @@ HISTORY_MSG_83;高画質 シャドウ/ハイライト
 HISTORY_MSG_84;パースペクティブの補正
 HISTORY_MSG_85;レンズ補正 プロファイル
 HISTORY_MSG_86;RGB カーブ - 輝度モード
-HISTORY_MSG_87;インパルス ノイズ低減
-HISTORY_MSG_88;インパルス NR しきい値
+HISTORY_MSG_87;インパルスノイズ低減
+HISTORY_MSG_88;インパルスノイズ低減 しきい値
 HISTORY_MSG_89;ノイズ低減
-HISTORY_MSG_90;ノイズ低減 - 輝度
-HISTORY_MSG_91;ノイズ低減 - カラー
-HISTORY_MSG_92;ノイズ低減 - ガンマ
+HISTORY_MSG_90;輝度ノイズの低減
+HISTORY_MSG_91;色ノイズの低減
+HISTORY_MSG_92;ノイズ低減のガンマ
 HISTORY_MSG_93;ディテールのコントラスト係数
 HISTORY_MSG_94;ディテールのコントラスト
 HISTORY_MSG_95;Labの色度
@@ -351,11 +352,11 @@ HISTORY_MSG_113;Lab　-　レッドと肌色トーンを保護
 HISTORY_MSG_114;DCB 反復
 HISTORY_MSG_115;偽色抑制
 HISTORY_MSG_116;DCB 拡張
-HISTORY_MSG_117;色収差 Raw レッド
-HISTORY_MSG_118;色収差 Raw ブルー
+HISTORY_MSG_117;色収差 raw レッド
+HISTORY_MSG_118;色収差 raw ブルー
 HISTORY_MSG_119;ラインノイズ フィルタ
 HISTORY_MSG_120;グリーン 平衡化
-HISTORY_MSG_121;Raw 色収差 自動
+HISTORY_MSG_121;raw 色収差 自動
 HISTORY_MSG_122;ダークフレーム 自動
 HISTORY_MSG_123;ダークフレーム ファイル
 HISTORY_MSG_124;リニア露光補正
@@ -407,7 +408,7 @@ HISTORY_MSG_169;'CH' カーブ
 HISTORY_MSG_170;自然な彩度 - カーブ
 HISTORY_MSG_171;'LC' カーブ
 HISTORY_MSG_172;LCの適用をレッドと肌色トーンだけに制限
-HISTORY_MSG_173;ノイズ低減 - 輝度ディテール
+HISTORY_MSG_173;輝度ノイズ　細部の復元
 HISTORY_MSG_174;CIE色の見えモデル2002
 HISTORY_MSG_175;CAM02 - 色順応量
 HISTORY_MSG_176;CAM02 - 観視の暗い周囲環境
@@ -435,8 +436,8 @@ HISTORY_MSG_197;CAM02 - カラー・カーブ
 HISTORY_MSG_198;CAM02 - カラー・カーブ
 HISTORY_MSG_199;CAM02 - カーブでCIECAM02出力のヒストグラムを表示
 HISTORY_MSG_200;CAM02 - CIECAM02 Q でトーンマッピング
-HISTORY_MSG_201;ノイズ低減 - 色差 レッド
-HISTORY_MSG_202;ノイズ低減 - 色差 ブルー
+HISTORY_MSG_201;色差 レッド／グリーン
+HISTORY_MSG_202;色差 ブルー／イエロー
 HISTORY_MSG_203;ノイズ低減 - 方式
 HISTORY_MSG_204;LMMSE 拡張処理
 HISTORY_MSG_205;CAM02 ホット／バッドピクセル
@@ -580,7 +581,7 @@ MAIN_TAB_FILTER;絞り込み
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;メタデータ
 MAIN_TAB_METADATA_TOOLTIP;ショートカット: <b>Alt-m</b>
-MAIN_TAB_RAW;RAW
+MAIN_TAB_RAW;raw
 MAIN_TAB_RAW_TOOLTIP;ショートカット: <b>Alt-r</b>
 MAIN_TAB_TAGGING;タグ付け
 MAIN_TAB_TRANSFORM;変形
@@ -603,29 +604,20 @@ MAIN_TOOLTIP_SHOWHIDERP1;表示/非表示 右パネル\nショートカット: <
 MAIN_TOOLTIP_SHOWHIDETP1;表示/非表示 上パネル\nショートカット: <b>Shift-L</b>
 MAIN_TOOLTIP_THRESHOLD;しきい値
 MAIN_TOOLTIP_TOGGLE;<b>補正前</b>/<b>補正後</b> 切り替え\nショートカット: <b>Shift-b</b>
-NAVIGATOR_B_NA;B = n/a
-NAVIGATOR_B_VALUE;B = %1
-NAVIGATOR_G_NA;G = n/a
-NAVIGATOR_G_VALUE;G = %1
-NAVIGATOR_H_NA;H = n/a
-NAVIGATOR_H_VALUE;H = %1
-NAVIGATOR_LAB_A_NA;a = n/a
-NAVIGATOR_LAB_A_VALUE;a = %1
-NAVIGATOR_LAB_B_NA;b = n/a
-NAVIGATOR_LAB_B_VALUE;b = %1
-NAVIGATOR_LAB_L_NA;L = n/a
-NAVIGATOR_LAB_L_VALUE;L = %1
+NAVIGATOR_B;B:
+NAVIGATOR_G;G:
+NAVIGATOR_H;H:
+NAVIGATOR_LAB_A;a:
+NAVIGATOR_LAB_B;b:
+NAVIGATOR_LAB_L;L:
 NAVIGATOR_NA; --
-NAVIGATOR_R_NA;R = n/a
-NAVIGATOR_R_VALUE;R = %1
-NAVIGATOR_S_NA;S = n/a
-NAVIGATOR_S_VALUE;S = %1
-NAVIGATOR_V_NA;V = n/a
-NAVIGATOR_V_VALUE;V = %1
+NAVIGATOR_R;R:
+NAVIGATOR_S;S:
+NAVIGATOR_V;V:
 NAVIGATOR_XY_FULL;幅 = %1, 高さ = %2
 NAVIGATOR_XY_NA;x = n/a, y = n/a
-OPTIONS_DEFIMG_MISSING;<b>RAWではない画像</b>のデフォルプロファイルが見つからないか、設定されていません\n\nプロファイル・ディレクトリを確認してください、存在しないか破損しているかもしれません\n\nデフォルト設定値が使用されます
-OPTIONS_DEFRAW_MISSING;<b>RAW画像</b>のデフォル・プロファイルが見つからないか、設定されていません\n\nプロファイル・ディレクトリを確認してください、存在しないか破損しているかもしれません\n\nデフォルト設定値が使用されます
+OPTIONS_DEFIMG_MISSING;<b>rawではない画像</b>のデフォルプロファイルが見つからないか、設定されていません\n\nプロファイル・ディレクトリを確認してください、存在しないか破損しているかもしれません\n\nデフォルト設定値が使用されます
+OPTIONS_DEFRAW_MISSING;<b>raw画像</b>のデフォル・プロファイルが見つからないか、設定されていません\n\nプロファイル・ディレクトリを確認してください、存在しないか破損しているかもしれません\n\nデフォルト設定値が使用されます
 PARTIALPASTE_BASICGROUP;基本設定
 PARTIALPASTE_CACORRECTION;色収差補正
 PARTIALPASTE_CHANNELMIXERBW;白黒
@@ -671,9 +663,9 @@ PARTIALPASTE_RAWCACORR_AUTO;自動色収差補正
 PARTIALPASTE_RAWCACORR_CABLUE;色収差 ブルー
 PARTIALPASTE_RAWCACORR_CARED;色収差 レッド
 PARTIALPASTE_RAWEXPOS_BLACK;黒レベル
-PARTIALPASTE_RAWEXPOS_LINEAR;Raw ホワイトポイント リニア補正係数
-PARTIALPASTE_RAWEXPOS_PRESER;Raw ホワイトポイント ハイライトを保持したまま補正 (EV)
-PARTIALPASTE_RAWGROUP;Raw 設定
+PARTIALPASTE_RAWEXPOS_LINEAR;raw ホワイトポイント リニア補正係数
+PARTIALPASTE_RAWEXPOS_PRESER;raw ホワイトポイント ハイライトを保持したまま補正 (EV)
+PARTIALPASTE_RAWGROUP;raw 設定
 PARTIALPASTE_RAW_ALLENHANCE;デモザイク後 アーティファクト/ノイズ低減を適用
 PARTIALPASTE_RAW_DCBENHANCE;DCB 拡張処理適用
 PARTIALPASTE_RAW_DCBITERATIONS;DCB反復の数
@@ -752,8 +744,8 @@ PREFERENCES_FLATFIELD;フラットフィールド
 PREFERENCES_FLUOF2;蛍光灯 F2
 PREFERENCES_FLUOF7;蛍光灯 F7
 PREFERENCES_FLUOF11;蛍光灯 F11
-PREFERENCES_FORIMAGE;RAWではない画像
-PREFERENCES_FORRAW;RAW画像
+PREFERENCES_FORIMAGE;rawではない画像
+PREFERENCES_FORRAW;raw画像
 PREFERENCES_GIMPPATH;GIMP インストール ディレクトリ
 PREFERENCES_GREY05;Yb=05 CIE L#30
 PREFERENCES_GREY10;Yb=10 CIE L#40
@@ -764,6 +756,8 @@ PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_GREY;出力デバイスの Yb 輝度 (%)
 PREFERENCES_HISTOGRAMPOSITIONLEFT;左パネルにヒストグラム
+PREFERENCES_HISTOGRAMWORKING;ヒストグラムとナビゲーターの表示に作業プロファイルを使う
+PREFERENCES_HISTOGRAM_TOOLTIP;これを有効にすると、ヒストグラムとナビゲーターの表示に、出力プロファイル（ガンマ適用）の代わりに作業プロファイルを使います
 PREFERENCES_HLTHRESHOLD;ハイライト・クリッピング領域のしきい値
 PREFERENCES_ICCDIR;カラープロファイルを含むディレクトリ
 PREFERENCES_IMPROCPARAMS;画像処理のデフォルト値
@@ -771,7 +765,7 @@ PREFERENCES_INTENT_ABSOLUTE;絶対的な色域を維持
 PREFERENCES_INTENT_PERCEPTUAL;知覚的
 PREFERENCES_INTENT_RELATIVE;相対的な色域を維持
 PREFERENCES_INTENT_SATURATION;彩度
-PREFERENCES_INTERNALTHUMBIFUNTOUCHED;RAWファイルが未編集の場合 JPEGのサムネイルを表示
+PREFERENCES_INTERNALTHUMBIFUNTOUCHED;rawファイルが未編集の場合 JPEGのサムネイルを表示
 PREFERENCES_LANGAUTODETECT;OSの言語設定を使用
 PREFERENCES_MENUGROUPEXTPROGS;"..で開く"のグループ
 PREFERENCES_MENUGROUPFILEOPERATIONS;"ファイル操作"のグループ
@@ -783,6 +777,7 @@ PREFERENCES_METADATA;メタデータ
 PREFERENCES_MONITORICC;モニター・カラープロファイル
 PREFERENCES_MULTITABDUALMON;マルチ編集タブモード（セカンド・モニタが使用可能な場合）
 PREFERENCES_MULTITAB;マルチ編集タブモード
+PREFERENCES_NAVGUIDEBRUSH;ナビゲーターのガイドカラー
 PREFERENCES_OUTDIRFOLDERHINT;選択したフォルダに画像を保存します
 PREFERENCES_OUTDIRFOLDER;フォルダに保存
 PREFERENCES_OUTDIRTEMPLATEHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
@@ -989,7 +984,7 @@ TP_COARSETRAF_TOOLTIP_ROTLEFT;90度左回転\nショートカット: <b>[</b>\n\
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;90度右回転\nショートカット: <b>]</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt-]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;上下反転
 TP_COLORAPP_ADAPTSCENE;撮影輝度への適応
-TP_COLORAPP_ADAPTSCENE_TOOLTIP;撮影環境の絶対輝度(cd/m2)\n1)Exif情報から算出：\nシャッター速度、ISO、絞り、カメラの露出補正\n2)RAWのホワイトポイントとRTの露光補正スライダー値から算出
+TP_COLORAPP_ADAPTSCENE_TOOLTIP;撮影環境の絶対輝度(cd/m2)\n1)Exif情報から算出：\nシャッター速度、ISO、絞り、カメラの露出補正\n2)rawのホワイトポイントとRTの露光補正スライダー値から算出
 TP_COLORAPP_ADAPTVIEWING;観視輝度への適応 (cd/m2)
 TP_COLORAPP_ADAPTVIEWING_TOOLTIP;観視環境の絶対輝度\n(通常 16cd/m2)
 TP_COLORAPP_ADAP_AUTO_TOOLTIP;チェックボックッスが有効の場合（推奨）はRTがExif情報に基づいて最適値を計算します\n手動で行う場合はチェックボックスを無効にします
@@ -1085,19 +1080,19 @@ TP_DEFRINGE_LABEL;フリンジ低減
 TP_DEFRINGE_RADIUS;半径
 TP_DEFRINGE_THRESHOLD;しきい値
 TP_DIRPYRDENOISE_BLUE;色差 ブルー/イエロー
-TP_DIRPYRDENOISE_CHROMA;色度 (メイン)
-TP_DIRPYRDENOISE_ENABLED_TOOLTIP;RAWと非RAW画像に使用することができます\n\n非RAW画像の場合、輝度ノイズ低減は、入力カラープロファイルのガンマを使って行います。その際sRGBのガンマが想定されていますので、入力画像が異なるガンマのカラープロファイルであれば、輝度ノイズ低減の結果も異なります。
+TP_DIRPYRDENOISE_CHROMA;色(マスター)
+TP_DIRPYRDENOISE_ENABLED_TOOLTIP;rawと非raw画像に使用することができます\n\n非raw画像の場合、輝度ノイズ低減は、入力カラープロファイルのガンマを使って行います。その際sRGBのガンマが想定されていますので、入力画像が異なるガンマのカラープロファイルであれば、輝度ノイズ低減の結果も異なります。
 TP_DIRPYRDENOISE_ENH;強化モード
 TP_DIRPYRDENOISE_ENH_TOOLTIP;ノイズ低減の効果を髙めますが、代わりに演算時間が約20%増えます。
 TP_DIRPYRDENOISE_GAMMA;ガンマ
 TP_DIRPYRDENOISE_GAMMA_TOOLTIP;ガンマは、トーンの範囲全体でノイズ低減の量を変化させます。値が大きいほど明るいトーンに効果を及ぼし、値が小さいほどシャドウをターゲットにします
 TP_DIRPYRDENOISE_LABEL;ノイズ低減
 TP_DIRPYRDENOISE_LAB;Lab
-TP_DIRPYRDENOISE_LDETAIL;輝度ディテール
+TP_DIRPYRDENOISE_LDETAIL;輝度　細部の復元
 TP_DIRPYRDENOISE_LUMA;輝度
 TP_DIRPYRDENOISE_METHOD;方式
-TP_DIRPYRDENOISE_METHOD_TOOLTIP;RAW画像は、RGBまたはLab方式のいずれかを使用することができます。\n\n非RAW画像は、選択にかかわらずLab方式が使用されます
-TP_DIRPYRDENOISE_PERF;RGB モード(RAW画像)
+TP_DIRPYRDENOISE_METHOD_TOOLTIP;raw画像は、RGBまたはLab方式のいずれかを使用することができます。\n\n非raw画像は、選択にかかわらずLab方式が使用されます
+TP_DIRPYRDENOISE_PERF;RGB モード(raw画像)
 TP_DIRPYRDENOISE_RED;色差 レッド/グリーン
 TP_DIRPYRDENOISE_RGB;RGB
 TP_DIRPYREQUALIZER_ALGO;肌色用のアルゴリズム
@@ -1127,9 +1122,9 @@ TP_EPD_REWEIGHTINGITERATES;再加重反復
 TP_EPD_SCALE;スケール
 TP_EPD_STRENGTH;強さ
 TP_EPD_TOOLTIP;トーンマッピングは、Labモード(標準)またはCIECAM02モードを介して可能です\n\n CIECAM02トーンマッピングモードは以下の設定を有効にします:\n 1. CIECAM02\n 2. アルゴリズム="明るさ + 鮮やかさ (QM)"\n 3. "CIECAM02 明るさ(Q)でトーンマッピング"
-TP_EXPOSCORR_LABEL;Raw ホワイト・ブラック・ポイント
+TP_EXPOSCORR_LABEL;raw ホワイト・ブラック・ポイント
 TP_EXPOSURE_AUTOLEVELS;自動露光補正
-TP_EXPOSURE_AUTOLEVELS_TIP;画像を解析し露光補正を自動で設定をします
+TP_EXPOSURE_AUTOLEVELS_TIP;画像を解析し露光補正を自動で設定します
 TP_EXPOSURE_BLACKLEVEL;黒レベル
 TP_EXPOSURE_BRIGHTNESS;明度
 TP_EXPOSURE_CLIP;クリップ　％
@@ -1203,7 +1198,7 @@ TP_ICM_INPUTCUSTOM;カスタム
 TP_ICM_INPUTCUSTOM_TOOLTIP;独自の DCP/ICCプロファイルファイルを選択
 TP_ICM_INPUTDLGLABEL;DCP/ICC 入力プロファイルを選択...
 TP_ICM_INPUTEMBEDDED;埋め込み使用, 可能なら
-TP_ICM_INPUTEMBEDDED_TOOLTIP;RAW以外のファイルに埋め込まれたカラープロファイルを使用
+TP_ICM_INPUTEMBEDDED_TOOLTIP;raw以外のファイルに埋め込まれたカラープロファイルを使用
 TP_ICM_INPUTNONE;プロファイルなし
 TP_ICM_INPUTNONE_TOOLTIP;すべてにカラープロファイルを使用しない 特殊な場合にのみ使用
 TP_ICM_INPUTPROFILE;入力プロファイル
@@ -1215,7 +1210,7 @@ TP_ICM_SAVEREFERENCE_TOOLTIP;入力プロファイルが適用される前のリ
 TP_ICM_TONECURVE;DCPトーンカーブ使用
 TP_ICM_TONECURVE_TOOLTIP;DCPのプロファイルに含まれているトーンカーブを使用することができます
 TP_ICM_WORKINGPROFILE;作業プロファイル
-TP_IMPULSEDENOISE_LABEL;インパルス ノイズ低減
+TP_IMPULSEDENOISE_LABEL;インパルスノイズ低減
 TP_IMPULSEDENOISE_THRESH;しきい値
 TP_LABCURVE_AVOIDCOLORSHIFT;色ずれを回避
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;作業色空間の色域に色を合わせ、マンセル補正を適用します
@@ -1300,7 +1295,7 @@ TP_RAW_DMETHOD;方式
 TP_RAW_DMETHOD_PROGRESSBAR;%1 デモザイク中...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;デモザイク・リファイン中...
 TP_RAW_DMETHOD_TOOLTIP;注: IGVとLMMSEは高ISO画像に適しています
-TP_RAW_FALSECOLOR;偽色抑制の処理段階
+TP_RAW_FALSECOLOR;偽色抑制処理の回数
 TP_RAW_LABEL;デモザイク
 TP_RAW_LMMSEITERATIONS;LMMSE 拡張処理
 TP_RAW_LMMSE_TOOLTIP;ガンマ追加 (step 1) - メディアン追加 (step 2,3,4), リファイン追加 (step 5,6) アーティファクトを低減しノイズ比を向上させます
@@ -1442,10 +1437,3 @@ ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる\nショートカット: <b>f</b>
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
-!PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator, otherwise the gamma-corrected output profile is used.
-!PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
