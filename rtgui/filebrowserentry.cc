@@ -204,7 +204,11 @@ void FileBrowserEntry::updateImage (rtengine::IImage8* img, double scale, rtengi
     param->img = img;
     param->scale = scale;
     param->cropParams = cropParams;
+#if __GNUC__ == 4 && __GNUC_MINOR__ >= 8 && defined( WIN32 ) && defined(__x86_64__)
+    g_idle_add_full (G_PRIORITY_DEFAULT, updateImageUI, param, NULL);
+#else
     g_idle_add_full (G_PRIORITY_LOW, updateImageUI, param, NULL);
+#endif
 }
 
 void FileBrowserEntry::_updateImage (rtengine::IImage8* img, double s, rtengine::procparams::CropParams cropParams) {
