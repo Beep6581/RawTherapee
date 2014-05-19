@@ -361,7 +361,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
 
 */
 
-    { // quality A (only aperture scaling for f/1.2 missing)
+    { // quality A 
         "make_model": "Canon EOS 5D Mark II",
         "dcraw_matrix": [ 4716,603,-830,-7798,15474,2480,-1496,1937,6651 ],
         "ranges": {
@@ -525,14 +525,14 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
             "aperture_scaling": [
 		/* note: no scale factors known for f/1.2 and f/1.0 (had no lenses to test with), but the
 		   typical 12650 white levels maxes out at "white_max" for f/1.4 and below anyway. */
-		{ "aperture": 1.4, "scale_factor": 1.308 }, // gaps 81of301
-		{ "aperture": 1.6, "scale_factor": 1.201 },
-		{ "aperture": 1.8, "scale_factor": 1.143 },
-		{ "aperture": 2.0, "scale_factor": 1.084 }, // gaps 1of11
+		{ "aperture": 1.4, "scale_factor": 1.300 }, // gaps 81of301
+		{ "aperture": 1.6, "scale_factor": 1.200 },
+		{ "aperture": 1.8, "scale_factor": 1.140 },
+		{ "aperture": 2.0, "scale_factor": 1.080 }, // gaps 1of11
 		{ "aperture": 2.2, "scale_factor": 1.060 },
 		{ "aperture": 2.5, "scale_factor": 1.050 },
-		{ "aperture": 2.8, "scale_factor": 1.033 },
-		{ "aperture": 3.2, "scale_factor": 1.016 },
+		{ "aperture": 2.8, "scale_factor": 1.030 },
+		{ "aperture": 3.2, "scale_factor": 1.015 },
 		{ "aperture": 3.5, "scale_factor": 1.000 } // no sample but it would be negligible
             ]
                   }
@@ -565,27 +565,26 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
     },
 
     { // Quality b, scaling factors missing but guessed safely
-        "make_model": [ "Canon EOS 1200D", "Canon EOS Rebel T5" ],
+        "make_model": [ "Canon EOS 1200D", "Canon EOS Rebel T5", "Canon EOS 600D", "Canon EOS Rebel T3i" ],
         "dcraw_matrix": [ 6461,-907,-882,-4300,12184,2378,-819,1944,5931 ], // dcp D65 colormatrix2
         "ranges": { 
                "white": [ 
                 { "iso": [ 100, 125 ], "levels": 13480 }, // typical 13583
                 { "iso": [ 160, 320, 640, 1250, 2500, 5000, 10000 ], "levels": 12550 }, // typical 12650
-                { "iso": [ 200, 250, 400, 500, 800, 1000, 1600, 2000, 3200, 4000, 6400, 8000 ], "levels": 15200 }, // typical 15303 
-                { "iso": [ 12800, 25600 ], "levels": 16200 } // typical 16383
+                { "iso": [ 200, 250, 400, 500, 800, 1000, 1600, 2000, 3200, 4000, 6400, 8000, 12800 ], "levels": 15200 } // typical 15303 
                         ], 
                "white_max": 16383,
             "aperture_scaling": [
 		/* note: no scale factors known for f/1.2 and f/1.0 (had no lenses to test with), but the
 		   typical 12650 white levels maxes out at "white_max" for f/1.4 and below anyway. */
-		{ "aperture": 1.4, "scale_factor": 1.200 }, // guessed from 650D data
-		{ "aperture": 1.6, "scale_factor": 1.080 }, // guessed
-		{ "aperture": 1.8, "scale_factor": 1.055 }, // guessed
-		{ "aperture": 2.0, "scale_factor": 1.030 }, // guessed
-		{ "aperture": 2.2, "scale_factor": 1.020 }, // guessed
-		{ "aperture": 2.5, "scale_factor": 1.020 }, // guessed
-		{ "aperture": 2.8, "scale_factor": 1.000 }, // 
-		{ "aperture": 3.2, "scale_factor": 1.000 }, // 
+		{ "aperture": 1.4, "scale_factor": 1.290 }, // guessed from 60D data
+		{ "aperture": 1.6, "scale_factor": 1.190 }, // guessed
+		{ "aperture": 1.8, "scale_factor": 1.140 }, // guessed
+		{ "aperture": 2.0, "scale_factor": 1.090 }, // 12293/11222 = 1.095
+		{ "aperture": 2.2, "scale_factor": 1.060 }, // 11971/11222 = 1.066
+		{ "aperture": 2.5, "scale_factor": 1.050 }, // guessed
+		{ "aperture": 2.8, "scale_factor": 1.030 }, // iso100: 14042/13584=1.0336 - iso200 15820/15303 = 1.0348
+		{ "aperture": 3.2, "scale_factor": 1.00 }, // 
 		{ "aperture": 3.5, "scale_factor": 1.000 } // 
             ]
                   }
@@ -668,6 +667,13 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
     { // Quality A
         "make_model": "FUJIFILM S1",
         "dcraw_matrix": [ 11705,-4262,-1107,-2282,10791,1709,-555,1713,4945 ] // MATRIX FROM FUJI SL1000
+    },
+
+    { // Quality C, PRELIMINARY - new model not supported by dcraw9.20 or dng 8.4
+        "make_model": "Nikon 1 V3",
+        "dcraw_matrix": [ 5306,-1066,-469,-3865,11189,3076,-399,1341,5120 ], // matrix dXo D50 
+//        "dcraw_matrix": [ 6588,-1305,-693,-3277,10987,2634,-355,2016,5106 ], // copy from 1 V2
+        "ranges": { "black": 200, "white": 4080 } // exif 800
     },
 
    { // quality B, lacks aperture and ISO scaling, known to exist, but little to gain as the levels are so close to white_max
@@ -757,7 +763,8 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
            "black": 143, 
            "white": [
               { "iso": 125, "levels": 3100 }, // bell shape 3150-3650 - exif 2616
-              { "iso": [ 160, 200, 250, 320, 400,500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 12800, 25600 ], "levels": 4080 } // nominal 4095
+              { "iso": 160, "levels": 3600 }, // guessed from relative GX7 data
+              { "iso": [ 200, 250, 320, 400,500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 12800, 25600 ], "levels": 4080 } // nominal 4095
                     ]
                   } 
     },
@@ -768,20 +775,33 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
            "black": 143, 
            "white": [
               { "iso": 125, "levels": 3100 },
-              { "iso": [ 160, 200, 250, 320, 400,500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 12800, 25600 ], "levels": 4080 } // nominal 4095
+              { "iso": 160, "levels": 3600 },
+              { "iso": [ 200, 250, 320, 400,500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 12800, 25600 ], "levels": 4080 } // nominal 4095
                     ]
                   } 
     },
+
+    { // Quality B, intermediate ISOs info missing  
+        "make_model": [ "RICOH PENTAX K-3", "PENTAX K-3" ],
+        "dcraw_matrix": [ 7415,-2052,-721,-5186,12788,2682,-1446,2157,6773 ], // adobe dcp d65
+//        "dcraw_matrix": [ 8542,-2581,-1144,-3995,12301,1881,863,1514,5755 ], // pentax DNG
+//        "dcraw_matrix": [ 6464,-1574,-422,-5324,12712,2934,-1129,1724,6900 ], // DxO
+        "raw_crop": [ 10, 4, 6028, 4024 ],
+        "ranges": { 
+           "white": [
+              { "iso": 100, "levels": 16310 }, // 16317 or 16350
+              { "iso": 200, "levels": 16120 }, // 16254 or 16125
+              { "iso": 400, "levels": 15860 }, // 16125 or 15868
+              { "iso": 800, "levels": 15360 }, // 15868 or 15364-15370
+              { "iso": [ 1600, 3200, 6400, 12800, 25600, 51200 ], "levels": 16300 } // 16383 - pentax dng tag is 15868-15350
+                    ]
+                  } 
+    }, 
 
     {  // Quality A, Conflict with Samsung NX in Dcraw.c-Dcraw.cc if not included in camconst.json
         "make_model": "Samsung NX30", 
         "dcraw_matrix": [ 7557,-2522,-739,-4679,12949,1894,-840,1777,5311 ] // D65 matrix from Adobe's Dcp profile - DxoD50 6661,-1695,-616,-6456,14646,1913,-1417,2142,5646
     },
-//    {  // Quality C,  new model,  
-//        "make_model": "Samsung NX mini", 
-//        "dcraw_matrix": [ 7557,-2522,-739,-4679,12949,1894,-840,1777,5311 ], // quessed
-//        "raw_crop": [ 128, 36, 5480, 3656 ] // jpeg 5472x3648 - raw 5664 x 3710 - crop 132, 40, 5604, 3688
-//    },
 
     { // Quality A, correction for frame width
         "make_model": "Sony NEX-5N",
