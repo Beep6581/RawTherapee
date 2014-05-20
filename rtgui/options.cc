@@ -227,6 +227,8 @@ void Options::setDefaults () {
     font = "sans, 8";
     windowWidth = 1200;
     windowHeight = 680;
+    windowX = 0;
+    windowY = 0;
     windowMaximized = true;
     saveAsDialogWidth = 920;
     saveAsDialogHeight = 680;
@@ -703,6 +705,8 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "Font"))            font            = keyFile.get_string  ("GUI", "Font");
     if (keyFile.has_key ("GUI", "WindowWidth"))     windowWidth     = keyFile.get_integer ("GUI", "WindowWidth");
     if (keyFile.has_key ("GUI", "WindowHeight"))    windowHeight    = keyFile.get_integer ("GUI", "WindowHeight");
+    if (keyFile.has_key ("GUI", "WindowX"))     	windowX     = keyFile.get_integer ("GUI", "WindowX");
+    if (keyFile.has_key ("GUI", "WindowY"))    		windowY    = keyFile.get_integer ("GUI", "WindowY");
     if (keyFile.has_key ("GUI", "WindowMaximized")) windowMaximized = keyFile.get_boolean ("GUI", "WindowMaximized");
     if (keyFile.has_key ("GUI", "DetailWindowWidth"))   detailWindowWidth        = keyFile.get_integer ("GUI", "DetailWindowWidth");
     if (keyFile.has_key ("GUI", "DetailWindowHeight"))  detailWindowHeight       = keyFile.get_integer ("GUI", "DetailWindowHeight");
@@ -994,6 +998,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("GUI", "Font", font);
     keyFile.set_integer ("GUI", "WindowWidth", windowWidth);
     keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
+    keyFile.set_integer ("GUI", "WindowX", windowX);
+    keyFile.set_integer ("GUI", "WindowY", windowY);
     keyFile.set_boolean ("GUI", "WindowMaximized", windowMaximized);
     keyFile.set_integer ("GUI", "DetailWindowWidth", detailWindowWidth);
     keyFile.set_integer ("GUI", "DetailWindowHeight", detailWindowHeight);

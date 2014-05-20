@@ -113,6 +113,8 @@ class Options {
     Glib::ustring font;
     int windowWidth;
     int windowHeight;
+    int windowX;
+    int windowY;
     bool windowMaximized;
     int detailWindowWidth;
     int detailWindowHeight;
