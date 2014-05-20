@@ -123,8 +123,10 @@ RTWindow::RTWindow ()
     set_resizable(true);
     if (options.windowMaximized)
     	maximize();
-    else
+    else {
     	unmaximize();
+    	move(options.windowX,options.windowY);
+    }
 
     on_delete_has_run = false;
     is_fullscreen = false;
@@ -592,6 +594,7 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
     if (!options.windowMaximized) {
 		options.windowWidth = get_width();
 		options.windowHeight = get_height();
+		get_position (options.windowX,options.windowY);
     }
 
     Options::save ();
