@@ -8,6 +8,7 @@ and prints the features to the screen.
 #include "klt/pnmio.h"
 #include "klt/klt.h"
 #include <cmath>
+#include <cstring>
 
 #define N_FEATURES 100
 #define DELTA_1 0.05
@@ -30,7 +31,7 @@ void drawDot(unsigned char* img, int ncols, int nrows, double r0, double r10, in
 }
 #endif
 
-double calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int nrows)
+int calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int nrows, int nfactor, double &distortion)
 {
     KLT_TrackingContext tc;
     KLT_FeatureList fl;
@@ -38,8 +39,10 @@ double calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int n
     int i,n;
     double radius, wc, hc;
 
-    double r0[N_FEATURES] = {0.0};
-    double r10[N_FEATURES] = {0.0};
+    double r0[N_FEATURES*nfactor];
+    memset(r0,0,N_FEATURES*nfactor*sizeof(double));
+    double r10[N_FEATURES*nfactor];
+    memset(r10,0,N_FEATURES*nfactor*sizeof(double));
 
     tc = KLTCreateTrackingContext();
     //tc->mindist = 20;
@@ -48,8 +51,8 @@ double calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int n
     tc->step_factor = 2.0;
     tc->max_iterations = 20;
     //KLTPrintTrackingContext(tc);
-    fl = KLTCreateFeatureList(N_FEATURES);
-    ft = KLTCreateFeatureTable(2, N_FEATURES);
+    fl = KLTCreateFeatureList(N_FEATURES*nfactor);
+    ft = KLTCreateFeatureTable(2, N_FEATURES*nfactor);
 
     radius = sqrt(ncols*ncols+nrows*nrows)/2.0;
     wc=((double)ncols)/2.0-0.5;
@@ -68,7 +71,7 @@ double calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int n
     // find the best comp and scale when assume r1 = r0*(1.0-comp+(r0*comp))*scale;
     n=0;
     double total_r10=0.0, total_r0=0.0;
-    for (i=0;i<N_FEATURES;i++) {
+    for (i=0;i<N_FEATURES*nfactor;i++) {
         if (ft->feature[i][1]->val>=0) {
             double x0,y0,x1,y1;
             x0=ft->feature[i][0]->x;
@@ -92,7 +95,8 @@ double calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int n
 
     if (n < 5) {
         printf ("Not sufficient features.\n");
-        return 0.0;
+        distortion = 0.0;
+        return -1;
     }
 
     double avg_r10 = total_r10 / n;
@@ -140,7 +144,8 @@ double calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int n
 
     if (new_n < 5) {
         printf ("Not sufficient features.\n");
-        return 0.0;
+        distortion = 0.0;
+        return -1;
     }
 
     printf ("Removed %d outstading data points\n", n-new_n);
@@ -213,15 +218,18 @@ double calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int n
 
     if (total_delta / new_n > DELTA_2) {
         printf ("Deviation is too big.\n");
-        return 0.0;
+        distortion = 0.0;
+        return -2;
     }
 
     if (rxy < RXY_LIMIT) {
         printf ("Not linear enough\n");
-        return 0.0;
+        distortion = 0.0;
+        return -3;
     }
 
     printf ("distortion amount=%lf scale=%lf deviation=%lf, rxy=%lf\n", a, b, total_delta/n, rxy);
-    return a;
+    distortion = a;
+    return 1;
 }
 

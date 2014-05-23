@@ -4385,7 +4385,10 @@ fclose(f);*/
 				return 0.0;
 			}
 
-			double dist_amount = calcDistortion (thumbGray, rawGray, width, h_thumb);
+			double dist_amount;
+			int dist_result = calcDistortion (thumbGray, rawGray, width, h_thumb, 1, dist_amount);
+			if(dist_result == -1) // not enough features found, try increasing max. number of features by factor 4
+				dist_result = calcDistortion (thumbGray, rawGray, width, h_thumb, 4, dist_amount);
 			delete thumbGray;
 			delete rawGray;
 			delete thumb;
