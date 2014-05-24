@@ -5228,7 +5228,8 @@ int CLASS parse_tiff_ifd (int base)
 	fgets (make, 64, ifp);
 	break;
       case 272:				/* Model */
-	fgets (model, 64, ifp);
+        if (strstr(model, "Hasselblad ") != model) // RT: if Hasselblad, only parse the first model name (otherwise it can change from say Hasselblad CFV-50 to Hasselblad CW (ie the camera body model, not the back model which we are interested in)
+	  fgets (model, 64, ifp);
 	break;
       case 280:				/* Panasonic RW2 offset */
 	if (type != 4) break;
@@ -8250,6 +8251,18 @@ konica_400z:
       top_margin  = 4;
       left_margin = 41;
       filters = 0x61616161;
+    } else if (raw_width == 6542) { // RT, H3D-31, H3DII-31
+      if (!strcmp(model, "H3D")) strcpy(model, "H3D-31"); // note: can't differ between H3D-31 and H3DII-31.
+      height = 4904;
+      width = 6524;
+      top_margin = 4;
+      left_margin = 8;
+    } else if (raw_width == 8282) { // RT, H3DII-50, H3DII-50MS, CFV-50
+      if (!strcmp(model, "H3D")) strcpy(model, "H3DII-50"); // note: can't differ between H3DII-50 and H3DII-50MS
+      height = 6152;
+      width = 8196;
+      top_margin = 4;
+      left_margin = 44;
     } else if (raw_width == 9044) {
       height = 6716;
       width  = 8964;
