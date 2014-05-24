@@ -8255,8 +8255,9 @@ konica_400z:
       width  = 8964;
       top_margin  = 8;
       left_margin = 40;
-      black += load_flags = 256;
-      maximum = 0x8101;
+      // RT: removed black level / maximum adjustment, as it does not seem to be correct when there are clipped highlights. Tested with Hasselblad H4D-60.
+      //black += load_flags = 256;
+      //maximum = 0x8101;
     } else if (raw_width == 4090) {
       strcpy (model, "V96C");
       height -= (top_margin = 6);

@@ -1,5 +1,5 @@
---- dcraw.c	2014-05-11 10:30:58 +0000
-+++ dcraw.cc	2014-05-11 12:30:50 +0000
+--- dcraw.c	2014-02-19 17:25:45.051457734 +0100
++++ dcraw.cc	2014-05-24 11:45:53.712407849 +0200
 @@ -1,3 +1,15 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -1284,7 +1284,19 @@
      width -= 46;
    } else if (!strcmp(model,"D4") ||
  	     !strcmp(model,"Df")) {
-@@ -8394,6 +8309,7 @@
+@@ -8340,8 +8255,9 @@
+       width  = 8964;
+       top_margin  = 8;
+       left_margin = 40;
+-      black += load_flags = 256;
+-      maximum = 0x8101;
++      // RT: removed black level / maximum adjustment, as it does not seem to be correct when there are clipped highlights. Tested with Hasselblad H4D-60.
++      //black += load_flags = 256;
++      //maximum = 0x8101;
+     } else if (raw_width == 4090) {
+       strcpy (model, "V96C");
+       height -= (top_margin = 6);
+@@ -8394,6 +8310,7 @@
        filters = 0x16161616;
      }
    } else if (!strcmp(make,"Leica") || !strcmp(make,"Panasonic")) {
@@ -1292,7 +1304,7 @@
      if ((flen - data_offset) / (raw_width*8/7) == raw_height)
        load_raw = &CLASS panasonic_load_raw;
      if (!load_raw) {
-@@ -8411,6 +8327,7 @@
+@@ -8411,6 +8328,7 @@
        }
      filters = 0x01010101 * (uchar) "\x94\x61\x49\x16"
  	[((filters-1) ^ (left_margin & 1) ^ (top_margin << 1)) & 3];
@@ -1300,7 +1312,7 @@
    } else if (!strcmp(model,"C770UZ")) {
      height = 1718;
      width  = 2304;
-@@ -8630,6 +8547,10 @@
+@@ -8630,6 +8548,10 @@
      memcpy (rgb_cam, cmatrix, sizeof cmatrix);
      raw_color = 0;
    }
@@ -1311,7 +1323,7 @@
    if (raw_color) adobe_coeff (make, model);
    if (load_raw == &CLASS kodak_radc_load_raw)
      if (raw_color) adobe_coeff ("Apple","Quicktake");
-@@ -8646,7 +8567,7 @@
+@@ -8646,7 +8568,7 @@
    if (!tiff_bps) tiff_bps = 12;
    if (!maximum) maximum = (1 << tiff_bps) - 1;
    if (!load_raw || height < 22 || width < 22 ||
@@ -1320,7 +1332,7 @@
      is_raw = 0;
  #ifdef NO_JASPER
    if (load_raw == &CLASS redcine_load_raw) {
-@@ -8725,195 +8646,269 @@
+@@ -8725,195 +8647,269 @@
  }
  #endif
  
@@ -1765,7 +1777,7 @@
  struct tiff_tag {
    ushort tag, type;
    int count;
-@@ -8935,585 +8930,12 @@
+@@ -8935,585 +8931,12 @@
    unsigned gps[26];
    char desc[512], make[64], model[64], soft[32], date[20], artist[64];
  };
