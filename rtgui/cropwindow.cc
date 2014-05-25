@@ -67,7 +67,7 @@ CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_,
     backColor(options.bgcolor), decorated(true), titleHeight(30),
     sideBorderWidth(3), lowerBorderWidth(3), upperBorderWidth(1), sepWidth(2),
     xpos(30), ypos(30), imgX(0), imgY(0), imgW(1), imgH(1), iarea(parent),
-    cropZoom(0), cropgl(NULL), pmlistener(NULL), observedCropWin(NULL), isFlawnOver(false) {
+    cropZoom(0), cropgl(NULL), pmlistener(NULL), observedCropWin(NULL), ipc(ipc_), isFlawnOver(false) {
 
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();       
@@ -1585,8 +1585,11 @@ void CropWindow::buttonPressed (LWButton* button, int actionCode, void* actionDa
     else if (button==bZoom100) // zoom 100
         zoom11 ();
     else if (button==bClose) {// close
-        deleted = true;
-        iarea->cropWindowClosed (this);
+		if(ipc->updateTryLock()) {
+			deleted = true;
+			iarea->cropWindowClosed (this);
+			ipc->updateUnLock();
+		}
     }
 }
 
