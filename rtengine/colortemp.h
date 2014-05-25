@@ -191,9 +191,8 @@ class ColorTemp {
 			return c1*(100.0 / fl) * pow( (27.13 * fabs( c - 0.1 )) / (400.0 - fabs( c - 0.1 )), 1.0 / 0.42 );
 		}
 		static float inverse_nonlinear_adaptationfloat( float c, float fl ) {
-		    int c1;
-		    if(c-0.1f < 0.0f) c1=-1; else c1=1;
-			return c1*(100.0f / fl) * pow_F( (27.13f * fabs( c - 0.1f )) / (400.0f - fabs( c - 0.1f )), 1.0f / 0.42f );
+		    if(c-0.1f < 0.f) fl*=-1.f;
+		    return (100.0f / fl) * pow_F( (27.13f * fabsf( c - 0.1f )) / (400.0f - fabsf( c - 0.1f )), 2.38095238f );
 		}
 		
 		
