@@ -926,7 +926,7 @@ void ColorTemp::curvecolor(double satind, double satval, double &sres, double pa
 }
 void ColorTemp::curvecolorfloat(float satind, float satval, float &sres, float parsat) {
 	if (satind >=0.0f) {
-		sres = (1.-(satind)/100.f)*satval+(satind)/100.f*(1.f-SQR(SQR(1.f-min(satval,1.0f))));
+		sres = (1.f-(satind)/100.f)*satval+(satind)/100.f*(1.f-SQR(SQR(1.f-min(satval,1.0f))));
 		if (sres>parsat) sres=parsat;
 		if (sres<0.f) sres=0.f;
 	} else {
@@ -1917,7 +1917,8 @@ void  ColorTemp::calculate_abfloat( float &aa, float &bb, float h, float e, floa
 	float sinh = sincosval.x;
 	float cosh = sincosval.y;
 	float x = (a / nbb) + 0.305f;
-	float p3 = 21.0f/20.0f;	
+//	float p3 = 21.0f/20.0f;	
+	float p3 = 1.05f;
 	if( fabs( sinh ) >= fabs( cosh ) ) {
 		bb =    ((0.32787f * x) * (2.0f + p3)) /
 				((e / (t * sinh)) -
@@ -2081,7 +2082,7 @@ void ColorTemp::xyz2jchqms_ciecam02( double &J, double &C, double &h, double &Q,
 
 void ColorTemp::xyz2jchqms_ciecam02float( float &J, float &C, float &h, float &Q, float &M, float &s,float &aw, float &fl, float &wh,
 									 float x, float y, float z, float xw, float yw, float zw, 
-									 float yb, float la, float f, float c, float nc, float pilotd, int gamu, float n, float nbb, float ncb, float pfl, float cz, float d)
+									 float yb, float la, float f, float c, float nc, float pilotd, int gamu, float pow1, float nbb, float ncb, float pfl, float cz, float d)
 
 									 {
     float r, g, b;
@@ -2100,57 +2101,38 @@ void ColorTemp::xyz2jchqms_ciecam02float( float &J, float &C, float &h, float &Q
     bc = b * (((yw * d) / bw) + (1.0 - d));
 
     ColorTemp::cat02_to_hpefloat( rp, gp, bp, rc, gc, bc, gamu );
-    if(gamu==1){//gamut correction M.H.Brill S.Susstrunk
-	rp=MAXR(rp,0.0f);
-	gp=MAXR(gp,0.0f);
-	bp=MAXR(bp,0.0f);
+    if(gamu==1) {//gamut correction M.H.Brill S.Susstrunk
+		rp=MAXR(rp,0.0f);
+		gp=MAXR(gp,0.0f);
+		bp=MAXR(bp,0.0f);
 	}
     rpa = nonlinear_adaptationfloat( rp, fl );
     gpa = nonlinear_adaptationfloat( gp, fl );
     bpa = nonlinear_adaptationfloat( bp, fl );
 
-    ca = rpa - ((12.0f * gpa) / 11.0f) + (bpa / 11.0f);
-    cb = (1.0f / 9.0f) * (rpa + gpa - (2.0f * bpa));
+    ca = rpa - ((12.0f * gpa) - bpa) / 11.0f;
+    cb = (0.11111111f) * (rpa + gpa - (2.0f * bpa));
 
-    myh = (180.0f / M_PI) * xatan2f( cb, ca );
-    if( myh < 0.0f ) myh += 360.0f;
-	//we can also calculate H, if necessary...but it's using time...for  what usage ?
-	/*double temp;
-	if(myh<20.14) {
-        temp = ((myh + 122.47)/1.2) + ((20.14 - myh)/0.8);
-        H = 300 + (100*((myh + 122.47)/1.2)) / temp;
-	}
-	else if(myh < 90.0) {
-        temp = ((myh - 20.14)/0.8) + ((90.00 - myh)/0.7);
-        H = (100*((myh - 20.14)/0.8)) / temp;
-    }
-    else if (myh < 164.25) {
-        temp = ((myh - 90.00)/0.7) + ((164.25 - myh)/1.0);
-        H = 100 + ((100*((myh - 90.00)/0.7)) / temp);
-    }
-    else if (myh < 237.53) {
-        temp = ((myh - 164.25)/1.0) + ((237.53 - myh)/1.2);
-        H = 200 + ((100*((myh - 164.25)/1.0)) / temp);
-    }
-    else {
-        temp = ((myh - 237.53)/1.2) + ((360 - myh + 20.14)/0.8);
-        H = 300 + ((100*((myh - 237.53)/1.2)) / temp);
-    }
-	*/
-    a = ((2.0f * rpa) + gpa + ((1.0f / 20.0f) * bpa) - 0.305f) * nbb;
-	if (gamu==1) a=MAXR(a,0.0f);//gamut correction M.H.Brill S.Susstrunk
-    J = 100.0f * pow_F( a / aw, c * cz );
+    myh = xatan2f( cb, ca );
+    if( myh < 0.0f )
+		myh += (2.f * M_PI);
 
-    e = ((12500.0f / 13.0f) * nc * ncb) * (xcosf( ((myh * M_PI) / 180.0f) + 2.0f ) + 3.8f);
-    t = (e * sqrt( (ca * ca) + (cb * cb) )) / (rpa + gpa + ((21.0f / 20.0f) * bpa));
+    a = ((2.0f * rpa) + gpa + (0.05f * bpa) - 0.305f) * nbb;
+	if (gamu==1)
+		a=MAXR(a,0.0f);//gamut correction M.H.Brill S.Susstrunk
+	
+	J = pow_F( a / aw, c * cz * 0.5f);
 
-    C = pow_F( t, 0.9f ) * sqrt( J / 100.0f )
-                        * pow_F( 1.64f - pow_F( 0.29f, n ), 0.73f );
+    e = ((961.53846f) * nc * ncb) * (xcosf( myh + 2.0f ) + 3.8f);
+    t = (e * sqrtf( (ca * ca) + (cb * cb) )) / (rpa + gpa + (1.05f * bpa));
 
-	Q = wh * sqrt( J / 100.0f );
+    C = pow_F( t, 0.9f ) * J * pow1;
+
+	Q = wh * J;
+	J *= J * 100.0f;
     M = C * pfl;
-    s = 100.0f * sqrt( M / Q );
-    h = myh;
+    s = 100.0f * sqrtf( M / Q );
+    h = (myh * 180.f) / (float)M_PI;
 
 }
 
@@ -2191,7 +2173,7 @@ void ColorTemp::jch2xyz_ciecam02( double &x, double &y, double &z, double J, dou
 
 void ColorTemp::jch2xyz_ciecam02float( float &x, float &y, float &z, float J, float C, float h,
 								  float xw, float yw, float zw, float yb, float la,
-								  float f, float c, float nc , int gamu, float n, float nbb, float ncb, float fl, float cz, float d, float aw)
+								  float f, float c, float nc , int gamu, float pow1, float nbb, float ncb, float fl, float cz, float d, float aw)
 								  
 {
     float r, g, b;
@@ -2203,9 +2185,9 @@ void ColorTemp::jch2xyz_ciecam02float( float &x, float &y, float &z, float J, fl
     float e, t;
 	gamu=1;
     ColorTemp::xyz_to_cat02float( rw, gw, bw, xw, yw, zw, gamu );
-    e = ((12500.0f / 13.0f) * nc * ncb) * (xcosf( ((h * M_PI) / 180.0f) + 2.0f ) + 3.8f);
+    e = ((961.53846f) * nc * ncb) * (xcosf( ((h * M_PI) / 180.0f) + 2.0f ) + 3.8f);
     a = pow_F( J / 100.0f, 1.0f / (c * cz) ) * aw;
-    t = pow_F( C / (sqrt( J / 100.f) * pow_F( 1.64f - pow_F( 0.29f, n ), 0.73f )), 10.0f / 9.0f );
+    t = pow_F( 10.f * C / (sqrtf( J ) * pow1), 1.1111111f );
 
     calculate_abfloat( ca, cb, h, e, t, nbb, a );
     Aab_to_rgbfloat( rpa, gpa, bpa, a, ca, cb, nbb );

@@ -25,7 +25,7 @@
 #include "labimage.h"
 #include "iccstore.h"
 #include "iccmatrices.h"
-
+#include "sleef.c"
 namespace rtengine {
 
 #ifdef _DEBUG
@@ -245,7 +245,7 @@ public:
 	* @param rgb_xyz[3][3] transformation matrix to use for the conversion
 	*/
 	static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, double rgb_xyz[3][3]);
-	static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, float rgb_xyz[3][3]);
+	static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const float rgb_xyz[3][3]);
 
 	
 	/**
@@ -613,8 +613,10 @@ public:
 	*/
 #ifdef _DEBUG
 	static void gamutLchonly  (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb);
+	static void gamutLchonly  (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb);
 #else
 	static void gamutLchonly  (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef);
+	static void gamutLchonly  (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef);
 #endif
 
 
