@@ -205,6 +205,9 @@ class ImProcCoordinator : public StagedImageProcessor {
         void getSpotWB   (int x, int y, int rectSize, double& temp, double& green);
         void getAutoCrop (double ratio, int &x, int &y, int &w, int &h);
 
+        bool updateTryLock () {return updaterThreadStart.trylock();}
+        void updateUnLock () {updaterThreadStart.unlock();}
+
         void setProgressListener (ProgressListener* pl)  { plistener = pl; }
         void setPreviewImageListener    (PreviewImageListener* il)     {imageListener = il; }
         void setSizeListener     (SizeListener* il)      {sizeListeners.push_back (il); }

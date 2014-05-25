@@ -330,6 +330,10 @@ namespace rtengine {
               * @return the height of the preview image */
             virtual int         getPreviewHeight () =0;
 
+			virtual bool		updateTryLock() = 0;
+
+			virtual void		updateUnLock() = 0;
+
             /** Creates and returns a Crop instance that acts as a window on the image
               * @param editDataProvider pointer to the EditDataProvider that communicates with the EditSubscriber
               * @return a pointer to the Crop object that handles the image data trough its own pipeline */
