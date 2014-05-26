@@ -724,6 +724,10 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 					clipfix[2] += dirwt*hilite_dir[dir*4+2][i1][j1]/(hilite_dir[dir*4+3][i1][j1]+0.00001);
 				}
 			}
+
+			if(totwt == 0.f)
+				continue;
+			
 			clipfix[0] /= totwt;
 			clipfix[1] /= totwt;
 			clipfix[2] /= totwt;
