@@ -5489,6 +5489,9 @@ int CLASS parse_tiff_ifd (int base)
 	if (!make[0]) strcpy (make, "DNG");
 	is_raw = 1;
 	break;
+      case 50708:			/* UniqueCameraModel */
+        fgets (model3, 64, ifp);
+	break;
       case 50710:			/* CFAPlaneColor */
 	if (len > 4) len = 4;
 	colors = len;
@@ -7636,7 +7639,7 @@ void CLASS identify()
   tiff_flip = flip = filters = UINT_MAX;	/* unknown */
   raw_height = raw_width = fuji_width = fuji_layout = cr2_slice[0] = 0;
   maximum = height = width = top_margin = left_margin = 0;
-  cdesc[0] = desc[0] = artist[0] = make[0] = model[0] = model2[0] = 0;
+  cdesc[0] = desc[0] = artist[0] = make[0] = model[0] = model2[0] = model3[0] = 0;
   iso_speed = shutter = aperture = focal_len = unique_id = 0;
   tiff_nifds = 0;
   memset (tiff_ifd, 0, sizeof tiff_ifd);
@@ -8240,6 +8243,7 @@ konica_400z:
     if (load_raw == &CLASS lossless_jpeg_load_raw)
       load_raw = &CLASS hasselblad_load_raw;
     if (raw_width == 7262) {
+      if (!strcmp(model, "H3D")) strcpy(model, "H3D-39"); // RT
       height = 5444;
       width  = 7248;
       top_margin  = 4;
@@ -8252,13 +8256,13 @@ konica_400z:
       left_margin = 41;
       filters = 0x61616161;
     } else if (raw_width == 6542) { // RT, H3D-31, H3DII-31
-      if (!strcmp(model, "H3D")) strcpy(model, "H3D-31"); // note: can't differ between H3D-31 and H3DII-31.
+      if (!strcmp(model, "H3D")) strcpy(model, "H3D-31");
       height = 4904;
       width = 6524;
       top_margin = 4;
       left_margin = 8;
     } else if (raw_width == 8282) { // RT, H3DII-50, H3DII-50MS, CFV-50
-      if (!strcmp(model, "H3D")) strcpy(model, "H3DII-50"); // note: can't differ between H3DII-50 and H3DII-50MS
+      if (!strcmp(model, "H3D")) strcpy(model, "H3DII-50");
       height = 6152;
       width = 8196;
       top_margin = 4;
@@ -8271,6 +8275,11 @@ konica_400z:
       // RT: removed black level / maximum adjustment, as it does not seem to be correct when there are clipped highlights. Tested with Hasselblad H4D-60.
       //black += load_flags = 256;
       //maximum = 0x8101;
+    } else if (raw_width == 4096) { // RT: CF-22 etc
+      if (!strcmp(model, "H3D")) strcpy(model, "H3D-22");
+      else if (strstr(model3, "Hasselblad ") == model3) strcpy(model, &model3[11]);
+      if (strstr(model3, "ixpressCF132")) strcpy(model, "CF-22"); // ixpressCF132 / CF132 is same as CF-22, we use the simpler name
+      else if (strstr(model3, "Hasselblad96")) strcpy(model, "CFV"); // popularly called CFV-16
     } else if (raw_width == 4090) {
       strcpy (model, "V96C");
       height -= (top_margin = 6);

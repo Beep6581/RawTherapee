@@ -884,17 +884,33 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "ranges": { "black": 0, "white": 63300 }
     },
 
-    { // Quality A
+    { // Quality A for tested CFV, the other models have the same sensor (16 megapixel square sensor)
+        "make_model": [ "Hasselblad V96C", "Hasselblad CFV", "Hasselblad CFV-II" ],
+        "dcraw_matrix": [ 8519, -3260, -280, -5081, 13459, 1738, -1449, 2960, 7809 ] // borrowed from Adobe's DNG converter
+    },
+    { // Quality A for tested CF-22, the other models have the same sensor
+        "make_model": [ "Hasselblad CF-22", "Hasselblad CF-22MS", "Hasselblad CFH-22", "Hasselblad H3D-22", "Hasselblad H3DII-22" ],
+        "dcraw_matrix": [ 8519, -3260, -280, -5081, 13459, 1738, -1449, 2960, 7809 ] // borrowed from Adobe's DNG converter
+    },
+    { // Quality A for tested H3D-31, the other models have the same sensor
         "make_model": [ "Hasselblad H3D-31", "Hasselblad H3DII-31", "Hasselblad H4D-31" ],
-        "dcraw_matrix": [ 5458, -1448, 145, -4479, 12338, 2401, -1659, 3086, 6710 ]
+        "dcraw_matrix": [ 5458, -1448, 145, -4479, 12338, 2401, -1659, 3086, 6710 ] // borrowed from Adobe's DNG converter
+    },
+    { // Quality A for tested CFV-39, the other models have the same sensor. Small filter differences may exist so some might do better with a slightly different profile
+        "make_model": [ "Hasselblad CF-39", "Hasselblad CF-39MS", "Hasselblad CFH-39", "Hasselblad CFV-39", "Hasselblad H3D-39", "Hasselblad H3DII-39", "Hasselblad H3DII-39MS" ],
+        "dcraw_matrix": [ 3857, 452, -46, -6008, 14477, 1596, -2627, 4481, 5718 ] // borrowed from Adobe's DNG converter
+    },
+    { // Quality A for tested CFV-50, the other models have the same sensor
+        "make_model": [ "Hasselblad CFV-50", "Hasselblad H3DII-50", "Hasselblad H3DII-50MS", "Hasselblad H4D-50", "Hasselblad H4D-50MS", "Hasselblad H4D-200MS", "Hasselblad H5D-50", "Hasselblad H5D-50MS", "Hasselblad H5D-200MS" ],
+	"dcraw_matrix": [ 5656, -659, -346, -3923, 12306, 1791, -1602, 3509, 5442 ] // borrowed from Adobe's DNG converter
     },
     { // Quality A
-        "make_model": [ "Hasselblad CFV-50", "Hasselblad H3DII-50", "Hasselblad H3DII-50MS", "Hasselblad H4D-50", "Hasselblad H4D-50MS", "Hasselblad H4D-200MS", "Hasselblad H5D-50", "Hasselblad H5D-50 Multi-Shot" ],
-	"dcraw_matrix": [ 5656, -659, -346, -3923, 12306, 1791, -1602, 3509, 5442 ]
+        "make_model": [ "Hasselblad H4D-40", "Hasselblad H5D-40" ],
+	"dcraw_matrix": [ 9662, -684, -279, -4903, 12293, 2950, -344, 1669, 6024 ] // borrowed from Adobe's DNG converter
     },
-    { // Quality A
+    { // Quality A for tested H4D-60, the other models have the same sensor
         "make_model": [ "Hasselblad H4D-60", "Hasselblad H5D-60" ],
-	"dcraw_matrix": [ 9662, -684, -279, -4903, 12293, 2950, -344, 1669, 6024 ]
+	"dcraw_matrix": [ 9662, -684, -279, -4903, 12293, 2950, -344, 1669, 6024 ] // borrowed from Adobe's DNG converter
     },
 
     // dummy test entry to test the parser and show the format with all entries active
