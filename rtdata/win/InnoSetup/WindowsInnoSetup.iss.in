@@ -104,6 +104,7 @@ Source: "{#MyBuildBasePath}\dcpprofiles\*"; DestDir: "{app}\dcpprofiles\"; Flags
 Source: "{#MyBuildBasePath}\iccprofiles\*"; DestDir: "{app}\iccprofiles\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyBuildBasePath}\images\*"; DestDir: "{app}\images\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyBuildBasePath}\languages\*"; DestDir: "{app}\languages\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#MyBuildBasePath}\licenses\*"; DestDir: "{app}\licenses\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyBuildBasePath}\lib\*"; DestDir: "{app}\lib\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyBuildBasePath}\profiles\*"; DestDir: "{app}\profiles\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyBuildBasePath}\sounds\*"; DestDir: "{app}\sounds\"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -116,6 +117,8 @@ Source: "{#MyBuildBasePath}\options"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\*.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\gspawn-win{#MyBitDepth}-helper.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\gspawn-win{#MyBitDepth}-helper-console.exe"; DestDir: "{app}"; Flags: ignoreversion
+
+Source: "{#MyBuildBasePath}\fonts\DroidSansMonoSlashed.ttf"; DestDir: "{fonts}"; FontInstall: "Droid Sans Mono Slashed"; Flags: onlyifdoesntexist uninsneveruninstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
