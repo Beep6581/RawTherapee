@@ -85,7 +85,7 @@ Navigator::Navigator () {
 	Glib::ustring fontname;
 
 #ifdef WIN32
-	fontname = "Lucida Sans Typewriter";
+	fontname = "Droid Sans Mono Slashed"; // font file is provided in the source tree in rtdata/fonts to be installed by the windows installer
 #endif
 
 #ifdef __linux__
