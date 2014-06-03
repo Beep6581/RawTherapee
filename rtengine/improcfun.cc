@@ -1937,7 +1937,7 @@ printf("BADPIX");
 #endif
 		   		for (int i=0; i<height; i++) // update CieImages with new values after sharpening, defringe, contrast by detail level
 					for (int j=0; j<width; j++) {
-						float interm=ncie->sh_p[i][j]/(32768.f);
+						float interm=fabsf(ncie->sh_p[i][j]/(32768.f));
 						ncie->J_p[i][j]=100.0f* SQR(interm);
 						ncie->Q_p[i][j]=interm*Qredi;
 						ncie->M_p[i][j]=ncie->C_p[i][j]*co_e;
