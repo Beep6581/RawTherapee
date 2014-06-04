@@ -40,6 +40,9 @@ RawImage::~RawImage()
    if( image )
 		free(image);
    if(allocation){ delete [] allocation; allocation=NULL;}
+   if(float_raw_image)
+		delete [] float_raw_image;
+
    if(data){ delete [] data; data=NULL;}
    if(profile_data){ delete [] profile_data; profile_data=NULL;}
 }
