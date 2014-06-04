@@ -706,6 +706,23 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
 //        "ranges": { "black": 600 }
 //    },
 
+   { // quality B, lacks WL measures at intermediate ISOs (160-250-320 ..) and measures at long exposures with LongExposureNoiseReduction 
+     //            aperture scaling known to exist, but little to gain as the levels are so close to white_max
+        "make_model": "Nikon D610",
+        "dcraw_matrix": [ 8178,-2245,-609,-4857,12394,2776,-1207,2086,7298 ], // dcp d65
+        "raw_crop": [ 0, 0, 6034, 4028 ], // Dcraw has no raw crop for D610
+        "ranges": {
+            "white": [
+               { "iso": [ 50, 100 ], "levels": [ 15800, 15700, 15800 ] }, // typical G1/G2 15778, R/B 15879 lowered to 15700, 158800 for possible WL distribution under LENR
+               { "iso": [ 200, 400, 800 ], "levels": [ 16300, 15700, 16300 ] }, // 15878, 16383
+               { "iso": 1600, "levels": [ 16300, 16100, 16300 ] }, // 16145-165, 16383
+               { "iso": [ 3200, 6400, 12800, 25600 ], "levels": [ 16300, 16300, 16300 ] } // 16383
+                     ],
+        "white_max": 16383
+                  }
+   },
+
+
     { // Quality A, new model, there is a conflict with E-M1 in Dcraw.cc, raw crop correction
         "make_model": "OLYMPUS E-M10",
         "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 ],
