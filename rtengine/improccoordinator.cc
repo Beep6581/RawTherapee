@@ -144,7 +144,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     RAWParams rp = params.raw;
     if( !highDetailNeeded ){
         // if below 100% magnification, take a fast path
-        rp.dmethod = RAWParams::methodstring[RAWParams::fast];
+        if(rp.dmethod != RAWParams::methodstring[RAWParams::none])
+			rp.dmethod = RAWParams::methodstring[RAWParams::fast];
         rp.hotdeadpix_filt = false;
         rp.ccSteps = 0;
         //rp.all_enhance = false;
