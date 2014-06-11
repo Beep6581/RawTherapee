@@ -190,7 +190,8 @@ void Crop::update (int todo) {
         double shradius = params.sh.radius;
         if (!params.sh.hq) shradius *= radius / 1800.0;
         cshmap->update (baseCrop, shradius, parent->ipf.lumimul, params.sh.hq, skip);
-        cshmap->forceStat (parent->shmap->max_f, parent->shmap->min_f, parent->shmap->avg);
+        if(parent->shmap->min_f < 65535.f) // don't call forceStat with wrong values
+			cshmap->forceStat (parent->shmap->max_f, parent->shmap->min_f, parent->shmap->avg);
     }
 
     // shadows & highlights & tone curve & convert to cielab
