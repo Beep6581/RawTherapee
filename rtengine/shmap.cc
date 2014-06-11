@@ -140,8 +140,8 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
 #ifdef _OPENMP
 #pragma omp for reduction(+:_avg) nowait
 #endif
-    for (int i=32; i<H-32; i++)
-        for (int j=32; j<W-32; j++) {
+    for (int i=0; i<H; i++)
+        for (int j=0; j<W; j++) {
             _val = map[i][j];
             if (_val < _min_f)
                 _min_f = _val;
@@ -159,7 +159,7 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
 		max_f = _max_f;
 }
 }
-    _avg /= ((H-64)*(W-64));
+    _avg /= ((H)*(W));
     avg = _avg;
 
 }
