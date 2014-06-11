@@ -1,4 +1,4 @@
-<H1>Building Raw Therapee in Windows 64</H1>
+<H1>Building RawTherapee in Windows 64</H1>
 12 November 2011<BR>
 <BR>
 <BR>
@@ -6,7 +6,7 @@ This short guide outlines setting up a development environment for building RawT
 Apology and warning: the procedure is convoluted. Prepare for frustration if you deviate even one bit. Sorry.<BR>
 <BR>
 <B>Step 0:</B><BR>
-Use <A HREF=http://tortoisehg.bitbucket.org/>TortoiseHg</A> to grab the latest Raw Therapee, put it in a directory whose name doesn't contain spaces. This is more or less simple but well documented, please figure it out yourself.<BR>
+Use <A HREF=http://tortoisehg.bitbucket.org/>TortoiseHg</A> to grab the latest RawTherapee, put it in a directory whose name doesn't contain spaces. This is more or less simple but well documented, please figure it out yourself.<BR>
 <BR>
 <B>Step 1:</B><BR>
 Download the latest <A HREF=http://cmake.org/cmake/resources/software.html>CMake</A>. Install it into C:\CMake.<BR>
@@ -24,7 +24,7 @@ Download the latest <A HREF=http://www.visualbakery.com/rawtherapee/Downloads.as
 Download <A HREF=http://sourceforge.net/projects/mingw/files/MSYS/Base/msys-core/msys-1.0.11/MSYS-1.0.11.exe/download>a rather specific build</A> of MSYS. Install to C:\msys. At the end it asks for your MinGW directory, <u>make sure</u> you give it C:/MinGW64. That's a forward slash, and it matters.<BR>
 <BR>
 <B>Step 6:</B><BR>
-Create a file named build.bat in your raw therapee source directory with the following content:<BR>
+Create a file named build.bat in your RawTherapee source directory with the following content:<BR>
 <BR>
 set GTKMM_BASEPATH=C:\gtkmm64<BR>
 set GTKMM64_BASEPATH=C:\gtkmm64<BR>
@@ -38,8 +38,6 @@ pause<BR>
 <BR>
 <BR>
 <BR>
-Running the batch file above after completing all steps properly should slowly but flawlessly build Raw Therapee.<BR>
-<B>If it doesn't work, <U>please</U> tell us about it at the <A HREF=http://www.rawtherapee.com/forum/viewforum.php?f=10>Raw Therapee forum</A>. Maybe this document needs updating.</B><BR>
+Running the batch file above after completing all steps properly should slowly but flawlessly build RawTherapee.<BR>
+<B>If it doesn't work, <U>please</U> tell us about it at the <A HREF=http://www.rawtherapee.com/forum/viewforum.php?f=10>RawTherapee forum</A>. Maybe this document needs updating.</B><BR>
 Do not rest until it builds. A complicated build sucks, but out of date or inaccurate build documentation is unacceptable.<BR>
-<BR>
-<BR>
