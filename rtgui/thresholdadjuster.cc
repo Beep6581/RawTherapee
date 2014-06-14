@@ -211,11 +211,24 @@ void ThresholdAdjuster::setValue (double bottomLeft, double topLeft, double bott
 	afterReset = false;
 }
 
-inline void ThresholdAdjuster::getValue (Glib::ustring& bottom, Glib::ustring& top) {
+void ThresholdAdjuster::getValue (double& bottom, double& top) {
+	tSelector.getPositions<double> (bottom, top);
+}
+void ThresholdAdjuster::getValue (double& bottomLeft, double& topLeft, double& bottomRight, double& topRight) {
+	tSelector.getPositions<double> (bottomLeft, topLeft, bottomRight, topRight);
+}
+void ThresholdAdjuster::getValue (int& bottom, int& top) {
+	tSelector.getPositions<int> (bottom, top);
+}
+void ThresholdAdjuster::getValue (int& bottomLeft, int& topLeft, int& bottomRight, int& topRight) {
+	tSelector.getPositions<int> (bottomLeft, topLeft, bottomRight, topRight);
+}
+
+void ThresholdAdjuster::getValue (Glib::ustring& bottom, Glib::ustring& top) {
 	tSelector.getPositions (bottom, top);
 }
 
-inline void ThresholdAdjuster::getValue (Glib::ustring& bottomLeft, Glib::ustring& topLeft, Glib::ustring& bottomRight, Glib::ustring& topRight) {
+void ThresholdAdjuster::getValue (Glib::ustring& bottomLeft, Glib::ustring& topLeft, Glib::ustring& bottomRight, Glib::ustring& topRight) {
 	tSelector.getPositions (bottomLeft, topLeft, bottomRight, topRight);
 }
 
@@ -228,7 +241,7 @@ bool ThresholdAdjuster::notifyListener () {
 	return false;
 }
 
-inline void ThresholdAdjuster::setBgCurveProvider (ThresholdCurveProvider* provider) {
+void ThresholdAdjuster::setBgCurveProvider (ThresholdCurveProvider* provider) {
 	tSelector.setBgCurveProvider(provider);
 }
 

@@ -489,9 +489,13 @@ void LCurve::adjusterChanged (Adjuster* a, double newval) {
     }
 }
 
-void LCurve::colorForValue (double valX, double valY, int callerId, ColorCaller *caller) {
+void LCurve::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller) {
 
 	float R, G, B;
+
+	if (elemType==ColorCaller::CCET_VERTICAL_BAR)
+		valY = 0.5;
+
 	if (callerId == 1) {         // ch - main curve
 
 		Color::hsv2rgb01(float(valX), float(valY), 0.5f, R, G, B);

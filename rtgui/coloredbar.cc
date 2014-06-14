@@ -104,7 +104,7 @@ void ColoredBar::draw() {
 								double y_ = double((h-1)-y);
 								double x01 = x_       /double(w-1);
 								double y01 = double(y)/double(h-1);
-								colorProvider->colorForValue (x01, y01, colorCallerId, this);
+								colorProvider->colorForValue (x01, y01, CCET_BACKGROUND, colorCallerId, this);
 								cr->set_source_rgb(ccRed, ccGreen, ccBlue);
 								cr->rectangle(x_, y_, 1., 1.);
 								cr->fill();
@@ -118,7 +118,7 @@ void ColoredBar::draw() {
 								double y_ = double((h-1)-y);
 								double x01 = double(x)/double(w-1);
 								double y01 = double(y)/double(h-1);
-								colorProvider->colorForValue (x01, y01, colorCallerId, this);
+								colorProvider->colorForValue (x01, y01, CCET_BACKGROUND, colorCallerId, this);
 								cr->set_source_rgb(ccRed, ccGreen, ccBlue);
 								cr->rectangle(x_, y_, 1., 1.);
 								cr->fill();
@@ -132,7 +132,7 @@ void ColoredBar::draw() {
 								double y_ = double((h-1)-y);
 								double x01 = double(x)/double(w-1);
 								double y01 = double(y)/double(h-1);
-								colorProvider->colorForValue (y01, x01, colorCallerId, this);
+								colorProvider->colorForValue (y01, x01, CCET_BACKGROUND, colorCallerId, this);
 								cr->set_source_rgb(ccRed, ccGreen, ccBlue);
 								cr->rectangle(x_, y_, 1., 1.);
 								cr->fill();
@@ -147,7 +147,7 @@ void ColoredBar::draw() {
 								double y_ = double(      y);
 								double x01 = x_/double(w-1);
 								double y01 = y_/double(h-1);
-								colorProvider->colorForValue (y01, x01, colorCallerId, this);
+								colorProvider->colorForValue (y01, x01, CCET_BACKGROUND, colorCallerId, this);
 								cr->set_source_rgb(ccRed, ccGreen, ccBlue);
 								cr->rectangle(x_, y_, 1., 1.);
 								cr->fill();

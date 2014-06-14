@@ -73,9 +73,13 @@ Defringe::~Defringe () {
     delete curveEditorPF;
 }
 
-void Defringe::colorForValue (double valX, double valY, int callerId, ColorCaller *caller) {
+void Defringe::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller) {
 
     float R, G, B;
+
+    if (elemType==ColorCaller::CCET_VERTICAL_BAR)
+        valY = 0.5;
+
     if (callerId == 1) { // ch
         Color::hsv2rgb01(float(valX), float(valY), 0.5f, R, G, B);
     }

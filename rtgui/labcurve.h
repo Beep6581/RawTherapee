@@ -75,7 +75,7 @@ class LCurve : public ToolParamBlock, public AdjusterListener, public FoldableTo
 	
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
 
-    virtual void colorForValue (double valX, double valY, int callerId, ColorCaller* caller);
+    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
 };
 
 #endif
