@@ -34,6 +34,12 @@ class ColorCaller {
 		ColorProvider* colorProvider;
 
 	public:
+		enum ElemType {
+			CCET_POINT,
+			CCET_VERTICAL_BAR,
+			CCET_HORIZONTAL_BAR,
+			CCET_BACKGROUND
+		};
 		double ccRed;
 		double ccGreen;
 		double ccBlue;
@@ -52,7 +58,7 @@ class ColorProvider {
 
 	public:
 		virtual ~ColorProvider() {};
-		virtual void colorForValue (double valX, double valY, int callerId, ColorCaller* caller) {};
+		virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) {};
 };
 
 #endif

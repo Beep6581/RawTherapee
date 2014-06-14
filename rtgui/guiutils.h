@@ -177,6 +177,11 @@ private:
 
 };
 
+typedef enum RTUpdatePolicy {
+	RTUP_STATIC,
+	RTUP_DYNAMIC
+} eUpdatePolicy;
+
 typedef enum RTOrientation {
 	RTO_Left2Right,
 	RTO_Bottom2Top,

@@ -53,7 +53,7 @@ class Defringe : public ToolParamBlock, public AdjusterListener, public Foldable
 
     void adjusterChanged (Adjuster* a, double newval);
     void enabledChanged  ();
-    virtual void colorForValue (double valX, double valY, int callerId, ColorCaller* caller);
+    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
 
 };
 

@@ -119,6 +119,8 @@ class ThresholdAdjuster : public Gtk::VBox {
 		void showEditedCB ();
 		void block(bool isBlocked) { blocked = isBlocked; }
 		void setBgGradient (const std::vector<GradientMilestone> &milestones) { tSelector.setBgGradient (milestones); }
+		void setBgColorProvider (ColorProvider *cp, int i) { tSelector.setColorProvider(cp, i); }
+		void setUpdatePolicy (eUpdatePolicy policy) { tSelector.setUpdatePolicy(policy); }
 
 		//void spinChanged ();
 		void selectorChanged ();

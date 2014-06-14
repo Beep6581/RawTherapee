@@ -932,9 +932,13 @@ bool ColorAppearance::adapCamComputed_ () {
 }
 
 
-void ColorAppearance::colorForValue (double valX, double valY, int callerId, ColorCaller *caller) {
+void ColorAppearance::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller) {
 
 	float R, G, B;
+
+	if (elemType==ColorCaller::CCET_VERTICAL_BAR)
+		valY = 0.5;
+
 	if (callerId == 1) {    // cc - bottom bar
 
 		float value = (1.f - 0.7f) * float(valX) + 0.7f;

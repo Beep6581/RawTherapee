@@ -97,6 +97,7 @@ class ThresholdSelector : public Gtk::DrawingArea, public ColoredBar {
 		double defPos[4];
 		double positions[4];
 		unsigned short wslider;
+		eUpdatePolicy updatePolicy;
 
 		const static int hb = 3;  // horizontal border
 		const static int vb = 2;  // vertical border
@@ -194,6 +195,7 @@ class ThresholdSelector : public Gtk::DrawingArea, public ColoredBar {
 		void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
 		unsigned int getPrecision () { return precisionTop; }
 		void reset ();
+		void setUpdatePolicy (eUpdatePolicy policy) { updatePolicy = policy; }
 		void set_tooltip_markup(const Glib::ustring& markup);
 		// this set_tooltip_text method is to set_tooltip_markup, and text can contain markups
 		void set_tooltip_text(const Glib::ustring& text);

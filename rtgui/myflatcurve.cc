@@ -216,7 +216,7 @@ void MyFlatCurve::draw () {
                     int coloredLineWidth = min( max(75,graphW)/75, 8 );
 
                     cr->set_line_width (coloredLineWidth);
-                    colorProvider->colorForValue(curve.x.at(i), 0.5, colorCallerId, this);
+                    colorProvider->colorForValue(curve.x.at(i), curve.y.at(i), CCET_VERTICAL_BAR, colorCallerId, this);
                     cr->set_source_rgb (ccRed, ccGreen, ccBlue);
 
                     if ( i==lit_point && (editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointX)) ) {
@@ -236,7 +236,7 @@ void MyFlatCurve::draw () {
                                 cr->set_line_width (2*coloredLineWidth);
                             }
 
-                            colorProvider->colorForValue(curve.x.at(i), curve.y.at(i), colorCallerId, this);
+                            colorProvider->colorForValue(curve.x.at(i), curve.y.at(i), CCET_HORIZONTAL_BAR, colorCallerId, this);
                             cr->set_source_rgb (ccRed, ccGreen, ccBlue);
 
                             cr->move_to (double(graphX+1) , double(graphY-1) - innerH*curve.y.at(lit_point));
@@ -252,7 +252,7 @@ void MyFlatCurve::draw () {
     else {
         cr->set_source_rgb (0.5, 0.0, 0.0);
 
-        if ( (area&(FCT_Area_H|FCT_Area_V|FCT_Area_Point)) || editedHandle==FCT_EditedHandle_CPointUD ) {
+        if ((lit_point>-1) && ((area&(FCT_Area_H|FCT_Area_V|FCT_Area_Point)) || editedHandle==FCT_EditedHandle_CPointUD) ) {
             // draw the lit_point's vertical line
             if (editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointY)) {
                 cr->set_line_width (2.0);
@@ -364,7 +364,7 @@ void MyFlatCurve::draw () {
             if (curve.x.at(i) != -1.) {
                 if (i == lit_point) {
                     if (colorProvider) {
-                        colorProvider->colorForValue(curve.x.at(i), curve.y.at(i), colorCallerId, this);
+                        colorProvider->colorForValue(curve.x.at(i), curve.y.at(i), CCET_POINT, colorCallerId, this);
                         cr->set_source_rgb (ccRed, ccGreen, ccBlue);
                     }
                     else
