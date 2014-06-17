@@ -129,8 +129,9 @@ protected:
     } tiff_ifd[10];
 
     struct ph1 {
-      int format, key_off, black, black_off, black_off2, split_col, split_row, tag_21a;
-      float tag_210;
+	  int format, key_off, tag_21a;
+	  int black, split_col, black_col, split_row, black_row;
+	  float tag_210;
     } ph1;
 
     struct jhead {
@@ -281,7 +282,7 @@ void minolta_rd175_load_raw();
 void quicktake_100_load_raw();
 void kodak_radc_load_raw();
 void samsung_load_raw();
-
+void samsung2_load_raw();
 void kodak_jpeg_load_raw();
 void lossy_dng_load_raw();
 void kodak_dc120_load_raw();

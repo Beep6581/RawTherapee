@@ -327,7 +327,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
 				  width += w;
 				  width -= left_margin;
 			  } else if (w > 0) {
-				  iwidth = width = w;
+				  iwidth = width = min((int)width,w);
 			  }
 			  if (h < 0) {
 				  iheight += h;
@@ -335,7 +335,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
 				  height += h;
 				  height -= top_margin;
 			  } else if (h > 0) {
-				  iheight = height = h;
+				  iheight = height = min((int)height,h);
 			  }
 		  }
 		  if (cc && cc->has_rawMask(0)) {
@@ -372,7 +372,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
       if (cc) {
            for (int i = 0; i < 4; i++) {
                  if (RT_blacklevel_from_constant) {
-                     black_c4[i] = cc->get_BlackLevel(i, iso_speed);
+                     black_c4[i] = cblack[i] + cc->get_BlackLevel(i, iso_speed);
                  }
                  // load 4 channel white level here, will be used if available
                  if (RT_whitelevel_from_constant) {
@@ -382,7 +382,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
       }
       if (black_c4[0] == -1) {
           // RT constants not set, bring in the DCRAW single channel black constant
-          for (int c=0; c < 4; c++) black_c4[c] = black;
+          for (int c=0; c < 4; c++) black_c4[c] = black + cblack[c];
       } else {
 	      black_from_cc = true;
       }
@@ -568,30 +568,32 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
           { 8665,-2247,-762,-2424,10372,2382,-1011,2286,5189 } },
 
 
-        { "Panasonic DMC-FZ150", 143, 0xfff,  /* RT */
-          { 10435,-3208,-72,-2293,10506,2067,-486,1725,4682 } },
-        { "Panasonic DMC-G10", 15, 0xf3c, /* RT - Colin Walker */
-          { 8310,-1811,-960,-4941,12990,2151,-1378,2468,6860 } },
-        { "Panasonic DMC-G1", 15, 0xf94,    /* RT - Colin Walker*/
-          { 7477,-1615,-651,-5016,12769,2506,-1380,2475,7240 } },
-        { "Panasonic DMC-G2", 15, 0xf3c, /* RT - Colin Walker */
-          { 8310,-1811,-960,-4941,12990,2151,-1378,2468,6860 } },
-        { "Panasonic DMC-G3", 143, 0xfff,   /* RT - Colin Walker */
-          { 6051,-1406,-671,-4015,11505,2868,-1654,2667,6219 } },
-        { "Panasonic DMC-G5", 143, 0xfff,   /* RT */
-          { 7122,-2092,-419,-4643,11769,3283,-1363,2413,5944 } },
-        { "Panasonic DMC-GF1", 15, 0xf92, /* RT - Colin Walker */
-          { 7863,-2080,-668,-4623,12331,2578,-1020,2066,7266 } },
-        { "Panasonic DMC-GF2", 143, 0xfff, /* RT - Colin Walker */
-          { 7694,-1791,-745,-4917,12818,2332,-1221,2322,7197 } },
-        { "Panasonic DMC-GF3", 143, 0xfff, /* RT - Colin Walker */
-          { 8074,-1846,-861,-5026,12999,2239,-1320,2375,7422 } },
-        { "Panasonic DMC-GH1", 15, 0xf92,  /* RT - Colin Walker */
-          { 6360,-1557,-375,-4201,11504,3086,-1378,2518,5843 } },
-        { "Panasonic DMC-GH2", 15, 0xf95, /* RT - Colin Walker */
-//        { 6855,-1765,-456,-4223,11600,2996,-1450,2602,5761 } }, disabled
-          { 7780,-2410,-806,-3913,11724,2484,-1018,2390,5298 } }, // dcraw original
+    /* since Dcraw_v9.21 Panasonic BlackLevel is read from exif (tags 0x001c BlackLevelRed, 0x001d BlackLevelGreen, 0x001e BlackLevelBlue 
+      and we define here the needed offset of around 15. The total BL is BL + BLoffset (cblack + black)  */
 
+	    { "Panasonic DMC-FZ150", 15, 0xfd2,  /* RT */
+          { 10435,-3208,-72,-2293,10506,2067,-486,1725,4682 } },
+        { "Panasonic DMC-G10", 15, 0xf50, /* RT - Colin Walker - variable WL 3920 - 4080 */
+          { 8310,-1811,-960,-4941,12990,2151,-1378,2468,6860 } },
+        { "Panasonic DMC-G1", 15, 0xf50,  /* RT - Colin Walker - variable WL 3920 - 4080 */
+          { 7477,-1615,-651,-5016,12769,2506,-1380,2475,7240 } },
+        { "Panasonic DMC-G2", 15, 0xf50,  /* RT - Colin Walker - variable WL 3920 - 4080  */
+          { 8310,-1811,-960,-4941,12990,2151,-1378,2468,6860 } },
+        { "Panasonic DMC-G3", 15, 0xfdc,  /* RT - Colin Walker - WL 4060 */
+          { 6051,-1406,-671,-4015,11505,2868,-1654,2667,6219 } },
+        { "Panasonic DMC-G5", 15, 0xfdc,   /* RT - WL 4060 */
+          { 7122,-2092,-419,-4643,11769,3283,-1363,2413,5944 } },
+        { "Panasonic DMC-GF1", 15, 0xf50, /* RT - Colin Walker - Variable WL 3920 - 4080 */
+          { 7863,-2080,-668,-4623,12331,2578,-1020,2066,7266 } },
+        { "Panasonic DMC-GF2", 15, 0xfd2, /* RT - Colin Walker - WL 4050 */
+          { 7694,-1791,-745,-4917,12818,2332,-1221,2322,7197 } },
+        { "Panasonic DMC-GF3", 15, 0xfd2, /* RT - Colin Walker - WL 4050 */
+          { 8074,-1846,-861,-5026,12999,2239,-1320,2375,7422 } },
+        { "Panasonic DMC-GH1", 15, 0xf5a,  /* RT - Colin Walker - variable WL 3930 - 4080 */
+          { 6360,-1557,-375,-4201,11504,3086,-1378,2518,5843 } },
+        { "Panasonic DMC-GH2", 15, 0xf5a,  /* RT - Colin Walker - variable WL 3930 - 4080 */
+//        { 6855,-1765,-456,-4223,11600,2996,-1450,2602,5761 } }, disabled due to problems with underwater WB
+          { 7780,-2410,-806,-3913,11724,2484,-1018,2390,5298 } }, // dcraw original
 
         { "Pentax K200D", -1, -1,  /* RT */
           { 10962,-4428,-542,-5486,13023,2748,-569,842,8390 } },
