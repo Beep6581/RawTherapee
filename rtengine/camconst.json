@@ -60,7 +60,8 @@ Examples:
         "make_model": "ManufacturerA ModelB",
         // ColorMatrix with D65 Calibration Illuminant, in dcraw format
         "dcraw_matrix": [ 7530, -1942, -255, -4318, 11390, 3362, -926, 1694, 7649 ],
-        // black and white level same for all colors at all ISOs
+        // black level (or black offset if a base black is already calculated by Dcraw, see Panasonic) 
+        // and white level same for all colors at all ISOs
         "ranges": { "black": 10, "white": 1000 },
 	// crop away masked sensor borders, 10 pixels left, 20 pixels top, resulting image width/height 4000x3000
 	// instead of width/height you can write a negative number which specifies how much of right/bottom border
@@ -278,10 +279,9 @@ end up providing incompatible black/white levels.
 
 You can use RawTherapee for analysis too, it's safer as you are using it's
 own raw decoder but it's not as user-friendly: enable verbose mode in options
-so you get output on the console (you need to start RT from a console to see
-the output). When you load a file you will see a message of current black
-and white levels and if they came from dcraw or camconst.json. If you're
-adjusting an existing camconst.json value you can just read what it is in
+so you get output on the console. When you load a file you will see a message 
+of current black and white levels and if they came from dcraw or camconst.json.
+If you're adjusting an existing camconst.json value you can just read what it is in
 the file and not need to enable verbose output.
 
 Reset exposure sliders to neutral, and zoom in on a large clipped highlight.
@@ -295,7 +295,7 @@ apply it on the old white level to find a new larger one. As RT's "whitepoint
 linear correction factor" work after blacklevel subtraction and camconst.json
 want values without it we need to do some math:
 
-BL = black level (typically something near 0, 256, 512 or 1024, find it in the
+BL = black level (typically something near 0, 256, 512, 1024 or 2048 find it in the
      verbose output or if available in camconst.json)
 F =  whitepoint linear correction factor you just found out (typically in the
      range 0.90 to 0.99 if you need to increase white level, 1.01 to 1.10 if
@@ -325,15 +325,19 @@ About black levels:
 -------------------
 
 Unlike for white levels it's much more common that black levels can be
-derived from the format. Either it's simply 0 (typical for Nikon cameras), or
-it can be derived from masked pixels (typical for Canon cameras) or otherwise
-be extracted from some tag. Some formats are have built-in subtraction
-information and are pre-processed by DCRaw to end up at a black level of zero
-(Phase One's IIQ). In all, you typically should not care about the black
-level in camconst.json: any information that can be derived from the raw file
-itself should not be specified in camconst.json! Sony's ARW2 is one of the
-few exceptions (which has a single black level around 512), but DCraw
-generally has good constants for these already.
+derived from the format. Either it's simply 0 (typical for old Nikon cameras, 
+newer Nikons (year2013-14) have a BL at around 150 12bit or 600/768 14bit ), 
+or it can be derived from masked pixels (typical for Canon cameras) or otherwise
+be extracted from some tag. 
+Some formats have built-in subtraction information and are pre-processed by DCRaw 
+to end up at a black level of zero(Phase One's IIQ).
+For Panasonic raws beginning from Dcraw v9.21 Dcraw/RT reads base BL from exif data
+(tags 0x001c BlackLevelRed, 0x001d BlackLevelGreen, 0x001e BlackLevelBlue)and we 
+define in "ranges": { "black": the needed offset of around 15. The (total) BL RT displays is base+offset 
+In all, you typically should not care about the black level in camconst.json,
+any information that can be derived from the raw file itself should not be specified in camconst.json! 
+Sony's ARW2 is one of the few exceptions (which has a single black level around 512), 
+but DCraw generally has good constants for these already.
 
 Currently we have chosen not to provide any guide how to measure black levels
 as we don't think it will be a common task (it's also more difficult to do
@@ -617,7 +621,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
                   }
     },
 
-    { // Quality B, only one some scaling factors missing
+    { // Quality B, missing scaling factors are guessed safely from 650D relative data
         "make_model": "Canon EOS-M",
         "dcraw_matrix": [ 6602,-841,-939,-4472,12458,2247,-975,2039,6148 ],
         "ranges": { 
@@ -644,19 +648,19 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
                   }
     },
 
-    { /*   Quality C, needs a way to auto apply 3/2 or 4/3 crops (read exif tags ..) to work better with auto distortion, 
+    { /*   Quality B, needs a way to auto apply 3/2 or 4/3 crops (read exif tags ..) to work better with auto distortion, 
            for the moment just comment-uncomment the desired raw crop */
         "make_model": "Canon PowerShot G1 X Mark II",
         "dcraw_matrix": [ 7378,-1255,-1043,-4088,12251,2048,-876,1946,5805 ], // D65 matrix from adobe dcp
  //       "raw_crop": [ 80, 50, 4400, 3316 ], // full frame 4480x3366 borders 80,50 - much shade in corners, no/wrong auto distortion   
- //        "raw_crop": [ 104, 144, 4360, 3128 ], // Mixed best average frame - , width is 4352 from 3/2, height 3120 from 4/3 - auto distortion does not work correctly
- //        "raw_crop": [ 200, 144, 4168, 3128 ], // Optional 4/3 frame 4160x3120, 4pix  borders, Left Border 204-4, Top Border 148-4
-        "raw_crop": [ 104, 252, 4360, 2912 ], // Default 3/2 frame 4352X2904, 4pix borders, Left Border 108-4, Top border 256-4
+ //        "raw_crop": [ 104, 144, 4360, 3128 ], // Mixed best average frame, width is 4352 from 3/2, height 3120 from 4/3 - auto distortion does not work correctly
+ //        "raw_crop": [ 200, 144, 4168, 3128 ], // Optional official 4/3 frame 4160x3120, 4pix  borders, Left Border 204-4, Top Border 148-4
+        "raw_crop": [ 104, 252, 4360, 2912 ], // Default official 3/2 frame 4352X2904, 4pix borders, Left Border 108-4, Top border 256-4
         "masked_areas": [ 148, 2, 3340, 78 ],
         "ranges": { "white": 16300 }
     },
 
-    { // Quality A
+    { // Quality A, changes for raw crop which is wrong (larger) in Dcraw
         "make_model": "Canon PowerShot S120",
         "dcraw_matrix": [ 6961,-1685,-695,-4625,12945,1836,-1114,2152,5518 ],
         "raw_crop": [ 120, 30, 4024, 3030 ],
@@ -669,12 +673,12 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "dcraw_matrix": [ 11705,-4262,-1107,-2282,10791,1709,-555,1713,4945 ] // MATRIX FROM FUJI SL1000
     },
 
-    { // Quality C, PRELIMINARY - new model not supported by dcraw9.20 or dng 8.4
-        "make_model": "Nikon 1 V3",
-        "dcraw_matrix": [ 5306,-1066,-469,-3865,11189,3076,-399,1341,5120 ], // matrix dXo D50 
-//        "dcraw_matrix": [ 6588,-1305,-693,-3277,10987,2634,-355,2016,5106 ], // copy from 1 V2
-        "ranges": { "black": 200, "white": 4080 } // exif 800
-    },
+ //   { // Quality C, PRELIMINARY - new model not supported by dcraw9.20 or dng 8.4
+ //       "make_model": "Nikon 1 V3",
+ //       "dcraw_matrix": [ 5306,-1066,-469,-3865,11189,3076,-399,1341,5120 ], // matrix dXo D50 
+ // //        "dcraw_matrix": [ 6588,-1305,-693,-3277,10987,2634,-355,2016,5106 ], // copy from 1 V2
+ //       "ranges": { "black": 200, "white": 4080 } // exif 800
+ //   },
 
    { // quality B, lacks aperture and ISO scaling, known to exist, but little to gain as the levels are so close to white_max
         "make_model": "Nikon D7000",
@@ -689,21 +693,21 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
 	    // aperture scaling not measured, but known to exist, at f/1.8 the G channels hits white_max
 	}
     },
-    { // Quality A, new model, not in dcraw 9.20, conflict with D4 in dcraw 9.20, sRAW format not supported
-        "make_model": "Nikon D4s",
-        "dcraw_matrix": [ 8598,-2848,-857,-5618,13606,2195,-1002,1773,7137 ],
-        "ranges": { "black": 768, "white": 16300 }
-    },
-    { // Quality A, // correction for BL 147 to 150 and color matrix
-        "make_model": "Nikon D3300",
-        "dcraw_matrix": [ 6988,-1384,-714,-5631,13410,2447,-1485,2204,7318 ], // matrix from adobe dcp d65 
-        "ranges": { "black": 150, "white": 4095 } 
-    },
+ //   { // Quality A, new model, not in dcraw 9.20, conflict with D4 in dcraw 9.20, sRAW format not supported
+ //       "make_model": "Nikon D4s",
+ //       "dcraw_matrix": [ 8598,-2848,-857,-5618,13606,2195,-1002,1773,7137 ],
+ //       "ranges": { "black": 768, "white": 16300 }
+ //   },
+ //   { // Quality A, // correction for BL 147 to 150 and color matrix
+ //       "make_model": "Nikon D3300",
+ //       "dcraw_matrix": [ 6988,-1384,-714,-5631,13410,2447,-1485,2204,7318 ], // matrix from adobe dcp d65 
+ //       "ranges": { "black": 150, "white": 4095 } 
+ //   },
 //    { // Quality B, does not work with 12bit files - experimenting with matrices
 //        "make_model": "Nikon D5300",
 //        "dcraw_matrix": [ 6988,-1384,-714,-5631,13410,2447,-1485,2204,7318 ], // matrix from adobe dcp d65 
 //        "dcraw_matrix": [ 7009,-1699,-414,-5209,12641,2886,-1201,1904,7229 ], // Calculated from DxO d50 
-//        "ranges": { "black": 600 }
+//        "ranges": { "black": 600 } // attention .. this is for 14bit files and has to be 150 for 12bit files
 //    },
 
    { // quality B, lacks WL measures at intermediate ISOs (160-250-320 ..) and measures at long exposures with LongExposureNoiseReduction 
@@ -736,23 +740,120 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "ranges": { "white": 4040 } // nominal 4056
     },
 
-    { // Quality B
+	/* since Dcraw_v9.21 Panasonic base BL is read from exif (tags 0x001c BlackLevelRed15 is BL offstet. 
+      Dcraw/RT read the base offset from exif and calculates total BL = BLbase+BLoffset, 0x001d BlackLevelGreen, 0x001e BlackLevelBlue
+      and we define here the needed offset of around 15. The total BL is base+offset */
+
+	{ // Quality A , replicated from rawimage.cc
+        "make_model": "Panasonic DMC-FZ150",
+        "dcraw_matrix": [ 10435,-3208,-72,-2293,10506,2067,-486,1725,4682 ], // RT
+        "ranges": { "black": 15, "white": 4050 } // 15 is BL offstet. Dcraw/RT read the base offset from exif and calculates total BL = BLbase+BLoffset
+    },
+	{ // Quality A
         "make_model": "Panasonic DMC-LF1",
         "dcraw_matrix": [ 9379,-3267,-816,-3227,11560,1881,-926,1928,5340 ],
-        "ranges": { "black": 143, "white": 4080 } // BL is floating and should be extracted from exif
+        "ranges": { "black": 15, "white": 4050 } // 15 is BL offstet. Dcraw/RT read the base offset from exif and calculates total BL = BLbase+BLoffset
     },
-    { // Quality B
+    { // Quality A
         "make_model": [ "Panasonic DMC-TZ60", "Panasonic DMC-TZ61", "Panasonic DMC-ZS40", "Panasonic DMC-ZS41" ],
         "dcraw_matrix": [ 8607,-2822,-808,-3755,11930,2049,-820,2060,5224 ], // matrix from Adobe dcp v8.4
         "raw_crop": [ 8, 8, 4904, 3680 ], // crop according to exif 4896 X 3672 plus 4 pixels borders. RT's frame gets smaller than Dcraw but works better with auto distortion
-        "ranges": { "black": 143, "white": 4050 } // BL is floating and should be extracted from exif
+        "ranges": { "black": 15, "white": 4050 } // 15 is BL offstet. Dcraw/RT read the base offset from exif and calculates total BL = BLbase+BLoffset
+    },
+
+	// Panasonic DMC-FZ150,G10,G1,G2,G3,G5,GF1,GF2,GF3 are included as overwrites of the same items of rawimage.cc to test the Dcraw9.21 patch
+ 
+     { // Quality A, Replicated from rawimage.cc
+        "make_model": [ "Panasonic DMC-G10", "Panasonic DMC-G2" ],
+        "dcraw_matrix": [ 8310,-1811,-960,-4941,12990,2151,-1378,2468,6860 ], // Colin Walker
+        "ranges": { 
+           "black": 15, // 15 is black offset, Dcraw/RT read the base black from exif and calculates total BL = BLbase+BLoffset
+           "white": [
+		      { "iso": [ 100, 200, 400, 800 ], "levels": 3920 }, // exif:3967 distribution peak at 3967 +/- up to 50
+			  { "iso": [ 1600, 3200, 6400 ], "levels": 4060 } // exif 3967, histogram peak 4095 and distribution down to 4070
+                    ]
+                  }
+	},
+	{ // Quality A, Replicated from rawimage.cc
+        "make_model": "Panasonic DMC-G1",
+        "dcraw_matrix": [ 7477,-1615,-651,-5016,12769,2506,-1380,2475,7240 ], // Colin Walker
+        "ranges": { 
+           "black": 15, // 15 is BL offstet. Dcraw/RT read the base black from exif and calculates total BL = BLbase+BLoffset
+           "white": [
+		      { "iso": [ 100, 200, 400, 800 ], "levels": 3920 }, // exif:4095 distribution peak at 3977 +/- up to 50
+			  { "iso": [ 1600, 3200 ], "levels": 4060 } // exif 4095, histogram peak 4095 and distribution down to 4070
+                    ]
+			      } 
+    },
+    { // Quality A, Replicated from rawimage.cc
+        "make_model": "Panasonic DMC-G3",
+        "dcraw_matrix": [ 6051,-1406,-671,-4015,11505,2868,-1654,2667,6219 ], // Colin Walker
+        "ranges": { 
+           "black": 15, // 15 is BL offstet. Dcraw/RT read the base black from exif and calculates total BL = BLbase+BLoffset
+           "white": 4060 } // exif:4095 normal distribution 4080-4095, 4070-4095 on long exposure NR 
+    },
+    { // Quality A, Replicated from rawimage.cc
+        "make_model": "Panasonic DMC-G5",
+        "dcraw_matrix": [ 7122,-2092,-419,-4643,11769,3283,-1363,2413,5944 ], // RT
+        "ranges": { 
+           "black": 15, // 15 is BL offstet. Dcraw/RT read the base black from exif and calculates total BL = BLbase+BLoffset
+           "white": 4060 } // exif:4095 normal distribution 4080-4095, 4070-4095 on long exposure NR 
+    },
+    { // Quality A, Replicated from rawimage.cc
+        "make_model": "Panasonic DMC-GF1",
+        "dcraw_matrix": [ 7863,-2080,-668,-4623,12331,2578,-1020,2066,7266 ], // Colin Walker
+        "ranges": { 
+           "black": 15, // 15 is BL offstet. Dcraw/RT read the base black from exif and calculates total BL = BLbase+BLoffset
+           "white": [
+		      { "iso": [ 100, 200, 400, 800 ], "levels": 3920 }, // exif:4095 distribution peak at 3977 +/- up to 50
+			  { "iso": [ 1600, 3200 ], "levels": 4060 } // exif 4095, histogram peak 4095 and distribution down to 4070
+                    ]
+			      } 
+    },
+
+    { // Quality A, Replicated from rawimage.cc
+        "make_model": "Panasonic DMC-GF2",
+        "dcraw_matrix": [ 7694,-1791,-745,-4917,12818,2332,-1221,2322,7197 ], // Colin Walker
+        "ranges": { 
+           "black": 15, // 15 is BL offstet. Dcraw/RT read the base black from exif and calculates total BL = BLbase+BLoffset
+           "white": 4050 } // exif:4095 normal distribution 4080-4095, 4050-4095 on long exposure NR 
+    },
+    { // Quality A, Replicated from rawimage.cc
+        "make_model": "Panasonic DMC-GF3",
+        "dcraw_matrix": [ 8074,-1846,-861,-5026,12999,2239,-1320,2375,7422 ], // Colin Walker
+        "ranges": { 
+           "black": 15, // 15 is BL offstet. Dcraw/RT read the base black from exif and calculates total BL = BLbase+BLoffset
+           "white": 4050 } // exif:4095 normal distribution 4080-4095, 4050-4095 on long exposure NR 
+    },
+    { // Quality A, Replicated from rawimage.cc
+        "make_model": "Panasonic DMC-GH1",
+        "dcraw_matrix": [ 6360,-1557,-375,-4201,11504,3086,-1378,2518,5843 ], // Colin Walker
+        "ranges": { 
+           "black": 15, // 15 is BL offstet. Dcraw/RT read the base black from exif and calculates total BL = BLbase+BLoffset
+           "white": [
+		      { "iso": [ 100, 200, 400, 800 ], "levels": 3930 }, // exif:4095 distribution peak at 3982 +/- up to 50
+			  { "iso": [ 1600, 3200 ], "levels": 4060 } // exif 4095, histogram peak 4095 and distribution down to 4070
+                    ]
+			      } 
+    },
+    { // Quality A, Replicated from rawimage.cc
+        "make_model": "Panasonic DMC-GH2",
+      //  "dcraw_matrix": [ 6855,-1765,-456,-4223,11600,2996,-1450,2602,5761 ], // Colin Walker - disabled due to problems with underwater
+        "dcraw_matrix": [ 7780,-2410,-806,-3913,11724,2484,-1018,2390,5298 ], // Dcraw d65
+        "ranges": { 
+           "black": 15, // 15 is BL offstet. Dcraw/RT read the base black from exif and calculates total BL = BLbase+BLoffset
+           "white": [
+		      { "iso": [ 100, 200, 400, 800 ], "levels": 3930 }, // exif:4095 distribution peak at 3982 +/- up to 50
+			  { "iso": [ 1600, 3200, 6400, 12800 ], "levels": 4060 } // exif 4095, histogram peak 4095 and distribution down to 4070
+                    ]
+			      } 
     },
 
     { // Quality B, BL is floating and should be extracted from exif maker data
         "make_model": "Panasonic DMC-GH3",
         "dcraw_matrix": [ 6559,-1752,-491,-3672,11407,2586,-962,1875,5130 ], // dcp d65
         "ranges": { 
-           "black": 144,
+           "black": 16, // 16 is BL offstet. Dcraw/RT read the base black from exif and calculates total BL = BLbase+BLoffset
            "white": [ 
               { "iso": 125, "levels": 3500 }, // gaussian 3600-4095
               { "iso": [ 160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 12800, 25600 ], "levels": 4080 } // nominal 4095 
@@ -764,7 +865,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "make_model": "Panasonic DMC-GH4",
         "dcraw_matrix": [ 5545,-878,-249,-4592,12128,2709,-1225,1928,5260 ], // calculated from dxo D50 matrix 
         "ranges": { 
-           "black": 144, // BL is floating and should be extracted from exif maker data
+           "black": 16, // // 15 is BL offstet. Dcraw/RT read the base black from exif and calculates total BL = BLbase+BLoffset
            "white": [ 
               { "iso": 100, "levels": 2700 }, // gaussian center at 2870-2920 range +/- 150
               { "iso": 125, "levels": 3100 }, // guessed 
@@ -773,11 +874,11 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
                   }
     },
 
-    { // Quality B, BL is floating and should be extracted from exif maker data
+    { // Quality A, 
         "make_model": "Panasonic DMC-GM1",
         "dcraw_matrix": [ 6770,-1895,-744,-5232,13145,2303,-1664,2691,5703 ],
         "ranges": { 
-           "black": 143, 
+           "black": 15, // 15 is BL offstet. Dcraw/RT read the base offset from exif and calculates total BL = BLbase+BLoffset
            "white": [
               { "iso": 125, "levels": 3100 }, // bell shape 3150-3650 - exif 2616
               { "iso": 160, "levels": 3600 }, // guessed from relative GX7 data
@@ -785,11 +886,11 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
                     ]
                   } 
     },
-    { // Quality B, BL is floating and should be extracted from exif maker data
+    { // Quality A, 
         "make_model": "Panasonic DMC-GX7",
         "dcraw_matrix": [ 7610,-2780,-576,-4614,12195,2733,-1375,2393,6490 ],
         "ranges": { 
-           "black": 143, 
+           "black": 15, // 15 is BL offstet. Dcraw/RT read the base offset from exif and calculates total BL = BLbase+BLoffset
            "white": [
               { "iso": 125, "levels": 3100 },
               { "iso": 160, "levels": 3600 },
@@ -815,7 +916,13 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
                   } 
     }, 
 
-    {  // Quality A, Conflict with Samsung NX in Dcraw.c-Dcraw.cc if not included in camconst.json
+    {  // Quality B,  color looks bad with Dcraw matrix - corrections for raw crop vs Dcraw9.21, matched to Samsung's default  
+        "make_model": "Samsung NX mini", 
+        "dcraw_matrix": [ 5222,-1196,-550,-6540,14649,2009,-1666,2819,5657 ], // Dcraw921
+        "raw_crop": [ 128, 36, 5480, 3656 ], // jpeg 5472x3648 - full raw: 5664 x 3710 - Samsung's official crop: 132, 40, 5604, 3688
+        "ranges": { "white": 4030 } // double clipping point for each channel at a) 4095 and b) bell distribution with peak at 4038 .. used the conservative one
+    },
+    {  // Quality A, 
         "make_model": "Samsung NX30", 
         "dcraw_matrix": [ 7557,-2522,-739,-4679,12949,1894,-840,1777,5311 ] // D65 matrix from Adobe's Dcp profile - DxoD50 6661,-1695,-616,-6456,14646,1913,-1417,2142,5646
     },
