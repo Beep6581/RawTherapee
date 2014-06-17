@@ -897,11 +897,15 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
     bool alt   = event->state & GDK_MOD1_MASK;
     bool altgr = event->state & GDK_MOD2_MASK;
 
-    if ((event->keyval==GDK_C || event->keyval==GDK_c) && ctrl) {
+    if ((event->keyval==GDK_C || event->keyval==GDK_c || event->keyval==GDK_Insert) && ctrl) {
         copyProfile ();
         return true;
     }
     else if ((event->keyval==GDK_V || event->keyval==GDK_v) && ctrl && !shift) {
+        pasteProfile ();
+        return true;
+    }
+    else if (event->keyval==GDK_Insert && shift) {
         pasteProfile ();
         return true;
     }
