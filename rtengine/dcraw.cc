@@ -8779,56 +8779,43 @@ static inline uint32_t DNG_FP24ToFloat(const uint8_t * input) {
   return (uint32_t) ((sign << 31) | (exponent << 23) | mantissa);
 }
 
-static void expandFloats(Bytef * dst, int tileWidth, int bytesps, float &vmax) {
-  float * dstfl = (float *) dst;
-
+static void expandFloats(Bytef * dst, int tileWidth, int bytesps) {
   if (bytesps == 2) {
     uint16_t * dst16 = (uint16_t *) dst;
     uint32_t * dst32 = (uint32_t *) dst;
-	
     for (int index = tileWidth - 1; index >= 0; --index) {
       dst32[index] = DNG_HalfToFloat(dst16[index]);
-      float v = dstfl[index];
-      if(v>vmax)
-		vmax = v;
     }
   } else if (bytesps == 3) {
     uint8_t  * dst8  = ((uint8_t *) dst) + (tileWidth - 1) * 3;
     uint32_t * dst32 = (uint32_t *) dst;
     for (int index = tileWidth - 1; index >= 0; --index, dst8 -= 3) {
       dst32[index] = DNG_FP24ToFloat(dst8);
-      float v = dstfl[index];
-      if(v>vmax)
-		vmax = v;
-    }
-  } else {
-    for (int index = 0; index < tileWidth; ++index) {
-      float v = dstfl[index];
-      if(v>vmax)
-		vmax = v;
     }
   }
 }
 
 static void copyFloatDataToInt(float * src, ushort * dst, size_t size, float max) {
-
-  bool negative = false;
+  bool negative = false, nan = false;
 
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
   for (size_t i = 0; i < size; ++i) {
-    // Scale and clip data, because it is used to index some LUTs
-    src[i] *= 65535.0f / max;
     if (src[i] < 0.0f) {
       negative = true;
       src[i] = 0.0f;
+    } else if (std::isnan(src[i])) {
+      nan = true;
+      src[i] = max;
     }
     // Copy the data to the integer buffer to build the thumbnail
     dst[i] = (ushort)src[i];
   }
   if (negative)
     fprintf(stderr, "DNG Float: Negative data found in input file\n");
+  if (nan)
+    fprintf(stderr, "DNG Float: NaN data found in input file\n");
 }
 
 void CLASS deflate_dng_load_raw() {
@@ -8855,13 +8842,11 @@ void CLASS deflate_dng_load_raw() {
 #endif
     for (size_t i = 0; i < raw_width * raw_height; ++i)
       float_raw_image[i] = 0.0f;
-    maximum = 65535; black = 0;
   }
 
   // NOTE: This reader is based on the official DNG SDK from Adobe.
   // It assumes tiles without subtiles, but the standard does not say that
   // subtiles or strips couldn't be used.
-  float maxValue = 0.0f;
   if (tile_length < INT_MAX) {
     size_t tilesWide = (raw_width + tile_width - 1) / tile_width;
     size_t tilesHigh = (raw_height + tile_length - 1) / tile_length;
@@ -8892,7 +8877,6 @@ void CLASS deflate_dng_load_raw() {
 {
     Bytef cBuffer[maxCompressed];
     Bytef uBuffer[dstLen];
-    float maxValuethr = 0.0f;
 
 #ifdef _OPENMP
 #pragma omp for collapse(2) nowait
@@ -8907,7 +8891,7 @@ void CLASS deflate_dng_load_raw() {
 }
         int err = uncompress(uBuffer, &dstLen, cBuffer, tileBytes[t]);
         if (err != Z_OK) {
-          fprintf(stderr, "DNG Deflate: Failed uncompressing tile %d, with error %d\n", t, err);
+          fprintf(stderr, "DNG Deflate: Failed uncompressing tile %d, with error %d\n", (int)t, err);
         } else if (ifd->sample_format == 3) {  // Floating point data
           int bytesps = ifd->bps >> 3;
           size_t thisTileLength = y + tile_length > raw_height ? raw_height - y : tile_length;
@@ -8917,25 +8901,18 @@ void CLASS deflate_dng_load_raw() {
             Bytef * dst = (Bytef *)&float_raw_image[(y+row)*raw_width + x];
             if (predFactor)
               decodeFPDeltaRow(src, dst, thisTileWidth, tile_width, bytesps, predFactor);
-            expandFloats(dst, thisTileWidth, bytesps, maxValuethr);
+            expandFloats(dst, thisTileWidth, bytesps);
           }
         } else {  // 32-bit Integer data
           // TODO
         }
       }
     }
-#ifdef _OPENMP
-#pragma omp critical
-#endif
-{
-	if(maxValuethr > maxValue)
-		maxValue = maxValuethr;
-}
 }
   }
     
   if (ifd->sample_format == 3) {  // Floating point data
-    copyFloatDataToInt(float_raw_image, raw_image, raw_width*raw_height, maxValue);
+    copyFloatDataToInt(float_raw_image, raw_image, raw_width*raw_height, maximum);
   }
 }
 
