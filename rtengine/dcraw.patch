@@ -1,5 +1,5 @@
---- dcraw.c	2014-06-17 19:24:34 +0000
-+++ dcraw.cc	2014-06-17 19:58:03 +0000
+--- dcraw.c	2014-06-18 17:38:12 +0000
++++ dcraw.cc	2014-06-18 17:46:28 +0000
 @@ -1,3 +1,15 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -359,8 +359,7 @@
 -   This algorithm is officially called:
 -
 -   "Interpolation using a Threshold-based variable number of gradients"
-+/* RT: delete interpolation functions */
- 
+-
 -   described in http://scien.stanford.edu/pages/labsite/1999/psych221/projects/99/tingchen/algodep/vargra.html
 -
 -   I've extended the basic idea to work with non-Bayer filter arrays.
@@ -504,7 +503,8 @@
 -
 -  border_interpolate(3);
 -  if (verbose) fprintf (stderr,_("PPG interpolation...\n"));
--
++/* RT: delete interpolation functions */
+ 
 -/*  Fill in the green layer with gradients and pattern recognition: */
 -  for (row=3; row < height-3; row++)
 -    for (col=3+(FC(row,3) & 1), c=FC(row,col); col < width-3; col+=2) {
@@ -567,7 +567,7 @@
 -   char (*homo)[TS][TS], *buffer;
 -
 -  if (verbose) fprintf (stderr,_("AHD interpolation...\n"));
--
+ 
 -  cielab (0,0);
 -  border_interpolate(5);
 -  buffer = (char *) malloc (26*TS*TS);
@@ -575,7 +575,7 @@
 -  rgb  = (ushort(*)[TS][TS][3]) buffer;
 -  lab  = (short (*)[TS][TS][3])(buffer + 12*TS*TS);
 -  homo = (char  (*)[TS][TS])   (buffer + 24*TS*TS);
- 
+-
 -  for (top=2; top < height-5; top += TS-6)
 -    for (left=2; left < width-5; left += TS-6) {
 -
@@ -1090,7 +1090,7 @@
      is_raw = 0;
  #ifdef NO_JASPER
    if (load_raw == &CLASS redcine_load_raw) {
-@@ -8951,194 +8678,268 @@
+@@ -8951,194 +8678,245 @@
  }
  #endif
  
@@ -1342,39 +1342,9 @@
 +    } else {
 +      // Nan -- Just set to zero.
 +      return 0;
-+    }
-+  }
-+  // Normalized number
-+  exponent += (128 - 64);
-+  mantissa <<= 7;
-+  // Assemble sign, exponent and mantissa.
-+  return (uint32_t) ((sign << 31) | (exponent << 23) | mantissa);
-+}
-+
-+static void expandFloats(Bytef * dst, int tileWidth, int bytesps, float &vmax) {
-+  float * dstfl = (float *) dst;
-+
-+  if (bytesps == 2) {
-+    uint16_t * dst16 = (uint16_t *) dst;
-+    uint32_t * dst32 = (uint32_t *) dst;
-+	
-+    for (int index = tileWidth - 1; index >= 0; --index) {
-+      dst32[index] = DNG_HalfToFloat(dst16[index]);
-+      float v = dstfl[index];
-+      if(v>vmax)
-+		vmax = v;
-+    }
-+  } else if (bytesps == 3) {
-+    uint8_t  * dst8  = ((uint8_t *) dst) + (tileWidth - 1) * 3;
-+    uint32_t * dst32 = (uint32_t *) dst;
-+    for (int index = tileWidth - 1; index >= 0; --index, dst8 -= 3) {
-+      dst32[index] = DNG_FP24ToFloat(dst8);
-+      float v = dstfl[index];
-+      if(v>vmax)
-+		vmax = v;
      }
 -    height = newdim;
-   } else {
+-  } else {
 -    newdim = width * pixel_aspect + 0.5;
 -    img = (ushort (*)[4]) calloc (height, newdim*sizeof *img);
 -    merror (img, "stretch()");
@@ -1384,10 +1354,26 @@
 -      if (c+1 < width) pix1 += 4;
 -      for (row=0; row < height; row++, pix0+=width*4, pix1+=width*4)
 -	FORCC img[row*newdim+col][c] = pix0[c]*(1-frac) + pix1[c]*frac + 0.5;
-+    for (int index = 0; index < tileWidth; ++index) {
-+      float v = dstfl[index];
-+      if(v>vmax)
-+		vmax = v;
++  }
++  // Normalized number
++  exponent += (128 - 64);
++  mantissa <<= 7;
++  // Assemble sign, exponent and mantissa.
++  return (uint32_t) ((sign << 31) | (exponent << 23) | mantissa);
++}
++
++static void expandFloats(Bytef * dst, int tileWidth, int bytesps) {
++  if (bytesps == 2) {
++    uint16_t * dst16 = (uint16_t *) dst;
++    uint32_t * dst32 = (uint32_t *) dst;
++    for (int index = tileWidth - 1; index >= 0; --index) {
++      dst32[index] = DNG_HalfToFloat(dst16[index]);
++    }
++  } else if (bytesps == 3) {
++    uint8_t  * dst8  = ((uint8_t *) dst) + (tileWidth - 1) * 3;
++    uint32_t * dst32 = (uint32_t *) dst;
++    for (int index = tileWidth - 1; index >= 0; --index, dst8 -= 3) {
++      dst32[index] = DNG_FP24ToFloat(dst8);
      }
 -    width = newdim;
    }
@@ -1397,24 +1383,26 @@
  
 -int CLASS flip_index (int row, int col)
 +static void copyFloatDataToInt(float * src, ushort * dst, size_t size, float max) {
-+
-+  bool negative = false;
++  bool negative = false, nan = false;
 +
 +#ifdef _OPENMP
 +#pragma omp parallel for
 +#endif
 +  for (size_t i = 0; i < size; ++i) {
-+    // Scale and clip data, because it is used to index some LUTs
-+    src[i] *= 65535.0f / max;
 +    if (src[i] < 0.0f) {
 +      negative = true;
 +      src[i] = 0.0f;
++    } else if (std::isnan(src[i])) {
++      nan = true;
++      src[i] = max;
 +    }
 +    // Copy the data to the integer buffer to build the thumbnail
 +    dst[i] = (ushort)src[i];
 +  }
 +  if (negative)
 +    fprintf(stderr, "DNG Float: Negative data found in input file\n");
++  if (nan)
++    fprintf(stderr, "DNG Float: NaN data found in input file\n");
 +}
 +
 +void CLASS deflate_dng_load_raw() {
@@ -1441,13 +1429,11 @@
 +#endif
 +    for (size_t i = 0; i < raw_width * raw_height; ++i)
 +      float_raw_image[i] = 0.0f;
-+    maximum = 65535; black = 0;
 +  }
 +
 +  // NOTE: This reader is based on the official DNG SDK from Adobe.
 +  // It assumes tiles without subtiles, but the standard does not say that
 +  // subtiles or strips couldn't be used.
-+  float maxValue = 0.0f;
 +  if (tile_length < INT_MAX) {
 +    size_t tilesWide = (raw_width + tile_width - 1) / tile_width;
 +    size_t tilesHigh = (raw_height + tile_length - 1) / tile_length;
@@ -1482,7 +1468,6 @@
 -  return row * iwidth + col;
 +    Bytef cBuffer[maxCompressed];
 +    Bytef uBuffer[dstLen];
-+    float maxValuethr = 0.0f;
 +
 +#ifdef _OPENMP
 +#pragma omp for collapse(2) nowait
@@ -1497,7 +1482,7 @@
 +}
 +        int err = uncompress(uBuffer, &dstLen, cBuffer, tileBytes[t]);
 +        if (err != Z_OK) {
-+          fprintf(stderr, "DNG Deflate: Failed uncompressing tile %d, with error %d\n", t, err);
++          fprintf(stderr, "DNG Deflate: Failed uncompressing tile %d, with error %d\n", (int)t, err);
 +        } else if (ifd->sample_format == 3) {  // Floating point data
 +          int bytesps = ifd->bps >> 3;
 +          size_t thisTileLength = y + tile_length > raw_height ? raw_height - y : tile_length;
@@ -1507,25 +1492,18 @@
 +            Bytef * dst = (Bytef *)&float_raw_image[(y+row)*raw_width + x];
 +            if (predFactor)
 +              decodeFPDeltaRow(src, dst, thisTileWidth, tile_width, bytesps, predFactor);
-+            expandFloats(dst, thisTileWidth, bytesps, maxValuethr);
++            expandFloats(dst, thisTileWidth, bytesps);
 +          }
 +        } else {  // 32-bit Integer data
 +          // TODO
 +        }
 +      }
 +    }
-+#ifdef _OPENMP
-+#pragma omp critical
-+#endif
-+{
-+	if(maxValuethr > maxValue)
-+		maxValue = maxValuethr;
-+}
  }
 +  }
 +    
 +  if (ifd->sample_format == 3) {  // Floating point data
-+    copyFloatDataToInt(float_raw_image, raw_image, raw_width*raw_height, maxValue);
++    copyFloatDataToInt(float_raw_image, raw_image, raw_width*raw_height, maximum);
 +  }
 +}
 +
@@ -1533,7 +1511,7 @@
  
  struct tiff_tag {
    ushort tag, type;
-@@ -9161,585 +8962,12 @@
+@@ -9161,585 +8939,12 @@
    unsigned gps[26];
    char desc[512], make[64], model[64], soft[32], date[20], artist[64];
  };

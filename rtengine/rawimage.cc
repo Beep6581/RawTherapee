@@ -40,9 +40,7 @@ RawImage::~RawImage()
    if( image )
 		free(image);
    if(allocation){ delete [] allocation; allocation=NULL;}
-   if(float_raw_image)
-		delete [] float_raw_image;
-
+   if(float_raw_image) { delete [] float_raw_image; float_raw_image = NULL; }
    if(data){ delete [] data; data=NULL;}
    if(profile_data){ delete [] profile_data; profile_data=NULL;}
 }
@@ -421,16 +419,6 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
 
 float** RawImage::compress_image()
 {
-	if( float_raw_image ) {
-		allocation = float_raw_image;
-		float_raw_image = NULL;
-		data = new float*[height];
-		for (int i = 0; i < height; i++)
-			data[i] = allocation + (i + top_margin) * raw_width + left_margin;
-		free(image); // we don't need this anymore
-		image=NULL;
-		return data;
-	}
 	if( !image )
 		return NULL;
 	if (filters) {
@@ -450,7 +438,14 @@ float** RawImage::compress_image()
 	}
 
     // copy pixel raw data: the compressed format earns space
-	if (filters != 0) {
+    if( float_raw_image ) {
+        #pragma omp parallel for
+        for (int row = 0; row < height; row++)
+            for (int col = 0; col < width; col++)
+                this->data[row][col] = float_raw_image[(row + top_margin) * raw_width + col + left_margin];
+		delete [] float_raw_image;
+        float_raw_image = NULL;
+    } else if (filters != 0) {
         #pragma omp parallel for
 		for (int row = 0; row < height; row++)
 			for (int col = 0; col < width; col++)
