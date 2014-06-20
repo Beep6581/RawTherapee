@@ -129,6 +129,9 @@ skip_block2: ;
 			for(int c=0;c<4;c++)
 				dsum[c] -= cblack_[c] * dsum[c+4];
 
+		} else if (colors == 1) {
+			for (int c = 0; c < 4; c++)
+				pre_mul_[c] = 1;
 		} else {
 			for (row = 0; row < H; row += 8)
 				for (col = 0; col < W ; col += 8) {
@@ -181,6 +184,10 @@ skip_block: ;
 	if (pre_mul_[3] == 0)
 		pre_mul_[3] = this->get_colors() < 4 ? pre_mul_[1] : 1;
 
+	if (colors == 1)
+		for (c = 1; c < 4; c++)
+			cblack_[c] = cblack_[0];
+
 	bool multiple_whites = false;
 	int largest_white = this->get_white(0);
 	for (c = 1; c < 4; c++) {
@@ -209,7 +216,7 @@ skip_block: ;
 	}
 
 	for (c = 0; c < 4; c++) {
-		int sat = this->get_white(c) - this->get_cblack(c);
+		int sat = this->get_white(c) - cblack_[c];
 		scale_mul_[c] = (pre_mul_[c] /= dmax) * 65535.0 / sat;
 	}
 	if (settings->verbose) {
@@ -428,6 +435,14 @@ float** RawImage::compress_image()
 			for (int i = 0; i < height; i++)
 				data[i] = allocation + i * width;
 		}
+	} else if (colors == 1) {
+		// Monochrome
+		if (!allocation) {
+			allocation = new float[height * width];
+			data = new float*[height];
+			for (int i = 0; i < height; i++)
+				data[i] = allocation + i * width;
+		}
 	} else {
 		if (!allocation) {
 			allocation = new float[3 * height * width];
@@ -450,6 +465,11 @@ float** RawImage::compress_image()
 		for (int row = 0; row < height; row++)
 			for (int col = 0; col < width; col++)
 				this->data[row][col] = image[row * width + col][FC(row, col)];
+	} else if (colors == 1) {
+        #pragma omp parallel for
+		for (int row = 0; row < height; row++)
+			for (int col = 0; col < width; col++)
+				this->data[row][col] = image[row * width + col][0];
 	} else {
         #pragma omp parallel for
 		for (int row = 0; row < height; row++)
