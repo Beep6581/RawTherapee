@@ -68,7 +68,7 @@ class RawImageSource : public ImageSource {
         static LUTf invGrad;  // for fast_demosaic
         static LUTf initInvGrad ();
         static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in);
-        static void colorSpaceConversion (Imagefloat* im, ColorManagementParams &cmp, ColorTemp &wb, double pre_mul[3], float rawWhitePoint, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
+        static void colorSpaceConversion_ (Imagefloat* im, ColorManagementParams &cmp, ColorTemp &wb, double pre_mul[3], const RAWParams &raw, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
 
     protected:
         MyMutex getImageMutex;  // locks getImage
@@ -180,12 +180,8 @@ class RawImageSource : public ImageSource {
         void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
 
         void convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb, RAWParams raw);
-        //static void colorSpaceConversion16 (Image16*    im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName);
-        static void colorSpaceConversion   (Imagefloat* im, ColorManagementParams cmp, ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName) {
-            colorSpaceConversion (im, cmp, wb, pre_mul, 0.0f, embedded, camprofile, cam, camName);
-        }
         static void colorSpaceConversion   (Imagefloat* im, ColorManagementParams cmp, ColorTemp &wb, double pre_mul[3], RAWParams raw, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName) {
-            colorSpaceConversion (im, cmp, wb, pre_mul, float(raw.expos), embedded, camprofile, cam, camName);
+            colorSpaceConversion_ (im, cmp, wb, pre_mul, raw, embedded, camprofile, cam, camName);
         }
         static void inverse33 (const double (*coeff)[3], double (*icoeff)[3]);
 
@@ -228,7 +224,7 @@ class RawImageSource : public ImageSource {
 
         void green_equilibrate (float greenthresh);//Emil's green equilibration
 
-        void nodemosaic();
+        void nodemosaic(bool bw);
         void eahd_demosaic();
         void hphd_demosaic();
         void vng4_demosaic();

@@ -2351,17 +2351,22 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
 }
 #undef TS
 
-void RawImageSource::nodemosaic()
+void RawImageSource::nodemosaic(bool bw)
 {
     red(W,H);
     green(W,H);
     blue(W,H);
+#pragma omp parallel for
     for (int i=0; i<H; i++) {
         for (int j=0; j<W; j++){
-            switch( FC(i,j)) {
+            if (bw) {
+                red[i][j] = green[i][j] = blue[i][j] = rawData[i][j];
+            } else {
+                switch( FC(i,j)) {
                 case 0: red[i][j] = rawData[i][j]; green[i][j]=blue[i][j]=0; break;
                 case 1: green[i][j] = rawData[i][j]; red[i][j]=blue[i][j]=0; break;
                 case 2: blue[i][j] = rawData[i][j]; red[i][j]=green[i][j]=0; break;
+                }
             }
         }
     }

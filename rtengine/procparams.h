@@ -778,7 +778,7 @@ class RAWParams {
     public:
 	//	enum eMethod{eahd,hphd,vng4,dcb,amaze,ahd,IGV_noise,fast,
 	//				numMethods }; // This MUST be the last enum
-		enum eMethod{amaze,igv,lmmse,eahd,hphd,vng4,dcb,ahd,fast,none,
+		enum eMethod{amaze,igv,lmmse,eahd,hphd,vng4,dcb,ahd,fast,mono,none,
 					numMethods }; // This MUST be the last enum
 					
 		static const char *methodstring[numMethods];

@@ -325,6 +325,15 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 				tmpImg->b(y,x) = b;
 			}
 		}
+	} else if (ri->get_colors() == 1) {
+		for (int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
+			rofs = row * width;
+			for (int col = firstgreen, x = 0; col < width - 1 && x < tmpw; col
+					+= hskip, x++) {
+				int ofs = rofs + col;
+				tmpImg->r(y,x) = tmpImg->g(y,x) = tmpImg->b(y,x) = image[ofs][0];
+			}
+		}
 	} else {
 		for (int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
 			rofs = row * width;
@@ -398,13 +407,21 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 			start = 8;
 			end = width - 8;
 		}
-		for (int j = start; j < end; j++)
-			if (FISGREEN(filter,i,j))
-                tpp->aeHistogram[((int)(tpp->camwbGreen*image[i* width+j][1]))>>tpp->aeHistCompression]+=gadd;
-			else if (FISRED(filter,i,j))
-                tpp->aeHistogram[((int)(tpp->camwbRed * image[i* width+j][0]))>>tpp->aeHistCompression]+=radd;
-			else if (FISBLUE(filter,i,j))
-                tpp->aeHistogram[((int)(tpp->camwbBlue *image[i* width+j][2]))>>tpp->aeHistCompression]+=badd;
+		if (ri->get_colors() == 1) {
+			for (int j = start; j < end; j++) {
+				tpp->aeHistogram[((int)(image[i* width+j][0]))>>tpp->aeHistCompression]+=radd;
+				tpp->aeHistogram[((int)(image[i* width+j][0]))>>tpp->aeHistCompression]+=gadd;
+				tpp->aeHistogram[((int)(image[i* width+j][0]))>>tpp->aeHistCompression]+=badd;
+			}
+		} else {
+			for (int j = start; j < end; j++)
+				if (FISGREEN(filter,i,j))
+					tpp->aeHistogram[((int)(tpp->camwbGreen*image[i* width+j][1]))>>tpp->aeHistCompression]+=gadd;
+				else if (FISRED(filter,i,j))
+					tpp->aeHistogram[((int)(tpp->camwbRed * image[i* width+j][0]))>>tpp->aeHistCompression]+=radd;
+				else if (FISBLUE(filter,i,j))
+					tpp->aeHistogram[((int)(tpp->camwbBlue *image[i* width+j][2]))>>tpp->aeHistCompression]+=badd;
+		}
 	}
 
 	// generate autoWB
@@ -426,7 +443,13 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 			end = width - 32;
 		}
 		for (int j = start; j < end; j++) {
-			if (FISGREEN(filter,i,j)) {
+			if (!filter) {
+				double d = tpp->defGain * image[i * width + j][0];
+				if (d > 64000.)
+					continue;
+				avg_g += d; avg_r += d; avg_b += d;
+				rn++; gn++; bn++;
+			} else if (FISGREEN(filter,i,j)) {
 				double d = tpp->defGain * image[i * width + j][1];
 				if (d > 64000.)
 					continue;
@@ -673,7 +696,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     // perform color space transformation
     if (isRaw) {
         double pre_mul[3] = { redMultiplier, greenMultiplier, blueMultiplier };
-        RawImageSource::colorSpaceConversion (baseImg, params.icm, currWB, pre_mul, embProfile, camProfile, cam2xyz, camName );
+        RawImageSource::colorSpaceConversion (baseImg, params.icm, currWB, pre_mul, params.raw, embProfile, camProfile, cam2xyz, camName );
     } else {
         StdImageSource::colorSpaceConversion (baseImg, params.icm, embProfile, thumbImg->getSampleFormat());
     }
