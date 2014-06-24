@@ -41,6 +41,7 @@ class RawProcess : public ToolParamBlock, public AdjusterListener, public Foldab
     Adjuster* lmmseIterations;
 
     bool lastDCBen;
+    int oldSelection;
 	//bool lastALLen;
     sigc::connection methodconn,dcbEnhconn;  //,allEnhconn;
   public:
