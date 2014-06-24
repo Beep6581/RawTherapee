@@ -188,7 +188,7 @@ enum ProcEvent {
 	EvRGBgCurve=163,
 	EvRGBbCurve=164,
 	EvNeutralExp=165,
-//	EvLBWtoning=166,  -- can be reused --
+        EvDemosaicMethodPreProc=166,
 	EvLCCCurve=167,
 	EvLCHCurve=168,
 	EvVibranceSkinTonesCurve=169,

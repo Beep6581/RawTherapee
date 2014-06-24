@@ -186,7 +186,7 @@ RGBCURVE,         // EvRGBrCurve
 RGBCURVE,         // EvRGBgCurve
 RGBCURVE,         // EvRGBbCurve
 RGBCURVE,         // EvNeutralExp
-NONE,             // --unused--,
+DEMOSAIC|M_PREPROC, // EvDemosaicMethodPreProc
 LUMINANCECURVE,   // EvLCCurve
 LUMINANCECURVE,   // EvLCHCurve
 RGBCURVE,         // EvVibranceSkinTonesCurve
