@@ -154,6 +154,7 @@ void ParamsEdited::set (bool v) {
 	dirpyrDenoise.enabled      = v;
 	dirpyrDenoise.enhance      = v;
 //	dirpyrDenoise.perform      = v;
+	dirpyrDenoise.median      = v;
 	dirpyrDenoise.luma         = v;
 	dirpyrDenoise.Ldetail      = v;
 	dirpyrDenoise.chroma       = v;
@@ -161,6 +162,7 @@ void ParamsEdited::set (bool v) {
 	dirpyrDenoise.bluechro     = v;
 	dirpyrDenoise.gamma        = v;
 	dirpyrDenoise.dmethod      = v;
+	dirpyrDenoise.medmethod      = v;
 	epd.enabled                = v;
 	epd.strength            = v;
 	epd.edgeStopping        = v;
@@ -441,6 +443,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
 
         dirpyrDenoise.enabled = dirpyrDenoise.enabled && p.dirpyrDenoise.enabled == other.dirpyrDenoise.enabled;
         dirpyrDenoise.enhance = dirpyrDenoise.enhance && p.dirpyrDenoise.enhance == other.dirpyrDenoise.enhance;
+        dirpyrDenoise.median = dirpyrDenoise.median && p.dirpyrDenoise.median == other.dirpyrDenoise.median;
  //       dirpyrDenoise.perform = dirpyrDenoise.perform && p.dirpyrDenoise.perform == other.dirpyrDenoise.perform;
         dirpyrDenoise.luma = dirpyrDenoise.luma && p.dirpyrDenoise.luma == other.dirpyrDenoise.luma;
         dirpyrDenoise.Ldetail = dirpyrDenoise.Ldetail && p.dirpyrDenoise.Ldetail == other.dirpyrDenoise.Ldetail;
@@ -449,6 +452,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         dirpyrDenoise.bluechro = dirpyrDenoise.bluechro && p.dirpyrDenoise.bluechro == other.dirpyrDenoise.bluechro;	
         dirpyrDenoise.gamma = dirpyrDenoise.gamma && p.dirpyrDenoise.gamma == other.dirpyrDenoise.gamma;
         dirpyrDenoise.dmethod = dirpyrDenoise.dmethod && p.dirpyrDenoise.dmethod == other.dirpyrDenoise.dmethod;
+        dirpyrDenoise.medmethod = dirpyrDenoise.medmethod && p.dirpyrDenoise.medmethod == other.dirpyrDenoise.medmethod;
 
         epd.enabled = epd.enabled && p.epd.enabled == other.epd.enabled;
         epd.strength = epd.strength && p.epd.strength == other.epd.strength;
@@ -728,6 +732,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
 	if (dirpyrDenoise.enabled)				toEdit.dirpyrDenoise.enabled 	= mods.dirpyrDenoise.enabled;
 	if (dirpyrDenoise.enhance)				toEdit.dirpyrDenoise.enhance 	= mods.dirpyrDenoise.enhance;
+	if (dirpyrDenoise.median)				toEdit.dirpyrDenoise.median 	= mods.dirpyrDenoise.median;
 	if (dirpyrDenoise.luma)					toEdit.dirpyrDenoise.luma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_LUMA] ? toEdit.dirpyrDenoise.luma + mods.dirpyrDenoise.luma : mods.dirpyrDenoise.luma;
 	if (dirpyrDenoise.Ldetail)				toEdit.dirpyrDenoise.Ldetail	= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_LUMDET] ? toEdit.dirpyrDenoise.Ldetail + mods.dirpyrDenoise.Ldetail : mods.dirpyrDenoise.Ldetail;
 	if (dirpyrDenoise.chroma)				toEdit.dirpyrDenoise.chroma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHROMA] ? toEdit.dirpyrDenoise.chroma + mods.dirpyrDenoise.chroma : mods.dirpyrDenoise.chroma;
@@ -736,6 +741,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (dirpyrDenoise.gamma)				toEdit.dirpyrDenoise.gamma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_GAMMA] ? toEdit.dirpyrDenoise.gamma + mods.dirpyrDenoise.gamma : mods.dirpyrDenoise.gamma;
 //	if (dirpyrDenoise.perform)				toEdit.dirpyrDenoise.perform 	= mods.dirpyrDenoise.perform;
 	if (dirpyrDenoise.dmethod)				toEdit.dirpyrDenoise.dmethod		= mods.dirpyrDenoise.dmethod;
+	if (dirpyrDenoise.medmethod)			toEdit.dirpyrDenoise.medmethod		= mods.dirpyrDenoise.medmethod;
 
 	if (epd.enabled)						toEdit.epd.enabled				= mods.epd.enabled;
 	if (epd.strength)						toEdit.epd.strength				= mods.epd.strength;

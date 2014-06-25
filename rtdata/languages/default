@@ -474,7 +474,8 @@ HISTORY_MSG_251;B&amp;W - Algorithm
 HISTORY_MSG_252;CbDL Skin Tones
 HISTORY_MSG_253;CbDL Reduce artifacts
 HISTORY_MSG_254;CbDL - Hueskin
-HISTORY_MSG_255;CbDL - Algorithm
+HISTORY_MSG_255;NR - median
+HISTORY_MSG_256;NR - median method
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1069,6 +1070,8 @@ TP_DIRPYRDENOISE_CHROMA;Chrominance - Master
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on the gamma of the input color profile. An sRGB gamma is assumed, thus if the image uses an input color profile of a different gamma, the effects of luminance noise reduction will differ.
 TP_DIRPYRDENOISE_ENH;Enhanced mode
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase.
+TP_DIRPYRDENOISE_MED;Median 
+TP_DIRPYRDENOISE_MED_TOOLTIP;Add a median 3x3 soft or 3x3 standard or 5x5 strong at the end of threatment - Increases noise reduction at the expense of a 4% to 10% processing time increase.
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
 TP_DIRPYRDENOISE_LABEL;Noise Reduction
@@ -1080,6 +1083,12 @@ TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be 
 TP_DIRPYRDENOISE_PERF;RGB mode (raw images)
 TP_DIRPYRDENOISE_RED;Chrominance - Red-Green
 TP_DIRPYRDENOISE_RGB;RGB
+TP_DIRPYRDENOISE_MEDMETHOD;Median Method
+TP_DIRPYRDENOISE_SOFT;3x3 soft
+TP_DIRPYRDENOISE_33;3x3 standard
+TP_DIRPYRDENOISE_55;5x5
+TP_DIRPYRDENOISE_55SOFT;5x5 soft
+TP_DIRPYRDENOISE_MET_TOOLTIP;allow different denoise: soft preserve detail, 3x3 standard, 5x5 soft, 5x5 
 TP_DIRPYREQUALIZER_ALGO;Algorithm Skin
 TP_DIRPYREQUALIZER_ALGO_FI;Fine
 TP_DIRPYREQUALIZER_ALGO_LA;Large

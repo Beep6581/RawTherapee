@@ -38,13 +38,18 @@ class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public Fol
     sigc::connection enaConn;
     Gtk::CheckButton* enhance;
     bool lastenhance;
-    sigc::connection enhanConn;
+    sigc::connection enhanConn, medianConn;
+    Gtk::CheckButton* median;
+    bool lastmedian;
 	
 //    Gtk::CheckButton* perform;
 //    bool lastperform;
 //    sigc::connection perfconn;
     MyComboBoxText*   dmethod;
     sigc::connection  dmethodconn;
+    MyComboBoxText*   medmethod;
+    sigc::connection  medmethodconn;
+    Gtk::HBox* ctbox;
 	
 
   public:
@@ -59,8 +64,10 @@ class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public Fol
     void adjusterChanged (Adjuster* a, double newval);
     void enabledChanged  ();
     void enhanceChanged  ();
+    void medianChanged  ();
 //    void perform_toggled  ();
     void dmethodChanged      ();
+    void medmethodChanged      ();
 
     void setAdjusterBehavior (bool lumaadd, bool lumdetadd, bool chromaadd, bool chromaredadd, bool chromablueadd, bool gammaadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
