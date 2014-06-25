@@ -390,7 +390,8 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
         // construct closeable tab for the image
         Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
         hb->pack_start (*Gtk::manage (new RTImage ("rtwindow.png")));
-        hb->pack_start (*Gtk::manage (new Gtk::Label (name)));
+        hb->pack_start (*Gtk::manage (new Gtk::Label (Glib::path_get_basename (name))));
+        hb->set_tooltip_markup (name);
         Gtk::Button* closeb = Gtk::manage (new Gtk::Button ());
         closeb->set_image (*Gtk::manage(new RTImage ("gtk-close.png")));
         closeb->set_relief (Gtk::RELIEF_NONE);
@@ -425,8 +426,8 @@ void RTWindow::remEditorPanel (EditorPanel* ep) {
         EditWindow * wndEdit = EditWindow::getInstance(this);
         wndEdit->remEditorPanel(ep);
     } else {
-	    epanels.erase (ep->getShortName());
-	    filesEdited.erase (ep->getShortName ());
+	    epanels.erase (ep->getFileName());
+	    filesEdited.erase (ep->getFileName ());
 	    fpanel->refreshEditedState (filesEdited);
 
 	    mainNB->remove_page (*ep);

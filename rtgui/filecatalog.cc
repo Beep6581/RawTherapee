@@ -702,12 +702,10 @@ void FileCatalog::_openImage (std::vector<Thumbnail*> tmb) {
     if (enabled && listener!=NULL) {
     	bool continueToLoad=true;
         for (size_t i=0; i< tmb.size() && continueToLoad; i++) {
-            if (editedFiles.find (tmb[i]->getFileName())==editedFiles.end()){
-                // Open the image here, and stop if in Single Editor mode, or if an image couldn't
-                // be opened, would it be because the file doesn't exist or because of lack of RAM
-                if( !(listener->fileSelected (tmb[i])) && !options.tabbedUI )
-                    continueToLoad = false;
-            }
+			// Open the image here, and stop if in Single Editor mode, or if an image couldn't
+			// be opened, would it be because the file doesn't exist or because of lack of RAM
+			if( !(listener->fileSelected (tmb[i])) && !options.tabbedUI )
+				continueToLoad = false;
             tmb[i]->decreaseRef ();
         }
     }
