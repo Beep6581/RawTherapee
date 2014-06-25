@@ -279,10 +279,10 @@ void MyDiagonalCurve::draw (int handle) {
         for (unsigned int i = 1; i < nbPoints; i++) {
             int pos = i*2+1;
 
-            double x1 = double(graphX)+1.5 + double(graphW-3)*points[pos-2];  // project (curve.x[i], 0, 1, graphW);
-            double y1 = double(graphY)-1.5 - double(graphH-3)*points[pos-1];  // project (curve.y[i], 0, 1, graphH);
-            double x2 = double(graphX)+0.5 + double(graphW-3)*points[pos];    // project (curve.x[i], 0, 1, graphW);
-            double y2 = double(graphY)-1.5 - double(graphH-3)*points[pos+1];  // project (curve.y[i], 0, 1, graphH);
+            double x1 = double(graphX)+1.5 + double(graphW-3)*points[pos-2];  // project (curve.at(i), 0, 1, graphW);
+            double y1 = double(graphY)-1.5 - double(graphH-3)*points[pos-1];  // project (curve.y.at(i)i], 0, 1, graphH);
+            double x2 = double(graphX)+0.5 + double(graphW-3)*points[pos];    // project (curve.at(i), 0, 1, graphW);
+            double y2 = double(graphY)-1.5 - double(graphH-3)*points[pos+1];  // project (curve.y.at(i), 0, 1, graphH);
 
             // set the color of the line when the point is snapped to the cage
             if (curve.x.size() == nbPoints && snapToElmt >= 1000 && ((i == (snapToElmt-1000)) || (i == (snapToElmt-999))))
@@ -339,7 +339,7 @@ void MyDiagonalCurve::draw (int handle) {
     if (curve.type!=DCT_Parametric) {
         c = style->get_fg (state);
         for (int i = 0; i < (int)curve.x.size(); ++i) {
-            if (curve.x[i] == -1) continue;
+            if (curve.x.at(i) == -1) continue;
             if (snapToElmt >= 1000) {
                 int pt = snapToElmt-1000;
                 if (i >= (pt-1) && i <= (pt+1))
@@ -354,8 +354,8 @@ void MyDiagonalCurve::draw (int handle) {
                     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
             }
 
-            double x = double(graphX+1) + double((graphW-2) * curve.x[i]); // project (curve.x[i], 0, 1, graphW);
-            double y = double(graphY-1) - double((graphH-2) * curve.y[i]); // project (curve.y[i], 0, 1, graphH);
+            double x = double(graphX+1) + double((graphW-2) * curve.x.at(i)); // project (curve.x.at(i), 0, 1, graphW);
+            double y = double(graphY-1) - double((graphH-2) * curve.y.at(i)); // project (curve.y.at(i), 0, 1, graphH);
 
             cr->arc (x, y, RADIUS+0.5, 0, 2*M_PI);
             cr->fill ();
@@ -434,7 +434,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 				if (distanceX > minDistanceX) {
 					/* insert a new control point */
 					if (num > 0) {
-						if (clampedX > curve.x[closest_point])
+						if (clampedX > curve.x.at(closest_point))
 							++closest_point;
 					}
 					itx = curve.x.begin();
@@ -445,8 +445,8 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 					num++;
 
 					// the graph is refreshed only if a new point is created (snaped to a pixel)
-					curve.x[closest_point] = clampedX;
-					curve.y[closest_point] = clampedY;
+					curve.x.at(closest_point) = clampedX;
+					curve.y.at(closest_point) = clampedY;
 
 					curveIsDirty = true;
 					setDirty(true);
@@ -455,8 +455,8 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 				}
 				grab_point = closest_point;
 				lit_point = closest_point;
-				ugpX = curve.x[closest_point];
-				ugpY = curve.y[closest_point];
+				ugpX = curve.x.at(closest_point);
+				ugpY = curve.y.at(closest_point);
 			}
 			if (buttonPressed) retval = true;
 		}
@@ -479,9 +479,9 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 				itx = curve.x.begin();
 				ity = curve.y.begin();
 				for (src = dst = 0; src < num; ++src)
-					if (curve.x[src] >= 0.0) {
-						curve.x[dst] = curve.x[src];
-						curve.y[dst] = curve.y[src];
+					if (curve.x.at(src) >= 0.0) {
+						curve.x.at(dst) = curve.x.at(src);
+						curve.y.at(dst) = curve.y.at(src);
 						++dst;
 						++itx;
 						++ity;
@@ -567,8 +567,8 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 				// a point is being moved
 
 				// bounds of the grabbed point
-				double leftBound         = (grab_point == 0    ) ? 0. : curve.x[grab_point-1];
-				double rightBound        = (grab_point == num-1) ? 1. : curve.x[grab_point+1];
+				double leftBound         = (grab_point == 0    ) ? 0. : curve.x.at(grab_point-1);
+				double rightBound        = (grab_point == num-1) ? 1. : curve.x.at(grab_point+1);
 				double const bottomBound = 0.;
 				double const topBound    = 1.;
 
@@ -578,8 +578,8 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 				double topDeletionBound    = topBound    + minDistanceY;
 
 				// we memorize the previous position of the point, for optimization purpose
-				double prevPosX = curve.x[grab_point];
-				double prevPosY = curve.y[grab_point];
+				double prevPosX = curve.x.at(grab_point);
+				double prevPosY = curve.y.at(grab_point);
 
 				// we memorize the previous position of the point, for optimization purpose
 				ugpX += deltaX;
@@ -590,57 +590,57 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 
 				// handling limitations along X axis
 				if (ugpX >= rightDeletionBound && (grab_point > 0 && grab_point < (num-1))) {
-					curve.x[grab_point] = -1.;
+					curve.x.at(grab_point) = -1.;
 				}
 				else if (ugpX <= leftDeletionBound && (grab_point > 0 && grab_point < (num-1))) {
-					curve.x[grab_point] = -1.;
+					curve.x.at(grab_point) = -1.;
 				}
 				else
 					// nextPosX is in bounds
-					curve.x[grab_point] = CLAMP(ugpX, leftBound, rightBound);
+					curve.x.at(grab_point) = CLAMP(ugpX, leftBound, rightBound);
 
 				// Handling limitations along Y axis
 				if (ugpY >= topDeletionBound && grab_point != 0 && grab_point != num-1) {
-					curve.x[grab_point] = -1.;
+					curve.x.at(grab_point) = -1.;
 				}
 				else if (ugpY <= bottomDeletionBound && grab_point != 0 && grab_point != num-1) {
-					curve.x[grab_point] = -1.;
+					curve.x.at(grab_point) = -1.;
 				}
 				else {
 					// snapping point to specific values
-					if (snapTo && curve.x[grab_point] != -1.) {
+					if (snapTo && curve.x.at(grab_point) != -1.) {
 						if (grab_point > 0 && grab_point < (curve.y.size()-1)) {
-							double prevX = curve.x[grab_point-1];
-							double prevY = curve.y[grab_point-1];
-							double nextX = curve.x[grab_point+1];
-							double nextY = curve.y[grab_point+1];
+							double prevX = curve.x.at(grab_point-1);
+							double prevY = curve.y.at(grab_point-1);
+							double nextX = curve.x.at(grab_point+1);
+							double nextY = curve.y.at(grab_point+1);
 
-							double ratio = (curve.x[grab_point]-prevX)/(nextX-prevX);
+							double ratio = (curve.x.at(grab_point)-prevX)/(nextX-prevX);
 							double y = (nextY-prevY) * ratio + prevY;
 
 							if (snapCoordinateY(y, ugpY)) snapToElmt = 1000+grab_point;
 						}
 						if (grab_point > 0) {
 							int prevP = grab_point-1;
-							if (snapCoordinateY(curve.y[prevP], ugpY)) snapToElmt = prevP;
+							if (snapCoordinateY(curve.y.at(prevP), ugpY)) snapToElmt = prevP;
 						}
 						if (grab_point < (curve.y.size()-1)) {
 							int nextP = grab_point+1;
-							if (snapCoordinateY(curve.y[nextP], ugpY)) snapToElmt = nextP;
+							if (snapCoordinateY(curve.y.at(nextP), ugpY)) snapToElmt = nextP;
 						}
-						if (snapCoordinateY(1.0,                 ugpY)) snapToElmt = -3;
-						if (snapCoordinateY(curve.x[grab_point], ugpY)) snapToElmt = -2;
-						if (snapCoordinateY(0.0,                 ugpY)) snapToElmt = -1;
+						if (snapCoordinateY(1.0,                    ugpY)) snapToElmt = -3;
+						if (snapCoordinateY(curve.x.at(grab_point), ugpY)) snapToElmt = -2;
+						if (snapCoordinateY(0.0,                    ugpY)) snapToElmt = -1;
 
-						curve.y[grab_point] = snapToValY;
+						curve.y.at(grab_point) = snapToValY;
 					}
 					else {
 						// nextPosY is in the bounds
-						curve.y[grab_point] = CLAMP(ugpY, 0.0, 1.0);
+						curve.y.at(grab_point) = CLAMP(ugpY, 0.0, 1.0);
 					}
 				}
 
-				if (curve.x[grab_point] != prevPosX || curve.y[grab_point] != prevPosY) {
+				if (curve.x.at(grab_point) != prevPosX || curve.y.at(grab_point) != prevPosY) {
 					// we recalculate the curve only if we have to
 					curveIsDirty = true;
 					setDirty(true);
@@ -681,25 +681,27 @@ void MyDiagonalCurve::pipetteMouseOver (EditDataProvider *provider, int modifier
 	pipetteG = provider->pipetteVal[1];
 	pipetteB = provider->pipetteVal[2];
 	pipetteVal = 0.f;
-	int n = 0;
-	if (pipetteR != -1.f) {
-		pipetteVal += pipetteR;
-		++n;
+	if (listener)
+		pipetteVal = listener->blendPipetteValues(pipetteR, pipetteG, pipetteB);
+	else {
+		int n = 0;
+		if (pipetteR != -1.f) {
+			pipetteVal += pipetteR;
+			++n;
+		}
+		if (pipetteG != -1.f) {
+			pipetteVal += pipetteG;
+			++n;
+		}
+		if (pipetteB != -1.f) {
+			pipetteVal += pipetteB;
+			++n;
+		}
+		if (n>1)
+			pipetteVal /= n;
+		else if (!n)
+			pipetteVal = -1.f;
 	}
-	if (pipetteG != -1.f) {
-		pipetteVal += pipetteG;
-		++n;
-	}
-	if (pipetteB != -1.f) {
-		pipetteVal += pipetteB;
-		++n;
-	}
-	if (n>1)
-		pipetteVal /= n;
-	else if (!n)
-		pipetteVal = -1.f;
-
-	int num = (int)curve.x.size();
 
 	/* graphW and graphH are the size of the graph */
 	calcDimensions();
@@ -708,7 +710,6 @@ void MyDiagonalCurve::pipetteMouseOver (EditDataProvider *provider, int modifier
 		return;
 
 	double minDistanceX = double(MIN_DISTANCE) / double(graphW-1);
-	double minDistanceY = double(MIN_DISTANCE) / double(graphH-1);
 
 	if (curve.type == DCT_Linear || curve.type == DCT_Spline || curve.type == DCT_NURBS) {
 		// get the pointer position
@@ -764,7 +765,7 @@ void MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modi
 
 			/* insert a new control point */
 			if (num > 0) {
-				if (clampedX > curve.x[closest_point])
+				if (clampedX > curve.x.at(closest_point))
 					++closest_point;
 			}
 			itx = curve.x.begin();
@@ -775,8 +776,8 @@ void MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modi
 			num++;
 
 			// the graph is refreshed only if a new point is created (snaped to a pixel)
-			curve.x[closest_point] = clampedX;
-			curve.y[closest_point] = clampedY = rtCurve.getVal(pipetteVal);
+			curve.x.at(closest_point) = clampedX;
+			curve.y.at(closest_point) = clampedY = rtCurve.getVal(pipetteVal);
 
 			curveIsDirty = true;
 			setDirty(true);
@@ -785,19 +786,17 @@ void MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modi
 		}
 		grab_point = closest_point;
 		lit_point = closest_point;
-		ugpX = curve.x[closest_point];
-		ugpY = curve.y[closest_point];
+		ugpX = curve.x.at(closest_point);
+		ugpY = curve.y.at(closest_point);
 	}
 }
 
 void MyDiagonalCurve::pipetteButton1Released(EditDataProvider *provider) {
-	int num = (int)curve.x.size();
-
 	/* graphW and graphH are the size of the graph */
 	calcDimensions();
 
 	double minDistanceX = double(MIN_DISTANCE) / double(graphW-1);
-	double minDistanceY = double(MIN_DISTANCE) / double(graphH-1);
+	//double minDistanceY = double(MIN_DISTANCE) / double(graphH-1);
 
 	if ((graphW < 0) || (graphH < 0))
 		return;
@@ -805,36 +804,13 @@ void MyDiagonalCurve::pipetteButton1Released(EditDataProvider *provider) {
 	snapToElmt = -100;
 	if (curve.type!=DCT_Parametric) {
 		std::vector<double>::iterator itx, ity;
-		int src, dst;
 		buttonPressed = false;
 		/*  get the pointer position  */
-		int px = graphX + int(float(graphW)*pipetteVal);  // WARNING: converting pipetteVal from float to int, precision loss here!
 		getCursorPosition(Gdk::EventType(Gdk::BUTTON_RELEASE), false, graphY, 0, Gdk::ModifierType(0));
 		findClosestPoint();
 
 		int previous_lit_point = lit_point;
-		/* delete inactive points: */
-		itx = curve.x.begin();
-		ity = curve.y.begin();
-		for (src = dst = 0; src < num; ++src)
-			if (curve.x[src] >= 0.0) {
-				curve.x[dst] = curve.x[src];
-				curve.y[dst] = curve.y[src];
-				++dst;
-				++itx;
-				++ity;
-			}
-		if (dst < src) {
-			curve.x.erase (itx, curve.x.end());
-			curve.y.erase (ity, curve.y.end());
-			if (curve.x.empty()) {
-				curve.x.push_back (0);
-				curve.y.push_back (0);
-				curveIsDirty = true;
-				setDirty(true);
-				draw (lit_point);
-			}
-		}
+
 		if (distanceX <= minDistanceX) {
 			lit_point = closest_point;
 		}
@@ -861,21 +837,11 @@ void MyDiagonalCurve::pipetteDrag(EditDataProvider *provider, int modifierKey) {
 	/* graphW and graphH are the size of the graph */
 	calcDimensions();
 
-	//double minDistanceX = double(MIN_DISTANCE) / double(graphW-1);
-	//double minDistanceY = double(MIN_DISTANCE) / double(graphH-1);
-
 	getCursorPosition(Gdk::MOTION_NOTIFY, false, cursorX+graphX, graphY+provider->deltaScreen.y, Gdk::ModifierType(modifierKey));
 
-	// bounds of the grabbed point
-	//double const bottomBound = 0.;
-	//double const topBound    = 1.;
-
-	//double bottomDeletionBound = bottomBound - minDistanceY;
-	//double topDeletionBound    = topBound    + minDistanceY;
-
 	// we memorize the previous position of the point, for optimization purpose
-	double prevPosX = curve.x[grab_point];
-	double prevPosY = curve.y[grab_point];
+	double prevPosX = curve.x.at(grab_point);
+	double prevPosY = curve.y.at(grab_point);
 
 	// we memorize the previous position of the point, for optimization purpose
 	ugpX += deltaX;
@@ -885,38 +851,38 @@ void MyDiagonalCurve::pipetteDrag(EditDataProvider *provider, int modifierKey) {
 	ugpY = CLAMP(ugpY, 0.0, 1.0);
 
 	// snapping point to specific values
-	if (snapTo && curve.x[grab_point] != -1.) {
+	if (snapTo && curve.x.at(grab_point) != -1.) {
 		if (grab_point > 0 && grab_point < (curve.y.size()-1)) {
-			double prevX = curve.x[grab_point-1];
-			double prevY = curve.y[grab_point-1];
-			double nextX = curve.x[grab_point+1];
-			double nextY = curve.y[grab_point+1];
+			double prevX = curve.x.at(grab_point-1);
+			double prevY = curve.y.at(grab_point-1);
+			double nextX = curve.x.at(grab_point+1);
+			double nextY = curve.y.at(grab_point+1);
 
-			double ratio = (curve.x[grab_point]-prevX)/(nextX-prevX);
+			double ratio = (curve.x.at(grab_point)-prevX)/(nextX-prevX);
 			double y = (nextY-prevY) * ratio + prevY;
 
 			if (snapCoordinateY(y, ugpY)) snapToElmt = 1000+grab_point;
 		}
 		if (grab_point > 0) {
 			int prevP = grab_point-1;
-			if (snapCoordinateY(curve.y[prevP], ugpY)) snapToElmt = prevP;
+			if (snapCoordinateY(curve.y.at(prevP), ugpY)) snapToElmt = prevP;
 		}
 		if (grab_point < (curve.y.size()-1)) {
 			int nextP = grab_point+1;
-			if (snapCoordinateY(curve.y[nextP], ugpY)) snapToElmt = nextP;
+			if (snapCoordinateY(curve.y.at(nextP), ugpY)) snapToElmt = nextP;
 		}
-		if (snapCoordinateY(1.0,                 ugpY)) snapToElmt = -3;
-		if (snapCoordinateY(curve.x[grab_point], ugpY)) snapToElmt = -2;
-		if (snapCoordinateY(0.0,                 ugpY)) snapToElmt = -1;
+		if (snapCoordinateY(1.0,                    ugpY)) snapToElmt = -3;
+		if (snapCoordinateY(curve.x.at(grab_point), ugpY)) snapToElmt = -2;
+		if (snapCoordinateY(0.0,                    ugpY)) snapToElmt = -1;
 
-		curve.y[grab_point] = snapToValY;
+		curve.y.at(grab_point) = snapToValY;
 	}
 	else {
 		// nextPosY is in the bounds
-		curve.y[grab_point] = ugpY;
+		curve.y.at(grab_point) = ugpY;
 	}
 
-	if (curve.x[grab_point] != prevPosX || curve.y[grab_point] != prevPosY) {
+	if (curve.x.at(grab_point) != prevPosX || curve.y.at(grab_point) != prevPosY) {
 		// we recalculate the curve only if we have to
 		curveIsDirty = true;
 		setDirty(true);
@@ -993,8 +959,8 @@ void MyDiagonalCurve::findClosestPoint() {
 
     if (curve.type!=DCT_Parametric) {
         for (int i = 0; i < (int)curve.x.size(); i++) {
-            double dX = curve.x[i] - clampedX;
-            double dY = curve.y[i] - clampedY;
+            double dX = curve.x.at(i) - clampedX;
+            double dY = curve.y.at(i) - clampedY;
             double currDistX = dX < 0. ? -dX : dX; //abs (dX);
             double currDistY = dY < 0. ? -dY : dY; //abs (dY);
             if (currDistX < distanceX) {
@@ -1016,7 +982,7 @@ std::vector<double> MyDiagonalCurve::getPoints () {
     if (curve.type==DCT_Parametric) {
         result.push_back ((double)(DCT_Parametric));
         for (int i=0; i<(int)curve.x.size(); i++) {
-            result.push_back (curve.x[i]);
+            result.push_back (curve.x.at(i));
         }
     }
     else {
@@ -1029,9 +995,9 @@ std::vector<double> MyDiagonalCurve::getPoints () {
             result.push_back (double(DCT_NURBS));
         // then we push all the points coordinate
         for (int i=0; i<(int)curve.x.size(); i++) {
-            if (curve.x[i]>=0) {
-                result.push_back (curve.x[i]);
-                result.push_back (curve.y[i]);
+            if (curve.x.at(i)>=0) {
+                result.push_back (curve.x.at(i));
+                result.push_back (curve.y.at(i));
             }
         }
     }

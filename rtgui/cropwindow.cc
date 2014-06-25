@@ -67,7 +67,7 @@ CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_,
     backColor(options.bgcolor), decorated(true), titleHeight(30),
     sideBorderWidth(3), lowerBorderWidth(3), upperBorderWidth(1), sepWidth(2),
     xpos(30), ypos(30), imgX(0), imgY(0), imgW(1), imgH(1), iarea(parent),
-    cropZoom(0), cropgl(NULL), pmlistener(NULL), observedCropWin(NULL), isFlawnOver(false) {
+    cropZoom(0), cropgl(NULL), pmlistener(NULL), observedCropWin(NULL), ipc(ipc_), isFlawnOver(false) {
 
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();       
@@ -416,7 +416,13 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y) {
 
     bool needRedraw = false;
     if (state==SCropWinResize) {
-        setSize (press_x + x - action_x, press_y + y - action_y);
+		int newWidth = press_x + x - action_x;
+		int newHeight = press_y + y - action_y;
+		setSize(newWidth, newHeight);
+		if (decorated) {
+			options.detailWindowWidth = newWidth;
+			options.detailWindowHeight = newHeight;
+	    }
         state = SNormal;
         for (std::list<CropWindowListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
             (*i)->cropWindowSizeChanged (this);
@@ -444,7 +450,41 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y) {
     }
     else if (state==SEditDrag) {
         editSubscriber->button1Released();
-        iarea->object = 0;
+        if (editSubscriber) {
+            rtengine::Crop* crop = static_cast<rtengine::Crop*>(cropHandler.getCrop());
+            Coord imgPos;
+            action_x = x;
+            action_y = y;
+            screenCoordToImage (x, y, imgPos.x, imgPos.y);
+
+            iarea->posImage.set(imgPos.x, imgPos.y);
+            iarea->posScreen.set(x, y);
+
+            Coord cropPos;
+            screenCoordToCropBuffer(x, y, cropPos.x, cropPos.y);
+            if (editSubscriber->getEditingType()==ET_PIPETTE) {
+                iarea->object = onArea (CropImage, x, y) && !onArea (CropObserved, x, y) ? 1 : 0;
+                //iarea->object = cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) ? 1 : 0;
+                if (iarea->object) {
+                    crop->getPipetteData(iarea->pipetteVal, cropPos.x, cropPos.y, iarea->getPipetteRectSize());
+                    //printf("PipetteData:  %.3f  %.3f  %.3f\n", iarea->pipetteVal[0], iarea->pipetteVal[1], iarea->pipetteVal[2]);
+                }
+                else {
+                    iarea->pipetteVal[0] = iarea->pipetteVal[1] = iarea->pipetteVal[2] = -1.f;
+                }
+            }
+            else if (editSubscriber->getEditingType()==ET_OBJECTS) {
+                if (onArea (CropImage, x, y))
+                    iarea->object = crop->getObjectID(cropPos);
+                else
+                    iarea->object = -1;
+            }
+
+            if (editSubscriber->mouseOver(bstate))
+                iarea->redraw ();
+        }
+        else
+            iarea->object = 0;
         iarea->deltaImage.set(0, 0);
         iarea->deltaScreen.set(0, 0);
         iarea->deltaPrevImage.set(0, 0);
@@ -672,8 +712,16 @@ void CropWindow::pointerMoved (int bstate, int x, int y) {
         screenCoordToImage (x, y, mx, my);
         if (!onArea (CropImage, x, y) || !cropHandler.cropPixbuf) {
             cropHandler.getFullImageSize(mx,my);
-            pmlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
-            if (pmhlistener) pmhlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
+        //    pmlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
+         //   if (pmhlistener) pmhlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
+	    /*    Glib::ustring outputProfile;
+            outputProfile =cropHandler.colorParams.output ;
+            printf("Using \"%s\" output\n", outputProfile.c_str());
+			if(outputProfile=="RT_sRGB") printf("OK SRGB2");
+		*/
+            pmlistener->pointerMoved (false, cropHandler.colorParams.output,cropHandler.colorParams.working, mx, my, -1, -1, -1);
+            if (pmhlistener) pmhlistener->pointerMoved (false, cropHandler.colorParams.output,cropHandler.colorParams.working, mx, my, -1, -1, -1);
+			
         }
         else {
             /*MyMutex::MyLock lock(cropHandler.cimg);
@@ -696,9 +744,11 @@ void CropWindow::pointerMoved (int bstate, int x, int y) {
             int imheight = cropHandler.cropPixbuf->get_height();
             guint8* pix = cropHandler.cropPixbuftrue->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
             if (vx < imwidth && vy < imheight) {
-                pmlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
+          //      pmlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
+                pmlistener->pointerMoved (true, cropHandler.colorParams.output, cropHandler.colorParams.working,mx, my, pix[0], pix[1], pix[2]);
                 if (pmhlistener)
-                    pmhlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
+                //    pmhlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
+                    pmhlistener->pointerMoved (true, cropHandler.colorParams.output, cropHandler.colorParams.working,mx, my, pix[0], pix[1], pix[2]);
             }
             cropHandler.cimg.unlock ();
         }
@@ -1535,8 +1585,11 @@ void CropWindow::buttonPressed (LWButton* button, int actionCode, void* actionDa
     else if (button==bZoom100) // zoom 100
         zoom11 ();
     else if (button==bClose) {// close
-        deleted = true;
-        iarea->cropWindowClosed (this);
+		if(ipc->updateTryLock()) {
+			deleted = true;
+			iarea->cropWindowClosed (this);
+			ipc->updateUnLock();
+		}
     }
 }
 

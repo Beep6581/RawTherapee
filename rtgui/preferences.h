@@ -85,7 +85,6 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
 	//Gtk::CheckButton* cbAutocielab;
 	Gtk::CheckButton* cbciecamfloat;
 
-    Gtk::CheckButton* blinkClipped;
 	Gtk::SpinButton*  hlThresh;
 	Gtk::SpinButton*  shThresh;
 
@@ -145,10 +144,10 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
     Gtk::ComboBoxText* custProfBuilderLabelType;
 
     Gtk::CheckButton* ckbHistogramPositionLeft;
+    Gtk::CheckButton* ckbHistogramWorking;
     Gtk::CheckButton* ckbShowProfileSelector;
     Gtk::CheckButton* ckbFileBrowserToolbarSingleRow;
     Gtk::CheckButton* ckbHideTPVScrollbar;
-    Gtk::CheckButton* ckbSquareDetailWindow;
     Gtk::CheckButton* ckbUseIconNoText;
 
     Glib::ustring storedValueRaw;

@@ -855,26 +855,18 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !MAIN_TOOLTIP_SHOWHIDETP1;Show/Hide the top panel.\nShortcut: <b>Shift-L</b>
 !MAIN_TOOLTIP_THRESHOLD;Threshold
 !MAIN_TOOLTIP_TOGGLE;Toggle the <b>Before</b>/<b>After</b> view.\nShortcut: <b>Shift-b</b>
-!NAVIGATOR_B_NA;B = n/a
-!NAVIGATOR_B_VALUE;B = %1
-!NAVIGATOR_G_NA;G = n/a
-!NAVIGATOR_G_VALUE;G = %1
-!NAVIGATOR_H_NA;H = n/a
-!NAVIGATOR_H_VALUE;H = %1
-!NAVIGATOR_LAB_A_NA;a = n/a
-!NAVIGATOR_LAB_A_VALUE;a = %1
-!NAVIGATOR_LAB_B_NA;b = n/a
-!NAVIGATOR_LAB_B_VALUE;b = %1
-!NAVIGATOR_LAB_L_NA;L = n/a
-!NAVIGATOR_LAB_L_VALUE;L = %1
-!NAVIGATOR_R_NA;R = n/a
-!NAVIGATOR_R_VALUE;R = %1
-!NAVIGATOR_S_NA;S = n/a
-!NAVIGATOR_S_VALUE;S = %1
-!NAVIGATOR_V_NA;V = n/a
-!NAVIGATOR_V_VALUE;V = %1
-!NAVIGATOR_XY_FULL;Width = %1, Height = %2
-!NAVIGATOR_XY_NA;x = n/a, y = n/a
+!NAVIGATOR_B;B:
+!NAVIGATOR_G;G:
+!NAVIGATOR_H;H:
+!NAVIGATOR_LAB_A;a:
+!NAVIGATOR_LAB_B;b:
+!NAVIGATOR_LAB_L;L:
+!NAVIGATOR_NA; --
+!NAVIGATOR_R;R:
+!NAVIGATOR_S;S:
+!NAVIGATOR_V;V:
+!NAVIGATOR_XY_FULL;Width: %1, Height: %2
+!NAVIGATOR_XY_NA;x: --, y: --
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !PARTIALPASTE_CHANNELMIXERBW;Black-and-White
@@ -969,8 +961,10 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !PREFERENCES_GREY40;Yb=40 CIE L#70
 !PREFERENCES_GREY;Output device's Yb luminance (%)
 !PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
+!PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
+!PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator, otherwise the gamma-corrected output profile is used.
 !PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show embedded JPEG thumbnail if raw is unedited
-!PREFERENCES_LANGAUTODETECT;Use OS language setting
+!PREFERENCES_LANGAUTODETECT;Use system language
 !PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
 !PREFERENCES_MENUGROUPFILEOPERATIONS;Group "File Operations"
 !PREFERENCES_MENUGROUPLABEL;Group "Color Label"
@@ -980,6 +974,7 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !PREFERENCES_METADATA;Metadata
 !PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs Mode (if available on second monitor)
 !PREFERENCES_MULTITAB;Multiple Editor Tabs Mode
+!PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 !PREFERENCES_PANFACTORFRAME;Pan Rate Amplification

@@ -36,7 +36,6 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p) {
     flawnOverWindow = NULL;
     mainCropWindow = NULL;
     previewHandler = NULL;
-    lastClosedX = -1;
 	showClippedH = false;
 	showClippedS = false;
     listener = NULL;
@@ -106,10 +105,6 @@ void ImageArea::setImProcCoordinator (rtengine::StagedImageProcessor* ipc_) {
     if( !ipc_ ){
         focusGrabber = NULL;
         std::list<CropWindow*>::iterator i = cropWins.begin();
-        if( i!=cropWins.end() ){
-            (*i)->getPosition (lastClosedX, lastClosedY);
-            (*i)->getSize (lastClosedW, lastClosedH);
-        }
         for( ;i!=cropWins.end();i++ ){
         	delete *i;
         }
@@ -350,55 +345,75 @@ void ImageArea::unGrabFocus () {
 }
 
 void ImageArea::addCropWindow () { 
-    if (!mainCropWindow) return;  // if called but no image is loaded, it would crash
+    if (!mainCropWindow)
+		return;  // if called but no image is loaded, it would crash
 
     CropWindow* cw = new CropWindow (this, ipc, true);
     cw->zoom11();
     cw->setCropGUIListener (cropgl);
     cw->setPointerMotionListener (pmlistener);
     cw->setPointerMotionHListener (pmhlistener);
+    int lastWidth = options.detailWindowWidth;
+    int lastHeight = options.detailWindowHeight;
+	if (lastWidth<lastHeight)
+		lastHeight=lastWidth;
+	if (lastHeight<lastWidth)
+		lastWidth=lastHeight;
+
+    if(!cropWins.empty()) {
+		CropWindow *lastCrop;
+		lastCrop = cropWins.front();
+		if(lastCrop)
+			lastCrop->getSize(lastWidth,lastHeight);
+    }
+
     cropWins.push_front (cw);
 
-    // Position the new crop window in a checkerboard, or used the last position
-    if (lastClosedX<0) {
-        int K = 2;
-        int hBorder = get_width()/K/8;
-        int vBorder = get_height()/K/8;
-        int N = cropWins.size()-1;
-        int layer = N/K/K;
-        int row = K-1 - (N % (K*K)) / K;
-        int col = K-1 - (N % (K*K)) % K;
-        int cropwidth, cropheight;
-        
-        cropwidth = get_width()/K - hBorder;
-        cropheight = get_height()/K - vBorder;
+    // Position the new crop window this way: start from top right going down to bottom. When bottom is reached, continue top left going down......
+	int N = cropWins.size()-1;
+	int cropwidth, cropheight;
+	
+	if(lastWidth <= 0) { // this is only the case for very first start of RT 4.1 or when options file is deleted
+		cropwidth = 200;
+		cropheight = 200;
+	} else {
+		cropwidth = lastWidth;
+		cropheight = lastHeight;
+	}
 
-        if (options.squareDetailWindow){
-			// force square CropWindow (this is faster as area is smaller)
-			if (cropwidth<cropheight) cropheight=cropwidth;
-			if (cropheight<cropwidth) cropwidth=cropheight;
-        }
+	cw->setSize (cropwidth,cropheight);
+	int x,y;
+	int maxRows = get_height()/cropheight;
+	if(maxRows == 0)
+		maxRows = 1;
 
-        cw->setSize (cropwidth,cropheight);
-        cw->setPosition (col*get_width()/K + hBorder/2 + layer*30, row*get_height()/K + vBorder/2 + layer*30);
-    }
-    else {
-        cw->setSize(lastClosedW, lastClosedH);
-        cw->setPosition (lastClosedX, lastClosedY);
-        lastClosedX = -1;
-    }
+	int col = N / maxRows;
+	if(col % 2) { // from left side
+		col = col/2;
+		x = col*cropwidth;
+		if(x >= get_width() - 50)
+			x = get_width() - 50;
+	}
+	else {		// from right side
+		col /= 2;
+		col++;
+		x = get_width() - col * cropwidth;
+		if(x <= 0)
+			x = 0;
+	}
 
-    cw->enable(); // start processing!
+	y = cropheight * (N%maxRows);
+	cw->setPosition (x, y);
+	cw->enable(); // start processing!
 
-    int x0,y0,w,h,wc,hc;
-    mainCropWindow->getCropRectangle(x0,y0,w,h );
-    cw->getCropSize(wc,hc);
-    cw->setCropPosition(x0+w/2-wc/2,y0+h/2-hc/2);
-    mainCropWindow->setObservedCropWin (cropWins.front());
+	int x0,y0,w,h,wc,hc;
+	mainCropWindow->getCropRectangle(x0,y0,w,h );
+	cw->getCropSize(wc,hc);
+	cw->setCropPosition(x0+w/2-wc/2,y0+h/2-hc/2);
+	mainCropWindow->setObservedCropWin (cropWins.front());
 
-    ipc->startProcessing(M_HIGHQUAL);
-
-//    queue_draw (); 
+	if(cropWins.size()==1) // after first detail window we already have high quality
+		ipc->startProcessing(M_HIGHQUAL);
 }
 
 
@@ -414,8 +429,6 @@ void ImageArea::cropWindowSelected (CropWindow* cw) {
 void ImageArea::cropWindowClosed (CropWindow* cw) { 
     
     focusGrabber = NULL; 
-    cw->getPosition (lastClosedX, lastClosedY);
-    cw->getSize (lastClosedW, lastClosedH);
     std::list<CropWindow*>::iterator i = std::find (cropWins.begin(), cropWins.end(), cw);
     if (i!=cropWins.end())
         cropWins.erase (i);

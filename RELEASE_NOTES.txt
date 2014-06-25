@@ -1,19 +1,80 @@
 RAWTHERAPEE 4.1 RELEASE NOTES
 --------------------------------
 
-CAVEATS
--------
-- Memory requirements
-TODO wiki link: Please read http://rawtherapee.com/blog/maximizing-memory-efficiency
+In order to use RawTherapee efficiently you should know that:
+- You can scroll all panels using the mouse scroll-wheel.
+- To change slider values or drop-down list items with the mouse scroll-wheel, hold the Shift key. This is so that you can safely scroll the panels without accidentally changing a slider or other tool setting.
+- All curves support the Shift and Ctrl keys while dragging a point. Shift+drag makes the point snap to meaningful axes (top, bottom, diagonal, other), while Ctrl+drag makes your mouse movement super-fine for precise point positioning.
+- There are many keyboard shortcuts which make working with RawTherapee much faster and give you greater control, make sure you familiarize yourself with them on RawPedia's Keyboard Shortcuts page!
 
-NEW FEATURES
-------------
-- dcraw 9.xx
-- Added support for
-  - Cameras
-- New DCP profiles for
-  - Cameras
-
+NEW FEATURES since 4.0.12
+-------------------------
+- Pipette tool for curves, see RawPedia - General Comments About Some Toolbox Widgets - Pipette.
+- Support for floating-point HDR raw DNG images.
+- Enhanced look for all tools (panel background).
+- Enhanced look for crop guides, zoom guides, straightening line, Navigator panel and detail windows.
+- Enhanced focus mask.
+- Skin-tones targetting for Contrast by Detail Levels tool.
+- "None" demosaicing method to show the raw image without demosaicing.
+- New algorithm for orange, yellow, cyan, purple and magenta in the Black-and-White tool.
+- Set the cache and config paths using environment variables, see RawPedia - File Paths.
+- JPEG subsampling parameter in the command-line interface.
+- The opened/closed state of the left and right panels of the File Browser tab is now remembered between sessions.
+- RawTherapee's window size and position are remembered between sessions.
+- When cropping, click anywhere without dragging to clear crop.
+- Added 'no wait' option (-w) for command-line (Windows only).
+- dcraw 9.20 Revision: 1.461.
+- New or improved support for:
+  - Canon EOS 5D Mark II
+  - Canon EOS 5D Mark III
+  - Canon EOS 6D
+  - Canon EOS 40D
+  - Canon EOS 50D
+  - Canon EOS 60D
+  - Canon EOS 70D
+  - Canon EOS 600D/Rebel T3i/Kiss X5
+  - Canon EOS 650D/Rebel T4i/Kiss X6i
+  - Canon EOS 1200D/Rebel T5/Kiss X70
+  - Canon EOS-M
+  - Canon PowerShot G1 X Mark II
+  - Canon PowerShot S120
+  - Fujifilm S1
+  - Hasselblad CFV-50
+  - Nikon 1 V3
+  - Nikon D4s
+  - Nikon D3300
+  - Nikon D5300
+  - Nikon D7000
+  - Olympus E-M10
+  - Olympus E-PM2
+  - Panasonic DMC-GH3
+  - Panasonic DMC-GH4
+  - Panasonic DMC-GM1
+  - Panasonic DMC-GX7
+  - Panasonic DMC-LF1
+  - Panasonic DMC-ZS40/Panasonic DMC-TZ60
+  - Panasonic DMC-ZS41/Panasonic DMC-TZ61
+  - Pentax K10D
+  - Pentax K-3
+  - Phase One IQ180/IQ280
+  - Phase One IQ260
+  - Phase One IQ260
+  - Phase One P20/P20+
+  - Phase One P21/P21+
+  - Phase One P25/P25+
+  - Phase One P30/P30+
+  - Phase One P40+/IQ140
+  - Phase One P45/P45+
+  - Phase One P65+/IQ160
+  - Samsung NX30
+  - Sony ILCE-7R
+  - Sony ILCE-3000
+  - Sony ILCE-5000
+  - Sony ILCE-6000
+  - Sony NEX-5N
+  - Sony SLT-A77
+  - Sony SLT-A99/Sony SLT-A99V
+  
 Refer to the RawPedia for information about these tools and how to use them:
 http://rawpedia.rawtherapee.com/
 
@@ -22,33 +83,661 @@ DOCUMENTATION
 http://rawtherapee.com/documentation
 http://rawpedia.rawtherapee.com/
 
-
 REPORTING BUGS
 --------------
-TODO wiki link: http://rawtherapee.com/forum/viewtopic.php?f=3&t=3639#p25814
+Find out how to write good bug reports and get stack-backtraces here:
+http://rawpedia.rawtherapee.com/How_to_write_useful_bug_reports
 
-LIVE CHAT WITH RT USERS
------------------------
-Network: freenode
-Server: chat.freenode.net
-Channel #rawtherapee
+LIVE CHAT WITH USERS AND DEVELOPERS
+--------------------------------------
+  Network: freenode
+  Server: chat.freenode.net
+  Channel #rawtherapee
+Or use freenode webchat to chat without installing anything:
 http://webchat.freenode.net/?randomnick=1&channels=rawtherapee&prompt=1
-TODO wiki link: http://rawtherapee.com/forum/viewtopic.php?f=1&t=945#p4603
-
+More information here: http://rawpedia.rawtherapee.com/IRC
 
 SOCIAL NETWORKS
 ---------------
 Google+
 http://plus.google.com/106783532637761598368
 
-
 REVISION HISTORY
 ----------------
-The complete change log is available at:
+The complete changelog is available at:
 https://code.google.com/p/rawtherapee/source/list
 
 
-CHANGELOG for 4.1
+CHANGELOG for 4.1 since 4.0.12.0
 ----------------------------------------------------------------------
-  DATE          | CHANGESET 	| COMMITTER 	
-----------------|---------------|-------------------------------------
+  DATE          | CHANGESET     | COMMITTER     
+  --------------|---------------|-------------------------------------
+> 2014-05-21    | 0ea43b1dcd93  | DrSlony
+  Updated Pentax K10D DCP profile, issue 2367
+
+> 2014-05-20    | b043e44d0d3d  | Ingo
+  Remember position of RT when not maximized, Issue 1624 comment #5
+
+> 2014-05-19    | fe73bffe3d66  | Ingo
+  Very bad response time on win64 builds using gcc 4.8 when queue is
+  running, Issue 2384
+
+> 2014-05-19    | edf1639212b5  | DrSlony
+  Updated Japanese interface translation on behalf of firefly, issue
+  2383
+
+> 2014-05-19    | d6e9ea8f931d  | DrSlony
+  camconst.json update 2, issue 2348
+
+> 2014-05-17    | 052a2388dbd7  | Ingo
+  Changes to Detail Window and Preferences Dialog, Issue 2376 comment
+  #9 and #11
+
+> 2014-05-16    | 9bf3805a6355  | Ingo
+  Add 'none' to 'demosaic methods' in GUI, see Issue 2247 comment #2
+  for details
+
+> 2014-05-15    | 1f8bde37d31c  | DrSlony
+  Small language file fix and regeneration for 4.1
+
+> 2014-05-13    | 4381a1f219ce  | DrSlony
+  Updated Czech interface translation on behalf of mkyral, issue 2378
+
+> 2014-05-12    | c10685af3d04  | Hombre
+  Solving issue 2375: "Partial paste resets (all?) unselected tools
+  the first time it is used"
+
+> 2014-05-12    | 193476c8c202  | DrSlony
+  Update to AUTHORS.txt for 4.1
+
+> 2014-05-12    | 3985b2370ec5  | Ingo
+  Improvements for Detail Window, see Issue 2376 comment #4 for
+  details
+
+> 2014-05-11    | 9fd3399d0cf0  | Ingo
+  Support DNG 1.4 files with Floating Point data, Issue 2369, thanks
+  to Javier Celaya
+
+> 2014-05-11    | 6d424d1d5775  | DrSlony
+  New splash-screen for 4.1
+
+> 2014-05-10    | 9f63535046be  | Ingo
+  Windows builds failed to compile using tdmgcc4.8.1 or gcc < 4.8,
+  Issue 2364
+
+> 2014-05-10    | 8be74fd1d767  | Ingo
+  RT goes to 100% cpu-load when starting with an image in queue on
+  Win64/gcc 4.8.1, Issue 2370
+
+> 2014-05-07    | 85a0fc237fe9  | Ingo
+  Using CLI some TIFFs are identified as RAW files, though they aren't
+  (e.g. TIFFs from Enfuse), Issue 2002
+
+> 2014-05-06    | 6259af971b88  | DrSlony
+  Make it clear when a button is clicked in 21-Gray-* themes
+
+> 2014-05-05    | d1796d027876  | Torger
+  Issue 2348: camconst.json updates with many new cameras.
+
+> 2014-05-04    | 7d8c489dedcb  | Ingo
+  RT stuck in loop when pasting profile, Issue 2363
+
+> 2014-05-03    | 32ed165333a5  | DrSlony
+  Set default Navigator monospace font on Linux to "Monospace", issue
+  2333
+
+> 2014-05-03    | 9bbcb4d40be1  | Michael Ezra
+  gcc 4.8.1 support on Winx64 (issue 2120 comment 7)
+
+> 2014-04-29    | f371233e14d6  | Ingo
+  Crash in 'Highlight Reconstruction Colour Propagation', Issue 2360
+
+> 2014-04-24    | 3339e21bb846  | Hombre
+  Solving issue 2301: "segfault in pipette"
+
+> 2014-04-24    | 7a4562ecaacd  | Jacques Desmis
+  Fixed input of CL curve in Lab mode issue2327
+
+> 2014-04-23    | 49fe027fd779  | Hombre
+  Solving issue 2341: "Pipette and flat curves - no line colors"
+
+> 2014-04-22    | 3f18de8dc7cb  | DrSlony
+  Updated Italiano interface translation on behalf of crx, issue 2351
+
+> 2014-04-22    | bed2af971e9d  | DrSlony
+  Replaced (unused?) rtdata/images/refresh-white.png with crash-free
+  version, issue 2353
+
+> 2014-04-20    | 3971dc5a1b37  | Hombre
+  Solving issue 2342: "Information needed for the color conversion
+  methods of the Color class" ; done by Jacques Desmis
+
+> 2014-04-19    | d253462b609b  | Ingo
+  RT crashes when undo crop action via history, Issue 1969
+
+> 2014-04-17    | 8beb70815d3f  | Hombre
+  Solving issue 2345: "Crash opening Pentax Q7 DNG files"
+
+> 2014-04-16    | ab44193db527  | Hombre
+  Solving issue 2301: "segfault in pipette"
+
+> 2014-04-16    | e78ae99d6b9f  | Ingo
+  Crash opening Pentax Q7 DNG files, Issue 2345
+
+> 2014-04-15    | c848d85e690c  | DrSlony
+  Created 92-Beige-DarkCyan.iconset as it was missing. No issue.
+
+> 2014-04-14    | 85717f49c997  | Jacques Desmis
+  Pipette in Lab Mode and improving data Navigator and histogram panel
+  issue2327
+
+> 2014-04-12    | 23cfd54d11c3  | Ingo
+  Enhanced look for detail window and zoom guides, Issue 2306, thanks
+  also to DrSlony, Hombre and Michael
+
+> 2014-04-11    | 48ba9066c195  | Ingo
+  Fixes access to unintialized variables when using before/after view,
+  no Issue
+
+> 2014-04-11    | 0b0771440f91  | Michael Ezra
+  Navigator info fonts (issue 2333)
+
+> 2014-04-11    | e1fcfd82c5c8  | Ingo
+  New small icons for detail window, Issue 2306
+
+> 2014-04-09    | 4b193208e07a  | Ingo
+  Buffer underrun in RGB denoise, Issue 2337. Could also fix 'Crash
+  when creating detail window, Issue 2324' (Thanks to Hombre)
+
+> 2014-04-09    | b24978a735e2  | DrSlony
+  Updated interface language files: Japanese by firefly, issue 2339,
+  and Czech by Marian, issue 2335
+
+> 2014-04-08    | acb610e35510  | Michael Ezra
+  Navigator info alignment (issue 2333)
+
+> 2014-04-07    | f9553f499392  | Philip Rinn
+  Update and correct automatic language selection (see issue 2328)
+
+> 2014-04-07    | e9bee7c8f37c  | DrSlony
+  All interface language files updated with additional corrections
+
+> 2014-04-07    | f8f15ed2d3e5  | DrSlony
+  Japanese interface language update by firefly, issue 2334
+
+> 2014-04-06    | 842b44a5b723  | Ingo
+  After selection of (GTK-default) theme in preferences RT doesn't
+  start anymore on Windows, Issue 2330
+
+> 2014-04-06    | 02765b7d0d61  | Hombre
+  Setting the "Fill Mode" button state of the Profile selector to
+  "off" by default (see issue 2329).
+
+> 2014-04-06    | ae550b0baa01  | Hombre
+  Solving issue 2326: "Copy/Paste bug" ; The "Fill mode" button
+  (Profile selector) is now extended to the "Load" and "Paste"
+  buttons.
+
+> 2014-04-05    | b57505ee9c6d  | Ingo
+  Enhanced look for crop guide and straightening line, Issue 2306
+
+> 2014-04-04    | b850c653dc1d  | Ingo
+  Auto Levels calculates wrong lightness value, which leads to crash
+  of RT, Issue 2325 / Credits: Hombre, Ingo
+
+> 2014-04-03    | 675735ebf708  | Hombre
+  Solving issue 2324: "Crash when creating detail window" / Credits:
+  Ingo, Hombre
+
+> 2014-04-02    | 2d38d51c35fd  | Ingo
+  Added 'no wait' option (-w) for command line (Windows only), Issue
+  2314
+
+> 2014-04-02    | fc1cd8b79985  | Ingo
+  Fast Demosaic is executed twice when Custom input profile is
+  changed, Issue 2299
+
+> 2014-04-02    | 066b86aa9ce9  | Ingo
+  Optimization for Focus Mask, Issue 2319
+
+> 2014-04-01    | c897e1e8149c  | DrSlony
+  buildRT 4.1 update to only cmake when necessary
+
+> 2014-04-01    | ed52173204ca  | DrSlony
+  Select Input DCP/ICC Profile window shows DNG files, issue 2320
+
+> 2014-04-01    | 41a0a7142965  | Ingo
+  Lab HH does not work when 'Avoid dolor shift' is disabled, Issue
+  2318
+
+> 2014-03-31    | c8daac147b86  | Ingo
+  Crop guide order, Issue 2312
+
+> 2014-03-29    | 6548fb6ff0d3  | Hombre
+  New batch of "uninitialized values" bugfix. No issue.
+
+> 2014-03-28    | 08e8ab0892c2  | Torger
+  #include fix for freebsd etc
+
+> 2014-03-28    | 5dbf8d8d8868  | Torger
+  2311: Fixed uninit access bug
+
+> 2014-03-27    | e3af8d0b602f  | Ingo
+  pure prophoto blue rendered black, Issue 2141
+
+> 2014-03-26    | c0ea604b688e  | Ingo
+  Speedup for Graduated Filter, Issue 1615
+
+> 2014-03-26    | 65a652b820af  | DrSlony
+  Merge 6edeb8dcd6a3 with 41bd5181c582
+
+> 2014-03-26    | 41bd5181c582  | DrSlony
+  Drenched Default.gtkrc and Default.iconset in fuel and set on fire.
+
+> 2014-03-26    | a2ea9dd5aa84  | DrSlony
+  Show/Hide the top panel shortcut changed to capital "L" as it's more
+  clear.
+
+> 2014-03-26    | 6edeb8dcd6a3  | Torger
+  Issue 2311: improved "Decoding..." progress bar
+
+> 2014-03-26    | 1699d4e8abe8  | Torger
+  2297: Improved Phase One IIQ support by fixing flatfield and tiling
+  issues on P40+, P65+ and the IQ series. These fixes should also help
+  the Credo series, but we can't decode those files (yet).
+
+> 2014-03-25    | 3396330bdc35  | Ingo
+  Removed zoom rectangle from navigator for zoom levels <= fit zoom
+  level, Issue 2306
+
+> 2014-03-24    | 33999cf99bdc  | Ingo
+  Fixed some histogram issues, Issue 2279
+
+> 2014-03-24    | 51fa29f9de66  | DrSlony
+  Updated Nederlands interface translation on behalf of wim ter meer,
+  issue 2310
+
+> 2014-03-24    | e55cf6645f7a  | Hombre
+  Supressing an annoying warning, repeated numerous times. (no issue)
+
+> 2014-03-24    | eea761e55548  | Ingo
+  Fixes a case of undefined behaviour when opening a new default
+  window, Issue 2277
+
+> 2014-03-24    | 16401f30e4d5  | Hombre
+  Solving issue 2290: "Enhanced look"
+
+> 2014-03-24    | 5397b9524721  | Ingo
+  Fast Demosaic is executed twice when Input Profile is set to 'Camera
+  standard', another case, Issue 2299
+
+> 2014-03-24    | f1c95742d5aa  | Ingo
+  Fixed two possible reasons for nan values, Issue 2194
+
+> 2014-03-24    | ebd67f82ce19  | Torger
+  Include the standardized <memory> instead of non-standard
+  <auto_ptr.h>
+
+> 2014-03-21    | f354f91acd11  | Ingo
+  RT tries to move the preview, even if that's not possible, Issue
+  2298
+
+> 2014-03-21    | 42e7c0725d2a  | Torger
+  Use locale names with better linux/osx/win cross-platform
+  compatibility (old did not work on OSX); use less specific exception
+  objects to avoid strange throw issues on OSX builds
+
+> 2014-03-21    | 724350f3cfb3  | Torger
+  Catch a more general form of exception, as we don't make use of the
+  more specific. Had issues with Runtime type information on OSX, not
+  sure exactly what the problem is but this generalization of
+  exception handling seem to make it work safely.
+
+> 2014-03-21    | 921151eb516f  | Torger
+  Minor clang warning fixes
+
+> 2014-03-20    | 504e1d806072  | Ingo
+  Fixed gcc warning which was caused by fixing clang warning, no Issue
+
+> 2014-03-20    | 9fa40159a81f  | Torger
+  Don't include <auto_ptr.h> if compiling with Clang/libc++
+  (auto_ptr.h doesn't exist)
+
+> 2014-03-20    | 8eeb27a6e34c  | Torger
+  std::setlocale() -> setlocale() (compile fix)
+
+> 2014-03-20    | 604411950000  | Torger
+  Clang compile error fix
+
+> 2014-03-20    | 16177c841c35  | Torger
+  Fixed clang warning on implicit double to int conversion
+
+> 2014-03-19    | de74ab37075d  | Ingo
+  Fast Demosaic is executed twice when Input Profile is set to 'Camera
+  standard'
+
+> 2014-03-19    | 5fc50e18c765  | Ingo
+  RT opens console window on Windows when a filename or a name of a
+  folder is passed as argument, Issue 2300
+
+> 2014-03-18    | f0ac59072d2d  | Ingo
+  Fixed another case of uninitialised memory, no Issue
+
+> 2014-03-18    | 6eb0b7a967f3  | Ingo
+  Access to uninitialised value when writing cache data, no Issue
+
+> 2014-03-18    | a8ff1edb9920  | Ingo
+  Fixes some 'code with no effect' detected by cppcheck, no Issue
+
+> 2014-03-18    | 9d5b21abf3f8  | Ingo
+  Fixing some undefined behaviour part 3, Issue 2277
+
+> 2014-03-18    | 40535dd978cf  | Ingo
+  Windows default viewer (queue-processed), Issue 2296
+
+> 2014-03-17    | 2ba4ff798cb3  | Ingo
+  Access to uninitialised memory in fast demosaic, no Issue
+
+> 2014-03-17    | cf356a2a740c  | Ingo
+  Highlight Reconstruction/Colour propagation uses uninitialised
+  values, Issue 2293
+
+> 2014-03-17    | 4b2b77ea8755  | Ingo
+  LUT in initMunsell() are not completely filled, wich leads to
+  uninitialised values, Issue 2295
+
+> 2014-03-17    | 596ca184f112  | Ingo
+  Buffer underrun when CBDL is activated and all levels set to 1.0,
+  Issue 2294
+
+> 2014-03-17    | 886cd16a6632  | Ingo
+  uninitialised values when using pop1 profile, Issue 2289
+
+> 2014-03-15    | 74a1f0a38585  | Hombre
+  Intermediate merge of the pipette branch
+
+> 2014-03-15    | 8d2f4c054230  | Hombre
+  French translation update
+
+> 2014-03-15    | 9cdd43205041  | Michael Ezra
+  Language entries for popup menu for Rank and Color Label (no issue)
+
+> 2014-03-15    | aeedba42b7cc  | Hombre
+  "1:1" icon added for the EPD tool + EPD fields' renaming
+
+> 2014-03-15    | f9735aaa3702  | Ingo
+  Removed static declaration from some vars in vng4_demosaic, Issue
+  2278
+
+> 2014-03-14    | cb8d230d41e1  | Ingo
+  Fixing some undefined behaviour part 2, Issue 2277
+
+> 2014-03-14    | a9e5c9f3e682  | DrSlony
+  Clear crop with c+click, issue 392
+
+> 2014-03-14    | bdb8cc3a8545  | Ingo
+  Speedup for fast demosaic, Issue 2037
+
+> 2014-03-14    | 9aebf15a65cc  | Ingo
+  Floating point exception: SIGFPE, Arithmetic exception when starting
+  RT, Issue 2222
+
+> 2014-03-14    | 84ed77bf4f49  | DrSlony
+  Updated Espanol interface translation on behalf of
+  mapelo/titodelama, issue 2199
+
+> 2014-03-14    | 01b3d87b14cd  | DrSlony
+  Updated Chinese (Simplified) interface translation on behalf of
+  Jiero, issue 2011
+
+> 2014-03-14    | 0128a48ac35e  | Ingo
+  Time reduction of Noise Reduction, Issue 1971
+
+> 2014-03-14    | 36699351cd8c  | Ingo
+  Optimization of VNG4 demosaic (and converting to float
+  calculations), Issue 2278
+
+> 2014-03-12    | cdeb7d15824b  | Jacques Desmis
+  Fixed - Black and White images still have some color issue2275
+
+> 2014-03-11    | 163df2349661  | Hombre
+  Solving issue 2263: "Settings of some tools are lost when enabling
+  some option from File Browser"
+
+> 2014-03-11    | df5048e4db26  | Ingo
+  Fixing some undefined behaviour, Issue 2277
+
+> 2014-03-06    | 405931380f85  | Ingo
+  Reformated code of vng4_demosaic() to prepare patches for Issue 2278
+
+> 2014-03-06    | 4b8f3cb02ef0  | DrSlony
+  Small improvement to buildRT
+
+> 2014-03-06    | ee72ddbcfd4e  | DrSlony
+  buildRT: Added -s option to define a suffix of the destination build
+  dir, and -t to add a suffix to the version string which is shown in
+  the window titlebar (issue 2274)
+
+> 2014-03-05    | 6e384f1d3997  | Hombre
+  Solving issue 2274: "Adding a suffix to the version string"
+
+> 2014-03-04    | c875b60b406a  | Hombre
+  Solving issue 2273: "Default processing parameters command line
+  argument causes error"
+
+> 2014-03-03    | 571d75dbd2f8  | Hombre
+  Yet another file to ignore...
+
+> 2014-03-02    | 3ecbbfd8cf38  | Jacques Desmis
+  Improvment for Denoise Luminance detail in Lab mode issue2157
+
+> 2014-02-27    | 9608c324fdd5  | Ingo
+  Increased precision of StopWatch class, no Issue
+
+> 2014-02-27    | 75b1d4e889f4  | Ingo
+  Copy of old pp3 kept when renaming file, Issue 2266
+
+> 2014-02-27    | bbec11e977b5  | Ingo
+  FileChooser-using tools applied unintentionally (SETM), Issue 2259
+
+> 2014-02-27    | 469c7e5bd507  | Ingo
+  Remove WB from File Browser, Issue 2229
+
+> 2014-02-27    | 20f6a1a7fc43  | Ingo
+  Optimization for Flat Field, Issue 2262
+
+> 2014-02-27    | 647e4d41d487  | Torger
+  Fixed forward matrix transpose bug; use DNG reference code white
+  balance derivation for DCP renditions to better handle extreme white
+  balances.
+
+> 2014-02-26    | 42406c0ad0d4  | DrSlony
+  Updated interface translation files: Japanese (firefly), Russian
+  (kromanov), Swedish (Johan)
+
+> 2014-02-25    | 1e31668459a2  | Ingo
+  Batch rename (Kill Szeva), Issue 316
+
+> 2014-02-25    | 0127315647a4  | Torger
+  Added Phase One IQ260 and Hasselblad CFV-50 to camconst.json,
+  patched dcraw to not destroy Hasselblad model name.
+
+> 2014-02-22    | e38668ae90c2  | Ingo
+  Thumbnail rotation does not include crop rotation, on behalf of Adam
+  Reichold, Issue 1716
+
+> 2014-02-22    | becb877c651f  | Ingo
+  pp3 files are always written for all files in a directory, even when
+  nothing was changed, Issue 2256
+
+> 2014-02-22    | 7ca97769399f  | Ingo
+  Correction for Pentax K10D dng files; removed 'pragma comment' and
+  added -Werror=unknown-pragmas, no Issue
+
+> 2014-02-19    | b1e16664f4b9  | Hombre
+  Correcting typo error in an OpenMP statement (no issue)
+
+> 2014-02-18    | ef386222219c  | Ingo
+  Course rotation goes the wrong way when the image is already
+  flipped, Issue 2239. On behalf of smartyrawtherapee
+
+> 2014-02-16    | d3a85712685b  | Jacques Desmis
+  CBDL skin tones targeting-protection issue2150
+
+> 2014-02-12    | c2380474d5ec  | Ingo
+  Optimization for Output-Resize Method Lanczos, Issue 2248
+
+> 2014-02-10    | 13427b2b409b  | Philip Rinn
+  Install rtengine/camconst.json in ${DATADIR} not in ${BINDIR} (See
+  issue 2244).
+
+> 2014-02-10    | c7db9d874ece  | Ingo
+  Optimization for Vignette Filter (Exposure tab), Issue 2243
+
+> 2014-02-10    | 891ba3947ab5  | Ingo
+  Optimization for RawImageSource::getRAWHistogram, Issue 2238
+
+> 2014-02-10    | 254c59d2409a  | Ingo
+  Vignetting Correction bug makes hard transitions for positive Amount
+  values, Issue 2241
+
+> 2014-02-08    | d02647eb522c  | Jacques Desmis
+  CIECAM Dancing pixels issue2234
+
+> 2014-02-07    | 767d16dfb1b3  | Ingo
+  Enhanced lens identification with Canon cameras, Issue 2228
+
+> 2014-02-06    | b989fba4c24c  | Hombre
+  The opened/closed state of the left and right panels of the file
+  browser is now remembered when restarting RT (no issue).
+
+> 2014-02-06    | c39366bfd6d1  | Hombre
+  Solving issue 2235: "JPEG subsampling parameter is missing in the
+  command line"
+
+> 2014-02-06    | a7d8da4a2554  | DrSlony
+  Revised default and updated all language files. Issue 2188
+
+> 2014-02-06    | 0435b604642b  | Ingo
+  Avoids invalid reads which occured with Pentax K100D, patch provided
+  by Hombre, no Issue
+
+> 2014-02-05    | 92537ec2f0a6  | Ingo
+  Optimization of RawImage::get_colorsCoeff, Issue 2227
+
+> 2014-02-05    | 718e6fad1436  | Hombre
+  Solving issue 2221: "Specifying the Settings and Cache path through
+  environment variables"
+
+> 2014-02-03    | b9098566ce0d  | Jacques Desmis
+  Black and white channel-mixer new algorithm for orange Yellow Cyan
+  Purple Magenta
+
+> 2014-02-02    | d455f2486880  | Ingo
+  Update to dcraw 9.20 Revision: 1.461
+
+> 2014-01-30    | 93449278a456  | DrSlony
+  [PCVignette] and [Gradient] Strength=0.6, issue 2162
+
+> 2014-01-29    | d52d5c66eaf3  | Hombre
+  Solving issue 2197: "Pentax K-3 support"
+
+> 2014-01-29    | e88c93883450  | Ingo
+  changed misleading error message, no Issue
+
+> 2014-01-26    | 1e88d3476d28  | Ingo
+  USM's halo control behaves oddly, Issue 409, on behalf of Martin
+  Burri
+
+> 2014-01-25    | d39c1365c9f6  | Ingo
+  Removed Hot/Dead pixel filter from Default.pp3
+
+> 2014-01-24    | 11b776457594  | DrSlony
+  Added compareRT Bash script, to help compare images developed with
+  pre- and post-patch RT
+
+> 2014-01-23    | f2cda92e97c8  | DrSlony
+  buildRT updated. Now menu handles long branch names correctly.
+  Formatting improved.
+
+> 2014-01-21    | 9965948946db  | Ingo
+  Remove bold from History panel, Issue 2213
+
+> 2014-01-20    | 365fb513354f  | Ingo
+  Added Leica RWL extension to ParseExtensions, no Issue
+
+> 2014-01-19    | b699d7b4bd01  | Ingo
+  Pentax lens focal length shown as 0.00 mm with K-30, Issue 2207
+
+> 2014-01-19    | 91d028d7de59  | Ingo
+  LC curve blotches, Issue 2209
+
+> 2014-01-19    | c9b7f2ef2062  | Ingo
+  CC and CL curves need to be reapplied at 1:1 zoom, Issue 2208
+
+> 2014-01-16    | 4b77ef6013ae  | Ingo
+  Buffer overrun in Amaze demosaic when image width is odd, Issue 2203
+
+> 2014-01-16    | eb9c92b8ae4d  | DrSlony
+  Updated Japanese interface translation on behalf of firefly, issue
+  2204
+
+> 2014-01-15    | 1e31950064e6  | Ingo
+  Fixes a wrong delete statement and a memory leak, Issue 2202
+
+> 2014-01-15    | dcdec22096ee  | Ingo
+  RT crashes instantly with Sony FE lcp profiles, Issue 2196
+
+> 2014-01-14    | ad02bf8a24cb  | Ingo
+  Optimization of ImProcFunctions::rgbProc and ::chromiLuminanceCurve,
+  Issue 2077
+
+> 2014-01-13    | 2212dcf1fa49  | DrSlony
+  Updated tools/generateUnusedKeys to ignore EXTPROGTARGET_,
+  FILEBROWSER_POPUPRANK and FILEBROWSER_POPUPCOLORLABEL
+
+> 2014-01-13    | 5397a34884c2  | DrSlony
+  rewrote tools/source_icons/README
+
+> 2014-01-12    | 898e33d89ccc  | Ingo
+  CIECAM produces black splotches in overexposed areas, Issue 2187,
+  double precision
+
+> 2014-01-11    | e2c55562f85b  | Ingo
+  CIECAM produces black splotches in overexposed areas, Issue 2187
+
+> 2014-01-10    | 43d9573a9ffa  | Ingo
+  Review of Default Profile, Issue 2192
+
+> 2014-01-10    | 2b4404091c79  | Michael Ezra
+  Decoration of adjusters (issue 2190)
+
+> 2014-01-10    | 81d2ed4e6379  | DrSlony
+  Removed unused keys from all interface language files including
+  default
+
+> 2014-01-10    | c269bbd50a9e  | DrSlony
+  Fixed typo in distortion.svg filename
+
+> 2014-01-10    | db85aa5440a9  | DrSlony
+  Added timing and sorting in tools/generateTranslationDiffs
+
+> 2014-01-10    | d7e3d657c60b  | DrSlony
+  Added tools/generateUnusedKeys to get a list of unused interface
+  language file keys and remove them from the translations
+
+> 2014-01-07    | 52ef21aa43cb  | DrSlony
+  Updated Czech interface translation on behalf of Marian.Kyral, issue
+  2189
+
+> 2014-01-07    | 8d539db57ef5  | DrSlony
+  Removed PDF, updated COMPILE.txt and RELEASE_NOTES.txt with RawPedia
+  stubs for 4.1
+
+> 2014-01-07    | 9c758a1e4e12  | DrSlony
+  Added tag 4.0.12 for changeset 7df170026476
+
+> 2014-01-07    | 7df170026476  | DrSlony
+  Updated RawTherapeeManual_en.pdf, RELEASE_NOTES.txt and COMPILE.txt
+  for tagging 4.0.12
+  

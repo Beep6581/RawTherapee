@@ -234,6 +234,7 @@ class DirPyrDenoiseParamsEdited {
 public:
     bool enabled;
     bool enhance;
+	bool median;
     bool Ldetail;
     bool luma;
     bool chroma;
@@ -242,6 +243,8 @@ public:
     bool gamma;
 //    bool perform;
 	bool dmethod;
+    bool medmethod;
+	
 };
 
 class EPDParamsEdited{

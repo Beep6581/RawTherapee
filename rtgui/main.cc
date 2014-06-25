@@ -582,11 +582,12 @@ int processLineParams( int argc, char **argv )
 		}
 
 		// Load the image
-		ii = rtengine::InitialImage::load ( inputFile, true, &errorCode, NULL );
-		if (ii)
-			isRaw=true;
-		else
-			ii = rtengine::InitialImage::load ( inputFile , false, &errorCode, NULL );
+		isRaw = true;
+		Glib::ustring ext = getExtension (inputFile);
+		if (ext.lowercase()=="jpg" || ext.lowercase()=="jpeg" || ext.lowercase()=="tif" || ext.lowercase()=="tiff" || ext.lowercase()=="png")
+			isRaw = false;
+		
+		ii = rtengine::InitialImage::load ( inputFile, isRaw, &errorCode, NULL );
 		if (!ii) {
 			errors++;
 			std::cerr << "Error loading file: "<< inputFile << std::endl;

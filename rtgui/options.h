@@ -113,7 +113,11 @@ class Options {
     Glib::ustring font;
     int windowWidth;
     int windowHeight;
+    int windowX;
+    int windowY;
     bool windowMaximized;
+    int detailWindowWidth;
+    int detailWindowHeight;
     int dirBrowserWidth;
     int dirBrowserHeight;
     int preferencesWidth;
@@ -197,10 +201,10 @@ class Options {
 
     bool tunnelMetaData;    // Pass through IPTC and XMP unchanged
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
+//    int histogramWorking;  // 0=disabled, 1=left pane, 2=right pane
     bool histogramBar;
     bool histogramFullMode;
     bool showProfileSelector;
-    bool squareDetailWindow;
     bool FileBrowserToolbarSingleRow;
     bool hideTPVScrollbar;
     bool UseIconNoText;

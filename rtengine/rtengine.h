@@ -233,7 +233,7 @@ namespace rtengine {
               * @param histBlue is the array of size 256 containing the histogram of the blue channel
               * @param histLuma is the array of size 256 containing the histogram of the luminance channel
               * other for curves backgrounds, histRAW is RAW without colors */
-            virtual void histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histCLurve, LUTu & histLLCurve, LUTu & histLCAM, LUTu & histCCAM,
+            virtual void histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve,LUTu & histLLCurve, */LUTu & histLCAM, LUTu & histCCAM,
                 LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw, LUTu & histChroma) {}
     };
 
@@ -329,6 +329,10 @@ namespace rtengine {
             /** Returns the height of the preview image. 
               * @return the height of the preview image */
             virtual int         getPreviewHeight () =0;
+
+			virtual bool		updateTryLock() = 0;
+
+			virtual void		updateUnLock() = 0;
 
             /** Creates and returns a Crop instance that acts as a window on the image
               * @param editDataProvider pointer to the EditDataProvider that communicates with the EditSubscriber

@@ -227,6 +227,8 @@ void Options::setDefaults () {
     font = "sans, 8";
     windowWidth = 1200;
     windowHeight = 680;
+    windowX = 0;
+    windowY = 0;
     windowMaximized = true;
     saveAsDialogWidth = 920;
     saveAsDialogHeight = 680;
@@ -259,6 +261,8 @@ void Options::setDefaults () {
     startupDir = STARTUPDIR_LAST;
     startupPath = "";
     useBundledProfiles = true;
+    detailWindowWidth = -1;
+    detailWindowHeight = -1;
     dirBrowserWidth = 260;
     dirBrowserHeight = 350;
     preferencesWidth = 800;
@@ -353,7 +357,6 @@ void Options::setDefaults () {
     hideTPVScrollbar = false;
     UseIconNoText = true;
     whiteBalanceSpotSize = 8;
-    squareDetailWindow = true;
     menuGroupRank = true;
     menuGroupLabel = true;
     menuGroupFileOperations = true;
@@ -529,6 +532,7 @@ void Options::setDefaults () {
     rtSettings.CRI_color =0;
 	rtSettings.autocielab=true;
 	rtSettings.denoiselabgamma=2;
+    rtSettings.HistogramWorking = false;
 	
 //	rtSettings.ciebadpixgauss=false;	
 	rtSettings.rgbcurveslumamode_gamut=true;
@@ -701,7 +705,11 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "Font"))            font            = keyFile.get_string  ("GUI", "Font");
     if (keyFile.has_key ("GUI", "WindowWidth"))     windowWidth     = keyFile.get_integer ("GUI", "WindowWidth");
     if (keyFile.has_key ("GUI", "WindowHeight"))    windowHeight    = keyFile.get_integer ("GUI", "WindowHeight");
+    if (keyFile.has_key ("GUI", "WindowX"))     	windowX     = keyFile.get_integer ("GUI", "WindowX");
+    if (keyFile.has_key ("GUI", "WindowY"))    		windowY    = keyFile.get_integer ("GUI", "WindowY");
     if (keyFile.has_key ("GUI", "WindowMaximized")) windowMaximized = keyFile.get_boolean ("GUI", "WindowMaximized");
+    if (keyFile.has_key ("GUI", "DetailWindowWidth"))   detailWindowWidth        = keyFile.get_integer ("GUI", "DetailWindowWidth");
+    if (keyFile.has_key ("GUI", "DetailWindowHeight"))  detailWindowHeight       = keyFile.get_integer ("GUI", "DetailWindowHeight");
     if (keyFile.has_key ("GUI", "DirBrowserWidth"))     dirBrowserWidth          = keyFile.get_integer ("GUI", "DirBrowserWidth");
     if (keyFile.has_key ("GUI", "DirBrowserHeight"))    dirBrowserHeight         = keyFile.get_integer ("GUI", "DirBrowserHeight");
     if (keyFile.has_key ("GUI", "PreferencesWidth"))    preferencesWidth         = keyFile.get_integer ("GUI", "PreferencesWidth");
@@ -734,10 +742,11 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "HistogramBar"))        histogramBar        = keyFile.get_boolean ("GUI", "HistogramBar");
     if (keyFile.has_key ("GUI", "HistogramFullMode"))   histogramFullMode   = keyFile.get_boolean ("GUI", "HistogramFullMode");
     if (keyFile.has_key ("GUI", "ShowProfileSelector")) showProfileSelector = keyFile.get_boolean ("GUI", "ShowProfileSelector");
-    if (keyFile.has_key ("GUI", "SquareDetailWindow"))  squareDetailWindow  = keyFile.get_boolean ("GUI", "SquareDetailWindow");
     if (keyFile.has_key ("GUI", "FileBrowserToolbarSingleRow")) FileBrowserToolbarSingleRow = keyFile.get_boolean ("GUI", "FileBrowserToolbarSingleRow");
     if (keyFile.has_key ("GUI", "HideTPVScrollbar"))    hideTPVScrollbar    = keyFile.get_boolean ("GUI", "HideTPVScrollbar");
     if (keyFile.has_key ("GUI", "UseIconNoText"))    UseIconNoText    = keyFile.get_boolean ("GUI", "UseIconNoText");
+    if( keyFile.has_key ("GUI", "HistogramWorking"))    rtSettings.HistogramWorking          = keyFile.get_boolean("GUI", "HistogramWorking");
+	
 }
 
 if (keyFile.has_group ("Crop Settings")) { 
@@ -989,7 +998,11 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("GUI", "Font", font);
     keyFile.set_integer ("GUI", "WindowWidth", windowWidth);
     keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
+    keyFile.set_integer ("GUI", "WindowX", windowX);
+    keyFile.set_integer ("GUI", "WindowY", windowY);
     keyFile.set_boolean ("GUI", "WindowMaximized", windowMaximized);
+    keyFile.set_integer ("GUI", "DetailWindowWidth", detailWindowWidth);
+    keyFile.set_integer ("GUI", "DetailWindowHeight", detailWindowHeight);
     keyFile.set_integer ("GUI", "DirBrowserWidth", dirBrowserWidth);
     keyFile.set_integer ("GUI", "DirBrowserHeight", dirBrowserHeight);
     keyFile.set_integer ("GUI", "PreferencesWidth", preferencesWidth);
@@ -1022,10 +1035,10 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("GUI", "HistogramBar", histogramBar);
     keyFile.set_boolean ("GUI", "HistogramFullMode", histogramFullMode);
     keyFile.set_boolean ("GUI", "ShowProfileSelector", showProfileSelector);
-    keyFile.set_boolean ("GUI", "SquareDetailWindow", squareDetailWindow);
     keyFile.set_boolean ("GUI", "FileBrowserToolbarSingleRow", FileBrowserToolbarSingleRow);
     keyFile.set_boolean ("GUI", "HideTPVScrollbar", hideTPVScrollbar);
     keyFile.set_boolean ("GUI", "UseIconNoText", UseIconNoText);
+    keyFile.set_boolean ("GUI", "HistogramWorking", rtSettings.HistogramWorking);
 
     //Glib::ArrayHandle<int> crvopen = crvOpen;
     //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);

@@ -98,14 +98,14 @@ public:
       }
   }
   dcrawImage_t get_image() { return image; }
-  unsigned short** compress_image(); // revert to compressed pixels format and release image data
-  unsigned short** data;             // holds pixel values, data[i][j] corresponds to the ith row and jth column
+  float** compress_image(); // revert to compressed pixels format and release image data
+  float** data;             // holds pixel values, data[i][j] corresponds to the ith row and jth column
   unsigned prefilters;               // original filters saved ( used for 4 color processing )
 protected:
   Glib::ustring filename; // complete filename
   int rotate_deg; // 0,90,180,270 degree of rotation: info taken by dcraw from exif
   char* profile_data; // Embedded ICC color profile
-  unsigned short* allocation; // pointer to allocated memory
+  float* allocation; // pointer to allocated memory
   int maximum_c4[4];
 
 public:

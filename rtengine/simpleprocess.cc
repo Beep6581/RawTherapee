@@ -273,7 +273,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve,hist16, hist16, lumacurve, dummy, 1, utili);
 	CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, hist16C, dummy, 1);
 
-	CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
+	CurveFactory::complexsgnCurve (1.f, autili, butili, ccutili, cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
 								   params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,params.labCurve.lccurve,curve1, curve2, satcurve,lhskcurve, 
 								   hist16C, hist16C, dummy,dummy,
 								   1);
@@ -737,7 +737,12 @@ void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bo
 void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData) {
 
     if (bpl)
+#if __GNUC__ == 4 && __GNUC_MINOR__ >= 8 && defined( WIN32 ) && defined(__x86_64__)
+		// See Issue 2384 "Very bad response time on win7/64 using gcc 4.8 when queue is running"
+        Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
+#else
         Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_LOW);
+#endif
     
 }
 

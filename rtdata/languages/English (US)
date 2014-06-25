@@ -589,26 +589,18 @@
 !MAIN_TOOLTIP_SHOWHIDETP1;Show/Hide the top panel.\nShortcut: <b>Shift-L</b>
 !MAIN_TOOLTIP_THRESHOLD;Threshold
 !MAIN_TOOLTIP_TOGGLE;Toggle the <b>Before</b>/<b>After</b> view.\nShortcut: <b>Shift-b</b>
-!NAVIGATOR_B_NA;B = n/a
-!NAVIGATOR_B_VALUE;B = %1
-!NAVIGATOR_G_NA;G = n/a
-!NAVIGATOR_G_VALUE;G = %1
-!NAVIGATOR_H_NA;H = n/a
-!NAVIGATOR_H_VALUE;H = %1
-!NAVIGATOR_LAB_A_NA;a = n/a
-!NAVIGATOR_LAB_A_VALUE;a = %1
-!NAVIGATOR_LAB_B_NA;b = n/a
-!NAVIGATOR_LAB_B_VALUE;b = %1
-!NAVIGATOR_LAB_L_NA;L = n/a
-!NAVIGATOR_LAB_L_VALUE;L = %1
-!NAVIGATOR_R_NA;R = n/a
-!NAVIGATOR_R_VALUE;R = %1
-!NAVIGATOR_S_NA;S = n/a
-!NAVIGATOR_S_VALUE;S = %1
-!NAVIGATOR_V_NA;V = n/a
-!NAVIGATOR_V_VALUE;V = %1
-!NAVIGATOR_XY_FULL;Width = %1, Height = %2
-!NAVIGATOR_XY_NA;x = n/a, y = n/a
+!NAVIGATOR_B;B:
+!NAVIGATOR_G;G:
+!NAVIGATOR_H;H:
+!NAVIGATOR_LAB_A;a:
+!NAVIGATOR_LAB_B;b:
+!NAVIGATOR_LAB_L;L:
+!NAVIGATOR_NA; --
+!NAVIGATOR_R;R:
+!NAVIGATOR_S;S:
+!NAVIGATOR_V;V:
+!NAVIGATOR_XY_FULL;Width: %1, Height: %2
+!NAVIGATOR_XY_NA;x: --, y: --
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !PARTIALPASTE_BASICGROUP;Basic Settings
@@ -749,6 +741,8 @@
 !PREFERENCES_GREY40;Yb=40 CIE L#70
 !PREFERENCES_GREY;Output device's Yb luminance (%)
 !PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
+!PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
+!PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator, otherwise the gamma-corrected output profile is used.
 !PREFERENCES_HLTHRESHOLD;Threshold for clipped highlights
 !PREFERENCES_ICCDIR;Directory containing color profiles
 !PREFERENCES_IMPROCPARAMS;Default Image Processing Parameters
@@ -757,7 +751,7 @@
 !PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
 !PREFERENCES_INTENT_SATURATION;Saturation
 !PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show embedded JPEG thumbnail if raw is unedited
-!PREFERENCES_LANGAUTODETECT;Use OS language setting
+!PREFERENCES_LANGAUTODETECT;Use system language
 !PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
 !PREFERENCES_MENUGROUPFILEOPERATIONS;Group "File Operations"
 !PREFERENCES_MENUGROUPLABEL;Group "Color Label"
@@ -768,6 +762,7 @@
 !PREFERENCES_MONITORICC;Monitor color profile
 !PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs Mode (if available on second monitor)
 !PREFERENCES_MULTITAB;Multiple Editor Tabs Mode
+!PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !PREFERENCES_OUTDIRFOLDERHINT;Save images to the selected folder.
 !PREFERENCES_OUTDIRFOLDER;Save to folder
 !PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nThese formatting strings refer to the different parts of the photo's pathname, some attributes of the photo or an arbitrary sequence index in the batch job.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> will be replaced by the rank of the photo.  If the photo is unranked, %r will be replaced by '0'.  If the photo is in the trash bin, %r will be replaced by 'x'.\n\n<b>%s1</b>, <b>%s2</b>, etc. will be replaced by a sequence index which is padded to between 1 and 9 digits. The sequence index will start at one each time the queue processing is started and is incremented by one for each image processed.\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>

@@ -186,7 +186,7 @@ RGBCURVE,         // EvRGBrCurve
 RGBCURVE,         // EvRGBgCurve
 RGBCURVE,         // EvRGBbCurve
 RGBCURVE,         // EvNeutralExp
-NONE,             // --unused--,
+DEMOSAIC|M_PREPROC, // EvDemosaicMethodPreProc
 LUMINANCECURVE,   // EvLCCurve
 LUMINANCECURVE,   // EvLCHCurve
 RGBCURVE,         // EvVibranceSkinTonesCurve
@@ -273,7 +273,9 @@ ALLNORAW,         // EvDPDNenhance
 RGBCURVE,         // EvBWMethodalg
 DIRPYREQUALIZER,  // EvDirPyrEqualizerSkin
 DIRPYREQUALIZER,  // EvDirPyrEqlgamutlab
-DIRPYREQUALIZER  // EvDirPyrEqualizerHueskin
+DIRPYREQUALIZER,  // EvDirPyrEqualizerHueskin
+ALLNORAW,         // EvDPDNmedian
+ALLNORAW 			//EvDPDNmedmet
 //DIRPYREQUALIZER   // EvDirPyrEqualizeralg
 
 //LUMINANCECURVE    // EvCATsharpcie

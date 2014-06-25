@@ -84,6 +84,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener, public E
         std::list<CropWindowListener*> listeners;
         
         CropWindow* observedCropWin;
+        rtengine::StagedImageProcessor* ipc;
 
         bool onArea                    (CursorArea a, int x, int y);
         void updateCursor              (int x, int y);

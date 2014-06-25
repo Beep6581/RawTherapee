@@ -91,6 +91,7 @@ void RawProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
    for( size_t i=0; i< procparams::RAWParams::numMethods;i++)
        if( pp->raw.dmethod == procparams::RAWParams::methodstring[i]){
            dmethod->set_active(i);
+	   oldSelection = i;
            break;
        }
 
@@ -221,11 +222,17 @@ void RawProcess::methodChanged ()
 	}
 	
 	Glib::ustring methodName="";
-	if( curSelection>=0 && curSelection < procparams::RAWParams::numMethods)
+	bool ppreq = false;
+	if( curSelection>=0 && curSelection < procparams::RAWParams::numMethods) {
 	    methodName = procparams::RAWParams::methodstring[curSelection];
+	    if (curSelection == procparams::RAWParams::mono || oldSelection == procparams::RAWParams::mono) {
+		    ppreq = true;
+	    }
+	}
+	oldSelection = curSelection;
 
     if (listener)
-        listener->panelChanged (EvDemosaicMethod, methodName);
+	    listener->panelChanged (ppreq ? EvDemosaicMethodPreProc : EvDemosaicMethod, methodName);
 }
 
 void RawProcess::dcbEnhanceChanged ()

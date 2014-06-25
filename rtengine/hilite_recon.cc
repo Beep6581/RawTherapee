@@ -675,6 +675,8 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 				for (int c=1; c < ColorCount; c++)
 					sum[i2] += SQR(lab[i2][c]);
 			}
+			if(sum[0] == 0.f)		// avoid division by zero
+				sum[0] = 0.0001f;
 			chratio = sqrt(sum[1]/sum[0]);
 			
 			
@@ -722,6 +724,10 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 					clipfix[2] += dirwt*hilite_dir[dir*4+2][i1][j1]/(hilite_dir[dir*4+3][i1][j1]+0.00001);
 				}
 			}
+
+			if(totwt == 0.f)
+				continue;
+			
 			clipfix[0] /= totwt;
 			clipfix[1] /= totwt;
 			clipfix[2] /= totwt;

@@ -5,11 +5,14 @@ Project initiator:
 
 Developement contributors, in last name alphabetical order:
 
+  Martin Burri
+  Javier Celaya
   Jacques Desmis
   Oliver Duis
   Maciek Dworak
   Michael Ezra
   Jean-Christophe Frisch
+  Ilias Giarimis
   Steve Herrell
   Philippe Hupé
   Wolfgang Kuehnel
@@ -18,6 +21,7 @@ Developement contributors, in last name alphabetical order:
   Wyatt Olson
   Jacek Poplawski
   Ilia Popov
+  Adam Reichold
   Philip Rinn
   Jan Rinze
   Ben S.
@@ -32,10 +36,18 @@ Other contributors (profiles, ideas, mockups, testing, forum activity, translati
   Thorsten Bartolomäus
   Patrik Brunner
   Fernando Carello
+  Reine Edvardsson
+  André Gauthier
   M. Dávid Gyurkó
   Arturs Jekabsons
+  Marián Kyral
+  Oscar de Lama
   Lebarhon
   Karl Loncarek
+  Jie Luo
   Paul Matthijsse
+  Wim ter Meer
   Alberto Righetto
+  Kostia (Kildor) Romanov
+  Johan Thor
   Colin Walker

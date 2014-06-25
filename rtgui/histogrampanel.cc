@@ -26,6 +26,9 @@
 #include "../rtengine/improccoordinator.h"
 #include "../rtengine/color.h"
 
+
+using namespace rtengine;
+
 extern Glib::ustring argv0;
 extern Options options;
 
@@ -278,7 +281,7 @@ void HistogramPanel::toggleFreeze () {
     return;
 }
 
-void HistogramPanel::pointerMoved (bool validPos, Glib::ustring profile, int x, int y, int r, int g, int b) {
+void HistogramPanel::pointerMoved (bool validPos, Glib::ustring profile, Glib::ustring profileW,int x, int y, int r, int g, int b) {
 
     if (!validPos) {
         // do something to un-show vertical bars
@@ -287,7 +290,7 @@ void HistogramPanel::pointerMoved (bool validPos, Glib::ustring profile, int x, 
     }
     else {
         // do something to show vertical bars
-        histogramRGBArea->renderRGBMarks(r, g, b, profile);
+        histogramRGBArea->renderRGBMarks(r, g, b, profile, profileW);
         histogramRGBArea->queue_draw ();
     }
 }
@@ -343,7 +346,7 @@ void HistogramRGBArea::updateFreeze (bool f) {
     return;
 }
 
-void HistogramRGBArea::renderRGBMarks (int r, int g, int b, Glib::ustring profile) {
+void HistogramRGBArea::renderRGBMarks (int r, int g, int b, Glib::ustring profile, Glib::ustring profileW) {
 
   if (!is_realized ())
         return;
@@ -404,7 +407,7 @@ void HistogramRGBArea::renderRGBMarks (int r, int g, int b, Glib::ustring profil
   }
   if(needLuma || needChroma) {
 	float Lab_L,Lab_a,Lab_b;
-	rgb2lab( profile, r,g,b,Lab_L,Lab_a,Lab_b);
+	rgb2lab( profile, profileW, r,g,b,Lab_L,Lab_a,Lab_b);
     if (needLuma) {
       // Luma
       cr->set_source_rgb(1.0, 1.0, 1.0);
@@ -415,7 +418,8 @@ void HistogramRGBArea::renderRGBMarks (int r, int g, int b, Glib::ustring profil
     if (needChroma) {
       // Chroma
       float chromaval = sqrt(Lab_a*Lab_a + Lab_b*Lab_b)/1.8;
-      cr->set_source_rgb(0.0, 0.0, 0.0);
+     //  float chromaval = sqrt(Lab_a*Lab_a + Lab_b*Lab_b);
+     cr->set_source_rgb(0.0, 0.0, 0.0);
       cr->move_to((int)(chromaval*(winw/100.0)), 0);
       cr->line_to((int)(chromaval*(winw/100.0)), winh-0);
       cr->stroke();
@@ -424,7 +428,7 @@ void HistogramRGBArea::renderRGBMarks (int r, int g, int b, Glib::ustring profil
   }
 }
 
-void HistogramRGBArea::rgb2lab (Glib::ustring profile, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b) {
+void HistogramRGBArea::rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b) {
 	double xyz_rgb[3][3];
 	const double ep=216.0/24389.0;
 	const double ka=24389.0/27.0;
@@ -433,49 +437,94 @@ void HistogramRGBArea::rgb2lab (Glib::ustring profile, int r, int g, int b, floa
 	double var_G = g / 255.0;
 	double var_B = b / 255.0;
 
-	if (profile=="sRGB") {//apply sRGB inverse gamma
+	Glib::ustring profileCalc;
+	profileCalc="sRGB";//default
+	if(options.rtSettings.HistogramWorking) profileCalc=profileW;//display working
+	
+	else {// if you want display = output space
+		if (profile=="RT_sRGB" || profile=="RT_sRGB_gBT709" || profile=="RT_sRGB_g10") profileCalc="sRGB";
+		if (profile=="ProPhoto" || profile=="RT_Large_gBT709" || profile=="RT_Large_g10"  || profile=="RT_Large_gsRGB") profileCalc="ProPhoto";
+		if (profile=="AdobeRGB1998" || profile=="RT_Medium_gsRGB") profileCalc="Adobe RGB";
+		if (profile=="WideGamutRGB") profileCalc="WideGamut";
+	}
+	if(options.rtSettings.HistogramWorking)	{//display working
+		if (profileW=="sRGB") {//apply sRGB inverse gamma
 
-    // 
-// if you want display = working space
-// today as the gamma output can not be configured
-// it is better that the user has the gamma of the output space
-	if ( var_R > 0.04045 ) 
-		var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
-	else    
-		var_R = var_R / 12.92;
-	if ( var_G > 0.04045 ) 
-		var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
-	else                   
-		var_G = var_G / 12.92;
-	if ( var_B > 0.04045 ) 
-		var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
-	else    
-		var_B = var_B / 12.92;
+		if ( var_R > 0.04045 ) 
+			var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+		else    
+			var_R = var_R / 12.92;
+		if ( var_G > 0.04045 ) 
+			var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+		else                   
+			var_G = var_G / 12.92;
+		if ( var_B > 0.04045 ) 
+			var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+		else    
+			var_B = var_B / 12.92;
+		}
+		else 
+		if (profileW=="ProPhoto") {// apply inverse gamma 1.8
+			var_R = pow ( var_R, 1.8);
+			var_G = pow ( var_G, 1.8);
+			var_B = pow ( var_B, 1.8);
+		}
+		else {// apply inverse gamma 2.2
+			var_R = pow ( var_R, 2.2);
+			var_G = pow ( var_G, 2.2);
+			var_B = pow ( var_B, 2.2);
+		}	
+	}
+	else {//display outout profile
+
+	if (profile=="RT_sRGB" || profile=="RT_Large_gsRGB"  || profile=="RT_Medium_gsRGB") {//apply sRGB inverse gamma
+		if ( var_R > 0.04045 ) 
+			var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+		else    
+			var_R = var_R / 12.92;
+		if ( var_G > 0.04045 ) 
+			var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+		else                   
+			var_G = var_G / 12.92;
+		if ( var_B > 0.04045 ) 
+			var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+		else    
+			var_B = var_B / 12.92;
 	} 
-// if you want display = output space
-	else 
-	if (profile=="ProPhoto") {// apply inverse gamma 1.8
+	
+	else if (profile=="RT_sRGB_gBT709"  || profile=="RT_Large_gBT709") {//
+		if ( var_R > 0.0795 ) 
+			var_R = pow ( ( ( var_R + 0.0954 ) / 1.0954 ), 2.2);else var_R=var_R/4.5;
+
+		if ( var_G > 0.0795 ) 
+			var_G = pow ( ( ( var_G + 0.0954 ) / 1.0954 ), 2.2);else var_G=var_G/4.5;
+
+		if ( var_B > 0.0795 ) 
+			var_B = pow ( ( ( var_B + 0.0954 ) / 1.0954 ), 2.2);else var_B=var_B/4.5;
+		
+	}
+	else if (profile=="ProPhoto") {// apply inverse gamma 1.8
+	
 		var_R = pow ( var_R, 1.8);
 		var_G = pow ( var_G, 1.8);
 		var_B = pow ( var_B, 1.8);
 	}
+	else if (profile=="RT_sRGB_g10"  || profile=="RT_Large_g10") {// apply inverse gamma 1.8
+	
+		var_R = pow ( var_R, 1.);
+		var_G = pow ( var_G, 1.);
+		var_B = pow ( var_B, 1.);
+	}
+	
 	else {// apply inverse gamma 2.2
 		var_R = pow ( var_R, 2.2);
 		var_G = pow ( var_G, 2.2);
 		var_B = pow ( var_B, 2.2);
 	}
+	}
+   // TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix (profileW);
 
-	/*for (int i=0; i<numprofiles; i++) {
-		if (profile==wpnames[i]) {
-			for (int m=0; m<3; m++) 
-				for (int n=0; n<3; n++) {
-					xyz_rgb[m][n] = wprofiles[i][m][n];
-			}
-			break;
-		}
-	}*/
-
-    TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix (profile);
+    TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix (profileCalc);
 
 	for (int m=0; m<3; m++) 
 		for (int n=0; n<3; n++) {
@@ -483,9 +532,9 @@ void HistogramRGBArea::rgb2lab (Glib::ustring profile, int r, int g, int b, floa
 		}
 
 	double varxx,varyy,varzz;
-	double var_X = ( xyz_rgb[0][0]*var_R + xyz_rgb[0][1]*var_G + xyz_rgb[0][2]*var_B ) / rtengine::Color::D50x;
+	double var_X = ( xyz_rgb[0][0]*var_R + xyz_rgb[0][1]*var_G + xyz_rgb[0][2]*var_B ) / Color::D50x;
 	double var_Y = ( xyz_rgb[1][0]*var_R + xyz_rgb[1][1]*var_G + xyz_rgb[1][2]*var_B ) ;
-	double var_Z = ( xyz_rgb[2][0]*var_R + xyz_rgb[2][1]*var_G + xyz_rgb[2][2]*var_B ) / rtengine::Color::D50z;
+	double var_Z = ( xyz_rgb[2][0]*var_R + xyz_rgb[2][1]*var_G + xyz_rgb[2][2]*var_B ) / Color::D50z;
 
 	varxx = var_X>ep?cbrt(var_X):( ka * var_X  +  16.0) / 116.0 ;
 	varyy = var_Y>ep?cbrt(var_Y):( ka * var_Y  +  16.0) / 116.0 ;

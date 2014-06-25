@@ -122,7 +122,7 @@ class BlackWhite : public ToolParamBlock, public AdjusterListener, public Foldab
 	void methodChanged       ();
 	void filterChanged       ();
 	void settingChanged      ();
-	virtual void colorForValue (double valX, double valY, int callerId, ColorCaller* caller);
+	virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
 	void BWChanged           (double redbw, double greenbw, double bluebw);
 	bool BWComputed_         ();
 	void curveChanged        (CurveEditor* ce);

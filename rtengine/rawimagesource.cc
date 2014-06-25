@@ -204,18 +204,24 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 static float
-calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const float c_white[4], const float c_black[4])
+calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const float c_white[4], const float c_black[4], const RAWParams &raw, int colors)
 {
-    float pre_mul[4];
-    for (int c = 0; c < 4; c++) {
-        pre_mul[c] = pre_mul_[c]; // G2 == G1
-    }
-    if (pre_mul[3] == 0) {
-        pre_mul[3] = pre_mul[1];
-    }
-    float maxpremul = max(pre_mul[0], pre_mul[1], pre_mul[2], pre_mul[3]);
-    for (int c = 0; c < 4; c++) {
-        scale_mul[c] = (pre_mul[c] / maxpremul) * 65535.0 / (c_white[c] - c_black[c]);
+    if (raw.dmethod == RAWParams::methodstring[RAWParams::mono] || colors == 1) {
+        for (int c = 0; c < 4; c++) {
+            scale_mul[c] = 65535.0 / (c_white[c] - c_black[c]);
+        }
+    } else {
+        float pre_mul[4];
+        for (int c = 0; c < 4; c++) {
+            pre_mul[c] = pre_mul_[c];
+        }
+        if (pre_mul[3] == 0) {
+            pre_mul[3] = pre_mul[1]; // G2 == G1
+        }
+        float maxpremul = max(pre_mul[0], pre_mul[1], pre_mul[2], pre_mul[3]);
+        for (int c = 0; c < 4; c++) {
+            scale_mul[c] = (pre_mul[c] / maxpremul) * 65535.0 / (c_white[c] - c_black[c]);
+        }
     }
     float gain = max(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
     return gain;
@@ -239,7 +245,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
         // adjust gain so the maximum raw value of the least scaled channel just hits max
         const float new_pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
         float new_scale_mul[4];
-        float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom);
+        float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, raw, ri->get_colors());
         rm = new_scale_mul[0] / scale_mul[0] * gain;
         gm = new_scale_mul[1] / scale_mul[1] * gain;
         bm = new_scale_mul[2] / scale_mul[2] * gain;
@@ -314,7 +320,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 #pragma omp for
 #endif
 	for (int ix=0; ix<imheight; ix++) { int i=sy1+skip*ix;if (i>=maxy-skip) i=maxy-skip-1; // avoid trouble
-		if (ri->isBayer()) {
+		if (ri->isBayer() || ri->get_colors() == 1) {
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {if (jx>=maxx-skip) jx=maxx-skip-1; // avoid trouble
             	float rtot,gtot,btot;
             	rtot=gtot=btot=0;
@@ -1177,15 +1183,20 @@ void RawImageSource::demosaic(const RAWParams &raw)
             lmmse_interpolate_omp(W,H,raw.lmmse_iterations);
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::fast] )
             fast_demosaic (0,0,W,H);
-			//nodemosaic();//for testing
-		else
-        	nodemosaic();
+        else if (raw.dmethod == RAWParams::methodstring[RAWParams::mono] )
+            nodemosaic(true);
+	else
+            nodemosaic(false);
         t2.set();
         if( settings->verbose )
            printf("Demosaicing: %s - %d usec\n",raw.dmethod.c_str(), t2.etime(t1));
 		
         //if (raw.all_enhance) refinement_lassus();
         
+        rgbSourceModified = false;
+    } else if (ri->get_colors() == 1) {
+        // Monochrome
+        nodemosaic(true);
         rgbSourceModified = false;
     }
 }
@@ -1243,7 +1254,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 				for (int col = 0; col < W; col++) {
 					int c  = FC(row, col);
 					int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
-					rawData[row][col]	= max(src->data[row][col]+black[c4] - riDark->data[row][col], 0);
+					rawData[row][col]	= max(src->data[row][col]+black[c4] - riDark->data[row][col], 0.0f);
 				}
 			}
 		}else{
@@ -1333,6 +1344,23 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 			
 
 		}  // flatfield
+	} else if (ri->get_colors() == 1) {
+		// Monochrome
+		if (!rawData) rawData(W,H);
+
+		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
+			for (int row = 0; row < H; row++) {
+				for (int col = 0; col < W; col++) {
+					rawData[row][col] = max(src->data[row][col]+black[0] - riDark->data[row][col], 0.0f);
+				}
+			}
+		} else {
+			for (int row = 0; row < H; row++) {
+				for (int col = 0; col < W; col++) {
+					rawData[row][col] = src->data[row][col];
+				}
+			}
+		}
 	} else {
         // No bayer pattern
         // TODO: Is there a flat field correction possible?
@@ -1343,9 +1371,9 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 				for (int col = 0; col < W; col++) {
 					int c  = FC(row, col);
 					int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
-					rawData[row][3*col+0] = max(src->data[row][3*col+0]+black[c4] - riDark->data[row][3*col+0], 0);
-					rawData[row][3*col+1] = max(src->data[row][3*col+1]+black[c4] - riDark->data[row][3*col+1], 0);
-					rawData[row][3*col+2] = max(src->data[row][3*col+2]+black[c4] - riDark->data[row][3*col+2], 0);
+					rawData[row][3*col+0] = max(src->data[row][3*col+0]+black[c4] - riDark->data[row][3*col+0], 0.0f);
+					rawData[row][3*col+1] = max(src->data[row][3*col+1]+black[c4] - riDark->data[row][3*col+1], 0.0f);
+					rawData[row][3*col+2] = max(src->data[row][3*col+2]+black[c4] - riDark->data[row][3*col+2], 0.0f);
 				}
 			}
 		} else {
@@ -1544,7 +1572,7 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWP
 	black_lev[3]=raw.blackthree;//G2  (only used with a Bayer filter)
 
 	for(int i=0; i<4 ;i++) cblacksom[i] = max( c_black[i]+black_lev[i], 0.0f ); // adjust black level
-        initialGain = calculate_scale_mul(scale_mul, ref_pre_mul, c_white, cblacksom); // recalculate scale colors with adjusted levels
+        initialGain = calculate_scale_mul(scale_mul, ref_pre_mul, c_white, cblacksom, raw, ri->get_colors()); // recalculate scale colors with adjusted levels
         //fprintf(stderr, "recalc: %f [%f %f %f %f]\n", initialGain, scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
         
 	// this seems strange, but it works
@@ -1575,6 +1603,26 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWP
 		chmax[0] = max(tmpchmax[0],chmax[0]);
 		chmax[1] = max(tmpchmax[1],chmax[1]);
 		chmax[2] = max(tmpchmax[2],chmax[2]);
+}
+}
+	}else if ( ri->get_colors() == 1 ) {
+#pragma omp parallel
+{
+		float tmpchmax = 0.0f;
+
+#pragma omp for nowait
+		for (int row = winy; row < winy+winh; row ++){
+			for (int col = winx; col < winx+winw; col++) {
+				float val = rawData[row][col];
+				val -= cblacksom[0];
+				val *= scale_mul[0];
+				rawData[row][col] = (val);
+				tmpchmax = max(tmpchmax,val);
+			}
+		}
+#pragma omp critical
+{
+		chmax[0] = chmax[1] = chmax[2] = chmax[3] = max(tmpchmax,chmax[0]);
 }
 }
 	}else{
@@ -1849,7 +1897,7 @@ lab2ProphotoRgbD50(float L, float A, float B, float& r, float& g, float& b)
 }
 
 // Converts raw image including ICC input profile to working space - floating point version
-void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams &cmp, ColorTemp &wb, double pre_mul[3], float rawWhitePoint, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName) {
+void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParams &cmp, ColorTemp &wb, double pre_mul[3], const RAWParams &raw, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName) {
 
     //MyTime t1, t2, t3;
     //t1.set ();
@@ -1862,7 +1910,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 
     if (dcpProf!=NULL) {
         // DCP processing
-        dcpProf->Apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul, camMatrix, rawWhitePoint, cmp.toneCurve);
+        dcpProf->Apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul, camMatrix, raw.expos, cmp.toneCurve);
         return;
     }
 
@@ -2528,6 +2576,10 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
 			else if (ri->ISRED(i,j))  tmphistogram[CLIP((int)(refwb_red*  rawData[i][j]))>>histcompr]+=4;
 			else if (ri->ISBLUE(i,j)) tmphistogram[CLIP((int)(refwb_blue* rawData[i][j]))>>histcompr]+=4;
 			} 
+	} else if (ri->get_colors() == 1) {
+            for (int j=start; j<end; j++) {
+                    tmphistogram[CLIP((int)(refwb_red*  rawData[i][j]))>>histcompr]++;
+	    }
 			} else {
 		for (int j=start; j<end; j++) {
                     tmphistogram[CLIP((int)(refwb_red*  rawData[i][3*j+0]))>>histcompr]++;
@@ -2580,16 +2632,22 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
 			int c2 = FC(i,start+1);
 			c2 = ( c2 == 1 && !(i&1) ) ? 3 : c2;
 			for (j=start; j<end-1; j+=2) {
-				tmphist[c1][ri->data[i][j]]++;
-				tmphist[c2][ri->data[i][j+1]]++;
+				tmphist[c1][(int)ri->data[i][j]]++;
+				tmphist[c2][(int)ri->data[i][j+1]]++;
 			}
 			if(j<end) { // last pixel of row if width is odd
-				tmphist[c1][ri->data[i][j]]++;
+				tmphist[c1][(int)ri->data[i][j]]++;
+			}
+		} else if (ri->get_colors() == 1) {
+			for (int j=start; j<end; j++) {
+				for (int c=0; c<3; c++){
+					tmphist[c][(int)ri->data[i][j]]++;
+				}
 			}
 		} else {
 			for (int j=start; j<end; j++) {
 				for (int c=0; c<3; c++){
-					tmphist[c][ri->data[i][3*j+c]]++;
+					tmphist[c][(int)ri->data[i][3*j+c]]++;
 				}
 			}
 		}
@@ -2636,6 +2694,10 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm) {
 
+		if (ri->get_colors() == 1) {
+			rm = gm = bm = 1;
+			return;
+		}
 		if (redAWBMul != -1.) {
 			rm = redAWBMul;
 			gm = greenAWBMul;

@@ -83,6 +83,8 @@ LCurve::LCurve () : FoldableToolPanel(this) {
 	lshape->setEditID(EUID_Lab_LCurve, BT_SINGLEPLANE_FLOAT);
 
 	ashape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "a"));
+	ashape->setEditID(EUID_Lab_aCurve, BT_SINGLEPLANE_FLOAT);
+	
 	ashape->setRangeLabels(
 			M("TP_LABCURVE_CURVEEDITOR_A_RANGE1"), M("TP_LABCURVE_CURVEEDITOR_A_RANGE2"),
 			M("TP_LABCURVE_CURVEEDITOR_A_RANGE3"), M("TP_LABCURVE_CURVEEDITOR_A_RANGE4")
@@ -100,6 +102,8 @@ LCurve::LCurve () : FoldableToolPanel(this) {
 			M("TP_LABCURVE_CURVEEDITOR_B_RANGE1"), M("TP_LABCURVE_CURVEEDITOR_B_RANGE2"),
 			M("TP_LABCURVE_CURVEEDITOR_B_RANGE3"), M("TP_LABCURVE_CURVEEDITOR_B_RANGE4")
 	);
+	bshape->setEditID(EUID_Lab_bCurve, BT_SINGLEPLANE_FLOAT);
+	
 	//from blue to yellow
 	milestones.clear();
 	milestones.push_back( GradientMilestone(0., 0., 0., 1.) );
@@ -113,21 +117,25 @@ LCurve::LCurve () : FoldableToolPanel(this) {
 	lhshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_LABCURVE_CURVEEDITOR_LH")));
 	lhshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP"));
 	lhshape->setCurveColorProvider(this, 4);
+	lhshape->setEditID(EUID_Lab_LHCurve, BT_SINGLEPLANE_FLOAT);
 
 
 	chshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_LABCURVE_CURVEEDITOR_CH")));
 	chshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP"));
 	chshape->setCurveColorProvider(this, 1);
+	chshape->setEditID(EUID_Lab_CHCurve, BT_SINGLEPLANE_FLOAT);
 
 
 	hhshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_LABCURVE_CURVEEDITOR_HH")));
 	hhshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP"));
 	hhshape->setCurveColorProvider(this, 5);
+	hhshape->setEditID(EUID_Lab_HHCurve, BT_SINGLEPLANE_FLOAT);
 	
 	curveEditorG->newLine();  //  ------------------------------------------------ 3rd line
 
 	ccshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_LABCURVE_CURVEEDITOR_CC")));
 	ccshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP"));
+	ccshape->setEditID(EUID_Lab_CCurve, BT_SINGLEPLANE_FLOAT);
 	ccshape->setRangeLabels(
 			M("TP_LABCURVE_CURVEEDITOR_CC_RANGE1"), M("TP_LABCURVE_CURVEEDITOR_CC_RANGE2"),
 			M("TP_LABCURVE_CURVEEDITOR_CC_RANGE3"), M("TP_LABCURVE_CURVEEDITOR_CC_RANGE4")
@@ -139,6 +147,8 @@ LCurve::LCurve () : FoldableToolPanel(this) {
 	
 	lcshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_LABCURVE_CURVEEDITOR_LC")));
 	lcshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP"));
+	lcshape->setEditID(EUID_Lab_LCCurve, BT_SINGLEPLANE_FLOAT);
+	
 	// left and bottom bar uses the same caller id because the will display the same content
 	lcshape->setBottomBarColorProvider(this, 2);
 	lcshape->setRangeLabels(
@@ -149,6 +159,8 @@ LCurve::LCurve () : FoldableToolPanel(this) {
 
 	clshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_LABCURVE_CURVEEDITOR_CL")));
 	clshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP"));
+	clshape->setEditID(EUID_Lab_CLCurve, BT_SINGLEPLANE_FLOAT);
+	
 	clshape->setLeftBarColorProvider(this, 2);
 	clshape->setRangeDefaultMilestones(0.25, 0.5, 0.75);
 	milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
@@ -277,6 +289,15 @@ void LCurve::autoOpenCurve () {
 
 void LCurve::setEditProvider  (EditDataProvider *provider) {
     lshape->setEditProvider(provider);
+    ccshape->setEditProvider(provider);
+    lcshape->setEditProvider(provider);
+    clshape->setEditProvider(provider);
+    lhshape->setEditProvider(provider);
+    chshape->setEditProvider(provider);
+    hhshape->setEditProvider(provider);
+    ashape->setEditProvider(provider);
+    bshape->setEditProvider(provider);
+	
 }
 
 
@@ -468,9 +489,13 @@ void LCurve::adjusterChanged (Adjuster* a, double newval) {
     }
 }
 
-void LCurve::colorForValue (double valX, double valY, int callerId, ColorCaller *caller) {
+void LCurve::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller) {
 
 	float R, G, B;
+
+	if (elemType==ColorCaller::CCET_VERTICAL_BAR)
+		valY = 0.5;
+
 	if (callerId == 1) {         // ch - main curve
 
 		Color::hsv2rgb01(float(valX), float(valY), 0.5f, R, G, B);
@@ -530,12 +555,12 @@ void LCurve::setBatchMode (bool batchMode) {
 }
 
 
-void LCurve::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histCLurve, LUTu & histLLCurve, LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma){
+void LCurve::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma){
 
 	lshape->updateBackgroundHistogram (histLCurve);
 	ccshape->updateBackgroundHistogram (histCCurve);
-	clshape->updateBackgroundHistogram (histCLurve);
-	lcshape->updateBackgroundHistogram (histLLCurve);
+//	clshape->updateBackgroundHistogram (histCLurve);
+//	lcshape->updateBackgroundHistogram (histLLCurve);
 	
 }
 

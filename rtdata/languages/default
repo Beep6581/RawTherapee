@@ -474,7 +474,8 @@ HISTORY_MSG_251;B&amp;W - Algorithm
 HISTORY_MSG_252;CbDL Skin Tones
 HISTORY_MSG_253;CbDL Reduce artifacts
 HISTORY_MSG_254;CbDL - Hueskin
-HISTORY_MSG_255;CbDL - Algorithm
+HISTORY_MSG_255;NR - median
+HISTORY_MSG_256;NR - median method
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -696,7 +697,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;Executable path
 PREFERENCES_CUSTPROFBUILD;Custom Processing Profile Builder
 PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
-PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 PREFERENCES_D50;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
@@ -742,6 +742,8 @@ PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_GREY;Output device's Yb luminance (%)
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
+PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
+PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator, otherwise the gamma-corrected output profile is used.
 PREFERENCES_HLTHRESHOLD;Threshold for clipped highlights
 PREFERENCES_ICCDIR;Directory containing color profiles
 PREFERENCES_IMPROCPARAMS;Default Image Processing Parameters
@@ -750,7 +752,7 @@ PREFERENCES_INTENT_PERCEPTUAL;Perceptual
 PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
 PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show embedded JPEG thumbnail if raw is unedited
-PREFERENCES_LANGAUTODETECT;Use OS language setting
+PREFERENCES_LANGAUTODETECT;Use system language
 PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Group "File Operations"
 PREFERENCES_MENUGROUPLABEL;Group "Color Label"
@@ -761,6 +763,7 @@ PREFERENCES_METADATA;Metadata
 PREFERENCES_MONITORICC;Monitor color profile
 PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs Mode (if available on second monitor)
 PREFERENCES_MULTITAB;Multiple Editor Tabs Mode
+PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 PREFERENCES_OUTDIRFOLDERHINT;Save images to the selected folder.
 PREFERENCES_OUTDIRFOLDER;Save to folder
 PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nThese formatting strings refer to the different parts of the photo's pathname, some attributes of the photo or an arbitrary sequence index in the batch job.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> will be replaced by the rank of the photo.  If the photo is unranked, %r will be replaced by '0'.  If the photo is in the trash bin, %r will be replaced by 'x'.\n\n<b>%s1</b>, <b>%s2</b>, etc. will be replaced by a sequence index which is padded to between 1 and 9 digits. The sequence index will start at one each time the queue processing is started and is incremented by one for each image processed.\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
@@ -1067,6 +1070,8 @@ TP_DIRPYRDENOISE_CHROMA;Chrominance - Master
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on the gamma of the input color profile. An sRGB gamma is assumed, thus if the image uses an input color profile of a different gamma, the effects of luminance noise reduction will differ.
 TP_DIRPYRDENOISE_ENH;Enhanced mode
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase.
+TP_DIRPYRDENOISE_MED;Median 
+TP_DIRPYRDENOISE_MED_TOOLTIP;Add a median 3x3 soft or 3x3 standard or 5x5 strong at the end of threatment - Increases noise reduction at the expense of a 4% to 10% processing time increase.
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
 TP_DIRPYRDENOISE_LABEL;Noise Reduction
@@ -1078,6 +1083,12 @@ TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be 
 TP_DIRPYRDENOISE_PERF;RGB mode (raw images)
 TP_DIRPYRDENOISE_RED;Chrominance - Red-Green
 TP_DIRPYRDENOISE_RGB;RGB
+TP_DIRPYRDENOISE_MEDMETHOD;Median Method
+TP_DIRPYRDENOISE_SOFT;3x3 soft
+TP_DIRPYRDENOISE_33;3x3 standard
+TP_DIRPYRDENOISE_55;5x5
+TP_DIRPYRDENOISE_55SOFT;5x5 soft
+TP_DIRPYRDENOISE_MET_TOOLTIP;allow different denoise: soft preserve detail, 3x3 standard, 5x5 soft, 5x5 
 TP_DIRPYREQUALIZER_ALGO;Algorithm Skin
 TP_DIRPYREQUALIZER_ALGO_FI;Fine
 TP_DIRPYREQUALIZER_ALGO_LA;Large

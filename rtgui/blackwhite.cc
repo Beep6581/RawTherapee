@@ -662,9 +662,12 @@ bool BlackWhite::curveMode1Changed2_ () {
 	return false;
 }
 */
-void BlackWhite::colorForValue (double valX, double valY, int callerId, ColorCaller* caller) {
+void BlackWhite::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) {
 
 	float r, g, b;
+
+	if (elemType == ColorCaller::CCET_VERTICAL_BAR)
+		valY = 0.5f;
 
 	if (callerId == 1) {        // Hue = f(Hue)
 

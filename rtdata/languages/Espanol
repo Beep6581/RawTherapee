@@ -823,7 +823,7 @@ PREFERENCES_INTENT_PERCEPTUAL;Perceptual
 PREFERENCES_INTENT_RELATIVE;Colorimétrico relativo
 PREFERENCES_INTENT_SATURATION;Saturación
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Mostrar miniatura JPEG incrustada si foto Raw no se ha editado
-PREFERENCES_LANGAUTODETECT;Usar configuración de idioma del SO
+PREFERENCES_LANGAUTODETECT;Usar idioma del sistema
 PREFERENCES_LINEDENOISE;Filtro de ruido de línea
 PREFERENCES_MENUGROUPEXTPROGS;Grupo "Abrir con"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Grupo "Operaciones de archivo"
@@ -1582,6 +1582,10 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !HISTORY_MSG_253;CbDL Reduce artifacts
 !HISTORY_MSG_254;CbDL - Hueskin
 !HISTORY_MSG_255;CbDL - Algorithm
+!NAVIGATOR_NA; --
+!PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
+!PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator, otherwise the gamma-corrected output profile is used.
+!PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !TP_BWMIX_ALGO;Algorithm OYCPM
 !TP_BWMIX_ALGO_LI;Linear
 !TP_BWMIX_ALGO_SP;Special effects

@@ -1410,6 +1410,7 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !MAIN_MSG_OPERATIONCANCELLED;Operation cancelled
 !MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoesn't exist. Please set a correct path in the Preference window.
 !MAIN_MSG_SETPATHFIRST;You have to set a target path first in Preferences\nin order to use this function!
+!NAVIGATOR_NA; --
 !PARTIALPASTE_CHANNELMIXERBW;Black-and-White
 !PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
@@ -1419,6 +1420,9 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
+!PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
+!PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator, otherwise the gamma-corrected output profile is used.
+!PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 !PROFILEPANEL_GLOBALPROFILES;Bundled profiles
 !PROFILEPANEL_MODE_TIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.

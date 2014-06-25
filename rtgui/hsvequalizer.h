@@ -51,7 +51,7 @@ public:
     void setBatchMode    (bool batchMode);
     void setEditProvider (EditDataProvider *provider);
     void autoOpenCurve   ();
-    virtual void colorForValue (double valX, double valY, int callerId, ColorCaller* caller);
+    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
    
     //void adjusterChanged (Adjuster* a, double newval);
 };

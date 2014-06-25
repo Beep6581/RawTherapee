@@ -24,6 +24,7 @@
 #include "../rtengine/curves.h"
 #include "../rtengine/color.h"
 #include "../rtengine/rt_math.h"
+#include "options.h"
 
 using namespace rtengine;
 
@@ -84,11 +85,11 @@ Navigator::Navigator () {
 	Glib::ustring fontname;
 
 #ifdef WIN32
-	fontname = "Lucida Sans Typewriter";
+	fontname = "Droid Sans Mono Slashed"; // font file is provided in the source tree in rtdata/fonts to be installed by the windows installer
 #endif
 
 #ifdef __linux__
-	fontname = "DejaVu Sans Mono";
+	fontname = "Monospace";
 #endif
 
 #ifdef __APPLE__
@@ -202,7 +203,7 @@ void Navigator::setInvalid (int fullWidth, int fullHeight) {
 }
 
 // if !validPos then x/y contain the full image size
-void Navigator::pointerMoved (bool validPos, Glib::ustring profile, int x, int y, int r, int g, int b) {
+void Navigator::pointerMoved (bool validPos, Glib::ustring profile,Glib::ustring profileW, int x, int y, int r, int g, int b) {
 
 	if (!validPos)
 		setInvalid (x,y);
@@ -221,7 +222,7 @@ void Navigator::pointerMoved (bool validPos, Glib::ustring profile, int x, int y
 
 		float LAB_a, LAB_b, LAB_l;
 		//rgb2lab (r, g, b, LAB_l, LAB_a, LAB_b);
-		rgb2lab (profile, r, g, b, LAB_l, LAB_a, LAB_b);  // TODO: Really sure this function works?		
+		rgb2lab (profile, profileW, r, g, b, LAB_l, LAB_a, LAB_b);  // TODO: Really sure this function works?		
 		LAB_A->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), LAB_a));
 		LAB_B->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), LAB_b));
 		LAB_L->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), LAB_l));
@@ -229,7 +230,7 @@ void Navigator::pointerMoved (bool validPos, Glib::ustring profile, int x, int y
 }
 
 
-void Navigator::rgb2lab (Glib::ustring profile, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b) {
+void Navigator::rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b) {
 	double xyz_rgb[3][3];
 	const double ep=216.0/24389.0;
 	const double ka=24389.0/27.0;
@@ -238,49 +239,94 @@ void Navigator::rgb2lab (Glib::ustring profile, int r, int g, int b, float &LAB_
 	double var_G = g / 255.0;
 	double var_B = b / 255.0;
 
-	if (profile=="sRGB") {//apply sRGB inverse gamma
+	Glib::ustring profileCalc;
+	profileCalc="sRGB";//default
+	if(options.rtSettings.HistogramWorking) profileCalc=profileW;//display working
+	
+	else {// if you want display = output space
+		if (profile=="RT_sRGB" || profile=="RT_sRGB_gBT709" || profile=="RT_sRGB_g10") profileCalc="sRGB";
+		if (profile=="ProPhoto" || profile=="RT_Large_gBT709" || profile=="RT_Large_g10"  || profile=="RT_Large_gsRGB") profileCalc="ProPhoto";
+		if (profile=="AdobeRGB1998" || profile=="RT_Medium_gsRGB") profileCalc="Adobe RGB";
+		if (profile=="WideGamutRGB") profileCalc="WideGamut";
+	}
+	if(options.rtSettings.HistogramWorking)	{//display working
+		if (profileW=="sRGB") {//apply sRGB inverse gamma
 
-    // 
-// if you want display = working space
-// today as the gamma output can not be configured
-// it is better that the user has the gamma of the output space
-	if ( var_R > 0.04045 ) 
-		var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
-	else    
-		var_R = var_R / 12.92;
-	if ( var_G > 0.04045 ) 
-		var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
-	else                   
-		var_G = var_G / 12.92;
-	if ( var_B > 0.04045 ) 
-		var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
-	else    
-		var_B = var_B / 12.92;
+		if ( var_R > 0.04045 ) 
+			var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+		else    
+			var_R = var_R / 12.92;
+		if ( var_G > 0.04045 ) 
+			var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+		else                   
+			var_G = var_G / 12.92;
+		if ( var_B > 0.04045 ) 
+			var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+		else    
+			var_B = var_B / 12.92;
+		}
+		else 
+		if (profileW=="ProPhoto") {// apply inverse gamma 1.8
+			var_R = pow ( var_R, 1.8);
+			var_G = pow ( var_G, 1.8);
+			var_B = pow ( var_B, 1.8);
+		}
+		else {// apply inverse gamma 2.2
+			var_R = pow ( var_R, 2.2);
+			var_G = pow ( var_G, 2.2);
+			var_B = pow ( var_B, 2.2);
+		}	
+	}
+	else {//display outout profile
+
+	if (profile=="RT_sRGB" || profile=="RT_Large_gsRGB"  || profile=="RT_Medium_gsRGB") {//apply sRGB inverse gamma
+		if ( var_R > 0.04045 ) 
+			var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+		else    
+			var_R = var_R / 12.92;
+		if ( var_G > 0.04045 ) 
+			var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+		else                   
+			var_G = var_G / 12.92;
+		if ( var_B > 0.04045 ) 
+			var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+		else    
+			var_B = var_B / 12.92;
 	} 
-// if you want display = output space
-	else 
-	if (profile=="ProPhoto") {// apply inverse gamma 1.8
+	
+	else if (profile=="RT_sRGB_gBT709"  || profile=="RT_Large_gBT709") {//
+		if ( var_R > 0.0795 ) 
+			var_R = pow ( ( ( var_R + 0.0954 ) / 1.0954 ), 2.2);else var_R=var_R/4.5;
+
+		if ( var_G > 0.0795 ) 
+			var_G = pow ( ( ( var_G + 0.0954 ) / 1.0954 ), 2.2);else var_G=var_G/4.5;
+
+		if ( var_B > 0.0795 ) 
+			var_B = pow ( ( ( var_B + 0.0954 ) / 1.0954 ), 2.2);else var_B=var_B/4.5;
+		
+	}
+	else if (profile=="ProPhoto") {// apply inverse gamma 1.8
+	
 		var_R = pow ( var_R, 1.8);
 		var_G = pow ( var_G, 1.8);
 		var_B = pow ( var_B, 1.8);
 	}
+	else if (profile=="RT_sRGB_g10"  || profile=="RT_Large_g10") {// apply inverse gamma 1.8
+	
+		var_R = pow ( var_R, 1.);
+		var_G = pow ( var_G, 1.);
+		var_B = pow ( var_B, 1.);
+	}
+	
 	else {// apply inverse gamma 2.2
 		var_R = pow ( var_R, 2.2);
 		var_G = pow ( var_G, 2.2);
 		var_B = pow ( var_B, 2.2);
 	}
+	}
+   // TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix (profileW);
 
-	/*for (int i=0; i<numprofiles; i++) {
-		if (profile==wpnames[i]) {
-			for (int m=0; m<3; m++) 
-				for (int n=0; n<3; n++) {
-					xyz_rgb[m][n] = wprofiles[i][m][n];
-			}
-			break;
-		}
-	}*/
-
-    TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix (profile);
+    TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix (profileCalc);
 
 	for (int m=0; m<3; m++) 
 		for (int n=0; n<3; n++) {

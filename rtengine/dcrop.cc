@@ -190,7 +190,8 @@ void Crop::update (int todo) {
         double shradius = params.sh.radius;
         if (!params.sh.hq) shradius *= radius / 1800.0;
         cshmap->update (baseCrop, shradius, parent->ipf.lumimul, params.sh.hq, skip);
-        cshmap->forceStat (parent->shmap->max_f, parent->shmap->min_f, parent->shmap->avg);
+        if(parent->shmap->min_f < 65535.f) // don't call forceStat with wrong values
+			cshmap->forceStat (parent->shmap->max_f, parent->shmap->min_f, parent->shmap->avg);
     }
 
     // shadows & highlights & tone curve & convert to cielab
@@ -352,8 +353,13 @@ void Crop::update (int todo) {
     if (cropImageListener) {
         // this in output space held in parallel to allow analysis like shadow/highlight
         Glib::ustring outProfile=params.icm.output;
-        if (params.icm.output=="" || params.icm.output==ColorManagementParams::NoICMString) outProfile="sRGB";
-        Image8 *cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0,0,cropw,croph, outProfile, false);
+        Glib::ustring workProfile=params.icm.working;
+		Image8 *cropImgtrue;
+        if(settings->HistogramWorking)  cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0,0,cropw,croph, workProfile, false);
+		else {
+			if (params.icm.output=="" || params.icm.output==ColorManagementParams::NoICMString) outProfile="sRGB";
+			cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0,0,cropw,croph, outProfile, false);
+			}
 
         int finalW = rqcropw;
         if (cropImg->getWidth()-leftBorder < finalW)

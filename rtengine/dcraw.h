@@ -60,6 +60,7 @@ public:
 	,getbithuff(this,ifp,zero_after_ff)
 	,ph1_bithuff(this,ifp,order)	
 	,pana_bits(ifp,load_flags)
+	,float_raw_image(NULL)
     {
         aber[0]=aber[1]=aber[2]=aber[3]=1;
         gamm[0]=0.45;gamm[1]=4.5;gamm[2]=gamm[3]=gamm[4]=gamm[5]=0;
@@ -75,7 +76,7 @@ protected:
     short order;
     const char *ifname;
     char *meta_data, xtrans[6][6];
-    char cdesc[5], desc[512], make[64], model[64], model2[64], artist[64];
+    char cdesc[5], desc[512], make[64], model[64], model2[64], model3[64], artist[64];
     float flash_used, canon_ev, iso_speed, shutter, aperture, focal_len;
     time_t timestamp;
     unsigned shot_order, kodak_cbpp, filters, exif_cfa, unique_id;
@@ -90,6 +91,7 @@ protected:
     ushort raw_height, raw_width, height, width, top_margin, left_margin;
     ushort shrink, iheight, iwidth, fuji_width, thumb_width, thumb_height;
     ushort *raw_image;
+    float * float_raw_image;
     ushort white[8][8], curve[0x10000], cr2_slice[3], sraw_mul[4];
     int mask[8][4], flip, tiff_flip, colors;
     double pixel_aspect;
@@ -123,12 +125,13 @@ protected:
 
     struct tiff_ifd {
       int width, height, bps, comp, phint, offset, flip, samples, bytes;
-      int tile_width, tile_length;
+      int tile_width, tile_length, sample_format, predictor;
     } tiff_ifd[10];
 
     struct ph1 {
-      int format, key_off, black, black_off, black_off2, split_col, split_row, tag_21a;
-      float tag_210;
+	  int format, key_off, tag_21a;
+	  int black, split_col, black_col, split_row, black_row;
+	  float tag_210;
     } ph1;
 
     struct jhead {
@@ -215,6 +218,7 @@ void canon_sraw_load_raw();
 void adobe_copy_pixel (unsigned row, unsigned col, ushort **rp);
 void lossless_dng_load_raw();
 void packed_dng_load_raw();
+void deflate_dng_load_raw();
 void pentax_load_raw();
 void nikon_load_raw();
 int nikon_is_compressed();
@@ -278,7 +282,7 @@ void minolta_rd175_load_raw();
 void quicktake_100_load_raw();
 void kodak_radc_load_raw();
 void samsung_load_raw();
-
+void samsung2_load_raw();
 void kodak_jpeg_load_raw();
 void lossy_dng_load_raw();
 void kodak_dc120_load_raw();

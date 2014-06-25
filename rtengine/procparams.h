@@ -473,6 +473,7 @@ class DirPyrDenoiseParams {
     public:
         bool    enabled;
         bool    enhance;
+        bool    median;
 		
         bool    perform;
         double  luma;
@@ -482,6 +483,7 @@ class DirPyrDenoiseParams {
         double  bluechro;
         double  gamma;
         Glib::ustring dmethod;
+        Glib::ustring medmethod;
 };
 
 //EPD related parameters.
@@ -778,7 +780,7 @@ class RAWParams {
     public:
 	//	enum eMethod{eahd,hphd,vng4,dcb,amaze,ahd,IGV_noise,fast,
 	//				numMethods }; // This MUST be the last enum
-		enum eMethod{amaze,igv,lmmse,eahd,hphd,vng4,dcb,ahd,fast,
+		enum eMethod{amaze,igv,lmmse,eahd,hphd,vng4,dcb,ahd,fast,mono,none,
 					numMethods }; // This MUST be the last enum
 					
 		static const char *methodstring[numMethods];

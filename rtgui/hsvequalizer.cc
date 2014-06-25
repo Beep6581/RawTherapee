@@ -134,9 +134,12 @@ void HSVEqualizer::curveChanged (CurveEditor* ce) {
 	}
 }
 
-void HSVEqualizer::colorForValue (double valX, double valY, int callerId, ColorCaller* caller) {
+void HSVEqualizer::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) {
 
 	float r, g, b;
+
+	if (elemType==ColorCaller::CCET_VERTICAL_BAR)
+		valY = 0.5;
 
 	if (callerId == 1) {        // Hue = f(Hue)
 

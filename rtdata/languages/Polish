@@ -704,7 +704,7 @@ PREFERENCES_INTENT_PERCEPTUAL;Percepcyjny
 PREFERENCES_INTENT_RELATIVE;Względnie kolorymetryczny
 PREFERENCES_INTENT_SATURATION;Nasyceniowy
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Pokaż osadzoną miniaturę raw, jeśli nieedytowany
-PREFERENCES_LANGAUTODETECT;Użycie systemowych ustawień językowych
+PREFERENCES_LANGAUTODETECT;Użyj języka systemowego
 PREFERENCES_MENUGROUPEXTPROGS;Grupuj "Otwórz za pomocą"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Grupuj operacje plików
 PREFERENCES_MENUGROUPLABEL;Grupuj operacje etykiet
@@ -1374,12 +1374,16 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_253;CbDL Reduce artifacts
 !HISTORY_MSG_254;CbDL - Hueskin
 !HISTORY_MSG_255;CbDL - Algorithm
+!NAVIGATOR_NA; --
 !PARTIALPASTE_CHANNELMIXERBW;Black-and-White
 !PARTIALPASTE_GRADIENT;Graduated filter
 !PARTIALPASTE_PCVIGNETTE;Vignette filter
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
+!PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
+!PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator, otherwise the gamma-corrected output profile is used.
+!PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 !PROFILEPANEL_GLOBALPROFILES;Bundled profiles
 !PROFILEPANEL_MYPROFILES;My profiles

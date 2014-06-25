@@ -168,7 +168,7 @@ bool FilePanel::fileSelected (Thumbnail* thm) {
         return false;
 
     // Check if it's already open BEFORE loading the file
-    if (options.tabbedUI && parent->selectEditorPanel(Glib::path_get_basename (thm->getFileName())))
+    if (options.tabbedUI && parent->selectEditorPanel(thm->getFileName()))
         return true;
 
     // try to open the file
@@ -189,7 +189,7 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
             {
             GThreadLock lock; // Acquiring the GUI... not sure that it's necessary, but it shouldn't harm
             epanel = Gtk::manage (new EditorPanel ());
-            parent->addEditorPanel (epanel,Glib::path_get_basename (thm->getFileName()));
+            parent->addEditorPanel (epanel,thm->getFileName());
             }
             epanel->open(thm, pc->returnValue() );
         } else {

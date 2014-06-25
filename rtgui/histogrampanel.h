@@ -85,7 +85,7 @@ class HistogramRGBArea : public Gtk::DrawingArea {
     HistogramRGBArea();
     ~HistogramRGBArea();
 
-    void renderRGBMarks (int r, int g, int b, Glib::ustring profile = "");
+    void renderRGBMarks (int r, int g, int b, Glib::ustring profile = "", Glib::ustring profileW = "");
     void updateFreeze (bool f);
     bool getFreeze ();
     bool getShow ();
@@ -99,7 +99,7 @@ class HistogramRGBArea : public Gtk::DrawingArea {
     bool on_button_press_event (GdkEventButton* event);
     void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
   private:
-  	void rgb2lab (Glib::ustring profile, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b);
+  	void rgb2lab (Glib::ustring profile, Glib::ustring profileW,int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b);
     // Some ...
 };
 
@@ -203,7 +203,7 @@ class HistogramPanel : public Gtk::HBox, public PointerMotionListener, public Fu
         histogramArea->update (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw, histChroma);
     }
     // pointermotionlistener interface
-    void pointerMoved (bool validPos, Glib::ustring profile, int x, int y, int r, int g, int b);
+    void pointerMoved (bool validPos, Glib::ustring profile, Glib::ustring profileW,int x, int y, int r, int g, int b);
     // added pointermotionlistener interface
     void toggleFreeze();
     // TODO should be protected

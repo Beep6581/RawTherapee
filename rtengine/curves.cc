@@ -390,7 +390,7 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 }
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	void CurveFactory::complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, bool & cclutili, double saturation, double rstprotection,
+	void CurveFactory::complexsgnCurve (float adjustr, bool & autili,  bool & butili, bool & ccutili, bool & cclutili, double saturation, double rstprotection,
 										const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,
 										const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve,
 										LUTu & histogramC, LUTu & histogramLC, LUTu & outBeforeCCurveHistogram,LUTu & outBeforeLCurveHistogram, //for chroma
@@ -402,10 +402,11 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 		bool needed;
 		DiagonalCurve* dCurve = NULL;
 		LUTf dCcurve(65536,0);
-	
-		for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
-				dCcurve[i] = (float)i / 47999.0;
+		int k=48000;//32768*1.41
+		for (int i=0; i<k*adjustr; i++) {  //# 32768*1.414  approximation maxi for chroma
+				dCcurve[i] = (float)i / (k*adjustr-1);
 		}
+		
 		if (outBeforeCCurveHistogram)		
 			outBeforeCCurveHistogram.clear();
 		bool histNeededC = false;
@@ -459,7 +460,7 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 			if (dCurve && !dCurve->isIdentity())
 				{needed = true;ccutili=true;}
 		}
-		for (int i=0; i<48000; i++) {//32768*1.414  + ...
+		for (int i=0; i<k*adjustr; i++) {//32768*1.414  + ...
 			float val;
 			if (histNeededC) {
 				float hval = dCcurve[i];
@@ -483,7 +484,7 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 			if (dCurve && !dCurve->isIdentity())
 				{needed = true;cclutili=true;}
 		}
-		for (int i=0; i<48000; i++) {//32768*1.414  + ...
+		for (int i=0; i<k*adjustr; i++) {//32768*1.414  + ...
 			float val;
 			if (histNeededLC) {
 				float hval = dCcurve[i];

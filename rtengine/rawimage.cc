@@ -40,6 +40,7 @@ RawImage::~RawImage()
    if( image )
 		free(image);
    if(allocation){ delete [] allocation; allocation=NULL;}
+   if(float_raw_image) { delete [] float_raw_image; float_raw_image = NULL; }
    if(data){ delete [] data; data=NULL;}
    if(profile_data){ delete [] profile_data; profile_data=NULL;}
 }
@@ -52,7 +53,7 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
 	unsigned  row, col, x, y, c, sum[8];
 	unsigned  W = this->get_width();
 	unsigned  H = this->get_height();
-	int val;
+	float val;
 	double dsum[8], dmin, dmax;
 
 
@@ -81,15 +82,15 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
 {
 			double dsumthr[8];
 			memset(dsumthr, 0, sizeof dsumthr);
-			int sum[4];
+			float sum[4];
 			// make local copies of the black and white values to avoid calculations and conversions
-			int cblackint[4];
-			int whiteint[4];
+			float cblackfloat[4];
+			float whitefloat[4];
 			for (int c = 0; c < 4; c++) {
-				cblackint[c] = cblack_[c];
-				whiteint[c] = this->get_white(c) - 25;
+				cblackfloat[c] = cblack_[c];
+				whitefloat[c] = this->get_white(c) - 25;
 			}
-			unsigned short *tempdata = data[0];
+			float *tempdata = data[0];
 #pragma omp for nowait
 			for (row = 0; row < H; row += 8) {
 				int ymax = row + 8 < H ? row + 8 : H;
@@ -100,15 +101,15 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
 						for (x = col; x < xmax; x++) {
 							int c = FC(y, x);
 							val = tempdata[y*W+x];
-							if (val > whiteint[c]) { // calculate number of pixels to be substracted from sum and skip the block
+							if (val > whitefloat[c]) { // calculate number of pixels to be substracted from sum and skip the block
 								dsumthr[FC(row,col)+4]		+= (int)(((xmax - col + 1)/2) * ((ymax - row + 1)/2));
 								dsumthr[FC(row,col+1)+4]	+= (int)(((xmax - col)/2) * ((ymax - row + 1)/2));
 								dsumthr[FC(row+1,col)+4]	+= (int)(((xmax - col + 1)/2) * ((ymax - row)/2));
 								dsumthr[FC(row+1,col+1)+4]	+= (int)(((xmax - col)/2) * ((ymax - row)/2));
 								goto skip_block2;
 							}
-							if (val < cblackint[c])
-								val = cblackint[c];
+							if (val < cblackfloat[c])
+								val = cblackfloat[c];
 							sum[c] += val;
 						}
 					for (int c = 0; c < 4; c++)
@@ -128,6 +129,9 @@ skip_block2: ;
 			for(int c=0;c<4;c++)
 				dsum[c] -= cblack_[c] * dsum[c+4];
 
+		} else if (colors == 1) {
+			for (int c = 0; c < 4; c++)
+				pre_mul_[c] = 1;
 		} else {
 			for (row = 0; row < H; row += 8)
 				for (col = 0; col < W ; col += 8) {
@@ -180,6 +184,10 @@ skip_block: ;
 	if (pre_mul_[3] == 0)
 		pre_mul_[3] = this->get_colors() < 4 ? pre_mul_[1] : 1;
 
+	if (colors == 1)
+		for (c = 1; c < 4; c++)
+			cblack_[c] = cblack_[0];
+
 	bool multiple_whites = false;
 	int largest_white = this->get_white(0);
 	for (c = 1; c < 4; c++) {
@@ -208,7 +216,7 @@ skip_block: ;
 	}
 
 	for (c = 0; c < 4; c++) {
-		int sat = this->get_white(c) - this->get_cblack(c);
+		int sat = this->get_white(c) - cblack_[c];
 		scale_mul_[c] = (pre_mul_[c] /= dmax) * 65535.0 / sat;
 	}
 	if (settings->verbose) {
@@ -324,7 +332,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
 				  width += w;
 				  width -= left_margin;
 			  } else if (w > 0) {
-				  iwidth = width = w;
+				  iwidth = width = min((int)width,w);
 			  }
 			  if (h < 0) {
 				  iheight += h;
@@ -332,7 +340,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
 				  height += h;
 				  height -= top_margin;
 			  } else if (h > 0) {
-				  iheight = height = h;
+				  iheight = height = min((int)height,h);
 			  }
 		  }
 		  if (cc && cc->has_rawMask(0)) {
@@ -369,7 +377,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
       if (cc) {
            for (int i = 0; i < 4; i++) {
                  if (RT_blacklevel_from_constant) {
-                     black_c4[i] = cc->get_BlackLevel(i, iso_speed);
+                     black_c4[i] = cblack[i] + cc->get_BlackLevel(i, iso_speed);
                  }
                  // load 4 channel white level here, will be used if available
                  if (RT_whitelevel_from_constant) {
@@ -379,7 +387,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
       }
       if (black_c4[0] == -1) {
           // RT constants not set, bring in the DCRAW single channel black constant
-          for (int c=0; c < 4; c++) black_c4[c] = black;
+          for (int c=0; c < 4; c++) black_c4[c] = black + cblack[c];
       } else {
 	      black_from_cc = true;
       }
@@ -416,32 +424,52 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
   return 0;
 }
 
-unsigned short** RawImage::compress_image()
+float** RawImage::compress_image()
 {
 	if( !image )
 		return NULL;
 	if (filters) {
 		if (!allocation) {
-			allocation = new unsigned short[height * width];
-			data = new unsigned short*[height];
+			allocation = new float[height * width];
+			data = new float*[height];
+			for (int i = 0; i < height; i++)
+				data[i] = allocation + i * width;
+		}
+	} else if (colors == 1) {
+		// Monochrome
+		if (!allocation) {
+			allocation = new float[height * width];
+			data = new float*[height];
 			for (int i = 0; i < height; i++)
 				data[i] = allocation + i * width;
 		}
 	} else {
 		if (!allocation) {
-			allocation = new unsigned short[3 * height * width];
-			data = new unsigned short*[height];
+			allocation = new float[3 * height * width];
+			data = new float*[height];
 			for (int i = 0; i < height; i++)
 				data[i] = allocation + 3 * i * width;
 		}
 	}
 
     // copy pixel raw data: the compressed format earns space
-	if (filters != 0) {
+    if( float_raw_image ) {
+        #pragma omp parallel for
+        for (int row = 0; row < height; row++)
+            for (int col = 0; col < width; col++)
+                this->data[row][col] = float_raw_image[(row + top_margin) * raw_width + col + left_margin];
+		delete [] float_raw_image;
+        float_raw_image = NULL;
+    } else if (filters != 0) {
         #pragma omp parallel for
 		for (int row = 0; row < height; row++)
 			for (int col = 0; col < width; col++)
 				this->data[row][col] = image[row * width + col][FC(row, col)];
+	} else if (colors == 1) {
+        #pragma omp parallel for
+		for (int row = 0; row < height; row++)
+			for (int col = 0; col < width; col++)
+				this->data[row][col] = image[row * width + col][0];
 	} else {
         #pragma omp parallel for
 		for (int row = 0; row < height; row++)
@@ -555,30 +583,32 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
           { 8665,-2247,-762,-2424,10372,2382,-1011,2286,5189 } },
 
 
-        { "Panasonic DMC-FZ150", 143, 0xfff,  /* RT */
-          { 10435,-3208,-72,-2293,10506,2067,-486,1725,4682 } },
-        { "Panasonic DMC-G10", 15, 0xf3c, /* RT - Colin Walker */
-          { 8310,-1811,-960,-4941,12990,2151,-1378,2468,6860 } },
-        { "Panasonic DMC-G1", 15, 0xf94,    /* RT - Colin Walker*/
-          { 7477,-1615,-651,-5016,12769,2506,-1380,2475,7240 } },
-        { "Panasonic DMC-G2", 15, 0xf3c, /* RT - Colin Walker */
-          { 8310,-1811,-960,-4941,12990,2151,-1378,2468,6860 } },
-        { "Panasonic DMC-G3", 143, 0xfff,   /* RT - Colin Walker */
-          { 6051,-1406,-671,-4015,11505,2868,-1654,2667,6219 } },
-        { "Panasonic DMC-G5", 143, 0xfff,   /* RT */
-          { 7122,-2092,-419,-4643,11769,3283,-1363,2413,5944 } },
-        { "Panasonic DMC-GF1", 15, 0xf92, /* RT - Colin Walker */
-          { 7863,-2080,-668,-4623,12331,2578,-1020,2066,7266 } },
-        { "Panasonic DMC-GF2", 143, 0xfff, /* RT - Colin Walker */
-          { 7694,-1791,-745,-4917,12818,2332,-1221,2322,7197 } },
-        { "Panasonic DMC-GF3", 143, 0xfff, /* RT - Colin Walker */
-          { 8074,-1846,-861,-5026,12999,2239,-1320,2375,7422 } },
-        { "Panasonic DMC-GH1", 15, 0xf92,  /* RT - Colin Walker */
-          { 6360,-1557,-375,-4201,11504,3086,-1378,2518,5843 } },
-        { "Panasonic DMC-GH2", 15, 0xf95, /* RT - Colin Walker */
-//        { 6855,-1765,-456,-4223,11600,2996,-1450,2602,5761 } }, disabled
-          { 7780,-2410,-806,-3913,11724,2484,-1018,2390,5298 } }, // dcraw original
+    /* since Dcraw_v9.21 Panasonic BlackLevel is read from exif (tags 0x001c BlackLevelRed, 0x001d BlackLevelGreen, 0x001e BlackLevelBlue 
+      and we define here the needed offset of around 15. The total BL is BL + BLoffset (cblack + black)  */
 
+	    { "Panasonic DMC-FZ150", 15, 0xfd2,  /* RT */
+          { 10435,-3208,-72,-2293,10506,2067,-486,1725,4682 } },
+        { "Panasonic DMC-G10", 15, 0xf50, /* RT - Colin Walker - variable WL 3920 - 4080 */
+          { 8310,-1811,-960,-4941,12990,2151,-1378,2468,6860 } },
+        { "Panasonic DMC-G1", 15, 0xf50,  /* RT - Colin Walker - variable WL 3920 - 4080 */
+          { 7477,-1615,-651,-5016,12769,2506,-1380,2475,7240 } },
+        { "Panasonic DMC-G2", 15, 0xf50,  /* RT - Colin Walker - variable WL 3920 - 4080  */
+          { 8310,-1811,-960,-4941,12990,2151,-1378,2468,6860 } },
+        { "Panasonic DMC-G3", 15, 0xfdc,  /* RT - Colin Walker - WL 4060 */
+          { 6051,-1406,-671,-4015,11505,2868,-1654,2667,6219 } },
+        { "Panasonic DMC-G5", 15, 0xfdc,   /* RT - WL 4060 */
+          { 7122,-2092,-419,-4643,11769,3283,-1363,2413,5944 } },
+        { "Panasonic DMC-GF1", 15, 0xf50, /* RT - Colin Walker - Variable WL 3920 - 4080 */
+          { 7863,-2080,-668,-4623,12331,2578,-1020,2066,7266 } },
+        { "Panasonic DMC-GF2", 15, 0xfd2, /* RT - Colin Walker - WL 4050 */
+          { 7694,-1791,-745,-4917,12818,2332,-1221,2322,7197 } },
+        { "Panasonic DMC-GF3", 15, 0xfd2, /* RT - Colin Walker - WL 4050 */
+          { 8074,-1846,-861,-5026,12999,2239,-1320,2375,7422 } },
+        { "Panasonic DMC-GH1", 15, 0xf5a,  /* RT - Colin Walker - variable WL 3930 - 4080 */
+          { 6360,-1557,-375,-4201,11504,3086,-1378,2518,5843 } },
+        { "Panasonic DMC-GH2", 15, 0xf5a,  /* RT - Colin Walker - variable WL 3930 - 4080 */
+//        { 6855,-1765,-456,-4223,11600,2996,-1450,2602,5761 } }, disabled due to problems with underwater WB
+          { 7780,-2410,-806,-3913,11724,2484,-1018,2390,5298 } }, // dcraw original
 
         { "Pentax K200D", -1, -1,  /* RT */
           { 10962,-4428,-542,-5486,13023,2748,-569,842,8390 } },

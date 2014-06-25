@@ -16,17 +16,25 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifdef WIN32
+// Desired auto detect function is Vista+
+#if __GNUC__ == 4 && __GNUC_MINOR__ >= 8
+#define WINVER 0x0600 // switching to WINVER for gcc 4.8.1 support on Winx64
+#else
+#define _WIN32_WINNT 0x0600
+#endif
+#include <windows.h>
+#include <winnls.h>
+#if __GNUC__ == 4 && __GNUC_MINOR__ >= 8
+#undef WINVER
+#else
+#undef _WIN32_WINNT
+#endif
+#endif
 #include <glib/gstdio.h>
 #include "multilangmgr.h"
 #include <cstring>
 #include "../rtengine/safegtk.h"
-#ifdef WIN32
-// Desired auto detect function is Vista+
-#define _WIN32_WINNT 0x0600
-#include <windows.h>
-#include <winnls.h>
-#undef _WIN32_WINNT
-#endif
 
 MultiLangMgr langMgr;
 

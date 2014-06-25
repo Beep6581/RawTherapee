@@ -132,6 +132,7 @@ ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double de
 
 void ThresholdSelector::initValues () {
 
+	updatePolicy = RTUP_STATIC;
 	additionalTTip = "";
 	oldLitCursor = litCursor = TS_UNDEFINED;
 	movedCursor = TS_UNDEFINED;
@@ -141,6 +142,7 @@ void ThresholdSelector::initValues () {
 	set_name("ThresholdSelector");
 	set_can_focus(false);
 	set_app_paintable(true);
+	setDirty(true);
 	updateTooltip();
 }
 
@@ -150,6 +152,8 @@ void ThresholdSelector::initValues () {
 void ThresholdSelector::setPositions (double bottom, double top) {
 
 	setPositions(bottom, top, maxValBottom, maxValTop);
+	if (updatePolicy==RTUP_DYNAMIC)
+		setDirty(true);
 }
 
 /*
@@ -165,6 +169,8 @@ void ThresholdSelector::setPositions (double bottomLeft, double topLeft, double 
 	positions[TS_TOPRIGHT]    = topRight;
 
 	if (different) {
+		if (updatePolicy==RTUP_DYNAMIC)
+			setDirty(true);
 		sig_val_changed.emit();
 		updateTooltip();
 		queue_draw ();
@@ -267,6 +273,7 @@ bool ThresholdSelector::on_expose_event(GdkEventExpose* event) {
 
 	}
 	else {
+		if (!separatedSliders) {
 		double yStart = initalEq1 ? double(int(float(h)*1.5f/7.f))+1.5 : double(int(float(h)*5.5f/7.f))-0.5;
 		double yEnd   = initalEq1 ? double(int(float(h)*5.5f/7.f))-0.5 : double(int(float(h)*1.5f/7.f))+1.5;
 		ThreshCursorId p[4];
@@ -286,6 +293,7 @@ bool ThresholdSelector::on_expose_event(GdkEventExpose* event) {
 			if (positions[p[3]] < maxValTop)
 				cr->line_to (hb+hwslider+iw+0.5, yStart);
 		}
+	}
 	}
 	if (is_sensitive() && bgGradient.size()>1) {
 		// draw surrounding curve
@@ -444,6 +452,10 @@ bool ThresholdSelector::on_motion_notify_event (GdkEventMotion* event) {
 		// set the new reference value for the next move
 		tmpX = event->x;
 
+		// ask to redraw the background
+		if (updatePolicy==RTUP_DYNAMIC)
+			setDirty(true);
+
 		// update the tooltip
 		updateTooltip();
 
@@ -597,11 +609,15 @@ void ThresholdSelector::reset () {
 	positions[1] = defPos[1];
 	positions[2] = defPos[2];
 	positions[3] = defPos[3];
+
+	if (updatePolicy==RTUP_DYNAMIC)
+		setDirty(true);
+
 	updateTooltip();
 	queue_draw ();
 }
 
-inline double ThresholdSelector::to01(ThreshCursorId cursorId) {
+double ThresholdSelector::to01(ThreshCursorId cursorId) {
 
 	double rVal;
 	if (cursorId==TS_BOTTOMLEFT || cursorId==TS_BOTTOMRIGHT)
@@ -613,15 +629,15 @@ inline double ThresholdSelector::to01(ThreshCursorId cursorId) {
 	return rVal;
 }
 
-inline void ThresholdSelector::setBgCurveProvider (ThresholdCurveProvider* provider) {
+void ThresholdSelector::setBgCurveProvider (ThresholdCurveProvider* provider) {
 	bgCurveProvider = provider;
 }
 
-inline void ThresholdSelector::setSeparatedSliders(bool separated) {
+void ThresholdSelector::setSeparatedSliders(bool separated) {
 	separatedSliders = separated;
 }
 
-inline bool ThresholdSelector::getSeparatedSliders() {
+bool ThresholdSelector::getSeparatedSliders() {
 	return separatedSliders;
 }
 

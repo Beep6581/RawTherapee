@@ -50,6 +50,7 @@ namespace rtengine {
 			bool            gamutICC; // no longer used
 			bool            gamutLch;
 			bool			ciecamfloat;
+			bool			HistogramWorking;
 			int				amchroma;
 			int             protectred;
 			double          protectredh;

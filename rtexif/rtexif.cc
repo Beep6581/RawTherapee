@@ -731,10 +731,11 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
                       directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE  , sonyCameraSettingsAttribs3, INTEL);
                   else {
                       // Unknown CameraSettings
-                      delete directory;
+                      delete [] directory;
                       directory = NULL;
+                      type = INVALID;
                   }
-                  makerNoteKind = TABLESUBDIR;
+                  makerNoteKind = directory ? TABLESUBDIR : NOMK;
                   break;
               case 0x9405:
                   directory = new TagDirectory*[2];
@@ -771,10 +772,11 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
                       directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , pentaxSRInfo2Attribs, order);
                   else {
                       // Unknown SRInfo
-                      delete directory;
+                      delete [] directory;
                       directory = NULL;
+                      type = INVALID;
                   }
-                  makerNoteKind = TABLESUBDIR;
+                  makerNoteKind = directory ? TABLESUBDIR : NOMK;
                   break;
               case 0x0206:
                   directory = new TagDirectory*[2];
@@ -787,10 +789,11 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
                       directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , pentaxAEInfoAttribs, order);
                   else {
                       // Unknown AEInfo
-                      delete directory;
+                      delete [] directory;
                       directory = NULL;
+                      type = INVALID;
                   }
-                  makerNoteKind = TABLESUBDIR;
+                  makerNoteKind = directory ? TABLESUBDIR : NOMK;
                   break;
               case 0x0207:
               {   // There are 2 format pentaxLensDataAttribs
@@ -799,10 +802,10 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
                       offsetFirst = 3;  // LensInfo
                   else if( strstr(model, "645D") )
                       offsetFirst = 13;  // LensInfo3
+                  else if( strstr(model, "K-01") || strstr(model, "K-30") || strstr(model, "K-500"))
+                      offsetFirst = 15;  // LensInfo5
                   else if( strstr(model, "K-5") || strstr(model, "K-r") )
                       offsetFirst = 12;  // LensInfo4
-                  else if( strstr(model, "K-01") || strstr(model, "K-30"))
-                      offsetFirst = 15;  // LensInfo5
                   else if(!strncmp(make, "RICOH", 5)) { // all PENTAX camera model produced under the RICOH era uses LensInfo5, for now...
                       offsetFirst = 15;  // LensInfo5 too
                   }

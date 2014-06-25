@@ -70,7 +70,7 @@ public:
 	{
 		int threadCount=1;
 		#ifdef _OPENMP
-		threadCount=omp_get_num_procs();  
+			threadCount=omp_get_num_procs();
 		#endif
 		
 		threadPool_=new Glib::ThreadPool(threadCount,0);

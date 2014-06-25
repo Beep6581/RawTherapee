@@ -89,6 +89,7 @@ protected:
 	void updateGUI (CurveEditor* ce);
 	void curveResetPressed ();
 	void curveChanged ();
+	float blendPipetteValues(float chan1, float chan2, float chan3);
 	void setUnChanged (bool uc, CurveEditor* ce);
 };
 
