@@ -278,8 +278,9 @@ enum ProcEvent {
 	EvDirPyrEqlgamutlab=252,
 	EvDirPyrEqualizerHueskin=253,
 //	EvDirPyrEqualizeralg=254,
-	
-	NUMOFEVENTS=254
+	EvDPDNmedian=254,
+	EvDPDNmedmet=255,	
+	NUMOFEVENTS=256
 };
 }
 #endif

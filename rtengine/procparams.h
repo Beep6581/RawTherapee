@@ -473,6 +473,7 @@ class DirPyrDenoiseParams {
     public:
         bool    enabled;
         bool    enhance;
+        bool    median;
 		
         bool    perform;
         double  luma;
@@ -482,6 +483,7 @@ class DirPyrDenoiseParams {
         double  bluechro;
         double  gamma;
         Glib::ustring dmethod;
+        Glib::ustring medmethod;
 };
 
 //EPD related parameters.

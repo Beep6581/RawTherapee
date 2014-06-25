@@ -273,7 +273,9 @@ ALLNORAW,         // EvDPDNenhance
 RGBCURVE,         // EvBWMethodalg
 DIRPYREQUALIZER,  // EvDirPyrEqualizerSkin
 DIRPYREQUALIZER,  // EvDirPyrEqlgamutlab
-DIRPYREQUALIZER  // EvDirPyrEqualizerHueskin
+DIRPYREQUALIZER,  // EvDirPyrEqualizerHueskin
+ALLNORAW,         // EvDPDNmedian
+ALLNORAW 			//EvDPDNmedmet
 //DIRPYREQUALIZER   // EvDirPyrEqualizeralg
 
 //LUMINANCECURVE    // EvCATsharpcie

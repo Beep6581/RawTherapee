@@ -62,6 +62,65 @@
 
 #define epsilon 0.001f/(TS*TS) //tolerance
 
+#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
+
+#define med3(a0,a1,a2,a3,a4,a5,a6,a7,a8,median) { \
+pp[0]=a0; pp[1]=a1; pp[2]=a2; pp[3]=a3; pp[4]=a4; pp[5]=a5; pp[6]=a6; pp[7]=a7; pp[8]=a8; \
+PIX_SORT(pp[1],pp[2]); PIX_SORT(pp[4],pp[5]); PIX_SORT(pp[7],pp[8]); \
+PIX_SORT(pp[0],pp[1]); PIX_SORT(pp[3],pp[4]); PIX_SORT(pp[6],pp[7]); \
+PIX_SORT(pp[1],pp[2]); PIX_SORT(pp[4],pp[5]); PIX_SORT(pp[7],pp[8]); \
+PIX_SORT(pp[0],pp[3]); PIX_SORT(pp[5],pp[8]); PIX_SORT(pp[4],pp[7]); \
+PIX_SORT(pp[3],pp[6]); PIX_SORT(pp[1],pp[4]); PIX_SORT(pp[2],pp[5]); \
+PIX_SORT(pp[4],pp[7]); PIX_SORT(pp[4],pp[2]); PIX_SORT(pp[6],pp[4]); \
+PIX_SORT(pp[4],pp[2]); median=pp[4];} //pp4 = median
+
+#define med2(a0,a1,a2,a3,a4,median) { \
+pp[0]=a0; pp[1]=a1; pp[2]=a2; pp[3]=a3; pp[4]=a4;  \
+PIX_SORT(pp[0],pp[1]) ; PIX_SORT(pp[3],pp[4]) ; PIX_SORT(pp[0],pp[3]) ;\
+PIX_SORT(pp[1],pp[4]) ; PIX_SORT(pp[1],pp[2]) ; PIX_SORT(pp[2],pp[3]) ;\
+PIX_SORT(pp[1],pp[2]) ; median=pp[2] ;}
+
+#define med5(a0,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a14,a15,a16,a17,a18,a19,a20,a21,a22,a23,a24,median) { \
+pp[0]=a0; pp[1]=a1; pp[2]=a2; pp[3]=a3; pp[4]=a4; pp[5]=a5; pp[6]=a6; pp[7]=a7; pp[8]=a8; pp[9]=a9; pp[10]=a10; pp[11]=a11; pp[12]=a12; \
+pp[13]=a13; pp[14]=a14; pp[15]=a15; pp[16]=a16; pp[17]=a17; pp[18]=a18; pp[19]=a19; pp[20]=a20; pp[21]=a21; pp[22]=a22; pp[23]=a23; pp[24]=a24; \
+PIX_SORT(pp[0], pp[1]) ;   PIX_SORT(pp[3], pp[4]) ;   PIX_SORT(pp[2], pp[4]) ;\
+PIX_SORT(pp[2], pp[3]) ;   PIX_SORT(pp[6], pp[7]) ;   PIX_SORT(pp[5], pp[7]) ;\
+PIX_SORT(pp[5], pp[6]) ;   PIX_SORT(pp[9], pp[10]) ;  PIX_SORT(pp[8], pp[10]) ;\
+PIX_SORT(pp[8], pp[9]) ;   PIX_SORT(pp[12], pp[13]) ; PIX_SORT(pp[11], pp[13]) ;\
+PIX_SORT(pp[11], pp[12]) ; PIX_SORT(pp[15], pp[16]) ; PIX_SORT(pp[14], pp[16]) ;\
+PIX_SORT(pp[14], pp[15]) ; PIX_SORT(pp[18], pp[19]) ; PIX_SORT(pp[17], pp[19]) ;\
+PIX_SORT(pp[17], pp[18]) ; PIX_SORT(pp[21], pp[22]) ; PIX_SORT(pp[20], pp[22]) ;\
+PIX_SORT(pp[20], pp[21]) ; PIX_SORT(pp[23], pp[24]) ; PIX_SORT(pp[2], pp[5]) ;\
+PIX_SORT(pp[3], pp[6]) ;   PIX_SORT(pp[0], pp[6]) ;   PIX_SORT(pp[0], pp[3]) ;\
+PIX_SORT(pp[4], pp[7]) ;   PIX_SORT(pp[1], pp[7]) ;   PIX_SORT(pp[1], pp[4]) ;\
+PIX_SORT(pp[11], pp[14]) ; PIX_SORT(pp[8], pp[14]) ;  PIX_SORT(pp[8], pp[11]) ;\
+PIX_SORT(pp[12], pp[15]) ; PIX_SORT(pp[9], pp[15]) ;  PIX_SORT(pp[9], pp[12]) ;\
+PIX_SORT(pp[13], pp[16]) ; PIX_SORT(pp[10], pp[16]) ; PIX_SORT(pp[10], pp[13]) ;\
+PIX_SORT(pp[20], pp[23]) ; PIX_SORT(pp[17], pp[23]) ; PIX_SORT(pp[17], pp[20]) ;\
+PIX_SORT(pp[21], pp[24]) ; PIX_SORT(pp[18], pp[24]) ; PIX_SORT(pp[18], pp[21]) ;\
+PIX_SORT(pp[19], pp[22]) ; PIX_SORT(pp[8], pp[17]) ;  PIX_SORT(pp[9], pp[18]) ;\
+PIX_SORT(pp[0], pp[18]) ;  PIX_SORT(pp[0], pp[9]) ;   PIX_SORT(pp[10], pp[19]) ;\
+PIX_SORT(pp[1], pp[19]) ;  PIX_SORT(pp[1], pp[10]) ;  PIX_SORT(pp[11], pp[20]) ;\
+PIX_SORT(pp[2], pp[20]) ;  PIX_SORT(pp[2], pp[11]) ;  PIX_SORT(pp[12], pp[21]) ;\
+PIX_SORT(pp[3], pp[21]) ;  PIX_SORT(pp[3], pp[12]) ;  PIX_SORT(pp[13], pp[22]) ;\
+PIX_SORT(pp[4], pp[22]) ;  PIX_SORT(pp[4], pp[13]) ;  PIX_SORT(pp[14], pp[23]) ;\
+PIX_SORT(pp[5], pp[23]) ;  PIX_SORT(pp[5], pp[14]) ;  PIX_SORT(pp[15], pp[24]) ;\
+PIX_SORT(pp[6], pp[24]) ;  PIX_SORT(pp[6], pp[15]) ;  PIX_SORT(pp[7], pp[16]) ;\
+PIX_SORT(pp[7], pp[19]) ;  PIX_SORT(pp[13], pp[21]) ; PIX_SORT(pp[15], pp[23]) ;\
+PIX_SORT(pp[7], pp[13]) ;  PIX_SORT(pp[7], pp[15]) ;  PIX_SORT(pp[1], pp[9]) ;\
+PIX_SORT(pp[3], pp[11]) ;  PIX_SORT(pp[5], pp[17]) ;  PIX_SORT(pp[11], pp[17]) ;\
+PIX_SORT(pp[9], pp[17]) ;  PIX_SORT(pp[4], pp[10]) ;  PIX_SORT(pp[6], pp[12]) ;\
+PIX_SORT(pp[7], pp[14]) ;  PIX_SORT(pp[4], pp[6]) ;   PIX_SORT(pp[4], pp[7]) ;\
+PIX_SORT(pp[12], pp[14]) ; PIX_SORT(pp[10], pp[14]) ; PIX_SORT(pp[6], pp[7]) ;\
+PIX_SORT(pp[10], pp[12]) ; PIX_SORT(pp[6], pp[10]) ;  PIX_SORT(pp[6], pp[17]) ;\
+PIX_SORT(pp[12], pp[17]) ; PIX_SORT(pp[7], pp[17]) ;  PIX_SORT(pp[7], pp[10]) ;\
+PIX_SORT(pp[12], pp[18]) ; PIX_SORT(pp[7], pp[12]) ;  PIX_SORT(pp[10], pp[18]) ;\
+PIX_SORT(pp[12], pp[20]) ; PIX_SORT(pp[10], pp[20]) ; PIX_SORT(pp[10], pp[12]) ;\
+median=pp[12];} 
+
+#define ELEM_FLOAT_SWAP(a,b) { register float t=(a);(a)=(b);(b)=t; }
+
+
 namespace rtengine {
 
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,14 +142,58 @@ namespace rtengine {
 
 		extern const Settings* settings;
 
+// Median calculation using quicksort
+float fq_sort2(float arr[], int n) 
+{
+    int low, high ;
+    int median;
+    int middle, ll, hh;
+
+    low = 0 ; high = n-1 ; median = (low + high) / 2;
+    for (;;) {
+        if (high <= low)
+            return arr[median] ;
+        if (high == low + 1) {
+            if (arr[low] > arr[high])
+                ELEM_FLOAT_SWAP(arr[low], arr[high]) ;
+           return arr[median] ;
+        }
+
+    middle = (low + high) / 2;
+    if (arr[middle] > arr[high]) ELEM_FLOAT_SWAP(arr[middle], arr[high]) ;
+    if (arr[low] > arr[high]) ELEM_FLOAT_SWAP(arr[low], arr[high]) ;
+    if (arr[middle] > arr[low]) ELEM_FLOAT_SWAP(arr[middle], arr[low]) ;
+
+    ELEM_FLOAT_SWAP(arr[middle], arr[low+1]) ;
+    ll = low + 1;
+    hh = high;
+
+    for (;;) {
+        do ll++; while (arr[low] > arr[ll]) ;
+        do hh--; while (arr[hh]  > arr[low]) ;
+
+        if (hh < ll)
+        break;
+
+        ELEM_FLOAT_SWAP(arr[ll], arr[hh]) ;
+   }
+
+    ELEM_FLOAT_SWAP(arr[low], arr[hh]) ;
+
+    if (hh <= median)
+        low = ll;
+        if (hh >= median)
+        high = hh - 1;
+    }
+ }
 
 
 
 	void ImProcFunctions::RGB_denoise(Imagefloat * src, Imagefloat * dst, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe, const double expcomp)
 	{
 //#ifdef _DEBUG
-//	MyTime t1e,t2e;
-//	t1e.set();
+	MyTime t1e,t2e;
+	t1e.set();
 //#endif
 	
 		static MyMutex FftwMutex;
@@ -110,11 +213,14 @@ namespace rtengine {
 
 		const short int imheight=src->height, imwidth=src->width;
 
-		if (dnparams.luma==0 && dnparams.chroma==0) {
-            //nothing to do; copy src to dst
-            memcpy(dst->data,src->data,dst->width*dst->height*3*sizeof(float));
+		if (dnparams.luma==0 && dnparams.chroma==0  && !dnparams.median) {
+            //nothing to do; copy src to dst or do nothing in case src == dst
+			if(src != dst)
+				memcpy(dst->data,src->data,dst->width*dst->height*3*sizeof(float));
 			return;
 		}
+		
+	if (dnparams.luma!=0 || dnparams.chroma!=0) {
 		perf=false;
 		if(dnparams.dmethod=="RGB") perf=true;//RGB mode
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -165,6 +271,7 @@ namespace rtengine {
 		float incr=1.f;
 		float noisevar_Ldetail = SQR((float)(SQR(100.-dnparams.Ldetail) + 50.*(100.-dnparams.Ldetail)) * TS * 0.5f * incr);
 		bool enhance_denoise = dnparams.enhance;
+//		bool median_denoise = dnparams.median;
 		int gamlab = settings->denoiselabgamma;//gamma lab essentialy for Luminance detail
 		if(gamlab > 2) gamlab=2;
 		if(settings->verbose) printf("Denoise Lab=%i\n",gamlab);
@@ -768,18 +875,188 @@ namespace rtengine {
 		}
 
 		delete dsttmp;
-
     // destroy the plans
 	fftwf_destroy_plan( plan_forward_blox[0] );
 	fftwf_destroy_plan( plan_backward_blox[0] );
 	fftwf_destroy_plan( plan_forward_blox[1] );
 	fftwf_destroy_plan( plan_backward_blox[1] );
 	fftwf_cleanup();
+	}
+
+
+	//median 3x3 in complement 
+	if(dnparams.median) {
+		int wid=dst->width, hei=dst->height;
+		float** tm;
+		tm = new float*[hei];
+		for (int i=0; i<hei; i++)
+			tm[i] = new float[wid];
+			
+		Imagefloat *source;
+		if (dnparams.luma==0 && dnparams.chroma==0)
+			source = dst;
+		else
+			source = src;
+
+		int methmed=0;
+		int border = 1;
+		if(dnparams.medmethod=="soft")
+			methmed=0;
+		else if(dnparams.medmethod=="33")
+			methmed=1;
+		else if(dnparams.medmethod=="55") {
+			methmed = 3;
+			border = 2;
+		}
+		else if(dnparams.medmethod=="55soft") {
+			methmed = 2;
+			border = 2;
+		}
+
+
+#pragma omp parallel
+{
+		if(methmed < 2) {
+#pragma omp for	
+			for (int i=1; i<hei-1; i++) {
+				float pp[9],temp;
+				if(methmed == 0)
+					for (int j=1; j<wid-1; j++) {
+						med2(source->r(i,j),source->r(i-1,j),source->r(i+1,j),source->r(i,j+1),source->r(i,j-1),tm[i][j]);//3x3 soft
+						}
+				else
+					for (int j=1; j<wid-1; j++) {
+						med3(source->r(i,j),source->r(i-1,j),source->r(i+1,j),source->r(i,j+1),source->r(i,j-1),source->r(i-1,j-1),source->r(i-1,j+1),source->r(i+1,j-1),source->r(i+1,j+1),tm[i][j]);//3x3
+					}
+			}
+		} else {
+#pragma omp for	
+			for (int i=2; i<hei-2; i++) {
+				float pp[25],temp;
+				if(methmed == 3)			
+					for (int j=2; j<wid-2; j++) {
+						med5(source->r(i,j),source->r(i-1,j),source->r(i+1,j),source->r(i,j+1),source->r(i,j-1),source->r(i-1,j-1),source->r(i-1,j+1),source->r(i+1,j-1),source->r(i+1,j+1),
+						source->r(i-2,j),source->r(i+2,j),source->r(i,j+2),source->r(i,j-2),source->r(i-2,j-2),source->r(i-2,j+2),source->r(i+2,j-2),source->r(i+2,j+2),	
+						source->r(i-2,j+1),source->r(i+2,j+1),source->r(i-1,j+2),source->r(i-1,j-2),source->r(i-2,j-1),source->r(i+2,j-1),source->r(i+1,j+2),source->r(i+1,j-2),	
+						tm[i][j]);//5x5
+					}
+				else
+					for (int j=2; j<wid-2; j++) {
+						pp[0]=source->r(i,j);pp[1]=source->r(i-1,j); pp[2]=source->r(i+1,j);pp[3]=source->r(i,j+1);pp[4]=source->r(i,j-1);pp[5]=source->r(i-1,j-1);pp[6]=source->r(i-1,j+1);
+						pp[7]=source->r(i+1,j-1);pp[8]=source->r(i+1,j+1);pp[9]=source->r(i+2,j);pp[10]=source->r(i-2,j);pp[11]=source->r(i,j+2);pp[12]=source->r(i,j-2);
+						fq_sort2(pp,13);
+						tm[i][j]=pp[6];//5x5 soft
+					}
+				}
+		}
+#ifdef _OPENMP
+#pragma omp for nowait
+#endif
+		for(int i = border; i < hei-border; i++ ) {
+			for(int j = border; j < wid-border; j++) {
+				dst->r(i,j) = tm[i][j];
+			}
+		}
+
+		if(methmed < 2) {
+#pragma omp for		
+			for (int i=1; i<hei-1; i++) {
+				float pp[9],temp;
+				if(methmed == 0)
+					for (int j=1; j<wid-1; j++) {
+						med2(source->b(i,j),source->b(i-1,j),source->b(i+1,j),source->b(i,j+1),source->b(i,j-1),tm[i][j]);
+					}
+				else 
+					for (int j=1; j<wid-1; j++) {
+						med3(source->b(i,j),source->b(i-1,j),source->b(i+1,j),source->b(i,j+1),source->b(i,j-1),source->b(i-1,j-1),source->b(i-1,j+1),source->b(i+1,j-1),source->b(i+1,j+1),tm[i][j]);
+					}
+			}
+		} else {
+#pragma omp for	
+			for (int i=2; i<hei-2; i++) {
+				float pp[25],temp;
+				if(methmed == 3)							
+					for (int j=2; j<wid-2; j++) {
+						med5(source->b(i,j),source->b(i-1,j),source->b(i+1,j),source->b(i,j+1),source->b(i,j-1),source->b(i-1,j-1),source->b(i-1,j+1),source->b(i+1,j-1),source->b(i+1,j+1),
+						source->b(i-2,j),source->b(i+2,j),source->b(i,j+2),source->b(i,j-2),source->b(i-2,j-2),source->b(i-2,j+2),source->b(i+2,j-2),source->b(i+2,j+2),	
+						source->b(i-2,j+1),source->b(i+2,j+1),source->b(i-1,j+2),source->b(i-1,j-2),source->b(i-2,j-1),source->b(i+2,j-1),source->b(i+1,j+2),source->b(i+1,j-2),	
+						tm[i][j]);//5x5
+					}
+				else
+					for (int j=2; j<wid-2; j++) {
+						pp[0]=source->b(i,j);pp[1]=source->b(i-1,j); pp[2]=source->b(i+1,j);pp[3]=source->b(i,j+1);pp[4]=source->b(i,j-1);pp[5]=source->b(i-1,j-1);pp[6]=source->b(i-1,j+1);
+						pp[7]=source->b(i+1,j-1);pp[8]=source->b(i+1,j+1);pp[9]=source->b(i+2,j);pp[10]=source->b(i-2,j);pp[11]=source->b(i,j+2);pp[12]=source->b(i,j-2);
+						fq_sort2(pp,13);
+						tm[i][j]=pp[6];//5x5 soft
+					}
+			}
+		}
+
+#ifdef _OPENMP
+#pragma omp for nowait
+#endif
+		for(int i = border; i < hei-border; i++ ) {
+			for(int j = border; j < wid-border; j++) {
+				dst->b(i,j) = tm[i][j];	
+			}
+		}
+
+
+		if(methmed < 2) {
+#pragma omp for		
+			for (int i=1; i<hei-1; i++) {
+				float pp[9],temp;
+				if(methmed == 0)
+					for (int j=1; j<wid-1; j++) {
+						med2(source->g(i,j),source->g(i-1,j),source->g(i+1,j),source->g(i,j+1),source->g(i,j-1),tm[i][j]);
+					}
+				else
+					for (int j=1; j<wid-1; j++) {
+						med3(source->g(i,j),source->g(i-1,j),source->g(i+1,j),source->g(i,j+1),source->g(i,j-1),source->g(i-1,j-1),source->g(i-1,j+1),source->g(i+1,j-1),source->g(i+1,j+1),tm[i][j]);
+					}
+			}
+		} else {
+#pragma omp for	
+			for (int i=2; i<hei-2; i++) {
+				float pp[25],temp;
+				if(methmed == 3)											
+					for (int j=2; j<wid-2; j++) {
+						med5(source->g(i,j),source->g(i-1,j),source->g(i+1,j),source->g(i,j+1),source->g(i,j-1),source->g(i-1,j-1),source->g(i-1,j+1),source->g(i+1,j-1),source->g(i+1,j+1),
+						source->g(i-2,j),source->g(i+2,j),source->g(i,j+2),source->g(i,j-2),source->g(i-2,j-2),source->g(i-2,j+2),source->g(i+2,j-2),source->g(i+2,j+2),	
+						source->g(i-2,j+1),source->g(i+2,j+1),source->g(i-1,j+2),source->g(i-1,j-2),source->g(i-2,j-1),source->g(i+2,j-1),source->g(i+1,j+2),source->g(i+1,j-2),	
+						tm[i][j]);//5x5
+					}
+				else
+					for (int j=2; j<wid-2; j++) {
+						pp[0]=source->g(i,j);pp[1]=source->g(i-1,j); pp[2]=source->g(i+1,j);pp[3]=source->g(i,j+1);pp[4]=source->g(i,j-1);pp[5]=source->g(i-1,j-1);pp[6]=source->g(i-1,j+1);
+						pp[7]=source->g(i+1,j-1);pp[8]=source->g(i+1,j+1);pp[9]=source->g(i+2,j);pp[10]=source->g(i-2,j);pp[11]=source->g(i,j+2);pp[12]=source->g(i,j-2);
+						fq_sort2(pp,13);
+						tm[i][j]=pp[6];//5x5 soft
+					}
+			}
+		}
+
+#ifdef _OPENMP
+#pragma omp for
+#endif
+		for(int i = border; i < hei-border; i++ ) {
+			for(int j = border; j < wid-border; j++) {
+				dst->g(i,j) = tm[i][j];
+			}
+		}
+}
+		
+                for (int i=0; i<hei; i++)
+                    delete [] tm[i];
+                delete [] tm;
+	}		
+		//end median
+
 //#ifdef _DEBUG
-//	if (settings->verbose) {
-//		t2e.set();
-//		printf("Denoise performed in %d usec:\n", t2e.etime(t1e));
-//	}
+	if (settings->verbose) {
+		t2e.set();
+		printf("Denoise performed in %d usec:\n", t2e.etime(t1e));
+	}
 //#endif
 
 	}//end of main RGB_denoise
