@@ -87,6 +87,37 @@ class RGBCurvesParamsEdited {
         bool bcurve;
 };
 
+class ColorToningEdited {
+
+    public:
+        bool enabled;
+        bool opacityCurve;
+        bool colorCurve;
+        bool clcurve;
+        bool method;
+        bool autosat;		
+        bool satProtectionThreshold;
+        bool saturatedOpacity;
+		bool strengthprotection;
+        bool shadowsColSat;
+        bool hlColSat;
+        bool balance;
+        bool twocolor;
+        bool cl2curve;
+        bool redlow;
+        bool greenlow;
+        bool bluelow;
+        bool redmed;
+        bool greenmed;
+        bool bluemed;
+        bool redhigh;
+        bool greenhigh;
+        bool bluehigh;
+        bool satlow;
+        bool sathigh;
+        bool lumamode;
+};
+
 class SharpenEdgeParamsEdited {
 
     public :
@@ -493,6 +524,7 @@ class ParamsEdited {
         ToneCurveParamsEdited         toneCurve;
         LCurveParamsEdited            labCurve;
         RGBCurvesParamsEdited         rgbCurves;
+        ColorToningEdited             colorToning;
         SharpeningParamsEdited        sharpening;
         SharpenEdgeParamsEdited       sharpenEdge;
         SharpenMicroParamsEdited      sharpenMicro;

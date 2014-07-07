@@ -63,6 +63,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* blackwhite;
         Gtk::CheckButton* hsveq;
         Gtk::CheckButton* rgbcurves;
+        Gtk::CheckButton* colortoning;
        // Gtk::CheckButton* icm;
 
         // options in lens:
@@ -113,7 +114,7 @@ class PartialPasteDlg : public Gtk::Dialog {
 
         sigc::connection wbConn, exposureConn, shConn, pcvignetteConn, gradientConn, labcurveConn, colorappearanceConn;
         sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, waveqConn, defringeConn, epdConn, dirpyreqConn;
-        sigc::connection vibranceConn, chmixerConn, hsveqConn, rgbcurvesConn, chmixerbwConn;
+        sigc::connection vibranceConn, chmixerConn, hsveqConn, rgbcurvesConn, chmixerbwConn, colortoningConn;
         sigc::connection distortionConn, cacorrConn, vignettingConn, lcpConn;
         sigc::connection coarserotConn, finerotConn, cropConn, resizeConn, perspectiveConn, commonTransConn;
         sigc::connection exifchConn, iptcConn, icmConn, gamcsconn;

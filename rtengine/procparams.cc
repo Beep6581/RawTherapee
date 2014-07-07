@@ -110,10 +110,327 @@ void CropParams::mapToResized(int resizedWidth, int resizedHeight, int scale, in
     }
 }
 
+ColorToningParams::ColorToningParams () : hlColSat(60, 80, false), shadowsColSat(80, 208, false) {
+    setDefault();
+}
+
+void ColorToningParams::setDefault() {
+    enabled = false;
+	autosat=true;
+    method = "Lab";
+    colorCurve.resize(9);
+    colorCurve.at(0) = double(FCT_MinMaxCPoints);
+    colorCurve.at(1) = 0.05;
+    colorCurve.at(2) = 0.62;
+    colorCurve.at(3) = 0.25;
+    colorCurve.at(4) = 0.25;
+    colorCurve.at(5) = 0.585;
+    colorCurve.at(6) = 0.11;
+    colorCurve.at(7) = 0.25;
+    colorCurve.at(8) = 0.25;
+	
+    opacityCurve.resize(17);
+    opacityCurve.at(0 ) = double(FCT_MinMaxCPoints);
+    opacityCurve.at(1 ) = 0.; // first point
+    opacityCurve.at(2 ) = 0.30;
+    opacityCurve.at(3 ) = 0.35;
+    opacityCurve.at(4 ) = 0.;
+    opacityCurve.at(5 ) = 0.25; // second point
+    opacityCurve.at(6 ) = 0.8;
+    opacityCurve.at(7 ) = 0.35;
+    opacityCurve.at(8 ) = 0.35;
+    opacityCurve.at(9 ) = 0.7;
+    opacityCurve.at(10) = 0.8;
+    opacityCurve.at(11) = 0.35;
+    opacityCurve.at(12) = 0.35;
+    opacityCurve.at(13) = 1.0;
+    opacityCurve.at(14) = 0.3;
+    opacityCurve.at(15) = 0.;
+    opacityCurve.at(16) = 0.;
+	
+    hlColSat.setValues(60, 80);
+    shadowsColSat.setValues(80, 208);
+    balance = 0;
+    satProtectionThreshold = 30;
+    saturatedOpacity = 80;
+	strengthprotection = 50;
+    lumamode = true;
+    twocolor = "Std";
+    redlow = 0.0;
+    greenlow = 0.0;
+    bluelow = 0.0;
+    satlow = 0.0;
+    sathigh = 0.0;
+    redmed = 0.0;
+    greenmed = 0.0;
+    bluemed = 0.0;
+    redhigh = 0.0;
+    greenhigh = 0.0;
+    bluehigh = 0.0;
+
+    //clcurve.clear ();
+    //clcurve.push_back(DCT_Linear);
+    clcurve.resize(7);
+    clcurve.at(0) = double(DCT_NURBS);
+    clcurve.at(1) = 0.0;
+    clcurve.at(2) = 0.0;
+    clcurve.at(3) = 0.35;
+    clcurve.at(4) = 0.65;
+    clcurve.at(5) = 1.;
+    clcurve.at(6) = 1.;
+
+    // colorToning.llcurve.clear ();
+    // colorToning.llcurve.push_back(DCT_Linear);
+    cl2curve.resize(7);
+    cl2curve.at(0) = double(DCT_NURBS);
+    cl2curve.at(1) = 0.0;
+    cl2curve.at(2) = 0.0;
+    cl2curve.at(3) = 0.35;
+    cl2curve.at(4) = 0.65;
+    cl2curve.at(5) = 1.;
+    cl2curve.at(6) = 1.;
+
+  /*  colorToning.llcurve.at(1) = 0.0;
+    llcurve.at(2) = 0.0;
+    llcurve.at(3) = 0.3;
+    llcurve.at(4) = 0.19;
+    llcurve.at(5) = 0.69;
+    llcurve.at(6) = 0.8;
+    llcurve.at(7) = 1.;
+    llcurve.at(8) = 1.;
+*/
+
+}
+
+void ColorToningParams::mixerToCurve(std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const {
+    // check if non null first
+    if (!redlow && !greenlow && !bluelow && !redmed && !greenmed && !bluemed && !redhigh && !greenhigh && !bluehigh) {
+        colorCurve.resize(1);
+        colorCurve.at(0) = FCT_Linear;
+        opacityCurve.resize(1);
+        opacityCurve.at(0) = FCT_Linear;
+        return;
+    }
+
+    float low[3];  // RGB color for shadows
+    float med[3];  // RGB color for mid-tones
+    float high[3]; // RGB color for highlights
+    float lowSat  = 0.f;
+    float medSat  = 0.f;
+    float highSat = 0.f;
+    float minTmp, maxTmp;
+
+    // Fill the shadow mixer values of the Color TOning tool
+    low[0] = float(redlow  )/100.f; // [-1. ; +1.]
+    low[1] = float(greenlow)/100.f; // [-1. ; +1.]
+    low[2] = float(bluelow )/100.f; // [-1. ; +1.]
+    minTmp = min<float>(low[0], low[1], low[2]);
+    maxTmp = max<float>(low[0], low[1], low[2]);
+    if (maxTmp-minTmp > 0.005f) {
+        float v[3];
+        lowSat = (maxTmp-minTmp)/2.f;
+        if      (low[0] == minTmp) v[0] = 0.f;
+        else if (low[1] == minTmp) v[1] = 0.f;
+        else if (low[2] == minTmp) v[2] = 0.f;
+        if      (low[0] == maxTmp) v[0] = 1.f;
+        else if (low[1] == maxTmp) v[1] = 1.f;
+        else if (low[2] == maxTmp) v[2] = 1.f;
+        if      (low[3] != minTmp && low[0] != maxTmp) v[0] = (low[0]-minTmp)/(maxTmp-minTmp);
+        else if (low[1] != minTmp && low[1] != maxTmp) v[1] = (low[1]-minTmp)/(maxTmp-minTmp);
+        else if (low[2] != minTmp && low[2] != maxTmp) v[2] = (low[2]-minTmp)/(maxTmp-minTmp);
+        low[0] = v[0];
+        low[1] = v[1];
+        low[2] = v[2];
+    }
+    else {
+        low[0] = low[1] = low[2] = 1.f;
+    }
+
+    // Fill the mid-tones mixer values of the Color TOning tool
+    med[0] = float(redmed  )/100.f; // [-1. ; +1.]
+    med[1] = float(greenmed)/100.f; // [-1. ; +1.]
+    med[2] = float(bluemed )/100.f; // [-1. ; +1.]
+    minTmp = min<float>(med[0], med[1], med[2]);
+    maxTmp = max<float>(med[0], med[1], med[2]);
+    if (maxTmp-minTmp > 0.005f) {
+        float v[3];
+        medSat = (maxTmp-minTmp)/2.f;
+        if      (med[0] == minTmp) v[0] = 0.f;
+        else if (med[1] == minTmp) v[1] = 0.f;
+        else if (med[2] == minTmp) v[2] = 0.f;
+        if      (med[0] == maxTmp) v[0] = 1.f;
+        else if (med[1] == maxTmp) v[1] = 1.f;
+        else if (med[2] == maxTmp) v[2] = 1.f;
+        if      (med[3] != minTmp && med[0] != maxTmp) v[0] = (med[0]-minTmp)/(maxTmp-minTmp);
+        else if (med[1] != minTmp && med[1] != maxTmp) v[1] = (med[1]-minTmp)/(maxTmp-minTmp);
+        else if (med[2] != minTmp && med[2] != maxTmp) v[2] = (med[2]-minTmp)/(maxTmp-minTmp);
+        med[0] = v[0];
+        med[1] = v[1];
+        med[2] = v[2];
+    }
+    else {
+        med[0] = med[1] = med[2] = 1.f;
+    }
+
+    // Fill the highlight mixer values of the Color TOning tool
+    high[0] = float(redhigh  )/100.f; // [-1. ; +1.]
+    high[1] = float(greenhigh)/100.f; // [-1. ; +1.]
+    high[2] = float(bluehigh )/100.f; // [-1. ; +1.]
+    minTmp = min<float>(high[0], high[1], high[2]);
+    maxTmp = max<float>(high[0], high[1], high[2]);
+    if (maxTmp-minTmp > 0.005f) {
+        float v[3];
+        highSat = (maxTmp-minTmp)/2.f;
+        if      (high[0] == minTmp) v[0] = 0.f;
+        else if (high[1] == minTmp) v[1] = 0.f;
+        else if (high[2] == minTmp) v[2] = 0.f;
+        if      (high[0] == maxTmp) v[0] = 1.f;
+        else if (high[1] == maxTmp) v[1] = 1.f;
+        else if (high[2] == maxTmp) v[2] = 1.f;
+        if      (high[3] != minTmp && high[0] != maxTmp) v[0] = (high[0]-minTmp)/(maxTmp-minTmp);
+        else if (high[1] != minTmp && high[1] != maxTmp) v[1] = (high[1]-minTmp)/(maxTmp-minTmp);
+        else if (high[2] != minTmp && high[2] != maxTmp) v[2] = (high[2]-minTmp)/(maxTmp-minTmp);
+        high[0] = v[0];
+        high[1] = v[1];
+        high[2] = v[2];
+    }
+    else {
+        high[0] = high[1] = high[2] = 1.f;
+    }
+
+
+
+
+    const double xPosLow  = 0.1;
+    const double xPosMed  = 0.4;
+    const double xPosHigh = 0.7;
+
+
+
+
+    colorCurve.resize( medSat!=0.f ? 13 : 9 );
+    colorCurve.at(0) = FCT_MinMaxCPoints;
+    opacityCurve.resize(13);
+    opacityCurve.at(0) = FCT_MinMaxCPoints;
+
+    float h, s, l;
+    int idx = 1;
+
+    if (lowSat == 0.f) {
+        if (medSat != 0.f)
+            Color::rgb2hsl(med[0], med[1], med[2], h, s, l);
+        else// highSat can't be null if the 2 other ones are!
+            Color::rgb2hsl(high[0], high[1], high[2], h, s, l);
+    }
+    else
+        Color::rgb2hsl(low[0], low[1], low[2], h, s, l);
+    colorCurve.at(idx++)  = xPosLow;
+    colorCurve.at(idx++)  = h;
+    colorCurve.at(idx++)  = 0.35;
+    colorCurve.at(idx++)  = 0.35;
+
+    if (medSat != 0.f) {
+        Color::rgb2hsl(med[0], med[1], med[2], h, s, l);
+        colorCurve.at(idx++)  = xPosMed;
+        colorCurve.at(idx++)  = h;
+        colorCurve.at(idx++)  = 0.35;
+        colorCurve.at(idx++)  = 0.35;
+    }
+
+    if (highSat == 0.f) {
+        if (medSat != 0.f)
+            Color::rgb2hsl(med[0], med[1], med[2], h, s, l);
+        else// lowSat can't be null if the 2 other ones are!
+            Color::rgb2hsl(low[0], low[1], low[2], h, s, l);
+    }
+    else
+        Color::rgb2hsl(high[0], high[1], high[2], h, s, l);
+    colorCurve.at(idx++)  = xPosHigh;
+    colorCurve.at(idx++)  = h;
+    colorCurve.at(idx++)  = 0.35;
+    colorCurve.at(idx)    = 0.35;
+
+    opacityCurve.at(1)  = xPosLow;
+    opacityCurve.at(2)  = double(lowSat);
+    opacityCurve.at(3)  = 0.35;
+    opacityCurve.at(4)  = 0.35;
+    opacityCurve.at(5)  = xPosMed;
+    opacityCurve.at(6)  = double(medSat);
+    opacityCurve.at(7)  = 0.35;
+    opacityCurve.at(8)  = 0.35;
+    opacityCurve.at(9)  = xPosHigh;
+    opacityCurve.at(10) = double(highSat);
+    opacityCurve.at(11) = 0.35;
+    opacityCurve.at(12) = 0.35;
+}
+
+void ColorToningParams::slidersToCurve(std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const {
+    if (hlColSat.value[0]==0 && shadowsColSat.value[0]==0) { // if both opacity are null, set both curves to Linear
+        colorCurve.resize(1);
+        colorCurve.at(0) = FCT_Linear;
+        opacityCurve.resize(1);
+        opacityCurve.at(0) = FCT_Linear;
+        return;
+    }
+
+    colorCurve.resize(9);
+    colorCurve.at(0) = FCT_MinMaxCPoints;
+    colorCurve.at(1) = 0.26 + 0.12*double(balance)/100.;
+    colorCurve.at(2) = double(shadowsColSat.value[1])/360.;
+    colorCurve.at(3) = 0.35;
+    colorCurve.at(4) = 0.35;
+    colorCurve.at(5) = 0.64 + 0.12*double(balance)/100.;
+    colorCurve.at(6) = double(hlColSat.value[1])/360.;
+    colorCurve.at(7) = 0.35;
+    colorCurve.at(8) = 0.35;
+
+    opacityCurve.resize(9);
+    opacityCurve.at(0) = FCT_MinMaxCPoints;
+    opacityCurve.at(1) = colorCurve.at(1);
+    opacityCurve.at(2) = double(shadowsColSat.value[0])/100.;
+    opacityCurve.at(3) = 0.35;
+    opacityCurve.at(4) = 0.35;
+    opacityCurve.at(5) = colorCurve.at(5);
+    opacityCurve.at(6) = double(hlColSat.value[0])/100.;
+    opacityCurve.at(7) = 0.35;
+    opacityCurve.at(8) = 0.35;
+}
+
+void ColorToningParams::getCurves(ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3]) const {
+    float satur=0.8f;
+    float lumin=0.5f;//middle of luminance for optimization of gamut - no real importance...as we work in XYZ and gamut control
+
+    // Transform slider values to control points
+    std::vector<double> cCurve, oCurve;
+    if (method=="RGBSliders" || method=="Splitlr")
+        slidersToCurve(cCurve, oCurve);
+    else if (method=="Splitco")
+        mixerToCurve(cCurve, oCurve);
+    else {
+        cCurve = this->colorCurve;
+        oCurve = this->opacityCurve;
+    }
+
+    if(method=="Lab") {
+        if(twocolor=="Separ") satur=0.9f;
+        if(twocolor=="All"  || twocolor=="Two") satur=0.9f;
+        colorCurveLUT.SetXYZ(cCurve, xyz_rgb, rgb_xyz, satur, lumin);
+        opacityCurveLUT.Set(oCurve);
+    }
+    else if(method=="Splitlr" || method=="Splitco") {
+        colorCurveLUT.SetXYZ(cCurve, xyz_rgb, rgb_xyz, satur, lumin);
+        opacityCurveLUT.Set(oCurve);
+    }
+    else if(method.substr(0,3)=="RGB") {
+        colorCurveLUT.SetRGB(cCurve, xyz_rgb, rgb_xyz);
+        opacityCurveLUT.Set(oCurve);
+     }
+}
+
 ProcParams::ProcParams () { 
 
     setDefaults (); 
-}       
+}
 
 void ProcParams::init () {
 
@@ -123,7 +440,7 @@ void ProcParams::init () {
 void ProcParams::cleanup () {
 
     WBParams::cleanup();
-}       
+}
 
 ProcParams* ProcParams::create () {
 
@@ -155,12 +472,12 @@ void ProcParams::setDefaults () {
     toneCurve.curveMode2    = ToneCurveParams::TC_MODE_STD;
     toneCurve.hrenabled = false;
     toneCurve.method  = "Blend";
-	labCurve.brightness      = 0;
+    labCurve.brightness      = 0;
     labCurve.contrast        = 0;
     labCurve.chromaticity    = 0;
-    labCurve.avoidcolorshift = true;
+    labCurve.avoidcolorshift = false;
     labCurve.lcredsk = true;
-	
+
     labCurve.rstprotection   = 0;
     labCurve.lcurve.clear ();
     labCurve.lcurve.push_back(DCT_Linear);
@@ -176,7 +493,7 @@ void ProcParams::setDefaults () {
     labCurve.lhcurve.push_back(FCT_Linear);
     labCurve.hhcurve.clear ();
     labCurve.hhcurve.push_back(FCT_Linear);
-	
+
     labCurve.lccurve.clear ();
     labCurve.lccurve.push_back(DCT_Linear);
     labCurve.clcurve.clear ();
@@ -190,6 +507,7 @@ void ProcParams::setDefaults () {
     rgbCurves.bcurve.clear ();
     rgbCurves.bcurve.push_back(DCT_Linear);
 
+    colorToning.setDefault();
 
     sharpenEdge.enabled         = false;
     sharpenEdge.passes          = 2;
@@ -464,17 +782,17 @@ void ProcParams::setDefaults () {
     raw.dcb_iterations=2;
     raw.dcb_enhance=false;
     raw.lmmse_iterations=2;
-	
+
     //raw.all_enhance=false;
-	
+
     // exposure before interpolation
     raw.expos=1.0;
     raw.preser=0.0;
-	raw.blackzero=0.0;
-	raw.blackone=0.0;
-	raw.blacktwo=0.0;
-	raw.blackthree=0.0;
-	raw.twogreen=true;
+    raw.blackzero=0.0;
+    raw.blackone=0.0;
+    raw.blacktwo=0.0;
+    raw.blackthree=0.0;
+    raw.twogreen=true;
     exif.clear ();
     iptc.clear ();
 
@@ -1057,6 +1375,54 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->rgbCurves.bcurve) {
         Glib::ArrayHandle<double> RGBbcurve = rgbCurves.bcurve;
         keyFile.set_double_list("RGB Curves", "bCurve", RGBbcurve);
+    }
+
+    // save Color Toning
+    if (!pedited || pedited->colorToning.enabled)    keyFile.set_boolean ("ColorToning", "Enabled", colorToning.enabled);
+    if (!pedited || pedited->colorToning.method)     keyFile.set_string  ("ColorToning", "Method", colorToning.method);
+    if (!pedited || pedited->colorToning.lumamode)   keyFile.set_boolean ("ColorToning", "Lumamode", colorToning.lumamode);
+    if (!pedited || pedited->colorToning.twocolor)   keyFile.set_string  ("ColorToning", "Twocolor", colorToning.twocolor);
+    if (!pedited || pedited->colorToning.redlow)     keyFile.set_double  ("ColorToning", "Redlow", colorToning.redlow);
+    if (!pedited || pedited->colorToning.greenlow)   keyFile.set_double  ("ColorToning", "Greenlow", colorToning.greenlow);
+    if (!pedited || pedited->colorToning.bluelow)    keyFile.set_double  ("ColorToning", "Bluelow", colorToning.bluelow);
+    if (!pedited || pedited->colorToning.satlow)     keyFile.set_double  ("ColorToning", "Satlow", colorToning.satlow);
+    if (!pedited || pedited->colorToning.balance)    keyFile.set_integer ("ColorToning", "Balance", colorToning.balance);
+    if (!pedited || pedited->colorToning.sathigh)    keyFile.set_double  ("ColorToning", "Sathigh", colorToning.sathigh);
+    if (!pedited || pedited->colorToning.redmed)     keyFile.set_double  ("ColorToning", "Redmed", colorToning.redmed);
+    if (!pedited || pedited->colorToning.greenmed)   keyFile.set_double  ("ColorToning", "Greenmed", colorToning.greenmed);
+    if (!pedited || pedited->colorToning.bluemed)    keyFile.set_double  ("ColorToning", "Bluemed", colorToning.bluemed);
+    if (!pedited || pedited->colorToning.redhigh)    keyFile.set_double  ("ColorToning", "Redhigh", colorToning.redhigh);
+    if (!pedited || pedited->colorToning.greenhigh)  keyFile.set_double  ("ColorToning", "Greenhigh", colorToning.greenhigh);
+    if (!pedited || pedited->colorToning.bluehigh)   keyFile.set_double  ("ColorToning", "Bluehigh", colorToning.bluehigh);
+    if (!pedited || pedited->colorToning.autosat)    keyFile.set_boolean ("ColorToning", "Autosat", colorToning.autosat);
+
+    if (!pedited || pedited->colorToning.opacityCurve) {
+        Glib::ArrayHandle<double> curve = colorToning.opacityCurve;
+        keyFile.set_double_list("ColorToning", "OpacityCurve", curve);
+    }
+    if (!pedited || pedited->colorToning.colorCurve) {
+        Glib::ArrayHandle<double> curve = colorToning.colorCurve;
+        keyFile.set_double_list("ColorToning", "ColorCurve", curve);
+    }
+    if (!pedited || pedited->colorToning.satProtectionThreshold)  keyFile.set_integer ("ColorToning", "SatProtectionThreshold", colorToning.satProtectionThreshold );
+    if (!pedited || pedited->colorToning.saturatedOpacity)        keyFile.set_integer ("ColorToning", "SaturatedOpacity", colorToning.saturatedOpacity );
+    if (!pedited || pedited->colorToning.strengthprotection)        keyFile.set_integer ("ColorToning", "Strengthprotection", colorToning.strengthprotection );
+
+    if (!pedited || pedited->colorToning.hlColSat) {
+        Glib::ArrayHandle<int> thresh (colorToning.hlColSat.value, 2, Glib::OWNERSHIP_NONE);
+        keyFile.set_integer_list("ColorToning", "HighlightsColorSaturation", thresh);
+    }
+    if (!pedited || pedited->colorToning.shadowsColSat) {
+        Glib::ArrayHandle<int> thresh (colorToning.shadowsColSat.value, 2, Glib::OWNERSHIP_NONE);
+        keyFile.set_integer_list("ColorToning", "ShadowsColorSaturation", thresh);
+    }
+    if (!pedited || pedited->colorToning.clcurve)  {
+        Glib::ArrayHandle<double> clcurve = colorToning.clcurve;
+        keyFile.set_double_list("ColorToning", "ClCurve", clcurve);
+    }
+    if (!pedited || pedited->colorToning.cl2curve)  {
+        Glib::ArrayHandle<double> cl2curve = colorToning.cl2curve;
+        keyFile.set_double_list("ColorToning", "Cl2Curve", cl2curve);
     }
 
     // save raw parameters
@@ -1693,10 +2059,48 @@ if (keyFile.has_group ("HSV Equalizer")) {
 
     // load RGB curves
 if (keyFile.has_group ("RGB Curves")) {
-	if (keyFile.has_key ("RGB Curves", "LumaMode"))  { rgbCurves.lumamode = keyFile.get_boolean ("RGB Curves", "LumaMode"); if (pedited) pedited->rgbCurves.lumamode = true; }
+    if (keyFile.has_key ("RGB Curves", "LumaMode"))  { rgbCurves.lumamode = keyFile.get_boolean ("RGB Curves", "LumaMode"); if (pedited) pedited->rgbCurves.lumamode = true; }
     if (keyFile.has_key ("RGB Curves", "rCurve")) { rgbCurves.rcurve = keyFile.get_double_list ("RGB Curves", "rCurve"); if (pedited) pedited->rgbCurves.rcurve = true; }
     if (keyFile.has_key ("RGB Curves", "gCurve")) { rgbCurves.gcurve = keyFile.get_double_list ("RGB Curves", "gCurve"); if (pedited) pedited->rgbCurves.gcurve = true; }
     if (keyFile.has_key ("RGB Curves", "bCurve")) { rgbCurves.bcurve  = keyFile.get_double_list ("RGB Curves", "bCurve"); if (pedited) pedited->rgbCurves.bcurve = true; }
+}
+
+    // load Color Toning
+if (keyFile.has_group ("ColorToning")) {
+    if (keyFile.has_key ("ColorToning", "Enabled"))       { colorToning.enabled = keyFile.get_boolean ("ColorToning", "Enabled"); if (pedited) pedited->colorToning.enabled = true; }
+    if (keyFile.has_key ("ColorToning", "Method"))        { colorToning.method = keyFile.get_string ("ColorToning", "Method"); if (pedited) pedited->colorToning.method = true; }
+    if (keyFile.has_key ("ColorToning", "Lumamode"))      { colorToning.lumamode = keyFile.get_boolean ("ColorToning", "Lumamode"); if (pedited) pedited->colorToning.lumamode = true; }
+    if (keyFile.has_key ("ColorToning", "Twocolor"))      { colorToning.twocolor = keyFile.get_string ("ColorToning", "Twocolor"); if (pedited) pedited->colorToning.twocolor = true; }
+    if (keyFile.has_key ("ColorToning", "OpacityCurve"))  { colorToning.opacityCurve = keyFile.get_double_list ("ColorToning", "OpacityCurve"); if (pedited) pedited->colorToning.opacityCurve = true; }
+    if (keyFile.has_key ("ColorToning", "ColorCurve"))    { colorToning.colorCurve = keyFile.get_double_list ("ColorToning", "ColorCurve"); if (pedited) pedited->colorToning.colorCurve = true; }
+    if (keyFile.has_key ("ColorToning", "Autosat"))       { colorToning.autosat = keyFile.get_boolean ("ColorToning", "Autosat"); if (pedited) pedited->colorToning.autosat = true; }
+    if (keyFile.has_key ("ColorToning", "SatProtectionThreshold"))    { colorToning.satProtectionThreshold = keyFile.get_integer ("ColorToning", "SatProtectionThreshold"); if (pedited) pedited->colorToning.satProtectionThreshold = true; }
+    if (keyFile.has_key ("ColorToning", "SaturatedOpacity"))          { colorToning.saturatedOpacity = keyFile.get_integer ("ColorToning", "SaturatedOpacity"); if (pedited) pedited->colorToning.saturatedOpacity = true; }
+    if (keyFile.has_key ("ColorToning", "Strengthprotection"))          { colorToning.strengthprotection = keyFile.get_integer ("ColorToning", "Strengthprotection"); if (pedited) pedited->colorToning.strengthprotection = true; }
+	if (keyFile.has_key ("ColorToning", "HighlightsColorSaturation")) {
+        Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("ColorToning", "HighlightsColorSaturation");
+        colorToning.hlColSat.setValues(thresh.data()[0], thresh.data()[1]);
+        if (pedited) pedited->colorToning.hlColSat = true;
+    }
+    if (keyFile.has_key ("ColorToning", "ShadowsColorSaturation")) {
+        Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("ColorToning", "ShadowsColorSaturation");
+        colorToning.shadowsColSat.setValues(thresh.data()[0], thresh.data()[1]);
+        if (pedited) pedited->colorToning.shadowsColSat = true;
+    }
+    if (keyFile.has_key ("ColorToning", "ClCurve"))       { colorToning.clcurve = keyFile.get_double_list ("ColorToning", "ClCurve"); if (pedited) pedited->colorToning.clcurve = true; }
+    if (keyFile.has_key ("ColorToning", "Cl2Curve"))      { colorToning.cl2curve = keyFile.get_double_list ("ColorToning", "Cl2Curve"); if (pedited) pedited->colorToning.cl2curve = true; }
+    if (keyFile.has_key ("ColorToning", "Redlow"))        { colorToning.redlow = keyFile.get_double ("ColorToning", "Redlow"); if (pedited) pedited->colorToning.redlow = true; }
+    if (keyFile.has_key ("ColorToning", "Greenlow"))      { colorToning.greenlow = keyFile.get_double ("ColorToning", "Greenlow"); if (pedited) pedited->colorToning.greenlow = true; }
+    if (keyFile.has_key ("ColorToning", "Bluelow"))       { colorToning.bluelow = keyFile.get_double ("ColorToning", "Bluelow"); if (pedited) pedited->colorToning.bluelow = true; }
+    if (keyFile.has_key ("ColorToning", "Satlow"))        { colorToning.satlow = keyFile.get_double ("ColorToning", "Satlow"); if (pedited) pedited->colorToning.satlow = true; }
+    if (keyFile.has_key ("ColorToning", "Balance"))       { colorToning.balance = keyFile.get_integer ("ColorToning", "Balance"); if (pedited) pedited->colorToning.balance = true; }
+    if (keyFile.has_key ("ColorToning", "Sathigh"))       { colorToning.sathigh = keyFile.get_double ("ColorToning", "Sathigh"); if (pedited) pedited->colorToning.sathigh = true; }
+    if (keyFile.has_key ("ColorToning", "Redmed"))        { colorToning.redmed = keyFile.get_double ("ColorToning", "Redmed"); if (pedited) pedited->colorToning.redmed = true; }
+    if (keyFile.has_key ("ColorToning", "Greenmed"))      { colorToning.greenmed = keyFile.get_double ("ColorToning", "Greenmed"); if (pedited) pedited->colorToning.greenmed = true; }
+    if (keyFile.has_key ("ColorToning", "Bluemed"))       { colorToning.bluemed = keyFile.get_double ("ColorToning", "Bluemed"); if (pedited) pedited->colorToning.bluemed = true; }
+    if (keyFile.has_key ("ColorToning", "Redhigh"))       { colorToning.redhigh = keyFile.get_double ("ColorToning", "Redhigh"); if (pedited) pedited->colorToning.redhigh = true; }
+    if (keyFile.has_key ("ColorToning", "Greenhigh"))     { colorToning.greenhigh = keyFile.get_double ("ColorToning", "Greenhigh"); if (pedited) pedited->colorToning.greenhigh = true; }
+    if (keyFile.has_key ("ColorToning", "Bluehigh"))      { colorToning.bluehigh = keyFile.get_double ("ColorToning", "Bluehigh"); if (pedited) pedited->colorToning.bluehigh = true; }
 }
 
     // load raw settings
@@ -2056,6 +2460,31 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& rgbCurves.rcurve == other.rgbCurves.rcurve
 		&& rgbCurves.gcurve == other.rgbCurves.gcurve
 		&& rgbCurves.bcurve == other.rgbCurves.bcurve
+		&& colorToning.enabled == other.colorToning.enabled
+		&& colorToning.twocolor == other.colorToning.twocolor
+		&& colorToning.method == other.colorToning.method
+		&& colorToning.colorCurve == other.colorToning.colorCurve
+		&& colorToning.opacityCurve == other.colorToning.opacityCurve
+		&& colorToning.autosat == other.colorToning.autosat
+		&& colorToning.satProtectionThreshold == other.colorToning.satProtectionThreshold
+		&& colorToning.saturatedOpacity == other.colorToning.saturatedOpacity
+		&& colorToning.strengthprotection == other.colorToning.strengthprotection
+		&& colorToning.hlColSat == other.colorToning.hlColSat
+		&& colorToning.shadowsColSat == other.colorToning.shadowsColSat
+		&& colorToning.balance == other.colorToning.balance
+		&& colorToning.clcurve == other.colorToning.clcurve
+		&& colorToning.cl2curve == other.colorToning.cl2curve
+		&& colorToning.redlow == other.colorToning.redlow
+		&& colorToning.greenlow == other.colorToning.greenlow
+		&& colorToning.bluelow == other.colorToning.bluelow
+		&& colorToning.satlow == other.colorToning.satlow
+		&& colorToning.sathigh == other.colorToning.sathigh
+		&& colorToning.redmed == other.colorToning.redmed
+		&& colorToning.greenmed == other.colorToning.greenmed
+		&& colorToning.bluemed == other.colorToning.bluemed
+		&& colorToning.redhigh == other.colorToning.redhigh
+		&& colorToning.greenhigh == other.colorToning.greenhigh
+		&& colorToning.bluehigh == other.colorToning.bluehigh
 		&& exif==other.exif
 		&& iptc==other.iptc
 		&& raw.expos==other.raw.expos

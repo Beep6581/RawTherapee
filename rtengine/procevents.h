@@ -280,7 +280,37 @@ enum ProcEvent {
 //	EvDirPyrEqualizeralg=254,
 	EvDPDNmedian=254,
 	EvDPDNmedmet=255,	
-	NUMOFEVENTS=256
+	EvColorToningEnabled=256,
+	EvColorToningColor =257,
+	EvColorToningOpacity=258,
+	EvColorToningCLCurve=259,
+	EvColorToningMethod=260,
+//	EvColorToningTwocolor=259,
+	EvColorToningLLCurve=261,
+	EvColorToningredlow=262,
+	EvColorToninggreenlow=263,
+	EvColorToningbluelow=264,
+	EvColorToningredmed=265,
+	EvColorToninggreenmed=266,
+	EvColorToningbluemed=267,
+	EvColorToningredhigh=268,
+	EvColorToninggreenhigh=269,
+	EvColorToningbluehigh=270,
+	EvColorToningbalance=271,
+	EvColorToningNeutral=272,
+	EvColorToningsatlow=273,
+	EvColorToningsathigh=274,
+	EvColorToningTwocolor=275,
+	EvColorToningNeutralcur=276,
+	EvColorToningLumamode=277,
+	EvColorToningShadows=278,
+	EvColorToningHighights=279,
+	EvColorToningSatProtection=280,
+	EvColorToningSatThreshold=281,
+	EvColorToningStrProtection=282,
+	EvColorToningautosat=283,
+	
+	NUMOFEVENTS=284
 };
 }
 #endif

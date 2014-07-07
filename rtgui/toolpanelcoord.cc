@@ -51,6 +51,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     sharpenMicro        = Gtk::manage (new SharpenMicro ());
     lcurve              = Gtk::manage (new LCurve ());
     rgbcurves           = Gtk::manage (new RGBCurves ());
+    colortoning         = Gtk::manage (new ColorToning ());
     lensgeom            = Gtk::manage (new LensGeometry ());
     lensProf            = Gtk::manage (new LensProfilePanel ());
     distortion          = Gtk::manage (new Distortion ());
@@ -90,6 +91,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (detailsPanel, sharpenMicro,           M("TP_SHARPENMICRO_LABEL"), true);      toolPanels.push_back (sharpenMicro);
     addPanel (colorPanel, hsvequalizer,             M("TP_HSVEQUALIZER_LABEL"));            toolPanels.push_back (hsvequalizer);
     addPanel (colorPanel, rgbcurves,                M("TP_RGBCURVES_LABEL"));               toolPanels.push_back (rgbcurves);
+    addPanel (colorPanel, colortoning,              M("TP_COLORTONING_LABEL"));             toolPanels.push_back (colortoning);
     addPanel (exposurePanel, epd,                   M("TP_EPD_LABEL"), true);               toolPanels.push_back (epd);
     addPanel (exposurePanel, pcvignette,            M("TP_PCVIGNETTE_LABEL"));              toolPanels.push_back (pcvignette);
     addPanel (exposurePanel, gradient,              M("TP_GRADIENT_LABEL"));                toolPanels.push_back (gradient);
@@ -363,6 +365,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setAutoExpListener (toneCurve);
         ipc->setAutoCamListener (colorappearance);
         ipc->setAutoBWListener (blackwhite);
+        ipc->setAutoColorTonListener (colortoning);
 
         ipc->setSizeListener (crop);
         ipc->setSizeListener (resize);

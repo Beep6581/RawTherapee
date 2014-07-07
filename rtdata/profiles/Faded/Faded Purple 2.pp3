@@ -29,7 +29,7 @@ Enabled=false
 Brightness=0
 Contrast=-25
 Chromaticity=-29
-AvoidColorShift=true
+AvoidColorShift=false
 RedAndSkinTonesProtection=0
 LCredsk=true
 LCurve=0;
@@ -48,7 +48,7 @@ Pastels=0
 Saturated=0
 PSThreshold=0;75;
 ProtectSkins=false
-AvoidColorShift=true
+AvoidColorShift=false
 PastSatTog=true
 SkinTonesCurve=0;
 

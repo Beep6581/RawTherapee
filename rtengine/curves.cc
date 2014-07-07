@@ -106,6 +106,30 @@ namespace rtengine {
 
 	}
 
+	/** @ brief Return the number of control points of the curve
+	 * This method return the number of control points of a curve. Not suitable for parametric curves.
+	 * @return number of control points of the curve. 0 will be sent back for Parametric curves
+	 */
+	int Curve::getSize () const {
+		return N;
+	}
+
+	/** @ brief Return the a control point's value
+	 * This method return a control points' value. Not suitable for parametric curves.
+	 * @param cpNum id of the control points we're interested in
+	 * @param x Y value of the control points, or -1 if invalid
+	 * @param y Y value of the control points, or -1 if invalid
+	 */
+	void Curve::getControlPoint(int cpNum, double &x, double &y) const {
+		if (this->x && cpNum < N) {
+			x = this->x[cpNum];
+			y = this->y[cpNum];
+		}
+		else {
+			x = y = -1.;
+		}
+	}
+
     // Wikipedia sRGB: Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single numerical value.
     // The overall gamma is approximately 2.2, consisting of a linear (gamma 1.0) section near black, and a non-linear section elsewhere involving a 2.4 exponent 
     // and a gamma (slope of log output versus log input) changing from 1.0 through about 2.3.
@@ -383,6 +407,58 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 		}
 		
 		fillCurveArray(dCurve, clCurve, skip, needed);
+		if (dCurve) {
+			delete dCurve;
+			dCurve = NULL;
+		}
+}
+
+// add curve Colortoning : C=f(L)
+void CurveFactory::curveToningCL ( bool & clctoningutili,const std::vector<double>& clcurvePoints, LUTf & clToningCurve,int skip){
+		bool needed;
+		DiagonalCurve* dCurve = NULL;
+		LUTf dCcurve(65536,0);
+	
+		float val;
+		for (int i=0; i<32768; i++) {  
+				dCcurve[i] = (float)i / 32767.0;
+		}
+		
+		needed = false;
+		if (!clcurvePoints.empty() && clcurvePoints[0]!=0) {
+			dCurve = new DiagonalCurve (clcurvePoints, CURVES_MIN_POLY_POINTS/skip);
+			
+			if (dCurve && !dCurve->isIdentity())
+				{needed = true;clctoningutili=true;}
+		}
+		fillCurveArray(dCurve, clToningCurve, skip, needed);
+	//	clToningCurve.dump("CLToning");
+		if (dCurve) {
+			delete dCurve;
+			dCurve = NULL;
+		}
+}
+
+// add curve Colortoning : CLf(L)
+void CurveFactory::curveToningLL ( bool & llctoningutili,const std::vector<double>& llcurvePoints, LUTf & llToningCurve, int skip){
+		bool needed;
+		DiagonalCurve* dCurve = NULL;
+		LUTf dCcurve(65536,0);
+	
+		float val;
+		for (int i=0; i<32768; i++) {  
+				dCcurve[i] = (float)i / 32767.0;
+		}
+		needed = false;
+		if (!llcurvePoints.empty() && llcurvePoints[0]!=0) {
+			dCurve = new DiagonalCurve (llcurvePoints, CURVES_MIN_POLY_POINTS/skip);
+			
+			if (dCurve && !dCurve->isIdentity())
+				{needed = true;llctoningutili=true;}
+		}
+		fillCurveArray(dCurve, llToningCurve, skip, needed);
+//		llToningCurve.dump("LLToning");
+
 		if (dCurve) {
 			delete dCurve;
 			dCurve = NULL;
@@ -1028,8 +1104,6 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 	}
 	
 	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void ColorAppearance::Reset() {
     lutColCurve.reset();
 }
@@ -1049,5 +1123,278 @@ void ToneCurve::Set(Curve *pCurve) {
     lutToneCurve(65536);
     for (int i=0; i<65536; i++) lutToneCurve[i] = pCurve->getVal(double(i)/65535.) * 65535.;
 }
+
+void OpacityCurve::Reset() {
+	lutOpacityCurve.reset();
+}
+
+void OpacityCurve::Set(const Curve *pCurve) {
+	if (pCurve->isIdentity()) {
+		lutOpacityCurve.reset(); // raise this value if the quality suffers from this number of samples
+		return;
+	}
+	lutOpacityCurve(501); // raise this value if the quality suffers from this number of samples
+
+	for (int i=0; i<501; i++) lutOpacityCurve[i] = pCurve->getVal(double(i)/500.);
+	//lutOpacityCurve.dump("opacity");
+}
+
+void OpacityCurve::Set(const std::vector<double> &curvePoints) {
+	FlatCurve* tcurve = NULL;
+
+	if (!curvePoints.empty() && curvePoints[0]>FCT_Linear && curvePoints[0]<FCT_Unchanged) {
+		tcurve = new FlatCurve (curvePoints, false, CURVES_MIN_POLY_POINTS/2);
+		tcurve->setIdentityValue(0.);
+	}
+	if (tcurve) {
+		Set(tcurve);
+		delete tcurve;
+		tcurve = NULL;
+	}
+}
+
+void ColorGradientCurve::Reset() {
+	lut1.reset();
+	lut2.reset();
+	lut3.reset();
+}
+
+void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float satur, float lumin) {
+	if (pCurve->isIdentity()) {
+		lut1.reset();
+		lut2.reset();
+		lut3.reset();
+		return;
+	}
+	if (!lut1) {
+		lut1(501);
+		lut2(501);
+		lut3(501);
+	}
+
+	float r, g, b, xx, yy, zz;
+	float lr1,lr2;
+	int upperBound = lut1.getUpperBound();
+	if (pCurve->isIdentity()) {
+		Color::hsv2rgb(0.5f, satur, lumin, r, g, b);
+		Color::rgbxyz(r, g, b, xx, yy, zz, xyz_rgb);
+		
+		for (int i=0; i<=500; ++i) {
+			// WARNING: set the identity value according to what is set in the GUI
+			lut1[i] = xx;
+			lut2[i] = yy;
+			lut3[i] = zz;
+		}
+		return;
+	}
+
+	int nPoints = pCurve->getSize();
+	int ptNum = 0;
+	double nextX, nextY;
+	pCurve->getControlPoint(ptNum, nextX, nextY);
+	double prevY = nextY;
+	double dY = 0.;
+	low=nextX;
+	lr1=(0.5f+low)/2.f;//optimize use of gamut in low light..one can optimize more using directly low ?
+	//lr1=low;
+	for (int i=0; i<=upperBound; ++i) {
+		double x = double(i)/double(upperBound);
+
+		if (x > nextX) {
+			++ptNum;
+			if (ptNum < nPoints) {
+				prevY = nextY;
+				pCurve->getControlPoint(ptNum, nextX, nextY);
+				dY = nextY - prevY;
+				high=nextX;
+				lr2=(0.5f + high)/2.f;//optimize use of gamut in high light..one can optimize more using directly high ?
+				//lr2=high;
+			}
+		}
+
+		if (!ptNum) {
+			Color::hsv2rgb(float(prevY), satur, lr1, r, g, b);
+			Color::rgbxyz(r, g, b, xx, yy, zz, xyz_rgb);
+			lut1[i] = xx;
+			lut2[i] = yy;
+			lut3[i] = zz;
+		}
+		else if (ptNum >= nPoints) {
+			Color::hsv2rgb(float(nextY), satur, lr2, r, g, b);
+			Color::rgbxyz(r, g, b, xx, yy, zz, xyz_rgb);
+			lut1[i] = xx;
+			lut2[i] = yy;
+			lut3[i] = zz;
+		}
+		else {
+			double currY = pCurve->getVal(x) - prevY;
+			if (dY > 0.000001 || dY < -0.000001) {
+				float r1, g1, b1, r2, g2, b2, ro, go, bo;
+				Color::hsv2rgb(float(prevY), satur, lr1, r1, g1, b1);
+				Color::hsv2rgb(float(nextY), satur, lr2, r2, g2, b2);
+				bool chr = false;
+				bool lum = true;
+				LUTf dum;
+				float X1,X2,Y1,Y2,Z1,Z2,L1,a_1,b_1,c1,h1;
+				Color::rgbxyz(r2, g2, b2, X2, Y2, Z2, xyz_rgb);
+				Color::rgbxyz(r1, g1, b1, X1, Y1, Z1, xyz_rgb);
+				//I use XYZ to mix color 1 and 2 rather than rgb (gamut) and rather than Lab artifacts
+				X1 = X1 + (X2-X1)*currY/dY; if(X1<0.f) X1=0.f;//negative value not good
+				Y1 = Y1 + (Y2-Y1)*currY/dY; if(Y1<0.f) Y1=0.f;
+				Z1 = Z1 + (Z2-Z1)*currY/dY; if(Z1<0.f) Z1=0.f;
+				Color::XYZ2Lab(X1, Y1, Z1, L1, a_1, b_1);//prepare to gamut control
+				Color::Lab2Lch(a_1, b_1, c1, h1);
+				float Lr=L1/327.68f;
+				float RR,GG,BB;
+				#ifndef NDEBUG
+					bool neg=false;
+					bool more_rgb=false;
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(h1,Lr,c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f, neg, more_rgb);
+				#else
+					Color::gamutLchonly(h1,Lr,c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
+				#endif
+				L1=Lr*327.68f;
+				float a,b,X,Y,Z;
+				// converting back to rgb
+				Color::Lch2Lab(c1, h1, a, b);
+				Color::Lab2XYZ(L1, a, b, X, Y, Z);
+				lut1[i] = X;
+				lut2[i] = Y;
+				lut3[i] = Z;
+			}
+			else {
+				Color::hsv2rgb(float(nextY), satur, lumin, r, g, b);
+				Color::rgbxyz(r, g, b, xx, yy, zz, xyz_rgb);
+				lut1[i] = xx;
+				lut2[i] = yy;
+				lut3[i] = zz;
+			}
+		}
+	}
+	/*
+	#ifndef NDEBUG
+	lutRed.dump("red");
+	lutGreen.dump("green");
+	lutBlue.dump("blue");
+	#endif
+	*/
+}
+
+void ColorGradientCurve::SetXYZ(const std::vector<double> &curvePoints, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float satur, float lumin) {
+	FlatCurve* tcurve = NULL;
+
+	if (!curvePoints.empty() && curvePoints[0]>FCT_Linear && curvePoints[0]<FCT_Unchanged) {
+		tcurve = new FlatCurve (curvePoints, false, CURVES_MIN_POLY_POINTS/2);
+	}
+	if (tcurve) {
+		SetXYZ(tcurve, xyz_rgb, rgb_xyz, satur, lumin);
+		delete tcurve;
+		tcurve = NULL;
+	}
+}
+
+void ColorGradientCurve::SetRGB(const Curve *pCurve, const double xyz_rgb[3][3], const double rgb_xyz[3][3]) {
+	if (pCurve->isIdentity()) {
+		lut1.reset();
+		lut2.reset();
+		lut3.reset();
+		return;
+	}
+	if (!lut1) {
+		lut1(501);
+		lut2(501);
+		lut3(501);
+	}
+
+	float r, g, b;
+
+	int upperBound = lut1.getUpperBound();
+
+	int nPoints = pCurve->getSize();
+	int ptNum = 0;
+	double nextX, nextY;
+	pCurve->getControlPoint(ptNum, nextX, nextY);
+	double prevY = nextY;
+	double dY = 0.;
+	Color::eInterpolationDirection dir = Color::ID_DOWN;
+	for (int i=0; i<=upperBound; ++i) {
+		double x = double(i)/double(upperBound);
+
+		if (x > nextX) {
+			++ptNum;
+			if (ptNum < nPoints) {
+				prevY = nextY;
+				pCurve->getControlPoint(ptNum, nextX, nextY);
+				dY = nextY - prevY;
+				dir = Color::getHueInterpolationDirection(prevY, nextY, Color::IP_SHORTEST);
+			}
+		}
+
+		if (!ptNum) {
+			Color::hsv2rgb(float(prevY), 1.f, 1.f, r, g, b);
+			lut1[i] = r;
+			lut2[i] = g;
+			lut3[i] = b;
+		}
+		else if (ptNum >= nPoints) {
+			Color::hsv2rgb(float(nextY), 1.f, 1.f, r, g, b);
+			lut1[i] = r;
+			lut2[i] = g;
+			lut3[i] = b;
+		}
+		else {
+			double currY = pCurve->getVal(x) - prevY;
+			if (dY > 0.0000001 || dY < -0.0000001) {
+				#if 1
+				float ro, go, bo;
+				double h2 = Color::interpolateHueHSV(prevY, nextY, currY/dY, dir);
+				Color::hsv2rgb(h2, 1.f, 1.f, ro, go, bo);
+				#else
+				float r1, g1, b1, r2, g2, b2, ro, go, bo;
+				Color::hsv2rgb(float(prevY), 1., 1., r1, g1, b1);
+				Color::hsv2rgb(float(nextY), 1., 1., r2, g2, b2);
+				Color::interpolateRGBColor(currY/dY, r1, g1, b1, r2, g2, b2, Color::CHANNEL_LIGHTNESS|Color::CHANNEL_CHROMATICITY|Color::CHANNEL_HUE, xyz_rgb, rgb_xyz, ro, go, bo);
+				#endif
+				lut1[i] = ro;
+				lut2[i] = go;
+				lut3[i] = bo;
+			}
+			else {
+				Color::hsv2rgb(float(nextY), 1.f, 1.f, r, g, b);
+				lut1[i] = r;
+				lut2[i] = g;
+				lut3[i] = b;
+			}
+		}
+	}
+	/*
+	#ifndef NDEBUG
+	lut1.dump("red");
+	lut2.dump("green");
+	lut3.dump("blue");
+	#endif
+	*/
+}
+
+void ColorGradientCurve::SetRGB(const std::vector<double> &curvePoints, const double xyz_rgb[3][3], const double rgb_xyz[3][3]) {
+	FlatCurve* tcurve = NULL;
+
+	if (!curvePoints.empty() && curvePoints[0]>FCT_Linear && curvePoints[0]<FCT_Unchanged) {
+		tcurve = new FlatCurve (curvePoints, false, CURVES_MIN_POLY_POINTS/2);
+	}
+	if (tcurve) {
+		SetRGB(tcurve, xyz_rgb, rgb_xyz);
+		delete tcurve;
+		tcurve = NULL;
+	}
+}
+
+void ColorGradientCurve::getVal(float index, float &r, float &g, float &b) const {
+	r = lut1[index*500.f];
+	g = lut2[index*500.f];
+	b = lut3[index*500.f];
+}
+
 
 }

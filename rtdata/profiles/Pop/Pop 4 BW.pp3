@@ -55,7 +55,7 @@ AfterCurve=0;
 Brightness=0
 Contrast=0
 Chromaticity=0
-AvoidColorShift=true
+AvoidColorShift=false
 RedAndSkinTonesProtection=0
 LCredsk=true
 LCurve=3;0;0;0.21199999999999999;0.11899999999999999;0.67400000000000004;0.77300000000000002;1;1;
@@ -74,7 +74,7 @@ Pastels=50
 Saturated=50
 PSThreshold=0;75;
 ProtectSkins=false
-AvoidColorShift=true
+AvoidColorShift=false
 PastSatTog=true
 SkinTonesCurve=0;
 

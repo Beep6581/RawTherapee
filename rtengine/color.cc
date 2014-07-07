@@ -47,6 +47,7 @@ namespace rtengine {
     LUTf Color::gammatab_26_11;
     LUTf Color::igammatab_24_17;
     LUTf Color::gammatab_24_17a;
+    LUTf Color::gammatab_13_2;
 
     // Wikipedia sRGB: Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single numerical value.
     // The overall gamma is approximately 2.2, consisting of a linear (gamma 1.0) section near black, and a non-linear section elsewhere involving a 2.4 exponent
@@ -54,7 +55,8 @@ namespace rtengine {
     const double Color::sRGBGamma = 2.2;
     const double Color::sRGBGammaCurve = 2.4;
 
-    const double Color::eps_max=580.40756;  //(MAXVALF* 216.0f/24389.0);
+    const double Color::eps_max=580.40756; //(MAXVALF* 216.0f/24389.0);
+    const double Color::eps=216.0f/24389.0;//0.008856
     const double Color::kappa=24389.0/27.0;//903.29630;
 
     const float Color::D50x=0.9642f; //0.96422;
@@ -155,6 +157,7 @@ namespace rtengine {
         gammatab_26_11(65536,0);
         igammatab_24_17(65536,0);
         gammatab_24_17a(65536,0);
+        gammatab_13_2(65536,0);
 
         for (int i=0; i<65536; i++)
             gammatab_srgb[i] = (65535.0 * gamma2 (i/65535.0));
@@ -176,6 +179,8 @@ namespace rtengine {
             gammatab_4[i] = (65535.0 * gamma4 (i/65535.0));
         for (int i=0; i<65536; i++)
             igammatab_4[i] = (65535.0 * igamma4 (i/65535.0));
+        for (int i=0; i<65536; i++)
+            gammatab_13_2[i] = (65535.0 * gamma13_2 (i/65535.0));
 
         for (int i=0; i<65536; i++)
             gammatab_26_11[i] = (65535.0 * gamma26_11 (i/65535.0));
@@ -270,6 +275,29 @@ namespace rtengine {
         }
     }
 
+    void Color::hsl2rgb01 (float h, float s, float l, float &r, float &g, float &b) {
+
+        if (s == 0)
+            r = g = b = l; //  achromatic
+        else {
+            double m2;
+            double h_ = double(h);
+            double s_ = double(s);
+            double l_ = double(l);
+
+            if (l <= 0.5f)
+                m2 = l_ * (1.0 + s_);
+            else {
+                m2 = l_ + s_ - l_ * s_;
+            }
+
+            double m1 = 2.0 * l_ - m2;
+
+            r = float(hue2rgb (m1, m2, h_ * 6.0 + 2.0));
+            g = float(hue2rgb (m1, m2, h_ * 6.0));
+            b = float(hue2rgb (m1, m2, h_ * 6.0 - 2.0));
+        }
+    }
 
     void Color::rgb2hsv(float r, float g, float b, float &h, float &s, float &v) {
         double var_R = r / 65535.0;
@@ -299,13 +327,13 @@ namespace rtengine {
 
     void Color::hsv2rgb (float h, float s, float v, float &r, float &g, float &b) {
 
-        float h1 = h*6; // sector 0 to 5
+        float h1 = h*6.f; // sector 0 to 5
         int i = (int)h1;  // floor() is very slow, and h1 is always >0
         float f = h1 - i; // fractional part of h
 
-        float p = v * ( 1 - s );
-        float q = v * ( 1 - s * f );
-        float t = v * ( 1 - s * ( 1 - f ) );
+        float p = v * ( 1.f - s );
+        float q = v * ( 1.f - s * f );
+        float t = v * ( 1.f - s * ( 1.f - f ) );
 
         float r1,g1,b1;
 
@@ -316,9 +344,9 @@ namespace rtengine {
         else if (i==5)    {r1 = v;  g1 = p;  b1 = q;}
         else /*i==(0|6)*/ {r1 = v;  g1 = t;  b1 = p;}
 
-        r = ((r1)*65535.0);
-        g = ((g1)*65535.0);
-        b = ((b1)*65535.0);
+        r = ((r1)*65535.0f);
+        g = ((g1)*65535.0f);
+        b = ((b1)*65535.0f);
     }
 
     // Function copied for speed concerns
@@ -399,14 +427,13 @@ namespace rtengine {
         z = ((xyz_prophoto[2][0]*r + xyz_prophoto[2][1]*g + xyz_prophoto[2][2]*b)) ;
     }
 
-    void Color::rgbxyz (float r, float g, float b, float &x, float &y, float &z, double xyz_rgb[3][3]) {
+    void Color::rgbxyz (float r, float g, float b, float &x, float &y, float &z, const double xyz_rgb[3][3]) {
         x = ((xyz_rgb[0][0]*r + xyz_rgb[0][1]*g + xyz_rgb[0][2]*b)) ;
         y = ((xyz_rgb[1][0]*r + xyz_rgb[1][1]*g + xyz_rgb[1][2]*b)) ;
         z = ((xyz_rgb[2][0]*r + xyz_rgb[2][1]*g + xyz_rgb[2][2]*b)) ;
     }
 	
-	
-    void Color::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, double rgb_xyz[3][3]) {
+    void Color::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const double rgb_xyz[3][3]) {
         //Transform to output color.  Standard sRGB is D65, but internal representation is D50
         //Note that it is only at this point that we should have need of clipping color data
 
@@ -608,6 +635,183 @@ namespace rtengine {
 		
     }
 
+    void Color::interpolateRGBColor (const float balance, const float r1, const float g1, const float b1, const float r2, const float g2, const float b2, int toDo, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo) {
+        float X1, Y1, Z1, X2, Y2, Z2, X, Y, Z;
+        float L1, L2, a_1, b_1, a_2, b_2, a, b;
+        float c1, c2, h1, h2;
+        float RR,GG,BB;
+        float Lr;
+
+        // converting color 1 to Lch
+        Color::rgbxyz(r1, g1, b1, X1, Y1, Z1, xyz_rgb);
+        Color::XYZ2Lab(X1, Y1, Z1, L1, a_1, b_1);
+        Color::Lab2Lch(a_1, b_1, c1, h1);
+        Lr=L1/327.68f;//for gamutlch
+        //gamut control on r1 g1 b1
+        #ifndef NDEBUG
+        bool neg=false;
+        bool more_rgb=false;
+
+        //gamut control : Lab values are in gamut
+        Color::gamutLchonly(h1,Lr,c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f, neg, more_rgb);
+        #else
+        Color::gamutLchonly(h1,Lr,c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
+        #endif
+
+        L1=Lr*327.68f;
+
+        // converting color 2 to Lch
+        Color::rgbxyz(r2, g2, b2, X2, Y2, Z2, xyz_rgb);
+        Color::XYZ2Lab(X2, Y2, Z2, L2, a_2, b_2);
+        Color::Lab2Lch(a_2, b_2, c2, h2);
+
+        Lr=L2/327.68f;//for gamutlch
+        //gamut control on r2 g2 b2
+        #ifndef NDEBUG
+        neg=false;
+        more_rgb=false;
+        //gamut control : Lab values are in gamut
+        Color::gamutLchonly(h2,Lr,c2, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f, neg, more_rgb);
+        #else
+        Color::gamutLchonly(h2,Lr,c2, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
+        #endif
+        L2=Lr*327.68f;
+
+         // interpolating Lch values
+        if (toDo & CHANNEL_LIGHTNESS)     { L1 = L1 + (L2-L1)*balance;if(L1<0.f) L1=0.f;}//do not allow negative L
+        if (toDo & CHANNEL_CHROMATICITY)  {c1 = c1 + (c2-c1)*balance;if(c1<0.f) c1=0.f; if(c1>180.f) c1=180.f;}//limit C to reasonable value
+        if (toDo & CHANNEL_HUE)            h1 = interpolatePolarHue_PI<float, float>(h1, h2, balance);
+
+        // here I have put gamut control with gamutlchonly  on final process
+        Lr=L1/327.68f;//for gamutlch
+        #ifndef NDEBUG
+        neg=false;
+        more_rgb=false;
+        //gamut control : Lab values are in gamut
+        Color::gamutLchonly(h1,Lr,c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f, neg, more_rgb);
+        #else
+        //gamut control : Lab values are in gamut
+        Color::gamutLchonly(h1,Lr,c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
+        #endif
+        //convert CH ==> ab
+        L1=Lr*327.68f;
+
+        // converting back to rgb
+        Color::Lch2Lab(c1, h1, a, b);
+        Color::Lab2XYZ(L1, a, b, X, Y, Z);
+        Color::xyz2rgb(X, Y, Z, ro, go, bo, rgb_xyz);
+    }
+
+
+    void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int algm, const float balance, int twoc, int metchrom,
+                                     bool chr, bool lum, float chromat, float luma, const float r1, const float g1, const float b1,
+                                     const float xl, const float yl, const float zl, const float x2, const float y2, const float z2,
+                                     int toDo, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo)
+    {
+        float X1, Y1, Z1, X2, Y2, Z2, X, Y, Z,XL,YL,ZL;
+        float L1, L2, LL, a_1, b_1, a_2, b_2, a, b,a_L,b_L;
+        float c1, c2, h1, h2,cL,hL;
+        float RR,GG,BB;
+        float Lr;
+        float slc=0.f;
+        float hh=0.f;
+        float ll=0.f;
+        float sh=0.f;
+        bool LCH=false;
+
+        float ha,hb,hc,ba;
+        float c_1,h_1;
+        // converting color 1 to Lab  (image)
+        Color::rgbxyz(r1, g1, b1, X1, Y1, Z1, xyz_rgb);
+        if(algm == 1) {//use H interpolate
+            Color::XYZ2Lab(X1, Y1, Z1, L1, a_1, b_1);
+            //Color::Lab2Lch(a_1, b_1, c_1, h_1) ;
+        }
+        // converting color l lab(low) first color
+        if(twoc==0) { // 2 colours
+            //Color::rgbxyz(rl, gl, bl, XL, YL, ZL, xyz_rgb);
+            XL=xl;
+            YL=yl;
+            ZL=zl;
+            if(algm <= 1) {//use H interpolate
+                Color::XYZ2Lab(XL, YL, ZL, LL, a_L, b_L);
+            }
+        }
+
+        // converting color 2 to lab (universal or high)
+        X2=x2;
+        Y2=y2;
+        Z2=z2;
+        float c_2,h_2;
+        if(algm == 1 ) {
+            Color::XYZ2Lab(X2, Y2, Z2, L2, a_2, b_2);
+            //Color::Lab2Lch(a_2, b_2, c_2, h_2) ;
+        }
+        float bal,balH,cal,calH,calm;
+        bal=balH=balance;
+        cal=calH=calm=1.f-chromat;
+        float med=(iphigh+iplow)/2.f;
+        float medH=(iphigh+iplow)/2.f;
+        float medL=(iphigh+iplow)/2.f;
+
+        med=1.f;medH=0.f;//new algo for 2 colors
+        float calan;
+        calan=chromat;
+
+        float calby;
+        calby=luma;
+
+        if(twoc==0) { // 2 colours
+            calan=chromat;
+
+            //calculate new balance in function of (arbitrary) "med".. I hope no error !!
+            if      (realL > iplow && realL<=med)       bal = realL*balance/(iplow-med) - med*balance/(iplow-med);
+            else if (realL <= iplow)                    bal = realL*balance/iplow;
+
+            if      (realL > medH && realL <= iphigh)   balH = realL*balance/(iphigh-medH) - medH*balance/(iphigh-medH);
+            else if (realL > iphigh)                    balH = realL*balance*(iphigh-1.f) - balance*(iphigh-1.f);
+
+            //calculate new balance chroma 
+            if      (realL > iplow && realL<=med)       cal = realL*calan/(iplow-med) - med*calan/(iplow-med);
+            else if (realL <= iplow)                    cal = realL*calan/iplow;
+
+            if      (realL > medH && realL <= iphigh)   calH = realL*calan/(iphigh-medH) - medH*calan/(iphigh-medH);
+            else if (realL > iphigh)                    calH = realL*calan;//*(iphigh-1.f) - calan*(iphigh-1.f);//it is better without transition in highlight
+        }
+
+        float hX=0.f;
+        float hLL,hH,ccL,ccH,llH,aaH,bbH;
+
+        if(algm <=1){
+            if(twoc==0  && metchrom==3) { // 2 colours	only with special "ab"
+                if(algm==1) {
+                    aaH=a_1 + (a_2-a_1)*calH;bbH=b_1 + (b_2-b_1)*calH;//pass to line after
+                    a_1=aaH + (a_L-aaH)*cal*balance;b_1=bbH + (b_L-bbH)*cal*balance;					
+                }
+            }
+            else if(twoc==1) {
+                if(metchrom==0) {
+                    a_1=a_1 + (a_2-a_1)*balance;
+                    b_1=b_1 + (b_2-b_1)*balance;
+                }
+                else if(metchrom==1){
+                    a_1=a_1 + (a_2-a_1)*calan*balance;
+                    b_1=b_1 + (b_2-b_1)*calan*balance;
+                }
+                else if(metchrom==2) {
+                    a_1=a_1 + (a_2-a_1)*calan*balance;
+                    b_1=b_1 + (b_2-b_1)*calby*balance;
+                }
+            }
+        }
+        else
+            h1=hX;
+
+        Color::Lab2XYZ(L1, a_1, b_1, X, Y, Z);
+
+        Color::xyz2rgb(X, Y, Z, ro, go, bo, rgb_xyz);// ro go bo in gamut
+    }
+
     void Color::calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4, double &gamma5) {
         //from Dcraw (D.Coffin)
         int i;
@@ -657,9 +861,9 @@ namespace rtengine {
         float y= Y;
         float fx,fy,fz;
 
-        fx = (x<65535.0f ? cachef[std::max(x,0.f)] : (327.68f*exp(log(x/MAXVALF)/3.0f )));
-        fy = (y<65535.0f ? cachef[std::max(y,0.f)] : (327.68f*exp(log(y/MAXVALF)/3.0f )));
-        fz = (z<65535.0f ? cachef[std::max(z,0.f)] : (327.68f*exp(log(z/MAXVALF)/3.0f )));
+        fx = (x<=65535.0f ? cachef[std::max(x,0.f)] : (327.68f*exp(log(x/MAXVALF)/3.0f )));
+        fy = (y<=65535.0f ? cachef[std::max(y,0.f)] : (327.68f*exp(log(y/MAXVALF)/3.0f )));
+        fz = (z<=65535.0f ? cachef[std::max(z,0.f)] : (327.68f*exp(log(z/MAXVALF)/3.0f )));
 
         L = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
         a = (500.0f * (fx - fy) );
@@ -691,13 +895,73 @@ namespace rtengine {
 
         gamutmap(X,Y,Z,wp);
 
-        float fx = (X<65535.0 ? cachef[X] : (327.68*exp(log(X/MAXVALF)/3.0 )));
-        float fy = (Y<65535.0 ? cachef[Y] : (327.68*exp(log(Y/MAXVALF)/3.0 )));
-        float fz = (Z<65535.0 ? cachef[Z] : (327.68*exp(log(Z/MAXVALF)/3.0 )));
+        float fx = (X<=65535.0 ? cachef[X] : (327.68*exp(log(X/MAXVALF)/3.0 )));
+        float fy = (Y<=65535.0 ? cachef[Y] : (327.68*exp(log(Y/MAXVALF)/3.0 )));
+        float fz = (Z<=65535.0 ? cachef[Z] : (327.68*exp(log(Z/MAXVALF)/3.0 )));
 
         L = (116.0 * fy - 5242.88); //5242.88=16.0*327.68;
         a = (500.0 * (fx - fy) );
         b = (200.0 * (fy - fz) );
+    }
+
+    void Color::Lab2Lch(float a, float b, float &c, float &h) {
+        c = (sqrtf(a*a+b*b))/327.68f;
+        h = xatan2f(b, a); 
+    }
+
+    void Color::Lch2Lab(float c, float h, float &a, float &b) {
+        float2 sincosval = xsincosf(h);
+        a = 327.68f * c * sincosval.y;
+        b = 327.68f * c * sincosval.x;
+    }
+
+    void Color::Luv2Lch(float u, float v, float &c, float &h) {
+        c = sqrtf(u*u+v*v);
+        h = xatan2f(v, u);  //WARNING: should we care of division by zero here?
+        if (h < 0.f)
+            h += 1.f;
+    }
+
+    void Color::Lch2Luv(float c, float h, float &u, float &v) {
+        float2 sincosval = xsincosf(h);
+        u = c * sincosval.x;
+        v = c * sincosval.y;
+    }
+
+    // NOT TESTED
+    void Color::XYZ2Luv (float X, float Y, float Z, float &L, float &u, float &v) {
+
+        X /= 65535.f;
+        Y /= 65535.f;
+        Z /= 65535.f;
+
+        if (Y > float(eps))
+            L = 116.f * pow(Y, 1.f/3.f) -16.f;
+        else
+            L = float(kappa) * Y;
+        u = 13.f * L * float(u0);
+        v = 13.f * L * float(v0);
+    }
+
+    // NOT TESTED
+    void Color::Luv2XYZ (float L, float u, float v, float &X, float &Y, float &Z) {
+        if (L > float(epskap)) {
+            float t = (L+16.f) / 116.f;
+            Y = t*t*t;
+        }
+        else
+            Y = L/float(kappa);
+
+        float a = ((52.f*L) / (u+13.f*L*float(u0)) -1.f) / 3.f;
+        float d = Y * (((39*L) / (v+13*float(v0))) -5.f);
+        float b = -5.f*Y;
+        X = (d-b) / (a+1.f/3.f);
+
+        Z = X*a+b;
+
+        X *= 65535.f;
+        Y *= 65535.f;
+        Z *= 65535.f;
     }
 
     /*
@@ -1055,9 +1319,9 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
      * bool neg and moreRGB : only in DEBUG mode to calculate iterations for negatives values and > 65535
      */
 #ifdef _DEBUG
-    void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
+    void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
 #else
-    void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
+    void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
 #endif
     {
         const float ClipLevel = 65535.0f;
@@ -1090,8 +1354,17 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 #ifdef _DEBUG
                 neg=true;
 #endif
-                if (Lprov1 < 0.01f)
-					Lprov1 = 0.01f;
+                if (Lprov1 < 0.1f) Lprov1 = 0.1f;
+				//gamut for L with ultra blue : we can improve the algorithm ... thinner, and other color ???
+				if(HH < -0.9f && HH > -1.55f ) {//ultra blue
+					if(Chprov1 > 160.f) if (Lprov1 < 5.f) Lprov1 = 5.f;//very very very very high chroma
+					if(Chprov1 > 140.f) if (Lprov1 < 3.5f) Lprov1 = 3.5f;
+					if(Chprov1 > 120.f) if (Lprov1 < 2.f) Lprov1 = 2.f;
+					if(Chprov1 > 105.f) if (Lprov1 < 1.f) Lprov1 = 1.f;	
+					if(Chprov1 > 90.f) if (Lprov1 < 0.7f) Lprov1 = 0.7f;	
+					if(Chprov1 > 50.f) if (Lprov1 < 0.5f) Lprov1 = 0.5f;
+					if(Chprov1 > 20.f) if (Lprov1 < 0.4f) Lprov1 = 0.4f;
+				}
                 Chprov1 *= higherCoef; // decrease the chromaticity value
                 if (Chprov1 <= 3.0f)
 					Lprov1 += lowerCoef;

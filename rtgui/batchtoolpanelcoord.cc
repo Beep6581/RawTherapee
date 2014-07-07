@@ -143,6 +143,7 @@ void BatchToolPanelCoordinator::initSession () {
 
 			chmixer->setAdjusterBehavior (false);
 			blackwhite->setAdjusterBehavior (false,false);
+			colortoning->setAdjusterBehavior (false, false, false, false, false);
 
 			shadowshighlights->setAdjusterBehavior (false, false, false);
 			dirpyrequalizer->setAdjusterBehavior (false, false, false);
@@ -172,6 +173,7 @@ void BatchToolPanelCoordinator::initSession () {
 			sharpenEdge->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENEDGE_AMOUNT],options.baBehav[ADDSET_SHARPENEDGE_PASS]);
 			sharpenMicro->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENMICRO_AMOUNT],options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY]);
 			icm->setAdjusterBehavior (options.baBehav[ADDSET_FREE_OUPUT_GAMMA],options.baBehav[ADDSET_FREE_OUTPUT_SLOPE]);
+			colortoning->setAdjusterBehavior (options.baBehav[ADDSET_COLORTONING_SPLIT], options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD], options.baBehav[ADDSET_COLORTONING_SATOPACITY], options.baBehav[ADDSET_COLORTONING_STRPROTECT], options.baBehav[ADDSET_COLORTONING_BALANCE]);
 
 			chmixer->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER] );
 			blackwhite->setAdjusterBehavior (options.baBehav[ADDSET_BLACKWHITE_HUES],options.baBehav[ADDSET_BLACKWHITE_GAMMA]);
@@ -240,6 +242,14 @@ void BatchToolPanelCoordinator::initSession () {
 
 			//if (options.baBehav[ADDSET_CS_BLUEYELLOW])  pparams.colorShift.a = 0;
 			//if (options.baBehav[ADDSET_CS_GREENMAGENTA])  pparams.colorShift.b = 0;
+			if (options.baBehav[ADDSET_COLORTONING_SPLIT]) pparams.colorToning.redlow  = pparams.colorToning.greenlow  = pparams.colorToning.bluelow =
+			                                               pparams.colorToning.redmed  = pparams.colorToning.greenmed  = pparams.colorToning.bluemed =
+			                                               pparams.colorToning.redhigh = pparams.colorToning.greenhigh = pparams.colorToning.bluehigh =
+			                                               pparams.colorToning.satlow = pparams.colorToning.sathigh = 0;
+			if (options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD]) pparams.colorToning.satProtectionThreshold = 0;
+			if (options.baBehav[ADDSET_COLORTONING_SATOPACITY]) pparams.colorToning.saturatedOpacity = 0;
+			if (options.baBehav[ADDSET_COLORTONING_BALANCE]) pparams.colorToning.balance = 0;
+			if (options.baBehav[ADDSET_COLORTONING_STRPROTECT]) pparams.colorToning.strengthprotection = 0;
 
 			if (options.baBehav[ADDSET_ROTATE_DEGREE])  pparams.rotate.degree = 0;
 			if (options.baBehav[ADDSET_DIST_AMOUNT])  pparams.distortion.amount = 0;

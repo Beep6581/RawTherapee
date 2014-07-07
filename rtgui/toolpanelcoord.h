@@ -68,6 +68,7 @@
 #include "sharpenmicro.h"
 #include "sharpenedge.h"
 #include "rgbcurves.h"
+#include "colortoning.h"
 
 class ImageEditorCoordinator;
 
@@ -114,8 +115,9 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         SharpenMicro* sharpenMicro;
         LCurve* lcurve;
         RGBCurves* rgbcurves;
-        DirPyrEqualizer * dirpyrequalizer;
-        HSVEqualizer * hsvequalizer;
+        ColorToning* colortoning;
+        DirPyrEqualizer* dirpyrequalizer;
+        HSVEqualizer* hsvequalizer;
         RawProcess* rawprocess;
         PreProcess* preprocess;
         DarkFrame* darkframe;
