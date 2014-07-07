@@ -140,7 +140,7 @@ namespace rtengine {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-		extern const Settings* settings;
+extern const Settings* settings;
 
 // Median calculation using quicksort
 float fq_sort2(float arr[], int n) 
@@ -187,6 +187,27 @@ float fq_sort2(float arr[], int n)
     }
  }
 
+float media(float *elements, int N)
+{
+  int i,j,min;
+  float temp;
+
+  //   Order elements (only half of them)
+   for (i = 0; i < (N >> 1) + 1; ++i)
+   {
+      //   Find position of minimum element
+      min = i;
+      for (j = i + 1; j < N; ++j)
+         if (elements[j] < elements[min])
+            min = j;
+      //   Put found minimum element in its place
+      temp = elements[i];
+      elements[i] = elements[min];
+      elements[min] = temp;
+   }
+   //   Get result - the middle element
+   return elements[N >> 1];
+}
 
 
 	void ImProcFunctions::RGB_denoise(Imagefloat * src, Imagefloat * dst, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe, const double expcomp)
@@ -213,14 +234,14 @@ float fq_sort2(float arr[], int n)
 
 		const short int imheight=src->height, imwidth=src->width;
 
-		if (dnparams.luma==0 && dnparams.chroma==0  && !dnparams.median) {
+		if (dnparams.luma==0 && dnparams.chroma==0  && dnparams.methodmed=="none" ) {
             //nothing to do; copy src to dst or do nothing in case src == dst
 			if(src != dst)
 				memcpy(dst->data,src->data,dst->width*dst->height*3*sizeof(float));
 			return;
 		}
 		
-	if (dnparams.luma!=0 || dnparams.chroma!=0) {
+	if (dnparams.luma!=0 || dnparams.chroma!=0 || dnparams.methodmed=="Lab" || dnparams.methodmed=="Lonly") {
 		perf=false;
 		if(dnparams.dmethod=="RGB") perf=true;//RGB mode
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -552,8 +573,9 @@ float fq_sort2(float arr[], int n)
 				//binary 1 or 0 for each level, eg subsampling = 0 means no subsampling, 1 means subsample
 				//the first level only, 7 means subsample the first three levels, etc.
 				float noisevarL	 = (float) (SQR((dnparams.luma/125.0)*(1.+ dnparams.luma/25.0)));
-				
+				//printf("noisL=%f \n",noisevarL);
 				float interm_med= (float) dnparams.chroma/10.0;
+				//printf("inter=%f\n",interm_med);
 				float intermred, intermblue;
 				if(dnparams.redchro > 0.) intermred=0.0014f* (float)SQR(dnparams.redchro); else intermred= (float) dnparams.redchro/7.0;//increase slower than linear for more sensit
 				float intermred2=(float) dnparams.redchro/7.0;
@@ -566,8 +588,10 @@ float fq_sort2(float arr[], int n)
 				float realblue = interm_med + intermblue; if (realblue < 0.f) realblue=0.01f;
 				float realblue2 = interm_med + intermblue2; if (realblue2 < 0.f) realblue2=0.01f;
 				float noisevarab_b = SQR(realblue);
-				
-				
+				bool execwavelet=true;
+				if(noisevarL < 0.00007f && interm_med < 0.1f && (dnparams.methodmed=="Lab" || dnparams.methodmed=="Lonly")) execwavelet=false;//do not exec wavelet if sliders luminance and chroma are very small and median need
+				//we considered user don't want wavelet
+				if(execwavelet) {//gain time if user choose only median  sliders L <=1  slider chrom master < 1
                 { // enclosing this code in a block frees about 120 MB before allocating 20 MB after this block (measured with D700 NEF)
                 wavelet_decomposition* Ldecomp;
                 wavelet_decomposition* adecomp;
@@ -597,7 +621,7 @@ float fq_sort2(float arr[], int n)
 				bdecomp->reconstruct(labdn->data+2*datalen);
 				delete bdecomp;
                 }
-
+				}
 				//TODO: at this point wavelet coefficients storage can be freed
 				//Issue 1680: Done now
 
@@ -606,7 +630,256 @@ float fq_sort2(float arr[], int n)
 					impulse_nr (labdn, MIN(50.0f,(float)dnparams.luma)/20.0f);
 				}
 				//PF_correct_RT(dst, dst, defringe.radius, defringe.threshold);
+				
+				int metchoice=0;
+				if(dnparams.methodmed=="Lonly") metchoice=1;
+				else if(dnparams.methodmed=="Lab") metchoice=2;
+				
+				//median on Luminance Lab only
+			if(metchoice==1 || metchoice ==2) {
+			for(int iteration=1;iteration<=dnparams.passes;iteration++){
+			  //printf("pas=%i\n",iteration);
+					int wid=labdn->W;
+					int hei=labdn->H;
+					float** tmL;
+					tmL = new float*[hei];
+						for (int i=0; i<hei; i++)
+							tmL[i] = new float[wid];
+			
+					int methmedL=0;
+					int borderL = 1;
+					if(dnparams.medmethod=="soft")
+						methmedL=0;
+					else if(dnparams.medmethod=="33")
+						methmedL=1;
+					else if(dnparams.medmethod=="55") {
+						methmedL = 3;
+						borderL = 2;
+					}
+					else if(dnparams.medmethod=="55soft") {
+						methmedL = 2;
+						borderL = 2;
+					}	
+					else if(dnparams.medmethod=="77") {
+						methmedL = 4;
+						borderL = 3;
+					}	
+					if(methmedL < 2) {
+						for (int i=1; i<hei-1; i++) {
+							float pp[9],results[5],temp;
+							if(methmedL == 0) 
+								for (int j=1; j<wid-1; j++) {
+									med2(labdn->L[i][j] ,labdn->L[i-1][j], labdn->L[i+1][j] ,labdn->L[i][j+1],labdn->L[i][j-1], tmL[i][j]);//3x3 soft
+								}
+							else
+								for (int j=1; j<wid-1; j++) {//hybrid median filter ==> impluse denoise !I let here to get trace
+									/*	pp[0] = labdn->L[i][j-1] ;
+										pp[1] = labdn->L[i-1][j] ;
+										pp[2] = labdn->L[i][j] ;
+										pp[3] = labdn->L[i+1][j] ;
+										pp[4] = labdn->L[i][j+1] ;
+									//   Get median
+										results[0] = media(pp, 5);
+									//   Pick up x-window elements
+										pp[0] = labdn->L[i-1][j-1] ;
+										pp[1] = labdn->L[i+1][j-1] ;
+										pp[2] = labdn->L[i][j] ;
+										pp[3] = labdn->L[i-1][j+1] ;
+										pp[4] = labdn->L[i+1][j+1] ;
+										  //   Get median
+										results[1] = media(pp, 5);
+										//   Pick up leading element
+										results[2] = labdn->L[i][j] ;;
+										//   Get result
+										tmL[i][j] = media(results, 3);
+								*/
+								med3(labdn->L[i][j] ,labdn->L[i-1][j], labdn->L[i+1][j] ,labdn->L[i][j+1],labdn->L[i][j-1], labdn->L[i-1][j-1],labdn->L[i-1][j+1],labdn->L[i+1][j-1],labdn->L[i+1][j+1],tmL[i][j]);//3x3 soft
+								}
+						}
+					}
+					else {
+						for (int i=borderL; i<hei-borderL; i++) {
+							float pp[49],temp;
+						if(methmedL == 4)						
+							for (int j=borderL; j<wid-borderL; j++) {
+									int kk=0;
+									for (int ii=-3;ii<=3;ii++) {
+										for (int jj=-3;jj<=3;jj++){kk++;
+										 pp[kk]=labdn->L[i+ii][j+jj];
+										}
+									}	
+								fq_sort2(pp,49);
+								tmL[i][j]=pp[24];//7x7
+							}
+						else if(methmedL == 3)	
+							for (int j=2; j<wid-2; j++) {
+								med5(labdn->L[i][j],labdn->L[i-1][j],labdn->L[i+1][j],labdn->L[i][j+1],labdn->L[i][j-1],labdn->L[i-1][j-1],labdn->L[i-1][j+1], labdn->L[i+1][j-1],labdn->L[i+1][j+1],
+								labdn->L[i-2][j],labdn->L[i+2][j],labdn->L[i][j+2],labdn->L[i][j-2],labdn->L[i-2][j-2],labdn->L[i-2][j+2],labdn->L[i+2][j-2],labdn->L[i+2][j+2],	
+								labdn->L[i-2][j+1],labdn->L[i+2][j+1],labdn->L[i-1][j+2],labdn->L[i-1][j-2],labdn->L[i-2][j-1],labdn->L[i+2][j-1],labdn->L[i+1][j+2],labdn->L[i+1][j-2],	
+								tmL[i][j]);//5x5
+							}
+						else
+							for (int j=2; j<wid-2; j++) {
+								pp[0]=labdn->L[i][j];pp[1]=labdn->L[i-1][j]; pp[2]=labdn->L[i+1][j];pp[3]=labdn->L[i][j+1];pp[4]=labdn->L[i][j-1];pp[5]=labdn->L[i-1][j-1];pp[6]=labdn->L[i-1][j+1];
+								pp[7]=labdn->L[i+1][j-1];pp[8]=labdn->L[i+1][j+1];pp[9]=labdn->L[i+2][j];pp[10]=labdn->L[i-2][j];pp[11]=labdn->L[i][j+2];pp[12]=labdn->L[i][j-2];
+								fq_sort2(pp,13);
+								tmL[i][j]=pp[6];//5x5 soft
+							}
+						}
+					}
 
+		
+					for(int i = borderL; i < hei-borderL; i++ ) {
+						for(int j = borderL; j < wid-borderL; j++) {
+							labdn->L[i][j] = tmL[i][j];
+						}
+		 			}
+//a                  
+				if(metchoice==2) {
+					if(methmedL < 2) {
+						for (int i=1; i<hei-1; i++) {
+							float pp[9],temp;
+							if(methmedL == 0) 
+								for (int j=1; j<wid-1; j++) {
+									med2(labdn->a[i][j] ,labdn->a[i-1][j], labdn->a[i+1][j] ,labdn->a[i][j+1],labdn->a[i][j-1], tmL[i][j]);//3x3 soft
+								}
+							else
+								for (int j=1; j<wid-1; j++) {
+								med3(labdn->a[i][j] ,labdn->a[i-1][j], labdn->a[i+1][j] ,labdn->a[i][j+1],labdn->a[i][j-1], labdn->a[i-1][j-1],labdn->a[i-1][j+1],labdn->a[i+1][j-1],labdn->a[i+1][j+1],tmL[i][j]);//3x3 soft
+								}
+						}
+					}
+					else {
+						for (int i=borderL; i<hei-borderL; i++) {
+							float pp[49],temp;
+						if(methmedL == 4)						
+							for (int j=borderL; j<wid-borderL; j++) {
+									int kk=0;
+									for (int ii=-3;ii<=3;ii++) {
+										for (int jj=-3;jj<=3;jj++){kk++;
+										 pp[kk]=labdn->a[i+ii][j+jj];
+										}
+									}	
+								fq_sort2(pp,49);
+								tmL[i][j]=pp[24];//7x7
+							}
+						else if(methmedL == 3)
+							for (int j=2; j<wid-2; j++) {						
+								med5(labdn->a[i][j],labdn->a[i-1][j],labdn->a[i+1][j],labdn->a[i][j+1],labdn->a[i][j-1],labdn->a[i-1][j-1],labdn->a[i-1][j+1], labdn->a[i+1][j-1],labdn->a[i+1][j+1],
+								labdn->a[i-2][j],labdn->a[i+2][j],labdn->a[i][j+2],labdn->a[i][j-2],labdn->a[i-2][j-2],labdn->a[i-2][j+2],labdn->a[i+2][j-2],labdn->a[i+2][j+2],	
+								labdn->a[i-2][j+1],labdn->a[i+2][j+1],labdn->a[i-1][j+2],labdn->a[i-1][j-2],labdn->a[i-2][j-1],labdn->a[i+2][j-1],labdn->a[i+1][j+2],labdn->a[i+1][j-2],	
+								tmL[i][j]);//5x5
+								}
+						else
+							for (int j=2; j<wid-2; j++) {
+								pp[0]=labdn->a[i][j];pp[1]=labdn->a[i-1][j]; pp[2]=labdn->a[i+1][j];pp[3]=labdn->a[i][j+1];pp[4]=labdn->a[i][j-1];pp[5]=labdn->a[i-1][j-1];pp[6]=labdn->a[i-1][j+1];
+								pp[7]=labdn->a[i+1][j-1];pp[8]=labdn->a[i+1][j+1];pp[9]=labdn->a[i+2][j];pp[10]=labdn->a[i-2][j];pp[11]=labdn->a[i][j+2];pp[12]=labdn->a[i][j-2];
+								fq_sort2(pp,13);
+								tmL[i][j]=pp[6];//5x5 soft
+							}
+						/*	for (int j=3; j<wid-3; j++) {
+									int kk=0;
+									for (int ii=-2;ii<=2;ii++) {
+										for (int jj=-2;jj<=2;jj++){kk++;
+										 pp[kk]=labdn->a[i+ii][j+jj];
+										}
+										pp[kk+1]=labdn->a[i-3][j-3];pp[kk+2]=labdn->a[i-3][j+3];pp[kk+3]=labdn->a[i+3][j-3];pp[kk+4]=labdn->a[i+3][j+3];
+										pp[kk+5]=labdn->a[i-3][j];pp[kk+6]=labdn->a[i+3][j];pp[kk+7]=labdn->a[i][j-3];pp[kk+8]=labdn->a[i][j+3];
+										
+									}	
+								fq_sort2(pp,33);
+								tmL[i][j]=pp[16];//7x7
+							}
+							*/
+						}
+					}
+
+		
+					for(int i = borderL; i < hei-borderL; i++ ) {
+						for(int j = borderL; j < wid-borderL; j++) {
+							labdn->a[i][j] = tmL[i][j];
+						}
+					}
+					
+					
+//b
+					if(methmedL < 2) {
+						for (int i=1; i<hei-1; i++) {
+							float pp[9],temp;
+							if(methmedL == 0) 
+								for (int j=1; j<wid-1; j++) {
+									med2(labdn->b[i][j] ,labdn->b[i-1][j], labdn->b[i+1][j] ,labdn->b[i][j+1],labdn->b[i][j-1], tmL[i][j]);//3x3 soft
+								}
+							else
+								for (int j=1; j<wid-1; j++) {
+								med3(labdn->b[i][j] ,labdn->b[i-1][j], labdn->b[i+1][j] ,labdn->b[i][j+1],labdn->b[i][j-1], labdn->b[i-1][j-1],labdn->b[i-1][j+1],labdn->b[i+1][j-1],labdn->b[i+1][j+1],tmL[i][j]);//3x3 soft
+								}
+						}
+					}
+					else {
+						for (int i=borderL; i<hei-borderL; i++) {
+							float pp[49],temp;
+						if(methmedL == 4)			
+							for (int j=borderL; j<wid-borderL; j++) {
+									int kk=0;
+									for (int ii=-3;ii<=3;ii++) {
+										for (int jj=-3;jj<=3;jj++){kk++;
+										 pp[kk]=labdn->b[i+ii][j+jj];
+										}
+									}	
+								fq_sort2(pp,49);
+								tmL[i][j]=pp[24];//7x7
+							
+								
+							}
+						else if(methmedL == 3)			
+							for (int j=2; j<wid-2; j++) {
+								med5(labdn->b[i][j],labdn->b[i-1][j],labdn->b[i+1][j],labdn->b[i][j+1],labdn->b[i][j-1],labdn->b[i-1][j-1],labdn->b[i-1][j+1], labdn->b[i+1][j-1],labdn->b[i+1][j+1],
+								labdn->b[i-2][j],labdn->b[i+2][j],labdn->b[i][j+2],labdn->b[i][j-2],labdn->b[i-2][j-2],labdn->b[i-2][j+2],labdn->b[i+2][j-2],labdn->b[i+2][j+2],	
+								labdn->b[i-2][j+1],labdn->b[i+2][j+1],labdn->b[i-1][j+2],labdn->b[i-1][j-2],labdn->b[i-2][j-1],labdn->b[i+2][j-1],labdn->b[i+1][j+2],labdn->b[i+1][j-2],	
+								tmL[i][j]);//5x5
+							
+							}
+						else
+							for (int j=2; j<wid-2; j++) {
+							/*for (int j=3; j<wid-3; j++) {
+									int kk=0;
+									for (int ii=-2;ii<=2;ii++) {
+										for (int jj=-2;jj<=2;jj++){kk++;
+										 pp[kk]=labdn->b[i+ii][j+jj];
+										}
+										pp[kk+1]=labdn->b[i-3][j-3];pp[kk+2]=labdn->b[i-3][j+3];pp[kk+3]=labdn->b[i+3][j-3];pp[kk+4]=labdn->b[i+3][j+3];
+										pp[kk+5]=labdn->b[i-3][j];pp[kk+6]=labdn->b[i+3][j];pp[kk+7]=labdn->b[i][j-3];pp[kk+8]=labdn->b[i][j+3];
+										
+									}	
+								fq_sort2(pp,33);
+								tmL[i][j]=pp[16];//7x7
+							*/
+							
+							
+								pp[0]=labdn->b[i][j];pp[1]=labdn->b[i-1][j]; pp[2]=labdn->b[i+1][j];pp[3]=labdn->b[i][j+1];pp[4]=labdn->b[i][j-1];pp[5]=labdn->b[i-1][j-1];pp[6]=labdn->b[i-1][j+1];
+								pp[7]=labdn->b[i+1][j-1];pp[8]=labdn->b[i+1][j+1];pp[9]=labdn->b[i+2][j];pp[10]=labdn->b[i-2][j];pp[11]=labdn->b[i][j+2];pp[12]=labdn->b[i][j-2];
+								fq_sort2(pp,13);
+								tmL[i][j]=pp[6];//5x5 soft
+							
+							}
+						}
+					}
+
+		
+					for(int i = borderL; i < hei-borderL; i++ ) {
+						for(int j = borderL; j < wid-borderL; j++) {
+							labdn->b[i][j] = tmL[i][j];
+						}
+					}
+				}			
+			
+					for (int i=0; i<hei; i++)
+						delete [] tmL[i];
+					delete [] tmL;
+			}
+			}
+			
 				//wavelet denoised L channel
 				array2D<float> Lwavdn(width,height);
 				float * Lwavdnptr = Lwavdn;
@@ -884,8 +1157,8 @@ float fq_sort2(float arr[], int n)
 	}
 
 
-	//median 3x3 in complement 
-	if(dnparams.median) {
+	//median 3x3 in complement on RGB
+	if(dnparams.methodmed=="RGB") {
 		int wid=dst->width, hei=dst->height;
 		float** tm;
 		tm = new float*[hei];
@@ -900,19 +1173,20 @@ float fq_sort2(float arr[], int n)
 
 		int methmed=0;
 		int border = 1;
-		if(dnparams.medmethod=="soft")
+		if(dnparams.rgbmethod=="soft")
 			methmed=0;
-		else if(dnparams.medmethod=="33")
+		else if(dnparams.rgbmethod=="33")
 			methmed=1;
-		else if(dnparams.medmethod=="55") {
+		else if(dnparams.rgbmethod=="55") {
 			methmed = 3;
 			border = 2;
 		}
-		else if(dnparams.medmethod=="55soft") {
+		else if(dnparams.rgbmethod=="55soft") {
 			methmed = 2;
 			border = 2;
 		}
 
+for(int iteration=1;iteration<=dnparams.passes;iteration++){
 
 #pragma omp parallel
 {
@@ -1045,11 +1319,12 @@ float fq_sort2(float arr[], int n)
 			}
 		}
 }
-		
+}		
                 for (int i=0; i<hei; i++)
                     delete [] tm[i];
                 delete [] tm;
-	}		
+			
+}		
 		//end median
 
 //#ifdef _DEBUG

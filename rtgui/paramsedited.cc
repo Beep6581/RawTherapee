@@ -188,8 +188,11 @@ void ParamsEdited::set (bool v) {
 	dirpyrDenoise.redchro      = v;
 	dirpyrDenoise.bluechro     = v;
 	dirpyrDenoise.gamma        = v;
+	dirpyrDenoise.passes        = v;
 	dirpyrDenoise.dmethod      = v;
 	dirpyrDenoise.medmethod      = v;
+	dirpyrDenoise.methodmed      = v;
+	dirpyrDenoise.rgbmethod      = v;
 	epd.enabled                = v;
 	epd.strength            = v;
 	epd.edgeStopping        = v;
@@ -504,8 +507,11 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         dirpyrDenoise.redchro = dirpyrDenoise.redchro && p.dirpyrDenoise.redchro == other.dirpyrDenoise.redchro;
         dirpyrDenoise.bluechro = dirpyrDenoise.bluechro && p.dirpyrDenoise.bluechro == other.dirpyrDenoise.bluechro;	
         dirpyrDenoise.gamma = dirpyrDenoise.gamma && p.dirpyrDenoise.gamma == other.dirpyrDenoise.gamma;
+        dirpyrDenoise.passes = dirpyrDenoise.passes && p.dirpyrDenoise.passes == other.dirpyrDenoise.passes;
         dirpyrDenoise.dmethod = dirpyrDenoise.dmethod && p.dirpyrDenoise.dmethod == other.dirpyrDenoise.dmethod;
         dirpyrDenoise.medmethod = dirpyrDenoise.medmethod && p.dirpyrDenoise.medmethod == other.dirpyrDenoise.medmethod;
+        dirpyrDenoise.methodmed = dirpyrDenoise.methodmed && p.dirpyrDenoise.methodmed == other.dirpyrDenoise.methodmed;
+        dirpyrDenoise.rgbmethod = dirpyrDenoise.rgbmethod && p.dirpyrDenoise.rgbmethod == other.dirpyrDenoise.rgbmethod;
 
         epd.enabled = epd.enabled && p.epd.enabled == other.epd.enabled;
         epd.strength = epd.strength && p.epd.strength == other.epd.strength;
@@ -823,9 +829,12 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (dirpyrDenoise.redchro)				toEdit.dirpyrDenoise.redchro	= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHROMARED] ? toEdit.dirpyrDenoise.redchro + mods.dirpyrDenoise.redchro : mods.dirpyrDenoise.redchro;
 	if (dirpyrDenoise.bluechro)				toEdit.dirpyrDenoise.bluechro	= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHROMABLUE] ? toEdit.dirpyrDenoise.bluechro + mods.dirpyrDenoise.bluechro : mods.dirpyrDenoise.bluechro;
 	if (dirpyrDenoise.gamma)				toEdit.dirpyrDenoise.gamma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_GAMMA] ? toEdit.dirpyrDenoise.gamma + mods.dirpyrDenoise.gamma : mods.dirpyrDenoise.gamma;
+	if (dirpyrDenoise.passes)				toEdit.dirpyrDenoise.passes		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_PASSES] ? toEdit.dirpyrDenoise.passes + mods.dirpyrDenoise.passes : mods.dirpyrDenoise.passes;
 //	if (dirpyrDenoise.perform)				toEdit.dirpyrDenoise.perform 	= mods.dirpyrDenoise.perform;
 	if (dirpyrDenoise.dmethod)				toEdit.dirpyrDenoise.dmethod		= mods.dirpyrDenoise.dmethod;
 	if (dirpyrDenoise.medmethod)			toEdit.dirpyrDenoise.medmethod		= mods.dirpyrDenoise.medmethod;
+	if (dirpyrDenoise.methodmed)			toEdit.dirpyrDenoise.methodmed		= mods.dirpyrDenoise.methodmed;
+	if (dirpyrDenoise.rgbmethod)			toEdit.dirpyrDenoise.rgbmethod		= mods.dirpyrDenoise.rgbmethod;
 
 	if (epd.enabled)						toEdit.epd.enabled				= mods.epd.enabled;
 	if (epd.strength)						toEdit.epd.strength				= mods.epd.strength;

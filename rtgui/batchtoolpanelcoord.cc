@@ -147,7 +147,7 @@ void BatchToolPanelCoordinator::initSession () {
 
 			shadowshighlights->setAdjusterBehavior (false, false, false);
 			dirpyrequalizer->setAdjusterBehavior (false, false, false);
-			dirpyrdenoise->setAdjusterBehavior (false, false,false,false,false,false);
+			dirpyrdenoise->setAdjusterBehavior (false, false,false,false,false,false, false);
 			preprocess->setAdjusterBehavior (false, false);
 			rawcacorrection->setAdjusterBehavior (false);
 			rawexposure->setAdjusterBehavior (false, false, false);
@@ -179,7 +179,7 @@ void BatchToolPanelCoordinator::initSession () {
 			blackwhite->setAdjusterBehavior (options.baBehav[ADDSET_BLACKWHITE_HUES],options.baBehav[ADDSET_BLACKWHITE_GAMMA]);
 			shadowshighlights->setAdjusterBehavior (options.baBehav[ADDSET_SH_HIGHLIGHTS], options.baBehav[ADDSET_SH_SHADOWS], options.baBehav[ADDSET_SH_LOCALCONTRAST]);
 			dirpyrequalizer->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYREQ], options.baBehav[ADDSET_DIRPYREQ_THRESHOLD], options.baBehav[ADDSET_DIRPYREQ_SKINPROTECT]);
-			dirpyrdenoise->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYRDN_LUMA],options.baBehav[ADDSET_DIRPYRDN_LUMDET],options.baBehav[ADDSET_DIRPYRDN_CHROMA],options.baBehav[ADDSET_DIRPYRDN_CHROMARED],options.baBehav[ADDSET_DIRPYRDN_CHROMABLUE], options.baBehav[ADDSET_DIRPYRDN_GAMMA]);
+			dirpyrdenoise->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYRDN_LUMA],options.baBehav[ADDSET_DIRPYRDN_LUMDET],options.baBehav[ADDSET_DIRPYRDN_CHROMA],options.baBehav[ADDSET_DIRPYRDN_CHROMARED],options.baBehav[ADDSET_DIRPYRDN_CHROMABLUE], options.baBehav[ADDSET_DIRPYRDN_GAMMA], options.baBehav[ADDSET_DIRPYRDN_PASSES]);
 			preprocess->setAdjusterBehavior (options.baBehav[ADDSET_PREPROCESS_LINEDENOISE], options.baBehav[ADDSET_PREPROCESS_GREENEQUIL]);
 			rawcacorrection->setAdjusterBehavior (options.baBehav[ADDSET_RAWCACORR]);
 			rawexposure->setAdjusterBehavior (options.baBehav[ADDSET_RAWEXPOS_LINEAR], options.baBehav[ADDSET_RAWEXPOS_PRESER], options.baBehav[ADDSET_RAWEXPOS_BLACKS]);

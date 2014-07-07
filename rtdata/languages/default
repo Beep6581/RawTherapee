@@ -505,6 +505,10 @@ HISTORY_MSG_281;Color Toning - Sat. Protection
 HISTORY_MSG_282;Color Toning - Sat. Threshold
 HISTORY_MSG_283;Color Toning - Str. Protection
 HISTORY_MSG_284;Color Toning - Auto saturation
+HISTORY_MSG_285;NR - median type Lab
+HISTORY_MSG_286;NR - median method
+HISTORY_MSG_287;NR - median type RGB
+HISTORY_MSG_288;NR - median iterations
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1152,8 +1156,9 @@ TP_DIRPYRDENOISE_CHROMA;Chrominance - Master
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on the gamma of the input color profile. An sRGB gamma is assumed, thus if the image uses an input color profile of a different gamma, the effects of luminance noise reduction will differ.
 TP_DIRPYRDENOISE_ENH;Enhanced mode
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase.
-TP_DIRPYRDENOISE_MED;Median 
-TP_DIRPYRDENOISE_MED_TOOLTIP;Add a median 3x3 soft or 3x3 standard or 5x5 strong at the end of threatment - Increases noise reduction at the expense of a 4% to 10% processing time increase.
+TP_DIRPYRDENOISE_MED;Median - Luminance only
+TP_DIRPYRDENOISE_MET_TOOLTIP;Choice of median type : median 3x3  or 3x3 strong or 5x5 (RGB) or 5x5 strong or 7x7 (L only and Lab)in the threatment - Increases noise reduction.
+TP_DIRPYRDENOISE_METM_TOOLTIP;Add a median - in mode "Luminance only" or "Lab" just after wavelet\nOr in mode "RGB" at the end
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
 TP_DIRPYRDENOISE_LABEL;Noise Reduction
@@ -1165,12 +1170,20 @@ TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be 
 TP_DIRPYRDENOISE_PERF;RGB mode (raw images)
 TP_DIRPYRDENOISE_RED;Chrominance - Red-Green
 TP_DIRPYRDENOISE_RGB;RGB
-TP_DIRPYRDENOISE_MEDMETHOD;Median Method
-TP_DIRPYRDENOISE_SOFT;3x3 soft
-TP_DIRPYRDENOISE_33;3x3 standard
-TP_DIRPYRDENOISE_55;5x5
-TP_DIRPYRDENOISE_55SOFT;5x5 soft
-TP_DIRPYRDENOISE_MET_TOOLTIP;allow different denoise: soft preserve detail, 3x3 standard, 5x5 soft, 5x5 
+TP_DIRPYRDENOISE_MEDMETHOD;Median type
+TP_DIRPYRDENOISE_METHODMED;Median Method
+TP_DIRPYRDENOISE_LM;Luminance only
+TP_DIRPYRDENOISE_LABM;Lab
+TP_DIRPYRDENOISE_RGBM;RGB
+TP_DIRPYRDENOISE_NONE;None
+TP_DIRPYRDENOISE_SOFT;3x3 
+TP_DIRPYRDENOISE_33;3x3 strong
+TP_DIRPYRDENOISE_55;5x5 strong
+TP_DIRPYRDENOISE_55SOFT;5x5 
+TP_DIRPYRDENOISE_77;7x7 'slow'
+TP_DIRPYRDENOISE_MED_TOOLTIP;If enabled median for luminance (Lab) after wavelet, if desabled RGB at the end of threatment. 
+TP_DIRPYRDENOISE_PASSE;Iterations
+TP_DIRPYRDENOISE_PASSES_TOOLTIP;Often, it is better to do iterations, with small median, than one with big !
 TP_DIRPYREQUALIZER_ALGO;Algorithm Skin
 TP_DIRPYREQUALIZER_ALGO_FI;Fine
 TP_DIRPYREQUALIZER_ALGO_LA;Large

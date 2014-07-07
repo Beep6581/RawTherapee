@@ -309,8 +309,11 @@ enum ProcEvent {
 	EvColorToningSatThreshold=281,
 	EvColorToningStrProtection=282,
 	EvColorToningautosat=283,
+	EvDPDNmetmed=284,	
+	EvDPDNrgbmet=285,
+	EvDPDNpasses=286,	
 	
-	NUMOFEVENTS=284
+	NUMOFEVENTS=287
 };
 }
 #endif
