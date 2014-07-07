@@ -275,6 +275,9 @@ public:
 //    bool perform;
 	bool dmethod;
     bool medmethod;
+    bool methodmed;
+    bool rgbmethod;
+    bool passes;
 	
 };
 

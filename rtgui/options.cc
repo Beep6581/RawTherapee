@@ -487,6 +487,7 @@ void Options::setDefaults () {
 			0,  // ADDSET_DIRPYREQ_THRESHOLD
 			0,  // ADDSET_DIRPYREQ_SKINPROTECT
 			0,  // ADDSET_COLORTONING_SPLIT
+			0,	//ADDSET_DIRPYRDN_PASSES
 
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);

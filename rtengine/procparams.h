@@ -549,6 +549,9 @@ class DirPyrDenoiseParams {
         double  gamma;
         Glib::ustring dmethod;
         Glib::ustring medmethod;
+        Glib::ustring methodmed;
+        Glib::ustring rgbmethod;
+        int  passes;
 };
 
 //EPD related parameters.

@@ -305,7 +305,10 @@ RGBCURVE,         // EvColorToningHighights
 RGBCURVE,         // EvColorToningSatProtection
 RGBCURVE,         // EvColorToningSatThreshold
 RGBCURVE,			//EvColorToningStrProtection
-RGBCURVE			//EvColorToningautosat
+RGBCURVE,			//EvColorToningautosat
+ALLNORAW, 			//EvDPDNmetmed
+ALLNORAW, 			//EvDPDNrgbmet
+ALLNORAW			//EvDPDNpasses
 
 //LUMINANCECURVE    // EvCATsharpcie
 
