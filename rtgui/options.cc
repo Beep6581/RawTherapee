@@ -486,6 +486,7 @@ void Options::setDefaults () {
 			0,  // ADDSET_BLACKWHITE_GAMMA
 			0,  // ADDSET_DIRPYREQ_THRESHOLD
 			0,  // ADDSET_DIRPYREQ_SKINPROTECT
+			0,  // ADDSET_COLORTONING_SPLIT
 
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
@@ -533,7 +534,8 @@ void Options::setDefaults () {
 	rtSettings.autocielab=true;
 	rtSettings.denoiselabgamma=2;
     rtSettings.HistogramWorking = false;
-	
+ //   rtSettings.colortoningab =0.7;
+//rtSettings.decaction =0.3;	
 //	rtSettings.ciebadpixgauss=false;	
 	rtSettings.rgbcurveslumamode_gamut=true;
 	lastIccDir = rtSettings.iccDirectory;
@@ -768,6 +770,8 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "CBDLArtif"))      rtSettings.artifact_cbdl        = keyFile.get_double("Color Management", "CBDLArtif");
     if (keyFile.has_key ("Color Management", "CBDLlevel0"))     rtSettings.level0_cbdl        = keyFile.get_double("Color Management", "CBDLlevel0");
     if (keyFile.has_key ("Color Management", "CBDLlevel123"))   rtSettings.level123_cbdl        = keyFile.get_double("Color Management", "CBDLlevel123");
+ //   if (keyFile.has_key ("Color Management", "Colortoningab"))  rtSettings.colortoningab            = keyFile.get_double("Color Management", "Colortoningab");
+ //   if (keyFile.has_key ("Color Management", "Decaction"))   rtSettings.decaction        = keyFile.get_double("Color Management", "Decaction");
 
     if (keyFile.has_key ("Color Management", "WhiteBalanceSpotSize")) whiteBalanceSpotSize      = keyFile.get_integer("Color Management", "WhiteBalanceSpotSize");
     if( keyFile.has_key ("Color Management", "GamutICC"))       rtSettings.gamutICC             = keyFile.get_boolean("Color Management", "GamutICC");
@@ -1077,6 +1081,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_double ("Color Management", "CBDLArtif", rtSettings.artifact_cbdl);
     keyFile.set_double ("Color Management", "CBDLlevel0", rtSettings.level0_cbdl);
     keyFile.set_double ("Color Management", "CBDLlevel123", rtSettings.level123_cbdl);
+ //   keyFile.set_double ("Color Management", "Colortoningab", rtSettings.colortoningab);
+//    keyFile.set_double ("Color Management", "Decaction", rtSettings.decaction);
 
 
     Glib::ArrayHandle<int> bab = baBehav;

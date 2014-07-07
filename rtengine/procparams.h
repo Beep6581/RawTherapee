@@ -29,6 +29,10 @@
 class ParamsEdited;
 
 namespace rtengine {
+
+class ColorGradientCurve;
+class OpacityCurve;
+
 namespace procparams {
 
 template <typename T>
@@ -44,36 +48,36 @@ class Threshold {
 #endif
 
     public:
-        Threshold (T val1, T val2, bool startAtOne) {
+        Threshold (T bottom, T top, bool startAtOne) {
             initEq1 = startAtOne;
-            value[0] = val1;
-            value[1] = val2;
+            value[0] = bottom;
+            value[1] = top;
             value[2] = T(0);
             value[3] = T(0);
             _isDouble = false;
         }
 
-        Threshold (T val1, T val2, T val3, T val4, bool startAtOne) {
+        Threshold (T bottomLeft, T topLeft, T bottomRight, T topRight, bool startAtOne) {
             initEq1 = startAtOne;
-            value[0] = val1;
-            value[1] = val2;
-            value[2] = val3;
-            value[3] = val4;
+            value[0] = bottomLeft;
+            value[1] = topLeft;
+            value[2] = bottomRight;
+            value[3] = topRight;
             _isDouble = true;
         }
 
         // for convenience, since 'values' is public
-        void setValues(T val1, T val2) {
-            value[0] = val1;
-            value[1] = val2;
+        void setValues(T bottom, T top) {
+            value[0] = bottom;
+            value[1] = top;
         }
 
         // for convenience, since 'values' is public
-        void setValues(T val1, T val2, T val3, T val4) {
-            value[0] = val1;
-            value[1] = val2;
-            value[2] = val3;
-            value[3] = val4;
+        void setValues(T bottomLeft, T topLeft, T bottomRight, T topRight) {
+            value[0] = bottomLeft;
+            value[1] = topLeft;
+            value[2] = bottomRight;
+            value[3] = topRight;
         }
 
         bool isDouble() const { return _isDouble; }
@@ -245,6 +249,67 @@ class RGBCurvesParams {
 };
 
 /**
+  * Parameters of the Color Toning
+  */
+
+class ColorToningParams {
+
+    public:
+        bool enabled;
+		bool autosat;
+        std::vector<double> opacityCurve;
+        std::vector<double> colorCurve;
+        int satProtectionThreshold;
+        int saturatedOpacity;
+		int strengthprotection;
+        int balance;
+        Threshold<int> hlColSat;
+        Threshold<int> shadowsColSat;
+        std::vector<double> clcurve;
+        std::vector<double> cl2curve;
+
+        /* Can be either:
+         *  Splitlr    :
+         *  Splitco    :
+         *  Splitbal   :
+         *  Lab        :
+         *  Lch        :
+         *  RGBSliders :
+         *  RGBCurves  :
+         */
+        Glib::ustring method;
+
+        /* Can be either:
+         * Std   :
+         * All   :
+         * Separ :
+         * Two   :
+         */
+        Glib::ustring twocolor;
+        double redlow;
+        double greenlow;
+        double bluelow;
+        double redmed;
+        double greenmed;
+        double bluemed;
+        double redhigh;
+        double greenhigh;
+        double bluehigh;
+        double satlow;
+        double sathigh;
+        bool lumamode;
+
+        ColorToningParams ();
+        void setDefault();  // SHOULD BE GENERALIZED TO ALL CLASSES!
+        /// @brief Transform the mixer values to their curve equivalences
+        void mixerToCurve(std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const;
+        /// @brief Specifically transform the sliders values to their curve equivalences
+        void slidersToCurve(std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const;
+        /// @brief Fill the ColorGradientCurve and OpacityCurve LUTf from the control points curve or sliders value
+        void getCurves(ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3]) const;
+};
+
+/**
   * Parameters of the sharpening
   */
 class SharpeningParams {
@@ -357,10 +422,10 @@ class WBParams {
         static void     cleanup();
 };
 
-    /**
-     * Parameters of colorappearance
-     */
-    class ColorAppearanceParams {
+/**
+ * Parameters of colorappearance
+ */
+class ColorAppearanceParams {
 
     public:
         enum eTCModeId {
@@ -832,6 +897,7 @@ class ProcParams {
         ToneCurveParams         toneCurve;       ///< Tone curve parameters
         LCurveParams            labCurve;        ///< CIELAB luminance curve parameters
         RGBCurvesParams         rgbCurves;       ///< RGB curves parameters
+        ColorToningParams       colorToning;     ///< Color Toning parameters
         SharpeningParams        sharpening;      ///< Sharpening parameters
         SharpenEdgeParams       sharpenEdge;     ///< Sharpen edge parameters
         SharpenMicroParams      sharpenMicro;    ///< Sharpen microcontrast parameters

@@ -468,6 +468,36 @@ HISTORY_MSG_247;Courbe 'LT'
 HISTORY_MSG_248;Courbe 'TT'
 HISTORY_MSG_249;Seuil Contraste par niv. de détail
 HISTORY_MSG_250;Réd. de bruit - Amélioré
+HISTORY_MSG_251;N&amp;B - Algorithme
+HISTORY_MSG_252;CpND - Tons chair
+HISTORY_MSG_253;CpND - Réduction des artéfactes
+HISTORY_MSG_254;CpND - Teinte chair
+HISTORY_MSG_255;Virage Partiel
+HISTORY_MSG_256;Virage Partiel - Couleur
+HISTORY_MSG_257;Virage Partiel - Opacité
+HISTORY_MSG_258;Virage Partiel - Opacité ab
+HISTORY_MSG_259;Virage Partiel - Méthode
+HISTORY_MSG_260;Virage Partiel - 2 couleurs
+HISTORY_MSG_261;Virage Partiel - Luminance
+HISTORY_MSG_262;Virage Partiel - Ombres - Rouge
+HISTORY_MSG_263;Virage Partiel - Ombres - Vert
+HISTORY_MSG_264;Virage Partiel - Ombres - Bleu
+HISTORY_MSG_265;Virage Partiel - Moyen - Rouge
+HISTORY_MSG_266;Virage Partiel - Moyen - Vert
+HISTORY_MSG_267;Virage Partiel - Moyen - Bleu
+HISTORY_MSG_268;Virage Partiel - HL - Rouge
+HISTORY_MSG_269;Virage Partiel - HL - Vert
+HISTORY_MSG_270;Virage Partiel - HL - Bleu
+HISTORY_MSG_271;Virage Partiel - Balance
+HISTORY_MSG_272;Virage Partiel - Réinit.
+HISTORY_MSG_273;Virage Partiel - Saturation Shadows
+HISTORY_MSG_274;Virage Partiel - Saturation Highlights
+HISTORY_MSG_275;Virage Partiel - Réinit. Courbes
+HISTORY_MSG_276;Virage Partiel - Préserver Luminance
+HISTORY_MSG_277;Virage partiel - Ombres
+HISTORY_MSG_278;Virage partiel - Hautes Lumières
+HISTORY_MSG_279;Virage partiel - Protect. Saturé
+HISTORY_MSG_280;Virage partiel - Seuil de Protection
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Captures
@@ -611,6 +641,7 @@ PARTIALPASTE_CHANNELMIXER;Mixage des canaux
 PARTIALPASTE_COARSETRANS;Rotation de 90° / symétrisation
 PARTIALPASTE_COLORAPP;CIE Modèle apparence de la couleur 2002
 PARTIALPASTE_COLORGROUP;Réglages couleurs
+PARTIALPASTE_COLORTONING;Virage Partiel
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Remplir
 PARTIALPASTE_COMPOSITIONGROUP;Réglages de la composition
 PARTIALPASTE_CROP;Recadrage
@@ -1034,6 +1065,53 @@ TP_COLORAPP_TONECIE;Compression Tonale utilisant CIECAM02
 TP_COLORAPP_TONECIE_TOOLTIP;Si cette option est désactivée, la compression tonale est faite dans l'espace Lab.\nSi cette options est activée, la compression tonale est faite en utilisant CIECAM02.\nL'outil Compression Tonale doit être activé pour que ce réglage prenne effet
 TP_COLORAPP_WBCAM;BB [RT+CAT02] + [sortie]
 TP_COLORAPP_WBRT;BB [RT] + [sortie]
+TP_COLORTONING_LABEL;Virage Partiel
+TP_COLORTONING_OPACITY;Opacité
+TP_COLORTONING_LUMAMODE;Préserver la luminance
+TP_COLORTONING_LUMAMODE_TOOLTIP;Si activé, lorsque vous changez la couleur (rouge, vert, cyan, bleu, etc.), la luminance de chaque pixel est préservé
+TP_COLORTONING_COLOR;Couleur
+TP_COLORTONING_LABCOL;Couleurs direct
+TP_COLORTONING_LABCOL_TOOLTIP;Lorsque vous déplacez un curseur de saturation, ces couleurs 'direct' sont augmentés
+TP_COLORTONING_LABINT;Couleurs interpolés - Mixage
+TP_COLORTONING_LABINT_TOOLTIP;Lorsque l'image est bleue et que la mixage de la couleur interpolé est rouge, cela résulte en un magenta en fonction du pourcentage d'opacité\nLorsque l'image est rouge et que la mixage de la couleur interpolé est jaune, cela résulte en un orange en fonction du pourcentage d'opacité\nEtc...
+TP_COLORTONING_CHROMA;Opacité 'ab' ou 'a'
+TP_COLORTONING_CHROMA2;Opacité 'b'
+TP_COLORTONING_AB;ab L
+TP_COLORTONING_BY;b L
+TP_COLORTONING_LUMA;Luminance
+TP_COLORTONING_CURVEEDITOR_LL;L
+TP_COLORTONING_METHOD;Méthode
+TP_COLORTONING_TWOSTD;Opacité standard 'ab'
+TP_COLORTONING_TWOALL;Opacité spécial 'ab'
+TP_COLORTONING_TWOBY;Opacité spécial 'a' and 'b'
+TP_COLORTONING_TWO2;Opacité spécial 'ab' 2 couleurs
+TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard: réponse linéaire identique pour 'a' et 'b'\nSpécial 'ab': même réponse pour 'a' and 'b', mais sans limites - essayez en dessous de la diagonale\nSpécial 'a' et 'b': comme Spécial + courbes 'a' et 'b' séparé: dédié aux effets spéciaux\nSpécial 2 couleurs - plus prévisible
+TP_COLORTONING_HUE;Mixage de la teinte
+TP_COLORTONING_LAB;Mixage Lab
+TP_COLORTONING_LCH;Mixage Lch
+TP_COLORTONING_LCH_1;Teinte + XYZ
+TP_COLORTONING_LCH_2;Mixage XYZ
+TP_COLORTONING_NEUTRALCUR;Réinit. courbes
+TP_COLORTONING_NEUTRALCUR_TIP;Réinitialise toutes les courbes à leurs valeur par défaut.
+TP_COLORTONING_NEUTRAL;Réinit. curseurs
+TP_COLORTONING_NEUTRAL_TIP;Réinitialise toutes les valeurs (Ombres, Tons moyens, Hautes lumières) à leur valeur par défaut.
+TP_COLORTONING_SPLITCO;Virage couleur O-TM-HL
+TP_COLORTONING_SPLITBAL;Virage couleur O-HL + balance
+TP_COLORTONING_SPLITLR;Virage couleur - Saturation 2 couleurs
+TP_COLORTONING_SATL;Saturation des Ombres
+TP_COLORTONING_SATH;Saturation des Hautes lumière
+TP_COLORTONING_BALANCE;Balance
+TP_COLORTONING_METHOD_TOOLTIP;Lab blending use interpolation colour blending\nSplit Toning Colour SMH (Shadows Midtones Highlights)\nSplit Toning Colour SH+balance (Shadows Highlights + balance shadows/highlights) use direct colors\nIn all methods you can enabled Black and White 
+TP_COLORTONING_BALANCE_TOOLTIP;Équilibre entre la couleur des ombres et celle des hautes lumières
+TP_COLORTONING_RGBSLIDERS;RVB - Curseurs
+TP_COLORTONING_RGBCURVES;RVB - Courbes
+TP_COLORTONING_SATURATIONTHRESHOLD;Seuil des couleurs saturés
+TP_COLORTONING_SATURATEDOPACITY;Protection des couleurs saturées
+TP_COLORTONING_SHADOWS;Ombres
+TP_COLORTONING_MIDTONES;Tons Moyens
+TP_COLORTONING_HIGHLIGHT;Hautes lumières
+TP_COLORTONING_STRENGTH;Force
+TP_COLORTONING_HUE;Teinte
 TP_CROP_FIXRATIO;Ratio fixe:
 TP_CROP_GTDIAGONALS;Règle des diagonales
 TP_CROP_GTEPASSPORT;Passeport biométrique

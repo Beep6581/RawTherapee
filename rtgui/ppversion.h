@@ -2,11 +2,13 @@
 #define _PPVERSION_
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 319
+#define PPVERSION 320
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
+   316  2014-03-29
+		[ColorToning] new tool for color toning
    319  2014-02-11
 		Hue skin for Contrast by detail levels
    318  2014-02-10

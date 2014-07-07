@@ -824,7 +824,7 @@ void BlackWhite::enabled_toggled () {
 	if (listener) {
 		if (enabled->get_inconsistent())
 			listener->panelChanged (EvBWChmixEnabled, M("GENERAL_UNCHANGED"));
-		else if (enabled->get_active ()) {
+		else if (enabled->get_active ()) { 
 			listener->panelChanged (EvBWChmixEnabled, M("GENERAL_ENABLED"));
 		}
 		else {

@@ -258,6 +258,12 @@ namespace rtengine {
             virtual void autoCamChanged (double ccam) {}
             virtual void adapCamChanged (double cadap) {}
     };
+
+    class AutoColorTonListener {
+        public :
+            virtual ~AutoColorTonListener() {}
+            virtual void autoColorTonChanged (int bwct, int satthres, int satprot) {}
+    };
 	
 	class AutoBWListener {
 		public :
@@ -354,7 +360,8 @@ namespace rtengine {
             virtual void        setPreviewImageListener (PreviewImageListener* l) =0;
             virtual void        setAutoCamListener      (AutoCamListener* l) =0;
             virtual void        setAutoBWListener     	(AutoBWListener* l) =0;
-
+            virtual void        setAutoColorTonListener (AutoColorTonListener* l) =0;
+						
             virtual ~StagedImageProcessor () {}
 
         /** Returns a staged, cached image processing manager supporting partial updates

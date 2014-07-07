@@ -275,8 +275,37 @@ DIRPYREQUALIZER,  // EvDirPyrEqualizerSkin
 DIRPYREQUALIZER,  // EvDirPyrEqlgamutlab
 DIRPYREQUALIZER,  // EvDirPyrEqualizerHueskin
 ALLNORAW,         // EvDPDNmedian
-ALLNORAW 			//EvDPDNmedmet
+ALLNORAW, 			//EvDPDNmedmet
 //DIRPYREQUALIZER   // EvDirPyrEqualizeralg
+RGBCURVE,         // EvColorToningEnabled
+RGBCURVE,         // EvColorToningColor
+RGBCURVE,         // EvColorToningOpacity
+RGBCURVE,         // EvColorToningCLCurve
+RGBCURVE,         // EvColorToningMethod
+//RGBCURVE,       // EvColorToningTwocolor
+RGBCURVE,         // EvColorToningLLCurve
+RGBCURVE,         // EvColorToningredlow
+RGBCURVE,         // EvColorToninggreenlow
+RGBCURVE,         // EvColorToningbluelow
+RGBCURVE,         // EvColorToningredmed
+RGBCURVE,         // EvColorToninggreenmed
+RGBCURVE,         // EvColorToningbluemed
+RGBCURVE,         // EvColorToningredhigh
+RGBCURVE,         // EvColorToninggreenhigh
+RGBCURVE,         // EvColorToningbluehigh
+RGBCURVE,         // EvColorToningbalance
+RGBCURVE,         // EvColorToningNeutral
+RGBCURVE,         // EvColorToningsatlow
+RGBCURVE,         // EvColorToningsathigh
+RGBCURVE,         // EvColorToningTwocolor
+RGBCURVE,         // EvColorToningNeutralcur
+RGBCURVE,         // EvColorToningLumamode
+RGBCURVE,         // EvColorToningShadows
+RGBCURVE,         // EvColorToningHighights
+RGBCURVE,         // EvColorToningSatProtection
+RGBCURVE,         // EvColorToningSatThreshold
+RGBCURVE,			//EvColorToningStrProtection
+RGBCURVE			//EvColorToningautosat
 
 //LUMINANCECURVE    // EvCATsharpcie
 

@@ -81,7 +81,6 @@ class ImProcCoordinator : public StagedImageProcessor {
 
         float bwAutoR, bwAutoG, bwAutoB;
         float CAMMean;
-
         LUTf hltonecurve;
         LUTf shtonecurve;
         LUTf tonecurve;
@@ -92,6 +91,8 @@ class ImProcCoordinator : public StagedImageProcessor {
         LUTf satcurve;
         LUTf lhskcurve;
         LUTf clcurve;
+        LUTf clToningcurve;
+        LUTf cl2Toningcurve;
 
         LUTu vhist16,vhist16bw;
         LUTu lhist16,lhist16Cropped;
@@ -121,6 +122,8 @@ class ImProcCoordinator : public StagedImageProcessor {
 
         ToneCurve customToneCurve1;
         ToneCurve customToneCurve2;
+        ColorGradientCurve ctColorCurve;
+        OpacityCurve ctOpacityCurve;
         ColorAppearance customColCurve1;
         ColorAppearance customColCurve2;
         ColorAppearance customColCurve3;
@@ -141,6 +144,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         AutoExpListener* aeListener;
         AutoCamListener* acListener;
         AutoBWListener* abwListener;
+        AutoColorTonListener* actListener;
 
         HistogramListener* hListener;
         std::vector<SizeListener*> sizeListeners;
@@ -216,6 +220,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         void setHistogramListener(HistogramListener *h)  {hListener = h; }
         void setAutoCamListener  (AutoCamListener* acl)  {acListener = acl; }
         void setAutoBWListener   (AutoBWListener* abw)   {abwListener = abw; }
+        void setAutoColorTonListener   (AutoColorTonListener* bwct)   {actListener = bwct; }
 
         void saveInputICCReference (const Glib::ustring& fname);
 

@@ -189,6 +189,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	LUTf lhskcurve (65536,0);
 	LUTf lumacurve(65536,0);
 	LUTf clcurve (65536,0);
+	LUTf clToningcurve (65536,0);
+	LUTf cl2Toningcurve (65536,0);
 
 	LUTf rCurve (65536,0);
 	LUTf gCurve (65536,0);
@@ -196,6 +198,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	LUTu dummy;
 
 	ToneCurve customToneCurve1, customToneCurve2;
+	ColorGradientCurve ctColorCurve;
+	OpacityCurve ctOpacityCurve;
 	ColorAppearance customColCurve1, customColCurve2,customColCurve3 ;
 	ToneCurve customToneCurvebw1;
 	ToneCurve customToneCurvebw2;
@@ -211,6 +215,25 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, 1);
 	CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, 1);
 
+	TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
+    TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params.icm.working);
+
+	double wp[3][3] = {
+		{wprof[0][0],wprof[0][1],wprof[0][2]},
+		{wprof[1][0],wprof[1][1],wprof[1][2]},
+		{wprof[2][0],wprof[2][1],wprof[2][2]}};
+	double wip[3][3] = {
+		{wiprof[0][0],wiprof[0][1],wiprof[0][2]},
+		{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
+		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}
+	};
+	params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip);
+
+	bool clctoningutili=false;
+	CurveFactory::curveToningCL(clctoningutili, params.colorToning.clcurve, clToningcurve, 1);
+	bool llctoningutili=false;
+	CurveFactory::curveToningLL(llctoningutili, params.colorToning.cl2curve, cl2Toningcurve, 1);
+
     LabImage* labView = new LabImage (fw,fh);
 
 
@@ -218,9 +241,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	double rrm, ggm, bbm;
     float autor, autog, autob;
     autor = -9000.f; // This will ask to compute the "auto" values for the B&W tool (have to be inferior to -5000)
-    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
+    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve,customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
     if (settings->verbose)
         printf("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);
+
+    // freeing up some memory
+    customToneCurve1.Reset();
+    customToneCurve2.Reset();
+    ctColorCurve.Reset();
+    ctOpacityCurve.Reset();
+    customToneCurvebw1.Reset();
+    customToneCurvebw2.Reset();
 
     // Freeing baseImg because not used anymore
     delete baseImg;
@@ -569,15 +600,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     else {
         // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
         // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
-		
-        readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output, params.blackwhite.enabled);
+
+        //  readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output, params.blackwhite.enabled);
+      bool bwonly = params.blackwhite.enabled &&  !params.colorToning.enabled ;
+        readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output, bwonly);
         if (settings->verbose) printf("Output profile: \"%s\"\n", params.icm.output.c_str());
     }
 
     delete labView;
     labView = NULL;
 	
-	if(params.blackwhite.enabled) {//force BW r=g=b
+	if(params.blackwhite.enabled &&  !params.colorToning.enabled ) {//force BW r=g=b
 		for (int ccw=0;ccw<cw;ccw++) {
 			for (int cch=0;cch<ch;cch++) {
 			readyImg->r(cch,ccw)=readyImg->g(cch,ccw);

@@ -263,6 +263,7 @@ class Options {
     Glib::ustring lastPFCurvesDir;
     Glib::ustring lastHsvCurvesDir;
     Glib::ustring lastToneCurvesDir;
+    Glib::ustring lastColorToningCurvesDir;
     Glib::ustring lastVibranceCurvesDir;
     Glib::ustring lastProfilingReferenceDir;
     Glib::ustring lastBWCurvesDir;

@@ -44,6 +44,8 @@ ImProcCoordinator::ImProcCoordinator ()
       satcurve(65536,0),
       lhskcurve(65536,0),
       clcurve(65536,0),
+      clToningcurve(65536,0),
+      cl2Toningcurve(65536,0),
 
       vhist16(65536),vhist16bw(65536),
       lhist16(65536), lhist16Cropped(65536),
@@ -80,7 +82,7 @@ ImProcCoordinator::ImProcCoordinator ()
       bcurvehist(256), bcurvehistCropped(256), bbeforehist(256),
 
       pW(-1), pH(-1),
-      plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),acListener(NULL), abwListener(NULL),
+      plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),acListener(NULL), abwListener(NULL),actListener(NULL),
       resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false),utili(false),autili(false),
 	  butili(false),ccutili(false),cclutili(false),clcutili(false),fullw(1),fullh(1)
 
@@ -318,18 +320,65 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, scale==1 ? 1 : 1);
         CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, scale==1 ? 1 : 1);
 
+        TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
+        double wp[3][3] = {
+            {wprof[0][0],wprof[0][1],wprof[0][2]},
+            {wprof[1][0],wprof[1][1],wprof[1][2]},
+            {wprof[2][0],wprof[2][1],wprof[2][2]}};
+        TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params.icm.working);
+        double wip[3][3] = {
+            {wiprof[0][0],wiprof[0][1],wiprof[0][2]},
+            {wiprof[1][0],wiprof[1][1],wiprof[1][2]},
+            {wiprof[2][0],wiprof[2][1],wiprof[2][2]}
+        };
+        params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip);
+
+        bool clctoningutili=false;
+        bool llctoningutili=false;
+        CurveFactory::curveToningCL(clctoningutili, params.colorToning.clcurve, clToningcurve,scale==1 ? 1 : 16);
+        //	clToningcurve.dump("CLToning3");
+        CurveFactory::curveToningLL(llctoningutili, params.colorToning.cl2curve, cl2Toningcurve,scale==1 ? 1 : 16);
+
         CurveFactory::curveBW (params.blackwhite.beforeCurve,params.blackwhite.afterCurve, vhist16bw, histToneCurveBW, beforeToneCurveBW, afterToneCurveBW,scale==1 ? 1 : 1);
 
         //initialize rrm bbm ggm different from zero to avoid black screen in some cases
         double rrm=33.;
         double ggm=33.;
         double bbm=33.;
-
+		
+		int satTH=80;
+		int satPR=30;
+		int indi=0;
+		if(params.colorToning.enabled  && params.colorToning.autosat){//for colortoning evaluation of saturation settings
+			float moyS=0.f;
+			float eqty=0.f;
+			ipf.moyeqt (oprevi, moyS, eqty);//return image : mean saturation and standard dev of saturation 
+			//printf("moy=%f ET=%f\n", moyS,eqty);
+			float satp=((moyS+1.5f*eqty)-0.3f)/0.7f;//1.5 sigma ==> 93% pixels with high saturation -0.3 / 0.7 convert to Hombre scale
+			if(satp >= 0.92f) satp=0.92f;//avoid values too high (out of gamut)
+			if(satp <= 0.15f) satp=0.15f;//avoid too low values
+			
+			satTH=(int) 100.f*satp;
+			satPR=(int) 100.f*(moyS-0.85f*eqty);//-0.85 sigma==>20% pixels with low saturation
+		} 
+		if(actListener) {
+			if(params.blackwhite.enabled) {actListener->autoColorTonChanged(0, satTH, satPR);}
+			else {
+				if(params.colorToning.autosat){
+				  if(params.colorToning.method=="Lab") indi=1; 
+				  else if(params.colorToning.method=="RGBCurves") indi=1;
+				  else if(params.colorToning.method=="RGBSliders") indi=1;
+				  else if(params.colorToning.method=="Splico") indi=2;
+				  else if(params.colorToning.method=="Splitlr") indi=2;		
+				  
+					actListener->autoColorTonChanged(indi, satTH, satPR);}
+		}
+		} 
         // if it's just crop we just need the histogram, no image updates
         if ( todo & M_RGBCURVE ) {
             ipf.rgbProc (oprevi, oprevl, NULL, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
-                         rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2,beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
-            if(params.blackwhite.enabled && params.blackwhite.autoc && abwListener) {
+                         rCurve, gCurve, bCurve, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
+			if(params.blackwhite.enabled && params.blackwhite.autoc && abwListener) {
                 if (settings->verbose)
                     printf("ImProcCoordinator / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", bwAutoR, bwAutoG, bwAutoB);
                 abwListener->BWChanged((float) rrm, (float) ggm, (float) bbm);

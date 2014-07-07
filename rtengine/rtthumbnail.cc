@@ -764,6 +764,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	LUTf satcurve (65536);
 	LUTf lhskcurve (65536);
 	LUTf clcurve (65536);
+	LUTf clToningcurve (65536);
+	LUTf cl2Toningcurve (65536);
 	
 	LUTf rCurve (65536);
 	LUTf gCurve (65536);
@@ -772,6 +774,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	LUTu dummy;
 
 	ToneCurve customToneCurve1, customToneCurve2;
+	ColorGradientCurve ctColorCurve;
+	OpacityCurve ctOpacityCurve;
     ColorAppearance customColCurve1;
     ColorAppearance customColCurve2;
     ColorAppearance customColCurve3;
@@ -789,16 +793,41 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, 16);
 	CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, 16);
 	CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, 16);
-	
+
+	TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
+	double wp[3][3] = {
+		{wprof[0][0],wprof[0][1],wprof[0][2]},
+		{wprof[1][0],wprof[1][1],wprof[1][2]},
+		{wprof[2][0],wprof[2][1],wprof[2][2]}};
+	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params.icm.working);
+	double wip[3][3] = {
+			{wiprof[0][0],wiprof[0][1],wiprof[0][2]},
+			{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
+			{wiprof[2][0],wiprof[2][1],wiprof[2][2]}
+			};
+	params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip);
+
 	LabImage* labView = new LabImage (fw,fh);
 	CieImage* cieView = new CieImage (fw,fh);
+	bool clctoningutili=false;
+	bool llctoningutili=false;
+    CurveFactory::curveToningCL(clctoningutili, params.colorToning.clcurve, clToningcurve,scale==1 ? 1 : 16);
+    CurveFactory::curveToningLL(llctoningutili, params.colorToning.cl2curve, cl2Toningcurve, scale==1 ? 1 : 16);
 	
     CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 16);
 	
 	double rrm, ggm, bbm;
     float autor, autog, autob;
     autor = autog = autob = -9000.f; // This will ask to compute the "auto" values for the B&W tool
-    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
+    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
+
+    // freeing up some memory
+    customToneCurve1.Reset();
+    customToneCurve2.Reset();
+    ctColorCurve.Reset();
+    ctOpacityCurve.Reset();
+    customToneCurvebw1.Reset();
+    customToneCurvebw2.Reset();
 
     if (shmap)
         delete shmap;

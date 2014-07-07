@@ -196,6 +196,8 @@ class CurveFactory {
 						 ToneCurve & customToneCurvebw1, ToneCurve & customToneCurvebw2, int skip);
 		
 	static void curveCL ( bool & clcutili, const std::vector<double>& clcurvePoints, LUTf & clCurve, LUTu & histogramcl, LUTu & outBeforeCLurveHistogram, int skip);
+	static void curveToningCL ( bool & clctoningutili, const std::vector<double>& clcurvePoints, LUTf & clToningCurve, int skip);
+	static void curveToningLL ( bool & llctoningutili, const std::vector<double>& llcurvePoints, LUTf & llToningCurve, int skip);
 						  
 	static void complexsgnCurve ( float adjustr, bool & autili,  bool & butili, bool & ccutili, bool & clcutili, double saturation, double rstprotection, const std::vector<double>& acurvePoints,
 								 const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve, 
@@ -266,6 +268,8 @@ class Curve {
     Curve ();
     virtual ~Curve () {};
     void AddPolygons ();
+    int getSize () const; // return the number of control points
+    void getControlPoint(int cpNum, double &x, double &y) const;
     virtual double getVal (double t) const = 0;
     virtual void   getVal (const std::vector<double>& t, std::vector<double>& res) const = 0;
 
@@ -276,10 +280,6 @@ class DiagonalCurve : public Curve {
 
   protected:
     DiagonalCurveType kind;
-
-    unsigned int minSearch;     // a effacer!!!
-    unsigned int maxSearch;     // a effacer!!!
-    unsigned int searchArray[21];     // a effacer!!!
 
     void spline_cubic_set ();
     void NURBS_set ();
@@ -324,6 +324,57 @@ class ToneCurve {
     void Reset();
     void Set(Curve *pCurve);
     operator bool (void) const { return lutToneCurve; }
+};
+
+class OpacityCurve {
+  public:
+    LUTf lutOpacityCurve;  // 0xffff range
+
+    virtual ~OpacityCurve() {};
+
+    void Reset();
+    void Set(const Curve *pCurve);
+    void Set(const std::vector<double> &curvePoints);
+
+    // TODO: transfer this method to the Color class...
+    float blend (float x, float lower, float upper) const {
+        return (upper-lower)*lutOpacityCurve[x*500.f] + lower;
+    }
+    void blend3f (float x, float lower1, float upper1, float &result1, float lower2, float upper2, float &result2, float lower3, float upper3, float &result3) const {
+        float opacity = lutOpacityCurve[x*500.f];
+        result1 = (upper1-lower1)*opacity + lower1;
+        result2 = (upper2-lower2)*opacity + lower2;
+        result3 = (upper3-lower3)*opacity + lower3;
+    }
+
+    operator bool (void) const { return lutOpacityCurve; }
+};
+
+class ColorGradientCurve {
+  public:
+    LUTf   lut1;    // [0.;1.] range (float values)
+    LUTf   lut2;  // [0.;1.] range (float values)
+    LUTf   lut3;   // [0.;1.] range (float values)
+    double low;
+    double high;
+
+    virtual ~ColorGradientCurve() {};
+
+    void Reset();
+    void SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float satur, float lumin);
+    void SetXYZ(const std::vector<double> &curvePoints, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float satur, float lumin);
+    void SetRGB(const Curve *pCurve, const double xyz_rgb[3][3], const double rgb_xyz[3][3]);
+    void SetRGB(const std::vector<double> &curvePoints, const double xyz_rgb[3][3], const double rgb_xyz[3][3]);
+
+    /**
+    * @brief Get the value of Red, Green and Blue corresponding to the requested index
+    * @param index value in the [0 ; 1] range
+    * @param r corresponding red value [0 ; 65535] (return value)
+    * @param g corresponding green value [0 ; 65535] (return value)
+    * @param b corresponding blue value [0 ; 65535] (return value)
+    */
+    void getVal(float index, float &r, float &g, float &b) const;
+    operator bool (void) const { return lut1 && lut2 && lut3; }
 };
 
 class ColorAppearance {
