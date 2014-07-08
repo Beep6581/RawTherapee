@@ -473,15 +473,15 @@ HISTORY_MSG_250;NR - Enhanced
 HISTORY_MSG_251;B&amp;W - Algorithm
 HISTORY_MSG_252;CbDL Skin Tones
 HISTORY_MSG_253;CbDL Reduce artifacts
-HISTORY_MSG_254;CbDL - Hueskin
-HISTORY_MSG_255;NR - median
-HISTORY_MSG_256;NR - median method
+HISTORY_MSG_254;CbDL - Skin hue
+HISTORY_MSG_255;NR - Median
+HISTORY_MSG_256;NR - Median type
 HISTORY_MSG_257;Color Toning
 HISTORY_MSG_258;Color Toning - Color
 HISTORY_MSG_259;Color Toning - Opacity
-HISTORY_MSG_260;Color Toning - Opacity ab
+HISTORY_MSG_260;Color Toning - Opacity
 HISTORY_MSG_261;Color Toning - Method
-HISTORY_MSG_262;Color Toning - 2 colours
+HISTORY_MSG_262;Color Toning - Opacity
 HISTORY_MSG_263;Color Toning - Luminance
 HISTORY_MSG_263;Color Toning - Shadows Red
 HISTORY_MSG_264;Color Toning - Shadows Green
@@ -494,9 +494,9 @@ HISTORY_MSG_270;Color Toning - High Green
 HISTORY_MSG_271;Color Toning - High Blue
 HISTORY_MSG_272;Color Toning - Balance
 HISTORY_MSG_273;Color Toning - Reset
-HISTORY_MSG_274;Color Toning - Saturation Shadows
-HISTORY_MSG_275;Color Toning - Saturation Highlights
-HISTORY_MSG_276;Color Toning - Method
+HISTORY_MSG_274;Color Toning - Sat. Shadows
+HISTORY_MSG_275;Color Toning - Sat. Highlights
+HISTORY_MSG_276;Color Toning - Opacity
 HISTORY_MSG_277;Color Toning - Reset Curves
 HISTORY_MSG_278;Color Toning - Preserve Luminance
 HISTORY_MSG_279;Color Toning - Shadows
@@ -505,10 +505,9 @@ HISTORY_MSG_281;Color Toning - Sat. Protection
 HISTORY_MSG_282;Color Toning - Sat. Threshold
 HISTORY_MSG_283;Color Toning - Str. Protection
 HISTORY_MSG_284;Color Toning - Auto saturation
-HISTORY_MSG_285;NR - median type Lab
-HISTORY_MSG_286;NR - median method
-HISTORY_MSG_287;NR - median type RGB
-HISTORY_MSG_288;NR - median iterations
+HISTORY_MSG_285;NR - Median method
+HISTORY_MSG_286;NR - Median type
+HISTORY_MSG_287;NR - Median iterations
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1078,12 +1077,12 @@ TP_COLORAPP_WBRT;WB [RT] + [output]
 TP_COLORTONING_LABEL;Color Toning
 TP_COLORTONING_OPACITY;Opacity
 TP_COLORTONING_LUMAMODE;Preserve luminance
-TP_COLORTONING_LUMAMODE_TOOLTIP;if enabled when you change color (red, green, cyan, blue, etc.) the luminance of each pixel is preserved
+TP_COLORTONING_LUMAMODE_TOOLTIP;If enabled, when you change color (red, green, cyan, blue, etc.) the luminance of each pixel is preserved.
 TP_COLORTONING_COLOR;Color
 TP_COLORTONING_LABCOL;Direct Colors
-TP_COLORTONING_LABCOL_TOOLTIP;When you move a saturation slider, these 'direct' colors are increased
-TP_COLORTONING_LABINT;Interpolates Colors - Blending
-TP_COLORTONING_LABINT_TOOLTIP;When image color is blue and interpolate color blending is red - it result a magenta in function of % opacity\nWhen image color is red and interpolate color blending is yellow - it result a orange in function of % opacity\n etc.
+TP_COLORTONING_LABCOL_TOOLTIP;When you move a saturation slider, these 'direct' colors are increased.
+TP_COLORTONING_LABINT;-
+TP_COLORTONING_LABINT_TOOLTIP;When the image color is blue and the blending color is red, it results in a magenta color in the function of % opacity.\nWhen the image color is red and the blending color is yellow, it results in an orange color in the function of % opacity.
 TP_COLORTONING_CHROMA;Opacity 'ab' or 'a'
 TP_COLORTONING_CHROMA1;Opacity 'a'
 TP_COLORTONING_CHROMA2;Opacity 'b'
@@ -1157,8 +1156,8 @@ TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor n
 TP_DIRPYRDENOISE_ENH;Enhanced mode
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase.
 TP_DIRPYRDENOISE_MED;Median - Luminance only
-TP_DIRPYRDENOISE_MET_TOOLTIP;Choice of median type : median 3x3  or 3x3 strong or 5x5 (RGB) or 5x5 strong or 7x7 (L only and Lab)in the threatment - Increases noise reduction.
-TP_DIRPYRDENOISE_METM_TOOLTIP;Add a median - in mode "Luminance only" or "Lab" just after wavelet\nOr in mode "RGB" at the end
+TP_DIRPYRDENOISE_MET_TOOLTIP;Median filtering type:\n3x3, 3x3 strong and 5x5 (RGB) or 5x5 strong or 7x7 (L only and Lab) in the treatment - Increases noise reduction.
+TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "Lab" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
 TP_DIRPYRDENOISE_LABEL;Noise Reduction
@@ -1170,37 +1169,37 @@ TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be 
 TP_DIRPYRDENOISE_PERF;RGB mode (raw images)
 TP_DIRPYRDENOISE_RED;Chrominance - Red-Green
 TP_DIRPYRDENOISE_RGB;RGB
-TP_DIRPYRDENOISE_MEDMETHOD;Median type
-TP_DIRPYRDENOISE_METHODMED;Median Method
+TP_DIRPYRDENOISE_MEDTYPE;Median type
+TP_DIRPYRDENOISE_MEDMETHOD;Median method
 TP_DIRPYRDENOISE_LM;Luminance only
 TP_DIRPYRDENOISE_LABM;Lab
 TP_DIRPYRDENOISE_RGBM;RGB
 TP_DIRPYRDENOISE_NONE;None
-TP_DIRPYRDENOISE_SOFT;3x3 
+TP_DIRPYRDENOISE_SOFT;3x3
 TP_DIRPYRDENOISE_33;3x3 strong
 TP_DIRPYRDENOISE_55;5x5 strong
-TP_DIRPYRDENOISE_55SOFT;5x5 
-TP_DIRPYRDENOISE_77;7x7 'slow'
-TP_DIRPYRDENOISE_MED_TOOLTIP;If enabled median for luminance (Lab) after wavelet, if desabled RGB at the end of threatment. 
-TP_DIRPYRDENOISE_PASSE;Iterations
-TP_DIRPYRDENOISE_PASSES_TOOLTIP;Often, it is better to do iterations, with small median, than one with big !
+TP_DIRPYRDENOISE_55SOFT;5x5
+TP_DIRPYRDENOISE_77;7x7 (slow)
+TP_DIRPYRDENOISE_MED_TOOLTIP;-
+TP_DIRPYRDENOISE_PASSE;Median iterations
+TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying median filtering often leads to better results when done in small steps (iterations) than in one large one.
 TP_DIRPYREQUALIZER_ALGO;Algorithm Skin
 TP_DIRPYREQUALIZER_ALGO_FI;Fine
 TP_DIRPYREQUALIZER_ALGO_LA;Large
-TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts
-TP_DIRPYREQUALIZER_GAMUT;Reduce artifacts  
-TP_DIRPYREQUALIZER_HUESKIN;Skin hue 
-TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected
+TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts.
+TP_DIRPYREQUALIZER_GAMUT;Reduce artifacts
+TP_DIRPYREQUALIZER_HUESKIN;Skin hue
+TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
 TP_DIRPYREQUALIZER_LABEL;Contrast by Detail Levels
 TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
-TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+ 
+TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
 TP_DIRPYREQUALIZER_LUMAFINEST;Finest
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 TP_DIRPYREQUALIZER_SKIN;Skin Tones Targetting/Protection
 TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin tones are protected while all other tones are affected.
 TP_DIRPYREQUALIZER_THRESHOLD;Threshold
-TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts due to the transitions between the color (hue, chroma, luma) of the skin and the rest of the image
+TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts due to the transitions between the color (hue, chroma, luma) of the skin and the rest of the image.
 TP_DISTORTION_AMOUNT;Amount
 TP_DISTORTION_AUTO;Auto Distortion Correction
 TP_DISTORTION_AUTO_TIP;Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.).

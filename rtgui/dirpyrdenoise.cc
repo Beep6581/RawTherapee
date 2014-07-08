@@ -130,15 +130,15 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
 	medmethodconn = medmethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::medmethodChanged) );
 
 	ctboxm = Gtk::manage (new Gtk::HBox ());
-	Gtk::Label* labmm = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_METHODMED")));
+	Gtk::Label* labmm = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_MEDMETHOD")));
 	ctboxm->pack_start (*labmm, Gtk::PACK_SHRINK, 4);
 	
 	ctbox = Gtk::manage (new Gtk::HBox ());
-	Gtk::Label* labm = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_MEDMETHOD")));
+	Gtk::Label* labm = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_MEDTYPE")));
 	ctbox->pack_start (*labm, Gtk::PACK_SHRINK, 4);
 
 	ctboxrgb = Gtk::manage (new Gtk::HBox ());
-	Gtk::Label* labrgb = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_MEDMETHOD")));
+	Gtk::Label* labrgb = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_MEDTYPE")));
 	ctboxrgb->pack_start (*labrgb, Gtk::PACK_SHRINK, 4);
 	
 	pack_start (*luma);

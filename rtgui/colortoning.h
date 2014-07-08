@@ -104,7 +104,8 @@ class ColorToning : public ToolParamBlock, public FoldableToolPanel,  public rte
     void autosatChanged      ();
     void autoOpenCurve       ();
     void methodChanged       ();
-    void twocolorChanged     ();
+    void twocolorChanged     (bool changedbymethod);
+    void twoColorChangedByGui();
     void lumamodeChanged     ();
 
     void colorForValue       (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
