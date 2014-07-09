@@ -283,8 +283,9 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 	unsigned filter = ri->get_filters();
 	int firstgreen = 1;
 	// locate first green location in the first row
-	while (!FISGREEN(filter,1,firstgreen))
-		firstgreen++;
+	if(ri->getSensorType()!=ST_FUJI_XTRANS)
+		while (!FISGREEN(filter,1,firstgreen))
+			firstgreen++;
 
 	int skip = 1;
 	if (ri->get_FujiWidth() != 0){
@@ -314,7 +315,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 	DCraw::dcrawImage_t image = ri->get_image();
 
 	Imagefloat* tmpImg = new Imagefloat(tmpw, tmph);
-	if (ri->isBayer()) {
+	if (ri->getSensorType()==ST_BAYER) {
 		// demosaicing! (sort of)
 		for (int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
 			rofs = row * width;
@@ -344,14 +345,37 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 			}
 		}
 	} else {
-		for (int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
-			rofs = row * width;
-			for (int col = firstgreen, x = 0; col < width - 1 && x < tmpw; col
-					+= hskip, x++) {
-				int ofs = rofs + col;
-				tmpImg->r(y,x) = image[ofs][0];
-				tmpImg->g(y,x) = image[ofs][1];
-				tmpImg->b(y,x) = image[ofs][2];
+		if(ri->getSensorType()==ST_FUJI_XTRANS) {
+			for( int row=1, y = 0; row < height-1 && y < tmph; row+=vskip, y++) {
+				rofs = row * width;
+				for( int col=1, x = 0; col < width-1 && x < tmpw; col+=hskip, x++ ) {
+					int ofs = rofs + col;
+					float sum[3] = {};
+					int c;
+					for(int v=-1;v<=1;v++) {
+						for(int h=-1;h<=1;h++) {
+							c = ri->XTRANSFC(row+v,col+h);
+							sum[c] += image[ofs + v*width + h][c];
+						}
+					}
+					c = ri->XTRANSFC(row,col);
+
+					switch (c) {
+						case 0: tmpImg->r(y,x) = image[ofs][0]; tmpImg->g(y,x) = sum[1] / 5.f; tmpImg->b(y,x) = sum[2] / 3.f; break;
+						case 1: tmpImg->r(y,x) = sum[0] / 2.f; tmpImg->g(y,x) = image[ofs][1]; tmpImg->b(y,x) = sum[2] / 2.f; break;
+						case 2: tmpImg->r(y,x) = sum[0] / 3.f; tmpImg->g(y,x) = sum[1] / 5.f; tmpImg->b(y,x) = image[ofs][2]; break;
+					}
+				}
+			}
+		} else {
+			for (int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
+				rofs = row * width;
+				for (int col = firstgreen, x = 0; col < width - 1 && x < tmpw; col += hskip, x++) {
+					int ofs = rofs + col;
+					tmpImg->r(y,x) = image[ofs][0];
+					tmpImg->g(y,x) = image[ofs][1];
+					tmpImg->b(y,x) = image[ofs][2];
+				}
 			}
 		}
 	}
@@ -422,13 +446,21 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 				tpp->aeHistogram[((int)(image[i* width+j][0]))>>tpp->aeHistCompression]+=gadd;
 				tpp->aeHistogram[((int)(image[i* width+j][0]))>>tpp->aeHistCompression]+=badd;
 			}
-		} else {
+		} else if(ri->getSensorType()!=ST_FUJI_XTRANS) {
 			for (int j = start; j < end; j++)
 				if (FISGREEN(filter,i,j))
 					tpp->aeHistogram[((int)(tpp->camwbGreen*image[i* width+j][1]))>>tpp->aeHistCompression]+=gadd;
 				else if (FISRED(filter,i,j))
 					tpp->aeHistogram[((int)(tpp->camwbRed * image[i* width+j][0]))>>tpp->aeHistCompression]+=radd;
 				else if (FISBLUE(filter,i,j))
+					tpp->aeHistogram[((int)(tpp->camwbBlue *image[i* width+j][2]))>>tpp->aeHistCompression]+=badd;
+		} else {
+			for (int j = start; j < end; j++)
+				if (ri->ISXTRANSGREEN(i,j))
+					tpp->aeHistogram[((int)(tpp->camwbGreen*image[i* width+j][1]))>>tpp->aeHistCompression]+=gadd;
+				else if (ri->ISXTRANSRED(i,j))
+					tpp->aeHistogram[((int)(tpp->camwbRed * image[i* width+j][0]))>>tpp->aeHistCompression]+=radd;
+				else if (ri->ISXTRANSBLUE(i,j))
 					tpp->aeHistogram[((int)(tpp->camwbBlue *image[i* width+j][2]))>>tpp->aeHistCompression]+=badd;
 		}
 	}
@@ -451,33 +483,59 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 			start = 32;
 			end = width - 32;
 		}
-		for (int j = start; j < end; j++) {
-			if (!filter) {
-				double d = tpp->defGain * image[i * width + j][0];
-				if (d > 64000.)
-					continue;
-				avg_g += d; avg_r += d; avg_b += d;
-				rn++; gn++; bn++;
-			} else if (FISGREEN(filter,i,j)) {
-				double d = tpp->defGain * image[i * width + j][1];
-				if (d > 64000.)
-					continue;
-				avg_g += d;
-				gn++;
+		if(ri->getSensorType()!=ST_FUJI_XTRANS) {
+			for (int j = start; j < end; j++) {
+				if (!filter) {
+					double d = tpp->defGain * image[i * width + j][0];
+					if (d > 64000.)
+						continue;
+					avg_g += d; avg_r += d; avg_b += d;
+					rn++; gn++; bn++;
+				} else if (FISGREEN(filter,i,j)) {
+					double d = tpp->defGain * image[i * width + j][1];
+					if (d > 64000.)
+						continue;
+					avg_g += d;
+					gn++;
+				}
+				else if (FISRED(filter,i,j)) {
+					double d = tpp->defGain * image[i * width + j][0];
+					if (d > 64000.)
+						continue;
+					avg_r += d;
+					rn++;
+				}
+				else if (FISBLUE(filter,i,j)) {
+					double d = tpp->defGain * image[i * width + j][2];
+					if (d > 64000.)
+						continue;
+					avg_b += d;
+					bn++;
+				}
 			}
-			else if (FISRED(filter,i,j)) {
-				double d = tpp->defGain * image[i * width + j][0];
-				if (d > 64000.)
-					continue;
-				avg_r += d;
-				rn++;
-			}
-			else if (FISBLUE(filter,i,j)) {
-				double d = tpp->defGain * image[i * width + j][2];
-				if (d > 64000.)
-					continue;
-				avg_b += d;
-				bn++;
+		} else  {
+			for (int j = start; j < end; j++) {
+				if (ri->ISXTRANSGREEN(i,j)) {
+					double d = tpp->defGain * image[i * width + j][1];
+					if (d > 64000.)
+						continue;
+					avg_g += d;
+					gn++;
+				}
+				else if (ri->ISXTRANSRED(i,j)) {
+					double d = tpp->defGain * image[i * width + j][0];
+					if (d > 64000.)
+						continue;
+					avg_r += d;
+					rn++;
+				}
+				else if (ri->ISXTRANSBLUE(i,j)) {
+					double d = tpp->defGain * image[i * width + j][2];
+					if (d > 64000.)
+						continue;
+					avg_b += d;
+					bn++;
+				}
 			}
 		}
 	}

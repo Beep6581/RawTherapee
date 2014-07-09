@@ -59,12 +59,18 @@
 #include "dirselectionlistener.h"
 #include "dirpyrequalizer.h"
 #include "hsvequalizer.h"
-#include "rawprocess.h"
 #include "preprocess.h"
+#include "bayerpreprocess.h"
+#include "bayerprocess.h"
+#include "xtransprocess.h"
 #include "darkframe.h"
 #include "flatfield.h"
+#include "sensorbayer.h"
+#include "sensorxtrans.h"
 #include "rawcacorrection.h"
 #include "rawexposure.h"
+#include "bayerrawexposure.h"
+#include "xtransrawexposure.h"
 #include "sharpenmicro.h"
 #include "sharpenedge.h"
 #include "rgbcurves.h"
@@ -118,12 +124,18 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ColorToning* colortoning;
         DirPyrEqualizer* dirpyrequalizer;
         HSVEqualizer* hsvequalizer;
-        RawProcess* rawprocess;
+        SensorBayer * sensorbayer;
+        SensorXTrans * sensorxtrans;
+        BayerProcess* bayerprocess;
+        XTransProcess* xtransprocess;
+        BayerPreProcess* bayerpreprocess;
         PreProcess* preprocess;
         DarkFrame* darkframe;
         FlatField* flatfield;
         RAWCACorr* rawcacorrection;
         RAWExposure* rawexposure;
+        BayerRAWExposure* bayerrawexposure;
+        XTransRAWExposure* xtransrawexposure;
 
         std::vector<PParamsChangeListener*> paramcListeners;
 

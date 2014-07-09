@@ -45,22 +45,34 @@ RawImage::~RawImage()
    if(profile_data){ delete [] profile_data; profile_data=NULL;}
 }
 
+eSensorType RawImage::getSensorType() {
+	if (isBayer())
+		return ST_BAYER;
+	else if (isXtrans())
+		return ST_FUJI_XTRANS;
+
+	return ST_NONE;
+}
+
 /* Similar to dcraw scale_colors for coeff. calculation, but without actual pixels scaling.
  * need pixels in data[][] available
  */
 void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblack_, bool forceAutoWB) {
-
 	unsigned  row, col, x, y, c, sum[8];
 	unsigned  W = this->get_width();
 	unsigned  H = this->get_height();
 	float val;
 	double dsum[8], dmin, dmax;
 
-
-
 	if ((this->get_cblack(4)+1)/2 == 1 && (this->get_cblack(5)+1)/2 == 1) {
 		for (int c = 0; c < 4; c++){
 			cblack_[FC(c/2,c%2)] = this->get_cblack(6 + c/2 % this->get_cblack(4) * this->get_cblack(5) + c%2 % this->get_cblack(5));
+			pre_mul_[c] = this->get_pre_mul(c);
+		}
+	} else if(isXtrans()) {
+		// for xtrans files dcraw stores black levels in cblack[6] .. cblack[41], but all are equal, so we just use cblack[6]
+		for (int c = 0; c < 4; c++){
+			cblack_[c] = (float) this->get_cblack(6);
 			pre_mul_[c] = this->get_pre_mul(c);
 		}
 	} else {
@@ -129,6 +141,44 @@ skip_block2: ;
 			for(int c=0;c<4;c++)
 				dsum[c] -= cblack_[c] * dsum[c+4];
 
+		} else if(isXtrans()) {
+#pragma omp parallel
+{
+			double dsumthr[8];
+			memset(dsumthr, 0, sizeof dsumthr);
+			float sum[8];
+			// make local copies of the black and white values to avoid calculations and conversions
+			float whitefloat[4];
+			for (int c = 0; c < 4; c++) {
+				whitefloat[c] = this->get_white(c) - 25;
+			}
+
+#pragma omp for nowait
+			for (int row = 0; row < H; row += 8)
+				for (int col = 0; col < W ; col += 8) {
+					memset(sum, 0, sizeof sum);
+					for (int y = row; y < row + 8 && y < H; y++)
+						for (int x = col; x < col + 8 && x < W; x++) {
+							int c = XTRANSFC(y, x);
+							float val = data[y][x];
+							if (val > whitefloat[c])
+								goto skip_block3;
+							if ((val -= cblack_[c]) < 0)
+								val = 0;
+							sum[c] += val;
+							sum[c + 4]++;
+							}
+					for (int c = 0; c < 8; c++)
+						dsumthr[c] += sum[c];
+skip_block3: ;
+				}
+#pragma omp critical
+{
+			for (int c = 0; c < 8; c++)
+				dsum[c] += dsumthr[c];
+
+}
+}		
 		} else if (colors == 1) {
 			for (int c = 0; c < 4; c++)
 				pre_mul_[c] = 1;
@@ -386,8 +436,11 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
          }
       }
       if (black_c4[0] == -1) {
+		  if(isXtrans())
+			for (int c=0; c < 4; c++) black_c4[c] = cblack[6];
+		  else
           // RT constants not set, bring in the DCRAW single channel black constant
-          for (int c=0; c < 4; c++) black_c4[c] = black + cblack[c];
+            for (int c=0; c < 4; c++) black_c4[c] = black + cblack[c];
       } else {
 	      black_from_cc = true;
       }
@@ -428,7 +481,7 @@ float** RawImage::compress_image()
 {
 	if( !image )
 		return NULL;
-	if (filters) {
+	if (isBayer() || isXtrans()) {
 		if (!allocation) {
 			allocation = new float[height * width];
 			data = new float*[height];
@@ -460,11 +513,16 @@ float** RawImage::compress_image()
                 this->data[row][col] = float_raw_image[(row + top_margin) * raw_width + col + left_margin];
 		delete [] float_raw_image;
         float_raw_image = NULL;
-    } else if (filters != 0) {
+    } else if (filters != 0 && !isXtrans()) {
         #pragma omp parallel for
 		for (int row = 0; row < height; row++)
 			for (int col = 0; col < width; col++)
 				this->data[row][col] = image[row * width + col][FC(row, col)];
+	} else if (isXtrans()) {
+        #pragma omp parallel for
+		for (int row = 0; row < height; row++)
+			for (int col = 0; col < width; col++)
+				this->data[row][col] = image[row * width + col][XTRANSFC(row, col)];
 	} else if (colors == 1) {
         #pragma omp parallel for
 		for (int row = 0; row < height; row++)
@@ -479,8 +537,8 @@ float** RawImage::compress_image()
 				this->data[row][3 * col + 2] = image[row * width + col][2];
 			}
 	}
-    free(image); // we don't need this anymore
-    image=NULL;
+	free(image); // we don't need this anymore
+	image=NULL;
     return data;
 }
 
@@ -491,6 +549,21 @@ RawImage::is_supportedThumb() const
 	     ( write_thumb == &rtengine::RawImage::jpeg_thumb ||
 	       write_thumb == &rtengine::RawImage::ppm_thumb) &&
 	     !thumb_load_raw );
+}
+
+void RawImage::getXtransMatrix( char XtransMatrix[6][6])
+{
+	for(int row=0;row<6;row++)
+		for(int col=0;col<6;col++)
+			XtransMatrix[row][col] = xtrans[row][col];
+}
+
+void RawImage::getRgbCam (float rgbcam[3][4])
+{
+	for(int row=0;row<3;row++)
+		for(int col=0;col<4;col++)
+			rgbcam[row][col] = rgb_cam[row][col];
+	
 }
 
 bool 

@@ -308,9 +308,13 @@ RGBCURVE,			//EvColorToningStrProtection
 RGBCURVE,			//EvColorToningautosat
 ALLNORAW, 			//EvDPDNmetmed
 ALLNORAW, 			//EvDPDNrgbmet
-ALLNORAW			//EvDPDNpasses
+ALLNORAW,			//EvDPDNpasses
+FLATFIELD,        // EvFlatFieldClipControl
+FLATFIELD,        // EvFlatFieldAutoClipControl
+DARKFRAME,        // EvPreProcessExpBlackRed
+DARKFRAME,        // EvPreProcessExpBlackGreen
+DARKFRAME,        // EvPreProcessExpBlackBlue
 
-//LUMINANCECURVE    // EvCATsharpcie
 
 
 };

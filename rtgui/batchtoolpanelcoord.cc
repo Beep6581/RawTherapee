@@ -148,9 +148,12 @@ void BatchToolPanelCoordinator::initSession () {
 			shadowshighlights->setAdjusterBehavior (false, false, false);
 			dirpyrequalizer->setAdjusterBehavior (false, false, false);
 			dirpyrdenoise->setAdjusterBehavior (false, false,false,false,false,false, false);
-			preprocess->setAdjusterBehavior (false, false);
+			bayerpreprocess->setAdjusterBehavior (false, false);
 			rawcacorrection->setAdjusterBehavior (false);
-			rawexposure->setAdjusterBehavior (false, false, false);
+			flatfield->setAdjusterBehavior(false);
+			rawexposure->setAdjusterBehavior (false, false);
+			bayerrawexposure->setAdjusterBehavior (false);
+			xtransrawexposure->setAdjusterBehavior (false);
 		}
 		else {
 
@@ -180,9 +183,12 @@ void BatchToolPanelCoordinator::initSession () {
 			shadowshighlights->setAdjusterBehavior (options.baBehav[ADDSET_SH_HIGHLIGHTS], options.baBehav[ADDSET_SH_SHADOWS], options.baBehav[ADDSET_SH_LOCALCONTRAST]);
 			dirpyrequalizer->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYREQ], options.baBehav[ADDSET_DIRPYREQ_THRESHOLD], options.baBehav[ADDSET_DIRPYREQ_SKINPROTECT]);
 			dirpyrdenoise->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYRDN_LUMA],options.baBehav[ADDSET_DIRPYRDN_LUMDET],options.baBehav[ADDSET_DIRPYRDN_CHROMA],options.baBehav[ADDSET_DIRPYRDN_CHROMARED],options.baBehav[ADDSET_DIRPYRDN_CHROMABLUE], options.baBehav[ADDSET_DIRPYRDN_GAMMA], options.baBehav[ADDSET_DIRPYRDN_PASSES]);
-			preprocess->setAdjusterBehavior (options.baBehav[ADDSET_PREPROCESS_LINEDENOISE], options.baBehav[ADDSET_PREPROCESS_GREENEQUIL]);
+			bayerpreprocess->setAdjusterBehavior (options.baBehav[ADDSET_PREPROCESS_LINEDENOISE], options.baBehav[ADDSET_PREPROCESS_GREENEQUIL]);
 			rawcacorrection->setAdjusterBehavior (options.baBehav[ADDSET_RAWCACORR]);
-			rawexposure->setAdjusterBehavior (options.baBehav[ADDSET_RAWEXPOS_LINEAR], options.baBehav[ADDSET_RAWEXPOS_PRESER], options.baBehav[ADDSET_RAWEXPOS_BLACKS]);
+			flatfield->setAdjusterBehavior(options.baBehav[ADDSET_RAWFFCLIPCONTROL]);
+			rawexposure->setAdjusterBehavior (options.baBehav[ADDSET_RAWEXPOS_LINEAR], options.baBehav[ADDSET_RAWEXPOS_PRESER]);
+			bayerrawexposure->setAdjusterBehavior (options.baBehav[ADDSET_RAWEXPOS_BLACKS]);
+			xtransrawexposure->setAdjusterBehavior (options.baBehav[ADDSET_RAWEXPOS_BLACKS]);
 
 			if (options.baBehav[ADDSET_TC_EXPCOMP])  pparams.toneCurve.expcomp = 0;
 			if (options.baBehav[ADDSET_TC_HLCOMPAMOUNT])  pparams.toneCurve.hlcompr = 0;
@@ -282,12 +288,17 @@ void BatchToolPanelCoordinator::initSession () {
 //			pparams.dirpyrDenoise.Ldetail = pparams.dirpyrDenoise.luma = pparams.dirpyrDenoise.chroma = 0;
 			if (options.baBehav[ADDSET_DIRPYRDN_GAMMA])  pparams.dirpyrDenoise.gamma = 0;
 
-			if (options.baBehav[ADDSET_PREPROCESS_GREENEQUIL])  pparams.raw.greenthresh = 0;
-			if (options.baBehav[ADDSET_PREPROCESS_LINEDENOISE])  pparams.raw.linenoise = 0;
 			if (options.baBehav[ADDSET_RAWCACORR])  pparams.raw.cablue = pparams.raw.cared = 0;
 			if (options.baBehav[ADDSET_RAWEXPOS_LINEAR])  pparams.raw.expos = 0;
 			if (options.baBehav[ADDSET_RAWEXPOS_PRESER])  pparams.raw.preser = 0;
-			if (options.baBehav[ADDSET_RAWEXPOS_BLACKS])  pparams.raw.blackzero = pparams.raw.blackone = pparams.raw.blacktwo = pparams.raw.blackthree = 0;
+			if (options.baBehav[ADDSET_RAWEXPOS_BLACKS]) {
+				pparams.raw.bayersensor.black0 = pparams.raw.bayersensor.black1 = pparams.raw.bayersensor.black2 = pparams.raw.bayersensor.black3 = 0;
+				pparams.raw.xtranssensor.blackred = pparams.raw.xtranssensor.blackgreen = pparams.raw.xtranssensor.blackblue = 0;
+			}
+			if (options.baBehav[ADDSET_RAWFFCLIPCONTROL])  pparams.raw.ff_clipControl = 0;
+
+			if (options.baBehav[ADDSET_PREPROCESS_GREENEQUIL])  pparams.raw.bayersensor.greenthresh = 0;
+			if (options.baBehav[ADDSET_PREPROCESS_LINEDENOISE])  pparams.raw.bayersensor.linenoise = 0;
 		}
 
 		for (size_t i=0; i<toolPanels.size(); i++) {

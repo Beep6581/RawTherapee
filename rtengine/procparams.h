@@ -790,13 +790,12 @@ class ColorManagementParams {
         int dcpIlluminant;
         Glib::ustring working;
         Glib::ustring output;
-        static const Glib::ustring NoICMString;      
-        
+        static const Glib::ustring NoICMString;
+
         Glib::ustring gamma;
-		double gampos;
-		double slpos;
-		bool freegamma;
-		
+        double gampos;
+        double slpos;
+        bool freegamma;
 };
 
 /**
@@ -813,82 +812,106 @@ typedef std::map<Glib::ustring, std::vector<Glib::ustring> > IPTCPairs;
 * Directional pyramid equalizer params
 */
 class DirPyrEqualizerParams {
-	
-	public:
-		bool enabled;
-		bool gamutlab;
-		double mult[5];
-		double threshold;
-		double skinprotect;
-		Threshold<int> hueskin;
-	//	Glib::ustring algo;
 
-		DirPyrEqualizerParams() : hueskin(20, 80, 2000, 1200, false) {};
+    public:
+        bool enabled;
+        bool gamutlab;
+        double mult[5];
+        double threshold;
+        double skinprotect;
+        Threshold<int> hueskin;
+        //Glib::ustring algo;
+
+        DirPyrEqualizerParams() : hueskin(20, 80, 2000, 1200, false) {};
 };
 
 /**
  * HSV equalizer params
  */
 class HSVEqualizerParams {
-	
-	public:
-		std::vector<double>   hcurve;
-		std::vector<double>   scurve;
-		std::vector<double>   vcurve;
-		
+
+    public:
+        std::vector<double>   hcurve;
+        std::vector<double>   scurve;
+        std::vector<double>   vcurve;
 };
 
-
-
 /**
-  * Parameters for RAW demosaicing
+  * Parameters for RAW demosaicing, common to all sensor type
   */
 class RAWParams {
 
     public:
-	//	enum eMethod{eahd,hphd,vng4,dcb,amaze,ahd,IGV_noise,fast,
-	//				numMethods }; // This MUST be the last enum
-		enum eMethod{amaze,igv,lmmse,eahd,hphd,vng4,dcb,ahd,fast,mono,none,
-					numMethods }; // This MUST be the last enum
-					
-		static const char *methodstring[numMethods];
+        /**
+         * Parameters for RAW demosaicing specific to Bayer sensors
+         */
+        class BayerSensor {
+            public:
+                //enum eMethod{ eahd,hphd,vng4,dcb,amaze,ahd,IGV_noise,fast,
+                              //numMethods }; // This MUST be the last enum
+                enum eMethod{ amaze, igv, lmmse, eahd, hphd, vng4, dcb, ahd, fast, mono, none,
+                              numMethods }; // This MUST be the last enum
+                static const char *methodstring[numMethods];
 
-		enum eFlatFileBlurType{/*parametric,*/area_ff,v_ff,h_ff,vh_ff,
-								numFlatFileBlurTypes }; // This MUST be the last enum
-		static const char *ff_BlurTypestring[numFlatFileBlurTypes];
-	
+                Glib::ustring method;
+                int ccSteps;
+                double black0;
+                double black1;
+                double black2;
+                double black3;
+                bool twogreen;
+                int linenoise;
+                int greenthresh;
+                int dcb_iterations;
+                int lmmse_iterations;
+                bool dcb_enhance;
+                //bool all_enhance;
+        };
 
-	    Glib::ustring dark_frame;
-	    bool df_autoselect;
-	
-		Glib::ustring ff_file;
-		bool ff_AutoSelect;
-		int ff_BlurRadius;
-		Glib::ustring ff_BlurType;
-	
-		bool ca_autocorrect;
-		double cared;
-		double cablue;
+        /**
+         * Parameters for RAW demosaicing specific to X-Trans sensors
+         */
+        class XTransSensor {
+            public:
+            enum eMethod{ threePass, onePass, fast, mono, none,
+            numMethods }; // This MUST be the last enum
+            static const char *methodstring[numMethods];
 
-		// exposure before interpolation
-		double expos;
-		double preser; 
-		double blackzero;
-		double blackone;
-		double blacktwo;
-		double blackthree;
-		bool twogreen;
-		bool hotdeadpix_filt;
-		int hotdeadpix_thresh;
-		int	linenoise;
-		int greenthresh;
-        int ccSteps;
-        Glib::ustring dmethod;
-        int dcb_iterations;
-        int lmmse_iterations;
-		
-        bool dcb_enhance;
-        //bool all_enhance;
+            Glib::ustring method;
+            int ccSteps;
+            double blackred;
+            double blackgreen;
+            double blackblue;
+        };
+
+        BayerSensor bayersensor;         ///< RAW parameters for Bayer sensors
+        XTransSensor xtranssensor;       ///< RAW parameters for X-Trans sensors
+
+        enum eFlatFileBlurType{ /*parametric,*/area_ff,v_ff,h_ff,vh_ff,
+                                numFlatFileBlurTypes }; // This MUST be the last enum
+
+        static const char *ff_BlurTypestring[numFlatFileBlurTypes];
+
+        Glib::ustring dark_frame;
+        bool df_autoselect;
+
+        Glib::ustring ff_file;
+        bool ff_AutoSelect;
+        int ff_BlurRadius;
+        Glib::ustring ff_BlurType;
+        bool ff_AutoClipControl;
+        int ff_clipControl;
+
+        bool ca_autocorrect;
+        double cared;
+        double cablue;
+
+        // exposure before interpolation
+        double expos;
+        double preser;
+
+        bool hotdeadpix_filt;
+        int hotdeadpix_thresh;
 };
 
 /**

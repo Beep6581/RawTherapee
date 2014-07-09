@@ -490,32 +490,56 @@ class HSVEqualizerParamsEdited {
 class RAWParamsEdited {
 
     public:
-        bool ccSteps;
-        bool dmethod;
-        bool dcbIterations;
-        bool dcbEnhance;
-        bool lmmseIterations;
-        //bool allEnhance;
+        class BayerSensor {
+
+            public:
+                bool method;
+                bool ccSteps;
+                bool exBlack0;
+                bool exBlack1;
+                bool exBlack2;
+                bool exBlack3;
+                bool exTwoGreen;
+                bool dcbIterations;
+                bool dcbEnhance;
+                bool lmmseIterations;
+                //bool allEnhance;
+                bool greenEq;
+                bool linenoise;
+
+                bool isUnchanged() const;
+        };
+
+        class XTransSensor {
+
+            public:
+                bool method;
+                bool ccSteps;
+                bool exBlackRed;
+                bool exBlackGreen;
+                bool exBlackBlue;
+
+                bool isUnchanged() const;
+        };
+
+        BayerSensor bayersensor;
+        XTransSensor xtranssensor;
+
         bool caCorrection;
         bool caRed;
         bool caBlue;
-        bool greenEq;
         bool hotDeadPixelFilter;
         bool hotDeadPixelThresh;
-        bool linenoise;
         bool darkFrame;
         bool dfAuto;
         bool ff_file;
         bool ff_AutoSelect;
         bool ff_BlurRadius;
         bool ff_BlurType;
+        bool ff_AutoClipControl;
+        bool ff_clipControl;
         bool exPos;
         bool exPreser;
-        bool exBlackzero;
-        bool exBlackone;
-        bool exBlacktwo;
-        bool exBlackthree;
-        bool exTwoGreen;
 
         bool isUnchanged() const;
 };

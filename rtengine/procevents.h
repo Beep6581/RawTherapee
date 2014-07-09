@@ -188,7 +188,7 @@ enum ProcEvent {
 	EvRGBgCurve=163,
 	EvRGBbCurve=164,
 	EvNeutralExp=165,
-        EvDemosaicMethodPreProc=166,
+	EvDemosaicMethodPreProc=166,
 	EvLCCCurve=167,
 	EvLCHCurve=168,
 	EvVibranceSkinTonesCurve=169,
@@ -312,8 +312,12 @@ enum ProcEvent {
 	EvDPDNmetmed=284,	
 	EvDPDNrgbmet=285,
 	EvDPDNpasses=286,	
-	
-	NUMOFEVENTS=287
+	EvFlatFieldClipControl=287,
+	EvFlatFieldAutoClipControl=288,
+	EvPreProcessExpBlackRed=289,
+	EvPreProcessExpBlackGreen=290,
+	EvPreProcessExpBlackBlue=291,
+	NUMOFEVENTS	
 };
 }
 #endif

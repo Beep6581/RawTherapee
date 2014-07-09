@@ -16,36 +16,34 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _PREPROCESS_H_
-#define _PREPROCESS_H_
+#ifndef _BAYERPREPROCESS_H_
+#define _BAYERPREPROCESS_H_
 
 #include <gtkmm.h>
-//#include "adjuster.h"
+#include "adjuster.h"
 #include "toolpanel.h"
 #include "../rtengine/rawimage.h"
 
-class PreProcess : public ToolParamBlock, /*public AdjusterListener,*/ public FoldableToolPanel {
+class BayerPreProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
   protected:
 
-    Gtk::CheckButton* hotDeadPixel;
-    bool lastHot;
-    sigc::connection hdpixelconn;
+    Adjuster* lineDenoise;
+    Adjuster* greenEqThreshold;
 
   public:
 
-    PreProcess ();
+    BayerPreProcess ();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    //void setBatchMode   (bool batchMode);
-    //void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void setBatchMode   (bool batchMode);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
 
+    void adjusterChanged     (Adjuster* a, double newval);
     void hotDeadPixelChanged();
-
-    //void adjusterChanged     (Adjuster* a, double newval);
-    //void setAdjusterBehavior (bool linedenoiseadd, bool greenequiladd);
-    //void trimValues          (rtengine::procparams::ProcParams* pp);
+    void setAdjusterBehavior (bool linedenoiseadd, bool greenequiladd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 
 #endif

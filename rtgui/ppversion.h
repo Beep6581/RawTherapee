@@ -7,6 +7,8 @@
 
 /*
   Log of version changes
+   320  2014-07-02
+		New [RAW Bayer] and [RAW X-Trans] sections, with some parameters transfered from [RAW] to [RAW Bayer]
    316  2014-03-29
 		[ColorToning] new tool for color toning
    319  2014-02-11

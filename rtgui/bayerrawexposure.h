@@ -16,33 +16,39 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _RAWEXPOSURE_H_
-#define _RAWEXPOSURE_H_
+#ifndef _BAYERRAWEXPOSURE_H_
+#define _BAYERRAWEXPOSURE_H_
 
 #include <gtkmm.h>
 #include "adjuster.h"
 #include "toolpanel.h"
 #include "../rtengine/rawimage.h"
 
-class RAWExposure : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
+class BayerRAWExposure : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
 protected:
-	Adjuster* PexPos;
-	Adjuster* PexPreser;
+	Adjuster* PexBlack0;
+	Adjuster* PexBlack1;
+	Adjuster* PexBlack2;
+	Adjuster* PexBlack3;
+	bool lastPextwoGreen;
+	sigc::connection  greenconn;
+	Gtk::CheckButton*  PextwoGreen;
 
 private:
 //	Gtk::CheckButton*  PextwoGreen;
 public:
 
-	RAWExposure ();
+	BayerRAWExposure ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setBatchMode   (bool batchMode);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
-    void adjusterChanged     (Adjuster* a, double newval);
-    void setAdjusterBehavior (bool pexposadd, bool pexpreseradd);
-    void trimValues          (rtengine::procparams::ProcParams* pp);
+	void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
+	void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+	void setBatchMode   (bool batchMode);
+	void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+	void GreenChanged() ;
+	void adjusterChanged     (Adjuster* a, double newval);
+	void setAdjusterBehavior (bool pexblackadd);
+	void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 
 #endif
