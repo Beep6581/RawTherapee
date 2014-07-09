@@ -83,7 +83,7 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
 // Issue 1676
 // Moved from inside the parallel section
 	if (plistener) {
-		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::amaze]));
+		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze]));
 		plistener->setProgress (0.0);
 	}
 	struct s_hv {

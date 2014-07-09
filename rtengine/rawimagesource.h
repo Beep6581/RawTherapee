@@ -153,11 +153,13 @@ class RawImageSource : public ImageSource {
 
         bool        IsrgbSourceModified() {return rgbSourceModified;} // tracks whether cached rgb output of demosaic has been modified
 
+		void		processFlatField(const RAWParams &raw, RawImage *riFlatFile, unsigned short black[4]);
         void        copyOriginalPixels(const RAWParams &raw, RawImage *ri, RawImage *riDark, RawImage *riFlatFile  );
         void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW );
         void        scaleColors (int winx,int winy,int winw,int winh, const RAWParams &raw);// raw for cblack
 
         void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, ToneCurveParams hrp, ColorManagementParams cmp, RAWParams raw);
+        eSensorType getSensorType () { return ri!=NULL ? ri->getSensorType() : ST_NONE; }
         ColorTemp   getWB       () { return camera_wb; }
         void        getAutoWBMultipliers (double &rm, double &gm, double &bm);
         ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal);
@@ -253,7 +255,10 @@ class RawImageSource : public ImageSource {
         void restore_from_buffer(float (*image)[4], float (*image2)[3]);
         void dcb_refinement(float (*image)[4], int x0, int y0);
         void dcb_color_full(float (*image)[4], int x0, int y0, float (*chroma)[2]);
-
+        void cielab (const float (*rgb)[3], float* l, float* a, float *b, const int width, const int height, const int labWidth, const float xyz_cam[3][3]);
+        void xtransborder_interpolate (int border);
+        void xtrans_interpolate (int passes, bool useCieLab);
+        void fast_xtrans_interpolate ();
         void    transLine   (float* red, float* green, float* blue, int i, Imagefloat* image, int tran, int imw, int imh, int fw);
         void    hflip       (Imagefloat* im);
         void    vflip       (Imagefloat* im);

@@ -31,11 +31,11 @@
    *If you have not modified dcraw.c in any way, a link to my
    homepage qualifies as "full source code".
 
-   $Revision: 1.463 $
-   $Date: 2014/05/05 22:03:20 $
+   $Revision: 1.467 $
+   $Date: 2014/07/03 21:19:24 $
  */
 
-#define DCRAW_VERSION "9.21"
+#define DCRAW_VERSION "9.22"
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -215,7 +215,7 @@ int CLASS fcol (int row, int col)
     { 0,3,1,0,0,2,0,3,2,1,3,1,1,3,1,3 } };
 
   if (filters == 1) return filter[(row+top_margin)&15][(col+left_margin)&15];
-  if (filters == 9) return xtrans[(row+top_margin+6)%6][(col+left_margin+6)%6];
+  if (filters == 9) return xtrans[(row+6) % 6][(col+6) % 6];
 
   return FC(row,col);
 }
@@ -338,14 +338,15 @@ void CLASS read_shorts (ushort *pixel, int count)
 
 void CLASS cubic_spline (const int *x_, const int *y_, const int len)
 {
-  float A[2*len][2*len], b[2*len], c[2*len], d[2*len];
-  float x[len], y[len];
+  float **A, *b, *c, *d, *x, *y;
   int i, j;
 
-  memset (A, 0, sizeof(A));
-  memset (b, 0, sizeof(b));
-  memset (c, 0, sizeof(c));
-  memset (d, 0, sizeof(d));
+  A = (float **) calloc (((2*len + 4)*sizeof **A + sizeof *A), 2*len);
+  if (!A) return;
+  A[0] = (float *) (A + 2*len);
+  for (i = 1; i < 2*len; i++)
+    A[i] = A[0] + 2*len*i;
+  y = len + (x = i + (d = i + (c = i + (b = A[0] + i*i))));
   for (i = 0; i < len; i++) {
     x[i] = x_[i] / 65535.0;
     y[i] = y_[i] / 65535.0;
@@ -387,6 +388,7 @@ void CLASS cubic_spline (const int *x_, const int *y_, const int len)
     curve[i] = y_out < 0.0 ? 0 : (y_out >= 1.0 ? 65535 :
 		(ushort)(y_out * 65535.0 + 0.5));
   }
+  free (A);
 }
 
 void CLASS canon_600_fixed_wb (int temp)
@@ -3841,8 +3843,8 @@ void CLASS colorcheck()
     { 0.310, 0.316, 9.0 },		// Neutral 3.5
     { 0.310, 0.316, 3.1 } };		// Black
   double gmb_cam[NSQ][4], gmb_xyz[NSQ][3];
-  double inverse[NSQ][3], cam_xyz[4][3], num;
-  int c, i, j, k, sq, row, col, count[4];
+  double inverse[NSQ][3], cam_xyz[4][3], balance[4], num;
+  int c, i, j, k, sq, row, col, pass, count[4];
 
   memset (gmb_cam, 0, sizeof gmb_cam);
   for (sq=0; sq < NSQ; sq++) {
@@ -3851,7 +3853,8 @@ void CLASS colorcheck()
       for (col=cut[sq][2]; col < cut[sq][2]+cut[sq][0]; col++) {
 	c = FC(row,col);
 	if (c >= colors) c -= 2;
-	gmb_cam[sq][c] += BAYER(row,col);
+	gmb_cam[sq][c] += BAYER2(row,col);
+	BAYER2(row,col) = black + (BAYER2(row,col)-black)/2;
 	count[c]++;
       }
     FORCC gmb_cam[sq][c] = gmb_cam[sq][c]/count[c] - black;
@@ -3861,11 +3864,16 @@ void CLASS colorcheck()
 		(1 - gmb_xyY[sq][0] - gmb_xyY[sq][1]) / gmb_xyY[sq][1];
   }
   pseudoinverse (gmb_xyz, inverse, NSQ);
-  for (raw_color = i=0; i < colors; i++)
-    for (j=0; j < 3; j++)
-      for (cam_xyz[i][j] = k=0; k < NSQ; k++)
-	cam_xyz[i][j] += gmb_cam[k][i] * inverse[k][j];
-  cam_xyz_coeff (rgb_cam, cam_xyz);
+  for (pass=0; pass < 2; pass++) {
+    for (raw_color = i=0; i < colors; i++)
+      for (j=0; j < 3; j++)
+	for (cam_xyz[i][j] = k=0; k < NSQ; k++)
+	  cam_xyz[i][j] += gmb_cam[k][i] * inverse[k][j];
+    cam_xyz_coeff (rgb_cam, cam_xyz);
+    FORCC balance[c] = pre_mul[c] * gmb_cam[20][c];
+    for (sq=0; sq < NSQ; sq++)
+      FORCC gmb_cam[sq][c] *= balance[c];
+  }
   if (verbose) {
     printf ("    { \"%s %s\", %d,\n\t{", make, model, black);
     num = 10000 / (cam_xyz[1][0] + cam_xyz[1][1] + cam_xyz[1][2]);
@@ -4185,7 +4193,7 @@ void CLASS cielab (ushort rgb[3], short lab[3])
 }
 
 #define TS 512		/* Tile Size */
-#define fcol(row,col) xtrans[(row+top_margin+6)%6][(col+left_margin+6)%6]
+#define fcol(row,col) xtrans[(row+6) % 6][(col+6) % 6]
 
 /*
    Frank Markesteijn's algorithm for Fuji X-Trans sensors
@@ -4565,7 +4573,7 @@ void CLASS tiff_get (unsigned base,
   *type = get2();
   *len  = get4();
   *save = ftell(ifp) + 4;
-  if (*len * ("11124811248488"[*type < 14 ? *type:0]-'0') > 4)
+  if (*len * ("11124811248484"[*type < 14 ? *type:0]-'0') > 4)
     fseek (ifp, get4()+base, SEEK_SET);
 }
 
@@ -4861,7 +4869,7 @@ get2_256:
       cam_mul[0] = get2() / 256.0;
       cam_mul[2] = get2() / 256.0;
     }
-    if ((tag | 0x70) == 0x2070 && type == 4)
+    if ((tag | 0x70) == 0x2070 && (type == 4 || type == 13))
       fseek (ifp, get4()+base, SEEK_SET);
     if (tag == 0x2020)
       parse_thumb_note (base, 257, 258);
@@ -5157,6 +5165,7 @@ int CLASS parse_tiff_ifd (int base)
 	thumb_length = len;
 	break;
       case 61440:			/* Fuji HS10 table */
+	fseek (ifp, get4()+base, SEEK_SET);
 	parse_tiff_ifd (base);
 	break;
       case 2: case 256: case 61441:	/* ImageWidth */
@@ -5317,8 +5326,7 @@ int CLASS parse_tiff_ifd (int base)
 	break;
       case 33422:			/* CFAPattern */
 	if (filters == 9) {
-	  FORC(36)
-	    xtrans[(c/6+top_margin)%6][(c+left_margin)%6] = fgetc(ifp) & 3;
+	  FORC(36) xtrans[0][c] = fgetc(ifp) & 3;
 	  break;
 	}
       case 64777:			/* Kodak P-series */
@@ -6157,7 +6165,7 @@ void CLASS parse_fuji (int offset)
       fuji_width = !(fgetc(ifp) & 8);
     } else if (tag == 0x131) {
       filters = 9;
-      FORC(36) xtrans[0][35-c] = fgetc(ifp) & 3;
+      FORC(36) xtrans_abs[0][35-c] = fgetc(ifp) & 3;
     } else if (tag == 0x2ff0) {
       FORC4 cam_mul[c ^ 1] = get2();
     } else if (tag == 0xc000) {
@@ -6884,6 +6892,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 8139,-2171,-663,-8747,16541,2295,-1925,2008,8093 } },
     { "Nikon D70", 0, 0,
 	{ 7732,-2422,-789,-8238,15884,2498,-859,783,7330 } },
+    { "Nikon D810", 596, 0,		/* DJC */
+	{ 6502,-2328,154,-4249,9943,4307,-1303,2538,8108 } },
     { "Nikon D800", 0, 0,
 	{ 7866,-2108,-555,-4869,12483,2681,-1176,2069,7501 } },
     { "Nikon D80", 0, 0,
@@ -6937,14 +6947,18 @@ void CLASS adobe_coeff (const char *make, const char *model)
     { "Nikon COOLPIX P7800", 200, 0,
 	{ 10321,-3920,-931,-2750,11146,1824,-442,1545,5539 } },
     { "Nikon 1 V3", 200, 0,
-	{ 6588,-1305,-693,-3277,10987,2634,-355,2016,5106 } },
+	{ 5958,-1559,-571,-4021,11453,2939,-634,1548,5087 } },
+    { "Nikon 1 J4", 200, 0,
+	{ 5958,-1559,-571,-4021,11453,2939,-634,1548,5087 } },
+    { "Nikon 1 S2", 200, 0,
+	{ 6612,-1342,-618,-3338,11055,2623,-174,1792,5075 } },
     { "Nikon 1 V2", 0, 0,
 	{ 6588,-1305,-693,-3277,10987,2634,-355,2016,5106 } },
     { "Nikon 1 J3", 0, 0,
 	{ 6588,-1305,-693,-3277,10987,2634,-355,2016,5106 } },
     { "Nikon 1 AW1", 0, 0,
 	{ 6588,-1305,-693,-3277,10987,2634,-355,2016,5106 } },
-    { "Nikon 1 ", 0, 0,
+    { "Nikon 1 ", 0, 0,		/* J1, J2, S1, V1 */
 	{ 8994,-2667,-865,-4594,12324,2552,-699,1786,6260 } },
     { "Olympus C5050", 0, 0,
 	{ 10508,-3124,-1273,-6079,14294,1901,-1653,2306,6237 } },
@@ -7132,6 +7146,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 10148,-3743,-991,-2837,11366,1659,-701,1893,4899 } },
     { "Leica D-LUX 6", 15, 0,
 	{ 10148,-3743,-991,-2837,11366,1659,-701,1893,4899 } },
+    { "Panasonic DMC-FZ1000", 15, 0,	/* DJC */
+	{ 5686,-2219,-68,-4143,9912,4232,-1244,2246,5917 } },
     { "Panasonic DMC-FZ100", 15, 0xfff,
 	{ 16197,-6146,-1761,-2393,10765,1869,366,2238,5248 } },
     { "Leica V-LUX 2", 15, 0xfff,
@@ -7174,6 +7190,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 7780,-2410,-806,-3913,11724,2484,-1018,2390,5298 } },
     { "Panasonic DMC-GH3", 15, 0,
 	{ 6559,-1752,-491,-3672,11407,2586,-962,1875,5130 } },
+    { "Panasonic DMC-GH4", 15, 0,
+	{ 7122,-2108,-512,-3155,11201,2231,-541,1423,5045 } },
     { "Panasonic DMC-GM1", 15, 0,
 	{ 6770,-1895,-744,-5232,13145,2303,-1664,2691,5703 } },
     { "Panasonic DMC-GX1", 15, 0,
@@ -7274,6 +7292,10 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 5413,-1162,-365,-5665,13098,2866,-608,1179,8440 } },
     { "Sony DSLR-A900", 128, 0,
 	{ 5209,-1072,-397,-8845,16120,2919,-1618,1803,8654 } },
+    { "Sony ILCA-77M2", 128, 0,
+	{ 5991,-1732,-443,-4100,11989,2381,-704,1467,5992 } },
+    { "Sony ILCE-7S", 128, 0,
+	{ 5838,-1430,-246,-3497,11477,2297,-748,1885,5778 } },
     { "Sony ILCE-7R", 128, 0,
 	{ 4913,-541,-202,-6130,13513,2906,-1564,2151,7183 } },
     { "Sony ILCE-7", 128, 0,
@@ -8141,6 +8163,9 @@ canon_a5:
       filters = 0x16161616;
     }
     if (fuji_layout) raw_width *= is_raw;
+    if (filters == 9)
+      FORC(36) xtrans[0][c] =
+	xtrans_abs[(c/6+top_margin) % 6][(c+left_margin) % 6];
   } else if (!strcmp(model,"KD-400Z")) {
     height = 1712;
     width  = 2312;
@@ -8407,6 +8432,8 @@ konica_400z:
     adobe_coeff ("Sony","DSC-R1");
     width = 3925;
     order = 0x4d4d;
+  } else if (!strcmp(make,"Sony") && raw_width == 4288) {
+    width -= 32;
   } else if (!strcmp(make,"Sony") && raw_width == 4928) {
     if (height < 3280) width -= 8;
   } else if (!strcmp(make,"Sony") && raw_width == 5504) {

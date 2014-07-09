@@ -75,7 +75,7 @@ protected:
     FILE *ofp;
     short order;
     const char *ifname;
-    char *meta_data, xtrans[6][6];
+    char *meta_data, xtrans[6][6],xtrans_abs[6][6];
     char cdesc[5], desc[512], make[64], model[64], model2[64], model3[64], artist[64];
     float flash_used, canon_ev, iso_speed, shutter, aperture, focal_len;
     time_t timestamp;

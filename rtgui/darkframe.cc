@@ -29,21 +29,22 @@ using namespace rtengine::procparams;
 DarkFrame::DarkFrame () : FoldableToolPanel(this)
 {
 	hbdf = Gtk::manage(new Gtk::HBox());
+	hbdf->set_spacing(4);
 	darkFrameFile = Gtk::manage(new MyFileChooserButton(M("TP_DARKFRAME_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
 	darkFrameFilePersister.reset(new FileChooserLastFolderPersister(darkFrameFile, options.lastDarkframeDir));
 	dfLabel = Gtk::manage(new Gtk::Label(M("GENERAL_FILE")));
 	btnReset = Gtk::manage(new Gtk::Button());
 	btnReset->set_image (*Gtk::manage(new RTImage ("gtk-cancel.png")));
-	hbdf->pack_start(*dfLabel, Gtk::PACK_SHRINK, 4);
+	hbdf->pack_start(*dfLabel, Gtk::PACK_SHRINK, 0);
 	hbdf->pack_start(*darkFrameFile);
-	hbdf->pack_start(*btnReset, Gtk::PACK_SHRINK, 4);
+	hbdf->pack_start(*btnReset, Gtk::PACK_SHRINK, 0);
 	dfAuto = Gtk::manage(new Gtk::CheckButton((M("TP_DARKFRAME_AUTOSELECT"))));
 	dfInfo = Gtk::manage(new Gtk::Label(""));
 	dfInfo->set_alignment(0,0); //left align
 
-	pack_start( *hbdf, Gtk::PACK_SHRINK, 4);
-	pack_start( *dfAuto, Gtk::PACK_SHRINK, 4);
-	pack_start( *dfInfo, Gtk::PACK_SHRINK, 4);
+	pack_start( *hbdf, Gtk::PACK_SHRINK, 0);
+	pack_start( *dfAuto, Gtk::PACK_SHRINK, 0);
+	pack_start( *dfInfo, Gtk::PACK_SHRINK, 0);
 
 	dfautoconn = dfAuto->signal_toggled().connect ( sigc::mem_fun(*this, &DarkFrame::dfAutoChanged), true);
 	dfFile = darkFrameFile->signal_file_set().connect ( sigc::mem_fun(*this, &DarkFrame::darkFrameChanged), true);
@@ -54,6 +55,8 @@ void DarkFrame::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 {
 	disableListener ();
 	dfautoconn.block(true);
+
+	dfAuto->set_active( pp->raw.df_autoselect );
 
 	if(pedited ){
 		dfAuto->set_inconsistent(!pedited->raw.dfAuto );
@@ -66,7 +69,7 @@ void DarkFrame::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 
 	lastDFauto = pp->raw.df_autoselect;
 
-	if( pp->raw.df_autoselect  && dfp && !batchMode){
+	if( pp->raw.df_autoselect  && dfp && !multiImage){
 		// retrieve the auto-selected df filename
 		rtengine::RawImage *img = dfp->getDF();
 		if( img ){
@@ -77,7 +80,6 @@ void DarkFrame::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 	}
 	else dfInfo->set_text("");
 
-	dfAuto->set_active( pp->raw.df_autoselect );
 	dfChanged = false;
 
 	dfautoconn.block(false);

@@ -204,9 +204,9 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 static float
-calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const float c_white[4], const float c_black[4], const RAWParams &raw, int colors)
+calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const float c_white[4], const float c_black[4], bool isMono, int colors)
 {
-    if (raw.dmethod == RAWParams::methodstring[RAWParams::mono] || colors == 1) {
+    if (isMono || colors == 1) {
         for (int c = 0; c < 4; c++) {
             scale_mul[c] = 65535.0 / (c_white[c] - c_black[c]);
         }
@@ -245,7 +245,10 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
         // adjust gain so the maximum raw value of the least scaled channel just hits max
         const float new_pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
         float new_scale_mul[4];
-        float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, raw, ri->get_colors());
+
+        bool isMono = (ri->getSensorType()==ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::mono])
+                   || (ri->getSensorType()==ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::mono]);
+        float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
         rm = new_scale_mul[0] / scale_mul[0] * gain;
         gm = new_scale_mul[1] / scale_mul[1] * gain;
         bm = new_scale_mul[2] / scale_mul[2] * gain;
@@ -320,7 +323,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 #pragma omp for
 #endif
 	for (int ix=0; ix<imheight; ix++) { int i=sy1+skip*ix;if (i>=maxy-skip) i=maxy-skip-1; // avoid trouble
-		if (ri->isBayer() || ri->get_colors() == 1) {
+		if (ri->getSensorType()!=ST_NONE || ri->get_colors() == 1) {
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {if (jx>=maxx-skip) jx=maxx-skip-1; // avoid trouble
             	float rtot,gtot,btot;
             	rtot=gtot=btot=0;
@@ -434,10 +437,14 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
         hflip (image);
     if (tran & TR_VFLIP)
         vflip (image);
-        
+
     // Color correction (only when running on full resolution)
-    if (ri->isBayer() && pp.skip==1)
-        processFalseColorCorrection (image, raw.ccSteps);
+    if (ri->getSensorType()!=ST_NONE && pp.skip==1) {
+        if (ri->getSensorType()==ST_BAYER)
+            processFalseColorCorrection (image, raw.bayersensor.ccSteps);
+        else if (ri->getSensorType()==ST_FUJI_XTRANS)
+            processFalseColorCorrection (image, raw.xtranssensor.ccSteps);
+    }
     // *** colorSpaceConversion was here ***
     //colorSpaceConversion (image, cmp, raw, embProfile, camProfile, xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
 }
@@ -880,6 +887,10 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     d1x  = ! ri->get_model().compare("D1X");
     if (d1x)
         border = 8;
+
+    if(ri->getSensorType()==ST_FUJI_XTRANS)
+		border = 7;
+
     if ( ri->get_profile() )
         embProfile = cmsOpenProfileFromMem (ri->get_profile(), ri->get_profileLen());
 
@@ -1084,7 +1095,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 	   cfaCleanFromMap( bitmapBads );
 
     // check if it is an olympus E camera, if yes, compute G channel pre-compensation factors
-    if ( raw.greenthresh || (((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,9)=="Panasonic")) && raw.dmethod != RAWParams::methodstring[ RAWParams::vng4] && ri->isBayer()) ) {
+    if ( ri->getSensorType()==ST_BAYER && (raw.bayersensor.greenthresh || (((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,9)=="Panasonic")) && raw.bayersensor.method != RAWParams::BayerSensor::methodstring[ RAWParams::BayerSensor::vng4])) ) {
         // global correction
         int ng1=0, ng2=0, i=0;
         double avgg1=0., avgg2=0.;
@@ -1115,25 +1126,25 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
                 }
 	}
 
-	if ( raw.greenthresh >0) {
+	if ( ri->getSensorType()==ST_BAYER && raw.bayersensor.greenthresh >0) {
 		if (plistener) {
 			plistener->setProgressStr ("Green equilibrate...");
 			plistener->setProgress (0.0);
 		}
-		green_equilibrate(0.01*(raw.greenthresh));
+		green_equilibrate(0.01*(raw.bayersensor.greenthresh));
     }
 
 	
-	if ( raw.linenoise >0 ) {
+	if ( ri->getSensorType()==ST_BAYER && raw.bayersensor.linenoise >0 ) {
 		if (plistener) {
 			plistener->setProgressStr ("Line Denoise...");
 			plistener->setProgress (0.0);
 		}
 
-		cfa_linedn(0.00002*(raw.linenoise));
+		cfa_linedn(0.00002*(raw.bayersensor.linenoise));
 	}
 	
-	if ( raw.ca_autocorrect || fabs(raw.cared)>0.001 || fabs(raw.cablue)>0.001 ) {
+	if ( (raw.ca_autocorrect || fabs(raw.cared)>0.001 || fabs(raw.cablue)>0.001) && ri->getSensorType()!=ST_FUJI_XTRANS ) {  // Auto CA correction disabled for X-Trans, for now...
 		if (plistener) {
 			plistener->setProgressStr ("CA Auto Correction...");
 			plistener->setProgress (0.0);
@@ -1162,43 +1173,60 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 	
 void RawImageSource::demosaic(const RAWParams &raw)
 {
-    if (ri->isBayer()) {
-    	MyTime t1,t2;
-    	t1.set();
-        if ( raw.dmethod == RAWParams::methodstring[RAWParams::hphd] )
-               hphd_demosaic ();
-        else if (raw.dmethod == RAWParams::methodstring[RAWParams::vng4] )
-            vng4_demosaic ();
-        else if (raw.dmethod == RAWParams::methodstring[RAWParams::ahd] )
-            ahd_demosaic (0,0,W,H);
-	    else if (raw.dmethod == RAWParams::methodstring[RAWParams::amaze] )
-            amaze_demosaic_RT (0,0,W,H);
-        else if (raw.dmethod == RAWParams::methodstring[RAWParams::dcb] )
-            dcb_demosaic(raw.dcb_iterations, raw.dcb_enhance);
-        else if (raw.dmethod == RAWParams::methodstring[RAWParams::eahd])
-            eahd_demosaic ();
-        else if (raw.dmethod == RAWParams::methodstring[RAWParams::igv])
-            igv_interpolate(W,H);
-        else if (raw.dmethod == RAWParams::methodstring[RAWParams::lmmse])
-            lmmse_interpolate_omp(W,H,raw.lmmse_iterations);
-        else if (raw.dmethod == RAWParams::methodstring[RAWParams::fast] )
-            fast_demosaic (0,0,W,H);
-        else if (raw.dmethod == RAWParams::methodstring[RAWParams::mono] )
-            nodemosaic(true);
-	else
-            nodemosaic(false);
-        t2.set();
-        if( settings->verbose )
-           printf("Demosaicing: %s - %d usec\n",raw.dmethod.c_str(), t2.etime(t1));
+	MyTime t1,t2;
+	t1.set();
+
+	if (ri->getSensorType()==ST_BAYER) {
+		if ( raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::hphd] )
+			   hphd_demosaic ();
+		else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::vng4] )
+			vng4_demosaic ();
+		else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::ahd] )
+			ahd_demosaic (0,0,W,H);
+		else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze] )
+			amaze_demosaic_RT (0,0,W,H);
+		else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::dcb] )
+			dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
+		else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::eahd])
+			eahd_demosaic ();
+		else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::igv])
+			igv_interpolate(W,H);
+		else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::lmmse])
+			lmmse_interpolate_omp(W,H,raw.bayersensor.lmmse_iterations);
+		else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::fast] )
+			fast_demosaic (0,0,W,H);
+		else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::mono] )
+			nodemosaic(true);
+		else
+			nodemosaic(false);
 		
-        //if (raw.all_enhance) refinement_lassus();
-        
-        rgbSourceModified = false;
+		//if (raw.all_enhance) refinement_lassus();
+
+	} else if (ri->getSensorType()==ST_FUJI_XTRANS) {
+		if (raw.xtranssensor.method == RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::fast] )
+			fast_xtrans_interpolate();
+		else if (raw.xtranssensor.method == RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::onePass])
+			xtrans_interpolate(1,false);
+		else if (raw.xtranssensor.method == RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::threePass] )
+			xtrans_interpolate(3,true);
+		else if(raw.xtranssensor.method == RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::mono] )
+			nodemosaic(true);
+		else
+			nodemosaic(false);
     } else if (ri->get_colors() == 1) {
         // Monochrome
         nodemosaic(true);
-        rgbSourceModified = false;
     }
+    t2.set();
+
+    rgbSourceModified = false;
+    if( settings->verbose ) {
+        if (getSensorType() == ST_BAYER)
+            printf("Demosaicing Bayer data: %s - %d usec\n",raw.bayersensor.method.c_str(), t2.etime(t1));
+        else if (getSensorType() == ST_FUJI_XTRANS)
+            printf("Demosaicing X-Trans data: %s - %d usec\n",raw.xtranssensor.method.c_str(), t2.etime(t1));
+    }
+
 }
 
 void RawImageSource::flushRawData() {
@@ -1237,6 +1265,191 @@ void RawImageSource::HLRecovery_Global(ToneCurveParams hrp )
 }
 
 
+void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile, unsigned short black[4])
+{
+	float (*cfablur);
+	cfablur = (float (*)) calloc (H*W, sizeof *cfablur);
+	int BS = raw.ff_BlurRadius;
+	BS += BS&1;
+	
+	//function call to cfabloxblur 
+	if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::v_ff])
+		cfaboxblur(riFlatFile, cfablur, 2*BS, 0);
+	else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::h_ff])
+		cfaboxblur(riFlatFile, cfablur, 0, 2*BS);
+	else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff])
+		//slightly more complicated blur if trying to correct both vertical and horizontal anomalies
+		cfaboxblur(riFlatFile, cfablur, BS, BS);//first do area blur to correct vignette
+	else //(raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::area_ff])
+		cfaboxblur(riFlatFile, cfablur, BS, BS);
+	
+	if(ri->getSensorType()==ST_BAYER) {
+		float refcolor[2][2];
+		//find center ave values by channel
+		for (int m=0; m<2; m++)
+			for (int n=0; n<2; n++) {
+				int row = 2*(H>>2)+m;
+				int col = 2*(W>>2)+n;
+				int c  = FC(row, col);
+				int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
+				refcolor[m][n] = max(0.0f,cfablur[row*W+col] - black[c4]);
+			}
+
+		float limitFactor = 1.f;
+		
+		if(raw.ff_AutoClipControl) {
+			for (int m=0; m<2; m++)
+				for (int n=0; n<2; n++) {
+					float maxval = 0.f;
+					int c  = FC(m, n);
+					int c4 = ( c == 1 && !(m&1) ) ? 3 : c;
+#pragma omp parallel
+{
+					float maxvalthr = 0.f;
+#pragma omp for
+					for (int row = 0; row< H-m; row+=2) {
+						for (int col = 0; col < W-n; col+=2) {
+							float tempval = (rawData[row+m][col+n]-black[c4]) * ( refcolor[m][n]/max(1e-5f,cfablur[(row+m)*W+col+n]-black[c4]) );
+							if(tempval > maxvalthr)
+								maxvalthr = tempval;
+						}
+					}
+#pragma omp critical
+{
+
+					if(maxvalthr>maxval)
+						maxval = maxvalthr;
+					
+}
+}
+					// now we have the max value for the channel
+					// if it clips, calculate factor to avoid clipping
+					if(maxval + black[c4] >= ri->get_white(c4))
+						limitFactor = min(limitFactor,ri->get_white(c4) / (maxval + black[c4]));
+				}
+		} else {
+			limitFactor = max((float)(100 - raw.ff_clipControl)/100.f,0.01f);
+		}
+		for (int m=0; m<2; m++)
+			for (int n=0; n<2; n++)
+				refcolor[m][n] *= limitFactor;
+	
+			
+		for (int m=0; m<2; m++)
+			for (int n=0; n<2; n++) {
+#pragma omp parallel
+{
+				int c  = FC(m, n);
+				int c4 = ( c == 1 && !(m&1) ) ? 3 : c;
+#pragma omp for
+				for (int row = 0; row< H-m; row+=2) {
+					for (int col = 0; col < W-n; col+=2) {
+						float vignettecorr = ( refcolor[m][n]/max(1e-5f,cfablur[(row+m)*W+col+n]-black[c4]) );
+						rawData[row+m][col+n] = (rawData[row+m][col+n]-black[c4]) * vignettecorr + black[c4]; 	
+					}
+				}
+}
+			}
+	} else if(ri->getSensorType()==ST_FUJI_XTRANS) {
+		float refcolor[3] = {0.f};
+		int cCount[3] = {0};
+		//find center ave values by channel
+		for (int m=-3; m<3; m++)
+			for (int n=-3; n<3; n++) {
+				int row = 2*(H>>2)+m;
+				int col = 2*(W>>2)+n;
+				int c  = riFlatFile->XTRANSFC(row, col);
+				refcolor[c] += max(0.0f,cfablur[row*W+col] - black[c]);
+				cCount[c] ++;
+			}
+		for(int c=0;c<3;c++)
+			refcolor[c] = refcolor[c] / cCount[c];
+
+		float limitFactor;
+		
+		if(raw.ff_AutoClipControl) {
+			// determine maximum calculated value to avoid clipping
+			float maxval = 0.f;
+			// xtrans files have only one black level actually, so we can simplify the code a bit
+#pragma omp parallel
+{
+			float maxvalthr = 0.f;
+#pragma omp for schedule(dynamic,16) nowait
+			for (int row = 0; row< H; row++) {
+				for (int col = 0; col < W; col++) {
+					float tempval = (rawData[row][col]-black[0]) * ( refcolor[ri->XTRANSFC(row, col)]/max(1e-5f,cfablur[(row)*W+col]-black[0]) );
+					if(tempval > maxvalthr)
+						maxvalthr = tempval;
+				}
+			}
+#pragma omp critical
+{
+			if(maxvalthr>maxval)
+				maxval = maxvalthr;
+}
+}
+			// there's only one white level for xtrans
+			if(maxval + black[0] > ri->get_white(0))
+				limitFactor = ri->get_white(0) / (maxval + black[0]);
+		} else { 
+			limitFactor = max((float)(100 - raw.ff_clipControl)/100.f,0.01f);
+		}
+
+
+		for(int c=0;c<3;c++)
+			refcolor[c] *= limitFactor;
+		
+#pragma omp parallel for
+		for (int row = 0; row< H; row++) {
+			for (int col = 0; col < W; col++) {
+				int c  = ri->XTRANSFC(row, col);
+				float vignettecorr = ( refcolor[c]/max(1e-5f,cfablur[(row)*W+col]-black[c]) );
+				rawData[row][col] = (rawData[row][col]-black[c]) * vignettecorr + black[c]; 	
+			}
+		}
+	}
+	if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff]) {
+		float (*cfablur1);
+		cfablur1 = (float (*)) calloc (H*W, sizeof *cfablur1);
+		float (*cfablur2);
+		cfablur2 = (float (*)) calloc (H*W, sizeof *cfablur2);
+		//slightly more complicated blur if trying to correct both vertical and horizontal anomalies
+		cfaboxblur(riFlatFile, cfablur1, 0, 2*BS);//now do horizontal blur
+		cfaboxblur(riFlatFile, cfablur2, 2*BS, 0);//now do vertical blur
+		
+		if(ri->getSensorType()==ST_BAYER) {
+			for (int m=0; m<2; m++)
+				for (int n=0; n<2; n++) {
+#pragma omp parallel for
+					for (int row = 0; row< H-m; row+=2) {
+						int c  = FC(row, 0);
+						int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
+						for (int col = 0; col < W-n; col+=2) {
+							float hlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-black[c4])/max(1e-5f,cfablur1[(row+m)*W+col+n]-black[c4]) );
+							float vlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-black[c4])/max(1e-5f,cfablur2[(row+m)*W+col+n]-black[c4]) );
+							rawData[row+m][col+n] = ((rawData[row+m][col+n]-black[c4]) * hlinecorr * vlinecorr + black[c4]); 
+						}
+					}
+				}
+		} else if(ri->getSensorType()==ST_FUJI_XTRANS) {
+#pragma omp parallel for
+			for (int row = 0; row< H; row++) {
+				for (int col = 0; col < W; col++) {
+					int c  = ri->XTRANSFC(row, col);
+					float hlinecorr = (max(1e-5f,cfablur[(row)*W+col]-black[c])/max(1e-5f,cfablur1[(row)*W+col]-black[c]) );
+					float vlinecorr = (max(1e-5f,cfablur[(row)*W+col]-black[c])/max(1e-5f,cfablur2[(row)*W+col]-black[c]) );
+					rawData[row][col] = ((rawData[row][col]-black[c]) * hlinecorr * vlinecorr + black[c]); 
+				}
+			}
+			
+		}
+		free (cfablur1);
+		free (cfablur2);
+	}
+	
+	free (cfablur);
+}
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /* Copy original pixel data and
@@ -1246,10 +1459,10 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 {
 	unsigned short black[4]={ri->get_cblack(0),ri->get_cblack(1),ri->get_cblack(2),ri->get_cblack(3)};
 
-	if (ri->isBayer()) {
+	if (ri->getSensorType()!=ST_NONE) {
 		if (!rawData)
 			rawData(W,H);
-		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
+		if (riDark && W == riDark->get_width() && H == riDark->get_height()) { // This works also for xtrans-sensors, because black[0] to black[4] are equal for these
 			for (int row = 0; row < H; row++) {
 				for (int col = 0; col < W; col++) {
 					int c  = FC(row, col);
@@ -1267,82 +1480,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 		
 		
 		if (riFlatFile && W == riFlatFile->get_width() && H == riFlatFile->get_height()) {
-			
-			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			float (*cfablur);
-			cfablur = (float (*)) calloc (H*W, sizeof *cfablur);
-//#define BS 32	
-			int BS = raw.ff_BlurRadius;
-			if (BS&1) BS++;
-			
-			//function call to cfabloxblur 
-			if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::v_ff])
-				cfaboxblur(riFlatFile, cfablur, 2*BS, 0);
-			else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::h_ff])
-				cfaboxblur(riFlatFile, cfablur, 0, 2*BS);
-			else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff])
-				//slightly more complicated blur if trying to correct both vertical and horizontal anomalies
-				cfaboxblur(riFlatFile, cfablur, BS, BS);//first do area blur to correct vignette
-			else //(raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::area_ff])
-				cfaboxblur(riFlatFile, cfablur, BS, BS);
-			
-			float refcolor[2][2];
-			//find center ave values by channel
-			for (int m=0; m<2; m++)
-				for (int n=0; n<2; n++) {
-					int row = 2*(H>>2)+m;
-					int col = 2*(W>>2)+n;
-					int c  = FC(row, col);
-					int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
-					refcolor[m][n] = max(0.0f,cfablur[row*W+col] - black[c4]);
-				}
-			
-			for (int m=0; m<2; m++)
-				for (int n=0; n<2; n++) {
-#pragma omp parallel for
-					for (int row = 0; row< H-m; row+=2) {
-						int c  = FC(row, 0);
-						int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
-						for (int col = 0; col < W-n; col+=2) {
-//							int c  = FC(row, col);
-//							int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
-							float vignettecorr = ( refcolor[m][n]/max(1e-5f,cfablur[(row+m)*W+col+n]-black[c4]) );
-							rawData[row+m][col+n] = (rawData[row+m][col+n]-black[c4]) * vignettecorr + black[c4]; 	
-						}
-					}
-				}
-			
-			if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff]) {
-				float (*cfablur1);
-				cfablur1 = (float (*)) calloc (H*W, sizeof *cfablur1);
-				float (*cfablur2);
-				cfablur2 = (float (*)) calloc (H*W, sizeof *cfablur2);
-				//slightly more complicated blur if trying to correct both vertical and horizontal anomalies
-				cfaboxblur(riFlatFile, cfablur1, 0, 2*BS);//now do horizontal blur
-				cfaboxblur(riFlatFile, cfablur2, 2*BS, 0);//now do vertical blur
-				
-				for (int m=0; m<2; m++)
-					for (int n=0; n<2; n++) {
-#pragma omp parallel for
-						for (int row = 0; row< H-m; row+=2) {
-							int c  = FC(row, 0);
-							int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
-							for (int col = 0; col < W-n; col+=2) {
-								float hlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-black[c4])/max(1e-5f,cfablur1[(row+m)*W+col+n]-black[c4]) );
-								float vlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-black[c4])/max(1e-5f,cfablur2[(row+m)*W+col+n]-black[c4]) );
-								rawData[row+m][col+n] = ((rawData[row+m][col+n]-black[c4]) * hlinecorr * vlinecorr + black[c4]); 
-							}
-						}
-					}
-				free (cfablur1);
-				free (cfablur2);
-			}
-			
-			free (cfablur);
-			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//#undef BS
-			
-
+			processFlatField(raw, riFlatFile, black);			
 		}  // flatfield
 	} else if (ri->get_colors() == 1) {
 		// Monochrome
@@ -1566,20 +1704,35 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWP
 	float black_lev[4];//black level
 
 	//adjust black level  (eg Canon)
-	black_lev[0]=raw.blackone;//R
-	black_lev[1]=raw.blackzero;//G1
-	black_lev[2]=raw.blacktwo;//B
-	black_lev[3]=raw.blackthree;//G2  (only used with a Bayer filter)
+	bool isMono = false;
+	if (getSensorType()==ST_BAYER) {
+
+		black_lev[0]=raw.bayersensor.black1;//R
+		black_lev[1]=raw.bayersensor.black0;//G1
+		black_lev[2]=raw.bayersensor.black2;//B
+		black_lev[3]=raw.bayersensor.black3;//G2
+
+		isMono = RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::mono] == raw.bayersensor.method;
+	}
+	else if (getSensorType()==ST_FUJI_XTRANS) {
+
+		black_lev[0]=raw.xtranssensor.blackred;//R
+		black_lev[1]=raw.xtranssensor.blackgreen;//G1
+		black_lev[2]=raw.xtranssensor.blackblue;//B
+		black_lev[3]=raw.xtranssensor.blackgreen;//G2  (set, only used with a Bayer filter)
+
+		isMono = RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::mono] == raw.xtranssensor.method;
+	}
 
 	for(int i=0; i<4 ;i++) cblacksom[i] = max( c_black[i]+black_lev[i], 0.0f ); // adjust black level
-        initialGain = calculate_scale_mul(scale_mul, ref_pre_mul, c_white, cblacksom, raw, ri->get_colors()); // recalculate scale colors with adjusted levels
+        initialGain = calculate_scale_mul(scale_mul, ref_pre_mul, c_white, cblacksom, isMono, ri->get_colors()); // recalculate scale colors with adjusted levels
         //fprintf(stderr, "recalc: %f [%f %f %f %f]\n", initialGain, scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
         
 	// this seems strange, but it works
 
 		// scale image colors
-		
-	if( ri->isBayer() ){
+
+	if( ri->getSensorType()==ST_BAYER){
 #pragma omp parallel
 {
 		float tmpchmax[3];
@@ -1605,7 +1758,7 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWP
 		chmax[2] = max(tmpchmax[2],chmax[2]);
 }
 }
-	}else if ( ri->get_colors() == 1 ) {
+	} else if ( ri->get_colors() == 1 ) {
 #pragma omp parallel
 {
 		float tmpchmax = 0.0f;
@@ -1625,7 +1778,32 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWP
 		chmax[0] = chmax[1] = chmax[2] = chmax[3] = max(tmpchmax,chmax[0]);
 }
 }
-	}else{
+	} else if(ri->getSensorType()==ST_FUJI_XTRANS) {
+#pragma omp parallel
+{
+		float tmpchmax[3];
+		tmpchmax[0] = tmpchmax[1] = tmpchmax[2] = 0.0f;
+
+#pragma omp for nowait
+		for (int row = winy; row < winy+winh; row ++){
+			for (int col = winx; col < winx+winw; col++) {
+				float val = rawData[row][col];
+				int c = ri->XTRANSFC(row, col);
+				val-=cblacksom[c];
+				val*=scale_mul[c];
+				
+				rawData[row][col] = (val);
+				tmpchmax[c] = max(tmpchmax[c],val);
+			}
+		}
+#pragma omp critical
+{
+		chmax[0] = max(tmpchmax[0],chmax[0]);
+		chmax[1] = max(tmpchmax[1],chmax[1]);
+		chmax[2] = max(tmpchmax[2],chmax[2]);
+}
+}
+	} else {
 #pragma omp parallel
 {
 		float tmpchmax[3];
@@ -1650,8 +1828,6 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWP
 		chmax[2] = max(tmpchmax[2],chmax[2]);
 }
 }
-
-		
 		chmax[3]=chmax[1];
 	}
 
@@ -2560,33 +2736,39 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
 
     histogram(65536>>histcompr);
     histogram.clear();
+
 #pragma omp parallel
 {
 	LUTu tmphistogram(65536>>histcompr);
 	tmphistogram.clear();
-	
 #pragma omp for nowait
     for (int i=border; i<H-border; i++) {
         int start, end;
         getRowStartEnd (i, start, end);
 
-        if (ri->isBayer()) {
+        if (ri->getSensorType()==ST_BAYER) {
             for (int j=start; j<end; j++) {
-			if (ri->ISGREEN(i,j))     tmphistogram[CLIP((int)(refwb_green*rawData[i][j]))>>histcompr]+=4;
-			else if (ri->ISRED(i,j))  tmphistogram[CLIP((int)(refwb_red*  rawData[i][j]))>>histcompr]+=4;
-			else if (ri->ISBLUE(i,j)) tmphistogram[CLIP((int)(refwb_blue* rawData[i][j]))>>histcompr]+=4;
+				if (ri->ISGREEN(i,j))     tmphistogram[CLIP((int)(refwb_green*rawData[i][j]))>>histcompr]+=4;
+				else if (ri->ISRED(i,j))  tmphistogram[CLIP((int)(refwb_red*  rawData[i][j]))>>histcompr]+=4;
+				else if (ri->ISBLUE(i,j)) tmphistogram[CLIP((int)(refwb_blue* rawData[i][j]))>>histcompr]+=4;
 			} 
-	} else if (ri->get_colors() == 1) {
+        } else if (ri->getSensorType()==ST_FUJI_XTRANS) {
             for (int j=start; j<end; j++) {
-                    tmphistogram[CLIP((int)(refwb_red*  rawData[i][j]))>>histcompr]++;
-	    }
-			} else {
-		for (int j=start; j<end; j++) {
-                    tmphistogram[CLIP((int)(refwb_red*  rawData[i][3*j+0]))>>histcompr]++;
-                    tmphistogram[CLIP((int)(refwb_green*rawData[i][3*j+1]))>>histcompr]+=2;
-                    tmphistogram[CLIP((int)(refwb_blue* rawData[i][3*j+2]))>>histcompr]++;
-				}
+				if (ri->ISXTRANSGREEN(i,j))     tmphistogram[CLIP((int)(refwb_green*rawData[i][j]))>>histcompr]+=4;
+				else if (ri->ISXTRANSRED(i,j))  tmphistogram[CLIP((int)(refwb_red*  rawData[i][j]))>>histcompr]+=4;
+				else if (ri->ISXTRANSBLUE(i,j)) tmphistogram[CLIP((int)(refwb_blue* rawData[i][j]))>>histcompr]+=4;
+			} 
+		} else if (ri->get_colors() == 1) {
+			for (int j=start; j<end; j++) {
+				tmphistogram[CLIP((int)(refwb_red*  rawData[i][j]))>>histcompr]++;
 			}
+		} else {
+			for (int j=start; j<end; j++) {
+				tmphistogram[CLIP((int)(refwb_red*  rawData[i][3*j+0]))>>histcompr]++;
+				tmphistogram[CLIP((int)(refwb_green*rawData[i][3*j+1]))>>histcompr]+=2;
+				tmphistogram[CLIP((int)(refwb_blue* rawData[i][3*j+2]))>>histcompr]++;
+			}
+		}
     }
 #pragma omp critical
 {
@@ -2625,7 +2807,7 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
 		int start, end;
 		getRowStartEnd (i, start, end);
 
-		if (ri->isBayer()) {
+		if (ri->getSensorType()==ST_BAYER) {
 			int j;
 			int c1 = FC(i,start);
 			c1 = ( c1 == 1 && !(i&1) ) ? 3 : c1;
@@ -2643,6 +2825,11 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
 				for (int c=0; c<3; c++){
 					tmphist[c][(int)ri->data[i][j]]++;
 				}
+			}
+		} else if(ri->getSensorType()==ST_FUJI_XTRANS) {
+			for (int j=start; j<end-1; j+=2) {
+				int c = ri->XTRANSFC(i,j);
+				tmphist[c][(int)ri->data[i][j]]++;
 			}
 		} else {
 			for (int j=start; j<end; j++) {
@@ -2670,10 +2857,14 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
 } // end of critical region
 } // end of parallel region
 
-    // since there are twice as many greens, correct for it
-    if (ri->isBayer())
+    
+    if (ri->getSensorType()==ST_BAYER)		// since there are twice as many greens, correct for it
 		for (int i=0;i<256;i++)
 			histGreenRaw[i]>>=1;
+	else if(ri->getSensorType()==ST_FUJI_XTRANS)	// since Xtrans has 2.5 as many greens, correct for it
+		for (int i=0;i<256;i++)
+			histGreenRaw[i] = (histGreenRaw[i]*2)/5;
+			
 
 }
 
@@ -2723,7 +2914,7 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 				int start = ABS(fw-i) + 32;
 				int end = min(H+W-fw-i, fw+i) - 32;
 				for (int j=start; j<end; j++) {
-					if (!ri->isBayer()) {
+					if (ri->getSensorType()!=ST_BAYER) {
 						double dr = CLIP(initialGain*(rawData[i][3*j]  ));
 						double dg = CLIP(initialGain*(rawData[i][3*j+1]));
 						double db = CLIP(initialGain*(rawData[i][3*j+2]));
@@ -2756,20 +2947,48 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 			}
 		}
 		else {
-			if (!ri->isBayer()) {
-				for (int i=32; i<H-32; i++)
-					for (int j=32; j<W-32; j++) {
-						// each loop read 1 rgb triplet value
+			if (ri->getSensorType()!=ST_BAYER) {
+				if(ri->getSensorType()==ST_FUJI_XTRANS) {
+					for (int i=32; i<H-32; i++)
+						for (int j=32; j<W-32; j++) {
+							// each loop read 1 rgb triplet value
+							if(ri->ISXTRANSRED(i,j)) {
+								float dr = CLIP(initialGain*(rawData[i][j]));
+								if (dr>64000.f)
+									continue;
+								avg_r += dr;
+								rn ++;
+							}
+							if(ri->ISXTRANSGREEN(i,j)) {
+								float dg = CLIP(initialGain*(rawData[i][j]));
+								if (dg>64000.f)
+									continue;
+								avg_g += dg;
+								gn ++;
+							}
+							if(ri->ISXTRANSBLUE(i,j)) {
+								float db = CLIP(initialGain*(rawData[i][j]));
+								if (db>64000.f)
+									continue;
+								avg_b += db;
+								bn ++;
+							}
+						}
+				} else {
+					for (int i=32; i<H-32; i++)
+						for (int j=32; j<W-32; j++) {
+							// each loop read 1 rgb triplet value
 
-						double dr = CLIP(initialGain*(rawData[i][3*j]  ));
-						double dg = CLIP(initialGain*(rawData[i][3*j+1]));
-						double db = CLIP(initialGain*(rawData[i][3*j+2]));
-						if (dr>64000. || dg>64000. || db>64000.) continue;
-						avg_r += dr; rn++;
-						avg_g += dg; 
-						avg_b += db; 
-					}
-				gn = rn; bn=rn;
+							double dr = CLIP(initialGain*(rawData[i][3*j]  ));
+							double dg = CLIP(initialGain*(rawData[i][3*j+1]));
+							double db = CLIP(initialGain*(rawData[i][3*j+2]));
+							if (dr>64000. || dg>64000. || db>64000.) continue;
+							avg_r += dr; rn++;
+							avg_g += dg; 
+							avg_b += db; 
+						}
+					gn = rn; bn=rn;
+				}
 			} else {
 				//determine GRBG coset; (ey,ex) is the offset of the R subarray
 				int ey, ex;
@@ -2828,25 +3047,59 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 		double reds = 0, greens = 0, blues = 0;
 		int rn = 0;
 		
-		if (!ri->isBayer()) {
-			int xmin, xmax, ymin, ymax;
-			int xr, xg, xb, yr, yg, yb;
-			for (size_t i=0; i<red.size(); i++) {
-				transformPosition (red[i].x, red[i].y, tran, xr, yr);
-				transformPosition (green[i].x, green[i].y, tran, xg, yg);
-				transformPosition (blue[i].x, blue[i].y, tran, xb, yb);
-				if (initialGain*(rawData[yr][3*xr]  )>52500 ||      
-					initialGain*(rawData[yg][3*xg+1])>52500 ||        
-					initialGain*(rawData[yb][3*xb+2])>52500) continue;
-				xmin = min(xr,xg,xb);
-				xmax = max(xr,xg,xb);
-				ymin = min(yr,yg,yb);
-				ymax = max(yr,yg,yb);
-				if (xmin>=0 && ymin>=0 && xmax<W && ymax<H) {
-					reds	+= (rawData[yr][3*xr]  );  
-					greens	+= (rawData[yg][3*xg+1]);
-					blues	+= (rawData[yb][3*xb+2]);  
-					rn++;
+		if (ri->getSensorType()!=ST_BAYER) {
+			if(ri->getSensorType()==ST_FUJI_XTRANS) {
+				int d[9][2] = {{0,0}, {-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1}};
+				double rloc, gloc, bloc;
+				int rnbrs, gnbrs, bnbrs;
+				for (size_t i=0; i<red.size(); i++) {
+					transformPosition (red[i].x, red[i].y, tran, x, y);
+					rloc=gloc=bloc=rnbrs=gnbrs=bnbrs=0;
+					for (int k=0; k<9; k++) {
+						int xv = x + d[k][0];
+						int yv = y + d[k][1];
+						if(xv>=0 && yv>=0 && xv<W && yv<H) {
+							if (ri->ISXTRANSRED(yv,xv)) { //RED
+								rloc += (rawData[yv][xv]);
+								rnbrs++;
+								continue;
+							} else if (ri->ISXTRANSBLUE(yv,xv)) { //BLUE
+								bloc += (rawData[yv][xv]);
+								bnbrs++;
+								continue;
+							} else { // GREEN
+								gloc += (rawData[yv][xv]);
+								gnbrs++;
+								continue;
+							}
+						}
+					}
+					rloc /= rnbrs; gloc /= gnbrs; bloc /= bnbrs;
+					if (rloc*initialGain<64000. && gloc*initialGain<64000. && bloc*initialGain<64000.) {
+						reds += rloc; greens += gloc; blues += bloc; rn++;
+					}
+				}
+				
+			} else {
+				int xmin, xmax, ymin, ymax;
+				int xr, xg, xb, yr, yg, yb;
+				for (size_t i=0; i<red.size(); i++) {
+					transformPosition (red[i].x, red[i].y, tran, xr, yr);
+					transformPosition (green[i].x, green[i].y, tran, xg, yg);
+					transformPosition (blue[i].x, blue[i].y, tran, xb, yb);
+					if (initialGain*(rawData[yr][3*xr]  )>52500 ||      
+						initialGain*(rawData[yg][3*xg+1])>52500 ||        
+						initialGain*(rawData[yb][3*xb+2])>52500) continue;
+					xmin = min(xr,xg,xb);
+					xmax = max(xr,xg,xb);
+					ymin = min(yr,yg,yb);
+					ymax = max(yr,yg,yb);
+					if (xmin>=0 && ymin>=0 && xmax<W && ymax<H) {
+						reds	+= (rawData[yr][3*xr]  );  
+						greens	+= (rawData[yg][3*xg+1]);
+						blues	+= (rawData[yb][3*xb+2]);  
+						rn++;
+					}
 				}
 			}
 			
@@ -2862,18 +3115,20 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 					int xv = x + d[k][0];
 					int yv = y + d[k][1];
 					int c = FC(yv,xv);
-					if (c==0 && xv>=0 && yv>=0 && xv<W && yv<H) { //RED
-						rloc += (rawData[yv][xv]);
-						rnbrs++;
-						continue;
-					}else if (c==2 && xv>=0 && yv>=0 && xv<W && yv<H) { //BLUE
-						bloc += (rawData[yv][xv]);
-						bnbrs++;
-						continue;
-					} else { // GREEN
-						gloc += (rawData[yv][xv]);
-						gnbrs++;
-						continue;
+					if(xv>=0 && yv>=0 && xv<W && yv<H) {
+						if (c==0) { //RED
+							rloc += (rawData[yv][xv]);
+							rnbrs++;
+							continue;
+						}else if (c==2) { //BLUE
+							bloc += (rawData[yv][xv]);
+							bnbrs++;
+							continue;
+						} else { // GREEN
+							gloc += (rawData[yv][xv]);
+							gnbrs++;
+							continue;
+						}
 					}
 				}
 				rloc /= rnbrs; gloc /= gnbrs; bloc /= bnbrs;
@@ -2886,18 +3141,20 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 					int xv = x + d[k][0];
 					int yv = y + d[k][1];
 					int c = FC(yv,xv);
-					if (c==0 && xv>=0 && yv>=0 && xv<W && yv<H) { //RED
-						rloc += (rawData[yv][xv]);
-						rnbrs++;
-						continue;
-					}else if (c==2 && xv>=0 && yv>=0 && xv<W && yv<H) { //BLUE
-						bloc += (rawData[yv][xv]);
-						bnbrs++;
-						continue;
-					} else { // GREEN
-						gloc += (rawData[yv][xv]);
-						gnbrs++;
-						continue;
+					if(xv>=0 && yv>=0 && xv<W && yv<H) {
+						if (c==0) { //RED
+							rloc += (rawData[yv][xv]);
+							rnbrs++;
+							continue;
+						}else if (c==2) { //BLUE
+							bloc += (rawData[yv][xv]);
+							bnbrs++;
+							continue;
+						} else { // GREEN
+							gloc += (rawData[yv][xv]);
+							gnbrs++;
+							continue;
+						}
 					}
 				}
 				rloc /= rnbrs; gloc /= gnbrs; bloc /= bnbrs;
@@ -2911,20 +3168,21 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 					int xv = x + d[k][0];
 					int yv = y + d[k][1];
 					int c = FC(yv,xv);
-					if (c==0 && xv>=0 && yv>=0 && xv<W && yv<H) { //RED
-						rloc += (rawData[yv][xv]);
-						rnbrs++;
-						continue;
-					} else if (c==2 && xv>=0 && yv>=0 && xv<W && yv<H) { //BLUE
-						bloc += (rawData[yv][xv]);
-						bnbrs++;
-						continue;
-					} else { // GREEN
-						gloc += (rawData[yv][xv]);
-						gnbrs++;
-						continue;
+					if(xv>=0 && yv>=0 && xv<W && yv<H) {
+						if (c==0) { //RED
+							rloc += (rawData[yv][xv]);
+							rnbrs++;
+							continue;
+						} else if (c==2) { //BLUE
+							bloc += (rawData[yv][xv]);
+							bnbrs++;
+							continue;
+						} else { // GREEN
+							gloc += (rawData[yv][xv]);
+							gnbrs++;
+							continue;
+						}
 					}
-					
 				}
 				rloc /= rnbrs; gloc /= gnbrs; bloc /= bnbrs;
 				if (rloc*initialGain<64000. && gloc*initialGain<64000. && bloc*initialGain<64000.) {

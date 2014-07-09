@@ -83,8 +83,9 @@
 #define ADDSET_COLORTONING_BALANCE      75
 #define ADDSET_COLORTONING_STRPROTECT   76
 #define ADDSET_DIRPYRDN_PASSES			77
+#define ADDSET_RAWFFCLIPCONTROL         78
 
 // When adding items, make sure to update ADDSET_PARAM_NUM
-#define ADDSET_PARAM_NUM                78 // THIS IS USED AS A DELIMITER!!
+#define ADDSET_PARAM_NUM                79 // THIS IS USED AS A DELIMITER!!
 
 #endif

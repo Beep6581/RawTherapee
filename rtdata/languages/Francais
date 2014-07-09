@@ -498,6 +498,11 @@ HISTORY_MSG_277;Virage partiel - Ombres
 HISTORY_MSG_278;Virage partiel - Hautes Lumières
 HISTORY_MSG_279;Virage partiel - Protect. Saturé
 HISTORY_MSG_280;Virage partiel - Seuil de Protection
+HISTORY_MSG_288;Champ Uniforme - Ctrl de l'Écrêtage
+HISTORY_MSG_289;Champ Uniforme - Ctrl Auto de l'Écrêtage
+HISTORY_MSG_290;Niveau de noir - Rouge
+HISTORY_MSG_291;Niveau de noir - Vert
+HISTORY_MSG_292;Niveau de noir - Bleu
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Captures
@@ -660,6 +665,7 @@ PARTIALPASTE_EXPOSURE;Exposition
 PARTIALPASTE_FLATFIELDAUTOSELECT;Sélection auto du Champ Uniforme
 PARTIALPASTE_FLATFIELDBLURRADIUS;Rayon de floutage du Champ Uniforme
 PARTIALPASTE_FLATFIELDBLURTYPE;Type de floutage du Champ Uniforme
+PARTIALPASTE_FLATFIELDCLIPCONTROL;Contrôle de l'écrêtage du Champs Uniforme
 PARTIALPASTE_FLATFIELDFILE;Fichier de Champ Uniforme
 PARTIALPASTE_GRADIENT;Filtre Dégradé
 PARTIALPASTE_HSVEQUALIZER;Égaliseur TSV
@@ -1169,7 +1175,8 @@ TP_EPD_REWEIGHTINGITERATES;Itérations de la pondération
 TP_EPD_SCALE;Échelle
 TP_EPD_STRENGTH;Force
 TP_EPD_TOOLTIP;Vous pouvez choisir entre le mode Lab (standard) ou le mode CIECAM02.\n En activant "Compression tonale avec brillance Q CIECAM" dans le menu "Brillance + Niveau de couleur CIECAM"
-TP_EXPOSCORR_LABEL;Points Noir & Blanc Raw
+TP_EXPOS_BLACKPOINT_LABEL;Points Noir Raw
+TP_EXPOS_WHITEPOINT_LABEL;Points Blanc Raw
 TP_EXPOSURE_AUTOLEVELS;Niveaux Auto
 TP_EXPOSURE_AUTOLEVELS_TIP;Bascule l'usage de Niveaux automatiques afin de régler automatiquement les valeurs basé sur l'analyse de l'image\nActive la Reconstruction des Hautes Lumières si nécessaire.
 TP_EXPOSURE_BLACKLEVEL;Noir
@@ -1199,6 +1206,7 @@ TP_FLATFIELD_BT_AREA;Zone
 TP_FLATFIELD_BT_HORIZONTAL;Horizontal
 TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
 TP_FLATFIELD_BT_VERTICAL;Vertical
+TP_FLATFIELD_CLIPCONTROL;Control de l'écrêtage
 TP_FLATFIELD_LABEL;Champ Uniforme
 TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Manuel
@@ -1326,13 +1334,17 @@ TP_PREPROCESS_NO_FOUND;Aucun trouvé
 TP_RAWCACORR_AUTO;Correction automatique
 TP_RAWCACORR_CABLUE;Bleu
 TP_RAWCACORR_CARED;Rouge
-TP_RAWEXPOS_BLACKONE;Niveau de noir: Rouge
 TP_RAWEXPOS_BLACKS;Niveaux de noir
-TP_RAWEXPOS_BLACKTHREE;Niveau de noir: Vert 2
-TP_RAWEXPOS_BLACKTWO;Niveau de noir: Bleu
-TP_RAWEXPOS_BLACKZERO;Niveau de noir: Vert 1 (maître)
+TP_RAWEXPOS_BLACK_0;Vert 1 (maître)
+TP_RAWEXPOS_BLACK_1;Rouge
+TP_RAWEXPOS_BLACK_2;Bleu
+TP_RAWEXPOS_BLACK_3;Vert 2
+TP_RAWEXPOS_BLACK_RED;Rouge
+TP_RAWEXPOS_BLACK_GREEN;Vert
+TP_RAWEXPOS_BLACK_BLUE;Bleu
 TP_RAWEXPOS_LINEAR;Corr. du Point Blanc
 TP_RAWEXPOS_PRESER;Préservation des HL
+TP_RAWEXPOS_RGB;Rouge, Vert, Bleu
 TP_RAWEXPOS_TWOGREEN;Lier les verts
 TP_RAW_ALLENHANCE;Réduction de bruit/artefact post-dématriçage
 TP_RAW_DCBENHANCE;Amélioration de DCB
@@ -1345,6 +1357,8 @@ TP_RAW_FALSECOLOR;Itérations pour la suppression\ndes fausses couleurs
 TP_RAW_LABEL;Dématriçage
 TP_RAW_LMMSEITERATIONS;Niveau d'amélioration LMMSE
 TP_RAW_LMMSE_TOOLTIP;Ajoute gamma (niveau 1) + médian (niveau 2-4) + affinage (niveau 5-6) pour réduire les artéfacts et améliorer le rapport signal/bruit
+TP_RAW_SENSOR_BAYER_LABEL;Capteur à matrice de Bayer
+TP_RAW_SENSOR_XTRANS_LABEL;Capteur à matrice X-Trans
 TP_RESIZE_APPLIESTO;S'applique à:
 TP_RESIZE_BICUBICSF;Bicubique (Plus doux)
 TP_RESIZE_BICUBICSH;Bicubique (Plus net)

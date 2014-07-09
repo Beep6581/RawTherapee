@@ -508,6 +508,11 @@ HISTORY_MSG_284;Color Toning - Auto saturation
 HISTORY_MSG_285;NR - Median method
 HISTORY_MSG_286;NR - Median type
 HISTORY_MSG_287;NR - Median iterations
+HISTORY_MSG_288;Flat Field Clip Control
+HISTORY_MSG_289;Flat Field Automatic Clip Control
+HISTORY_MSG_290;Black Level - Red
+HISTORY_MSG_291;Black Level - Green
+HISTORY_MSG_292;Black Level - Blue
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -662,6 +667,7 @@ PARTIALPASTE_EXPOSURE;Exposure
 PARTIALPASTE_FLATFIELDAUTOSELECT;Flat-field auto-selection
 PARTIALPASTE_FLATFIELDBLURRADIUS;Flat-field blur radius
 PARTIALPASTE_FLATFIELDBLURTYPE;Flat-field blur type
+PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
 PARTIALPASTE_FLATFIELDFILE;Flat-field file
 PARTIALPASTE_GRADIENT;Graduated filter
 PARTIALPASTE_HSVEQUALIZER;HSV equalizer
@@ -1210,7 +1216,8 @@ TP_EPD_REWEIGHTINGITERATES;Reweighting Iterates
 TP_EPD_SCALE;Scale
 TP_EPD_STRENGTH;Strength
 TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
-TP_EXPOSCORR_LABEL;Raw White & Black Points
+TP_EXPOS_BLACKPOINT_LABEL;Raw Black Points
+TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
 TP_EXPOSURE_AUTOLEVELS;Auto Levels
 TP_EXPOSURE_AUTOLEVELS_TIP;Toggles execution of Auto Levels to automatically set Exposure slider values based on an image analysis.\nEnables Highlight Reconstruction if necessary.
 TP_EXPOSURE_BLACKLEVEL;Black
@@ -1240,6 +1247,8 @@ TP_FLATFIELD_BT_AREA;Area
 TP_FLATFIELD_BT_HORIZONTAL;Horizontal
 TP_FLATFIELD_BT_VERTHORIZ;Vertical + Horizontal
 TP_FLATFIELD_BT_VERTICAL;Vertical
+TP_FLATFIELD_CLIPCONTROL;Clip control
+TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
 TP_FLATFIELD_LABEL;Flat-Field
 TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Free gamma
@@ -1368,13 +1377,17 @@ TP_PREPROCESS_NO_FOUND;None found
 TP_RAWCACORR_AUTO;Auto-correction
 TP_RAWCACORR_CABLUE;Blue
 TP_RAWCACORR_CARED;Red
-TP_RAWEXPOS_BLACKONE;Black Level: Red
 TP_RAWEXPOS_BLACKS;Black Levels
-TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
-TP_RAWEXPOS_BLACKTWO;Black Level: Blue
-TP_RAWEXPOS_BLACKZERO;Black Level: Green 1 (lead)
+TP_RAWEXPOS_BLACK_0;Green 1 (lead)
+TP_RAWEXPOS_BLACK_1;Red
+TP_RAWEXPOS_BLACK_2;Blue
+TP_RAWEXPOS_BLACK_3;Green 2
+TP_RAWEXPOS_BLACK_RED;Red
+TP_RAWEXPOS_BLACK_GREEN;Green
+TP_RAWEXPOS_BLACK_BLUE;Blue
 TP_RAWEXPOS_LINEAR;White Point Correction
 TP_RAWEXPOS_PRESER;Highlight Preservation
+TP_RAWEXPOS_RGB;Red, Green, Blue
 TP_RAWEXPOS_TWOGREEN;Link greens
 TP_RAW_ALLENHANCE;Post-Demosaic Artifact/Noise Reduction
 TP_RAW_DCBENHANCE;DCB Enhancement
@@ -1387,6 +1400,9 @@ TP_RAW_FALSECOLOR;False Color Suppression Steps
 TP_RAW_LABEL;Demosaicing
 TP_RAW_LMMSEITERATIONS;LMMSE Enhancement Steps
 TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.
+TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer matrix
+TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans matrix
+TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images)\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
 TP_RESIZE_APPLIESTO;Applies to:
 TP_RESIZE_BICUBICSF;Bicubic (Softer)
 TP_RESIZE_BICUBICSH;Bicubic (Sharper)

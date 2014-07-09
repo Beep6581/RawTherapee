@@ -215,7 +215,11 @@ void ImageData::extractInfo () {
 
     // Sometimes (e.g. DNG) EXIF already contains lens data
 
-    if (root->findTag("MakerNote")) {
+	if(!make.compare (0, 8, "FUJIFILM")) {
+		if(exif->getTag ("LensModel")) {
+			lens = exif->getTag ("LensModel")->valueToString ();
+		}
+	} else if (root->findTag("MakerNote")) {
         rtexif::TagDirectory* mnote = root->findTag("MakerNote")->getDirectory();
         if (mnote && !make.compare (0, 5, "NIKON")) {
             // ISO at max value supported, check manufacturer specific

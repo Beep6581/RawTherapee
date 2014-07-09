@@ -42,7 +42,8 @@ using namespace std;
 namespace rtengine {
 namespace procparams {
 
-    const char *RAWParams::methodstring[RAWParams::numMethods]={"amaze","igv","lmmse","eahd", "hphd", "vng4", "dcb", "ahd", "fast", "mono", "none" };
+    const char *RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::numMethods]={"amaze","igv","lmmse","eahd", "hphd", "vng4", "dcb", "ahd", "fast", "mono", "none" };
+    const char *RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::numMethods]={"3-pass (best)", "1-pass (medium)", "fast", "mono", "none" };
 
 const char *RAWParams::ff_BlurTypestring[RAWParams::numFlatFileBlurTypes]={/*"Parametric",*/ "Area Flatfield", "Vertical Flatfield", "Horizontal Flatfield", "V+H Flatfield"};
 std::vector<WBEntry*> WBParams::wbEntries;
@@ -769,33 +770,39 @@ void ProcParams::setDefaults () {
     hsvequalizer.scurve.push_back (FCT_Linear);
     hsvequalizer.vcurve.clear ();
     hsvequalizer.vcurve.push_back (FCT_Linear);
+    raw.bayersensor.method = RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze];
+    raw.bayersensor.ccSteps = 0;
+    raw.bayersensor.dcb_iterations = 2;
+    raw.bayersensor.dcb_enhance = false;
+    //raw.bayersensor.all_enhance = false;
+    raw.bayersensor.lmmse_iterations = 2;
+    raw.bayersensor.black0 = 0.0;
+    raw.bayersensor.black1 = 0.0;
+    raw.bayersensor.black2 = 0.0;
+    raw.bayersensor.black3 = 0.0;
+    raw.bayersensor.twogreen = true;
+    raw.bayersensor.linenoise = 0;
+    raw.bayersensor.greenthresh = 0;
+
+    raw.xtranssensor.method = RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::threePass];
+    raw.xtranssensor.ccSteps = 0;
+    raw.xtranssensor.blackred = 0.0;
+    raw.xtranssensor.blackgreen = 0.0;
+    raw.xtranssensor.blackblue = 0.0;
+
+    raw.expos=1.0;
+    raw.preser=0.0;
     raw.df_autoselect = false;
     raw.ff_AutoSelect = false;
     raw.ff_BlurRadius = 32;
     raw.ff_BlurType = RAWParams::ff_BlurTypestring[RAWParams::area_ff];
+    raw.ff_AutoClipControl = false;
+    raw.ff_clipControl = 0;    
     raw.cared = 0;
     raw.cablue = 0;
     raw.ca_autocorrect = false;
     raw.hotdeadpix_filt = false;
     raw.hotdeadpix_thresh = 40;
-    raw.linenoise = 0;
-    raw.greenthresh = 0;
-    raw.ccSteps = 0;
-    raw.dmethod = RAWParams::methodstring[RAWParams::amaze];;
-    raw.dcb_iterations=2;
-    raw.dcb_enhance=false;
-    raw.lmmse_iterations=2;
-
-    //raw.all_enhance=false;
-
-    // exposure before interpolation
-    raw.expos=1.0;
-    raw.preser=0.0;
-    raw.blackzero=0.0;
-    raw.blackone=0.0;
-    raw.blacktwo=0.0;
-    raw.blackthree=0.0;
-    raw.twogreen=true;
     exif.clear ();
     iptc.clear ();
 
@@ -1432,35 +1439,44 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     }
 
     // save raw parameters
-    if (!pedited || pedited->raw.darkFrame)          keyFile.set_string  ("RAW", "DarkFrame", relativePathIfInside(fname, fnameAbsolute, raw.dark_frame) );
-    if (!pedited || pedited->raw.dfAuto)             keyFile.set_boolean ("RAW", "DarkFrameAuto", raw.df_autoselect );
-    if (!pedited || pedited->raw.ff_file)            keyFile.set_string  ("RAW", "FlatFieldFile", relativePathIfInside(fname, fnameAbsolute, raw.ff_file) );
-    if (!pedited || pedited->raw.ff_AutoSelect)      keyFile.set_boolean ("RAW", "FlatFieldAutoSelect", raw.ff_AutoSelect );
-    if (!pedited || pedited->raw.ff_BlurRadius)      keyFile.set_integer ("RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius );
-    if (!pedited || pedited->raw.ff_BlurType)        keyFile.set_string  ("RAW", "FlatFieldBlurType", raw.ff_BlurType );
-    if (!pedited || pedited->raw.caCorrection)       keyFile.set_boolean ("RAW", "CA", raw.ca_autocorrect );
-    if (!pedited || pedited->raw.caRed)              keyFile.set_double  ("RAW", "CARed", raw.cared );
-    if (!pedited || pedited->raw.caBlue)             keyFile.set_double  ("RAW", "CABlue", raw.cablue );
-    if (!pedited || pedited->raw.hotDeadPixelFilter) keyFile.set_boolean ("RAW", "HotDeadPixels", raw.hotdeadpix_filt );
-    if (!pedited || pedited->raw.hotDeadPixelThresh) keyFile.set_integer ("RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh );
-    if (!pedited || pedited->raw.linenoise)          keyFile.set_integer ("RAW", "LineDenoise", raw.linenoise);
-    if (!pedited || pedited->raw.greenEq)            keyFile.set_integer ("RAW", "GreenEqThreshold", raw.greenthresh);
-    if (!pedited || pedited->raw.ccSteps)            keyFile.set_integer ("RAW", "CcSteps", raw.ccSteps);
-    if (!pedited || pedited->raw.dmethod)            keyFile.set_string  ("RAW", "Method", raw.dmethod );
-    if (!pedited || pedited->raw.dcbIterations)      keyFile.set_integer ("RAW", "DCBIterations", raw.dcb_iterations );
-    if (!pedited || pedited->raw.dcbEnhance)         keyFile.set_boolean ("RAW", "DCBEnhance", raw.dcb_enhance );
-    if (!pedited || pedited->raw.lmmseIterations)    keyFile.set_integer ("RAW", "LMMSEIterations", raw.lmmse_iterations );
-	
-    //if (!pedited || pedited->raw.allEnhance)         keyFile.set_boolean ("RAW", "ALLEnhance", raw.all_enhance );
+    if (!pedited || pedited->raw.darkFrame)            keyFile.set_string  ("RAW", "DarkFrame", relativePathIfInside(fname, fnameAbsolute, raw.dark_frame) );
+    if (!pedited || pedited->raw.dfAuto)               keyFile.set_boolean ("RAW", "DarkFrameAuto", raw.df_autoselect );
+    if (!pedited || pedited->raw.ff_file)              keyFile.set_string  ("RAW", "FlatFieldFile", relativePathIfInside(fname, fnameAbsolute, raw.ff_file) );
+    if (!pedited || pedited->raw.ff_AutoSelect)        keyFile.set_boolean ("RAW", "FlatFieldAutoSelect", raw.ff_AutoSelect );
+    if (!pedited || pedited->raw.ff_BlurRadius)        keyFile.set_integer ("RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius );
+    if (!pedited || pedited->raw.ff_BlurType)          keyFile.set_string  ("RAW", "FlatFieldBlurType", raw.ff_BlurType );
+    if (!pedited || pedited->raw.ff_AutoClipControl)   keyFile.set_boolean ("RAW", "FlatFieldAutoClipControl", raw.ff_AutoClipControl );
+    if (!pedited || pedited->raw.ff_clipControl)       keyFile.set_boolean ("RAW", "FlatFieldClipControl", raw.ff_clipControl );
+    if (!pedited || pedited->raw.caCorrection)         keyFile.set_boolean ("RAW", "CA", raw.ca_autocorrect );
+    if (!pedited || pedited->raw.caRed)                keyFile.set_double  ("RAW", "CARed", raw.cared );
+    if (!pedited || pedited->raw.caBlue)               keyFile.set_double  ("RAW", "CABlue", raw.cablue );
+    if (!pedited || pedited->raw.hotDeadPixelFilter)   keyFile.set_boolean ("RAW", "HotDeadPixels", raw.hotdeadpix_filt );
+    if (!pedited || pedited->raw.hotDeadPixelThresh)   keyFile.set_integer ("RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh );
+
+    if (!pedited || pedited->raw.bayersensor.method)          keyFile.set_string  ("RAW Bayer", "Method", raw.bayersensor.method );
+    if (!pedited || pedited->raw.bayersensor.ccSteps)         keyFile.set_integer ("RAW Bayer", "CcSteps", raw.bayersensor.ccSteps);
+    if (!pedited || pedited->raw.bayersensor.exBlack0)        keyFile.set_double  ("RAW Bayer", "PreBlack0", raw.bayersensor.black0 );
+    if (!pedited || pedited->raw.bayersensor.exBlack1)        keyFile.set_double  ("RAW Bayer", "PreBlack1", raw.bayersensor.black1 );
+    if (!pedited || pedited->raw.bayersensor.exBlack2)        keyFile.set_double  ("RAW Bayer", "PreBlack2", raw.bayersensor.black2 );
+    if (!pedited || pedited->raw.bayersensor.exBlack3)        keyFile.set_double  ("RAW Bayer", "PreBlack3", raw.bayersensor.black3 );
+    if (!pedited || pedited->raw.bayersensor.exTwoGreen)      keyFile.set_boolean ("RAW Bayer", "PreTwoGreen", raw.bayersensor.twogreen );
+    if (!pedited || pedited->raw.bayersensor.linenoise)       keyFile.set_integer ("RAW Bayer", "LineDenoise", raw.bayersensor.linenoise);
+    if (!pedited || pedited->raw.bayersensor.greenEq)         keyFile.set_integer ("RAW Bayer", "GreenEqThreshold", raw.bayersensor.greenthresh);
+    if (!pedited || pedited->raw.bayersensor.dcbIterations)   keyFile.set_integer ("RAW Bayer", "DCBIterations", raw.bayersensor.dcb_iterations );
+    if (!pedited || pedited->raw.bayersensor.dcbEnhance)      keyFile.set_boolean ("RAW Bayer", "DCBEnhance", raw.bayersensor.dcb_enhance );
+    if (!pedited || pedited->raw.bayersensor.lmmseIterations) keyFile.set_integer ("RAW Bayer", "LMMSEIterations", raw.bayersensor.lmmse_iterations );
+    //if (!pedited || pedited->raw.bayersensor.allEnhance)    keyFile.set_boolean ("RAW Bayer", "ALLEnhance", raw.bayersensor.all_enhance );
+
+    if (!pedited || pedited->raw.xtranssensor.method)         keyFile.set_string  ("RAW X-Trans", "Method", raw.xtranssensor.method );
+    if (!pedited || pedited->raw.xtranssensor.ccSteps)        keyFile.set_integer ("RAW X-Trans", "CcSteps", raw.xtranssensor.ccSteps);
+    if (!pedited || pedited->raw.xtranssensor.exBlackRed)     keyFile.set_double  ("RAW X-Trans", "PreBlackRed", raw.xtranssensor.blackred );
+    if (!pedited || pedited->raw.xtranssensor.exBlackGreen)   keyFile.set_double  ("RAW X-Trans", "PreBlackGreen", raw.xtranssensor.blackgreen );
+    if (!pedited || pedited->raw.xtranssensor.exBlackBlue)    keyFile.set_double  ("RAW X-Trans", "PreBlackBlue", raw.xtranssensor.blackblue );
+
 
     // save raw exposition
     if (!pedited || pedited->raw.exPos)              keyFile.set_double  ("RAW", "PreExposure", raw.expos );
     if (!pedited || pedited->raw.exPreser)           keyFile.set_double  ("RAW", "PrePreserv", raw.preser );
-    if (!pedited || pedited->raw.exBlackzero)        keyFile.set_double  ("RAW", "PreBlackzero", raw.blackzero );
-    if (!pedited || pedited->raw.exBlackone)         keyFile.set_double  ("RAW", "PreBlackone", raw.blackone );
-    if (!pedited || pedited->raw.exBlacktwo)         keyFile.set_double  ("RAW", "PreBlacktwo", raw.blacktwo );
-    if (!pedited || pedited->raw.exBlackthree)       keyFile.set_double  ("RAW", "PreBlackthree", raw.blackthree );
-    if (!pedited || pedited->raw.exTwoGreen)         keyFile.set_boolean ("RAW", "PreTwoGreen", raw.twogreen );
 
     // save exif change list
     if (!pedited || pedited->exif) {
@@ -2114,34 +2130,63 @@ if (keyFile.has_group ("ColorToning")) {
 
     // load raw settings
 if (keyFile.has_group ("RAW")) {
-    if (keyFile.has_key ("RAW", "DarkFrame"))        { raw.dark_frame = expandRelativePath(fname, "", keyFile.get_string  ("RAW", "DarkFrame" )); if (pedited) pedited->raw.darkFrame = true; }
-    if (keyFile.has_key ("RAW", "DarkFrameAuto"))    { raw.df_autoselect = keyFile.get_boolean ("RAW", "DarkFrameAuto" ); if (pedited) pedited->raw.dfAuto = true; }
-    if (keyFile.has_key ("RAW", "FlatFieldFile"))       { raw.ff_file = expandRelativePath(fname, "", keyFile.get_string  ("RAW", "FlatFieldFile" )); if (pedited) pedited->raw.ff_file = true; }
-    if (keyFile.has_key ("RAW", "FlatFieldAutoSelect")) { raw.ff_AutoSelect = keyFile.get_boolean  ("RAW", "FlatFieldAutoSelect" );  if (pedited) pedited->raw.ff_AutoSelect = true; }
-    if (keyFile.has_key ("RAW", "FlatFieldBlurRadius")) { raw.ff_BlurRadius = keyFile.get_integer  ("RAW", "FlatFieldBlurRadius" ); if (pedited) pedited->raw.ff_BlurRadius = true; }
-    if (keyFile.has_key ("RAW", "FlatFieldBlurType"))   { raw.ff_BlurType = keyFile.get_string  ("RAW", "FlatFieldBlurType" ); if (pedited) pedited->raw.ff_BlurType = true; }
-    if (keyFile.has_key ("RAW", "CA"))               { raw.ca_autocorrect = keyFile.get_boolean ("RAW", "CA" ); if (pedited) pedited->raw.caCorrection = true; }
-    if (keyFile.has_key ("RAW", "CARed"))            { raw.cared = keyFile.get_double ("RAW", "CARed" ); if (pedited) pedited->raw.caRed = true; }
-    if (keyFile.has_key ("RAW", "CABlue"))           { raw.cablue = keyFile.get_double ("RAW", "CABlue" ); if (pedited) pedited->raw.caBlue = true; }
-    if (keyFile.has_key ("RAW", "HotDeadPixels"))    { raw.hotdeadpix_filt = keyFile.get_boolean ("RAW", "HotDeadPixels" ); if (pedited) pedited->raw.hotDeadPixelFilter = true; }
-    if (keyFile.has_key ("RAW", "HotDeadPixelThresh")) { raw.hotdeadpix_thresh = keyFile.get_integer ("RAW", "HotDeadPixelThresh" ); if (pedited) pedited->raw.hotDeadPixelThresh = true; }
-    if (keyFile.has_key ("RAW", "LineDenoise"))      { raw.linenoise = keyFile.get_integer ("RAW", "LineDenoise" ); if (pedited) pedited->raw.linenoise = true; }
-    if (keyFile.has_key ("RAW", "GreenEqThreshold")) { raw.greenthresh= keyFile.get_integer ("RAW", "GreenEqThreshold"); if (pedited) pedited->raw.greenEq = true; }
-    if (keyFile.has_key ("RAW", "CcSteps"))          { raw.ccSteps  = keyFile.get_integer ("RAW", "CcSteps"); if (pedited) pedited->raw.ccSteps = true; }
-    if (keyFile.has_key ("RAW", "Method"))           { raw.dmethod = keyFile.get_string ("RAW", "Method"); if (pedited) pedited->raw.dmethod = true; }
-    if (keyFile.has_key ("RAW", "DCBIterations"))    { raw.dcb_iterations = keyFile.get_integer("RAW", "DCBIterations"); if (pedited) pedited->raw.dcbIterations = true; }
-    if (keyFile.has_key ("RAW", "DCBEnhance"))       { raw.dcb_enhance =keyFile.get_boolean("RAW", "DCBEnhance"); if (pedited) pedited->raw.dcbEnhance = true; }
-    if (keyFile.has_key ("RAW", "LMMSEIterations"))  { raw.lmmse_iterations = keyFile.get_integer("RAW", "LMMSEIterations"); if (pedited) pedited->raw.lmmseIterations = true; }
-    //if (keyFile.has_key ("RAW", "ALLEnhance"))       { raw.all_enhance =keyFile.get_boolean("RAW", "ALLEnhance"); if (pedited) pedited->raw.allEnhance = true; }
+    if (keyFile.has_key ("RAW", "DarkFrame"))                { raw.dark_frame = expandRelativePath(fname, "", keyFile.get_string  ("RAW", "DarkFrame" )); if (pedited) pedited->raw.darkFrame = true; }
+    if (keyFile.has_key ("RAW", "DarkFrameAuto"))            { raw.df_autoselect = keyFile.get_boolean ("RAW", "DarkFrameAuto" ); if (pedited) pedited->raw.dfAuto = true; }
+    if (keyFile.has_key ("RAW", "FlatFieldFile"))            { raw.ff_file = expandRelativePath(fname, "", keyFile.get_string  ("RAW", "FlatFieldFile" )); if (pedited) pedited->raw.ff_file = true; }
+    if (keyFile.has_key ("RAW", "FlatFieldAutoSelect"))      { raw.ff_AutoSelect = keyFile.get_boolean  ("RAW", "FlatFieldAutoSelect" );  if (pedited) pedited->raw.ff_AutoSelect = true; }
+    if (keyFile.has_key ("RAW", "FlatFieldBlurRadius"))      { raw.ff_BlurRadius = keyFile.get_integer  ("RAW", "FlatFieldBlurRadius" ); if (pedited) pedited->raw.ff_BlurRadius = true; }
+    if (keyFile.has_key ("RAW", "FlatFieldBlurType"))        { raw.ff_BlurType = keyFile.get_string  ("RAW", "FlatFieldBlurType" ); if (pedited) pedited->raw.ff_BlurType = true; }
+    if (keyFile.has_key ("RAW", "FlatFieldAutoClipControl")) { raw.ff_AutoClipControl = keyFile.get_boolean  ("RAW", "FlatFieldAutoClipControl" );  if (pedited) pedited->raw.ff_AutoClipControl = true; }
+    if (keyFile.has_key ("RAW", "FlatFieldClipControl"))     { raw.ff_clipControl = keyFile.get_boolean  ("RAW", "FlatFieldClipControl" );  if (pedited) pedited->raw.ff_clipControl = true; }
+    if (keyFile.has_key ("RAW", "CA"))                       { raw.ca_autocorrect = keyFile.get_boolean ("RAW", "CA" ); if (pedited) pedited->raw.caCorrection = true; }
+    if (keyFile.has_key ("RAW", "CARed"))                    { raw.cared = keyFile.get_double ("RAW", "CARed" ); if (pedited) pedited->raw.caRed = true; }
+    if (keyFile.has_key ("RAW", "CABlue"))                   { raw.cablue = keyFile.get_double ("RAW", "CABlue" ); if (pedited) pedited->raw.caBlue = true; }
+    if (keyFile.has_key ("RAW", "HotDeadPixels"))            { raw.hotdeadpix_filt = keyFile.get_boolean ("RAW", "HotDeadPixels" ); if (pedited) pedited->raw.hotDeadPixelFilter = true; }
+    if (keyFile.has_key ("RAW", "HotDeadPixelThresh"))       { raw.hotdeadpix_thresh = keyFile.get_integer ("RAW", "HotDeadPixelThresh" ); if (pedited) pedited->raw.hotDeadPixelThresh = true; }
+    if (keyFile.has_key ("RAW", "PreExposure"))              { raw.expos =keyFile.get_double("RAW", "PreExposure"); if (pedited) pedited->raw.exPos = true; }
+    if (keyFile.has_key ("RAW", "PrePreserv"))               { raw.preser =keyFile.get_double("RAW", "PrePreserv"); if (pedited) pedited->raw.exPreser = true; }
 
-    if (keyFile.has_key ("RAW", "PreExposure"))   { raw.expos =keyFile.get_double("RAW", "PreExposure"); if (pedited) pedited->raw.exPos = true; }
-    if (keyFile.has_key ("RAW", "PrePreserv"))    { raw.preser =keyFile.get_double("RAW", "PrePreserv"); if (pedited) pedited->raw.exPreser = true; }
-    if (keyFile.has_key ("RAW", "PreBlackzero"))  { raw.blackzero =keyFile.get_double("RAW", "PreBlackzero"); if (pedited) pedited->raw.exBlackzero = true; }
-    if (keyFile.has_key ("RAW", "PreBlackone"))   { raw.blackone =keyFile.get_double("RAW", "PreBlackone"); if (pedited) pedited->raw.exBlackone = true; }
-    if (keyFile.has_key ("RAW", "PreBlacktwo"))   { raw.blacktwo =keyFile.get_double("RAW", "PreBlacktwo"); if (pedited) pedited->raw.exBlacktwo = true; }
-    if (keyFile.has_key ("RAW", "PreBlackthree")) { raw.blackthree =keyFile.get_double("RAW", "PreBlackthree"); if (pedited) pedited->raw.exBlackthree = true; }
-    if (keyFile.has_key ("RAW", "PreTwoGreen"))   { raw.twogreen =keyFile.get_boolean("RAW", "PreTwoGreen"); if (pedited) pedited->raw.exTwoGreen = true; }
+    if (ppVersion < 320) {
+        if (keyFile.has_key ("RAW", "Method"))           { raw.bayersensor.method = keyFile.get_string ("RAW", "Method"); if (pedited) pedited->raw.bayersensor.method = true; }
+        if (keyFile.has_key ("RAW", "CcSteps"))          { raw.bayersensor.ccSteps  = keyFile.get_integer ("RAW", "CcSteps"); if (pedited) pedited->raw.bayersensor.ccSteps = true; }
+        if (keyFile.has_key ("RAW", "LineDenoise"))      { raw.bayersensor.linenoise = keyFile.get_integer ("RAW", "LineDenoise" ); if (pedited) pedited->raw.bayersensor.linenoise = true; }
+        if (keyFile.has_key ("RAW", "GreenEqThreshold")) { raw.bayersensor.greenthresh= keyFile.get_integer ("RAW", "GreenEqThreshold"); if (pedited) pedited->raw.bayersensor.greenEq = true; }
+        if (keyFile.has_key ("RAW", "DCBIterations"))    { raw.bayersensor.dcb_iterations = keyFile.get_integer("RAW", "DCBIterations"); if (pedited) pedited->raw.bayersensor.dcbIterations = true; }
+        if (keyFile.has_key ("RAW", "DCBEnhance"))       { raw.bayersensor.dcb_enhance = keyFile.get_boolean("RAW", "DCBEnhance"); if (pedited) pedited->raw.bayersensor.dcbEnhance = true; }
+        if (keyFile.has_key ("RAW", "LMMSEIterations"))  { raw.bayersensor.lmmse_iterations = keyFile.get_integer("RAW", "LMMSEIterations"); if (pedited) pedited->raw.bayersensor.lmmseIterations = true; }
+        if (keyFile.has_key ("RAW", "PreBlackzero"))     { raw.bayersensor.black0 = keyFile.get_double("RAW", "PreBlackzero"); if (pedited) pedited->raw.bayersensor.exBlack0 = true; }
+        if (keyFile.has_key ("RAW", "PreBlackone"))      { raw.bayersensor.black1 = keyFile.get_double("RAW", "PreBlackone"); if (pedited) pedited->raw.bayersensor.exBlack1 = true; }
+        if (keyFile.has_key ("RAW", "PreBlacktwo"))      { raw.bayersensor.black2 = keyFile.get_double("RAW", "PreBlacktwo"); if (pedited) pedited->raw.bayersensor.exBlack2 = true; }
+        if (keyFile.has_key ("RAW", "PreBlackthree"))    { raw.bayersensor.black3 = keyFile.get_double("RAW", "PreBlackthree"); if (pedited) pedited->raw.bayersensor.exBlack3 = true; }
+        if (keyFile.has_key ("RAW", "PreTwoGreen"))      { raw.bayersensor.twogreen = keyFile.get_boolean("RAW", "PreTwoGreen"); if (pedited) pedited->raw.bayersensor.exTwoGreen = true; }
+        //if (keyFile.has_key ("RAW", "ALLEnhance"))     { raw.bayersensor.all_enhance = keyFile.get_boolean("RAW", "ALLEnhance"); if (pedited) pedited->raw.bayersensor.allEnhance = true; }
+    }
+}
 
+// load Bayer sensors' raw settings
+if (keyFile.has_group ("RAW Bayer")) {
+    if (keyFile.has_key ("RAW Bayer", "Method"))           { raw.bayersensor.method = keyFile.get_string ("RAW Bayer", "Method"); if (pedited) pedited->raw.bayersensor.method = true; }
+    if (keyFile.has_key ("RAW Bayer", "CcSteps"))          { raw.bayersensor.ccSteps  = keyFile.get_integer ("RAW Bayer", "CcSteps"); if (pedited) pedited->raw.bayersensor.ccSteps = true; }
+    if (keyFile.has_key ("RAW Bayer", "PreBlack0"))        { raw.bayersensor.black0 = keyFile.get_double("RAW Bayer", "PreBlack0"); if (pedited) pedited->raw.bayersensor.exBlack0 = true; }
+    if (keyFile.has_key ("RAW Bayer", "PreBlack1"))        { raw.bayersensor.black1 = keyFile.get_double("RAW Bayer", "PreBlack1"); if (pedited) pedited->raw.bayersensor.exBlack1 = true; }
+    if (keyFile.has_key ("RAW Bayer", "PreBlack2"))        { raw.bayersensor.black2 = keyFile.get_double("RAW Bayer", "PreBlack2"); if (pedited) pedited->raw.bayersensor.exBlack2 = true; }
+    if (keyFile.has_key ("RAW Bayer", "PreBlack3"))        { raw.bayersensor.black3 = keyFile.get_double("RAW Bayer", "PreBlack3"); if (pedited) pedited->raw.bayersensor.exBlack3 = true; }
+    if (keyFile.has_key ("RAW Bayer", "PreTwoGreen"))      { raw.bayersensor.twogreen = keyFile.get_boolean("RAW Bayer", "PreTwoGreen"); if (pedited) pedited->raw.bayersensor.exTwoGreen = true; }
+    if (keyFile.has_key ("RAW Bayer", "LineDenoise"))      { raw.bayersensor.linenoise = keyFile.get_integer ("RAW Bayer", "LineDenoise" ); if (pedited) pedited->raw.bayersensor.linenoise = true; }
+    if (keyFile.has_key ("RAW Bayer", "GreenEqThreshold")) { raw.bayersensor.greenthresh= keyFile.get_integer ("RAW Bayer", "GreenEqThreshold"); if (pedited) pedited->raw.bayersensor.greenEq = true; }
+    if (keyFile.has_key ("RAW Bayer", "DCBIterations"))    { raw.bayersensor.dcb_iterations = keyFile.get_integer("RAW Bayer", "DCBIterations"); if (pedited) pedited->raw.bayersensor.dcbIterations = true; }
+    if (keyFile.has_key ("RAW Bayer", "DCBEnhance"))       { raw.bayersensor.dcb_enhance = keyFile.get_boolean("RAW Bayer", "DCBEnhance"); if (pedited) pedited->raw.bayersensor.dcbEnhance = true; }
+    if (keyFile.has_key ("RAW Bayer", "LMMSEIterations"))  { raw.bayersensor.lmmse_iterations = keyFile.get_integer("RAW Bayer", "LMMSEIterations"); if (pedited) pedited->raw.bayersensor.lmmseIterations = true; }
+    //if (keyFile.has_key ("RAW Bayer", "ALLEnhance"))     { raw.bayersensor.all_enhance = keyFile.get_boolean("RAW Bayer", "ALLEnhance"); if (pedited) pedited->raw.bayersensor.allEnhance = true; }
+}
+
+// load X-Trans sensors' raw settings
+if (keyFile.has_group ("RAW X-Trans")) {
+    if (keyFile.has_key ("RAW X-Trans", "Method"))           { raw.xtranssensor.method = keyFile.get_string ("RAW X-Trans", "Method"); if (pedited) pedited->raw.xtranssensor.method = true; }
+    if (keyFile.has_key ("RAW X-Trans", "CcSteps"))          { raw.xtranssensor.ccSteps  = keyFile.get_integer ("RAW X-Trans", "CcSteps"); if (pedited) pedited->raw.xtranssensor.ccSteps = true; }
+    if (keyFile.has_key ("RAW X-Trans", "PreBlackRed"))      { raw.xtranssensor.blackred = keyFile.get_double("RAW X-Trans", "PreBlackRed"); if (pedited) pedited->raw.xtranssensor.exBlackRed = true; }
+    if (keyFile.has_key ("RAW X-Trans", "PreBlackGreen"))    { raw.xtranssensor.blackgreen = keyFile.get_double("RAW X-Trans", "PreBlackGreen"); if (pedited) pedited->raw.xtranssensor.exBlackGreen = true; }
+    if (keyFile.has_key ("RAW X-Trans", "PreBlackBlue"))     { raw.xtranssensor.blackblue = keyFile.get_double("RAW X-Trans", "PreBlackBlue"); if (pedited) pedited->raw.xtranssensor.exBlackBlue = true; }
 }
 
     // load exif change settings
@@ -2434,23 +2479,37 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& resize.dataspec == other.resize.dataspec
 		&& resize.width == other.resize.width
 		&& resize.height == other.resize.height
+		&& raw.bayersensor.method == other.raw.bayersensor.method
+		&& raw.bayersensor.ccSteps == other.raw.bayersensor.ccSteps
+		&& raw.bayersensor.black0==other.raw.bayersensor.black0
+		&& raw.bayersensor.black1==other.raw.bayersensor.black1
+		&& raw.bayersensor.black2==other.raw.bayersensor.black2
+		&& raw.bayersensor.black3==other.raw.bayersensor.black3
+		&& raw.bayersensor.twogreen==other.raw.bayersensor.twogreen
+		&& raw.bayersensor.greenthresh == other.raw.bayersensor.greenthresh
+		&& raw.bayersensor.linenoise == other.raw.bayersensor.linenoise
+		&& raw.bayersensor.dcb_enhance == other.raw.bayersensor.dcb_enhance
+		&& raw.bayersensor.dcb_iterations == other.raw.bayersensor.dcb_iterations
+		&& raw.xtranssensor.method == other.raw.xtranssensor.method
+		&& raw.xtranssensor.ccSteps == other.raw.xtranssensor.ccSteps
+		&& raw.xtranssensor.blackred==other.raw.xtranssensor.blackred
+		&& raw.xtranssensor.blackgreen==other.raw.xtranssensor.blackgreen
+		&& raw.xtranssensor.blackblue==other.raw.xtranssensor.blackblue
 		&& raw.dark_frame == other.raw.dark_frame
 		&& raw.df_autoselect == other.raw.df_autoselect
 		&& raw.ff_file == other.raw.ff_file
 		&& raw.ff_AutoSelect == other.raw.ff_AutoSelect
 		&& raw.ff_BlurRadius == other.raw.ff_BlurRadius
-		&& raw.ff_BlurType == other.raw.ff_BlurType	
-		&& raw.dcb_enhance == other.raw.dcb_enhance
-		&& raw.dcb_iterations == other.raw.dcb_iterations
-		&& raw.ccSteps == other.raw.ccSteps
+		&& raw.ff_BlurType == other.raw.ff_BlurType
+		&& raw.ff_AutoClipControl == other.raw.ff_AutoClipControl
+		&& raw.ff_clipControl == other.raw.ff_clipControl
+		&& raw.expos==other.raw.expos
+		&& raw.preser==other.raw.preser
 		&& raw.ca_autocorrect == other.raw.ca_autocorrect
 		&& raw.cared == other.raw.cared
 		&& raw.cablue == other.raw.cablue
 		&& raw.hotdeadpix_filt == other.raw.hotdeadpix_filt
 		&& raw.hotdeadpix_thresh == other.raw.hotdeadpix_thresh
-		&& raw.dmethod == other.raw.dmethod
-		&& raw.greenthresh == other.raw.greenthresh
-		&& raw.linenoise == other.raw.linenoise
 		&& icm.input == other.icm.input
 		&& icm.toneCurve == other.icm.toneCurve
 		&& icm.blendCMSMatrix == other.icm.blendCMSMatrix
@@ -2498,16 +2557,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& colorToning.greenhigh == other.colorToning.greenhigh
 		&& colorToning.bluehigh == other.colorToning.bluehigh
 		&& exif==other.exif
-		&& iptc==other.iptc
-		&& raw.expos==other.raw.expos
-		&& raw.preser==other.raw.preser 
-		&& raw.preser==other.raw.preser
-		&& raw.blackzero==other.raw.blackzero
-		&& raw.blackone==other.raw.blackone
-		&& raw.blacktwo==other.raw.blacktwo
-		&& raw.blackthree==other.raw.blackthree
-		&& raw.twogreen==other.raw.twogreen;
-	
+		&& iptc==other.iptc;
 }
 
 bool ProcParams::operator!= (const ProcParams& other) {

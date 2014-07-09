@@ -16,36 +16,46 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _PREPROCESS_H_
-#define _PREPROCESS_H_
+#ifndef _BAYERPROCESS_H_
+#define _BAYERPROCESS_H_
 
 #include <gtkmm.h>
-//#include "adjuster.h"
+#include "adjuster.h"
+#include "guiutils.h"
 #include "toolpanel.h"
-#include "../rtengine/rawimage.h"
 
-class PreProcess : public ToolParamBlock, /*public AdjusterListener,*/ public FoldableToolPanel {
+
+class BayerProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel{
 
   protected:
 
-    Gtk::CheckButton* hotDeadPixel;
-    bool lastHot;
-    sigc::connection hdpixelconn;
+    MyComboBoxText* method;
+    Adjuster* ccSteps;
+    Gtk::VBox *dcbOptions;
+    Adjuster* dcbIterations;
+    Gtk::CheckButton* dcbEnhance;
+    //Gtk::VBox *allOptions;
+    //Gtk::CheckButton* allEnhance;
+    Gtk::VBox *lmmseOptions;
+    Adjuster* lmmseIterations;
 
+    bool lastDCBen;
+    int oldSelection;
+    //bool lastALLen;
+    sigc::connection methodconn,dcbEnhconn;  //,allEnhconn;
   public:
 
-    PreProcess ();
+    BayerProcess ();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    //void setBatchMode   (bool batchMode);
-    //void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void setBatchMode   (bool batchMode);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
 
-    void hotDeadPixelChanged();
-
-    //void adjusterChanged     (Adjuster* a, double newval);
-    //void setAdjusterBehavior (bool linedenoiseadd, bool greenequiladd);
-    //void trimValues          (rtengine::procparams::ProcParams* pp);
+    void methodChanged ();
+    void adjusterChanged     (Adjuster* a, double newval);
+    void dcbEnhanceChanged();
+    //void allEnhanceChanged();
 };
 
 #endif

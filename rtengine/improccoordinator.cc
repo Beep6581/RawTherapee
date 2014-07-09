@@ -146,12 +146,17 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     RAWParams rp = params.raw;
     if( !highDetailNeeded ){
         // if below 100% magnification, take a fast path
-        if(rp.dmethod != RAWParams::methodstring[RAWParams::none] && rp.dmethod != RAWParams::methodstring[RAWParams::mono])
-			rp.dmethod = RAWParams::methodstring[RAWParams::fast];
+        if(rp.bayersensor.method != RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::none] && rp.bayersensor.method != RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::mono])
+            rp.bayersensor.method = RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::fast];
+        //bayerrp.all_enhance = false;
+
+        if(rp.xtranssensor.method != RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::none] && rp.xtranssensor.method != RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::mono])
+            rp.xtranssensor.method = RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::fast];
+
+        rp.bayersensor.ccSteps = 0;
+        rp.xtranssensor.ccSteps = 0;
         rp.hotdeadpix_filt = false;
-        rp.ccSteps = 0;
-        //rp.all_enhance = false;
-        }
+    }
 
     progress ("Applying white balance, color correction & sRGB conversion...",100*readyphase/numofphases);
     // raw auto CA is bypassed if no high detail is needed, so we have to compute it when high detail is needed
@@ -181,7 +186,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         || (!params.toneCurve.hrenabled && params.toneCurve.method=="Color" && imgsrc->IsrgbSourceModified()))
     {
 
-        if (settings->verbose) printf("Demosaic %s\n",rp.dmethod.c_str());
+        if (settings->verbose) {
+            if (imgsrc->getSensorType() == ST_BAYER)
+                printf("Demosaic Bayer image using method: %s\n",rp.bayersensor.method.c_str());
+            else if (imgsrc->getSensorType() == ST_FUJI_XTRANS)
+                printf("Demosaic X-Trans image with using method: %s\n",rp.xtranssensor.method.c_str());
+        }
+        imgsrc->isRAW();
 
         imgsrc->demosaic( rp );
 
