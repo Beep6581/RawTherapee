@@ -51,7 +51,7 @@ namespace rtengine {
 		bool subsamp_out;
 		
 		// spacing of filter taps
-		size_t skip;
+		int skip;
 		
 		// allocation and destruction of data storage
 		T ** create(size_t n);
@@ -294,7 +294,7 @@ namespace rtengine {
 		 *
 		 */										
 		
-		for(size_t i = 0; i < (srclen - skip); i++) {
+		for(int i = 0; i < (srclen - skip); i++) {
 			dstLo[(pitch*(i))] = 0.5*(srcbuffer[i] + srcbuffer[i+skip]);
 			dstHi[(pitch*(i))] = 0.5*(srcbuffer[i] - srcbuffer[i+skip]);
 		}
