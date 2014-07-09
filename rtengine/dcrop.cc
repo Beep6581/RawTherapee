@@ -559,7 +559,6 @@ void Crop::fullUpdate () {
         //parent->changeSinceLast = 0;
         parent->thread->join ();
     }
-    parent->updaterThreadStart.unlock ();
 
     if (parent->plistener)
         parent->plistener->setProgressState (true);
@@ -574,6 +573,7 @@ void Crop::fullUpdate () {
 
     if (parent->plistener)
         parent->plistener->setProgressState (false);
+    parent->updaterThreadStart.unlock ();
 }
 
 }
