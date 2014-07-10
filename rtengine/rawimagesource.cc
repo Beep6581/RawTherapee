@@ -1296,8 +1296,8 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
 			}
 
 		float limitFactor = 1.f;
-		
 		if(raw.ff_AutoClipControl) {
+			int clipControlGui = 0;
 			for (int m=0; m<2; m++)
 				for (int n=0; n<2; n++) {
 					float maxval = 0.f;
@@ -1327,6 +1327,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
 					if(maxval + black[c4] >= ri->get_white(c4))
 						limitFactor = min(limitFactor,ri->get_white(c4) / (maxval + black[c4]));
 				}
+			clipControlGui = (1.f - limitFactor) * 100.f;			// this value can be used to set the clip control slider in gui
 		} else {
 			limitFactor = max((float)(100 - raw.ff_clipControl)/100.f,0.01f);
 		}
@@ -1365,10 +1366,11 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
 		for(int c=0;c<3;c++)
 			refcolor[c] = refcolor[c] / cCount[c];
 
-		float limitFactor;
-		
+		float limitFactor = 1.f;
+
 		if(raw.ff_AutoClipControl) {
 			// determine maximum calculated value to avoid clipping
+			int clipControlGui = 0;
 			float maxval = 0.f;
 			// xtrans files have only one black level actually, so we can simplify the code a bit
 #pragma omp parallel
@@ -1389,8 +1391,10 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
 }
 }
 			// there's only one white level for xtrans
-			if(maxval + black[0] > ri->get_white(0))
+			if(maxval + black[0] > ri->get_white(0)) {
 				limitFactor = ri->get_white(0) / (maxval + black[0]);
+				clipControlGui = (1.f - limitFactor) * 100.f;			// this value can be used to set the clip control slider in gui
+			}
 		} else { 
 			limitFactor = max((float)(100 - raw.ff_clipControl)/100.f,0.01f);
 		}
