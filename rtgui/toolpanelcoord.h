@@ -242,6 +242,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
 
         //FFProvider interface
         rtengine::RawImage* getFF();
+        Glib::ustring GetCurrentImageFilePath();
 
         // rotatelistener interface
         void straightenRequested ();

@@ -76,6 +76,26 @@ FlatField::FlatField () : FoldableToolPanel(this)
 	flatFieldAutoSelectconn = flatFieldAutoSelect->signal_toggled().connect ( sigc::mem_fun(*this, &FlatField::flatFieldAutoSelectChanged), true);
 	flatFieldBlurTypeconn = flatFieldBlurType->signal_changed().connect( sigc::mem_fun(*this, &FlatField::flatFieldBlurTypeChanged) );
 	lastShortcutPath = "";
+	
+	// Set filename filters
+	b_filter_asCurrent = false;
+	Gtk::FileFilter *filter_any = Gtk::manage(new Gtk::FileFilter);
+    filter_any->add_pattern("*");
+    filter_any->set_name(M("TP_FLATFIELD_FILEDLGFILTERANY"));
+    flatFieldFile->add_filter (*filter_any);
+    
+    // filters for all supported non-raw extensions       
+    for (size_t i=0; i<options.parseExtensions.size(); i++) {
+        if (options.parseExtensionsEnabled[i] && options.parseExtensions[i].uppercase()!="JPG" && options.parseExtensions[i].uppercase()!="JPEG" && options.parseExtensions[i].uppercase()!="PNG" && options.parseExtensions[i].uppercase()!="TIF" && options.parseExtensions[i].uppercase()!="TIFF"  )
+        {    
+	        Gtk::FileFilter *filter_ff = Gtk::manage(new Gtk::FileFilter);
+	        filter_ff->add_pattern("*." + options.parseExtensions[i]);
+   	        filter_ff->add_pattern("*." + options.parseExtensions[i].uppercase());
+	        filter_ff->set_name(options.parseExtensions[i].uppercase());
+	        flatFieldFile->add_filter (*filter_ff);
+	        //printf("adding filter %s \n",options.parseExtensions[i].uppercase().c_str());
+        }
+    }
 }
 
 void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
@@ -134,6 +154,42 @@ void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 	flatFieldAutoSelectconn.block (false);
 	flatFieldBlurTypeconn.block (false);
 	enableListener ();
+	
+	// Add filter with the current file extension if the current file is raw
+	if (ffp && !batchMode){
+	
+		if (b_filter_asCurrent){
+			//First, remove last filter_asCurrent if it was set for a raw file
+			std::vector<const Gtk::FileFilter*> filters = flatFieldFile->list_filters();
+			flatFieldFile->remove_filter(**(filters.end()-1));
+			b_filter_asCurrent = false;
+		}
+
+		Glib::ustring fname = Glib::path_get_basename(ffp->GetCurrentImageFilePath());
+		Glib::ustring filetype;
+
+		if (fname!=""){
+			// get image filetype, set filter to the same as current image's filetype
+			std::string::size_type idx;
+			idx = fname.rfind('.');
+			if(idx != std::string::npos){
+				filetype = fname.substr(idx+1);
+				//exclude non-raw
+				israw = filetype.uppercase()!="JPG" && filetype.uppercase()!="JPEG" && filetype.uppercase()!="PNG" && filetype.uppercase()!="TIF" && filetype.uppercase()!="TIFF";
+
+				if (israw)
+				{
+					b_filter_asCurrent = true; //prevent re-adding this filter on every pp3 file read
+					Gtk::FileFilter *filter_asCurrent = Gtk::manage(new Gtk::FileFilter);
+					filter_asCurrent->add_pattern("*." + filetype);
+					filter_asCurrent->set_name(M("TP_FLATFIELD_FILEDLGFILTERFF") + " (" + filetype + ")");
+					flatFieldFile->add_filter (*filter_asCurrent);
+					flatFieldFile->set_filter (*filter_asCurrent);
+				}
+			}
+		}
+	}
+
 }
 
 void FlatField::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
