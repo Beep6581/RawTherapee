@@ -28,6 +28,7 @@
 class DFProvider {
   public:
     virtual rtengine::RawImage* getDF() = 0;
+    virtual Glib::ustring GetCurrentImageFilePath() {};
     // add other info here
 };
 
@@ -46,6 +47,8 @@ protected:
 	bool lastDFauto;
     DFProvider *dfp;
 	sigc::connection dfautoconn, dfFile;
+    bool b_filter_asCurrent;
+    bool israw;
 
 public:
 

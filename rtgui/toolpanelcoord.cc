@@ -518,6 +518,15 @@ rtengine::RawImage* ToolPanelCoordinator::getFF()
     }
     return NULL;
 }
+
+Glib::ustring ToolPanelCoordinator::GetCurrentImageFilePath()
+{
+	if (!ipc){
+        return "";
+    }
+    return ipc->getInitialImage()->getFileName();
+}
+
 void ToolPanelCoordinator::straightenRequested () {
 
     if (!ipc)

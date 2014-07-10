@@ -49,6 +49,26 @@ DarkFrame::DarkFrame () : FoldableToolPanel(this)
 	dfautoconn = dfAuto->signal_toggled().connect ( sigc::mem_fun(*this, &DarkFrame::dfAutoChanged), true);
 	dfFile = darkFrameFile->signal_file_set().connect ( sigc::mem_fun(*this, &DarkFrame::darkFrameChanged), true);
 	btnReset->signal_clicked().connect( sigc::mem_fun(*this, &DarkFrame::darkFrameReset), true );
+	
+	// Set filename filters
+	b_filter_asCurrent = false;
+	Gtk::FileFilter *filter_any = Gtk::manage(new Gtk::FileFilter);
+    filter_any->add_pattern("*");
+    filter_any->set_name(M("TP_FLATFIELD_FILEDLGFILTERANY"));
+    darkFrameFile->add_filter (*filter_any);
+    
+    // filters for all supported non-raw extensions       
+    for (size_t i=0; i<options.parseExtensions.size(); i++) {
+        if (options.parseExtensionsEnabled[i] && options.parseExtensions[i].uppercase()!="JPG" && options.parseExtensions[i].uppercase()!="JPEG" && options.parseExtensions[i].uppercase()!="PNG" && options.parseExtensions[i].uppercase()!="TIF" && options.parseExtensions[i].uppercase()!="TIFF"  )
+        {    
+	        Gtk::FileFilter *filter_df = Gtk::manage(new Gtk::FileFilter);
+	        filter_df->add_pattern("*." + options.parseExtensions[i]);
+   	        filter_df->add_pattern("*." + options.parseExtensions[i].uppercase());
+	        filter_df->set_name(options.parseExtensions[i].uppercase());
+	        darkFrameFile->add_filter (*filter_df);
+	        //printf("adding filter %s \n",options.parseExtensions[i].uppercase().c_str());
+        }
+    }
 }
 
 void DarkFrame::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
@@ -84,6 +104,42 @@ void DarkFrame::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 
 	dfautoconn.block(false);
 	enableListener ();
+	
+	// Add filter with the current file extension if the current file is raw
+	if (dfp && !batchMode){
+	
+		if (b_filter_asCurrent){
+			//First, remove last filter_asCurrent if it was set for a raw file
+			std::vector<const Gtk::FileFilter*> filters = darkFrameFile->list_filters();
+			darkFrameFile->remove_filter(**(filters.end()-1));
+			b_filter_asCurrent = false;
+		}
+
+		Glib::ustring fname = Glib::path_get_basename(dfp->GetCurrentImageFilePath());
+		Glib::ustring filetype;
+
+		if (fname!=""){
+			// get image filetype, set filter to the same as current image's filetype
+			std::string::size_type idx;
+			idx = fname.rfind('.');
+			if(idx != std::string::npos){
+				filetype = fname.substr(idx+1);
+				israw = filetype.uppercase()!="JPG" && filetype.uppercase()!="JPEG" && filetype.uppercase()!="PNG" && filetype.uppercase()!="TIF" && filetype.uppercase()!="TIFF";
+
+				//exclude non-raw
+				if (israw)
+				{
+					b_filter_asCurrent = true;
+					Gtk::FileFilter *filter_asCurrent = Gtk::manage(new Gtk::FileFilter);
+					filter_asCurrent->add_pattern("*." + filetype);
+					filter_asCurrent->set_name(M("TP_FLATFIELD_FILEDLGFILTERFF") + " (" + filetype + ")");
+					darkFrameFile->add_filter (*filter_asCurrent);
+					darkFrameFile->set_filter (*filter_asCurrent);
+				}
+			}
+		}
+	}
+
 }
 
 void DarkFrame::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)

@@ -30,6 +30,7 @@ class FFProvider {
   public:
     virtual ~FFProvider() {}
     virtual rtengine::RawImage* getFF() = 0;
+    virtual Glib::ustring GetCurrentImageFilePath() {};
     // add other info here
 };
 
@@ -52,7 +53,9 @@ protected:
 	bool lastFFAutoClipCtrl;
 	FFProvider *ffp;
 	sigc::connection flatFieldFileconn, flatFieldAutoSelectconn, flatFieldBlurTypeconn;
-	Glib::ustring lastShortcutPath;
+    Glib::ustring lastShortcutPath;
+    bool b_filter_asCurrent;
+    bool israw;
 
 public:
 
