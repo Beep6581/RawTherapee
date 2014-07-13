@@ -838,7 +838,7 @@ void RawImageSource::ppg_demosaic()
 
   if (plistener) {
     // looks like ppg isn't supported anymore
-    //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::ppg]));
+    //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::ppg]));
     plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "xxx"));
     plistener->setProgress (0.0);
   }
@@ -1085,7 +1085,7 @@ void RawImageSource::jdl_interpolate_omp()  // from "Lassus"
 	chr = (int (*)[2]) calloc(width*height, sizeof *chr);
 	if (plistener) {
 		// this function seems to be unused
-		//plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::jdl]));
+		//plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::jdl]));
 		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "xxx"));
 		plistener->setProgress (0.0);
 	}
@@ -1956,7 +1956,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
 	border_interpolate2(winw,winh,7);
 
 	if (plistener) {
-		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::igv]));
+		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::igv]));
 		plistener->setProgress (0.0);
 	}
 #ifdef _OPENMP
