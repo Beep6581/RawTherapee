@@ -72,6 +72,9 @@ ColorToning::ColorToning () : FoldableToolPanel(this)
 	milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
 	milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
 	colorShape->setBottomBarBgGradient(milestones);
+	std::vector<double> defaultCurve;
+	rtengine::ColorToningParams::getDefaultColorCurve(defaultCurve);
+	colorShape->setResetCurve(FCT_MinMaxCPoints, defaultCurve);
 
 	// This will add the reset button at the end of the curveType buttons
 	colorCurveEditorG->curveListComplete();
@@ -98,8 +101,10 @@ ColorToning::ColorToning () : FoldableToolPanel(this)
 	opacityCurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M("TP_COLORTONING_OPACITY"));
 	opacityCurveEditorG->setCurveListener (this);
 
+	rtengine::ColorToningParams::getDefaultOpacityCurve(defaultCurve);
 	opacityShape = static_cast<FlatCurveEditor*>(opacityCurveEditorG->addCurve(CT_Flat, "", NULL, false));
 	opacityShape->setIdentityValue(0.);
+	opacityShape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
 	opacityShape->setBottomBarBgGradient(milestones);
 
 	// This will add the reset button at the end of the curveType buttons
@@ -117,7 +122,10 @@ ColorToning::ColorToning () : FoldableToolPanel(this)
 	
 	clCurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M(labchroma1));
 	clCurveEditorG->setCurveListener (this);
+
+	rtengine::ColorToningParams::getDefaultCLCurve(defaultCurve);
 	clshape = static_cast<DiagonalCurveEditor*>(clCurveEditorG->addCurve(CT_Diagonal, M("TP_COLORTONING_AB"),irg));
+	clshape->setResetCurve(DiagonalCurveType(defaultCurve.at(0)), defaultCurve);
 	clshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP"));
 	//clshape->setEditID(EUID_Lab_CLCurve, BT_SINGLEPLANE_FLOAT);
 
@@ -137,7 +145,9 @@ ColorToning::ColorToning () : FoldableToolPanel(this)
 	cl2CurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M(labchroma1));
 	cl2CurveEditorG->setCurveListener (this);
 
+	rtengine::ColorToningParams::getDefaultCL2Curve(defaultCurve);
 	cl2shape = static_cast<DiagonalCurveEditor*>(cl2CurveEditorG->addCurve(CT_Diagonal, M("TP_COLORTONING_BY"),iby));
+	cl2shape->setResetCurve(DiagonalCurveType(defaultCurve.at(0)), defaultCurve);
 	cl2shape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP"));
 	//clshape->setEditID(EUID_Lab_CLCurve, BT_SINGLEPLANE_FLOAT);
 
@@ -152,18 +162,18 @@ ColorToning::ColorToning () : FoldableToolPanel(this)
 	pack_start( *cl2CurveEditorG, Gtk::PACK_SHRINK, 2);
 
 	//--------------------- Reset curves -----------------------------
-	neutrcurHBox = Gtk::manage (new Gtk::HBox ());
-	neutrcurHBox->set_border_width (2);
+	neutralCurvesHBox = Gtk::manage (new Gtk::HBox ());
+	neutralCurvesHBox->set_border_width (2);
 
-	neutralcur = Gtk::manage (new Gtk::Button (M("TP_COLORTONING_NEUTRALCUR")));
+	neutralCurves = Gtk::manage (new Gtk::Button (M("TP_COLORTONING_NEUTRALCUR")));
 	RTImage *resetImgc = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
-	neutralcur->set_image(*resetImgc);
-	neutralcur->set_tooltip_text (M("TP_COLORTONING_NEUTRALCUR_TIP"));
-	neutralcurconn = neutralcur->signal_pressed().connect( sigc::mem_fun(*this, &ColorToning::neutralcur_pressed) );
-	neutralcur->show();
-	neutrcurHBox->pack_start (*neutralcur);
+	neutralCurves->set_image(*resetImgc);
+	neutralCurves->set_tooltip_text (M("TP_COLORTONING_NEUTRALCUR_TIP"));
+	neutralcurvesconn = neutralCurves->signal_pressed().connect( sigc::mem_fun(*this, &ColorToning::neutralCurves_pressed) );
+	neutralCurves->show();
+	neutralCurvesHBox->pack_start (*neutralCurves);
 
-	pack_start (*neutrcurHBox);
+	pack_start (*neutralCurvesHBox);
 
 	//----------- Sliders + balance ------------------------------
 
@@ -340,37 +350,18 @@ ColorToning::~ColorToning() {
 	delete cl2CurveEditorG;
 }
 
-void ColorToning::neutralcur_pressed () {
+void ColorToning::neutralCurves_pressed () {
 	disableListener();
-	
-	std::vector<double> p;
-//	double fla[9]={1,0.25,0.8,0.25,0.25,0.75,0.6,0.25,0.25};
-	double fla[9]={1,0.05,0.62,0.25,0.25,0.585,0.11,0.25,0.25};
-	for(int i=0;i<9;i++) p.push_back(fla[i]);	
-	colorShape->setCurve(p);
 
+	bool changed = false;
+	changed |= colorShape->reset();
+	changed |= opacityShape->reset();
+	changed |= clshape->reset();
+	changed |= cl2shape->reset();
 
-	std::vector<double> p2;
+	enableListener();
 
-	
-	//double fla2[9]={1,0.7,0.8,0.35,0.35,1,0.3,0,0};
-	double fla2[17]={1,0.,0.3,0.35,0.,0.25,0.8,0.35,0.35,0.7,0.8,0.35,0.35,1.0,0.3,0.,0.};
-	for(int i=0;i<17;i++) p2.push_back(fla2[i]);
-	opacityShape->setCurve(p2);	
-	
-	std::vector<double> p3;
-	double fla3[9]={3,0,0,0.35,0.65,1,1};
-	for(int i=0;i<7;i++) p3.push_back(fla3[i]);	
-	clshape->setCurve(p3);
-
-	std::vector<double> p4;
-	double fla4[9]={3,0,0,0.35,0.65,1,1};
-	for(int i=0;i<7;i++) p4.push_back(fla4[i]);	
-	cl2shape->setCurve(p4);
-	
-	enableListener();	
-	
-	if (listener && enabled->get_active())	
+	if (listener && enabled->get_active() && changed)
 		listener->panelChanged (EvColorToningNeutralcur, M("ADJUSTER_RESET_TO_DEFAULT"));
 }
 
@@ -525,10 +516,10 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited) {
 
 	pp->colorToning.hlColSat               = hlColSat->getValue<int> ();
 	pp->colorToning.shadowsColSat          = shadowsColSat->getValue<int> ();
-	pp->colorToning.autosat      = autosat->get_active();
+	pp->colorToning.autosat                = autosat->get_active();
 	pp->colorToning.satProtectionThreshold = satProtectionThreshold->getIntValue();
 	pp->colorToning.saturatedOpacity       = saturatedOpacity->getIntValue();
-	pp->colorToning.strengthprotection       = strengthprotection->getIntValue();
+	pp->colorToning.strengthprotection     = strengthprotection->getIntValue();
 
 	if (pedited) {
 		pedited->colorToning.redlow     = redlow->getEditedState ();
@@ -715,18 +706,17 @@ bool ColorToning::CTComp_ () {
 	saturatedOpacity->setValue (nextsatpr);
 	satProtectionThreshold->setValue (nextsatth);
 	if(nextbw==1) {
-	saturatedOpacity->show();
-	satProtectionThreshold->show();
-	autosat->show();
+		saturatedOpacity->show();
+		satProtectionThreshold->show();
+		autosat->show();
 	}
 	else {
-	saturatedOpacity->hide();
-	satProtectionThreshold->hide();
-	autosat->hide();
+		saturatedOpacity->hide();
+		satProtectionThreshold->hide();
+		autosat->hide();
 	}
 	
 	enableListener ();
-
 
 	return false;
 }
@@ -794,8 +784,6 @@ void ColorToning::twocolorChanged (bool changedbymethod) {
 				clCurveEditorG->show();      // visible
 				cl2CurveEditorG->show();     // visible
 				irg->show();
-
-				
 			}
 		}
 		else if(method->get_active_row_number()==1) {			// RGB Sliders
@@ -844,7 +832,7 @@ void ColorToning::methodChanged () {
 			opacityCurveEditorG->hide();
 			clCurveEditorG->hide();
 			cl2CurveEditorG->hide();
-			neutrcurHBox->show();
+			neutralCurvesHBox->show();
 			hlColSat->hide();
 			shadowsColSat->hide();
 			balance->hide();
@@ -872,7 +860,7 @@ void ColorToning::methodChanged () {
 			opacityCurveEditorG->hide();
 			clCurveEditorG->hide();
 			cl2CurveEditorG->hide();
-			neutrcurHBox->hide();
+			neutralCurvesHBox->hide();
 			hlColSat->show();
 			shadowsColSat->show();
 			balance->show();
@@ -898,7 +886,7 @@ void ColorToning::methodChanged () {
 			opacityCurveEditorG->show();
 			clCurveEditorG->hide();
 			cl2CurveEditorG->hide();
-			neutrcurHBox->show();
+			neutralCurvesHBox->show();
 			hlColSat->hide();
 			shadowsColSat->hide();
 			balance->hide();
@@ -923,7 +911,7 @@ void ColorToning::methodChanged () {
 			opacityCurveEditorG->hide();
 			clCurveEditorG->hide();
 			cl2CurveEditorG->hide();
-			neutrcurHBox->hide();
+			neutralCurvesHBox->hide();
 			hlColSat->hide();
 			shadowsColSat->hide();
 			balance->hide();
@@ -947,13 +935,13 @@ void ColorToning::methodChanged () {
 			opacityCurveEditorG->hide();
 			clCurveEditorG->hide();
 			cl2CurveEditorG->hide();
-			neutrcurHBox->hide();
+			neutralCurvesHBox->hide();
 			hlColSat->show();
 			shadowsColSat->show();
 			balance->show();
 			satLimiterSep->hide();
 			satProtectionThreshold->hide();
-			saturatedOpacity->hide();			
+			saturatedOpacity->hide();
 			strengthprotection->show();
 
 			chanMixerBox->hide();

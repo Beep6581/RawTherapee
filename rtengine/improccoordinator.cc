@@ -376,13 +376,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 			if(params.blackwhite.enabled) {actListener->autoColorTonChanged(0, satTH, satPR);}
 			else {
 				if(params.colorToning.autosat){
-				  if(params.colorToning.method=="Lab") indi=1; 
-				  else if(params.colorToning.method=="RGBCurves") indi=1;
-				  else if(params.colorToning.method=="RGBSliders") indi=1;
-				  else if(params.colorToning.method=="Splico") indi=2;
-				  else if(params.colorToning.method=="Splitlr") indi=2;		
-				  
-					actListener->autoColorTonChanged(indi, satTH, satPR);}
+					if(params.colorToning.method=="Lab") indi=1;
+					else if(params.colorToning.method=="RGBCurves") indi=1;
+					else if(params.colorToning.method=="RGBSliders") indi=1;
+					else if(params.colorToning.method=="Splico") indi=2;
+					else if(params.colorToning.method=="Splitlr") indi=2;
+
+					actListener->autoColorTonChanged(indi, satTH, satPR);
+				}
 		}
 		} 
         // if it's just crop we just need the histogram, no image updates

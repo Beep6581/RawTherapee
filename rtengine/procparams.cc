@@ -115,46 +115,65 @@ ColorToningParams::ColorToningParams () : hlColSat(60, 80, false), shadowsColSat
     setDefault();
 }
 
+void ColorToningParams::getDefaultColorCurve(std::vector<double> &curve) {
+    double v[8]= { 0.050, 0.62, 0.25, 0.25,
+                   0.585, 0.11, 0.25, 0.25 };
+
+    curve.resize(9);
+    curve.at(0) = double(FCT_MinMaxCPoints);
+    for (size_t i=1; i<curve.size(); ++i)
+        curve.at(i) = v[i-1];
+}
+
+void ColorToningParams::getDefaultOpacityCurve(std::vector<double> &curve) {
+    double v[16]={ 0.00, 0.3, 0.35, 0.00,
+                   0.25, 0.8, 0.35, 0.35,
+                   0.70, 0.8, 0.35, 0.35,
+                   1.00, 0.3, 0.00, 0.00 };
+    curve.resize(17);
+    curve.at(0 ) = double(FCT_MinMaxCPoints);
+    for (size_t i=1; i<curve.size(); ++i)
+        curve.at(i) = v[i-1];
+}
+
+void ColorToningParams::getDefaultCLCurve(std::vector<double> &curve) {
+    double v[6]= { 0.00, 0.00,
+                   0.35, 0.65,
+                   1.00, 1.00 };
+
+    curve.resize(7);
+    curve.at(0) = double(DCT_NURBS);
+    for (size_t i=1; i<curve.size(); ++i)
+        curve.at(i) = v[i-1];
+}
+
+void ColorToningParams::getDefaultCL2Curve(std::vector<double> &curve) {
+    double v[6]= { 0.00, 0.00,
+                   0.35, 0.65,
+                   1.00, 1.00 };
+
+    curve.resize(7);
+    curve.at(0) = double(DCT_NURBS);
+    for (size_t i=1; i<curve.size(); ++i)
+        curve.at(i) = v[i-1];
+}
+
 void ColorToningParams::setDefault() {
     enabled = false;
-	autosat=true;
+    autosat=true;
     method = "Lab";
-    colorCurve.resize(9);
-    colorCurve.at(0) = double(FCT_MinMaxCPoints);
-    colorCurve.at(1) = 0.05;
-    colorCurve.at(2) = 0.62;
-    colorCurve.at(3) = 0.25;
-    colorCurve.at(4) = 0.25;
-    colorCurve.at(5) = 0.585;
-    colorCurve.at(6) = 0.11;
-    colorCurve.at(7) = 0.25;
-    colorCurve.at(8) = 0.25;
-	
-    opacityCurve.resize(17);
-    opacityCurve.at(0 ) = double(FCT_MinMaxCPoints);
-    opacityCurve.at(1 ) = 0.; // first point
-    opacityCurve.at(2 ) = 0.30;
-    opacityCurve.at(3 ) = 0.35;
-    opacityCurve.at(4 ) = 0.;
-    opacityCurve.at(5 ) = 0.25; // second point
-    opacityCurve.at(6 ) = 0.8;
-    opacityCurve.at(7 ) = 0.35;
-    opacityCurve.at(8 ) = 0.35;
-    opacityCurve.at(9 ) = 0.7;
-    opacityCurve.at(10) = 0.8;
-    opacityCurve.at(11) = 0.35;
-    opacityCurve.at(12) = 0.35;
-    opacityCurve.at(13) = 1.0;
-    opacityCurve.at(14) = 0.3;
-    opacityCurve.at(15) = 0.;
-    opacityCurve.at(16) = 0.;
-	
+
+    getDefaultColorCurve(colorCurve);
+    getDefaultOpacityCurve(opacityCurve);
+    getDefaultCLCurve(clcurve);
+    getDefaultCL2Curve(cl2curve);
+
     hlColSat.setValues(60, 80);
     shadowsColSat.setValues(80, 208);
     balance = 0;
     satProtectionThreshold = 30;
     saturatedOpacity = 80;
-	strengthprotection = 50;
+    strengthprotection = 50;
     lumamode = true;
     twocolor = "Std";
     redlow = 0.0;
@@ -168,39 +187,6 @@ void ColorToningParams::setDefault() {
     redhigh = 0.0;
     greenhigh = 0.0;
     bluehigh = 0.0;
-
-    //clcurve.clear ();
-    //clcurve.push_back(DCT_Linear);
-    clcurve.resize(7);
-    clcurve.at(0) = double(DCT_NURBS);
-    clcurve.at(1) = 0.0;
-    clcurve.at(2) = 0.0;
-    clcurve.at(3) = 0.35;
-    clcurve.at(4) = 0.65;
-    clcurve.at(5) = 1.;
-    clcurve.at(6) = 1.;
-
-    // colorToning.llcurve.clear ();
-    // colorToning.llcurve.push_back(DCT_Linear);
-    cl2curve.resize(7);
-    cl2curve.at(0) = double(DCT_NURBS);
-    cl2curve.at(1) = 0.0;
-    cl2curve.at(2) = 0.0;
-    cl2curve.at(3) = 0.35;
-    cl2curve.at(4) = 0.65;
-    cl2curve.at(5) = 1.;
-    cl2curve.at(6) = 1.;
-
-  /*  colorToning.llcurve.at(1) = 0.0;
-    llcurve.at(2) = 0.0;
-    llcurve.at(3) = 0.3;
-    llcurve.at(4) = 0.19;
-    llcurve.at(5) = 0.69;
-    llcurve.at(6) = 0.8;
-    llcurve.at(7) = 1.;
-    llcurve.at(8) = 1.;
-*/
-
 }
 
 void ColorToningParams::mixerToCurve(std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const {

@@ -121,7 +121,7 @@ class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller {
 		virtual std::vector<double> getPoints () = 0;
 		virtual void setPoints (const std::vector<double>& p) = 0;
 		virtual bool handleEvents (GdkEvent* event) = 0;
-		virtual void reset (double identityValue=0.5) = 0;
+		virtual void reset (const std::vector<double> &resetCurve, double identityValue=0.5) = 0;
 
 		virtual void pipetteMouseOver (EditDataProvider *provider, int modifierKey) =0;
 		virtual void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) =0;

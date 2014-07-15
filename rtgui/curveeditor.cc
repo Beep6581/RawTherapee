@@ -25,6 +25,10 @@
 
 #include <cstring>
 
+bool CurveEditor::reset() {
+	return subGroup->curveReset(this);
+}
+
 DiagonalCurveEditor::DiagonalCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup) : CurveEditor::CurveEditor(text, static_cast<CurveEditorGroup*>(ceGroup), ceSubGroup) {
 
     // Order set in the same order than "enum DiagonalCurveType". Shouldn't change, for compatibility reason
@@ -59,6 +63,25 @@ std::vector<double> DiagonalCurveEditor::getCurve () {
 		// returning Linear or Unchanged
 		curve.push_back((double)(selected));
 		return curve;
+	}
+}
+
+void DiagonalCurveEditor::setResetCurve(DiagonalCurveType cType, const std::vector<double> &resetCurve) {
+	switch (cType) {
+	case (DCT_NURBS):
+		if (resetCurve.size() && DiagonalCurveType(resetCurve.at(0)) == cType)
+			NURBSResetCurve = resetCurve;
+		break;
+	case (DCT_Parametric):
+		if (resetCurve.size() && DiagonalCurveType(resetCurve.at(0)) == cType)
+			paramResetCurve = resetCurve;
+		break;
+	case (DCT_Spline):
+		if (resetCurve.size() && DiagonalCurveType(resetCurve.at(0)) == cType)
+			customResetCurve = resetCurve;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -119,6 +142,17 @@ std::vector<double> FlatCurveEditor::getCurve () {
 		// returning Linear or Unchanged
 		curve.push_back((double)(selected));
 		return curve;
+	}
+}
+
+void FlatCurveEditor::setResetCurve(FlatCurveType cType, const std::vector<double> &resetCurve) {
+	switch (cType) {
+	case (FCT_MinMaxCPoints):
+		if (resetCurve.size() && FlatCurveType(resetCurve.at(0)) == cType)
+			controlPointsResetCurve = resetCurve;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -333,7 +367,6 @@ bool CurveEditor::drag(int modifierKey) {
 }
 
 CursorShape CurveEditor::getCursor(int objectID) {
-	printf("CurveEditor::getCursor\n");
 	if (remoteDrag)
 		return CSResizeHeight;
 	return CSOpenHand;
