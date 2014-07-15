@@ -307,6 +307,11 @@ class ColorToningParams {
         void slidersToCurve(std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const;
         /// @brief Fill the ColorGradientCurve and OpacityCurve LUTf from the control points curve or sliders value
         void getCurves(ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3]) const;
+
+        static void getDefaultColorCurve(std::vector<double> &curve);
+        static void getDefaultOpacityCurve(std::vector<double> &curve);
+        static void getDefaultCLCurve(std::vector<double> &curve);
+        static void getDefaultCL2Curve(std::vector<double> &curve);
 };
 
 /**

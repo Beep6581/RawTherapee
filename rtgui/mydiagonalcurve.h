@@ -78,7 +78,7 @@ class MyDiagonalCurve : public MyCurve {
 		void setType (DiagonalCurveType t);
 		bool handleEvents (GdkEvent* event);
 		void setActiveParam (int ac);
-		void reset (double identityValue=0.5);
+		void reset (const std::vector<double> &resetCurve, double identityValue=0.5);
 		void updateBackgroundHistogram (LUTu & hist);
 
 		void pipetteMouseOver (EditDataProvider *provider, int modifierKey);

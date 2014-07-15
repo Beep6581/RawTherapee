@@ -125,6 +125,8 @@ public:
 	virtual void pipetteButton1Released(EditDataProvider *provider) =0;
 	virtual void pipetteDrag(EditDataProvider *provider, int modifierKey) =0;
 
+	virtual bool curveReset (CurveEditor *ce) = 0; // Reset a curve editor, return TRUE if successful (curve changed)
+
 protected:
 
 	/**
@@ -137,7 +139,6 @@ protected:
 	Glib::ustring outputFile ();
 	Glib::ustring inputFile ();
 
-	virtual bool curveReset (int cType, double iValue) = 0; // Reset a curve editor, return TRUE if successful (curve changed)
 	virtual void storeCurveValues (CurveEditor* ce, const std::vector<double>& p) = 0;
 	virtual void storeDisplayedCurve () = 0;
 	virtual void restoreDisplayedHistogram() {};

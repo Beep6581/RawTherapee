@@ -1079,7 +1079,12 @@ void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist) {
 
 }
 
-void MyDiagonalCurve::reset(double identityValue) {
+void MyDiagonalCurve::reset(const std::vector<double> &resetCurve, double identityValue) {
+
+    if (!resetCurve.empty()) {
+        setPoints(resetCurve);
+        return;
+    }
 
     switch (curve.type) {
     case DCT_Spline :

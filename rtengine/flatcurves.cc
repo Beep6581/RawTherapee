@@ -102,10 +102,18 @@ bool FlatCurve::setIdentityValue (double iVal) {
             break;
         }
     }
-    if (identity)
-        kind = FCT_Empty;
-    else
+
+    if (!identity && N > (periodic?1:0) ) {
+        CtrlPoints_set ();
+        fillHash();
         kind = FCT_MinMaxCPoints;
+    }
+    else {
+        poly_x.clear();
+        poly_y.clear();
+        hash.clear();
+        kind = FCT_Empty;
+    }
 
     return kind==FCT_Empty;
 }

@@ -23,6 +23,8 @@
 #include "../rtengine/LUT.h"
 #include "coloredbar.h"
 #include "edit.h"
+#include "mydiagonalcurve.h"
+#include "myflatcurve.h"
 
 class CurveEditorGroup;
 class CurveEditorSubGroup;
@@ -113,6 +115,7 @@ class CurveEditor : public EditSubscriber {
 		virtual void setIdentityValue (const double iValue=0.5) {};
 		virtual double getIdentityValue () { return 0.5; };
 		virtual std::vector<double> getCurve () = 0;
+		bool reset();
 		void setTooltip(Glib::ustring ttip);
 
 		sigc::signal<void> signal_curvegraph_enter();
@@ -143,8 +146,11 @@ class DiagonalCurveEditor : public CurveEditor {
 	protected:
 		// reflects the buttonType active selection ; used as a pre-'selectionChange' reminder value
 		std::vector<double> customCurveEd;
+		std::vector<double> customResetCurve;
 		std::vector<double> paramCurveEd;
+		std::vector<double> paramResetCurve;
 		std::vector<double> NURBSCurveEd;
+		std::vector<double> NURBSResetCurve;
 		Glib::ustring rangeLabels[4];
 		double rangeMilestones[3];
 
@@ -155,6 +161,9 @@ class DiagonalCurveEditor : public CurveEditor {
 		void getRangeLabels(Glib::ustring &r1, Glib::ustring &r2, Glib::ustring &r3, Glib::ustring &r4);
 		void setRangeDefaultMilestones(double m1, double m2, double m3);
 		void getRangeDefaultMilestones(double &m1, double &m2, double &m3);
+
+		// set the reset curve for a given curve type. This is optional; all curve type have a default reset curve
+		void setResetCurve(DiagonalCurveType cType, const std::vector<double> &resetCurve);
 };
 
 
@@ -170,6 +179,7 @@ class FlatCurveEditor : public CurveEditor {
 	protected:
 		// reflects the buttonType active selection ; used as a pre-'selectionChange' reminder value
 		std::vector<double> controlPointsCurveEd;
+		std::vector<double> controlPointsResetCurve;
 		bool periodic;
 		double identityValue;
 
@@ -178,6 +188,9 @@ class FlatCurveEditor : public CurveEditor {
 		virtual void setIdentityValue (const double iValue=0.5) { identityValue = iValue; }
 		virtual double getIdentityValue () { return identityValue; };
 		std::vector<double> getCurve ();
+
+		// set the reset curve for a given curve type. This is optional; all curve type have a default reset curve
+		void setResetCurve(FlatCurveType cType, const std::vector<double> &resetCurve);
 };
 
 #endif

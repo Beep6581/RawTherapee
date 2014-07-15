@@ -1448,8 +1448,14 @@ void MyFlatCurve::setType (FlatCurveType t) {
     setDirty(true);
 }
 
-void MyFlatCurve::reset(double identityValue) {
+void MyFlatCurve::reset(const std::vector<double> &resetCurve, double identityValue) {
     calcDimensions();
+
+    // If a resetCurve exist (non empty)
+    if (!resetCurve.empty()) {
+        setPoints(resetCurve);
+        return;
+    }
 
     switch (curve.type) {
     case  FCT_MinMaxCPoints :
