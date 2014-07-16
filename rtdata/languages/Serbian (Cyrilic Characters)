@@ -1070,8 +1070,46 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !HISTORY_MSG_251;B&amp;W - Algorithm
 !HISTORY_MSG_252;CbDL Skin Tones
 !HISTORY_MSG_253;CbDL Reduce artifacts
-!HISTORY_MSG_254;CbDL - Hueskin
-!HISTORY_MSG_255;CbDL - Algorithm
+!HISTORY_MSG_254;CbDL - Skin hue
+!HISTORY_MSG_255;NR - Median
+!HISTORY_MSG_256;NR - Median type
+!HISTORY_MSG_257;Color Toning
+!HISTORY_MSG_258;Color Toning - Color
+!HISTORY_MSG_259;Color Toning - Opacity
+!HISTORY_MSG_260;Color Toning - Opacity
+!HISTORY_MSG_261;Color Toning - Method
+!HISTORY_MSG_262;Color Toning - Opacity
+!HISTORY_MSG_263;Color Toning - Luminance
+!HISTORY_MSG_263;Color Toning - Shadows Red
+!HISTORY_MSG_264;Color Toning - Shadows Green
+!HISTORY_MSG_265;Color Toning - Shadows Blue
+!HISTORY_MSG_266;Color Toning - Middle Red
+!HISTORY_MSG_267;Color Toning - Middle Green
+!HISTORY_MSG_268;Color Toning - Middle Blue
+!HISTORY_MSG_269;Color Toning - High Red
+!HISTORY_MSG_270;Color Toning - High Green
+!HISTORY_MSG_271;Color Toning - High Blue
+!HISTORY_MSG_272;Color Toning - Balance
+!HISTORY_MSG_273;Color Toning - Reset
+!HISTORY_MSG_274;Color Toning - Sat. Shadows
+!HISTORY_MSG_275;Color Toning - Sat. Highlights
+!HISTORY_MSG_276;Color Toning - Opacity
+!HISTORY_MSG_277;Color Toning - Reset Curves
+!HISTORY_MSG_278;Color Toning - Preserve Luminance
+!HISTORY_MSG_279;Color Toning - Shadows
+!HISTORY_MSG_280;Color Toning - Highlights
+!HISTORY_MSG_281;Color Toning - Sat. Protection
+!HISTORY_MSG_282;Color Toning - Sat. Threshold
+!HISTORY_MSG_283;Color Toning - Str. Protection
+!HISTORY_MSG_284;Color Toning - Auto saturation
+!HISTORY_MSG_285;NR - Median method
+!HISTORY_MSG_286;NR - Median type
+!HISTORY_MSG_287;NR - Median iterations
+!HISTORY_MSG_288;Flat Field Clip Control
+!HISTORY_MSG_289;Flat Field Automatic Clip Control
+!HISTORY_MSG_290;Black Level - Red
+!HISTORY_MSG_291;Black Level - Green
+!HISTORY_MSG_292;Black Level - Blue
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
@@ -1098,7 +1136,9 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !PARTIALPASTE_CHANNELMIXERBW;Black-and-White
 !PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
+!PARTIALPASTE_COLORTONING;Color Toning
 !PARTIALPASTE_EPD;Tone mapping
+!PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
 !PARTIALPASTE_GRADIENT;Graduated filter
 !PARTIALPASTE_ICMGAMMA;Output gamma
 !PARTIALPASTE_LENSPROFILE;Lens correction profile
@@ -1313,29 +1353,98 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in Lab space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 !TP_COLORAPP_WBRT;WB [RT] + [output]
+!TP_COLORTONING_AB;o C/L
+!TP_COLORTONING_AUTOSAT;Auto saturation
+!TP_COLORTONING_BALANCE;Balance
+!TP_COLORTONING_BALANCE_TOOLTIP;Equilibrate tones between shadows and highlights
+!TP_COLORTONING_BY;o C/L
+!TP_COLORTONING_CHROMA1;Opacity 'a'
+!TP_COLORTONING_CHROMA2;Opacity 'b'
+!TP_COLORTONING_CHROMAC;Opacity chroma
+!TP_COLORTONING_CHROMA;Opacity 'ab' or 'a'
+!TP_COLORTONING_COLOR;Color
+!TP_COLORTONING_CURVEEDITOR_LL;L
+!TP_COLORTONING_HIGHLIGHT;Highlights
+!TP_COLORTONING_HUE;Hue
+!TP_COLORTONING_HUE;Hue blending only
+!TP_COLORTONING_LABCOL;Direct Colors
+!TP_COLORTONING_LABCOL_TOOLTIP;When you move a saturation slider, these 'direct' colors are increased.
+!TP_COLORTONING_LABEL;Color Toning
+!TP_COLORTONING_LABINT;-
+!TP_COLORTONING_LABINT_TOOLTIP;When the image color is blue and the blending color is red, it results in a magenta color in the function of % opacity.\nWhen the image color is red and the blending color is yellow, it results in an orange color in the function of % opacity.
+!TP_COLORTONING_LAB;Lab blending
+!TP_COLORTONING_LCH;Lch blending
+!TP_COLORTONING_LCH_1;Hue + XYZ
+!TP_COLORTONING_LCH_2;XYZ blending
+!TP_COLORTONING_LUMAMODE;Preserve luminance
+!TP_COLORTONING_LUMAMODE_TOOLTIP;If enabled, when you change color (red, green, cyan, blue, etc.) the luminance of each pixel is preserved.
+!TP_COLORTONING_LUMA;Luminance
+!TP_COLORTONING_METHOD;Method
+!TP_COLORTONING_METHOD_TOOLTIP;Lab blending use interpolation colour blending\nColor balance (Shadows Midtones Highlights)\nSplit Toning Colour SH+balance (Shadows Highlights + balance shadows/highlights) use direct colors\nIn all methods you can enabled Black and White
+!TP_COLORTONING_MIDTONES;Mid Tones
+!TP_COLORTONING_NEUTRALCUR;Reset curves
+!TP_COLORTONING_NEUTRALCUR_TIP;Reset all curves to default.
+!TP_COLORTONING_NEUTRAL;Reset sliders
+!TP_COLORTONING_NEUTRAL_TIP;Reset all values (Shadows Midtones Highlights) to default.
+!TP_COLORTONING_OPACITY;Opacity
+!TP_COLORTONING_RGBCURVES;RGB - Curves
+!TP_COLORTONING_RGBSLIDERS;RGB - Sliders
+!TP_COLORTONING_SATH;Saturation highlights
+!TP_COLORTONING_SATL;Saturation shadows
+!TP_COLORTONING_SATURATEDOPACITY;Saturation protection
+!TP_COLORTONING_SATURATIONTHRESHOLD;Saturation protection threshold
+!TP_COLORTONING_SHADOWS;Shadows
+!TP_COLORTONING_SPLITBAL;Split Toning Colour SH + balance
+!TP_COLORTONING_SPLITCOCO;Color Balance SMH
+!TP_COLORTONING_SPLITCO;Split Toning Colour SMH
+!TP_COLORTONING_SPLITLR;Split Toning Saturation 2 colors
+!TP_COLORTONING_STRENGTH;Strength
+!TP_COLORTONING_STRPROTECT;Strength protection
+!TP_COLORTONING_TWO2;Opacity special chroma 2 colors
+!TP_COLORTONING_TWOALL;Opacity special chroma
+!TP_COLORTONING_TWOBY;Opacity special 'a' and 'b'
+!TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard - linear response same for 'a' and 'b'\nSpecial chroma same response for 'a' and 'b', but without bound - try under the diagonal\nSpecial 'a' and 'b': as Special + first curve 'a' only - second curve 'b' only : dedicate for special effects\nSpecial 2 colors - more predictable
+!TP_COLORTONING_TWOSTD;Opacity standard chroma
 !TP_CROP_GTEPASSPORT;Biometric Passport
 !TP_CROP_GTFRAME;Frame
+!TP_DIRPYRDENOISE_33;3x3 strong
+!TP_DIRPYRDENOISE_55SOFT;5x5
+!TP_DIRPYRDENOISE_55;5x5 strong
+!TP_DIRPYRDENOISE_77;7x7 (slow)
 !TP_DIRPYRDENOISE_BLUE;Chrominance - Blue-Yellow
 !TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on the gamma of the input color profile. An sRGB gamma is assumed, thus if the image uses an input color profile of a different gamma, the effects of luminance noise reduction will differ.
 !TP_DIRPYRDENOISE_ENH;Enhanced mode
 !TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase.
 !TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
+!TP_DIRPYRDENOISE_LABM;Lab
 !TP_DIRPYRDENOISE_LDETAIL;Luminance Detail
+!TP_DIRPYRDENOISE_LM;Luminance only
+!TP_DIRPYRDENOISE_MEDMETHOD;Median method
+!TP_DIRPYRDENOISE_MEDTYPE;Median type
+!TP_DIRPYRDENOISE_MED;Median - Luminance only
+!TP_DIRPYRDENOISE_MED_TOOLTIP;-
 !TP_DIRPYRDENOISE_METHOD;Method
 !TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be used.\n\nFor non-raw images the Lab method will be used, regardless of the selection.
+!TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "Lab" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
+!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired size. The larger the size, the longer it takes.\n\n3x3 soft: treats 5 pixels in a 1-pixel range.\n3x3: treats 9 pixels in a 1-pixel range.\n5x5 soft: treats 13 pixels in a 2-pixel range.\n5x5: treats 25 pixels in a 2-pixel range.\n7x7: treats 49 pixels in a 3-pixel range.\n\nSometimes it is possible to achieve higher quality running several iterations with a small range than one iteration with a large range.
+!TP_DIRPYRDENOISE_NONE;None
+!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying a 3x3 median filter with three iterations often leads to better results than applying 7x7 once.
+!TP_DIRPYRDENOISE_PASSE;Median iterations
 !TP_DIRPYRDENOISE_PERF;RGB mode (raw images)
 !TP_DIRPYRDENOISE_RED;Chrominance - Red-Green
+!TP_DIRPYRDENOISE_RGBM;RGB
 !TP_DIRPYRDENOISE_RGB;RGB
+!TP_DIRPYRDENOISE_SOFT;3x3
 !TP_DIRPYREQUALIZER_ALGO;Algorithm Skin
 !TP_DIRPYREQUALIZER_ALGO_FI;Fine
 !TP_DIRPYREQUALIZER_ALGO_LA;Large
-!TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts
+!TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts.
 !TP_DIRPYREQUALIZER_GAMUT;Reduce artifacts
 !TP_DIRPYREQUALIZER_HUESKIN;Skin hue
-!TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected
+!TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
 !TP_DIRPYREQUALIZER_SKIN;Skin Tones Targetting/Protection
 !TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin tones are protected while all other tones are affected.
-!TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts due to the transitions between the color (hue, chroma, luma) of the skin and the rest of the image
+!TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts due to the transitions between the color (hue, chroma, luma) of the skin and the rest of the image.
 !TP_EPD_EDGESTOPPING;Edge Stopping
 !TP_EPD_LABEL;Tone Mapping
 !TP_EPD_REWEIGHTINGITERATES;Reweighting Iterates
@@ -1353,6 +1462,12 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Saturation and Value Blending
 !TP_EXPOSURE_TCMODE_STANDARD;Standard
 !TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
+!TP_EXPOS_BLACKPOINT_LABEL;Raw Black Points
+!TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
+!TP_FLATFIELD_CLIPCONTROL;Clip control
+!TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
+!TP_FLATFIELD_FILEDLGFILTERANY;Any files
+!TP_FLATFIELD_FILEDLGFILTERFF;Same format as current photo
 !TP_GAMMA_CURV;Gamma
 !TP_GENERAL_11SCALE_TOOLTIP;The effects of this tool are only visible or only accurate at a preview scale of 1:1.
 !TP_GRADIENT_CENTER;Center
@@ -1431,11 +1546,22 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_PFCURVE_CURVEEDITOR_CH;Hue
 !TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color.\nHigher = more,\nLower = less.
 !TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Tries to suppress hot and dead pixels.
+!TP_RAWEXPOS_BLACK_0;Green 1 (lead)
+!TP_RAWEXPOS_BLACK_1;Red
+!TP_RAWEXPOS_BLACK_2;Blue
+!TP_RAWEXPOS_BLACK_3;Green 2
+!TP_RAWEXPOS_BLACK_BLUE;Blue
+!TP_RAWEXPOS_BLACK_GREEN;Green
+!TP_RAWEXPOS_BLACK_RED;Red
+!TP_RAWEXPOS_RGB;Red, Green, Blue
 !TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 !TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
 !TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to posterization or a washed-out look.
 !TP_RAW_LMMSEITERATIONS;LMMSE Enhancement Steps
 !TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.
+!TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer matrix
+!TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images)\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
+!TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans matrix
 !TP_RGBCURVES_BLUE;B
 !TP_RGBCURVES_CHANNEL;Channel
 !TP_RGBCURVES_GREEN;G
