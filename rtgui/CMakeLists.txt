@@ -9,7 +9,7 @@ set (BASESOURCEFILES
     resize.cc icmpanel.cc crop.cc shadowshighlights.cc
     impulsedenoise.cc dirpyrdenoise.cc epd.cc
     exifpanel.cc toolpanel.cc lensprofile.cc
-    sharpening.cc vibrance.cc rgbcurves.cc
+    sharpening.cc vibrance.cc rgbcurves.cc  colortoning.cc
     whitebalance.cc   vignetting.cc gradient.cc pcvignette.cc rotate.cc distortion.cc
     crophandler.cc dirbrowser.cc
     curveeditor.cc curveeditorgroup.cc diagonalcurveeditorsubgroup.cc flatcurveeditorsubgroup.cc
@@ -25,7 +25,8 @@ set (BASESOURCEFILES
     thumbbrowserentrybase.cc batchqueueentry.cc
     batchqueue.cc lwbutton.cc lwbuttonset.cc
     batchqueuebuttonset.cc browserfilter.cc exiffiltersettings.cc
-    profilestore.cc partialpastedlg.cc rawprocess.cc preprocess.cc
+    profilestore.cc partialpastedlg.cc
+    sensorbayer.cc sensorxtrans.cc preprocess.cc bayerpreprocess.cc bayerprocess.cc bayerrawexposure.cc xtransprocess.cc xtransrawexposure.cc
     darkframe.cc flatfield.cc rawcacorrection.cc rawexposure.cc
     dirpyrequalizer.cc hsvequalizer.cc defringe.cc
     popupcommon.cc popupbutton.cc popuptogglebutton.cc sharpenedge.cc sharpenmicro.cc colorappearance.cc)

@@ -199,6 +199,7 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_DIRPYRDENOISE_RED"), ADDSET_DIRPYRDN_CHROMARED, true);
     appendBehavList (mi, M("TP_DIRPYRDENOISE_BLUE"), ADDSET_DIRPYRDN_CHROMABLUE, true);
 	appendBehavList (mi, M("TP_DIRPYRDENOISE_GAMMA"), ADDSET_DIRPYRDN_GAMMA, true);
+	appendBehavList (mi, M("TP_DIRPYRDENOISE_PASSE"), ADDSET_DIRPYRDN_PASSES, true);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_WBALANCE_LABEL"));
@@ -240,6 +241,14 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     mi->set_value (behavColumns.label, M("TP_BWMIX_LABEL"));
     appendBehavList (mi, M("TP_BWMIX_MIXC"), ADDSET_BLACKWHITE_HUES, false);
     appendBehavList (mi, M("TP_BWMIX_GAMMA"), ADDSET_BLACKWHITE_GAMMA, false);
+
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_COLORTONING_LABEL"));
+    appendBehavList (mi, M("TP_COLORTONING_SPLITCOCO"),ADDSET_COLORTONING_SPLIT , true);
+    appendBehavList (mi, M("TP_COLORTONING_SATURATIONTHRESHOLD"),ADDSET_COLORTONING_SATTHRESHOLD , true);
+    appendBehavList (mi, M("TP_COLORTONING_SATURATEDOPACITY"),ADDSET_COLORTONING_SATOPACITY , true);
+    appendBehavList (mi, M("TP_COLORTONING_BALANCE"),ADDSET_COLORTONING_BALANCE , true);
+    appendBehavList (mi, M("TP_COLORTONING_STRPROTECT"),ADDSET_COLORTONING_STRPROTECT , true);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_ROTATE_LABEL"));
@@ -289,10 +298,17 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_PREPROCESS_LINEDENOISE"), ADDSET_PREPROCESS_LINEDENOISE, true);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M("TP_EXPOSCORR_LABEL"));
+    mi->set_value (behavColumns.label, M("TP_EXPOS_WHITEPOINT_LABEL"));
     appendBehavList (mi, M("TP_RAWEXPOS_LINEAR"), ADDSET_RAWEXPOS_LINEAR, false);
     appendBehavList (mi, M("TP_RAWEXPOS_PRESER"), ADDSET_RAWEXPOS_PRESER, false);
-    appendBehavList (mi, M("TP_RAWEXPOS_BLACKS"), ADDSET_RAWEXPOS_BLACKS, false);
+
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_RAWEXPOS_BLACKS"));
+    appendBehavList (mi, M("TP_RAWEXPOS_RGB"), ADDSET_RAWEXPOS_BLACKS, false);
+
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_FLATFIELD_LABEL"));
+    appendBehavList (mi, M("TP_FLATFIELD_CLIPCONTROL"), ADDSET_RAWFFCLIPCONTROL, true);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_CHROMATABERR_LABEL"));

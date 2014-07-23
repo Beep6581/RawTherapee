@@ -53,21 +53,25 @@ class ExportPanel : public Gtk::VBox {
 	    Gtk::CheckButton* bypass_dirpyrequalizer; // also could leave untouched but disable only small radius adjustments
 	    //Gtk::CheckButton* bypass_raw_all_enhance;
 
-	    Gtk::CheckButton* bypass_raw_ca; // wraps raw.cared, raw.cablue, raw.ca_autocorrect
+	    MyComboBoxText* raw_bayer_method;
+
+	    Gtk::CheckButton* bypass_raw_bayer_dcb_iterations;
+	    Gtk::CheckButton* bypass_raw_bayer_dcb_enhance;
+	    Gtk::CheckButton* bypass_raw_bayer_lmmse_iterations;
+	    //Gtk::CheckButton* bypass_raw_bayer_all_enhance;
+	    Gtk::CheckButton* bypass_raw_bayer_linenoise;
+	    Gtk::CheckButton* bypass_raw_bayer_greenthresh;
+
+	    Gtk::CheckButton* bypass_raw_ccSteps;
+	    Gtk::CheckButton* bypass_raw_ca; //wraps raw.cared, raw.cablue, raw.ca_autocorrect
 	    Gtk::CheckButton* bypass_raw_df; //wraps raw.dark_frame, raw.df_AutoSelect
 	    Gtk::CheckButton* bypass_raw_ff; //wraps raw.ff_file, raw.ff_AutoSelect
-	    MyComboBoxText* raw_dmethod;
+
+	    MyComboBoxText* raw_xtrans_method;
+
 	    MyComboBoxText* resize_method;
 
-	    Gtk::CheckButton* bypass_raw_dcb_iterations;
-	    Gtk::CheckButton* bypass_raw_dcb_enhance;
-	    Gtk::CheckButton* bypass_raw_lmmse_iterations;
-	    Gtk::CheckButton* bypass_raw_ccSteps;
-	    Gtk::CheckButton* raw_all_enhance;
-	    Gtk::CheckButton* bypass_raw_linenoise;
-	    Gtk::CheckButton* bypass_raw_greenthresh;
-
-        Gtk::Button* btnFastExport;
+	    Gtk::Button* btnFastExport;
         Gtk::Button* btnExportLoadSettings;
         Gtk::Button* btnExportSaveSettings;
 
@@ -78,20 +82,20 @@ class ExportPanel : public Gtk::VBox {
 		sigc::connection bypass_sharpeningConn        ;
 		sigc::connection bypass_sharpenEdgeConn       ;
 		sigc::connection bypass_sharpenMicroConn      ;
-		//sigc::connection bypass_lumaDenoiseConn       ;
-		//sigc::connection bypass_colorDenoiseConn      ;
+		//sigc::connection bypass_lumaDenoiseConn     ;
+		//sigc::connection bypass_colorDenoiseConn    ;
 		sigc::connection bypass_defringeConn          ;
 		sigc::connection bypass_dirpyrDenoiseConn     ;
 		sigc::connection bypass_sh_hqConn             ;
 		sigc::connection bypass_dirpyrequalizerConn   ;
-		//sigc::connection bypass_raw_all_enhanceConn   ;
+		//sigc::connection bypass_raw_bayer_all_enhanceConn   ;
+		sigc::connection bypass_raw_bayer_dcb_iterationsConn  ;
+		sigc::connection bypass_raw_bayer_dcb_enhanceConn     ;
+		sigc::connection bypass_raw_bayer_lmmse_iterationsConn;
+		sigc::connection bypass_raw_bayer_linenoiseConn       ;
+		sigc::connection bypass_raw_bayer_greenthreshConn     ;
 		sigc::connection bypass_raw_ccStepsConn       ;
-		sigc::connection bypass_raw_dcb_iterationsConn;
-		sigc::connection bypass_raw_dcb_enhanceConn   ;
-		sigc::connection bypass_raw_lmmse_iterationsConn;
 		sigc::connection bypass_raw_caConn            ;
-		sigc::connection bypass_raw_linenoiseConn     ;
-		sigc::connection bypass_raw_greenthreshConn   ;
 		sigc::connection bypass_raw_dfConn            ;
 		sigc::connection bypass_raw_ffConn            ;
 

@@ -63,6 +63,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* blackwhite;
         Gtk::CheckButton* hsveq;
         Gtk::CheckButton* rgbcurves;
+        Gtk::CheckButton* colortoning;
        // Gtk::CheckButton* icm;
 
         // options in lens:
@@ -95,7 +96,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* raw_hotdeadpix_filt;
         Gtk::CheckButton* raw_linenoise;
         Gtk::CheckButton* raw_greenthresh;
-        Gtk::CheckButton* raw_dmethod;
+        Gtk::CheckButton* raw_method;
         Gtk::CheckButton* raw_ccSteps;
         Gtk::CheckButton* raw_dcb_iterations;
         Gtk::CheckButton* raw_dcb_enhance;
@@ -108,17 +109,18 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* ff_AutoSelect;
         Gtk::CheckButton* ff_BlurRadius;
         Gtk::CheckButton* ff_BlurType;
+        Gtk::CheckButton* ff_ClipControl;
 
         sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaicmConn, rawConn;
 
         sigc::connection wbConn, exposureConn, shConn, pcvignetteConn, gradientConn, labcurveConn, colorappearanceConn;
         sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, waveqConn, defringeConn, epdConn, dirpyreqConn;
-        sigc::connection vibranceConn, chmixerConn, hsveqConn, rgbcurvesConn, chmixerbwConn;
+        sigc::connection vibranceConn, chmixerConn, hsveqConn, rgbcurvesConn, chmixerbwConn, colortoningConn;
         sigc::connection distortionConn, cacorrConn, vignettingConn, lcpConn;
         sigc::connection coarserotConn, finerotConn, cropConn, resizeConn, perspectiveConn, commonTransConn;
         sigc::connection exifchConn, iptcConn, icmConn, gamcsconn;
-        sigc::connection df_fileConn, df_AutoSelectConn, ff_fileConn, ff_AutoSelectConn, ff_BlurRadiusConn, ff_BlurTypeConn;
-        sigc::connection raw_caredConn, raw_cablueConn, raw_ca_autocorrectConn, raw_hotdeadpix_filtConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_dmethodConn, raw_dcb_iterationsConn, raw_lmmse_iterationsConn, raw_dcb_enhanceConn, raw_exposConn, raw_preserConn, raw_blackConn; //,raw_all_enhanceConn
+        sigc::connection df_fileConn, df_AutoSelectConn, ff_fileConn, ff_AutoSelectConn, ff_BlurRadiusConn, ff_BlurTypeConn, ff_ClipControlConn;
+        sigc::connection raw_caredConn, raw_cablueConn, raw_ca_autocorrectConn, raw_hotdeadpix_filtConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_methodConn, raw_dcb_iterationsConn, raw_lmmse_iterationsConn, raw_dcb_enhanceConn, raw_exposConn, raw_preserConn, raw_blackConn; //,raw_all_enhanceConn
 
     public:
         PartialPasteDlg (Glib::ustring title);

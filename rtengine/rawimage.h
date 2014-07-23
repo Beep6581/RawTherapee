@@ -22,6 +22,7 @@
 #include <ctime>
 #include <glibmm.h>
 #include "dcraw.h"
+#include "imageio.h"
 
 namespace rtengine {
 
@@ -86,6 +87,7 @@ public:
 class RawImage: public DCraw
 {
 public:
+
   RawImage(  const Glib::ustring name );
   ~RawImage();
 
@@ -107,6 +109,8 @@ protected:
   char* profile_data; // Embedded ICC color profile
   float* allocation; // pointer to allocated memory
   int maximum_c4[4];
+  bool isBayer() const { return (filters!=0 && filters!=9); }
+  bool isXtrans() const { return filters==9; }
 
 public:
 
@@ -115,7 +119,11 @@ public:
   int get_width()  const { return width; }
   int get_height() const { return height; }
   int get_FujiWidth() const { return fuji_width; }
-  bool isBayer() const { return filters!=0; }
+  eSensorType getSensorType();
+
+  void getRgbCam (float rgbcam[3][4]);
+  void getXtransMatrix ( char xtransMatrix[6][6]);
+  void clearXtransCblack( ) { for(int c=0;c<4;c++) cblack[c] = 0;}
   unsigned get_filters() const { return filters; }
   int get_colors() const { return colors;}
   int get_cblack(int i) const {return cblack[i];}
@@ -150,7 +158,7 @@ public:
   unsigned get_thumbLength(){ return thumb_length;}
 public:
   // dcraw functions
-  void scale_colors(){ DCraw::scale_colors(); }
+  void scale_colors(){ if(isXtrans()) clearXtransCblack( ); DCraw::scale_colors(); }
   void pre_interpolate() { DCraw::pre_interpolate(); }
 
 public:
@@ -158,6 +166,11 @@ public:
   bool ISGREEN(unsigned row, unsigned col) const { return ((filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==1);}
   bool ISBLUE (unsigned row, unsigned col) const { return ((filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==2);}
   unsigned FC (unsigned row, unsigned col) const { return (filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3); }
+  bool ISXTRANSRED  (unsigned row, unsigned col) const { return ((xtrans[(row)%6][(col)%6])==0);}
+  bool ISXTRANSGREEN(unsigned row, unsigned col) const { return ((xtrans[(row)%6][(col)%6])==1);}
+  bool ISXTRANSBLUE (unsigned row, unsigned col) const { return ((xtrans[(row)%6][(col)%6])==2);}
+  unsigned XTRANSFC (unsigned row, unsigned col) const { return (xtrans[(row)%6][(col)%6]);}
+  
 };
 
 }

@@ -856,14 +856,19 @@ void DiagonalCurveEditorSubGroup::removeEditor () {
 	removeIfThere (parent, NURBSCurveBox, false);
 }
 
-bool DiagonalCurveEditorSubGroup::curveReset(int cType, double iValue) {
-	switch ((DiagonalCurveType) cType) {
+bool DiagonalCurveEditorSubGroup::curveReset(CurveEditor *ce) {
+	if (!ce)
+		return false;
+
+	DiagonalCurveEditor *dce = static_cast<DiagonalCurveEditor*>(ce);
+
+	switch (ce->selected) {
 	case (DCT_NURBS) :	// = Control cage
-		NURBSCurve->reset ();
+		NURBSCurve->reset (dce->NURBSResetCurve, dce->getIdentityValue());
 		return true;
 		break;
 	case (DCT_Spline) :	// = Custom
-		customCurve->reset ();
+		customCurve->reset (dce->customResetCurve, dce->getIdentityValue());
 		return true;
 		break;
 	case (DCT_Parametric) :
@@ -878,7 +883,7 @@ bool DiagonalCurveEditorSubGroup::curveReset(int cType, double iValue) {
 		shadows->resetPressed(NULL);
 		shcSelector->setDefaults(mileStone[0], mileStone[1], mileStone[2]);
 		shcSelector->reset();
-		paramCurve->reset ();
+		paramCurve->reset (dce->paramResetCurve, dce->getIdentityValue());
 		return true;
 		break;
 	}

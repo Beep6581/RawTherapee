@@ -83,10 +83,10 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
   if (vlabel.empty()) {
     // No label, everything goes in hbox
     if (imgIcon1) hbox->pack_start (*imgIcon1, Gtk::PACK_SHRINK, 0);
+    hbox->pack_start (*slider, Gtk::PACK_EXPAND_WIDGET, 0);
+    if (imgIcon2) hbox->pack_start (*imgIcon2, Gtk::PACK_SHRINK, 0);
     hbox->pack_end (*reset, Gtk::PACK_SHRINK, 0); 
     hbox->pack_end (*spin, Gtk::PACK_SHRINK, 0);
-    if (imgIcon2) hbox->pack_start (*imgIcon2, Gtk::PACK_SHRINK, 0);
-    hbox->pack_start (*slider, true, true);
   }
   else {
     // A label is provided, spreading the widgets in 2 rows

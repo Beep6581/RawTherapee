@@ -63,7 +63,7 @@ extern const Settings* settings;
 
 void RawImageSource::eahd_demosaic () {
   if (plistener) {
-    plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::eahd]));
+    plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::eahd]));
     plistener->setProgress (0.0);
   }
 
@@ -499,7 +499,7 @@ void RawImageSource::hphd_green (float** hpmap) {
 
 void RawImageSource::hphd_demosaic () {
   if (plistener) {
-    plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::hphd]));
+    plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::hphd]));
     plistener->setProgress (0.0);
   }
 
@@ -597,7 +597,7 @@ void RawImageSource::vng4_demosaic () {
 	const bool plistenerActive = plistener;
 
 	if (plistenerActive) {
-		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::vng4]));
+		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::vng4]));
 		plistener->setProgress (progress);
 	}
 
@@ -838,7 +838,7 @@ void RawImageSource::ppg_demosaic()
 
   if (plistener) {
     // looks like ppg isn't supported anymore
-    //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::ppg]));
+    //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::ppg]));
     plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "xxx"));
     plistener->setProgress (0.0);
   }
@@ -1085,7 +1085,7 @@ void RawImageSource::jdl_interpolate_omp()  // from "Lassus"
 	chr = (int (*)[2]) calloc(width*height, sizeof *chr);
 	if (plistener) {
 		// this function seems to be unused
-		//plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::jdl]));
+		//plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::jdl]));
 		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "xxx"));
 		plistener->setProgress (0.0);
 	}
@@ -1223,7 +1223,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 	if(iterations==0) {applyGamma=false;iter=0;} else applyGamma=true;
 
 	if (plistener) {
-		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::lmmse]));
+		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::lmmse]));
 		plistener->setProgress (0.0);
 	}
 	float (*image)[3];
@@ -1611,7 +1611,7 @@ SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
 	border_interpolate2(winw,winh,7);
 
 	if (plistener) {
-		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::igv]));
+		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::igv]));
 		plistener->setProgress (0.0);
 	}
 #ifdef _OPENMP
@@ -1956,7 +1956,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
 	border_interpolate2(winw,winh,7);
 
 	if (plistener) {
-		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::igv]));
+		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::igv]));
 		plistener->setProgress (0.0);
 	}
 #ifdef _OPENMP
@@ -2199,7 +2199,7 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
     const float d65_white[3] = { 0.950456, 1, 1.088754 };
 
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::ahd]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::ahd]));
         plistener->setProgress (0.0);
     }
 
@@ -2361,8 +2361,14 @@ void RawImageSource::nodemosaic(bool bw)
         for (int j=0; j<W; j++){
             if (bw) {
                 red[i][j] = green[i][j] = blue[i][j] = rawData[i][j];
-            } else {
+            } else if(ri->getSensorType()!=ST_FUJI_XTRANS){
                 switch( FC(i,j)) {
+                case 0: red[i][j] = rawData[i][j]; green[i][j]=blue[i][j]=0; break;
+                case 1: green[i][j] = rawData[i][j]; red[i][j]=blue[i][j]=0; break;
+                case 2: blue[i][j] = rawData[i][j]; red[i][j]=green[i][j]=0; break;
+                }
+            } else {
+                switch( ri->XTRANSFC(i,j)) {
                 case 0: red[i][j] = rawData[i][j]; green[i][j]=blue[i][j]=0; break;
                 case 1: green[i][j] = rawData[i][j]; red[i][j]=blue[i][j]=0; break;
                 case 2: blue[i][j] = rawData[i][j]; red[i][j]=green[i][j]=0; break;
@@ -3071,7 +3077,7 @@ void RawImageSource::dcb_demosaic(int iterations, bool dcb_enhance)
 {
     double currentProgress=0.0;
     if(plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::dcb]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::dcb]));
         plistener->setProgress (currentProgress);
     }
 
@@ -3190,6 +3196,595 @@ void RawImageSource::dcb_demosaic(int iterations, bool dcb_enhance)
 
     if(plistener) plistener->setProgress (1.0);
 }
+
+const double xyz_rgb[3][3] = {			// XYZ from RGB
+  { 0.412453, 0.357580, 0.180423 },
+  { 0.212671, 0.715160, 0.072169 },
+  { 0.019334, 0.119193, 0.950227 } };
+const float d65_white[3] = { 0.950456, 1, 1.088754 };
+
+void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b, const int width, const int height, const int labWidth, const float xyz_cam[3][3])
+{
+	static float cbrt[0x10000];
+	static bool cbrtinit = false;
+	if (!rgb) { 
+		int i, j, k;
+		float r;
+		if(!cbrtinit) {
+			for (i=0; i < 0x10000; i++) {
+				r = i / 65535.f;
+				cbrt[i] = r > 0.008856f ? xcbrtf(r) : 7.787f*r + 16.f/116.f;
+			}
+			cbrtinit = true;
+		}
+		return;
+	}
+
+	int rgbOffset = (width - labWidth);
+	for(int i=0;i<height;i++) {
+		for(int j=0;j<labWidth;j++) {
+			float xyz[3] = {0.5f};
+			int c;
+			FORC3 {
+				xyz[0] += xyz_cam[0][c] * rgb[i*width+j][c];
+				xyz[1] += xyz_cam[1][c] * rgb[i*width+j][c];
+				xyz[2] += xyz_cam[2][c] * rgb[i*width+j][c];
+			}
+			xyz[0] = cbrt[CLIP((int) xyz[0])];
+			xyz[1] = cbrt[CLIP((int) xyz[1])];
+			xyz[2] = cbrt[CLIP((int) xyz[2])];
+
+			l[i*labWidth+j] = 116 * xyz[1] - 16;
+			a[i*labWidth+j] = 500 * (xyz[0] - xyz[1]);
+			b[i*labWidth+j] = 200 * (xyz[1] - xyz[2]);
+		}
+	}
+}
+
+#define fcol(row,col) xtrans[(row)%6][(col)%6]
+
+void RawImageSource::xtransborder_interpolate (int border)
+{
+	const int height = H, width = W;
+	
+	char xtrans[6][6];
+	ri->getXtransMatrix(xtrans);
+
+	for (int row=0; row < height; row++)
+		for (int col=0; col < width; col++) {
+			if (col==border && row >= border && row < height-border)
+				col = width-border;
+			float sum[6] = {0.f};
+			for (int y=MAX(0,row-1); y <= MIN(row+1,height-1); y++)
+				for (int x=MAX(0,col-1); x <= MIN(col+1,width-1); x++) {
+					int f = fcol(y,x);
+					sum[f] += rawData[y][x];
+					sum[f+3]++;
+				}
+
+			switch(fcol(row,col)) {
+				case 0:	red[row][col] = rawData[row][col];
+						green[row][col] = (sum[1]/sum[4]);
+						blue[row][col] = (sum[2]/sum[5]);
+						break;
+				case 1:	if(sum[3]==0.f) { // at the 4 corner pixels it can happen, that we have only green pixels in 2x2 area
+							red[row][col] = green[row][col] = blue[row][col] = rawData[row][col];
+						} else {
+							red[row][col] = (sum[0]/sum[3]);
+							green[row][col] = rawData[row][col];
+							blue[row][col] = (sum[2]/sum[5]);
+						}
+						break;
+				case 2:	red[row][col] = (sum[0]/sum[3]);
+						green[row][col] = (sum[1]/sum[4]);
+						blue[row][col] = rawData[row][col];
+			}
+		}
+}
+
+/*
+   Frank Markesteijn's algorithm for Fuji X-Trans sensors
+   adapted to RT by Ingo Weyrich 2014
+*/
+
+#define TS 122		/* Tile Size */
+
+void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
+{
+	double progress = 0.0;
+	const bool plistenerActive = plistener;
+  
+ 	if (plistenerActive) {
+		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "Xtrans"));
+		plistener->setProgress (progress);
+	}
+
+	char xtrans[6][6];
+	ri->getXtransMatrix(xtrans);
+
+	static const short  orth[12] = { 1,0,0,1,-1,0,0,-1,1,0,0,1 },
+						patt[2][16] = { { 0,1,0,-1,2,0,-1,0,1,1,1,-1,0,0,0,0 },
+									 { 0,1,0,-2,1,0,-2,0,1,1,-2,-2,1,-1,-1,1 } },
+						dir[4] = { 1,TS,TS+1,TS-1 };
+
+	short allhex[2][3][3][8];
+
+	// sgrow/sgcol is the offset in the sensor matrix of the solitary
+	// green pixels 
+	ushort sgrow, sgcol;
+	
+	const int height = H, width = W;
+
+	if (settings->verbose)
+		printf("%d-pass X-Trans interpolation using %s conversion...\n", passes, useCieLab ? "lab" : "yuv");
+
+	xtransborder_interpolate(6);
+
+	float xyz_cam[3][3];
+	{
+	float rgb_cam[3][4];
+	ri->getRgbCam(rgb_cam);
+	int k;
+	for (int i=0; i < 3; i++)
+		for (int j=0; j < 3; j++)
+			for (xyz_cam[i][j] = k=0; k < 3; k++)
+				xyz_cam[i][j] += xyz_rgb[i][k] * rgb_cam[k][j] / d65_white[i];
+	}
+
+/* Map a green hexagon around each non-green pixel and vice versa:	*/
+{
+	int gint, d, h, v, ng, row, col, c;
+
+	for (row=0; row < 3; row++)
+		for (col=0; col < 3; col++) {
+			gint = fcol(row,col) == 1;
+			for (ng=d=0; d < 10; d+=2) {
+				if (fcol(row+orth[d]+6,col+orth[d+2]+6) == 1)
+					ng=0;
+				else
+					ng++;
+				if (ng == 4) {
+					// if there are four non-green pixels adjacent in cardinal
+					// directions, this is the solitary green pixel
+					sgrow = row;
+					sgcol = col;
+				}
+				if (ng == gint+1)
+					FORC(8) {
+						v = orth[d]*patt[gint][c*2] + orth[d+1]*patt[gint][c*2+1];
+						h = orth[d+2]*patt[gint][c*2] + orth[d+3]*patt[gint][c*2+1];
+						allhex[0][row][col][c^(gint*2 & d)] = h + v*width;
+						allhex[1][row][col][c^(gint*2 & d)] = h + v*TS;
+					}
+			}
+		}
+
+}
+	if(plistenerActive) {
+		progress += 0.05;
+		plistener->setProgress(progress);
+	} 
+
+
+	double progressInc = 36.0*(1.0-progress)/((H*W)/((TS-16)*(TS-16)));
+	const int ndir = 4 << (passes > 1);
+	cielab (0,0,0,0,0,0,0,0);
+	struct s_minmaxgreen {
+		float min;
+		float max;
+	};
+
+	int	RightShift[6];
+	for(int row=0;row<6;row++) {
+		// count number of green pixels in three cols
+		int greencount = 0;
+		for(int col=0;col<3;col++)
+			greencount += (fcol(row,col) == 1);
+		RightShift[row] = (greencount == 2);
+	}
+
+	
+#pragma omp parallel
+{
+	int progressCounter = 0;
+	short *hex;
+    int c, d, f, h, i, v, mrow, mcol;
+    int pass;
+	float color[3][8], g, val;
+	float (*rgb)[TS][TS][3], (*rix)[3];
+	float (*lab)[TS-8][TS-8];
+	float (*drv)[TS-10][TS-10], diff[6], tr;
+	s_minmaxgreen  (*greenminmaxtile)[TS];
+	uint8_t (*homo)[TS][TS];
+	uint8_t (*homosum)[TS][TS];
+	float *buffer;
+	buffer = (float *) malloc ((TS*TS*(ndir*3+11)+128)*sizeof(float));
+	rgb  = (float(*)[TS][TS][3]) buffer;
+	lab  = (float (*)    [TS-8][TS-8])(buffer + TS*TS*(ndir*3));
+	drv  = (float (*)[TS-10][TS-10])   (buffer + TS*TS*(ndir*3+3));
+	homo = (uint8_t  (*)[TS][TS])   (lab); // we can reuse the lab-buffer because they are not used together
+	greenminmaxtile = (s_minmaxgreen(*)[TS]) (lab); // we can reuse the lab-buffer because they are not used together
+	homosum = (uint8_t (*)[TS][TS]) (drv); // we can reuse the drv-buffer because they are not used together
+
+#pragma omp for collapse(2)	schedule(dynamic) nowait
+	for (int top=3; top < height-19; top += TS-16)
+		for (int left=3; left < width-19; left += TS-16) {
+			int mrow = MIN (top+TS, height-3);
+			int mcol = MIN (left+TS, width-3);
+			memset(rgb,0,TS*TS*3*sizeof(float));
+			for (int row=top; row < mrow; row++)
+				for (int col=left; col < mcol; col++) {
+					rgb[0][row-top][col-left][fcol(row,col)] = rawData[row][col];
+				}
+			FORC3 memcpy (rgb[c+1], rgb[0], sizeof *rgb);
+
+			/* Set green1 and green3 to the minimum and maximum allowed values:	*/
+			for (int row=top; row < mrow; row++) {
+				float minval=FLT_MAX;
+				float maxval=0.f;
+				int shiftindex = RightShift[(row)%6];
+				for (int col=left; col < mcol; col++) {
+					if (fcol(row,col) == 1) {
+						minval=FLT_MAX;
+						maxval=0.f;
+						continue;
+					}
+					float *pix = &rawData[row][col];
+					hex = allhex[0][row % 3][col % 3];
+					if (maxval==0.f)
+						FORC(6) {
+							val = pix[hex[c]];
+							if (minval > val)
+								minval = val;
+							if (maxval < val)
+								maxval = val;
+						}
+					greenminmaxtile[row-top][(col-left)>>shiftindex].min = minval;
+					greenminmaxtile[row-top][(col-left)>>shiftindex].max = maxval;
+					switch ((row-sgrow) % 3) {
+						case 1: if (row < mrow-1) {
+									row++;
+									shiftindex = RightShift[(row)%6];
+									col--;
+								}
+								break;
+						case 2: minval=FLT_MAX;
+								maxval=0.f;
+								if ((col+=2) < mcol-1 && row > top+1) {
+									row--;
+									shiftindex = RightShift[(row)%6];
+								}
+					}
+				}
+			}
+
+			/* Interpolate green horizontally, vertically, and along both diagonals: */
+			for (int row=top; row < mrow; row++) {
+				// find first non-green pixel
+				int leftstart = left;
+				for(;leftstart<mcol;leftstart++)
+					if(fcol(row,leftstart)!=1)
+						break;
+				const int shiftindex = RightShift[(row)%6];
+				const int coloffset = (shiftindex == 1 ? 3:1);
+				for (int col=leftstart; col < mcol; col+=coloffset) {
+					if (fcol(row,col) == 1)
+						continue;
+					float *pix = &rawData[row][col];
+					hex = allhex[0][row % 3][col % 3];
+					color[1][0] = 0.6796875f * (pix[hex[1]] + pix[hex[0]]) -
+						 0.1796875f * (pix[2*hex[1]] + pix[2*hex[0]]);
+					color[1][1] = 0.87109375f *  pix[hex[3]] + pix[hex[2]] * 0.12890625f +
+						 0.359375f * (pix[0] - pix[-hex[2]]);
+					FORC(2)
+						color[1][2+c] = 0.640625f * pix[hex[4+c]] + 0.359375f * pix[-2*hex[4+c]] + 0.12890625f *
+										(2.f*pix[0] - pix[3*hex[4+c]] - pix[-3*hex[4+c]]);
+					FORC(4)
+						rgb[c^!((row-sgrow) % 3)][row-top][col-left][1] = LIM(color[1][c],greenminmaxtile[row-top][(col-left)>>shiftindex].min,greenminmaxtile[row-top][(col-left)>>shiftindex].max);
+				}
+			}
+			for (pass=0; pass < passes; pass++) {
+				if (pass == 1)
+					memcpy (rgb+=4, buffer, 4*sizeof *rgb);
+
+/* Recalculate green from interpolated values of closer pixels:	*/
+				if (pass) {
+					for (int row=top+2; row < mrow-2; row++) {
+						int leftstart = left+2;
+						for(;leftstart<mcol-2;leftstart++)
+							if(fcol(row,leftstart)!=1)
+								break;
+						const int shiftindex = RightShift[(row)%6];
+						const int coloffset = (shiftindex == 1 ? 3:1);
+						for (int col=leftstart; col < mcol-2; col+=coloffset) {
+							if ((f = fcol(row,col)) == 1)
+								continue;
+							hex = allhex[1][row % 3][col % 3];
+							for (d=3; d < 6; d++) {
+								rix = &rgb[(d-2)^!((row-sgrow) % 3)][row-top][col-left];
+								val = rix[-2*hex[d]][1] + 2*(rix[hex[d]][1] - rix[hex[d]][f])
+									- rix[-2*hex[d]][f] + 3*rix[0][f];
+								rix[0][1] = LIM((float)(val*.33333333f),greenminmaxtile[row-top][(col-left)>>shiftindex].min,greenminmaxtile[row-top][(col-left)>>shiftindex].max);
+							}
+						}
+					}
+				}
+
+/* Interpolate red and blue values for solitary green pixels:	*/
+				for (int row=(top-sgrow+4)/3*3+sgrow; row < mrow-2; row+=3)
+					for (int col=(left-sgcol+4)/3*3+sgcol; col < mcol-2; col+=3) {
+						rix = &rgb[0][row-top][col-left];
+						h = fcol(row,col+1);
+						memset (diff, 0, sizeof diff);
+						for (i=1, d=0; d < 6; d++, i^=TS^1, h^=2) {
+							for (c=0; c < 2; c++, h^=2) {
+								g = rix[0][1] + rix[0][1] - rix[i<<c][1] - rix[-i<<c][1];
+								color[h][d] = g + rix[i<<c][h] + rix[-i<<c][h];
+								if (d > 1)
+									diff[d] += SQR (rix[i<<c][1] - rix[-i<<c][1]
+											- rix[i<<c][h] + rix[-i<<c][h]) + SQR(g);
+							}
+							if (d > 2 && (d & 1))	 // 3, 5
+								if (diff[d-1] < diff[d])
+									FORC(2)
+										color[c*2][d] = color[c*2][d-1];
+							if ((d & 1) || d < 2) { // d: 0, 1, 3, 5
+								FORC(2)
+									rix[0][c*2] = CLIP(0.5f*color[c*2][d]);
+								rix += TS*TS;
+							}
+						}
+					}
+
+/* Interpolate red for blue pixels and vice versa:		*/
+				for (int row=top+1; row < mrow-1; row++) {
+					i = (row-sgrow) % 3 ? TS:1;
+					int leftstart = left+1;
+					for(;leftstart<mcol-1;leftstart++)
+						if(fcol(row,leftstart)!=1)
+							break;
+					const int coloffset = (RightShift[(row)%6] == 1 ? 3:1);
+					for (int col=leftstart; col < mcol-1; col+=coloffset) {
+						if ((f = 2-fcol(row,col)) == 1)
+							continue;
+						rix = &rgb[0][row-top][col-left];
+						for (d=0; d < 4; d++, rix += TS*TS)
+							rix[0][f] = CLIP(0.5f*(rix[i][f] + rix[-i][f] +
+										rix[0][1] + rix[0][1] - rix[i][1] - rix[-i][1]));
+					}
+				}
+
+/* Fill in red and blue for 2x2 blocks of green:		*/
+				for (int row=top+2; row < mrow-2; row++)
+					if ((row-sgrow) % 3) {
+						for (int col=left+2; col < mcol-2; col++)
+							if ((col-sgcol) % 3) {
+								rix = &rgb[0][row-top][col-left];
+								hex = allhex[1][row%3][col % 3];
+								for (d=0; d < ndir; d+=2, rix += TS*TS)
+									if (hex[d] + hex[d+1]) {
+										g = 3*rix[0][1] - 2*rix[hex[d]][1] - rix[hex[d+1]][1];
+										for (c=0; c < 4; c+=2)
+											rix[0][c] =	CLIP((g + 2*rix[hex[d]][c] + rix[hex[d+1]][c])*0.33333333f);
+									} else {
+										g = 2*rix[0][1] - rix[hex[d]][1] - rix[hex[d+1]][1];
+										for (c=0; c < 4; c+=2)
+											rix[0][c] =	CLIP((g + rix[hex[d]][c] + rix[hex[d+1]][c])*0.5f);
+									}
+							}
+					}
+			}
+			
+// end of multipass part
+			rgb = (float(*)[TS][TS][3]) buffer;
+			mrow -= top;
+			mcol -= left;
+
+			if(useCieLab) {
+				/* Convert to CIELab and differentiate in all directions:	*/
+				// Original dcraw algorithm uses CIELab as perceptual space
+				// (presumably coming from original AHD) and converts taking
+				// camera matrix into account.  We use this in RT.
+				for (d=0; d < ndir; d++) {
+					float *l = &lab[0][0][0];
+					float *a = &lab[1][0][0];
+					float *b = &lab[2][0][0];
+					cielab(&rgb[d][4][4],l,a,b,TS,mrow-8,TS-8,xyz_cam);
+					int f = dir[d & 3];
+					f = f == 1 ? 1 : f-8;
+					for (int row=5; row < mrow-5; row++)
+						for (int col=5; col < mcol-5; col++) {
+							float *l = &lab[0][row-4][col-4];
+							float *a = &lab[1][row-4][col-4];
+							float *b = &lab[2][row-4][col-4];
+							
+							g = 2*l[0] - l[f] - l[-f];
+							drv[d][row-5][col-5] =	SQR(g)
+												+ SQR((2*a[0] - a[f] - a[-f] + g*2.1551724f))
+												+ SQR((2*b[0] - b[f] - b[-f] - g*0.86206896f));
+						}
+
+				}
+			} else {
+				// Now use YPbPr which requires much
+				// less code and is nearly indistinguishable. It assumes the
+				// camera RGB is roughly linear.
+				// 
+				for (d=0; d < ndir; d++) {
+					float (*yuv)[TS-8][TS-8] = lab; // we use the lab buffer, which has the same dimensions
+					for (int row=4; row < mrow-4; row++)
+						for (int col=4; col < mcol-4; col++) {
+							// use ITU-R BT.2020 YPbPr, which is great, but could use
+							// a better/simpler choice? note that imageop.h provides
+							// dt_iop_RGB_to_YCbCr which uses Rec. 601 conversion,
+							// which appears less good with specular highlights
+							float y = 0.2627f * rgb[d][row][col][0] + 0.6780f * rgb[d][row][col][1] + 0.0593f * rgb[d][row][col][2];
+							yuv[0][row-4][col-4] = y;
+							yuv[1][row-4][col-4] = (rgb[d][row][col][2]-y)*0.56433f;
+							yuv[2][row-4][col-4] = (rgb[d][row][col][0]-y)*0.67815f;
+						}
+					int f=dir[d & 3];
+					f = f == 1 ? 1 : f-8;
+					for (int row=5; row < mrow-5; row++)
+						for (int col=5; col < mcol-5; col++) {
+							float *y = &yuv[0][row-4][col-4];
+							float *u = &yuv[1][row-4][col-4];
+							float *v = &yuv[2][row-4][col-4];
+							drv[d][row-5][col-5] = SQR(2*y[0] - y[f] - y[-f])
+												 + SQR(2*u[0] - u[f] - u[-f])
+												 + SQR(2*v[0] - v[f] - v[-f]);
+					  }
+				}
+			}
+
+/* Build homogeneity maps from the derivatives:			*/
+			memset(homo, 0, ndir*TS*TS*sizeof(uint8_t));
+			for (int row=6; row < mrow-6; row++)
+				for (int col=6; col < mcol-6; col++) {
+					for (tr=FLT_MAX, d=0; d < ndir; d++)
+						tr = (drv[d][row-5][col-5] < tr ? drv[d][row-5][col-5] : tr);
+					tr *= 8;
+					for (d=0; d < ndir; d++)
+						for (v=-1; v <= 1; v++)
+							for (h=-1; h <= 1; h++)
+								homo[d][row][col] += (drv[d][row+v-5][col+h-5] <= tr ? 1:0) ;
+				}
+
+			if (height-top < TS+4)
+				mrow = height-top+2;
+			if (width-left < TS+4)
+				mcol = width-left+2;
+
+
+/* Build 5x5 sum of homogeneity maps */
+			for(d=0;d<ndir;d++) {
+				for (int row = MIN(top,8); row < mrow-8; row++) {
+					int v5sum[5] = {0};
+					const int startcol = MIN(left,8);
+					for(v=-2;v<=2;v++)
+						for(h=-2;h<=2;h++)
+							v5sum[2+h] += homo[d][row+v][startcol+h];
+					int blocksum = v5sum[0] + v5sum[1] + v5sum[2] + v5sum[3] + v5sum[4];
+					homosum[d][row][startcol] = blocksum;
+					int voffset = -1;
+					// now we can subtract a column of five from blocksum and get new colsum of 5
+					for (int col = startcol+1; col < mcol-8; col++) {
+						int colsum = homo[d][row-2][col+2];
+						for(v=-1;v<=2;v++)
+							colsum += homo[d][row+v][col+2];
+						voffset ++;
+						voffset = voffset == 5 ? 0 : voffset;  // faster than voffset %= 5;
+						blocksum -= v5sum[voffset];
+						blocksum += colsum;
+						v5sum[voffset] = colsum;
+						homosum[d][row][col] = blocksum;
+					}
+				}
+			}
+
+/* Average the most homogenous pixels for the final result:	*/
+			for (int row = MIN(top,8); row < mrow-8; row++)
+				for (int col = MIN(left,8); col < mcol-8; col++) {
+					uint8_t hm[8];
+					uint8_t maxval = 0;
+					for (d=0; d < 4; d++) {
+						hm[d] = homosum[d][row][col];
+						maxval = (maxval < hm[d] ? hm[d] : maxval);
+					}
+					for (; d < ndir; d++) {
+						hm[d] = homosum[d][row][col];
+						maxval = (maxval < hm[d] ? hm[d] : maxval);
+						if (hm[d-4] < hm[d])
+							hm[d-4] = 0;
+						else if (hm[d-4] > hm[d])
+							hm[d] = 0;
+					}
+					maxval -= maxval >> 3;
+					float avg[4] = {0.f};
+					for (d=0; d < ndir; d++)
+						if (hm[d] >= maxval) {
+							FORC3 avg[c] += rgb[d][row][col][c];
+							avg[3]++;
+						}
+
+					red[row+top][col+left] = (avg[0]/avg[3]);
+					green[row+top][col+left] = (avg[1]/avg[3]);
+					blue[row+top][col+left] = (avg[2]/avg[3]);
+			}
+			
+			if(plistenerActive && ((++progressCounter) % 32 == 0)) {
+#ifdef _OPENMP
+#pragma omp critical (xtransdemosaic)
+#endif
+{
+				progress += progressInc;
+				progress = min(1.0,progress);
+				plistener->setProgress (progress);
+}
+			}
+
+
+		}
+	free(buffer);
+}
+
+}
+
+#undef TS
+
+void RawImageSource::fast_xtrans_interpolate ()
+{
+	if (settings->verbose)
+		printf("fast X-Trans interpolation...\n");
+
+	double progress = 0.0;
+	const bool plistenerActive = plistener;
+  
+ 	if (plistenerActive) {
+		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "fast Xtrans"));
+		plistener->setProgress (progress);
+	}
+
+	const int height = H, width = W;
+
+	xtransborder_interpolate (1);
+	char xtrans[6][6];
+	ri->getXtransMatrix(xtrans);
+
+#pragma omp parallel for
+	for(int row=1;row<height-1;row++) {
+		for(int col=1;col<width-1;col++) {
+			float sum[3] = {0.f};
+			for(int v=-1;v<=1;v++) {
+				for(int h=-1;h<=1;h++) {
+					sum[fcol(row+v,col+h)] += rawData[row+v][(col+h)];
+				}
+			}
+			switch(fcol(row,col)) {
+				case 0: red[row][col] = rawData[row][col];
+						green[row][col] = sum[1] *0.2f;
+						blue[row][col] = sum[2] *0.33333333f;
+						break;
+				case 1: red[row][col] = sum[0] * 0.5f;
+						green[row][col] = rawData[row][col];
+						blue[row][col] = sum[2] * 0.5f;
+						break;
+				case 2:	red[row][col] = sum[0] * 0.33333333f;
+						green[row][col] = sum[1] *0.2f;
+						blue[row][col] = rawData[row][col];
+						break;
+			}
+		}
+	}
+	
+ 	if (plistenerActive) {
+		plistener->setProgress (1.0);
+ 	}
+}
+#undef fcol
+
+
+
 #undef TILEBORDER
 #undef TILESIZE
 #undef CACHESIZE

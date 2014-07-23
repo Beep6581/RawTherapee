@@ -445,10 +445,15 @@ void FlatCurveEditorSubGroup::removeEditor () {
     removeIfThere (parent, CPointsCurveBox, false);
 }
 
-bool FlatCurveEditorSubGroup::curveReset(int cType, double iValue) {
-	switch ((FlatCurveType) cType) {
+bool FlatCurveEditorSubGroup::curveReset(CurveEditor *ce) {
+	if (!ce)
+		return false;
+
+	FlatCurveEditor *fce = static_cast<FlatCurveEditor*>(ce);
+
+	switch (FlatCurveType(ce->selected)) {
 	case (FCT_MinMaxCPoints) :	// = Control cage
-		CPointsCurve->reset (iValue);
+		CPointsCurve->reset (fce->controlPointsResetCurve, fce->getIdentityValue());
 		return true;
 		break;
 	/*case (FCT_Parametric) :

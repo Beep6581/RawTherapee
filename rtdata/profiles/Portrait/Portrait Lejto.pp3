@@ -15,8 +15,8 @@ HighlightComprThreshold=0
 ShadowCompr=50
 CurveMode=Standard
 CurveMode2=SatAndValueBlending
-Curve=1;0;0;0.079285714285714293;0.029999999999999999;0.18041642857142856;0.21375157142857143;0.70232600000000001;0.74883699999999997;1;1;
-Curve2=1;0;0;0.075000000000000691;0.13571428571428609;0.29999999999999999;0.42857142857142855;0.7214285714285712;0.74642857142857144;1;1;
+Curve=1;0;0;0.079285714285714293;0.03;0.18041642857142856;0.21375157142857143;0.702326;0.748837;1;1;
+Curve2=1;0;0;0.075;0.13571428571428609;0.3;0.42857142857142855;0.7214285714285712;0.74642857142857144;1;1;
 
 [HLRecovery]
 Enabled=false
@@ -55,7 +55,7 @@ AfterCurve=0;
 Brightness=0
 Contrast=0
 Chromaticity=0
-AvoidColorShift=true
+AvoidColorShift=false
 RedAndSkinTonesProtection=0
 LCredsk=true
 LCurve=0;
@@ -74,7 +74,7 @@ Pastels=0
 Saturated=0
 PSThreshold=0;75;
 ProtectSkins=false
-AvoidColorShift=true
+AvoidColorShift=false
 PastSatTog=true
 SkinTonesCurve=0;
 

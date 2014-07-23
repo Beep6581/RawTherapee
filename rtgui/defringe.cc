@@ -37,7 +37,7 @@ Defringe::Defringe () : FoldableToolPanel(this)  {
   enabled->set_active (false);
   enabled->set_tooltip_markup (M("TP_SHARPENING_TOOLTIP"));
   
-  enabled->show ();
+ // enabled->show ();
   pack_start (*enabled);
 
   Gtk::HSeparator *hsep1 = Gtk::manage (new  Gtk::HSeparator());
@@ -59,14 +59,16 @@ Defringe::Defringe () : FoldableToolPanel(this)  {
   threshold    = Gtk::manage (new Adjuster (M("TP_DEFRINGE_THRESHOLD"), 0, 100, 1, 13));
   radius->setAdjusterListener (this);
   threshold->setAdjusterListener (this); 
-  radius->show();
-  threshold->show();
+ // radius->show();
+ // threshold->show();
 
   pack_start (*radius);
   pack_start (*threshold);
   curveEditorPF->curveListComplete();
 
   pack_start (*curveEditorPF, Gtk::PACK_SHRINK, 4);
+  
+  show ();
 }
 
 Defringe::~Defringe () {
@@ -115,7 +117,7 @@ void Defringe::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
 void Defringe::autoOpenCurve () {
     // WARNING: The following line won't work, since linear is a flat curve at 0.
-    chshape->openIfNonlinear();
+   // chshape->openIfNonlinear();
 }
 
 void Defringe::write (ProcParams* pp, ParamsEdited* pedited) {

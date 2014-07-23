@@ -51,6 +51,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     sharpenMicro        = Gtk::manage (new SharpenMicro ());
     lcurve              = Gtk::manage (new LCurve ());
     rgbcurves           = Gtk::manage (new RGBCurves ());
+    colortoning         = Gtk::manage (new ColorToning ());
     lensgeom            = Gtk::manage (new LensGeometry ());
     lensProf            = Gtk::manage (new LensProfilePanel ());
     distortion          = Gtk::manage (new Distortion ());
@@ -72,49 +73,73 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     iptcpanel           = Gtk::manage (new IPTCPanel ());
     dirpyrequalizer     = Gtk::manage (new DirPyrEqualizer ());
     hsvequalizer        = Gtk::manage (new HSVEqualizer ());
-    rawprocess          = Gtk::manage (new RawProcess ());
+    sensorbayer         = Gtk::manage (new SensorBayer ());
+    sensorxtrans        = Gtk::manage (new SensorXTrans ());
+    bayerprocess        = Gtk::manage (new BayerProcess ());
+    xtransprocess       = Gtk::manage (new XTransProcess ());
+    bayerpreprocess     = Gtk::manage (new BayerPreProcess ());
     preprocess          = Gtk::manage (new PreProcess ());
     darkframe           = Gtk::manage (new DarkFrame ());
     flatfield           = Gtk::manage (new FlatField ());
     rawcacorrection     = Gtk::manage (new RAWCACorr ());
     rawexposure         = Gtk::manage (new RAWExposure ());
+    bayerrawexposure    = Gtk::manage (new BayerRAWExposure ());
+    xtransrawexposure   = Gtk::manage (new XTransRAWExposure ());
 
-    addPanel (colorPanel, whitebalance,             M("TP_WBALANCE_LABEL"));                toolPanels.push_back (whitebalance);
-    addPanel (exposurePanel, toneCurve,             M("TP_EXPOSURE_LABEL"));                toolPanels.push_back (toneCurve);
-    addPanel (colorPanel, vibrance,                 M("TP_VIBRANCE_LABEL"));                toolPanels.push_back (vibrance);
-    addPanel (colorPanel, chmixer,                  M("TP_CHMIXER_LABEL"));                 toolPanels.push_back (chmixer);
-    addPanel (colorPanel, blackwhite,               M("TP_BWMIX_LABEL"));                   toolPanels.push_back (blackwhite);
-    addPanel (exposurePanel, shadowshighlights,     M("TP_SHADOWSHLIGHTS_LABEL"));          toolPanels.push_back (shadowshighlights);
-    addPanel (detailsPanel, sharpening,             M("TP_SHARPENING_LABEL"), true);        toolPanels.push_back (sharpening);
-    addPanel (detailsPanel, sharpenEdge,            M("TP_SHARPENEDGE_LABEL"), true);       toolPanels.push_back (sharpenEdge);
-    addPanel (detailsPanel, sharpenMicro,           M("TP_SHARPENMICRO_LABEL"), true);      toolPanels.push_back (sharpenMicro);
-    addPanel (colorPanel, hsvequalizer,             M("TP_HSVEQUALIZER_LABEL"));            toolPanels.push_back (hsvequalizer);
-    addPanel (colorPanel, rgbcurves,                M("TP_RGBCURVES_LABEL"));               toolPanels.push_back (rgbcurves);
-    addPanel (exposurePanel, epd,                   M("TP_EPD_LABEL"), true);               toolPanels.push_back (epd);
-    addPanel (exposurePanel, pcvignette,            M("TP_PCVIGNETTE_LABEL"));              toolPanels.push_back (pcvignette);
-    addPanel (exposurePanel, gradient,              M("TP_GRADIENT_LABEL"));                toolPanels.push_back (gradient);
-    addPanel (exposurePanel, lcurve,                M("TP_LABCURVE_LABEL"));                toolPanels.push_back (lcurve);
-    addPanel (exposurePanel, colorappearance,       M("TP_COLORAPP_LABEL"));                toolPanels.push_back (colorappearance);
-    addPanel (detailsPanel, impulsedenoise,         M("TP_IMPULSEDENOISE_LABEL"), true);    toolPanels.push_back (impulsedenoise);
-    addPanel (detailsPanel, dirpyrdenoise,          M("TP_DIRPYRDENOISE_LABEL"), true);     toolPanels.push_back (dirpyrdenoise);
-    addPanel (detailsPanel, defringe,               M("TP_DEFRINGE_LABEL"), true);          toolPanels.push_back (defringe);
-    addPanel (detailsPanel, dirpyrequalizer,        M("TP_DIRPYREQUALIZER_LABEL"), true);   toolPanels.push_back (dirpyrequalizer);
-    addPanel (transformPanel, crop,                 M("TP_CROP_LABEL"));                    toolPanels.push_back (crop);
-    addPanel (transformPanel, resize,               M("TP_RESIZE_LABEL"));                  toolPanels.push_back (resize);
-    addPanel (transformPanel, lensgeom,             M("TP_LENSGEOM_LABEL"));                toolPanels.push_back (lensgeom);
-    addPanel (lensgeom->getPackBox(), rotate,       M("TP_ROTATE_LABEL"));                  toolPanels.push_back (rotate);
-    addPanel (lensgeom->getPackBox(), perspective,  M("TP_PERSPECTIVE_LABEL"));             toolPanels.push_back (perspective);
-    addPanel (lensgeom->getPackBox(), lensProf,     M("TP_LENSPROFILE_LABEL"));             toolPanels.push_back (lensProf);
-    addPanel (lensgeom->getPackBox(), distortion,   M("TP_DISTORTION_LABEL"));              toolPanels.push_back (distortion);
-    addPanel (lensgeom->getPackBox(), cacorrection, M("TP_CACORRECTION_LABEL"));            toolPanels.push_back (cacorrection);
-    addPanel (lensgeom->getPackBox(), vignetting,   M("TP_VIGNETTING_LABEL"));              toolPanels.push_back (vignetting);
-    addPanel (colorPanel, icm,                      M("TP_ICM_LABEL"));                     toolPanels.push_back (icm);
-    addPanel (rawPanel, rawprocess,                 M("TP_RAW_LABEL"), true);               toolPanels.push_back (rawprocess);
-    addPanel (rawPanel, preprocess,                 M("TP_PREPROCESS_LABEL"), true);        toolPanels.push_back (preprocess);
-    addPanel (rawPanel, rawexposure,                M("TP_EXPOSCORR_LABEL"));               toolPanels.push_back (rawexposure);
-    addPanel (rawPanel, darkframe,                  M("TP_DARKFRAME_LABEL"));               toolPanels.push_back (darkframe);
-    addPanel (rawPanel, flatfield,                  M("TP_FLATFIELD_LABEL"));               toolPanels.push_back (flatfield);
-    addPanel (rawPanel, rawcacorrection,            M("TP_CHROMATABERR_LABEL"));            toolPanels.push_back (rawcacorrection);
+    // So Demosaic, Line noise filter, Green Equilibration, Ca-Correction (garder le nom de section identique!) and Black-Level will be moved in a "Bayer sensor" tool,
+    // and a separate Demosaic and Black Level tool will be created in an "X-Trans sensor" tool
+
+    // X-Trans demozaic methods: "3-pass (best), 1-pass (medium), fast"
+    // Mettre à jour les profils fournis pour inclure les nouvelles section Raw, notamment pour "Default High ISO"
+    // Valeurs par défaut:
+    //     Best -> low ISO
+    //     Medium -> High ISO
+
+    addPanel (colorPanel, whitebalance,                       M("TP_WBALANCE_LABEL"));                toolPanels.push_back (whitebalance);
+    addPanel (exposurePanel, toneCurve,                       M("TP_EXPOSURE_LABEL"));                toolPanels.push_back (toneCurve);
+    addPanel (colorPanel, vibrance,                           M("TP_VIBRANCE_LABEL"));                toolPanels.push_back (vibrance);
+    addPanel (colorPanel, chmixer,                            M("TP_CHMIXER_LABEL"));                 toolPanels.push_back (chmixer);
+    addPanel (colorPanel, blackwhite,                         M("TP_BWMIX_LABEL"));                   toolPanels.push_back (blackwhite);
+    addPanel (exposurePanel, shadowshighlights,               M("TP_SHADOWSHLIGHTS_LABEL"));          toolPanels.push_back (shadowshighlights);
+    addPanel (detailsPanel, sharpening,                       M("TP_SHARPENING_LABEL"), true);        toolPanels.push_back (sharpening);
+    addPanel (detailsPanel, sharpenEdge,                      M("TP_SHARPENEDGE_LABEL"), true);       toolPanels.push_back (sharpenEdge);
+    addPanel (detailsPanel, sharpenMicro,                     M("TP_SHARPENMICRO_LABEL"), true);      toolPanels.push_back (sharpenMicro);
+    addPanel (colorPanel, hsvequalizer,                       M("TP_HSVEQUALIZER_LABEL"));            toolPanels.push_back (hsvequalizer);
+    addPanel (colorPanel, rgbcurves,                          M("TP_RGBCURVES_LABEL"));               toolPanels.push_back (rgbcurves);
+	addPanel (colorPanel, colortoning,						  M("TP_COLORTONING_LABEL"));             toolPanels.push_back (colortoning);
+    addPanel (exposurePanel, epd,                             M("TP_EPD_LABEL"), true);               toolPanels.push_back (epd);
+    addPanel (exposurePanel, pcvignette,                      M("TP_PCVIGNETTE_LABEL"));              toolPanels.push_back (pcvignette);
+    addPanel (exposurePanel, gradient,                        M("TP_GRADIENT_LABEL"));                toolPanels.push_back (gradient);
+    addPanel (exposurePanel, lcurve,                          M("TP_LABCURVE_LABEL"));                toolPanels.push_back (lcurve);
+    addPanel (exposurePanel, colorappearance,                 M("TP_COLORAPP_LABEL"));                toolPanels.push_back (colorappearance);
+    addPanel (detailsPanel, impulsedenoise,                   M("TP_IMPULSEDENOISE_LABEL"), true);    toolPanels.push_back (impulsedenoise);
+    addPanel (detailsPanel, dirpyrdenoise,                    M("TP_DIRPYRDENOISE_LABEL"), true);     toolPanels.push_back (dirpyrdenoise);
+    addPanel (detailsPanel, defringe,                         M("TP_DEFRINGE_LABEL"), true);          toolPanels.push_back (defringe);
+    addPanel (detailsPanel, dirpyrequalizer,                  M("TP_DIRPYREQUALIZER_LABEL"), true);   toolPanels.push_back (dirpyrequalizer);
+    addPanel (transformPanel, crop,                           M("TP_CROP_LABEL"));                    toolPanels.push_back (crop);
+    addPanel (transformPanel, resize,                         M("TP_RESIZE_LABEL"));                  toolPanels.push_back (resize);
+    addPanel (transformPanel, lensgeom,                       M("TP_LENSGEOM_LABEL"));                toolPanels.push_back (lensgeom);
+    addPanel (lensgeom->getPackBox(), rotate,                 M("TP_ROTATE_LABEL"));                  toolPanels.push_back (rotate);
+    addPanel (lensgeom->getPackBox(), perspective,            M("TP_PERSPECTIVE_LABEL"));             toolPanels.push_back (perspective);
+    addPanel (lensgeom->getPackBox(), lensProf,               M("TP_LENSPROFILE_LABEL"));             toolPanels.push_back (lensProf);
+    addPanel (lensgeom->getPackBox(), distortion,             M("TP_DISTORTION_LABEL"));              toolPanels.push_back (distortion);
+    addPanel (lensgeom->getPackBox(), cacorrection,           M("TP_CACORRECTION_LABEL"));            toolPanels.push_back (cacorrection);
+    addPanel (lensgeom->getPackBox(), vignetting,             M("TP_VIGNETTING_LABEL"));              toolPanels.push_back (vignetting);
+    addPanel (colorPanel, icm,                                M("TP_ICM_LABEL"));                     toolPanels.push_back (icm);
+    addPanel (rawPanel, sensorbayer,                          M("TP_RAW_SENSOR_BAYER_LABEL"));        toolPanels.push_back (sensorbayer);
+    addPanel (sensorbayer->getPackBox(), bayerprocess,        M("TP_RAW_LABEL"), true);               toolPanels.push_back (bayerprocess);
+    addPanel (sensorbayer->getPackBox(), bayerrawexposure,    M("TP_EXPOS_BLACKPOINT_LABEL"));        toolPanels.push_back (bayerrawexposure);
+    addPanel (sensorbayer->getPackBox(), bayerpreprocess,     M("TP_PREPROCESS_LABEL"), true);        toolPanels.push_back (bayerpreprocess);
+    addPanel (sensorbayer->getPackBox(), rawcacorrection,     M("TP_CHROMATABERR_LABEL"));            toolPanels.push_back (rawcacorrection);
+    addPanel (rawPanel, sensorxtrans,                         M("TP_RAW_SENSOR_XTRANS_LABEL"));       toolPanels.push_back (sensorxtrans);
+    addPanel (sensorxtrans->getPackBox(), xtransprocess,      M("TP_RAW_LABEL"), true);               toolPanels.push_back (xtransprocess);
+    addPanel (sensorxtrans->getPackBox(), xtransrawexposure,  M("TP_EXPOS_BLACKPOINT_LABEL"));        toolPanels.push_back (xtransrawexposure);
+    addPanel (rawPanel, rawexposure,                          M("TP_EXPOS_WHITEPOINT_LABEL"));        toolPanels.push_back (rawexposure);
+    addPanel (rawPanel, preprocess,                           M("TP_PREPROCESS_LABEL"), true);        toolPanels.push_back (preprocess);
+    addPanel (rawPanel, darkframe,                            M("TP_DARKFRAME_LABEL"));               toolPanels.push_back (darkframe);
+    addPanel (rawPanel, flatfield,                            M("TP_FLATFIELD_LABEL"));               toolPanels.push_back (flatfield);
+ 
+ 
 
     toolPanels.push_back (coarse);
     toolPanels.push_back (exifpanel);
@@ -301,7 +326,7 @@ void ToolPanelCoordinator::profileChange  (const PartialProfile *nparams, rtengi
         pe.set(true);
         pe.initFrom (lParams);
 
-        filterRawRefresh=pe.raw.isUnchanged() && pe.lensProf.isUnchanged();
+        filterRawRefresh = pe.raw.isUnchanged() && pe.lensProf.isUnchanged();
     }
 
     *params = *mergedParams;
@@ -363,6 +388,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setAutoExpListener (toneCurve);
         ipc->setAutoCamListener (colorappearance);
         ipc->setAutoBWListener (blackwhite);
+        ipc->setAutoColorTonListener (colortoning);
 
         ipc->setSizeListener (crop);
         ipc->setSizeListener (resize);
@@ -492,6 +518,15 @@ rtengine::RawImage* ToolPanelCoordinator::getFF()
     }
     return NULL;
 }
+
+Glib::ustring ToolPanelCoordinator::GetCurrentImageFilePath()
+{
+	if (!ipc){
+        return "";
+    }
+    return ipc->getInitialImage()->getFileName();
+}
+
 void ToolPanelCoordinator::straightenRequested () {
 
     if (!ipc)

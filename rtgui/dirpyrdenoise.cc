@@ -47,7 +47,11 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
 	
 	gamma	= Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_GAMMA"), 1.0, 3.0, 0.01, 1.7));
 	gamma->set_tooltip_text (M("TP_DIRPYRDENOISE_GAMMA_TOOLTIP"));
-  
+
+	passes	= Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_PASSE"), 1.0, 3.0, 1., 1.));
+	passes->set_tooltip_text (M("TP_DIRPYRDENOISE_PASSES_TOOLTIP"));
+
+	
 	Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
 	hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_DIRPYRDENOISE_METHOD") +": ")),Gtk::PACK_SHRINK, 4);
 	hb1->set_tooltip_markup (M("TP_DIRPYRDENOISE_METHOD_TOOLTIP"));
@@ -73,6 +77,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
 	bluechro->setAdjusterListener (this); 
 	
     gamma->setAdjusterListener (this); 
+    passes->setAdjusterListener (this); 
 	
     luma->show();
     Ldetail->show();
@@ -82,27 +87,59 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
 //	perform->show();
 	gamma->show();
 //	perform->set_active (true);
+	passes->show();
 
 	enhance = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYRDENOISE_ENH")));
 	enhance->set_active (false);
 	enhance->set_tooltip_text (M("TP_DIRPYRDENOISE_ENH_TOOLTIP"));
 
 	median = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYRDENOISE_MED")));
-	median->set_active (false);
+	median->set_active (true);
 	median->set_tooltip_text (M("TP_DIRPYRDENOISE_MED_TOOLTIP"));
 
+	
+	Gtk::HSeparator *hsep2 = Gtk::manage (new  Gtk::HSeparator());
+	hsep2->show ();
+	
+	methodmed = Gtk::manage (new MyComboBoxText ());
+	methodmed->append_text (M("TP_DIRPYRDENOISE_NONE"));
+	methodmed->append_text (M("TP_DIRPYRDENOISE_LM"));
+	methodmed->append_text (M("TP_DIRPYRDENOISE_LABM"));
+	methodmed->append_text (M("TP_DIRPYRDENOISE_RGBM"));
+	methodmed->set_active (0);
+	methodmed->set_tooltip_text (M("TP_DIRPYRDENOISE_METM_TOOLTIP"));
+	methodmedconn = methodmed->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::methodmedChanged) );
+	
+	rgbmethod = Gtk::manage (new MyComboBoxText ());
+	rgbmethod->append_text (M("TP_DIRPYRDENOISE_SOFT"));
+	rgbmethod->append_text (M("TP_DIRPYRDENOISE_33"));
+	rgbmethod->append_text (M("TP_DIRPYRDENOISE_55SOFT"));
+	rgbmethod->set_active (0);
+	rgbmethod->set_tooltip_text (M("TP_DIRPYRDENOISE_MET_TOOLTIP"));
+	rgbmethodconn = rgbmethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::rgbmethodChanged) );
+	
+	
 	medmethod = Gtk::manage (new MyComboBoxText ());
 	medmethod->append_text (M("TP_DIRPYRDENOISE_SOFT"));
 	medmethod->append_text (M("TP_DIRPYRDENOISE_33"));
 	medmethod->append_text (M("TP_DIRPYRDENOISE_55SOFT"));
 	medmethod->append_text (M("TP_DIRPYRDENOISE_55"));
+	medmethod->append_text (M("TP_DIRPYRDENOISE_77"));
 	medmethod->set_active (0);
 	medmethod->set_tooltip_text (M("TP_DIRPYRDENOISE_MET_TOOLTIP"));
 	medmethodconn = medmethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::medmethodChanged) );
 
+	ctboxm = Gtk::manage (new Gtk::HBox ());
+	Gtk::Label* labmm = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_MEDMETHOD")));
+	ctboxm->pack_start (*labmm, Gtk::PACK_SHRINK, 4);
+	
 	ctbox = Gtk::manage (new Gtk::HBox ());
-	Gtk::Label* labm = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_MEDMETHOD")));
+	Gtk::Label* labm = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_MEDTYPE")));
 	ctbox->pack_start (*labm, Gtk::PACK_SHRINK, 4);
+
+	ctboxrgb = Gtk::manage (new Gtk::HBox ());
+	Gtk::Label* labrgb = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_MEDTYPE")));
+	ctboxrgb->pack_start (*labrgb, Gtk::PACK_SHRINK, 4);
 	
 	pack_start (*luma);
 	pack_start (*Ldetail);
@@ -112,14 +149,23 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
 	
 	pack_start (*gamma);
 	pack_start (*enhance);
-	pack_start (*median);
+	
+	pack_start (*hsep2);
+	
+	ctboxm->pack_start (*methodmed);
 	ctbox->pack_start (*medmethod);
+	ctboxrgb->pack_start (*rgbmethod);
+	pack_start (*ctboxm);
 	pack_start (*ctbox);
+	pack_start (*ctboxrgb);
+	pack_start (*passes);
+	
+//	pack_start (*median);
 	
 //	pack_start (*perform);
 	enhanConn = enhance->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrDenoise::enhanceChanged) );
 	medianConn = median->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrDenoise::medianChanged) );
-
+	ctboxrgb->hide();
 }
 
 void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
@@ -128,14 +174,29 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
     dmethodconn.block(true);
     enaConn.block (true);
 	medmethodconn.block(true);
+	rgbmethodconn.block(true);
+	methodmedconn.block(true);
 
     dmethod->set_active (0);
     if (pp->dirpyrDenoise.dmethod=="RGB")
         dmethod->set_active (0);
     else if (pp->dirpyrDenoise.dmethod=="Lab")
         dmethod->set_active (1);
+
+    methodmed->set_active (0);
+    if (pp->dirpyrDenoise.methodmed=="none")
+        methodmed->set_active (0);
+    else if (pp->dirpyrDenoise.methodmed=="Lonly")
+        methodmed->set_active (1);
+    else if (pp->dirpyrDenoise.methodmed=="Lab")
+        methodmed->set_active (2);
+    else if (pp->dirpyrDenoise.methodmed=="RGB")
+        methodmed->set_active (3);
+	methodmedChanged();
 		
     medmethod->set_active (0);
+//    if (pp->dirpyrDenoise.medmethod=="none")
+//        medmethod->set_active (0);
     if (pp->dirpyrDenoise.medmethod=="soft")
         medmethod->set_active (0);
     else if (pp->dirpyrDenoise.medmethod=="33")
@@ -144,14 +205,31 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
         medmethod->set_active (2);
     else if (pp->dirpyrDenoise.medmethod=="55")
         medmethod->set_active (3);
+    else if (pp->dirpyrDenoise.medmethod=="77")
+        medmethod->set_active (4);
+	medmethodChanged();
 		
+    rgbmethod->set_active (0);
+//    if (pp->dirpyrDenoise.medmethod=="none")
+//        medmethod->set_active (0);
+    if (pp->dirpyrDenoise.rgbmethod=="soft")
+        rgbmethod->set_active (0);
+    else if (pp->dirpyrDenoise.rgbmethod=="33")
+        rgbmethod->set_active (1);
+    else if (pp->dirpyrDenoise.rgbmethod=="55soft")
+        rgbmethod->set_active (2);
+	rgbmethodChanged();
 		
 		
     if (pedited) {
         if (!pedited->dirpyrDenoise.dmethod)
             dmethod->set_active (2);
-        if (!pedited->dirpyrDenoise.medmethod)
+        if (!pedited->dirpyrDenoise.rgbmethod)
+            rgbmethod->set_active (2);
+         if (!pedited->dirpyrDenoise.medmethod)
             medmethod->set_active (4);
+		if (!pedited->dirpyrDenoise.methodmed)
+            methodmed->set_active (3);
 			
         luma->setEditedState      (pedited->dirpyrDenoise.luma ? Edited : UnEdited);
         Ldetail->setEditedState   (pedited->dirpyrDenoise.Ldetail ? Edited : UnEdited);
@@ -160,6 +238,7 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
         bluechro->setEditedState    (pedited->dirpyrDenoise.bluechro ? Edited : UnEdited);
 
         gamma->setEditedState     (pedited->dirpyrDenoise.gamma ? Edited : UnEdited);
+        passes->setEditedState     (pedited->dirpyrDenoise.passes ? Edited : UnEdited);
         enabled->set_inconsistent (!pedited->dirpyrDenoise.enabled);
         enhance->set_inconsistent (!pedited->dirpyrDenoise.enhance);
         median->set_inconsistent (!pedited->dirpyrDenoise.median);
@@ -183,11 +262,15 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
     bluechro->setValue  (pp->dirpyrDenoise.bluechro);
 
     gamma->setValue   (pp->dirpyrDenoise.gamma);
+    passes->setValue   (pp->dirpyrDenoise.passes);
 
     enaConn.block (false);
     dmethodconn.block(false);
     medmethodconn.block(false);
+    rgbmethodconn.block(false);
+    methodmedconn.block(false);
     enableListener ();
+
 }
 
 void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
@@ -198,6 +281,7 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
 	pp->dirpyrDenoise.redchro	= redchro->getValue ();
 	pp->dirpyrDenoise.bluechro	= bluechro->getValue ();
 	pp->dirpyrDenoise.gamma		= gamma->getValue ();
+	pp->dirpyrDenoise.passes	= passes->getValue ();
 	pp->dirpyrDenoise.enabled   = enabled->get_active();
 	pp->dirpyrDenoise.enhance   = enhance->get_active();
 //	pp->dirpyrDenoise.perform   = perform->get_active();
@@ -205,13 +289,16 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
 	
     if (pedited) {
         pedited->dirpyrDenoise.dmethod  = dmethod->get_active_row_number() != 2;
-        pedited->dirpyrDenoise.medmethod  = medmethod->get_active_row_number() != 3;
+        pedited->dirpyrDenoise.medmethod  = medmethod->get_active_row_number() != 4;
+        pedited->dirpyrDenoise.rgbmethod  = rgbmethod->get_active_row_number() != 2;
+        pedited->dirpyrDenoise.methodmed  = methodmed->get_active_row_number() != 3;
         pedited->dirpyrDenoise.luma     = luma->getEditedState ();
         pedited->dirpyrDenoise.Ldetail  = Ldetail->getEditedState ();
         pedited->dirpyrDenoise.chroma   = chroma->getEditedState ();
         pedited->dirpyrDenoise.redchro  = redchro->getEditedState ();
         pedited->dirpyrDenoise.bluechro = bluechro->getEditedState ();
         pedited->dirpyrDenoise.gamma    = gamma->getEditedState ();
+        pedited->dirpyrDenoise.passes    = passes->getEditedState ();
         pedited->dirpyrDenoise.enabled  = !enabled->get_inconsistent();
         pedited->dirpyrDenoise.enhance  = !enhance->get_inconsistent();
         pedited->dirpyrDenoise.median  = !median->get_inconsistent();
@@ -221,7 +308,20 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
         pp->dirpyrDenoise.dmethod = "RGB";
     else if (dmethod->get_active_row_number()==1)
         pp->dirpyrDenoise.dmethod = "Lab";
+
+		if (methodmed->get_active_row_number()==0)
+        pp->dirpyrDenoise.methodmed = "none";	
+    else if (methodmed->get_active_row_number()==1)
+        pp->dirpyrDenoise.methodmed = "Lonly";
+    else if (methodmed->get_active_row_number()==2)
+        pp->dirpyrDenoise.methodmed = "Lab";
+    else if (methodmed->get_active_row_number()==3)
+        pp->dirpyrDenoise.methodmed = "RGB";
+
+
 		
+ //   if (medmethod->get_active_row_number()==0)
+ //       pp->dirpyrDenoise.medmethod = "none";	
     if (medmethod->get_active_row_number()==0)
         pp->dirpyrDenoise.medmethod = "soft";
     else if (medmethod->get_active_row_number()==1)
@@ -230,6 +330,15 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
         pp->dirpyrDenoise.medmethod = "55soft";
     else if (medmethod->get_active_row_number()==3)
         pp->dirpyrDenoise.medmethod = "55";
+    else if (medmethod->get_active_row_number()==4)
+        pp->dirpyrDenoise.medmethod = "77";
+
+    if (rgbmethod->get_active_row_number()==0)
+        pp->dirpyrDenoise.rgbmethod = "soft";
+    else if (rgbmethod->get_active_row_number()==1)
+        pp->dirpyrDenoise.rgbmethod = "33";
+    else if (rgbmethod->get_active_row_number()==2)
+        pp->dirpyrDenoise.rgbmethod = "55soft";
 		
 }
 
@@ -241,12 +350,31 @@ void DirPyrDenoise::dmethodChanged () {
 }
 
 void DirPyrDenoise::medmethodChanged () {
-
+	
+	
 	if (listener && (multiImage||enabled->get_active()) ) {
 		listener->panelChanged (EvDPDNmedmet, medmethod->get_active_text ());
 	}
 }
 
+void DirPyrDenoise::rgbmethodChanged () {
+	ctboxrgb->hide();
+	if(methodmed->get_active_row_number()==3) ctboxrgb->show();
+	if (listener && (multiImage||enabled->get_active()) ) {
+		listener->panelChanged (EvDPDNrgbmet, rgbmethod->get_active_text ());
+	}
+}
+
+
+
+void DirPyrDenoise::methodmedChanged () {
+	if(methodmed->get_active_row_number()==3) {ctboxrgb->show();ctbox->hide();}
+	else {ctboxrgb->hide();ctbox->show();}
+
+	if (listener && (multiImage||enabled->get_active()) ) {
+		listener->panelChanged (EvDPDNmetmed, methodmed->get_active_text ());
+	}
+}
 
 void DirPyrDenoise::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
 	
@@ -256,6 +384,7 @@ void DirPyrDenoise::setDefaults (const ProcParams* defParams, const ParamsEdited
 	redchro->setDefault  (defParams->dirpyrDenoise.redchro);
 	bluechro->setDefault  (defParams->dirpyrDenoise.bluechro);
 	gamma->setDefault   (defParams->dirpyrDenoise.gamma);
+	passes->setDefault   (defParams->dirpyrDenoise.passes);
 
     if (pedited) {
     	luma->setDefaultEditedState     (pedited->dirpyrDenoise.luma ? Edited : UnEdited);
@@ -264,6 +393,7 @@ void DirPyrDenoise::setDefaults (const ProcParams* defParams, const ParamsEdited
     	redchro->setDefaultEditedState   (pedited->dirpyrDenoise.redchro ? Edited : UnEdited);
     	bluechro->setDefaultEditedState   (pedited->dirpyrDenoise.bluechro ? Edited : UnEdited);
 		gamma->setDefaultEditedState    (pedited->dirpyrDenoise.gamma ? Edited : UnEdited);
+		passes->setDefaultEditedState    (pedited->dirpyrDenoise.passes ? Edited : UnEdited);
    }
     else {
     	luma->setDefaultEditedState     (Irrelevant);
@@ -272,6 +402,7 @@ void DirPyrDenoise::setDefaults (const ProcParams* defParams, const ParamsEdited
     	redchro->setDefaultEditedState   (Irrelevant);
     	bluechro->setDefaultEditedState   (Irrelevant);
         gamma->setDefaultEditedState    (Irrelevant);
+        passes->setDefaultEditedState    (Irrelevant);
     }
 }
 
@@ -293,6 +424,8 @@ void DirPyrDenoise::adjusterChanged (Adjuster* a, double newval) {
             listener->panelChanged (EvDPDNbluechro, costr);		
         else if (a==gamma)
 			listener->panelChanged (EvDPDNGamma, costr);
+        else if (a==passes)
+			listener->panelChanged (EvDPDNpasses, costr);
 	}
 }
 
@@ -399,12 +532,15 @@ void DirPyrDenoise::setBatchMode (bool batchMode) {
     redchro->showEditedCB ();
     bluechro->showEditedCB ();
     gamma->showEditedCB ();
+    passes->showEditedCB ();
     dmethod->append_text (M("GENERAL_UNCHANGED"));
     medmethod->append_text (M("GENERAL_UNCHANGED"));
+    methodmed->append_text (M("GENERAL_UNCHANGED"));
+    rgbmethod->append_text (M("GENERAL_UNCHANGED"));
 	
 }
 
-void DirPyrDenoise::setAdjusterBehavior (bool lumaadd, bool lumdetadd, bool chromaadd, bool chromaredadd, bool chromablueadd, bool gammaadd) {
+void DirPyrDenoise::setAdjusterBehavior (bool lumaadd, bool lumdetadd, bool chromaadd, bool chromaredadd, bool chromablueadd, bool gammaadd, bool passesadd) {
 
 	luma->setAddMode(lumaadd);
 	Ldetail->setAddMode(lumdetadd);
@@ -412,6 +548,8 @@ void DirPyrDenoise::setAdjusterBehavior (bool lumaadd, bool lumdetadd, bool chro
 	redchro->setAddMode(chromaredadd);
 	bluechro->setAddMode(chromablueadd);
 	gamma->setAddMode(gammaadd);
+	passes->setAddMode(passesadd);
+	
 }
 
 void DirPyrDenoise::trimValues (rtengine::procparams::ProcParams* pp) {
@@ -422,4 +560,5 @@ void DirPyrDenoise::trimValues (rtengine::procparams::ProcParams* pp) {
 	redchro->trimValue(pp->dirpyrDenoise.redchro);
 	bluechro->trimValue(pp->dirpyrDenoise.bluechro);
 	gamma->trimValue(pp->dirpyrDenoise.gamma);
+	passes->trimValue(pp->dirpyrDenoise.passes);
 }

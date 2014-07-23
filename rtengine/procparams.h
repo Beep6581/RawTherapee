@@ -29,6 +29,10 @@
 class ParamsEdited;
 
 namespace rtengine {
+
+class ColorGradientCurve;
+class OpacityCurve;
+
 namespace procparams {
 
 template <typename T>
@@ -44,36 +48,36 @@ class Threshold {
 #endif
 
     public:
-        Threshold (T val1, T val2, bool startAtOne) {
+        Threshold (T bottom, T top, bool startAtOne) {
             initEq1 = startAtOne;
-            value[0] = val1;
-            value[1] = val2;
+            value[0] = bottom;
+            value[1] = top;
             value[2] = T(0);
             value[3] = T(0);
             _isDouble = false;
         }
 
-        Threshold (T val1, T val2, T val3, T val4, bool startAtOne) {
+        Threshold (T bottomLeft, T topLeft, T bottomRight, T topRight, bool startAtOne) {
             initEq1 = startAtOne;
-            value[0] = val1;
-            value[1] = val2;
-            value[2] = val3;
-            value[3] = val4;
+            value[0] = bottomLeft;
+            value[1] = topLeft;
+            value[2] = bottomRight;
+            value[3] = topRight;
             _isDouble = true;
         }
 
         // for convenience, since 'values' is public
-        void setValues(T val1, T val2) {
-            value[0] = val1;
-            value[1] = val2;
+        void setValues(T bottom, T top) {
+            value[0] = bottom;
+            value[1] = top;
         }
 
         // for convenience, since 'values' is public
-        void setValues(T val1, T val2, T val3, T val4) {
-            value[0] = val1;
-            value[1] = val2;
-            value[2] = val3;
-            value[3] = val4;
+        void setValues(T bottomLeft, T topLeft, T bottomRight, T topRight) {
+            value[0] = bottomLeft;
+            value[1] = topLeft;
+            value[2] = bottomRight;
+            value[3] = topRight;
         }
 
         bool isDouble() const { return _isDouble; }
@@ -245,6 +249,72 @@ class RGBCurvesParams {
 };
 
 /**
+  * Parameters of the Color Toning
+  */
+
+class ColorToningParams {
+
+    public:
+        bool enabled;
+		bool autosat;
+        std::vector<double> opacityCurve;
+        std::vector<double> colorCurve;
+        int satProtectionThreshold;
+        int saturatedOpacity;
+		int strengthprotection;
+        int balance;
+        Threshold<int> hlColSat;
+        Threshold<int> shadowsColSat;
+        std::vector<double> clcurve;
+        std::vector<double> cl2curve;
+
+        /* Can be either:
+         *  Splitlr    :
+         *  Splitco    :
+         *  Splitbal   :
+         *  Lab        :
+         *  Lch        :
+         *  RGBSliders :
+         *  RGBCurves  :
+         */
+        Glib::ustring method;
+
+        /* Can be either:
+         * Std   :
+         * All   :
+         * Separ :
+         * Two   :
+         */
+        Glib::ustring twocolor;
+        double redlow;
+        double greenlow;
+        double bluelow;
+        double redmed;
+        double greenmed;
+        double bluemed;
+        double redhigh;
+        double greenhigh;
+        double bluehigh;
+        double satlow;
+        double sathigh;
+        bool lumamode;
+
+        ColorToningParams ();
+        void setDefault();  // SHOULD BE GENERALIZED TO ALL CLASSES!
+        /// @brief Transform the mixer values to their curve equivalences
+        void mixerToCurve(std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const;
+        /// @brief Specifically transform the sliders values to their curve equivalences
+        void slidersToCurve(std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const;
+        /// @brief Fill the ColorGradientCurve and OpacityCurve LUTf from the control points curve or sliders value
+        void getCurves(ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3]) const;
+
+        static void getDefaultColorCurve(std::vector<double> &curve);
+        static void getDefaultOpacityCurve(std::vector<double> &curve);
+        static void getDefaultCLCurve(std::vector<double> &curve);
+        static void getDefaultCL2Curve(std::vector<double> &curve);
+};
+
+/**
   * Parameters of the sharpening
   */
 class SharpeningParams {
@@ -357,10 +427,10 @@ class WBParams {
         static void     cleanup();
 };
 
-    /**
-     * Parameters of colorappearance
-     */
-    class ColorAppearanceParams {
+/**
+ * Parameters of colorappearance
+ */
+class ColorAppearanceParams {
 
     public:
         enum eTCModeId {
@@ -484,6 +554,9 @@ class DirPyrDenoiseParams {
         double  gamma;
         Glib::ustring dmethod;
         Glib::ustring medmethod;
+        Glib::ustring methodmed;
+        Glib::ustring rgbmethod;
+        int  passes;
 };
 
 //EPD related parameters.
@@ -722,13 +795,12 @@ class ColorManagementParams {
         int dcpIlluminant;
         Glib::ustring working;
         Glib::ustring output;
-        static const Glib::ustring NoICMString;      
-        
+        static const Glib::ustring NoICMString;
+
         Glib::ustring gamma;
-		double gampos;
-		double slpos;
-		bool freegamma;
-		
+        double gampos;
+        double slpos;
+        bool freegamma;
 };
 
 /**
@@ -745,82 +817,106 @@ typedef std::map<Glib::ustring, std::vector<Glib::ustring> > IPTCPairs;
 * Directional pyramid equalizer params
 */
 class DirPyrEqualizerParams {
-	
-	public:
-		bool enabled;
-		bool gamutlab;
-		double mult[5];
-		double threshold;
-		double skinprotect;
-		Threshold<int> hueskin;
-	//	Glib::ustring algo;
 
-		DirPyrEqualizerParams() : hueskin(20, 80, 2000, 1200, false) {};
+    public:
+        bool enabled;
+        bool gamutlab;
+        double mult[5];
+        double threshold;
+        double skinprotect;
+        Threshold<int> hueskin;
+        //Glib::ustring algo;
+
+        DirPyrEqualizerParams() : hueskin(20, 80, 2000, 1200, false) {};
 };
 
 /**
  * HSV equalizer params
  */
 class HSVEqualizerParams {
-	
-	public:
-		std::vector<double>   hcurve;
-		std::vector<double>   scurve;
-		std::vector<double>   vcurve;
-		
+
+    public:
+        std::vector<double>   hcurve;
+        std::vector<double>   scurve;
+        std::vector<double>   vcurve;
 };
 
-
-
 /**
-  * Parameters for RAW demosaicing
+  * Parameters for RAW demosaicing, common to all sensor type
   */
 class RAWParams {
 
     public:
-	//	enum eMethod{eahd,hphd,vng4,dcb,amaze,ahd,IGV_noise,fast,
-	//				numMethods }; // This MUST be the last enum
-		enum eMethod{amaze,igv,lmmse,eahd,hphd,vng4,dcb,ahd,fast,mono,none,
-					numMethods }; // This MUST be the last enum
-					
-		static const char *methodstring[numMethods];
+        /**
+         * Parameters for RAW demosaicing specific to Bayer sensors
+         */
+        class BayerSensor {
+            public:
+                //enum eMethod{ eahd,hphd,vng4,dcb,amaze,ahd,IGV_noise,fast,
+                              //numMethods }; // This MUST be the last enum
+                enum eMethod{ amaze, igv, lmmse, eahd, hphd, vng4, dcb, ahd, fast, mono, none,
+                              numMethods }; // This MUST be the last enum
+                static const char *methodstring[numMethods];
 
-		enum eFlatFileBlurType{/*parametric,*/area_ff,v_ff,h_ff,vh_ff,
-								numFlatFileBlurTypes }; // This MUST be the last enum
-		static const char *ff_BlurTypestring[numFlatFileBlurTypes];
-	
+                Glib::ustring method;
+                int ccSteps;
+                double black0;
+                double black1;
+                double black2;
+                double black3;
+                bool twogreen;
+                int linenoise;
+                int greenthresh;
+                int dcb_iterations;
+                int lmmse_iterations;
+                bool dcb_enhance;
+                //bool all_enhance;
+        };
 
-	    Glib::ustring dark_frame;
-	    bool df_autoselect;
-	
-		Glib::ustring ff_file;
-		bool ff_AutoSelect;
-		int ff_BlurRadius;
-		Glib::ustring ff_BlurType;
-	
-		bool ca_autocorrect;
-		double cared;
-		double cablue;
+        /**
+         * Parameters for RAW demosaicing specific to X-Trans sensors
+         */
+        class XTransSensor {
+            public:
+            enum eMethod{ threePass, onePass, fast, mono, none,
+            numMethods }; // This MUST be the last enum
+            static const char *methodstring[numMethods];
 
-		// exposure before interpolation
-		double expos;
-		double preser; 
-		double blackzero;
-		double blackone;
-		double blacktwo;
-		double blackthree;
-		bool twogreen;
-		bool hotdeadpix_filt;
-		int hotdeadpix_thresh;
-		int	linenoise;
-		int greenthresh;
-        int ccSteps;
-        Glib::ustring dmethod;
-        int dcb_iterations;
-        int lmmse_iterations;
-		
-        bool dcb_enhance;
-        //bool all_enhance;
+            Glib::ustring method;
+            int ccSteps;
+            double blackred;
+            double blackgreen;
+            double blackblue;
+        };
+
+        BayerSensor bayersensor;         ///< RAW parameters for Bayer sensors
+        XTransSensor xtranssensor;       ///< RAW parameters for X-Trans sensors
+
+        enum eFlatFileBlurType{ /*parametric,*/area_ff,v_ff,h_ff,vh_ff,
+                                numFlatFileBlurTypes }; // This MUST be the last enum
+
+        static const char *ff_BlurTypestring[numFlatFileBlurTypes];
+
+        Glib::ustring dark_frame;
+        bool df_autoselect;
+
+        Glib::ustring ff_file;
+        bool ff_AutoSelect;
+        int ff_BlurRadius;
+        Glib::ustring ff_BlurType;
+        bool ff_AutoClipControl;
+        int ff_clipControl;
+
+        bool ca_autocorrect;
+        double cared;
+        double cablue;
+
+        // exposure before interpolation
+        double expos;
+        double preser;
+
+        bool hotdeadpix_filt;
+        int hotdeadpix_thresh;
 };
 
 /**
@@ -832,6 +928,7 @@ class ProcParams {
         ToneCurveParams         toneCurve;       ///< Tone curve parameters
         LCurveParams            labCurve;        ///< CIELAB luminance curve parameters
         RGBCurvesParams         rgbCurves;       ///< RGB curves parameters
+        ColorToningParams       colorToning;     ///< Color Toning parameters
         SharpeningParams        sharpening;      ///< Sharpening parameters
         SharpenEdgeParams       sharpenEdge;     ///< Sharpen edge parameters
         SharpenMicroParams      sharpenMicro;    ///< Sharpen microcontrast parameters

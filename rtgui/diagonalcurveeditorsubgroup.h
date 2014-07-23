@@ -81,6 +81,8 @@ public:
 	void pipetteButton1Released(EditDataProvider *provider);
 	void pipetteDrag(EditDataProvider *provider, int modifierKey);
 
+	bool curveReset (CurveEditor *ce);
+
 protected:
 	void storeCurveValues (CurveEditor* ce, const std::vector<double>& p);
 	void storeDisplayedCurve ();
@@ -90,7 +92,6 @@ protected:
 	void copyPressed ();
 	void pastePressed ();
 	void editToggled (Gtk::ToggleButton *button);
-	bool curveReset (int cType, double iValue);
 	void removeEditor ();
 	const std::vector<double> getCurveFromGUI (int type);
 	void shcChanged ();

@@ -20,20 +20,17 @@
 #define _PREPROCESS_H_
 
 #include <gtkmm.h>
-#include "adjuster.h"
+//#include "adjuster.h"
 #include "toolpanel.h"
 #include "../rtengine/rawimage.h"
 
-class PreProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
+class PreProcess : public ToolParamBlock, /*public AdjusterListener,*/ public FoldableToolPanel {
 
   protected:
 
-    Adjuster* lineDenoise;
-
-    Adjuster* greenEqThreshold;
     Gtk::CheckButton* hotDeadPixel;
-	bool lastHot;
-	sigc::connection hdpixelconn;
+    bool lastHot;
+    sigc::connection hdpixelconn;
 
   public:
 
@@ -41,13 +38,14 @@ class PreProcess : public ToolParamBlock, public AdjusterListener, public Foldab
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setBatchMode   (bool batchMode);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    //void setBatchMode   (bool batchMode);
+    //void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
 
-    void adjusterChanged     (Adjuster* a, double newval);
     void hotDeadPixelChanged();
-    void setAdjusterBehavior (bool linedenoiseadd, bool greenequiladd);
-    void trimValues          (rtengine::procparams::ProcParams* pp);
+
+    //void adjusterChanged     (Adjuster* a, double newval);
+    //void setAdjusterBehavior (bool linedenoiseadd, bool greenequiladd);
+    //void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 
 #endif

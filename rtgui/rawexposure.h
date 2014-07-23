@@ -29,13 +29,6 @@ class RAWExposure : public ToolParamBlock, public AdjusterListener, public Folda
 protected:
 	Adjuster* PexPos;
 	Adjuster* PexPreser;
-	Adjuster* PexBlackzero;
-	Adjuster* PexBlackone;
-	Adjuster* PexBlacktwo;
-	Adjuster* PexBlackthree;
-	bool lastPextwoGreen;
-	sigc::connection  greenconn;
-	Gtk::CheckButton*  PextwoGreen;
 
 private:
 //	Gtk::CheckButton*  PextwoGreen;
@@ -47,9 +40,8 @@ public:
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
-    void GreenChanged() ;
     void adjusterChanged     (Adjuster* a, double newval);
-    void setAdjusterBehavior (bool pexposadd, bool pexpreseradd, bool pexblackadd);
+    void setAdjusterBehavior (bool pexposadd, bool pexpreseradd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 

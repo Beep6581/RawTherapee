@@ -25,6 +25,10 @@
 //		     Jacques Desmis <jdesmis@gmail.com>
 //   	     use fast-demo(provisional) from Emil Martinec
 //			 inspired from work Guillermo Luijk and Manuel LLorens(Perfectraw)
+//			 Ingo Weyrich (2014-07-07)
+//			    optimized the highlight protection case
+//				needs 2*width*height*sizeof(float) byte less memory than before
+//			    needs about 60% less processing time than before
 //
 // This function uses parameters:
 //      exposure (linear): 2^(-8..0..8): currently 0.5 +3
@@ -34,7 +38,6 @@
 #include "rawimagesource.h"
 #include "mytime.h"
 #include "rt_math.h"
-#include "../rtgui/options.h"
 
 namespace rtengine {
 
@@ -42,122 +45,107 @@ extern const Settings* settings;
 
 void RawImageSource::processRawWhitepoint(float expos, float preser) {
 	MyTime t1e,t2e;
-	t1e.set();
+	if (settings->verbose)
+		t1e.set();
 	
 	int width=W, height=H;
-	
     // exposure correction inspired from G.Luijk
-    if (fabs(preser)<0.001) {	
+
+	for (int c=0; c<4; c++)
+		chmax[c] *= expos;
+
+    if (fabs(preser)<0.001f) {
         // No highlight protection - simple mutiplication
-		for (int c=0; c<4; c++) chmax[c] *= expos;
 
-        #pragma omp parallel for
-        for (int row=0;row<height;row++)
-            for (int col=0;col<width;col++) {
-                if (ri->isBayer()) {
-                rawData[row][col] *= expos;
-                } else {
-                    rawData[row][col*3] *= expos;
-                    rawData[row][col*3+1] *= expos;
-                    rawData[row][col*3+2] *= expos;
-                }
-			}
+        if (ri->getSensorType()!=ST_NONE)
+			#pragma omp parallel for
+			for (int row=0;row<height;row++)
+				for (int col=0;col<width;col++)
+					rawData[row][col] *= expos;
+		else
+			#pragma omp parallel for
+			for (int row=0;row<height;row++)
+				for (int col=0;col<width;col++) {
+					rawData[row][col*3] *= expos;
+					rawData[row][col*3+1] *= expos;
+					rawData[row][col*3+2] *= expos;
+				}
     } else {
-		// calculate CIE luminosity
-        float* luminosity = (float *) new float[width*height];
-
-        if (ri->isBayer()) {
-        // save old image as it's overwritten by demosaic
-        float** imgd = allocArray< float >(W,H); 
-		
-        // with memcpy it's faster than for (...)
-        for (int i=0; i<H; i++) memcpy (imgd[i], rawData[i], W*sizeof(**imgd));
-		
-        // Demosaic to calc luminosity
-        fast_demosaic (0,0,W,H);
-		
-            // CIE luminosity
-            #pragma omp parallel for  
-			for(int row=0;row<height;row++)
-				for(int col=0;col<width;col++)
-                    luminosity[row*width+col] = 
-                    0.299f * (float)red[row][col] + 0.587f * (float)green[row][col] + 0.114f * (float)blue[row][col]; 
-		
-        // restore image destroyed by demosaic
-        for (int i=0; i<H; i++) memcpy (rawData[i], imgd[i], W*sizeof(**imgd));
-        freeArray<float>(imgd, H);
-        } else {
-            // Non-Bayers are already RGB
-            
-            // CIE luminosity
-            #pragma omp parallel for  
-			for(int row=0;row<height;row++)
-				for(int col=0;col<width;col++)
-                    luminosity[row*width+col] = 
-                    0.299f * (float)rawData[row][col*3] + 0.587f * (float)rawData[row][col*3+1] + 0.114f * (float)rawData[row][col*3+2]; 
+        if (ri->getSensorType()!=ST_NONE) {
+			// Demosaic to allow calculation of luminosity.
+			if(ri->getSensorType()==ST_BAYER)
+				fast_demosaic (0,0,W,H);
+			else
+				fast_xtrans_interpolate();
         }
 		
         // Find maximum to adjust LUTs. New float engines clips only at the very end
-        int maxVal=0;
-		for(int row=0;row<height;row++)
-			for (int col=0;col<width;col++) {
-                if (ri->isBayer()) {
-                if (rawData[row][col]>maxVal) maxVal = rawData[row][col];
-                } else {
-                    for (int c=0;c<3;c++) if (rawData[row][col*3+c]>maxVal) maxVal = rawData[row][col*3+c];
+        float maxValFloat = 0.f;
+#pragma omp parallel
+{
+		float maxValFloatThr = 0.f;
+        if (ri->getSensorType()!=ST_NONE)
+#pragma omp for schedule(dynamic,16) nowait
+			for(int row=0;row<height;row++)
+				for (int col=0;col<width;col++) {
+					if (rawData[row][col]>maxValFloatThr)
+						maxValFloatThr = rawData[row][col];
+				}
+		else
+#pragma omp for schedule(dynamic,16) nowait
+			for(int row=0;row<height;row++)
+				for (int col=0;col<width;col++) {
+                    for (int c=0;c<3;c++) if (rawData[row][col*3+c]>maxValFloatThr)
+						maxValFloatThr = rawData[row][col*3+c];
                 }
-            }
-		
+
+#pragma omp critical
+{
+		if(maxValFloatThr > maxValFloat)
+			maxValFloat = maxValFloatThr;
+}
+}
+
 		// Exposure correction with highlight preservation
+		int maxVal = maxValFloat;
         LUTf lut(maxVal+1);
+        float K;
 		if(expos>1){
             // Positive exposure
-
-            float K = (float) maxVal / expos*exp(-preser*log(2.0));
+            K = (float) maxVal / expos*exp(-preser*log(2.0));
             for (int j=0;j<=maxVal;j++) 
                 lut[(int)j]=(((float)maxVal-K*expos)/((float)maxVal-K)*(j-maxVal)+(float) maxVal) / j;
-			
-			for (int c=0; c<4; c++) chmax[c] *= expos;
-			
-            #pragma omp parallel for
-			for(int row=0;row<height;row++)
-				for(int col=0;col<width;col++){
-                    float fac = luminosity[row*width + col] < K ? expos : lut[luminosity[row*width+col]];
-                    
-                    if (ri->isBayer()) {
-                        rawData[row][col] *= fac;
-                    } else {
-                        for (int c=0;c<3;c++) rawData[row][col*3+c] *= fac;
-					}
-                }
         } else {
             // Negative exposure
 			float EV=log(expos)/log(2.0);                              // Convert exp. linear to EV
-            float K = (float)maxVal * exp(-preser * log(2.0));
+            K = (float)maxVal * exp(-preser * log(2.0));
 			
             for (int j=0;j<=maxVal;j++) 
                 lut[(int)j] = exp(EV*((float)maxVal-j) / ((float)maxVal-K) * log(2.0));
-			
-            #pragma omp parallel for
+        }	
+
+		if (ri->getSensorType()!=ST_NONE)
+			#pragma omp parallel for schedule(dynamic,16)
 			for(int row=0;row<height;row++)
 				for(int col=0;col<width;col++){
-                    float fac = luminosity[row*width + col] < K ? expos : lut[luminosity[row*width+col]];
-
-                    if (ri->isBayer()) {
-                        rawData[row][col] *= fac;
-                    } else {
-                        for (int c=0;c<3;c++) rawData[row][col*3+c] *= fac;
-			}
-        }	
+					float lumi = 0.299f * red[row][col] + 0.587f * green[row][col] + 0.114f * blue[row][col];
+					rawData[row][col] *= lumi < K ? expos : lut[lumi];
+				}
+		else
+			#pragma omp parallel for
+			for(int row=0;row<height;row++)
+				for(int col=0;col<width;col++){
+					float lumi = 0.299f * rawData[row][col*3] + 0.587f * rawData[row][col*3+1] + 0.114f * rawData[row][col*3+2];
+					float fac = lumi < K ? expos : lut[lumi];
+					for (int c=0;c<3;c++)
+						rawData[row][col*3+c] *= fac;
+				}
 		
-			for (int c=0; c<4; c++) chmax[c] *= expos;
-        }	
-		
-        delete[] luminosity;
     }
-	t2e.set();
-	if (settings->verbose)
-		printf("Exposure before  %d usec\n", t2e.etime(t1e));
+	if (settings->verbose) {
+		t2e.set();
+		printf("Exposure before %d usec\n", t2e.etime(t1e));
+	}
 	
 }
 

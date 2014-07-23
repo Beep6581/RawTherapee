@@ -15,7 +15,7 @@ HighlightComprThreshold=0
 ShadowCompr=50
 CurveMode=FilmLike
 CurveMode2=Standard
-Curve=1;0;0;0.443;0.57399999999999995;1;1;
+Curve=1;0;0;0.443;0.574;1;1;
 Curve2=0;
 
 [HLRecovery]
@@ -55,7 +55,7 @@ AfterCurve=0;
 Brightness=-20
 Contrast=-20
 Chromaticity=0
-AvoidColorShift=true
+AvoidColorShift=false
 RedAndSkinTonesProtection=50
 LCredsk=true
 LCurve=3;0;0;0.042700000000000002;0.014;0.16200000000000001;0.16200000000000001;0.54700000000000004;0.93300000000000005;1;1;
@@ -74,7 +74,7 @@ Pastels=0
 Saturated=0
 PSThreshold=75;75;
 ProtectSkins=false
-AvoidColorShift=true
+AvoidColorShift=false
 PastSatTog=true
 SkinTonesCurve=0;
 

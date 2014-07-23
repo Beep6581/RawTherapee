@@ -16,6 +16,7 @@
 #16 2014-04-07 firefly
 #17 2014-04-08 firefly
 #18 2014-05-16 firefly
+#19 2014-07-13 firefly
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -236,6 +237,7 @@ HISTORY_CUSTOMCURVE;カスタムカーブ
 HISTORY_DELSNAPSHOT;削除
 HISTORY_FROMCLIPBOARD;クリップボードから
 HISTORY_LABEL;履歴
+HISTORY_MGS_256;ノイズ低減　-　メディアン法
 HISTORY_MSG_1;写真を読み込みました
 HISTORY_MSG_2;PP3を読み込みました
 HISTORY_MSG_3;PP3を変更しました
@@ -489,7 +491,44 @@ HISTORY_MSG_251;白黒 - アルゴリズム
 HISTORY_MSG_252;ディテールレベルのコントラスト　肌色トーン
 HISTORY_MSG_253;ディテールレベルのコントラスト　アーティファクトを軽減
 HISTORY_MSG_254;ディテールレベルのコントラスト　肌色の色相
-HISTORY_MSG_255;ディテールレベルのコントラスト　アルゴリズム
+HISTORY_MSG_255;ノイズ低減　-　メディアン
+HISTORY_MSG_257;カラートーン調整
+HISTORY_MSG_258;カラートーン調整　-　カラー
+HISTORY_MSG_259;カラートーン調整　-　不透明度
+HISTORY_MSG_260;カラートーン調整　-　不透明度 
+HISTORY_MSG_261;カラートーン調整　-　方法
+HISTORY_MSG_262;カラートーン調整　-　不透明度
+HISTORY_MSG_263;カラートーン調整　-　シャドウのレッド
+HISTORY_MSG_263;カラートーン調整　-　明度
+HISTORY_MSG_264;カラートーン調整　-　シャドウのグリーン
+HISTORY_MSG_265;カラートーン調整　-　シャドウのブルー
+HISTORY_MSG_266;カラートーン調整　-　ミッドのレッド
+HISTORY_MSG_267;カラートーン調整　-　ミッドのグリーン
+HISTORY_MSG_268;カラートーン調整　-　ミッドのブルー
+HISTORY_MSG_269;カラートーン調整　-　ハイライトのレッド
+HISTORY_MSG_270;カラートーン調整　-　ハイライトのグリーン
+HISTORY_MSG_271;カラートーン調整　-　ハイライトのブルー
+HISTORY_MSG_272;カラートーン調整　-　バランス
+HISTORY_MSG_273;カラートーン調整　-　リセット
+HISTORY_MSG_274;カラートーン調整　-　シャドウの彩度
+HISTORY_MSG_275;カラートーン調整　-　ハイライトの彩度
+HISTORY_MSG_276;カラートーン調整　-　不透明度
+HISTORY_MSG_277;カラートーン調整　-　カーブをリセット
+HISTORY_MSG_278;カラートーン調整　-　明度を維持
+HISTORY_MSG_279;カラートーン調整　-　シャドウ
+HISTORY_MSG_280;カラートーン調整　-　ハイライト
+HISTORY_MSG_281;カラートーン調整　-　彩度の保護
+HISTORY_MSG_282;カラートーン調整　-　彩度のしきい値
+HISTORY_MSG_283;カラートーン調整　-　強さを維持
+HISTORY_MSG_284;カラートーン調整　-　自動彩度
+HISTORY_MSG_285;ノイズ低減　-　メディアン法
+HISTORY_MSG_286;ノイズ低減　-　メディアンの種類
+HISTORY_MSG_287;ノイズ低減　-　繰り返し
+HISTORY_MSG_288;フラットフィールド　クリッピングコントロール	
+HISTORY_MSG_289;自動クリッピングコントロール
+HISTORY_MSG_290;黒レベル　－　レッド
+HISTORY_MSG_291;黒レベル　－　グリーン
+HISTORY_MSG_292;黒レベル　－　ブルー
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;スナップショット
@@ -625,6 +664,7 @@ PARTIALPASTE_CHANNELMIXER;チャンネル・ミキサー
 PARTIALPASTE_COARSETRANS;90° 回転 / 反転
 PARTIALPASTE_COLORAPP;CIE色の見えモデル2002
 PARTIALPASTE_COLORGROUP;カラー 設定
+PARTIALPASTE_COLORTONING;カラートーン調整
 PARTIALPASTE_COMMONTRANSFORMPARAMS;オート・フィル
 PARTIALPASTE_COMPOSITIONGROUP;変形 設定
 PARTIALPASTE_CROP;切り抜き
@@ -643,6 +683,7 @@ PARTIALPASTE_EXPOSURE;露光量
 PARTIALPASTE_FLATFIELDAUTOSELECT;フラットフィールド 自動選択
 PARTIALPASTE_FLATFIELDBLURRADIUS;フラットフィールド ぼかし半径
 PARTIALPASTE_FLATFIELDBLURTYPE;フラットフィールド ぼかしタイプ
+PARTIALPASTE_FLATFIELDCLIPCONTROL;フラットフィールド　クリップコントロール
 PARTIALPASTE_FLATFIELDFILE;フラットフィールド ファイル
 PARTIALPASTE_GRADIENT;グラデーションフィルター
 PARTIALPASTE_HSVEQUALIZER;HSV イコライザ
@@ -888,7 +929,7 @@ SAVEDLG_SUBSAMP_TOOLTIP;高圧縮: 4:1:1\nバランス: 4:2:2\n高画質: 4:4:4
 SAVEDLG_TIFFFILTER;TIFF ファイル
 SAVEDLG_TIFFUNCOMPRESSED;非圧縮 TIFF
 SAVEDLG_WARNFILENAME;ファイルに名前が付けられます
-SHCSELECTOR_TOOLTIP;この3つのスライダーの位置をリセットするには\ nマウスの右ボタンをクリック
+SHCSELECTOR_TOOLTIP;この3つのスライダーの位置をリセットするには\nマウスの右ボタンをクリック
 THRESHOLDSELECTOR_BL;下-左
 THRESHOLDSELECTOR_BR;下-右
 THRESHOLDSELECTOR_B;下
@@ -1055,6 +1096,58 @@ TP_COLORAPP_TONECIE;CIECAM02 明るさ(Q)を使用してトーンマッピング
 TP_COLORAPP_TONECIE_TOOLTIP;このオプションが無効になっている場合、トーンマッピングはLab空間を使用します\nこのオプションが有効になっている場合、トーンマッピングは、CIECAM02を使用します\nトーンマッピング（Lab/CIECAM02）ツールを有効にするには、この設定を有効にする必要があります
 TP_COLORAPP_WBCAM;WB [RT+CAT02] + [出力]
 TP_COLORAPP_WBRT;WB [RT] + [出力]
+TP_COLORTONING_AB;o C/L
+TP_COLORTONING_AUTOSAT;自動彩度
+TP_COLORTONING_BALANCE;バランス
+TP_COLORTONING_BALANCE_TOOLTIP;シャドウとハイライトのトーンでつり合いをとります
+TP_COLORTONING_BY;o C/L
+TP_COLORTONING_CHROMA1;'a'の不透明度
+TP_COLORTONING_CHROMA2;'b'の不透明度
+TP_COLORTONING_CHROMAC;色度の不透明度
+TP_COLORTONING_CHROMA;'ab'或いは'a'の不透明度
+TP_COLORTONING_COLOR;カラー
+TP_COLORTONING_CURVEEDITOR_LL;L
+TP_COLORTONING_HIGHLIGHT;ハイライト
+TP_COLORTONING_HUE;色相
+TP_COLORTONING_HUE;色相のブレンドだけ
+TP_COLORTONING_LABCOL;ダイレクトカラー
+TP_COLORTONING_LABCOL_TOOLTIP;彩度のスライダーを動かすと、ダイレクトカラーが増加します
+TP_COLORTONING_LABEL;カラートーン調整
+TP_COLORTONING_LABINT;-　
+TP_COLORTONING_LABINT_TOOLTIP;例えば、ブルーの画像にレッドを混ぜると、カラーはその不透明度に応じたマゼンタになります\nまた、レッドの画像にイエローを混ぜた場合は、その不透明度に応じたオレンジになります
+TP_COLORTONING_LAB;Labモデルでブレンド
+TP_COLORTONING_LCH;Lchモデルでブレンド
+TP_COLORTONING_LCH_1;色相＋XYZ
+TP_COLORTONING_LCH_2;XYZモデルでブレンド
+TP_COLORTONING_LUMAMODE;明度を維持
+TP_COLORTONING_LUMAMODE_TOOLTIP;カラー（レッド、グリーン、シアン、ブルーなど）を変える際に、これを有効にすると、各ピクセルの明度は維持されます。
+TP_COLORTONING_LUMA;明度
+TP_COLORTONING_METHOD;方法
+TP_COLORTONING_METHOD_TOOLTIP;Labモデルの混色はカラー補間を使います\nカラーバランスは、シャドウ、ミッドトーン、ハイライトでバランスをとります\nSH＋バランスは、ダイレクトカラーを使ってシャドウとハイライトでカラートン調整とバランスを調整します\n全ての方法で白黒変換を有効に出来ます
+TP_COLORTONING_MIDTONES;ミッドトーン
+TP_COLORTONING_NEUTRALCUR;カーブをリセット
+TP_COLORTONING_NEUTRALCUR_TIP;全てのカーブをデフォルトに戻す
+TP_COLORTONING_NEUTRAL;スライダーをリセット
+TP_COLORTONING_NEUTRAL_TIP;スライダーの全ての値（SMH：シャドウ、ミッドトーン、ハイライト）をデフォルトに戻す
+TP_COLORTONING_OPACITY;不透明度
+TP_COLORTONING_RGBCURVES;RGB　－　カーブ
+TP_COLORTONING_RGBSLIDERS;RGB　－　スライダー
+TP_COLORTONING_SATH;ハイライトの彩度
+TP_COLORTONING_SATL;シャドウの彩度
+TP_COLORTONING_SATURATEDOPACITY;彩度の保護
+TP_COLORTONING_SATURATIONTHRESHOLD;彩度保護のしきい値
+TP_COLORTONING_SHADOWS;シャドウ
+TP_COLORTONING_SPLITBAL;SHでカラートン調整＋バランス
+TP_COLORTONING_SPLITCOCO;SMHでカラーバランス
+TP_COLORTONING_SPLITCO;SMHでカラートーン調整
+TP_COLORTONING_SPLITLR;2色の彩度でカラートーン調整
+TP_COLORTONING_STRENGTH;強さ
+TP_COLORTONING_STRPROTECT;強さを保護
+TP_COLORTONING_TWO2;特定の2色の色度の不透明度
+TP_COLORTONING_TWOALL;特定の色度の不透明度
+TP_COLORTONING_TWOBY;特定の'a'と'b'の不透明度
+TP_COLORTONING_TWOCOLOR_TOOLTIP;標準的な色　-　'a'と'b'に線形的に作用します\n特定の色　-　'a'と'b'に同じように作用しますが、範囲は特定されません　－　例えば、対角線より下の部分だけ\n特定の'a'と'b'　-　初めのカーブは'a'だけに、次のカーブは'b'だけに作用します\n2色の特定の色度　-　予測がしやすい方法
+TP_COLORTONING_TWOSTD;標準的な色度の不透明度
 TP_CROP_FIXRATIO;縦横比固定
 TP_CROP_GTDIAGONALS;対角線
 TP_CROP_GTEPASSPORT;バイオメトリック・パスポート
@@ -1079,6 +1172,10 @@ TP_DARKFRAME_LABEL;ダークフレーム
 TP_DEFRINGE_LABEL;フリンジ低減 
 TP_DEFRINGE_RADIUS;半径
 TP_DEFRINGE_THRESHOLD;しきい値
+TP_DIRPYRDENOISE_33;強い3x3
+TP_DIRPYRDENOISE_55SOFT;ソフトな5x5
+TP_DIRPYRDENOISE_55;強い5x5
+TP_DIRPYRDENOISE_77;7x7（処理時間が長い）
 TP_DIRPYRDENOISE_BLUE;色差 ブルー/イエロー
 TP_DIRPYRDENOISE_CHROMA;色(マスター)
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;rawと非raw画像に使用することができます\n\n非raw画像の場合、輝度ノイズ低減は、入力カラープロファイルのガンマを使って行います。その際sRGBのガンマが想定されていますので、入力画像が異なるガンマのカラープロファイルであれば、輝度ノイズ低減の結果も異なります。
@@ -1087,14 +1184,27 @@ TP_DIRPYRDENOISE_ENH_TOOLTIP;ノイズ低減の効果を髙めますが、代わ
 TP_DIRPYRDENOISE_GAMMA;ガンマ
 TP_DIRPYRDENOISE_GAMMA_TOOLTIP;ガンマは、トーンの範囲全体でノイズ低減の量を変化させます。値が大きいほど明るいトーンに効果を及ぼし、値が小さいほどシャドウをターゲットにします
 TP_DIRPYRDENOISE_LABEL;ノイズ低減
+TP_DIRPYRDENOISE_LABM;Lab
 TP_DIRPYRDENOISE_LAB;Lab
 TP_DIRPYRDENOISE_LDETAIL;輝度　細部の復元
+TP_DIRPYRDENOISE_LM;輝度のみ
 TP_DIRPYRDENOISE_LUMA;輝度
+TP_DIRPYRDENOISE_MEDMETHOD;メディアン法
+TP_DIRPYRDENOISE_MEDTYPE;メディアンの種類
+TP_DIRPYRDENOISE_MED;メディアン - 輝度のみ
+TP_DIRPYRDENOISE_MED_TOOLTIP;-
 TP_DIRPYRDENOISE_METHOD;方式
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;raw画像は、RGBまたはLab方式のいずれかを使用することができます。\n\n非raw画像は、選択にかかわらずLab方式が使用されます
+TP_DIRPYRDENOISE_METM_TOOLTIP;フィルタリングの種類で、"輝度のみ"と"Lab"を選択した場合、メディアンフィルタリングはノイズ低減行程でウェーブレット変換が行われた直後に適用されます\n"RGB"モードの場合は、ノイズ低減行程の最後で適用されます
+TP_DIRPYRDENOISE_MET_TOOLTIP;メディアンのフィルタリングの種類:\nソフトな3x3,強い3x3、ソフトな5x5(RGB)、強い5x5、7x7 (輝度のみとLab)があり、順にノイズ低減効果が高くなります
+TP_DIRPYRDENOISE_NONE;なし
+TP_DIRPYRDENOISE_PASSES_TOOLTIP;多くの場合、メディアンフィルタリングの適用は、小さいマトリクスで繰り返す方が、大きなマトリクスを一回使うより、良い結果が得られます
+TP_DIRPYRDENOISE_PASSE;メディアンの繰り返し
 TP_DIRPYRDENOISE_PERF;RGB モード(raw画像)
 TP_DIRPYRDENOISE_RED;色差 レッド/グリーン
+TP_DIRPYRDENOISE_RGBM;RGB
 TP_DIRPYRDENOISE_RGB;RGB
+TP_DIRPYRDENOISE_SOFT;ソフトな3x3
 TP_DIRPYREQUALIZER_ALGO;肌色用のアルゴリズム
 TP_DIRPYREQUALIZER_ALGO_FI;ファイン
 TP_DIRPYREQUALIZER_ALGO_LA;広範
@@ -1122,7 +1232,6 @@ TP_EPD_REWEIGHTINGITERATES;再加重反復
 TP_EPD_SCALE;スケール
 TP_EPD_STRENGTH;強さ
 TP_EPD_TOOLTIP;トーンマッピングは、Labモード(標準)またはCIECAM02モードを介して可能です\n\n CIECAM02トーンマッピングモードは以下の設定を有効にします:\n 1. CIECAM02\n 2. アルゴリズム="明るさ + 鮮やかさ (QM)"\n 3. "CIECAM02 明るさ(Q)でトーンマッピング"
-TP_EXPOSCORR_LABEL;raw ホワイト・ブラック・ポイント
 TP_EXPOSURE_AUTOLEVELS;自動露光補正
 TP_EXPOSURE_AUTOLEVELS_TIP;画像を解析し露光補正を自動で設定します
 TP_EXPOSURE_BLACKLEVEL;黒レベル
@@ -1145,6 +1254,8 @@ TP_EXPOSURE_TCMODE_LABEL2;カーブ・モード2
 TP_EXPOSURE_TCMODE_SATANDVALBLENDING;彩度と明度のブレンド
 TP_EXPOSURE_TCMODE_STANDARD;標準
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;加重平均
+TP_EXPOS_BLACKPOINT_LABEL;raw ブラック・ポイント
+TP_EXPOS_WHITEPOINT_LABEL;raw　ホワイト・ポイント
 TP_FLATFIELD_AUTOSELECT;自動選択
 TP_FLATFIELD_BLURRADIUS;ぼかし半径
 TP_FLATFIELD_BLURTYPE;ぼかしタイプ
@@ -1152,6 +1263,10 @@ TP_FLATFIELD_BT_AREA;面
 TP_FLATFIELD_BT_HORIZONTAL;水平
 TP_FLATFIELD_BT_VERTHORIZ;垂直 + 水平
 TP_FLATFIELD_BT_VERTICAL;垂直
+TP_FLATFIELD_CLIPCONTROL;クリップコントロール
+TP_FLATFIELD_CLIPCONTROL_TOOLTIP;クリップコントロールは、フラットフィールドを使った時に白飛び発生するのを避けるために使われます。フラットフィールドを適用する前に既に白飛びがある場合は、クリップコントロールの適用で色被りが起こる可能性があります。
+TP_FLATFIELD_FILEDLGFILTERANY;どのファイルにも適用
+TP_FLATFIELD_FILEDLGFILTERFF;現在の画像と同じフォーマットを使う
 TP_FLATFIELD_LABEL;フラットフィールド
 TP_GAMMA_CURV;ガンマ
 TP_GAMMA_FREE;フリーなガンマ
@@ -1280,13 +1395,17 @@ TP_PREPROCESS_NO_FOUND;未検出
 TP_RAWCACORR_AUTO;自動補正
 TP_RAWCACORR_CABLUE;ブルー
 TP_RAWCACORR_CARED;レッド
-TP_RAWEXPOS_BLACKONE;黒レベル: レッド
 TP_RAWEXPOS_BLACKS;黒レベル
-TP_RAWEXPOS_BLACKTHREE;黒レベル: グリーン 2
-TP_RAWEXPOS_BLACKTWO;黒レベル: ブルー
-TP_RAWEXPOS_BLACKZERO;黒レベル: グリーン 1 (主)
+TP_RAWEXPOS_BLACK_0;グリーン1（先頭）
+TP_RAWEXPOS_BLACK_1;レッド
+TP_RAWEXPOS_BLACK_2;ブルー
+TP_RAWEXPOS_BLACK_3;グリーン2
+TP_RAWEXPOS_BLACK_BLUE;ブルー
+TP_RAWEXPOS_BLACK_GREEN;グリーン
+TP_RAWEXPOS_BLACK_RED;レッド
 TP_RAWEXPOS_LINEAR;ホワイトポイント補正
 TP_RAWEXPOS_PRESER;ハイライトを保持
+TP_RAWEXPOS_RGB;レッド、グリーン、ブルー
 TP_RAWEXPOS_TWOGREEN;2つのグリーンを連動
 TP_RAW_ALLENHANCE;デモザイク後 アーティファクト/ノイズ低減
 TP_RAW_DCBENHANCE;DCB 拡張処理
@@ -1299,6 +1418,9 @@ TP_RAW_FALSECOLOR;偽色抑制処理の回数
 TP_RAW_LABEL;デモザイク
 TP_RAW_LMMSEITERATIONS;LMMSE 拡張処理
 TP_RAW_LMMSE_TOOLTIP;ガンマ追加 (step 1) - メディアン追加 (step 2,3,4), リファイン追加 (step 5,6) アーティファクトを低減しノイズ比を向上させます
+TP_RAW_SENSOR_BAYER_LABEL;ベイヤー配列を使ったセンサー
+TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-passが最適です（低ISO画像には奨められます)\n高ISO画像の場合、1-passと3-passの違いは殆どありません、処理速度は前者の方が速いです。
+TP_RAW_SENSOR_XTRANS_LABEL;X-Transマトリクスを使ったセンサー
 TP_RESIZE_APPLIESTO;適用 :
 TP_RESIZE_BICUBICSF;バイキュービック (ソフトに)
 TP_RESIZE_BICUBICSH;バイキュービック (シャープに)
@@ -1437,3 +1559,8 @@ ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる\nショートカット: <b>f</b>
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_256;NR - Median type

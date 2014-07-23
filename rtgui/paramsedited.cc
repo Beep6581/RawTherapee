@@ -34,8 +34,8 @@ void ParamsEdited::set (bool v) {
 
 	toneCurve.curve      = v;
 	toneCurve.curve2     = v;
-    toneCurve.curveMode  = v;
-    toneCurve.curveMode2 = v;
+	toneCurve.curveMode  = v;
+	toneCurve.curveMode2 = v;
 	toneCurve.brightness = v;
 	toneCurve.black      = v;
 	toneCurve.contrast   = v;
@@ -67,6 +67,33 @@ void ParamsEdited::set (bool v) {
 	rgbCurves.rcurve         = v;
 	rgbCurves.gcurve         = v;
 	rgbCurves.bcurve         = v;
+	colorToning.enabled      = v;
+	colorToning.autosat      = v;
+	colorToning.opacityCurve = v;
+	colorToning.colorCurve   = v;
+	colorToning.satProtectionThreshold = v;
+	colorToning.saturatedOpacity       = v;	
+	colorToning.strengthprotection       = v;
+	colorToning.shadowsColSat          = v;
+	colorToning.hlColSat   = v;
+	colorToning.balance    = v;
+	colorToning.clcurve    = v;
+	colorToning.method     = v;
+	colorToning.twocolor   = v;
+	colorToning.cl2curve   = v;
+	colorToning.redlow     = v;
+	colorToning.greenlow   = v;
+	colorToning.bluelow    = v;
+	colorToning.satlow     = v;
+	colorToning.sathigh    = v;
+	colorToning.redmed     = v;
+	colorToning.greenmed   = v;
+	colorToning.bluemed    = v;
+	colorToning.redhigh    = v;
+	colorToning.greenhigh  = v;
+	colorToning.bluehigh   = v;
+	colorToning.lumamode   = v;
+
 	sharpening.enabled            = v;
 	sharpening.radius             = v;
 	sharpening.amount             = v;
@@ -161,8 +188,11 @@ void ParamsEdited::set (bool v) {
 	dirpyrDenoise.redchro      = v;
 	dirpyrDenoise.bluechro     = v;
 	dirpyrDenoise.gamma        = v;
+	dirpyrDenoise.passes        = v;
 	dirpyrDenoise.dmethod      = v;
 	dirpyrDenoise.medmethod      = v;
+	dirpyrDenoise.methodmed      = v;
+	dirpyrDenoise.rgbmethod      = v;
 	epd.enabled                = v;
 	epd.strength            = v;
 	epd.edgeStopping        = v;
@@ -191,10 +221,10 @@ void ParamsEdited::set (bool v) {
 	commonTrans.autofill = v;
 	rotate.degree = v;
 	distortion.amount = v;
-    lensProf.lcpFile = v;
-    lensProf.useDist = v;
-    lensProf.useVign = v;
-    lensProf.useCA = v;
+	lensProf.lcpFile = v;
+	lensProf.useDist = v;
+	lensProf.useVign = v;
+	lensProf.useCA = v;
 	perspective.horizontal = v;
 	perspective.vertical = v;
 	gradient.enabled = v;
@@ -255,42 +285,48 @@ void ParamsEdited::set (bool v) {
 	resize.height    = v;
 	resize.enabled   = v;
 	icm.input        = v;
-    icm.toneCurve = v;
-    icm.blendCMSMatrix = v;
-    icm.dcpIlluminant = v;
+	icm.toneCurve = v;
+	icm.blendCMSMatrix = v;
+	icm.dcpIlluminant = v;
 	icm.working      = v;
 	icm.output       = v;
 	icm.gamma		= v;
 	icm.freegamma		= v;
 	icm.gampos		= v;
 	icm.slpos		= v;
-	raw.ccSteps = v;
-	raw.dmethod = v;
-	raw.dcbIterations = v;
-	raw.dcbEnhance = v;
-	raw.lmmseIterations = v;
-	
-	//raw.allEnhance = v;
+	raw.bayersensor.method = v;
+	raw.bayersensor.ccSteps = v;
+	raw.bayersensor.exBlack0 = v;
+	raw.bayersensor.exBlack1 = v;
+	raw.bayersensor.exBlack2 = v;
+	raw.bayersensor.exBlack3 = v;
+	raw.bayersensor.exTwoGreen=v;
+	raw.bayersensor.dcbIterations = v;
+	raw.bayersensor.dcbEnhance = v;
+	//raw.bayersensor.allEnhance = v;
+	raw.bayersensor.lmmseIterations = v;
+	raw.bayersensor.greenEq = v;
+	raw.bayersensor.linenoise = v;
+	raw.xtranssensor.method = v;
+	raw.xtranssensor.ccSteps = v;
+	raw.xtranssensor.exBlackRed= v;
+	raw.xtranssensor.exBlackGreen = v;
+	raw.xtranssensor.exBlackBlue = v;
 	raw.caCorrection = v;
 	raw.caBlue  = v;
 	raw.caRed   = v;
-	raw.greenEq = v;
 	raw.hotDeadPixelFilter = v;
 	raw.hotDeadPixelThresh = v;
-	raw.linenoise = v;
 	raw.darkFrame = v;
-    raw.dfAuto = v;
+	raw.dfAuto = v;
 	raw.ff_file = v;
 	raw.ff_AutoSelect = v;
 	raw.ff_BlurRadius = v;
 	raw.ff_BlurType = v;
+	raw.ff_AutoClipControl = v;
+	raw.ff_clipControl = v;
 	raw.exPos = v;
 	raw.exPreser = v;
-	raw.exBlackzero = v;
-	raw.exBlackone = v;
-	raw.exBlacktwo = v;
-	raw.exBlackthree = v;
-	raw.exTwoGreen=v;
 
 	dirpyrequalizer.enabled = v;
 	dirpyrequalizer.gamutlab = v;
@@ -355,6 +391,32 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         rgbCurves.rcurve = rgbCurves.rcurve && p.rgbCurves.rcurve == other.rgbCurves.rcurve;
         rgbCurves.gcurve = rgbCurves.gcurve && p.rgbCurves.gcurve == other.rgbCurves.gcurve;
         rgbCurves.bcurve = rgbCurves.bcurve && p.rgbCurves.bcurve == other.rgbCurves.bcurve;
+        colorToning.enabled = colorToning.enabled && p.colorToning.enabled == other.colorToning.enabled;
+        colorToning.twocolor = colorToning.twocolor && p.colorToning.twocolor == other.colorToning.twocolor;
+        colorToning.opacityCurve = colorToning.opacityCurve && p.colorToning.opacityCurve == other.colorToning.opacityCurve;
+        colorToning.colorCurve = colorToning.colorCurve && p.colorToning.colorCurve == other.colorToning.colorCurve;
+        colorToning.autosat = colorToning.autosat && p.colorToning.autosat == other.colorToning.autosat;
+        colorToning.satProtectionThreshold = colorToning.satProtectionThreshold && p.colorToning.satProtectionThreshold == other.colorToning.satProtectionThreshold;
+        colorToning.saturatedOpacity = colorToning.saturatedOpacity && p.colorToning.saturatedOpacity == other.colorToning.saturatedOpacity;
+        colorToning.strengthprotection = colorToning.strengthprotection && p.colorToning.strengthprotection == other.colorToning.strengthprotection;
+        colorToning.shadowsColSat = colorToning.shadowsColSat && p.colorToning.shadowsColSat == other.colorToning.shadowsColSat;
+        colorToning.hlColSat = colorToning.hlColSat && p.colorToning.hlColSat == other.colorToning.hlColSat;
+        colorToning.balance = colorToning.balance && p.colorToning.balance == other.colorToning.balance;
+        colorToning.clcurve = colorToning.clcurve && p.colorToning.clcurve == other.colorToning.clcurve;
+        colorToning.cl2curve = colorToning.cl2curve && p.colorToning.cl2curve == other.colorToning.cl2curve;
+        colorToning.method = colorToning.method && p.colorToning.method == other.colorToning.method;
+        colorToning.redlow = colorToning.redlow && p.colorToning.redlow == other.colorToning.redlow;
+        colorToning.greenlow = colorToning.greenlow && p.colorToning.greenlow == other.colorToning.greenlow;
+        colorToning.bluelow = colorToning.bluelow && p.colorToning.bluelow == other.colorToning.bluelow;
+        colorToning.satlow = colorToning.satlow && p.colorToning.satlow == other.colorToning.satlow;
+        colorToning.sathigh = colorToning.sathigh && p.colorToning.sathigh == other.colorToning.sathigh;
+        colorToning.redmed = colorToning.redmed && p.colorToning.redmed == other.colorToning.redmed;
+        colorToning.greenmed = colorToning.greenmed && p.colorToning.greenmed == other.colorToning.greenmed;
+        colorToning.bluemed = colorToning.bluemed && p.colorToning.bluemed == other.colorToning.bluemed;
+        colorToning.redhigh = colorToning.redhigh && p.colorToning.redhigh == other.colorToning.redhigh;
+        colorToning.greenhigh = colorToning.greenhigh && p.colorToning.greenhigh == other.colorToning.greenhigh;
+        colorToning.bluehigh = colorToning.bluehigh && p.colorToning.bluehigh == other.colorToning.bluehigh;
+        colorToning.lumamode = colorToning.lumamode && p.colorToning.lumamode == other.colorToning.lumamode;
         sharpenEdge.enabled = sharpenEdge.enabled && p.sharpenEdge.enabled == other.sharpenEdge.enabled;
         sharpenEdge.passes = sharpenEdge.passes && p.sharpenEdge.passes == other.sharpenEdge.passes;
         sharpenEdge.amount = sharpenEdge.amount && p.sharpenEdge.amount == other.sharpenEdge.amount;
@@ -451,8 +513,11 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         dirpyrDenoise.redchro = dirpyrDenoise.redchro && p.dirpyrDenoise.redchro == other.dirpyrDenoise.redchro;
         dirpyrDenoise.bluechro = dirpyrDenoise.bluechro && p.dirpyrDenoise.bluechro == other.dirpyrDenoise.bluechro;	
         dirpyrDenoise.gamma = dirpyrDenoise.gamma && p.dirpyrDenoise.gamma == other.dirpyrDenoise.gamma;
+        dirpyrDenoise.passes = dirpyrDenoise.passes && p.dirpyrDenoise.passes == other.dirpyrDenoise.passes;
         dirpyrDenoise.dmethod = dirpyrDenoise.dmethod && p.dirpyrDenoise.dmethod == other.dirpyrDenoise.dmethod;
         dirpyrDenoise.medmethod = dirpyrDenoise.medmethod && p.dirpyrDenoise.medmethod == other.dirpyrDenoise.medmethod;
+        dirpyrDenoise.methodmed = dirpyrDenoise.methodmed && p.dirpyrDenoise.methodmed == other.dirpyrDenoise.methodmed;
+        dirpyrDenoise.rgbmethod = dirpyrDenoise.rgbmethod && p.dirpyrDenoise.rgbmethod == other.dirpyrDenoise.rgbmethod;
 
         epd.enabled = epd.enabled && p.epd.enabled == other.epd.enabled;
         epd.strength = epd.strength && p.epd.strength == other.epd.strength;
@@ -555,32 +620,39 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         icm.freegamma = icm.freegamma && p.icm.freegamma == other.icm.freegamma;
         icm.gampos = icm.gampos && p.icm.gampos == other.icm.gampos;
         icm.slpos = icm.slpos && p.icm.slpos == other.icm.slpos;
-        raw.ccSteps = raw.ccSteps && p.raw.ccSteps == other.raw.ccSteps;
-        raw.dmethod = raw.dmethod && p.raw.dmethod == other.raw.dmethod;
-        raw.dcbIterations = raw.dcbIterations && p.raw.dcb_iterations == other.raw.dcb_iterations;
-        raw.dcbEnhance = raw.dcbEnhance && p.raw.dcb_enhance == other.raw.dcb_enhance;
-        raw.lmmseIterations = raw.lmmseIterations && p.raw.lmmse_iterations == other.raw.lmmse_iterations;
-        //raw.allEnhance = raw.allEnhance && p.raw.all_enhance == other.raw.all_enhance;
+        raw.bayersensor.method = raw.bayersensor.method && p.raw.bayersensor.method == other.raw.bayersensor.method;
+        raw.bayersensor.ccSteps = raw.bayersensor.ccSteps && p.raw.bayersensor.ccSteps == other.raw.bayersensor.ccSteps;
+        raw.bayersensor.exBlack0 = raw.bayersensor.exBlack0 && p.raw.bayersensor.black0 == other.raw.bayersensor.black0;
+        raw.bayersensor.exBlack1 = raw.bayersensor.exBlack1 && p.raw.bayersensor.black1 == other.raw.bayersensor.black1;
+        raw.bayersensor.exBlack2 = raw.bayersensor.exBlack2 && p.raw.bayersensor.black2 == other.raw.bayersensor.black2;
+        raw.bayersensor.exBlack3 = raw.bayersensor.exBlack3 && p.raw.bayersensor.black3 == other.raw.bayersensor.black3;
+        raw.bayersensor.exTwoGreen = raw.bayersensor.exTwoGreen && p.raw.bayersensor.twogreen == other.raw.bayersensor.twogreen;
+        raw.bayersensor.dcbIterations = raw.bayersensor.dcbIterations && p.raw.bayersensor.dcb_iterations == other.raw.bayersensor.dcb_iterations;
+        raw.bayersensor.dcbEnhance = raw.bayersensor.dcbEnhance && p.raw.bayersensor.dcb_enhance == other.raw.bayersensor.dcb_enhance;
+        //raw.bayersensor.allEnhance = raw.bayersensor.allEnhance && p.raw.bayersensor.all_enhance == other.raw.bayersensor.all_enhance;
+        raw.bayersensor.lmmseIterations = raw.bayersensor.lmmseIterations && p.raw.bayersensor.lmmse_iterations == other.raw.bayersensor.lmmse_iterations;
+        raw.bayersensor.greenEq = raw.bayersensor.greenEq && p.raw.bayersensor.greenthresh == other.raw.bayersensor.greenthresh;
+        raw.bayersensor.linenoise = raw.bayersensor.linenoise && p.raw.bayersensor.linenoise == other.raw.bayersensor.linenoise;
+        raw.xtranssensor.method = raw.xtranssensor.method && p.raw.xtranssensor.method == other.raw.xtranssensor.method;
+        raw.xtranssensor.ccSteps = raw.xtranssensor.ccSteps && p.raw.xtranssensor.ccSteps == other.raw.xtranssensor.ccSteps;
+        raw.xtranssensor.exBlackRed = raw.xtranssensor.exBlackRed && p.raw.xtranssensor.blackred == other.raw.xtranssensor.blackred;
+        raw.xtranssensor.exBlackGreen = raw.xtranssensor.exBlackGreen && p.raw.xtranssensor.blackgreen == other.raw.xtranssensor.blackgreen;
+        raw.xtranssensor.exBlackBlue = raw.xtranssensor.exBlackBlue && p.raw.xtranssensor.blackblue == other.raw.xtranssensor.blackblue;
         raw.caCorrection = raw.caCorrection && p.raw.ca_autocorrect == other.raw.ca_autocorrect;
         raw.caRed = raw.caRed && p.raw.cared == other.raw.cared;
         raw.caBlue = raw.caBlue && p.raw.cablue == other.raw.cablue;
-        raw.greenEq = raw.greenEq && p.raw.greenthresh == other.raw.greenthresh;
         raw.hotDeadPixelFilter = raw.hotDeadPixelFilter && p.raw.hotdeadpix_filt == other.raw.hotdeadpix_filt;
         raw.hotDeadPixelThresh = raw.hotDeadPixelThresh && p.raw.hotdeadpix_thresh == other.raw.hotdeadpix_thresh;
-        raw.linenoise = raw.linenoise && p.raw.linenoise == other.raw.linenoise;
         raw.darkFrame = raw.darkFrame && p.raw.dark_frame == other.raw.dark_frame;
         raw.dfAuto = raw.dfAuto && p.raw.df_autoselect == other.raw.df_autoselect;
         raw.ff_file = raw.ff_file && p.raw.ff_file == other.raw.ff_file;
         raw.ff_AutoSelect = raw.ff_AutoSelect && p.raw.ff_AutoSelect == other.raw.ff_AutoSelect;
         raw.ff_BlurRadius = raw.ff_BlurRadius && p.raw.ff_BlurRadius == other.raw.ff_BlurRadius;
         raw.ff_BlurType = raw.ff_BlurType && p.raw.ff_BlurType == other.raw.ff_BlurType;
+        raw.ff_AutoClipControl = raw.ff_AutoClipControl && p.raw.ff_AutoClipControl == other.raw.ff_AutoClipControl;
+        raw.ff_clipControl = raw.ff_clipControl && p.raw.ff_clipControl == other.raw.ff_clipControl;
         raw.exPos = raw.exPos && p.raw.expos == other.raw.expos;
         raw.exPreser = raw.exPreser && p.raw.preser == other.raw.preser;
-        raw.exBlackzero = raw.exBlackzero && p.raw.blackzero == other.raw.blackzero;
-        raw.exBlackone = raw.exBlackone && p.raw.blackone == other.raw.blackone;
-        raw.exBlacktwo = p.raw.blacktwo == other.raw.blacktwo;
-        raw.exBlackthree = p.raw.blackthree == other.raw.blackthree;
-        raw.exTwoGreen = p.raw.twogreen == other.raw.twogreen;
 
         dirpyrequalizer.enabled = dirpyrequalizer.enabled && p.dirpyrequalizer.enabled == other.dirpyrequalizer.enabled;
         dirpyrequalizer.gamutlab = dirpyrequalizer.gamutlab && p.dirpyrequalizer.gamutlab == other.dirpyrequalizer.gamutlab;
@@ -641,6 +713,37 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (rgbCurves.rcurve)					toEdit.rgbCurves.rcurve     = mods.rgbCurves.rcurve;
 	if (rgbCurves.gcurve)					toEdit.rgbCurves.gcurve     = mods.rgbCurves.gcurve;
 	if (rgbCurves.bcurve)					toEdit.rgbCurves.bcurve     = mods.rgbCurves.bcurve;
+
+	if (colorToning.enabled)				toEdit.colorToning.enabled		= mods.colorToning.enabled;
+	if (colorToning.twocolor)				toEdit.colorToning.twocolor		= mods.colorToning.twocolor;
+	if (colorToning.opacityCurve)			toEdit.colorToning.opacityCurve	= mods.colorToning.opacityCurve;
+	if (colorToning.colorCurve)				toEdit.colorToning.colorCurve	= mods.colorToning.colorCurve;
+	if (colorToning.enabled)				toEdit.colorToning.enabled		= mods.colorToning.enabled;
+	if (colorToning.opacityCurve)			toEdit.colorToning.opacityCurve	= mods.colorToning.opacityCurve;
+	if (colorToning.colorCurve)				toEdit.colorToning.colorCurve				= mods.colorToning.colorCurve;
+	if (colorToning.satProtectionThreshold)	toEdit.colorToning.satProtectionThreshold	= dontforceSet && options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD] ? toEdit.colorToning.satProtectionThreshold + mods.colorToning.satProtectionThreshold : mods.colorToning.satProtectionThreshold;
+	if (colorToning.autosat)				toEdit.colorToning.autosat		= mods.colorToning.autosat;
+	if (colorToning.saturatedOpacity)		toEdit.colorToning.saturatedOpacity			= dontforceSet && options.baBehav[ADDSET_COLORTONING_SATOPACITY] ? toEdit.colorToning.saturatedOpacity + mods.colorToning.saturatedOpacity : mods.colorToning.saturatedOpacity;
+	if (colorToning.strengthprotection)		toEdit.colorToning.strengthprotection			= dontforceSet && options.baBehav[ADDSET_COLORTONING_STRPROTECT] ? toEdit.colorToning.strengthprotection + mods.colorToning.strengthprotection: mods.colorToning.strengthprotection;
+
+	if (colorToning.shadowsColSat)			toEdit.colorToning.shadowsColSat			= mods.colorToning.shadowsColSat;
+	if (colorToning.hlColSat)				toEdit.colorToning.hlColSat	= mods.colorToning.hlColSat;
+	if (colorToning.balance)				toEdit.colorToning.balance	= dontforceSet && options.baBehav[ADDSET_COLORTONING_BALANCE] ? toEdit.colorToning.balance + mods.colorToning.balance : mods.colorToning.balance;
+	if (colorToning.clcurve)				toEdit.colorToning.clcurve	= mods.colorToning.clcurve;
+	if (colorToning.method)					toEdit.colorToning.method	= mods.colorToning.method;
+	if (colorToning.cl2curve)				toEdit.colorToning.cl2curve	= mods.colorToning.cl2curve;
+	if (colorToning.lumamode)				toEdit.colorToning.lumamode	= mods.colorToning.lumamode;
+	if (colorToning.satlow)					toEdit.colorToning.satlow	= dontforceSet && options.baBehav[ADDSET_COLORTONING_SPLIT] ? toEdit.colorToning.satlow + mods.colorToning.satlow : mods.colorToning.satlow;
+	if (colorToning.sathigh)				toEdit.colorToning.sathigh	= dontforceSet && options.baBehav[ADDSET_COLORTONING_SPLIT] ? toEdit.colorToning.sathigh + mods.colorToning.sathigh : mods.colorToning.sathigh;
+	if (colorToning.redlow)					toEdit.colorToning.redlow	= dontforceSet && options.baBehav[ADDSET_COLORTONING_SPLIT] ? toEdit.colorToning.redlow + mods.colorToning.redlow : mods.colorToning.redlow;
+	if (colorToning.greenlow)				toEdit.colorToning.greenlow	= dontforceSet && options.baBehav[ADDSET_COLORTONING_SPLIT] ? toEdit.colorToning.greenlow + mods.colorToning.greenlow : mods.colorToning.greenlow;
+	if (colorToning.bluelow)				toEdit.colorToning.bluelow	= dontforceSet && options.baBehav[ADDSET_COLORTONING_SPLIT] ? toEdit.colorToning.bluelow + mods.colorToning.bluelow : mods.colorToning.bluelow;	
+	if (colorToning.redmed)					toEdit.colorToning.redmed	= dontforceSet && options.baBehav[ADDSET_COLORTONING_SPLIT] ? toEdit.colorToning.redmed + mods.colorToning.redmed : mods.colorToning.redmed;
+	if (colorToning.greenmed)				toEdit.colorToning.greenmed	= dontforceSet && options.baBehav[ADDSET_COLORTONING_SPLIT] ? toEdit.colorToning.greenmed + mods.colorToning.greenmed : mods.colorToning.greenmed;
+	if (colorToning.bluemed)				toEdit.colorToning.bluemed	= dontforceSet && options.baBehav[ADDSET_COLORTONING_SPLIT] ? toEdit.colorToning.bluemed + mods.colorToning.bluemed : mods.colorToning.bluemed;
+	if (colorToning.redhigh)				toEdit.colorToning.redhigh	= dontforceSet && options.baBehav[ADDSET_COLORTONING_SPLIT] ? toEdit.colorToning.redhigh + mods.colorToning.redhigh : mods.colorToning.redhigh;
+	if (colorToning.greenhigh)				toEdit.colorToning.greenhigh= dontforceSet && options.baBehav[ADDSET_COLORTONING_SPLIT] ? toEdit.colorToning.greenhigh + mods.colorToning.greenhigh : mods.colorToning.greenhigh;
+	if (colorToning.bluehigh)				toEdit.colorToning.bluehigh	= dontforceSet && options.baBehav[ADDSET_COLORTONING_SPLIT] ? toEdit.colorToning.bluehigh + mods.colorToning.bluehigh : mods.colorToning.bluehigh;
 
 	if (sharpenEdge.enabled)				toEdit.sharpenEdge.enabled 	= mods.sharpenEdge.enabled;
 	if (sharpenEdge.passes)					toEdit.sharpenEdge.passes	= dontforceSet && options.baBehav[ADDSET_SHARPENEDGE_PASS] ? toEdit.sharpenEdge.passes + mods.sharpenEdge.passes : mods.sharpenEdge.passes;
@@ -739,9 +842,12 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (dirpyrDenoise.redchro)				toEdit.dirpyrDenoise.redchro	= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHROMARED] ? toEdit.dirpyrDenoise.redchro + mods.dirpyrDenoise.redchro : mods.dirpyrDenoise.redchro;
 	if (dirpyrDenoise.bluechro)				toEdit.dirpyrDenoise.bluechro	= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHROMABLUE] ? toEdit.dirpyrDenoise.bluechro + mods.dirpyrDenoise.bluechro : mods.dirpyrDenoise.bluechro;
 	if (dirpyrDenoise.gamma)				toEdit.dirpyrDenoise.gamma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_GAMMA] ? toEdit.dirpyrDenoise.gamma + mods.dirpyrDenoise.gamma : mods.dirpyrDenoise.gamma;
+	if (dirpyrDenoise.passes)				toEdit.dirpyrDenoise.passes		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_PASSES] ? toEdit.dirpyrDenoise.passes + mods.dirpyrDenoise.passes : mods.dirpyrDenoise.passes;
 //	if (dirpyrDenoise.perform)				toEdit.dirpyrDenoise.perform 	= mods.dirpyrDenoise.perform;
 	if (dirpyrDenoise.dmethod)				toEdit.dirpyrDenoise.dmethod		= mods.dirpyrDenoise.dmethod;
 	if (dirpyrDenoise.medmethod)			toEdit.dirpyrDenoise.medmethod		= mods.dirpyrDenoise.medmethod;
+	if (dirpyrDenoise.methodmed)			toEdit.dirpyrDenoise.methodmed		= mods.dirpyrDenoise.methodmed;
+	if (dirpyrDenoise.rgbmethod)			toEdit.dirpyrDenoise.rgbmethod		= mods.dirpyrDenoise.rgbmethod;
 
 	if (epd.enabled)						toEdit.epd.enabled				= mods.epd.enabled;
 	if (epd.strength)						toEdit.epd.strength				= mods.epd.strength;
@@ -844,35 +950,43 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (icm.slpos)			toEdit.icm.slpos		= dontforceSet && options.baBehav[ADDSET_FREE_OUTPUT_SLOPE] ? toEdit.icm.slpos + mods.icm.slpos : mods.icm.slpos;	
 	if (icm.gamma)		    toEdit.icm.gamma        = mods.icm.gamma;
 	if (icm.freegamma)		toEdit.icm.freegamma    = mods.icm.freegamma;
-    if (raw.ccSteps)        toEdit.raw.ccSteps      = mods.raw.ccSteps;
-    if (raw.dmethod)        toEdit.raw.dmethod      = mods.raw.dmethod;
-    if (raw.dcbIterations)  toEdit.raw.dcb_iterations = mods.raw.dcb_iterations;
-    if (raw.dcbEnhance)     toEdit.raw.dcb_enhance     = mods.raw.dcb_enhance;
-    if (raw.lmmseIterations)  toEdit.raw.lmmse_iterations = mods.raw.lmmse_iterations;
-    //if (raw.allEnhance)     toEdit.raw.all_enhance     = mods.raw.all_enhance;
-	
-    if (raw.caCorrection)   toEdit.raw.ca_autocorrect  = mods.raw.ca_autocorrect;
+	if (raw.bayersensor.method)          toEdit.raw.bayersensor.method           = mods.raw.bayersensor.method;
+	if (raw.bayersensor.ccSteps)         toEdit.raw.bayersensor.ccSteps          = mods.raw.bayersensor.ccSteps;
+	if (raw.bayersensor.exBlack0)        toEdit.raw.bayersensor.black0           = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_BLACKS] ? toEdit.raw.bayersensor.black0 + mods.raw.bayersensor.black0 : mods.raw.bayersensor.black0;
+	if (raw.bayersensor.exBlack1)        toEdit.raw.bayersensor.black1           = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_BLACKS] ? toEdit.raw.bayersensor.black1 + mods.raw.bayersensor.black1 : mods.raw.bayersensor.black1;
+	if (raw.bayersensor.exBlack2)        toEdit.raw.bayersensor.black2           = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_BLACKS] ? toEdit.raw.bayersensor.black2 + mods.raw.bayersensor.black2 : mods.raw.bayersensor.black2;
+	if (raw.bayersensor.exBlack3)        toEdit.raw.bayersensor.black3           = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_BLACKS] ? toEdit.raw.bayersensor.black3 + mods.raw.bayersensor.black3 : mods.raw.bayersensor.black3;
+	if (raw.bayersensor.exTwoGreen)      toEdit.raw.bayersensor.twogreen         = mods.raw.bayersensor.twogreen;
+	if (raw.bayersensor.dcbIterations)   toEdit.raw.bayersensor.dcb_iterations   = mods.raw.bayersensor.dcb_iterations;
+	if (raw.bayersensor.dcbEnhance)      toEdit.raw.bayersensor.dcb_enhance      = mods.raw.bayersensor.dcb_enhance;
+	if (raw.bayersensor.lmmseIterations) toEdit.raw.bayersensor.lmmse_iterations = mods.raw.bayersensor.lmmse_iterations;
+	//if (raw.bayersensor.allEnhance)    toEdit.raw.bayersensor.all_enhance      = mods.raw.bayersensor.all_enhance;
+	if (raw.bayersensor.greenEq)         toEdit.raw.bayersensor.greenthresh      = dontforceSet && options.baBehav[ADDSET_PREPROCESS_GREENEQUIL] ? toEdit.raw.bayersensor.greenthresh + mods.raw.bayersensor.greenthresh : mods.raw.bayersensor.greenthresh;
+	if (raw.bayersensor.linenoise)       toEdit.raw.bayersensor.linenoise        = dontforceSet && options.baBehav[ADDSET_PREPROCESS_LINEDENOISE] ? toEdit.raw.bayersensor.linenoise + mods.raw.bayersensor.linenoise : mods.raw.bayersensor.linenoise;
+
+	if (raw.xtranssensor.method)         toEdit.raw.xtranssensor.method          = mods.raw.xtranssensor.method;
+	if (raw.xtranssensor.ccSteps)        toEdit.raw.xtranssensor.ccSteps         = mods.raw.xtranssensor.ccSteps;
+	if (raw.xtranssensor.exBlackRed)     toEdit.raw.xtranssensor.blackred        = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_BLACKS] ? toEdit.raw.xtranssensor.blackred + mods.raw.xtranssensor.blackred : mods.raw.xtranssensor.blackred;
+	if (raw.xtranssensor.exBlackGreen)   toEdit.raw.xtranssensor.blackgreen      = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_BLACKS] ? toEdit.raw.xtranssensor.blackgreen + mods.raw.xtranssensor.blackgreen : mods.raw.xtranssensor.blackgreen;
+	if (raw.xtranssensor.exBlackBlue)    toEdit.raw.xtranssensor.blackblue       = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_BLACKS] ? toEdit.raw.xtranssensor.blackblue + mods.raw.xtranssensor.blackblue : mods.raw.xtranssensor.blackblue;
+
+	if (raw.caCorrection)   toEdit.raw.ca_autocorrect  = mods.raw.ca_autocorrect;
 	if (raw.caRed)          toEdit.raw.cared           = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.cared + mods.raw.cared : mods.raw.cared;
-    if (raw.caBlue)         toEdit.raw.cablue          = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.cablue + mods.raw.cablue : mods.raw.cablue;
+	if (raw.caBlue)         toEdit.raw.cablue          = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.cablue + mods.raw.cablue : mods.raw.cablue;
 	if (raw.exPos)          toEdit.raw.expos           = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_LINEAR] ? toEdit.raw.expos + mods.raw.expos : mods.raw.expos;
 	if (raw.exPreser)       toEdit.raw.preser          = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_PRESER] ? toEdit.raw.preser + mods.raw.preser : mods.raw.preser;
-	if (raw.exBlackzero)    toEdit.raw.blackzero       = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_BLACKS] ? toEdit.raw.blackzero + mods.raw.blackzero : mods.raw.blackzero;
-	if (raw.exBlackone)     toEdit.raw.blackone        = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_BLACKS] ? toEdit.raw.blackone + mods.raw.blackone : mods.raw.blackone;
-	if (raw.exBlacktwo)     toEdit.raw.blacktwo        = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_BLACKS] ? toEdit.raw.blacktwo + mods.raw.blacktwo : mods.raw.blacktwo;
-	if (raw.exBlackthree)   toEdit.raw.blackthree      = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_BLACKS] ? toEdit.raw.blackthree + mods.raw.blackthree : mods.raw.blackthree;
-	if (raw.exTwoGreen)		toEdit.raw.twogreen        = mods.raw.twogreen;	
 
-    if (raw.greenEq)            toEdit.raw.greenthresh       = dontforceSet && options.baBehav[ADDSET_PREPROCESS_GREENEQUIL] ? toEdit.raw.greenthresh + mods.raw.greenthresh : mods.raw.greenthresh;
-    if (raw.hotDeadPixelFilter) toEdit.raw.hotdeadpix_filt   = mods.raw.hotdeadpix_filt;
-    if (raw.hotDeadPixelThresh) toEdit.raw.hotdeadpix_thresh = mods.raw.hotdeadpix_thresh;
-    if (raw.linenoise)          toEdit.raw.linenoise         = dontforceSet && options.baBehav[ADDSET_PREPROCESS_LINEDENOISE] ? toEdit.raw.linenoise + mods.raw.linenoise : mods.raw.linenoise;
-    if (raw.darkFrame)          toEdit.raw.dark_frame        = mods.raw.dark_frame;
-    if (raw.dfAuto)             toEdit.raw.df_autoselect     = mods.raw.df_autoselect;
+	if (raw.hotDeadPixelFilter) toEdit.raw.hotdeadpix_filt   = mods.raw.hotdeadpix_filt;
+	if (raw.hotDeadPixelThresh) toEdit.raw.hotdeadpix_thresh = mods.raw.hotdeadpix_thresh;
+	if (raw.darkFrame)          toEdit.raw.dark_frame        = mods.raw.dark_frame;
+	if (raw.dfAuto)             toEdit.raw.df_autoselect     = mods.raw.df_autoselect;
 
-    if (raw.ff_file)        toEdit.raw.ff_file         = mods.raw.ff_file;
-    if (raw.ff_AutoSelect)  toEdit.raw.ff_AutoSelect   = mods.raw.ff_AutoSelect;
-    if (raw.ff_BlurRadius)  toEdit.raw.ff_BlurRadius   = mods.raw.ff_BlurRadius;
-    if (raw.ff_BlurType)    toEdit.raw.ff_BlurType     = mods.raw.ff_BlurType;
+	if (raw.ff_file)            toEdit.raw.ff_file            = mods.raw.ff_file;
+	if (raw.ff_AutoSelect)      toEdit.raw.ff_AutoSelect      = mods.raw.ff_AutoSelect;
+	if (raw.ff_BlurRadius)      toEdit.raw.ff_BlurRadius      = mods.raw.ff_BlurRadius;
+	if (raw.ff_BlurType)        toEdit.raw.ff_BlurType        = mods.raw.ff_BlurType;
+	if (raw.ff_AutoClipControl) toEdit.raw.ff_AutoClipControl = mods.raw.ff_AutoClipControl;
+	if (raw.ff_clipControl)     toEdit.raw.ff_clipControl     = dontforceSet && options.baBehav[ADDSET_RAWFFCLIPCONTROL] ? toEdit.raw.ff_clipControl + mods.raw.ff_clipControl : mods.raw.ff_clipControl;
 
 	if (dirpyrequalizer.enabled)	toEdit.dirpyrequalizer.enabled	= mods.dirpyrequalizer.enabled;
 	if (dirpyrequalizer.gamutlab)	toEdit.dirpyrequalizer.gamutlab	= mods.dirpyrequalizer.gamutlab;
@@ -900,10 +1014,18 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 		}
 }
 
+bool RAWParamsEdited::BayerSensor::isUnchanged() const {
+	return  method && ccSteps && dcbIterations && dcbEnhance && lmmseIterations/*&& allEnhance*/ &&  greenEq
+			&& linenoise && exBlack0 && exBlack1 && exBlack2 && exBlack3 && exTwoGreen;
+}
+
+bool RAWParamsEdited::XTransSensor::isUnchanged() const {
+	return method && ccSteps && exBlackRed && exBlackGreen && exBlackBlue;
+}
+
 bool RAWParamsEdited::isUnchanged() const {
-    return ccSteps && dmethod && dcbIterations && dcbEnhance && lmmseIterations/*&& allEnhance*/ && caCorrection && caRed && caBlue && greenEq
-        && hotDeadPixelFilter && hotDeadPixelThresh && linenoise && darkFrame && dfAuto && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType
-        && exPos && exPreser && exBlackzero && exBlackone && exBlacktwo && exBlackthree && exTwoGreen;
+	return  bayersensor.isUnchanged() && xtranssensor.isUnchanged() && caCorrection && caRed && caBlue && hotDeadPixelFilter && hotDeadPixelThresh && darkFrame
+			&& dfAuto && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType && exPos && exPreser && ff_AutoClipControl && ff_clipControl;
 }
 
 bool LensProfParamsEdited::isUnchanged() const {

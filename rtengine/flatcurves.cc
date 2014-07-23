@@ -62,10 +62,7 @@ FlatCurve::FlatCurve (const std::vector<double>& p, bool isPeriodic, int poly_pn
                 leftTangent[N] = p[3];
                 rightTangent[N] = p[4];
             }
-            else {
-                N--;
-            }
-            if (!identity && N > 0+(periodic?1:0) ) {
+            if (!identity && N > (periodic?1:0) ) {
                 CtrlPoints_set ();
                 fillHash();
             }
@@ -99,28 +96,37 @@ bool FlatCurve::setIdentityValue (double iVal) {
 
     identityValue = iVal;
     bool identity = true;
-    for (int i=0; i<N; i++) {
+    for (int i=0; i<N+(periodic?1:0); i++) {
         if (y[i] >= identityValue+1.e-7 || y[i] <= identityValue-1.e-7) {
             identity = false;
             break;
         }
     }
-    if (identity)
-        kind = FCT_Empty;
-    else
+
+    if (!identity && N > (periodic?1:0) ) {
+        CtrlPoints_set ();
+        fillHash();
         kind = FCT_MinMaxCPoints;
+    }
+    else {
+        poly_x.clear();
+        poly_y.clear();
+        hash.clear();
+        kind = FCT_Empty;
+    }
 
     return kind==FCT_Empty;
 }
 
 void FlatCurve::CtrlPoints_set () {
 
-	int nbSubCurvesPoints = N*6;
+	int N_ = periodic ? N : N-1;
+	int nbSubCurvesPoints = N_*6;
 
     std::vector<double> sc_x(nbSubCurvesPoints);  // X sub-curve points (  XP0,XP1,XP2,  XP2,XP3,XP4,  ...)
     std::vector<double> sc_y(nbSubCurvesPoints);  // Y sub-curve points (  YP0,YP1,YP2,  YP2,YP3,YP4,  ...)
-    std::vector<double> sc_length(N*2);           // Length of the subcurves
-    std::vector<bool> sc_isLinear(N*2);           // true if the subcurve is linear
+    std::vector<double> sc_length(N_*2);           // Length of the subcurves
+    std::vector<bool> sc_isLinear(N_*2);           // true if the subcurve is linear
     double total_length=0.;
 
 	// Create the list of Bezier sub-curves
@@ -129,7 +135,7 @@ void FlatCurve::CtrlPoints_set () {
     unsigned int j = 0;
     unsigned int k = 0;
 
-    for (int i = 0; i < N;) {
+    for (int i = 0; i < N_;) {
         double length;
         double dx;
         double dy;
@@ -300,7 +306,7 @@ void FlatCurve::CtrlPoints_set () {
 			nbr_points = (int)(((double)(ppn) * sc_length[i] )/ total_length);
 			if (nbr_points<0){
 				for(size_t it=0;it < sc_x.size(); it+=3) printf("sc_length[%zd/3]=%f \n",it,sc_length[it/3]);
-				printf("Flat curve: error detected!\n i=%d periodic=%d nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f",i,periodic,nbr_points,ppn,N,sc_length[i/3],total_length);
+				printf("Flat curve: error detected!\n i=%d k=%d periodic=%d nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f\n",i,k,periodic,nbr_points,ppn,N,sc_length[i/3],total_length);
 				exit(0);
 			}
 			// increment along the curve, not along the X axis
@@ -334,13 +340,6 @@ double FlatCurve::getVal (double t) const {
     switch (kind) {
 
     case FCT_MinMaxCPoints : {
-        /* To be updated if we have to handle non periodic flat curves
-        // values under and over the first and last point
-        if (t>x[N-1])
-            return y[N-1];
-        else if (t<x[0])
-            return y[0];
-        */
 
         // magic to handle curve periodicity : we look above the 1.0 bound for the value
         if (t < poly_x[0]) t += 1.0;

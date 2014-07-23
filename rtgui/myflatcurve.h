@@ -119,7 +119,7 @@ class MyFlatCurve : public MyCurve {
 		void setPoints (const std::vector<double>& p);
 		void setType (FlatCurveType t);
 		bool handleEvents (GdkEvent* event);
-		void reset (double identityValue=0.5);
+		void reset (const std::vector<double> &resetCurve, double identityValue=0.5);
 		//void updateBackgroundHistogram (unsigned int* hist);
 
 		void pipetteMouseOver (EditDataProvider *provider, int modifierKey);

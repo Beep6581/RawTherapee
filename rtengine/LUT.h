@@ -79,11 +79,13 @@
 
 template<typename T>
 class LUT {
-private:
+protected:
 	// list of variables ordered to improve cache speed
 	unsigned int maxs;
 	T * data;
-	unsigned int clip, size, owner;
+	unsigned int clip, size;
+private:
+	unsigned int owner;
 #if defined( __SSE2__ ) && defined( __x86_64__ )
 	__m128 maxsv __attribute__ ((aligned (16)));
 	__m128 sizev __attribute__ ((aligned (16)));
@@ -178,6 +180,22 @@ public:
 
 	void setClip(int flags) {
 		clip = flags;
+	}
+
+	/** @brief Get the number of element in the LUT (i.e. dimension of the array)
+	 *  For a LUT(500), it will return 500
+	 *  @return number of element in the array
+	 */
+	int getSize() {
+		return size;
+	}
+
+	/** @brief Get the highest value possible (i.e. dimension of the array)
+	 *  For a LUT(500), it will return 499, because 500 elements, starting from 0, goes up to 499
+	 *  @return number of element in the array
+	 */
+	int getUpperBound() {
+		return size>0 ? size-1 : 0;
 	}
 
 	LUT<T> & operator=(LUT<T> &rhs) {
@@ -373,5 +391,58 @@ public:
 		maxs=0;
     }
 };
+
+/** @brief LUT subclass handling hue values specifically.
+    The array has a fixed size of float values and have to be in the [0.; 1.] range in both axis (no error checking implemented) */
+class HueLUT : public LUTf {
+	public:
+		HueLUT() : LUTf() {}
+		HueLUT(bool createArray) : LUTf() {
+			if (createArray)
+				this->operator () (501, LUT_CLIP_BELOW|LUT_CLIP_ABOVE);
+		}
+
+		void create() {
+			this->operator () (501, LUT_CLIP_BELOW|LUT_CLIP_ABOVE);
+		}
+
+		// use with integer indices
+		float& operator[](int index) const {
+			return data[ rtengine::LIM<int>(index, 0, size-1) ];
+		}
+
+		// use with float indices in the [0.;1.] range
+		float operator[](float index) const {
+			int idx = int(index*500.f);  // don't use floor! The difference in negative space is no problems here
+			if (index<0.f)
+				return data[0];
+			else if (index > 1.f)
+				return data[size - 1];
+
+			float balance = index - float(idx/500.f);
+			float h1 = data[idx];
+			float h2 = data[idx + 1];
+
+			if (h1==h2)
+				return h1;
+			if ((h1 > h2) && (h1-h2 > 0.5f)){
+				h1 -= 1.f;
+				float value = h1 + balance * (h2-h1);
+				if (value < 0.f)
+					value += 1.f;
+				return value;
+			}
+			else if (h2-h1 > 0.5f) {
+				h2 -= 1.f;
+				float value = h1 + balance * (h2-h1);
+				if (value < 0.f)
+					value += 1.f;
+				return value;
+			}
+			else
+				return h1 + balance * (h2-h1);
+		}
+};
+
 
 #endif /* LUT_H_ */

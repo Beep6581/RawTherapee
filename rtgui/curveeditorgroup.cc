@@ -294,7 +294,7 @@ float CurveEditorGroup::blendPipetteValues (float chan1, float chan2, float chan
  */
 void CurveEditorGroup::curveResetPressed () {
 	if (displayedCurve) {
-		if (displayedCurve->subGroup->curveReset(displayedCurve->selected, displayedCurve->getIdentityValue())) {
+		if (displayedCurve->subGroup->curveReset(displayedCurve)) {
 			curveChanged();
 		}
 	}

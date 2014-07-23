@@ -26,6 +26,8 @@
 #include "iccstore.h"
 #include "iccmatrices.h"
 #include "sleef.c"
+#define SAT(a,b,c) ((float)max(a,b,c)-(float)min(a,b,c))/(float)max(a,b,c)
+
 namespace rtengine {
 
 #ifdef _DEBUG
@@ -83,12 +85,34 @@ private:
 
 	// Separated from init() to keep the code clear
 	static void initMunsell ();
-    static double hue2rgb(double p, double q, double t);
+	static double hue2rgb(double p, double q, double t);
 
 public:
+
+	typedef enum Channel {
+		CHANNEL_RED            = 1<<0,
+		CHANNEL_GREEN          = 1<<1,
+		CHANNEL_BLUE           = 1<<2,
+		CHANNEL_HUE            = 1<<3,
+		CHANNEL_SATURATION     = 1<<4,
+		CHANNEL_VALUE          = 1<<5,
+		CHANNEL_LIGHTNESS      = 1<<6,
+		CHANNEL_CHROMATICITY   = 1<<7
+	} eChannel;
+
+	typedef enum InterpolationPath {
+		IP_SHORTEST, /// Interpolate color using the shortest path between 2 hues
+		IP_LONGEST,  /// Interpolate color using the longest path between 2 hues
+	} eInterpolationPath;
+
+	typedef enum InterpolationDirection {
+		ID_UP,       /// Interpolate color by increasing the hue value, crossing the upper limit
+		ID_DOWN      /// Interpolate color by decreasing the hue value, crossing the lower limit
+	} eInterpolationDirection;
+
 	const static double sRGBGamma;        // standard average gamma
 	const static double sRGBGammaCurve;   // 2.4 in the curve
-	const static double eps_max, kappa, epskap;
+	const static double eps, eps_max, kappa, epskap;
 	const static float D50x, D50z;
 	const static double u0, v0;
 
@@ -111,6 +135,7 @@ public:
 	static LUTf gammatab_26_11;
 	static LUTf igammatab_24_17;
 	static LUTf gammatab_24_17a;
+	static LUTf gammatab_13_2;
 	
 	// look-up tables for the simple exponential gamma
 	static LUTf gammatab;
@@ -155,6 +180,17 @@ public:
 	* @param b blue channel [0 ; 65535] (return value)
 	*/
 	static void hsl2rgb (float h, float s, float l, float &r, float &g, float &b);
+
+	/**
+	* @brief Convert hue/saturation/luminance in red/green/blue
+	* @param h hue channel [0 ; 1]
+	* @param s saturation channel [0 ; 1]
+	* @param l luminance channel [0 ; 1]
+	* @param r red channel [0 ; 1] (return value)
+	* @param g green channel [0 ; 1] (return value)
+	* @param b blue channel [0 ; 1] (return value)
+	*/
+	static void hsl2rgb01 (float h, float s, float l, float &r, float &g, float &b);
 
 	
 	/**
@@ -244,13 +280,13 @@ public:
 	* @param b blue channel [same range than xyz channel] (return value)
 	* @param rgb_xyz[3][3] transformation matrix to use for the conversion
 	*/
-	static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, double rgb_xyz[3][3]);
+	static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const double rgb_xyz[3][3]);
 	static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const float rgb_xyz[3][3]);
 
 	
 	/**
 	* @brief Convert rgb in xyz
-	* Color space : undefined - use matrix adhoc : xyz_rgb[3][3] (iccmatrice.h) in function of working space
+	* Color space : undefined - use adhoc matrix : xyz_rgb[3][3] (iccmatrice.h) in function of working space
 	* @param r red channel [0 ; 1] or [0 ; 65535]
 	* @param g green channel [0 ; 1] or [0 ; 65535]
 	* @param b blue channel [0 ; 1] or [0 ; 65535]
@@ -259,7 +295,7 @@ public:
 	* @param z Z coordinate [same range than rgb channel] (return value)
 	* @param xyz_rgb[3][3] transformation matrix to use for the conversion
 	*/
-	static void rgbxyz (float r, float g, float b, float &x, float &y, float &z, double xyz_rgb[3][3]);
+	static void rgbxyz (float r, float g, float b, float &x, float &y, float &z, const double xyz_rgb[3][3]);
 
 
 	/**
@@ -283,7 +319,7 @@ public:
 	* @param a channel [-42000 ; +42000] ; can be more than 42000 (return value)
 	* @param b channel [-42000 ; +42000] ; can be more than 42000 (return value)
 	*/
-	static void XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b);
+	static void XYZ2Lab(float x, float y, float z, float &L, float &a, float &b);
 
 
 	/**
@@ -311,6 +347,72 @@ public:
 
 
 	/**
+	* @brief Convert the 'a' and 'b' channels of the L*a*b color space to 'c' and 'h' channels of the Lch color space (channel 'L' is identical [0 ; 32768])
+	* @param a 'a' channel [-42000 ; +42000] ; can be more than 42000
+	* @param b 'b' channel [-42000 ; +42000] ; can be more than 42000
+	* @param c 'c' channel return value, in [0 ; 42000] ; can be more than 42000 (return value)
+	* @param h 'h' channel return value, in [-PI ; +PI] (return value)
+	*/
+	static void Lab2Lch(float a, float b, float &c, float &h);
+
+
+	/**
+	* @brief Convert 'c' and 'h' channels of the Lch color space to the 'a' and 'b' channels of the L*a*b color space (channel 'L' is identical [0 ; 32768])
+	* @param c 'c' channel value, in [0 ; 42000]
+	* @param h 'h' channel value, in [-PI ; +PI]
+	* @param a 'a' channel [-42000 ; +42000] ; can be more than 42000 (return value)
+	* @param b 'b' channel [-42000 ; +42000] ; can be more than 42000 (return value)
+	*/
+	static void Lch2Lab(float c, float h, float &a, float &b);
+
+
+	/**
+	* @brief Convert the 'u' and 'v' channels of the Luv color space to 'c' and 'h' channels of the Lch color space ('L' channel is identical)
+	* @param u 'u' channel [unknown range!]
+	* @param v 'v' channel [unknown range!]
+	* @param c 'c' channel [unknown range!] (return value)
+	* @param h 'h' channel [-PI ; +PI] (return value)
+	*/
+	static void Luv2Lch(float u, float v, float &c, float &h);
+
+
+	/**
+	* @brief Convert 'c' and 'h' channels of the Lch color space to the 'u' and 'v' channels of the Luv color space ('L' channel is identical)
+	* @param c 'c' channel [unknown range!] ; can be more than 42000
+	* @param h 'h' channel [-PI ; +PI]
+	* @param u 'u' channel [unknown range!] (return value)
+	* @param v 'v' channel [unknown range!] (return value)
+	*/
+	static void Lch2Luv(float c, float h, float &u, float &v);
+
+
+	/**
+	* @brief Convert the XYZ values to Luv values
+	* Warning: this method has never been used/tested so far
+	* @param x X coordinate [0 ; 65535] ; can be negative or superior to 65535
+	* @param y Y coordinate [0 ; 65535] ; can be negative or superior to 65535
+	* @param z Z coordinate [0 ; 65535] ; can be negative or superior to 65535
+	* @param L 'L' channel [0 ; 32768] (return value)
+	* @param u 'u' channel [-42000 ; 42000] ; can be more than 42000 (return value)
+	* @param v 'v' channel [-42000 ; 42000] ; can be more than 42000 (return value)
+	*/
+	static void XYZ2Luv (float X, float Y, float Z, float &L, float &u, float &v);
+
+
+	/**
+	* @brief Convert the Luv values to XYZ values
+	* Warning: this method has never been used/tested so far
+	* @param L 'L' channel [0 ; 32768]
+	* @param u 'u' channel [-42000 ; 42000] ; can be more than 42000
+	* @param v 'v' channel [-42000 ; 42000] ; can be more than 42000
+	* @param x X coordinate [0 ; 65535] ; can be negative or superior to 65535 (return value)
+	* @param y Y coordinate [0 ; 65535] ; can be negative or superior to 65535 (return value)
+	* @param z Z coordinate [0 ; 65535] ; can be negative or superior to 65535 (return value)
+	*/
+	static void Luv2XYZ (float L, float u, float v, float &X, float &Y, float &Z);
+
+
+	/**
 	* @brief Return "f" in function of CIE's kappa and epsilon constants
 	* @param f f can be fx fy fz where:
 	*          fx=a/500 + fy  a=chroma green red [-128 ; +128]
@@ -333,6 +435,259 @@ public:
 
 
 	/**
+	 * @brief Calculate the effective direction (up or down) to linearly interpolating 2 colors so that it follows the shortest or longest path
+	 * @param h1 First hue [0 ; 1]
+	 * @param h2 Second hue [0 ; 1]
+	 * @param path Path to follow (shortest/longest)
+	 * @return The interpolation direction
+	 */
+	static inline eInterpolationDirection getHueInterpolationDirection (double h1, double h2, eInterpolationPath path) {
+		if (path==IP_SHORTEST) {
+			if (h2>h1) {
+				if (h2-h1<=0.5)
+					return ID_UP;
+				else
+					return ID_DOWN;
+			}
+			else {
+				if (h1-h2<=0.5)
+					return ID_DOWN;
+				else
+					return ID_UP;
+			}
+		}
+		else {
+			if (h2>h1) {
+				if (h2-h1<=0.5)
+					return ID_DOWN;
+				else
+					return ID_UP;
+			}
+			else {
+				if (h1-h2<=0.5)
+					return ID_UP;
+				else
+					return ID_DOWN;
+			}
+		}
+	}
+
+
+	/**
+	 * @brief Calculate a color by linearly interpolating 2 colors
+	 * @param h1 First hue
+	 * @param h2 Second hue
+	 * @param balance Factor from 0 (first hue) to 1 (second hue)
+	 * @param dir Tells which direction the interpolation have to follow. You can get the value with getHueInterpolationDirection
+	 * @return The interpolated hue
+	 */
+	static inline double interpolateHueHSV (double h1, double h2, double balance, eInterpolationDirection dir) {
+		if (h1==h2)
+			return h1;
+		if (dir==ID_DOWN) {
+			if (h1 < h2){
+				double temp = h1;
+				h1 = h2-1.;
+				h2 = temp;
+				balance = 1. - balance;
+			}
+			double h3 = h1 + balance * (h2-h1);
+			if (h3<0.)
+				h3 += 1.;
+			return h3;
+		}
+		else {
+			if (h1 > h2){
+				h2 += 1.;
+			}
+			double h3 = h1 + balance * (h2-h1);
+			if (h3>1.)
+				h3 -= 1.;
+			return h3;
+		}
+	}
+
+	/**
+	* @brief Interpolate 2 colors from their respective red/green/blue channels, with a balance factor
+	* @param balance gives weight to the first and second color [0 ; 1]
+	*                0. = output color == first color
+	*                0.5 = output color == equally mixed colors
+	*                1. = output color == second color
+	* @param r1 red channel of color 1 [0 ; 65535]
+	* @param g1 green channel of color 1 [0 ; 65535]
+	* @param b1 blue channel of color 1 [0 ; 65535]
+	* @param r2 red channel of color 2 [0 ; 65535]
+	* @param g2 green channel of color 2 [0 ; 65535]
+	* @param b2 blue channel of color 2 [0 ; 65535]
+	* @param channels bitfield of channel to interpolate (CHANNEL_LIGHTNESS|CHANNEL_CHROMATICITY|CHANNEL_HUE)
+	* @param xyz_rgb color space
+	* @param ro red channel of output color [0 ; 65535] (return value)
+	* @param go green channel of output color [0 ; 65535] (return value)
+	* @param bo blue channel of output color [0 ; 65535] (return value)
+	*/
+	static void interpolateRGBColor (const float balance, const float r1, const float g1, const float b1, const float r2, const float g2, const float b2, int channels, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo);
+
+	/**
+	* @brief Interpolate 2 colors from their respective red/green/blue channels, with a balance factor
+	* @param realL luminance hsl [0; 1]
+	* @param iplow low luminance for rl [0;1]
+	* @param ihigh high luminance for r2 [0;1]
+	* @param algm algorithm [0;2]
+	* @param balance gives weight to the first and second color [0 ; 1]
+	*                0. = output color == first color
+	*                0.5 = output color == equally mixed colors
+	*                1. = output color == second color
+	* @param twoc 2 colors or 512 int
+	* @param r1 red channel of color 1 [0 ; 65535]
+	* @param g1 green channel of color 1 [0 ; 65535]
+	* @param b1 blue channel of color 1 [0 ; 65535]
+	* @param rl red channel of color low [0 ; 65535]
+	* @param gl green channel of color low [0 ; 65535]
+	* @param bl blue channel of color low [0 ; 65535]
+
+	* @param r2 red channel of color 2 or high[0 ; 65535]
+	* @param g2 green channel of color 2 or high[0 ; 65535]
+	* @param b2 blue channel of color 2 [or high 0 ; 65535]
+	* @param channels bitfield of channel to interpolate (CHANNEL_LIGHTNESS|CHANNEL_CHROMATICITY|CHANNEL_HUE)
+	* @param xyz_rgb color space
+	* @param rgb_xyz inverse color space
+	* @param ro red channel of output color [0 ; 65535] (return value)
+	* @param go green channel of output color [0 ; 65535] (return value)
+	* @param bo blue channel of output color [0 ; 65535] (return value)
+	*/
+	static void interpolateRGBColor (float realL, float iplow, float iphigh, int algm,  const float balance, int twoc, int metchrom, bool chr, bool lum, float chromat, float luma, const float r1, const float g1, const float b1, const float xl, const float yl, const float zl, const float x2, const float y2, const float z2, int channels, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo);
+
+
+	/**
+	* @brief Interpolate a hue value as the angle of a polar coordinate with hue in the [0;1] range
+	* Chose the shorter path from hue 1 to hue 2.
+	* @param h1 First hue [0; 1]
+	* @param h2 Second hue  [0; 1]
+	* @param balance Interpolation factor [0 ; 1] where 0.=h1, 1.=h2
+	* @return the interpolated value [0;1]
+	*/
+	/*template <typename T, typename U>
+	static inline T interpolatePolarHue_01 (T h1, T h2, U balance) {
+
+		if (h1==h2)
+			return h1;
+		if ((h1 > h2) && (h1-h2 > T(0.5))){
+			h1 -= T(1.);
+			double value = h1 + T(balance) * (h2-h1);
+			if (value < T(0.))
+				value += T(1.);
+			return value;
+		}
+		else if (h2-h1 > T(0.5)) {
+			h2 -= T(1.);
+			double value = h1 + T(balance) * (h2-h1);
+			if (value < T(0.))
+				value += T(1.);
+			return value;
+		}
+		else
+			return h1 + T(balance) * (h2-h1);
+	}*/
+
+
+	/**
+	* @brief Interpolate a hue value as the angle of a polar coordinate with hue in the [-PI ; +PI] range
+	* Chose the shorter path from hue 1 to hue 2.
+	* @param h1 First hue [-PI ; +PI]
+	* @param h2 Second hue [-PI ; +PI]
+	* @param balance Interpolation factor [0 ; 1] where 0.=h1, 1.=h2
+	* @return the interpolated value [-PI ; +PI]
+	*/
+	/*template <typename T, typename U>
+	static inline T interpolatePolarHue_PI (T h1, T h2, U balance) {
+		if (h1==h2)
+			return h1;
+		if ((h1 > h2) && (h1-h2 > T(M_PI))){
+			h1 -= T(2*M_PI);
+			T value = h1 + T(balance) * (h2-h1);
+			if (value < T(-M_PI))
+				value += T(2*M_PI);
+			return value;
+		}
+		else if (h2-h1 > T(M_PI)) {
+			h2 -= T(2*M_PI);
+			T value = h1 + T(balance) * (h2-h1);
+			if (value < T(0))
+				value += T(2*M_PI);
+			return value;
+		}
+		else
+			return h1 + T(balance) * (h2-h1);
+	}*/
+
+
+	/**
+	* @brief Interpolate a hue value as the angle of a polar coordinate with hue in the [0;1] range
+	* Chose the shorter path from hue 1 to hue 2.
+	* @param h1 First hue [0; 1]
+	* @param h2 Second hue  [0; 1]
+	* @param balance Interpolation factor [0 ; 1] where 0.=h1, 1.=h2
+	* @return the interpolated value [0;1]
+	*/
+	template <typename T, typename U>
+	static inline T interpolatePolarHue_01 (T h1, T h2, U balance) {
+		float d = h2 - h1;
+		float f;
+		f=T(balance);
+		double h;
+		if (h1 > h2){
+			std::swap(h1,h2);
+			d = -d;
+			f=1.f-f;
+		}
+		if (d < T(-M_PI) || d < T(0) || d > T(M_PI)) { //there was an inversion here !! d > T(M_PI)
+			h1 += T(2*M_PI);
+			h = h1 + f*(h2-h1);
+			h = std::fmod(h,2*M_PI);
+		}
+		else h = h1 + f * d;
+		// not strictly necessary..but in case of
+		if(h < T(-M_PI)) h=T(2*M_PI)-h;
+		if(h > T(M_PI)) h=h-T(2*M_PI);
+
+		return h;
+	}
+
+
+	/**
+	* @brief Interpolate a hue value as the angle of a polar coordinate with hue in the [-PI ; +PI] range
+	* Chose the shorter path from hue 1 to hue 2.
+	* @param h1 First hue [-PI ; +PI]
+	* @param h2 Second hue [-PI ; +PI]
+	* @param balance Interpolation factor [0 ; 1] where 0.=h1, 1.=h2
+	* @return the interpolated value [-PI ; +PI ]
+	*/
+	template <typename T, typename U>
+	static inline T interpolatePolarHue_PI (T h1, T h2, U balance) {
+		float d = h2 - h1;
+		float f;
+		f=T(balance);
+		double h;
+		if (h1 > h2){
+			std::swap(h1,h2);
+			d = -d;
+			f=1.f-f;
+		}
+		if (d < T(0) || d < T(0.5) || d > T(1.)) { //there was an inversion here !! d > T(M_PI)
+			h1 += T(1.);
+			h = h1 + f*(h2-h1);
+			h = std::fmod(h,1.);
+		}
+		else h = h1 + f * d;
+		// not strictly necessary..but in case of
+		if(h < T(0)) h=T(1.)-h;
+		if(h > T(1)) h=h-T(1.);
+
+		return h;
+	}
+
+
+	/**
 	* @brief Get the gamma curves' parameters used by LCMS2
 	* @param pwr gamma value [>1]
 	* @param ts slope [0 ; 20]
@@ -347,7 +702,7 @@ public:
 	*/
 	static void calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4,double &gamma5);
 
-	
+
 	/**
 	* @brief Used by Black and White to correct gamma for each channel red, green and blue channel
 	* @param r red channel input and output value [0 ; 65535]
@@ -506,6 +861,14 @@ public:
 	static inline double igamma26_11    (double x) {
 										return x <= 0.054127 ? x/11.0 : exp(log((x+0.086603)/1.086603)*2.6);
 									}
+	/**
+	* @brief Get the gamma value for Gamma=1.3 Slope=2
+	* @param x red, green or blue channel's value [0 ; 1]
+	* @return the gamma modified's value [0 ; 1]
+	*/
+	static inline double gamma13_2     (double x) {
+											return x <= 0.016613 ? x*2.0 : 1.009968*exp(log(x)/1.3)-0.016613;
+									}
 
 
 	// gamma function with adjustable parameters
@@ -612,10 +975,10 @@ public:
 	* @param moreRGB (Debug target only) to calculate iterations for values >65535
 	*/
 #ifdef _DEBUG
-	static void gamutLchonly  (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb);
+	static void gamutLchonly  (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb);
 	static void gamutLchonly  (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb);
 #else
-	static void gamutLchonly  (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef);
+	static void gamutLchonly  (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef);
 	static void gamutLchonly  (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef);
 #endif
 

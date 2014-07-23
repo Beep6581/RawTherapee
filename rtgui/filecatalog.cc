@@ -895,34 +895,35 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
 				if (options.fastexport_bypass_sharpening         ) params.sharpening.enabled          = false;
 				if (options.fastexport_bypass_sharpenEdge        ) params.sharpenEdge.enabled         = false;
 				if (options.fastexport_bypass_sharpenMicro       ) params.sharpenMicro.enabled        = false;
-				//if (options.fastexport_bypass_lumaDenoise        ) params.lumaDenoise.enabled         = false;
-				//if (options.fastexport_bypass_colorDenoise       ) params.colorDenoise.enabled        = false;
+				//if (options.fastexport_bypass_lumaDenoise      ) params.lumaDenoise.enabled         = false;
+				//if (options.fastexport_bypass_colorDenoise     ) params.colorDenoise.enabled        = false;
 				if (options.fastexport_bypass_defringe           ) params.defringe.enabled            = false;
 				if (options.fastexport_bypass_dirpyrDenoise      ) params.dirpyrDenoise.enabled       = false;
 				if (options.fastexport_bypass_sh_hq              ) params.sh.hq                       = false;
 				if (options.fastexport_bypass_dirpyrequalizer    ) params.dirpyrequalizer.enabled     = false;
-				//if (options.fastexport_bypass_raw_all_enhance    ) params.raw.all_enhance             = false;
-				if (options.fastexport_bypass_raw_ccSteps        ) params.raw.ccSteps                 = 0;
-				if (options.fastexport_bypass_raw_dcb_iterations ) params.raw.dcb_iterations          = 0;
-				if (options.fastexport_bypass_raw_dcb_enhance    ) params.raw.dcb_enhance             = false;
-				if (options.fastexport_bypass_raw_lmmse_iterations ) params.raw.lmmse_iterations          = 0;
-				if (options.fastexport_bypass_raw_ca             ) {params.raw.ca_autocorrect =false; params.raw.cared=0; params.raw.cablue=0;}
-				if (options.fastexport_bypass_raw_linenoise      ) params.raw.linenoise               = 0;
-				if (options.fastexport_bypass_raw_greenthresh    ) params.raw.greenthresh             = 0;
-				if (options.fastexport_bypass_raw_df             ) {params.raw.df_autoselect = false; params.raw.dark_frame="";}
-				if (options.fastexport_bypass_raw_ff             ) {params.raw.ff_AutoSelect = false; params.raw.ff_file="";}
-				params.raw.dmethod       = options.fastexport_raw_dmethod     ;
-				params.icm.input         = options.fastexport_icm_input       ;
-				params.icm.working       = options.fastexport_icm_working     ;
-				params.icm.output        = options.fastexport_icm_output      ;
-				params.icm.gamma         = options.fastexport_icm_gamma       ;
-				params.resize.enabled    = options.fastexport_resize_enabled  ;
-				params.resize.scale      = options.fastexport_resize_scale    ;
-				params.resize.appliesTo  = options.fastexport_resize_appliesTo;
-				params.resize.method     = options.fastexport_resize_method   ;
-				params.resize.dataspec   = options.fastexport_resize_dataspec ;
-				params.resize.width      = options.fastexport_resize_width    ;
-				params.resize.height     = options.fastexport_resize_height   ;
+				//if (options.fastexport_bypass_raw_bayer_all_enhance   ) params.raw.bayersensor.all_enhance       = false;
+				if (options.fastexport_bypass_raw_bayer_dcb_iterations  ) params.raw.bayersensor.dcb_iterations    = 0;
+				if (options.fastexport_bypass_raw_bayer_dcb_enhance     ) params.raw.bayersensor.dcb_enhance       = false;
+				if (options.fastexport_bypass_raw_bayer_lmmse_iterations) params.raw.bayersensor.lmmse_iterations  = 0;
+				if (options.fastexport_bypass_raw_bayer_linenoise       ) params.raw.bayersensor.linenoise         = 0;
+				if (options.fastexport_bypass_raw_bayer_greenthresh     ) params.raw.bayersensor.greenthresh       = 0;
+				if (options.fastexport_bypass_raw_ccSteps        ) {params.raw.bayersensor.ccSteps = params.raw.xtranssensor.ccSteps = 0;}
+				if (options.fastexport_bypass_raw_ca             ) {params.raw.ca_autocorrect = false; params.raw.cared=0; params.raw.cablue=0;}
+				if (options.fastexport_bypass_raw_df             ) {params.raw.df_autoselect  = false; params.raw.dark_frame="";}
+				if (options.fastexport_bypass_raw_ff             ) {params.raw.ff_AutoSelect  = false; params.raw.ff_file="";}
+				params.raw.bayersensor.method  = options.fastexport_raw_bayer_method ;
+				params.raw.xtranssensor.method = options.fastexport_raw_xtrans_method;
+				params.icm.input               = options.fastexport_icm_input        ;
+				params.icm.working             = options.fastexport_icm_working      ;
+				params.icm.output              = options.fastexport_icm_output       ;
+				params.icm.gamma               = options.fastexport_icm_gamma        ;
+				params.resize.enabled          = options.fastexport_resize_enabled   ;
+				params.resize.scale            = options.fastexport_resize_scale     ;
+				params.resize.appliesTo        = options.fastexport_resize_appliesTo ;
+				params.resize.method           = options.fastexport_resize_method    ;
+				params.resize.dataspec         = options.fastexport_resize_dataspec  ;
+				params.resize.width            = options.fastexport_resize_width     ;
+				params.resize.height           = options.fastexport_resize_height    ;
             }
 
             rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (fbe->filename, th->getType()==FT_Raw, params);

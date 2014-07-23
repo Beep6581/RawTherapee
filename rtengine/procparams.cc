@@ -42,7 +42,8 @@ using namespace std;
 namespace rtengine {
 namespace procparams {
 
-    const char *RAWParams::methodstring[RAWParams::numMethods]={"amaze","igv","lmmse","eahd", "hphd", "vng4", "dcb", "ahd", "fast", "mono", "none" };
+    const char *RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::numMethods]={"amaze","igv","lmmse","eahd", "hphd", "vng4", "dcb", "ahd", "fast", "mono", "none" };
+    const char *RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::numMethods]={"3-pass (best)", "1-pass (medium)", "fast", "mono", "none" };
 
 const char *RAWParams::ff_BlurTypestring[RAWParams::numFlatFileBlurTypes]={/*"Parametric",*/ "Area Flatfield", "Vertical Flatfield", "Horizontal Flatfield", "V+H Flatfield"};
 std::vector<WBEntry*> WBParams::wbEntries;
@@ -110,10 +111,313 @@ void CropParams::mapToResized(int resizedWidth, int resizedHeight, int scale, in
     }
 }
 
+ColorToningParams::ColorToningParams () : hlColSat(60, 80, false), shadowsColSat(80, 208, false) {
+    setDefault();
+}
+
+void ColorToningParams::getDefaultColorCurve(std::vector<double> &curve) {
+    double v[8]= { 0.050, 0.62, 0.25, 0.25,
+                   0.585, 0.11, 0.25, 0.25 };
+
+    curve.resize(9);
+    curve.at(0) = double(FCT_MinMaxCPoints);
+    for (size_t i=1; i<curve.size(); ++i)
+        curve.at(i) = v[i-1];
+}
+
+void ColorToningParams::getDefaultOpacityCurve(std::vector<double> &curve) {
+    double v[16]={ 0.00, 0.3, 0.35, 0.00,
+                   0.25, 0.8, 0.35, 0.35,
+                   0.70, 0.8, 0.35, 0.35,
+                   1.00, 0.3, 0.00, 0.00 };
+    curve.resize(17);
+    curve.at(0 ) = double(FCT_MinMaxCPoints);
+    for (size_t i=1; i<curve.size(); ++i)
+        curve.at(i) = v[i-1];
+}
+
+void ColorToningParams::getDefaultCLCurve(std::vector<double> &curve) {
+    double v[6]= { 0.00, 0.00,
+                   0.35, 0.65,
+                   1.00, 1.00 };
+
+    curve.resize(7);
+    curve.at(0) = double(DCT_NURBS);
+    for (size_t i=1; i<curve.size(); ++i)
+        curve.at(i) = v[i-1];
+}
+
+void ColorToningParams::getDefaultCL2Curve(std::vector<double> &curve) {
+    double v[6]= { 0.00, 0.00,
+                   0.35, 0.65,
+                   1.00, 1.00 };
+
+    curve.resize(7);
+    curve.at(0) = double(DCT_NURBS);
+    for (size_t i=1; i<curve.size(); ++i)
+        curve.at(i) = v[i-1];
+}
+
+void ColorToningParams::setDefault() {
+    enabled = false;
+    autosat=true;
+    method = "Lab";
+
+    getDefaultColorCurve(colorCurve);
+    getDefaultOpacityCurve(opacityCurve);
+    getDefaultCLCurve(clcurve);
+    getDefaultCL2Curve(cl2curve);
+
+    hlColSat.setValues(60, 80);
+    shadowsColSat.setValues(80, 208);
+    balance = 0;
+    satProtectionThreshold = 30;
+    saturatedOpacity = 80;
+    strengthprotection = 50;
+    lumamode = true;
+    twocolor = "Std";
+    redlow = 0.0;
+    greenlow = 0.0;
+    bluelow = 0.0;
+    satlow = 0.0;
+    sathigh = 0.0;
+    redmed = 0.0;
+    greenmed = 0.0;
+    bluemed = 0.0;
+    redhigh = 0.0;
+    greenhigh = 0.0;
+    bluehigh = 0.0;
+}
+
+void ColorToningParams::mixerToCurve(std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const {
+    // check if non null first
+    if (!redlow && !greenlow && !bluelow && !redmed && !greenmed && !bluemed && !redhigh && !greenhigh && !bluehigh) {
+        colorCurve.resize(1);
+        colorCurve.at(0) = FCT_Linear;
+        opacityCurve.resize(1);
+        opacityCurve.at(0) = FCT_Linear;
+        return;
+    }
+
+    float low[3];  // RGB color for shadows
+    float med[3];  // RGB color for mid-tones
+    float high[3]; // RGB color for highlights
+    float lowSat  = 0.f;
+    float medSat  = 0.f;
+    float highSat = 0.f;
+    float minTmp, maxTmp;
+
+    // Fill the shadow mixer values of the Color TOning tool
+    low[0] = float(redlow  )/100.f; // [-1. ; +1.]
+    low[1] = float(greenlow)/100.f; // [-1. ; +1.]
+    low[2] = float(bluelow )/100.f; // [-1. ; +1.]
+    minTmp = min<float>(low[0], low[1], low[2]);
+    maxTmp = max<float>(low[0], low[1], low[2]);
+    if (maxTmp-minTmp > 0.005f) {
+        float v[3];
+        lowSat = (maxTmp-minTmp)/2.f;
+        if      (low[0] == minTmp) v[0] = 0.f;
+        else if (low[1] == minTmp) v[1] = 0.f;
+        else if (low[2] == minTmp) v[2] = 0.f;
+        if      (low[0] == maxTmp) v[0] = 1.f;
+        else if (low[1] == maxTmp) v[1] = 1.f;
+        else if (low[2] == maxTmp) v[2] = 1.f;
+        if      (low[3] != minTmp && low[0] != maxTmp) v[0] = (low[0]-minTmp)/(maxTmp-minTmp);
+        else if (low[1] != minTmp && low[1] != maxTmp) v[1] = (low[1]-minTmp)/(maxTmp-minTmp);
+        else if (low[2] != minTmp && low[2] != maxTmp) v[2] = (low[2]-minTmp)/(maxTmp-minTmp);
+        low[0] = v[0];
+        low[1] = v[1];
+        low[2] = v[2];
+    }
+    else {
+        low[0] = low[1] = low[2] = 1.f;
+    }
+
+    // Fill the mid-tones mixer values of the Color TOning tool
+    med[0] = float(redmed  )/100.f; // [-1. ; +1.]
+    med[1] = float(greenmed)/100.f; // [-1. ; +1.]
+    med[2] = float(bluemed )/100.f; // [-1. ; +1.]
+    minTmp = min<float>(med[0], med[1], med[2]);
+    maxTmp = max<float>(med[0], med[1], med[2]);
+    if (maxTmp-minTmp > 0.005f) {
+        float v[3];
+        medSat = (maxTmp-minTmp)/2.f;
+        if      (med[0] == minTmp) v[0] = 0.f;
+        else if (med[1] == minTmp) v[1] = 0.f;
+        else if (med[2] == minTmp) v[2] = 0.f;
+        if      (med[0] == maxTmp) v[0] = 1.f;
+        else if (med[1] == maxTmp) v[1] = 1.f;
+        else if (med[2] == maxTmp) v[2] = 1.f;
+        if      (med[3] != minTmp && med[0] != maxTmp) v[0] = (med[0]-minTmp)/(maxTmp-minTmp);
+        else if (med[1] != minTmp && med[1] != maxTmp) v[1] = (med[1]-minTmp)/(maxTmp-minTmp);
+        else if (med[2] != minTmp && med[2] != maxTmp) v[2] = (med[2]-minTmp)/(maxTmp-minTmp);
+        med[0] = v[0];
+        med[1] = v[1];
+        med[2] = v[2];
+    }
+    else {
+        med[0] = med[1] = med[2] = 1.f;
+    }
+
+    // Fill the highlight mixer values of the Color TOning tool
+    high[0] = float(redhigh  )/100.f; // [-1. ; +1.]
+    high[1] = float(greenhigh)/100.f; // [-1. ; +1.]
+    high[2] = float(bluehigh )/100.f; // [-1. ; +1.]
+    minTmp = min<float>(high[0], high[1], high[2]);
+    maxTmp = max<float>(high[0], high[1], high[2]);
+    if (maxTmp-minTmp > 0.005f) {
+        float v[3];
+        highSat = (maxTmp-minTmp)/2.f;
+        if      (high[0] == minTmp) v[0] = 0.f;
+        else if (high[1] == minTmp) v[1] = 0.f;
+        else if (high[2] == minTmp) v[2] = 0.f;
+        if      (high[0] == maxTmp) v[0] = 1.f;
+        else if (high[1] == maxTmp) v[1] = 1.f;
+        else if (high[2] == maxTmp) v[2] = 1.f;
+        if      (high[3] != minTmp && high[0] != maxTmp) v[0] = (high[0]-minTmp)/(maxTmp-minTmp);
+        else if (high[1] != minTmp && high[1] != maxTmp) v[1] = (high[1]-minTmp)/(maxTmp-minTmp);
+        else if (high[2] != minTmp && high[2] != maxTmp) v[2] = (high[2]-minTmp)/(maxTmp-minTmp);
+        high[0] = v[0];
+        high[1] = v[1];
+        high[2] = v[2];
+    }
+    else {
+        high[0] = high[1] = high[2] = 1.f;
+    }
+
+
+
+
+    const double xPosLow  = 0.1;
+    const double xPosMed  = 0.4;
+    const double xPosHigh = 0.7;
+
+
+
+
+    colorCurve.resize( medSat!=0.f ? 13 : 9 );
+    colorCurve.at(0) = FCT_MinMaxCPoints;
+    opacityCurve.resize(13);
+    opacityCurve.at(0) = FCT_MinMaxCPoints;
+
+    float h, s, l;
+    int idx = 1;
+
+    if (lowSat == 0.f) {
+        if (medSat != 0.f)
+            Color::rgb2hsl(med[0], med[1], med[2], h, s, l);
+        else// highSat can't be null if the 2 other ones are!
+            Color::rgb2hsl(high[0], high[1], high[2], h, s, l);
+    }
+    else
+        Color::rgb2hsl(low[0], low[1], low[2], h, s, l);
+    colorCurve.at(idx++)  = xPosLow;
+    colorCurve.at(idx++)  = h;
+    colorCurve.at(idx++)  = 0.35;
+    colorCurve.at(idx++)  = 0.35;
+
+    if (medSat != 0.f) {
+        Color::rgb2hsl(med[0], med[1], med[2], h, s, l);
+        colorCurve.at(idx++)  = xPosMed;
+        colorCurve.at(idx++)  = h;
+        colorCurve.at(idx++)  = 0.35;
+        colorCurve.at(idx++)  = 0.35;
+    }
+
+    if (highSat == 0.f) {
+        if (medSat != 0.f)
+            Color::rgb2hsl(med[0], med[1], med[2], h, s, l);
+        else// lowSat can't be null if the 2 other ones are!
+            Color::rgb2hsl(low[0], low[1], low[2], h, s, l);
+    }
+    else
+        Color::rgb2hsl(high[0], high[1], high[2], h, s, l);
+    colorCurve.at(idx++)  = xPosHigh;
+    colorCurve.at(idx++)  = h;
+    colorCurve.at(idx++)  = 0.35;
+    colorCurve.at(idx)    = 0.35;
+
+    opacityCurve.at(1)  = xPosLow;
+    opacityCurve.at(2)  = double(lowSat);
+    opacityCurve.at(3)  = 0.35;
+    opacityCurve.at(4)  = 0.35;
+    opacityCurve.at(5)  = xPosMed;
+    opacityCurve.at(6)  = double(medSat);
+    opacityCurve.at(7)  = 0.35;
+    opacityCurve.at(8)  = 0.35;
+    opacityCurve.at(9)  = xPosHigh;
+    opacityCurve.at(10) = double(highSat);
+    opacityCurve.at(11) = 0.35;
+    opacityCurve.at(12) = 0.35;
+}
+
+void ColorToningParams::slidersToCurve(std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const {
+    if (hlColSat.value[0]==0 && shadowsColSat.value[0]==0) { // if both opacity are null, set both curves to Linear
+        colorCurve.resize(1);
+        colorCurve.at(0) = FCT_Linear;
+        opacityCurve.resize(1);
+        opacityCurve.at(0) = FCT_Linear;
+        return;
+    }
+
+    colorCurve.resize(9);
+    colorCurve.at(0) = FCT_MinMaxCPoints;
+    colorCurve.at(1) = 0.26 + 0.12*double(balance)/100.;
+    colorCurve.at(2) = double(shadowsColSat.value[1])/360.;
+    colorCurve.at(3) = 0.35;
+    colorCurve.at(4) = 0.35;
+    colorCurve.at(5) = 0.64 + 0.12*double(balance)/100.;
+    colorCurve.at(6) = double(hlColSat.value[1])/360.;
+    colorCurve.at(7) = 0.35;
+    colorCurve.at(8) = 0.35;
+
+    opacityCurve.resize(9);
+    opacityCurve.at(0) = FCT_MinMaxCPoints;
+    opacityCurve.at(1) = colorCurve.at(1);
+    opacityCurve.at(2) = double(shadowsColSat.value[0])/100.;
+    opacityCurve.at(3) = 0.35;
+    opacityCurve.at(4) = 0.35;
+    opacityCurve.at(5) = colorCurve.at(5);
+    opacityCurve.at(6) = double(hlColSat.value[0])/100.;
+    opacityCurve.at(7) = 0.35;
+    opacityCurve.at(8) = 0.35;
+}
+
+void ColorToningParams::getCurves(ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3]) const {
+    float satur=0.8f;
+    float lumin=0.5f;//middle of luminance for optimization of gamut - no real importance...as we work in XYZ and gamut control
+
+    // Transform slider values to control points
+    std::vector<double> cCurve, oCurve;
+    if (method=="RGBSliders" || method=="Splitlr")
+        slidersToCurve(cCurve, oCurve);
+    else if (method=="Splitco")
+        mixerToCurve(cCurve, oCurve);
+    else {
+        cCurve = this->colorCurve;
+        oCurve = this->opacityCurve;
+    }
+
+    if(method=="Lab") {
+        if(twocolor=="Separ") satur=0.9f;
+        if(twocolor=="All"  || twocolor=="Two") satur=0.9f;
+        colorCurveLUT.SetXYZ(cCurve, xyz_rgb, rgb_xyz, satur, lumin);
+        opacityCurveLUT.Set(oCurve);
+    }
+    else if(method=="Splitlr" || method=="Splitco") {
+        colorCurveLUT.SetXYZ(cCurve, xyz_rgb, rgb_xyz, satur, lumin);
+        opacityCurveLUT.Set(oCurve);
+    }
+    else if(method.substr(0,3)=="RGB") {
+        colorCurveLUT.SetRGB(cCurve, xyz_rgb, rgb_xyz);
+        opacityCurveLUT.Set(oCurve);
+     }
+}
+
 ProcParams::ProcParams () { 
 
     setDefaults (); 
-}       
+}
 
 void ProcParams::init () {
 
@@ -123,7 +427,7 @@ void ProcParams::init () {
 void ProcParams::cleanup () {
 
     WBParams::cleanup();
-}       
+}
 
 ProcParams* ProcParams::create () {
 
@@ -155,12 +459,12 @@ void ProcParams::setDefaults () {
     toneCurve.curveMode2    = ToneCurveParams::TC_MODE_STD;
     toneCurve.hrenabled = false;
     toneCurve.method  = "Blend";
-	labCurve.brightness      = 0;
+    labCurve.brightness      = 0;
     labCurve.contrast        = 0;
     labCurve.chromaticity    = 0;
-    labCurve.avoidcolorshift = true;
+    labCurve.avoidcolorshift = false;
     labCurve.lcredsk = true;
-	
+
     labCurve.rstprotection   = 0;
     labCurve.lcurve.clear ();
     labCurve.lcurve.push_back(DCT_Linear);
@@ -176,7 +480,7 @@ void ProcParams::setDefaults () {
     labCurve.lhcurve.push_back(FCT_Linear);
     labCurve.hhcurve.clear ();
     labCurve.hhcurve.push_back(FCT_Linear);
-	
+
     labCurve.lccurve.clear ();
     labCurve.lccurve.push_back(DCT_Linear);
     labCurve.clcurve.clear ();
@@ -190,6 +494,7 @@ void ProcParams::setDefaults () {
     rgbCurves.bcurve.clear ();
     rgbCurves.bcurve.push_back(DCT_Linear);
 
+    colorToning.setDefault();
 
     sharpenEdge.enabled         = false;
     sharpenEdge.passes          = 2;
@@ -301,15 +606,18 @@ void ProcParams::setDefaults () {
     dirpyrDenoise.enabled       = false;
     dirpyrDenoise.enhance       = false;
  //   dirpyrDenoise.perform       = false;
-     dirpyrDenoise.median       = false;
-   dirpyrDenoise.luma          = 0;
+    dirpyrDenoise.median       = true;
+	dirpyrDenoise.luma          = 0;
     dirpyrDenoise.Ldetail       = 50;
     dirpyrDenoise.chroma        = 15;
     dirpyrDenoise.redchro       = 0;
     dirpyrDenoise.bluechro      = 0;
     dirpyrDenoise.gamma         = 1.7;
+    dirpyrDenoise.passes         = 1;
     dirpyrDenoise.dmethod       = "RGB";
     dirpyrDenoise.medmethod       = "soft";
+    dirpyrDenoise.methodmed       = "none";
+    dirpyrDenoise.rgbmethod       = "soft";
 
     epd.enabled = false;
     epd.strength = 0.25;
@@ -448,33 +756,39 @@ void ProcParams::setDefaults () {
     hsvequalizer.scurve.push_back (FCT_Linear);
     hsvequalizer.vcurve.clear ();
     hsvequalizer.vcurve.push_back (FCT_Linear);
+    raw.bayersensor.method = RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze];
+    raw.bayersensor.ccSteps = 0;
+    raw.bayersensor.dcb_iterations = 2;
+    raw.bayersensor.dcb_enhance = false;
+    //raw.bayersensor.all_enhance = false;
+    raw.bayersensor.lmmse_iterations = 2;
+    raw.bayersensor.black0 = 0.0;
+    raw.bayersensor.black1 = 0.0;
+    raw.bayersensor.black2 = 0.0;
+    raw.bayersensor.black3 = 0.0;
+    raw.bayersensor.twogreen = true;
+    raw.bayersensor.linenoise = 0;
+    raw.bayersensor.greenthresh = 0;
+
+    raw.xtranssensor.method = RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::threePass];
+    raw.xtranssensor.ccSteps = 0;
+    raw.xtranssensor.blackred = 0.0;
+    raw.xtranssensor.blackgreen = 0.0;
+    raw.xtranssensor.blackblue = 0.0;
+
+    raw.expos=1.0;
+    raw.preser=0.0;
     raw.df_autoselect = false;
     raw.ff_AutoSelect = false;
     raw.ff_BlurRadius = 32;
     raw.ff_BlurType = RAWParams::ff_BlurTypestring[RAWParams::area_ff];
+    raw.ff_AutoClipControl = false;
+    raw.ff_clipControl = 0;    
     raw.cared = 0;
     raw.cablue = 0;
     raw.ca_autocorrect = false;
     raw.hotdeadpix_filt = false;
     raw.hotdeadpix_thresh = 40;
-    raw.linenoise = 0;
-    raw.greenthresh = 0;
-    raw.ccSteps = 0;
-    raw.dmethod = RAWParams::methodstring[RAWParams::amaze];;
-    raw.dcb_iterations=2;
-    raw.dcb_enhance=false;
-    raw.lmmse_iterations=2;
-	
-    //raw.all_enhance=false;
-	
-    // exposure before interpolation
-    raw.expos=1.0;
-    raw.preser=0.0;
-	raw.blackzero=0.0;
-	raw.blackone=0.0;
-	raw.blacktwo=0.0;
-	raw.blackthree=0.0;
-	raw.twogreen=true;
     exif.clear ();
     iptc.clear ();
 
@@ -897,9 +1211,12 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->dirpyrDenoise.chroma)  keyFile.set_double ("Directional Pyramid Denoising", "Chroma",  dirpyrDenoise.chroma);
     if (!pedited || pedited->dirpyrDenoise.dmethod)  keyFile.set_string  ("Directional Pyramid Denoising", "Method",  dirpyrDenoise.dmethod);
     if (!pedited || pedited->dirpyrDenoise.medmethod)  keyFile.set_string  ("Directional Pyramid Denoising", "MedMethod",  dirpyrDenoise.medmethod);
-   if (!pedited || pedited->dirpyrDenoise.redchro) keyFile.set_double ("Directional Pyramid Denoising", "Redchro",  dirpyrDenoise.redchro);
+    if (!pedited || pedited->dirpyrDenoise.rgbmethod)  keyFile.set_string  ("Directional Pyramid Denoising", "RGBMethod",  dirpyrDenoise.rgbmethod);
+    if (!pedited || pedited->dirpyrDenoise.methodmed)  keyFile.set_string  ("Directional Pyramid Denoising", "MethodMed",  dirpyrDenoise.methodmed);
+	if (!pedited || pedited->dirpyrDenoise.redchro) keyFile.set_double ("Directional Pyramid Denoising", "Redchro",  dirpyrDenoise.redchro);
     if (!pedited || pedited->dirpyrDenoise.bluechro)keyFile.set_double ("Directional Pyramid Denoising", "Bluechro",  dirpyrDenoise.bluechro);
     if (!pedited || pedited->dirpyrDenoise.gamma)   keyFile.set_double  ("Directional Pyramid Denoising", "Gamma",   dirpyrDenoise.gamma);
+    if (!pedited || pedited->dirpyrDenoise.passes)   keyFile.set_integer  ("Directional Pyramid Denoising", "Passes",   dirpyrDenoise.passes);
 
     //Save epd.
     if (!pedited || pedited->epd.enabled)             keyFile.set_boolean ("EPD", "Enabled", epd.enabled);
@@ -1059,36 +1376,93 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         keyFile.set_double_list("RGB Curves", "bCurve", RGBbcurve);
     }
 
+    // save Color Toning
+    if (!pedited || pedited->colorToning.enabled)    keyFile.set_boolean ("ColorToning", "Enabled", colorToning.enabled);
+    if (!pedited || pedited->colorToning.method)     keyFile.set_string  ("ColorToning", "Method", colorToning.method);
+    if (!pedited || pedited->colorToning.lumamode)   keyFile.set_boolean ("ColorToning", "Lumamode", colorToning.lumamode);
+    if (!pedited || pedited->colorToning.twocolor)   keyFile.set_string  ("ColorToning", "Twocolor", colorToning.twocolor);
+    if (!pedited || pedited->colorToning.redlow)     keyFile.set_double  ("ColorToning", "Redlow", colorToning.redlow);
+    if (!pedited || pedited->colorToning.greenlow)   keyFile.set_double  ("ColorToning", "Greenlow", colorToning.greenlow);
+    if (!pedited || pedited->colorToning.bluelow)    keyFile.set_double  ("ColorToning", "Bluelow", colorToning.bluelow);
+    if (!pedited || pedited->colorToning.satlow)     keyFile.set_double  ("ColorToning", "Satlow", colorToning.satlow);
+    if (!pedited || pedited->colorToning.balance)    keyFile.set_integer ("ColorToning", "Balance", colorToning.balance);
+    if (!pedited || pedited->colorToning.sathigh)    keyFile.set_double  ("ColorToning", "Sathigh", colorToning.sathigh);
+    if (!pedited || pedited->colorToning.redmed)     keyFile.set_double  ("ColorToning", "Redmed", colorToning.redmed);
+    if (!pedited || pedited->colorToning.greenmed)   keyFile.set_double  ("ColorToning", "Greenmed", colorToning.greenmed);
+    if (!pedited || pedited->colorToning.bluemed)    keyFile.set_double  ("ColorToning", "Bluemed", colorToning.bluemed);
+    if (!pedited || pedited->colorToning.redhigh)    keyFile.set_double  ("ColorToning", "Redhigh", colorToning.redhigh);
+    if (!pedited || pedited->colorToning.greenhigh)  keyFile.set_double  ("ColorToning", "Greenhigh", colorToning.greenhigh);
+    if (!pedited || pedited->colorToning.bluehigh)   keyFile.set_double  ("ColorToning", "Bluehigh", colorToning.bluehigh);
+    if (!pedited || pedited->colorToning.autosat)    keyFile.set_boolean ("ColorToning", "Autosat", colorToning.autosat);
+
+    if (!pedited || pedited->colorToning.opacityCurve) {
+        Glib::ArrayHandle<double> curve = colorToning.opacityCurve;
+        keyFile.set_double_list("ColorToning", "OpacityCurve", curve);
+    }
+    if (!pedited || pedited->colorToning.colorCurve) {
+        Glib::ArrayHandle<double> curve = colorToning.colorCurve;
+        keyFile.set_double_list("ColorToning", "ColorCurve", curve);
+    }
+    if (!pedited || pedited->colorToning.satProtectionThreshold)  keyFile.set_integer ("ColorToning", "SatProtectionThreshold", colorToning.satProtectionThreshold );
+    if (!pedited || pedited->colorToning.saturatedOpacity)        keyFile.set_integer ("ColorToning", "SaturatedOpacity", colorToning.saturatedOpacity );
+    if (!pedited || pedited->colorToning.strengthprotection)        keyFile.set_integer ("ColorToning", "Strengthprotection", colorToning.strengthprotection );
+
+    if (!pedited || pedited->colorToning.hlColSat) {
+        Glib::ArrayHandle<int> thresh (colorToning.hlColSat.value, 2, Glib::OWNERSHIP_NONE);
+        keyFile.set_integer_list("ColorToning", "HighlightsColorSaturation", thresh);
+    }
+    if (!pedited || pedited->colorToning.shadowsColSat) {
+        Glib::ArrayHandle<int> thresh (colorToning.shadowsColSat.value, 2, Glib::OWNERSHIP_NONE);
+        keyFile.set_integer_list("ColorToning", "ShadowsColorSaturation", thresh);
+    }
+    if (!pedited || pedited->colorToning.clcurve)  {
+        Glib::ArrayHandle<double> clcurve = colorToning.clcurve;
+        keyFile.set_double_list("ColorToning", "ClCurve", clcurve);
+    }
+    if (!pedited || pedited->colorToning.cl2curve)  {
+        Glib::ArrayHandle<double> cl2curve = colorToning.cl2curve;
+        keyFile.set_double_list("ColorToning", "Cl2Curve", cl2curve);
+    }
+
     // save raw parameters
-    if (!pedited || pedited->raw.darkFrame)          keyFile.set_string  ("RAW", "DarkFrame", relativePathIfInside(fname, fnameAbsolute, raw.dark_frame) );
-    if (!pedited || pedited->raw.dfAuto)             keyFile.set_boolean ("RAW", "DarkFrameAuto", raw.df_autoselect );
-    if (!pedited || pedited->raw.ff_file)            keyFile.set_string  ("RAW", "FlatFieldFile", relativePathIfInside(fname, fnameAbsolute, raw.ff_file) );
-    if (!pedited || pedited->raw.ff_AutoSelect)      keyFile.set_boolean ("RAW", "FlatFieldAutoSelect", raw.ff_AutoSelect );
-    if (!pedited || pedited->raw.ff_BlurRadius)      keyFile.set_integer ("RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius );
-    if (!pedited || pedited->raw.ff_BlurType)        keyFile.set_string  ("RAW", "FlatFieldBlurType", raw.ff_BlurType );
-    if (!pedited || pedited->raw.caCorrection)       keyFile.set_boolean ("RAW", "CA", raw.ca_autocorrect );
-    if (!pedited || pedited->raw.caRed)              keyFile.set_double  ("RAW", "CARed", raw.cared );
-    if (!pedited || pedited->raw.caBlue)             keyFile.set_double  ("RAW", "CABlue", raw.cablue );
-    if (!pedited || pedited->raw.hotDeadPixelFilter) keyFile.set_boolean ("RAW", "HotDeadPixels", raw.hotdeadpix_filt );
-    if (!pedited || pedited->raw.hotDeadPixelThresh) keyFile.set_integer ("RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh );
-    if (!pedited || pedited->raw.linenoise)          keyFile.set_integer ("RAW", "LineDenoise", raw.linenoise);
-    if (!pedited || pedited->raw.greenEq)            keyFile.set_integer ("RAW", "GreenEqThreshold", raw.greenthresh);
-    if (!pedited || pedited->raw.ccSteps)            keyFile.set_integer ("RAW", "CcSteps", raw.ccSteps);
-    if (!pedited || pedited->raw.dmethod)            keyFile.set_string  ("RAW", "Method", raw.dmethod );
-    if (!pedited || pedited->raw.dcbIterations)      keyFile.set_integer ("RAW", "DCBIterations", raw.dcb_iterations );
-    if (!pedited || pedited->raw.dcbEnhance)         keyFile.set_boolean ("RAW", "DCBEnhance", raw.dcb_enhance );
-    if (!pedited || pedited->raw.lmmseIterations)    keyFile.set_integer ("RAW", "LMMSEIterations", raw.lmmse_iterations );
-	
-    //if (!pedited || pedited->raw.allEnhance)         keyFile.set_boolean ("RAW", "ALLEnhance", raw.all_enhance );
+    if (!pedited || pedited->raw.darkFrame)            keyFile.set_string  ("RAW", "DarkFrame", relativePathIfInside(fname, fnameAbsolute, raw.dark_frame) );
+    if (!pedited || pedited->raw.dfAuto)               keyFile.set_boolean ("RAW", "DarkFrameAuto", raw.df_autoselect );
+    if (!pedited || pedited->raw.ff_file)              keyFile.set_string  ("RAW", "FlatFieldFile", relativePathIfInside(fname, fnameAbsolute, raw.ff_file) );
+    if (!pedited || pedited->raw.ff_AutoSelect)        keyFile.set_boolean ("RAW", "FlatFieldAutoSelect", raw.ff_AutoSelect );
+    if (!pedited || pedited->raw.ff_BlurRadius)        keyFile.set_integer ("RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius );
+    if (!pedited || pedited->raw.ff_BlurType)          keyFile.set_string  ("RAW", "FlatFieldBlurType", raw.ff_BlurType );
+    if (!pedited || pedited->raw.ff_AutoClipControl)   keyFile.set_boolean ("RAW", "FlatFieldAutoClipControl", raw.ff_AutoClipControl );
+    if (!pedited || pedited->raw.ff_clipControl)       keyFile.set_boolean ("RAW", "FlatFieldClipControl", raw.ff_clipControl );
+    if (!pedited || pedited->raw.caCorrection)         keyFile.set_boolean ("RAW", "CA", raw.ca_autocorrect );
+    if (!pedited || pedited->raw.caRed)                keyFile.set_double  ("RAW", "CARed", raw.cared );
+    if (!pedited || pedited->raw.caBlue)               keyFile.set_double  ("RAW", "CABlue", raw.cablue );
+    if (!pedited || pedited->raw.hotDeadPixelFilter)   keyFile.set_boolean ("RAW", "HotDeadPixels", raw.hotdeadpix_filt );
+    if (!pedited || pedited->raw.hotDeadPixelThresh)   keyFile.set_integer ("RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh );
+
+    if (!pedited || pedited->raw.bayersensor.method)          keyFile.set_string  ("RAW Bayer", "Method", raw.bayersensor.method );
+    if (!pedited || pedited->raw.bayersensor.ccSteps)         keyFile.set_integer ("RAW Bayer", "CcSteps", raw.bayersensor.ccSteps);
+    if (!pedited || pedited->raw.bayersensor.exBlack0)        keyFile.set_double  ("RAW Bayer", "PreBlack0", raw.bayersensor.black0 );
+    if (!pedited || pedited->raw.bayersensor.exBlack1)        keyFile.set_double  ("RAW Bayer", "PreBlack1", raw.bayersensor.black1 );
+    if (!pedited || pedited->raw.bayersensor.exBlack2)        keyFile.set_double  ("RAW Bayer", "PreBlack2", raw.bayersensor.black2 );
+    if (!pedited || pedited->raw.bayersensor.exBlack3)        keyFile.set_double  ("RAW Bayer", "PreBlack3", raw.bayersensor.black3 );
+    if (!pedited || pedited->raw.bayersensor.exTwoGreen)      keyFile.set_boolean ("RAW Bayer", "PreTwoGreen", raw.bayersensor.twogreen );
+    if (!pedited || pedited->raw.bayersensor.linenoise)       keyFile.set_integer ("RAW Bayer", "LineDenoise", raw.bayersensor.linenoise);
+    if (!pedited || pedited->raw.bayersensor.greenEq)         keyFile.set_integer ("RAW Bayer", "GreenEqThreshold", raw.bayersensor.greenthresh);
+    if (!pedited || pedited->raw.bayersensor.dcbIterations)   keyFile.set_integer ("RAW Bayer", "DCBIterations", raw.bayersensor.dcb_iterations );
+    if (!pedited || pedited->raw.bayersensor.dcbEnhance)      keyFile.set_boolean ("RAW Bayer", "DCBEnhance", raw.bayersensor.dcb_enhance );
+    if (!pedited || pedited->raw.bayersensor.lmmseIterations) keyFile.set_integer ("RAW Bayer", "LMMSEIterations", raw.bayersensor.lmmse_iterations );
+    //if (!pedited || pedited->raw.bayersensor.allEnhance)    keyFile.set_boolean ("RAW Bayer", "ALLEnhance", raw.bayersensor.all_enhance );
+
+    if (!pedited || pedited->raw.xtranssensor.method)         keyFile.set_string  ("RAW X-Trans", "Method", raw.xtranssensor.method );
+    if (!pedited || pedited->raw.xtranssensor.ccSteps)        keyFile.set_integer ("RAW X-Trans", "CcSteps", raw.xtranssensor.ccSteps);
+    if (!pedited || pedited->raw.xtranssensor.exBlackRed)     keyFile.set_double  ("RAW X-Trans", "PreBlackRed", raw.xtranssensor.blackred );
+    if (!pedited || pedited->raw.xtranssensor.exBlackGreen)   keyFile.set_double  ("RAW X-Trans", "PreBlackGreen", raw.xtranssensor.blackgreen );
+    if (!pedited || pedited->raw.xtranssensor.exBlackBlue)    keyFile.set_double  ("RAW X-Trans", "PreBlackBlue", raw.xtranssensor.blackblue );
+
 
     // save raw exposition
     if (!pedited || pedited->raw.exPos)              keyFile.set_double  ("RAW", "PreExposure", raw.expos );
     if (!pedited || pedited->raw.exPreser)           keyFile.set_double  ("RAW", "PrePreserv", raw.preser );
-    if (!pedited || pedited->raw.exBlackzero)        keyFile.set_double  ("RAW", "PreBlackzero", raw.blackzero );
-    if (!pedited || pedited->raw.exBlackone)         keyFile.set_double  ("RAW", "PreBlackone", raw.blackone );
-    if (!pedited || pedited->raw.exBlacktwo)         keyFile.set_double  ("RAW", "PreBlacktwo", raw.blacktwo );
-    if (!pedited || pedited->raw.exBlackthree)       keyFile.set_double  ("RAW", "PreBlackthree", raw.blackthree );
-    if (!pedited || pedited->raw.exTwoGreen)         keyFile.set_boolean ("RAW", "PreTwoGreen", raw.twogreen );
 
     // save exif change list
     if (!pedited || pedited->exif) {
@@ -1493,10 +1867,13 @@ if (keyFile.has_group ("Directional Pyramid Denoising")) {//TODO: No longer an a
     if (keyFile.has_key ("Directional Pyramid Denoising", "Chroma"))     { dirpyrDenoise.chroma  = keyFile.get_double ("Directional Pyramid Denoising", "Chroma"); if (pedited) pedited->dirpyrDenoise.chroma = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "Method"))     {dirpyrDenoise.dmethod  = keyFile.get_string  ("Directional Pyramid Denoising", "Method"); if (pedited) pedited->dirpyrDenoise.dmethod = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "MedMethod"))     {dirpyrDenoise.medmethod  = keyFile.get_string  ("Directional Pyramid Denoising", "MedMethod"); if (pedited) pedited->dirpyrDenoise.medmethod = true; }
+    if (keyFile.has_key ("Directional Pyramid Denoising", "MethodMed"))     {dirpyrDenoise.methodmed  = keyFile.get_string  ("Directional Pyramid Denoising", "MethodMed"); if (pedited) pedited->dirpyrDenoise.methodmed = true; }
+    if (keyFile.has_key ("Directional Pyramid Denoising", "RGBMethod"))     {dirpyrDenoise.rgbmethod  = keyFile.get_string  ("Directional Pyramid Denoising", "RGBMethod"); if (pedited) pedited->dirpyrDenoise.rgbmethod = true; }
 
     if (keyFile.has_key ("Directional Pyramid Denoising", "Redchro"))    { dirpyrDenoise.redchro  = keyFile.get_double ("Directional Pyramid Denoising", "Redchro"); if (pedited) pedited->dirpyrDenoise.redchro = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "Bluechro"))   { dirpyrDenoise.bluechro  = keyFile.get_double ("Directional Pyramid Denoising", "Bluechro"); if (pedited) pedited->dirpyrDenoise.bluechro = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "Gamma"))      { dirpyrDenoise.gamma   = keyFile.get_double ("Directional Pyramid Denoising", "Gamma"); if (pedited) pedited->dirpyrDenoise.gamma = true; }
+    if (keyFile.has_key ("Directional Pyramid Denoising", "Passes"))      { dirpyrDenoise.passes   = keyFile.get_integer ("Directional Pyramid Denoising", "Passes"); if (pedited) pedited->dirpyrDenoise.passes = true; }
 }
 
     //Load EPD.
@@ -1693,42 +2070,109 @@ if (keyFile.has_group ("HSV Equalizer")) {
 
     // load RGB curves
 if (keyFile.has_group ("RGB Curves")) {
-	if (keyFile.has_key ("RGB Curves", "LumaMode"))  { rgbCurves.lumamode = keyFile.get_boolean ("RGB Curves", "LumaMode"); if (pedited) pedited->rgbCurves.lumamode = true; }
+    if (keyFile.has_key ("RGB Curves", "LumaMode"))  { rgbCurves.lumamode = keyFile.get_boolean ("RGB Curves", "LumaMode"); if (pedited) pedited->rgbCurves.lumamode = true; }
     if (keyFile.has_key ("RGB Curves", "rCurve")) { rgbCurves.rcurve = keyFile.get_double_list ("RGB Curves", "rCurve"); if (pedited) pedited->rgbCurves.rcurve = true; }
     if (keyFile.has_key ("RGB Curves", "gCurve")) { rgbCurves.gcurve = keyFile.get_double_list ("RGB Curves", "gCurve"); if (pedited) pedited->rgbCurves.gcurve = true; }
     if (keyFile.has_key ("RGB Curves", "bCurve")) { rgbCurves.bcurve  = keyFile.get_double_list ("RGB Curves", "bCurve"); if (pedited) pedited->rgbCurves.bcurve = true; }
 }
 
+    // load Color Toning
+if (keyFile.has_group ("ColorToning")) {
+    if (keyFile.has_key ("ColorToning", "Enabled"))       { colorToning.enabled = keyFile.get_boolean ("ColorToning", "Enabled"); if (pedited) pedited->colorToning.enabled = true; }
+    if (keyFile.has_key ("ColorToning", "Method"))        { colorToning.method = keyFile.get_string ("ColorToning", "Method"); if (pedited) pedited->colorToning.method = true; }
+    if (keyFile.has_key ("ColorToning", "Lumamode"))      { colorToning.lumamode = keyFile.get_boolean ("ColorToning", "Lumamode"); if (pedited) pedited->colorToning.lumamode = true; }
+    if (keyFile.has_key ("ColorToning", "Twocolor"))      { colorToning.twocolor = keyFile.get_string ("ColorToning", "Twocolor"); if (pedited) pedited->colorToning.twocolor = true; }
+    if (keyFile.has_key ("ColorToning", "OpacityCurve"))  { colorToning.opacityCurve = keyFile.get_double_list ("ColorToning", "OpacityCurve"); if (pedited) pedited->colorToning.opacityCurve = true; }
+    if (keyFile.has_key ("ColorToning", "ColorCurve"))    { colorToning.colorCurve = keyFile.get_double_list ("ColorToning", "ColorCurve"); if (pedited) pedited->colorToning.colorCurve = true; }
+    if (keyFile.has_key ("ColorToning", "Autosat"))       { colorToning.autosat = keyFile.get_boolean ("ColorToning", "Autosat"); if (pedited) pedited->colorToning.autosat = true; }
+    if (keyFile.has_key ("ColorToning", "SatProtectionThreshold"))    { colorToning.satProtectionThreshold = keyFile.get_integer ("ColorToning", "SatProtectionThreshold"); if (pedited) pedited->colorToning.satProtectionThreshold = true; }
+    if (keyFile.has_key ("ColorToning", "SaturatedOpacity"))          { colorToning.saturatedOpacity = keyFile.get_integer ("ColorToning", "SaturatedOpacity"); if (pedited) pedited->colorToning.saturatedOpacity = true; }
+    if (keyFile.has_key ("ColorToning", "Strengthprotection"))          { colorToning.strengthprotection = keyFile.get_integer ("ColorToning", "Strengthprotection"); if (pedited) pedited->colorToning.strengthprotection = true; }
+	if (keyFile.has_key ("ColorToning", "HighlightsColorSaturation")) {
+        Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("ColorToning", "HighlightsColorSaturation");
+        colorToning.hlColSat.setValues(thresh.data()[0], thresh.data()[1]);
+        if (pedited) pedited->colorToning.hlColSat = true;
+    }
+    if (keyFile.has_key ("ColorToning", "ShadowsColorSaturation")) {
+        Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("ColorToning", "ShadowsColorSaturation");
+        colorToning.shadowsColSat.setValues(thresh.data()[0], thresh.data()[1]);
+        if (pedited) pedited->colorToning.shadowsColSat = true;
+    }
+    if (keyFile.has_key ("ColorToning", "ClCurve"))       { colorToning.clcurve = keyFile.get_double_list ("ColorToning", "ClCurve"); if (pedited) pedited->colorToning.clcurve = true; }
+    if (keyFile.has_key ("ColorToning", "Cl2Curve"))      { colorToning.cl2curve = keyFile.get_double_list ("ColorToning", "Cl2Curve"); if (pedited) pedited->colorToning.cl2curve = true; }
+    if (keyFile.has_key ("ColorToning", "Redlow"))        { colorToning.redlow = keyFile.get_double ("ColorToning", "Redlow"); if (pedited) pedited->colorToning.redlow = true; }
+    if (keyFile.has_key ("ColorToning", "Greenlow"))      { colorToning.greenlow = keyFile.get_double ("ColorToning", "Greenlow"); if (pedited) pedited->colorToning.greenlow = true; }
+    if (keyFile.has_key ("ColorToning", "Bluelow"))       { colorToning.bluelow = keyFile.get_double ("ColorToning", "Bluelow"); if (pedited) pedited->colorToning.bluelow = true; }
+    if (keyFile.has_key ("ColorToning", "Satlow"))        { colorToning.satlow = keyFile.get_double ("ColorToning", "Satlow"); if (pedited) pedited->colorToning.satlow = true; }
+    if (keyFile.has_key ("ColorToning", "Balance"))       { colorToning.balance = keyFile.get_integer ("ColorToning", "Balance"); if (pedited) pedited->colorToning.balance = true; }
+    if (keyFile.has_key ("ColorToning", "Sathigh"))       { colorToning.sathigh = keyFile.get_double ("ColorToning", "Sathigh"); if (pedited) pedited->colorToning.sathigh = true; }
+    if (keyFile.has_key ("ColorToning", "Redmed"))        { colorToning.redmed = keyFile.get_double ("ColorToning", "Redmed"); if (pedited) pedited->colorToning.redmed = true; }
+    if (keyFile.has_key ("ColorToning", "Greenmed"))      { colorToning.greenmed = keyFile.get_double ("ColorToning", "Greenmed"); if (pedited) pedited->colorToning.greenmed = true; }
+    if (keyFile.has_key ("ColorToning", "Bluemed"))       { colorToning.bluemed = keyFile.get_double ("ColorToning", "Bluemed"); if (pedited) pedited->colorToning.bluemed = true; }
+    if (keyFile.has_key ("ColorToning", "Redhigh"))       { colorToning.redhigh = keyFile.get_double ("ColorToning", "Redhigh"); if (pedited) pedited->colorToning.redhigh = true; }
+    if (keyFile.has_key ("ColorToning", "Greenhigh"))     { colorToning.greenhigh = keyFile.get_double ("ColorToning", "Greenhigh"); if (pedited) pedited->colorToning.greenhigh = true; }
+    if (keyFile.has_key ("ColorToning", "Bluehigh"))      { colorToning.bluehigh = keyFile.get_double ("ColorToning", "Bluehigh"); if (pedited) pedited->colorToning.bluehigh = true; }
+}
+
     // load raw settings
 if (keyFile.has_group ("RAW")) {
-    if (keyFile.has_key ("RAW", "DarkFrame"))        { raw.dark_frame = expandRelativePath(fname, "", keyFile.get_string  ("RAW", "DarkFrame" )); if (pedited) pedited->raw.darkFrame = true; }
-    if (keyFile.has_key ("RAW", "DarkFrameAuto"))    { raw.df_autoselect = keyFile.get_boolean ("RAW", "DarkFrameAuto" ); if (pedited) pedited->raw.dfAuto = true; }
-    if (keyFile.has_key ("RAW", "FlatFieldFile"))       { raw.ff_file = expandRelativePath(fname, "", keyFile.get_string  ("RAW", "FlatFieldFile" )); if (pedited) pedited->raw.ff_file = true; }
-    if (keyFile.has_key ("RAW", "FlatFieldAutoSelect")) { raw.ff_AutoSelect = keyFile.get_boolean  ("RAW", "FlatFieldAutoSelect" );  if (pedited) pedited->raw.ff_AutoSelect = true; }
-    if (keyFile.has_key ("RAW", "FlatFieldBlurRadius")) { raw.ff_BlurRadius = keyFile.get_integer  ("RAW", "FlatFieldBlurRadius" ); if (pedited) pedited->raw.ff_BlurRadius = true; }
-    if (keyFile.has_key ("RAW", "FlatFieldBlurType"))   { raw.ff_BlurType = keyFile.get_string  ("RAW", "FlatFieldBlurType" ); if (pedited) pedited->raw.ff_BlurType = true; }
-    if (keyFile.has_key ("RAW", "CA"))               { raw.ca_autocorrect = keyFile.get_boolean ("RAW", "CA" ); if (pedited) pedited->raw.caCorrection = true; }
-    if (keyFile.has_key ("RAW", "CARed"))            { raw.cared = keyFile.get_double ("RAW", "CARed" ); if (pedited) pedited->raw.caRed = true; }
-    if (keyFile.has_key ("RAW", "CABlue"))           { raw.cablue = keyFile.get_double ("RAW", "CABlue" ); if (pedited) pedited->raw.caBlue = true; }
-    if (keyFile.has_key ("RAW", "HotDeadPixels"))    { raw.hotdeadpix_filt = keyFile.get_boolean ("RAW", "HotDeadPixels" ); if (pedited) pedited->raw.hotDeadPixelFilter = true; }
-    if (keyFile.has_key ("RAW", "HotDeadPixelThresh")) { raw.hotdeadpix_thresh = keyFile.get_integer ("RAW", "HotDeadPixelThresh" ); if (pedited) pedited->raw.hotDeadPixelThresh = true; }
-    if (keyFile.has_key ("RAW", "LineDenoise"))      { raw.linenoise = keyFile.get_integer ("RAW", "LineDenoise" ); if (pedited) pedited->raw.linenoise = true; }
-    if (keyFile.has_key ("RAW", "GreenEqThreshold")) { raw.greenthresh= keyFile.get_integer ("RAW", "GreenEqThreshold"); if (pedited) pedited->raw.greenEq = true; }
-    if (keyFile.has_key ("RAW", "CcSteps"))          { raw.ccSteps  = keyFile.get_integer ("RAW", "CcSteps"); if (pedited) pedited->raw.ccSteps = true; }
-    if (keyFile.has_key ("RAW", "Method"))           { raw.dmethod = keyFile.get_string ("RAW", "Method"); if (pedited) pedited->raw.dmethod = true; }
-    if (keyFile.has_key ("RAW", "DCBIterations"))    { raw.dcb_iterations = keyFile.get_integer("RAW", "DCBIterations"); if (pedited) pedited->raw.dcbIterations = true; }
-    if (keyFile.has_key ("RAW", "DCBEnhance"))       { raw.dcb_enhance =keyFile.get_boolean("RAW", "DCBEnhance"); if (pedited) pedited->raw.dcbEnhance = true; }
-    if (keyFile.has_key ("RAW", "LMMSEIterations"))  { raw.lmmse_iterations = keyFile.get_integer("RAW", "LMMSEIterations"); if (pedited) pedited->raw.lmmseIterations = true; }
-    //if (keyFile.has_key ("RAW", "ALLEnhance"))       { raw.all_enhance =keyFile.get_boolean("RAW", "ALLEnhance"); if (pedited) pedited->raw.allEnhance = true; }
+    if (keyFile.has_key ("RAW", "DarkFrame"))                { raw.dark_frame = expandRelativePath(fname, "", keyFile.get_string  ("RAW", "DarkFrame" )); if (pedited) pedited->raw.darkFrame = true; }
+    if (keyFile.has_key ("RAW", "DarkFrameAuto"))            { raw.df_autoselect = keyFile.get_boolean ("RAW", "DarkFrameAuto" ); if (pedited) pedited->raw.dfAuto = true; }
+    if (keyFile.has_key ("RAW", "FlatFieldFile"))            { raw.ff_file = expandRelativePath(fname, "", keyFile.get_string  ("RAW", "FlatFieldFile" )); if (pedited) pedited->raw.ff_file = true; }
+    if (keyFile.has_key ("RAW", "FlatFieldAutoSelect"))      { raw.ff_AutoSelect = keyFile.get_boolean  ("RAW", "FlatFieldAutoSelect" );  if (pedited) pedited->raw.ff_AutoSelect = true; }
+    if (keyFile.has_key ("RAW", "FlatFieldBlurRadius"))      { raw.ff_BlurRadius = keyFile.get_integer  ("RAW", "FlatFieldBlurRadius" ); if (pedited) pedited->raw.ff_BlurRadius = true; }
+    if (keyFile.has_key ("RAW", "FlatFieldBlurType"))        { raw.ff_BlurType = keyFile.get_string  ("RAW", "FlatFieldBlurType" ); if (pedited) pedited->raw.ff_BlurType = true; }
+    if (keyFile.has_key ("RAW", "FlatFieldAutoClipControl")) { raw.ff_AutoClipControl = keyFile.get_boolean  ("RAW", "FlatFieldAutoClipControl" );  if (pedited) pedited->raw.ff_AutoClipControl = true; }
+    if (keyFile.has_key ("RAW", "FlatFieldClipControl"))     { raw.ff_clipControl = keyFile.get_boolean  ("RAW", "FlatFieldClipControl" );  if (pedited) pedited->raw.ff_clipControl = true; }
+    if (keyFile.has_key ("RAW", "CA"))                       { raw.ca_autocorrect = keyFile.get_boolean ("RAW", "CA" ); if (pedited) pedited->raw.caCorrection = true; }
+    if (keyFile.has_key ("RAW", "CARed"))                    { raw.cared = keyFile.get_double ("RAW", "CARed" ); if (pedited) pedited->raw.caRed = true; }
+    if (keyFile.has_key ("RAW", "CABlue"))                   { raw.cablue = keyFile.get_double ("RAW", "CABlue" ); if (pedited) pedited->raw.caBlue = true; }
+    if (keyFile.has_key ("RAW", "HotDeadPixels"))            { raw.hotdeadpix_filt = keyFile.get_boolean ("RAW", "HotDeadPixels" ); if (pedited) pedited->raw.hotDeadPixelFilter = true; }
+    if (keyFile.has_key ("RAW", "HotDeadPixelThresh"))       { raw.hotdeadpix_thresh = keyFile.get_integer ("RAW", "HotDeadPixelThresh" ); if (pedited) pedited->raw.hotDeadPixelThresh = true; }
+    if (keyFile.has_key ("RAW", "PreExposure"))              { raw.expos =keyFile.get_double("RAW", "PreExposure"); if (pedited) pedited->raw.exPos = true; }
+    if (keyFile.has_key ("RAW", "PrePreserv"))               { raw.preser =keyFile.get_double("RAW", "PrePreserv"); if (pedited) pedited->raw.exPreser = true; }
 
-    if (keyFile.has_key ("RAW", "PreExposure"))   { raw.expos =keyFile.get_double("RAW", "PreExposure"); if (pedited) pedited->raw.exPos = true; }
-    if (keyFile.has_key ("RAW", "PrePreserv"))    { raw.preser =keyFile.get_double("RAW", "PrePreserv"); if (pedited) pedited->raw.exPreser = true; }
-    if (keyFile.has_key ("RAW", "PreBlackzero"))  { raw.blackzero =keyFile.get_double("RAW", "PreBlackzero"); if (pedited) pedited->raw.exBlackzero = true; }
-    if (keyFile.has_key ("RAW", "PreBlackone"))   { raw.blackone =keyFile.get_double("RAW", "PreBlackone"); if (pedited) pedited->raw.exBlackone = true; }
-    if (keyFile.has_key ("RAW", "PreBlacktwo"))   { raw.blacktwo =keyFile.get_double("RAW", "PreBlacktwo"); if (pedited) pedited->raw.exBlacktwo = true; }
-    if (keyFile.has_key ("RAW", "PreBlackthree")) { raw.blackthree =keyFile.get_double("RAW", "PreBlackthree"); if (pedited) pedited->raw.exBlackthree = true; }
-    if (keyFile.has_key ("RAW", "PreTwoGreen"))   { raw.twogreen =keyFile.get_boolean("RAW", "PreTwoGreen"); if (pedited) pedited->raw.exTwoGreen = true; }
+    if (ppVersion < 320) {
+        if (keyFile.has_key ("RAW", "Method"))           { raw.bayersensor.method = keyFile.get_string ("RAW", "Method"); if (pedited) pedited->raw.bayersensor.method = true; }
+        if (keyFile.has_key ("RAW", "CcSteps"))          { raw.bayersensor.ccSteps  = keyFile.get_integer ("RAW", "CcSteps"); if (pedited) pedited->raw.bayersensor.ccSteps = true; }
+        if (keyFile.has_key ("RAW", "LineDenoise"))      { raw.bayersensor.linenoise = keyFile.get_integer ("RAW", "LineDenoise" ); if (pedited) pedited->raw.bayersensor.linenoise = true; }
+        if (keyFile.has_key ("RAW", "GreenEqThreshold")) { raw.bayersensor.greenthresh= keyFile.get_integer ("RAW", "GreenEqThreshold"); if (pedited) pedited->raw.bayersensor.greenEq = true; }
+        if (keyFile.has_key ("RAW", "DCBIterations"))    { raw.bayersensor.dcb_iterations = keyFile.get_integer("RAW", "DCBIterations"); if (pedited) pedited->raw.bayersensor.dcbIterations = true; }
+        if (keyFile.has_key ("RAW", "DCBEnhance"))       { raw.bayersensor.dcb_enhance = keyFile.get_boolean("RAW", "DCBEnhance"); if (pedited) pedited->raw.bayersensor.dcbEnhance = true; }
+        if (keyFile.has_key ("RAW", "LMMSEIterations"))  { raw.bayersensor.lmmse_iterations = keyFile.get_integer("RAW", "LMMSEIterations"); if (pedited) pedited->raw.bayersensor.lmmseIterations = true; }
+        if (keyFile.has_key ("RAW", "PreBlackzero"))     { raw.bayersensor.black0 = keyFile.get_double("RAW", "PreBlackzero"); if (pedited) pedited->raw.bayersensor.exBlack0 = true; }
+        if (keyFile.has_key ("RAW", "PreBlackone"))      { raw.bayersensor.black1 = keyFile.get_double("RAW", "PreBlackone"); if (pedited) pedited->raw.bayersensor.exBlack1 = true; }
+        if (keyFile.has_key ("RAW", "PreBlacktwo"))      { raw.bayersensor.black2 = keyFile.get_double("RAW", "PreBlacktwo"); if (pedited) pedited->raw.bayersensor.exBlack2 = true; }
+        if (keyFile.has_key ("RAW", "PreBlackthree"))    { raw.bayersensor.black3 = keyFile.get_double("RAW", "PreBlackthree"); if (pedited) pedited->raw.bayersensor.exBlack3 = true; }
+        if (keyFile.has_key ("RAW", "PreTwoGreen"))      { raw.bayersensor.twogreen = keyFile.get_boolean("RAW", "PreTwoGreen"); if (pedited) pedited->raw.bayersensor.exTwoGreen = true; }
+        //if (keyFile.has_key ("RAW", "ALLEnhance"))     { raw.bayersensor.all_enhance = keyFile.get_boolean("RAW", "ALLEnhance"); if (pedited) pedited->raw.bayersensor.allEnhance = true; }
+    }
+}
 
+// load Bayer sensors' raw settings
+if (keyFile.has_group ("RAW Bayer")) {
+    if (keyFile.has_key ("RAW Bayer", "Method"))           { raw.bayersensor.method = keyFile.get_string ("RAW Bayer", "Method"); if (pedited) pedited->raw.bayersensor.method = true; }
+    if (keyFile.has_key ("RAW Bayer", "CcSteps"))          { raw.bayersensor.ccSteps  = keyFile.get_integer ("RAW Bayer", "CcSteps"); if (pedited) pedited->raw.bayersensor.ccSteps = true; }
+    if (keyFile.has_key ("RAW Bayer", "PreBlack0"))        { raw.bayersensor.black0 = keyFile.get_double("RAW Bayer", "PreBlack0"); if (pedited) pedited->raw.bayersensor.exBlack0 = true; }
+    if (keyFile.has_key ("RAW Bayer", "PreBlack1"))        { raw.bayersensor.black1 = keyFile.get_double("RAW Bayer", "PreBlack1"); if (pedited) pedited->raw.bayersensor.exBlack1 = true; }
+    if (keyFile.has_key ("RAW Bayer", "PreBlack2"))        { raw.bayersensor.black2 = keyFile.get_double("RAW Bayer", "PreBlack2"); if (pedited) pedited->raw.bayersensor.exBlack2 = true; }
+    if (keyFile.has_key ("RAW Bayer", "PreBlack3"))        { raw.bayersensor.black3 = keyFile.get_double("RAW Bayer", "PreBlack3"); if (pedited) pedited->raw.bayersensor.exBlack3 = true; }
+    if (keyFile.has_key ("RAW Bayer", "PreTwoGreen"))      { raw.bayersensor.twogreen = keyFile.get_boolean("RAW Bayer", "PreTwoGreen"); if (pedited) pedited->raw.bayersensor.exTwoGreen = true; }
+    if (keyFile.has_key ("RAW Bayer", "LineDenoise"))      { raw.bayersensor.linenoise = keyFile.get_integer ("RAW Bayer", "LineDenoise" ); if (pedited) pedited->raw.bayersensor.linenoise = true; }
+    if (keyFile.has_key ("RAW Bayer", "GreenEqThreshold")) { raw.bayersensor.greenthresh= keyFile.get_integer ("RAW Bayer", "GreenEqThreshold"); if (pedited) pedited->raw.bayersensor.greenEq = true; }
+    if (keyFile.has_key ("RAW Bayer", "DCBIterations"))    { raw.bayersensor.dcb_iterations = keyFile.get_integer("RAW Bayer", "DCBIterations"); if (pedited) pedited->raw.bayersensor.dcbIterations = true; }
+    if (keyFile.has_key ("RAW Bayer", "DCBEnhance"))       { raw.bayersensor.dcb_enhance = keyFile.get_boolean("RAW Bayer", "DCBEnhance"); if (pedited) pedited->raw.bayersensor.dcbEnhance = true; }
+    if (keyFile.has_key ("RAW Bayer", "LMMSEIterations"))  { raw.bayersensor.lmmse_iterations = keyFile.get_integer("RAW Bayer", "LMMSEIterations"); if (pedited) pedited->raw.bayersensor.lmmseIterations = true; }
+    //if (keyFile.has_key ("RAW Bayer", "ALLEnhance"))     { raw.bayersensor.all_enhance = keyFile.get_boolean("RAW Bayer", "ALLEnhance"); if (pedited) pedited->raw.bayersensor.allEnhance = true; }
+}
+
+// load X-Trans sensors' raw settings
+if (keyFile.has_group ("RAW X-Trans")) {
+    if (keyFile.has_key ("RAW X-Trans", "Method"))           { raw.xtranssensor.method = keyFile.get_string ("RAW X-Trans", "Method"); if (pedited) pedited->raw.xtranssensor.method = true; }
+    if (keyFile.has_key ("RAW X-Trans", "CcSteps"))          { raw.xtranssensor.ccSteps  = keyFile.get_integer ("RAW X-Trans", "CcSteps"); if (pedited) pedited->raw.xtranssensor.ccSteps = true; }
+    if (keyFile.has_key ("RAW X-Trans", "PreBlackRed"))      { raw.xtranssensor.blackred = keyFile.get_double("RAW X-Trans", "PreBlackRed"); if (pedited) pedited->raw.xtranssensor.exBlackRed = true; }
+    if (keyFile.has_key ("RAW X-Trans", "PreBlackGreen"))    { raw.xtranssensor.blackgreen = keyFile.get_double("RAW X-Trans", "PreBlackGreen"); if (pedited) pedited->raw.xtranssensor.exBlackGreen = true; }
+    if (keyFile.has_key ("RAW X-Trans", "PreBlackBlue"))     { raw.xtranssensor.blackblue = keyFile.get_double("RAW X-Trans", "PreBlackBlue"); if (pedited) pedited->raw.xtranssensor.exBlackBlue = true; }
 }
 
     // load exif change settings
@@ -1923,9 +2367,12 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& dirpyrDenoise.chroma == other.dirpyrDenoise.chroma
 		&& dirpyrDenoise.dmethod == other.dirpyrDenoise.dmethod
 		&& dirpyrDenoise.medmethod == other.dirpyrDenoise.medmethod
+		&& dirpyrDenoise.methodmed == other.dirpyrDenoise.methodmed
+		&& dirpyrDenoise.rgbmethod == other.dirpyrDenoise.rgbmethod
 		&& dirpyrDenoise.redchro == other.dirpyrDenoise.redchro
 		&& dirpyrDenoise.bluechro == other.dirpyrDenoise.bluechro
 		&& dirpyrDenoise.gamma == other.dirpyrDenoise.gamma
+		&& dirpyrDenoise.passes == other.dirpyrDenoise.passes
 		&& epd.enabled == other.epd.enabled
 		&& epd.strength == other.epd.strength
 		&& epd.edgeStopping == other.epd.edgeStopping
@@ -2018,23 +2465,37 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& resize.dataspec == other.resize.dataspec
 		&& resize.width == other.resize.width
 		&& resize.height == other.resize.height
+		&& raw.bayersensor.method == other.raw.bayersensor.method
+		&& raw.bayersensor.ccSteps == other.raw.bayersensor.ccSteps
+		&& raw.bayersensor.black0==other.raw.bayersensor.black0
+		&& raw.bayersensor.black1==other.raw.bayersensor.black1
+		&& raw.bayersensor.black2==other.raw.bayersensor.black2
+		&& raw.bayersensor.black3==other.raw.bayersensor.black3
+		&& raw.bayersensor.twogreen==other.raw.bayersensor.twogreen
+		&& raw.bayersensor.greenthresh == other.raw.bayersensor.greenthresh
+		&& raw.bayersensor.linenoise == other.raw.bayersensor.linenoise
+		&& raw.bayersensor.dcb_enhance == other.raw.bayersensor.dcb_enhance
+		&& raw.bayersensor.dcb_iterations == other.raw.bayersensor.dcb_iterations
+		&& raw.xtranssensor.method == other.raw.xtranssensor.method
+		&& raw.xtranssensor.ccSteps == other.raw.xtranssensor.ccSteps
+		&& raw.xtranssensor.blackred==other.raw.xtranssensor.blackred
+		&& raw.xtranssensor.blackgreen==other.raw.xtranssensor.blackgreen
+		&& raw.xtranssensor.blackblue==other.raw.xtranssensor.blackblue
 		&& raw.dark_frame == other.raw.dark_frame
 		&& raw.df_autoselect == other.raw.df_autoselect
 		&& raw.ff_file == other.raw.ff_file
 		&& raw.ff_AutoSelect == other.raw.ff_AutoSelect
 		&& raw.ff_BlurRadius == other.raw.ff_BlurRadius
-		&& raw.ff_BlurType == other.raw.ff_BlurType	
-		&& raw.dcb_enhance == other.raw.dcb_enhance
-		&& raw.dcb_iterations == other.raw.dcb_iterations
-		&& raw.ccSteps == other.raw.ccSteps
+		&& raw.ff_BlurType == other.raw.ff_BlurType
+		&& raw.ff_AutoClipControl == other.raw.ff_AutoClipControl
+		&& raw.ff_clipControl == other.raw.ff_clipControl
+		&& raw.expos==other.raw.expos
+		&& raw.preser==other.raw.preser
 		&& raw.ca_autocorrect == other.raw.ca_autocorrect
 		&& raw.cared == other.raw.cared
 		&& raw.cablue == other.raw.cablue
 		&& raw.hotdeadpix_filt == other.raw.hotdeadpix_filt
 		&& raw.hotdeadpix_thresh == other.raw.hotdeadpix_thresh
-		&& raw.dmethod == other.raw.dmethod
-		&& raw.greenthresh == other.raw.greenthresh
-		&& raw.linenoise == other.raw.linenoise
 		&& icm.input == other.icm.input
 		&& icm.toneCurve == other.icm.toneCurve
 		&& icm.blendCMSMatrix == other.icm.blendCMSMatrix
@@ -2056,17 +2517,33 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& rgbCurves.rcurve == other.rgbCurves.rcurve
 		&& rgbCurves.gcurve == other.rgbCurves.gcurve
 		&& rgbCurves.bcurve == other.rgbCurves.bcurve
+		&& colorToning.enabled == other.colorToning.enabled
+		&& colorToning.twocolor == other.colorToning.twocolor
+		&& colorToning.method == other.colorToning.method
+		&& colorToning.colorCurve == other.colorToning.colorCurve
+		&& colorToning.opacityCurve == other.colorToning.opacityCurve
+		&& colorToning.autosat == other.colorToning.autosat
+		&& colorToning.satProtectionThreshold == other.colorToning.satProtectionThreshold
+		&& colorToning.saturatedOpacity == other.colorToning.saturatedOpacity
+		&& colorToning.strengthprotection == other.colorToning.strengthprotection
+		&& colorToning.hlColSat == other.colorToning.hlColSat
+		&& colorToning.shadowsColSat == other.colorToning.shadowsColSat
+		&& colorToning.balance == other.colorToning.balance
+		&& colorToning.clcurve == other.colorToning.clcurve
+		&& colorToning.cl2curve == other.colorToning.cl2curve
+		&& colorToning.redlow == other.colorToning.redlow
+		&& colorToning.greenlow == other.colorToning.greenlow
+		&& colorToning.bluelow == other.colorToning.bluelow
+		&& colorToning.satlow == other.colorToning.satlow
+		&& colorToning.sathigh == other.colorToning.sathigh
+		&& colorToning.redmed == other.colorToning.redmed
+		&& colorToning.greenmed == other.colorToning.greenmed
+		&& colorToning.bluemed == other.colorToning.bluemed
+		&& colorToning.redhigh == other.colorToning.redhigh
+		&& colorToning.greenhigh == other.colorToning.greenhigh
+		&& colorToning.bluehigh == other.colorToning.bluehigh
 		&& exif==other.exif
-		&& iptc==other.iptc
-		&& raw.expos==other.raw.expos
-		&& raw.preser==other.raw.preser 
-		&& raw.preser==other.raw.preser
-		&& raw.blackzero==other.raw.blackzero
-		&& raw.blackone==other.raw.blackone
-		&& raw.blacktwo==other.raw.blacktwo
-		&& raw.blackthree==other.raw.blackthree
-		&& raw.twogreen==other.raw.twogreen;
-	
+		&& iptc==other.iptc;
 }
 
 bool ProcParams::operator!= (const ProcParams& other) {

@@ -29,14 +29,15 @@ using namespace rtengine::procparams;
 FlatField::FlatField () : FoldableToolPanel(this)
 {
 	hbff = Gtk::manage(new Gtk::HBox());
+	hbff->set_spacing(2);
 	flatFieldFile = Gtk::manage(new MyFileChooserButton(M("TP_FLATFIELD_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
 	flatFieldFilePersister.reset(new FileChooserLastFolderPersister(flatFieldFile, options.lastFlatfieldDir));
 	ffLabel = Gtk::manage(new Gtk::Label(M("GENERAL_FILE")));
 	flatFieldFileReset = Gtk::manage(new Gtk::Button());
 	flatFieldFileReset->set_image (*Gtk::manage(new RTImage ("gtk-cancel.png")));
-	hbff->pack_start(*ffLabel, Gtk::PACK_SHRINK, 4);
+	hbff->pack_start(*ffLabel, Gtk::PACK_SHRINK, 0);
 	hbff->pack_start(*flatFieldFile);
-	hbff->pack_start(*flatFieldFileReset, Gtk::PACK_SHRINK, 4);
+	hbff->pack_start(*flatFieldFileReset, Gtk::PACK_SHRINK, 0);
 	flatFieldAutoSelect = Gtk::manage(new Gtk::CheckButton((M("TP_FLATFIELD_AUTOSELECT"))));
 	ffInfo = Gtk::manage(new Gtk::Label(""));
 	ffInfo->set_alignment(0,0); //left align
@@ -46,7 +47,8 @@ FlatField::FlatField () : FoldableToolPanel(this)
 	flatFieldBlurRadius->show();
 
 	Gtk::HBox* hbffbt = Gtk::manage (new Gtk::HBox ());
-	hbffbt->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_FLATFIELD_BLURTYPE") +": ")));
+	hbffbt->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_FLATFIELD_BLURTYPE") +":")));
+	hbffbt->set_spacing(4);
 	flatFieldBlurType = Gtk::manage (new MyComboBoxText ());
 	flatFieldBlurType->append_text(M("TP_FLATFIELD_BT_AREA"));
 	flatFieldBlurType->append_text(M("TP_FLATFIELD_BT_VERTICAL"));
@@ -55,17 +57,45 @@ FlatField::FlatField () : FoldableToolPanel(this)
 	flatFieldBlurType->set_active(0);
 	hbffbt->pack_end (*flatFieldBlurType);
 
-	pack_start( *hbff, Gtk::PACK_SHRINK, 4);
-	pack_start( *flatFieldAutoSelect, Gtk::PACK_SHRINK, 4);
-	pack_start( *ffInfo, Gtk::PACK_SHRINK, 4);
-	pack_start( *hbffbt, Gtk::PACK_SHRINK, 4);
-	pack_start( *flatFieldBlurRadius, Gtk::PACK_SHRINK, 4);
+	flatFieldClipControl = Gtk::manage (new Adjuster(M("TP_FLATFIELD_CLIPCONTROL"), 0., 100., 1., 0.));
+	flatFieldClipControl->setAdjusterListener(this);
+	flatFieldClipControl->addAutoButton("");
+	if (flatFieldClipControl->delay < 1000) flatFieldClipControl->delay = 1000;
+	flatFieldClipControl->show();
+	flatFieldClipControl->set_tooltip_markup (M("TP_FLATFIELD_CLIPCONTROL_TOOLTIP"));
+
+	pack_start( *hbff, Gtk::PACK_SHRINK, 0);
+	pack_start( *flatFieldAutoSelect, Gtk::PACK_SHRINK, 0);
+	pack_start( *ffInfo, Gtk::PACK_SHRINK, 0);
+	pack_start( *hbffbt, Gtk::PACK_SHRINK, 0);
+	pack_start( *flatFieldBlurRadius, Gtk::PACK_SHRINK, 0);
+	pack_start( *flatFieldClipControl, Gtk::PACK_SHRINK, 0);
 
 	flatFieldFileconn = flatFieldFile->signal_file_set().connect ( sigc::mem_fun(*this, &FlatField::flatFieldFileChanged), true);
 	flatFieldFileReset->signal_clicked().connect( sigc::mem_fun(*this, &FlatField::flatFieldFile_Reset), true );
 	flatFieldAutoSelectconn = flatFieldAutoSelect->signal_toggled().connect ( sigc::mem_fun(*this, &FlatField::flatFieldAutoSelectChanged), true);
 	flatFieldBlurTypeconn = flatFieldBlurType->signal_changed().connect( sigc::mem_fun(*this, &FlatField::flatFieldBlurTypeChanged) );
 	lastShortcutPath = "";
+	
+	// Set filename filters
+	b_filter_asCurrent = false;
+	Gtk::FileFilter *filter_any = Gtk::manage(new Gtk::FileFilter);
+    filter_any->add_pattern("*");
+    filter_any->set_name(M("TP_FLATFIELD_FILEDLGFILTERANY"));
+    flatFieldFile->add_filter (*filter_any);
+    
+    // filters for all supported non-raw extensions       
+    for (size_t i=0; i<options.parseExtensions.size(); i++) {
+        if (options.parseExtensionsEnabled[i] && options.parseExtensions[i].uppercase()!="JPG" && options.parseExtensions[i].uppercase()!="JPEG" && options.parseExtensions[i].uppercase()!="PNG" && options.parseExtensions[i].uppercase()!="TIF" && options.parseExtensions[i].uppercase()!="TIFF"  )
+        {    
+	        Gtk::FileFilter *filter_ff = Gtk::manage(new Gtk::FileFilter);
+	        filter_ff->add_pattern("*." + options.parseExtensions[i]);
+   	        filter_ff->add_pattern("*." + options.parseExtensions[i].uppercase());
+	        filter_ff->set_name(options.parseExtensions[i].uppercase());
+	        flatFieldFile->add_filter (*filter_ff);
+	        //printf("adding filter %s \n",options.parseExtensions[i].uppercase().c_str());
+        }
+    }
 }
 
 void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
@@ -74,9 +104,28 @@ void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 	flatFieldAutoSelectconn.block (true);
 	flatFieldBlurTypeconn.block (true);
 
+	//flatFieldBlurType
+	for( size_t i=0; i< procparams::RAWParams::numFlatFileBlurTypes;i++)
+		if( pp->raw.ff_BlurType == procparams::RAWParams::ff_BlurTypestring[i]){
+			flatFieldBlurType->set_active(i);
+			break;
+		}
+
+	if (multiImage || pp->raw.ff_BlurType == procparams::RAWParams::ff_BlurTypestring[procparams::RAWParams::area_ff])
+		flatFieldClipControl->show();
+	else
+		flatFieldClipControl->hide();
+
+	flatFieldAutoSelect->set_active (pp->raw.ff_AutoSelect);
+	flatFieldBlurRadius->setValue (pp->raw.ff_BlurRadius);
+	flatFieldClipControl->setValue (pp->raw.ff_clipControl);
+	flatFieldClipControl->setAutoValue (pp->raw.ff_AutoClipControl);
+
 	if(pedited ){
 		flatFieldAutoSelect->set_inconsistent (!pedited->raw.ff_AutoSelect);
 		flatFieldBlurRadius->setEditedState( pedited->raw.ff_BlurRadius ? Edited : UnEdited );
+		flatFieldClipControl->setEditedState( pedited->raw.ff_clipControl ? Edited : UnEdited );
+		flatFieldClipControl->setAutoInconsistent(multiImage && !pedited->raw.ff_AutoClipControl);
 		if( !pedited->raw.ff_BlurType )
 			flatFieldBlurType->set_active(procparams::RAWParams::numFlatFileBlurTypes); // No name
 	}
@@ -87,6 +136,8 @@ void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 	hbff->set_sensitive( !pp->raw.ff_AutoSelect );
 
 	lastFFAutoSelect = pp->raw.ff_AutoSelect;
+	lastFFAutoClipCtrl = pp->raw.ff_AutoClipControl;
+
 	if( pp->raw.ff_AutoSelect  && ffp && !batchMode){
 		// retrieve the auto-selected ff filename
 		rtengine::RawImage *img = ffp->getFF();
@@ -98,25 +149,47 @@ void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 	}
 	else ffInfo->set_text("");
 
-	flatFieldAutoSelect ->set_active(pp->raw.ff_AutoSelect);
-	flatFieldBlurRadius->setValue (pp->raw.ff_BlurRadius);
-	flatFieldBlurType->set_active(procparams::RAWParams::numFlatFileBlurTypes);
-
-	//flatFieldBlurType
-	for( size_t i=0; i< procparams::RAWParams::numFlatFileBlurTypes;i++)
-		if( pp->raw.ff_BlurType == procparams::RAWParams::ff_BlurTypestring[i]){
-			flatFieldBlurType->set_active(i);
-			break;
-		}
-
-	flatFieldAutoSelect->set_active (pp->raw.ff_AutoSelect);
-	flatFieldBlurRadius->setValue (pp->raw.ff_BlurRadius);
-
 	ffChanged = false;
 
 	flatFieldAutoSelectconn.block (false);
 	flatFieldBlurTypeconn.block (false);
 	enableListener ();
+	
+	// Add filter with the current file extension if the current file is raw
+	if (ffp && !batchMode){
+	
+		if (b_filter_asCurrent){
+			//First, remove last filter_asCurrent if it was set for a raw file
+			std::vector<const Gtk::FileFilter*> filters = flatFieldFile->list_filters();
+			flatFieldFile->remove_filter(**(filters.end()-1));
+			b_filter_asCurrent = false;
+		}
+
+		Glib::ustring fname = Glib::path_get_basename(ffp->GetCurrentImageFilePath());
+		Glib::ustring filetype;
+
+		if (fname!=""){
+			// get image filetype, set filter to the same as current image's filetype
+			std::string::size_type idx;
+			idx = fname.rfind('.');
+			if(idx != std::string::npos){
+				filetype = fname.substr(idx+1);
+				//exclude non-raw
+				israw = filetype.uppercase()!="JPG" && filetype.uppercase()!="JPEG" && filetype.uppercase()!="PNG" && filetype.uppercase()!="TIF" && filetype.uppercase()!="TIFF";
+
+				if (israw)
+				{
+					b_filter_asCurrent = true; //prevent re-adding this filter on every pp3 file read
+					Gtk::FileFilter *filter_asCurrent = Gtk::manage(new Gtk::FileFilter);
+					filter_asCurrent->add_pattern("*." + filetype);
+					filter_asCurrent->set_name(M("TP_FLATFIELD_FILEDLGFILTERFF") + " (" + filetype + ")");
+					flatFieldFile->add_filter (*filter_asCurrent);
+					flatFieldFile->set_filter (*filter_asCurrent);
+				}
+			}
+		}
+	}
+
 }
 
 void FlatField::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
@@ -124,6 +197,8 @@ void FlatField::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedit
 	pp->raw.ff_file = flatFieldFile->get_filename();
 	pp->raw.ff_AutoSelect = flatFieldAutoSelect->get_active();
 	pp->raw.ff_BlurRadius = flatFieldBlurRadius->getIntValue();
+	pp->raw.ff_clipControl = flatFieldClipControl->getIntValue();
+	pp->raw.ff_AutoClipControl = flatFieldClipControl->getAutoValue();
 
 	int currentRow = flatFieldBlurType->get_active_row_number();
 	if( currentRow>=0 && currentRow < procparams::RAWParams::numFlatFileBlurTypes)
@@ -133,6 +208,8 @@ void FlatField::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedit
 		pedited->raw.ff_file = ffChanged;
 		pedited->raw.ff_AutoSelect = !flatFieldAutoSelect->get_inconsistent();
 		pedited->raw.ff_BlurRadius = flatFieldBlurRadius->getEditedState ();
+		pedited->raw.ff_clipControl = flatFieldClipControl->getEditedState ();
+		pedited->raw.ff_AutoClipControl = !flatFieldClipControl->getAutoInconsistent();
 		pedited->raw.ff_BlurType = flatFieldBlurType->get_active_row_number() != procparams::RAWParams::numFlatFileBlurTypes;
 	}
 
@@ -144,7 +221,36 @@ void FlatField::adjusterChanged (Adjuster* a, double newval)
 
 		Glib::ustring value = a->getTextValue();
 
-		listener->panelChanged (EvFlatFieldBlurRadius,  value );
+		if (a==flatFieldBlurRadius)
+			listener->panelChanged (EvFlatFieldBlurRadius,  value);
+		else if (a==flatFieldClipControl)
+			listener->panelChanged (EvFlatFieldClipControl,  value);
+	}
+}
+
+void FlatField::adjusterAutoToggled (Adjuster* a, bool newval) {
+
+	if (multiImage) {
+		if (flatFieldClipControl->getAutoInconsistent()) {
+			flatFieldClipControl->setAutoInconsistent(false);
+			flatFieldClipControl->setAutoValue(false);
+		}
+		else if (lastFFAutoClipCtrl)
+			flatFieldClipControl->setAutoInconsistent(true);
+
+		lastFFAutoClipCtrl = flatFieldClipControl->getAutoValue();
+
+	}
+
+	if (listener) {
+		if(a==flatFieldClipControl) {
+			if (flatFieldClipControl->getAutoInconsistent())
+				listener->panelChanged (EvFlatFieldAutoClipControl, M("GENERAL_UNCHANGED"));
+			else if (flatFieldClipControl->getAutoValue())
+				listener->panelChanged (EvFlatFieldAutoClipControl, M("GENERAL_ENABLED"));
+			else
+				listener->panelChanged (EvFlatFieldAutoClipControl, M("GENERAL_DISABLED"));
+		}
 	}
 }
 
@@ -152,16 +258,28 @@ void FlatField::setBatchMode(bool batchMode)
 {
 	ToolPanel::setBatchMode (batchMode);
 	flatFieldBlurRadius->showEditedCB ();
+	flatFieldClipControl->showEditedCB ();
+}
+
+void FlatField::setAdjusterBehavior (bool clipctrladd) {
+	flatFieldClipControl->setAddMode(clipctrladd);
+}
+
+void FlatField::trimValues (rtengine::procparams::ProcParams* pp) {
+	flatFieldClipControl->trimValue(pp->raw.ff_clipControl);
 }
 
 void FlatField::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
 	flatFieldBlurRadius->setDefault( defParams->raw.ff_BlurRadius);
+	flatFieldClipControl->setDefault( defParams->raw.ff_clipControl);
 
 	if (pedited) {
 		flatFieldBlurRadius->setDefaultEditedState( pedited->raw.ff_BlurRadius ? Edited : UnEdited);
+		flatFieldClipControl->setDefaultEditedState( pedited->raw.ff_clipControl ? Edited : UnEdited);
 	} else {
 		flatFieldBlurRadius->setDefaultEditedState( Irrelevant );
+		flatFieldClipControl->setDefaultEditedState( Irrelevant );
 	}
 }
 
@@ -197,6 +315,11 @@ void FlatField::flatFieldBlurTypeChanged ()
 	Glib::ustring s="";
 	if( curSelection>=0 && curSelection < procparams::RAWParams::numFlatFileBlurTypes)
 	    s = flatFieldBlurType->get_active_text();
+
+	if (multiImage || curSelection == procparams::RAWParams::area_ff)
+		flatFieldClipControl->show();
+	else
+		flatFieldClipControl->hide();
 
     if (listener)
         listener->panelChanged (EvFlatFieldBlurType, s);

@@ -33,6 +33,12 @@ class CurveListener {
         void setMulti(bool value) { multi = value; }
         bool isMulti() { return multi; }
 
+        /** @brief Ask the reset curve for a given curve type
+         * @param ce CurveEditor that we want to reset
+         * @param curve Actual curve for the return value. The actual curve type (given by the first value of the vector)
+         *              should be kept the same. Change the curve type if REALLY necessary! */
+        virtual bool getResetCurve(CurveEditor *ce, std::vector<double> &curve) { return false; };
+
         /** @brief Blend pipette values from its different channels into a single value
         If the buffer has more than one channel and one channel, this method will blend them together.
         @param chan1 first channel's value

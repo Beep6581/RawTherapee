@@ -19,7 +19,6 @@
 #include "ffmanager.h"
 #include "../rtgui/options.h"
 #include <giomm.h>
-#include "../rtgui/guiutils.h"
 #include "safegtk.h"
 #include "rawimage.h"
 #include <sstream>
@@ -116,7 +115,7 @@ void ffInfo::updateRawImage()
 			int H = ri->get_height();
 			int W = ri->get_width();
 			ri->compress_image();
-            int rSize = W*(ri->isBayer()?1:3);
+            int rSize = W*((ri->getSensorType()!=ST_NONE)?1:3);
 			acc_t **acc = new acc_t*[H];
 			for( int row=0; row<H;row++)
 				acc[row] = new acc_t[rSize ];
@@ -132,7 +131,7 @@ void ffInfo::updateRawImage()
 				if( !temp->loadRaw(true)){
 					temp->compress_image();		//\ TODO would be better working on original, because is temporary
 					nFiles++;
-					if( ri->isBayer() ){
+					if( ri->getSensorType()!=ST_NONE ){
 						for( int row=0; row<H;row++){
 							for( int col=0; col < W;col++)
 								acc[row][col] += temp->data[row][col];
@@ -161,8 +160,9 @@ void ffInfo::updateRawImage()
 		if( ri->loadRaw(true)){
 			delete ri;
 			ri=NULL;
-		}else
+		}else {
 			ri->compress_image();
+		}
 	}
 }
 

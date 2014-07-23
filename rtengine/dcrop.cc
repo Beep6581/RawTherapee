@@ -191,7 +191,7 @@ void Crop::update (int todo) {
         if (!params.sh.hq) shradius *= radius / 1800.0;
         cshmap->update (baseCrop, shradius, parent->ipf.lumimul, params.sh.hq, skip);
         if(parent->shmap->min_f < 65535.f) // don't call forceStat with wrong values
-			cshmap->forceStat (parent->shmap->max_f, parent->shmap->min_f, parent->shmap->avg);
+            cshmap->forceStat (parent->shmap->max_f, parent->shmap->min_f, parent->shmap->avg);
     }
 
     // shadows & highlights & tone curve & convert to cielab
@@ -210,8 +210,8 @@ void Crop::update (int todo) {
 
     if (todo & M_RGBCURVE)
         parent->ipf.rgbProc (baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
-                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->customToneCurve1,
-                             parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW,rrm, ggm, bbm,
+                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->ctColorCurve, parent->ctOpacityCurve, parent->clToningcurve,parent->cl2Toningcurve,
+                             parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW,rrm, ggm, bbm,
                              parent->bwAutoR, parent->bwAutoG, parent->bwAutoB);
 
     /*xref=000;yref=000;
@@ -559,7 +559,6 @@ void Crop::fullUpdate () {
         //parent->changeSinceLast = 0;
         parent->thread->join ();
     }
-    parent->updaterThreadStart.unlock ();
 
     if (parent->plistener)
         parent->plistener->setProgressState (true);
@@ -574,6 +573,7 @@ void Crop::fullUpdate () {
 
     if (parent->plistener)
         parent->plistener->setProgressState (false);
+    parent->updaterThreadStart.unlock ();
 }
 
 }
