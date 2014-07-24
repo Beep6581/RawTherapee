@@ -102,7 +102,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
 	hsep2->show ();
 	
 	methodmed = Gtk::manage (new MyComboBoxText ());
-	methodmed->append_text (M("TP_DIRPYRDENOISE_NONE"));
+	//methodmed->append_text (M("TP_DIRPYRDENOISE_NONE"));
 	methodmed->append_text (M("TP_DIRPYRDENOISE_LM"));
 	methodmed->append_text (M("TP_DIRPYRDENOISE_LABM"));
 	methodmed->append_text (M("TP_DIRPYRDENOISE_RGBM"));
@@ -151,6 +151,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
 	pack_start (*enhance);
 	
 	pack_start (*hsep2);
+	pack_start (*median);
 	
 	ctboxm->pack_start (*methodmed);
 	ctbox->pack_start (*medmethod);
@@ -160,7 +161,6 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
 	pack_start (*ctboxrgb);
 	pack_start (*passes);
 	
-//	pack_start (*median);
 	
 //	pack_start (*perform);
 	enhanConn = enhance->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrDenoise::enhanceChanged) );
@@ -184,14 +184,14 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
         dmethod->set_active (1);
 
     methodmed->set_active (0);
-    if (pp->dirpyrDenoise.methodmed=="none")
+ //   if (pp->dirpyrDenoise.methodmed=="none")
+ //       methodmed->set_active (0);
+    if (pp->dirpyrDenoise.methodmed=="Lonly")
         methodmed->set_active (0);
-    else if (pp->dirpyrDenoise.methodmed=="Lonly")
-        methodmed->set_active (1);
     else if (pp->dirpyrDenoise.methodmed=="Lab")
-        methodmed->set_active (2);
+        methodmed->set_active (1);
     else if (pp->dirpyrDenoise.methodmed=="RGB")
-        methodmed->set_active (3);
+        methodmed->set_active (2);
 	methodmedChanged();
 		
     medmethod->set_active (0);
@@ -229,7 +229,7 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
          if (!pedited->dirpyrDenoise.medmethod)
             medmethod->set_active (4);
 		if (!pedited->dirpyrDenoise.methodmed)
-            methodmed->set_active (3);
+            methodmed->set_active (2);
 			
         luma->setEditedState      (pedited->dirpyrDenoise.luma ? Edited : UnEdited);
         Ldetail->setEditedState   (pedited->dirpyrDenoise.Ldetail ? Edited : UnEdited);
@@ -291,7 +291,7 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->dirpyrDenoise.dmethod  = dmethod->get_active_row_number() != 2;
         pedited->dirpyrDenoise.medmethod  = medmethod->get_active_row_number() != 4;
         pedited->dirpyrDenoise.rgbmethod  = rgbmethod->get_active_row_number() != 2;
-        pedited->dirpyrDenoise.methodmed  = methodmed->get_active_row_number() != 3;
+        pedited->dirpyrDenoise.methodmed  = methodmed->get_active_row_number() != 2;
         pedited->dirpyrDenoise.luma     = luma->getEditedState ();
         pedited->dirpyrDenoise.Ldetail  = Ldetail->getEditedState ();
         pedited->dirpyrDenoise.chroma   = chroma->getEditedState ();
@@ -309,13 +309,13 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
     else if (dmethod->get_active_row_number()==1)
         pp->dirpyrDenoise.dmethod = "Lab";
 
-		if (methodmed->get_active_row_number()==0)
-        pp->dirpyrDenoise.methodmed = "none";	
-    else if (methodmed->get_active_row_number()==1)
+	//	if (methodmed->get_active_row_number()==0)
+    //   pp->dirpyrDenoise.methodmed = "none";	
+    if (methodmed->get_active_row_number()==0)
         pp->dirpyrDenoise.methodmed = "Lonly";
-    else if (methodmed->get_active_row_number()==2)
+    else if (methodmed->get_active_row_number()==1)
         pp->dirpyrDenoise.methodmed = "Lab";
-    else if (methodmed->get_active_row_number()==3)
+    else if (methodmed->get_active_row_number()==2)
         pp->dirpyrDenoise.methodmed = "RGB";
 
 
@@ -352,15 +352,15 @@ void DirPyrDenoise::dmethodChanged () {
 void DirPyrDenoise::medmethodChanged () {
 	
 	
-	if (listener && (multiImage||enabled->get_active()) ) {
+	if (listener && (multiImage||enabled->get_active())  && median->get_active() ) {
 		listener->panelChanged (EvDPDNmedmet, medmethod->get_active_text ());
 	}
 }
 
 void DirPyrDenoise::rgbmethodChanged () {
 	ctboxrgb->hide();
-	if(methodmed->get_active_row_number()==3) ctboxrgb->show();
-	if (listener && (multiImage||enabled->get_active()) ) {
+	if(methodmed->get_active_row_number()==2) ctboxrgb->show();
+	if (listener && (multiImage||enabled->get_active())  && median->get_active()) {
 		listener->panelChanged (EvDPDNrgbmet, rgbmethod->get_active_text ());
 	}
 }
@@ -368,10 +368,10 @@ void DirPyrDenoise::rgbmethodChanged () {
 
 
 void DirPyrDenoise::methodmedChanged () {
-	if(methodmed->get_active_row_number()==3) {ctboxrgb->show();ctbox->hide();}
+	if(methodmed->get_active_row_number()==2) {ctboxrgb->show();ctbox->hide();}
 	else {ctboxrgb->hide();ctbox->show();}
 
-	if (listener && (multiImage||enabled->get_active()) ) {
+	if (listener && (multiImage||enabled->get_active())  && median->get_active()) {
 		listener->panelChanged (EvDPDNmetmed, methodmed->get_active_text ());
 	}
 }
@@ -424,7 +424,7 @@ void DirPyrDenoise::adjusterChanged (Adjuster* a, double newval) {
             listener->panelChanged (EvDPDNbluechro, costr);		
         else if (a==gamma)
 			listener->panelChanged (EvDPDNGamma, costr);
-        else if (a==passes)
+        else if (a==passes  && median->get_active())
 			listener->panelChanged (EvDPDNpasses, costr);
 	}
 }
@@ -492,9 +492,15 @@ void DirPyrDenoise::medianChanged () {
 	
     if (listener) {
         if (median->get_active ())
-            listener->panelChanged (EvDPDNmedian, M("GENERAL_ENABLED"));
+           { listener->panelChanged (EvDPDNmedian, M("GENERAL_ENABLED"));
+		 //  medmethodChanged ();rgbmethodChanged ();methodmedChanged ();
+		   }
         else
-            listener->panelChanged (EvDPDNmedian, M("GENERAL_DISABLED"));
+           { listener->panelChanged (EvDPDNmedian, M("GENERAL_DISABLED"));
+		  // medmethodChanged ();rgbmethodChanged ();methodmedChanged ();
+		   }
+		   
+		   
     }  
 }
 

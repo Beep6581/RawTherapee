@@ -234,14 +234,14 @@ float media(float *elements, int N)
 
 		const short int imheight=src->height, imwidth=src->width;
 
-		if (dnparams.luma==0 && dnparams.chroma==0  && dnparams.methodmed=="none" ) {
+		if (dnparams.luma==0 && dnparams.chroma==0  && !dnparams.median ) {
             //nothing to do; copy src to dst or do nothing in case src == dst
 			if(src != dst)
 				memcpy(dst->data,src->data,dst->width*dst->height*3*sizeof(float));
 			return;
 		}
 		
-	if (dnparams.luma!=0 || dnparams.chroma!=0 || dnparams.methodmed=="Lab" || dnparams.methodmed=="Lonly") {
+	if (dnparams.luma!=0 || dnparams.chroma!=0 || dnparams.methodmed=="Lab" || dnparams.methodmed=="Lonly" ) {
 		perf=false;
 		if(dnparams.dmethod=="RGB") perf=true;//RGB mode
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -589,7 +589,7 @@ float media(float *elements, int N)
 				float realblue2 = interm_med + intermblue2; if (realblue2 < 0.f) realblue2=0.01f;
 				float noisevarab_b = SQR(realblue);
 				bool execwavelet=true;
-				if(noisevarL < 0.00007f && interm_med < 0.1f && (dnparams.methodmed=="Lab" || dnparams.methodmed=="Lonly")) execwavelet=false;//do not exec wavelet if sliders luminance and chroma are very small and median need
+				if(noisevarL < 0.00007f && interm_med < 0.1f && dnparams.median && (dnparams.methodmed=="Lab" || dnparams.methodmed=="Lonly")) execwavelet=false;//do not exec wavelet if sliders luminance and chroma are very small and median need
 				//we considered user don't want wavelet
 				if(execwavelet) {//gain time if user choose only median  sliders L <=1  slider chrom master < 1
                 { // enclosing this code in a block frees about 120 MB before allocating 20 MB after this block (measured with D700 NEF)
@@ -636,7 +636,8 @@ float media(float *elements, int N)
 				else if(dnparams.methodmed=="Lab") metchoice=2;
 				
 				//median on Luminance Lab only
-			if(metchoice==1 || metchoice ==2) {
+			if( (metchoice==1 || metchoice==2)   && dnparams.median) {
+			//printf("Lab et Lonly \n");
 			for(int iteration=1;iteration<=dnparams.passes;iteration++){
 			  //printf("pas=%i\n",iteration);
 					int wid=labdn->W;
@@ -664,6 +665,9 @@ float media(float *elements, int N)
 						methmedL = 4;
 						borderL = 3;
 					}	
+				if (metchoice==1 || metchoice==2)
+				{ /*printf("LONLY methmedL=%d\n", methmedL);*/
+					
 					if(methmedL < 2) {
 						for (int i=1; i<hei-1; i++) {
 							float pp[9],results[5],temp;
@@ -734,8 +738,8 @@ float media(float *elements, int N)
 							labdn->L[i][j] = tmL[i][j];
 						}
 		 			}
-//a                  
-				if(metchoice==2) {
+             }    
+				if(metchoice==2) {/*printf(" AB methmedL=%d\n", methmedL);*/
 					if(methmedL < 2) {
 						for (int i=1; i<hei-1; i++) {
 							float pp[9],temp;
@@ -1158,7 +1162,8 @@ float media(float *elements, int N)
 
 
 	//median 3x3 in complement on RGB
-	if(dnparams.methodmed=="RGB") {
+	if(dnparams.methodmed=="RGB" && dnparams.median) {
+	//printf("RGB den\n");
 		int wid=dst->width, hei=dst->height;
 		float** tm;
 		tm = new float*[hei];
