@@ -4323,6 +4323,8 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 	bool LCredsk = params->labCurve.lcredsk;
 	bool ccut = ccutili;
 	bool clut = clcutili;
+	bool aut = autili;
+	bool but = butili;
 	double rstprotection = 100.-params->labCurve.rstprotection; // Red and Skin Tones Protection
 	// avoid color shift is disabled when bwToning is activated and enabled if gamut is true in colorappearanace
 	bool avoidColorShift = (params->labCurve.avoidcolorshift || (params->colorappearance.gamut && params->colorappearance.enabled)) && !bwToning ;
@@ -4380,8 +4382,10 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 	for (int i=0; i<H; i++)
 		for (int j=0; j<W; j++) {
 			float LL=lold->L[i][j]/327.68f;
-			float CC=sqrt(SQR(lold->a[i][j]) + SQR(lold->b[i][j]))/327.68f;
-			float HH=xatan2f(lold->b[i][j],lold->a[i][j]);
+			float CC;
+			CC=sqrt(SQR(lold->a[i][j]) + SQR(lold->b[i][j]))/327.68f;
+			float HH;
+			HH=xatan2f(lold->b[i][j],lold->a[i][j]);
 			// According to mathematical laws we can get the sin and cos of HH by simple operations
 			float2  sincosval;
 			if(CC==0.0f) {
@@ -4395,7 +4399,7 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 			float Chprov=CC;
 			float Chprov1=CC;
 			float memChprov=Chprov;
-			
+				
 			float Lin=lold->L[i][j];
 			float Lprov2=Lin/327.68f;
 
@@ -4412,9 +4416,28 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 			if (editID == EUID_Lab_bCurve){
 					float chromapipb =lold->b[i][j]+(32768.f*1.28f);
 					editWhatever->v(i,j) = LIM01<float>((chromapipb)/(65536.f*1.28f));}//Lab b pipette
-			
-			float atmp = acurve[lold->a[i][j]+32768.0f]-32768.0f;// curves Lab a
-			float btmp = bcurve[lold->b[i][j]+32768.0f]-32768.0f;// curves Lab b
+		
+			float atmp, btmp;
+			atmp = acurve[lold->a[i][j]+32768.0f]-32768.0f;// curves Lab a
+			btmp = bcurve[lold->b[i][j]+32768.0f]-32768.0f;// curves Lab b
+			if(!bwToning) {	//take into account modification of 'a' and 'b'
+				lold->a[i][j]=atmp;
+				lold->b[i][j]=btmp;
+				CC=sqrt(SQR(lold->a[i][j]) + SQR(lold->b[i][j]))/327.68f;
+				HH=xatan2f(lold->b[i][j],lold->a[i][j]);
+				// According to mathematical laws we can get the sin and cos of HH by simple operations
+				//float2  sincosval;
+				if(CC==0.0f) {
+					sincosval.y = 1.0f;
+					sincosval.x = 0.0f;
+				} else {
+					sincosval.y = lold->a[i][j]/(CC*327.68f);
+					sincosval.x = lold->b[i][j]/(CC*327.68f);
+				}
+				Chprov=CC;
+				Chprov1=CC;
+				memChprov=Chprov;
+			} // now new values of lold with 'a' and 'b'
 			float Chprov2=Chprov1;
 			int poscc,posp,posl;
 			bool inRGB;
@@ -4776,6 +4799,7 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 					lnew->b[i][j] = btmp;
 				}
 			}
+		//	}
 		}
 
 } // end of parallelization
