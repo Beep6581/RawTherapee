@@ -17,6 +17,7 @@
 #17 2014-04-08 firefly
 #18 2014-05-16 firefly
 #19 2014-07-13 firefly
+#20 2014-07-24 firefly
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -492,6 +493,7 @@ HISTORY_MSG_252;ディテールレベルのコントラスト　肌色トーン
 HISTORY_MSG_253;ディテールレベルのコントラスト　アーティファクトを軽減
 HISTORY_MSG_254;ディテールレベルのコントラスト　肌色の色相
 HISTORY_MSG_255;ノイズ低減　-　メディアン
+HISTORY_MSG_256;ノイズ低減 - メディアンの種類
 HISTORY_MSG_257;カラートーン調整
 HISTORY_MSG_258;カラートーン調整　-　カラー
 HISTORY_MSG_259;カラートーン調整　-　不透明度
@@ -1196,9 +1198,9 @@ TP_DIRPYRDENOISE_MED_TOOLTIP;-
 TP_DIRPYRDENOISE_METHOD;方式
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;raw画像は、RGBまたはLab方式のいずれかを使用することができます。\n\n非raw画像は、選択にかかわらずLab方式が使用されます
 TP_DIRPYRDENOISE_METM_TOOLTIP;フィルタリングの種類で、"輝度のみ"と"Lab"を選択した場合、メディアンフィルタリングはノイズ低減行程でウェーブレット変換が行われた直後に適用されます\n"RGB"モードの場合は、ノイズ低減行程の最後で適用されます
-TP_DIRPYRDENOISE_MET_TOOLTIP;メディアンのフィルタリングの種類:\nソフトな3x3,強い3x3、ソフトな5x5(RGB)、強い5x5、7x7 (輝度のみとLab)があり、順にノイズ低減効果が高くなります
+TP_DIRPYRDENOISE_MET_TOOLTIP;適用するメディアンフィルターのサイズを決めます。大きくするとその分処理時間が増えます。\n\nソフトな3x3：1ピクセル範囲で5ピクセルの処理を行います\n強い3x3：1ピクセル範囲で9ピクセルの処理を行います\nソフトな5x5：2ピクセル範囲で13ピクセルの処理を行います\n強い5x5：2ピクセル範囲で25ピクセルの処理を行います\n7x7：3ピクセル範囲で49ピクセルの処理を行います\n\n小さいフィルターを使って、繰り返し処理をした方が、大きいフィルターを1回使うより結果が良いこともあります。
 TP_DIRPYRDENOISE_NONE;なし
-TP_DIRPYRDENOISE_PASSES_TOOLTIP;多くの場合、メディアンフィルタリングの適用は、小さいマトリクスで繰り返す方が、大きなマトリクスを一回使うより、良い結果が得られます
+TP_DIRPYRDENOISE_PASSES_TOOLTIP;3x3のメディアンフィルターを3回繰り返して適用する方が、7x7のフィルターを1回適用するより、良い結果を生むことが多いです
 TP_DIRPYRDENOISE_PASSE;メディアンの繰り返し
 TP_DIRPYRDENOISE_PERF;RGB モード(raw画像)
 TP_DIRPYRDENOISE_RED;色差 レッド/グリーン
@@ -1559,8 +1561,3 @@ ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる\nショートカット: <b>f</b>
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_256;NR - Median type
