@@ -113,10 +113,10 @@ RTWindow::RTWindow ()
         gtkosx_application_ready (osxApp);
     }
 #endif
-    Glib::ustring versionStr("RawTherapee "+versionString);
+    versionStr = "RawTherapee "+versionString;
     if (!versionSuffixString.empty())
         versionStr += " "+versionSuffixString;
-    set_title(versionStr);
+    set_title_decorated("");
     property_allow_shrink() = true;
     set_default_size(options.windowWidth, options.windowHeight);
     set_modal(false);
@@ -366,6 +366,13 @@ void RTWindow::on_mainNB_switch_page(GtkNotebookPage* page, guint page_num) {
 
         EditorPanel *ep = static_cast<EditorPanel*>(mainNB->get_nth_page(page_num));
         ep->setAspect();
+		
+        if (!isSingleTabMode() && mainNB->get_current_page ()>2){
+        	if (mainNB->get_n_pages()>2 && filesEdited.size()>0){
+			set_title_decorated(ep->getFileName());
+        	}
+		}
+
     } else {
         // in single tab mode with command line filename epanel does not exist yet
         if (isSingleTabMode() && epanel) {
@@ -412,6 +419,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
         mainNB->set_current_page (mainNB->page_num (*ep));
         mainNB->set_tab_reorderable (*ep, true);
 
+        set_title_decorated(name);
         epanels[ name ] = ep;
         filesEdited.insert ( name );
         fpanel->refreshEditedState (filesEdited);
@@ -432,8 +440,14 @@ void RTWindow::remEditorPanel (EditorPanel* ep) {
 
 	    mainNB->remove_page (*ep);
 
-	    if (mainNB->get_current_page () == mainNB->page_num (*bpanel))
+	    if (mainNB->get_current_page () == mainNB->page_num (*bpanel)){
 		    mainNB->set_current_page (mainNB->page_num (*fpanel));
+		    set_title_decorated("");
+	    }
+	    else{
+		    EditorPanel* ep = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));
+	        set_title_decorated(ep->getFileName());
+	    }
         // TODO: ask what to do: close & apply, close & apply selection, close & revert, cancel
     }
 }
@@ -441,13 +455,21 @@ void RTWindow::remEditorPanel (EditorPanel* ep) {
 bool RTWindow::selectEditorPanel(const std::string &name) {
     if (EditWindow::isMultiDisplayEnabled()) {
         EditWindow * wndEdit = EditWindow::getInstance(this);
-        if (wndEdit->selectEditorPanel(name)) return true;
+        if (wndEdit->selectEditorPanel(name)) {
+        	set_title_decorated(name);
+        	return true;
+        }
     } else {
         std::map<Glib::ustring, EditorPanel*>::iterator iep = epanels.find(name);
 
         if (iep!=epanels.end()) {
             mainNB->set_current_page (mainNB->page_num (*iep->second));
+            set_title_decorated(name);
             return true;
+        }
+        else{
+        	//set_title_decorated(name);
+        	//printf("RTWindow::selectEditorPanel - plain set\n");
         }
     }
 
@@ -735,4 +757,19 @@ bool RTWindow::splashClosed(GdkEventAny* event) {
 	delete splash;
 	splash = NULL;
 	return true;
+}
+
+void RTWindow::set_title_decorated(Glib::ustring fname){
+	Glib::ustring subtitle;
+	if (!fname.empty()) subtitle= " - " + fname;
+	set_title(versionStr + subtitle);	
+}
+
+void RTWindow::CloseOpenEditors(){
+	std::map<Glib::ustring, EditorPanel*>::const_iterator itr;
+	itr = epanels.begin();
+	while(itr != epanels.end()) {
+		remEditorPanel((*itr).second);
+		itr = epanels.begin();
+	}
 }

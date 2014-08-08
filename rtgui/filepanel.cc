@@ -192,12 +192,15 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
             parent->addEditorPanel (epanel,thm->getFileName());
             }
             epanel->open(thm, pc->returnValue() );
+            if (!EditWindow::isMultiDisplayEnabled())
+	            parent->set_title_decorated(thm->getFileName());
         } else {
             {
             GThreadLock lock; // Acquiring the GUI... not sure that it's necessary, but it shouldn't harm
             parent->SetEditorCurrent();
             }
             parent->epanel->open(thm, pc->returnValue() );
+            parent->set_title_decorated(thm->getFileName());
         }
     } else {
         Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n</b>";
