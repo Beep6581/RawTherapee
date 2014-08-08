@@ -53,6 +53,7 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         bool on_expose_event_epanel(GdkEventExpose* event);
         bool on_expose_event_fpanel(GdkEventExpose* event);
         bool splashClosed(GdkEventAny* event);
+        Glib::ustring versionStr;
 #if defined(__APPLE__)
         GtkosxApplication *osxApp;
 #endif
@@ -99,6 +100,8 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
    		void updateTabsUsesIcons (bool useIcons);
    		void updateFBQueryTB (bool singleRow);
         bool getIsFullscreen() { return is_fullscreen; }
+        void set_title_decorated(Glib::ustring fname);
+        void CloseOpenEditors();
 };
 
 #endif

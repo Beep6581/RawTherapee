@@ -1644,11 +1644,16 @@ void Preferences::workflowUpdate (){
 
     if(moptions.tabbedUI != options.tabbedUI) {
         parent->MoveFileBrowserToMain();
+        parent->CloseOpenEditors();
         parent->SetMainCurrent();
-        if(moptions.tabbedUI)
+        if(moptions.tabbedUI){
             parent->epanel->hide_all();
-        else
+        	parent->set_title_decorated("");
+        }
+        else{
            parent->epanel->show_all();
+           parent->set_title_decorated(parent->epanel->getFileName());
+        }
     }
     if(moptions.hideTPVScrollbar != options.hideTPVScrollbar) {
     	// Update the tool panels

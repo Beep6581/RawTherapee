@@ -32,7 +32,7 @@
 using namespace rtengine::procparams;
 
 EditorPanel::EditorPanel (FilePanel* filePanel) 
-    : beforePreviewHandler(NULL), beforeIarea(NULL), beforeBox(NULL), afterBox(NULL), afterHeaderBox(NULL), parent(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL), iHistoryShow(NULL), iHistoryHide(NULL), iBeforeLockON(NULL),iBeforeLockOFF(NULL), iRightPanel_1_Show(NULL), iRightPanel_1_Hide(NULL), iTopPanel_1_Show(NULL), iTopPanel_1_Hide(NULL) {
+    : beforePreviewHandler(NULL), beforeIarea(NULL), beforeBox(NULL), afterBox(NULL), afterHeaderBox(NULL), parent(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL), iHistoryShow(NULL), iHistoryHide(NULL), iBeforeLockON(NULL),iBeforeLockOFF(NULL), iRightPanel_1_Show(NULL), iRightPanel_1_Hide(NULL), iTopPanel_1_Show(NULL), iTopPanel_1_Hide(NULL), openThm(NULL) {
 
     epih = new EditorPanelIdleHelper;
     epih->epanel = this;
@@ -549,13 +549,13 @@ void EditorPanel::saveProfile () {
 }
 
 Glib::ustring EditorPanel::getShortName () {
-
-    return Glib::path_get_basename (openThm->getFileName ());
+   if (openThm) return Glib::path_get_basename (openThm->getFileName ());
+   else return "";
 }
 
 Glib::ustring EditorPanel::getFileName () {
-
-    return openThm->getFileName ();
+    if (openThm) return openThm->getFileName ();
+    else return "";
 }
 
 // TODO!!!

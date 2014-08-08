@@ -73,8 +73,7 @@ EditWindow::EditWindow (RTWindow* p) : parent(p) , isFullscreen(false) {
     set_default_icon_from_file (fullPath, error);
     }
 #endif //GLIBMM_EXCEPTIONS_ENABLED
-
-    set_title("RawTherapee "+ M("EDITWINDOW_TITLE"));
+	set_title_decorated("");
     property_allow_shrink() = true;
     set_modal(false);
     set_resizable(true);
@@ -114,10 +113,14 @@ bool EditWindow::on_window_state_event(GdkEventWindowState* event) {
 }
 
 void EditWindow::on_mainNB_switch_page(GtkNotebookPage* page, guint page_num) {
-    if (page_num > 1) {
+    //if (page_num > 1) {
 	EditorPanel *ep = static_cast<EditorPanel*>(mainNB->get_nth_page(page_num));
-        ep->setAspect();
-    }
+	
+	if (mainNB->get_n_pages()>1 && page_num<=(filesEdited.size()-1)){
+	set_title_decorated(ep->getFileName());
+	}
+    ep->setAspect();
+    //}
 }
 
 void EditWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
@@ -147,6 +150,8 @@ void EditWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
     mainNB->set_current_page (mainNB->page_num (*ep));
     mainNB->set_tab_reorderable (*ep, true);
 
+    set_title_decorated(name);
+
     epanels[ name ] = ep;
     filesEdited.insert ( name );
     parent->fpanel->refreshEditedState (filesEdited);
@@ -159,6 +164,11 @@ void EditWindow::remEditorPanel (EditorPanel* ep) {
     parent->fpanel->refreshEditedState (filesEdited);
 
     mainNB->remove_page (*ep);
+	if (mainNB->get_n_pages()>0){
+	    EditorPanel* ep1 = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));
+	    set_title_decorated(ep1->getFileName());
+	}
+	else set_title_decorated("");
     // TODO: save options if wanted
 }
 
@@ -167,6 +177,7 @@ bool EditWindow::selectEditorPanel(const std::string &name) {
 
     if (iep!=epanels.end()) {
         mainNB->set_current_page (mainNB->page_num (*iep->second));
+        set_title_decorated(name);
         return true;
     }
     return false;
@@ -224,3 +235,8 @@ bool EditWindow::on_delete_event(GdkEventAny* event) {
     return true;
 }
 
+void EditWindow::set_title_decorated(Glib::ustring fname){
+	Glib::ustring subtitle;
+	if (!fname.empty()) subtitle= " - " + fname;
+	set_title("RawTherapee "+ M("EDITWINDOW_TITLE") + subtitle);
+}
