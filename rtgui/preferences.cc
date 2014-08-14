@@ -448,7 +448,7 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     Gtk::Frame* fff = Gtk::manage (new Gtk::Frame (M("PREFERENCES_FLATFIELD")) );
     Gtk::HBox* hb43 = Gtk::manage (new Gtk::HBox ());
     flatFieldDir = Gtk::manage(new Gtk::FileChooserButton(M("PREFERENCES_FLATFIELDSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
-    Gtk::Label *ffLab = Gtk::manage(new Gtk::Label(M("PREFERENCES_FLATFIELDSDIR")));
+    Gtk::Label *ffLab = Gtk::manage(new Gtk::Label(M("PREFERENCES_FLATFIELDSDIR")+":"));
     hb43->pack_start(*ffLab , Gtk::PACK_SHRINK, 4 );
     hb43->pack_start(*flatFieldDir);
     ffLabel = Gtk::manage(new Gtk::Label("Found:"));
