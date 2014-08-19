@@ -1479,14 +1479,15 @@ void CLASS phase_one_correct()
       }
       for (qr = 0; qr < 2; qr++) {
 	for (qc = 0; qc < 2; qc++) {
-	  int cx[18], cf[18];
+	  int cx[19], cf[19];
 	  for (i = 0; i < 16; i++) {
 	    cx[1+i] = lc[qr][qc][i];
 	    cf[1+i] = ref[i];
 	  }
 	  cx[0] = cf[0] = 0;
 	  cx[17] = cf[17] = ((unsigned int)ref[15] * 65535) / lc[qr][qc][15];
-	  cubic_spline(cx, cf, 18);
+          cx[18] = cf[18] = 65535;
+	  cubic_spline(cx, cf, 19);
 
 	  for (row = (qr ? ph1.split_row : 0);
 	       row < (qr ? raw_height : ph1.split_row); row++)
