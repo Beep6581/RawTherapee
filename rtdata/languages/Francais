@@ -503,6 +503,9 @@ HISTORY_MSG_289;Champ Uniforme - Ctrl Auto de l'Écrêtage
 HISTORY_MSG_290;Niveau de noir - Rouge
 HISTORY_MSG_291;Niveau de noir - Vert
 HISTORY_MSG_292;Niveau de noir - Bleu
+HISTORY_MSG_293;Simulation de Film
+HISTORY_MSG_294;Simulation de Film - Force
+HISTORY_MSG_295;Simulation de Film - Film
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Captures
@@ -1497,6 +1500,12 @@ ZOOMPANEL_ZOOM100;Zoom à 100%\nRaccourci: <b>z</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre\nRaccourci: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom Avant\nRaccourci: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
+TP_FILMSIMULATION_LABEL;Simulation de Film
+TP_FILMSIMULATION_STRENGTH;Force
+PARTIALPASTER_FILMSIMULATION;Simulation de Film
+TP_FILMSIMULATION_ZEROCLUTSFOUND;Veuillez préciser le dossier contenant les fichiers HaldCLUT dans les Préférences
+PREFERENCES_FILMSIMULATION;Simulation de Film
+PREFERENCES_CLUTSDIR;Dossier HaldCLUT
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.

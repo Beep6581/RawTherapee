@@ -513,6 +513,9 @@ HISTORY_MSG_289;Flat Field Automatic Clip Control
 HISTORY_MSG_290;Black Level - Red
 HISTORY_MSG_291;Black Level - Green
 HISTORY_MSG_292;Black Level - Blue
+HISTORY_MSG_293;Film Simulation
+HISTORY_MSG_294;Film Simulation - Strength
+HISTORY_MSG_295;Film Simulation - Film
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1543,3 +1546,9 @@ ZOOMPANEL_ZOOM100;Zoom to 100%\nShortcut: <b>z</b>
 ZOOMPANEL_ZOOMFITSCREEN;Fit to screen\nShortcut: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
+TP_FILMSIMULATION_LABEL;Film Simulation
+TP_FILMSIMULATION_STRENGTH;Strength
+PARTIALPASTER_FILMSIMULATION;Film Simulation
+TP_FILMSIMULATION_ZEROCLUTSFOUND;Set HaldCLUT directory in Preferences
+PREFERENCES_FILMSIMULATION;Film Simulation
+PREFERENCES_CLUTSDIR;HaldCLUT directory

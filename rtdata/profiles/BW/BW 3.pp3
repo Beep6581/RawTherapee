@@ -1,6 +1,6 @@
 [Version]
-AppVersion=4.0.12
-Version=319
+AppVersion=4.1.50
+Version=321
 
 [Exposure]
 Auto=true
@@ -112,7 +112,7 @@ Curve3=0;
 [EPD]
 Enabled=false
 Strength=0.25
-EdgeStopping=1.3999999999999999
+EdgeStopping=1.4
 Scale=1
 ReweightingIterates=0
 
@@ -140,6 +140,9 @@ Strength=0.6
 Feather=50
 Roundness=50
 
+[Film Simulation]
+Enabled=false
+
 [HSV Equalizer]
 HCurve=0;
 SCurve=0;
@@ -150,4 +153,7 @@ LumaMode=false
 rCurve=0;
 gCurve=0;
 bCurve=0;
+
+[ColorToning]
+Enabled=false
 

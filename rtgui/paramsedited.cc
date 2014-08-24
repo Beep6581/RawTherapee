@@ -340,6 +340,10 @@ void ParamsEdited::set (bool v) {
 	hsvequalizer.hcurve = v;
 	hsvequalizer.scurve = v;
 	hsvequalizer.vcurve = v;
+    filmSimulation.enabled = v;
+    filmSimulation.clutFilename = v;
+    filmSimulation.strength = v;
+
 	exif = v;
 	iptc = v;
 }
@@ -666,6 +670,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         hsvequalizer.hcurve = hsvequalizer.hcurve && p.hsvequalizer.hcurve == other.hsvequalizer.hcurve;
         hsvequalizer.scurve = hsvequalizer.scurve && p.hsvequalizer.scurve == other.hsvequalizer.scurve;
         hsvequalizer.vcurve = hsvequalizer.vcurve && p.hsvequalizer.vcurve == other.hsvequalizer.vcurve;
+        filmSimulation.enabled = filmSimulation.enabled && p.filmSimulation.enabled == other.filmSimulation.enabled;
+        filmSimulation.clutFilename = filmSimulation.clutFilename && p.filmSimulation.clutFilename == other.filmSimulation.clutFilename;
+        filmSimulation.strength = filmSimulation.strength && p.filmSimulation.strength == other.filmSimulation.strength;
 
 //      How the hell can we handle that???
 //      exif = exif && p.exif==other.exif
@@ -1000,6 +1007,11 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (hsvequalizer.hcurve)		toEdit.hsvequalizer.hcurve		= mods.hsvequalizer.hcurve;
 	if (hsvequalizer.scurve)		toEdit.hsvequalizer.scurve		= mods.hsvequalizer.scurve;
 	if (hsvequalizer.vcurve)		toEdit.hsvequalizer.vcurve		= mods.hsvequalizer.vcurve;
+
+	if (filmSimulation.enabled)			toEdit.filmSimulation.enabled		= mods.filmSimulation.enabled;
+	if (filmSimulation.clutFilename)	toEdit.filmSimulation.clutFilename	= mods.filmSimulation.clutFilename;
+	if (filmSimulation.strength)		toEdit.filmSimulation.strength		= dontforceSet && options.baBehav[ADDSET_FILMSIMULATION_STRENGTH] ? toEdit.filmSimulation.strength + mods.filmSimulation.strength : mods.filmSimulation.strength;
+
 
 	// Exif changes are added to the existing ones
 	if (exif)

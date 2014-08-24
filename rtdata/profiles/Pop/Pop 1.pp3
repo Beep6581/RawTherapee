@@ -1,6 +1,6 @@
 [Version]
-AppVersion=4.0.12
-Version=319
+AppVersion=4.1.50
+Version=321
 
 [Exposure]
 Auto=false
@@ -15,7 +15,7 @@ HighlightComprThreshold=0
 ShadowCompr=50
 CurveMode=FilmLike
 CurveMode2=Standard
-Curve=3;0;0;0.084000000000000005;0;0.187;0.188;0.442;0.57599999999999996;1;1;
+Curve=3;0;0;0.084;0;0.187;0.188;0.442;0.576;1;1;
 Curve2=0;
 
 [HLRecovery]
@@ -58,7 +58,7 @@ Chromaticity=0
 AvoidColorShift=false
 RedAndSkinTonesProtection=0
 LCredsk=true
-LCurve=3;0;0;0.5;0.40000000000000002;1;1;
+LCurve=3;0;0;0.5;0.4;1;1;
 aCurve=0;
 bCurve=0;
 ccCurve=0;
@@ -106,14 +106,14 @@ CurveMode=Brightness
 CurveMode2=Lightness
 CurveMode3=Colorfullness
 Curve=0;
-Curve2=3;0;0;0.14999999999999999;0;0.67000000000000004;0.91000000000000003;1;1;
-Curve3=3;0;0;0.080000000000000002;0.02;0.29999999999999999;0.5;1;1;
+Curve2=3;0;0;0.15;0;0.67;0.91;1;1;
+Curve3=3;0;0;0.08;0.02;0.3;0.5;1;1;
 
 [EPD]
 Enabled=true
 Strength=0.25
-EdgeStopping=2.3999999999999999
-Scale=0.10000000000000001
+EdgeStopping=2.4
+Scale=0.1
 ReweightingIterates=0
 
 [Shadows & Highlights]
@@ -145,8 +145,14 @@ HCurve=0;
 SCurve=0;
 VCurve=0;
 
+[Film Simulation]
+Enabled=false
+
 [RGB Curves]
 LumaMode=false
+
+[ColorToning]
+Enabled=false
 
 [RAW]
 CA=true

@@ -841,6 +841,27 @@ class HSVEqualizerParams {
         std::vector<double>   vcurve;
 };
 
+
+/**
+ *  Film simualtion params
+ */
+struct FilmSimulationParams {
+    bool enabled;
+    Glib::ustring clutFilename;
+    int strength;
+ 
+    FilmSimulationParams() {
+        setDefaults();
+    }
+
+    void setDefaults() {
+        enabled = false;
+        clutFilename = Glib::ustring();
+        strength = 100;
+    }
+};
+
+
 /**
   * Parameters for RAW demosaicing, common to all sensor type
   */
@@ -962,6 +983,7 @@ class ProcParams {
         RAWParams               raw;             ///< RAW parameters before demosaicing
         DirPyrEqualizerParams   dirpyrequalizer; ///< directional pyramid equalizer parameters
         HSVEqualizerParams      hsvequalizer;    ///< hsv equalizer parameters
+        FilmSimulationParams    filmSimulation;  ///< film simulation parameters
         char                    rank;            ///< Custom image quality ranking
         char                    colorlabel;      ///< Custom color label
         bool                    inTrash;         ///< Marks deleted image

@@ -487,6 +487,13 @@ class HSVEqualizerParamsEdited {
         bool vcurve;
 };
 
+class FilmSimulationParamsEdited {
+public:
+    bool enabled;
+    bool clutFilename;
+    bool strength;
+};
+
 class RAWParamsEdited {
 
     public:
@@ -585,6 +592,7 @@ class ParamsEdited {
         RAWParamsEdited               raw;
         DirPyrEqualizerParamsEdited   dirpyrequalizer;
         HSVEqualizerParamsEdited      hsvequalizer;
+        FilmSimulationParamsEdited    filmSimulation;
         bool                          exif;
         bool                          iptc;
 

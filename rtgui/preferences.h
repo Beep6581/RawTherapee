@@ -72,6 +72,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
     Gtk::RadioButton* edOther;
     Gtk::FileChooserButton* darkFrameDir;
     Gtk::FileChooserButton* flatFieldDir;
+    Gtk::FileChooserButton* clutsDir;
     Gtk::Label *dfLabel;
     Gtk::Label *ffLabel;
 

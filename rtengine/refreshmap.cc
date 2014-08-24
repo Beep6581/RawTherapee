@@ -314,6 +314,9 @@ FLATFIELD,        // EvFlatFieldAutoClipControl
 DARKFRAME,        // EvPreProcessExpBlackRed
 DARKFRAME,        // EvPreProcessExpBlackGreen
 DARKFRAME,        // EvPreProcessExpBlackBlue
+RGBCURVE,         //EvFilmSimulationEnabled
+RGBCURVE,         //EvFilmSimulationStrength
+RGBCURVE,         //EvFilmSimulationFilename
 
 
 

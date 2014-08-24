@@ -1,6 +1,6 @@
 [Version]
-AppVersion=4.0.12
-Version=319
+AppVersion=4.1.50
+Version=321
 
 [Exposure]
 Auto=false
@@ -123,7 +123,7 @@ Gamma=1.7
 [EPD]
 Enabled=false
 Strength=0.25
-EdgeStopping=1.3999999999999999
+EdgeStopping=1.4
 Scale=1
 ReweightingIterates=0
 
@@ -156,8 +156,15 @@ HCurve=0;
 SCurve=0;
 VCurve=0;
 
+[Film Simulation]
+Enabled=false
+
 [RGB Curves]
 LumaMode=true
 rCurve=3;0;0;0.058419243986254393;0.28522336769759427;0.46735395189003465;0.890034364261168;1;1;
 gCurve=3;0;0;0.96563573883161546;0.66323024054982871;1;1;
 bCurve=0;
+
+[ColorToning]
+Enabled=false
+

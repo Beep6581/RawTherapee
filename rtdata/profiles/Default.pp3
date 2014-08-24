@@ -1,6 +1,6 @@
 [Version]
-AppVersion=4.0.12
-Version=319
+AppVersion=4.1.50
+Version=321
 
 [Exposure]
 Auto=true
@@ -68,7 +68,7 @@ Radius=0.5
 Amount=250
 Threshold=20;80;2000;1200;
 OnlyEdges=false
-EdgedetectionRadius=1.8999999999999999
+EdgedetectionRadius=1.9
 EdgeTolerance=1800
 HalocontrolEnabled=false
 HalocontrolAmount=85
@@ -132,7 +132,7 @@ Gamma=1.7
 [EPD]
 Enabled=false
 Strength=0.25
-EdgeStopping=1.3999999999999999
+EdgeStopping=1.4
 Scale=1
 ReweightingIterates=0
 
@@ -165,11 +165,17 @@ HCurve=0;
 SCurve=0;
 VCurve=0;
 
+[Film Simulation]
+Enabled=false
+
 [RGB Curves]
 LumaMode=false
 rCurve=0;
 gCurve=0;
 bCurve=0;
+
+[ColorToning]
+Enabled=false
 
 [RAW]
 CA=true

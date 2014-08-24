@@ -210,6 +210,8 @@ class Options {
     bool UseIconNoText;
     int whiteBalanceSpotSize;
 
+    Glib::ustring clutsDir;
+
     // Performance options
     int rgbDenoiseThreadLimit; // maximum number of threads for the denoising tool ; 0 = use the maximum available
 
