@@ -84,7 +84,7 @@ public:
     void set( CLUT *p ) { m_point = p; }
 
 private:
-    ClutPtr& operator=(ClutPtr const& cp ) {} // ... a return value is expected here
+    ClutPtr& operator=(ClutPtr const& cp ) { /*only for clean warning messages*/return *this; }
     CLUT *m_point;
 };
 
