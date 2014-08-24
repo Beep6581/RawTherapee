@@ -40,6 +40,8 @@
 #include "rt_math.h"
 #include "EdgePreservingDecomposition.h"
 #include "improccoordinator.h"
+#include "clutstore.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -2258,6 +2260,28 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 		}
 	}
 
+    ClutPtr colorLUT;
+    bool clutAndWorkingProfilesAreSame = false;
+    TMatrix work2xyz, xyz2clut, clut2xyz, xyz2work;
+    if ( params->filmSimulation.enabled && !params->filmSimulation.clutFilename.empty() )
+    {
+        colorLUT.set( clutStore.getClut( params->filmSimulation.clutFilename ) );
+        if ( colorLUT )
+        {
+            clutAndWorkingProfilesAreSame = colorLUT->profile() == params->icm.working;
+            if ( !clutAndWorkingProfilesAreSame )
+            {
+                work2xyz = iccStore->workingSpaceMatrix( params->icm.working );
+                xyz2clut = iccStore->workingSpaceInverseMatrix( colorLUT->profile() );
+                xyz2work = iccStore->workingSpaceInverseMatrix( params->icm.working );
+                clut2xyz = iccStore->workingSpaceMatrix( colorLUT->profile() );	
+            }
+        }
+    }
+
+    double filmSimCorrectedStrength = double(params->filmSimulation.strength)/100.;
+    double filmSimSourceStrength = double(100-params->filmSimulation.strength)/100.;
+
 	const float exp_scale = pow (2.0, expcomp);
 	const float comp = (max(0.0, expcomp) + 1.0)*hlcompr/100.0;
 	const float shoulder = ((65536.0/max(1.0f,exp_scale))*(hlcomprthresh/200.0))+0.1;
@@ -3045,6 +3069,48 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 					}
 				}
 			}
+
+            //Film Simulations
+            if ( colorLUT )
+            {
+                for (int i=istart,ti=0; i<tH; i++,ti++) {
+                    for (int j=jstart,tj=0; j<tW; j++,tj++) {
+                        float &sourceR =rtemp[ti*TS+tj];
+                        float &sourceG =gtemp[ti*TS+tj];
+                        float &sourceB = btemp[ti*TS+tj];
+
+						if (!clutAndWorkingProfilesAreSame) {
+							//convert from working to clut profile
+							float x, y, z;
+							Color::rgbxyz( sourceR, sourceG, sourceB, x, y, z, work2xyz );
+							Color::xyz2rgb( x, y, z, sourceR, sourceG, sourceB, xyz2clut );
+						}
+						//appply gamma sRGB (default RT)
+						sourceR = CLIP<float>( Color::gamma_srgb( sourceR ) );
+						sourceG = CLIP<float>( Color::gamma_srgb( sourceG ) );
+						sourceB = CLIP<float>( Color::gamma_srgb( sourceB ) );
+
+                        float r, g, b;
+                        colorLUT->getRGB( sourceR, sourceG, sourceB, r, g, b );
+                        // apply strength
+                        sourceR = r * filmSimCorrectedStrength + sourceR * filmSimSourceStrength; 
+                        sourceG = g * filmSimCorrectedStrength + sourceG * filmSimSourceStrength; 
+                        sourceB = b * filmSimCorrectedStrength + sourceB * filmSimSourceStrength; 
+						// apply inverse gamma sRGB
+						sourceR = Color::igamma_srgb( sourceR );
+						sourceG = Color::igamma_srgb( sourceG );
+						sourceB = Color::igamma_srgb( sourceB );
+						
+						if (!clutAndWorkingProfilesAreSame) {
+							//convert from clut to working profile
+							float x, y, z;
+							Color::rgbxyz( sourceR, sourceG, sourceB, x, y, z, clut2xyz );
+							Color::xyz2rgb( x, y, z, sourceR, sourceG, sourceB, xyz2work );
+						}
+							
+                    }
+                }
+            }
 
 			//black and white
 			if(blackwhite){
@@ -4845,7 +4911,6 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 	
   //  t2e.set();
   //  printf("Chromil took %d �sec\n",t2e.etime(t1e));
-	
 }
 
 

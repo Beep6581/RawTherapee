@@ -756,6 +756,9 @@ void ProcParams::setDefaults () {
     hsvequalizer.scurve.push_back (FCT_Linear);
     hsvequalizer.vcurve.clear ();
     hsvequalizer.vcurve.push_back (FCT_Linear);
+
+    filmSimulation.setDefaults();
+
     raw.bayersensor.method = RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze];
     raw.bayersensor.ccSteps = 0;
     raw.bayersensor.dcb_iterations = 2;
@@ -1359,6 +1362,11 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         Glib::ArrayHandle<double> vcurve = hsvequalizer.vcurve;
         keyFile.set_double_list("HSV Equalizer", "VCurve", vcurve);
     }
+
+    //save film simulation parameters
+    if ( !pedited || pedited->filmSimulation.enabled )      keyFile.set_boolean( "Film Simulation", "Enabled", filmSimulation.enabled );
+    if ( !pedited || pedited->filmSimulation.clutFilename ) keyFile.set_string ( "Film Simulation", "ClutFilename", filmSimulation.clutFilename );
+    if ( !pedited || pedited->filmSimulation.strength )     keyFile.set_integer( "Film Simulation", "Strength", filmSimulation.strength );
 
 
     if (!pedited || pedited->rgbCurves.lumamode)     keyFile.set_boolean ("RGB Curves", "LumaMode",  rgbCurves.lumamode);
@@ -2059,6 +2067,20 @@ if (keyFile.has_group ("Directional Pyramid Equalizer")) {
     }
 }
 
+    // load CLUT parameters
+if ( keyFile.has_group( "Film Simulation" ) )
+{
+    if ( keyFile.has_key( "Film Simulation", "Enabled" ) )      { filmSimulation.enabled = keyFile.get_boolean( "Film Simulation", "Enabled" ); if ( pedited ) pedited->filmSimulation.enabled = true; }
+    if ( keyFile.has_key( "Film Simulation", "ClutFilename" ) ) { filmSimulation.clutFilename = keyFile.get_string( "Film Simulation", "ClutFilename" ); if ( pedited ) pedited->filmSimulation.clutFilename = true; }
+    if ( keyFile.has_key( "Film Simulation", "Strength" ) )     {
+        if (ppVersion < 321)
+            filmSimulation.strength = int(keyFile.get_double( "Film Simulation", "Strength" )*100 + 0.1);
+        else
+            filmSimulation.strength = keyFile.get_integer( "Film Simulation", "Strength" );
+        if ( pedited ) pedited->filmSimulation.strength = true;
+    }
+}
+
     // load HSV equalizer parameters
 if (keyFile.has_group ("HSV Equalizer")) {
     if (ppVersion>=300) {
@@ -2514,6 +2536,9 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& hsvequalizer.hcurve == other.hsvequalizer.hcurve
 		&& hsvequalizer.scurve == other.hsvequalizer.scurve
 		&& hsvequalizer.vcurve == other.hsvequalizer.vcurve
+		&& filmSimulation.enabled == other.filmSimulation.enabled
+		&& filmSimulation.clutFilename == other.filmSimulation.clutFilename
+		&& filmSimulation.strength == other.filmSimulation.strength
 		&& rgbCurves.rcurve == other.rgbCurves.rcurve
 		&& rgbCurves.gcurve == other.rgbCurves.gcurve
 		&& rgbCurves.bcurve == other.rgbCurves.bcurve

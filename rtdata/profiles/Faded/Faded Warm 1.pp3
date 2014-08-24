@@ -1,6 +1,6 @@
 [Version]
-AppVersion=4.0.12
-Version=319
+AppVersion=4.1.50
+Version=321
 
 [Exposure]
 Auto=false
@@ -84,8 +84,15 @@ HCurve=0;
 SCurve=0;
 VCurve=0;
 
+[Film Simulation]
+Enabled=false
+
 [RGB Curves]
 LumaMode=false
 rCurve=3;0;0;0.051383399209486022;0.17391304347826081;1;1;
 gCurve=3;0;0;1;1;
 bCurve=3;0;0;0.051383399209486022;0.17391304347826081;0.91699604743083007;0.76284584980237169;1;1;
+
+[ColorToning]
+Enabled=false
+

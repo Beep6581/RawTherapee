@@ -396,6 +396,8 @@ void Options::setDefaults () {
     fastexport_resize_width              = 900;
     fastexport_resize_height             = 900;
 
+    clutsDir = "./cluts";
+
     cutOverlayBrush = std::vector<double> (4);
     cutOverlayBrush[3] = 0.667;  // :-p
 
@@ -490,6 +492,7 @@ void Options::setDefaults () {
 			0,  // ADDSET_COLORTONING_SPLIT
 			0,	//ADDSET_DIRPYRDN_PASSES
 			0,  // ADDSET_RAWFFCLIPCONTROL
+            0,  // ADDSET_FILMSIMULATION_STRENGTH
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
@@ -792,6 +795,8 @@ if (keyFile.has_group ("Color Management")) {
     if( keyFile.has_key ("Color Management", "ProtectRed"))     rtSettings.protectred           = keyFile.get_integer("Color Management", "ProtectRed");
     if( keyFile.has_key ("Color Management", "ProtectRedH"))    rtSettings.protectredh          = keyFile.get_double("Color Management", "ProtectRedH");
     if( keyFile.has_key ("Color Management", "Amountchroma"))    rtSettings.amchroma            = keyFile.get_integer("Color Management", "Amountchroma");
+
+    if( keyFile.has_key ("Color Management", "ClutsDirectory")) clutsDir             = keyFile.get_string("Color Management", "ClutsDirectory");
 //    if( keyFile.has_key ("Color Management", "Ciebadpixgauss")) rtSettings.ciebadpixgauss       = keyFile.get_boolean("Color Management", "Ciebadpixgauss");
 
 }
@@ -1092,6 +1097,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_double ("Color Management", "CBDLlevel123", rtSettings.level123_cbdl);
  //   keyFile.set_double ("Color Management", "Colortoningab", rtSettings.colortoningab);
 //    keyFile.set_double ("Color Management", "Decaction", rtSettings.decaction);
+    keyFile.set_string ("Color Management", "ClutsDirectory", clutsDir);
 
 
     Glib::ArrayHandle<int> bab = baBehav;

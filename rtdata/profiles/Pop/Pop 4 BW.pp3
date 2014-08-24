@@ -1,11 +1,11 @@
 [Version]
-AppVersion=4.0.12
-Version=319
+AppVersion=4.1.50
+Version=321
 
 [Exposure]
 Auto=false
 Clip=0.02
-Compensation=0.66000000000000003
+Compensation=0.66
 Brightness=0
 Contrast=0
 Saturation=0
@@ -15,7 +15,7 @@ HighlightComprThreshold=0
 ShadowCompr=50
 CurveMode=SatAndValueBlending
 CurveMode2=Standard
-Curve=3;0;0;0.084000000000000005;0;0.187;0.188;0.58699999999999997;0.74199999999999999;1;1;
+Curve=3;0;0;0.084;0;0.187;0.188;0.587;0.742;1;1;
 Curve2=0;
 
 [HLRecovery]
@@ -58,7 +58,7 @@ Chromaticity=0
 AvoidColorShift=false
 RedAndSkinTonesProtection=0
 LCredsk=true
-LCurve=3;0;0;0.21199999999999999;0.11899999999999999;0.67400000000000004;0.77300000000000002;1;1;
+LCurve=3;0;0;0.212;0.119;0.674;0.773;1;1;
 aCurve=0;
 bCurve=0;
 ccCurve=0;
@@ -96,7 +96,7 @@ J-Contrast=0
 Q-Contrast=0
 H-Hue=0
 RSTProtection=0
-AdaptScene=164.32900000000001
+AdaptScene=164.329
 AutoAdapscen=true
 SurrSource=false
 Gamut=true
@@ -105,15 +105,15 @@ Tonecie=true
 CurveMode=Lightness
 CurveMode2=Lightness
 CurveMode3=Colorfullness
-Curve=3;0;0;0.14999999999999999;0;0.54500000000000004;1;1;1;
+Curve=3;0;0;0.15;0;0.545;1;1;1;
 Curve2=0;
 Curve3=0;
 
 [EPD]
 Enabled=true
 Strength=0.25
-EdgeStopping=2.3999999999999999
-Scale=0.10000000000000001
+EdgeStopping=2.4
+Scale=0.1
 ReweightingIterates=0
 
 [Shadows & Highlights]
@@ -145,8 +145,14 @@ HCurve=0;
 SCurve=0;
 VCurve=0;
 
+[Film Simulation]
+Enabled=false
+
 [RGB Curves]
 LumaMode=false
+
+[ColorToning]
+Enabled=false
 
 [RAW]
 CA=true

@@ -1,6 +1,6 @@
 [Version]
-AppVersion=4.0.12
-Version=319
+AppVersion=4.1.50
+Version=321
 
 [Exposure]
 Auto=false
@@ -75,6 +75,9 @@ ReweightingIterates=0
 [Shadows & Highlights]
 Enabled=false
 
+[Film Simulation]
+Enabled=false
+
 [HSV Equalizer]
 HCurve=0;
 SCurve=0;
@@ -85,3 +88,7 @@ LumaMode=false
 rCurve=3;0;0;0.24505928853754988;0.055335968379447285;1;1;
 gCurve=3;0;0;0.1146245059288528;0.023715415019764076;1;1;
 bCurve=3;0;0;0.086956521739130363;0.21739130434782611;0.9446640316205519;0.69960474308300313;1;1;
+
+[ColorToning]
+Enabled=false
+

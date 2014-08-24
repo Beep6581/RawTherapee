@@ -243,6 +243,10 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_BWMIX_GAMMA"), ADDSET_BLACKWHITE_GAMMA, false);
 
     mi = behModel->append ();
+    mi->set_value( behavColumns.label, M("TP_FILMSIMULATION_LABEL") );
+    appendBehavList( mi, M( "TP_FILMSIMULATION_STRENGTH" ), ADDSET_FILMSIMULATION_STRENGTH, true );
+
+    mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_COLORTONING_LABEL"));
     appendBehavList (mi, M("TP_COLORTONING_SPLITCOCO"),ADDSET_COLORTONING_SPLIT , true);
     appendBehavList (mi, M("TP_COLORTONING_SATURATIONTHRESHOLD"),ADDSET_COLORTONING_SATTHRESHOLD , true);
@@ -461,6 +465,19 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
 
     //ffconn = flatFieldDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
     ffconn = flatFieldDir->signal_current_folder_changed().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
+
+    //Cluts Dir
+    Gtk::Frame* clutsDirFrame = Gtk::manage (new Gtk::Frame (M("PREFERENCES_FILMSIMULATION")) );
+    Gtk::HBox* clutsDirBox = Gtk::manage (new Gtk::HBox ());
+    clutsDir = Gtk::manage(new Gtk::FileChooserButton(M("PREFERENCES_CLUTSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    Gtk::Label *clutsDirLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_CLUTSDIR") + ":"));
+    Gtk::Label* clutsRestartNeeded = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
+    clutsDirBox->pack_start( *clutsDirLabel, Gtk::PACK_SHRINK, 4 );
+    clutsDirBox->pack_start( *clutsDir );
+    clutsDirBox->pack_start( *clutsRestartNeeded, Gtk::PACK_SHRINK, 4 );
+    clutsDirBox->set_border_width( 4 );
+    clutsDirFrame->add( *clutsDirBox );
+    mvbpp->pack_start( *clutsDirFrame, Gtk::PACK_SHRINK, 4 );
 
     Gtk::Frame* fmd = Gtk::manage (new Gtk::Frame (M("PREFERENCES_METADATA")));
     Gtk::VBox* vbmd = Gtk::manage (new Gtk::VBox ());
@@ -1222,6 +1239,8 @@ void Preferences::storePreferences () {
     moptions.rtSettings.darkFramesPath =   darkFrameDir->get_filename();
     moptions.rtSettings.flatFieldsPath =   flatFieldDir->get_filename();
 
+    moptions.clutsDir = clutsDir->get_filename();
+
     moptions.baBehav.resize (ADDSET_PARAM_NUM);
     for (Gtk::TreeIter sections=behModel->children().begin();  sections!=behModel->children().end(); sections++)
         for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++) 
@@ -1383,6 +1402,8 @@ void Preferences::fillPreferences () {
     //updateFFinfos();
     flatFieldDir->set_current_folder( moptions.rtSettings.flatFieldsPath );
     flatFieldChanged ();
+
+    clutsDir->set_current_folder( moptions.clutsDir );
 
     addc.block (true);
     setc.block (true);

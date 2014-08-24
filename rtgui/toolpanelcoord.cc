@@ -73,6 +73,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     iptcpanel           = Gtk::manage (new IPTCPanel ());
     dirpyrequalizer     = Gtk::manage (new DirPyrEqualizer ());
     hsvequalizer        = Gtk::manage (new HSVEqualizer ());
+    filmSimulation      = Gtk::manage (new FilmSimulation ());
     sensorbayer         = Gtk::manage (new SensorBayer ());
     sensorxtrans        = Gtk::manage (new SensorXTrans ());
     bayerprocess        = Gtk::manage (new BayerProcess ());
@@ -105,6 +106,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (detailsPanel, sharpenEdge,                      M("TP_SHARPENEDGE_LABEL"), true);       toolPanels.push_back (sharpenEdge);
     addPanel (detailsPanel, sharpenMicro,                     M("TP_SHARPENMICRO_LABEL"), true);      toolPanels.push_back (sharpenMicro);
     addPanel (colorPanel, hsvequalizer,                       M("TP_HSVEQUALIZER_LABEL"));            toolPanels.push_back (hsvequalizer);
+    addPanel (colorPanel, filmSimulation,                     M("TP_FILMSIMULATION_LABEL"));          toolPanels.push_back (filmSimulation);
     addPanel (colorPanel, rgbcurves,                          M("TP_RGBCURVES_LABEL"));               toolPanels.push_back (rgbcurves);
 	addPanel (colorPanel, colortoning,						  M("TP_COLORTONING_LABEL"));             toolPanels.push_back (colortoning);
     addPanel (exposurePanel, epd,                             M("TP_EPD_LABEL"), true);               toolPanels.push_back (epd);

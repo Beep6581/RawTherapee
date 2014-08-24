@@ -317,6 +317,9 @@ enum ProcEvent {
 	EvPreProcessExpBlackRed=289,
 	EvPreProcessExpBlackGreen=290,
 	EvPreProcessExpBlackBlue=291,
+    EvFilmSimulationEnabled=292,
+    EvFilmSimulationStrength=293,
+    EvFilmSimulationFilename=294,
 	NUMOFEVENTS	
 };
 }

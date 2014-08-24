@@ -22,6 +22,7 @@ set (RTENGINESOURCEFILES safegtk.cc colortemp.cc curves.cc flatcurves.cc diagona
     cJSON.c camconst.cc
     klt/convolve.cc klt/error.cc klt/klt.cc klt/klt_util.cc klt/pnmio.cc klt/pyramid.cc klt/selectGoodFeatures.cc
     klt/storeFeatures.cc klt/trackFeatures.cc klt/writeFeatures.cc
+    clutstore.cc
     )
 
 include_directories (BEFORE "${CMAKE_CURRENT_BINARY_DIR}")

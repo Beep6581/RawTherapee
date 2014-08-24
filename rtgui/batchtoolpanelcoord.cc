@@ -144,6 +144,7 @@ void BatchToolPanelCoordinator::initSession () {
 			chmixer->setAdjusterBehavior (false);
 			blackwhite->setAdjusterBehavior (false,false);
 			colortoning->setAdjusterBehavior (false, false, false, false, false);
+			filmSimulation->setAdjusterBehavior(false);
 
 			shadowshighlights->setAdjusterBehavior (false, false, false);
 			dirpyrequalizer->setAdjusterBehavior (false, false, false);
@@ -177,6 +178,7 @@ void BatchToolPanelCoordinator::initSession () {
 			sharpenMicro->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENMICRO_AMOUNT],options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY]);
 			icm->setAdjusterBehavior (options.baBehav[ADDSET_FREE_OUPUT_GAMMA],options.baBehav[ADDSET_FREE_OUTPUT_SLOPE]);
 			colortoning->setAdjusterBehavior (options.baBehav[ADDSET_COLORTONING_SPLIT], options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD], options.baBehav[ADDSET_COLORTONING_SATOPACITY], options.baBehav[ADDSET_COLORTONING_STRPROTECT], options.baBehav[ADDSET_COLORTONING_BALANCE]);
+			filmSimulation->setAdjusterBehavior(options.baBehav[ADDSET_FILMSIMULATION_STRENGTH]);
 
 			chmixer->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER] );
 			blackwhite->setAdjusterBehavior (options.baBehav[ADDSET_BLACKWHITE_HUES],options.baBehav[ADDSET_BLACKWHITE_GAMMA]);
@@ -256,6 +258,8 @@ void BatchToolPanelCoordinator::initSession () {
 			if (options.baBehav[ADDSET_COLORTONING_SATOPACITY]) pparams.colorToning.saturatedOpacity = 0;
 			if (options.baBehav[ADDSET_COLORTONING_BALANCE]) pparams.colorToning.balance = 0;
 			if (options.baBehav[ADDSET_COLORTONING_STRPROTECT]) pparams.colorToning.strengthprotection = 0;
+
+			if (options.baBehav[ADDSET_FILMSIMULATION_STRENGTH]) pparams.filmSimulation.strength = 0;
 
 			if (options.baBehav[ADDSET_ROTATE_DEGREE])  pparams.rotate.degree = 0;
 			if (options.baBehav[ADDSET_DIST_AMOUNT])  pparams.distortion.amount = 0;

@@ -1,6 +1,6 @@
 [Version]
-AppVersion=4.0.12
-Version=319
+AppVersion=4.1.50
+Version=321
 
 [Exposure]
 Auto=true
@@ -15,7 +15,7 @@ HighlightComprThreshold=33
 ShadowCompr=50
 CurveMode=Standard
 CurveMode2=Standard
-Curve=1;0;0;0.040000000000000001;0.029999999999999999;0.17684498029510265;0.21732319394192093;0.70232558139534862;0.74883720930232545;1;1;
+Curve=1;0;0;0.04;0.03;0.17684498029510265;0.21732319394192093;0.70232558139534862;0.74883720930232545;1;1;
 Curve2=0;
 
 [HLRecovery]
@@ -112,7 +112,7 @@ Curve3=0;
 [EPD]
 Enabled=false
 Strength=0.25
-EdgeStopping=1.3999999999999999
+EdgeStopping=1.4
 Scale=1
 ReweightingIterates=0
 
@@ -145,9 +145,15 @@ HCurve=0;
 SCurve=0;
 VCurve=0;
 
+[Film Simulation]
+Enabled=false
+
 [RGB Curves]
 LumaMode=false
 rCurve=0;
 gCurve=0;
 bCurve=0;
+
+[ColorToning]
+Enabled=false
 

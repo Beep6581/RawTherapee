@@ -75,6 +75,7 @@
 #include "sharpenedge.h"
 #include "rgbcurves.h"
 #include "colortoning.h"
+#include "filmsimulation.h"
 
 class ImageEditorCoordinator;
 
@@ -124,6 +125,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ColorToning* colortoning;
         DirPyrEqualizer* dirpyrequalizer;
         HSVEqualizer* hsvequalizer;
+        FilmSimulation *filmSimulation;
         SensorBayer * sensorbayer;
         SensorXTrans * sensorxtrans;
         BayerProcess* bayerprocess;
