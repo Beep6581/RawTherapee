@@ -244,7 +244,7 @@ skip_block: ;
 		if (this->get_white(c) != this->get_white(0)) {
 			multiple_whites = true;
 			if (this->get_white(c) > largest_white) {
-				largest_white = this->get_white(0);
+				largest_white = this->get_white(c);
 			}
 		}
 	}
