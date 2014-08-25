@@ -271,10 +271,11 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
     ratio->set_active_text (pp->crop.ratio);
     fixr->set_active (pp->crop.fixratio);
 
+    const bool flip_orientation = pp->crop.fixratio && cropratio[ratio->get_active_row_number()].value < 1.0;
     if (pp->crop.orientation == "Landscape")
-        orientation->set_active (0);
+        orientation->set_active (flip_orientation ? 1 : 0);
     else if (pp->crop.orientation == "Portrait")
-        orientation->set_active (1);
+        orientation->set_active (flip_orientation ? 0 : 1);
 
     if (pp->crop.guide == "None")
         guide->set_active (0);
@@ -355,10 +356,12 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited) {
   pp->crop.fixratio = fixr->get_active ();
   pp->crop.ratio = ratio->get_active_text ();
 
+  // for historical reasons we store orientation different if ratio is written as 2:3 instead of 3:2, but in GUI 'landscape' is always long side horizontal regardless of the ratio is written short or long side first.
+  const bool flip_orientation = fixr->get_active() && cropratio[ratio->get_active_row_number()].value < 1.0;
   if (orientation->get_active_row_number()==0)
-      pp->crop.orientation = "Landscape";
+      pp->crop.orientation = flip_orientation ? "Portrait" : "Landscape";
   else if (orientation->get_active_row_number()==1)
-      pp->crop.orientation = "Portrait";
+      pp->crop.orientation = flip_orientation ? "Landscape" : "Portrait";
 
   if (guide->get_active_row_number()==0)
     pp->crop.guide = "None";
@@ -1055,6 +1058,8 @@ double Crop::getRatio () {
     return r;
 
   r = cropratio[ratio->get_active_row_number()].value;
+  if (r < 1.0)
+    r = 1.0 / r; // convert to long side first (eg 4:5 becomes 5:4)
 
   if (orientation->get_active_row_number()==0)
     return r;
