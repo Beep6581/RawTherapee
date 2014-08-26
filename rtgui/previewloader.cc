@@ -50,6 +50,13 @@ public:
 		Glib::ustring dir_entry_;
 		PreviewLoaderListener* listener_;
 	};
+	struct OutputJob
+	{
+		bool complete;
+		int dir_id;
+		PreviewLoaderListener* listener;
+		FileBrowserEntry* fdn;
+	};
 
 	struct JobCompare
 	{
@@ -69,7 +76,7 @@ public:
 	{
 		int threadCount=2;
 		#ifdef _OPENMP
-		threadCount=int(omp_get_num_procs()*1.5);
+		threadCount=omp_get_num_procs();
 		#endif 
 		
 		threadPool_=new Glib::ThreadPool(threadCount,0);
@@ -79,10 +86,12 @@ public:
 	MyMutex mutex_;
 	JobSet jobs_;
 	gint nConcurrentThreads;
+	std::vector<OutputJob *> output_;
 
 	void processNextJob()
 	{ 
 		Job j;
+		OutputJob *oj;
 		{
 			MyMutex::MyLock lock(mutex_);
 
@@ -98,12 +107,19 @@ public:
 			jobs_.erase(jobs_.begin());
 			DEBUG("processing %s",j.dir_entry_.c_str());
 			DEBUG("%d job(s) remaining",jobs_.size());
+			oj = new OutputJob();
+			oj->complete = false;
+			oj->dir_id = j.dir_id_;
+			oj->listener = j.listener_;
+			oj->fdn = 0;
+			output_.push_back(oj);
 		}
 
 		g_atomic_int_inc (&nConcurrentThreads);  // to detect when last thread in pool has run out
 
 		// unlock and do processing; will relock on block exit, then call listener
 		// if something got
+		FileBrowserEntry* fdn = 0;
 		try {
 			Thumbnail* tmb = 0;
 			{
@@ -112,13 +128,28 @@ public:
 					tmb = cacheMgr->getEntry(j.dir_entry_);
 				}
 			}
-
-			// we got something, so notify listener
 			if ( tmb )
 			{
-				j.listener_->previewReady(j.dir_id_,new FileBrowserEntry(tmb,j.dir_entry_));
+				fdn = new FileBrowserEntry(tmb,j.dir_entry_);
 			}
+
 		} catch (Glib::Error &e){} catch(...){}
+
+		{
+			// the purpose of the output_ vector is to deliver the previewReady() calls in the same
+			// order as we got the jobs from the jobs_ queue.
+			MyMutex::MyLock lock(mutex_);
+			oj->fdn = fdn;
+			oj->complete = true;
+			while (output_.size() > 0 && output_.front()->complete) {
+				oj = output_.front();
+				if (oj->fdn) {
+					oj->listener->previewReady(oj->dir_id,oj->fdn);
+				}
+				output_.erase(output_.begin());
+				delete oj;
+			}
+		}
 
 		bool last = g_atomic_int_dec_and_test (&nConcurrentThreads);
 
