@@ -475,6 +475,7 @@ std::vector<Glib::ustring> FileCatalog::getFileList () {
     std::vector<Glib::ustring> names;
     Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (selectedDirectory);
     safe_build_file_list (dir, names, selectedDirectory, &(options.parsedExtensions));
+    std::sort (names.begin(), names.end());
     return names;
 }
 
