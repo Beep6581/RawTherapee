@@ -764,8 +764,9 @@ void Crop::cropWidth1Resized (int &X, int &Y, int &W, int &H) {
     if (fixr->get_active()) {
         double r = getRatio();
         H = (int)round(W / r);
-        if (H > maxh) {
-            H = maxh;
+        int Hmax = min(ny + nh, maxh - ny);
+        if (H > Hmax) {
+            H = Hmax;
             W = H * r;
         }
         ny = ny - (H - nh) / 2.0;
@@ -788,8 +789,9 @@ void Crop::cropWidth2Resized (int &X, int &Y, int &W, int &H) {
     if (fixr->get_active()) {
         double r = getRatio();
         H = (int)round(W / r);
-        if (H > maxh) {
-            H = maxh;
+        int Hmax = min(ny + nh, maxh - ny);
+        if (H > Hmax) {
+            H = Hmax;
             W = H * r;
         }
         ny = ny - (H - nh) / 2.0;
@@ -812,8 +814,9 @@ void Crop::cropHeight1Resized (int &X, int &Y, int &W, int &H) {
     if (fixr->get_active()) {
         double r = getRatio();
         W = (int)round(H * r);
-        if (W > maxw) {
-            W = maxw;
+        int Wmax = min(nx + nw, maxw - nx);
+        if (W > Wmax) {
+            W = Wmax;
             H = W / r;
         }
         nx = nx - (W - nw) / 2.0;
@@ -836,8 +839,9 @@ void Crop::cropHeight2Resized (int &X, int &Y, int &W, int &H) {
     if (fixr->get_active()) {
         double r = getRatio();
         W = (int)round(H * r);
-        if (W > maxw) {
-            W = maxw;
+        int Wmax = min(nx + nw, maxw - nx);
+        if (W > Wmax) {
+            W = Wmax;
             H = W / r;
         }
         nx = nx - (W - nw) / 2.0; // nx must be floating point to avoid drifting
