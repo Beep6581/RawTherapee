@@ -51,6 +51,14 @@ class FilePanel : public Gtk::HPaned,
         RTWindow* parent;      
         Gtk::Notebook* rightNotebook;
 
+        struct pendingLoad {
+            bool complete;
+            ProgressConnector<rtengine::InitialImage*> *pc;
+            Thumbnail *thm;
+        };
+	MyMutex pendingLoadMutex;
+        std::vector<struct pendingLoad*> pendingLoads;
+
         int error;
     public:
         FilePanel ();

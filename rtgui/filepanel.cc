@@ -175,6 +175,14 @@ bool FilePanel::fileSelected (Thumbnail* thm) {
     bool loading = thm->imageLoad( true );
     if( !loading ) return false;
 
+    pendingLoadMutex.lock();
+    pendingLoad *pl = new pendingLoad();
+    pl->complete = false;
+    pl->pc = 0;
+    pl->thm = thm;
+    pendingLoads.push_back(pl);
+    pendingLoadMutex.unlock();
+
     ProgressConnector<rtengine::InitialImage*> *ld = new ProgressConnector<rtengine::InitialImage*>();
     ld->startFunc (sigc::bind(sigc::ptr_fun(&rtengine::InitialImage::load), thm->getFileName (), thm->getType()==FT_Raw, &error, parent->getProgressListener()),
                    sigc::bind(sigc::mem_fun(*this,&FilePanel::imageLoaded), thm, ld) );
@@ -182,38 +190,55 @@ bool FilePanel::fileSelected (Thumbnail* thm) {
 }
 bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> *pc ){
 
-    if (pc->returnValue() && thm) {
-
-        if (options.tabbedUI) {
-            EditorPanel* epanel;
-            {
-            GThreadLock lock; // Acquiring the GUI... not sure that it's necessary, but it shouldn't harm
-            epanel = Gtk::manage (new EditorPanel ());
-            parent->addEditorPanel (epanel,thm->getFileName());
-            }
-            epanel->open(thm, pc->returnValue() );
-            if (!EditWindow::isMultiDisplayEnabled())
-	            parent->set_title_decorated(thm->getFileName());
-        } else {
-            {
-            GThreadLock lock; // Acquiring the GUI... not sure that it's necessary, but it shouldn't harm
-            parent->SetEditorCurrent();
-            }
-            parent->epanel->open(thm, pc->returnValue() );
-            parent->set_title_decorated(thm->getFileName());
+    pendingLoadMutex.lock();
+    // find our place in the array and mark the entry as complete
+    for (unsigned int i = 0; i < pendingLoads.size(); i++) {
+        if (pendingLoads[i]->thm == thm) {
+            pendingLoads[i]->pc = pc;
+            pendingLoads[i]->complete = true;
+            break;
         }
-    } else {
-        Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n</b>";
-        Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-        msgd.run ();
     }
-    delete pc;
+    // The purpose of the pendingLoads vector is to open tabs in the same order as the loads where initiated. It has no effect on single editor mode.
+    while (pendingLoads.size() > 0 && pendingLoads.front()->complete) {
+        pendingLoad *pl = pendingLoads.front();
+        if (pl->pc->returnValue()) {
+            if (options.tabbedUI) {
+                EditorPanel* epanel;
+                {
+                GThreadLock lock; // Acquiring the GUI... not sure that it's necessary, but it shouldn't harm
+                epanel = Gtk::manage (new EditorPanel ());
+                parent->addEditorPanel (epanel,pl->thm->getFileName());
+                }
+                epanel->open(pl->thm, pl->pc->returnValue() );
+                if (!EditWindow::isMultiDisplayEnabled())
+                    parent->set_title_decorated(pl->thm->getFileName());
+            } else {
+                {
+                GThreadLock lock; // Acquiring the GUI... not sure that it's necessary, but it shouldn't harm
+                parent->SetEditorCurrent();
+                }
+                parent->epanel->open(pl->thm, pl->pc->returnValue() );
+                parent->set_title_decorated(pl->thm->getFileName());
+            }
+        } else {
+            Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n</b>";
+            Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+            msgd.run ();
+        }
+        delete pl->pc;
 
-    {
-    GThreadLock lock; // Acquiring the GUI... not sure that it's necessary, but it shouldn't harm
-    parent->setProgress(0.);
-    parent->setProgressStr("");
+        {
+        GThreadLock lock; // Acquiring the GUI... not sure that it's necessary, but it shouldn't harm
+        parent->setProgress(0.);
+        parent->setProgressStr("");
+        }
+
+        pendingLoads.erase(pendingLoads.begin());
+        delete pl;
     }
+    pendingLoadMutex.unlock();
+
     thm->imageLoad( false );
 
     return false; // MUST return false from idle function
