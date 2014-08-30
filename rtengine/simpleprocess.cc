@@ -375,23 +375,20 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 					customColCurve2,
 					customColCurve3,
 					1);
-	float adap2,adap;
-	double ada, ada2;
+	double adap;
 	if(params.colorappearance.enabled){
 		float fnum = imgsrc->getMetaData()->getFNumber  ();// F number
 		float fiso = imgsrc->getMetaData()->getISOSpeed () ;// ISO
 		float fspeed = imgsrc->getMetaData()->getShutterSpeed () ;//speed
 		float fcomp = imgsrc->getMetaData()->getExpComp  ();//compensation + -
-		if(fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) {adap=adap2=2000.f;ada=ada2=2000.;}//if no exif data or wrong
+		if(fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) {
+			adap=2000.;
+		}//if no exif data or wrong
 		else {
 			float E_V = fcomp + log2 ((fnum*fnum) / fspeed / (fiso/100.f));
-			float expo2= params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
-			E_V += expo2;
-			float expo1;//exposure raw white point
-			expo1=log2(params.raw.expos);//log2 ==>linear to EV
-			E_V += expo1;
-			adap2 = adap= powf(2.f, E_V-3.f);//cd / m2
-			ada=ada2=(double) adap;
+			E_V += params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+			E_V += log2(params.raw.expos);// exposure raw white point ; log2 ==> linear to EV
+			adap = powf(2.f, E_V-3.f);//cd / m2
 		}
 		LUTf CAMBrightCurveJ;
 		LUTf CAMBrightCurveQ;
@@ -404,8 +401,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 			for (int i=0; i<fh; i++)
 			buffer[i] = new float[fw];
 			int sk=1;
-			if(settings->ciecamfloat) ipf.ciecam_02float (cieView, adap, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, d, sk, 1);
-			else ipf.ciecam_02 (cieView, ada, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, dd, 1, 1);
+			if(settings->ciecamfloat) ipf.ciecam_02float (cieView, float(adap), begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, d, sk, 1);
+			else ipf.ciecam_02 (cieView, adap, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, dd, 1, 1);
 			for (int i=0; i<fh; i++)
 			delete [] buffer[i];
 			delete [] buffer;
@@ -419,7 +416,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 			for (int i=0; i<f_h; i++)
 			buffer[i] = new float[f_w];
 			int sk=1;
-			if(settings->ciecamfloat) ipf.ciecam_02float (cieView, adap, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, d, sk, 1);
+			if(settings->ciecamfloat) ipf.ciecam_02float (cieView, float(adap), begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, d, sk, 1);
 			else ipf.ciecam_02 (cieView, adap, begh, endh,1, 2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, dd, 1, 1);
 
 			for (int i=0; i<f_h; i++)
