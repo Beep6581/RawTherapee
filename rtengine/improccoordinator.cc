@@ -46,7 +46,7 @@ ImProcCoordinator::ImProcCoordinator ()
       clcurve(65536,0),
       clToningcurve(65536,0),
       cl2Toningcurve(65536,0),
-
+	  Noisecurve(65536,0),
       vhist16(65536),vhist16bw(65536),
       lhist16(65536), lhist16Cropped(65536),
       lhist16CAM(65536), lhist16CroppedCAM(65536),
@@ -83,7 +83,7 @@ ImProcCoordinator::ImProcCoordinator ()
 
       pW(-1), pH(-1),
       plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),acListener(NULL), abwListener(NULL),actListener(NULL),
-      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false),utili(false),autili(false),
+      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false),utili(false),autili(false),lldenoiseutili(false),
 	  butili(false),ccutili(false),cclutili(false),clcutili(false),fullw(1),fullh(1)
 
     {}
@@ -265,13 +265,27 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.toneCurve, params.icm, params.raw);
         //ColorTemp::CAT02 (orig_prev, &params)	;
 
-        //imgsrc->convertColorSpace(orig_prev, params.icm, params.raw);
-
+		Imagefloat *calclum ;
+		lldenoiseutili=false;
+		params.dirpyrDenoise.getCurves(dnNoisCurve,lldenoiseutili);
+		if(lldenoiseutili && scale==1 && params.dirpyrDenoise.enabled ){//only allocate memory if enabled and scale=1	
+			calclum = new Imagefloat (pW, pH);//for Luminance denoise curve
+				if(orig_prev !=  calclum)
+				memcpy(calclum->data,orig_prev->data,orig_prev->width*orig_prev->height*3*sizeof(float));
+		
+			imgsrc->convertColorSpace(calclum, params.icm, currWB, params.raw);//claculate values after colorspace conversion
+		}
+		
         if (todo & M_LINDENOISE) {
-            //printf("denoising!\n");
-            if (scale==1 && params.dirpyrDenoise.enabled)
-                ipf.RGB_denoise(orig_prev, orig_prev, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp());
-        }
+			
+			if (scale==1 && params.dirpyrDenoise.enabled) {
+			
+			ipf.RGB_denoise(orig_prev, orig_prev, calclum, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp(), dnNoisCurve, lldenoiseutili);
+
+			}
+		}
+	//	delete calclum;
+		
         imgsrc->convertColorSpace(orig_prev, params.icm, currWB, params.raw);
 
         ipf.firstAnalysis (orig_prev, &params, vhist16, imgsrc->getGamma());

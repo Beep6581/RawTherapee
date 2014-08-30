@@ -44,6 +44,7 @@
 extern Options options;
 
 namespace rtengine {
+using namespace procparams;
 
 Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq) {
 
@@ -834,6 +835,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	ToneCurve customToneCurve1, customToneCurve2;
 	ColorGradientCurve ctColorCurve;
 	OpacityCurve ctOpacityCurve;
+  //  NoisCurve dnNoisCurve;
+	
     ColorAppearance customColCurve1;
     ColorAppearance customColCurve2;
     ColorAppearance customColCurve3;
@@ -864,6 +867,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 			{wiprof[2][0],wiprof[2][1],wiprof[2][2]}
 			};
 	params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip);
+	//params.dirpyrDenoise.getCurves(dnNoisCurve, lldenoisutili);
 
 	LabImage* labView = new LabImage (fw,fh);
 	CieImage* cieView = new CieImage (fw,fh);
@@ -884,6 +888,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     customToneCurve2.Reset();
     ctColorCurve.Reset();
     ctOpacityCurve.Reset();
+ //   dnNoisCurve.Reset();
     customToneCurvebw1.Reset();
     customToneCurvebw2.Reset();
 

@@ -311,6 +311,33 @@ void CurveFactory::curveLightBrightColor (
 	if (tcurve) delete tcurve;
 
 }
+// add curve Denoise : L=f(L)
+void CurveFactory::denoiseLL ( bool & lldenoiseutili,const std::vector<double>& llcurvePoints, LUTf & Noisecurve,int skip){
+		bool needed;
+		DiagonalCurve* dCurve = NULL;
+		LUTf dCcurve(65536,0);
+	
+		float val;
+		for (int i=0; i<32768; i++) {  
+				dCcurve[i] = (float)i / 32767.0;
+		}
+		
+		needed = false;
+		if (!llcurvePoints.empty() && llcurvePoints[0]!=0) {
+			dCurve = new DiagonalCurve (llcurvePoints, CURVES_MIN_POLY_POINTS/skip);
+			
+			if (dCurve && !dCurve->isIdentity())
+				{needed = true;lldenoiseutili=true;}
+		}
+		fillCurveArray(dCurve, Noisecurve, skip, needed);
+		//Noisecurve.dump("Noise");
+		
+		if (dCurve) {
+			delete dCurve;
+			dCurve = NULL;
+		}
+}
+
 
 void CurveFactory::curveBW (
 		const std::vector<double>& curvePointsbw, const std::vector<double>& curvePointsbw2,
@@ -1148,6 +1175,38 @@ void OpacityCurve::Set(const std::vector<double> &curvePoints) {
 	}
 	if (tcurve) {
 		Set(tcurve);
+		delete tcurve;
+		tcurve = NULL;
+	}
+}
+
+void NoisCurve::Reset() {
+	lutNoisCurve.reset();
+}
+
+void NoisCurve::Set(const Curve *pCurve) {
+	if (pCurve->isIdentity()) {
+		lutNoisCurve.reset(); // raise this value if the quality suffers from this number of samples
+		return;
+	}
+	lutNoisCurve(501); // raise this value if the quality suffers from this number of samples
+	nonzero=0.f;
+	for (int i=0; i<501; i++) {
+	lutNoisCurve[i] = pCurve->getVal(double(i)/500.); 
+	if(lutNoisCurve[i] < 0.01f) lutNoisCurve[i]=0.01f;//avoid 0.f for wavelet : under 0.01f quasi no action for each value
+	nonzero+=lutNoisCurve[i];}//minima for Wavelet about 6.f or 7.f quasi no action
+	//lutNoisCurve.dump("Nois");
+}
+
+void NoisCurve::Set(const std::vector<double> &curvePoints, bool &lldenoiseutili) {
+	FlatCurve* tcurve = NULL;
+
+	if (!curvePoints.empty() && curvePoints[0]>FCT_Linear && curvePoints[0]<FCT_Unchanged) {
+		tcurve = new FlatCurve (curvePoints, false, CURVES_MIN_POLY_POINTS/2);
+		tcurve->setIdentityValue(0.);
+	}
+	if (tcurve) {
+		Set(tcurve);lldenoiseutili=true;
 		delete tcurve;
 		tcurve = NULL;
 	}

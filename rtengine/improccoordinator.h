@@ -93,6 +93,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         LUTf clcurve;
         LUTf clToningcurve;
         LUTf cl2Toningcurve;
+        LUTf Noisecurve;
 
         LUTu vhist16,vhist16bw;
         LUTu lhist16,lhist16Cropped;
@@ -119,11 +120,12 @@ class ImProcCoordinator : public StagedImageProcessor {
         bool ccutili;
         bool cclutili;
         bool clcutili;
-
+		bool lldenoiseutili;
         ToneCurve customToneCurve1;
         ToneCurve customToneCurve2;
         ColorGradientCurve ctColorCurve;
         OpacityCurve ctOpacityCurve;
+        NoisCurve dnNoisCurve;
         ColorAppearance customColCurve1;
         ColorAppearance customColCurve2;
         ColorAppearance customColCurve3;

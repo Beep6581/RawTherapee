@@ -272,8 +272,11 @@ public:
     bool redchro;
     bool bluechro;
     bool gamma;
+    bool lcurve;
+	
 //    bool perform;
 	bool dmethod;
+	bool smethod;
     bool medmethod;
     bool methodmed;
     bool rgbmethod;
