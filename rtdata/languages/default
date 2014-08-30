@@ -516,6 +516,8 @@ HISTORY_MSG_292;Black Level - Blue
 HISTORY_MSG_293;Film Simulation
 HISTORY_MSG_294;Film Simulation - Strength
 HISTORY_MSG_295;Film Simulation - Film
+HISTORY_MSG_296;NR - Modulate luminance
+HISTORY_MSG_297;NR - Quality
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1176,6 +1178,14 @@ TP_DIRPYRDENOISE_LAB;Lab
 TP_DIRPYRDENOISE_LDETAIL;Luminance Detail
 TP_DIRPYRDENOISE_LM;Luminance only
 TP_DIRPYRDENOISE_LUMA;Luminance
+TP_DIRPYRDENOISE_LCURVE;Luminance curve
+TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modulates action of 'Luminance' denoise
+TP_DIRPYRDENOISE_METHOD11;Quality
+TP_DIRPYRDENOISE_SHBI;Double
+TP_DIRPYRDENOISE_SHAL;Standard
+TP_DIRPYRDENOISE_SHALBI;High
+TP_DIRPYRDENOISE_SHALAL;ALL+ALL shrink
+TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern: 1-Standard- 2-High\n 1->2 increase the noise reduction effect, but extend the processing time
 TP_DIRPYRDENOISE_MEDMETHOD;Median method
 TP_DIRPYRDENOISE_MEDTYPE;Median type
 TP_DIRPYRDENOISE_MED;Median

@@ -317,6 +317,8 @@ DARKFRAME,        // EvPreProcessExpBlackBlue
 RGBCURVE,         //EvFilmSimulationEnabled
 RGBCURVE,         //EvFilmSimulationStrength
 RGBCURVE,         //EvFilmSimulationFilename
+ALLNORAW,			//	EvDPDNLCurve
+ALLNORAW			//	EvDPDNsmet
 
 
 

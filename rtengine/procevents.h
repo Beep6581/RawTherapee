@@ -320,6 +320,9 @@ enum ProcEvent {
     EvFilmSimulationEnabled=292,
     EvFilmSimulationStrength=293,
     EvFilmSimulationFilename=294,
+	EvDPDNLCurve=295,
+	EvDPDNsmet=296,	
+	
 	NUMOFEVENTS	
 };
 }

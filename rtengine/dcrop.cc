@@ -5,6 +5,7 @@
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
+ *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  * 
@@ -155,14 +156,28 @@ void Crop::update (int todo) {
         parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.icm, params.raw );
         //ColorTemp::CAT02 (origCrop, &params)	;
 
-        //parent->imgsrc->convertColorSpace(origCrop, params.icm);
-
+		Imagefloat *calclum;//for Luminance denoise curve
+		NoisCurve dnNoisCurve;
+		bool lldenoiseutili=false;
+		params.dirpyrDenoise.getCurves(dnNoisCurve, lldenoiseutili);
+		if(lldenoiseutili && skip==1 && params.dirpyrDenoise.enabled)	{//only allocate memory if enabled and skip
+			calclum = new Imagefloat (cropw, croph);//for Luminance denoise curve
+				if(origCrop !=  calclum)
+				memcpy(calclum->data,origCrop->data,origCrop->width*origCrop->height*3*sizeof(float));
+		
+			parent->imgsrc->convertColorSpace(calclum, params.icm, parent->currWB, params.raw);//for denoise luminance curve
+		}
         if (todo & M_LINDENOISE) {
-            if (skip==1 && params.dirpyrDenoise.enabled)
-                parent->ipf.RGB_denoise(origCrop, origCrop, parent->imgsrc->isRAW(), /*Roffset,*/ params.dirpyrDenoise, params.defringe, parent->imgsrc->getDirPyrDenoiseExpComp());
+            if (skip==1 && params.dirpyrDenoise.enabled) {
+
+                parent->ipf.RGB_denoise(origCrop, origCrop, calclum, parent->imgsrc->isRAW(), /*Roffset,*/ params.dirpyrDenoise, params.defringe, parent->imgsrc->getDirPyrDenoiseExpComp(), dnNoisCurve,lldenoiseutili);
         }
+		}
+	//	delete calclum;
+
         parent->imgsrc->convertColorSpace(origCrop, params.icm, parent->currWB, params.raw);
-    }
+
+	}
 
     // has to be called after setCropSizes! Tools prior to this point can't handle the Edit mechanism, but that shouldn't be a problem.
     createBuffer(cropw, croph);

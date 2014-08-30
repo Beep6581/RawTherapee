@@ -19,11 +19,13 @@
 #include "dirpyrdenoise.h"
 #include <iomanip>
 #include <cmath>
+#include "edit.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
 DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
+	std::vector<GradientMilestone> milestones;
 	
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_tooltip_text (M("TP_DIRPYRDENOISE_ENABLED_TOOLTIP"));
@@ -44,6 +46,19 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
 	chroma    = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_CHROMA"), 0, 100, 0.01, 15));
 	redchro    = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_RED"), -100, 100, 0.1, 0));
 	bluechro    = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_BLUE"), -100, 100, 0.1, 0));
+	std::vector<double> defaultCurve;
+	
+	NoiscurveEditorG = new CurveEditorGroup (options.lastDenoiseCurvesDir, M("TP_DIRPYRDENOISE_LCURVE"));
+	//curveEditorG = new CurveEditorGroup (options.lastLabCurvesDir);
+	NoiscurveEditorG->setCurveListener (this);
+	rtengine::DirPyrDenoiseParams::getDefaultNoisCurve(defaultCurve);
+	lshape = static_cast<FlatCurveEditor*>(NoiscurveEditorG->addCurve(CT_Flat, "", NULL, false));
+	lshape->setIdentityValue(0.);
+	lshape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
+
+	lshape->setTooltip(M("TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP"));
+	//lshape->setEditID(EUID_Lab_LCurve, BT_SINGLEPLANE_FLOAT);
+	
 	
 	gamma	= Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_GAMMA"), 1.0, 3.0, 0.01, 1.7));
 	gamma->set_tooltip_text (M("TP_DIRPYRDENOISE_GAMMA_TOOLTIP"));
@@ -77,17 +92,17 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
 	bluechro->setAdjusterListener (this); 
 	
     gamma->setAdjusterListener (this); 
-    passes->setAdjusterListener (this); 
 	
     luma->show();
     Ldetail->show();
+
+	
     chroma->show();
     redchro->show();
     bluechro->show();
 //	perform->show();
 	gamma->show();
 //	perform->set_active (true);
-	passes->show();
 
 	enhance = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYRDENOISE_ENH")));
 	enhance->set_active (false);
@@ -102,7 +117,6 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
 	hsep2->show ();
 	
 	methodmed = Gtk::manage (new MyComboBoxText ());
-	//methodmed->append_text (M("TP_DIRPYRDENOISE_NONE"));
 	methodmed->append_text (M("TP_DIRPYRDENOISE_LM"));
 	methodmed->append_text (M("TP_DIRPYRDENOISE_LABM"));
 	methodmed->append_text (M("TP_DIRPYRDENOISE_RGBM"));
@@ -131,24 +145,60 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
 
 	ctboxm = Gtk::manage (new Gtk::HBox ());
 	Gtk::Label* labmm = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_MEDMETHOD")));
-	ctboxm->pack_start (*labmm, Gtk::PACK_SHRINK, 4);
+	ctboxm->pack_start (*labmm, Gtk::PACK_SHRINK, 1);
 	
 	ctbox = Gtk::manage (new Gtk::HBox ());
 	Gtk::Label* labm = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_MEDTYPE")));
-	ctbox->pack_start (*labm, Gtk::PACK_SHRINK, 4);
+	ctbox->pack_start (*labm, Gtk::PACK_SHRINK, 1);
 
 	ctboxrgb = Gtk::manage (new Gtk::HBox ());
 	Gtk::Label* labrgb = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_MEDTYPE")));
-	ctboxrgb->pack_start (*labrgb, Gtk::PACK_SHRINK, 4);
+	ctboxrgb->pack_start (*labrgb, Gtk::PACK_SHRINK, 1);
+
+	
+	milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
+	milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
+	lshape->setBottomBarBgGradient(milestones);	
+	//lshape->setLeftBarBgGradient(milestones);
+	milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
+	milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
+	NoiscurveEditorG->curveListComplete();
+
+	Gtk::HSeparator *hsep4 = Gtk::manage (new  Gtk::HSeparator());
+	hsep4->show ();
+
+	Gtk::HBox* hb11 = Gtk::manage (new Gtk::HBox ());
+	hb11->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_DIRPYRDENOISE_METHOD11") +": ")),Gtk::PACK_SHRINK, 4);
+	hb11->set_tooltip_markup (M("TP_DIRPYRDENOISE_METHOD11_TOOLTIP"));
+   
+	smethod = Gtk::manage (new MyComboBoxText ());
+	smethod->append_text (M("TP_DIRPYRDENOISE_SHAL"));
+//	smethod->append_text (M("TP_DIRPYRDENOISE_SHBI"));
+	smethod->append_text (M("TP_DIRPYRDENOISE_SHALBI"));
+//	smethod->append_text (M("TP_DIRPYRDENOISE_SHALAL"));
+//	smethod->append_text (M("TP_DIRPYRDENOISE_SHBIBI"));
+	smethod->set_active(1);
+	hb11->pack_start (*smethod, Gtk::PACK_EXPAND_WIDGET, 4);
+//	pack_start( *hb11, Gtk::PACK_SHRINK, 4);
+	smethodconn = smethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::smethodChanged) );
+
+	passes	= Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_PASSE"), 1.0, 3.0, 1., 1.));
+	passes->set_tooltip_text (M("TP_DIRPYRDENOISE_PASSES_TOOLTIP"));
+    passes->setAdjusterListener (this); 
+	passes->show();
 	
 	pack_start (*luma);
+	pack_start (*NoiscurveEditorG, Gtk::PACK_SHRINK, 4);
 	pack_start (*Ldetail);
 	pack_start (*chroma);
 	pack_start (*redchro);
 	pack_start (*bluechro);
 	
 	pack_start (*gamma);
-	pack_start (*enhance);
+	//pack_start (*enhance);
+	pack_start (*hsep4);
+	
+	pack_start( *hb11, Gtk::PACK_SHRINK, 4);
 	
 	pack_start (*hsep2);
 	pack_start (*median);
@@ -159,7 +209,8 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
 	pack_start (*ctboxm);
 	pack_start (*ctbox);
 	pack_start (*ctboxrgb);
-	pack_start (*passes);
+	pack_start (*passes,Gtk::PACK_SHRINK, 1);
+	
 	
 	
 //	pack_start (*perform);
@@ -168,10 +219,17 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
 	ctboxrgb->hide();
 }
 
+DirPyrDenoise::~DirPyrDenoise () {
+	delete NoiscurveEditorG;
+}
+
+
+
 void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     disableListener ();
     dmethodconn.block(true);
+    smethodconn.block(true);
     enaConn.block (true);
 	medmethodconn.block(true);
 	rgbmethodconn.block(true);
@@ -183,6 +241,19 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
     else if (pp->dirpyrDenoise.dmethod=="Lab")
         dmethod->set_active (1);
 
+		
+    smethod->set_active (0);
+    if (pp->dirpyrDenoise.smethod=="shal")
+        smethod->set_active (0);
+//    else if (pp->dirpyrDenoise.smethod=="shbi")
+//        smethod->set_active (1);
+    else if (pp->dirpyrDenoise.smethod=="shalbi")
+        smethod->set_active (1);
+ //   else if (pp->dirpyrDenoise.smethod=="shalal")
+ //       smethod->set_active (3);
+ //   else if (pp->dirpyrDenoise.smethod=="shbibi")
+ //       smethod->set_active (4);
+		
     methodmed->set_active (0);
  //   if (pp->dirpyrDenoise.methodmed=="none")
  //       methodmed->set_active (0);
@@ -224,6 +295,8 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
     if (pedited) {
         if (!pedited->dirpyrDenoise.dmethod)
             dmethod->set_active (2);
+        if (!pedited->dirpyrDenoise.smethod)
+            smethod->set_active (2);
         if (!pedited->dirpyrDenoise.rgbmethod)
             rgbmethod->set_active (2);
          if (!pedited->dirpyrDenoise.medmethod)
@@ -263,16 +336,24 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     gamma->setValue   (pp->dirpyrDenoise.gamma);
     passes->setValue   (pp->dirpyrDenoise.passes);
+    lshape->setCurve   (pp->dirpyrDenoise.lcurve);
 
     enaConn.block (false);
     dmethodconn.block(false);
+    smethodconn.block(false);
     medmethodconn.block(false);
     rgbmethodconn.block(false);
     methodmedconn.block(false);
     enableListener ();
 
 }
-
+void DirPyrDenoise::setEditProvider  (EditDataProvider *provider) {
+    lshape->setEditProvider(provider);
+}
+void DirPyrDenoise::autoOpenCurve () {
+    // Open up the first curve if selected
+    bool active = lshape->openIfNonlinear();
+}
 void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
 	
 	pp->dirpyrDenoise.luma      = luma->getValue ();
@@ -286,9 +367,11 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
 	pp->dirpyrDenoise.enhance   = enhance->get_active();
 //	pp->dirpyrDenoise.perform   = perform->get_active();
 	pp->dirpyrDenoise.median   = median->get_active();
+    pp->dirpyrDenoise.lcurve  = lshape->getCurve ();
 	
     if (pedited) {
         pedited->dirpyrDenoise.dmethod  = dmethod->get_active_row_number() != 2;
+        pedited->dirpyrDenoise.smethod  = smethod->get_active_row_number() != 2;
         pedited->dirpyrDenoise.medmethod  = medmethod->get_active_row_number() != 4;
         pedited->dirpyrDenoise.rgbmethod  = rgbmethod->get_active_row_number() != 2;
         pedited->dirpyrDenoise.methodmed  = methodmed->get_active_row_number() != 2;
@@ -302,6 +385,8 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->dirpyrDenoise.enabled  = !enabled->get_inconsistent();
         pedited->dirpyrDenoise.enhance  = !enhance->get_inconsistent();
         pedited->dirpyrDenoise.median  = !median->get_inconsistent();
+        pedited->dirpyrDenoise.lcurve    = !lshape->isUnChanged ();
+		
     //    pedited->dirpyrDenoise.perform  = !perform->get_inconsistent();
     }
     if (dmethod->get_active_row_number()==0)
@@ -309,6 +394,17 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
     else if (dmethod->get_active_row_number()==1)
         pp->dirpyrDenoise.dmethod = "Lab";
 
+    if (smethod->get_active_row_number()==0)
+        pp->dirpyrDenoise.smethod = "shal";
+ //   else if (smethod->get_active_row_number()==1)
+//        pp->dirpyrDenoise.smethod = "shbi";
+    else if (smethod->get_active_row_number()==1)
+        pp->dirpyrDenoise.smethod = "shalbi";
+//    else if (smethod->get_active_row_number()==3)
+//        pp->dirpyrDenoise.smethod = "shalal";
+//    else if (smethod->get_active_row_number()==4)
+//        pp->dirpyrDenoise.smethod = "shbibi";
+		
 	//	if (methodmed->get_active_row_number()==0)
     //   pp->dirpyrDenoise.methodmed = "none";	
     if (methodmed->get_active_row_number()==0)
@@ -342,10 +438,24 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
 		
 }
 
+void DirPyrDenoise::curveChanged () {
+
+    if (listener && enabled->get_active()) {
+            listener->panelChanged (EvDPDNLCurve, M("HISTORY_CUSTOMCURVE"));
+		}
+}
+
 void DirPyrDenoise::dmethodChanged () {
 
 	if (listener && (multiImage||enabled->get_active()) ) {
 		listener->panelChanged (EvDPDNmet, dmethod->get_active_text ());
+	}
+}
+
+void DirPyrDenoise::smethodChanged () {
+
+	if (listener && (multiImage||enabled->get_active()) ) {
+		listener->panelChanged (EvDPDNsmet, smethod->get_active_text ());
 	}
 }
 
@@ -539,7 +649,10 @@ void DirPyrDenoise::setBatchMode (bool batchMode) {
     bluechro->showEditedCB ();
     gamma->showEditedCB ();
     passes->showEditedCB ();
+	NoiscurveEditorG->setBatchMode (batchMode);
+	
     dmethod->append_text (M("GENERAL_UNCHANGED"));
+    smethod->append_text (M("GENERAL_UNCHANGED"));
     medmethod->append_text (M("GENERAL_UNCHANGED"));
     methodmed->append_text (M("GENERAL_UNCHANGED"));
     rgbmethod->append_text (M("GENERAL_UNCHANGED"));

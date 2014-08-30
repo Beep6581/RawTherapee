@@ -22,10 +22,15 @@
 #include <gtkmm.h>
 #include "adjuster.h"
 #include "toolpanel.h"
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
+#include "colorprovider.h"
+#include "guiutils.h"
 
-class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
+class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider {
 
   protected:
+    CurveEditorGroup* NoiscurveEditorG;
 	Adjuster* luma;
 	Adjuster* Ldetail;
 	Adjuster* chroma;
@@ -33,6 +38,7 @@ class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public Fol
 	Adjuster* bluechro;	
 	Adjuster* gamma;
 	Adjuster* passes;
+    FlatCurveEditor* lshape;
 
     Gtk::CheckButton* enabled;
     bool lastEnabled;
@@ -48,6 +54,8 @@ class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public Fol
 //    sigc::connection perfconn;
     MyComboBoxText*   dmethod;
     sigc::connection  dmethodconn;
+    MyComboBoxText*   smethod;
+    sigc::connection  smethodconn;
     MyComboBoxText*   medmethod;
     sigc::connection  medmethodconn;
     Gtk::HBox* ctbox;
@@ -62,11 +70,15 @@ class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public Fol
   public:
 
     DirPyrDenoise ();
+    ~DirPyrDenoise ();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
+    void curveChanged 	();
+    void setEditProvider     (EditDataProvider *provider);
+    void autoOpenCurve  ();
 
     void adjusterChanged (Adjuster* a, double newval);
     void enabledChanged  ();
@@ -77,6 +89,7 @@ class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public Fol
     void medmethodChanged      ();
     void methodmedChanged      ();
     void rgbmethodChanged      ();
+    void smethodChanged      ();
 
     void setAdjusterBehavior (bool lumaadd, bool lumdetadd, bool chromaadd, bool chromaredadd, bool chromablueadd, bool gammaadd, bool passesadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);

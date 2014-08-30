@@ -128,13 +128,26 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     imgsrc->getImage (currWB, tr, baseImg, pp, params.toneCurve, params.icm, params.raw);
     if (pl) pl->setProgress (0.45);
 
+	LUTf Noisecurve (65536,0);
 
     // perform luma/chroma denoise
-//	CieImage *cieView;    
-
+//	CieImage *cieView;  
+ 	NoisCurve dnNoisCurve;
+    bool lldenoiseutili=false;
+	Imagefloat *calclum ;	
+    params.dirpyrDenoise.getCurves(dnNoisCurve, lldenoiseutili);
+	if (params.dirpyrDenoise.enabled  && lldenoiseutili) {
+		calclum = new Imagefloat (fw, fh);//for luminance denoise curve
+			if(baseImg !=  calclum)
+			memcpy(calclum->data,baseImg->data,baseImg->width*baseImg->height*3*sizeof(float));
+			imgsrc->convertColorSpace(calclum, params.icm, currWB, params.raw);
+	}
     if (params.dirpyrDenoise.enabled) {
-		ipf.RGB_denoise(baseImg, baseImg, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp());
-    }
+       // CurveFactory::denoiseLL(lldenoiseutili, params.dirpyrDenoise.lcurve, Noisecurve,1);
+		//params.dirpyrDenoise.getCurves(dnNoisCurve);	
+		ipf.RGB_denoise(baseImg, baseImg, calclum, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp(), dnNoisCurve, lldenoiseutili);
+   }
+ //  delete calclum;
     imgsrc->convertColorSpace(baseImg, params.icm, currWB, params.raw);
 
     // perform first analysis
@@ -250,6 +263,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     customToneCurve2.Reset();
     ctColorCurve.Reset();
     ctOpacityCurve.Reset();
+	dnNoisCurve.Reset();
     customToneCurvebw1.Reset();
     customToneCurvebw2.Reset();
 

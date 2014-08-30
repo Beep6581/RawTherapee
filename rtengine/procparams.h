@@ -32,6 +32,7 @@ namespace rtengine {
 
 class ColorGradientCurve;
 class OpacityCurve;
+class NoisCurve;
 
 namespace procparams {
 
@@ -541,6 +542,8 @@ class ImpulseDenoiseParams {
 class DirPyrDenoiseParams {
 
     public:
+        std::vector<double>   lcurve;
+	
         bool    enabled;
         bool    enhance;
         bool    median;
@@ -553,10 +556,18 @@ class DirPyrDenoiseParams {
         double  bluechro;
         double  gamma;
         Glib::ustring dmethod;
+        Glib::ustring smethod;
         Glib::ustring medmethod;
         Glib::ustring methodmed;
         Glib::ustring rgbmethod;
         int  passes;
+		
+        DirPyrDenoiseParams ();
+        void setDefault();  // SHOULD BE GENERALIZED TO ALL CLASSES!
+        void getCurves(NoisCurve &lcurveLUT, bool &lldenoiseutili) const;
+
+        static void getDefaultNoisCurve(std::vector<double> &curve);
+		
 };
 
 //EPD related parameters.
