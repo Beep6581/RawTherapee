@@ -139,7 +139,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	if (params.dirpyrDenoise.enabled  && lldenoiseutili) {
 		calclum = new Imagefloat (fw, fh);//for luminance denoise curve
 			if(baseImg !=  calclum)
-			memcpy(calclum->data,baseImg->data,baseImg->width*baseImg->height*3*sizeof(float));
+				baseImg->copyData(calclum);
 			imgsrc->convertColorSpace(calclum, params.icm, currWB, params.raw);
 	}
     if (params.dirpyrDenoise.enabled) {
