@@ -163,7 +163,7 @@ void Crop::update (int todo) {
 		if(lldenoiseutili && skip==1 && params.dirpyrDenoise.enabled)	{//only allocate memory if enabled and skip
 			calclum = new Imagefloat (cropw, croph);//for Luminance denoise curve
 				if(origCrop !=  calclum)
-				memcpy(calclum->data,origCrop->data,origCrop->width*origCrop->height*3*sizeof(float));
+					origCrop->copyData(calclum);
 		
 			parent->imgsrc->convertColorSpace(calclum, params.icm, parent->currWB, params.raw);//for denoise luminance curve
 		}

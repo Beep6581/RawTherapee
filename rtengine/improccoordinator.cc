@@ -271,7 +271,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		if(lldenoiseutili && scale==1 && params.dirpyrDenoise.enabled ){//only allocate memory if enabled and scale=1	
 			calclum = new Imagefloat (pW, pH);//for Luminance denoise curve
 				if(orig_prev !=  calclum)
-				memcpy(calclum->data,orig_prev->data,orig_prev->width*orig_prev->height*3*sizeof(float));
+					orig_prev->copyData(calclum);
 		
 			imgsrc->convertColorSpace(calclum, params.icm, currWB, params.raw);//claculate values after colorspace conversion
 		}
