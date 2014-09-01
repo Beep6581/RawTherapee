@@ -113,7 +113,7 @@ void RawImageSource::processRawWhitepoint(float expos, float preser) {
 		if(expos>1){
             // Positive exposure
             K = (float) maxVal / expos*exp(-preser*log(2.0));
-            for (int j=0;j<=maxVal;j++) 
+            for (int j=max(1,(int)K);j<=maxVal;j++) 
                 lut[(int)j]=(((float)maxVal-K*expos)/((float)maxVal-K)*(j-maxVal)+(float) maxVal) / j;
         } else {
             // Negative exposure
