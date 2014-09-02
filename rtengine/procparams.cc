@@ -222,7 +222,7 @@ void ColorToningParams::mixerToCurve(std::vector<double> &colorCurve, std::vecto
         if      (low[0] == maxTmp) v[0] = 1.f;
         else if (low[1] == maxTmp) v[1] = 1.f;
         else if (low[2] == maxTmp) v[2] = 1.f;
-        if      (low[3] != minTmp && low[0] != maxTmp) v[0] = (low[0]-minTmp)/(maxTmp-minTmp);
+        if      (low[0] != minTmp && low[0] != maxTmp) v[0] = (low[0]-minTmp)/(maxTmp-minTmp);
         else if (low[1] != minTmp && low[1] != maxTmp) v[1] = (low[1]-minTmp)/(maxTmp-minTmp);
         else if (low[2] != minTmp && low[2] != maxTmp) v[2] = (low[2]-minTmp)/(maxTmp-minTmp);
         low[0] = v[0];
@@ -248,7 +248,7 @@ void ColorToningParams::mixerToCurve(std::vector<double> &colorCurve, std::vecto
         if      (med[0] == maxTmp) v[0] = 1.f;
         else if (med[1] == maxTmp) v[1] = 1.f;
         else if (med[2] == maxTmp) v[2] = 1.f;
-        if      (med[3] != minTmp && med[0] != maxTmp) v[0] = (med[0]-minTmp)/(maxTmp-minTmp);
+        if      (med[0] != minTmp && med[0] != maxTmp) v[0] = (med[0]-minTmp)/(maxTmp-minTmp);
         else if (med[1] != minTmp && med[1] != maxTmp) v[1] = (med[1]-minTmp)/(maxTmp-minTmp);
         else if (med[2] != minTmp && med[2] != maxTmp) v[2] = (med[2]-minTmp)/(maxTmp-minTmp);
         med[0] = v[0];
@@ -274,7 +274,7 @@ void ColorToningParams::mixerToCurve(std::vector<double> &colorCurve, std::vecto
         if      (high[0] == maxTmp) v[0] = 1.f;
         else if (high[1] == maxTmp) v[1] = 1.f;
         else if (high[2] == maxTmp) v[2] = 1.f;
-        if      (high[3] != minTmp && high[0] != maxTmp) v[0] = (high[0]-minTmp)/(maxTmp-minTmp);
+        if      (high[0] != minTmp && high[0] != maxTmp) v[0] = (high[0]-minTmp)/(maxTmp-minTmp);
         else if (high[1] != minTmp && high[1] != maxTmp) v[1] = (high[1]-minTmp)/(maxTmp-minTmp);
         else if (high[2] != minTmp && high[2] != maxTmp) v[2] = (high[2]-minTmp)/(maxTmp-minTmp);
         high[0] = v[0];
