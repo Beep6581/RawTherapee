@@ -1210,11 +1210,24 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb) { // true -> entry
     	FileName = FileName.uppercase();
     	//printf("FileBrowser::checkFilter FileName = '%s'; find() result= %i \n",FileName.c_str(), FileName.find(filter.queryFileName.uppercase()));
     	
+    	Glib::ustring decodedQueryFileName;
+    	bool MatchEqual;
+
+    	// Determine the match mode - check if the first 2 characters are equal to "!="
+    	if (filter.queryFileName.find("!=")==0){
+    		decodedQueryFileName = filter.queryFileName.substr (2,filter.queryFileName.length()-2);
+    		MatchEqual = false;
+    	}
+    	else {
+    		decodedQueryFileName = filter.queryFileName;
+    		MatchEqual = true;
+    	}
+
     	// Consider that queryFileName consist of comma separated values (FilterString)
     	// Evaluate if ANY of these FilterString are contained in the filename
     	// This will construct OR filter within the filter.queryFileName
     	int iFilenameMatch=0;
-    	std::vector<Glib::ustring> vFilterStrings = Glib::Regex::split_simple(",", filter.queryFileName.uppercase());
+    	std::vector<Glib::ustring> vFilterStrings = Glib::Regex::split_simple(",", decodedQueryFileName.uppercase());
     	for(int i=0; i<vFilterStrings.size(); i++) {
     		// ignore empty vFilterStrings. Otherwise filter will always return true if
     		// e.g. filter.queryFileName ends on "," and will stop being a filter
@@ -1222,8 +1235,15 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb) { // true -> entry
     			if (FileName.find(vFilterStrings.at(i))!=-1) iFilenameMatch++;
     		}
     	}
-    	if (iFilenameMatch==0) //none of the vFilterStrings found in FileName
-        	 return false;
+
+    	if (MatchEqual==true){
+    		if (iFilenameMatch==0) //none of the vFilterStrings found in FileName
+    		  	return false;
+    	}
+    	else{
+    		if (iFilenameMatch>0) // match is found for at least one of vFilterStrings in FileName
+    			return false;
+    	}
 
     	/*experimental Regex support, this is unlikely to be useful to photographers*/
     	//bool matchfound=Glib::Regex::match_simple(filter.queryFileName.uppercase(),FileName);
