@@ -121,13 +121,20 @@ Curve3=0;
 [Directional Pyramid Denoising]
 Enabled=true
 Enhance=true
-Luma=50
+Median=false
+Luma=0
 Ldetail=50
 Chroma=50
 Method=RGB
+SMethod=shal
+MedMethod=soft
+RGBMethod=soft
+MethodMed=Lonly
 Redchro=0
 Bluechro=0
 Gamma=1.7
+Passes=1
+LCurve=1;0.053;0.55;0.35;0.35;0.62;0.04;0.35;0.35;
 
 [EPD]
 Enabled=false
@@ -181,5 +188,11 @@ Enabled=false
 CA=true
 HotDeadPixels=true
 HotDeadPixelThresh=40
-CcSteps=0
+
+[RAW Bayer]
 Method=igv
+CcSteps=0
+
+[RAW X-Trans]
+Method=3-pass (best)
+CcSteps=0
