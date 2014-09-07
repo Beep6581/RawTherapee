@@ -1194,7 +1194,6 @@ TP_DIRPYRDENOISE_METHOD;Method
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be used.\n\nFor non-raw images the Lab method will be used, regardless of the selection.
 TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "Lab" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
 TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired size. The larger the size, the longer it takes.\n\n3x3 soft: treats 5 pixels in a 1-pixel range.\n3x3: treats 9 pixels in a 1-pixel range.\n5x5 soft: treats 13 pixels in a 2-pixel range.\n5x5: treats 25 pixels in a 2-pixel range.\n7x7: treats 49 pixels in a 3-pixel range.\n\nSometimes it is possible to achieve higher quality running several iterations with a small range than one iteration with a large range.
-TP_DIRPYRDENOISE_MET_TOOLTIP;Median filtering type:\n3x3, 3x3 strong and 5x5 (RGB) or 3x3, 3x3 strong, 5x5, 5x5 strong or 7x7 (L only and Lab) in the treatment - Increases noise reduction.
 TP_DIRPYRDENOISE_NONE;None
 TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying a 3x3 median filter with three iterations often leads to better results than applying 7x7 once.
 TP_DIRPYRDENOISE_PASSE;Median iterations
