@@ -1041,7 +1041,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "ranges": { "black": 0, "white": 63300 }
     },
     { // quality X, matrix taken from H5D-50c which has the same sensor, probably with the same CFA. Color looks good to the eye with files tested.
-        "make_model": [ "Phase One IQ250" ],
+        "make_model": [ "Phase One IQ250", "Leaf Credo 50" ],
 	"dcraw_matrix": [ 4932, -835, 141, -4878, 11868, 3437, -1138, 1961, 7067 ],
         "ranges": { "black": 0, "white": 64400 } // CMOS sensor, we dare to set white level a bit higher than for the more varying Phase One CCDs
     },
