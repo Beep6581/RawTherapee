@@ -50,6 +50,7 @@ public:
 		Glib::ustring dir_entry_;
 		PreviewLoaderListener* listener_;
 	};
+/* Issue 2406
 	struct OutputJob
 	{
 		bool complete;
@@ -57,7 +58,7 @@ public:
 		PreviewLoaderListener* listener;
 		FileBrowserEntry* fdn;
 	};
-
+*/
 	struct JobCompare
 	{
 		bool operator()(const Job& lhs, const Job& rhs)
@@ -86,12 +87,12 @@ public:
 	MyMutex mutex_;
 	JobSet jobs_;
 	gint nConcurrentThreads;
-	std::vector<OutputJob *> output_;
+// Issue 2406	std::vector<OutputJob *> output_;
 
 	void processNextJob()
 	{ 
 		Job j;
-		OutputJob *oj;
+// Issue 2406		OutputJob *oj;
 		{
 			MyMutex::MyLock lock(mutex_);
 
@@ -107,19 +108,21 @@ public:
 			jobs_.erase(jobs_.begin());
 			DEBUG("processing %s",j.dir_entry_.c_str());
 			DEBUG("%d job(s) remaining",jobs_.size());
+/* Issue 2406
 			oj = new OutputJob();
 			oj->complete = false;
 			oj->dir_id = j.dir_id_;
 			oj->listener = j.listener_;
 			oj->fdn = 0;
 			output_.push_back(oj);
+*/
 		}
 
 		g_atomic_int_inc (&nConcurrentThreads);  // to detect when last thread in pool has run out
 
 		// unlock and do processing; will relock on block exit, then call listener
 		// if something got
-		FileBrowserEntry* fdn = 0;
+// Issue 2406		FileBrowserEntry* fdn = 0;
 		try {
 			Thumbnail* tmb = 0;
 			{
@@ -130,11 +133,12 @@ public:
 			}
 			if ( tmb )
 			{
-				fdn = new FileBrowserEntry(tmb,j.dir_entry_);
+				j.listener_->previewReady(j.dir_id_,new FileBrowserEntry(tmb,j.dir_entry_));
+// Issue 2406				fdn = new FileBrowserEntry(tmb,j.dir_entry_);
 			}
 
 		} catch (Glib::Error &e){} catch(...){}
-
+/* Issue 2406
 		{
 			// the purpose of the output_ vector is to deliver the previewReady() calls in the same
 			// order as we got the jobs from the jobs_ queue.
@@ -150,7 +154,7 @@ public:
 				delete oj;
 			}
 		}
-
+*/
 		bool last = g_atomic_int_dec_and_test (&nConcurrentThreads);
 
 		// signal at end
