@@ -456,13 +456,14 @@ void RawImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams 
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* cfaCleanFromMap: correct raw pixels looking at the bitmap
+/* interpolateBadPixels: correct raw pixels looking at the bitmap
  * takes into consideration if there are multiple bad pixels in the neighborhood
  */
-int RawImageSource::cfaCleanFromMap( PixelsMap &bitmapBads )
+int RawImageSource::interpolateBadPixels( PixelsMap &bitmapBads )
 {
-	float eps=1.0;	
+	static const float eps=1.f;	
 	int counter=0;
+#pragma omp parallel for reduction(+:counter) schedule(dynamic,16)
 	for( int row = 2; row < H-2; row++ ){
 		for(int col = 2; col <W-2; col++ ){
 			int sk = bitmapBads.skipIfZero(col,row); //optimization for a stripe all zero
@@ -470,32 +471,90 @@ int RawImageSource::cfaCleanFromMap( PixelsMap &bitmapBads )
 				col +=sk-1; //-1 is because of col++ in cycle
 				continue;
 			}
-			if( ! bitmapBads.get(col,row ) )
+			if(!bitmapBads.get(col,row))
 				continue;
 
-			double wtdsum=0,norm=0,sum=0,tot=0;
-			for( int dy=-2;dy<=2;dy+=2){
-				for( int dx=-2;dx<=2;dx+=2){
-					if (dy==0 && dx==0) continue;
-					if( bitmapBads.get(col+dx,row+dy) ) continue;
-					sum += rawData[row+dy][col+dx];
-					tot++;
-					if (bitmapBads.get(col-dx,row-dy)) continue;
-
-					double dirwt = 1/( fabs( rawData[row+dy][col+dx]- rawData[row-dy][col-dx])+eps);
-					wtdsum += dirwt* rawData[row+dy][col+dx];
+			float wtdsum=0.f,norm=0.f;
+			
+			// diagonal interpolation
+			if(FC(row,col)==1) {
+				// green channel. We can use closer pixels than for red or blue channel. Distance to center pixel is sqrt(2) => weighting is 0.70710678
+				// For green channel following pixels will be used for interpolation. Pixel to be interpolated is in center.
+				// 1 means that pixel is used in this step, if itself and his counterpart are not marked bad
+				// 0 0 0 0 0
+				// 0 1 0 1 0
+				// 0 0 0 0 0
+				// 0 1 0 1 0
+				// 0 0 0 0 0
+				for( int dx=-1;dx<=1;dx+=2){
+					if( bitmapBads.get(col+dx,row-1) || bitmapBads.get(col-dx,row+1))
+						continue;
+					float dirwt = 0.70710678f/( fabsf( rawData[row-1][col+dx]- rawData[row+1][col-dx])+eps);
+					wtdsum += dirwt * (rawData[row-1][col+dx] + rawData[row+1][col-dx]);
+					norm += dirwt;
+				}
+			} else {
+				// red and blue channel. Distance to center pixel is sqrt(8) => weighting is 0.35355339
+				// For red and blue channel following pixels will be used for interpolation. Pixel to be interpolated is in center.
+				// 1 means that pixel is used in this step, if itself and his counterpart are not marked bad
+				// 1 0 0 0 1
+				// 0 0 0 0 0
+				// 0 0 0 0 0
+				// 0 0 0 0 0
+				// 1 0 0 0 1
+				for( int dx=-2;dx<=2;dx+=4){
+					if( bitmapBads.get(col+dx,row-2) || bitmapBads.get(col-dx,row+2))
+						continue;
+					float dirwt = 0.35355339f/( fabsf( rawData[row-2][col+dx]- rawData[row+2][col-dx])+eps);
+					wtdsum += dirwt * (rawData[row-2][col+dx] + rawData[row+2][col-dx]);
 					norm += dirwt;
 				}
 			}
-			if (norm > 0.0){
-				rawData[row][col]= wtdsum / norm;//gradient weighted average
+			// channel independent. Distance to center pixel is 2 => weighting is 0.5
+			// Additionally for all channel following pixels will be used for interpolation. Pixel to be interpolated is in center.
+			// 1 means that pixel is used in this step, if itself and his counterpart are not marked bad
+			// 0 0 1 0 0
+			// 0 0 0 0 0
+			// 1 0 0 0 1
+			// 0 0 0 0 0
+			// 0 0 1 0 0
+			
+			// horizontal interpolation
+			if(!(bitmapBads.get(col-2,row) || bitmapBads.get(col+2,row))) {
+				float dirwt = 0.5f/( fabsf( rawData[row][col-2]- rawData[row][col+2])+eps);
+				wtdsum += dirwt * (rawData[row][col-2] + rawData[row][col+2]);
+				norm += dirwt;
+			}
+			
+			// vertical interpolation
+			if(!(bitmapBads.get(col,row-2) || bitmapBads.get(col,row+2))) {
+				float dirwt = 0.5f/( fabsf( rawData[row-2][col]- rawData[row+2][col])+eps);
+				wtdsum += dirwt * (rawData[row-2][col] + rawData[row+2][col]);
+				norm += dirwt;
+			}
+
+			if (LIKELY(norm > 0.f)){ // This means, we found at least one pair of valid pixels in the steps above, likelyhood of this case is about 99.999%
+				rawData[row][col]= wtdsum / (2.f * norm);//gradient weighted average, Factor of 2.f is an optimization to avoid multiplications in former steps
 				counter++;
-			} else {
-				if (tot > 0.1) rawData[row][col] = sum/tot;//backup plan -- simple average
+			} else { //backup plan -- simple average. Same method for all channels. We could improve this, but it's really unlikely that this case happens
+				int tot = 0;
+				float sum = 0;
+				for( int dy=-2;dy<=2;dy+=2){
+					for( int dx=-2;dx<=2;dx+=2){
+						if(bitmapBads.get(col+dx,row+dy))
+							continue;
+						sum += rawData[row+dy][col+dx];
+						tot++;
+					}
+				}
+				if (tot > 0) {
+					rawData[row][col] = sum/tot;
+					counter ++;
+				}
 			}
 		}
 	}
-	return counter;
+	return counter; // Number of interpolated pixels.
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -505,8 +564,10 @@ int RawImageSource::cfaCleanFromMap( PixelsMap &bitmapBads )
  *  (Taken from Emil Martinec idea)
  *  (Optimized by Ingo Weyrich 2013)
  */
-int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
+int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels )
 {
+	float varthresh = (20.0*(thresh/100.0) + 1.0 ); 
+
 	// counter for dead or hot pixels
 	int counter=0;
 	
@@ -528,7 +589,7 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 			med3x3(rawData[iprev][jprev],rawData[iprev][j],rawData[iprev][jnext],
 				   rawData[i][jprev],rawData[i][j],rawData[i][jnext],
 				   rawData[inext][jprev],rawData[inext][j],rawData[inext][jnext],temp);
-			cfablur[i*W+j] = fabs(rawData[i][j]-temp);
+			cfablur[i*W+j] = rawData[i][j]-temp;
 		}
 	}
 #pragma omp for reduction(+:counter) schedule (dynamic,16)
@@ -540,16 +601,21 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 		for (int cc=0; cc < W; cc++,rrmWpcc++) {
 			//evaluate pixel for heat/death
 			float pixdev = cfablur[rrmWpcc];
+			if((!findDeadPixels) && pixdev <= 0)
+				continue;
+			if((!findHotPixels) && pixdev >= 0)
+				continue;
+			pixdev = fabsf(pixdev);
 			float hfnbrave = -pixdev;
 			int left=max(0,cc-2);
 			int right=min(W-1,cc+2);
 			for (int mm=top; mm<=bottom; mm++) {
 				int mmmWpnn = mm*W+left;
 				for (int nn=left; nn<=right; nn++,mmmWpnn++) {
-					hfnbrave += cfablur[mmmWpnn];
+					hfnbrave += fabsf(cfablur[mmmWpnn]);
 				}
 			}
-			if (pixdev * ((bottom-top+1)*(right-left+1)-1) > thresh*hfnbrave) {
+			if (pixdev * ((bottom-top+1)*(right-left+1)-1) > varthresh*hfnbrave) {
 				// mark the pixel as "bad"
 				bpMap.set(cc,rr);
 				counter++;
@@ -1015,7 +1081,23 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 	if( rid && settings->verbose){
 		printf( "Subtracting Darkframe:%s\n",rid->get_filename().c_str());
 	}
-	//copyOriginalPixels(ri, rid);
+
+	PixelsMap bitmapBads(W,H);
+	int totBP=0; // Hold count of bad pixels to correct
+
+	if(ri->zeroIsBad()) { // mark all pixels with value zero as bad, has to be called before FF and DF. dcraw sets this flag only for some cameras (mainly Panasonic and Leica)
+#pragma omp parallel for reduction(+:totBP)
+		for(int i=0;i<H;i++)
+			for(int j=0;j<W;j++) {
+				if(ri->data[i][j] == 0.f) {
+					bitmapBads.set(j,i);
+					totBP++;
+				}
+			}
+		if( settings->verbose) {
+			printf( "%d pixels with value zero marked as bad pixels\n",totBP);
+		}
+	}
 
 	//FLATFIELD start
 	Glib::ustring newFF = raw.ff_file;
@@ -1027,20 +1109,18 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 		rif = ffm.searchFlatField( idata->getMake(), idata->getModel(),idata->getLens(),idata->getFocalLen(), idata->getFNumber(), idata->getDateTimeAsTS());
 	}
 
+
     bool hasFlatField = (rif!=NULL);
 	if( hasFlatField && settings->verbose) {
 		printf( "Flat Field Correction:%s\n",rif->get_filename().c_str());
 	}
+
 	copyOriginalPixels(raw, ri, rid, rif);
 	//FLATFIELD end
 	
-	
-	
-	PixelsMap bitmapBads(W,H);
-	int totBP=0; // Hold count of bad pixels to correct
 
-	// Always correct camera badpixels
-	std::list<badPix> *bp = dfm.getBadPixels( ri->get_maker(), ri->get_model(), std::string("") );
+	// Always correct camera badpixels from .badpixels file
+	std::vector<badPix> *bp = dfm.getBadPixels( ri->get_maker(), ri->get_model(), idata->getSerialNumber() );
 	if( bp ){
 		totBP+=bitmapBads.set( *bp );
 		if( settings->verbose ){
@@ -1060,6 +1140,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 			std::cout << "Correcting " << bp->size() << " hotpixels from darkframe" << std::endl;
 		}
 	}
+
 
     scaleColors( 0,0, W, H, raw);//+ + raw parameters for black level(raw.blackxx)
 
@@ -1081,20 +1162,17 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     defGain = 0.0;//log(initialGain) / log(2.0);
 
-	if ( raw.hotdeadpix_filt>0 ) {
+	if ( raw.hotPixelFilter>0 || raw.deadPixelFilter>0) {
 		if (plistener) {
 			plistener->setProgressStr ("Hot/Dead Pixel Filter...");
 			plistener->setProgress (0.0);
 		}
-		float varthresh = (20.0*((float)raw.hotdeadpix_thresh/100.0) + 1.0 ); 
-		int nFound =findHotDeadPixel( bitmapBads, varthresh );
+		int nFound = findHotDeadPixels( bitmapBads, raw.hotdeadpix_thresh, raw.hotPixelFilter, raw.deadPixelFilter );
 		totBP += nFound;
 		if( settings->verbose && nFound>0){
 			printf( "Correcting %d hot/dead pixels found inside image\n",nFound );
 		}
 	}
-	if( totBP )
-	   cfaCleanFromMap( bitmapBads );
 
     // check if it is an olympus E camera, if yes, compute G channel pre-compensation factors
     if ( ri->getSensorType()==ST_BAYER && (raw.bayersensor.greenthresh || (((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,9)=="Panasonic")) && raw.bayersensor.method != RAWParams::BayerSensor::methodstring[ RAWParams::BayerSensor::vng4])) ) {
@@ -1135,6 +1213,10 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 		}
 		green_equilibrate(0.01*(raw.bayersensor.greenthresh));
     }
+
+
+	if( totBP )
+	   interpolateBadPixels( bitmapBads );
 
 	
 	if ( ri->getSensorType()==ST_BAYER && raw.bayersensor.linenoise >0 ) {

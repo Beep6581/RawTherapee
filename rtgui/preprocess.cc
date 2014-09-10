@@ -26,54 +26,86 @@ using namespace rtengine::procparams;
 
 PreProcess::PreProcess () : FoldableToolPanel(this)
 {
-	hotDeadPixel = Gtk::manage(new Gtk::CheckButton((M("TP_PREPROCESS_HOTDEADPIXFILT"))));
-	hotDeadPixel->set_tooltip_markup (M("TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP"));
-
-	pack_start( *hotDeadPixel, Gtk::PACK_SHRINK, 4);
-
-	hdpixelconn = hotDeadPixel->signal_toggled().connect ( sigc::mem_fun(*this, &PreProcess::hotDeadPixelChanged), true);
+	
+	Gtk::HBox* hotdeadPixel = Gtk::manage( new Gtk::HBox () );
+	hotdeadPixel->set_spacing(4);
+	hotPixel = Gtk::manage(new Gtk::CheckButton((M("TP_PREPROCESS_HOTPIXFILT"))));
+	deadPixel = Gtk::manage(new Gtk::CheckButton((M("TP_PREPROCESS_DEADPIXFILT"))));
+	
+	hotPixel->set_tooltip_markup (M("TP_PREPROCESS_HOTPIXFILT_TOOLTIP"));
+	deadPixel->set_tooltip_markup (M("TP_PREPROCESS_DEADPIXFILT_TOOLTIP"));
+	
+	hotdeadPixel->pack_start( *hotPixel, Gtk::PACK_SHRINK);
+	hotdeadPixel->pack_start( *deadPixel, Gtk::PACK_SHRINK, 0);
+	pack_start(*hotdeadPixel, Gtk::PACK_SHRINK, 0);
+//	hotdeadPixel->show();
+	hpixelconn = hotPixel->signal_toggled().connect ( sigc::mem_fun(*this, &PreProcess::hotPixelChanged), true);
+	dpixelconn = deadPixel->signal_toggled().connect ( sigc::mem_fun(*this, &PreProcess::deadPixelChanged), true);
 }
 
 void PreProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
 	disableListener ();
-	hdpixelconn.block (true);
-
+	hpixelconn.block (true);
+	dpixelconn.block (true);
 	if(pedited ){
-		hotDeadPixel->set_inconsistent (!pedited->raw.hotDeadPixelFilter);
+		hotPixel->set_inconsistent (!pedited->raw.hotPixelFilter);
+		deadPixel->set_inconsistent (!pedited->raw.deadPixelFilter);
 	}
 
-	lastHot = pp->raw.hotdeadpix_filt;
+	lastHot = pp->raw.hotPixelFilter;
+	lastDead = pp->raw.deadPixelFilter;
+	hotPixel->set_active (pp->raw.hotPixelFilter);
+	deadPixel->set_active (pp->raw.deadPixelFilter);
 
-	hotDeadPixel->set_active (pp->raw.hotdeadpix_filt);
-
-	hdpixelconn.block (false);
+	hpixelconn.block (false);
+	dpixelconn.block (false);
 	enableListener ();
 }
 
 void PreProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
-	pp->raw.hotdeadpix_filt = hotDeadPixel->get_active();
+	pp->raw.hotPixelFilter = hotPixel->get_active();
+	pp->raw.deadPixelFilter = deadPixel->get_active();
 
 	if (pedited) {
-		pedited->raw.hotDeadPixelFilter = !hotDeadPixel->get_inconsistent();
+		pedited->raw.hotPixelFilter = !hotPixel->get_inconsistent();
+		pedited->raw.deadPixelFilter = !deadPixel->get_inconsistent();
 	}
 }
 
-void PreProcess::hotDeadPixelChanged ()
+void PreProcess::hotPixelChanged ()
 {
 	if (batchMode) {
-		if (hotDeadPixel->get_inconsistent()) {
-			hotDeadPixel->set_inconsistent (false);
-			hdpixelconn.block (true);
-			hotDeadPixel->set_active (false);
-			hdpixelconn.block (false);
+		if (hotPixel->get_inconsistent()) {
+			hotPixel->set_inconsistent (false);
+			hpixelconn.block (true);
+			hotPixel->set_active (false);
+			hpixelconn.block (false);
 		}
 		else if (lastHot)
-			hotDeadPixel->set_inconsistent (true);
+			hotPixel->set_inconsistent (true);
 
-		lastHot = hotDeadPixel->get_active ();
+		lastHot = hotPixel->get_active ();
 	}
 	if (listener)
-		listener->panelChanged (EvPreProcessHotDeadPixel, hotDeadPixel->get_active()?M("GENERAL_ENABLED"):M("GENERAL_DISABLED"));
+		listener->panelChanged (EvPreProcessHotPixel, hotPixel->get_active()?M("GENERAL_ENABLED"):M("GENERAL_DISABLED"));
+}
+
+void PreProcess::deadPixelChanged ()
+{
+	if (batchMode) {
+		if (deadPixel->get_inconsistent()) {
+			deadPixel->set_inconsistent (false);
+			dpixelconn.block (true);
+			deadPixel->set_active (false);
+			dpixelconn.block (false);
+		}
+		else if (lastDead)
+			deadPixel->set_inconsistent (true);
+
+		lastDead = deadPixel->get_active ();
+	}
+	if (listener)
+		listener->panelChanged (EvPreProcessDeadPixel, deadPixel->get_active()?M("GENERAL_ENABLED"):M("GENERAL_DISABLED"));
 }

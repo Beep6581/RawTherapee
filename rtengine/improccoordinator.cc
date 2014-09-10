@@ -155,7 +155,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
         rp.bayersensor.ccSteps = 0;
         rp.xtranssensor.ccSteps = 0;
-        rp.hotdeadpix_filt = false;
+        rp.deadPixelFilter = rp.hotPixelFilter = false;
     }
 
     progress ("Applying white balance, color correction & sRGB conversion...",100*readyphase/numofphases);

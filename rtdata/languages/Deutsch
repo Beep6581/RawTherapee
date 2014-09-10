@@ -623,7 +623,8 @@ PARTIALPASTE_METAICMGROUP;Gruppe Metadaten / ICM
 PARTIALPASTE_PCVIGNETTE;Vignettierungsfilter
 PARTIALPASTE_PERSPECTIVE;Perspektive
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Vorverarbeitung: Grün-Ausgleich
-PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Vorverarbeitung: Hot/Dead-Pixel-Filter anwenden
+PARTIALPASTE_PREPROCESS_HOTPIXFILT;Vorverarbeitung: Hot-Pixel-Filter
+PARTIALPASTE_PREPROCESS_DEADPIXFILT;Vorverarbeitung: Dead-Pixel-Filter
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Vorverarbeitung: Zeilenrauschfilter
 PARTIALPASTE_RAWCACORR_AUTO;Chromatische Aberration: Automatische Korrektur
 PARTIALPASTE_RAWCACORR_CABLUE;Chromatische Aberration: Blau
@@ -633,7 +634,7 @@ PARTIALPASTE_RAWEXPOS_LINEAR;RAW-Weiß/Schwarz-Punkt: Linearer Korrekturfaktor
 PARTIALPASTE_RAWEXPOS_PRESER;RAW-Weiß/Schwarz-Punkt: Lichter bewahren (EV)
 PARTIALPASTE_RAWGROUP;Gruppe RAW
 PARTIALPASTE_RAW_ALLENHANCE;Farbinterpolation: Artifakt-/Rauschminderung
-PARTIALPASTE_RAW_DCBENHANCE;Farbinterpolation: DCB-Verfeinerungsschritt durchführen
+PARTIALPASTE_RAW_DCBENHANCE;Farbinterpolation: DCB-Verfeinerungsschritt
 PARTIALPASTE_RAW_DCBITERATIONS;Farbinterpolation: Anzahl der DCB-Iterationen
 PARTIALPASTE_RAW_DMETHOD;Farbinterpolation: Methode
 PARTIALPASTE_RAW_FALSECOLOR;Farbinterpolation: Falschfarbenunterdrückung Stufen
@@ -1206,7 +1207,8 @@ TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspektive
 TP_PERSPECTIVE_VERTICAL;Vertikal
 TP_PREPROCESS_GREENEQUIL;Grün-Ausgleich
-TP_PREPROCESS_HOTDEADPIXFILT;Hot/Dead-Pixel-Filter anwenden
+TP_PREPROCESS_HOTPIXFILT;Hot-Pixel-Filter
+TP_PREPROCESS_DEADPIXFILT;Dead-Pixel-Filter
 TP_PREPROCESS_HOTDEADPIXTHRESH;Hot/Dead-Pixel-Erkennung\nSchwellenwert
 TP_PREPROCESS_LABEL;Vorverarbeitung
 TP_PREPROCESS_LINEDENOISE;Zeilenrauschfilter
@@ -1223,7 +1225,7 @@ TP_RAWEXPOS_LINEAR;Weißpunkt: Linearer\nKorrekturfaktor
 TP_RAWEXPOS_PRESER;Weißpunkt: Lichter\nbewahrende Korrektur (EV)
 TP_RAWEXPOS_TWOGREEN;Grün-Werte automatisch angleichen
 TP_RAW_ALLENHANCE;Artifakt-/Rauschminderung nach\nFarbinterpolation durchführen
-TP_RAW_DCBENHANCE;DCB-Verfeinerungsschritt durchführen
+TP_RAW_DCBENHANCE;DCB-Verfeinerungsschritt
 TP_RAW_DCBITERATIONS;Anzahl der DCB-Iterationen
 TP_RAW_DMETHOD;Methode
 TP_RAW_FALSECOLOR;Falschfarbenunterdrückung\nStufen

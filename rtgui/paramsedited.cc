@@ -317,7 +317,8 @@ void ParamsEdited::set (bool v) {
 	raw.caCorrection = v;
 	raw.caBlue  = v;
 	raw.caRed   = v;
-	raw.hotDeadPixelFilter = v;
+	raw.hotPixelFilter = v;
+	raw.deadPixelFilter = v;
 	raw.hotDeadPixelThresh = v;
 	raw.darkFrame = v;
 	raw.dfAuto = v;
@@ -649,7 +650,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.caCorrection = raw.caCorrection && p.raw.ca_autocorrect == other.raw.ca_autocorrect;
         raw.caRed = raw.caRed && p.raw.cared == other.raw.cared;
         raw.caBlue = raw.caBlue && p.raw.cablue == other.raw.cablue;
-        raw.hotDeadPixelFilter = raw.hotDeadPixelFilter && p.raw.hotdeadpix_filt == other.raw.hotdeadpix_filt;
+        raw.hotPixelFilter = raw.hotPixelFilter && p.raw.hotPixelFilter == other.raw.hotPixelFilter;
+        raw.deadPixelFilter = raw.deadPixelFilter && p.raw.deadPixelFilter == other.raw.deadPixelFilter;
         raw.hotDeadPixelThresh = raw.hotDeadPixelThresh && p.raw.hotdeadpix_thresh == other.raw.hotdeadpix_thresh;
         raw.darkFrame = raw.darkFrame && p.raw.dark_frame == other.raw.dark_frame;
         raw.dfAuto = raw.dfAuto && p.raw.df_autoselect == other.raw.df_autoselect;
@@ -989,7 +991,8 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (raw.exPos)          toEdit.raw.expos           = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_LINEAR] ? toEdit.raw.expos + mods.raw.expos : mods.raw.expos;
 	if (raw.exPreser)       toEdit.raw.preser          = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_PRESER] ? toEdit.raw.preser + mods.raw.preser : mods.raw.preser;
 
-	if (raw.hotDeadPixelFilter) toEdit.raw.hotdeadpix_filt   = mods.raw.hotdeadpix_filt;
+	if (raw.hotPixelFilter)     toEdit.raw.hotPixelFilter    = mods.raw.hotPixelFilter;
+	if (raw.deadPixelFilter)    toEdit.raw.deadPixelFilter   = mods.raw.deadPixelFilter;
 	if (raw.hotDeadPixelThresh) toEdit.raw.hotdeadpix_thresh = mods.raw.hotdeadpix_thresh;
 	if (raw.darkFrame)          toEdit.raw.dark_frame        = mods.raw.dark_frame;
 	if (raw.dfAuto)             toEdit.raw.df_autoselect     = mods.raw.df_autoselect;
@@ -1042,7 +1045,7 @@ bool RAWParamsEdited::XTransSensor::isUnchanged() const {
 }
 
 bool RAWParamsEdited::isUnchanged() const {
-	return  bayersensor.isUnchanged() && xtranssensor.isUnchanged() && caCorrection && caRed && caBlue && hotDeadPixelFilter && hotDeadPixelThresh && darkFrame
+	return  bayersensor.isUnchanged() && xtranssensor.isUnchanged() && caCorrection && caRed && caBlue && hotPixelFilter && deadPixelFilter && hotDeadPixelThresh && darkFrame
 			&& dfAuto && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType && exPos && exPreser && ff_AutoClipControl && ff_clipControl;
 }
 

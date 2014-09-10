@@ -120,7 +120,7 @@ enum ProcEvent {
     EvLaCurve=95,
     EvLbCurve=96,
     EvDemosaicMethod=97,
-    EvPreProcessHotDeadPixel=98,
+    EvPreProcessHotPixel=98,
     EvSaturation=99,
     EvHSVEqualizerH=100,
     EvHSVEqualizerS=101,
@@ -322,6 +322,7 @@ enum ProcEvent {
     EvFilmSimulationFilename=294,
 	EvDPDNLCurve=295,
 	EvDPDNsmet=296,	
+    EvPreProcessDeadPixel=297,
 	
 	NUMOFEVENTS	
 };

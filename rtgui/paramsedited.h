@@ -536,7 +536,8 @@ class RAWParamsEdited {
         bool caCorrection;
         bool caRed;
         bool caBlue;
-        bool hotDeadPixelFilter;
+        bool hotPixelFilter;
+        bool deadPixelFilter;
         bool hotDeadPixelThresh;
         bool darkFrame;
         bool dfAuto;

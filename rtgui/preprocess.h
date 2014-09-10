@@ -27,10 +27,11 @@
 class PreProcess : public ToolParamBlock, /*public AdjusterListener,*/ public FoldableToolPanel {
 
   protected:
-
-    Gtk::CheckButton* hotDeadPixel;
-    bool lastHot;
-    sigc::connection hdpixelconn;
+    Gtk::CheckButton* hotPixel;
+    Gtk::CheckButton* deadPixel;
+    bool lastHot,lastDead;
+    sigc::connection hpixelconn;
+    sigc::connection dpixelconn;
 
   public:
 
@@ -41,7 +42,8 @@ class PreProcess : public ToolParamBlock, /*public AdjusterListener,*/ public Fo
     //void setBatchMode   (bool batchMode);
     //void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
 
-    void hotDeadPixelChanged();
+    void hotPixelChanged();
+    void deadPixelChanged();
 
     //void adjusterChanged     (Adjuster* a, double newval);
     //void setAdjusterBehavior (bool linedenoiseadd, bool greenequiladd);

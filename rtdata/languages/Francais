@@ -690,7 +690,8 @@ PARTIALPASTE_METAICMGROUP;Réglages des Métadonnées/ICM
 PARTIALPASTE_PCVIGNETTE;Filtre Vignettage
 PARTIALPASTE_PERSPECTIVE;Perspective
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Équilibrage du vert
-PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Filtrage des pixels chauds/morts
+PARTIALPASTE_PREPROCESS_HOTPIXFILT;Filtrage des pixels chauds
+PARTIALPASTE_PREPROCESS_DEADPIXFILT;Filtrage des pixels morts
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtre de bruit de ligne
 PARTIALPASTE_RAWCACORR_AUTO;Corr. auto. de l'aberr. chromatique
 PARTIALPASTE_RAWCACORR_CABLUE;Aberr. chromatique bleu
@@ -1360,8 +1361,10 @@ TP_PERSPECTIVE_VERTICAL;Verticale
 TP_PFCURVE_CURVEEDITOR_CH;Teinte
 TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Contrôle la force du défrangeage en fonction de la couleur. En haut = action maxi, en bas = pas d'action sur la couleur.
 TP_PREPROCESS_GREENEQUIL;Équilibrage du vert
-TP_PREPROCESS_HOTDEADPIXFILT;Filtrer les pixels chauds/morts
-TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Essaie de supprimer les pixels chauds/morts
+TP_PREPROCESS_HOTPIXFILT;Filtrer les pixels chauds
+TP_PREPROCESS_DEADPIXFILT;Filtrer les pixels morts
+TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Essaie de supprimer les pixels chauds
+TP_PREPROCESS_DEADPIXFILT_TOOLTIP;Essaie de supprimer les pixels morts
 TP_PREPROCESS_LABEL;Traitement pre-dématriçage
 TP_PREPROCESS_LINEDENOISE;Filtre de bruit de ligne
 TP_PREPROCESS_NO_FOUND;Aucun trouvé

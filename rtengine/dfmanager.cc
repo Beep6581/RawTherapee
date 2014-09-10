@@ -95,7 +95,7 @@ RawImage* dfInfo::getRawImage()
 	return ri;
 }
 
-std::list<badPix>& dfInfo::getHotPixels()
+std::vector<badPix>& dfInfo::getHotPixels()
 {
 	if( !ri ){
 		updateRawImage();
@@ -172,26 +172,36 @@ void dfInfo::updateRawImage()
 
 void dfInfo::updateBadPixelList( RawImage *df )
 {
-	const int threshold=10;
+	const float threshold=10.f/8.f;
 	if( ri->getSensorType()!=ST_NONE ){
+		std::vector<badPix> badPixelsTemp;
+
+#pragma omp parallel
+{
+		std::vector<badPix> badPixelsThread;
+#pragma omp for nowait
 		for( int row=2; row<df->get_height()-2; row++)
 			for( int col=2; col < df->get_width()-2; col++){
-				int m =	(df->data[row-2][col-2] + df->data[row-2][col] + df->data[row-2][col+2]+
+				float m =	(df->data[row-2][col-2] + df->data[row-2][col] + df->data[row-2][col+2]+
 						df->data[row][col-2] + df->data[row][col+2]+
-						df->data[row+2][col-2] + df->data[row+2][col] + df->data[row+2][col+2])/8;
-				if( df->data[row][col]/threshold > m )
-					badPixels.push_back( badPix(col,row) );
+						df->data[row+2][col-2] + df->data[row+2][col] + df->data[row+2][col+2]);
+				if( df->data[row][col] > m*threshold )
+					badPixelsThread.push_back( badPix(col,row) );
 			}
+#pragma omp critical
+		badPixelsTemp.insert(badPixelsTemp.end(),badPixelsThread.begin(),badPixelsThread.end());
+}
+		badPixels.insert(badPixels.end(),badPixelsTemp.begin(),badPixelsTemp.end());
 	}else{
 		for( int row=1; row<df->get_height()-1; row++)
 			for( int col=1; col < df->get_width()-1; col++){
-			   int m[3];
+			   float m[3];
 			   for( int c=0; c<3;c++){
 				    m[c] =	(df->data[row-1][3*(col-1)+c] + df->data[row-1][3*col+c] + df->data[row-1][3*(col+1)+c]+
 						     df->data[row]  [3*(col-1)+c] + df->data[row]  [3*col+c]+
-						     df->data[row+1][3*(col-1)+c] + df->data[row+1][3*col+c] + df->data[row+1][3*(col+1)+c])/8;
+						     df->data[row+1][3*(col-1)+c] + df->data[row+1][3*col+c] + df->data[row+1][3*(col+1)+c]);
 			   }
-			   if( df->data[row][3*col]/threshold > m[0] || df->data[row][3*col+1]/threshold > m[1] || df->data[row][3*col+2]/threshold > m[2])
+			   if( df->data[row][3*col] > m[0]*threshold || df->data[row][3*col+1] > m[1]*threshold || df->data[row][3*col+2] > m[2]*threshold)
 					badPixels.push_back( badPix(col,row) );
 			}
 	}
@@ -367,7 +377,7 @@ RawImage* DFManager::searchDarkFrame( const Glib::ustring filename )
 		return df->getRawImage();
 	return 0;
 }
-std::list<badPix> *DFManager::getHotPixels ( const Glib::ustring filename )
+std::vector<badPix> *DFManager::getHotPixels ( const Glib::ustring filename )
 {
 	for ( dfList_t::iterator iter = dfList.begin(); iter != dfList.end();iter++ ){
 		if( iter->second.pathname.compare( filename )==0  )
@@ -375,7 +385,7 @@ std::list<badPix> *DFManager::getHotPixels ( const Glib::ustring filename )
 	}
 	return 0;
 }
-std::list<badPix> *DFManager::getHotPixels ( const std::string &mak, const std::string &mod, int iso, double shut, time_t t )
+std::vector<badPix> *DFManager::getHotPixels ( const std::string &mak, const std::string &mod, int iso, double shut, time_t t )
 {
    dfInfo *df = find( mak, mod, iso, shut, t );
    if( df ){
@@ -408,13 +418,21 @@ int DFManager::scanBadPixelsFile( Glib::ustring filename )
 		dirpos1= dirpos2;
 
 	std::string makmodel(filename,dirpos1+1,lastdot-(dirpos1+1) );
-	std::list<badPix> bp;
+	std::vector<badPix> bp;
 	char line[256];
-    while( fgets(line,sizeof(line),file ) ){
+	if(fgets(line,sizeof(line),file )) {
     	int x,y;
-    	if( sscanf(line,"%d %d",&x,&y) == 2 )
-    		bp.push_back( badPix(x,y) );
-    }
+    	int offset = 0;
+    	int numparms = sscanf(line,"%d %d",&x,&y);
+    	if( numparms == 1 ) // only one number in first line means, that this is the offset.
+			offset = x;
+		else if(numparms == 2)
+    		bp.push_back( badPix(x+offset,y+offset) );
+		while( fgets(line,sizeof(line),file ) ){
+			if( sscanf(line,"%d %d",&x,&y) == 2 )
+				bp.push_back( badPix(x+offset,y+offset) );
+		}
+	}
     int numPixels = bp.size();
     if( numPixels >0 )
     	bpList[ makmodel ] = bp;
@@ -422,21 +440,42 @@ int DFManager::scanBadPixelsFile( Glib::ustring filename )
 	return numPixels;
 }
 
-std::list<badPix> *DFManager::getBadPixels ( const std::string &mak, const std::string &mod, const std::string &serial)
+std::vector<badPix> *DFManager::getBadPixels ( const std::string &mak, const std::string &mod, const std::string &serial)
 {
-	std::ostringstream s;
-	s << mak << " " <<mod;
-	if( !serial.empty())
-	   s << " " << serial;
-	bpList_t::iterator iter = bpList.find( s.str() );
-	if( iter != bpList.end() ){
+	bpList_t::iterator iter;
+	bool found = false;
+	if( !serial.empty() ) {
+		// search with sreial number first
+		std::ostringstream s;
+		s << mak << " " << mod << " " << serial;
+		iter = bpList.find( s.str() );
+		if( iter != bpList.end() )
+			found = true;
 		if( settings->verbose )
-		   printf("Found:%s.badpixels in list\n",s.str().c_str());
+			if(found)
+				printf("%s.badpixels found\n",s.str().c_str());
+			else
+				printf("%s.badpixels not found\n",s.str().c_str());
+
+	}
+	if(!found) {
+		// search without serial number
+		std::ostringstream s;
+		s << mak << " " <<mod;
+		iter = bpList.find( s.str() );
+		if( iter != bpList.end() )
+			found = true;
+		if( settings->verbose )
+			if(found)
+				printf("%s.badpixels found\n",s.str().c_str());
+			else
+				printf("%s.badpixels not found\n",s.str().c_str());
+	}
+	if(!found) {
+		return 0;
+	} else {
 		return &(iter->second);
 	}
-	if( settings->verbose )
-	   printf("%s.badpixels not found\n",s.str().c_str());
-	return 0;
 }
 
 // Global variable
