@@ -370,44 +370,58 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         double rrm=33.;
         double ggm=33.;
         double bbm=33.;
-		
-		int satTH=80;
-		int satPR=30;
-		int indi=0;
-		if(params.colorToning.enabled  && params.colorToning.autosat){//for colortoning evaluation of saturation settings
-			float moyS=0.f;
-			float eqty=0.f;
-			ipf.moyeqt (oprevi, moyS, eqty);//return image : mean saturation and standard dev of saturation 
-			//printf("moy=%f ET=%f\n", moyS,eqty);
-			float satp=((moyS+1.5f*eqty)-0.3f)/0.7f;//1.5 sigma ==> 93% pixels with high saturation -0.3 / 0.7 convert to Hombre scale
-			if(satp >= 0.92f) satp=0.92f;//avoid values too high (out of gamut)
-			if(satp <= 0.15f) satp=0.15f;//avoid too low values
-			
-			satTH=(int) 100.f*satp;
-			satPR=(int) 100.f*(moyS-0.85f*eqty);//-0.85 sigma==>20% pixels with low saturation
-		} 
-		if(actListener) {
-			if(params.blackwhite.enabled) {actListener->autoColorTonChanged(0, satTH, satPR);}
-			else {
-				if(params.colorToning.autosat){
-					if(params.colorToning.method=="Lab") indi=1;
-					else if(params.colorToning.method=="RGBCurves") indi=1;
-					else if(params.colorToning.method=="RGBSliders") indi=1;
-					else if(params.colorToning.method=="Splico") indi=2;
-					else if(params.colorToning.method=="Splitlr") indi=2;
 
-					actListener->autoColorTonChanged(indi, satTH, satPR);
-				}
-		}
-		} 
+        float satLimit = float(params.colorToning.satProtectionThreshold)/100.f*0.7f+0.3f;
+        float satLimitOpacity = 1.f-(float(params.colorToning.saturatedOpacity)/100.f);
+
+        int satTH=80;
+        int satPR=30;
+        int indi=0;
+        if(params.colorToning.enabled  && params.colorToning.autosat){//for colortoning evaluation of saturation settings
+            float moyS=0.f;
+            float eqty=0.f;
+            ipf.moyeqt (oprevi, moyS, eqty);//return image : mean saturation and standard dev of saturation
+            //printf("moy=%f ET=%f\n", moyS,eqty);
+            float satp=((moyS+1.5f*eqty)-0.3f)/0.7f;//1.5 sigma ==> 93% pixels with high saturation -0.3 / 0.7 convert to Hombre scale
+            if(satp >= 0.92f) satp=0.92f;//avoid values too high (out of gamut)
+            if(satp <= 0.15f) satp=0.15f;//avoid too low values
+
+            //satTH=(int) 100.f*satp;
+            //satPR=(int) 100.f*(moyS-0.85f*eqty);//-0.85 sigma==>20% pixels with low saturation
+            satLimit= 100.f*satp;
+            satTH = (int) 100.f*satp;
+
+            satLimitOpacity= 100.f*(moyS-0.85f*eqty);//-0.85 sigma==>20% pixels with low saturation
+            satPR= (int) 100.f*(moyS-0.85f*eqty);
+        }
+        if(actListener) {
+            //if(params.blackwhite.enabled) {actListener->autoColorTonChanged(0, satTH, satPR);}
+            if(params.blackwhite.enabled && params.colorToning.autosat) {actListener->autoColorTonChanged(0, satTH, satPR);indi=0;}//hide sliders only if autosat
+            else {
+                if(params.colorToning.autosat){
+                    if     (params.colorToning.method=="Lab")        indi=1;
+                    else if(params.colorToning.method=="RGBCurves")  indi=1;
+                    else if(params.colorToning.method=="RGBSliders") indi=1;
+                    else if(params.colorToning.method=="Splico")     indi=2;
+                    else if(params.colorToning.method=="Splitlr")    indi=2;
+
+                    //actListener->autoColorTonChanged(indi, satTH, satPR);
+                }
+            }
+        }
         // if it's just crop we just need the histogram, no image updates
         if ( todo & M_RGBCURVE ) {
             ipf.rgbProc (oprevi, oprevl, NULL, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
-                         rCurve, gCurve, bCurve, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
-			if(params.blackwhite.enabled && params.blackwhite.autoc && abwListener) {
+                         rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
+            if(params.blackwhite.enabled && params.blackwhite.autoc && abwListener) {
                 if (settings->verbose)
                     printf("ImProcCoordinator / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", bwAutoR, bwAutoG, bwAutoB);
                 abwListener->BWChanged((float) rrm, (float) ggm, (float) bbm);
+            }
+            if(params.colorToning.autosat && actListener) {
+                if (settings->verbose)
+                    printf("ImProcCoordinator / Auto CT:  indi=%d   satH=%d  satPR=%d\n", indi,(int)satLimit , (int) satLimitOpacity);
+                actListener->autoColorTonChanged(indi, (int) satLimit, (int)satLimitOpacity);//change sliders autosat
             }
             // correct GUI black and white with value
         }
@@ -434,30 +448,30 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 //    cclutili=false;
 //    clcutili=false;
     if ((todo & M_LUMACURVE) || (todo & M_CROP)) {
-		utili = false;
+        utili = false;
         CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lhist16Cropped,
                                      lumacurve, histLCurve, scale==1 ? 1 : 16, utili);
     }
     if (todo & M_LUMACURVE) {
-		autili=false;
-		butili=false;
-		ccutili=false;
-		cclutili=false;
-		clcutili=false;
+        autili=false;
+        butili=false;
+        ccutili=false;
+        cclutili=false;
+        clcutili=false;
 
         CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, lhist16CLlad, histCLurve, scale==1 ? 1 : 16);
-		float adjustr=1.0f, adjustbg=1.0f;
+        float adjustr=1.0f, adjustbg=1.0f;
 
 
-/*	if      (params.icm.working=="ProPhoto")   {adjustr =       adjustbg = 1.2f;}// 1.2 instead 1.0 because it's very rare to have C>170..
-	else if (params.icm.working=="Adobe RGB")  {adjustr = 1.8f; adjustbg = 1.4f;}
-	else if (params.icm.working=="sRGB")  	    {adjustr = 2.0f; adjustbg = 1.7f;}
-	else if (params.icm.working=="WideGamut")  {adjustr =       adjustbg = 1.2f;}
-	else if (params.icm.working=="Beta RGB")   {adjustr =       adjustbg = 1.4f;}
-	else if (params.icm.working=="BestRGB")    {adjustr =       adjustbg = 1.4f;}
-	else if (params.icm.working=="BruceRGB")   {adjustr = 1.8f; adjustbg = 1.5f;}
+/*      if      (params.icm.working=="ProPhoto")   {adjustr =       adjustbg = 1.2f;}// 1.2 instead 1.0 because it's very rare to have C>170..
+        else if (params.icm.working=="Adobe RGB")  {adjustr = 1.8f; adjustbg = 1.4f;}
+        else if (params.icm.working=="sRGB")       {adjustr = 2.0f; adjustbg = 1.7f;}
+        else if (params.icm.working=="WideGamut")  {adjustr =       adjustbg = 1.2f;}
+        else if (params.icm.working=="Beta RGB")   {adjustr =       adjustbg = 1.4f;}
+        else if (params.icm.working=="BestRGB")    {adjustr =       adjustbg = 1.4f;}
+        else if (params.icm.working=="BruceRGB")   {adjustr = 1.8f; adjustbg = 1.5f;}
 */
-		adjustr=1.f;
+        adjustr=1.f;
         CurveFactory::complexsgnCurve (adjustr, autili, butili,ccutili,cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
                                        params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve,chroma_acurve, chroma_bcurve, satcurve,lhskcurve,
                                        lhist16Clad, lhist16LLClad, histCCurve, histLLCurve, scale==1 ? 1 : 16);
@@ -509,15 +523,15 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
                 delete [] buffer;
                 readyphase++;
             }
-		}	
-	//	if (scale==1) {
+        }
+        //if (scale==1) {
             if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)){
                 progress ("Pyramid equalizer...",100*readyphase/numofphases);
                 ipf.dirpyrequalizer (nprevl, scale);
-				//ipf.Lanczoslab (nprevl, nprevl, 1.f/scale);
+                //ipf.Lanczoslab (nprevl, nprevl, 1.f/scale);
                 readyphase++;
             }
-     //   }
+        //}
 
         //L histo  and Chroma histo for ciecam
         // histogram well be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
@@ -623,12 +637,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             delete workimg;
             Glib::ustring outProfile=params.icm.output;
             Glib::ustring workProfile=params.icm.working;
-			
-			if(settings->HistogramWorking) workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, workProfile, true);
-			else {
-				if (params.icm.output=="" || params.icm.output==ColorManagementParams::NoICMString) outProfile="sRGB";
-				workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, outProfile, false);
-			}
+
+            if(settings->HistogramWorking) workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, workProfile, true);
+            else {
+                if (params.icm.output=="" || params.icm.output==ColorManagementParams::NoICMString) outProfile="sRGB";
+                workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, outProfile, false);
+            }
         }
         catch(char * str)
         {

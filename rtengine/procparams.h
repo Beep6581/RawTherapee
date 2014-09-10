@@ -257,12 +257,12 @@ class ColorToningParams {
 
     public:
         bool enabled;
-		bool autosat;
+        bool autosat;
         std::vector<double> opacityCurve;
         std::vector<double> colorCurve;
         int satProtectionThreshold;
         int saturatedOpacity;
-		int strengthprotection;
+        int strength;
         int balance;
         Threshold<int> hlColSat;
         Threshold<int> shadowsColSat;

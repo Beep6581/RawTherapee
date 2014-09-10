@@ -275,7 +275,7 @@ DIRPYREQUALIZER,  // EvDirPyrEqualizerSkin
 DIRPYREQUALIZER,  // EvDirPyrEqlgamutlab
 DIRPYREQUALIZER,  // EvDirPyrEqualizerHueskin
 ALLNORAW,         // EvDPDNmedian
-ALLNORAW, 			//EvDPDNmedmet
+ALLNORAW,         //EvDPDNmedmet
 //DIRPYREQUALIZER   // EvDirPyrEqualizeralg
 RGBCURVE,         // EvColorToningEnabled
 RGBCURVE,         // EvColorToningColor
@@ -304,7 +304,7 @@ RGBCURVE,         // EvColorToningShadows
 RGBCURVE,         // EvColorToningHighights
 RGBCURVE,         // EvColorToningSatProtection
 RGBCURVE,         // EvColorToningSatThreshold
-RGBCURVE,			//EvColorToningStrProtection
+RGBCURVE,			//EvColorToningStrength
 RGBCURVE,			//EvColorToningautosat
 ALLNORAW, 			//EvDPDNmetmed
 ALLNORAW, 			//EvDPDNrgbmet

@@ -173,7 +173,7 @@ void ColorToningParams::setDefault() {
     balance = 0;
     satProtectionThreshold = 30;
     saturatedOpacity = 80;
-    strengthprotection = 50;
+    strength = 50;
     lumamode = true;
     twocolor = "Std";
     redlow = 0.0;
@@ -1461,9 +1461,9 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         Glib::ArrayHandle<double> curve = colorToning.colorCurve;
         keyFile.set_double_list("ColorToning", "ColorCurve", curve);
     }
-    if (!pedited || pedited->colorToning.satProtectionThreshold)  keyFile.set_integer ("ColorToning", "SatProtectionThreshold", colorToning.satProtectionThreshold );
-    if (!pedited || pedited->colorToning.saturatedOpacity)        keyFile.set_integer ("ColorToning", "SaturatedOpacity", colorToning.saturatedOpacity );
-    if (!pedited || pedited->colorToning.strengthprotection)        keyFile.set_integer ("ColorToning", "Strengthprotection", colorToning.strengthprotection );
+    if (!pedited || pedited->colorToning.satprotectionthreshold)  keyFile.set_integer ("ColorToning", "SatProtectionThreshold", colorToning.satProtectionThreshold );
+    if (!pedited || pedited->colorToning.saturatedopacity)        keyFile.set_integer ("ColorToning", "SaturatedOpacity", colorToning.saturatedOpacity );
+    if (!pedited || pedited->colorToning.strength)                keyFile.set_integer ("ColorToning", "Strength", colorToning.strength );
 
     if (!pedited || pedited->colorToning.hlColSat) {
         Glib::ArrayHandle<int> thresh (colorToning.hlColSat.value, 2, Glib::OWNERSHIP_NONE);
@@ -2159,10 +2159,10 @@ if (keyFile.has_group ("ColorToning")) {
     if (keyFile.has_key ("ColorToning", "OpacityCurve"))  { colorToning.opacityCurve = keyFile.get_double_list ("ColorToning", "OpacityCurve"); if (pedited) pedited->colorToning.opacityCurve = true; }
     if (keyFile.has_key ("ColorToning", "ColorCurve"))    { colorToning.colorCurve = keyFile.get_double_list ("ColorToning", "ColorCurve"); if (pedited) pedited->colorToning.colorCurve = true; }
     if (keyFile.has_key ("ColorToning", "Autosat"))       { colorToning.autosat = keyFile.get_boolean ("ColorToning", "Autosat"); if (pedited) pedited->colorToning.autosat = true; }
-    if (keyFile.has_key ("ColorToning", "SatProtectionThreshold"))    { colorToning.satProtectionThreshold = keyFile.get_integer ("ColorToning", "SatProtectionThreshold"); if (pedited) pedited->colorToning.satProtectionThreshold = true; }
-    if (keyFile.has_key ("ColorToning", "SaturatedOpacity"))          { colorToning.saturatedOpacity = keyFile.get_integer ("ColorToning", "SaturatedOpacity"); if (pedited) pedited->colorToning.saturatedOpacity = true; }
-    if (keyFile.has_key ("ColorToning", "Strengthprotection"))          { colorToning.strengthprotection = keyFile.get_integer ("ColorToning", "Strengthprotection"); if (pedited) pedited->colorToning.strengthprotection = true; }
-	if (keyFile.has_key ("ColorToning", "HighlightsColorSaturation")) {
+    if (keyFile.has_key ("ColorToning", "SatProtectionThreshold"))    { colorToning.satProtectionThreshold = keyFile.get_integer ("ColorToning", "SatProtectionThreshold"); if (pedited) pedited->colorToning.satprotectionthreshold = true; }
+    if (keyFile.has_key ("ColorToning", "SaturatedOpacity"))          { colorToning.saturatedOpacity = keyFile.get_integer ("ColorToning", "SaturatedOpacity"); if (pedited) pedited->colorToning.saturatedopacity = true; }
+    if (keyFile.has_key ("ColorToning", "Strength"))                  { colorToning.strength = keyFile.get_integer ("ColorToning", "Strength"); if (pedited) pedited->colorToning.strength = true; }
+    if (keyFile.has_key ("ColorToning", "HighlightsColorSaturation")) {
         Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("ColorToning", "HighlightsColorSaturation");
         colorToning.hlColSat.setValues(thresh.data()[0], thresh.data()[1]);
         if (pedited) pedited->colorToning.hlColSat = true;
@@ -2604,7 +2604,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& colorToning.autosat == other.colorToning.autosat
 		&& colorToning.satProtectionThreshold == other.colorToning.satProtectionThreshold
 		&& colorToning.saturatedOpacity == other.colorToning.saturatedOpacity
-		&& colorToning.strengthprotection == other.colorToning.strengthprotection
+		&& colorToning.strength == other.colorToning.strength
 		&& colorToning.hlColSat == other.colorToning.hlColSat
 		&& colorToning.shadowsColSat == other.colorToning.shadowsColSat
 		&& colorToning.balance == other.colorToning.balance

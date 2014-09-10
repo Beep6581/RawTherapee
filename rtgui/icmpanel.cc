@@ -185,7 +185,6 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this), iunchanged(NULL), icmplistener(
     Gtk::Frame* fgFrame = Gtk::manage (new Gtk::Frame ());
 
     Gtk::VBox *fgVBox = Gtk::manage ( new Gtk::VBox());
-    fgVBox->set_border_width(4);
     fgVBox->set_spacing(0);
 
     freegamma = Gtk::manage(new Gtk::CheckButton((M("TP_GAMMA_FREE"))));

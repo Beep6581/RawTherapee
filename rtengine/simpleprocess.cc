@@ -253,8 +253,25 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 1);
 	double rrm, ggm, bbm;
     float autor, autog, autob;
+	float satLimit = float(params.colorToning.satProtectionThreshold)/100.f*0.7f+0.3f;
+	float satLimitOpacity = 1.f-(float(params.colorToning.saturatedOpacity)/100.f);
+		
+		if(params.colorToning.enabled  && params.colorToning.autosat){//for colortoning evaluation of saturation settings
+			float moyS=0.f;
+			float eqty=0.f;
+			ipf.moyeqt (baseImg, moyS, eqty);//return image : mean saturation and standard dev of saturation 
+			//printf("moy=%f ET=%f\n", moyS,eqty);
+			float satp=((moyS+1.5f*eqty)-0.3f)/0.7f;//1.5 sigma ==> 93% pixels with high saturation -0.3 / 0.7 convert to Hombre scale
+			if(satp >= 0.92f) satp=0.92f;//avoid values too high (out of gamut)
+			if(satp <= 0.15f) satp=0.15f;//avoid too low values
+			
+			satLimit= 100.f*satp;
+			
+			satLimitOpacity= 100.f*(moyS-0.85f*eqty);//-0.85 sigma==>20% pixels with low saturation
+		} 
+	
     autor = -9000.f; // This will ask to compute the "auto" values for the B&W tool (have to be inferior to -5000)
-    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve,customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
+    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve,customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
     if (settings->verbose)
         printf("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);
 

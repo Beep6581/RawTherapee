@@ -25,7 +25,6 @@ ColorToning::ColorToning () : FoldableToolPanel(this)
 	method->append_text (M("TP_COLORTONING_LAB"));
 	method->append_text (M("TP_COLORTONING_RGBSLIDERS"));
 	method->append_text (M("TP_COLORTONING_RGBCURVES"));
-//	method->append_text (M("TP_COLORTONING_SPLITBW"));
 	method->append_text (M("TP_COLORTONING_SPLITCOCO"));
 	method->append_text (M("TP_COLORTONING_SPLITLR"));
 	method->set_active (0);
@@ -114,20 +113,16 @@ ColorToning::ColorToning () : FoldableToolPanel(this)
 	pack_start( *opacityCurveEditorG, Gtk::PACK_SHRINK, 2);
 
 	//---------Chroma curve 1 --------------------
-	labchroma1="TP_COLORTONING_CHROMAC";
-	labchroma2="TP_COLORTONING_CHROMA2";
-//	itot   = Gtk::manage (new RTImage ("Chanmixer-RGBY.png"));
 	iby   = Gtk::manage (new RTImage ("Chanmixer-BY.png"));
 	irg   = Gtk::manage (new RTImage ("Chanmixer-RG.png"));
 	
-	clCurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M(labchroma1));
+	clCurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M("TP_COLORTONING_CHROMAC"));
 	clCurveEditorG->setCurveListener (this);
 
 	rtengine::ColorToningParams::getDefaultCLCurve(defaultCurve);
 	clshape = static_cast<DiagonalCurveEditor*>(clCurveEditorG->addCurve(CT_Diagonal, M("TP_COLORTONING_AB"),irg));
 	clshape->setResetCurve(DiagonalCurveType(defaultCurve.at(0)), defaultCurve);
-	clshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP"));
-	//clshape->setEditID(EUID_Lab_CLCurve, BT_SINGLEPLANE_FLOAT);
+	clshape->setTooltip(M("TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP"));
 
 	clshape->setLeftBarColorProvider(this, 1);
 	clshape->setRangeDefaultMilestones(0.25, 0.5, 0.75);
@@ -141,15 +136,13 @@ ColorToning::ColorToning () : FoldableToolPanel(this)
 
 	//---------Chroma curve 2 --------------------
 
-	//cl2CurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M("TP_COLORTONING_CHROMA2"));
-	cl2CurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M(labchroma1));
+	cl2CurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M("TP_COLORTONING_CHROMAC"));
 	cl2CurveEditorG->setCurveListener (this);
 
 	rtengine::ColorToningParams::getDefaultCL2Curve(defaultCurve);
 	cl2shape = static_cast<DiagonalCurveEditor*>(cl2CurveEditorG->addCurve(CT_Diagonal, M("TP_COLORTONING_BY"),iby));
 	cl2shape->setResetCurve(DiagonalCurveType(defaultCurve.at(0)), defaultCurve);
-	cl2shape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP"));
-	//clshape->setEditID(EUID_Lab_CLCurve, BT_SINGLEPLANE_FLOAT);
+	cl2shape->setTooltip(M("TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP"));
 
 	cl2shape->setLeftBarColorProvider(this, 1);
 	cl2shape->setRangeDefaultMilestones(0.25, 0.5, 0.75);
@@ -162,18 +155,16 @@ ColorToning::ColorToning () : FoldableToolPanel(this)
 	pack_start( *cl2CurveEditorG, Gtk::PACK_SHRINK, 2);
 
 	//--------------------- Reset curves -----------------------------
-	neutralCurvesHBox = Gtk::manage (new Gtk::HBox ());
-	neutralCurvesHBox->set_border_width (2);
-
+	/*   Each curve can reset to a different curve, so this button only save one click now... so we remove it.
 	neutralCurves = Gtk::manage (new Gtk::Button (M("TP_COLORTONING_NEUTRALCUR")));
 	RTImage *resetImgc = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
 	neutralCurves->set_image(*resetImgc);
 	neutralCurves->set_tooltip_text (M("TP_COLORTONING_NEUTRALCUR_TIP"));
 	neutralcurvesconn = neutralCurves->signal_pressed().connect( sigc::mem_fun(*this, &ColorToning::neutralCurves_pressed) );
 	neutralCurves->show();
-	neutralCurvesHBox->pack_start (*neutralCurves);
 
-	pack_start (*neutralCurvesHBox);
+	pack_start (*neutralCurves);
+	*/
 
 	//----------- Sliders + balance ------------------------------
 
@@ -191,44 +182,54 @@ ColorToning::ColorToning () : FoldableToolPanel(this)
 
 	pack_start( *shadowsColSat, Gtk::PACK_SHRINK, 0);
 
-	//satlow = Gtk::manage (new Adjuster (M("TP_COLORTONING_SATL"), 0., 100., 1., 0.));
-	//pack_start (*satlow, Gtk::PACK_EXPAND_WIDGET);
-
-	//sathigh = Gtk::manage (new Adjuster (M("TP_COLORTONING_SATH"), 0., 100., 1., 0.));
-	//pack_start (*sathigh, Gtk::PACK_EXPAND_WIDGET);
 
 	balance = Gtk::manage( new Adjuster(M("TP_COLORTONING_BALANCE"), -100., 100., 1., 0.) );
 	balance->setAdjusterListener(this);
 
 	pack_start (*balance, Gtk::PACK_SHRINK, 2);
 
-	//----------- Saturation and strength protection ------------------------------
+	//----------- Saturation and strength ------------------------------
 
-	satLimiterSep = Gtk::manage (new Gtk::HSeparator());
-	pack_start (*satLimiterSep, Gtk::PACK_SHRINK);
+//	satLimiterSep = Gtk::manage (new Gtk::HSeparator());
+	
+	
+//	pack_start (*satLimiterSep, Gtk::PACK_SHRINK);
+	
+//	Gtk::Frame *p1Frame;
+	// Vertical box container for the content of the Process 1 frame
+	Gtk::VBox *p1VBox;
+	p1Frame = Gtk::manage (new Gtk::Frame(M("TP_COLORTONING_SA")) );
+	p1Frame->set_border_width(0);
+	p1Frame->set_label_align(0.025, 0.5);
+	
+	p1VBox = Gtk::manage ( new Gtk::VBox());
+	p1VBox->set_border_width(4);
+	p1VBox->set_spacing(2);
 
 	autosat = Gtk::manage (new Gtk::CheckButton (M("TP_COLORTONING_AUTOSAT")));
 	autosat->set_active (true);
 	autosatConn  = autosat->signal_toggled().connect( sigc::mem_fun(*this, &ColorToning::autosatChanged) );
+	//satFrame->set_label_widget(*autosat);
 
-	pack_start (*autosat, Gtk::PACK_SHRINK, 2);
+	p1VBox->pack_start (*autosat, Gtk::PACK_SHRINK, 2);
 	
-	satProtectionThreshold = Gtk::manage( new Adjuster(M("TP_COLORTONING_SATURATIONTHRESHOLD"), 0., 100., 1., 70.) );
+	satProtectionThreshold = Gtk::manage( new Adjuster(M("TP_COLORTONING_SATURATIONTHRESHOLD"), 0., 100., 1., 80.) );
 	satProtectionThreshold->setAdjusterListener(this);
 	satProtectionThreshold->set_sensitive(false);
 
-	pack_start( *satProtectionThreshold, Gtk::PACK_SHRINK, 2);
+	p1VBox->pack_start( *satProtectionThreshold, Gtk::PACK_SHRINK, 2);
 
-	saturatedOpacity = Gtk::manage( new Adjuster(M("TP_COLORTONING_SATURATEDOPACITY"), 0., 100., 1., 50.) );;
+	saturatedOpacity = Gtk::manage( new Adjuster(M("TP_COLORTONING_SATURATEDOPACITY"), 0., 100., 1., 30.) );;
 	saturatedOpacity->setAdjusterListener(this);
 	saturatedOpacity->set_sensitive(false);
 
-	pack_start( *saturatedOpacity, Gtk::PACK_SHRINK, 2); //I have moved after Chanmixer 
+	p1VBox->pack_start( *saturatedOpacity, Gtk::PACK_SHRINK, 2); //I have moved after Chanmixer 
+	p1Frame->add(*p1VBox);
+	pack_start (*p1Frame, Gtk::PACK_EXPAND_WIDGET, 4);
 
-	strengthprotection = Gtk::manage( new Adjuster(M("TP_COLORTONING_STRPROTECT"), 0., 100., 1., 50.) );;
-	strengthprotection->setAdjusterListener(this);
+	strength = Gtk::manage( new Adjuster(M("TP_COLORTONING_STR"), 0., 100., 1., 50.) );;
+	strength->setAdjusterListener(this);
 
-	//pack_start( *strengthprotection, Gtk::PACK_SHRINK, 2); //I have moved after Chanmixer 
 	
 	
 	//	--------------------Sliders BW Colortoning -------------------
@@ -294,7 +295,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this)
 	chanMixerBox->pack_start(*chanMixerShadowsFrame, Gtk::PACK_SHRINK);
 
 	pack_start(*chanMixerBox, Gtk::PACK_SHRINK);
-	pack_start( *strengthprotection, Gtk::PACK_SHRINK, 2); //I have moved after Chanmixer 
+	pack_start( *strength, Gtk::PACK_SHRINK, 2); //I have moved after Chanmixer 
 
 	//--------------------- Reset sliders  ---------------------------
 	neutrHBox = Gtk::manage (new Gtk::HBox ());
@@ -319,15 +320,10 @@ ColorToning::ColorToning () : FoldableToolPanel(this)
 
 	pack_start (*lumamode);
 
-	//splitSep = Gtk::manage (new  Gtk::HSeparator());
-
-	//pack_start (*splitSep);
 
 	redlow->setAdjusterListener (this);
 	greenlow->setAdjusterListener (this);
 	bluelow->setAdjusterListener (this);
-	//satlow->setAdjusterListener (this);
-	//sathigh->setAdjusterListener (this);
 	balance->setAdjusterListener (this);
 	redmed->setAdjusterListener (this);
 	greenmed->setAdjusterListener (this);
@@ -350,6 +346,7 @@ ColorToning::~ColorToning() {
 	delete cl2CurveEditorG;
 }
 
+/*
 void ColorToning::neutralCurves_pressed () {
 	disableListener();
 
@@ -364,6 +361,7 @@ void ColorToning::neutralCurves_pressed () {
 	if (listener && enabled->get_active() && changed)
 		listener->panelChanged (EvColorToningNeutralcur, M("ADJUSTER_RESET_TO_DEFAULT"));
 }
+*/
 
 // Will only reset the chanel mixer
 void ColorToning::neutral_pressed () {
@@ -377,8 +375,6 @@ void ColorToning::neutral_pressed () {
 	redhigh->resetValue(false);
 	greenhigh->resetValue(false);
 	bluehigh->resetValue(false);
-	//satlow->resetValue(false);
-	//sathigh->resetValue(false);
 	//balance->resetValue(false);
 
 	enableListener();
@@ -400,8 +396,6 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
 		redlow->setEditedState (pedited->colorToning.redlow ? Edited : UnEdited);
 		greenlow->setEditedState (pedited->colorToning.greenlow ? Edited : UnEdited);
 		bluelow->setEditedState (pedited->colorToning.bluelow ? Edited : UnEdited);
-		//satlow->setEditedState (pedited->colorToning.satlow ? Edited : UnEdited);
-		//sathigh->setEditedState (pedited->colorToning.sathigh ? Edited : UnEdited);
 		balance->setEditedState (pedited->colorToning.balance ? Edited : UnEdited);
 		redmed->setEditedState (pedited->colorToning.redmed ? Edited : UnEdited);
 		greenmed->setEditedState (pedited->colorToning.greenmed ? Edited : UnEdited);
@@ -424,8 +418,6 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
 	redlow->setValue    (pp->colorToning.redlow);
 	greenlow->setValue    (pp->colorToning.greenlow);
 	bluelow->setValue    (pp->colorToning.bluelow);
-	//satlow->setValue    (pp->colorToning.satlow);
-	//sathigh->setValue    (pp->colorToning.sathigh);
 	balance->setValue    (pp->colorToning.balance);
 	redmed->setValue    (pp->colorToning.redmed);
 	greenmed->setValue    (pp->colorToning.greenmed);
@@ -448,7 +440,7 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
 	saturatedOpacity->setValue (pp->colorToning.saturatedOpacity);
 	hlColSat->setValue<int> (pp->colorToning.hlColSat);
 	shadowsColSat->setValue<int> (pp->colorToning.shadowsColSat);
-	strengthprotection->setValue (pp->colorToning.strengthprotection);
+	strength->setValue (pp->colorToning.strength);
 	lumamodeConn.block (true);
 	lumamode->set_active (pp->colorToning.lumamode);
 	lumamodeConn.block (false);
@@ -463,12 +455,8 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
 		method->set_active (1);
 	else if (pp->colorToning.method=="RGBCurves")
 		method->set_active (2);
-	//else if (pp->colorToning.method=="Split")
-	//	method->set_active (1);
 	else if (pp->colorToning.method=="Splitco")
 		method->set_active (3);
-	//    else if (pp->colorToning.method=="Splitbal")
-	//       method->set_active (5);
 	else if (pp->colorToning.method=="Splitlr")
 		method->set_active (4);
 	methodChanged();
@@ -497,8 +485,6 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited) {
 	pp->colorToning.redlow    = redlow->getValue ();
 	pp->colorToning.greenlow  = greenlow->getValue ();
 	pp->colorToning.bluelow   = bluelow->getValue ();
-	//pp->colorToning.satlow    = satlow->getValue ();
-	//pp->colorToning.sathigh   = sathigh->getValue ();
 	pp->colorToning.balance   = balance->getIntValue ();
 	pp->colorToning.redmed    = redmed->getValue ();
 	pp->colorToning.greenmed  = greenmed->getValue ();
@@ -519,14 +505,12 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited) {
 	pp->colorToning.autosat                = autosat->get_active();
 	pp->colorToning.satProtectionThreshold = satProtectionThreshold->getIntValue();
 	pp->colorToning.saturatedOpacity       = saturatedOpacity->getIntValue();
-	pp->colorToning.strengthprotection     = strengthprotection->getIntValue();
+	pp->colorToning.strength               = strength->getIntValue();
 
 	if (pedited) {
 		pedited->colorToning.redlow     = redlow->getEditedState ();
 		pedited->colorToning.greenlow   = greenlow->getEditedState ();
 		pedited->colorToning.bluelow    = bluelow->getEditedState ();
-		//pedited->colorToning.satlow     = satlow->getEditedState ();
-		//pedited->colorToning.sathigh    = sathigh->getEditedState ();
 		pedited->colorToning.balance    = balance->getEditedState ();
 		pedited->colorToning.redmed     = redmed->getEditedState ();
 		pedited->colorToning.greenmed   = greenmed->getEditedState ();
@@ -548,22 +532,15 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited) {
 		pedited->colorToning.hlColSat      = hlColSat->getEditedState ();
 		pedited->colorToning.shadowsColSat = shadowsColSat->getEditedState ();
 	}
-//	if (pedited) {
-//		pedited->colorToning.method     = method->get_active_row_number()!=6;
-//	}
 
 	if (method->get_active_row_number()==0)
 		pp->colorToning.method = "Lab";
-//	else if (method->get_active_row_number()==1)
-//		pp->colorToning.method = "Split";
 	else if (method->get_active_row_number()==1)
 		pp->colorToning.method = "RGBSliders";
 	else if (method->get_active_row_number()==2)
 		pp->colorToning.method = "RGBCurves";
 	else if (method->get_active_row_number()==3)
 		pp->colorToning.method = "Splitco";
-//	else if (method->get_active_row_number()==5)
-//		pp->colorToning.method = "Splitbal";
 	else if (method->get_active_row_number()==4)
 		pp->colorToning.method = "Splitlr";
 
@@ -605,8 +582,6 @@ void ColorToning::setDefaults (const ProcParams* defParams, const ParamsEdited* 
 	redlow->setDefault (defParams->colorToning.redlow);
 	greenlow->setDefault (defParams->colorToning.greenlow);
 	bluelow->setDefault (defParams->colorToning.bluelow);
-	//satlow->setDefault (defParams->colorToning.satlow);
-	//sathigh->setDefault (defParams->colorToning.sathigh);
 	balance->setDefault (defParams->colorToning.balance);
 	redmed->setDefault (defParams->colorToning.redmed);
 	greenmed->setDefault (defParams->colorToning.greenmed);
@@ -618,14 +593,12 @@ void ColorToning::setDefaults (const ProcParams* defParams, const ParamsEdited* 
 	saturatedOpacity->setDefault (defParams->colorToning.saturatedOpacity);
 	hlColSat->setDefault<int> (defParams->colorToning.hlColSat);
 	shadowsColSat->setDefault<int> (defParams->colorToning.shadowsColSat);
-	strengthprotection->setDefault (defParams->colorToning.strengthprotection);
+	strength->setDefault (defParams->colorToning.strength);
 
 	if (pedited) {
 		redlow->setDefaultEditedState (pedited->colorToning.redlow ? Edited : UnEdited);
 		greenlow->setDefaultEditedState (pedited->colorToning.greenlow ? Edited : UnEdited);
 		bluelow->setDefaultEditedState (pedited->colorToning.bluelow ? Edited : UnEdited);
-		//satlow->setDefaultEditedState (pedited->colorToning.satlow ? Edited : UnEdited);
-		//sathigh->setDefaultEditedState (pedited->colorToning.sathigh ? Edited : UnEdited);
 		balance->setDefaultEditedState (pedited->colorToning.balance ? Edited : UnEdited);
 		redmed->setDefaultEditedState (pedited->colorToning.redmed ? Edited : UnEdited);
 		greenmed->setDefaultEditedState (pedited->colorToning.greenmed ? Edited : UnEdited);
@@ -633,18 +606,16 @@ void ColorToning::setDefaults (const ProcParams* defParams, const ParamsEdited* 
 		redhigh->setDefaultEditedState (pedited->colorToning.redhigh ? Edited : UnEdited);
 		greenhigh->setDefaultEditedState (pedited->colorToning.greenhigh ? Edited : UnEdited);
 		bluehigh->setDefaultEditedState (pedited->colorToning.bluehigh ? Edited : UnEdited);
-		satProtectionThreshold->setDefaultEditedState (pedited->colorToning.satProtectionThreshold ? Edited : UnEdited);
-		saturatedOpacity->setDefaultEditedState (pedited->colorToning.saturatedOpacity ? Edited : UnEdited);
+		satProtectionThreshold->setDefaultEditedState (pedited->colorToning.satprotectionthreshold ? Edited : UnEdited);
+		saturatedOpacity->setDefaultEditedState (pedited->colorToning.saturatedopacity ? Edited : UnEdited);
 		hlColSat->setDefaultEditedState (pedited->colorToning.hlColSat ? Edited : UnEdited);
 		shadowsColSat->setDefaultEditedState (pedited->colorToning.shadowsColSat ? Edited : UnEdited);
-		strengthprotection->setDefaultEditedState (pedited->colorToning.strengthprotection ? Edited : UnEdited);
+		strength->setDefaultEditedState (pedited->colorToning.strength ? Edited : UnEdited);
 	}
 	else {
 		redlow->setDefaultEditedState (Irrelevant);
 		greenlow->setDefaultEditedState (Irrelevant);
 		bluelow->setDefaultEditedState (Irrelevant);
-		//satlow->setDefaultEditedState (Irrelevant);
-		//sathigh->setDefaultEditedState (Irrelevant);
 		balance->setDefaultEditedState (Irrelevant);
 		redmed->setDefaultEditedState (Irrelevant);
 		greenmed->setDefaultEditedState (Irrelevant);
@@ -656,7 +627,7 @@ void ColorToning::setDefaults (const ProcParams* defParams, const ParamsEdited* 
 		saturatedOpacity->setDefaultEditedState (Irrelevant);
 		hlColSat->setDefaultEditedState (Irrelevant);
 		shadowsColSat->setDefaultEditedState (Irrelevant);
-		strengthprotection->setDefaultEditedState (Irrelevant);
+		strength->setDefaultEditedState (Irrelevant);
 	}
 }
 
@@ -664,8 +635,6 @@ void ColorToning::setAdjusterBehavior (bool splitAdd, bool satThresholdAdd, bool
 	redlow->setAddMode(splitAdd);
 	greenlow->setAddMode(splitAdd);
 	bluelow->setAddMode(splitAdd);
-	//satlow->setAddMode(splitAdd);
-	//sathigh->setAddMode(splitAdd);
 	balance->setAddMode(splitAdd);
 	redmed->setAddMode(splitAdd);
 	greenmed->setAddMode(splitAdd);
@@ -676,7 +645,7 @@ void ColorToning::setAdjusterBehavior (bool splitAdd, bool satThresholdAdd, bool
 	satProtectionThreshold->setAddMode(satThresholdAdd);
 	saturatedOpacity->setAddMode(satOpacityAdd);
 	balance->setAddMode(balanceAdd);
-	strengthprotection->setAddMode(strprotectAdd);
+	strength->setAddMode(strprotectAdd);
 	
 }
 
@@ -705,7 +674,7 @@ bool ColorToning::CTComp_ () {
 	disableListener ();
 	saturatedOpacity->setValue (nextsatpr);
 	satProtectionThreshold->setValue (nextsatth);
-	if(nextbw==1) {
+/*	if(nextbw==1) {
 		saturatedOpacity->show();
 		satProtectionThreshold->show();
 		autosat->show();
@@ -715,7 +684,7 @@ bool ColorToning::CTComp_ () {
 		satProtectionThreshold->hide();
 		autosat->hide();
 	}
-	
+*/	
 	enableListener ();
 
 	return false;
@@ -746,19 +715,13 @@ void ColorToning::adjusterChanged (Adjuster* a, double newval) {
 		listener->panelChanged (EvColorToningbluehigh, bluehigh->getTextValue());
 	else if (a==balance)
 		listener->panelChanged (EvColorToningbalance, balance->getTextValue());
-	/*else if (a==satlow)
-		listener->panelChanged (EvColorToningsatlow, satlow->getTextValue());
-	else if (a==sathigh)
-		listener->panelChanged (EvColorToningsatlow, sathigh->getTextValue());*/
 	else if (a==satProtectionThreshold)
 		listener->panelChanged (EvColorToningSatThreshold, a->getTextValue());
 	else if (a==saturatedOpacity)
 		listener->panelChanged (EvColorToningSatProtection, a->getTextValue());
-	else if (a==strengthprotection)
-		listener->panelChanged (EvColorToningStrProtection, a->getTextValue());
-		
-
-		}
+	else if (a==strength)
+		listener->panelChanged (EvColorToningStrength, a->getTextValue());
+}
 
 //Two Color changed
 void ColorToning::twocolorChanged (bool changedbymethod) {
@@ -832,15 +795,27 @@ void ColorToning::methodChanged () {
 			opacityCurveEditorG->hide();
 			clCurveEditorG->hide();
 			cl2CurveEditorG->hide();
-			neutralCurvesHBox->show();
+			//neutralCurves->show();
 			hlColSat->hide();
 			shadowsColSat->hide();
 			balance->hide();
-			satLimiterSep->show();
+//			satLimiterSep->show();
+			if(autosat->get_active()) {
+			saturatedOpacity->set_sensitive(false);
+			satProtectionThreshold->set_sensitive(false);
+			satProtectionThreshold->show();
+			saturatedOpacity->show();			
+			}
+			else {
 			satProtectionThreshold->show();
 			saturatedOpacity->show();
-			
-			strengthprotection->hide();
+			saturatedOpacity->set_sensitive(true);
+			satProtectionThreshold->set_sensitive(true);
+			}
+			autosat->show();
+			p1Frame->show();
+
+			strength->hide();
 			chanMixerBox->hide();
 			neutrHBox->hide();
 			lumamode->hide();
@@ -860,21 +835,31 @@ void ColorToning::methodChanged () {
 			opacityCurveEditorG->hide();
 			clCurveEditorG->hide();
 			cl2CurveEditorG->hide();
-			neutralCurvesHBox->hide();
+			//neutralCurves->hide();
 			hlColSat->show();
 			shadowsColSat->show();
 			balance->show();
-			satLimiterSep->show();
+//			satLimiterSep->show();
+			autosat->show();
+			p1Frame->show();
+			if(autosat->get_active()) {
+			saturatedOpacity->set_sensitive(false);
+			satProtectionThreshold->set_sensitive(false);
+			satProtectionThreshold->show();
+			saturatedOpacity->show();			
+			}
+			else {
 			satProtectionThreshold->show();
 			saturatedOpacity->show();
-			strengthprotection->hide();
+			saturatedOpacity->set_sensitive(true);
+			satProtectionThreshold->set_sensitive(true);
+			}
+			
+			strength->hide();
 			chanMixerBox->hide();
 			neutrHBox->hide();
 			lumamode->hide();
 
-			//splitSep->hide();
-			//satlow->hide();
-			//sathigh->hide();
 		}
 		else if (method->get_active_row_number()==2) {  // RGB Curves
 			colorSep->hide();
@@ -886,20 +871,30 @@ void ColorToning::methodChanged () {
 			opacityCurveEditorG->show();
 			clCurveEditorG->hide();
 			cl2CurveEditorG->hide();
-			neutralCurvesHBox->show();
+			//neutralCurves->show();
 			hlColSat->hide();
 			shadowsColSat->hide();
 			balance->hide();
-			satLimiterSep->show();
+//			satLimiterSep->show();
+			p1Frame->show();
+
+			autosat->show();
+			if(autosat->get_active()) {
+			saturatedOpacity->set_sensitive(false);
+			satProtectionThreshold->set_sensitive(false);
+			satProtectionThreshold->show();
+			saturatedOpacity->show();			
+			}
+			else {
 			satProtectionThreshold->show();
 			saturatedOpacity->show();
-			strengthprotection->hide();
+			saturatedOpacity->set_sensitive(true);
+			satProtectionThreshold->set_sensitive(true);
+			}
+			strength->hide();
 			chanMixerBox->hide();
 			neutrHBox->hide();
 			lumamode->hide();
-			//splitSep->hide();
-			//satlow->hide();
-			//sathigh->hide();
 		}
 		else if (method->get_active_row_number()==3) {  // Split LR
 			colorSep->hide();
@@ -911,20 +906,20 @@ void ColorToning::methodChanged () {
 			opacityCurveEditorG->hide();
 			clCurveEditorG->hide();
 			cl2CurveEditorG->hide();
-			neutralCurvesHBox->hide();
+			//neutralCurves->hide();
 			hlColSat->hide();
 			shadowsColSat->hide();
 			balance->hide();
-			satLimiterSep->hide();
+			p1Frame->hide();
+			
+//			satLimiterSep->hide();
+			autosat->hide();
 			satProtectionThreshold->hide();
 			saturatedOpacity->hide();
-			strengthprotection->show();
+			strength->show();
 			chanMixerBox->show();
 			neutrHBox->show();
 			lumamode->show();
-			//splitSep->show();
-			//satlow->hide();
-			//sathigh->hide();
 		}
 		else if (method->get_active_row_number()==4) {  // Split Color
 			colorSep->show();
@@ -935,21 +930,21 @@ void ColorToning::methodChanged () {
 			opacityCurveEditorG->hide();
 			clCurveEditorG->hide();
 			cl2CurveEditorG->hide();
-			neutralCurvesHBox->hide();
+			//neutralCurves->hide();
 			hlColSat->show();
 			shadowsColSat->show();
 			balance->show();
-			satLimiterSep->hide();
+//			satLimiterSep->hide();
+			p1Frame->hide();
+
+			autosat->hide();
 			satProtectionThreshold->hide();
 			saturatedOpacity->hide();
-			strengthprotection->show();
+			strength->show();
 
 			chanMixerBox->hide();
 			neutrHBox->hide();
 			lumamode->show();
-			//splitSep->hide();
-			//satlow->show();
-			//sathigh->show();
 		}
 	}
 
@@ -1083,8 +1078,6 @@ void ColorToning::trimValues (rtengine::procparams::ProcParams* pp) {
 	redlow->trimValue(pp->colorToning.redlow);
 	greenlow->trimValue(pp->colorToning.greenlow);
 	bluelow->trimValue(pp->colorToning.bluelow);
-	//satlow->trimValue(pp->colorToning.satlow);
-	//sathigh->trimValue(pp->colorToning.sathigh);
 	balance->trimValue(pp->colorToning.balance);
 	redmed->trimValue(pp->colorToning.redmed);
 	greenmed->trimValue(pp->colorToning.greenmed);
@@ -1104,8 +1097,6 @@ void ColorToning::setBatchMode (bool batchMode)
 	redlow->showEditedCB ();
 	greenlow->showEditedCB ();
 	bluelow->showEditedCB ();
-	//satlow->showEditedCB ();
-	//sathigh->showEditedCB ();
 	balance->showEditedCB ();
 	redmed->showEditedCB ();
 	greenmed->showEditedCB ();

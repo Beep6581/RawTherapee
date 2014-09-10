@@ -222,10 +222,24 @@ void Crop::update (int todo) {
                    parent->imgsrc->getGamma());
         }*/
     double rrm, ggm, bbm;
+    float satLimit = float(params.colorToning.satProtectionThreshold)/100.f*0.7f+0.3f;
+    float satLimitOpacity = 1.f-(float(params.colorToning.saturatedOpacity)/100.f);
+
+    if(params.colorToning.enabled  && params.colorToning.autosat){//for colortoning evaluation of saturation settings
+        float moyS=0.f;
+        float eqty=0.f;
+        parent->ipf.moyeqt (baseCrop, moyS, eqty);//return image : mean saturation and standard dev of saturation
+        //printf("moy=%f ET=%f\n", moyS,eqty);
+        float satp=((moyS+1.5f*eqty)-0.3f)/0.7f;//1.5 sigma ==> 93% pixels with high saturation -0.3 / 0.7 convert to Hombre scale
+        if(satp >= 0.92f) satp=0.92f;//avoid values too high (out of gamut)
+        if(satp <= 0.15f) satp=0.15f;//avoid too low values
+        satLimit= 100.f*satp;
+        satLimitOpacity= 100.f*(moyS-0.85f*eqty);//-0.85 sigma==>20% pixels with low saturation
+    }
 
     if (todo & M_RGBCURVE)
         parent->ipf.rgbProc (baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
-                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->ctColorCurve, parent->ctOpacityCurve, parent->clToningcurve,parent->cl2Toningcurve,
+                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, satLimit ,satLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->clToningcurve,parent->cl2Toningcurve,
                              parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW,rrm, ggm, bbm,
                              parent->bwAutoR, parent->bwAutoG, parent->bwAutoB);
 
