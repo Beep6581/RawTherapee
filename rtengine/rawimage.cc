@@ -350,14 +350,14 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
 	  meta_data = (char *) (image + height*width);
 	  if(!image)
 		  return 200;
-
+/* Issue 2467
 	  if (setjmp (failure)) {
           if (image) { free (image); image=NULL; }
           if (raw_image) { free(raw_image); raw_image=NULL; }
 		  fclose(ifp); ifp=NULL;
 		  return 100;
 	  }
-
+*/
 	  // Load raw pixels data
 	  fseek (ifp, data_offset, SEEK_SET);
 	  (this->*load_raw)();

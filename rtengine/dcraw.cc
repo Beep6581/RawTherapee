@@ -259,7 +259,7 @@ void CLASS derror()
       fprintf (stderr,_("Corrupt data near 0x%llx\n"), (INT64) ftello(ifp));
   }
   data_error++;
-/*RT*/  longjmp (failure, 1);
+/*RT Issue 2467  longjmp (failure, 1);*/
 }
 
 ushort CLASS sget2 (uchar *s)
