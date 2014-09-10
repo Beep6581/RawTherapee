@@ -20,7 +20,6 @@
 #define __RAWIMAGE_H
 
 #include <ctime>
-#include <glibmm.h>
 #include "dcraw.h"
 #include "imageio.h"
 
@@ -28,9 +27,9 @@ namespace rtengine {
 
 struct badPix
 {
-	int x;
-	int y;
-	badPix(	int xc, int yc ):x(xc),y(yc){}
+	uint16_t x;
+	uint16_t y;
+	badPix(	uint16_t xc, uint16_t yc ):x(xc),y(yc){}
 };
 
 class PixelsMap{
@@ -66,12 +65,12 @@ public:
 	}
 
 	// set pixels from a list
-	int set( std::list<badPix> &bp)
+	int set( std::vector<badPix> &bp)
 	{
-		int totSet=0;
-		for(std::list<badPix>::iterator iter = bp.begin(); iter != bp.end(); iter++,totSet++)
+		for(std::vector<badPix>::iterator iter = bp.begin(); iter != bp.end(); ++iter)
 			set( iter->x,iter->y);
-		return totSet;
+
+		return bp.size();
 	}
 
 	void clear(){
@@ -156,6 +155,8 @@ public:
   int get_thumbBPS(){ return thumb_load_raw ? 16 : 8; }
   bool get_thumbSwap() const;
   unsigned get_thumbLength(){ return thumb_length;}
+  bool zeroIsBad() {return zero_is_bad == 1 ? true : false;}
+
 public:
   // dcraw functions
   void scale_colors(){ if(isXtrans()) clearXtransCblack( ); DCraw::scale_colors(); }

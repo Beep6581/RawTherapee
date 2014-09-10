@@ -947,7 +947,8 @@ class RAWParams {
         double expos;
         double preser;
 
-        bool hotdeadpix_filt;
+        bool hotPixelFilter;
+        bool deadPixelFilter;
         int hotdeadpix_thresh;
 };
 

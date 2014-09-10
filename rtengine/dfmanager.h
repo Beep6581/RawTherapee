@@ -55,11 +55,11 @@ public:
 	std::string key(){ return key( maker,model,iso,shutter); }
 
 	RawImage *getRawImage();
-	std::list<badPix> &getHotPixels();
+	std::vector<badPix> &getHotPixels();
 
 protected:
 	RawImage *ri; ///< Dark Frame raw data
-	std::list<badPix> badPixels; ///< Extracted hot pixels
+	std::vector<badPix> badPixels; ///< Extracted hot pixels
 
 	void updateBadPixelList( RawImage *df );
 	void updateRawImage();
@@ -73,13 +73,13 @@ public:
 	void getStat( int &totFiles, int &totTemplate);
 	RawImage *searchDarkFrame( const std::string &mak, const std::string &mod, int iso, double shut, time_t t );
 	RawImage *searchDarkFrame( const Glib::ustring filename );
-	std::list<badPix> *getHotPixels ( const std::string &mak, const std::string &mod, int iso, double shut, time_t t );
-	std::list<badPix> *getHotPixels ( const Glib::ustring filename );
-	std::list<badPix> *getBadPixels ( const std::string &mak, const std::string &mod, const std::string &serial);
+	std::vector<badPix> *getHotPixels ( const std::string &mak, const std::string &mod, int iso, double shut, time_t t );
+	std::vector<badPix> *getHotPixels ( const Glib::ustring filename );
+	std::vector<badPix> *getBadPixels ( const std::string &mak, const std::string &mod, const std::string &serial);
 
 protected:
 	typedef std::multimap<std::string,dfInfo> dfList_t;
-	typedef std::map<std::string, std::list<badPix> > bpList_t;
+	typedef std::map<std::string, std::vector<badPix> > bpList_t;
 	dfList_t dfList;
 	bpList_t bpList;
 	bool initialized;

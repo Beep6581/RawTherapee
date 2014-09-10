@@ -118,7 +118,7 @@ LUMINANCECURVE,   // EvLSaturation,
 LUMINANCECURVE,   // EvLaCurve,
 LUMINANCECURVE,   // EvLbCurve,
 DEMOSAIC,         // EvDemosaicMethod
-DARKFRAME,        // EvPreProcessHotDeadPixel
+DARKFRAME,        // EvPreProcessHotPixel
 RGBCURVE,         // EvSaturation,
 RGBCURVE,         // EvHSVEqualizerH,
 RGBCURVE,         // EvHSVEqualizerS,
@@ -318,8 +318,8 @@ RGBCURVE,         //EvFilmSimulationEnabled
 RGBCURVE,         //EvFilmSimulationStrength
 RGBCURVE,         //EvFilmSimulationFilename
 ALLNORAW,			//	EvDPDNLCurve
-ALLNORAW			//	EvDPDNsmet
-
+ALLNORAW,			//	EvDPDNsmet
+DARKFRAME        // EvPreProcessDeadPixel
 
 
 };

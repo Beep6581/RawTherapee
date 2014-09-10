@@ -835,7 +835,8 @@ void ProcParams::setDefaults () {
     raw.cared = 0;
     raw.cablue = 0;
     raw.ca_autocorrect = false;
-    raw.hotdeadpix_filt = false;
+    raw.hotPixelFilter = false;
+    raw.deadPixelFilter = false;
     raw.hotdeadpix_thresh = 40;
     exif.clear ();
     iptc.clear ();
@@ -1494,7 +1495,8 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->raw.caCorrection)         keyFile.set_boolean ("RAW", "CA", raw.ca_autocorrect );
     if (!pedited || pedited->raw.caRed)                keyFile.set_double  ("RAW", "CARed", raw.cared );
     if (!pedited || pedited->raw.caBlue)               keyFile.set_double  ("RAW", "CABlue", raw.cablue );
-    if (!pedited || pedited->raw.hotDeadPixelFilter)   keyFile.set_boolean ("RAW", "HotDeadPixels", raw.hotdeadpix_filt );
+    if (!pedited || pedited->raw.hotPixelFilter)       keyFile.set_boolean ("RAW", "HotPixelFilter", raw.hotPixelFilter );
+    if (!pedited || pedited->raw.deadPixelFilter)      keyFile.set_boolean ("RAW", "DeadPixelFilter", raw.deadPixelFilter );
     if (!pedited || pedited->raw.hotDeadPixelThresh)   keyFile.set_integer ("RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh );
 
     if (!pedited || pedited->raw.bayersensor.method)          keyFile.set_string  ("RAW Bayer", "Method", raw.bayersensor.method );
@@ -2201,7 +2203,11 @@ if (keyFile.has_group ("RAW")) {
     if (keyFile.has_key ("RAW", "CA"))                       { raw.ca_autocorrect = keyFile.get_boolean ("RAW", "CA" ); if (pedited) pedited->raw.caCorrection = true; }
     if (keyFile.has_key ("RAW", "CARed"))                    { raw.cared = keyFile.get_double ("RAW", "CARed" ); if (pedited) pedited->raw.caRed = true; }
     if (keyFile.has_key ("RAW", "CABlue"))                   { raw.cablue = keyFile.get_double ("RAW", "CABlue" ); if (pedited) pedited->raw.caBlue = true; }
-    if (keyFile.has_key ("RAW", "HotDeadPixels"))            { raw.hotdeadpix_filt = keyFile.get_boolean ("RAW", "HotDeadPixels" ); if (pedited) pedited->raw.hotDeadPixelFilter = true; }
+    // for compatibility to elder pp3 versions
+    if (keyFile.has_key ("RAW", "HotDeadPixels"))            { raw.deadPixelFilter = raw.hotPixelFilter = keyFile.get_boolean ("RAW", "HotDeadPixels" ); if (pedited) pedited->raw.hotPixelFilter = pedited->raw.deadPixelFilter = true; }
+    if (keyFile.has_key ("RAW", "HotPixelFilter"))           { raw.hotPixelFilter = keyFile.get_boolean ("RAW", "HotPixelFilter" ); if (pedited) pedited->raw.hotPixelFilter = true; }
+    if (keyFile.has_key ("RAW", "DeadPixelFilter"))          { raw.deadPixelFilter = keyFile.get_boolean ("RAW", "DeadPixelFilter" ); if (pedited) pedited->raw.deadPixelFilter = true; }
+    
     if (keyFile.has_key ("RAW", "HotDeadPixelThresh"))       { raw.hotdeadpix_thresh = keyFile.get_integer ("RAW", "HotDeadPixelThresh" ); if (pedited) pedited->raw.hotDeadPixelThresh = true; }
     if (keyFile.has_key ("RAW", "PreExposure"))              { raw.expos =keyFile.get_double("RAW", "PreExposure"); if (pedited) pedited->raw.exPos = true; }
     if (keyFile.has_key ("RAW", "PrePreserv"))               { raw.preser =keyFile.get_double("RAW", "PrePreserv"); if (pedited) pedited->raw.exPreser = true; }
@@ -2570,7 +2576,8 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& raw.ca_autocorrect == other.raw.ca_autocorrect
 		&& raw.cared == other.raw.cared
 		&& raw.cablue == other.raw.cablue
-		&& raw.hotdeadpix_filt == other.raw.hotdeadpix_filt
+		&& raw.hotPixelFilter == other.raw.hotPixelFilter
+		&& raw.deadPixelFilter == other.raw.deadPixelFilter
 		&& raw.hotdeadpix_thresh == other.raw.hotdeadpix_thresh
 		&& icm.input == other.icm.input
 		&& icm.toneCurve == other.icm.toneCurve

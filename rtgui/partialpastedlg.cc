@@ -97,7 +97,8 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     raw_ca_autocorrect  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_AUTO")));
     raw_cared           = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_CARED")));
     raw_cablue          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_CABLUE")));
-    raw_hotdeadpix_filt = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT")));
+    raw_hotpix_filt     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_HOTPIXFILT")));
+    raw_deadpix_filt    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_DEADPIXFILT")));
     raw_linenoise       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_LINEDENOISE")));
     raw_greenthresh     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_GREENEQUIL")));
     raw_method          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_DMETHOD")));
@@ -190,7 +191,8 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
 	vboxes[6]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
 	vboxes[6]->pack_start (*raw_linenoise, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*raw_greenthresh, Gtk::PACK_SHRINK, 2);
-	vboxes[6]->pack_start (*raw_hotdeadpix_filt, Gtk::PACK_SHRINK, 2);
+	vboxes[6]->pack_start (*raw_hotpix_filt, Gtk::PACK_SHRINK, 2);
+	vboxes[6]->pack_start (*raw_deadpix_filt, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
 	vboxes[6]->pack_start (*raw_expos, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*raw_preser, Gtk::PACK_SHRINK, 2);
@@ -307,7 +309,8 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     raw_ca_autocorrectConn  = raw_ca_autocorrect->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_caredConn           = raw_cared->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_cablueConn          = raw_cablue->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
-    raw_hotdeadpix_filtConn = raw_hotdeadpix_filt->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_hotpix_filtConn     = raw_hotpix_filt->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_deadpix_filtConn    = raw_deadpix_filt->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_linenoiseConn       = raw_linenoise->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_greenthreshConn     = raw_greenthresh->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     df_fileConn             = df_file->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
@@ -378,7 +381,8 @@ void PartialPasteDlg::rawToggled () {
 	raw_ca_autocorrectConn.block (true);
 	raw_caredConn.block (true);
 	raw_cablueConn.block (true);
-	raw_hotdeadpix_filtConn.block (true);
+	raw_hotpix_filtConn.block (true);
+	raw_deadpix_filtConn.block (true);
 	raw_linenoiseConn.block (true);
 	raw_greenthreshConn.block (true);
 	df_fileConn.block (true);
@@ -403,7 +407,8 @@ void PartialPasteDlg::rawToggled () {
     raw_ca_autocorrect->set_active (raw->get_active ());
     raw_cared->set_active (raw->get_active ());
     raw_cablue->set_active (raw->get_active ());
-    raw_hotdeadpix_filt->set_active (raw->get_active ());
+    raw_hotpix_filt->set_active (raw->get_active ());
+    raw_deadpix_filt->set_active (raw->get_active ());
     raw_linenoise->set_active (raw->get_active ());
     raw_greenthresh->set_active (raw->get_active ());
     df_file->set_active (raw->get_active ());
@@ -426,7 +431,8 @@ void PartialPasteDlg::rawToggled () {
     raw_ca_autocorrectConn.block (false);
     raw_caredConn.block (false);
     raw_cablueConn.block (false);
-    raw_hotdeadpix_filtConn.block (false);
+    raw_hotpix_filtConn.block (false);
+    raw_deadpix_filtConn.block (false);
     raw_linenoiseConn.block (false);
     raw_greenthreshConn.block (false);
     df_fileConn.block (false);
@@ -688,7 +694,9 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     if (!raw_ca_autocorrect->get_active ())    filterPE.raw.caCorrection       = falsePE.raw.caCorrection;
     if (!raw_cared->get_active ())             filterPE.raw.caRed              = falsePE.raw.caRed;
     if (!raw_cablue->get_active ())            filterPE.raw.caBlue             = falsePE.raw.caBlue;
-    if (!raw_hotdeadpix_filt->get_active ()) { filterPE.raw.hotDeadPixelFilter = falsePE.raw.hotDeadPixelFilter;
+    if (!raw_hotpix_filt->get_active ())     { filterPE.raw.hotPixelFilter     = falsePE.raw.hotPixelFilter;
+                                               filterPE.raw.hotDeadPixelThresh = falsePE.raw.hotDeadPixelThresh; }
+    if (!raw_deadpix_filt->get_active ())    { filterPE.raw.deadPixelFilter    = falsePE.raw.deadPixelFilter;
                                                filterPE.raw.hotDeadPixelThresh = falsePE.raw.hotDeadPixelThresh; }
     if (!df_file->get_active ())               filterPE.raw.darkFrame          = falsePE.raw.darkFrame;
     if (!df_AutoSelect->get_active ())         filterPE.raw.dfAuto             = falsePE.raw.dfAuto;

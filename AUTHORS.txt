@@ -8,6 +8,7 @@ Developement contributors, in last name alphabetical order:
   Martin Burri
   Javier Celaya
   Jacques Desmis
+  Pavlov Dmitry
   Oliver Duis
   Maciek Dworak
   Michael Ezra
@@ -36,6 +37,7 @@ Other contributors (profiles, ideas, mockups, testing, forum activity, translati
   Thorsten Bartolomäus
   Patrik Brunner
   Fernando Carello
+  Pat David
   Reine Edvardsson
   André Gauthier
   Sébastien Guyader
