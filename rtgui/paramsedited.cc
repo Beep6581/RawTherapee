@@ -71,9 +71,9 @@ void ParamsEdited::set (bool v) {
 	colorToning.autosat      = v;
 	colorToning.opacityCurve = v;
 	colorToning.colorCurve   = v;
-	colorToning.satProtectionThreshold = v;
-	colorToning.saturatedOpacity       = v;	
-	colorToning.strengthprotection       = v;
+	colorToning.satprotectionthreshold = v;
+	colorToning.saturatedopacity       = v;	
+	colorToning.strength               = v;
 	colorToning.shadowsColSat          = v;
 	colorToning.hlColSat   = v;
 	colorToning.balance    = v;
@@ -402,9 +402,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         colorToning.opacityCurve = colorToning.opacityCurve && p.colorToning.opacityCurve == other.colorToning.opacityCurve;
         colorToning.colorCurve = colorToning.colorCurve && p.colorToning.colorCurve == other.colorToning.colorCurve;
         colorToning.autosat = colorToning.autosat && p.colorToning.autosat == other.colorToning.autosat;
-        colorToning.satProtectionThreshold = colorToning.satProtectionThreshold && p.colorToning.satProtectionThreshold == other.colorToning.satProtectionThreshold;
-        colorToning.saturatedOpacity = colorToning.saturatedOpacity && p.colorToning.saturatedOpacity == other.colorToning.saturatedOpacity;
-        colorToning.strengthprotection = colorToning.strengthprotection && p.colorToning.strengthprotection == other.colorToning.strengthprotection;
+        colorToning.satprotectionthreshold = colorToning.satprotectionthreshold && p.colorToning.satProtectionThreshold == other.colorToning.satProtectionThreshold;
+        colorToning.saturatedopacity = colorToning.saturatedopacity && p.colorToning.saturatedOpacity == other.colorToning.saturatedOpacity;
+        colorToning.strength = colorToning.strength && p.colorToning.strength == other.colorToning.strength;
         colorToning.shadowsColSat = colorToning.shadowsColSat && p.colorToning.shadowsColSat == other.colorToning.shadowsColSat;
         colorToning.hlColSat = colorToning.hlColSat && p.colorToning.hlColSat == other.colorToning.hlColSat;
         colorToning.balance = colorToning.balance && p.colorToning.balance == other.colorToning.balance;
@@ -732,10 +732,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (colorToning.enabled)				toEdit.colorToning.enabled		= mods.colorToning.enabled;
 	if (colorToning.opacityCurve)			toEdit.colorToning.opacityCurve	= mods.colorToning.opacityCurve;
 	if (colorToning.colorCurve)				toEdit.colorToning.colorCurve				= mods.colorToning.colorCurve;
-	if (colorToning.satProtectionThreshold)	toEdit.colorToning.satProtectionThreshold	= dontforceSet && options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD] ? toEdit.colorToning.satProtectionThreshold + mods.colorToning.satProtectionThreshold : mods.colorToning.satProtectionThreshold;
-	if (colorToning.autosat)				toEdit.colorToning.autosat		= mods.colorToning.autosat;
-	if (colorToning.saturatedOpacity)		toEdit.colorToning.saturatedOpacity			= dontforceSet && options.baBehav[ADDSET_COLORTONING_SATOPACITY] ? toEdit.colorToning.saturatedOpacity + mods.colorToning.saturatedOpacity : mods.colorToning.saturatedOpacity;
-	if (colorToning.strengthprotection)		toEdit.colorToning.strengthprotection			= dontforceSet && options.baBehav[ADDSET_COLORTONING_STRPROTECT] ? toEdit.colorToning.strengthprotection + mods.colorToning.strengthprotection: mods.colorToning.strengthprotection;
+	if (colorToning.satprotectionthreshold)	toEdit.colorToning.satProtectionThreshold	= dontforceSet && options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD] ? toEdit.colorToning.satProtectionThreshold + mods.colorToning.satProtectionThreshold : mods.colorToning.satProtectionThreshold;
+	if (colorToning.autosat)				toEdit.colorToning.autosat					= mods.colorToning.autosat;
+	if (colorToning.saturatedopacity)		toEdit.colorToning.saturatedOpacity			= dontforceSet && options.baBehav[ADDSET_COLORTONING_SATOPACITY] ? toEdit.colorToning.saturatedOpacity + mods.colorToning.saturatedOpacity : mods.colorToning.saturatedOpacity;
+	if (colorToning.strength)				toEdit.colorToning.strength					= dontforceSet && options.baBehav[ADDSET_COLORTONING_STRENGTH] ? toEdit.colorToning.strength + mods.colorToning.strength: mods.colorToning.strength;
 
 	if (colorToning.shadowsColSat)			toEdit.colorToning.shadowsColSat			= mods.colorToning.shadowsColSat;
 	if (colorToning.hlColSat)				toEdit.colorToning.hlColSat	= mods.colorToning.hlColSat;

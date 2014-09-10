@@ -252,7 +252,7 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_COLORTONING_SATURATIONTHRESHOLD"),ADDSET_COLORTONING_SATTHRESHOLD , true);
     appendBehavList (mi, M("TP_COLORTONING_SATURATEDOPACITY"),ADDSET_COLORTONING_SATOPACITY , true);
     appendBehavList (mi, M("TP_COLORTONING_BALANCE"),ADDSET_COLORTONING_BALANCE , true);
-    appendBehavList (mi, M("TP_COLORTONING_STRPROTECT"),ADDSET_COLORTONING_STRPROTECT , true);
+    appendBehavList (mi, M("TP_COLORTONING_STRENGTH"),ADDSET_COLORTONING_STRENGTH , true);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_ROTATE_LABEL"));

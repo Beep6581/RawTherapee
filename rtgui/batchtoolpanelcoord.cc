@@ -177,7 +177,8 @@ void BatchToolPanelCoordinator::initSession () {
 			sharpenEdge->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENEDGE_AMOUNT],options.baBehav[ADDSET_SHARPENEDGE_PASS]);
 			sharpenMicro->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENMICRO_AMOUNT],options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY]);
 			icm->setAdjusterBehavior (options.baBehav[ADDSET_FREE_OUPUT_GAMMA],options.baBehav[ADDSET_FREE_OUTPUT_SLOPE]);
-			colortoning->setAdjusterBehavior (options.baBehav[ADDSET_COLORTONING_SPLIT], options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD], options.baBehav[ADDSET_COLORTONING_SATOPACITY], options.baBehav[ADDSET_COLORTONING_STRPROTECT], options.baBehav[ADDSET_COLORTONING_BALANCE]);
+//			colortoning->setAdjusterBehavior (options.baBehav[ADDSET_COLORTONING_SPLIT], options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD], options.baBehav[ADDSET_COLORTONING_SATOPACITY], options.baBehav[ADDSET_COLORTONING_STRPROTECT], options.baBehav[ADDSET_COLORTONING_BALANCE]);
+			colortoning->setAdjusterBehavior (options.baBehav[ADDSET_COLORTONING_SPLIT], options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD], options.baBehav[ADDSET_COLORTONING_SATOPACITY], options.baBehav[ADDSET_COLORTONING_STRENGTH], options.baBehav[ADDSET_COLORTONING_BALANCE]);
 			filmSimulation->setAdjusterBehavior(options.baBehav[ADDSET_FILMSIMULATION_STRENGTH]);
 
 			chmixer->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER] );
@@ -257,7 +258,7 @@ void BatchToolPanelCoordinator::initSession () {
 			if (options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD]) pparams.colorToning.satProtectionThreshold = 0;
 			if (options.baBehav[ADDSET_COLORTONING_SATOPACITY]) pparams.colorToning.saturatedOpacity = 0;
 			if (options.baBehav[ADDSET_COLORTONING_BALANCE]) pparams.colorToning.balance = 0;
-			if (options.baBehav[ADDSET_COLORTONING_STRPROTECT]) pparams.colorToning.strengthprotection = 0;
+			if (options.baBehav[ADDSET_COLORTONING_STRENGTH]) pparams.colorToning.strength = 0;
 
 			if (options.baBehav[ADDSET_FILMSIMULATION_STRENGTH]) pparams.filmSimulation.strength = 0;
 

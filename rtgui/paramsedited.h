@@ -51,7 +51,6 @@ class ToneCurveParamsEdited {
         bool expcomp;
         bool hrenabled;
         bool method;
-		
 };
 
 class LCurveParamsEdited {
@@ -72,10 +71,9 @@ class LCurveParamsEdited {
         bool hhcurve;
         bool lccurve;
         bool clcurve;
-		
+
         bool enabled;
         bool method;
-		
 };
 
 class RGBCurvesParamsEdited {
@@ -95,10 +93,10 @@ class ColorToningEdited {
         bool colorCurve;
         bool clcurve;
         bool method;
-        bool autosat;		
-        bool satProtectionThreshold;
-        bool saturatedOpacity;
-		bool strengthprotection;
+        bool autosat;
+        bool satprotectionthreshold;
+        bool saturatedopacity;
+        bool strength;
         bool shadowsColSat;
         bool hlColSat;
         bool balance;
