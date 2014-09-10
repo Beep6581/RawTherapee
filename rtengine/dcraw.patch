@@ -1,5 +1,5 @@
---- dcraw.c	2014-07-24 16:15:36.700261700 +0200
-+++ dcraw.cc	2014-08-19 16:28:10.968569879 +0200
+--- dcraw.c	2014-09-10 12:00:54 +0000
++++ dcraw.cc	2014-09-10 12:27:02 +0000
 @@ -1,3 +1,15 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -169,7 +169,7 @@
        fprintf (stderr,_("Corrupt data near 0x%llx\n"), (INT64) ftello(ifp));
    }
    data_error++;
-+/*RT*/  longjmp (failure, 1);
++/*RT Issue 2467  longjmp (failure, 1);*/
  }
  
  ushort CLASS sget2 (uchar *s)
