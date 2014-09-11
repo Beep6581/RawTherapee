@@ -646,6 +646,7 @@ NAVIGATOR_XY_FULL;Width: %1, Height: %2
 NAVIGATOR_XY_NA;x: --, y: --
 OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+PARTIALPASTER_FILMSIMULATION;Film Simulation
 PARTIALPASTE_BASICGROUP;Basic Settings
 PARTIALPASTE_CACORRECTION;Chromatic aberration correction
 PARTIALPASTE_CHANNELMIXERBW;Black-and-White
@@ -686,9 +687,9 @@ PARTIALPASTE_LENSPROFILE;Lens correction profile
 PARTIALPASTE_METAICMGROUP;Metadata/Color Management Settings
 PARTIALPASTE_PCVIGNETTE;Vignette filter
 PARTIALPASTE_PERSPECTIVE;Perspective
+PARTIALPASTE_PREPROCESS_DEADPIXFILT;Apply dead pixel filter
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 PARTIALPASTE_PREPROCESS_HOTPIXFILT;Apply hot pixel filter
-PARTIALPASTE_PREPROCESS_DEADPIXFILT;Apply dead pixel filter
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
 PARTIALPASTE_RAWCACORR_AUTO;CA auto-correction
 PARTIALPASTE_RAWCACORR_CABLUE;CA blue
@@ -734,6 +735,7 @@ PREFERENCES_CIEART;CIECAM02 optimization
 PREFERENCES_CIEART_LABEL;Use float precision instead of double
 PREFERENCES_CIEART_TOOLTIP;If enabled, CIECAM02 calculations are performed in the single-precision floating-point format instead of the double-precision one. This provides a small increase in speed at the expense of a negligible loss of quality.
 PREFERENCES_CLIPPINGIND;Clipping Indication
+PREFERENCES_CLUTSDIR;HaldCLUT directory
 PREFERENCES_CMETRICINTENT;Colorimetric intent
 PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\n\nThe path of the communication file (*.ini style, a.k.a. "Keyfile") is added as a command line parameter. It contains various parameters required for the scipts and image Exif to allow a rules-based processing profile generation.\n\n<b>WARNING:</b> You are responsible for using double quotes where necessary if you're using paths containing spaces.
 PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
@@ -767,6 +769,7 @@ PREFERENCES_EXTERNALEDITOR;External Editor
 PREFERENCES_FBROWSEROPTS;File Browser / Thumbnail Options
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low resolution display)
 PREFERENCES_FILEFORMAT;File format
+PREFERENCES_FILMSIMULATION;Film Simulation
 PREFERENCES_FLATFIELDFOUND;Found
 PREFERENCES_FLATFIELDSDIR;Flat-fields directory
 PREFERENCES_FLATFIELDSHOTS;shots
@@ -1091,9 +1094,9 @@ TP_COLORTONING_AUTOSAT;Automatic
 TP_COLORTONING_BALANCE;Balance
 TP_COLORTONING_BALANCE_TOOLTIP;Equilibrate tones between shadows and highlights
 TP_COLORTONING_BY;o C/L
-TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Opacity Chroma according to Luminance of C=f(L)
 TP_COLORTONING_CHROMAC;Opacity
 TP_COLORTONING_COLOR;Color
+TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Opacity Chroma according to Luminance of C=f(L)
 TP_COLORTONING_HIGHLIGHT;Highlights
 TP_COLORTONING_HUE;Hue
 TP_COLORTONING_LABCOL;Direct Colors
@@ -1117,21 +1120,21 @@ TP_COLORTONING_RGBCURVES;RGB - Curves
 TP_COLORTONING_RGBSLIDERS;RGB - Sliders
 TP_COLORTONING_SATH;Saturation highlights
 TP_COLORTONING_SATL;Saturation shadows
-TP_COLORTONING_SA;Saturation Protection
 TP_COLORTONING_SATURATEDOPACITY;Strength
 TP_COLORTONING_SATURATIONTHRESHOLD;Threshold
+TP_COLORTONING_SA;Saturation Protection
 TP_COLORTONING_SHADOWS;Shadows
 TP_COLORTONING_SPLITBAL;Shadows / Highlights + balance
 TP_COLORTONING_SPLITCOCO;Color Balance Shadows / Mid-tones / Highligths
 TP_COLORTONING_SPLITCO;Shadows / Mid-tones / Highligths
 TP_COLORTONING_SPLITLR;Saturation 2 colors
 TP_COLORTONING_STRENGTH;Strength
-TP_COLORTONING_TWOSTD;Standard chroma
+TP_COLORTONING_STR;Strength
+TP_COLORTONING_TWO2;Special chroma '2 colors'
 TP_COLORTONING_TWOALL;Special chroma
 TP_COLORTONING_TWOBY;Special 'a' and 'b'
-TP_COLORTONING_TWO2;Special chroma '2 colors'
 TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
-TP_COLORTONING_STR;Strength
+TP_COLORTONING_TWOSTD;Standard chroma
 TP_CROP_GTDIAGONALS;Rule of Diagonals
 TP_CROP_GTEPASSPORT;Biometric Passport
 TP_CROP_GTFRAME;Frame
@@ -1155,13 +1158,14 @@ TP_DARKFRAME_LABEL;Dark Frame
 TP_DEFRINGE_LABEL;Defringe
 TP_DEFRINGE_RADIUS;Radius
 TP_DEFRINGE_THRESHOLD;Threshold
-TP_DIRPYRDENOISE_33;3×3 strong
 TP_DIRPYRDENOISE_33SOFT;3×3
-TP_DIRPYRDENOISE_55;5×5 strong
+TP_DIRPYRDENOISE_33;3×3 strong
 TP_DIRPYRDENOISE_55SOFT;5×5
+TP_DIRPYRDENOISE_55;5×5 strong
 TP_DIRPYRDENOISE_77;7×7 (slow)
 TP_DIRPYRDENOISE_BLUE;Chrominance - Blue-Yellow
 TP_DIRPYRDENOISE_CHROMA;Chrominance - Master
+TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modulates action of 'Luminance' denoise
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on the gamma of the input color profile. An sRGB gamma is assumed, thus if the image uses an input color profile of a different gamma, the effects of luminance noise reduction will differ.
 TP_DIRPYRDENOISE_ENH;Enhanced mode
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase.
@@ -1170,21 +1174,16 @@ TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the 
 TP_DIRPYRDENOISE_LABEL;Noise Reduction
 TP_DIRPYRDENOISE_LABM;Lab
 TP_DIRPYRDENOISE_LAB;Lab
+TP_DIRPYRDENOISE_LCURVE;Luminance curve
 TP_DIRPYRDENOISE_LDETAIL;Luminance Detail
 TP_DIRPYRDENOISE_LM;Luminance only
 TP_DIRPYRDENOISE_LUMA;Luminance
-TP_DIRPYRDENOISE_LCURVE;Luminance curve
-TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modulates action of 'Luminance' denoise
-TP_DIRPYRDENOISE_METHOD11;Quality
-TP_DIRPYRDENOISE_SHBI;Double
-TP_DIRPYRDENOISE_SHAL;Standard
-TP_DIRPYRDENOISE_SHALBI;High
-TP_DIRPYRDENOISE_SHALAL;ALL+ALL shrink
-TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern: 1-Standard- 2-High\n 1->2 increase the noise reduction effect, but extend the processing time
 TP_DIRPYRDENOISE_MEDMETHOD;Median method
 TP_DIRPYRDENOISE_MEDTYPE;Median type
 TP_DIRPYRDENOISE_MED;Median
 TP_DIRPYRDENOISE_MED_TOOLTIP;Enabled median denoising
+TP_DIRPYRDENOISE_METHOD11;Quality
+TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern: 1-Standard- 2-High\n 1->2 increase the noise reduction effect, but extend the processing time
 TP_DIRPYRDENOISE_METHOD;Method
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be used.\n\nFor non-raw images the Lab method will be used, regardless of the selection.
 TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "Lab" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
@@ -1196,6 +1195,10 @@ TP_DIRPYRDENOISE_PERF;RGB mode (raw images)
 TP_DIRPYRDENOISE_RED;Chrominance - Red-Green
 TP_DIRPYRDENOISE_RGBM;RGB
 TP_DIRPYRDENOISE_RGB;RGB
+TP_DIRPYRDENOISE_SHALAL;ALL+ALL shrink
+TP_DIRPYRDENOISE_SHALBI;High
+TP_DIRPYRDENOISE_SHAL;Standard
+TP_DIRPYRDENOISE_SHBI;Double
 TP_DIRPYRDENOISE_SOFT;3x3
 TP_DIRPYREQUALIZER_ALGO;Skin Color Range
 TP_DIRPYREQUALIZER_ALGO_FI;Fine
@@ -1247,6 +1250,9 @@ TP_EXPOSURE_TCMODE_STANDARD;Standard
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
 TP_EXPOS_BLACKPOINT_LABEL;Raw Black Points
 TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
+TP_FILMSIMULATION_LABEL;Film Simulation
+TP_FILMSIMULATION_STRENGTH;Strength
+TP_FILMSIMULATION_ZEROCLUTSFOUND;Set HaldCLUT directory in Preferences
 TP_FLATFIELD_AUTOSELECT;Auto-selection
 TP_FLATFIELD_BLURRADIUS;Blur Radius
 TP_FLATFIELD_BLURTYPE;Blur Type
@@ -1377,11 +1383,11 @@ TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Vertical
 TP_PFCURVE_CURVEEDITOR_CH;Hue
 TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color.\nHigher = more,\nLower = less.
+TP_PREPROCESS_DEADPIXFILT;Dead pixel filter
+TP_PREPROCESS_DEADPIXFILT_TOOLTIP;Tries to suppress dead pixels.
 TP_PREPROCESS_GREENEQUIL;Green Equilibration
 TP_PREPROCESS_HOTPIXFILT;Hot pixel filter
 TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Tries to suppress hot pixels.
-TP_PREPROCESS_DEADPIXFILT;Dead pixel filter
-TP_PREPROCESS_DEADPIXFILT_TOOLTIP;Tries to suppress dead pixels.
 TP_PREPROCESS_LABEL;Preprocessing
 TP_PREPROCESS_LINEDENOISE;Line Noise Filter
 TP_PREPROCESS_NO_FOUND;None found
@@ -1551,9 +1557,3 @@ ZOOMPANEL_ZOOM100;Zoom to 100%\nShortcut: <b>z</b>
 ZOOMPANEL_ZOOMFITSCREEN;Fit to screen\nShortcut: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
-TP_FILMSIMULATION_LABEL;Film Simulation
-TP_FILMSIMULATION_STRENGTH;Strength
-PARTIALPASTER_FILMSIMULATION;Film Simulation
-TP_FILMSIMULATION_ZEROCLUTSFOUND;Set HaldCLUT directory in Preferences
-PREFERENCES_FILMSIMULATION;Film Simulation
-PREFERENCES_CLUTSDIR;HaldCLUT directory
