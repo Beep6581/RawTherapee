@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
-# This Bash4 script checks whether each key in "default" appears in
-# a .cc or .h file. Those that do not are printed to screen, and the
+# This Bash4 script checks whether each key in "default" is used in
+# a .cc or .h file. Those that are not are printed to screen, and the
 # user is asked if they should be deleted from all language files.
 #
-# Keys in commented-out sections are not skipped, so they will remain
-# in the language files.
+# Keys in commented-out sections are treated as if they weren't there.
+# The following comment styles are handled:
+#  // key
+#  /* key
+#  key */
+
 # It does not handle dynamically built keys:
 #   HISTORY_MSG_
 #   EXTPROGTARGET_
@@ -17,6 +21,9 @@
 #
 # Doublecheck the deletion before committing.
 # Run ./tools/generateTranslationDiffs after running this script.
+#
+# Blame DrSlony
+# Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
 
 tmp=temp_file
 if [[ -w $tmp ]]; then
@@ -55,19 +62,32 @@ t1="$(date +%s)"
 printf "%s\n" 'Matching keys in "default" against .cc and .h files' 'Unmatched keys follow:'
 unset delLines
 while read -r 'defLine'; do
-  grep -Irl -m1 --include=\*.{cc,h} --exclude-dir="klt" "${defLine%%;*}" ../../* &>/dev/null
+  grep -Ir --include=\*.{cc,h} --exclude-dir="klt" "${defLine%%;*}" ../../* | grep -Ev "//.*${defLine%%;*}|/\*.*${defLine%%;*}|${defLine%%;*}.*\*/" &>/dev/null
   if [[ $? = 1 ]]; then
     printf "  %s\n" "${defLine%%;*}"
     delLines+=("${defLine%%;*}")
   fi
 done < <(grep -Ev "^(#|$)|HISTORY_MSG_" "default" | sed -e "s/EXTPROGTARGET_[0-9]*/EXTPROGTARGET_/" -e "s/FILEBROWSER_POPUPCOLORLABEL[0-9]*/FILEBROWSER_POPUPCOLORLABEL/" -e "s/FILEBROWSER_POPUPRANK[0-9]*/FILEBROWSER_POPUPRANK/" | sort -Vu)
-# The grep/sed line above lists keys to ignore.
+# The grep/sed line above lists keys to ignore. Exit status 1 (failure) means
+# key not found in code, destined for deletion. The piped grep in the loop
+# checks the initial match for known comment markers // /* and */
+# Sometimes a key is first found in a comment, and then the same key is found
+# in active code, therefore -m1 (stop reading after 1st match) cannot be used.
+# To remove comment support, remove the piped grep and set first grep flags to
+# -Irl -m1
 # Dynamically built keys like HISTORY_MSG_1 can't be grepped in the code,
 # so it renames KEY_1-KEY_9 to KEY_ so that they can be grepped and therefore ignored.
+# The piped grep in the loop
 
 t2="$(date +%s)"
 tt=$((t2-t1))
-printf "%s\n" "" "Scan took $tt seconds" ""
+printf "%s\n" "" "Scan took $tt seconds" "" "Double-checking the code for matched keys:"
+
+for delLine in "${delLines[@]}"; do
+  printf "%s\n" "$delLine"
+  grep -Ir --include=\*.{cc,h} --exclude-dir="klt" "${delLine}" ../../*
+done
+echo
 
 read -r -p 'Write results to "unmatched"? [y/n] '
 if [[ $REPLY = y || $REPLY = Y ]]; then
