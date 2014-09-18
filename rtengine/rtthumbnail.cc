@@ -866,7 +866,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 			{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
 			{wiprof[2][0],wiprof[2][1],wiprof[2][2]}
 			};
-	params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip);
+	bool opautili=false;		
+	params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip, opautili);
 	//params.dirpyrDenoise.getCurves(dnNoisCurve, lldenoisutili);
 
 	LabImage* labView = new LabImage (fw,fh);
@@ -898,7 +899,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 		} 
 	
     autor = autog = autob = -9000.f; // This will ask to compute the "auto" values for the B&W tool
-    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
+    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
 
     // freeing up some memory
     customToneCurve1.Reset();

@@ -83,7 +83,7 @@ ImProcCoordinator::ImProcCoordinator ()
 
       pW(-1), pH(-1),
       plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),acListener(NULL), abwListener(NULL),actListener(NULL),
-      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false),utili(false),autili(false),lldenoiseutili(false),
+      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false),utili(false),autili(false),lldenoiseutili(false), opautili(false),
 	  butili(false),ccutili(false),cclutili(false),clcutili(false),fullw(1),fullh(1)
 
     {}
@@ -356,8 +356,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             {wiprof[1][0],wiprof[1][1],wiprof[1][2]},
             {wiprof[2][0],wiprof[2][1],wiprof[2][2]}
         };
-        params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip);
-
+		opautili=false;
+        params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip, opautili);
+		if(opautili) printf("OPA OUI\n");
+		if(!opautili) printf("OPA NON\n");
+		
         bool clctoningutili=false;
         bool llctoningutili=false;
         CurveFactory::curveToningCL(clctoningutili, params.colorToning.clcurve, clToningcurve,scale==1 ? 1 : 16);
@@ -412,7 +415,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         // if it's just crop we just need the histogram, no image updates
         if ( todo & M_RGBCURVE ) {
             ipf.rgbProc (oprevi, oprevl, NULL, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
-                         rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
+                         rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
             if(params.blackwhite.enabled && params.blackwhite.autoc && abwListener) {
                 if (settings->verbose)
                     printf("ImProcCoordinator / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", bwAutoR, bwAutoG, bwAutoB);
