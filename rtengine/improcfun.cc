@@ -2134,14 +2134,14 @@ float mo=0.f;
 
 
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *editBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit ,float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, LUTf & clToningcurve,LUTf & cl2Toningcurve,
+                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit ,float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili,  LUTf & clToningcurve,LUTf & cl2Toningcurve,
                                const ToneCurve & customToneCurve1,const ToneCurve & customToneCurve2, const ToneCurve & customToneCurvebw1,const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob ) {
-    rgbProc (working, lab, editBuffer, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve,customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm, autor, autog, autob, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh);
+    rgbProc (working, lab, editBuffer, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve,customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm, autor, autog, autob, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh);
 }
 
 // Process RGB image and convert to LAB space
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *editBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit ,float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, LUTf & clToningcurve,LUTf & cl2Toningcurve,
+                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit ,float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clToningcurve,LUTf & cl2Toningcurve,
                                const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,  const ToneCurve & customToneCurvebw1,const ToneCurve & customToneCurvebw2,double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh) {
 
     LUTf iGammaLUTf;
@@ -2300,7 +2300,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
     bool hasToneCurvebw2 = bool(customToneCurvebw2);
 
     bool hasColorToning = params->colorToning.enabled && bool(ctOpacityCurve) &&  bool(ctColorCurve);
-
   //  float satLimit = float(params->colorToning.satProtectionThreshold)/100.f*0.7f+0.3f;
   //  float satLimitOpacity = 1.f-(float(params->colorToning.saturatedOpacity)/100.f);
     float strProtect = (float(params->colorToning.strength)/100.f);
@@ -2967,13 +2966,13 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 							rtemp[ti*TS+tj]=ro;
 							gtemp[ti*TS+tj]=go;
 							btemp[ti*TS+tj]=bo;	
-						}
+						} 
 					}
 //#endif
 				}
 
 				//colortoning with shift color XYZ or Lch
-				else if (params->colorToning.method=="Lab") {
+				else if (params->colorToning.method=="Lab" && opautili) {
 					int algm=0;
 					bool twocol = true;//true=500 color   false=2 color
 					int metchrom;
@@ -3010,7 +3009,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 						}
 					}
 				}
-				else if (params->colorToning.method.substr(0,3)=="RGB") {
+				else if (params->colorToning.method.substr(0,3)=="RGB" && opautili) {
 					// color toning
 					for (int i=istart,ti=0; i<tH; i++,ti++) {
 						for (int j=jstart,tj=0; j<tW; j++,tj++) {
@@ -3026,8 +3025,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 							float l_ = Color::gamma_srgb(l*65535.f)/65535.f;
 
 							// get the opacity and tweak it to preserve saturated colors
-							float opacity = (1.f-min<float>(s/satLimit, 1.f)*(1.f-satLimitOpacity)) * ctOpacityCurve.lutOpacityCurve[l_*500.f];
-
+							float opacity;
+							if(ctOpacityCurve) opacity = (1.f-min<float>(s/satLimit, 1.f)*(1.f-satLimitOpacity)) * ctOpacityCurve.lutOpacityCurve[l_*500.f];
+							if(!ctOpacityCurve) opacity=0.f;
 							float r2, g2, b2;
 							ctColorCurve.getVal(l_, r2, g2, b2);  // get the color from the color curve
 
@@ -3555,7 +3555,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 					}
 
 					//colortoning with shift color Lab
-					else if (params->colorToning.method=="Lab") {
+					else if (params->colorToning.method=="Lab"  && opautili) {
 						int algm=0;
 						bool twocol = true;
 						int metchrom;
@@ -3598,7 +3598,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 						}
 					}
 
-					else if (params->colorToning.method.substr(0,3)=="RGB") {
+					else if (params->colorToning.method.substr(0,3)=="RGB"  && opautili) {
 						// color toning
 #ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic, 5)
@@ -4209,8 +4209,8 @@ void ImProcFunctions::labtoning (float r, float g, float b, float &ro, float &go
 
 	// get the opacity and tweak it to preserve saturated colors
 	//float l_ = Color::gamma_srgb(l*65535.f)/65535.f;
-	float opacity = (1.f-min<float>(s/satLimit, 1.f)*(1.f-satLimitOpacity)) * ctOpacityCurve.lutOpacityCurve[l*500.f];
-
+	float opacity;
+	opacity = (1.f-min<float>(s/satLimit, 1.f)*(1.f-satLimitOpacity)) * ctOpacityCurve.lutOpacityCurve[l*500.f];
 	float opacity2 = (1.f-min<float>(s/satLimit, 1.f)*(1.f-satLimitOpacity));
 
 	//float ro, go, bo;

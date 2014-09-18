@@ -335,7 +335,7 @@ class OpacityCurve {
 
     void Reset();
     void Set(const Curve *pCurve);
-    void Set(const std::vector<double> &curvePoints);
+    void Set(const std::vector<double> &curvePoints, bool &opautili);
 
     // TODO: transfer this method to the Color class...
     float blend (float x, float lower, float upper) const {

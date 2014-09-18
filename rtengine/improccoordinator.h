@@ -121,6 +121,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         bool cclutili;
         bool clcutili;
 		bool lldenoiseutili;
+		bool opautili;
         ToneCurve customToneCurve1;
         ToneCurve customToneCurve2;
         ColorGradientCurve ctColorCurve;

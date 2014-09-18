@@ -239,7 +239,7 @@ void Crop::update (int todo) {
 
     if (todo & M_RGBCURVE)
         parent->ipf.rgbProc (baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
-                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, satLimit ,satLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->clToningcurve,parent->cl2Toningcurve,
+                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, satLimit ,satLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve,parent->cl2Toningcurve,
                              parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW,rrm, ggm, bbm,
                              parent->bwAutoR, parent->bwAutoG, parent->bwAutoB);
 

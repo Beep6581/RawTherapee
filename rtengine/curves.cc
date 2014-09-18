@@ -1166,7 +1166,7 @@ void OpacityCurve::Set(const Curve *pCurve) {
 	//lutOpacityCurve.dump("opacity");
 }
 
-void OpacityCurve::Set(const std::vector<double> &curvePoints) {
+void OpacityCurve::Set(const std::vector<double> &curvePoints, bool &opautili) {
 	FlatCurve* tcurve = NULL;
 
 	if (!curvePoints.empty() && curvePoints[0]>FCT_Linear && curvePoints[0]<FCT_Unchanged) {
@@ -1174,7 +1174,7 @@ void OpacityCurve::Set(const std::vector<double> &curvePoints) {
 		tcurve->setIdentityValue(0.);
 	}
 	if (tcurve) {
-		Set(tcurve);
+		Set(tcurve);opautili=true;
 		delete tcurve;
 		tcurve = NULL;
 	}

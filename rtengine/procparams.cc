@@ -383,7 +383,7 @@ void ColorToningParams::slidersToCurve(std::vector<double> &colorCurve, std::vec
     opacityCurve.at(8) = 0.35;
 }
 
-void ColorToningParams::getCurves(ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3]) const {
+void ColorToningParams::getCurves(ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3], bool &opautili) const {
     float satur=0.8f;
     float lumin=0.5f;//middle of luminance for optimization of gamut - no real importance...as we work in XYZ and gamut control
 
@@ -402,15 +402,15 @@ void ColorToningParams::getCurves(ColorGradientCurve &colorCurveLUT, OpacityCurv
         if(twocolor=="Separ") satur=0.9f;
         if(twocolor=="All"  || twocolor=="Two") satur=0.9f;
         colorCurveLUT.SetXYZ(cCurve, xyz_rgb, rgb_xyz, satur, lumin);
-        opacityCurveLUT.Set(oCurve);
+        opacityCurveLUT.Set(oCurve, opautili);		
     }
     else if(method=="Splitlr" || method=="Splitco") {
         colorCurveLUT.SetXYZ(cCurve, xyz_rgb, rgb_xyz, satur, lumin);
-        opacityCurveLUT.Set(oCurve);
+        opacityCurveLUT.Set(oCurve, opautili);
     }
     else if(method.substr(0,3)=="RGB") {
         colorCurveLUT.SetRGB(cCurve, xyz_rgb, rgb_xyz);
-        opacityCurveLUT.Set(oCurve);
+        opacityCurveLUT.Set(oCurve, opautili);
      }
 }
 

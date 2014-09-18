@@ -240,7 +240,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 		{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
 		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}
 	};
-	params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip);
+	bool opautili=false;
+	params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip, opautili);
 
 	bool clctoningutili=false;
 	CurveFactory::curveToningCL(clctoningutili, params.colorToning.clcurve, clToningcurve, 1);
@@ -271,7 +272,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 		} 
 	
     autor = -9000.f; // This will ask to compute the "auto" values for the B&W tool (have to be inferior to -5000)
-    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve,customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
+    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve,customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
     if (settings->verbose)
         printf("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);
 
