@@ -358,8 +358,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         };
 		opautili=false;
         params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip, opautili);
-		if(opautili) printf("OPA OUI\n");
-		if(!opautili) printf("OPA NON\n");
 		
         bool clctoningutili=false;
         bool llctoningutili=false;
