@@ -63,7 +63,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
 	gamma	= Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_GAMMA"), 1.0, 3.0, 0.01, 1.7));
 	gamma->set_tooltip_text (M("TP_DIRPYRDENOISE_GAMMA_TOOLTIP"));
 
-	passes	= Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_PASSE"), 1.0, 3.0, 1., 1.));
+	passes	= Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_PASSES"), 1.0, 3.0, 1., 1.));
 	passes->set_tooltip_text (M("TP_DIRPYRDENOISE_PASSES_TOOLTIP"));
 
 	
@@ -182,7 +182,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this), lastenhance(false) {
 //	pack_start( *hb11, Gtk::PACK_SHRINK, 4);
 	smethodconn = smethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::smethodChanged) );
 
-	passes	= Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_PASSE"), 1.0, 3.0, 1., 1.));
+	passes	= Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_PASSES"), 1.0, 3.0, 1., 1.));
 	passes->set_tooltip_text (M("TP_DIRPYRDENOISE_PASSES_TOOLTIP"));
     passes->setAdjusterListener (this); 
 	passes->show();

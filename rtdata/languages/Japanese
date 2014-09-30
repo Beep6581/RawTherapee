@@ -77,12 +77,9 @@ EXIFPANEL_RESETHINT;選択タグを元の値にリセット
 EXIFPANEL_RESET;リセット
 EXIFPANEL_SUBDIRECTORY;サブディレクトリ
 EXPORT_BYPASS_ALL;全て選択 / 全て解除
-EXPORT_BYPASS_COLORDENOISE;カラーノイズ低減を迂回
 EXPORT_BYPASS_DEFRINGE;フリンジ低減を迂回
 EXPORT_BYPASS_DIRPYRDENOISE;ノイズ低減を迂回
 EXPORT_BYPASS_DIRPYREQUALIZER;ディテール・レベルのコントラストを迂回
-EXPORT_BYPASS_LUMADENOISE;輝度ノイズ低減を迂回
-EXPORT_BYPASS_RAW_ALL_ENHANCE;デモザイク後のアーティファクト/ノイズ低減を迂回
 EXPORT_BYPASS_RAW_CA;[raw] 色収差補正を迂回
 EXPORT_BYPASS_RAW_CCSTEPS;[raw] 偽色抑制を迂回
 EXPORT_BYPASS_RAW_DCB_ENHANCE;[raw] DCB 拡張処理を迂回
@@ -203,7 +200,6 @@ FILEBROWSER_STOPPROCESSING;処理中止
 FILEBROWSER_THUMBSIZE;サムネイルのサイズ
 FILEBROWSER_TOOLTIP_STOPPROCESSING;新しいrawファイルが送られて来たら自動的に現像処理を開始します
 FILEBROWSER_UNRANK_TOOLTIP;ランクなし\nショートカット: <b>Shift-0</b>
-FILEBROWSER_USETEMPLATE;テンプレート使用:
 FILEBROWSER_ZOOMINHINT;サムネイルサイズの拡大\nショートカット: <b>+</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt-+</b>
 FILEBROWSER_ZOOMOUTHINT;サムネイルサイズの縮小\nショートカット: <b>-</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt--</b>
 GENERAL_ABOUT;RawTherapeeについて..
@@ -629,7 +625,6 @@ MAIN_TAB_METADATA;メタデータ
 MAIN_TAB_METADATA_TOOLTIP;ショートカット: <b>Alt-m</b>
 MAIN_TAB_RAW;raw
 MAIN_TAB_RAW_TOOLTIP;ショートカット: <b>Alt-r</b>
-MAIN_TAB_TAGGING;タグ付け
 MAIN_TAB_TRANSFORM;変形
 MAIN_TAB_TRANSFORM_TOOLTIP;ショートカット: <b>Alt-t</b>
 MAIN_TOOLTIP_BACKCOLOR0;プレビューの背景色を指定します: <b>テーマに基づく</b>\nショートカット: <b>9</b>
@@ -716,7 +711,6 @@ PARTIALPASTE_RAWEXPOS_BLACK;黒レベル
 PARTIALPASTE_RAWEXPOS_LINEAR;raw ホワイトポイント リニア補正係数
 PARTIALPASTE_RAWEXPOS_PRESER;raw ホワイトポイント ハイライトを保持したまま補正 (EV)
 PARTIALPASTE_RAWGROUP;raw 設定
-PARTIALPASTE_RAW_ALLENHANCE;デモザイク後 アーティファクト/ノイズ低減を適用
 PARTIALPASTE_RAW_DCBENHANCE;DCB 拡張処理適用
 PARTIALPASTE_RAW_DCBITERATIONS;DCB反復の数
 PARTIALPASTE_RAW_DMETHOD;デモザイクの方法
@@ -742,7 +736,6 @@ PREFERENCES_BEHAVIOR;ビヘイビア
 PREFERENCES_BEHSETALLHINT;すべてのパラメータを <b>設定</b>モードにします\nバッチツールパネルで設定される調整値が、各画像の既定値に取って代わり<b>同一</b>になります
 PREFERENCES_BEHSETALL;すべて '設定'
 PREFERENCES_BLACKBODY;タングステン
-PREFERENCES_BLINKCLIPPED;クリッピング領域の点滅
 PREFERENCES_CACHECLEARALL;すべてクリア
 PREFERENCES_CACHECLEARPROFILES;プロファイルのクリア
 PREFERENCES_CACHECLEARTHUMBS;サムネイルのクリア
@@ -770,7 +763,6 @@ PREFERENCES_DARKFRAMEFOUND;検出
 PREFERENCES_DARKFRAMESHOTS;ショット
 PREFERENCES_DARKFRAMETEMPLATES;テンプレート
 PREFERENCES_DARKFRAME;ダークフレーム
-PREFERENCES_DATEFORMATFRAME;日付の形式
 PREFERENCES_DATEFORMATHINT;<i>次の書式を使用することができます:</i>\n<b>%y</b><i> : 年</i>\n<b>%m</b><i> : 月</i>\n<b>%d</b><i> : 日</i>\n<i>\n例として, ハンガリアン記法の日付:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DATEFORMAT;日付の形式
 PREFERENCES_DEFAULTLANG;デフォルトの言語
@@ -869,7 +861,6 @@ PREFERENCES_SND_BATCHQUEUEDONE;キュー処理 終了
 PREFERENCES_SND_HELP;ファイルパスを入力 または空欄(無音).\nWindowsはシステムサウンドの "SystemDefault", "SystemAsterisk"など..\nLinuxはシステムサウンドの "complete", "window-attention"などを使用します
 PREFERENCES_SND_LNGEDITPROCDONE;編集処理 終了
 PREFERENCES_SND_TRESHOLDSECS;秒後
-PREFERENCES_SQUAREDETAILWINDOW;正方形のディテール・ウィンドウ（速い）
 PREFERENCES_STARTUPIMDIR;起動時の画像・ディレクトリ
 PREFERENCES_TAB_BROWSER;ファイルブラウザ
 PREFERENCES_TAB_COLORMGR;カラーマネジメント
@@ -958,7 +949,6 @@ TP_BWMIX_ALGO_SP;特殊効果
 TP_BWMIX_ALGO_TOOLTIP;リニア: 通常の <b>線形的</b> な効果です\n特殊効果: チャンネルミキサーによる <b>非線形的</b>な特殊効果です
 TP_BWMIX_AUTOCH;オート
 TP_BWMIX_AUTOCH_TIP;チャンネルミキサーの最適値を計算します
-TP_BWMIX_BLUE;ブルー
 TP_BWMIX_CC_ENABLED;補色の調整
 TP_BWMIX_CC_TOOLTIP;ROYGCBPMモードの中で補色の調整を自動で行います
 TP_BWMIX_CHANNEL;輝度イコライザー
@@ -967,7 +957,6 @@ TP_BWMIX_CURVEEDITOR2;‘後の‘カーブ
 TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;処理最終段階で白黒変換を施した後のトーンカーブ
 TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;色の構成を変えるかもしれない\n白黒変換を施す前のトーンカーブ
 TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;色相における明度を補正\n極端な補正はアーティファクトの発生に注意します
-TP_BWMIX_CYAN;シアン
 TP_BWMIX_FILTER;カラーフィルター
 TP_BWMIX_FILTER_BLUEGREEN;ブルー/グリーン
 TP_BWMIX_FILTER_BLUE;ブルー
@@ -980,13 +969,8 @@ TP_BWMIX_FILTER_RED;レッド
 TP_BWMIX_FILTER_TOOLTIP;カラーフィルターはレンズにカラーフィルターを装着して撮影したような効果をもたらします。カラーフィルターは特定の入光色を減らし、特定の明るさを変えます。例、レッドフィルターは青空の色を暗くします。
 TP_BWMIX_FILTER_YELLOW;イエロー
 TP_BWMIX_GAMMA;ガンマ補正
-TP_BWMIX_GAM_BLUE;ブルーチャンネル
-TP_BWMIX_GAM_GREEN;グリーンチャンネル
-TP_BWMIX_GAM_RED;レッドチャンネル
 TP_BWMIX_GAM_TOOLTIP;RGB各チャンネルのガンマを修正
-TP_BWMIX_GREEN;グリーン
 TP_BWMIX_LABEL;白黒
-TP_BWMIX_MAGENTA;マゼンタ
 TP_BWMIX_MET;方法
 TP_BWMIX_MET_CHANMIX;チャンネルミキサー
 TP_BWMIX_MET_DESAT;彩度低減
@@ -994,9 +978,6 @@ TP_BWMIX_MET_LUMEQUAL;輝度イコライザー
 TP_BWMIX_MIXC;ミキサー
 TP_BWMIX_NEUTRAL;ミキサーのリセット
 TP_BWMIX_NEUTRAL_TIP;全ての値（フィルター、チャンネルミキサー）をデフォルトに戻します
-TP_BWMIX_ORANGE;オレンジ
-TP_BWMIX_PURPLE;パープル
-TP_BWMIX_RED;レッド
 TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   トータル: %4%%
 TP_BWMIX_RGBLABEL_HINT;ミキサーオプションの全てを考慮した最終のRGBファクター\nトータルは実際に適用されたRGBの合計を表示:\n- 常に100％相対モード\n- 絶対モード100％より高い（明るい）、或いは低い（暗い）
 TP_BWMIX_RGB_TOOLTIP;RGBチャンネルをミックス。ガイダンスとしてプリセットを使います。\nマイナス値はアーティファクトの発生や誤った作用を起こすかもしれないことに注意します
@@ -1022,7 +1003,6 @@ TP_BWMIX_TCMODE_SATANDVALBLENDING;白黒　彩度と明度のブレンド
 TP_BWMIX_TCMODE_STANDARD;白黒　標準
 TP_BWMIX_TCMODE_WEIGHTEDSTD;白黒　加重平均
 TP_BWMIX_VAL;L
-TP_BWMIX_YELLOW;イエロー
 TP_CACORRECTION_BLUE;ブルー
 TP_CACORRECTION_LABEL;色収差補正
 TP_CACORRECTION_RED;レッド
@@ -1110,7 +1090,6 @@ TP_COLORAPP_WBRT;WB [RT] + [出力]
 TP_COLORTONING_AB;o C/L
 TP_COLORTONING_AUTOSAT;自動彩度
 TP_COLORTONING_BALANCE;バランス
-TP_COLORTONING_BALANCE_TOOLTIP;シャドウとハイライトのトーンでつり合いをとります
 TP_COLORTONING_BY;o C/L
 TP_COLORTONING_CHROMAC;不透明度
 TP_COLORTONING_COLOR;カラー
@@ -1123,9 +1102,6 @@ TP_COLORTONING_LABEL;カラートーン調整
 TP_COLORTONING_LABINT;-　
 TP_COLORTONING_LABINT_TOOLTIP;例えば、ブルーの画像にレッドを混ぜると、カラーはその不透明度に応じたマゼンタになります\nまた、レッドの画像にイエローを混ぜた場合は、その不透明度に応じたオレンジになります
 TP_COLORTONING_LAB;Labモデルでブレンド
-TP_COLORTONING_LCH;Lchモデルでブレンド
-TP_COLORTONING_LCH_1;色相＋XYZ
-TP_COLORTONING_LCH_2;XYZモデルでブレンド
 TP_COLORTONING_LUMAMODE;明度を維持
 TP_COLORTONING_LUMAMODE_TOOLTIP;カラー（レッド、グリーン、シアン、ブルーなど）を変える際に、これを有効にすると、各ピクセルの明度は維持されます。
 TP_COLORTONING_LUMA;明度
@@ -1138,13 +1114,10 @@ TP_COLORTONING_NEUTRAL_TIP;スライダーの全ての値（SMH：シャドウ�
 TP_COLORTONING_OPACITY;不透明度
 TP_COLORTONING_RGBCURVES;RGB　－　カーブ
 TP_COLORTONING_RGBSLIDERS;RGB　－　スライダー
-TP_COLORTONING_SATH;ハイライトの彩度
-TP_COLORTONING_SATL;シャドウの彩度
 TP_COLORTONING_SATURATEDOPACITY;強さ
 TP_COLORTONING_SATURATIONTHRESHOLD;しきい値
 TP_COLORTONING_SA;彩度の保護
 TP_COLORTONING_SHADOWS;シャドウ
-TP_COLORTONING_SPLITBAL;S/Hでカラートン調整＋バランス
 TP_COLORTONING_SPLITCOCO;S/M/Hでカラーバランス
 TP_COLORTONING_SPLITCO;S/M/Hでカラートーン調整
 TP_COLORTONING_SPLITLR;2色の彩度でカラートーン調整
@@ -1178,7 +1151,6 @@ TP_DARKFRAME_LABEL;ダークフレーム
 TP_DEFRINGE_LABEL;フリンジ低減 
 TP_DEFRINGE_RADIUS;半径
 TP_DEFRINGE_THRESHOLD;しきい値
-TP_DIRPYRDENOISE_33SOFT;3x3
 TP_DIRPYRDENOISE_33;強い3x3
 TP_DIRPYRDENOISE_55SOFT;5x5
 TP_DIRPYRDENOISE_55;強い5x5
@@ -1208,17 +1180,13 @@ TP_DIRPYRDENOISE_METHOD;方式
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;raw画像は、RGBまたはLab方式のいずれかを使用することができます。\n\nraw以外の画像は、選択にかかわらずLab方式が採用されます
 TP_DIRPYRDENOISE_METM_TOOLTIP;フィルタリングの方式で、"輝度のみ"と"Lab"を選択した場合、メディアンフィルタリングはノイズ低減行程でウェーブレット変換が行われた直後に適用されます\n"RGB"モードの場合は、ノイズ低減行程の最後で適用されます
 TP_DIRPYRDENOISE_MET_TOOLTIP;適用するメディアンフィルターのサイズを決めます。大きくするとその分処理時間が増えます。\n\nソフトな3x3：1ピクセル範囲で5ピクセルの処理を行います\n強い3x3：1ピクセル範囲で9ピクセルの処理を行います\nソフトな5x5：2ピクセル範囲で13ピクセルの処理を行います\n強い5x5：2ピクセル範囲で25ピクセルの処理を行います\n7x7：3ピクセル範囲で49ピクセルの処理を行います\n\n小さいフィルターを使って、繰り返し処理をした方が、大きいフィルターを1回使うより結果が良いこともあります。
-TP_DIRPYRDENOISE_NONE;なし
 TP_DIRPYRDENOISE_PASSES_TOOLTIP;3x3のメディアンフィルターを3回繰り返して適用する方が、7x7のフィルターを1回適用するより、良い結果を生むことが多いです
 TP_DIRPYRDENOISE_PASSE;フィルタリングの繰り返し回数
-TP_DIRPYRDENOISE_PERF;RGB モード(raw画像)
 TP_DIRPYRDENOISE_RED;色差 レッド/グリーン
 TP_DIRPYRDENOISE_RGBM;RGB
 TP_DIRPYRDENOISE_RGB;RGB
-TP_DIRPYRDENOISE_SHALAL;ALL+ALL shrink
 TP_DIRPYRDENOISE_SHALBI;高い
 TP_DIRPYRDENOISE_SHAL;標準
-TP_DIRPYRDENOISE_SHBI;Double
 TP_DIRPYRDENOISE_SOFT;3x3
 TP_DIRPYREQUALIZER_ALGO;肌色用のアルゴリズム
 TP_DIRPYREQUALIZER_ALGO_FI;ファイン
@@ -1426,7 +1394,6 @@ TP_RAWEXPOS_LINEAR;ホワイトポイント補正
 TP_RAWEXPOS_PRESER;ハイライトを保持
 TP_RAWEXPOS_RGB;レッド、グリーン、ブルー
 TP_RAWEXPOS_TWOGREEN;2つのグリーンを連動
-TP_RAW_ALLENHANCE;デモザイク後 アーティファクト/ノイズ低減
 TP_RAW_DCBENHANCE;DCB 拡張処理
 TP_RAW_DCBITERATIONS;DCB 反復の数
 TP_RAW_DMETHOD;方式
@@ -1578,3 +1545,11 @@ ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる\nショートカット: <b>f</b>
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!PARTIALPASTE_FILMSIMULATION;Film Simulation
+!TP_COLORTONING_MIDTONES;Midtones
+!TP_CROP_FIXRATIO;Lock ratio
+!TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
