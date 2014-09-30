@@ -61,12 +61,9 @@ EXIFPANEL_RESETHINT;Сбросить выбранные теги в первон
 EXIFPANEL_RESET;Сбросить
 EXIFPANEL_SUBDIRECTORY;Подкаталог
 EXPORT_BYPASS_ALL;Выделить все / Снять выделение
-EXPORT_BYPASS_COLORDENOISE;Пропустить удаление цифрового шума
 EXPORT_BYPASS_DEFRINGE;Пропустить подавление ореолов
 EXPORT_BYPASS_DIRPYRDENOISE;Пропустить подавление шума
 EXPORT_BYPASS_DIRPYREQUALIZER;Пропустить контраст в зависимости от детализации
-EXPORT_BYPASS_LUMADENOISE;Пропустить подавление яркостного шума
-EXPORT_BYPASS_RAW_ALL_ENHANCE;Пропустить пост-демозаик подавление искажений/шума
 EXPORT_BYPASS_RAW_CA;Пропустить [raw] коррекцию хроматических аберраций
 EXPORT_BYPASS_RAW_CCSTEPS;Пропустить [raw] подавление ложных цветов
 EXPORT_BYPASS_RAW_DCB_ENHANCE;Пропустить [raw] расширенный DCB
@@ -186,7 +183,6 @@ FILEBROWSER_STOPPROCESSING;Остановить обработку
 FILEBROWSER_THUMBSIZE;Размер эскиза
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Автоматически запускать обработку при добавлении файла в очередь
 FILEBROWSER_UNRANK_TOOLTIP;Удалить рейтинг\nГорячая клавиша: <b>Shift-~</b>
-FILEBROWSER_USETEMPLATE;Использовать шаблон:
 FILEBROWSER_ZOOMINHINT;Увеличить размер эскиза\nГорячая клавиша: <b>+</b>\n\nГорячая клавиша в режиме Одиночного редактора: <b>Alt-+</b>
 FILEBROWSER_ZOOMOUTHINT;Уменьшить размер эскиза\nГорячая клавиша: <b>+</b>\n\nГорячая клавиша в режиме Одиночного редактора: <b>Alt--</b>
 GENERAL_ABOUT;О программе
@@ -565,7 +561,6 @@ MAIN_TAB_METADATA;Метаданные
 MAIN_TAB_METADATA_TOOLTIP;Горячая клавиша: <b>Alt-M</b>
 MAIN_TAB_RAW;Raw
 MAIN_TAB_RAW_TOOLTIP;Горячая клавиша: <b>Alt-R</b>
-MAIN_TAB_TAGGING;Метки
 MAIN_TAB_TRANSFORM;Преобразования
 MAIN_TAB_TRANSFORM_TOOLTIP;Горячая клавиша: <b>Alt-T</b>
 MAIN_TOOLTIP_BACKCOLOR0;Фоновый цвет предпросмотра: <b>Как в теме</b>\nГорячая клавиша: <b>9</b>
@@ -656,7 +651,6 @@ PARTIALPASTE_RAWEXPOS_BLACK;Уровень черного
 PARTIALPASTE_RAWEXPOS_LINEAR;Коррекция точки белого
 PARTIALPASTE_RAWEXPOS_PRESER;Сохранение пересветов
 PARTIALPASTE_RAWGROUP;Настройки Raw
-PARTIALPASTE_RAW_ALLENHANCE;Применить пост-демозаик подавление искажений/шума
 PARTIALPASTE_RAW_DCBENHANCE;Применить расширенный DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Количество проходов DCB
 PARTIALPASTE_RAW_DMETHOD;Методика демозаика
@@ -682,7 +676,6 @@ PREFERENCES_BEHAVIOR;Поведение
 PREFERENCES_BEHSETALLHINT;Выставить все параметры в режим <b>Установить</b>.\nНастройки параметров в панели пакетной обработки будут <b>абсолютными</b>, будут показаны используемые значения
 PREFERENCES_BEHSETALL;Всё в "Установить"
 PREFERENCES_BLACKBODY;Лампа накаливания
-PREFERENCES_BLINKCLIPPED;Мигать проблемными зонами
 PREFERENCES_CACHECLEARALL;Удалить все
 PREFERENCES_CACHECLEARPROFILES;Удалить параметры обработки
 PREFERENCES_CACHECLEARTHUMBS;Удалить эскизы
@@ -709,7 +702,6 @@ PREFERENCES_DARKFRAMEFOUND;Найдено
 PREFERENCES_DARKFRAMESHOTS;снимков
 PREFERENCES_DARKFRAMETEMPLATES;шаблонов
 PREFERENCES_DARKFRAME;Темновой кадр
-PREFERENCES_DATEFORMATFRAME;Формат даты
 PREFERENCES_DATEFORMATHINT;Вы можете использовать следующие элементы форматирования:\n<b>%y</b><i>: год</i>\n<b>%m</b><i>: месяц</i>\n<b>%d</b><i>: день</i>\n\nНапример, венгерский формат даты такой:\n<b>%y/%m/%d</b>
 PREFERENCES_DATEFORMAT;Формат даты
 PREFERENCES_DEFAULTLANG;Язык по умолчанию
@@ -804,7 +796,6 @@ PREFERENCES_SND_BATCHQUEUEDONE;Пакетная обработка заверш�
 PREFERENCES_SND_HELP;Введите имя файла, либо оставьте поле пустым (без звука). В Windows можно использовать "SystemDefault", "SystemAsterisk" и т.д. для системных звуков.
 PREFERENCES_SND_LNGEDITPROCDONE;Обработка в редакторе завершена
 PREFERENCES_SND_TRESHOLDSECS;после, секунд
-PREFERENCES_SQUAREDETAILWINDOW;Квадратное окно подробностей (быстро)
 PREFERENCES_STARTUPIMDIR;Каталог изображений при запуске
 PREFERENCES_TAB_BROWSER;Файловый браузер
 PREFERENCES_TAB_COLORMGR;Управление цветом
@@ -893,7 +884,6 @@ TP_BWMIX_ALGO_SP;Специальные эффекты
 TP_BWMIX_ALGO_TOOLTIP;Линейный: выдаст нормальный <b>линейный</b> отклик.\nСпециальные эффекты: выдаст специальные эффекты путём смешивания каналов <b>нелинейно</b>.
 TP_BWMIX_AUTOCH;Автоопределение
 TP_BWMIX_AUTOCH_TIP;Автоматическое вычисление значений миксера каналов
-TP_BWMIX_BLUE;Синий
 TP_BWMIX_CC_ENABLED;Подстраивать дополнительные цвета
 TP_BWMIX_CC_TOOLTIP;Включите для автоматической регулировки дополнительных цветов в модели ROYGCBPM
 TP_BWMIX_CHANNEL;Эквалайзер яркости
@@ -902,7 +892,6 @@ TP_BWMIX_CURVEEDITOR2;Кривая "После"
 TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Тональная кривая после конверсии в Ч/Б, в конце обработки.
 TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Тональная кривая сразу перед конверсией в Ч/Б.\nМожет учитывать цветовые компоненты.
 TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Модифицирует яркость как функцию от цвета.\nУчитывает предельные значения, способные вызывать искажения
-TP_BWMIX_CYAN;Циан
 TP_BWMIX_FILTER;Цветовой фильтр
 TP_BWMIX_FILTER_BLUEGREEN;Синий-Зелёный
 TP_BWMIX_FILTER_BLUE;Синий
@@ -915,13 +904,8 @@ TP_BWMIX_FILTER_RED;Красный
 TP_BWMIX_FILTER_TOOLTIP;Цветовой фильтр воспроизводит снимки, снятые с использованием светофильтра, помещённого перед объективом. Светофильтры подавляют передачу определённой части спектра и соответствующим образом влияют на их яркость. К примеру <i>красный фильтр</i> затемняет <i>синее</i> небо.
 TP_BWMIX_FILTER_YELLOW;Жёлтый
 TP_BWMIX_GAMMA;Коррекция гаммы
-TP_BWMIX_GAM_BLUE;Синий канал
-TP_BWMIX_GAM_GREEN;Зелёный канал
-TP_BWMIX_GAM_RED;Красный канал
 TP_BWMIX_GAM_TOOLTIP;Корректирует гамму для каждого канала RGB.
-TP_BWMIX_GREEN;Зелёный
 TP_BWMIX_LABEL;Чёрный-и-белый
-TP_BWMIX_MAGENTA;Магента
 TP_BWMIX_MET;Метод
 TP_BWMIX_MET_CHANMIX;Миксер каналов
 TP_BWMIX_MET_DESAT;Обесцвечивание
@@ -929,9 +913,6 @@ TP_BWMIX_MET_LUMEQUAL;Яркостный Эквалайзер
 TP_BWMIX_MIXC;Миксер
 TP_BWMIX_NEUTRAL;Сбросить
 TP_BWMIX_NEUTRAL_TIP;Сбросить все значения (фильтр, миксер каналов) на умолчательные
-TP_BWMIX_ORANGE;Оранжевый
-TP_BWMIX_PURPLE;Фиолетовый
-TP_BWMIX_RED;Красный
 TP_BWMIX_RGBLABEL;К: %1%%  З: %2%%  С: %3%%   Итог: %4%%
 TP_BWMIX_RGBLABEL_HINT;Итоговые значения RGB, учитывающие все настройки миксера.\nИтог показывает сумму применённых значений RGB:\n- всегда 100% в относительных режимах\n- выше (светлее) или ниже (темнее) в абсолютных режимах.
 TP_BWMIX_RGB_TOOLTIP;Смешивание каналов RGB. Используйте пресеты для руководства.\nУчтите что отрицательные значения могут вызвать искажения или неустойчивое поведение.
@@ -957,7 +938,6 @@ TP_BWMIX_TCMODE_SATANDVALBLENDING;Ч&Б насыщенность+значени�
 TP_BWMIX_TCMODE_STANDARD;Ч&Б Стандарт
 TP_BWMIX_TCMODE_WEIGHTEDSTD;Ч&Б Средневзвешенный стандарт
 TP_BWMIX_VAL;L
-TP_BWMIX_YELLOW;Жёлтый
 TP_CACORRECTION_BLUE;Синий
 TP_CACORRECTION_LABEL;Хроматические аберрации
 TP_CACORRECTION_RED;Красный
@@ -1046,7 +1026,6 @@ TP_DIRPYRDENOISE_LDETAIL;Детализация яркости
 TP_DIRPYRDENOISE_LUMA;Яркость
 TP_DIRPYRDENOISE_METHOD;Метод
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;Для raw-изображений можно использовать как режим RGB так и Lab.\n\nДля не-raw будет использован Lab режим вне зависимости от выбора.
-TP_DIRPYRDENOISE_PERF;Режим RGB (raw-изображения)
 TP_DIRPYRDENOISE_RED;Цветность: красный-зелёный
 TP_DIRPYRDENOISE_RGB;RGB
 TP_DIRPYREQUALIZER_LABEL;Контраст по уровню деталей
@@ -1230,7 +1209,6 @@ TP_RAWEXPOS_BLACKZERO;Уровень черного: Зеленый ведущи
 TP_RAWEXPOS_LINEAR;Коррекция точки белого
 TP_RAWEXPOS_PRESER;Сохранение пересветов
 TP_RAWEXPOS_TWOGREEN;Два зеленых совместно
-TP_RAW_ALLENHANCE;Применить пост-демозаик подавление искажений/шума
 TP_RAW_DCBENHANCE;Расширенный DCB
 TP_RAW_DCBITERATIONS;Количество итераций DCB
 TP_RAW_DMETHOD;Метод
@@ -1386,54 +1364,64 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
 !EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
 !FILEBROWSER_POPUPRANK0;Unrank
-!HISTORY_MSG_252;CbDL Skin Tones
-!HISTORY_MSG_253;CbDL Reduce artifacts
+!HISTORY_MSG_252;CbDL - Skin-tones
+!HISTORY_MSG_253;CbDL - Reduce artifacts
 !HISTORY_MSG_254;CbDL - Skin hue
-!HISTORY_MSG_255;NR - Median
+!HISTORY_MSG_255;NR - Median filter
 !HISTORY_MSG_256;NR - Median type
 !HISTORY_MSG_257;Color Toning
 !HISTORY_MSG_258;Color Toning - Color
 !HISTORY_MSG_259;Color Toning - Opacity
-!HISTORY_MSG_260;Color Toning - Opacity
+!HISTORY_MSG_260;Color Toning - 'a[b]' opacity
 !HISTORY_MSG_261;Color Toning - Method
-!HISTORY_MSG_262;Color Toning - Opacity
-!HISTORY_MSG_263;Color Toning - Luminance
-!HISTORY_MSG_263;Color Toning - Shadows Red
-!HISTORY_MSG_264;Color Toning - Shadows Green
-!HISTORY_MSG_265;Color Toning - Shadows Blue
-!HISTORY_MSG_266;Color Toning - Middle Red
-!HISTORY_MSG_267;Color Toning - Middle Green
-!HISTORY_MSG_268;Color Toning - Middle Blue
-!HISTORY_MSG_269;Color Toning - High Red
-!HISTORY_MSG_270;Color Toning - High Green
-!HISTORY_MSG_271;Color Toning - High Blue
+!HISTORY_MSG_262;Color Toning - 'b' opacity
+!HISTORY_MSG_263;Color Toning - Shadows - Red
+!HISTORY_MSG_264;Color Toning - Shadows - Green
+!HISTORY_MSG_265;Color Toning - Shadows - Blue
+!HISTORY_MSG_266;Color Toning - Mid - Red
+!HISTORY_MSG_267;Color Toning - Mid - Green
+!HISTORY_MSG_268;Color Toning - Mid - Blue
+!HISTORY_MSG_269;Color Toning - High - Red
+!HISTORY_MSG_270;Color Toning - High - Green
+!HISTORY_MSG_271;Color Toning - High - Blue
 !HISTORY_MSG_272;Color Toning - Balance
 !HISTORY_MSG_273;Color Toning - Reset
 !HISTORY_MSG_274;Color Toning - Sat. Shadows
 !HISTORY_MSG_275;Color Toning - Sat. Highlights
 !HISTORY_MSG_276;Color Toning - Opacity
-!HISTORY_MSG_277;Color Toning - Reset Curves
-!HISTORY_MSG_278;Color Toning - Preserve Luminance
+!HISTORY_MSG_277;--unused--
+!HISTORY_MSG_278;Color Toning - Preserve luminance
 !HISTORY_MSG_279;Color Toning - Shadows
 !HISTORY_MSG_280;Color Toning - Highlights
-!HISTORY_MSG_281;Color Toning - Sat. Protection
-!HISTORY_MSG_282;Color Toning - Sat. Threshold
-!HISTORY_MSG_283;Color Toning - Str. Protection
-!HISTORY_MSG_284;Color Toning - Auto saturation
-!HISTORY_MSG_285;NR - Median method
-!HISTORY_MSG_286;NR - Median type
-!HISTORY_MSG_287;NR - Median iterations
-!HISTORY_MSG_288;Flat Field Clip Control
-!HISTORY_MSG_289;Flat Field Automatic Clip Control
+!HISTORY_MSG_281;Color Toning - Sat. strength
+!HISTORY_MSG_282;Color Toning - Sat. threshold
+!HISTORY_MSG_283;Color Toning - Strength
+!HISTORY_MSG_284;Color Toning - Auto sat. protection
+!HISTORY_MSG_285;NR - Median - Method
+!HISTORY_MSG_286;NR - Median - Type
+!HISTORY_MSG_287;NR - Median - Iterations
+!HISTORY_MSG_288;Flat Field - Clip control
+!HISTORY_MSG_289;Flat Field - Clip control - Auto
 !HISTORY_MSG_290;Black Level - Red
 !HISTORY_MSG_291;Black Level - Green
 !HISTORY_MSG_292;Black Level - Blue
+!HISTORY_MSG_293;Film Simulation
+!HISTORY_MSG_294;Film Simulation - Strength
+!HISTORY_MSG_295;Film Simulation - Film
+!HISTORY_MSG_296;NR - Modulate luminance
+!HISTORY_MSG_297;NR - Quality
+!HISTORY_MSG_298;Dead pixel filter
 !MAIN_TOOLTIP_HIDEHP;Show/Hide the left panel (including the history).\nShortcut: <b>l</b>
 !NAVIGATOR_NA; --
 !PARTIALPASTE_COLORTONING;Color Toning
+!PARTIALPASTE_FILMSIMULATION;Film Simulation
 !PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
+!PARTIALPASTE_PREPROCESS_DEADPIXFILT;Apply dead pixel filter
+!PARTIALPASTE_PREPROCESS_HOTPIXFILT;Apply hot pixel filter
+!PREFERENCES_CLUTSDIR;HaldCLUT directory
+!PREFERENCES_FILMSIMULATION;Film Simulation
 !PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
-!PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator, otherwise the gamma-corrected output profile is used.
+!PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
 !PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show Lab values before CIECAM02 adjustments.
 !TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RT calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended).
@@ -1446,8 +1434,8 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !TP_COLORAPP_LIGHT;Lightness (J)
 !TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 differs from Lab and RGB lightness.
 !TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in <i>Preferences > Color Management</i>.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in <i>Preferences - Color Management</i>.
-!TP_COLORAPP_RSTPRO;Red & skin tones protection
-!TP_COLORAPP_RSTPRO_TOOLTIP;Red and skin tones protection (sliders and curves).
+!TP_COLORAPP_RSTPRO;Red & skin-tones protection
+!TP_COLORAPP_RSTPRO_TOOLTIP;Red and skin-tones protection (sliders and curves).
 !TP_COLORAPP_SURROUND;Surround
 !TP_COLORAPP_SURROUND_AVER;Average
 !TP_COLORAPP_SURROUND_DARK;Dark
@@ -1469,92 +1457,92 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 !TP_COLORAPP_WBRT;WB [RT] + [output]
 !TP_COLORTONING_AB;o C/L
-!TP_COLORTONING_AUTOSAT;Auto saturation
+!TP_COLORTONING_AUTOSAT;Automatic
 !TP_COLORTONING_BALANCE;Balance
-!TP_COLORTONING_BALANCE_TOOLTIP;Equilibrate tones between shadows and highlights
 !TP_COLORTONING_BY;o C/L
-!TP_COLORTONING_CHROMA1;Opacity 'a'
-!TP_COLORTONING_CHROMA2;Opacity 'b'
-!TP_COLORTONING_CHROMAC;Opacity chroma
-!TP_COLORTONING_CHROMA;Opacity 'ab' or 'a'
+!TP_COLORTONING_CHROMAC;Opacity
 !TP_COLORTONING_COLOR;Color
-!TP_COLORTONING_CURVEEDITOR_LL;L
+!TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Opacity Chroma according to Luminance of C=f(L)
 !TP_COLORTONING_HIGHLIGHT;Highlights
 !TP_COLORTONING_HUE;Hue
-!TP_COLORTONING_HUE;Hue blending only
 !TP_COLORTONING_LABCOL;Direct Colors
 !TP_COLORTONING_LABCOL_TOOLTIP;When you move a saturation slider, these 'direct' colors are increased.
 !TP_COLORTONING_LABEL;Color Toning
 !TP_COLORTONING_LABINT;-
 !TP_COLORTONING_LABINT_TOOLTIP;When the image color is blue and the blending color is red, it results in a magenta color in the function of % opacity.\nWhen the image color is red and the blending color is yellow, it results in an orange color in the function of % opacity.
 !TP_COLORTONING_LAB;Lab blending
-!TP_COLORTONING_LCH;Lch blending
-!TP_COLORTONING_LCH_1;Hue + XYZ
-!TP_COLORTONING_LCH_2;XYZ blending
 !TP_COLORTONING_LUMAMODE;Preserve luminance
 !TP_COLORTONING_LUMAMODE_TOOLTIP;If enabled, when you change color (red, green, cyan, blue, etc.) the luminance of each pixel is preserved.
 !TP_COLORTONING_LUMA;Luminance
 !TP_COLORTONING_METHOD;Method
-!TP_COLORTONING_METHOD_TOOLTIP;Lab blending use interpolation colour blending\nColor balance (Shadows Midtones Highlights)\nSplit Toning Colour SH+balance (Shadows Highlights + balance shadows/highlights) use direct colors\nIn all methods you can enabled Black and White
-!TP_COLORTONING_MIDTONES;Mid Tones
-!TP_COLORTONING_NEUTRALCUR;Reset curves
-!TP_COLORTONING_NEUTRALCUR_TIP;Reset all curves to default.
+!TP_COLORTONING_METHOD_TOOLTIP;"Lab blending", "RGB sliders" and "RGB curves" use interpolated color blending.\n"Color balance (Shadows/Midtones/Highlights)" and "Saturation 2 colors" use direct colors.\n\nThe Black-and-White tool can be enabled when using any color toning method, which allows for color toning.
+!TP_COLORTONING_MIDTONES;Midtones
 !TP_COLORTONING_NEUTRAL;Reset sliders
-!TP_COLORTONING_NEUTRAL_TIP;Reset all values (Shadows Midtones Highlights) to default.
+!TP_COLORTONING_NEUTRAL_TIP;Reset all values (Shadows, Midtones, Highlights) to default.
 !TP_COLORTONING_OPACITY;Opacity
 !TP_COLORTONING_RGBCURVES;RGB - Curves
 !TP_COLORTONING_RGBSLIDERS;RGB - Sliders
-!TP_COLORTONING_SATH;Saturation highlights
-!TP_COLORTONING_SATL;Saturation shadows
-!TP_COLORTONING_SATURATEDOPACITY;Saturation protection
-!TP_COLORTONING_SATURATIONTHRESHOLD;Saturation protection threshold
+!TP_COLORTONING_SATURATEDOPACITY;Strength
+!TP_COLORTONING_SATURATIONTHRESHOLD;Threshold
+!TP_COLORTONING_SA;Saturation Protection
 !TP_COLORTONING_SHADOWS;Shadows
-!TP_COLORTONING_SPLITBAL;Split Toning Colour SH + balance
-!TP_COLORTONING_SPLITCOCO;Color Balance SMH
-!TP_COLORTONING_SPLITCO;Split Toning Colour SMH
-!TP_COLORTONING_SPLITLR;Split Toning Saturation 2 colors
+!TP_COLORTONING_SPLITCOCO;Color Balance Shadows/Midtones/Highlights
+!TP_COLORTONING_SPLITCO;Shadows/Midtones/Highlights
+!TP_COLORTONING_SPLITLR;Saturation 2 colors
 !TP_COLORTONING_STRENGTH;Strength
-!TP_COLORTONING_STRPROTECT;Strength protection
-!TP_COLORTONING_TWO2;Opacity special chroma 2 colors
-!TP_COLORTONING_TWOALL;Opacity special chroma
-!TP_COLORTONING_TWOBY;Opacity special 'a' and 'b'
-!TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard - linear response same for 'a' and 'b'\nSpecial chroma same response for 'a' and 'b', but without bound - try under the diagonal\nSpecial 'a' and 'b': as Special + first curve 'a' only - second curve 'b' only : dedicate for special effects\nSpecial 2 colors - more predictable
-!TP_COLORTONING_TWOSTD;Opacity standard chroma
-!TP_DIRPYRDENOISE_33;3x3 strong
-!TP_DIRPYRDENOISE_55SOFT;5x5
-!TP_DIRPYRDENOISE_55;5x5 strong
-!TP_DIRPYRDENOISE_77;7x7 (slow)
+!TP_COLORTONING_STR;Strength
+!TP_COLORTONING_TWO2;Special chroma '2 colors'
+!TP_COLORTONING_TWOALL;Special chroma
+!TP_COLORTONING_TWOBY;Special 'a' and 'b'
+!TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
+!TP_COLORTONING_TWOSTD;Standard chroma
+!TP_DIRPYRDENOISE_33;3×3 strong
+!TP_DIRPYRDENOISE_55SOFT;5×5
+!TP_DIRPYRDENOISE_55;5×5 strong
+!TP_DIRPYRDENOISE_77;7×7 (slow)
+!TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modulates action of 'Luminance' denoise
 !TP_DIRPYRDENOISE_LABM;Lab
+!TP_DIRPYRDENOISE_LCURVE;Luminance curve
 !TP_DIRPYRDENOISE_LM;Luminance only
 !TP_DIRPYRDENOISE_MEDMETHOD;Median method
 !TP_DIRPYRDENOISE_MEDTYPE;Median type
-!TP_DIRPYRDENOISE_MED;Median - Luminance only
-!TP_DIRPYRDENOISE_MED_TOOLTIP;-
+!TP_DIRPYRDENOISE_MED;Median
+!TP_DIRPYRDENOISE_MED_TOOLTIP;Enabled median denoising
+!TP_DIRPYRDENOISE_METHOD11;Quality
+!TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
 !TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "Lab" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
 !TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired size. The larger the size, the longer it takes.\n\n3x3 soft: treats 5 pixels in a 1-pixel range.\n3x3: treats 9 pixels in a 1-pixel range.\n5x5 soft: treats 13 pixels in a 2-pixel range.\n5x5: treats 25 pixels in a 2-pixel range.\n7x7: treats 49 pixels in a 3-pixel range.\n\nSometimes it is possible to achieve higher quality running several iterations with a small range than one iteration with a large range.
-!TP_DIRPYRDENOISE_NONE;None
+!TP_DIRPYRDENOISE_PASSES;Median iterations
 !TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying a 3x3 median filter with three iterations often leads to better results than applying 7x7 once.
-!TP_DIRPYRDENOISE_PASSE;Median iterations
 !TP_DIRPYRDENOISE_RGBM;RGB
+!TP_DIRPYRDENOISE_SHALBI;High
+!TP_DIRPYRDENOISE_SHAL;Standard
 !TP_DIRPYRDENOISE_SOFT;3x3
-!TP_DIRPYREQUALIZER_ALGO;Algorithm Skin
+!TP_DIRPYREQUALIZER_ALGO;Skin Color Range
 !TP_DIRPYREQUALIZER_ALGO_FI;Fine
 !TP_DIRPYREQUALIZER_ALGO_LA;Large
 !TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts.
 !TP_DIRPYREQUALIZER_GAMUT;Reduce artifacts
 !TP_DIRPYREQUALIZER_HUESKIN;Skin hue
 !TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
-!TP_DIRPYREQUALIZER_SKIN;Skin Tones Targetting/Protection
-!TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin tones are protected while all other tones are affected.
-!TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts due to the transitions between the color (hue, chroma, luma) of the skin and the rest of the image.
+!TP_DIRPYREQUALIZER_SKIN;Skin-tones targetting/protection
+!TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
+!TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
 !TP_EXPOS_BLACKPOINT_LABEL;Raw Black Points
 !TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
+!TP_FILMSIMULATION_LABEL;Film Simulation
+!TP_FILMSIMULATION_STRENGTH;Strength
+!TP_FILMSIMULATION_ZEROCLUTSFOUND;Set HaldCLUT directory in Preferences
 !TP_FLATFIELD_CLIPCONTROL;Clip control
 !TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
 !TP_FLATFIELD_FILEDLGFILTERANY;Any files
 !TP_FLATFIELD_FILEDLGFILTERFF;Same format as current photo
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
 !TP_ICM_FILEDLGFILTERICMDNG;Color profiles + DNG
+!TP_PREPROCESS_DEADPIXFILT;Dead pixel filter
+!TP_PREPROCESS_DEADPIXFILT_TOOLTIP;Tries to suppress dead pixels.
+!TP_PREPROCESS_HOTPIXFILT;Hot pixel filter
+!TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Tries to suppress hot pixels.
 !TP_RAWEXPOS_BLACK_0;Green 1 (lead)
 !TP_RAWEXPOS_BLACK_1;Red
 !TP_RAWEXPOS_BLACK_2;Blue
@@ -1563,6 +1551,6 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !TP_RAWEXPOS_BLACK_GREEN;Green
 !TP_RAWEXPOS_BLACK_RED;Red
 !TP_RAWEXPOS_RGB;Red, Green, Blue
-!TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer matrix
-!TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images)\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
-!TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans matrix
+!TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
+!TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
+!TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix

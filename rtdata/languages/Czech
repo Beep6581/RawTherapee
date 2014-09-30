@@ -88,12 +88,9 @@ EXIFPANEL_RESETHINT;Obnoví původní hodnoty u vybraných štítků.
 EXIFPANEL_RESET;Obnovit
 EXIFPANEL_SUBDIRECTORY;Podadresář
 EXPORT_BYPASS_ALL;Vybrat / Zrušit výběr všeho
-EXPORT_BYPASS_COLORDENOISE;Vynechat odstranění barevného šumu
 EXPORT_BYPASS_DEFRINGE;Vynechat odstranění lemu
 EXPORT_BYPASS_DIRPYRDENOISE;Vynechat redukci šumu
 EXPORT_BYPASS_DIRPYREQUALIZER;Vynechat kontrast dle detailu úrovní
-EXPORT_BYPASS_LUMADENOISE;Vynechat redukci jasového šumu
-EXPORT_BYPASS_RAW_ALL_ENHANCE;Vynechat redukci artefaktů a šumu po demozajkování
 EXPORT_BYPASS_RAW_CA;Vynechat [raw] korekci Chromatické aberace
 EXPORT_BYPASS_RAW_CCSTEPS;Vynechat [raw] potlačení chybných barev
 EXPORT_BYPASS_RAW_DCB_ENHANCE;Vynechat [raw] kroky vylepšení DCB
@@ -214,7 +211,6 @@ FILEBROWSER_STOPPROCESSING;Zastavit zpracovávaní
 FILEBROWSER_THUMBSIZE;Velikost náhledu
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Automatické spuštění zpracování po vložení nové úlohy.
 FILEBROWSER_UNRANK_TOOLTIP;Zrušit hodnocení.\nZkratka: <b>Shift - 0</b>
-FILEBROWSER_USETEMPLATE;Použít šablonu:
 FILEBROWSER_ZOOMINHINT;Zvětšit velikosti náhledů.\n\nZkratky:\n<b>+</b> - režim více karet editoru,\n<b>Alt-+</b> - režim jedné karty editoru.
 FILEBROWSER_ZOOMOUTHINT;Zmenšit velikosti náhledů.\n\nZkratky:\n<b>-</b> - režim více karet editoru,\n<b>Alt--</b> - režim jedné karty editoru.
 GENERAL_ABOUT;O programu
@@ -597,7 +593,6 @@ MAIN_TAB_METADATA;Metadata
 MAIN_TAB_METADATA_TOOLTIP;Zkratka: <b>Alt-m</b>
 MAIN_TAB_RAW;Raw
 MAIN_TAB_RAW_TOOLTIP;Zkratka: <b>Alt-r</b>
-MAIN_TAB_TAGGING;Štítky
 MAIN_TAB_TRANSFORM;Transformace
 MAIN_TAB_TRANSFORM_TOOLTIP;Zkratka: <b>Alt-t</b>
 MAIN_TOOLTIP_BACKCOLOR0;Barva pozadí náhledu: <b>Dle motivu</b>\nZkratka: <b>9</b>
@@ -680,7 +675,6 @@ PARTIALPASTE_RAWEXPOS_BLACK;Úrovně černé
 PARTIALPASTE_RAWEXPOS_LINEAR;Korekce bílého bodu
 PARTIALPASTE_RAWEXPOS_PRESER;Zachování světel
 PARTIALPASTE_RAWGROUP;Nastavení Raw
-PARTIALPASTE_RAW_ALLENHANCE;Redukce artefaktů/šumu po demozajkování
 PARTIALPASTE_RAW_DCBENHANCE;Vylepšení DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Počet průchodů DCB
 PARTIALPASTE_RAW_DMETHOD;Metoda demozajkování
@@ -706,7 +700,6 @@ PREFERENCES_BEHAVIOR;Režim
 PREFERENCES_BEHSETALLHINT;Nastaví všechny parametry do módu <b>Nastavit</b>.\nZměna parametrů v panelu dávkového zpracování se aplikuje jako <b>absolutní</b>, budou zobrazeny aktuální hodnoty.
 PREFERENCES_BEHSETALL;Vše do 'Nastavit'
 PREFERENCES_BLACKBODY;Wolfram
-PREFERENCES_BLINKCLIPPED;Blikání v oříznutých oblastech
 PREFERENCES_CACHECLEARALL;Vymazat vše
 PREFERENCES_CACHECLEARPROFILES;Smazat profily zpracování
 PREFERENCES_CACHECLEARTHUMBS;Vymazat náhledy
@@ -733,7 +726,6 @@ PREFERENCES_DARKFRAMEFOUND;Nalezeno
 PREFERENCES_DARKFRAMESHOTS;snímků
 PREFERENCES_DARKFRAMETEMPLATES;šablon
 PREFERENCES_DARKFRAME;Tmavý snímek
-PREFERENCES_DATEFORMATFRAME;Formát data
 PREFERENCES_DATEFORMATHINT;Lze použít následující formátovací řetězce:\n<b>%y</b>\t- rok (year)\n<b>%m</b>\t- měsíc (month)\n<b>%d</b>\t-: den (day)\n\nNapříklad český formát data:\n<b>%d. %m. %y</b>
 PREFERENCES_DATEFORMAT;Formát data
 PREFERENCES_DEFAULTLANG;Výchozí jazyk
@@ -831,7 +823,6 @@ PREFERENCES_SND_BATCHQUEUEDONE;Zpracování fronty dokončeno
 PREFERENCES_SND_HELP;Vložte cestu k souboru nebo ponechte prázdné (bez zvuku).\nVe Windows zadejte "SystemDefault", "SystemAsterisk", atd. pro použití systémových zvuků.\nNa Linuxu pro systémové zvuky použijte "complete", "window-attention" a další. 
 PREFERENCES_SND_LNGEDITPROCDONE;Zpracování v editoru dokončeno
 PREFERENCES_SND_TRESHOLDSECS;po sekundách
-PREFERENCES_SQUAREDETAILWINDOW;Čtvercové okno detailu (rychlejší)
 PREFERENCES_STARTUPIMDIR;Složka obrázků při spuštění
 PREFERENCES_TAB_BROWSER;Prohlížeč souborů
 PREFERENCES_TAB_COLORMGR;Správa barev
@@ -920,7 +911,6 @@ TP_BWMIX_ALGO_SP;Speciální efekty
 TP_BWMIX_ALGO_TOOLTIP;Lineární: výstupem bude běžná <b>lineární</b> odpověď.\nSpeciální efekty: výstupem budou speciální efekty pomocí míchání kanálů (<b>nelineární</b> odpověď).
 TP_BWMIX_AUTOCH;Automaticky
 TP_BWMIX_AUTOCH_TIP;Spočítá optimální hodnoty pro míchání kanálů.
-TP_BWMIX_BLUE;Modrá
 TP_BWMIX_CC_ENABLED;Úpravy doplňkových barev
 TP_BWMIX_CC_TOOLTIP;Povolením zapnete automatické korekce doplňkových barev v režimu ROYGCBPM.
 TP_BWMIX_CHANNEL;Korekce jasu
@@ -929,7 +919,6 @@ TP_BWMIX_CURVEEDITOR2;Křivka 'Po'
 TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tónová křivka na konci úprav - po převodu na černobílou fotografii.
 TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tónová křivka před převodem na černobílou fotografii\nmůže vzít v potaz barevné složky.
 TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Změní jas dle odstínu L=f(H).\nUvědomte si, že extrémní hodnoty mohou způsobovat artefakty.
-TP_BWMIX_CYAN;Tyrkysová
 TP_BWMIX_FILTER;Barevný filtr
 TP_BWMIX_FILTER_BLUEGREEN;Tyrkysový
 TP_BWMIX_FILTER_BLUE;Modrý
@@ -942,13 +931,8 @@ TP_BWMIX_FILTER_RED;Červený
 TP_BWMIX_FILTER_TOOLTIP;Efekt barevného filtru je podobný focení na film s nasazeným barevným filtrem. Barevný filtr omezuje průchod specifického rozsahu barev a způsobuje tak jejich zesvětlení. Například červený filtr způsobí ztmavení modré oblohy.
 TP_BWMIX_FILTER_YELLOW;Žlutý
 TP_BWMIX_GAMMA;Gama korekce
-TP_BWMIX_GAM_BLUE;Modrý kanál
-TP_BWMIX_GAM_GREEN;Zelený kanál
-TP_BWMIX_GAM_RED;Červený kanál
 TP_BWMIX_GAM_TOOLTIP;Gama korekce pro každý R, G, B kanál.
-TP_BWMIX_GREEN;Zelená
 TP_BWMIX_LABEL;Černobílá
-TP_BWMIX_MAGENTA;Purpurová
 TP_BWMIX_MET;Metoda
 TP_BWMIX_MET_CHANMIX;Míchání kanálů
 TP_BWMIX_MET_DESAT;Odbarvení
@@ -956,9 +940,6 @@ TP_BWMIX_MET_LUMEQUAL;Korekce jasu
 TP_BWMIX_MIXC;Míchání
 TP_BWMIX_NEUTRAL;Vrátit míchání
 TP_BWMIX_NEUTRAL_TIP;Vrátí všechny hodnoty (filtry, mixéry kanálů) na výchozí pozice.
-TP_BWMIX_ORANGE;Oranžová
-TP_BWMIX_PURPLE;Nachová
-TP_BWMIX_RED;Červená
 TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Celkem: %4%%
 TP_BWMIX_RGBLABEL_HINT;Výsledné RGB faktory po započtení všech mixérů\n"Celkem" zobrazí souček aktuálně aplikovaných RGB hodnot:\n- vždy 100% v relativním režimu\n- více (světlejší) nebo méně (tmavší) než 100% v absolutním režimu.
 TP_BWMIX_RGB_TOOLTIP;Mísení RGB kanálů. Jako vodítko můžete použít uložená přednastavení.\nPovšimněte si prosím, že záporné hodnoty mohou vést ke vzniku artefaktů nebo chybnému chování.
@@ -984,7 +965,6 @@ TP_BWMIX_TCMODE_SATANDVALBLENDING;ČB Mísení saturace a hodnoty
 TP_BWMIX_TCMODE_STANDARD;ČB Běžný
 TP_BWMIX_TCMODE_WEIGHTEDSTD;ČB Běžný vážený
 TP_BWMIX_VAL;L
-TP_BWMIX_YELLOW;Žlutá
 TP_CACORRECTION_BLUE;Modrá
 TP_CACORRECTION_LABEL;Korekce chromatické aberace
 TP_CACORRECTION_RED;Červená
@@ -1106,7 +1086,6 @@ TP_DIRPYRDENOISE_LDETAIL;Jas detailů
 TP_DIRPYRDENOISE_LUMA;Jas
 TP_DIRPYRDENOISE_METHOD;Metoda
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;Pro raw obrázky může být použita jak RGB tak i Lab metoda.\n\nPro ostatní obrázky bude vždy použita metoda Lab bez ohledu na výběr.
-TP_DIRPYRDENOISE_PERF;RGB režim (raw obrázky)
 TP_DIRPYRDENOISE_RED;Barevnost - Červená a zelená
 TP_DIRPYRDENOISE_RGB;RGB
 TP_DIRPYREQUALIZER_ALGO;Algoritmus pleti
@@ -1302,7 +1281,6 @@ TP_RAWEXPOS_BLACKZERO;Úroveň černé: Zelená 1 (řídící)
 TP_RAWEXPOS_LINEAR;Korekce bílého bodu
 TP_RAWEXPOS_PRESER;Zachování světel
 TP_RAWEXPOS_TWOGREEN;Spojit zelené
-TP_RAW_ALLENHANCE;Redukce artefaktů/šumu po demozajkování
 TP_RAW_DCBENHANCE;DCB vylepšení
 TP_RAW_DCBITERATIONS;Počet průchodů DCB
 TP_RAW_DMETHOD;Metoda
@@ -1459,117 +1437,127 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_257;Color Toning
 !HISTORY_MSG_258;Color Toning - Color
 !HISTORY_MSG_259;Color Toning - Opacity
-!HISTORY_MSG_260;Color Toning - Opacity
+!HISTORY_MSG_260;Color Toning - 'a[b]' opacity
 !HISTORY_MSG_261;Color Toning - Method
-!HISTORY_MSG_262;Color Toning - Opacity
-!HISTORY_MSG_263;Color Toning - Luminance
-!HISTORY_MSG_263;Color Toning - Shadows Red
-!HISTORY_MSG_264;Color Toning - Shadows Green
-!HISTORY_MSG_265;Color Toning - Shadows Blue
-!HISTORY_MSG_266;Color Toning - Middle Red
-!HISTORY_MSG_267;Color Toning - Middle Green
-!HISTORY_MSG_268;Color Toning - Middle Blue
-!HISTORY_MSG_269;Color Toning - High Red
-!HISTORY_MSG_270;Color Toning - High Green
-!HISTORY_MSG_271;Color Toning - High Blue
+!HISTORY_MSG_262;Color Toning - 'b' opacity
+!HISTORY_MSG_263;Color Toning - Shadows - Red
+!HISTORY_MSG_264;Color Toning - Shadows - Green
+!HISTORY_MSG_265;Color Toning - Shadows - Blue
+!HISTORY_MSG_266;Color Toning - Mid - Red
+!HISTORY_MSG_267;Color Toning - Mid - Green
+!HISTORY_MSG_268;Color Toning - Mid - Blue
+!HISTORY_MSG_269;Color Toning - High - Red
+!HISTORY_MSG_270;Color Toning - High - Green
+!HISTORY_MSG_271;Color Toning - High - Blue
 !HISTORY_MSG_272;Color Toning - Balance
 !HISTORY_MSG_273;Color Toning - Reset
 !HISTORY_MSG_274;Color Toning - Sat. Shadows
 !HISTORY_MSG_275;Color Toning - Sat. Highlights
 !HISTORY_MSG_276;Color Toning - Opacity
-!HISTORY_MSG_277;Color Toning - Reset Curves
-!HISTORY_MSG_278;Color Toning - Preserve Luminance
+!HISTORY_MSG_277;--unused--
+!HISTORY_MSG_278;Color Toning - Preserve luminance
 !HISTORY_MSG_279;Color Toning - Shadows
 !HISTORY_MSG_280;Color Toning - Highlights
-!HISTORY_MSG_281;Color Toning - Sat. Protection
-!HISTORY_MSG_282;Color Toning - Sat. Threshold
-!HISTORY_MSG_283;Color Toning - Str. Protection
-!HISTORY_MSG_284;Color Toning - Auto saturation
-!HISTORY_MSG_285;NR - Median method
-!HISTORY_MSG_286;NR - Median type
-!HISTORY_MSG_287;NR - Median iterations
-!HISTORY_MSG_288;Flat Field Clip Control
-!HISTORY_MSG_289;Flat Field Automatic Clip Control
+!HISTORY_MSG_281;Color Toning - Sat. strength
+!HISTORY_MSG_282;Color Toning - Sat. threshold
+!HISTORY_MSG_283;Color Toning - Strength
+!HISTORY_MSG_284;Color Toning - Auto sat. protection
+!HISTORY_MSG_285;NR - Median - Method
+!HISTORY_MSG_286;NR - Median - Type
+!HISTORY_MSG_287;NR - Median - Iterations
+!HISTORY_MSG_288;Flat Field - Clip control
+!HISTORY_MSG_289;Flat Field - Clip control - Auto
 !HISTORY_MSG_290;Black Level - Red
 !HISTORY_MSG_291;Black Level - Green
 !HISTORY_MSG_292;Black Level - Blue
+!HISTORY_MSG_293;Film Simulation
+!HISTORY_MSG_294;Film Simulation - Strength
+!HISTORY_MSG_295;Film Simulation - Film
+!HISTORY_MSG_296;NR - Modulate luminance
+!HISTORY_MSG_297;NR - Quality
+!HISTORY_MSG_298;Dead pixel filter
 !PARTIALPASTE_COLORTONING;Color Toning
+!PARTIALPASTE_FILMSIMULATION;Film Simulation
 !PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
+!PARTIALPASTE_PREPROCESS_DEADPIXFILT;Apply dead pixel filter
+!PARTIALPASTE_PREPROCESS_HOTPIXFILT;Apply hot pixel filter
+!PREFERENCES_CLUTSDIR;HaldCLUT directory
+!PREFERENCES_FILMSIMULATION;Film Simulation
 !TP_COLORTONING_AB;o C/L
-!TP_COLORTONING_AUTOSAT;Auto saturation
+!TP_COLORTONING_AUTOSAT;Automatic
 !TP_COLORTONING_BALANCE;Balance
-!TP_COLORTONING_BALANCE_TOOLTIP;Equilibrate tones between shadows and highlights
 !TP_COLORTONING_BY;o C/L
-!TP_COLORTONING_CHROMA1;Opacity 'a'
-!TP_COLORTONING_CHROMA2;Opacity 'b'
-!TP_COLORTONING_CHROMAC;Opacity chroma
-!TP_COLORTONING_CHROMA;Opacity 'ab' or 'a'
+!TP_COLORTONING_CHROMAC;Opacity
 !TP_COLORTONING_COLOR;Color
-!TP_COLORTONING_CURVEEDITOR_LL;L
+!TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Opacity Chroma according to Luminance of C=f(L)
 !TP_COLORTONING_HIGHLIGHT;Highlights
 !TP_COLORTONING_HUE;Hue
-!TP_COLORTONING_HUE;Hue blending only
 !TP_COLORTONING_LABCOL;Direct Colors
 !TP_COLORTONING_LABCOL_TOOLTIP;When you move a saturation slider, these 'direct' colors are increased.
 !TP_COLORTONING_LABEL;Color Toning
 !TP_COLORTONING_LABINT;-
 !TP_COLORTONING_LABINT_TOOLTIP;When the image color is blue and the blending color is red, it results in a magenta color in the function of % opacity.\nWhen the image color is red and the blending color is yellow, it results in an orange color in the function of % opacity.
 !TP_COLORTONING_LAB;Lab blending
-!TP_COLORTONING_LCH;Lch blending
-!TP_COLORTONING_LCH_1;Hue + XYZ
-!TP_COLORTONING_LCH_2;XYZ blending
 !TP_COLORTONING_LUMAMODE;Preserve luminance
 !TP_COLORTONING_LUMAMODE_TOOLTIP;If enabled, when you change color (red, green, cyan, blue, etc.) the luminance of each pixel is preserved.
 !TP_COLORTONING_LUMA;Luminance
 !TP_COLORTONING_METHOD;Method
-!TP_COLORTONING_METHOD_TOOLTIP;Lab blending use interpolation colour blending\nColor balance (Shadows Midtones Highlights)\nSplit Toning Colour SH+balance (Shadows Highlights + balance shadows/highlights) use direct colors\nIn all methods you can enabled Black and White
-!TP_COLORTONING_MIDTONES;Mid Tones
-!TP_COLORTONING_NEUTRALCUR;Reset curves
-!TP_COLORTONING_NEUTRALCUR_TIP;Reset all curves to default.
+!TP_COLORTONING_METHOD_TOOLTIP;"Lab blending", "RGB sliders" and "RGB curves" use interpolated color blending.\n"Color balance (Shadows/Midtones/Highlights)" and "Saturation 2 colors" use direct colors.\n\nThe Black-and-White tool can be enabled when using any color toning method, which allows for color toning.
+!TP_COLORTONING_MIDTONES;Midtones
 !TP_COLORTONING_NEUTRAL;Reset sliders
-!TP_COLORTONING_NEUTRAL_TIP;Reset all values (Shadows Midtones Highlights) to default.
+!TP_COLORTONING_NEUTRAL_TIP;Reset all values (Shadows, Midtones, Highlights) to default.
 !TP_COLORTONING_OPACITY;Opacity
 !TP_COLORTONING_RGBCURVES;RGB - Curves
 !TP_COLORTONING_RGBSLIDERS;RGB - Sliders
-!TP_COLORTONING_SATH;Saturation highlights
-!TP_COLORTONING_SATL;Saturation shadows
-!TP_COLORTONING_SATURATEDOPACITY;Saturation protection
-!TP_COLORTONING_SATURATIONTHRESHOLD;Saturation protection threshold
+!TP_COLORTONING_SATURATEDOPACITY;Strength
+!TP_COLORTONING_SATURATIONTHRESHOLD;Threshold
+!TP_COLORTONING_SA;Saturation Protection
 !TP_COLORTONING_SHADOWS;Shadows
-!TP_COLORTONING_SPLITBAL;Split Toning Colour SH + balance
-!TP_COLORTONING_SPLITCOCO;Color Balance SMH
-!TP_COLORTONING_SPLITCO;Split Toning Colour SMH
-!TP_COLORTONING_SPLITLR;Split Toning Saturation 2 colors
+!TP_COLORTONING_SPLITCOCO;Color Balance Shadows/Midtones/Highlights
+!TP_COLORTONING_SPLITCO;Shadows/Midtones/Highlights
+!TP_COLORTONING_SPLITLR;Saturation 2 colors
 !TP_COLORTONING_STRENGTH;Strength
-!TP_COLORTONING_STRPROTECT;Strength protection
-!TP_COLORTONING_TWO2;Opacity special chroma 2 colors
-!TP_COLORTONING_TWOALL;Opacity special chroma
-!TP_COLORTONING_TWOBY;Opacity special 'a' and 'b'
-!TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard - linear response same for 'a' and 'b'\nSpecial chroma same response for 'a' and 'b', but without bound - try under the diagonal\nSpecial 'a' and 'b': as Special + first curve 'a' only - second curve 'b' only : dedicate for special effects\nSpecial 2 colors - more predictable
-!TP_COLORTONING_TWOSTD;Opacity standard chroma
-!TP_DIRPYRDENOISE_33;3x3 strong
-!TP_DIRPYRDENOISE_55SOFT;5x5
-!TP_DIRPYRDENOISE_55;5x5 strong
-!TP_DIRPYRDENOISE_77;7x7 (slow)
+!TP_COLORTONING_STR;Strength
+!TP_COLORTONING_TWO2;Special chroma '2 colors'
+!TP_COLORTONING_TWOALL;Special chroma
+!TP_COLORTONING_TWOBY;Special 'a' and 'b'
+!TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
+!TP_COLORTONING_TWOSTD;Standard chroma
+!TP_DIRPYRDENOISE_33;3×3 strong
+!TP_DIRPYRDENOISE_55SOFT;5×5
+!TP_DIRPYRDENOISE_55;5×5 strong
+!TP_DIRPYRDENOISE_77;7×7 (slow)
+!TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modulates action of 'Luminance' denoise
 !TP_DIRPYRDENOISE_LABM;Lab
+!TP_DIRPYRDENOISE_LCURVE;Luminance curve
 !TP_DIRPYRDENOISE_LM;Luminance only
 !TP_DIRPYRDENOISE_MEDMETHOD;Median method
 !TP_DIRPYRDENOISE_MEDTYPE;Median type
-!TP_DIRPYRDENOISE_MED;Median - Luminance only
-!TP_DIRPYRDENOISE_MED_TOOLTIP;-
+!TP_DIRPYRDENOISE_MED;Median
+!TP_DIRPYRDENOISE_MED_TOOLTIP;Enabled median denoising
+!TP_DIRPYRDENOISE_METHOD11;Quality
+!TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
 !TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "Lab" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
 !TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired size. The larger the size, the longer it takes.\n\n3x3 soft: treats 5 pixels in a 1-pixel range.\n3x3: treats 9 pixels in a 1-pixel range.\n5x5 soft: treats 13 pixels in a 2-pixel range.\n5x5: treats 25 pixels in a 2-pixel range.\n7x7: treats 49 pixels in a 3-pixel range.\n\nSometimes it is possible to achieve higher quality running several iterations with a small range than one iteration with a large range.
-!TP_DIRPYRDENOISE_NONE;None
+!TP_DIRPYRDENOISE_PASSES;Median iterations
 !TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying a 3x3 median filter with three iterations often leads to better results than applying 7x7 once.
-!TP_DIRPYRDENOISE_PASSE;Median iterations
 !TP_DIRPYRDENOISE_RGBM;RGB
+!TP_DIRPYRDENOISE_SHALBI;High
+!TP_DIRPYRDENOISE_SHAL;Standard
 !TP_DIRPYRDENOISE_SOFT;3x3
 !TP_EXPOS_BLACKPOINT_LABEL;Raw Black Points
 !TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
+!TP_FILMSIMULATION_LABEL;Film Simulation
+!TP_FILMSIMULATION_STRENGTH;Strength
+!TP_FILMSIMULATION_ZEROCLUTSFOUND;Set HaldCLUT directory in Preferences
 !TP_FLATFIELD_CLIPCONTROL;Clip control
 !TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
 !TP_FLATFIELD_FILEDLGFILTERANY;Any files
 !TP_FLATFIELD_FILEDLGFILTERFF;Same format as current photo
+!TP_PREPROCESS_DEADPIXFILT;Dead pixel filter
+!TP_PREPROCESS_DEADPIXFILT_TOOLTIP;Tries to suppress dead pixels.
+!TP_PREPROCESS_HOTPIXFILT;Hot pixel filter
+!TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Tries to suppress hot pixels.
 !TP_RAWEXPOS_BLACK_0;Green 1 (lead)
 !TP_RAWEXPOS_BLACK_1;Red
 !TP_RAWEXPOS_BLACK_2;Blue
@@ -1578,6 +1566,6 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_RAWEXPOS_BLACK_GREEN;Green
 !TP_RAWEXPOS_BLACK_RED;Red
 !TP_RAWEXPOS_RGB;Red, Green, Blue
-!TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer matrix
-!TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images)\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
-!TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans matrix
+!TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
+!TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
+!TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
