@@ -345,6 +345,7 @@ void Imagefloat::normalizeFloatTo65535() {
 }
 
 void Imagefloat::calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist) {
+
     hist.clear();
 
     // Set up factors to calc the lightness
@@ -359,21 +360,29 @@ void Imagefloat::calcCroppedHistogram(const ProcParams &params, float scale, LUT
     int x1, x2, y1, y2;
     params.crop.mapToResized(width, height, scale, x1, x2, y1, y2);
 
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
+#pragma omp parallel
+{
+	LUTu histThr(65536);
+	histThr.clear();
+#pragma omp for nowait
     for (int y=y1; y<y2; y++) {
         int i;
         for (int x=x1; x<x2; x++) {
             i = (int)(facRed * r(y,x) + facGreen * g(y,x) + facBlue * b(y,x));
-            if (i<0) i=0; else if (i>65535) i=65535;
-#ifdef _OPENMP
-// Access to hist[] must be atomic. In this case, we may need to see if this parallelization is worth it
-#pragma omp atomic
-#endif
-            hist[i]++;
+            if (i<0)
+				i=0;
+			else if (i>65535)
+				i=65535;
+            histThr[i]++;
         }
     }
+#pragma omp critical
+{
+	for(int i=0;i<=0xffff;i++)
+		hist[i] += histThr[i];
+}
+}
+
 }
 
 // Parallelized transformation; create transform with cmsFLAGS_NOCACHE!

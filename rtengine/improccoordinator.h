@@ -99,8 +99,6 @@ class ImProcCoordinator : public StagedImageProcessor {
         LUTu lhist16,lhist16Cropped;
         LUTu lhist16CAM,lhist16CroppedCAM;
         LUTu lhist16CCAM;
-        LUTu lhist16CCAMAF;
-        LUTu lhist16ClabAF;
         LUTu histCropped;
         LUTu lhist16Clad,lhist16CLlad,lhist16LClad,lhist16LLClad;
         LUTu histRed, histRedRaw;

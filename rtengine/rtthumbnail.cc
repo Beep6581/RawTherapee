@@ -870,8 +870,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip, opautili);
 	//params.dirpyrDenoise.getCurves(dnNoisCurve, lldenoisutili);
 
-	LabImage* labView = new LabImage (fw,fh);
-	CieImage* cieView = new CieImage (fw,fh);
 	bool clctoningutili=false;
 	bool llctoningutili=false;
     CurveFactory::curveToningCL(clctoningutili, params.colorToning.clcurve, clToningcurve,scale==1 ? 1 : 16);
@@ -899,6 +897,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 		} 
 	
     autor = autog = autob = -9000.f; // This will ask to compute the "auto" values for the B&W tool
+
+	LabImage* labView = new LabImage (fw,fh);
     ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
 
     // freeing up some memory
@@ -940,10 +940,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 								   hist16C, hist16C, dummy, dummy,
 								   16);
     //ipf.luminanceCurve (labView, labView, curve);
+ 
+
     ipf.chromiLuminanceCurve (NULL, 1,labView, labView, curve1, curve2, satcurve,lhskcurve, clcurve, curve, utili, autili, butili, ccutili,cclutili, clcutili, dummy, dummy, dummy, dummy);
 	
 	ipf.vibrance(labView);
-	int begh = 0, endh = labView->H;
 
 	if((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) ipf.EPDToneMap(labView,5,6);
 
@@ -961,6 +962,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 					16);
 
 	if(params.colorappearance.enabled){
+		int begh = 0, endh = labView->H;
 		float** buffer = new float*[fh];
 		for (int i=0; i<fh; i++)
 			buffer[i] = new float[fw];
@@ -996,7 +998,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 		int scale;
 		sk=16;
 		int rtt=0;		
+		CieImage* cieView = new CieImage (fw,fh);
 		ipf.ciecam_02float (cieView, adap, begh, endh, 1, 2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 6, (float**)buffer, execsharp, d, sk, rtt);
+		delete cieView;
 		for (int i=0; i<fh; i++)
 			delete [] buffer[i];
 		delete [] buffer; buffer=NULL;
@@ -1009,7 +1013,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     ipf.lab2monitorRgb (labView, readyImg);
     delete labView;
     delete baseImg;
-    delete cieView;
     // calculate scale
     if (params.coarse.rotate==90 || params.coarse.rotate==270) 
         myscale = scale * thumbImg->width / fh;
@@ -1030,6 +1033,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
                 else
                     ix += 3;
     }*/
+
     return readyImg;
 }
 

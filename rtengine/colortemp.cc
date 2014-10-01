@@ -110,8 +110,7 @@ void ColorTemp::clip (double &temp, double &green, double &equal) {
         equal = MAXEQUAL;
 }
 
-ColorTemp::ColorTemp (double mulr, double mulg, double mulb, double e) : equal(e) {
-    method = "Custom";
+ColorTemp::ColorTemp (double mulr, double mulg, double mulb, double e) : equal(e), method("Custom") {
     mul2temp (mulr, mulg, mulb, equal, temp, green);
 }
 
@@ -1205,7 +1204,7 @@ void ColorTemp::cieCAT02(double Xw, double Yw, double Zw, double &CAM02BB00,doub
 
 }
 
-void ColorTemp::temp2mulxyz (double tem, double gree, Glib::ustring method ,double &Xxyz, double &Zxyz) {
+void ColorTemp::temp2mulxyz (double tem, double gree, std::string method ,double &Xxyz, double &Zxyz) {
     double xD, yD, x_D, y_D, interm;
     double x, y, z;
 
@@ -1239,10 +1238,10 @@ void ColorTemp::temp2mulxyz (double tem, double gree, Glib::ustring method ,doub
     else if(method == "Flash 6500K"         ) spectrum_to_xyz_preset(Flash6500_spect,        x, y, z);
     else {
         // otherwise we use the Temp+Green generic solution
-        if (tem <= 4000) {
+        if (tem <= INITIALBLACKBODY) {
             // if temperature is between 2000K and 4000K we use blackbody, because there will be no Daylight reference below 4000K...
             // of course, the previous version of RT used the "magical" but wrong formula of U.Fuchs (Ufraw).
-            spectrum_to_xyz_blackbody(0., 0., tem, x, y, z);
+            spectrum_to_xyz_blackbody(tem, x, y, z);
         }
         else {
             // from 4000K up to 25000K: using the D illuminant (daylight) which is standard
@@ -1260,7 +1259,7 @@ void ColorTemp::temp2mulxyz (double tem, double gree, Glib::ustring method ,doub
             interm=(0.0241+0.2562*x_D-0.734*y_D);
             m1=(-1.3515-1.7703*x_D+5.9114*y_D)/interm;
             m2=(0.03-31.4424*x_D+30.0717*y_D)/interm;
-            spectrum_to_xyz_daylight(m1, m2, 0., x, y, z);
+            spectrum_to_xyz_daylight(m1, m2, x, y, z);
             xD=x;yD=y;
         }
 
@@ -1307,7 +1306,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
     double Lpal[50],apal[50],bpal[50];
 
     int palet=-1;
-    bool palette=true;
+    bool palette=false;
     // double tempalet; // correlated temperature
 
     // We first test for specially handled methods
@@ -1341,10 +1340,10 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
     else if(method == "Flash 6500K"         ) {spectrum_to_xyz_preset(Flash6500_spect,        x, y, z);palet=27; /*tempalet=6500;*/ }
     else {
         // otherwise we use the Temp+Green generic solution
-        if (temp <= 4000) {
+        if (temp <= INITIALBLACKBODY) {
             // if temperature is between 2000K and 4000K we use blackbody, because there will be no Daylight reference below 4000K...
             // of course, the previous version of RT used the "magical" but wrong formula of U.Fuchs (Ufraw).
-            spectrum_to_xyz_blackbody(0., 0., temp, x, y, z);palet=28;
+            spectrum_to_xyz_blackbody(temp, x, y, z);palet=28;
         }
         else {
             // from 4000K up to 25000K: using the D illuminant (daylight) which is standard
@@ -1362,7 +1361,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
             interm=(0.0241+0.2562*x_D-0.734*y_D);
             m1=(-1.3515-1.7703*x_D+5.9114*y_D)/interm;
             m2=(0.03-31.4424*x_D+30.0717*y_D)/interm;
-            spectrum_to_xyz_daylight(m1, m2, 0., x, y, z);
+            spectrum_to_xyz_daylight(m1, m2, x, y, z);
             xD=x;yD=y;
         }
     }
@@ -1442,9 +1441,9 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
 			}
 		}
 		else if(palet>=28) {
-			if(temp<4000) {
+			if(temp<INITIALBLACKBODY) {
 				for(int i=0;i<N_col;i++) {
-					spectrum_to_color_xyz_blackbody(spec_colorpalet[i], 0.,0.,temp,x_x,y_y,z_z);
+					spectrum_to_color_xyz_blackbody(spec_colorpalet[i], temp,x_x,y_y,z_z);
 					Xpal[i]=x_x;Ypal[i]=y_y;Zpal[i]=z_z;
 				}
 			}
@@ -1453,7 +1452,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
 					m11p=m1;m22p=m2;
 
 				for(int i=0;i<N_col;i++) {// calculate XYZ palette for illuminant and color
-					spectrum_to_color_xyz_daylight(spec_colorpalet[i], m11p,m22p,temp,x_x,y_y,z_z);
+					spectrum_to_color_xyz_daylight(spec_colorpalet[i], m11p,m22p,x_x,y_y,z_z);
 					Xpal[i]=x_x;Ypal[i]=y_y;Zpal[i]=z_z;
 				}
 			}
@@ -1565,16 +1564,16 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
 			}
 
 			//calculate XYZ for each color : for Blackbody and Daylight at tempw
-			if(tempw<4000) {
+			if(tempw<=INITIALBLACKBODY) {
 				for(int i=0;i<N_c;i++) {
-					spectrum_to_color_xyz_blackbody(spec_color[i],0.,0.,tempw,xx,yy,zz);
+					spectrum_to_color_xyz_blackbody(spec_color[i],tempw,xx,yy,zz);
 					Xchk[i]=xx;Ychk[i]=yy;Zchk[i]=zz;
 				}
-				spectrum_to_xyz_blackbody(0., 0., tempw, x, y, z);//for white point
+				spectrum_to_xyz_blackbody(tempw, x, y, z);//for white point
 			}
 			else // after 6600K (arbitrary) I use daylight...because ...but there is no lamp...
 			{
-				double m11, m22, x_DD,y_DD, interm2, yDD;
+				double m11, m22, x_DD,y_DD, interm2;
 				if (tempw<=7000)
 					x_DD = -4.6070e9/(tempw*tempw*tempw) + 2.9678e6/(tempw*tempw) + 0.09911e3/tempw + 0.244063;
 				else
@@ -1588,10 +1587,10 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
 				m22=(0.03-31.4424*x_DD+30.0717*y_DD)/interm2;
 
 				for(int i=0;i<N_c;i++) {
-					spectrum_to_color_xyz_daylight(spec_color[i],m11,m22,tempw,xx,yy,zz);
+					spectrum_to_color_xyz_daylight(spec_color[i],m11,m22,xx,yy,zz);
 					Xchk[i]=xx;Ychk[i]=yy;Zchk[i]=zz;
 				}
-				spectrum_to_xyz_daylight(m11, m22, 0., x, y, z);
+				spectrum_to_xyz_daylight(m11, m22, x, y, z);
 			}
 
 			XYZtoCorColorTemp(Xwb, Ywb, Zwb, correl_temp);
@@ -2217,11 +2216,11 @@ void ColorTemp::jch2xyz_ciecam02float( float &x, float &y, float &z, float J, fl
     Calculate Planck's radiation
 */
  //calculate spectral data for blackbody at temp!
-double ColorTemp::blackbody_spect(double wavelength, double m1, double m2, double temp)
+double ColorTemp::blackbody_spect(double wavelength, double temperature)
 {
     double wlm = wavelength * 1e-9;   /* Wavelength in meters */
-    return (3.7417715247e-16 * pow(wlm, -5.0)) /              //3.7417..= c1 = 2*Pi*h*c2  where h=Planck constant, c=velocity of light
-           (exp(1.438786e-2 / (wlm * temp)) - 1.0); //1.4387..= c2 = h*c/k  where k=Boltzmann constant
+    return (3.7417715247e-16 / pow(wlm, 5)) /              //3.7417..= c1 = 2*Pi*h*c2  where h=Planck constant, c=velocity of light
+           (xexp(1.438786e-2 / (wlm * temperature)) - 1.0); //1.4387..= c2 = h*c/k  where k=Boltzmann constant
 }
 
 /*
@@ -2241,13 +2240,13 @@ E.g. for 380nm: x2=0.001368  y2=0.000039  z2=0.006451  round in J.Walker to 0.00
 I have increase precision used by J.Walker  and pass to 350nm to 830nm
 */
 
-void ColorTemp::spectrum_to_xyz_daylight(double _m1, double _m2, double _temp, double &x, double &y, double &z)
+void ColorTemp::spectrum_to_xyz_daylight(double _m1, double _m2, double &x, double &y, double &z)
 {
     int i;
     double lambda, X = 0, Y = 0, Z = 0, XYZ;
 
     for (i=0, lambda=350.; lambda<830.1; i++, lambda+=5.) {
-        double Me = daylight_spect(lambda, _m1, _m2, _temp);
+        double Me = daylight_spect(lambda, _m1, _m2);
         X += Me * cie_colour_match_jd[i][0];
         Y += Me * cie_colour_match_jd[i][1];
         Z += Me * cie_colour_match_jd[i][2];
@@ -2258,13 +2257,13 @@ void ColorTemp::spectrum_to_xyz_daylight(double _m1, double _m2, double _temp, d
     z = Z / XYZ;
 }
 
-void ColorTemp::spectrum_to_xyz_blackbody(double _m1, double _m2, double _temp, double &x, double &y, double &z)
+void ColorTemp::spectrum_to_xyz_blackbody(double _temp, double &x, double &y, double &z)
 {
     int i;
     double lambda, X = 0, Y = 0, Z = 0, XYZ;
 
     for (i=0, lambda=350.; lambda<830.1; i++, lambda+=5.) {
-        double Me = blackbody_spect(lambda, _m1, _m2, _temp);
+        double Me = blackbody_spect(lambda, _temp);
         X += Me * cie_colour_match_jd[i][0];
         Y += Me * cie_colour_match_jd[i][1];
         Z += Me * cie_colour_match_jd[i][2];
@@ -2338,7 +2337,7 @@ void ColorTemp::spectrum_to_color_xyz_preset(const double* spec_color, const dou
 }
 
 //calculate XYZ from spectrum data (color) and illuminant : J.Desmis december 2011
-void ColorTemp::spectrum_to_color_xyz_daylight(const double* spec_color, double _m1, double _m2, double _temp, double &xx, double &yy, double &zz)
+void ColorTemp::spectrum_to_color_xyz_daylight(const double* spec_color, double _m1, double _m2, double &xx, double &yy, double &zz)
 {
     int i;
     double lambda, X = 0, Y = 0, Z = 0, Yo=0;
@@ -2348,7 +2347,7 @@ void ColorTemp::spectrum_to_color_xyz_daylight(const double* spec_color, double 
         double Mc;
 
         Me = get_spectral_color(lambda, spec_color);
-        Mc = daylight_spect(lambda,_m1, _m2, _temp);
+        Mc = daylight_spect(lambda,_m1, _m2);
         X += Mc * cie_colour_match_jd[i][0] * Me;
         Y += Mc * cie_colour_match_jd[i][1] * Me;
         Z += Mc * cie_colour_match_jd[i][2] * Me;
@@ -2357,7 +2356,7 @@ void ColorTemp::spectrum_to_color_xyz_daylight(const double* spec_color, double 
 
         double Ms;
 
-        Ms = daylight_spect(lambda,_m1, _m2, _temp);
+        Ms = daylight_spect(lambda,_m1, _m2);
         Yo += cie_colour_match_jd[i][1] * Ms;
     }
 
@@ -2367,7 +2366,7 @@ void ColorTemp::spectrum_to_color_xyz_daylight(const double* spec_color, double 
 }
 
 //calculate XYZ from spectrum data (color) and illuminant : J.Desmis december 2011
-void ColorTemp::spectrum_to_color_xyz_blackbody(const double* spec_color, double _m1, double _m2, double _temp, double &xx, double &yy, double &zz)
+void ColorTemp::spectrum_to_color_xyz_blackbody(const double* spec_color, double _temp, double &xx, double &yy, double &zz)
 {
     int i;
     double lambda, X = 0, Y = 0, Z = 0, Yo=0;
@@ -2377,7 +2376,7 @@ void ColorTemp::spectrum_to_color_xyz_blackbody(const double* spec_color, double
         double Mc;
 
         Me = get_spectral_color(lambda, spec_color);
-        Mc = blackbody_spect(lambda,_m1, _m2, _temp);
+        Mc = blackbody_spect(lambda, _temp);
         X += Mc * cie_colour_match_jd[i][0] * Me;
         Y += Mc * cie_colour_match_jd[i][1] * Me;
         Z += Mc * cie_colour_match_jd[i][2] * Me;
@@ -2386,7 +2385,7 @@ void ColorTemp::spectrum_to_color_xyz_blackbody(const double* spec_color, double
 
         double Ms;
 
-        Ms = blackbody_spect(lambda,_m1, _m2, _temp);
+        Ms = blackbody_spect(lambda, _temp);
         Yo += cie_colour_match_jd[i][1] * Ms;
     }
 
@@ -2395,7 +2394,7 @@ void ColorTemp::spectrum_to_color_xyz_blackbody(const double* spec_color, double
     zz = Z / Yo;
 }
 
-double ColorTemp::daylight_spect(double wavelength, double m1, double m2, double temp)
+double ColorTemp::daylight_spect(double wavelength, double m1, double m2)
 {
     //Values for Daylight illuminant: s0 s1 s2
     //s0

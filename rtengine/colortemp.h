@@ -48,7 +48,7 @@ class ColorTemp {
 		double temp;
 		double green;
 		double equal;
-		Glib::ustring method;
+		std::string method;
 		static void clip (double &temp, double &green);
 		static void clip (double &temp, double &green, double &equal);
 
@@ -62,7 +62,7 @@ class ColorTemp {
 		void update (const double rmul, const double gmul, const double bmul, const double equal) { this->equal = equal; mul2temp (rmul, gmul, bmul, this->equal, temp, green); }
 		void useDefaults (const double equal) { temp = 6504; green = 1.0; this->equal = equal; } // Values copied from procparams.cc
 
-		inline Glib::ustring getMethod() { return method; }
+		inline std::string getMethod() { return method; }
 		inline double getTemp ()    { return temp;  }
 		inline double getGreen ()   { return green; }
 		inline double getEqual ()   { return equal; }
@@ -71,7 +71,7 @@ class ColorTemp {
 
 		void mul2temp (const double rmul, const double gmul, const double bmul, const double equal, double& temp, double& green);
 		void temp2mul (double temp, double green, double equal, double& rmul, double& gmul, double& bmul);
-		static void temp2mulxyz (double tem, double gree, Glib::ustring method, double &Xxyz, double &Zxyz);
+		static void temp2mulxyz (double tem, double gree, std::string method, double &Xxyz, double &Zxyz);
 
 		int XYZtoCorColorTemp(double x0,double y0 ,double z0, double &temp);
 		static void cieCAT02(double Xw, double Yw, double Zw,double &CAM02BB00,double &CAM02BB01,double &CAM02BB02, double &CAM02BB10,double &CAM02BB11,double &CAM02BB12,double &CAM02BB20,double &CAM02BB21,double &CAM02BB22, double adap );
@@ -204,8 +204,8 @@ class ColorTemp {
 		bool operator== (const ColorTemp& other) { return fabs(temp-other.temp)<1e-10 && fabs(green-other.green)<1e-10; }
 		bool operator!= (const ColorTemp& other) { return !(*this==other); }
 
-		static double blackbody_spect (double wavelength, double m1, double m2, double temp);
-		static double daylight_spect  (double wavelength, double m1, double m2, double temp);
+		static double blackbody_spect (double wavelength, double temperature);
+		static double daylight_spect  (double wavelength, double m1, double m2);
 		static const double Cloudy6200_spect[97];
 		static const double Daylight5300_spect[97];
 		static const double Shade7600_spect[97];
@@ -294,12 +294,12 @@ class ColorTemp {
 		static const double ColabSky60_0_m31_spect[97];//Sky L=60
 		static const double ColabSky42_0_m24_spect[97];//Sky L=42
 
-		static void spectrum_to_xyz_daylight  (double _m1, double _m2, double _temp, double &x, double &y, double &z);
-		static void spectrum_to_xyz_blackbody (double _m1, double _m2, double _temp, double &x, double &y, double &z);
+		static void spectrum_to_xyz_daylight  (double _m1, double _m2, double &x, double &y, double &z);
+		static void spectrum_to_xyz_blackbody (double _temp, double &x, double &y, double &z);
 		static void spectrum_to_xyz_preset    (const double* spec_intens, double &x, double &y, double &z);
 
-		static void spectrum_to_color_xyz_daylight  (const double* spec_color, double _m1, double _m2, double _temp, double &xx, double &yy, double &zz);
-		static void spectrum_to_color_xyz_blackbody (const double* spec_color, double _m1, double _m2, double _temp, double &xx, double &yy, double &zz);
+		static void spectrum_to_color_xyz_daylight  (const double* spec_color, double _m1, double _m2, double &xx, double &yy, double &zz);
+		static void spectrum_to_color_xyz_blackbody (const double* spec_color, double _temp, double &xx, double &yy, double &zz);
 		static void spectrum_to_color_xyz_preset    (const double* spec_color, const double* spec_intens, double &xx, double &yy, double &zz);
 
 
