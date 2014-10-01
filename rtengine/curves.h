@@ -60,7 +60,7 @@ class CurveFactory {
     static inline double basel (double x, double m1, double m2) {
         if (x==0.0)
             return 0.0;
-        double k = sqrt ((m1-1.0)*(m1-m2)/2) / (1.0-m2);
+        double k = sqrt ((m1-1.0)*(m1-m2)*0.5) / (1.0-m2);
         double l = (m1-m2) / (1.0-m2) + k;
         double lx = xlog(x);
         return m2*x + (1.0-m2)*(2.0 - xexp(k*lx))*xexp(l*lx);
@@ -93,12 +93,14 @@ class CurveFactory {
     }
 	static inline double clower2 (double x, double m, double sr) {
 		//curve for b<0; starts with positive slope and then rolls over toward straight line to x=y=1
-		float x1 = sr/1.5 + 0.00001;
-		float y1 = 1-(1-x1)*m;
+		double x1 = sr/1.5 + 0.00001;
 		if (x>x1 || sr<0.001) 
 			return 1-(1-x)*m;
 		else
+		{
+			double y1 = 1-(1-x1)*m;
 			return y1+m*(x-x1)-(1-m)*SQR(SQR(1-x/x1));
+		}
 	}
     // tone curve base. a: slope (from exp.comp.), b: black point normalized by 65535, 
 	// D: max. x value (can be>1), hr,sr: highlight,shadow recovery
@@ -119,6 +121,26 @@ class CurveFactory {
 				return b==0 ? x*slope : clower (x/m, slope*m/y, sr) * y;
 			else if (a*D>1.0)
 				return y+(1.0-y)*cupper2((x-m)/(D-m), slope*(D-m)/(1.0-y), hr);
+			else
+				return y+(x-m)*slope;
+		}
+    }
+    static inline double simplebasecurve (double x, double b, double sr) { 
+    	// a = 1, D = 1, hr = 0 (unused for a = D = 1)
+        if (b<0) {
+			double m = 0.5;//midpoint
+			double slope = 1.0+b;//slope of straight line between (0,-b) and (1,1)
+			double y = -b+m*slope;//value at midpoint
+			if (x>m) 
+				return y + (x - m)*slope;//value on straight line between (m,y) and (1,1)
+			else 
+				return y*clower2(x/m, slope*m/y, 2.0-sr);
+		} else {
+			double slope = 1.0/(1.0-b);
+			double m = b+(1-b)*0.25;
+			double y = (m-b)*slope;
+			if (x<=m)
+				return b==0 ? x*slope : clower (x/m, slope*m/y, sr) * y;
 			else
 				return y+(x-m)*slope;
 		}

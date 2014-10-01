@@ -285,8 +285,8 @@ double DiagonalCurve::getVal (double t) const {
     		return t;
     	}
 
-    	unsigned int k_lo = 0;
-    	unsigned int k_hi = 0;
+    	unsigned int k_lo;
+    	unsigned int k_hi;
 
 		k_lo = hash.at(i).smallerValue;
 		k_hi = hash.at(i).higherValue;
