@@ -2256,6 +2256,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
                  strstr(description,"LF3 ") == description ||
                  strstr(description,"LeafLF2") == description ||
                  strstr(description,"LeafLF3") == description ||
+                 strstr(description,"LeafLF4") == description ||
                  strstr(description,"MamiyaLF2") == description ||
                  strstr(description,"MamiyaLF3") == description))
             {
