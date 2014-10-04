@@ -1106,61 +1106,8 @@ namespace rtengine {
 
 
 
-    void Color::SkinSatcdbl (float lum, float hue, float chrom, float skinprot, float &scale, bool ciec, bool neg, float b_l, float t_l, float t_r, float b_r, int choice) {
- 
- 
- 
-        float C9=0.0f, C8=0.0f, C7=0.0f, C4=0.0f, C3=0.0f, C2=0.0f, C1=0.0f;
-        float H9=0.0f, H8=0.0f, H7=0.0f, H4=0.0f, H3=0.0f, H2=0.0f, H1=0.0f, H10=0.0f,H11=0.0f;
-        H9=0.05f;H8=0.25f;H7=0.1f;H4=0.02f;H3=0.02f;H2=0.1f;H1=0.1f;H10=-0.2f;H11=-0.2f;//H10 and H11 are curious...H11=-0.8 ??
-        C9=8.0f;C8=15.0f;C7=12.0f;C4=7.0f;C3=5.0f;C2=5.0f;C1=5.0f;
 
-		if (ciec) {
-		float HH = 0.f;
-		bool doskin;
-		if     ((float)hue>8.6f  && (float)hue<=74.f ) {HH=(1.15f/65.4f)*(float)hue-0.0012f;  doskin=true;}//H > 0.15   H<1.3
-		else if((float)hue>0.f   && (float)hue<=8.6f ) {HH=(0.19f/8.6f )*(float)hue-0.04f;    doskin=true;}//H>-0.04 H < 0.15
-		else if((float)hue>355.f && (float)hue<=360.f) {HH=(0.11f/5.0f )*(float)hue-7.96f;    doskin=true;}//H>-0.15 <-0.04
-		else if((float)hue>74.f  && (float)hue<95.f  ) {HH=(0.30f/21.0f)*(float)hue+0.24285f; doskin=true;}//H>1.3  H<1.6
-		else if((float)hue>=95.f && (float)hue<137.5f) {HH= 0.01882*(float)hue-0.18823;}// H>1.6 H<2.4
-		else if((float)hue>285.f && (float)hue<=355.f)  {HH=0.1642*(float)hue -5.982;}//HH>-1.3  HH <-0.15
-		
-		hue=HH;
-		
-		}
-        // wide area for transition
-		if((t_r-t_l)<0.55f) t_l=t_r+0.55f;//avoid too small range
 
-        if      (lum >= 92.0f && (hue > b_l && hue < t_r) && (chrom > 7.0f && chrom < (18.0f))) scale = (100.f-skinprot*0.4f)/100.1f;
-        else if (lum >= 85.0f && lum < 92.0f && (hue > b_l+0.05f && hue < t_r) && (chrom > 7.0f && chrom < (35.0f+C9))) scale = (100.f-skinprot*0.4f)/100.1f;
-        else if ((lum >= 20.f && lum < 85.f) && (hue > (b_l+0.07f + H11) && hue < t_r) && (chrom > 7.0f && chrom < (55.0f+C9) )) scale = (100.f-skinprot*0.4f)/100.1f;
-        else if (lum < 20.0f && (hue > (b_l+0.07f+H11) && hue < t_r-0.1f) && (chrom > 7.0f && chrom < (45.0f+C1) )) scale = (100.f-skinprot*0.4f)/100.1f;
-
-        // wide area  skin color, useful if not accurate colorimetry or if the user has changed hue and saturation
-
-        if      (lum >= 92.0f  && (hue > t_l+0.4f && hue < t_r) && (chrom > 7.0f && chrom < (15.0f))) scale = (100.f-skinprot*0.6f)/100.1f;
-        else if (lum >= 85.0f && lum < 92.0f  && (hue > t_l+0.4f && hue < t_r-0.3f) && (chrom > 7.0f && chrom < (26.0f+C9))) scale = (100.f-skinprot*0.6f)/100.1f;
-        else if ((lum >= 20.f && lum < 85.f) && (hue > (b_l+0.07f + H11) && hue < t_r-0.2f) && (chrom > 7.0f && chrom < (48.0f+C9) )) scale = (100.f-skinprot*0.6f)/100.1f;
-        else if (lum < 20.0f  && (hue > (b_l+0.07f+H11) && hue < t_r-0.2f) && (chrom > 7.0f && chrom < (35.0f+C1) )) scale = (100.f-skinprot*0.6f)/100.1f;
-
-        // "real" skin color : take into account a slightly usage of contrast and saturation in RT if option "skin" = 1
-
-        if       (lum >= 85.0f  && (hue > (t_l+0.53f-H9) && hue < (t_r+H9)) && (chrom > 8.0f && chrom < (14.0f+C9))) scale = (100.f-skinprot)/100.1f;
-        else if ((lum >= 70.0f && lum < 85.0f)  && (hue > t_l+0.15f && hue < (t_r-0.2f+H8)) && (chrom > 8.0f && chrom < (35.0f+C8))) scale = (100.f-skinprot)/100.1f;
-        else if ((lum >= 52.0f && lum < 70.0f)  && (hue > t_l && hue < (t_r+H7)) && (chrom > 11.0f && chrom < (35.0f+C7))) scale = (100.f-skinprot)/100.1f;
-        else if ((lum >= 35.0f && lum < 52.0f)  && (hue > t_l && hue <  (t_r+H4)) && (chrom > 13.0f && chrom < (37.0f+C4))) scale = (100.f-skinprot)/100.1f;
-        else if ((lum >= 20.0f && lum < 35.0f)  && (hue > t_l && hue < (t_r+H3)) && (chrom > 7.0f && chrom <(35.0f+C3) )) scale = (100.f-skinprot)/100.1f;
-        else if ((lum > 10.0f && lum < 20.0f)  && (hue > (t_l-0.25f + H10) && hue < (t_r-0.3f +H2)) && (chrom > 8.0f && chrom < (23.0f+C2))) scale = (100.f-skinprot)/100.1f;
-        else if ((lum < 10.0f)  && (hue > (t_l -0.2f + H10) && hue < (t_r-0.3f+H1)) && (chrom > 8.0f && chrom < (23.0f+C1))) scale = (100.f-skinprot)/100.1f;
-		
-		//extended zone for hair, beard and if user adjust high value for skinprot
-		if(skinprot > 85.f && chrom < 20.f && neg) {
-			float modula = -0.0666f*skinprot + 6.66f;
-			scale *= modula;
-		}
-    }
-
-	
 
 	void Color::scalered ( float rstprotection, float param, float limit, float HH, float deltaHH, float &scale,float &scaleext)
 	{
@@ -1224,13 +1171,13 @@ namespace rtengine {
 
         bool contin1,contin2;
         float correctionHue=0.0,correctionHueLum=0.0;
-        float correctlumprov=0.0;
-        float correctlumprov2=0.0;
-        bool correctL=false;
-        float huelimit[8]={-2.48,-0.55,0.44,1.52,1.87,3.09,-0.27,0.44};//limits hue of blue-purple, red-yellow, green-yellow, red-purple
+        bool correctL;
         if(CC >= 6.0 && CC < 140) {          //if C > 140 we say C=140 (only in Prophoto ...with very large saturation)
-            if (Chprov1 > 140) Chprov1=139;  //limits of LUTf
-            if (Chprov1 < 6) Chprov1=6;
+			static const float huelimit[8]={-2.48,-0.55,0.44,1.52,1.87,3.09,-0.27,0.44};//limits hue of blue-purple, red-yellow, green-yellow, red-purple
+            if (Chprov1 > 140.f)
+				Chprov1=139.f;  //limits of LUTf
+            if (Chprov1 < 6.f)
+				Chprov1=6.f;
             for(int zo=1;zo<=4;zo++) {
                 if(HH>huelimit[2*zo-2] && HH<huelimit[2*zo-1]) {
                     //zone=zo;
@@ -1252,6 +1199,8 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 #endif
                     correctionHuechroma=correctionHue;    //preserve
                     if(lumaMuns) {
+				        float correctlumprov=0.f;
+						float correctlumprov2=0.f;
                         if(correctL) {
                             //for Munsell luminance correction
                             correctlumprov=correctionHueLum;
@@ -1386,6 +1335,92 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         while (!inGamut);
         //end first gamut control
     }
+
+    /*
+     * GamutLchonly correction
+     * Copyright (c)2012  Jacques Desmis <jdesmis@gmail.com> and Jean-Christophe Frisch <natureh@free.fr>
+     *
+     * This function puts the data (Lab) in the gamut of "working profile":
+     * it returns the corrected values of the chromaticity and luminance
+     *
+     * float HH : hue
+     * float2 sincosval : sin and cos of HH
+     * float Lprov1 : input luminance value, sent back corrected
+     * float Chprov1: input chroma value, sent back corrected
+     * float R,G,B : red, green and blue value of the corrected color
+     * double wip : working profile
+     * bool isHLEnabled : if "highlight reconstruction " is enabled
+     * float coef : a float number between [0.95 ; 1.0[... the nearest it is from 1.0, the more precise it will be... and the longer too as more iteration will be necessary)
+     * bool neg and moreRGB : only in DEBUG mode to calculate iterations for negatives values and > 65535
+     */
+#ifdef _DEBUG
+    void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
+#else
+    void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
+#endif
+    {
+        const float ClipLevel = 65535.0f;
+        bool inGamut;
+#ifdef _DEBUG
+        neg=false, more_rgb=false;
+#endif
+        do {
+            inGamut=true;
+
+            //Lprov1=LL;
+            float aprov1=Chprov1*sincosval.y;
+            float bprov1=Chprov1*sincosval.x;
+
+            //conversion Lab RGB to limit Lab values - this conversion is useful before Munsell correction
+            float fy = (0.00862069f *Lprov1 )+ 0.137932f;
+            float fx = (0.002f * aprov1) + fy;
+            float fz = fy - (0.005f * bprov1);
+
+            float x_ = 65535.0f * f2xyz(fx)*D50x;
+           // float y_ = 65535.0f * f2xyz(fy);
+            float z_ = 65535.0f * f2xyz(fz)*D50z;
+            float y_=(Lprov1>epskap) ? 65535.0*fy*fy*fy : 65535.0*Lprov1/kappa;
+
+            xyz2rgb(x_,y_,z_,R,G,B,wip);
+
+            // gamut control before saturation to put Lab values in future gamut, but not RGB
+            if (R<0.0f || G<0.0f || B<0.0f) {
+#ifdef _DEBUG
+                neg=true;
+#endif
+                if (Lprov1 < 0.1f) Lprov1 = 0.1f;
+				//gamut for L with ultra blue : we can improve the algorithm ... thinner, and other color ???
+				if(HH < -0.9f && HH > -1.55f ) {//ultra blue
+					if(Chprov1 > 160.f) if (Lprov1 < 5.f) Lprov1 = 5.f;//very very very very high chroma
+					if(Chprov1 > 140.f) if (Lprov1 < 3.5f) Lprov1 = 3.5f;
+					if(Chprov1 > 120.f) if (Lprov1 < 2.f) Lprov1 = 2.f;
+					if(Chprov1 > 105.f) if (Lprov1 < 1.f) Lprov1 = 1.f;	
+					if(Chprov1 > 90.f) if (Lprov1 < 0.7f) Lprov1 = 0.7f;	
+					if(Chprov1 > 50.f) if (Lprov1 < 0.5f) Lprov1 = 0.5f;
+					if(Chprov1 > 20.f) if (Lprov1 < 0.4f) Lprov1 = 0.4f;
+				}
+                Chprov1 *= higherCoef; // decrease the chromaticity value
+                if (Chprov1 <= 3.0f)
+					Lprov1 += lowerCoef;
+                inGamut = false;
+			} else if (!isHLEnabled && (R>ClipLevel || G>ClipLevel || B>ClipLevel)) {
+
+				// if "highlight reconstruction" is enabled or the point is completely white (clipped, no color), don't control Gamut
+#ifdef _DEBUG
+				more_rgb=true;
+#endif
+				if (Lprov1 > 99.999f)
+					Lprov1 = 99.98f;
+				Chprov1 *= higherCoef;
+				if (Chprov1 <= 3.0f)
+					Lprov1 -= lowerCoef;
+				inGamut = false;
+			}
+		}
+        while (!inGamut);
+        //end first gamut control
+    }
+
 
 #ifdef _DEBUG
     void Color::gamutLchonly (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
@@ -1861,42 +1896,57 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
      * pay attention to white balance, and do not change hue and saturation, upstream of the modification
      *
      */
-    void Color::SkinSat (float lum, float hue, float chrom, float &satreduc, int chromx) {
+    void Color::SkinSat (float lum, float hue, float chrom, float &satreduc) {
 
-        float reduction=0.3;// to be adapted...by tests
-        float extendedreduction=0.4;
-        float extendedreduction2=0.6;
+		// to be adapted...by tests
+        float reduction=0.3f;			// use "reduction" for  "real" skin color : take into account a slightly usage of contrast and saturation in RT if option "skin" = 1
+        float extendedreduction=0.4f;	// use "extendedreduction" for wide area skin color, useful if not accurate colorimetry or if the user has changed hue and saturation
+        float extendedreduction2=0.6f;	// use "extendedreduction2" for wide area for transition
 
-        if(chromx==1) {reduction=0.6;extendedreduction=0.7;extendedreduction2=0.8;}
+        float C9=8.0, C8=15.0, C7=12.0, C4=7.0, C3=5.0, C2=5.0, C1=5.0;
+        float H9=0.05, H8=0.25, H7=0.1, H4=0.02, H3=0.02, H2=0.1, H1=0.1, H10=-0.2,H11=-0.2; //H10 and H11 are curious...H11=-0.8 ??
+		
+        if (lum >= 85.f) {
+			if((hue > (0.78f-H9) && hue < (1.18f+H9)) && (chrom > 8.f && chrom < (14.f+C9))) satreduc=reduction;
+			else if (lum >= 92.f) {
+				if((hue > 0.8f && hue < 1.65f) && (chrom > 7.f && chrom < (15.f))) satreduc=extendedreduction;
+				else if ((hue > -0.1f && hue < 1.65f) && (chrom > 7.f && chrom < (18.f))) satreduc=extendedreduction2;
+			}
+			else if ((hue > 0.7f && hue < 1.4f) && (chrom > 7.f && chrom < (26.f+C9))) satreduc=extendedreduction;
+			else if (lum < 92.f && (hue > 0.f && hue < 1.65f) && (chrom > 7.f && chrom < (35.f+C9))) satreduc=extendedreduction2;
+        }
+        else if (lum >= 70.f) {
+			if((hue > 0.4f && hue < (1.04f+H8)) && (chrom > 8.f && chrom < (35.f+C8))) satreduc=reduction;
+			else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f+C9) )) satreduc=extendedreduction;
+			else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f+C9) )) satreduc=extendedreduction2;
+        }
+        else if (lum >= 52.f) {
+			if((hue > 0.3f && hue < (1.27f+H7)) && (chrom > 11.f && chrom < (35.f+C7))) satreduc=reduction;
+			else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f+C9) )) satreduc=extendedreduction;
+			else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f+C9) )) satreduc=extendedreduction2;
+        }
+        else if (lum >= 35.f) {
+			if((hue > 0.3f && hue < (1.25f+H4)) && (chrom > 13.f && chrom < (37.f+C4))) satreduc=reduction;
+			else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f+C9) )) satreduc=extendedreduction;
+			else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f+C9) )) satreduc=extendedreduction2;
+        }
+        else if (lum >= 20.f) {
+			if((hue > 0.3f && hue < (1.2f+H3)) && (chrom > 7.f && chrom <(35.f+C3) )) satreduc=reduction;
+			else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f+C9) )) satreduc=extendedreduction;
+			else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f+C9) )) satreduc=extendedreduction2;
+        }
+        else if (lum > 10.f) {
+			if((hue > (0.f + H10) && hue < (0.95f +H2)) && (chrom > 8.f && chrom < (23.f+C2))) satreduc=reduction;
+			else if ((hue > (0.02f+H11) && hue < 1.f) && (chrom > 7.f && chrom < (35.f+C1) )) satreduc=extendedreduction;
+			else if ((hue > (0.02f+H11) && hue < 1.6f) && (chrom > 7.f && chrom < (45.f+C1) )) satreduc=extendedreduction2;
+        }
+        else {
+			if((hue > (0.02f + H10) && hue < (0.9f+H1)) && (chrom > 8.f && chrom < (23.f+C1))) satreduc=reduction; // no data : extrapolate
+			else if ((hue > (0.02f+H11) && hue < 1.f) && (chrom > 7.f && chrom < (35.f+C1) )) satreduc=extendedreduction;
+			else if ((hue > (0.02f+H11) && hue < 1.6f) && (chrom > 7.f && chrom < (45.f+C1) )) satreduc=extendedreduction2;
+				
+        }
 
-        float C9=0.0, C8=0.0, C7=0.0, C4=0.0, C3=0.0, C2=0.0, C1=0.0;
-        float H9=0.0, H8=0.0, H7=0.0, H4=0.0, H3=0.0, H2=0.0, H1=0.0, H10=0.0,H11=0.0;
-        H9=0.05;H8=0.25;H7=0.1;H4=0.02;H3=0.02;H2=0.1;H1=0.1;H10=-0.2;H11=-0.2;//H10 and H11 are curious...H11=-0.8 ??
-        C9=8.0;C8=15.0;C7=12.0;C4=7.0;C3=5.0;C2=5.0;C1=5.0;
-
-        // wide area for transition
-
-        if      (lum >= 92.0 && (hue > -0.1 && hue < 1.65) && (chrom > 7.0 && chrom < (18.0))) satreduc=extendedreduction2;
-        else if (lum >= 85.0 && lum < 92.0 && (hue > 0.0 && hue < 1.65) && (chrom > 7.0 && chrom < (35.0+C9))) satreduc=extendedreduction2;
-        else if ((lum > 20 && lum < 85) && (hue > (0.02 + H11) && hue < 1.65) && (chrom > 7.0 && chrom < (55.0+C9) )) satreduc=extendedreduction2;
-        else if (lum < 20.0 && (hue > (0.02+H11) && hue < 1.60) && (chrom > 7.0 && chrom < (45.0+C1) )) satreduc=extendedreduction2;
-
-        // wide area  skin color, useful if not accurate colorimetry or if the user has changed hue and saturation
-
-        if      (lum >= 92.0  && (hue > 0.8 && hue < 1.65) && (chrom > 7.0 && chrom < (15.0))) satreduc=extendedreduction;
-        else if (lum >= 85.0 && lum < 92.0  && (hue > 0.70 && hue < 1.4) && (chrom > 7.0 && chrom < (26.0+C9))) satreduc=extendedreduction;
-        else if ((lum > 20 && lum < 85) && (hue > (0.02 + H11) && hue < 1.5) && (chrom > 7.0 && chrom < (48.0+C9) )) satreduc=extendedreduction;
-        else if (lum < 20.0  && (hue > (0.02+H11) && hue < 1.0) && (chrom > 7.0 && chrom < (35.0+C1) )) satreduc=extendedreduction;
-
-        // "real" skin color : take into account a slightly usage of contrast and saturation in RT if option "skin" = 1
-
-        if       (lum >= 85.0  && (hue > (0.78-H9) && hue < (1.18+H9)) && (chrom > 8.0 && chrom < (14.0+C9))) satreduc=reduction;
-        else if ((lum >= 70.0 && lum < 85.0)  && (hue > 0.4 && hue < (1.04+H8)) && (chrom > 8.0 && chrom < (35.0+C8))) satreduc=reduction;
-        else if ((lum >= 52.0 && lum < 70.0)  && (hue > 0.3 && hue < (1.27+H7)) && (chrom > 11.0 && chrom < (35.0+C7))) satreduc=reduction;
-        else if ((lum >= 35.0 && lum < 52.0)  && (hue > 0.3 && hue < (1.25+H4)) && (chrom > 13.0 && chrom < (37.0+C4))) satreduc=reduction;
-        else if ((lum >= 20.0 && lum < 35.0)  && (hue > 0.3 && hue < (1.20+H3)) && (chrom > 7.0 && chrom <(35.0+C3) )) satreduc=reduction;
-        else if ((lum > 10.0 && lum < 20.0)  && (hue > (0.0 + H10) && hue < (0.95 +H2)) && (chrom > 8.0 && chrom < (23.0+C2))) satreduc=reduction;
-        else if ((lum < 10.0)  && (hue > (0.02 + H10) && hue < (0.90+H1)) && (chrom > 8.0 && chrom < (23.0+C1))) satreduc=reduction; // no data : extrapolate
     }
 
     /*
