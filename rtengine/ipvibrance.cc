@@ -27,7 +27,6 @@
 #include "mytime.h"
 #include "../rtgui/thresholdselector.h"
 #include "curves.h"
-//#include "calc_distort.h"
 #include "color.h"
 
 #ifdef _OPENMP
@@ -44,9 +43,9 @@ using namespace procparams;
 
 extern const Settings* settings;
 
-void fillCurveArrayVib(DiagonalCurve* diagCurve, LUTf &outCurve, bool needed) {
+void fillCurveArrayVib(DiagonalCurve* diagCurve, LUTf &outCurve) {
 
-	if (needed && diagCurve) {
+	if (diagCurve) {
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
@@ -71,9 +70,9 @@ void fillCurveArrayVib(DiagonalCurve* diagCurve, LUTf &outCurve, bool needed) {
  *
  */
 void ImProcFunctions::vibrance (LabImage* lab) {
-
 	if (!params->vibrance.enabled)
 		return;
+
 //	int skip=1; //scale==1 ? 1 : 16;
 	bool skinCurveIsSet=false;
 	DiagonalCurve* dcurve = NULL;
@@ -96,7 +95,8 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 		return;
 	}
 
-	int width = lab->W, height = lab->H;
+	const int width = lab->W;
+	const int height = lab->H;
 
 #ifdef _DEBUG
 	MyTime t1e,t2e;
@@ -108,7 +108,7 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 	// I use diagonal because I think it's better
 	LUTf skin_curve (65536,0);
 	if(skinCurveIsSet)
-		fillCurveArrayVib(dcurve, skin_curve, skinCurveIsSet);
+		fillCurveArrayVib(dcurve, skin_curve);
 	if (dcurve) {
 		delete dcurve;
 		dcurve = NULL;
@@ -117,53 +117,19 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 
 // skin_curve.dump("skin_curve");
 
-	float chromaPastel = float(params->vibrance.pastels)   / 100.0f;
-	float chromaSatur  = float(params->vibrance.saturated) / 100.0f;
-	float limitpastelsatur =    static_cast<float>(params->vibrance.psthreshold.value[ThresholdSelector::TS_TOPLEFT])    / 100.0f;
-	float transitionweighting = static_cast<float>(params->vibrance.psthreshold.value[ThresholdSelector::TS_BOTTOMLEFT]) / 100.0f;
-
-	bool highlight = params->toneCurve.hrenabled;//Get the value if "highlight reconstruction" is activated
-	bool protectskins = params->vibrance.protectskins;
-	bool avoidcolorshift = params->vibrance.avoidcolorshift;
-
-
-#ifdef _DEBUG
-    MunsellDebugInfo* MunsDebugInfo = NULL;
-    if (avoidcolorshift)
-    	MunsDebugInfo = new MunsellDebugInfo();
-
-#pragma omp parallel default(shared) firstprivate(lab, width, height, chromaPastel, chromaSatur, highlight, limitpastelsatur, \
-		transitionweighting, protectskins, avoidcolorshift, MunsDebugInfo) reduction(+: negat, moreRGB, negsat, moresat) if (multiThread)
-#else
-#pragma omp parallel default(shared) firstprivate(lab, width, height, chromaPastel, chromaSatur, highlight, limitpastelsatur, \
-		transitionweighting, protectskins, avoidcolorshift) if (multiThread)
-#endif
-{
-
-	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
-	//inverse matrix user select
-	double wip[3][3] = {
-		{wiprof[0][0],wiprof[0][1],wiprof[0][2]},
-		{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
-		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}
-	};
-	float sathue[5],sathue2[4];// adjust sat in function of hue
-	
+	const float chromaPastel = float(params->vibrance.pastels)   / 100.0f;
+	const float chromaSatur  = float(params->vibrance.saturated) / 100.0f;
 	const float p00=0.07f;
-
-	// Fitting limitpastelsatur into the real 0.07->1.0 range
-	limitpastelsatur = limitpastelsatur*(1.0f-p00) + p00;
-	float p0,p1,p2;//adapt limit of pyramid to psThreshold
-	float s0,s1,s2;
-	float maxdp=(limitpastelsatur-p00)/4.0f;
-	float maxds=(1.0-limitpastelsatur)/4.0f;
-	p0=p00+maxdp;
-	p1=p00+2.0f*maxdp;
-	p2=p00+3.0f*maxdp;
-	s0=limitpastelsatur + maxds;
-	s1=limitpastelsatur + 2.0f*maxds;
-	s2=limitpastelsatur + 3.0f*maxds;
-
+	const float limitpastelsatur =    (static_cast<float>(params->vibrance.psthreshold.value[ThresholdSelector::TS_TOPLEFT])    / 100.0f)*(1.0f-p00) + p00;
+	const float maxdp=(limitpastelsatur-p00)/4.0f;
+	const float maxds=(1.0-limitpastelsatur)/4.0f;
+	const float p0 = p00+maxdp;
+	const float p1 = p00+2.0f*maxdp;
+	const float p2 = p00+3.0f*maxdp;
+	const float s0 = limitpastelsatur + maxds;
+	const float s1 = limitpastelsatur + 2.0f*maxds;
+	const float s2 = limitpastelsatur + 3.0f*maxds;
+	const float transitionweighting = static_cast<float>(params->vibrance.psthreshold.value[ThresholdSelector::TS_BOTTOMLEFT]) / 100.0f;
 	float chromamean=0.0f;
 	if(chromaPastel != chromaSatur){
 		//if sliders pastels and saturated are different: transition with a double linear interpolation: between p2 and limitpastelsatur, and between limitpastelsatur and s0
@@ -177,6 +143,55 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 			chromamean = (chromamean-chromaPastel)  * transitionweighting + chromamean;
 		}
 	}
+	const float chromaPastel_a = (chromaPastel-chromamean)/(p2-limitpastelsatur);
+	const float chromaPastel_b = chromaPastel-chromaPastel_a*p2;
+
+	const float chromaSatur_a=(chromaSatur-chromamean)/(s0-limitpastelsatur);
+	const float chromaSatur_b=chromaSatur-chromaSatur_a*s0;
+
+	const float dhue=0.15f;//hue transition
+	const float dchr=20.0f;//chroma transition
+	const float skbeg=-0.05f;//begin hue skin
+	const float skend=1.60f;//end hue skin
+	const float xx=0.5f;//soft : between 0.3 and 1.0
+	const float ask=65535.0f/(skend-skbeg);
+	const float bsk=-skbeg*ask;
+
+
+	const bool highlight = params->toneCurve.hrenabled;//Get the value if "highlight reconstruction" is activated
+	const bool protectskins = params->vibrance.protectskins;
+	const bool avoidcolorshift = params->vibrance.avoidcolorshift;
+
+	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
+	//inverse matrix user select
+	const double wip[3][3] = {
+		{wiprof[0][0],wiprof[0][1],wiprof[0][2]},
+		{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
+		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}
+	};
+
+
+#ifdef _DEBUG
+    MunsellDebugInfo* MunsDebugInfo = NULL;
+    if (avoidcolorshift)
+    	MunsDebugInfo = new MunsellDebugInfo();
+
+#pragma omp parallel default(shared) firstprivate(lab, width, height, chromaPastel, chromaSatur, highlight, limitpastelsatur, \
+		transitionweighting, protectskins, avoidcolorshift, MunsDebugInfo) reduction(+: negat, moreRGB, negsat, moresat) if (multiThread)
+#else
+#pragma omp parallel default(shared) if (multiThread)// firstprivate(lab, width, height, chromaPastel, chromaSatur, highlight, limitpastelsatur, \
+		transitionweighting, protectskins, avoidcolorshift) if (multiThread)
+#endif
+{
+
+	float sathue[5],sathue2[4];// adjust sat in function of hue
+	
+/*
+	// Fitting limitpastelsatur into the real 0.07->1.0 range
+//	limitpastelsatur = limitpastelsatur*(1.0f-p00) + p00;
+	float p0,p1,p2;//adapt limit of pyramid to psThreshold
+	float s0,s1,s2;
+*/
 
 #ifdef _OPENMP
 	if (settings->verbose && omp_get_thread_num()==0) {
@@ -187,93 +202,93 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 		printf("           pastel=%f   satur=%f   limit= %1.2f   chromamean=%0.5f\n",1.0f+chromaPastel,1.0f+chromaSatur, limitpastelsatur, chromamean);
 	}
 
-#pragma omp for schedule(dynamic, 10)
+#pragma omp for schedule(dynamic, 16)
 	for (int i=0; i<height; i++)
 		for (int j=0; j<width; j++) {
-			//int pos = i*width+j;
 			float LL=lab->L[i][j]/327.68f;
-			float CC=sqrt(SQR(lab->a[i][j]/327.68f)+ SQR(lab->b[i][j]/327.68f));
+			float CC=sqrt(SQR(lab->a[i][j])+ SQR(lab->b[i][j]))/327.68f;
 			float HH=xatan2f(lab->b[i][j],lab->a[i][j]);
-			//double pyramid: LL and HH
-			//I try to take into account: Munsell response (human vision) and Gamut..(less response for red): preferably using Prophoto or WideGamut
-			//blue: -1.80 -3.14  green = 2.1 3.14   green-yellow=1.4 2.1  red:0 1.4  blue-purple:-0.7  -1.4   purple: 0 -0.7
-			//these values allow a better and differential response
-			if(LL < 20.0f) {//more for blue-purple, blue and red modulate
-				if     (/*HH> -3.1415f &&*/ HH< -1.5f   ) {sathue[0]=1.3f;sathue[1]=1.2f;sathue[2]=1.1f;sathue[3]=1.05f;sathue[4]=0.4f;sathue2[0]=1.05f;sathue2[1]=1.1f ;sathue2[2]=1.05f;sathue2[3]=1.0f;}//blue
-				else if(/*HH>=-1.5f    &&*/ HH< -0.7f   ) {sathue[0]=1.6f;sathue[1]=1.4f;sathue[2]=1.3f;sathue[3]=1.2f ;sathue[4]=0.4f;sathue2[0]=1.2f ;sathue2[1]=1.15f;sathue2[2]=1.1f ;sathue2[3]=1.0f;}//blue purple  1.2 1.1
-				else if(/*HH>=-0.7f    &&*/ HH<  0.0f   ) {sathue[0]=1.2f;sathue[1]=1.0f;sathue[2]=1.0f;sathue[3]=1.0f ;sathue[4]=0.4f;sathue2[0]=1.0f ;sathue2[1]=1.0f ;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//purple
-	//			else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=1.1f;sathue[1]=1.1f;sathue[2]=1.1f;sathue[3]=1.0f ;sathue[4]=0.4f;sathue2[0]=1.0f ;sathue2[1]=1.0f ;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//red   0.8 0.7
-				else if(/*HH>= 0.0f    &&*/ HH<= 1.4f   ) {sathue[0]=1.3f;sathue[1]=1.2f;sathue[2]=1.1f;sathue[3]=1.0f ;sathue[4]=0.4f;sathue2[0]=1.0f ;sathue2[1]=1.0f ;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//red   0.8 0.7
-				else if(/*HH>  1.4f    &&*/ HH<= 2.1f   ) {sathue[0]=1.0f;sathue[1]=1.0f;sathue[2]=1.0f;sathue[3]=1.0f ;sathue[4]=0.4f;sathue2[0]=1.0f ;sathue2[1]=1.0f ;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//green yellow 1.2 1.1
-				else /*if(HH>  2.1f    && HH<= 3.1415f)*/ {sathue[0]=1.4f;sathue[1]=1.3f;sathue[2]=1.2f;sathue[3]=1.15f;sathue[4]=0.4f;sathue2[0]=1.15f;sathue2[1]=1.1f ;sathue2[2]=1.05f;sathue2[3]=1.0f;}//green
-			}
-			else if (LL< 50.0f) {//more for blue and green, less for red and green-yellow
-				if     (/*HH> -3.1415f &&*/ HH< -1.5f   ) {sathue[0]=1.5f;sathue[1]=1.4f;sathue[2]=1.3f;sathue[3]=1.2f ;sathue[4]=0.4f;sathue2[0]=1.2f ;sathue2[1]=1.1f ;sathue2[2]=1.05f;sathue2[3]=1.0f;}//blue
-				else if(/*HH>=-1.5f    &&*/ HH< -0.7f   ) {sathue[0]=1.3f;sathue[1]=1.2f;sathue[2]=1.1f;sathue[3]=1.05f;sathue[4]=0.4f;sathue2[0]=1.05f;sathue2[1]=1.05f;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//blue purple  1.2 1.1
-				else if(/*HH>=-0.7f    &&*/ HH<  0.0f   ) {sathue[0]=1.2f;sathue[1]=1.0f;sathue[2]=1.0f;sathue[3]=1.0f ;sathue[4]=0.4f;sathue2[0]=1.0f ;sathue2[1]=1.0f ;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//purple
-	//			else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f;sathue[3]=0.8f ;sathue[4]=0.4f;sathue2[0]=0.8f ;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
-				else if(/*HH>= 0.0f    &&*/ HH<= 1.4f   ) {sathue[0]=1.1f;sathue[1]=1.0f;sathue[2]=0.9f;sathue[3]=0.8f ;sathue[4]=0.4f;sathue2[0]=0.8f ;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
-				else if(/*HH>  1.4f    &&*/ HH<= 2.1f   ) {sathue[0]=1.1f;sathue[1]=1.1f;sathue[2]=1.1f;sathue[3]=1.05f;sathue[4]=0.4f;sathue2[0]=0.9f ;sathue2[1]=0.8f ;sathue2[2]=0.7f ;sathue2[3]=0.6f;}//green yellow 1.2 1.1
-				else /*if(HH>  2.1f    && HH<= 3.1415f)*/ {sathue[0]=1.5f;sathue[1]=1.4f;sathue[2]=1.3f;sathue[3]=1.2f ;sathue[4]=0.4f;sathue2[0]=1.2f ;sathue2[1]=1.1f ;sathue2[2]=1.05f;sathue2[3]=1.0f;}//green
-
-			}
-			else if (LL< 80.0f) {//more for green, less for red and green-yellow
-				if     (/*HH> -3.1415f &&*/ HH< -1.5f   ) {sathue[0]=1.3f;sathue[1]=1.2f;sathue[2]=1.15f;sathue[3]=1.1f ;sathue[4]=0.3f;sathue2[0]=1.1f ;sathue2[1]=1.1f ;sathue2[2]=1.05f;sathue2[3]=1.0f;}//blue
-				else if(/*HH>=-1.5f    &&*/ HH< -0.7f   ) {sathue[0]=1.3f;sathue[1]=1.2f;sathue[2]=1.15f;sathue[3]=1.1f ;sathue[4]=0.3f;sathue2[0]=1.1f ;sathue2[1]=1.05f;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//blue purple  1.2 1.1
-				else if(/*HH>=-0.7f    &&*/ HH<  0.0f   ) {sathue[0]=1.2f;sathue[1]=1.0f;sathue[2]=1.0f ;sathue[3]=1.0f ;sathue[4]=0.3f;sathue2[0]=1.0f ;sathue2[1]=1.0f ;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//purple
-	//			else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f ;sathue[3]=0.8f ;sathue[4]=0.3f;sathue2[0]=0.8f ;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
-				else if(/*HH>= 0.0f    &&*/ HH<= 1.4f   ) {sathue[0]=1.1f;sathue[1]=1.0f;sathue[2]=0.9f ;sathue[3]=0.8f ;sathue[4]=0.3f;sathue2[0]=0.8f ;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
-				else if(/*HH>  1.4f    &&*/ HH<= 2.1f   ) {sathue[0]=1.3f;sathue[1]=1.2f;sathue[2]=1.1f ;sathue[3]=1.05f;sathue[4]=0.3f;sathue2[0]=1.0f ;sathue2[1]=0.9f ;sathue2[2]=0.8f ;sathue2[3]=0.7f;}//green yellow 1.2 1.1
-				else /*if(HH>  2.1f    && HH<= 3.1415f)*/ {sathue[0]=1.6f;sathue[1]=1.4f;sathue[2]=1.3f ;sathue[3]=1.25f;sathue[4]=0.3f;sathue2[0]=1.25f;sathue2[1]=1.2f ;sathue2[2]=1.15f;sathue2[3]=1.05f;}//green - even with Prophoto green are too "little"  1.5 1.3
-			}
-			else /*if (LL>=80.0f)*/ {//more for green-yellow, less for red and purple
-				if     (/*HH> -3.1415f &&*/ HH< -1.5f   ) {sathue[0]=1.0f;sathue[1]=1.0f;sathue[2]=0.9f;sathue[3]=0.8f;sathue[4]=0.2f;sathue2[0]=0.8f;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//blue
-				else if(/*HH>=-1.5f    &&*/ HH< -0.7f   ) {sathue[0]=1.0f;sathue[1]=1.0f;sathue[2]=0.9f;sathue[3]=0.8f;sathue[4]=0.2f;sathue2[0]=0.8f;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//blue purple  1.2 1.1
-				else if(/*HH>=-0.7f    &&*/ HH<  0.0f   ) {sathue[0]=1.2f;sathue[1]=1.0f;sathue[2]=1.0f;sathue[3]=0.9f;sathue[4]=0.2f;sathue2[0]=0.9f;sathue2[1]=0.9f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//purple
-	//			else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f;sathue[3]=0.8f;sathue[4]=0.2f;sathue2[0]=0.8f;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
-				else if(/*HH>= 0.0f    &&*/ HH<= 1.4f   ) {sathue[0]=1.1f;sathue[1]=1.0f;sathue[2]=0.9f;sathue[3]=0.8f;sathue[4]=0.2f;sathue2[0]=0.8f;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
-				else if(/*HH>  1.4f    &&*/ HH<= 2.1f   ) {sathue[0]=1.6f;sathue[1]=1.5f;sathue[2]=1.4f;sathue[3]=1.2f;sathue[4]=0.2f;sathue2[0]=1.1f;sathue2[1]=1.05f;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//green yellow 1.2 1.1
-				else /*if(HH>  2.1f    && HH<= 3.1415f)*/ {sathue[0]=1.4f;sathue[1]=1.3f;sathue[2]=1.2f;sathue[3]=1.1f;sathue[4]=0.2f;sathue2[0]=1.1f;sathue2[1]=1.05f;sathue2[2]=1.05f;sathue2[3]=1.0f;}//green
-			}
-
+			
 			float satredu=1.0f; //reduct sat in function of skin
 			if(protectskins) {
-				Color::SkinSat (LL, HH, CC, satredu, 0);// for skin colors
+				Color::SkinSat (LL, HH, CC, satredu);// for skin colors
 			}
 			// here we work on Chromaticity and Hue
 			// variation of Chromaticity  ==> saturation via RGB
 			// Munsell correction, then conversion to Lab
 			float Lprov=LL;
 			float Chprov=CC;
-			float memChprov=CC;
 			float R, G, B;
+			float2 sincosval;
+			if(CC==0.0f) {
+				sincosval.y = 1.f;
+				sincosval.x = 0.0f;
+			} else {
+				sincosval.y = lab->a[i][j]/(CC*327.68f);
+				sincosval.x = lab->b[i][j]/(CC*327.68f);
+			}
 
 #ifdef _DEBUG
 			bool neg=false;
 			bool more_rgb=false;
 			//gamut control : Lab values are in gamut
-			Color::gamutLchonly(HH, Lprov, Chprov, R, G, B, wip, highlight, 0.15f, 0.98f, neg, more_rgb);
+			Color::gamutLchonly(HH, sincosval, Lprov, Chprov, R, G, B, wip, highlight, 0.15f, 0.98f, neg, more_rgb);
 			if(neg) negat++;
 			if(more_rgb) moreRGB++;
 #else
 			//gamut control : Lab values are in gamut
-			Color::gamutLchonly(HH, Lprov, Chprov, R, G, B, wip, highlight, 0.15f, 0.98f);
+			Color::gamutLchonly(HH, sincosval, Lprov, Chprov, R, G, B, wip, highlight, 0.15f, 0.98f);
 #endif
-
-			float saturation=SAT(R,G,B);
-			//evaluate saturation with curve chroma
-//			saturation=(sat_curve[saturation*65535.0f])/65535.0f;
-			
-			// work on saturation
-			if(Chprov > 6.0f) {  //protect gray and LUT Munsell
-				//pyramid to adjust saturation in function of saturation and hue (and Luminance)
-				if(satredu!=1.0f) {
-					// for skin, no differentiation
-					sathue [0]=sathue [1]=sathue [2]=sathue [3]=sathue[4]=1.0f;
-					sathue2[0]=sathue2[1]=sathue2[2]=sathue2[3]          =1.0f;
-				}
-
+			if(Chprov > 6.0f) {
+				const float saturation=SAT(R,G,B);
 				if(saturation>0.0f) {
+					if(satredu!=1.0f) {
+						// for skin, no differentiation
+						sathue [0]=sathue [1]=sathue [2]=sathue [3]=sathue[4]=1.0f;
+						sathue2[0]=sathue2[1]=sathue2[2]=sathue2[3]          =1.0f;
+					} else {
+						//double pyramid: LL and HH
+						//I try to take into account: Munsell response (human vision) and Gamut..(less response for red): preferably using Prophoto or WideGamut
+						//blue: -1.80 -3.14  green = 2.1 3.14   green-yellow=1.4 2.1  red:0 1.4  blue-purple:-0.7  -1.4   purple: 0 -0.7
+						//these values allow a better and differential response
+						if(LL < 20.0f) {//more for blue-purple, blue and red modulate
+							if     (/*HH> -3.1415f &&*/ HH< -1.5f   ) {sathue[0]=1.3f;sathue[1]=1.2f;sathue[2]=1.1f;sathue[3]=1.05f;sathue[4]=0.4f;sathue2[0]=1.05f;sathue2[1]=1.1f ;sathue2[2]=1.05f;sathue2[3]=1.0f;}//blue
+							else if(/*HH>=-1.5f    &&*/ HH< -0.7f   ) {sathue[0]=1.6f;sathue[1]=1.4f;sathue[2]=1.3f;sathue[3]=1.2f ;sathue[4]=0.4f;sathue2[0]=1.2f ;sathue2[1]=1.15f;sathue2[2]=1.1f ;sathue2[3]=1.0f;}//blue purple  1.2 1.1
+							else if(/*HH>=-0.7f    &&*/ HH<  0.0f   ) {sathue[0]=1.2f;sathue[1]=1.0f;sathue[2]=1.0f;sathue[3]=1.0f ;sathue[4]=0.4f;sathue2[0]=1.0f ;sathue2[1]=1.0f ;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//purple
+				//			else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=1.1f;sathue[1]=1.1f;sathue[2]=1.1f;sathue[3]=1.0f ;sathue[4]=0.4f;sathue2[0]=1.0f ;sathue2[1]=1.0f ;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//red   0.8 0.7
+							else if(/*HH>= 0.0f    &&*/ HH<= 1.4f   ) {sathue[0]=1.3f;sathue[1]=1.2f;sathue[2]=1.1f;sathue[3]=1.0f ;sathue[4]=0.4f;sathue2[0]=1.0f ;sathue2[1]=1.0f ;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//red   0.8 0.7
+							else if(/*HH>  1.4f    &&*/ HH<= 2.1f   ) {sathue[0]=1.0f;sathue[1]=1.0f;sathue[2]=1.0f;sathue[3]=1.0f ;sathue[4]=0.4f;sathue2[0]=1.0f ;sathue2[1]=1.0f ;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//green yellow 1.2 1.1
+							else /*if(HH>  2.1f    && HH<= 3.1415f)*/ {sathue[0]=1.4f;sathue[1]=1.3f;sathue[2]=1.2f;sathue[3]=1.15f;sathue[4]=0.4f;sathue2[0]=1.15f;sathue2[1]=1.1f ;sathue2[2]=1.05f;sathue2[3]=1.0f;}//green
+						}
+						else if (LL< 50.0f) {//more for blue and green, less for red and green-yellow
+							if     (/*HH> -3.1415f &&*/ HH< -1.5f   ) {sathue[0]=1.5f;sathue[1]=1.4f;sathue[2]=1.3f;sathue[3]=1.2f ;sathue[4]=0.4f;sathue2[0]=1.2f ;sathue2[1]=1.1f ;sathue2[2]=1.05f;sathue2[3]=1.0f;}//blue
+							else if(/*HH>=-1.5f    &&*/ HH< -0.7f   ) {sathue[0]=1.3f;sathue[1]=1.2f;sathue[2]=1.1f;sathue[3]=1.05f;sathue[4]=0.4f;sathue2[0]=1.05f;sathue2[1]=1.05f;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//blue purple  1.2 1.1
+							else if(/*HH>=-0.7f    &&*/ HH<  0.0f   ) {sathue[0]=1.2f;sathue[1]=1.0f;sathue[2]=1.0f;sathue[3]=1.0f ;sathue[4]=0.4f;sathue2[0]=1.0f ;sathue2[1]=1.0f ;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//purple
+				//			else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f;sathue[3]=0.8f ;sathue[4]=0.4f;sathue2[0]=0.8f ;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
+							else if(/*HH>= 0.0f    &&*/ HH<= 1.4f   ) {sathue[0]=1.1f;sathue[1]=1.0f;sathue[2]=0.9f;sathue[3]=0.8f ;sathue[4]=0.4f;sathue2[0]=0.8f ;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
+							else if(/*HH>  1.4f    &&*/ HH<= 2.1f   ) {sathue[0]=1.1f;sathue[1]=1.1f;sathue[2]=1.1f;sathue[3]=1.05f;sathue[4]=0.4f;sathue2[0]=0.9f ;sathue2[1]=0.8f ;sathue2[2]=0.7f ;sathue2[3]=0.6f;}//green yellow 1.2 1.1
+							else /*if(HH>  2.1f    && HH<= 3.1415f)*/ {sathue[0]=1.5f;sathue[1]=1.4f;sathue[2]=1.3f;sathue[3]=1.2f ;sathue[4]=0.4f;sathue2[0]=1.2f ;sathue2[1]=1.1f ;sathue2[2]=1.05f;sathue2[3]=1.0f;}//green
+
+						}
+						else if (LL< 80.0f) {//more for green, less for red and green-yellow
+							if     (/*HH> -3.1415f &&*/ HH< -1.5f   ) {sathue[0]=1.3f;sathue[1]=1.2f;sathue[2]=1.15f;sathue[3]=1.1f ;sathue[4]=0.3f;sathue2[0]=1.1f ;sathue2[1]=1.1f ;sathue2[2]=1.05f;sathue2[3]=1.0f;}//blue
+							else if(/*HH>=-1.5f    &&*/ HH< -0.7f   ) {sathue[0]=1.3f;sathue[1]=1.2f;sathue[2]=1.15f;sathue[3]=1.1f ;sathue[4]=0.3f;sathue2[0]=1.1f ;sathue2[1]=1.05f;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//blue purple  1.2 1.1
+							else if(/*HH>=-0.7f    &&*/ HH<  0.0f   ) {sathue[0]=1.2f;sathue[1]=1.0f;sathue[2]=1.0f ;sathue[3]=1.0f ;sathue[4]=0.3f;sathue2[0]=1.0f ;sathue2[1]=1.0f ;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//purple
+				//			else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f ;sathue[3]=0.8f ;sathue[4]=0.3f;sathue2[0]=0.8f ;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
+							else if(/*HH>= 0.0f    &&*/ HH<= 1.4f   ) {sathue[0]=1.1f;sathue[1]=1.0f;sathue[2]=0.9f ;sathue[3]=0.8f ;sathue[4]=0.3f;sathue2[0]=0.8f ;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
+							else if(/*HH>  1.4f    &&*/ HH<= 2.1f   ) {sathue[0]=1.3f;sathue[1]=1.2f;sathue[2]=1.1f ;sathue[3]=1.05f;sathue[4]=0.3f;sathue2[0]=1.0f ;sathue2[1]=0.9f ;sathue2[2]=0.8f ;sathue2[3]=0.7f;}//green yellow 1.2 1.1
+							else /*if(HH>  2.1f    && HH<= 3.1415f)*/ {sathue[0]=1.6f;sathue[1]=1.4f;sathue[2]=1.3f ;sathue[3]=1.25f;sathue[4]=0.3f;sathue2[0]=1.25f;sathue2[1]=1.2f ;sathue2[2]=1.15f;sathue2[3]=1.05f;}//green - even with Prophoto green are too "little"  1.5 1.3
+						}
+						else /*if (LL>=80.0f)*/ {//more for green-yellow, less for red and purple
+							if     (/*HH> -3.1415f &&*/ HH< -1.5f   ) {sathue[0]=1.0f;sathue[1]=1.0f;sathue[2]=0.9f;sathue[3]=0.8f;sathue[4]=0.2f;sathue2[0]=0.8f;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//blue
+							else if(/*HH>=-1.5f    &&*/ HH< -0.7f   ) {sathue[0]=1.0f;sathue[1]=1.0f;sathue[2]=0.9f;sathue[3]=0.8f;sathue[4]=0.2f;sathue2[0]=0.8f;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//blue purple  1.2 1.1
+							else if(/*HH>=-0.7f    &&*/ HH<  0.0f   ) {sathue[0]=1.2f;sathue[1]=1.0f;sathue[2]=1.0f;sathue[3]=0.9f;sathue[4]=0.2f;sathue2[0]=0.9f;sathue2[1]=0.9f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//purple
+				//			else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f;sathue[3]=0.8f;sathue[4]=0.2f;sathue2[0]=0.8f;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
+							else if(/*HH>= 0.0f    &&*/ HH<= 1.4f   ) {sathue[0]=1.1f;sathue[1]=1.0f;sathue[2]=0.9f;sathue[3]=0.8f;sathue[4]=0.2f;sathue2[0]=0.8f;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
+							else if(/*HH>  1.4f    &&*/ HH<= 2.1f   ) {sathue[0]=1.6f;sathue[1]=1.5f;sathue[2]=1.4f;sathue[3]=1.2f;sathue[4]=0.2f;sathue2[0]=1.1f;sathue2[1]=1.05f;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//green yellow 1.2 1.1
+							else /*if(HH>  2.1f    && HH<= 3.1415f)*/ {sathue[0]=1.4f;sathue[1]=1.3f;sathue[2]=1.2f;sathue[3]=1.1f;sathue[4]=0.2f;sathue2[0]=1.1f;sathue2[1]=1.05f;sathue2[2]=1.05f;sathue2[3]=1.0f;}//green
+						}
+					}
 					float chmodpastel,chmodsat;
 					// variables to improve transitions
 					float pa, pb;// transition = pa*saturation + pb
@@ -302,55 +317,50 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 
 						// Pastels
 						if(saturation > p2 && saturation < limitpastelsatur) {
-							float chromaPastel_a = (chromaPastel-chromamean)/(p2-limitpastelsatur);
-							float chromaPastel_b = chromaPastel-chromaPastel_a*p2;
 							float newchromaPastel = chromaPastel_a*saturation + chromaPastel_b;
 							chmodpastel = newchromaPastel*satredu*sathue[3];
 						}
 
 						// Saturated
 						if(saturation < s0 && saturation >=limitpastelsatur) {
-							float chromaSatur_a=(chromaSatur-chromamean)/(s0-limitpastelsatur);
-							float chromaSatur_b=chromaSatur-chromaSatur_a*s0;
 							float newchromaSatur=chromaSatur_a*saturation + chromaSatur_b;
 							chmodsat = newchromaSatur*satredu*sathue2[0];
 						}
 					}// end transition
 
 					if (saturation <= limitpastelsatur) {
-						if     (chmodpastel >  2.0f ) chmodpastel = 2.0f;   //avoid too big values
-						else if(chmodpastel < -0.93f) chmodpastel =-0.93f;  //avoid negative values
+						if (chmodpastel >  2.0f )
+							chmodpastel = 2.0f;   //avoid too big values
+						else if(chmodpastel < -0.93f)
+							chmodpastel =-0.93f;  //avoid negative values
 
 						Chprov *=(1.0f+chmodpastel);
-						if(Chprov<6.0f) Chprov=6.0f;
+						if(Chprov<6.0f)
+							Chprov=6.0f;
 					}
 					else { //if (saturation > limitpastelsatur)
-						if     (chmodsat >  1.8f ) chmodsat = 1.8f;        //saturated
-						else if(chmodsat < -0.93f) chmodsat =-0.93f;
+						if (chmodsat >  1.8f )
+							chmodsat = 1.8f;        //saturated
+						else if(chmodsat < -0.93f)
+							chmodsat =-0.93f;
 
 						Chprov *= 1.0f+chmodsat;
-						if(Chprov < 6.0f) Chprov=6.0f;
-					}
+						if(Chprov < 6.0f)
+							Chprov=6.0f;
+					}					
 				}
 			}
 
+			bool hhModified = false;
 			// Vibrance's Skin curve
 			if(skinCurveIsSet) {
-				const float dhue=0.15f;//hue transition
-				const float dchr=20.0f;//chroma transition
-				const float skbeg=-0.05f;//begin hue skin
-				const float skend=1.60f;//end hue skin
-				const float xx=0.5f;//soft : between 0.3 and 1.0
-
-				float ask=65535.0f/(skend-skbeg);
-				float bsk=-skbeg*ask;
-
 				if (HH>skbeg && HH<skend) {
 					if(Chprov < 60.0f) {//skin hue  : todo ==> transition
 						float HHsk=ask*HH+bsk;
 						float Hn=(skin_curve[HHsk]-bsk)/ask;
 						float Hc=(Hn*xx+HH*(1.0f-xx));
 						HH=Hc;
+						hhModified = true;
 					}
 					else if(Chprov < (60.0f+dchr)) {//transition chroma
 						float HHsk=ask*HH+bsk;
@@ -358,56 +368,62 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 						float Hc=(Hn*xx+HH*(1.0f-xx));
 						float aa= (HH-Hc)/dchr ; float bb= HH-(60.0f+dchr)*aa;
 						HH=aa*Chprov+bb;
+						hhModified = true;
 					}
 				}
 				//transition hue
-				else if(HH>(skbeg-dhue) && HH<=skbeg && Chprov < (60.0f+dchr/2.0f)) {
+				else if(HH>(skbeg-dhue) && HH<=skbeg && Chprov < (60.0f+dchr*0.5f)) {
 					float HHsk=ask*skbeg+bsk;
 					float Hn=(skin_curve[HHsk]-bsk)/ask;
 					float Hcc=(Hn*xx+skbeg*(1.0f-xx));
 					float adh=(Hcc-(skbeg-dhue))/(dhue);
 					float bdh=Hcc-adh*skbeg;
 					HH=adh*HH+bdh;
+					hhModified = true;
 				}
-				else if(HH>=skend && HH<(skend+dhue) && Chprov < (60.0f+dchr/2.0f)) {
+				else if(HH>=skend && HH<(skend+dhue) && Chprov < (60.0f+dchr*0.5f)) {
 					float HHsk=ask*skend+bsk;
 					float Hn=(skin_curve[HHsk]-bsk)/ask;
 					float Hcc=(Hn*xx+skend*(1.0f-xx));
 					float adh=(skend+dhue-Hcc)/(dhue);
 					float bdh=Hcc-adh*skend;
 					HH=adh*HH+bdh;
+					hhModified = true;
 				}
 			} // end skin hue
 
 			//Munsell correction
-			float correctionHue=0.0f;
-			float correctlum;
-
+//			float2 sincosval;
+			if(!avoidcolorshift && hhModified)
+				 sincosval = xsincosf(HH);
 			float aprovn,bprovn;
 			bool inGamut;
 			do {
 				inGamut=true;
 				if(avoidcolorshift) {
-					correctionHue=0.0f;
-					correctlum=0.0f;
+					float correctionHue=0.0f;
+					float correctlum=0.0f;
 
 #ifdef _DEBUG
-					Color::AllMunsellLch(/*lumaMuns*/false, Lprov,Lprov,HH,Chprov,memChprov,correctionHue,correctlum, MunsDebugInfo);
+					Color::AllMunsellLch(/*lumaMuns*/false, Lprov,Lprov,HH,Chprov,CC,correctionHue,correctlum, MunsDebugInfo);
 #else
-					Color::AllMunsellLch(/*lumaMuns*/false, Lprov,Lprov,HH,Chprov,memChprov,correctionHue,correctlum);
+					Color::AllMunsellLch(/*lumaMuns*/false, Lprov,Lprov,HH,Chprov,CC,correctionHue,correctlum);
 #endif
+					if(correctionHue != 0.f || hhModified) {
+						sincosval = xsincosf(HH+correctionHue);
+						hhModified = false;
+					}
 				}
-				float2 sincosval = xsincosf(HH+correctionHue);				
 				aprovn=Chprov*sincosval.y;
 				bprovn=Chprov*sincosval.x;
 
 				float fyy = (0.00862069f *Lprov )+ 0.137932f;
 				float fxx = (0.002f * aprovn) + fyy;
 				float fzz = fyy - (0.005f * bprovn);
-				float xx_ = 65535.0f * Color::f2xyz(fxx)*Color::D50x;
+				float xx_ = 65535.f * Color::f2xyz(fxx)*Color::D50x;
 			//	float yy_ = 65535.0f * Color::f2xyz(fyy);
-				float zz_ = 65535.0f * Color::f2xyz(fzz)*Color::D50z;
-				float yy_= (Lprov>Color::epskap) ? 65535.0*fyy*fyy*fyy : 65535.0*Lprov/Color::kappa;
+				float zz_ = 65535.f * Color::f2xyz(fzz)*Color::D50z;
+				float yy_ = 65535.f * ((Lprov>Color::epskap) ? fyy*fyy*fyy : Lprov/Color::kappa);
 
 				Color::xyz2rgb(xx_,yy_,zz_,R,G,B,wip);
 
@@ -415,8 +431,8 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 #ifdef _DEBUG
 					negsat++;
 #endif
-					Chprov*=0.98f;
-					inGamut=false;
+					Chprov *= 0.98f;
+					inGamut = false;
 				}
 
 				// if "highlight reconstruction" enabled don't control Gamut for highlights
@@ -424,11 +440,11 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 #ifdef _DEBUG
 					moresat++;
 #endif
-					Chprov*=0.98f;
-					inGamut=false;
+					Chprov *= 0.98f;
+					inGamut = false;
 				}
-			}
-			while (!inGamut);
+			} while (!inGamut);
+			
 			//put new values in Lab
 			lab->L[i][j]=Lprov*327.68f;
 			lab->a[i][j]=aprovn*327.68f;
