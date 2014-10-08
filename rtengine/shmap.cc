@@ -21,11 +21,8 @@
 #include "rtengine.h"
 #include "rt_math.h"
 #include "rawimagesource.h"
-#include "sleef.c"
 #undef THREAD_PRIORITY_NORMAL
-#ifdef __SSE2__
-#include "sleefsseavx.c"
-#endif // __SSE2__
+#include "opthelper.h"
 
 namespace rtengine {
 
@@ -36,6 +33,7 @@ SHMap::SHMap (int w, int h, bool multiThread) : W(w), H(h), multiThread(multiThr
     map = new float*[H];
     for (int i=0; i<H; i++)
         map[i] = new float[W];
+
 }
 
 SHMap::~SHMap () {
@@ -45,18 +43,24 @@ SHMap::~SHMap () {
     delete [] map;
 }
 
-void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int skip) {
+void SHMap::fillLuminance( Imagefloat * img, float **luminance, double lumi[3] ) // fill with luminance
+{
 
-    // fill with luminance
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
     for (int i=0; i<H; i++)
         for (int j=0; j<W; j++) {
-            map[i][j] = lumi[0]*std::max(img->r(i,j),0.f) + lumi[1]*std::max(img->g(i,j),0.f) + lumi[2]*std::max(img->b(i,j),0.f);
+            luminance[i][j] = lumi[0]*std::max(img->r(i,j),0.f) + lumi[1]*std::max(img->g(i,j),0.f) + lumi[2]*std::max(img->b(i,j),0.f);
 		}
+	
+}
+
+void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int skip) {
 
     if (!hq) {
+		fillLuminance( img, map, lumi);
+
 #ifdef _OPENMP
 #pragma omp parallel
 #endif
@@ -72,43 +76,64 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		//experimental dirpyr shmap
 
-		float thresh = 100*radius;//1000;
-		LUTf rangefn(0x10000);
-		float ** dirpyrlo[2];
+		float thresh = (100.f*radius);//1000;
 
-		int intfactor = 1024;//16384;
-
-		//set up range functions
-		for (int i=0; i<0x10000; i++) {
-			//rangefn[i] = (int)(((thresh)/((double)(i) + (thresh)))*intfactor);
-			rangefn[i] = static_cast<int>(xexpf(-(min(10.0f,(static_cast<float>(i)*i) / (thresh*thresh))))*intfactor);
-			//if (rangefn[i]<0 || rangefn[i]>intfactor)
-				//printf("i=%d rangefn=%d arg=%f \n",i,rangefn[i], float(i*i) / (thresh*thresh));
+		// set up range function
+		// calculate size of Lookup table. That's possible because from a value k for all i>=k rangefn[i] will be exp(-10)
+		// So we use this fact and the automatic clip of lut to reduce the size of lut and the number of calculations to fill the lut
+		// In past this lut had only integer precision with rangefn[i] = 0 for all i>=k
+		// We set the last element to a small epsilon 1e-15 instead of zero to avoid divisions by zero
+		const int lutSize = thresh * sqrtf(10.f) + 1;
+		thresh *= thresh;
+		LUTf rangefn(lutSize);
+		for (int i=0; i<lutSize-1; i++) {
+			rangefn[i] = xexpf(-min(10.f,(static_cast<float>(i)*i) / thresh ));//*intfactor;
+		}
+		rangefn[lutSize-1] = 1e-15f;
+		
+		// We need one temporary buffer
+		float ** buffer = allocArray<float> (W, H);
+		
+		// the final result has to be in map
+		// for an even number of levels that means: map => buffer, buffer => map
+		// for an odd number of levels that means: buffer => map, map => buffer, buffer => map
+		// so let's calculate the number of levels first
+		// There are at least two levels
+		int numLevels=2;
+		int scale=2;
+		while (skip*scale<16) {
+			scale *= 2;
+			numLevels++;
 		}
 
-		dirpyrlo[0] = allocArray<float> (W, H);
-		dirpyrlo[1] = allocArray<float> (W, H);
+		float ** dirpyrlo[2];
+		if(numLevels&1) { // odd number of levels, start with buffer
+			dirpyrlo[0] = buffer;
+			dirpyrlo[1] = map;
+		} else { // even number of levels, start with map
+			dirpyrlo[0] = map;
+			dirpyrlo[1] = buffer;
+		}
 
-		int scale=1;
+		fillLuminance( img, dirpyrlo[0], lumi);
+
+		scale = 1;
 		int level=0;
 		int indx=0;
-		dirpyr_shmap(map, dirpyrlo[indx], W, H, rangefn, 0, scale );
+		dirpyr_shmap(dirpyrlo[indx], dirpyrlo[1-indx], W, H, rangefn, level, scale );
 		scale *= 2;
-		level += 1;
+		level ++;
 		indx = 1-indx;
 		while (skip*scale<16) {
-			dirpyr_shmap(dirpyrlo[1-indx], dirpyrlo[indx], W, H, rangefn, level, scale );
+			dirpyr_shmap(dirpyrlo[indx], dirpyrlo[1-indx], W, H, rangefn, level, scale );
 			scale *= 2;
-			level += 1;
+			level ++;
 			indx = 1-indx;
 		}
 
-		dirpyr_shmap(dirpyrlo[1-indx], map, W, H, rangefn, level, scale );
+		dirpyr_shmap(dirpyrlo[indx], dirpyrlo[1-indx], W, H, rangefn, level, scale );
 
-
-		freeArray<float>(dirpyrlo[0], H);
-		freeArray<float>(dirpyrlo[1], H);
-
+		freeArray<float>(buffer, H);
 
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 /*
@@ -126,8 +151,7 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
 
     }
     // update average, minimum, maximum
-
-    float _avg = 0.0f;
+    double _avg = 0.0f;	// use double precision to gain precision especially at systems with few cores and big pictures (error for 36 MPixel on single core was about 8% with float)
     min_f = 65535;
     max_f = 0;
 #ifdef _OPENMP
@@ -138,7 +162,7 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
     float _max_f = 0.0f;
     float _val;
 #ifdef _OPENMP
-#pragma omp for reduction(+:_avg) nowait
+#pragma omp for reduction(+:_avg) schedule(dynamic,16) nowait
 #endif
     for (int i=0; i<H; i++)
         for (int j=0; j<W; j++) {
@@ -171,11 +195,7 @@ void SHMap::forceStat (float max_, float min_, float avg_) {
     avg = avg_;
 }
 
-#if defined( __SSE__ ) && defined( WIN32 )
-__attribute__((force_align_arg_pointer)) void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale)
-#else
-void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale)
-#endif
+SSEFUNCTION void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale)
 {
 	//scale is spacing of directional averaging weights
 
@@ -193,7 +213,7 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 #endif
 {
 #if defined( __SSE2__ ) && defined( __x86_64__ )
-	__m128 dirwtv, valv, normv;
+	__m128 dirwtv, valv, normv, dftemp1v, dftemp2v;
 #endif // __SSE2__
 	int j;
 #ifdef _OPENMP
@@ -201,11 +221,9 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 #endif
 	for(int i = 0; i < height; i++) {
 		float dirwt;
-		for(j = 0; j < scalewin; j++)
-		{
-			float val=0;
-			float norm=0;
-
+		for(j = 0; j < scalewin; j++) {
+			float val=0.f;
+			float norm=0.f;
 			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j%scale; jnbr<=j+scalewin; jnbr+=scale) {
 					dirwt = ( rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
@@ -216,26 +234,25 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 			data_coarse[i][j] = val/norm; // low pass filter
 		}
 #if defined( __SSE2__ ) && defined( __x86_64__ )
-		for(; j < (width-scalewin)-3; j+=4)
-		{
+		int inbrMin = max(i-scalewin,i%scale);
+		for(; j < (width-scalewin)-3; j+=4) {
 			valv= _mm_setzero_ps();
 			normv= _mm_setzero_ps();
-
-			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
+			dftemp1v = LVFU(data_fine[i][j]);
+			for(int inbr=inbrMin; inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
-					dirwtv = ( rangefn[_mm_cvttps_epi32(vabsf(LVFU(data_fine[inbr][jnbr])-LVFU(data_fine[i][j])))] );
-					valv += dirwtv*LVFU(data_fine[inbr][jnbr]);
+					dftemp2v = LVFU(data_fine[inbr][jnbr]);
+					dirwtv = ( rangefn[_mm_cvttps_epi32(vabsf(dftemp2v-dftemp1v))] );
+					valv += dirwtv*dftemp2v;
 					normv += dirwtv;
 				}
 			}
 			_mm_storeu_ps( &data_coarse[i][j], valv/normv);
 		}
-		for(; j < width-scalewin; j++)
-		{
-			float val=0;
-			float norm=0;
-
-			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
+		for(; j < width-scalewin; j++) {
+			float val=0.f;
+			float norm=0.f;
+			for(int inbr=inbrMin; inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
 					dirwt = ( rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
 					val += dirwt*data_fine[inbr][jnbr];
@@ -246,11 +263,9 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 		}
 
 #else
-		for(; j < width-scalewin; j++)
-		{
-			float val=0;
-			float norm=0;
-
+		for(; j < width-scalewin; j++) {
+			float val=0.f;
+			float norm=0.f;
 			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
 					dirwt = ( rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
@@ -261,11 +276,9 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 			data_coarse[i][j] = val/norm; // low pass filter
 		}
 #endif
-		for(; j < width; j++)
-		{
-			float val=0;
-			float norm=0;
-
+		for(; j < width; j++) {
+			float val=0.f;
+			float norm=0.f;
 			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j-scalewin; jnbr<width; jnbr+=scale) {
 					dirwt = ( rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
@@ -289,21 +302,19 @@ else {
 #endif
 {
 #if defined( __SSE2__ ) && defined( __x86_64__ )
-	__m128 dirwtv, valv, normv;
+	__m128 dirwtv, valv, normv, dftemp1v, dftemp2v;
 	float domkerv[5][5][4] __attribute__ ((aligned (16))) = {{{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1}},{{1,1,1,1},{2,2,2,2},{2,2,2,2},{2,2,2,2},{1,1,1,1}},{{1,1,1,1},{2,2,2,2},{2,2,2,2},{2,2,2,2},{1,1,1,1}},{{1,1,1,1},{2,2,2,2},{2,2,2,2},{2,2,2,2},{1,1,1,1}},{{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1}}};
 
 #endif // __SSE2__
 	int j;
 #ifdef _OPENMP
-#pragma omp for
+#pragma omp for schedule(dynamic,16)
 #endif
 	for(int i = 0; i < height; i++) {
 		float dirwt;
-		for(j = 0; j < scalewin; j++)
-		{
-			float val=0;
-			float norm=0;
-
+		for(j = 0; j < scalewin; j++) {
+			float val=0.f;
+			float norm=0.f;
 			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j%scale; jnbr<=j+scalewin; jnbr+=scale) {
 					dirwt = ( domker[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin] * rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
@@ -314,25 +325,24 @@ else {
 			data_coarse[i][j] = val/norm; // low pass filter
 		}
 #if defined( __SSE2__ ) && defined( __x86_64__ )
-		for(; j < width-scalewin-3; j+=4)
-		{
+		for(; j < width-scalewin-3; j+=4) {
 			valv = _mm_setzero_ps();
 			normv = _mm_setzero_ps();
-
-			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
-				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
-					dirwtv = ( _mm_load_ps((float*)&domkerv[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin]) * rangefn[_mm_cvttps_epi32(vabsf(LVFU(data_fine[inbr][jnbr])-LVFU(data_fine[i][j])))] );
-					valv += dirwtv*LVFU(data_fine[inbr][jnbr]);
+			dftemp1v = LVFU(data_fine[i][j]);
+			for(int inbr=max(i-scalewin,i%scale); inbr<=MIN(i+scalewin, height-1); inbr+=scale) {
+				int indexihlp = (inbr-i)/scale+halfwin;
+				for (int jnbr=j-scalewin,indexjhlp = 0; jnbr<=j+scalewin; jnbr+=scale,indexjhlp++) {
+					dftemp2v = LVFU(data_fine[inbr][jnbr]);
+					dirwtv = ( _mm_load_ps((float*)&domkerv[indexihlp][indexjhlp]) * rangefn[_mm_cvttps_epi32(vabsf(dftemp2v-dftemp1v))] );
+					valv += dirwtv*dftemp2v;
 					normv += dirwtv;
 				}
 			}
 			_mm_storeu_ps( &data_coarse[i][j], valv/normv);
 		}
-		for(; j < width-scalewin; j++)
-		{
+		for(; j < width-scalewin; j++) {
 			float val=0;
 			float norm=0;
-
 			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
 					dirwt = ( domker[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin] * rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
@@ -344,11 +354,9 @@ else {
 		}
 
 #else
-		for(; j < width-scalewin; j++)
-		{
+		for(; j < width-scalewin; j++) {
 			float val=0;
 			float norm=0;
-
 			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
 					dirwt = ( domker[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin] * rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
@@ -359,11 +367,9 @@ else {
 			data_coarse[i][j] = val/norm; // low pass filter
 		}
 #endif
-		for(; j < width; j++)
-		{
+		for(; j < width; j++) {
 			float val=0;
 			float norm=0;
-
 			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j-scalewin; jnbr<width; jnbr+=scale) {
 					dirwt = ( domker[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin] * rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
