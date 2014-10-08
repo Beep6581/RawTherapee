@@ -27,18 +27,22 @@ namespace rtengine {
 class SHMap {
 
     public: 
-        int W, H;
         float** map;
         float   max_f, min_f, avg;
-        bool multiThread;
         
-     SHMap (int w, int h, bool multiThread);
-    ~SHMap ();
+		 SHMap (int w, int h, bool multiThread);
+		~SHMap ();
 
-    void update (Imagefloat* img, double radius, double lumi[3], bool hq, int skip);
-    void forceStat (float max_, float min_, float avg_);
-	void dirpyr_shmap       (float ** data_fine, float ** data_coarse, 
-							 int width, int height, LUTf & rangefn, int level, int scale);
+		void update (Imagefloat* img, double radius, double lumi[3], bool hq, int skip);
+		void forceStat (float max_, float min_, float avg_);
+
+	private:
+		int W, H;
+		bool multiThread;
+
+		void fillLuminance( Imagefloat * img, float **luminance, double lumi[3] );
+		void dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale);
+		
 };
 }
 #endif

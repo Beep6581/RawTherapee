@@ -204,6 +204,8 @@ void Crop::update (int todo) {
         double radius = sqrt (double(SKIPS(parent->fw,skip)*SKIPS(parent->fw,skip)+SKIPS(parent->fh,skip)*SKIPS(parent->fh,skip))) / 2.0;
         double shradius = params.sh.radius;
         if (!params.sh.hq) shradius *= radius / 1800.0;
+        if(!cshmap)
+			cshmap = new SHMap (cropw, croph, true);
         cshmap->update (baseCrop, shradius, parent->ipf.lumimul, params.sh.hq, skip);
         if(parent->shmap->min_f < 65535.f) // don't call forceStat with wrong values
             cshmap->forceStat (parent->shmap->max_f, parent->shmap->min_f, parent->shmap->avg);
@@ -525,12 +527,14 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
 
         if (cbuffer  ) delete [] cbuffer;
         if (cbuf_real) delete [] cbuf_real;
-        if (cshmap   ) delete    cshmap;
+        if (cshmap   ) { delete    cshmap; cshmap = NULL;}
         cbuffer = new float*[croph];
         cbuf_real= new float[(croph+2)*cropw];
         for (int i=0; i<croph; i++)
             cbuffer[i] = cbuf_real+cropw*i+cropw;
-        cshmap = new SHMap (cropw, croph, true);
+		if(params.sh.enabled) {
+			cshmap = new SHMap (cropw, croph, true);
+		}
 
         EditBuffer::resize(cropw, croph);
 

@@ -310,6 +310,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         double radius = sqrt (double(pW*pW+pH*pH)) / 2.0;
         double shradius = params.sh.radius;
         if (!params.sh.hq) shradius *= radius / 1800.0;
+        if(!shmap)
+			shmap = new SHMap (pW, pH, true);
         shmap->update (oprevi, shradius, ipf.lumimul, params.sh.hq, scale);
     }
     readyphase++;
@@ -688,7 +690,8 @@ void ImProcCoordinator::freeAll () {
             delete previmg;
 
         delete workimg;
-        delete shmap;
+        if(shmap)
+			delete shmap; shmap = NULL;
 
     }
     allocated = false;
@@ -733,7 +736,9 @@ if (settings->verbose) printf ("setscale before lock\n");
         //ncie is only used in ImProcCoordinator::updatePreviewImage, it will be allocated on first use and deleted if not used anymore
         previmg = new Image8 (pW, pH);
         workimg = new Image8 (pW, pH);
-        shmap = new SHMap (pW, pH, true);
+   		if(params.sh.enabled) {
+			shmap = new SHMap (pW, pH, true);
+   		}
 
         allocated = true;
     }
