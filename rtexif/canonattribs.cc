@@ -1245,6 +1245,10 @@ class CAModelIDInterpreter : public ChoiceInterpreter {
             choices[0x2940000] = "PowerShot SX130 IS";
             choices[0x2950000] = "PowerShot S95";
             choices[0x3010000] = "PowerShot Pro90 IS";
+            choices[0x3340000] = "PowerShot SX50 HS";
+            choices[0x3360000] = "PowerShot S110";
+            choices[0x3540000] = "PowerShot G16";
+            choices[0x3550000] = "PowerShot S120";
             choices[0x4040000] = "PowerShot G1";
             choices[0x6040000] = "PowerShot S100 / Digital IXUS / IXY Digital";
             choices[0x4007d673]	= "DC19 / DC21 / DC22";
@@ -1293,7 +1297,10 @@ class CAModelIDInterpreter : public ChoiceInterpreter {
             choices[0x80000261] = "EOS 50D";
             choices[0x80000270] = "EOS Rebel T2i / 550D / Kiss X4";
             choices[0x80000281] = "EOS-1D Mark IV";
+            choices[0x80000285] = "EOS 5D Mark III";
+            choices[0x80000286] = "EOS 600D";
             choices[0x80000287] = "EOS 60D";
+            choices[0x80000325] = "EOS 70D";
         }
 };
 CAModelIDInterpreter caModelIDInterpreter;
