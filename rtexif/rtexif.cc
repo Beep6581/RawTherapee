@@ -802,7 +802,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
                       offsetFirst = 3;  // LensInfo
                   else if( strstr(model, "645D") )
                       offsetFirst = 13;  // LensInfo3
-                  else if( strstr(model, "K-01") || strstr(model, "K-30") || strstr(model, "K-500"))
+                  else if( strstr(model, "K-01") || strstr(model, "K-30") || strstr(model, "K-50"))
                       offsetFirst = 15;  // LensInfo5
                   else if( strstr(model, "K-5") || strstr(model, "K-r") )
                       offsetFirst = 12;  // LensInfo4
