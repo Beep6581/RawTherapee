@@ -153,7 +153,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
         rp.bayersensor.ccSteps = 0;
         rp.xtranssensor.ccSteps = 0;
-        rp.deadPixelFilter = rp.hotPixelFilter = false;
+        /* Commented out the following line so that the hot pixel filter works at <100% zoom levels too, to fix issue 2535.
+         * rp.deadPixelFilter = rp.hotPixelFilter = false;
+         */
     }
 
     progress ("Applying white balance, color correction & sRGB conversion...",100*readyphase/numofphases);
