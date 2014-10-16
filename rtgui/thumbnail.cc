@@ -346,6 +346,15 @@ void Thumbnail::clearProcParams (int whoClearedIt) {
         fname_ = removeExtension(fname) + paramFileExtension;
         if (safe_file_test (fname_, Glib::FILE_TEST_EXISTS))
             safe_g_remove (fname_);
+
+        if (cfs.format == FT_Raw && options.internalThumbIfUntouched && cfs.thumbImgType != CacheImageData::QUICK_THUMBNAIL) {
+            // regenerate thumbnail, ie load the quick thumb again. For the rare formats not supporting quick thumbs this will
+            // be a bit slow as a new full thumbnail will be generated unnecessarily, but currently there is no way to pre-check
+            // if the format supports quick thumbs.
+            initial_ = true;
+            _generateThumbnailImage();
+            initial_ = false;
+        }
     }
 
 	} // end of mutex lock
