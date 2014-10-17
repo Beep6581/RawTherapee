@@ -1437,9 +1437,9 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_257;Color Toning
 !HISTORY_MSG_258;Color Toning - Color
 !HISTORY_MSG_259;Color Toning - Opacity
-!HISTORY_MSG_260;Color Toning - 'a[b]' opacity
+!HISTORY_MSG_260;Color Toning - a*[b*] opacity
 !HISTORY_MSG_261;Color Toning - Method
-!HISTORY_MSG_262;Color Toning - 'b' opacity
+!HISTORY_MSG_262;Color Toning - b* opacity
 !HISTORY_MSG_263;Color Toning - Shadows - Red
 !HISTORY_MSG_264;Color Toning - Shadows - Green
 !HISTORY_MSG_265;Color Toning - Shadows - Blue
@@ -1479,8 +1479,8 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !PARTIALPASTE_COLORTONING;Color Toning
 !PARTIALPASTE_FILMSIMULATION;Film Simulation
 !PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
-!PARTIALPASTE_PREPROCESS_DEADPIXFILT;Apply dead pixel filter
-!PARTIALPASTE_PREPROCESS_HOTPIXFILT;Apply hot pixel filter
+!PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
+!PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
 !PREFERENCES_FILMSIMULATION;Film Simulation
 !TP_COLORTONING_AB;o C/L
@@ -1489,20 +1489,16 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_COLORTONING_BY;o C/L
 !TP_COLORTONING_CHROMAC;Opacity
 !TP_COLORTONING_COLOR;Color
-!TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Opacity Chroma according to Luminance of C=f(L)
+!TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Chroma opacity as a function of luminance oC=f(L)
 !TP_COLORTONING_HIGHLIGHT;Highlights
 !TP_COLORTONING_HUE;Hue
-!TP_COLORTONING_LABCOL;Direct Colors
-!TP_COLORTONING_LABCOL_TOOLTIP;When you move a saturation slider, these 'direct' colors are increased.
 !TP_COLORTONING_LABEL;Color Toning
-!TP_COLORTONING_LABINT;-
-!TP_COLORTONING_LABINT_TOOLTIP;When the image color is blue and the blending color is red, it results in a magenta color in the function of % opacity.\nWhen the image color is red and the blending color is yellow, it results in an orange color in the function of % opacity.
-!TP_COLORTONING_LAB;Lab blending
+!TP_COLORTONING_LAB;L*a*b* blending
 !TP_COLORTONING_LUMAMODE;Preserve luminance
 !TP_COLORTONING_LUMAMODE_TOOLTIP;If enabled, when you change color (red, green, cyan, blue, etc.) the luminance of each pixel is preserved.
 !TP_COLORTONING_LUMA;Luminance
 !TP_COLORTONING_METHOD;Method
-!TP_COLORTONING_METHOD_TOOLTIP;"Lab blending", "RGB sliders" and "RGB curves" use interpolated color blending.\n"Color balance (Shadows/Midtones/Highlights)" and "Saturation 2 colors" use direct colors.\n\nThe Black-and-White tool can be enabled when using any color toning method, which allows for color toning.
+!TP_COLORTONING_METHOD_TOOLTIP;"L*a*b* blending", "RGB sliders" and "RGB curves" use interpolated color blending.\n"Color balance (Shadows/Midtones/Highlights)" and "Saturation 2 colors" use direct colors.\n\nThe Black-and-White tool can be enabled when using any color toning method, which allows for color toning.
 !TP_COLORTONING_MIDTONES;Midtones
 !TP_COLORTONING_NEUTRAL;Reset sliders
 !TP_COLORTONING_NEUTRAL_TIP;Reset all values (Shadows, Midtones, Highlights) to default.
@@ -1520,7 +1516,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_COLORTONING_STR;Strength
 !TP_COLORTONING_TWO2;Special chroma '2 colors'
 !TP_COLORTONING_TWOALL;Special chroma
-!TP_COLORTONING_TWOBY;Special 'a' and 'b'
+!TP_COLORTONING_TWOBY;Special a* and b*
 !TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
 !TP_COLORTONING_TWOSTD;Standard chroma
 !TP_DIRPYRDENOISE_33;3×3 strong
@@ -1528,7 +1524,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_DIRPYRDENOISE_55;5×5 strong
 !TP_DIRPYRDENOISE_77;7×7 (slow)
 !TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modulates action of 'Luminance' denoise
-!TP_DIRPYRDENOISE_LABM;Lab
+!TP_DIRPYRDENOISE_LABM;L*a*b*
 !TP_DIRPYRDENOISE_LCURVE;Luminance curve
 !TP_DIRPYRDENOISE_LM;Luminance only
 !TP_DIRPYRDENOISE_MEDMETHOD;Median method
@@ -1537,7 +1533,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_DIRPYRDENOISE_MED_TOOLTIP;Enabled median denoising
 !TP_DIRPYRDENOISE_METHOD11;Quality
 !TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
-!TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "Lab" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
+!TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "L*a*b*" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
 !TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired size. The larger the size, the longer it takes.\n\n3x3 soft: treats 5 pixels in a 1-pixel range.\n3x3: treats 9 pixels in a 1-pixel range.\n5x5 soft: treats 13 pixels in a 2-pixel range.\n5x5: treats 25 pixels in a 2-pixel range.\n7x7: treats 49 pixels in a 3-pixel range.\n\nSometimes it is possible to achieve higher quality running several iterations with a small range than one iteration with a large range.
 !TP_DIRPYRDENOISE_PASSES;Median iterations
 !TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying a 3x3 median filter with three iterations often leads to better results than applying 7x7 once.

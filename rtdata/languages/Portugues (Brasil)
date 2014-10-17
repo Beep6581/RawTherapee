@@ -519,7 +519,7 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !CURVEEDITOR_DARKS;Darks
 !CURVEEDITOR_HIGHLIGHTS;Highlights
 !CURVEEDITOR_LIGHTS;Lights
-!CURVEEDITOR_MINMAXCPOINTS;Minima/Maxima control points
+!CURVEEDITOR_MINMAXCPOINTS;Equalizer
 !CURVEEDITOR_NURBS;Control cage
 !CURVEEDITOR_PARAMETRIC;Parametric
 !CURVEEDITOR_SHADOWS;Shadows
@@ -646,12 +646,12 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !HISTORY_MSG_92;NR - Gamma
 !HISTORY_MSG_93;CbDL - Value
 !HISTORY_MSG_94;Contrast by Detail Levels
-!HISTORY_MSG_95;Lab - Chromaticity
-!HISTORY_MSG_96;'a' Curve
-!HISTORY_MSG_97;'b' Curve
+!HISTORY_MSG_95;L*a*b* - Chromaticity
+!HISTORY_MSG_96;a* curve
+!HISTORY_MSG_97;b* curve
 !HISTORY_MSG_98;Demosaicing method
 !HISTORY_MSG_99;Hot pixel filter
-!HISTORY_MSG_100;Saturation
+!HISTORY_MSG_100;RGB Saturation
 !HISTORY_MSG_101;HSV - Hue
 !HISTORY_MSG_102;HSV - Saturation
 !HISTORY_MSG_103;HSV - Value
@@ -662,9 +662,9 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_109;Resize - Bounding box
 !HISTORY_MSG_110;Resize - Applies to
-!HISTORY_MSG_111;Lab - Avoid color shift
+!HISTORY_MSG_111;L*a*b* - Avoid color shift
 !HISTORY_MSG_112;--unused--
-!HISTORY_MSG_113;Lab - Protection
+!HISTORY_MSG_113;L*a*b* - Protection
 !HISTORY_MSG_114;DCB iterations
 !HISTORY_MSG_115;False color suppression
 !HISTORY_MSG_116;DCB enhancement
@@ -719,11 +719,11 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !HISTORY_MSG_165;RGB curves - Blue
 !HISTORY_MSG_166;Neutral levels
 !HISTORY_MSG_167;--unused--
-!HISTORY_MSG_168;Lab - CC curve
-!HISTORY_MSG_169;Lab - CH curve
+!HISTORY_MSG_168;L*a*b* - CC curve
+!HISTORY_MSG_169;L*a*b* - CH curve
 !HISTORY_MSG_170;Vibrance - HH curve
-!HISTORY_MSG_171;Lab - LC curve
-!HISTORY_MSG_172;Lab - Restrict LC
+!HISTORY_MSG_171;L*a*b* - LC curve
+!HISTORY_MSG_172;L*a*b* - Restrict LC
 !HISTORY_MSG_173;NR - Luminance detail
 !HISTORY_MSG_174;CIECAM02
 !HISTORY_MSG_175;CAM02 - CAT02 adaptation
@@ -810,9 +810,9 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !HISTORY_MSG_257;Color Toning
 !HISTORY_MSG_258;Color Toning - Color
 !HISTORY_MSG_259;Color Toning - Opacity
-!HISTORY_MSG_260;Color Toning - 'a[b]' opacity
+!HISTORY_MSG_260;Color Toning - a*[b*] opacity
 !HISTORY_MSG_261;Color Toning - Method
-!HISTORY_MSG_262;Color Toning - 'b' opacity
+!HISTORY_MSG_262;Color Toning - b* opacity
 !HISTORY_MSG_263;Color Toning - Shadows - Red
 !HISTORY_MSG_264;Color Toning - Shadows - Green
 !HISTORY_MSG_265;Color Toning - Shadows - Blue
@@ -889,15 +889,15 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
 !MAIN_TOOLTIP_SHOWHIDELP1;Show/Hide the left panel.\nShortcut: <b>l</b>
 !MAIN_TOOLTIP_SHOWHIDERP1;Show/Hide the right panel.\nShortcut: <b>Alt-l</b>
-!MAIN_TOOLTIP_SHOWHIDETP1;Show/Hide the top panel.\nShortcut: <b>Shift-L</b>
+!MAIN_TOOLTIP_SHOWHIDETP1;Show/Hide the top panel.\nShortcut: <b>Shift-l</b>
 !MAIN_TOOLTIP_THRESHOLD;Threshold
 !MAIN_TOOLTIP_TOGGLE;Toggle the <b>Before</b>/<b>After</b> view.\nShortcut: <b>Shift-b</b>
 !NAVIGATOR_B;B:
 !NAVIGATOR_G;G:
 !NAVIGATOR_H;H:
-!NAVIGATOR_LAB_A;a:
-!NAVIGATOR_LAB_B;b:
-!NAVIGATOR_LAB_L;L:
+!NAVIGATOR_LAB_A;a*:
+!NAVIGATOR_LAB_B;b*:
+!NAVIGATOR_LAB_L;L*:
 !NAVIGATOR_NA; --
 !NAVIGATOR_R;R:
 !NAVIGATOR_S;S:
@@ -908,7 +908,7 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !PARTIALPASTE_CHANNELMIXERBW;Black-and-White
 !PARTIALPASTE_CHANNELMIXER;Channel mixer
-!PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
+!PARTIALPASTE_COLORAPP;CIECAM02
 !PARTIALPASTE_COLORTONING;Color Toning
 !PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto-fill
 !PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark-frame auto-selection
@@ -929,13 +929,13 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !PARTIALPASTE_HSVEQUALIZER;HSV equalizer
 !PARTIALPASTE_ICMGAMMA;Output gamma
 !PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
-!PARTIALPASTE_LABCURVE;Lab adjustments
+!PARTIALPASTE_LABCURVE;L*a*b* adjustments
 !PARTIALPASTE_LENSPROFILE;Lens correction profile
 !PARTIALPASTE_PCVIGNETTE;Vignette filter
 !PARTIALPASTE_PERSPECTIVE;Perspective
-!PARTIALPASTE_PREPROCESS_DEADPIXFILT;Apply dead pixel filter
+!PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
 !PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
-!PARTIALPASTE_PREPROCESS_HOTPIXFILT;Apply hot pixel filter
+!PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
 !PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
 !PARTIALPASTE_RAWCACORR_AUTO;CA auto-correction
 !PARTIALPASTE_RAWCACORR_CABLUE;CA blue
@@ -1149,30 +1149,30 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !TP_COLORAPP_BADPIXSL;Hot/bad pixel filter
 !TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n0 = No effect\n1 = Median\n2 = Gaussian.\nAlternatively, adjust the image to avoid very dark shadows.\n\nThese artifacts are due to limitations of CIECAM02.
 !TP_COLORAPP_BRIGHT;Brightness (Q)
-!TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02 takes into account the white's luminosity and differs from Lab and RGB brightness.
+!TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02 takes into account the white's luminosity and differs from L*a*b* and RGB brightness.
 !TP_COLORAPP_CHROMA;Chroma (C)
 !TP_COLORAPP_CHROMA_M;Colorfulnes (M)
-!TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM02 differs from Lab and RGB colorfulness.
+!TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM02 differs from L*a*b* and RGB colorfulness.
 !TP_COLORAPP_CHROMA_S;Saturation (S)
-!TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM02 differs from Lab and RGB saturation.
-!TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02 differs from Lab and RGB chroma.
+!TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM02 differs from L*a*b* and RGB saturation.
+!TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02 differs from L*a*b* and RGB chroma.
 !TP_COLORAPP_CIECAT_DEGREE;CAT02 adaptation
 !TP_COLORAPP_CONTRAST;Contrast (J)
 !TP_COLORAPP_CONTRAST_Q;Contrast (Q)
-!TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast in CIECAM02 for the Q slider; it differs from Lab and RGB contrast.
-!TP_COLORAPP_CONTRAST_TOOLTIP;Contrast in CIECAM02 for the J slider; it differs from Lab and RGB contrast.
+!TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast in CIECAM02 for the Q slider; it differs from L*a*b* and RGB contrast.
+!TP_COLORAPP_CONTRAST_TOOLTIP;Contrast in CIECAM02 for the J slider; it differs from L*a*b* and RGB contrast.
 !TP_COLORAPP_CURVEEDITOR1;Tone curve 1
-!TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L (Lab) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of J or Q after CIECAM02.\n\nJ and Q are not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
+!TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L* (L*a*b*) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of J or Q after CIECAM02.\n\nJ and Q are not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
 !TP_COLORAPP_CURVEEDITOR2;Tone curve 2
 !TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the second exposure tone curve.
 !TP_COLORAPP_CURVEEDITOR3;Color curve
-!TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (Lab) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of C, s or M after CIECAM02.\n\nC, s and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
+!TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of C, s or M after CIECAM02.\n\nC, s and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
 !TP_COLORAPP_DATACIE;CIECAM02 output histograms in curves
-!TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show Lab values before CIECAM02 adjustments.
-!TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RT calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended).
+!TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show L*a*b* values before CIECAM02 adjustments.
+!TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended).
 !TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002.
-!TP_COLORAPP_GAMUT;Gamut control (Lab)
-!TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in Lab mode.
+!TP_COLORAPP_GAMUT;Gamut control (L*a*b*)
+!TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
 !TP_COLORAPP_HUE;Hue (h)
 !TP_COLORAPP_HUE_TOOLTIP;Hue (h) - angle between 0° and 360°.
 !TP_COLORAPP_LABEL;CIE Color Appearance Model 2002
@@ -1180,7 +1180,7 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !TP_COLORAPP_LABEL_SCENE;Scene Conditions
 !TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
 !TP_COLORAPP_LIGHT;Lightness (J)
-!TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 differs from Lab and RGB lightness.
+!TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 differs from L*a*b* and RGB lightness.
 !TP_COLORAPP_MODEL;WP Model
 !TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in <i>Preferences > Color Management</i>.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in <i>Preferences - Color Management</i>.
 !TP_COLORAPP_RSTPRO;Red & skin-tones protection
@@ -1204,7 +1204,7 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
 !TP_COLORAPP_TCMODE_SATUR;Saturation
 !TP_COLORAPP_TONECIE;Tone mapping using CIECAM02
-!TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in Lab space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
+!TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 !TP_COLORAPP_WBRT;WB [RT] + [output]
 !TP_COLORTONING_AB;o C/L
@@ -1213,20 +1213,16 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !TP_COLORTONING_BY;o C/L
 !TP_COLORTONING_CHROMAC;Opacity
 !TP_COLORTONING_COLOR;Color
-!TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Opacity Chroma according to Luminance of C=f(L)
+!TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Chroma opacity as a function of luminance oC=f(L)
 !TP_COLORTONING_HIGHLIGHT;Highlights
 !TP_COLORTONING_HUE;Hue
-!TP_COLORTONING_LABCOL;Direct Colors
-!TP_COLORTONING_LABCOL_TOOLTIP;When you move a saturation slider, these 'direct' colors are increased.
 !TP_COLORTONING_LABEL;Color Toning
-!TP_COLORTONING_LABINT;-
-!TP_COLORTONING_LABINT_TOOLTIP;When the image color is blue and the blending color is red, it results in a magenta color in the function of % opacity.\nWhen the image color is red and the blending color is yellow, it results in an orange color in the function of % opacity.
-!TP_COLORTONING_LAB;Lab blending
+!TP_COLORTONING_LAB;L*a*b* blending
 !TP_COLORTONING_LUMAMODE;Preserve luminance
 !TP_COLORTONING_LUMAMODE_TOOLTIP;If enabled, when you change color (red, green, cyan, blue, etc.) the luminance of each pixel is preserved.
 !TP_COLORTONING_LUMA;Luminance
 !TP_COLORTONING_METHOD;Method
-!TP_COLORTONING_METHOD_TOOLTIP;"Lab blending", "RGB sliders" and "RGB curves" use interpolated color blending.\n"Color balance (Shadows/Midtones/Highlights)" and "Saturation 2 colors" use direct colors.\n\nThe Black-and-White tool can be enabled when using any color toning method, which allows for color toning.
+!TP_COLORTONING_METHOD_TOOLTIP;"L*a*b* blending", "RGB sliders" and "RGB curves" use interpolated color blending.\n"Color balance (Shadows/Midtones/Highlights)" and "Saturation 2 colors" use direct colors.\n\nThe Black-and-White tool can be enabled when using any color toning method, which allows for color toning.
 !TP_COLORTONING_MIDTONES;Midtones
 !TP_COLORTONING_NEUTRAL;Reset sliders
 !TP_COLORTONING_NEUTRAL_TIP;Reset all values (Shadows, Midtones, Highlights) to default.
@@ -1244,7 +1240,7 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !TP_COLORTONING_STR;Strength
 !TP_COLORTONING_TWO2;Special chroma '2 colors'
 !TP_COLORTONING_TWOALL;Special chroma
-!TP_COLORTONING_TWOBY;Special 'a' and 'b'
+!TP_COLORTONING_TWOBY;Special a* and b*
 !TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
 !TP_COLORTONING_TWOSTD;Standard chroma
 !TP_CROP_GTEPASSPORT;Biometric Passport
@@ -1269,8 +1265,8 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !TP_DIRPYRDENOISE_GAMMA;Gamma
 !TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
 !TP_DIRPYRDENOISE_LABEL;Noise Reduction
-!TP_DIRPYRDENOISE_LABM;Lab
-!TP_DIRPYRDENOISE_LAB;Lab
+!TP_DIRPYRDENOISE_LABM;L*a*b*
+!TP_DIRPYRDENOISE_LAB;L*a*b*
 !TP_DIRPYRDENOISE_LCURVE;Luminance curve
 !TP_DIRPYRDENOISE_LDETAIL;Luminance - Detail
 !TP_DIRPYRDENOISE_LM;Luminance only
@@ -1282,8 +1278,8 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !TP_DIRPYRDENOISE_METHOD11;Quality
 !TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
 !TP_DIRPYRDENOISE_METHOD;Method
-!TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be used.\n\nFor non-raw images the Lab method will be used, regardless of the selection.
-!TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "Lab" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
+!TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or L*a*b* methods can be used.\n\nFor non-raw images the L*a*b* method will be used, regardless of the selection.
+!TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "L*a*b*" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
 !TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired size. The larger the size, the longer it takes.\n\n3x3 soft: treats 5 pixels in a 1-pixel range.\n3x3: treats 9 pixels in a 1-pixel range.\n5x5 soft: treats 13 pixels in a 2-pixel range.\n5x5: treats 25 pixels in a 2-pixel range.\n7x7: treats 49 pixels in a 3-pixel range.\n\nSometimes it is possible to achieve higher quality running several iterations with a small range than one iteration with a large range.
 !TP_DIRPYRDENOISE_PASSES;Median iterations
 !TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying a 3x3 median filter with three iterations often leads to better results than applying 7x7 once.
@@ -1294,8 +1290,6 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !TP_DIRPYRDENOISE_SHAL;Standard
 !TP_DIRPYRDENOISE_SOFT;3x3
 !TP_DIRPYREQUALIZER_ALGO;Skin Color Range
-!TP_DIRPYREQUALIZER_ALGO_FI;Fine
-!TP_DIRPYREQUALIZER_ALGO_LA;Large
 !TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts.
 !TP_DIRPYREQUALIZER_GAMUT;Reduce artifacts
 !TP_DIRPYREQUALIZER_HUESKIN;Skin hue
@@ -1422,11 +1416,11 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !TP_LABCURVE_CURVEEDITOR_LH;LH
 !TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
 !TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance according to luminance L=f(L)
-!TP_LABCURVE_LABEL;Lab Adjustments
+!TP_LABCURVE_LABEL;L*a*b* Adjustments
 !TP_LABCURVE_LCREDSK;Restrict LC to red and skin-tones
 !TP_LABCURVE_LCREDSK_TIP;If enabled, the LC Curve affects only red and skin-tones.\nIf disabled, it applies to all tones.
 !TP_LABCURVE_RSTPROTECTION;Red and skin-tones protection
-!TP_LABCURVE_RSTPRO_TOOLTIP;Can be used with the Chromaticity slider and the CC curve.
+!TP_LABCURVE_RSTPRO_TOOLTIP;Works on the Chromaticity slider and the CC curve.
 !TP_LENSGEOM_AUTOCROP;Auto-Crop
 !TP_LENSGEOM_FILL;Auto-fill
 !TP_LENSGEOM_LABEL;Lens / Geometry
@@ -1476,7 +1470,7 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !TP_RAW_DCBITERATIONS;Number of DCB iterations
 !TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 !TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
-!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to posterization or a washed-out look.
+!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.
 !TP_RAW_LABEL;Demosaicing
 !TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.
