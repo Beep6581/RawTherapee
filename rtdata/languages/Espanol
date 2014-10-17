@@ -40,7 +40,7 @@
 #40   (**) Término no incluido en diccionario RAE
 #41
 #42  Términos conservados en Inglés por no tener traducción breve
-#43  al español en el sent  ido usado por RT/fotografía digital
+#43  al español en el sentido usado por RT/fotografía digital
 #44  -----------------------------------------------------
 #45   ICM (Image Color Management)
 #46   Gamut
@@ -59,6 +59,7 @@
 #59 2011-12-25 plores, translation improvement, translation of untranslated strings
 #60 2013-01-03 OdeLama, translation for v4.0.12 of untranslated/changed strings
 #61 2014-01-14 mapelo, bug correction and small enhancements.
+#62 2014-10-10 fotger
 
 ABOUT_TAB_BUILD;Versión
 ABOUT_TAB_CREDITS;Créditos
@@ -91,6 +92,8 @@ CURVEEDITOR_TOOLTIPPASTE;Pegar curva desde el portapapeles
 CURVEEDITOR_TOOLTIPSAVE;Guardar curva actual
 CURVEEDITOR_TYPE;Tipo:
 EDITWINDOW_TITLE;Edición de imagen
+EDIT_OBJECT_TOOLTIP;Muestra un instrumento en la ventana de previo, el cual le permitirá ajustar esta herramienta.
+EDIT_PIPETTE_TOOLTIP;Para agregar un punto de ajuste en la curva , mantenga presionada la tecla Ctrl mientras oprime el botón izquierdo del ratón sobre el punto deseado en el previo de la imagen.\nPara ajustar el punto, mantenga presionada la tecla Ctrl mientras oprime el botón izquierdo del ratón sobre la correspondiente area en el previo y muevase hacia arriba y/o hacia abajo, logrando un ajuste fino del punto en la curva. Si desea un ajuste mayor, libere la tecla Ctrl.
 EXIFFILTER_APERTURE;Diafragma
 EXIFFILTER_CAMERA;Cámara
 EXIFFILTER_EXPOSURECOMPENSATION;Compensación de exposición (EV)
@@ -109,12 +112,12 @@ EXIFPANEL_KEEPHINT;Conserva las etiquetas seleccionadas al escribir el archivo d
 EXIFPANEL_KEEP;Conservar
 EXIFPANEL_REMOVEHINT;Quita las etiquetas seleccionadas al escribir el archivo de salida
 EXIFPANEL_REMOVE;Borrar
-EXIFPANEL_RESETALLHINT;Reiniciar todos los atributos a los valores originales
-EXIFPANEL_RESETALL;Reiniciar todo
-EXIFPANEL_RESETHINT;Reiniciar atributos seleccionados a los valores originales
-EXIFPANEL_RESET;Reiniciar
+EXIFPANEL_RESETALLHINT;Restablecer todos los atributos a los valores predeterminados
+EXIFPANEL_RESETALL;Restablecer todo
+EXIFPANEL_RESETHINT;Restablecer atributos seleccionados a los valores predeterminados
+EXIFPANEL_RESET;Restablecer
 EXIFPANEL_SUBDIRECTORY;Subcarpeta
-EXPORT_BYPASS_ALL;Seleccionar / deseleccionar todo
+EXPORT_BYPASS_ALL;Seleccionar / Deseleccionar todo
 EXPORT_BYPASS_DEFRINGE;Saltar Quitar borde púrpura
 EXPORT_BYPASS_DIRPYRDENOISE;Saltar Reducción de ruido
 EXPORT_BYPASS_DIRPYREQUALIZER;Saltar Contraste por niveles de detalle
@@ -139,12 +142,12 @@ EXPORT_PUTTOQUEUEFAST;  Poner en la cola de Exportación Rápida
 EXPORT_RAW_DMETHOD;Método de interpolado
 EXPORT_RESIZEMETHOD;Método de cambio de tamaño
 EXTPROGTARGET_1;Raw
-EXTPROGTARGET_2;procesada en cola
+EXTPROGTARGET_2;procesado en cola
 FILEBROWSER_ADDDELTEMPLATE;Añadir/Borrar plantillas...
 FILEBROWSER_APPLYPROFILE;Aplicar perfil
 FILEBROWSER_APPLYPROFILE_PARTIAL;Aplicar perfil (parcial)
 FILEBROWSER_AUTODARKFRAME;Toma Negra automática
-FILEBROWSER_AUTOFLATFIELD;Auto Campo plano
+FILEBROWSER_AUTOFLATFIELD;Campo plano automático
 FILEBROWSER_BROWSEPATHBUTTONHINT;Pulsar para examinar la carpeta seleccionada
 FILEBROWSER_BROWSEPATHHINT;Ingrese la ruta a examinar \n<b>Ctrl-O</b> poner el foco en campo con la ruta\n<b>Enter</b> / <b>Ctrl-Enter</b> para examinar allí;\n<b>Esc</b>Para quitar los cambios.\n<b>Shift-Esc</b> Para quitar el foco.\n\n\nAbreviaturas de ruta:\n  <b>~</b> - Carpeta hogar del usuario\n  <b>!</b> - Carpeta de imágenes del usuario
 FILEBROWSER_CACHECLEARFROMFULL;Limpiar del caché - Total
@@ -164,12 +167,17 @@ FILEBROWSER_EXEC_CPB;Ejecutar generador de perfiles de imagen del usuario
 FILEBROWSER_EXTPROGMENU;Abrir con
 FILEBROWSER_FLATFIELD;Campo plano
 FILEBROWSER_MOVETODARKFDIR;Mover a carpeta de Tomas Negras
-FILEBROWSER_MOVETOFLATFIELDDIR;Mover a carpeta de campo plano
+FILEBROWSER_MOVETOFLATFIELDDIR;Mover a carpeta de Campo Plano
 FILEBROWSER_NEW_NAME;Nuevo nombre:
 FILEBROWSER_OPENDEFAULTVIEWER;Ventana predeterminada de visualización (procesada en cola)
 FILEBROWSER_PARTIALPASTEPROFILE;Pegar perfil parcialmente
 FILEBROWSER_PASTEPROFILE;Pegar perfil
 FILEBROWSER_POPUPCANCELJOB;Cancelar trabajo
+FILEBROWSER_POPUPCOLORLABEL1;Etiqueta: Rojo
+FILEBROWSER_POPUPCOLORLABEL2;Etiqueta: Amarillo
+FILEBROWSER_POPUPCOLORLABEL3;Etiqueta: Verde
+FILEBROWSER_POPUPCOLORLABEL4;Etiqueta: Azul
+FILEBROWSER_POPUPCOLORLABEL5;Etiqueta: Púrpura
 FILEBROWSER_POPUPCOLORLABEL;Etiquetar con un color
 FILEBROWSER_POPUPCOPYTO;Copiar a...
 FILEBROWSER_POPUPFILEOPERATIONS;Operaciones con archivos
@@ -180,6 +188,12 @@ FILEBROWSER_POPUPOPEN;Abrir
 FILEBROWSER_POPUPPROCESSFAST;Poner en la cola (exportación rápida)
 FILEBROWSER_POPUPPROCESS;Poner en la cola
 FILEBROWSER_POPUPPROFILEOPERATIONS;Operaciones con perfiles
+FILEBROWSER_POPUPRANK0;Sin Rango
+FILEBROWSER_POPUPRANK1;Rango 1 *
+FILEBROWSER_POPUPRANK2;Rango 2 **
+FILEBROWSER_POPUPRANK3;Rango 3 ***
+FILEBROWSER_POPUPRANK4;Rango 4 ****
+FILEBROWSER_POPUPRANK5;Rango 5 *****
 FILEBROWSER_POPUPRANK;Asignar rango
 FILEBROWSER_POPUPREMOVEINCLPROC;Borrar con salida de la cola
 FILEBROWSER_POPUPREMOVE;Borrar
@@ -199,7 +213,7 @@ FILEBROWSER_RANK5_TOOLTIP;Rango 5 *****\nAtajo<b>Shift-5</b>
 FILEBROWSER_RENAMEDLGLABEL;Renombrar archivo
 FILEBROWSER_RENAMEDLGMSG;Renombrar archivo "%1"a:
 FILEBROWSER_SELECTDARKFRAME;Seleccionar Toma Negra…
-FILEBROWSER_SELECTFLATFIELD;Seleccionar campo plano…
+FILEBROWSER_SELECTFLATFIELD;Seleccionar Campo Plano…
 FILEBROWSER_SHOWCOLORLABEL1HINT;Mostrar imágenes etiquetadas con Rojo <b>Alt-1</b>
 FILEBROWSER_SHOWCOLORLABEL2HINT;Mostrar imágenes etiquetadas con Amarillo <b>Alt-2</b>
 FILEBROWSER_SHOWCOLORLABEL3HINT;Mostrar imágenes etiquetadas con Verde <b>Alt-3</b>
@@ -271,7 +285,7 @@ HISTORY_MSG_7;Negro
 HISTORY_MSG_8;Compensación de exposición
 HISTORY_MSG_9;Compresión de luces altas
 HISTORY_MSG_10;Compresión de sombras
-HISTORY_MSG_11;Curva de tonal 1
+HISTORY_MSG_11;Curva tonal 1
 HISTORY_MSG_12;Exposición automática
 HISTORY_MSG_13;Recorte de exposición
 HISTORY_MSG_14;Lab - Claridad
@@ -510,6 +524,54 @@ HISTORY_MSG_247;Curva 'LM'
 HISTORY_MSG_248;Curva 'MM'
 HISTORY_MSG_249;CpND - Umbral
 HISTORY_MSG_250;RR - Mejorado
+HISTORY_MSG_251;B&amp;N - Algoritmo
+HISTORY_MSG_252;CbDL - Tono de piel
+HISTORY_MSG_253;CbDL - Reducir elementos extraños
+HISTORY_MSG_254;CbDL - Matiz de piel
+HISTORY_MSG_255;RR - Filtro Median
+HISTORY_MSG_256;RR - Tipo Median
+HISTORY_MSG_257;Tonificación de Color
+HISTORY_MSG_258;TC - Color
+HISTORY_MSG_259;TC - Opacidad
+HISTORY_MSG_260;TC - Opacidad'a[b]'
+HISTORY_MSG_261;TC - Método
+HISTORY_MSG_262;TC - Opacidad 'b'
+HISTORY_MSG_263;TC - Sombras - Rojo
+HISTORY_MSG_264;TC - Sombras - Verde
+HISTORY_MSG_265;TC - Sombras - Azul
+HISTORY_MSG_266;TC - Tonos Medios - Rojo
+HISTORY_MSG_267;TC - Tonos Medios - Verde
+HISTORY_MSG_268;TC - Tonos Medios - Azul
+HISTORY_MSG_269;TC - Altas Luces - Rojo
+HISTORY_MSG_270;TC - Altas Luces - Verde
+HISTORY_MSG_271;TC - Altas Luces - Azul
+HISTORY_MSG_272;TC - Balance
+HISTORY_MSG_273;TC - Restablecer
+HISTORY_MSG_274;TC - Sat. de Sombras
+HISTORY_MSG_275;TC - Sat. de Altas Luces
+HISTORY_MSG_276;TC - Opacidad
+HISTORY_MSG_277;--no utilizado--
+HISTORY_MSG_278;TC - Preservar luminancia
+HISTORY_MSG_279;TC - Sombras
+HISTORY_MSG_280;TC - Altas Luces
+HISTORY_MSG_281;TC - Intensidad de Saturación
+HISTORY_MSG_282;TC - Umbral de Saturación
+HISTORY_MSG_283;TC - Intensidad
+HISTORY_MSG_284;TC - Autoprotección de Saturación
+HISTORY_MSG_285;RR - Median - Método
+HISTORY_MSG_286;RR - Median - Tipo
+HISTORY_MSG_287;RR - Median - Iteracciones
+HISTORY_MSG_288;Campo Plano - Control de recorte
+HISTORY_MSG_289;Campo Plano - Control de recorte - Automático
+HISTORY_MSG_290;Nivel de Negro - Rojo
+HISTORY_MSG_291;Nivel de Negro - Verde
+HISTORY_MSG_292;Nivel de Negro - Azul
+HISTORY_MSG_293;Simulación de Fílmico
+HISTORY_MSG_294;Simulación de Fílmico - Intensidad
+HISTORY_MSG_295;Simulación de Fílmico - Filme
+HISTORY_MSG_296;RR - Modular luminancia
+HISTORY_MSG_297;RR - Calidad
+HISTORY_MSG_298;Filtro Pixel Muerto
 HISTORY_NEWSNAPSHOT;Agregar
 HISTORY_NEWSNAPSHOT_TOOLTIP;Atajo: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Instantáneas
@@ -534,7 +596,7 @@ IPTCPANEL_CREDITHINT;Identifica el proveedor de la imagen, que no necesariamente
 IPTCPANEL_CREDIT;Créditos
 IPTCPANEL_DATECREATEDHINT;Fecha de creación del contenido intelectual de la imagen; Formato: AAAAMMDD.
 IPTCPANEL_DATECREATED;Fecha de creación
-IPTCPANEL_EMBEDDEDHINT;Reiniciar a los datos IPTC incrustados en el archivo de la imagen
+IPTCPANEL_EMBEDDEDHINT;Restablecer a los datos IPTC incrustados en el archivo de la imagen
 IPTCPANEL_EMBEDDED;Incrustado
 IPTCPANEL_HEADLINEHINT;Una anotación publicable que provee una sinopsis de los contenidos de la imagen.
 IPTCPANEL_HEADLINE;Encabezado
@@ -545,8 +607,8 @@ IPTCPANEL_KEYWORDS;Palabras clave
 IPTCPANEL_PASTEHINT;Pegar ajustes IPTC desde el portapapeles
 IPTCPANEL_PROVINCEHINT;Origen de la imagen: Estado/Provincia (Province-State).
 IPTCPANEL_PROVINCE;Estado/Provincia
-IPTCPANEL_RESETHINT;Reiniciar a los ajustes predeterminados del perfil.
-IPTCPANEL_RESET;Reiniciar
+IPTCPANEL_RESETHINT;Restablecer a los ajustes predeterminados del perfil.
+IPTCPANEL_RESET;Restablecer
 IPTCPANEL_SOURCEHINT;Propietario original del contenido intelectual de la imagen (Source).
 IPTCPANEL_SOURCE;Fuente
 IPTCPANEL_SUPPCATEGORIESHINT;Datos adicionales del tema de la imagen.
@@ -639,6 +701,7 @@ NAVIGATOR_LAB_B_NA;B = n/a
 NAVIGATOR_LAB_B_VALUE;B = %1
 NAVIGATOR_LAB_L_NA;L = n/a
 NAVIGATOR_LAB_L_VALUE;L = %1
+NAVIGATOR_NA; --
 NAVIGATOR_R_NA;R = n/a
 NAVIGATOR_R_VALUE;R = %1
 NAVIGATOR_S_NA;S = n/a
@@ -656,6 +719,7 @@ PARTIALPASTE_CHANNELMIXER;Mezclador de canales
 PARTIALPASTE_COARSETRANS;Rotar 90º/ voltear
 PARTIALPASTE_COLORAPP;Modelo CIE 2002 de apariencia de color
 PARTIALPASTE_COLORGROUP;Ajustes de color
+PARTIALPASTE_COLORTONING;Tonificación de Color
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto relleno
 PARTIALPASTE_COMPOSITIONGROUP;Ajustes de composición
 PARTIALPASTE_CROP;Recortar
@@ -671,9 +735,11 @@ PARTIALPASTE_EPD;Mapeo tonal
 PARTIALPASTE_EVERYTHING;Todo
 PARTIALPASTE_EXIFCHANGES;Cambio en datos Exif
 PARTIALPASTE_EXPOSURE;Exposición
+PARTIALPASTE_FILMSIMULATION;Simulación de Fílmico
 PARTIALPASTE_FLATFIELDAUTOSELECT;Auto Selección de campo plano
 PARTIALPASTE_FLATFIELDBLURRADIUS;Radio de difuminado de campo plano
 PARTIALPASTE_FLATFIELDBLURTYPE;Tipo de difuminado de campo plano
+PARTIALPASTE_FLATFIELDCLIPCONTROL;Control de recorte de Campo Plano
 PARTIALPASTE_FLATFIELDFILE;Archivo de campo plano
 PARTIALPASTE_GRADIENTSHARPEN;Nitidez por gradiente (bordes)
 PARTIALPASTE_HSVEQUALIZER;Ecualizador HSV
@@ -689,8 +755,10 @@ PARTIALPASTE_METAICMGROUP;Ajustes de metadatos/Gestión de color
 PARTIALPASTE_MICROCONTRAST;Microcontraste
 PARTIALPASTE_PCVIGNETTE;Filtro quitar viñeteado
 PARTIALPASTE_PERSPECTIVE;Perspectiva
+PARTIALPASTE_PREPROCESS_DEADPIXFILT;Aplicar filtro Pixel Muerto
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Equilibrio del verde
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Filtrar píxel caliente/muerto
+PARTIALPASTE_PREPROCESS_HOTPIXFILT;Aplicar filtro Pixel Caliente
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtro de ruido de línea
 PARTIALPASTE_RAWCACORR_AUTO;Auto corrección de Aberración Cromática
 PARTIALPASTE_RAWCACORR_CABLUE;AC Azul
@@ -744,6 +812,7 @@ PREFERENCES_CLEARDLG_LINE1;Borrando memoria intermedia
 PREFERENCES_CLEARDLG_LINE2;Puede durar unos segundos.
 PREFERENCES_CLEARDLG_TITLE;Aguardar, por favor
 PREFERENCES_CLIPPINGIND;Indicación de recortes
+PREFERENCES_CLUTSDIR;Directorio HaldCLUT
 PREFERENCES_CMETRICINTENT;Intento colorimétrico
 PREFERENCES_CUSTPROFBUILDHINT;Archivo ejecutable (o script) invocado un nuevo perfil de procesamiento inicial debe ser generado para una imagen.\n\nLa ruta del archivo de comunicación (estilo .ini) es agregado como parámetro de comando en línea. Éste contiene diversos parámetros requeridos y metadatos Exif de la imagen para permitir la generación de perfiles de procesamientos basados en reglas.\n\n<b>ADVERTENCIA:</b>Usted es responsable de colocar comillas donde se requieren cuando se usan rutas conteniendo espacios en blanco.
 PREFERENCES_CUSTPROFBUILDKEYFORMAT;Clave de formato
@@ -781,6 +850,7 @@ PREFERENCES_FALSECOLOR;Pasos de supresión de colores falsos
 PREFERENCES_FBROWSEROPTS;Opciones del explorador de archivos/Miniaturas
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barra de herramientas del explorador en una sola fila (deseleccionar para pantallas de baja resolución)
 PREFERENCES_FILEFORMAT;Formato de archivo
+PREFERENCES_FILMSIMULATION;Simulación de Fílmico
 PREFERENCES_FLATFIELDAUTOSELECT;Selección automática de campo plano
 PREFERENCES_FLATFIELDBLURRADIUS;Radio de difuminado de campo plano
 PREFERENCES_FLATFIELDBLURTYPE;Tipo de difuminado de campo plano
@@ -806,6 +876,8 @@ PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_GREY;Luminancia (%) Yb del dispositivo de salida
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histograma en panel izquierdo
+PREFERENCES_HISTOGRAMWORKING;Usar perfil de trabajo para el histograma principal y el navegador
+PREFERENCES_HISTOGRAM_TOOLTIP;Si está activado, el perfil de trabajo se utiliza para renderizar el histograma principal y el panel navegador, de lo contrario se utiliza el perfil de Gamma Corregida de salida.
 PREFERENCES_HLTHRESHOLD;Umbral de luces altas cortadas
 PREFERENCES_HOTDEADPIXFILT;Aplicar filtro de píxel dañado
 PREFERENCES_ICCDIR;Carpeta con perfiles de color ICC
@@ -827,6 +899,7 @@ PREFERENCES_METADATA;Metadatos
 PREFERENCES_MONITORICC;Perfil de pantalla
 PREFERENCES_MULTITABDUALMON;Modo Editor de varias pestañas, si está disponible en segundo monitor
 PREFERENCES_MULTITAB;Modo Editor de varias pestañas
+PREFERENCES_NAVGUIDEBRUSH;Color de la guía del navegador
 PREFERENCES_OUTDIRFOLDERHINT;Guardar las imágenes creadas en una carpeta elegida
 PREFERENCES_OUTDIRFOLDER;Guardar en carpeta
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Se pueden usar las variables siguientes:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEstas variables son referencias a las carpetas y subrutas de las rutas del lugar donde se encuentra la imagen raw.\n\nPor ejemplo, si abres </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, los valores de las variables son:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi quieres guardar la imagen de salida en el lugar original, usa:\n</i><b>%p1/%f\n</b><i>\nSi quieres guardar la imagen de salida en una carpeta 'convertida' dentro de la carpeta original, usa:\n</i><b>%p1/convertida/%f\n</b><i>\nSi quieres guardar la imagen de salida en la carpeta '/home/tom/convertida' conservando la misma subcarpeta de fechas, usa:\n</i><b>%p2/convertida/%d1/%f</b>
@@ -952,6 +1025,10 @@ TOOLBAR_TOOLTIP_CROP;Selección de <b>recorte</b>.\nAtajo: <b>c</b>
 TOOLBAR_TOOLTIP_HAND;Herramienta mano.\nAtajo: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Enderezado</b> / <b>Rotación Fina</b>.\nAtajo: <b>s</b>\n\nIndique la vertical u horizontal trazando una línea guía sobre la vista previa de la imagen. El ángulo de rotación será mostrado al continuación de la línea guía. El centro de la imagen es el centro de rotación.
 TOOLBAR_TOOLTIP_WB;Muestrea equilibrio de blancos.\nAtajo: <b>w</b>
+TP_BWMIX_ALGO;Algoritmo OYCPM
+TP_BWMIX_ALGO_LI;Lineal
+TP_BWMIX_ALGO_SP;Efectos especiales
+TP_BWMIX_ALGO_TOOLTIP;Lineal: producirá una respuesta <b>lineal</b> normal.\nEfectos especiales: producirá efectos especiales por mezclar <b>no linealmente</b> los canales.
 TP_BWMIX_AUTOCH;Auto
 TP_BWMIX_AUTOCH_TIP;Calcular valores óptimos para el Mezclador de Canales
 TP_BWMIX_CC_ENABLED;Ajustar color complementario
@@ -1074,7 +1151,7 @@ TP_COLORAPP_LABEL_SCENE;Condiciones de la escena
 TP_COLORAPP_LABEL_VIEWING;Condiciones de visualización
 TP_COLORAPP_LIGHT;Claridad (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Claridad en CIECAM02 es diferente a la de Lab y a la de RGB
-TP_COLORAPP_MODEL;Modelo de punto blanco
+TP_COLORAPP_MODEL;Modelo de Punto Blanco
 TP_COLORAPP_MODEL_TOOLTIP;Modelo de Punto Blanco\n\n<b>WB [RT] + [salida]:</b>\nEl Balance de Blancos de RT es usado para la escena, CIECAM02 es establecido a D50, y el Balance de Blancos del dispositivo de salida es el establecido en <i>Preferencias > Gestión de Color</i>\n\n<b>WB [RT+CAT02] + [salida]:</b>\nEl Balance de Blancos de RT es usado por CAT02 y el del dispositivo de salida es el establecido en preferencias
 TP_COLORAPP_RSTPRO; Protección de tonos rojos y color piel
 TP_COLORAPP_RSTPRO_TOOLTIP;Intensidad de protección de tonos rojos y color piel (en curvas y en controles deslizantes)
@@ -1117,6 +1194,46 @@ TP_COLORDENOISE_RADIUS;Radio
 TP_COLORSHIFT_BLUEYELLOW;Azul-Amarillo
 TP_COLORSHIFT_GREENMAGENTA;Verde-Magenta
 TP_COLORSHIFT_LABEL;Desplazamiento de colores
+TP_COLORTONING_AB;o C/L
+TP_COLORTONING_AUTOSAT;Automático
+TP_COLORTONING_BALANCE;Balance
+TP_COLORTONING_BY;o C/L
+TP_COLORTONING_CHROMAC;Opacidad
+TP_COLORTONING_COLOR;Color
+TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Opacidad de la Crominancia en función de la Luminancia: C=f(L)
+TP_COLORTONING_HIGHLIGHT;Luces Altas
+TP_COLORTONING_HUE;Matiz
+TP_COLORTONING_LABCOL;Colores Directos
+TP_COLORTONING_LABCOL_TOOLTIP;Cuando mueve el control deslizante de Saturación, estos colores 'directos' son incrementados.
+TP_COLORTONING_LABEL;Tonificación de Color
+TP_COLORTONING_LABINT;-
+TP_COLORTONING_LABINT_TOOLTIP;Cuando el color de la imagen es azul y el color de mezcla es rojo, el resultado es el color magenta en función del % de opacidad.\nCuando el color de la imagen es rojo y el color de mezcla es amarillo, el resultado es el color naranja en función del % de opacidad..
+TP_COLORTONING_LAB;Mezcla Lab
+TP_COLORTONING_LUMAMODE;Preservar luminancia
+TP_COLORTONING_LUMAMODE_TOOLTIP;Si está activado, cuando se cambia el color(rojo, verde, cian, azul, etc.) la luminancia de cada pixel es preservada.
+TP_COLORTONING_LUMA;Luminancia
+TP_COLORTONING_METHOD;Método
+TP_COLORTONING_METHOD_TOOLTIP;"Mezcla Lab", "Controles deslizantes RGB" y "Curvas RGB" utilizan mezcla de color interpolada.\n"Balance de Color (Sombras/Tonos Medios/Luces Altas)" y "Saturación 2 colores" utilizan colores directos.\n\nCualquier método de tonificación de color puede ser aplicado aún estando la herramienta Blanco y Negro activada.
+TP_COLORTONING_MIDTONES;Tonos Medios
+TP_COLORTONING_NEUTRAL;Restablecer controles deslizantes
+TP_COLORTONING_NEUTRAL_TIP;Restablecer todos los valores predeterminados(Sombras, Tonos Medios, Luces Altas).
+TP_COLORTONING_OPACITY;Opacidad
+TP_COLORTONING_RGBCURVES;RGB - Curvas
+TP_COLORTONING_RGBSLIDERS;RGB - Controles deslizantes
+TP_COLORTONING_SATURATEDOPACITY;Intensidad
+TP_COLORTONING_SATURATIONTHRESHOLD;Umbral
+TP_COLORTONING_SA;Protección de saturación
+TP_COLORTONING_SHADOWS;Sombras
+TP_COLORTONING_SPLITCOCO;Balance de Color Sombras/Tonos Medios/Luces Altas
+TP_COLORTONING_SPLITCO;Sombras/Tonos Medios/Luces Altas
+TP_COLORTONING_SPLITLR;Saturación 2 colores
+TP_COLORTONING_STRENGTH;Intensidad
+TP_COLORTONING_STR;Intensidad
+TP_COLORTONING_TWO2;Crominancia especial '2 colores'
+TP_COLORTONING_TWOALL;Crominancia especial
+TP_COLORTONING_TWOBY;Especial 'a' y 'b'
+TP_COLORTONING_TWOCOLOR_TOOLTIP;Crominancia estándar:\nRespuesta lineal, a* = b*.\n\nCrominancia especial:\nRespuesta lineal, a* = b*, pero no unidas - intentar debajo de la diagonal.\n\nEspecial a* and b*:\nRespuesta lineal no unida con curvas separadas para a* y b*. Previsto para efectos especiales.\n\nCrominancia especial 2 colores:\nMás predecible.
+TP_COLORTONING_TWOSTD;Crominancia estándar
 TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;Fijar proporciones:
 TP_CROP_GTDIAGONALS;Regla de las diagonales
@@ -1143,8 +1260,13 @@ TP_DEFRINGE_LABEL;Quitar borde púrpura
 TP_DEFRINGE_RADIUS;Radio
 TP_DEFRINGE_THRESHOLD;Umbral
 TP_DETAIL_AMOUNT;Cantidad
+TP_DIRPYRDENOISE_33;3×3 fuerte
+TP_DIRPYRDENOISE_55SOFT;5×5
+TP_DIRPYRDENOISE_55;5×5 fuerte
+TP_DIRPYRDENOISE_77;7×7 (lento)
 TP_DIRPYRDENOISE_BLUE;Crominancia: Azul-Amarillo
 TP_DIRPYRDENOISE_CHROMA;Crominancia: Maestra
+TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modula la acción de eliminación de ruido 'de luminancia'
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Puede usarse en imágenes Raw y no Raw.\n\nPara imágenes no Raw la reducción del ruido en la luminancia depende de la gamma en el perfil de color de entrada. Se asume la gamma de sRGB, de manera que si la imagen tiene un perfil de color con otra gamma, la reducción del ruido en la luminancia va a variar.
 TP_DIRPYRDENOISE_ENH;Modo mejorado
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Incrementa la calidad de la Reducción de Ruido a costa de un incremento de 20% en el tiempo de procesamiento
@@ -1152,19 +1274,46 @@ TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma hace variar la fuerza de reducción del ruido a lo largo del rango tonal.\n\n Valores pequeños dirigen la reducción hacia las sombras, mientras que valores grandes extienden el efecto hasta los tonos brillantes
 TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Mediante Gamma se varía la intensidad de la Reducción de Ruido a lo largo del rango tonal. Valores pequeños están dirigidos a las sombras, mientras que valores grandes estiran el efecto hacia los tonos brillantes
 TP_DIRPYRDENOISE_LABEL;Reducción de ruido
+TP_DIRPYRDENOISE_LABM;Lab
+TP_DIRPYRDENOISE_LCURVE;Curva de Luminancia
 TP_DIRPYRDENOISE_LDETAIL;Detalle en luminancia
+TP_DIRPYRDENOISE_LM;Sólo luminancia
 TP_DIRPYRDENOISE_LUMA;Luminancia
+TP_DIRPYRDENOISE_MEDMETHOD;Método Median
+TP_DIRPYRDENOISE_MEDTYPE;Tipo Median
+TP_DIRPYRDENOISE_MED;Median
+TP_DIRPYRDENOISE_MED_TOOLTIP;Eliminador de ruido Median activado
+TP_DIRPYRDENOISE_METHOD11;Calidad
+TP_DIRPYRDENOISE_METHOD11_TOOLTIP;La Calidad puede ser adaptada a un patrón de ruido. Al seleccionar "Alto" se incrementa el efecto de reducción de ruido a costa de prolongar el tiempo de procesamiento.
 TP_DIRPYRDENOISE_METHOD;Método
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;Para imágenes raw puede usar tanto el método RGB como el Lab.\n\nPara imágenes no raw el método Lab será usado de todas maneras, ignorando el método seleccionado.
+TP_DIRPYRDENOISE_METM_TOOLTIP;Cuando se utiliza "Sólo Luminancia" y los métodos "Lab", el filtro Median será aplicado inmediatamente después de cada proceso de toda la cadena de reducción de ruido.\nCuando se utiliza el modo "RGB", el filtro Median se aplicará al final de toda la cadena de procesos de reducción de ruido.
+TP_DIRPYRDENOISE_MET_TOOLTIP;Aplicar el filtro Median al tamaño deseado. Cuanto mayor sea el tamaño, demandará más tiempo.\n\n3x3 suave: procesar 5 píxeles en un rango de 1 píxel.\n3x3: procesar 9 píxeles en un rango de 1 píxel.\n5x5 suave: procesar 13 píxeles en un rango de 2 píxeles.\n5x5: procesar 25 píxeles en un rango de 2 píxeles.\n7x7: procesar 49 píxeles en un rango 3 píxeles.\n\nAlgunas veces es posible lograr una mayor calidad ejecutando varias iteraciones con un rango pequeño, que con una sóla iteración con un rango amplio.
+TP_DIRPYRDENOISE_PASSES;Iteracciones Median
+TP_DIRPYRDENOISE_PASSES_TOOLTIP;Aplicar el filtro Median 3x3 con 3 iteraciones, a menudo produce mejores resultados que aplicar una sola vez 7x7. 
 TP_DIRPYRDENOISE_RED;Crominancia: Rojo-Verde
+TP_DIRPYRDENOISE_RGBM;RGB
 TP_DIRPYRDENOISE_RGB;RGB
+TP_DIRPYRDENOISE_SHALBI;Alto
+TP_DIRPYRDENOISE_SHAL;Estándar
+TP_DIRPYRDENOISE_SOFT;3x3
+TP_DIRPYREQUALIZER_ALGO;Rango de Color de Piel
+TP_DIRPYREQUALIZER_ALGO_FI;Fino
+TP_DIRPYREQUALIZER_ALGO_LA;Amplio
+TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fino: cercano a los colores de la piel, minimizando la acción en otros colores\nAmplio: evita más elementos extraños.
+TP_DIRPYREQUALIZER_GAMUT;Reducir elementos extraños
+TP_DIRPYREQUALIZER_HUESKIN;Matiz de la piel
+TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;En la parte superior se selecciona la zona con los valores máximos.\nEn la parte inferior se ajusta la transición.\nSi necesita para mover el área de manera significativa a la izquierda o a la derecha - o si hay elementos extraños:.. El <b>balance de blancos es incorrecto </b>\nPuedes reducir ligeramente la zona para evitar que el resto de la imagen se vea afectada.
 TP_DIRPYREQUALIZER_LABEL;Contraste por niveles de detalle
 TP_DIRPYREQUALIZER_LUMACOARSEST;Más grueso
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;-Contraste
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;+Contraste
 TP_DIRPYREQUALIZER_LUMAFINEST;Más fino
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutro
+TP_DIRPYREQUALIZER_SKIN;Tonos de Piel focalización/protección
+TP_DIRPYREQUALIZER_SKIN_TOOLTIP;A -100 se focalizan los tonos de piel.\nA 0 todos los tonos son afectados de la misma manera.\nA 100 los tonos de piel son protegidos mientras otros tonos son afectados.
 TP_DIRPYREQUALIZER_THRESHOLD;Umbral
+TP_DIRPYREQUALIZER_TOOLTIP;Reduce los elementos extraños producidos en la transición entre los colores de piel (matiz, crominancia, luminancia) y el resto de la imagen.
 TP_DISTORTION_AMOUNT;Cantidad
 TP_DISTORTION_AUTO;Auto corrección de distorsión
 TP_DISTORTION_AUTO_TIP;(Experimental) Corrige automáticamente la distorsión de la lente para algunas cámaras (Micro 4/3, algunas compactas DC, etc.)
@@ -1205,7 +1354,12 @@ TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Mezcla de saturación y valor
 TP_EXPOSURE_TCMODE_STANDARD;Estándar
 TP_EXPOSURE_TCMODE_VALBLENDING;Canal de valor
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Estándar ponderado
+TP_EXPOS_BLACKPOINT_LABEL;Raw - Puntos Negros
+TP_EXPOS_WHITEPOINT_LABEL;Raw - Puntos Blancos
 TP_EXPO_AFTER; Después de la interpolación (antes de la conversión RGB)
+TP_FILMSIMULATION_LABEL;Simulación de Fílmico
+TP_FILMSIMULATION_STRENGTH;Intensidad
+TP_FILMSIMULATION_ZEROCLUTSFOUND;Seleccionar el directorio HaldCLUT en Preferencias
 TP_FLATFIELD_AUTOSELECT;Auto selección
 TP_FLATFIELD_BLURRADIUS;Radio de difuminado
 TP_FLATFIELD_BLURTYPE;Tipo de difuminado
@@ -1213,6 +1367,10 @@ TP_FLATFIELD_BT_AREA;Área
 TP_FLATFIELD_BT_HORIZONTAL;Horizontal
 TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
 TP_FLATFIELD_BT_VERTICAL;Vertical
+TP_FLATFIELD_CLIPCONTROL;Control de Recorte
+TP_FLATFIELD_CLIPCONTROL_TOOLTIP;El Control de Recorte evita la perdida de detalle en las luces altas causadas por la aplicación del Campo Plano. Si ya hubiera perdida de detalle en las altas luces antes de aplicar el Campo Plano, el Control de Recorte puede conducir a una dominante de color.
+TP_FLATFIELD_FILEDLGFILTERANY;Cualquier archivo
+TP_FLATFIELD_FILEDLGFILTERFF;Mismo formato que la foto actual
 TP_FLATFIELD_LABEL;Campo plano
 TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Gamma libre
@@ -1257,6 +1415,7 @@ TP_ICM_DCPILLUMINANT;Iluminante
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolado
 TP_ICM_DCPILLUMINANT_TOOLTIP;Seleccione el Iluminante a emplear. El valor predeterminado es "interpolado", que es una mezcla entre dos basados en el Balance de Blancos. Este ajuste es posible solo si un Iluminante dual DCP con soporte de interpolación es seleccionado.
 TP_ICM_FILEDLGFILTERANY;Cualquier archivo
+TP_ICM_FILEDLGFILTERICMDNG;Perfiles de color + DNG
 TP_ICM_FILEDLGFILTERICM;Perfiles de color
 TP_ICM_GAMMABEFOREINPUT;El perfil aplica gamma
 TP_ICM_INPUTCAMERAICC;Perfil de la cámara (auto elegida)
@@ -1281,6 +1440,7 @@ TP_ICM_PREFERREDPROFILE_3;Fluorescente
 TP_ICM_PREFERREDPROFILE_4;Flash
 TP_ICM_SAVEREFERENCEDLGLABEL;Guardar como referencia para perfilado
 TP_ICM_SAVEREFERENCE;Guardar como referencia para el perfilado
+TP_ICM_SAVEREFERENCE_TOOLTIP;Guardar la imagen TIFF lineal antes de aplicar el perfil de entrada. El resultado puede ser utilizado para fines de calibración y la generación de un perfil de cámara.
 TP_ICM_TONECURVE;Usar la curva tonal en DCP
 TP_ICM_TONECURVE_TOOLTIP;Activa el uso de las curvas de tono que pueden contener los perfiles DCP. Este ajuste es posible solo si el DCP seleccionado contiene una curva tonal.
 TP_ICM_WORKINGPROFILE;Perfil de trabajo
@@ -1361,6 +1521,8 @@ TP_PERSPECTIVE_VERTICAL;Vertical
 TP_PFCURVE_CURVEEDITOR_CH;Matiz
 TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controla la fuerza de reducción de bordes coloridos (AC):\n\n Alto = más\nbajo = menos.
 TP_PREPROCESS_DARKFRAME;Imagen en oscuridad
+TP_PREPROCESS_DEADPIXFILT;Filtro Pixel Muerto
+TP_PREPROCESS_DEADPIXFILT_TOOLTIP;Trata de eliminar los píxeles muertos.
 TP_PREPROCESS_DFAUTOSELECT;Selección automática
 TP_PREPROCESS_FLATFIELDAUTOSELECT;Selección automática de campo plano
 TP_PREPROCESS_FLATFIELDBLURRADIUS;Radio de difuminado de campo plano
@@ -1369,6 +1531,8 @@ TP_PREPROCESS_FLATFIELDFILE;Archivo de campo plano
 TP_PREPROCESS_GREENEQUIL;Equilibrado de verdes
 TP_PREPROCESS_HOTDEADPIXFILT;Aplicar filtro de píxel dañado
 TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Intenta eliminar píxeles calientes o muertos
+TP_PREPROCESS_HOTPIXFILT;Filtro Pixel Caliente
+TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Trata de eliminar los píxeles calientes.
 TP_PREPROCESS_LABEL;Preprocesado
 TP_PREPROCESS_LINEDENOISE;Filtro de ruido de línea
 TP_PREPROCESS_NO_FOUND;No encontrado
@@ -1380,8 +1544,16 @@ TP_RAWEXPOS_BLACKS;Niveles de negro
 TP_RAWEXPOS_BLACKTHREE;Nivel de negro: Verde 2
 TP_RAWEXPOS_BLACKTWO;Nivel de negro: Azul
 TP_RAWEXPOS_BLACKZERO;Nivel de negro: Verde 1 (líder)
+TP_RAWEXPOS_BLACK_0;Verde 1 (principal)
+TP_RAWEXPOS_BLACK_1;Rojo
+TP_RAWEXPOS_BLACK_2;Azul
+TP_RAWEXPOS_BLACK_3;Verde 2
+TP_RAWEXPOS_BLACK_BLUE;Azul
+TP_RAWEXPOS_BLACK_GREEN;Verde
+TP_RAWEXPOS_BLACK_RED;Rojo
 TP_RAWEXPOS_LINEAR;Corrección de punto blanco
 TP_RAWEXPOS_PRESER;Preservación de Luces Altas
+TP_RAWEXPOS_RGB;Rojo, Verde, Azul
 TP_RAWEXPOS_TWOGREEN;Vincular verdes
 TP_RAWPANEL_DEMOSAICING;Desmosaicado
 TP_RAWPANEL_PREPROCESSING;Preprocesado
@@ -1395,6 +1567,9 @@ TP_RAW_FALSECOLOR;Pasos de supresión de color falso
 TP_RAW_LABEL;Desmosaicado
 TP_RAW_LMMSEITERATIONS;Pasos de mejora LMMSE
 TP_RAW_LMMSE_TOOLTIP;Agregar gamma (paso 1)\n Agregar mediana (pasos 2,3,4)\nAgregar refinamientos (pasos 5,6) para reducir objetos espurios y mejorar la relación señal a ruido
+TP_RAW_SENSOR_BAYER_LABEL;Sensor con matriz Bayer
+TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pases da mejores resultados (recomendado para imágenes de ISO bajo).\n1-pase es más rápido y es casi indistinguible del modo 3-pases para imágenes de ISO altas.
+TP_RAW_SENSOR_XTRANS_LABEL;Sensor con matriz X-Trans
 TP_RESIZE_APPLIESTO;Aplica a:
 TP_RESIZE_BICUBICSF;Bicúbica (más suave)
 TP_RESIZE_BICUBICSH;Bicúbica (más enfocado)
@@ -1541,178 +1716,4 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
-!EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
 !FILEBROWSER_POPUPCOLORLABEL0;Label: None
-!FILEBROWSER_POPUPCOLORLABEL1;Label: Red
-!FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
-!FILEBROWSER_POPUPCOLORLABEL3;Label: Green
-!FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
-!FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
-!FILEBROWSER_POPUPRANK0;Unrank
-!FILEBROWSER_POPUPRANK1;Rank 1 *
-!FILEBROWSER_POPUPRANK2;Rank 2 **
-!FILEBROWSER_POPUPRANK3;Rank 3 ***
-!FILEBROWSER_POPUPRANK4;Rank 4 ****
-!FILEBROWSER_POPUPRANK5;Rank 5 *****
-!HISTORY_MSG_251;B&amp;W - Algorithm
-!HISTORY_MSG_252;CbDL - Skin-tones
-!HISTORY_MSG_253;CbDL - Reduce artifacts
-!HISTORY_MSG_254;CbDL - Skin hue
-!HISTORY_MSG_255;NR - Median filter
-!HISTORY_MSG_256;NR - Median type
-!HISTORY_MSG_257;Color Toning
-!HISTORY_MSG_258;Color Toning - Color
-!HISTORY_MSG_259;Color Toning - Opacity
-!HISTORY_MSG_260;Color Toning - 'a[b]' opacity
-!HISTORY_MSG_261;Color Toning - Method
-!HISTORY_MSG_262;Color Toning - 'b' opacity
-!HISTORY_MSG_263;Color Toning - Shadows - Red
-!HISTORY_MSG_264;Color Toning - Shadows - Green
-!HISTORY_MSG_265;Color Toning - Shadows - Blue
-!HISTORY_MSG_266;Color Toning - Mid - Red
-!HISTORY_MSG_267;Color Toning - Mid - Green
-!HISTORY_MSG_268;Color Toning - Mid - Blue
-!HISTORY_MSG_269;Color Toning - High - Red
-!HISTORY_MSG_270;Color Toning - High - Green
-!HISTORY_MSG_271;Color Toning - High - Blue
-!HISTORY_MSG_272;Color Toning - Balance
-!HISTORY_MSG_273;Color Toning - Reset
-!HISTORY_MSG_274;Color Toning - Sat. Shadows
-!HISTORY_MSG_275;Color Toning - Sat. Highlights
-!HISTORY_MSG_276;Color Toning - Opacity
-!HISTORY_MSG_277;--unused--
-!HISTORY_MSG_278;Color Toning - Preserve luminance
-!HISTORY_MSG_279;Color Toning - Shadows
-!HISTORY_MSG_280;Color Toning - Highlights
-!HISTORY_MSG_281;Color Toning - Sat. strength
-!HISTORY_MSG_282;Color Toning - Sat. threshold
-!HISTORY_MSG_283;Color Toning - Strength
-!HISTORY_MSG_284;Color Toning - Auto sat. protection
-!HISTORY_MSG_285;NR - Median - Method
-!HISTORY_MSG_286;NR - Median - Type
-!HISTORY_MSG_287;NR - Median - Iterations
-!HISTORY_MSG_288;Flat Field - Clip control
-!HISTORY_MSG_289;Flat Field - Clip control - Auto
-!HISTORY_MSG_290;Black Level - Red
-!HISTORY_MSG_291;Black Level - Green
-!HISTORY_MSG_292;Black Level - Blue
-!HISTORY_MSG_293;Film Simulation
-!HISTORY_MSG_294;Film Simulation - Strength
-!HISTORY_MSG_295;Film Simulation - Film
-!HISTORY_MSG_296;NR - Modulate luminance
-!HISTORY_MSG_297;NR - Quality
-!HISTORY_MSG_298;Dead pixel filter
-!NAVIGATOR_NA; --
-!PARTIALPASTE_COLORTONING;Color Toning
-!PARTIALPASTE_FILMSIMULATION;Film Simulation
-!PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
-!PARTIALPASTE_PREPROCESS_DEADPIXFILT;Apply dead pixel filter
-!PARTIALPASTE_PREPROCESS_HOTPIXFILT;Apply hot pixel filter
-!PREFERENCES_CLUTSDIR;HaldCLUT directory
-!PREFERENCES_FILMSIMULATION;Film Simulation
-!PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
-!PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
-!PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
-!TP_BWMIX_ALGO;Algorithm OYCPM
-!TP_BWMIX_ALGO_LI;Linear
-!TP_BWMIX_ALGO_SP;Special effects
-!TP_BWMIX_ALGO_TOOLTIP;Linear: will produce a normal <b>linear</b> response.\nSpecial effects: will produce special effects by mixing channels <b>non-linearly</b>.
-!TP_COLORTONING_AB;o C/L
-!TP_COLORTONING_AUTOSAT;Automatic
-!TP_COLORTONING_BALANCE;Balance
-!TP_COLORTONING_BY;o C/L
-!TP_COLORTONING_CHROMAC;Opacity
-!TP_COLORTONING_COLOR;Color
-!TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Opacity Chroma according to Luminance of C=f(L)
-!TP_COLORTONING_HIGHLIGHT;Highlights
-!TP_COLORTONING_HUE;Hue
-!TP_COLORTONING_LABCOL;Direct Colors
-!TP_COLORTONING_LABCOL_TOOLTIP;When you move a saturation slider, these 'direct' colors are increased.
-!TP_COLORTONING_LABEL;Color Toning
-!TP_COLORTONING_LABINT;-
-!TP_COLORTONING_LABINT_TOOLTIP;When the image color is blue and the blending color is red, it results in a magenta color in the function of % opacity.\nWhen the image color is red and the blending color is yellow, it results in an orange color in the function of % opacity.
-!TP_COLORTONING_LAB;Lab blending
-!TP_COLORTONING_LUMAMODE;Preserve luminance
-!TP_COLORTONING_LUMAMODE_TOOLTIP;If enabled, when you change color (red, green, cyan, blue, etc.) the luminance of each pixel is preserved.
-!TP_COLORTONING_LUMA;Luminance
-!TP_COLORTONING_METHOD;Method
-!TP_COLORTONING_METHOD_TOOLTIP;"Lab blending", "RGB sliders" and "RGB curves" use interpolated color blending.\n"Color balance (Shadows/Midtones/Highlights)" and "Saturation 2 colors" use direct colors.\n\nThe Black-and-White tool can be enabled when using any color toning method, which allows for color toning.
-!TP_COLORTONING_MIDTONES;Midtones
-!TP_COLORTONING_NEUTRAL;Reset sliders
-!TP_COLORTONING_NEUTRAL_TIP;Reset all values (Shadows, Midtones, Highlights) to default.
-!TP_COLORTONING_OPACITY;Opacity
-!TP_COLORTONING_RGBCURVES;RGB - Curves
-!TP_COLORTONING_RGBSLIDERS;RGB - Sliders
-!TP_COLORTONING_SATURATEDOPACITY;Strength
-!TP_COLORTONING_SATURATIONTHRESHOLD;Threshold
-!TP_COLORTONING_SA;Saturation Protection
-!TP_COLORTONING_SHADOWS;Shadows
-!TP_COLORTONING_SPLITCOCO;Color Balance Shadows/Midtones/Highlights
-!TP_COLORTONING_SPLITCO;Shadows/Midtones/Highlights
-!TP_COLORTONING_SPLITLR;Saturation 2 colors
-!TP_COLORTONING_STRENGTH;Strength
-!TP_COLORTONING_STR;Strength
-!TP_COLORTONING_TWO2;Special chroma '2 colors'
-!TP_COLORTONING_TWOALL;Special chroma
-!TP_COLORTONING_TWOBY;Special 'a' and 'b'
-!TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
-!TP_COLORTONING_TWOSTD;Standard chroma
-!TP_DIRPYRDENOISE_33;3×3 strong
-!TP_DIRPYRDENOISE_55SOFT;5×5
-!TP_DIRPYRDENOISE_55;5×5 strong
-!TP_DIRPYRDENOISE_77;7×7 (slow)
-!TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modulates action of 'Luminance' denoise
-!TP_DIRPYRDENOISE_LABM;Lab
-!TP_DIRPYRDENOISE_LCURVE;Luminance curve
-!TP_DIRPYRDENOISE_LM;Luminance only
-!TP_DIRPYRDENOISE_MEDMETHOD;Median method
-!TP_DIRPYRDENOISE_MEDTYPE;Median type
-!TP_DIRPYRDENOISE_MED;Median
-!TP_DIRPYRDENOISE_MED_TOOLTIP;Enabled median denoising
-!TP_DIRPYRDENOISE_METHOD11;Quality
-!TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
-!TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "Lab" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
-!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired size. The larger the size, the longer it takes.\n\n3x3 soft: treats 5 pixels in a 1-pixel range.\n3x3: treats 9 pixels in a 1-pixel range.\n5x5 soft: treats 13 pixels in a 2-pixel range.\n5x5: treats 25 pixels in a 2-pixel range.\n7x7: treats 49 pixels in a 3-pixel range.\n\nSometimes it is possible to achieve higher quality running several iterations with a small range than one iteration with a large range.
-!TP_DIRPYRDENOISE_PASSES;Median iterations
-!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying a 3x3 median filter with three iterations often leads to better results than applying 7x7 once.
-!TP_DIRPYRDENOISE_RGBM;RGB
-!TP_DIRPYRDENOISE_SHALBI;High
-!TP_DIRPYRDENOISE_SHAL;Standard
-!TP_DIRPYRDENOISE_SOFT;3x3
-!TP_DIRPYREQUALIZER_ALGO;Skin Color Range
-!TP_DIRPYREQUALIZER_ALGO_FI;Fine
-!TP_DIRPYREQUALIZER_ALGO_LA;Large
-!TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts.
-!TP_DIRPYREQUALIZER_GAMUT;Reduce artifacts
-!TP_DIRPYREQUALIZER_HUESKIN;Skin hue
-!TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
-!TP_DIRPYREQUALIZER_SKIN;Skin-tones targetting/protection
-!TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
-!TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
-!TP_EXPOS_BLACKPOINT_LABEL;Raw Black Points
-!TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
-!TP_FILMSIMULATION_LABEL;Film Simulation
-!TP_FILMSIMULATION_STRENGTH;Strength
-!TP_FILMSIMULATION_ZEROCLUTSFOUND;Set HaldCLUT directory in Preferences
-!TP_FLATFIELD_CLIPCONTROL;Clip control
-!TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
-!TP_FLATFIELD_FILEDLGFILTERANY;Any files
-!TP_FLATFIELD_FILEDLGFILTERFF;Same format as current photo
-!TP_ICM_FILEDLGFILTERICMDNG;Color profiles + DNG
-!TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
-!TP_PREPROCESS_DEADPIXFILT;Dead pixel filter
-!TP_PREPROCESS_DEADPIXFILT_TOOLTIP;Tries to suppress dead pixels.
-!TP_PREPROCESS_HOTPIXFILT;Hot pixel filter
-!TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Tries to suppress hot pixels.
-!TP_RAWEXPOS_BLACK_0;Green 1 (lead)
-!TP_RAWEXPOS_BLACK_1;Red
-!TP_RAWEXPOS_BLACK_2;Blue
-!TP_RAWEXPOS_BLACK_3;Green 2
-!TP_RAWEXPOS_BLACK_BLUE;Blue
-!TP_RAWEXPOS_BLACK_GREEN;Green
-!TP_RAWEXPOS_BLACK_RED;Red
-!TP_RAWEXPOS_RGB;Red, Green, Blue
-!TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
-!TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
-!TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
