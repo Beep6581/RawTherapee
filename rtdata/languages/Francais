@@ -1527,9 +1527,9 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_BWMIX_ALGO_SP;Special effects
 !TP_BWMIX_ALGO_TOOLTIP;Linear: will produce a normal <b>linear</b> response.\nSpecial effects: will produce special effects by mixing channels <b>non-linearly</b>.
 !TP_COLORTONING_AUTOSAT;Automatic
-!TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Opacity Chroma according to Luminance of C=f(L)
+!TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Chroma opacity as a function of luminance oC=f(L)
 !TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modulates action of 'Luminance' denoise
-!TP_DIRPYRDENOISE_LABM;Lab
+!TP_DIRPYRDENOISE_LABM;L*a*b*
 !TP_DIRPYRDENOISE_LCURVE;Luminance curve
 !TP_DIRPYRDENOISE_METHOD11;Quality
 !TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
