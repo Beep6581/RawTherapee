@@ -78,11 +78,11 @@ LCurve::LCurve () : FoldableToolPanel(this) {
 	curveEditorG = new CurveEditorGroup (options.lastLabCurvesDir);
 	curveEditorG->setCurveListener (this);
 
-	lshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "L"));
+	lshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "L*"));
 	lshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP"));
 	lshape->setEditID(EUID_Lab_LCurve, BT_SINGLEPLANE_FLOAT);
 
-	ashape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "a"));
+	ashape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "a*"));
 	ashape->setEditID(EUID_Lab_aCurve, BT_SINGLEPLANE_FLOAT);
 	
 	ashape->setRangeLabels(
@@ -97,7 +97,7 @@ LCurve::LCurve () : FoldableToolPanel(this) {
 	ashape->setLeftBarBgGradient(milestones);
 	milestones.clear();
 
-	bshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "b"));
+	bshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "b*"));
 	bshape->setRangeLabels(
 			M("TP_LABCURVE_CURVEEDITOR_B_RANGE1"), M("TP_LABCURVE_CURVEEDITOR_B_RANGE2"),
 			M("TP_LABCURVE_CURVEEDITOR_B_RANGE3"), M("TP_LABCURVE_CURVEEDITOR_B_RANGE4")
