@@ -110,7 +110,8 @@ void ColorTemp::clip (double &temp, double &green, double &equal) {
         equal = MAXEQUAL;
 }
 
-ColorTemp::ColorTemp (double mulr, double mulg, double mulb, double e) : equal(e), method("Custom") {
+ColorTemp::ColorTemp (double mulr, double mulg, double mulb, double e) : equal(e) {
+    method = "Custom";
     mul2temp (mulr, mulg, mulb, equal, temp, green);
 }
 
