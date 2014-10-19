@@ -440,7 +440,7 @@ void RTWindow::remEditorPanel (EditorPanel* ep) {
 
 	    mainNB->remove_page (*ep);
 
-	    if (mainNB->get_current_page () == mainNB->page_num (*bpanel)){
+	    if (mainNB->get_current_page () == mainNB->page_num (*bpanel) || mainNB->get_current_page () == mainNB->page_num (*fpanel)){
 		    mainNB->set_current_page (mainNB->page_num (*fpanel));
 		    set_title_decorated("");
 	    }
