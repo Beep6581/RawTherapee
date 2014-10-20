@@ -22,27 +22,16 @@
 //
 ////////////////////////////////////////////////////////////////
 
-//#include "rtengine.h"
 #include <cstddef>
 #include <cmath>
-#include "curves.h"
 #include "array2D.h"
-#include "improcfun.h"
 #include "rawimagesource.h"
-//#include "stack1.h"
-
+#include "rt_math.h"
+#include "opthelper.h"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-
-#include "rt_math.h"
-#include "rawimagesource.h"
-#ifdef __SSE2__
-#include "sleefsseavx.c"
-#endif // __SSE2__
-
-
 
 
 #define FOREACHCOLOR for (int c=0; c < ColorCount; c++)				
@@ -54,13 +43,8 @@ namespace rtengine {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#if defined( __SSE2__ ) && defined( WIN32 )
-__attribute__((force_align_arg_pointer)) void RawImageSource::boxblur2(float** src, float** dst, int H, int W, int box ) 
-#else
-void RawImageSource::boxblur2(float** src, float** dst, int H, int W, int box ) 
-#endif
+SSEFUNCTION void RawImageSource::boxblur2(float** src, float** dst, int H, int W, int box ) 
 {
-	
 	array2D<float> temp(W,H);
 	
 	//box blur image channel; box size = 2*box+1
@@ -97,30 +81,68 @@ void RawImageSource::boxblur2(float** src, float** dst, int H, int W, int box )
 	__m128 lenv = _mm_set1_ps( len );
 	__m128 lenp1v = _mm_set1_ps( len + 1.0f );
 	__m128 onev = _mm_set1_ps( 1.0f );
-	__m128 tempv;
+	__m128 tempv,temp2v;
 #ifdef _OPENMP
-#pragma omp for
+#pragma omp for nowait
 #endif
-	for (int col = 0; col < W-3; col+=4) {
+	for (int col = 0; col < W-7; col+=8) {
+		tempv = LVFU(temp[0][col]) / lenv;
+		temp2v = LVFU(temp[0][col+4]) / lenv;
+		for (int i=1; i<=box; i++) {
+			tempv = tempv + LVFU(temp[i][col]) / lenv;
+			temp2v = temp2v + LVFU(temp[i][col+4]) / lenv;
+		}
+		_mm_storeu_ps( &dst[0][col], tempv);
+		_mm_storeu_ps( &dst[0][col+4], temp2v);
+		for (int row=1; row<=box; row++) {
+			tempv = (tempv * lenv + LVFU(temp[(row+box)][col]))/lenp1v;
+			temp2v = (temp2v * lenv + LVFU(temp[(row+box)][col+4]))/lenp1v;
+			_mm_storeu_ps( &dst[row][col], tempv);
+			_mm_storeu_ps( &dst[row][col+4], temp2v);
+			lenv = lenp1v;
+			lenp1v = lenp1v + onev;
+		}
+		for (int row = box+1; row < H-box; row++) {
+			tempv = tempv + (LVFU(temp[(row+box)][col]) - LVFU(temp[(row-box-1)][col]))/lenv;
+			temp2v = temp2v + (LVFU(temp[(row+box)][col+4]) - LVFU(temp[(row-box-1)][col+4]))/lenv;
+			_mm_storeu_ps( &dst[row][col], tempv);
+			_mm_storeu_ps( &dst[row][col+4], temp2v);
+		}
+		for (int row=H-box; row<H; row++) {
+			lenp1v = lenv;
+			lenv = lenv - onev;
+			tempv = (tempv * lenp1v - LVFU(temp[(row-box-1)][col])) / lenv;
+			temp2v = (temp2v * lenp1v - LVFU(temp[(row-box-1)][col+4])) / lenv;
+			_mm_storeu_ps( &dst[row][col], tempv );
+			_mm_storeu_ps( &dst[row][col+4], temp2v );
+		}
+	}
+#pragma omp single
+{
+	for (int col = W-(W%8); col < W-3; col+=4) {
 		tempv = LVFU(temp[0][col]) / lenv;
 		for (int i=1; i<=box; i++) {
 			tempv = tempv + LVFU(temp[i][col]) / lenv;
 		}
 		_mm_storeu_ps( &dst[0][col], tempv);
 		for (int row=1; row<=box; row++) {
-			_mm_storeu_ps( &dst[row][col], (LVFU(dst[(row-1)][col])*lenv + LVFU(temp[(row+box)][col]))/lenp1v);
+			tempv = (tempv * lenv + LVFU(temp[(row+box)][col]))/lenp1v;
+			_mm_storeu_ps( &dst[row][col], tempv);
 			lenv = lenp1v;
 			lenp1v = lenp1v + onev;
 		}
 		for (int row = box+1; row < H-box; row++) {
-			_mm_storeu_ps( &dst[row][col], LVFU(dst[(row-1)][col]) + (LVFU(temp[(row+box)][col]) - LVFU(temp[(row-box-1)][col]))/lenv );
+			tempv = tempv + (LVFU(temp[(row+box)][col]) - LVFU(temp[(row-box-1)][col]))/lenv;
+			_mm_storeu_ps( &dst[row][col], tempv);
 		}
 		for (int row=H-box; row<H; row++) {
 			lenp1v = lenv;
 			lenv = lenv - onev;
-			_mm_storeu_ps( &dst[row][col], (LVFU(dst[(row-1)][col])*lenp1v - LVFU(temp[(row-box-1)][col])) / lenv );
+			tempv = (tempv * lenp1v - LVFU(temp[(row-box-1)][col])) / lenv;
+			_mm_storeu_ps( &dst[row][col], tempv );
 		}
 	}
+}
 }
 	for (int col = W-(W%4); col < W; col++) {
 		int len = box + 1;
@@ -140,7 +162,6 @@ void RawImageSource::boxblur2(float** src, float** dst, int H, int W, int box )
 			len --;
 		}
 	}
-
 #else
 	//vertical blur
 #ifdef _OPENMP
@@ -168,18 +189,15 @@ void RawImageSource::boxblur2(float** src, float** dst, int H, int W, int box )
 	
 }
 
-void RawImageSource::boxblur_resamp(float **src, float **dst, float & max_f, int H, int W, int box, int samp )
+void RawImageSource::boxblur_resamp(float **src, float **dst, int H, int W, int box, int samp )
 {
 	
 	array2D<float> temp((W/samp)+ ((W%samp)==0 ? 0 : 1),H);
 	
-	float maxtmp=0.0f;
-
 #ifdef _OPENMP
 #pragma omp parallel
 #endif
 {
-	float maxtmpthr = 0;
 	float tempval;
 #ifdef _OPENMP
 #pragma omp for
@@ -189,42 +207,29 @@ void RawImageSource::boxblur_resamp(float **src, float **dst, float & max_f, int
 	for (int row = 0; row < H; row++) {
 		int len = box + 1;
 		tempval = src[row][0]/len;
-		maxtmpthr = max(maxtmpthr,src[row][0]);
 		for (int j=1; j<=box; j++) {
 			tempval += src[row][j]/len;
-			maxtmpthr = max(maxtmpthr,src[row][j]);
 		}
 		temp[row][0] = tempval;
 		for (int col=1; col<=box; col++) {
 			tempval = (tempval*len + src[row][col+box])/(len+1);
 			if(col%samp == 0)
 				temp[row][col/samp] = tempval;
-			maxtmpthr = max(maxtmpthr,src[row][col]);
 			len ++;
 		}
 		for (int col = box+1; col < W-box; col++) {
 			tempval = tempval + (src[row][col+box] - src[row][col-box-1])/len;
 			if(col%samp == 0)
 				temp[row][col/samp] = tempval;
-			maxtmpthr = max(maxtmpthr,src[row][col]);
 		}
 		for (int col=W-box; col<W; col++) {
 			tempval = (tempval*len - src[row][col-box-1])/(len-1);
 			if(col%samp == 0)
 				temp[row][col/samp] = tempval;
-			maxtmpthr = max(maxtmpthr,src[row][col]);
 			len --;
 		}
 	}
-#ifdef _OPENMP
-#pragma omp critical
-#endif
-{
-	maxtmp = max(maxtmp,maxtmpthr);
 }
-}
-	
-	max_f = maxtmp;
 
 #ifdef _OPENMP
 #pragma omp parallel
@@ -311,12 +316,12 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	float max_f[3], thresh[3], fixthresh[3], norm[3];
 		
 	//float red1, green1, blue1;//diagnostic
-	float chmaxalt[4]={0,0,0,0};//diagnostic
+//	float chmaxalt[4]={0,0,0,0};//diagnostic
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//halfsize demosaic
 	
-	
+/*	
 	multi_array2D<float,3> hfsize (hfw+1,hfh+1,ARRAY2D_CLEAR_DATA);
 	
 	boxblur_resamp(red,hfsize[0],chmaxalt[0],height,width,range,pitch);
@@ -339,7 +344,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	//for (int m=0; m<3; m++)
 	//	boxblur2(hfsize[m],hfsizeblur[m],hfh,hfw,3);
 	
-	
+*/	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
@@ -385,7 +390,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	
 	// set up which pixels are clipped or near clipping
 #ifdef _OPENMP
-#pragma omp parallel for reduction(+:hipass_sum,hipass_norm)
+#pragma omp parallel for reduction(+:hipass_sum,hipass_norm) schedule(dynamic,16)
 #endif
 	for (int i=0; i<height; i++) {
 		for (int j=0; j<width; j++) {
@@ -428,7 +433,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	}
 
 #ifdef _OPENMP
-#pragma omp parallel for
+#pragma omp parallel for schedule(dynamic,16)
 #endif
 	for (int i=0; i<height; i++) {
 		for (int j=0; j<width; j++) {
@@ -455,7 +460,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// blur and resample highlight data; range=size of blur, pitch=sample spacing
 	for (int m=0; m<4; m++) {
-		boxblur_resamp(hilite_full[m],hilite[m],chmaxalt[m],height,width,range,pitch);
+		boxblur_resamp(hilite_full[m],hilite[m],height,width,range,pitch);
 		if(plistener){
 			progress += 0.05;
 			plistener->setProgress(progress);
@@ -489,9 +494,6 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	
 	//fill gaps in highlight map by directional extension
 	//raster scan from four corners
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 	for (int j=1; j<hfw-1; j++) 
 		for (int i=2; i<hfh-2; i++) {
 			//from left 
@@ -514,9 +516,6 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 		plistener->setProgress(progress);
 	}
 
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 	for (int j=hfw-2; j>0; j--)  
 		for (int i=2; i<hfh-2; i++) {
 			//from right 
@@ -539,9 +538,6 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 		plistener->setProgress(progress);
 	}
 
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 	for (int i=1; i<hfh-1; i++) 
 		for (int j=2; j<hfw-2; j++) {
 			//if (i%100==0 && j%100==0)
@@ -566,9 +562,6 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 		plistener->setProgress(progress);
 	}
 
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 	for (int i=hfh-2; i>0; i--) 
 		for (int j=2; j<hfw-2; j++) {
 			//from bottom 
@@ -590,9 +583,6 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 		plistener->setProgress(progress);
 	}
 	
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 	//fill in edges
 	for (int dir=0; dir<numdirs; dir++) {
 		for (int i=1; i<hfh-1; i++) 
@@ -638,7 +628,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	//float sumwt=0, counts=0;
 	
 #ifdef _OPENMP
-#pragma omp parallel for
+#pragma omp parallel for schedule(dynamic,16)
 #endif
 	for (int i=0; i<height; i++) {
 		int i1 = min((i-(i%pitch))/pitch,hfh-1);

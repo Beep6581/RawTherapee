@@ -1337,14 +1337,12 @@ void RawImageSource::flushRGB() {
 
 void RawImageSource::HLRecovery_Global(ToneCurveParams hrp )
 {
-	//color propagation highlight recovery 
 	if (hrp.hrenabled && hrp.method=="Color"){
-		if (settings->verbose) printf ("Applying Highlight Recovery: Color propagation...\n");
-		HLRecovery_inpaint (red,green,blue);
-		rgbSourceModified = true;
-	}
-	else{
-		rgbSourceModified = false;
+		if(!rgbSourceModified) {
+			if (settings->verbose) printf ("Applying Highlight Recovery: Color propagation...\n");
+			HLRecovery_inpaint (red,green,blue);
+			rgbSourceModified = true;
+		}
 	}
 }
 
