@@ -23,19 +23,13 @@
 #include "improcfun.h"
 #include "cieimage.h"
 #include "sleef.c"
-#ifdef __SSE2__
-#include "sleefsseavx.c"
-#endif
+#include "opthelper.h"
 
 using namespace std;
 
 namespace rtengine {
 
-#if defined( __SSE2__ ) && defined( WIN32 )
-__attribute__((force_align_arg_pointer)) void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
-#else
-void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
-#endif
+SSEFUNCTION void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
 {
 
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -240,13 +234,8 @@ void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
 }
 
 
-#if defined( __SSE2__ ) && defined( WIN32 )
-__attribute__((force_align_arg_pointer)) void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh)
-#else
-void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh)
-#endif
+SSEFUNCTION void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, float **buffers[3])
 {
-
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// impulse noise removal
 	// local variables
@@ -256,67 +245,16 @@ void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh)
 
 	
 	float piid=3.14159265f/180.f;
+
 	// buffer for the lowpass image
-    float ** lpf = new float *[height];
+    float ** lpf = buffers[0];
 	// buffer for the highpass image
-    float ** impish = new float *[height];
-    for (int i=0; i<height; i++) {
-        lpf[i] = new float [width];
-        //memset (lpf[i], 0, width*sizeof(float));
-		impish[i] = new float [width];
-		//memset (impish[i], 0, width*sizeof(unsigned short));
-    }
+    float ** impish = buffers[1];
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// modified bilateral filter for lowpass image, omitting input pixel; or Gaussian blur
 
-	const float eps = 1.0f;
-	float** sraa;
-		sraa = new float*[height];
-		for (int i=0; i<height; i++)
-			sraa[i] = new float[width];
-			
-	float** srbb;
-	srbb = new float*[height];
-		for (int i=0; i<height; i++)
-			srbb[i] = new float[width];
 
-#ifdef _OPENMP
-#pragma omp parallel
-#endif
-{
-	int j;
-	float2 sincosval;
-#ifdef __SSE2__
-	vfloat2 sincosvalv;
-	__m128 piidv = _mm_set1_ps( piid );
-	__m128 tempv;
-#endif
-#ifdef _OPENMP
-#pragma omp for
-#endif			
-		for (int i=0; i<height; i++) {
-#ifdef __SSE2__
-			for (j=0; j<width-3; j+=4) {
-				sincosvalv = xsincosf(piidv*LVFU(ncie->h_p[i][j]));
-				tempv = LVFU(ncie->C_p[i][j]);
-				_mm_storeu_ps(&sraa[i][j], tempv * sincosvalv.y);
-				_mm_storeu_ps(&srbb[i][j], tempv * sincosvalv.x);
-			}
-			for (; j<width; j++) {
-				sincosval = xsincosf(piid*ncie->h_p[i][j]);			
-				sraa[i][j]=ncie->C_p[i][j]*sincosval.y;			
-				srbb[i][j]=ncie->C_p[i][j]*sincosval.x;
-			}
-#else
-			for (j=0; j<width; j++) {
-				sincosval = xsincosf(piid*ncie->h_p[i][j]);			
-				sraa[i][j]=ncie->C_p[i][j]*sincosval.y;			
-				srbb[i][j]=ncie->C_p[i][j]*sincosval.x;
-			}
-#endif
-		}
-}
 		
 	//The cleaning algorithm starts here
 
@@ -404,6 +342,48 @@ void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh)
 }
 
 //now impulsive values have been identified
+	
+	const float eps = 1.0f;
+
+	float** sraa = buffers[0]; // we can reuse buffers[0] because lpf is not needed anymore at this point
+	float** srbb = buffers[2];
+
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+	int j;
+	float2 sincosval;
+#ifdef __SSE2__
+	vfloat2 sincosvalv;
+	__m128 piidv = _mm_set1_ps( piid );
+	__m128 tempv;
+#endif
+#ifdef _OPENMP
+#pragma omp for
+#endif			
+		for (int i=0; i<height; i++) {
+#ifdef __SSE2__
+			for (j=0; j<width-3; j+=4) {
+				sincosvalv = xsincosf(piidv*LVFU(ncie->h_p[i][j]));
+				tempv = LVFU(ncie->C_p[i][j]);
+				_mm_storeu_ps(&sraa[i][j], tempv * sincosvalv.y);
+				_mm_storeu_ps(&srbb[i][j], tempv * sincosvalv.x);
+			}
+			for (; j<width; j++) {
+				sincosval = xsincosf(piid*ncie->h_p[i][j]);			
+				sraa[i][j]=ncie->C_p[i][j]*sincosval.y;			
+				srbb[i][j]=ncie->C_p[i][j]*sincosval.x;
+			}
+#else
+			for (j=0; j<width; j++) {
+				sincosval = xsincosf(piid*ncie->h_p[i][j]);			
+				sraa[i][j]=ncie->C_p[i][j]*sincosval.y;			
+				srbb[i][j]=ncie->C_p[i][j]*sincosval.x;
+			}
+#endif
+		}
+}
 		
 // Issue 1671:
 // often, noise isn't evenly distributed, e.g. only a few noisy pixels in the bright sky, but many in the dark foreground,
@@ -523,19 +503,6 @@ void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh)
 #endif
 	}
 }
-
-    for (int i=0; i<height; i++) {
-        delete [] lpf[i];
-		delete [] impish[i];
-	}
-	delete [] lpf;
-	delete [] impish;
-    for (int i=0; i<height; i++)
-        delete [] sraa[i];
-        delete [] sraa;
-    for (int i=0; i<height; i++)
-        delete [] srbb[i];
-        delete [] srbb;
 
 }
 

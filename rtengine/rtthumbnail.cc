@@ -963,9 +963,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
 	if(params.colorappearance.enabled){
 		int begh = 0, endh = labView->H;
-		float** buffer = new float*[fh];
-		for (int i=0; i<fh; i++)
-			buffer[i] = new float[fw];
 		bool execsharp=false;
 		float d;
 		float fnum = fnumber;// F number
@@ -999,11 +996,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 		sk=16;
 		int rtt=0;		
 		CieImage* cieView = new CieImage (fw,fh);
-		ipf.ciecam_02float (cieView, adap, begh, endh, 1, 2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 6, (float**)buffer, execsharp, d, sk, rtt);
+		ipf.ciecam_02float (cieView, adap, begh, endh, 1, 2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 6, execsharp, d, sk, rtt);
 		delete cieView;
-		for (int i=0; i<fh; i++)
-			delete [] buffer[i];
-		delete [] buffer; buffer=NULL;
 	}
     // color processing
     //ipf.colorCurve (labView, labView);

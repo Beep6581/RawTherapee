@@ -214,10 +214,10 @@ class ImProcFunctions {
 		void luminanceCurve   (LabImage* lold, LabImage* lnew, LUTf &curve);
 		void ciecam_02float   (CieImage* ncie, float adap, int begh, int endh,  int pW, int pwb, LabImage* lab, const ProcParams* params,
 		                       const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3,
-		                       LUTu &histLCAM, LUTu &histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, float** buffer, bool execsharp, float &d, int scalecd, int rtt);
+		                       LUTu &histLCAM, LUTu &histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, int scalecd, int rtt);
 		void ciecam_02        (CieImage* ncie, double adap, int begh, int endh,  int pW, int pwb, LabImage* lab, const ProcParams* params,
 		                       const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3,
-		                       LUTu &histLCAM, LUTu &histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, float** buffer, bool execsharp, double &d, int scalecd, int rtt);
+		                       LUTu &histLCAM, LUTu &histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, double &d, int scalecd, int rtt);
 		void chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve,LUTf & satclcurve, LUTf &clcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histCLurve, LUTu &histLCurve, LUTu &histLurve);
 		void vibrance         (LabImage* lab);//Jacques' vibrance
 		void colorCurve       (LabImage* lold, LabImage* lnew);
@@ -236,9 +236,9 @@ class ImProcFunctions {
 		void MLmicrocontrastcam(CieImage* ncie ); //Manuel's microcontrast
 
 		void impulsedenoise   (LabImage* lab);//Emil's impulse denoise
-		void impulsedenoisecam   (CieImage* ncie);
+		void impulsedenoisecam   (CieImage* ncie, float **buffers[3]);
 		void impulse_nr (LabImage* lab, double thresh);
-		void impulse_nrcam (CieImage* ncie, double thresh);
+		void impulse_nrcam (CieImage* ncie, double thresh, float **buffers[3]);
 		
 		void dirpyrdenoise    (LabImage* src);//Emil's pyramid denoise
 		void dirpyrequalizer  (LabImage* lab, int scale);//Emil's equalizer
