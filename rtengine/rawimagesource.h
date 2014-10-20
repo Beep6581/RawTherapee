@@ -188,7 +188,7 @@ class RawImageSource : public ImageSource {
         static void inverse33 (const double (*coeff)[3], double (*icoeff)[3]);
 
         void boxblur2(float** src, float** dst, int H, int W, int box );
-        void boxblur_resamp(float **src, float **dst, float & max, int H, int W, int box, int samp );
+        void boxblur_resamp(float **src, float **dst, int H, int W, int box, int samp );
 
         //void boxblur_resamp(float **red, float **green, float **blue, int H, int W, float thresh[3], float max[3],
         //                multi_array2D<float,3> & hfsize, multi_array2D<float,3> & hilite, int box );
