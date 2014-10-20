@@ -929,10 +929,6 @@ TP_BWMIX_SET_NORMCONTAST;Нормальный контраст
 TP_BWMIX_SET_ORTHOCHRO;Ортохроматический
 TP_BWMIX_SET_PANCHRO;Панхроматический
 TP_BWMIX_SET_PORTRAIT;Портретный
-TP_BWMIX_SET_RGBABS;Миксер каналов RGB (абс.)
-TP_BWMIX_SET_RGBREL;Миксер каналов RGB (отн.)
-TP_BWMIX_SET_ROYGCBPMABS;Миксер каналов (абс. ROYGCBPM)
-TP_BWMIX_SET_ROYGCBPMREL;Миксер каналов (отн. ROYGCBPM)
 TP_BWMIX_TCMODE_FILMLIKE;Ч&Б плёнка
 TP_BWMIX_TCMODE_SATANDVALBLENDING;Ч&Б насыщенность+значение
 TP_BWMIX_TCMODE_STANDARD;Ч&Б Стандарт
@@ -1423,6 +1419,10 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
 !PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
 !PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
+!TP_BWMIX_SET_RGBABS;Absolute RGB
+!TP_BWMIX_SET_RGBREL;Relative RGB
+!TP_BWMIX_SET_ROYGCBPMABS;Absolute ROYGCBPM
+!TP_BWMIX_SET_ROYGCBPMREL;Relative ROYGCBPM
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show L*a*b* values before CIECAM02 adjustments.
 !TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended).
 !TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002.
