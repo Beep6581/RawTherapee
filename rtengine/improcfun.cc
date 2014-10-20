@@ -1187,8 +1187,8 @@ if(params->colorappearance.enabled) {
 	}
 	//end preparate histogram
 	int width = lab->W, height = lab->H;
-	float minQ=10000.f;
-	float maxQ= -1000.f;
+	float minQ = 10000.f;
+	float maxQ = -1000.f;
 	float Yw;
 	Yw=1.0;
 	double Xw, Zw;
@@ -1450,7 +1450,8 @@ if(params->colorappearance.enabled) {
 #pragma omp parallel
 #endif
 {	
-
+	float minQThr = 10000.f;
+	float maxQThr = -1000.f;
 #ifndef _DEBUG
 #pragma omp for schedule(dynamic, 10)
 #endif
@@ -1746,8 +1747,10 @@ if(params->colorappearance.enabled) {
 			ncie->C_p[i][j]=(float)C+epsil;
 			ncie->sh_p[i][j]=(float) 3276.8f*(sqrtf( J ) ) ;
 			if(epdEnabled) {
-				if(ncie->Q_p[i][j]<minQ) minQ=ncie->Q_p[i][j];//minima
-				if(ncie->Q_p[i][j]>maxQ) maxQ=ncie->Q_p[i][j];//maxima
+				if(ncie->Q_p[i][j]<minQThr)
+					minQThr = ncie->Q_p[i][j];//minima
+				if(ncie->Q_p[i][j]>maxQThr)
+					maxQThr = ncie->Q_p[i][j];//maxima
 			}
 		}
 			if(!params->colorappearance.tonecie  || !settings->autocielab || !epdEnabled){
@@ -1842,6 +1845,13 @@ if(LabPassOne){
 		}
 		}
 		}
+#pragma omp critical
+{
+	if(minQThr < minQ)
+		minQ = minQThr;
+	if(maxQThr > maxQ)
+		maxQ = maxQThr;
+}
 	}
 	// End of parallelization
 if(!params->colorappearance.tonecie   || !settings->autocielab){//normal
@@ -5092,15 +5102,17 @@ if(!params->epd.enabled) return;
 		unsigned int i, N = Wid*Hei;
 		float Qpro= ( 4.0 / c_)  * ( a_w + 4.0 ) ;//estimate Q max if J=100.0
 		float *Qpr=ncie->Q_p[0];
-		float eps=0.0001;
-		if (settings->verbose) printf("minQ=%f maxQ=%f  Qpro=%f\n",minQ,maxQ, Qpro);
-		if(maxQ>Qpro) Qpro=maxQ;
-		for (int i=0; i<Hei; i++)
-			for (int j=0; j<Wid; j++) { Qpr[i*Wid+j]=ncie->Q_p[i][j];}
+		if (settings->verbose)
+			printf("minQ=%f maxQ=%f  Qpro=%f\n",minQ,maxQ, Qpro);
+		if(maxQ>Qpro)
+			Qpro=maxQ;
 
 		EdgePreservingDecomposition epd = EdgePreservingDecomposition(Wid, Hei);
 
-		for(i = 0; i != N; i++) Qpr[i] = (Qpr[i]+eps)/(Qpro);
+		#pragma omp parallel for
+		for (int i=0; i<Hei; i++)
+			for (int j=0; j<Wid; j++)
+				ncie->Q_p[i][j] = ncie->Q_p[i][j]/(Qpro);
 
 		float Compression = expf(-stren);		//This modification turns numbers symmetric around 0 into exponents.
 		float DetailBoost = stren;
@@ -5119,7 +5131,7 @@ if(!params->epd.enabled) return;
 		#endif
 		for (int i=0; i<Hei; i++)
 			for (int j=0; j<Wid; j++) {
-			ncie->Q_p[i][j]=(Qpr[i*Wid+j]+eps)*Qpro;
+			ncie->Q_p[i][j]=ncie->Q_p[i][j]*Qpro;
 			ncie->M_p[i][j]*=s;
 		}
 /*
