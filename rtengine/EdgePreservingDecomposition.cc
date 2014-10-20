@@ -5,6 +5,8 @@
 #include <omp.h>
 #endif
 #include "sleef.c"
+#include "opthelper.h"
+
 #define pow_F(a,b) (xexpf(b*xlogf(a)))
 
 #define DIAGONALS 5
@@ -168,7 +170,7 @@ bool MultiDiagonalSymmetricMatrix::CreateDiagonal(int index, int StartRow){
 	// Falls back to original version if big block could not be allocated
 	int padding = 4096 - ((n*m*sizeof(float)) % 4096);
 	if(index == 0){
-		buffer = (char*)malloc( (n+padding) * m * sizeof(float)+ (m+16)*64 + 63);
+		buffer = (char*)calloc( (n+padding) * m * sizeof(float)+ (m+16)*64 + 63,1);
 		if(buffer == NULL)
 			// no big memory block available => try to allocate smaller blocks
 			DiagBuffer = NULL;
@@ -194,10 +196,10 @@ bool MultiDiagonalSymmetricMatrix::CreateDiagonal(int index, int StartRow){
 			printf("Error in MultiDiagonalSymmetricMatrix::CreateDiagonal: memory allocation failed. Out of memory?\n");
 			return false;
 		}
+		memset(Diagonals[index], 0, sizeof(float)*DiagonalLength(StartRow));
 	}
 		
 	StartRows[index] = StartRow;
-	memset(Diagonals[index], 0, sizeof(float)*DiagonalLength(StartRow));
 	return true;
 }
 
@@ -229,53 +231,89 @@ bool MultiDiagonalSymmetricMatrix::LazySetEntry(float value, int row, int column
 	return true;
 }
 
-void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Product, float* RESTRICT x){
+SSEFUNCTION void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Product, float* RESTRICT x){
 
-	//Loop over the stored diagonals.
+	int srm = StartRows[m-1];
+	int lm = DiagonalLength(srm);
+#ifdef _OPENMP
+#ifdef __SSE2__
+	const int chunkSize = (lm-srm)/(omp_get_num_procs()*32);
+#else
+	const int chunkSize = (lm-srm)/(omp_get_num_procs()*8);
+#endif
+#endif
+#pragma omp parallel
+{
+	// First fill the big part in the middle
+	// This can be done without intermediate stores to memory and it can be parallelized too
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic,chunkSize) nowait
+#endif
+#ifdef __SSE2__
+	for(int j=srm;j<lm-3;j+=4) {
+		__m128 prodv = LVFU(Diagonals[0][j]) * LVFU(x[j]);
+		for(int i=m-1;i>0;i--) {
+			int s = StartRows[i];
+			prodv += (LVFU(Diagonals[i][j - s])*LVFU(x[j - s])) + (LVFU(Diagonals[i][j])*LVFU(x[j + s]));
+		}
+		_mm_storeu_ps(&Product[j],prodv);
+	}
+#else
+	for(int j=srm;j<lm;j++) {
+		float prod = Diagonals[0][j]*x[j];
+		for(int i=m-1;i>0;i--) {
+			int s = StartRows[i];
+			prod += (Diagonals[i][j - s]*x[j - s]) + (Diagonals[i][j]*x[j + s]);
+		}
+		Product[j] = prod;
+	}
+
+#endif
+#pragma omp single
+{
+#ifdef __SSE2__
+		for(int j=lm-((lm-srm)%4);j<lm;j++) {
+		float prod = Diagonals[0][j]*x[j];
+		for(int i=m-1;i>0;i--) {
+			int s = StartRows[i];
+			prod += (Diagonals[i][j - s]*x[j - s]) + (Diagonals[i][j]*x[j + s]);
+		}
+		Product[j] = prod;
+	}
+#endif
+	// Fill remaining area
+	// Loop over the stored diagonals.
 	for(int i = 0; i < m; i++){
 		int sr = StartRows[i];
 		float *a = Diagonals[i];	//One fewer dereference.
 		int l = DiagonalLength(sr);
-
-		if(sr == 0)
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-			for(int j = 0; j < l; j++)
+		if(sr == 0) {
+			for(int j = 0; j < srm; j++)
 				Product[j] = a[j]*x[j];		//Separate, fairly simple treatment for the main diagonal.
-		else {
+			for(int j = lm; j < l; j++)
+				Product[j] = a[j]*x[j];		//Separate, fairly simple treatment for the main diagonal.
+		} else {
 // Split the loop in 3 parts, so now the big one in the middle can be parallelized without race conditions
-
 			// updates 0 to sr - 1. Because sr is small (in the range of image-width) no benefit by omp
 			for(int j=0;j<sr;j++) {
 				Product[j] += a[j]*x[j + sr];		//Contribution from upper triangle
 			}
-				
 			// Updates sr to l - 1. Because sr is small and l is big, this loop is parallelized
-#ifdef _OPENMP
-#pragma omp parallel
-#endif
-{
-#ifdef _OPENMP
-#pragma omp for nowait
-#endif
-			for(int j = sr; j < l; j++) {
+			for(int j = sr; j < srm; j++) {
 				Product[j] += a[j - sr]*x[j - sr] + a[j]*x[j + sr];		//Contribution from lower and upper triangle
 			}
-#ifdef _OPENMP
-#pragma omp single
-#endif
-{
+			for(int j = lm; j < l; j++) {
+				Product[j] += a[j - sr]*x[j - sr] + a[j]*x[j + sr];		//Contribution from lower and upper triangle
+			}
 			// Updates l to l + sr - 1. Because sr is small (in the range of image-width) no benefit by omp
 			for(int j = l; j < l + sr; j++) {
 				Product[j] += a[j-sr]*x[j - sr];	//Contribution from lower triangle
 			}
-}
-}
 		}
 	}
-
-} 
+}
+}
+}
 
 bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int MaxFillAbove){
 	if(m == 1){
@@ -391,17 +429,18 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
 		//Now, calculate l from top down along this column.
 
 		int mapindex = 0;
+		int jMax = icn - j;
 		for(s = 1; s < icm; s++){
-			if(j >= icn - icStartRows[s]) break;	//Possible values of j are limited.
-
+			if(icStartRows[s] >= jMax)
+				break; //Possible values of j are limited
+				
 			float temp = 0.0f;
-			
 			while(mapindex <= MaxIndizes[s] && ( k = DiagMap[mapindex].k) <= j) {
 				temp -= l[DiagMap[mapindex].sss][j - k]*l[DiagMap[mapindex].ss][j - k]*d[j - k];
 				mapindex ++;
 			}
 			sss = findmap[s];
-			l[s][j] = sss < 0 ? temp * id : (Diagonals[sss][j] + temp) * id;
+			l[s][j] = id * (sss < 0 ? temp : (Diagonals[sss][j] + temp));
 		}
 	}
 	delete[] DiagMap;
@@ -449,7 +488,7 @@ void MultiDiagonalSymmetricMatrix::CholeskyBackSolve(float* RESTRICT x, float* R
 		}
 		for(j = s[M-1]+1; j<N; j++){
 			float sub = b[j];              		// using local var to reduce memory writes, gave a big speedup
-			for(int i=1;i<DIAGONALSP1;i++){		// using a constant upperbound allows the compiler to unroll this loop (gives a good speedup)
+			for(int i=DIAGONALSP1-1;i>0;i--){		// using a constant upperbound allows the compiler to unroll this loop (gives a good speedup)
 				sub -= d[i][j-s[i]]*x[j-s[i]];
 			}
 			x[j] = sub;							// only one memory-write per j
@@ -490,7 +529,7 @@ void MultiDiagonalSymmetricMatrix::CholeskyBackSolve(float* RESTRICT x, float* R
 		}
 		for(j=(N-2)-s[M-1];j>=0;j--) {
 			float sub = x[j];					// using local var to reduce memory writes, gave a big speedup
-			for(int i=1;i<DIAGONALSP1;i++){		// using a constant upperbound allows the compiler to unroll this loop (gives a good speedup)
+			for(int i=DIAGONALSP1-1;i>0;i--){		// using a constant upperbound allows the compiler to unroll this loop (gives a good speedup)
 				sub -= d[i][j]*x[j + s[i]];
 			}
 			x[j] = sub;							// only one memory-write per j
@@ -561,7 +600,6 @@ SSEFUNCTION float *EdgePreservingDecomposition::CreateBlur(float *Source, float 
 	__m128 sqrepsv = _mm_set1_ps( sqreps );
 	__m128 EdgeStoppingv = _mm_set1_ps( -EdgeStopping );
 	__m128 zd5v = _mm_set1_ps( 0.5f );
-	__m128 temp1v, temp2v;
 #endif
 #ifdef _OPENMP
 #pragma omp for
@@ -688,6 +726,9 @@ float *EdgePreservingDecomposition::CreateIteratedBlur(float *Source, float Scal
 }
 
 SSEFUNCTION float *EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scale, float EdgeStopping, float CompressionExponent, float DetailBoost, int Iterates, int Reweightings, float *Compressed){
+	if(w<300 && h<300) // set number of Reweightings to zero for small images (thumbnails). We could try to find a better solution here.
+		Reweightings = 0;
+		
 	//Small number intended to prevent division by zero. This is different from the eps in CreateBlur.
 	const float eps = 0.0001f;
 
