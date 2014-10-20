@@ -39,7 +39,7 @@
 namespace rtengine {
 extern const Settings* settings;
 
-IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool tunnelMetaData) {
+IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool tunnelMetaData, bool flush) {
 
     errorCode = 0;
 
@@ -128,7 +128,28 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     imgsrc->getImage (currWB, tr, baseImg, pp, params.toneCurve, params.icm, params.raw);
     if (pl) pl->setProgress (0.45);
 
-	LUTf Noisecurve (65536,0);
+//	LUTf Noisecurve (65536,0);
+//!!!// auto exposure!!!
+    double expcomp = params.toneCurve.expcomp;
+	int    bright = params.toneCurve.brightness;
+	int	   contr = params.toneCurve.contrast;
+	int    black = params.toneCurve.black;
+	int	   hlcompr = params.toneCurve.hlcompr;
+	int    hlcomprthresh = params.toneCurve.hlcomprthresh;
+
+    if (params.toneCurve.autoexp) {
+		LUTu aehist; int aehistcompr;
+		imgsrc->getAutoExpHistogram (aehist, aehistcompr);
+		ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, expcomp, bright, contr, black, hlcompr,hlcomprthresh);
+    }
+
+    // at this stage, we can flush the raw data to free up quite an important amount of memory
+    // commented out because it makes the application crash when batch processing...
+    // TODO: find a better place to flush rawData and rawRGB
+    if(flush) {
+		imgsrc->flushRawData();
+		imgsrc->flushRGB();
+    }
 
     // perform luma/chroma denoise
 //	CieImage *cieView;  
@@ -175,25 +196,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 		shmap->update (baseImg, shradius, ipf.lumimul, params.sh.hq, 1);
     }
     // RGB processing
-//!!!// auto exposure!!!
-    double expcomp = params.toneCurve.expcomp;
-	int    bright = params.toneCurve.brightness;
-	int	   contr = params.toneCurve.contrast;
-	int    black = params.toneCurve.black;
-	int	   hlcompr = params.toneCurve.hlcompr;
-	int    hlcomprthresh = params.toneCurve.hlcomprthresh;
-
-    if (params.toneCurve.autoexp) {
-		LUTu aehist; int aehistcompr;
-		imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-		ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, expcomp, bright, contr, black, hlcompr,hlcomprthresh);
-    }
-
-    // at this stage, we can flush the raw data to free up quite an important amount of memory
-    // commented out because it makes the application crash when batch processing...
-    // TODO: find a better place to flush rawData and rawRGB
-    //imgsrc->flushRawData();
-    //imgsrc->flushRGB();
 
     LUTf curve1 (65536,0);
     LUTf curve2 (65536,0);
@@ -415,31 +417,18 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 			float d;
 			double dd;
 
-			float** buffer = new float*[fh];
-			for (int i=0; i<fh; i++)
-			buffer[i] = new float[fw];
 			int sk=1;
-			if(settings->ciecamfloat) ipf.ciecam_02float (cieView, float(adap), begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, d, sk, 1);
-			else ipf.ciecam_02 (cieView, adap, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, dd, 1, 1);
-			for (int i=0; i<fh; i++)
-			delete [] buffer[i];
-			delete [] buffer;
+			if(settings->ciecamfloat) ipf.ciecam_02float (cieView, float(adap), begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, sk, 1);
+			else ipf.ciecam_02 (cieView, adap, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, 1, 1);
 		}
 		else {
 			int f_h=2,f_w=2;
 			float d;
 
 			double dd;
-			float** buffer = new float*[f_h];
-			for (int i=0; i<f_h; i++)
-			buffer[i] = new float[f_w];
 			int sk=1;
-			if(settings->ciecamfloat) ipf.ciecam_02float (cieView, float(adap), begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, d, sk, 1);
-			else ipf.ciecam_02 (cieView, adap, begh, endh,1, 2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, dd, 1, 1);
-
-			for (int i=0; i<f_h; i++)
-			delete [] buffer[i];
-			delete [] buffer;
+			if(settings->ciecamfloat) ipf.ciecam_02float (cieView, float(adap), begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, sk, 1);
+			else ipf.ciecam_02 (cieView, adap, begh, endh,1, 2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, 1, 1);
 		}
 	}	
     delete cieView;
@@ -781,7 +770,7 @@ void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bo
     
     while (currentJob) {
         int errorCode;
-        IImage16* img = processImage (currentJob, errorCode, bpl, tunnelMetaData);
+        IImage16* img = processImage (currentJob, errorCode, bpl, tunnelMetaData, true);
         if (errorCode) {
             bpl->error (M("MAIN_MSG_CANNOTLOAD"));
             currentJob = NULL;

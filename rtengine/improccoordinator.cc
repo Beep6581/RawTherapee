@@ -584,9 +584,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             int endh=pH;
             float d;
             double dd;
-            float **buffer = new float*[pH];
-            for (int i=0; i<pH; i++)
-                buffer[i] = new float[pW];
             bool execsharp=false;
             if(scale==1) execsharp=true;
 
@@ -598,19 +595,16 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             if (!CAMBrightCurveQ && (params.colorappearance.algo=="QM" || params.colorappearance.algo=="ALL"))
                 CAMBrightCurveQ(65536,0);
             if(settings->ciecamfloat){
-                ipf.ciecam_02float (ncie, float(adap), begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, execsharp, d, scale, 1);
+                ipf.ciecam_02float (ncie, float(adap), begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, execsharp, d, scale, 1);
                 if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*(double)d);
                 if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) acListener->adapCamChanged(adap);//real value of adapt scene luminosity
             }
             else {
-                ipf.ciecam_02 (ncie, adap, begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, execsharp, dd, scale, 1);
+                ipf.ciecam_02 (ncie, adap, begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, execsharp, dd, scale, 1);
                 if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*dd);
                 if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) acListener->adapCamChanged(adap);
             }
 
-            for (int i=0; i<pH; i++)
-                delete [] buffer[i];
-            delete [] buffer;
             readyphase++;
         }
         else {
