@@ -810,7 +810,7 @@ bool ImProcCoordinator::getAutoWB (double& temp, double& green, double equal) {
 
     if (imgsrc) {
         if (lastAwbEqual != equal) {
-            MyMutex::MyLock lock(minit);  // Also used in crop window
+// Issue 2500            MyMutex::MyLock lock(minit);  // Also used in crop window
             double rm, gm, bm;
             imgsrc->getAutoWBMultipliers(rm, gm, bm);
             if (rm != -1) {
