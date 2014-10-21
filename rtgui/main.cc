@@ -397,9 +397,18 @@ int processLineParams( int argc, char **argv )
 					}
 				}
 				break;
+            case 'b':
+                    sscanf(&argv[iArg][2],"%d",&bits);
+                    if (bits != 8 && bits != 16)
+                    {
+                        std::cerr << "Error: specify -b8 for 8-bit or -b16 for 16-bit output." << std::endl;
+                        deleteProcParams(processingParams);
+                        return -3;
+                    }
+                    break;
 			case 't':
 				outputType = "tif";
-				compression = ((argv[iArg][2]!='1')?0:1);
+				compression = ((argv[iArg][2]!='z')?0:1);
 				break;
 			case 'n':
 				outputType = "png";
@@ -443,15 +452,20 @@ int processLineParams( int argc, char **argv )
 			default:
 			{
 				Glib::ustring pparamsExt = paramFileExtension.substr(1);
+        std::cout << "<Chevrons> indicate parameters you can change." << std::endl;
+        std::cout << "[Square brackets] mean the parameter is not mandatory." << std::endl;
+        std::cout << "The pipe symbol | indicates a choice of one or the other." << std::endl;
+        std::cout << "The dash symbol - denotes a range of possible values from one to the other." << std::endl;
+        cout << std::endl;
         std::cout << "Usage:" << std::endl;
-        std::cout << "  " << Glib::path_get_basename(argv[0]) << " [<selected dir>]   Start File Browser inside directory." << std::endl;
+        std::cout << "  " << Glib::path_get_basename(argv[0]) << " <selected dir>     Start File Browser inside directory." << std::endl;
         std::cout << "  " << Glib::path_get_basename(argv[0]) << " <file>             Start Image Editor with file." << std::endl;
         std::cout << "  " << Glib::path_get_basename(argv[0]) << " -c <dir>|<files>   Convert files in batch with default parameters." << std::endl << std::endl;
 #ifdef WIN32
         std::cout << "  -w Do not open the Windows console" << std::endl;
 #endif
         std::cout << "Other options used with -c (-c must be the last option):" << std::endl;
-        std::cout << Glib::path_get_basename(argv[0]) << " [-o <output>|-O <output>] [-s|-S] [-p <files>] [-d] [-j[1-100]|-t|-t1|-n] -Y -c <input>" << std::endl;
+        std::cout << Glib::path_get_basename(argv[0]) << " [-o <output>|-O <output>] [-s|-S] [-p <files>] [-d] [-j[1-100] [-js<1-3>]|[-b<8|16>] <[-t[z] | [-n]]] [-Y] -c <input>" << std::endl;
         std::cout << "  -o <file>|<dir>  Select output file or directory." << std::endl;
         std::cout << "  -O <file>|<dir>  Select output file or directory and copy " << pparamsExt << " file into it." << std::endl;
         std::cout << "  -s               Include the " << pparamsExt << " file next to the input file (with the same" << std::endl;
@@ -465,16 +479,17 @@ int processLineParams( int argc, char **argv )
         std::cout << "                   You can specify as many -p options as you like (see" << std::endl;
         std::cout << "                   description below)." << std::endl;
         std::cout << "  -d               Use the default raw or non-raw " << pparamsExt << " file as set in" << std::endl;
-        std::cout << "                   Preferences > Image Processing > Default Image Processing Parameters" << std::endl;
+        std::cout << "                   Preferences > Image Processing > Default Processing Profile" << std::endl;
         std::cout << "  -j[1-100]        Specify output to be JPEG (on by default). Optionally add" << std::endl;
         std::cout << "                   compression 1-100 (default value: 100)." << std::endl;
-        std::cout << "  -js1-3           Specify the JPEG subsampling parameter, where:" << std::endl;
+        std::cout << "  -js<1-3>         Specify the JPEG subsampling parameter, where:" << std::endl;
         std::cout << "                   1 = Best compression:         2x2, 1x1, 1x1 (4:1:1) - default of the JPEG library" << std::endl;
         std::cout << "                   2 = Widely used normal ratio: 2x1, 1x1, 1x1 (4:2:2)" << std::endl;
         std::cout << "                   3 = Best quality:             1x1, 1x1, 1x1 (4:4:4)" << std::endl;
-        std::cout << "  -t               Specify output to be uncompressed 16-bit TIFF." << std::endl;
-        std::cout << "  -t1              Specify output to be compressed 16-bit TIFF (ZIP compression)." << std::endl;
-        std::cout << "  -n               Specify output to be compressed 16-bit PNG." << std::endl;
+        std::cout << "  -b<8|16>         Specify bit depth per channel (only applies to TIFF and PNG output)." << std::endl;
+        std::cout << "  -t[z]            Specify output to be TIFF (16-bit if -b8 is not set)." << std::endl;
+        std::cout << "                   Uncompressed by default, or ZIP compression with 'z'" << std::endl;
+        std::cout << "  -n               Specify output to be compressed PNG (16-bit if -b8 is not set)." << std::endl;
         std::cout << "  -Y               Overwrite output if present." << std::endl<<std::endl;
         std::cout << "Your " << pparamsExt << " files can be incomplete, RawTherapee will set the values as follows:" << std::endl;
         std::cout << "  1- A new profile is created using internal default (neutral) values" <<std::endl;
@@ -523,7 +538,7 @@ int processLineParams( int argc, char **argv )
 		rawParams = new rtengine::procparams::PartialProfile(true);
 		Glib::ustring profPath = options.findProfilePath(options.defProfRaw);
 		if (options.is_defProfRawMissing() || profPath.empty() || rawParams->load(Glib::build_filename(profPath, Glib::path_get_basename(options.defProfRaw) + paramFileExtension))) {
-			std::cerr << "Error: default Raw procparams file not found" << std::endl;
+			std::cerr << "Error: default raw processing profile not found" << std::endl;
 			rawParams->deleteInstance();
 			delete rawParams;
 			deleteProcParams(processingParams);
@@ -532,7 +547,7 @@ int processLineParams( int argc, char **argv )
 		imgParams = new rtengine::procparams::PartialProfile(true);
 		profPath = options.findProfilePath(options.defProfImg);
 		if (options.is_defProfImgMissing() || profPath.empty() || imgParams->load(Glib::build_filename(profPath, Glib::path_get_basename(options.defProfImg) + paramFileExtension))) {
-			std::cerr << "Error: default Image procparams file not found" << std::endl;
+			std::cerr << "Error: default non-raw processing profile not found" << std::endl;
 			imgParams->deleteInstance();
 			delete imgParams;
 			rawParams->deleteInstance();
@@ -596,11 +611,11 @@ int processLineParams( int argc, char **argv )
 
 		if (useDefault) {
 			if (isRaw) {
-				std::cout << "  Merging default Raw profile" << std::endl;
+				std::cout << "  Merging default raw processing profile" << std::endl;
 				rawParams->applyTo(&currentParams);
 			}
 			else {
-				std::cout << "  Merging default Image profile" << std::endl;
+				std::cout << "  Merging default non-raw processing profile" << std::endl;
 				imgParams->applyTo(&currentParams);
 			}
 		}
