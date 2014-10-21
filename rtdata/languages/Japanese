@@ -19,6 +19,7 @@
 #19 2014-07-13 firefly
 #20 2014-07-24 firefly
 #21 2014-09-11 firefly
+#22 2014-10-21 firefly
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -275,9 +276,9 @@ HISTORY_MSG_37;オートレベル
 HISTORY_MSG_38;ホワイトバランス 方式
 HISTORY_MSG_39;色温度
 HISTORY_MSG_40;ホワイトバランス 色合い
-HISTORY_MSG_41;トーンカーブ モード 1
+HISTORY_MSG_41;トーンカーブ1のモード
 HISTORY_MSG_42;トーンカーブ 2
-HISTORY_MSG_43;トーンカーブ モード 2
+HISTORY_MSG_43;トーンカーブ2のモード
 HISTORY_MSG_44;輝度ノイズ低減 半径
 HISTORY_MSG_45;輝度ノイズ低減 エッジの許容度
 HISTORY_MSG_46;色ノイズ低減
@@ -315,7 +316,7 @@ HISTORY_MSG_77;IPTC メタデータ
 HISTORY_MSG_78;リサイズ指定のデータ
 HISTORY_MSG_79;リサイズ幅
 HISTORY_MSG_80;リサイズ 高さ
-HISTORY_MSG_81;リサイズ 有効
+HISTORY_MSG_81;リサイズの有効・無効
 HISTORY_MSG_82;プロファイル変更
 HISTORY_MSG_83;高画質 シャドウ/ハイライト
 HISTORY_MSG_84;パースペクティブの補正
@@ -344,15 +345,15 @@ HISTORY_MSG_106;フリンジ低減 半径
 HISTORY_MSG_107;フリンジ低減 しきい値
 HISTORY_MSG_108;ハイライト圧縮 しきい値
 HISTORY_MSG_109;リサイズ バウンディングボックス
-HISTORY_MSG_110;リサイズ適用
+HISTORY_MSG_110;リサイズの適用領域
 HISTORY_MSG_111;Lab　-　色ずれ回避
 HISTORY_MSG_112;--未使用--
 HISTORY_MSG_113;Lab　-　レッドと肌色トーンを保護
 HISTORY_MSG_114;DCB 反復
 HISTORY_MSG_115;偽色抑制
 HISTORY_MSG_116;DCB 拡張
-HISTORY_MSG_117;色収差 raw レッド
-HISTORY_MSG_118;色収差 raw ブルー
+HISTORY_MSG_117;raw 色収差  レッド
+HISTORY_MSG_118;raw 色収差  ブルー
 HISTORY_MSG_119;ラインノイズ フィルタ
 HISTORY_MSG_120;グリーン 平衡化
 HISTORY_MSG_121;raw 色収差 自動
@@ -402,10 +403,10 @@ HISTORY_MSG_164;RGB カーブ - グリーン
 HISTORY_MSG_165;RGB カーブ - ブルー
 HISTORY_MSG_166;ニュートラル・レベル
 HISTORY_MSG_167;--未使用--
-HISTORY_MSG_168;'CC' カーブ
-HISTORY_MSG_169;'CH' カーブ
+HISTORY_MSG_168;Lab CC カーブ
+HISTORY_MSG_169;Lab CH カーブ
 HISTORY_MSG_170;自然な彩度 - カーブ
-HISTORY_MSG_171;'LC' カーブ
+HISTORY_MSG_171;Lab LC カーブ
 HISTORY_MSG_172;LCの適用をレッドと肌色トーンだけに制限
 HISTORY_MSG_173;輝度ノイズ　細部の復元
 HISTORY_MSG_174;CIE色の見えモデル2002
@@ -479,9 +480,9 @@ HISTORY_MSG_242;ビネットフィルター　形状
 HISTORY_MSG_243;半径
 HISTORY_MSG_244;ビネットフィルター　強さ
 HISTORY_MSG_245;ビネットフィルター　中央
-HISTORY_MSG_246;"CL"カーブ
-HISTORY_MSG_247;"LH"　カーブ
-HISTORY_MSG_248;"HH"　カーブ
+HISTORY_MSG_246;Lab CL カーブ
+HISTORY_MSG_247;Lab LH　カーブ
+HISTORY_MSG_248;Lab HH　カーブ
 HISTORY_MSG_249;ディテールレベルのコントラスト - しきい値
 HISTORY_MSG_250;ノイズ低減　-　強化
 HISTORY_MSG_251;白黒 - アルゴリズム
@@ -522,7 +523,7 @@ HISTORY_MSG_285;メディアンの方式
 HISTORY_MSG_286;メディアンフィルターの種類
 HISTORY_MSG_287;フィルタリングの回数
 HISTORY_MSG_288;フラットフィールド　クリッピングコントロール	
-HISTORY_MSG_289;自動クリッピングコントロール
+HISTORY_MSG_289;フラットフィールド　クリッピングコントロール　自動
 HISTORY_MSG_290;黒レベル　－　レッド
 HISTORY_MSG_291;黒レベル　－　グリーン
 HISTORY_MSG_292;黒レベル　－　ブルー
@@ -683,6 +684,7 @@ PARTIALPASTE_EPD;トーンマッピング
 PARTIALPASTE_EVERYTHING;すべて
 PARTIALPASTE_EXIFCHANGES;exifデータを変える
 PARTIALPASTE_EXPOSURE;露光量
+PARTIALPASTE_FILMSIMULATION;フィルムシミュレーション
 PARTIALPASTE_FLATFIELDAUTOSELECT;フラットフィールド 自動選択
 PARTIALPASTE_FLATFIELDBLURRADIUS;フラットフィールド ぼかし半径
 PARTIALPASTE_FLATFIELDBLURTYPE;フラットフィールド ぼかしタイプ
@@ -1107,6 +1109,7 @@ TP_COLORTONING_LUMAMODE_TOOLTIP;カラー（レッド、グリーン、シアン
 TP_COLORTONING_LUMA;明度
 TP_COLORTONING_METHOD;方法
 TP_COLORTONING_METHOD_TOOLTIP;Labモデルのブレンドはカラー補間を使います\nカラーバランスは、シャドウ、ミッドトーン、ハイライトでバランスをとります\nSH＋バランスは、ダイレクトカラーを使ってシャドウとハイライトでカラートン調整とバランスを調整します\n全ての方法で白黒変換を有効に出来ます
+TP_COLORTONING_MIDTONES;中間トーン
 TP_COLORTONING_NEUTRALCUR;カーブをリセット
 TP_COLORTONING_NEUTRALCUR_TIP;全てのカーブをデフォルトに戻す
 TP_COLORTONING_NEUTRAL;スライダーをリセット
@@ -1128,6 +1131,7 @@ TP_COLORTONING_TWOALL;特定の色度
 TP_COLORTONING_TWOBY;特定の'a'と'b'
 TP_COLORTONING_TWOCOLOR_TOOLTIP;標準的な色度:\n線形的作用　a*=b*\n特定の色度:\n線形的作用　a*=b*、但し、特定しない　－　例えば、対角線より下の部分だけ\n特定のa*とb*:\n線形的作用　a*、b*カーブ別々で特定しない。特殊効果が目的\n2色の特定の色度:\n予測がしやすい方法
 TP_COLORTONING_TWOSTD;標準的な色度
+TP_CROP_FIXRATIO;縦横比固定
 TP_CROP_GTDIAGONALS;対角線
 TP_CROP_GTEPASSPORT;バイオメトリック・パスポート
 TP_CROP_GTFRAME;フレーム
@@ -1204,6 +1208,7 @@ TP_DIRPYREQUALIZER_LUMANEUTRAL;ニュートラル
 TP_DIRPYREQUALIZER_SKIN;肌色トーン　目標／保護
 TP_DIRPYREQUALIZER_SKIN_TOOLTIP;-100　肌色トーンの調整が目的になります\n0 全ての色調が調整の対象です\n+100　肌色が保護され、他の色調が調整されます
 TP_DIRPYREQUALIZER_THRESHOLD;しきい値
+TP_DIRPYREQUALIZER_TOOLTIP;肌色（色相、色度、明度）と他の色の間の遷移でアーティファクトが発生するのを軽減します
 TP_DISTORTION_AMOUNT;適用量
 TP_DISTORTION_AUTO;自動歪曲収差補正
 TP_DISTORTION_AUTO_TIP;(試用) 自動レンズ収差補正 (M4/3, 一部のコンデジ, etc.)
@@ -1407,12 +1412,12 @@ TP_RAW_LMMSE_TOOLTIP;ガンマ追加 (step 1) - メディアン追加 (step 2,3,
 TP_RAW_SENSOR_BAYER_LABEL;ベイヤー配列を使ったセンサー
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-passが最適です（低ISO画像には奨められます)\n高ISO画像の場合、1-passと3-passの違いは殆どありません、処理速度は前者の方が速いです。
 TP_RAW_SENSOR_XTRANS_LABEL;X-Transマトリクスを使ったセンサー
-TP_RESIZE_APPLIESTO;適用 :
+TP_RESIZE_APPLIESTO;適用領域:
 TP_RESIZE_BICUBICSF;バイキュービック (ソフトに)
 TP_RESIZE_BICUBICSH;バイキュービック (シャープに)
 TP_RESIZE_BICUBIC;バイキュービック
 TP_RESIZE_BILINEAR;バイリニア
-TP_RESIZE_CROPPEDAREA;切り抜き領域
+TP_RESIZE_CROPPEDAREA;切り抜き画像
 TP_RESIZE_FITBOX;バウンディング・ボックス
 TP_RESIZE_FULLIMAGE;全画像
 TP_RESIZE_HEIGHT;高さ
@@ -1422,7 +1427,7 @@ TP_RESIZE_LANCZOS;ランチョス
 TP_RESIZE_METHOD;方式: 
 TP_RESIZE_NEAREST;ニアリスト
 TP_RESIZE_SCALE;スケール
-TP_RESIZE_SPECIFY;指定:
+TP_RESIZE_SPECIFY;条件指定:
 TP_RESIZE_WIDTH;幅
 TP_RESIZE_W;W:
 TP_RGBCURVES_BLUE;B
@@ -1545,11 +1550,3 @@ ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる\nショートカット: <b>f</b>
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!PARTIALPASTE_FILMSIMULATION;Film Simulation
-!TP_COLORTONING_MIDTONES;Midtones
-!TP_CROP_FIXRATIO;Lock ratio
-!TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
