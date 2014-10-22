@@ -7,8 +7,5 @@ hgChangeset="`hg parents --template '{node|short}'`"
 echo "set(HG_BRANCH $hgBranch)
 set(HG_VERSION $hgLatesttag.$hgLatesttagdistance)
 set(HG_CHANGESET $hgChangeset)
-set(HG_TAGDISTANCE $hgLatesttagdistance)
-if (CACHE_NAME_SUFFIX STREQUAL \"\")
-  set(CACHE_NAME_SUFFIX $hgLatesttag)
-endif()" > ReleaseInfo.cmake
+set(HG_TAGDISTANCE $hgLatesttagdistance)" > ReleaseInfo.cmake
 
