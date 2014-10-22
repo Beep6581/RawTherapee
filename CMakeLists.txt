@@ -156,6 +156,12 @@ if (NOT DEFINED ICONSDIR)
     endif (UNIX)
 endif (NOT DEFINED ICONSDIR)
 
+if (NOT DEFINED APPDATADIR)
+    if (UNIX)
+        set (APPDATADIR "${CMAKE_INSTALL_PREFIX}/share/appdata")
+    endif (UNIX)
+endif (NOT DEFINED APPDATADIR)
+
 # non-bundle builds has to use absolute paths
 if (NOT BUILD_BUNDLE AND
     NOT (IS_ABSOLUTE "${BINDIR}" AND IS_ABSOLUTE "${DATADIR}" AND IS_ABSOLUTE "${LIBDIR}" AND
@@ -352,6 +358,7 @@ if (WIN32)
 endif (WIN32)
 if (UNIX)
   install (FILES "${PROJECT_SOURCE_DIR}/doc/manpage/rawtherapee.1" DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man1")
+  install (FILES rawtherapee.appdata.xml DESTINATION "${APPDATADIR}")
 endif (UNIX)
 
 add_subdirectory (rtexif)
