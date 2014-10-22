@@ -4,11 +4,8 @@ for /f "tokens=*" %%a in ('hg parents --template "{latesttag}"') do @set hgLates
 for /f "tokens=*" %%a in ('hg parents --template "{latesttagdistance}"') do @set hgLatesttagdistance=%%a
 for /f "tokens=*" %%a in ('hg parents --template "{node|short}"') do @set hgChangeset=%%a
 
-echo set(HG_BRANCH %hgBranch%)  > ReleaseInfo.cmake
+echo set(HG_BRANCH %hgBranch%) > ReleaseInfo.cmake
 echo set(HG_VERSION %hgLatesttag%.%hgLatesttagdistance%) >> ReleaseInfo.cmake
 echo set(HG_CHANGESET %hgChangeset%) >> ReleaseInfo.cmake
 echo set(HG_TAGDISTANCE %hgLatesttagdistance%) >> ReleaseInfo.cmake
-echo if (CACHE_NAME_SUFFIX STREQUAL "") >> ReleaseInfo.cmake
-echo   set(CACHE_NAME_SUFFIX %hgLatesttag%) >> ReleaseInfo.cmake
-echo endif() >> ReleaseInfo.cmake
 
