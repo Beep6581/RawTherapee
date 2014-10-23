@@ -236,16 +236,16 @@ void Options::setDefaults () {
     saveAsDialogHeight = 680;
     savesParamsAtExit = true;
     saveFormat.format = "jpg";
-    saveFormat.jpegQuality = 90;
+    saveFormat.jpegQuality = 92;
     saveFormat.jpegSubSamp = 2;
     saveFormat.pngCompression = 6;
     saveFormat.pngBits = 8;
-    saveFormat.tiffBits = 8;
+    saveFormat.tiffBits = 16;
     saveFormat.tiffUncompressed = true;
     saveFormat.saveParams = true;
 
     saveFormatBatch.format = "jpg";
-    saveFormatBatch.jpegQuality = 90;
+    saveFormatBatch.jpegQuality = 92;
     saveFormatBatch.jpegSubSamp = 2;
     saveFormatBatch.pngCompression = 6;
     saveFormatBatch.pngBits = 8;
@@ -269,8 +269,8 @@ void Options::setDefaults () {
     dirBrowserHeight = 350;
     preferencesWidth = 800;
     preferencesHeight = 0;
-    toolPanelWidth = 390;
-    browserToolPanelWidth = 430;
+    toolPanelWidth = 400;
+    browserToolPanelWidth = 465;
     browserToolPanelHeight = 600;
     browserToolPanelOpened = true;;
     browserDirPanelOpened = true;

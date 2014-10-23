@@ -321,7 +321,7 @@ int processLineParams( int argc, char **argv )
 	bool skipIfNoSidecar=false;
 	bool useDefault=false;
 	unsigned int sideCarFilePos = 0;
-	int compression=100;
+	int compression=92;
 	int subsampling=3;
 	int bits=-1;
 	std::string outputType = "";
@@ -481,7 +481,7 @@ int processLineParams( int argc, char **argv )
         std::cout << "  -d               Use the default raw or non-raw " << pparamsExt << " file as set in" << std::endl;
         std::cout << "                   Preferences > Image Processing > Default Processing Profile" << std::endl;
         std::cout << "  -j[1-100]        Specify output to be JPEG (on by default). Optionally add" << std::endl;
-        std::cout << "                   compression 1-100 (default value: 100)." << std::endl;
+        std::cout << "                   compression 1-100 (default value: 92)." << std::endl;
         std::cout << "  -js<1-3>         Specify the JPEG subsampling parameter, where:" << std::endl;
         std::cout << "                   1 = Best compression:         2x2, 1x1, 1x1 (4:1:1) - default of the JPEG library" << std::endl;
         std::cout << "                   2 = Widely used normal ratio: 2x1, 1x1, 1x1 (4:2:2)" << std::endl;
