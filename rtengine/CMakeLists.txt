@@ -28,6 +28,8 @@ set (RTENGINESOURCEFILES safegtk.cc colortemp.cc curves.cc flatcurves.cc diagona
 include_directories (BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 
 add_library (rtengine ${RTENGINESOURCEFILES})
+add_dependencies (rtengine AboutFile)
+
 #It may be nice to store library version too
 IF (BUILD_SHARED_LIBS)
     install (TARGETS rtengine DESTINATION ${LIBDIR})

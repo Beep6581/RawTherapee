@@ -1,5 +1,5 @@
-add_library (rtexif rtexif.cc stdattribs.cc nikonattribs.cc canonattribs.cc
-    pentaxattribs.cc fujiattribs.cc sonyminoltaattribs.cc olympusattribs.cc kodakattribs.cc)
+add_library (rtexif rtexif.cc stdattribs.cc nikonattribs.cc canonattribs.cc pentaxattribs.cc fujiattribs.cc sonyminoltaattribs.cc olympusattribs.cc kodakattribs.cc)
+add_dependencies (rtexif AboutFile)
 
 IF (WIN32)
     set_target_properties (rtexif PROPERTIES COMPILE_FLAGS " -ffast-math -fexpensive-optimizations")
