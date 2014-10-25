@@ -219,7 +219,6 @@ float media(float *elements, int N)
 		static MyMutex FftwMutex;
 		MyMutex::MyLock lock(FftwMutex);
 		int hei,wid;
-		float LLum,AAum,BBum;
 		float** lumcalc;
 		
 		if(lldenoiseutili)	{	
@@ -241,6 +240,7 @@ float media(float *elements, int N)
 #endif		
 			for(int ii=0;ii<hei;ii++){
 				for(int jj=0;jj<wid;jj++){
+					float LLum,AAum,BBum;
 					float RL = calclum->r(ii,jj);
 					float GL = calclum->g(ii,jj);
 					float BL = calclum->b(ii,jj);
