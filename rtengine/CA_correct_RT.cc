@@ -615,9 +615,8 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 	//now prepare for CA correction pass
 	//first, fill border blocks of blockshift array
 	if(processpasstwo) {
-#pragma omp sections
+#pragma omp single
 {
-#pragma omp section
 		for (vblock=1; vblock<vblsz-1; vblock++) {//left and right sides
 			for (c=0; c<3; c+=2) {
 				for (i=0; i<2; i++) {
@@ -626,7 +625,6 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 				}
 			}
 		}
-#pragma omp section
 		for (hblock=0; hblock<hblsz; hblock++) {//top and bottom sides
 			for (c=0; c<3; c+=2) {
 				for (i=0; i<2; i++) {
@@ -736,7 +734,8 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 						processpasstwo = false;
 					}
 				}
-		}
+
+}
 	//fitparams[polyord*i+j] gives the coefficients of (vblock^i hblock^j) in a polynomial fit for i,j<=4
 	}
 	//end of initialization for CA correction pass
