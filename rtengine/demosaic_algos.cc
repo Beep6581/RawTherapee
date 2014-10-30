@@ -1239,9 +1239,9 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 		}
 	maxdata=65535.f;
 	if (applyGamma)
-		buffer = (char *)malloc(rr1*cc1*6*sizeof(float)+(int)(maxdata)*sizeof(float));
+		buffer = (char *)calloc(rr1*cc1*6*sizeof(float)+(int)(maxdata)*sizeof(float),1);
 	else
-		buffer = (char *)malloc(rr1*cc1*6*sizeof(float));
+		buffer = (char *)calloc(rr1*cc1*6*sizeof(float),1);
 
 	qix = (float (*)[6])buffer;
 {
