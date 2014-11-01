@@ -83,7 +83,7 @@ style "clearlooks-default" {
 	text[NORMAL]      = @rt_text_color
 	text[PRELIGHT]    = @rt_text_color
 	text[SELECTED]    = @rt_selected_fg_color
-	text[INSENSITIVE] = darker (@rt_bg_color)
+	text[INSENSITIVE] = lighter (@rt_bg_color)
 	text[ACTIVE]      = @rt_selected_fg_color
 
 	base[NORMAL]      = @rt_base_color
