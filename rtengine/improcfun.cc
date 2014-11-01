@@ -196,7 +196,9 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 
 #if !defined(__APPLE__) // No support for monitor profiles on OS X, all data is sRGB
     Glib::ustring monitorProfile=settings->monitorProfile;
+#if defined(WIN32)
     if (settings->autoMonitorProfile) monitorProfile=iccStore->defaultMonitorProfile;
+#endif
 
 	cmsHPROFILE monitor = iccStore->getProfile ("file:"+monitorProfile);
 	if (monitor) {
