@@ -533,8 +533,11 @@ Gtk::Widget* Preferences::getColorManagementPanel () {
     monProfile = Gtk::manage (new Gtk::FileChooserButton (M("PREFERENCES_MONITORICC"), Gtk::FILE_CHOOSER_ACTION_OPEN));
     Gtk::Label* mplabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_MONITORICC")+":", Gtk::ALIGN_LEFT));
 
+#if defined(WIN32)
+    // Auto-detection not implemented for Linux, see issue 851
 	cbAutoMonProfile = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_AUTOMONPROFILE")));
 	autoMonProfileConn  = cbAutoMonProfile->signal_toggled().connect (sigc::mem_fun(*this, &Preferences::autoMonProfileToggled));
+#endif
 
     Gtk::Table* colt = Gtk::manage (new Gtk::Table (3, 2));
     colt->attach (*intlab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
@@ -544,11 +547,15 @@ Gtk::Widget* Preferences::getColorManagementPanel () {
 #if !defined(__APPLE__) // monitor profile not supported on apple
     colt->attach (*mplabel, 0, 1, 2, 3, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colt->attach (*monProfile, 1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+#if defined(WIN32)
     colt->attach (*cbAutoMonProfile, 1, 2, 3, 4, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+#endif
 #endif
     mvbcm->pack_start (*colt, Gtk::PACK_SHRINK, 4);
 
+#if defined(WIN32)
     autoMonProfileToggled();
+#endif
     //Gtk::Frame* fdp = Gtk::manage (new Gtk::Frame (M("PREFERENCES_OUTPUTDEVICE")));
     Gtk::VBox* vbdp = Gtk::manage (new Gtk::VBox ());
     vbdp->set_border_width (4);
@@ -1196,7 +1203,9 @@ void Preferences::storePreferences () {
     moptions.CPBKeys = CPBKeyType(custProfBuilderLabelType->get_active_row_number());
 
     moptions.rtSettings.monitorProfile      = monProfile->get_filename ();
+#if defined(WIN32)
     moptions.rtSettings.autoMonitorProfile  = cbAutoMonProfile->get_active ();
+#endif
     moptions.rtSettings.iccDirectory        = iccDir->get_filename ();
     moptions.rtSettings.colorimetricIntent  = intent->get_active_row_number ();
     moptions.rtSettings.viewingdevice       = view->get_active_row_number ();
@@ -1290,7 +1299,9 @@ void Preferences::fillPreferences () {
         monProfile->set_filename (moptions.rtSettings.monitorProfile);
     if (moptions.rtSettings.monitorProfile.empty())
         monProfile->set_current_folder (moptions.rtSettings.iccDirectory);
+#if defined(WIN32)
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
+#endif
 #endif
 
     if (Glib::file_test (moptions.rtSettings.iccDirectory, Glib::FILE_TEST_IS_DIR)) 
@@ -1453,9 +1464,11 @@ void Preferences::savePressed () {
 }
 */
 
+#if defined(WIN32)
 void Preferences::autoMonProfileToggled () {
 	monProfile->set_sensitive(!cbAutoMonProfile->get_active());
 }
+#endif
 /*
 void Preferences::autocielabToggled () {
 //	cbAutocielab->set_sensitive(cbAutocielab->get_active());
