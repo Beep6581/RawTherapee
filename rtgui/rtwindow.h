@@ -53,6 +53,9 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         bool on_expose_event_epanel(GdkEventExpose* event);
         bool on_expose_event_fpanel(GdkEventExpose* event);
         bool splashClosed(GdkEventAny* event);
+        bool isEditorPanel(Widget* panel);
+        bool isEditorPanel(guint pageNum);
+
         Glib::ustring versionStr;
 #if defined(__APPLE__)
         GtkosxApplication *osxApp;

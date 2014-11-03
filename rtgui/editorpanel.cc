@@ -1099,6 +1099,7 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Gl
 
         saveimgas->set_sensitive(true);
         sendtogimp->set_sensitive(true);
+        isProcessing = false;
 
 	}
 	rtengine::ImageSource* imgsrc = isrc->getImageSource ();
@@ -1135,6 +1136,8 @@ bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16*
     setProgressState(false);
 
 	delete pc;
+	SoundManager::playSoundAsync(options.sndBatchQueueDone);
+	isProcessing = false;
     return false;
 }
 
@@ -1215,6 +1218,7 @@ void EditorPanel::saveAsPressed () {
 			}
 
 			if (fnameOK) {
+				isProcessing = true;
 				// save image
 				rtengine::procparams::ProcParams pparams;
 				ipc->getParams (&pparams);

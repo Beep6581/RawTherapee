@@ -361,29 +361,31 @@ bool RTWindow::on_window_state_event(GdkEventWindowState* event) {
 }
 
 void RTWindow::on_mainNB_switch_page(GtkNotebookPage* page, guint page_num) {
-    if (page_num > 1) {
-        if (isSingleTabMode()) MoveFileBrowserToEditor();
+	if(!on_delete_has_run) {
+		if(isEditorPanel(page_num)) {
+			if (isSingleTabMode() && epanel)
+				MoveFileBrowserToEditor();
+			
+			EditorPanel *ep = static_cast<EditorPanel*>(mainNB->get_nth_page(page_num));
+			ep->setAspect();
+			
+			if (!isSingleTabMode()){
+				if (filesEdited.size()>0){
+					set_title_decorated(ep->getFileName());
+				}
+			}
+		} else {
+			// in single tab mode with command line filename epanel does not exist yet
+			if (isSingleTabMode() && epanel) {
+				// Save profile on leaving the editor panel
+				epanel->saveProfile();
 
-        EditorPanel *ep = static_cast<EditorPanel*>(mainNB->get_nth_page(page_num));
-        ep->setAspect();
-		
-        if (!isSingleTabMode() && mainNB->get_current_page ()>2){
-        	if (mainNB->get_n_pages()>2 && filesEdited.size()>0){
-			set_title_decorated(ep->getFileName());
-        	}
+				// Moving the FileBrowser only if the user has switched to the FileBrowser tab
+				if (mainNB->get_nth_page(page_num)==fpanel)
+					MoveFileBrowserToMain();
+			}
 		}
-
-    } else {
-        // in single tab mode with command line filename epanel does not exist yet
-        if (isSingleTabMode() && epanel) {
-            // Save profile on leaving the editor panel
-            epanel->saveProfile();
-
-            // Moving the FileBrowser only if the user has switched to the FileBrowser tab
-            if (page_num==0)
-                MoveFileBrowserToMain();
-        }
-    }
+	}
 }
 
 void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
@@ -440,11 +442,9 @@ void RTWindow::remEditorPanel (EditorPanel* ep) {
 
 	    mainNB->remove_page (*ep);
 
-	    if (mainNB->get_current_page () == mainNB->page_num (*bpanel) || mainNB->get_current_page () == mainNB->page_num (*fpanel)){
-		    mainNB->set_current_page (mainNB->page_num (*fpanel));
+	    if (!isEditorPanel(mainNB->get_current_page())){
 		    set_title_decorated("");
-	    }
-	    else{
+	    } else {
 		    EditorPanel* ep = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));
 	        set_title_decorated(ep->getFileName());
 	    }
@@ -569,15 +569,14 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
     else {
         int pageCount=mainNB->get_n_pages();
 
-        // First and second are file browser and batch queue
-        if (pageCount>2) {
-            for (int i=2;i<pageCount;i++) 
-            isProcessing |= (static_cast<EditorPanel*>(mainNB->get_nth_page(i)))->getIsProcessing();
-        }
+        for (int i=0;i<pageCount && !isProcessing;i++) {
+			if(isEditorPanel(i))
+				isProcessing |= (static_cast<EditorPanel*>(mainNB->get_nth_page(i)))->getIsProcessing();
+		}
     }
 
-    if (isProcessing) return true;
-
+    if (isProcessing)
+		return true;
 
     if( fpanel )
        fpanel->saveOptions ();
@@ -773,4 +772,12 @@ void RTWindow::CloseOpenEditors(){
 		remEditorPanel((*itr).second);
 		itr = epanels.begin();
 	}
+}
+
+bool RTWindow::isEditorPanel(Widget* panel) {
+	return (panel != bpanel) && (panel != fpanel);
+}
+
+bool RTWindow::isEditorPanel(guint pageNum) {
+	return isEditorPanel(mainNB->get_nth_page(pageNum));
 }
