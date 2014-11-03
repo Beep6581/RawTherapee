@@ -274,6 +274,7 @@ void Options::setDefaults () {
     browserToolPanelHeight = 600;
     browserToolPanelOpened = true;;
     browserDirPanelOpened = true;
+    editorFilmStripOpened = true;
     historyPanelWidth = 330;
     lastScale = 5;
     panAccelFactor = 5;
@@ -291,7 +292,7 @@ void Options::setDefaults () {
     thumbSize = 240;
     thumbSizeTab = 180;
     thumbSizeQueue = 160;
-    sameThumbSize = false;				// preferring speed of switch between file browser and single editor tab
+    sameThumbSize = true;				// preferring speed of switch between file browser and single editor tab
     showHistory = true;
     showFilePanelState = 0;				// Not used anymore ; was the thumb strip state
     showInfo = true;
@@ -340,8 +341,10 @@ void Options::setDefaults () {
     thumbnailZoomRatios.push_back (0.8);
     thumbnailZoomRatios.push_back (1.0);
     overlayedFileNames = false;
+    filmStripOverlayedFileNames = false;
     internalThumbIfUntouched = true; 	// if TRUE, only fast, internal preview images are taken if the image is not edited yet
     showFileNames = true;
+    filmStripShowFileNames = false;
     tabbedUI = false;
     mainNBVertical = true;
     multiDisplayMode = 0;
@@ -359,6 +362,7 @@ void Options::setDefaults () {
     hideTPVScrollbar = false;
     UseIconNoText = true;
     whiteBalanceSpotSize = 8;
+    showFilmStripToolBar = false;
     menuGroupRank = true;
     menuGroupLabel = true;
     menuGroupFileOperations = true;
@@ -691,14 +695,16 @@ if (keyFile.has_group ("File Browser")) {
     if (keyFile.has_key ("File Browser", "RenameTemplates"))    renameTemplates    = keyFile.get_string_list ("File Browser", "RenameTemplates");
     if (keyFile.has_key ("File Browser", "RenameUseTemplates")) renameUseTemplates = keyFile.get_boolean ("File Browser", "RenameUseTemplates");
     if (keyFile.has_key ("File Browser", "ThumbnailZoomRatios"))thumbnailZoomRatios= keyFile.get_double_list ("File Browser", "ThumbnailZoomRatios");
-    if (keyFile.has_key ("File Browser", "OverlayedFileNames")) overlayedFileNames = keyFile.get_boolean ("File Browser", "OverlayedFileNames");
-    if (keyFile.has_key ("File Browser", "ShowFileNames"))      showFileNames = keyFile.get_boolean ("File Browser", "ShowFileNames");
-    if (keyFile.has_key ("File Browser", "InternalThumbIfUntouched")) internalThumbIfUntouched = keyFile.get_boolean ("File Browser", "InternalThumbIfUntouched");
-    if (keyFile.has_key ("File Browser", "menuGroupRank")) menuGroupRank = keyFile.get_boolean ("File Browser", "menuGroupRank");
-    if (keyFile.has_key ("File Browser", "menuGroupLabel")) menuGroupLabel = keyFile.get_boolean ("File Browser", "menuGroupLabel");
-    if (keyFile.has_key ("File Browser", "menuGroupFileOperations")) menuGroupFileOperations = keyFile.get_boolean ("File Browser", "menuGroupFileOperations");
-    if (keyFile.has_key ("File Browser", "menuGroupProfileOperations")) menuGroupProfileOperations = keyFile.get_boolean ("File Browser", "menuGroupProfileOperations");
-    if (keyFile.has_key ("File Browser", "menuGroupExtProg")) menuGroupExtProg = keyFile.get_boolean ("File Browser", "menuGroupExtProg");
+    if (keyFile.has_key ("File Browser", "OverlayedFileNames"))          overlayedFileNames          = keyFile.get_boolean ("File Browser", "OverlayedFileNames");
+    if (keyFile.has_key ("File Browser", "FilmStripOverlayedFileNames")) filmStripOverlayedFileNames = keyFile.get_boolean ("File Browser", "FilmStripOverlayedFileNames");
+    if (keyFile.has_key ("File Browser", "ShowFileNames"))               showFileNames               = keyFile.get_boolean ("File Browser", "ShowFileNames");
+    if (keyFile.has_key ("File Browser", "FilmStripShowFileNames"))      filmStripShowFileNames      = keyFile.get_boolean ("File Browser", "FilmStripShowFileNames");
+    if (keyFile.has_key ("File Browser", "InternalThumbIfUntouched"))    internalThumbIfUntouched    = keyFile.get_boolean ("File Browser", "InternalThumbIfUntouched");
+    if (keyFile.has_key ("File Browser", "menuGroupRank"))               menuGroupRank               = keyFile.get_boolean ("File Browser", "menuGroupRank");
+    if (keyFile.has_key ("File Browser", "menuGroupLabel"))              menuGroupLabel              = keyFile.get_boolean ("File Browser", "menuGroupLabel");
+    if (keyFile.has_key ("File Browser", "menuGroupFileOperations"))     menuGroupFileOperations     = keyFile.get_boolean ("File Browser", "menuGroupFileOperations");
+    if (keyFile.has_key ("File Browser", "menuGroupProfileOperations"))  menuGroupProfileOperations  = keyFile.get_boolean ("File Browser", "menuGroupProfileOperations");
+    if (keyFile.has_key ("File Browser", "menuGroupExtProg"))            menuGroupExtProg            = keyFile.get_boolean ("File Browser", "menuGroupExtProg");
 }
 
 if (keyFile.has_group ("Clipping Indication")) { 
@@ -731,6 +737,7 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "BrowserToolPanelHeight")) browserToolPanelHeight = keyFile.get_integer ("GUI", "BrowserToolPanelHeight");
     if (keyFile.has_key ("GUI", "BrowserToolPanelOpened")) browserToolPanelOpened = keyFile.get_boolean ("GUI", "BrowserToolPanelOpened");
     if (keyFile.has_key ("GUI", "BrowserDirPanelOpened"))  browserDirPanelOpened  = keyFile.get_boolean ("GUI", "BrowserDirPanelOpened");
+    if (keyFile.has_key ("GUI", "EditorFilmStripOpened"))  editorFilmStripOpened  = keyFile.get_boolean ("GUI", "EditorFilmStripOpened");
     if (keyFile.has_key ("GUI", "HistoryPanelWidth"))   historyPanelWidth = keyFile.get_integer ("GUI", "HistoryPanelWidth");
     if (keyFile.has_key ("GUI", "LastPreviewScale"))    lastScale         = keyFile.get_integer ("GUI", "LastPreviewScale");
     if (keyFile.has_key ("GUI", "PanAccelFactor"))      panAccelFactor    = keyFile.get_integer ("GUI", "PanAccelFactor");
@@ -751,11 +758,12 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "HistogramPosition"))   histogramPosition   = keyFile.get_integer ("GUI", "HistogramPosition");
     if (keyFile.has_key ("GUI", "HistogramBar"))        histogramBar        = keyFile.get_boolean ("GUI", "HistogramBar");
     if (keyFile.has_key ("GUI", "HistogramFullMode"))   histogramFullMode   = keyFile.get_boolean ("GUI", "HistogramFullMode");
-    if (keyFile.has_key ("GUI", "ShowProfileSelector")) showProfileSelector = keyFile.get_boolean ("GUI", "ShowProfileSelector");
+    if (keyFile.has_key ("GUI", "ShowFilmStripToolBar"))        showFilmStripToolBar        = keyFile.get_boolean ("GUI", "ShowFilmStripToolBar");
+    if (keyFile.has_key ("GUI", "ShowProfileSelector"))         showProfileSelector         = keyFile.get_boolean ("GUI", "ShowProfileSelector");
     if (keyFile.has_key ("GUI", "FileBrowserToolbarSingleRow")) FileBrowserToolbarSingleRow = keyFile.get_boolean ("GUI", "FileBrowserToolbarSingleRow");
-    if (keyFile.has_key ("GUI", "HideTPVScrollbar"))    hideTPVScrollbar    = keyFile.get_boolean ("GUI", "HideTPVScrollbar");
-    if (keyFile.has_key ("GUI", "UseIconNoText"))    UseIconNoText    = keyFile.get_boolean ("GUI", "UseIconNoText");
-    if( keyFile.has_key ("GUI", "HistogramWorking"))    rtSettings.HistogramWorking          = keyFile.get_boolean("GUI", "HistogramWorking");
+    if (keyFile.has_key ("GUI", "HideTPVScrollbar"))            hideTPVScrollbar            = keyFile.get_boolean ("GUI", "HideTPVScrollbar");
+    if (keyFile.has_key ("GUI", "UseIconNoText"))               UseIconNoText               = keyFile.get_boolean ("GUI", "UseIconNoText");
+    if( keyFile.has_key ("GUI", "HistogramWorking"))            rtSettings.HistogramWorking = keyFile.get_boolean("GUI", "HistogramWorking");
 	
 }
 
@@ -963,7 +971,9 @@ int Options::saveToFile (Glib::ustring fname) {
     Glib::ArrayHandle<double> ptzoom = thumbnailZoomRatios;
     keyFile.set_double_list ("File Browser", "ThumbnailZoomRatios", ptzoom);
     keyFile.set_boolean ("File Browser", "OverlayedFileNames", overlayedFileNames);
+    keyFile.set_boolean ("File Browser", "FilmStripOverlayedFileNames", filmStripOverlayedFileNames);
     keyFile.set_boolean ("File Browser", "ShowFileNames", showFileNames );
+    keyFile.set_boolean ("File Browser", "FilmStripShowFileNames", filmStripShowFileNames );
     keyFile.set_boolean ("File Browser", "InternalThumbIfUntouched", internalThumbIfUntouched );
     keyFile.set_boolean ("File Browser", "menuGroupRank", menuGroupRank);
     keyFile.set_boolean ("File Browser", "menuGroupLabel", menuGroupLabel);
@@ -1035,6 +1045,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("GUI", "BrowserToolPanelWidth", browserToolPanelWidth);
     keyFile.set_integer ("GUI", "BrowserToolPanelHeight", browserToolPanelHeight);
     keyFile.set_boolean ("GUI", "BrowserToolPanelOpened", browserToolPanelOpened);
+    keyFile.set_boolean ("GUI", "EditorFilmStripOpened", editorFilmStripOpened);
     keyFile.set_boolean ("GUI", "BrowserDirPanelOpened", browserDirPanelOpened);
     keyFile.set_integer ("GUI", "HistoryPanelWidth", historyPanelWidth);
     keyFile.set_integer ("GUI", "LastPreviewScale", lastScale);
@@ -1056,6 +1067,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("GUI", "HistogramPosition", histogramPosition);
     keyFile.set_boolean ("GUI", "HistogramBar", histogramBar);
     keyFile.set_boolean ("GUI", "HistogramFullMode", histogramFullMode);
+    keyFile.set_boolean ("GUI", "ShowFilmStripToolBar", showFilmStripToolBar);
     keyFile.set_boolean ("GUI", "ShowProfileSelector", showProfileSelector);
     keyFile.set_boolean ("GUI", "FileBrowserToolbarSingleRow", FileBrowserToolbarSingleRow);
     keyFile.set_boolean ("GUI", "HideTPVScrollbar", hideTPVScrollbar);

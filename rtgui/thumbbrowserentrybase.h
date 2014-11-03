@@ -27,6 +27,13 @@
 class ThumbBrowserBase;
 class ThumbBrowserEntryBase {
 
+public:
+    enum eWithFilename {
+        WFNAME_NONE,
+        WFNAME_REDUCED,
+        WFNAME_FULL
+    };
+
 protected:
     int fnlabw, fnlabh; // dimensions of the filename label
     int dtlabw, dtlabh; // dimensions of the date/time label 
@@ -96,6 +103,7 @@ protected:
     bool edited;
     bool recentlysaved;
     bool updatepriority;
+    eWithFilename withFilename;
   
     ThumbBrowserEntryBase   (const Glib::ustring& fname);   
     virtual ~ThumbBrowserEntryBase  ();

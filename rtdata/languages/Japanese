@@ -191,7 +191,7 @@ FILEBROWSER_SHOWRANK4HINT;４つ星ランクを表示\nショートカット: <b
 FILEBROWSER_SHOWRANK5HINT;５つ星ランクを表示\nショートカット: <b>5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;最近保存された画像を表示\nショートカット:  <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;最近保存されていない画像を表示\nショートカット: <b>Alt-6</b>
-FILEBROWSER_SHOWTRASHHINT;ゴミ箱の内容を表示\nショートカット: <b>T</b>
+FILEBROWSER_SHOWTRASHHINT;ゴミ箱の内容を表示\nショートカット: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;カラー・ラベルのない画像を表示\nショートカット: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;ランクなし画像を表示\nショートカット:  <b>0</b>
 FILEBROWSER_STARTPROCESSINGHINT;処理開始/キュー画像の保存

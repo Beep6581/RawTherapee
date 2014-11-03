@@ -53,6 +53,14 @@ class ThumbBrowserBase  :  public Gtk::VBox {
             bool isDirty  () { return dirty; }
     };
 
+  public:
+
+    enum eLocation {
+        THLOC_BATCHQUEUE,
+        THLOC_FILEBROWSER,
+        THLOC_EDITOR
+    } location;
+
   protected:
     virtual int getMaxThumbnailHeight() const { return options.maxThumbnailHeight; }  // Differs between batch and file
     virtual void saveThumbnailHeight (int height)=0;
@@ -63,8 +71,6 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     Gtk::VScrollbar vscroll;
     
     int inW, inH;
-
-    bool inTabMode;  // Tab mode has e.g. different preview heights
 
     void resizeThumbnailArea (int w, int h);
     void internalAreaResized (Gtk::Allocation& req);
@@ -82,6 +88,8 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     void selectNext (int distance, bool enlarge);
     void selectFirst (bool enlarge);
     void selectLast (bool enlarge);
+
+    eLocation getLocation() { return location; }
 
   protected:
 

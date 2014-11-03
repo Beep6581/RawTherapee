@@ -146,6 +146,8 @@ class EditorPanel : public Gtk::VBox,
         void setParent (RTWindow* p) { parent = p; }
         void writeOptions();
 
+        void showTopPanel(bool show);
+
         // progresslistener interface
         void setProgress (double p);
         void setProgressStr (Glib::ustring str);

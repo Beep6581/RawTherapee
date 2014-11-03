@@ -704,6 +704,7 @@ void RTWindow::MoveFileBrowserToEditor()
         FileCatalog *fCatalog = fpanel->fileCatalog;
         fpanel->ribbonPane->remove(*fCatalog);
         epanel->catalogPane->add(*fCatalog);
+        epanel->showTopPanel(options.editorFilmStripOpened);
         fCatalog->enableTabMode(true);
         fCatalog->refreshHeight();
         fCatalog->tbLeftPanel_1_visible(false);

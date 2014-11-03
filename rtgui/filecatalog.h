@@ -58,8 +58,8 @@ class FilePanel;
  *   - monitoring the directory (for any change)
  */
 class FileCatalog : public Gtk::VBox,
-                    public DirSelectionListener, 
-                    public PreviewLoaderListener, 
+                    public DirSelectionListener,
+                    public PreviewLoaderListener,
 					public FilterPanelListener,
                     public FileBrowserListener,
                     public ExportPanelListener
@@ -249,6 +249,9 @@ class FileCatalog : public Gtk::VBox,
                 void toggleSidePanels();
                 void toggleLeftPanel();
                 void toggleRightPanel();
+
+                void showToolBar();
+                void hideToolBar();
 
 #ifndef _WIN32
                 void on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, bool internal);

@@ -418,7 +418,10 @@ bool FileCatalog::capture_event(GdkEventButton* event){
 
 void FileCatalog::exifInfoButtonToggled()
 {
-   options.showFileNames =  exifInfo->get_active();
+   if (inTabMode)
+       options.filmStripShowFileNames =  exifInfo->get_active();
+   else
+       options.showFileNames =  exifInfo->get_active();
    fileBrowser->refreshThumbImages ();
 }
 
@@ -527,6 +530,19 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
 void FileCatalog::enableTabMode(bool enable) {
     inTabMode = enable;
 
+    if (enable) {
+        if (options.showFilmStripToolBar)
+            showToolBar();
+        else
+            hideToolBar();
+        exifInfo->set_active( options.filmStripShowFileNames );
+
+    }
+    else {
+        buttonBar->show();
+        hbToolBar1->show();
+        exifInfo->set_active( options.showFileNames );
+    }
     fileBrowser->enableTabMode(inTabMode);
 
     redrawAll();
@@ -691,10 +707,16 @@ void FileCatalog::refreshThumbImages () {
 }
 
 void FileCatalog::refreshHeight () {
-    int newHeight=fileBrowser->getEffectiveHeight() + buttonBar->get_height();
-    if (!options.FileBrowserToolbarSingleRow) {
-        newHeight += hbToolBar1->get_height();
+    int newHeight = fileBrowser->getEffectiveHeight();
+    if (newHeight < 5) {  // This may occure if there's no thumbnail.
+        int w, h;
+        get_size_request(w, h);
+        newHeight = h;
     }
+    if (hbToolBar1->is_visible() && !options.FileBrowserToolbarSingleRow)
+        newHeight += hbToolBar1->get_height();
+    if (buttonBar->is_visible())
+        newHeight += buttonBar->get_height();
     set_size_request(0, newHeight+2); // HOMBRE: yeah, +2, there's always 2 pixels missing... sorry for this dirty hack O:)
 }
 
@@ -1942,10 +1964,6 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
 			case GDK_D:
 				categoryButtonToggled(bFilterClear,false);
 				return true;
-			case GDK_t:
-			case GDK_T:
-				categoryButtonToggled(bTrash,false);
-				return true;
         }
     }
 
@@ -1973,7 +1991,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
                 return true;
         }
     }
-    if (ctrl && !alt) { 
+    if (ctrl && !alt) {
         switch (event->keyval) {
             case GDK_o:
                 BrowsePath->select_region(0, BrowsePath->get_text_length());
@@ -1983,6 +2001,40 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
                 Query->select_region(0, Query->get_text_length());
                 Query->grab_focus();
                 return true;
+            case GDK_t:
+            case GDK_T:
+                modifierKey = 0; // HOMBRE: yet another hack.... otherwise the shortcut won't work
+                categoryButtonToggled(bTrash,false);
+                return true;
+        }
+    }
+    if (!ctrl && !alt && shift) {
+        switch (event->keyval) {
+            case GDK_t:
+            case GDK_T:
+                if (inTabMode) {
+                    if (options.showFilmStripToolBar)
+                        hideToolBar();
+                    else
+                        showToolBar();
+                    options.showFilmStripToolBar = !options.showFilmStripToolBar;
+                }
+                return true;
+        }
+    }
+    if (!ctrl && !alt && !shift) {
+        switch (event->keyval) {
+            case GDK_t:
+            case GDK_T:
+                if (inTabMode) {
+                    if (options.showFilmStripToolBar)
+                        hideToolBar();
+                    else
+                        showToolBar();
+                    options.showFilmStripToolBar = !options.showFilmStripToolBar;
+                }
+                refreshHeight();
+                return true;
         }
     }
 
@@ -1990,4 +2042,16 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
         return true;
 
     return false;
+}
+
+void FileCatalog::showToolBar() {
+    if (!options.FileBrowserToolbarSingleRow)
+        hbToolBar1->show();
+    buttonBar->show();
+}
+
+void FileCatalog::hideToolBar() {
+    if (!options.FileBrowserToolbarSingleRow)
+        hbToolBar1->hide();
+    buttonBar->hide();
 }

@@ -932,7 +932,10 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     Gtk::HBox* hbro1 = Gtk::manage( new Gtk::HBox () );
     Gtk::HBox* hbro0 = Gtk::manage( new Gtk::HBox () );
     overlayedFileNames = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_OVERLAY_FILENAMES")) );
-	ckbInternalThumbIfUntouched = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_INTERNALTHUMBIFUNTOUCHED")));
+    filmStripOverlayedFileNames = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP")) );
+    sameThumbSize = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT")) );
+    sameThumbSize->set_tooltip_text(M("PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT"));
+    ckbInternalThumbIfUntouched = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_INTERNALTHUMBIFUNTOUCHED")));
 
     vbro->set_border_width (4);
     vbro->pack_start (*showDateTime, Gtk::PACK_SHRINK, 0);
@@ -948,7 +951,9 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     hbro1->pack_start (*showExpComp, Gtk::PACK_SHRINK, 4);
     vbro->pack_start (*hbro1, Gtk::PACK_SHRINK, 0);
     vbro->pack_start (*overlayedFileNames, Gtk::PACK_SHRINK, 0);
-	vbro->pack_start (*ckbInternalThumbIfUntouched, Gtk::PACK_SHRINK, 0);
+    vbro->pack_start (*filmStripOverlayedFileNames, Gtk::PACK_SHRINK, 0);
+    vbro->pack_start (*sameThumbSize, Gtk::PACK_SHRINK, 0);
+    vbro->pack_start (*ckbInternalThumbIfUntouched, Gtk::PACK_SHRINK, 0);
 
     fro->add (*vbro);  
 
@@ -1236,6 +1241,8 @@ void Preferences::storePreferences () {
     moptions.maxThumbnailHeight = (int)maxThumbSize->get_value ();
     moptions.maxCacheEntries = (int)maxCacheEntries->get_value ();
     moptions.overlayedFileNames = overlayedFileNames->get_active ();
+    moptions.filmStripOverlayedFileNames = filmStripOverlayedFileNames->get_active();
+    moptions.sameThumbSize = sameThumbSize->get_active();
     moptions.internalThumbIfUntouched = ckbInternalThumbIfUntouched->get_active ();
     
     moptions.saveParamsFile = saveParamsFile->get_active ();
@@ -1381,6 +1388,8 @@ void Preferences::fillPreferences () {
     maxThumbSize->set_value (moptions.maxThumbnailHeight);
     maxCacheEntries->set_value (moptions.maxCacheEntries);
     overlayedFileNames->set_active (moptions.overlayedFileNames);
+    filmStripOverlayedFileNames->set_active(moptions.filmStripOverlayedFileNames);
+    sameThumbSize->set_active(moptions.sameThumbSize);
     ckbInternalThumbIfUntouched->set_active(moptions.internalThumbIfUntouched);
     
     saveParamsFile->set_active (moptions.saveParamsFile);

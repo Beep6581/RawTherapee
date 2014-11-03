@@ -230,7 +230,7 @@ FILEBROWSER_SHOWRANK4HINT;Mostrar imágenes con 4 estrellas.\nAtajo: <b>4</b>
 FILEBROWSER_SHOWRANK5HINT;Mostrar imágenes con 5 estrellas.\nAtajo: <b>5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Mostrar imágenes guardadas recientemente.\nAtajo: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Mostrar imágenes no guardadas recientemente.\nAtajo: <b>Alt-6</b>
-FILEBROWSER_SHOWTRASHHINT;Mostrar el contenido de la papelera.\nAtajo: <b>t</b>
+FILEBROWSER_SHOWTRASHHINT;Mostrar el contenido de la papelera.\nAtajo: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Mostrar imágenes sin etiqueta de color.\nAtajo: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Mostrar imágenes sin rango.\nAtajo: <b>0</b>
 FILEBROWSER_STARTPROCESSINGHINT;Iniciar el procesamiento de imágenes en la cola

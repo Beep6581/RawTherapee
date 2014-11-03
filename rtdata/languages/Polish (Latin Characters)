@@ -178,7 +178,7 @@ FILEBROWSER_SHOWRANK4HINT;Pokazuje zdjecia ocenione na 4 gwiazdki.\nSkrot: <b>4<
 FILEBROWSER_SHOWRANK5HINT;Pokazuje zdjecia ocenione na 5 gwiazdek.\nSkrot: <b>5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Pokazuje zapisane zdjecia.\nSkrot: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Pokazuje niezapisane zdjecia.\nSkrot: <b>Alt-6</b>
-FILEBROWSER_SHOWTRASHHINT;Pokazuje zawartosc kosza.\nSkrot: <b>t</b>
+FILEBROWSER_SHOWTRASHHINT;Pokazuje zawartosc kosza.\nSkrot: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Pokazuje zdjecia bez kolorowej etykiety.\nSkrot: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Pokazuje nieocenione zdjecia.\nSkrot: <b>0</b>
 FILEBROWSER_STARTPROCESSINGHINT;Rozpoczyna przetwarzanie/zapisywanie plikow z kolejki.

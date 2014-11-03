@@ -109,6 +109,7 @@ class Options {
     int browserToolPanelHeight;
     bool browserToolPanelOpened;
     bool browserDirPanelOpened;
+    bool editorFilmStripOpened;
     int historyPanelWidth;
     Glib::ustring font;
     int windowWidth;
@@ -187,7 +188,9 @@ class Options {
 
     std::vector<double> thumbnailZoomRatios;
     bool overlayedFileNames;
+    bool filmStripOverlayedFileNames;
     bool showFileNames;
+    bool filmStripShowFileNames;
     bool tabbedUI;
     int previewSizeTab,previewSizeBrowser;
     int multiDisplayMode;  // 0=none, 1=Edit panels on other display
@@ -209,6 +212,8 @@ class Options {
     bool hideTPVScrollbar;
     bool UseIconNoText;
     int whiteBalanceSpotSize;
+
+    bool showFilmStripToolBar;
 
     Glib::ustring clutsDir;
 

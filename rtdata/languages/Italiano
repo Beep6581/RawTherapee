@@ -174,7 +174,7 @@ FILEBROWSER_SHOWRANK4HINT;Mostra le immagini classificate con 4 stelle.\nScorcia
 FILEBROWSER_SHOWRANK5HINT;Mostra le immagini classificate con 5 stelle.\nScorciatoia: <b>5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Mostra le immagini salvate.\nScorciatoia: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Mostra le immagini non salvate.\nScorciatoia: <b>Alt-6</b>
-FILEBROWSER_SHOWTRASHHINT;Mostra il contenuto del cestino.\nScorciatoia: <b>t</b>
+FILEBROWSER_SHOWTRASHHINT;Mostra il contenuto del cestino.\nScorciatoia: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Mostra le immagini senza etichetta colorata.\nScorciatoia: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Mostra le immagini non classificate.\nScorciatoia: <b>0</b>
 FILEBROWSER_STARTPROCESSINGHINT;Inizia a sviluppare le immagini nella Coda.

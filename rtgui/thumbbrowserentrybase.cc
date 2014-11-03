@@ -29,7 +29,7 @@ ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname)
       parent(NULL), bbSelected(false), bbFramed(false), bbPreview(NULL),
       thumbnail(NULL), filename(fname), shortname(dispname), exifline(""), datetimeline(""),
       selected(false), drawable(false), filtered(false), framed(false), processing(false), italicstyle(false),
-      edited(false), recentlysaved(false), updatepriority(false) {}
+      edited(false), recentlysaved(false), updatepriority(false), withFilename(WFNAME_NONE) {}
 
 ThumbBrowserEntryBase::~ThumbBrowserEntryBase () {
 
@@ -109,7 +109,8 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
     int istartx = prex;
     int istarty = prey;
 
-    if (options.showFileNames && options.overlayedFileNames) {
+    if ((parent->getLocation()!=ThumbBrowserBase::THLOC_EDITOR && options.showFileNames && options.overlayedFileNames)
+      || (parent->getLocation()==ThumbBrowserBase::THLOC_EDITOR && options.filmStripShowFileNames && options.filmStripOverlayedFileNames)) {
         cr->begin_new_path ();
         cr->rectangle (istartx, istarty, prew, fnlabh+dtlabh+exlabh+2*iofs_y);
         if ((texts.get_red_p()+texts.get_green_p()+texts.get_blue_p())/3 > 0.5)
@@ -123,18 +124,27 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
     istarty += iofs_y;
     
     if (!bbIcons.empty()) {
-        int iwidth = igap;
+        int iwidth = 0;
         int iheight = 0;
         for (size_t i=0; i<bbIcons.size(); i++) {
-            iwidth += bbIcons[i]->get_width() + igap;
+            iwidth += bbIcons[i]->get_width() + (i>0 ? igap : 0);
             if (bbIcons[i]->get_height() > iheight)
                 iheight = bbIcons[i]->get_height();
         }
-        iheight += 2*igap;
-        if (!options.overlayedFileNames) {
+        if ((parent->getLocation()!=ThumbBrowserBase::THLOC_EDITOR && (!options.showFileNames || !options.overlayedFileNames))
+          || (parent->getLocation()==ThumbBrowserBase::THLOC_EDITOR && (!options.filmStripShowFileNames || !options.filmStripOverlayedFileNames))) {
+            // Draw the transparent black background around icons
             cr->begin_new_path ();
-            cr->rectangle (istartx-igap, istarty-igap, iwidth, iheight);
-            cr->set_source_rgba (0, 0, 0, 0.75);
+            cr->move_to(istartx-igap, istarty);
+            cr->rel_line_to(igap, -igap);
+            cr->rel_line_to(iwidth, 0);
+            cr->rel_line_to(igap, igap);
+            cr->rel_line_to(0, iheight);
+            cr->rel_line_to(-igap, igap);
+            cr->rel_line_to(-iwidth, 0);
+            cr->rel_line_to(-igap, -igap);
+            cr->rel_line_to(0, -iheight);
+            cr->set_source_rgba (0, 0, 0, 0.6);
             cr->fill ();
         }
         for (size_t i=0; i<bbIcons.size(); i++) {
@@ -143,9 +153,14 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
         }
     }
 
-    if( options.showFileNames ){
+	if ( ( (parent->getLocation()!=ThumbBrowserBase::THLOC_EDITOR && options.showFileNames)
+		|| (parent->getLocation()==ThumbBrowserBase::THLOC_EDITOR && options.filmStripShowFileNames))
+		&& withFilename>WFNAME_NONE)
+	{
 		int textposx_fn, textposx_ex, textposx_dt, textposy, textw;
-		if (!options.overlayedFileNames) {
+		if (! ((parent->getLocation()!=ThumbBrowserBase::THLOC_EDITOR && options.overlayedFileNames)
+			|| (parent->getLocation()==ThumbBrowserBase::THLOC_EDITOR && options.filmStripOverlayedFileNames)) )
+		{
 			textposx_fn = exp_width/2 - fnlabw/2;
 			if (textposx_fn<0) textposx_fn = 0;
 			textposx_ex = exp_width/2 - exlabw/2;
@@ -184,24 +199,26 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
 		fontd.set_style (Pango::STYLE_NORMAL);
 		context->set_font_description (fontd);
 
-		// draw date/time label
-		int tpos = fnlabh;
-		if (options.fbShowDateTime && datetimeline!="") {
-			fn = w->create_pango_layout (datetimeline);
-			fn->set_width (textw*Pango::SCALE);
-			fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
-			backBuffer->draw_layout(gc_, textposx_dt, textposy + tpos, fn);
-			tpos += dtlabh;
+		if (withFilename==WFNAME_FULL) {
+			// draw date/time label
+			int tpos = fnlabh;
+			if (options.fbShowDateTime && datetimeline!="") {
+				fn = w->create_pango_layout (datetimeline);
+				fn->set_width (textw*Pango::SCALE);
+				fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
+				backBuffer->draw_layout(gc_, textposx_dt, textposy + tpos, fn);
+				tpos += dtlabh;
+			}
+			// draw basic exif info
+			if (options.fbShowBasicExif && exifline!="") {
+				fn = w->create_pango_layout (exifline);
+				fn->set_width (textw*Pango::SCALE);
+				fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
+				backBuffer->draw_layout (gc_, textposx_ex, textposy + tpos, fn);
+				tpos += exlabh;
+			}
 		}
-		// draw basic exif info
-		if (options.fbShowBasicExif && exifline!="") {
-			fn = w->create_pango_layout (exifline);
-			fn->set_width (textw*Pango::SCALE);
-			fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
-			backBuffer->draw_layout (gc_, textposx_ex, textposy + tpos, fn);
-			tpos += exlabh;
-		}
-    }
+	}
 }
 
 void ThumbBrowserEntryBase::getTextSizes (int& infow, int& infoh) {
@@ -224,29 +241,41 @@ void ThumbBrowserEntryBase::getTextSizes (int& infow, int& infoh) {
     Glib::RefPtr<Pango::Layout> fn = w->create_pango_layout(shortname);
     fn->get_pixel_size (fnlabw, fnlabh);
 
-    // datetime
-    fontd.set_weight (Pango::WEIGHT_NORMAL);
-    context->set_font_description (fontd);
-    fn = w->create_pango_layout (datetimeline);
-    fn->get_pixel_size (dtlabw, dtlabh);
-    
-    // basic exif data
-    fn = w->create_pango_layout (exifline);
-    fn->get_pixel_size (exlabw, exlabh);
-
     // calculate cummulated height of all info fields
     infoh = fnlabh;
     infow = 0;
-    // add date/tile size:
-    if (options.fbShowDateTime) {
-        infoh += dtlabh;
-        if (dtlabw + 2*sideMargin > infow)
-            infow = dtlabw + 2*sideMargin;
+
+    if (withFilename==WFNAME_FULL) {
+        // datetime
+        fontd.set_weight (Pango::WEIGHT_NORMAL);
+        context->set_font_description (fontd);
+        fn = w->create_pango_layout (datetimeline);
+        fn->get_pixel_size (dtlabw, dtlabh);
+
+        // basic exif data
+        fn = w->create_pango_layout (exifline);
+        fn->get_pixel_size (exlabw, exlabh);
+
+        // add date/tile size:
+        if (options.fbShowDateTime) {
+            infoh += dtlabh;
+            if (dtlabw + 2*sideMargin > infow)
+                infow = dtlabw + 2*sideMargin;
+        }
+        else {
+            dtlabw = dtlabh = 0;
+        }
+        if (options.fbShowBasicExif) {
+            infoh += exlabh;
+            if (exlabw + 2*sideMargin > infow)
+                infow = exlabw + 2*sideMargin;
+        }
+        else {
+            exlabw = exlabh = 0;
+        }
     }
-    if (options.fbShowBasicExif) {
-        infoh += exlabh;
-        if (exlabw + 2*sideMargin > infow)
-            infow = exlabw + 2*sideMargin;
+    else {
+        dtlabw = dtlabh = exlabw = exlabh = 0;
     }
 }
 
@@ -263,16 +292,35 @@ void ThumbBrowserEntryBase::resize (int h) {
     int bsw=0, bsh=0;
     if (buttonSet)
         buttonSet->getMinimalDimensions (bsw, bsh);
-    
+
+    if (parent->getLocation() == ThumbBrowserBase::THLOC_FILEBROWSER) {
+        if (options.showFileNames)
+            withFilename = WFNAME_FULL;
+        else
+            withFilename = WFNAME_NONE;
+    }
+    else if (parent->getLocation() == ThumbBrowserBase::THLOC_BATCHQUEUE) {
+        withFilename = WFNAME_REDUCED;
+    }
+    else {
+        if (options.filmStripShowFileNames)
+            withFilename = WFNAME_REDUCED;
+        else
+            withFilename = WFNAME_NONE;
+    }
+
     // calculate the height remaining for the thumbnail image
     preh = height - upperMargin - 2*borderWidth - lowerMargin - bsh;
     int infow=0;
     int infoh=0;
-    if (options.showFileNames && !options.overlayedFileNames) {
+    if (    (parent->getLocation()!=ThumbBrowserBase::THLOC_EDITOR && options.showFileNames && !options.overlayedFileNames)
+         || (parent->getLocation()==ThumbBrowserBase::THLOC_EDITOR && options.filmStripShowFileNames && !options.filmStripOverlayedFileNames))
+    {
         // dimensions of the info text
         getTextSizes (infow, infoh);
         infoh += textGap;
-        preh -= infoh;
+        //preh -= infoh;
+        height += infoh;
     }
     // Minimum size for thumbs
     if (preh<24){
@@ -283,7 +331,9 @@ void ThumbBrowserEntryBase::resize (int h) {
     calcThumbnailSize ();  // recalculates prew
 
     width = prew + 2*sideMargin + 2*borderWidth;
-    if (options.showFileNames && !options.overlayedFileNames) {
+    if (    (parent->getLocation()!=ThumbBrowserBase::THLOC_EDITOR && options.showFileNames && !options.overlayedFileNames)
+         || (parent->getLocation()==ThumbBrowserBase::THLOC_EDITOR && options.filmStripShowFileNames && !options.filmStripOverlayedFileNames))
+    {
         width = prew + 2*sideMargin + 2*borderWidth;
         if (width<infow + 2*sideMargin + 2*borderWidth)
             width = infow + 2*sideMargin + 2*borderWidth;
@@ -298,7 +348,7 @@ void ThumbBrowserEntryBase::resize (int h) {
         refreshThumbnailImage ();
     }
     else
-        updateBackBuffer();
+        backBuffer.clear();  // This will force a backBuffer update on queue_draw
 
     drawable = true;
 }
@@ -437,7 +487,7 @@ Glib::ustring ThumbBrowserEntryBase::getToolTip (int x, int y) {
     if (buttonSet) tooltip = buttonSet->getToolTip (x, y);
 
     // if the fileinfo is not shown anyway, make a tooltip with the info
-    if (!options.showFileNames && inside(x,y) && tooltip.empty()) {
+    if (withFilename<WFNAME_FULL && inside(x,y) && tooltip.empty()) {
         tooltip = dispname;
         if (options.fbShowDateTime && datetimeline!="") tooltip += Glib::ustring("\n") + datetimeline;
         if (options.fbShowBasicExif && exifline!="") tooltip += Glib::ustring("\n") + exifline;
