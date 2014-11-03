@@ -172,7 +172,7 @@
 !FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5-star.\nShortcut: <b>5</b>
 !FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show saved images.\nShortcut: <b>Alt-7</b>
 !FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show unsaved images.\nShortcut: <b>Alt-6</b>
-!FILEBROWSER_SHOWTRASHHINT;Show contents of trash.\nShortcut: <b>t</b>
+!FILEBROWSER_SHOWTRASHHINT;Show contents of trash.\nShortcut: <b>Ctrl-t</b>
 !FILEBROWSER_SHOWUNCOLORHINT;Show images without a color label.\nShortcut: <b>Alt-0</b>
 !FILEBROWSER_SHOWUNRANKHINT;Show unranked images.\nShortcut: <b>0</b>
 !FILEBROWSER_STARTPROCESSINGHINT;Start processing the images in the queue.

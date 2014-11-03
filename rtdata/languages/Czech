@@ -202,7 +202,7 @@ FILEBROWSER_SHOWRANK4HINT;Ukázat obrázky hodnocené čtyřmi hvězdičkami.\nZ
 FILEBROWSER_SHOWRANK5HINT;Ukázat obrázky hodnocené pěti hvězdičkami.\nZkratka: <b>5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Ukázat uložené obrázky.\nZkratka: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Ukázat neuložené obrázky.\nZkratka: <b>Alt-6</b>
-FILEBROWSER_SHOWTRASHHINT;Ukázat obsah koše.\nZkratka: <b>t</b>
+FILEBROWSER_SHOWTRASHHINT;Ukázat obsah koše.\nZkratka: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Ukázat obrázky bez barevného štítku.\nZkratka: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Ukázat nehodnocené obrázky.\nZkratka: <b>0</b>
 FILEBROWSER_STARTPROCESSINGHINT;Spustit zpracování obrázků ve frontě.

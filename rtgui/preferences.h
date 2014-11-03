@@ -113,6 +113,8 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
     Gtk::Button*    addExt;
     Gtk::Button*    delExt;
     Gtk::CheckButton* overlayedFileNames;
+    Gtk::CheckButton* filmStripOverlayedFileNames;
+    Gtk::CheckButton* sameThumbSize;
 
     Gtk::SpinButton*  rgbDenoiseTreadLimitSB;
 

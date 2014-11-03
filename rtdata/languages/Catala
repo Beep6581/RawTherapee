@@ -148,7 +148,7 @@ FILEBROWSER_SHOWRANK4HINT;Exposa imatges de 4 estrelles.\nDrecera: <b>4</b>
 FILEBROWSER_SHOWRANK5HINT;Exposa imatges de 5 estrelles.\nDrecera: <b>5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Mostra últimes imatges desades.\nDrecera: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Mostra imatges no recentment desades.\nDrecera: <b>Alt-6</b>
-FILEBROWSER_SHOWTRASHHINT;Veure què hi ha a la paperera.\nDrecera: <b>T</b>
+FILEBROWSER_SHOWTRASHHINT;Veure què hi ha a la paperera.\nDrecera: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Mostra imatges sense etiqueta de color.\nDrecera: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Mostra imatges sense rang.\nDrecera: <b>0</b>
 FILEBROWSER_STARTPROCESSINGHINT;Inicia el processament de les imatges de la cua

@@ -170,7 +170,7 @@ FILEBROWSER_SHOWRANK4HINT;Voir les images 4 étoiles\nRaccourci: <b>4</b>
 FILEBROWSER_SHOWRANK5HINT;Voir les images 5 étoiles\nRaccourci: <b>5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Afficher les images sauvegardées récemment\nRaccourci: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT; Afficher les images non sauvegardées récemment\nRaccourci: <b>Alt-6</b>
-FILEBROWSER_SHOWTRASHHINT;Voir le contenu de la corbeille\nRaccourci: <b>t</b>
+FILEBROWSER_SHOWTRASHHINT;Voir le contenu de la corbeille\nRaccourci: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Afficher les images sans label de couleur\nRaccourci: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Voir les images sans étoile\nRaccourci: <b>0</b>
 FILEBROWSER_STARTPROCESSINGHINT;Démarre le traitement/sauvegarde des images dans la file
@@ -775,6 +775,8 @@ PREFERENCES_FLUOF7;Fluorescent F7
 PREFERENCES_FLUOF11;Fluorescent F11
 PREFERENCES_FORIMAGE;Pour les fichiers images
 PREFERENCES_FORRAW;Pour les fichiers RAW
+PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Taille de vignette identique entre l'Éditeur et le Navigateur de Fichier
+PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Avoir une hauteur différente demandera plus de temp de traitement à chaque fois que vous baculerez entre l'Éditeur unique et le Navigateur de Fichier.
 PREFERENCES_GIMPPATH;Dossier d'intallation de GIMP
 PREFERENCES_GREY05;Yb=05 CIE L#30
 PREFERENCES_GREY10;Yb=10 CIE L#40
@@ -809,7 +811,8 @@ PREFERENCES_OUTDIRFOLDER;Dossier de sauvegarde
 PREFERENCES_OUTDIRTEMPLATEHINT;Vous pouvez utiliser les paramètres de chaîne formatées suivants:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nCes chaînes de formattage se réfèrent aux différentes parties du chemin de la photo, certains de ses attributs ou un numéro de séquence arbitraire dans le traitement par lot.\n\nPar exemple, si la photo en cours de traitement a le chemin suivant:\n<b><i>/home/tom/image/02-09-2006/dsc0012.nef</i></b>\nla signification des chaînes de formattage est:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> sera remplacé par le rang de la photo. Si la photo n'a pas de rang, %r sera remplacé par '0'. Si la photo est dans la corbeille de RawTherapee, %r sera remplacé par 'x'.\n\n<b>%s1</b>, <b>%s2</b>, etc. sera remplacé par un index de séquence constitué de 1 à 9 chiffre. L'index de la séquence commencera à 1 à chaque fois que le file de traitement est démarrée, et est incrémenté de 1 pour chaque image traitée.\n\nSi vous voulez enregistrer l'image de sortie là où se trouve l'originale, écrivez:\n<b>%p1/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>convertis</i>" situé dans le dossier de l'originale, écrivez:\n<b>%p1/convertis/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>/home/tom/photos/convertis/2010-10-31</i>", écrivez:\n<b>%p2/convertis/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Utiliser le modèle
 PREFERENCES_OUTDIR;Dossier de sortie
-PREFERENCES_OVERLAY_FILENAMES;Superposer les noms de fichier sur les vignettes
+PREFERENCES_OVERLAY_FILENAMES;Superposer les noms de fichier sur les vignettes dans le navigateur de fichier
+PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Superposer les noms de fichier sur les vignettes dans le panneau d'édition
 PREFERENCES_OVERWRITEOUTPUTFILE;Écraser le fichier s'il existe déjà
 PREFERENCES_PANFACTORFRAME;Amplification du déplacement
 PREFERENCES_PANFACTORLABEL;Facteur

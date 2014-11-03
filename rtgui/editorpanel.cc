@@ -417,6 +417,11 @@ void EditorPanel::writeOptions() {
 		tpc->writeOptions();
 }
 
+void EditorPanel::showTopPanel(bool show) {
+	if (tbTopPanel_1->get_active() != show)
+		tbTopPanel_1->set_active(show);
+}
+
 void EditorPanel::setAspect () {
 	int winW, winH;
 	parent->get_size(winW, winH);
@@ -837,10 +842,12 @@ void EditorPanel::tbTopPanel_1_toggled () {
 		if (tbTopPanel_1->get_active()){
 			catalogPane->show();
 			tbTopPanel_1->set_image (*iTopPanel_1_Hide);
+			options.editorFilmStripOpened = true;
 		}
 		else {
 			catalogPane->hide();
 			tbTopPanel_1->set_image (*iTopPanel_1_Show);
+			options.editorFilmStripOpened = false;
 		}
 
 		tbShowHideSidePanels_managestate();

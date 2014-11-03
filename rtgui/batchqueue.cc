@@ -38,6 +38,8 @@ using namespace rtengine;
 
 BatchQueue::BatchQueue () : processing(NULL), sequence(0), listener(NULL)  {
 
+    location = THLOC_BATCHQUEUE;
+
     int p = 0;
     pmenu = new Gtk::Menu ();
     pmenu->attach (*Gtk::manage(selall = new Gtk::MenuItem (M("FILEBROWSER_POPUPSELECTALL"))), 0, 1, p, p+1); p++;

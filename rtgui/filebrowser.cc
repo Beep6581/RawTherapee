@@ -1081,7 +1081,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
 }
 
 void FileBrowser::saveThumbnailHeight (int height) {
-    if (!options.sameThumbSize && inTabMode)
+    if (!options.sameThumbSize && getLocation()==THLOC_EDITOR)
         options.thumbSizeTab = height;
     else
         options.thumbSize = height;
@@ -1089,7 +1089,7 @@ void FileBrowser::saveThumbnailHeight (int height) {
 
 int FileBrowser::getThumbnailHeight () {
     // The user could have manually forced the option to a too big value
-    if (!options.sameThumbSize && inTabMode)
+    if (!options.sameThumbSize && getLocation()==THLOC_EDITOR)
         return std::max(std::min(options.thumbSizeTab, 800), 10);
     else
         return std::max(std::min(options.thumbSize, 800), 10);

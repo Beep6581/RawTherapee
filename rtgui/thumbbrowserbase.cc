@@ -26,7 +26,7 @@ using namespace std;
 
 ThumbBrowserBase::ThumbBrowserBase () 
     : lastClicked(NULL), previewHeight(options.thumbSize), numOfCols(1) {
-    inTabMode=false;  // corresponding to take thumbSize
+    location = THLOC_FILEBROWSER;
     inW = -1; inH = -1;
 
     Gtk::HBox* hb1 = Gtk::manage( new Gtk::HBox () );
@@ -930,10 +930,10 @@ void ThumbBrowserBase::setArrangement (Arrangement a) {
 }
 
 void ThumbBrowserBase::enableTabMode(bool enable) {
-    inTabMode = enable;
-    arrangement = inTabMode ? ThumbBrowserBase::TB_Horizontal : ThumbBrowserBase::TB_Vertical;
-    
-    if (!options.sameThumbSize && (options.thumbSizeTab!=options.thumbSize)) {
+    location = enable ? THLOC_EDITOR : THLOC_FILEBROWSER;
+    arrangement = enable ? ThumbBrowserBase::TB_Horizontal : ThumbBrowserBase::TB_Vertical;
+
+    if ((!options.sameThumbSize && (options.thumbSizeTab!=options.thumbSize)) || (options.showFileNames || options.filmStripShowFileNames)) {
         #if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);
         #endif
@@ -952,7 +952,7 @@ void ThumbBrowserBase::enableTabMode(bool enable) {
     #endif
 
     if (!selected.empty()) {
-        if (inTabMode) {
+        if (enable) {
             double h=selected[0]->getStartX();
             #if PROTECT_VECTORS
             MYREADERLOCK_RELEASE(l);
