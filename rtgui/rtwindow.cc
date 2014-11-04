@@ -436,6 +436,7 @@ void RTWindow::remEditorPanel (EditorPanel* ep) {
         EditWindow * wndEdit = EditWindow::getInstance(this);
         wndEdit->remEditorPanel(ep);
     } else {
+    	bool queueHadFocus = (mainNB->get_current_page() == mainNB->page_num (*bpanel));
 	    epanels.erase (ep->getFileName());
 	    filesEdited.erase (ep->getFileName ());
 	    fpanel->refreshEditedState (filesEdited);
@@ -443,7 +444,8 @@ void RTWindow::remEditorPanel (EditorPanel* ep) {
 	    mainNB->remove_page (*ep);
 
 	    if (!isEditorPanel(mainNB->get_current_page())){
-			mainNB->set_current_page (mainNB->page_num (*fpanel));
+			if(!queueHadFocus)
+				mainNB->set_current_page (mainNB->page_num (*fpanel));
 		    set_title_decorated("");
 	    } else {
 		    EditorPanel* ep = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));
