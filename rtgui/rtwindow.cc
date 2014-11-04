@@ -443,6 +443,7 @@ void RTWindow::remEditorPanel (EditorPanel* ep) {
 	    mainNB->remove_page (*ep);
 
 	    if (!isEditorPanel(mainNB->get_current_page())){
+			mainNB->set_current_page (mainNB->page_num (*fpanel));
 		    set_title_decorated("");
 	    } else {
 		    EditorPanel* ep = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));
