@@ -151,19 +151,14 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 	blockwt		= (float (*))			(buffer1);
 	blockshifts	= (float (*)[3][2])		(buffer1+(vblsz*hblsz*sizeof(float)));
 
-	double	polymat[3][2][256], shiftmat[3][2][16], fitparams[3][2][16];
-	for (int i=0; i<256; i++) {polymat[0][0][i] = polymat[0][1][i] = polymat[2][0][i] = polymat[2][1][i] = 0;}
-	for (int i=0; i<16; i++) {shiftmat[0][0][i] = shiftmat[0][1][i] = shiftmat[2][0][i] = shiftmat[2][1][i] = 0;}
+	double fitparams[3][2][16];
 
 	//order of 2d polynomial fit (polyord), and numpar=polyord^2
 	int polyord=4, numpar=16;
-	int numblox[3]={0,0,0};
 
-#pragma omp parallel shared(Gtmp,width,height,blockave,blocksqave,blockdenom,blockvar,blockwt,blockshifts,polymat,shiftmat,fitparams,polyord,numpar)
+#pragma omp parallel shared(Gtmp,width,height,blockave,blocksqave,blockdenom,blockvar,blockwt,blockshifts,fitparams,polyord,numpar)
 {
 	int progresscounter = 0;
-	//number of blocks used in the fit
-	int numbloxthr[3]={0,0,0};
 
 	int rrmin, rrmax, ccmin, ccmax;
 	int top, left, row, col;
@@ -533,7 +528,7 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 
 					if (areawt[j][c]>0 && coeff[j][2][c]>eps2) {
 						CAshift[j][c]=coeff[j][1][c]/coeff[j][2][c];
-						blockwt[vblock*hblsz+hblock]= areawt[j][c];//*coeff[j][2][c]/(eps+coeff[j][0][c]) ;
+						blockwt[vblock*hblsz+hblock]= areawt[j][c]*coeff[j][2][c]/(eps+coeff[j][0][c]) ;
 					} else {
 						CAshift[j][c]=17.0;
 						blockwt[vblock*hblsz+hblock]=0;
@@ -606,7 +601,6 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 				break;
 			}
 		}
-}
 	//printf ("tile variances %f %f %f %f \n",blockvar[0][0],blockvar[1][0],blockvar[0][2],blockvar[1][2] );
 
 
@@ -615,8 +609,6 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 	//now prepare for CA correction pass
 	//first, fill border blocks of blockshift array
 	if(processpasstwo) {
-#pragma omp single
-{
 		for (vblock=1; vblock<vblsz-1; vblock++) {//left and right sides
 			for (c=0; c<3; c+=2) {
 				for (i=0; i<2; i++) {
@@ -633,17 +625,15 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 				}
 			}
 		}
-}
 		//end of filling border pixels of blockshift array
-#pragma omp barrier
 
 		//initialize fit arrays
-		double	polymatthr[3][2][256], shiftmatthr[3][2][16];
-		float bstemp[3][2];
-		//initialize fit arrays
-		for (i=0; i<256; i++) {polymatthr[0][0][i] = polymatthr[0][1][i] = polymatthr[2][0][i] = polymatthr[2][1][i] = 0;}
-		for (i=0; i<16; i++) {shiftmatthr[0][0][i] = shiftmatthr[0][1][i] = shiftmatthr[2][0][i] = shiftmatthr[2][1][i] = 0;}
-#pragma omp for nowait	// nowait to allow the first ready thread to start the critical section as soon as possible
+		double	polymat[3][2][256], shiftmat[3][2][16];
+		for (i=0; i<256; i++) {polymat[0][0][i] = polymat[0][1][i] = polymat[2][0][i] = polymat[2][1][i] = 0;}
+		for (i=0; i<16; i++) {shiftmat[0][0][i] = shiftmat[0][1][i] = shiftmat[2][0][i] = shiftmat[2][1][i] = 0;}
+		int numblox[3]={0,0,0};
+
+		float bstemp[2];
 		for (vblock=1; vblock<vblsz-1; vblock++)
 			for (hblock=1; hblock<hblsz-1; hblock++) {
 				// block 3x3 median of blockshifts for robustness
@@ -665,24 +655,24 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 						PIX_SORT(p[3],p[6]); PIX_SORT(p[1],p[4]); PIX_SORT(p[2],p[5]);
 						PIX_SORT(p[4],p[7]); PIX_SORT(p[4],p[2]); PIX_SORT(p[6],p[4]);
 						PIX_SORT(p[4],p[2]);
-						bstemp[c][dir] = p[4];
+						bstemp[dir] = p[4];
 						//if (c==0 && dir==0) printf("vblock= %d hblock= %d blockshiftsmedian= %f \n",vblock,hblock,p[4]);
 					}
 
 					//if (verbose) fprintf (stderr,_("tile vshift hshift (%d %d %4f %4f)...\n"),vblock, hblock, blockshifts[(vblock)*hblsz+hblock][c][0], blockshifts[(vblock)*hblsz+hblock][c][1]);
 
 					//now prepare coefficient matrix; use only data points within two std devs of zero
-					if (SQR(bstemp[c][0])>4.0*blockvar[0][c] || SQR(bstemp[c][1])>4.0*blockvar[1][c])
+					if (SQR(bstemp[0])>4.0*blockvar[0][c] || SQR(bstemp[1])>4.0*blockvar[1][c])
 						continue;
-					numbloxthr[c]++;
+					numblox[c]++;
 					for (dir=0; dir<2; dir++) {
 						for (i=0; i<polyord; i++) {
 							for (j=0; j<polyord; j++) {
 								for (m=0; m<polyord; m++)
 									for (n=0; n<polyord; n++) {
-										polymatthr[c][dir][numpar*(polyord*i+j)+(polyord*m+n)] += (float)pow((double)vblock,i+m)*pow((double)hblock,j+n)*blockwt[vblock*hblsz+hblock];
+										polymat[c][dir][numpar*(polyord*i+j)+(polyord*m+n)] += (float)pow((double)vblock,i+m)*pow((double)hblock,j+n)*blockwt[vblock*hblsz+hblock];
 									}
-								shiftmatthr[c][dir][(polyord*i+j)] += (float)pow((double)vblock,i)*pow((double)hblock,j)*bstemp[c][dir]*blockwt[vblock*hblsz+hblock];
+								shiftmat[c][dir][(polyord*i+j)] += (float)pow((double)vblock,i)*pow((double)hblock,j)*bstemp[dir]*blockwt[vblock*hblsz+hblock];
 							}
 							//if (c==0 && dir==0) {printf("i= %d j= %d shiftmat= %f \n",i,j,shiftmat[c][dir][(polyord*i+j)]);}
 						}//monomials
@@ -690,29 +680,6 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 
 				}//c
 			}//blocks
-#pragma omp critical
-{
-	// now sum up the per thread vars
-	for (i=0; i<256; i++) {
-		polymat[0][0][i] += polymatthr[0][0][i];
-		polymat[0][1][i] += polymatthr[0][1][i];
-		polymat[2][0][i] += polymatthr[2][0][i];
-		polymat[2][1][i] += polymatthr[2][1][i];
-	}
-	for (i=0; i<16; i++) {
-		shiftmat[0][0][i] += shiftmatthr[0][0][i];
-		shiftmat[0][1][i] += shiftmatthr[0][1][i];
-		shiftmat[2][0][i] += shiftmatthr[2][0][i];
-		shiftmat[2][1][i] += shiftmatthr[2][1][i];
-	}
-	numblox[0] += numbloxthr[0];
-	numblox[2] += numbloxthr[2];
-
-}
-#pragma omp barrier
-
-#pragma omp single
-{
 
 		numblox[1]=min(numblox[0],numblox[2]);
 		//if too few data points, restrict the order of the fit to linear
@@ -737,7 +704,7 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 
 }
 	//fitparams[polyord*i+j] gives the coefficients of (vblock^i hblock^j) in a polynomial fit for i,j<=4
-	}
+}
 	//end of initialization for CA correction pass
 	//only executed if cared and cablue are zero
 }
