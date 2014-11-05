@@ -437,6 +437,7 @@ if(params->colorappearance.enabled) {
 			ColorTemp::curveJ (qbri, qcontra, 1, CAMBrightCurveQ, hist16Q);//brightness and contrast Q
 		}
 	}
+if(settings->viewinggreySc==0){//auto	
 	if     (mean<15.f) yb=3.0;
 	else if(mean<30.f) yb=5.0;
 	else if(mean<40.f) yb=10.0;
@@ -448,6 +449,8 @@ if(params->colorappearance.enabled) {
 	else if(mean<80.f) yb=60.0;
 	else if(mean<90.f) yb=80.0;
 	else               yb=90.0;
+}
+if(settings->viewinggreySc==1)	yb=18.0;
 
 	int gamu=0;
 	bool highlight = params->toneCurve.hrenabled; //Get the value if "highlight reconstruction" is activated
@@ -1397,7 +1400,7 @@ if(params->colorappearance.enabled) {
 		}
 	}
 
-
+if(settings->viewinggreySc==0){//auto
 	if     (mean<15.f) yb=3.0f;
 	else if(mean<30.f) yb=5.0f;
 	else if(mean<40.f) yb=10.0f;
@@ -1409,6 +1412,9 @@ if(params->colorappearance.enabled) {
 	else if(mean<80.f) yb=60.0f;
 	else if(mean<90.f) yb=80.0f;
 	else               yb=90.0f;
+}
+if(settings->viewinggreySc==1) yb=18.0f;//fixed
+
 
 	const bool highlight = params->toneCurve.hrenabled; //Get the value if "highlight reconstruction" is activated
 	

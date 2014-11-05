@@ -783,6 +783,10 @@ PREFERENCES_GREY23;Yb=23 CIE L#55
 PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_GREY;Output device's Yb luminance (%)
+PREFERENCES_GREYSC;Scene Yb luminance (%)
+PREFERENCES_GREY05;Yb=05 CIE L#30
+PREFERENCES_GREYSCA;Automatic
+PREFERENCES_GREYSC18;Yb=18 CIE L#50
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
 PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
 PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
