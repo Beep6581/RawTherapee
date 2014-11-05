@@ -72,8 +72,10 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn) {
                 identity = false;
 
                 x = new double[9];
-                for (int i=0; i<4; i++)
-                    x[i] = p[i];
+                x[0] = p[0];
+                for (int i=1; i<4; i++) {
+                    x[i] = min(max(p[i],0.001),0.99);
+                }
                 for (int i=4; i<8; i++)
                     x[i] = (p[i]+100.0)/200.0;
                 if (p.size()<9)
