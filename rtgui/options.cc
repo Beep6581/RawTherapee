@@ -518,6 +518,7 @@ void Options::setDefaults () {
     rtSettings.colorimetricIntent = 1;
 	rtSettings.viewingdevice=0;
 	rtSettings.viewingdevicegrey=3;
+	rtSettings.viewinggreySc=1;
 	
     rtSettings.monitorProfile = "";
     rtSettings.autoMonitorProfile = false;
@@ -783,6 +784,7 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "DenoiseLabgamma"))rtSettings.denoiselabgamma       = keyFile.get_integer("Color Management", "DenoiseLabgamma");
     if (keyFile.has_key ("Color Management", "view"))           rtSettings.viewingdevice        = keyFile.get_integer("Color Management", "view");
     if (keyFile.has_key ("Color Management", "grey"))           rtSettings.viewingdevicegrey    = keyFile.get_integer("Color Management", "grey");
+    if (keyFile.has_key ("Color Management", "greySc"))           rtSettings.viewinggreySc    = keyFile.get_integer("Color Management", "greySc");
     if (keyFile.has_key ("Color Management", "CBDLArtif"))      rtSettings.artifact_cbdl        = keyFile.get_double("Color Management", "CBDLArtif");
     if (keyFile.has_key ("Color Management", "CBDLlevel0"))     rtSettings.level0_cbdl        = keyFile.get_double("Color Management", "CBDLlevel0");
     if (keyFile.has_key ("Color Management", "CBDLlevel123"))   rtSettings.level123_cbdl        = keyFile.get_double("Color Management", "CBDLlevel123");
@@ -1087,6 +1089,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("Color Management", "Intent", rtSettings.colorimetricIntent);
     keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);	
     keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);	
+    keyFile.set_integer ("Color Management", "greySc", rtSettings.viewinggreySc);	
 	
     keyFile.set_string  ("Color Management", "AdobeRGB", rtSettings.adobe);
     keyFile.set_string  ("Color Management", "ProPhoto", rtSettings.prophoto);

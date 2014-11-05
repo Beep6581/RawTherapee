@@ -582,16 +582,26 @@ Gtk::Widget* Preferences::getColorManagementPanel () {
     grey->append_text (M("PREFERENCES_GREY30"));
     grey->append_text (M("PREFERENCES_GREY40"));
 
+    Gtk::Label* greySclab = Gtk::manage (new Gtk::Label (M("PREFERENCES_GREYSC")+":", Gtk::ALIGN_LEFT));
+    greySc = Gtk::manage (new Gtk::ComboBoxText ());
+    greySc->append_text (M("PREFERENCES_GREYSCA"));
+    greySc->append_text (M("PREFERENCES_GREYSC18"));
+	
     Gtk::Label* restartNeeded1 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
     Gtk::Label* restartNeeded2 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
+    Gtk::Label* restartNeeded3 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
 
-    Gtk::Table* colo = Gtk::manage (new Gtk::Table (2, 3));
+    Gtk::Table* colo = Gtk::manage (new Gtk::Table (3, 3));
     colo->attach (*viewlab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colo->attach (*view, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     colo->attach (*restartNeeded1, 2, 3, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colo->attach (*greylab, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colo->attach (*grey, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     colo->attach (*restartNeeded2, 2, 3, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colo->attach (*greySclab, 0, 1, 2, 3, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colo->attach (*greySc, 1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colo->attach (*restartNeeded3, 2, 3, 2, 3, Gtk::FILL, Gtk::SHRINK, 2, 2);
+	
     mvbcm->pack_start (*colo, Gtk::PACK_SHRINK, 4);
 
     Gtk::Label* cielab = Gtk::manage (new Gtk::Label (M("PREFERENCES_CIEART")+":", Gtk::ALIGN_LEFT));
@@ -1215,6 +1225,7 @@ void Preferences::storePreferences () {
     moptions.rtSettings.colorimetricIntent  = intent->get_active_row_number ();
     moptions.rtSettings.viewingdevice       = view->get_active_row_number ();
     moptions.rtSettings.viewingdevicegrey   = grey->get_active_row_number ();
+    moptions.rtSettings.viewinggreySc   = greySc->get_active_row_number ();
   //  moptions.rtSettings.autocielab 			= cbAutocielab->get_active ();
     moptions.rtSettings.ciecamfloat 			= cbciecamfloat->get_active ();
     moptions.rtSettings.HistogramWorking			= ckbHistogramWorking->get_active ();
@@ -1316,6 +1327,7 @@ void Preferences::fillPreferences () {
     intent->set_active (moptions.rtSettings.colorimetricIntent);
     view->set_active (moptions.rtSettings.viewingdevice);
     grey->set_active (moptions.rtSettings.viewingdevicegrey);
+    greySc->set_active (moptions.rtSettings.viewinggreySc);
 //	cbAutocielab->set_active (moptions.rtSettings.autocielab);
 	cbciecamfloat->set_active (moptions.rtSettings.ciecamfloat);
 	ckbHistogramWorking->set_active (moptions.rtSettings.HistogramWorking);

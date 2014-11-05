@@ -28,6 +28,7 @@ namespace rtengine {
             int             colorimetricIntent;     ///< Colorimetric intent used at color space conversions
 			int				viewingdevice; 			// white of output device (D50...D65..)
 			int				viewingdevicegrey; 			// level of grey output device
+			int				viewinggreySc; 			// level of grey Scene
  
 			Glib::ustring   monitorProfile;         ///< ICC profile of the monitor (full path recommended)
 			bool            autoMonitorProfile;     ///< Try to auto-determine the correct monitor color profile
