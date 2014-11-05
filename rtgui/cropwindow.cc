@@ -1653,7 +1653,7 @@ void CropWindow::imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy) {
     cropHandler.getPosition (cropX, cropY);
     phyx = (imgx - cropX)*zoomSteps[cropZoom].zoom + xpos + imgX;
     phyy = (imgy - cropY)*zoomSteps[cropZoom].zoom + ypos + imgY;
-    //printf("imgx:%d  /  imgy:%d  /  cropX:%d  /  cropY:%d  /  xpos:%d  /  ypos:%d  /  imgX:%d  /  imgY:%d  /  leftBorder: %d  /  upperBorder:%d  /  phyx:%d  /  phyy:%d\n", imgx, imgy, cropX, cropY, xpos, ypos, imgX, imgY, crop->getLeftBorder(), crop->getUpperBorder(), phyx, phyy);
+  //  printf("imgx:%d  /  imgy:%d  /  cropX:%d  /  cropY:%d  /  xpos:%d  /  ypos:%d  /  imgX:%d  /  imgY:%d  /  leftBorder: %d  /  upperBorder:%d  /  phyx:%d  /  phyy:%d\n", imgx, imgy, cropX, cropY, xpos, ypos, imgX, imgY, crop->getLeftBorder(), crop->getUpperBorder(), phyx, phyy);
 }
 
 void CropWindow::imageCoordToCropBuffer (int imgx, int imgy, int& phyx, int& phyy) {

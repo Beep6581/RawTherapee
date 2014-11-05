@@ -33,6 +33,7 @@ namespace rtengine {
 class ColorGradientCurve;
 class OpacityCurve;
 class NoisCurve;
+class NoisCCcurve;
 
 namespace procparams {
 
@@ -543,10 +544,12 @@ class DirPyrDenoiseParams {
 
     public:
         std::vector<double>   lcurve;
+        std::vector<double>   cccurve;
 	
         bool    enabled;
         bool    enhance;
         bool    median;
+        bool    autochroma;
 		
         bool    perform;
         double  luma;
@@ -556,6 +559,9 @@ class DirPyrDenoiseParams {
         double  bluechro;
         double  gamma;
         Glib::ustring dmethod;
+        Glib::ustring Lmethod;
+        Glib::ustring Cmethod;
+        Glib::ustring C2method;
         Glib::ustring smethod;
         Glib::ustring medmethod;
         Glib::ustring methodmed;
@@ -564,9 +570,11 @@ class DirPyrDenoiseParams {
 		
         DirPyrDenoiseParams ();
         void setDefault();  // SHOULD BE GENERALIZED TO ALL CLASSES!
-        void getCurves(NoisCurve &lcurveLUT, bool &lldenoiseutili) const;
+    //    void getCurves(NoisCurve &lcurveLUT, bool &lldenoiseutili) const;
+        void getCurves(NoisCurve &lcurveLUT,NoisCCcurve &cccurveLUT,bool &lldenoiseutili,bool &ccdenoiseutili ) const;
 
         static void getDefaultNoisCurve(std::vector<double> &curve);
+        static void getDefaultCCCurve(std::vector<double> &curve);
 		
 };
 

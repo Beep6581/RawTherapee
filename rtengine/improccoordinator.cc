@@ -23,6 +23,7 @@
 #include "simpleprocess.h"
 #include "../rtgui/ppversion.h"
 #include "colortemp.h"
+#include "improcfun.h"
 
 namespace rtengine {
 
@@ -32,7 +33,8 @@ ImProcCoordinator::ImProcCoordinator ()
     : orig_prev(NULL), oprevi(NULL), oprevl(NULL), nprevl(NULL), previmg(NULL), workimg(NULL),
       ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true), scale(10),
       highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false),
-      bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(0.f),
+      bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(0.), chaut(0.f), redaut(0.f), blueaut(0.f), maxredaut(0.f), maxblueaut(0.f),nresi(0.f),
+		chromina(0.f), sigma(0.f), lumema(0.f),minredaut(0.f), minblueaut(0.f),
 
       hltonecurve(65536,0),
       shtonecurve(65536,2),//clip above
@@ -47,6 +49,7 @@ ImProcCoordinator::ImProcCoordinator ()
       clToningcurve(65536,0),
       cl2Toningcurve(65536,0),
 	  Noisecurve(65536,0),
+	  NoiseCCcurve(65536,0),
       vhist16(65536),vhist16bw(65536),
       lhist16(65536), lhist16Cropped(65536),
       lhist16CAM(65536), lhist16CroppedCAM(65536),
@@ -81,8 +84,8 @@ ImProcCoordinator::ImProcCoordinator ()
       bcurvehist(256), bcurvehistCropped(256), bbeforehist(256),
 
       pW(-1), pH(-1),
-      plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),acListener(NULL), abwListener(NULL),actListener(NULL),
-      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false),utili(false),autili(false),lldenoiseutili(false), opautili(false),
+      plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),acListener(NULL), abwListener(NULL),actListener(NULL),adnListener(NULL),
+      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false),utili(false),autili(false),lldenoiseutili(false), opautili(false),ccdenoiseutili(false),
 	  butili(false),ccutili(false),cclutili(false),clcutili(false),fullw(1),fullh(1)
 
     {}
@@ -124,7 +127,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     int readyphase = 0;
 
     bwAutoR = bwAutoG = bwAutoB = -9000.f;
-
+	chaut=redaut=blueaut=maxredaut=maxblueaut=nresi=highresi=0.f;
+	chromina=sigma=lumema=0.f;
+	minredaut=minblueaut=10000.f;
     if (todo==CROP && ipf.needsPCVignetting())
         todo |= TRANSFORM; // Change about Crop does affect TRANSFORM
 
@@ -267,25 +272,39 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
 		Imagefloat *calclum ;
 		lldenoiseutili=false;
-		params.dirpyrDenoise.getCurves(dnNoisCurve,lldenoiseutili);
-		if(lldenoiseutili && scale==1 && params.dirpyrDenoise.enabled ){//only allocate memory if enabled and scale=1	
+		ccdenoiseutili=false;
+		params.dirpyrDenoise.getCurves(dnNoisCurve,dnNoisCCcurve,lldenoiseutili, ccdenoiseutili);
+		int nbw=6;//nb tile W
+		int nbh=4;//
+		
+		float *ch_M = new float [nbw*nbh];//allocate memory
+		float *max_r = new float [nbw*nbh];//allocate memory
+		float *max_b = new float [nbw*nbh];//allocate memory
+		
+		if(params.dirpyrDenoise.Lmethod=="CUR") params.dirpyrDenoise.luma=0.5f;
+		if(params.dirpyrDenoise.Lmethod=="SLI") lldenoiseutili=false;
+		
+		if((lldenoiseutili || ccdenoiseutili) &&  params.dirpyrDenoise.enabled && (scale==1)){//only allocate memory if enabled and scale=1	
 			calclum = new Imagefloat (pW, pH);//for Luminance denoise curve
 				if(orig_prev !=  calclum)
 					orig_prev->copyData(calclum);
 		
 			imgsrc->convertColorSpace(calclum, params.icm, currWB, params.raw);//claculate values after colorspace conversion
 		}
-		
+		//always enabled to calculated auto Chroma
         if (todo & M_LINDENOISE) {
-			
-			if (scale==1 && params.dirpyrDenoise.enabled) {
-			
-			ipf.RGB_denoise(orig_prev, orig_prev, calclum, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp(), dnNoisCurve, lldenoiseutili);
-
-			}
+			if (params.dirpyrDenoise.enabled && (scale==1)) {
+			printf("IMPROC\n");
+			int kall=1;
+			int trafx, trafy, trafw, trafh,  widIm, heiIm;
+			ipf.RGB_denoise(kall, trafx, trafy, trafw, trafh,  widIm, heiIm, orig_prev, orig_prev, calclum, ch_M, max_r, max_b, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp(), dnNoisCurve, lldenoiseutili, dnNoisCCcurve,ccdenoiseutili, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
+		}
 		}
 	//	delete calclum;
-		
+	delete [] ch_M;
+	delete [] max_r;
+	delete [] max_b;
+	
         imgsrc->convertColorSpace(orig_prev, params.icm, currWB, params.raw);
 
         ipf.firstAnalysis (orig_prev, &params, vhist16, imgsrc->getGamma());

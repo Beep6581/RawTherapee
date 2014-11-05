@@ -428,15 +428,34 @@ void DirPyrDenoiseParams::getDefaultNoisCurve(std::vector<double> &curve) {
         curve.at(i) = v[i-1];
 }
 
+void DirPyrDenoiseParams::getDefaultCCCurve(std::vector<double> &curve) {
+  //  double v[8]= { 0.15, 0.00,0.35,0.35,
+  //                 0.60, 0.05,0.35,0.35};
+    double v[8]= { 0.05, 0.50,0.35,0.35,
+                   0.35, 0.05,0.35,0.35};
+				   
+    curve.resize(9);
+    curve.at(0 ) = double(FCT_MinMaxCPoints);
+    for (size_t i=1; i<curve.size(); ++i)
+        curve.at(i) = v[i-1];
+}
+
+
 void DirPyrDenoiseParams::setDefault() {
 
 		getDefaultNoisCurve(lcurve);
+		getDefaultCCCurve(cccurve);
+		
 		enabled    	  	 = false;
 		enhance      	 = false;
 		median      	 = false;
+		autochroma     	 = false;
 		luma         	 = 0;
 		passes        	 = 1;
-		dmethod      	 = "RGB";
+		dmethod      	 = "Lab";
+		Lmethod      	 = "CUR";
+		Cmethod      	 = "MAN";
+		C2method      	 = "AUTO";
 		smethod      	 = "shal";
 		medmethod     	 = "soft";
 		methodmed      	 = "none";
@@ -448,10 +467,14 @@ void DirPyrDenoiseParams::setDefault() {
 		gamma      		 = 1.7;
 }
 
-void DirPyrDenoiseParams::getCurves(NoisCurve &lcurveLUT, bool &lldenoiseutili) const {
+void DirPyrDenoiseParams::getCurves(NoisCurve &lcurveLUT, NoisCCcurve &cccurveLUT, bool &lldenoiseutili, bool &ccdenoiseutili) const {
     std::vector<double> llCurve;
         llCurve = this->lcurve;
         lcurveLUT.Set(llCurve, lldenoiseutili);
+    std::vector<double> ccCurve;
+        ccCurve = this->cccurve;
+        cccurveLUT.Set(ccCurve, ccdenoiseutili);
+		
 }
 
 
@@ -1254,11 +1277,15 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->dirpyrDenoise.enabled) keyFile.set_boolean ("Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled);
     if (!pedited || pedited->dirpyrDenoise.enhance) keyFile.set_boolean ("Directional Pyramid Denoising", "Enhance", dirpyrDenoise.enhance);
     if (!pedited || pedited->dirpyrDenoise.median) keyFile.set_boolean ("Directional Pyramid Denoising", "Median", dirpyrDenoise.median);
+    if (!pedited || pedited->dirpyrDenoise.autochroma) keyFile.set_boolean ("Directional Pyramid Denoising", "Auto", dirpyrDenoise.autochroma);
  //   if (!pedited || pedited->dirpyrDenoise.perform) keyFile.set_boolean ("Directional Pyramid Denoising", "Perform", dirpyrDenoise.perform);
     if (!pedited || pedited->dirpyrDenoise.luma)    keyFile.set_double ("Directional Pyramid Denoising", "Luma",    dirpyrDenoise.luma);
     if (!pedited || pedited->dirpyrDenoise.Ldetail) keyFile.set_double ("Directional Pyramid Denoising", "Ldetail", dirpyrDenoise.Ldetail);
     if (!pedited || pedited->dirpyrDenoise.chroma)  keyFile.set_double ("Directional Pyramid Denoising", "Chroma",  dirpyrDenoise.chroma);
     if (!pedited || pedited->dirpyrDenoise.dmethod)  keyFile.set_string  ("Directional Pyramid Denoising", "Method",  dirpyrDenoise.dmethod);
+    if (!pedited || pedited->dirpyrDenoise.Lmethod)  keyFile.set_string  ("Directional Pyramid Denoising", "LMethod",  dirpyrDenoise.Lmethod);
+    if (!pedited || pedited->dirpyrDenoise.Cmethod)  keyFile.set_string  ("Directional Pyramid Denoising", "CMethod",  dirpyrDenoise.Cmethod);
+    if (!pedited || pedited->dirpyrDenoise.C2method)  keyFile.set_string  ("Directional Pyramid Denoising", "C2Method",  dirpyrDenoise.C2method);
     if (!pedited || pedited->dirpyrDenoise.smethod)  keyFile.set_string  ("Directional Pyramid Denoising", "SMethod",  dirpyrDenoise.smethod);
     if (!pedited || pedited->dirpyrDenoise.medmethod)  keyFile.set_string  ("Directional Pyramid Denoising", "MedMethod",  dirpyrDenoise.medmethod);
     if (!pedited || pedited->dirpyrDenoise.rgbmethod)  keyFile.set_string  ("Directional Pyramid Denoising", "RGBMethod",  dirpyrDenoise.rgbmethod);
@@ -1270,6 +1297,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->dirpyrDenoise.lcurve)  {
         Glib::ArrayHandle<double> lcurve = dirpyrDenoise.lcurve;
         keyFile.set_double_list("Directional Pyramid Denoising", "LCurve", lcurve);
+    }
+    if (!pedited || pedited->dirpyrDenoise.cccurve)  {
+        Glib::ArrayHandle<double> cccurve = dirpyrDenoise.cccurve;
+        keyFile.set_double_list("Directional Pyramid Denoising", "CCCurve", cccurve);
     }
 
     //Save epd.
@@ -1921,16 +1952,21 @@ if (keyFile.has_group ("Directional Pyramid Denoising")) {//TODO: No longer an a
     if (keyFile.has_key ("Directional Pyramid Denoising", "Enabled"))    { dirpyrDenoise.enabled = keyFile.get_boolean ("Directional Pyramid Denoising", "Enabled"); if (pedited) pedited->dirpyrDenoise.enabled = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "Enhance"))    { dirpyrDenoise.enhance = keyFile.get_boolean ("Directional Pyramid Denoising", "Enhance"); if (pedited) pedited->dirpyrDenoise.enhance = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "Median"))    { dirpyrDenoise.median = keyFile.get_boolean ("Directional Pyramid Denoising", "Median"); if (pedited) pedited->dirpyrDenoise.median = true; }
+    if (keyFile.has_key ("Directional Pyramid Denoising", "Auto"))    { dirpyrDenoise.autochroma = keyFile.get_boolean ("Directional Pyramid Denoising", "Auto"); if (pedited) pedited->dirpyrDenoise.autochroma = true; }
  //   if (keyFile.has_key ("Directional Pyramid Denoising", "Perform"))    { dirpyrDenoise.perform = keyFile.get_boolean ("Directional Pyramid Denoising", "Perform"); if (pedited) pedited->dirpyrDenoise.perform = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "Luma"))       { dirpyrDenoise.luma    = keyFile.get_double ("Directional Pyramid Denoising", "Luma"); if (pedited) pedited->dirpyrDenoise.luma = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "Ldetail"))    { dirpyrDenoise.Ldetail = keyFile.get_double ("Directional Pyramid Denoising", "Ldetail"); if (pedited) pedited->dirpyrDenoise.Ldetail = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "Chroma"))     { dirpyrDenoise.chroma  = keyFile.get_double ("Directional Pyramid Denoising", "Chroma"); if (pedited) pedited->dirpyrDenoise.chroma = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "Method"))     {dirpyrDenoise.dmethod  = keyFile.get_string  ("Directional Pyramid Denoising", "Method"); if (pedited) pedited->dirpyrDenoise.dmethod = true; }
+    if (keyFile.has_key ("Directional Pyramid Denoising", "LMethod"))     {dirpyrDenoise.Lmethod  = keyFile.get_string  ("Directional Pyramid Denoising", "LMethod"); if (pedited) pedited->dirpyrDenoise.Lmethod = true; }
+    if (keyFile.has_key ("Directional Pyramid Denoising", "CMethod"))     {dirpyrDenoise.Cmethod  = keyFile.get_string  ("Directional Pyramid Denoising", "CMethod"); if (pedited) pedited->dirpyrDenoise.Cmethod = true; }
+    if (keyFile.has_key ("Directional Pyramid Denoising", "C2Method"))     {dirpyrDenoise.C2method  = keyFile.get_string  ("Directional Pyramid Denoising", "C2Method"); if (pedited) pedited->dirpyrDenoise.C2method = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "SMethod"))     {dirpyrDenoise.smethod  = keyFile.get_string  ("Directional Pyramid Denoising", "SMethod"); if (pedited) pedited->dirpyrDenoise.smethod = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "MedMethod"))     {dirpyrDenoise.medmethod  = keyFile.get_string  ("Directional Pyramid Denoising", "MedMethod"); if (pedited) pedited->dirpyrDenoise.medmethod = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "MethodMed"))     {dirpyrDenoise.methodmed  = keyFile.get_string  ("Directional Pyramid Denoising", "MethodMed"); if (pedited) pedited->dirpyrDenoise.methodmed = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "RGBMethod"))     {dirpyrDenoise.rgbmethod  = keyFile.get_string  ("Directional Pyramid Denoising", "RGBMethod"); if (pedited) pedited->dirpyrDenoise.rgbmethod = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "LCurve"))          {dirpyrDenoise.lcurve             = keyFile.get_double_list ("Directional Pyramid Denoising", "LCurve"); if (pedited) pedited->dirpyrDenoise.lcurve = true; }
+    if (keyFile.has_key ("Directional Pyramid Denoising", "CCCurve"))          {dirpyrDenoise.cccurve             = keyFile.get_double_list ("Directional Pyramid Denoising", "CCCurve"); if (pedited) pedited->dirpyrDenoise.cccurve = true; }
 
     if (keyFile.has_key ("Directional Pyramid Denoising", "Redchro"))    { dirpyrDenoise.redchro  = keyFile.get_double ("Directional Pyramid Denoising", "Redchro"); if (pedited) pedited->dirpyrDenoise.redchro = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "Bluechro"))   { dirpyrDenoise.bluechro  = keyFile.get_double ("Directional Pyramid Denoising", "Bluechro"); if (pedited) pedited->dirpyrDenoise.bluechro = true; }
@@ -2441,12 +2477,17 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& dirpyrDenoise.enabled == other.dirpyrDenoise.enabled
 		&& dirpyrDenoise.enhance == other.dirpyrDenoise.enhance
 		&& dirpyrDenoise.median == other.dirpyrDenoise.median
+		&& dirpyrDenoise.autochroma == other.dirpyrDenoise.autochroma
 //		&& dirpyrDenoise.perform == other.dirpyrDenoise.perform
 		&& dirpyrDenoise.luma == other.dirpyrDenoise.luma
 		&& dirpyrDenoise.lcurve == other.dirpyrDenoise.lcurve
+		&& dirpyrDenoise.cccurve == other.dirpyrDenoise.cccurve
 		&& dirpyrDenoise.Ldetail == other.dirpyrDenoise.Ldetail
 		&& dirpyrDenoise.chroma == other.dirpyrDenoise.chroma
 		&& dirpyrDenoise.dmethod == other.dirpyrDenoise.dmethod
+		&& dirpyrDenoise.Lmethod == other.dirpyrDenoise.Lmethod
+		&& dirpyrDenoise.Cmethod == other.dirpyrDenoise.Cmethod
+		&& dirpyrDenoise.C2method == other.dirpyrDenoise.C2method
 		&& dirpyrDenoise.smethod == other.dirpyrDenoise.smethod
 		&& dirpyrDenoise.medmethod == other.dirpyrDenoise.medmethod
 		&& dirpyrDenoise.methodmed == other.dirpyrDenoise.methodmed

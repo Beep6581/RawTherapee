@@ -38,7 +38,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     epih->epanel = this;
     epih->destroyed = false;
     epih->pending = 0;
-
+	//rtengine::befaf=true;
     processingStartedTime = 0;
     firstProcessingDone = false;
 
@@ -349,9 +349,9 @@ EditorPanel::~EditorPanel () {
     delete beforeIarea;
     beforeIarea = NULL;
 
-    if (beforeIpc)
+    if (beforeIpc){
         beforeIpc->setPreviewImageListener (NULL);
-
+		}
     delete beforePreviewHandler;
     beforePreviewHandler = NULL;
     if (beforeIpc)
@@ -453,6 +453,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     lastSaveAsFileName = removeExtension (Glib::path_get_basename (fname));
 
     previewHandler = new PreviewHandler ();
+    previewHandler2 = new PreviewHandler ();
 
     this->isrc = isrc;
     ipc = rtengine::StagedImageProcessor::create (isrc);
@@ -514,12 +515,14 @@ void EditorPanel::close () {
         rtengine::ImageSource* is=isrc->getImageSource();
         is->setProgressListener( NULL );
 
-        if (ipc)
+        if (ipc) {
             ipc->setPreviewImageListener (NULL);
+			}
 
-        if (beforeIpc)
+        if (beforeIpc){
             beforeIpc->setPreviewImageListener (NULL);
-
+		}
+		
         delete previewHandler;
         previewHandler= NULL;
 
@@ -1437,7 +1440,6 @@ void EditorPanel::beforeAfterToggled () {
 
     removeIfThere (beforeAfterBox,  beforeBox, false);
     removeIfThere (afterBox,  afterHeaderBox, false);
-
     if (beforeIarea) {
         if (beforeIpc)
             beforeIpc->stopProcessing ();
@@ -1446,7 +1448,8 @@ void EditorPanel::beforeAfterToggled () {
         delete beforeIarea;
         beforeIarea = NULL;
         if (beforeIpc)
-            beforeIpc->setPreviewImageListener (NULL);
+           { beforeIpc->setPreviewImageListener (NULL);
+		   }
         delete beforePreviewHandler;
         beforePreviewHandler = NULL;
         if (beforeIpc)
@@ -1455,6 +1458,7 @@ void EditorPanel::beforeAfterToggled () {
     }
 
     if (beforeAfter->get_active ()) {
+	
         int errorCode=0;
         rtengine::InitialImage *beforeImg = rtengine::InitialImage::load ( isrc->getImageSource ()->getFileName(),  openThm->getType()==FT_Raw , &errorCode, NULL);
         if( !beforeImg || errorCode )

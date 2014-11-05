@@ -182,7 +182,9 @@ void ParamsEdited::set (bool v) {
 	dirpyrDenoise.enhance      = v;
 //	dirpyrDenoise.perform      = v;
 	dirpyrDenoise.lcurve      = v;
+	dirpyrDenoise.cccurve      = v;
 	dirpyrDenoise.median      = v;
+	dirpyrDenoise.autochroma      = v;
 	dirpyrDenoise.luma         = v;
 	dirpyrDenoise.Ldetail      = v;
 	dirpyrDenoise.chroma       = v;
@@ -191,6 +193,9 @@ void ParamsEdited::set (bool v) {
 	dirpyrDenoise.gamma        = v;
 	dirpyrDenoise.passes        = v;
 	dirpyrDenoise.dmethod      = v;
+	dirpyrDenoise.Lmethod      = v;
+	dirpyrDenoise.Cmethod      = v;
+	dirpyrDenoise.C2method      = v;
 	dirpyrDenoise.smethod      = v;
 	dirpyrDenoise.medmethod      = v;
 	dirpyrDenoise.methodmed      = v;
@@ -513,9 +518,11 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         dirpyrDenoise.enabled = dirpyrDenoise.enabled && p.dirpyrDenoise.enabled == other.dirpyrDenoise.enabled;
         dirpyrDenoise.enhance = dirpyrDenoise.enhance && p.dirpyrDenoise.enhance == other.dirpyrDenoise.enhance;
         dirpyrDenoise.median = dirpyrDenoise.median && p.dirpyrDenoise.median == other.dirpyrDenoise.median;
+        dirpyrDenoise.autochroma = dirpyrDenoise.autochroma && p.dirpyrDenoise.autochroma == other.dirpyrDenoise.autochroma;
  //       dirpyrDenoise.perform = dirpyrDenoise.perform && p.dirpyrDenoise.perform == other.dirpyrDenoise.perform;
         dirpyrDenoise.luma = dirpyrDenoise.luma && p.dirpyrDenoise.luma == other.dirpyrDenoise.luma;
         dirpyrDenoise.lcurve = dirpyrDenoise.lcurve && p.dirpyrDenoise.lcurve == other.dirpyrDenoise.lcurve;
+        dirpyrDenoise.cccurve = dirpyrDenoise.cccurve && p.dirpyrDenoise.cccurve == other.dirpyrDenoise.cccurve;
         dirpyrDenoise.Ldetail = dirpyrDenoise.Ldetail && p.dirpyrDenoise.Ldetail == other.dirpyrDenoise.Ldetail;
         dirpyrDenoise.chroma = dirpyrDenoise.chroma && p.dirpyrDenoise.chroma == other.dirpyrDenoise.chroma;
         dirpyrDenoise.redchro = dirpyrDenoise.redchro && p.dirpyrDenoise.redchro == other.dirpyrDenoise.redchro;
@@ -523,6 +530,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         dirpyrDenoise.gamma = dirpyrDenoise.gamma && p.dirpyrDenoise.gamma == other.dirpyrDenoise.gamma;
         dirpyrDenoise.passes = dirpyrDenoise.passes && p.dirpyrDenoise.passes == other.dirpyrDenoise.passes;
         dirpyrDenoise.dmethod = dirpyrDenoise.dmethod && p.dirpyrDenoise.dmethod == other.dirpyrDenoise.dmethod;
+        dirpyrDenoise.Lmethod = dirpyrDenoise.Lmethod && p.dirpyrDenoise.Lmethod == other.dirpyrDenoise.Lmethod;
+        dirpyrDenoise.Cmethod = dirpyrDenoise.Cmethod && p.dirpyrDenoise.Cmethod == other.dirpyrDenoise.Cmethod;
+        dirpyrDenoise.C2method = dirpyrDenoise.C2method && p.dirpyrDenoise.C2method == other.dirpyrDenoise.C2method;
         dirpyrDenoise.smethod = dirpyrDenoise.smethod && p.dirpyrDenoise.smethod == other.dirpyrDenoise.smethod;
         dirpyrDenoise.medmethod = dirpyrDenoise.medmethod && p.dirpyrDenoise.medmethod == other.dirpyrDenoise.medmethod;
         dirpyrDenoise.methodmed = dirpyrDenoise.methodmed && p.dirpyrDenoise.methodmed == other.dirpyrDenoise.methodmed;
@@ -849,8 +859,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (dirpyrDenoise.enabled)				toEdit.dirpyrDenoise.enabled 	= mods.dirpyrDenoise.enabled;
 	if (dirpyrDenoise.enhance)				toEdit.dirpyrDenoise.enhance 	= mods.dirpyrDenoise.enhance;
 	if (dirpyrDenoise.median)				toEdit.dirpyrDenoise.median 	= mods.dirpyrDenoise.median;
+	if (dirpyrDenoise.autochroma)			toEdit.dirpyrDenoise.autochroma 	= mods.dirpyrDenoise.autochroma;
 	if (dirpyrDenoise.luma)					toEdit.dirpyrDenoise.luma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_LUMA] ? toEdit.dirpyrDenoise.luma + mods.dirpyrDenoise.luma : mods.dirpyrDenoise.luma;
 	if (dirpyrDenoise.lcurve)				toEdit.dirpyrDenoise.lcurve 	    = mods.dirpyrDenoise.lcurve;
+	if (dirpyrDenoise.cccurve)				toEdit.dirpyrDenoise.cccurve 	    = mods.dirpyrDenoise.cccurve;
 	if (dirpyrDenoise.Ldetail)				toEdit.dirpyrDenoise.Ldetail	= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_LUMDET] ? toEdit.dirpyrDenoise.Ldetail + mods.dirpyrDenoise.Ldetail : mods.dirpyrDenoise.Ldetail;
 	if (dirpyrDenoise.chroma)				toEdit.dirpyrDenoise.chroma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHROMA] ? toEdit.dirpyrDenoise.chroma + mods.dirpyrDenoise.chroma : mods.dirpyrDenoise.chroma;
 	if (dirpyrDenoise.redchro)				toEdit.dirpyrDenoise.redchro	= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHROMARED] ? toEdit.dirpyrDenoise.redchro + mods.dirpyrDenoise.redchro : mods.dirpyrDenoise.redchro;
@@ -859,6 +871,9 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (dirpyrDenoise.passes)				toEdit.dirpyrDenoise.passes		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_PASSES] ? toEdit.dirpyrDenoise.passes + mods.dirpyrDenoise.passes : mods.dirpyrDenoise.passes;
 //	if (dirpyrDenoise.perform)				toEdit.dirpyrDenoise.perform 	= mods.dirpyrDenoise.perform;
 	if (dirpyrDenoise.dmethod)				toEdit.dirpyrDenoise.dmethod		= mods.dirpyrDenoise.dmethod;
+	if (dirpyrDenoise.Lmethod)				toEdit.dirpyrDenoise.Lmethod		= mods.dirpyrDenoise.Lmethod;
+	if (dirpyrDenoise.Cmethod)				toEdit.dirpyrDenoise.Cmethod		= mods.dirpyrDenoise.Cmethod;
+	if (dirpyrDenoise.C2method)				toEdit.dirpyrDenoise.C2method		= mods.dirpyrDenoise.C2method;
 	if (dirpyrDenoise.smethod)				toEdit.dirpyrDenoise.smethod		= mods.dirpyrDenoise.smethod;
 	if (dirpyrDenoise.medmethod)			toEdit.dirpyrDenoise.medmethod		= mods.dirpyrDenoise.medmethod;
 	if (dirpyrDenoise.methodmed)			toEdit.dirpyrDenoise.methodmed		= mods.dirpyrDenoise.methodmed;
