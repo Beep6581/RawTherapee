@@ -264,6 +264,7 @@ public:
     bool enabled;
     bool enhance;
 	bool median;
+	bool autochroma;
     bool Ldetail;
     bool luma;
     bool chroma;
@@ -271,9 +272,13 @@ public:
     bool bluechro;
     bool gamma;
     bool lcurve;
+    bool cccurve;
 	
 //    bool perform;
 	bool dmethod;
+	bool Lmethod;
+	bool Cmethod;
+	bool C2method;
 	bool smethod;
     bool medmethod;
     bool methodmed;

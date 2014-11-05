@@ -519,6 +519,11 @@ void Options::setDefaults () {
 	rtSettings.viewingdevice=0;
 	rtSettings.viewingdevicegrey=3;
 	rtSettings.viewinggreySc=1;
+	rtSettings.leveldnv=2;
+	rtSettings.leveldnti=0;
+	rtSettings.leveldnaut=0;
+	rtSettings.leveldnliss=0;
+	rtSettings.leveldnautsimpl=0;
 	
     rtSettings.monitorProfile = "";
     rtSettings.autoMonitorProfile = false;
@@ -546,6 +551,12 @@ void Options::setDefaults () {
 	rtSettings.autocielab=true;
 	rtSettings.denoiselabgamma=2;
     rtSettings.HistogramWorking = false;
+	
+    rtSettings.nrauto = 10;//between 2 and 20
+    rtSettings.nrautomax = 40;//between 5 and 100
+    rtSettings.nrhigh = 0.45;//between 0.1 and 0.9
+    rtSettings.nrwavlevel = 1;//integer between 0 and 2
+	
  //   rtSettings.colortoningab =0.7;
 //rtSettings.decaction =0.3;	
 //	rtSettings.ciebadpixgauss=false;	
@@ -716,6 +727,17 @@ if (keyFile.has_group ("Clipping Indication")) {
 
 if (keyFile.has_group ("Performance")) {
     if (keyFile.has_key ("Performance", "RgbDenoiseThreadLimit")) rgbDenoiseThreadLimit = keyFile.get_integer ("Performance", "RgbDenoiseThreadLimit");
+    if( keyFile.has_key ("Performance", "NRauto"))    rtSettings.nrauto          = keyFile.get_double("Performance", "NRauto");
+    if( keyFile.has_key ("Performance", "NRautomax"))    rtSettings.nrautomax          = keyFile.get_double("Performance", "NRautomax");
+    if( keyFile.has_key ("Performance", "NRhigh"))    rtSettings.nrhigh          = keyFile.get_double("Performance", "NRhigh");
+    if( keyFile.has_key ("Performance", "NRWavlevel"))    rtSettings.nrwavlevel          = keyFile.get_integer("Performance", "NRWavlevel");
+    if (keyFile.has_key ("Performance", "LevNR"))        rtSettings.leveldnv    = keyFile.get_integer("Performance", "LevNR");
+    if (keyFile.has_key ("Performance", "LevNRTI"))        rtSettings.leveldnti    = keyFile.get_integer("Performance", "LevNRTI");
+    if (keyFile.has_key ("Performance", "LevNRAUT"))        rtSettings.leveldnaut    = keyFile.get_integer("Performance", "LevNRAUT");
+    if (keyFile.has_key ("Performance", "LevNRLISS"))        rtSettings.leveldnliss    = keyFile.get_integer("Performance", "LevNRLISS");
+    if (keyFile.has_key ("Performance", "SIMPLNRAUT"))        rtSettings.leveldnautsimpl    = keyFile.get_integer("Performance", "SIMPLNRAUT");
+	
+	
 }
 
 if (keyFile.has_group ("GUI")) { 
@@ -988,6 +1010,15 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Clipping Indication", "BlinkClipped", blinkClipped);
 
     keyFile.set_integer ("Performance", "RgbDenoiseThreadLimit", rgbDenoiseThreadLimit);
+    keyFile.set_double  ("Performance", "NRauto", rtSettings.nrauto);
+    keyFile.set_double  ("Performance", "NRautomax", rtSettings.nrautomax);
+    keyFile.set_double  ("Performance", "NRhigh", rtSettings.nrhigh);
+    keyFile.set_integer  ("Performance", "NRWavlevel", rtSettings.nrwavlevel);
+    keyFile.set_integer ("Performance", "LevNR", rtSettings.leveldnv);	
+    keyFile.set_integer ("Performance", "LevNRTI", rtSettings.leveldnti);	
+    keyFile.set_integer ("Performance", "LevNRAUT", rtSettings.leveldnaut);	
+    keyFile.set_integer ("Performance", "LevNRLISS", rtSettings.leveldnliss);	
+    keyFile.set_integer ("Performance", "SIMPLNRAUT", rtSettings.leveldnautsimpl);	
 
     keyFile.set_string  ("Output", "Format", saveFormat.format);
     keyFile.set_integer ("Output", "JpegQuality", saveFormat.jpegQuality);

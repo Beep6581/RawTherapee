@@ -220,7 +220,7 @@ class CurveFactory {
 	static void curveCL ( bool & clcutili, const std::vector<double>& clcurvePoints, LUTf & clCurve, LUTu & histogramcl, LUTu & outBeforeCLurveHistogram, int skip);
 	static void curveToningCL ( bool & clctoningutili, const std::vector<double>& clcurvePoints, LUTf & clToningCurve, int skip);
 	static void curveToningLL ( bool & llctoningutili, const std::vector<double>& llcurvePoints, LUTf & llToningCurve, int skip);
-	static void denoiseLL ( bool & lldenoiseutili, const std::vector<double>& llcurvePoints, LUTf & Noisecurve,int skip);
+	static void denoiseCC ( bool & ccdenoiseutili, const std::vector<double>& cccurvePoints, LUTf & NoiseCCcurve,int skip);
 						  
 	static void complexsgnCurve ( float adjustr, bool & autili,  bool & butili, bool & ccutili, bool & clcutili, double saturation, double rstprotection, const std::vector<double>& acurvePoints,
 								 const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve, 
@@ -383,6 +383,19 @@ class NoisCurve {
     void Set(const std::vector<double> &curvePoints, bool &lldenoiseutili);
 
     operator bool (void) const { return lutNoisCurve; }
+};
+
+class NoisCCcurve {
+  public:
+    LUTf lutNoisCCcurve;  // 0xffff range
+	float nonzeroc;
+    virtual ~NoisCCcurve() {};
+
+    void Reset();
+    void Set(const Curve *pCurve);
+    void Set(const std::vector<double> &curvePoints, bool &ccdenoiseutili);
+
+    operator bool (void) const { return lutNoisCCcurve; }
 };
 
 class ColorGradientCurve {

@@ -490,7 +490,13 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
 }
 
 Gtk::Widget* Preferences::getPerformancePanel () {
+    Gtk::VBox* mvbsd = Gtk::manage( new Gtk::VBox () );
+
+    Gtk::Frame* fdenoise = Gtk::manage(  new Gtk::Frame (M("PREFERENCES_NOISE")) );
+
 	Gtk::VBox* mainContainer = Gtk::manage( new Gtk::VBox () );
+    mainContainer->set_border_width (4);
+	
 	mainContainer->set_spacing(4);
 
     Gtk::HBox* threadLimitHB = Gtk::manage( new Gtk::HBox () );
@@ -509,10 +515,89 @@ Gtk::Widget* Preferences::getPerformancePanel () {
     rgbDenoiseTreadLimitSB->set_range (0, maxThreadNumber);
     threadLimitHB->pack_start (*RGBDTLl, Gtk::PACK_SHRINK, 0);
     threadLimitHB->pack_end (*rgbDenoiseTreadLimitSB, Gtk::PACK_SHRINK, 0);
+    Gtk::Label* restartNeeded3 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
+    Gtk::Label* restartNeeded4 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
+    Gtk::Label* restartNeeded5 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
+    Gtk::Label* restartNeeded6 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
+    Gtk::Label* restartNeeded7 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
+    Gtk::Label* restartNeeded8 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
 
+    Gtk::Label* dnlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_LEVDN")+":", Gtk::ALIGN_LEFT));
+    Gtk::Label* dnautlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_LEVAUTDN")+":", Gtk::ALIGN_LEFT));
+    Gtk::Label* dnautsimpllab = Gtk::manage (new Gtk::Label (M("PREFERENCES_SIMPLAUT")+":", Gtk::ALIGN_LEFT));
+    Gtk::Label* dntilab = Gtk::manage (new Gtk::Label (M("PREFERENCES_TINB")+":", Gtk::ALIGN_LEFT));
+    Gtk::Label* dnwavlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_WAVLEV")+":", Gtk::ALIGN_LEFT));
+    Gtk::Label* dnlisslab = Gtk::manage (new Gtk::Label (M("PREFERENCES_LISS")+":", Gtk::ALIGN_LEFT));
+
+    dnv = Gtk::manage (new Gtk::ComboBoxText ());
+    dnv->append_text (M("PREFERENCES_MIN"));
+    dnv->append_text (M("PREFERENCES_SMA"));
+    dnv->append_text (M("PREFERENCES_MED"));
+    dnv->append_text (M("PREFERENCES_MAX"));
+    dnaut = Gtk::manage (new Gtk::ComboBoxText ());
+    dnaut->append_text (M("PREFERENCES_AUTLOW"));
+    dnaut->append_text (M("PREFERENCES_AUTSTD"));
+	
+    dnautsimpl = Gtk::manage (new Gtk::ComboBoxText ());
+    dnautsimpl->append_text (M("PREFERENCES_STDAUT"));
+    dnautsimpl->append_text (M("PREFERENCES_EXPAUT"));
+
+    dnliss = Gtk::manage (new Gtk::ComboBoxText ());
+    dnliss->append_text (M("PREFERENCES_AUTLISVLOW"));//very low
+    dnliss->append_text (M("PREFERENCES_AUTLISLOW"));//low
+    dnliss->append_text (M("PREFERENCES_AUTLISSTD"));//med
+    dnliss->append_text (M("PREFERENCES_AUTLISMAX"));//max
+	
+    dnti = Gtk::manage (new Gtk::ComboBoxText ());
+    dnti->append_text (M("PREFERENCES_TISTD"));
+    dnti->append_text (M("PREFERENCES_TIMAX"));
+
+    dnwavlev = Gtk::manage (new Gtk::ComboBoxText ());
+    dnwavlev->append_text (M("PREFERENCES_WLZER"));
+    dnwavlev->append_text (M("PREFERENCES_WLONE"));
+    dnwavlev->append_text (M("PREFERENCES_WLTWO"));
+	
+    Gtk::Table* colon = Gtk::manage (new Gtk::Table (6, 3));
+    colon->attach (*dnlab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colon->attach (*dnv, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colon->attach (*restartNeeded3, 2, 3, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colon->attach (*dnautlab, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colon->attach (*dnaut, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colon->attach (*restartNeeded4, 2, 3, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colon->attach (*dnautsimpllab, 0, 1, 2, 3, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colon->attach (*dnautsimpl, 1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colon->attach (*restartNeeded8, 2, 3, 2, 3, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colon->attach (*dnlisslab, 0, 1, 3, 4, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colon->attach (*dnliss, 1, 2, 3, 4, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colon->attach (*restartNeeded5, 2, 3, 3, 4, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colon->attach (*dntilab, 0, 1, 4, 5, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colon->attach (*dnti, 1, 2, 4, 5, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colon->attach (*restartNeeded6, 2, 3, 4, 5, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colon->attach (*dnwavlab, 0, 1, 5, 6, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colon->attach (*dnwavlev, 1, 2, 5, 6, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colon->attach (*restartNeeded7, 2, 3, 5, 6, Gtk::FILL, Gtk::SHRINK, 2, 2);
+	
+    mainContainer->pack_start (*colon, Gtk::PACK_SHRINK, 4);
+	
+ /*   Gtk::Label* dntilab = Gtk::manage (new Gtk::Label (M("PREFERENCES_TINB")+":", Gtk::ALIGN_LEFT));
+
+    dnti = Gtk::manage (new Gtk::ComboBoxText ());
+    dnti->append_text (M("PREFERENCES_TISTD"));
+    dnti->append_text (M("PREFERENCES_TIMAX"));
+    Gtk::Table* colon2 = Gtk::manage (new Gtk::Table (1, 3));
+    colon2->attach (*dntilab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colon2->attach (*dnti, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colon2->attach (*restartNeeded4, 2, 3, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    mainContainer->pack_start (*colon2, Gtk::PACK_SHRINK, 4);
+*/
+	
     mainContainer->pack_start(*threadLimitHB, Gtk::PACK_SHRINK, 4);
+    fdenoise->add (*mainContainer);
+    mvbsd->pack_start (*fdenoise, Gtk::PACK_SHRINK, 4);
 
-    return mainContainer;
+   // return mainContainer;
+    return mvbsd;
+	
 }
 
 Gtk::Widget* Preferences::getColorManagementPanel () {
@@ -1229,6 +1314,12 @@ void Preferences::storePreferences () {
   //  moptions.rtSettings.autocielab 			= cbAutocielab->get_active ();
     moptions.rtSettings.ciecamfloat 			= cbciecamfloat->get_active ();
     moptions.rtSettings.HistogramWorking			= ckbHistogramWorking->get_active ();
+    moptions.rtSettings.leveldnv   = dnv->get_active_row_number ();
+    moptions.rtSettings.leveldnti   = dnti->get_active_row_number ();
+    moptions.rtSettings.leveldnliss   = dnliss->get_active_row_number ();
+    moptions.rtSettings.leveldnaut   = dnaut->get_active_row_number ();
+    moptions.rtSettings.nrwavlevel   = dnwavlev->get_active_row_number ();
+    moptions.rtSettings.leveldnautsimpl   = dnautsimpl->get_active_row_number ();
 
     if (sdcurrent->get_active ()) 
         moptions.startupDir = STARTUPDIR_CURRENT;
@@ -1328,6 +1419,13 @@ void Preferences::fillPreferences () {
     view->set_active (moptions.rtSettings.viewingdevice);
     grey->set_active (moptions.rtSettings.viewingdevicegrey);
     greySc->set_active (moptions.rtSettings.viewinggreySc);
+    dnv->set_active (moptions.rtSettings.leveldnv);
+    dnti->set_active (moptions.rtSettings.leveldnti);
+    dnliss->set_active (moptions.rtSettings.leveldnliss);
+    dnaut->set_active (moptions.rtSettings.leveldnaut);
+    dnautsimpl->set_active (moptions.rtSettings.leveldnautsimpl);
+    dnwavlev->set_active (moptions.rtSettings.nrwavlevel);
+	
 //	cbAutocielab->set_active (moptions.rtSettings.autocielab);
 	cbciecamfloat->set_active (moptions.rtSettings.ciecamfloat);
 	ckbHistogramWorking->set_active (moptions.rtSettings.HistogramWorking);

@@ -29,6 +29,11 @@ namespace rtengine {
 			int				viewingdevice; 			// white of output device (D50...D65..)
 			int				viewingdevicegrey; 			// level of grey output device
 			int				viewinggreySc; 			// level of grey Scene
+			int				leveldnv; 			// level of crop denoise
+			int				leveldnti; 			// size of tiles denoise
+			int				leveldnaut; 			// level of auto denoise
+			int				leveldnliss; 			// level of auto multi zone
+			int				leveldnautsimpl; 			// STD or EXPERT
  
 			Glib::ustring   monitorProfile;         ///< ICC profile of the monitor (full path recommended)
 			bool            autoMonitorProfile;     ///< Try to auto-determine the correct monitor color profile
@@ -55,6 +60,11 @@ namespace rtengine {
 			int				amchroma;
 			int             protectred;
 			double          protectredh;
+			double 			nrauto;
+			double 			nrautomax;
+			double 			nrhigh;
+			int				nrwavlevel;
+			
 			bool			ciebadpixgauss;
 			int             CRI_color; // N� for display Lab value  ; 0 disabled
 			int				denoiselabgamma; // 0=gamma 26 11   1=gamma 40 5  2 =gamma 55 10

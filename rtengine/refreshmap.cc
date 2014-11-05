@@ -319,7 +319,12 @@ RGBCURVE,         //EvFilmSimulationStrength
 RGBCURVE,         //EvFilmSimulationFilename
 ALLNORAW,			//	EvDPDNLCurve
 ALLNORAW,			//	EvDPDNsmet
-DARKFRAME        // EvPreProcessDeadPixel
+DARKFRAME,        // EvPreProcessDeadPixel
+ALLNORAW,			//EvDPDNCCCurve
+ALLNORAW,			//EvDPDNautochroma
+ALLNORAW,			//	EvDPDNLmet
+ALLNORAW,			//	EvDPDNCmet
+ALLNORAW			//	EvDPDNC2met
 
 
 };

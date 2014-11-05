@@ -323,6 +323,11 @@ enum ProcEvent {
 	EvDPDNLCurve=295,
 	EvDPDNsmet=296,	
     EvPreProcessDeadPixel=297,
+	EvDPDNCCCurve=298,	
+	EvDPDNautochroma=299,	
+	EvDPDNLmet=300,	
+	EvDPDNCmet=301,	
+	EvDPDNC2met=302,	
 	
 	NUMOFEVENTS	
 };

@@ -209,6 +209,8 @@ namespace rtengine {
             virtual void setDetailedCrop (IImage8* img, IImage8* imgtrue, procparams::ColorManagementParams cmp,
                                           procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip) {}
             virtual bool getWindow       (int& cx, int& cy, int& cw, int& ch, int& skip) { return false; }
+		//	virtual void    setPosition (int x, int y, bool update=true) {}
+
     };
 
     /** This listener is used when the full size of the final image has been changed (e.g. rotated by 90 deg.) */
@@ -257,6 +259,15 @@ namespace rtengine {
             virtual ~AutoCamListener() {}
             virtual void autoCamChanged (double ccam) {}
             virtual void adapCamChanged (double cadap) {}
+    };
+	
+    class AutoChromaListener {
+        public :
+            virtual ~AutoChromaListener() {}
+            virtual void chromaChanged (double autchroma, double autred, double autblue) {}
+            virtual void noiseChanged (double nresid, double highresid) {}
+            virtual void noiseTilePrev (int tileX, int tileY, int prevX, int prevY, int sizeT, int sizeP) {}
+			
     };
 
     class AutoColorTonListener {
@@ -361,6 +372,7 @@ namespace rtengine {
             virtual void        setAutoCamListener      (AutoCamListener* l) =0;
             virtual void        setAutoBWListener     	(AutoBWListener* l) =0;
             virtual void        setAutoColorTonListener (AutoColorTonListener* l) =0;
+            virtual void        setAutoChromaListener   (AutoChromaListener* l) =0;
 						
             virtual ~StagedImageProcessor () {}
 

@@ -26,11 +26,13 @@
 #include "curveeditorgroup.h"
 #include "colorprovider.h"
 #include "guiutils.h"
+#include "options.h"
 
-class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider {
+class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoChromaListener, public CurveListener, public ColorProvider {
 
   protected:
     CurveEditorGroup* NoiscurveEditorG;
+    CurveEditorGroup* CCcurveEditorG;
 	Adjuster* luma;
 	Adjuster* Ldetail;
 	Adjuster* chroma;
@@ -39,21 +41,33 @@ class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public Fol
 	Adjuster* gamma;
 	Adjuster* passes;
     FlatCurveEditor* lshape;
+    FlatCurveEditor* ccshape;
 
     Gtk::CheckButton* enabled;
     bool lastEnabled;
     sigc::connection enaConn;
     Gtk::CheckButton* enhance;
     bool lastenhance;
-    sigc::connection enhanConn, medianConn;
+    sigc::connection enhanConn, medianConn, autochromaConn;
     Gtk::CheckButton* median;
     bool lastmedian;
+    Gtk::CheckButton* autochroma;
+    bool lastautochroma;
+	Gtk::Label*    NoiseLabels;
+	Gtk::Label*    TileLabels;
+	Gtk::Label*    PrevLabels;
 	
 //    Gtk::CheckButton* perform;
 //    bool lastperform;
 //    sigc::connection perfconn;
     MyComboBoxText*   dmethod;
     sigc::connection  dmethodconn;
+    MyComboBoxText*   Lmethod;
+    sigc::connection  Lmethodconn;
+    MyComboBoxText*   Cmethod;
+    sigc::connection  Cmethodconn;
+    MyComboBoxText*   C2method;
+    sigc::connection  C2methodconn;
     MyComboBoxText*   smethod;
     sigc::connection  smethodconn;
     MyComboBoxText*   medmethod;
@@ -65,8 +79,21 @@ class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public Fol
     MyComboBoxText*   rgbmethod;
     sigc::connection  rgbmethodconn;
     Gtk::HBox* ctboxrgb;
+	double nextchroma;
+	double nextred;
+	double nextblue;
+	double nextnresid;
+	double nexthighresid;
+    Gtk::HBox* ctboxL;
+    Gtk::HBox* ctboxC;
+    Gtk::HBox* ctboxC2;
+	int nexttileX;
+	int nexttileY;
+	int nextprevX;
+	int nextprevY;
+	int nextsizeT;
+	int nextsizeP;
 	
-
   public:
 
     DirPyrDenoise ();
@@ -76,7 +103,7 @@ class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public Fol
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
-    void curveChanged 	();
+    void curveChanged 	(CurveEditor* ce);
     void setEditProvider     (EditDataProvider *provider);
     void autoOpenCurve  ();
 
@@ -84,15 +111,33 @@ class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public Fol
     void enabledChanged  ();
     void enhanceChanged  ();
     void medianChanged  ();
+    void autochromaChanged  ();
+    void chromaChanged (double autchroma, double autred, double autblue);
+    bool chromaComputed_ ();
+    void noiseChanged (double nresid, double highresid);
+    bool noiseComputed_ ();
+    void noiseTilePrev (int tileX, int tileY, int prevX, int prevY, int sizeT, int sizeP);
+    bool TilePrevComputed_ ();
+	
 //    void perform_toggled  ();
+	void updateNoiseLabel      ();
+    void LmethodChanged      ();
+    void CmethodChanged      ();
+    void C2methodChanged      ();
+	void updateTileLabel      ();
+	void updatePrevLabel      ();
+
     void dmethodChanged      ();
     void medmethodChanged      ();
     void methodmedChanged      ();
     void rgbmethodChanged      ();
     void smethodChanged      ();
+    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
 
     void setAdjusterBehavior (bool lumaadd, bool lumdetadd, bool chromaadd, bool chromaredadd, bool chromablueadd, bool gammaadd, bool passesadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
+	Glib::ustring getSettingString ();
+	
 };
 
 #endif
