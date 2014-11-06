@@ -2133,9 +2133,7 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 								float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L]);
 								//float mag_Lpar = SQR(parfrac*WavPars_L[dir][coeffloc_Lpar]);
 								//float sf_L = SQR(1-expf(-(mag_L/mad_L)-(mag_Lpar/mad_L)));
-								float sf_L shrinkal= mag_L/(mag_L+mad_LL[coeffloc_L]*xexpf(-mag_L/(9.f*mad_LL[coeffloc_L]))+eps);
-
-								sfave[coeffloc_L] = sf_L;
+								sfave[coeffloc_L] = mag_L/(mag_L+mad_LL[coeffloc_L]*xexpf(-mag_L/(9.f*mad_LL[coeffloc_L]))+eps);
 
 								//edge[i][j] = (WavCoeffs_L[dir][coeffloc_L] - WavPars_L[dir][coeffloc_Lpar]);
 							}
