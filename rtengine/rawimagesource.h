@@ -217,7 +217,8 @@ class RawImageSource : public ImageSource {
         void ddct8x8s(int isgn, float a[8][8]);
         void processRawWhitepoint (float expos, float preser);  // exposure before interpolation
 
-        int  interpolateBadPixels( PixelsMap &bitmapBads );
+        int  interpolateBadPixelsBayer( PixelsMap &bitmapBads );
+        int  interpolateBadPixelsXtrans( PixelsMap &bitmapBads );
         int  findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels );
 
         void cfa_linedn (float linenoiselevel);//Emil's line denoise

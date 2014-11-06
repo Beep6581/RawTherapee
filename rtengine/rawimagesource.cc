@@ -456,10 +456,10 @@ void RawImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams 
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* interpolateBadPixels: correct raw pixels looking at the bitmap
+/* interpolateBadPixelsBayer: correct raw pixels looking at the bitmap
  * takes into consideration if there are multiple bad pixels in the neighborhood
  */
-int RawImageSource::interpolateBadPixels( PixelsMap &bitmapBads )
+int RawImageSource::interpolateBadPixelsBayer( PixelsMap &bitmapBads )
 {
 	static const float eps=1.f;	
 	int counter=0;
@@ -556,7 +556,162 @@ int RawImageSource::interpolateBadPixels( PixelsMap &bitmapBads )
 	}
 	return counter; // Number of interpolated pixels.
 }
-	
+
+/* interpolateBadPixelsXtrans: correct raw pixels looking at the bitmap
+ * takes into consideration if there are multiple bad pixels in the neighborhood
+ */
+int RawImageSource::interpolateBadPixelsXtrans( PixelsMap &bitmapBads )
+{
+	static const float eps=1.f;	
+	int counter=0;
+#pragma omp parallel for reduction(+:counter) schedule(dynamic,16)
+	for( int row = 2; row < H-2; row++ ){
+		for(int col = 2; col <W-2; col++ ){
+			int skip = bitmapBads.skipIfZero(col,row); //optimization for a stripe all zero
+			if( skip ){
+				col +=skip-1; //-1 is because of col++ in cycle
+				continue;
+			}
+			if(!bitmapBads.get(col,row))
+				continue;
+
+			float wtdsum=0.f,norm=0.f;
+			int pixelColor = ri->XTRANSFC(row,col);
+			float oldval = rawData[row][col];
+			if(pixelColor==1) {
+				// green channel. A green pixel can either be a solitary green pixel or a member of a 2x2 square of green pixels
+				if(ri->XTRANSFC(row,col-1)==ri->XTRANSFC(row,col+1)) {
+					// If left and right neighbour have same color, then this is a solitary green pixel
+					// For these the following pixels will be used for interpolation. Pixel to be interpolated is in center and marked with a P.
+					// Pairs of pixels used in this step are numbered. A pair will be used if none of the pixels of the pair is marked bad
+					// 0 means, the pixel has a different color and will not be used
+					// 0 1 0 2 0
+					// 3 5 0 6 4
+					// 0 0 P 0 0
+					// 4 6 0 5 3
+					// 0 2 0 1 0
+					for( int dx=-1;dx<=1;dx+=2){ // pixels marked 5 or 6 in above example. Distance to P is sqrt(2) => weighting is 0.70710678f
+						if( bitmapBads.get(col+dx,row-1) || bitmapBads.get(col-dx,row+1))
+							continue;
+						float dirwt = 0.70710678f/( fabsf( rawData[row-1][col+dx]- rawData[row+1][col-dx])+eps);
+						wtdsum += dirwt * (rawData[row-1][col+dx] + rawData[row+1][col-dx]);
+						norm += dirwt;
+					}
+					for( int dx=-1;dx<=1;dx+=2){ // pixels marked 1 or 2 on above example. Distance to P is sqrt(5) => weighting is 0.44721359f
+						if( bitmapBads.get(col+dx,row-2) || bitmapBads.get(col-dx,row+2))
+							continue;
+						float dirwt = 0.44721359f/( fabsf( rawData[row-2][col+dx]- rawData[row+2][col-dx])+eps);
+						wtdsum += dirwt * (rawData[row-2][col+dx] + rawData[row+2][col-dx]);
+						norm += dirwt;
+					}
+					for( int dx=-2;dx<=2;dx+=4){ // pixels marked 3 or 4 on above example. Distance to P is sqrt(5) => weighting is 0.44721359f
+						if( bitmapBads.get(col+dx,row-1) || bitmapBads.get(col-dx,row+1))
+							continue;
+						float dirwt = 0.44721359f/( fabsf( rawData[row-1][col+dx]- rawData[row+1][col-dx])+eps);
+						wtdsum += dirwt * (rawData[row-1][col+dx] + rawData[row+1][col-dx]);
+						norm += dirwt;
+					}
+				} else {
+					// this is a member of a 2x2 square of green pixels
+					// For these the following pixels will be used for interpolation. Pixel to be interpolated is at position P in the example.
+					// Pairs of pixels used in this step are numbered. A pair will be used if none of the pixels of the pair is marked bad
+					// 0 means, the pixel has a different color and will not be used
+					// 1 0 0 3 
+					// 0 P 2 0 
+					// 0 2 1 0 
+					// 3 0 0 0
+					int offset1 = ri->XTRANSFC(row-1,col-1) == ri->XTRANSFC(row+1,col+1) ? 1 : -1; // pixels marked 1 in above example. Distance to P is sqrt(2) => weighting is 0.70710678f
+					if( !(bitmapBads.get(col-offset1,row-1) || bitmapBads.get(col+offset1,row+1))) {
+						float dirwt = 0.70710678f/( fabsf( rawData[row-1][col-offset1]- rawData[row+1][col+offset1])+eps);
+						wtdsum += dirwt * (rawData[row-1][col-offset1] + rawData[row+1][col+offset1]);
+						norm += dirwt;
+					}
+					int offsety = (ri->XTRANSFC(row-1,col) != 1 ? 1 : -1);
+					int offsetx = offset1 * offsety;
+					if( !(bitmapBads.get(col+offsetx,row) || bitmapBads.get(col,row+offsety))) {
+						float dirwt = 1.f/( fabsf( rawData[row][col+offsetx]- rawData[row+offsety][col])+eps);
+						wtdsum += dirwt * (rawData[row][col+offsetx] + rawData[row+offsety][col]);
+						norm += dirwt;
+					}
+					int offsety2 = -offsety;
+					int offsetx2 = -offsetx;
+					offsetx *=2;
+					offsety *=2;
+					// pixels marked 3 in above example. Distance to P is sqrt(5) => weighting is 0.44721359f
+					if( !(bitmapBads.get(col+offsetx,row+offsety2) || bitmapBads.get(col+offsetx2,row+offsety))) {
+						float dirwt = 0.44721359f/( fabsf( rawData[row+offsety2][col+offsetx]- rawData[row+offsety][col+offsetx2])+eps);
+						wtdsum += dirwt * (rawData[row+offsety2][col+offsetx] + rawData[row+offsety][col+offsetx2]);
+						norm += dirwt;
+					}
+				}
+			} else {
+				// red and blue channel.
+				// Each red or blue pixel has exactly one neigbour of same color in distance 2 and four neighbours of same color which can be reached by a move of a knight in chess.
+				// For the distance 2 pixel (marked with an X) we generate a virtual counterpart (marked with a V) 
+				// For red and blue channel following pixels will be used for interpolation. Pixel to be interpolated is in center and marked with a P.
+				// Pairs of pixels used in this step are numbered except for distance 2 pixels which are marked X and V. A pair will be used if none of the pixels of the pair is marked bad
+				// 0 1 0 0 0	0 0 X 0 0	remaining cases are symmetric
+				// 0 0 0 0 2	1 0 0 0 2
+				// X 0 P 0 V	0 0 P 0 0
+				// 0 0 0 0 1	0 0 0 0 0
+				// 0 2 0 0 0	0 2 V 1 0
+
+				// Find two knight moves landing on a pixel of same color as the pixel to be interpolated.
+				// If we look at first and last row of 5x5 square, we will find exactly two knight pixels.
+				// Additionally we know that the column of this pixel has 1 or -1 horizontal distance to the center pixel
+				// When we find a knight pixel, we get its counterpart, which has distance (+-3,+-3), where the signs of distance depend on the corner of the found knight pixel.
+				// These pixels are marked 1 or 2 in above examples. Distance to P is sqrt(5) => weighting is 0.44721359f
+				// The following loop simply scans the four possible places. To keep things simple, it doesn't stop after finding two knight pixels, because it will not find more than two
+				for(int d1=-2,offsety=3;d1<=2;d1+=4,offsety-=6) {
+					for(int d2=-1,offsetx=3;d2<1;d2+=2,offsetx-=6) {
+						if(ri->XTRANSFC(row+d1,col+d2) == pixelColor) {
+							if( !(bitmapBads.get(col+d2,row+d1) || bitmapBads.get(col+d2+offsetx,row+d1+offsety))) {
+								float dirwt = 0.44721359f/( fabsf( rawData[row+d1][col+d2]- rawData[row+d1+offsety][col+d2+offsetx])+eps);
+								wtdsum += dirwt * (rawData[row+d1][col+d2] + rawData[row+d1+offsety][col+d2+offsetx]);
+								norm += dirwt;
+							}
+						}
+					}
+				}
+
+				// now scan for the pixel of same colour in distance 2 in each direction (marked with an X in above examples).
+				bool distance2PixelFound = false;
+				int dx,dy;
+				// check horizontal
+				for(dx=-2,dy=0;dx<=2 && !distance2PixelFound;dx+=4)
+					if(ri->XTRANSFC(row,col+dx) == pixelColor)
+						distance2PixelFound = true;
+
+				if(!distance2PixelFound)
+					// no distance 2 pixel on horizontal, check vertical
+					for(dx=0,dy=-2;dy<=2 && !distance2PixelFound;dy+=4)
+						if(ri->XTRANSFC(row+dy,col) == pixelColor)
+							distance2PixelFound = true;
+				
+				// calculate the value of its virtual counterpart (marked with a V in above examples)
+				float virtualPixel;
+				if(dy==0) {
+					virtualPixel = 0.5f*(rawData[row-1][col-dx] + rawData[row+1][col-dx]);
+				}
+				else {
+					virtualPixel = 0.5f*(rawData[row-dy][col-1] + rawData[row-dy][col+1]);
+				}
+				// and weight as usual. Distance to P is 2 => weighting is 0.5f
+				float dirwt = 0.5f/( fabsf( virtualPixel- rawData[row+dy][col+dx])+eps);
+				wtdsum += dirwt * (virtualPixel + rawData[row+dy][col+dx]);
+				norm += dirwt;
+			}
+
+			if (LIKELY(norm > 0.f)){ // This means, we found at least one pair of valid pixels in the steps above, likelyhood of this case is about 99.999%
+				rawData[row][col]= wtdsum / (2.f * norm);//gradient weighted average, Factor of 2.f is an optimization to avoid multiplications in former steps
+//#pragma omp critical
+//				printf("%s Pixel at (col/row) : (%4d/%4d) : Original : %f, interpolated: %f\n",pixelColor == 0 ? "Red  " : pixelColor==1 ? "Green" : "Blue ", col-7,row-7,oldval, rawData[row][col]);
+				counter++;
+			}
+		}
+	}
+	return counter; // Number of interpolated pixels.
+}
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /*  Search for hot or dead pixels in the image and update the map
@@ -1162,7 +1317,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     defGain = 0.0;//log(initialGain) / log(2.0);
 
-	if ( raw.hotPixelFilter>0 || raw.deadPixelFilter>0) {
+	if ( ri->getSensorType()==ST_BAYER && (raw.hotPixelFilter>0 || raw.deadPixelFilter>0)) {
 		if (plistener) {
 			plistener->setProgressStr ("Hot/Dead Pixel Filter...");
 			plistener->setProgress (0.0);
@@ -1216,8 +1371,10 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
 
 	if( totBP )
-	   interpolateBadPixels( bitmapBads );
-
+		if ( ri->getSensorType()==ST_BAYER )
+			interpolateBadPixelsBayer( bitmapBads );
+		else
+			interpolateBadPixelsXtrans( bitmapBads );
 	
 	if ( ri->getSensorType()==ST_BAYER && raw.bayersensor.linenoise >0 ) {
 		if (plistener) {
