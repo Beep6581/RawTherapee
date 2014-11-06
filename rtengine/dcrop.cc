@@ -588,11 +588,11 @@ void Crop::update (int todo) {
                 parent->ipf.RGB_denoise(kall, trafx, trafy, trafw, trafh, widIm, heiIm, origCrop, origCrop, calclum, ch_M, max_r, max_b, parent->imgsrc->isRAW(), /*Roffset,*/ params.dirpyrDenoise, params.defringe, parent->imgsrc->getDirPyrDenoiseExpComp(), dnNoisCurve,lldenoiseutili, dnNoisCCcurve,ccdenoiseutili, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
 				if(parent->adnListener) parent->adnListener->noiseChanged(nresi, highresi);	
 				if(settings->leveldnautsimpl==1) {
-				if((params.dirpyrDenoise.Cmethod=="AUT" || params.dirpyrDenoise.Cmethod=="PRE" && (parent->adnListener))) // force display value of sliders
+				if((params.dirpyrDenoise.Cmethod=="AUT" || params.dirpyrDenoise.Cmethod=="PRE") && (parent->adnListener)) // force display value of sliders
 					parent->adnListener->chromaChanged(params.dirpyrDenoise.chroma, params.dirpyrDenoise.redchro, params.dirpyrDenoise.bluechro);
 				}
 				else {
-				if(params.dirpyrDenoise.C2method=="AUTO" || params.dirpyrDenoise.C2method=="PREV" && (parent->adnListener)) // force display value of sliders
+				if((params.dirpyrDenoise.C2method=="AUTO" || params.dirpyrDenoise.C2method=="PREV") && (parent->adnListener)) // force display value of sliders
 					parent->adnListener->chromaChanged(params.dirpyrDenoise.chroma, params.dirpyrDenoise.redchro, params.dirpyrDenoise.bluechro);
 				
 				}
