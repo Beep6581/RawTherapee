@@ -1520,26 +1520,87 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_296;NR - Modulate luminance
 !HISTORY_MSG_297;NR - Quality
 !HISTORY_MSG_298;Dead pixel filter
+!HISTORY_MSG_299;NR - Chrominance curve
+!HISTORY_MSG_300;-
+!HISTORY_MSG_301;NR - Luma control
+!HISTORY_MSG_302;NR - Chroma method
+!HISTORY_MSG_303;-
 !NAVIGATOR_NA; --
 !PARTIALPASTE_FILMSIMULATION;Film Simulation
+!PREFERENCES_AUTLISLOW;Low
+!PREFERENCES_AUTLISMAX;Max - Average of all tiles
+!PREFERENCES_AUTLISSTD;High
+!PREFERENCES_AUTLISVLOW;None
+!PREFERENCES_AUTLOW;Low
+!PREFERENCES_AUTSTD;Standard
+!PREFERENCES_EXPAUT;Expert
+!PREFERENCES_GREYSC18;Yb=18 CIE L#50
+!PREFERENCES_GREYSCA;Automatic
+!PREFERENCES_GREYSC;Scene Yb luminance (%)
 !PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
 !PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
+!PREFERENCES_LEVAUTDN;Denoising level
+!PREFERENCES_LEVDN;Cell size
+!PREFERENCES_LISS;Auto multi-zone smoothing
+!PREFERENCES_MAX;Maxi (Tile)
+!PREFERENCES_MED;Medium (Tile/2)
+!PREFERENCES_MIN;Mini (100x115)
 !PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
+!PREFERENCES_NOISE;Noise Reduction
+!PREFERENCES_SIMPLAUT;Tool mode
+!PREFERENCES_SMA;Small (250x287)
+!PREFERENCES_STDAUT;Standard
+!PREFERENCES_TIMAX;High
+!PREFERENCES_TINB;Number of tiles
+!PREFERENCES_TISTD;Standard
+!PREFERENCES_WAVLEV;Increase wavelet level in quality 'high'
+!PREFERENCES_WLONE;One level
+!PREFERENCES_WLTWO;Two levels
+!PREFERENCES_WLZER;No
 !TP_BWMIX_ALGO;Algorithm OYCPM
 !TP_BWMIX_ALGO_LI;Linear
 !TP_BWMIX_ALGO_SP;Special effects
 !TP_BWMIX_ALGO_TOOLTIP;Linear: will produce a normal <b>linear</b> response.\nSpecial effects: will produce special effects by mixing channels <b>non-linearly</b>.
 !TP_COLORTONING_AUTOSAT;Automatic
 !TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Chroma opacity as a function of luminance oC=f(L)
+!TP_DIRPYRDENOISE_99;9x9 (very slow)
+!TP_DIRPYRDENOISE_ABM;Chroma only
+!TP_DIRPYRDENOISE_AUTO;Automatic global
+!TP_DIRPYRDENOISE_AUTO;Auto chroma
+!TP_DIRPYRDENOISE_AUTO_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !
+!TP_DIRPYRDENOISE_AUT;Automatic global
+!TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
+!TP_DIRPYRDENOISE_CCCURVE;Chrominance curve
+!TP_DIRPYRDENOISE_CHROMAFR;Chrominance
+!TP_DIRPYRDENOISE_CTYPE;Auto method
+!TP_DIRPYRDENOISE_CTYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nAutomatic multi-zones\nNo preview - works only during saving, but using the "Preview" method by matching the tile size and center to the preview size and center you can get an idea of the expected results.\nThe image is divided into tiles (about 10 to 70 depending on image size) and each tile receives its own chrominance noise reduction settings.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
+!TP_DIRPYRDENOISE_CURVEEDITOR_CC;Chroma
+!TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
 !TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modulates action of 'Luminance' denoise
+!TP_DIRPYRDENOISE_CUR;Curve
 !TP_DIRPYRDENOISE_LABM;L*a*b*
 !TP_DIRPYRDENOISE_LCURVE;Luminance curve
+!TP_DIRPYRDENOISE_LPLABM;Weighted L* (little) + a*b* (normal)
+!TP_DIRPYRDENOISE_LTYPE;Luminance type
+!TP_DIRPYRDENOISE_LUMAFR;Luminance
+!TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet on luminance and Fourier transform for luminance detail
+!TP_DIRPYRDENOISE_MANU;Manual
+!TP_DIRPYRDENOISE_MAN;Manual
 !TP_DIRPYRDENOISE_METHOD11;Quality
 !TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
+!TP_DIRPYRDENOISE_NOISELABELEMPTY;Preview noise: Mean= -   High= -
+!TP_DIRPYRDENOISE_NOISELABEL;Preview noise: Mean=%1  High=%2
+!TP_DIRPYRDENOISE_NRESID_TOOLTIP;Displays the remaining noise levels of the part of the image visible in the <b>preview</b> after wavelet.\n\n>300 Very noisy\n100-300 Noisy\n50-100 A little noisy\n<50 Very low noise\n\nBeware, the values will differ between RGB and L*a*b* mode. The RGB values are less accurate because the RGB mode does not completely separate luminance and chrominance.
+!TP_DIRPYRDENOISE_PON;Auto multi-zones
+!TP_DIRPYRDENOISE_PREVLABEL;Preview size=%1, Center: Px=%2  Py=%3
+!TP_DIRPYRDENOISE_PREV;Preview
+!TP_DIRPYRDENOISE_PRE;Preview multi-zones
 !TP_DIRPYRDENOISE_RGBM;RGB
 !TP_DIRPYRDENOISE_SHALBI;High
 !TP_DIRPYRDENOISE_SHAL;Standard
+!TP_DIRPYRDENOISE_SLI;Slider
 !TP_DIRPYRDENOISE_SOFT;3x3
+!TP_DIRPYRDENOISE_TILELABEL;Tile size=%1, Center: Tx=%2  Ty=%3
 !TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
 !TP_FLATFIELD_FILEDLGFILTERANY;Any files
 !TP_FLATFIELD_FILEDLGFILTERFF;Same format as current photo

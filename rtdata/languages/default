@@ -715,7 +715,13 @@ PARTIALPASTE_VIGNETTING;Vignetting correction
 PARTIALPASTE_WHITEBALANCE;White balance
 PREFERENCES_ADD;Add
 PREFERENCES_APPLNEXTSTARTUP;restart required
+PREFERENCES_AUTLISLOW;Low
+PREFERENCES_AUTLISMAX;Max - Average of all tiles
+PREFERENCES_AUTLISSTD;High
+PREFERENCES_AUTLISVLOW;None
+PREFERENCES_AUTLOW;Low
 PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
+PREFERENCES_AUTSTD;Standard
 PREFERENCES_BATCH_PROCESSING;Batch Processing
 PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
 PREFERENCES_BEHADDALL;All to 'Add'
@@ -746,30 +752,6 @@ PREFERENCES_D50;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
 PREFERENCES_D65;6500K
-PREFERENCES_LEVDN;Cell size
-PREFERENCES_MIN;Mini (100x115)
-PREFERENCES_SMA;Small (250x287)
-PREFERENCES_MED;Medium (Tile/2)
-PREFERENCES_MAX;Maxi (Tile)
-PREFERENCES_NOISE;Noise Reduction
-PREFERENCES_LEVAUTDN;Denoising level
-PREFERENCES_AUTLOW;Low
-PREFERENCES_AUTSTD;Standard
-PREFERENCES_SIMPLAUT;Tool mode
-PREFERENCES_STDAUT;Standard
-PREFERENCES_EXPAUT;Expert
-PREFERENCES_LISS;Auto multi-zone smoothing
-PREFERENCES_AUTLISVLOW;None
-PREFERENCES_AUTLISLOW;Low
-PREFERENCES_AUTLISSTD;High
-PREFERENCES_AUTLISMAX;Max - Average of all tiles
-PREFERENCES_TINB;Number of tiles
-PREFERENCES_TISTD;Standard
-PREFERENCES_TIMAX;High
-PREFERENCES_WAVLEV;Increase wavelet level in quality 'high'
-PREFERENCES_WLZER;No
-PREFERENCES_WLONE;One level
-PREFERENCES_WLTWO;Two levels
 PREFERENCES_DARKFRAMEFOUND;Found
 PREFERENCES_DARKFRAMESHOTS;shots
 PREFERENCES_DARKFRAMETEMPLATES;templates
@@ -786,6 +768,7 @@ PREFERENCES_DIRSELECTDLG;Select Image Directory at Startup...
 PREFERENCES_DIRSOFTWARE;Installation directory
 PREFERENCES_EDITORCMDLINE;Other command line
 PREFERENCES_EDITORLAYOUT;Editor Layout
+PREFERENCES_EXPAUT;Expert
 PREFERENCES_EXTERNALEDITOR;External Editor
 PREFERENCES_FBROWSEROPTS;File Browser / Thumbnail Options
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low resolution display)
@@ -811,11 +794,10 @@ PREFERENCES_GREY18;Yb=18 CIE L#50
 PREFERENCES_GREY23;Yb=23 CIE L#55
 PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
-PREFERENCES_GREY;Output device's Yb luminance (%)
-PREFERENCES_GREYSC;Scene Yb luminance (%)
-PREFERENCES_GREY05;Yb=05 CIE L#30
-PREFERENCES_GREYSCA;Automatic
 PREFERENCES_GREYSC18;Yb=18 CIE L#50
+PREFERENCES_GREYSCA;Automatic
+PREFERENCES_GREYSC;Scene Yb luminance (%)
+PREFERENCES_GREY;Output device's Yb luminance (%)
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
 PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
 PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
@@ -828,6 +810,11 @@ PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
 PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show embedded JPEG thumbnail if raw is unedited
 PREFERENCES_LANGAUTODETECT;Use system language
+PREFERENCES_LEVAUTDN;Denoising level
+PREFERENCES_LEVDN;Cell size
+PREFERENCES_LISS;Auto multi-zone smoothing
+PREFERENCES_MAX;Maxi (Tile)
+PREFERENCES_MED;Medium (Tile/2)
 PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Group "File operations"
 PREFERENCES_MENUGROUPLABEL;Group "Color label"
@@ -835,10 +822,12 @@ PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group "Processing profile operations"
 PREFERENCES_MENUGROUPRANK;Group "Rank"
 PREFERENCES_MENUOPTIONS;Context Menu Options
 PREFERENCES_METADATA;Metadata
+PREFERENCES_MIN;Mini (100x115)
 PREFERENCES_MONITORICC;Monitor color profile
 PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs Mode (if available on second monitor)
 PREFERENCES_MULTITAB;Multiple Editor Tabs Mode
 PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
+PREFERENCES_NOISE;Noise Reduction
 PREFERENCES_OUTDIRFOLDERHINT;Save images to the selected folder.
 PREFERENCES_OUTDIRFOLDER;Save to folder
 PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nThese formatting strings refer to the different parts of the photo's pathname, some attributes of the photo or an arbitrary sequence index in the batch job.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> will be replaced by the rank of the photo. If the photo is unranked, %r will be replaced by '0'. If the photo is in the trash bin, %r will be replaced by 'x'.\n\n<b>%s1</b>, <b>%s2</b>, etc. will be replaced by a sequence index which is padded to between 1 and 9 digits. The sequence index will start at one each time the queue processing is started and is incremented by one for each image processed.\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
@@ -872,20 +861,26 @@ PREFERENCES_SHOWDATETIME;Show date and time
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
 PREFERENCES_SHOWPROFILESELECTOR;Show processing profile selector
 PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
+PREFERENCES_SIMPLAUT;Tool mode
 PREFERENCES_SINGLETABVERTAB;Single Editor Tab Mode, Vertical Tabs
 PREFERENCES_SINGLETAB;Single Editor Tab Mode
 PREFERENCES_SLIMUI;Slim interface
+PREFERENCES_SMA;Small (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
 PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound).\nOn Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.\nOn Linux use "complete", "window-attention" etc. for system sounds. 
 PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 PREFERENCES_SND_TRESHOLDSECS;After seconds
 PREFERENCES_STARTUPIMDIR;Image Directory at Startup
+PREFERENCES_STDAUT;Standard
 PREFERENCES_TAB_BROWSER;File Browser
 PREFERENCES_TAB_COLORMGR;Color Management
 PREFERENCES_TAB_GENERAL;General
 PREFERENCES_TAB_IMPROC;Image Processing
 PREFERENCES_TAB_PERFORMANCE;Performance & Quality
 PREFERENCES_TAB_SOUND;Sounds
+PREFERENCES_TIMAX;High
+PREFERENCES_TINB;Number of tiles
+PREFERENCES_TISTD;Standard
 PREFERENCES_TP_LABEL;Tool panel:
 PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
@@ -893,6 +888,10 @@ PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging 
 PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 PREFERENCES_USESYSTEMTHEME;Use system theme
 PREFERENCES_VIEW;Output device's white balance (monitor, TV, projector, viewing, etc.)
+PREFERENCES_WAVLEV;Increase wavelet level in quality 'high'
+PREFERENCES_WLONE;One level
+PREFERENCES_WLTWO;Two levels
+PREFERENCES_WLZER;No
 PREFERENCES_WORKFLOW;Layout
 PROFILEPANEL_COPYPPASTE;Parameters to copy
 PROFILEPANEL_FILEDLGFILTERANY;Any files
@@ -1170,9 +1169,22 @@ TP_DIRPYRDENOISE_55SOFT;5×5
 TP_DIRPYRDENOISE_55;5×5 strong
 TP_DIRPYRDENOISE_77;7×7 (slow)
 TP_DIRPYRDENOISE_99;9x9 (very slow)
+TP_DIRPYRDENOISE_ABM;Chroma only
+TP_DIRPYRDENOISE_AUTO;Automatic global
+TP_DIRPYRDENOISE_AUTO;Auto chroma
+TP_DIRPYRDENOISE_AUTO_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !
+TP_DIRPYRDENOISE_AUT;Automatic global
 TP_DIRPYRDENOISE_BLUE;Chrominance - Blue-Yellow
+TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
+TP_DIRPYRDENOISE_CCCURVE;Chrominance curve
+TP_DIRPYRDENOISE_CHROMAFR;Chrominance
 TP_DIRPYRDENOISE_CHROMA;Chrominance - Master
+TP_DIRPYRDENOISE_CTYPE;Auto method
+TP_DIRPYRDENOISE_CTYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nAutomatic multi-zones\nNo preview - works only during saving, but using the "Preview" method by matching the tile size and center to the preview size and center you can get an idea of the expected results.\nThe image is divided into tiles (about 10 to 70 depending on image size) and each tile receives its own chrominance noise reduction settings.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
+TP_DIRPYRDENOISE_CURVEEDITOR_CC;Chroma
+TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
 TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modulates action of 'Luminance' denoise
+TP_DIRPYRDENOISE_CUR;Curve
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on the gamma of the input color profile. An sRGB gamma is assumed, thus if the image uses an input color profile of a different gamma, the effects of luminance noise reduction will differ.
 TP_DIRPYRDENOISE_ENH;Enhanced mode
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase.
@@ -1181,38 +1193,16 @@ TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the 
 TP_DIRPYRDENOISE_LABEL;Noise Reduction
 TP_DIRPYRDENOISE_LABM;L*a*b*
 TP_DIRPYRDENOISE_LAB;L*a*b*
-TP_DIRPYRDENOISE_ABM;Chroma only
-TP_DIRPYRDENOISE_LPLABM;Weighted L* (little) + a*b* (normal)
-TP_DIRPYRDENOISE_LTYPE;Luminance type
 TP_DIRPYRDENOISE_LCURVE;Luminance curve
-TP_DIRPYRDENOISE_SLI;Slider
-TP_DIRPYRDENOISE_CUR;Curve
-TP_DIRPYRDENOISE_LUMAFR;Luminance
-TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet on luminance and Fourier transform for luminance detail
-TP_DIRPYRDENOISE_CHROMAFR;Chrominance
-TP_DIRPYRDENOISE_AUTO;Auto chroma
-TP_DIRPYRDENOISE_CTYPE;Auto method
-TP_DIRPYRDENOISE_CTYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nAutomatic multi-zones\nNo preview - works only during saving, but using the "Preview" method by matching the tile size and center to the preview size and center you can get an idea of the expected results.\nThe image is divided into tiles (about 10 to 70 depending on image size) and each tile receives its own chrominance noise reduction settings.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
-TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
-TP_DIRPYRDENOISE_MAN;Manual
-TP_DIRPYRDENOISE_MANU;Manual
-TP_DIRPYRDENOISE_AUT;Automatic global
-TP_DIRPYRDENOISE_AUTO;Automatic global
-TP_DIRPYRDENOISE_PON;Auto multi-zones
-TP_DIRPYRDENOISE_PRE;Preview multi-zones
-TP_DIRPYRDENOISE_PREV;Preview
-TP_DIRPYRDENOISE_AUTO_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !
-TP_DIRPYRDENOISE_NOISELABEL;Preview noise: Mean=%1  High=%2
-TP_DIRPYRDENOISE_TILELABEL;Tile size=%1, Center: Tx=%2  Ty=%3
-TP_DIRPYRDENOISE_PREVLABEL;Preview size=%1, Center: Px=%2  Py=%3
-TP_DIRPYRDENOISE_NOISELABELEMPTY;Preview noise: Mean= -   High= -
-TP_DIRPYRDENOISE_NRESID_TOOLTIP;Displays the remaining noise levels of the part of the image visible in the <b>preview</b> after wavelet.\n\n>300 Very noisy\n100-300 Noisy\n50-100 A little noisy\n<50 Very low noise\n\nBeware, the values will differ between RGB and L*a*b* mode. The RGB values are less accurate because the RGB mode does not completely separate luminance and chrominance.
-TP_DIRPYRDENOISE_CCCURVE;Chrominance curve
-TP_DIRPYRDENOISE_CURVEEDITOR_CC;Chroma
-TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
 TP_DIRPYRDENOISE_LDETAIL;Luminance - Detail
 TP_DIRPYRDENOISE_LM;Luminance only
+TP_DIRPYRDENOISE_LPLABM;Weighted L* (little) + a*b* (normal)
+TP_DIRPYRDENOISE_LTYPE;Luminance type
+TP_DIRPYRDENOISE_LUMAFR;Luminance
+TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet on luminance and Fourier transform for luminance detail
 TP_DIRPYRDENOISE_LUMA;Luminance
+TP_DIRPYRDENOISE_MANU;Manual
+TP_DIRPYRDENOISE_MAN;Manual
 TP_DIRPYRDENOISE_MEDMETHOD;Median method
 TP_DIRPYRDENOISE_MEDTYPE;Median type
 TP_DIRPYRDENOISE_MED;Median Filter
@@ -1223,14 +1213,23 @@ TP_DIRPYRDENOISE_METHOD;Method
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or L*a*b* methods can be used.\n\nFor non-raw images the L*a*b* method will be used, regardless of the selection.
 TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "L*a*b*" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
 TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired size. The larger the size, the longer it takes.\n\n3x3 soft: treats 5 pixels in a 1-pixel range.\n3x3: treats 9 pixels in a 1-pixel range.\n5x5 soft: treats 13 pixels in a 2-pixel range.\n5x5: treats 25 pixels in a 2-pixel range.\n7x7: treats 49 pixels in a 3-pixel range.\n9x9: treats 81 pixels in a 4-pixel range.\n\nSometimes it is possible to achieve higher quality running several iterations with a small range than one iteration with a large range.
+TP_DIRPYRDENOISE_NOISELABELEMPTY;Preview noise: Mean= -   High= -
+TP_DIRPYRDENOISE_NOISELABEL;Preview noise: Mean=%1  High=%2
+TP_DIRPYRDENOISE_NRESID_TOOLTIP;Displays the remaining noise levels of the part of the image visible in the <b>preview</b> after wavelet.\n\n>300 Very noisy\n100-300 Noisy\n50-100 A little noisy\n<50 Very low noise\n\nBeware, the values will differ between RGB and L*a*b* mode. The RGB values are less accurate because the RGB mode does not completely separate luminance and chrominance.
 TP_DIRPYRDENOISE_PASSES;Median iterations
 TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying a 3x3 median filter with three iterations often leads to better results than applying 7x7 once.
+TP_DIRPYRDENOISE_PON;Auto multi-zones
+TP_DIRPYRDENOISE_PREVLABEL;Preview size=%1, Center: Px=%2  Py=%3
+TP_DIRPYRDENOISE_PREV;Preview
+TP_DIRPYRDENOISE_PRE;Preview multi-zones
 TP_DIRPYRDENOISE_RED;Chrominance - Red-Green
 TP_DIRPYRDENOISE_RGBM;RGB
 TP_DIRPYRDENOISE_RGB;RGB
 TP_DIRPYRDENOISE_SHALBI;High
 TP_DIRPYRDENOISE_SHAL;Standard
+TP_DIRPYRDENOISE_SLI;Slider
 TP_DIRPYRDENOISE_SOFT;3x3
+TP_DIRPYRDENOISE_TILELABEL;Tile size=%1, Center: Tx=%2  Ty=%3
 TP_DIRPYREQUALIZER_ALGO;Skin Color Range
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts.
 TP_DIRPYREQUALIZER_GAMUT;Reduce artifacts
