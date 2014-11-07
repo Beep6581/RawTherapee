@@ -24,6 +24,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
 
     set_modal (true);
     set_title (title);
+    set_default_size(700, 600);
 
     everything  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EVERYTHING")));
     everything  ->set_name("partialPasteHeader");
@@ -220,18 +221,17 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     vbCol3->set_border_width (8);
 
     for (int i=0; i<3; i++)
-        vbCol1->pack_start (*vboxes[i]);
+        vbCol1->pack_start (*vboxes[i], Gtk::PACK_SHRINK, 2);
     for (int i=3; i<6; i++)
-        vbCol2->pack_start (*vboxes[i]);
+        vbCol2->pack_start (*vboxes[i], Gtk::PACK_SHRINK, 2);
     for (int i=6; i<7; i++)
-        vbCol3->pack_start (*vboxes[i]);
+        vbCol3->pack_start (*vboxes[i], Gtk::PACK_SHRINK, 2);
 
 	Gtk::VBox* vbtop = Gtk::manage (new Gtk::VBox ());
 	vbtop->pack_start (*everything, Gtk::PACK_SHRINK, 2);
-    vbtop->pack_start (*(Gtk::manage (new Gtk::HSeparator ())));
     vbtop->set_border_width (8);
 
-	get_vbox()->pack_start (*vbtop);
+    Gtk::Dialog::get_vbox()->pack_start (*vbtop, Gtk::PACK_SHRINK, 2); // TODO replace with get_content_area() with GTK upgrade
 
     Gtk::HBox* hbmain = Gtk::manage (new Gtk::HBox ());
     hbmain->pack_start (*vbCol1);
@@ -240,7 +240,19 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     hbmain->pack_start (*(Gtk::manage (new Gtk::VSeparator ())));
     hbmain->pack_start (*vbCol3);
 
-    get_vbox()->pack_start (*hbmain);
+    scrolledwindow = Gtk::manage ( new Gtk::ScrolledWindow() );
+    scrolledwindow->set_flags(Gtk::CAN_FOCUS);
+    scrolledwindow->set_border_width(2);
+    scrolledwindow->set_shadow_type(Gtk::SHADOW_NONE);
+    scrolledwindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+    scrolledwindow->property_window_placement().set_value(Gtk::CORNER_TOP_LEFT);
+
+    scrolledwindow->add(*hbmain);
+
+    Gtk::Dialog::get_vbox()->pack_start (*scrolledwindow, Gtk::PACK_EXPAND_WIDGET, 2);// TODO replace with get_content_area() with GTK upgrade
+
+    hbmain->show();
+    scrolledwindow->show ();
 
     // This can be improved
     // there is currently no binding of subsettings to CheckButton 'everything' for its inconsistent status
