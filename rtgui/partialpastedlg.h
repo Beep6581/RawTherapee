@@ -26,6 +26,8 @@ class PartialPasteDlg : public Gtk::Dialog {
 
     public:
 
+        Gtk::ScrolledWindow *scrolledwindow;
+
         Gtk::CheckButton* everything;
 
         // main groups:
