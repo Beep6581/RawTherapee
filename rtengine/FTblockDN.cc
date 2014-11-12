@@ -1394,15 +1394,14 @@ void ImProcFunctions::Tile_calc (int tilesize, int overlap, int kall, int imwidt
 						float X,Y,Z;
 						for (int j=tileleft; j<tileright; j++) {
 							int j1=j-tileleft;
-
+							float c_h=sqrt(SQR(labdn->a[i1][j1])+SQR(labdn->b[i1][j1]));
+							if(c_h>3000.f){
+								labdn->a[i1][j1]*=1.f + Qhigh*realred/100.f;
+								labdn->b[i1][j1]*=1.f + Qhigh*realblue/100.f;
+							}
 							Y = labdn->L[i1][j1];
 							X = (labdn->a[i1][j1]) + Y;
 							Z = Y - (labdn->b[i1][j1]);
-							float c_h=sqrt(SQR(X)+SQR(Z));
-							if(c_h>3000.f){
-								X*=1.f + Qhigh*realred/100.f;
-								Z*=1.f + Qhigh*realblue/100.f;
-							}
 							
 
 							X = X<32768.0f ? igamcurve[X] : (Color::gamma((float)X/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
