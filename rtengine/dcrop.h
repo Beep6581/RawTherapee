@@ -66,13 +66,13 @@ class Crop : public DetailedCrop, public EditBuffer {
 
         MyMutex cropMutex;
         ImProcCoordinator* parent;
-
+		bool isDetailWindow;
         EditUniqueID getCurrEditID();
         bool setCropSizes (int cx, int cy, int cw, int ch, int skip, bool internal);
         void freeAll ();
 
     public:
-        Crop             (ImProcCoordinator* parent, EditDataProvider *editDataProvider);
+        Crop             (ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow);
         virtual ~Crop    ();
         int skip2;
 

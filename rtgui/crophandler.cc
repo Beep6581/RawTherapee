@@ -61,7 +61,7 @@ void CropHandler::setEditSubscriber (EditSubscriber* newSubscriber) {
     (static_cast<rtengine::Crop *>(crop))->setEditSubscriber(newSubscriber);
 }
 
-void CropHandler::newImage (StagedImageProcessor* ipc_) {
+void CropHandler::newImage (StagedImageProcessor* ipc_, bool isDetailWindow) {
 
     ipc = ipc_;
     cx = 0;
@@ -74,7 +74,7 @@ void CropHandler::newImage (StagedImageProcessor* ipc_) {
     CropWindow *cropWin = listener ? static_cast<CropWindow*>(listener) : NULL;
     if (cropWin)
         editDataProvider = cropWin->getImageArea();
-    crop = ipc->createCrop (editDataProvider);
+    crop = ipc->createCrop (editDataProvider, isDetailWindow);
     ipc->setSizeListener (this);
     crop->setListener (enabled ? this : NULL);
     initial = true;

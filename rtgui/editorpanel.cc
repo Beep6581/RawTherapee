@@ -493,7 +493,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     // since there was no resize event
     if (iareapanel->imageArea->mainCropWindow)
     {
-        iareapanel->imageArea->mainCropWindow->cropHandler.newImage(ipc);
+        iareapanel->imageArea->mainCropWindow->cropHandler.newImage(ipc, false);
         iareapanel->imageArea->mainCropWindow->initialImageArrived();
 
 		// In single tab mode, the image is not always updated between switches

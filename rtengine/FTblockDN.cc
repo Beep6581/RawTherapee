@@ -247,12 +247,25 @@ void ImProcFunctions::Tile_calc (int tilesize, int overlap, int kall, int imwidt
 	//	printf("Nw=%d NH=%d tileW=%d tileH=%d\n",numtiles_W,numtiles_H,tileWskip,tileHskip);
 }
 
-	void ImProcFunctions::RGB_denoise(int kall, int trafx, int trafy, int trafw, int trafh, int widIm, int heiIm, Imagefloat * src, Imagefloat * dst,Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe, const double expcomp, const NoisCurve & dnNoisCurve, bool lldenoiseutili,  const NoisCCcurve & dnNoisCCcurve,  bool ccdenoiseutili, float &chaut, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &nresi, float &highresi)
+	void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst,Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe, const double expcomp, const NoisCurve & dnNoisCurve, bool lldenoiseutili,  const NoisCCcurve & dnNoisCCcurve,  bool ccdenoiseutili, float &chaut, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &nresi, float &highresi)
 	{
 //#ifdef _DEBUG
 	MyTime t1e,t2e;
 	t1e.set();
 //#endif
+
+	
+	if (dnparams.luma==0 && dnparams.chroma==0  && !dnparams.median && !dnNoisCurve && !dnNoisCCcurve) {
+		//nothing to do; copy src to dst or do nothing in case src == dst
+		if(src != dst)
+			memcpy(dst->data,src->data,dst->width*dst->height*3*sizeof(float));
+		if(calclum) {
+			delete calclum;
+			calclum = NULL;
+		}
+			
+		return;
+	}
 		static MyMutex FftwMutex;
 		MyMutex::MyLock lock(FftwMutex);
 		int hei,wid;
@@ -317,12 +330,6 @@ void ImProcFunctions::Tile_calc (int tilesize, int overlap, int kall, int imwidt
 		const short int imheight=src->height, imwidth=src->width;
 	//	printf("imW=%d imH=%d\n",imwidth,imheight);
 	//	printf("Chroma=%f\n", dnparams.chroma);
-		if (dnparams.luma==0 && dnparams.chroma==0  && !dnparams.median ) {
-            //nothing to do; copy src to dst or do nothing in case src == dst
-			if(src != dst)
-				memcpy(dst->data,src->data,dst->width*dst->height*3*sizeof(float));
-			return;
-		}
 	Qhigh=1.0f;	
 	if(dnparams.smethod=="shalbi") Qhigh=1.f/(float) settings->nrhigh;
 	if (dnparams.luma!=0 || dnparams.chroma!=0 || dnparams.methodmed=="Lab" || dnparams.methodmed=="Lonly" ) {
@@ -2574,13 +2581,21 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAll_info(float ** WavCoeffs_L, float ** 
 			}
 			
 //		printf("chro=%f maxc=%f sigma=%f max2sigma=%f lum=%f\n",chro/(nc),maxchro, sqrt(dev/nc), (chro/(nc))+ 2.f*sqrt(dev/nc), lume/nL);
-		chromina=chro/nc;
-		sigma=sqrt(dev/nc);
-		lumema=lume/nL;
-		sigma_L=sqrt(devL/nL);
-		redyel=red_yel/nry;
-		nsknc=(float)nsk/(float)nc;
-		skinc=skin_c/nsk;
+		if(nc>0) {
+			chromina=chro/nc;
+			sigma=sqrt(dev/nc);
+			nsknc=(float)nsk/(float)nc;
+		} else {
+			nsknc=(float)nsk;
+		}
+		if(nL>0) {
+			lumema=lume/nL;
+			sigma_L=sqrt(devL/nL);
+		}
+		if(nry>0)
+			redyel=red_yel/nry;
+		if(nsk>0)
+			skinc=skin_c/nsk;
 		
 		
 	//	printf("redy=%f ski=%f nsk=%d nc=%d pcsk=%f\n",red_yel/nry,skinc,nsk, nc, (float)nsk/(float)nc );
@@ -2776,6 +2791,13 @@ void ImProcFunctions::calcautodn_info (float &chaut, float &delta, int Nb, int l
 	void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat * dst,Imagefloat * provicalc, bool isRAW, LUTf &gamcurve, float gam, float gamthresh, float gamslope, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe, const double expcomp, const NoisCurve & dnNoisCurve, bool lldenoiseutili,  const NoisCCcurve & dnNoisCCcurve,  bool ccdenoiseutili, float &chaut, int &Nb,  float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, float &nresi, float &highresi, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc)
 	{
 //		StopWatch Stop1("RGB_denoise_info");
+
+	if (dnparams.luma==0 && dnparams.chroma==0  && !dnparams.median ) {
+		//nothing to do; copy src to dst or do nothing in case src == dst
+		return;
+	}
+
+
 		int hei,wid;
 //		float LLum,AAum,BBum;
 		float** lumcalc;
@@ -2822,12 +2844,6 @@ void ImProcFunctions::calcautodn_info (float &chaut, float &delta, int Nb, int l
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 		const short int imheight=src->height, imwidth=src->width;
-		if (dnparams.luma==0 && dnparams.chroma==0  && !dnparams.median ) {
-            //nothing to do; copy src to dst or do nothing in case src == dst
-			if(src != dst)
-				memcpy(dst->data,src->data,dst->width*dst->height*3*sizeof(float));
-			return;
-		}
 
 	if (dnparams.luma!=0 || dnparams.chroma!=0 || dnparams.methodmed=="Lab" || dnparams.methodmed=="Lonly" ) {
 		perf=false;
