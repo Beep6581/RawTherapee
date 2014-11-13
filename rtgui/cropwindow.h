@@ -98,7 +98,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener, public E
 
     public:
         CropHandler cropHandler;
-        CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_, bool isLowUpdatePriority_);
+        CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_, bool isLowUpdatePriority_, bool isDetailWindow);
 
         void setDecorated       (bool decorated)    { this->decorated = decorated; }
         void setFitZoomEnabled  (bool fze)          { fitZoomEnabled = fze; }

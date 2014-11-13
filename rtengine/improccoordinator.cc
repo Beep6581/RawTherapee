@@ -112,9 +112,9 @@ ImProcCoordinator::~ImProcCoordinator () {
     updaterThreadStart.unlock ();
 }
 
-DetailedCrop* ImProcCoordinator::createCrop  (::EditDataProvider *editDataProvider) {
+DetailedCrop* ImProcCoordinator::createCrop  (::EditDataProvider *editDataProvider, bool isDetailWindow) {
 
-    return new Crop (this, editDataProvider);
+    return new Crop (this, editDataProvider, isDetailWindow);
 }
 
 
@@ -270,7 +270,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.toneCurve, params.icm, params.raw);
         //ColorTemp::CAT02 (orig_prev, &params)	;
 
-		Imagefloat *calclum ;
+		Imagefloat *calclum = NULL ;
 		lldenoiseutili=false;
 		ccdenoiseutili=false;
 		params.dirpyrDenoise.getCurves(dnNoisCurve,dnNoisCCcurve,lldenoiseutili, ccdenoiseutili);
@@ -284,6 +284,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		if(params.dirpyrDenoise.Lmethod=="CUR") params.dirpyrDenoise.luma=0.5f;
 		if(params.dirpyrDenoise.Lmethod=="SLI") lldenoiseutili=false;
 		
+		if(!lldenoiseutili)
+			dnNoisCurve.Reset();
+		if(!ccdenoiseutili)
+			dnNoisCCcurve.Reset();
+
 		if((lldenoiseutili || ccdenoiseutili) &&  params.dirpyrDenoise.enabled && (scale==1)){//only allocate memory if enabled and scale=1	
 			calclum = new Imagefloat (pW, pH);//for Luminance denoise curve
 				if(orig_prev !=  calclum)
@@ -296,8 +301,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 			if (params.dirpyrDenoise.enabled && (scale==1)) {
 			printf("IMPROC\n");
 			int kall=1;
-			int trafx, trafy, trafw, trafh,  widIm, heiIm;
-			ipf.RGB_denoise(kall, trafx, trafy, trafw, trafh,  widIm, heiIm, orig_prev, orig_prev, calclum, ch_M, max_r, max_b, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp(), dnNoisCurve, lldenoiseutili, dnNoisCCcurve,ccdenoiseutili, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
+			ipf.RGB_denoise(kall, orig_prev, orig_prev, calclum, ch_M, max_r, max_b, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp(), dnNoisCurve, lldenoiseutili, dnNoisCCcurve,ccdenoiseutili, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
 		}
 		}
 	//	delete calclum;

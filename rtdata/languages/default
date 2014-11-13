@@ -235,7 +235,7 @@ HISTORY_MSG_15;L*a*b* - Contrast
 HISTORY_MSG_16;-
 HISTORY_MSG_17;-
 HISTORY_MSG_18;-
-HISTORY_MSG_19;L* curve
+HISTORY_MSG_19;L*a*b* - L* curve
 HISTORY_MSG_20;Sharpening
 HISTORY_MSG_21;USM - Radius
 HISTORY_MSG_22;USM - Amount
@@ -312,8 +312,8 @@ HISTORY_MSG_92;NR - Gamma
 HISTORY_MSG_93;CbDL - Value
 HISTORY_MSG_94;Contrast by Detail Levels
 HISTORY_MSG_95;L*a*b* - Chromaticity
-HISTORY_MSG_96;a* curve
-HISTORY_MSG_97;b* curve
+HISTORY_MSG_96;L*a*b* - a* curve
+HISTORY_MSG_97;L*a*b* - b* curve
 HISTORY_MSG_98;Demosaicing method
 HISTORY_MSG_99;Hot pixel filter
 HISTORY_MSG_100;RGB Saturation
@@ -461,9 +461,9 @@ HISTORY_MSG_242;VF - Roundness
 HISTORY_MSG_243;VC - Radius
 HISTORY_MSG_244;VC - Strength
 HISTORY_MSG_245;VC - Center
-HISTORY_MSG_246;CL curve
-HISTORY_MSG_247;LH curve
-HISTORY_MSG_248;HH curve
+HISTORY_MSG_246;L*a*b* - CL curve
+HISTORY_MSG_247;L*a*b* - LH curve
+HISTORY_MSG_248;L*a*b* - HH curve
 HISTORY_MSG_249;CbDL - Threshold
 HISTORY_MSG_250;NR - Enhanced
 HISTORY_MSG_251;B&amp;W - Algorithm
@@ -473,33 +473,33 @@ HISTORY_MSG_254;CbDL - Skin hue
 HISTORY_MSG_255;NR - Median filter
 HISTORY_MSG_256;NR - Median type
 HISTORY_MSG_257;Color Toning
-HISTORY_MSG_258;Color Toning - Color
-HISTORY_MSG_259;Color Toning - Opacity
-HISTORY_MSG_260;Color Toning - a*[b*] opacity
-HISTORY_MSG_261;Color Toning - Method
-HISTORY_MSG_262;Color Toning - b* opacity
-HISTORY_MSG_263;Color Toning - Shadows - Red
-HISTORY_MSG_264;Color Toning - Shadows - Green
-HISTORY_MSG_265;Color Toning - Shadows - Blue
-HISTORY_MSG_266;Color Toning - Mid - Red
-HISTORY_MSG_267;Color Toning - Mid - Green
-HISTORY_MSG_268;Color Toning - Mid - Blue
-HISTORY_MSG_269;Color Toning - High - Red
-HISTORY_MSG_270;Color Toning - High - Green
-HISTORY_MSG_271;Color Toning - High - Blue
-HISTORY_MSG_272;Color Toning - Balance
-HISTORY_MSG_273;Color Toning - Reset
-HISTORY_MSG_274;Color Toning - Sat. Shadows
-HISTORY_MSG_275;Color Toning - Sat. Highlights
-HISTORY_MSG_276;Color Toning - Opacity
+HISTORY_MSG_258;CT - Color curve
+HISTORY_MSG_259;CT - Opacity curve
+HISTORY_MSG_260;CT - a*[b*] opacity
+HISTORY_MSG_261;CT - Method
+HISTORY_MSG_262;CT - b* opacity
+HISTORY_MSG_263;CT - Shadows - Red
+HISTORY_MSG_264;CT - Shadows - Green
+HISTORY_MSG_265;CT - Shadows - Blue
+HISTORY_MSG_266;CT - Mid - Red
+HISTORY_MSG_267;CT - Mid - Green
+HISTORY_MSG_268;CT - Mid - Blue
+HISTORY_MSG_269;CT - High - Red
+HISTORY_MSG_270;CT - High - Green
+HISTORY_MSG_271;CT - High - Blue
+HISTORY_MSG_272;CT - Balance
+HISTORY_MSG_273;CT - Reset
+HISTORY_MSG_274;CT - Sat. Shadows
+HISTORY_MSG_275;CT - Sat. Highlights
+HISTORY_MSG_276;CT - Opacity
 HISTORY_MSG_277;--unused--
-HISTORY_MSG_278;Color Toning - Preserve luminance
-HISTORY_MSG_279;Color Toning - Shadows
-HISTORY_MSG_280;Color Toning - Highlights
-HISTORY_MSG_281;Color Toning - Sat. strength
-HISTORY_MSG_282;Color Toning - Sat. threshold
-HISTORY_MSG_283;Color Toning - Strength
-HISTORY_MSG_284;Color Toning - Auto sat. protection
+HISTORY_MSG_278;CT - Preserve luminance
+HISTORY_MSG_279;CT - Shadows
+HISTORY_MSG_280;CT - Highlights
+HISTORY_MSG_281;CT - Sat. strength
+HISTORY_MSG_282;CT - Sat. threshold
+HISTORY_MSG_283;CT - Strength
+HISTORY_MSG_284;CT - Auto sat. protection
 HISTORY_MSG_285;NR - Median - Method
 HISTORY_MSG_286;NR - Median - Type
 HISTORY_MSG_287;NR - Median - Iterations
@@ -511,14 +511,14 @@ HISTORY_MSG_292;Black Level - Blue
 HISTORY_MSG_293;Film Simulation
 HISTORY_MSG_294;Film Simulation - Strength
 HISTORY_MSG_295;Film Simulation - Film
-HISTORY_MSG_296;NR - Modulate luminance
+HISTORY_MSG_296;NR - Luminance curve
 HISTORY_MSG_297;NR - Quality
 HISTORY_MSG_298;Dead pixel filter
 HISTORY_MSG_299;NR - Chrominance curve
 HISTORY_MSG_300;-
 HISTORY_MSG_301;NR - Luma control
 HISTORY_MSG_302;NR - Chroma method
-HISTORY_MSG_303;-
+HISTORY_MSG_303;NR - Chroma method
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1171,7 +1171,6 @@ TP_DIRPYRDENOISE_77;7×7 (slow)
 TP_DIRPYRDENOISE_99;9x9 (very slow)
 TP_DIRPYRDENOISE_ABM;Chroma only
 TP_DIRPYRDENOISE_AUTO;Automatic global
-TP_DIRPYRDENOISE_AUTO;Auto chroma
 TP_DIRPYRDENOISE_AUTO_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !
 TP_DIRPYRDENOISE_AUT;Automatic global
 TP_DIRPYRDENOISE_BLUE;Chrominance - Blue-Yellow
@@ -1197,7 +1196,7 @@ TP_DIRPYRDENOISE_LCURVE;Luminance curve
 TP_DIRPYRDENOISE_LDETAIL;Luminance - Detail
 TP_DIRPYRDENOISE_LM;Luminance only
 TP_DIRPYRDENOISE_LPLABM;Weighted L* (little) + a*b* (normal)
-TP_DIRPYRDENOISE_LTYPE;Luminance type
+TP_DIRPYRDENOISE_LTYPE;Luminance control
 TP_DIRPYRDENOISE_LUMAFR;Luminance
 TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet on luminance and Fourier transform for luminance detail
 TP_DIRPYRDENOISE_LUMA;Luminance

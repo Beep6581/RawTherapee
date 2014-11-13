@@ -208,7 +208,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         int getPreviewWidth ()     { return pW; }
         int getPreviewHeight ()    { return pH; }
 
-        DetailedCrop* createCrop  (::EditDataProvider *editDataProvider);
+        DetailedCrop* createCrop  (::EditDataProvider *editDataProvider, bool isDetailWindow);
 
         bool getAutoWB   (double& temp, double& green, double equal);
         void getCamWB    (double& temp, double& green);

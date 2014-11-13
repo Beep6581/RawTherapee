@@ -1027,10 +1027,8 @@ void DirPyrDenoise::enabledChanged () {
     }
 	
     if (listener) {
-        if (enabled->get_active ()) {autochromaChanged ();
-
+        if (enabled->get_active ())
             listener->panelChanged (EvDPDNEnabled, M("GENERAL_ENABLED"));
-			}
         else
             listener->panelChanged (EvDPDNEnabled, M("GENERAL_DISABLED"));
     }  
