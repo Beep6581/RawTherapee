@@ -1191,69 +1191,40 @@ void OpacityCurve::Set(const std::vector<double> &curvePoints, bool &opautili) {
 	}
 }
 
-void NoisCCcurve::Reset() {
-	lutNoisCCcurve.reset();
+NoiseCurve::NoiseCurve() : sum(0.f) {};
+
+void NoiseCurve::Reset() {
+	lutNoiseCurve.reset();
+	sum = 0.f;
 }
 
-void NoisCCcurve::Set(const Curve *pCurve) {
-	if (pCurve->isIdentity()) {
-		lutNoisCCcurve.reset(); // raise this value if the quality suffers from this number of samples
+void NoiseCurve::Set(const Curve &pCurve) {
+	if (pCurve.isIdentity()) {
+		Reset(); // raise this value if the quality suffers from this number of samples
 		return;
 	}
-	lutNoisCCcurve(501); // raise this value if the quality suffers from this number of samples
-	nonzeroc=0.f;
+	lutNoiseCurve(501); // raise this value if the quality suffers from this number of samples
+	sum=0.f;
 	for (int i=0; i<501; i++) {
-	lutNoisCCcurve[i] = pCurve->getVal(double(i)/500.); 
-	if(lutNoisCCcurve[i] < 0.1f) lutNoisCCcurve[i]=0.1f;//avoid 0.f for wavelet : under 0.01f quasi no action for each value
-	nonzeroc+=lutNoisCCcurve[i];}//minima for Wavelet about 6.f or 7.f quasi no action
-	//lutNoisCCcurve.dump("NoisCC");
-}
-void NoisCCcurve::Set(const std::vector<double> &curvePoints, bool &ccdenoiseutili) {
-	FlatCurve* tcurve = NULL;
-
-	if (!curvePoints.empty() && curvePoints[0]>FCT_Linear && curvePoints[0]<FCT_Unchanged) {
-		tcurve = new FlatCurve (curvePoints, false, CURVES_MIN_POLY_POINTS/2);
-		tcurve->setIdentityValue(0.);
+		lutNoiseCurve[i] = pCurve.getVal(double(i)/500.); 
+		if(lutNoiseCurve[i] < 0.01f)
+			lutNoiseCurve[i] = 0.01f;//avoid 0.f for wavelet : under 0.01f quasi no action for each value
+		sum += lutNoiseCurve[i]; //minima for Wavelet about 6.f or 7.f quasi no action
 	}
-	if (tcurve) {
-		Set(tcurve);ccdenoiseutili=true;
-		delete tcurve;
-		tcurve = NULL;
-	}
-}
-
-
-void NoisCurve::Reset() {
-	lutNoisCurve.reset();
-}
-
-void NoisCurve::Set(const Curve *pCurve) {
-	if (pCurve->isIdentity()) {
-		lutNoisCurve.reset(); // raise this value if the quality suffers from this number of samples
-		return;
-	}
-	lutNoisCurve(501); // raise this value if the quality suffers from this number of samples
-	nonzero=0.f;
-	for (int i=0; i<501; i++) {
-	lutNoisCurve[i] = pCurve->getVal(double(i)/500.); 
-	if(lutNoisCurve[i] < 0.01f) lutNoisCurve[i]=0.01f;//avoid 0.f for wavelet : under 0.01f quasi no action for each value
-	nonzero+=lutNoisCurve[i];}//minima for Wavelet about 6.f or 7.f quasi no action
 	//lutNoisCurve.dump("Nois");
 }
 
-void NoisCurve::Set(const std::vector<double> &curvePoints, bool &lldenoiseutili) {
-	FlatCurve* tcurve = NULL;
+void NoiseCurve::Set(const std::vector<double> &curvePoints) {
 
 	if (!curvePoints.empty() && curvePoints[0]>FCT_Linear && curvePoints[0]<FCT_Unchanged) {
-		tcurve = new FlatCurve (curvePoints, false, CURVES_MIN_POLY_POINTS/2);
-		tcurve->setIdentityValue(0.);
-	}
-	if (tcurve) {
-		Set(tcurve);lldenoiseutili=true;
-		delete tcurve;
-		tcurve = NULL;
+		FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS/2);
+		tcurve.setIdentityValue(0.);
+		Set(tcurve);
+	} else {
+		Reset();
 	}
 }
+
 
 void ColorGradientCurve::Reset() {
 	lut1.reset();

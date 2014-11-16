@@ -467,14 +467,9 @@ void DirPyrDenoiseParams::setDefault() {
 		gamma      		 = 1.7;
 }
 
-void DirPyrDenoiseParams::getCurves(NoisCurve &lcurveLUT, NoisCCcurve &cccurveLUT, bool &lldenoiseutili, bool &ccdenoiseutili) const {
-    std::vector<double> llCurve;
-        llCurve = this->lcurve;
-        lcurveLUT.Set(llCurve, lldenoiseutili);
-    std::vector<double> ccCurve;
-        ccCurve = this->cccurve;
-        cccurveLUT.Set(ccCurve, ccdenoiseutili);
-		
+void DirPyrDenoiseParams::getCurves(NoiseCurve &lCurve, NoiseCurve &cCurve) const {
+        lCurve.Set(this->lcurve);
+        cCurve.Set(this->cccurve);
 }
 
 

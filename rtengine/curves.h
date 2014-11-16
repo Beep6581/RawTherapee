@@ -372,30 +372,20 @@ class OpacityCurve {
 
     operator bool (void) const { return lutOpacityCurve; }
 };
-class NoisCurve {
+class NoiseCurve {
+  private:
+    LUTf lutNoiseCurve;  // 0xffff range
+	float sum;
+    void Set(const Curve &pCurve);
+  	
   public:
-    LUTf lutNoisCurve;  // 0xffff range
-	float nonzero;
-    virtual ~NoisCurve() {};
-
+    virtual ~NoiseCurve() {};
+	NoiseCurve();
     void Reset();
-    void Set(const Curve *pCurve);
-    void Set(const std::vector<double> &curvePoints, bool &lldenoiseutili);
-
-    operator bool (void) const { return lutNoisCurve; }
-};
-
-class NoisCCcurve {
-  public:
-    LUTf lutNoisCCcurve;  // 0xffff range
-	float nonzeroc;
-    virtual ~NoisCCcurve() {};
-
-    void Reset();
-    void Set(const Curve *pCurve);
-    void Set(const std::vector<double> &curvePoints, bool &ccdenoiseutili);
-
-    operator bool (void) const { return lutNoisCCcurve; }
+    void Set(const std::vector<double> &curvePoints);
+	float getSum() const {return sum;}
+	float operator[](float index) const { return lutNoiseCurve[index]; }
+    operator bool (void) const { return lutNoiseCurve; }
 };
 
 class ColorGradientCurve {

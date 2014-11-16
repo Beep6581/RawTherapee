@@ -85,7 +85,7 @@ ImProcCoordinator::ImProcCoordinator ()
 
       pW(-1), pH(-1),
       plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),acListener(NULL), abwListener(NULL),actListener(NULL),adnListener(NULL),
-      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false),utili(false),autili(false),lldenoiseutili(false), opautili(false),ccdenoiseutili(false),
+      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false),utili(false),autili(false),opautili(false),
 	  butili(false),ccutili(false),cclutili(false),clcutili(false),fullw(1),fullh(1)
 
     {}
@@ -271,9 +271,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         //ColorTemp::CAT02 (orig_prev, &params)	;
 
 		Imagefloat *calclum = NULL ;
-		lldenoiseutili=false;
-		ccdenoiseutili=false;
-		params.dirpyrDenoise.getCurves(dnNoisCurve,dnNoisCCcurve,lldenoiseutili, ccdenoiseutili);
+		DirPyrDenoiseParams denoiseParams = params.dirpyrDenoise;
+
+		denoiseParams.getCurves(noiseLCurve,noiseCCurve);
 		int nbw=6;//nb tile W
 		int nbh=4;//
 		
@@ -281,15 +281,16 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		float *max_r = new float [nbw*nbh];//allocate memory
 		float *max_b = new float [nbw*nbh];//allocate memory
 		
-		if(params.dirpyrDenoise.Lmethod=="CUR") params.dirpyrDenoise.luma=0.5f;
-		if(params.dirpyrDenoise.Lmethod=="SLI") lldenoiseutili=false;
+		if(denoiseParams.Lmethod == "CUR") {
+			if(noiseLCurve)
+				denoiseParams.luma = 0.5f;
+			else
+				denoiseParams.luma = 0.0f;
+		} else if(denoiseParams.Lmethod == "SLI")
+			noiseLCurve.Reset();
 		
-		if(!lldenoiseutili)
-			dnNoisCurve.Reset();
-		if(!ccdenoiseutili)
-			dnNoisCCcurve.Reset();
 
-		if((lldenoiseutili || ccdenoiseutili) &&  params.dirpyrDenoise.enabled && (scale==1)){//only allocate memory if enabled and scale=1	
+		if((noiseLCurve || noiseCCurve) &&  denoiseParams.enabled && (scale==1)){//only allocate memory if enabled and scale=1	
 			calclum = new Imagefloat (pW, pH);//for Luminance denoise curve
 				if(orig_prev !=  calclum)
 					orig_prev->copyData(calclum);
@@ -298,10 +299,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		}
 		//always enabled to calculated auto Chroma
         if (todo & M_LINDENOISE) {
-			if (params.dirpyrDenoise.enabled && (scale==1)) {
+			if (denoiseParams.enabled && (scale==1)) {
 			printf("IMPROC\n");
 			int kall=1;
-			ipf.RGB_denoise(kall, orig_prev, orig_prev, calclum, ch_M, max_r, max_b, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp(), dnNoisCurve, lldenoiseutili, dnNoisCCcurve,ccdenoiseutili, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
+			ipf.RGB_denoise(kall, orig_prev, orig_prev, calclum, ch_M, max_r, max_b, imgsrc->isRAW(), denoiseParams, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
 		}
 		}
 	//	delete calclum;
