@@ -32,8 +32,7 @@ namespace rtengine {
 
 class ColorGradientCurve;
 class OpacityCurve;
-class NoisCurve;
-class NoisCCcurve;
+class NoiseCurve;
 
 namespace procparams {
 
@@ -570,8 +569,7 @@ class DirPyrDenoiseParams {
 		
         DirPyrDenoiseParams ();
         void setDefault();  // SHOULD BE GENERALIZED TO ALL CLASSES!
-    //    void getCurves(NoisCurve &lcurveLUT, bool &lldenoiseutili) const;
-        void getCurves(NoisCurve &lcurveLUT,NoisCCcurve &cccurveLUT,bool &lldenoiseutili,bool &ccdenoiseutili ) const;
+        void getCurves(NoiseCurve &lCurve, NoiseCurve &cCurve) const;
 
         static void getDefaultNoisCurve(std::vector<double> &curve);
         static void getDefaultCCCurve(std::vector<double> &curve);

@@ -162,15 +162,14 @@ void Crop::update (int todo) {
 		int skipP=1;//force Skip for noise evaluation
 
 		Imagefloat *calclum = NULL;//for Luminance denoise curve
-		NoisCurve dnNoisCurve;
-		NoisCCcurve dnNoisCCcurve;
-		bool lldenoiseutili=false;
-		bool ccdenoiseutili=false;
+		NoiseCurve noiseLCurve;
+		NoiseCurve noiseCCurve;
 		float autoNR = (float) settings->nrauto;//
 		float autoNRmax = (float) settings->nrautomax;//
 		float autohigh = (float) settings->nrhigh;//
 		
-		params.dirpyrDenoise.getCurves(dnNoisCurve, dnNoisCCcurve, lldenoiseutili, ccdenoiseutili);
+		DirPyrDenoiseParams denoiseParams = params.dirpyrDenoise;
+		denoiseParams.getCurves(noiseLCurve, noiseCCurve);
 
 		int tilesize;
 		int overlap;
@@ -205,20 +204,20 @@ void Crop::update (int todo) {
 		for(int cX=0;cX<numtiles_W;cX++) centerTile_X[cX]= tileWskip/2 + tileWskip*cX;
 		for(int cY=0;cY<numtiles_H;cY++) centerTile_Y[cY]= tileHskip/2 + tileHskip*cY;
 		if(settings->leveldnautsimpl==1){
-		if(params.dirpyrDenoise.Cmethod=="MAN" || params.dirpyrDenoise.Cmethod=="PON" )  {
+		if(denoiseParams.Cmethod=="MAN" || denoiseParams.Cmethod=="PON" )  {
 			PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
 			parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.icm, params.raw );
 		}
 		}
 		else {
-		if(params.dirpyrDenoise.C2method=="MANU")  {
+		if(denoiseParams.C2method=="MANU")  {
 			PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
 			parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.icm, params.raw );
 		}
 		
 		}
 		/*
-		if(params.dirpyrDenoise.Cmethod=="PON") {
+		if(denoiseParams.Cmethod=="PON") {
 			MyTime t1dce,t2dce;
 			t1dce.set();
 
@@ -228,7 +227,7 @@ void Crop::update (int todo) {
 			origCropPart = new Imagefloat (crW, crH);//allocate memory
 		
 		int skipP=1;
-		if (skip==1 && params.dirpyrDenoise.enabled) {//evaluate Noise
+		if (skip==1 && denoiseParams.enabled) {//evaluate Noise
 		
 			for(int wcr=0;wcr<numtiles_W;wcr++) {
 				for(int hcr=0;hcr<numtiles_H;hcr++) {
@@ -252,7 +251,7 @@ void Crop::update (int todo) {
 
 					float chaut, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L;
 					chaut=0.f;redaut=0.f; blueaut=0.f; maxredaut=0.f; maxblueaut=0.f;chromina=0.f; sigma=0.f;
-					parent->ipf.RGB_denoise_info(provi, provi, provicalc, parent->imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, parent->imgsrc->getDirPyrDenoiseExpComp(), dnNoisCurve,lldenoiseutili, dnNoisCCcurve,ccdenoiseutili, chaut, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L);
+					parent->ipf.RGB_denoise_info(provi, provi, provicalc, parent->imgsrc->isRAW(), denoiseParams, params.defringe, parent->imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve,lldenoiseutili, noiseCCurve,ccdenoiseutili, chaut, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L);
 					//printf("DCROP skip=%d cha=%f red=%f bl=%f redM=%f bluM=%f chrom=%f sigm=%f lum=%f\n",skip, chaut,redaut,blueaut, maxredaut, maxblueaut, chromina, sigma, lumema);
 					if(maxredaut > maxblueaut) {
 						maxr=(maxredaut-chaut)/(autoNRmax/2.f);
@@ -282,11 +281,11 @@ void Crop::update (int todo) {
 		}
 		*/
 		
-		if((settings->leveldnautsimpl==1 && params.dirpyrDenoise.Cmethod=="PRE") || (settings->leveldnautsimpl==0 && params.dirpyrDenoise.C2method=="PREV")) {
+		if((settings->leveldnautsimpl==1 && denoiseParams.Cmethod=="PRE") || (settings->leveldnautsimpl==0 && denoiseParams.C2method=="PREV")) {
 		
 			PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
 			parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.icm, params.raw );
-			if((!isDetailWindow) && parent->adnListener && skip==1 && params.dirpyrDenoise.enabled) {
+			if((!isDetailWindow) && parent->adnListener && skip==1 && denoiseParams.enabled) {
 				float lowdenoise=1.f;
 				int levaut=settings->leveldnaut;
 				if(levaut==1)  //Standard
@@ -312,7 +311,7 @@ void Crop::update (int todo) {
 				if(settings->leveldnv ==3) {crW=tileWskip-10;crH=tileHskip-10;}
 
 
-				if (skip==1 && params.dirpyrDenoise.enabled) {
+				if (skip==1 && denoiseParams.enabled) {
 					float adjustr=1.f;	
 					if      (params.icm.working=="ProPhoto")   {adjustr =1.f;}
 					else if (params.icm.working=="Adobe RGB")  {adjustr = 1.f/1.3f;}
@@ -349,9 +348,9 @@ void Crop::update (int todo) {
 					chaut=0.f;redaut=0.f; blueaut=0.f; maxredaut=0.f; maxblueaut=0.f;minredaut=0.f; minblueaut=0.f;
 					LUTf gamcurve(65536,0);
 					float gam, gamthresh, gamslope;
-					parent->ipf.RGB_denoise_infoGamCurve(params.dirpyrDenoise, parent->imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope);
+					parent->ipf.RGB_denoise_infoGamCurve(denoiseParams, parent->imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope);
 
-					parent->ipf.RGB_denoise_info(provi, provi, provicalc, parent->imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope, params.dirpyrDenoise, params.defringe, parent->imgsrc->getDirPyrDenoiseExpComp(), dnNoisCurve,lldenoiseutili, dnNoisCCcurve,ccdenoiseutili, chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut,nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
+					parent->ipf.RGB_denoise_info(provi, provi, provicalc, parent->imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope, denoiseParams, parent->imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut,nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
 //					printf("redy=%f skin=%f pcskin=%f\n",redyel, skinc,nsknc);
 //					printf("DCROP skip=%d cha=%4.0f Nb=%d red=%4.0f bl=%4.0f redM=%4.0f bluM=%4.0f  L=%4.0f sigL=%4.0f Ch=%4.0f Si=%4.0f\n",skip, chaut,Nb, redaut,blueaut, maxredaut, maxblueaut, lumema, sigma_L, chromina, sigma);
 					float multip=1.f;
@@ -377,17 +376,17 @@ void Crop::update (int todo) {
 					}//maxb mxr - empirical evaluation red / blue
 					
 				
-					params.dirpyrDenoise.chroma=chaut/(autoNR*multip*adjustr*lowdenoise);
-					params.dirpyrDenoise.redchro=maxr;
-					params.dirpyrDenoise.bluechro=maxb;
-					parent->adnListener->chromaChanged(params.dirpyrDenoise.chroma, params.dirpyrDenoise.redchro, params.dirpyrDenoise.bluechro);
+					denoiseParams.chroma=chaut/(autoNR*multip*adjustr*lowdenoise);
+					denoiseParams.redchro=maxr;
+					denoiseParams.bluechro=maxb;
+					parent->adnListener->chromaChanged(denoiseParams.chroma, denoiseParams.redchro, denoiseParams.bluechro);
 					
 					delete provi;
 				}	
 			}
 		}
 
-		if((settings->leveldnautsimpl==1 && params.dirpyrDenoise.Cmethod=="AUT")  || (settings->leveldnautsimpl==0 && params.dirpyrDenoise.C2method=="AUTO")) {
+		if((settings->leveldnautsimpl==1 && denoiseParams.Cmethod=="AUT")  || (settings->leveldnautsimpl==0 && denoiseParams.C2method=="AUTO")) {
 		
 			MyTime t1aue,t2aue;
 			t1aue.set();
@@ -405,10 +404,10 @@ void Crop::update (int todo) {
 				lowdenoise=0.7f;
 		
 
-			if (skip==1 && params.dirpyrDenoise.enabled) {//evaluate Noise
+			if (skip==1 && denoiseParams.enabled) {//evaluate Noise
 			LUTf gamcurve(65536,0);
 			float gam, gamthresh, gamslope;
-			parent->ipf.RGB_denoise_infoGamCurve(params.dirpyrDenoise, parent->imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope);
+			parent->ipf.RGB_denoise_infoGamCurve(denoiseParams, parent->imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope);
 			int Nb[9];
 
 			#pragma omp parallel			
@@ -443,7 +442,7 @@ void Crop::update (int todo) {
 						float chaut=0.f, redaut=0.f, blueaut=0.f, maxredaut=0.f, maxblueaut=0.f, minredaut=0.f, minblueaut=0.f, nresi=0.f, highresi=0.f, chromina=0.f, sigma=0.f, lumema=0.f, sigma_L=0.f, redyel=0.f, skinc=0.f, nsknc=0.f;
 						int nb=0;
 //						chaut=0.f;redaut=0.f; blueaut=0.f; maxredaut=0.f; maxblueaut=0.f; chromina=0.f; sigma=0.f;
-						parent->ipf.RGB_denoise_info(provi, provi, provicalc, parent->imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope, params.dirpyrDenoise, params.defringe, parent->imgsrc->getDirPyrDenoiseExpComp(), dnNoisCurve,lldenoiseutili, dnNoisCCcurve,ccdenoiseutili, chaut, nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
+						parent->ipf.RGB_denoise_info(provi, provi, provicalc, parent->imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope, denoiseParams, parent->imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
 					
 					
 					//printf("DCROP skip=%d cha=%f red=%f bl=%f redM=%f bluM=%f chrom=%f sigm=%f lum=%f\n",skip, chaut,redaut,blueaut, maxredaut, maxblueaut, chromina, sigma, lumema);
@@ -553,11 +552,11 @@ void Crop::update (int todo) {
 				}
 			
 //					printf("DCROP skip=%d cha=%f red=%f bl=%f \n",skip, chM,maxr,maxb);
-					params.dirpyrDenoise.chroma=chM/(autoNR*multip*adjustr);
-					params.dirpyrDenoise.redchro=maxr;
-					params.dirpyrDenoise.bluechro=maxb;
+					denoiseParams.chroma=chM/(autoNR*multip*adjustr);
+					denoiseParams.redchro=maxr;
+					denoiseParams.bluechro=maxb;
 					if(parent->adnListener) {
-						parent->adnListener->chromaChanged(params.dirpyrDenoise.chroma, params.dirpyrDenoise.redchro, params.dirpyrDenoise.bluechro);
+						parent->adnListener->chromaChanged(denoiseParams.chroma, denoiseParams.redchro, denoiseParams.bluechro);
 					}
 		}	
 		if (settings->verbose) {
@@ -567,22 +566,23 @@ void Crop::update (int todo) {
 			
 		//end evaluate noise
 		}
-	//	if(params.dirpyrDenoise.Cmethod=="AUT" || params.dirpyrDenoise.Cmethod=="PON") {//reinit origCrop after Auto
-		if((settings->leveldnautsimpl==1 && params.dirpyrDenoise.Cmethod=="AUT")  || (settings->leveldnautsimpl==0 && params.dirpyrDenoise.C2method=="AUTO")) {//reinit origCrop after Auto
+	//	if(denoiseParams.Cmethod=="AUT" || denoiseParams.Cmethod=="PON") {//reinit origCrop after Auto
+		if((settings->leveldnautsimpl==1 && denoiseParams.Cmethod=="AUT")  || (settings->leveldnautsimpl==0 && denoiseParams.C2method=="AUTO")) {//reinit origCrop after Auto
 			PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
 			parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.icm, params.raw );
 		}
 
-		if(params.dirpyrDenoise.Lmethod=="CUR") params.dirpyrDenoise.luma=0.5f;//very small value to init process - select curve or slider
-		if(params.dirpyrDenoise.Lmethod=="SLI") lldenoiseutili=false;
+		if(denoiseParams.Lmethod == "CUR") {
+			if(noiseLCurve)
+				denoiseParams.luma = 0.5f;	//very small value to init process - select curve or slider
+			else
+				denoiseParams.luma = 0.0f;
+		} else if(denoiseParams.Lmethod == "SLI")
+			noiseLCurve.Reset();
 
-		if(!lldenoiseutili)
-			dnNoisCurve.Reset();
-		if(!ccdenoiseutili)
-			dnNoisCCcurve.Reset();
 
 
-		if((lldenoiseutili || ccdenoiseutili ) && skip==1 && params.dirpyrDenoise.enabled)	{//only allocate memory if enabled and skip
+		if((noiseLCurve || noiseCCurve ) && skip==1 && denoiseParams.enabled)	{//only allocate memory if enabled and skip
 			calclum = new Imagefloat (cropw, croph);//for Luminance denoise curve
 				if(origCrop !=  calclum)
 					origCrop->copyData(calclum);
@@ -592,19 +592,19 @@ void Crop::update (int todo) {
 		if(skip!=1) if(parent->adnListener) parent->adnListener->noiseChanged(0.f, 0.f);	
 
         if (todo & M_LINDENOISE) {
-            if (skip==1 && params.dirpyrDenoise.enabled) {
+            if (skip==1 && denoiseParams.enabled) {
 				int kall=0;
 
 				float chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi;
-                parent->ipf.RGB_denoise(kall, origCrop, origCrop, calclum, ch_M, max_r, max_b, parent->imgsrc->isRAW(), /*Roffset,*/ params.dirpyrDenoise, params.defringe, parent->imgsrc->getDirPyrDenoiseExpComp(), dnNoisCurve,lldenoiseutili, dnNoisCCcurve,ccdenoiseutili, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
+                parent->ipf.RGB_denoise(kall, origCrop, origCrop, calclum, ch_M, max_r, max_b, parent->imgsrc->isRAW(), /*Roffset,*/ denoiseParams, parent->imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
 				if(parent->adnListener) parent->adnListener->noiseChanged(nresi, highresi);	
 				if(settings->leveldnautsimpl==1) {
-				if((params.dirpyrDenoise.Cmethod=="AUT" || params.dirpyrDenoise.Cmethod=="PRE") && (parent->adnListener)) // force display value of sliders
-					parent->adnListener->chromaChanged(params.dirpyrDenoise.chroma, params.dirpyrDenoise.redchro, params.dirpyrDenoise.bluechro);
+				if((denoiseParams.Cmethod=="AUT" || denoiseParams.Cmethod=="PRE") && (parent->adnListener)) // force display value of sliders
+					parent->adnListener->chromaChanged(denoiseParams.chroma, denoiseParams.redchro, denoiseParams.bluechro);
 				}
 				else {
-				if((params.dirpyrDenoise.C2method=="AUTO" || params.dirpyrDenoise.C2method=="PREV") && (parent->adnListener)) // force display value of sliders
-					parent->adnListener->chromaChanged(params.dirpyrDenoise.chroma, params.dirpyrDenoise.redchro, params.dirpyrDenoise.bluechro);
+				if((denoiseParams.C2method=="AUTO" || denoiseParams.C2method=="PREV") && (parent->adnListener)) // force display value of sliders
+					parent->adnListener->chromaChanged(denoiseParams.chroma, denoiseParams.redchro, denoiseParams.bluechro);
 				
 				}
 				

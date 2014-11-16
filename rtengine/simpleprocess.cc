@@ -125,12 +125,10 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         currWB.update(rm, gm, bm, params.wb.equal);
     }
 	
- 	NoisCurve dnNoisCurve;
-    bool lldenoiseutili=false;
-    bool ccdenoiseutili=false;
- 	NoisCCcurve dnNoisCCcurve;
+ 	NoiseCurve noiseLCurve;
+ 	NoiseCurve noiseCCurve;
 	Imagefloat *calclum = NULL ;	
-    params.dirpyrDenoise.getCurves(dnNoisCurve, dnNoisCCcurve, lldenoiseutili, ccdenoiseutili);
+    params.dirpyrDenoise.getCurves(noiseLCurve, noiseCCurve);
 	float autoNR = (float) settings->nrauto;//
 	float autoNRmax = (float) settings->nrautomax;//
 	float autohigh = (float) settings->nrhigh;//
@@ -218,7 +216,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 						float chaut, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc;
 						int Nb;
 						chaut=0.f;redaut=0.f; blueaut=0.f; maxredaut=0.f; maxblueaut=0.f;chromina=0.f; sigma=0.f;
-						ipf.RGB_denoise_info(provi, provi, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope, params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp(), dnNoisCurve,lldenoiseutili, dnNoisCCcurve,ccdenoiseutili, chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
+						ipf.RGB_denoise_info(provi, provi, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope, params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
 						float multip=1.f;
 						float adjustr=1.f;	
 							if      (params.icm.working=="ProPhoto")   {adjustr =1.f;}//
@@ -329,10 +327,10 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 		if((settings->leveldnautsimpl==1 && params.dirpyrDenoise.Cmethod=="AUT")  || (settings->leveldnautsimpl==0 && params.dirpyrDenoise.C2method=="AUTO")) {
 			MyTime t1aue,t2aue; 
 			t1aue.set();
-			int crW,crH;	
+			int crW,crH;
 			if(settings->leveldnv ==0) {crW=100;crH=100;}
 			if(settings->leveldnv ==1) {crW=250;crH=250;}
-		if(settings->leveldnv ==2) {crW=int(tileWskip/2);crH=int(tileHskip/2);}
+			if(settings->leveldnv ==2) {crW=int(tileWskip/2);crH=int(tileHskip/2);}
 		//	if(settings->leveldnv ==2) {crW=int(tileWskip/2);crH=int(1.15f*(tileWskip/2));}//adapted to scale of preview
 			if(settings->leveldnv ==3) {crW=tileWskip-10;crH=tileHskip-10;}
 			
@@ -346,58 +344,48 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 			float gam, gamthresh, gamslope;
 			ipf.RGB_denoise_infoGamCurve(params.dirpyrDenoise, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope);
 			int Nb[9];
-			#pragma omp parallel			
-			{	
+			int  coordW[3];//coordonate of part of image to mesure noise
+			int  coordH[3];
+			int begW=50;
+			int begH=50;
+			coordW[0]=begW;coordW[1]=fw/2-crW/2;coordW[2]=fw-crW-begW;
+			coordH[0]=begH;coordH[1]=fh/2-crH/2;coordH[2]=fh-crH-begH;
+			#pragma omp parallel
+			{
 				Imagefloat *origCropPart;//init auto noise		
 				origCropPart = new Imagefloat (crW, crH);//allocate memory
 				Imagefloat *provi;
 				Imagefloat *provicalc;
 				provi = new Imagefloat (crW, crH);
 				provicalc = new Imagefloat (crW, crH);			
-				int  coordW[3];//coordonate of part of image to mesure noise
-				int  coordH[3];
-				int begW=50;
-				int begH=50;
-				coordW[0]=begW;coordW[1]=fw/2-crW/2;coordW[2]=fw-crW-begW;
-				coordH[0]=begH;coordH[1]=fh/2-crH/2;coordH[2]=fh-crH-begH;
 
 				#pragma omp for schedule(dynamic) collapse(2) nowait				
 				for(int wcr=0;wcr<=2;wcr++) {
 					for(int hcr=0;hcr<=2;hcr++) {
-
-					PreviewProps ppP (coordW[wcr] , coordH[hcr], crW, crH, 1);
-
-					imgsrc->getImage (currWB, tr, origCropPart, ppP, params.toneCurve, params.icm, params.raw);
-			
-						if(origCropPart !=  provi)
-							origCropPart->copyData(provi);
-						if(origCropPart !=  provicalc)
-							origCropPart->copyData(provicalc);
-					imgsrc->convertColorSpace(provicalc, params.icm, currWB, params.raw);//for denoise luminance curve
-					float maxr=0.f;
-					float maxb=0.f;
-					float pondcorrec=1.0f;
-					int nb = 0;
-					float chaut=0.f, redaut=0.f, blueaut=0.f, maxredaut=0.f, maxblueaut=0.f, minredaut=0.f, minblueaut=0.f, nresi=0.f, highresi=0.f, chromina=0.f, sigma=0.f, lumema=0.f, sigma_L=0.f, redyel=0.f, skinc=0.f, nsknc=0.f;
-					ipf.RGB_denoise_info(provi, provi, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope,  params.dirpyrDenoise,params.defringe, imgsrc->getDirPyrDenoiseExpComp(), dnNoisCurve,lldenoiseutili, dnNoisCCcurve,ccdenoiseutili, chaut, nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
-
-					Nb[hcr*3 + wcr] = nb;
-					ch_M[hcr*3 + wcr]=pondcorrec*chaut;
-					max_r[hcr*3 + wcr]=pondcorrec*maxredaut;
-					max_b[hcr*3 + wcr]=pondcorrec*maxblueaut;		
-					min_r[hcr*3 + wcr]=pondcorrec*minredaut;
-					min_b[hcr*3 + wcr]=pondcorrec*minblueaut;
-					lumL[hcr*3 + wcr]=lumema;	
-					chromC[hcr*3 + wcr]=chromina;	
-					ry[hcr*3 + wcr]=redyel;	
-					sk[hcr*3 + wcr]=skinc;	
-					pcsk[hcr*3 + wcr]=nsknc;	
-						
+						PreviewProps ppP (coordW[wcr] , coordH[hcr], crW, crH, 1);
+						imgsrc->getImage (currWB, tr, origCropPart, ppP, params.toneCurve, params.icm, params.raw);
+						origCropPart->copyData(provi);
+						origCropPart->copyData(provicalc);
+						imgsrc->convertColorSpace(provicalc, params.icm, currWB, params.raw);//for denoise luminance curve
+						int nb = 0;
+						float chaut=0.f, redaut=0.f, blueaut=0.f, maxredaut=0.f, maxblueaut=0.f, minredaut=0.f, minblueaut=0.f, nresi=0.f, highresi=0.f, chromina=0.f, sigma=0.f, lumema=0.f, sigma_L=0.f, redyel=0.f, skinc=0.f, nsknc=0.f;
+						ipf.RGB_denoise_info(provi, provi, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope,  params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
+						Nb[hcr*3 + wcr] = nb;
+						ch_M[hcr*3 + wcr] = chaut;
+						max_r[hcr*3 + wcr] = maxredaut;
+						max_b[hcr*3 + wcr] = maxblueaut;		
+						min_r[hcr*3 + wcr] = minredaut;
+						min_b[hcr*3 + wcr] = minblueaut;
+						lumL[hcr*3 + wcr] = lumema;	
+						chromC[hcr*3 + wcr] = chromina;	
+						ry[hcr*3 + wcr] = redyel;	
+						sk[hcr*3 + wcr] = skinc;	
+						pcsk[hcr*3 + wcr] = nsknc;	
 					}
 				} 
-			delete provicalc;
-			delete provi;			
-			delete origCropPart;
+				delete provicalc;
+				delete provi;			
+				delete origCropPart;
 			}
 			float chM=0.f;
 			float MaxR=0.f;
@@ -406,11 +394,11 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 			float MinB=100000000.f;
 			float maxr=0.f;
 			float maxb=0.f;
-		float multip=1.f;
+			float multip=1.f;
 			float adjustr=1.f;	
 			float Max_R[9]={0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f};
 			float Max_B[9]={0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f};
-		float Min_R[9];
+			float Min_R[9];
 			float Min_B[9];
 			float MaxRMoy=0.f;
 			float MaxBMoy=0.f;
@@ -428,19 +416,16 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 				if(!imgsrc->isRAW()) multip=2.f;//take into account gamma for TIF / JPG approximate value...not good fot gamma=1
 
 				float maxmax;
-				float minmin;				
 				float delta[9];
 				int mode=1;
 				int lissage=settings->leveldnliss;
-				float redyel, skinc, nsknc;
 				for(int k=0;k<9;k++) {
-					maxmax=max(max_r[k],max_b[k]);				
-					ipf.calcautodn_info (ch_M[k], delta[k], Nb[k], levaut, maxmax, lumL[k], chromC[k], mode, lissage,ry[k], sk[k], pcsk[k] );
+					maxmax = max(max_r[k],max_b[k]);
+					ipf.calcautodn_info (ch_M[k], delta[k], Nb[k], levaut, maxmax, lumL[k], chromC[k], mode, lissage, ry[k], sk[k], pcsk[k] );
 				//	printf("ch_M=%f delta=%f\n",ch_M[k], delta[k]);
 				}
 				for(int k=0;k<9;k++) {
 					if(max_r[k] > max_b[k]) {
-						minmin=min(min_r[k],min_b[k]);				
 						//printf("R delta=%f  koef=%f\n",delta[k],autoNRmax*multip*adjustr*lowdenoise);
 						Max_R[k]=(delta[k])/((autoNRmax*multip*adjustr*lowdenoise)/2.f);
 						Min_B[k]= -(ch_M[k]-min_b[k])/(autoNRmax*multip*adjustr*lowdenoise);
@@ -448,7 +433,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 						Min_R[k]=0.f;
 					} 
 					else {
-						minmin=min(min_r[k],min_b[k]);				
 						//printf("B delta=%f  koef=%f\n",delta[k],autoNRmax*multip*adjustr*lowdenoise);
 						Max_B[k]=(delta[k])/((autoNRmax*multip*adjustr*lowdenoise)/2.f);
 						Min_R[k]=- (ch_M[k]-min_r[k])	/ (autoNRmax*multip*adjustr*lowdenoise);
@@ -536,32 +520,36 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     // perform luma/chroma denoise
 //	CieImage *cieView;  
-// 	NoisCurve dnNoisCurve;
+// 	NoisCurve noiseLCurve;
 //    bool lldenoiseutili=false;
 //	Imagefloat *calclum ;	
-//    params.dirpyrDenoise.getCurves(dnNoisCurve, lldenoiseutili);
+//    params.dirpyrDenoise.getCurves(noiseLCurve, lldenoiseutili);
 //	if (params.dirpyrDenoise.enabled  && lldenoiseutili) {
-		if(params.dirpyrDenoise.Lmethod=="CUR") params.dirpyrDenoise.luma=0.5f;
-		if(params.dirpyrDenoise.Lmethod=="SLI") lldenoiseutili=false;
-		if(!lldenoiseutili)
-			dnNoisCurve.Reset();
-		if(!ccdenoiseutili)
-			dnNoisCCcurve.Reset();
 
-	if (params.dirpyrDenoise.enabled  && (lldenoiseutili || ccdenoiseutili )) {
+		DirPyrDenoiseParams denoiseParams = params.dirpyrDenoise;	// make a copy because we cheat here
+
+		if(denoiseParams.Lmethod == "CUR") {
+			if(noiseLCurve)
+				denoiseParams.luma = 0.5f;
+			else
+				denoiseParams.luma = 0.0f;
+		} else if(denoiseParams.Lmethod=="SLI")
+			noiseLCurve.Reset();
+
+	if (denoiseParams.enabled  && (noiseLCurve || noiseCCurve )) {
 
 		calclum = new Imagefloat (fw, fh);//for luminance denoise curve
 			if(baseImg !=  calclum)
 				baseImg->copyData(calclum);
 			imgsrc->convertColorSpace(calclum, params.icm, currWB, params.raw);
 	}
-    if (params.dirpyrDenoise.enabled) {
-       // CurveFactory::denoiseLL(lldenoiseutili, params.dirpyrDenoise.lcurve, Noisecurve,1);
-		//params.dirpyrDenoise.getCurves(dnNoisCurve);	
-//		ipf.RGB_denoise(baseImg, baseImg, calclum, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp(), dnNoisCurve, lldenoiseutili);
+    if (denoiseParams.enabled) {
+       // CurveFactory::denoiseLL(lldenoiseutili, denoiseParams.lcurve, Noisecurve,1);
+		//denoiseParams.getCurves(noiseLCurve);	
+//		ipf.RGB_denoise(baseImg, baseImg, calclum, imgsrc->isRAW(), denoiseParams, params.defringe, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, lldenoiseutili);
 		float chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc;
 		int kall=2;
-		ipf.RGB_denoise(kall, baseImg, baseImg, calclum, ch_M, max_r, max_b, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp(), dnNoisCurve, lldenoiseutili, dnNoisCCcurve,ccdenoiseutili, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
+		ipf.RGB_denoise(kall, baseImg, baseImg, calclum, ch_M, max_r, max_b, imgsrc->isRAW(), denoiseParams, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
  
  }
  //  delete calclum;
@@ -695,7 +683,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     customToneCurve2.Reset();
     ctColorCurve.Reset();
     ctOpacityCurve.Reset();
-	dnNoisCurve.Reset();
+	noiseLCurve.Reset();
+	noiseCCurve.Reset();
     customToneCurvebw1.Reset();
     customToneCurvebw2.Reset();
 
