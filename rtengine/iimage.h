@@ -579,7 +579,7 @@ namespace rtengine {
             }
 
             // find the padding length to ensure a 128 bits alignment for each row
-            size_t size = rowstride * 3*height;
+            size_t size = (size_t)rowstride*3*(size_t)height;
             if (!width) {
                 size = 0;
                 rowstride = 0;
