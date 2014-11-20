@@ -21,6 +21,7 @@
 #21 2014-09-11 firefly
 #22 2014-10-21 firefly
 #23 2014-11-07 firefly
+#24 2014-11-18 firefly
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -255,7 +256,7 @@ HISTORY_MSG_15;L*a*b*　-　コントラスト
 HISTORY_MSG_16;輝度 黒レベル
 HISTORY_MSG_17;輝度 ハイライト圧縮
 HISTORY_MSG_18;輝度 シャドウ圧縮
-HISTORY_MSG_19;'L'カーブ
+HISTORY_MSG_19;L*a*b* - L*カーブ
 HISTORY_MSG_20;シャープ化
 HISTORY_MSG_21;シャープ化 半径
 HISTORY_MSG_22;シャープ化 適用量
@@ -332,8 +333,8 @@ HISTORY_MSG_92;ノイズ低減のガンマ
 HISTORY_MSG_93;ディテールのコントラスト係数
 HISTORY_MSG_94;ディテールのコントラスト
 HISTORY_MSG_95;L*a*b*の色度
-HISTORY_MSG_96;'a*' カーブ 
-HISTORY_MSG_97;'b*' カーブ
+HISTORY_MSG_96;L*a*b* - a*カーブ
+HISTORY_MSG_97;L*a*b* - b*カーブ
 HISTORY_MSG_98;デモザイク 方式
 HISTORY_MSG_99;ホットピクセルフィルター
 HISTORY_MSG_100;RGB 彩度
@@ -493,8 +494,8 @@ HISTORY_MSG_254;ディテールレベルのコントラスト　肌色の色相
 HISTORY_MSG_255;ノイズ低減　-　メディアン
 HISTORY_MSG_256;ノイズ低減 - フィルターの種類
 HISTORY_MSG_257;カラートーン調整
-HISTORY_MSG_258;カラートーン調整　-　カラー
-HISTORY_MSG_259;カラートーン調整　-　不透明度
+HISTORY_MSG_258;カラートーン調整　-　カラーのカーブ
+HISTORY_MSG_259;カラートーン調整　-　不透明度のカーブ
 HISTORY_MSG_260;カラートーン調整　-　不透明度 
 HISTORY_MSG_261;カラートーン調整　-　方法
 HISTORY_MSG_262;カラートーン調整　-　不透明度
@@ -531,14 +532,14 @@ HISTORY_MSG_292;黒レベル　－　ブルー
 HISTORY_MSG_293;フィルムシミュレーション
 HISTORY_MSG_294;フィルムシミュレーション　－　強さ
 HISTORY_MSG_295;フィルムシミュレーション　－　フィルム
-HISTORY_MSG_296;ノイズ低減　－　輝度の加減
+HISTORY_MSG_296;輝度ノイズ低減のカーブ
 HISTORY_MSG_297;ノイズ低減　－　質
 HISTORY_MSG_298;デッドピクセルフィルター
-HISTORY_MSG_299;ノイズ低減 - 輝度カーブ
+HISTORY_MSG_299;色ノイズ低減のカーブ
 HISTORY_MSG_300;-
-HISTORY_MSG_301;ノイズ低減 - 輝度の調節
-HISTORY_MSG_302;ノイズ低減 - 色度の方式
-HISTORY_MSG_303;-
+HISTORY_MSG_301;輝度ノイズの調整方法
+HISTORY_MSG_302;色ノイズの調整方法
+HISTORY_MSG_303;色ノイズの調整方法
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;スナップショット
@@ -736,7 +737,7 @@ PARTIALPASTE_WHITEBALANCE;ホワイトバランス
 PREFERENCES_ADD;追加
 PREFERENCES_APPLNEXTSTARTUP;要再起動
 PREFERENCES_AUTLISLOW;低
-PREFERENCES_AUTLISMAX;最大 - 全部タイルの平均
+PREFERENCES_AUTLISMAX;最大 - 全タイルの平均
 PREFERENCES_AUTLISSTD;高
 PREFERENCES_AUTLISVLOW;なし
 PREFERENCES_AUTLOW;低
@@ -816,7 +817,7 @@ PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_GREYSC18;Yb=18 CIE L#50
 PREFERENCES_GREYSCA;Ybを自動で計算
-PREFERENCES_GREYSC;入力ファイルのYb輝度 (%)
+PREFERENCES_GREYSC;撮影時のYb輝度 (%)
 PREFERENCES_GREY;出力デバイスのYb輝度 (%)
 PREFERENCES_HISTOGRAMPOSITIONLEFT;左パネルにヒストグラム
 PREFERENCES_HISTOGRAMWORKING;ヒストグラムとナビゲーターの表示に作業プロファイルを使う
@@ -1190,17 +1191,16 @@ TP_DIRPYRDENOISE_55;強い5x5
 TP_DIRPYRDENOISE_77;7x7（遅い）
 TP_DIRPYRDENOISE_99;9x9 (非常に遅い)
 TP_DIRPYRDENOISE_ABM;色ノイズだけ
-TP_DIRPYRDENOISE_AUTO;自動（全体）
-TP_DIRPYRDENOISE_AUTO;色ノイズ低減　自動
+TP_DIRPYRDENOISE_AUTO;自動（分割方式）
 TP_DIRPYRDENOISE_AUTO_TOOLTIP;色ノイズ低減の効果を確認して下さい\n注意：設定値の計算はあくまで平均的なもので、かなり主観的でです
-TP_DIRPYRDENOISE_AUT;自動（全体）
+TP_DIRPYRDENOISE_AUT;自動（分割方式）
 TP_DIRPYRDENOISE_BLUE;色差 ブルー/イエロー
-TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;手動\n画像全体に作用します\nノイズ低減の設定を手動で行います\n\n自動（全体）\n画像全体に作用します\n画像を9つに分割して、そこから全体の色ノイズ低減に適した設定を自動的に行います\n\nプレビュー方式\n画像全体に作用します\nプレビューで見えている画像の一部を使って全体の色ノイズ低減に適した設定を自動で行います
+TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;手動\n画像全体に作用します\nノイズ低減の設定を手動で行います\n\n自動（分割方式）\n画像全体に作用します\n画像を9つに分割して、そこから全体の色ノイズ低減に適した設定を自動的に行います\n\n自動（プレビュー方式）\n画像全体に作用します\nプレビューで見えている画像の一部を使って全体の色ノイズ低減に適した設定を自動で行います
 TP_DIRPYRDENOISE_CCCURVE;色ノイズ低減のカーブ
 TP_DIRPYRDENOISE_CHROMAFR;色ノイズ
 TP_DIRPYRDENOISE_CHROMA;色(マスター)
-TP_DIRPYRDENOISE_CTYPE;方式
-TP_DIRPYRDENOISE_CTYPE_TOOLTIP;手動\n画像全体に作用します\nノイズ低減の設定を手動で行います\n\n自動（全体）\n画像全体に作用します\n画像を9つに分割して、そこから全体の色ノイズ低減に適した設定を自動的に行います\n\n自動（多分割）\nプレビュー画像には反映されません-保存画像だけに反映されます。但し、タイルサイズとその中心をプレビューサイズとその中心にマッチさせる〝プレビュー”方式を使えば、効果がどれ位か予測がつきます。\n画像をタイル状に分割し（タイル数は画像サイズ次第で、10～70枚になります）、各タイルにあった色ノイズ低減の設定を自動で行います\n\nプレビュー方式\n画像全体に作用します\nプレビューで見えている画像の一部を使って全体の色ノイズ低減に適した設定を自動で行います
+TP_DIRPYRDENOISE_CTYPE;色ノイズの調整法
+TP_DIRPYRDENOISE_CTYPE_TOOLTIP;手動\n画像全体に作用します\nノイズ低減の設定を手動で行います\n\n自動（分割方式）\n画像全体に作用します\n画像を9つに分割して、そこから全体の色ノイズ低減に適した設定を自動的に行います\n\n自動（多分割方式）\nプレビュー画像には反映されません-保存画像だけに反映されます。但し、タイルサイズとその中心をプレビューサイズとその中心にマッチさせる〝プレビュー”方式を使えば、効果がどれ位か予測がつきます。\n画像をタイル状に分割し（タイル数は画像サイズ次第で、10～70枚になります）、各タイルにあった色ノイズ低減の設定を自動で行います\n\n自動（プレビュー方式）\n画像全体に作用します\nプレビューで見えている画像の一部を使って全体の色ノイズ低減に適した設定を自動で行います
 TP_DIRPYRDENOISE_CURVEEDITOR_CC;色度
 TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;色度のスライダーの値を全て増やします（乗数）\nこれは色度に応じて色ノイズの低減効果の強弱を調節するカーブです。例えば、色度の低い部分で低減効果を高めるとか、色度の高い部分で低減効果を緩める、という具合です。
 TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;‘輝度’の位置でノイズ低減の強さを加減します
@@ -1217,7 +1217,7 @@ TP_DIRPYRDENOISE_LCURVE;輝度カーブ
 TP_DIRPYRDENOISE_LDETAIL;輝度　細部の復元
 TP_DIRPYRDENOISE_LM;輝度のみ
 TP_DIRPYRDENOISE_LPLABM;加重平均 L* (少なめ) + a*b* (普通)
-TP_DIRPYRDENOISE_LTYPE;輝度のタイプ
+TP_DIRPYRDENOISE_LTYPE;輝度ノイズの調整法
 TP_DIRPYRDENOISE_LUMAFR;輝度ノイズ
 TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;輝度の低減で、全体的にはウェーブレット変換、ディテールにはフーリエ変換を使います
 TP_DIRPYRDENOISE_LUMA;輝度
@@ -1233,15 +1233,15 @@ TP_DIRPYRDENOISE_METHOD;方式
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;raw画像は、RGBまたはL*a*b*方式のいずれかを使用することができます。\n\nraw以外の画像は、選択にかかわらずL*a*b*方式が採用されます
 TP_DIRPYRDENOISE_METM_TOOLTIP;フィルタリングの方式で、"輝度のみ"と"L*a*b*"を選択した場合、メディアンフィルタリングはノイズ低減行程でウェーブレット変換が行われた直後に適用されます\n"RGB"モードの場合は、ノイズ低減行程の最後で適用されます
 TP_DIRPYRDENOISE_MET_TOOLTIP;適用するメディアンフィルターのサイズを決めます。大きくするとその分処理時間が増えます。\n\nソフトな3x3：1ピクセル範囲で5ピクセルの処理を行います\n強い3x3：1ピクセル範囲で9ピクセルの処理を行います\nソフトな5x5：2ピクセル範囲で13ピクセルの処理を行います\n強い5x5：2ピクセル範囲で25ピクセルの処理を行います\n7x7：3ピクセル範囲で49ピクセルの処理を行います\n9x9:4ピクセル範囲で81ピクセルの処理を行います\n\n小さいフィルターを使って、繰り返し処理をした方が、大きいフィルターを1回使うより結果が良いこともあります。
-TP_DIRPYRDENOISE_NOISELABELEMPTY;プレビューのノイズ: 中間= -   多い= -
-TP_DIRPYRDENOISE_NOISELABEL;プレビューのノイズ: 中間=%1  多い=%2
-TP_DIRPYRDENOISE_NRESID_TOOLTIP;ウェーブレット変換後、<b>プレビュー</b> で見える部分画像で残ったノイズのレベルを表示します\n\n>300以上　非常にノイズが多い\n100～300 ノイズが多い\n50～100　ノイズが少ない\n50以下 ノイズが非常に少ない\n\n算出値はRGBとL*a*b*モードでは異なります。RGBモードは輝度と色を完全に切り離すことが出来ないので、算出値の精度は劣ります。
+TP_DIRPYRDENOISE_NOISELABELEMPTY;プレビューのノイズ: 中間色度= -   高色度= -
+TP_DIRPYRDENOISE_NOISELABEL;プレビューのノイズ: 中間色度=%1  高色度=%2
+TP_DIRPYRDENOISE_NRESID_TOOLTIP;ウェーブレット変換後、<b>プレビュー</b>で見える部分画像で残ったノイズのレベルを表示します\n\n>300以上　非常にノイズが多い\n100～300 ノイズが多い\n50～100　ノイズが少ない\n50以下 ノイズが非常に少ない\n\n算出値はRGBとL*a*b*モードでは異なります。RGBモードは輝度と色を完全に切り離すことが出来ないので、算出値の精度は劣ります。
 TP_DIRPYRDENOISE_PASSES;フィルタリングの繰り返し回数
 TP_DIRPYRDENOISE_PASSES_TOOLTIP;3x3のメディアンフィルターを3回繰り返して適用する方が、7x7のフィルターを1回適用するより、良い結果を生むことが多いです
-TP_DIRPYRDENOISE_PON;自動（多分割）
+TP_DIRPYRDENOISE_PON;自動（多分割方式）
 TP_DIRPYRDENOISE_PREVLABEL;プレビューのサイズ=%1, 中心: Px=%2  Py=%3
 TP_DIRPYRDENOISE_PREV;プレビュー方式
-TP_DIRPYRDENOISE_PRE;プレビュー方式（多分割）
+TP_DIRPYRDENOISE_PRE;自動（プレビュー方式）
 TP_DIRPYRDENOISE_RED;色差 レッド/グリーン
 TP_DIRPYRDENOISE_RGBM;RGB
 TP_DIRPYRDENOISE_RGB;RGB
