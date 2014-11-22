@@ -739,6 +739,8 @@ PREFERENCES_CIEART;CIECAM02 optimization
 PREFERENCES_CIEART_LABEL;Use float precision instead of double
 PREFERENCES_CIEART_TOOLTIP;If enabled, CIECAM02 calculations are performed in the single-precision floating-point format instead of the double-precision one. This provides a small increase in speed at the expense of a negligible loss of quality.
 PREFERENCES_CLIPPINGIND;Clipping Indication
+PREFERENCES_CLUTSCACHE;HaldCLUT cache
+PREFERENCES_CLUTSCACHE_LABEL;Max number of cached Cluts
 PREFERENCES_CLUTSDIR;HaldCLUT directory
 PREFERENCES_CMETRICINTENT;Colorimetric intent
 PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\n\nThe path of the communication file (*.ini style, a.k.a. "Keyfile") is added as a command line parameter. It contains various parameters required for the scripts and image Exif to allow a rules-based processing profile generation.\n\n<b>WARNING:</b> You are responsible for using double quotes where necessary if you're using paths containing spaces.

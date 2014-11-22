@@ -5,6 +5,7 @@
 #include "../rtgui/threadutils.h"
 #include "imagefloat.h"
 #include <vector>
+#include <map>
 
 namespace rtengine { 
 
@@ -25,7 +26,6 @@ public:
     ~HaldCLUT();
     void load( Glib::ustring filename );
     bool isValid() const;
-    void clear();
 
     void getRGB( float r, float g, float b, float &outR, float &outG, float &outB ) const;
     Glib::ustring profile() const;
@@ -51,17 +51,17 @@ class CLUTStore
 {
 public:
     CLUTStore();
-    CLUT* getClut( Glib::ustring filename );
-    void takeUpClut();
-    void releaseClut( CLUT *clut );
-    void clearCache();
+    
+    CLUT* getClut( const Glib::ustring& filename );
+    void releaseClut( const CLUT* clut );
+
+	void clearCache();
 
 private:
-    int m_refCount;
+	typedef std::map<Glib::ustring, std::pair<int, HaldCLUT*> > Cluts;
+	
+	Cluts m_cluts;
     MyMutex m_mutex;
-
-    HaldCLUT m_lastHaldClut;
-    Glib::ustring m_lastFilename;
 };
 
 void splitClutFilename( Glib::ustring filename, Glib::ustring &name, Glib::ustring &extension, Glib::ustring &profileName );
@@ -79,12 +79,12 @@ public:
     ClutPtr() : m_point( 0 ) {}
     explicit ClutPtr(CLUT *p) : m_point( p ) {}
     ~ClutPtr() { clutStore.releaseClut( m_point ); }
-    CLUT* operator-> () const { return m_point; }
+    const CLUT* operator-> () const { return m_point; }
     operator bool() const { return m_point != 0; }
     void set( CLUT *p ) { m_point = p; }
 
 private:
-    ClutPtr& operator=(ClutPtr const& cp ) { /*only for clean warning messages*/return *this; }
+    ClutPtr& operator=(ClutPtr const& cp );
     CLUT *m_point;
 };
 

@@ -114,7 +114,8 @@ void FilmSimulation::read( const rtengine::procparams::ProcParams* pp, const Par
     }
     if ( !m_enabled->get_inconsistent() && !pp->filmSimulation.enabled )
     {
-        clutStore.clearCache();
+    	if (options.clutCacheSize == 1)
+			clutStore.clearCache();
     }
 
     updateDisable( false );

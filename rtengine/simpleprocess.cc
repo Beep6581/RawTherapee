@@ -22,6 +22,7 @@
 #include "improcfun.h"
 #include "curves.h"
 #include "iccstore.h"
+#include "clutstore.h"
 #include "processingjob.h"
 #include <glibmm.h>
 #include "../rtgui/options.h"
@@ -677,6 +678,10 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve,customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
     if (settings->verbose)
         printf("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);
+
+	// if clut was used and size of clut cache == 1 we free the memory used by the clutstore (default clut cache size = 1 for 32 bit OS)
+	if ( params.filmSimulation.enabled && !params.filmSimulation.clutFilename.empty() && options.clutCacheSize == 1)
+		clutStore.clearCache();
 
     // freeing up some memory
     customToneCurve1.Reset();

@@ -124,6 +124,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
     Gtk::CheckButton* sameThumbSize;
 
     Gtk::SpinButton*  rgbDenoiseTreadLimitSB;
+    Gtk::SpinButton*  clutCacheSizeSB;
 
     Gtk::CheckButton* ckbmenuGroupRank;
     Gtk::CheckButton* ckbmenuGroupLabel;

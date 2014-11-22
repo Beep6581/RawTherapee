@@ -27,6 +27,11 @@
 #include "../rtengine/safegtk.h"
 #include "version.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
+
 #ifdef WIN32
 #include <windows.h>
 // for GCC32
@@ -354,8 +359,12 @@ void Options::setDefaults () {
     histogramFullMode = false;
 
     rgbDenoiseThreadLimit = 0;
-
-    filledProfile = false;
+#if defined( _OPENMP ) && defined( __x86_64__ )
+	clutCacheSize = omp_get_num_procs();
+#else
+	clutCacheSize = 1;
+#endif
+   filledProfile = false;
 
     showProfileSelector = true;
     FileBrowserToolbarSingleRow = false;
@@ -736,8 +745,7 @@ if (keyFile.has_group ("Performance")) {
     if (keyFile.has_key ("Performance", "LevNRAUT"))        rtSettings.leveldnaut    = keyFile.get_integer("Performance", "LevNRAUT");
     if (keyFile.has_key ("Performance", "LevNRLISS"))        rtSettings.leveldnliss    = keyFile.get_integer("Performance", "LevNRLISS");
     if (keyFile.has_key ("Performance", "SIMPLNRAUT"))        rtSettings.leveldnautsimpl    = keyFile.get_integer("Performance", "SIMPLNRAUT");
-	
-	
+    if (keyFile.has_key ("Performance", "ClutCacheSize")) clutCacheSize = keyFile.get_integer ("Performance", "ClutCacheSize");
 }
 
 if (keyFile.has_group ("GUI")) { 
@@ -1019,6 +1027,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("Performance", "LevNRAUT", rtSettings.leveldnaut);	
     keyFile.set_integer ("Performance", "LevNRLISS", rtSettings.leveldnliss);	
     keyFile.set_integer ("Performance", "SIMPLNRAUT", rtSettings.leveldnautsimpl);	
+    keyFile.set_integer ("Performance", "ClutCacheSize", clutCacheSize);
 
     keyFile.set_string  ("Output", "Format", saveFormat.format);
     keyFile.set_integer ("Output", "JpegQuality", saveFormat.jpegQuality);
