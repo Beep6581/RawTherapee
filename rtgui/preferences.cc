@@ -27,6 +27,9 @@
 #include <sstream>
 #include "../rtengine/safegtk.h"
 #include "rtimage.h"
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 extern Options options;
 extern Glib::ustring argv0;
@@ -594,6 +597,32 @@ Gtk::Widget* Preferences::getPerformancePanel () {
     mainContainer->pack_start(*threadLimitHB, Gtk::PACK_SHRINK, 4);
     fdenoise->add (*mainContainer);
     mvbsd->pack_start (*fdenoise, Gtk::PACK_SHRINK, 4);
+    
+    
+    Gtk::Frame* fclut = Gtk::manage(  new Gtk::Frame (M("PREFERENCES_CLUTSCACHE")) ); 
+
+    Gtk::HBox* clutCacheSizeHB = Gtk::manage( new Gtk::HBox () );
+    clutCacheSizeHB->set_border_width(4);
+    clutCacheSizeHB->set_spacing(4);
+//    clutCacheSizeHB->set_tooltip_text(M("PREFERENCES_CLUTCACHESIZE_TOOLTIP"));
+    Gtk::Label* CLUTLl = Gtk::manage( new Gtk::Label (M("PREFERENCES_CLUTSCACHE_LABEL") + ":", Gtk::ALIGN_LEFT));
+    clutCacheSizeSB = Gtk::manage( new Gtk::SpinButton () );
+    clutCacheSizeSB->set_digits (0);
+    clutCacheSizeSB->set_increments (1, 5);
+    clutCacheSizeSB->set_max_length(2);  // Will this be sufficient? :)
+
+#ifdef _OPENMP
+    clutCacheSizeSB->set_range (1, 2*omp_get_num_procs());
+#else
+    clutCacheSizeSB->set_range (1, 8);
+#endif
+
+    clutCacheSizeHB->pack_start (*CLUTLl, Gtk::PACK_SHRINK, 0);
+    clutCacheSizeHB->pack_end (*clutCacheSizeSB, Gtk::PACK_SHRINK, 0);
+    fclut->add (*clutCacheSizeHB);
+
+    
+    mvbsd->pack_start (*fclut, Gtk::PACK_SHRINK, 4);
 
    // return mainContainer;
     return mvbsd;
@@ -1377,6 +1406,7 @@ void Preferences::storePreferences () {
     moptions.UseIconNoText = ckbUseIconNoText->get_active();
 
     moptions.rgbDenoiseThreadLimit = rgbDenoiseTreadLimitSB->get_value_as_int();
+    moptions.clutCacheSize = clutCacheSizeSB->get_value_as_int();
 
     // Sounds only on Windows and Linux
 #if defined(WIN32) || defined(__linux__)
@@ -1522,7 +1552,7 @@ void Preferences::fillPreferences () {
     ckbUseIconNoText->set_active(moptions.UseIconNoText);
 
     rgbDenoiseTreadLimitSB->set_value(moptions.rgbDenoiseThreadLimit);
-
+	clutCacheSizeSB->set_value(moptions.clutCacheSize);
     //darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );
     //updateDFinfos();
     darkFrameDir->set_current_folder( moptions.rtSettings.darkFramesPath );
@@ -1534,7 +1564,7 @@ void Preferences::fillPreferences () {
     flatFieldChanged ();
 
     clutsDir->set_current_folder( moptions.clutsDir );
-
+	
     addc.block (true);
     setc.block (true);
     if (moptions.baBehav.size() == ADDSET_PARAM_NUM) {
