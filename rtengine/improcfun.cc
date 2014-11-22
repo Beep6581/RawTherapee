@@ -3422,8 +3422,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 				mixerPurple  = 33.f;
 				mixerCyan    = 33.f;
 			}
-
-			Color::computeBWMixerConstants(params->blackwhite.setting, params->blackwhite.filter,params->blackwhite.algo,
+			float filcor;
+			Color::computeBWMixerConstants(params->blackwhite.setting, params->blackwhite.filter,params->blackwhite.algo,filcor,
 					bwr, bwg, bwb, mixerOrange, mixerYellow, mixerCyan, mixerPurple, mixerMagenta,
 					params->blackwhite.autoc, complem, kcorec, rrm, ggm, bbm);
 

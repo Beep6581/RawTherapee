@@ -734,7 +734,7 @@ public:
 	* @param ggm green channel of the mixer (return value)
 	* @param bbm blue channel of the mixer (return value)
 	*/
-	static void computeBWMixerConstants (const Glib::ustring &setting, const Glib::ustring &filter, const Glib::ustring &algo, float &mixerRed, float &mixerGreen,
+	static void computeBWMixerConstants (const Glib::ustring &setting, const Glib::ustring &filter, const Glib::ustring &algo, float &filcor, float &mixerRed, float &mixerGreen,
 										float &mixerBlue, float mixerOrange, float mixerYellow, float mixerCyan, float mixerPurple, float mixerMagenta,
 										bool autoc, bool complement, float &kcorec, double &rrm, double &ggm, double &bbm);
 

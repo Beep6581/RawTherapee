@@ -479,14 +479,13 @@ namespace rtengine {
      * @param setting BlackWhite::setting
      * @param setting BlackWhite::filter
      */
-    void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::ustring &filter,  const Glib::ustring &algo, float &mixerRed, float &mixerGreen,
+    void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::ustring &filter,  const Glib::ustring &algo, float &filcor, float &mixerRed, float &mixerGreen,
                   float &mixerBlue, float mixerOrange, float mixerYellow, float mixerCyan, float mixerPurple, float mixerMagenta,
                   bool autoc, bool complement, float &kcorec, double &rrm, double &ggm, double &bbm)
     {
         float somm;
         float som = mixerRed+mixerGreen+mixerBlue;
         // rM = mixerRed, gM = mixerGreen, bM = mixerBlue !
-
         //presets
         if     (setting=="RGB-Abs" || setting=="ROYGCBPM-Abs")
             kcorec=som/100.f;
@@ -609,25 +608,24 @@ namespace rtengine {
             kcorec = koymcp+som/100.f;
         //Color filters
         float filred,filgreen,filblue;
-        filred=1.f;filgreen=1.f;filblue=1.f;
-        if          (filter=="None")        {filred=1.f;  filgreen=1.f;  filblue=1.f;}
-        else if     (filter=="Red")         {filred=1.f;  filgreen=0.05f;filblue=0.f;}
-        else if     (filter=="Orange")      {filred=1.f;  filgreen=0.6f; filblue=0.f;}
-        else if     (filter=="Yellow")      {filred=1.f;  filgreen=1.f;  filblue=0.05f;}
-        else if     (filter=="YellowGreen") {filred=0.6f; filgreen=1.f;  filblue=0.3f;}
-        else if     (filter=="Green")       {filred=0.2f; filgreen=1.f;  filblue=0.3f;}
-        else if     (filter=="Cyan")        {filred=0.05f;filgreen=1.f;  filblue=1.f;}
-        else if     (filter=="Blue")        {filred=0.f;  filgreen=0.05f;filblue=1.f;}
-        else if     (filter=="Purple")      {filred=1.f;  filgreen=0.05f;filblue=1.f;}
-
-
-        mixerRed   = mixerRed   * filred;
+        filred=1.f;filgreen=1.f;filblue=1.f;filcor=1.f;
+        if          (filter=="None")        {filred=1.f;  filgreen=1.f;  filblue=1.f; filcor=1.f;}
+        else if     (filter=="Red")         {filred=1.f;  filgreen=0.05f;filblue=0.f; filcor=1.08f;}
+        else if     (filter=="Orange")      {filred=1.f;  filgreen=0.6f; filblue=0.f; filcor=1.35f;}
+        else if     (filter=="Yellow")      {filred=1.f;  filgreen=1.f;  filblue=0.05f;filcor=1.23f;}
+        else if     (filter=="YellowGreen") {filred=0.6f; filgreen=1.f;  filblue=0.3f;filcor=1.32f;}
+        else if     (filter=="Green")       {filred=0.2f; filgreen=1.f;  filblue=0.3f;filcor=1.41f;}
+		else if     (filter=="Cyan")        {filred=0.05f;filgreen=1.f;  filblue=1.f; filcor=1.23f;}
+        else if     (filter=="Blue")        {filred=0.f;  filgreen=0.05f;filblue=1.f; filcor=1.20f;}
+        else if     (filter=="Purple")      {filred=1.f;  filgreen=0.05f;filblue=1.f; filcor=1.23f;}
+        mixerRed   = mixerRed * filred;
         mixerGreen = mixerGreen * filgreen;
         mixerBlue  = mixerBlue  * filblue;
 
-        mixerRed   = mixerRed   / (mixerRed + mixerGreen + mixerBlue);
-        mixerGreen = mixerGreen / (mixerRed + mixerGreen + mixerBlue);
-        mixerBlue  = mixerBlue  / (mixerRed + mixerGreen + mixerBlue);
+        mixerRed   = filcor*mixerRed   / (mixerRed + mixerGreen + mixerBlue);
+        mixerGreen = filcor*mixerGreen / (mixerRed + mixerGreen + mixerBlue);
+        mixerBlue  = filcor*mixerBlue  / (mixerRed + mixerGreen + mixerBlue);
+		
 		if(filter!="None") {
 			som = mixerRed+mixerGreen+mixerBlue;
 			if(setting=="RGB-Abs" || setting=="ROYGCBPM-Abs") kcorec = kcorec*som;
