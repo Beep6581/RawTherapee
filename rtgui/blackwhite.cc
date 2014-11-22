@@ -1088,16 +1088,22 @@ void BlackWhite::updateRGBLabel () {
 			b = mixerBlue->getValue();
 		}
 		double mixR, mixG, mixB;
+		float filcor;
 		Glib::ustring sSetting = getSettingString();
-		Color::computeBWMixerConstants(sSetting, getFilterString(),getalgoString(), r, g, b,
+		Color::computeBWMixerConstants(sSetting, getFilterString(),getalgoString(), filcor, r, g, b,
 				mixerOrange->getValue(), mixerYellow->getValue(), mixerCyan->getValue(), mixerPurple->getValue(), mixerMagenta->getValue(),
 				autoch->get_active(), enabledcc->get_active(), kcorrec, mixR, mixG, mixB);
+		if(	filcor!=1.f){	
+			r=kcorrec*r/(r+g+b);
+			g=kcorrec*g/(r+g+b);
+			b=kcorrec*b/(r+g+b);
+		}
 		RGBLabels->set_text(
 				Glib::ustring::compose(M("TP_BWMIX_RGBLABEL"),
 				Glib::ustring::format(std::fixed, std::setprecision(1), r*100.),
 				Glib::ustring::format(std::fixed, std::setprecision(1), g*100.),
 				Glib::ustring::format(std::fixed, std::setprecision(1), b*100.),
-				Glib::ustring::format(std::fixed, std::setprecision(0), ceil(kcorrec*100./*(r+g+b)*100.)*/)))
+				Glib::ustring::format(std::fixed, std::setprecision(0), ceil(kcorrec*100./*(r+g+b)*100.)*/)))			
 				);
 		// We have to update the RGB sliders too if preset values has been chosen
 		if (sSetting != "RGB-Abs" && sSetting != "RGB-Rel" && sSetting != "ROYGCBPM-Abs" && sSetting != "ROYGCBPM-Rel") {
