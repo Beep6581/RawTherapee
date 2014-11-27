@@ -47,7 +47,7 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         
         Gtk::Image *iFullscreen, *iFullscreen_exit;
 
-        bool isSingleTabMode() { return !options.tabbedUI && !EditWindow::isMultiDisplayEnabled(); };
+        bool isSingleTabMode() { return !options.tabbedUI && !(options.multiDisplayMode>0); };
         void findVerNumbers(int* numbers, Glib::ustring versionStr);
 
         bool on_expose_event_epanel(GdkEventExpose* event);

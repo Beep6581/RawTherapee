@@ -211,7 +211,7 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
                 parent->addEditorPanel (epanel,pl->thm->getFileName());
                 }
                 epanel->open(pl->thm, pl->pc->returnValue() );
-                if (!EditWindow::isMultiDisplayEnabled())
+                if (!(options.multiDisplayMode>0))
                     parent->set_title_decorated(pl->thm->getFileName());
             } else {
                 {
