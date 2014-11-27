@@ -267,21 +267,21 @@ int ImageIO::loadPNG  (Glib::ustring fname) {
     //retrieving image information
     png_uint_32 width,height;
     int bit_depth,color_type,interlace_type,compression_type,filter_method;
-    png_get_IHDR(png,info,&width,&height,&bit_depth,&color_type,&interlace_type,&compression_type, &filter_method);
+    png_get_IHDR(png, info, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
 
-    //converting to 32bpp format
-    if (color_type==PNG_COLOR_TYPE_PALETTE) png_set_palette_to_rgb(png);
+    if (color_type==PNG_COLOR_TYPE_PALETTE || interlace_type!=PNG_INTERLACE_NONE )  {
+    	// we don't support interlaced png or png with palette
+        png_destroy_read_struct (&png, &info, &end_info);
+        fclose (file);
+        printf("%s uses an unsupported feature: <palette-indexed colors|interlacing>. Skipping.\n",fname.data());
+        return IMIO_VARIANTNOTSUPPORTED;
+    }
 
     if (color_type==PNG_COLOR_TYPE_GRAY || color_type==PNG_COLOR_TYPE_GRAY_ALPHA)
         png_set_gray_to_rgb(png);
 
-    if (png_get_valid(png,info,PNG_INFO_tRNS)) png_set_tRNS_to_alpha(png);
-
-    if (interlace_type!=PNG_INTERLACE_NONE) {
-        png_destroy_read_struct (&png, &info, &end_info);
-        fclose (file);
-        return IMIO_VARIANTNOTSUPPORTED;
-    }
+    if (png_get_valid(png,info,PNG_INFO_tRNS))
+		png_set_tRNS_to_alpha(png);
 
     if (color_type & PNG_COLOR_MASK_ALPHA)
         png_set_strip_alpha(png);
@@ -303,6 +303,14 @@ int ImageIO::loadPNG  (Glib::ustring fname) {
 
     int rowlen = width*3*bit_depth/8;
     unsigned char *row = new unsigned char [rowlen];
+
+	// set a new jump point to avoid memory leak
+    if (setjmp (png_jmpbuf(png))) {
+        png_destroy_read_struct (&png, &info, &end_info);
+        fclose (file);
+        delete [] row;
+        return IMIO_READERROR;
+    }
 
     for (unsigned int i=0;i<height;i++) {
 
@@ -753,7 +761,7 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps) {
     FILE *file = safe_g_fopen_WriteBinLock (fname);
 
     if (!file) 
-      return IMIO_CANNOTREADFILE;
+      return IMIO_CANNOTWRITEFILE;
 
     if (pl) {
       pl->setProgressStr ("PROGRESSBAR_SAVEPNG");
@@ -775,7 +783,7 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps) {
     if (setjmp(png_jmpbuf(png))) {
         png_destroy_write_struct (&png,&info);
         fclose(file);
-        return IMIO_READERROR;
+        return IMIO_CANNOTWRITEFILE;
     }
 
     png_set_write_fn (png, file, png_write_data, png_flush);
@@ -826,19 +834,61 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps) {
 }
 
 
+typedef struct  {
+	struct jpeg_error_mgr pub;	/* "public" fields */
+	jmp_buf setjmp_buffer;	/* for return to caller */
+} my_error_mgr;
+
+void my_error_exit (j_common_ptr cinfo) {
+	/* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
+	my_error_mgr *myerr = (my_error_mgr*) cinfo->err;
+	/* Always display the message. */
+	/* We could postpone this until after returning, if we chose. */
+	(*cinfo->err->output_message) (cinfo);
+
+	/* Return control to the setjmp point */
+#if defined( WIN32 ) && defined( __x86_64__ )
+	__builtin_longjmp(myerr->setjmp_buffer, 1);
+#else
+	longjmp(myerr->setjmp_buffer, 1);
+#endif
+}
+
 // Quality 0..100, subsampling: 1=low quality, 2=medium, 3=high
 int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp) {
 
-    jpeg_compress_struct cinfo;
-    jpeg_error_mgr jerr;
+    FILE *file = safe_g_fopen_WriteBinLock (fname);
+    if (!file)
+          return IMIO_CANNOTWRITEFILE;
 
-    cinfo.err = jpeg_std_error (&jerr);
+    jpeg_compress_struct cinfo;
+	/* We use our private extension JPEG error handler.
+	   Note that this struct must live as long as the main JPEG parameter
+	   struct, to avoid dangling-pointer problems.
+	*/
+	my_error_mgr jerr;
+	/* We set up the normal JPEG error routines, then override error_exit. */
+	cinfo.err = jpeg_std_error(&jerr.pub);
+	jerr.pub.error_exit = my_error_exit;
+
+	/* Establish the setjmp return context for my_error_exit to use. */
+#if defined( WIN32 ) && defined( __x86_64__ )
+	if (__builtin_setjmp(jerr.setjmp_buffer)) {
+#else
+	if (setjmp(jerr.setjmp_buffer)) {
+#endif
+		/* If we get here, the JPEG code has signaled an error.
+		   We need to clean up the JPEG object, close the file, remove the already saved part of the file and return.
+		*/
+		jpeg_destroy_compress(&cinfo);
+		fclose(file);
+		safe_g_remove(fname);
+		return IMIO_CANNOTWRITEFILE;
+	}
+
     jpeg_create_compress (&cinfo);
 
-    FILE *file = safe_g_fopen_WriteBinLock (fname);
 
-    if (!file)
-          return IMIO_CANNOTREADFILE;
 
     if (pl) {
         pl->setProgressStr ("PROGRESSBAR_SAVEJPEG");
@@ -910,6 +960,8 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp) {
         if (!error)
             jpeg_write_marker(&cinfo, JPEG_APP0+13, buffer, bytes);
     }
+	delete [] buffer;
+
     // write icc profile to the output
     if (profileData)
         write_icc_profile (&cinfo, (JOCTET*)profileData, profileLength);
@@ -918,15 +970,31 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp) {
     int rowlen = width*3;
     unsigned char *row = new unsigned char [rowlen];
 
+	/* To avoid memory leaks we establish a new setjmp return context for my_error_exit to use. */
+#if defined( WIN32 ) && defined( __x86_64__ )
+	if (__builtin_setjmp(jerr.setjmp_buffer)) {
+#else
+	if (setjmp(jerr.setjmp_buffer)) {
+#endif
+		/* If we get here, the JPEG code has signaled an error.
+		   We need to clean up the JPEG object, close the file, remove the already saved part of the file and return.
+		*/
+		delete [] row;
+		jpeg_destroy_compress(&cinfo);
+		fclose(file);
+		safe_g_remove(fname);
+		return IMIO_CANNOTWRITEFILE;
+	}
+
     while (cinfo.next_scanline < cinfo.image_height) {
 
         getScanline (cinfo.next_scanline, row, 8);
-
         if (jpeg_write_scanlines (&cinfo, &row, 1) < 1) {
-            jpeg_finish_compress (&cinfo);
             jpeg_destroy_compress (&cinfo);
+            delete [] row;
             fclose (file);
-            return IMIO_READERROR;
+       		safe_g_remove(fname);
+            return IMIO_CANNOTWRITEFILE;
         }
 
         if (pl && !(cinfo.next_scanline%100))
@@ -937,10 +1005,8 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp) {
     jpeg_destroy_compress (&cinfo);
 
     delete [] row;
-    delete [] buffer;
 
     fclose (file);
-
     if (pl) {
         pl->setProgressStr ("PROGRESSBAR_READY");
         pl->setProgress (1.0);
@@ -952,7 +1018,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp) {
 int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
 
      //TODO: Handling 32 bits floating point output images!
-
+	bool writeOk = true;
     int width = getW ();
     int height = getH ();
 
@@ -967,7 +1033,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
 
         if (!file) {
             delete [] linebuffer;
-            return IMIO_CANNOTREADFILE;
+            return IMIO_CANNOTWRITEFILE;
         }
             
         if (pl) {
@@ -1007,7 +1073,9 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
                 pl->setProgress ((double)(i+1)/height);
         }
         delete [] buffer;
-        
+		if (ferror(file))
+			writeOk = false;
+
         fclose (file);
     }
     else {
@@ -1022,7 +1090,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
         #endif
         if (!out) { 
         delete [] linebuffer;
-            return IMIO_CANNOTREADFILE;
+            return IMIO_CANNOTWRITEFILE;
         }
 
         if (pl) {
@@ -1089,11 +1157,14 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
             if (TIFFWriteScanline (out, linebuffer, row, 0) < 0) {
                 TIFFClose (out);
                 delete [] linebuffer;
-                return IMIO_READERROR;
+                return IMIO_CANNOTWRITEFILE;
             }
             if (pl && !(row%100))
                 pl->setProgress ((double)(row+1)/height);
         }
+   		if (TIFFFlush(out)!=1)
+			writeOk = false;
+
         TIFFClose (out);
     }
 
@@ -1103,7 +1174,12 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
         pl->setProgress (1.0);
     }
 
-    return IMIO_SUCCESS;
+	if(writeOk)
+		return IMIO_SUCCESS;
+	else {
+		safe_g_remove(fname);
+		return IMIO_CANNOTWRITEFILE;
+	}
 }
 
 // PNG read and write routines:

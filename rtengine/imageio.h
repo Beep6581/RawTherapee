@@ -26,6 +26,7 @@
 #define IMIO_READERROR             4
 #define IMIO_VARIANTNOTSUPPORTED   5
 #define IMIO_FILETYPENOTSUPPORTED  6
+#define IMIO_CANNOTWRITEFILE       7
 
 #include "rtengine.h"
 #include <glibmm.h>
