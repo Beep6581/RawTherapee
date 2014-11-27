@@ -35,12 +35,10 @@ bool EditWindow::isMultiDisplayEnabled() {
 EditWindow* EditWindow::getInstance(RTWindow* p)
 {
 
-    if ( editWnd == NULL )
-    {
+    if (editWnd == NULL) {
         static MyMutex smutex_;
         MyMutex::MyLock lock(smutex_);
-        if ( editWnd == 0 )
-        {
+        if ( editWnd == 0 ) {
             editWnd = new EditWindow(p);
 
             // Determine the other display and maximize the window on that
@@ -48,7 +46,7 @@ EditWindow* EditWindow::getInstance(RTWindow* p)
             int monNo=p->get_screen()->get_monitor_at_window (wnd);
 
             Gdk::Rectangle lMonitorRect;
-            editWnd->get_screen()->get_monitor_geometry(monNo==0 ? 1:0, lMonitorRect);
+            editWnd->get_screen()->get_monitor_geometry(isMultiDisplayEnabled() ? (monNo==0 ?  1 : 0) : monNo, lMonitorRect);
             editWnd->move(lMonitorRect.get_x(), lMonitorRect.get_y());
             editWnd->maximize();
             editWnd->show();
@@ -159,6 +157,9 @@ void EditWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
 }
 
 void EditWindow::remEditorPanel (EditorPanel* ep) {
+    if (ep->getIsProcessing())
+		return;  // Will crash if destroyed while loading
+	
     epanels.erase (ep->getFileName());
     filesEdited.erase (ep->getFileName ());
     parent->fpanel->refreshEditedState (filesEdited);
@@ -220,8 +221,8 @@ bool EditWindow::on_delete_event(GdkEventAny* event) {
         if (epanels[*iter]->getIsProcessing()) isProcessing=true;
     }
 
-    if (isProcessing) return false;
-
+    if (isProcessing)
+		return true;
 
     for ( std::set <Glib::ustring>::iterator iter = filesEdited.begin(); iter != filesEdited.end(); iter++ )
         mainNB->remove_page (*epanels[*iter]);
@@ -232,7 +233,7 @@ bool EditWindow::on_delete_event(GdkEventAny* event) {
     parent->fpanel->refreshEditedState (filesEdited);
 
     hide ();
-    return true;
+    return false;
 }
 
 void EditWindow::set_title_decorated(Glib::ustring fname){

@@ -389,7 +389,7 @@ void RTWindow::on_mainNB_switch_page(GtkNotebookPage* page, guint page_num) {
 }
 
 void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
-    if (EditWindow::isMultiDisplayEnabled()) {
+    if (options.multiDisplayMode>0) {
         EditWindow * wndEdit = EditWindow::getInstance(this);
         wndEdit->show_all();
         wndEdit->addEditorPanel(ep,name);
@@ -432,7 +432,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
 void RTWindow::remEditorPanel (EditorPanel* ep) {
     if (ep->getIsProcessing()) return;  // Will crash if destroyed while loading
 
-    if (EditWindow::isMultiDisplayEnabled()) {
+    if (options.multiDisplayMode>0) {
         EditWindow * wndEdit = EditWindow::getInstance(this);
         wndEdit->remEditorPanel(ep);
     } else {
@@ -456,7 +456,7 @@ void RTWindow::remEditorPanel (EditorPanel* ep) {
 }
 
 bool RTWindow::selectEditorPanel(const std::string &name) {
-    if (EditWindow::isMultiDisplayEnabled()) {
+    if (options.multiDisplayMode>0) {
         EditWindow * wndEdit = EditWindow::getInstance(this);
         if (wndEdit->selectEditorPanel(name)) {
         	set_title_decorated(name);

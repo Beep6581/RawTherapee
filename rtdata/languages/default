@@ -826,7 +826,7 @@ PREFERENCES_MENUOPTIONS;Context Menu Options
 PREFERENCES_METADATA;Metadata
 PREFERENCES_MIN;Mini (100x115)
 PREFERENCES_MONITORICC;Monitor color profile
-PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs Mode (if available on second monitor)
+PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs In Own Window Mode
 PREFERENCES_MULTITAB;Multiple Editor Tabs Mode
 PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 PREFERENCES_NOISE;Noise Reduction

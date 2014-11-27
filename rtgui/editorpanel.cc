@@ -225,29 +225,30 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     iops->pack_end (*iareapanel->imageArea->zoomPanel, Gtk::PACK_SHRINK, 1);
     iops->pack_end (*vsepz3, Gtk::PACK_SHRINK, 2);
 
-    // Navigation buttons
-    Gtk::Image *navPrevImage = Gtk::manage (new RTImage ("nav-prev.png"));
-    navPrevImage->set_padding(0,0);
-    navPrev = Gtk::manage (new Gtk::Button ());
-    navPrev->add(*navPrevImage);
-    navPrev->set_relief(Gtk::RELIEF_NONE);
-    navPrev->set_tooltip_markup(M("MAIN_BUTTON_NAVPREV_TOOLTIP"));
-    
-    Gtk::Image *navNextImage = Gtk::manage (new RTImage ("nav-next.png"));
-    navNextImage->set_padding(0,0);
-    navNext = Gtk::manage (new Gtk::Button ());
-    navNext->add(*navNextImage);
-    navNext->set_relief(Gtk::RELIEF_NONE);
-    navNext->set_tooltip_markup(M("MAIN_BUTTON_NAVNEXT_TOOLTIP"));
-
-    Gtk::Image *navSyncImage = Gtk::manage (new RTImage ("nav-sync.png"));
-    navSyncImage->set_padding(0,0);
-    navSync = Gtk::manage (new Gtk::Button ());
-    navSync->add(*navSyncImage);
-    navSync->set_relief(Gtk::RELIEF_NONE);
-    navSync->set_tooltip_markup(M("MAIN_BUTTON_NAVSYNC_TOOLTIP"));    
-    
+	navPrev = navNext = navSync = NULL;
     if (!simpleEditor && !options.tabbedUI){
+		// Navigation buttons
+		Gtk::Image *navPrevImage = Gtk::manage (new RTImage ("nav-prev.png"));
+		navPrevImage->set_padding(0,0);
+		navPrev = Gtk::manage (new Gtk::Button ());
+		navPrev->add(*navPrevImage);
+		navPrev->set_relief(Gtk::RELIEF_NONE);
+		navPrev->set_tooltip_markup(M("MAIN_BUTTON_NAVPREV_TOOLTIP"));
+		
+		Gtk::Image *navNextImage = Gtk::manage (new RTImage ("nav-next.png"));
+		navNextImage->set_padding(0,0);
+		navNext = Gtk::manage (new Gtk::Button ());
+		navNext->add(*navNextImage);
+		navNext->set_relief(Gtk::RELIEF_NONE);
+		navNext->set_tooltip_markup(M("MAIN_BUTTON_NAVNEXT_TOOLTIP"));
+
+		Gtk::Image *navSyncImage = Gtk::manage (new RTImage ("nav-sync.png"));
+		navSyncImage->set_padding(0,0);
+		navSync = Gtk::manage (new Gtk::Button ());
+		navSync->add(*navSyncImage);
+		navSync->set_relief(Gtk::RELIEF_NONE);
+		navSync->set_tooltip_markup(M("MAIN_BUTTON_NAVSYNC_TOOLTIP"));    
+    
 	    iops->pack_end (*Gtk::manage(new Gtk::VSeparator()), Gtk::PACK_SHRINK, 0);
         iops->pack_end (*navNext, Gtk::PACK_SHRINK, 0);
         iops->pack_end (*navSync, Gtk::PACK_SHRINK, 0);
@@ -326,13 +327,15 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     saveimgas->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::saveAsPressed) );
     queueimg->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::queueImgPressed) );
     sendtogimp->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::sendToGimpPressed) );
-    navPrev->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::openPreviousEditorImage) );
-    navNext->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::openNextEditorImage) );
-    navSync->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::syncFileBrowser) );
-
+	if(navPrev)
+		navPrev->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::openPreviousEditorImage) );
+	if(navNext)
+		navNext->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::openNextEditorImage) );
+	if(navSync)
+		navSync->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::syncFileBrowser) );
     ShowHideSidePanelsconn = tbShowHideSidePanels->signal_toggled().connect ( sigc::mem_fun(*this, &EditorPanel::toggleSidePanels), true);
     if (tbTopPanel_1)
-        tbTopPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::tbTopPanel_1_toggled) );
+		tbTopPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::tbTopPanel_1_toggled) );
 }
 
 EditorPanel::~EditorPanel () {
