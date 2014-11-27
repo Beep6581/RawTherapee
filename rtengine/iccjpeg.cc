@@ -70,8 +70,7 @@ write_icc_profile (j_compress_ptr cinfo,
     icc_data_len -= length;
 
     /* Write the JPEG marker header (APP2 code and marker length) */
-    jpeg_write_m_header(cinfo, ICC_MARKER,
-			(unsigned int) (length + ICC_OVERHEAD_LEN));
+    jpeg_write_m_header(cinfo, ICC_MARKER, (unsigned int) (length + ICC_OVERHEAD_LEN));
 
     /* Write the marker identifying string "ICC_PROFILE" (null-terminated).
      * We code it in this less-than-transparent way so that the code works

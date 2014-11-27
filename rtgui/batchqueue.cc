@@ -608,7 +608,8 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
             err = img->saveAsJPEG (fname, saveFormat.jpegQuality, saveFormat.jpegSubSamp);
         img->free ();
 
-        if (err) throw Glib::FileError(Glib::FileError::FAILED, M("MAIN_MSG_CANNOTSAVE"));
+		if (err)
+			throw Glib::FileError(Glib::FileError::FAILED, M("MAIN_MSG_CANNOTSAVE")+"\n"+fname);
 
         if (saveFormat.saveParams) {
             // We keep the extension to avoid overwriting the profile when we have
@@ -626,13 +627,17 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
     Glib::ustring processedParams = processing->savedParamsFile;
     
     // delete from the queue
-    delete processing; processing = NULL;
     bool queueEmptied=false;
+	bool remove_button_set = false;
+
     {
         // TODO: Check for Linux
         #if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);
         #endif
+        
+        delete processing;
+        processing = NULL;
 
         fd.erase (fd.begin());
 
@@ -654,13 +659,14 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
                 processing->selected = false;
             }
             // remove button set
-            {
-            // ButtonSet have Cairo::Surface which might be rendered while we're trying to delete them
-            GThreadLock lock;
-            next->removeButtonSet ();
-            }
+            remove_button_set = true;
         }
     }
+	if (remove_button_set) {
+		// ButtonSet have Cairo::Surface which might be rendered while we're trying to delete them
+        GThreadLock lock;
+        processing->removeButtonSet ();
+	}
     if (saveBatchQueue( )) {
         safe_g_remove( processedParams );
         // Delete all files in directory \batch when finished, just to be sure to remove zombies

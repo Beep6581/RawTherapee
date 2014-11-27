@@ -699,17 +699,21 @@ void EditorPanel::refreshProcessingState (bool inProcessingP) {
 
 struct errparams {
     Glib::ustring descr;
+    Glib::ustring title;
     EditorPanelIdleHelper* epih;
 };
 
-void EditorPanel::displayError (Glib::ustring descr) {
-
-    if (parent) {
-        Gtk::MessageDialog* msgd = new Gtk::MessageDialog (*parent, descr, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-        msgd->set_title (M("MAIN_MSG_CANNOTSAVE"));
-        msgd->run ();
-        delete msgd;
-    }
+void EditorPanel::displayError (Glib::ustring title, Glib::ustring descr) {
+	GtkWidget* msgd = gtk_message_dialog_new_with_markup (NULL,
+							 GTK_DIALOG_DESTROY_WITH_PARENT,
+							 GTK_MESSAGE_ERROR,
+							 GTK_BUTTONS_OK,
+							 descr.data());
+	gtk_window_set_title((GtkWindow*)msgd, title.data());
+	g_signal_connect_swapped (msgd, "response",
+					  G_CALLBACK (gtk_widget_destroy),
+					  msgd);
+					  gtk_widget_show_all (msgd);
 }
 
 int disperrorUI (void* data) {
@@ -725,18 +729,19 @@ int disperrorUI (void* data) {
         return 0;
     }
 
-    p->epih->epanel->displayError (p->descr);
+    p->epih->epanel->displayError (p->title, p->descr);
     p->epih->pending--;
     delete p;
 
     return 0;
 }
 
-void EditorPanel::error (Glib::ustring descr) {
+void EditorPanel::error (Glib::ustring title, Glib::ustring descr) {
 
     epih->pending++;
     errparams* p = new errparams;
     p->descr = descr;
+    p->title = title;
     p->epih = epih;
     g_idle_add (disperrorUI, p);
 }
@@ -1129,8 +1134,7 @@ bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16*
 		}
 	} else {
 		Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": Error during image saving\n</b>";
-		Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-		msgd.run ();
+		error(M("MAIN_MSG_CANNOTSAVE"), "<b>"+fname+"</b>");
     }
 
     saveimgas->set_sensitive(true);
