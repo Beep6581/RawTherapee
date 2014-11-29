@@ -381,6 +381,7 @@ void Crop::update (int todo) {
 					denoiseParams.bluechro=maxb;
 					parent->adnListener->chromaChanged(denoiseParams.chroma, denoiseParams.redchro, denoiseParams.bluechro);
 					
+					delete provicalc;
 					delete provi;
 				}	
 			}
