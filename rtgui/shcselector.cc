@@ -217,7 +217,7 @@ bool SHCSelector::on_motion_notify_event (GdkEventMotion* event) {
             positions[movingPosition] = positions[movingPosition-1]+wslider/w;
         if (positions[movingPosition] > 1.0)
             positions[movingPosition] = 1.0;
-        else if (movingPosition <3 && positions[movingPosition] > positions[movingPosition+1]-wslider/w)
+        else if (movingPosition < 2 && positions[movingPosition] > positions[movingPosition+1]-wslider/w)
             positions[movingPosition] = positions[movingPosition+1]-wslider/w;
 
         if (cl)
