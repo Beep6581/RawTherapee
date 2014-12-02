@@ -1026,19 +1026,25 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
 
         //  readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output, params.blackwhite.enabled);
-      bool bwonly = params.blackwhite.enabled &&  !params.colorToning.enabled ;
+		bool bwonly = params.blackwhite.enabled &&  !params.colorToning.enabled ;
+	  	if(autili || butili ) bwonly = false;  
         readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output, bwonly);
-        if (settings->verbose) printf("Output profile: \"%s\"\n", params.icm.output.c_str());
+        if (settings->verbose) printf("Output profile_: \"%s\"\n", params.icm.output.c_str());
     }
 
     delete labView;
     labView = NULL;
 	
-	if(params.blackwhite.enabled &&  !params.colorToning.enabled ) {//force BW r=g=b
-		for (int ccw=0;ccw<cw;ccw++) {
-			for (int cch=0;cch<ch;cch++) {
-			readyImg->r(cch,ccw)=readyImg->g(cch,ccw);
-			readyImg->b(cch,ccw)=readyImg->g(cch,ccw);
+	
+	
+	if(!autili && !butili ) {
+		if(params.blackwhite.enabled &&  !params.colorToning.enabled ) {//force BW r=g=b
+		   if (settings->verbose) printf("Force BW\n");
+			for (int ccw=0;ccw<cw;ccw++) {
+				for (int cch=0;cch<ch;cch++) {
+				readyImg->r(cch,ccw)=readyImg->g(cch,ccw);
+				readyImg->b(cch,ccw)=readyImg->g(cch,ccw);
+				}
 			}
 		}
 	}
