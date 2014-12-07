@@ -555,6 +555,7 @@ class SALensIDInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(64, "Sony 500mm f/4.0 G SSM"));
             choices.insert(p_t(65, "Sony DT 18-135mm f/3.5-5.6 SAM"));
             choices.insert(p_t(66, "Sony 300mm f/2.8 G SSM II"));
+            choices.insert(p_t(67, "Sony 70-20mm f/2.8 G SSM"));
             choices.insert(p_t(68, "Sony DT 55-300mm f/4.5-5.6 SAM"));
             choices.insert(p_t(69, "Sony 70-400mm f/4-5.6 G SSM II"));
             choices.insert(p_t(70, "Carl Zeiss Planar T* 50mm f/1.4 ZA SSM"));
@@ -567,6 +568,7 @@ class SALensIDInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(128, "Sigma 10-20mm f/3.5 EX DC HSM"));
             choices.insert(p_t(128, "Sigma 70-200mm f/2.8 II EX DG APO Macro HSM"));
             choices.insert(p_t(128, "Sigma 10mm f/2.8 EX DC HSM Fisheye"));
+            choices.insert(p_t(128, "Sigma 35mm f/1.4 DG HSM"));
             choices.insert(p_t(128, "Sigma 50mm f/1.4 EX DG HSM"));
             choices.insert(p_t(128, "Sigma 85mm f/1.4 EX DG HSM"));
             choices.insert(p_t(128, "Sigma 24-70mm f/2.8 IF EX DG HSM"));
