@@ -1302,7 +1302,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     // Correct vignetting of lens profile
     if (!hasFlatField && lensProf.useVign) {
         LCPProfile *pLCPProf=lcpStore->getProfile(lensProf.lcpFile);
-        if (pLCPProf && (idata->getFocalLen() > 0.f || idata->getFocalLen35mm()> 0.f)) {
+        if (pLCPProf && idata->getFocalLen() > 0.f) {
             LCPMapper map(pLCPProf, idata->getFocalLen(), idata->getFocalLen35mm(), idata->getFocusDist(), idata->getFNumber(), true, false, W, H, coarse, -1);
         
             #pragma omp parallel for
