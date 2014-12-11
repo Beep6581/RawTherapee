@@ -2784,8 +2784,6 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 		const float fixpt = fixthresh*minpt;
 		const float desatpt = satthresh*maxave+(1-satthresh)*maxval;
 
-
-#pragma omp parallel for
 		for (int col=0; col<width; col++) {
 			float rgb[ColorCount], cam[2][ColorCount], lab[2][ColorCount], sum[2], chratio, lratio=0;
 			float L,C,H,Lfrac;
