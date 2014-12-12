@@ -8607,7 +8607,11 @@ dng_skip:
     memcpy (rgb_cam, cmatrix, sizeof cmatrix);
     raw_color = 0;
   }
+  if(!strncmp(make, "Panasonic", 9) && !strncmp(model, "DMC-LX100",9))
+	adobe_coeff (make, model);
   if(!strncmp(make, "Samsung", 7) && !strncmp(model, "GX20",4))
+	adobe_coeff (make, model);
+  if(!strncmp(make, "Samsung", 7) && !strncmp(model, "NX1",3))
 	adobe_coeff (make, model);
   if(!strncmp(make, "Pentax", 6) && !strncmp(model, "K10D",4))
 	adobe_coeff (make, model);

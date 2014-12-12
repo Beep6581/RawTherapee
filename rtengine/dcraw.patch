@@ -1,5 +1,5 @@
---- dcraw.c	2014-07-24 16:15:36.700261700 +0200
-+++ dcraw.cc	2014-10-29 10:25:28.255138439 +0100
+--- dcraw.c	2014-12-12 22:44:15 +0000
++++ dcraw.cc	2014-12-12 23:27:38 +0000
 @@ -1,3 +1,15 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -1088,18 +1088,22 @@
    } else if (!strcmp(model,"C770UZ")) {
      height = 1718;
      width  = 2304;
-@@ -8883,6 +8607,10 @@
+@@ -8883,6 +8607,14 @@
      memcpy (rgb_cam, cmatrix, sizeof cmatrix);
      raw_color = 0;
    }
++  if(!strncmp(make, "Panasonic", 9) && !strncmp(model, "DMC-LX100",9))
++	adobe_coeff (make, model);
 +  if(!strncmp(make, "Samsung", 7) && !strncmp(model, "GX20",4))
++	adobe_coeff (make, model);
++  if(!strncmp(make, "Samsung", 7) && !strncmp(model, "NX1",3))
 +	adobe_coeff (make, model);
 +  if(!strncmp(make, "Pentax", 6) && !strncmp(model, "K10D",4))
 +	adobe_coeff (make, model);
    if (raw_color) adobe_coeff (make, model);
    if (load_raw == &CLASS kodak_radc_load_raw)
      if (raw_color) adobe_coeff ("Apple","Quicktake");
-@@ -8899,7 +8627,7 @@
+@@ -8899,7 +8631,7 @@
    if (!tiff_bps) tiff_bps = 12;
    if (!maximum) maximum = (1 << tiff_bps) - 1;
    if (!load_raw || height < 22 || width < 22 ||
@@ -1108,7 +1112,7 @@
      is_raw = 0;
  #ifdef NO_JASPER
    if (load_raw == &CLASS redcine_load_raw) {
-@@ -8978,194 +8706,246 @@
+@@ -8978,194 +8710,246 @@
  }
  #endif
  
@@ -1530,7 +1534,7 @@
  
  struct tiff_tag {
    ushort tag, type;
-@@ -9188,585 +8968,12 @@
+@@ -9188,585 +8972,12 @@
    unsigned gps[26];
    char desc[512], make[64], model[64], soft[32], date[20], artist[64];
  };
