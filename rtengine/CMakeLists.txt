@@ -15,7 +15,7 @@ set (RTENGINESOURCEFILES safegtk.cc colortemp.cc curves.cc flatcurves.cc diagona
     processingjob.cc rtthumbnail.cc utils.cc labimage.cc slicer.cc cieimage.cc
     iplab2rgb.cc ipsharpen.cc iptransform.cc ipresize.cc ipvibrance.cc
     imagedimensions.cc jpeg_memsrc.cc jdatasrc.cc iimage.cc
-    EdgePreserveLab.cc EdgePreservingDecomposition.cc cplx_wavelet_dec.cc FTblockDN.cc
+    EdgePreservingDecomposition.cc cplx_wavelet_dec.cc FTblockDN.cc
     PF_correct_RT.cc 
     dirpyr_equalizer.cc
     calc_distort.cc lcp.cc dcp.cc

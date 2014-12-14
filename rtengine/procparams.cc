@@ -904,7 +904,7 @@ static Glib::ustring relativePathIfInside(Glib::ustring procparams_fname, bool f
     return prefix + embedded_fname.substr(dir1.length());
 }
 
-int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsolute, ParamsEdited* pedited) const {
+int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsolute, ParamsEdited* pedited) {
 
     if (!fname.length() && !fname2.length())
         return 0;
@@ -1279,8 +1279,17 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->dirpyrDenoise.chroma)  keyFile.set_double ("Directional Pyramid Denoising", "Chroma",  dirpyrDenoise.chroma);
     if (!pedited || pedited->dirpyrDenoise.dmethod)  keyFile.set_string  ("Directional Pyramid Denoising", "Method",  dirpyrDenoise.dmethod);
     if (!pedited || pedited->dirpyrDenoise.Lmethod)  keyFile.set_string  ("Directional Pyramid Denoising", "LMethod",  dirpyrDenoise.Lmethod);
-    if (!pedited || pedited->dirpyrDenoise.Cmethod)  keyFile.set_string  ("Directional Pyramid Denoising", "CMethod",  dirpyrDenoise.Cmethod);
-    if (!pedited || pedited->dirpyrDenoise.C2method)  keyFile.set_string  ("Directional Pyramid Denoising", "C2Method",  dirpyrDenoise.C2method);
+    // never save 'auto chroma preview mode' to pp3
+	if (!pedited || pedited->dirpyrDenoise.Cmethod) {
+		if(dirpyrDenoise.Cmethod=="PRE")
+			dirpyrDenoise.Cmethod = "MAN";
+		keyFile.set_string  ("Directional Pyramid Denoising", "CMethod",  dirpyrDenoise.Cmethod);
+    }
+    if (!pedited || pedited->dirpyrDenoise.C2method) {
+    	if(dirpyrDenoise.C2method=="PREV")
+			dirpyrDenoise.C2method = "MANU";
+		keyFile.set_string  ("Directional Pyramid Denoising", "C2Method",  dirpyrDenoise.C2method);
+    }
     if (!pedited || pedited->dirpyrDenoise.smethod)  keyFile.set_string  ("Directional Pyramid Denoising", "SMethod",  dirpyrDenoise.smethod);
     if (!pedited || pedited->dirpyrDenoise.medmethod)  keyFile.set_string  ("Directional Pyramid Denoising", "MedMethod",  dirpyrDenoise.medmethod);
     if (!pedited || pedited->dirpyrDenoise.rgbmethod)  keyFile.set_string  ("Directional Pyramid Denoising", "RGBMethod",  dirpyrDenoise.rgbmethod);
@@ -1955,7 +1964,12 @@ if (keyFile.has_group ("Directional Pyramid Denoising")) {//TODO: No longer an a
     if (keyFile.has_key ("Directional Pyramid Denoising", "Method"))     {dirpyrDenoise.dmethod  = keyFile.get_string  ("Directional Pyramid Denoising", "Method"); if (pedited) pedited->dirpyrDenoise.dmethod = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "LMethod"))     {dirpyrDenoise.Lmethod  = keyFile.get_string  ("Directional Pyramid Denoising", "LMethod"); if (pedited) pedited->dirpyrDenoise.Lmethod = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "CMethod"))     {dirpyrDenoise.Cmethod  = keyFile.get_string  ("Directional Pyramid Denoising", "CMethod"); if (pedited) pedited->dirpyrDenoise.Cmethod = true; }
-    if (keyFile.has_key ("Directional Pyramid Denoising", "C2Method"))     {dirpyrDenoise.C2method  = keyFile.get_string  ("Directional Pyramid Denoising", "C2Method"); if (pedited) pedited->dirpyrDenoise.C2method = true; }
+    // never load 'auto chroma preview mode' from pp3
+	if(dirpyrDenoise.Cmethod=="PRE")
+		dirpyrDenoise.Cmethod = "MAN";
+	if (keyFile.has_key ("Directional Pyramid Denoising", "C2Method"))     {dirpyrDenoise.C2method  = keyFile.get_string  ("Directional Pyramid Denoising", "C2Method"); if (pedited) pedited->dirpyrDenoise.C2method = true; }
+	if(dirpyrDenoise.C2method=="PREV")
+		dirpyrDenoise.C2method = "MANU";
     if (keyFile.has_key ("Directional Pyramid Denoising", "SMethod"))     {dirpyrDenoise.smethod  = keyFile.get_string  ("Directional Pyramid Denoising", "SMethod"); if (pedited) pedited->dirpyrDenoise.smethod = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "MedMethod"))     {dirpyrDenoise.medmethod  = keyFile.get_string  ("Directional Pyramid Denoising", "MedMethod"); if (pedited) pedited->dirpyrDenoise.medmethod = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "MethodMed"))     {dirpyrDenoise.methodmed  = keyFile.get_string  ("Directional Pyramid Denoising", "MethodMed"); if (pedited) pedited->dirpyrDenoise.methodmed = true; }

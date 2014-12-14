@@ -22,19 +22,6 @@
 
 namespace rtengine {
 	
-	cplx_wavelet_decomposition::~cplx_wavelet_decomposition()
-	{
-		for(int i = 0; i <= lvltot; i++) {
-			for (int j=0; j<4; j++) {
-				delete dual_tree[i][j];
-			}
-		}
-		delete[] first_lev_anal;
-		delete[] first_lev_synth;
-		delete[] wavfilt_anal;
-		delete[] wavfilt_synth;
-	}
-	
 	wavelet_decomposition::~wavelet_decomposition()
 	{
 		for(int i = 0; i <= lvltot; i++) {

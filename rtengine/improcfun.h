@@ -31,7 +31,6 @@
 #include "LUT.h"
 #include "lcp.h"
 #include "curves.h"
-#include <fftw3.h>
 #include "cplx_wavelet_dec.h"
 #include "editbuffer.h"
 
@@ -193,7 +192,7 @@ class ImProcFunctions {
 		float blueresid;
 //		float maxredresid;//used by noise_residual
 //		float maxblueresid;//used by noise_residual
-		int comptlevel;
+//		int comptlevel;
 
 		static void initCache ();
 		static void cleanupCache ();
@@ -276,8 +275,8 @@ class ImProcFunctions {
 		void Tile_calc (int tilesize, int overlap, int kall, int imwidth, int imheight, int &numtiles_W, int &numtiles_H, int &tilewidth, int &tileheight, int &tileWskip, int &tileHskip);
 
 		void RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst, Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp,const NoiseCurve & ctNoisCurve , const NoiseCurve & ctNoisCCcurve , float &chaut, float &redaut, float &blueaut, float &maxredaut, float & maxblueaut, float &nresi, float &highresi);
-		void RGB_denoise_infoGamCurve(const procparams::DirPyrDenoiseParams & dnparams, bool isRAW, LUTf &gamcurve, float &gam, float &gamthresh, float &gamslope);
-		void RGB_denoise_info(Imagefloat * src, Imagefloat * dst, Imagefloat * calclum, bool isRAW, LUTf &gamcurve, float gam, float gamthresh, float gamslope, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp,const NoiseCurve & ctNoisCurve, const NoiseCurve & ctNoisCCcurve, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float & maxblueaut, float &minredaut, float & minblueaut,float &nresi, float &highresi, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel,float &skinc, float &nsknc);
+		void RGB_denoise_infoGamCurve(const procparams::DirPyrDenoiseParams & dnparams, const bool isRAW, LUTf &gamcurve, float &gam, float &gamthresh, float &gamslope);
+		void RGB_denoise_info(Imagefloat * src, Imagefloat * calclum, bool isRAW, LUTf &gamcurve, float gam, float gamthresh, float gamslope, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float & maxblueaut, float &minredaut, float & minblueaut,float &nresi, float &highresi, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel,float &skinc, float &nsknc, bool multiThread = false);
 		void RGBtile_denoise (float * fLblox, int hblproc, float noisevar_L, float * nbrwt, float * blurbuffer );	//for DCT
 		void RGBoutput_tile_row (float *Lbloxrow, float ** Ldetail, float ** tilemask_out, int height, int width, int top );
 		//void WaveletDenoise(cplx_wavelet_decomposition &DualTreeCoeffs, float noisevar );
@@ -285,28 +284,29 @@ class ImProcFunctions {
 	//	void WaveletDenoiseAll(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
 	//						   wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab, wavelet_decomposition &wch, NoiImage * noi );
 		void WaveletDenoiseAll(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
-							   wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float **noisevarlum, float **noisevarchrom, int width, int height, float *mad_LL, float *mad_aa, float *mad_bb, float noisevar_abr, float noisevar_abb, LabImage * noi, const NoiseCurve & dnNoisCurve, const NoiseCurve & dnNoisCCcurve, float &chaut, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, int schoice, bool autoch);
-		void WaveletDenoiseAll_info(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
-							   wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float **noisevarlum, float **noisevarchrom, float **noisevarhue, int width, int height, float *mad_LL, float *mad_aa, float *mad_bb, float noisevar_abr, float noisevar_abb, LabImage * noi, const NoiseCurve & dnNoisCurve, const NoiseCurve & dnNoisCCcurve, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut,float &minredaut, float & minblueaut, int schoice, bool autoch, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel,float &skinc, float &nsknc,
-							   float &maxchred, float &maxchblue,float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue);
+							   wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float **noisevarlum, float **noisevarchrom, int width, int height, float *mad_LL, float *mad_aa, float *mad_bb, float noisevar_abr, float noisevar_abb, LabImage * noi, const NoiseCurve & dnNoisCurve, const NoiseCurve & dnNoisCCcurve, float &chaut, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, int schoice, bool autoch, bool perf);
+		void WaveletDenoiseAll_info(int levwav, wavelet_decomposition &WaveletCoeffs_a, 
+							   wavelet_decomposition &WaveletCoeffs_b, float **noisevarlum, float **noisevarchrom, float **noisevarhue, int width, int height, float *mad_aa, float *mad_bb, float noisevar_abr, float noisevar_abb, LabImage * noi, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut,float &minredaut, float & minblueaut, int schoice, bool autoch, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel,float &skinc, float &nsknc,
+							   float &maxchred, float &maxchblue,float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, bool perf, bool multiThread);
 							   
 		void WaveletDenoiseAll_BiShrink(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
-										wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float **noisevarlum, float **noisevarchrom, int width, int height, float *mad_LL, float *mad_aa, float *mad_bb,  float noisevar_abr, float noisevar_abb, LabImage * noi, const NoiseCurve & dnNoisCurve, const NoiseCurve & dnNoisCCcurve, float &chaut, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, int schoice, bool autoch);
+										wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float **noisevarlum, float **noisevarchrom, int width, int height, float *mad_LL, float *mad_aa, float *mad_bb,  float noisevar_abr, float noisevar_abb, LabImage * noi, const NoiseCurve & dnNoisCurve, const NoiseCurve & dnNoisCCcurve, float &chaut, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, int schoice, bool autoch, bool perf);
 		//void BiShrink(float * ReCoeffs, float * ImCoeffs, float * ReParents, float * ImParents, 
 		//			  int W, int H, int level, int padding, float noisevar);
 		//void Shrink(float ** WavCoeffs, int W, int H, int level, float noisevar);
 	//	void ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level, 
 	//				   int W_L, int H_L, int W_ab, int H_ab, int W_h, int H_h, int skip_L, int skip_ab, int skip_h, float noisevar_L, float noisevar_ab, float **WavCoeffs_h, LabImage * noi);
 
-		void ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level, 
-					   int W_L, int H_L, int W_ab, int H_ab, int skip_L, int skip_ab, float noisevar_L, float **noisevarlum, float **noisevarchrom, int width, int height, float *mad_LL,  float *mad_aa, float *mad_bb, float noisevar_abr, float noisevar_abb,LabImage * noi, const NoiseCurve & dnNoisCurve,  const NoiseCurve & dnNoisCCcurve, float &chaut, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, int callby, bool autoch, float * madaa = NULL, float * madab = NULL, float * madaL = NULL, bool madCalculated= false);
-		void ShrinkAll_info(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level, 
-					   int W_L, int H_L, int W_ab, int H_ab, int skip_L, int skip_ab, float noisevar_L, float **noisevarlum, float **noisevarchrom, float **noisevarhue, int width, int height, float *mad_LL,  float *mad_aa, float *mad_bb, float noisevar_abr, float noisevar_abb,LabImage * noi, const NoiseCurve & dnNoisCurve, const NoiseCurve & dnNoisCCcurve, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, int callby, bool autoch, int schoice, int lvl, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel,float &skinc, float &nsknc, 
-					   float &maxchred, float &maxchblue, float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, float * madaa = NULL, float * madab = NULL, float * madaL = NULL, bool madCalculated= false);
+		void ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, float *buffer[4], int level, 
+					   int W_L, int H_L, int W_ab, int H_ab, int skip_L, int skip_ab, float noisevar_L, float **noisevarlum, float **noisevarchrom, int width, int height, float *mad_LL,  float *mad_aa, float *mad_bb, float noisevar_abr, float noisevar_abb,LabImage * noi, const NoiseCurve & dnNoisCurve,  const NoiseCurve & dnNoisCCcurve, float &chaut, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, int callby, bool autoch, bool perf, float * madaa = NULL, float * madab = NULL, float * madaL = NULL, bool madCalculated= false);
+		void ShrinkAll_info(float ** WavCoeffs_a, float ** WavCoeffs_b, int level, 
+					   int W_ab, int H_ab, int skip_ab, float **noisevarlum, float **noisevarchrom, float **noisevarhue, int width, int height, float *mad_aa, float *mad_bb, float noisevar_abr, float noisevar_abb,LabImage * noi, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, bool autoch, int schoice, int lvl, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel,float &skinc, float &nsknc, 
+					   float &maxchred, float &maxchblue, float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, bool perf, bool multiThread);
 		void Noise_residual(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, wavelet_decomposition &WaveletCoeffs_b, int width, int height, float &chresid, float &chmaxredresid,float &chmaxblueresid, float &chresidred, float & chresidblue, float resid, float residblue, float residred, float maxredresid, float maxblueresid, float nbresid);
 		void calcautodn_info (float &chaut, float &delta, int Nb, int levaut, float maxmax, float lumema, float chromina, int mode, int lissage, float redyel, float skinc, float nsknc);
 		float MadMax(float * HH_Coeffs, int &max, int datalen); 
-		float Mad(float * HH_Coeffs, int datalen, int * histo);
+		float Mad(float * DataList, const int datalen);
+		float MadRgb(float * DataList, const int datalen);
 		
 		// pyramid equalizer
 		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, float ** l_a, float ** l_b, float ** dest_a, float ** dest_b, const double * mult, const double dirpyrThreshold, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice, int scale);//Emil's directional pyramid equalizer

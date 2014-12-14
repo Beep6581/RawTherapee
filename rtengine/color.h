@@ -296,6 +296,7 @@ public:
 	* @param xyz_rgb[3][3] transformation matrix to use for the conversion
 	*/
 	static void rgbxyz (float r, float g, float b, float &x, float &y, float &z, const double xyz_rgb[3][3]);
+	static void rgbxyz (float r, float g, float b, float &x, float &y, float &z, const float xyz_rgb[3][3]);
 
 
 	/**
@@ -427,8 +428,8 @@ public:
 
 	}
 	static inline float f2xyz(float f) {
-		const float epsilonExpInv3 = 6.0f/29.0f;
-		const float kappaInv = 27.0f/24389.0f;  // inverse of kappa
+		const float epsilonExpInv3 = 0.20689655f; // 6.0f/29.0f;
+		const float kappaInv = 0.0011070565f; // 27.0f/24389.0f;  // inverse of kappa
 
 		return (f > epsilonExpInv3) ? f*f*f : (116.f * f - 16.f) * kappaInv;
 	}
@@ -890,6 +891,16 @@ public:
 	*/
 	static inline double gamman      (double x, double gamma) {         //standard gamma without slope...
 										return (x =exp(log(x)/gamma));
+									}
+
+	/**
+	* @brief Very basic gamma
+	* @param x red, green or blue channel's value [0 ; 1]
+	* @param gamma gamma value [1 ; 5]
+	* @return the gamma modified's value [0 ; 1]
+	*/
+	static inline float gammanf      (float x, float gamma) {         //standard gamma without slope...
+										return (x =xexpf(xlogf(x)/gamma));
 									}
 
 
