@@ -82,6 +82,7 @@ class LUT {
 protected:
 	// list of variables ordered to improve cache speed
 	unsigned int maxs;
+	float maxsf;
 	T * data;
 	unsigned int clip, size;
 private:
@@ -109,6 +110,7 @@ public:
 		owner = 1;
 		size = s;
 		maxs=size-2;
+		maxsf = (float)maxs;
 #if defined( __SSE2__ ) && defined( __x86_64__ )
 		maxsv =  _mm_set1_ps( maxs );
 		maxsiv = _mm_cvttps_epi32( maxsv );
@@ -130,6 +132,7 @@ public:
 		owner = 1;
 		size = s;
 		maxs=size-2;
+		maxsf = (float)maxs;
 #if defined( __SSE2__ ) && defined( __x86_64__ )
 		maxsv =  _mm_set1_ps( maxs );
 		maxsiv = _mm_cvttps_epi32( maxsv );
@@ -153,6 +156,7 @@ public:
 		owner = 1;
 		size = s;
 		maxs=size-2;
+		maxsf = (float)maxs;
 #if defined( __SSE2__ ) && defined( __x86_64__ )
 		maxsv =  _mm_set1_ps( size - 2);
 		maxsiv = _mm_cvttps_epi32( maxsv );
@@ -211,6 +215,7 @@ public:
 	      memcpy(this->data,rhs.data,rhs.size*sizeof(T));
 	      this->size=rhs.size;
 	      this->maxs=this->size-2;
+		  this->maxsf = (float)this->maxs;
 #if defined( __SSE2__ ) && defined( __x86_64__ )
 		  this->maxsv =  _mm_set1_ps( this->size - 2);
 		  this->maxsiv = _mm_cvttps_epi32( this->maxsv );
@@ -342,7 +347,7 @@ public:
 				return data[0];
 			idx=0;
 		}
-		else if (index > float(maxs))
+		else if (index > maxsf)
 		{
 			if (clip & LUT_CLIP_ABOVE)
 				return data[size - 1];

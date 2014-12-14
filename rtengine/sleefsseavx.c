@@ -901,8 +901,11 @@ static INLINE vdouble xlog1p(vdouble a) {
 typedef struct {
   vfloat x, y;
 } vfloat2;
-
+#if defined( __FMA__ ) && defined( __x86_64__ ) && defined(WIN32)  // experimental
+static INLINE vfloat vmlaf(vfloat x, vfloat y, vfloat z) { return _mm_fmadd_ps(x,y,z); }
+#else
 static INLINE vfloat vmlaf(vfloat x, vfloat y, vfloat z) { return vaddf(vmulf(x, y), z); }
+#endif
 static INLINE vfloat vabsf(vfloat f) { return (vfloat)vandnotm((vmask)vcast_vf_f(-0.0f), (vmask)f); }
 static INLINE vfloat vnegf(vfloat f) { return (vfloat)vxorm((vmask)f, (vmask)vcast_vf_f(-0.0f)); }
 
@@ -1242,8 +1245,8 @@ static INLINE vfloat xexpf(vfloat d) {
   vint2 q = vrint_vi2_vf(vmulf(d, vcast_vf_f(R_LN2f)));
   vfloat s, u;
 
-  s = vaddf(d, vmulf(vcast_vf_vi2(q), vcast_vf_f(-L2Uf)));
-  s = vaddf(s, vmulf(vcast_vf_vi2(q), vcast_vf_f(-L2Lf)));
+  s = vmlaf(vcast_vf_vi2(q), vcast_vf_f(-L2Uf),d);
+  s = vmlaf(vcast_vf_vi2(q), vcast_vf_f(-L2Lf),s);
 
   u = vcast_vf_f(0.00136324646882712841033936f);
   u = vmlaf(u, s, vcast_vf_f(0.00836596917361021041870117f));
@@ -1251,7 +1254,7 @@ static INLINE vfloat xexpf(vfloat d) {
   u = vmlaf(u, s, vcast_vf_f(0.166665524244308471679688f));
   u = vmlaf(u, s, vcast_vf_f(0.499999850988388061523438f));
 
-  u = vaddf(vcast_vf_f(1.0f), vaddf(s, vmulf(vmulf(s, s), u)));
+  u = vaddf(vcast_vf_f(1.0f), vmlaf(vmulf(s, s), u, s));
 
   u = vldexpf(u, q);
 

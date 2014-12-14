@@ -1029,7 +1029,7 @@ class ProcParams {
         * @param pedited pointer to a ParamsEdited object (optional) to store which values has to be saved
         * @return Error code (=0 if all supplied filenames where created correctly)
         */
-        int     save        (Glib::ustring fname, Glib::ustring fname2 = "", bool fnameAbsolute = true, ParamsEdited* pedited=NULL) const;
+        int     save        (Glib::ustring fname, Glib::ustring fname2 = "", bool fnameAbsolute = true, ParamsEdited* pedited=NULL);
       /**
         * Loads the parameters from a file.
         * @param fname the name of the file

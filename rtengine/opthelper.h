@@ -25,7 +25,7 @@
 	#ifdef __SSE2__
 		#include "sleefsseavx.c"
 		#ifdef __GNUC__
-			#ifdef WIN32
+			#if defined(WIN32) && !defined( __x86_64__ )
 				// needed for actual versions of GCC with 32-Bit Windows
 				#define SSEFUNCTION __attribute__((force_align_arg_pointer))
 			#else
@@ -37,7 +37,7 @@
 	#else
 		#ifdef __SSE__
 			#ifdef __GNUC__
-				#ifdef WIN32
+				#if defined(WIN32) && !defined( __x86_64__ )
 					// needed for actual versions of GCC with 32-Bit Windows
 					#define SSEFUNCTION __attribute__((force_align_arg_pointer))
 				#else
@@ -55,9 +55,14 @@
 		#define RESTRICT 	__restrict__
 		#define LIKELY(x)   __builtin_expect (!!(x), 1)
 		#define UNLIKELY(x) __builtin_expect (!!(x), 0)
+		#define ALIGNED64 __attribute__ ((aligned (64)))
+		#define ALIGNED16 __attribute__ ((aligned (16)))
+
 	#else
 		#define RESTRICT
 		#define LIKELY(x)    (x)
 		#define UNLIKELY(x)  (x)
+		#define ALIGNED64
+		#define ALIGNED16
 	#endif
 #endif

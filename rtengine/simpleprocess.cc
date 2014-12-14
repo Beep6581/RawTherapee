@@ -194,9 +194,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 		{
 			Imagefloat *origCropPart;//init auto noise
 			origCropPart = new Imagefloat (crW, crH);//allocate memory
-			Imagefloat *provi;
 			Imagefloat *provicalc;
-			provi = new Imagefloat (crW, crH);
 			provicalc = new Imagefloat (crW, crH);	
 			int skipP=1;
 			#pragma omp for schedule(dynamic) collapse(2) nowait		
@@ -206,8 +204,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 						int beg_tileH=hcr*tileHskip + tileHskip/2.f - crH/2.f;
 						PreviewProps ppP (beg_tileW , beg_tileH, crW, crH, skipP);
 						imgsrc->getImage (currWB, tr, origCropPart, ppP, params.toneCurve, params.icm, params.raw );
-						if(origCropPart !=  provi)
-							origCropPart->copyData(provi);
 						if(origCropPart !=  provicalc)
 						origCropPart->copyData(provicalc);
 						imgsrc->convertColorSpace(provicalc, params.icm, currWB, params.raw);//for denoise luminance curve
@@ -217,7 +213,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 						float chaut, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc;
 						int Nb;
 						chaut=0.f;redaut=0.f; blueaut=0.f; maxredaut=0.f; maxblueaut=0.f;chromina=0.f; sigma=0.f;
-						ipf.RGB_denoise_info(provi, provi, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope, params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
+						ipf.RGB_denoise_info(origCropPart, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope, params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
 						float multip=1.f;
 						float adjustr=1.f;	
 							if      (params.icm.working=="ProPhoto")   {adjustr =1.f;}//
@@ -258,7 +254,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 				}
 		
 			delete provicalc;
-			delete provi;		
 			delete origCropPart;
 		}	
 
@@ -355,9 +350,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 			{
 				Imagefloat *origCropPart;//init auto noise		
 				origCropPart = new Imagefloat (crW, crH);//allocate memory
-				Imagefloat *provi;
 				Imagefloat *provicalc;
-				provi = new Imagefloat (crW, crH);
 				provicalc = new Imagefloat (crW, crH);			
 
 				#pragma omp for schedule(dynamic) collapse(2) nowait				
@@ -365,12 +358,11 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 					for(int hcr=0;hcr<=2;hcr++) {
 						PreviewProps ppP (coordW[wcr] , coordH[hcr], crW, crH, 1);
 						imgsrc->getImage (currWB, tr, origCropPart, ppP, params.toneCurve, params.icm, params.raw);
-						origCropPart->copyData(provi);
 						origCropPart->copyData(provicalc);
 						imgsrc->convertColorSpace(provicalc, params.icm, currWB, params.raw);//for denoise luminance curve
 						int nb = 0;
 						float chaut=0.f, redaut=0.f, blueaut=0.f, maxredaut=0.f, maxblueaut=0.f, minredaut=0.f, minblueaut=0.f, nresi=0.f, highresi=0.f, chromina=0.f, sigma=0.f, lumema=0.f, sigma_L=0.f, redyel=0.f, skinc=0.f, nsknc=0.f;
-						ipf.RGB_denoise_info(provi, provi, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope,  params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
+						ipf.RGB_denoise_info(origCropPart, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope,  params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), chaut, nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
 						Nb[hcr*3 + wcr] = nb;
 						ch_M[hcr*3 + wcr] = chaut;
 						max_r[hcr*3 + wcr] = maxredaut;
@@ -385,7 +377,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 					}
 				} 
 				delete provicalc;
-				delete provi;			
 				delete origCropPart;
 			}
 			float chM=0.f;

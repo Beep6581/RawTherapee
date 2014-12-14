@@ -124,7 +124,7 @@ namespace rtengine {
     void Color::init () {
 
         int maxindex = 65536;
-        cachef(maxindex,0/*LUT_CLIP_BELOW*/);
+        cachef(maxindex,LUT_CLIP_BELOW);
 
         gamma2curve(maxindex,0);
 
@@ -428,6 +428,12 @@ namespace rtengine {
     }
 
     void Color::rgbxyz (float r, float g, float b, float &x, float &y, float &z, const double xyz_rgb[3][3]) {
+        x = ((xyz_rgb[0][0]*r + xyz_rgb[0][1]*g + xyz_rgb[0][2]*b)) ;
+        y = ((xyz_rgb[1][0]*r + xyz_rgb[1][1]*g + xyz_rgb[1][2]*b)) ;
+        z = ((xyz_rgb[2][0]*r + xyz_rgb[2][1]*g + xyz_rgb[2][2]*b)) ;
+    }
+
+    void Color::rgbxyz (float r, float g, float b, float &x, float &y, float &z, const float xyz_rgb[3][3]) {
         x = ((xyz_rgb[0][0]*r + xyz_rgb[0][1]*g + xyz_rgb[0][2]*b)) ;
         y = ((xyz_rgb[1][0]*r + xyz_rgb[1][1]*g + xyz_rgb[1][2]*b)) ;
         z = ((xyz_rgb[2][0]*r + xyz_rgb[2][1]*g + xyz_rgb[2][2]*b)) ;
@@ -859,9 +865,9 @@ namespace rtengine {
         float y= Y;
         float fx,fy,fz;
 
-        fx = (x<=65535.0f ? cachef[std::max(x,0.f)] : (327.68f*exp(log(x/MAXVALF)/3.0f )));
-        fy = (y<=65535.0f ? cachef[std::max(y,0.f)] : (327.68f*exp(log(y/MAXVALF)/3.0f )));
-        fz = (z<=65535.0f ? cachef[std::max(z,0.f)] : (327.68f*exp(log(z/MAXVALF)/3.0f )));
+        fx = (x<=65535.0f ? cachef[x] : (327.68f*xcbrtf(x/MAXVALF)));
+        fy = (y<=65535.0f ? cachef[y] : (327.68f*xcbrtf(x/MAXVALF)));
+        fz = (z<=65535.0f ? cachef[z] : (327.68f*xcbrtf(x/MAXVALF)));
 
         L = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
         a = (500.0f * (fx - fy) );
