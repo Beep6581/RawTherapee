@@ -1,5 +1,5 @@
---- dcraw.c	2014-12-12 22:44:15 +0000
-+++ dcraw.cc	2014-12-12 23:27:38 +0000
+--- dcraw.c	2014-12-15 19:12:56 +0000
++++ dcraw.cc	2014-12-15 19:15:00 +0000
 @@ -1,3 +1,15 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -1112,7 +1112,7 @@
      is_raw = 0;
  #ifdef NO_JASPER
    if (load_raw == &CLASS redcine_load_raw) {
-@@ -8978,194 +8710,246 @@
+@@ -8978,194 +8710,249 @@
  }
  #endif
  
@@ -1489,8 +1489,8 @@
 -  if (flip & 2) row = iheight - 1 - row;
 -  if (flip & 1) col = iwidth  - 1 - col;
 -  return row * iwidth + col;
-+    Bytef cBuffer[maxCompressed];
-+    Bytef uBuffer[dstLen];
++    Bytef * cBuffer = new Bytef[maxCompressed];
++    Bytef * uBuffer = new Bytef[dstLen];
 +
 +#ifdef _OPENMP
 +#pragma omp for collapse(2) nowait
@@ -1522,6 +1522,9 @@
 +        }
 +      }
 +    }
++    
++    delete [] cBuffer;
++    delete [] uBuffer;
  }
 +  }
 +    
@@ -1534,7 +1537,7 @@
  
  struct tiff_tag {
    ushort tag, type;
-@@ -9188,585 +8972,12 @@
+@@ -9188,585 +8975,12 @@
    unsigned gps[26];
    char desc[512], make[64], model[64], soft[32], date[20], artist[64];
  };
