@@ -8908,8 +8908,8 @@ void CLASS deflate_dng_load_raw() {
 #pragma omp parallel
 #endif
 {
-    Bytef cBuffer[maxCompressed];
-    Bytef uBuffer[dstLen];
+    Bytef * cBuffer = new Bytef[maxCompressed];
+    Bytef * uBuffer = new Bytef[dstLen];
 
 #ifdef _OPENMP
 #pragma omp for collapse(2) nowait
@@ -8941,6 +8941,9 @@ void CLASS deflate_dng_load_raw() {
         }
       }
     }
+    
+    delete [] cBuffer;
+    delete [] uBuffer;
 }
   }
     
