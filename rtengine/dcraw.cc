@@ -8277,19 +8277,22 @@ konica_400z:
       left_margin = 7;
       filters = 0x61616161;
     } else if (raw_width == 7410) {
+      if (!strcmp(model, "H4D")) strcpy(model, "H4D-40"); // RT
       height = 5502;
       width  = 7328;
       top_margin  = 4;
       left_margin = 41;
       filters = 0x61616161;
-    } else if (raw_width == 6542) { // RT, H3D-31, H3DII-31
+    } else if (raw_width == 6542) { // RT, H3D-31, H3DII-31, H4D-31
       if (!strcmp(model, "H3D")) strcpy(model, "H3D-31");
+      if (!strcmp(model, "H4D")) strcpy(model, "H4D-31");
       height = 4904;
       width = 6524;
       top_margin = 4;
       left_margin = 8;
-    } else if (raw_width == 8282) { // RT, H3DII-50, H3DII-50MS, CFV-50
+    } else if (raw_width == 8282) { // RT, H3DII-50, H3DII-50MS, CFV-50, H4D-50
       if (!strcmp(model, "H3D")) strcpy(model, "H3DII-50");
+      if (!strcmp(model, "H4D")) strcpy(model, "H4D-50");
       height = 6152;
       width = 8196;
       top_margin = 4;
