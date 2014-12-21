@@ -82,14 +82,14 @@ CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_,
     
     titleHeight = ih;
        
-    bZoomIn  = new LWButton (safe_create_from_png ("gtk-zoom-in-small.png"),  0, NULL, LWButton::Left, LWButton::Center, "Zoom In");
-    bZoomOut = new LWButton (safe_create_from_png ("gtk-zoom-out-small.png"), 1, NULL, LWButton::Left, LWButton::Center, "Zoom Out");
+    bZoomOut = new LWButton (safe_create_from_png ("gtk-zoom-out-small.png"), 0, NULL, LWButton::Left, LWButton::Center, "Zoom Out");
+    bZoomIn  = new LWButton (safe_create_from_png ("gtk-zoom-in-small.png"),  1, NULL, LWButton::Left, LWButton::Center, "Zoom In");
     bZoom100 = new LWButton (safe_create_from_png ("gtk-zoom-100-small.png"), 2, NULL, LWButton::Left, LWButton::Center, "Zoom 100/%");
     //bZoomFit = new LWButton (safe_create_from_png ("gtk-zoom-fit.png"), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
     bClose   = new LWButton (safe_create_from_png ("gtk-close-small.png"),    4, NULL, LWButton::Right, LWButton::Center, "Close");
     
-    buttonSet.add (bZoomIn);
     buttonSet.add (bZoomOut);
+    buttonSet.add (bZoomIn);
     buttonSet.add (bZoom100);
     buttonSet.add (bClose);
     
