@@ -866,8 +866,8 @@ namespace rtengine {
         float fx,fy,fz;
 
         fx = (x<=65535.0f ? cachef[x] : (327.68f*xcbrtf(x/MAXVALF)));
-        fy = (y<=65535.0f ? cachef[y] : (327.68f*xcbrtf(x/MAXVALF)));
-        fz = (z<=65535.0f ? cachef[z] : (327.68f*xcbrtf(x/MAXVALF)));
+        fy = (y<=65535.0f ? cachef[y] : (327.68f*xcbrtf(y/MAXVALF)));
+        fz = (z<=65535.0f ? cachef[z] : (327.68f*xcbrtf(z/MAXVALF)));
 
         L = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
         a = (500.0f * (fx - fy) );
