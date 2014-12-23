@@ -22,7 +22,7 @@ namespace rtengine {
 
 const int Daub4_len=6;
 const int Daub4_offset=2;
-const float Daub4_anal[2][6] = {//analysis filter
+const float Daub4_anal[2][6] ALIGNED16 = {//analysis filter
 	{0, 0, 0.34150635, 0.59150635, 0.15849365, -0.091506351}, 
 	{-0.091506351, -0.15849365, 0.59150635, -0.34150635, 0, 0}};
 

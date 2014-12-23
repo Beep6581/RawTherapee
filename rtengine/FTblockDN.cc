@@ -244,7 +244,7 @@ void ImProcFunctions::Tile_calc (int tilesize, int overlap, int kall, int imwidt
 int denoiseNestedLevels = 1;
 
 
-void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst,Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, const NoiseCurve & noiseLCurve, const NoiseCurve & noiseCCurve, float &chaut, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &nresi, float &highresi)
+SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst,Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, const NoiseCurve & noiseLCurve, const NoiseCurve & noiseCCurve, float &chaut, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &nresi, float &highresi)
 {
 //#ifdef _DEBUG
 	MyTime t1e,t2e;
@@ -278,20 +278,20 @@ void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst,I
 			{wprofi[1][0],wprofi[1][1],wprofi[1][2]},
 			{wprofi[2][0],wprofi[2][1],wprofi[2][2]}
 			};
-		lumcalc = new float*[hei];
-			for (int i=0; i<hei; i++)
-				lumcalc[i] = new float[wid];
-		acalc = new float*[hei];
-			for (int i=0; i<hei; i++)
-				acalc[i] = new float[wid];
-		bcalc = new float*[hei];
-			for (int i=0; i<hei; i++)
-				bcalc[i] = new float[wid];
+		lumcalc = new float*[(hei+1)/2];
+			for (int i=0; i<(hei+1)/2; i++)
+				lumcalc[i] = new float[(wid+1)/2];
+		acalc = new float*[(hei+1)/2];
+			for (int i=0; i<(hei+1)/2; i++)
+				acalc[i] = new float[(wid+1)/2];
+		bcalc = new float*[(hei+1)/2];
+			for (int i=0; i<(hei+1)/2; i++)
+				bcalc[i] = new float[(wid+1)/2];
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif		
-		for(int ii=0;ii<hei;ii++){
-			for(int jj=0;jj<wid;jj++){
+		for(int ii=0;ii<hei;ii+=2){
+			for(int jj=0;jj<wid;jj+=2){
 				float LLum,AAum,BBum;
 			
 				float RL = calclum->r(ii,jj);
@@ -301,9 +301,9 @@ void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst,I
 				float XL,YL,ZL;
 				Color::rgbxyz(RL,GL,BL,XL,YL,ZL,wpi);
 				Color::XYZ2Lab(XL, YL, ZL, LLum, AAum, BBum);							
-				lumcalc[ii][jj]=LLum;
-				acalc[ii][jj]=AAum;
-				bcalc[ii][jj]=BBum;
+				lumcalc[ii>>1][jj>>1]=LLum;
+				acalc[ii>>1][jj>>1]=AAum;
+				bcalc[ii>>1][jj>>1]=BBum;
 			}
 		}
 	delete calclum;
@@ -472,14 +472,12 @@ if(settings->leveldnti ==1) {
 		printf("RGB_denoise uses %d main thread(s) and up to %d nested thread(s) for each main thread\n",numthreads,denoiseNestedLevels);
 #endif
 
-	float *nbrwtArray[denoiseNestedLevels*numthreads];
 	float *LbloxArray[denoiseNestedLevels*numthreads];
 	float *fLbloxArray[denoiseNestedLevels*numthreads];
 
 	for(int i=0;i<denoiseNestedLevels*numthreads;i++) {
 		LbloxArray[i]  = (float*) fftwf_malloc(max_numblox_W*TS*TS*sizeof(float));
 		fLbloxArray[i] = (float*) fftwf_malloc(max_numblox_W*TS*TS*sizeof(float));
-		nbrwtArray[i] = new float[TS*TS];
 	}
 
 	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
@@ -511,6 +509,12 @@ if(settings->leveldnti ==1) {
 	float residblue=0.f;
 	
 	int pos;
+	float** noisevarlum = new float*[(tileheight+1)/2];
+	for (int i=0; i<(tileheight+1)/2; i++)
+		noisevarlum[i] = new float[(tilewidth+1)/2];
+	float** noisevarchrom = new float*[(tileheight+1)/2];
+	for (int i=0; i<(tileheight+1)/2; i++)
+		noisevarchrom[i] = new float[(tilewidth+1)/2];
 
 
 #ifdef _OPENMP
@@ -562,17 +566,9 @@ if(settings->leveldnti ==1) {
 			//wavelet denoised image
 			LabImage * labdn = new LabImage(width,height);
 			float* mad_LL = new float [height*width];
-			float** noisevarlum;
-					noisevarlum = new float*[height];
-						for (int i=0; i<height; i++)
-						noisevarlum[i] = new float[width];
 
 			float* mad_aa = new float [height*width];
 			float* mad_bb = new float [height*width];
-			float** noisevarchrom;
-					noisevarchrom = new float*[height];
-						for (int i=0; i<height; i++)
-						noisevarchrom[i] = new float[width];
 
 			//residual between input and denoised L channel
 			array2D<float> Ldetail(width,height,ARRAY2D_CLEAR_DATA);
@@ -626,6 +622,7 @@ if(settings->leveldnti ==1) {
 						R_ = R_<65535.0f ? gamcurve[R_] : (Color::gammanf(R_/65535.f, gam)*32768.0f);
 						G_ = G_<65535.0f ? gamcurve[G_] : (Color::gammanf(G_/65535.f, gam)*32768.0f);
 						B_ = B_<65535.0f ? gamcurve[B_] : (Color::gammanf(B_/65535.f, gam)*32768.0f);
+						
 						//true conversion xyz=>Lab
 						float L,a,b;
 						float X,Y,Z;
@@ -633,35 +630,38 @@ if(settings->leveldnti ==1) {
 
 						//convert to Lab
 						Color::XYZ2Lab(X, Y, Z, L, a, b);
-						
-						if(noiseLCurve) {
-							float kN = lumcalc[i][j]; //with no gamma and take into account working profile
-							float epsi = 0.01f;
-							if(kN<2.f)
-								kN = 2.f;//avoid divided by zero
-							if(kN>32768.f)
-								kN = 32768.f;	// not strictly necessary							
-							float kinterm = epsi + noiseLCurve[xdivf(kN,15)*500.f];
-							float ki = kinterm*100.f;
-							ki += noiseluma;
-							noisevarlum[i1][j1] = SQR((ki/125.f)*(1.f+ki/25.f));
-						}
-						if(noiseCCurve) {
-							float aN = acalc[i][j];
-							float bN = bcalc[i][j];
-							float cN = sqrtf(SQR(aN)+SQR(bN));
-							if(cN < 100.f)
-								cN = 100.f;//avoid divided by zero
-							float Cinterm = 1.f + ponderCC*4.f*noiseCCurve[cN/60.f];//C=f(C)
-							noisevarchrom[i1][j1] = max(noisevarab_b,noisevarab_r)*SQR(Cinterm);
-						}
-						//end chroma
 
 						labdn->L[i1][j1] = L;
 						labdn->a[i1][j1] = a;
 						labdn->b[i1][j1] = b;
 					
 						Lin[i1][j1] = L;
+
+						if(((i1|j1)&1) == 0) {
+							if(noiseLCurve) {
+								float kN = lumcalc[i>>1][j>>1]; //with no gamma and take into account working profile
+								float epsi = 0.01f;
+								if(kN<2.f)
+									kN = 2.f;//avoid divided by zero
+								if(kN>32768.f)
+									kN = 32768.f;	// not strictly necessary							
+								float kinterm = epsi + noiseLCurve[xdivf(kN,15)*500.f];
+								float ki = kinterm*100.f;
+								ki += noiseluma;
+								noisevarlum[i1>>1][j1>>1] = SQR((ki/125.f)*(1.f+ki/25.f));
+							}
+							if(noiseCCurve) {
+								float aN = acalc[i>>1][j>>1];
+								float bN = bcalc[i>>1][j>>1];
+								float cN = sqrtf(SQR(aN)+SQR(bN));
+								if(cN < 100.f)
+									cN = 100.f;//avoid divided by zero
+								float Cinterm = 1.f + ponderCC*4.f*noiseCCurve[cN/60.f];//C=f(C)
+								noisevarchrom[i1>>1][j1>>1] = max(noisevarab_b,noisevarab_r)*SQR(Cinterm);
+							}
+						}
+						//end chroma
+
 					}
 				}
 				}
@@ -681,28 +681,29 @@ if(settings->leveldnti ==1) {
 						X = X<65535.0f ? gamcurve[X] : (Color::gamma((double)X/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
 						Y = Y<65535.0f ? gamcurve[Y] : (Color::gamma((double)Y/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
 						Z = Z<65535.0f ? gamcurve[Z] : (Color::gamma((double)Z/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
-						if(noiseLCurve) {
-						//	float noiseluma=(float) dnparams.luma;	
-							float kN = lumcalc[i][j];
-							float epsi = 0.01f;
-							if (kN<2.f) 
-								kN = 2.f;
-							if (kN>32768.f)
-								kN = 32768.f;
-							float kinterm = epsi + noiseLCurve[xdivf(kN,15)*500.f];
-							float ki = kinterm*100.f;
-							ki += noiseluma;
-							noisevarlum[i1][j1] = SQR((ki/125.f)*(1.f+ki/25.f));
-						}
-						if(noiseCCurve) {
-							float aN = acalc[i][j];
-							float bN = bcalc[i][j];
-							
-							float cN = sqrtf(SQR(aN)+SQR(bN));
-							if(cN < 100.f)
-								cN = 100.f;//avoid divided by zero
-							float Cinterm = 1.f + ponderCC*4.f*noiseCCurve[cN/60.f];
-							noisevarchrom[i1][j1] = max(noisevarab_b,noisevarab_r)*SQR(Cinterm);
+						if(((i1|j1)&1) == 0) {
+							if(noiseLCurve) {
+							//	float noiseluma=(float) dnparams.luma;	
+								float kN = lumcalc[i>>1][j>>1];
+								float epsi = 0.01f;
+								if (kN<2.f) 
+									kN = 2.f;
+								if (kN>32768.f)
+									kN = 32768.f;
+								float kinterm = epsi + noiseLCurve[xdivf(kN,15)*500.f];
+								float ki = kinterm*100.f;
+								ki += noiseluma;
+								noisevarlum[i1>>1][j1>>1] = SQR((ki/125.f)*(1.f+ki/25.f));
+							}
+							if(noiseCCurve) {
+								float aN = acalc[i>>1][j>>1];
+								float bN = bcalc[i>>1][j>>1];
+								float cN = sqrtf(SQR(aN)+SQR(bN));
+								if(cN < 100.f)
+									cN = 100.f;//avoid divided by zero
+								float Cinterm = 1.f + ponderCC*4.f*noiseCCurve[cN/60.f];
+								noisevarchrom[i1>>1][j1>>1] = max(noisevarab_b,noisevarab_r)*SQR(Cinterm);
+							}
 						}
 						//end chroma					
 						labdn->L[i1][j1] = Y;
@@ -746,34 +747,34 @@ if(settings->leveldnti ==1) {
 						//convert Lab
 						Color::XYZ2Lab(X, Y, Z, L, a, b);
 						float Llum,alum,blum;
-						if(noiseLCurve || noiseCCurve) {
-							float XL,YL,ZL;
-							Color::rgbxyz(rLum,gLum,bLum,XL,YL,ZL,wp);
-							Color::XYZ2Lab(XL, YL, ZL, Llum, alum, blum);
+						if(((i1|j1)&1) == 0) {
+							if(noiseLCurve || noiseCCurve) {
+								float XL,YL,ZL;
+								Color::rgbxyz(rLum,gLum,bLum,XL,YL,ZL,wp);
+								Color::XYZ2Lab(XL, YL, ZL, Llum, alum, blum);
+							}
+					
+							if(noiseLCurve) {
+								float kN = Llum;
+								float epsi=0.01f;
+								if(kN<2.f) kN=2.f;
+								if(kN>32768.f) kN=32768.f;								
+								float kinterm=epsi + noiseLCurve[xdivf(kN,15)*500.f];
+								float ki=kinterm*100.f;
+								ki+=noiseluma;
+								noiseluma += 1.f;
+								noisevarlum[i1>>1][j1>>1]=SQR((ki/125.f)*(1.f+ki/25.f));
+							}	
+							if(noiseCCurve) {
+								float aN=alum;
+								float bN=blum;
+								float cN=sqrtf(SQR(aN)+SQR(bN));
+								if(cN < 100.f)
+									cN=100.f;//avoid divided by zero ???
+								float Cinterm=1.f + ponderCC*4.f*noiseCCurve[cN/60.f];
+								noisevarchrom[i1>>1][j1>>1]=max(noisevarab_b,noisevarab_r)*SQR(Cinterm);
+							}
 						}
-				
-						if(noiseLCurve) {
-							float kN = Llum;
-							float epsi=0.01f;
-
-							if(kN<2.f) kN=2.f;
-							if(kN>32768.f) kN=32768.f;								
-							float kinterm=epsi + noiseLCurve[xdivf(kN,15)*500.f];
-							float ki=kinterm*100.f;
-							ki+=noiseluma;
-							noiseluma += 1.f;
-							noisevarlum[i1][j1]=SQR((ki/125.f)*(1.f+ki/25.f));
-						}	
-						if(noiseCCurve) {
-							float aN=alum;
-							float bN=blum;
-							float cN=sqrtf(SQR(aN)+SQR(bN));
-							if(cN < 100.f)
-								cN=100.f;//avoid divided by zero ???
-							float Cinterm=1.f + ponderCC*4.f*noiseCCurve[cN/60.f];
-							noisevarchrom[i1][j1]=max(noisevarab_b,noisevarab_r)*SQR(Cinterm);
-						}
-						
 						labdn->L[i1][j1] = L;
 						labdn->a[i1][j1] = a;
 						labdn->b[i1][j1] = b;
@@ -838,13 +839,18 @@ if(settings->leveldnti ==1) {
 #pragma omp section
 #endif
 {
-			Ldecomp = new wavelet_decomposition (labdn->data, labdn->W, labdn->H, levwav/*maxlevels*/, 0/*subsampling*/ );
+			Ldecomp = new wavelet_decomposition (labdn->data, labdn->W, labdn->H, levwav/*maxlevels*/, 1/*subsampling*/ );
 }
 #ifdef _OPENMP
 #pragma omp section
 #endif
-{			// only one section for both, because they are much faster then Ldecomp
+{
 			adecomp = new wavelet_decomposition (labdn->data+datalen, labdn->W, labdn->H,levwav, 1 );
+}
+#ifdef _OPENMP
+#pragma omp section
+#endif
+{
 			bdecomp = new wavelet_decomposition (labdn->data+2*datalen, labdn->W, labdn->H, levwav, 1 );
 }
 }
@@ -1231,10 +1237,6 @@ if(settings->leveldnti ==1) {
 		}
 
 			//wavelet denoised L channel
-			array2D<float> Lwavdn(width,height);
-			float * Lwavdnptr = Lwavdn;
-			memcpy (Lwavdnptr, labdn->data, width*height*sizeof(float));
-
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			// now do detail recovery using block DCT to detect
@@ -1269,21 +1271,19 @@ if(settings->leveldnti ==1) {
 #else
 			int subThread = 0;
 #endif
-			AlignedBuffer<float> pBuf(width + TS + 2*blkrad*offset);
-			float * nbrwt = nbrwtArray[subThread];
+			float blurbuffer[TS*TS] ALIGNED64;
 			float * Lblox = LbloxArray[subThread];
-			float * fLblox = fLbloxArray[subThread];;
-			float * blurbuffer = new float[TS*TS];
+			float * fLblox = fLbloxArray[subThread];
+			float pBuf[width + TS + 2*blkrad*offset] ALIGNED16;
+			float nbrwt[TS*TS] ALIGNED64;
 #ifdef _OPENMP
 #pragma omp for
 #endif
 			for (int vblk=0; vblk<numblox_H; vblk++) {
-				//printf("vblock=%d",vblk);
 
 				int top = (vblk-blkrad)*offset;
-				float * datarow = (float*)pBuf.data +blkrad*offset;
+				float * datarow = pBuf +blkrad*offset;
 
-				//TODO: implement using AlignedBufferMP
 				for (int i=0/*, row=top*/; i<TS; i++/*, row++*/) {
 					int row = top + i;
 					int rr = row;
@@ -1294,7 +1294,7 @@ if(settings->leveldnti ==1) {
 					}
 
 					for (int j=0; j<labdn->W; j++) {
-						datarow[j] = (Lin[rr][j]-Lwavdn[rr][j]);
+						datarow[j] = (Lin[rr][j]-labdn->L[rr][j]);
 					}
 
 					for (int j=-blkrad*offset; j<0; j++) {
@@ -1305,13 +1305,12 @@ if(settings->leveldnti ==1) {
 					}//now we have a padded data row
 
 					//now fill this row of the blocks with Lab high pass data
-					//OMP here does not add speed, better handled on the outside loop
 					for (int hblk=0; hblk<numblox_W; hblk++) {
 						int left = (hblk-blkrad)*offset;
 						int indx = (hblk)*TS;//index of block in malloc
 
 						for (int j=0; j<TS; j++) {
-							Lblox[(indx + i)*TS+j]  = tilemask_in[i][j]*datarow[left+j];// luma data
+							Lblox[(indx + i)*TS+j] = tilemask_in[i][j]*datarow[left+j];// luma data
 							if (top+i>=0 && top+i<height && left+j>=0 && left+j<width) {
 								totwt[top+i][left+j] += tilemask_in[i][j]*tilemask_out[i][j];
 							}
@@ -1350,7 +1349,6 @@ if(settings->leveldnti ==1) {
 
 			}//end of vertical block loop
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			delete [] blurbuffer;
 
 }
 			}
@@ -1360,7 +1358,7 @@ if(settings->leveldnti ==1) {
 					//may want to include masking threshold for large hipass data to preserve edges/detail
 					float hpdn = Ldetail[i][j]/totwt[i][j];//note that labdn initially stores the denoised hipass data
 
-					labdn->L[i][j] = Lwavdn[i][j] + hpdn;
+					labdn->L[i][j] += hpdn;
 
 				}
 			}
@@ -1369,8 +1367,8 @@ if(settings->leveldnti ==1) {
 			// transform denoised "Lab" to output RGB
 
 			//calculate mask for feathering output tile overlaps
-			float * Vmask = new float [height+1];
-			float * Hmask = new float [width+1];
+			float Vmask[height+1] ALIGNED16;
+			float Hmask[width+1] ALIGNED16;
 
 			for (int i=0; i<height; i++) {
 				Vmask[i] = 1;
@@ -1383,7 +1381,7 @@ if(settings->leveldnti ==1) {
 			}
 				
 			for (int i=0; i<overlap; i++) {
-				float mask = SQR(sin((M_PI*i)/(2*overlap)));
+				float mask = SQR(xsinf((M_PI*i)/(2*overlap)));
 				if (tiletop>0) Vmask[i] = mask;
 				if (tilebottom<imheight) Vmask[height-i] = mask;
 				if (tileleft>0) Hmask[i] = mask/newGain;
@@ -1514,28 +1512,23 @@ if(settings->leveldnti ==1) {
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 			delete labdn;
-			for (int i=0; i<height; i++)
-				delete [] noisevarlum[i];
-			delete [] noisevarlum;
 			delete [] mad_LL;
-			for (int i=0; i<height; i++)
-				delete [] noisevarchrom[i];
-			delete [] noisevarchrom;
 			delete [] mad_aa;
 			delete [] mad_bb;
 
-			delete[] Vmask;
-			delete[] Hmask;
-
-
-
 		}//end of tile row
 	}//end of tile loop
+	for (int i=0; i<(tileheight+1)/2; i++)
+		delete [] noisevarlum[i];
+	delete [] noisevarlum;
+	for (int i=0; i<(tileheight+1)/2; i++)
+		delete [] noisevarchrom[i];
+	delete [] noisevarchrom;
+
 	}
 	for(int i=0;i<denoiseNestedLevels*numthreads;i++) {
 		fftwf_free(LbloxArray[i]);
 		fftwf_free(fLbloxArray[i]);
-		delete [] nbrwtArray[i];
 	}
 
 #ifdef _OPENMP
@@ -1733,13 +1726,13 @@ for(int iteration=1;iteration<=dnparams.passes;iteration++){
 }		
 	//end median
 	if(noiseLCurve || noiseCCurve) {
-			for (int i=0; i<hei; i++)
+			for (int i=0; i<(hei+1)/2; i++)
 				delete [] lumcalc[i];
 			delete [] lumcalc;
-			for (int i=0; i<hei; i++)
+			for (int i=0; i<(hei+1)/2; i++)
 				delete [] acalc[i];
 			delete [] acalc;
-			for (int i=0; i<hei; i++)
+			for (int i=0; i<(hei+1)/2; i++)
 				delete [] bcalc[i];
 			delete [] bcalc;
 			
@@ -1771,7 +1764,7 @@ SSEFUNCTION	void ImProcFunctions::RGBtile_denoise (float * fLblox, int hblproc, 
 		__m128	noisevar_Ldetailv = _mm_set1_ps( noisevar_Ldetail );
 		__m128	onev = _mm_set1_ps( 1.0f );
 		for (int n=0; n<TS*TS; n+=4) {		//for DCT
-			tempv  = onev - xexpf( -SQRV( LVFU(nbrwt[n]))/noisevar_Ldetailv);
+			tempv  = onev - xexpf( -SQRV( LVF(nbrwt[n]))/noisevar_Ldetailv);
 			_mm_storeu_ps( &fLblox[blkstart+n], LVFU(fLblox[blkstart+n]) * tempv );
 		}//output neighbor averaged result
 #else
@@ -1960,29 +1953,24 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 
 		float madL[8][3], mada[8][3], madb[8][3];
 		
-		int maxWL = 0, maxHL = 0, maxWab = 0, maxHab = 0;
+		int maxWL = 0, maxHL = 0;
 		for (int lvl=0; lvl<maxlvl; lvl++) {
 			if(WaveletCoeffs_L.level_W(lvl) > maxWL)
 				maxWL = WaveletCoeffs_L.level_W(lvl);
 			if(WaveletCoeffs_L.level_H(lvl) > maxHL)
 				maxHL = WaveletCoeffs_L.level_H(lvl);
-			if(WaveletCoeffs_a.level_W(lvl) > maxWab)
-				maxWab = WaveletCoeffs_a.level_W(lvl);
-			if(WaveletCoeffs_a.level_H(lvl) > maxHab)
-				maxHab = WaveletCoeffs_a.level_H(lvl);
 		}
 
 #ifdef _OPENMP
 #pragma omp parallel num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
 {
-		float *buffer[6];
+		float *buffer[5];
 		buffer[0] = new float[maxWL*maxHL+32];
 		buffer[1] = new float[maxWL*maxHL+64];
 		buffer[2] = new float[maxWL*maxHL+96];
-		buffer[3] = new float[maxWab*maxHab+128];
+		buffer[3] = new float[maxWL*maxHL+128];
 		buffer[4] = new float[maxWL*maxHL+160];
-		buffer[5] = new float[maxWL*maxHL+192];
 		
 
 #ifdef _OPENMP
@@ -1993,9 +1981,6 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 
 			int Wlvl_L = WaveletCoeffs_L.level_W(lvl);
 			int Hlvl_L = WaveletCoeffs_L.level_H(lvl);
-			
-			if(Wlvl_L!=width) Wlvl_L=width;
-			if(Hlvl_L!=height) Hlvl_L=height;
 			
 			int Wlvl_ab = WaveletCoeffs_a.level_W(lvl);
 			int Hlvl_ab = WaveletCoeffs_a.level_H(lvl);
@@ -2024,9 +2009,6 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 			int Wlvl_L = WaveletCoeffs_L.level_W(lvl);
 			int Hlvl_L = WaveletCoeffs_L.level_H(lvl);
 			
-			if(Wlvl_L!=width) Wlvl_L=width;
-			if(Hlvl_L!=height) Hlvl_L=height;
-			
 			int Wlvl_ab = WaveletCoeffs_a.level_W(lvl);
 			int Hlvl_ab = WaveletCoeffs_a.level_H(lvl);
 
@@ -2044,8 +2026,7 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 			} else {
 				//simple wavelet shrinkage
 				float * sfave = buffer[0]+32;
-				float * sfaved = buffer[4]+160;
-				float * WavCoeffsLtemp = buffer[3]+128;
+				float * sfaved = buffer[3]+128;
 				float * blurBuffer = buffer[1]+64;
 				for (int dir=1; dir<4; dir++) {
 					float mad_Lr = madL[lvl][dir-1];
@@ -2070,48 +2051,42 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 						}
 					}
 					if (noisevar_abr>0.001f  || noisevar_abb>0.001f) {
-						for(int i=0;i<Hlvl_ab;i++)
-							for(int j=0;j<Wlvl_ab;j++)
-								WavCoeffsLtemp[i*Wlvl_ab+j] = WavCoeffs_L[dir][((i*skip_L)/skip_ab)*Wlvl_L + ((j*skip_L)/skip_ab)];
 					
 #ifdef __SSE2__
-						int j;
 						__m128 onev = _mm_set1_ps(1.f);
 						__m128 rmad_Lm9v = onev / _mm_set1_ps(mad_Lr * 9.f);
 						__m128 mad_av;
 						__m128 mad_bv;
 						__m128 mag_Lv, mag_av, mag_bv;
 						__m128 tempav, tempbv;
-						for (int i=0; i<Hlvl_ab; i++) {
-							int coeffloc_ab = i*Wlvl_ab;
-							for (j=0; j<Wlvl_ab-3; j+=4, coeffloc_ab+=4) {
-								mad_av = LVFU(mad_aa[coeffloc_ab]);
-								mad_bv = LVFU(mad_bb[coeffloc_ab]);
-							
-								tempav = LVFU(WavCoeffs_a[dir][coeffloc_ab]);
-								tempbv = LVFU(WavCoeffs_b[dir][coeffloc_ab]);
-								mag_Lv = LVFU(WavCoeffsLtemp[coeffloc_ab]);
-								mag_av = SQRV(tempav);
-								mag_bv = SQRV(tempbv);
-								mag_Lv = SQRV(mag_Lv) * rmad_Lm9v;
-								_mm_storeu_ps(&WavCoeffs_a[dir][coeffloc_ab], tempav * SQRV((onev-xexpf(-(mag_av/mad_av)-(mag_Lv)))));
-								_mm_storeu_ps(&WavCoeffs_b[dir][coeffloc_ab], tempbv * SQRV((onev-xexpf(-(mag_bv/mad_bv)-(mag_Lv)))));
-							}
-							for (; j<Wlvl_ab; j++,coeffloc_ab++) {
-								float mag_L = SQR(WavCoeffsLtemp[coeffloc_ab ]);
-								float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab]);
-								float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab]);
-								WavCoeffs_a[dir][coeffloc_ab] *= SQR(1.f-xexpf(-(mag_a/mad_aa[coeffloc_ab])-(mag_L/(9.f*mad_Lr)))/*satfactor_a*/);
-								WavCoeffs_b[dir][coeffloc_ab] *= SQR(1.f-xexpf(-(mag_b/mad_bb[coeffloc_ab])-(mag_L/(9.f*mad_Lr)))/*satfactor_b*/);
-							}
+						int coeffloc_ab;
+						for (coeffloc_ab=0; coeffloc_ab<Hlvl_ab*Wlvl_ab-3; coeffloc_ab+=4) {
+							mad_av = LVFU(mad_aa[coeffloc_ab]);
+							mad_bv = LVFU(mad_bb[coeffloc_ab]);
+						
+							tempav = LVFU(WavCoeffs_a[dir][coeffloc_ab]);
+							tempbv = LVFU(WavCoeffs_b[dir][coeffloc_ab]);
+							mag_Lv = LVFU(WavCoeffs_L[dir][coeffloc_ab]);
+							mag_av = SQRV(tempav);
+							mag_bv = SQRV(tempbv);
+							mag_Lv = SQRV(mag_Lv) * rmad_Lm9v;
+							_mm_storeu_ps(&WavCoeffs_a[dir][coeffloc_ab], tempav * SQRV((onev-xexpf(-(mag_av/mad_av)-(mag_Lv)))));
+							_mm_storeu_ps(&WavCoeffs_b[dir][coeffloc_ab], tempbv * SQRV((onev-xexpf(-(mag_bv/mad_bv)-(mag_Lv)))));
+						}
+						// few remaining pixels
+						for (; coeffloc_ab<Hlvl_ab*Wlvl_ab; coeffloc_ab++) {
+							float mag_L = SQR(WavCoeffs_L[dir][coeffloc_ab ]);
+							float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab]);
+							float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab]);
+							WavCoeffs_a[dir][coeffloc_ab] *= SQR(1.f-xexpf(-(mag_a/mad_aa[coeffloc_ab])-(mag_L/(9.f*mad_Lr)))/*satfactor_a*/);
+							WavCoeffs_b[dir][coeffloc_ab] *= SQR(1.f-xexpf(-(mag_b/mad_bb[coeffloc_ab])-(mag_L/(9.f*mad_Lr)))/*satfactor_b*/);
 						}//now chrominance coefficients are denoised
 #else
 						for (int i=0; i<Hlvl_ab; i++) {
 							for (int j=0; j<Wlvl_ab; j++) {
-
 								int coeffloc_ab = i*Wlvl_ab+j;
 
-								float mag_L = SQR(WavCoeffsLtemp[coeffloc_ab ])+eps;
+								float mag_L = SQR(WavCoeffs_L[dir][coeffloc_ab ])+eps;
 								float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])+eps;
 								float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])+eps;
 
@@ -2142,23 +2117,19 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 							}
 						}
 #ifdef __SSE2__
-						int j;
 						__m128 mad_Lv;
 						__m128 ninev = _mm_set1_ps( 9.0f );
 						__m128 epsv = _mm_set1_ps(eps);
 						__m128 mag_Lv;
-						for (int i=0; i<Hlvl_L; i++) {
-							int coeffloc_L = i*Wlvl_L;
-							for (j=0; j<Wlvl_L-3; j+=4,coeffloc_L+=4) {
-								mad_Lv = LVFU(mad_LL[coeffloc_L]);
-								mag_Lv = SQRV(LVFU(WavCoeffs_L[dir][coeffloc_L]));
-								_mm_storeu_ps(&sfave[coeffloc_L], mag_Lv / ( mag_Lv + mad_Lv * xexpf(-mag_Lv/(mad_Lv*ninev) )+ epsv));
-								
-							}	
-							for (; j<Wlvl_L; j++, coeffloc_L++) {
-								float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L]);
-								sfave[coeffloc_L] = mag_L/(mag_L+mad_LL[coeffloc_L]*xexpf(-mag_L/(9.f*mad_LL[coeffloc_L]))+eps);
-							}
+						int coeffloc_L;
+						for (coeffloc_L=0; coeffloc_L<Hlvl_L*Wlvl_L-3; coeffloc_L+=4) {
+							mad_Lv = LVFU(mad_LL[coeffloc_L]);
+							mag_Lv = SQRV(LVFU(WavCoeffs_L[dir][coeffloc_L]));
+							_mm_storeu_ps(&sfave[coeffloc_L], mag_Lv / ( mag_Lv + mad_Lv * xexpf(-mag_Lv/(mad_Lv*ninev) )+ epsv));
+						}	
+						for (; coeffloc_L<Hlvl_L*Wlvl_L; coeffloc_L++) {
+							float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L]);
+							sfave[coeffloc_L] = mag_L/(mag_L+mad_LL[coeffloc_L]*xexpf(-mag_L/(9.f*mad_LL[coeffloc_L]))+eps);
 						}
 #else
 						for (int i=0; i<Hlvl_L; i++)
@@ -2173,20 +2144,18 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 #ifdef __SSE2__
 						__m128 sfavev;
 						__m128 sf_Lv;
-						for (int i=0; i<Hlvl_L; i++) {
-							int coeffloc_L = i*Wlvl_L;
-							for (j=0; j<Wlvl_L-3; j+=4,coeffloc_L+=4) {
-								sfavev = LVFU(sfaved[coeffloc_L]);
-								sf_Lv = LVFU(sfave[coeffloc_L]);
-								_mm_storeu_ps(&WavCoeffs_L[dir][coeffloc_L], LVFU(WavCoeffs_L[dir][coeffloc_L]) * (SQRV(sfavev)+SQRV(sf_Lv))/(sfavev+sf_Lv+epsv));
-								//use smoothed shrinkage unless local shrinkage is much less
-							}//now luminance coeffs are denoised
-							for (; j<Wlvl_L; j++,coeffloc_L++) {
-								float sf_L = sfave[coeffloc_L];
-								//use smoothed shrinkage unless local shrinkage is much less
-								WavCoeffs_L[dir][coeffloc_L] *= (SQR(sfaved[coeffloc_L])+SQR(sf_L))/(sfaved[coeffloc_L]+sf_L+eps);
-							}//now luminance coeffs are denoised
+						for (coeffloc_L=0; coeffloc_L<Hlvl_L*Wlvl_L-3; coeffloc_L+=4) {
+							sfavev = LVFU(sfaved[coeffloc_L]);
+							sf_Lv = LVFU(sfave[coeffloc_L]);
+							_mm_storeu_ps(&WavCoeffs_L[dir][coeffloc_L], LVFU(WavCoeffs_L[dir][coeffloc_L]) * (SQRV(sfavev)+SQRV(sf_Lv))/(sfavev+sf_Lv+epsv));
+							//use smoothed shrinkage unless local shrinkage is much less
 						}
+						// few remaining pixels
+						for (; coeffloc_L<Hlvl_L*Wlvl_L; coeffloc_L++) {
+							float sf_L = sfave[coeffloc_L];
+							//use smoothed shrinkage unless local shrinkage is much less
+							WavCoeffs_L[dir][coeffloc_L] *= (SQR(sfaved[coeffloc_L])+SQR(sf_L))/(sfaved[coeffloc_L]+sf_L+eps);
+						}//now luminance coeffs are denoised
 #else
 						for (int i=0; i<Hlvl_L; i++)
 							for (int j=0; j<Wlvl_L; j++) {
@@ -2194,14 +2163,13 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 								float sf_L = sfave[coeffloc_L];
 								//use smoothed shrinkage unless local shrinkage is much less
 								WavCoeffs_L[dir][coeffloc_L] *= (SQR(sfaved[coeffloc_L])+SQR(sf_L))/(sfaved[coeffloc_L]+sf_L+eps);
-
 							}//now luminance coeffs are denoised
 #endif
 					}
 				}
 			}
 		}
-		for(int i=5;i>=0;i--)
+		for(int i=4;i>=0;i--)
 			delete [] buffer[i];
 
 }
@@ -2214,16 +2182,12 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 	{
 
 		int maxlvl = WaveletCoeffs_L.maxlevel();
-		int maxWL = 0, maxHL = 0, maxWab = 0, maxHab = 0;
+		int maxWL = 0, maxHL = 0;
 		for (int lvl=0; lvl<maxlvl; lvl++) {
 			if(WaveletCoeffs_L.level_W(lvl) > maxWL)
 				maxWL = WaveletCoeffs_L.level_W(lvl);
 			if(WaveletCoeffs_L.level_H(lvl) > maxHL)
 				maxHL = WaveletCoeffs_L.level_H(lvl);
-			if(WaveletCoeffs_a.level_W(lvl) > maxWab)
-				maxWab = WaveletCoeffs_a.level_W(lvl);
-			if(WaveletCoeffs_a.level_H(lvl) > maxHab)
-				maxHab = WaveletCoeffs_a.level_H(lvl);
 		}
 
 
@@ -2231,13 +2195,12 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 #pragma omp parallel num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
 {
-		float *buffer[6];
+		float *buffer[5];
 		buffer[0] = new float[maxWL*maxHL+32];
 		buffer[1] = new float[maxWL*maxHL+64];
 		buffer[2] = new float[maxWL*maxHL+96];
-		buffer[3] = new float[maxWab*maxHab+128];
+		buffer[3] = new float[maxWL*maxHL+128];
 		buffer[4] = new float[maxWL*maxHL+160];
-		buffer[5] = new float[maxWL*maxHL+192];
 		
 		
 #ifdef _OPENMP
@@ -2268,7 +2231,7 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 					  skip_L, skip_ab, noisevar_L, noisevarlum,  noisevarchrom, width, height, mad_LL, mad_aa, mad_bb, noisevar_abr, noisevar_abb, noi, noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, callby, autoch, perf);
 
 		}
-		for(int i=5;i>=0;i--)
+		for(int i=4;i>=0;i--)
 			delete [] buffer[i];
 }
 	}
@@ -2282,18 +2245,17 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCo
 									{
 		//simple wavelet shrinkage
 		const float eps = 0.01f;
-		W_L = width;
-		H_L = height;
-		if(autoch && noisevar_abr <=0.001f) noisevar_abr=0.02f;
-		if(autoch && noisevar_abb <=0.001f) noisevar_abb=0.02f;
+		if(autoch && noisevar_abr <=0.001f)
+			noisevar_abr=0.02f;
+		if(autoch && noisevar_abb <=0.001f)
+			noisevar_abb=0.02f;
 		
 		float * sfavea = buffer[0]+32;
 		float * sfaveb = buffer[1]+64;
-		float * sfavead = buffer[4]+160;
-		float * sfavebd = buffer[5]+192;
+		float * sfavead = buffer[3]+128;
+		float * sfavebd = buffer[4]+160;
 		float * sfave = sfavea; // we can safely reuse sfavea here, because they are not used together
 		float * sfaved = sfavead; // we can safely reuse sfavead here, because they are not used together
-		float * WavCoeffsLtemp = buffer[3]+128;
 		float * blurBuffer = buffer[2]+96;
 
 		for (int dir=1; dir<4; dir++) {
@@ -2332,39 +2294,31 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCo
 			}
 			
 			if (noisevar_abr>0.001f  ||  noisevar_abb>0.001f ) {
-
-				for(int i=0;i<H_ab;i++)
-					for(int j=0;j<W_ab;j++)
-						WavCoeffsLtemp[i*W_ab+j] = WavCoeffs_L[dir][((i*skip_L)/skip_ab)*W_L + ((j*skip_L)/skip_ab)];
-
 #ifdef __SSE2__
-				int j;
 				__m128 onev = _mm_set1_ps(1.f);
 				__m128 rmadLm9v = onev / _mm_set1_ps(madL * 9.f);
 				__m128 mad_av ;
 				__m128 mad_bv;
 				__m128 mag_Lv, mag_av, mag_bv;
-				for (int i=0; i<H_ab; i++) {
-					int coeffloc_ab = i*W_ab;
-					for (j=0; j<W_ab-3; j+=4, coeffloc_ab+=4) {
-						mad_av = LVFU(mad_aa[coeffloc_ab]);
-						mad_bv = LVFU(mad_bb[coeffloc_ab]);
+				int coeffloc_ab;
+				for (coeffloc_ab=0; coeffloc_ab<H_ab*W_ab-3; coeffloc_ab+=4) {
+					mad_av = LVFU(mad_aa[coeffloc_ab]);
+					mad_bv = LVFU(mad_bb[coeffloc_ab]);
 
-						mag_Lv = LVFU(WavCoeffsLtemp[coeffloc_ab]);
-						mag_av = SQRV(LVFU(WavCoeffs_a[dir][coeffloc_ab]));
-						mag_bv = SQRV(LVFU(WavCoeffs_b[dir][coeffloc_ab]));
-						mag_Lv = (SQRV(mag_Lv)) * rmadLm9v;
-						_mm_storeu_ps(&sfavea[coeffloc_ab], (onev-xexpf(-(mag_av/mad_av)-(mag_Lv))));
-						_mm_storeu_ps(&sfaveb[coeffloc_ab], (onev-xexpf(-(mag_bv/mad_bv)-(mag_Lv))));
-
-					}
-					for (; j<W_ab; j++,coeffloc_ab++) {
-						float mag_L = SQR(WavCoeffsLtemp[coeffloc_ab]);
-						float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab]);
-						float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab]);
-						sfavea[coeffloc_ab] = (1.f-xexpf(-(mag_a/mad_aa[coeffloc_ab])-(mag_L/(9.f*madL))));
-						sfaveb[coeffloc_ab] = (1.f-xexpf(-(mag_b/mad_bb[coeffloc_ab])-(mag_L/(9.f*madL))));
-					}
+					mag_Lv = LVFU(WavCoeffs_L[dir][coeffloc_ab]);
+					mag_av = SQRV(LVFU(WavCoeffs_a[dir][coeffloc_ab]));
+					mag_bv = SQRV(LVFU(WavCoeffs_b[dir][coeffloc_ab]));
+					mag_Lv = (SQRV(mag_Lv)) * rmadLm9v;
+					_mm_storeu_ps(&sfavea[coeffloc_ab], (onev-xexpf(-(mag_av/mad_av)-(mag_Lv))));
+					_mm_storeu_ps(&sfaveb[coeffloc_ab], (onev-xexpf(-(mag_bv/mad_bv)-(mag_Lv))));
+				}
+				// few remaining pixels
+				for (; coeffloc_ab<H_ab*W_ab; coeffloc_ab++) {
+					float mag_L = SQR(WavCoeffs_L[dir][coeffloc_ab]);
+					float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab]);
+					float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab]);
+					sfavea[coeffloc_ab] = (1.f-xexpf(-(mag_a/mad_aa[coeffloc_ab])-(mag_L/(9.f*madL))));
+					sfaveb[coeffloc_ab] = (1.f-xexpf(-(mag_b/mad_bb[coeffloc_ab])-(mag_L/(9.f*madL))));
 				}//now chrominance coefficients are denoised
 
 #else
@@ -2388,30 +2342,26 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCo
 				__m128 epsv = _mm_set1_ps(eps);
 				__m128 sfav, sfbv;
 				__m128 sfaveav, sfavebv;
-				for (int i=0; i<H_ab; i++) {
-					int coeffloc_ab = i*W_ab;
-					for (j=0; j<W_ab-3; j+=4,coeffloc_ab+=4) {
-						sfav = LVFU(sfavea[coeffloc_ab]);
-						sfbv = LVFU(sfaveb[coeffloc_ab]);
-						sfaveav = LVFU(sfavead[coeffloc_ab]);
-						sfavebv = LVFU(sfavebd[coeffloc_ab]);
+				for (coeffloc_ab=0; coeffloc_ab<H_ab*W_ab-3; coeffloc_ab+=4) {
+					sfav = LVFU(sfavea[coeffloc_ab]);
+					sfbv = LVFU(sfaveb[coeffloc_ab]);
+					sfaveav = LVFU(sfavead[coeffloc_ab]);
+					sfavebv = LVFU(sfavebd[coeffloc_ab]);
 
-						//use smoothed shrinkage unless local shrinkage is much less
-						_mm_storeu_ps( &WavCoeffs_a[dir][coeffloc_ab], LVFU(WavCoeffs_a[dir][coeffloc_ab]) * (SQRV(sfaveav)+SQRV(sfav))/(sfaveav+sfav+epsv));
-						_mm_storeu_ps( &WavCoeffs_b[dir][coeffloc_ab], LVFU(WavCoeffs_b[dir][coeffloc_ab]) * (SQRV(sfavebv)+SQRV(sfbv))/(sfavebv+sfbv+epsv));
-
-					}//now chrominance coefficients are denoised
-					for (; j<W_ab; j++,coeffloc_ab++) {
-						//modification Jacques feb 2013
-						float sfa = sfavea[coeffloc_ab];
-						float sfb = sfaveb[coeffloc_ab];
-
-						//use smoothed shrinkage unless local shrinkage is much less
-						WavCoeffs_a[dir][coeffloc_ab] *= (SQR(sfavead[coeffloc_ab])+SQR(sfa))/(sfavead[coeffloc_ab]+sfa+eps);
-						WavCoeffs_b[dir][coeffloc_ab] *= (SQR(sfavebd[coeffloc_ab])+SQR(sfb))/(sfavebd[coeffloc_ab]+sfb+eps);
-
-					}//now chrominance coefficients are denoised
+					//use smoothed shrinkage unless local shrinkage is much less
+					_mm_storeu_ps( &WavCoeffs_a[dir][coeffloc_ab], LVFU(WavCoeffs_a[dir][coeffloc_ab]) * (SQRV(sfaveav)+SQRV(sfav))/(sfaveav+sfav+epsv));
+					_mm_storeu_ps( &WavCoeffs_b[dir][coeffloc_ab], LVFU(WavCoeffs_b[dir][coeffloc_ab]) * (SQRV(sfavebv)+SQRV(sfbv))/(sfavebv+sfbv+epsv));
 				}
+				// few remaining pixels
+				for (; coeffloc_ab<H_ab*W_ab; coeffloc_ab++) {
+					//modification Jacques feb 2013
+					float sfa = sfavea[coeffloc_ab];
+					float sfb = sfaveb[coeffloc_ab];
+
+					//use smoothed shrinkage unless local shrinkage is much less
+					WavCoeffs_a[dir][coeffloc_ab] *= (SQR(sfavead[coeffloc_ab])+SQR(sfa))/(sfavead[coeffloc_ab]+sfa+eps);
+					WavCoeffs_b[dir][coeffloc_ab] *= (SQR(sfavebd[coeffloc_ab])+SQR(sfb))/(sfavebd[coeffloc_ab]+sfb+eps);
+				}//now chrominance coefficients are denoised
 #else
 				for (int i=0; i<H_ab; i++) {
 					for (int j=0; j<W_ab; j++) {
@@ -2422,7 +2372,6 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCo
 						//use smoothed shrinkage unless local shrinkage is much less
 						WavCoeffs_a[dir][coeffloc_ab] *= (SQR(sfavead[coeffloc_ab])+SQR(sfa))/(sfavead[coeffloc_ab]+sfa+eps);
 						WavCoeffs_b[dir][coeffloc_ab] *= (SQR(sfavebd[coeffloc_ab])+SQR(sfb))/(sfavebd[coeffloc_ab]+sfb+eps);
-
 					}//now chrominance coefficients are denoised
 				}
 #endif
@@ -2455,6 +2404,7 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCo
 					magv = SQRV(LVFU(WavCoeffs_L[dir][i]));
 					_mm_storeu_ps( &sfave[i], magv / (magv + mad_Lv*xexpf(-magv/(ninev * mad_Lv)) + epsv));
 				}
+				// few remaining pixels
 				for (; i<W_L*H_L; i++) {
 					float mag = SQR(WavCoeffs_L[dir][i]);
 					sfave[i] = mag/(mag+mad_LL[i]*xexpf(-mag/(9*mad_LL[i]))+eps);
@@ -2471,12 +2421,13 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCo
 
 #ifdef __SSE2__ 
 				__m128	sfv;
-				for (int i=0; i<W_L*H_L-3; i+=4) {
+				for (i=0; i<W_L*H_L-3; i+=4) {
 					sfv = LVFU(sfave[i]);
 					//use smoothed shrinkage unless local shrinkage is much less
 					_mm_storeu_ps( &WavCoeffs_L[dir][i], _mm_loadu_ps( &WavCoeffs_L[dir][i]) * (SQRV( LVFU(sfaved[i] )) + SQRV(sfv)) / (LVFU(sfaved[i])+sfv+epsv));
 				}
-				for (int i=(W_L*H_L)-((W_L*H_L)%4); i<W_L*H_L; i++) {
+				// few remaining pixels
+				for (; i<W_L*H_L; i++) {
 					float sf = sfave[i];
 
 					//use smoothed shrinkage unless local shrinkage is much less
@@ -2493,10 +2444,7 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCo
 				}//now luminance coefficients are denoised
 #endif
 			}
-
-
 		}
-
 	}
 
 

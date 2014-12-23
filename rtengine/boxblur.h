@@ -708,20 +708,25 @@ template<class T, class A> SSEFUNCTION void boxabsblur (T* src, A* dst, int radx
 		//horizontal blur
 		for (int row = 0; row < H; row++) {
 			int len = radx + 1;
-			temp[row*W+0] = fabsf((float)src[row*W+0]);
+			float tempval = fabsf((float)src[row*W+0]);
 			for (int j=1; j<=radx; j++) {
-				temp[row*W+0] += fabsf((float)src[row*W+j]);
+				tempval += fabsf((float)src[row*W+j]);
 			}
-			temp[row*W+0] = temp[row*W+0] / len;
+			tempval /= len;
+			temp[row*W+0] = tempval;
 			for (int col=1; col<=radx; col++) {
-				temp[row*W+col] = (temp[row*W+col-1]*len + fabsf(src[row*W+col+radx]))/(len+1);
+				tempval = (tempval*len + fabsf(src[row*W+col+radx]))/(len+1);
+				temp[row*W+col] = tempval;
 				len ++;
 			}
+			float rlen = 1.f/(float)len;
 			for (int col = radx+1; col < W-radx; col++) {
-				temp[row*W+col] = temp[row*W+col-1] + ((float)(fabsf(src[row*W+col+radx]) - fabsf(src[row*W+col-radx-1])))/len;
+				tempval = tempval + ((float)(fabsf(src[row*W+col+radx]) - fabsf(src[row*W+col-radx-1])))*rlen;
+				temp[row*W+col] = tempval;
 			}
 			for (int col=W-radx; col<W; col++) {
-				temp[row*W+col] = (temp[row*W+col-1]*len - fabsf(src[row*W+col-radx-1]))/(len-1);
+				tempval = (tempval*len - fabsf(src[row*W+col-radx-1]))/(len-1);
+				temp[row*W+col] = tempval;
 				len --;
 			}
 		}
@@ -737,29 +742,30 @@ template<class T, class A> SSEFUNCTION void boxabsblur (T* src, A* dst, int radx
 #ifdef __SSE2__
 		__m128	leninitv = _mm_set1_ps( (float)(rady+1));
 		__m128 	onev = _mm_set1_ps( 1.0f );
-		__m128	tempv,lenv,lenp1v,lenm1v;
+		__m128	tempv,lenv,lenp1v,lenm1v,rlenv;
 		for (int col = 0; col < W-3; col+=4) {
 			lenv = leninitv;
-			tempv = LVFU(temp[0*W+col]);
+			tempv = LVF(temp[0*W+col]);
 			for (int i=1; i<=rady; i++) {
-				tempv = tempv + LVFU(temp[i*W+col]);
+				tempv = tempv + LVF(temp[i*W+col]);
 			}
 			tempv = tempv / lenv;
-			_mm_storeu_ps( &dst[0*W+col], tempv );
+			_mm_store_ps( &dst[0*W+col], tempv );
 			for (int row=1; row<=rady; row++) {
 				lenp1v = lenv + onev;
-				tempv = (tempv*lenv + LVFU(temp[(row+rady)*W+col]))/lenp1v;
-				_mm_storeu_ps( &dst[row*W+col],tempv);
+				tempv = (tempv*lenv + LVF(temp[(row+rady)*W+col]))/lenp1v;
+				_mm_store_ps( &dst[row*W+col],tempv);
 				lenv = lenp1v;
 			}
+			rlenv = onev / lenv;
 			for (int row = rady+1; row < H-rady; row++) {
-				tempv = tempv + (LVFU(temp[(row+rady)*W+col])- LVFU(temp[(row-rady-1)*W+col]))/lenv;
-				_mm_storeu_ps( &dst[row*W+col], tempv);
+				tempv = tempv + (LVF(temp[(row+rady)*W+col])- LVF(temp[(row-rady-1)*W+col]))*rlenv;
+				_mm_store_ps( &dst[row*W+col], tempv);
 			}
 			for (int row=H-rady; row<H; row++) {
 				lenm1v = lenv - onev;
-				tempv = (tempv*lenv - LVFU(temp[(row-rady-1)*W+col]))/lenm1v;
-				_mm_storeu_ps( &dst[row*W+col], tempv);
+				tempv = (tempv*lenv - LVF(temp[(row-rady-1)*W+col]))/lenm1v;
+				_mm_store_ps( &dst[row*W+col], tempv);
 				lenv = lenm1v;
 			}
 	}

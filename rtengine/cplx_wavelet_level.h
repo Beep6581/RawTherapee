@@ -25,7 +25,6 @@
 #include <cstddef>
 #include "rt_math.h"
 #include "opthelper.h"
-
 namespace rtengine {
 
 	template<typename T>
@@ -50,15 +49,15 @@ namespace rtengine {
 
 		// load a row/column of input data, possibly with padding
 
-		void AnalysisFilterHaarVertical (T * srcbuffer, T * dstLo, T * dstHi, int pitch, int srclen);
-		void AnalysisFilterHaarHorizontal (T * srcbuffer, T * dstLo, T * dstHi, int pitch, int srclen);
+		void AnalysisFilterHaarVertical (T * srcbuffer, T * dstLo, T * dstHi, int pitch, int srclen, int row);
+		void AnalysisFilterHaarHorizontal (T * srcbuffer, T * dstLo, T * dstHi, int srclen, int row);
 		void SynthesisFilterHaarHorizontal (T * srcLo, T * srcHi, T * dst, int dstlen);
 		void SynthesisFilterHaarVertical (T * srcLo, T * srcHi, T * dst, int pitch, int dstlen);
 
 		void AnalysisFilterSubsampHorizontal (T * srcbuffer, T * dstLo, T * dstHi, float *filterLo, float *filterHi, 
-							 int taps, int offset, int pitch, int srclen, int m_w2);
+							 int taps, int offset, int pitch, int srclen, int m_w2, int row);
 		void AnalysisFilterSubsampVertical (T * srcbuffer, T * dstLo, T * dstHi, float *filterLo, float *filterHi, 
-							 int taps, int offset, int pitch, int srclen);
+							 int taps, int offset, int pitch, int srclen, int row);
 		void SynthesisFilterSubsampHorizontal (T * srcLo, T * srcHi, T * dst,
 							  float *filterLo, float *filterHi, int taps, int offset, int dstlen);
 		void SynthesisFilterSubsampVertical (T * srcLo, T * srcHi, T * dst, float *filterLo, float *filterHi, int taps, int offset, int pitch, int dstlen);
@@ -66,7 +65,7 @@ namespace rtengine {
 	public:
 
 		T ** wavcoeffs;
-				// full size
+		// full size
 		size_t m_w, m_h;
 
 		// size of low frequency part
@@ -152,38 +151,33 @@ namespace rtengine {
 	}
 
 	template<typename T>
-	void wavelet_level<T>::AnalysisFilterHaarHorizontal (T * RESTRICT srcbuffer, T * RESTRICT dstLo, T * RESTRICT dstHi, int pitch, int srclen) {
-
+	void wavelet_level<T>::AnalysisFilterHaarHorizontal (T * RESTRICT srcbuffer, T * RESTRICT dstLo, T * RESTRICT dstHi, int srclen, int row) {
 		/* Basic convolution code
 		 * Applies a Haar filter 
-		*/										
-		for(int j=0;j<pitch;j++) {
+		*/							
 			for(int i = 0; i < (srclen - skip); i++) {
-				dstLo[j*srclen+i] = 0.5f*(srcbuffer[j*srclen+i] + srcbuffer[j*srclen+i+skip]);
-				dstHi[j*srclen+i] = 0.5f*(srcbuffer[j*srclen+i] - srcbuffer[j*srclen+i+skip]);
+				dstLo[row*srclen+i] = (srcbuffer[i] + srcbuffer[i+skip]);
+				dstHi[row*srclen+i] = (srcbuffer[i] - srcbuffer[i+skip]);
 			}
 			for(size_t i = max(srclen-skip,skip); i < (srclen); i++) {
-				dstLo[j*srclen+i] = 0.5f*(srcbuffer[j*srclen+i] + srcbuffer[j*srclen+i-skip]);
-				dstHi[j*srclen+i] = 0.5f*(srcbuffer[j*srclen+i] - srcbuffer[j*srclen+i-skip]);
+				dstLo[row*srclen+i] = (srcbuffer[i] + srcbuffer[i-skip]);
+				dstHi[row*srclen+i] = (srcbuffer[i] - srcbuffer[i-skip]);
 			}
-		}
 	}
 
-	template<typename T> void wavelet_level<T>::AnalysisFilterHaarVertical (T * RESTRICT srcbuffer, T * RESTRICT dstLo, T * RESTRICT dstHi, int pitch, int srclen) {
-
+	template<typename T> void wavelet_level<T>::AnalysisFilterHaarVertical (T * RESTRICT srcbuffer, T * RESTRICT dstLo, T * RESTRICT dstHi, int pitch, int srclen, int row) {
 	/* Basic convolution code
 	 * Applies a Haar filter 
 	*/
-		for(int i = 0; i < (srclen - skip); i++) {
+		if(row < (srclen - skip)) {
 			for(int j=0;j<pitch;j++) {
-				dstLo[(pitch*(i))+j] = 0.5f*(srcbuffer[i*pitch+j] + srcbuffer[(i+skip)*pitch+j]);
-				dstHi[(pitch*(i))+j] = 0.5f*(srcbuffer[i*pitch+j] - srcbuffer[(i+skip)*pitch+j]);
+				dstLo[j] = 0.25f*(srcbuffer[row*pitch+j] + srcbuffer[(row+skip)*pitch+j]);
+				dstHi[j] = 0.25f*(srcbuffer[row*pitch+j] - srcbuffer[(row+skip)*pitch+j]);
 			}
-		}
-		for(size_t i = max(srclen-skip,skip); i < (srclen); i++) {
+		} else if(row>=max(srclen-skip,skip)) {
 			for(int j=0;j<pitch;j++) {
-				dstLo[(pitch*(i))+j] = 0.5f*(srcbuffer[i*pitch+j] + srcbuffer[(i-skip)*pitch+j]);
-				dstHi[(pitch*(i))+j] = 0.5f*(srcbuffer[i*pitch+j] - srcbuffer[(i-skip)*pitch+j]);
+				dstLo[j] = 0.25f*(srcbuffer[row*pitch+j] + srcbuffer[(row-skip)*pitch+j]);
+				dstHi[j] = 0.25f*(srcbuffer[row*pitch+j] - srcbuffer[(row-skip)*pitch+j]);
 			}
 		}
 	}
@@ -227,40 +221,37 @@ namespace rtengine {
 
 	template<typename T>
 	void wavelet_level<T>::AnalysisFilterSubsampHorizontal (T * RESTRICT srcbuffer, T * RESTRICT dstLo, T * RESTRICT dstHi, float * RESTRICT filterLo, float *filterHi, 
-												int taps, int offset, int pitch, int srclen, int m_w2) {
-
+												int taps, int offset, int pitch, int srclen, int m_w2, int row) {
 		/* Basic convolution code
 		 * Applies an FIR filter 'filter' with filter length 'taps', 
 		 * aligning the 'offset' element of the filter with
 		 * the input pixel, and skipping 'skip' pixels between taps 
 		 * Output is subsampled by two
 		 */
-
 		// calculate coefficients
-		for(int k=0;k<pitch;k++) {
 			for(int i = 0; i < srclen; i+=2) {
 				float lo = 0.f, hi = 0.f;
 				if (LIKELY(i>skip*taps && i<srclen-skip*taps)) {//bulk
 					for (int j=0, l=-skip*offset; j<taps; j++, l+=skip) {
-						float src = srcbuffer[k*srclen+i-l];
+						float src = srcbuffer[i-l];
 						lo += filterLo[j] * src;//lopass channel
 						hi += filterHi[j] * src;//hipass channel
 					}
 				} else {
 					for (int j=0; j<taps; j++) {
 						int arg = max(0,min(i+skip*(offset-j),srclen-1));//clamped BC's
-						lo += filterLo[j] * srcbuffer[k*srclen+arg];//lopass channel
-						hi += filterHi[j] * srcbuffer[k*srclen+arg];//hipass channel
+						lo += filterLo[j] * srcbuffer[arg];//lopass channel
+						hi += filterHi[j] * srcbuffer[arg];//hipass channel
 					}
 				}
-				dstLo[k*m_w2+((i/2))] = lo;
-				dstHi[k*m_w2+((i/2))] = hi;
+				dstLo[row*m_w2+((i/2))] = lo;
+				dstHi[row*m_w2+((i/2))] = hi;
 			}
-		}
 	}
 
 	template<typename T> void wavelet_level<T>::AnalysisFilterSubsampVertical (T * RESTRICT srcbuffer, T * RESTRICT dstLo, T * RESTRICT dstHi, float * RESTRICT filterLo, float * RESTRICT filterHi, 
-													int taps, int offset, int pitch, int srclen) {
+													int taps, int offset, int pitch, int srclen, int row) {
+
 			/* Basic convolution code
 			 * Applies an FIR filter 'filter' with filter length 'taps', 
 			 * aligning the 'offset' element of the filter with
@@ -269,31 +260,28 @@ namespace rtengine {
 			 */
 
 			// calculate coefficients
-
-		for(int i = 0; i < srclen; i+=2) {
-			if (LIKELY(i>skip*taps && i<srclen-skip*taps)) {//bulk
+			if (LIKELY(row>skip*taps && row<srclen-skip*taps)) {//bulk
 				for (int k=0; k<pitch; k++) {
 					float lo = 0.f, hi = 0.f;
 					for (int j=0, l=-skip*offset; j<taps; j++, l+=skip) {
-						lo += filterLo[j] * srcbuffer[(i-l)*pitch+k];//lopass channel
-						hi += filterHi[j] * srcbuffer[(i-l)*pitch+k];//hipass channel
+						lo += filterLo[j] * srcbuffer[(row-l)*pitch+k];//lopass channel
+						hi += filterHi[j] * srcbuffer[(row-l)*pitch+k];//hipass channel
 					}
-					dstLo[(pitch*(i/2))+k] = lo;
-					dstHi[(pitch*(i/2))+k] = hi;
+					dstLo[k] = lo;
+					dstHi[k] = hi;
 				}
 			} else {//boundary
 				for (int k=0; k<pitch; k++) {
 					float lo = 0.f, hi = 0.f;
 					for (int j=0; j<taps; j++) {
-						int arg = max(0,min(i+skip*(offset-j),srclen-1))*pitch+k;//clamped BC's
+						int arg = max(0,min(row+skip*(offset-j),srclen-1))*pitch+k;//clamped BC's
 						lo += filterLo[j] * srcbuffer[arg];//lopass channel
 						hi += filterHi[j] * srcbuffer[arg];//hipass channel
 					}
-					dstLo[(pitch*(i/2))+k] = lo;
-					dstHi[(pitch*(i/2))+k] = hi;
+					dstLo[k] = lo;
+					dstHi[k] = hi;
 				}
 			}
-		}
 	}
 
 	template<typename T> void wavelet_level<T>::SynthesisFilterSubsampHorizontal (T * RESTRICT srcLo, T * RESTRICT srcHi, T * RESTRICT dst, float * RESTRICT filterLo, float * RESTRICT filterHi, int taps, int offset, int dstlen) {
@@ -325,7 +313,7 @@ namespace rtengine {
 						tot += ((filterLo[j] * srcLo[k*m_w2+arg] + filterHi[j] * srcHi[k*m_w2+arg]));
 					}
 				}
-				dst[k*m_w+(i-m_pad)] = 2.f * tot;
+				dst[k*m_w+(i-m_pad)] = tot;
 			}
 		}
 	}
@@ -353,7 +341,7 @@ namespace rtengine {
 					for (int j=begin, l=0; j<taps; j+=2, l+=skip) {
 						tot += ((filterLo[j] * srcLo[(i_src-l)*pitch+k] + filterHi[j] * srcHi[(i_src-l)*pitch+k]));
 					}
-					dst[pitch*(i-m_pad)+k] = 2.f * tot;
+					dst[pitch*(i-m_pad)+k] = 4.f * tot;
 				}
 			} else {//boundary
 				for (int k=0; k<pitch; k++) {
@@ -362,7 +350,7 @@ namespace rtengine {
 						int arg = max(0,min((i_src-l),srclen-1))*pitch+k;//clamped BC's
 						tot += ((filterLo[j] * srcLo[arg] + filterHi[j] * srcHi[arg]));
 					}
-					dst[pitch*(i-m_pad)+k] = 2.f * tot;
+					dst[pitch*(i-m_pad)+k] = 4.f * tot;
 				}
 			}
 		}
@@ -370,22 +358,22 @@ namespace rtengine {
 
 	template<typename T> template<typename E> void wavelet_level<T>::decompose_level(E *src, float *filterV, float *filterH, int taps, int offset) { 
 
-		T *tmpLo = new T[m_w*m_h2];
-		T *tmpHi = new T[m_w*m_h2];
-
+		T tmpLo[m_w] ALIGNED64;
+		T tmpHi[m_w] ALIGNED64;
 		/* filter along rows and columns */
 		if(subsamp_out) {
-			AnalysisFilterSubsampVertical (src, tmpLo, tmpHi, filterV, filterV+taps, taps, offset, m_w/*output_pitch*/, m_h/*srclen*/);
-			AnalysisFilterSubsampHorizontal (tmpLo, wavcoeffs[0], wavcoeffs[1], filterH, filterH+taps, taps, offset, m_h2/*output_pitch*/, m_w/*srclen*/, m_w2);
-			AnalysisFilterSubsampHorizontal (tmpHi, wavcoeffs[2], wavcoeffs[3], filterH, filterH+taps, taps, offset, m_h2/*output_pitch*/, m_w/*srclen*/, m_w2);
+			for(int row=0;row<m_h;row+=2) {
+				AnalysisFilterSubsampVertical (src, tmpLo, tmpHi, filterV, filterV+taps, taps, offset, m_w/*output_pitch*/, m_h/*srclen*/, row);
+				AnalysisFilterSubsampHorizontal (tmpLo, wavcoeffs[0], wavcoeffs[1], filterH, filterH+taps, taps, offset, m_h2/*output_pitch*/, m_w/*srclen*/, m_w2, row/2);
+				AnalysisFilterSubsampHorizontal (tmpHi, wavcoeffs[2], wavcoeffs[3], filterH, filterH+taps, taps, offset, m_h2/*output_pitch*/, m_w/*srclen*/, m_w2, row/2);
+			}
 		} else {
-			AnalysisFilterHaarVertical (src, tmpLo, tmpHi, m_w, m_h);
-			AnalysisFilterHaarHorizontal (tmpLo, wavcoeffs[0], wavcoeffs[1], m_h, m_w);
-			AnalysisFilterHaarHorizontal (tmpHi, wavcoeffs[2], wavcoeffs[3], m_h, m_w);
+			for(int row=0;row<m_h;row++) {
+				AnalysisFilterHaarVertical (src, tmpLo, tmpHi, m_w, m_h, row);
+				AnalysisFilterHaarHorizontal (tmpLo, wavcoeffs[0], wavcoeffs[1], m_w, row);
+				AnalysisFilterHaarHorizontal (tmpHi, wavcoeffs[2], wavcoeffs[3], m_w, row);
+			}
 		}
-
-		delete[] tmpLo;
-		delete[] tmpHi;
 	}
 
 	template<typename T> template<typename E> void wavelet_level<T>::reconstruct_level(E* tmpLo, E* tmpHi, E *dst, float *filterV, float *filterH, int taps, int offset) { 
