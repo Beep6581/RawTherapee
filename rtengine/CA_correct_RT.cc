@@ -108,6 +108,14 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 #define TSH 64		// Half Tile size
 #define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
 
+	// Test for RGB cfa
+	for(int i=0;i<2;i++)
+		for(int j=0;j<2;j++)
+			if(FC(i,j) == 3) {
+				printf("CA correction supports only RGB Color filter arrays\n");
+				return;
+			}
+			
 	volatile double progress = 0.0;
 	if(plistener) plistener->setProgress (progress);
 
