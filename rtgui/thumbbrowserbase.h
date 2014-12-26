@@ -24,6 +24,7 @@
 #include <set>
 #include "options.h"
 #include "guiutils.h"
+#include "inspector.h"
 
 /*
  * Class handling the list of ThumbBrowserEntry objects and their position in it's allocated space
@@ -48,7 +49,7 @@ class ThumbBrowserBase  :  public Gtk::VBox {
             bool on_key_press_event (GdkEventKey* event);
             bool on_query_tooltip (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
             void setPosition (int x, int y);
-            
+
             void setDirty () { dirty = true; }
             bool isDirty  () { return dirty; }
     };
@@ -72,12 +73,20 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     
     int inW, inH;
 
+    Inspector *inspector;
+    bool isInspectorActive;
+
+
     void resizeThumbnailArea (int w, int h);
     void internalAreaResized (Gtk::Allocation& req);
     void buttonPressed (int x, int y, int button, GdkEventType type, int state, int clx, int cly, int clw, int clh);
     
   public:
 
+    void setInspector(Inspector* inspector) { this->inspector = inspector; }
+    Inspector* getInspector() { return inspector; }
+    void disableInspector();
+    void enableInspector();
     enum Arrangement {TB_Horizontal, TB_Vertical};
     void configScrollBars ();
     void scrollChanged ();
@@ -88,6 +97,8 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     void selectNext (int distance, bool enlarge);
     void selectFirst (bool enlarge);
     void selectLast (bool enlarge);
+
+    virtual bool isInTabMode() { return false; }
 
     eLocation getLocation() { return location; }
 

@@ -19,6 +19,7 @@
 
 #include "guiutils.h"
 #include "options.h"
+#include "../rtengine/rt_math.h"
 #include "../rtengine/utils.h"
 #include "../rtengine/safegtk.h"
 #include "rtimage.h"
@@ -540,12 +541,18 @@ void TextOrIcon::switchTo(TOITypes type) {
 	show_all();
 }
 
-BackBuffer::BackBuffer() {
-	x = y = w = h = 0;
-	dirty = true;
+BackBuffer::BackBuffer() : x(0), y(0), w(0), h(0), offset(0,0), dirty(true) {}
+
+void BackBuffer::setSrcOffset(int x, int y) {
+	// values will be clamped when used...
+	offset.x = x;
+	offset.y = y;
 }
 
-bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, int newY, int newW, int newH) {
+// Note: newW & newH must be > 0
+bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, int newY, int newW, int newH, bool updateBackBufferSize) {
+	assert(newW && newH);
+
 	bool newSize = w!=newW || h!=newH;
 
 	x = newX;
@@ -554,17 +561,31 @@ bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, in
 	h = newH;
 
 	// WARNING: we're assuming that the surface type won't change during all the execution time of RT. I guess it may be wrong when the user change the gfx card display settings!?
-	if (newSize && window) {
+	if (updateBackBufferSize && newSize && window) {
 		// allocate a new Surface
-		if (newW>0 && newH>0) {
-			surface = window->create_similar_surface(Cairo::CONTENT_COLOR, w, h);
-		}
-		else {
-			// at least one dimension is null, so we delete the Surface
-			surface.clear();
-			// and we reset all dimensions
-			x = y = w = h = 0;
-		}
+		surface.clear();  // ... don't know if this is necessary?
+		surface = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, w, h);
+		dirty = true;
+	}
+	return dirty;
+}
+
+// Note: newW & newH must be > 0
+bool BackBuffer::setDrawRectangle(Cairo::Format format, int newX, int newY, int newW, int newH, bool updateBackBufferSize) {
+	assert(!newW && !newH);
+
+	bool newSize = w!=newW || h!=newH;
+
+	x = newX;
+	y = newY;
+	w = newW;
+	h = newH;
+
+	// WARNING: we're assuming that the surface type won't change during all the execution time of RT. I guess it may be wrong when the user change the gfx card display settings!?
+	if (updateBackBufferSize && newSize) {
+		// allocate a new Surface
+		surface.clear();  // ... don't know if this is necessary?
+		surface = Cairo::ImageSurface::create(format, w, h);
 		dirty = true;
 	}
 	return dirty;
@@ -579,9 +600,13 @@ void BackBuffer::copySurface(Glib::RefPtr<Gdk::Window> window, GdkRectangle *rec
 		Cairo::RefPtr<Cairo::Context> crSrc = window->create_cairo_context();
 		Cairo::RefPtr<Cairo::Surface> destSurface = crSrc->get_target();
 
+		// compute the source offset
+		int offsetX = rtengine::LIM<int>(offset.x,0, surface->get_width());
+		int offsetY = rtengine::LIM<int>(offset.y,0, surface->get_height());
+
 		// now copy the off-screen Surface to the destination Surface
 		Cairo::RefPtr<Cairo::Context> crDest = Cairo::Context::create(destSurface);
-		crDest->set_source(surface, x, y);
+		crDest->set_source(surface, x-offsetX, y-offsetY);
 		crDest->set_line_width(0.);
 		if (rectangle)
 			crDest->rectangle(rectangle->x, rectangle->y, rectangle->width, rectangle->height);
@@ -596,9 +621,13 @@ void BackBuffer::copySurface(Glib::RefPtr<Gdk::Window> window, GdkRectangle *rec
  */
 void BackBuffer::copySurface(BackBuffer *destBackBuffer, GdkRectangle *rectangle) {
 	if (surface && destBackBuffer) {
+		// compute the source offset
+		int offsetX = rtengine::LIM<int>(offset.x,0, surface->get_width());
+		int offsetY = rtengine::LIM<int>(offset.y,0, surface->get_height());
+
 		// now copy the off-screen Surface to the destination Surface
 		Cairo::RefPtr<Cairo::Context> crDest = Cairo::Context::create(destBackBuffer->getSurface());
-		crDest->set_source(surface, x, y);
+		crDest->set_source(surface, x-offsetX, y-offsetY);
 		crDest->set_line_width(0.);
 		if (rectangle)
 			crDest->rectangle(rectangle->x, rectangle->y, rectangle->width, rectangle->height);
@@ -611,11 +640,15 @@ void BackBuffer::copySurface(BackBuffer *destBackBuffer, GdkRectangle *rectangle
 /*
  * Copy the BackBuffer to another Cairo::Surface
  */
-void BackBuffer::copySurface(Cairo::RefPtr<Cairo::Surface> destSurface, GdkRectangle *rectangle) {
+void BackBuffer::copySurface(Cairo::RefPtr<Cairo::ImageSurface> destSurface, GdkRectangle *rectangle) {
 	if (surface && destSurface) {
+		// compute the source offset
+		int offsetX = rtengine::LIM<int>(offset.x,0, surface->get_width());
+		int offsetY = rtengine::LIM<int>(offset.y,0, surface->get_height());
+
 		// now copy the off-screen Surface to the destination Surface
 		Cairo::RefPtr<Cairo::Context> crDest = Cairo::Context::create(destSurface);
-		crDest->set_source(surface, x, y);
+		crDest->set_source(surface, x-offsetX, y-offsetY);
 		crDest->set_line_width(0.);
 		if (rectangle)
 			crDest->rectangle(rectangle->x, rectangle->y, rectangle->width, rectangle->height);

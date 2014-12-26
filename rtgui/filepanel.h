@@ -44,11 +44,12 @@ class FilePanel : public Gtk::HPaned,
         RecentBrowser* recentBrowser;
        // FileCatalog* fileCatalog;   // filecatalog is the file browser with the button bar above it
 
+        Inspector* inspectorPanel;
         Gtk::VPaned* tpcPaned;
         BatchToolPanelCoordinator* tpc;
         History* history;
-		//FilterPanel* filterPanel;
-        RTWindow* parent;      
+        //FilterPanel* filterPanel;
+        RTWindow* parent;
         Gtk::Notebook* rightNotebook;
 
         struct pendingLoad {
@@ -56,12 +57,16 @@ class FilePanel : public Gtk::HPaned,
             ProgressConnector<rtengine::InitialImage*> *pc;
             Thumbnail *thm;
         };
-	MyMutex pendingLoadMutex;
+        MyMutex pendingLoadMutex;
         std::vector<struct pendingLoad*> pendingLoads;
 
         int error;
+
+        void on_NB_switch_page(GtkNotebookPage* page, guint page_num);
+
     public:
         FilePanel ();
+        ~FilePanel ();
 
         Gtk::Paned* placespaned;
         Gtk::HPaned* dirpaned;
@@ -80,10 +85,10 @@ class FilePanel : public Gtk::HPaned,
         void open (const Glib::ustring& d); // open a file or a directory
         void refreshEditedState (const std::set<Glib::ustring>& efiles) { fileCatalog->refreshEditedState (efiles); }
         void loadingThumbs(Glib::ustring str, double rate);
-        
-        // call this before closeing rt: it saves file browser relating things into options
+
+        // call this before closing RT: it saves file browser's related things into options
         void saveOptions ();
-        
+
         // interface fileselectionlistener
         bool fileSelected           (Thumbnail* thm);
         bool addBatchQueueJobs ( std::vector<BatchQueueEntry*> &entries );

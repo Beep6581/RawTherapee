@@ -80,9 +80,9 @@ namespace rtengine {
             int      getImageWidth  (const procparams::ProcParams& pparams, int rheight, float &ratio);
             void     getDimensions  (int& w, int& h, double& scaleFac);
             
-            static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate);
+            static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate, bool inspectorMode=false);
             static Thumbnail* loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, double wbEq, bool rotate);
-            static Thumbnail* loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq);
+            static Thumbnail* loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq, bool inspectorMode=false);
             static RawMetaDataLocation loadMetaDataFromRaw (const Glib::ustring& fname);
             
             void getCamWB     (double& temp, double& green);
@@ -104,6 +104,7 @@ namespace rtengine {
             bool readAEHistogram  (const Glib::ustring& fname);
             bool writeAEHistogram (const Glib::ustring& fname);
 
+            unsigned char* getImage8Data();  // accessor to the 8bit image if it is one, which should be the case for the "Inspector" mode.
 
             // Hombre: ... let's hope that proper template can make this cleaner
 

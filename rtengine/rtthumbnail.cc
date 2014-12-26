@@ -46,7 +46,7 @@ extern Options options;
 namespace rtengine {
 using namespace procparams;
 
-Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq) {
+Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq, bool inspectorMode) {
 
     StdImageSource imgSrc;
     if (imgSrc.load(fname)) {
@@ -73,60 +73,88 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     tpp->colorMatrix[1][1] = 1.0;
     tpp->colorMatrix[2][2] = 1.0;
 
-    if (fixwh==1) {
-        w = h * img->width / img->height;
-        tpp->scale = (double)img->height / h;
+    if (inspectorMode) {
+        // Special case, meaning that we want a full sized thumbnail image (e.g. for the Inspector feature)
+        w = img->width;
+        h = img->height;
+        tpp->scale = 1.;
     }
     else {
-        h = w * img->height / img->width;
-        tpp->scale = (double)img->width / w;
+        if (fixwh==1) {
+            w = h * img->width / img->height;
+            tpp->scale = (double)img->height / h;
+        }
+        else {
+            h = w * img->height / img->width;
+            tpp->scale = (double)img->width / w;
+        }
     }
-
     // bilinear interpolation
-    if (tpp->thumbImg) delete tpp->thumbImg; tpp->thumbImg = NULL;
-    tpp->thumbImg = resizeToSameType(w, h, TI_Bilinear, img);
-
-    // histogram computation
-    tpp->aeHistCompression = 3;
-    tpp->aeHistogram(65536>>tpp->aeHistCompression);
-
-    double avg_r = 0;
-    double avg_g = 0;
-    double avg_b = 0;
-    int n = 0;
-
-    if (img->getType() == rtengine::sImage8) {
-        Image8 *image = static_cast<Image8*>(img);
-        image->computeHistogramAutoWB(avg_r, avg_g, avg_b, n, tpp->aeHistogram, tpp->aeHistCompression);
+    if (tpp->thumbImg) {
+        delete tpp->thumbImg;
+        tpp->thumbImg = NULL;
     }
-    else if (img->getType() == sImage16) {
-        Image16 *image = static_cast<Image16*>(img);
-        image->computeHistogramAutoWB(avg_r, avg_g, avg_b, n, tpp->aeHistogram, tpp->aeHistCompression);
-    }
-    else if (img->getType() == sImagefloat) {
-        Imagefloat *image = static_cast<Imagefloat*>(img);
-        image->computeHistogramAutoWB(avg_r, avg_g, avg_b, n, tpp->aeHistogram, tpp->aeHistCompression);
+    if (inspectorMode) {
+        // we want an Image8
+        if (img->getType() == rtengine::sImage8) {
+            // copy the image
+            Image8 *srcImg = static_cast<Image8*>(img);
+            Image8 *thImg = new Image8 (w, h);
+            srcImg->copyData(thImg);
+            tpp->thumbImg = thImg;
+        }
+        else {
+            // copy the image with a conversion
+            tpp->thumbImg = resizeTo<Image8>(w, h, TI_Bilinear, img);
+        }
     }
     else {
-        printf("loadFromImage: Unsupported image type \"%s\"!\n", img->getType());
+        // we want the same image type than the source file
+        tpp->thumbImg = resizeToSameType(w, h, TI_Bilinear, img);
+
+        // histogram computation
+        tpp->aeHistCompression = 3;
+        tpp->aeHistogram(65536>>tpp->aeHistCompression);
+
+        double avg_r = 0;
+        double avg_g = 0;
+        double avg_b = 0;
+        int n = 0;
+
+        if (img->getType() == rtengine::sImage8) {
+            Image8 *image = static_cast<Image8*>(img);
+            image->computeHistogramAutoWB(avg_r, avg_g, avg_b, n, tpp->aeHistogram, tpp->aeHistCompression);
+        }
+        else if (img->getType() == sImage16) {
+            Image16 *image = static_cast<Image16*>(img);
+            image->computeHistogramAutoWB(avg_r, avg_g, avg_b, n, tpp->aeHistogram, tpp->aeHistCompression);
+        }
+        else if (img->getType() == sImagefloat) {
+            Imagefloat *image = static_cast<Imagefloat*>(img);
+            image->computeHistogramAutoWB(avg_r, avg_g, avg_b, n, tpp->aeHistogram, tpp->aeHistCompression);
+        }
+        else {
+            printf("loadFromImage: Unsupported image type \"%s\"!\n", img->getType());
+        }
+
+        if (n>0) {
+            ColorTemp cTemp;
+
+            tpp->redAWBMul   = avg_r/double(n);
+            tpp->greenAWBMul = avg_g/double(n);
+            tpp->blueAWBMul  = avg_b/double(n);
+            tpp->wbEqual = wbEq;
+
+            cTemp.mul2temp (tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->autoWBTemp, tpp->autoWBGreen);
+        }
+
+        tpp->init ();
     }
 
-    if (n>0) {
-        ColorTemp cTemp;
-
-        tpp->redAWBMul   = avg_r/double(n);
-        tpp->greenAWBMul = avg_g/double(n);
-        tpp->blueAWBMul  = avg_b/double(n);
-        tpp->wbEqual = wbEq;
-
-        cTemp.mul2temp (tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->autoWBTemp, tpp->autoWBGreen);
-    }
-
-    tpp->init ();
     return tpp;
 }
 
-Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate)
+Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate, bool inspectorMode)
 {
     RawImage *ri= new RawImage(fname);
     int r = ri->loadRaw(false,false);
@@ -188,18 +216,34 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     tpp->colorMatrix[1][1] = 1.0;
     tpp->colorMatrix[2][2] = 1.0;
 
-    if (fixwh==1) {
-        w = h * img->width / img->height;
-        tpp->scale = (double)img->height / h;
+    if (inspectorMode) {
+        // Special case, meaning that we want a full sized thumbnail image (e.g. for the Inspector feature)
+        w = img->width;
+        h = img->height;
+        tpp->scale = 1.;
     }
     else {
-        h = w * img->height / img->width;
-        tpp->scale = (double)img->width / w;
+        if (fixwh==1) {
+            w = h * img->width / img->height;
+            tpp->scale = (double)img->height / h;
+        }
+        else {
+            h = w * img->height / img->width;
+            tpp->scale = (double)img->width / w;
+        }
     }
 
-    if (tpp->thumbImg) delete tpp->thumbImg; tpp->thumbImg = NULL;
-    tpp->thumbImg = resizeTo<Image8>(w, h, TI_Nearest, img);
-    delete img;
+    if (tpp->thumbImg) {
+        delete tpp->thumbImg;
+        tpp->thumbImg = NULL;
+    }
+    if (inspectorMode) {
+        tpp->thumbImg = img;
+    }
+    else {
+        tpp->thumbImg = resizeTo<Image8>(w, h, TI_Nearest, img);
+        delete img;
+    }
 
     if (rotate && ri->get_rotateDegree() > 0) {
         std::string fname = ri->get_filename();
@@ -214,7 +258,9 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
         }
     }
 
-    tpp->init ();
+    if (!inspectorMode)
+        tpp->init ();
+
     delete ri;
 
     return tpp;
@@ -1613,5 +1659,15 @@ bool Thumbnail::writeAEHistogram (const Glib::ustring& fname) {
     }
     return false;
 }
+
+unsigned char* Thumbnail::getImage8Data() {
+    if (thumbImg && thumbImg->getType()==rtengine::sImage8) {
+        Image8* img8 = static_cast<Image8*>(thumbImg);
+        return img8->data;
+    }
+    return NULL;
+}
+
+
 
 }

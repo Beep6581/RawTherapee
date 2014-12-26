@@ -597,6 +597,7 @@ MAIN_TAB_EXPORT;Export Rapide
 MAIN_TAB_EXPOSURE;Exposition
 MAIN_TAB_EXPOSURE_TOOLTIP;Raccourci:<b>Alt-e</b>
 MAIN_TAB_FILTER; Filtrer 
+MAIN_TAB_INSPECT; Inspecter
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Métadonnées
 MAIN_TAB_METADATA_TOOLTIP;Raccourci:<b>Alt-m</b>
@@ -796,6 +797,9 @@ PREFERENCES_INTENT_RELATIVE;Colorimétrie relative
 PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Afficher vignette incluse dans fichier RAW si non édité
 PREFERENCES_LANGAUTODETECT;Utiliser les paramètres linguistiques de l'OS
+PREFERENCES_INSPECT_LABEL;Inspecter
+PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Nombre maxi de mémoire tampon
+PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Règle le nombre maximum d'images mis en cache lors de leur survol dans le Navigateur de Fichier ; les systèmes avec peu de mémoire RAM (2 Go) devraient garder cette valeur à 1 ou 2.
 PREFERENCES_MENUGROUPEXTPROGS;Groupe "Ouvrir avec"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Opérations sur les fichiers
 PREFERENCES_MENUGROUPLABEL;Label

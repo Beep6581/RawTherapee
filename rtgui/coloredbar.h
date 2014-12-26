@@ -39,7 +39,7 @@ class ColoredBar : public BackBuffer, public ColorCaller {
 		ColoredBar (eRTOrientation orient);
 
 		void expose(Glib::RefPtr<Gdk::Window> destWindow);
-		void expose(Cairo::RefPtr<Cairo::Surface> destSurface);
+		void expose(Cairo::RefPtr<Cairo::ImageSurface> destSurface);
 		void expose(BackBuffer *backBuffer);
 
 		bool canGetColors();

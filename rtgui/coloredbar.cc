@@ -26,9 +26,9 @@ ColoredBar::ColoredBar (eRTOrientation orient) {
 }
 
 /*
- * Redraw the bar to a Cairo::Surface
+ * Redraw the bar to a Cairo::ImageSurface
  */
-void ColoredBar::expose(Cairo::RefPtr<Cairo::Surface> destSurface) {
+void ColoredBar::expose(Cairo::RefPtr<Cairo::ImageSurface> destSurface) {
 	// look out if the Surface has to be redrawn
 	if (!surfaceCreated() || !destSurface)
 		return;
