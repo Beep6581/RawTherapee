@@ -219,7 +219,8 @@ class Options {
 
     // Performance options
     int rgbDenoiseThreadLimit; // maximum number of threads for the denoising tool ; 0 = use the maximum available
-	int clutCacheSize;
+    int maxInspectorBuffers;   // maximum number of buffers (i.e. images) for the Inspector feature
+    int clutCacheSize;
     bool filledProfile;  // Used as reminder for the ProfilePanel "mode"
 
     bool menuGroupRank;

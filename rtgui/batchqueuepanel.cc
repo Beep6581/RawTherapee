@@ -179,12 +179,15 @@ BatchQueuePanel::BatchQueuePanel () {
     }
 }
 
-
-void BatchQueuePanel::updateTab (int qsize)
+// it is expected to have a non null forceOrientation value on Preferences update only. In this case, qsize is ingored and computed automatically
+void BatchQueuePanel::updateTab (int qsize, int forceOrientation)
 {
     Gtk::Notebook *nb =(Gtk::Notebook *)(this->get_parent());
 
-    if (options.mainNBVertical) {
+    if (forceOrientation > 0)
+        qsize = batchQueue->getEntries().size();
+
+    if ((forceOrientation==0 && options.mainNBVertical) || (forceOrientation==2)) {
         Gtk::VBox* vbb = Gtk::manage (new Gtk::VBox ());
         Gtk::Label* l;
 

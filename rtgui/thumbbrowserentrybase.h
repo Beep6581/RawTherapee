@@ -127,6 +127,7 @@ protected:
     int getY                () const { return ofsY+starty; }
 
     bool inside             (int x, int y);
+    void getPosInImgSpace   (int x, int y, rtengine::Coord2D &coord);
     bool insideWindow       (int x, int y, int w, int h);
     void setPosition        (int x, int y, int w, int h);
     void setOffset (int x, int y);

@@ -75,9 +75,9 @@ RTWindow::RTWindow ()
 :mainNB(NULL)
 ,bpanel(NULL)
 ,splash(NULL)
+,btn_fullscreen(NULL)
 ,epanel(NULL)
 ,fpanel(NULL)
-,btn_fullscreen(NULL)
 {
 
     cacheMgr->init ();
@@ -284,6 +284,8 @@ RTWindow::~RTWindow()
 #if defined(__APPLE__)
     g_object_unref (osxApp);
 #endif
+    if (fpanel)
+        delete fpanel;
 }
 
 void RTWindow::findVerNumbers(int* numbers, Glib::ustring versionStr) {
@@ -705,6 +707,7 @@ void RTWindow::MoveFileBrowserToEditor()
     {
         FileCatalog *fCatalog = fpanel->fileCatalog;
         fpanel->ribbonPane->remove(*fCatalog);
+        fCatalog->disableInspector();
         epanel->catalogPane->add(*fCatalog);
         epanel->showTopPanel(options.editorFilmStripOpened);
         fCatalog->enableTabMode(true);

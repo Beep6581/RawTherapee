@@ -360,11 +360,12 @@ void Options::setDefaults () {
 
     rgbDenoiseThreadLimit = 0;
 #if defined( _OPENMP ) && defined( __x86_64__ )
-	clutCacheSize = omp_get_num_procs();
+    clutCacheSize = omp_get_num_procs();
 #else
-	clutCacheSize = 1;
+    clutCacheSize = 1;
 #endif
-   filledProfile = false;
+    filledProfile = false;
+    maxInspectorBuffers = 2; //  a rather conservative value for low specced systems...
 
     showProfileSelector = true;
     FileBrowserToolbarSingleRow = false;
@@ -735,17 +736,18 @@ if (keyFile.has_group ("Clipping Indication")) {
 }
 
 if (keyFile.has_group ("Performance")) {
-    if (keyFile.has_key ("Performance", "RgbDenoiseThreadLimit")) rgbDenoiseThreadLimit = keyFile.get_integer ("Performance", "RgbDenoiseThreadLimit");
-    if( keyFile.has_key ("Performance", "NRauto"))    rtSettings.nrauto          = keyFile.get_double("Performance", "NRauto");
-    if( keyFile.has_key ("Performance", "NRautomax"))    rtSettings.nrautomax          = keyFile.get_double("Performance", "NRautomax");
-    if( keyFile.has_key ("Performance", "NRhigh"))    rtSettings.nrhigh          = keyFile.get_double("Performance", "NRhigh");
-    if( keyFile.has_key ("Performance", "NRWavlevel"))    rtSettings.nrwavlevel          = keyFile.get_integer("Performance", "NRWavlevel");
-    if (keyFile.has_key ("Performance", "LevNR"))        rtSettings.leveldnv    = keyFile.get_integer("Performance", "LevNR");
-    if (keyFile.has_key ("Performance", "LevNRTI"))        rtSettings.leveldnti    = keyFile.get_integer("Performance", "LevNRTI");
-    if (keyFile.has_key ("Performance", "LevNRAUT"))        rtSettings.leveldnaut    = keyFile.get_integer("Performance", "LevNRAUT");
-    if (keyFile.has_key ("Performance", "LevNRLISS"))        rtSettings.leveldnliss    = keyFile.get_integer("Performance", "LevNRLISS");
-    if (keyFile.has_key ("Performance", "SIMPLNRAUT"))        rtSettings.leveldnautsimpl    = keyFile.get_integer("Performance", "SIMPLNRAUT");
-    if (keyFile.has_key ("Performance", "ClutCacheSize")) clutCacheSize = keyFile.get_integer ("Performance", "ClutCacheSize");
+    if (keyFile.has_key ("Performance", "RgbDenoiseThreadLimit")) rgbDenoiseThreadLimit      = keyFile.get_integer ("Performance", "RgbDenoiseThreadLimit");
+    if( keyFile.has_key ("Performance", "NRauto"))                rtSettings.nrauto          = keyFile.get_double  ("Performance", "NRauto");
+    if( keyFile.has_key ("Performance", "NRautomax"))             rtSettings.nrautomax       = keyFile.get_double  ("Performance", "NRautomax");
+    if( keyFile.has_key ("Performance", "NRhigh"))                rtSettings.nrhigh          = keyFile.get_double  ("Performance", "NRhigh");
+    if( keyFile.has_key ("Performance", "NRWavlevel"))            rtSettings.nrwavlevel      = keyFile.get_integer ("Performance", "NRWavlevel");
+    if (keyFile.has_key ("Performance", "LevNR"))                 rtSettings.leveldnv        = keyFile.get_integer ("Performance", "LevNR");
+    if (keyFile.has_key ("Performance", "LevNRTI"))               rtSettings.leveldnti       = keyFile.get_integer ("Performance", "LevNRTI");
+    if (keyFile.has_key ("Performance", "LevNRAUT"))              rtSettings.leveldnaut      = keyFile.get_integer ("Performance", "LevNRAUT");
+    if (keyFile.has_key ("Performance", "LevNRLISS"))             rtSettings.leveldnliss     = keyFile.get_integer ("Performance", "LevNRLISS");
+    if (keyFile.has_key ("Performance", "SIMPLNRAUT"))            rtSettings.leveldnautsimpl = keyFile.get_integer ("Performance", "SIMPLNRAUT");
+    if (keyFile.has_key ("Performance", "ClutCacheSize"))         clutCacheSize              = keyFile.get_integer ("Performance", "ClutCacheSize");
+    if (keyFile.has_key ("Performance", "MaxInspectorBuffers"))   maxInspectorBuffers        = keyFile.get_integer ("Performance", "MaxInspectorBuffers");
 }
 
 if (keyFile.has_group ("GUI")) { 
@@ -811,12 +813,12 @@ if (keyFile.has_group ("Color Management")) {
 
     if (keyFile.has_key ("Color Management", "Intent"))         rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");
     if (keyFile.has_key ("Color Management", "CRI"))            rtSettings.CRI_color            = keyFile.get_integer("Color Management", "CRI");
-    if (keyFile.has_key ("Color Management", "DenoiseLabgamma"))rtSettings.denoiselabgamma       = keyFile.get_integer("Color Management", "DenoiseLabgamma");
+    if (keyFile.has_key ("Color Management", "DenoiseLabgamma"))rtSettings.denoiselabgamma      = keyFile.get_integer("Color Management", "DenoiseLabgamma");
     if (keyFile.has_key ("Color Management", "view"))           rtSettings.viewingdevice        = keyFile.get_integer("Color Management", "view");
     if (keyFile.has_key ("Color Management", "grey"))           rtSettings.viewingdevicegrey    = keyFile.get_integer("Color Management", "grey");
-    if (keyFile.has_key ("Color Management", "greySc"))           rtSettings.viewinggreySc    = keyFile.get_integer("Color Management", "greySc");
+    if (keyFile.has_key ("Color Management", "greySc"))         rtSettings.viewinggreySc        = keyFile.get_integer("Color Management", "greySc");
     if (keyFile.has_key ("Color Management", "CBDLArtif"))      rtSettings.artifact_cbdl        = keyFile.get_double("Color Management", "CBDLArtif");
-    if (keyFile.has_key ("Color Management", "CBDLlevel0"))     rtSettings.level0_cbdl        = keyFile.get_double("Color Management", "CBDLlevel0");
+    if (keyFile.has_key ("Color Management", "CBDLlevel0"))     rtSettings.level0_cbdl          = keyFile.get_double("Color Management", "CBDLlevel0");
     if (keyFile.has_key ("Color Management", "CBDLlevel123"))   rtSettings.level123_cbdl        = keyFile.get_double("Color Management", "CBDLlevel123");
  //   if (keyFile.has_key ("Color Management", "Colortoningab"))  rtSettings.colortoningab            = keyFile.get_double("Color Management", "Colortoningab");
  //   if (keyFile.has_key ("Color Management", "Decaction"))   rtSettings.decaction        = keyFile.get_double("Color Management", "Decaction");
@@ -1021,13 +1023,14 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_double  ("Performance", "NRauto", rtSettings.nrauto);
     keyFile.set_double  ("Performance", "NRautomax", rtSettings.nrautomax);
     keyFile.set_double  ("Performance", "NRhigh", rtSettings.nrhigh);
-    keyFile.set_integer  ("Performance", "NRWavlevel", rtSettings.nrwavlevel);
-    keyFile.set_integer ("Performance", "LevNR", rtSettings.leveldnv);	
-    keyFile.set_integer ("Performance", "LevNRTI", rtSettings.leveldnti);	
-    keyFile.set_integer ("Performance", "LevNRAUT", rtSettings.leveldnaut);	
-    keyFile.set_integer ("Performance", "LevNRLISS", rtSettings.leveldnliss);	
-    keyFile.set_integer ("Performance", "SIMPLNRAUT", rtSettings.leveldnautsimpl);	
+    keyFile.set_integer ("Performance", "NRWavlevel", rtSettings.nrwavlevel);
+    keyFile.set_integer ("Performance", "LevNR", rtSettings.leveldnv);
+    keyFile.set_integer ("Performance", "LevNRTI", rtSettings.leveldnti);
+    keyFile.set_integer ("Performance", "LevNRAUT", rtSettings.leveldnaut);
+    keyFile.set_integer ("Performance", "LevNRLISS", rtSettings.leveldnliss);
+    keyFile.set_integer ("Performance", "SIMPLNRAUT", rtSettings.leveldnautsimpl);
     keyFile.set_integer ("Performance", "ClutCacheSize", clutCacheSize);
+    keyFile.set_integer ("Performance", "MaxInspectorBuffers", maxInspectorBuffers);
 
     keyFile.set_string  ("Output", "Format", saveFormat.format);
     keyFile.set_integer ("Output", "JpegQuality", saveFormat.jpegQuality);
@@ -1128,8 +1131,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Color Management", "RGBcurvesLumamode_Gamut", rtSettings.rgbcurveslumamode_gamut);
     keyFile.set_integer ("Color Management", "Intent", rtSettings.colorimetricIntent);
     keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);	
-    keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);	
-    keyFile.set_integer ("Color Management", "greySc", rtSettings.viewinggreySc);	
+    keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);
+    keyFile.set_integer ("Color Management", "greySc", rtSettings.viewinggreySc);
 	
     keyFile.set_string  ("Color Management", "AdobeRGB", rtSettings.adobe);
     keyFile.set_string  ("Color Management", "ProPhoto", rtSettings.prophoto);

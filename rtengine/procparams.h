@@ -211,6 +211,10 @@ class ToneCurveParams {
         int         hlcompr;        // Highlight Recovery's compression
         int         hlcomprthresh;  // Highlight Recovery's threshold
 
+        ToneCurveParams () {
+            setDefaults();
+        }
+        void setDefaults();
         static bool HLReconstructionNecessary(LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw);
 };
 
@@ -301,7 +305,7 @@ class ColorToningParams {
         bool lumamode;
 
         ColorToningParams ();
-        void setDefault();  // SHOULD BE GENERALIZED TO ALL CLASSES!
+        void setDefaults();  // SHOULD BE GENERALIZED TO ALL CLASSES!
         /// @brief Transform the mixer values to their curve equivalences
         void mixerToCurve(std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const;
         /// @brief Specifically transform the sliders values to their curve equivalences
@@ -568,7 +572,7 @@ class DirPyrDenoiseParams {
         int  passes;
 		
         DirPyrDenoiseParams ();
-        void setDefault();  // SHOULD BE GENERALIZED TO ALL CLASSES!
+        void setDefaults();  // SHOULD BE GENERALIZED TO ALL CLASSES!
         void getCurves(NoiseCurve &lCurve, NoiseCurve &cCurve) const;
 
         static void getDefaultNoisCurve(std::vector<double> &curve);
@@ -631,6 +635,11 @@ class CoarseTransformParams {
         int     rotate;
         bool    hflip;
         bool    vflip;
+
+        CoarseTransformParams() {
+           setDefaults();
+        }
+        void setDefaults();
 };
 
 /**
@@ -666,6 +675,11 @@ class LensProfParams {
 public:
     Glib::ustring lcpFile;
     bool useDist, useVign, useCA;
+
+    LensProfParams() {
+        setDefaults();
+    }
+    void setDefaults();
 };
 
 /**
@@ -818,6 +832,11 @@ class ColorManagementParams {
         double gampos;
         double slpos;
         bool freegamma;
+
+        ColorManagementParams() {
+            setDefaults();
+        }
+        void setDefaults();
 };
 
 /**
@@ -956,6 +975,11 @@ class RAWParams {
         bool hotPixelFilter;
         bool deadPixelFilter;
         int hotdeadpix_thresh;
+
+        RAWParams() {
+            setDefaults();
+        }
+        void setDefaults();
 };
 
 /**

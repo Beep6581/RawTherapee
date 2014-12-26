@@ -23,6 +23,7 @@
 #include "guiutils.h"
 #include "threadutils.h"
 #include "../rtengine/safegtk.h"
+#include "inspector.h"
 
 #include <cstring>
 
@@ -34,7 +35,7 @@ Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::recentlySavedIcon;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::enqueuedIcon;
 
 FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname) 
-    : ThumbBrowserEntryBase (fname), iatlistener(NULL), cropgl(NULL), state(SNormal) {
+    : ThumbBrowserEntryBase (fname), wasInside(false), iatlistener(NULL), cropgl(NULL), state(SNormal) {
     thumbnail=thm;
 
     feih = new FileBrowserEntryIdleHelper;
@@ -260,6 +261,25 @@ bool FileBrowserEntry::motionNotify (int x, int y) {
     
     int ix = x - startx - ofsX;
     int iy = y - starty - ofsY;
+
+    Inspector* inspector = parent->getInspector();
+    if (inspector && inspector->isActive() && !parent->isInTabMode()) {
+       rtengine::Coord2D coord(-1.,-1.);
+       getPosInImgSpace(x, y, coord);
+       if (coord.x != -1.) {
+           if (!wasInside) {
+               inspector->switchImage(filename);
+           }
+           wasInside = true;
+           inspector->mouseMove(coord, 0);
+        }
+        else {
+            if (wasInside) {
+                wasInside = false;
+                rtengine::Coord2D coord(-1,-1);
+            }
+        }
+    }
 
     if (inside (x,y))
         updateCursor (ix, iy);

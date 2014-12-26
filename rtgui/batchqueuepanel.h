@@ -69,7 +69,7 @@ class BatchQueuePanel : public Gtk::VBox,
         void pathFolderChanged ();
         void pathFolderButtonPressed ();
         void formatChanged (Glib::ustring f);
-        void updateTab (int qsize);
+        void updateTab (int qsize, int forceOrientation=0);  // forceOrientation=0: base on options / 1: horizontal / 2: vertical
         
         bool handleShortcutKey (GdkEventKey* event);
 };

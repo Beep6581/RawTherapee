@@ -265,29 +265,34 @@ class BackBuffer {
 
 protected:
 	int x, y, w, h;  // Rectangle where the colored bar has to be drawn
-	Cairo::RefPtr<Cairo::Surface> surface;
+	Point<int> offset;  // Offset of the source region to draw, relative to the top left corner
+	Cairo::RefPtr<Cairo::ImageSurface> surface;
 	bool dirty;  // mean that the Surface has to be (re)allocated
 
 public:
 	BackBuffer();
 
 	// set the destination drawing rectangle; return true if the dimensions are different
-	bool setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, int newY, int newW, int newH);
+	// Note: newW & newH must be > 0
+	bool setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, int newY, int newW, int newH, bool updateBackBufferSize=true);
+	bool setDrawRectangle(Cairo::Format format, int newX, int newY, int newW, int newH, bool updateBackBufferSize=true);
+	void setSrcOffset(int x, int y);
 
 	void copySurface(Glib::RefPtr<Gdk::Window> window, GdkRectangle *rectangle=NULL);
 	void copySurface(BackBuffer *destBackBuffer, GdkRectangle *rectangle=NULL);
-	void copySurface(Cairo::RefPtr<Cairo::Surface> destSurface, GdkRectangle *rectangle=NULL);
+	void copySurface(Cairo::RefPtr<Cairo::ImageSurface> destSurface, GdkRectangle *rectangle=NULL);
 
 	void setDirty(bool isDirty) { dirty = isDirty; if (!dirty && !surface) dirty = true; }
 	bool isDirty() { return dirty; }
 	// you have to check if the surface is created thanks to surfaceCreated before starting to draw on it
 	bool surfaceCreated() { return surface; }
-	Cairo::RefPtr<Cairo::Surface> getSurface() { return surface; }
-	void deleteSurface() { surface.clear(); dirty=true; }
+	Cairo::RefPtr<Cairo::ImageSurface> getSurface() { return surface; }
+	void setSurface(Cairo::RefPtr<Cairo::ImageSurface> surf) { surface = surf; }
+	void deleteSurface() { if (surface) surface.clear(); dirty=true; }
 	// will let you get a Cairo::Context for Cairo drawing operations
 	Cairo::RefPtr<Cairo::Context> getContext() { return Cairo::Context::create(surface); }
-	int getWidth() { return w; }
-	int getHeight() { return h; }
+	int getWidth() { return surface ? surface->get_width() : 0; }
+	int getHeight() { return surface ? surface->get_height() : 0; }
 };
 
 

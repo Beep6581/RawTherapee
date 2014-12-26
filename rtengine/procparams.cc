@@ -112,7 +112,7 @@ void CropParams::mapToResized(int resizedWidth, int resizedHeight, int scale, in
 }
 
 ColorToningParams::ColorToningParams () : hlColSat(60, 80, false), shadowsColSat(80, 208, false) {
-    setDefault();
+    setDefaults();
 }
 
 void ColorToningParams::getDefaultColorCurve(std::vector<double> &curve) {
@@ -158,7 +158,7 @@ void ColorToningParams::getDefaultCL2Curve(std::vector<double> &curve) {
         curve.at(i) = v[i-1];
 }
 
-void ColorToningParams::setDefault() {
+void ColorToningParams::setDefaults() {
     enabled = false;
     autosat=true;
     method = "Lab";
@@ -416,7 +416,7 @@ void ColorToningParams::getCurves(ColorGradientCurve &colorCurveLUT, OpacityCurv
 
 
 DirPyrDenoiseParams::DirPyrDenoiseParams () {
-    setDefault (); 
+    setDefaults ();
 }
 
 void DirPyrDenoiseParams::getDefaultNoisCurve(std::vector<double> &curve) {
@@ -433,7 +433,7 @@ void DirPyrDenoiseParams::getDefaultCCCurve(std::vector<double> &curve) {
   //                 0.60, 0.05,0.35,0.35};
     double v[8]= { 0.05, 0.50,0.35,0.35,
                    0.35, 0.05,0.35,0.35};
-				   
+
     curve.resize(9);
     curve.at(0 ) = double(FCT_MinMaxCPoints);
     for (size_t i=1; i<curve.size(); ++i)
@@ -441,38 +441,119 @@ void DirPyrDenoiseParams::getDefaultCCCurve(std::vector<double> &curve) {
 }
 
 
-void DirPyrDenoiseParams::setDefault() {
+void DirPyrDenoiseParams::setDefaults() {
 
-		getDefaultNoisCurve(lcurve);
-		getDefaultCCCurve(cccurve);
-		
-		enabled    	  	 = false;
-		enhance      	 = false;
-		median      	 = false;
-		autochroma     	 = false;
-		luma         	 = 0;
-		passes        	 = 1;
-		dmethod      	 = "Lab";
-		Lmethod      	 = "CUR";
-		Cmethod      	 = "MAN";
-		C2method      	 = "AUTO";
-		smethod      	 = "shal";
-		medmethod     	 = "soft";
-		methodmed      	 = "none";
-		rgbmethod     	 = "soft";
-		Ldetail    		 = 50;
-		chroma     		 = 15;
-		redchro    		 = 0;
-		bluechro    	 = 0;
-		gamma      		 = 1.7;
+    getDefaultNoisCurve(lcurve);
+    getDefaultCCCurve(cccurve);
+
+    enabled = false;
+    enhance = false;
+    median = false;
+    autochroma = false;
+    luma = 0;
+    passes = 1;
+    dmethod = "Lab";
+    Lmethod = "CUR";
+    Cmethod = "MAN";
+    C2method = "AUTO";
+    smethod = "shal";
+    medmethod = "soft";
+    methodmed = "none";
+    rgbmethod = "soft";
+    Ldetail = 50;
+    chroma = 15;
+    redchro = 0;
+    bluechro = 0;
+    gamma = 1.7;
 }
 
 void DirPyrDenoiseParams::getCurves(NoiseCurve &lCurve, NoiseCurve &cCurve) const {
-        lCurve.Set(this->lcurve);
-        cCurve.Set(this->cccurve);
+    lCurve.Set(this->lcurve);
+    cCurve.Set(this->cccurve);
 }
 
+void ToneCurveParams::setDefaults() {
+    autoexp       = false;
+    clip          = 0.02;
+    expcomp       = 0;
+    brightness    = 0;
+    contrast      = 0;
+    saturation    = 0;
+    black         = 0;
+    hlcompr       = 0;
+    hlcomprthresh = 33;
+    shcompr       = 50;
+    curve.clear ();
+    curve.push_back(DCT_Linear);
+    curve2.clear ();
+    curve2.push_back(DCT_Linear);
+    curveMode     = ToneCurveParams::TC_MODE_STD;
+    curveMode2    = ToneCurveParams::TC_MODE_STD;
+    hrenabled = false;
+    method  = "Blend";
+}
 
+void LensProfParams::setDefaults() {
+    lcpFile="";
+    useDist=useVign=true;
+    useCA=false;
+}
+
+void CoarseTransformParams::setDefaults() {
+    rotate = 0;
+    hflip = false;
+    vflip = false;
+}
+
+void RAWParams::setDefaults() {
+    bayersensor.method = RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze];
+    bayersensor.ccSteps = 0;
+    bayersensor.dcb_iterations = 2;
+    bayersensor.dcb_enhance = false;
+    //bayersensor.all_enhance = false;
+    bayersensor.lmmse_iterations = 2;
+    bayersensor.black0 = 0.0;
+    bayersensor.black1 = 0.0;
+    bayersensor.black2 = 0.0;
+    bayersensor.black3 = 0.0;
+    bayersensor.twogreen = true;
+    bayersensor.linenoise = 0;
+    bayersensor.greenthresh = 0;
+
+    xtranssensor.method = RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::threePass];
+    xtranssensor.ccSteps = 0;
+    xtranssensor.blackred = 0.0;
+    xtranssensor.blackgreen = 0.0;
+    xtranssensor.blackblue = 0.0;
+
+    expos=1.0;
+    preser=0.0;
+    df_autoselect = false;
+    ff_AutoSelect = false;
+    ff_BlurRadius = 32;
+    ff_BlurType = RAWParams::ff_BlurTypestring[RAWParams::area_ff];
+    ff_AutoClipControl = false;
+    ff_clipControl = 0;
+    cared = 0;
+    cablue = 0;
+    ca_autocorrect = false;
+    hotPixelFilter = false;
+    deadPixelFilter = false;
+    hotdeadpix_thresh = 40;
+}
+
+void ColorManagementParams::setDefaults() {
+    input   = "(cameraICC)";
+    blendCMSMatrix = false;
+    toneCurve = false;
+    dcpIlluminant = 0;
+    working = "ProPhoto";
+    output  = "RT_sRGB";
+    gamma  = "default";
+    gampos =2.22;
+    slpos=4.5;
+    freegamma = false;
+}
 
 ProcParams::ProcParams () { 
 
@@ -501,30 +582,13 @@ void ProcParams::destroy (ProcParams* pp) {
 
 void ProcParams::setDefaults () {
 
-    toneCurve.autoexp       = false;
-    toneCurve.clip          = 0.02;
-    toneCurve.expcomp       = 0;
-    toneCurve.brightness    = 0;
-    toneCurve.contrast      = 0;
-    toneCurve.saturation    = 0;
-    toneCurve.black         = 0;
-    toneCurve.hlcompr       = 0;
-    toneCurve.hlcomprthresh = 33;
-    toneCurve.shcompr       = 50;
-    toneCurve.curve.clear ();
-    toneCurve.curve.push_back(DCT_Linear);
-    toneCurve.curve2.clear ();
-    toneCurve.curve2.push_back(DCT_Linear);
-    toneCurve.curveMode     = ToneCurveParams::TC_MODE_STD;
-    toneCurve.curveMode2    = ToneCurveParams::TC_MODE_STD;
-    toneCurve.hrenabled = false;
-    toneCurve.method  = "Blend";
+    toneCurve.setDefaults();
+
     labCurve.brightness      = 0;
     labCurve.contrast        = 0;
     labCurve.chromaticity    = 0;
     labCurve.avoidcolorshift = false;
     labCurve.lcredsk = true;
-
     labCurve.rstprotection   = 0;
     labCurve.lcurve.clear ();
     labCurve.lcurve.push_back(DCT_Linear);
@@ -554,7 +618,7 @@ void ProcParams::setDefaults () {
     rgbCurves.bcurve.clear ();
     rgbCurves.bcurve.push_back(DCT_Linear);
 
-    colorToning.setDefault();
+    colorToning.setDefaults();
 
     sharpenEdge.enabled         = false;
     sharpenEdge.passes          = 2;
@@ -662,26 +726,9 @@ void ProcParams::setDefaults () {
     defringe.huecurve.at(22)    = 0.;
     defringe.huecurve.at(23)    = 0.35;
     defringe.huecurve.at(24)    = 0.35;
-/*
-    dirpyrDenoise.enabled       = false;
-    dirpyrDenoise.enhance       = false;
- //   dirpyrDenoise.perform       = false;
-    dirpyrDenoise.median       = true;
-	dirpyrDenoise.luma          = 0;
-    dirpyrDenoise.lcurve.clear ();
-    dirpyrDenoise.lcurve.push_back(DCT_Linear);
-    dirpyrDenoise.Ldetail       = 50;
-    dirpyrDenoise.chroma        = 15;
-    dirpyrDenoise.redchro       = 0;
-    dirpyrDenoise.bluechro      = 0;
-    dirpyrDenoise.gamma         = 1.7;
-    dirpyrDenoise.passes         = 1;
-    dirpyrDenoise.dmethod       = "RGB";
-    dirpyrDenoise.smethod       = "shal";
-    dirpyrDenoise.medmethod       = "soft";
-    dirpyrDenoise.methodmed       = "none";
-    dirpyrDenoise.rgbmethod       = "soft";
-*/
+
+    dirpyrDenoise.setDefaults();
+
     epd.enabled = false;
     epd.strength = 0.25;
     epd.edgeStopping = 1.4;
@@ -707,9 +754,7 @@ void ProcParams::setDefaults () {
     crop.orientation= "Landscape";
     crop.guide      = "Rule of thirds";
     
-    coarse.rotate   = 0;
-    coarse.hflip    = false;
-    coarse.vflip    = false;
+    coarse.setDefaults();
     
     commonTrans.autofill = true;
 
@@ -742,9 +787,7 @@ void ProcParams::setDefaults () {
     vignetting.centerX = 0;
     vignetting.centerY = 0;
 
-    lensProf.lcpFile="";
-    lensProf.useDist=lensProf.useVign=true;
-    lensProf.useCA=false;
+    lensProf.setDefaults();
 
     chmixer.red[0] = 100;
     chmixer.red[1] = 0;
@@ -791,16 +834,7 @@ void ProcParams::setDefaults () {
     resize.width = 900;
     resize.height = 900;
 
-    icm.input   = "(cameraICC)";
-    icm.blendCMSMatrix = false;
-    icm.toneCurve = false;
-    icm.dcpIlluminant = 0;
-    icm.working = "ProPhoto";
-    icm.output  = "RT_sRGB";
-    icm.gamma  = "default";
-    icm.gampos =2.22;
-    icm.slpos=4.5;
-    icm.freegamma = false;
+    icm.setDefaults();
   
     dirpyrequalizer.enabled = false;
     dirpyrequalizer.gamutlab = false;
@@ -822,40 +856,8 @@ void ProcParams::setDefaults () {
 
     filmSimulation.setDefaults();
 
-    raw.bayersensor.method = RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze];
-    raw.bayersensor.ccSteps = 0;
-    raw.bayersensor.dcb_iterations = 2;
-    raw.bayersensor.dcb_enhance = false;
-    //raw.bayersensor.all_enhance = false;
-    raw.bayersensor.lmmse_iterations = 2;
-    raw.bayersensor.black0 = 0.0;
-    raw.bayersensor.black1 = 0.0;
-    raw.bayersensor.black2 = 0.0;
-    raw.bayersensor.black3 = 0.0;
-    raw.bayersensor.twogreen = true;
-    raw.bayersensor.linenoise = 0;
-    raw.bayersensor.greenthresh = 0;
+    raw.setDefaults();
 
-    raw.xtranssensor.method = RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::threePass];
-    raw.xtranssensor.ccSteps = 0;
-    raw.xtranssensor.blackred = 0.0;
-    raw.xtranssensor.blackgreen = 0.0;
-    raw.xtranssensor.blackblue = 0.0;
-
-    raw.expos=1.0;
-    raw.preser=0.0;
-    raw.df_autoselect = false;
-    raw.ff_AutoSelect = false;
-    raw.ff_BlurRadius = 32;
-    raw.ff_BlurType = RAWParams::ff_BlurTypestring[RAWParams::area_ff];
-    raw.ff_AutoClipControl = false;
-    raw.ff_clipControl = 0;    
-    raw.cared = 0;
-    raw.cablue = 0;
-    raw.ca_autocorrect = false;
-    raw.hotPixelFilter = false;
-    raw.deadPixelFilter = false;
-    raw.hotdeadpix_thresh = 40;
     exif.clear ();
     iptc.clear ();
 

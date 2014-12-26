@@ -25,7 +25,7 @@
 using namespace std;
 
 ThumbBrowserBase::ThumbBrowserBase () 
-    : lastClicked(NULL), previewHeight(options.thumbSize), numOfCols(1) {
+    : lastClicked(NULL), previewHeight(options.thumbSize), numOfCols(1), inspector(NULL), isInspectorActive(false) {
     location = THLOC_FILEBROWSER;
     inW = -1; inH = -1;
 
@@ -546,6 +546,15 @@ void ThumbBrowserBase::arrangeFiles () {
     }
 }
 
+void ThumbBrowserBase::disableInspector() {
+    if (inspector)
+        inspector->setActive(false);
+}
+
+void ThumbBrowserBase::enableInspector() {
+    if (inspector)
+        inspector->setActive(true);
+}
 
 void ThumbBrowserBase::Internal::on_realize() {
   // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)

@@ -126,7 +126,7 @@ namespace rtengine {
         int maxindex = 65536;
         cachef(maxindex,LUT_CLIP_BELOW);
 
-        gamma2curve(maxindex,0);
+        gamma2curve(maxindex,LUT_CLIP_BELOW|LUT_CLIP_ABOVE);
 
         for (int i=0; i<maxindex; i++) {
             if (i>eps_max) {

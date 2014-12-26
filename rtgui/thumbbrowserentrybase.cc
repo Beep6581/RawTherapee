@@ -459,7 +459,20 @@ void ThumbBrowserEntryBase::setOffset (int x, int y) {
 bool ThumbBrowserEntryBase::inside (int x, int y) {
 
     return x>ofsX+startx && x<ofsX+startx+exp_width && y>ofsY+starty && y<ofsY+starty+exp_height; 
-} 
+}
+
+void ThumbBrowserEntryBase::getPosInImgSpace (int x, int y, rtengine::Coord2D &coord) {
+
+    coord.x = coord.y = -1.;
+    if (preview) {
+        x -= ofsX+startx;
+        y -= ofsY+starty;
+        if (x>=prex && x<=prex+prew && y>=prey && y<=prey+preh) {
+            coord.x = double(x-prex)/double(prew);
+            coord.y = double(y-prey)/double(preh);
+        }
+    }
+}
 
 bool ThumbBrowserEntryBase::insideWindow (int x, int y, int w, int h) {
 

@@ -493,14 +493,14 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
 }
 
 Gtk::Widget* Preferences::getPerformancePanel () {
-    Gtk::VBox* mvbsd = Gtk::manage( new Gtk::VBox () );
+    Gtk::VBox* vbdenoise = Gtk::manage( new Gtk::VBox () );
 
     Gtk::Frame* fdenoise = Gtk::manage(  new Gtk::Frame (M("PREFERENCES_NOISE")) );
 
-	Gtk::VBox* mainContainer = Gtk::manage( new Gtk::VBox () );
+    Gtk::VBox* mainContainer = Gtk::manage( new Gtk::VBox () );
     mainContainer->set_border_width (4);
-	
-	mainContainer->set_spacing(4);
+
+    mainContainer->set_spacing(4);
 
     Gtk::HBox* threadLimitHB = Gtk::manage( new Gtk::HBox () );
     threadLimitHB->set_border_width(4);
@@ -579,9 +579,13 @@ Gtk::Widget* Preferences::getPerformancePanel () {
     colon->attach (*dnwavlab, 0, 1, 5, 6, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colon->attach (*dnwavlev, 1, 2, 5, 6, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     colon->attach (*restartNeeded7, 2, 3, 5, 6, Gtk::FILL, Gtk::SHRINK, 2, 2);
-	
-    mainContainer->pack_start (*colon, Gtk::PACK_SHRINK, 4);
-	
+
+    vbdenoise->pack_start (*colon, Gtk::PACK_SHRINK, 4);
+
+    vbdenoise->pack_start(*threadLimitHB, Gtk::PACK_SHRINK, 4);
+    fdenoise->add (*vbdenoise);
+    mainContainer->pack_start (*fdenoise, Gtk::PACK_SHRINK, 4);
+
  /*   Gtk::Label* dntilab = Gtk::manage (new Gtk::Label (M("PREFERENCES_TINB")+":", Gtk::ALIGN_LEFT));
 
     dnti = Gtk::manage (new Gtk::ComboBoxText ());
@@ -591,14 +595,9 @@ Gtk::Widget* Preferences::getPerformancePanel () {
     colon2->attach (*dntilab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colon2->attach (*dnti, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     colon2->attach (*restartNeeded4, 2, 3, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    mainContainer->pack_start (*colon2, Gtk::PACK_SHRINK, 4);
+    vbdenoise->pack_start (*colon2, Gtk::PACK_SHRINK, 4);
 */
-	
-    mainContainer->pack_start(*threadLimitHB, Gtk::PACK_SHRINK, 4);
-    fdenoise->add (*mainContainer);
-    mvbsd->pack_start (*fdenoise, Gtk::PACK_SHRINK, 4);
-    
-    
+
     Gtk::Frame* fclut = Gtk::manage(  new Gtk::Frame (M("PREFERENCES_CLUTSCACHE")) ); 
 
     Gtk::HBox* clutCacheSizeHB = Gtk::manage( new Gtk::HBox () );
@@ -619,14 +618,29 @@ Gtk::Widget* Preferences::getPerformancePanel () {
 
     clutCacheSizeHB->pack_start (*CLUTLl, Gtk::PACK_SHRINK, 0);
     clutCacheSizeHB->pack_end (*clutCacheSizeSB, Gtk::PACK_SHRINK, 0);
+
     fclut->add (*clutCacheSizeHB);
+    mainContainer->pack_start (*fclut, Gtk::PACK_SHRINK, 4);
 
-    
-    mvbsd->pack_start (*fclut, Gtk::PACK_SHRINK, 4);
+    Gtk::Frame* finspect = Gtk::manage(  new Gtk::Frame (M("PREFERENCES_INSPECT_LABEL")) );
 
-   // return mainContainer;
-    return mvbsd;
-	
+    Gtk::HBox* maxIBuffersHB = Gtk::manage( new Gtk::HBox () );
+    maxIBuffersHB->set_border_width(4);
+    maxIBuffersHB->set_spacing(4);
+    maxIBuffersHB->set_tooltip_text(M("PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP"));
+    Gtk::Label* maxIBufferLbl = Gtk::manage( new Gtk::Label (M("PREFERENCES_INSPECT_MAXBUFFERS_LABEL") + ":", Gtk::ALIGN_LEFT));
+    maxInspectorBuffersSB = Gtk::manage( new Gtk::SpinButton () );
+    maxInspectorBuffersSB->set_digits (0);
+    maxInspectorBuffersSB->set_increments (1, 5);
+    maxInspectorBuffersSB->set_max_length(2);
+    maxInspectorBuffersSB->set_range (1, 12);  // ... we have to set a limit, 12 seem to be enough even for systems with tons of RAM
+    maxIBuffersHB->pack_start (*maxIBufferLbl, Gtk::PACK_SHRINK, 0);
+    maxIBuffersHB->pack_end (*maxInspectorBuffersSB, Gtk::PACK_SHRINK, 0);
+    finspect->add(*maxIBuffersHB);
+
+    mainContainer->pack_start(*finspect, Gtk::PACK_SHRINK, 4);
+
+    return mainContainer;
 }
 
 Gtk::Widget* Preferences::getColorManagementPanel () {
@@ -1407,6 +1421,7 @@ void Preferences::storePreferences () {
 
     moptions.rgbDenoiseThreadLimit = rgbDenoiseTreadLimitSB->get_value_as_int();
     moptions.clutCacheSize = clutCacheSizeSB->get_value_as_int();
+    moptions.maxInspectorBuffers = maxInspectorBuffersSB->get_value_as_int();
 
     // Sounds only on Windows and Linux
 #if defined(WIN32) || defined(__linux__)
@@ -1552,7 +1567,9 @@ void Preferences::fillPreferences () {
     ckbUseIconNoText->set_active(moptions.UseIconNoText);
 
     rgbDenoiseTreadLimitSB->set_value(moptions.rgbDenoiseThreadLimit);
-	clutCacheSizeSB->set_value(moptions.clutCacheSize);
+    clutCacheSizeSB->set_value(moptions.clutCacheSize);
+    maxInspectorBuffersSB->set_value(moptions.maxInspectorBuffers);
+
     //darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );
     //updateDFinfos();
     darkFrameDir->set_current_folder( moptions.rtSettings.darkFramesPath );

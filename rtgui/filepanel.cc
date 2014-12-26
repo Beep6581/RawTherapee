@@ -20,6 +20,7 @@
 #include "filepanel.h"
 #include "rtwindow.h"
 #include "../rtengine/safegtk.h"
+#include "inspector.h"
 
 int FilePanelInitUI (void* data) {
     (static_cast<FilePanel*>(data))->init ();
@@ -68,6 +69,7 @@ FilePanel::FilePanel () : parent(NULL) {
     rightBox = Gtk::manage ( new Gtk::HBox () );
     rightBox->set_size_request(50,100);
     rightNotebook = Gtk::manage ( new Gtk::Notebook () );
+    rightNotebook->signal_switch_page().connect_notify( sigc::mem_fun(*this, &FilePanel::on_NB_switch_page) );
     //Gtk::VBox* taggingBox = Gtk::manage ( new Gtk::VBox () );
 
     history = Gtk::manage ( new History (false) );
@@ -79,6 +81,9 @@ FilePanel::FilePanel () : parent(NULL) {
 	filterPanel = Gtk::manage ( new FilterPanel () );
 	sFilterPanel->add (*filterPanel);
 	sFilterPanel->set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
+
+    inspectorPanel = new Inspector();
+    fileCatalog->setInspector(inspectorPanel);
 
     Gtk::ScrolledWindow* sExportPanel = Gtk::manage ( new Gtk::ScrolledWindow() );
     exportPanel = Gtk::manage ( new ExportPanel () );
@@ -96,6 +101,8 @@ FilePanel::FilePanel () : parent(NULL) {
 
     Gtk::Label* devLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_DEVELOP")) );
     devLab->set_angle (90);
+    Gtk::Label* inspectLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_INSPECT")) );
+    inspectLab->set_angle (90);
     Gtk::Label* filtLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_FILTER")) );
     filtLab->set_angle (90);
     //Gtk::Label* tagLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_TAGGING")) );
@@ -108,6 +115,7 @@ FilePanel::FilePanel () : parent(NULL) {
     tpcPaned->pack2 (*history, true, true);
 
     rightNotebook->append_page (*tpcPaned, *devLab);
+    rightNotebook->append_page (*inspectorPanel, *inspectLab);
     rightNotebook->append_page (*sFilterPanel, *filtLab);
     //rightNotebook->append_page (*taggingBox, *tagLab); commented out: currently the tab is empty ...
     rightNotebook->append_page (*sExportPanel, *exportLab);
@@ -123,6 +131,11 @@ FilePanel::FilePanel () : parent(NULL) {
     g_idle_add (FilePanelInitUI, this);
 
     show_all ();
+}
+
+FilePanel::~FilePanel () {
+    if (inspectorPanel)
+        delete inspectorPanel;
 }
 
 void FilePanel::setAspect () {
@@ -160,7 +173,18 @@ void FilePanel::init () {
             }
         }
     }
-} 
+}
+
+void FilePanel::on_NB_switch_page(GtkNotebookPage* page, guint page_num) {
+    if (page_num == 1) {
+        // switching the inspector "on"
+        fileCatalog->enableInspector();
+    }
+    else {
+        // switching the inspector "off"
+        fileCatalog->disableInspector();
+    }
+}
 
 bool FilePanel::fileSelected (Thumbnail* thm) {
 

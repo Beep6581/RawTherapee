@@ -60,7 +60,7 @@ class FilePanel;
 class FileCatalog : public Gtk::VBox,
                     public DirSelectionListener,
                     public PreviewLoaderListener,
-					public FilterPanelListener,
+                    public FilterPanelListener,
                     public FileBrowserListener,
                     public ExportPanelListener
 #ifdef WIN32
@@ -181,6 +181,10 @@ class FileCatalog : public Gtk::VBox,
                 void previewsFinishedUI ();
                 void _refreshProgressBar ();
 
+                void setInspector(Inspector* inspector) { if (fileBrowser) fileBrowser->setInspector(inspector); }
+                void disableInspector() { if (fileBrowser) fileBrowser->disableInspector(); }
+                void enableInspector()  { if (fileBrowser) fileBrowser->enableInspector(); }
+
                 // filterpanel interface
                 void exifFilterChanged ();
 
@@ -244,6 +248,8 @@ class FileCatalog : public Gtk::VBox,
                 void openNextPreviousEditorImage (Glib::ustring fname, bool clearFilters, eRTNav nextPrevious);
 
                 bool handleShortcutKey (GdkEventKey* event);
+
+                bool isInTabMode() { return inTabMode; }
 
                 bool CheckSidePanelsVisibility();
                 void toggleSidePanels();

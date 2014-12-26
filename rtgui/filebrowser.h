@@ -45,6 +45,7 @@ class FileBrowserListener {
         virtual void copyMoveRequested      (std::vector<FileBrowserEntry*> tbe, bool moveRequested) {}
         virtual void selectionChanged       (std::vector<Thumbnail*> tbe) {}
         virtual void clearFromCacheRequested(std::vector<FileBrowserEntry*> tbe, bool leavenotrace) {}
+        virtual bool isInTabMode            () { return false; }
 };
 
 struct FileBrowserIdleHelper {
@@ -165,6 +166,8 @@ class FileBrowser  : public ThumbBrowserBase,
 
     void saveThumbnailHeight (int height);
     int  getThumbnailHeight ();
+
+    bool isInTabMode() { return tbl ? tbl->isInTabMode() : false; }
 
     void openNextImage ();
     void openPrevImage ();

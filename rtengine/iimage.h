@@ -93,23 +93,23 @@ namespace rtengine {
     };
 
     template <>
-    inline void ImageDatas::convertTo<unsigned short, unsigned char> (unsigned short srcValue, unsigned char &dstValue) {
+    inline void ImageDatas::convertTo<unsigned short, unsigned char> (const unsigned short srcValue, unsigned char &dstValue) {
         dstValue = (unsigned char)(srcValue >> 8);
     }
     template <>
-    inline void ImageDatas::convertTo<unsigned char, int> (unsigned char srcValue, int &dstValue) {
+    inline void ImageDatas::convertTo<unsigned char, int> (const unsigned char srcValue, int &dstValue) {
         dstValue = (int)(srcValue) << 8;
     }
     template <>
-    inline void ImageDatas::convertTo<unsigned char, unsigned short> (unsigned char srcValue, unsigned short &dstValue) {
+    inline void ImageDatas::convertTo<unsigned char, unsigned short> (const unsigned char srcValue, unsigned short &dstValue) {
         dstValue = (unsigned short)(srcValue) << 8;
     }
     template <>
-    inline void ImageDatas::convertTo<float, unsigned char> (float srcValue, unsigned char &dstValue) {
+    inline void ImageDatas::convertTo<float, unsigned char> (const float srcValue, unsigned char &dstValue) {
         dstValue = (unsigned char)( (unsigned short)(srcValue) >> 8 );
     }
     template <>
-    inline void ImageDatas::convertTo<unsigned char, float> (unsigned char srcValue, float &dstValue) {
+    inline void ImageDatas::convertTo<unsigned char, float> (const unsigned char srcValue, float &dstValue) {
         dstValue = float( (unsigned short)(srcValue) << 8 );
     }
 
@@ -350,7 +350,15 @@ namespace rtengine {
         template <class IC>
         void resizeImgTo (int nw, int nh, TypeInterpolation interp, PlanarWhateverData<IC> *imgPtr) {
             //printf("resizeImgTo: resizing %s image data (%d x %d) to %s (%d x %d)\n", getType(), width, height, imgPtr->getType(), imgPtr->width, imgPtr->height);
-            if (interp == TI_Nearest) {
+            if (width==nw && height==nh) {
+                // special case where no resizing is necessary, just type conversion....
+                for (int i=0; i<height; i++) {
+                    for (int j=0; j<width; j++) {
+                        convertTo(v(i,j), imgPtr->v(i,j));
+                    }
+                }
+            }
+            else if (interp == TI_Nearest) {
                 for (int i=0; i<nh; i++) {
                     int ri = i*height/nh;
                     for (int j=0; j<nw; j++) {
@@ -701,7 +709,17 @@ namespace rtengine {
         template <class IC>
         void resizeImgTo (int nw, int nh, TypeInterpolation interp, IC *imgPtr) {
             //printf("resizeImgTo: resizing %s image data (%d x %d) to %s (%d x %d)\n", getType(), width, height, imgPtr->getType(), imgPtr->width, imgPtr->height);
-            if (interp == TI_Nearest) {
+            if (width==nw && height==nh) {
+                // special case where no resizing is necessary, just type conversion....
+                for (int i=0; i<height; i++) {
+                    for (int j=0; j<width; j++) {
+                        convertTo(r(i,j), imgPtr->r(i,j));
+                        convertTo(g(i,j), imgPtr->g(i,j));
+                        convertTo(b(i,j), imgPtr->b(i,j));
+                    }
+                }
+            }
+            else if (interp == TI_Nearest) {
                 for (int i=0; i<nh; i++) {
                     int ri = i*height/nh;
                     for (int j=0; j<nw; j++) {
@@ -1214,7 +1232,17 @@ namespace rtengine {
         template <class IC>
         void resizeImgTo (int nw, int nh, TypeInterpolation interp, IC *imgPtr) {
             //printf("resizeImgTo: resizing %s image data (%d x %d) to %s (%d x %d)\n", getType(), width, height, imgPtr->getType(), imgPtr->width, imgPtr->height);
-            if (interp == TI_Nearest) {
+            if (width==nw && height==nh) {
+                // special case where no resizing is necessary, just type conversion....
+                for (int i=0; i<height; i++) {
+                    for (int j=0; j<width; j++) {
+                        convertTo(r(i,j), imgPtr->r(i,j));
+                        convertTo(g(i,j), imgPtr->g(i,j));
+                        convertTo(b(i,j), imgPtr->b(i,j));
+                    }
+                }
+            }
+            else if (interp == TI_Nearest) {
                 for (int i=0; i<nh; i++) {
                     int ri = i*height/nh;
                     for (int j=0; j<nw; j++) {
