@@ -1223,15 +1223,14 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 {
 	MyTime t1,t2;
 	t1.set();
+
 	Glib::ustring newDF = raw.dark_frame;
-	Glib::ustring makerstring = ((Glib::ustring)ri->get_maker()).uppercase();
-	Glib::ustring modelstring = ((Glib::ustring)ri->get_model()).uppercase();
 	RawImage *rid=NULL;
 	if (!raw.df_autoselect) {
 		if( !raw.dark_frame.empty())
 			rid = dfm.searchDarkFrame( raw.dark_frame );
 	} else {
-		rid = dfm.searchDarkFrame( makerstring, modelstring, ri->get_ISOspeed(), ri->get_shutter(), ri->get_timestamp());
+		rid = dfm.searchDarkFrame( ri->get_maker(), ri->get_model(), ri->get_ISOspeed(), ri->get_shutter(), ri->get_timestamp());
 	}
 	if( rid && settings->verbose){
 		printf( "Subtracting Darkframe:%s\n",rid->get_filename().c_str());
@@ -1286,7 +1285,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 	// If darkframe selected, correct hotpixels found on darkframe
 	bp = 0;
 	if( raw.df_autoselect ){
-		bp = dfm.getHotPixels( makerstring, modelstring, ri->get_ISOspeed(), ri->get_shutter(), ri->get_timestamp());
+		bp = dfm.getHotPixels( ri->get_maker(), ri->get_model(), ri->get_ISOspeed(), ri->get_shutter(), ri->get_timestamp());
 	}else if( !raw.dark_frame.empty() )
 		bp = dfm.getHotPixels( raw.dark_frame );
 	if(bp){
