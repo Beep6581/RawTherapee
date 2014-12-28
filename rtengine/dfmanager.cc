@@ -26,6 +26,7 @@
 #include <iostream>
 #include <cstdio>
 #include "imagedata.h"
+#include <glibmm/ustring.h>
 
 namespace rtengine{
 
@@ -283,10 +284,10 @@ dfInfo *DFManager::addFileInfo(const Glib::ustring &filename ,bool pool )
         	   rml.ciffLength = ri.get_ciffLen();
         	   ImageData idata(filename, &rml);
          	   /* Files are added in the map, divided by same maker/model,ISO and shutter*/
-        	   std::string key( dfInfo::key(idata.getMake(), idata.getModel(),idata.getISOSpeed(),idata.getShutterSpeed()) );
+        	   std::string key( dfInfo::key(((Glib::ustring)idata.getMake()).uppercase(), ((Glib::ustring)idata.getModel()).uppercase(),idata.getISOSpeed(),idata.getShutterSpeed()) );
         	   iter = dfList.find( key );
         	   if( iter == dfList.end() ){
-				   dfInfo n(filename, idata.getMake(), idata.getModel(),idata.getISOSpeed(),idata.getShutterSpeed(), idata.getDateTimeAsTS() );
+				   dfInfo n(filename, ((Glib::ustring)idata.getMake()).uppercase(), ((Glib::ustring)idata.getModel()).uppercase(),idata.getISOSpeed(),idata.getShutterSpeed(), idata.getDateTimeAsTS() );
 				   iter = dfList.insert(std::pair< std::string,dfInfo>( key,n ) );
         	   }else{
         		   while( iter != dfList.end() && iter->second.key() == key && ABS(iter->second.timestamp - idata.getDateTimeAsTS()) >60*60*6 ) // 6 hour difference
@@ -295,7 +296,7 @@ dfInfo *DFManager::addFileInfo(const Glib::ustring &filename ,bool pool )
         		   if( iter != dfList.end() )
         		      iter->second.pathNames.push_back( filename );
         		   else{
-    				   dfInfo n(filename, idata.getMake(), idata.getModel(),idata.getISOSpeed(),idata.getShutterSpeed(),idata.getDateTimeAsTS());
+    				   dfInfo n(filename, ((Glib::ustring)idata.getMake()).uppercase(), ((Glib::ustring)idata.getModel()).uppercase(),idata.getISOSpeed(),idata.getShutterSpeed(),idata.getDateTimeAsTS());
     				   iter = dfList.insert(std::pair< std::string,dfInfo>( key,n ) );
         		   }
         	   }
@@ -359,7 +360,7 @@ dfInfo* DFManager::find( const std::string &mak, const std::string &mod, int iso
 
 RawImage* DFManager::searchDarkFrame( const std::string &mak, const std::string &mod, int iso, double shut, time_t t )
 {
-   dfInfo *df = find( mak, mod, iso, shut, t );
+   dfInfo *df = find( ((Glib::ustring)mak).uppercase(), ((Glib::ustring)mod).uppercase(), iso, shut, t );
    if( df )
       return df->getRawImage();
    else
@@ -387,7 +388,7 @@ std::vector<badPix> *DFManager::getHotPixels ( const Glib::ustring filename )
 }
 std::vector<badPix> *DFManager::getHotPixels ( const std::string &mak, const std::string &mod, int iso, double shut, time_t t )
 {
-   dfInfo *df = find( mak, mod, iso, shut, t );
+   dfInfo *df = find( ((Glib::ustring)mak).uppercase(), ((Glib::ustring)mod).uppercase(), iso, shut, t );
    if( df ){
 	   if( settings->verbose ) {
 		   if( !df->pathname.empty() ) {
