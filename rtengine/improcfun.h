@@ -297,7 +297,7 @@ class ImProcFunctions {
 	//	void ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level, 
 	//				   int W_L, int H_L, int W_ab, int H_ab, int W_h, int H_h, int skip_L, int skip_ab, int skip_h, float noisevar_L, float noisevar_ab, float **WavCoeffs_h, LabImage * noi);
 
-		void ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, float *buffer[4], int level, 
+		void ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, float **buffer, int level, 
 					   int W_L, int H_L, int W_ab, int H_ab, int skip_L, int skip_ab, float noisevar_L, float **noisevarlum, float **noisevarchrom, int width, int height, float *mad_LL,  float *mad_aa, float *mad_bb, float noisevar_abr, float noisevar_abb,LabImage * noi, const NoiseCurve & dnNoisCurve,  const NoiseCurve & dnNoisCCcurve, float &chaut, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, int callby, bool autoch, bool perf, float * madaa = NULL, float * madab = NULL, float * madaL = NULL, bool madCalculated= false);
 		void ShrinkAll_info(float ** WavCoeffs_a, float ** WavCoeffs_b, int level, 
 					   int W_ab, int H_ab, int skip_ab, float **noisevarlum, float **noisevarchrom, float **noisevarhue, int width, int height, float *mad_aa, float *mad_bb, float noisevar_abr, float noisevar_abb,LabImage * noi, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, bool autoch, int schoice, int lvl, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel,float &skinc, float &nsknc, 
