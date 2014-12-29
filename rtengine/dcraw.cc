@@ -1676,6 +1676,326 @@ void CLASS phase_one_load_raw_c()
   maximum = 0xfffc - ph1.black;
 }
 
+void CLASS parse_hasselblad_gain()
+{
+    /*
+      Reverse-engineer's notes:
+
+      The Hasselblad gain tag (0x19 in makernotes) is only available in the 3FR format and
+      is applied and removed when Hasselblad Phocus converts it to the FFF format. It's
+      always 0x300000 bytes large regardless of (tested) model, not all space in it is
+      used though.
+
+      It contains individual calibration information from the factory to tune the sensor
+      performance.
+
+      There is more calibration data in the tag than what is applied in conversion to FFF,
+      I've only cared to figure out the data which is actually used, but have some leads on
+      remaining info.
+
+      The format is not equal between all models. Due to lack of 3FR files (harder to get
+      than FFF) only a subset of the models have been reverse-engineered.
+
+      The header space is 512 bytes and is a mix of 16 and 32 bit values. Offset to blocks
+      are 32 bit values, but all information seems to be encoded in 16 bit values. Many
+      values in the header can be zeroed with no effect on FFF conversion, and their
+      meaning, if any, have not been further investigated.
+
+      Formats:
+      hdr16[22] = raw width
+      hdr16[23] = raw height
+      hdr32[24] = offset to level corr block
+         Data block format. Seems to differ depending on sensor type. For tested H4D-50
+         and H3D-31: 10 16 bit signed values per row
+         value 0: a correction factor (k) used on even columns, where the new pixel value is
+         calulated as follows:
+         new_value = old_value + (2 * ((k * (old_value_on_row_above-256)) / 32767) - 2)
+         note the connection to the value on the row above, seems to be some sort of signal
+         leakage correction.
+         value 1: same as value 0 but using old value on row below instead of above
+         value 2-3: same as value 0-1 but for odd columns
+         value 4-9: has some effect if non-zero (probably similar to the others) but not
+         investigated which, as it's seems to be always zero for the tested cameras.
+
+      hdr32[25] = probably offset to "bad/unreliable pixels" info, always 512 as it starts
+                  directly after the header. Not applied in FFF conversion (at least
+                  typically).
+                  Data block format guess: raw_height packets of
+                    <type?><number of coords><coords...>
+
+      hdr32[27] = offset to unknown data (bad colulmns?), of the form:
+                  <packet count><packets><0>
+                  packet: <column><?><?><?>.
+
+      hdr32[34] = curves offset, seems to be A/D curves (one per channel) on newer models
+                  and some sort of a film curve on older. Not applied in FFF conversion.
+
+      hdr32[36] = flatfield correction, not available in older models. Data format:
+                  <1><block width><block height><rows><cols><11 * 2 pad><packets>
+                  packet: <R><G1><G2><B>
+
+                  The header pad is not zeroed and might seem to contain some sort of
+                  information, but it makes no difference if set to zero. See
+                  hasselblad_correct() how the flatfield is applied.
+
+      Applied in FFF conversion is flatfield correction, levels, and the bad columns(?)
+      data. A/D curves are surprisingly not applied, maybe pre-applied in hardware and
+      only available as information?
+
+      Not all combinations/models have been tested so there may be gaps.
+    */
+
+    ushort raw_h, count, ch_count, u16;
+    int i, offset;
+    off_t base;
+
+    base = ftell(ifp);
+    fseek(ifp, 2 * 23, SEEK_CUR);
+    raw_h = get2();
+    fseek(ifp, 48, SEEK_CUR);
+    offset = get4();
+    hbd.levels = offset ? base + offset : 0;
+    fseek(ifp, 8, SEEK_CUR);
+    offset = get4();
+    hbd.unknown1 = offset ? base + offset : 0;
+    fseek(ifp, 32, SEEK_CUR);
+    offset = get4();
+    hbd.flatfield = offset ? base + offset : 0;
+}
+
+void CLASS hasselblad_correct()
+{
+    unsigned col, row;
+
+    /*
+
+      This function applies 3FR calibration data. At the time of writing it supports a
+      subset, so here's a todo list:
+
+      TODO:
+       - Support all gain tag formats
+          - The 0x19 tag varies a bit between models. We don't have parsers for all models.
+          - The reference model used was during inital reverse-engineering was a H4D-50,
+            we probably support the Hasselblads with Kodak 31, 39, 40 and 50 megapixels
+            well, but more work is needed for Kodak 16 and 22, Dalsa 60 and Sony 50.
+       - Apply bad column(?) data (hbd.unknown1)
+          - It was left out in this initial release since the effect is very small.
+       - Apply black(?) data, tag 0x1a and 0x1b is not parsed, it has however marginal
+         effect (at least for shorter exposures) so it's not too important.
+
+      While there are things to do, the current implementation supports the most
+      important aspects, the faltfield and levels calibrations applied can have strong
+      visible effects.
+
+     */
+
+    if (hbd.flatfield) {
+        int bw, bh, ffrows, ffcols, i, c;
+        ushort ref[4], ref_max;
+        fseek(ifp, hbd.flatfield, SEEK_SET);
+        get2();
+        bw = get2();
+        bh = get2();
+        ffcols = get2();
+        ffrows = get2();
+        fseek(ifp, hbd.flatfield + 16 * 2, SEEK_SET);
+
+        ushort *ffmap = (ushort *)malloc(sizeof(*ffmap) * 4 * ffcols * ffrows);
+        for (i = 0; i < 4 * ffcols * ffrows; i++) ffmap[i] = get2();
+
+        /* Get reference values from center of field. This seems to be what Phocus does too,
+           but haven't cared to figure out exactly at which coordinate */
+        i = 4 * (ffcols * ffrows / 2 + ffcols / 2);
+        ref[0] = ffmap[i+0];
+        ref[1] = ffmap[i+1];
+        ref[3] = ffmap[i+2]; // G2 = index 3 in dcraw, 2 in 3FR
+        ref[2] = ffmap[i+3];
+        ref_max = 0;
+        FORC4 if (ref[c] > ref_max) ref_max = ref[c];
+        if (ref_max == 0) ref[0] = ref[1] = ref[2] = ref[3] = ref_max = 10000;
+
+        /* Convert measured flatfield values to actual multipliers. The measured flatfield
+           can have vignetting which should be normalized, only color cast should be corrected. */
+        for (i = 0; i < 4 * ffcols * ffrows; i += 4) {
+            double base, min = 65535.0, max = 0;
+            double cur[4];
+            cur[0] = (double)ffmap[i+0] / ref[0];
+            cur[1] = (double)ffmap[i+1] / ref[1];
+            cur[3] = (double)ffmap[i+2] / ref[3]; // G2 index differs in dcraw and 3FR
+            cur[2] = (double)ffmap[i+3] / ref[2];
+            FORC4 {
+                if (cur[c] < min) min = cur[c];
+                if (cur[c] > max) max = cur[c];
+            }
+            if (max == 0) max = 1.0;
+            base = (cur[0]+cur[1]+cur[2]+cur[3])/(max*4);
+            FORC4 cur[c] = cur[c] == 0 ? 1.0 : (base * max) / cur[c];
+            /* convert to integer multiplier and store back to ffmap, we limit
+               range to 4 (16384*4) which should be fine for flatfield */
+            FORC4 {
+                cur[c] *= 16384.0;
+                if (cur[c] > 65535.0) cur[c] = 65535.0;
+                ffmap[i+c] = (ushort)cur[c];
+            }
+        }
+
+        // of the cameras we've tested we know the exact placement of the flatfield map
+        int row_offset, col_offset;
+        switch (raw_width) {
+        case 8282: // 50 megapixel Kodak
+            row_offset = 21;
+            col_offset = 71;
+            break;
+        default:
+            /* Default case for camera models we've not tested. We center the map, which may
+               not be exactly where it should be but close enough for the smooth flatfield */
+            row_offset = (raw_height - bh * ffrows) / 2;
+            col_offset = (raw_width - bw * ffcols) / 2;
+            break;
+        }
+
+        /*
+          Concerning smoothing between blocks in the map Phocus makes it only vertically,
+          probably because it's simpler and faster. Looking at actual flatfield data it seems
+          like it's better to smooth in both directions. Possibly flatfield could be used for
+          correcting tiling on Dalsa sensors (H4D-60) like partly done in Phase One IIQ format,
+          and then sharp edges may be beneficial at least at the tiling seams, but at the time
+          of writing I've had no H4D-60 3FR files to test with to verify that.
+
+          Meanwhile we do both vertical and horizontal smoothing/blurring.
+        */
+
+        /* pre-calculate constants for blurring. We probably should make a more efficient
+           blur than this, but this does not need any buffer and makes nice-looking
+           radial gradients */
+        ushort *corners_weight = (ushort *)malloc(bw*bh*9*sizeof(*corners_weight));
+        const char corners_mix[9][4][2] = { { {0,0}, {0,1}, {1,0}, {1,1} },
+                                            { {0,1}, {1,1}, {-1,-1}, {-1,-1} },
+                                            { {0,1}, {0,2}, {1,1}, {1,2} },
+                                            { {1,0}, {1,1}, {-1,-1}, {-1,-1} },
+                                            { {1,1}, {-1,-1}, {-1,-1}, {-1,-1} },
+                                            { {1,1}, {1,2}, {-1,-1}, {-1,-1} },
+                                            { {1,0}, {1,1}, {2,0}, {2,1} },
+                                            { {1,1}, {2,1}, {-1,-1}, {-1,-1} },
+                                            { {1,1}, {1,2}, {2,1}, {2,2} } };
+        const ushort corners_shift[9] = { 2, 1, 2, 1, 0, 1, 2, 1, 2 };
+        for (row = 0; row < bh; row++) {
+            const ushort maxdist = bw < bh ? bw/2-1 : bh/2-1;
+            const unsigned corners[9][2] = {{0,0},   {0,bw/2},   {0,bw-1},
+                                            {bh/2,0},{bh/2,bw/2},{bh/2,bw-1},
+                                            {bh-1,0},{bh-1,bw/2},{bh-1,bw-1}};
+            for (col = 0; col < bw; col++) {
+                for (i = 0; i < 9; i++) {
+                    ushort dist = (ushort)sqrt(abs(corners[i][0] - row) * abs(corners[i][0] - row) + abs(corners[i][1] - col) * abs(corners[i][1] - col));
+                    ushort weight = dist > maxdist ? 0 : maxdist - dist;
+                    corners_weight[9*(row*bw+col)+i] = weight;
+                }
+            }
+        }
+
+        // apply flatfield
+#pragma omp parallel for
+        for (int row = 0; row < raw_height; row++) {
+            int ffs, cur_ffr, i, c;
+            if (row < row_offset) {
+                cur_ffr = row_offset;
+                ffs = 0;
+            } else if (row >= row_offset + ffrows * bh) {
+                cur_ffr = row_offset + (ffrows-1) * bh;
+                ffs = 4 * ffcols * (ffrows-1);
+            } else {
+                cur_ffr = row_offset + bh * ((row - row_offset) / bh);
+                ffs = 4 * ffcols * ((row - row_offset) / bh);
+            }
+            int next_ffc = 0, cur_ffc = col_offset;
+            int ffc = ffs;
+            ushort *cur[3][3]; // points to local ffmap entries with center at cur[1][1]
+            for (int col = 0; col < raw_width; col++) {
+                if (col == next_ffc) {
+                    int rowsub = ffs == 0 ? 0 : ffcols*4;
+                    int rowadd = ffs == 4 * ffcols * (ffrows-1) ? 0 : ffcols * 4;
+                    int colsub = ffc == ffs ? 0 : 4;
+                    int coladd = ffc == ffs + 4 * (ffcols-1) ? 0 : 4;
+                    if (col != 0) cur_ffc = next_ffc;
+                    else next_ffc += col_offset;
+                    next_ffc += bw;
+
+                    cur[0][0] = &ffmap[ffc-rowsub-colsub];
+                    cur[0][1] = &ffmap[ffc-rowsub];
+                    cur[0][2] = &ffmap[ffc-rowsub+coladd];
+
+                    cur[1][0] = &ffmap[ffc-colsub];
+                    cur[1][1] = &ffmap[ffc];
+                    cur[1][2] = &ffmap[ffc+coladd];
+
+                    cur[2][0] = &ffmap[ffc+rowadd-colsub];
+                    cur[2][1] = &ffmap[ffc+rowadd];
+                    cur[2][2] = &ffmap[ffc+rowadd+coladd];
+
+                    ffc += 4;
+                    if (ffc == ffs + 4 * ffcols) next_ffc += raw_width; // last col in map, avoid stepping further
+                }
+                unsigned v = RAW(row,col);
+                if (v > black) {
+                    c = FC(row,col);
+                    unsigned x = col < cur_ffc ? 0 : col - cur_ffc;
+                    unsigned y = row < cur_ffr ? 0 : row - cur_ffr;
+                    if (x >= bw) x = bw-1;
+                    if (y >= bh) y = bh-1;
+                    unsigned wsum = 0;
+                    unsigned mul = 0;
+                    for (i = 0; i < 9; i++) {
+                        ushort cw = corners_weight[9*(y*bw+x)+i];
+                        if (cw) {
+                            unsigned m = 0;
+                            int j;
+                            for (j = 0; j < 1 << corners_shift[i]; j++) {
+                                int cr = corners_mix[i][j][0], cc = corners_mix[i][j][1];
+                                m += cur[cr][cc][c];
+                            }
+                            m >>= corners_shift[i];
+                            mul += m * cw;
+                            wsum += cw;
+                        }
+                    }
+                    mul /= wsum;
+                    v = black + ((v-black) * mul) / 16384;
+                    RAW(row,col) = v > 65535 ? 65535 : v;
+                }
+            }
+        }
+        free(ffmap);
+        free(corners_weight);
+    }
+
+    if (hbd.levels) {
+        int i;
+        fseek(ifp, hbd.levels, SEEK_SET);
+        /* skip the first set (not used as we don't apply on first/last row), we look at it though to see if
+           the levels format is one that we support (there are other formats on some models which is not
+           supported here) */
+        short test[10];
+        for (i = 0; i < 10; i++) test[i] = (short)get2();
+        if (test[5] == 0 && test[6] == 0 && test[7] == 0 && test[8] == 0 && test[9] == 0) {
+            int corr[4];
+            ushort *row_above = (ushort *)malloc(sizeof(ushort) * raw_width); // we need to cache row above as we write new values as we go
+            for (col = 0; col < raw_width; col++) row_above[col] = RAW(0,col);
+            for (row = 1; row < raw_height-1; row++) {
+                for (i = 0; i < 4; i++) corr[i] = (short)get2();
+                fseek(ifp, 6 * 2, SEEK_CUR);
+                for (col = 0; col < raw_width; col++) {
+                    unsigned v = RAW(row,col);
+                    if (corr[((col & 1)<<1)+0] && row_above[col] > black) v += 2 * ((corr[((col & 1)<<1)+0] * (row_above[col]-(int)black)) / 32767) - 2;
+                    if (corr[((col & 1)<<1)+1] && RAW(row+1,col) > black) v += 2 * ((corr[((col & 1)<<1)+1] * (RAW(row+1,col)-(int)black)) / 32767) - 2;
+                    row_above[col] = RAW(row,col);
+                    RAW(row,col) = CLIP(v);
+                }
+            }
+            free(row_above);
+        }
+    }
+}
+
 void CLASS hasselblad_load_raw()
 {
   struct jhead jh;
@@ -3536,6 +3856,8 @@ void CLASS crop_masked_pixels()
   if (load_raw == &CLASS phase_one_load_raw ||
       load_raw == &CLASS phase_one_load_raw_c)
     phase_one_correct();
+  if (load_raw == &CLASS hasselblad_load_raw) // RT
+      hasselblad_correct();                   // RT
   if (fuji_width) {
     for (row=0; row < raw_height-top_margin*2; row++) {
       for (col=0; col < fuji_width << !fuji_layout; col++) {
@@ -4755,6 +5077,9 @@ nf: order = 0x4949;
       if (tag == 0x1b) tag = 0x1018;
       if (tag == 0x1c) tag = 0x1017;
     }
+    if (tag == 0x19 && !strcmp(make,"Hasselblad") && len == 0x300000) { // RT
+        parse_hasselblad_gain();                                        // RT
+    }                                                                   // RT
     if (tag == 0x1d)
       while ((c = fgetc(ifp)) && c != EOF)
 	serial = serial*10 + (isdigit(c) ? c - '0' : c % 10);

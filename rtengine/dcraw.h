@@ -62,6 +62,7 @@ public:
 	,pana_bits(ifp,load_flags)
 	,float_raw_image(NULL)
     {
+        memset(&hbd, 0, sizeof(hbd));
         aber[0]=aber[1]=aber[2]=aber[3]=1;
         gamm[0]=0.45;gamm[1]=4.5;gamm[2]=gamm[3]=gamm[4]=gamm[5]=0;
         user_mul[0]=user_mul[1]=user_mul[2]=user_mul[3]=0;
@@ -133,6 +134,9 @@ protected:
 	  int black, split_col, black_col, split_row, black_row;
 	  float tag_210;
     } ph1;
+    struct hbd {
+        off_t levels, unknown1, flatfield;
+    } hbd;
 
     struct jhead {
       int bits, high, wide, clrs, sraw, psv, restart, vpred[6];
@@ -254,6 +258,8 @@ private:
 ph1_bithuff_t ph1_bithuff;
 
 void phase_one_load_raw_c();
+void hasselblad_correct();
+void parse_hasselblad_gain();
 void hasselblad_load_raw();
 void leaf_hdr_load_raw();
 void unpacked_load_raw();
