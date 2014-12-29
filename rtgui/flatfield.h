@@ -30,7 +30,7 @@ class FFProvider {
   public:
     virtual ~FFProvider() {}
     virtual rtengine::RawImage* getFF() = 0;
-    virtual Glib::ustring GetCurrentImageFilePath() {};
+    virtual Glib::ustring GetCurrentImageFilePath() = 0;
     // add other info here
 };
 
