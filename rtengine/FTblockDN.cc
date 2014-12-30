@@ -1764,7 +1764,7 @@ SSEFUNCTION	void ImProcFunctions::RGBtile_denoise (float * fLblox, int hblproc, 
 		__m128	noisevar_Ldetailv = _mm_set1_ps( noisevar_Ldetail );
 		__m128	onev = _mm_set1_ps( 1.0f );
 		for (int n=0; n<TS*TS; n+=4) {		//for DCT
-			tempv  = onev - xexpf( -SQRV( LVF(nbrwt[n]))/noisevar_Ldetailv);
+			tempv  = onev - xexpf( -SQRV( LVFU(nbrwt[n]))/noisevar_Ldetailv);
 			_mm_storeu_ps( &fLblox[blkstart+n], LVFU(fLblox[blkstart+n]) * tempv );
 		}//output neighbor averaged result
 #else

@@ -745,27 +745,27 @@ template<class T, class A> SSEFUNCTION void boxabsblur (T* src, A* dst, int radx
 		__m128	tempv,lenv,lenp1v,lenm1v,rlenv;
 		for (int col = 0; col < W-3; col+=4) {
 			lenv = leninitv;
-			tempv = LVF(temp[0*W+col]);
+			tempv = LVFU(temp[0*W+col]);
 			for (int i=1; i<=rady; i++) {
-				tempv = tempv + LVF(temp[i*W+col]);
+				tempv = tempv + LVFU(temp[i*W+col]);
 			}
 			tempv = tempv / lenv;
-			_mm_store_ps( &dst[0*W+col], tempv );
+			_mm_storeu_ps( &dst[0*W+col], tempv );
 			for (int row=1; row<=rady; row++) {
 				lenp1v = lenv + onev;
-				tempv = (tempv*lenv + LVF(temp[(row+rady)*W+col]))/lenp1v;
-				_mm_store_ps( &dst[row*W+col],tempv);
+				tempv = (tempv*lenv + LVFU(temp[(row+rady)*W+col]))/lenp1v;
+				_mm_storeu_ps( &dst[row*W+col],tempv);
 				lenv = lenp1v;
 			}
 			rlenv = onev / lenv;
 			for (int row = rady+1; row < H-rady; row++) {
-				tempv = tempv + (LVF(temp[(row+rady)*W+col])- LVF(temp[(row-rady-1)*W+col]))*rlenv;
-				_mm_store_ps( &dst[row*W+col], tempv);
+				tempv = tempv + (LVFU(temp[(row+rady)*W+col])- LVFU(temp[(row-rady-1)*W+col]))*rlenv;
+				_mm_storeu_ps( &dst[row*W+col], tempv);
 			}
 			for (int row=H-rady; row<H; row++) {
 				lenm1v = lenv - onev;
-				tempv = (tempv*lenv - LVF(temp[(row-rady-1)*W+col]))/lenm1v;
-				_mm_store_ps( &dst[row*W+col], tempv);
+				tempv = (tempv*lenv - LVFU(temp[(row-rady-1)*W+col]))/lenm1v;
+				_mm_storeu_ps( &dst[row*W+col], tempv);
 				lenv = lenm1v;
 			}
 	}
