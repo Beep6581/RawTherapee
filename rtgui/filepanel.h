@@ -51,6 +51,7 @@ class FilePanel : public Gtk::HPaned,
         //FilterPanel* filterPanel;
         RTWindow* parent;
         Gtk::Notebook* rightNotebook;
+        sigc::connection rightNotebookSwitchConn;
 
         struct pendingLoad {
             bool complete;
