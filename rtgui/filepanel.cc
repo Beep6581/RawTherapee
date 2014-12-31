@@ -69,7 +69,7 @@ FilePanel::FilePanel () : parent(NULL) {
     rightBox = Gtk::manage ( new Gtk::HBox () );
     rightBox->set_size_request(50,100);
     rightNotebook = Gtk::manage ( new Gtk::Notebook () );
-    rightNotebook->signal_switch_page().connect_notify( sigc::mem_fun(*this, &FilePanel::on_NB_switch_page) );
+    rightNotebookSwitchConn = rightNotebook->signal_switch_page().connect_notify( sigc::mem_fun(*this, &FilePanel::on_NB_switch_page) );
     //Gtk::VBox* taggingBox = Gtk::manage ( new Gtk::VBox () );
 
     history = Gtk::manage ( new History (false) );
@@ -134,6 +134,7 @@ FilePanel::FilePanel () : parent(NULL) {
 }
 
 FilePanel::~FilePanel () {
+    rightNotebookSwitchConn.disconnect();
     if (inspectorPanel)
         delete inspectorPanel;
 }
