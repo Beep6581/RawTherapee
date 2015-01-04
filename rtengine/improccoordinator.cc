@@ -36,7 +36,7 @@ ImProcCoordinator::ImProcCoordinator ()
       bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(0.), chaut(0.f), redaut(0.f), blueaut(0.f), maxredaut(0.f), maxblueaut(0.f),nresi(0.f),
 		chromina(0.f), sigma(0.f), lumema(0.f),minredaut(0.f), minblueaut(0.f),
 
-      hltonecurve(65536,0),
+      hltonecurve(65536,LUT_CLIP_BELOW),  // used LUT_CLIP_BELOW, because we want to have a baseline of 2^expcomp in this curve. If we don't clip the lut we get wrong values, see Issue 2621 #14 for details
       shtonecurve(65536,2),//clip above
       tonecurve(65536,0),//,1);
 
