@@ -589,7 +589,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
     // RGB processing
 
-    LUTf curve1 (65536,0);
+    LUTf curve1 (65536,LUT_CLIP_BELOW); // used LUT_CLIP_BELOW, because we want to have a baseline of 2^expcomp in this curve. If we don't clip the lut we get wrong values, see Issue 2621 #14 for details
     LUTf curve2 (65536,0);
 	LUTf curve (65536,0);
 	LUTf satcurve (65536,0);

@@ -592,7 +592,6 @@ void CurveFactory::curveToningLL ( bool & llctoningutili,const std::vector<doubl
 									 LUTu & outBeforeCCurveHistogram,
 									 ToneCurve & customToneCurve1,
 									 ToneCurve & customToneCurve2,
-									 
 									 int skip) {
 		
 		
@@ -675,37 +674,12 @@ void CurveFactory::curveToningLL ( bool & llctoningutili,const std::vector<doubl
 				hlCurve[i]=exp_scale;
 			float scalemshoulder = scale - shoulder;
 
-			// SSE makes more sense than omp here
-#ifdef __SSE2__
-			int i;
-			__m128 exp_scalev = _mm_set1_ps(exp_scale);
-			__m128 scalemshoulderv = _mm_set1_ps(scalemshoulder);
-			__m128 compv = _mm_set1_ps(comp);
-			__m128 valv = _mm_set_ps(4.f,3.f,2.f,1.f);
-			__m128 onev = _mm_set1_ps(1.f);
-			__m128 fourv = _mm_set1_ps(4.f);
-			for (i=shoulder+1; i<0xFFFD; i+=4) {
-				// change to [0,1] range
-				__m128 Rv = valv*compv/(scalemshoulderv);
-				_mm_storeu_ps(&hlCurve[i],xlogf(onev+Rv*exp_scalev)/Rv);
-				valv += fourv;
-			}
-			for (; i<0x10000; i++) {
-				// change to [0,1] range
-				float val = (float)i-shoulder;
-				float R = val*comp/(scalemshoulder);
-				hlCurve[i] = xlogf(1.f+R*exp_scale)/R;
-			}
-
-#else
 			for (int i=shoulder+1; i<0x10000; i++) {
 				// change to [0,1] range
 				float val = (float)i-shoulder;
 				float R = val*comp/(scalemshoulder);
-				hlCurve[i] = xlogf(1.f+R*exp_scale)/R;
+				hlCurve[i] = xlog(1.0+R*exp_scale)/R; // don't use xlogf or 1.f here. Leads to errors caused by too low precision
 			}
-#endif
-
 		}
 
 
