@@ -1159,7 +1159,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
     },
 
     { // Quality A, correction for frame width
-        "make_model": [ "Sony ILCE-3000", "Sony ILCE-5000", "Sony ILCE-QX1" ],
+        "make_model": [ "Sony ILCE-3000", "Sony ILCE-3500", "Sony ILCE-5000", "Sony ILCE-QX1" ],
         "dcraw_matrix": [ 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 ], // adobe dcp d65
         "ranges": { "black": 512, "white": 16300 },
         "raw_crop": [ 0, 0, 5476, 3656 ]
@@ -1176,10 +1176,9 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "raw_crop": [ 0, 0, 6024, 4024 ],
         "ranges": { "black": 512, "white": 16300 }
     },
-    { // Quality A, correction for frame width
-        "make_model": "Sony ILCE-A7M2",
+    { // Quality A
+        "make_model": "Sony ILCE-7M2",
         "dcraw_matrix": [ 5271,-712,-347,-6153,13653,2763,-1601,2366,7242 ], // DNGv8.7.1
-     //  "dcraw_matrix": [ 4913,-541,-202,-6130,13513,2906,-1564,2151,7183 ],
         "ranges": { "black": 512, "white": 16300 }
     },
     { // Quality A, correction for frame width
