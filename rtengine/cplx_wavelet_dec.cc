@@ -29,6 +29,8 @@ namespace rtengine {
 		}
 		delete[] wavfilt_anal;
 		delete[] wavfilt_synth;
+		if(coeff0)
+			delete [] coeff0;
 	}
 
 };

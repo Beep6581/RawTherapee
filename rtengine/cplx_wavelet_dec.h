@@ -46,9 +46,7 @@ namespace rtengine {
 		float *wavfilt_anal;
 		float *wavfilt_synth;
 
-		int testfilt_len, testfilt_offset;
-		float *testfilt_anal;
-		float *testfilt_synth;
+		float *coeff0;
 
 		wavelet_level<internal_type> * wavelet_decomp[maxlevels];
 
@@ -86,7 +84,7 @@ namespace rtengine {
 
 		int maxlevel() const
 		{
-			return lvltot;
+			return lvltot+1;
 		}
 
 		int subsample() const
@@ -99,7 +97,7 @@ namespace rtengine {
 
 	template<typename E>
 	wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling)
-	: lvltot(0), subsamp(subsampling), m_w(width), m_h(height)
+	: lvltot(0), subsamp(subsampling), m_w(width), m_h(height), coeff0(NULL)
 	{
 		//initialize wavelet filters
 		wavfilt_len = Daub4_len;
@@ -120,14 +118,22 @@ namespace rtengine {
 
 		int padding = 0;//pow(2, maxlvl);//must be a multiple of two
 		lvltot=0;
-		wavelet_decomp[lvltot] = new wavelet_level<internal_type>(src, lvltot/*level*/, subsamp, padding/*padding*/, m_w, m_h, \
+		E *buffer[2];
+		buffer[0] = new E[(m_w/2+1)*(m_h/2+1)];
+		buffer[1] = new E[(m_w/2+1)*(m_h/2+1)];
+		int bufferindex = 0;
+
+		wavelet_decomp[lvltot] = new wavelet_level<internal_type>(src, buffer[bufferindex^1], lvltot/*level*/, subsamp, padding/*padding*/, m_w, m_h, \
 																  wavfilt_anal, wavfilt_anal, wavfilt_len, wavfilt_offset);
-		while(lvltot < maxlvl) {
+		while(lvltot < maxlvl-1) {
 			lvltot++;
-			wavelet_decomp[lvltot] = new wavelet_level<internal_type>(wavelet_decomp[lvltot-1]->lopass()/*lopass*/, lvltot/*level*/, subsamp, 0/*no padding*/, \
+			bufferindex ^= 1;
+			wavelet_decomp[lvltot] = new wavelet_level<internal_type>(buffer[bufferindex], buffer[bufferindex^1]/*lopass*/, lvltot/*level*/, subsamp, 0/*no padding*/, \
 																	  wavelet_decomp[lvltot-1]->width(), wavelet_decomp[lvltot-1]->height(), \
 																	  wavfilt_anal, wavfilt_anal, wavfilt_len, wavfilt_offset);
 		}
+		coeff0 = buffer[bufferindex^1];
+		delete[] buffer[bufferindex];
 	}
 	
 	template<typename E>
@@ -143,17 +149,23 @@ namespace rtengine {
 			if(m_h2 < wavelet_decomp[lvl]->m_h2)
 				m_h2 = wavelet_decomp[lvl]->m_h2;
 		}
-
 		E *tmpLo = new E[m_w*m_h2];
 		E *tmpHi = new E[m_w*m_h2];
 
-		for (int lvl=lvltot-1; lvl>0; lvl--) {
-			wavelet_decomp[lvl]->reconstruct_level(tmpLo, tmpHi, wavelet_decomp[lvl-1]->wavcoeffs[0], wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset);
+		E *buffer[2];
+		buffer[0] = coeff0;
+		buffer[1] = new E[(m_w/2+1)*(m_h/2+1)];
+		int bufferindex = 0;
+		for (int lvl=lvltot; lvl>0; lvl--) {
+			wavelet_decomp[lvl]->reconstruct_level(tmpLo, tmpHi, buffer[bufferindex], buffer[bufferindex^1], wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset);
+			bufferindex ^= 1;
 			//skip /=2;
 		}
 
-		wavelet_decomp[0]->reconstruct_level(tmpLo, tmpHi, dst, wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset);
-
+		wavelet_decomp[0]->reconstruct_level(tmpLo, tmpHi, buffer[bufferindex], dst, wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset);
+		delete[] buffer[0];
+		delete[] buffer[1];
+		coeff0 = NULL;
 		delete[] tmpLo;
 		delete[] tmpHi;
 		
