@@ -1738,11 +1738,17 @@ void CLASS parse_hasselblad_gain()
                   information, but it makes no difference if set to zero. See
                   hasselblad_correct() how the flatfield is applied.
 
-      Applied in FFF conversion is flatfield correction, levels, and the bad columns(?)
+      Applied in FFF conversion is levels, flatfield correction, and the bad columns(?)
       data. A/D curves are surprisingly not applied, maybe pre-applied in hardware and
-      only available as information?
+      only available as information? Levels are applied before flatfield, further
+      ordering has not been investigated.
 
       Not all combinations/models have been tested so there may be gaps.
+
+      Most clipped pixels in a 3FR is at 65535, but there's also some at 65534. Both
+      are set to 65535 when calibrated, while 65533 is treated as a normal value. In
+      the calibration process smaller values can be scaled to 65534 (which should
+      not be seen as clipped).
     */
 
     ushort raw_h, count, ch_count, u16;
@@ -1788,6 +1794,37 @@ void CLASS hasselblad_correct()
       visible effects.
 
      */
+
+    if (hbd.levels) {
+        int i;
+        fseek(ifp, hbd.levels, SEEK_SET);
+        /* skip the first set (not used as we don't apply on first/last row), we look at it though to see if
+           the levels format is one that we support (there are other formats on some models which is not
+           supported here) */
+        short test[10];
+        for (i = 0; i < 10; i++) test[i] = (short)get2();
+        if (test[5] == 0 && test[6] == 0 && test[7] == 0 && test[8] == 0 && test[9] == 0) {
+            int corr[4];
+            ushort *row_above = (ushort *)malloc(sizeof(ushort) * raw_width); // we need to cache row above as we write new values as we go
+            for (col = 0; col < raw_width; col++) row_above[col] = RAW(0,col);
+            for (row = 1; row < raw_height-1; row++) {
+                for (i = 0; i < 4; i++) corr[i] = (short)get2();
+                fseek(ifp, 6 * 2, SEEK_CUR);
+                for (col = 0; col < raw_width; col++) {
+                    unsigned v = RAW(row,col);
+		    if (v >= 65534) {
+		        v = 65535;
+		    } else {
+		        if (corr[((col & 1)<<1)+0] && row_above[col] > black) v += 2 * ((corr[((col & 1)<<1)+0] * (row_above[col]-(int)black)) / 32767) - 2;
+			if (corr[((col & 1)<<1)+1] && RAW(row+1,col) > black) v += 2 * ((corr[((col & 1)<<1)+1] * (RAW(row+1,col)-(int)black)) / 32767) - 2;
+		    }
+                    row_above[col] = RAW(row,col);
+                    RAW(row,col) = CLIP(v);
+                }
+            }
+            free(row_above);
+        }
+    }
 
     if (hbd.flatfield) {
         int bw, bh, ffrows, ffcols, i, c;
@@ -1936,7 +1973,7 @@ void CLASS hasselblad_correct()
                     if (ffc == ffs + 4 * ffcols) next_ffc += raw_width; // last col in map, avoid stepping further
                 }
                 unsigned v = RAW(row,col);
-                if (v > black) {
+                if (v > black && v < 65535) {
                     c = FC(row,col);
                     unsigned x = col < cur_ffc ? 0 : col - cur_ffc;
                     unsigned y = row < cur_ffr ? 0 : row - cur_ffr;
@@ -1966,33 +2003,6 @@ void CLASS hasselblad_correct()
         }
         free(ffmap);
         free(corners_weight);
-    }
-
-    if (hbd.levels) {
-        int i;
-        fseek(ifp, hbd.levels, SEEK_SET);
-        /* skip the first set (not used as we don't apply on first/last row), we look at it though to see if
-           the levels format is one that we support (there are other formats on some models which is not
-           supported here) */
-        short test[10];
-        for (i = 0; i < 10; i++) test[i] = (short)get2();
-        if (test[5] == 0 && test[6] == 0 && test[7] == 0 && test[8] == 0 && test[9] == 0) {
-            int corr[4];
-            ushort *row_above = (ushort *)malloc(sizeof(ushort) * raw_width); // we need to cache row above as we write new values as we go
-            for (col = 0; col < raw_width; col++) row_above[col] = RAW(0,col);
-            for (row = 1; row < raw_height-1; row++) {
-                for (i = 0; i < 4; i++) corr[i] = (short)get2();
-                fseek(ifp, 6 * 2, SEEK_CUR);
-                for (col = 0; col < raw_width; col++) {
-                    unsigned v = RAW(row,col);
-                    if (corr[((col & 1)<<1)+0] && row_above[col] > black) v += 2 * ((corr[((col & 1)<<1)+0] * (row_above[col]-(int)black)) / 32767) - 2;
-                    if (corr[((col & 1)<<1)+1] && RAW(row+1,col) > black) v += 2 * ((corr[((col & 1)<<1)+1] * (RAW(row+1,col)-(int)black)) / 32767) - 2;
-                    row_above[col] = RAW(row,col);
-                    RAW(row,col) = CLIP(v);
-                }
-            }
-            free(row_above);
-        }
     }
 }
 
