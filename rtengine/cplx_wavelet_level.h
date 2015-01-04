@@ -72,7 +72,7 @@ namespace rtengine {
 		size_t m_w2, m_h2;
 
 		template<typename E>
-		wavelet_level(E * src, int level, int subsamp, int padding, size_t w, size_t h, float *filterV, float *filterH, int len, int offset)
+		wavelet_level(E * src, E * dst, int level, int subsamp, int padding, size_t w, size_t h, float *filterV, float *filterH, int len, int offset)
 		: m_w(w), m_h(h), m_w2(w), m_h2(h), m_pad(padding), wavcoeffs(NULL), lvl(level), skip(1<<level), subsamp_out((subsamp>>level)&1)
 		{
 			if (subsamp) {
@@ -86,7 +86,7 @@ namespace rtengine {
 			m_pad= skip*padding;
 			
 			wavcoeffs = create((m_w2)*(m_h2));
-			decompose_level(src, filterV, filterH, len, offset);
+			decompose_level(src, dst, filterV, filterH, len, offset);
 			
 		}
 
@@ -126,18 +126,18 @@ namespace rtengine {
 		}
 
 		template<typename E>
-		void decompose_level(E *src, float *filterV, float *filterH, int len, int offset);
+		void decompose_level(E *src, E *dst, float *filterV, float *filterH, int len, int offset);
 
 		template<typename E>
-		void reconstruct_level(E* tmpLo, E* tmpHi, E *dst, float *filterV, float *filterH, int taps, int offset);
+		void reconstruct_level(E* tmpLo, E* tmpHi, E *src, E *dst, float *filterV, float *filterH, int taps, int offset);
 	};
 
 	template<typename T>
 	T ** wavelet_level<T>::create(size_t n)	{
-		T * data = new T[4*n];
+		T * data = new T[3*n];
 		T ** subbands = new T*[4];
-		for(size_t j = 0; j < 4; j++) {
-			subbands[j] = data + n * j;
+		for(size_t j = 1; j < 4; j++) {
+			subbands[j] = data + n * (j-1);
 		}
 		return subbands;
 	}
@@ -145,7 +145,7 @@ namespace rtengine {
 	template<typename T>
 	void wavelet_level<T>::destroy(T ** subbands) {
 		if(subbands) {
-			delete[] subbands[0];
+			delete[] subbands[1];
 			delete[] subbands;
 		}
 	}
@@ -356,7 +356,7 @@ namespace rtengine {
 		}
 	}
 
-	template<typename T> template<typename E> void wavelet_level<T>::decompose_level(E *src, float *filterV, float *filterH, int taps, int offset) { 
+	template<typename T> template<typename E> void wavelet_level<T>::decompose_level(E *src, E *dst, float *filterV, float *filterH, int taps, int offset) { 
 
 		T tmpLo[m_w] ALIGNED64;
 		T tmpHi[m_w] ALIGNED64;
@@ -364,27 +364,27 @@ namespace rtengine {
 		if(subsamp_out) {
 			for(int row=0;row<m_h;row+=2) {
 				AnalysisFilterSubsampVertical (src, tmpLo, tmpHi, filterV, filterV+taps, taps, offset, m_w/*output_pitch*/, m_h/*srclen*/, row);
-				AnalysisFilterSubsampHorizontal (tmpLo, wavcoeffs[0], wavcoeffs[1], filterH, filterH+taps, taps, offset, m_h2/*output_pitch*/, m_w/*srclen*/, m_w2, row/2);
+				AnalysisFilterSubsampHorizontal (tmpLo, dst, wavcoeffs[1], filterH, filterH+taps, taps, offset, m_h2/*output_pitch*/, m_w/*srclen*/, m_w2, row/2);
 				AnalysisFilterSubsampHorizontal (tmpHi, wavcoeffs[2], wavcoeffs[3], filterH, filterH+taps, taps, offset, m_h2/*output_pitch*/, m_w/*srclen*/, m_w2, row/2);
 			}
 		} else {
 			for(int row=0;row<m_h;row++) {
 				AnalysisFilterHaarVertical (src, tmpLo, tmpHi, m_w, m_h, row);
-				AnalysisFilterHaarHorizontal (tmpLo, wavcoeffs[0], wavcoeffs[1], m_w, row);
+				AnalysisFilterHaarHorizontal (tmpLo, dst, wavcoeffs[1], m_w, row);
 				AnalysisFilterHaarHorizontal (tmpHi, wavcoeffs[2], wavcoeffs[3], m_w, row);
 			}
 		}
 	}
 
-	template<typename T> template<typename E> void wavelet_level<T>::reconstruct_level(E* tmpLo, E* tmpHi, E *dst, float *filterV, float *filterH, int taps, int offset) { 
+	template<typename T> template<typename E> void wavelet_level<T>::reconstruct_level(E* tmpLo, E* tmpHi, E * src, E *dst, float *filterV, float *filterH, int taps, int offset) { 
 
 		/* filter along rows and columns */
 		if (subsamp_out) {
-			SynthesisFilterSubsampHorizontal (wavcoeffs[0], wavcoeffs[1], tmpLo, filterH, filterH+taps, taps, offset, m_w/*dstlen*/);
+			SynthesisFilterSubsampHorizontal (src, wavcoeffs[1], tmpLo, filterH, filterH+taps, taps, offset, m_w/*dstlen*/);
 			SynthesisFilterSubsampHorizontal (wavcoeffs[2], wavcoeffs[3], tmpHi, filterH, filterH+taps, taps, offset, m_w/*dstlen*/);
 			SynthesisFilterSubsampVertical (tmpLo, tmpHi, dst, filterV, filterV+taps, taps, offset, m_w/*pitch*/, m_h/*dstlen*/);
 		} else {
-			SynthesisFilterHaarHorizontal (wavcoeffs[0], wavcoeffs[1], tmpLo, m_w);
+			SynthesisFilterHaarHorizontal (src, wavcoeffs[1], tmpLo, m_w);
 			SynthesisFilterHaarHorizontal (wavcoeffs[2], wavcoeffs[3], tmpHi, m_w);
 			SynthesisFilterHaarVertical (tmpLo, tmpHi, dst, m_w, m_h);
 		}
