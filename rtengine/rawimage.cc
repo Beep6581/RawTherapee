@@ -233,6 +233,8 @@ skip_block: ;
 	}
 	if (pre_mul_[3] == 0)
 		pre_mul_[3] = this->get_colors() < 4 ? pre_mul_[1] : 1;
+	else if (this->get_colors() < 4)
+		pre_mul_[3] = pre_mul_[1] = (pre_mul_[3] + pre_mul_[1]) / 2;
 
 	if (colors == 1)
 		for (c = 1; c < 4; c++)
