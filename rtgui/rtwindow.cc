@@ -351,12 +351,13 @@ void RTWindow::on_realize () {
 }
 
 bool RTWindow::on_window_state_event(GdkEventWindowState* event) {
+
 	if (!event->new_window_state) {
 		// Window mode
 		options.windowMaximized = false;
 	}
-	else if (event->new_window_state & (GDK_WINDOW_STATE_MAXIMIZED|GDK_WINDOW_STATE_FULLSCREEN)) {
-		// Fullscreen mode
+	else if (event->new_window_state & (GDK_WINDOW_STATE_MAXIMIZED|GDK_WINDOW_STATE_FULLSCREEN|GDK_WINDOW_STATE_ICONIFIED)) {
+		// Fullscreen mode, save this mode even when window is iconified (minimized) to allow easier restore, not the best solution though...
 		options.windowMaximized = true;
 	}
 	return true;
@@ -616,7 +617,6 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
     cacheMgr->closeCache ();  // also makes cleanup if too large
     WhiteBalance::cleanup();
     ProfilePanel::cleanup();
-
 
     if (!options.windowMaximized) {
 		options.windowWidth = get_width();
