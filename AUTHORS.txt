@@ -34,6 +34,7 @@ Developement contributors, in last name alphabetical order:
 
 Other contributors (profiles, ideas, mockups, testing, forum activity, translations, etc.), in last name/nickname alphabetical order:
 
+  Marcin Bajor
   Thorsten Bartolomäus
   Patrik Brunner
   Fernando Carello
