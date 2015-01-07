@@ -708,6 +708,7 @@ void EditorPanel::displayError (Glib::ustring title, Glib::ustring descr) {
 							 GTK_DIALOG_DESTROY_WITH_PARENT,
 							 GTK_MESSAGE_ERROR,
 							 GTK_BUTTONS_OK,
+							 "<b>%s</b>",
 							 descr.data());
 	gtk_window_set_title((GtkWindow*)msgd, title.data());
 	g_signal_connect_swapped (msgd, "response",
@@ -1133,8 +1134,7 @@ bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16*
 			pparams.save (fname + ".out" + paramFileExtension);
 		}
 	} else {
-		Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": Error during image saving\n</b>";
-		error(M("MAIN_MSG_CANNOTSAVE"), "<b>"+fname+"</b>");
+		error(M("MAIN_MSG_CANNOTSAVE"), fname);
     }
 
     saveimgas->set_sensitive(true);
