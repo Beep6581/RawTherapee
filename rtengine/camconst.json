@@ -1269,9 +1269,8 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
 	"dcraw_matrix": [ 9662, -684, -279, -4903, 12293, 2950, -344, 1669, 6024 ] // borrowed from Adobe's DNG converter
     },
     { // Quality A
-        "make_model": "Hasselblad H5D-50c",
-	"dcraw_matrix": [ 4932, -835, 141, -4878, 11868, 3437, -1138, 1961, 7067 ],
-        "raw_crop": [ 48, 96, 8280, 6208 ]
+        "make_model": [ "Hasselblad H5D-50c", "Hasselblad CFV-50c" ],
+	"dcraw_matrix": [ 4932, -835, 141, -4878, 11868, 3437, -1138, 1961, 7067 ]
     },
 
     // dummy test entry to test the parser and show the format with all entries active
