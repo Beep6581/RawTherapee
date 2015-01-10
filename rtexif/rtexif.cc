@@ -2021,6 +2021,115 @@ TagDirectory* ExifManager::parse (FILE* f, int base, bool skipIgnored) {
 
   parse_leafdata(root, order);
 
+  if (make && !strncmp((char*)make->getValue(), "Hasselblad", 10)) {
+      /*
+	Figuring out the Hasselblad model is a mess. Hasselblad raw data comes in four slightly
+	different containers, 3FR (directly from CF card), FFF (same as 3FR but filtered through
+	Phocus, calibration data applied and a bit different tags), Adobe-generated DNGs and
+	Phocus-generated DNGs.
+
+	FFF usually has a sane model name in Model (and is used as reference for what we shall
+	call the different Hasselblad models), but 3FR only says like "Hasselblad H3D" for
+	all H3D models, or "Flash Sync" if the back has been used on a mechanical camera body.
+	V-mount backs may have the model name of the V body instead of the back model. Etc...
+	as said it's a mess.
+
+	This code is supposed to handle all raw containers and end up with the same model
+	regardless of container.
+
+	We don't differ between single shot and multi-shot models, and probably there's no use
+	of doing so. You need Hasselblad's own software to shoot multi-shot and can only do that
+	tethered. In single-shot mode they should be exactly the same as the single-shot models.
+       */
+      Tag *subd = root->getTag(0x14a);
+      Tag *iw = (subd) ? subd->getDirectory()->getTag("ImageWidth") : 0;
+      int sensorWidth = (iw) ? iw->toInt() : 0;
+      Tag* tmodel = root->getTag ("Model");
+      const char *model = (tmodel) ? (const char *)tmodel->getValue() : "";
+      if (strstr(model, "Hasselblad ") == model) {
+          model += 11;
+      } else {
+          // if HxD is used in flash sync mode for example, we need to fetch model from this tag
+          Tag* tmodel3 = root->getTag("UniqueCameraModel");
+          const char *model3 = (tmodel3) ? (const char *)tmodel3->getValue() : "";
+          if (strstr(model3, "Hasselblad ") == model3) {
+              model = model3 + 11;
+          }
+      }
+      // FIXME: due to lack of test files this Hasselblad model identification is not 100% complete
+      // This needs checking out: CFV-39/CFV-50 3FR, H3DII vs H3D, old CF/CFH models
+
+      if (!strcmp(model, "H3D")) {
+	  // We can't differ between H3D and H3DII for the 22, 31 and 39 models. There's was no H3D-50 so we know that is a
+	  // H3DII-50. At the time of writing I have no test files for the H3D vs H3DII models, so there still may be a chance
+	  // to differ between them. AFAIK Adobe's DNG converter don't differ between them, and actually call the H3DII-50
+	  // H3D-50 although Hasselblad never released such a model.
+          switch (sensorWidth) {
+          case 4096: tmodel->initString("H3D-22"); break;
+          case 6542: tmodel->initString("H3D-31"); break;
+          case 7262: tmodel->initString("H3D-39"); break;
+          case 8282: tmodel->initString("H3DII-50"); break;
+          }
+      } else if (!strcmp(model, "H4D")) {
+          switch (sensorWidth) {
+          case 6542: tmodel->initString("H4D-31"); break;
+          case 7410: tmodel->initString("H4D-40"); break;
+          case 8282: tmodel->initString("H4D-50"); break;
+          case 9044: tmodel->initString("H4D-60"); break;
+          }
+      } else if (!strcmp(model, "H5D")) {
+          switch (sensorWidth) {
+          case 7410: tmodel->initString("H5D-40"); break;
+          case 8282: tmodel->initString("H5D-50"); break;
+          case 8374: tmodel->initString("H5D-50c"); break;
+          case 9044: tmodel->initString("H5D-60"); break;
+          }
+      } else if (!strcmp(model, "CFV")) {
+          switch (sensorWidth) {
+          case 7262: tmodel->initString("CFV-39"); break;
+          case 8282: tmodel->initString("CFV-50"); break;
+          case 8374: tmodel->initString("CFV-50c"); break;
+          }
+      }
+
+      // and a few special cases
+      Tag* tmodel3 = root->getTag("UniqueCameraModel");
+      const char *model3 = (tmodel3) ? (const char *)tmodel3->getValue() : "";
+      if (strstr(model3, "Hasselblad ") == model3) {
+          model3 = model3 + 11;
+      }
+      if (!strcmp(model3, "ixpressCF132")) {
+          tmodel->initString("CF-22");
+      } else if (!strcmp(model3, "Hasselblad96")) {
+          tmodel->initString("CFV"); // popularly called CFV-16, but the official name is CFV
+      } else if (!strcmp(model3, "Hasselblad234")) {
+          tmodel->initString("CFV-39");
+      } else if (sensorWidth == 4090) {
+          tmodel->initString("V96C");
+      }
+
+      // and yet some, this is for Adobe-generated DNG files
+      Tag* tmodel4 = root->getTag("LocalizedCameraModel");
+      if (tmodel4) {
+          const char *model4 = (tmodel4) ? (const char *)tmodel4->getValue() : "";
+          if (strstr(model4, "Hasselblad ") == model4) {
+              model4 = model4 + 11;
+          }
+          if (!strcmp(model4, "ixpressCF132-22")) {
+              tmodel->initString("CF-22");
+          } else if (!strcmp(model4, "Hasselblad96-16")) {
+              tmodel->initString("CFV");
+          } else if (!strcmp(model4, "Hasselblad234-39")) {
+              tmodel->initString("CFV-39");
+          } else if (!strcmp(model4, "H3D-50")) {
+	      // Adobe names H3DII-50 incorrectly as H3D-50
+              tmodel->initString("H3DII-50");
+          } else if (strstr(model4, "H3D-") == model4 || strstr(model4, "H4D-") == model4 || strstr(model4, "H5D-") == model4) {
+              tmodel->initString(model4);
+          }
+      }
+  }
+
   if (!root->getTag("Orientation")) {
       if (make && !strncmp((char*)make->getValue(), "Phase One", 9)) {
           int orientation = 0;
