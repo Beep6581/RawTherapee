@@ -807,6 +807,9 @@ PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for render
 PREFERENCES_HLTHRESHOLD;Threshold for clipped highlights
 PREFERENCES_ICCDIR;Directory containing color profiles
 PREFERENCES_IMPROCPARAMS;Default Processing Profile
+PREFERENCES_INSPECT_LABEL;Inspect
+PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of buffers
+PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
 PREFERENCES_INTENT_ABSOLUTE;Absolute Colorimetric
 PREFERENCES_INTENT_PERCEPTUAL;Perceptual
 PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
@@ -817,9 +820,6 @@ PREFERENCES_LEVAUTDN;Denoising level
 PREFERENCES_LEVDN;Cell size
 PREFERENCES_LISS;Auto multi-zone smoothing
 PREFERENCES_MAX;Maxi (Tile)
-PREFERENCES_INSPECT_LABEL;Inspect
-PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of buffer
-PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images set in cache when hovering them in the File Browser ; systems with few RAM memory (2 Gb) should keep this value set to 1 ot 2.
 PREFERENCES_MED;Medium (Tile/2)
 PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Group "File operations"
