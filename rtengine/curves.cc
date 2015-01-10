@@ -659,6 +659,7 @@ void CurveFactory::curveToningLL ( bool & llctoningutili,const std::vector<doubl
 		}
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+		hlCurve.setClip(LUT_CLIP_BELOW); // used LUT_CLIP_BELOW, because we want to have a baseline of 2^expcomp in this curve. If we don't clip the lut we get wrong values, see Issue 2621 #14 for details
 		float exp_scale = a;
 		float scale = 65536.0;
 		float comp = (max(0.0,ecomp) + 1.0)*hlcompr/100.0;
@@ -688,7 +689,7 @@ void CurveFactory::curveToningLL ( bool & llctoningutili,const std::vector<doubl
 
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// change to [0,1] range
-
+		shCurve.setClip(LUT_CLIP_ABOVE); // used LUT_CLIP_ABOVE, because the curve converges to 1.0 at the upper end and we don't want to exceed this value.
 		float val = 1.f/65535.f;
 		float	val2 = simplebasecurve (val, black, 0.015*shcompr);
 		shCurve[0] = CLIPD(val2)/val;
