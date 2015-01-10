@@ -22,6 +22,7 @@
 #22 2014-10-21 firefly
 #23 2014-11-07 firefly
 #24 2014-11-18 firefly
+#25 2015-01-05 firefly
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -112,9 +113,9 @@ FILEBROWSER_AUTODARKFRAME;オート・ダークフレーム
 FILEBROWSER_AUTOFLATFIELD;オート・フラットフィールド
 FILEBROWSER_BROWSEPATHBUTTONHINT;クリックで選択したパスをブラウズ
 FILEBROWSER_BROWSEPATHHINT;参照するパスを入力します\n<b>Ctrl-O</b> パスのテキストボックスにフォーカス\n<b>Enter</b> / <b>Ctrl-Enter</b>その場所をブラウズします\n<b>Esc</b> 変更をクリア\n<b>Shift-Esc</b>フォーカスを削除\nパスのショートカット:\n  <b>~</b> - ユーザーのホームディレクトリ\n  <b>!</b> - ユーザーの画像ディレクトリ
-FILEBROWSER_CACHECLEARFROMFULL;キャッシュをクリア - すべて
-FILEBROWSER_CACHECLEARFROMPARTIAL;キャッシュをクリア - 一部
-FILEBROWSER_CACHE;キャッシュ
+FILEBROWSER_CACHECLEARFROMFULL;cacheをクリア - すべて
+FILEBROWSER_CACHECLEARFROMPARTIAL;cacheをクリア - 一部
+FILEBROWSER_CACHE;cache
 FILEBROWSER_CLEARPROFILE;プロファイルのクリア
 FILEBROWSER_COLORLABEL_TOOLTIP;カラー・ラベル\n\nドロップダウン・メニューからか、ショートカット:\nShift-Ctrl-1 レッド\nShift-Ctrl-2 イエロー\nShift-Ctrl-3 グリーン\nShift-Ctrl-4 ブルー\nShift-Ctrl-5 パープル
 FILEBROWSER_COPYPROFILE;プロファイルをコピー
@@ -502,9 +503,9 @@ HISTORY_MSG_262;カラートーン調整　-　不透明度
 HISTORY_MSG_263;カラートーン調整　-　シャドウのレッド
 HISTORY_MSG_264;カラートーン調整　-　シャドウのグリーン
 HISTORY_MSG_265;カラートーン調整　-　シャドウのブルー
-HISTORY_MSG_266;カラートーン調整　-　ミッドのレッド
-HISTORY_MSG_267;カラートーン調整　-　ミッドのグリーン
-HISTORY_MSG_268;カラートーン調整　-　ミッドのブルー
+HISTORY_MSG_266;カラートーン調整　-　中間トーンのレッド
+HISTORY_MSG_267;カラートーン調整　-　中間トーンのグリーン
+HISTORY_MSG_268;カラートーン調整　-　中間トーンのブルー
 HISTORY_MSG_269;カラートーン調整　-　ハイライトのレッド
 HISTORY_MSG_270;カラートーン調整　-　ハイライトのグリーン
 HISTORY_MSG_271;カラートーン調整　-　ハイライトのブルー
@@ -628,6 +629,7 @@ MAIN_TAB_EXPORT; 書き出し
 MAIN_TAB_EXPOSURE;露光
 MAIN_TAB_EXPOSURE_TOOLTIP;ショートカット: <b>Alt-e</b>
 MAIN_TAB_FILTER;絞り込み
+MAIN_TAB_INSPECT;検査
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;メタデータ
 MAIN_TAB_METADATA_TOOLTIP;ショートカット: <b>Alt-m</b>
@@ -754,12 +756,14 @@ PREFERENCES_CACHECLEARALL;すべてクリア
 PREFERENCES_CACHECLEARPROFILES;プロファイルのクリア
 PREFERENCES_CACHECLEARTHUMBS;サムネイルのクリア
 PREFERENCES_CACHEMAXENTRIES;最大キャッシュエントリー数
-PREFERENCES_CACHEOPTS;キャッシュ オプション
+PREFERENCES_CACHEOPTS;cache オプション
 PREFERENCES_CACHETHUMBHEIGHT;サムネイル縦の最大値
 PREFERENCES_CIEART;CIECAM02 最適化
 PREFERENCES_CIEART_LABEL;倍精度の代わりに単精度浮動小数点を使用
 PREFERENCES_CIEART_TOOLTIP;有効にした場合、 CIECAM02は倍精度浮動小数点形式の代わりに単精度で実行されます。これは品質を少し犠牲にし、速度を少し増加させます
 PREFERENCES_CLIPPINGIND;クリッピング領域の表示
+PREFERENCES_CLUTSCACHE;HaldCLUT cache
+PREFERENCES_CLUTSCACHE_LABEL;cacheに置けるHaldCLUTの最大数
 PREFERENCES_CLUTSDIR;HaldCLUTのディレクトリー
 PREFERENCES_CMETRICINTENT;レンダリング・インテント
 PREFERENCES_CUSTPROFBUILDHINT;画像から新規のプロファイルを作成する際に呼び出される実行ファイル (またはスクリプト)\n.PP3生成のルールに基づいたコマンドライン・パラメータを受け取ります\n[raw/JPG・パス] [デフォルトのプロファイルのパス] [f-数値] [露出時間 秒] [焦点距離 mm] [ISO] [レンズ] [カメラ]
@@ -825,6 +829,9 @@ PREFERENCES_HISTOGRAM_TOOLTIP;これを有効にすると、ヒストグラム�
 PREFERENCES_HLTHRESHOLD;ハイライト・クリッピング領域のしきい値
 PREFERENCES_ICCDIR;カラープロファイルを含むディレクトリ
 PREFERENCES_IMPROCPARAMS;画像処理のデフォルト値
+PREFERENCES_INSPECT_LABEL;検査
+PREFERENCES_INSPECT_MAXBUFFERS_LABEL;バッファーの最大数
+PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;ファイルブラウザの操作中にcacheに差し込める画像の最大数。RAM容量が小さい場合（2G以下）の場合は、設定値を1或いは2にするべき
 PREFERENCES_INTENT_ABSOLUTE;絶対的な色域を維持
 PREFERENCES_INTENT_PERCEPTUAL;知覚的
 PREFERENCES_INTENT_RELATIVE;相対的な色域を維持
@@ -845,7 +852,7 @@ PREFERENCES_MENUOPTIONS;メニューオプションの状況
 PREFERENCES_METADATA;メタデータ
 PREFERENCES_MIN;最小 (100x115)
 PREFERENCES_MONITORICC;モニター・カラープロファイル
-PREFERENCES_MULTITABDUALMON;マルチ編集タブモード（セカンド・モニタが使用可能な場合）
+PREFERENCES_MULTITABDUALMON;独自のウィンドウモードによるマルチ編集タブ
 PREFERENCES_MULTITAB;マルチ編集タブモード
 PREFERENCES_NAVGUIDEBRUSH;ナビゲーターのガイドカラー
 PREFERENCES_NOISE;ノイズ低減
@@ -867,7 +874,7 @@ PREFERENCES_PROFILEHANDLING;処理プロファイルの取扱い
 PREFERENCES_PROFILELOADPR;処理プロファイル読み込みの優先
 PREFERENCES_PROFILEPRCACHE;キャッシュのプロファイル
 PREFERENCES_PROFILEPRFILE;入力ファイルに隣接するプロファイル
-PREFERENCES_PROFILESAVECACHE;処理プロファイルのパラメータをキャッシュに保存
+PREFERENCES_PROFILESAVECACHE;処理プロファイルのパラメータをcacheに保存
 PREFERENCES_PROFILESAVEINPUT;処理プロファイルのパラメータを入力ファイルと同じディレクトリに保存
 PREFERENCES_PROPERTY;プロパティ
 PREFERENCES_PSPATH;Adobe Photoshop のインストール・ディレクトリ
@@ -921,7 +928,7 @@ PROFILEPANEL_GLOBALPROFILES;付属のプロファイル
 PROFILEPANEL_LABEL;処理プロファイル
 PROFILEPANEL_LOADDLGLABEL;処理プロファイルを読み込む...
 PROFILEPANEL_LOADPPASTE;読み込むパラメータ
-PROFILEPANEL_MODE_TIP;プロファイルの補完処理\n\nボタンが押された: 不完全なプロファイルは完全なプロファイルに変換され、不足している値はハードコーディングされたデフォルト値に置き換えられます\n\nボタンが離された: プロファイルに含まれる値だけをそのまま変更し適用します
+PROFILEPANEL_MODE_TIP;処理プロファイルの適用モードボタン\n\nボタンが押された状態:処理プロファイルで設定されている値が適用され、且つ、他の値はプログラムにハードコーディングされているデフォルト値に置き換えられます\n\nボタンが離された状態:その処理プロファイルで設定されている値だけが適用されます
 PROFILEPANEL_MYPROFILES;自分のプロファイル
 PROFILEPANEL_PASTEPPASTE;貼り付けるパラメータ
 PROFILEPANEL_PCUSTOM;カスタム
@@ -1131,7 +1138,7 @@ TP_COLORTONING_BALANCE;バランス
 TP_COLORTONING_BY;o C/L
 TP_COLORTONING_CHROMAC;不透明度
 TP_COLORTONING_COLOR;カラー
-TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;C=f(L)の明度に応じた色度の不透明度
+TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;C=f(L)の明度に応じたクロマの不透明度
 TP_COLORTONING_HIGHLIGHT;ハイライト
 TP_COLORTONING_HUE;色相
 TP_COLORTONING_LABEL;カラートーン調整
@@ -1156,11 +1163,11 @@ TP_COLORTONING_SPLITCO;S/M/Hでカラートーン調整
 TP_COLORTONING_SPLITLR;2色の彩度でカラートーン調整
 TP_COLORTONING_STRENGTH;強さ
 TP_COLORTONING_STR;強さ
-TP_COLORTONING_TWO2;特定の色度‘2色’
-TP_COLORTONING_TWOALL;特定の色度
-TP_COLORTONING_TWOBY;特定の'a'と'b'
-TP_COLORTONING_TWOCOLOR_TOOLTIP;標準的な色度:\n線形的作用　a*=b*\n特定の色度:\n線形的作用　a*=b*、但し、特定しない　－　例えば、対角線より下の部分だけ\n特定のa*とb*:\n線形的作用　a*、b*カーブ別々で特定しない。特殊効果が目的\n2色の特定の色度:\n予測がしやすい方法
-TP_COLORTONING_TWOSTD;標準的な色度
+TP_COLORTONING_TWO2;特定のクロマ‘2色’
+TP_COLORTONING_TWOALL;特定のクロマ
+TP_COLORTONING_TWOBY;特定の'a*'と'b*'
+TP_COLORTONING_TWOCOLOR_TOOLTIP;標準的クロマ:\n線形的作用　a*=b*\n特定のクロマ:\n線形的作用　a*=b*、同じ増減率、カーブを対角線より下に下げると不透明度の値はマイナスになる、色相全体が影響を受ける\n特定のa*とb*:\n線形的作用　a*、b*別々に調整、特殊効果が目的\n特定のクロマ2色:\nカラーカーブで特定された2つの色相だけが影響を受ける
+TP_COLORTONING_TWOSTD;標準的クロマ
 TP_CROP_FIXRATIO;縦横比固定
 TP_CROP_GTDIAGONALS;対角線
 TP_CROP_GTEPASSPORT;バイオメトリック・パスポート
@@ -1235,7 +1242,7 @@ TP_DIRPYRDENOISE_METM_TOOLTIP;フィルタリングの方式で、"輝度のみ"
 TP_DIRPYRDENOISE_MET_TOOLTIP;適用するメディアンフィルターのサイズを決めます。大きくするとその分処理時間が増えます。\n\nソフトな3x3：1ピクセル範囲で5ピクセルの処理を行います\n強い3x3：1ピクセル範囲で9ピクセルの処理を行います\nソフトな5x5：2ピクセル範囲で13ピクセルの処理を行います\n強い5x5：2ピクセル範囲で25ピクセルの処理を行います\n7x7：3ピクセル範囲で49ピクセルの処理を行います\n9x9:4ピクセル範囲で81ピクセルの処理を行います\n\n小さいフィルターを使って、繰り返し処理をした方が、大きいフィルターを1回使うより結果が良いこともあります。
 TP_DIRPYRDENOISE_NOISELABELEMPTY;プレビューのノイズ: 中間色度= -   高色度= -
 TP_DIRPYRDENOISE_NOISELABEL;プレビューのノイズ: 中間色度=%1  高色度=%2
-TP_DIRPYRDENOISE_NRESID_TOOLTIP;ウェーブレット変換後、<b>プレビュー</b>で見える部分画像で残ったノイズのレベルを表示します\n\n>300以上　非常にノイズが多い\n100～300 ノイズが多い\n50～100　ノイズが少ない\n50以下 ノイズが非常に少ない\n\n算出値はRGBとL*a*b*モードでは異なります。RGBモードは輝度と色を完全に切り離すことが出来ないので、算出値の精度は劣ります。
+TP_DIRPYRDENOISE_NRESID_TOOLTIP;ウェーブレット変換後、プレビューで見える部分画像で残ったノイズのレベルを表示します\n\n>300以上　非常にノイズが多い\n100～300 ノイズが多い\n50～100　ノイズが少ない\n50以下 ノイズが非常に少ない\n\n算出値はRGBとL*a*b*モードでは異なります。RGBモードは輝度と色を完全に切り離すことが出来ないので、算出値の精度は劣ります。
 TP_DIRPYRDENOISE_PASSES;フィルタリングの繰り返し回数
 TP_DIRPYRDENOISE_PASSES_TOOLTIP;3x3のメディアンフィルターを3回繰り返して適用する方が、7x7のフィルターを1回適用するより、良い結果を生むことが多いです
 TP_DIRPYRDENOISE_PON;自動（多分割方式）
