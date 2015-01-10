@@ -705,6 +705,7 @@ const TagAttrib iopAttribs[] = {
  {0, AC_DONTWRITE, 0, 0, 0xC612, AUTO, "DNGVersion", &stdInterpreter},
  {0, AC_DONTWRITE, 0, 0, 0xC613, AUTO, "DNGBackwardVersion", &stdInterpreter},
  {0, AC_WRITE,     0, 0, 0xC614, AUTO, "UniqueCameraModel", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC615, AUTO, "LocalizedCameraModel", &stdInterpreter},
  {0, AC_WRITE,     0, 0, 0xc62f, AUTO, "CameraSerialNumber", &stdInterpreter},
  {0, AC_SYSTEM,    0, 0, 0xc630, AUTO, "DNGLensInfo", &stdInterpreter},
  {0, AC_DONTWRITE, 0, 0, 0xC634, AUTO, "MakerNote", &stdInterpreter}, //DNGPrivateData
