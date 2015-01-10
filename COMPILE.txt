@@ -68,26 +68,27 @@ PREAMBLE
 DEPENDENCIES
 ------------
 
-  PACKAGE                        URL
-  BZIP2       bzip2>-1.0.4       http://www.bzip.org/
-  EXIV2       exiv2>=0.19        http://www.exiv2.org/
-  EXPAT       expat>=2.1.0       http://expat.sourceforge.net/
-  FFTW        fftw>=3.2.2        http://fftw.org/
-  GCC         gcc>=4.7           http://gcc.gnu.org/
-  GLIB2       glib-2.0>=2.24     http://www.gtk.org/
-  GLIBMM      glibmm-2.4>=2.24   http://www.gtkmm.org
-  GTK+        gtk+-2.0>=2.24.18  http://www.gtk.org/
-  GTKMM       gtkmm-2.4>=2.22    http://www.gtkmm.org
-  JPEG        libjpeg>=6b        http://libjpeg-turbo.virtualgl.org/
-                                 http://jpegclub.org/
-                                 http://www.ijg.org/
-  LIBCANBERRA libcanberra-gtk    http://0pointer.de/lennart/projects/libcanberra/ (Linux only)
-  LCMS2       lcms>=2.0a         http://www.littlecms.com/
-  LIBIPTCDATA libiptcdata>=1.0.2 http://libiptcdata.sourceforge.net
-  PNG         libpng>=1.2.44     http://www.libpng.org/
-  SIGC        sigc++-2.0         http://libsigc.sourceforge.net/
-  TIFF        libtiff>=3.9.4     http://www.remotesensing.org/libtiff/
-  ZLIB        zlib>=1.2.3-r1     http://www.zlib.net/
+  PACKAGE                         URL
+  BZIP2        bzip2>-1.0.4       http://www.bzip.org/
+  EXIV2        exiv2>=0.19        http://www.exiv2.org/
+  EXPAT        expat>=2.1.0       http://expat.sourceforge.net/
+  FFTW         fftw>=3.2.2        http://fftw.org/
+  GCC          gcc>=4.7           http://gcc.gnu.org/
+  GLIB2        glib-2.0>=2.24     http://www.gtk.org/
+  GLIBMM       glibmm-2.4>=2.24   http://www.gtkmm.org
+  GTK+         gtk+-2.0>=2.24.18  http://www.gtk.org/
+  GTK2-Engines gtk-engines-2.20.2 http://www.gtk.org/
+  GTKMM        gtkmm-2.4>=2.22    http://www.gtkmm.org
+  JPEG         libjpeg>=6b        http://libjpeg-turbo.virtualgl.org/
+                                  http://jpegclub.org/
+                                  http://www.ijg.org/
+  LCMS2        lcms>=2.0a         http://www.littlecms.com/
+  LIBCANBERRA  libcanberra-gtk    http://0pointer.de/lennart/projects/libcanberra/ (Linux only)
+  LIBIPTCDATA  libiptcdata>=1.0.2 http://libiptcdata.sourceforge.net
+  PNG          libpng>=1.2.44     http://www.libpng.org/
+  SIGC         sigc++-2.0         http://libsigc.sourceforge.net/
+  TIFF         libtiff>=3.9.4     http://www.remotesensing.org/libtiff/
+  ZLIB         zlib>=1.2.3        http://www.zlib.net/
 
 
 WINDOWS
@@ -359,16 +360,17 @@ LINUX
 
     In Fedora, run:
       sudo yum install bzip2-devel cmake exiv2-devel expat-devel fftw-devel    \
-      gcc-c++ glib2-devel glibmm24-devel gtk+-devel gtkmm24-devel lcms2-devel  \
-      libcanberra-devel libiptcdata-devel libjpeg-turbo-devel libpng-devel     \
-      libsigc++20-devel libtiff-devel zlib-devel
+      gcc-c++ glib2-devel glibmm24-devel gtk+-devel gtk2-engines gtkmm24-devel \
+      lcms2-devel libcanberra-devel libiptcdata-devel libjpeg-turbo-devel      \
+      libpng-devel libsigc++20-devel libtiff-devel zlib-devel
 
     In Gentoo, run:
       sudo emerge -uva app-arch/bzip2 dev-cpp/glibmm dev-cpp/gtkmm             \
       dev-libs/expat dev-libs/glib dev-libs/libsigc++ dev-vcs/mercurial        \
       media-gfx/exiv2 media-libs/lcms media-libs/libcanberra                   \
       media-libs/libiptcdata media-libs/libjpeg-turbo media-libs/libpng        \
-      media-libs/tiff net-misc/curl sci-libs/fftw sys-libs/zlib x11-libs/gtk+
+      media-libs/tiff net-misc/curl sci-libs/fftw sys-libs/zlib x11-libs/gtk+  \
+      x11-themes/gtk-engines
 
     In openSUSE, run:
       sudo zypper in cmake fftw3-devel gcc-c++ glib2-devel glibmm2-devel       \
