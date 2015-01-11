@@ -445,7 +445,7 @@ class NALensDataInterpreter : public Interpreter {
             lenses["32 53 64 64 24 24 35 02"] = "Tamron SP AF 90mm f/2.8 Di Macro 1:1 (172E/272E)";
             lenses["32 54 50 50 24 24 35 02"] = "Sigma 50mm f/2.8 EX DG Macro";
             lenses["32 54 6A 6A 24 24 35 02"] = "AF Micro-Nikkor 105mm f/2.8D";
-            lenses["32 54 6A 6A 24 24 35 02"] = "Sigma Macro 105mm f/2.8 EX DG";
+            lenses["32 54 6A 6A 24 24 35 02"] = "Sigma 105mm f/2.8 EX DG Macro";
             lenses["33 48 2D 2D 24 24 31 02"] = "AF Nikkor 18mm f/2.8D";
             lenses["33 54 3C 5E 24 24 62 02"] = "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical (IF) Macro (A09)";
             lenses["34 48 29 29 24 24 32 02"] = "AF Fisheye Nikkor 16mm f/2.8D";
@@ -646,6 +646,7 @@ class NALensDataInterpreter : public Interpreter {
             lenses["CF 38 6E 98 34 3C 4B 0E"] = "Sigma APO 120-400mm f/4.5-5.6 DG OS HSM";
             lenses["DC 48 19 19 24 24 4B 06"] = "Sigma 10mm f/2.8 EX DC HSM Fisheye";
             lenses["DE 54 50 50 0C 0C 4B 06"] = "Sigma 50mm f/1.4 EX DG HSM";
+            lenses["D8 48 5C 5C 24 24 1C 06"] = "Sigma 70mm f/2.8 EX DG Macro";
             lenses["E0 3C 5C 8E 30 3C 4B 06"] = "Sigma 70-300mm f/4-5.6 APO DG Macro HSM";
             lenses["E1 58 37 37 14 14 1C 02"] = "Sigma 24mm f/1.8 EX DG Aspherical Macro";
             lenses["E3 54 50 50 24 24 35 02"] = "Sigma 50mm f/2.8 EX DG Macro";
