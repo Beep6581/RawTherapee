@@ -75,6 +75,7 @@ class ImageIO : virtual public ImageDatas {
         char* profileData;
         int profileLength;
         char* loadedProfileData;
+        bool loadedProfileDataJpg;
         int loadedProfileLength;
         procparams::ExifPairs exifChange;
         IptcData* iptc;
@@ -83,10 +84,12 @@ class ImageIO : virtual public ImageDatas {
         IIOSampleFormat sampleFormat;
         IIOSampleArrangement sampleArrangement;
 
+	private:
+		void deleteLoadedProfileData( ) { if(loadedProfileData) {if(loadedProfileDataJpg) free(loadedProfileData); else delete[] loadedProfileData;} loadedProfileData = NULL; }
     public:
         static Glib::ustring errorMsg[6];
 
-        ImageIO () : pl (NULL), embProfile(NULL), profileData(NULL), profileLength(0), loadedProfileData(NULL),
+        ImageIO () : pl (NULL), embProfile(NULL), profileData(NULL), profileLength(0), loadedProfileData(NULL),loadedProfileDataJpg(false),
                      loadedProfileLength(0), iptc(NULL), exifRoot (NULL), sampleFormat(IIOSF_UNKNOWN),
                      sampleArrangement(IIOSA_UNKNOWN) {}
 
