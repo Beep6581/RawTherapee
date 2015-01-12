@@ -1119,9 +1119,10 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "raw_crop": [ 128, 36, 5480, 3656 ], // jpeg 5472x3648 - full raw: 5664 x 3710 - Samsung's official crop: 132, 40, 5604, 3688
         "ranges": { "white": 4030 } // double clipping point for each channel at a) 4095 and b) bell distribution with peak at 4038 .. used the conservative one
     },
-    {  // Quality A, Conflict with "Samsung NX30" in Dcraw_v9.21_r1.414
+    {  // Quality A, Conflict with "Samsung NX30" in Dcraw_v9.21_r1.414, frame corrections and color data  
         "make_model": "Samsung NX3000", 
-        "dcraw_matrix": [ 8060,-2933,-761,-4504,12890,1762,-630,1489,5227 ] // D65 from Adobe's Dcp profile
+        "dcraw_matrix": [ 8060,-2933,-761,-4504,12890,1762,-630,1489,5227 ], // DNG_v8.7.1 D65
+        "raw_crop": [ 92, 38, 5480, 3656 ] // jpeg 5472x3648 - full raw: 5600 x 3714 - Samsung's official crop: 96, 42, 5568, 3690
 	},
 
     {  // Quality B, Crash on SRWs, RT normally use the embedded data with DNGs so needs adobe_coeff setting in dcraw.cc to always use the data from camconst.json for NX1
