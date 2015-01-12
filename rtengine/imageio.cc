@@ -143,7 +143,7 @@ ImageIO::~ImageIO () {
 
     if (embProfile)
         cmsCloseProfile(embProfile);
-    delete [] loadedProfileData;
+	deleteLoadedProfileData();
     delete exifRoot;
     delete [] profileData;
 }
@@ -359,10 +359,8 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
         //jpeg_memory_src (&cinfo,buffer,bufsize);
         jpeg_read_header(&cinfo, TRUE);
 
-        if( loadedProfileData ){
-           delete [] loadedProfileData;
-           loadedProfileData = NULL;
-        }
+		deleteLoadedProfileData();
+		loadedProfileDataJpg = true;
         bool hasprofile = read_icc_profile (&cinfo, (JOCTET**)&loadedProfileData, (unsigned int*)&loadedProfileLength);
         if (hasprofile) 
             embProfile = cmsOpenProfileFromMem (loadedProfileData, loadedProfileLength);
@@ -406,7 +404,6 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
 }
 
 int ImageIO::loadJPEG (Glib::ustring fname) {
-
     FILE *file=safe_g_fopen(fname,"rb");
     if (!file)
         return IMIO_CANNOTREADFILE;
@@ -435,8 +432,8 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
             return IMIO_READERROR;
         }
 
-        delete loadedProfileData;
-        loadedProfileData = NULL;
+		deleteLoadedProfileData();
+		loadedProfileDataJpg = true;
         bool hasprofile = read_icc_profile (&cinfo, (JOCTET**)&loadedProfileData, (unsigned int*)&loadedProfileLength);
         if (hasprofile) 
             embProfile = cmsOpenProfileFromMem (loadedProfileData, loadedProfileLength);
@@ -651,10 +648,8 @@ int ImageIO::loadTIFF (Glib::ustring fname) {
 
 
     char* profdata;
-    if( loadedProfileData ){
-       delete [] loadedProfileData;
-       loadedProfileData = NULL;
-    }
+	deleteLoadedProfileData();
+	loadedProfileDataJpg = false;
     if (TIFFGetField(in, TIFFTAG_ICCPROFILE, &loadedProfileLength, &profdata)) {
         embProfile = cmsOpenProfileFromMem (profdata, loadedProfileLength);
 
