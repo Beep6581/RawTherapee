@@ -287,7 +287,7 @@ void DCPProfile::MakeXYZCAM(ColorTemp &wb, double pre_mul[3], double camWbMatrix
     }
 
     // mix if we have two matrices
-    double mix;
+    double mix = 1.0;
     if ((hasCol1 && hasCol2) || (hasFwd1 && hasFwd2)) {
         double wbtemp;
         /* DNG ref way to convert XY to temperature, which affect matrix mixing. A different model here

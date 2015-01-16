@@ -37,7 +37,7 @@ namespace rtengine {
 
 	private:
 
-		static const int maxlevels = 9;//should be greater than any conceivable order of decimation
+		static const int maxlevels = 10;//should be greater than any conceivable order of decimation
 
 		int lvltot, subsamp;
 		size_t m_w, m_h;//dimensions
@@ -53,7 +53,7 @@ namespace rtengine {
 	public:
 
 		template<typename E>
-		wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling);
+		wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling, int skipcrop = 1);
 
 		~wavelet_decomposition();
 
@@ -70,11 +70,6 @@ namespace rtengine {
 		int level_H(int level) const
 		{
 			return wavelet_decomp[level]->height();
-		}
-
-		int level_pad(int level) const
-		{
-			return wavelet_decomp[level]->padding();
 		}
 
 		int level_stride(int level) const
@@ -96,7 +91,7 @@ namespace rtengine {
 	};
 
 	template<typename E>
-	wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling)
+	wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling, int skipcrop)
 	: lvltot(0), subsamp(subsampling), m_w(width), m_h(height), coeff0(NULL)
 	{
 		//initialize wavelet filters
@@ -116,21 +111,20 @@ namespace rtengine {
 		// after coefficient rotation, data structure is:
 		// wavelet_decomp[scale][channel={lo,hi1,hi2,hi3}][pixel_array]
 
-		int padding = 0;//pow(2, maxlvl);//must be a multiple of two
 		lvltot=0;
 		E *buffer[2];
 		buffer[0] = new E[(m_w/2+1)*(m_h/2+1)];
 		buffer[1] = new E[(m_w/2+1)*(m_h/2+1)];
 		int bufferindex = 0;
 
-		wavelet_decomp[lvltot] = new wavelet_level<internal_type>(src, buffer[bufferindex^1], lvltot/*level*/, subsamp, padding/*padding*/, m_w, m_h, \
-																  wavfilt_anal, wavfilt_anal, wavfilt_len, wavfilt_offset);
+		wavelet_decomp[lvltot] = new wavelet_level<internal_type>(src, buffer[bufferindex^1], lvltot/*level*/, subsamp, m_w, m_h, \
+																  wavfilt_anal, wavfilt_anal, wavfilt_len, wavfilt_offset, skipcrop);
 		while(lvltot < maxlvl-1) {
 			lvltot++;
 			bufferindex ^= 1;
-			wavelet_decomp[lvltot] = new wavelet_level<internal_type>(buffer[bufferindex], buffer[bufferindex^1]/*lopass*/, lvltot/*level*/, subsamp, 0/*no padding*/, \
+			wavelet_decomp[lvltot] = new wavelet_level<internal_type>(buffer[bufferindex], buffer[bufferindex^1]/*lopass*/, lvltot/*level*/, subsamp, \
 																	  wavelet_decomp[lvltot-1]->width(), wavelet_decomp[lvltot-1]->height(), \
-																	  wavfilt_anal, wavfilt_anal, wavfilt_len, wavfilt_offset);
+																	  wavfilt_anal, wavfilt_anal, wavfilt_len, wavfilt_offset, skipcrop);
 		}
 		coeff0 = buffer[bufferindex^1];
 		delete[] buffer[bufferindex];

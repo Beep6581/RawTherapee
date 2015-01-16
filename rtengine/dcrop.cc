@@ -23,7 +23,6 @@
 #include "refreshmap.h"
 #include "rt_math.h"
 #include "colortemp.h"
-
 // "ceil" rounding
 #define SKIPS(a,b) ((a) / (b) + ((a) % (b) > 0))
 
@@ -158,14 +157,11 @@ void Crop::update (int todo) {
 		//	printf("x=%d y=%d crow=%d croh=%d skip=%d\n",rqcropx, rqcropy, rqcropw, rqcroph, skip);
 		//	printf("trafx=%d trafyy=%d trafwsk=%d trafHs=%d \n",trafx, trafy, trafw*skip, trafh*skip);
 			
-		int skipP=1;//force Skip for noise evaluation
-
 		Imagefloat *calclum = NULL;//for Luminance denoise curve
 		NoiseCurve noiseLCurve;
 		NoiseCurve noiseCCurve;
 		float autoNR = (float) settings->nrauto;//
 		float autoNRmax = (float) settings->nrautomax;//
-		float autohigh = (float) settings->nrhigh;//
 		
 		params.dirpyrDenoise.getCurves(noiseLCurve, noiseCCurve);
 
@@ -186,7 +182,6 @@ void Crop::update (int todo) {
 		parent->ipf.Tile_calc (tilesize, overlap, kall, widIm, heiIm, numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip);
 		kall=0;
 		
-		int nbtl=numtiles_W*numtiles_H;
 		float *ch_M = new float [9];//allocate memory
 		float *max_r = new float [9];
 		float *max_b = new float [9];
@@ -212,71 +207,7 @@ void Crop::update (int todo) {
 				parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.icm, params.raw );
 			}
 		}
-		/*
-		if(params.dirpyrDenoise.Cmethod=="PON") {
-			MyTime t1dce,t2dce;
-			t1dce.set();
 
-		int crW=100;//crop noise width
-		int crH=100;//crop noise height
-		Imagefloat *origCropPart;//init auto noise
-			origCropPart = new Imagefloat (crW, crH);//allocate memory
-		
-		int skipP=1;
-		if (skip==1 && params.dirpyrDenoise.enabled) {//evaluate Noise
-		
-			for(int wcr=0;wcr<numtiles_W;wcr++) {
-				for(int hcr=0;hcr<numtiles_H;hcr++) {
-			
-					int beg_tileW=wcr*tileWskip + tileWskip/2.f - crW/2.f;
-					int beg_tileH=hcr*tileHskip + tileHskip/2.f - crH/2.f;
-					PreviewProps ppP (beg_tileW , beg_tileH, crW, crH, skipP);
-					parent->imgsrc->getImage (parent->currWB, tr, origCropPart, ppP, params.toneCurve, params.icm, params.raw );
-
-					Imagefloat *provi;
-					Imagefloat *provicalc;
-					provi = new Imagefloat (crW, crH);
-						if(origCropPart !=  provi)
-							origCropPart->copyData(provi);
-					provicalc = new Imagefloat (crW, crH);
-						if(origCropPart !=  provicalc)
-							origCropPart->copyData(provicalc);
-					parent->imgsrc->convertColorSpace(provicalc, params.icm, parent->currWB, params.raw);//for denoise luminance curve
-					float maxr=0.f;
-					float maxb=0.f;
-
-					float chaut, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L;
-					chaut=0.f;redaut=0.f; blueaut=0.f; maxredaut=0.f; maxblueaut=0.f;chromina=0.f; sigma=0.f;
-					parent->ipf.RGB_denoise_info(provi, provi, provicalc, parent->imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, parent->imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve,lldenoiseutili, noiseCCurve,ccdenoiseutili, chaut, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L);
-					//printf("DCROP skip=%d cha=%f red=%f bl=%f redM=%f bluM=%f chrom=%f sigm=%f lum=%f\n",skip, chaut,redaut,blueaut, maxredaut, maxblueaut, chromina, sigma, lumema);
-					if(maxredaut > maxblueaut) {
-						maxr=(maxredaut-chaut)/(autoNRmax/2.f);
-						if(minblueaut <= minredaut  && minblueaut < chaut) maxb=(-chaut+minblueaut)/autoNRmax;
-					} 
-					else {
-						maxb=(maxblueaut-chaut)/(autoNRmax/2.f);
-						if(minredaut <= minblueaut  && minredaut < chaut) maxr=(-chaut+minredaut)/autoNRmax;
-					}//maxb mxr - empirical evaluation red / blue
-					
-					ch_M[hcr*numtiles_W + wcr]=chaut/autoNR;
-					max_r[hcr*numtiles_W + wcr]=maxr;
-					max_b[hcr*numtiles_W + wcr]=maxb;
-					
-					delete provi;
-				
-				}
-			}
-		
-		}
-		delete origCropPart; 
-		if (settings->verbose) {
-			t2dce.set();
-			printf("Info denoise ponderated performed in %d usec:\n", t2dce.etime(t1dce));
-			}
-		
-		}
-		*/
-		
 		if((settings->leveldnautsimpl==1 && params.dirpyrDenoise.Cmethod=="PRE") || (settings->leveldnautsimpl==0 && params.dirpyrDenoise.C2method=="PREV")) {
 			PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
 			parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.icm, params.raw );
@@ -298,12 +229,12 @@ void Crop::update (int todo) {
 					if(abs(centerTile_Y[cc]-CenterPreview_Y) < minimuY) {minimuY=abs(centerTile_Y[cc]-CenterPreview_Y);poscenterY=cc;}
 				}
 			//	printf("TileCX=%d  TileCY=%d  prevX=%d  prevY=%d \n",centerTile_X[poscenterX],centerTile_Y[poscenterY],CenterPreview_X,CenterPreview_Y);
-				int crW,crH;	
-				if(settings->leveldnv ==0) {crW=100;crH=100;}
-				if(settings->leveldnv ==1) {crW=250;crH=250;}
+				int crW;	
+				if(settings->leveldnv ==0) {crW=100;}
+				if(settings->leveldnv ==1) {crW=250;}
 			//	if(settings->leveldnv ==2) {crW=int(tileWskip/2);crH=int((tileWskip/2));}//adapted to scale of preview
-				if(settings->leveldnv ==2) {crW=int(tileWskip/2);crH=int(tileHskip/2);}
-				if(settings->leveldnv ==3) {crW=tileWskip-10;crH=tileHskip-10;}
+				if(settings->leveldnv ==2) {crW=int(tileWskip/2);}
+				if(settings->leveldnv ==3) {crW=tileWskip-10;}
 
 				float adjustr=1.f;	
 				if      (params.icm.working=="ProPhoto")   {adjustr =1.f;}
@@ -323,9 +254,17 @@ void Crop::update (int todo) {
 			 //   cropImageListener->setPosition (centerTile_X[poscenterX],centerTile_Y[poscenterY] , true);
 				//setCropSizes (centerTile_X[poscenterX], centerTile_Y[poscenterY], trafw*skip,trafh*skip , skip, true);
 
-				Imagefloat *provicalc = new Imagefloat (cropw, croph);//for Luminance denoise curve
-				origCrop->copyData(provicalc);
+				// we only need image reduced to 1/4 here
+				Imagefloat *provicalc = new Imagefloat ((cropw+1)/2, (croph+1)/2);//for denoise curves
+				for(int ii=0;ii<croph;ii+=2){
+					for(int jj=0;jj<cropw;jj+=2){
+						provicalc->r(ii>>1,jj>>1) = origCrop->r(ii,jj);
+						provicalc->g(ii>>1,jj>>1) = origCrop->g(ii,jj);
+						provicalc->b(ii>>1,jj>>1) = origCrop->b(ii,jj);
+					}
+				}
 				parent->imgsrc->convertColorSpace(provicalc, params.icm, parent->currWB, params.raw);//for denoise luminance curve
+
 				float maxr=0.f;
 				float maxb=0.f;
 				float chaut, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc;
@@ -380,7 +319,6 @@ void Crop::update (int todo) {
 		//	if(settings->leveldnv ==2) {crW=int(tileWskip/2);crH=int((tileWskip/2));}//adapted to scale of preview
 			if(settings->leveldnv ==2) {crW=int(tileWskip/2);crH=int(tileHskip/2);}
 			if(settings->leveldnv ==3) {crW=tileWskip-10;crH=tileHskip-10;}
-			
 			float lowdenoise=1.f;
 			int levaut=settings->leveldnaut;
 			if(levaut==1)  //Standard
@@ -394,10 +332,8 @@ void Crop::update (int todo) {
 #pragma omp parallel			
 #endif
 {
-			Imagefloat *origCropPart;//init auto noise		
-			origCropPart = new Imagefloat (crW, crH);//allocate memory
-			Imagefloat *provicalc;
-			provicalc = new Imagefloat (crW, crH);			
+			Imagefloat *origCropPart = new Imagefloat (crW, crH);//allocate memory
+			Imagefloat *provicalc = new Imagefloat ((crW+1)/2, (crH+1)/2);//for denoise curves
 
 			int  coordW[3];//coordonate of part of image to mesure noise
 			int  coordH[3];
@@ -410,18 +346,22 @@ void Crop::update (int todo) {
 #endif
 			for(int wcr=0;wcr<=2;wcr++) {
 				for(int hcr=0;hcr<=2;hcr++) {
-					PreviewProps ppP (coordW[wcr] , coordH[hcr], crW, crH, skipP);
+					PreviewProps ppP (coordW[wcr] , coordH[hcr], crW, crH, 1);
 					parent->imgsrc->getImage (parent->currWB, tr, origCropPart, ppP, params.toneCurve, params.icm, params.raw );
 
-					if(origCropPart !=  provicalc)
-						origCropPart->copyData(provicalc);
+					// we only need image reduced to 1/4 here
+					for(int ii=0;ii<crH;ii+=2){
+						for(int jj=0;jj<crW;jj+=2){
+							provicalc->r(ii>>1,jj>>1) = origCropPart->r(ii,jj);
+							provicalc->g(ii>>1,jj>>1) = origCropPart->g(ii,jj);
+							provicalc->b(ii>>1,jj>>1) = origCropPart->b(ii,jj);
+						}
+					}
 					parent->imgsrc->convertColorSpace(provicalc, params.icm, parent->currWB, params.raw);//for denoise luminance curve
-					//float maxr=0.f;
-					//float maxb=0.f;
+
 					float pondcorrec=1.0f;
 					float chaut=0.f, redaut=0.f, blueaut=0.f, maxredaut=0.f, maxblueaut=0.f, minredaut=0.f, minblueaut=0.f, nresi=0.f, highresi=0.f, chromina=0.f, sigma=0.f, lumema=0.f, sigma_L=0.f, redyel=0.f, skinc=0.f, nsknc=0.f;
 					int nb=0;
-//						chaut=0.f;redaut=0.f; blueaut=0.f; maxredaut=0.f; maxblueaut=0.f; chromina=0.f; sigma=0.f;
 					parent->ipf.RGB_denoise_info(origCropPart, provicalc, parent->imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope, params.dirpyrDenoise, parent->imgsrc->getDirPyrDenoiseExpComp(), chaut, nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
 
 				//printf("DCROP skip=%d cha=%f red=%f bl=%f redM=%f bluM=%f chrom=%f sigm=%f lum=%f\n",skip, chaut,redaut,blueaut, maxredaut, maxblueaut, chromina, sigma, lumema);
@@ -469,27 +409,22 @@ void Crop::update (int todo) {
 			else if (params.icm.working=="BestRGB")    {adjustr =1.f/1.2f;}
 			else if (params.icm.working=="BruceRGB")   {adjustr =1.f/1.2f;}
 
-			float maxmax;
-			float minmin;				
 			float delta[9];
 			int mode=1;
-			float redyel, skinc, nsknc;
 			int lissage=settings->leveldnliss;
 			for (int k=0;k<9;k++) {
-				maxmax=max(max_r[k],max_b[k]);				
+				float maxmax=max(max_r[k],max_b[k]);				
 				parent->ipf.calcautodn_info (ch_M[k], delta[k], Nb[k], levaut, maxmax,lumL[k],chromC[k], mode, lissage, ry[k], sk[k], pcsk[k]);
 			//	printf("ch_M=%f delta=%f\n",ch_M[k], delta[k]);
 			}
 			for (int k=0;k<9;k++) {
 				if(max_r[k] > max_b[k]) {
-					minmin=min(min_r[k],min_b[k]);
 					Max_R[k]=(delta[k])/((autoNRmax*multip*adjustr*lowdenoise)/2.f);
 					Min_B[k]= -(ch_M[k]- min_b[k])/(autoNRmax*multip*adjustr*lowdenoise);
 					Max_B[k]=0.f;
 					Min_R[k]=0.f;
 				} 
 				else {
-					minmin=min(min_r[k],min_b[k]);	
 					Max_B[k]=(delta[k])/((autoNRmax*multip*adjustr*lowdenoise)/2.f);
 					Min_R[k]=- (ch_M[k]-min_r[k])	/ (autoNRmax*multip*adjustr*lowdenoise);
 					Min_B[k]=0.f;
@@ -555,14 +490,20 @@ void Crop::update (int todo) {
 		} else if(denoiseParams.Lmethod == "SLI")
 			noiseLCurve.Reset();
 
-
-
 		if((noiseLCurve || noiseCCurve ) && skip==1 && denoiseParams.enabled)	{//only allocate memory if enabled and skip
-			calclum = new Imagefloat (cropw, croph);//for Luminance denoise curve
-			origCrop->copyData(calclum);
+			// we only need image reduced to 1/4 here
+			calclum = new Imagefloat ((cropw+1)/2, (croph+1)/2);//for denoise curves
+			for(int ii=0;ii<croph;ii+=2){
+				for(int jj=0;jj<cropw;jj+=2){
+					calclum->r(ii>>1,jj>>1) = origCrop->r(ii,jj);
+					calclum->g(ii>>1,jj>>1) = origCrop->g(ii,jj);
+					calclum->b(ii>>1,jj>>1) = origCrop->b(ii,jj);
+				}
+			}
 		
 			parent->imgsrc->convertColorSpace(calclum, params.icm, parent->currWB, params.raw);//for denoise luminance curve
 		}
+
 		if(skip!=1) if(parent->adnListener) parent->adnListener->noiseChanged(0.f, 0.f);	
 
         if (todo & M_LINDENOISE) {
@@ -643,7 +584,6 @@ void Crop::update (int todo) {
                    baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256,
                    parent->imgsrc->getGamma());
         }*/
-    double rrm, ggm, bbm;
     float satLimit = float(params.colorToning.satProtectionThreshold)/100.f*0.7f+0.3f;
     float satLimitOpacity = 1.f-(float(params.colorToning.saturatedOpacity)/100.f);
 
@@ -659,12 +599,13 @@ void Crop::update (int todo) {
         satLimitOpacity= 100.f*(moyS-0.85f*eqty);//-0.85 sigma==>20% pixels with low saturation
     }
 
-    if (todo & M_RGBCURVE)
+    if (todo & M_RGBCURVE) {
+	    double rrm, ggm, bbm;
         parent->ipf.rgbProc (baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
                              params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, satLimit ,satLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve,parent->cl2Toningcurve,
                              parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW,rrm, ggm, bbm,
                              parent->bwAutoR, parent->bwAutoG, parent->bwAutoB);
-
+    }
     /*xref=000;yref=000;
     if (colortest && cropw>115 && croph>115)
     for(int j=1;j<5;j++){
@@ -744,7 +685,6 @@ void Crop::update (int todo) {
 
             if(settings->ciecamfloat) {
                 float d; // not used after this block
-				skip2=skip;
                 parent->ipf.ciecam_02float (cieCrop, float(adap), begh, endh, 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
                                             dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, 1, execsharp, d, skip, 1);			
             }

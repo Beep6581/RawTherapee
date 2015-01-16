@@ -114,13 +114,6 @@ class ImProcCoordinator : public StagedImageProcessor {
         LUTf rCurve;
         LUTf gCurve;
         LUTf bCurve;
-        bool utili;
-        bool autili;
-        bool butili;
-        bool ccutili;
-        bool cclutili;
-        bool clcutili;
-		bool opautili;
         ToneCurve customToneCurve1;
         ToneCurve customToneCurve2;
         ColorGradientCurve ctColorCurve;
@@ -176,6 +169,13 @@ class ImProcCoordinator : public StagedImageProcessor {
         bool updaterRunning;
         ProcParams nextParams;
         bool destroying;
+        bool utili;
+        bool autili;
+        bool butili;
+        bool ccutili;
+        bool cclutili;
+        bool clcutili;
+		bool opautili;
 
         void startProcessing ();
         void process ();
