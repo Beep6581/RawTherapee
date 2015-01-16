@@ -33,13 +33,13 @@ ImProcCoordinator::ImProcCoordinator ()
     : orig_prev(NULL), oprevi(NULL), oprevl(NULL), nprevl(NULL), previmg(NULL), workimg(NULL),
       ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true), scale(10),
       highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false),
-      bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(0.), chaut(0.f), redaut(0.f), blueaut(0.f), maxredaut(0.f), maxblueaut(0.f),nresi(0.f),
-		chromina(0.f), sigma(0.f), lumema(0.f),minredaut(0.f), minblueaut(0.f),
+      bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(0.),
 
-      hltonecurve(65536,LUT_CLIP_BELOW),  // used LUT_CLIP_BELOW, because we want to have a baseline of 2^expcomp in this curve. If we don't clip the lut we get wrong values, see Issue 2621 #14 for details
-      shtonecurve(65536,2),//clip above
+      hltonecurve(65536),
+      shtonecurve(65536),
       tonecurve(65536,0),//,1);
-
+	  chaut(0.f), redaut(0.f), blueaut(0.f), maxredaut(0.f), maxblueaut(0.f),minredaut(0.f), minblueaut(0.f),nresi(0.f),
+	  chromina(0.f), sigma(0.f), lumema(0.f),
       lumacurve(65536,0),
       chroma_acurve(65536,0),
       chroma_bcurve(65536,0),
@@ -82,11 +82,11 @@ ImProcCoordinator::ImProcCoordinator ()
       rcurvehist(256), rcurvehistCropped(256), rbeforehist(256),
       gcurvehist(256), gcurvehistCropped(256), gbeforehist(256),
       bcurvehist(256), bcurvehistCropped(256), bbeforehist(256),
-
+	  fullw(1),fullh(1),
       pW(-1), pH(-1),
-      plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),acListener(NULL), abwListener(NULL),actListener(NULL),adnListener(NULL),
-      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false),utili(false),autili(false),opautili(false),
-	  butili(false),ccutili(false),cclutili(false),clcutili(false),fullw(1),fullh(1)
+      plistener(NULL), imageListener(NULL), aeListener(NULL), acListener(NULL),abwListener(NULL),actListener(NULL),adnListener(NULL), hListener(NULL), 
+      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false),utili(false),autili(false),
+	  butili(false),ccutili(false),cclutili(false),clcutili(false),opautili(false)
 
     {}
 
@@ -291,10 +291,15 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		
 
 		if((noiseLCurve || noiseCCurve) &&  denoiseParams.enabled && (scale==1)){//only allocate memory if enabled and scale=1	
-			calclum = new Imagefloat (pW, pH);//for Luminance denoise curve
-				if(orig_prev !=  calclum)
-					orig_prev->copyData(calclum);
-		
+			// we only need image reduced to 1/4 here
+			calclum = new Imagefloat ((pW+1)/2, (pH+1)/2);//for luminance denoise curve
+			for(int ii=0;ii<pH;ii+=2){
+				for(int jj=0;jj<pW;jj+=2){
+					calclum->r(ii>>1,jj>>1) = orig_prev->r(ii,jj);
+					calclum->g(ii>>1,jj>>1) = orig_prev->g(ii,jj);
+					calclum->b(ii>>1,jj>>1) = orig_prev->b(ii,jj);
+				}
+			}
 			imgsrc->convertColorSpace(calclum, params.icm, currWB, params.raw);//claculate values after colorspace conversion
 		}
 		//always enabled to calculated auto Chroma

@@ -1212,26 +1212,40 @@ __inline float xexpf(float d) {
 
 }
 
-
 __inline float xmul2f(float d) {
-	if (*(int*)&d & 0x7FFFFFFF) { // if f==0 do nothing
-		*(int*)&d += 1 << 23; // add 1 to the exponent
-		}
-	return d;
+	union {
+		float floatval;
+		int intval;
+	} uflint;
+	uflint.floatval = d;
+	if (uflint.intval & 0x7FFFFFFF) { // if f==0 do nothing
+		uflint.intval += 1 << 23; // add 1 to the exponent
+	}
+	return uflint.floatval;
 }
 
 __inline float xdiv2f(float d) {
-	if (*(int*)&d & 0x7FFFFFFF) { // if f==0 do nothing
-		*(int*)&d -= 1 << 23; // sub 1 from the exponent
+	union {
+		float floatval;
+		int intval;
+	} uflint;
+	uflint.floatval = d;
+	if (uflint.intval & 0x7FFFFFFF) { // if f==0 do nothing
+		uflint.intval -= 1 << 23; // sub 1 from the exponent
 		}
-	return d;
+	return uflint.floatval;
 }
 
 __inline float xdivf( float d, int n){
-	if (*(int*)&d & 0x7FFFFFFF) { // if f==0 do nothing
-		*(int*)&d -= n << 23; // add n to the exponent
+	union {
+		float floatval;
+		int intval;
+	} uflint;
+	uflint.floatval = d;
+	if (uflint.intval & 0x7FFFFFFF) { // if f==0 do nothing
+		uflint.intval -= n << 23; // add n to the exponent
 		}
-	return d;
+	return uflint.floatval;
 }	
 
 

@@ -25,7 +25,6 @@
 #include <math.h>
 #include <fftw3.h>
 #include "../rtgui/threadutils.h"
-
 #include "rtengine.h"
 #include "improcfun.h"
 #include "LUT.h"
@@ -36,18 +35,11 @@
 #include "mytime.h"
 #include "sleef.c"
 #include "opthelper.h"
+#include "cplx_wavelet_dec.h"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-
-#include "cplx_wavelet_dec.h"
-
-//#define MIN(a,b) ((a) < (b) ? (a) : (b))
-//#define MAX(a,b) ((a) > (b) ? (a) : (b))
-//#define LIM(x,min,max) MAX(min,MIN(x,max))
-//#define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
-//#define CLIP(x) LIM(x,0,65535)
 
 #define TS 64		// Tile size
 #define offset 25	// shift between tiles
@@ -139,11 +131,10 @@ extern const Settings* settings;
 // Median calculation using quicksort
 float fq_sort2(float arr[], int n) 
 {
-    int low, high ;
-    int median;
-    int middle, ll, hh;
+    int low = 0;
+    int high = n-1;
+    int median = (low + high) / 2;
 
-    low = 0 ; high = n-1 ; median = (low + high) / 2;
     for (;;) {
         if (high <= low)
             return arr[median] ;
@@ -153,49 +144,47 @@ float fq_sort2(float arr[], int n)
            return arr[median] ;
         }
 
-    middle = (low + high) / 2;
-    if (arr[middle] > arr[high]) ELEM_FLOAT_SWAP(arr[middle], arr[high]) ;
-    if (arr[low] > arr[high]) ELEM_FLOAT_SWAP(arr[low], arr[high]) ;
-    if (arr[middle] > arr[low]) ELEM_FLOAT_SWAP(arr[middle], arr[low]) ;
+		int middle = (low + high) / 2;
+		if (arr[middle] > arr[high]) ELEM_FLOAT_SWAP(arr[middle], arr[high]) ;
+		if (arr[low] > arr[high]) ELEM_FLOAT_SWAP(arr[low], arr[high]) ;
+		if (arr[middle] > arr[low]) ELEM_FLOAT_SWAP(arr[middle], arr[low]) ;
 
-    ELEM_FLOAT_SWAP(arr[middle], arr[low+1]) ;
-    ll = low + 1;
-    hh = high;
+		ELEM_FLOAT_SWAP(arr[middle], arr[low+1]) ;
+		int ll = low + 1;
+		int hh = high;
 
-    for (;;) {
-        do ll++; while (arr[low] > arr[ll]) ;
-        do hh--; while (arr[hh]  > arr[low]) ;
+		for (;;) {
+			do ll++; while (arr[low] > arr[ll]) ;
+			do hh--; while (arr[hh]  > arr[low]) ;
 
-        if (hh < ll)
-        break;
+			if (hh < ll)
+			break;
 
-        ELEM_FLOAT_SWAP(arr[ll], arr[hh]) ;
-   }
+			ELEM_FLOAT_SWAP(arr[ll], arr[hh]) ;
+	   }
 
-    ELEM_FLOAT_SWAP(arr[low], arr[hh]) ;
+		ELEM_FLOAT_SWAP(arr[low], arr[hh]) ;
 
-    if (hh <= median)
-        low = ll;
-        if (hh >= median)
-        high = hh - 1;
+		if (hh <= median)
+			low = ll;
+			if (hh >= median)
+			high = hh - 1;
     }
  }
 
 float media(float *elements, int N)
 {
-  int i,j,min;
-  float temp;
 
   //   Order elements (only half of them)
-   for (i = 0; i < (N >> 1) + 1; ++i)
+   for (int i = 0; i < (N >> 1) + 1; ++i)
    {
       //   Find position of minimum element
-      min = i;
-      for (j = i + 1; j < N; ++j)
+      int min = i;
+      for (int j = i + 1; j < N; ++j)
          if (elements[j] < elements[min])
             min = j;
       //   Put found minimum element in its place
-      temp = elements[i];
+      float temp = elements[i];
       elements[i] = elements[min];
       elements[min] = temp;
    }
@@ -242,7 +231,7 @@ void ImProcFunctions::Tile_calc (int tilesize, int overlap, int kall, int imwidt
 }
 
 int denoiseNestedLevels = 1;
-
+enum nrquality {QUALITY_STANDARD, QUALITY_HIGH};
 
 SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst,Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, const NoiseCurve & noiseLCurve, const NoiseCurve & noiseCCurve, float &chaut, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &nresi, float &highresi)
 {
@@ -250,7 +239,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 	MyTime t1e,t2e;
 	t1e.set();
 //#endif
-
 	if (dnparams.luma==0 && dnparams.chroma==0  && !dnparams.median && !noiseLCurve && !noiseCCurve) {
 		//nothing to do; copy src to dst or do nothing in case src == dst
 		if(src != dst)
@@ -262,84 +250,106 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 			
 		return;
 	}
+	
 	static MyMutex FftwMutex;
 	MyMutex::MyLock lock(FftwMutex);
-	int hei,wid;
+	
+	const nrquality nrQuality = (dnparams.smethod == "shal") ? QUALITY_STANDARD : QUALITY_HIGH;//shrink method
+	const float qhighFactor = (nrQuality == QUALITY_HIGH) ? 1.f/(float) settings->nrhigh : 1.0f;
+	const bool useNoiseCCurve = (noiseCCurve && noiseCCurve.getSum() > 5.f );
+	const bool useNoiseLCurve = (noiseLCurve && noiseLCurve.getSum() >= 7.f );
+
+	int hei;
 	float** lumcalc;
-	float** acalc;
-	float** bcalc;
-	if(noiseLCurve || noiseCCurve) {
+	float** ccalc;
+
+	bool ponder=false;
+	float ponderCC=1.f;
+	if(settings->leveldnautsimpl==1 && params->dirpyrDenoise.Cmethod=="PON") {ponder=true;ponderCC=0.5f;}
+	if(settings->leveldnautsimpl==1 && params->dirpyrDenoise.Cmethod=="PRE") {ponderCC=0.5f;}
+	if(settings->leveldnautsimpl==0 && params->dirpyrDenoise.Cmethod=="PREV") {ponderCC=0.5f;}
+
+	const bool denoiseMethodRgb = (dnparams.dmethod == "RGB");
+
+	// init luma noisevarL
+	const float noiseluma=(float) dnparams.luma;
+	const float noisevarL = (useNoiseLCurve && (denoiseMethodRgb || !isRAW)) ? (float) (SQR(((noiseluma+1.0)/125.0)*(10.+ (noiseluma+1.0)/25.0))) : (float) (SQR((noiseluma/125.0)*(1.0+ noiseluma/25.0)));
+
+	if(useNoiseLCurve || useNoiseCCurve) {
 		hei=calclum->height;
-		wid=calclum->width;
+		int wid=calclum->width;
 		TMatrix wprofi = iccStore->workingSpaceMatrix (params->icm.working);
 
-		double wpi[3][3] = {
-			{wprofi[0][0],wprofi[0][1],wprofi[0][2]},
-			{wprofi[1][0],wprofi[1][1],wprofi[1][2]},
-			{wprofi[2][0],wprofi[2][1],wprofi[2][2]}
+		const float wpi[3][3] = {
+			{static_cast<float>(wprofi[0][0]),static_cast<float>(wprofi[0][1]),static_cast<float>(wprofi[0][2])},
+			{static_cast<float>(wprofi[1][0]),static_cast<float>(wprofi[1][1]),static_cast<float>(wprofi[1][2])},
+			{static_cast<float>(wprofi[2][0]),static_cast<float>(wprofi[2][1]),static_cast<float>(wprofi[2][2])}
 			};
-		lumcalc = new float*[(hei+1)/2];
-			for (int i=0; i<(hei+1)/2; i++)
-				lumcalc[i] = new float[(wid+1)/2];
-		acalc = new float*[(hei+1)/2];
-			for (int i=0; i<(hei+1)/2; i++)
-				acalc[i] = new float[(wid+1)/2];
-		bcalc = new float*[(hei+1)/2];
-			for (int i=0; i<(hei+1)/2; i++)
-				bcalc[i] = new float[(wid+1)/2];
+		lumcalc = new float*[(hei)];
+			for (int i=0; i<(hei); i++)
+				lumcalc[i] = new float[(wid)];
+		ccalc = new float*[(hei)];
+			for (int i=0; i<(hei); i++)
+				ccalc[i] = new float[(wid)];
+
+		float cn100Precalc;
+		if(useNoiseCCurve)
+			cn100Precalc = SQR(1.f + ponderCC*(4.f*noiseCCurve[100.f / 60.f]));
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif		
-		for(int ii=0;ii<hei;ii+=2){
-			for(int jj=0;jj<wid;jj+=2){
+		for(int ii=0;ii<hei;ii++){
+			for(int jj=0;jj<wid;jj++){
 				float LLum,AAum,BBum;
 			
 				float RL = calclum->r(ii,jj);
 				float GL = calclum->g(ii,jj);
 				float BL = calclum->b(ii,jj);
-							// determine luminance for noisecurve
+				// determine luminance and chrominance for noisecurves
 				float XL,YL,ZL;
 				Color::rgbxyz(RL,GL,BL,XL,YL,ZL,wpi);
-				Color::XYZ2Lab(XL, YL, ZL, LLum, AAum, BBum);							
-				lumcalc[ii>>1][jj>>1]=LLum;
-				acalc[ii>>1][jj>>1]=AAum;
-				bcalc[ii>>1][jj>>1]=BBum;
+				Color::XYZ2Lab(XL, YL, ZL, LLum, AAum, BBum);
+				if(useNoiseLCurve) {
+					float epsi = 0.01f;
+					if(LLum<2.f)
+						LLum = 2.f;//avoid divided by zero
+					if(LLum>32768.f)
+						LLum = 32768.f;	// not strictly necessary
+					float kinterm = epsi + noiseLCurve[xdivf(LLum,15)*500.f];
+					kinterm *= 100.f;
+					kinterm += noiseluma;
+					lumcalc[ii][jj] = SQR((kinterm/125.f)*(1.f+kinterm/25.f));
+				}
+				if(useNoiseCCurve) {
+					float cN = sqrtf(SQR(AAum)+SQR(BBum));
+					if(cN > 100)
+						ccalc[ii][jj] = SQR(1.f + ponderCC*(4.f*noiseCCurve[cN / 60.f]));
+					else
+						ccalc[ii][jj] = cn100Precalc;
+				}
 			}
 		}
+
 	delete calclum;
 	calclum = NULL;
-}		
-
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-	/*if (plistener) {
-	 plistener->setProgressStr ("Denoise...");
-	 plistener->setProgress (0.0);
-	 }*/
-
-//		volatile double progress = 0.0;
-
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	}
 
 	const short int imheight=src->height, imwidth=src->width;
-	Qhigh=1.0f;
-	if(dnparams.smethod=="shalbi")
-		Qhigh=1.f/(float) settings->nrhigh;
+
 	if (dnparams.luma!=0 || dnparams.chroma!=0 || dnparams.methodmed=="Lab" || dnparams.methodmed=="Lonly" ) {
-		const bool perf = (dnparams.dmethod=="RGB");
 		// gamma transform for input data
 		float gam = dnparams.gamma;
 		float gamthresh = 0.001f;
 		if(!isRAW) {//reduce gamma under 1 for Lab mode ==> TIF and JPG
-			if(gam <1.9f)
-				gam=1.f - (1.9f-gam)/3.f;//minimum gamma 0.7
+			if(gam < 1.9f)
+				gam = 1.f - (1.9f-gam)/3.f;//minimum gamma 0.7
 			else if (gam >= 1.9f && gam <= 3.f)
-				gam=(1.4f/1.1f)*gam - 1.41818f;
+				gam = (1.4f/1.1f)*gam - 1.41818f;
 		}
 		float gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
 
 		LUTf gamcurve(65536,LUT_CLIP_BELOW);
-		if(perf) {
+		if(denoiseMethodRgb) {
 			for (int i=0; i<65536; i++) {
 				gamcurve[i] = (Color::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) * 32768.0f;
 			}
@@ -355,7 +365,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 		float igamslope = 1.f/gamslope;
 
 		LUTf igamcurve(65536,LUT_CLIP_BELOW);
-		if(perf) {
+		if(denoiseMethodRgb) {
 			for (int i=0; i<65536; i++) {
 				igamcurve[i] = (Color::gamma((float)i/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
 			}
@@ -366,42 +376,57 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 		}
 
 		const float gain = pow (2.0f, float(expcomp));
-		float incr=1.f;
-		float noisevar_Ldetail = SQR((float)(SQR(100.-dnparams.Ldetail) + 50.*(100.-dnparams.Ldetail)) * TS * 0.5f * incr);
-		bool enhance_denoise = dnparams.enhance;
-		int gamlab = settings->denoiselabgamma;//gamma lab essentialy for Luminance detail
-		if(gamlab > 2)
-			gamlab=2;
+		float noisevar_Ldetail = SQR((float)(SQR(100.-dnparams.Ldetail) + 50.*(100.-dnparams.Ldetail)) * TS * 0.5f);
+
 		if(settings->verbose)
-			printf("Denoise Lab=%i\n",gamlab);
+			printf("Denoise Lab=%i\n",settings->denoiselabgamma);
+
+		// To avoid branches in loops we access the gammatabs by pointers
+		// modify arbitrary data for Lab..I have test : nothing, gamma 2.6 11 - gamma 4 5 - gamma 5.5 10
+		// we can put other as gamma g=2.6 slope=11, etc.
+		// but noting to do with real gamma !!!: it's only for data Lab # data RGB
+		// finally I opted fot gamma55 and with options we can change
+
+		LUTf *denoisegamtab;
+		LUTf *denoiseigamtab;
+		switch(settings->denoiselabgamma) {
+			case 0:	 denoisegamtab = &(Color::gammatab_26_11);
+					 denoiseigamtab = &(Color::igammatab_26_11);
+					 break;
+			case 1:  denoisegamtab = &(Color::gammatab_4);
+					 denoiseigamtab = &(Color::igammatab_4);
+					 break;
+			default: denoisegamtab = &(Color::gammatab_55);
+					 denoiseigamtab = &(Color::igammatab_55);
+					 break;
+		}
 
 		array2D<float> tilemask_in(TS,TS);
 		array2D<float> tilemask_out(TS,TS);
 
 		const int border = MAX(2,TS/16);
-		
-
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-	for (int i=0; i<TS; i++) {
-		float i1 = abs((i>TS/2 ? i-TS+1 : i));
-		float vmask = (i1<border ? SQR(sin((M_PI*i1)/(2*border))) : 1.0f);
-		float vmask2 = (i1<2*border ? SQR(sin((M_PI*i1)/(2*border))) : 1.0f);
-		for (int j=0; j<TS; j++) {
-			float j1 = abs((j>TS/2 ? j-TS+1 : j));
-			tilemask_in[i][j] = (vmask * (j1<border ? SQR(sin((M_PI*j1)/(2*border))) : 1.0f)) + epsilon;
-			tilemask_out[i][j] = (vmask2 * (j1<2*border ? SQR(sin((M_PI*j1)/(2*border))) : 1.0f)) + epsilon;
+		for (int i=0; i<TS; i++) {
+			float i1 = abs((i>TS/2 ? i-TS+1 : i));
+			float vmask = (i1<border ? SQR(sin((M_PI*i1)/(2*border))) : 1.0f);
+			float vmask2 = (i1<2*border ? SQR(sin((M_PI*i1)/(2*border))) : 1.0f);
+			for (int j=0; j<TS; j++) {
+				float j1 = abs((j>TS/2 ? j-TS+1 : j));
+				tilemask_in[i][j] = (vmask * (j1<border ? SQR(sin((M_PI*j1)/(2*border))) : 1.0f)) + epsilon;
+				tilemask_out[i][j] = (vmask2 * (j1<2*border ? SQR(sin((M_PI*j1)/(2*border))) : 1.0f)) + epsilon;
 
+			}
 		}
-	}
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// begin tile processing of image
 
 	//output buffer
 	Imagefloat * dsttmp = new Imagefloat(imwidth,imheight);
-	for (int n=0; n<3*imwidth*imheight; n++) dsttmp->data[n] = 0;
+	for (int n=0; n<3*imwidth*imheight; n++)
+		dsttmp->data[n] = 0;
 
 int tilesize;
 int overlap;
@@ -451,12 +476,12 @@ if(settings->leveldnti ==1) {
 	fftwf_free ( Lbloxtmp );
 	fftwf_free ( fLbloxtmp );
 
+#ifndef _OPENMP
 	int numthreads = 1;
-
-#ifdef _OPENMP
+#else
 	// Calculate number of tiles. If less than omp_get_max_threads(), then limit num_threads to number of tiles
 	int numtiles = numtiles_W * numtiles_H;
-	numthreads = MIN(numtiles,omp_get_max_threads());
+	int numthreads = MIN(numtiles,omp_get_max_threads());
 	if(options.rgbDenoiseThreadLimit > 0)
 		numthreads = MIN(numthreads,options.rgbDenoiseThreadLimit);
 	denoiseNestedLevels = omp_get_max_threads() / numthreads;
@@ -483,17 +508,17 @@ if(settings->leveldnti ==1) {
 	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
 	//inverse matrix user select
 	const float wip[3][3] = {
-		{wiprof[0][0],wiprof[0][1],wiprof[0][2]},
-		{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
-		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}
+		{static_cast<float>(wiprof[0][0]),static_cast<float>(wiprof[0][1]),static_cast<float>(wiprof[0][2])},
+		{static_cast<float>(wiprof[1][0]),static_cast<float>(wiprof[1][1]),static_cast<float>(wiprof[1][2])},
+		{static_cast<float>(wiprof[2][0]),static_cast<float>(wiprof[2][1]),static_cast<float>(wiprof[2][2])}
 	};
 
 	TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
 
 	const float wp[3][3] = {
-		{wprof[0][0],wprof[0][1],wprof[0][2]},
-		{wprof[1][0],wprof[1][1],wprof[1][2]},
-		{wprof[2][0],wprof[2][1],wprof[2][2]}
+		{static_cast<float>(wprof[0][0]),static_cast<float>(wprof[0][1]),static_cast<float>(wprof[0][2])},
+		{static_cast<float>(wprof[1][0]),static_cast<float>(wprof[1][1]),static_cast<float>(wprof[1][2])},
+		{static_cast<float>(wprof[2][0]),static_cast<float>(wprof[2][1]),static_cast<float>(wprof[2][2])}
 	};
 
 
@@ -502,20 +527,15 @@ if(settings->leveldnti ==1) {
 #endif
 	{
 	float resid=0.f;
-	float nbresid=0;
+	float nbresid=0.f;
 	float maxredresid=0.f;
 	float maxblueresid=0.f;
 	float residred=0.f;
 	float residblue=0.f;
 	
 	int pos;
-	float** noisevarlum = new float*[(tileheight+1)/2];
-	for (int i=0; i<(tileheight+1)/2; i++)
-		noisevarlum[i] = new float[(tilewidth+1)/2];
-	float** noisevarchrom = new float*[(tileheight+1)/2];
-	for (int i=0; i<(tileheight+1)/2; i++)
-		noisevarchrom[i] = new float[(tilewidth+1)/2];
-
+	float* noisevarlum = new float[((tileheight+1)/2)*((tilewidth+1)/2)];
+	float* noisevarchrom = new float[((tileheight+1)/2)*((tilewidth+1)/2)];
 
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic) collapse(2)
@@ -524,31 +544,13 @@ if(settings->leveldnti ==1) {
 	for (int tiletop=0; tiletop<imheight; tiletop+=tileHskip) {
 		for (int tileleft=0; tileleft<imwidth ; tileleft+=tileWskip) {
 			//printf("titop=%d tileft=%d\n",tiletop/tileHskip, tileleft/tileWskip);
-			pos= (tiletop/tileHskip)*numtiles_W + tileleft/tileWskip ;
-	//	    printf("posw=%d\n", pos);
-	/*		if(kall==0) {//with Dcrop
-				//int trafx, int trafy, int trafw, int trafh, // trafx trafy = begin window trafw trafh = width and heigh window
-				//int widIm, int heiIm : width and height full image
-				int centerwCrop=trafx+trafw/2;//center crop window
-				int centerhCrop=trafy+trafh/2;
-				int poscalculate; 
-		//	for(int wcr=0;wcr< ;wcr++) {
-		//	for(int hcr=0;hcr<numtiles_H;hcr++) {
-		//	    int posca= hcr*numtiles_W + wcr;
-		
-			}
-			*/
+			pos = (tiletop/tileHskip)*numtiles_W + tileleft/tileWskip ;
 			int tileright = MIN(imwidth,tileleft+tilewidth);
 			int tilebottom = MIN(imheight,tiletop+tileheight);
 			int width  = tileright-tileleft;
 			int height = tilebottom-tiletop;
-			bool ponder=false;
-			float ponderCC=1.f;
-			if(settings->leveldnautsimpl==1 && params->dirpyrDenoise.Cmethod=="PON") {ponder=true;ponderCC=0.5f;}
-			if(settings->leveldnautsimpl==1 && params->dirpyrDenoise.Cmethod=="PRE") {ponderCC=0.5f;}
-			if(settings->leveldnautsimpl==0 && params->dirpyrDenoise.Cmethod=="PREV") {ponderCC=0.5f;}
-			
-			float realred2, realred, realblue, realblue2;
+			int width2 = (width+1)/2;
+			float realred, realblue;
 			float interm_med =(float) dnparams.chroma/10.0;
 			float intermred, intermblue;
 			if(dnparams.redchro > 0.) intermred=(dnparams.redchro/10.); else intermred= (float) dnparams.redchro/7.0;//increase slower than linear for more sensit
@@ -561,74 +563,50 @@ if(settings->leveldnti ==1) {
 			const float noisevarab_b = SQR(realblue);
 		//	printf("Ch=%f red=%f blu=%f\n",interm_med, intermred,intermblue );
 
+			
+			//pixel weight
+			array2D<float> totwt(width,height,ARRAY2D_CLEAR_DATA);//weight for combining DCT blocks
+
+			//residual between input and denoised L channel
+			array2D<float> Ldetail(width,height,ARRAY2D_CLEAR_DATA);
+
 			//input L channel
 			array2D<float> Lin(width,height);
 			//wavelet denoised image
 			LabImage * labdn = new LabImage(width,height);
-			float* mad_LL = new float [height*width];
 
-			float* mad_aa = new float [height*width];
-			float* mad_bb = new float [height*width];
-
-			//residual between input and denoised L channel
-			array2D<float> Ldetail(width,height,ARRAY2D_CLEAR_DATA);
-			//pixel weight
-			array2D<float> totwt(width,height,ARRAY2D_CLEAR_DATA);//weight for combining DCT blocks
-			// init luma noisevarL
-			float noiseluma=(float) dnparams.luma;
-			if(perf && noiseLCurve)
-				noiseluma += 1.f;
-			float noisevarL	 = (float) (SQR((noiseluma/125.0)*(1.+ noiseluma/25.0)));
-		//	printf("nova=%f\n",noisevarL);
-			//TODO: implement using AlignedBufferMP
 			//fill tile from image; convert RGB to "luma/chroma"
+			const float maxNoiseVarab = max(noisevarab_b,noisevarab_r);
 			if (isRAW) {//image is raw; use channel differences for chroma channels
 
-				if(!perf){//lab mode
+				if(!denoiseMethodRgb){//lab mode
 						//modification Jacques feb 2013 and july 2014
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
-				for (int i=tiletop/*, i1=0*/; i<tilebottom; i++/*, i1++*/) {
+				for (int i=tiletop; i<tilebottom; i++) {
 					int i1 = i - tiletop;
-					for (int j=tileleft/*, j1=0*/; j<tileright; j++/*, j1++*/) {
+					for (int j=tileleft; j<tileright; j++) {
 						int j1 = j - tileleft;
 						float R_ = gain*src->r(i,j);
 						float G_ = gain*src->g(i,j);
 						float B_ = gain*src->b(i,j);
 
-						//modify arbitrary data for Lab..I have test : nothing, gamma 2.6 11 - gamma 4 5 - gamma 5.5 10
-						//we can put other as gamma g=2.6 slope=11, etc.
-						// but noting to do with real gamma !!!: it's only for data Lab # data RGB
-						//finally I opted fot gamma55 and with options we can change
-						if (gamlab == 0) {// options 12/2013
-							R_ = Color::igammatab_26_11[R_];
-							G_ = Color::igammatab_26_11[G_];
-							B_ = Color::igammatab_26_11[B_];
-						}
-						else if (gamlab == 1) {
-						//other new gamma 4 5 
-							R_ = Color::igammatab_4[R_];
-							G_ = Color::igammatab_4[G_];
-							B_ = Color::igammatab_4[B_];
-						}
-						else if (gamlab == 2) {							
-						//new gamma 5.5 10 better for detail luminance..it is a compromise...which depends on the image (distribution BL, ML, HL ...)
-							R_ = Color::igammatab_55[R_];
-							G_ = Color::igammatab_55[G_];
-							B_ = Color::igammatab_55[B_];
-						}
+						R_ = (*denoiseigamtab)[R_];
+						G_ = (*denoiseigamtab)[G_];
+						B_ = (*denoiseigamtab)[B_];
+
 						//apply gamma noise	standard (slider)
 						R_ = R_<65535.0f ? gamcurve[R_] : (Color::gammanf(R_/65535.f, gam)*32768.0f);
 						G_ = G_<65535.0f ? gamcurve[G_] : (Color::gammanf(G_/65535.f, gam)*32768.0f);
 						B_ = B_<65535.0f ? gamcurve[B_] : (Color::gammanf(B_/65535.f, gam)*32768.0f);
 						
 						//true conversion xyz=>Lab
-						float L,a,b;
 						float X,Y,Z;
 						Color::rgbxyz(R_,G_,B_,X,Y,Z,wp);
 
 						//convert to Lab
+						float L,a,b;
 						Color::XYZ2Lab(X, Y, Z, L, a, b);
 
 						labdn->L[i1][j1] = L;
@@ -638,27 +616,8 @@ if(settings->leveldnti ==1) {
 						Lin[i1][j1] = L;
 
 						if(((i1|j1)&1) == 0) {
-							if(noiseLCurve) {
-								float kN = lumcalc[i>>1][j>>1]; //with no gamma and take into account working profile
-								float epsi = 0.01f;
-								if(kN<2.f)
-									kN = 2.f;//avoid divided by zero
-								if(kN>32768.f)
-									kN = 32768.f;	// not strictly necessary							
-								float kinterm = epsi + noiseLCurve[xdivf(kN,15)*500.f];
-								float ki = kinterm*100.f;
-								ki += noiseluma;
-								noisevarlum[i1>>1][j1>>1] = SQR((ki/125.f)*(1.f+ki/25.f));
-							}
-							if(noiseCCurve) {
-								float aN = acalc[i>>1][j>>1];
-								float bN = bcalc[i>>1][j>>1];
-								float cN = sqrtf(SQR(aN)+SQR(bN));
-								if(cN < 100.f)
-									cN = 100.f;//avoid divided by zero
-								float Cinterm = 1.f + ponderCC*4.f*noiseCCurve[cN/60.f];//C=f(C)
-								noisevarchrom[i1>>1][j1>>1] = max(noisevarab_b,noisevarab_r)*SQR(Cinterm);
-							}
+							noisevarlum[(i1>>1)*width2+(j1>>1)] = useNoiseLCurve ? lumcalc[i>>1][j>>1] : noisevarL;
+							noisevarchrom[(i1>>1)*width2+(j1>>1)] = useNoiseCCurve ? maxNoiseVarab*ccalc[i>>1][j>>1] : 1.f;
 						}
 						//end chroma
 
@@ -669,9 +628,9 @@ if(settings->leveldnti ==1) {
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
-				for (int i=tiletop/*, i1=0*/; i<tilebottom; i++/*, i1++*/) {
+				for (int i=tiletop; i<tilebottom; i++) {
 					int i1 = i - tiletop;
-					for (int j=tileleft/*, j1=0*/; j<tileright; j++/*, j1++*/) {
+					for (int j=tileleft; j<tileright; j++) {
 						int j1 = j - tileleft;
 
 						float X = gain*src->r(i,j);
@@ -681,36 +640,17 @@ if(settings->leveldnti ==1) {
 						X = X<65535.0f ? gamcurve[X] : (Color::gamma((double)X/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
 						Y = Y<65535.0f ? gamcurve[Y] : (Color::gamma((double)Y/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
 						Z = Z<65535.0f ? gamcurve[Z] : (Color::gamma((double)Z/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
-						if(((i1|j1)&1) == 0) {
-							if(noiseLCurve) {
-							//	float noiseluma=(float) dnparams.luma;	
-								float kN = lumcalc[i>>1][j>>1];
-								float epsi = 0.01f;
-								if (kN<2.f) 
-									kN = 2.f;
-								if (kN>32768.f)
-									kN = 32768.f;
-								float kinterm = epsi + noiseLCurve[xdivf(kN,15)*500.f];
-								float ki = kinterm*100.f;
-								ki += noiseluma;
-								noisevarlum[i1>>1][j1>>1] = SQR((ki/125.f)*(1.f+ki/25.f));
-							}
-							if(noiseCCurve) {
-								float aN = acalc[i>>1][j>>1];
-								float bN = bcalc[i>>1][j>>1];
-								float cN = sqrtf(SQR(aN)+SQR(bN));
-								if(cN < 100.f)
-									cN = 100.f;//avoid divided by zero
-								float Cinterm = 1.f + ponderCC*4.f*noiseCCurve[cN/60.f];
-								noisevarchrom[i1>>1][j1>>1] = max(noisevarab_b,noisevarab_r)*SQR(Cinterm);
-							}
-						}
 						//end chroma					
 						labdn->L[i1][j1] = Y;
 						labdn->a[i1][j1] = (X-Y);
 						labdn->b[i1][j1] = (Y-Z);
 
 						Lin[i1][j1] = Y;
+
+						if(((i1|j1)&1) == 0) {
+							noisevarlum[(i1>>1)*width2+(j1>>1)] = useNoiseLCurve ? lumcalc[i>>1][j>>1] : noisevarL;
+							noisevarchrom[(i1>>1)*width2+(j1>>1)] = useNoiseCCurve ? maxNoiseVarab*ccalc[i>>1][j>>1] : 1.f;
+						}
 					}
 				}
 
@@ -720,12 +660,12 @@ if(settings->leveldnti ==1) {
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
-				for (int i=tiletop/*, i1=0*/; i<tilebottom; i++/*, i1++*/) {
+				for (int i=tiletop; i<tilebottom; i++) {
 					int i1 = i - tiletop;
-					for (int j=tileleft/*, j1=0*/; j<tileright; j++/*, j1++*/) {
+					for (int j=tileleft; j<tileright; j++) {
 						int j1 = j - tileleft;
 						float L,a,b;
-						float rLum=src->r(i,j) ;//for luminance denoise curve
+						float rLum=src->r(i,j) ;//for denoise curves
 						float gLum=src->g(i,j) ;
 						float bLum=src->b(i,j) ;
 						
@@ -746,15 +686,21 @@ if(settings->leveldnti ==1) {
 
 						//convert Lab
 						Color::XYZ2Lab(X, Y, Z, L, a, b);
-						float Llum,alum,blum;
+						labdn->L[i1][j1] = L;
+						labdn->a[i1][j1] = a;
+						labdn->b[i1][j1] = b;
+
+						Lin[i1][j1] = L;
+
 						if(((i1|j1)&1) == 0) {
-							if(noiseLCurve || noiseCCurve) {
+							float Llum,alum,blum;
+							if(useNoiseLCurve || useNoiseCCurve) {
 								float XL,YL,ZL;
 								Color::rgbxyz(rLum,gLum,bLum,XL,YL,ZL,wp);
 								Color::XYZ2Lab(XL, YL, ZL, Llum, alum, blum);
 							}
 					
-							if(noiseLCurve) {
+							if(useNoiseLCurve) {
 								float kN = Llum;
 								float epsi=0.01f;
 								if(kN<2.f) kN=2.f;
@@ -762,32 +708,25 @@ if(settings->leveldnti ==1) {
 								float kinterm=epsi + noiseLCurve[xdivf(kN,15)*500.f];
 								float ki=kinterm*100.f;
 								ki+=noiseluma;
-								noiseluma += 1.f;
-								noisevarlum[i1>>1][j1>>1]=SQR((ki/125.f)*(1.f+ki/25.f));
-							}	
-							if(noiseCCurve) {
+								noisevarlum[(i1>>1)*width2+(j1>>1)]=SQR((ki/125.f)*(1.f+ki/25.f));
+							} else {
+								noisevarlum[(i1>>1)*width2+(j1>>1)] = noisevarL;
+							}
+							if(useNoiseCCurve) {
 								float aN=alum;
 								float bN=blum;
 								float cN=sqrtf(SQR(aN)+SQR(bN));
 								if(cN < 100.f)
 									cN=100.f;//avoid divided by zero ???
 								float Cinterm=1.f + ponderCC*4.f*noiseCCurve[cN/60.f];
-								noisevarchrom[i1>>1][j1>>1]=max(noisevarab_b,noisevarab_r)*SQR(Cinterm);
+								noisevarchrom[(i1>>1)*width2+(j1>>1)]= maxNoiseVarab*SQR(Cinterm);
+							} else {
+								noisevarchrom[(i1>>1)*width2+(j1>>1)] = 1.f;
 							}
 						}
-						labdn->L[i1][j1] = L;
-						labdn->a[i1][j1] = a;
-						labdn->b[i1][j1] = b;
-
-						Lin[i1][j1] = L;
 					}
 				}
 			}
-
-			//initial impulse denoise, removed in Issue 2557
-//				if (dnparams.luma>0.01) {
-//					impulse_nr (labdn, float(MIN(50.0,dnparams.luma))/20.0f);
-//				}
 
 			int datalen = labdn->W * labdn->H;
 
@@ -808,27 +747,24 @@ if(settings->leveldnti ==1) {
 				execwavelet=true;
 			if(settings->leveldnautsimpl==1 && (dnparams.Cmethod=="AUT" || dnparams.Cmethod=="PRE"))
 				autoch=true;
-			if(settings->leveldnautsimpl==0 && dnparams.C2method=="AUTO" || dnparams.C2method=="PREV")
+			if(settings->leveldnautsimpl==0 && (dnparams.C2method=="AUTO" || dnparams.C2method=="PREV"))
 				autoch=true;
 			
 			if(execwavelet) {//gain time if user choose only median  sliders L <=1  slider chrom master < 1
-			{ // enclosing this code in a block frees about 120 MB before allocating 20 MB after this block (measured with D700 NEF)
-			wavelet_decomposition* Ldecomp;
-			wavelet_decomposition* adecomp;
-			wavelet_decomposition* bdecomp;
-			int schoice=0;//shrink method
-			if(dnparams.smethod=="shal") schoice=0;
-			else if(dnparams.smethod=="shalbi") schoice=2;
-
-			int levwav=5;
-			float maxreal = max(realred, realblue);
-			//increase the level of wavelet if user increase much or very much sliders
-			if( maxreal < 8.f) levwav=5;
-			else if( maxreal < 10.f)levwav=6;
-			else if( maxreal < 15.f)levwav=7;
-			else levwav=8;//maximum ==> I have increase Maxlevel in cplx_wavelet_dec.h from 8 to 9
-			if(schoice==2) levwav+=settings->nrwavlevel;//increase level for enhanced mode
-			if(levwav>8) levwav=8;
+				wavelet_decomposition* Ldecomp;
+				wavelet_decomposition* adecomp;
+				wavelet_decomposition* bdecomp;
+				
+				int levwav=5;
+				float maxreal = max(realred, realblue);
+				//increase the level of wavelet if user increase much or very much sliders
+				if( maxreal < 8.f) levwav=5;
+				else if( maxreal < 10.f)levwav=6;
+				else if( maxreal < 15.f)levwav=7;
+				else levwav=8;//maximum ==> I have increase Maxlevel in cplx_wavelet_dec.h from 8 to 9
+				if(nrQuality == QUALITY_HIGH)
+					levwav += settings->nrwavlevel;//increase level for enhanced mode
+				if(levwav>8) levwav=8;
 			
 			//	if (settings->verbose) printf("levwavelet=%i  noisevarA=%f noisevarB=%f \n",levwav, noisevarab_r, noisevarab_b );
 #ifdef _OPENMP
@@ -839,33 +775,36 @@ if(settings->leveldnti ==1) {
 #pragma omp section
 #endif
 {
-			Ldecomp = new wavelet_decomposition (labdn->data, labdn->W, labdn->H, levwav/*maxlevels*/, 1/*subsampling*/ );
+				Ldecomp = new wavelet_decomposition (labdn->data, labdn->W, labdn->H, levwav/*maxlevels*/, 1/*subsampling*/ );
 }
 #ifdef _OPENMP
 #pragma omp section
 #endif
 {
-			adecomp = new wavelet_decomposition (labdn->data+datalen, labdn->W, labdn->H,levwav, 1 );
+				adecomp = new wavelet_decomposition (labdn->data+datalen, labdn->W, labdn->H,levwav, 1 );
 }
 #ifdef _OPENMP
 #pragma omp section
 #endif
 {
-			bdecomp = new wavelet_decomposition (labdn->data+2*datalen, labdn->W, labdn->H, levwav, 1 );
+				bdecomp = new wavelet_decomposition (labdn->data+2*datalen, labdn->W, labdn->H, levwav, 1 );
 }
 }
-			if(schoice==0) WaveletDenoiseAll(*Ldecomp, *adecomp, *bdecomp, noisevarL, noisevarlum, noisevarchrom, width, height, mad_LL, mad_aa, mad_bb, noisevarab_r, noisevarab_b,labdn, noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, schoice, autoch, perf );//enhance mode
-			if(schoice==2) {
-				WaveletDenoiseAll_BiShrink(*Ldecomp, *adecomp, *bdecomp, noisevarL, noisevarlum, noisevarchrom, width, height, mad_LL,  mad_aa, mad_bb, noisevarab_r, noisevarab_b,labdn, noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, schoice, autoch, perf );//enhance mode
-				WaveletDenoiseAll(*Ldecomp, *adecomp, *bdecomp, noisevarL, noisevarlum, noisevarchrom, width, height, mad_LL,  mad_aa, mad_bb, noisevarab_r, noisevarab_b,labdn, noiseLCurve, noiseCCurve, chaut ,redaut, blueaut, maxredaut, maxblueaut, schoice, autoch, perf );
+				if(nrQuality==QUALITY_STANDARD)
+					WaveletDenoiseAll(*Ldecomp, *adecomp, *bdecomp, noisevarL, noisevarlum, noisevarchrom, width, height, noisevarab_r, noisevarab_b,labdn, useNoiseLCurve, useNoiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, autoch, denoiseMethodRgb );//enhance mode
+				else /*if(nrQuality==QUALITY_HIGH)*/ {
+					WaveletDenoiseAll_BiShrink(*Ldecomp, *adecomp, *bdecomp, noisevarL, noisevarlum, noisevarchrom, width, height, noisevarab_r, noisevarab_b,labdn, useNoiseLCurve, useNoiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, autoch, denoiseMethodRgb );//enhance mode
+					WaveletDenoiseAll(*Ldecomp, *adecomp, *bdecomp, noisevarL, noisevarlum, noisevarchrom, width, height, noisevarab_r, noisevarab_b,labdn, useNoiseLCurve, useNoiseCCurve, chaut ,redaut, blueaut, maxredaut, maxblueaut, autoch, denoiseMethodRgb );
 				}
-			float chresid,chmaxredresid,chmaxblueresid,chresidred, chresidblue;	
-			//kall=0 call by Dcrop
-			resid=0.f;residred=0.f;residblue=0.f;
-			if(kall==0) Noise_residual(*Ldecomp, *adecomp, *bdecomp,  width, height, chresid, chmaxredresid,chmaxblueresid, chresidred, chresidblue, resid, residblue, residred, maxredresid, maxblueresid, nbresid);
-			//printf("NoiRESID=%3.1f maxR=%3.1f maxB=%3.1f red=%3.1f  blue=%3.1f\n",chresid, chmaxredresid,chmaxblueresid, chresidred, chresidblue);	
-			nresi=chresid;
-			highresi=chresid + 0.66f*(max(chmaxredresid,chmaxblueresid) - chresid);//evaluate sigma
+					//kall=0 call by Dcrop
+				if(kall==0) {
+					float chresid,chmaxredresid,chmaxblueresid,chresidred, chresidblue;	
+					resid=0.f;residred=0.f;residblue=0.f;
+					Noise_residual(*Ldecomp, *adecomp, *bdecomp,  width, height, chresid, chmaxredresid,chmaxblueresid, chresidred, chresidblue, resid, residblue, residred, maxredresid, maxblueresid, nbresid, denoiseMethodRgb);
+					//printf("NoiRESID=%3.1f maxR=%3.1f maxB=%3.1f red=%3.1f  blue=%3.1f\n",chresid, chmaxredresid,chmaxblueresid, chresidred, chresidblue);	
+					nresi=chresid;
+					highresi=chresid + 0.66f*(max(chmaxredresid,chmaxblueresid) - chresid);//evaluate sigma
+				}
 #ifdef _OPENMP
 #pragma omp parallel sections num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
@@ -874,34 +813,26 @@ if(settings->leveldnti ==1) {
 #pragma omp section
 #endif
 {
-			Ldecomp->reconstruct(labdn->data);
-			delete Ldecomp;
+				Ldecomp->reconstruct(labdn->data);
+				delete Ldecomp;
 }
 #ifdef _OPENMP
 #pragma omp section
 #endif
 {
-			adecomp->reconstruct(labdn->data+datalen);
-			delete adecomp;
+				adecomp->reconstruct(labdn->data+datalen);
+				delete adecomp;
 }
 #ifdef _OPENMP
 #pragma omp section
 #endif
 {
-			bdecomp->reconstruct(labdn->data+2*datalen);
-			delete bdecomp;
+				bdecomp->reconstruct(labdn->data+2*datalen);
+				delete bdecomp;
 }
 }
 			}
-			}
-			//TODO: at this point wavelet coefficients storage can be freed
-			//Issue 1680: Done now
 
-			//second impulse denoise, removed in Issue 2557
-//				if (dnparams.luma>0.01) {
-//					impulse_nr (labdn, MIN(50.0f,(float)dnparams.luma)/20.0f);
-//				}
-			//PF_correct_RT(dst, dst, defringe.radius, defringe.threshold);
 
 			
 			int metchoice=0;
@@ -911,7 +842,7 @@ if(settings->leveldnti ==1) {
 			else if(dnparams.methodmed=="Lpab") metchoice=4;
 			
 			//median on Luminance Lab only
-		if( (metchoice==1 || metchoice==2 || metchoice==3 || metchoice==4)   && dnparams.median) {
+		if( (metchoice==1 || metchoice==2 || metchoice==3 || metchoice==4) && dnparams.median) {
 		//printf("Lab et Lonly \n");
 			float** tmL;
 			int wid=labdn->W;
@@ -977,7 +908,7 @@ if(settings->leveldnti ==1) {
 #pragma omp parallel for num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
 					for (int i=1; i<hei-1; i++) {
-						float pp[9],results[5],temp;
+						float pp[9],temp;
 						if(methmedL == 0) 
 							for (int j=1; j<wid-1; j++) {
 								med2(labdn->L[i][j] ,labdn->L[i-1][j], labdn->L[i+1][j] ,labdn->L[i][j+1],labdn->L[i][j-1], tmL[i][j]);//3x3 soft
@@ -1249,14 +1180,13 @@ if(settings->leveldnti ==1) {
 			const int numblox_W = ceil(((float)(width))/(offset))+2*blkrad;
 			const int numblox_H = ceil(((float)(height))/(offset))+2*blkrad;
 
-			//const int nrtiles = numblox_W*numblox_H;
 			// end of tiling calc
 			{
 
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			// Main detail recovery algorithm: Block loop
-				//DCT block data storage
+			//DCT block data storage
 
 
 #ifdef _OPENMP
@@ -1283,7 +1213,6 @@ if(settings->leveldnti ==1) {
 
 				int top = (vblk-blkrad)*offset;
 				float * datarow = pBuf +blkrad*offset;
-
 				for (int i=0/*, row=top*/; i<TS; i++/*, row++*/) {
 					int row = top + i;
 					int rr = row;
@@ -1308,14 +1237,26 @@ if(settings->leveldnti ==1) {
 					for (int hblk=0; hblk<numblox_W; hblk++) {
 						int left = (hblk-blkrad)*offset;
 						int indx = (hblk)*TS;//index of block in malloc
-
-						for (int j=0; j<TS; j++) {
-							Lblox[(indx + i)*TS+j] = tilemask_in[i][j]*datarow[left+j];// luma data
-							if (top+i>=0 && top+i<height && left+j>=0 && left+j<width) {
+						if(top+i>=0 && top+i<height) {
+							int j;
+							for (j=0; j<min((-left),TS); j++) {
+								Lblox[(indx + i)*TS+j] = tilemask_in[i][j]*datarow[left+j];// luma data
+							}
+							for (; j<min(TS,width-left); j++) {
+								Lblox[(indx + i)*TS+j] = tilemask_in[i][j]*datarow[left+j];// luma data
 								totwt[top+i][left+j] += tilemask_in[i][j]*tilemask_out[i][j];
 							}
+							for (; j<TS; j++) {
+								Lblox[(indx + i)*TS+j] = tilemask_in[i][j]*datarow[left+j];// luma data
+							}
+						} else {
+							for (int j=0; j<TS; j++) {
+								Lblox[(indx + i)*TS+j] = tilemask_in[i][j]*datarow[left+j];// luma data
+							}
 						}
+
 					}
+
 				}//end of filling block row
 
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1389,29 +1330,28 @@ if(settings->leveldnti ==1) {
 			}
 			//convert back to RGB and write to destination array
 			if (isRAW) {
-			if(!perf) {//Lab mode
-					realred /= 100.f;
-					realblue /= 100.f;
+			if(!denoiseMethodRgb) {//Lab mode
+				realred /= 100.f;
+				realblue /= 100.f;
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
 				for (int i=tiletop; i<tilebottom; i++){
 					int i1 = i-tiletop;
-					float X,Y,Z,L,a,b;
-
 					for (int j=tileleft; j<tileright; j++) {
 						int j1=j-tileleft;
 						//modification Jacques feb 2013
 						//true conversion Lab==>xyz
-						L = labdn->L[i1][j1];
-						a = labdn->a[i1][j1];
-						b = labdn->b[i1][j1];
+						float L = labdn->L[i1][j1];
+						float a = labdn->a[i1][j1];
+						float b = labdn->b[i1][j1];
 						float c_h=SQR(a)+SQR(b);
 						if(c_h>9000000.f){
-							a *= 1.f + Qhigh*realred;
-							b *= 1.f + Qhigh*realblue;
+							a *= 1.f + qhighFactor*realred;
+							b *= 1.f + qhighFactor*realblue;
 						}
 						//convert XYZ
+						float X,Y,Z;
 						Color::Lab2XYZ(L, a, b, X, Y, Z);
 						//apply inverse gamma noise
 						float r_,g_,b_;
@@ -1420,22 +1360,12 @@ if(settings->leveldnti ==1) {
 						r_ = r_<32768.f ? igamcurve[r_] : (Color::gammanf(r_/32768.f, igam) * 65535.f);
 						g_ = g_<32768.f ? igamcurve[g_] : (Color::gammanf(g_/32768.f, igam) * 65535.f);
 						b_ = b_<32768.f ? igamcurve[b_] : (Color::gammanf(b_/32768.f, igam) * 65535.f);
+
 						//readapt arbitrary gamma (inverse from beginning)
-						if (gamlab == 0) {
-							r_ = Color::gammatab_26_11[r_];
-							g_ = Color::gammatab_26_11[g_];
-							b_ = Color::gammatab_26_11[b_];
-						}
-						else if (gamlab == 1) {
-							r_ = Color::gammatab_4[r_];
-							g_ = Color::gammatab_4[g_];
-							b_ = Color::gammatab_4[b_];
-						}
-						else if (gamlab == 2) {
-							r_ = Color::gammatab_55[r_];
-							g_ = Color::gammatab_55[g_];
-							b_ = Color::gammatab_55[b_];
-						}
+						r_ = (*denoisegamtab)[r_];
+						g_ = (*denoisegamtab)[g_];
+						b_ = (*denoisegamtab)[b_];
+
 						float factor = Vmask[i1]*Hmask[j1];
 
 						dsttmp->r(i,j) += factor*r_;
@@ -1448,17 +1378,16 @@ if(settings->leveldnti ==1) {
 				else {//RGB mode
 				for (int i=tiletop; i<tilebottom; i++){
 					int i1 = i-tiletop;
-					float X,Y,Z;
 					for (int j=tileleft; j<tileright; j++) {
 						int j1=j-tileleft;
 						float c_h=sqrt(SQR(labdn->a[i1][j1])+SQR(labdn->b[i1][j1]));
 						if(c_h>3000.f){
-							labdn->a[i1][j1]*=1.f + Qhigh*realred/100.f;
-							labdn->b[i1][j1]*=1.f + Qhigh*realblue/100.f;
+							labdn->a[i1][j1]*=1.f + qhighFactor*realred/100.f;
+							labdn->b[i1][j1]*=1.f + qhighFactor*realblue/100.f;
 						}
-						Y = labdn->L[i1][j1];
-						X = (labdn->a[i1][j1]) + Y;
-						Z = Y - (labdn->b[i1][j1]);
+						float Y = labdn->L[i1][j1];
+						float X = (labdn->a[i1][j1]) + Y;
+						float Z = Y - (labdn->b[i1][j1]);
 						
 
 						X = X<32768.0f ? igamcurve[X] : (Color::gamma((float)X/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
@@ -1478,19 +1407,19 @@ if(settings->leveldnti ==1) {
 			} else {
 				for (int i=tiletop; i<tilebottom; i++){
 					int i1 = i-tiletop;
-					float X,Y,Z,L,a,b;
 					for (int j=tileleft; j<tileright; j++) {
 						int j1=j-tileleft;
 						//modification Jacques feb 2013
-						L = labdn->L[i1][j1];
-						a = labdn->a[i1][j1];
-						b = labdn->b[i1][j1];
+						float L = labdn->L[i1][j1];
+						float a = labdn->a[i1][j1];
+						float b = labdn->b[i1][j1];
 						float c_h=sqrt(SQR(a)+SQR(b));
 						if(c_h>3000.f){
-							a*=1.f + Qhigh*realred/100.f;
-							b*=1.f + Qhigh*realblue/100.f;
+							a*=1.f + qhighFactor*realred/100.f;
+							b*=1.f + qhighFactor*realblue/100.f;
 						}
 						
+						float X,Y,Z;
 						Color::Lab2XYZ(L, a, b, X, Y, Z);
 
 						float factor = Vmask[i1]*Hmask[j1];
@@ -1512,20 +1441,14 @@ if(settings->leveldnti ==1) {
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 			delete labdn;
-			delete [] mad_LL;
-			delete [] mad_aa;
-			delete [] mad_bb;
 
 		}//end of tile row
 	}//end of tile loop
-	for (int i=0; i<(tileheight+1)/2; i++)
-		delete [] noisevarlum[i];
 	delete [] noisevarlum;
-	for (int i=0; i<(tileheight+1)/2; i++)
-		delete [] noisevarchrom[i];
 	delete [] noisevarchrom;
 
 	}
+
 	for(int i=0;i<denoiseNestedLevels*numthreads;i++) {
 		fftwf_free(LbloxArray[i]);
 		fftwf_free(fLbloxArray[i]);
@@ -1605,15 +1528,16 @@ for(int iteration=1;iteration<=dnparams.passes;iteration++){
 	} else {
 #pragma omp for	
 		for (int i=2; i<hei-2; i++) {
-			float pp[25],temp;
-			if(methmed == 3)			
+			float pp[25];
+			if(methmed == 3) {
+				float temp;
 				for (int j=2; j<wid-2; j++) {
 					med5(source->r(i,j),source->r(i-1,j),source->r(i+1,j),source->r(i,j+1),source->r(i,j-1),source->r(i-1,j-1),source->r(i-1,j+1),source->r(i+1,j-1),source->r(i+1,j+1),
 					source->r(i-2,j),source->r(i+2,j),source->r(i,j+2),source->r(i,j-2),source->r(i-2,j-2),source->r(i-2,j+2),source->r(i+2,j-2),source->r(i+2,j+2),	
 					source->r(i-2,j+1),source->r(i+2,j+1),source->r(i-1,j+2),source->r(i-1,j-2),source->r(i-2,j-1),source->r(i+2,j-1),source->r(i+1,j+2),source->r(i+1,j-2),	
 					tm[i][j]);//5x5
 				}
-			else
+			} else
 				for (int j=2; j<wid-2; j++) {
 					pp[0]=source->r(i,j);pp[1]=source->r(i-1,j); pp[2]=source->r(i+1,j);pp[3]=source->r(i,j+1);pp[4]=source->r(i,j-1);pp[5]=source->r(i-1,j-1);pp[6]=source->r(i-1,j+1);
 					pp[7]=source->r(i+1,j-1);pp[8]=source->r(i+1,j+1);pp[9]=source->r(i+2,j);pp[10]=source->r(i-2,j);pp[11]=source->r(i,j+2);pp[12]=source->r(i,j-2);
@@ -1647,15 +1571,16 @@ for(int iteration=1;iteration<=dnparams.passes;iteration++){
 	} else {
 #pragma omp for	
 		for (int i=2; i<hei-2; i++) {
-			float pp[25],temp;
-			if(methmed == 3)							
+			float pp[25];
+			if(methmed == 3) {
+				float temp;
 				for (int j=2; j<wid-2; j++) {
 					med5(source->b(i,j),source->b(i-1,j),source->b(i+1,j),source->b(i,j+1),source->b(i,j-1),source->b(i-1,j-1),source->b(i-1,j+1),source->b(i+1,j-1),source->b(i+1,j+1),
 					source->b(i-2,j),source->b(i+2,j),source->b(i,j+2),source->b(i,j-2),source->b(i-2,j-2),source->b(i-2,j+2),source->b(i+2,j-2),source->b(i+2,j+2),	
 					source->b(i-2,j+1),source->b(i+2,j+1),source->b(i-1,j+2),source->b(i-1,j-2),source->b(i-2,j-1),source->b(i+2,j-1),source->b(i+1,j+2),source->b(i+1,j-2),	
 					tm[i][j]);//5x5
 				}
-			else
+			} else
 				for (int j=2; j<wid-2; j++) {
 					pp[0]=source->b(i,j);pp[1]=source->b(i-1,j); pp[2]=source->b(i+1,j);pp[3]=source->b(i,j+1);pp[4]=source->b(i,j-1);pp[5]=source->b(i-1,j-1);pp[6]=source->b(i-1,j+1);
 					pp[7]=source->b(i+1,j-1);pp[8]=source->b(i+1,j+1);pp[9]=source->b(i+2,j);pp[10]=source->b(i-2,j);pp[11]=source->b(i,j+2);pp[12]=source->b(i,j-2);
@@ -1691,15 +1616,16 @@ for(int iteration=1;iteration<=dnparams.passes;iteration++){
 	} else {
 #pragma omp for	
 		for (int i=2; i<hei-2; i++) {
-			float pp[25],temp;
-			if(methmed == 3)											
+			float pp[25];
+			if(methmed == 3) {
+				float temp;
 				for (int j=2; j<wid-2; j++) {
 					med5(source->g(i,j),source->g(i-1,j),source->g(i+1,j),source->g(i,j+1),source->g(i,j-1),source->g(i-1,j-1),source->g(i-1,j+1),source->g(i+1,j-1),source->g(i+1,j+1),
 					source->g(i-2,j),source->g(i+2,j),source->g(i,j+2),source->g(i,j-2),source->g(i-2,j-2),source->g(i-2,j+2),source->g(i+2,j-2),source->g(i+2,j+2),	
 					source->g(i-2,j+1),source->g(i+2,j+1),source->g(i-1,j+2),source->g(i-1,j-2),source->g(i-2,j-1),source->g(i+2,j-1),source->g(i+1,j+2),source->g(i+1,j-2),	
 					tm[i][j]);//5x5
 				}
-			else
+			} else
 				for (int j=2; j<wid-2; j++) {
 					pp[0]=source->g(i,j);pp[1]=source->g(i-1,j); pp[2]=source->g(i+1,j);pp[3]=source->g(i,j+1);pp[4]=source->g(i,j-1);pp[5]=source->g(i-1,j-1);pp[6]=source->g(i-1,j+1);
 					pp[7]=source->g(i+1,j-1);pp[8]=source->g(i+1,j+1);pp[9]=source->g(i+2,j);pp[10]=source->g(i-2,j);pp[11]=source->g(i,j+2);pp[12]=source->g(i,j-2);
@@ -1725,16 +1651,13 @@ for(int iteration=1;iteration<=dnparams.passes;iteration++){
 		
 }		
 	//end median
-	if(noiseLCurve || noiseCCurve) {
-			for (int i=0; i<(hei+1)/2; i++)
+	if(noiseLCurve || useNoiseCCurve) {
+			for (int i=0; i<(hei); i++)
 				delete [] lumcalc[i];
 			delete [] lumcalc;
-			for (int i=0; i<(hei+1)/2; i++)
-				delete [] acalc[i];
-			delete [] acalc;
-			for (int i=0; i<(hei+1)/2; i++)
-				delete [] bcalc[i];
-			delete [] bcalc;
+			for (int i=0; i<(hei); i++)
+				delete [] ccalc[i];
+			delete [] ccalc;
 			
 			}
 
@@ -1764,7 +1687,7 @@ SSEFUNCTION	void ImProcFunctions::RGBtile_denoise (float * fLblox, int hblproc, 
 		__m128	noisevar_Ldetailv = _mm_set1_ps( noisevar_Ldetail );
 		__m128	onev = _mm_set1_ps( 1.0f );
 		for (int n=0; n<TS*TS; n+=4) {		//for DCT
-			tempv  = onev - xexpf( -SQRV( LVFU(nbrwt[n]))/noisevar_Ldetailv);
+			tempv  = onev - xexpf( -SQRV( LVF(nbrwt[n]))/noisevar_Ldetailv);
 			_mm_storeu_ps( &fLblox[blkstart+n], LVFU(fLblox[blkstart+n]) * tempv );
 		}//output neighbor averaged result
 #else
@@ -1909,10 +1832,10 @@ SSEFUNCTION	void ImProcFunctions::RGBtile_denoise (float * fLblox, int hblproc, 
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-void ImProcFunctions::Noise_residual(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, wavelet_decomposition &WaveletCoeffs_b,  int width, int height, float &chresid, float &chmaxredresid,float &chmaxblueresid, float &chresidred, float & chresidblue, float resid, float residblue, float residred, float maxredresid, float maxblueresid, float nbresid)
+void ImProcFunctions::Noise_residual(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, wavelet_decomposition &WaveletCoeffs_b,  int width, int height, float &chresid, float &chmaxredresid,float &chmaxblueresid, float &chresidred, float & chresidblue, float resid, float residblue, float residred, float maxredresid, float maxblueresid, float nbresid, bool denoiseMethodRgb)
 {
 		int maxlvl = WaveletCoeffs_L.maxlevel();
-		const float eps = 0.01f;
+
 
 		float madaC,madbC;
 		for (int lvl=0; lvl<maxlvl; lvl++) {
@@ -1924,9 +1847,13 @@ void ImProcFunctions::Noise_residual(wavelet_decomposition &WaveletCoeffs_L, wav
 			float ** WavCoeffs_a = WaveletCoeffs_a.level_coeffs(lvl);
 			float ** WavCoeffs_b = WaveletCoeffs_b.level_coeffs(lvl);
 			for (int dir=1; dir<4; dir++) {
-				madaC = SQR(Mad(WavCoeffs_a[dir], Wlvl_ab*Hlvl_ab));
-				madbC = SQR(Mad(WavCoeffs_b[dir], Wlvl_ab*Hlvl_ab));
-
+				if(denoiseMethodRgb) {
+					madaC = SQR(MadRgb(WavCoeffs_a[dir], Wlvl_ab*Hlvl_ab));
+					madbC = SQR(MadRgb(WavCoeffs_b[dir], Wlvl_ab*Hlvl_ab));
+				} else {
+					madaC = SQR(Mad(WavCoeffs_a[dir], Wlvl_ab*Hlvl_ab));
+					madbC = SQR(Mad(WavCoeffs_b[dir], Wlvl_ab*Hlvl_ab));
+				}
 				resid +=(madaC+madbC);
 				residred+=madaC;
 				residblue+=madbC;
@@ -1944,7 +1871,7 @@ void ImProcFunctions::Noise_residual(wavelet_decomposition &WaveletCoeffs_L, wav
 }
 
 SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a,
-													 wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float **noisevarlum, float **noisevarchrom, int width, int height, float *mad_LL, float *mad_aa, float *mad_bb, float noisevar_abr, float noisevar_abb, LabImage * noi, const NoiseCurve & noiseLCurve, const NoiseCurve & noiseCCurve, float &chaut, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, int schoice, bool autoch, bool perf)
+													 wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float *noisevarlum, float *noisevarchrom, int width, int height, float noisevar_abr, float noisevar_abb, LabImage * noi, const bool useNoiseLCurve, const bool useNoiseCCurve, float &chaut, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, bool autoch, bool denoiseMethodRgb)
 	{
 		int maxlvl = WaveletCoeffs_L.maxlevel();
 		const float eps = 0.01f;
@@ -1990,7 +1917,7 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 			float ** WavCoeffs_b = WaveletCoeffs_b.level_coeffs(lvl);
 
 			for (int dir=1; dir<4; dir++) {
-				if(!perf) {
+				if(!denoiseMethodRgb) {
 					madL[lvl][dir-1] = SQR(Mad(WavCoeffs_L[dir], Wlvl_L*Hlvl_L));
 					mada[lvl][dir-1] = SQR(Mad(WavCoeffs_a[dir], Wlvl_ab*Hlvl_ab));
 					madb[lvl][dir-1] = SQR(Mad(WavCoeffs_b[dir], Wlvl_ab*Hlvl_ab));
@@ -2018,42 +1945,27 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 			float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
 			float ** WavCoeffs_a = WaveletCoeffs_a.level_coeffs(lvl);
 			float ** WavCoeffs_b = WaveletCoeffs_b.level_coeffs(lvl);
-			int callby=1;
 			if (lvl==maxlvl-1) {
 				ShrinkAll(WavCoeffs_L, WavCoeffs_a, WavCoeffs_b, buffer, lvl, Wlvl_L, Hlvl_L, Wlvl_ab, Hlvl_ab,
-						  skip_L, skip_ab, noisevar_L, noisevarlum,  noisevarchrom, width, height, mad_LL, mad_aa, mad_bb,noisevar_abr, noisevar_abb, noi, noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, callby, autoch, perf, mada[lvl], madb[lvl], madL[lvl], true);
+						  skip_L, skip_ab, noisevar_L, noisevarlum,  noisevarchrom, width, height, noisevar_abr, noisevar_abb, noi, useNoiseLCurve, useNoiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, autoch, denoiseMethodRgb, mada[lvl], madb[lvl], madL[lvl], true);
 
 			} else {
 				//simple wavelet shrinkage
 				float * sfave = buffer[0]+32;
 				float * sfaved = buffer[3]+128;
 				float * blurBuffer = buffer[1]+64;
+
 				for (int dir=1; dir<4; dir++) {
 					float mad_Lr = madL[lvl][dir-1];
-					float mad_ar = noisevar_abr*mada[lvl][dir-1];
-					float mad_br = noisevar_abb*madb[lvl][dir-1];
+					float mad_ar = useNoiseCCurve ? noisevar_abr*mada[lvl][dir-1] : SQR(noisevar_abr)*mada[lvl][dir-1];
+					float mad_br = useNoiseCCurve ? noisevar_abb*madb[lvl][dir-1] : SQR(noisevar_abb)*madb[lvl][dir-1] ;
 
-					if (!noiseCCurve || noiseCCurve.getSum() < 5.f ){
-						for (int i=0; i<Hlvl_ab; i++) {
-							for (int j=0; j<Wlvl_ab; j++) {
-								mad_aa[i*Wlvl_ab+j]=mad_ar*(noisevar_abr);
-								mad_bb[i*Wlvl_ab+j]=mad_br*(noisevar_abb);
-							}//noisevarchrom	
-						}
-					}	
-
-					if (noiseCCurve  && noiseCCurve.getSum() > 5.f ){
-						for (int i=0; i<Hlvl_ab; i++) {
-							for (int j=0; j<Wlvl_ab; j++) {
-									mad_aa[i*Wlvl_ab+j]=mad_ar*(noisevarchrom[i][j]);
-									mad_bb[i*Wlvl_ab+j]=mad_br*(noisevarchrom[i][j]);
-							}//noisevarchrom
-						}
-					}
 					if (noisevar_abr>0.001f  || noisevar_abb>0.001f) {
 					
 #ifdef __SSE2__
 						__m128 onev = _mm_set1_ps(1.f);
+						__m128 mad_arv = _mm_set1_ps(mad_ar);
+						__m128 mad_brv = _mm_set1_ps(mad_br);
 						__m128 rmad_Lm9v = onev / _mm_set1_ps(mad_Lr * 9.f);
 						__m128 mad_av;
 						__m128 mad_bv;
@@ -2061,8 +1973,9 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 						__m128 tempav, tempbv;
 						int coeffloc_ab;
 						for (coeffloc_ab=0; coeffloc_ab<Hlvl_ab*Wlvl_ab-3; coeffloc_ab+=4) {
-							mad_av = LVFU(mad_aa[coeffloc_ab]);
-							mad_bv = LVFU(mad_bb[coeffloc_ab]);
+							__m128 nvcv = LVFU(noisevarchrom[coeffloc_ab]);
+							mad_av = nvcv*mad_arv;
+							mad_bv = nvcv*mad_brv;
 						
 							tempav = LVFU(WavCoeffs_a[dir][coeffloc_ab]);
 							tempbv = LVFU(WavCoeffs_b[dir][coeffloc_ab]);
@@ -2078,8 +1991,8 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 							float mag_L = SQR(WavCoeffs_L[dir][coeffloc_ab ]);
 							float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab]);
 							float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab]);
-							WavCoeffs_a[dir][coeffloc_ab] *= SQR(1.f-xexpf(-(mag_a/mad_aa[coeffloc_ab])-(mag_L/(9.f*mad_Lr)))/*satfactor_a*/);
-							WavCoeffs_b[dir][coeffloc_ab] *= SQR(1.f-xexpf(-(mag_b/mad_bb[coeffloc_ab])-(mag_L/(9.f*mad_Lr)))/*satfactor_b*/);
+							WavCoeffs_a[dir][coeffloc_ab] *= SQR(1.f-xexpf(-(mag_a/(noisevarchrom[coeffloc_ab]*mad_ar))-(mag_L/(9.f*mad_Lr)))/*satfactor_a*/);
+							WavCoeffs_b[dir][coeffloc_ab] *= SQR(1.f-xexpf(-(mag_b/(noisevarchrom[coeffloc_ab]*mad_br))-(mag_L/(9.f*mad_Lr)))/*satfactor_b*/);
 						}//now chrominance coefficients are denoised
 #else
 						for (int i=0; i<Hlvl_ab; i++) {
@@ -2090,8 +2003,8 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 								float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])+eps;
 								float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])+eps;
 
-								WavCoeffs_a[dir][coeffloc_ab] *= SQR(1.f-xexpf(-(mag_a/mad_aa[coeffloc_ab])-(mag_L/(9.f*mad_Lr)))/*satfactor_a*/);
-								WavCoeffs_b[dir][coeffloc_ab] *= SQR(1.f-xexpf(-(mag_b/mad_bb[coeffloc_ab])-(mag_L/(9.f*mad_Lr)))/*satfactor_b*/);
+								WavCoeffs_a[dir][coeffloc_ab] *= SQR(1.f-xexpf(-(mag_a/(noisevarchrom[coeffloc_ab]*mad_ar))-(mag_L/(9.f*mad_Lr)))/*satfactor_a*/);
+								WavCoeffs_b[dir][coeffloc_ab] *= SQR(1.f-xexpf(-(mag_b/(noisevarchrom[coeffloc_ab]*mad_br))-(mag_L/(9.f*mad_Lr)))/*satfactor_b*/);
 
 							}
 						}//now chrominance coefficients are denoised
@@ -2099,37 +2012,23 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 					}
 
 
-					float levelFactor = mad_Lr*5.f/(lvl+1);
 					if (noisevar_L>0.00001f) {
-						if (!noiseLCurve || noiseLCurve.getSum() < 7.f ) {
-							for (int i=0; i<Hlvl_L; i++)
-								for (int j=0; j<Wlvl_L; j++) {
-									int coeffloc_L = i*Wlvl_L+j;
-									mad_LL[coeffloc_L] = noisevar_L*levelFactor;//noisevarlum
-								}
-							}
-						else { 	if (noiseLCurve && noiseLCurve.getSum() >= 7.f) {	
-							for (int i=0; i<Hlvl_L; i++)
-								for (int j=0; j<Wlvl_L; j++) {
-									int coeffloc_L = i*Wlvl_L+j;
-									mad_LL[coeffloc_L] = noisevarlum[i][j]*levelFactor;//noisevarlum
-								}
-							}
-						}
+						float levelFactor = mad_Lr*5.f/(lvl+1);
 #ifdef __SSE2__
 						__m128 mad_Lv;
 						__m128 ninev = _mm_set1_ps( 9.0f );
 						__m128 epsv = _mm_set1_ps(eps);
 						__m128 mag_Lv;
+						__m128 levelFactorv = _mm_set1_ps(levelFactor);
 						int coeffloc_L;
 						for (coeffloc_L=0; coeffloc_L<Hlvl_L*Wlvl_L-3; coeffloc_L+=4) {
-							mad_Lv = LVFU(mad_LL[coeffloc_L]);
+							mad_Lv = LVFU(noisevarlum[coeffloc_L]) * levelFactorv;
 							mag_Lv = SQRV(LVFU(WavCoeffs_L[dir][coeffloc_L]));
 							_mm_storeu_ps(&sfave[coeffloc_L], mag_Lv / ( mag_Lv + mad_Lv * xexpf(-mag_Lv/(mad_Lv*ninev) )+ epsv));
 						}	
 						for (; coeffloc_L<Hlvl_L*Wlvl_L; coeffloc_L++) {
 							float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L]);
-							sfave[coeffloc_L] = mag_L/(mag_L+mad_LL[coeffloc_L]*xexpf(-mag_L/(9.f*mad_LL[coeffloc_L]))+eps);
+							sfave[coeffloc_L] = mag_L/(mag_L+levelFactor*noisevarlum[coeffloc_L]*xexpf(-mag_L/(9.f*levelFactor*noisevarlum[coeffloc_L]))+eps);
 						}
 #else
 						for (int i=0; i<Hlvl_L; i++)
@@ -2137,7 +2036,7 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 
 								int coeffloc_L = i*Wlvl_L+j;
 								float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L]);
-								sfave[coeffloc_L] = mag_L/(mag_L+mad_LL[coeffloc_L]*xexpf(-mag_L/(9.f*mad_LL[coeffloc_L]))+eps);
+								sfave[coeffloc_L] = mag_L/(mag_L+levelFactor*noisevarlum[coeffloc_L]*xexpf(-mag_L/(9.f*levelFactor*noisevarlum[coeffloc_L]))+eps);
 							}
 #endif
 						boxblur(sfave, sfaved, blurBuffer, lvl+2, lvl+2, Wlvl_L, Hlvl_L);//increase smoothness by locally averaging shrinkage
@@ -2177,7 +2076,7 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 
 
 	void ImProcFunctions::WaveletDenoiseAll(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a,
-											wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float **noisevarlum, float **noisevarchrom, int width, int height, float *mad_LL, float *mad_aa, float *mad_bb, float noisevar_abr, float noisevar_abb, LabImage * noi, const NoiseCurve & noiseLCurve, const NoiseCurve & noiseCCurve, float &chaut,float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, int schoice, bool autoch, bool perf)//mod JD
+											wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float *noisevarlum, float *noisevarchrom, int width, int height, float noisevar_abr, float noisevar_abb, LabImage * noi, const bool useNoiseLCurve, const bool useNoiseCCurve, float &chaut,float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, bool autoch, bool denoiseMethodRgb)//mod JD
 
 	{
 
@@ -2189,7 +2088,6 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 			if(WaveletCoeffs_L.level_H(lvl) > maxHL)
 				maxHL = WaveletCoeffs_L.level_H(lvl);
 		}
-
 
 #ifdef _OPENMP
 #pragma omp parallel num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
@@ -2223,12 +2121,8 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 			float ** WavCoeffs_a = WaveletCoeffs_a.level_coeffs(lvl);
 			float ** WavCoeffs_b = WaveletCoeffs_b.level_coeffs(lvl);
 
-			int callby=0;
-			if(schoice==0) callby=0;
-			if(schoice==2) callby=1;
-			
 			ShrinkAll(WavCoeffs_L, WavCoeffs_a, WavCoeffs_b, buffer, lvl, Wlvl_L, Hlvl_L, Wlvl_ab, Hlvl_ab,
-					  skip_L, skip_ab, noisevar_L, noisevarlum,  noisevarchrom, width, height, mad_LL, mad_aa, mad_bb, noisevar_abr, noisevar_abb, noi, noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, callby, autoch, perf);
+					  skip_L, skip_ab, noisevar_L, noisevarlum,  noisevarchrom, width, height, noisevar_abr, noisevar_abb, noi, useNoiseLCurve, useNoiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, autoch, denoiseMethodRgb);
 
 		}
 		for(int i=4;i>=0;i--)
@@ -2239,8 +2133,8 @@ SSEFUNCTION	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decompositi
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SSEFUNCTION	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, float **buffer, int level, 
-									int W_L, int H_L, int W_ab, int H_ab,int skip_L, int skip_ab, float noisevar_L, float **noisevarlum, float **noisevarchrom, int width, int height, float * mad_LL, float * mad_aa, float * mad_bb, float noisevar_abr, float noisevar_abb, LabImage * noi, const NoiseCurve & noiseLCurve, const NoiseCurve & noiseCCurve, float &chaut, float &redaut, float &blueaut,
-									float &maxredaut, float &maxblueaut, int callby, bool autoch, bool perf, float * madaa, float * madab, float * madaL, bool madCalculated )
+									int W_L, int H_L, int W_ab, int H_ab,int skip_L, int skip_ab, float noisevar_L, float *noisevarlum, float *noisevarchrom, int width, int height, float noisevar_abr, float noisevar_abb, LabImage * noi, const bool useNoiseLCurve, const bool useNoiseCCurve, float &chaut, float &redaut, float &blueaut,
+									float &maxredaut, float &maxblueaut, bool autoch, bool denoiseMethodRgb, float * madaa, float * madab, float * madaL, bool madCalculated )
 
 									{
 		//simple wavelet shrinkage
@@ -2265,7 +2159,7 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCo
 				madb = madab[dir-1];
 				madL = madaL[dir-1] ;
 			} else {
-				if(!perf) {
+				if(!denoiseMethodRgb) {
 					madL = SQR(Mad(WavCoeffs_L[dir], W_L*H_L));
 					mada = SQR(Mad(WavCoeffs_a[dir], W_ab*H_ab));
 					madb = SQR(Mad(WavCoeffs_b[dir], W_ab*H_ab));
@@ -2275,35 +2169,24 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCo
 					madb = SQR(MadRgb(WavCoeffs_b[dir], W_ab*H_ab));
 				}
 			}
-		
-			if (!noiseCCurve || noiseCCurve.getSum() < 5.f ){
-				for (int i=0; i<H_ab; i++) {
-					for (int j=0; j<W_ab; j++) {
-						mad_aa[i*W_ab+j]=mada*(noisevar_abr);
-						mad_bb[i*W_ab+j]=madb*(noisevar_abb);
-					}//noisevarchrom	
-				}
-			}	
-			if (noiseCCurve  && noiseCCurve.getSum() > 5.f ){
-				for (int i=0; i<H_ab; i++) {
-					for (int j=0; j<W_ab; j++) {
-						mad_aa[i*W_ab+j]=mada*(noisevarchrom[i][j]);
-						mad_bb[i*W_ab+j]=madb*(noisevarchrom[i][j]);
-					}//noisevarchrom
-				}
-			}
-			
+
 			if (noisevar_abr>0.001f  ||  noisevar_abb>0.001f ) {
+				mada = useNoiseCCurve ? mada : mada * noisevar_abr;
+				madb = useNoiseCCurve ? madb : madb * noisevar_abb;
 #ifdef __SSE2__
 				__m128 onev = _mm_set1_ps(1.f);
+				__m128 mad_arv = _mm_set1_ps(mada);
+				__m128 mad_brv = _mm_set1_ps(madb);
+
 				__m128 rmadLm9v = onev / _mm_set1_ps(madL * 9.f);
 				__m128 mad_av ;
 				__m128 mad_bv;
 				__m128 mag_Lv, mag_av, mag_bv;
 				int coeffloc_ab;
 				for (coeffloc_ab=0; coeffloc_ab<H_ab*W_ab-3; coeffloc_ab+=4) {
-					mad_av = LVFU(mad_aa[coeffloc_ab]);
-					mad_bv = LVFU(mad_bb[coeffloc_ab]);
+					__m128 nvcv = LVFU(noisevarchrom[coeffloc_ab]);
+					mad_av = nvcv*mad_arv;
+					mad_bv = nvcv*mad_brv;
 
 					mag_Lv = LVFU(WavCoeffs_L[dir][coeffloc_ab]);
 					mag_av = SQRV(LVFU(WavCoeffs_a[dir][coeffloc_ab]));
@@ -2317,10 +2200,9 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCo
 					float mag_L = SQR(WavCoeffs_L[dir][coeffloc_ab]);
 					float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab]);
 					float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab]);
-					sfavea[coeffloc_ab] = (1.f-xexpf(-(mag_a/mad_aa[coeffloc_ab])-(mag_L/(9.f*madL))));
-					sfaveb[coeffloc_ab] = (1.f-xexpf(-(mag_b/mad_bb[coeffloc_ab])-(mag_L/(9.f*madL))));
+					sfavea[coeffloc_ab] = (1.f-xexpf(-(mag_a/(noisevarchrom[coeffloc_ab]*mada))-(mag_L/(9.f*madL))));
+					sfaveb[coeffloc_ab] = (1.f-xexpf(-(mag_b/(noisevarchrom[coeffloc_ab]*madb))-(mag_L/(9.f*madL))));
 				}//now chrominance coefficients are denoised
-
 #else
 				for (int i=0; i<H_ab; i++) {
 					for (int j=0; j<W_ab; j++) {
@@ -2329,15 +2211,14 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCo
 						float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L ]);
 						float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab]);
 						float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab]);
-						sfavea[coeffloc_ab] = (1.f-xexpf(-(mag_a/mad_aa[coeffloc_ab])-(mag_L/(9.f*madL))));
-						sfaveb[coeffloc_ab] = (1.f-xexpf(-(mag_b/mad_bb[coeffloc_ab])-(mag_L/(9.f*madL))));
+						sfavea[coeffloc_ab] = (1.f-xexpf(-(mag_a/(noisevarchrom[coeffloc_ab]*mada))-(mag_L/(9.f*madL))));
+						sfaveb[coeffloc_ab] = (1.f-xexpf(-(mag_b/(noisevarchrom[coeffloc_ab]*madb))-(mag_L/(9.f*madL))));
 					}
 				}//now chrominance coefficients are denoised
 #endif
 
 				boxblur(sfavea, sfavead, blurBuffer, level+2, level+2, W_ab, H_ab);//increase smoothness by locally averaging shrinkage
 				boxblur(sfaveb, sfavebd, blurBuffer, level+2, level+2, W_ab, H_ab);//increase smoothness by locally averaging shrinkage
-
 #ifdef __SSE2__
 				__m128 epsv = _mm_set1_ps(eps);
 				__m128 sfav, sfbv;
@@ -2378,42 +2259,29 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCo
 			}
 			
 			if (noisevar_L>0.00001f) {
-				if (!noiseLCurve || noiseLCurve.getSum() < 7.f ){//under 7 quasi no action
-					for (int i=0; i<H_L; i++) {
-						for (int j=0; j<W_L; j++) {
-							mad_LL[i*W_L+j]=madL*(noisevar_L)*5/(level+1);
-						}//noisevarlum
-					}
-				}
-				else if (noiseLCurve && noiseLCurve.getSum() >= 7.f) {
-					float precalc = madL * 5.f / (float)(level+1);
-					for (int i=0; i<H_L; i++) {
-						for (int j=0; j<W_L; j++) {
-							mad_LL[i*W_L+j]=precalc*(noisevarlum[i][j]);
-						}//noisevarlum
-					}
-				}
+				float levelFactor = madL * 5.f / (float)(level+1);
 #ifdef __SSE2__
 				__m128	magv;
+				__m128 levelFactorv = _mm_set1_ps(levelFactor);
 				__m128  mad_Lv;
 				__m128	ninev = _mm_set1_ps( 9.0f );
 				__m128 	epsv = _mm_set1_ps( eps );
 				int i;
 				for (i=0; i<W_L*H_L-3; i+=4) {
-					mad_Lv = LVFU(mad_LL[i]);
+					mad_Lv = LVFU(noisevarlum[i]) * levelFactorv;
 					magv = SQRV(LVFU(WavCoeffs_L[dir][i]));
 					_mm_storeu_ps( &sfave[i], magv / (magv + mad_Lv*xexpf(-magv/(ninev * mad_Lv)) + epsv));
 				}
 				// few remaining pixels
 				for (; i<W_L*H_L; i++) {
 					float mag = SQR(WavCoeffs_L[dir][i]);
-					sfave[i] = mag/(mag+mad_LL[i]*xexpf(-mag/(9*mad_LL[i]))+eps);
+					sfave[i] = mag/(mag+levelFactor*noisevarlum[i]*xexpf(-mag/(9*levelFactor*noisevarlum[i]))+eps);
 				}
 #else
 				for (int i=0; i<W_L*H_L; i++) {
 
 					float mag = SQR(WavCoeffs_L[dir][i]);
-					float shrinkfactor = mag/(mag+mad_LL[i]*xexpf(-mag/(9*mad_LL[i]))+eps);
+					float shrinkfactor = mag/(mag+levelFactor*noisevarlum[i]*xexpf(-mag/(9*levelFactor*noisevarlum[i]))+eps);
 					sfave[i] = shrinkfactor;
 				}
 #endif
@@ -2449,7 +2317,7 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCo
 
 
 SSEFUNCTION	void ImProcFunctions::ShrinkAll_info(float ** WavCoeffs_a, float ** WavCoeffs_b, int level,
-									int W_ab, int H_ab, int skip_ab, float **noisevarlum, float **noisevarchrom, float **noisevarhue, int width, int height, float * mad_aa, float * mad_bb, float noisevar_abr, float noisevar_abb, LabImage * noi, float &chaut, int &Nb, float &redaut, float &blueaut,
+									int W_ab, int H_ab, int skip_ab, float **noisevarlum, float **noisevarchrom, float **noisevarhue, int width, int height, float noisevar_abr, float noisevar_abb, LabImage * noi, float &chaut, int &Nb, float &redaut, float &blueaut,
 									float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut,  bool autoch, int schoice, int lvl, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel,float &skinc, float &nsknc,
 									float &maxchred, float &maxchblue, float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, bool perf, bool multiThread) {
 
@@ -2465,7 +2333,7 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAll_info(float ** WavCoeffs_a, float ** 
 		float red_yel = 0.f;
 		float skin_c = 0.f;
 		int nsk = 0;
-		float nsk_nc = 0.f;
+
 		for (int i=0; i<H_ab; i++) {
 			for (int j=0; j<W_ab; j++) {
 				chro += noisevarchrom[i][j];
@@ -2541,7 +2409,7 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAll_info(float ** WavCoeffs_a, float ** 
 
 
 void ImProcFunctions::WaveletDenoiseAll_info(int levwav, wavelet_decomposition &WaveletCoeffs_a,
-											wavelet_decomposition &WaveletCoeffs_b, float **noisevarlum, float **noisevarchrom, float **noisevarhue, int width, int height, float *mad_aa, float *mad_bb, float noisevar_abr, float noisevar_abb, LabImage * noi, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut,int schoice, bool autoch, 
+											wavelet_decomposition &WaveletCoeffs_b, float **noisevarlum, float **noisevarchrom, float **noisevarhue, int width, int height, float noisevar_abr, float noisevar_abb, LabImage * noi, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut,int schoice, bool autoch, 
 											float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc, float &maxchred, float &maxchblue, float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, bool perf, bool multiThread ){
 
 	int maxlvl = levwav;
@@ -2556,7 +2424,7 @@ void ImProcFunctions::WaveletDenoiseAll_info(int levwav, wavelet_decomposition &
 		float ** WavCoeffs_b = WaveletCoeffs_b.level_coeffs(lvl);
 
 		ShrinkAll_info(WavCoeffs_a, WavCoeffs_b, lvl, Wlvl_ab, Hlvl_ab,
-		  skip_ab, noisevarlum,  noisevarchrom, noisevarhue, width, height, mad_aa, mad_bb, noisevar_abr, noisevar_abb, noi, chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, 
+		  skip_ab, noisevarlum,  noisevarchrom, noisevarhue, width, height, noisevar_abr, noisevar_abb, noi, chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, 
 		 autoch, schoice, lvl, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc, maxchred, maxchblue, minchred, minchblue, nb, chau, chred, chblue, perf, multiThread );
 
 	}
@@ -2592,9 +2460,9 @@ void ImProcFunctions::calcautodn_info (float &chaut, float &delta, int Nb, int l
 		reducdelta = (float)settings->nrhigh;
 
 	chaut = (chaut*Nb-maxmax)/(Nb-1);//suppress maximum for chaut calcul
-	if (redyel > 5000.f || skinc > 1000.f && nsknc < 0.4f  && chromina > 3000.f)
+	if ((redyel > 5000.f || skinc > 1000.f) && nsknc < 0.4f  && chromina > 3000.f)
 		chaut *= 0.45f;//reduct action in red zone, except skin for high / med chroma
-	else if (redyel>12000.f || skinc > 1200.f && nsknc < 0.3f && chromina > 3000.f)
+	else if ((redyel>12000.f || skinc > 1200.f) && nsknc < 0.3f && chromina > 3000.f)
 		chaut *= 0.3f;
 	
 	if (mode==0 || mode==2) {//Preview or Auto multizone
@@ -2678,11 +2546,12 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 	wid=provicalc->width;
 	TMatrix wprofi = iccStore->workingSpaceMatrix (params->icm.working);
 
-	double wpi[3][3] = {
-		{wprofi[0][0],wprofi[0][1],wprofi[0][2]},
-		{wprofi[1][0],wprofi[1][1],wprofi[1][2]},
-		{wprofi[2][0],wprofi[2][1],wprofi[2][2]}
+	const float wpi[3][3] = {
+		{static_cast<float>(wprofi[0][0]),static_cast<float>(wprofi[0][1]),static_cast<float>(wprofi[0][2])},
+		{static_cast<float>(wprofi[1][0]),static_cast<float>(wprofi[1][1]),static_cast<float>(wprofi[1][2])},
+		{static_cast<float>(wprofi[2][0]),static_cast<float>(wprofi[2][1]),static_cast<float>(wprofi[2][2])}
 		};
+
 	lumcalc = new float*[hei];
 	for (int i=0; i<hei; i++)
 		lumcalc[i] = new float[wid];
@@ -2742,14 +2611,11 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-	//DCT block data storage
 	TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
-
-	double wp[3][3] = {
-		{wprof[0][0],wprof[0][1],wprof[0][2]},
-		{wprof[1][0],wprof[1][1],wprof[1][2]},
-		{wprof[2][0],wprof[2][1],wprof[2][2]}
+	const float wp[3][3] = {
+		{static_cast<float>(wprof[0][0]),static_cast<float>(wprof[0][1]),static_cast<float>(wprof[0][2])},
+		{static_cast<float>(wprof[1][0]),static_cast<float>(wprof[1][1]),static_cast<float>(wprof[1][2])},
+		{static_cast<float>(wprof[2][0]),static_cast<float>(wprof[2][1]),static_cast<float>(wprof[2][2])}
 	};
 
 	float chau=0.f;
@@ -2762,6 +2628,18 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 	int nb=0;
 	int comptlevel=0;
 
+	// To avoid branches in loops we access the gammatabs by pointers
+	LUTf *denoiseigamtab;
+	switch(settings->denoiselabgamma) {
+		case 0:	 denoiseigamtab = &(Color::igammatab_26_11);
+				 break;
+		case 1:	 denoiseigamtab = &(Color::igammatab_4);
+				 break;
+		default: denoiseigamtab = &(Color::igammatab_55);
+				 break;
+	}
+
+
 	for (int tiletop=0; tiletop<imheight; tiletop+=tileHskip) {
 		for (int tileleft=0; tileleft<imwidth; tileleft+=tileWskip) {
 
@@ -2770,18 +2648,16 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 			int width  = tileright-tileleft;
 			int height = tilebottom-tiletop;
 			LabImage * labdn = new LabImage(width,height);
-			float** noisevarlum = new float*[height];
-			for (int i=0; i<height; i++)
-				noisevarlum[i] = new float[width];
+			float** noisevarlum = new float*[(height+1)/2];
+			for (int i=0; i<(height+1)/2; i++)
+				noisevarlum[i] = new float[(width+1)/2];
 						
-			float* mad_aa = new float [height*width];
-			float* mad_bb = new float [height*width];
-			float** noisevarchrom = new float*[height];
-			for (int i=0; i<height; i++)
-				noisevarchrom[i] = new float[width];
-			float** noisevarhue = new float*[height];
-			for (int i=0; i<height; i++)
-				noisevarhue[i] = new float[width];
+			float** noisevarchrom = new float*[(height+1)/2];
+			for (int i=0; i<(height+1)/2; i++)
+				noisevarchrom[i] = new float[(width+1)/2];
+			float** noisevarhue = new float*[(height+1)/2];
+			for (int i=0; i<(height+1)/2; i++)
+				noisevarhue[i] = new float[(width+1)/2];
 			
 			// init luma noisevarL
 			float noisevarab_b, noisevarab_r;
@@ -2805,61 +2681,59 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 				realblue = 0.001f;
 			//TODO: implement using AlignedBufferMP
 			//fill tile from image; convert RGB to "luma/chroma"
-			float noiseluma=(float) dnparams.luma;
-			noiseluma += 1.f;
-			float noisevarL = SQR((noiseluma/125.f)*(1.f+noiseluma/25.f));
+
 			if (isRAW) {//image is raw; use channel differences for chroma channels
 #ifdef _OPENMP
 #pragma omp parallel for if(multiThread)
 #endif
-					for (int i=tiletop; i<tilebottom; i++) {
+					for (int i=tiletop; i<tilebottom; i+=2) {
 						int i1 = i - tiletop;
 #ifdef __SSE2__
 						__m128 aNv,bNv;
 						__m128 c100v = _mm_set1_ps(100.f);
 						int j;
-						for (j=tileleft; j<tileright-3; j+=4) {
+						for (j=tileleft; j<tileright-7; j+=8) {
 							int j1 = j - tileleft;
-							aNv = LVFU(acalc[i][j]);
-							bNv = LVFU(bcalc[i][j]);
-							_mm_storeu_ps(&noisevarhue[i1][j1], xatan2f(bNv,aNv));
-							_mm_storeu_ps(&noisevarchrom[i1][j1], _mm_max_ps(c100v,_mm_sqrt_ps(SQRV(aNv)+SQRV(bNv))));
+							aNv = LVFU(acalc[i>>1][j>>1]);
+							bNv = LVFU(bcalc[i>>1][j>>1]);
+							_mm_storeu_ps(&noisevarhue[i1>>1][j1>>1], xatan2f(bNv,aNv));
+							_mm_storeu_ps(&noisevarchrom[i1>>1][j1>>1], _mm_max_ps(c100v,_mm_sqrt_ps(SQRV(aNv)+SQRV(bNv))));
 						}
-						for (; j<tileright; j++) {
+						for (; j<tileright; j+=2) {
 							int j1 = j - tileleft;
-							float aN = acalc[i][j];
-							float bN = bcalc[i][j];
+							float aN = acalc[i>>1][j>>1];
+							float bN = bcalc[i>>1][j>>1];
 							float cN = sqrtf(SQR(aN)+SQR(bN));
-							noisevarhue[i1][j1] = xatan2f(bN,aN);
+							noisevarhue[i1>>1][j1>>1] = xatan2f(bN,aN);
 							if(cN < 100.f)
 								cN=100.f;//avoid divided by zero
-							noisevarchrom[i1][j1] = cN;
+							noisevarchrom[i1>>1][j1>>1] = cN;
 						}
 #else
-						for (int j=tileleft; j<tileright; j++) {
+						for (int j=tileleft; j<tileright; j+=2) {
 							int j1 = j - tileleft;
-							float aN = acalc[i][j];
-							float bN = bcalc[i][j];
+							float aN = acalc[i>>1][j>>1];
+							float bN = bcalc[i>>1][j>>1];
 							float cN = sqrtf(SQR(aN)+SQR(bN));
 							float hN = xatan2f(bN,aN);
 							if(cN < 100.f)
 								cN = 100.f;//avoid divided by zero
-							noisevarchrom[i1][j1] = cN;
-							noisevarhue[i1][j1] = hN;
+							noisevarchrom[i1>>1][j1>>1] = cN;
+							noisevarhue[i1>>1][j1>>1] = hN;
 						}
 #endif
 					}
 #ifdef _OPENMP
 #pragma omp parallel for if(multiThread)
 #endif
-					for (int i=tiletop; i<tilebottom; i++) {
+					for (int i=tiletop; i<tilebottom; i+=2) {
 						int i1 = i - tiletop;
-						for (int j=tileleft; j<tileright; j++) {
+						for (int j=tileleft; j<tileright; j+=2) {
 							int j1 = j - tileleft;
-							float Llum = lumcalc[i][j];
+							float Llum = lumcalc[i>>1][j>>1];
 							Llum = Llum < 2.f ? 2.f : Llum; //avoid divided by zero ?
 							Llum = Llum > 32768.f ? 32768.f : Llum; // not strictly necessary							
-							noisevarlum[i1][j1]= Llum;
+							noisevarlum[i1>>1][j1>>1]= Llum;
 						}
 					}
 				if (!perf){//lab mode, modification Jacques feb 2013 and july 2014
@@ -2875,24 +2749,10 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 						float G_ = gain*src->g(i,j);
 						float B_ = gain*src->b(i,j);
 
-						//finally I opted fot gamma55 and with options we can change
-						if (gamlab == 0) {// options 12/2013
-							R_ = Color::igammatab_26_11[R_];
-							G_ = Color::igammatab_26_11[G_];
-							B_ = Color::igammatab_26_11[B_];
-						}
-						else if (gamlab == 1) {
-							//other new gamma 4 5 
-							R_ = Color::igammatab_4[R_];
-							G_ = Color::igammatab_4[G_];
-							B_ = Color::igammatab_4[B_];
-						}
-						else if (gamlab == 2) {							
-							//new gamma 5.5 10 better for detail luminance..it is a compromise...which depends on the image (distribution BL, ML, HL ...)
-							R_ = Color::igammatab_55[R_];
-							G_ = Color::igammatab_55[G_];
-							B_ = Color::igammatab_55[B_];
-						}
+						R_ = (*denoiseigamtab)[R_];
+						G_ = (*denoiseigamtab)[G_];
+						B_ = (*denoiseigamtab)[B_];
+
 						//apply gamma noise	standard (slider)
 						R_ = R_<65535.0f ? gamcurve[R_] : (Color::gamman((double)R_/65535.0, gam)*32768.0f);
 						G_ = G_<65535.0f ? gamcurve[G_] : (Color::gamman((double)G_/65535.0, gam)*32768.0f);
@@ -2958,25 +2818,24 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 
 						//convert Lab
 						Color::XYZ2Lab(X, Y, Z, L, a, b);
-						float Llum,alum,blum;
-						float XL,YL,ZL;
-						Color::rgbxyz(rLum,gLum,bLum,XL,YL,ZL,wp);
-						Color::XYZ2Lab(XL, YL, ZL, Llum, alum, blum);
-						
-						float kN=Llum;
-						float epsi=0.01f;
 
-						if(kN<2.f) kN=2.f;
-						if(kN>32768.f) kN=32768.f;								
-						noisevarlum[i1][j1]=kN;
-						float aN=alum;
-						float bN=blum;
-						float hN=xatan2f(bN,aN);
-						float cN=sqrt(SQR(aN)+SQR(bN));
-						if(cN < 100.f) cN=100.f;//avoid divided by zero
-						noisevarchrom[i1][j1]=cN;
-						noisevarhue[i1][j1]=hN;
-
+						if(((i1|j1)&1) == 0) {
+							float Llum,alum,blum;
+							float XL,YL,ZL;
+							Color::rgbxyz(rLum,gLum,bLum,XL,YL,ZL,wp);
+							Color::XYZ2Lab(XL, YL, ZL, Llum, alum, blum);
+							float kN=Llum;
+							if(kN<2.f) kN=2.f;
+							if(kN>32768.f) kN=32768.f;
+							noisevarlum[i1>>1][j1>>1]=kN;
+							float aN=alum;
+							float bN=blum;
+							float hN=xatan2f(bN,aN);
+							float cN=sqrt(SQR(aN)+SQR(bN));
+							if(cN < 100.f) cN=100.f;//avoid divided by zero
+							noisevarchrom[i1>>1][j1>>1]=cN;
+							noisevarhue[i1>>1][j1>>1]=hN;
+						}
 						labdn->a[i1][j1] = a;
 						labdn->b[i1][j1] = b;
 					}
@@ -3018,27 +2877,24 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 }
 }
 			bool autoch = dnparams.autochroma;
-			if(comptlevel==0) WaveletDenoiseAll_info(levwav, *adecomp, *bdecomp, noisevarlum, noisevarchrom, noisevarhue, width, height, mad_aa, mad_bb, noisevarab_r, noisevarab_b, labdn, chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, schoice, autoch, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc,maxchred, maxchblue, minchred, minchblue, nb,chau ,chred, chblue, perf, multiThread);//enhance mode
+			if(comptlevel==0) WaveletDenoiseAll_info(levwav, *adecomp, *bdecomp, noisevarlum, noisevarchrom, noisevarhue, width, height, noisevarab_r, noisevarab_b, labdn, chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, schoice, autoch, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc,maxchred, maxchblue, minchred, minchblue, nb,chau ,chred, chblue, perf, multiThread);//enhance mode
 			comptlevel+=1;
-			float chresid,chmaxredresid,chmaxblueresid,chresidred, chresidblue;	
+			float chresid,chmaxredresid,chmaxblueresid;	
 			nresi=chresid;
 			highresi=chresid + 0.66f*(max(chmaxredresid,chmaxblueresid) - chresid);//evaluate sigma
 			delete adecomp;
 			delete bdecomp;
 			delete labdn;
-			for (int i=0; i<height; i++)
+			for (int i=0; i<(height+1)/2; i++)
 				delete [] noisevarlum[i];
 			delete [] noisevarlum;
-			for (int i=0; i<height; i++)
+			for (int i=0; i<(height+1)/2; i++)
 				delete [] noisevarchrom[i];
 			delete [] noisevarchrom;
-			for (int i=0; i<height; i++)
+			for (int i=0; i<(height+1)/2; i++)
 				delete [] noisevarhue[i];
 			delete [] noisevarhue;
 			
-			delete [] mad_aa;
-			delete [] mad_bb;
-
 		}//end of tile row
 	}//end of tile loop
 

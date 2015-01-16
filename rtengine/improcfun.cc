@@ -35,7 +35,6 @@
 #include "iccmatrices.h"
 #include "color.h"
 #include "calc_distort.h"
-#include "boxblur.h"
 #include "rt_math.h"
 #include "EdgePreservingDecomposition.h"
 #include "improccoordinator.h"
