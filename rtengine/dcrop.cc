@@ -255,9 +255,11 @@ void Crop::update (int todo) {
 				//setCropSizes (centerTile_X[poscenterX], centerTile_Y[poscenterY], trafw*skip,trafh*skip , skip, true);
 
 				// we only need image reduced to 1/4 here
-				Imagefloat *provicalc = new Imagefloat ((cropw+1)/2, (croph+1)/2);//for denoise curves
-				for(int ii=0;ii<croph;ii+=2){
-					for(int jj=0;jj<cropw;jj+=2){
+				int W = origCrop->getWidth();
+				int H = origCrop->getHeight();
+				Imagefloat *provicalc = new Imagefloat ((W+1)/2, (H+1)/2);//for denoise curves
+				for(int ii=0;ii<H;ii+=2){
+					for(int jj=0;jj<W;jj+=2){
 						provicalc->r(ii>>1,jj>>1) = origCrop->r(ii,jj);
 						provicalc->g(ii>>1,jj>>1) = origCrop->g(ii,jj);
 						provicalc->b(ii>>1,jj>>1) = origCrop->b(ii,jj);
@@ -492,9 +494,11 @@ void Crop::update (int todo) {
 
 		if((noiseLCurve || noiseCCurve ) && skip==1 && denoiseParams.enabled)	{//only allocate memory if enabled and skip
 			// we only need image reduced to 1/4 here
-			calclum = new Imagefloat ((cropw+1)/2, (croph+1)/2);//for denoise curves
-			for(int ii=0;ii<croph;ii+=2){
-				for(int jj=0;jj<cropw;jj+=2){
+			int W = origCrop->getWidth();
+			int H = origCrop->getHeight();
+			calclum = new Imagefloat ((W+1)/2, (H+1)/2);//for denoise curves
+			for(int ii=0;ii<H;ii+=2){
+				for(int jj=0;jj<W;jj+=2){
 					calclum->r(ii>>1,jj>>1) = origCrop->r(ii,jj);
 					calclum->g(ii>>1,jj>>1) = origCrop->g(ii,jj);
 					calclum->b(ii>>1,jj>>1) = origCrop->b(ii,jj);
