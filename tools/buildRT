@@ -25,7 +25,7 @@ esac
 
 #--- Set some variables
 unset choiceNumber choiceNumbers buildType buildTypes list branch branches repo
-version="4.1"
+version="4.2"
 movetoPatched=""
 repo="${HOME}/rawtherapee"
 procTarget=2
