@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# buildRT version 4.1, 2014-04-01
+# buildRT version 4.2, 2015-01-20
 # Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
 # www.rawtherapee.com
 # www.londonlight.org
@@ -243,7 +243,7 @@ fi
 # Make the menu list
 list=("0" "[abort]" "[exit]")
 num="1"
-buildTypes=("Release" "Debug")
+buildTypes=("release" "debug")
 for branch in "${branches[@]}"; do
   for buildType in "${buildTypes[@]}"; do
     list+=("$num" "${branch}" "${buildType}")
@@ -253,14 +253,36 @@ done
 
 printf "%s\n" "---------------------------------------------"
 printf "%s\t%s\t%s\n" "#" "Branch" "Build Type" "${list[@]}" | column -t -s $'\t' -c 3 | sed $'1s/.\+/\E[1m&\E[0m/'
-printf "%s\n" "---------------------------------------------" "" "Enter your choices, each number separated by a single space, e.g. 3 4" "If you don't know which option to choose, then choose the \"default\" branch, \"Release\" build type." "" | fold -s
+printf "%s\n" "---------------------------------------------" "" "Enter your choices, each number separated by a single space, e.g. 3 4" "If you don't know which option to choose, then choose the \"default\" branch, \"release\" build type." "" | fold -s
 
-while [[ -z $choiceNumbers ]]; do
+# make sure choices are valid
+checkChoices () {
+    choiceNumbers="${choiceNumbers//[^0-9 ]/}"
+    # all choiceNumbers must exist in listNums, else ask again
+    for choiceNumber in "${choiceNumbers[@]}"; do
+        if [[ "${choiceNumber}" = 0 ]]; then
+            exit 0;
+        fi
+        found=0
+        # for each num in list[@]
+        for (( o=3 ; o<${#list[@]} ; ((o+=3)) )); do
+            if [[ "${list[$o]}" = ${choiceNumber} ]]; then
+                found=1;
+            fi
+        done
+        # if one of the numbers the user typed arent in the list, break the loop and ask for input again
+        if [[ $found = 0 ]]; then
+            [[ -n ${choiceNumbers[@]} ]] && printf '%s\n' "Invalid choices, try again."
+            return 1;
+        fi
+    done
+}
+
+# keep repeating read until choices are valid
+until checkChoices; do
   read -r -p "Your choices: " -a choiceNumbers
 done
 printf "%s\n" "" "---------------------------------------------" ""
-#sanitize
-choiceNumbers="${choiceNumbers//[^0-9 ]/}"
 
 #--- Compile the chosen builds
 for choiceNumber in "${choiceNumbers[@]}"; do
@@ -271,6 +293,11 @@ for choiceNumber in "${choiceNumbers[@]}"; do
   # ${array[@]:offset:length}
   # choiceNumber*3 to get the human menu choice to match the correct array index, and then +1 so we offset to branch and buildType, not #.
   IFS=$'\t' read -r branch buildType < <(printf "%s\t%s\n" "${list[@]:$(($((choiceNumber*3))+1)):2}")
+  # extra safety check
+  if [[ -z "$branch" ]] || [[ -z "$buildType" ]]; then
+      print '%s\n' "Something went wrong with the selection, \"branch\" or \"buildType\" empty." "Aborting"
+      exit 1
+  fi
   # This seems useless  "$branch != default"
   # if [[ -z $patched && $branch != default ]]; then
   if [[ -z $patched ]]; then
