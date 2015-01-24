@@ -25,6 +25,7 @@
 #include <cstddef>
 #include "rt_math.h"
 #include "opthelper.h"
+#include "stdio.h"
 namespace rtengine {
 
 	template<typename T>
@@ -36,10 +37,13 @@ namespace rtengine {
 
 		// whether to subsample the output
 		bool subsamp_out;
+		
+		int numThreads;
 
 		// spacing of filter taps
 		int skip;
 
+		bool bigBlockOfMemory;
 		// allocation and destruction of data storage
 		T ** create(size_t n);
 		void destroy(T ** subbands);
@@ -68,6 +72,7 @@ namespace rtengine {
 		void SynthesisFilterSubsampVertical (T * srcLo, T * srcHi, T * dst, float *filterLo, float *filterHi, const int taps, const int offset, const int width, const int srcheight, const int dstheight);
 #endif
 	public:
+		bool memoryAllocationFailed;
 
 		T ** wavcoeffs;
 		// full size
@@ -77,8 +82,8 @@ namespace rtengine {
 		size_t m_w2, m_h2;
 
 		template<typename E>
-		wavelet_level(E * src, E * dst, int level, int subsamp, size_t w, size_t h, float *filterV, float *filterH, int len, int offset, int skipcrop)
-		: lvl(level), subsamp_out((subsamp>>level)&1), skip(1<<level), wavcoeffs(NULL), m_w(w), m_h(h), m_w2(w), m_h2(h)
+		wavelet_level(E * src, E * dst, int level, int subsamp, size_t w, size_t h, float *filterV, float *filterH, int len, int offset, int skipcrop, int numThreads)
+		: lvl(level), subsamp_out((subsamp>>level)&1), numThreads(numThreads), skip(1<<level), bigBlockOfMemory(true), memoryAllocationFailed(false), wavcoeffs(NULL), m_w(w), m_h(h), m_w2(w), m_h2(h)
 		{
 			if (subsamp) {
 				skip = 1;
@@ -93,7 +98,8 @@ namespace rtengine {
 			m_h2 = (subsamp_out ? (h+1)/2 : h);
 			
 			wavcoeffs = create((m_w2)*(m_h2));
-			decompose_level(src, dst, filterV, filterH, len, offset);
+			if(!memoryAllocationFailed)
+				decompose_level(src, dst, filterV, filterH, len, offset);
 			
 		}
 
@@ -136,10 +142,21 @@ namespace rtengine {
 
 	template<typename T>
 	T ** wavelet_level<T>::create(size_t n)	{
-		T * data = new T[3*n];
+		T * data = new (std::nothrow) T[3*n];
+		if(data == NULL) {
+			bigBlockOfMemory = false;
+		}
 		T ** subbands = new T*[4];
 		for(size_t j = 1; j < 4; j++) {
-			subbands[j] = data + n * (j-1);
+			if(bigBlockOfMemory)
+				subbands[j] = data + n * (j-1);
+			else {
+				subbands[j] = new (std::nothrow) T[n];
+				if(subbands[j] == NULL) {
+					printf("Couldn't allocate memory in level %d of wavelet\n",lvl);
+					memoryAllocationFailed = true;
+				}
+			}
 		}
 		return subbands;
 	}
@@ -147,7 +164,14 @@ namespace rtengine {
 	template<typename T>
 	void wavelet_level<T>::destroy(T ** subbands) {
 		if(subbands) {
-			delete[] subbands[1];
+			if(bigBlockOfMemory)
+				delete[] subbands[1];
+			else {
+				for(size_t j = 1; j < 4; j++) {
+					if(subbands[j] != NULL)
+						delete[] subbands[j];
+				}
+			}
 			delete[] subbands;
 		}
 	}
@@ -193,7 +217,9 @@ namespace rtengine {
 		 * Applies a Haar filter 
 		 *
 		 */
-
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(numThreads) if(numThreads>1)
+#endif
 		for (int k=0; k<height; k++) {
 			for(size_t i = 0; i < skip; i++) {
 				dst[k*width+i] = (srcLo[k*width+i] + srcHi[k*width+i]);			
@@ -210,15 +236,25 @@ namespace rtengine {
 		 * Applies a Haar filter 
 		 *
 		 */
-
+#ifdef _OPENMP
+#pragma omp parallel num_threads(numThreads) if(numThreads>1)
+#endif
+{
+#ifdef _OPENMP
+#pragma omp for nowait
+#endif
 		for(size_t i = 0; i < skip; i++) {
 			for(int j=0;j<width;j++)
 				dst[width*i+j] = (srcLo[i*width+j] + srcHi[i*width+j]);			
 		}
+#ifdef _OPENMP
+#pragma omp for
+#endif
 		for(size_t i = skip; i < height; i++) {
 			for(int j=0;j<width;j++)
 				dst[width*i+j] = 0.5f*(srcLo[i*width+j] + srcHi[i*width+j] + srcLo[(i-skip)*width+j] - srcHi[(i-skip)*width+j]);			
 		}
+}
 	}
 
 	template<typename T>
@@ -360,7 +396,9 @@ namespace rtengine {
 
 		// calculate coefficients
 		int shift = skip*(taps-offset-1);//align filter with data
-
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(numThreads) if(numThreads>1)
+#endif
 		for (int k=0; k<height; k++) {
 			int i;	
 			for(i=0; i<=min(skip*taps,dstwidth); i++) {
@@ -412,6 +450,9 @@ namespace rtengine {
 		// calculate coefficients
 		int shift=skip*(taps-offset-1);//align filter with data
 		__m128 fourv = _mm_set1_ps(4.f);
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(numThreads) if(numThreads>1)
+#endif
 		for(size_t i = 0; i < dstheight; i++) {
 			int i_src = (i+shift)/2;
 			int begin = (i+shift)%2;
@@ -467,6 +508,9 @@ namespace rtengine {
 		// calculate coefficients
 		int shift=skip*(taps-offset-1);//align filter with data
 
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(numThreads) if(numThreads>1)
+#endif
 		for(size_t i = 0; i < dstheight; i++) {
 			int i_src = (i+shift)/2;
 			int begin = (i+shift)%2;
@@ -496,54 +540,80 @@ namespace rtengine {
 #ifdef __SSE2__
 	template<typename T> template<typename E> SSEFUNCTION void wavelet_level<T>::decompose_level(E *src, E *dst, float *filterV, float *filterH, int taps, int offset) { 
 
-		T tmpLo[m_w] ALIGNED64;
-		T tmpHi[m_w] ALIGNED64;
 		/* filter along rows and columns */
+		float filterVarray[2*taps][4] ALIGNED64;
 		if(subsamp_out) {
-			float filterVarray[2*taps][4] ALIGNED64;
 			for(int i=0;i<2*taps;i++) {
 				for(int j=0;j<4;j++) {
 					filterVarray[i][j] = filterV[i];
 				}
 			}
+		}
+#ifdef _OPENMP
+#pragma omp parallel num_threads(numThreads) if(numThreads>1)
+#endif
+{
+		T tmpLo[m_w] ALIGNED64;
+		T tmpHi[m_w] ALIGNED64;
+		if(subsamp_out) {
+#ifdef _OPENMP
+#pragma omp for
+#endif
 			for(int row=0;row<m_h;row+=2) {
 				AnalysisFilterSubsampVertical (src, tmpLo, tmpHi, filterVarray, filterVarray+taps, taps, offset, m_w, m_h, row);
 				AnalysisFilterSubsampHorizontal (tmpLo, dst, wavcoeffs[1], filterH, filterH+taps, taps, offset, m_w, m_w2, row/2);
 				AnalysisFilterSubsampHorizontal (tmpHi, wavcoeffs[2], wavcoeffs[3], filterH, filterH+taps, taps, offset, m_w, m_w2, row/2);
 			}
 		} else {
+#ifdef _OPENMP
+#pragma omp for
+#endif
 			for(int row=0;row<m_h;row++) {
 				AnalysisFilterHaarVertical (src, tmpLo, tmpHi, m_w, m_h, row);
 				AnalysisFilterHaarHorizontal (tmpLo, dst, wavcoeffs[1], m_w, row);
 				AnalysisFilterHaarHorizontal (tmpHi, wavcoeffs[2], wavcoeffs[3], m_w, row);
 			}
 		}
+}
 	}
 #else
 	template<typename T> template<typename E> void wavelet_level<T>::decompose_level(E *src, E *dst, float *filterV, float *filterH, int taps, int offset) { 
 
+#ifdef _OPENMP
+#pragma omp parallel num_threads(numThreads) if(numThreads>1)
+#endif
+{
 		T tmpLo[m_w] ALIGNED64;
 		T tmpHi[m_w] ALIGNED64;
 		/* filter along rows and columns */
 		if(subsamp_out) {
+#ifdef _OPENMP
+#pragma omp for
+#endif
 			for(int row=0;row<m_h;row+=2) {
 				AnalysisFilterSubsampVertical (src, tmpLo, tmpHi, filterV, filterV+taps, taps, offset, m_w, m_h, row);
 				AnalysisFilterSubsampHorizontal (tmpLo, dst, wavcoeffs[1], filterH, filterH+taps, taps, offset, m_w, m_w2, row/2);
 				AnalysisFilterSubsampHorizontal (tmpHi, wavcoeffs[2], wavcoeffs[3], filterH, filterH+taps, taps, offset, m_w, m_w2, row/2);
 			}
 		} else {
+#ifdef _OPENMP
+#pragma omp for
+#endif
 			for(int row=0;row<m_h;row++) {
 				AnalysisFilterHaarVertical (src, tmpLo, tmpHi, m_w, m_h, row);
 				AnalysisFilterHaarHorizontal (tmpLo, dst, wavcoeffs[1], m_w, row);
 				AnalysisFilterHaarHorizontal (tmpHi, wavcoeffs[2], wavcoeffs[3], m_w, row);
 			}
 		}
+}
 	}
 #endif
 
 #ifdef __SSE2__
 
 	template<typename T> template<typename E> SSEFUNCTION void wavelet_level<T>::reconstruct_level(E* tmpLo, E* tmpHi, E * src, E *dst, float *filterV, float *filterH, int taps, int offset) { 
+		if(memoryAllocationFailed)
+			return;
 
 		/* filter along rows and columns */
 		if (subsamp_out) {
@@ -564,7 +634,8 @@ namespace rtengine {
 	}
 #else
 	template<typename T> template<typename E> void wavelet_level<T>::reconstruct_level(E* tmpLo, E* tmpHi, E * src, E *dst, float *filterV, float *filterH, int taps, int offset) { 
-
+		if(memoryAllocationFailed)
+			return;
 		/* filter along rows and columns */
 		if (subsamp_out) {
 			SynthesisFilterSubsampHorizontal (src, wavcoeffs[1], tmpLo, filterH, filterH+taps, taps, offset, m_w2, m_w, m_h2);
