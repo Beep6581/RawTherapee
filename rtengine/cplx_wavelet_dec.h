@@ -34,26 +34,28 @@ namespace rtengine {
 	public:
 
 		typedef float internal_type;
+		float *coeff0;
+		bool memoryAllocationFailed;
 
 	private:
 
 		static const int maxlevels = 10;//should be greater than any conceivable order of decimation
 
 		int lvltot, subsamp;
+		int numThreads;
 		size_t m_w, m_h;//dimensions
 
 		int wavfilt_len, wavfilt_offset;
 		float *wavfilt_anal;
 		float *wavfilt_synth;
 
-		float *coeff0;
 
 		wavelet_level<internal_type> * wavelet_decomp[maxlevels];
 
 	public:
 
 		template<typename E>
-		wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling, int skipcrop = 1);
+		wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling, int skipcrop = 1, int numThreads = 1);
 
 		~wavelet_decomposition();
 
@@ -91,8 +93,8 @@ namespace rtengine {
 	};
 
 	template<typename E>
-	wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling, int skipcrop)
-	: lvltot(0), subsamp(subsampling), m_w(width), m_h(height), coeff0(NULL)
+	wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling, int skipcrop, int numThreads)
+	: coeff0(NULL), memoryAllocationFailed(false), lvltot(0), subsamp(subsampling), numThreads(numThreads), m_w(width), m_h(height)
 	{
 		//initialize wavelet filters
 		wavfilt_len = Daub4_len;
@@ -113,18 +115,32 @@ namespace rtengine {
 
 		lvltot=0;
 		E *buffer[2];
-		buffer[0] = new E[(m_w/2+1)*(m_h/2+1)];
-		buffer[1] = new E[(m_w/2+1)*(m_h/2+1)];
+		buffer[0] = new (std::nothrow) E[(m_w/2+1)*(m_h/2+1)];
+		if(buffer[0] == NULL) {
+			memoryAllocationFailed = true;
+			return;
+		}
+		buffer[1] = new (std::nothrow) E[(m_w/2+1)*(m_h/2+1)];
+		if(buffer[1] == NULL) {
+			memoryAllocationFailed = true;
+			delete[] buffer[0];
+			buffer[0] = NULL;
+			return;
+		}
 		int bufferindex = 0;
 
 		wavelet_decomp[lvltot] = new wavelet_level<internal_type>(src, buffer[bufferindex^1], lvltot/*level*/, subsamp, m_w, m_h, \
-																  wavfilt_anal, wavfilt_anal, wavfilt_len, wavfilt_offset, skipcrop);
+																  wavfilt_anal, wavfilt_anal, wavfilt_len, wavfilt_offset, skipcrop, numThreads);
+		if(wavelet_decomp[lvltot]->memoryAllocationFailed)
+			memoryAllocationFailed = true;
 		while(lvltot < maxlvl-1) {
 			lvltot++;
 			bufferindex ^= 1;
 			wavelet_decomp[lvltot] = new wavelet_level<internal_type>(buffer[bufferindex], buffer[bufferindex^1]/*lopass*/, lvltot/*level*/, subsamp, \
 																	  wavelet_decomp[lvltot-1]->width(), wavelet_decomp[lvltot-1]->height(), \
-																	  wavfilt_anal, wavfilt_anal, wavfilt_len, wavfilt_offset, skipcrop);
+																	  wavfilt_anal, wavfilt_anal, wavfilt_len, wavfilt_offset, skipcrop, numThreads);
+			if(wavelet_decomp[lvltot]->memoryAllocationFailed)
+				memoryAllocationFailed = true;
 		}
 		coeff0 = buffer[bufferindex^1];
 		delete[] buffer[bufferindex];
@@ -132,7 +148,8 @@ namespace rtengine {
 	
 	template<typename E>
 	void wavelet_decomposition::reconstruct(E * dst) { 
-
+		if(memoryAllocationFailed)
+			return;
 		// data structure is wavcoeffs[scale][channel={lo,hi1,hi2,hi3}][pixel_array]
 		int m_w = 0;
 		int m_h2 = 0;
@@ -143,17 +160,33 @@ namespace rtengine {
 			if(m_h2 < wavelet_decomp[lvl]->m_h2)
 				m_h2 = wavelet_decomp[lvl]->m_h2;
 		}
-		E *tmpLo = new E[m_w*m_h2];
-		E *tmpHi = new E[m_w*m_h2];
+		E *tmpLo = new (std::nothrow) E[m_w*m_h2];
+		if(tmpLo == NULL) {
+			memoryAllocationFailed = true;
+			return;
+		}
+
+		E *tmpHi = new (std::nothrow) E[m_w*m_h2];
+		if(tmpHi == NULL) {
+			memoryAllocationFailed = true;
+			delete[] tmpLo;
+			return;
+		}
 
 		E *buffer[2];
 		buffer[0] = coeff0;
-		buffer[1] = new E[(m_w/2+1)*(m_h/2+1)];
+		buffer[1] = new (std::nothrow) E[(m_w/2+1)*(m_h/2+1)];
+		if(buffer[1] == NULL) {
+			memoryAllocationFailed = true;
+			delete[] tmpHi;
+			delete[] tmpLo;
+			return;
+		}
+
 		int bufferindex = 0;
 		for (int lvl=lvltot; lvl>0; lvl--) {
 			wavelet_decomp[lvl]->reconstruct_level(tmpLo, tmpHi, buffer[bufferindex], buffer[bufferindex^1], wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset);
 			bufferindex ^= 1;
-			//skip /=2;
 		}
 
 		wavelet_decomp[0]->reconstruct_level(tmpLo, tmpHi, buffer[bufferindex], dst, wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset);

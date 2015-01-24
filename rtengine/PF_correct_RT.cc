@@ -30,10 +30,7 @@
 #include "mytime.h"
 #include "../rtgui/myflatcurve.h"
 #include "rt_math.h"
-
-#ifdef __SSE2__
-#include "sleefsseavx.c"
-#endif
+#include "opthelper.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -44,11 +41,7 @@ using namespace std;
 namespace rtengine {
 extern const Settings* settings;
 
-#if defined( __SSE2__ ) && defined( WIN32 )
-__attribute__((force_align_arg_pointer)) void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radius, int thresh)
-#else
-void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radius, int thresh)
-#endif
+SSEFUNCTION void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radius, int thresh)
 {
 	const int halfwin = ceil(2*radius)+1;
 
@@ -117,8 +110,7 @@ float chromave=0.0f;
 				// no precalculated values without SSE => calculate
 				float HH=xatan2f(src->b[i][j],src->a[i][j]);
 #endif
-				double hr;
-				float chparam = float((chCurve->getVal((hr=Color::huelab_to_huehsv2(HH)))-0.5f) * 2.0f);//get C=f(H)
+				float chparam = float((chCurve->getVal((Color::huelab_to_huehsv2(HH)))-0.5f) * 2.0f);//get C=f(H)
 				if(chparam > 0.f) chparam /=2.f; // reduced action if chparam > 0
 					chromaChfactor=1.0f+chparam;
 			}
@@ -267,11 +259,8 @@ float chromave=0.0f;
 	if(chCurve) delete chCurve;
 	free(fringe);
 }
-#if defined( __SSE2__ ) && defined( WIN32 )
-__attribute__((force_align_arg_pointer)) void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * dst, double radius, int thresh)
-#else
-void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * dst, double radius, int thresh)
-#endif
+
+SSEFUNCTION void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * dst, double radius, int thresh)
 {
 	const int halfwin = ceil(2*radius)+1;
 
@@ -396,8 +385,7 @@ if( chCurve ) {
 				// no precalculated values without SSE => calculate
 				float HH=xatan2f(srbb[i][j],sraa[i][j]);
 #endif
-				double hr;
-				float chparam = float((chCurve->getVal((hr=Color::huelab_to_huehsv2(HH)))-0.5f) * 2.0f);//get C=f(H)
+				float chparam = float((chCurve->getVal((Color::huelab_to_huehsv2(HH)))-0.5f) * 2.0f);//get C=f(H)
 				if(chparam > 0.f) chparam /=2.f; // reduced action if chparam > 0
 				chromaChfactor=1.0f+chparam;
 			}
@@ -579,24 +567,7 @@ if( chCurve ) {
     free(fringe);
 }
 
-
-#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
-
-#define med3(a0,a1,a2,a3,a4,a5,a6,a7,a8,median) { \
-pp[0]=a0; pp[1]=a1; pp[2]=a2; pp[3]=a3; pp[4]=a4; pp[5]=a5; pp[6]=a6; pp[7]=a7; pp[8]=a8; \
-PIX_SORT(pp[1],pp[2]); PIX_SORT(pp[4],pp[5]); PIX_SORT(pp[7],pp[8]); \
-PIX_SORT(pp[0],pp[1]); PIX_SORT(pp[3],pp[4]); PIX_SORT(pp[6],pp[7]); \
-PIX_SORT(pp[1],pp[2]); PIX_SORT(pp[4],pp[5]); PIX_SORT(pp[7],pp[8]); \
-PIX_SORT(pp[0],pp[3]); PIX_SORT(pp[5],pp[8]); PIX_SORT(pp[4],pp[7]); \
-PIX_SORT(pp[3],pp[6]); PIX_SORT(pp[1],pp[4]); PIX_SORT(pp[2],pp[5]); \
-PIX_SORT(pp[4],pp[7]); PIX_SORT(pp[4],pp[2]); PIX_SORT(pp[6],pp[4]); \
-PIX_SORT(pp[4],pp[2]); median=pp[4];} //pp4 = median
-
-#if defined( __SSE2__ ) && defined( WIN32 )
-__attribute__((force_align_arg_pointer)) void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, double radius, int thresh, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom, int hotbad)
-#else
-void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, double radius, int thresh, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom, int hotbad)
-#endif
+SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, double radius, int thresh, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom, int hotbad)
 {
 	const int halfwin = ceil(2*radius)+1;
     MyTime t1,t2;
@@ -1002,31 +973,10 @@ float chrommed=0.f;
 #pragma omp parallel
 #endif
 {
-#ifdef __SSE2__
-	int j;
-	__m128 interav, interbv;
-	__m128 piidv = _mm_set1_ps(piid);
-#endif
 #ifdef _OPENMP
 #pragma omp for
 #endif
 	for(int i = 0; i < height; i++ ) {
-/*	
-#ifdef __SSE2__
-		for(j = 0; j < width-3; j+=4) {
-			interav = LVFU(tmaa[i][j]);
-			interbv = LVFU(tmbb[i][j]);
-			_mm_storeu_ps(&dst->h_p[i][j],(xatan2f(interbv,interav))/piidv);
-			_mm_storeu_ps(&dst->C_p[i][j],_mm_sqrt_ps(SQRV(interbv)+SQRV(interav)));
-		}
-		for(; j < width; j++) {
-			float intera = tmaa[i][j];
-			float interb = tmbb[i][j];
-			dst->h_p[i][j]=(xatan2f(interb,intera))/piid;
-			dst->C_p[i][j]=sqrt(SQR(interb)+SQR(intera));
-		}
-#else
-*/
 		for(int j = 0; j < width; j++) {
 			float intera = tmaa[i][j];
 			float interb = tmbb[i][j];
@@ -1042,7 +992,6 @@ float chrommed=0.f;
 			dst->C_p[i][j]=sqrt(SQR(interb)+SQR(intera));			
 			}
 		}
-//#endif
 	}
 }
 
@@ -1082,12 +1031,7 @@ float chrommed=0.f;
 	
 }
 
-
-#if defined( __SSE2__ ) && defined( WIN32 )
-__attribute__((force_align_arg_pointer)) void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, double radius, int thresh, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom)
-#else
-void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, double radius, int thresh, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom)
-#endif
+SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, double radius, int thresh, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom)
 {
 	const int halfwin = ceil(2*radius)+1;
     MyTime t1,t2;
@@ -1490,49 +1434,19 @@ float chrommed=0.f;
 #pragma omp parallel
 #endif
 {
-#ifdef __SSE2__
-	int j;
-	__m128 interav, interbv;
-	
-//	__m128 piidv = _mm_set1_ps(piid);
-#endif
 #ifdef _OPENMP
 #pragma omp for
 #endif
 	for(int i = 0; i < height; i++ ) {
-	/*
-#ifdef __SSE2__
-		for(j = 0; j < width-3; j+=4) {
-			interav = LVFU(tmaa[i][j]);
-			interbv = LVFU(tmbb[i][j]);
-			_mm_storeu_ps(&dst->a[i][j],(interav));
-			_mm_storeu_ps(&dst->b[i][j],(interbv));
-			}
-			
-		//	_mm_storeu_ps(&dst->C_p[i][j],_mm_sqrt_ps(SQRV(interbv)+SQRV(interav)));
-		}
-		for(; j < width; j++) {
-			float intera = tmaa[i][j];
-			float interb = tmbb[i][j];
-		
-			dst->a[i][j]=(intera);
-			dst->b[i][j]=(interb);
-		}
-#else
-*/
 		for(int j = 0; j < width; j++) {
 			float intera = tmaa[i][j];
 			float interb = tmbb[i][j];
-			float HH=xatan2f(interb,intera);
 			float CC=sqrt(SQR(interb/327.68)+SQR(intera/327.68f));	
-		//	if((HH > b_l && HH < t_r) && CC < chrom && skinprot !=0.f){	
 			if(CC < chrom && skinprot !=0.f){	
-			
-			dst->a[i][j]=intera;
-			dst->b[i][j]=interb;
+				dst->a[i][j]=intera;
+				dst->b[i][j]=interb;
 			}
 		}
-//#endif
 	}
 }
 }
@@ -1572,9 +1486,4 @@ float chrommed=0.f;
 	
 }
 
-
-
-
 }
-#undef PIX_SORT
-#undef med3
