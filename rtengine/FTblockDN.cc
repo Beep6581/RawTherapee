@@ -2030,8 +2030,8 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
 							for (int j=0; j<Wlvl_ab; j++) {
 								int coeffloc_ab = i*Wlvl_ab+j;
 
-								float mag_L = SQR(WavCoeffs_L[dir][coeffloc_ab ])+eps;
-								float mag_ab = SQR(WavCoeffs_ab[dir][coeffloc_ab])+eps;
+								float mag_L = SQR(WavCoeffs_L[dir][coeffloc_ab ]);
+								float mag_ab = SQR(WavCoeffs_ab[dir][coeffloc_ab]);
 
 								WavCoeffs_ab[dir][coeffloc_ab] *= SQR(1.f-xexpf(-(mag_ab/(noisevarchrom[coeffloc_ab]*mad_abr))-(mag_L/(9.f*mad_Lr)))/*satfactor_a*/);
 
