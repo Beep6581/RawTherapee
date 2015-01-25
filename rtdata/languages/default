@@ -716,6 +716,7 @@ PARTIALPASTE_VIGNETTING;Vignetting correction
 PARTIALPASTE_WHITEBALANCE;White balance
 PREFERENCES_ADD;Add
 PREFERENCES_APPLNEXTSTARTUP;restart required
+PREFERENCES_APPLNEXTRELOAD;image reload required
 PREFERENCES_AUTLISLOW;Low
 PREFERENCES_AUTLISMAX;Max - Average of all tiles
 PREFERENCES_AUTLISSTD;High
@@ -737,6 +738,7 @@ PREFERENCES_CACHEMAXENTRIES;Maximum number of cache entries
 PREFERENCES_CACHEOPTS;Cache Options
 PREFERENCES_CACHETHUMBHEIGHT;Maximum thumbnail height
 PREFERENCES_CIEART;CIECAM02 optimization
+PREFERENCES_CIEART_FRAME;CIECAM02-Specific Settings
 PREFERENCES_CIEART_LABEL;Use float precision instead of double
 PREFERENCES_CIEART_TOOLTIP;If enabled, CIECAM02 calculations are performed in the single-precision floating-point format instead of the double-precision one. This provides a small increase in speed at the expense of a negligible loss of quality.
 PREFERENCES_CLIPPINGIND;Clipping Indication
@@ -806,6 +808,7 @@ PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigato
 PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
 PREFERENCES_HLTHRESHOLD;Threshold for clipped highlights
 PREFERENCES_ICCDIR;Directory containing color profiles
+PREFERENCES_IMG_RELOAD_NEEDED;These changes require the image to be reloaded (or a new image to be opened) to take effect.
 PREFERENCES_IMPROCPARAMS;Default Processing Profile
 PREFERENCES_INSPECT_LABEL;Inspect
 PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of buffers

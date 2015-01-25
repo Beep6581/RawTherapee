@@ -493,15 +493,14 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
 }
 
 Gtk::Widget* Preferences::getPerformancePanel () {
-    Gtk::VBox* vbdenoise = Gtk::manage( new Gtk::VBox () );
-
-    Gtk::Frame* fdenoise = Gtk::manage(  new Gtk::Frame (M("PREFERENCES_NOISE")) );
-
     Gtk::VBox* mainContainer = Gtk::manage( new Gtk::VBox () );
     mainContainer->set_border_width (4);
-
     mainContainer->set_spacing(4);
+    Gtk::Frame* fdenoise = Gtk::manage( new Gtk::Frame (M("PREFERENCES_NOISE")) );
+    Gtk::VBox* vbdenoise = Gtk::manage( new Gtk::VBox () );
+    vbdenoise->set_border_width (4);
 
+    Gtk::Label* lreloadneeded2 = Gtk::manage (new Gtk::Label (M("PREFERENCES_IMG_RELOAD_NEEDED"), Gtk::ALIGN_LEFT));
     Gtk::HBox* threadLimitHB = Gtk::manage( new Gtk::HBox () );
     threadLimitHB->set_border_width(4);
     threadLimitHB->set_spacing(4);
@@ -518,12 +517,6 @@ Gtk::Widget* Preferences::getPerformancePanel () {
     rgbDenoiseTreadLimitSB->set_range (0, maxThreadNumber);
     threadLimitHB->pack_start (*RGBDTLl, Gtk::PACK_SHRINK, 0);
     threadLimitHB->pack_end (*rgbDenoiseTreadLimitSB, Gtk::PACK_SHRINK, 0);
-    Gtk::Label* restartNeeded3 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
-    Gtk::Label* restartNeeded4 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
-    Gtk::Label* restartNeeded5 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
-    Gtk::Label* restartNeeded6 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
-    Gtk::Label* restartNeeded7 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
-    Gtk::Label* restartNeeded8 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
 
     Gtk::Label* dnlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_LEVDN")+":", Gtk::ALIGN_LEFT));
     Gtk::Label* dnautlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_LEVAUTDN")+":", Gtk::ALIGN_LEFT));
@@ -540,7 +533,7 @@ Gtk::Widget* Preferences::getPerformancePanel () {
     dnaut = Gtk::manage (new Gtk::ComboBoxText ());
     dnaut->append_text (M("PREFERENCES_AUTLOW"));
     dnaut->append_text (M("PREFERENCES_AUTSTD"));
-	
+
     dnautsimpl = Gtk::manage (new Gtk::ComboBoxText ());
     dnautsimpl->append_text (M("PREFERENCES_STDAUT"));
     dnautsimpl->append_text (M("PREFERENCES_EXPAUT"));
@@ -550,7 +543,7 @@ Gtk::Widget* Preferences::getPerformancePanel () {
     dnliss->append_text (M("PREFERENCES_AUTLISLOW"));//low
     dnliss->append_text (M("PREFERENCES_AUTLISSTD"));//med
     dnliss->append_text (M("PREFERENCES_AUTLISMAX"));//max
-	
+
     dnti = Gtk::manage (new Gtk::ComboBoxText ());
     dnti->append_text (M("PREFERENCES_TISTD"));
     dnti->append_text (M("PREFERENCES_TIMAX"));
@@ -559,29 +552,23 @@ Gtk::Widget* Preferences::getPerformancePanel () {
     dnwavlev->append_text (M("PREFERENCES_WLZER"));
     dnwavlev->append_text (M("PREFERENCES_WLONE"));
     dnwavlev->append_text (M("PREFERENCES_WLTWO"));
-	
-    Gtk::Table* colon = Gtk::manage (new Gtk::Table (6, 3));
+
+    Gtk::Table* colon = Gtk::manage (new Gtk::Table (6, 2));
     colon->attach (*dnlab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colon->attach (*dnv, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colon->attach (*restartNeeded3, 2, 3, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colon->attach (*dnautlab, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colon->attach (*dnaut, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colon->attach (*restartNeeded4, 2, 3, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colon->attach (*dnautsimpllab, 0, 1, 2, 3, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colon->attach (*dnautsimpl, 1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colon->attach (*restartNeeded8, 2, 3, 2, 3, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colon->attach (*dnlisslab, 0, 1, 3, 4, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colon->attach (*dnliss, 1, 2, 3, 4, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colon->attach (*restartNeeded5, 2, 3, 3, 4, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colon->attach (*dntilab, 0, 1, 4, 5, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colon->attach (*dnti, 1, 2, 4, 5, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colon->attach (*restartNeeded6, 2, 3, 4, 5, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colon->attach (*dnwavlab, 0, 1, 5, 6, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colon->attach (*dnwavlev, 1, 2, 5, 6, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colon->attach (*restartNeeded7, 2, 3, 5, 6, Gtk::FILL, Gtk::SHRINK, 2, 2);
 
+    vbdenoise->pack_start (*lreloadneeded2, Gtk::PACK_SHRINK, 4);
     vbdenoise->pack_start (*colon, Gtk::PACK_SHRINK, 4);
-
     vbdenoise->pack_start(*threadLimitHB, Gtk::PACK_SHRINK, 4);
     fdenoise->add (*vbdenoise);
     mainContainer->pack_start (*fdenoise, Gtk::PACK_SHRINK, 4);
@@ -598,12 +585,10 @@ Gtk::Widget* Preferences::getPerformancePanel () {
     vbdenoise->pack_start (*colon2, Gtk::PACK_SHRINK, 4);
 */
 
-    Gtk::Frame* fclut = Gtk::manage(  new Gtk::Frame (M("PREFERENCES_CLUTSCACHE")) ); 
-
+    Gtk::Frame* fclut = Gtk::manage( new Gtk::Frame (M("PREFERENCES_CLUTSCACHE")) ); 
     Gtk::HBox* clutCacheSizeHB = Gtk::manage( new Gtk::HBox () );
     clutCacheSizeHB->set_border_width(4);
     clutCacheSizeHB->set_spacing(4);
-//    clutCacheSizeHB->set_tooltip_text(M("PREFERENCES_CLUTCACHESIZE_TOOLTIP"));
     Gtk::Label* CLUTLl = Gtk::manage( new Gtk::Label (M("PREFERENCES_CLUTSCACHE_LABEL") + ":", Gtk::ALIGN_LEFT));
     clutCacheSizeSB = Gtk::manage( new Gtk::SpinButton () );
     clutCacheSizeSB->set_digits (0);
@@ -661,10 +646,9 @@ Gtk::Widget* Preferences::getColorManagementPanel () {
     monProfile = Gtk::manage (new Gtk::FileChooserButton (M("PREFERENCES_MONITORICC"), Gtk::FILE_CHOOSER_ACTION_OPEN));
     Gtk::Label* mplabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_MONITORICC")+":", Gtk::ALIGN_LEFT));
 
-#if defined(WIN32)
-    // Auto-detection not implemented for Linux, see issue 851
-	cbAutoMonProfile = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_AUTOMONPROFILE")));
-	autoMonProfileConn  = cbAutoMonProfile->signal_toggled().connect (sigc::mem_fun(*this, &Preferences::autoMonProfileToggled));
+#if defined(WIN32) // Auto-detection not implemented for Linux, see issue 851
+    cbAutoMonProfile = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_AUTOMONPROFILE")));
+    autoMonProfileConn  = cbAutoMonProfile->signal_toggled().connect (sigc::mem_fun(*this, &Preferences::autoMonProfileToggled));
 #endif
 
     Gtk::Table* colt = Gtk::manage (new Gtk::Table (3, 2));
@@ -684,10 +668,9 @@ Gtk::Widget* Preferences::getColorManagementPanel () {
 #if defined(WIN32)
     autoMonProfileToggled();
 #endif
-    //Gtk::Frame* fdp = Gtk::manage (new Gtk::Frame (M("PREFERENCES_OUTPUTDEVICE")));
+
     Gtk::VBox* vbdp = Gtk::manage (new Gtk::VBox ());
     vbdp->set_border_width (4);
-    //Gtk::Label* viewlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_VIEW")+":"));
     Gtk::Label* viewlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_VIEW")+":", Gtk::ALIGN_LEFT));
 
     view = Gtk::manage (new Gtk::ComboBoxText ());
@@ -714,36 +697,27 @@ Gtk::Widget* Preferences::getColorManagementPanel () {
     greySc = Gtk::manage (new Gtk::ComboBoxText ());
     greySc->append_text (M("PREFERENCES_GREYSCA"));
     greySc->append_text (M("PREFERENCES_GREYSC18"));
-	
-    Gtk::Label* restartNeeded1 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
-    Gtk::Label* restartNeeded2 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
-    Gtk::Label* restartNeeded3 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
 
-    Gtk::Table* colo = Gtk::manage (new Gtk::Table (3, 3));
+    Gtk::Frame* fcielab = Gtk::manage( new Gtk::Frame (M("PREFERENCES_CIEART_FRAME")) );
+    Gtk::VBox* vbcielab = Gtk::manage( new Gtk::VBox () );
+    vbcielab->set_border_width (4);
+
+    Gtk::Label* lreloadneeded1 = Gtk::manage (new Gtk::Label (M("PREFERENCES_IMG_RELOAD_NEEDED"), Gtk::ALIGN_LEFT));
+    Gtk::Table* colo = Gtk::manage (new Gtk::Table (4, 2));
     colo->attach (*viewlab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colo->attach (*view, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colo->attach (*restartNeeded1, 2, 3, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colo->attach (*greylab, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colo->attach (*grey, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colo->attach (*restartNeeded2, 2, 3, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colo->attach (*greySclab, 0, 1, 2, 3, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colo->attach (*greySc, 1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colo->attach (*restartNeeded3, 2, 3, 2, 3, Gtk::FILL, Gtk::SHRINK, 2, 2);
-	
-    mvbcm->pack_start (*colo, Gtk::PACK_SHRINK, 4);
+    cbciecamfloat = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_CIEART_LABEL")));
+    colo->attach (*cbciecamfloat, 0, 1, 3, 4, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    cbciecamfloat->set_tooltip_markup (M("PREFERENCES_CIEART_TOOLTIP"));
+    vbcielab->pack_start (*lreloadneeded1, Gtk::PACK_SHRINK, 4);
+    vbcielab->pack_start (*colo, Gtk::PACK_EXPAND_WIDGET, 4);
+    fcielab->add (*vbcielab);
 
-    Gtk::Label* cielab = Gtk::manage (new Gtk::Label (M("PREFERENCES_CIEART")+":", Gtk::ALIGN_LEFT));
-	cbciecamfloat = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_CIEART_LABEL")));
-	//autocielabConn  = cbAutocielab->signal_toggled().connect (sigc::mem_fun(*this, &Preferences::autocielabToggled));
-	Gtk::Table* coltcie = Gtk::manage (new Gtk::Table (1, 2));	
-    coltcie->attach (*cielab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-  //  coltcie->attach (*cbAutocielab, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-	//cbAutocielab->set_tooltip_markup (M("PREFERENCES_CIEART_TOOLTIP"));
-    coltcie->attach (*cbciecamfloat, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-	cbciecamfloat->set_tooltip_markup (M("PREFERENCES_CIEART_TOOLTIP"));
-
-    mvbcm->pack_start (*coltcie, Gtk::PACK_SHRINK, 4);
-   // autocielabToggled();
+    mvbcm->pack_start (*fcielab, Gtk::PACK_SHRINK, 4);
 
     return mvbcm;
 }
@@ -1215,34 +1189,36 @@ Gtk::Widget* Preferences::getSoundPanel () {
     ckbSndEnable = Gtk::manage( new Gtk::CheckButton (M("GENERAL_ENABLE")));
     sndEnableConn  = ckbSndEnable->signal_toggled().connect (sigc::mem_fun(*this, &Preferences::sndEnableToggled));
 
-    pSnd->pack_start (*ckbSndEnable, Gtk::PACK_SHRINK, 8);
+    pSnd->pack_start (*ckbSndEnable, Gtk::PACK_SHRINK, 4);
 
+    Gtk::HBox* hblSndHelp = Gtk::manage (new Gtk::HBox ());
     Gtk::Label* lSndHelp = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_HELP")));
-    pSnd->pack_start (*lSndHelp, Gtk::PACK_SHRINK, 4);
+    hblSndHelp->pack_start (*lSndHelp, Gtk::PACK_SHRINK, 4);
+    pSnd->pack_start (*hblSndHelp, Gtk::PACK_SHRINK, 4);
 
     // BatchQueueDone
     Gtk::HBox* pBatchQueueDone = Gtk::manage( new Gtk::HBox() );
 
     Gtk::Label* lSndBatchQueueDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_BATCHQUEUEDONE") + Glib::ustring(":")));
-    pBatchQueueDone->pack_start (*lSndBatchQueueDone, Gtk::PACK_SHRINK, 12);
-    
+    pBatchQueueDone->pack_start (*lSndBatchQueueDone, Gtk::PACK_SHRINK, 4);
+
     txtSndBatchQueueDone =  Gtk::manage (new Gtk::Entry());
     pBatchQueueDone->pack_end (*txtSndBatchQueueDone, Gtk::PACK_EXPAND_WIDGET, 4);
-    
+
     pSnd->pack_start (*pBatchQueueDone, Gtk::PACK_SHRINK, 4);
 
     // LngEditProcDone
     Gtk::HBox* pSndLngEditProcDone = Gtk::manage( new Gtk::HBox() );
 
     Gtk::Label* lSndLngEditProcDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_LNGEDITPROCDONE") + Glib::ustring(":")));
-    pSndLngEditProcDone->pack_start (*lSndLngEditProcDone, Gtk::PACK_SHRINK, 12);
-    
+    pSndLngEditProcDone->pack_start (*lSndLngEditProcDone, Gtk::PACK_SHRINK, 4);
+
     txtSndLngEditProcDone =  Gtk::manage (new Gtk::Entry());
     pSndLngEditProcDone->pack_start (*txtSndLngEditProcDone, Gtk::PACK_EXPAND_WIDGET, 4);
 
     Gtk::Label* lSndLngEditProcDoneSecs = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_TRESHOLDSECS") + Glib::ustring(":")));
     pSndLngEditProcDone->pack_start (*lSndLngEditProcDoneSecs, Gtk::PACK_SHRINK, 12);
- 
+
     spbSndLngEditProcDoneSecs = Gtk::manage( new Gtk::SpinButton () );
     spbSndLngEditProcDoneSecs->set_digits (1);
     spbSndLngEditProcDoneSecs->set_increments (0.5, 1);
