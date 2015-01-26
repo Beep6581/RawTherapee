@@ -718,7 +718,7 @@ do {
 			const float noisevarab_b = SQR(realblue);
 
 			//input L channel
-			array2D<float> Lin(width,height);
+			array2D<float> *Lin;
 			//wavelet denoised image
 			LabImage * labdn = new LabImage(width,height);
 
@@ -760,8 +760,6 @@ do {
 							labdn->a[i1][j1] = a;
 							labdn->b[i1][j1] = b;
 
-							Lin[i1][j1] = L;
-
 							if(((i1|j1)&1) == 0) {
 								if(numTries == 1) {
 									noisevarlum[(i1>>1)*width2+(j1>>1)] = useNoiseLCurve ? lumcalc[i>>1][j>>1] : noisevarL;
@@ -794,8 +792,6 @@ do {
 							labdn->L[i1][j1] = Y;
 							labdn->a[i1][j1] = (X-Y);
 							labdn->b[i1][j1] = (Y-Z);
-
-							Lin[i1][j1] = Y;
 
 							if(((i1|j1)&1) == 0) {
 								if(numTries == 1) {
@@ -842,8 +838,6 @@ do {
 						labdn->L[i1][j1] = L;
 						labdn->a[i1][j1] = a;
 						labdn->b[i1][j1] = b;
-
-						Lin[i1][j1] = L;
 
 						if(((i1|j1)&1) == 0) {
 							float Llum,alum,blum;
@@ -1017,8 +1011,17 @@ do {
 								if(!WaveletDenoiseAllL(*Ldecomp, noisevarL, noisevarlum, madL, width, height, useNoiseLCurve, denoiseMethodRgb ))
 									memoryAllocationFailed = true;
 						}
-						if(!memoryAllocationFailed)
+						if(!memoryAllocationFailed) {
+							// copy labdn->L to Lin before it gets modified by reconstruction
+							Lin = new array2D<float>(width,height);
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
+#endif
+							for(int i=0;i<height;i++)
+								for(int j=0;j<width;j++)
+									(*Lin)[i][j] = labdn->L[i][j];
 							Ldecomp->reconstruct(labdn->data);
+						}
 					}
 				}
 				delete Ldecomp;
@@ -1156,7 +1159,7 @@ do {
 					}
 
 					for (int j=0; j<labdn->W; j++) {
-						datarow[j] = (Lin[rr][j]-labdn->L[rr][j]);
+						datarow[j] = ((*Lin)[rr][j]-labdn->L[rr][j]);
 					}
 
 					for (int j=-blkrad*offset; j<0; j++) {
@@ -1397,6 +1400,7 @@ do {
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		}
 			delete labdn;
+			delete Lin;
 
 		}//end of tile row
 	}//end of tile loop
