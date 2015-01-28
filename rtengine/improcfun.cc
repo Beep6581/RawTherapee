@@ -1365,7 +1365,7 @@ if(params->colorappearance.enabled) {
 		//evaluate lightness, contrast
 		if (needJ) {
 			if (!CAMBrightCurveJ) {
-				CAMBrightCurveJ(65536,0);
+				CAMBrightCurveJ(32768,0);
 				CAMBrightCurveJ.dirty = false;
 			}
 			float jli=params->colorappearance.jlight;
@@ -1374,7 +1374,7 @@ if(params->colorappearance.enabled) {
 		}
 		if (needQ) {
 			if (!CAMBrightCurveQ) {
-				CAMBrightCurveQ(65536,0);
+				CAMBrightCurveQ(32768,0);
 				CAMBrightCurveQ.clear();
 				CAMBrightCurveQ.dirty = false;
 			}
@@ -1497,8 +1497,8 @@ if(settings->viewinggreySc==1) yb=18.0f;//fixed
 			else if(alg==3 || alg==0  || alg==2) {
 				if(alg==3 || alg==2) {
 					float coef=32760.f/wh;
-					if(Qpro*coef > 32767.0f)
-						Qpro=(CAMBrightCurveQ[(float)32767.0f])/coef;//brightness and contrast
+					if(Qpro*coef >= 32767.0f)
+						Qpro=(CAMBrightCurveQ[32767])/coef;//brightness and contrast
 					else
 						Qpro=(CAMBrightCurveQ[(float)(Qpro*coef)])/coef;//brightness and contrast
 				}
@@ -1512,6 +1512,7 @@ if(settings->viewinggreySc==1) yb=18.0f;//fixed
 				Color::skinredfloat(Jpro, hpro, sres, Mp, dred, protect_red,0,rstprotection,100.f, Mpro);
 				Jpro = SQR((10.f*Qpro)/wh);
 				Cpro= Mpro/coe;
+				Qpro = (Qpro == 0.f ? epsil : Qpro); // avoid division by zero
 				spro = 100.0f * sqrtf( Mpro / Qpro );
 				if(alg!=2) {
 					if(Jpro > 99.9f)

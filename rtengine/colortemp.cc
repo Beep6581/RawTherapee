@@ -2131,6 +2131,7 @@ void ColorTemp::xyz2jchqms_ciecam02float( float &J, float &C, float &h, float &Q
 	Q = wh * J;
 	J *= J * 100.0f;
     M = C * pfl;
+	Q = (Q == 0.f ? 0.0001f : Q); // avoid division by zero
     s = 100.0f * sqrtf( M / Q );
     h = (myh * 180.f) / (float)M_PI;
 
