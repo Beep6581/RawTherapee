@@ -620,9 +620,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
                 ncie = new CieImage (pW, pH);
 
             if (!CAMBrightCurveJ && (params.colorappearance.algo=="JC" || params.colorappearance.algo=="JS" || params.colorappearance.algo=="ALL"))
-                CAMBrightCurveJ(65536,0);
+                CAMBrightCurveJ(32768,0);
             if (!CAMBrightCurveQ && (params.colorappearance.algo=="QM" || params.colorappearance.algo=="ALL"))
-                CAMBrightCurveQ(65536,0);
+                CAMBrightCurveQ(32768,0);
             if(settings->ciecamfloat){
                 ipf.ciecam_02float (ncie, float(adap), begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, execsharp, d, scale, 1);
                 if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*(double)d);
