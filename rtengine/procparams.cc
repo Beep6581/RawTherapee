@@ -1585,34 +1585,34 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
 	
     
     // save directional pyramid wavelet parameters
-    if (!pedited || pedited->dirpyrequalizer.enabled) keyFile.set_boolean ("Directional Pyramid Wavelet", "Enabled", dirpyrequalizer.enabled);
-    if (!pedited || pedited->dirpyrequalizer.gamutlab) keyFile.set_boolean ("Directional Pyramid Wavelet", "Gamutlab", dirpyrequalizer.gamutlab);
+    if (!pedited || pedited->dirpyrequalizer.enabled) keyFile.set_boolean ("Directional Pyramid Equalizer", "Enabled", dirpyrequalizer.enabled);
+    if (!pedited || pedited->dirpyrequalizer.gamutlab) keyFile.set_boolean ("Directional Pyramid Equalizer", "Gamutlab", dirpyrequalizer.gamutlab);
     for(int i = 0; i < 6; i++)
     {
         std::stringstream ss;
         ss << "Mult" << i;
-        if (!pedited || pedited->dirpyrequalizer.mult[i]) keyFile.set_double("Directional Pyramid Wavelet", ss.str(), dirpyrequalizer.mult[i]);
+        if (!pedited || pedited->dirpyrequalizer.mult[i]) keyFile.set_double("Directional Pyramid Equalizer", ss.str(), dirpyrequalizer.mult[i]);
     }
-    if (!pedited || pedited->dirpyrequalizer.threshold) keyFile.set_double ("Directional Pyramid Wavelet", "Threshold", dirpyrequalizer.threshold);
-    if (!pedited || pedited->dirpyrequalizer.skinprotect) keyFile.set_double ("Directional Pyramid Wavelet", "Skinprotect", dirpyrequalizer.skinprotect);
-  //  if (!pedited || pedited->dirpyrequalizer.algo) keyFile.set_string ("Directional Pyramid Wavelet", "Algorithm", dirpyrequalizer.algo);
+    if (!pedited || pedited->dirpyrequalizer.threshold) keyFile.set_double ("Directional Pyramid Equalizer", "Threshold", dirpyrequalizer.threshold);
+    if (!pedited || pedited->dirpyrequalizer.skinprotect) keyFile.set_double ("Directional Pyramid Equalizer", "Skinprotect", dirpyrequalizer.skinprotect);
+  //  if (!pedited || pedited->dirpyrequalizer.algo) keyFile.set_string ("Directional Pyramid Equalizer", "Algorithm", dirpyrequalizer.algo);
     if (!pedited || pedited->dirpyrequalizer.hueskin) {
         Glib::ArrayHandle<int> thresh (dirpyrequalizer.hueskin.value, 4, Glib::OWNERSHIP_NONE);
-        keyFile.set_integer_list("Directional Pyramid Wavelet",   "Hueskin", thresh);
+        keyFile.set_integer_list("Directional Pyramid Equalizer",   "Hueskin", thresh);
     }
 
     // save hsv wavelet parameters
     if (!pedited || pedited->hsvequalizer.hcurve) {
         Glib::ArrayHandle<double> hcurve = hsvequalizer.hcurve;
-        keyFile.set_double_list("HSV Wavelet", "HCurve", hcurve);
+        keyFile.set_double_list("HSV Equalizer", "HCurve", hcurve);
     }
     if (!pedited || pedited->hsvequalizer.scurve) {
         Glib::ArrayHandle<double> scurve = hsvequalizer.scurve;
-        keyFile.set_double_list("HSV Wavelet", "SCurve", scurve);
+        keyFile.set_double_list("HSV Equalizer", "SCurve", scurve);
     }
     if (!pedited || pedited->hsvequalizer.vcurve) {
         Glib::ArrayHandle<double> vcurve = hsvequalizer.vcurve;
-        keyFile.set_double_list("HSV Wavelet", "VCurve", vcurve);
+        keyFile.set_double_list("HSV Equalizer", "VCurve", vcurve);
     }
 
     //save film simulation parameters
@@ -2369,13 +2369,13 @@ if (keyFile.has_group ("Wavelet")) {
     }
 }
 
-    // load directional pyramid wavelet parameters
-if (keyFile.has_group ("Directional Pyramid Wavelet")) {
-    if (keyFile.has_key ("Directional Pyramid Wavelet", "Enabled"))   { dirpyrequalizer.enabled = keyFile.get_boolean ("Directional Pyramid Wavelet", "Enabled"); if (pedited) pedited->dirpyrequalizer.enabled = true; }
-    if (keyFile.has_key ("Directional Pyramid Wavelet", "Gamutlab"))  { dirpyrequalizer.gamutlab = keyFile.get_boolean ("Directional Pyramid Wavelet", "Gamutlab"); if (pedited) pedited->dirpyrequalizer.gamutlab = true; }
- //   if (keyFile.has_key ("Directional Pyramid Wavelet", "Algorithm")) { dirpyrequalizer.algo = keyFile.get_string ("Directional Pyramid Wavelet", "Algorithm"); if (pedited) pedited->dirpyrequalizer.algo = true; }
+    // load directional pyramid equalizer parameters
+if (keyFile.has_group ("Directional Pyramid Equalizer")) {
+    if (keyFile.has_key ("Directional Pyramid Equalizer", "Enabled"))   { dirpyrequalizer.enabled = keyFile.get_boolean ("Directional Pyramid Equalizer", "Enabled"); if (pedited) pedited->dirpyrequalizer.enabled = true; }
+    if (keyFile.has_key ("Directional Pyramid Equalizer", "Gamutlab"))  { dirpyrequalizer.gamutlab = keyFile.get_boolean ("Directional Pyramid Equalizer", "Gamutlab"); if (pedited) pedited->dirpyrequalizer.gamutlab = true; }
+ //   if (keyFile.has_key ("Directional Pyramid Equalizer", "Algorithm")) { dirpyrequalizer.algo = keyFile.get_string ("Directional Pyramid Equalizer", "Algorithm"); if (pedited) pedited->dirpyrequalizer.algo = true; }
     if (keyFile.has_key ("Directional Pyramid Wavelet", "Hueskin"))   {
-        Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Directional Pyramid Wavelet", "Hueskin");
+        Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Directional Pyramid Equalizer", "Hueskin");
         dirpyrequalizer.hueskin.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
         if (pedited) pedited->dirpyrequalizer.hueskin = true;
     }
@@ -2385,8 +2385,8 @@ if (keyFile.has_group ("Directional Pyramid Wavelet")) {
             std::stringstream ss;
             ss << "Mult" << i;
             if(keyFile.has_key ("Directional Pyramid Wavelet", ss.str())) {
-                if(i==4) { dirpyrequalizer.threshold = keyFile.get_double ("Directional Pyramid Wavelet", ss.str()); if (pedited) pedited->dirpyrequalizer.threshold = true; }
-                else     { dirpyrequalizer.mult[i]   = keyFile.get_double ("Directional Pyramid Wavelet", ss.str()); if (pedited) pedited->dirpyrequalizer.mult[i]   = true; }
+                if(i==4) { dirpyrequalizer.threshold = keyFile.get_double ("Directional Pyramid Equalizer", ss.str()); if (pedited) pedited->dirpyrequalizer.threshold = true; }
+                else     { dirpyrequalizer.mult[i]   = keyFile.get_double ("Directional Pyramid Equalizer", ss.str()); if (pedited) pedited->dirpyrequalizer.mult[i]   = true; }
             }
         }
         dirpyrequalizer.mult[4] = 1.0;
@@ -2396,10 +2396,10 @@ if (keyFile.has_group ("Directional Pyramid Wavelet")) {
         for(int i = 0; i < 6; i ++) {
             std::stringstream ss;
             ss << "Mult" << i;
-            if(keyFile.has_key ("Directional Pyramid Wavelet", ss.str())) { dirpyrequalizer.mult[i]  = keyFile.get_double ("Directional Pyramid Wavelet", ss.str()); if (pedited) pedited->dirpyrequalizer.mult[i]   = true; }
+            if(keyFile.has_key ("Directional Pyramid Equalizer", ss.str())) { dirpyrequalizer.mult[i]  = keyFile.get_double ("Directional Pyramid Equalizer", ss.str()); if (pedited) pedited->dirpyrequalizer.mult[i]   = true; }
         }
-        if(keyFile.has_key ("Directional Pyramid Wavelet", "Threshold"))   { dirpyrequalizer.threshold = keyFile.get_double ("Directional Pyramid Wavelet", "Threshold"); if (pedited) pedited->dirpyrequalizer.threshold = true; }
-        if(keyFile.has_key ("Directional Pyramid Wavelet", "Skinprotect")) { dirpyrequalizer.skinprotect = keyFile.get_double ("Directional Pyramid Wavelet", "Skinprotect"); if (pedited) pedited->dirpyrequalizer.skinprotect = true; }
+        if(keyFile.has_key ("Directional Pyramid Equalizer", "Threshold"))   { dirpyrequalizer.threshold = keyFile.get_double ("Directional Pyramid Equalizer", "Threshold"); if (pedited) pedited->dirpyrequalizer.threshold = true; }
+        if(keyFile.has_key ("Directional Pyramid Equalizer", "Skinprotect")) { dirpyrequalizer.skinprotect = keyFile.get_double ("Directional Pyramid Equalizer", "Skinprotect"); if (pedited) pedited->dirpyrequalizer.skinprotect = true; }
     }
 }
 
@@ -2420,9 +2420,9 @@ if ( keyFile.has_group( "Film Simulation" ) )
     // load HSV wavelet parameters
 if (keyFile.has_group ("HSV Wavelet")) {
     if (ppVersion>=300) {
-        if (keyFile.has_key ("HSV Wavelet", "HCurve")) { hsvequalizer.hcurve = keyFile.get_double_list ("HSV Wavelet", "HCurve"); if (pedited) pedited->hsvequalizer.hcurve = true; }
-        if (keyFile.has_key ("HSV Wavelet", "SCurve")) { hsvequalizer.scurve = keyFile.get_double_list ("HSV Wavelet", "SCurve"); if (pedited) pedited->hsvequalizer.scurve = true; }
-        if (keyFile.has_key ("HSV Wavelet", "VCurve")) { hsvequalizer.vcurve = keyFile.get_double_list ("HSV Wavelet", "VCurve"); if (pedited) pedited->hsvequalizer.vcurve = true; }
+        if (keyFile.has_key ("HSV Equalizer", "HCurve")) { hsvequalizer.hcurve = keyFile.get_double_list ("HSV Equalizer", "HCurve"); if (pedited) pedited->hsvequalizer.hcurve = true; }
+        if (keyFile.has_key ("HSV Equalizer", "SCurve")) { hsvequalizer.scurve = keyFile.get_double_list ("HSV Equalizer", "SCurve"); if (pedited) pedited->hsvequalizer.scurve = true; }
+        if (keyFile.has_key ("HSV Equalizer", "VCurve")) { hsvequalizer.vcurve = keyFile.get_double_list ("HSV Equalizer", "VCurve"); if (pedited) pedited->hsvequalizer.vcurve = true; }
     }
 }
 
