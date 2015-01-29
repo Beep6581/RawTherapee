@@ -19,7 +19,7 @@
  */
 #ifndef _EXPORTPANEL_
 #define _EXPORTPANEL_
-
+ 
 #include <gtkmm.h>
 #include "guiutils.h"
 #include "adjuster.h"
@@ -52,6 +52,7 @@ class ExportPanel : public Gtk::VBox {
 */
 	    Gtk::CheckButton* bypass_dirpyrequalizer; // also could leave untouched but disable only small radius adjustments
 	    //Gtk::CheckButton* bypass_raw_all_enhance;
+	    Gtk::CheckButton* bypass_wavelet; // also could leave untouched but disable only small radius adjustments
 
 	    MyComboBoxText* raw_bayer_method;
 
@@ -88,6 +89,7 @@ class ExportPanel : public Gtk::VBox {
 		sigc::connection bypass_dirpyrDenoiseConn     ;
 		sigc::connection bypass_sh_hqConn             ;
 		sigc::connection bypass_dirpyrequalizerConn   ;
+		sigc::connection bypass_waveletConn   ;
 		//sigc::connection bypass_raw_bayer_all_enhanceConn   ;
 		sigc::connection bypass_raw_bayer_dcb_iterationsConn  ;
 		sigc::connection bypass_raw_bayer_dcb_enhanceConn     ;

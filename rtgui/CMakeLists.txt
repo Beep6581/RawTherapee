@@ -27,7 +27,7 @@ set (BASESOURCEFILES
     batchqueuebuttonset.cc browserfilter.cc exiffiltersettings.cc
     profilestore.cc partialpastedlg.cc
     sensorbayer.cc sensorxtrans.cc preprocess.cc bayerpreprocess.cc bayerprocess.cc bayerrawexposure.cc xtransprocess.cc xtransrawexposure.cc
-    darkframe.cc flatfield.cc rawcacorrection.cc rawexposure.cc
+    darkframe.cc flatfield.cc rawcacorrection.cc rawexposure.cc wavelet.cc
     dirpyrequalizer.cc hsvequalizer.cc defringe.cc
     popupcommon.cc popupbutton.cc popuptogglebutton.cc sharpenedge.cc sharpenmicro.cc colorappearance.cc
     filmsimulation.cc)

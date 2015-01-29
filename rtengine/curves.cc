@@ -1166,6 +1166,93 @@ void OpacityCurve::Set(const std::vector<double> &curvePoints, bool &opautili) {
 	}
 }
 
+WavCurve::WavCurve() : sum(0.f) {};
+
+void WavCurve::Reset() {
+	lutWavCurve.reset();
+	sum = 0.f;
+}
+
+void WavCurve::Set(const Curve &pCurve) {
+	if (pCurve.isIdentity()) {
+		Reset(); // raise this value if the quality suffers from this number of samples
+		return;
+	}
+	lutWavCurve(501); // raise this value if the quality suffers from this number of samples
+	sum=0.f;
+	for (int i=0; i<501; i++) {
+		lutWavCurve[i] = pCurve.getVal(double(i)/500.);
+		if(lutWavCurve[i] < 0.02f)
+			lutWavCurve[i] = 0.02f;//avoid 0.f for wavelet : under 0.01f quasi no action for each value
+		sum += lutWavCurve[i];
+	}
+	//lutWavCurve.dump("wav");
+}
+void WavCurve::Set(const std::vector<double> &curvePoints) {
+	
+	if (!curvePoints.empty() && curvePoints[0]>FCT_Linear && curvePoints[0]<FCT_Unchanged) {
+		FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS/2);
+		tcurve.setIdentityValue(0.);
+		Set(tcurve);
+	} else {
+		Reset();
+	}
+}
+WavOpacityCurveRG::WavOpacityCurveRG(){};
+
+void WavOpacityCurveRG::Reset() {
+	lutOpacityCurveRG.reset();
+}
+
+void WavOpacityCurveRG::Set(const Curve &pCurve) {
+	if (pCurve.isIdentity()) {
+	    Reset(); // raise this value if the quality suffers from this number of samples
+		return;
+	}
+	lutOpacityCurveRG(501); // raise this value if the quality suffers from this number of samples
+
+	for (int i=0; i<501; i++) lutOpacityCurveRG[i] = pCurve.getVal(double(i)/500.);
+}
+
+void WavOpacityCurveRG::Set(const std::vector<double> &curvePoints) {
+	if (!curvePoints.empty() && curvePoints[0]>FCT_Linear && curvePoints[0]<FCT_Unchanged) {
+		FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS/2);
+		tcurve.setIdentityValue(0.);
+		Set(tcurve);
+	} else {
+		Reset();
+	}
+
+}
+
+WavOpacityCurveBY::WavOpacityCurveBY(){};
+
+void WavOpacityCurveBY::Reset() {
+	lutOpacityCurveBY.reset();
+}
+
+void WavOpacityCurveBY::Set(const Curve &pCurve) {
+	if (pCurve.isIdentity()) {
+		lutOpacityCurveBY.reset(); // raise this value if the quality suffers from this number of samples
+		return;
+	}
+	lutOpacityCurveBY(501); // raise this value if the quality suffers from this number of samples
+
+	for (int i=0; i<501; i++) lutOpacityCurveBY[i] = pCurve.getVal(double(i)/500.);
+}
+
+void WavOpacityCurveBY::Set(const std::vector<double> &curvePoints) {
+	if (!curvePoints.empty() && curvePoints[0]>FCT_Linear && curvePoints[0]<FCT_Unchanged) {
+		FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS/2);
+		tcurve.setIdentityValue(0.);
+		Set(tcurve);
+	} else {
+		Reset();
+	}
+}
+
+
+
 NoiseCurve::NoiseCurve() : sum(0.f) {};
 
 void NoiseCurve::Reset() {
@@ -1224,7 +1311,7 @@ void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3],
 	float lr1,lr2;
 	int upperBound = lut1.getUpperBound();
 	if (pCurve->isIdentity()) {
-		Color::hsv2rgb(0.5f, satur, lumin, r, g, b);
+		Color::hsv2rgb(0.5f, satur, lumin, r, g, b);		
 		Color::rgbxyz(r, g, b, xx, yy, zz, xyz_rgb);
 		
 		for (int i=0; i<=500; ++i) {
@@ -1245,6 +1332,7 @@ void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3],
 	low=nextX;
 	lr1=(0.5f+low)/2.f;//optimize use of gamut in low light..one can optimize more using directly low ?
 	//lr1=low;
+	
 	for (int i=0; i<=upperBound; ++i) {
 		double x = double(i)/double(upperBound);
 
@@ -1261,14 +1349,14 @@ void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3],
 		}
 
 		if (!ptNum) {
-			Color::hsv2rgb(float(prevY), satur, lr1, r, g, b);
+			Color::hsv2rgb(float(prevY), satur, lr1, r, g, b);			
 			Color::rgbxyz(r, g, b, xx, yy, zz, xyz_rgb);
 			lut1[i] = xx;
 			lut2[i] = yy;
 			lut3[i] = zz;
 		}
 		else if (ptNum >= nPoints) {
-			Color::hsv2rgb(float(nextY), satur, lr2, r, g, b);
+			Color::hsv2rgb(float(nextY), satur, lr2, r, g, b);			
 			Color::rgbxyz(r, g, b, xx, yy, zz, xyz_rgb);
 			lut1[i] = xx;
 			lut2[i] = yy;
@@ -1278,7 +1366,7 @@ void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3],
 			double currY = pCurve->getVal(x) - prevY;
 			if (dY > 0.000001 || dY < -0.000001) {
 				float r1, g1, b1, r2, g2, b2, ro, go, bo;
-				Color::hsv2rgb(float(prevY), satur, lr1, r1, g1, b1);
+				Color::hsv2rgb(float(prevY), satur, lr1, r1, g1, b1);				
 				Color::hsv2rgb(float(nextY), satur, lr2, r2, g2, b2);
 				bool chr = false;
 				bool lum = true;

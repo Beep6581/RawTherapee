@@ -775,9 +775,19 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                 delete [] buffer[i];
                 delete [] buffer;
     }
-	// directional pyramid equalizer
-	if((params.colorappearance.enabled && !settings->autocielab)  || !params.colorappearance.enabled) ipf.dirpyrequalizer (labView, 1);//TODO: this is the luminance tonecurve, not the RGB one
+	WaveletParams WaveParams = params.wavelet;
+	WavCurve wavCLVCurve;
+    WavOpacityCurveRG waOpacityCurveRG;
+    WavOpacityCurveBY waOpacityCurveBY;
 	
+	params.wavelet.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY);
+	
+	// directional pyramid wavelet
+	if((params.colorappearance.enabled && !settings->autocielab)  || !params.colorappearance.enabled) ipf.dirpyrequalizer (labView, 1);//TODO: this is the luminance tonecurve, not the RGB one
+    int kall=2;
+	if((params.wavelet.enabled))	ipf.ip_wavelet(labView, labView, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, 1);		
+	wavCLVCurve.Reset();
+
 	//Colorappearance and tone-mapping associated
 	
 	int f_w=1,f_h=1;

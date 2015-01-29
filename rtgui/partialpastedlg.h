@@ -58,6 +58,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* dirpyrden;
         Gtk::CheckButton* defringe;
         Gtk::CheckButton* dirpyreq;
+        Gtk::CheckButton* wavelet;
 
         // options in color:
         Gtk::CheckButton* vibrance;
@@ -118,7 +119,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaicmConn, rawConn;
 
         sigc::connection wbConn, exposureConn, shConn, pcvignetteConn, gradientConn, labcurveConn, colorappearanceConn;
-        sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, waveqConn, defringeConn, epdConn, dirpyreqConn;
+        sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, waveqConn, defringeConn, epdConn, dirpyreqConn, waveletConn;
         sigc::connection vibranceConn, chmixerConn, hsveqConn, rgbcurvesConn, chmixerbwConn, colortoningConn, filmSimulationConn;
         sigc::connection distortionConn, cacorrConn, vignettingConn, lcpConn;
         sigc::connection coarserotConn, finerotConn, cropConn, resizeConn, perspectiveConn, commonTransConn;

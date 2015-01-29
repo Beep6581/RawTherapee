@@ -62,6 +62,7 @@ EXPORT_BYPASS_ALL;Select / Unselect All
 EXPORT_BYPASS_DEFRINGE;Bypass Defringe
 EXPORT_BYPASS_DIRPYRDENOISE;Bypass Noise Reduction
 EXPORT_BYPASS_DIRPYREQUALIZER;Bypass Contrast by Detail Levels
+EXPORT_BYPASS_EQUALIZER;Bypass Wavelet Levels
 EXPORT_BYPASS_RAW_CA;Bypass [raw] Chromatic Aberration Correction
 EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False Color Suppression
 EXPORT_BYPASS_RAW_DCB_ENHANCE;Bypass [raw] DCB Enhancement Steps
@@ -519,6 +520,40 @@ HISTORY_MSG_300;-
 HISTORY_MSG_301;NR - Luma control
 HISTORY_MSG_302;NR - Chroma method
 HISTORY_MSG_303;NR - Chroma method
+HISTORY_MSG_304;Wavelet level
+HISTORY_MSG_305;Wavelet level
+HISTORY_MSG_306;Wavelet N° level
+HISTORY_MSG_307;Wavelet Ch level
+HISTORY_MSG_308;Wavelet direction
+HISTORY_MSG_309;Wavelet tiles
+HISTORY_MSG_310;Wavelet Hue-tones sky
+HISTORY_MSG_311;Wavelet threshold
+HISTORY_MSG_312;Wavelet Shadow Threshold 
+HISTORY_MSG_313;Wavelet Pastel Saturated
+HISTORY_MSG_314;Wavelet artifacts blue sky
+HISTORY_MSG_315;Wavelet Contrast uniformity
+HISTORY_MSG_316;Wavelet Skin tones
+HISTORY_MSG_317;Wavelet Skin hue
+HISTORY_MSG_318;Wavelet highlight levels 
+HISTORY_MSG_319;Wavelet highlight range 
+HISTORY_MSG_320;Wavelet shadow range 
+HISTORY_MSG_321;Wavelet shadow levels 
+HISTORY_MSG_322;Wavelet avoid color shift 
+HISTORY_MSG_323;Wavelet Chroma level 
+HISTORY_MSG_324;Wavelet Chroma pastel 
+HISTORY_MSG_325;Wavelet Chroma saturated 
+HISTORY_MSG_326;Wavelet Chroma method 
+HISTORY_MSG_327;Wavelet Contrast method 
+HISTORY_MSG_328;Wavelet Chroma link
+HISTORY_MSG_329;Wavelet Opacity RG
+HISTORY_MSG_330;Wavelet Opacity BY
+HISTORY_MSG_331;Wavelet Extra
+HISTORY_MSG_332;Wavelet Tiles Method
+HISTORY_MSG_333;Wavelet Shadow contrast
+HISTORY_MSG_334;Wavelet Chroma
+HISTORY_MSG_335;Wavelet Highlight contrast
+HISTORY_MSG_336;Wavelet Highlight threshold
+HISTORY_MSG_337;Wavelet Hue range
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -670,6 +705,7 @@ PARTIALPASTE_EPD;Tone mapping
 PARTIALPASTE_EVERYTHING;Everything
 PARTIALPASTE_EXIFCHANGES;Exif
 PARTIALPASTE_EXPOSURE;Exposure
+PARTIALPASTE_EQUALIZER;Wavelet Equalizer
 PARTIALPASTE_FILMSIMULATION;Film Simulation
 PARTIALPASTE_FLATFIELDAUTOSELECT;Flat-field auto-selection
 PARTIALPASTE_FLATFIELDBLURRADIUS;Flat-field blur radius
@@ -859,8 +895,8 @@ PREFERENCES_PROFILESAVECACHE;Save processing profile to the cache
 PREFERENCES_PROFILESAVEINPUT;Save processing profile next to the input file
 PREFERENCES_PROPERTY;Property
 PREFERENCES_PSPATH;Adobe Photoshop installation directory
-PREFERENCES_RGBDTL_LABEL;Max number of threads
-PREFERENCES_RGBDTL_TOOLTIP;Noise Reduction requires a baseline of about 128MB RAM for a 10MPix image or 512MB for a 40MPix image, and additionally 128MB RAM per thread. The more threads run in parallel, the faster the computation. Leave the setting at "0" to automatically use as many threads as possible.
+PREFERENCES_RGBDTL_LABEL;Max number of threads Denoise and Wavelet (divide by 2)
+PREFERENCES_RGBDTL_TOOLTIP;Noise Reduction and Wavelet requires a baseline of about 128MB RAM for a 10MPix image or 512MB for a 40MPix image, and additionally 128MB RAM per thread. The more threads run in parallel, the faster the computation. Leave the setting at "0" to automatically use as many threads as possible.
 PREFERENCES_SELECTFONT;Select font
 PREFERENCES_SELECTLANG;Select language
 PREFERENCES_SELECTTHEME;Select theme
@@ -1237,7 +1273,89 @@ TP_DIRPYRDENOISE_SHALBI;High
 TP_DIRPYRDENOISE_SHAL;Standard
 TP_DIRPYRDENOISE_SLI;Slider
 TP_DIRPYRDENOISE_SOFT;3x3
+TP_WAVELET_RESID;Residual image
+TP_WAVELET_RESCON;Shadows Contrast
+TP_WAVELET_RESCONH;Highlights Contrast
+TP_WAVELET_RESCHRO;Chromaticity
+TP_WAVELET_THR;Threshold shadows
+TP_WAVELET_THRH;Threshold highlights
+TP_WAVELET_HUESKY;Hue Range (sky)
+TP_WAVELET_HUESKY_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
+TP_WAVELET_SKY;Hue-tones (sky) targetting/protection
+TP_WAVELET_SKY_TOOLTIP;Increase/reduce chrominance in/out hue range\nAvoid artifacts in blue sky - due to micro-contrast, micro-chroma,...
+TP_WAVELET_LEVF;Contrast
+TP_WAVELET_LEVCH;Chromaticity
+TP_WAVELET_TON;Toning
+TP_WAVELET_COLORT;Opacity Red-Green  Levels
+TP_WAVELET_OPACITY;Opacity Blue-Yellow Levels
+TP_WAVELET_CONTR;Gamut - controls
+TP_WAVELET_UTIL;Utilities
+TP_WAVELET_UNIF;Contrast Uniformity
+TP_WAVELET_UNIF_TOOLTIP;Modulation of the effect based on local contrast\nTake into account local contrast\nMore it is present, more its increasing is reduct regardless to the slider
+TP_WAVELET_DISP;Display Wavelet levels
+TP_WAVELET_DISPLAY;Show Levels and Utilities
 TP_DIRPYRDENOISE_TILELABEL;Tile size=%1, Center: Tx=%2  Ty=%3
+TP_WAVELET_CONTRAST_MINUS;Contrast -
+TP_WAVELET_NEUTRAL;Neutral
+TP_WAVELET_CONTRAST_PLUS;Contrast +
+TP_WAVELET_FINEST;Finest
+TP_WAVELET_LARGEST;Coarsest
+TP_WAVELET_LABEL;Wavelet levels
+TP_WAVELET_ONE;one level
+TP_WAVELET_INF;below or equal the level
+TP_WAVELET_SUP;above the level + residual
+TP_WAVELET_SUPE;Extra
+TP_WAVELET_ALL;all levels-directions
+TP_WAVELET_CONTRAST;Contrast levels
+TP_WAVELET_0;level 0
+TP_WAVELET_1;level 1
+TP_WAVELET_2;level 2
+TP_WAVELET_3;level 3
+TP_WAVELET_4;level 4
+TP_WAVELET_5;level 5
+TP_WAVELET_6;level 6
+TP_WAVELET_7;level 7
+TP_WAVELET_8;level 8
+TP_WAVELET_LEVLABEL;Preview maximum possible levels=%1
+TP_WAVELET_AVOID;Avoid color shift
+TP_WAVELET_DONE;Direction: Vertical
+TP_WAVELET_DTWO;Direction: Horizontal
+TP_WAVELET_DTHR;Direction: Diagonal
+TP_WAVELET_DALL;All directions
+TP_WAVELET_MEDI;Reduce artifacts in blue sky
+TP_WAVELET_THRES;Max level
+TP_WAVELET_THRES_TOOLTIP;Can act on the number of active levels. Levels higher values are not taken into account, regardless of the position of the slider.
+TP_WAVELET_TILES;Tiles size (* 128)
+TP_WAVELET_TILES_TOOLTIP;If you select full image process will be performed - for a 16M image and 10 levels this option needs memory 2.G°\nfor a 24M image and 10 levels  this option needs memory 2.5G°\nfor a 35M image and 10 levels  this option needs memory 3.3G°\nOtherwise select tiles or if memory is too low
+TP_WAVELET_TILESFULL;Full image
+TP_WAVELET_TILESBIG;Big Tiles
+TP_WAVELET_TILESLIT;Little Tiles
+TP_WAVELET_CHRO;Saturated - Pastel
+TP_WAVELET_CHR;Chroma link
+TP_WAVELET_CHR_TOOLTIP;Adjust chroma in function of:\na-levels contrasts\nb-Chroma link slider strength
+TP_WAVELET_CHRO_TOOLTIP;Limit between pastel and saturated\n 1-x level saturated \n x-9 level pastel
+TP_WAVELET_THRESHOLD;Highlight Levels numbers used (finest to coarsest - master)
+TP_WAVELET_THRESHOLD_TOOLTIP;If you change this value, only level beyond will be treated with highlight luminance levels\nOthers level will be full treated
+TP_WAVELET_THRESHOLD2_TOOLTIP;If you change this value, only level between 9 and 9 minus value, will be treated with shadow luminance levels\nOthers level will be full treated\nMax level shadow is limited by value of highlight level (9-highlight level)
+TP_WAVELET_HIGHSHA;Highlight Shadows
+TP_WAVELET_HIGHLIGHT;Highlight Luminance Range (0..100)
+TP_WAVELET_THRESHOLD2;Shadows Levels numbers used(coarsest to finest)
+TP_WAVELET_LOWLIGHT;Shadow Luminance Range (0..100)
+TP_WAVELET_PASTEL;Pastel chromacity
+TP_WAVELET_SAT;Saturated chromacity
+TP_WAVELET_CH1;All chroma
+TP_WAVELET_CH2;Pastel - Saturated
+TP_WAVELET_CH3;Link contrast levels
+TP_WAVELET_HS1;All luminance
+TP_WAVELET_HS2;Highlight - Shadows
+TP_WAVELET_MIN;min
+TP_WAVELET_MAX;max
+TP_WAVELET_CLVCURVE;Chrominance - Levels
+TP_WAVELET_CURVEEDITOR_CLV_TOOLTIP;Give chroma in function of levels (absciss)\nLevels are discrets values
+TP_WAVELET_HUESKIN;Hue Range (skin)
+TP_WAVELET_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
+TP_WAVELET_SKIN;Hue-tones (skin) targetting/protection
+TP_WAVELET_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 TP_DIRPYREQUALIZER_ALGO;Skin Color Range
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts.
 TP_DIRPYREQUALIZER_GAMUT;Reduce artifacts

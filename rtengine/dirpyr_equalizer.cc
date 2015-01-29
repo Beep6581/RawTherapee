@@ -40,11 +40,11 @@
 
 namespace rtengine {
 	
-	static const int maxlevel = 5;
+	static const int maxlevel = 6;
 	static const float noise = 2000;
 	
 	//sequence of scales
-	static const int scales[5] = {1,2,4,8,16};
+	static const int scales[6] = {1,2,4,8,16,32};
 	extern const Settings* settings;
 	
 	//sequence of scales
@@ -72,16 +72,16 @@ SSEFUNCTION void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst,
 		if (lastlevel==0) return;
 		
 		int level;
-		float multi[5]={1.f,1.f,1.f,1.f,1.f};
-		float scalefl[5];
+		float multi[6]={1.f,1.f,1.f,1.f,1.f,1.f};
+		float scalefl[6];
 	
-		for(int lv=0;lv<5;lv++) {
+		for(int lv=0;lv<6;lv++) {
 			scalefl[lv]= ((float) scales[lv])/(float) scaleprev;
 			if(lv>=1) {if(scalefl[lv] < 1.f) multi[lv] = (atten123*((float) mult[lv] -1.f)/100.f)+1.f; else  multi[lv]=(float) mult[lv];}//modulate action if zoom < 100%
 			else  {if(scalefl[lv] < 1.f) multi[lv] = (atten0*((float) mult[lv] -1.f)/100.f)+1.f; else  multi[lv]=(float) mult[lv];}//modulate action if zoom < 100%
 			
 			}
-		if(settings->verbose) printf("CbDL mult0=%f  1=%f 2=%f 3=%f 4=%f\n",multi[0],multi[1],multi[2],multi[3],multi[4]);
+		if(settings->verbose) printf("CbDL mult0=%f  1=%f 2=%f 3=%f 4=%f 5=%f\n",multi[0],multi[1],multi[2],multi[3],multi[4],multi[5]);
 		
 		multi_array2D<float,maxlevel> dirpyrlo (srcwidth, srcheight);
 
@@ -220,10 +220,10 @@ SSEFUNCTION void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst,
 		
 		int level;
 		
-		float multi[5]={1.f,1.f,1.f,1.f,1.f};
-		float scalefl[5];
+		float multi[6]={1.f,1.f,1.f,1.f,1.f,1.f};
+		float scalefl[6];
 	
-		for(int lv=0;lv<5;lv++) {
+		for(int lv=0;lv<6;lv++) {
 			scalefl[lv]= ((float) scales[lv])/(float) scaleprev;
 		//	if(scalefl[lv] < 1.f) multi[lv] = 1.f; else  multi[lv]=(float) mult[lv];
 			if (lv>=1) {if(scalefl[lv] < 1.f) multi[lv] = (atten123*((float) mult[lv] -1.f)/100.f)+1.f; else  multi[lv]=(float) mult[lv];}
@@ -231,7 +231,7 @@ SSEFUNCTION void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst,
 
 			
 			}
-		if(settings->verbose) printf("CAM CbDL mult0=%f  1=%f 2=%f 3=%f 4=%f\n",multi[0],multi[1],multi[2],multi[3],multi[4]);
+		if(settings->verbose) printf("CAM CbDL mult0=%f  1=%f 2=%f 3=%f 4=%f 5=%f\n",multi[0],multi[1],multi[2],multi[3],multi[4],multi[5]);
 		
 		
 		
@@ -303,6 +303,7 @@ SSEFUNCTION void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** da
 	if(level > 1) {
 		//generate domain kernel 
 		int domker[5][5] = {{1,1,1,1,1},{1,2,2,2,1},{1,2,2,2,1},{1,2,2,2,1},{1,1,1,1,1}};
+	//	int domker[5][5] = {{1,1,1,1,1},{1,1,1,1,1},{1,1,1,1,1},{1,1,1,1,1},{1,1,1,1,1}};
 		static const int halfwin=2;
 		const int scalewin = halfwin*scale;
 #ifdef _OPENMP
@@ -315,6 +316,7 @@ SSEFUNCTION void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** da
 //	multiplied each value of domkerv by 1000 to avoid multiplication by 1000 inside the loop
 	float domkerv[5][5][4] __attribute__ ((aligned (16))) = {{{1000,1000,1000,1000},{1000,1000,1000,1000},{1000,1000,1000,1000},{1000,1000,1000,1000},{1000,1000,1000,1000}},{{1000,1000,1000,1000},{2000,2000,2000,2000},{2000,2000,2000,2000},{2000,2000,2000,2000},{1000,1000,1000,1000}},{{1000,1000,1000,1000},{2000,2000,2000,2000},{2000,2000,2000,2000},{2000,2000,2000,2000},{1000,1000,1000,1000}},{{1000,1000,1000,1000},{2000,2000,2000,2000},{2000,2000,2000,2000},{2000,2000,2000,2000},{1000,1000,1000,1000}},{{1000,1000,1000,1000},{1000,1000,1000,1000},{1000,1000,1000,1000},{1000,1000,1000,1000},{1000,1000,1000,1000}}};
 #endif // __SSE2__
+
 	int j;
 #ifdef _OPENMP
 #pragma omp for //schedule (dynamic,8)
@@ -325,8 +327,10 @@ SSEFUNCTION void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** da
 				float val=0.f;
 				float norm=0.f;
 				
+				
 				for(int inbr=max(0,i-scalewin); inbr<=min(height-1,i+scalewin); inbr+=scale) {
 					for (int jnbr=max(0,j-scalewin); jnbr<=j+scalewin; jnbr+=scale) {
+					    //printf("i=%d ",(inbr-i)/scale+halfwin);
 						dirwt = DIRWT(inbr, jnbr, i, j);
 						val += dirwt*data_fine[inbr][jnbr];
 						norm += dirwt;
@@ -366,6 +370,7 @@ SSEFUNCTION void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** da
 				data_coarse[i][j]=val/norm;//low pass filter
 			}
 #else
+
 			for(; j < width-scalewin; j++)
 			{
 				float val=0.f;
@@ -459,6 +464,7 @@ SSEFUNCTION void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** da
 				data_coarse[i][j]=val/norm;//low pass filter
 			}
 #else
+
 			for(; j < width-scale; j++)
 			{
 				float val=0.f;
@@ -505,19 +511,25 @@ SSEFUNCTION void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** da
 		offs = 0.f;
 	else
 		offs = -1.f;
+		float multbis[6];
+		
+		multbis[level]=mult[level];//multbis to reduce artifacts for high values mult
+		if(level==4 && mult[level]> 1.f) multbis[level]=1.f+0.65f*(mult[level]-1.f);
+		if(level==5 && mult[level]> 1.f) multbis[level]=1.f+0.45f*(mult[level]-1.f);
 	
 	LUTf irangefn (0x20000);
 	{
 		const float noisehi = 1.33f*noise*dirpyrThreshold/expf(level*log(3.0)), noiselo = 0.66f*noise*dirpyrThreshold/expf(level*log(3.0));
 		//printf("level=%i multlev=%f noisehi=%f noiselo=%f skinprot=%f\n",level,mult[level], noisehi, noiselo, skinprot);
+		
 		for (int i=0; i<0x20000; i++) {
-			if (abs(i-0x10000)>noisehi || mult[level]<1.0) {
-				irangefn[i] = mult[level] + offs;
+			if (abs(i-0x10000)>noisehi || multbis[level]<1.0) {
+				irangefn[i] = multbis[level] + offs;
 			} else {
 				if (abs(i-0x10000)<noiselo) {
 					irangefn[i] = 1.f + offs ;
 				} else {
-					irangefn[i] = 1.f + offs + (mult[level]-1.f) * (noisehi-abs(i-0x10000))/(noisehi-noiselo+0.01f) ;
+					irangefn[i] = 1.f + offs + (multbis[level]-1.f) * (noisehi-abs(i-0x10000))/(noisehi-noiselo+0.01f) ;
 				}
 			}
 		}
@@ -583,19 +595,24 @@ SSEFUNCTION void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** da
 		offs = 0.f;
 	else
 		offs = -1.f;
+		float multbis[6];
+		
+		multbis[level]=mult[level];//multbis to reduce artifacts for high values mult
+		if(level==4 && mult[level]> 1.f) multbis[level]=1.f+0.65f*(mult[level]-1.f);
+		if(level==5 && mult[level]> 1.f) multbis[level]=1.f+0.45f*(mult[level]-1.f);
 	
 	LUTf irangefn (0x20000);
 	{
 		const float noisehi = 1.33f*noise*dirpyrThreshold/expf(level*log(3.0)), noiselo = 0.66f*noise*dirpyrThreshold/expf(level*log(3.0));
 		//printf("level=%i multlev=%f noisehi=%f noiselo=%f skinprot=%f\n",level,mult[level], noisehi, noiselo, skinprot);
 		for (int i=0; i<0x20000; i++) {
-			if (abs(i-0x10000)>noisehi || mult[level]<1.0) {
-				irangefn[i] = mult[level] + offs;
+			if (abs(i-0x10000)>noisehi || multbis[level]<1.0) {
+				irangefn[i] = multbis[level] + offs;
 			} else {
 				if (abs(i-0x10000)<noiselo) {
 					irangefn[i] = 1.f + offs ;
 				} else {
-					irangefn[i] = 1.f + offs + (mult[level]-1.f) * (noisehi-abs(i-0x10000))/(noisehi-noiselo+0.01f) ;
+					irangefn[i] = 1.f + offs + (multbis[level]-1.f) * (noisehi-abs(i-0x10000))/(noisehi-noiselo+0.01f) ;
 				}
 			}
 		}

@@ -21,7 +21,7 @@
 #include <iostream>
 #include <iomanip>
 #include "../rtengine/rt_math.h"
-
+ 
 #include "filecatalog.h"
 #include "filepanel.h"
 #include "options.h"
@@ -924,6 +924,7 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
 				if (options.fastexport_bypass_dirpyrDenoise      ) params.dirpyrDenoise.enabled       = false;
 				if (options.fastexport_bypass_sh_hq              ) params.sh.hq                       = false;
 				if (options.fastexport_bypass_dirpyrequalizer    ) params.dirpyrequalizer.enabled     = false;
+				if (options.fastexport_bypass_wavelet    ) params.wavelet.enabled     = false;
 				//if (options.fastexport_bypass_raw_bayer_all_enhance   ) params.raw.bayersensor.all_enhance       = false;
 				if (options.fastexport_bypass_raw_bayer_dcb_iterations  ) params.raw.bayersensor.dcb_iterations    = 0;
 				if (options.fastexport_bypass_raw_bayer_dcb_enhance     ) params.raw.bayersensor.dcb_enhance       = false;

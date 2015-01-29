@@ -120,6 +120,10 @@ class ImProcCoordinator : public StagedImageProcessor {
         OpacityCurve ctOpacityCurve;
         NoiseCurve noiseLCurve;
 		NoiseCurve noiseCCurve;		
+		WavCurve wavCLVCurve;	
+        WavOpacityCurveRG waOpacityCurveRG;
+        WavOpacityCurveBY waOpacityCurveBY;
+		
         ColorAppearance customColCurve1;
         ColorAppearance customColCurve2;
         ColorAppearance customColCurve3;
@@ -142,6 +146,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         AutoBWListener* abwListener;
         AutoColorTonListener* actListener;
 		AutoChromaListener* adnListener;
+        WaveletListener* awavListener;
 
         HistogramListener* hListener;
         std::vector<SizeListener*> sizeListeners;
@@ -226,6 +231,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         void setAutoBWListener   (AutoBWListener* abw)   {abwListener = abw; }
         void setAutoColorTonListener   (AutoColorTonListener* bwct)   {actListener = bwct; }
         void setAutoChromaListener  (AutoChromaListener* adn)  {adnListener = adn; }
+        void setWaveletListener  (WaveletListener* awa)  {awavListener = awa; }
 
         void saveInputICCReference (const Glib::ustring& fname);
 

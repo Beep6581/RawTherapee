@@ -1112,7 +1112,80 @@ public:
 			scale *= modula;
 		}
     }	
+ 
+    static inline void SkinSatCbdl2 (float lum, float hue, float chrom, float skinprot, float &scale, bool neg, float b_l, float t_l, float t_r, float b_r, int basc) {
+ 
+        static const float C9=8.f, C8=15.f, C7=12.f, C4=7.f, C3=5.f, C2=5.f, C1=5.f;
+        static const float H9=0.05f, H8=0.25f, H7=0.1f, H4=0.02f, H3=0.02f, H2=0.1f, H1=0.1f, H10=-0.2f,H11=-0.2f;
+
+        // "real" skin color : take into account a slightly usage of contrast and saturation in RT if option "skin" = 1, uses imolicit factor 1.0
+        // wide area  skin color, useful if not accurate colorimetry or if the user has changed hue and saturation, uses explicit facor 0.6
+        // wide area for transition, uses explicit factor 0.4
+		if((b_l > -0.3f && b_r < 2.f)  || basc==0) {  //range maxi skin
+        if  (lum >= 85.0f) {
+			if((hue > (t_l+0.53f-H9) && hue < (t_r+H9)) && (chrom > 8.0f && chrom < (14.0f+C9))) scale = (100.f-skinprot)/100.1f;
+			else if (lum >= 92.0f) {
+				if((hue > t_l+0.4f && hue < t_r) && (chrom > 7.0f && chrom < (15.0f))) scale = (100.f-skinprot*0.6f)/100.1f;
+				else if ((hue > b_l && hue < t_r) && (chrom > 7.0f && chrom < (18.0f))) scale = (100.f-skinprot*0.4f)/100.1f;
+			}
+			else if ((hue > t_l+0.4f && hue < t_r-0.3f) && (chrom > 7.0f && chrom < (26.0f+C9))) scale = (100.f-skinprot*0.6f)/100.1f;
+			else if ((hue > b_l+0.05f && hue < t_r) && (chrom > 7.0f && chrom < (35.0f+C9))) scale = (100.f-skinprot*0.4f)/100.1f;
+        }
+        else if (lum >= 70.0f) {
+			if((hue > t_l+0.15f && hue < (t_r-0.2f+H8)) && (chrom > 8.0f && chrom < (35.0f+C8))) scale = (100.f-skinprot)/100.1f;
+			else if ((hue > (b_l+0.07f + H11) && hue < t_r-0.2f) && (chrom > 7.0f && chrom < (48.0f+C9) )) scale = (100.f-skinprot*0.6f)/100.1f;
+			else if ((hue > (b_l+0.07f + H11) && hue < t_r) && (chrom > 7.0f && chrom < (55.0f+C9) )) scale = (100.f-skinprot*0.4f)/100.1f;
+        }
+        else if (lum >= 52.0f) {
+			if((hue > t_l && hue < (t_r+H7)) && (chrom > 11.0f && chrom < (35.0f+C7))) scale = (100.f-skinprot)/100.1f;
+			else if ((hue > (b_l+0.07f + H11) && hue < t_r-0.2f) && (chrom > 7.0f && chrom < (48.0f+C9) )) scale = (100.f-skinprot*0.6f)/100.1f;
+			else if ((hue > (b_l+0.07f + H11) && hue < t_r) && (chrom > 7.0f && chrom < (55.0f+C9) )) scale = (100.f-skinprot*0.4f)/100.1f;
+        }
+        else if (lum >= 35.0f) {
+			if((hue > t_l && hue <  (t_r+H4)) && (chrom > 13.0f && chrom < (37.0f+C4))) scale = (100.f-skinprot)/100.1f;
+			else if ((hue > (b_l+0.07f + H11) && hue < t_r-0.2f) && (chrom > 7.0f && chrom < (48.0f+C9) )) scale = (100.f-skinprot*0.6f)/100.1f;
+			else if ((hue > (b_l+0.07f + H11) && hue < t_r) && (chrom > 7.0f && chrom < (55.0f+C9) )) scale = (100.f-skinprot*0.4f)/100.1f;
+        }
+        else if (lum >= 20.0f) {
+			if((hue > t_l && hue < (t_r+H3)) && (chrom > 7.0f && chrom <(35.0f+C3) )) scale = (100.f-skinprot)/100.1f;
+			else if ((hue > (b_l+0.07f + H11) && hue < t_r-0.2f) && (chrom > 7.0f && chrom < (48.0f+C9) )) scale = (100.f-skinprot*0.6f)/100.1f;
+			else if ((hue > (b_l+0.07f + H11) && hue < t_r) && (chrom > 7.0f && chrom < (55.0f+C9) )) scale = (100.f-skinprot*0.4f)/100.1f;
+        }
+        else if (lum >= 10.0f) {
+			if((hue > (t_l-0.25f + H10) && hue < (t_r-0.3f +H2)) && (chrom > 8.0f && chrom < (23.0f+C2))) scale = (100.f-skinprot)/100.1f;
+			else if ((hue > (b_l+0.07f+H11) && hue < t_r-0.2f) && (chrom > 7.0f && chrom < (35.0f+C1) )) scale = (100.f-skinprot*0.6f)/100.1f;
+			else if ((hue > (b_l+0.07f+H11) && hue < t_r-0.1f) && (chrom > 7.0f && chrom < (45.0f+C1) )) scale = (100.f-skinprot*0.4f)/100.1f;
+        }
+        else if ((hue > (t_l -0.2f + H10) && hue < (t_r-0.3f+H1)) && (chrom > 8.0f && chrom < (23.0f+C1))) scale = (100.f-skinprot)/100.1f;
+        else if ((hue > (b_l+0.07f+H11) && hue < t_r-0.2f) && (chrom > 7.0f && chrom < (35.0f+C1) )) scale = (100.f-skinprot*0.6f)/100.1f;
+        else if ((hue > (b_l+0.07f+H11) && hue < t_r-0.1f) && (chrom > 7.0f && chrom < (45.0f+C1) )) scale = (100.f-skinprot*0.4f)/100.1f;
+		
+		//extended zone for hair, beard and if user adjust high value for skinprot
+		if(skinprot > 85.f && chrom < 20.f && neg) {
+			float modula = -0.0666f * skinprot + 6.66f;
+			scale *= modula;
+		}
+		}
+		//end hue skin algo
+		else if (basc==1) {//not hue skin  linear transition or mod chroma curve
+		if(hue >= t_l && hue <= t_r) scale = (100.f-skinprot)/100.1f;
+		else if(hue > b_l && hue < t_l) {
+			float sc=(100.f-skinprot)/100.1f;
+			float aa=(1.f-sc)/(b_l-t_l);
+			float bb=1.f-aa*b_l;
+			scale=aa*hue + bb;	
+		}
+		else if(hue > t_r && hue < b_r) {
+			float sc=(100.f-skinprot)/100.1f;
+			float aa=(sc-1.f)/(t_r-b_r);
+			float bb=1.f-aa*b_r;
+			scale=aa*hue + bb;	
+		}	
+		}	
+    }	
     
+
+ 
     static inline void SkinSatCbdlCam (float lum, float hue, float chrom, float skinprot, float &scale, bool neg, float b_l, float t_l, float t_r) {
  
         static const float C9=8.f, C8=15.f, C7=12.f, C4=7.f, C3=5.f, C2=5.f, C1=5.f;

@@ -33,7 +33,7 @@ protected:
 
     Gtk::CheckButton * enabled;
     Gtk::CheckButton * gamutlab;
-    Adjuster* multiplier[5]; 
+    Adjuster* multiplier[6]; 
     Adjuster* threshold;
     Adjuster* skinprotect;
     ThresholdAdjuster* hueskin;

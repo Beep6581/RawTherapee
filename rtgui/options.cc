@@ -32,6 +32,7 @@
 #endif
 
 
+
 #ifdef WIN32
 #include <windows.h>
 // for GCC32
@@ -153,6 +154,9 @@ void Options::updatePaths() {
         lastLabCurvesDir = preferredPath;
     if (lastDenoiseCurvesDir.empty() || !safe_file_test (lastDenoiseCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastDenoiseCurvesDir, Glib::FILE_TEST_IS_DIR))
         lastDenoiseCurvesDir = preferredPath;
+    if (lastWaveletCurvesDir.empty() || !safe_file_test (lastWaveletCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastWaveletCurvesDir, Glib::FILE_TEST_IS_DIR))
+        lastWaveletCurvesDir = preferredPath;
+	
     if (lastPFCurvesDir.empty() || !safe_file_test (lastPFCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastPFCurvesDir, Glib::FILE_TEST_IS_DIR))
         lastPFCurvesDir = preferredPath;
     if (lastHsvCurvesDir.empty() || !safe_file_test (lastHsvCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastHsvCurvesDir, Glib::FILE_TEST_IS_DIR))
@@ -388,6 +392,7 @@ void Options::setDefaults () {
     fastexport_bypass_dirpyrDenoise      = true;
     fastexport_bypass_sh_hq              = true;
     fastexport_bypass_dirpyrequalizer    = true;
+    fastexport_bypass_wavelet    = true;
     fastexport_raw_bayer_method                  = "fast";
     //fastexport_bypass_raw_bayer_all_enhance    = true;
     fastexport_bypass_raw_bayer_dcb_iterations   = true;
@@ -509,6 +514,21 @@ void Options::setDefaults () {
 			0,	//ADDSET_DIRPYRDN_PASSES
 			0,  // ADDSET_RAWFFCLIPCONTROL
             0,  // ADDSET_FILMSIMULATION_STRENGTH
+			0, //ADDSET_WA
+			0, //ADDSET_WA_THRESHOLD
+			0, //ADDSET_WA_THRESHOLD2
+			0, //ADDSET_WA_THRES
+			0, //ADDSET_WA_CHRO
+			0, //ADDSET_WA_CHROMA
+			0, //ADDSET_WA_UNIF
+			0, //ADDSET_WA_SKINPROTECT
+			0, //ADDSET_WA_RESCHRO
+			0, //ADDSET_WA_RESCON
+			0, //ADDSET_WA_RESCONH
+			0, //ADDSET_WA_THRR
+			0, //ADDSET_WA_THRRH
+			0, //ADDSET_WA_SKYPROTECT
+			
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
@@ -583,6 +603,7 @@ void Options::setDefaults () {
 	lastRgbCurvesDir = "";
 	lastLabCurvesDir = "";
 	lastDenoiseCurvesDir = "";
+	lastWaveletCurvesDir = "";
 	lastPFCurvesDir = "";
 	lastHsvCurvesDir = "";
 	lastToneCurvesDir = "";
@@ -867,6 +888,7 @@ if (keyFile.has_group ("Fast Export")) {
     if (keyFile.has_key ("Fast Export", "fastexport_bypass_dirpyrDenoise"     ))  fastexport_bypass_dirpyrDenoise       = keyFile.get_boolean ("Fast Export", "fastexport_bypass_dirpyrDenoise"     );
     if (keyFile.has_key ("Fast Export", "fastexport_bypass_sh_hq"             ))  fastexport_bypass_sh_hq               = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sh_hq"             );
     if (keyFile.has_key ("Fast Export", "fastexport_bypass_dirpyrequalizer"   ))  fastexport_bypass_dirpyrequalizer     = keyFile.get_boolean ("Fast Export", "fastexport_bypass_dirpyrequalizer"   );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_wavelet"   ))  fastexport_bypass_wavelet     = keyFile.get_boolean ("Fast Export", "fastexport_bypass_wavelet"   );
     if (keyFile.has_key ("Fast Export", "fastexport_raw_dmethod"              ))  fastexport_raw_bayer_method           = keyFile.get_string  ("Fast Export", "fastexport_raw_dmethod"              );
     if (keyFile.has_key ("Fast Export", "fastexport_raw_bayer_method"         ))  fastexport_raw_bayer_method           = keyFile.get_string  ("Fast Export", "fastexport_raw_bayer_method"         );
     //if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_bayer_all_enhance"   )) fastexport_bypass_raw_bayer_all_enhance       = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_all_enhance"           );
@@ -905,6 +927,7 @@ if (keyFile.has_group ("Dialogs")) {
     safeDirGet(keyFile, "Dialogs", "LastRgbCurvesDir", lastRgbCurvesDir);
     safeDirGet(keyFile, "Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
     safeDirGet(keyFile, "Dialogs", "LastDenoiseCurvesDir", lastDenoiseCurvesDir);
+    safeDirGet(keyFile, "Dialogs", "LastWaveletCurvesDir", lastWaveletCurvesDir);
     safeDirGet(keyFile, "Dialogs", "LastPFCurvesDir", lastPFCurvesDir);
     safeDirGet(keyFile, "Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
     safeDirGet(keyFile, "Dialogs", "LastBWCurvesDir", lastBWCurvesDir);
@@ -1180,6 +1203,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Fast Export", "fastexport_bypass_dirpyrDenoise"      , fastexport_bypass_dirpyrDenoise     );
     keyFile.set_boolean ("Fast Export", "fastexport_bypass_sh_hq"              , fastexport_bypass_sh_hq             );
     keyFile.set_boolean ("Fast Export", "fastexport_bypass_dirpyrequalizer"    , fastexport_bypass_dirpyrequalizer   );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_wavelet"    , fastexport_bypass_wavelet   );
     keyFile.set_string  ("Fast Export", "fastexport_raw_bayer_method"          , fastexport_raw_bayer_method         );
     //keyFile.set_boolean ("Fast Export", "fastexport_bypass_bayer_raw_all_enhance"   , fastexport_bypass_raw_bayer_all_enhance     );
     keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_dcb_iterations"  , fastexport_bypass_raw_bayer_dcb_iterations  );
@@ -1210,6 +1234,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string ("Dialogs", "LastRgbCurvesDir", lastRgbCurvesDir);
     keyFile.set_string ("Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
     keyFile.set_string ("Dialogs", "LastDenoiseCurvesDir", lastDenoiseCurvesDir);
+    keyFile.set_string ("Dialogs", "LastWaveletCurvesDir", lastWaveletCurvesDir);
     keyFile.set_string ("Dialogs", "LastPFCurvesDir", lastPFCurvesDir);
     keyFile.set_string ("Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
     keyFile.set_string ("Dialogs", "LastBWCurvesDir", lastBWCurvesDir);

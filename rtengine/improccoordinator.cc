@@ -84,7 +84,7 @@ ImProcCoordinator::ImProcCoordinator ()
       bcurvehist(256), bcurvehistCropped(256), bbeforehist(256),
 	  fullw(1),fullh(1),
       pW(-1), pH(-1),
-      plistener(NULL), imageListener(NULL), aeListener(NULL), acListener(NULL),abwListener(NULL),actListener(NULL),adnListener(NULL), hListener(NULL), 
+      plistener(NULL), imageListener(NULL), aeListener(NULL), acListener(NULL),abwListener(NULL),actListener(NULL),adnListener(NULL), awavListener(NULL), hListener(NULL), 
       resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false),utili(false),autili(false),
 	  butili(false),ccutili(false),cclutili(false),clcutili(false),opautili(false)
 
@@ -555,12 +555,32 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         }
         //if (scale==1) {
             if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)){
-                progress ("Pyramid equalizer...",100*readyphase/numofphases);
+                progress ("Pyramid wavelet...",100*readyphase/numofphases);
                 ipf.dirpyrequalizer (nprevl, scale);
-                //ipf.Lanczoslab (nprevl, nprevl, 1.f/scale);
+                //ipf.Lanczoslab (ip_wavelet(LabImage * lab, LabImage * dst, const procparams::EqualizerParams & eqparams), nprevl, 1.f/scale);
                 readyphase++;
             }
         //}
+        TMatrix wprofa = iccStore->workingSpaceMatrix (params.icm.working);
+        double wpa[3][3] = {
+            {wprofa[0][0],wprofa[0][1],wprofa[0][2]},
+            {wprofa[1][0],wprofa[1][1],wprofa[1][2]},
+            {wprofa[2][0],wprofa[2][1],wprofa[2][2]}};
+        TMatrix wiprofa = iccStore->workingSpaceInverseMatrix (params.icm.working);
+        double wipa[3][3] = {
+            {wiprofa[0][0],wiprofa[0][1],wiprofa[0][2]},
+            {wiprofa[1][0],wiprofa[1][1],wiprofa[1][2]},
+            {wiprofa[2][0],wiprofa[2][1],wiprofa[2][2]}
+        };
+		
+		if((params.wavelet.enabled)) {
+			WaveletParams WaveParams = params.wavelet;
+			WaveParams.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY);
+		
+			int kall=0;
+			progress ("Wavelet...",100*readyphase/numofphases);
+			ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, scale);		
+		}
 
         
         if(params.colorappearance.enabled){
