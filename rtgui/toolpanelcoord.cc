@@ -71,6 +71,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     icm                 = Gtk::manage (new ICMPanel ());
     exifpanel           = Gtk::manage (new ExifPanel ());
     iptcpanel           = Gtk::manage (new IPTCPanel ());
+    wavelet           = Gtk::manage (new Wavelet ());
     dirpyrequalizer     = Gtk::manage (new DirPyrEqualizer ());
     hsvequalizer        = Gtk::manage (new HSVEqualizer ());
     filmSimulation      = Gtk::manage (new FilmSimulation ());
@@ -118,6 +119,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (detailsPanel, dirpyrdenoise,                    M("TP_DIRPYRDENOISE_LABEL"), true);     toolPanels.push_back (dirpyrdenoise);
     addPanel (detailsPanel, defringe,                         M("TP_DEFRINGE_LABEL"), true);          toolPanels.push_back (defringe);
     addPanel (detailsPanel, dirpyrequalizer,                  M("TP_DIRPYREQUALIZER_LABEL"), true);   toolPanels.push_back (dirpyrequalizer);
+    addPanel (detailsPanel, wavelet,       				      M("TP_WAVELET_LABEL"),true);      	  toolPanels.push_back (wavelet);
     addPanel (transformPanel, crop,                           M("TP_CROP_LABEL"));                    toolPanels.push_back (crop);
     addPanel (transformPanel, resize,                         M("TP_RESIZE_LABEL"));                  toolPanels.push_back (resize);
     addPanel (transformPanel, lensgeom,                       M("TP_LENSGEOM_LABEL"));                toolPanels.push_back (lensgeom);
@@ -392,6 +394,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setAutoBWListener (blackwhite);
         ipc->setAutoColorTonListener (colortoning);
         ipc->setAutoChromaListener (dirpyrdenoise);
+        ipc->setWaveletListener (wavelet);
 
         ipc->setSizeListener (crop);
         ipc->setSizeListener (resize);

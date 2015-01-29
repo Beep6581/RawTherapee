@@ -282,6 +282,13 @@ namespace rtengine {
 			virtual void BWChanged (double redbw, double greenbw, double bluebw) {}
 			
  	};		
+
+	class WaveletListener {
+		public :
+            virtual ~WaveletListener() {}
+			virtual void wavChanged (double nlevel) {}
+			
+ 	};		
 	
 
     /** This class represents a detailed part of the image (looking through a kind of window).
@@ -373,6 +380,7 @@ namespace rtengine {
             virtual void        setAutoBWListener     	(AutoBWListener* l) =0;
             virtual void        setAutoColorTonListener (AutoColorTonListener* l) =0;
             virtual void        setAutoChromaListener   (AutoChromaListener* l) =0;
+            virtual void        setWaveletListener     	(WaveletListener* l) =0;
 						
             virtual ~StagedImageProcessor () {}
 

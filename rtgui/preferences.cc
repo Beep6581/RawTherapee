@@ -300,6 +300,23 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_DIRPYREQUALIZER_SKIN"), ADDSET_DIRPYREQ_SKINPROTECT, true);
 
     mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_WAVELET_LABEL"));
+    appendBehavList (mi, M("TP_WAVELET_THRES"), ADDSET_WA_THRES, true);
+    appendBehavList (mi, M("TP_WAVELET_CONTRAST"), ADDSET_WA, true);
+ //   appendBehavList (mi, M("TP_WAVELET_UNIF"), ADDSET_WA_UNIF, true);
+    appendBehavList (mi, M("TP_WAVELET_THRESHOLD"), ADDSET_WA_THRESHOLD, true);
+    appendBehavList (mi, M("TP_WAVELET_THRESHOLD2"), ADDSET_WA_THRESHOLD2, true);
+    appendBehavList (mi, M("TP_WAVELET_CHRO"), ADDSET_WA_CHRO, true);
+    appendBehavList (mi, M("TP_WAVELET_CHR"), ADDSET_WA_CHROMA, true);
+    appendBehavList (mi, M("TP_WAVELET_SKIN"), ADDSET_WA_SKINPROTECT, true);	
+    appendBehavList (mi, M("TP_WAVELET_RESCON"), ADDSET_WA_RESCON, true);
+    appendBehavList (mi, M("TP_WAVELET_THR"), ADDSET_WA_THRR, true);
+    appendBehavList (mi, M("TP_WAVELET_RESCONH"), ADDSET_WA_RESCONH, true);
+    appendBehavList (mi, M("TP_WAVELET_THRH"), ADDSET_WA_THRRH, true);
+    appendBehavList (mi, M("TP_WAVELET_RESCHRO"), ADDSET_WA_RESCHRO, true);
+    appendBehavList (mi, M("TP_WAVELET_SKY"), ADDSET_WA_SKYPROTECT, true);
+	
+    mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_PREPROCESS_LABEL"));
     appendBehavList (mi, M("TP_PREPROCESS_GREENEQUIL"), ADDSET_PREPROCESS_GREENEQUIL, false);
     appendBehavList (mi, M("TP_PREPROCESS_LINEDENOISE"), ADDSET_PREPROCESS_LINEDENOISE, true);
@@ -594,6 +611,7 @@ Gtk::Widget* Preferences::getPerformancePanel () {
     clutCacheSizeSB->set_digits (0);
     clutCacheSizeSB->set_increments (1, 5);
     clutCacheSizeSB->set_max_length(2);  // Will this be sufficient? :)
+
 
 #ifdef _OPENMP
     clutCacheSizeSB->set_range (1, 2*omp_get_num_procs());

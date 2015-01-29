@@ -85,8 +85,21 @@
 #define ADDSET_DIRPYRDN_PASSES          77
 #define ADDSET_RAWFFCLIPCONTROL         78
 #define ADDSET_FILMSIMULATION_STRENGTH  79
-
+#define ADDSET_WA  						80
+#define ADDSET_WA_SKINPROTECT			81
+#define ADDSET_WA_THRR					82
+#define ADDSET_WA_THRRH					83
+#define ADDSET_WA_THRES					84
+#define ADDSET_WA_THRESHOLD				85
+#define ADDSET_WA_THRESHOLD2			86
+#define ADDSET_WA_CHRO					87
+#define ADDSET_WA_CHROMA				88
+#define ADDSET_WA_UNIF					89
+#define ADDSET_WA_RESCON				90
+#define ADDSET_WA_RESCONH				91
+#define ADDSET_WA_RESCHRO				92
+#define ADDSET_WA_SKYPROTECT			93
 // When adding items, make sure to update ADDSET_PARAM_NUM
-#define ADDSET_PARAM_NUM                80 // THIS IS USED AS A DELIMITER!!
+#define ADDSET_PARAM_NUM                94 // THIS IS USED AS A DELIMITER!!
 
 #endif

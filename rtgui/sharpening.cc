@@ -130,7 +130,6 @@ Sharpening::Sharpening () : FoldableToolPanel(this) {
     diter->setAdjusterListener (this);
     radius->setAdjusterListener (this);
     amount->setAdjusterListener (this); 
-    threshold->setAdjusterListener (this); 
     eradius->setAdjusterListener (this); 
     etolerance->setAdjusterListener (this); 
     hcamount->setAdjusterListener (this); 

@@ -60,6 +60,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     impden		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IMPULSEDENOISE")));
     dirpyreq    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYREQUALIZER")));
     defringe    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DEFRINGE")));
+    wavelet    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EQUALIZER")));
 
     // options in color:
     vibrance    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_VIBRANCE")));
@@ -147,6 +148,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     vboxes[1]->pack_start (*defringe, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*dirpyreq, Gtk::PACK_SHRINK, 2);
     //vboxes[1]->pack_start (*waveq, Gtk::PACK_SHRINK, 2);
+    vboxes[1]->pack_start (*wavelet, Gtk::PACK_SHRINK, 2);
 
     vboxes[2]->pack_start (*color, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*hseps[2], Gtk::PACK_SHRINK, 2);
@@ -282,6 +284,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     dirpyreqConn	= dirpyreq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     //waveqConn	    = waveq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     defringeConn    = defringe->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
+    waveletConn	= wavelet->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
 
     vibranceConn    = vibrance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     chmixerConn     = chmixer->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
@@ -509,6 +512,7 @@ void PartialPasteDlg::detailToggled () {
     defringe->set_active (detail->get_active ());
     dirpyreq->set_active (detail->get_active ());
     //waveq->set_active (detail->get_active ());
+    wavelet->set_active (detail->get_active ());
 
     sharpenConn.block (false);
     gradsharpenConn.block(false);
@@ -657,6 +661,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     if (!dirpyreq->get_active ())    filterPE.dirpyrequalizer = falsePE.dirpyrequalizer;
     if (!defringe->get_active ())    filterPE.defringe        = falsePE.defringe;
     if (!dirpyrden->get_active ())   filterPE.dirpyrDenoise   = falsePE.dirpyrDenoise;
+    if (!wavelet->get_active ())    filterPE.wavelet = falsePE.wavelet;
 
     if (!vibrance->get_active ())    filterPE.vibrance     = falsePE.vibrance;
     if (!chmixer->get_active ())     filterPE.chmixer      = falsePE.chmixer;

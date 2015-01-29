@@ -301,16 +301,20 @@ void ThresholdAdjuster::sendToListener () {
 	if (tSelector.getPrecision() > 0) {
 		// if precision is >0, then we assume that the listener is waiting for doubles
 		rtengine::procparams::Threshold<double> t = tSelector.getPositions<double>();
-		if (tSelector.isDouble())
+		if (tSelector.isDouble()){
 			adjusterListener->adjusterChanged (this, t.value[0], t.value[1], t.value[2], t.value[3]);
+			adjusterListener->adjusterChanged2 (this, t.value[0], t.value[1], t.value[2], t.value[3]);
+		}
 		else
 			adjusterListener->adjusterChanged (this, t.value[0], t.value[1]);
 	}
 	else {
 		// if precision is equal to 0, then we assume that the listener is waiting for integers
 		rtengine::procparams::Threshold<int> t = tSelector.getPositions<int>();
-		if (tSelector.isDouble())
+		if (tSelector.isDouble()){
 			adjusterListener->adjusterChanged (this, t.value[0], t.value[1], t.value[2], t.value[3]);
+			adjusterListener->adjusterChanged2 (this, t.value[0], t.value[1], t.value[2], t.value[3]);
+		}
 		else
 			adjusterListener->adjusterChanged (this, t.value[0], t.value[1]);
 	}

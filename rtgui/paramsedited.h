@@ -54,7 +54,6 @@ class ToneCurveParamsEdited {
 };
 
 class LCurveParamsEdited {
-
     public:
         bool brightness;
         bool contrast;
@@ -131,6 +130,7 @@ class SharpenMicroParamsEdited {
         bool matrix;
         bool amount;
         bool uniformity;
+		
 };
 
 class SharpeningParamsEdited {
@@ -472,13 +472,53 @@ class ColorManagementParamsEdited {
         bool gamfree;
         bool freegamma;
 };
+class WaveletParamsEdited {
+
+    public:
+        bool enabled;
+        bool display;
+        bool median;
+        bool avoid;
+		bool c[9];
+		bool Lmethod;
+		bool CHmethod;
+		bool HSmethod;
+		bool CLmethod;
+		bool Tilesmethod;
+		bool Dirmethod;
+		bool tiles;
+		bool rescon;
+		bool resconH;
+		bool reschro;
+		bool sup;
+		bool sky;
+		bool thres;
+		bool threshold;
+		bool threshold2;
+		bool chroma;
+		bool chro;
+		bool unif;
+		bool thr;
+		bool thrH;
+        bool skinprotect;
+        bool hueskin;
+        bool hueskin2;
+        bool hllev;
+        bool bllev;
+		bool clvcurve;
+        bool opacityCurveBY;
+        bool opacityCurveRG;		
+        bool pastlev;
+        bool satlev;	
+};
 
 class DirPyrEqualizerParamsEdited {
 
     public:
         bool enabled;
         bool gamutlab;
-        bool mult[5];
+        bool mult[6];
+		
         bool threshold;
         bool skinprotect;
         bool hueskin;
@@ -598,6 +638,7 @@ class ParamsEdited {
         ColorManagementParamsEdited   icm;
         RAWParamsEdited               raw;
         DirPyrEqualizerParamsEdited   dirpyrequalizer;
+        WaveletParamsEdited     	    wavelet;
         HSVEqualizerParamsEdited      hsvequalizer;
         FilmSimulationParamsEdited    filmSimulation;
         bool                          exif;

@@ -37,7 +37,7 @@
 #define DEFPROFILE_IMG      "Neutral"
 // Profile name to use for internal values' profile
 #define DEFPROFILE_INTERNAL "Neutral"
-
+ 
 class SaveFormat {
 
     public:
@@ -239,6 +239,7 @@ class Options {
     bool fastexport_bypass_dirpyrDenoise;
     bool fastexport_bypass_sh_hq;
     bool fastexport_bypass_dirpyrequalizer;
+    bool fastexport_bypass_wavelet;
     Glib::ustring fastexport_raw_bayer_method;
     //bool fastexport_bypass_raw_bayer_all_enhance;
     bool fastexport_bypass_raw_bayer_dcb_iterations;
@@ -270,6 +271,7 @@ class Options {
     Glib::ustring lastRgbCurvesDir;
     Glib::ustring lastLabCurvesDir;
     Glib::ustring lastDenoiseCurvesDir;
+    Glib::ustring lastWaveletCurvesDir;
     Glib::ustring lastPFCurvesDir;
     Glib::ustring lastHsvCurvesDir;
     Glib::ustring lastToneCurvesDir;

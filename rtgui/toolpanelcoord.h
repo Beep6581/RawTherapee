@@ -57,6 +57,7 @@
 #include "lensgeom.h"
 #include "lensgeomlistener.h"
 #include "dirselectionlistener.h"
+#include "wavelet.h"
 #include "dirpyrequalizer.h"
 #include "hsvequalizer.h"
 #include "preprocess.h"
@@ -123,7 +124,8 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         LCurve* lcurve;
         RGBCurves* rgbcurves;
         ColorToning* colortoning;
-        DirPyrEqualizer* dirpyrequalizer;
+        Wavelet * wavelet;
+		DirPyrEqualizer* dirpyrequalizer;
         HSVEqualizer* hsvequalizer;
         FilmSimulation *filmSimulation;
         SensorBayer * sensorbayer;

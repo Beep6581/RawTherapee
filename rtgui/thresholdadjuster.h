@@ -40,6 +40,7 @@ class ThresholdAdjusterListener {
     virtual void adjusterChanged (ThresholdAdjuster* a, int newBottom, int newTop) {}
 	// to be used by listener that has created a ThresholdAdjuster with with double threshold and precision == 0
     virtual void adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {}
+	virtual void adjusterChanged2 (ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) {}
 };
 
 

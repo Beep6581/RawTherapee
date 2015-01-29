@@ -33,6 +33,9 @@ namespace rtengine {
 class ColorGradientCurve;
 class OpacityCurve;
 class NoiseCurve;
+class WavCurve;
+class WavOpacityCurveRG;
+class WavOpacityCurveBY;
 
 namespace procparams {
 
@@ -47,7 +50,6 @@ class Threshold {
 #ifndef NDEBUG
         unsigned int part[5];
 #endif
-
     public:
         Threshold (T bottom, T top, bool startAtOne) {
             initEq1 = startAtOne;
@@ -217,6 +219,7 @@ class ToneCurveParams {
         void setDefaults();
         static bool HLReconstructionNecessary(LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw);
 };
+
 
 /**
   * Parameters of the luminance curve
@@ -849,6 +852,57 @@ typedef std::map<Glib::ustring, Glib::ustring> ExifPairs;
   */
 typedef std::map<Glib::ustring, std::vector<Glib::ustring> > IPTCPairs;
 
+
+class WaveletParams {
+
+    public:
+        std::vector<double>   clvcurve;
+        std::vector<double> opacityCurveRG;
+        std::vector<double> opacityCurveBY;
+        bool enabled;
+        bool display;
+        bool median;
+        bool avoid;
+        int c[9];
+        Glib::ustring Lmethod;
+        Glib::ustring CLmethod;
+        Glib::ustring Tilesmethod;
+        Glib::ustring CHmethod;
+        Glib::ustring Dirmethod;
+        Glib::ustring HSmethod;
+		int tiles;
+		int rescon;
+		int resconH;
+		int reschro;	
+		int sup;
+		double sky;
+		int thres;
+		int chroma;	
+		int chro;	
+		int threshold;
+		int threshold2;
+		int unif;	
+		int thr;	
+		int thrH;	
+        double skinprotect;
+        Threshold<int> hueskin;
+        Threshold<int> hueskin2;
+        Threshold<int> hllev;
+        Threshold<int> bllev;
+        Threshold<int> pastlev;
+        Threshold<int> satlev;
+	
+	
+		WaveletParams ();
+		void setDefaults(); 
+        void getCurves(WavCurve &cCurve,WavOpacityCurveRG &opacityCurveLUTRG , WavOpacityCurveBY &opacityCurveLUTBY) const;
+        static void getDefaultCLVCurve(std::vector<double> &curve);	
+        static void getDefaultOpacityCurveRG(std::vector<double> &curve);
+        static void getDefaultOpacityCurveBY(std::vector<double> &curve);
+		
+};
+
+
 /**
 * Directional pyramid equalizer params
 */
@@ -857,7 +911,7 @@ class DirPyrEqualizerParams {
     public:
         bool enabled;
         bool gamutlab;
-        double mult[5];
+        double mult[6];
         double threshold;
         double skinprotect;
         Threshold<int> hueskin;
@@ -1023,8 +1077,9 @@ class ProcParams {
         ResizeParams            resize;          ///< Resize parameters
         ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing
         RAWParams               raw;             ///< RAW parameters before demosaicing
-        DirPyrEqualizerParams   dirpyrequalizer; ///< directional pyramid equalizer parameters
-        HSVEqualizerParams      hsvequalizer;    ///< hsv equalizer parameters
+        WaveletParams        	wavelet;       ///< wavelet wavelet parameters
+        DirPyrEqualizerParams   dirpyrequalizer; ///< directional pyramid wavelet parameters
+        HSVEqualizerParams      hsvequalizer;    ///< hsv wavelet parameters
         FilmSimulationParams    filmSimulation;  ///< film simulation parameters
         char                    rank;            ///< Custom image quality ranking
         char                    colorlabel;      ///< Custom color label

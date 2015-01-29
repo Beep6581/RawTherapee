@@ -266,7 +266,7 @@ class ImProcFunctions {
 		void impulse_nrcam (CieImage* ncie, double thresh, float **buffers[3]);
 		
 		void dirpyrdenoise    (LabImage* src);//Emil's pyramid denoise
-		void dirpyrequalizer  (LabImage* lab, int scale);//Emil's equalizer
+		void dirpyrequalizer  (LabImage* lab, int scale);//Emil's wavelet
 		
 		void EPDToneMap(LabImage *lab, unsigned int Iterates = 0, int skip = 1);
 		void EPDToneMapCIE(CieImage *ncie, float a_w, float c_, float w_h, int Wid, int Hei, int begh, int endh, float minQ, float maxQ, unsigned int Iterates=0, int skip =1);
@@ -285,6 +285,25 @@ class ImProcFunctions {
 		//void RGB_OutputTransf(LabImage * src, Imagefloat * dst, const procparams::DirPyrDenoiseParams & dnparams);
 		//void output_tile_row (float *Lbloxrow, float ** Lhipassdn, float ** tilemask, int height, int width, int top, int blkrad );
 		void Tile_calc (int tilesize, int overlap, int kall, int imwidth, int imheight, int &numtiles_W, int &numtiles_H, int &tilewidth, int &tileheight, int &tileWskip, int &tileHskip);
+		void ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveBY & waOpacityCurveBY, int skip);
+		void WaveletcontAllL(LabImage * lab, float **varhue, float **varchrom, wavelet_decomposition &WaveletCoeffs_L, 
+											struct cont_params cp);
+		void WaveletcontAllAB(LabImage * lab, float **varhue, float **varchrom, wavelet_decomposition &WaveletCoeffs_a,
+											struct cont_params cp, const bool useChannelA);
+		void ContAllL (LabImage * lab, float **varhue, float **varchrom, float ** WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, struct cont_params cp,
+									int W_L, int H_L);
+		void ContAllAB (LabImage * lab, float **varhue, float **varchrom, float ** WavCoeffs_a, float * WavCoeffs_a0, int level, int dir, struct cont_params cp,
+									int W_ab, int H_ab, const bool useChannelA);
+		void Evaluate(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a,
+											wavelet_decomposition &WaveletCoeffs_b, float *av_LL, float *av_aa, float *av_bb,struct cont_params cp, int ind, float *mean, float *meanN, float *sigma, float *sigmaN);
+		void Eval (float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level,struct cont_params cp,
+									int W_L, int H_L, int W_ab, int H_ab,int skip_L, int skip_ab, float * av_LL, float * av_aa, float * av_bb, int ind, float *mean, float *meanN, float *sigma, float *sigmaN);
+ 
+		void Aver(float * HH_Coeffs, int datalen, float &averagePlus, float &averageNeg, float &max, float &min);
+		void Sigma(float * HH_Coeffs, int datalen, float averagePlus, float averageNeg, float &sigmaPlus, float &sigmaNeg);
+
+
+
 		enum mediantype {MED_3X3SOFT, MED_3X3STRONG, MED_5X5SOFT, MED_5X5STRONG, MED_7X7, MED_9X9};
 		void Median_Denoise( float **src, float **dst, int width, int height, mediantype medianType, int iterations, int numThreads, float **buffer = NULL);
 		void RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst, Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp,const NoiseCurve & ctNoisCurve , const NoiseCurve & ctNoisCCcurve , float &chaut, float &redaut, float &blueaut, float &maxredaut, float & maxblueaut, float &nresi, float &highresi);
@@ -314,9 +333,9 @@ class ImProcFunctions {
 		float Mad(float * DataList, const int datalen);
 		float MadRgb(float * DataList, const int datalen);
 		
-		// pyramid equalizer
-		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, float ** l_a, float ** l_b, float ** dest_a, float ** dest_b, const double * mult, const double dirpyrThreshold, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice, int scale);//Emil's directional pyramid equalizer
-		void dirpyr_equalizercam    (CieImage* ncie, float ** src, float ** dst, int srcwidth, int srcheight, float ** h_p, float ** C_p,  const double * mult, const double dirpyrThreshold, const double skinprot, bool execdir, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice, int scale);//Emil's directional pyramid equalizer
+		// pyramid wavelet
+		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, float ** l_a, float ** l_b, float ** dest_a, float ** dest_b, const double * mult, const double dirpyrThreshold, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice, int scale);//Emil's directional pyramid wavelet
+		void dirpyr_equalizercam    (CieImage* ncie, float ** src, float ** dst, int srcwidth, int srcheight, float ** h_p, float ** C_p,  const double * mult, const double dirpyrThreshold, const double skinprot, bool execdir, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice, int scale);//Emil's directional pyramid wavelet
 		void dirpyr_channel      (float ** data_fine, float ** data_coarse, int width, int height, int level, int scale);
 		void idirpyr_eq_channel  (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float multi[5], const double dirpyrThreshold, float ** l_a_h, float ** l_b_c, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice);
 		void idirpyr_eq_channelcam  (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float multi[5], const double dirpyrThreshold, float ** l_a_h, float ** l_b_c, const double skinprot, float b_l, float t_l, float t_r);

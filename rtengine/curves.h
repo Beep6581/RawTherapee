@@ -372,6 +372,57 @@ class OpacityCurve {
 
     operator bool (void) const { return lutOpacityCurve; }
 };
+
+class WavCurve {
+ private:
+    LUTf lutWavCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+ 
+  public:
+	float sum;
+  
+    virtual ~WavCurve() {};
+	WavCurve();
+    void Reset();
+    void Set(const std::vector<double> &curvePoints);
+	float getSum() const {return sum;}
+
+	float operator[](float index) const { return lutWavCurve[index]; }
+    operator bool (void) const { return lutWavCurve; }
+};
+
+class WavOpacityCurveRG {
+  private:
+    LUTf lutOpacityCurveRG;  // 0xffff range
+    void Set(const Curve &pCurve);
+  public:
+    virtual ~WavOpacityCurveRG() {};
+	WavOpacityCurveRG();
+
+    void Reset();
+  //  void Set(const std::vector<double> &curvePoints, bool &opautili);
+    void Set(const std::vector<double> &curvePoints);
+	float operator[](float index) const { return lutOpacityCurveRG[index]; }
+
+    operator bool (void) const { return lutOpacityCurveRG; }
+};
+class WavOpacityCurveBY {
+  private:
+    LUTf lutOpacityCurveBY;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+	public:
+    virtual ~WavOpacityCurveBY() {};
+	WavOpacityCurveBY();
+
+    void Reset();
+    void Set(const Curve *pCurve);
+    void Set(const std::vector<double> &curvePoints);
+	float operator[](float index) const { return lutOpacityCurveBY[index]; }
+
+    operator bool (void) const { return lutOpacityCurveBY; }
+};
+
 class NoiseCurve {
   private:
     LUTf lutNoiseCurve;  // 0xffff range
@@ -383,6 +434,7 @@ class NoiseCurve {
 	NoiseCurve();
     void Reset();
     void Set(const std::vector<double> &curvePoints);
+	
 	float getSum() const {return sum;}
 	float operator[](float index) const { return lutNoiseCurve[index]; }
     operator bool (void) const { return lutNoiseCurve; }
