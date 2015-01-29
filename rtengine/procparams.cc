@@ -2374,7 +2374,7 @@ if (keyFile.has_group ("Directional Pyramid Equalizer")) {
     if (keyFile.has_key ("Directional Pyramid Equalizer", "Enabled"))   { dirpyrequalizer.enabled = keyFile.get_boolean ("Directional Pyramid Equalizer", "Enabled"); if (pedited) pedited->dirpyrequalizer.enabled = true; }
     if (keyFile.has_key ("Directional Pyramid Equalizer", "Gamutlab"))  { dirpyrequalizer.gamutlab = keyFile.get_boolean ("Directional Pyramid Equalizer", "Gamutlab"); if (pedited) pedited->dirpyrequalizer.gamutlab = true; }
  //   if (keyFile.has_key ("Directional Pyramid Equalizer", "Algorithm")) { dirpyrequalizer.algo = keyFile.get_string ("Directional Pyramid Equalizer", "Algorithm"); if (pedited) pedited->dirpyrequalizer.algo = true; }
-    if (keyFile.has_key ("Directional Pyramid Wavelet", "Hueskin"))   {
+    if (keyFile.has_key ("Directional Pyramid Equalizer", "Hueskin"))   {
         Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Directional Pyramid Equalizer", "Hueskin");
         dirpyrequalizer.hueskin.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
         if (pedited) pedited->dirpyrequalizer.hueskin = true;
@@ -2384,7 +2384,7 @@ if (keyFile.has_group ("Directional Pyramid Equalizer")) {
         for(int i = 0; i < 5; i ++) {
             std::stringstream ss;
             ss << "Mult" << i;
-            if(keyFile.has_key ("Directional Pyramid Wavelet", ss.str())) {
+            if(keyFile.has_key ("Directional Pyramid Equalizer", ss.str())) {
                 if(i==4) { dirpyrequalizer.threshold = keyFile.get_double ("Directional Pyramid Equalizer", ss.str()); if (pedited) pedited->dirpyrequalizer.threshold = true; }
                 else     { dirpyrequalizer.mult[i]   = keyFile.get_double ("Directional Pyramid Equalizer", ss.str()); if (pedited) pedited->dirpyrequalizer.mult[i]   = true; }
             }
@@ -2418,7 +2418,7 @@ if ( keyFile.has_group( "Film Simulation" ) )
 }
 
     // load HSV wavelet parameters
-if (keyFile.has_group ("HSV Wavelet")) {
+if (keyFile.has_group ("HSV Equalizer")) {
     if (ppVersion>=300) {
         if (keyFile.has_key ("HSV Equalizer", "HCurve")) { hsvequalizer.hcurve = keyFile.get_double_list ("HSV Equalizer", "HCurve"); if (pedited) pedited->hsvequalizer.hcurve = true; }
         if (keyFile.has_key ("HSV Equalizer", "SCurve")) { hsvequalizer.scurve = keyFile.get_double_list ("HSV Equalizer", "SCurve"); if (pedited) pedited->hsvequalizer.scurve = true; }
