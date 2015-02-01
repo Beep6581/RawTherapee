@@ -45,7 +45,7 @@ namespace rtengine {
 
 		bool bigBlockOfMemory;
 		// allocation and destruction of data storage
-		T ** create(size_t n);
+		T ** create(int n);
 		void destroy(T ** subbands);
 
 		// load a row/column of input data, possibly with padding
@@ -76,13 +76,13 @@ namespace rtengine {
 
 		T ** wavcoeffs;
 		// full size
-		size_t m_w, m_h;
+		int m_w, m_h;
 
 		// size of low frequency part
-		size_t m_w2, m_h2;
+		int m_w2, m_h2;
 
 		template<typename E>
-		wavelet_level(E * src, E * dst, int level, int subsamp, size_t w, size_t h, float *filterV, float *filterH, int len, int offset, int skipcrop, int numThreads)
+		wavelet_level(E * src, E * dst, int level, int subsamp, int w, int h, float *filterV, float *filterH, int len, int offset, int skipcrop, int numThreads)
 		: lvl(level), subsamp_out((subsamp>>level)&1), numThreads(numThreads), skip(1<<level), bigBlockOfMemory(true), memoryAllocationFailed(false), wavcoeffs(NULL), m_w(w), m_h(h), m_w2(w), m_h2(h)
 		{
 			if (subsamp) {
@@ -118,17 +118,17 @@ namespace rtengine {
 			return wavcoeffs[0];
 		}
 
-		size_t width() const
+		int width() const
 		{
 			return m_w2;
 		}
 
-		size_t height() const
+		int height() const
 		{
 			return m_h2;
 		}
 
-		size_t stride() const
+		int stride() const
 		{
 			return skip;
 		}
@@ -141,13 +141,13 @@ namespace rtengine {
 	};
 
 	template<typename T>
-	T ** wavelet_level<T>::create(size_t n)	{
+	T ** wavelet_level<T>::create(int n)	{
 		T * data = new (std::nothrow) T[3*n];
 		if(data == NULL) {
 			bigBlockOfMemory = false;
 		}
 		T ** subbands = new T*[4];
-		for(size_t j = 1; j < 4; j++) {
+		for(int j = 1; j < 4; j++) {
 			if(bigBlockOfMemory)
 				subbands[j] = data + n * (j-1);
 			else {
@@ -167,7 +167,7 @@ namespace rtengine {
 			if(bigBlockOfMemory)
 				delete[] subbands[1];
 			else {
-				for(size_t j = 1; j < 4; j++) {
+				for(int j = 1; j < 4; j++) {
 					if(subbands[j] != NULL)
 						delete[] subbands[j];
 				}
@@ -185,7 +185,7 @@ namespace rtengine {
 				dstLo[row*width+i] = (srcbuffer[i] + srcbuffer[i+skip]);
 				dstHi[row*width+i] = (srcbuffer[i] - srcbuffer[i+skip]);
 			}
-			for(size_t i = max(width-skip,skip); i < (width); i++) {
+			for(int i = max(width-skip,skip); i < (width); i++) {
 				dstLo[row*width+i] = (srcbuffer[i] + srcbuffer[i-skip]);
 				dstHi[row*width+i] = (srcbuffer[i] - srcbuffer[i-skip]);
 			}
@@ -221,10 +221,10 @@ namespace rtengine {
 #pragma omp parallel for num_threads(numThreads) if(numThreads>1)
 #endif
 		for (int k=0; k<height; k++) {
-			for(size_t i = 0; i < skip; i++) {
+			for(int i = 0; i < skip; i++) {
 				dst[k*width+i] = (srcLo[k*width+i] + srcHi[k*width+i]);			
 			}
-			for(size_t i = skip; i < width; i++) {
+			for(int i = skip; i < width; i++) {
 				dst[k*width+i] = 0.5f*(srcLo[k*width+i] + srcHi[k*width+i] + srcLo[k*width+i-skip] - srcHi[k*width+i-skip]);			
 			}
 		}
@@ -243,14 +243,14 @@ namespace rtengine {
 #ifdef _OPENMP
 #pragma omp for nowait
 #endif
-		for(size_t i = 0; i < skip; i++) {
+		for(int i = 0; i < skip; i++) {
 			for(int j=0;j<width;j++)
 				dst[width*i+j] = (srcLo[i*width+j] + srcHi[i*width+j]);			
 		}
 #ifdef _OPENMP
 #pragma omp for
 #endif
-		for(size_t i = skip; i < height; i++) {
+		for(int i = skip; i < height; i++) {
 			for(int j=0;j<width;j++)
 				dst[width*i+j] = 0.5f*(srcLo[i*width+j] + srcHi[i*width+j] + srcLo[(i-skip)*width+j] - srcHi[(i-skip)*width+j]);			
 		}
@@ -453,7 +453,7 @@ namespace rtengine {
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(numThreads) if(numThreads>1)
 #endif
-		for(size_t i = 0; i < dstheight; i++) {
+		for(int i = 0; i < dstheight; i++) {
 			int i_src = (i+shift)/2;
 			int begin = (i+shift)%2;
 			//TODO: this is correct only if skip=1; otherwise, want to work with cosets of length 'skip'
@@ -511,7 +511,7 @@ namespace rtengine {
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(numThreads) if(numThreads>1)
 #endif
-		for(size_t i = 0; i < dstheight; i++) {
+		for(int i = 0; i < dstheight; i++) {
 			int i_src = (i+shift)/2;
 			int begin = (i+shift)%2;
 			//TODO: this is correct only if skip=1; otherwise, want to work with cosets of length 'skip'
