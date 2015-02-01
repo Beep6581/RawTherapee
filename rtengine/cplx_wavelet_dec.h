@@ -43,7 +43,7 @@ namespace rtengine {
 
 		int lvltot, subsamp;
 		int numThreads;
-		size_t m_w, m_h;//dimensions
+		int m_w, m_h;//dimensions
 
 		int wavfilt_len, wavfilt_offset;
 		float *wavfilt_anal;
@@ -173,29 +173,15 @@ namespace rtengine {
 			return;
 		}
 
-		E *buffer[2];
-		buffer[0] = coeff0;
-		buffer[1] = new (std::nothrow) E[(m_w/2+1)*(m_h/2+1)];
-		if(buffer[1] == NULL) {
-			memoryAllocationFailed = true;
-			delete[] tmpHi;
-			delete[] tmpLo;
-			return;
-		}
-
-		int bufferindex = 0;
 		for (int lvl=lvltot; lvl>0; lvl--) {
-			wavelet_decomp[lvl]->reconstruct_level(tmpLo, tmpHi, buffer[bufferindex], buffer[bufferindex^1], wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset);
-			bufferindex ^= 1;
+			wavelet_decomp[lvl]->reconstruct_level(tmpLo, tmpHi, coeff0, coeff0, wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset);
 		}
 
-		wavelet_decomp[0]->reconstruct_level(tmpLo, tmpHi, buffer[bufferindex], dst, wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset);
-		delete[] buffer[0];
-		delete[] buffer[1];
+		wavelet_decomp[0]->reconstruct_level(tmpLo, tmpHi, coeff0, dst, wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset);
+		delete[] coeff0;
 		coeff0 = NULL;
 		delete[] tmpLo;
 		delete[] tmpHi;
-		
 	}
 
 };
