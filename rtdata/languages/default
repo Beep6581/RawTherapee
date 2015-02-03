@@ -527,11 +527,11 @@ HISTORY_MSG_307;Wavelet Ch level
 HISTORY_MSG_308;Wavelet direction
 HISTORY_MSG_309;Wavelet tiles
 HISTORY_MSG_310;Wavelet Hue-tones sky
-HISTORY_MSG_311;Wavelet threshold
+HISTORY_MSG_311;Wavelet Max Levels
 HISTORY_MSG_312;Wavelet Shadow Threshold 
 HISTORY_MSG_313;Wavelet Pastel Saturated
 HISTORY_MSG_314;Wavelet artifacts blue sky
-HISTORY_MSG_315;Wavelet Contrast uniformity
+HISTORY_MSG_315;Wavelet Contrast Residual
 HISTORY_MSG_316;Wavelet Skin tones
 HISTORY_MSG_317;Wavelet Skin hue
 HISTORY_MSG_318;Wavelet highlight levels 
@@ -549,9 +549,9 @@ HISTORY_MSG_329;Wavelet Opacity RG
 HISTORY_MSG_330;Wavelet Opacity BY
 HISTORY_MSG_331;Wavelet Extra
 HISTORY_MSG_332;Wavelet Tiles Method
-HISTORY_MSG_333;Wavelet Shadow contrast
+HISTORY_MSG_333;Wavelet Shadow Residual
 HISTORY_MSG_334;Wavelet Chroma
-HISTORY_MSG_335;Wavelet Highlight contrast
+HISTORY_MSG_335;Wavelet Highlight Residual
 HISTORY_MSG_336;Wavelet Highlight threshold
 HISTORY_MSG_337;Wavelet Hue range
 HISTORY_NEWSNAPSHOT;Add
@@ -1274,12 +1274,13 @@ TP_DIRPYRDENOISE_SHAL;Standard
 TP_DIRPYRDENOISE_SLI;Slider
 TP_DIRPYRDENOISE_SOFT;3x3
 TP_WAVELET_RESID;Residual image
-TP_WAVELET_RESCON;Shadows Contrast
-TP_WAVELET_RESCONH;Highlights Contrast
+TP_WAVELET_RESCON;Shadows
+TP_WAVELET_RESCONH;Highlights
 TP_WAVELET_RESCHRO;Chromaticity
 TP_WAVELET_THR;Threshold shadows
 TP_WAVELET_THRH;Threshold highlights
 TP_WAVELET_HUESKY;Hue Range (sky)
+TP_WAVELET_CONTRA;Contrast
 TP_WAVELET_HUESKY_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
 TP_WAVELET_SKY;Hue-tones (sky) targetting/protection
 TP_WAVELET_SKY_TOOLTIP;Increase/reduce chrominance in/out hue range\nAvoid artifacts in blue sky - due to micro-contrast, micro-chroma,...
@@ -1290,10 +1291,11 @@ TP_WAVELET_COLORT;Opacity Red-Green  Levels
 TP_WAVELET_OPACITY;Opacity Blue-Yellow Levels
 TP_WAVELET_CONTR;Gamut - controls
 TP_WAVELET_UTIL;Utilities
-TP_WAVELET_UNIF;Contrast Uniformity
-TP_WAVELET_UNIF_TOOLTIP;Modulation of the effect based on local contrast\nTake into account local contrast\nMore it is present, more its increasing is reduct regardless to the slider
+TP_WAVELET_CONTRA_TOOLTIP;Change contrast residual image\nFunction of  Max Levels
 TP_WAVELET_DISP;Display Wavelet levels
-TP_WAVELET_DISPLAY;Show Levels and Utilities
+TP_WAVELET_DISPLAY;Levels and Utilities
+TP_WAVELET_DISPLAYCHRO;Chromaticity and Toning
+TP_WAVELET_DISPLAYGAM;Gamut and Control
 TP_DIRPYRDENOISE_TILELABEL;Tile size=%1, Center: Tx=%2  Ty=%3
 TP_WAVELET_CONTRAST_MINUS;Contrast -
 TP_WAVELET_NEUTRAL;Neutral
@@ -1306,7 +1308,6 @@ TP_WAVELET_INF;below or equal the level
 TP_WAVELET_SUP;above the level + residual
 TP_WAVELET_SUPE;Extra
 TP_WAVELET_ALL;all levels-directions
-TP_WAVELET_CONTRAST;Contrast levels
 TP_WAVELET_0;level 0
 TP_WAVELET_1;level 1
 TP_WAVELET_2;level 2

@@ -336,7 +336,6 @@ void ParamsEdited::set (bool v) {
 	raw.exPos = v;
 	raw.exPreser = v;
 	wavelet.enabled = v;
-	wavelet.display = v;
 	wavelet.median = v;
 	wavelet.avoid = v;
 	wavelet.Lmethod = v;
@@ -712,7 +711,6 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.exPos = raw.exPos && p.raw.expos == other.raw.expos;
         raw.exPreser = raw.exPreser && p.raw.preser == other.raw.preser;
         wavelet.enabled = wavelet.enabled && p.wavelet.enabled == other.wavelet.enabled;
-        wavelet.display = wavelet.display && p.wavelet.display == other.wavelet.display;
         wavelet.median = wavelet.median && p.wavelet.median == other.wavelet.median;
         wavelet.avoid = wavelet.avoid && p.wavelet.avoid == other.wavelet.avoid;
         wavelet.Lmethod = wavelet.Lmethod && p.wavelet.Lmethod == other.wavelet.Lmethod;
@@ -1093,7 +1091,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (raw.ff_AutoClipControl) toEdit.raw.ff_AutoClipControl = mods.raw.ff_AutoClipControl;
 	if (raw.ff_clipControl)     toEdit.raw.ff_clipControl     = dontforceSet && options.baBehav[ADDSET_RAWFFCLIPCONTROL] ? toEdit.raw.ff_clipControl + mods.raw.ff_clipControl : mods.raw.ff_clipControl;
 	if (wavelet.enabled)	toEdit.wavelet.enabled   = mods.wavelet.enabled;
-	if (wavelet.display)	toEdit.wavelet.display   = mods.wavelet.display;
 	if (wavelet.median)	toEdit.wavelet.median   = mods.wavelet.median;
 	if (wavelet.avoid)	toEdit.wavelet.avoid   = mods.wavelet.avoid;
 	if (wavelet.Lmethod)		toEdit.wavelet.Lmethod		= mods.wavelet.Lmethod;

@@ -1,6 +1,6 @@
 [Version]
-AppVersion=4.2.1
-Version=321
+AppVersion=4.2.84
+Version=322
 
 [Exposure]
 Auto=false
@@ -76,6 +76,9 @@ ReweightingIterates=0
 Enabled=false
 
 [Film Simulation]
+Enabled=false
+
+[Wavelet]
 Enabled=false
 
 [HSV Equalizer]
