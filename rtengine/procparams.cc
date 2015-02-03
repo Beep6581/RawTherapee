@@ -463,7 +463,6 @@ void WaveletParams::setDefaults() {
     getDefaultOpacityCurveRG(opacityCurveRG);
     getDefaultOpacityCurveBY(opacityCurveBY);	
     enabled = false;  
-    display = true;  
     median = false;  
     avoid = false;  
 	Lmethod      	 = "4_";
@@ -1511,8 +1510,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
 
     // save wavelet parameters
     if (!pedited || pedited->wavelet.enabled)    keyFile.set_boolean ("Wavelet", "Enabled", wavelet.enabled);
-    if (!pedited || pedited->wavelet.display)    keyFile.set_boolean ("Wavelet", "Display", wavelet.display);
-    if (!pedited || pedited->wavelet.thres)  keyFile.set_integer  ("Wavelet", "MaxLev",  wavelet.thres);
+	if (!pedited || pedited->wavelet.thres)  keyFile.set_integer  ("Wavelet", "MaxLev",  wavelet.thres);
     if (!pedited || pedited->wavelet.Tilesmethod)  keyFile.set_string  ("Wavelet", "TilesMethod",  wavelet.Tilesmethod);
     if (!pedited || pedited->wavelet.CLmethod)  keyFile.set_string  ("Wavelet", "ChoiceLevMethod",  wavelet.CLmethod);
     if (!pedited || pedited->wavelet.Lmethod)  keyFile.set_string  ("Wavelet", "LevMethod",  wavelet.Lmethod);
@@ -1539,7 +1537,6 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->wavelet.chroma)  keyFile.set_integer  ("Wavelet", "ThresholdChroma",  wavelet.chroma);
     if (!pedited || pedited->wavelet.CHmethod)  keyFile.set_string  ("Wavelet", "CHromaMethod",  wavelet.CHmethod);
     if (!pedited || pedited->wavelet.chro)  keyFile.set_integer  ("Wavelet", "ChromaLink",  wavelet.chro);
- //   if (!pedited || pedited->wavelet.unif)  keyFile.set_integer  ("Wavelet", "Unif",  wavelet.unif);
     if (!pedited || pedited->wavelet.clvcurve)  {
         Glib::ArrayHandle<double> clvcurve = wavelet.clvcurve;
         keyFile.set_double_list("Wavelet", "ChromaCurve", clvcurve);
@@ -1582,6 +1579,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         Glib::ArrayHandle<int> thresh (wavelet.hueskin2.value, 4, Glib::OWNERSHIP_NONE);
         keyFile.set_integer_list("Wavelet",   "HueRange", thresh);
     }
+    if (!pedited || pedited->wavelet.unif)  keyFile.set_integer  ("Wavelet", "Contrast",  wavelet.unif);
 	
     
     // save directional pyramid wavelet parameters
@@ -2301,7 +2299,6 @@ if (keyFile.has_group ("Color Management")) {
 if (keyFile.has_group ("Wavelet")) {
     if (keyFile.has_key ("Wavelet", "Enabled"))   { wavelet.enabled = keyFile.get_boolean ("Wavelet", "Enabled"); if (pedited) pedited->wavelet.enabled = true; }
 	
-    if (keyFile.has_key ("Wavelet", "Display")){ wavelet.display = keyFile.get_boolean ("Wavelet", "Display");if (pedited) pedited->wavelet.display = true;} 
     if (keyFile.has_key ("Wavelet", "Median")) {wavelet.median = keyFile.get_boolean ("Wavelet", "Median");if (pedited) pedited->wavelet.median = true;}
     if (keyFile.has_key ("Wavelet", "AvoidColorShift")) {wavelet.avoid = keyFile.get_boolean ("Wavelet", "AvoidColorShift");if (pedited) pedited->wavelet.avoid = true;}
     if (keyFile.has_key ("Wavelet", "LevMethod"))     {wavelet.Lmethod  = keyFile.get_string  ("Wavelet", "LevMethod"); if (pedited) pedited->wavelet.Lmethod = true; }
@@ -2321,7 +2318,7 @@ if (keyFile.has_group ("Wavelet")) {
     if (keyFile.has_key ("Wavelet", "ThresholdShadow"))     {wavelet.threshold2  = keyFile.get_integer  ("Wavelet", "ThresholdShadow"); if (pedited) pedited->wavelet.threshold2 = true; }
     if (keyFile.has_key ("Wavelet", "ThresholdChroma"))     {wavelet.chroma  = keyFile.get_integer  ("Wavelet", "ThresholdChroma"); if (pedited) pedited->wavelet.chroma = true; }
     if (keyFile.has_key ("Wavelet", "ChromaLink"))     {wavelet.chro  = keyFile.get_integer  ("Wavelet", "ChromaLink"); if (pedited) pedited->wavelet.chro = true; }
-    if (keyFile.has_key ("Wavelet", "Unif"))     {wavelet.unif  = keyFile.get_integer  ("Wavelet", "Unif"); if (pedited) pedited->wavelet.unif = true; }
+    if (keyFile.has_key ("Wavelet", "Contrast"))     {wavelet.unif  = keyFile.get_integer  ("Wavelet", "Contrast"); if (pedited) pedited->wavelet.unif = true; }
     if (keyFile.has_key ("Wavelet", "ThresholdResidShadow"))     {wavelet.thr  = keyFile.get_integer  ("Wavelet", "ThresholdResidShadow"); if (pedited) pedited->wavelet.thr = true; }
     if (keyFile.has_key ("Wavelet", "ThresholdResidHighLight"))     {wavelet.thr  = keyFile.get_integer  ("Wavelet", "ThresholdResidHighLight"); if (pedited) pedited->wavelet.thrH = true; }
     if (keyFile.has_key ("Wavelet", "ChromaCurve")) {wavelet.clvcurve = keyFile.get_double_list ("Wavelet", "ChromaCurve"); if (pedited) pedited->wavelet.clvcurve = true; }

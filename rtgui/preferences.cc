@@ -302,8 +302,7 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_WAVELET_LABEL"));
     appendBehavList (mi, M("TP_WAVELET_THRES"), ADDSET_WA_THRES, true);
-    appendBehavList (mi, M("TP_WAVELET_CONTRAST"), ADDSET_WA, true);
- //   appendBehavList (mi, M("TP_WAVELET_UNIF"), ADDSET_WA_UNIF, true);
+  //  appendBehavList (mi, M("TP_WAVELET_CONTRAST"), ADDSET_WA, true);
     appendBehavList (mi, M("TP_WAVELET_THRESHOLD"), ADDSET_WA_THRESHOLD, true);
     appendBehavList (mi, M("TP_WAVELET_THRESHOLD2"), ADDSET_WA_THRESHOLD2, true);
     appendBehavList (mi, M("TP_WAVELET_CHRO"), ADDSET_WA_CHRO, true);
@@ -315,6 +314,7 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_WAVELET_THRH"), ADDSET_WA_THRRH, true);
     appendBehavList (mi, M("TP_WAVELET_RESCHRO"), ADDSET_WA_RESCHRO, true);
     appendBehavList (mi, M("TP_WAVELET_SKY"), ADDSET_WA_SKYPROTECT, true);
+    appendBehavList (mi, M("TP_WAVELET_CONTRA"), ADDSET_WA_UNIF, true);
 	
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_PREPROCESS_LABEL"));

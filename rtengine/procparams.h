@@ -860,7 +860,6 @@ class WaveletParams {
         std::vector<double> opacityCurveRG;
         std::vector<double> opacityCurveBY;
         bool enabled;
-        bool display;
         bool median;
         bool avoid;
         int c[9];

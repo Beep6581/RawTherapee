@@ -476,7 +476,6 @@ class WaveletParamsEdited {
 
     public:
         bool enabled;
-        bool display;
         bool median;
         bool avoid;
 		bool c[9];

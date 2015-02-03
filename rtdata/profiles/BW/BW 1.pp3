@@ -1,6 +1,6 @@
 [Version]
-AppVersion=4.2.1
-Version=321
+AppVersion=4.2.84
+Version=322
 
 [Exposure]
 Auto=true
@@ -141,6 +141,9 @@ Feather=50
 Roundness=50
 
 [Film Simulation]
+Enabled=false
+
+[Wavelet]
 Enabled=false
 
 [HSV Equalizer]

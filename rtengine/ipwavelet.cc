@@ -247,7 +247,7 @@ int wavNestedLevels = 1;
 		if(minwin*skip < 256) maxlevelcrop = 7;//sampling 128
 		if(minwin*skip < 128) maxlevelcrop = 6;
 		if(minwin < 64) maxlevelcrop = 5;
-		printf("minwin=%d maxcrop=%d\n",minwin, maxlevelcrop);
+	//	printf("minwin=%d maxcrop=%d\n",minwin, maxlevelcrop);
 		
 		int levwav=params->wavelet.thres;
 		if(levwav==9 && cp.mul[9]!=0) levwav=10;
@@ -300,7 +300,7 @@ int wavNestedLevels = 1;
 		if(minsizetile < 128) maxlev2 = 6;
 		levwav=min(maxlev2,levwav);
 		
-		printf("levwav = %d\n",levwav);
+		//printf("levwav = %d\n",levwav);
 
 		int numthreads = 1;
 		int maxnumberofthreadsforwavelet =0;
@@ -694,12 +694,57 @@ omp_set_nested(oldNested);
 		int maxlvl = WaveletCoeffs_L.maxlevel();
 		int W_L = WaveletCoeffs_L.level_W(1);
 		int H_L = WaveletCoeffs_L.level_H(1);
-	
 		float * WavCoeffs_L0 = WaveletCoeffs_L.coeff0;
+
+		float maxh=2.5f;//amplification contrast above mean
+		float maxl=2.5f; //reduction contrast under mean
+		float contrast=cp.unif;
+		float multL=(float)contrast*(maxl-1.f)/100.f + 1.f;	
+		float multH=(float) contrast*(maxh-1.f)/100.f + 1.f;
+
+		double avedbl=0.f; // use double precision for big summations
+#ifdef _OPENMP
+#pragma omp parallel for reduction(+:avedbl) num_threads(wavNestedLevels) if(wavNestedLevels>1)
+#endif
+		for (int i=0; i<W_L*H_L; i++) {
+			avedbl += WavCoeffs_L0[i];
+		}
+
+		float ave = avedbl / (double)(W_L*H_L);
+		float av=ave/327.68f;
+		float ah=(multH-1.f)/(av-100.f);//av ==> lumaref
+		float bh=1.f-100.f*ah;
+		float al=(multL-1.f)/av;
+		float bl=1.f;
+		float factorx=1.f;
+
+		
 #ifdef _OPENMP
 #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 {
+	
+#ifdef _OPENMP
+#pragma omp for
+#endif						
+			for (int i=0; i<W_L*H_L; i++) {//contrast
+				if(WavCoeffs_L0[i] < 32768.f) {
+					float prov;
+					if( WavCoeffs_L0[i]> ave) {
+						float kh = ah*(WavCoeffs_L0[i]/327.68f)+bh;
+						prov=WavCoeffs_L0[i];
+						WavCoeffs_L0[i]=ave+kh*(WavCoeffs_L0[i]-ave);
+					} else {
+						float kl = al*(WavCoeffs_L0[i]/327.68f)+1.f;
+						prov=WavCoeffs_L0[i];
+						WavCoeffs_L0[i]=ave-kl*(ave-WavCoeffs_L0[i]);
+					}
+					float diflc=WavCoeffs_L0[i]-prov;
+					diflc*=factorx; 
+					WavCoeffs_L0[i] =  prov + diflc; 	
+				}					
+			}
+		
 #ifdef _OPENMP
 #pragma omp for nowait
 #endif				
@@ -761,6 +806,10 @@ omp_set_nested(oldNested);
 		int H_L = WaveletCoeffs_ab.level_H(1);
 	
 		float * WavCoeffs_ab0 = WaveletCoeffs_ab.coeff0;
+		
+		
+		
+		
 #ifdef _OPENMP
 #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif

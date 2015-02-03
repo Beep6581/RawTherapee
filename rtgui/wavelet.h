@@ -48,8 +48,22 @@ protected:
     FlatCurveEditor* ccshape;
     Gtk::CheckButton * enabled;
     Gtk::CheckButton * display;
+    Gtk::CheckButton * displaylevel;
+    Gtk::CheckButton * displaychro;
+    Gtk::CheckButton * displaygam;
+    Gtk::CheckButton * displayres;
     Gtk::CheckButton * median;
     Gtk::CheckButton * avoid;
+    Gtk::ToggleButton * tbresid;
+    Gtk::ToggleButton * tbcontrast;
+    Gtk::ToggleButton * tbgamut;
+    Gtk::ToggleButton * tbchroma;
+    Gtk::ToggleButton * tbtoning;
+    Gtk::ToggleButton * tbutil;
+    Gtk::ToggleButton * tbdisplay;
+    Gtk::CheckButton * cbresid;
+	Gtk::Image* igRes;
+	
     Adjuster* correction[9]; 
     Adjuster* tiles; 
     Adjuster* rescon; 
@@ -88,16 +102,27 @@ protected:
 	Gtk::Frame* residualFrame;
 	Gtk::Frame* utilFrame;
 	Gtk::Frame* dispFrame;
+	Gtk::Frame* levelFrame;
+	Gtk::Frame* chromaFrame;
+	Gtk::Frame* controlFrame;
     Gtk::Label* colLabel;
     Gtk::Label* interLabel;
 	Gtk::Label*   wavLabels;
+	Gtk::Expander* expcontrast;	
+	Gtk::Expander* expresid;
+	Gtk::Expander* expgamut;	
+	Gtk::Expander* expchroma;	
+	Gtk::Expander* exptoning;	
+	Gtk::Expander* exputil;	
+	Gtk::Expander* expdisplay;	
+	Gtk::HBox* hbresid;
 	
-    sigc::connection enaConn, displayConn, medianConn, avoidConn;
+    sigc::connection enaConn, expConn,  medianConn, avoidConn;
     sigc::connection neutralPressedConn;
     sigc::connection contrastPlusPressedConn;
     sigc::connection contrastMinusPressedConn;
     
-    bool lastEnabled, lastdisplay, lastmedian, lastavoid;
+    bool lastEnabled, lastdisplay, lastdisplaygam,lastdisplayres,lastdisplaychro, lastdisplaylevel,lastmedian, lastavoid;
 	int nextnlevel;
 
 public:
@@ -108,6 +133,16 @@ public:
     void setEditProvider     (EditDataProvider *provider);
     void autoOpenCurve  ();
 
+ //   virtual Gtk::Expander* getExpander     () { return NULL; }
+ //   virtual void           setExpanded     (bool expanded) {}
+ //   virtual bool           getExpanded     () { return false; }
+
+
+
+     /*   Gtk::Expander * getExpander() { return expresid; }
+        void setExpanded (bool expanded) { if (expresid) expresid->set_expanded( expanded ); }
+        bool getExpanded () { if (expresid) return expresid->get_expanded(); return false; }
+	*/
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
@@ -117,8 +152,14 @@ public:
    
     void adjusterChanged (Adjuster* a, double newval);
     void enabledToggled ();
-    void displayToggled ();
     void medianToggled ();
+    void expcontrastTog ();
+    void expresidTog ();
+    void expdisplayTog ();
+    void expgamutTog ();
+    void exputilTog ();
+    void expchromaTog ();
+    void exptoningTog ();
     void avoidToggled ();
     void neutralPressed ();
     void contrastPlusPressed ();
