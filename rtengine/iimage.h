@@ -519,9 +519,10 @@ namespace rtengine {
 
         int rowstride;    // Plan size, in bytes (all padding bytes included)
         int planestride;  // Row length, in bytes (padding bytes included)
-
-      public:
+	  protected:
         T* data;
+		
+      public:
         PlanarPtr<T> r;
         PlanarPtr<T> g;
         PlanarPtr<T> b;
