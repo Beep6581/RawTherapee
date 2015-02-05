@@ -380,7 +380,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 	if (dnparams.luma==0 && dnparams.chroma==0  && !dnparams.median && !noiseLCurve && !noiseCCurve) {
 		//nothing to do; copy src to dst or do nothing in case src == dst
 		if(src != dst)
-			memcpy(dst->data,src->data,dst->width*dst->height*3*sizeof(float));
+			src->copyData(dst);
 		if(calclum) {
 			delete calclum;
 			calclum = NULL;
@@ -594,8 +594,15 @@ do {
 		dsttmp = dst;
 	else {
 		dsttmp = new Imagefloat(imwidth,imheight);
-		for (int n=0; n<3*imwidth*imheight; n++)
-			dsttmp->data[n] = 0;
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+        for(int i=0;i<imheight;i++)
+            for(int j=0;j<imwidth;j++) {
+                dsttmp->r(i,j) = 0.f;
+                dsttmp->g(i,j) = 0.f;
+                dsttmp->b(i,j) = 0.f;
+            }
 	}
 
 	//now we have tile dimensions, overlaps
@@ -685,7 +692,7 @@ do {
 	int pos;
 	float* noisevarlum;
 	float* noisevarchrom;
-	if(numtiles == 1 && isRAW) {
+	if(numtiles == 1 && isRAW && (useNoiseCCurve || useNoiseLCurve)) {
 		noisevarlum = lumcalcBuffer;
 		noisevarchrom = ccalcBuffer;
 	} else {
@@ -905,6 +912,12 @@ do {
 				if(nrQuality == QUALITY_HIGH)
 					levwav += settings->nrwavlevel;//increase level for enhanced mode
 				if(levwav>8) levwav=8;
+				int minsizetile=min(tilewidth, tileheight);
+				int maxlev2=8;
+				if(minsizetile < 256) maxlev2 = 7;
+				if(minsizetile < 128) maxlev2 = 6;
+				if(minsizetile < 64) maxlev2 = 5;
+				levwav=min(maxlev2,levwav);
 			
 			//	if (settings->verbose) printf("levwavelet=%i  noisevarA=%f noisevarB=%f \n",levwav, noisevarab_r, noisevarab_b );
 				Ldecomp = new wavelet_decomposition (labdn->L[0], labdn->W, labdn->H, levwav, 1, 1, max(1,denoiseNestedLevels));
@@ -1400,7 +1413,7 @@ do {
 
 		}//end of tile row
 	}//end of tile loop
-	if(numtiles > 1 || !isRAW) {
+	if(numtiles > 1 || !isRAW || (!useNoiseCCurve && !useNoiseLCurve)) {
 		delete [] noisevarlum;
 		delete [] noisevarchrom;
 	}
@@ -1419,18 +1432,21 @@ omp_set_nested(oldNested);
 	//copy denoised image to output
 	if(numtiles>1) {
 		if(!memoryAllocationFailed)
-			memcpy (dst->data, dsttmp->data, 3*dst->width*dst->height*sizeof(float));
+			dsttmp->copyData(dst);
 		else if(dst != src)
-			memcpy (dst->data, src->data, 3*dst->width*dst->height*sizeof(float));
+			src->copyData(dst);
 		delete dsttmp;
 	}
 	if (!isRAW && !memoryAllocationFailed) {//restore original image gamma
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-		for (int i=0; i<3*dst->width*dst->height; i++) {
-			dst->data[i] = Color::gammatab_srgb[ dst->data[i] ];
-		}
+        for(int i=0;i<dst->height;i++)
+            for(int j=0;j<dst->width;j++) {
+                dst->r(i,j) = Color::gammatab_srgb[ dst->r(i,j) ];
+                dst->g(i,j) = Color::gammatab_srgb[ dst->g(i,j) ];
+                dst->b(i,j) = Color::gammatab_srgb[ dst->b(i,j) ];
+            }
 	}
 
 	if(denoiseLuminance) {
