@@ -539,7 +539,7 @@ void DirPyrDenoiseParams::setDefaults() {
     luma = 0;
     passes = 1;
     dmethod = "Lab";
-    Lmethod = "CUR";
+    Lmethod = "SLI";//"CUR";// SLIDER method with value 0 is set as default, while the default Lcurve is populated via getDefaultNoisCurve and can be switched to by the user
     Cmethod = "MAN";
     C2method = "AUTO";
     smethod = "shal";
