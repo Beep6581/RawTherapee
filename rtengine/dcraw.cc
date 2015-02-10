@@ -8634,6 +8634,7 @@ konica_400z:
       left_margin = 44;
     } else if (raw_width == 8374) { // RT, CFV-50c, H5D-50c, "H5D-50c MS", "H5D-200c MS"
       if (!strcmp(model, "H5D")) strcpy(model, "H5D-50c");
+      if (!strcmp(model, "CFV-2")) strcpy(model, "CFV-50c");
       height = 6208;
       width = 8280;
       top_margin = 96;
