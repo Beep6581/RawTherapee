@@ -102,6 +102,8 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
     Gtk::ComboBoxText* dnwavlev;
     Gtk::ComboBoxText* dnliss;
 
+    Gtk::ComboBoxText* cprevdemo;
+
     Gtk::ComboBoxText* theme;
     Gtk::CheckButton* slimUI;
     Gtk::HBox* hbtheme;
