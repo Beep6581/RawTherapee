@@ -778,8 +778,8 @@ PREFERENCES_CIEART_FRAME;CIECAM02-Specific Settings
 PREFERENCES_CIEART_LABEL;Use float precision instead of double
 PREFERENCES_CIEART_TOOLTIP;If enabled, CIECAM02 calculations are performed in the single-precision floating-point format instead of the double-precision one. This provides a small increase in speed at the expense of a negligible loss of quality.
 PREFERENCES_CLIPPINGIND;Clipping Indication
-PREFERENCES_CLUTSCACHE;HaldCLUT cache
-PREFERENCES_CLUTSCACHE_LABEL;Max number of cached Cluts
+PREFERENCES_CLUTSCACHE;HaldCLUT Cache
+PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 PREFERENCES_CLUTSDIR;HaldCLUT directory
 PREFERENCES_CMETRICINTENT;Colorimetric intent
 PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\n\nThe path of the communication file (*.ini style, a.k.a. "Keyfile") is added as a command line parameter. It contains various parameters required for the scripts and image Exif to allow a rules-based processing profile generation.\n\n<b>WARNING:</b> You are responsible for using double quotes where necessary if you're using paths containing spaces.
@@ -801,6 +801,10 @@ PREFERENCES_DATEFORMATHINT;You can use the following formatting strings:\n<b>%y<
 PREFERENCES_DATEFORMAT;Date format
 PREFERENCES_DEFAULTLANG;Default Language
 PREFERENCES_DEFAULTTHEME;Default Theme
+PREFERENCES_PREVDEMO;Preview Demosaic Method
+PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
+PREFERENCES_PREVDEMO_FAST;Fast
+PREFERENCES_PREVDEMO_SIDECAR;As in PP3
 PREFERENCES_DIRDARKFRAMES;Dark-frames directory
 PREFERENCES_DIRHOME;Home directory
 PREFERENCES_DIRLAST;Last visited directory
@@ -847,7 +851,7 @@ PREFERENCES_ICCDIR;Directory containing color profiles
 PREFERENCES_IMG_RELOAD_NEEDED;These changes require the image to be reloaded (or a new image to be opened) to take effect.
 PREFERENCES_IMPROCPARAMS;Default Processing Profile
 PREFERENCES_INSPECT_LABEL;Inspect
-PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of buffers
+PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of cached images
 PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
 PREFERENCES_INTENT_ABSOLUTE;Absolute Colorimetric
 PREFERENCES_INTENT_PERCEPTUAL;Perceptual

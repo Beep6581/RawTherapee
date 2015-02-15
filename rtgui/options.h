@@ -55,6 +55,7 @@ class SaveFormat {
 enum ThFileType {FT_Invalid=-1, FT_None=0, FT_Raw=1, FT_Jpeg=2, FT_Tiff=3, FT_Png=4, FT_Custom=5, FT_Tiff16=6, FT_Png16=7, FT_Custom16=8}; 
 enum PPLoadLocation {PLL_Cache=0, PLL_Input=1};
 enum CPBKeyType {CPBKT_TID=0, CPBKT_NAME=1, CPBKT_TID_NAME=2};
+enum prevdemo_t {PD_Sidecar=1, PD_Fast=0};
 
 namespace rtengine {
 	class SafeKeyFile;
@@ -179,7 +180,7 @@ class Options {
     //std::vector<int> crvOpen;
     std::vector<int> baBehav;
     rtengine::Settings rtSettings;
-    
+
     std::vector<Glib::ustring> favoriteDirs;
     std::vector<Glib::ustring> renameTemplates;
     bool renameUseTemplates;
@@ -196,7 +197,7 @@ class Options {
     int multiDisplayMode;  // 0=none, 1=Edit panels on other display
     std::vector<double> cutOverlayBrush;  // Red;Green;Blue;Alpha , all ranging 0..1
     std::vector<double> navGuideBrush;  // Red;Green;Blue;Alpha , all ranging 0..1
-    
+
     Glib::ustring sndBatchQueueDone;
     Glib::ustring sndLngEditProcDone;
     double sndLngEditProcDoneSecs;  // Minimum processing time seconds till the sound is played
@@ -204,7 +205,7 @@ class Options {
 
     bool tunnelMetaData;    // Pass through IPTC and XMP unchanged
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
-//    int histogramWorking;  // 0=disabled, 1=left pane, 2=right pane
+    //int histogramWorking;  // 0=disabled, 1=left pane, 2=right pane
     bool histogramBar;
     bool histogramFullMode;
     bool showProfileSelector;
@@ -215,13 +216,13 @@ class Options {
 
     bool showFilmStripToolBar;
 
-    Glib::ustring clutsDir;
-
     // Performance options
+    Glib::ustring clutsDir;
     int rgbDenoiseThreadLimit; // maximum number of threads for the denoising tool ; 0 = use the maximum available
     int maxInspectorBuffers;   // maximum number of buffers (i.e. images) for the Inspector feature
     int clutCacheSize;
     bool filledProfile;  // Used as reminder for the ProfilePanel "mode"
+    prevdemo_t prevdemo; // Demosaicing method used for the <100% preview
 
     bool menuGroupRank;
     bool menuGroupLabel;

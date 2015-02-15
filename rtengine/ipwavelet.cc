@@ -562,10 +562,10 @@ omp_set_nested(oldNested);
 			delete dsttmp;
 		}
 		
-//	if (settings->verbose) {
+	if (settings->verbose) {
 		t2e.set();
 		printf("Wavelet performed in %d usec:\n", t2e.etime(t1e));
-//	}
+	}
 		
 }//end o
 

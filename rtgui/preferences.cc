@@ -513,6 +513,55 @@ Gtk::Widget* Preferences::getPerformancePanel () {
     Gtk::VBox* mainContainer = Gtk::manage( new Gtk::VBox () );
     mainContainer->set_border_width (4);
     mainContainer->set_spacing(4);
+
+    Gtk::Frame* fprevdemo = Gtk::manage (new Gtk::Frame (M("PREFERENCES_PREVDEMO")));
+    Gtk::HBox* hbprevdemo = Gtk::manage (new Gtk::HBox (false, 4));
+    Gtk::Label* lprevdemo = Gtk::manage (new Gtk::Label (M("PREFERENCES_PREVDEMO_LABEL")));
+    cprevdemo = Gtk::manage (new Gtk::ComboBoxText ());
+    cprevdemo->append_text (M("PREFERENCES_PREVDEMO_FAST"));
+    cprevdemo->append_text (M("PREFERENCES_PREVDEMO_SIDECAR"));
+    cprevdemo->set_active (1);
+    hbprevdemo->pack_start (*lprevdemo, Gtk::PACK_SHRINK);
+    hbprevdemo->pack_start (*cprevdemo);
+    fprevdemo->add (*hbprevdemo);
+    hbprevdemo->set_border_width(4);
+    mainContainer->pack_start (*fprevdemo, Gtk::PACK_SHRINK, 4);
+
+    Gtk::Frame* fclut = Gtk::manage( new Gtk::Frame (M("PREFERENCES_CLUTSCACHE")) );
+    Gtk::HBox* clutCacheSizeHB = Gtk::manage( new Gtk::HBox () );
+    clutCacheSizeHB->set_border_width(4);
+    clutCacheSizeHB->set_spacing(4);
+    Gtk::Label* CLUTLl = Gtk::manage( new Gtk::Label (M("PREFERENCES_CLUTSCACHE_LABEL") + ":", Gtk::ALIGN_LEFT));
+    clutCacheSizeSB = Gtk::manage( new Gtk::SpinButton () );
+    clutCacheSizeSB->set_digits (0);
+    clutCacheSizeSB->set_increments (1, 5);
+    clutCacheSizeSB->set_max_length(2);  // Will this be sufficient? :)
+#ifdef _OPENMP
+    clutCacheSizeSB->set_range (1, 2*omp_get_num_procs());
+#else
+    clutCacheSizeSB->set_range (1, 8);
+#endif
+    clutCacheSizeHB->pack_start (*CLUTLl, Gtk::PACK_SHRINK, 0);
+    clutCacheSizeHB->pack_end (*clutCacheSizeSB, Gtk::PACK_SHRINK, 0);
+    fclut->add (*clutCacheSizeHB);
+    mainContainer->pack_start (*fclut, Gtk::PACK_SHRINK, 4);
+
+    Gtk::Frame* finspect = Gtk::manage(  new Gtk::Frame (M("PREFERENCES_INSPECT_LABEL")) );
+    Gtk::HBox* maxIBuffersHB = Gtk::manage( new Gtk::HBox () );
+    maxIBuffersHB->set_border_width(4);
+    maxIBuffersHB->set_spacing(4);
+    maxIBuffersHB->set_tooltip_text(M("PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP"));
+    Gtk::Label* maxIBufferLbl = Gtk::manage( new Gtk::Label (M("PREFERENCES_INSPECT_MAXBUFFERS_LABEL") + ":", Gtk::ALIGN_LEFT));
+    maxInspectorBuffersSB = Gtk::manage( new Gtk::SpinButton () );
+    maxInspectorBuffersSB->set_digits (0);
+    maxInspectorBuffersSB->set_increments (1, 5);
+    maxInspectorBuffersSB->set_max_length(2);
+    maxInspectorBuffersSB->set_range (1, 12);  // ... we have to set a limit, 12 seem to be enough even for systems with tons of RAM
+    maxIBuffersHB->pack_start (*maxIBufferLbl, Gtk::PACK_SHRINK, 0);
+    maxIBuffersHB->pack_end (*maxInspectorBuffersSB, Gtk::PACK_SHRINK, 0);
+    finspect->add(*maxIBuffersHB);
+    mainContainer->pack_start(*finspect, Gtk::PACK_SHRINK, 4);
+
     Gtk::Frame* fdenoise = Gtk::manage( new Gtk::Frame (M("PREFERENCES_NOISE")) );
     Gtk::VBox* vbdenoise = Gtk::manage( new Gtk::VBox () );
     vbdenoise->set_border_width (4);
@@ -589,59 +638,6 @@ Gtk::Widget* Preferences::getPerformancePanel () {
     vbdenoise->pack_start(*threadLimitHB, Gtk::PACK_SHRINK, 4);
     fdenoise->add (*vbdenoise);
     mainContainer->pack_start (*fdenoise, Gtk::PACK_SHRINK, 4);
-
- /*   Gtk::Label* dntilab = Gtk::manage (new Gtk::Label (M("PREFERENCES_TINB")+":", Gtk::ALIGN_LEFT));
-
-    dnti = Gtk::manage (new Gtk::ComboBoxText ());
-    dnti->append_text (M("PREFERENCES_TISTD"));
-    dnti->append_text (M("PREFERENCES_TIMAX"));
-    Gtk::Table* colon2 = Gtk::manage (new Gtk::Table (1, 3));
-    colon2->attach (*dntilab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colon2->attach (*dnti, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colon2->attach (*restartNeeded4, 2, 3, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    vbdenoise->pack_start (*colon2, Gtk::PACK_SHRINK, 4);
-*/
-
-    Gtk::Frame* fclut = Gtk::manage( new Gtk::Frame (M("PREFERENCES_CLUTSCACHE")) ); 
-    Gtk::HBox* clutCacheSizeHB = Gtk::manage( new Gtk::HBox () );
-    clutCacheSizeHB->set_border_width(4);
-    clutCacheSizeHB->set_spacing(4);
-    Gtk::Label* CLUTLl = Gtk::manage( new Gtk::Label (M("PREFERENCES_CLUTSCACHE_LABEL") + ":", Gtk::ALIGN_LEFT));
-    clutCacheSizeSB = Gtk::manage( new Gtk::SpinButton () );
-    clutCacheSizeSB->set_digits (0);
-    clutCacheSizeSB->set_increments (1, 5);
-    clutCacheSizeSB->set_max_length(2);  // Will this be sufficient? :)
-
-
-#ifdef _OPENMP
-    clutCacheSizeSB->set_range (1, 2*omp_get_num_procs());
-#else
-    clutCacheSizeSB->set_range (1, 8);
-#endif
-
-    clutCacheSizeHB->pack_start (*CLUTLl, Gtk::PACK_SHRINK, 0);
-    clutCacheSizeHB->pack_end (*clutCacheSizeSB, Gtk::PACK_SHRINK, 0);
-
-    fclut->add (*clutCacheSizeHB);
-    mainContainer->pack_start (*fclut, Gtk::PACK_SHRINK, 4);
-
-    Gtk::Frame* finspect = Gtk::manage(  new Gtk::Frame (M("PREFERENCES_INSPECT_LABEL")) );
-
-    Gtk::HBox* maxIBuffersHB = Gtk::manage( new Gtk::HBox () );
-    maxIBuffersHB->set_border_width(4);
-    maxIBuffersHB->set_spacing(4);
-    maxIBuffersHB->set_tooltip_text(M("PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP"));
-    Gtk::Label* maxIBufferLbl = Gtk::manage( new Gtk::Label (M("PREFERENCES_INSPECT_MAXBUFFERS_LABEL") + ":", Gtk::ALIGN_LEFT));
-    maxInspectorBuffersSB = Gtk::manage( new Gtk::SpinButton () );
-    maxInspectorBuffersSB->set_digits (0);
-    maxInspectorBuffersSB->set_increments (1, 5);
-    maxInspectorBuffersSB->set_max_length(2);
-    maxInspectorBuffersSB->set_range (1, 12);  // ... we have to set a limit, 12 seem to be enough even for systems with tons of RAM
-    maxIBuffersHB->pack_start (*maxIBufferLbl, Gtk::PACK_SHRINK, 0);
-    maxIBuffersHB->pack_end (*maxInspectorBuffersSB, Gtk::PACK_SHRINK, 0);
-    finspect->add(*maxIBuffersHB);
-
-    mainContainer->pack_start(*finspect, Gtk::PACK_SHRINK, 4);
 
     return mainContainer;
 }
@@ -1285,7 +1281,6 @@ void Preferences::storePreferences () {
     moptions.defProfImg          = iprofiles->getFullPathFromActiveRow();
     if (moptions.defProfImg.empty()) moptions.defProfImg = DEFPROFILE_INTERNAL;
 
-
     moptions.dateFormat          = dateformat->get_text();
     moptions.panAccelFactor      = (int)panFactor->get_value();
     moptions.fbShowDateTime  = showDateTime->get_active ();
@@ -1303,7 +1298,7 @@ void Preferences::storePreferences () {
     moptions.theme           = theme->get_active_text ();
     moptions.slimUI          = slimUI->get_active ();
     moptions.useSystemTheme  = chUseSystemTheme->get_active ();
-     
+
     Gdk::Color cropCol=butCropCol->get_color();
     moptions.cutOverlayBrush[0]=cropCol.get_red_p();
     moptions.cutOverlayBrush[1]=cropCol.get_green_p();
@@ -1358,6 +1353,8 @@ void Preferences::storePreferences () {
     moptions.rtSettings.nrwavlevel   = dnwavlev->get_active_row_number ();
     moptions.rtSettings.leveldnautsimpl   = dnautsimpl->get_active_row_number ();
 
+    moptions.prevdemo = (prevdemo_t)cprevdemo->get_active_row_number ();
+
     if (sdcurrent->get_active ()) 
         moptions.startupDir = STARTUPDIR_CURRENT;
     else if (sdhome->get_active ()) 
@@ -1376,14 +1373,14 @@ void Preferences::storePreferences () {
         moptions.parseExtensions.push_back (c[i][extensionColumns.ext]);
         moptions.parseExtensionsEnabled.push_back (c[i][extensionColumns.enabled]);
     }
-    
+
     moptions.maxThumbnailHeight = (int)maxThumbSize->get_value ();
     moptions.maxCacheEntries = (int)maxCacheEntries->get_value ();
     moptions.overlayedFileNames = overlayedFileNames->get_active ();
     moptions.filmStripOverlayedFileNames = filmStripOverlayedFileNames->get_active();
     moptions.sameThumbSize = sameThumbSize->get_active();
     moptions.internalThumbIfUntouched = ckbInternalThumbIfUntouched->get_active ();
-    
+
     moptions.saveParamsFile = saveParamsFile->get_active ();
     moptions.saveParamsCache = saveParamsCache->get_active ();
     moptions.paramsLoadLocation = (PPLoadLocation)loadParamsPreference->get_active_row_number ();
@@ -1464,6 +1461,7 @@ void Preferences::fillPreferences () {
     dnaut->set_active (moptions.rtSettings.leveldnaut);
     dnautsimpl->set_active (moptions.rtSettings.leveldnautsimpl);
     dnwavlev->set_active (moptions.rtSettings.nrwavlevel);
+    cprevdemo->set_active (moptions.prevdemo);
 	
 //	cbAutocielab->set_active (moptions.rtSettings.autocielab);
 	cbciecamfloat->set_active (moptions.rtSettings.ciecamfloat);

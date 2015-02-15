@@ -136,8 +136,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
     ipf.setScale (scale);
 
+    bool highDetailNeeded = false;
+
+    if (options.prevdemo==PD_Sidecar) highDetailNeeded = true; //i#2664
+    else highDetailNeeded = (todo & M_HIGHQUAL);
+
     // Check if any detail crops need high detail. If not, take a fast path short cut
-    bool highDetailNeeded = (todo & M_HIGHQUAL);
     if (!highDetailNeeded) {
         for (size_t i=0; i<crops.size(); i++)
             if (crops[i]->get_skip() == 1 ) {  // skip=1 -> full resolution
@@ -158,9 +162,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
         rp.bayersensor.ccSteps = 0;
         rp.xtranssensor.ccSteps = 0;
-        /* Commented out the following line so that the hot pixel filter works at <100% zoom levels too, to fix issue 2535.
-         * rp.deadPixelFilter = rp.hotPixelFilter = false;
-         */
+        //rp.deadPixelFilter = rp.hotPixelFilter = false;
     }
 
     progress ("Applying white balance, color correction & sRGB conversion...",100*readyphase/numofphases);
