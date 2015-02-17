@@ -23,6 +23,7 @@
 #23 2014-11-07 firefly
 #24 2014-11-18 firefly
 #25 2015-01-05 firefly
+#26 2015-02-17 firefly
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -84,6 +85,7 @@ EXPORT_BYPASS_ALL;全て選択 / 全て解除
 EXPORT_BYPASS_DEFRINGE;フリンジ低減を迂回
 EXPORT_BYPASS_DIRPYRDENOISE;ノイズ低減を迂回
 EXPORT_BYPASS_DIRPYREQUALIZER;ディテール・レベルのコントラストを迂回
+EXPORT_BYPASS_EQUALIZER;ウェーブレットのレベルを迂回
 EXPORT_BYPASS_RAW_CA;[raw] 色収差補正を迂回
 EXPORT_BYPASS_RAW_CCSTEPS;[raw] 偽色抑制を迂回
 EXPORT_BYPASS_RAW_DCB_ENHANCE;[raw] DCB 拡張処理を迂回
@@ -497,9 +499,9 @@ HISTORY_MSG_256;ノイズ低減 - フィルターの種類
 HISTORY_MSG_257;カラートーン調整
 HISTORY_MSG_258;カラートーン調整　-　カラーのカーブ
 HISTORY_MSG_259;カラートーン調整　-　不透明度のカーブ
-HISTORY_MSG_260;カラートーン調整　-　不透明度 
+HISTORY_MSG_260;カラートーン調整　-　a*(b*)の不透明度 
 HISTORY_MSG_261;カラートーン調整　-　方法
-HISTORY_MSG_262;カラートーン調整　-　不透明度
+HISTORY_MSG_262;カラートーン調整　-　b*の不透明度
 HISTORY_MSG_263;カラートーン調整　-　シャドウのレッド
 HISTORY_MSG_264;カラートーン調整　-　シャドウのグリーン
 HISTORY_MSG_265;カラートーン調整　-　シャドウのブルー
@@ -541,6 +543,40 @@ HISTORY_MSG_300;-
 HISTORY_MSG_301;輝度ノイズの調整方法
 HISTORY_MSG_302;色ノイズの調整方法
 HISTORY_MSG_303;色ノイズの調整方法
+HISTORY_MSG_304;ウェーブレットのレベル
+HISTORY_MSG_305;ウェーブレットのレベル
+HISTORY_MSG_306;ウェーブレット N° level
+HISTORY_MSG_307;ウェーブレット Ch level
+HISTORY_MSG_308;ウェーブレット 方向
+HISTORY_MSG_309;ウェーブレット タイル
+HISTORY_MSG_310;ウェーブレット 色相-トーン　空
+HISTORY_MSG_311;ウェーブレット レベルの最大数
+HISTORY_MSG_312;ウェーブレット　シャドウのしきい値 
+HISTORY_MSG_313;ウェーブレット　明清色/純色
+HISTORY_MSG_314;ウェーブレット　青空のアーティファクト
+HISTORY_MSG_315;ウェーブレット　コントラスト　残差画像
+HISTORY_MSG_316;ウェーブレット　肌色のトーン
+HISTORY_MSG_317;ウェーブレット　肌色の色相
+HISTORY_MSG_318;ウェーブレットのレベル　ハイライト
+HISTORY_MSG_319;ウェーブレット　ハイライトの範囲 
+HISTORY_MSG_320;ウェーブレット　シャドウの範囲 
+HISTORY_MSG_321;ウェーブレットのレベル　シャドウ 
+HISTORY_MSG_322;ウェーブレット　色ずれの回避 
+HISTORY_MSG_323;ウェーブレットのレベル　色度 
+HISTORY_MSG_324;ウェーブレット　明清色の色度 
+HISTORY_MSG_325;ウェーブレット　純色の色度 
+HISTORY_MSG_326;ウェーブレット　色度調整の方法 
+HISTORY_MSG_327;ウェーブレット　コントラスト調整の方法 
+HISTORY_MSG_328;ウェーブレット　色度　コントラストとのリンク
+HISTORY_MSG_329;ウェーブレット　レッド/グリーンの不透明度
+HISTORY_MSG_330;ウェーブレット　ブルー/イエローの不透明度
+HISTORY_MSG_331;ウェーブレット　エキストラレベル
+HISTORY_MSG_332;ウェーブレット　タイルの種類
+HISTORY_MSG_333;ウェーブレット　シャドウ　残差画像
+HISTORY_MSG_334;ウェーブレット　色度
+HISTORY_MSG_335;ウェーブレット　ハイライト　残差画像
+HISTORY_MSG_336;ウェーブレット　ハイライトのしきい値
+HISTORY_MSG_337;ウェーブレット　色相の範囲
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;スナップショット
@@ -689,6 +725,7 @@ PARTIALPASTE_DIRPYRDENOISE;ノイズ低減
 PARTIALPASTE_DIRPYREQUALIZER;ディテール・レベルのコントラスト
 PARTIALPASTE_DISTORTION;歪曲補正
 PARTIALPASTE_EPD;トーンマッピング
+PARTIALPASTE_EQUALIZER;ウェーブレットイコライザ
 PARTIALPASTE_EVERYTHING;すべて
 PARTIALPASTE_EXIFCHANGES;exifデータを変える
 PARTIALPASTE_EXPOSURE;露光量
@@ -737,6 +774,7 @@ PARTIALPASTE_VIBRANCE;自然な彩度
 PARTIALPASTE_VIGNETTING;周辺光量補正
 PARTIALPASTE_WHITEBALANCE;ホワイトバランス
 PREFERENCES_ADD;追加
+PREFERENCES_APPLNEXTRELOAD;要画像の再読み込み
 PREFERENCES_APPLNEXTSTARTUP;要再起動
 PREFERENCES_AUTLISLOW;低
 PREFERENCES_AUTLISMAX;最大 - 全タイルの平均
@@ -755,10 +793,11 @@ PREFERENCES_BLACKBODY;タングステン
 PREFERENCES_CACHECLEARALL;すべてクリア
 PREFERENCES_CACHECLEARPROFILES;プロファイルのクリア
 PREFERENCES_CACHECLEARTHUMBS;サムネイルのクリア
-PREFERENCES_CACHEMAXENTRIES;最大キャッシュエントリー数
+PREFERENCES_CACHEMAXENTRIES;キャッシュエントリーの最大数
 PREFERENCES_CACHEOPTS;cache オプション
 PREFERENCES_CACHETHUMBHEIGHT;サムネイル縦の最大値
 PREFERENCES_CIEART;CIECAM02 最適化
+PREFERENCES_CIEART_FRAME;CIECAM02-特定の設定
 PREFERENCES_CIEART_LABEL;倍精度の代わりに単精度浮動小数点を使用
 PREFERENCES_CIEART_TOOLTIP;有効にした場合、 CIECAM02は倍精度浮動小数点形式の代わりに単精度で実行されます。これは品質を少し犠牲にし、速度を少し増加させます
 PREFERENCES_CLIPPINGIND;クリッピング領域の表示
@@ -828,10 +867,11 @@ PREFERENCES_HISTOGRAMWORKING;ヒストグラムとナビゲーターの表示に
 PREFERENCES_HISTOGRAM_TOOLTIP;これを有効にすると、ヒストグラムとナビゲーターの表示に、出力プロファイル（ガンマ適用）の代わりに作業プロファイルを使います
 PREFERENCES_HLTHRESHOLD;ハイライト・クリッピング領域のしきい値
 PREFERENCES_ICCDIR;カラープロファイルを含むディレクトリ
+PREFERENCES_IMG_RELOAD_NEEDED;これらの変更を有効にするには画像の再読み込みが必要です（或いは、新しい画像の読み込み）
 PREFERENCES_IMPROCPARAMS;画像処理のデフォルト値
-PREFERENCES_INSPECT_LABEL;検査
-PREFERENCES_INSPECT_MAXBUFFERS_LABEL;バッファーの最大数
-PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;ファイルブラウザの操作中にcacheに差し込める画像の最大数。RAM容量が小さい場合（2G以下）の場合は、設定値を1或いは2にするべき
+PREFERENCES_INSPECT_LABEL;カメラ出しJPEG
+PREFERENCES_INSPECT_MAXBUFFERS_LABEL;cacheに入れる画像の最大数
+PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;ファイルブラウザの操作中にcacheに入れられる画像の最大数。RAM容量が小さい場合（2G以下）の場合は、設定値を1或いは2にするべき
 PREFERENCES_INTENT_ABSOLUTE;絶対的な色域を維持
 PREFERENCES_INTENT_PERCEPTUAL;知覚的
 PREFERENCES_INTENT_RELATIVE;相対的な色域を維持
@@ -870,9 +910,12 @@ PREFERENCES_PARSEDEXTADDHINT;拡張子を記入し このボタンでリスト�
 PREFERENCES_PARSEDEXTADD;拡張子の追加
 PREFERENCES_PARSEDEXTDELHINT;選択した拡張子をリストから削除します
 PREFERENCES_PARSEDEXT;拡張子
+PREFERENCES_PREVDEMO;プレビューのデモザイク方式
+PREFERENCES_PREVDEMO_FAST;Fast
+PREFERENCES_PREVDEMO_SIDECAR;PP3の記述通り
 PREFERENCES_PROFILEHANDLING;処理プロファイルの取扱い
 PREFERENCES_PROFILELOADPR;処理プロファイル読み込みの優先
-PREFERENCES_PROFILEPRCACHE;キャッシュのプロファイル
+PREFERENCES_PROFILEPRCACHE;cacheの中のプロファイル
 PREFERENCES_PROFILEPRFILE;入力ファイルに隣接するプロファイル
 PREFERENCES_PROFILESAVECACHE;処理プロファイルのパラメータをcacheに保存
 PREFERENCES_PROFILESAVEINPUT;処理プロファイルのパラメータを入力ファイルと同じディレクトリに保存
@@ -906,7 +949,7 @@ PREFERENCES_TAB_GENERAL;一般
 PREFERENCES_TAB_IMPROC;画像処理
 PREFERENCES_TAB_PERFORMANCE;パフォーマンスとクォリティ
 PREFERENCES_TAB_SOUND;サウンド
-PREFERENCES_TIMAX;高
+PREFERENCES_TIMAX;多数
 PREFERENCES_TINB;タイル数
 PREFERENCES_TISTD;標準
 PREFERENCES_TP_LABEL;ツール パネル:
@@ -957,6 +1000,7 @@ PROGRESSBAR_SNAPSHOT_ADDED;スナップショット追加
 PROGRESSDLG_PROFILECHANGEDINBROWSER;ブラウザでプロファイルの変更
 QINFO_ISO;ISO
 QINFO_NOEXIF;Exifデータがありません
+REFERENCES_PREVDEMO_LABEL;拡大率100％以下の場合に、プレビューで使われるデモザイク方式:
 SAVEDLG_AUTOSUFFIX;ファイルが存在する場合、自動的に末尾に文字を加える
 SAVEDLG_FILEFORMAT;ファイル形式
 SAVEDLG_FORCEFORMATOPTS;強制保存オプション
@@ -1256,8 +1300,8 @@ TP_DIRPYRDENOISE_SHALBI;高い
 TP_DIRPYRDENOISE_SHAL;標準
 TP_DIRPYRDENOISE_SLI;スライダー
 TP_DIRPYRDENOISE_SOFT;3x3
-TP_DIRPYRDENOISE_TILELABEL;タイルのサイズ=%1, 中心: Tx=%2  Ty=%3
-TP_DIRPYREQUALIZER_ALGO;肌色用のアルゴリズム
+TP_DIRPYRDENOISE_TILELABEL;タイルのサイズ=%1, 中心位置: X座標=%2  Y座標=%3
+TP_DIRPYREQUALIZER_ALGO;肌色の範囲
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;ファイン：撮影の肌色に近い部分に働くアルゴリズム、他の色への影響を最小限に抑えます\n広範：　アーティファクトの増加を避けるアルゴリズムです
 TP_DIRPYREQUALIZER_GAMUT;アーティファクトを軽減
 TP_DIRPYREQUALIZER_HUESKIN;肌色の色相
@@ -1560,6 +1604,89 @@ TP_VIGNETTING_CENTER_Y;中心 Y軸
 TP_VIGNETTING_LABEL;周辺光量補正
 TP_VIGNETTING_RADIUS;半径
 TP_VIGNETTING_STRENGTH;濃度
+TP_WAVELET_0;レベル 0
+TP_WAVELET_1;レベル 1
+TP_WAVELET_2;レベル 2
+TP_WAVELET_3;レベル 3
+TP_WAVELET_4;レベル 4
+TP_WAVELET_5;レベル 5
+TP_WAVELET_6;レベル 6
+TP_WAVELET_7;レベル 7
+TP_WAVELET_8;レベル 8
+TP_WAVELET_ALL;全てのレベル－方向
+TP_WAVELET_AVOID;色ずれの回避
+TP_WAVELET_CH1;全ての色度
+TP_WAVELET_CH2;明清色 - 純色
+TP_WAVELET_CH3;コントラストレベルへリンク
+TP_WAVELET_CHRO;純色 - 明清色
+TP_WAVELET_CHRO_TOOLTIP;明清色と純色を調整する範囲を決めます\n 1-xのレベルが純色の調整範囲\n x-9のレベルが明清色の調整範囲
+TP_WAVELET_CHR;クロマリンク
+TP_WAVELET_CHR_TOOLTIP;色度の調整は2通りあります\na 詳細レベルのコントラストに合わせる\nb　クロマリンクのスライダーに合わせる
+TP_WAVELET_CLVCURVE;色度 - レベル
+TP_WAVELET_COLORT;レッド/グリーンの不透明度
+TP_WAVELET_CONTRAST_MINUS;コントラスト -
+TP_WAVELET_CONTRAST_PLUS;コントラスト +
+TP_WAVELET_CONTRA;コントラスト
+TP_WAVELET_CONTRA_TOOLTIP;残差画像のコントラストを変える\nレベル数の設定に応じて効果が違います
+TP_WAVELET_CONTR;色域の抑制
+TP_WAVELET_CURVEEDITOR_CLV_TOOLTIP;レベル（X軸）に応じた色度を返します\nレベルの値は不連続です
+TP_WAVELET_DALL;全ての方向
+TP_WAVELET_DISPLAYCHRO;色度とカラートーン
+TP_WAVELET_DISPLAYGAM;色域とその抑制
+TP_WAVELET_DISPLAY;レベルとユーティリティ
+TP_WAVELET_DISP;ウェーブレットのレベルを表示
+TP_WAVELET_DONE;方向: 垂直
+TP_WAVELET_DTHR;方向: 対角線
+TP_WAVELET_DTWO;方向: 水平
+TP_WAVELET_FINEST;最も細かい
+TP_WAVELET_HIGHLIGHT;ハイライトの輝度範囲 (0～100)
+TP_WAVELET_HIGHSHA;シャドウ/ハイライト
+TP_WAVELET_HS1;全輝度範囲
+TP_WAVELET_HS2;シャドウ-ハイライト
+TP_WAVELET_HUESKIN;色相の範囲(デフォルト：肌色)
+TP_WAVELET_HUESKIN_TOOLTIP;このピラミッド型カーブは上部ほど、アルゴリズムの効率が良い部分です\n下部ほど色相の変化が激しい部分を示しています\nスライダーを極端に左右に動かす必要がある場合、或いはアーティファクトが発生している場合は：<b>ホワイトバランスが誤っています</b>\n範囲を若干狭めることで画像の他の部分が影響を受けないようにすることが出来ます
+TP_WAVELET_HUESKY;色相範囲（デフォルト：青空）
+TP_WAVELET_HUESKY_TOOLTIP;このピラミッド型カーブは上部ほど、アルゴリズムの効率が良い部分です\n下部ほど色相の変化が激しい部分を示しています\nスライダーを極端に左右に動かす必要がある場合、或いはアーティファクトが発生している場合は：<b>ホワイトバランスが誤っています</b>\n範囲を若干狭めることで画像の他の部分が影響を受けないようにすることが出来ます
+TP_WAVELET_INF;同等、或いはそれ以下のレベル
+TP_WAVELET_LABEL;ウェーブレットのレベル
+TP_WAVELET_LARGEST;最も粗い
+TP_WAVELET_LEVCH;色度
+TP_WAVELET_LEVF;コントラスト
+TP_WAVELET_LEVLABEL;プレビューで表示可能な最大レベル=%1
+TP_WAVELET_LOWLIGHT;シャドウの輝度範囲 (0～100)
+TP_WAVELET_MAX;最大
+TP_WAVELET_MEDI;青空のアーティファクトを軽減
+TP_WAVELET_MIN;最小
+TP_WAVELET_NEUTRAL;ニュートラル
+TP_WAVELET_ONE;一つのレベル
+TP_WAVELET_OPACITY;ブルー/イエローの不透明度
+TP_WAVELET_PASTEL;明清色 色度
+TP_WAVELET_RESCHRO;色度
+TP_WAVELET_RESCONH;ハイライト
+TP_WAVELET_RESCON;シャドウ
+TP_WAVELET_RESID;残差画像
+TP_WAVELET_SAT;純色 色度
+TP_WAVELET_SKIN;色相-トーン (肌色) の目標/保護
+TP_WAVELET_SKIN_TOOLTIP;－100にすると肌色のトーンだけが調整の対象になります\n0にすると全てのカラートーンが調整されます\n＋100にすると肌色のトーンは保護され、他のカラートーンが調整されます
+TP_WAVELET_SKY;色相-トーンの目標/保護（デフォルト：青空）
+TP_WAVELET_SKY_TOOLTIP;色相範囲の内外で色度を上げ下げします\n細部のコントラストや色度の強さに起因する青空のアーティファクトを回避します
+TP_WAVELET_SUPE;エキストラ
+TP_WAVELET_SUP;上のレベルと残差画像
+TP_WAVELET_THRESHOLD2;シャドウ調整をするレベルを指定(最も細かい～最も粗い)
+TP_WAVELET_THRESHOLD2_TOOLTIP;この数値を変更すると、9以下のレベルでシャドウの輝度が調整されます\n他のレベルは輝度範囲全体で調整されます\nシャドウの最大レベルはハイライトのレベルによって制限を受けます（9-ハイライトレベル）
+TP_WAVELET_THRESHOLD;ハイライト調整をするレベルを指定（最も細かい～最も粗い　－マスター）
+TP_WAVELET_THRESHOLD_TOOLTIP;この数値を変更すると、その一つ上のレベルだけがハイライトの輝度で調整されます\n他のレベルは輝度範囲全体で調整されます
+TP_WAVELET_THRES;最大のレベル数
+TP_WAVELET_THRES_TOOLTIP;使用するレベル数を設定します。スライダーの位置に関係なく、設定値より高いレベルは考慮されません
+TP_WAVELET_THRH;ハイライトのしきい値
+TP_WAVELET_THR;シャドウのしきい値
+TP_WAVELET_TILESBIG;大きいタイル
+TP_WAVELET_TILESFULL;画像全体
+TP_WAVELET_TILESLIT;小さいタイル
+TP_WAVELET_TILES;タイルサイズ (* 128)
+TP_WAVELET_TILES_TOOLTIP;16Mの画像で、画像全体の調整を選択し、レベル数を10に設定した場合、必要なメモリー量は2Gになります\n24Mの画像でレベル10の場合は2.5G\n35Mの画像でレベル10の場合は3.3G\nメモリー容量の不足を感じる場合はタイルサイズでの調整を選択します
+TP_WAVELET_TON;カラートーン
+TP_WAVELET_UTIL;ユーティリティ
 TP_WBALANCE_AUTO;自動補正
 TP_WBALANCE_CAMERA;カメラ
 TP_WBALANCE_CLOUDY;曇天
@@ -1613,3 +1740,8 @@ ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる\nショートカット: <b>f</b>
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
