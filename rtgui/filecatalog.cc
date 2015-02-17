@@ -1606,6 +1606,14 @@ void FileCatalog::updateFBQueryTB (bool singleRow) {
 	hbToolBar1->unreference();
 }
 
+void FileCatalog::updateFBToolBarVisibility (bool showFilmStripToolBar){
+	if (showFilmStripToolBar)
+		showToolBar();
+	else
+		hideToolBar();
+	refreshHeight();
+}
+
 void FileCatalog::buttonBrowsePathPressed () {
 	Glib::ustring BrowsePathValue = BrowsePath->get_text();
 	Glib::ustring DecodedPathPrefix="";

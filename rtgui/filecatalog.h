@@ -236,6 +236,7 @@ class FileCatalog : public Gtk::VBox,
                 void executeQuery ();
                 bool Query_key_pressed(GdkEventKey *event);
                 void updateFBQueryTB (bool singleRow);
+                void updateFBToolBarVisibility (bool showFilmStripToolBar);
 
                 void tbLeftPanel_1_toggled ();
                 void tbLeftPanel_1_visible (bool visible);

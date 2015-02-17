@@ -102,6 +102,7 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
    		void updateHistogramPosition (int oldPosition, int newPosition);
    		void updateTabsUsesIcons (bool useIcons);
    		void updateFBQueryTB (bool singleRow);
+        void updateFBToolBarVisibility (bool showFilmStripToolBar);
         bool getIsFullscreen() { return is_fullscreen; }
         void set_title_decorated(Glib::ustring fname);
         void CloseOpenEditors();

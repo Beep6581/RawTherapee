@@ -750,6 +750,10 @@ void RTWindow::updateFBQueryTB (bool singleRow) {
 	fpanel->fileCatalog->updateFBQueryTB (singleRow);
 }
 
+void RTWindow::updateFBToolBarVisibility (bool showFilmStripToolBar){
+	fpanel->fileCatalog->updateFBToolBarVisibility (showFilmStripToolBar);
+}
+
 void RTWindow::updateHistogramPosition (int oldPosition, int newPosition) {
 	epanel->updateHistogramPosition (oldPosition, newPosition);
 
