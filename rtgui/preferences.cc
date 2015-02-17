@@ -779,8 +779,10 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 
     Gtk::HBox* hbworkflow3 = Gtk::manage( new Gtk::HBox () );
     ckbFileBrowserToolbarSingleRow =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_FILEBROWSERTOOLBARSINGLEROW")) );
+    ckbShowFilmStripToolBar =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SHOWFILMSTRIPTOOLBAR")) );
 
     hbworkflow3->pack_start (*ckbFileBrowserToolbarSingleRow, Gtk::PACK_SHRINK, 4);
+    hbworkflow3->pack_start (*ckbShowFilmStripToolBar, Gtk::PACK_SHRINK, 4);
     vbworkflow->pack_start (*hbworkflow3, Gtk::PACK_SHRINK, 0);
 
     Gtk::HBox* hbworkflow4 = Gtk::manage( new Gtk::HBox () );
@@ -1406,6 +1408,7 @@ void Preferences::storePreferences () {
     moptions.histogramPosition = ckbHistogramPositionLeft->get_active() ? 1 : 2;
     moptions.showProfileSelector = ckbShowProfileSelector->get_active();
     moptions.FileBrowserToolbarSingleRow = ckbFileBrowserToolbarSingleRow->get_active();
+    moptions.showFilmStripToolBar = ckbShowFilmStripToolBar->get_active();
     moptions.hideTPVScrollbar = ckbHideTPVScrollbar->get_active();
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
     moptions.UseIconNoText = ckbUseIconNoText->get_active();
@@ -1555,6 +1558,7 @@ void Preferences::fillPreferences () {
  //   ckbHistogramWorking->set_active(moptions.histogramWorking==1);
     ckbShowProfileSelector->set_active(moptions.showProfileSelector);
     ckbFileBrowserToolbarSingleRow->set_active(moptions.FileBrowserToolbarSingleRow);
+    ckbShowFilmStripToolBar->set_active(moptions.showFilmStripToolBar);
     ckbHideTPVScrollbar->set_active(moptions.hideTPVScrollbar);
     ckbUseIconNoText->set_active(moptions.UseIconNoText);
 
@@ -1858,6 +1862,10 @@ void Preferences::workflowUpdate (){
     if(moptions.FileBrowserToolbarSingleRow != options.FileBrowserToolbarSingleRow) {
     	// Update the position of the Query toolbar
     	parent->updateFBQueryTB(moptions.FileBrowserToolbarSingleRow);
+    }
+    if(moptions.showFilmStripToolBar != options.showFilmStripToolBar) {
+    	// Update the visibility of FB toolbar
+    	parent->updateFBToolBarVisibility(moptions.showFilmStripToolBar);
     }
     if(moptions.histogramPosition != options.histogramPosition) {
     	// Update the position of the Histogram

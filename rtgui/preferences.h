@@ -161,6 +161,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
     Gtk::CheckButton* ckbHistogramWorking;
     Gtk::CheckButton* ckbShowProfileSelector;
     Gtk::CheckButton* ckbFileBrowserToolbarSingleRow;
+    Gtk::CheckButton* ckbShowFilmStripToolBar;
     Gtk::CheckButton* ckbHideTPVScrollbar;
     Gtk::CheckButton* ckbUseIconNoText;
 
