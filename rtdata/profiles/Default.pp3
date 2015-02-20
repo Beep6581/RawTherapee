@@ -137,7 +137,7 @@ PreTwoGreen=true
 LineDenoise=0
 GreenEqThreshold=0
 DCBIterations=2
-DCBEnhance=false
+DCBEnhance=true
 LMMSEIterations=2
 
 [RAW X-Trans]
