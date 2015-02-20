@@ -595,7 +595,7 @@ void RAWParams::setDefaults() {
     bayersensor.method = RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze];
     bayersensor.ccSteps = 0;
     bayersensor.dcb_iterations = 2;
-    bayersensor.dcb_enhance = false;
+    bayersensor.dcb_enhance = true;
     //bayersensor.all_enhance = false;
     bayersensor.lmmse_iterations = 2;
     bayersensor.black0 = 0.0;
