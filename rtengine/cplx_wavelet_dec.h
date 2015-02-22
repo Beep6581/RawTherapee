@@ -55,7 +55,7 @@ namespace rtengine {
 	public:
 
 		template<typename E>
-		wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling, int skipcrop = 1, int numThreads = 1);
+		wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling, int skipcrop = 1, int numThreads = 1, int Daub4Len = 6);
 
 		~wavelet_decomposition();
 
@@ -89,26 +89,37 @@ namespace rtengine {
 			return subsamp;
 		}
 		template<typename E>
-		void reconstruct(E * dst);
+		void reconstruct(E * dst, const float blend = 1.f);
 	};
 
 	template<typename E>
-	wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling, int skipcrop, int numThreads)
+	wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling, int skipcrop, int numThreads, int Daub4Len)
 	: coeff0(NULL), memoryAllocationFailed(false), lvltot(0), subsamp(subsampling), numThreads(numThreads), m_w(width), m_h(height)
 	{
+
 		//initialize wavelet filters
-		wavfilt_len = Daub4_len;
+		wavfilt_len = Daub4Len;
 		wavfilt_offset = Daub4_offset;
 		wavfilt_anal = new float[2*wavfilt_len];
 		wavfilt_synth = new float[2*wavfilt_len];
 
-		for (int n=0; n<2; n++) {
-			for (int i=0; i<wavfilt_len; i++) {
-				wavfilt_anal[wavfilt_len*(n)+i]  = Daub4_anal[n][i];
-				wavfilt_synth[wavfilt_len*(n)+i] = Daub4_anal[n][wavfilt_len-1-i];
-				//n=0 lopass, n=1 hipass
+		if(wavfilt_len==6) {
+			for (int n=0; n<2; n++) {
+				for (int i=0; i<wavfilt_len; i++) {
+					wavfilt_anal[wavfilt_len*(n)+i]  = Daub4_anal[n][i];
+					wavfilt_synth[wavfilt_len*(n)+i] = Daub4_anal[n][wavfilt_len-1-i];
+					//n=0 lopass, n=1 hipass
+				}
 			}
-		}
+		} else if(wavfilt_len==8) {
+			for (int n=0; n<2; n++) {
+				for (int i=0; i<wavfilt_len; i++) {
+					wavfilt_anal[wavfilt_len*(n)+i]  = Daub4_anal8[n][i];
+					wavfilt_synth[wavfilt_len*(n)+i] = Daub4_anal8[n][wavfilt_len-1-i];
+					//n=0 lopass, n=1 hipass
+				}
+			}
+		}	
 
 		// after coefficient rotation, data structure is:
 		// wavelet_decomp[scale][channel={lo,hi1,hi2,hi3}][pixel_array]
@@ -147,41 +158,60 @@ namespace rtengine {
 	}
 	
 	template<typename E>
-	void wavelet_decomposition::reconstruct(E * dst) { 
+	void wavelet_decomposition::reconstruct(E * dst, const float blend) { 
+
 		if(memoryAllocationFailed)
 			return;
 		// data structure is wavcoeffs[scale][channel={lo,hi1,hi2,hi3}][pixel_array]
-		int m_w = 0;
-		int m_h2 = 0;
 
-		for(int lvl=0;lvl<lvltot;lvl++) {
-			if(m_w < wavelet_decomp[lvl]->m_w)
-				m_w = wavelet_decomp[lvl]->m_w;
-			if(m_h2 < wavelet_decomp[lvl]->m_h2)
-				m_h2 = wavelet_decomp[lvl]->m_h2;
-		}
-		E *tmpLo = new (std::nothrow) E[m_w*m_h2];
-		if(tmpLo == NULL) {
-			memoryAllocationFailed = true;
-			return;
+		if(lvltot >= 1) {
+			int width = wavelet_decomp[1]->m_w;
+			int height = wavelet_decomp[1]->m_h;
+
+			E *tmpHi = new (std::nothrow) E[width*height];
+			if(tmpHi == NULL) {
+				memoryAllocationFailed = true;
+				return;
+			}
+
+			for (int lvl=lvltot; lvl>0; lvl--) {
+				E *tmpLo = wavelet_decomp[lvl]->wavcoeffs[2]; // we can use this as buffer
+				wavelet_decomp[lvl]->reconstruct_level(tmpLo, tmpHi, coeff0, coeff0, wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset);
+				delete wavelet_decomp[lvl];
+				wavelet_decomp[lvl] = NULL;
+			}
+			delete[] tmpHi;
 		}
 
-		E *tmpHi = new (std::nothrow) E[m_w*m_h2];
+		int width = wavelet_decomp[0]->m_w;
+		int height = wavelet_decomp[0]->m_h2;
+		E *tmpLo;
+		if(wavelet_decomp[0]->bigBlockOfMemoryUsed()) // bigBlockOfMemoryUsed means that wavcoeffs[2] points to a block of memory big enough to hold the data
+			tmpLo = wavelet_decomp[0]->wavcoeffs[2];
+		else {										  // allocate new block of memory
+			tmpLo = new (std::nothrow) E[width*height];
+			if(tmpLo == NULL) {
+				memoryAllocationFailed = true;
+				return;
+			}
+		}
+		E *tmpHi = new (std::nothrow) E[width*height];
 		if(tmpHi == NULL) {
 			memoryAllocationFailed = true;
-			delete[] tmpLo;
+			if(!wavelet_decomp[0]->bigBlockOfMemoryUsed())
+				delete[] tmpLo;
 			return;
 		}
 
-		for (int lvl=lvltot; lvl>0; lvl--) {
-			wavelet_decomp[lvl]->reconstruct_level(tmpLo, tmpHi, coeff0, coeff0, wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset);
-		}
 
-		wavelet_decomp[0]->reconstruct_level(tmpLo, tmpHi, coeff0, dst, wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset);
+		wavelet_decomp[0]->reconstruct_level(tmpLo, tmpHi, coeff0, dst, wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset, blend);
+		if(!wavelet_decomp[0]->bigBlockOfMemoryUsed())
+			delete[] tmpLo;
+		delete[] tmpHi;
+		delete wavelet_decomp[0];
+		wavelet_decomp[0] = NULL;
 		delete[] coeff0;
 		coeff0 = NULL;
-		delete[] tmpLo;
-		delete[] tmpHi;
 	}
 
 };

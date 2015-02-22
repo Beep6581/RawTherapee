@@ -862,6 +862,7 @@ class WaveletParams {
         bool enabled;
         bool median;
         bool avoid;
+        int strength;
         int c[9];
         Glib::ustring Lmethod;
         Glib::ustring CLmethod;
@@ -869,7 +870,6 @@ class WaveletParams {
         Glib::ustring CHmethod;
         Glib::ustring Dirmethod;
         Glib::ustring HSmethod;
-		int tiles;
 		int rescon;
 		int resconH;
 		int reschro;	
@@ -880,7 +880,10 @@ class WaveletParams {
 		int chro;	
 		int threshold;
 		int threshold2;
-		int unif;	
+		int contrast;
+		int edgrad;	
+		int edgval;	
+		int edgthresh;
 		int thr;	
 		int thrH;	
         double skinprotect;

@@ -520,7 +520,7 @@ void Options::setDefaults () {
 			0, //ADDSET_WA_THRES
 			0, //ADDSET_WA_CHRO
 			0, //ADDSET_WA_CHROMA
-			0, //ADDSET_WA_UNIF
+			0, //ADDSET_WA_CONTRAST
 			0, //ADDSET_WA_SKINPROTECT
 			0, //ADDSET_WA_RESCHRO
 			0, //ADDSET_WA_RESCON
@@ -528,6 +528,9 @@ void Options::setDefaults () {
 			0, //ADDSET_WA_THRR
 			0, //ADDSET_WA_THRRH
 			0, //ADDSET_WA_SKYPROTECT
+			0, //ADDSET_WA_EDGRAD
+			0, //ADDSET_WA_EDGVAL
+			0, //ADDSET_WA_STRENGTH
 			
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
@@ -581,6 +584,8 @@ void Options::setDefaults () {
 	rtSettings.autocielab=true;
 	rtSettings.denoiselabgamma=2;
     rtSettings.HistogramWorking = false;
+
+    rtSettings.daubech = false;
 	
     rtSettings.nrauto = 10;//between 2 and 20
     rtSettings.nrautomax = 40;//between 5 and 100
@@ -770,6 +775,7 @@ if (keyFile.has_group ("Performance")) {
     if (keyFile.has_key ("Performance", "ClutCacheSize"))         clutCacheSize              = keyFile.get_integer ("Performance", "ClutCacheSize");
     if (keyFile.has_key ("Performance", "MaxInspectorBuffers"))   maxInspectorBuffers        = keyFile.get_integer ("Performance", "MaxInspectorBuffers");
     if (keyFile.has_key ("Performance", "PreviewDemosaicFromSidecar"))  prevdemo             = (prevdemo_t)keyFile.get_integer ("Performance", "PreviewDemosaicFromSidecar");
+    if (keyFile.has_key ("Performance", "Daubechies"))            rtSettings.daubech         = keyFile.get_boolean ("Performance", "Daubechies");
 }
 
 if (keyFile.has_group ("GUI")) { 
@@ -1056,6 +1062,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("Performance", "ClutCacheSize", clutCacheSize);
     keyFile.set_integer ("Performance", "MaxInspectorBuffers", maxInspectorBuffers);
     keyFile.set_integer ("Performance", "PreviewDemosaicFromSidecar", prevdemo);
+    keyFile.set_boolean ("Performance", "Daubechies", rtSettings.daubech);
 
     keyFile.set_string  ("Output", "Format", saveFormat.format);
     keyFile.set_integer ("Output", "JpegQuality", saveFormat.jpegQuality);

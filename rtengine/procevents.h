@@ -362,7 +362,10 @@ enum ProcEvent {
 	EvWavresconH=334,	
 	EvWavthrH=335,	
 	EvWavHueskin2=336,	
-	
+	EvWavedgrad=337,	
+	EvWavedgval=338,	
+	EvWavStrength=339,
+
 	NUMOFEVENTS	
 };
 }

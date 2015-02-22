@@ -94,12 +94,16 @@
 #define ADDSET_WA_THRESHOLD2			86
 #define ADDSET_WA_CHRO					87
 #define ADDSET_WA_CHROMA				88
-#define ADDSET_WA_UNIF					89
+#define ADDSET_WA_CONTRAST					89
 #define ADDSET_WA_RESCON				90
 #define ADDSET_WA_RESCONH				91
 #define ADDSET_WA_RESCHRO				92
 #define ADDSET_WA_SKYPROTECT			93
+#define ADDSET_WA_EDGRAD				94
+#define ADDSET_WA_EDGVAL				95
+#define ADDSET_WA_STRENGTH				96
+
 // When adding items, make sure to update ADDSET_PARAM_NUM
-#define ADDSET_PARAM_NUM                94 // THIS IS USED AS A DELIMITER!!
+#define ADDSET_PARAM_NUM                97 // THIS IS USED AS A DELIMITER!!
 
 #endif

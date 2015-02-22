@@ -688,11 +688,16 @@ void Crop::update (int todo) {
 		if(minwin*skip < 256) maxlevelcrop = 7;//sampling 128
 		if(minwin*skip < 128) maxlevelcrop = 6;
 		if(minwin < 64) maxlevelcrop = 5;
+		
+		int realtile;
+		if(params.wavelet.Tilesmethod=="big") realtile=22;
+		if(params.wavelet.Tilesmethod=="lit") realtile=12;
+		
 		int tilesize;
 		int overlap;
 			tilesize = 1024;
 			overlap = 128;
-			tilesize=128*params.wavelet.tiles;
+			tilesize=128*realtile;
 			//overlap=(int) tilesize*params->wavelet.overl;
 			overlap=(int) tilesize*0.125f;
 		//	printf("overl=%d\n",overlap);

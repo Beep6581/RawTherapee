@@ -59,13 +59,12 @@ protected:
     Gtk::ToggleButton * tbgamut;
     Gtk::ToggleButton * tbchroma;
     Gtk::ToggleButton * tbtoning;
-    Gtk::ToggleButton * tbutil;
     Gtk::ToggleButton * tbdisplay;
+    Gtk::ToggleButton * tbedge;
     Gtk::CheckButton * cbresid;
 	Gtk::Image* igRes;
 	
     Adjuster* correction[9]; 
-    Adjuster* tiles; 
     Adjuster* rescon; 
     Adjuster* resconH; 
     Adjuster* reschro; 
@@ -74,10 +73,15 @@ protected:
     Adjuster* thres; 
     Adjuster* chroma; 
     Adjuster* chro; 
-    Adjuster* unif; 
+    Adjuster* contrast;
     Adjuster* thr; 
     Adjuster* thrH; 
     Adjuster* skinprotect;
+    Adjuster* edgrad;
+    Adjuster* edgval;
+    Adjuster* edgthresh;
+    Adjuster* strength;
+	
     ThresholdAdjuster* hueskin;
     ThresholdAdjuster* hueskin2;
     ThresholdAdjuster* hllev;
@@ -98,24 +102,35 @@ protected:
     sigc::connection  Tilesmethodconn;
     MyComboBoxText*   Dirmethod;
     sigc::connection  Dirmethodconn;
+    Gtk::Frame* settingsFrame;
 	Gtk::Frame* toningFrame;
 	Gtk::Frame* residualFrame;
-	Gtk::Frame* utilFrame;
 	Gtk::Frame* dispFrame;
 	Gtk::Frame* levelFrame;
 	Gtk::Frame* chromaFrame;
 	Gtk::Frame* controlFrame;
+	Gtk::Frame* edgeFrame;
+    Gtk::Frame* contrastSHFrame;
     Gtk::Label* colLabel;
     Gtk::Label* interLabel;
-	Gtk::Label*   wavLabels;
+	Gtk::Label* wavLabels;
+    Gtk::Label* hsmethodLabel;
 	Gtk::Expander* expcontrast;	
 	Gtk::Expander* expresid;
 	Gtk::Expander* expgamut;	
 	Gtk::Expander* expchroma;	
 	Gtk::Expander* exptoning;	
-	Gtk::Expander* exputil;	
 	Gtk::Expander* expdisplay;	
+	Gtk::Expander* expedge;	
 	Gtk::HBox* hbresid;
+    Gtk::HBox* tilesizeHBox;
+    Gtk::HBox* previewLevelsHBox;
+    Gtk::HBox* previewLDirHBox;
+    Gtk::HBox* hsmethodHBox;
+    Gtk::VBox* settingsVBox;
+    Gtk::VBox* contrastSHVBox;
+    Gtk::Label* tilesizeLabel;
+    Gtk::Label* previewLevelsLabel;
 	
     sigc::connection enaConn, expConn,  medianConn, avoidConn;
     sigc::connection neutralPressedConn;
@@ -148,7 +163,7 @@ public:
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
     void adjusterChanged2 (ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
-	void setAdjusterBehavior (bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd,bool chromaadd, bool unifadd, bool skinadd, bool reschroadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool skyadd);
+	void setAdjusterBehavior (bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd,bool chromaadd, bool contrastadd, bool skinadd, bool reschroadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool skyadd, bool edgradadd, bool edgvaladd, bool strengthadd);
    
     void adjusterChanged (Adjuster* a, double newval);
     void enabledToggled ();
@@ -157,7 +172,6 @@ public:
     void expresidTog ();
     void expdisplayTog ();
     void expgamutTog ();
-    void exputilTog ();
     void expchromaTog ();
     void exptoningTog ();
     void avoidToggled ();

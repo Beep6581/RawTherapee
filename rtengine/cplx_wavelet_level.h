@@ -67,9 +67,9 @@ namespace rtengine {
 		void SynthesisFilterSubsampHorizontal (T * srcLo, T * srcHi, T * dst,
 							  float *filterLo, float *filterHi, const int taps, const int offset, const int scrwidth, const int dstwidth, const int height);
 #ifdef __SSE2__
-		void SynthesisFilterSubsampVertical (T * srcLo, T * srcHi, T * dst, float (*filterLo)[4], float (*filterHi)[4], const int taps, const int offset, const int width, const int srcheight, const int dstheight);
+		void SynthesisFilterSubsampVertical (T * srcLo, T * srcHi, T * dst, float (*filterLo)[4], float (*filterHi)[4], const int taps, const int offset, const int width, const int srcheight, const int dstheight, const float blend);
 #else
-		void SynthesisFilterSubsampVertical (T * srcLo, T * srcHi, T * dst, float *filterLo, float *filterHi, const int taps, const int offset, const int width, const int srcheight, const int dstheight);
+		void SynthesisFilterSubsampVertical (T * srcLo, T * srcHi, T * dst, float *filterLo, float *filterHi, const int taps, const int offset, const int width, const int srcheight, const int dstheight, const float blend);
 #endif
 	public:
 		bool memoryAllocationFailed;
@@ -103,41 +103,39 @@ namespace rtengine {
 			
 		}
 
-		~wavelet_level()
-		{
+		~wavelet_level() {
 			destroy(wavcoeffs);
 		}
 
-		T ** subbands() const
-		{
+		T ** subbands() const {
 			return wavcoeffs;
 		}
 
-		T * lopass() const
-		{
+		T * lopass() const {
 			return wavcoeffs[0];
 		}
 
-		int width() const
-		{
+		int width() const {
 			return m_w2;
 		}
 
-		int height() const
-		{
+		int height() const {
 			return m_h2;
 		}
 
-		int stride() const
-		{
+		int stride() const {
 			return skip;
+		}
+		
+		bool bigBlockOfMemoryUsed() const {
+			return bigBlockOfMemory;
 		}
 
 		template<typename E>
 		void decompose_level(E *src, E *dst, float *filterV, float *filterH, int len, int offset);
 
 		template<typename E>
-		void reconstruct_level(E* tmpLo, E* tmpHi, E *src, E *dst, float *filterV, float *filterH, int taps, int offset);
+		void reconstruct_level(E* tmpLo, E* tmpHi, E *src, E *dst, float *filterV, float *filterH, int taps, int offset, const float blend = 1.f);
 	};
 
 	template<typename T>
@@ -288,7 +286,7 @@ namespace rtengine {
 	}
 
 #ifdef __SSE2__
-	template<typename T> void wavelet_level<T>::AnalysisFilterSubsampVertical (T * RESTRICT srcbuffer, T * RESTRICT dstLo, T * RESTRICT dstHi, float (* RESTRICT filterLo)[4], float (* RESTRICT filterHi)[4],
+	template<typename T> SSEFUNCTION void wavelet_level<T>::AnalysisFilterSubsampVertical (T * RESTRICT srcbuffer, T * RESTRICT dstLo, T * RESTRICT dstHi, float (* RESTRICT filterLo)[4], float (* RESTRICT filterHi)[4],
 													const int taps, const int offset, const int width, const int height, const int row) {
 
 		/* Basic convolution code
@@ -437,7 +435,7 @@ namespace rtengine {
 	}
 
 #ifdef __SSE2__
-	template<typename T> SSEFUNCTION void wavelet_level<T>::SynthesisFilterSubsampVertical (T * RESTRICT srcLo, T * RESTRICT srcHi, T * RESTRICT dst, float (* RESTRICT filterLo)[4], float (* RESTRICT filterHi)[4], const int taps, const int offset, const int width, const int srcheight, const int dstheight)
+	template<typename T> SSEFUNCTION void wavelet_level<T>::SynthesisFilterSubsampVertical (T * RESTRICT srcLo, T * RESTRICT srcHi, T * RESTRICT dst, float (* RESTRICT filterLo)[4], float (* RESTRICT filterHi)[4], const int taps, const int offset, const int width, const int srcheight, const int dstheight, const float blend)
 	 {
 
 		/* Basic convolution code
@@ -446,10 +444,12 @@ namespace rtengine {
 		 * the input pixel, and skipping 'skip' pixels between taps 
 		 * Output is subsampled by two
 		 */
-
+		const float srcFactor = 1.f - blend;
 		// calculate coefficients
 		int shift=skip*(taps-offset-1);//align filter with data
 		__m128 fourv = _mm_set1_ps(4.f);
+		__m128 srcFactorv = _mm_set1_ps(srcFactor);
+		__m128 dstFactorv = _mm_set1_ps(blend);
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(numThreads) if(numThreads>1)
 #endif
@@ -464,14 +464,14 @@ namespace rtengine {
 					for (int j=begin, l=0; j<taps; j+=2, l+=skip) {
 						totv += ((LVF(filterLo[j][0]) * LVFU(srcLo[(i_src-l)*width+k]) + LVF(filterHi[j][0]) * LVFU(srcHi[(i_src-l)*width+k])));
 					}
-					_mm_storeu_ps(&dst[width*i+k], fourv * totv);
+					_mm_storeu_ps(&dst[width*i+k], LVFU(dst[width*i+k]) * srcFactorv + dstFactorv * fourv * totv);
 				}
 				for (; k<width; k++) {
 					float tot = 0.f;
 					for (int j=begin, l=0; j<taps; j+=2, l+=skip) {
 						tot += ((filterLo[j][0] * srcLo[(i_src-l)*width+k] + filterHi[j][0] * srcHi[(i_src-l)*width+k]));
 					}
-					dst[width*i+k] = 4.f * tot;
+					dst[width*i+k] = dst[width*i+k] * srcFactor + blend * 4.f * tot;
 				}
 			} else {//boundary
 				int k;
@@ -481,7 +481,7 @@ namespace rtengine {
 						int arg = max(0,min((i_src-l),srcheight-1))*width+k;//clamped BC's
 						totv += ((LVF(filterLo[j][0]) * LVFU(srcLo[arg]) + LVF(filterHi[j][0]) * LVFU(srcHi[arg])));
 					}
-					_mm_storeu_ps(&dst[width*i+k], fourv * totv);
+					_mm_storeu_ps(&dst[width*i+k], LVFU(dst[width*i+k]) * srcFactorv + dstFactorv * fourv * totv);
 				}
 				for (; k<width; k++) {
 					float tot = 0.f;
@@ -489,13 +489,13 @@ namespace rtengine {
 						int arg = max(0,min((i_src-l),srcheight-1))*width+k;//clamped BC's
 						tot += ((filterLo[j][0] * srcLo[arg] + filterHi[j][0] * srcHi[arg]));
 					}
-					dst[width*i+k] = 4.f * tot;
+					dst[width*i+k] = dst[width*i+k] * srcFactor + blend * 4.f * tot;
 				}
 			}
 		}
 	}
 #else
-	template<typename T> void wavelet_level<T>::SynthesisFilterSubsampVertical (T * RESTRICT srcLo, T * RESTRICT srcHi, T * RESTRICT dst, float * RESTRICT filterLo, float * RESTRICT filterHi, const int taps, const int offset, const int width, const int srcheight, const int dstheight)
+	template<typename T> void wavelet_level<T>::SynthesisFilterSubsampVertical (T * RESTRICT srcLo, T * RESTRICT srcHi, T * RESTRICT dst, float * RESTRICT filterLo, float * RESTRICT filterHi, const int taps, const int offset, const int width, const int srcheight, const int dstheight, const float blend)
 	 {
 
 		/* Basic convolution code
@@ -505,6 +505,7 @@ namespace rtengine {
 		 * Output is subsampled by two
 		 */
 
+		const float srcFactor = 1.f - blend;
 		// calculate coefficients
 		int shift=skip*(taps-offset-1);//align filter with data
 
@@ -521,7 +522,7 @@ namespace rtengine {
 					for (int j=begin, l=0; j<taps; j+=2, l+=skip) {
 						tot += ((filterLo[j] * srcLo[(i_src-l)*width+k] + filterHi[j] * srcHi[(i_src-l)*width+k]));
 					}
-					dst[width*i+k] = 4.f * tot;
+					dst[width*i+k] = dst[width*i+k] * srcFactor + blend * 4.f * tot;
 				}
 			} else {//boundary
 				for (int k=0; k<width; k++) {
@@ -530,7 +531,7 @@ namespace rtengine {
 						int arg = max(0,min((i_src-l),srcheight-1))*width+k;//clamped BC's
 						tot += ((filterLo[j] * srcLo[arg] + filterHi[j] * srcHi[arg]));
 					}
-					dst[width*i+k] = 4.f * tot;
+					dst[width*i+k] = dst[width*i+k] * srcFactor + blend * 4.f * tot;
 				}
 			}
 		}
@@ -611,7 +612,7 @@ namespace rtengine {
 
 #ifdef __SSE2__
 
-	template<typename T> template<typename E> SSEFUNCTION void wavelet_level<T>::reconstruct_level(E* tmpLo, E* tmpHi, E * src, E *dst, float *filterV, float *filterH, int taps, int offset) { 
+	template<typename T> template<typename E> SSEFUNCTION void wavelet_level<T>::reconstruct_level(E* tmpLo, E* tmpHi, E * src, E *dst, float *filterV, float *filterH, int taps, int offset, const float blend) { 
 		if(memoryAllocationFailed)
 			return;
 
@@ -623,27 +624,27 @@ namespace rtengine {
 					filterVarray[i][j] = filterV[i];
 				}
 			}
-			SynthesisFilterSubsampHorizontal (src, wavcoeffs[1], tmpLo, filterH, filterH+taps, taps, offset, m_w2, m_w, m_h2);
 			SynthesisFilterSubsampHorizontal (wavcoeffs[2], wavcoeffs[3], tmpHi, filterH, filterH+taps, taps, offset, m_w2, m_w, m_h2);
-			SynthesisFilterSubsampVertical (tmpLo, tmpHi, dst, filterVarray, filterVarray+taps, taps, offset, m_w, m_h2, m_h);
+			SynthesisFilterSubsampHorizontal (src, wavcoeffs[1], tmpLo, filterH, filterH+taps, taps, offset, m_w2, m_w, m_h2);
+			SynthesisFilterSubsampVertical (tmpLo, tmpHi, dst, filterVarray, filterVarray+taps, taps, offset, m_w, m_h2, m_h, blend);
 		} else {
-			SynthesisFilterHaarHorizontal (src, wavcoeffs[1], tmpLo, m_w, m_h2);
 			SynthesisFilterHaarHorizontal (wavcoeffs[2], wavcoeffs[3], tmpHi, m_w, m_h2);
+			SynthesisFilterHaarHorizontal (src, wavcoeffs[1], tmpLo, m_w, m_h2);
 			SynthesisFilterHaarVertical (tmpLo, tmpHi, dst, m_w, m_h);
 		}
 	}
 #else
-	template<typename T> template<typename E> void wavelet_level<T>::reconstruct_level(E* tmpLo, E* tmpHi, E * src, E *dst, float *filterV, float *filterH, int taps, int offset) { 
+	template<typename T> template<typename E> void wavelet_level<T>::reconstruct_level(E* tmpLo, E* tmpHi, E * src, E *dst, float *filterV, float *filterH, int taps, int offset, const float blend) { 
 		if(memoryAllocationFailed)
 			return;
 		/* filter along rows and columns */
 		if (subsamp_out) {
-			SynthesisFilterSubsampHorizontal (src, wavcoeffs[1], tmpLo, filterH, filterH+taps, taps, offset, m_w2, m_w, m_h2);
 			SynthesisFilterSubsampHorizontal (wavcoeffs[2], wavcoeffs[3], tmpHi, filterH, filterH+taps, taps, offset, m_w2, m_w, m_h2);
-			SynthesisFilterSubsampVertical (tmpLo, tmpHi, dst, filterV, filterV+taps, taps, offset, m_w, m_h2, m_h);
+			SynthesisFilterSubsampHorizontal (src, wavcoeffs[1], tmpLo, filterH, filterH+taps, taps, offset, m_w2, m_w, m_h2);
+			SynthesisFilterSubsampVertical (tmpLo, tmpHi, dst, filterV, filterV+taps, taps, offset, m_w, m_h2, m_h, blend);
 		} else {
-			SynthesisFilterHaarHorizontal (src, wavcoeffs[1], tmpLo, m_w, m_h2);
 			SynthesisFilterHaarHorizontal (wavcoeffs[2], wavcoeffs[3], tmpHi, m_w, m_h2);
+			SynthesisFilterHaarHorizontal (src, wavcoeffs[1], tmpLo, m_w, m_h2);
 			SynthesisFilterHaarVertical (tmpLo, tmpHi, dst, m_w, m_h);
 		}
 	}
