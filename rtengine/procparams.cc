@@ -464,23 +464,26 @@ void WaveletParams::setDefaults() {
     getDefaultOpacityCurveBY(opacityCurveBY);	
     enabled = false;  
     median = false;  
-    avoid = false;  
+    avoid = false;
+    strength = 100;
 	Lmethod      	 = "4_";
 	CHmethod      	 = "without";
 	HSmethod      	 = "with";
 	CLmethod      	 = "all";
 	Dirmethod      	 = "all";
 	Tilesmethod      	 = "full";
-	tiles      	 = 14;
 	rescon      = 0;
 	resconH      = 0;
 	reschro      = 0;
 	sky      	 = 0.;
 	sup      	 = 0;
 	thres      	 = 7;
-	chroma      = 5;
+	chroma       = 5;
 	chro      	 = 0;
-	unif      	 = 0;
+	contrast      	 = 0;
+	edgrad 		 =15;
+	edgval		 = 0;
+	edgthresh    = 10;
 	thr      	 = 30;
 	thrH      	 = 70;
     skinprotect = 0.;
@@ -1510,16 +1513,16 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
 
     // save wavelet parameters
     if (!pedited || pedited->wavelet.enabled)    keyFile.set_boolean ("Wavelet", "Enabled", wavelet.enabled);
+	if (!pedited || pedited->wavelet.strength)    keyFile.set_integer ("Wavelet", "Strength", wavelet.strength);
 	if (!pedited || pedited->wavelet.thres)  keyFile.set_integer  ("Wavelet", "MaxLev",  wavelet.thres);
     if (!pedited || pedited->wavelet.Tilesmethod)  keyFile.set_string  ("Wavelet", "TilesMethod",  wavelet.Tilesmethod);
     if (!pedited || pedited->wavelet.CLmethod)  keyFile.set_string  ("Wavelet", "ChoiceLevMethod",  wavelet.CLmethod);
     if (!pedited || pedited->wavelet.Lmethod)  keyFile.set_string  ("Wavelet", "LevMethod",  wavelet.Lmethod);
     if (!pedited || pedited->wavelet.Dirmethod)  keyFile.set_string  ("Wavelet", "DirMethod",  wavelet.Dirmethod);
-  //  if (!pedited || pedited->wavelet.tiles)  keyFile.set_integer  ("Wavelet", "Tiles",  wavelet.tiles);
     for(int i = 0; i < 9; i++)
     {
         std::stringstream ss;
-        ss << "Contrast" << i;
+        ss << "Contrast" << (i+1);
 	if (!pedited || pedited->wavelet.c[i])         keyFile.set_integer("Wavelet", ss.str(), wavelet.c[i]);
     }
     if (!pedited || pedited->wavelet.sup)  keyFile.set_integer  ("Wavelet", "ContExtra",  wavelet.sup);	
@@ -1566,9 +1569,13 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         Glib::ArrayHandle<int> thresh (wavelet.hueskin.value, 4, Glib::OWNERSHIP_NONE);
         keyFile.set_integer_list("Wavelet",   "Hueskin", thresh);
     }
+    
+	if (!pedited || pedited->wavelet.edgrad)  keyFile.set_integer  ("Wavelet", "Edgrad",  wavelet.edgrad);
+    if (!pedited || pedited->wavelet.edgval)  keyFile.set_integer  ("Wavelet", "Edgval",  wavelet.edgval);
+    if (!pedited || pedited->wavelet.edgthresh)  keyFile.set_integer  ("Wavelet", "ThrEdg",  wavelet.edgthresh);
+    if (!pedited || pedited->wavelet.strength)  keyFile.set_integer  ("Wavelet", "Strength",  wavelet.strength);
 
 	if (!pedited || pedited->wavelet.avoid)    keyFile.set_boolean ("Wavelet", "AvoidColorShift", wavelet.avoid);
-	
     if (!pedited || pedited->wavelet.rescon)  keyFile.set_integer  ("Wavelet", "ResidualcontShadow",  wavelet.rescon);
     if (!pedited || pedited->wavelet.resconH)  keyFile.set_integer  ("Wavelet", "ResidualcontHighlight",  wavelet.resconH);
     if (!pedited || pedited->wavelet.thr)  keyFile.set_integer  ("Wavelet", "ThresholdResidShadow",  wavelet.thr);
@@ -1579,7 +1586,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         Glib::ArrayHandle<int> thresh (wavelet.hueskin2.value, 4, Glib::OWNERSHIP_NONE);
         keyFile.set_integer_list("Wavelet",   "HueRange", thresh);
     }
-    if (!pedited || pedited->wavelet.unif)  keyFile.set_integer  ("Wavelet", "Contrast",  wavelet.unif);
+    if (!pedited || pedited->wavelet.contrast)  keyFile.set_integer  ("Wavelet", "Contrast",  wavelet.contrast);
 	
     
     // save directional pyramid wavelet parameters
@@ -2298,7 +2305,7 @@ if (keyFile.has_group ("Color Management")) {
     // load wavelet wavelet parameters
 if (keyFile.has_group ("Wavelet")) {
     if (keyFile.has_key ("Wavelet", "Enabled"))   { wavelet.enabled = keyFile.get_boolean ("Wavelet", "Enabled"); if (pedited) pedited->wavelet.enabled = true; }
-	
+	if (keyFile.has_key ("Wavelet", "Strength"))   { wavelet.strength = keyFile.get_integer ("Wavelet", "Strength"); if (pedited) pedited->wavelet.strength = true; }
     if (keyFile.has_key ("Wavelet", "Median")) {wavelet.median = keyFile.get_boolean ("Wavelet", "Median");if (pedited) pedited->wavelet.median = true;}
     if (keyFile.has_key ("Wavelet", "AvoidColorShift")) {wavelet.avoid = keyFile.get_boolean ("Wavelet", "AvoidColorShift");if (pedited) pedited->wavelet.avoid = true;}
     if (keyFile.has_key ("Wavelet", "LevMethod"))     {wavelet.Lmethod  = keyFile.get_string  ("Wavelet", "LevMethod"); if (pedited) pedited->wavelet.Lmethod = true; }
@@ -2307,10 +2314,9 @@ if (keyFile.has_group ("Wavelet")) {
     if (keyFile.has_key ("Wavelet", "CHromaMethod"))     {wavelet.CHmethod  = keyFile.get_string  ("Wavelet", "CHromaMethod"); if (pedited) pedited->wavelet.CHmethod = true; }
     if (keyFile.has_key ("Wavelet", "HSMethod"))     {wavelet.HSmethod  = keyFile.get_string  ("Wavelet", "HSMethod"); if (pedited) pedited->wavelet.HSmethod = true; }
     if (keyFile.has_key ("Wavelet", "DirMethod"))     {wavelet.Dirmethod  = keyFile.get_string  ("Wavelet", "DirMethod"); if (pedited) pedited->wavelet.Dirmethod = true; }
-    if (keyFile.has_key ("Wavelet", "Tiles"))     {wavelet.tiles  = keyFile.get_integer  ("Wavelet", "Tiles"); if (pedited) pedited->wavelet.tiles = true; }
     if (keyFile.has_key ("Wavelet", "ResidualcontShadow"))     {wavelet.rescon  = keyFile.get_integer  ("Wavelet", "ResidualcontShadow"); if (pedited) pedited->wavelet.rescon = true; }
-    if (keyFile.has_key ("Wavelet", "ResidualcontHighLight"))     {wavelet.resconH  = keyFile.get_integer  ("Wavelet", "ResidualcontHighLight"); if (pedited) pedited->wavelet.resconH = true; }
-    if (keyFile.has_key ("Wavelet", "Residualchroma"))     {wavelet.reschro  = keyFile.get_integer  ("Wavelet", "Residualchroma"); if (pedited) pedited->wavelet.reschro = true; }
+	if (keyFile.has_key ("Wavelet", "ResidualcontHighlight"))     {wavelet.resconH  = keyFile.get_integer  ("Wavelet", "ResidualcontHighlight"); if (pedited) pedited->wavelet.resconH = true; }   
+	if (keyFile.has_key ("Wavelet", "Residualchroma"))     {wavelet.reschro  = keyFile.get_integer  ("Wavelet", "Residualchroma"); if (pedited) pedited->wavelet.reschro = true; }
     if (keyFile.has_key ("Wavelet", "ContExtra"))     {wavelet.sup  = keyFile.get_integer  ("Wavelet", "ContExtra"); if (pedited) pedited->wavelet.sup = true; }
     if (keyFile.has_key ("Wavelet", "HueRangeResidual"))     {wavelet.sky  = keyFile.get_double  ("Wavelet", "HueRangeResidual"); if (pedited) pedited->wavelet.sky = true; }
     if (keyFile.has_key ("Wavelet", "MaxLev"))     {wavelet.thres  = keyFile.get_integer  ("Wavelet", "MaxLev"); if (pedited) pedited->wavelet.thres = true; }
@@ -2318,9 +2324,12 @@ if (keyFile.has_group ("Wavelet")) {
     if (keyFile.has_key ("Wavelet", "ThresholdShadow"))     {wavelet.threshold2  = keyFile.get_integer  ("Wavelet", "ThresholdShadow"); if (pedited) pedited->wavelet.threshold2 = true; }
     if (keyFile.has_key ("Wavelet", "ThresholdChroma"))     {wavelet.chroma  = keyFile.get_integer  ("Wavelet", "ThresholdChroma"); if (pedited) pedited->wavelet.chroma = true; }
     if (keyFile.has_key ("Wavelet", "ChromaLink"))     {wavelet.chro  = keyFile.get_integer  ("Wavelet", "ChromaLink"); if (pedited) pedited->wavelet.chro = true; }
-    if (keyFile.has_key ("Wavelet", "Contrast"))     {wavelet.unif  = keyFile.get_integer  ("Wavelet", "Contrast"); if (pedited) pedited->wavelet.unif = true; }
+    if (keyFile.has_key ("Wavelet", "Contrast"))     {wavelet.contrast  = keyFile.get_integer  ("Wavelet", "Contrast"); if (pedited) pedited->wavelet.contrast = true; }
+    if (keyFile.has_key ("Wavelet", "Edgrad"))     {wavelet.edgrad  = keyFile.get_integer  ("Wavelet", "Edgrad"); if (pedited) pedited->wavelet.edgrad = true; }
+    if (keyFile.has_key ("Wavelet", "Edgval"))     {wavelet.edgval  = keyFile.get_integer  ("Wavelet", "Edgval"); if (pedited) pedited->wavelet.edgval = true; }
+    if (keyFile.has_key ("Wavelet", "ThrEdg"))     {wavelet.edgthresh  = keyFile.get_integer  ("Wavelet", "ThrEdg"); if (pedited) pedited->wavelet.edgthresh = true; }
     if (keyFile.has_key ("Wavelet", "ThresholdResidShadow"))     {wavelet.thr  = keyFile.get_integer  ("Wavelet", "ThresholdResidShadow"); if (pedited) pedited->wavelet.thr = true; }
-    if (keyFile.has_key ("Wavelet", "ThresholdResidHighLight"))     {wavelet.thr  = keyFile.get_integer  ("Wavelet", "ThresholdResidHighLight"); if (pedited) pedited->wavelet.thrH = true; }
+	if (keyFile.has_key ("Wavelet", "ThresholdResidHighLight"))     {wavelet.thrH  = keyFile.get_integer  ("Wavelet", "ThresholdResidHighLight"); if (pedited) pedited->wavelet.thrH = true; }
     if (keyFile.has_key ("Wavelet", "ChromaCurve")) {wavelet.clvcurve = keyFile.get_double_list ("Wavelet", "ChromaCurve"); if (pedited) pedited->wavelet.clvcurve = true; }
     if (keyFile.has_key ("Wavelet", "OpacityCurveRG"))    { wavelet.opacityCurveRG = keyFile.get_double_list ("Wavelet", "OpacityCurveRG"); if (pedited) pedited->wavelet.opacityCurveRG = true; }
     if (keyFile.has_key ("Wavelet", "OpacityCurveBY"))    { wavelet.opacityCurveBY = keyFile.get_double_list ("Wavelet", "OpacityCurveBY"); if (pedited) pedited->wavelet.opacityCurveBY = true; }
@@ -2361,7 +2370,7 @@ if (keyFile.has_group ("Wavelet")) {
     for(int i = 0; i < 9; i ++)
     {
         std::stringstream ss;
-        ss << "Contrast" << i;
+        ss << "Contrast" << (i+1);
         if(keyFile.has_key ("Wavelet", ss.str())) {wavelet.c[i] = keyFile.get_integer ("Wavelet", ss.str()); if (pedited) pedited->wavelet.c[i]   = true;} 
     }
 }
@@ -2893,7 +2902,6 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& wavelet.CHmethod == other.wavelet.CHmethod
 		&& wavelet.HSmethod == other.wavelet.HSmethod
 		&& wavelet.Dirmethod == other.wavelet.Dirmethod
-		&& wavelet.tiles == other.wavelet.tiles
 		&& wavelet.rescon == other.wavelet.rescon
 		&& wavelet.resconH == other.wavelet.resconH
 		&& wavelet.reschro == other.wavelet.reschro
@@ -2903,7 +2911,10 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& wavelet.threshold == other.wavelet.threshold
 		&& wavelet.chroma == other.wavelet.chroma
 		&& wavelet.chro == other.wavelet.chro
-		&& wavelet.unif == other.wavelet.unif
+		&& wavelet.contrast == other.wavelet.contrast
+		&& wavelet.edgrad == other.wavelet.edgrad
+		&& wavelet.edgval == other.wavelet.edgval
+		&& wavelet.edgthresh == other.wavelet.edgthresh
 		&& wavelet.thr == other.wavelet.thr
 		&& wavelet.thrH == other.wavelet.thrH
 		&& wavelet.threshold == other.wavelet.threshold
@@ -2918,6 +2929,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& wavelet.opacityCurveBY == other.wavelet.opacityCurveBY
 		&& wavelet.clvcurve == other.wavelet.clvcurve
 		&& wavelet.skinprotect == other.wavelet.skinprotect
+		&& wavelet.strength == other.wavelet.strength
 		&& dirpyrequalizer == other.dirpyrequalizer
 	//	&& dirpyrequalizer.algo == other.dirpyrequalizer.algo
 		&& dirpyrequalizer.hueskin == other.dirpyrequalizer.hueskin

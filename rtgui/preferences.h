@@ -85,7 +85,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
 	Gtk::CheckButton* cbAutoMonProfile;
 	//Gtk::CheckButton* cbAutocielab;
 	Gtk::CheckButton* cbciecamfloat;
-
+	Gtk::CheckButton* cbdaubech;
 	Gtk::SpinButton*  hlThresh;
 	Gtk::SpinButton*  shThresh;
 
@@ -101,6 +101,11 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
     Gtk::ComboBoxText* dnautsimpl;
     Gtk::ComboBoxText* dnwavlev;
     Gtk::ComboBoxText* dnliss;
+
+    Gtk::Frame* waveletFrame;
+    Gtk::HBox* waveletTileSizeHBox;
+    Gtk::Label* waveletTileSizeLabel;
+    Gtk::ComboBoxText* waveletTileSizeCombo;
 
     Gtk::ComboBoxText* cprevdemo;
 

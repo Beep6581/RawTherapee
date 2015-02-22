@@ -307,14 +307,17 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_WAVELET_THRESHOLD2"), ADDSET_WA_THRESHOLD2, true);
     appendBehavList (mi, M("TP_WAVELET_CHRO"), ADDSET_WA_CHRO, true);
     appendBehavList (mi, M("TP_WAVELET_CHR"), ADDSET_WA_CHROMA, true);
-    appendBehavList (mi, M("TP_WAVELET_SKIN"), ADDSET_WA_SKINPROTECT, true);	
+    appendBehavList (mi, M("TP_WAVELET_SKIN"), ADDSET_WA_SKINPROTECT, true);
+    appendBehavList (mi, M("TP_WAVELET_EDRAD"), ADDSET_WA_EDGRAD, true);
+    appendBehavList (mi, M("TP_WAVELET_EDVAL"), ADDSET_WA_EDGVAL, true);
     appendBehavList (mi, M("TP_WAVELET_RESCON"), ADDSET_WA_RESCON, true);
     appendBehavList (mi, M("TP_WAVELET_THR"), ADDSET_WA_THRR, true);
     appendBehavList (mi, M("TP_WAVELET_RESCONH"), ADDSET_WA_RESCONH, true);
     appendBehavList (mi, M("TP_WAVELET_THRH"), ADDSET_WA_THRRH, true);
     appendBehavList (mi, M("TP_WAVELET_RESCHRO"), ADDSET_WA_RESCHRO, true);
     appendBehavList (mi, M("TP_WAVELET_SKY"), ADDSET_WA_SKYPROTECT, true);
-    appendBehavList (mi, M("TP_WAVELET_CONTRA"), ADDSET_WA_UNIF, true);
+    appendBehavList (mi, M("TP_WAVELET_CONTRA"), ADDSET_WA_CONTRAST, true);
+    appendBehavList (mi, M("TP_WAVELET_STRENGTH"), ADDSET_WA_STRENGTH, true);
 	
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_PREPROCESS_LABEL"));
@@ -563,13 +566,11 @@ Gtk::Widget* Preferences::getPerformancePanel () {
     mainContainer->pack_start(*finspect, Gtk::PACK_SHRINK, 4);
 
     Gtk::Frame* fdenoise = Gtk::manage( new Gtk::Frame (M("PREFERENCES_NOISE")) );
-    Gtk::VBox* vbdenoise = Gtk::manage( new Gtk::VBox () );
+    Gtk::VBox* vbdenoise = Gtk::manage( new Gtk::VBox (Gtk::PACK_SHRINK, 4) );
     vbdenoise->set_border_width (4);
 
     Gtk::Label* lreloadneeded2 = Gtk::manage (new Gtk::Label (M("PREFERENCES_IMG_RELOAD_NEEDED"), Gtk::ALIGN_LEFT));
-    Gtk::HBox* threadLimitHB = Gtk::manage( new Gtk::HBox () );
-    threadLimitHB->set_border_width(4);
-    threadLimitHB->set_spacing(4);
+    Gtk::HBox* threadLimitHB = Gtk::manage (new Gtk::HBox (Gtk::PACK_SHRINK, 4));
     threadLimitHB->set_tooltip_text(M("PREFERENCES_RGBDTL_TOOLTIP"));
     Gtk::Label* RGBDTLl = Gtk::manage( new Gtk::Label (M("PREFERENCES_RGBDTL_LABEL") + ":", Gtk::ALIGN_LEFT));
     rgbDenoiseTreadLimitSB = Gtk::manage( new Gtk::SpinButton () );
@@ -581,8 +582,8 @@ Gtk::Widget* Preferences::getPerformancePanel () {
     maxThreadNumber = omp_get_max_threads();
 #endif
     rgbDenoiseTreadLimitSB->set_range (0, maxThreadNumber);
-    threadLimitHB->pack_start (*RGBDTLl, Gtk::PACK_SHRINK, 0);
-    threadLimitHB->pack_end (*rgbDenoiseTreadLimitSB, Gtk::PACK_SHRINK, 0);
+    threadLimitHB->pack_start (*RGBDTLl, Gtk::PACK_SHRINK, 2);
+    threadLimitHB->pack_end (*rgbDenoiseTreadLimitSB, Gtk::PACK_SHRINK, 2);
 
     Gtk::Label* dnlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_LEVDN")+":", Gtk::ALIGN_LEFT));
     Gtk::Label* dnautlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_LEVAUTDN")+":", Gtk::ALIGN_LEFT));
@@ -633,9 +634,14 @@ Gtk::Widget* Preferences::getPerformancePanel () {
     colon->attach (*dnwavlab, 0, 1, 5, 6, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colon->attach (*dnwavlev, 1, 2, 5, 6, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
 
-    vbdenoise->pack_start (*lreloadneeded2, Gtk::PACK_SHRINK, 4);
-    vbdenoise->pack_start (*colon, Gtk::PACK_SHRINK, 4);
-    vbdenoise->pack_start(*threadLimitHB, Gtk::PACK_SHRINK, 4);
+    vbdenoise->pack_start (*lreloadneeded2, Gtk::PACK_SHRINK);
+    vbdenoise->pack_start (*colon, Gtk::PACK_SHRINK);
+    vbdenoise->pack_start(*threadLimitHB, Gtk::PACK_SHRINK);
+    // <--- To be hard-coded and removed once tested
+    cbdaubech = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_DAUB_LABEL"), Gtk::ALIGN_LEFT));
+    cbdaubech->set_tooltip_markup (M("PREFERENCES_DAUB_TOOLTIP"));
+    vbdenoise->pack_start (*cbdaubech, Gtk::PACK_SHRINK);
+    // --->
     fdenoise->add (*vbdenoise);
     mainContainer->pack_start (*fdenoise, Gtk::PACK_SHRINK, 4);
 
@@ -1354,6 +1360,7 @@ void Preferences::storePreferences () {
     moptions.rtSettings.leveldnaut   = dnaut->get_active_row_number ();
     moptions.rtSettings.nrwavlevel   = dnwavlev->get_active_row_number ();
     moptions.rtSettings.leveldnautsimpl   = dnautsimpl->get_active_row_number ();
+    moptions.rtSettings.daubech 			= cbdaubech->get_active ();
 
     moptions.prevdemo = (prevdemo_t)cprevdemo->get_active_row_number ();
 
@@ -1465,6 +1472,7 @@ void Preferences::fillPreferences () {
     dnautsimpl->set_active (moptions.rtSettings.leveldnautsimpl);
     dnwavlev->set_active (moptions.rtSettings.nrwavlevel);
     cprevdemo->set_active (moptions.prevdemo);
+    cbdaubech->set_active (moptions.rtSettings.daubech);
 	
 //	cbAutocielab->set_active (moptions.rtSettings.autocielab);
 	cbciecamfloat->set_active (moptions.rtSettings.ciecamfloat);
