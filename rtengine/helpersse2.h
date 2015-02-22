@@ -9,11 +9,7 @@
 #define INLINE inline
 #endif
 
-#if defined( WIN32 ) && defined(__x86_64__)
-    #include <intrin.h>
-#else
-    #include <emmintrin.h>
-#endif
+#include <x86intrin.h>
 
 #include <stdint.h>
 
@@ -40,7 +36,33 @@ typedef __m128i vint2;
 	#define LVFU(x) _mm_loadu_ps(&x)
 	#define STVF(x,y) _mm_store_ps(&x,y)
 #endif
+
+// Load 8 floats from a and combine a[0],a[2],a[4] and a[6] into a vector of 4 floats
 #define LC2VFU(a) _mm_shuffle_ps( LVFU(a),  _mm_loadu_ps(  (&a) + 4 ), _MM_SHUFFLE( 2,0,2,0 ) )
+
+// Store a vector of 4 floats in a[0],a[2],a[4] and a[6]
+#if defined(__x86_64__) && defined(__SSE4_1__)
+// SSE4.1 => use _mm_blend_ps instead of _mm_set_epi32 and vself
+	#define STC2VFU(a,v) {\
+							__m128 TST1V = _mm_loadu_ps(&a);\
+							__m128 TST2V = _mm_shuffle_ps(v,v,_MM_SHUFFLE( 1,1,0,0 ));\
+							_mm_storeu_ps(&a, _mm_blend_ps(TST1V,TST2V,5));\
+							TST1V = _mm_loadu_ps((&a)+4);\
+							TST2V = _mm_shuffle_ps(v,v,_MM_SHUFFLE( 3,3,2,2 ));\
+							_mm_storeu_ps((&a)+4, _mm_blend_ps(TST1V,TST2V,5));\
+						}
+#else
+	#define STC2VFU(a,v) {\
+							__m128 TST1V = _mm_loadu_ps(&a);\
+							__m128 TST2V = _mm_shuffle_ps(v,v,_MM_SHUFFLE( 1,1,0,0 ));\
+							vmask cmask = _mm_set_epi32(0xffffffff,0,0xffffffff,0);\
+							_mm_storeu_ps(&a, vself(cmask,TST1V,TST2V));\
+							TST1V = _mm_loadu_ps((&a)+4);\
+							TST2V = _mm_shuffle_ps(v,v,_MM_SHUFFLE( 3,3,2,2 ));\
+							_mm_storeu_ps((&a)+4, vself(cmask,TST1V,TST2V));\
+						}
+#endif
+
 #define ZEROV _mm_setzero_ps()
 
 static INLINE vint vrint_vi_vd(vdouble vd) { return _mm_cvtpd_epi32(vd); }

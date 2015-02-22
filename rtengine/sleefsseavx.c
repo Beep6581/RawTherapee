@@ -901,17 +901,25 @@ static INLINE vdouble xlog1p(vdouble a) {
 typedef struct {
   vfloat x, y;
 } vfloat2;
-#if defined( __FMA__ ) && defined( __x86_64__ ) && defined(WIN32)  // experimental
-static INLINE vfloat vmlaf(vfloat x, vfloat y, vfloat z) { return _mm_fmadd_ps(x,y,z); }
+#if defined( __FMA__ ) && defined( __x86_64__ )
+	static INLINE vfloat vmlaf(vfloat x, vfloat y, vfloat z) { return _mm_fmadd_ps(x,y,z); }
 #else
-static INLINE vfloat vmlaf(vfloat x, vfloat y, vfloat z) { return vaddf(vmulf(x, y), z); }
+	static INLINE vfloat vmlaf(vfloat x, vfloat y, vfloat z) { return vaddf(vmulf(x, y), z); }
 #endif
 static INLINE vfloat vabsf(vfloat f) { return (vfloat)vandnotm((vmask)vcast_vf_f(-0.0f), (vmask)f); }
 static INLINE vfloat vnegf(vfloat f) { return (vfloat)vxorm((vmask)f, (vmask)vcast_vf_f(-0.0f)); }
 
-static INLINE vfloat vself(vmask mask, vfloat x, vfloat y) {
-  return (vfloat)vorm(vandm(mask, (vmask)x), vandnotm(mask, (vmask)y));
-}
+#if defined( __SSE4_1__ ) && defined( __x86_64__ )
+	// only one instruction when using SSE4.1
+	static INLINE vfloat vself(vmask mask, vfloat x, vfloat y) {
+		return _mm_blendv_ps(y,x,(vfloat)mask);
+	}
+#else
+	// three instructions when using SSE2
+	static INLINE vfloat vself(vmask mask, vfloat x, vfloat y) {
+		return (vfloat)vorm(vandm(mask, (vmask)x), vandnotm(mask, (vmask)y));
+	}
+#endif
 
 static INLINE vint2 vseli2_lt(vfloat f0, vfloat f1, vint2 x, vint2 y) {
   vint2 m2 = vcast_vi2_vm(vmaskf_lt(f0, f1));
