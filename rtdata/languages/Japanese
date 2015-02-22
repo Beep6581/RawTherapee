@@ -1744,4 +1744,22 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!HISTORY_MSG_338;Wavelet Edge Radius
+!HISTORY_MSG_339;Wavelet Edge Value
+!HISTORY_MSG_340;Wavelet Strength
+!PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
+!PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
+!PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
+!TP_WAVELET_9;Level 9
+!TP_WAVELET_APPLYTO;Apply To
+!TP_WAVELET_EDGE;Edge Sharpness (Luminance)
+!TP_WAVELET_EDGTHRESH;Threshold
+!TP_WAVELET_EDRAD;Radius
+!TP_WAVELET_EDVAL;Value
+!TP_WAVELET_LEVELS;Wavelet levels
+!TP_WAVELET_LEVELS_TOOLTIP;Choose the number of detail levels the image is to be decomposed into. More levels require more RAM and require a longer processing time.
+!TP_WAVELET_PREVIEWLEVELS;Preview
+!TP_WAVELET_SETTINGS;Wavelet Settings
+!TP_WAVELET_STRENGTH;Strength
+!TP_WAVELET_TILESIZE;Tile size
