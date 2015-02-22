@@ -24,6 +24,7 @@
 #24 2014-11-18 firefly
 #25 2015-01-05 firefly
 #26 2015-02-17 firefly
+#27 2015-02-21 firefly
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -577,6 +578,9 @@ HISTORY_MSG_334;ウェーブレット　色度
 HISTORY_MSG_335;ウェーブレット　ハイライト　残差画像
 HISTORY_MSG_336;ウェーブレット　ハイライトのしきい値
 HISTORY_MSG_337;ウェーブレット　色相の範囲
+HISTORY_MSG_338;ウェーブレット　エッジ半径
+HISTORY_MSG_339;ウェーブレット　エッジの値
+HISTORY_MSG_340;ウェーブレット　強さ
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;スナップショット
@@ -822,6 +826,8 @@ PREFERENCES_DARKFRAMETEMPLATES;テンプレート
 PREFERENCES_DARKFRAME;ダークフレーム
 PREFERENCES_DATEFORMATHINT;<i>次の書式を使用することができます:</i>\n<b>%y</b><i> : 年</i>\n<b>%m</b><i> : 月</i>\n<b>%d</b><i> : 日</i>\n<i>\n例として, ハンガリアン記法の日付:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DATEFORMAT;日付の形式
+PREFERENCES_DAUB_LABEL;ドビッシー関数のタイプ　D4の代わりにD6を使う
+PREFERENCES_DAUB_TOOLTIP;ノイズ低減とウェーブレットのレベルツールはマザーウェーブレットにドビッシーを使っています。このタイプでD4の代わりにD6を選択すると、直交系であるドビッシーの係数が増えるので、恐らくスケールの小さいレベルは質が向上するでしょう。タイプを変えても処理時間やメモリー使用量に影響はありません。
 PREFERENCES_DEFAULTLANG;デフォルトの言語
 PREFERENCES_DEFAULTTHEME;デフォルトテーマ
 PREFERENCES_DIRDARKFRAMES;ダークフレーム・ディレクトリ
@@ -912,6 +918,7 @@ PREFERENCES_PARSEDEXTDELHINT;選択した拡張子をリストから削除しま
 PREFERENCES_PARSEDEXT;拡張子
 PREFERENCES_PREVDEMO;プレビューのデモザイク方式
 PREFERENCES_PREVDEMO_FAST;Fast
+PREFERENCES_PREVDEMO_LABEL;プレビューのズームレベルが100％以下の場合に使うデモザイクアルゴリズム：
 PREFERENCES_PREVDEMO_SIDECAR;PP3の記述通り
 PREFERENCES_PROFILEHANDLING;処理プロファイルの取扱い
 PREFERENCES_PROFILELOADPR;処理プロファイル読み込みの優先
@@ -930,6 +937,7 @@ PREFERENCES_SET;設定
 PREFERENCES_SHOWBASICEXIF;基本Exif情報を表示
 PREFERENCES_SHOWDATETIME;日付表示
 PREFERENCES_SHOWEXPOSURECOMPENSATION;露光補正追加
+PREFERENCES_SHOWFILMSTRIPTOOLBAR;画像スライドのツールバーを表示する
 PREFERENCES_SHOWPROFILESELECTOR;プロファイル・セレクタの表示
 PREFERENCES_SHTHRESHOLD;シャドウ・クリッピング領域のしきい値
 PREFERENCES_SIMPLAUT;ツールのモード
@@ -1613,7 +1621,9 @@ TP_WAVELET_5;レベル 5
 TP_WAVELET_6;レベル 6
 TP_WAVELET_7;レベル 7
 TP_WAVELET_8;レベル 8
+TP_WAVELET_9;レベル 9
 TP_WAVELET_ALL;全てのレベル－方向
+TP_WAVELET_APPLYTO;適用
 TP_WAVELET_AVOID;色ずれの回避
 TP_WAVELET_CH1;全ての色度
 TP_WAVELET_CH2;明清色 - 純色
@@ -1638,6 +1648,10 @@ TP_WAVELET_DISP;ウェーブレットのレベルを表示
 TP_WAVELET_DONE;方向: 垂直
 TP_WAVELET_DTHR;方向: 対角線
 TP_WAVELET_DTWO;方向: 水平
+TP_WAVELET_EDGE;エッジのシャープ化（輝度）
+TP_WAVELET_EDGTHRESH;しきい値
+TP_WAVELET_EDRAD;半径
+TP_WAVELET_EDVAL;値
 TP_WAVELET_FINEST;最も細かい
 TP_WAVELET_HIGHLIGHT;ハイライトの輝度範囲 (0～100)
 TP_WAVELET_HIGHSHA;シャドウ/ハイライト
@@ -1651,6 +1665,8 @@ TP_WAVELET_INF;同等、或いはそれ以下のレベル
 TP_WAVELET_LABEL;ウェーブレットのレベル
 TP_WAVELET_LARGEST;最も粗い
 TP_WAVELET_LEVCH;色度
+TP_WAVELET_LEVELS;ウェーブレットのレベル
+TP_WAVELET_LEVELS_TOOLTIP;画像を幾つの詳細レベルに分割するか選択します。分割数が増えればメモリー使用量が増え、処理時間も長くなります。
 TP_WAVELET_LEVF;コントラスト
 TP_WAVELET_LEVLABEL;プレビューで表示可能な最大レベル=%1
 TP_WAVELET_LOWLIGHT;シャドウの輝度範囲 (0～100)
@@ -1661,15 +1677,18 @@ TP_WAVELET_NEUTRAL;ニュートラル
 TP_WAVELET_ONE;一つのレベル
 TP_WAVELET_OPACITY;ブルー/イエローの不透明度
 TP_WAVELET_PASTEL;明清色 色度
+TP_WAVELET_PREVIEWLEVELS;プレビュー
 TP_WAVELET_RESCHRO;色度
 TP_WAVELET_RESCONH;ハイライト
 TP_WAVELET_RESCON;シャドウ
 TP_WAVELET_RESID;残差画像
 TP_WAVELET_SAT;純色 色度
+TP_WAVELET_SETTINGS;ウェーブレットの設定
 TP_WAVELET_SKIN;色相-トーン (肌色) の目標/保護
 TP_WAVELET_SKIN_TOOLTIP;－100にすると肌色のトーンだけが調整の対象になります\n0にすると全てのカラートーンが調整されます\n＋100にすると肌色のトーンは保護され、他のカラートーンが調整されます
 TP_WAVELET_SKY;色相-トーンの目標/保護（デフォルト：青空）
 TP_WAVELET_SKY_TOOLTIP;色相範囲の内外で色度を上げ下げします\n細部のコントラストや色度の強さに起因する青空のアーティファクトを回避します
+TP_WAVELET_STRENGTH;強さ
 TP_WAVELET_SUPE;エキストラ
 TP_WAVELET_SUP;上のレベルと残差画像
 TP_WAVELET_THRESHOLD2;シャドウ調整をするレベルを指定(最も細かい～最も粗い)
@@ -1682,6 +1701,7 @@ TP_WAVELET_THRH;ハイライトのしきい値
 TP_WAVELET_THR;シャドウのしきい値
 TP_WAVELET_TILESBIG;大きいタイル
 TP_WAVELET_TILESFULL;画像全体
+TP_WAVELET_TILESIZE;タイルのサイズ
 TP_WAVELET_TILESLIT;小さいタイル
 TP_WAVELET_TILES;タイルサイズ (* 128)
 TP_WAVELET_TILES_TOOLTIP;16Mの画像で、画像全体の調整を選択し、レベル数を10に設定した場合、必要なメモリー量は2Gになります\n24Mの画像でレベル10の場合は2.5G\n35Mの画像でレベル10の場合は3.3G\nメモリー容量の不足を感じる場合はタイルサイズでの調整を選択します
@@ -1740,26 +1760,3 @@ ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる\nショートカット: <b>f</b>
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_338;Wavelet Edge Radius
-!HISTORY_MSG_339;Wavelet Edge Value
-!HISTORY_MSG_340;Wavelet Strength
-!PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
-!PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
-!PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
-!PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
-!TP_WAVELET_9;Level 9
-!TP_WAVELET_APPLYTO;Apply To
-!TP_WAVELET_EDGE;Edge Sharpness (Luminance)
-!TP_WAVELET_EDGTHRESH;Threshold
-!TP_WAVELET_EDRAD;Radius
-!TP_WAVELET_EDVAL;Value
-!TP_WAVELET_LEVELS;Wavelet levels
-!TP_WAVELET_LEVELS_TOOLTIP;Choose the number of detail levels the image is to be decomposed into. More levels require more RAM and require a longer processing time.
-!TP_WAVELET_PREVIEWLEVELS;Preview
-!TP_WAVELET_SETTINGS;Wavelet Settings
-!TP_WAVELET_STRENGTH;Strength
-!TP_WAVELET_TILESIZE;Tile size
