@@ -44,6 +44,11 @@ enum ActionCode {
     AC_INVALID=100,    // invalid state
 };
 enum ByteOrder {INTEL=0x4949, MOTOROLA=0x4D4D};
+#if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
+const enum ByteOrder HOSTORDER = INTEL;
+#else
+const enum ByteOrder HOSTORDER = MOTOROLA;
+#endif
 enum MNKind {NOMK, IFD, HEADERIFD, NIKON3, OLYMPUS2, FUJI,TABLESUBDIR};
 
 bool extractLensInfo(std::string &fullname,double &minFocal, double &maxFocal, double &maxApertureAtMinFocal, double &maxApertureAtMaxFocal);
@@ -193,7 +198,7 @@ class Tag {
     unsigned char*       getValue       () const { return value; }
     signed char*         getSignedValue () const { return reinterpret_cast<signed char*>(value); }
     const TagAttrib*     getAttrib      () const { return attrib; }
-    inline ByteOrder     getOrder       () const { return parent ? parent->getOrder() : INTEL; }
+    inline ByteOrder     getOrder       () const { return parent ? parent->getOrder() : HOSTORDER; }
     inline TagDirectory* getParent      () const { return parent; }
     int                  getValueSize   () const { return valuesize; }
     bool                 getOwnMemory   () const { return allocOwnMemory; }

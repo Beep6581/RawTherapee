@@ -44,7 +44,7 @@ Interpreter stdInterpreter;
 #define TAG_SUBFILETYPE 0x00fe
 
 TagDirectory::TagDirectory () 
-  : attribs(ifdAttribs), order(INTEL), parent(NULL) {}
+  : attribs(ifdAttribs), order(HOSTORDER), parent(NULL) {}
 
 TagDirectory::TagDirectory (TagDirectory* p, const TagAttrib* ta, ByteOrder border) 
     : attribs(ta), order(border), parent(p) {}
@@ -2244,7 +2244,7 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
 
 // write tiff header
     int offs = 0;
-    ByteOrder order = INTEL;
+    ByteOrder order = HOSTORDER;
     if (root)
         order = root->getOrder ();
     sset2 ((unsigned short)order, buffer+offs, order); offs += 2;
@@ -2255,7 +2255,7 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
     if (root)
     cl = (const_cast<TagDirectory*>(root))->clone (NULL);
     else
-        cl = new TagDirectory (NULL, ifdAttribs, INTEL);
+        cl = new TagDirectory (NULL, ifdAttribs, HOSTORDER);
 
 // add tiff strip data
     int rps = 8;
