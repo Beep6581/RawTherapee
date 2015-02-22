@@ -156,7 +156,7 @@ namespace rtengine {
         igammatab_26_11(65536,0);
         gammatab_26_11(65536,0);
         igammatab_24_17(65536,0);
-        gammatab_24_17a(65536,0);
+        gammatab_24_17a(65536,LUT_CLIP_ABOVE | LUT_CLIP_BELOW);
         gammatab_13_2(65536,0);
 
         for (int i=0; i<65536; i++)
