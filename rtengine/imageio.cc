@@ -802,11 +802,13 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps) {
         getScanline (i, row, bps);
         if (bps==16) {
             // convert to network byte order
+#if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
             for (int j=0; j<width*6; j+=2) {
                 unsigned char tmp = row[j];
                 row[j] = row[j+1];
                 row[j+1] = tmp;
             }
+#endif
         }
         png_write_row (png, (png_byte*)row);
         
@@ -1053,7 +1055,11 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
         if (size>0 && size<165530)
             fwrite (buffer, size, 1, file);
 
+#if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
         bool needsReverse = bps==16 && exifRoot->getOrder()==rtexif::MOTOROLA;
+#else
+        bool needsReverse = bps==16 && exifRoot->getOrder()==rtexif::INTEL;
+#endif
 
         for (int i=0; i<height; i++) {
             getScanline (i, linebuffer, bps);
