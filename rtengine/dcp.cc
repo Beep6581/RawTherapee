@@ -304,6 +304,35 @@ void DCPProfile::MakeXYZCAM(ColorTemp &wb, double pre_mul[3], double camWbMatrix
         }
     }
 
+    // Colormatrix
+    double mCol[3][3];
+    if (hasCol1 && hasCol2) {
+        // interpolate
+        if (mix >= 1.0) {
+            memcpy(mCol, mColorMatrix1, sizeof(mCol));
+        } else if (mix <= 0.0) {
+            memcpy(mCol, mColorMatrix2, sizeof(mCol));
+        } else {
+            Mix3x3(mColorMatrix1, mix, mColorMatrix2, 1.0 - mix, mCol);
+        }
+    } else if (hasCol1) {
+        memcpy(mCol, mColorMatrix1, sizeof(mCol));
+    } else {
+        memcpy(mCol, mColorMatrix2, sizeof(mCol));
+    }
+
+    /*
+      The exact position of the white XY coordinate affects the result very much, thus
+      it's important that the result is very similar or the same as DNG reference code.
+      Especially important is it that the raw-embedded "AsShot" multipliers is translated
+      to the same white XY coordinate as the DNG reference code, or else third party DCPs
+      will show incorrect color.
+    */
+
+    double white_xyz[3];
+    XYtoXYZ(white_xy, white_xyz);
+
+    double cam_xyz[3][3];
     if (hasFwd1 || hasFwd2) {
         // always prefer ForwardMatrix ahead of ColorMatrix
         double mFwd[3][3];
@@ -321,32 +350,54 @@ void DCPProfile::MakeXYZCAM(ColorTemp &wb, double pre_mul[3], double camWbMatrix
         } else {
             memcpy(mFwd, mForwardMatrix2, sizeof(mFwd));
         }
-        /*
-          The exact position of the white XY coordinate affects the result very much, thus
-          it's important that the result is very similar or the same as DNG reference code.
-          Especially important is it that the raw-embedded "AsShot" multipliers is translated
-          to the same white XY coordinate as the DNG reference code, or else third party DCPs
-          will show incorrect color.
-        */
-        ConvertDNGForwardMatrix2XYZCAM(mFwd,mXYZCAM,white_xy);
+        // adapted from dng_color_spec::SetWhiteXY
+        double CameraWhite[3];
+        Multiply3x3_v3(mCol, white_xyz, CameraWhite);
+
+        double whiteDiag[3][3] = {{CameraWhite[0], 0, 0}, {0, CameraWhite[1], 0}, {0, 0, CameraWhite[2]}};
+        double whiteDiagInv[3][3];
+        Invert3x3(whiteDiag, whiteDiagInv);
+
+        double xyz_cam[3][3];
+        Multiply3x3(mFwd, whiteDiagInv, xyz_cam);
+        Invert3x3(xyz_cam, cam_xyz);
     } else {
-        // Colormatrix
-        double mCol[3][3];
-        if (hasCol1 && hasCol2) {
-            // interpolate
-            if (mix >= 1.0) {
-                memcpy(mCol, mColorMatrix1, sizeof(mCol));
-            } else if (mix <= 0.0) {
-                memcpy(mCol, mColorMatrix2, sizeof(mCol));
-            } else {
-                Mix3x3(mColorMatrix1, mix, mColorMatrix2, 1.0 - mix, mCol);
-            }
-        } else if (hasCol1) {
-            memcpy(mCol, mColorMatrix1, sizeof(mCol));
-        } else {
-            memcpy(mCol, mColorMatrix2, sizeof(mCol));
+        double whiteMatrix[3][3];
+        const double white_d50[3] = { 0.3457, 0.3585, 0.2958 }; // D50
+        MapWhiteMatrix(white_d50, white_xyz, whiteMatrix);
+        Multiply3x3(mCol, whiteMatrix, cam_xyz);
+    }
+
+    // convert cam_xyz (XYZ D50 to CameraRGB, "PCS to Camera" in DNG terminology) to mXYZCAM
+
+    {
+        // This block can probably be simplified, seems unnecessary to pass through the sRGB matrix
+        // (probably dcraw legacy), it does no harm though as we don't clip anything.
+        int i,j,k;
+
+        // Multiply out XYZ colorspace
+        double cam_rgb[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+        for (i=0; i < 3; i++)
+            for (j=0; j < 3; j++)
+                for (k=0; k < 3; k++)
+                    cam_rgb[i][j] += cam_xyz[i][k] * xyz_sRGB[k][j];
+
+        // Normalize cam_rgb so that:  cam_rgb * (1,1,1) is (1,1,1,1)
+        double num;
+        for (i=0; i<3; i++) {
+            for (num=j=0; j<3; j++) num += cam_rgb[i][j];
+            for (j=0; j<3; j++) cam_rgb[i][j] /= num;
         }
-        ConvertDNGMatrix2XYZCAM(mCol,mXYZCAM);
+
+        double rgb_cam[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+        RawImageSource::inverse33 (cam_rgb, rgb_cam);
+
+        for (i=0; i<3; i++)
+            for (j=0; j<3; j++) mXYZCAM[i][j]=0;
+        for (i=0; i<3; i++)
+            for (j=0; j<3; j++)
+                for (k=0; k<3; k++)
+                    mXYZCAM[i][j] += xyz_sRGB[i][k] * rgb_cam[k][j];
     }
 }
 
@@ -608,43 +659,6 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
 
 DCPProfile::~DCPProfile() {
     delete[] aDeltas1; delete[] aDeltas2;
-}
-
-// Convert DNG color matrix to xyz_cam compatible matrix
-void DCPProfile::ConvertDNGMatrix2XYZCAM(const double (*mColorMatrix)[3], double (*mXYZCAM)[3]) const {
-    int i,j,k;
-
-    double cam_xyz[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-    for (i=0; i<3; i++)
-        for (j=0; j<3; j++)
-            for (k=0; k<3; k++)
-                cam_xyz[i][j] += mColorMatrix[k][j] * (i==k);
-
-
-    // Multiply out XYZ colorspace 
-    double cam_rgb[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-    for (i=0; i < 3; i++)	
-        for (j=0; j < 3; j++)
-            for (k=0; k < 3; k++) 
-                cam_rgb[i][j] += cam_xyz[i][k] * xyz_sRGB[k][j];
-
-    // Normalize cam_rgb so that:  cam_rgb * (1,1,1) is (1,1,1,1)
-    double num;
-    for (i=0; i<3; i++) {		
-        for (num=j=0; j<3; j++) num += cam_rgb[i][j];
-        for (j=0; j<3; j++) cam_rgb[i][j] /= num;
-    }
-
-    double rgb_cam[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-    RawImageSource::inverse33 (cam_rgb, rgb_cam);
-
-    for (i=0; i<3; i++)
-        for (j=0; j<3; j++) mXYZCAM[i][j]=0;
-
-    for (i=0; i<3; i++)
-        for (j=0; j<3; j++)
-            for (k=0; k<3; k++)
-                mXYZCAM[i][j] += xyz_sRGB[i][k] * rgb_cam[k][j];
 }
 
 void DCPProfile::HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, const float hs, const float ss, const float vs, float &h, float &s, float &v) const {
@@ -976,43 +990,11 @@ void DCPProfile::dngref_NeutralToXY(double neutral[3], int preferredIlluminant, 
     XY[1] = lastXY[1];
 }
 
-// Convert DNG forward matrix to xyz_cam compatible matrix
-void DCPProfile::ConvertDNGForwardMatrix2XYZCAM(const double (*mForwardMatrix)[3], double (*mXYZCAM)[3], const double whiteXY[2]) const {
-
-    // Convert ForwardMatrix (white-balanced CameraRGB -> XYZ D50 matrix)
-    // into a ColorMatrix (XYZ -> CameraRGB)
-
-    double white_xyz[3];
-    XYtoXYZ(whiteXY, white_xyz);
-
-    const double white_d50[3] = { 0.3457, 0.3585, 0.2958 }; // D50
-
-    // Cancel out the white balance to get a CameraRGB -> XYZ D50 matrix (CameraToPCS in dng terminology)
-    double whiteDiag[3][3] = {{white_xyz[0], 0, 0}, {0, white_xyz[1], 0}, {0, 0, white_xyz[2]}};
-    double whiteDiagInv[3][3];
-    Invert3x3(whiteDiag, whiteDiagInv);
-    double rgb2xyzD50[3][3];
-    Multiply3x3(mForwardMatrix, whiteDiagInv, rgb2xyzD50);
-
-    // Through chromatic adaptation convert XYZ D50 to XYZ camera white
-    double whiteMatrix[3][3];
-    MapWhiteMatrix(white_d50, white_xyz, whiteMatrix);
-    double rgb2xyz[3][3];
-    Multiply3x3(rgb2xyzD50, whiteMatrix, rgb2xyz);
-
-    // Now we have CameraRGB -> XYZ, invert so we get XYZ -> CameraRGB (ColorMatrix format)
-    double dngColorMatrix[3][3];
-    Invert3x3(rgb2xyz, dngColorMatrix);
-
-    // now we can run the ordinary ColorMatrix conversion
-    ConvertDNGMatrix2XYZCAM(dngColorMatrix, mXYZCAM);
-}
-
 void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], float rawWhiteFac, bool useToneCurve) const {
 
     TMatrix mWork = iccStore->workingSpaceInverseMatrix (workingSpace);
 
-    double mXYZCAM[3][3];
+    double mXYZCAM[3][3]; // Camera RGB to XYZ D50 matrix
     MakeXYZCAM(wb, pre_mul, camWbMatrix, preferredIlluminant, mXYZCAM);
     HSBModify *deleteTableHandle;
     const HSBModify *deltaBase = MakeHueSatMap(wb, preferredIlluminant, &deleteTableHandle);

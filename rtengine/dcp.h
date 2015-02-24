@@ -64,8 +64,6 @@ namespace rtengine {
         void dngref_NeutralToXY(double neutral[3], int preferredIlluminant, double XY[2]) const;
         void MakeXYZCAM(ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], int preferredIlluminant, double (*mXYZCAM)[3]) const;
         const HSBModify* MakeHueSatMap(ColorTemp &wb, int preferredIlluminant, HSBModify **deleteHandle) const;
-        void ConvertDNGMatrix2XYZCAM(const double (*mColorMatrix)[3], double (*mXYZCAM)[3]) const;
-        void ConvertDNGForwardMatrix2XYZCAM(const double (*mForwardMatrix)[3], double (*mXYZCAM)[3], const double whiteXY[2]) const;
         void HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, const float hs, const float ss, const float vs, float &h, float &s, float &v) const;
 
     public:
