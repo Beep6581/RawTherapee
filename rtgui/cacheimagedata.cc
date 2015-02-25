@@ -57,7 +57,6 @@ int CacheImageData::load (const Glib::ustring& fname) {
                 if (keyFile.has_key ("DateTime", "Hour"))   hour    = keyFile.get_integer ("DateTime", "Hour");
                 if (keyFile.has_key ("DateTime", "Min"))    min     = keyFile.get_integer ("DateTime", "Min");
                 if (keyFile.has_key ("DateTime", "Sec"))    sec     = keyFile.get_integer ("DateTime", "Sec");
-                if (keyFile.has_key ("DateTime", "MSec"))   msec    = keyFile.get_integer ("DateTime", "MSec");
             }
 
             exifValid = false;
@@ -146,7 +145,6 @@ int CacheImageData::save (const Glib::ustring& fname) {
         keyFile.set_integer ("DateTime", "Hour", hour);
         keyFile.set_integer ("DateTime", "Min", min);
         keyFile.set_integer ("DateTime", "Sec", sec);
-        keyFile.set_integer ("DateTime", "MSec", msec);
     }
 
     keyFile.set_boolean  ("ExifInfo", "Valid", exifValid);
