@@ -3730,20 +3730,25 @@ void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
 					}
 
 /* Interpolate red for blue pixels and vice versa:		*/
-				for (int row=top+1; row < mrow-1; row++) {
-					i = (row-sgrow) % 3 ? TS:1;
-					int leftstart = left+1;
+				for (int row=top+3; row < mrow-3; row++) {
+					int leftstart = left+3;
 					for(;leftstart<mcol-1;leftstart++)
 						if(fcol(row,leftstart)!=1)
 							break;
 					const int coloffset = (RightShift[(row)%6] == 1 ? 3:1);
-					for (int col=leftstart; col < mcol-1; col+=coloffset) {
+					c = (row-sgrow) % 3 ? TS:1;
+					h = 3 * (c ^ TS ^ 1);
+					for (int col=leftstart; col < mcol-3; col+=coloffset) {
 						if ((f = 2-fcol(row,col)) == 1)
 							continue;
 						rix = &rgb[0][row-top][col-left];
-						for (d=0; d < 4; d++, rix += TS*TS)
+						for (d=0; d < 4; d++, rix += TS*TS) {
+							i = d > 1 || ((d ^ c) & 1) ||
+								((fabsf(rix[0][1]-rix[c][1])+fabsf(rix[0][1]-rix[-c][1])) <	2.f*(fabsf(rix[0][1]-rix[h][1])+fabsf(rix[0][1]-rix[-h][1]))) ? c:h;
+
 							rix[0][f] = CLIP(0.5f*(rix[i][f] + rix[-i][f] +
 										rix[0][1] + rix[0][1] - rix[i][1] - rix[-i][1]));
+						}
 					}
 				}
 
