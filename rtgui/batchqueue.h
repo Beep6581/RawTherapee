@@ -45,6 +45,7 @@ class BatchQueue  : public ThumbBrowserBase,
     int  getThumbnailHeight ();
 
     BatchQueueEntry* processing;  // holds the currently processed image
+    FileCatalog* fileCatalog;
     int sequence; // holds the current sequence index
 
     Glib::ustring nameTemplate;
@@ -53,6 +54,7 @@ class BatchQueue  : public ThumbBrowserBase,
     Gtk::ImageMenuItem* head;
     Gtk::ImageMenuItem* tail;
     Gtk::MenuItem* selall;
+    Gtk::MenuItem* open;
     Gtk::Menu* pmenu;
     
     Glib::RefPtr<Gtk::AccelGroup> pmaccelgroup;
@@ -65,7 +67,7 @@ class BatchQueue  : public ThumbBrowserBase,
     void notifyListener (bool queueEmptied);
 
   public:
-    BatchQueue ();
+    BatchQueue (FileCatalog* aFileCatalog);
     ~BatchQueue ();
 
     void addEntries (std::vector<BatchQueueEntry*> &entries, bool head=false, bool save=true);
@@ -73,6 +75,8 @@ class BatchQueue  : public ThumbBrowserBase,
     void headItems (std::vector<ThumbBrowserEntryBase*>* items);
     void tailItems (std::vector<ThumbBrowserEntryBase*>* items);
     void selectAll ();
+    void openItemInEditor(ThumbBrowserEntryBase* item);
+    void openLastSelectedItemInEditor();
 
     void startProcessing ();
 
@@ -89,6 +93,7 @@ class BatchQueue  : public ThumbBrowserBase,
     void error (Glib::ustring msg);
     void setProgress (double p);
     void rightClicked (ThumbBrowserEntryBase* entry);
+    void doubleClicked (ThumbBrowserEntryBase* entry);
     bool keyPressed (GdkEventKey* event);
     void buttonPressed (LWButton* button, int actionCode, void* actionData);
     void redrawNeeded  (LWButton* button);
