@@ -181,7 +181,7 @@ RTWindow::RTWindow ()
 			mainNB->append_page (*fpanel, *hbf);
 		}
 
-        bpanel = Gtk::manage ( new BatchQueuePanel () );
+        bpanel = Gtk::manage ( new BatchQueuePanel (fpanel->fileCatalog) );
 		bpanel->setParent (this);
 
 		// decorate tab, the label is unimportant since its updated in batchqueuepanel anyway

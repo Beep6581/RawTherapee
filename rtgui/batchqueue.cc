@@ -25,6 +25,7 @@
 #include <sstream>
 #include <string> 
 
+#include "thumbnail.h"
 #include "batchqueue.h"
 #include "multilangmgr.h"
 #include "filecatalog.h"
@@ -36,12 +37,14 @@
 using namespace std;
 using namespace rtengine;
 
-BatchQueue::BatchQueue () : processing(NULL), sequence(0), listener(NULL)  {
+BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(NULL), fileCatalog(aFileCatalog), sequence(0), listener(NULL)  {
 
     location = THLOC_BATCHQUEUE;
 
     int p = 0;
     pmenu = new Gtk::Menu ();
+
+    pmenu->attach (*Gtk::manage(open = new Gtk::MenuItem (M("FILEBROWSER_POPUPOPENINEDITOR"))), 0, 1, p, p+1); p++;
     pmenu->attach (*Gtk::manage(selall = new Gtk::MenuItem (M("FILEBROWSER_POPUPSELECTALL"))), 0, 1, p, p+1); p++;
     pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
 
@@ -61,12 +64,14 @@ BatchQueue::BatchQueue () : processing(NULL), sequence(0), listener(NULL)  {
     // Accelerators
     pmaccelgroup = Gtk::AccelGroup::create ();
     pmenu->set_accel_group (pmaccelgroup);
+    open->add_accelerator ("activate", pmenu->get_accel_group(), GDK_e, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     selall->add_accelerator ("activate", pmenu->get_accel_group(), GDK_a, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     head->add_accelerator ("activate", pmenu->get_accel_group(), GDK_Home, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
     tail->add_accelerator ("activate", pmenu->get_accel_group(), GDK_End, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
     cancel->add_accelerator ("activate", pmenu->get_accel_group(), GDK_Delete, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
 
-    cancel->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &BatchQueue::cancelItems), &selected));    
+    open->signal_activate().connect(sigc::mem_fun(*this, &BatchQueue::openLastSelectedItemInEditor));
+    cancel->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &BatchQueue::cancelItems), &selected));
     head->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &BatchQueue::headItems), &selected));    
     tail->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &BatchQueue::tailItems), &selected));    
     selall->signal_activate().connect (sigc::mem_fun(*this, &BatchQueue::selectAll));
@@ -126,11 +131,19 @@ void BatchQueue::rightClicked (ThumbBrowserEntryBase* entry) {
     pmenu->popup (3, this->eventTime);
 }
 
+void BatchQueue::doubleClicked(ThumbBrowserEntryBase* entry) {
+    openItemInEditor(entry);
+}
+
 bool BatchQueue::keyPressed (GdkEventKey* event) {
 	bool ctrl  = event->state & GDK_CONTROL_MASK;
 	
     if ((event->keyval==GDK_A || event->keyval==GDK_a) && ctrl) {
         selectAll ();
+        return true;
+    }
+    else if ((event->keyval==GDK_E || event->keyval== GDK_e) && ctrl) {
+        openLastSelectedItemInEditor();
         return true;
     }
     else if (event->keyval==GDK_Home) {
@@ -537,6 +550,28 @@ void BatchQueue::selectAll () {
     }
     queue_draw ();
 }
+
+void BatchQueue::openLastSelectedItemInEditor() {
+    {
+        // TODO: Check for Linux
+        #if PROTECT_VECTORS
+        MYREADERLOCK(l, entryRW);
+        #endif
+
+        if (selected.size() > 0) {
+            openItemInEditor(selected.back());
+        }
+    }
+}
+
+void BatchQueue::openItemInEditor(ThumbBrowserEntryBase* item) {
+    if (item) {
+        std::vector< ::Thumbnail*> requestedItem;
+        requestedItem.push_back(item->thumbnail);
+        fileCatalog->openRequested(requestedItem);
+    }
+}
+
 
 void BatchQueue::startProcessing () {
 

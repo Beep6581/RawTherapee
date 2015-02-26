@@ -25,6 +25,8 @@
 #include "guiutils.h"
 
 class RTWindow;
+class FileCatalog;
+class Thumbnail;
 class BatchQueuePanel : public Gtk::VBox,
                         public BatchQueueListener,
                         public FormatChangeListener {
@@ -52,7 +54,7 @@ class BatchQueuePanel : public Gtk::VBox,
 
     public:
         
-        BatchQueuePanel ();
+        BatchQueuePanel (FileCatalog* aFileCatalog);
 
         void setParent (RTWindow* p) { parent = p; }
 
