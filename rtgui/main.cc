@@ -23,6 +23,12 @@
 
 // This file is for your program, I won't touch it again!
 
+#ifdef __GNUC__
+	#if defined(__FAST_MATH__)
+		#error Using the -ffast-math CFLAG is known to lead to problems. Disable it to compile RawTherapee.
+	#endif
+#endif
+
 #include "config.h"
 #include <gtkmm.h>
 #include <giomm.h>
