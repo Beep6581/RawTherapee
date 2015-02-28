@@ -467,7 +467,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 				
 				}
 				
-				printf("SIMPL cha=%f red=%f bl=%f \n",chM,maxr,maxb);
+//				printf("SIMPL cha=%f red=%f bl=%f \n",chM,maxr,maxb);
 
 				params.dirpyrDenoise.chroma=chM/(autoNR*multip*adjustr);
 				params.dirpyrDenoise.redchro=maxr;
