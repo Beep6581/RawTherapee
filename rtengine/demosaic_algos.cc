@@ -1555,15 +1555,15 @@ SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int i
 
 	// median filter/
 	for (int pass=0; pass < iter; pass++) {
-		for (int c=0; c < 3; c+=2) {
-			// Compute median(R-G) and median(B-G)
-			int d = c + 3 - (c == 0 ? 0 : 1);
-			// Apply 3x3 median filter
+		// Apply 3x3 median filter
+		// Compute median(R-G) and median(B-G)
 
 #ifdef _OPENMP
 #pragma omp parallel for private(rix)
 #endif
-			for (int rr=1; rr < rr1-1; rr++) {
+		for (int rr=1; rr < rr1-1; rr++) {
+			for (int c=0; c < 3; c+=2) {
+				int d = c + 3 - (c == 0 ? 0 : 1);
 				int cc=1;
 #ifdef __SSE2__
 				__m128 p1v,p2v,p3v,p4v,p5v,p6v,p7v,p8v,p9v,tempv;
