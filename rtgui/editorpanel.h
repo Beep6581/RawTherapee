@@ -122,7 +122,7 @@ class EditorPanel : public Gtk::VBox,
         BatchQueueEntry*    createBatchQueueEntry ();
         bool                idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16* img,Glib::ustring fname, SaveFormat sf);
         bool                idle_saveImage(ProgressConnector<rtengine::IImage16*> *pc,Glib::ustring fname, SaveFormat sf);
-        bool                idle_sendToGimp( ProgressConnector<rtengine::IImage16*> *pc);
+        bool                idle_sendToGimp( ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname);
         bool                idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16* img,Glib::ustring filename);
         int err;
 
