@@ -1531,10 +1531,11 @@ if(settings->viewinggreySc==1) yb=18.0f;//fixed
 				Cpro = Cp*100.f;
 				ColorTemp::curvecolorfloat(chr, Cp , sres, 1.8f);
 				Color::skinredfloat(Jpro, hpro, sres, Cp, 55.f, 30.f,1,rstprotection, 100.f, Cpro);
-				if(Jpro < 1.f && Cpro > 12.f) Cpro=12.f;//reduce artifacts by "pseudo gamut control CIECAM"
-				else if(Jpro < 2.f && Cpro > 15.f) Cpro=15.f;
-				else if(Jpro < 4.f && Cpro > 30.f) Cpro=30.f;
-				else if(Jpro < 7.f && Cpro > 50.f) Cpro=50.f;
+// disabled this code, Issue 2690
+//				if(Jpro < 1.f && Cpro > 12.f) Cpro=12.f;//reduce artifacts by "pseudo gamut control CIECAM"
+//				else if(Jpro < 2.f && Cpro > 15.f) Cpro=15.f;
+//				else if(Jpro < 4.f && Cpro > 30.f) Cpro=30.f;
+//				else if(Jpro < 7.f && Cpro > 50.f) Cpro=50.f;
 
 				hpro=hpro+hue;
 				if( hpro < 0.0f )
