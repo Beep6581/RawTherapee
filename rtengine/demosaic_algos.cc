@@ -1229,6 +1229,39 @@ SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int i
 	} else
 		applyGamma=true;
 
+	float *rix[5];
+	float *qix[5];
+	float *buffer = (float *)calloc(rr1*cc1*5*sizeof(float),1);
+	if(buffer == NULL) { // allocation of big block of memory failed, try to get 5 smaller ones
+		printf("lmmse_interpolate_omp: allocation of big memory block failed, try to get 5 smaller ones now...\n");
+		bool allocationFailed = false;
+		for(int i=0;i<5;i++) {
+			qix[i] = (float *)calloc(rr1*cc1*sizeof(float),1);
+			if(!qix[i]) { // allocation of at least one small block failed
+				allocationFailed = true;
+			}
+		}
+		if(allocationFailed) { // fall back to igv_interpolate
+			printf("lmmse_interpolate_omp: allocation of 5 small memory blocks failed, falling back to igv_interpolate...\n");
+			for(int i=0;i<5;i++) { // free the already allocated buffers
+				if(qix[i])
+					free(qix[i]);
+			}
+			igv_interpolate(winw, winh);
+			return;
+		}
+	} else {
+		qix[0] = buffer;
+		for(int i=1;i<5;i++)
+			qix[i] = qix[i-1] + rr1*cc1;
+	}
+
+	if (plistener) {
+		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::lmmse]));
+		plistener->setProgress (0.0);
+	}
+
+
 	LUTf *gamtab;
 	if(applyGamma)
 		gamtab = &(Color::gammatab_24_17a);
@@ -1238,23 +1271,6 @@ SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int i
 			(*gamtab)[i] = (float)i / 65535.f;
 	}
 
-	if (plistener) {
-		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::lmmse]));
-		plistener->setProgress (0.0);
-	}
-
-	float *rix[5];
-	float *qix[5];
-	float *buffer = (float *)calloc(rr1*cc1*5*sizeof(float),1);
-	if(buffer == NULL) { // allocation of big block of memory failed, try to get 6 smaller ones
-		printf("lmmse_interpolate_omp: allocation of big memory block failed, try to get 5 smaller ones now...\n");
-		for(int i=0;i<5;i++)
-			qix[i] = (float *)calloc(rr1*cc1*sizeof(float),1);
-	} else {
-		qix[0] = buffer;
-		for(int i=1;i<5;i++)
-			qix[i] = qix[i-1] + rr1*cc1;
-	}
 
 #ifdef _OPENMP
 #pragma omp parallel private(rix)
