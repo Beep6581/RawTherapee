@@ -245,9 +245,9 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
 					medianOut[i][j] = medianIn[i][j];
 				for (; j<width-border; j++) {
 					med2(medianIn[i][j] ,medianIn[i-1][j], medianIn[i+1][j] ,medianIn[i][j+1],medianIn[i][j-1], medianOut[i][j]);
+				}
 				for(;j<width;j++)
 					medianOut[i][j] = medianIn[i][j];
-				}
 			} else if(medianType == MED_3X3STRONG) {
 				float pp[9],temp;
 				int j;
