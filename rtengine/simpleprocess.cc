@@ -1195,7 +1195,7 @@ void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bo
 void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData) {
 
     if (bpl)
-#if __GNUC__ == 4 && __GNUC_MINOR__ >= 8 && defined( WIN32 ) && defined(__x86_64__)
+#if __GNUC__ == 4 && __GNUC_MINOR__ == 8 && defined( WIN32 ) && defined(__x86_64__)
 		// See Issue 2384 "Very bad response time on win7/64 using gcc 4.8 when queue is running"
         Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
 #else

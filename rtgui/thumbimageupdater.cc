@@ -68,11 +68,11 @@ public:
 		active_(0),
 		inactive_waiting_(false)
 	{
-		int threadCount=1;
-#if !(defined( WIN32 ) && defined( __x86_64__ ))
+		int threadCount = 1;
+#if !(__GNUC__ == 4 && __GNUC_MINOR__ == 8 && defined( WIN32 ) && defined(__x86_64__))
 		// See Issue 2431 for explanation
 		#ifdef _OPENMP
-			threadCount=omp_get_num_procs();
+			threadCount = omp_get_num_procs();
 		#endif
 #endif
 		
