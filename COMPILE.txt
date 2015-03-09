@@ -121,7 +121,7 @@ WINDOWS
     INSTALL THE TOOLCHAIN
       - TDM-GCC On-Demand Installer
           http://tdm-gcc.tdragon.net/download
-        GCC 4.7 is recommended, as under some conditions older
+        GCC 4.9 is recommended for Win64 builds, as under some conditions older
         versions of GCC can cause artifacts.
         Download the "tdm-gcc-webdl" option. Run it, select "Create a new
         TDM-GCC installation" and choose the appropriate option for your
