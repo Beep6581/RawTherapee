@@ -133,20 +133,19 @@ void writeFailed (Gtk::Window& parent, const std::string& filename) {
     msgd.run ();
 }
 
-void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams, bool drawGuide) {
+void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams, bool drawGuide, bool useBgColor, bool fullImageVisible) {
 
     cr->set_line_width (0.);
     cr->rectangle (imx, imy, imw, imh);
     cr->clip ();
-
+	
     double c1x = (cparams.x-startx)*scale;
     double c1y = (cparams.y-starty)*scale;
-    double c2x = (cparams.x+cparams.w-1-startx)*scale;
-    double c2y = (cparams.y+cparams.h-1-starty)*scale;
-
+    double c2x = (cparams.x+cparams.w-startx)*scale - (fullImageVisible ? 0.0 : 1.0);
+    double c2y = (cparams.y+cparams.h-starty)*scale - (fullImageVisible ? 0.0 : 1.0);
     // crop overlay color, linked with crop windows background
-    if (options.bgcolor==0)
-    cr->set_source_rgba (options.cutOverlayBrush[0], options.cutOverlayBrush[1], options.cutOverlayBrush[2], options.cutOverlayBrush[3]);
+    if (options.bgcolor==0 || !useBgColor)
+		cr->set_source_rgba (options.cutOverlayBrush[0], options.cutOverlayBrush[1], options.cutOverlayBrush[2], options.cutOverlayBrush[3]);
     else if (options.bgcolor==1)
         cr->set_source_rgb (0,0,0);
     else if (options.bgcolor==2)
@@ -163,8 +162,14 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
     if (cparams.guide!="None" && drawGuide) {
         double rectx1 = round(c1x) + imx + 0.5;
         double recty1 = round(c1y) + imy + 0.5;
-        double rectx2 = min(round(c2x) + imx + 0.5, imx+imw-0.5);
-        double recty2 = min(round(c2y) + imy + 0.5, imy+imh-0.5);
+        double rectx2 = round(c2x) + imx + 0.5;
+        double recty2 = round(c2y) + imy + 0.5;
+
+        if(fullImageVisible) {
+			rectx2 = min(rectx2, imx+imw-0.5);
+			recty2 = min(recty2, imy+imh-0.5);
+        }
+
         cr->set_line_width (1.0);
         cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
         cr->move_to (rectx1, recty1);
@@ -186,7 +191,7 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
         ds.resize (0);
         cr->set_dash (ds, 0);
         
-        if (cparams.guide!="Rule of diagonals") {
+        if (cparams.guide!="Rule of diagonals" && cparams.guide!="Golden Triangle 1" && cparams.guide!="Golden Triangle 2") {
             // draw guide lines
             std::vector<double> horiz_ratios;
             std::vector<double> vert_ratios;
@@ -197,22 +202,12 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                 vert_ratios.push_back (1.0/3.0);
                 vert_ratios.push_back (2.0/3.0);
             }
-            else if (cparams.guide=="Harmonic means 1") {
+            else if (!strncmp(cparams.guide.data(),"Harmonic means",14)) {
                 horiz_ratios.push_back (1.0-0.618);
-                vert_ratios.push_back (1.0-0.618);
-            }
-            else if (cparams.guide=="Harmonic means 2") {
-                horiz_ratios.push_back (0.618);
-                vert_ratios.push_back (1.0-0.618);
-            }
-            else if (cparams.guide=="Harmonic means 3") {
-                horiz_ratios.push_back (1.0-0.618);
-                vert_ratios.push_back (0.618);
-            }
-            else if (cparams.guide=="Harmonic means 4") {
                 horiz_ratios.push_back (0.618);
                 vert_ratios.push_back (0.618);
-            } 
+                vert_ratios.push_back (1.0-0.618);
+            }
             else if (cparams.guide=="Grid") {
                 // To have even distribution, normalize it a bit
                 const int longSideNumLines=10;
@@ -277,7 +272,7 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                 cr->set_dash (ds, 0);
             }           
         }
-        else {
+        else if (cparams.guide=="Rule of diagonals") {
             double corners_from[4][2];
             double corners_to[4][2];
             int mindim = min(rectx2-rectx1, recty2-recty1);
@@ -312,6 +307,64 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                 ds.resize (0);
                 cr->set_dash (ds, 0);
             }
+        } else if (cparams.guide=="Golden Triangle 1" || cparams.guide=="Golden Triangle 2") {
+        	// main diagonal
+			if(cparams.guide=="Golden Triangle 2") {
+				std:swap(rectx1,rectx2);
+			}
+			cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
+			cr->move_to (rectx1, recty1);
+			cr->line_to (rectx2, recty2);
+			cr->stroke ();
+			cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
+			std::valarray<double> ds (1);
+			ds[0] = 4;
+			cr->set_dash (ds, 0);
+			cr->move_to (rectx1, recty1);
+			cr->line_to (rectx2, recty2);
+			cr->stroke ();
+			ds.resize (0);
+			cr->set_dash (ds, 0);
+
+			double height = recty2 - recty1;
+			double width = rectx2 - rectx1;
+			double d = sqrt(height*height + width*width);
+			double alpha = asin(width/d);
+			double beta = asin(height/d);
+			double a = sin(beta) * height;
+			double b = sin(alpha) * height;
+
+			double x = (a*b)/height;
+			double y = height - (b*(d-a))/width;
+			cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
+			cr->move_to (rectx1, recty2);
+			cr->line_to (rectx1+x, recty1+y);
+			cr->stroke ();
+			cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
+			ds.resize (1);
+			ds[0] = 4;
+			cr->set_dash (ds, 0);
+			cr->move_to (rectx1, recty2);
+			cr->line_to (rectx1+x, recty1+y);
+			cr->stroke ();
+			ds.resize (0);
+			cr->set_dash (ds, 0);
+
+			x = width - (a*b)/height;
+			y = (b*(d-a))/width;
+			cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
+			cr->move_to (rectx2, recty1);
+			cr->line_to (rectx1+x, recty1+y);
+			cr->stroke ();
+			cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
+			ds.resize (1);
+			ds[0] = 4;
+			cr->set_dash (ds, 0);
+			cr->move_to (rectx2, recty1);
+			cr->line_to (rectx1+x, recty1+y);
+			cr->stroke ();
+			ds.resize (0);
+			cr->set_dash (ds, 0);
         }
     }
     cr->reset_clip ();

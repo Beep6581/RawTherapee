@@ -174,11 +174,10 @@ Crop::Crop (): FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true) 
   guide->append_text (M("TP_CROP_GTFRAME"));
   guide->append_text (M("TP_CROP_GTRULETHIRDS"));
   guide->append_text (M("TP_CROP_GTDIAGONALS"));
-  guide->append_text (M("TP_CROP_GTHARMMEANS1"));
-  guide->append_text (M("TP_CROP_GTHARMMEANS2"));
-  guide->append_text (M("TP_CROP_GTHARMMEANS3"));
-  guide->append_text (M("TP_CROP_GTHARMMEANS4"));
+  guide->append_text (M("TP_CROP_GTHARMMEANS"));
   guide->append_text (M("TP_CROP_GTGRID"));
+  guide->append_text (M("TP_CROP_GTTRIANGLE1"));
+  guide->append_text (M("TP_CROP_GTTRIANGLE2"));
   guide->append_text (M("TP_CROP_GTEPASSPORT"));
   guide->set_active (0);
 
@@ -277,18 +276,16 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
         guide->set_active (2);
     else if (pp->crop.guide == "Rule of diagonals")
         guide->set_active (3);
-    else if (pp->crop.guide == "Harmonic means 1")
+    else if (!strncmp(pp->crop.guide.data(),"Harmonic means",14))
         guide->set_active (4);
-    else if (pp->crop.guide == "Harmonic means 2")
-        guide->set_active (5);
-    else if (pp->crop.guide == "Harmonic means 3")
-        guide->set_active (6);
-    else if (pp->crop.guide == "Harmonic means 4")
-        guide->set_active (7);
     else if (pp->crop.guide == "Grid")
-        guide->set_active (8);
+        guide->set_active (5);
+    else if (pp->crop.guide == "Golden Triangle 1")
+        guide->set_active (6);
+    else if (pp->crop.guide == "Golden Triangle 2")
+        guide->set_active (7);
     else if (pp->crop.guide == "ePassport")
-        guide->set_active (9);
+        guide->set_active (8);
 
     x->set_value (pp->crop.x);
     y->set_value (pp->crop.y);
@@ -362,16 +359,14 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited) {
   else if (guide->get_active_row_number()==3)
     pp->crop.guide = "Rule of diagonals";
   else if (guide->get_active_row_number()==4)
-    pp->crop.guide = "Harmonic means 1";
+    pp->crop.guide = "Harmonic means";
   else if (guide->get_active_row_number()==5)
-    pp->crop.guide = "Harmonic means 2";
-  else if (guide->get_active_row_number()==6)
-    pp->crop.guide = "Harmonic means 3";
-  else if (guide->get_active_row_number()==7)
-    pp->crop.guide = "Harmonic means 4";
-  else if (guide->get_active_row_number()==8)
     pp->crop.guide = "Grid";
-  else if (guide->get_active_row_number()==9)
+  else if (guide->get_active_row_number()==6)
+    pp->crop.guide = "Golden Triangle 1";
+  else if (guide->get_active_row_number()==7)
+    pp->crop.guide = "Golden Triangle 2";
+  else if (guide->get_active_row_number()==8)
     pp->crop.guide = "ePassport";
 
     if (pedited) {

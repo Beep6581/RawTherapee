@@ -63,7 +63,7 @@ void PreviewWindow::updatePreviewImage () {
             backBuffer->draw_pixbuf (get_style()->get_base_gc(Gtk::STATE_NORMAL), resPixbuf, 0, 0, imgX, imgY, -1, -1, Gdk::RGB_DITHER_NONE, 0, 0);
             Cairo::RefPtr<Cairo::Context> cr = backBuffer->create_cairo_context();
             if (previewHandler->getCropParams().enabled)
-                drawCrop (cr, imgX, imgY, imgW, imgH, 0, 0, zoom, previewHandler->getCropParams());
+                drawCrop (cr, imgX, imgY, imgW, imgH, 0, 0, zoom, previewHandler->getCropParams(), true, false);
         }
     }
 }
