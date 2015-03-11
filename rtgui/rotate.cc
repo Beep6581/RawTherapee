@@ -24,7 +24,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Rotate::Rotate () : FoldableToolPanel(this) {
+Rotate::Rotate () : FoldableToolPanel(this, "rotate", M("TP_ROTATE_LABEL")) {
 
   rlistener = NULL;
 

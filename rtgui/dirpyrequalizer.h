@@ -31,7 +31,6 @@ class DirPyrEqualizer : public ToolParamBlock, public ThresholdAdjusterListener,
 
 protected:
 
-    Gtk::CheckButton * enabled;
     Gtk::CheckButton * gamutlab;
     Adjuster* multiplier[6]; 
     Adjuster* threshold;
@@ -42,12 +41,12 @@ protected:
   //  Gtk::Label*       alLabel;
   //  Gtk::HBox*        algoHBox;
 
-    sigc::connection enaConn, gamutlabConn;
+    sigc::connection  gamutlabConn;
     sigc::connection lumaneutralPressedConn;
     sigc::connection lumacontrastPlusPressedConn;
     sigc::connection lumacontrastMinusPressedConn;
 
-    bool lastEnabled, lastgamutlab;
+    bool lastgamutlab;
 
 public:
 
@@ -64,7 +63,7 @@ public:
 //    void algoChanged         ();
 
     void adjusterChanged (Adjuster* a, double newval);
-    void enabledToggled ();
+    void enabledChanged();
     void gamutlabToggled ();
     void lumaneutralPressed ();
     void lumacontrastPlusPressed ();

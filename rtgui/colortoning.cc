@@ -8,16 +8,10 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ColorToning::ColorToning () : FoldableToolPanel(this)
+ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLORTONING_LABEL"), false, true)
 {	
 	nextbw=0;
 	CurveListener::setMulti(true);
-	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-	enabled->set_active (false);
-	enaConn  = enabled->signal_toggled().connect( sigc::mem_fun(*this, &ColorToning::enabledChanged) );
-
-	pack_start(*enabled);
-	pack_start(*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_EXPAND_WIDGET, 4);
 
 	//---------------method
 	
@@ -378,7 +372,7 @@ void ColorToning::neutral_pressed () {
 	//balance->resetValue(false);
 
 	enableListener();
-	if (listener && enabled->get_active())
+	if (listener && getEnabled())
 		listener->panelChanged (EvColorToningNeutral, M("ADJUSTER_RESET_TO_DEFAULT"));
 }
 
@@ -407,7 +401,7 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
 		hlColSat->setEditedState (pedited->colorToning.hlColSat ? Edited : UnEdited);
 		shadowsColSat->setEditedState (pedited->colorToning.shadowsColSat ? Edited : UnEdited);
 
-		enabled->set_inconsistent (!pedited->colorToning.enabled);
+		set_inconsistent (multiImage && !pedited->colorToning.enabled);
 		colorShape->setUnChanged (!pedited->colorToning.colorCurve);
 		opacityShape->setUnChanged (!pedited->colorToning.opacityCurve);
 		autosat->set_inconsistent (!pedited->colorToning.autosat);		
@@ -426,10 +420,7 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
 	greenhigh->setValue    (pp->colorToning.greenhigh);
 	bluehigh->setValue    (pp->colorToning.bluehigh);	
 	
-	enaConn.block (true);
-	enabled->set_active (pp->colorToning.enabled);
-	enaConn.block (false);
-	lastEnabled = pp->colorToning.enabled;
+	setEnabled (pp->colorToning.enabled);
 
 	autosatConn.block (true);
 	autosat->set_active (pp->colorToning.autosat);
@@ -493,7 +484,7 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited) {
 	pp->colorToning.greenhigh = greenhigh->getValue ();
 	pp->colorToning.bluehigh  = bluehigh->getValue ();
 
-	pp->colorToning.enabled      = enabled->get_active();
+	pp->colorToning.enabled      = getEnabled();
 	pp->colorToning.colorCurve   = colorShape->getCurve ();
 	pp->colorToning.opacityCurve = opacityShape->getCurve ();
 	pp->colorToning.clcurve      = clshape->getCurve ();
@@ -521,7 +512,7 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited) {
 		pedited->colorToning.method     = method->get_active_text()!=M("GENERAL_UNCHANGED");
 		pedited->colorToning.twocolor   = twocolor->get_active_text()!=M("GENERAL_UNCHANGED");
 
-		pedited->colorToning.enabled       = !enabled->get_inconsistent();
+		pedited->colorToning.enabled       = !get_inconsistent();
 		pedited->colorToning.autosat       = !autosat->get_inconsistent();
 		pedited->colorToning.colorCurve    = !colorShape->isUnChanged ();
 		pedited->colorToning.opacityCurve  = !opacityShape->isUnChanged ();
@@ -569,7 +560,7 @@ void ColorToning::lumamodeChanged () {
 		lastLumamode = lumamode->get_active ();
 	}
 
-	if (listener && enabled->get_active()) {
+	if (listener && getEnabled()) {
 		if (lumamode->get_active ())
 			listener->panelChanged (EvColorToningLumamode, M("GENERAL_ENABLED"));
 		else
@@ -650,7 +641,7 @@ void ColorToning::setAdjusterBehavior (bool splitAdd, bool satThresholdAdd, bool
 }
 
 void ColorToning::adjusterChanged (ThresholdAdjuster* a, double newBottom, double newTop) {
-	if (listener && enabled->get_active())
+	if (listener && getEnabled())
 		listener->panelChanged (a==hlColSat ? EvColorToningHighights : EvColorToningShadows,
 								Glib::ustring::compose(Glib::ustring(M("TP_COLORTONING_HUE")+": %1"+"\n"+M("TP_COLORTONING_STRENGTH")+": %2"), int(newTop), int(newBottom)));
 }
@@ -692,7 +683,7 @@ bool ColorToning::CTComp_ () {
 
 void ColorToning::adjusterChanged (Adjuster* a, double newval) {
 
-	if (!listener || !enabled->get_active())
+	if (!listener || !getEnabled())
 		return;
 
 	if (a==redlow)
@@ -775,7 +766,7 @@ void ColorToning::twocolorChanged (bool changedbymethod) {
 		}
 	}
 
-	if (listener && enabled->get_active () && !changedbymethod)
+	if (listener && getEnabled() && !changedbymethod)
 		listener->panelChanged (EvColorToningTwocolor, twocolor->get_active_text ());
 }
 
@@ -948,7 +939,7 @@ void ColorToning::methodChanged () {
 		}
 	}
 
-	if (listener && enabled->get_active ())
+	if (listener && getEnabled())
 		listener->panelChanged (EvColorToningMethod, method->get_active_text ());
 }
 
@@ -1005,7 +996,7 @@ void ColorToning::colorForValue (double valX, double valY, enum ColorCaller::Ele
 
 void ColorToning::curveChanged (CurveEditor* ce) {
 
-	if (listener && enabled->get_active()) {
+	if (listener && getEnabled()) {
 		if (ce == colorShape)
 			listener->panelChanged (EvColorToningColor, M("HISTORY_CUSTOMCURVE"));
 		else if (ce == opacityShape)
@@ -1019,20 +1010,10 @@ void ColorToning::curveChanged (CurveEditor* ce) {
 
 void ColorToning::enabledChanged () {
 
-	if (batchMode) {
-		if (enabled->get_inconsistent()) {
-			enabled->set_inconsistent (false);
-			enaConn.block (true);
-			enabled->set_active (false);
-			enaConn.block (false);
-		}
-		else if (lastEnabled)
-			enabled->set_inconsistent (true);
-
-		lastEnabled = enabled->get_active ();
-	}
 	if (listener) {
-		if (enabled->get_active())
+		if (get_inconsistent())
+			listener->panelChanged (EvColorToningEnabled, M("GENERAL_UNCHANGED"));
+		else if (getEnabled())
 			listener->panelChanged (EvColorToningEnabled, M("GENERAL_ENABLED"));
 		else
 			listener->panelChanged (EvColorToningEnabled, M("GENERAL_DISABLED"));
@@ -1054,21 +1035,18 @@ void ColorToning::autosatChanged () {
 		lastautosat = autosat->get_active ();
 	}
 	if (listener) {
-		if (autosat->get_active())
-			{if (enabled->get_active())
+		if (autosat->get_active()) {
+			if (getEnabled())
 				listener->panelChanged (EvColorToningautosat, M("GENERAL_ENABLED"));
 			saturatedOpacity->set_sensitive(false);
 			satProtectionThreshold->set_sensitive(false);
-				
-			}
-
-		else
-			{if (enabled->get_active())
+		}
+		else {
+			if (getEnabled())
 				listener->panelChanged (EvColorToningautosat, M("GENERAL_DISABLED"));
 			saturatedOpacity->set_sensitive(true);
 			satProtectionThreshold->set_sensitive(true);
-				
-			}
+		}
 
 	}
 }

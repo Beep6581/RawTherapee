@@ -24,22 +24,14 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Sharpening::Sharpening () : FoldableToolPanel(this) {
+Sharpening::Sharpening () : FoldableToolPanel(this,"sharpening", M("TP_SHARPENING_LABEL"), true, true) {
 
    std::vector<GradientMilestone> milestones;
    milestones.push_back( GradientMilestone(0.0, 0.0, 0.0, 0.0) );
    milestones.push_back( GradientMilestone(1.0, 1.0, 1.0, 1.0) );
 
-   enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-   enabled->set_tooltip_markup (M("TP_SHARPENING_TOOLTIP"));
+   setEnabledTooltipMarkup(M("TP_SHARPENING_TOOLTIP"));
 
-   enabled->set_active (true);
-   pack_start(*enabled);
-   enabled->show ();
-   Gtk::HSeparator *hsep6aa = Gtk::manage (new  Gtk::HSeparator());
-   pack_start(*hsep6aa, Gtk::PACK_SHRINK, 2);
-   hsep6aa->show ();
-   
    Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
    hb->set_border_width (4);
    hb->show ();
@@ -139,10 +131,9 @@ Sharpening::Sharpening () : FoldableToolPanel(this) {
     usm->reference ();
     rld->reference ();
 
-  enaConn 	= enabled->signal_toggled().connect( sigc::mem_fun(*this, &Sharpening::enabled_toggled) );
-  eonlyConn = edgesonly->signal_toggled().connect( sigc::mem_fun(*this, &Sharpening::edgesonly_toggled) );
-  hcConn 	= halocontrol->signal_toggled().connect( sigc::mem_fun(*this, &Sharpening::halocontrol_toggled) );
-  method->signal_changed().connect( sigc::mem_fun(*this, &Sharpening::method_changed) );
+    eonlyConn = edgesonly->signal_toggled().connect( sigc::mem_fun(*this, &Sharpening::edgesonly_toggled) );
+    hcConn    = halocontrol->signal_toggled().connect( sigc::mem_fun(*this, &Sharpening::halocontrol_toggled) );
+    method->signal_changed().connect( sigc::mem_fun(*this, &Sharpening::method_changed) );
 }
 
 Sharpening::~Sharpening () {
@@ -170,15 +161,12 @@ void Sharpening::read (const ProcParams* pp, const ParamsEdited* pedited) {
 		diter->setEditedState 		(pedited->sharpening.deconviter ? Edited : UnEdited);
 		ddamping->setEditedState 	(pedited->sharpening.deconvdamping ? Edited : UnEdited);
 
-		enabled->set_inconsistent 		(multiImage && !pedited->sharpening.enabled);
 		halocontrol->set_inconsistent	(multiImage && !pedited->sharpening.halocontrol);
 		edgesonly->set_inconsistent		(multiImage && !pedited->sharpening.edgesonly);
+		set_inconsistent 				(multiImage && !pedited->sharpening.enabled);
 	}
 
-    enaConn.block (true);
-    enabled->set_active (pp->sharpening.enabled);
-    enaConn.block (false);   
-    lastEnabled = pp->sharpening.enabled;
+    setEnabled (pp->sharpening.enabled);
 	
     eonlyConn.block (true);
     edgesonly->set_active (pp->sharpening.edgesonly);
@@ -225,7 +213,7 @@ void Sharpening::read (const ProcParams* pp, const ParamsEdited* pedited) {
 void Sharpening::write (ProcParams* pp, ParamsEdited* pedited) {
 
     pp->sharpening.amount           = (int)amount->getValue();
-    pp->sharpening.enabled          = enabled->get_active ();
+    pp->sharpening.enabled          = getEnabled ();
     pp->sharpening.radius           = radius->getValue ();
     pp->sharpening.threshold        = threshold->getValue<int> ();
     pp->sharpening.edgesonly        = edgesonly->get_active ();
@@ -257,7 +245,7 @@ void Sharpening::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->sharpening.method 			=  method->get_active_row_number()!=2;
         pedited->sharpening.halocontrol 	=  !halocontrol->get_inconsistent();
         pedited->sharpening.edgesonly 		=  !edgesonly->get_inconsistent();
-        pedited->sharpening.enabled 		=  !enabled->get_inconsistent();
+        pedited->sharpening.enabled 		=  !get_inconsistent();
     }
 }
 
@@ -302,7 +290,7 @@ void Sharpening::setDefaults (const ProcParams* defParams, const ParamsEdited* p
 
 void Sharpening::adjusterChanged (Adjuster* a, double newval) {
 
-    if (listener && (multiImage||enabled->get_active()) ) {
+    if (listener && (multiImage||getEnabled()) ) {
 
         Glib::ustring costr;
         if (a==radius || a==dradius)
@@ -335,30 +323,17 @@ void Sharpening::adjusterChanged (Adjuster* a, double newval) {
 
 //void Sharpening::adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {
 void Sharpening::adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {
-    if (listener && (multiImage||enabled->get_active()) ) {
+    if (listener && (multiImage||getEnabled()) ) {
         listener->panelChanged (EvShrThresh, threshold->getHistoryString());
     }
 }
 
-void Sharpening::enabled_toggled () {
-
-    if (multiImage) {
-        if (enabled->get_inconsistent()) {
-            enabled->set_inconsistent (false);
-            enaConn.block (true);
-            enabled->set_active (false);
-            enaConn.block (false);
-        }
-        else if (lastEnabled)
-            enabled->set_inconsistent (true);
-
-        lastEnabled = enabled->get_active ();
-    }
+void Sharpening::enabledChanged () {
 
     if (listener) {
-        if (enabled->get_inconsistent())
+        if (get_inconsistent())
             listener->panelChanged (EvShrEnabled, M("GENERAL_UNCHANGED"));
-        else if (enabled->get_active ())
+        else if (getEnabled())
             listener->panelChanged (EvShrEnabled, M("GENERAL_ENABLED"));
         else
             listener->panelChanged (EvShrEnabled, M("GENERAL_DISABLED"));
@@ -386,7 +361,7 @@ void Sharpening::edgesonly_toggled () {
             edgebin->pack_start (*edgebox);
     }
 
-    if (listener && (multiImage||enabled->get_active()) ) {
+    if (listener && (multiImage||getEnabled()) ) {
         if (edgesonly->get_inconsistent())
             listener->panelChanged (EvShrEdgeOnly, M("GENERAL_INITIALVALUES"));
         else if (edgesonly->get_active ())
@@ -417,7 +392,7 @@ void Sharpening::halocontrol_toggled () {
             hcbin->pack_start (*hcbox);
     }
 
-    if (listener && (multiImage||enabled->get_active()) ) {
+    if (listener && (multiImage||getEnabled()) ) {
         if (halocontrol->get_inconsistent())
             listener->panelChanged (EvShrHaloControl, M("GENERAL_INITIALVALUES"));
         else if (halocontrol->get_active ())
@@ -432,12 +407,12 @@ void Sharpening::method_changed () {
     removeIfThere (this, usm, false);
     removeIfThere (this, rld, false);
 
-    if (method->get_active_row_number()==0) 
-        pack_start (*usm);   
-    else if (method->get_active_row_number()==1) 
+    if (method->get_active_row_number()==0)
+        pack_start (*usm);
+    else if (method->get_active_row_number()==1)
         pack_start (*rld);
 
-    if (listener && (multiImage||enabled->get_active()) )
+    if (listener && (multiImage||getEnabled()) )
         listener->panelChanged (EvShrMethod, method->get_active_text ());
     
 }

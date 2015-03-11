@@ -23,14 +23,10 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Resize::Resize () : FoldableToolPanel(this), maxw(100000), maxh(100000), lastEnabled(false) {
+Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), false, true), maxw(100000), maxh(100000) {
 
 	cropw = 0;
 	croph = 0;
-
-    enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-    pack_start(*enabled);
-    pack_start(*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_SHRINK, 2);
 
     Gtk::Table* combos = Gtk::manage (new Gtk::Table (2, 2));
     Gtk::Label *label = NULL;
@@ -114,7 +110,6 @@ Resize::Resize () : FoldableToolPanel(this), maxw(100000), maxh(100000), lastEna
 	aconn = appliesTo->signal_changed().connect ( sigc::mem_fun(*this, &Resize::appliesToChanged) );
 	method->signal_changed().connect ( sigc::mem_fun(*this, &Resize::methodChanged) );
 	sconn = spec->signal_changed().connect ( sigc::mem_fun(*this, &Resize::specChanged) );
-	enaConn = enabled->signal_toggled().connect ( sigc::mem_fun(*this, &Resize::enabledToggled) );
 
     show_all();
 }
@@ -137,7 +132,7 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited) {
     scale->setValue (pp->resize.scale);
     w->set_value (pp->resize.width);
     h->set_value (pp->resize.height);
-    enabled->set_active (pp->resize.enabled);
+    setEnabled (pp->resize.enabled);
     spec->set_active (pp->resize.dataspec);
     updateGUI();
 
@@ -179,17 +174,15 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited) {
             method->set_active (8);
         if (!pedited->resize.dataspec) 
             spec->set_active (4);
-        enabled->set_inconsistent (!pedited->resize.enabled);
+        set_inconsistent (multiImage && !pedited->resize.enabled);
     }
-
-    lastEnabled = pp->resize.enabled;
 
     scale->block(false);
     sconn.block (false);
     wconn.block (false);
     hconn.block (false);
     aconn.block (false);
-    enableListener ();    
+    enableListener ();
 }
 
 void Resize::write (ProcParams* pp, ParamsEdited* pedited) {
@@ -220,11 +213,11 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->resize.dataspec = dataSpec;
     pp->resize.width = w->get_value_as_int ();
     pp->resize.height = h->get_value_as_int ();
-    pp->resize.enabled = enabled->get_active ();
+    pp->resize.enabled = getEnabled ();
     //printf("  L:%d   H:%d\n", pp->resize.width, pp->resize.height);
 
     if (pedited) {
-        pedited->resize.enabled   = !enabled->get_inconsistent();
+        pedited->resize.enabled   = !get_inconsistent();
         pedited->resize.dataspec  = dataSpec != 4;
         pedited->resize.appliesTo = appliesTo->get_active_row_number() != 2;
         pedited->resize.method    = method->get_active_row_number() != 8;
@@ -262,7 +255,7 @@ void Resize::adjusterChanged (Adjuster* a, double newval) {
         hconn.block (false);
     }
 
-    if (listener && (enabled->get_active () || batchMode)) 
+    if (listener && (getEnabled () || batchMode))
         listener->panelChanged (EvResizeScale, Glib::ustring::format (std::setw(5), std::fixed, std::setprecision(2), scale->getValue()));
 }
 
@@ -290,7 +283,7 @@ void Resize::appliesToChanged () {
 
 	//printf("\nPASSAGE EN MODE \"%s\"\n\n", appliesTo->get_active_text().c_str());
 	setDimensions();
-    if (listener && (enabled->get_active () || batchMode)) {
+    if (listener && (getEnabled () || batchMode)) {
     	//printf("Appel du listener\n");
         listener->panelChanged (EvResizeAppliesTo, appliesTo->get_active_text());
     }
@@ -298,7 +291,7 @@ void Resize::appliesToChanged () {
 
 void Resize::methodChanged () {
 
-    if (listener && (enabled->get_active () || batchMode)) 
+    if (listener && (getEnabled () || batchMode))
         listener->panelChanged (EvResizeMethod, method->get_active_text());
 }
 
@@ -449,7 +442,7 @@ void Resize::entryWChanged () {
     	if (spec->get_active_row_number() == 3)
     		notifyBBox();
     	else {
-			if (enabled->get_active () || batchMode)
+			if (getEnabled () || batchMode)
 				listener->panelChanged (EvResizeWidth, Glib::ustring::format (w->get_value_as_int()));
     	}
     }
@@ -481,7 +474,7 @@ void Resize::entryHChanged () {
     	if (spec->get_active_row_number() == 3)
     		notifyBBox();
     	else {
-    		if (enabled->get_active () || batchMode)
+    		if (getEnabled () || batchMode)
 				listener->panelChanged (EvResizeHeight, Glib::ustring::format (h->get_value_as_int()));
     	}
     }
@@ -548,7 +541,7 @@ void Resize::updateGUI () {
 }
 
 void Resize::notifyBBox() {
-    if (listener && (enabled->get_active () || batchMode))
+    if (listener && (getEnabled () || batchMode))
         listener->panelChanged (EvResizeBoundingBox, Glib::ustring::compose("(%1x%2)",(int)w->get_value(), (int)h->get_value() ));
 }
 
@@ -560,23 +553,12 @@ void Resize::setBatchMode (bool batchMode) {
     scale->showEditedCB ();
 }
 
-void Resize::enabledToggled () {
-    
-    if (batchMode) {
-        if (enabled->get_inconsistent()) {
-            enabled->set_inconsistent (false);
-            enaConn.block (true);
-            enabled->set_active (false);
-            enaConn.block (false);
-        }
-        else if (lastEnabled)
-            enabled->set_inconsistent (true);
-
-        lastEnabled = enabled->get_active ();
-    }
+void Resize::enabledChanged () {
 
     if (listener) {
-        if (enabled->get_active ())
+        if (get_inconsistent())
+            listener->panelChanged (EvResizeEnabled, M("GENERAL_UNCHANGED"));
+        else if (getEnabled())
             listener->panelChanged (EvResizeEnabled, M("GENERAL_ENABLED"));
         else
             listener->panelChanged (EvResizeEnabled, M("GENERAL_DISABLED"));

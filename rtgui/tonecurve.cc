@@ -26,7 +26,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ToneCurve::ToneCurve () : FoldableToolPanel(this) {
+ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LABEL")) {
 
   CurveListener::setMulti(true);
 

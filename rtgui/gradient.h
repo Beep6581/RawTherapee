@@ -13,10 +13,8 @@ class Gradient : public ToolParamBlock, public AdjusterListener, public Foldable
 
   private:
     int lastObject;
-    Gtk::HBox* enaBox;
 
   protected:
-    Gtk::CheckButton* enabled;
     Gtk::ToggleButton* edit;
     Adjuster* degree;
     Adjuster* feather;
@@ -27,8 +25,7 @@ class Gradient : public ToolParamBlock, public AdjusterListener, public Foldable
     double draggedPointAdjusterAngle;
     double draggedFeatherOffset;
     Coord draggedCenter;
-    bool lastEnabled;
-    sigc::connection enaConn, editConn;
+    sigc::connection editConn;
 
     void editToggled ();
 
@@ -45,7 +42,7 @@ class Gradient : public ToolParamBlock, public AdjusterListener, public Foldable
     void updateGeometry (int centerX_, int centerY_, double feather_, double degree_);
 
     void adjusterChanged (Adjuster* a, double newval);
-    void enabledChanged ();
+    void enabledChanged  ();
     void setAdjusterBehavior (bool degreeadd, bool featheradd, bool strengthadd, bool centeradd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 

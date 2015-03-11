@@ -46,7 +46,6 @@ protected:
     FlatCurveEditor* opacityShapeBY;
 	
     FlatCurveEditor* ccshape;
-    Gtk::CheckButton * enabled;
     Gtk::CheckButton * display;
     Gtk::CheckButton * displaylevel;
     Gtk::CheckButton * displaychro;
@@ -132,12 +131,12 @@ protected:
     Gtk::Label* tilesizeLabel;
     Gtk::Label* previewLevelsLabel;
 	
-    sigc::connection enaConn, expConn,  medianConn, avoidConn;
+    sigc::connection expConn,  medianConn, avoidConn;
     sigc::connection neutralPressedConn;
     sigc::connection contrastPlusPressedConn;
     sigc::connection contrastMinusPressedConn;
-    
-    bool lastEnabled, lastdisplay, lastdisplaygam,lastdisplayres,lastdisplaychro, lastdisplaylevel,lastmedian, lastavoid;
+
+    bool lastdisplay, lastdisplaygam,lastdisplayres,lastdisplaychro, lastdisplaylevel,lastmedian, lastavoid;
 	int nextnlevel;
 
 public:
@@ -166,7 +165,7 @@ public:
 	void setAdjusterBehavior (bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd,bool chromaadd, bool contrastadd, bool skinadd, bool reschroadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool skyadd, bool edgradadd, bool edgvaladd, bool strengthadd);
    
     void adjusterChanged (Adjuster* a, double newval);
-    void enabledToggled ();
+    void enabledChanged ();
     void medianToggled ();
     void expcontrastTog ();
     void expresidTog ();

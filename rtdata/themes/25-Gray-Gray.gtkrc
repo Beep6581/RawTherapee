@@ -255,7 +255,7 @@ style "clearlooks-frame" {
 	bg[INSENSITIVE]   = mix(0.60, @rt_tool_bg, @rt_tool_border)
 }
 
-style "clearlooks-toolFrame" {
+style "clearlooks-toolFrame" = "clearlooks-toolContainer" {
 	bg[NORMAL]        = @rt_tool_bg
 
 	fg[NORMAL]        = @rt_tool_border
@@ -330,25 +330,19 @@ style "clearlooks-expander" {
 	xthickness = 3
 	ythickness = 3
 
-	fg[NORMAL]        = @rt_salt_pinch
-	fg[PRELIGHT]      = @rt_salt_pinch
-	fg[INSENSITIVE]   = @rt_salt_pinch
+	fg[NORMAL]        = "#a0a0a0"
+	fg[PRELIGHT]      = "#d0d0d0"
+	fg[INSENSITIVE]   = "#808080"
 
 	bg[PRELIGHT]      = mix(0.75, @rt_selected_bg_color, @rt_bg_color)
 
 	base[NORMAL]      = @rt_salt_pinch
 	base[PRELIGHT]    = @rt_salt_pinch
 	base[INSENSITIVE] = @rt_salt_pinch
-
-	engine "clearlooks" {
-		hint = "expander"
-	}
 }
 
-style "clearlooks-expanderLabel" {
-
-	fg[NORMAL]   = "#a0a0a0"
-	fg[PRELIGHT] = "#d0d0d0"
+style "clearlooks-subexpander" = "clearlooks-expander"{
+	bg[NORMAL]        = @rt_tool_bg
 }
 
 style "clearlooks-menubar" {
@@ -489,7 +483,6 @@ class "GtkScrollbar" style "clearlooks-scrollbar"
 class "GtkHScrollbar" style "clearlooks-hscrollbar"
 class "GtkVScrollbar" style "clearlooks-vscrollbar"
 
-class "GtkExpander" style "clearlooks-expander"
 class "GtkHSV" style "clearlooks-HSV"
 
 # General matching follows. The order is choosen so that the right styles override
@@ -513,9 +506,6 @@ widget_class "*<GtkStatusbar>*" style "clearlooks-statusbar"
 widget_class "*<GtkComboBox>*" style "clearlooks-combobox"
 
 widget_class "*<GtkCheckButton>*" style "clearlooks-checkbutton"
-widget_class "*<GtkExpander>.<GtkLabel>" style "clearlooks-expanderLabel"
-widget_class "*<GtkExpander>.<GtkHBox>.<GtkLabel>" style "clearlooks-expanderLabel"
-
 widget_class "*<GtkMenuBar>*" style "clearlooks-menubar"
 widget_class "*<GtkMenu>*" style "clearlooks-menu"
 widget_class "*<GtkMenuItem>*" style "clearlooks-menu_item"
@@ -532,17 +522,19 @@ widget_class "*.<GtkTreeView>.<GtkButton>" style "clearlooks-treeview_header"
 widget_class "*.<GtkCTree>.<GtkButton>" style "clearlooks-treeview_header"
 widget_class "*.<GtkList>.<GtkButton>" style "clearlooks-treeview_header"
 widget_class "*.<GtkCList>.<GtkButton>" style "clearlooks-treeview_header"
-widget_class "*.<GtkExpander>.*.<GtkSeparator>" style "clearlooks-separator"
-widget_class "*.<GtkExpander>.*.<GtkDrawingArea>" style "clearlooks-toolExpanderBox"
-widget_class "*.<GtkExpander>.<GtkEventBox>" style "clearlooks-toolFrame"
-widget_class "*.<GtkExpander>.<GtkEventBox>.*.<GtkEventBox>" style "clearlooks-toolExpanderBox"
+widget_class "*.<GtkVBox>.<GtkEventBox>.*.<GtkSeparator>" style "clearlooks-separator"
+widget_class "*.<GtkVBox>.<GtkEventBox>.*.<GtkDrawingArea>" style "clearlooks-toolExpanderBox"
 
 widget "*.partialPasteHeader.*" style "clearlooks-frame_title"
 widget "*.partialPasteHeaderSep" style "clearlooks-partialPasteHeaderSep"
 widget "*.histButton" style "clearlooks-histButton"
 widget "*.FramelessSpinButton" style "clearlooks-framelessspinbutton"
 widget "*.ThresholdSelector" style "clearlooks-thresholdselector"
-widget "*.ToolPanel" style "clearlooks-toolContainer"
+widget "*.MyExpanderTitle.*" style "clearlooks-expander"
+widget "*.MyExpanderTitle" style "clearlooks-expander"
+widget "*.ToolPanel" style "clearlooks-toolFrame"
+widget "*.ToolPanel.*.MyExpanderTitle" style "clearlooks-subexpander"
+widget "*.ToolPanel.*.MyExpanderTitle.*" style "clearlooks-subexpander"
 
 # The window of the tooltip is called "gtk-tooltip"
 ##################################################################

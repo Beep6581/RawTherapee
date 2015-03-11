@@ -25,7 +25,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-RAWCACorr::RAWCACorr () : FoldableToolPanel(this)
+RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROMATABERR_LABEL"))
 {
     Gtk::Image* icaredL =   Gtk::manage (new RTImage ("ajd-ca-red1.png"));
     Gtk::Image* icaredR =   Gtk::manage (new RTImage ("ajd-ca-red2.png"));

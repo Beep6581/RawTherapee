@@ -17,7 +17,6 @@ class ColorToning : public ToolParamBlock, public FoldableToolPanel,  public rte
                     public ThresholdAdjusterListener, public AdjusterListener {
 
   protected:
-    Gtk::CheckButton* enabled;
     //Gtk::HSeparator* splitSep;
     Gtk::HSeparator* satLimiterSep;
     Gtk::HSeparator* colorSep;
@@ -68,8 +67,6 @@ class ColorToning : public ToolParamBlock, public FoldableToolPanel,  public rte
     int nextsatpr;
     Glib::ustring nextbalcolor;
     Glib::ustring balcolor;
-    bool lastEnabled;
-    sigc::connection enaConn;
     bool lasttwocolor;
     sigc::connection neutralconn, twocconn; //, neutralcurvesconn;
     bool lastautosat;

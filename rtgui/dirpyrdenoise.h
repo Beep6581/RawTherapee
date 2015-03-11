@@ -43,9 +43,6 @@ class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public Fol
     FlatCurveEditor* lshape;
     FlatCurveEditor* ccshape;
 
-    Gtk::CheckButton* enabled;
-    bool lastEnabled;
-    sigc::connection enaConn;
     Gtk::CheckButton* enhance;
     bool lastenhance;
     sigc::connection enhanConn, medianConn, autochromaConn;

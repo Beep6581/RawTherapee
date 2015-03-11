@@ -33,7 +33,6 @@ class Vibrance : public ToolParamBlock, public AdjusterListener, public Threshol
 protected:
 	CurveEditorGroup* curveEditorGG;
 
-	Gtk::CheckButton* enabled;
 	Adjuster* pastels;
 	Adjuster* saturated;
     ThresholdAdjuster* psThreshold;
@@ -42,12 +41,10 @@ protected:
 	Gtk::CheckButton* pastSatTog;
 	DiagonalCurveEditor* skinTonesCurve;
 
-	bool lastEnabled;
 	bool lastProtectSkins;
 	bool lastAvoidColorShift;
 	bool lastPastSatTog;
 
-	sigc::connection enaconn;
 	sigc::connection pskinsconn;
 	sigc::connection ashiftconn;
 	sigc::connection pastsattogconn;
@@ -68,7 +65,7 @@ public:
 	void curveChanged        ();
     void autoOpenCurve       ();
 
-	void enabled_toggled         ();
+    void enabledChanged          ();
 	void protectskins_toggled    ();
 	void avoidcolorshift_toggled ();
 	void pastsattog_toggled      ();

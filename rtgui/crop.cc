@@ -34,18 +34,12 @@ class RefreshSpinHelper {
             : crop(_crop), notify(_notify) {}
 };
 
-Crop::Crop (): FoldableToolPanel(this) {
+Crop::Crop (): FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true) {
 
   clistener = NULL;
 
   maxw = 3000;
   maxh = 2000;
-
-  enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-  enabled->set_active (false);
-  pack_start(*enabled);
-
-  pack_start(*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_EXPAND_WIDGET, 4);
 
   Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
 
@@ -218,7 +212,6 @@ Crop::Crop (): FoldableToolPanel(this) {
   yconn = y->signal_value_changed().connect ( sigc::mem_fun(*this, &Crop::positionChanged), true);
   wconn = w->signal_value_changed().connect ( sigc::mem_fun(*this, &Crop::widthChanged), true);
   hconn = h->signal_value_changed().connect ( sigc::mem_fun(*this, &Crop::heightChanged), true);
-  econn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &Crop::enabledChanged) );
   fconn = fixr->signal_toggled().connect( sigc::mem_fun(*this, &Crop::ratioFixedChanged) );
   rconn = ratio->signal_changed().connect( sigc::mem_fun(*this, &Crop::ratioChanged) );
   oconn = orientation->signal_changed().connect( sigc::mem_fun(*this, &Crop::ratioChanged) );
@@ -255,11 +248,10 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
     hconn.block (true);
     rconn.block (true);
     fconn.block (true);
-    econn.block (true);
     oconn.block (true);
     gconn.block (true);
 
-    enabled->set_active (pp->crop.enabled);
+    setEnabled(pp->crop.enabled);
 
     // check if the new values are larger than the maximum
     double tmp, maxw, maxh;
@@ -326,11 +318,10 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
             orientation->set_active_text (M("GENERAL_UNCHANGED"));
         if (!pedited->crop.guide)
             guide->set_active_text (M("GENERAL_UNCHANGED"));
-        enabled->set_inconsistent (!pedited->crop.enabled);
+        set_inconsistent (multiImage && !pedited->crop.enabled);
         fixr->set_inconsistent (!pedited->crop.fixratio);
     }
 
-    lastEnabled = pp->crop.enabled;
     lastFixRatio = pp->crop.fixratio;
 
     xconn.block (false);
@@ -339,7 +330,6 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
     hconn.block (false);
     rconn.block (false);
     fconn.block (false);
-    econn.block (false);
     oconn.block (false);
     gconn.block (false);
 
@@ -348,7 +338,7 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
 void Crop::write (ProcParams* pp, ParamsEdited* pedited) {
 
-  pp->crop.enabled = enabled->get_active ();
+  pp->crop.enabled = getEnabled ();
   pp->crop.x = nx;
   pp->crop.y = ny;
   pp->crop.w = nw;
@@ -385,7 +375,7 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->crop.guide = "ePassport";
 
     if (pedited) {
-        pedited->crop.enabled       = !enabled->get_inconsistent();
+        pedited->crop.enabled       = !get_inconsistent();
         pedited->crop.ratio         = ratio->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->crop.orientation   = orientation->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->crop.guide         = guide->get_active_text() != M("GENERAL_UNCHANGED");
@@ -445,13 +435,11 @@ void Crop::selectPressed () {
 
 void Crop::notifyListener () {
 
-    if (listener && enabled->get_active ())
+    if (listener && getEnabled ())
         if (nw == 1 && nh == 1) {
-            econn.block (true);
-            enabled->set_active (false);
-            econn.block (false);
+            setEnabled(false);
             nx = (int)x->get_value ();
-            ny = (int)x->get_value ();
+            ny = (int)y->get_value ();
             nw = (int)w->get_value ();
             nh = (int)h->get_value ();
             listener->panelChanged (EvCrop, M("GENERAL_DISABLED"));
@@ -462,22 +450,11 @@ void Crop::notifyListener () {
 
 void Crop::enabledChanged () {
 
-    if (batchMode) {
-        if (enabled->get_inconsistent()) {
-            enabled->set_inconsistent (false);
-            econn.block (true);
-            enabled->set_active (false);
-            econn.block (false);
-        }
-        else if (lastEnabled)
-            enabled->set_inconsistent (true);
-
-        lastEnabled = enabled->get_active ();
-    }
-
     if (listener) {
-        if (enabled->get_active ())
-            listener->panelChanged (EvCrop, Glib::ustring::compose ("%1=%2, %3=%4\n%5=%6, %7=%8", M("TP_CROP_X"), nx, M("TP_CROP_Y"), ny, M("TP_CROP_W"), nw, M("TP_CROP_H"), nh));
+        if (get_inconsistent())
+            listener->panelChanged (EvCrop, M("GENERAL_UNCHANGED"));
+        else if (getEnabled())
+            listener->panelChanged (EvCrop, M("GENERAL_ENABLED"));
         else
             listener->panelChanged (EvCrop, M("GENERAL_DISABLED"));
     }
@@ -668,7 +645,7 @@ void Crop::setDimensions (int mw, int mh) {
   if (!wconnWasBlocked) wconn.block (false);
   if (!hconnWasBlocked) hconn.block (false);
 
-  if (enabled->get_active()==false) {
+  if (!getEnabled()) {
     nx = 0;
     ny = 0;
     nw = mw;
@@ -961,9 +938,7 @@ void Crop::cropInit (int &x, int &y, int &w, int &h) {
 
   w = 1; h = 1;
 
-  econn.block (true);
-  enabled->set_active (1);
-  econn.block (false);
+  setEnabled(true);
 }
 
 void Crop::cropResized (int &x, int &y, int& x2, int& y2) {

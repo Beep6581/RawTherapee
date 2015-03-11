@@ -23,7 +23,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-CACorrection::CACorrection () : FoldableToolPanel(this) {
+CACorrection::CACorrection () : FoldableToolPanel(this, "cacorrection", M("TP_CACORRECTION_LABEL")) {
 
     Gtk::Image* icaredL =   Gtk::manage (new RTImage ("ajd-ca-red1.png"));
     Gtk::Image* icaredR =   Gtk::manage (new RTImage ("ajd-ca-red2.png"));

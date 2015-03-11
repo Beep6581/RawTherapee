@@ -27,18 +27,9 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 
 
-SharpenMicro::SharpenMicro () : FoldableToolPanel(this) {
+SharpenMicro::SharpenMicro () : FoldableToolPanel(this, "sharpenmicro", M("TP_SHARPENMICRO_LABEL"), true, true) {
 
-	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-	enabled->set_active (true);
-	enabled->set_tooltip_markup (M("TP_SHARPENING_TOOLTIP"));
-	
-	pack_start(*enabled, Gtk::PACK_SHRINK, 0);
-	enabled->show ();
-
-	Gtk::HSeparator *hsep1 = Gtk::manage (new  Gtk::HSeparator());
-	hsep1->show ();
-	pack_start (*hsep1);
+	setEnabledTooltipMarkup(M("TP_SHARPENING_TOOLTIP"));
 
 	amount= Gtk::manage(new Adjuster (M("TP_SHARPENMICRO_AMOUNT"),0,100,1,20));
 	amount->setAdjusterListener (this);
@@ -59,7 +50,6 @@ SharpenMicro::SharpenMicro () : FoldableToolPanel(this) {
 
 	show ();
 
-	enaconn    = enabled->signal_toggled().connect( sigc::mem_fun(*this, &SharpenMicro::enabled_toggled) );
 	matrixconn = matrix->signal_toggled().connect( sigc::mem_fun(*this, &SharpenMicro::matrix_toggled) );
 }
 
@@ -67,15 +57,13 @@ void SharpenMicro::read(const ProcParams* pp, const ParamsEdited* pedited) {
 	disableListener ();
 
 	if(pedited ){
-		enabled->set_inconsistent  (!pedited->sharpenMicro.enabled);
+		set_inconsistent           (multiImage && !pedited->sharpenMicro.enabled);
 		matrix->set_inconsistent   (!pedited->sharpenMicro.matrix);
 		amount->setEditedState     (pedited->sharpenMicro.amount ? Edited : UnEdited);
 		uniformity->setEditedState (pedited->sharpenMicro.uniformity ? Edited : UnEdited);
 	}
-	enaconn.block (true);
-	enabled->set_active (pp->sharpenMicro.enabled);
-	enaconn.block (false);
-	lastEnabled = pp->sharpenMicro.enabled;
+
+	setEnabled(pp->sharpenMicro.enabled);
 
 	matrixconn.block (true);
 	matrix->set_active (pp->sharpenMicro.matrix);
@@ -89,39 +77,28 @@ void SharpenMicro::read(const ProcParams* pp, const ParamsEdited* pedited) {
 }
 
 void SharpenMicro::write( ProcParams* pp, ParamsEdited* pedited) {
-	pp->sharpenMicro.enabled    = enabled->get_active ();
+	pp->sharpenMicro.enabled    = getEnabled();
 	pp->sharpenMicro.matrix     = matrix->get_active ();
 	pp->sharpenMicro.amount     = amount->getValue ();
 	pp->sharpenMicro.uniformity = uniformity->getValue ();
 
 	if (pedited) {
-		pedited->sharpenMicro.enabled    = !enabled->get_inconsistent();
+		pedited->sharpenMicro.enabled    = !get_inconsistent();
 		pedited->sharpenMicro.matrix     = !matrix->get_inconsistent();
 		pedited->sharpenMicro.amount     = amount->getEditedState ();
 		pedited->sharpenMicro.uniformity = uniformity->getEditedState ();
 	}
 }
 
-void SharpenMicro::enabled_toggled () {
-	if (batchMode) {
-		if (enabled->get_inconsistent()) {
-			enabled->set_inconsistent (false);
-			enaconn.block (true);
-			enabled->set_active (false);
-			enaconn.block (false);
-		}
-		else if (lastEnabled)
-			enabled->set_inconsistent (true);
-
-		lastEnabled = enabled->get_active ();
-	}
+void SharpenMicro::enabledChanged () {
 
 	if (listener) {
-		if (enabled->get_active ())
+		if (get_inconsistent())
+			listener->panelChanged (EvSharpenMicroEnabled, M("GENERAL_UNCHANGED"));
+		else if (getEnabled())
 			listener->panelChanged (EvSharpenMicroEnabled, M("GENERAL_ENABLED"));
 		else
 			listener->panelChanged (EvSharpenMicroEnabled, M("GENERAL_DISABLED"));
-			
 	}
 }
 
@@ -139,7 +116,7 @@ void SharpenMicro::matrix_toggled () {
 		lastmatrix = matrix->get_active ();
 	}
 
-	if (listener && enabled->get_active ()) {
+	if (listener && getEnabled()) {
 		if (matrix->get_active ())
 			listener->panelChanged (EvSharpenMicroMatrix, M("GENERAL_ENABLED"));
 		else
@@ -148,7 +125,7 @@ void SharpenMicro::matrix_toggled () {
 }
 
 void SharpenMicro::adjusterChanged (Adjuster* a, double newval) {
-	if (listener && enabled->get_active()) {
+	if (listener && getEnabled()) {
 		Glib::ustring value = a->getTextValue();
 		if (a == amount)
 			listener->panelChanged (EvSharpenMicroAmount,     value );

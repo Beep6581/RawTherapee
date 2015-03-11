@@ -34,7 +34,7 @@ class Sharpening : public ToolParamBlock, public ThresholdAdjusterListener, publ
     Adjuster* diter;
     Gtk::VBox* usm;
     Gtk::VBox* rld;
-    
+
     Adjuster* radius;
     Adjuster* amount;
     Adjuster* eradius;
@@ -45,18 +45,13 @@ class Sharpening : public ToolParamBlock, public ThresholdAdjusterListener, publ
     Gtk::VBox* edgebox;
     Gtk::VBox* hcbox;
     ThresholdAdjuster* threshold;
-    Gtk::CheckButton* enabled;  
-    bool lastEnabled;
-    sigc::connection enaConn;
-    Gtk::CheckButton* edgesonly;  
+    Gtk::CheckButton* edgesonly;
     bool lastEdgesOnly;
     sigc::connection eonlyConn;
-    Gtk::CheckButton* halocontrol;  
+    Gtk::CheckButton* halocontrol;
     bool lastHaloControl;
     sigc::connection hcConn;
 
-
-	
   public:
 
     Sharpening ();
@@ -69,7 +64,7 @@ class Sharpening : public ToolParamBlock, public ThresholdAdjusterListener, publ
 
     void adjusterChanged (Adjuster* a, double newval);
     void adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
-    void enabled_toggled ();
+    void enabledChanged  ();
     void edgesonly_toggled ();
     void halocontrol_toggled ();
     void method_changed ();

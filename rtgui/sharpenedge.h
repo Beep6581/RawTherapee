@@ -32,13 +32,10 @@ class SharpenEdge : public ToolParamBlock, public AdjusterListener, public Folda
 
 protected:
 
-	Gtk::CheckButton* enabled;
 	Adjuster* passes;
 	Adjuster* amount;
 	Gtk::CheckButton* threechannels;
 
-	bool lastEnabled;
-	sigc::connection enaconn;
 	sigc::connection chanthreeconn;
 	bool lastchanthree;
 
@@ -54,7 +51,7 @@ public:
 	void setAdjusterBehavior (bool amountadd, bool passadd);
 	void adjusterChanged     (Adjuster* a, double newval);
 
-	void enabled_toggled     ();
+    void enabledChanged      ();
 	void chanthree_toggled   ();
 
 };

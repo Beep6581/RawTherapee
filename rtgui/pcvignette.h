@@ -11,12 +11,9 @@
 class PCVignette : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
   protected:
-    Gtk::CheckButton* enabled;
     Adjuster* strength;
     Adjuster* feather;
     Adjuster* roundness;
-    bool lastEnabled;
-    sigc::connection enaConn;
 
   public:
 
@@ -28,7 +25,7 @@ class PCVignette : public ToolParamBlock, public AdjusterListener, public Foldab
     void setBatchMode   (bool batchMode);
 
     void adjusterChanged (Adjuster* a, double newval);
-    void enabledChanged ();
+    void enabledChanged  ();
     void setAdjusterBehavior (bool strengthadd, bool featheradd, bool roundnessadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 };

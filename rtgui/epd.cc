@@ -23,19 +23,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-EdgePreservingDecompositionUI::EdgePreservingDecompositionUI () : FoldableToolPanel(this){
+EdgePreservingDecompositionUI::EdgePreservingDecompositionUI () : FoldableToolPanel(this, "epd", M("TP_EPD_LABEL"), true, true) {
 
-	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-	enabled->set_active (false);
-	enabled->set_tooltip_markup (M("TP_EPD_TOOLTIP"));
-	enabled->show ();
-	pack_start (*enabled);
-
-	Gtk::HSeparator *hsep1 = Gtk::manage (new  Gtk::HSeparator());
-	hsep1->show ();
-	pack_start (*hsep1);
-
-	enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &EdgePreservingDecompositionUI::enabledChanged) );
+	setEnabledTooltipMarkup(M("TP_EPD_TOOLTIP"));
 
 	strength = Gtk::manage(new Adjuster (M("TP_EPD_STRENGTH"), -2.0, 2.0, 0.01, 0.25));
 	edgeStopping = Gtk::manage(new Adjuster (M("TP_EPD_EDGESTOPPING"), 0.1, 4.0, 0.01, 1.4));
@@ -66,15 +56,10 @@ void EdgePreservingDecompositionUI::read(const ProcParams *pp, const ParamsEdite
 		edgeStopping->setEditedState(pedited->epd.edgeStopping ? Edited : UnEdited);
 		scale->setEditedState(pedited->epd.scale ? Edited : UnEdited);
 		reweightingIterates->setEditedState(pedited->epd.reweightingIterates ? Edited : UnEdited);
-
-		enabled->set_inconsistent(!pedited->epd.enabled);
+		set_inconsistent(multiImage && !pedited->epd.enabled);
 	}
 
-	enaConn.block(true);
-	enabled->set_active(pp->epd.enabled);
-	enaConn.block (false);
-
-	lastEnabled = pp->epd.enabled;
+	setEnabled(pp->epd.enabled);
 
 	strength->setValue(pp->epd.strength);
 	edgeStopping->setValue(pp->epd.edgeStopping);
@@ -89,14 +74,14 @@ void EdgePreservingDecompositionUI::write(ProcParams *pp, ParamsEdited *pedited)
 	pp->epd.edgeStopping = edgeStopping->getValue();
 	pp->epd.scale = scale->getValue();
 	pp->epd.reweightingIterates = reweightingIterates->getValue();
-	pp->epd.enabled = enabled->get_active();
+	pp->epd.enabled = getEnabled();
 	
 	if(pedited){
 		pedited->epd.strength = strength->getEditedState();
 		pedited->epd.edgeStopping = edgeStopping->getEditedState();
 		pedited->epd.scale = scale->getEditedState();
 		pedited->epd.reweightingIterates = reweightingIterates->getEditedState();
-		pedited->epd.enabled = !enabled->get_inconsistent();
+		pedited->epd.enabled = !get_inconsistent();
 	}
 }
 
@@ -120,7 +105,7 @@ void EdgePreservingDecompositionUI::setDefaults(const ProcParams *defParams, con
 }
 
 void EdgePreservingDecompositionUI::adjusterChanged(Adjuster* a, double newval){
-	if(listener && enabled->get_active()){
+	if(listener && getEnabled()){
 		if(a == strength)
 			listener->panelChanged(EvEPDStrength, Glib::ustring::format(std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
 		else if(a == edgeStopping)
@@ -132,22 +117,11 @@ void EdgePreservingDecompositionUI::adjusterChanged(Adjuster* a, double newval){
 	}
 }
 
-void EdgePreservingDecompositionUI::enabledChanged(){
-	if(batchMode){
-		if(enabled->get_inconsistent()){
-			enabled->set_inconsistent (false);
-			enaConn.block (true);
-			enabled->set_active (false);
-			enaConn.block (false);
-		}
-		else if(lastEnabled)
-			enabled->set_inconsistent (true);
-
-		lastEnabled = enabled->get_active ();
-	}
-	
-	if(listener){
-		if(enabled->get_active ())
+void EdgePreservingDecompositionUI::enabledChanged () {
+	if (listener) {
+		if (get_inconsistent())
+			listener->panelChanged (EvEPDEnabled, M("GENERAL_UNCHANGED"));
+		else if (getEnabled())
 			listener->panelChanged (EvEPDEnabled, M("GENERAL_ENABLED"));
 		else
 			listener->panelChanged (EvEPDEnabled, M("GENERAL_DISABLED"));

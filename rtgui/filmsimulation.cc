@@ -9,19 +9,8 @@ using namespace rtengine::procparams;
 typedef std::vector<Glib::ustring> Strings;
 
 FilmSimulation::FilmSimulation()
-:   FoldableToolPanel( this ),
-    m_lastEnabled( false )
+:   FoldableToolPanel( this, "filmsimulation", M("TP_FILMSIMULATION_LABEL"), false, true )
 {
-    m_enabled = Gtk::manage ( new Gtk::CheckButton( M("GENERAL_ENABLED") ) );
-    m_enabled->set_active( false );
-
-    pack_start( *m_enabled, Gtk::PACK_SHRINK, 0 );
-
-    m_enabled->show();
-    m_enabledConn = m_enabled->signal_toggled().connect( sigc::mem_fun( *this, &FilmSimulation::onEnabledToggled ) );
-
-    pack_start( *Gtk::manage ( new Gtk::HSeparator() ) );
-
     m_clutComboBox = Gtk::manage( new ClutComboBox() );
     int foundClutsCount = m_clutComboBox->fillFromDir( options.clutsDir );
     if ( foundClutsCount == 0 )
@@ -42,7 +31,7 @@ void FilmSimulation::onClutSelected()
 {
     Glib::ustring currentClutFilename = m_clutComboBox->getSelectedClut();
 
-    if ( m_enabled->get_active() && !currentClutFilename.empty() && listener && currentClutFilename != m_oldClutFilename )
+    if ( getEnabled() && !currentClutFilename.empty() && listener && currentClutFilename != m_oldClutFilename )
     {
         Glib::ustring clutName, dummy;
         splitClutFilename( currentClutFilename, clutName, dummy, dummy );
@@ -52,27 +41,12 @@ void FilmSimulation::onClutSelected()
     }  
 }
 
-void FilmSimulation::onEnabledToggled()
-{
-    if (multiImage)
-    {
-        if (m_enabled->get_inconsistent()) {
-            m_enabled->set_inconsistent (false);
-            m_enabledConn.block (true);
-            m_enabled->set_active (false);
-            m_enabledConn.block (false);
-        }
-        else if (m_lastEnabled)
-            m_enabled->set_inconsistent (true);
+void FilmSimulation::enabledChanged () {
 
-        m_lastEnabled = m_enabled->get_active ();
-    }
-
-    if ( listener ) 
-    {
-        if (m_enabled->get_inconsistent())
+    if (listener) {
+        if (get_inconsistent())
             listener->panelChanged (EvFilmSimulationEnabled, M("GENERAL_UNCHANGED"));
-        else if ( m_enabled->get_active() )
+        else if (getEnabled())
             listener->panelChanged (EvFilmSimulationEnabled, M("GENERAL_ENABLED"));
         else
             listener->panelChanged (EvFilmSimulationEnabled, M("GENERAL_DISABLED"));
@@ -81,7 +55,7 @@ void FilmSimulation::onEnabledToggled()
 
 void FilmSimulation::adjusterChanged( Adjuster* a, double newval )
 {
-    if (listener && (multiImage||m_enabled->get_active()) )
+    if (listener && (multiImage||getEnabled()) )
     {
         Glib::ustring value = a->getTextValue();
         listener->panelChanged ( EvFilmSimulationStrength, value );
@@ -100,19 +74,19 @@ void FilmSimulation::read( const rtengine::procparams::ProcParams* pp, const Par
     disableListener();
     updateDisable( true );
 
-    m_enabled->set_active( pp->filmSimulation.enabled );
+    setEnabled (pp->filmSimulation.enabled);
     if ( !pp->filmSimulation.clutFilename.empty() )
         m_clutComboBox->setSelectedClut( pp->filmSimulation.clutFilename );
     m_strength->setValue( pp->filmSimulation.strength );
 
     if (pedited)
     {
-        m_enabled->set_inconsistent (multiImage && !pedited->filmSimulation.enabled);
+        set_inconsistent (multiImage && !pedited->filmSimulation.enabled);
         m_strength->setEditedState (pedited->filmSimulation.strength ? Edited : UnEdited);
         if ( !pedited->filmSimulation.clutFilename )
             m_clutComboBox->setSelectedClut("NULL");
     }
-    if ( !m_enabled->get_inconsistent() && !pp->filmSimulation.enabled )
+    if ( !get_inconsistent() && !pp->filmSimulation.enabled )
     {
     	if (options.clutCacheSize == 1)
 			clutStore.clearCache();
@@ -124,7 +98,6 @@ void FilmSimulation::read( const rtengine::procparams::ProcParams* pp, const Par
 
 void FilmSimulation::updateDisable( bool value )
 {
-    m_enabledConn.block( value );
     m_clutComboBoxConn.block( value );
 }
 
@@ -132,12 +105,12 @@ void FilmSimulation::write( rtengine::procparams::ProcParams* pp, ParamsEdited* 
 {
     if ( pedited )
     {
-        pedited->filmSimulation.enabled  = !m_enabled->get_inconsistent();
+        pedited->filmSimulation.enabled  = !get_inconsistent();
         pedited->filmSimulation.strength = m_strength->getEditedState ();
         pedited->filmSimulation.clutFilename = m_clutComboBox->getSelectedClut() != "NULL";
     }
 
-    pp->filmSimulation.enabled = m_enabled->get_active();
+    pp->filmSimulation.enabled = getEnabled();
     Glib::ustring clutFName = m_clutComboBox->getSelectedClut();
     if ( clutFName != "NULL" ) // We do not want to set "NULL" in clutFilename, even if "unedited"
         pp->filmSimulation.clutFilename = clutFName;

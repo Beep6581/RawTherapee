@@ -23,7 +23,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Defringe::Defringe () : FoldableToolPanel(this)  {
+Defringe::Defringe () : FoldableToolPanel(this, "defringe", M("TP_DEFRINGE_LABEL"), true, true)  {
 
   std::vector<GradientMilestone> bottomMilestones;
   float R, G, B;
@@ -32,17 +32,8 @@ Defringe::Defringe () : FoldableToolPanel(this)  {
     Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
     bottomMilestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
   }
-
-  enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-  enabled->set_active (false);
-  enabled->set_tooltip_markup (M("TP_SHARPENING_TOOLTIP"));
   
- // enabled->show ();
-  pack_start (*enabled);
-
-  Gtk::HSeparator *hsep1 = Gtk::manage (new  Gtk::HSeparator());
-  hsep1->show ();
-  pack_start (*hsep1);
+  setEnabledTooltipMarkup(M("TP_SHARPENING_TOOLTIP"));
 
   curveEditorPF = new CurveEditorGroup (options.lastPFCurvesDir);
   curveEditorPF->setCurveListener (this);
@@ -52,7 +43,6 @@ Defringe::Defringe () : FoldableToolPanel(this)  {
   chshape->setBottomBarBgGradient(bottomMilestones);
   chshape->setCurveColorProvider(this, 1);
 
-  enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &Defringe::enabledChanged) );
   //edgConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &Defringe::edgeChanged) );
 
   radius  = Gtk::manage (new Adjuster (M("TP_DEFRINGE_RADIUS"), 0.5, 5.0, 0.1, 2.0));
@@ -97,15 +87,11 @@ void Defringe::read (const ProcParams* pp, const ParamsEdited* pedited) {
     if (pedited) {
         radius->setEditedState    ( pedited->defringe.radius ? Edited : UnEdited);
         threshold->setEditedState ( pedited->defringe.threshold ? Edited : UnEdited);
-        enabled->set_inconsistent (!pedited->defringe.enabled);
+        set_inconsistent          (multiImage && !pedited->defringe.enabled);
         chshape->setUnChanged     (!pedited->defringe.huecurve);
     }
 
-    enaConn.block (true);
-    enabled->set_active (pp->defringe.enabled);
-    enaConn.block (false);
-
-    lastEnabled = pp->defringe.enabled;
+    setEnabled(pp->defringe.enabled);
 
     radius->setValue    (pp->defringe.radius);
     threshold->setValue (pp->defringe.threshold);
@@ -124,13 +110,13 @@ void Defringe::write (ProcParams* pp, ParamsEdited* pedited) {
 
   pp->defringe.radius    = radius->getValue ();
   pp->defringe.threshold = (int)threshold->getValue ();
-  pp->defringe.enabled   = enabled->get_active();
+  pp->defringe.enabled   = getEnabled();
   pp->defringe.huecurve  = chshape->getCurve ();
 
     if (pedited) {
         pedited->defringe.radius    = radius->getEditedState ();
         pedited->defringe.threshold = threshold->getEditedState ();
-        pedited->defringe.enabled   = !enabled->get_inconsistent();
+        pedited->defringe.enabled   = !get_inconsistent();
         pedited->defringe.huecurve  = !chshape->isUnChanged ();
     }
 }
@@ -151,12 +137,12 @@ void Defringe::setDefaults (const ProcParams* defParams, const ParamsEdited* ped
 }
 void Defringe::curveChanged () {
 
-    if (listener && enabled->get_active()) listener->panelChanged (EvPFCurve, M("HISTORY_CUSTOMCURVE"));
+    if (listener && getEnabled()) listener->panelChanged (EvPFCurve, M("HISTORY_CUSTOMCURVE"));
 }
 
 void Defringe::adjusterChanged (Adjuster* a, double newval) {
 
-    if (listener && enabled->get_active()) {
+    if (listener && getEnabled()) {
         
         if (a==radius)
             listener->panelChanged (EvDefringeRadius, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(1), a->getValue()));
@@ -167,25 +153,14 @@ void Defringe::adjusterChanged (Adjuster* a, double newval) {
 
 void Defringe::enabledChanged () {
 
-    if (batchMode) {
-        if (enabled->get_inconsistent()) {
-            enabled->set_inconsistent (false);
-            enaConn.block (true);
-            enabled->set_active (false);
-            enaConn.block (false);
-        }
-        else if (lastEnabled)
-            enabled->set_inconsistent (true);
-
-        lastEnabled = enabled->get_active ();
-    }
-
     if (listener) {
-        if (enabled->get_active ())
+        if (get_inconsistent())
+            listener->panelChanged (EvDefringeEnabled, M("GENERAL_UNCHANGED"));
+        else if (getEnabled())
             listener->panelChanged (EvDefringeEnabled, M("GENERAL_ENABLED"));
         else
             listener->panelChanged (EvDefringeEnabled, M("GENERAL_DISABLED"));
-    }  
+    }
 }
 
 void Defringe::setBatchMode (bool batchMode) {

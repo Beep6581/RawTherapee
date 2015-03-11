@@ -24,7 +24,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Vibrance::Vibrance () : FoldableToolPanel(this) {
+Vibrance::Vibrance () : FoldableToolPanel(this, "vibrance", M("TP_VIBRANCE_LABEL"), false, true) {
 
 	std::vector<GradientMilestone> milestones;
 	float R, G, B;
@@ -33,12 +33,6 @@ Vibrance::Vibrance () : FoldableToolPanel(this) {
 	milestones.push_back( GradientMilestone(0.0, double(R), double(G), double(B)) );
 	Color::hsv2rgb01(0.14056f, 0.45f, 0.6f, R, G, B);
 	milestones.push_back( GradientMilestone(1.0, double(R), double(G), double(B)) );
-
-	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-	enabled->set_active (false);
-	pack_start(*enabled, Gtk::PACK_SHRINK, 0);
-
-	pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
 	saturated = Gtk::manage(new Adjuster (M("TP_VIBRANCE_SATURATED"),-100.,100.,1.,0.));
 	saturated->setAdjusterListener (this);
@@ -88,7 +82,6 @@ Vibrance::Vibrance () : FoldableToolPanel(this) {
 
 	show ();
 
-	enaconn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &Vibrance::enabled_toggled) );
 	pskinsconn = protectSkins->signal_toggled().connect( sigc::mem_fun(*this, &Vibrance::protectskins_toggled) );
 	ashiftconn = avoidColorShift->signal_toggled().connect( sigc::mem_fun(*this, &Vibrance::avoidcolorshift_toggled) );
 	pastsattogconn = pastSatTog->signal_toggled().connect( sigc::mem_fun(*this, &Vibrance::pastsattog_toggled) );
@@ -102,7 +95,7 @@ void Vibrance::read(const ProcParams* pp, const ParamsEdited* pedited) {
 	disableListener ();
 
 	if(pedited ){
-		enabled->set_inconsistent         (!pedited->vibrance.enabled);
+		set_inconsistent                  (multiImage && !pedited->vibrance.enabled);
 		pastels->setEditedState           (pedited->vibrance.pastels ? Edited : UnEdited);
 		saturated->setEditedState         (pedited->vibrance.saturated ? Edited : UnEdited);
 		psThreshold->setEditedState       (pedited->vibrance.psthreshold ? Edited : UnEdited);
@@ -112,10 +105,7 @@ void Vibrance::read(const ProcParams* pp, const ParamsEdited* pedited) {
 		skinTonesCurve->setUnChanged      (!pedited->vibrance.skintonescurve);
 	}
 
-	enaconn.block (true);
-	enabled->set_active (pp->vibrance.enabled);
-	enaconn.block (false);
-	lastEnabled = pp->vibrance.enabled;
+	setEnabled (pp->vibrance.enabled);
 
 	pskinsconn.block (true);
 	protectSkins->set_active (pp->vibrance.protectskins);
@@ -157,7 +147,7 @@ void Vibrance::autoOpenCurve  () {
 }
 
 void Vibrance::write( ProcParams* pp, ParamsEdited* pedited) {
-	pp->vibrance.enabled         = enabled->get_active ();
+	pp->vibrance.enabled         = getEnabled ();
 	pp->vibrance.pastels         = pastels->getIntValue();
 	pp->vibrance.saturated       = pastSatTog->get_active() ? pp->vibrance.pastels : saturated->getIntValue ();
 	pp->vibrance.psthreshold     = psThreshold->getValue<int> ();
@@ -167,7 +157,7 @@ void Vibrance::write( ProcParams* pp, ParamsEdited* pedited) {
 	pp->vibrance.skintonescurve  = skinTonesCurve->getCurve ();
 
 	if (pedited) {
-		pedited->vibrance.enabled         = !enabled->get_inconsistent();
+		pedited->vibrance.enabled         = !get_inconsistent();
 		pedited->vibrance.pastels         = pastels->getEditedState ();
 		pedited->vibrance.saturated       = saturated->getEditedState ();
 		pedited->vibrance.psthreshold     = psThreshold->getEditedState ();
@@ -180,25 +170,14 @@ void Vibrance::write( ProcParams* pp, ParamsEdited* pedited) {
 }
 void Vibrance::curveChanged () {
 
-	if (listener && enabled->get_active()) listener->panelChanged (EvVibranceSkinTonesCurve, M("HISTORY_CUSTOMCURVE"));
+	if (listener && getEnabled ()) listener->panelChanged (EvVibranceSkinTonesCurve, M("HISTORY_CUSTOMCURVE"));
 }
 
-void Vibrance::enabled_toggled () {
-	if (batchMode) {
-		if (enabled->get_inconsistent()) {
-			enabled->set_inconsistent (false);
-			enaconn.block (true);
-			enabled->set_active (false);
-			enaconn.block (false);
-		}
-		else if (lastEnabled)
-			enabled->set_inconsistent (true);
-
-		lastEnabled = enabled->get_active ();
-	}
-
+void Vibrance::enabledChanged () {
 	if (listener) {
-		if (enabled->get_active ())
+		if (get_inconsistent())
+			listener->panelChanged (EvVibranceEnabled, M("GENERAL_UNCHANGED"));
+		if (getEnabled())
 			listener->panelChanged (EvVibranceEnabled, M("GENERAL_ENABLED"));
 		else
 			listener->panelChanged (EvVibranceEnabled, M("GENERAL_DISABLED"));
@@ -219,7 +198,7 @@ void Vibrance::protectskins_toggled () {
 		lastProtectSkins = protectSkins->get_active ();
 	}
 
-	if (listener && enabled->get_active()) {
+	if (listener && getEnabled()) {
 		if (protectSkins->get_active ())
 			listener->panelChanged (EvVibranceProtectSkins, M("GENERAL_ENABLED"));
 		else
@@ -241,7 +220,7 @@ void Vibrance::avoidcolorshift_toggled () {
 		lastAvoidColorShift = avoidColorShift->get_active ();
 	}
 
-	if (listener && enabled->get_active()) {
+	if (listener && getEnabled()) {
 		if (avoidColorShift->get_active ())
 			listener->panelChanged (EvVibranceAvoidColorShift, M("GENERAL_ENABLED"));
 		else
@@ -275,7 +254,7 @@ void Vibrance::pastsattog_toggled () {
 		saturated->set_sensitive(true);
 	}
 
-	if (listener && enabled->get_active()) {
+	if (listener && getEnabled()) {
 		if (pastSatTog->get_active ()) {
 			listener->panelChanged (EvVibrancePastSatTog, M("GENERAL_ENABLED"));
 		}
@@ -288,7 +267,7 @@ void Vibrance::adjusterChanged (Adjuster* a, double newval) {
 	if (a == pastels && pastSatTog->get_active())
 		saturated->setValue (newval);
 
-	if (listener && enabled->get_active()) {
+	if (listener && getEnabled()) {
 		Glib::ustring value = a->getTextValue();
 
 		if (a == pastels )
@@ -299,7 +278,7 @@ void Vibrance::adjusterChanged (Adjuster* a, double newval) {
 }
 
 void Vibrance::adjusterChanged (ThresholdAdjuster* a, int newBottom, int newTop) {
-	if (listener && enabled->get_active()) {
+	if (listener && getEnabled()) {
 		listener->panelChanged (EvVibrancePastSatThreshold, psThreshold->getHistoryString());
 	}
 }

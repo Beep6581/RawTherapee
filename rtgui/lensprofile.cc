@@ -27,7 +27,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LensProfilePanel::LensProfilePanel () : FoldableToolPanel(this)
+LensProfilePanel::LensProfilePanel () : FoldableToolPanel(this, "lensprof", M("TP_LENSPROFILE_LABEL"))
 {
     hbLCPFile = Gtk::manage(new Gtk::HBox());
 

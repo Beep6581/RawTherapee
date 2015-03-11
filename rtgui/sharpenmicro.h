@@ -32,13 +32,10 @@ class SharpenMicro : public ToolParamBlock, public AdjusterListener, public Fold
 
 protected:
 
-	Gtk::CheckButton* enabled;
 	Gtk::CheckButton* matrix;
 	Adjuster* amount;
 	Adjuster* uniformity;
 
-	bool lastEnabled;
-	sigc::connection enaconn;
 	sigc::connection matrixconn;
 	bool lastmatrix;
 
@@ -54,7 +51,7 @@ public:
 	void setAdjusterBehavior (bool amountadd, bool uniformityadd );
 	void adjusterChanged     (Adjuster* a, double newval);
 
-	void enabled_toggled     ();
+    void enabledChanged      ();
 	void matrix_toggled      ();
 	
 

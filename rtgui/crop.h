@@ -41,7 +41,6 @@ class CropRatio {
 class Crop : public ToolParamBlock, public CropGUIListener, public FoldableToolPanel, public rtengine::SizeListener {
 
   protected:
-    Gtk::CheckButton* enabled;
     Gtk::CheckButton* fixr;
     MyComboBoxText* ratio;
     MyComboBoxText* orientation;
@@ -62,8 +61,8 @@ class Crop : public ToolParamBlock, public CropGUIListener, public FoldableToolP
     double nx, ny;
     int nw, nh;
     int lastRotationDeg;
-    sigc::connection xconn, yconn, wconn, hconn, econn, fconn, rconn, oconn, gconn;
-    bool wDirty, hDirty, xDirty, yDirty, lastEnabled, lastFixRatio;
+    sigc::connection xconn, yconn, wconn, hconn, fconn, rconn, oconn, gconn;
+    bool wDirty, hDirty, xDirty, yDirty, lastFixRatio;
     void adjustCropToRatio();
     std::vector<CropRatio>   cropratio;
 

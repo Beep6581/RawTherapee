@@ -46,13 +46,9 @@ public:
 
 private:
     void onClutSelected();
-    void onEnabledToggled();
+    void enabledChanged();
 
     void updateDisable( bool value );
-
-    Gtk::CheckButton* m_enabled;
-    bool m_lastEnabled;
-    sigc::connection m_enabledConn;
 
     ClutComboBox *m_clutComboBox;
     sigc::connection m_clutComboBoxConn;

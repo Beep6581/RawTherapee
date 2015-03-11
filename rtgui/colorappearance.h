@@ -61,7 +61,6 @@ class ColorAppearance : public ToolParamBlock, public AdjusterListener, public F
     Gtk::CheckButton* tonecie;
   //  Gtk::CheckButton* sharpcie;
 
-    Gtk::CheckButton* enabled;
     MyComboBoxText*   surround;
     sigc::connection  surroundconn;
     MyComboBoxText*   wbmodel;
@@ -79,10 +78,8 @@ class ColorAppearance : public ToolParamBlock, public AdjusterListener, public F
     DiagonalCurveEditor* shape2;
     DiagonalCurveEditor* shape3;
 	double nextCcam, nextCadap;
-    bool lastEnabled;
     bool lastAutoDegree;
 	bool lastAutoAdapscen;
-    sigc::connection enaConn;
     bool lastsurr;
     bool lastgamut;
 //	bool lastbadpix;

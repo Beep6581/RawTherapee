@@ -27,15 +27,7 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 
 
-SharpenEdge::SharpenEdge () : FoldableToolPanel(this) {
-
-	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-	enabled->set_active (true);
-	pack_start(*enabled, Gtk::PACK_SHRINK, 0);
-
-	Gtk::HSeparator *hsep1 = Gtk::manage (new  Gtk::HSeparator());
-	hsep1->show ();
-	pack_start (*hsep1);
+SharpenEdge::SharpenEdge () : FoldableToolPanel(this, "sharpenedge", M("TP_SHARPENEDGE_LABEL"), true, true) {
 
 	passes = Gtk::manage(new Adjuster (M("TP_SHARPENEDGE_PASSES"),1,4,1,2));
 	passes->setAdjusterListener (this);
@@ -52,7 +44,6 @@ SharpenEdge::SharpenEdge () : FoldableToolPanel(this) {
 
 	show ();
 
-	enaconn       = enabled->signal_toggled().connect( sigc::mem_fun(*this, &SharpenEdge::enabled_toggled) );
 	chanthreeconn = threechannels->signal_toggled().connect( sigc::mem_fun(*this, &SharpenEdge::chanthree_toggled) );
 }
 
@@ -62,13 +53,11 @@ void SharpenEdge::read(const ProcParams* pp, const ParamsEdited* pedited) {
 	if(pedited ){
 		passes->setEditedState          (pedited->sharpenEdge.passes ? Edited : UnEdited);
 		amount->setEditedState          (pedited->sharpenEdge.amount ? Edited : UnEdited);
-		enabled->set_inconsistent       (!pedited->sharpenEdge.enabled);
+		set_inconsistent                (multiImage && !pedited->sharpenEdge.enabled);
 		threechannels->set_inconsistent (!pedited->sharpenEdge.threechannels);
 	}
-	enaconn.block (true);
-	enabled->set_active (pp->sharpenEdge.enabled);
-	enaconn.block (false);
-	lastEnabled = pp->sharpenEdge.enabled;
+
+	setEnabled(pp->sharpenEdge.enabled);
 
 	chanthreeconn.block (true);
 	threechannels->set_active (pp->sharpenEdge.threechannels);
@@ -82,13 +71,13 @@ void SharpenEdge::read(const ProcParams* pp, const ParamsEdited* pedited) {
 }
 
 void SharpenEdge::write( ProcParams* pp, ParamsEdited* pedited) {
-	pp->sharpenEdge.enabled       = enabled->get_active ();
+	pp->sharpenEdge.enabled       = getEnabled();
 	pp->sharpenEdge.passes        = (int)passes->getValue();
 	pp->sharpenEdge.amount        = amount->getValue ();
 	pp->sharpenEdge.threechannels = threechannels->get_active ();
 
 	if (pedited) {
-		pedited->sharpenEdge.enabled       = !enabled->get_inconsistent();
+		pedited->sharpenEdge.enabled       = !get_inconsistent();
 		pedited->sharpenEdge.passes        = passes->getEditedState ();
 		pedited->sharpenEdge.amount        = amount->getEditedState ();
 		pedited->sharpenEdge.threechannels = !threechannels->get_inconsistent();
@@ -96,26 +85,12 @@ void SharpenEdge::write( ProcParams* pp, ParamsEdited* pedited) {
 
 }
 
-void SharpenEdge::enabled_toggled () {
-
-	if (batchMode) {
-		if (enabled->get_inconsistent()) {
-			enabled->set_inconsistent (false);
-			enaconn.block (true);
-			enabled->set_active (false);
-			enaconn.block (false);
-		}
-		else if (lastEnabled)
-			enabled->set_inconsistent (true);
-
-		lastEnabled = enabled->get_active ();
-	}
-
+void SharpenEdge::enabledChanged () {
 	if (listener) {
-		if (enabled->get_active ())
+		if (get_inconsistent())
+			listener->panelChanged (EvSharpenEdgeEnabled, M("GENERAL_UNCHANGED"));
+		else if (getEnabled())
 			listener->panelChanged (EvSharpenEdgeEnabled, M("GENERAL_ENABLED"));
-			//listener->panelChanged (EvMLunifor, M("GENERAL_ENABLED"));
-			
 		else
 			listener->panelChanged (EvSharpenEdgeEnabled, M("GENERAL_DISABLED"));
 	}
@@ -136,7 +111,7 @@ void SharpenEdge::chanthree_toggled () {
 		lastchanthree = threechannels->get_active ();
 	}
 
-	if (listener && enabled->get_active ()) {
+	if (listener && getEnabled()) {
 		if (threechannels->get_active ())
 			listener->panelChanged (EvSharpenEdgeThreechannels, M("GENERAL_ENABLED"));
 		else
@@ -145,7 +120,7 @@ void SharpenEdge::chanthree_toggled () {
 }
 
 void SharpenEdge::adjusterChanged (Adjuster* a, double newval) {
-	if (listener && enabled->get_active()) {
+	if (listener && getEnabled()) {
 		Glib::ustring value = a->getTextValue();
 		
 		if (a == passes )
