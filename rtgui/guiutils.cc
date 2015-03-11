@@ -380,7 +380,7 @@ void MyExpander::init() {
 }
 
 MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
-        enabled(false), inconsistent(false),
+        enabled(false), inconsistent(false), flushEvent(false),
         child(NULL), headerWidget(NULL), statusImage(NULL),
         label(NULL), useEnabled(useEnabled)
 {
@@ -425,7 +425,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
 }
 
 MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
-        enabled(false), inconsistent(false),
+        enabled(false), inconsistent(false), flushEvent(false),
         child(NULL), headerWidget(NULL), statusImage(NULL),
         label(NULL), useEnabled(useEnabled)
 {
@@ -597,30 +597,12 @@ void MyExpander::add  (Gtk::Container& widget) {
 	widget.show();
 }
 
-/*
-bool MyExpander::on_expose_event(GdkEventExpose* event) {
-
-	Gdk::Color c;
-	Cairo::RefPtr<Cairo::Context> cr = get_window()->create_cairo_context();
-
-	int w = get_width ();
-	int h = get_height ();
-
-	Gtk::StateType state = !is_sensitive() ? Gtk::STATE_INSENSITIVE : Gtk::STATE_PRELIGHT;
-	Glib::RefPtr<Gtk::Style> style = get_style();
-
-	// clear bg
-	cr->set_line_width (0.);
-	c = style->get_bg (state);
-	cr->set_source_rgb(c.get_red_p(), c.get_green_p(), c.get_blue_p());
-	// draw the box's background
-	cr->rectangle (0., 0., double(w), double(h));
-	cr->fill();
-	return true;
-}
-*/
-
 bool MyExpander::on_toggle(GdkEventButton* event) {
+	if (flushEvent) {
+		flushEvent = false;
+		return false;
+	}
+
 	if (!child || event->button != 1)
 		return false;
 
@@ -646,7 +628,7 @@ MyExpander::type_signal_enabled_toggled MyExpander::signal_enabled_toggled() {
 
 // internal use ; when the user clicks on the toggle button, it calls this method that will emit an enabled_change event
 bool MyExpander::on_enabled_change(GdkEventButton* event) {
-	if (useEnabled && event->button == 1) {
+	if (event->button == 1) {
 		if (enabled) {
 			enabled = false;
 			statusImage->set(disabledPBuf);
@@ -656,6 +638,7 @@ bool MyExpander::on_enabled_change(GdkEventButton* event) {
 			statusImage->set(enabledPBuf);
 		}
 		message.emit();
+		flushEvent = true;
 	}
 	return false;
 }
