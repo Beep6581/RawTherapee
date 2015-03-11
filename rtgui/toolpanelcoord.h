@@ -77,6 +77,7 @@
 #include "rgbcurves.h"
 #include "colortoning.h"
 #include "filmsimulation.h"
+#include "guiutils.h"
 
 class ImageEditorCoordinator;
 
@@ -185,11 +186,11 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         Gtk::ScrolledWindow* transformPanelSW;
         Gtk::ScrolledWindow* rawPanelSW;
 
-        std::vector<Gtk::Expander*> expList;
+        std::vector<MyExpander*> expList;
         
         bool hasChanged;
 
-        void addPanel (Gtk::Box* where, FoldableToolPanel* panel, Glib::ustring label, bool need100Percent=false);
+        void addPanel (Gtk::Box* where, FoldableToolPanel* panel);
         void foldThemAll (GdkEventButton* event);
         void updateVScrollbars (bool hide);
         void updateTabsHeader (bool useIcons);

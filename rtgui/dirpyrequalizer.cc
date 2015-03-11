@@ -22,7 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this) {
+DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer", M("TP_DIRPYREQUALIZER_LABEL"), true, true) {
 
    std::vector<GradientMilestone> milestones;
 
@@ -39,15 +39,8 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this) {
    Color::hsv2rgb01(0.2650, 0.5, 0.5, r, g, b);   milestones.push_back( GradientMilestone(0.8824, r, g, b) ); // hsv: 0.265  rad:  2.1
    Color::hsv2rgb01(0.3240, 0.5, 0.5, r, g, b);   milestones.push_back( GradientMilestone(1.    , r, g, b) ); // hsv: 0.324  rad:  2.5
 
-    enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-    enabled->set_active (true);
-    pack_start(*enabled);
-    enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrEqualizer::enabledToggled) );
-    enabled->set_tooltip_markup (M("TP_SHARPENING_TOOLTIP"));
+   setEnabledTooltipMarkup(M("TP_SHARPENING_TOOLTIP"));
 
-    Gtk::HSeparator *separator1 = Gtk::manage (new  Gtk::HSeparator());
-    pack_start(*separator1, Gtk::PACK_SHRINK, 2);
-    
     Gtk::HBox * buttonBox1 = Gtk::manage (new Gtk::HBox());
     pack_start(*buttonBox1, Gtk::PACK_SHRINK, 2);
 
@@ -138,7 +131,7 @@ void DirPyrEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     if (pedited) {
 
-        enabled->set_inconsistent (!pedited->dirpyrequalizer.enabled);
+        set_inconsistent (multiImage && !pedited->dirpyrequalizer.enabled);
         gamutlab->set_inconsistent (!pedited->dirpyrequalizer.gamutlab);
 
         for(int i = 0; i < 6; i++) {
@@ -149,10 +142,8 @@ void DirPyrEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited) {
         hueskin->setEditedState 	(pedited->dirpyrequalizer.hueskin ? Edited : UnEdited);	
     }
 
-    enaConn.block (true);
-    enabled->set_active (pp->dirpyrequalizer.enabled);
-    enaConn.block (false);
-    lastEnabled = pp->dirpyrequalizer.enabled;
+    setEnabled(pp->dirpyrequalizer.enabled);
+
 /*
     algoconn.block(true);
     if (pedited && !pedited->dirpyrequalizer.algo)
@@ -181,7 +172,7 @@ void DirPyrEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
 void DirPyrEqualizer::write (ProcParams* pp, ParamsEdited* pedited) {
 
-    pp->dirpyrequalizer.enabled = enabled->get_active ();
+    pp->dirpyrequalizer.enabled = getEnabled();
     pp->dirpyrequalizer.gamutlab = gamutlab->get_active ();
     pp->dirpyrequalizer.hueskin        = hueskin->getValue<int> ();
 
@@ -193,7 +184,7 @@ void DirPyrEqualizer::write (ProcParams* pp, ParamsEdited* pedited) {
 
     if (pedited) {
 
-        pedited->dirpyrequalizer.enabled =  !enabled->get_inconsistent();
+        pedited->dirpyrequalizer.enabled =  !get_inconsistent();
         pedited->dirpyrequalizer.hueskin 		= hueskin->getEditedState ();
 
         for(int i = 0; i < 6; i++) {
@@ -242,7 +233,7 @@ void DirPyrEqualizer::setDefaults (const ProcParams* defParams, const ParamsEdit
 }
 
 void DirPyrEqualizer::adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {
-    if (listener && (multiImage||enabled->get_active()) ) {
+    if (listener && (multiImage||getEnabled()) ) {
         listener->panelChanged (EvDirPyrEqualizerHueskin, hueskin->getHistoryString());
     }
 }
@@ -263,7 +254,7 @@ void DirPyrEqualizer::setBatchMode (bool batchMode) {
 
 void DirPyrEqualizer::adjusterChanged (Adjuster* a, double newval) {
 
-    if (listener && enabled->get_active()) {
+    if (listener && getEnabled()) {
         if (a == threshold) {
             listener->panelChanged (EvDirPyrEqualizerThreshold,
                          Glib::ustring::compose("%1",
@@ -290,23 +281,12 @@ void DirPyrEqualizer::adjusterChanged (Adjuster* a, double newval) {
     }
 }
 
-void DirPyrEqualizer::enabledToggled () {
-
-    if (batchMode) {
-        if (enabled->get_inconsistent()) {
-            enabled->set_inconsistent (false);
-            enaConn.block (true);
-            enabled->set_active (false);
-            enaConn.block (false);
-        }
-        else if (lastEnabled)
-            enabled->set_inconsistent (true);
-
-        lastEnabled = enabled->get_active ();
-    }
+void DirPyrEqualizer::enabledChanged () {
 
     if (listener) {
-        if (enabled->get_active ())
+        if (get_inconsistent())
+            listener->panelChanged (EvDirPyrEqlEnabled, M("GENERAL_UNCHANGED"));
+        else if (getEnabled())
             listener->panelChanged (EvDirPyrEqlEnabled, M("GENERAL_ENABLED"));
         else
             listener->panelChanged (EvDirPyrEqlEnabled, M("GENERAL_DISABLED"));

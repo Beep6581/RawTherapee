@@ -34,6 +34,12 @@ unsigned int MyReaderLock::readerLockCounter = 0;
 unsigned int MyWriterLock::writerLockCounter = 0;
 #endif
 
+Glib::RefPtr<Gdk::Pixbuf> MyExpander::inconsistentPBuf;
+Glib::RefPtr<Gdk::Pixbuf> MyExpander::enabledPBuf;
+Glib::RefPtr<Gdk::Pixbuf> MyExpander::disabledPBuf;
+Glib::RefPtr<Gdk::Pixbuf> MyExpander::openedPBuf;
+Glib::RefPtr<Gdk::Pixbuf> MyExpander::closedPBuf;
+
 Glib::ustring escapeHtmlChars(const Glib::ustring &src) {
 
     // Sources chars to be escaped
@@ -311,6 +317,295 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
     cr->reset_clip ();
 }
 
+
+void MyExpander::init() {
+    inconsistentPBuf = Gdk::Pixbuf::create_from_file(RTImage::findIconAbsolutePath("expanderInconsistent.png"));
+    enabledPBuf = Gdk::Pixbuf::create_from_file(RTImage::findIconAbsolutePath("expanderEnabled.png"));
+    disabledPBuf = Gdk::Pixbuf::create_from_file(RTImage::findIconAbsolutePath("expanderDisabled.png"));
+    openedPBuf = Gdk::Pixbuf::create_from_file(RTImage::findIconAbsolutePath("expanderOpened.png"));
+    closedPBuf = Gdk::Pixbuf::create_from_file(RTImage::findIconAbsolutePath("expanderClosed.png"));
+}
+
+MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
+        enabled(false), inconsistent(false),
+        child(NULL), headerWidget(NULL), statusImage(NULL),
+        label(NULL), useEnabled(useEnabled)
+{
+    set_spacing(options.slimUI ? 0 : 2);
+    set_name("MyExpander");
+    set_can_focus(false);
+
+    headerHBox = Gtk::manage( new Gtk::HBox());
+    headerHBox->set_can_focus(false);
+
+    if (useEnabled) {
+        statusImage = Gtk::manage(new Gtk::Image(disabledPBuf));
+        Gtk::EventBox *imageEvBox = Gtk::manage(new Gtk::EventBox());
+        imageEvBox->add(*statusImage);
+        imageEvBox->set_above_child(true);
+        imageEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_enabled_change) );
+        headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
+    }
+    else {
+        statusImage = Gtk::manage(new Gtk::Image(openedPBuf));
+        headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
+    }
+    statusImage->set_can_focus(false);
+
+    if (titleWidget) {
+        headerHBox->pack_start(*titleWidget, Gtk::PACK_EXPAND_WIDGET, 0);
+        headerWidget = titleWidget;
+    }
+
+    titleEvBox = Gtk::manage(new Gtk::EventBox());
+    titleEvBox->set_name("MyExpanderTitle");
+    titleEvBox->add(*headerHBox);
+    titleEvBox->set_above_child(false);  // this is the key! By making it below the child, they will get the events first.
+    titleEvBox->set_can_focus(false);
+
+    pack_start(*titleEvBox, Gtk::PACK_EXPAND_WIDGET, 0);
+
+    updateStyle();
+    titleEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_toggle) );
+    titleEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave), false);
+    titleEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave), false);
+}
+
+MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
+        enabled(false), inconsistent(false),
+        child(NULL), headerWidget(NULL), statusImage(NULL),
+        label(NULL), useEnabled(useEnabled)
+{
+    set_spacing(options.slimUI ? 0 : 2);
+    set_name("MyExpander");
+    set_can_focus(false);
+
+    headerHBox = Gtk::manage( new Gtk::HBox());
+    headerHBox->set_can_focus(false);
+
+
+    if (useEnabled) {
+        statusImage = Gtk::manage(new Gtk::Image(disabledPBuf));
+        Gtk::EventBox *imageEvBox = Gtk::manage(new Gtk::EventBox());
+        imageEvBox->add(*statusImage);
+        imageEvBox->set_above_child(true);
+        imageEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_enabled_change) );
+        headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
+    }
+    else {
+        statusImage = Gtk::manage(new Gtk::Image(openedPBuf));
+        headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
+    }
+    statusImage->set_can_focus(false);
+
+    Glib::ustring str("-");
+    if (!titleLabel.empty())
+        str = titleLabel;
+    label = Gtk::manage(new Gtk::Label());
+    label->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER);
+    label->set_markup(Glib::ustring("<b>") + escapeHtmlChars(titleLabel) + Glib::ustring("</b>"));
+    headerHBox->pack_start(*label, Gtk::PACK_EXPAND_WIDGET, 0);
+
+    titleEvBox = Gtk::manage(new Gtk::EventBox());
+    titleEvBox->set_name("MyExpanderTitle");
+    titleEvBox->add(*headerHBox);
+    titleEvBox->set_above_child(false);  // this is the key! By make it below the child, they will get the events first.
+    titleEvBox->set_can_focus(false);
+
+    pack_start(*titleEvBox, Gtk::PACK_EXPAND_WIDGET, 0);
+
+    updateStyle();
+    titleEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_toggle));
+    titleEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave), false);
+    titleEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave), false);
+}
+
+bool MyExpander::on_enter_leave (GdkEventCrossing* event) {
+	if (is_sensitive()) {
+		if (event->type == GDK_ENTER_NOTIFY) {
+			titleEvBox->set_state(Gtk::STATE_PRELIGHT);
+			queue_draw();
+		}
+		else if (event->type == GDK_LEAVE_NOTIFY) {
+			titleEvBox->set_state(Gtk::STATE_NORMAL);
+			queue_draw();
+		}
+	}
+	return true;
+}
+
+void MyExpander::updateStyle() {
+	headerHBox->set_spacing(options.slimUI ? 2 : 5);
+	headerHBox->set_border_width(options.slimUI ? 1 : 2);
+	set_spacing(0);
+	set_border_width(options.slimUI ? 0 : 1);
+	if (child) child->set_border_width(options.slimUI ? 2 : 8);  // Outer space around the tool's frame 2:7
+}
+
+void MyExpander::setLabel (Glib::ustring newLabel) {
+	if (label)
+		label->set_markup(Glib::ustring("<b>") + escapeHtmlChars(newLabel) + Glib::ustring("</b>"));
+}
+
+void MyExpander::setLabel (Gtk::Widget *newWidget) {
+	if (headerWidget) {
+		removeIfThere(headerHBox, headerWidget, false);
+		headerHBox->pack_start(*newWidget, Gtk::PACK_EXPAND_WIDGET, 0);
+	}
+}
+
+bool MyExpander::get_inconsistent() {
+	return inconsistent;
+}
+
+void MyExpander::set_inconsistent(bool isInconsistent) {
+	if (inconsistent != isInconsistent) {
+		inconsistent = isInconsistent;
+		if (useEnabled) {
+			if (isInconsistent)
+				statusImage->set(inconsistentPBuf);
+			else {
+				if (enabled)
+					statusImage->set(enabledPBuf);
+				else
+					statusImage->set(disabledPBuf);
+			}
+		}
+
+	}
+}
+
+bool MyExpander::getUseEnabled() {
+	return useEnabled;
+}
+
+bool MyExpander::getEnabled() {
+	return enabled;
+}
+
+void MyExpander::setEnabled(bool isEnabled) {
+	if (isEnabled != enabled) {
+		if (useEnabled) {
+			if (enabled) {
+				enabled = false;
+				if (!inconsistent) {
+					statusImage->set(disabledPBuf);
+					message.emit();
+				}
+			}
+			else {
+				enabled = true;
+				if (!inconsistent) {
+					statusImage->set(enabledPBuf);
+					message.emit();
+				}
+			}
+		}
+	}
+}
+
+void MyExpander::setEnabledTooltipMarkup(Glib::ustring tooltipMarkup) {
+	if (useEnabled) {
+		statusImage->set_tooltip_markup(tooltipMarkup);
+	}
+}
+
+void MyExpander::setEnabledTooltipText(Glib::ustring tooltipText) {
+	if (useEnabled) {
+		statusImage->set_tooltip_text(tooltipText);
+	}
+}
+
+void MyExpander::set_expanded( bool expanded ) {
+	if (!child)
+		return;
+
+	bool isVisible = child->is_visible();
+
+	if (isVisible == expanded)
+		return;
+
+	if (!useEnabled) {
+		if (expanded )
+			statusImage->set(openedPBuf);
+		else
+			statusImage->set(closedPBuf);
+	}
+	child->set_visible(expanded);
+}
+
+bool MyExpander::get_expanded() {
+	return child ? child->get_visible() : false;
+}
+
+void MyExpander::add  (Gtk::Container& widget) {
+	child = &widget;
+	pack_start(widget);
+	widget.show();
+}
+
+/*
+bool MyExpander::on_expose_event(GdkEventExpose* event) {
+
+	Gdk::Color c;
+	Cairo::RefPtr<Cairo::Context> cr = get_window()->create_cairo_context();
+
+	int w = get_width ();
+	int h = get_height ();
+
+	Gtk::StateType state = !is_sensitive() ? Gtk::STATE_INSENSITIVE : Gtk::STATE_PRELIGHT;
+	Glib::RefPtr<Gtk::Style> style = get_style();
+
+	// clear bg
+	cr->set_line_width (0.);
+	c = style->get_bg (state);
+	cr->set_source_rgb(c.get_red_p(), c.get_green_p(), c.get_blue_p());
+	// draw the box's background
+	cr->rectangle (0., 0., double(w), double(h));
+	cr->fill();
+	return true;
+}
+*/
+
+bool MyExpander::on_toggle(GdkEventButton* event) {
+	if (!child || event->button != 1)
+		return false;
+
+	bool isVisible = child->is_visible();
+	if (!useEnabled) {
+		if (isVisible)
+			statusImage->set(closedPBuf);
+		else
+			statusImage->set(openedPBuf);
+	}
+	child->set_visible(!isVisible);
+	return false;
+}
+
+Gtk::Container* MyExpander::getChild() {
+	return child;
+}
+
+// used to connect a function to the enabled_toggled signal
+MyExpander::type_signal_enabled_toggled MyExpander::signal_enabled_toggled() {
+	return message;
+}
+
+// internal use ; when the user clicks on the toggle button, it calls this method that will emit an enabled_change event
+bool MyExpander::on_enabled_change(GdkEventButton* event) {
+	if (useEnabled && event->button == 1) {
+		if (enabled) {
+			enabled = false;
+			statusImage->set(disabledPBuf);
+		}
+		else {
+			enabled = true;
+			statusImage->set(enabledPBuf);
+		}
+		message.emit();
+	}
+	return false;
+}
 
 /*
  *

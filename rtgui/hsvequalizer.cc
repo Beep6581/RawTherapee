@@ -25,7 +25,7 @@ using namespace rtengine::procparams;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-HSVEqualizer::HSVEqualizer () : FoldableToolPanel(this) {
+HSVEqualizer::HSVEqualizer () : FoldableToolPanel(this, "hsvequalizer", M("TP_HSVEQUALIZER_LABEL")) {
 	
 	std::vector<GradientMilestone> bottomMilestones;
 	float R, G, B;

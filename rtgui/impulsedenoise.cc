@@ -24,18 +24,12 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ImpulseDenoise::ImpulseDenoise () : FoldableToolPanel(this) {
-
-	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-	enabled->set_active (false);
+ImpulseDenoise::ImpulseDenoise () : FoldableToolPanel(this, "impulsedenoise", M("TP_IMPULSEDENOISE_LABEL"), true, true) {
 
 	thresh = Gtk::manage (new Adjuster (M("TP_IMPULSEDENOISE_THRESH"), 0, 100, 1, 50));
 
-	pack_start (*enabled);
-	pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 	pack_start (*thresh);
 
-	enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &ImpulseDenoise::enabledChanged) );
 	thresh->setAdjusterListener (this);
 
 	show_all_children ();
@@ -47,14 +41,10 @@ void ImpulseDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     if (pedited) {
         thresh->setEditedState    (pedited->impulseDenoise.thresh ? Edited : UnEdited);
-        enabled->set_inconsistent (!pedited->impulseDenoise.enabled);
+        set_inconsistent          (multiImage && !pedited->impulseDenoise.enabled);
     }
 
-    enaConn.block (true);
-    enabled->set_active (pp->impulseDenoise.enabled);
-    enaConn.block (false);
-    
-    lastEnabled = pp->impulseDenoise.enabled;
+    setEnabled(pp->impulseDenoise.enabled);
 
     thresh->setValue (pp->impulseDenoise.thresh);
 
@@ -64,11 +54,11 @@ void ImpulseDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
 void ImpulseDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
 
     pp->impulseDenoise.thresh    = thresh->getValue ();
-    pp->impulseDenoise.enabled   = enabled->get_active();
-	
+    pp->impulseDenoise.enabled   = getEnabled();
+
     if (pedited) {
         pedited->impulseDenoise.thresh        = thresh->getEditedState ();
-        pedited->impulseDenoise.enabled       = !enabled->get_inconsistent();
+        pedited->impulseDenoise.enabled       = !get_inconsistent();
     }
 }
 
@@ -84,33 +74,21 @@ void ImpulseDenoise::setDefaults (const ProcParams* defParams, const ParamsEdite
 
 void ImpulseDenoise::adjusterChanged (Adjuster* a, double newval) {
 
-    if (listener && enabled->get_active()) {
+    if (listener && getEnabled()) {
 
         listener->panelChanged (EvIDNThresh, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(1), a->getValue()));
     }
 }
 
 void ImpulseDenoise::enabledChanged () {
-
-    if (batchMode) {
-        if (enabled->get_inconsistent()) {
-            enabled->set_inconsistent (false);
-            enaConn.block (true);
-            enabled->set_active (false);
-            enaConn.block (false);
-        }
-        else if (lastEnabled)
-            enabled->set_inconsistent (true);
-
-        lastEnabled = enabled->get_active ();
-    }
-
     if (listener) {
-        if (enabled->get_active ())
+        if (get_inconsistent())
+            listener->panelChanged (EvIDNEnabled, M("GENERAL_UNCHANGED"));
+        else if (getEnabled())
             listener->panelChanged (EvIDNEnabled, M("GENERAL_ENABLED"));
         else
             listener->panelChanged (EvIDNEnabled, M("GENERAL_DISABLED"));
-    }  
+    }
 }
 
 void ImpulseDenoise::setBatchMode (bool batchMode) {

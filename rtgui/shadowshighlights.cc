@@ -21,14 +21,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ShadowsHighlights::ShadowsHighlights () : FoldableToolPanel(this) {
-
-  enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-  enabled->set_active (false);
-  pack_start (*enabled);
-  enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &ShadowsHighlights::enabledChanged) );
-
-  pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+ShadowsHighlights::ShadowsHighlights () : FoldableToolPanel(this, "shadowshighlights", M("TP_SHADOWSHLIGHTS_LABEL"), false, true) {
 
   hq = Gtk::manage (new Gtk::CheckButton (M("TP_SHADOWSHLIGHTS_SHARPMASK")));
   hq->set_active (false);
@@ -73,24 +66,22 @@ void ShadowsHighlights::read (const ProcParams* pp, const ParamsEdited* pedited)
     disableListener ();
 
     if (pedited) {
-        radius->setEditedState      (pedited->sh.radius ? Edited : UnEdited);
-        lcontrast->setEditedState   (pedited->sh.localcontrast ? Edited : UnEdited);
-        highlights->setEditedState  (pedited->sh.highlights ? Edited : UnEdited);
+        radius->setEditedState       (pedited->sh.radius ? Edited : UnEdited);
+        lcontrast->setEditedState    (pedited->sh.localcontrast ? Edited : UnEdited);
+        highlights->setEditedState   (pedited->sh.highlights ? Edited : UnEdited);
         h_tonalwidth->setEditedState (pedited->sh.htonalwidth ? Edited : UnEdited);
-        shadows->setEditedState     (pedited->sh.shadows ? Edited : UnEdited);
+        shadows->setEditedState      (pedited->sh.shadows ? Edited : UnEdited);
         s_tonalwidth->setEditedState (pedited->sh.stonalwidth ? Edited : UnEdited);
-        enabled->set_inconsistent   (!pedited->sh.enabled);
-        hq->set_inconsistent        (!pedited->sh.hq);
+        set_inconsistent             (multiImage && !pedited->sh.enabled);
+        hq->set_inconsistent         (!pedited->sh.hq);
     }
 
-    enaConn.block (true);
-    enabled->set_active (pp->sh.enabled);
-    enaConn.block (false);
+    setEnabled (pp->sh.enabled);
+
     hqConn.block (true);
     hq->set_active (pp->sh.hq);
     hqConn.block (false);
-    
-    lastEnabled = pp->sh.enabled;
+
     lastHQ = pp->sh.hq;
 
     radius->setValue        (pp->sh.radius);
@@ -111,7 +102,7 @@ void ShadowsHighlights::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->sh.htonalwidth   = (int)h_tonalwidth->getValue ();
     pp->sh.shadows       = (int)shadows->getValue ();
     pp->sh.stonalwidth   = (int)s_tonalwidth->getValue ();
-    pp->sh.enabled       = enabled->get_active();
+    pp->sh.enabled       = getEnabled();
     pp->sh.hq            = hq->get_active();
 
     if (pedited) {
@@ -121,7 +112,7 @@ void ShadowsHighlights::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->sh.htonalwidth     = h_tonalwidth->getEditedState ();
         pedited->sh.shadows         = shadows->getEditedState ();
         pedited->sh.stonalwidth     = s_tonalwidth->getEditedState ();
-        pedited->sh.enabled         = !enabled->get_inconsistent();
+        pedited->sh.enabled         = !get_inconsistent();
         pedited->sh.hq              = !hq->get_inconsistent();
     }
 }
@@ -155,7 +146,7 @@ void ShadowsHighlights::setDefaults (const ProcParams* defParams, const ParamsEd
 
 void ShadowsHighlights::adjusterChanged (Adjuster* a, double newval) {
 
-    if (listener && enabled->get_active()) {
+    if (listener && getEnabled()) {
 
         Glib::ustring costr = Glib::ustring::format ((int)a->getValue());
 
@@ -176,21 +167,10 @@ void ShadowsHighlights::adjusterChanged (Adjuster* a, double newval) {
 
 void ShadowsHighlights::enabledChanged () {
 
-    if (batchMode) {
-        if (enabled->get_inconsistent()) {
-            enabled->set_inconsistent (false);
-            enaConn.block (true);
-            enabled->set_active (false);
-            enaConn.block (false);
-        }
-        else if (lastEnabled)
-            enabled->set_inconsistent (true);
-
-        lastEnabled = enabled->get_active ();
-    }
-    
     if (listener) {
-        if (enabled->get_active())
+        if (get_inconsistent())
+            listener->panelChanged (EvSHEnabled, M("GENERAL_UNCHANGED"));
+        else if (getEnabled())
             listener->panelChanged (EvSHEnabled, M("GENERAL_ENABLED"));
         else
             listener->panelChanged (EvSHEnabled, M("GENERAL_DISABLED"));

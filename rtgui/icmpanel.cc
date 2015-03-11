@@ -30,7 +30,7 @@ using namespace rtengine::procparams;
 
 extern Options options;
 
-ICMPanel::ICMPanel () : FoldableToolPanel(this), iunchanged(NULL), icmplistener(NULL), lastRefFilename("") {
+ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunchanged(NULL), icmplistener(NULL), lastRefFilename("") {
 
     isBatchMode = lastToneCurve = lastBlendCMSMatrix = lastgamfree = false;
 

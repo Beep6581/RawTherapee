@@ -28,7 +28,6 @@
 class Resize : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::SizeListener {
 
   protected:
-    Gtk::CheckButton*  enabled;
     Adjuster*          scale;
     Gtk::VBox*         sizeBox;
     MyComboBoxText*    appliesTo;
@@ -38,8 +37,8 @@ class Resize : public ToolParamBlock, public AdjusterListener, public FoldableTo
     MySpinButton*      h;
     int                maxw, maxh;
     int                cropw, croph;
-    sigc::connection   sconn, aconn, wconn, hconn, enaConn;
-    bool               wDirty, hDirty, lastEnabled;
+    sigc::connection   sconn, aconn, wconn, hconn;
+    bool               wDirty, hDirty;
 
   public:
 
@@ -61,7 +60,7 @@ class Resize : public ToolParamBlock, public AdjusterListener, public FoldableTo
     void setGUIFromCrop   (bool isCropped, int cw, int ch);
     void sizeChanged      (int w, int h, int ow, int oh);
     void setDimensions    ();
-    void enabledToggled   ();
+    void enabledChanged   ();
 
   private:
     void fitBoxScale ();

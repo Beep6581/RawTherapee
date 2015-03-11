@@ -32,10 +32,9 @@ class ShadowsHighlights : public ToolParamBlock, public AdjusterListener, public
     Adjuster* s_tonalwidth;
     Adjuster* lcontrast;
     Adjuster* radius;
-    Gtk::CheckButton* enabled;
     Gtk::CheckButton* hq;
-    bool                lastEnabled, lastHQ;
-    sigc::connection    enaConn, hqConn;
+    bool lastHQ;
+    sigc::connection hqConn;
 
   public:
 
@@ -47,9 +46,9 @@ class ShadowsHighlights : public ToolParamBlock, public AdjusterListener, public
     void setBatchMode   (bool batchMode);
 
     void adjusterChanged (Adjuster* a, double newval);
-    void enabledChanged ();
-    void hqChanged ();
-    
+    void enabledChanged  ();
+    void hqChanged       ();
+
     void setAdjusterBehavior (bool hadd, bool sadd, bool lcadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 };

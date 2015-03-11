@@ -28,9 +28,6 @@ class ImpulseDenoise : public ToolParamBlock, public AdjusterListener, public Fo
   protected:
     Adjuster* thresh;
     //Adjuster* edge;
-    Gtk::CheckButton* enabled;
-    bool lastEnabled;
-    sigc::connection enaConn;
 
   public:
 
@@ -42,7 +39,7 @@ class ImpulseDenoise : public ToolParamBlock, public AdjusterListener, public Fo
     void setBatchMode   (bool batchMode);
 
     void adjusterChanged (Adjuster* a, double newval);
-    void enabledChanged ();
+    void enabledChanged  ();
 
     void setAdjusterBehavior (bool threshadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);

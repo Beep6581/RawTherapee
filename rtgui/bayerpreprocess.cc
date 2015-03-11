@@ -24,7 +24,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-BayerPreProcess::BayerPreProcess () : FoldableToolPanel(this)
+BayerPreProcess::BayerPreProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RAW_LABEL"), true)
 {
 	lineDenoise = Gtk::manage(new Adjuster (M("TP_PREPROCESS_LINEDENOISE"),0,1000,1,0));
 	lineDenoise->setAdjusterListener (this);

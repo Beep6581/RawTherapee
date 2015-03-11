@@ -23,6 +23,7 @@
 #include <glibmm.h>
 #include "../rtengine/rtengine.h"
 #include "../rtengine/procparams.h"
+#include "guiutils.h"
 #include "multilangmgr.h"
 #include "paramsedited.h"
 #include "edit.h"
@@ -61,19 +62,21 @@ class ToolParamBlock : public Gtk::VBox {
 class ToolPanel {
 
     protected:
+        Glib::ustring toolName;
         ToolPanelListener* listener;
         ToolPanelListener* tmp;
         bool batchMode;  // True if the ToolPanel is used in Batch mode
         bool multiImage; // True if more than one image are being edited at the same time (also imply that batchMode=true), false otherwise
+        bool need100Percent;
 
     public:
 
-        ToolPanel () : listener(NULL), tmp(NULL), batchMode(false), multiImage(false) {}
+        ToolPanel (Glib::ustring toolName="", bool need11=false) : toolName(toolName), listener(NULL), tmp(NULL), batchMode(false), multiImage(false), need100Percent(need11) {}
         virtual ~ToolPanel() {}
 
         virtual void           setParent       (Gtk::Box* parent) {}
         virtual Gtk::Box*      getParent       () { return NULL; }
-        virtual Gtk::Expander* getExpander     () { return NULL; }
+        virtual MyExpander*    getExpander     () { return NULL; }
         virtual void           setExpanded     (bool expanded) {}
         virtual bool           getExpanded     () { return false; }
                 void           setMultiImage   (bool m) { multiImage = m; }
@@ -103,19 +106,36 @@ class FoldableToolPanel : public ToolPanel {
 
     protected:
         Gtk::Box* parentContainer;
+        MyExpander* exp;
+        bool lastEnabled;
+        sigc::connection enaConn;
         void foldThemAll (GdkEventButton* event);
-        Gtk::Expander* exp;
+        void enabled_toggled();
 
     public:
 
-        FoldableToolPanel(Gtk::Box* content);
+        FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11=false, bool useEnabled=false);
 
-        Gtk::Expander * getExpander() { return exp; }
+        MyExpander* getExpander() { return exp; }
         void setExpanded (bool expanded) { if (exp) exp->set_expanded( expanded ); }
         bool getExpanded () { if (exp) return exp->get_expanded(); return false; }
         void setParent (Gtk::Box* parent) { parentContainer = parent; }
         Gtk::Box* getParent () { return parentContainer; }
-        void setLabel (Glib::ustring label, bool need100Percent=false);
+
+        virtual void enabledChanged  () {}
+
+        bool getUseEnabled () { if (exp) return exp->getUseEnabled(); else return true; }
+        bool getEnabled();  // related to the enabled/disabled state
+        void setEnabled(bool isActive);  // related to the enabled/disabled state
+        void setEnabledTooltipMarkup(Glib::ustring tooltipMarkup);
+        void setEnabledTooltipText(Glib::ustring tooltipText);
+        bool get_inconsistent();  // related to the enabled/disabled state
+        void set_inconsistent(bool isInconsistent);  // related to the enabled/disabled state
+
+        // Functions that want to receive an enabled/disabled event from this class
+        // will have to receive it from MyExpander directly, we do not create
+        // a relaying event
+        MyExpander::type_signal_enabled_toggled signal_enabled_toggled() { return exp->signal_enabled_toggled(); }
 };
 
 #endif

@@ -30,10 +30,6 @@ protected:
 	Adjuster *scale;
 	Adjuster *reweightingIterates;
 
-	Gtk::CheckButton* enabled;
-	bool lastEnabled;
-	sigc::connection enaConn;
-
 public:
 
 	EdgePreservingDecompositionUI();
@@ -44,7 +40,7 @@ public:
 	void setBatchMode   (bool batchMode);
 
 	void adjusterChanged (Adjuster* a, double newval);
-	void enabledChanged  ();
+    void enabledChanged  ();
 };
 
 #endif

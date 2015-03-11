@@ -23,7 +23,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-SensorXTrans::SensorXTrans () : FoldableToolPanel(this) {
+SensorXTrans::SensorXTrans () : FoldableToolPanel(this, "sensorxtrans", M("TP_RAW_SENSOR_XTRANS_LABEL")) {
 
 	packBox = Gtk::manage (new ToolParamBlock ());
 	pack_start (*packBox);

@@ -35,9 +35,6 @@ class Defringe : public ToolParamBlock, public AdjusterListener, public Foldable
 
     Adjuster* radius;
     Adjuster* threshold;
-    Gtk::CheckButton* enabled;
-    bool lastEnabled;
-    sigc::connection enaConn;
 	bool edges;
 
   public:

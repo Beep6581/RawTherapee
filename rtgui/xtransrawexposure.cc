@@ -24,7 +24,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-XTransRAWExposure::XTransRAWExposure () : FoldableToolPanel(this)
+XTransRAWExposure::XTransRAWExposure () : FoldableToolPanel(this, "xtransrawexposure", M("TP_EXPOS_BLACKPOINT_LABEL"))
 {
 	PexBlackRed = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_RED"),-2048,2048,0.1,0));//black level
 	PexBlackRed->setAdjusterListener (this);

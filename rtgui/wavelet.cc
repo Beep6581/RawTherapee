@@ -27,7 +27,7 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 extern Options options;
 
-Wavelet::Wavelet () :  FoldableToolPanel(this) {
+Wavelet::Wavelet () :  FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), true, true) {
 	std::vector<GradientMilestone> milestones;
 	CurveListener::setMulti(true);
 	nextnlevel=7.;
@@ -53,11 +53,6 @@ Wavelet::Wavelet () :  FoldableToolPanel(this) {
 	milestones2.push_back( GradientMilestone(0.0, 0.0, 0.0, 0.0) );
 	milestones2.push_back( GradientMilestone(1.0, 1.0, 1.0, 1.0) );
    
-    enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-    enabled->set_active (true);
-    pack_start(*enabled);
-    enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::enabledToggled) );
-
 	std::vector<double> defaultCurve;
 	
 	// frame and expand
@@ -637,7 +632,7 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
         if (!pedited->wavelet.HSmethod)
             HSmethod->set_active (1);
 
-        enabled->set_inconsistent (!pedited->wavelet.enabled);
+        set_inconsistent (multiImage && !pedited->wavelet.enabled);
         ccshape->setUnChanged  (!pedited->wavelet.clvcurve);
 		opacityShapeRG->setCurve (pp->wavelet.opacityCurveRG);
  		opacityShapeBY->setCurve (pp->wavelet.opacityCurveBY);
@@ -676,9 +671,7 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
     opacityShapeRG->setCurve   (pp->wavelet.opacityCurveRG);
     opacityShapeBY->setCurve   (pp->wavelet.opacityCurveBY);
 
-    enaConn.block (true);
-    enabled->set_active (pp->wavelet.enabled);
-    enaConn.block (false);
+    setEnabled(pp->wavelet.enabled);
     avoidConn.block (true);
     avoid->set_active (pp->wavelet.avoid);
     avoidConn.block (false);
@@ -686,7 +679,6 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
     median->set_active (pp->wavelet.median);
     medianConn.block (false);
     lastmedian = pp->wavelet.median;
-    lastEnabled = pp->wavelet.enabled;
     lastavoid = pp->wavelet.avoid;
     rescon->setValue (pp->wavelet.rescon);
     resconH->setValue (pp->wavelet.resconH);
@@ -743,81 +735,81 @@ void Wavelet::autoOpenCurve () {
 
 void Wavelet::write (ProcParams* pp, ParamsEdited* pedited) {
 
-    pp->wavelet.enabled 		= enabled->get_active ();
-    pp->wavelet.avoid 		= avoid->get_active ();
-	pp->wavelet.rescon 		=  rescon->getValue();
-	pp->wavelet.resconH 		=  resconH->getValue();
-	pp->wavelet.reschro 		=  reschro->getValue();
-	pp->wavelet.sup			=  sup->getValue();
-	pp->wavelet.sky 			=  sky->getValue();
-	pp->wavelet.thres			 =  thres->getValue();
-	pp->wavelet.chroma 		=  chroma->getValue();
-	pp->wavelet.chro 			=  chro->getValue();
-    pp->wavelet.median 		= median->get_active ();
-	pp->wavelet.contrast 			=  contrast->getValue();
-	pp->wavelet.edgrad 			=  edgrad->getValue();
-	pp->wavelet.edgval 			=  edgval->getValue();
-	pp->wavelet.edgthresh 		=  edgthresh->getValue();
-	pp->wavelet.thr 			=  thr->getValue();
-	pp->wavelet.thrH 			=  thrH->getValue();
-    pp->wavelet.hueskin      	= hueskin->getValue<int> ();
-    pp->wavelet.hueskin2      	= hueskin2->getValue<int> ();
-	pp->wavelet.skinprotect	=  skinprotect->getValue();
-    pp->wavelet.threshold  	= threshold->getValue();
-    pp->wavelet.threshold2    = threshold2->getValue();
-    pp->wavelet.hllev      	= hllev->getValue<int> ();
-    pp->wavelet.bllev       	= bllev->getValue<int> ();
-    pp->wavelet.clvcurve  	= ccshape->getCurve ();
-    pp->wavelet.opacityCurveRG  	= opacityShapeRG->getCurve ();
-    pp->wavelet.opacityCurveBY  = opacityShapeBY->getCurve ();
-    pp->wavelet.pastlev       = pastlev->getValue<int> ();
-    pp->wavelet.satlev        = satlev->getValue<int> ();
+    pp->wavelet.enabled        = getEnabled();
+    pp->wavelet.avoid          = avoid->get_active ();
+	pp->wavelet.rescon         =  rescon->getValue();
+	pp->wavelet.resconH        =  resconH->getValue();
+	pp->wavelet.reschro        =  reschro->getValue();
+	pp->wavelet.sup	           =  sup->getValue();
+	pp->wavelet.sky            =  sky->getValue();
+	pp->wavelet.thres          =  thres->getValue();
+	pp->wavelet.chroma         =  chroma->getValue();
+	pp->wavelet.chro           =  chro->getValue();
+    pp->wavelet.median         = median->get_active ();
+	pp->wavelet.contrast       =  contrast->getValue();
+	pp->wavelet.edgrad         =  edgrad->getValue();
+	pp->wavelet.edgval         =  edgval->getValue();
+	pp->wavelet.edgthresh      =  edgthresh->getValue();
+	pp->wavelet.thr            =  thr->getValue();
+	pp->wavelet.thrH           =  thrH->getValue();
+    pp->wavelet.hueskin        = hueskin->getValue<int> ();
+    pp->wavelet.hueskin2       = hueskin2->getValue<int> ();
+	pp->wavelet.skinprotect    =  skinprotect->getValue();
+    pp->wavelet.threshold      = threshold->getValue();
+    pp->wavelet.threshold2     = threshold2->getValue();
+    pp->wavelet.hllev          = hllev->getValue<int> ();
+    pp->wavelet.bllev          = bllev->getValue<int> ();
+    pp->wavelet.clvcurve       = ccshape->getCurve ();
+    pp->wavelet.opacityCurveRG = opacityShapeRG->getCurve ();
+    pp->wavelet.opacityCurveBY = opacityShapeBY->getCurve ();
+    pp->wavelet.pastlev        = pastlev->getValue<int> ();
+    pp->wavelet.satlev         = satlev->getValue<int> ();
 
     for (int i = 0; i < 9; i++) {
         pp->wavelet.c[i] = (int) correction[i]->getValue();
     }
 	pp->wavelet.strength = (int) strength->getValue();
     if (pedited) {
-        pedited->wavelet.enabled 			=  !enabled->get_inconsistent();
-        pedited->wavelet.avoid 			=  !avoid->get_inconsistent();
-        pedited->wavelet.median 			=  !median->get_inconsistent();
-        pedited->wavelet.Lmethod 		 	= Lmethod->get_active_row_number() != 8;
-        pedited->wavelet.CLmethod 	 	= CLmethod->get_active_row_number() != 3;
-        pedited->wavelet.Tilesmethod 	 	= Tilesmethod->get_active_row_number() != 2;
-		pedited->wavelet.CHmethod 	 	= CHmethod->get_active_row_number() != 2;
-        pedited->wavelet.HSmethod  		= HSmethod->get_active_row_number() != 1;
-        pedited->wavelet.Dirmethod 		= Dirmethod->get_active_row_number() != 3;
-        pedited->wavelet.edgthresh 			= edgthresh->getEditedState();
-        pedited->wavelet.rescon 			= rescon->getEditedState();
-        pedited->wavelet.resconH 			= resconH->getEditedState();
-        pedited->wavelet.reschro 			= reschro->getEditedState();
-        pedited->wavelet.sup 				= sup->getEditedState();
-        pedited->wavelet.sky				= sky->getEditedState();
-        pedited->wavelet.thres 			= thres->getEditedState();
-        pedited->wavelet.threshold 		= threshold->getEditedState();
-        pedited->wavelet.threshold2		= threshold2->getEditedState();
-        pedited->wavelet.chroma 			= chroma->getEditedState();
-        pedited->wavelet.chro 			= chro->getEditedState();
-        pedited->wavelet.contrast				= contrast->getEditedState();
-        pedited->wavelet.edgrad				= edgrad->getEditedState();
-        pedited->wavelet.edgval				= edgval->getEditedState();
-        pedited->wavelet.thr 				= thr->getEditedState();
-        pedited->wavelet.thrH 			= thrH->getEditedState();
-        pedited->wavelet.hueskin 			= hueskin->getEditedState ();
-        pedited->wavelet.hueskin2 		= hueskin2->getEditedState ();
-        pedited->wavelet.skinprotect 		= skinprotect->getEditedState();
-        pedited->wavelet.hllev 			= hllev->getEditedState ();
-        pedited->wavelet.clvcurve    		= !ccshape->isUnChanged ();
-        pedited->wavelet.opacityCurveRG    	= !opacityShapeRG->isUnChanged ();
-        pedited->wavelet.opacityCurveBY    	= !opacityShapeBY->isUnChanged ();
-		pedited->wavelet.bllev 			= bllev->getEditedState ();
-		pedited->wavelet.pastlev 			= pastlev->getEditedState ();
-		pedited->wavelet.satlev 			= satlev->getEditedState ();
+        pedited->wavelet.enabled        = !get_inconsistent();
+        pedited->wavelet.avoid          = !avoid->get_inconsistent();
+        pedited->wavelet.median         = !median->get_inconsistent();
+        pedited->wavelet.Lmethod        = Lmethod->get_active_row_number() != 8;
+        pedited->wavelet.CLmethod       = CLmethod->get_active_row_number() != 3;
+        pedited->wavelet.Tilesmethod    = Tilesmethod->get_active_row_number() != 2;
+        pedited->wavelet.CHmethod       = CHmethod->get_active_row_number() != 2;
+        pedited->wavelet.HSmethod       = HSmethod->get_active_row_number() != 1;
+        pedited->wavelet.Dirmethod      = Dirmethod->get_active_row_number() != 3;
+        pedited->wavelet.edgthresh      = edgthresh->getEditedState();
+        pedited->wavelet.rescon         = rescon->getEditedState();
+        pedited->wavelet.resconH        = resconH->getEditedState();
+        pedited->wavelet.reschro        = reschro->getEditedState();
+        pedited->wavelet.sup            = sup->getEditedState();
+        pedited->wavelet.sky            = sky->getEditedState();
+        pedited->wavelet.thres          = thres->getEditedState();
+        pedited->wavelet.threshold      = threshold->getEditedState();
+        pedited->wavelet.threshold2     = threshold2->getEditedState();
+        pedited->wavelet.chroma         = chroma->getEditedState();
+        pedited->wavelet.chro           = chro->getEditedState();
+        pedited->wavelet.contrast       = contrast->getEditedState();
+        pedited->wavelet.edgrad         = edgrad->getEditedState();
+        pedited->wavelet.edgval         = edgval->getEditedState();
+        pedited->wavelet.thr            = thr->getEditedState();
+        pedited->wavelet.thrH           = thrH->getEditedState();
+        pedited->wavelet.hueskin        = hueskin->getEditedState ();
+        pedited->wavelet.hueskin2       = hueskin2->getEditedState ();
+        pedited->wavelet.skinprotect    = skinprotect->getEditedState();
+        pedited->wavelet.hllev          = hllev->getEditedState ();
+        pedited->wavelet.clvcurve       = !ccshape->isUnChanged ();
+        pedited->wavelet.opacityCurveRG = !opacityShapeRG->isUnChanged ();
+        pedited->wavelet.opacityCurveBY = !opacityShapeBY->isUnChanged ();
+        pedited->wavelet.bllev          = bllev->getEditedState ();
+        pedited->wavelet.pastlev        = pastlev->getEditedState ();
+        pedited->wavelet.satlev         = satlev->getEditedState ();
 
         for(int i = 0; i < 9; i++) {
-            pedited->wavelet.c[i] = correction[i]->getEditedState();
+            pedited->wavelet.c[i]       = correction[i]->getEditedState();
         }
-        pedited->wavelet.strength 			= strength->getEditedState ();
+        pedited->wavelet.strength       = strength->getEditedState ();
     }
 		if (CHmethod->get_active_row_number()==0)
 			pp->wavelet.CHmethod = "without";
@@ -884,7 +876,7 @@ void Wavelet::write (ProcParams* pp, ParamsEdited* pedited) {
 }
 void Wavelet::curveChanged (CurveEditor* ce) {
 
-    if (listener && enabled->get_active()) {
+    if (listener && getEnabled()) {
 	    if (ce == ccshape)
             listener->panelChanged (EvWavCLVCurve, M("HISTORY_CUSTOMCURVE"));	
 		else if (ce == opacityShapeRG)
@@ -988,7 +980,7 @@ void Wavelet::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
 
 
 void Wavelet::adjusterChanged2 (ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) {
-    if (listener && (multiImage||enabled->get_active()) ) {
+    if (listener && (multiImage||getEnabled()) ) {
 		if(a==hueskin) { 
 		listener->panelChanged (EvWavHueskin,hueskin->getHistoryString());
 		}
@@ -1026,7 +1018,7 @@ void Wavelet::HSmethodChanged() {
 		}		
 	}
 	
-	if (listener && (multiImage||enabled->get_active()) ) {
+	if (listener && (multiImage||getEnabled()) ) {
 		listener->panelChanged (EvWavHSmet, HSmethod->get_active_text ());
 	}	
 }
@@ -1056,7 +1048,7 @@ void Wavelet::CHmethodChanged() {
 		}	
 	}
 	
-	if (listener && (multiImage||enabled->get_active()) ) {
+	if (listener && (multiImage||getEnabled()) ) {
 		listener->panelChanged (EvWavCHmet, CHmethod->get_active_text ());
 	}	
 }
@@ -1064,7 +1056,7 @@ void Wavelet::CHmethodChanged() {
 void Wavelet::CLmethodChanged() {
 	if (!batchMode) {
 	}
-	if (listener && (multiImage||enabled->get_active()) ) {
+	if (listener && (multiImage||getEnabled()) ) {
 		listener->panelChanged (EvWavCLmet, CLmethod->get_active_text ());
 	}	
     if (CLmethod->get_active_row_number()==0) {
@@ -1092,7 +1084,7 @@ void Wavelet::CLmethodChanged() {
 void Wavelet::TilesmethodChanged() {
 	if (!batchMode) {
 	}
-	if (listener && (multiImage||enabled->get_active()) ) {
+	if (listener && (multiImage||getEnabled()) ) {
 		listener->panelChanged (EvWavTilesmet, Tilesmethod->get_active_text ());
 	}	
 }
@@ -1100,7 +1092,7 @@ void Wavelet::TilesmethodChanged() {
 void Wavelet::DirmethodChanged() {
 	if (!batchMode) {	
 	}
-	if (listener && (multiImage||enabled->get_active()) ) {
+	if (listener && (multiImage||getEnabled()) ) {
 		listener->panelChanged (EvWavDirmeto, Dirmethod->get_active_text ());
 	}	
 }
@@ -1108,7 +1100,7 @@ void Wavelet::DirmethodChanged() {
 void Wavelet::LmethodChanged() {
 	if (!batchMode) {
 	}
-	if (listener && (multiImage||enabled->get_active()) ) {
+	if (listener && (multiImage||getEnabled()) ) {
 		listener->panelChanged (EvWavLmet, Lmethod->get_active_text ());
 	}	
 }
@@ -1155,7 +1147,7 @@ void Wavelet::setBatchMode (bool batchMode) {
 }
 
 void Wavelet::adjusterChanged (Adjuster* a, double newval) {
-    if (listener && enabled->get_active()) {
+    if (listener && getEnabled()) {
         if (a == edgthresh) {
             listener->panelChanged (EvWavtiles,
                          Glib::ustring::compose("%1",
@@ -1298,29 +1290,18 @@ void Wavelet::adjusterChanged (Adjuster* a, double newval) {
 }
 
 
-void Wavelet::enabledToggled () {
-
-    if (batchMode) {
-        if (enabled->get_inconsistent()) {
-            enabled->set_inconsistent (false);
-            enaConn.block (true);
-            enabled->set_active (false);
-            enaConn.block (false);
-        }
-        else if (lastEnabled)
-            enabled->set_inconsistent (true);
-
-        lastEnabled = enabled->get_active ();
+void Wavelet::enabledChanged () {
+    if (!batchMode) {
+        int y=thres->getValue();
+        int z;
+        for(z=y;z<9;z++) correction[z]->hide();
+        for(z=0;z<y;z++) correction[z]->show();
+        if(z==9) sup->show(); else sup->hide();
     }
-	else {
-		int y=thres->getValue();
-		int z;
-		for(z=y;z<9;z++) correction[z]->hide();
-		for(z=0;z<y;z++) correction[z]->show();
-		if(z==9) sup->show(); else sup->hide();
-	}
     if (listener) {
-        if (enabled->get_active ())
+        if (get_inconsistent())
+            listener->panelChanged (EvWavEnabled, M("GENERAL_UNCHANGED"));
+        else if (getEnabled())
             listener->panelChanged (EvWavEnabled, M("GENERAL_ENABLED"));
         else
             listener->panelChanged (EvWavEnabled, M("GENERAL_DISABLED"));
@@ -1403,7 +1384,7 @@ void Wavelet::medianToggled () {
     }
 
     if (listener) {
-        if (enabled->get_active ())
+        if (getEnabled ())
             listener->panelChanged (EvWavmedian, M("GENERAL_ENABLED"));
         else
             listener->panelChanged (EvWavmedian, M("GENERAL_DISABLED"));
@@ -1425,7 +1406,7 @@ void Wavelet::avoidToggled () {
         lastavoid = avoid->get_active ();
     }
     if (listener) {
-        if (enabled->get_active ())
+        if (getEnabled ())
             listener->panelChanged (EvWavavoid, M("GENERAL_ENABLED"));
         else
             listener->panelChanged (EvWavavoid, M("GENERAL_DISABLED"));

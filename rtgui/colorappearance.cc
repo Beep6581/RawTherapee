@@ -25,15 +25,11 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ColorAppearance::ColorAppearance () : FoldableToolPanel(this) {
+ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance", M("TP_COLORAPP_LABEL"), false, true) {
 	CurveListener::setMulti(true);
 	std::vector<GradientMilestone> milestones;
 	milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
 	milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
-
-	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-	enabled->set_active (false);
-	pack_start (*enabled);
 
 
 	// ------------------------ Process #1: Converting to CIECAM
@@ -360,7 +356,6 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this) {
 
 
 	surrconn = surrsource->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::surrsource_toggled) );
-	enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::enabledChanged) );
 	wbmodelconn = wbmodel->signal_changed().connect ( sigc::mem_fun(*this, &ColorAppearance::wbmodelChanged) );
 	algoconn = algo->signal_changed().connect ( sigc::mem_fun(*this, &ColorAppearance::algoChanged) );
 	surroundconn = surround->signal_changed().connect ( sigc::mem_fun(*this, &ColorAppearance::surroundChanged) );
@@ -385,7 +380,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this) {
 ColorAppearance::~ColorAppearance () {
 	delete curveEditorG;
 	delete curveEditorG2;
-	delete curveEditorG3;	
+	delete curveEditorG3;
 }
 
 
@@ -433,9 +428,9 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	//	sharpcie->set_inconsistent    (!pedited->colorappearance.sharpcie);
 
 		degree->setAutoInconsistent   (multiImage && !pedited->colorappearance.autodegree);
-		adapscen->setAutoInconsistent   (multiImage && !pedited->colorappearance.autoadapscen);
+		adapscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoadapscen);
+		set_inconsistent              (multiImage && !pedited->colorappearance.enabled);
 		
-		enabled->set_inconsistent     (multiImage && !pedited->colorappearance.enabled);
 		shape->setUnChanged (!pedited->colorappearance.curve);
 		shape2->setUnChanged (!pedited->colorappearance.curve2);
 		shape3->setUnChanged (!pedited->colorappearance.curve3);
@@ -452,9 +447,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
 		}
 
-	enaConn.block (true);
-	enabled->set_active (pp->colorappearance.enabled);
-	enaConn.block (false);
+	setEnabled(pp->colorappearance.enabled);
 
 	surroundconn.block(true);
 	if (pedited && !pedited->colorappearance.surround)
@@ -523,7 +516,6 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	lasttonecie=pp->colorappearance.tonecie;
 //	lastsharpcie=pp->colorappearance.sharpcie;
 
-	lastEnabled = pp->colorappearance.enabled;
 	lastAutoDegree = pp->colorappearance.autodegree;
 	lastAutoAdapscen = pp->colorappearance.autoadapscen;
 
@@ -561,7 +553,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited) {
 
 	pp->colorappearance.degree        = degree->getValue ();
 	pp->colorappearance.autodegree    = degree->getAutoValue ();
-	pp->colorappearance.enabled       = enabled->get_active();
+	pp->colorappearance.enabled       = getEnabled();
 	pp->colorappearance.adapscen      = adapscen->getValue ();
 	pp->colorappearance.autoadapscen  = adapscen->getAutoValue ();
 	pp->colorappearance.adaplum       = adaplum->getValue ();
@@ -614,7 +606,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited) {
 		pedited->colorappearance.rstprotection = rstprotection->getEditedState ();
 		pedited->colorappearance.autodegree    = !degree->getAutoInconsistent();
 		pedited->colorappearance.autoadapscen  = !adapscen->getAutoInconsistent();
-		pedited->colorappearance.enabled       = !enabled->get_inconsistent();
+		pedited->colorappearance.enabled       = !get_inconsistent();
 		pedited->colorappearance.surround      = surround->get_active_text()!=M("GENERAL_UNCHANGED");
 		pedited->colorappearance.wbmodel       = wbmodel->get_active_text()!=M("GENERAL_UNCHANGED");
 		pedited->colorappearance.algo          = algo->get_active_text()!=M("GENERAL_UNCHANGED");
@@ -953,7 +945,7 @@ void ColorAppearance::colorForValue (double valX, double valY, enum ColorCaller:
 
 void ColorAppearance::adjusterChanged (Adjuster* a, double newval) {
 
-	if (listener && (multiImage||enabled->get_active()) ) {
+	if (listener && (multiImage||getEnabled()) ) {
 		if(a==degree)
 			listener->panelChanged (EvCATDegree, a->getTextValue());
 		else if(a==adapscen)
@@ -1007,7 +999,7 @@ void ColorAppearance::adjusterAutoToggled (Adjuster* a, bool newval) {
 		
 	}
 
-	if (listener && (multiImage||enabled->get_active()) ) {
+	if (listener && (multiImage||getEnabled()) ) {
 	
 		if(a==degree) {
 			if (degree->getAutoInconsistent())
@@ -1031,43 +1023,29 @@ void ColorAppearance::adjusterAutoToggled (Adjuster* a, bool newval) {
 }
 void ColorAppearance::enabledChanged () {
 
-	if (multiImage) {
-		if (enabled->get_inconsistent()) {
-			enabled->set_inconsistent (false);
-			enaConn.block (true);
-			enabled->set_active (false);
-			enaConn.block (false);
-		}
-		else if (lastEnabled)
-			enabled->set_inconsistent (true);
-
-		lastEnabled = enabled->get_active ();
-	}
-
 	if (listener) {
-		if (enabled->get_inconsistent())
+		if (get_inconsistent())
 			listener->panelChanged (EvCATEnabled, M("GENERAL_UNCHANGED"));
-		else if (enabled->get_active ()) {
+		else if (getEnabled()) {
 			listener->panelChanged (EvCATEnabled, M("GENERAL_ENABLED"));
-			    curveEditorG->set_sensitive (true);
-				toneCurveMode->set_sensitive (true);
-			}
+			curveEditorG->set_sensitive (true);
+			toneCurveMode->set_sensitive (true);
+		}
 		else
-			{listener->panelChanged (EvCATEnabled, M("GENERAL_DISABLED"));
-			}
+			listener->panelChanged (EvCATEnabled, M("GENERAL_DISABLED"));
 	}
 }
 
 void ColorAppearance::surroundChanged () {
 
-	if (listener && (multiImage||enabled->get_active()) ) {
+	if (listener && (multiImage||getEnabled()) ) {
 		listener->panelChanged (EvCATMethodsur, surround->get_active_text ());
 	}
 }
 
 void ColorAppearance::wbmodelChanged () {
 
-	if (listener && (multiImage||enabled->get_active()) ) {
+	if (listener && (multiImage||getEnabled()) ) {
 		listener->panelChanged (EvCATMethodWB, wbmodel->get_active_text ());
 	}
 }
@@ -1142,7 +1120,7 @@ void ColorAppearance::algoChanged () {
 		curveEditorG3->show();
 	}
 
-	if (listener && (multiImage||enabled->get_active()) ) {
+	if (listener && (multiImage||getEnabled()) ) {
 		listener->panelChanged (EvCATMethodalg, algo->get_active_text ());
 	}
 }

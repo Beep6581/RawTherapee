@@ -262,6 +262,7 @@ int main(int argc, char **argv)
    defaultIconTheme->append_search_path(icon_path);
 
    RTImage::setPaths(options);
+   MyExpander::init();  // has to stay AFTER RTImage::setPaths
 
 #ifndef WIN32
    // For an unknown reason, gtkmm 2.22 don't know the gtk-button-images property, while it exists in the documentation...

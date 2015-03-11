@@ -23,7 +23,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Distortion::Distortion (): FoldableToolPanel(this) {
+Distortion::Distortion (): FoldableToolPanel(this, "distortion", M("TP_DISTORTION_LABEL")) {
 
     rlistener = NULL;
     autoDistor = Gtk::manage (new Gtk::Button (M("TP_DISTORTION_AUTO")));

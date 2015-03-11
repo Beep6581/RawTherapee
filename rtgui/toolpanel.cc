@@ -75,11 +75,11 @@ ToolVBox::ToolVBox() {
 
 void ToolVBox::updateStyle() {
 	if (options.slimUI) {
-		set_spacing(3);       // Vertical space between tools
+		set_spacing(1);       // Vertical space between tools
 		set_border_width(1);  // Space separating the tab's frame and the tools
 	}
 	else {
-		set_spacing(3);       // Vertical space between tools
+		set_spacing(2);       // Vertical space between tools
 		set_border_width(1);  // Space separating the tab's frame and the tools  3
 	}
 }
@@ -107,12 +107,32 @@ void ToolParamBlock::on_style_changed (const Glib::RefPtr<Gtk::Style>& style) {
 	updateStyle();
 }
 
-FoldableToolPanel::FoldableToolPanel(Gtk::Box* content) : ToolPanel(), parentContainer(NULL), exp(NULL) {
+FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11, bool useEnabled) : ToolPanel(toolName, need11), parentContainer(NULL), exp(NULL), lastEnabled(true)
+{
+	if (!content)
+		return;
 
-	exp = Gtk::manage (new Gtk::Expander ());
-	//exp->set_border_width (5);
-	exp->set_use_markup (true);
+//	exp->set_border_width (5);
+//	exp->set_use_markup (true);
+	if (need11) {
+		Gtk::HBox *titleHBox = Gtk::manage(new Gtk::HBox());
+
+		Gtk::Label *label = Gtk::manage(new Gtk::Label());
+		label->set_markup(Glib::ustring("<b>") + escapeHtmlChars(UILabel) + Glib::ustring("</b>"));
+		label->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER);
+		titleHBox->pack_start(*label, Gtk::PACK_EXPAND_WIDGET, 0);
+
+		RTImage *image = Gtk::manage (new RTImage("zoom-100-identifier.png"));
+		image->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
+		titleHBox->pack_end(*image, Gtk::PACK_SHRINK, 0);
+
+		exp = Gtk::manage (new MyExpander (useEnabled, titleHBox));
+	}
+	else {
+		exp = Gtk::manage (new MyExpander (useEnabled, UILabel));
+	}
 	exp->signal_button_release_event().connect_notify( sigc::mem_fun(this, &FoldableToolPanel::foldThemAll) );
+	enaConn = signal_enabled_toggled().connect( sigc::mem_fun(*this, &FoldableToolPanel::enabled_toggled) );
 
 	Frame2* pframe = Gtk::manage (new Frame2 (content));
 
@@ -126,7 +146,7 @@ FoldableToolPanel::FoldableToolPanel(Gtk::Box* content) : ToolPanel(), parentCon
 }
 
 void FoldableToolPanel::foldThemAll (GdkEventButton* event) {
-	if (event->button == 3)	{
+	if (event->button == 3) {
 		if (listener)
 		  (static_cast<ToolPanelCoordinator*>(listener))->foldAllButOne( parentContainer, this);
 		else
@@ -134,20 +154,51 @@ void FoldableToolPanel::foldThemAll (GdkEventButton* event) {
 	}
 }
 
-void FoldableToolPanel::setLabel (Glib::ustring label, bool need100Percent) {
-	if (!need100Percent)
-		exp->set_label(Glib::ustring("<b>") + label + Glib::ustring("</b>"));
-	else {
-		Gtk::Label *labelWidget = Gtk::manage (new Gtk::Label(Glib::ustring("<b>") + label + Glib::ustring("</b>")));
-		labelWidget->set_use_markup();
-		RTImage *image = Gtk::manage (new RTImage("zoom-100-identifier.png"));
-		image->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
-		Gtk::HBox *hbox = Gtk::manage (new Gtk::HBox());
+void FoldableToolPanel::enabled_toggled() {
+	if (multiImage) {
+		if (exp->get_inconsistent()) {
+			exp->set_inconsistent (false);
+			enaConn.block (true);
+			exp->setEnabled (false);
+			enaConn.block (false);
+		}
+		else if (lastEnabled)
+			exp->set_inconsistent (true);
 
-		hbox->set_spacing(4);
-		hbox->pack_start(*labelWidget, false, false, 0);
-		hbox->pack_end(*image, false, false, 0);
-		exp->set_label_widget(*hbox);
-		exp->set_label_fill();
+		lastEnabled = exp->getEnabled();
 	}
+	enabledChanged();
 }
+
+bool FoldableToolPanel::get_inconsistent() {
+	return exp->get_inconsistent();
+}
+
+void FoldableToolPanel::set_inconsistent(bool isInconsistent) {
+	exp->set_inconsistent(isInconsistent);
+}
+
+bool FoldableToolPanel::getEnabled() {
+	return exp->getEnabled();
+}
+
+// do not emit the enabled_toggled event
+void FoldableToolPanel::setEnabled(bool isEnabled) {
+	enaConn.block (true);
+	exp->setEnabled(isEnabled);
+	lastEnabled = isEnabled;
+	enaConn.block (false);
+}
+
+void FoldableToolPanel::setEnabledTooltipMarkup(Glib::ustring tooltipMarkup) {
+	if (exp)
+		exp->set_tooltip_markup(tooltipMarkup);
+}
+
+void FoldableToolPanel::setEnabledTooltipText(Glib::ustring tooltipText) {
+	if (exp)
+		exp->set_tooltip_text(tooltipText);
+}
+
+
+

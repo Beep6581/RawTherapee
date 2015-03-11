@@ -7,12 +7,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-PCVignette::PCVignette () : FoldableToolPanel(this)
+PCVignette::PCVignette () : FoldableToolPanel(this, "pcvignette", M("TP_PCVIGNETTE_LABEL"), false, true)
 {
-	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-	enabled->set_active (false);
-	enaConn  = enabled->signal_toggled().connect( sigc::mem_fun(*this, &PCVignette::enabledChanged) );
-
 	strength = Gtk::manage (new Adjuster (M("TP_PCVIGNETTE_STRENGTH"), -6, 6, 0.01, 0));
 	strength->set_tooltip_text (M("TP_PCVIGNETTE_STRENGTH_TOOLTIP"));
 	strength->setAdjusterListener (this);
@@ -25,8 +21,6 @@ PCVignette::PCVignette () : FoldableToolPanel(this)
 	roundness->set_tooltip_text (M("TP_PCVIGNETTE_ROUNDNESS_TOOLTIP"));
 	roundness->setAdjusterListener (this);
 
-	pack_start(*enabled);
-	pack_start(*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_EXPAND_WIDGET, 4);
 	pack_start (*strength);
 	pack_start (*feather);
 	pack_start (*roundness);
@@ -42,17 +36,13 @@ void PCVignette::read (const ProcParams* pp, const ParamsEdited* pedited)
 		strength->setEditedState (pedited->pcvignette.strength ? Edited : UnEdited);
 		feather->setEditedState (pedited->pcvignette.feather ? Edited : UnEdited);
 		roundness->setEditedState (pedited->pcvignette.roundness ? Edited : UnEdited);
-		enabled->set_inconsistent (!pedited->pcvignette.enabled);
+		set_inconsistent (multiImage && !pedited->pcvignette.enabled);
 	}
 
-	enaConn.block (true);
-	enabled->set_active (pp->pcvignette.enabled);
-	enaConn.block (false);
+	setEnabled(pp->pcvignette.enabled);
 	strength->setValue (pp->pcvignette.strength);
 	feather->setValue (pp->pcvignette.feather);
 	roundness->setValue (pp->pcvignette.roundness);
-
-	lastEnabled = pp->pcvignette.enabled;
 
 	enableListener ();
 }
@@ -62,13 +52,13 @@ void PCVignette::write (ProcParams* pp, ParamsEdited* pedited)
 	pp->pcvignette.strength = strength->getValue ();
 	pp->pcvignette.feather = feather->getIntValue ();
 	pp->pcvignette.roundness = roundness->getIntValue ();
-	pp->pcvignette.enabled = enabled->get_active();
+	pp->pcvignette.enabled = getEnabled();
 
 	if (pedited) {
 		pedited->pcvignette.strength = strength->getEditedState ();
 		pedited->pcvignette.feather = feather->getEditedState ();
 		pedited->pcvignette.roundness = roundness->getEditedState ();
-		pedited->pcvignette.enabled = !enabled->get_inconsistent();
+		pedited->pcvignette.enabled = !get_inconsistent();
 	}
 }
 
@@ -91,7 +81,7 @@ void PCVignette::setDefaults (const ProcParams* defParams, const ParamsEdited* p
 
 void PCVignette::adjusterChanged (Adjuster* a, double newval) {
 
-	if (listener && enabled->get_active()) {
+	if (listener && getEnabled()) {
 		if (a == strength)
 			listener->panelChanged (EvPCVignetteStrength, strength->getTextValue());
 		else if (a == feather)
@@ -103,20 +93,10 @@ void PCVignette::adjusterChanged (Adjuster* a, double newval) {
 
 void PCVignette::enabledChanged () {
 
-    if (batchMode) {
-        if (enabled->get_inconsistent()) {
-            enabled->set_inconsistent (false);
-            enaConn.block (true);
-            enabled->set_active (false);
-            enaConn.block (false);
-        }
-	else if (lastEnabled)
-            enabled->set_inconsistent (true);
-
-        lastEnabled = enabled->get_active ();
-    }
     if (listener) {
-        if (enabled->get_active())
+        if (get_inconsistent())
+            listener->panelChanged (EvPCVignetteEnabled, M("GENERAL_UNCHANGED"));
+        else if (getEnabled())
             listener->panelChanged (EvPCVignetteEnabled, M("GENERAL_ENABLED"));
         else
             listener->panelChanged (EvPCVignetteEnabled, M("GENERAL_DISABLED"));

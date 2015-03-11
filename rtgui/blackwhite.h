@@ -44,10 +44,10 @@ class BlackWhite : public ToolParamBlock, public AdjusterListener, public Foldab
 	Gtk::HBox*           autoHBox;
 	Gtk::Button*         neutral;
 	Gtk::Label*          RGBLabels;
-    MyComboBoxText*   algo;
-    sigc::connection  algoconn;
+    MyComboBoxText*      algo;
+    sigc::connection     algoconn;
 	Gtk::Label*          alLabel;
-	Gtk::HBox*        algoHBox;
+	Gtk::HBox*           algoHBox;
 
 	Adjuster *mixerRed;
 	Adjuster *mixerGreen;
@@ -74,9 +74,6 @@ class BlackWhite : public ToolParamBlock, public AdjusterListener, public Foldab
 	Gtk::Frame* gammaFrame;
 
 	Gtk::Image *imgIcon[11];
-	Gtk::CheckButton* enabled;
-	bool lastEnabled;
-	sigc::connection enaconn;
 
 	Gtk::HSeparator* enabledccSep;
 	Gtk::CheckButton* enabledcc;
@@ -118,7 +115,7 @@ class BlackWhite : public ToolParamBlock, public AdjusterListener, public Foldab
 	void setAdjusterBehavior (bool bwadd, bool bwgadd);
 	void trimValues          (rtengine::procparams::ProcParams* pp);
 	void enabledcc_toggled   ();
-	void enabled_toggled     ();
+    void enabledChanged      ();
 	void methodChanged       ();
 	void filterChanged       ();
 	void settingChanged      ();

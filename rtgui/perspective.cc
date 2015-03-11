@@ -22,7 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-PerspCorrection::PerspCorrection () : FoldableToolPanel(this) {
+PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("TP_PERSPECTIVE_LABEL")) {
 
     Gtk::Image* ipersHL =   Gtk::manage (new RTImage ("perspective-h1.png"));
     Gtk::Image* ipersHR =   Gtk::manage (new RTImage ("perspective-h2.png"));
