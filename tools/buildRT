@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# buildRT version 4.2, 2015-01-20
+# buildRT version 4.3, 2015-03-11
 # Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
 # www.rawtherapee.com
 # www.londonlight.org
@@ -25,7 +25,7 @@ esac
 
 #--- Set some variables
 unset choiceNumber choiceNumbers buildType buildTypes list branch branches repo
-version="4.2"
+version="4.3"
 movetoPatched=""
 repo="${HOME}/rawtherapee"
 procTarget=2
@@ -321,6 +321,7 @@ for choiceNumber in "${choiceNumbers[@]}"; do
     a|A) printf "%s\n" "Cannot proceed if old build directory exists." "Remove it or rename it, then re-run this script." "Aborting"
          exit 0 ;;
       *) printf "%s\n" "Unknown response \"$REPLY\""
+         exit 1 ;;
   esac
   }
 
