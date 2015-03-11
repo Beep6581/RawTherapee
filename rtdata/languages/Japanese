@@ -25,6 +25,7 @@
 #25 2015-01-05 firefly
 #26 2015-02-17 firefly
 #27 2015-02-21 firefly
+#28 2015-03-03 firefly
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -146,12 +147,12 @@ FILEBROWSER_POPUPCOLORLABEL3;ラベル：　グリーン
 FILEBROWSER_POPUPCOLORLABEL4;ラベル：　ブルー
 FILEBROWSER_POPUPCOLORLABEL5;ラベル：　パープル
 FILEBROWSER_POPUPCOLORLABEL;カラー・ラベル
-FILEBROWSER_POPUPOPENINEDITOR;エディタで開く
 FILEBROWSER_POPUPCOPYTO;コピーします...
 FILEBROWSER_POPUPFILEOPERATIONS;ファイルの操作
 FILEBROWSER_POPUPMOVEEND;キュー処理の最後に移動
 FILEBROWSER_POPUPMOVEHEAD;キュー処理の最初に移動
 FILEBROWSER_POPUPMOVETO;移動します...
+FILEBROWSER_POPUPOPENINEDITOR;編集画面を開く
 FILEBROWSER_POPUPOPEN;開く
 FILEBROWSER_POPUPPROCESSFAST;キューに追加 (高速書き出し)
 FILEBROWSER_POPUPPROCESS;キューに追加
@@ -546,9 +547,9 @@ HISTORY_MSG_301;輝度ノイズの調整方法
 HISTORY_MSG_302;色ノイズの調整方法
 HISTORY_MSG_303;色ノイズの調整方法
 HISTORY_MSG_304;ウェーブレットのレベル
-HISTORY_MSG_305;ウェーブレットのレベル
-HISTORY_MSG_306;ウェーブレット N° level
-HISTORY_MSG_307;ウェーブレット Ch level
+HISTORY_MSG_305;ウェーブレット　各コントラスト
+HISTORY_MSG_306;ウェーブレット 表示レベル
+HISTORY_MSG_307;ウェーブレット プレビューの表示
 HISTORY_MSG_308;ウェーブレット 方向
 HISTORY_MSG_309;ウェーブレット タイル
 HISTORY_MSG_310;ウェーブレット 色相-トーン　空
@@ -579,8 +580,8 @@ HISTORY_MSG_334;ウェーブレット　色度
 HISTORY_MSG_335;ウェーブレット　ハイライト　残差画像
 HISTORY_MSG_336;ウェーブレット　ハイライトのしきい値
 HISTORY_MSG_337;ウェーブレット　色相の範囲
-HISTORY_MSG_338;ウェーブレット　エッジ半径
-HISTORY_MSG_339;ウェーブレット　エッジの値
+HISTORY_MSG_338;ウェーブレット　シャープネスの半径
+HISTORY_MSG_339;ウェーブレット　シャープネスの適用量
 HISTORY_MSG_340;ウェーブレット　強さ
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
@@ -670,7 +671,7 @@ MAIN_TAB_EXPORT; 書き出し
 MAIN_TAB_EXPOSURE;露光
 MAIN_TAB_EXPOSURE_TOOLTIP;ショートカット: <b>Alt-e</b>
 MAIN_TAB_FILTER;絞り込み
-MAIN_TAB_INSPECT;検査
+MAIN_TAB_INSPECT;カメラ出しJPEG
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;メタデータ
 MAIN_TAB_METADATA_TOOLTIP;ショートカット: <b>Alt-m</b>
@@ -1613,7 +1614,6 @@ TP_VIGNETTING_CENTER_Y;中心 Y軸
 TP_VIGNETTING_LABEL;周辺光量補正
 TP_VIGNETTING_RADIUS;半径
 TP_VIGNETTING_STRENGTH;濃度
-TP_WAVELET_0;レベル 0
 TP_WAVELET_1;レベル 1
 TP_WAVELET_2;レベル 2
 TP_WAVELET_3;レベル 3
@@ -1623,7 +1623,7 @@ TP_WAVELET_6;レベル 6
 TP_WAVELET_7;レベル 7
 TP_WAVELET_8;レベル 8
 TP_WAVELET_9;レベル 9
-TP_WAVELET_ALL;全てのレベル－方向
+TP_WAVELET_ALL;全てのレベルと方向を合わせた画像
 TP_WAVELET_APPLYTO;適用
 TP_WAVELET_AVOID;色ずれの回避
 TP_WAVELET_CH1;全ての色度
@@ -1645,14 +1645,14 @@ TP_WAVELET_DALL;全ての方向
 TP_WAVELET_DISPLAYCHRO;色度とカラートーン
 TP_WAVELET_DISPLAYGAM;色域とその抑制
 TP_WAVELET_DISPLAY;レベルとユーティリティ
-TP_WAVELET_DISP;ウェーブレットのレベルを表示
+TP_WAVELET_DISP;ウェーブレットレベルのプレビューでの表示形式
 TP_WAVELET_DONE;方向: 垂直
 TP_WAVELET_DTHR;方向: 対角線
 TP_WAVELET_DTWO;方向: 水平
-TP_WAVELET_EDGE;エッジのシャープ化（輝度）
+TP_WAVELET_EDGE;エッジのシャープネス（輝度）
 TP_WAVELET_EDGTHRESH;しきい値
 TP_WAVELET_EDRAD;半径
-TP_WAVELET_EDVAL;値
+TP_WAVELET_EDVAL;適用量
 TP_WAVELET_FINEST;最も細かい
 TP_WAVELET_HIGHLIGHT;ハイライトの輝度範囲 (0～100)
 TP_WAVELET_HIGHSHA;シャドウ/ハイライト
@@ -1660,13 +1660,13 @@ TP_WAVELET_HS1;全輝度範囲
 TP_WAVELET_HS2;シャドウ-ハイライト
 TP_WAVELET_HUESKIN;色相の範囲(デフォルト：肌色)
 TP_WAVELET_HUESKIN_TOOLTIP;このピラミッド型カーブは上部ほど、アルゴリズムの効率が良い部分です\n下部ほど色相の変化が激しい部分を示しています\nスライダーを極端に左右に動かす必要がある場合、或いはアーティファクトが発生している場合は：<b>ホワイトバランスが誤っています</b>\n範囲を若干狭めることで画像の他の部分が影響を受けないようにすることが出来ます
-TP_WAVELET_HUESKY;色相範囲（デフォルト：青空）
+TP_WAVELET_HUESKY;色相の範囲（デフォルト：青空）
 TP_WAVELET_HUESKY_TOOLTIP;このピラミッド型カーブは上部ほど、アルゴリズムの効率が良い部分です\n下部ほど色相の変化が激しい部分を示しています\nスライダーを極端に左右に動かす必要がある場合、或いはアーティファクトが発生している場合は：<b>ホワイトバランスが誤っています</b>\n範囲を若干狭めることで画像の他の部分が影響を受けないようにすることが出来ます
-TP_WAVELET_INF;同等、或いはそれ以下のレベル
+TP_WAVELET_INF;選択したレベル以下の画像
 TP_WAVELET_LABEL;ウェーブレットのレベル
 TP_WAVELET_LARGEST;最も粗い
 TP_WAVELET_LEVCH;色度
-TP_WAVELET_LEVELS;ウェーブレットのレベル
+TP_WAVELET_LEVELS;ウェーブレットのレベルの数
 TP_WAVELET_LEVELS_TOOLTIP;画像を幾つの詳細レベルに分割するか選択します。分割数が増えればメモリー使用量が増え、処理時間も長くなります。
 TP_WAVELET_LEVF;コントラスト
 TP_WAVELET_LEVLABEL;プレビューで表示可能な最大レベル=%1
@@ -1675,10 +1675,10 @@ TP_WAVELET_MAX;最大
 TP_WAVELET_MEDI;青空のアーティファクトを軽減
 TP_WAVELET_MIN;最小
 TP_WAVELET_NEUTRAL;ニュートラル
-TP_WAVELET_ONE;一つのレベル
+TP_WAVELET_ONE;選択したレベルの画像だけ
 TP_WAVELET_OPACITY;ブルー/イエローの不透明度
 TP_WAVELET_PASTEL;明清色 色度
-TP_WAVELET_PREVIEWLEVELS;プレビュー
+TP_WAVELET_PREVIEWLEVELS;形式
 TP_WAVELET_RESCHRO;色度
 TP_WAVELET_RESCONH;ハイライト
 TP_WAVELET_RESCON;シャドウ
@@ -1687,14 +1687,14 @@ TP_WAVELET_SAT;純色 色度
 TP_WAVELET_SETTINGS;ウェーブレットの設定
 TP_WAVELET_SKIN;色相-トーン (肌色) の目標/保護
 TP_WAVELET_SKIN_TOOLTIP;－100にすると肌色のトーンだけが調整の対象になります\n0にすると全てのカラートーンが調整されます\n＋100にすると肌色のトーンは保護され、他のカラートーンが調整されます
-TP_WAVELET_SKY;色相-トーンの目標/保護（デフォルト：青空）
-TP_WAVELET_SKY_TOOLTIP;色相範囲の内外で色度を上げ下げします\n細部のコントラストや色度の強さに起因する青空のアーティファクトを回避します
+TP_WAVELET_SKY;色相-トーンの目標/保護
+TP_WAVELET_SKY_TOOLTIP;色相範囲の内側の色度を上げ、外側を下げます\n細部のコントラストや色度の強さに起因する青空のアーティファクトを回避します
 TP_WAVELET_STRENGTH;強さ
 TP_WAVELET_SUPE;エキストラ
-TP_WAVELET_SUP;上のレベルと残差画像
-TP_WAVELET_THRESHOLD2;シャドウ調整をするレベルを指定(最も細かい～最も粗い)
+TP_WAVELET_SUP;選択したレベルより上と残差画像
+TP_WAVELET_THRESHOLD2;シャドウ調整をするレベル
 TP_WAVELET_THRESHOLD2_TOOLTIP;この数値を変更すると、9以下のレベルでシャドウの輝度が調整されます\n他のレベルは輝度範囲全体で調整されます\nシャドウの最大レベルはハイライトのレベルによって制限を受けます（9-ハイライトレベル）
-TP_WAVELET_THRESHOLD;ハイライト調整をするレベルを指定（最も細かい～最も粗い　－マスター）
+TP_WAVELET_THRESHOLD;ハイライト調整をするレベル
 TP_WAVELET_THRESHOLD_TOOLTIP;この数値を変更すると、その一つ上のレベルだけがハイライトの輝度で調整されます\n他のレベルは輝度範囲全体で調整されます
 TP_WAVELET_THRES;最大のレベル数
 TP_WAVELET_THRES_TOOLTIP;使用するレベル数を設定します。スライダーの位置に関係なく、設定値より高いレベルは考慮されません
