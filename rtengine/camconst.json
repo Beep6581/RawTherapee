@@ -929,7 +929,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
     { // Quality A
         "make_model": [ "Panasonic DMC-TZ60", "Panasonic DMC-TZ61", "Panasonic DMC-ZS40", "Panasonic DMC-ZS41" ],
         "dcraw_matrix": [ 8607,-2822,-808,-3755,11930,2049,-820,2060,5224 ], // matrix from Adobe dcp v8.4
-        "raw_crop": [ 8, 8, 4904, 3680 ], // crop according to exif 4896 X 3672 plus 4 pixels borders. RT's frame gets smaller than Dcraw but works better with auto distortion
+        "raw_crop": [ 8, 8, -8, -8 ], // crop according to exif 4896 X 3672 plus 4 pixels borders. RT's frame gets smaller than Dcraw but works better with auto distortion
         "ranges": { "black": 15, "white": 4050 } // 15 is BL offstet. Dcraw/RT read the base offset from exif and calculates total BL = BLbase+BLoffset
     },
 
