@@ -90,6 +90,12 @@ void CropHandler::sizeChanged (int x, int y, int ow, int oh) {  // the ipc notif
     */
 }
 
+double CropHandler::getFitCropZoom () {
+	double z1 = (double) wh / cropParams.h;
+	double z2 = (double) ww / cropParams.w;
+	return z1<z2 ? z1 : z2;
+}
+
 double CropHandler::getFitZoom () {
     
     if (ipc) {

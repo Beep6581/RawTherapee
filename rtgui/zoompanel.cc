@@ -33,6 +33,8 @@ ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea) {
     image11->set_padding(0,0);
     Gtk::Image* imageFit = Gtk::manage (new RTImage ("gtk-zoom-fit.png"));
     imageFit->set_padding(0,0);
+    Gtk::Image* imageFitCrop = Gtk::manage (new RTImage ("gtk-zoom-crop.png"));
+    imageFit->set_padding(0,0);
 
     zoomOut = Gtk::manage (new Gtk::Button());
     zoomOut->add (*imageOut);
@@ -43,6 +45,9 @@ ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea) {
     zoomFit = Gtk::manage (new Gtk::Button());
     zoomFit->add (*imageFit);
     zoomFit->set_relief(Gtk::RELIEF_NONE);
+    zoomFitCrop = Gtk::manage (new Gtk::Button());
+    zoomFitCrop->add (*imageFitCrop);
+    zoomFitCrop->set_relief(Gtk::RELIEF_NONE);
     zoom11 = Gtk::manage (new Gtk::Button());
     zoom11->add (*image11);
     zoom11->set_relief(Gtk::RELIEF_NONE);
@@ -50,6 +55,7 @@ ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea) {
     pack_start (*zoomOut, Gtk::PACK_SHRINK, 0);
     pack_start (*zoomIn, Gtk::PACK_SHRINK, 0);
     pack_start (*zoomFit, Gtk::PACK_SHRINK, 0);
+    pack_start (*zoomFitCrop, Gtk::PACK_SHRINK, 0);
     pack_start (*zoom11, Gtk::PACK_SHRINK, 0);
 
     zoomLabel = Gtk::manage (new Gtk::Label ());
@@ -67,6 +73,7 @@ ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea) {
     zoomIn->signal_clicked().connect ( sigc::mem_fun(*this, &ZoomPanel::zoomInClicked) );
     zoomOut->signal_clicked().connect( sigc::mem_fun(*this, &ZoomPanel::zoomOutClicked) );
     zoomFit->signal_clicked().connect( sigc::mem_fun(*this, &ZoomPanel::zoomFitClicked) );
+    zoomFitCrop->signal_clicked().connect( sigc::mem_fun(*this, &ZoomPanel::zoomFitCropClicked) );
     zoom11->signal_clicked().connect ( sigc::mem_fun(*this, &ZoomPanel::zoom11Clicked) );
     newCrop->signal_clicked().connect ( sigc::mem_fun(*this, &ZoomPanel::newCropClicked) );
 
@@ -74,6 +81,7 @@ ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea) {
     zoomOut->set_tooltip_markup (M("ZOOMPANEL_ZOOMOUT"));
     zoom11->set_tooltip_markup (M("ZOOMPANEL_ZOOM100"));
     zoomFit->set_tooltip_markup (M("ZOOMPANEL_ZOOMFITSCREEN"));
+    zoomFitCrop->set_tooltip_markup (M("ZOOMPANEL_ZOOMFITCROPSCREEN"));
     newCrop->set_tooltip_markup (M("ZOOMPANEL_NEWCROPWINDOW"));
 
     zoomLabel->set_text (M("ZOOMPANEL_100"));
@@ -95,6 +103,12 @@ void ZoomPanel::zoomFitClicked () {
 
     if (iarea->mainCropWindow) 
         iarea->mainCropWindow->zoomFit ();
+}
+
+void ZoomPanel::zoomFitCropClicked () {
+
+    if (iarea->mainCropWindow) 
+        iarea->mainCropWindow->zoomFitCrop ();
 }
 
 void ZoomPanel::zoom11Clicked () {

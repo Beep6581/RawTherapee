@@ -29,6 +29,7 @@ class ZoomPanel : public Gtk::HBox {
     Gtk::Button*    zoomOut;
     Gtk::Button*    zoomIn;
     Gtk::Button*    zoomFit;
+    Gtk::Button*    zoomFitCrop;
     Gtk::Button*    zoom11;
     Gtk::Button*    newCrop;
     Gtk::Label*     zoomLabel;
@@ -41,6 +42,7 @@ class ZoomPanel : public Gtk::HBox {
     void zoomInClicked      ();
     void zoomOutClicked     ();
     void zoomFitClicked     ();
+    void zoomFitCropClicked ();
     void zoom11Clicked      ();
     void newCropClicked     ();
     void refreshZoomLabel   ();

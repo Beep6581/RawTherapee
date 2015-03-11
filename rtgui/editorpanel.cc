@@ -1043,6 +1043,9 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 				history->addBookmarkPressed ();
 				setProgressStr(M("PROGRESSBAR_SNAPSHOT_ADDED"));
 				return true;
+			case GDK_f:
+                iareapanel->imageArea->zoomPanel->zoomFitCropClicked();
+				return true;
 		}
     }
     
