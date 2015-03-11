@@ -23,7 +23,8 @@ endif ()
 
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 
-set (CACHE_NAME_SUFFIX "" CACHE STRING "RawTherapee's cache folder suffix (leave empty to use the default suffix, i.e. latesttag)")
+# Examples: "" = ~/.config/RawTherapee, "latesttag" = ~/.config/RawTherapee4.2, "_testing" = ~/.config/RawTherapee_testing
+set (CACHE_NAME_SUFFIX "" CACHE STRING "RawTherapee's cache folder suffix")
 
 # By default, we don't use specific processor target, so  PROC_TARGET_NUMBER is set to 0. If can specify other values to select specific
 # processor targets, which list can be found in ProcessorTargets.cmake.
