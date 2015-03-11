@@ -98,6 +98,7 @@ private:
 	bool inconsistent;          /// True if the enabled button is inconsistent
 	Gtk::EventBox *titleEvBox;  /// EventBox of the title, to get a connector from it
 	Gtk::HBox *headerHBox;
+	bool flushEvent;            /// Flag to control the weird event mechanism of Gtk (please prove me wrong!)
 
 	/// Triggered on opened/closed event
 	bool on_toggle(GdkEventButton* event);
@@ -173,6 +174,7 @@ public:
 	bool get_expanded();
 
 	/// Add a Gtk::Container for the content of the expander
+	/// Warning: do not manually Show/Hide the widget, because this parameter is handled by the click on the Expander's title
 	void add  (Gtk::Container& widget);
 };
 
