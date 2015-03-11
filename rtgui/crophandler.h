@@ -85,6 +85,7 @@ class CropHandler : public rtengine::DetailedCropListener, public rtengine::Size
         void    newImage    (rtengine::StagedImageProcessor* ipc_, bool isDetailWindow);
         void    setZoom     (int z, int centerx=-1, int centery=-1);
         double  getFitZoom  ();
+        double  getFitCropZoom();
         void    setWSize    (int w, int h);
         void    getWSize    (int& w, int &h);
         void    setPosition (int x, int y, bool update=true);

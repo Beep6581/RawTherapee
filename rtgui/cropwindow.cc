@@ -1575,6 +1575,27 @@ void CropWindow::zoomFit () {
     fitZoom = true;
 }
 
+void CropWindow::zoomFitCrop () {
+    if(cropHandler.cropParams.enabled) {
+		double z = cropHandler.getFitCropZoom ();
+		int cz = MAXZOOMSTEPS;
+		if (z < zoomSteps[0].zoom)
+			cz = 0;
+		else 
+			for (int i=0; i<MAXZOOMSTEPS; i++)
+				if (zoomSteps[i].zoom <= z && zoomSteps[i+1].zoom > z) {
+					cz = i;
+					break;
+				}
+		zoomVersion = exposeVersion;
+		int centerX,centerY;
+		centerX = cropHandler.cropParams.x + cropHandler.cropParams.w / 2;
+		centerY = cropHandler.cropParams.y + cropHandler.cropParams.h / 2;
+		changeZoom (cz, true, centerX, centerY, false);
+		fitZoom = false;
+	}
+}
+
 void CropWindow::buttonPressed (LWButton* button, int actionCode, void* actionData) {
 
     if (button==bZoomIn) // zoom in
@@ -1597,14 +1618,14 @@ void CropWindow::redrawNeeded (LWButton* button) {
     iarea->redraw ();
 }
 
-void CropWindow::changeZoom  (int zoom, bool notify, int centerx, int centery) {
+void CropWindow::changeZoom  (int zoom, bool notify, int centerx, int centery, bool skipZoomIfUnchanged) {
 
     if (zoom<0)
         zoom = 0;
     else if (zoom>MAXZOOMSTEPS)
         zoom = MAXZOOMSTEPS;
 
-    if (cropZoom == zoom) {
+    if (cropZoom == zoom && skipZoomIfUnchanged) {
     	// We are already at the start/end of the zoom range, so we do nothing
     	return;
     }

@@ -93,7 +93,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener, public E
         void drawScaledSpotRectangle   (Cairo::RefPtr<Cairo::Context> cr, int rectSize);
         void drawUnscaledSpotRectangle (Cairo::RefPtr<Cairo::Context> cr, int rectSize);
         void drawObservedFrame         (Cairo::RefPtr<Cairo::Context> cr, int rw=0, int rh=0);
-        void changeZoom                (int zoom, bool notify=true, int centerx=-1, int centery=-1);
+        void changeZoom                (int zoom, bool notify=true, int centerx=-1, int centery=-1, bool skipZoomIfUnchanged = true);
         void getObservedFrameArea      (int& x, int& y, int& w, int& h, int rw=0, int rh=0);
 
     public:
@@ -130,6 +130,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener, public E
         void zoomOut     (bool toCursor=false, int cursorX=-1, int cursorY=-1);
         void zoom11      ();
         void zoomFit     ();
+		void zoomFitCrop ();
         double getZoom   ();
         bool isMinZoom   ();
         bool isMaxZoom   ();
