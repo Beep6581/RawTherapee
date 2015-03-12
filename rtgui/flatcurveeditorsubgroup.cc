@@ -40,12 +40,18 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 	// ControlPoints curve
 	CPointsCurveBox = new Gtk::VBox ();
 	CPointsCurveBox->set_spacing(4);
+	Gtk::HBox* CPointsCurveAndButtons = Gtk::manage (new Gtk::HBox ());
+	CPointsCurveAndButtons->set_spacing(4);
 	CPointsCurve = Gtk::manage (new MyFlatCurve ());
 	CPointsCurve->set_size_request (GRAPH_SIZE+2*RADIUS+1, GRAPH_SIZE+2*RADIUS+1);
 	CPointsCurve->setType (FCT_MinMaxCPoints);
-	CPointsCurveBox->pack_start (*CPointsCurve, Gtk::PACK_EXPAND_WIDGET, 0);
 
-	Gtk::HBox*CPointsbbox = Gtk::manage (new Gtk::HBox ());
+	Gtk::Box* CPointsbbox; // curvebboxpos 0=above, 1=right, 2=below, 3=left
+	if (options.curvebboxpos==1 || options.curvebboxpos==3) {
+		CPointsbbox = Gtk::manage (new Gtk::VBox ());
+	} else {
+		CPointsbbox = Gtk::manage (new Gtk::HBox ());
+	}
 	CPointsbbox->set_spacing(4);
 
 	pasteCPoints = Gtk::manage (new Gtk::Button ());
@@ -67,7 +73,19 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 	CPointsbbox->pack_end (*loadCPoints, Gtk::PACK_SHRINK, 0);
 	CPointsbbox->pack_start(*editCPoints, Gtk::PACK_SHRINK, 0);
 
-	CPointsCurveBox->pack_end (*CPointsbbox, Gtk::PACK_SHRINK, 0);
+	CPointsCurveAndButtons->pack_start (*CPointsCurve, Gtk::PACK_EXPAND_WIDGET, 0);
+	CPointsCurveAndButtons->pack_start (*CPointsbbox, Gtk::PACK_SHRINK, 0);
+	CPointsCurveBox->pack_start (*CPointsCurveAndButtons, Gtk::PACK_EXPAND_WIDGET);
+	if (options.curvebboxpos==0) {
+		removeIfThere (CPointsCurveAndButtons, CPointsbbox, false);
+		CPointsCurveBox->pack_start (*CPointsbbox);
+		CPointsCurveBox->reorder_child(*CPointsbbox, 0);
+	} else if (options.curvebboxpos==2) {
+		removeIfThere (CPointsCurveAndButtons, CPointsbbox, false);
+		CPointsCurveBox->pack_start (*CPointsbbox);
+	} else if (options.curvebboxpos==3) {
+		CPointsCurveAndButtons->reorder_child(*CPointsbbox, 0);
+	}
 	CPointsCurveBox->show_all ();
 
 	saveCPoints->signal_clicked().connect( sigc::mem_fun(*this, &FlatCurveEditorSubGroup::savePressed) );

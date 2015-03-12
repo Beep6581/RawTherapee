@@ -746,66 +746,72 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 
     Gtk::VBox* mvbsd = Gtk::manage( new Gtk::VBox () );
 
-    Gtk::Frame* fworklflow = Gtk::manage(  new Gtk::Frame (M("PREFERENCES_WORKFLOW")) );
-    Gtk::HBox* hbworkflow = Gtk::manage( new Gtk::HBox () );
-    hbworkflow->set_border_width (4);
-    Gtk::Label* flayoutlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_EDITORLAYOUT")+":") );
-    editorLayout = Gtk::manage( new Gtk::ComboBoxText () );
-    editorLayout->set_size_request(45, -1);
+    Gtk::Frame* fworklflow = Gtk::manage (new Gtk::Frame (M("PREFERENCES_WORKFLOW")));
+    Gtk::VBox* vbworkflow = Gtk::manage (new Gtk::VBox (false, 4));
+    vbworkflow->set_border_width (4);
 
+    Gtk::HBox* hbworkflow = Gtk::manage (new Gtk::HBox (false, 4));
+    Gtk::Label* flayoutlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_EDITORLAYOUT")+":"));
+    editorLayout = Gtk::manage (new Gtk::ComboBoxText ());
     editorLayout->append_text (M("PREFERENCES_SINGLETAB"));
     editorLayout->append_text (M("PREFERENCES_SINGLETABVERTAB"));
     editorLayout->append_text (M("PREFERENCES_MULTITAB"));
     editorLayout->append_text (M("PREFERENCES_MULTITABDUALMON"));
     editorLayout->set_active (2);
-    editorLayout->signal_changed().connect( sigc::mem_fun(*this, &Preferences::layoutComboChanged) );
+    editorLayout->signal_changed().connect (sigc::mem_fun(*this, &Preferences::layoutComboChanged));
     layoutComboChanged(); // update the tooltip
-
-    hbworkflow->pack_start (*flayoutlab, Gtk::PACK_SHRINK, 4);
+    hbworkflow->pack_start (*flayoutlab, Gtk::PACK_SHRINK);
     hbworkflow->pack_start (*editorLayout);
-    Gtk::Label* lNextStart = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
-    hbworkflow->pack_end (*lNextStart, Gtk::PACK_SHRINK, 4);
+    Gtk::Label* lNextStart = Gtk::manage( new Gtk::Label (Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
+    hbworkflow->pack_end (*lNextStart, Gtk::PACK_SHRINK);
+    vbworkflow->pack_start (*hbworkflow, Gtk::PACK_SHRINK);
 
-    Gtk::VBox* vbworkflow = Gtk::manage( new Gtk::VBox () );
-    vbworkflow->pack_start (*hbworkflow, Gtk::PACK_SHRINK, 4);
+    Gtk::HBox* curveBBoxPosHB = Gtk::manage (new Gtk::HBox (false, 4));
+    Gtk::Label* curveBBoxPosL = Gtk::manage (new Gtk::Label (M("PREFERENCES_CURVEBBOXPOS")+":"));
+    Gtk::Label* curveBBoxPosRestartL = Gtk::manage (new Gtk::Label (Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")"));
+    curveBBoxPosC = Gtk::manage (new Gtk::ComboBoxText ());
+    curveBBoxPosC->append_text (M("PREFERENCES_CURVEBBOXPOS_ABOVE"));
+    curveBBoxPosC->append_text (M("PREFERENCES_CURVEBBOXPOS_RIGHT"));
+    curveBBoxPosC->append_text (M("PREFERENCES_CURVEBBOXPOS_BELOW"));
+    curveBBoxPosC->append_text (M("PREFERENCES_CURVEBBOXPOS_LEFT"));
+    curveBBoxPosC->set_active (1);
+    curveBBoxPosHB->pack_start (*curveBBoxPosL, Gtk::PACK_SHRINK);
+    curveBBoxPosHB->pack_start (*curveBBoxPosC);
+    curveBBoxPosHB->pack_start (*curveBBoxPosRestartL, Gtk::PACK_SHRINK);
+    vbworkflow->pack_start (*curveBBoxPosHB, Gtk::PACK_SHRINK);
 
     Gtk::HBox* hbworkflow2 = Gtk::manage( new Gtk::HBox () );
     ckbHistogramPositionLeft =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_HISTOGRAMPOSITIONLEFT")) );
-    hbworkflow2->pack_start (*ckbHistogramPositionLeft, Gtk::PACK_SHRINK, 4);
+    hbworkflow2->pack_start (*ckbHistogramPositionLeft);
     ckbHistogramWorking =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_HISTOGRAMWORKING")) );
-	ckbHistogramWorking->set_tooltip_markup (M("PREFERENCES_HISTOGRAM_TOOLTIP"));
-	
-    hbworkflow2->pack_start (*ckbHistogramWorking, Gtk::PACK_SHRINK, 4);
-    vbworkflow->pack_start (*hbworkflow2, Gtk::PACK_SHRINK, 4);
-    
+    ckbHistogramWorking->set_tooltip_markup (M("PREFERENCES_HISTOGRAM_TOOLTIP"));
+    hbworkflow2->pack_start (*ckbHistogramWorking);
+    vbworkflow->pack_start (*hbworkflow2, Gtk::PACK_SHRINK);
+
     ckbShowProfileSelector =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SHOWPROFILESELECTOR")) );
     Gtk::HBox* hbworkflow2d5 = Gtk::manage( new Gtk::HBox () );
-    hbworkflow2d5->pack_start (*ckbShowProfileSelector, Gtk::PACK_SHRINK, 4);
-    vbworkflow->pack_start (*hbworkflow2d5, Gtk::PACK_SHRINK, 4);
+    hbworkflow2d5->pack_start (*ckbShowProfileSelector, Gtk::PACK_SHRINK);
+    vbworkflow->pack_start (*hbworkflow2d5, Gtk::PACK_SHRINK);
 
     Gtk::HBox* hbworkflow3 = Gtk::manage( new Gtk::HBox () );
     ckbFileBrowserToolbarSingleRow =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_FILEBROWSERTOOLBARSINGLEROW")) );
     ckbShowFilmStripToolBar =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SHOWFILMSTRIPTOOLBAR")) );
+    hbworkflow3->pack_start (*ckbFileBrowserToolbarSingleRow);
+    hbworkflow3->pack_start (*ckbShowFilmStripToolBar);
+    vbworkflow->pack_start (*hbworkflow3, Gtk::PACK_SHRINK);
 
-    hbworkflow3->pack_start (*ckbFileBrowserToolbarSingleRow, Gtk::PACK_SHRINK, 4);
-    hbworkflow3->pack_start (*ckbShowFilmStripToolBar, Gtk::PACK_SHRINK, 4);
-    vbworkflow->pack_start (*hbworkflow3, Gtk::PACK_SHRINK, 0);
-
-    Gtk::HBox* hbworkflow4 = Gtk::manage( new Gtk::HBox () );
-
+    Gtk::HBox* hbworkflow4 = Gtk::manage( new Gtk::HBox (false, 4) );
     Gtk::Label* hb4label =  Gtk::manage( new Gtk::Label (M("PREFERENCES_TP_LABEL")) );
-    hbworkflow4->pack_start (*hb4label, Gtk::PACK_SHRINK, 4);
+    hbworkflow4->pack_start (*hb4label, Gtk::PACK_SHRINK);
     ckbHideTPVScrollbar =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_TP_VSCROLLBAR")) );
-    hbworkflow4->pack_start (*ckbHideTPVScrollbar, Gtk::PACK_SHRINK, 4);
-
+    hbworkflow4->pack_start (*ckbHideTPVScrollbar, Gtk::PACK_SHRINK);
     ckbUseIconNoText =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_TP_USEICONORTEXT")) );
-    hbworkflow4->pack_start (*ckbUseIconNoText, Gtk::PACK_SHRINK, 4);
-
-    vbworkflow->pack_start (*hbworkflow4, Gtk::PACK_SHRINK, 4);
+    hbworkflow4->pack_start (*ckbUseIconNoText, Gtk::PACK_SHRINK);
+    vbworkflow->pack_start (*hbworkflow4, Gtk::PACK_SHRINK);
 
     fworklflow->add (*vbworkflow);
-    mvbsd->pack_start (*fworklflow, Gtk::PACK_SHRINK, 4);
-     
+    mvbsd->pack_start (*fworklflow, Gtk::PACK_SHRINK);
+
     Gtk::Frame* flang = Gtk::manage( new Gtk::Frame (M("PREFERENCES_DEFAULTLANG")) );
     Gtk::HBox* hblang = Gtk::manage( new Gtk::HBox () );
     hblang->set_border_width (4);
@@ -1412,6 +1418,7 @@ void Preferences::storePreferences () {
     moptions.multiDisplayMode = editorMode==3 ? 1:0;
     moptions.mainNBVertical = editorMode==1;
 
+    moptions.curvebboxpos = curveBBoxPosC->get_active_row_number();
     moptions.histogramPosition = ckbHistogramPositionLeft->get_active() ? 1 : 2;
     moptions.showProfileSelector = ckbShowProfileSelector->get_active();
     moptions.FileBrowserToolbarSingleRow = ckbFileBrowserToolbarSingleRow->get_active();
@@ -1562,6 +1569,7 @@ void Preferences::fillPreferences () {
     else 
         editorLayout->set_active(moptions.multiDisplayMode ? 3 : 2);
 
+    curveBBoxPosC->set_active(moptions.curvebboxpos);
     ckbHistogramPositionLeft->set_active(moptions.histogramPosition==1);
  //   ckbHistogramWorking->set_active(moptions.histogramWorking==1);
     ckbShowProfileSelector->set_active(moptions.showProfileSelector);
