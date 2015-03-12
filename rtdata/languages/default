@@ -786,6 +786,11 @@ PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 PREFERENCES_CLUTSDIR;HaldCLUT directory
 PREFERENCES_CMETRICINTENT;Colorimetric intent
+PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
+PREFERENCES_CURVEBBOXPOS_ABOVE;Above
+PREFERENCES_CURVEBBOXPOS_BELOW;Below
+PREFERENCES_CURVEBBOXPOS_LEFT;Left
+PREFERENCES_CURVEBBOXPOS_RIGHT;Right
 PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\n\nThe path of the communication file (*.ini style, a.k.a. "Keyfile") is added as a command line parameter. It contains various parameters required for the scripts and image Exif to allow a rules-based processing profile generation.\n\n<b>WARNING:</b> You are responsible for using double quotes where necessary if you're using paths containing spaces.
 PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name

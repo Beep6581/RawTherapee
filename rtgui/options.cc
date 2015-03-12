@@ -361,6 +361,7 @@ void Options::setDefaults () {
     histogramPosition = 1;
     histogramBar = true;
     histogramFullMode = false;
+    curvebboxpos = 1;
     prevdemo = PD_Sidecar;
     rgbDenoiseThreadLimit = 0;
 #if defined( _OPENMP ) && defined( __x86_64__ )
@@ -824,8 +825,8 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "FileBrowserToolbarSingleRow")) FileBrowserToolbarSingleRow = keyFile.get_boolean ("GUI", "FileBrowserToolbarSingleRow");
     if (keyFile.has_key ("GUI", "HideTPVScrollbar"))            hideTPVScrollbar            = keyFile.get_boolean ("GUI", "HideTPVScrollbar");
     if (keyFile.has_key ("GUI", "UseIconNoText"))               UseIconNoText               = keyFile.get_boolean ("GUI", "UseIconNoText");
-    if( keyFile.has_key ("GUI", "HistogramWorking"))            rtSettings.HistogramWorking = keyFile.get_boolean("GUI", "HistogramWorking");
-	
+    if (keyFile.has_key ("GUI", "HistogramWorking"))            rtSettings.HistogramWorking = keyFile.get_boolean ("GUI", "HistogramWorking");
+    if (keyFile.has_key ("GUI", "CurveBBoxPosition"))   curvebboxpos                        = keyFile.get_integer ("GUI", "CurveBBoxPosition");
 }
 
 if (keyFile.has_group ("Crop Settings")) { 
@@ -1150,6 +1151,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("GUI", "HideTPVScrollbar", hideTPVScrollbar);
     keyFile.set_boolean ("GUI", "UseIconNoText", UseIconNoText);
     keyFile.set_boolean ("GUI", "HistogramWorking", rtSettings.HistogramWorking);
+    keyFile.set_integer ("GUI", "CurveBBoxPosition", curvebboxpos);
 
     //Glib::ArrayHandle<int> crvopen = crvOpen;
     //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);

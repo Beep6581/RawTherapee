@@ -44,13 +44,18 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	// custom curve
 	customCurveBox = new Gtk::VBox ();
 	customCurveBox->set_spacing(4);
+	Gtk::HBox* customCurveAndButtons = Gtk::manage (new Gtk::HBox ());
+	customCurveAndButtons->set_spacing(4);
 	customCurve = Gtk::manage (new MyDiagonalCurve ());
 	customCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
 	customCurve->setType (DCT_Spline);
-	//customCurve->set_tooltip_text (M("CURVEEDITOR_TOOLTIPMOVESPEED"));
-	customCurveBox->pack_start (*customCurve, Gtk::PACK_EXPAND_WIDGET, 0);
 
-	Gtk::HBox* custombbox = Gtk::manage (new Gtk::HBox ());
+	Gtk::Box* custombbox; // curvebboxpos 0=above, 1=right, 2=below, 3=left
+	if (options.curvebboxpos==1 || options.curvebboxpos==3) {
+		custombbox = Gtk::manage (new Gtk::VBox ());
+	} else {
+		custombbox = Gtk::manage (new Gtk::HBox ());
+	}
 	custombbox->set_spacing(4);
 
 	pasteCustom = Gtk::manage (new Gtk::Button ());
@@ -65,13 +70,26 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	editCustom->add (*Gtk::manage (new RTImage ("editmodehand.png")));
 	editCustom->set_tooltip_text(M("EDIT_PIPETTE_TOOLTIP"));
 	editCustom->hide();
+
 	custombbox->pack_end (*pasteCustom, Gtk::PACK_SHRINK, 0);
 	custombbox->pack_end (*copyCustom, Gtk::PACK_SHRINK, 0);
 	custombbox->pack_end (*saveCustom, Gtk::PACK_SHRINK, 0);
 	custombbox->pack_end (*loadCustom, Gtk::PACK_SHRINK, 0);
 	custombbox->pack_start(*editCustom, Gtk::PACK_SHRINK, 0);
 
-	customCurveBox->pack_end (*custombbox, Gtk::PACK_SHRINK, 0);
+	customCurveAndButtons->pack_start (*customCurve, Gtk::PACK_EXPAND_WIDGET, 0);
+	customCurveAndButtons->pack_start (*custombbox, Gtk::PACK_SHRINK, 0);
+	customCurveBox->pack_start (*customCurveAndButtons, Gtk::PACK_EXPAND_WIDGET);
+	if (options.curvebboxpos==0) {
+		removeIfThere (customCurveAndButtons, custombbox, false);
+		customCurveBox->pack_start (*custombbox);
+		customCurveBox->reorder_child(*custombbox, 0);
+	} else if (options.curvebboxpos==2) {
+		removeIfThere (customCurveAndButtons, custombbox, false);
+		customCurveBox->pack_start (*custombbox);
+	} else if (options.curvebboxpos==3) {
+		customCurveAndButtons->reorder_child(*custombbox, 0);
+	}
 	customCurveBox->show_all ();
 
 	saveCustom->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::savePressed) );
@@ -90,15 +108,20 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	// NURBS curve
 	NURBSCurveBox = new Gtk::VBox ();
 	NURBSCurveBox->set_spacing(4);
+	Gtk::HBox* NURBSCurveAndButtons = Gtk::manage (new Gtk::HBox ());
+	NURBSCurveAndButtons->set_spacing(4);
 	NURBSCurve = Gtk::manage (new MyDiagonalCurve ());
 	NURBSCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
 	NURBSCurve->setType (DCT_NURBS);
 
-	//customCurve->set_tooltip_text (M("CURVEEDITOR_TOOLTIPMOVESPEED"));
-	NURBSCurveBox->pack_start (*NURBSCurve, Gtk::PACK_EXPAND_WIDGET, 0);
-
-	Gtk::HBox* NURBSbbox = Gtk::manage (new Gtk::HBox ());
+	Gtk::Box* NURBSbbox;
+	if (options.curvebboxpos==1 || options.curvebboxpos==3) {
+		NURBSbbox = Gtk::manage (new Gtk::VBox ());
+	} else {
+		NURBSbbox = Gtk::manage (new Gtk::HBox ());
+	}
 	NURBSbbox->set_spacing(4);
+
 	pasteNURBS = Gtk::manage (new Gtk::Button ());
 	pasteNURBS->add (*Gtk::manage (new RTImage ("edit-paste.png")));
 	copyNURBS = Gtk::manage (new Gtk::Button ());
@@ -117,7 +140,19 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	NURBSbbox->pack_end (*loadNURBS, Gtk::PACK_SHRINK, 0);
 	NURBSbbox->pack_start(*editNURBS, Gtk::PACK_SHRINK, 0);
 
-	NURBSCurveBox->pack_end (*NURBSbbox, Gtk::PACK_SHRINK, 0);
+	NURBSCurveAndButtons->pack_start (*NURBSCurve, Gtk::PACK_EXPAND_WIDGET, 0);
+	NURBSCurveAndButtons->pack_start (*NURBSbbox, Gtk::PACK_SHRINK, 0);
+	NURBSCurveBox->pack_start (*NURBSCurveAndButtons, Gtk::PACK_EXPAND_WIDGET);
+	if (options.curvebboxpos==0) {
+		removeIfThere (NURBSCurveAndButtons, NURBSbbox, false);
+		NURBSCurveBox->pack_start (*NURBSbbox);
+		NURBSCurveBox->reorder_child(*NURBSbbox, 0);
+	} else if (options.curvebboxpos==2) {
+		removeIfThere (NURBSCurveAndButtons, NURBSbbox, false);
+		NURBSCurveBox->pack_start (*NURBSbbox);
+	} else if (options.curvebboxpos==3) {
+		NURBSCurveAndButtons->reorder_child(*NURBSbbox, 0);
+	}
 	NURBSCurveBox->show_all ();
 
 	saveNURBS->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::savePressed) );
@@ -135,21 +170,26 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
 	// parametric curve
 	paramCurveBox = new Gtk::VBox ();
-	paramCurveBox->set_spacing(0);
-
+	paramCurveBox->set_spacing(4);
+	Gtk::HBox* paramCurveAndButtons = Gtk::manage (new Gtk::HBox ());
+	paramCurveAndButtons->set_spacing(4);
+	Gtk::VBox* paramCurveAndShcVBox = Gtk::manage (new Gtk::VBox ());
 	paramCurve = Gtk::manage (new MyDiagonalCurve ());
 	paramCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
 	paramCurve->setType (DCT_Parametric);
 
+	Gtk::Box* parambbox;
+	if (options.curvebboxpos==1 || options.curvebboxpos==3) {
+		parambbox = Gtk::manage (new Gtk::VBox ());
+	} else {
+		parambbox = Gtk::manage (new Gtk::HBox ());
+	}
+	parambbox->set_spacing(4);
+
 	shcSelector = Gtk::manage (new SHCSelector ());
-	shcSelector->set_size_request (GRAPH_SIZE-100, 12); // width, height
+	shcSelector->set_size_request (GRAPH_SIZE-100, 10); // width, height
 	//* shcSelector->set_size_request ((GRAPH_SIZE+2*RADIUS)-20, 20);
 
-	paramCurveBox->pack_start (*paramCurve, Gtk::PACK_EXPAND_WIDGET, 0);
-	paramCurveBox->pack_start (*shcSelector, Gtk::PACK_EXPAND_WIDGET, 0);
-
-	Gtk::HBox* parambbox = Gtk::manage (new Gtk::HBox ());
-	parambbox->set_spacing(4);
 	pasteParam = Gtk::manage (new Gtk::Button ());
 	pasteParam->add (*Gtk::manage (new RTImage ("edit-paste.png")));
 	copyParam = Gtk::manage (new Gtk::Button ());
@@ -179,8 +219,6 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	pasteParam->set_tooltip_text (M("CURVEEDITOR_TOOLTIPPASTE"));
 	copyParam->set_tooltip_text (M("CURVEEDITOR_TOOLTIPCOPY"));
 
-	paramCurveBox->pack_end (*parambbox, Gtk::PACK_EXPAND_WIDGET, 0);
-
 	highlights = Gtk::manage (new Adjuster (M("CURVEEDITOR_HIGHLIGHTS"), -100, 100, 1, 0));
 	lights     = Gtk::manage (new Adjuster (M("CURVEEDITOR_LIGHTS"), -100, 100, 1, 0));
 	darks      = Gtk::manage (new Adjuster (M("CURVEEDITOR_DARKS"), -100, 100, 1, 0));
@@ -196,14 +234,36 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	evdarks->add (*darks);
 	evshadows->add (*shadows);
 
-	paramCurveBox->pack_start (*evhighlights);
-	paramCurveBox->pack_start (*evlights);
-	paramCurveBox->pack_start (*evdarks);
-	paramCurveBox->pack_start (*evshadows);
+	// paramCurveSliderBox needed to set vspacing(4) between curve+shc and sliders without vspacing between each slider
+	Gtk::VBox* paramCurveSliderBox = Gtk::manage (new Gtk::VBox ());
+	paramCurveSliderBox->set_spacing(4);
+
+	paramCurveSliderBox->pack_start (*evhighlights);
+	paramCurveSliderBox->pack_start (*evlights);
+	paramCurveSliderBox->pack_start (*evdarks);
+	paramCurveSliderBox->pack_start (*evshadows);
 
 	paramCurveBox->show_all ();
-	// parametric curve end
 
+	paramCurveAndShcVBox->pack_start (*paramCurve, Gtk::PACK_EXPAND_WIDGET);
+	paramCurveAndShcVBox->pack_start (*shcSelector, Gtk::PACK_EXPAND_WIDGET);
+	paramCurveAndButtons->pack_start (*paramCurveAndShcVBox);
+	paramCurveAndButtons->pack_start (*parambbox, Gtk::PACK_SHRINK);
+	paramCurveBox->pack_start (*paramCurveAndButtons);
+	paramCurveBox->pack_start (*paramCurveSliderBox);
+	if (options.curvebboxpos==0) {
+		removeIfThere (paramCurveAndButtons, parambbox, false);
+		paramCurveBox->pack_start (*parambbox);
+		paramCurveBox->reorder_child(*parambbox, 0);
+	} else if (options.curvebboxpos==2) {
+		removeIfThere (paramCurveAndButtons, parambbox, false);
+		paramCurveBox->pack_start (*parambbox);
+		//paramCurveBox->reorder_child(*parambbox, 1);
+	} else if (options.curvebboxpos==3) {
+		paramCurveAndButtons->reorder_child(*parambbox, 0);
+	}
+	paramCurveBox->show_all ();
+	// parametric curve end
 
 
 	customCurveBox->reference ();
