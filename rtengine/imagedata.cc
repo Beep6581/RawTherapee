@@ -128,7 +128,8 @@ void ImageData::extractInfo () {
        }
        make.erase( make.find_last_not_of(' ')+1 );
   }
-  if (root->getTag ("Model")){
+  if (root->getTag ("Model"))
+     if( !(model.size()==0)) {
      model = root->getTag ("Model")->valueToString ();
      std::size_t i=0;
      if (  make.find("KODAK") != std::string::npos ){
@@ -146,6 +147,9 @@ void ImageData::extractInfo () {
      	   model.erase(0,make.size()+1);
      if( model.find( "Digital Camera ") != std::string::npos )
      	model.erase(0,15);
+  }
+  else {
+      model = "Unknown";
   }
   if (root->getTag ("Orientation")){
      orientation = root->getTag ("Orientation")->valueToString ();
