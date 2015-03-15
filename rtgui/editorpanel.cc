@@ -440,6 +440,7 @@ void EditorPanel::on_realize () {
     Gtk::VBox::on_realize ();
     // This line is needed to avoid autoexpansion of the window :-/
     vboxright->set_size_request (options.toolPanelWidth, -1);
+    tpc->updateToolState();
 }
 
 void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {

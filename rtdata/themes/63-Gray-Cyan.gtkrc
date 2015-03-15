@@ -517,9 +517,9 @@ widget "*.FramelessSpinButton" style "clearlooks-framelessspinbutton"
 widget "*.ThresholdSelector" style "clearlooks-thresholdselector"
 widget "*.MyExpanderTitle.*" style "clearlooks-expander"
 widget "*.MyExpanderTitle" style "clearlooks-expander"
-widget "*.ToolPanel" style "clearlooks-toolFrame"
-widget "*.ToolPanel.*.MyExpanderTitle" style "clearlooks-subexpander"
-widget "*.ToolPanel.*.MyExpanderTitle.*" style "clearlooks-subexpander"
+widget "*.ExpanderBox" style "clearlooks-toolFrame"
+widget "*.ExpanderBox.*.MyExpanderTitle" style "clearlooks-subexpander"
+widget "*.ExpanderBox.*.MyExpanderTitle.*" style "clearlooks-subexpander"
 
 # The window of the tooltip is called "gtk-tooltip"
 ##################################################################

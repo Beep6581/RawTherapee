@@ -416,12 +416,30 @@ void ToolPanelCoordinator::closeImage () {
     }
 }
 
-void ToolPanelCoordinator::readOptions () {
+void ToolPanelCoordinator::closeAllTools() {
 
-    crop->readOptions (); 
+    for (size_t i=0; i<options.tpOpen.size(); i++)
+        if (i<expList.size())
+            expList.at(i)->set_expanded (false);
+}
+
+void ToolPanelCoordinator::openAllTools() {
+
+    for (size_t i=0; i<options.tpOpen.size(); i++)
+        if (i<expList.size())
+            expList.at(i)->set_expanded (true);
+}
+
+void ToolPanelCoordinator::updateToolState() {
+
     for (size_t i=0; i<options.tpOpen.size(); i++)
         if (i<expList.size())
             expList.at(i)->set_expanded (options.tpOpen.at(i));
+}
+
+void ToolPanelCoordinator::readOptions () {
+
+    crop->readOptions ();
 }
 
 void ToolPanelCoordinator::writeOptions () { 

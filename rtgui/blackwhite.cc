@@ -364,6 +364,10 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 //	tcmodeconn2 = afterCurveMode->signal_changed().connect( sigc::mem_fun(*this, &BlackWhite::curveMode1Changed2), true );
 
 	show_all();
+
+	disableListener();
+	methodChanged();
+	enableListener();
 }
 BlackWhite::~BlackWhite () {
 	delete luminanceCEG;
@@ -1073,7 +1077,7 @@ void BlackWhite::updateRGBLabel () {
 				Glib::ustring::format(std::fixed, std::setprecision(1), r*100.),
 				Glib::ustring::format(std::fixed, std::setprecision(1), g*100.),
 				Glib::ustring::format(std::fixed, std::setprecision(1), b*100.),
-				Glib::ustring::format(std::fixed, std::setprecision(0), ceil(kcorrec*100./*(r+g+b)*100.)*/)))			
+				Glib::ustring::format(std::fixed, std::setprecision(0), ceil(kcorrec*100./*(r+g+b)*100.)*/)))
 				);
 		// We have to update the RGB sliders too if preset values has been chosen
 		if (sSetting != "RGB-Abs" && sSetting != "RGB-Rel" && sSetting != "ROYGCBPM-Abs" && sSetting != "ROYGCBPM-Rel") {
@@ -1112,8 +1116,10 @@ void BlackWhite::setBatchMode (bool batchMode) {
 	setting->append_text (M("GENERAL_UNCHANGED"));
 	luminanceCEG->setBatchMode (batchMode);
 	beforeCurveCEG->setBatchMode (batchMode);
+	beforeCurveCEG->show();
 	beforeCurveMode->append_text (M("GENERAL_UNCHANGED"));
 	afterCurveCEG->setBatchMode (batchMode);
+	afterCurveCEG->show();
 //	afterCurveMode->append_text (M("GENERAL_UNCHANGED"));
 	algo->append_text (M("GENERAL_UNCHANGED"));
 

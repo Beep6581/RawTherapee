@@ -370,6 +370,36 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
     cr->reset_clip ();
 }
 
+bool ExpanderBox::on_expose_event(GdkEventExpose* event) {
+	bool retVal = Gtk::EventBox::on_expose_event(event);
+
+	if (!options.useSystemTheme) {
+		Glib::RefPtr<Gdk::Window> window = get_window();
+		Glib::RefPtr<Gtk::Style> style = get_style ();
+		Cairo::RefPtr<Cairo::Context> cr = window->create_cairo_context();
+
+		int x_, y_, w_, h_, foo;
+		window->get_geometry(x_, y_, w_, h_, foo);
+		double x = 0.;
+		double y = 0.;
+		double w = double(w_);
+		double h = double(h_);
+
+		cr->set_antialias (Cairo::ANTIALIAS_NONE);
+
+		// draw a frame
+		cr->set_line_width (1.0);
+		Gdk::Color c = style->get_fg (Gtk::STATE_NORMAL);
+		cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+		cr->move_to(x+0.5, y+0.5);
+		cr->line_to(x+w, y+0.5);
+		cr->line_to(x+w, y+h);
+		cr->line_to(x+0.5, y+h);
+		cr->line_to(x+0.5, y+0.5);
+		cr->stroke ();
+	}
+	return retVal;
+}
 
 void MyExpander::init() {
     inconsistentPBuf = Gdk::Pixbuf::create_from_file(RTImage::findIconAbsolutePath("expanderInconsistent.png"));
@@ -380,7 +410,7 @@ void MyExpander::init() {
 }
 
 MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
-        enabled(false), inconsistent(false), flushEvent(false),
+        enabled(false), inconsistent(false), flushEvent(false), expBox(NULL),
         child(NULL), headerWidget(NULL), statusImage(NULL),
         label(NULL), useEnabled(useEnabled)
 {
@@ -425,7 +455,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
 }
 
 MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
-        enabled(false), inconsistent(false), flushEvent(false),
+        enabled(false), inconsistent(false), flushEvent(false), expBox(NULL),
         child(NULL), headerWidget(NULL), statusImage(NULL),
         label(NULL), useEnabled(useEnabled)
 {
@@ -473,6 +503,32 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     titleEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave), false);
 }
 
+ExpanderBox::ExpanderBox( Gtk::Container *p):pC(p) {
+	set_name ("ExpanderBox");
+	updateStyle();
+}
+
+void ExpanderBox::on_style_changed (const Glib::RefPtr<Gtk::Style>& style) {
+	updateStyle();
+}
+
+void ExpanderBox::updateStyle() {
+	set_border_width(options.slimUI ? 2 : 8);  // Outer space around the tool's frame 2:7
+}
+
+void ExpanderBox::show_all() {
+	// ask childs to show themselves, but not us (remain unchanged)
+	Gtk::Container::show_all_children(true);
+}
+
+void ExpanderBox::showBox() {
+	Gtk::EventBox::show();
+}
+
+void ExpanderBox::hideBox() {
+	Gtk::EventBox::hide();
+}
+
 bool MyExpander::on_enter_leave (GdkEventCrossing* event) {
 	if (is_sensitive()) {
 		if (event->type == GDK_ENTER_NOTIFY) {
@@ -492,7 +548,7 @@ void MyExpander::updateStyle() {
 	headerHBox->set_border_width(options.slimUI ? 1 : 2);
 	set_spacing(0);
 	set_border_width(options.slimUI ? 0 : 1);
-	if (child) child->set_border_width(options.slimUI ? 2 : 8);  // Outer space around the tool's frame 2:7
+	if (expBox) expBox->updateStyle();
 }
 
 void MyExpander::setLabel (Glib::ustring newLabel) {
@@ -570,10 +626,10 @@ void MyExpander::setEnabledTooltipText(Glib::ustring tooltipText) {
 }
 
 void MyExpander::set_expanded( bool expanded ) {
-	if (!child)
+	if (!expBox)
 		return;
 
-	bool isVisible = child->is_visible();
+	bool isVisible = expBox->is_visible();
 
 	if (isVisible == expanded)
 		return;
@@ -584,17 +640,23 @@ void MyExpander::set_expanded( bool expanded ) {
 		else
 			statusImage->set(closedPBuf);
 	}
-	child->set_visible(expanded);
+	if (expanded)
+		expBox->showBox();
+	else
+		expBox->hideBox();
 }
 
 bool MyExpander::get_expanded() {
-	return child ? child->get_visible() : false;
+	return expBox ? expBox->get_visible() : false;
 }
 
 void MyExpander::add  (Gtk::Container& widget) {
 	child = &widget;
-	pack_start(widget);
-	widget.show();
+	expBox = Gtk::manage (new ExpanderBox (child));
+	expBox->add (*child);
+	pack_start(*expBox, Gtk::PACK_SHRINK, 0);
+	child->show();
+	expBox->hideBox();
 }
 
 bool MyExpander::on_toggle(GdkEventButton* event) {
@@ -603,17 +665,20 @@ bool MyExpander::on_toggle(GdkEventButton* event) {
 		return false;
 	}
 
-	if (!child || event->button != 1)
+	if (!expBox || event->button != 1)
 		return false;
 
-	bool isVisible = child->is_visible();
+	bool isVisible = expBox->is_visible();
 	if (!useEnabled) {
 		if (isVisible)
 			statusImage->set(closedPBuf);
 		else
 			statusImage->set(openedPBuf);
 	}
-	child->set_visible(!isVisible);
+	if (isVisible)
+		expBox->hideBox();
+	else
+		expBox->showBox();
 	return false;
 }
 

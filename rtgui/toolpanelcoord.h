@@ -231,6 +231,10 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         void initImage          (rtengine::StagedImageProcessor* ipc_, bool israw);
         void closeImage         ();
 
+        // update the "expanded" state of the Tools
+        void updateToolState    ();
+        void openAllTools       ();
+        void closeAllTools      ();
         // read/write the "expanded" state of the expanders & read/write the crop panel settings (ratio, guide type, etc.)
         void readOptions        ();
         void writeOptions       ();
