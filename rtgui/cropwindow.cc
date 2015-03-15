@@ -381,8 +381,9 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y) {
             rot_deg = 0;
         }
         else if (iarea->getToolMode () == TMSpotWB) {
-            screenCoordToImage (x, y, action_x, action_y);
-            iarea->spotWBSelected (action_x, action_y);
+			int spotx, spoty;
+			screenCoordToImage (x, y, spotx, spoty);
+			iarea->spotWBSelected (spotx, spoty);
         }
         else if (iarea->getToolMode () == TMCropSelect && cropgl) {
             state = SCropSelecting;
