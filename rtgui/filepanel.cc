@@ -139,6 +139,12 @@ FilePanel::~FilePanel () {
         delete inspectorPanel;
 }
 
+void FilePanel::on_realize () {
+    Gtk::HPaned::on_realize ();
+    tpc->closeAllTools();
+}
+
+
 void FilePanel::setAspect () {
 	int winW, winH;
 	parent->get_size(winW, winH);

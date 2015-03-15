@@ -15,6 +15,7 @@ class Gradient : public ToolParamBlock, public AdjusterListener, public Foldable
     int lastObject;
 
   protected:
+    Gtk::HBox *editHBox;
     Gtk::ToggleButton* edit;
     Adjuster* degree;
     Adjuster* feather;

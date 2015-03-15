@@ -77,6 +77,32 @@ public:
 };
 
 /**
+ * @brief Glue box to control visibility of the MyExpender's content ; also handle the frame around it
+ */
+class ExpanderBox: public Gtk::EventBox
+{
+private:
+	Gtk::Container *pC;
+
+public:
+	ExpanderBox( Gtk::Container *p);
+	~ExpanderBox( ){ delete pC;}
+
+	void updateStyle();
+
+	void show() {}
+	void show_all();
+	void hide() {}
+	void set_visible(bool isVisible=true) {}
+
+	void showBox();
+	void hideBox();
+
+	void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
+	bool on_expose_event(GdkEventExpose* event);
+};
+
+/**
  * @brief A custom Expander class, that can handle widgets in the title bar
  *
  * Custom made expander for responsive widgets in the header. It also handle a "enabled/disabled" property that display
@@ -99,6 +125,7 @@ private:
 	Gtk::EventBox *titleEvBox;  /// EventBox of the title, to get a connector from it
 	Gtk::HBox *headerHBox;
 	bool flushEvent;            /// Flag to control the weird event mechanism of Gtk (please prove me wrong!)
+	ExpanderBox* expBox;        /// Frame that includes the child and control its visibility
 
 	/// Triggered on opened/closed event
 	bool on_toggle(GdkEventButton* event);
@@ -114,7 +141,7 @@ private:
 
 
 protected:
-	Gtk::Container* child;         /// Gtk::Contained to display below the expander's title
+	Gtk::Container* child;      /// Gtk::Contained to display below the expander's title
 	Gtk::Widget* headerWidget;  /// Widget to display in the header, next to the arrow image ; can be NULL if the "string" version of the ctor has been used
 	Gtk::Image* statusImage;    /// Image to display the opened/closed status (if useEnabled is false) of the enabled/disabled status (if useEnabled is true)
 	Gtk::Label* label;          /// Text to display in the header, next to the arrow image ; can be NULL if the "widget" version of the ctor has been used

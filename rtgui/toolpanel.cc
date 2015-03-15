@@ -18,56 +18,10 @@
  */
 #include "toolpanel.h"
 #include "toolpanelcoord.h"
+#include "guiutils.h"
 
 using namespace rtengine::procparams;
 
-
-class Frame2: public Gtk::EventBox
-{
-	Gtk::Container *pC;
-
-public:
-	Frame2( Gtk::Container *p):pC(p){ updateStyle(); }
-	~Frame2( ){ delete pC;}
-
-	void updateStyle() {
-		set_border_width(options.slimUI ? 2 : 8);  // Outer space around the tool's frame 2:7
-	}
-
-	void on_style_changed (const Glib::RefPtr<Gtk::Style>& style) { updateStyle(); }
-	bool on_expose_event(GdkEventExpose* event);
-};
-
-bool Frame2::on_expose_event(GdkEventExpose* event) {
-	bool retVal = Gtk::EventBox::on_expose_event(event);
-
-	if (!options.useSystemTheme) {
-		Glib::RefPtr<Gdk::Window> window = get_window();
-		Glib::RefPtr<Gtk::Style> style = get_style ();
-		Cairo::RefPtr<Cairo::Context> cr = window->create_cairo_context();
-
-		int x_, y_, w_, h_, foo;
-		window->get_geometry(x_, y_, w_, h_, foo);
-		double x = 0.;
-		double y = 0.;
-		double w = double(w_);
-		double h = double(h_);
-
-		cr->set_antialias (Cairo::ANTIALIAS_NONE);
-
-		// draw a frame
-		cr->set_line_width (1.0);
-		Gdk::Color c = style->get_fg (Gtk::STATE_NORMAL);
-		cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-		cr->move_to(x+0.5, y+0.5);
-		cr->line_to(x+w, y+0.5);
-		cr->line_to(x+w, y+h);
-		cr->line_to(x+0.5, y+h);
-		cr->line_to(x+0.5, y+0.5);
-		cr->stroke ();
-	}
-	return retVal;
-}
 
 ToolVBox::ToolVBox() {
 	updateStyle();
@@ -134,14 +88,7 @@ FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, 
 	exp->signal_button_release_event().connect_notify( sigc::mem_fun(this, &FoldableToolPanel::foldThemAll) );
 	enaConn = signal_enabled_toggled().connect( sigc::mem_fun(*this, &FoldableToolPanel::enabled_toggled) );
 
-	Frame2* pframe = Gtk::manage (new Frame2 (content));
-
-	pframe->set_name ("ToolPanel");
-
-	pframe->add (*content);
-
-	exp->add (*pframe);
-	pframe->show ();
+	exp->add (*content);
 	exp->show ();
 }
 

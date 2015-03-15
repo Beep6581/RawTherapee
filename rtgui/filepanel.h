@@ -82,6 +82,7 @@ class FilePanel : public Gtk::HPaned,
 
         void setParent (RTWindow* p) { parent = p; }
         void init (); // dont call it directly, the constructor calls it as idle source
+        void on_realize ();
         void setAspect();
         void open (const Glib::ustring& d); // open a file or a directory
         void refreshEditedState (const std::set<Glib::ustring>& efiles) { fileCatalog->refreshEditedState (efiles); }

@@ -11,10 +11,14 @@ using namespace rtengine::procparams;
 
 Gradient::Gradient () : FoldableToolPanel(this, "gradient", M("TP_GRADIENT_LABEL"), false, true), EditSubscriber(ET_OBJECTS), lastObject(-1), draggedPointOldAngle(-1000.)
 {
+
+	editHBox = Gtk::manage (new Gtk::HBox());
 	edit = Gtk::manage (new Gtk::ToggleButton());
 	edit->add (*Gtk::manage (new RTImage ("editmodehand.png")));
 	edit->set_tooltip_text(M("EDIT_OBJECT_TOOLTIP"));
 	editConn = edit->signal_toggled().connect( sigc::mem_fun(*this, &Gradient::editToggled) );
+	editHBox->pack_start(*edit, Gtk::PACK_SHRINK, 0);
+	pack_start (*editHBox, Gtk::PACK_SHRINK, 0);
 
 	strength = Gtk::manage (new Adjuster (M("TP_GRADIENT_STRENGTH"), -5, 5, 0.01, 0));
 	strength->set_tooltip_text (M("TP_GRADIENT_STRENGTH_TOOLTIP"));
@@ -36,11 +40,11 @@ Gradient::Gradient () : FoldableToolPanel(this, "gradient", M("TP_GRADIENT_LABEL
 	centerY->set_tooltip_text (M("TP_GRADIENT_CENTER_Y_TOOLTIP"));
 	centerY->setAdjusterListener (this);
 
-	pack_start (*strength);
-	pack_start (*degree);
-	pack_start (*feather);
-	pack_start (*centerX);
-	pack_start (*centerY);
+	pack_start (*strength, Gtk::PACK_SHRINK, 0);
+	pack_start (*degree, Gtk::PACK_SHRINK, 0);
+	pack_start (*feather, Gtk::PACK_SHRINK, 0);
+	pack_start (*centerX, Gtk::PACK_SHRINK, 0);
+	pack_start (*centerY, Gtk::PACK_SHRINK, 0);
 
 	// Instantiating the Editing geometry; positions will be initialized later
 	Line *hLine, *vLine, *featherLine[2];
@@ -266,7 +270,8 @@ void Gradient::trimValues (rtengine::procparams::ProcParams* pp)
 
 void Gradient::setBatchMode (bool batchMode)
 {
-	removeIfThere(this, edit, false);
+	editConn.disconnect();
+	removeIfThere(this, editHBox, false);
 	ToolPanel::setBatchMode (batchMode);
 	degree->showEditedCB ();
 	feather->showEditedCB ();
