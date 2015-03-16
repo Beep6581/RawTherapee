@@ -126,13 +126,16 @@ private:
 	Gtk::HBox *headerHBox;
 	bool flushEvent;            /// Flag to control the weird event mechanism of Gtk (please prove me wrong!)
 	ExpanderBox* expBox;        /// Frame that includes the child and control its visibility
+	Gtk::EventBox *imageEvBox;  /// Enable/Disable or Open/Close arrow event box
 
 	/// Triggered on opened/closed event
 	bool on_toggle(GdkEventButton* event);
 	/// Triggered on enabled/disabled change -> will emit a toggle event to the connected objects
 	bool on_enabled_change(GdkEventButton* event);
-	/// Used to handle the colored background
-	bool on_enter_leave (GdkEventCrossing* event);
+	/// Used to handle the colored background for the whole Title
+	bool on_enter_leave_title (GdkEventCrossing* event);
+	/// Used to handle the colored background for the Enable button
+	bool on_enter_leave_enable (GdkEventCrossing* event);
 	/// Update the style of this widget, depending in the "slim" option
 	void updateStyle();
 

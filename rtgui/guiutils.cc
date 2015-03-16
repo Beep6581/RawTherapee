@@ -401,108 +401,6 @@ bool ExpanderBox::on_expose_event(GdkEventExpose* event) {
 	return retVal;
 }
 
-void MyExpander::init() {
-    inconsistentPBuf = Gdk::Pixbuf::create_from_file(RTImage::findIconAbsolutePath("expanderInconsistent.png"));
-    enabledPBuf = Gdk::Pixbuf::create_from_file(RTImage::findIconAbsolutePath("expanderEnabled.png"));
-    disabledPBuf = Gdk::Pixbuf::create_from_file(RTImage::findIconAbsolutePath("expanderDisabled.png"));
-    openedPBuf = Gdk::Pixbuf::create_from_file(RTImage::findIconAbsolutePath("expanderOpened.png"));
-    closedPBuf = Gdk::Pixbuf::create_from_file(RTImage::findIconAbsolutePath("expanderClosed.png"));
-}
-
-MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
-        enabled(false), inconsistent(false), flushEvent(false), expBox(NULL),
-        child(NULL), headerWidget(NULL), statusImage(NULL),
-        label(NULL), useEnabled(useEnabled)
-{
-    set_spacing(options.slimUI ? 0 : 2);
-    set_name("MyExpander");
-    set_can_focus(false);
-
-    headerHBox = Gtk::manage( new Gtk::HBox());
-    headerHBox->set_can_focus(false);
-
-    if (useEnabled) {
-        statusImage = Gtk::manage(new Gtk::Image(disabledPBuf));
-        Gtk::EventBox *imageEvBox = Gtk::manage(new Gtk::EventBox());
-        imageEvBox->add(*statusImage);
-        imageEvBox->set_above_child(true);
-        imageEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_enabled_change) );
-        headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
-    }
-    else {
-        statusImage = Gtk::manage(new Gtk::Image(openedPBuf));
-        headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
-    }
-    statusImage->set_can_focus(false);
-
-    if (titleWidget) {
-        headerHBox->pack_start(*titleWidget, Gtk::PACK_EXPAND_WIDGET, 0);
-        headerWidget = titleWidget;
-    }
-
-    titleEvBox = Gtk::manage(new Gtk::EventBox());
-    titleEvBox->set_name("MyExpanderTitle");
-    titleEvBox->add(*headerHBox);
-    titleEvBox->set_above_child(false);  // this is the key! By making it below the child, they will get the events first.
-    titleEvBox->set_can_focus(false);
-
-    pack_start(*titleEvBox, Gtk::PACK_EXPAND_WIDGET, 0);
-
-    updateStyle();
-    titleEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_toggle) );
-    titleEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave), false);
-    titleEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave), false);
-}
-
-MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
-        enabled(false), inconsistent(false), flushEvent(false), expBox(NULL),
-        child(NULL), headerWidget(NULL), statusImage(NULL),
-        label(NULL), useEnabled(useEnabled)
-{
-    set_spacing(options.slimUI ? 0 : 2);
-    set_name("MyExpander");
-    set_can_focus(false);
-
-    headerHBox = Gtk::manage( new Gtk::HBox());
-    headerHBox->set_can_focus(false);
-
-
-    if (useEnabled) {
-        statusImage = Gtk::manage(new Gtk::Image(disabledPBuf));
-        Gtk::EventBox *imageEvBox = Gtk::manage(new Gtk::EventBox());
-        imageEvBox->add(*statusImage);
-        imageEvBox->set_above_child(true);
-        imageEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_enabled_change) );
-        headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
-    }
-    else {
-        statusImage = Gtk::manage(new Gtk::Image(openedPBuf));
-        headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
-    }
-    statusImage->set_can_focus(false);
-
-    Glib::ustring str("-");
-    if (!titleLabel.empty())
-        str = titleLabel;
-    label = Gtk::manage(new Gtk::Label());
-    label->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER);
-    label->set_markup(Glib::ustring("<b>") + escapeHtmlChars(titleLabel) + Glib::ustring("</b>"));
-    headerHBox->pack_start(*label, Gtk::PACK_EXPAND_WIDGET, 0);
-
-    titleEvBox = Gtk::manage(new Gtk::EventBox());
-    titleEvBox->set_name("MyExpanderTitle");
-    titleEvBox->add(*headerHBox);
-    titleEvBox->set_above_child(false);  // this is the key! By make it below the child, they will get the events first.
-    titleEvBox->set_can_focus(false);
-
-    pack_start(*titleEvBox, Gtk::PACK_EXPAND_WIDGET, 0);
-
-    updateStyle();
-    titleEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_toggle));
-    titleEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave), false);
-    titleEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave), false);
-}
-
 ExpanderBox::ExpanderBox( Gtk::Container *p):pC(p) {
 	set_name ("ExpanderBox");
 	updateStyle();
@@ -529,7 +427,113 @@ void ExpanderBox::hideBox() {
 	Gtk::EventBox::hide();
 }
 
-bool MyExpander::on_enter_leave (GdkEventCrossing* event) {
+void MyExpander::init() {
+    inconsistentPBuf = Gdk::Pixbuf::create_from_file(RTImage::findIconAbsolutePath("expanderInconsistent.png"));
+    enabledPBuf = Gdk::Pixbuf::create_from_file(RTImage::findIconAbsolutePath("expanderEnabled.png"));
+    disabledPBuf = Gdk::Pixbuf::create_from_file(RTImage::findIconAbsolutePath("expanderDisabled.png"));
+    openedPBuf = Gdk::Pixbuf::create_from_file(RTImage::findIconAbsolutePath("expanderOpened.png"));
+    closedPBuf = Gdk::Pixbuf::create_from_file(RTImage::findIconAbsolutePath("expanderClosed.png"));
+}
+
+MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
+        enabled(false), inconsistent(false), flushEvent(false), expBox(NULL),
+        child(NULL), headerWidget(NULL), statusImage(NULL),
+        label(NULL), useEnabled(useEnabled)
+{
+    set_spacing(options.slimUI ? 0 : 2);
+    set_name("MyExpander");
+    set_can_focus(false);
+
+    headerHBox = Gtk::manage( new Gtk::HBox());
+    headerHBox->set_can_focus(false);
+
+    if (useEnabled) {
+        statusImage = Gtk::manage(new Gtk::Image(disabledPBuf));
+        imageEvBox = Gtk::manage(new Gtk::EventBox());
+        imageEvBox->add(*statusImage);
+        imageEvBox->set_above_child(true);
+        imageEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_enabled_change) );
+        imageEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
+        imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
+        headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
+    }
+    else {
+        statusImage = Gtk::manage(new Gtk::Image(openedPBuf));
+        headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
+    }
+    statusImage->set_can_focus(false);
+
+    if (titleWidget) {
+        headerHBox->pack_start(*titleWidget, Gtk::PACK_EXPAND_WIDGET, 0);
+        headerWidget = titleWidget;
+    }
+
+    titleEvBox = Gtk::manage(new Gtk::EventBox());
+    titleEvBox->set_name("MyExpanderTitle");
+    titleEvBox->add(*headerHBox);
+    titleEvBox->set_above_child(false);  // this is the key! By making it below the child, they will get the events first.
+    titleEvBox->set_can_focus(false);
+
+    pack_start(*titleEvBox, Gtk::PACK_EXPAND_WIDGET, 0);
+
+    updateStyle();
+    titleEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_toggle) );
+    titleEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
+    titleEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
+}
+
+MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
+        enabled(false), inconsistent(false), flushEvent(false), expBox(NULL),
+        child(NULL), headerWidget(NULL), statusImage(NULL),
+        label(NULL), useEnabled(useEnabled)
+{
+    set_spacing(options.slimUI ? 0 : 2);
+    set_name("MyExpander");
+    set_can_focus(false);
+
+    headerHBox = Gtk::manage( new Gtk::HBox());
+    headerHBox->set_can_focus(false);
+
+
+    if (useEnabled) {
+        statusImage = Gtk::manage(new Gtk::Image(disabledPBuf));
+        imageEvBox = Gtk::manage(new Gtk::EventBox());
+        imageEvBox->add(*statusImage);
+        imageEvBox->set_above_child(true);
+        imageEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_enabled_change) );
+        imageEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
+        imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
+        headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
+    }
+    else {
+        statusImage = Gtk::manage(new Gtk::Image(openedPBuf));
+        headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
+    }
+    statusImage->set_can_focus(false);
+
+    Glib::ustring str("-");
+    if (!titleLabel.empty())
+        str = titleLabel;
+    label = Gtk::manage(new Gtk::Label());
+    label->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER);
+    label->set_markup(Glib::ustring("<b>") + escapeHtmlChars(titleLabel) + Glib::ustring("</b>"));
+    headerHBox->pack_start(*label, Gtk::PACK_EXPAND_WIDGET, 0);
+
+    titleEvBox = Gtk::manage(new Gtk::EventBox());
+    titleEvBox->set_name("MyExpanderTitle");
+    titleEvBox->add(*headerHBox);
+    titleEvBox->set_above_child(false);  // this is the key! By make it below the child, they will get the events first.
+    titleEvBox->set_can_focus(false);
+
+    pack_start(*titleEvBox, Gtk::PACK_EXPAND_WIDGET, 0);
+
+    updateStyle();
+    titleEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_toggle));
+    titleEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
+    titleEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
+}
+
+bool MyExpander::on_enter_leave_title (GdkEventCrossing* event) {
 	if (is_sensitive()) {
 		if (event->type == GDK_ENTER_NOTIFY) {
 			titleEvBox->set_state(Gtk::STATE_PRELIGHT);
@@ -537,6 +541,20 @@ bool MyExpander::on_enter_leave (GdkEventCrossing* event) {
 		}
 		else if (event->type == GDK_LEAVE_NOTIFY) {
 			titleEvBox->set_state(Gtk::STATE_NORMAL);
+			queue_draw();
+		}
+	}
+	return true;
+}
+
+bool MyExpander::on_enter_leave_enable (GdkEventCrossing* event) {
+	if (is_sensitive()) {
+		if (event->type == GDK_ENTER_NOTIFY) {
+			imageEvBox->set_state(Gtk::STATE_PRELIGHT);
+			queue_draw();
+		}
+		else if (event->type == GDK_LEAVE_NOTIFY) {
+			imageEvBox->set_state(Gtk::STATE_NORMAL);
 			queue_draw();
 		}
 	}
