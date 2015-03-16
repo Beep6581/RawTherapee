@@ -10,7 +10,7 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="1000"
+   width="1300"
    height="1000"
    id="svg2"
    sodipodi:version="0.32"
@@ -283,20 +283,20 @@
        inkscape:collect="always"
        xlink:href="#linearGradient3625"
        id="linearGradient3631"
-       x1="-274.27156"
-       y1="34.445074"
-       x2="334.30281"
-       y2="34.445074"
+       x1="-274.27155"
+       y1="34.445072"
+       x2="334.3028"
+       y2="34.445072"
        gradientUnits="userSpaceOnUse" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient3625"
        id="linearGradient3206"
        gradientUnits="userSpaceOnUse"
-       x1="-274.27156"
-       y1="34.445074"
-       x2="334.30281"
-       y2="34.445074"
+       x1="-274.27155"
+       y1="34.445072"
+       x2="334.3028"
+       y2="34.445072"
        gradientTransform="translate(769.49471,0)" />
     <linearGradient
        inkscape:collect="always"
@@ -580,9 +580,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.394"
-     inkscape:cx="543.66361"
-     inkscape:cy="97.193659"
+     inkscape:zoom="0.839"
+     inkscape:cx="650"
+     inkscape:cy="500"
      inkscape:document-units="px"
      inkscape:current-layer="g4060"
      showguides="true"
@@ -619,15 +619,15 @@
          id="g4060"
          transform="matrix(1.5074827,0,0,1.5074827,-9.4212231,-17.89429)">
         <path
-           style="fill:none;stroke:#2a7fff;stroke-width:33.16787720000000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.65098040999999995;stroke-dasharray:none;opacity:0.7"
-           d="m 30.014965,-15.704302 c 0,-132.754478 0,-168.634068 0,-168.634068"
+           style="opacity:0.7;fill:none;stroke:#2a7fff;stroke-width:33.1678772;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.65098039;stroke-dasharray:none"
+           d="m 30.011141,-21.405379 c 0,-160.199321 0,-203.496441 0,-203.496441"
            id="path3062"
            inkscape:connector-curvature="0" />
         <path
            style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;opacity:0.7;color:#000000;fill:#2a7fff;fill-opacity:0.65158374;stroke:none;stroke-width:50.6696434;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
-           d="M 351.53125 285.5625 C 255.7874 338.19327 190.75 440.04328 190.75 556.78125 C 190.75 727.28691 329.49434 866.03125 500 866.03125 C 670.50566 866.03125 809.28125 727.28691 809.28125 556.78125 C 809.28125 440.04152 744.21496 338.19258 648.46875 285.5625 L 648.46875 344.03125 C 715.50536 390.84104 759.25 468.57989 759.25 556.78125 C 759.25 700.26491 643.48366 816.03125 500 816.03125 C 356.51635 816.03125 240.75 700.26491 240.75 556.78125 C 240.75 468.57989 284.48566 390.84104 351.53125 344.03125 L 351.53125 285.5625 z "
-           transform="matrix(0.66335753,0,0,0.66335753,-301.65558,-296.97895)"
-           id="path3832" />
+           d="m -88.73454,-132.23737 c -76.58256,42.130688 -128.60399,123.6612321 -128.60399,217.10952 0,136.48913 110.97734,247.55344 247.359582,247.55344 136.382238,0 247.384578,-111.06431 247.384578,-247.55344 0,-93.4496955 -52.04453,-174.9794 -128.62899,-217.10952 l 0,46.803955 c 53.62053,37.471077 88.61052,99.700722 88.61052,170.305565 0,114.85813 -92.59794,207.52864 -207.366108,207.52864 -114.768164,0 -207.366112,-92.67051 -207.366112,-207.52864 0,-70.604843 34.98281,-132.834488 88.61052,-170.305565 l 0,-46.803955 z"
+           id="path3832"
+           inkscape:connector-curvature="0" />
       </g>
     </g>
   </g>
