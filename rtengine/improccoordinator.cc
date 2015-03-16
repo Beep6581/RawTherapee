@@ -992,6 +992,23 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	params.wb.green = currWB.getGreen ();
 	imgsrc->getImage (currWB, 0, im, pp, ppar.toneCurve, ppar.icm, ppar.raw);
 	imgsrc->convertColorSpace(im, ppar.icm, currWB, params.raw);
+        if (params.crop.enabled) {
+            Imagefloat *tmpim = new Imagefloat (params.crop.w, params.crop.h);
+            int cx = params.crop.x;
+            int cy = params.crop.y;
+            int cw = params.crop.w;
+            int ch = params.crop.h;
+#pragma omp parallel for
+            for (int i=cy; i<cy+ch; i++) {
+                for (int j=cx; j<cx+cw; j++) {
+                    tmpim->r(i-cy, j-cx) = im->r(i, j);
+                    tmpim->g(i-cy, j-cx) = im->g(i, j);
+                    tmpim->b(i-cy, j-cx) = im->b(i, j);
+                }
+            }
+            delete im;
+            im = tmpim;
+        }
 	Image16* im16 = im->to16();
 	delete im;
 	im16->saveTIFF (fname,16,true);
