@@ -30,6 +30,24 @@ using namespace std;
 using namespace rtengine;
 using namespace rtexif;
 
+// This sRGB gamma is taken from DNG reference code, with the added linear extension past 1.0, as we run clipless here
+static float sRGBGammaForward (const float x) {
+    if (x <= 0.0031308)
+        return x * 12.92;
+    else if (x > 1.0)
+        return 1.0 + (x - 1.0) * (1.055*(1.0/2.4)); // linear extension
+    else
+        return 1.055 * pow (x, 1.0 / 2.4) - 0.055;
+}
+static float sRGBGammaInverse (const float y) {
+    if (y <= 0.0031308 * 12.92)
+        return y * (1.0 / 12.92);
+    else if (y > 1.0)
+        return 1.0 + (y - 1.0) / (1.055*(1.0/2.4));
+    else
+        return pow ((y + 0.055) * (1.0 / 1.055), 2.4);
+}
+
 static void Invert3x3(const double (*A)[3], double (*B)[3]) {
 
     double a00 = A[0][0];
@@ -471,6 +489,7 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
     const int TagProfileHueSatMapData1=50938, TagProfileHueSatMapData2=50939;
     const int TagCalibrationIlluminant1=50778, TagCalibrationIlluminant2=50779;
     const int TagProfileLookTableData=50982, TagProfileLookTableDims=50981;  // ProfileLookup is the low quality variant
+    const int TagProfileHueSatMapEncoding=51107, TagProfileLookTableEncoding=51108;
     const int TagProfileToneCurve=50940;
 
     aDeltas1=aDeltas2=aLookTable=NULL;
@@ -530,6 +549,9 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
     if (tag!=NULL) {
         LookInfo.iHueDivisions=tag->toInt(0); LookInfo.iSatDivisions=tag->toInt(4); LookInfo.iValDivisions=tag->toInt(8);
 
+        tag = tagDir->getTag(TagProfileLookTableEncoding);
+        LookInfo.sRGBGamma = tag != NULL && tag->toInt(0);
+
         tag = tagDir->getTag(TagProfileLookTableData);
         LookInfo.iArrayCount = tag->getCount()/3;
 
@@ -555,6 +577,9 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
     tag = tagDir->getTag(TagProfileHueSatMapDims);
     if (tag!=NULL) {
         DeltaInfo.iHueDivisions=tag->toInt(0); DeltaInfo.iSatDivisions=tag->toInt(4); DeltaInfo.iValDivisions=tag->toInt(8);
+
+        tag = tagDir->getTag(TagProfileLookTableEncoding);
+        DeltaInfo.sRGBGamma = tag != NULL && tag->toInt(0);
 
         tag = tagDir->getTag(TagProfileHueSatMapData1);
         DeltaInfo.iArrayCount = tag->getCount()/3;
@@ -665,6 +690,7 @@ void DCPProfile::HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, co
 
     // Apply the HueSatMap. Ported from Adobes reference implementation
     float hueShift, satScale, valScale;
+    float vsEncoded = vs;
 
     if (ti.iValDivisions < 2)  // Optimize most common case of "2.5D" table.
     {
@@ -715,7 +741,8 @@ void DCPProfile::HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, co
 
         float hScaled = hs * ti.pc.hScale;
         float sScaled = ss * ti.pc.sScale;
-        float vScaled = vs * ti.pc.vScale;
+        if (ti.sRGBGamma) vsEncoded = sRGBGammaForward(vs);
+        float vScaled = vsEncoded * ti.pc.vScale;
 
         int hIndex0 = (int) hScaled;
         int sIndex0 = max(min((int)sScaled,ti.pc.maxSatIndex0),0);
@@ -788,7 +815,15 @@ void DCPProfile::HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, co
 
     h += hueShift;
     s *= satScale;  // no clipping here, we are RT float :-)
-    v *= valScale;
+    if (ti.sRGBGamma) {
+        if (v == vs) {
+            v = sRGBGammaInverse(vsEncoded * valScale);
+        } else {
+            v = sRGBGammaInverse(sRGBGammaForward(v) * valScale);
+        }
+    } else {
+        v *= valScale;
+    }
 }
 
 struct ruvt {
