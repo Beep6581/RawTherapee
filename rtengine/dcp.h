@@ -41,6 +41,7 @@ namespace rtengine {
         {
             int iHueDivisions, iSatDivisions, iValDivisions;
             int iHueStep, iValStep, iArrayCount;
+            bool sRGBGamma;
             struct
             {
                 float hScale, sScale, vScale;
