@@ -128,9 +128,10 @@ void ImageData::extractInfo () {
        }
        make.erase( make.find_last_not_of(' ')+1 );
   }
+
   if (root->getTag ("Model"))
-     if( !(model.size()==0)) {
      model = root->getTag ("Model")->valueToString ();
+  if (!(model.size()==0)) {
      std::size_t i=0;
      if (  make.find("KODAK") != std::string::npos ){
    	  if( (i = model.find(" DIGITAL CAMERA")) !=  std::string::npos ||
