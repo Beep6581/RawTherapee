@@ -263,14 +263,40 @@ void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter) {
 
 void DirBrowser::addDir (const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirname) {
 
-    Gtk::TreeModel::iterator child = dirTreeModel->append(iter->children());
+    const Gtk::TreeNodeChildren it = iter->children();
+
+    Gtk::TreeModel::iterator child = dirTreeModel->append(it);
     child->set_value (dtColumns.filename, dirname);
     child->set_value (0, openfolder);
     child->set_value (1, closedfolder);
     Glib::ustring fullname = Glib::build_filename (iter->get_value (dtColumns.dirname), dirname);
     child->set_value (dtColumns.dirname, fullname);
-    Gtk::TreeModel::iterator fooRow = dirTreeModel->append(child->children());
-    fooRow->set_value (dtColumns.filename, Glib::ustring("foo"));
+    if (!safe_file_test(fullname, Glib::FILE_TEST_IS_DIR)) {
+        return;
+    }
+
+    try {
+        Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path(fullname);
+        Glib::RefPtr<Gio::FileEnumerator> dirList = dir->enumerate_children("standard::type");
+        if (dirList) {
+
+            bool canBeExpanded = false;
+            for (Glib::RefPtr<Gio::FileInfo> info = dirList->next_file(); info; info = dirList->next_file()) {
+                if (info->get_file_type() == Gio::FILE_TYPE_DIRECTORY ||
+                    info->get_file_type() == Gio::FILE_TYPE_SYMBOLIC_LINK) {
+                    canBeExpanded = true;
+                    break;
+                }
+            }
+            if (canBeExpanded) {
+                Gtk::TreeModel::iterator fooRow = dirTreeModel->append(child->children());
+                fooRow->set_value(dtColumns.filename, Glib::ustring("foo"));
+            }
+        }
+    }
+    catch (...) {
+        // will catch excepions like 'Permission denied'
+    }
 }
 
 void DirBrowser::row_activated (const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column) {
