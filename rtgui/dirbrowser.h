@@ -52,10 +52,11 @@ class DirBrowser : public Gtk::VBox, public DirBrowserRemoteInterface
         DirTreeColumns() { add(icon1); add(icon2); add(filename); add(dirname); add(monitor); }
     };
 
+    DirTreeColumns dtColumns;
     Gtk::TreeViewColumn tvc;
     Gtk::CellRendererText crt;
     Gtk::CellRendererPixbuf crb;
-    DirTreeColumns dtColumns;
+
 
     Gtk::TreeView *dirtree;
     Gtk::ScrolledWindow *scrolledwindow4;
@@ -92,6 +93,7 @@ class DirBrowser : public Gtk::VBox, public DirBrowserRemoteInterface
     DirBrowser ();
 
     void fillDirTree ();
+    void on_sort_column_changed() const;
     void row_expanded   (const Gtk::TreeModel::iterator& iter, const Gtk::TreeModel::Path& path);
     void row_activated  (const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column);
     void file_changed   (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirName);

@@ -34,6 +34,7 @@ CURVEEDITOR_TOOLTIPLOAD;Carica una curva da file
 CURVEEDITOR_TOOLTIPPASTE;Incolla la curva dagli appunti
 CURVEEDITOR_TOOLTIPSAVE;Salva la curva corrente
 CURVEEDITOR_TYPE;Tipologia:
+DIRBROWSER_FOLDERS;Cartelle
 EDITWINDOW_TITLE;Modifica immagine
 EDIT_OBJECT_TOOLTIP;Mostra un widget nella finestra anteprima che ti permette di configurare questo strumento.
 EDIT_PIPETTE_TOOLTIP;Per aggiungere un punto di regolazione alla curva, tieni premuto il tasto Ctrl e fai click sul punto desiderato nell'anteprima dell'immagine.\nPer sistemare il punto, tieni premuto il tasto Ctrl mentre fai click sulla corrispondente area nell'anteprima, poi lascia il tasto Ctrl (a meno che non desideri un controllo fine) e mentre tieni premuto il tasto sinistro del mouse, muovilo in su e in giù per muovere il punto su e giù sulla curva.

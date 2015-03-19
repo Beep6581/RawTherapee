@@ -22,6 +22,7 @@
 #include <windows.h>
 #endif
 #include "options.h"
+#include "multilangmgr.h"
 #include "../rtengine/safegtk.h"
 
 #include <cstring>
@@ -30,7 +31,17 @@
 
 #define CHECKTIME 5000
 
-DirBrowser::DirBrowser () : expandSuccess(false)
+struct DirNameComparator {
+    template<class T>
+    bool operator()(T const &firstDir, T const &secondDir) const {
+        return options.dirBrowserSortType == Gtk::SORT_ASCENDING ? firstDir < secondDir : firstDir > secondDir;
+    }
+};
+
+DirBrowser::DirBrowser () : dirTreeModel(),
+                            dtColumns(),
+                            tvc(M("DIRBROWSER_FOLDERS")),
+                            expandSuccess(false)
                             #ifdef WIN32
                             , volumes(0)
                             #endif
@@ -40,7 +51,8 @@ DirBrowser::DirBrowser () : expandSuccess(false)
    scrolledwindow4 = Gtk::manage ( new Gtk::ScrolledWindow() );
 
 //   dirtree->set_flags(Gtk::CAN_FOCUS);
-   dirtree->set_headers_visible(false);
+   dirtree->set_headers_visible();
+   dirtree->set_headers_clickable();
    dirtree->set_rules_hint(false);
    dirtree->set_reorderable(false);
    dirtree->set_enable_search(false);
@@ -74,19 +86,27 @@ void DirBrowser::fillDirTree () {
 
   Gtk::CellRendererPixbuf* render_pb = Gtk::manage ( new Gtk::CellRendererPixbuf () );
   tvc.pack_start (*render_pb, false);
-  tvc.add_attribute(*render_pb, "pixbuf-expander-closed", 1);
-  tvc.add_attribute(*render_pb, "pixbuf", 1);
-  tvc.add_attribute(*render_pb, "pixbuf-expander-open", 0);
+  tvc.add_attribute(*render_pb, "pixbuf-expander-closed", dtColumns.icon2);
+  tvc.add_attribute(*render_pb, "pixbuf", dtColumns.icon2);
+  tvc.add_attribute(*render_pb, "pixbuf-expander-open", dtColumns.icon1);
   tvc.pack_start (crt);
-  tvc.add_attribute(crt, "text", 2);
- 
+  tvc.add_attribute(crt, "text", dtColumns.filename);
+
+  dirtree->append_column(tvc);
+
+  tvc.set_sort_order(options.dirBrowserSortType);
+  tvc.set_sort_column(dtColumns.filename);
+  tvc.set_sort_indicator(true);
+  tvc.set_clickable();
+
+  dirTreeModel->set_sort_column(dtColumns.filename, options.dirBrowserSortType);
+
   crt.property_ypad() = 0;
   render_pb->property_ypad() = 0;
-  
-  dirtree->append_column(tvc); 
 
   dirtree->signal_row_expanded().connect(sigc::mem_fun(*this, &DirBrowser::row_expanded));
   dirtree->signal_row_activated().connect(sigc::mem_fun(*this, &DirBrowser::row_activated));
+  dirTreeModel->signal_sort_column_changed().connect(sigc::mem_fun(*this, &DirBrowser::on_sort_column_changed));
 }
 
 #ifdef WIN32
@@ -196,29 +216,52 @@ void DirBrowser::fillRoot () {
 #endif
 }
 
+void DirBrowser::on_sort_column_changed() const {
+  options.dirBrowserSortType = tvc.get_sort_order();
+}
+
 void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::TreeModel::Path& path) {
 
   expandSuccess = false;
 
-  int todel = iter->children().size();
+  // We will disable model's sorting because it decreases speed of inserting new items
+  // in list tree dramatically. Therefore will do:
+  // 1) Disable sorting in model
+  // 2) Manually sort data by DirNameComparator
+  // 3) Enable sorting in model again for UI (sorting by click on header)
+  int prevSortColumn;
+  Gtk::SortType prevSortType;
+  dirTreeModel->get_sort_column_id(prevSortColumn, prevSortType);
+  dirTreeModel->set_sort_column(Gtk::TreeSortable::DEFAULT_UNSORTED_COLUMN_ID, Gtk::SORT_ASCENDING);
 
-	std::vector<Glib::ustring> subDirs;
+  typedef std::vector<Glib::ustring> DirPathType;
+
+  DirPathType subDirs;
   Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (iter->get_value (dtColumns.dirname));
     
   safe_build_subdir_list (dir, subDirs, options.fbShowHidden);
 
-	if (subDirs.empty())
-			dirtree->collapse_row (path);
-	else {
-	
-			std::sort (subDirs.begin(), subDirs.end());
-			for (size_t i=0; i<subDirs.size(); i++)
-					addDir (iter, subDirs[i]);
+  if (subDirs.empty()) {
+    dirtree->collapse_row(path);
+  }
+  else {
+    Gtk::TreeNodeChildren children = iter->children();
+    std::list<Gtk::TreeIter> forErase(children.begin(), children.end());
 
-			for (int i=0; i<todel; i++)
-					dirTreeModel->erase (iter->children().begin());
-			expandSuccess = true;
-	}
+    DirNameComparator comparator;
+    sort(subDirs.begin(), subDirs.end(), comparator);
+
+    for (DirPathType::const_iterator it = subDirs.begin(), end = subDirs.end(); it != end; ++it) {
+      addDir(iter, *it);
+    }
+
+    for (std::list<Gtk::TreeIter>::const_iterator it = forErase.begin(), end = forErase.end(); it != end; ++it) {
+      dirTreeModel->erase(*it);
+    }
+    dirTreeModel->set_sort_column(prevSortColumn, prevSortType);
+
+    expandSuccess = true;
+  }
 #ifdef WIN32
   Glib::RefPtr<WinDirMonitor> monitor = Glib::RefPtr<WinDirMonitor>(new WinDirMonitor (iter->get_value (dtColumns.dirname), this));
   iter->set_value (dtColumns.monitor, monitor);
@@ -265,8 +308,8 @@ void DirBrowser::addDir (const Gtk::TreeModel::iterator& iter, const Glib::ustri
 
     Gtk::TreeModel::iterator child = dirTreeModel->append(iter->children());
     child->set_value (dtColumns.filename, dirname);
-    child->set_value (0, openfolder);
-    child->set_value (1, closedfolder);
+    child->set_value (dtColumns.icon1, openfolder);
+    child->set_value (dtColumns.icon2, closedfolder);
     Glib::ustring fullname = Glib::build_filename (iter->get_value (dtColumns.dirname), dirname);
     child->set_value (dtColumns.dirname, fullname);
     Gtk::TreeModel::iterator fooRow = dirTreeModel->append(child->children());

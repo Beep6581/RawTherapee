@@ -38,6 +38,7 @@ CURVEEDITOR_TOOLTIPLOAD;Wczytaj krzywa z pliku
 CURVEEDITOR_TOOLTIPPASTE;Wstaw krzywa ze schowka
 CURVEEDITOR_TOOLTIPSAVE;Zapisz krzywa
 CURVEEDITOR_TYPE;Typ:
+DIRBROWSER_FOLDERS;Katalogi
 EDITWINDOW_TITLE;Edytor obrazu
 EDIT_OBJECT_TOOLTIP;Wyswietla widzet na podgladzie ktory ulatwia ustawienie narzedzia.
 EDIT_PIPETTE_TOOLTIP;Aby dodac punkt do krzywej nalezy trzymac wcisniety klawisz Ctrl podczas klikniecia lewym guzikiem myszki na danym obszarze glownego podgladu.\nAby zmienic ustawienie juz istniejacego punktu, nalezy trzymac wduszony klawisz Ctrl podczas klikniecia lewym guzikiem myszki na danym obszarze glownego podgladu, nastepnie nalezy puscic klawisz Ctrl (chyba ze chodzi nam o bardzo precyzyjne ustawienie dzieki spowolnieniu jakie trzymanie klawisza Ctrl nam daje) i podczas trzymania lewego guzika myszki nalezy myszka ruszac w pionie aby odpowiednio manipulowac punktem w pionie.
