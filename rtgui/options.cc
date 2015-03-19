@@ -276,6 +276,7 @@ void Options::setDefaults () {
     detailWindowHeight = -1;
     dirBrowserWidth = 260;
     dirBrowserHeight = 350;
+    dirBrowserSortType = Gtk::SORT_ASCENDING;
     preferencesWidth = 800;
     preferencesHeight = 0;
     toolPanelWidth = 400;
@@ -790,6 +791,7 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "DetailWindowHeight"))  detailWindowHeight       = keyFile.get_integer ("GUI", "DetailWindowHeight");
     if (keyFile.has_key ("GUI", "DirBrowserWidth"))     dirBrowserWidth          = keyFile.get_integer ("GUI", "DirBrowserWidth");
     if (keyFile.has_key ("GUI", "DirBrowserHeight"))    dirBrowserHeight         = keyFile.get_integer ("GUI", "DirBrowserHeight");
+    if (keyFile.has_key ("GUI", "SortType"))            dirBrowserSortType       = static_cast<Gtk::SortType>(keyFile.get_integer ("GUI", "SortType"));
     if (keyFile.has_key ("GUI", "PreferencesWidth"))    preferencesWidth         = keyFile.get_integer ("GUI", "PreferencesWidth");
     if (keyFile.has_key ("GUI", "PreferencesHeight"))   preferencesHeight        = keyFile.get_integer ("GUI", "PreferencesHeight"); 
     if (keyFile.has_key ("GUI", "SaveAsDialogWidth"))   saveAsDialogWidth        = keyFile.get_integer ("GUI", "SaveAsDialogWidth");
@@ -1008,8 +1010,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("External Editor", "GimpDir", gimpDir);
     keyFile.set_string  ("External Editor", "PhotoshopDir", psDir);
     keyFile.set_string  ("External Editor", "CustomEditor", customEditorProg);
-    
-    
+
     keyFile.set_boolean ("File Browser", "BrowseOnlyRaw", fbOnlyRaw);
     keyFile.set_boolean ("File Browser", "BrowserShowsDate", fbShowDateTime);
     keyFile.set_boolean ("File Browser", "BrowserShowsExif", fbShowBasicExif);
@@ -1115,6 +1116,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("GUI", "DetailWindowHeight", detailWindowHeight);
     keyFile.set_integer ("GUI", "DirBrowserWidth", dirBrowserWidth);
     keyFile.set_integer ("GUI", "DirBrowserHeight", dirBrowserHeight);
+    keyFile.set_integer ("GUI", "SortType", dirBrowserSortType);
     keyFile.set_integer ("GUI", "PreferencesWidth", preferencesWidth);
     keyFile.set_integer ("GUI", "PreferencesHeight", preferencesHeight); 
     keyFile.set_integer ("GUI", "SaveAsDialogWidth", saveAsDialogWidth);

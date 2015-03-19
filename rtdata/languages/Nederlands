@@ -42,6 +42,7 @@ CURVEEDITOR_TOOLTIPLOAD;Laad curve uit bestand
 CURVEEDITOR_TOOLTIPPASTE;Plak curve van klembord
 CURVEEDITOR_TOOLTIPSAVE;Bewaar huidige curve
 CURVEEDITOR_TYPE;Type:
+DIRBROWSER_FOLDERS;Mappen
 EDITWINDOW_TITLE;Bewerk afbeelding
 EDIT_OBJECT_TOOLTIP;Toont een widget in het voorbeeld scherm waarmee de werking van het gereedschap kan worden aangepast.
 EDIT_PIPETTE_TOOLTIP;Voeg een punt toe aan de curve door de Ctrl toets ingedrukt te houden en tegelijkertijd te links-klikken op de gewenste plek op het voorbeeld.\nOm een punt te wijzigen, hou de Ctrl toets ingedrukt en links-klik tegelijkertijd op het gewenste gebied in het voorbeeld, en laat daarna de Ctrl toets los (behalve wanneer fijne controle is gewenst), blijf de linker muis knop ingedrukt houden en beweeg de muis naar boven of beneden om dit punt te verschuiven op de curve.

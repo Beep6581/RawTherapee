@@ -57,6 +57,7 @@ CURVEEDITOR_TOOLTIPLOAD;ファイルからカーブを読み込む
 CURVEEDITOR_TOOLTIPPASTE;クリップボードからカーブを貼り付け
 CURVEEDITOR_TOOLTIPSAVE;現在のカーブを保存
 CURVEEDITOR_TYPE;タイプ:
+DIRBROWSER_FOLDERS;フォルダ
 EDITWINDOW_TITLE;画像編集
 EDIT_OBJECT_TOOLTIP;この機能を使うための目安に、プレビュー画面にガイドを表示する
 EDIT_PIPETTE_TOOLTIP;カーブ上に調整ポイントを追加するには、Ctrlキーを押しながら、プレビューの画像上の目標ポイントを左クリックします。\n追加されたそのポイントを調整するには、Ctrlキーを押しながら、プレビュー画像のそのポイントに当たる部分を左クリックします。それからCtrlキーを離し（微妙な調整をする場合はそのまま）、左クリックしたままマウスを画面上で上下に動かすと、それに合わせてトーンカーブが調整されます。

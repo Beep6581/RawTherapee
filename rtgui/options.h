@@ -98,6 +98,7 @@ class Options {
     Glib::ustring dateFormat;
     int adjusterDelay;
     int  startupDir;
+    Gtk::SortType dirBrowserSortType;
     Glib::ustring startupPath;
     Glib::ustring profilePath; // can be an absolute or relative path; depending on this value, bundled profiles may not be found
     bool useBundledProfiles;   // only used if multiUser == true

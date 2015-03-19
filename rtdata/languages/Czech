@@ -63,6 +63,7 @@ CURVEEDITOR_TOOLTIPLOAD;Načíst křivku ze souboru.
 CURVEEDITOR_TOOLTIPPASTE;Vložit křivku ze schránky.
 CURVEEDITOR_TOOLTIPSAVE;Uložit současnou křivku.
 CURVEEDITOR_TYPE;Typ
+DIRBROWSER_FOLDERS;Složky
 EDITWINDOW_TITLE;Editace obrázku
 EDIT_OBJECT_TOOLTIP;V náhledovém okně zobrazí widget umožňující přizpůsobení nástroje.
 EDIT_PIPETTE_TOOLTIP;Pro přidání bodu na křivku, podržte klávesu Ctrl a klikněte levým tlačítkem na vybraný bod v náhledu obrázku.\nPro úpravu bodu podržte klávesu Ctrl a klikněte levým tlačítkem na odpovídající oblast v náhledu, následně uvolněte klávesu Ctrl (pokud si přejete jemné změny) a za stálého držení levého tlačítka myši pohybujte myší nahoru a dolů což bude posouvat bod na křivce nahoru a dolů.

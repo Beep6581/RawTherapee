@@ -91,6 +91,7 @@ CURVEEDITOR_TOOLTIPLOAD;Abrir una curva desde un archivo
 CURVEEDITOR_TOOLTIPPASTE;Pegar curva desde el portapapeles
 CURVEEDITOR_TOOLTIPSAVE;Guardar curva actual
 CURVEEDITOR_TYPE;Tipo:
+DIRBROWSER_FOLDERS;Carpetas
 EDITWINDOW_TITLE;Edición de imagen
 EDIT_OBJECT_TOOLTIP;Muestra un instrumento en la ventana de previo, el cual le permitirá ajustar esta herramienta.
 EDIT_PIPETTE_TOOLTIP;Para agregar un punto de ajuste en la curva , mantenga presionada la tecla Ctrl mientras oprime el botón izquierdo del ratón sobre el punto deseado en el previo de la imagen.\nPara ajustar el punto, mantenga presionada la tecla Ctrl mientras oprime el botón izquierdo del ratón sobre la correspondiente area en el previo y muevase hacia arriba y/o hacia abajo, logrando un ajuste fino del punto en la curva. Si desea un ajuste mayor, libere la tecla Ctrl.

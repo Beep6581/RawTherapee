@@ -36,6 +36,7 @@ CURVEEDITOR_TOOLTIPLOAD;Загрузить тоновую кривую
 CURVEEDITOR_TOOLTIPPASTE;Вставить кривую из буфера обмена
 CURVEEDITOR_TOOLTIPSAVE;Сохранить тоновую кривую
 CURVEEDITOR_TYPE;Тип:
+DIRBROWSER_FOLDERS;Папки
 EDITWINDOW_TITLE;Редактор
 EXIFFILTER_APERTURE;Диафрагма
 EXIFFILTER_CAMERA;Камера
