@@ -138,10 +138,12 @@ Glib::ustring MultiLangMgr::getOSUserLanguage() {
         }
 #endif
 #elif defined(__linux__) || defined(__APPLE__)
-    langName = TranslateRFC2Language(setlocale(LC_CTYPE,""));
+        char *tmplocale;
+        tmplocale = setlocale(LC_CTYPE,"");
+        if(tmplocale)
+            langName = TranslateRFC2Language(tmplocale);
 #endif
     }
-
     return langName;
 }
 
