@@ -265,7 +265,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         void cropSelectRequested ();
         
         // icmpanellistener interface
-        void saveInputICCReference (Glib::ustring fname);
+        void saveInputICCReference (Glib::ustring fname, bool apply_wb);
     
         // imageareatoollistener interface
         void spotWBselected (int x, int y, Thumbnail* thm=NULL);

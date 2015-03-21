@@ -333,6 +333,65 @@ SSEFUNCTION static void Lanczos(const LabImage* src, LabImage* dst, float scale)
 }
 }
 
+float ImProcFunctions::resizeScale (const ProcParams* params, int fw, int fh, int &imw, int &imh) {
+    imw = fw;
+    imh = fh;
+    if (!params || !params->resize.enabled) {
+        return 1.0;
+    }
+
+    // get the resize parameters
+    int refw, refh;
+    double dScale;
+    if (params->crop.enabled && params->resize.appliesTo == "Cropped area") {
+        // the resize values applies to the crop dimensions
+        refw = params->crop.w;
+        refh = params->crop.h;
+    }
+    else {
+        // the resize values applies to the image dimensions
+        // if a crop exists, it will be resized to the calculated scale
+        refw = fw;
+        refh = fh;
+    }
+
+    switch(params->resize.dataspec) {
+    case (1):
+        // Width
+        dScale = (double)params->resize.width/(double)refw;
+        break;
+    case (2):
+        // Height
+        dScale = (double)params->resize.height/(double)refh;
+        break;
+    case (3):
+        // FitBox
+        if ((double)refw/(double)refh > (double)params->resize.width/(double)params->resize.height)
+            dScale = (double)params->resize.width/(double)refw;
+        else
+            dScale = (double)params->resize.height/(double)refh;
+        break;
+    default:
+        // Scale
+        dScale = params->resize.scale;
+        break;
+    }
+
+    if (fabs(dScale-1.0)<=1e-5) {
+        return 1.0;
+    }
+    if (params->crop.enabled && params->resize.appliesTo == "Full image") {
+        imw = params->crop.w;
+        imh = params->crop.h;
+    }
+    else {
+        imw = refw;
+        imh = refh;
+    }
+    imw = (int)( (double)imw * dScale + 0.5 );
+    imh = (int)( (double)imh * dScale + 0.5 );
+    return (float)dScale;
+}
 
 void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
 #ifdef PROFILE

@@ -956,7 +956,7 @@ void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &
 }
 
 
-void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
+void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname, bool apply_wb) {
 	
 	MyMutex::MyLock lock(mProcessing);
 	
@@ -969,7 +969,6 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	Imagefloat* im = new Imagefloat (fW, fH);
 	imgsrc->preprocess( ppar.raw, ppar.lensProf, ppar.coarse );
 	imgsrc->demosaic(ppar.raw );
-	//imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.toneCurve, ppar.icm, ppar.raw);
 	ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
 	if (params.wb.method=="Camera")
 		currWB = imgsrc->getWB ();
@@ -988,29 +987,46 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 		}
 		currWB = autoWB;
 	}
-	params.wb.temperature = currWB.getTemp ();
-	params.wb.green = currWB.getGreen ();
+	if (!apply_wb) {
+		currWB = ColorTemp(); // = no white balance
+	}
 	imgsrc->getImage (currWB, 0, im, pp, ppar.toneCurve, ppar.icm, ppar.raw);
-	imgsrc->convertColorSpace(im, ppar.icm, currWB, params.raw);
-        if (params.crop.enabled) {
-            Imagefloat *tmpim = new Imagefloat (params.crop.w, params.crop.h);
-            int cx = params.crop.x;
-            int cy = params.crop.y;
-            int cw = params.crop.w;
-            int ch = params.crop.h;
+	ImProcFunctions ipf (&ppar, true);
+	if (ipf.needsTransform()) {
+		Imagefloat* trImg = new Imagefloat (fW, fH);
+		ipf.transform (im, trImg, 0, 0, 0, 0, fW, fH, fW, fH, imgsrc->getMetaData()->getFocalLen(), imgsrc->getMetaData()->getFocalLen35mm(),
+			       imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), true);
+		delete im;
+		im = trImg;
+	}
+	if (params.crop.enabled) {
+		Imagefloat *tmpim = new Imagefloat (params.crop.w, params.crop.h);
+		int cx = params.crop.x;
+		int cy = params.crop.y;
+		int cw = params.crop.w;
+		int ch = params.crop.h;
 #pragma omp parallel for
-            for (int i=cy; i<cy+ch; i++) {
-                for (int j=cx; j<cx+cw; j++) {
-                    tmpim->r(i-cy, j-cx) = im->r(i, j);
-                    tmpim->g(i-cy, j-cx) = im->g(i, j);
-                    tmpim->b(i-cy, j-cx) = im->b(i, j);
-                }
-            }
-            delete im;
-            im = tmpim;
-        }
+		for (int i=cy; i<cy+ch; i++) {
+			for (int j=cx; j<cx+cw; j++) {
+				tmpim->r(i-cy, j-cx) = im->r(i, j);
+				tmpim->g(i-cy, j-cx) = im->g(i, j);
+				tmpim->b(i-cy, j-cx) = im->b(i, j);
+			}
+		}
+		delete im;
+		im = tmpim;
+	}
 	Image16* im16 = im->to16();
 	delete im;
+
+	int imw, imh;
+	double tmpScale = ipf.resizeScale(&params, fW, fH, imw, imh);
+	if (tmpScale != 1.0) {
+		Image16* tempImage = new Image16 (imw, imh);
+		ipf.resize (im16, tempImage, tmpScale);
+		delete im16;
+		im16 = tempImage;
+	}
 	im16->saveTIFF (fname,16,true);
 	delete im16;
 	//im->saveJPEG (fname, 85);

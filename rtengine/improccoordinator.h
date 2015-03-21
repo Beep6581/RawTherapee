@@ -233,7 +233,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         void setAutoChromaListener  (AutoChromaListener* adn)  {adnListener = adn; }
         void setWaveletListener  (WaveletListener* awa)  {awavListener = awa; }
 
-        void saveInputICCReference (const Glib::ustring& fname);
+        void saveInputICCReference (const Glib::ustring& fname, bool apply_wb);
 
         InitialImage*  getInitialImage () { return imgsrc; }
 };

@@ -580,10 +580,10 @@ void ToolPanelCoordinator::cropSelectRequested () {
     toolBar->setTool (TMCropSelect);
 }
 
-void ToolPanelCoordinator::saveInputICCReference (Glib::ustring fname) {
+void ToolPanelCoordinator::saveInputICCReference (Glib::ustring fname, bool apply_wb) {
 
     if (ipc)
-        ipc->saveInputICCReference (fname);
+        ipc->saveInputICCReference (fname, apply_wb);
 }
 
 int ToolPanelCoordinator::getSpotWBRectSize () {

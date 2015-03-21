@@ -31,7 +31,7 @@ class ICMPanelListener {
 
     public:
         virtual ~ICMPanelListener() {}
-        virtual void saveInputICCReference (Glib::ustring fname) {}
+        virtual void saveInputICCReference (Glib::ustring fname, bool apply_wb) {}
 };
 
 class ICMPanel : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
