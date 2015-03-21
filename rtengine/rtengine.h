@@ -368,7 +368,7 @@ namespace rtengine {
             virtual void        getSpotWB  (int x, int y, int rectSize, double& temp, double& green) =0;
             virtual void        getAutoCrop (double ratio, int &x, int &y, int &w, int &h) =0;
 
-            virtual void        saveInputICCReference (const Glib::ustring& fname) =0;
+            virtual void        saveInputICCReference (const Glib::ustring& fname, bool apply_wb) =0;
 
             virtual void        setProgressListener     (ProgressListener* l) =0;
             virtual void        setSizeListener         (SizeListener* l) =0;

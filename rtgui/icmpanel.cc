@@ -693,6 +693,13 @@ void ICMPanel::saveReferencePressed () {
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
     dialog.add_button(Gtk::StockID("gtk-save"), Gtk::RESPONSE_OK);
 
+    Gtk::CheckButton applyWB(M("TP_ICM_SAVEREFERENCE_APPLYWB"));
+    applyWB.set_active(true);
+    Gtk::HBox* hbox = Gtk::manage( new Gtk::HBox() );
+    hbox->pack_end(applyWB, Gtk::PACK_SHRINK, 2);
+    Gtk::VBox *vbox = dialog.get_vbox();
+    vbox->pack_end(*hbox, Gtk::PACK_SHRINK, 2);
+
     Gtk::FileFilter filter_tif;
     filter_tif.set_name(M("SAVEDLG_TIFFFILTER"));
     filter_tif.add_pattern("*.tif");
@@ -704,6 +711,7 @@ void ICMPanel::saveReferencePressed () {
     filter_any.add_pattern("*");
     dialog.add_filter(filter_any);
 
+    dialog.show_all_children();
     //dialog.set_do_overwrite_confirmation (true);
 
     bool done = false;
@@ -717,7 +725,7 @@ void ICMPanel::saveReferencePressed () {
             if (ext != "tif" && ext != "tiff")
                 fname += ".tif";
             if (confirmOverwrite(dialog, fname)) {
-                icmplistener->saveInputICCReference (fname);
+                icmplistener->saveInputICCReference (fname, applyWB.get_active());
                 lastRefFilename = Glib::path_get_basename (fname);
                 done = true;
             }

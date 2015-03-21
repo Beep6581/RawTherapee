@@ -1045,63 +1045,14 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	}
     if (pl) pl->setProgress (0.70);
 
-    if (params.resize.enabled) {
-
-        // get the resize parameters
-        int refw, refh;
-        double tmpScale;
-        if (params.crop.enabled && params.resize.appliesTo == "Cropped area") {
-            // the resize values applies to the crop dimensions
-            refw = cw;
-            refh = ch;
-        }
-        else {
-            // the resize values applies to the image dimensions
-            // if a crop exists, it will be resized to the calculated scale
-            refw = fw;
-            refh = fh;
-        }
-
-        switch(params.resize.dataspec) {
-        case (1):
-            // Width
-            tmpScale = (double)params.resize.width/(double)refw;
-            break;
-        case (2):
-            // Height
-            tmpScale = (double)params.resize.height/(double)refh;
-            break;
-        case (3):
-            // FitBox
-            if ((double)refw/(double)refh > (double)params.resize.width/(double)params.resize.height)
-                tmpScale = (double)params.resize.width/(double)refw;
-            else
-                tmpScale = (double)params.resize.height/(double)refh;
-        break;
-        default:
-            // Scale
-            tmpScale = params.resize.scale;
-            break;
-        }
-
+    int imw, imh;
+    double tmpScale = ipf.resizeScale(&params, fw, fh, imw, imh);
+    if (tmpScale != 1.0) {
         // resize image
-        if (fabs(tmpScale-1.0)>1e-5) {
-            int imw, imh;
-            if (params.crop.enabled && params.resize.appliesTo == "Full image") {
-                imw = cw;
-                imh = ch;
-            }
-            else {
-                imw = refw;
-                imh = refh;
-            }
-            imw = (int)( (double)imw * tmpScale + 0.5 );
-            imh = (int)( (double)imh * tmpScale + 0.5 );
-            Image16* tempImage = new Image16 (imw, imh);
-            ipf.resize (readyImg, tempImage, tmpScale);
-            delete readyImg;
-            readyImg = tempImage;
-        }
+        Image16* tempImage = new Image16 (imw, imh);
+        ipf.resize (readyImg, tempImage, tmpScale);
+        delete readyImg;
+        readyImg = tempImage;
     }
 
 
