@@ -884,6 +884,7 @@ PREFERENCES_MONITORICC;Monitor color profile
 PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs In Own Window Mode
 PREFERENCES_MULTITAB;Multiple Editor Tabs Mode
 PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
+PREFERENCES_NAVIGATIONFRAME;Navigation
 PREFERENCES_NOISE;Noise Reduction
 PREFERENCES_OUTDIRFOLDERHINT;Save images to the selected folder.
 PREFERENCES_OUTDIRFOLDER;Save to folder
@@ -893,8 +894,9 @@ PREFERENCES_OUTDIR;Output Directory
 PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails in the file browser
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-PREFERENCES_PANFACTORFRAME;Pan Rate Amplification
-PREFERENCES_PANFACTORLABEL;Factor
+PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
+PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
+PREFERENCES_PANFACTORLABEL;Pan rate amplification
 PREFERENCES_PARSEDEXTADDHINT;Add entered extension to the list.
 PREFERENCES_PARSEDEXTADD;Add extension
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list.

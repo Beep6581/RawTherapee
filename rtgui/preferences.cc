@@ -901,7 +901,7 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 
 //-----
 
-    Gtk::HBox* hbcd = Gtk::manage( new Gtk::HBox () );
+    Gtk::HBox* hbcd = Gtk::manage( new Gtk::HBox (true) );
     hbcd->set_spacing(4);
 
     Gtk::Frame* frl = Gtk::manage( new Gtk::Frame (M("PREFERENCES_CLIPPINGIND")));
@@ -936,30 +936,33 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     frl->add (*vbrl);  
     hbcd->pack_start (*frl, true, true, 0);
 
-//-----
-    Gtk::VBox* dfpfvb = Gtk::manage( new Gtk::VBox () );
-    dfpfvb->set_spacing (4);
+    //---
 
-//-----
-    Gtk::Frame* pff = Gtk::manage( new Gtk::Frame (M("PREFERENCES_PANFACTORFRAME")) );
+    Gtk::Frame* navigationFrame = Gtk::manage( new Gtk::Frame (M("PREFERENCES_NAVIGATIONFRAME")) );
+    Gtk::VBox* navigationVBox = Gtk::manage( new Gtk::VBox () );
+    navigationVBox->set_border_width(4);
 
-    Gtk::HBox* pfhb = Gtk::manage( new Gtk::HBox () );
-    pfhb->set_border_width(4);
-    pfhb->set_spacing(4);
-    Gtk::Label* pfl = Gtk::manage( new Gtk::Label (M("PREFERENCES_PANFACTORLABEL") + ":", Gtk::ALIGN_LEFT));
+    Gtk::HBox* panFactorHBox = Gtk::manage( new Gtk::HBox () );
+    Gtk::Label* panFactorLabel = Gtk::manage( new Gtk::Label (M("PREFERENCES_PANFACTORLABEL") + ":", Gtk::ALIGN_LEFT));
     panFactor = Gtk::manage( new Gtk::SpinButton () );
     panFactor->set_digits (0);
     panFactor->set_increments (1, 5);
     panFactor->set_range (1, 10);
-    pfhb->pack_start (*pfl, Gtk::PACK_SHRINK, 0);
-    pfhb->pack_end (*panFactor, Gtk::PACK_SHRINK, 0);
-    pff->add (*pfhb);
+    panFactorHBox->pack_start (*panFactorLabel);
+    panFactorHBox->pack_end (*panFactor, Gtk::PACK_SHRINK);
 
-    dfpfvb->pack_start (*pff, true, true, 0);
-    hbcd->pack_start (*dfpfvb, Gtk::PACK_SHRINK, 4);
-    mvbsd->pack_start (*hbcd, Gtk::PACK_SHRINK, 4);
+    rememberZoomPanCheckbutton = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_REMEMBERZOOMPAN")) );
+    rememberZoomPanCheckbutton->set_tooltip_text(M("PREFERENCES_REMEMBERZOOMPAN_TOOLTIP"));
 
-  //-----
+    navigationVBox->pack_start (*panFactorHBox, Gtk::PACK_SHRINK);
+    navigationVBox->pack_start (*rememberZoomPanCheckbutton, Gtk::PACK_SHRINK);
+    navigationFrame->add (*navigationVBox);
+
+    hbcd->pack_start (*navigationFrame);
+    mvbsd->pack_start (*hbcd, Gtk::PACK_SHRINK, 0);
+
+//-----
+
     Gtk::Frame* fdg = Gtk::manage( new Gtk::Frame (M("PREFERENCES_EXTERNALEDITOR")) );
     Gtk::VBox* dgvb = Gtk::manage( new Gtk::VBox () );
 
@@ -1297,6 +1300,7 @@ void Preferences::storePreferences () {
 
     moptions.dateFormat          = dateformat->get_text();
     moptions.panAccelFactor      = (int)panFactor->get_value();
+    moptions.rememberZoomAndPan = rememberZoomPanCheckbutton->get_active();
     moptions.fbShowDateTime  = showDateTime->get_active ();
     moptions.fbShowBasicExif = showBasicExif->get_active ();
     moptions.fbShowExpComp   = showExpComp->get_active ();
@@ -1455,7 +1459,8 @@ void Preferences::fillPreferences () {
     iprofiles->setActiveRowFromFullPath (moptions.defProfImg);
     forImageComboChanged(); // update the tooltip
     dateformat->set_text (moptions.dateFormat);
-    panFactor->set_value(moptions.panAccelFactor);
+    panFactor->set_value (moptions.panAccelFactor);
+    rememberZoomPanCheckbutton->set_active (moptions.rememberZoomAndPan);
 #if !defined(__APPLE__) // monitor profile not supported on apple
     if (safe_file_test (moptions.rtSettings.monitorProfile, Glib::FILE_TEST_EXISTS)) 
         monProfile->set_filename (moptions.rtSettings.monitorProfile);

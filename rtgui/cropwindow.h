@@ -115,7 +115,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener, public E
         int scaleValueToScreen (int value);
         float scaleValueToScreen (float value);
         double scaleValueToScreen (double value);
-
+		double getZoomFitVal ();
         void setPosition (int x, int y);
         void getPosition (int& x, int& y);
         void setSize     (int w, int h, bool norefresh=false);
@@ -129,7 +129,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener, public E
         void zoomIn      (bool toCursor=false, int cursorX=-1, int cursorY=-1);
         void zoomOut     (bool toCursor=false, int cursorX=-1, int cursorY=-1);
         void zoom11      ();
-        void zoomFit     ();
+        void zoomFit     (bool skipZoomIfUnchanged=true);
 		void zoomFitCrop ();
         double getZoom   ();
         bool isMinZoom   ();
@@ -153,7 +153,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener, public E
         // crop handling
         void getCropRectangle (int& x, int& y, int& w, int& h);
         void getCropPosition  (int& x, int& y);
-        void setCropPosition  (int x, int y);
+        void setCropPosition  (int x, int y, bool update = true);
         void getCropSize      (int& w, int& h);
 
         // listeners
