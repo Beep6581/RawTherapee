@@ -26,7 +26,7 @@
 #include "../rtengine/refreshmap.h"
 #include "options.h"
 
-ImageArea::ImageArea (ImageAreaPanel* p) : parent(p) {
+ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), firstOpen(true) {
 
     infotext = "";
     cropgl = NULL;
@@ -520,8 +520,25 @@ void ImageArea::setZoom (double zoom) {
 
 void ImageArea::initialImageArrived (CropWindow* cw) {
 
-    if (mainCropWindow) 
-        mainCropWindow->zoomFit ();
+    if (mainCropWindow) {
+		if(firstOpen || options.prevdemo!=PD_Sidecar || (!options.rememberZoomAndPan) ) {
+			mainCropWindow->zoomFit (false);
+			firstOpen = false;
+			mainCropWindow->cropHandler.getFullImageSize(fullImageWidth,fullImageHeight);
+		} else {
+			int w,h;
+			mainCropWindow->cropHandler.getFullImageSize(w,h);
+			if(w == fullImageWidth && h == fullImageHeight) { // && mainCropWindow->getZoom() != mainCropWindow->getZoomFitVal()) {
+				int x,y;
+				mainCropWindow->getCropPosition(x,y);
+				mainCropWindow->setCropPosition(x,y, false);
+			} else {
+				mainCropWindow->zoomFit (false);
+			}
+			fullImageWidth = w;
+			fullImageHeight = h;
+		}
+    }
 }
 
 void ImageArea::syncBeforeAfterViews () {

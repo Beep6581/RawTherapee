@@ -195,6 +195,7 @@ class Options {
     bool filmStripShowFileNames;
     bool tabbedUI;
     int previewSizeTab,previewSizeBrowser;
+    bool rememberZoomAndPan;
     int multiDisplayMode;  // 0=none, 1=Edit panels on other display
     std::vector<double> cutOverlayBrush;  // Red;Green;Blue;Alpha , all ranging 0..1
     std::vector<double> navGuideBrush;  // Red;Green;Blue;Alpha , all ranging 0..1

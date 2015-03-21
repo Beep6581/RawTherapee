@@ -90,6 +90,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
 	Gtk::SpinButton*  shThresh;
 
 	Gtk::SpinButton*  panFactor;
+    Gtk::CheckButton* rememberZoomPanCheckbutton;
 
     Gtk::ComboBoxText* intent;
     Gtk::ComboBoxText* view;

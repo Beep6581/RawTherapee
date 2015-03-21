@@ -502,7 +502,10 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
 
 		// In single tab mode, the image is not always updated between switches
 		// normal redraw don't work, so this is the hard way
-        if (!options.tabbedUI) iareapanel->imageArea->mainCropWindow->cropHandler.update();
+		// Disabled this with Issue 2435 because it seems to work fine now
+//        if (!options.tabbedUI && iareapanel->imageArea->mainCropWindow->getZoomFitVal() == 1.0) {
+//			iareapanel->imageArea->mainCropWindow->cropHandler.update();
+//        }
     } else {
         Gtk::Allocation alloc;
         iareapanel->imageArea->on_resized(alloc);

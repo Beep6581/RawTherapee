@@ -59,7 +59,8 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public Edi
     ImageAreaToolListener* listener;
 
     CropWindow* getCropWindow (int x, int y);
-
+    bool firstOpen;
+    int fullImageWidth, fullImageHeight;
   public:
     CropWindow* mainCropWindow;
     CropWindow* flawnOverWindow;

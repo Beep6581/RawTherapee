@@ -168,9 +168,9 @@ void CropWindow::getCropRectangle (int& x, int& y, int& w, int& h) {
     cropHandler.cutRectToImgBounds (x, y, w, h);
 }
 
-void CropWindow::setCropPosition (int x, int y) {
+void CropWindow::setCropPosition (int x, int y, bool update) {
     
-    cropHandler.setPosition (x, y);
+    cropHandler.setPosition (x, y, update);
     for (std::list<CropWindowListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
         (*i)->cropPositionChanged (this);
 }
@@ -1559,7 +1559,22 @@ void CropWindow::setZoom (double zoom) {
     changeZoom (cz, false);
 }
 
-void CropWindow::zoomFit () {
+double CropWindow::getZoomFitVal () {
+    double z = cropHandler.getFitZoom ();
+    int cz = MAXZOOMSTEPS;
+    if (z < zoomSteps[0].zoom)
+        cz = 0;
+    else 
+        for (int i=0; i<MAXZOOMSTEPS; i++)
+            if (zoomSteps[i].zoom <= z && zoomSteps[i+1].zoom > z) {
+                cz = i;
+                break;
+            }
+	return zoomSteps[cz].zoom;
+}
+
+
+void CropWindow::zoomFit (bool skipZoomIfUnchanged) {
 
     double z = cropHandler.getFitZoom ();
     int cz = MAXZOOMSTEPS;
@@ -1572,7 +1587,7 @@ void CropWindow::zoomFit () {
                 break;
             }
     zoomVersion = exposeVersion;
-    changeZoom (cz);
+    changeZoom (cz, true, -1, -1, skipZoomIfUnchanged);
     fitZoom = true;
 }
 
