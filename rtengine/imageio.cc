@@ -286,12 +286,12 @@ int ImageIO::loadPNG  (Glib::ustring fname) {
     if (color_type & PNG_COLOR_MASK_ALPHA)
         png_set_strip_alpha(png);
 
-    //setting gamma
-    double gamma;
-    if (png_get_gAMA(png,info,&gamma))
-        png_set_gamma(png, 2.0, gamma);
-    else
-        png_set_gamma(png,2.0, 0.45455);
+	//setting gamma
+	double gamma;
+	if (png_get_gAMA(png,info,&gamma))
+		png_set_gamma(png, 1.0/gamma, gamma);   // use gamma from metadata
+	else                                       
+		png_set_gamma(png, 2.2, 1.0/2.2);       // no gamma in metadata, suppose gamma 2.2
 
 //	if (bps==8 && bit_depth==16) png_set_strip_16(png);
 
