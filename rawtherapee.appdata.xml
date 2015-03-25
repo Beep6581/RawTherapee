@@ -1,40 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2014 Maciej Dworak www.londonlight.org -->
 <application>
-  <id type="desktop">rawtherapee.desktop</id>
-  <metadata_license>CC-BY-SA-4.0</metadata_license>
-  <project_license>GPL-3.0+</project_license>
-  <name>RawTherapee</name>
-  <summary>A powerful cross-platform raw image processing program</summary>
-  <description>
-    <p>
-      RawTherapee is a powerful raw image processing program. All the internal calculations are done in a high precision 32-bit floating point engine which facilitates non-destructive editing. Images are opened directly without the hassle of having to import them. Adjustments made by the user are immediately reflected in the preview and saved to a separate sidecar file. These adjustments are then applied during the export process, or can be copied (fully and partially) onto other images, thereby allowing easy batch image processing.
-    </p>
-    <p>
-      All aspects of RawTherapee are documented in the RawPedia wiki. There is also an active forum and IRC channel for interaction with the developers and other users.
-    </p>
-    Supported input formats:
-    <ul>
-      <li>Most raw formats including those from Bayer and X-Trans type sensors</li>
-      <li>HDR DNG 1.4 with floating-point data</li>
-      <li>8-bit, 16-bit and 32-bit TIFF (RGB)</li>
-      <li>8-bit and 16-bit PNG (RGB)</li>
-      <li>JPEG</li>
-    </ul>
-    Supported output formats:
-    <ul>
-      <li>JPEG</li>
-      <li>8-bit and 16-bit TIFF</li>
-      <li>8-bit and 16-bit PNG</li>
-    </ul>
-  </description>
-  <screenshots>
-    <screenshot type="default">http://rawtherapee.com/images/screenshots/rt-42_07-hdr-landscape.jpg</screenshot>
-    <screenshot>http://rawtherapee.com/images/screenshots/rt-42_03-macro-detail-toning.jpg</screenshot>
-    <screenshot>http://rawtherapee.com/images/screenshots/rt-42_05-cow-bw-toning.jpg</screenshot>
-    <screenshot>http://rawtherapee.com/images/screenshots/rt-42_08-fb-metadata.jpg</screenshot>
-    <screenshot>http://rawtherapee.com/images/screenshots/rt-42_09-queue.jpg</screenshot>
-  </screenshots>
-  <url type="homepage">http://rawtherapee.com/</url>
-  <updatecontact>contactus_at_rawtherapee.com</updatecontact>
+    <id type="desktop">rawtherapee.desktop</id>
+    <metadata_license>CC-BY-SA-4.0</metadata_license>
+    <project_license>GPL-3.0+</project_license>
+    <name>RawTherapee</name>
+    <summary>A powerful cross-platform raw image processing program</summary>
+    <description>
+        <p>
+            RawTherapee is a powerful raw image processing program. All the internal calculations are done in a high precision 32-bit floating point engine which facilitates non-destructive editing. Images are opened directly without the hassle of having to import them. Adjustments made by the user are immediately reflected in the preview and saved to a separate sidecar file. These adjustments are then applied during the export process, or can be copied (fully and partially) onto other images, thereby allowing easy batch image processing.
+        </p>
+        <p>
+            All aspects of RawTherapee are documented in the RawPedia wiki. There is also an active forum and IRC channel for interaction with the developers and other users.
+        </p>
+        <p>
+            Supported input formats:
+        </p>
+        <ul>
+            <li>Most raw formats including those from Bayer and X-Trans type sensors</li>
+            <li>HDR DNG 1.4 with floating-point data</li>
+            <li>8-bit, 16-bit and 32-bit TIFF (RGB)</li>
+            <li>8-bit and 16-bit PNG (RGB)</li>
+            <li>JPEG</li>
+        </ul>
+        <p>
+            Supported output formats:
+        </p>
+        <ul>
+            <li>JPEG</li>
+            <li>8-bit and 16-bit TIFF</li>
+            <li>8-bit and 16-bit PNG</li>
+        </ul>
+    </description>
+    <screenshots>
+        <screenshot type="default">http://rawtherapee.com/images/screenshots/rt-42_07-hdr-landscape.jpg</screenshot>
+        <screenshot>http://rawtherapee.com/images/screenshots/rt-42_03-macro-detail-toning.jpg</screenshot>
+        <screenshot>http://rawtherapee.com/images/screenshots/rt-42_05-cow-bw-toning.jpg</screenshot>
+        <screenshot>http://rawtherapee.com/images/screenshots/rt-42_08-fb-metadata.jpg</screenshot>
+        <screenshot>http://rawtherapee.com/images/screenshots/rt-42_09-queue.jpg</screenshot>
+    </screenshots>
+    <url type="homepage">http://rawtherapee.com/</url>
+    <updatecontact>contactus_at_rawtherapee.com</updatecontact>
 </application>
