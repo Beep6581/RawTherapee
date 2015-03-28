@@ -373,6 +373,7 @@ void Options::setDefaults () {
 #endif
     filledProfile = false;
     maxInspectorBuffers = 2; //  a rather conservative value for low specced systems...
+	serializeTiffRead = true;
 
     showProfileSelector = true;
     FileBrowserToolbarSingleRow = false;
@@ -779,6 +780,7 @@ if (keyFile.has_group ("Performance")) {
     if (keyFile.has_key ("Performance", "MaxInspectorBuffers"))   maxInspectorBuffers        = keyFile.get_integer ("Performance", "MaxInspectorBuffers");
     if (keyFile.has_key ("Performance", "PreviewDemosaicFromSidecar"))  prevdemo             = (prevdemo_t)keyFile.get_integer ("Performance", "PreviewDemosaicFromSidecar");
     if (keyFile.has_key ("Performance", "Daubechies"))            rtSettings.daubech         = keyFile.get_boolean ("Performance", "Daubechies");
+    if (keyFile.has_key ("Performance", "SerializeTiffRead"))     serializeTiffRead          = keyFile.get_boolean ("Performance", "SerializeTiffRead");
 }
 
 if (keyFile.has_group ("GUI")) { 
@@ -1067,6 +1069,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("Performance", "MaxInspectorBuffers", maxInspectorBuffers);
     keyFile.set_integer ("Performance", "PreviewDemosaicFromSidecar", prevdemo);
     keyFile.set_boolean ("Performance", "Daubechies", rtSettings.daubech);
+    keyFile.set_boolean ("Performance", "SerializeTiffRead", serializeTiffRead);
 
     keyFile.set_string  ("Output", "Format", saveFormat.format);
     keyFile.set_integer ("Output", "JpegQuality", saveFormat.jpegQuality);
