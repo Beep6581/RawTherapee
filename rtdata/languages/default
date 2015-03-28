@@ -918,6 +918,9 @@ PREFERENCES_RGBDTL_TOOLTIP;Leave the setting at "0" to automatically use as many
 PREFERENCES_SELECTFONT;Select font
 PREFERENCES_SELECTLANG;Select language
 PREFERENCES_SELECTTHEME;Select theme
+PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
+PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize read of tiff files
+PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;When working with folders full of uncompressed tiff files enabling this option can increase performance of thumb generation.
 PREFERENCES_SET;Set
 PREFERENCES_SHOWBASICEXIF;Show basic Exif info
 PREFERENCES_SHOWDATETIME;Show date and time

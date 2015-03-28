@@ -226,6 +226,7 @@ class Options {
     int clutCacheSize;
     bool filledProfile;  // Used as reminder for the ProfilePanel "mode"
     prevdemo_t prevdemo; // Demosaicing method used for the <100% preview
+    bool serializeTiffRead;
 
     bool menuGroupRank;
     bool menuGroupLabel;

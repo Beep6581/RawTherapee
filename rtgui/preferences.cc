@@ -530,6 +530,15 @@ Gtk::Widget* Preferences::getPerformancePanel () {
     hbprevdemo->set_border_width(4);
     mainContainer->pack_start (*fprevdemo, Gtk::PACK_SHRINK, 4);
 
+    Gtk::Frame* ftiffserialize = Gtk::manage (new Gtk::Frame (M("PREFERENCES_SERIALIZE_TIFF_READ")));
+    Gtk::HBox* htiffserialize = Gtk::manage (new Gtk::HBox (false, 4));
+    ctiffserialize = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SERIALIZE_TIFF_READ_LABEL")) );
+    ctiffserialize->set_tooltip_text(M("PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP"));
+    htiffserialize->pack_start (*ctiffserialize);
+    ftiffserialize->add (*htiffserialize);
+    htiffserialize->set_border_width(4);
+    mainContainer->pack_start (*ftiffserialize, Gtk::PACK_SHRINK, 4);
+
     Gtk::Frame* fclut = Gtk::manage( new Gtk::Frame (M("PREFERENCES_CLUTSCACHE")) );
     Gtk::HBox* clutCacheSizeHB = Gtk::manage( new Gtk::HBox () );
     clutCacheSizeHB->set_border_width(4);
@@ -1373,7 +1382,7 @@ void Preferences::storePreferences () {
     moptions.rtSettings.daubech 			= cbdaubech->get_active ();
 
     moptions.prevdemo = (prevdemo_t)cprevdemo->get_active_row_number ();
-
+	moptions.serializeTiffRead = ctiffserialize->get_active();
     if (sdcurrent->get_active ()) 
         moptions.startupDir = STARTUPDIR_CURRENT;
     else if (sdhome->get_active ()) 
@@ -1461,6 +1470,7 @@ void Preferences::fillPreferences () {
     dateformat->set_text (moptions.dateFormat);
     panFactor->set_value (moptions.panAccelFactor);
     rememberZoomPanCheckbutton->set_active (moptions.rememberZoomAndPan);
+    ctiffserialize->set_active(moptions.serializeTiffRead);
 #if !defined(__APPLE__) // monitor profile not supported on apple
     if (safe_file_test (moptions.rtSettings.monitorProfile, Glib::FILE_TEST_EXISTS)) 
         monProfile->set_filename (moptions.rtSettings.monitorProfile);

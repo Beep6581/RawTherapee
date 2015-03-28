@@ -571,6 +571,11 @@ int ImageIO::getTIFFSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat,
 
 int ImageIO::loadTIFF (Glib::ustring fname) {
 
+	static MyMutex thumbMutex;
+	MyMutex::MyLock lock(thumbMutex);
+	if(!options.serializeTiffRead)
+		lock.release();
+		
 #ifdef WIN32
     wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
     TIFF* in = TIFFOpenW (wfilename, "r");

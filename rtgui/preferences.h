@@ -109,6 +109,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
     Gtk::ComboBoxText* waveletTileSizeCombo;
 
     Gtk::ComboBoxText* cprevdemo;
+    Gtk::CheckButton* ctiffserialize;
     Gtk::ComboBoxText* curveBBoxPosC;
 
     Gtk::ComboBoxText* theme;
