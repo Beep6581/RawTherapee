@@ -45,6 +45,7 @@ Glib::ustring safe_get_user_home_dir();
 Glib::ustring safe_get_user_desktop_dir();
 
 #ifdef WIN32
+Glib::ustring safe_get_user_profile_dir();
 bool safe_is_shortcut_dir (const Glib::ustring& filename);
 #endif
 
