@@ -1949,7 +1949,7 @@ SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur
 void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWParams &raw)
 {
 	chmax[0]=chmax[1]=chmax[2]=chmax[3]=0;//channel maxima
-	float black_lev[4];//black level
+	float black_lev[4] = {0.f};//black level
 
 	//adjust black level  (eg Canon)
 	bool isMono = false;
