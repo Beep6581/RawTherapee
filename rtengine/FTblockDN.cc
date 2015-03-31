@@ -13,7 +13,7 @@
 //	(at your option) any later version.
 //
 //	This program is distributed in the hope that it will be useful,
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of
+//	but WITHOUT ANY WARRANTY; without even the implied warranty of	
 //	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //	GNU General Public License for more details.
 //
@@ -420,7 +420,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 	const float noiseluma=(float) dnparams.luma;
 	const float noisevarL = (useNoiseLCurve && (denoiseMethodRgb || !isRAW)) ? (float) (SQR(((noiseluma+1.0)/125.0)*(10.+ (noiseluma+1.0)/25.0))) : (float) (SQR((noiseluma/125.0)*(1.0+ noiseluma/25.0)));
 	const bool denoiseLuminance = (noisevarL > 0.00001f);
-
+	//printf("NL=%f \n",noisevarL);
 	if(useNoiseLCurve || useNoiseCCurve) {
 		int hei=calclum->height;
 		int wid=calclum->width;
@@ -1009,14 +1009,15 @@ do {
 					delete bdecomp;
 					if(!memoryAllocationFailed) {
 						if(denoiseLuminance) {
+							int edge=0;
 							if(nrQuality==QUALITY_STANDARD) {
-								if(!WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL))//enhance mode
+								if(!WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, NULL, edge))//enhance mode
 									memoryAllocationFailed = true;
 							} else /*if(nrQuality==QUALITY_HIGH)*/ {
 								if(!WaveletDenoiseAll_BiShrinkL(*Ldecomp, noisevarlum, madL))//enhance mode
 									memoryAllocationFailed = true;
 								if(!memoryAllocationFailed)
-									if(!WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL))
+									if(!WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, NULL, edge))
 										memoryAllocationFailed = true;
 							}
 							if(!memoryAllocationFailed) {
@@ -1877,7 +1878,9 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
 			
 			float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
 			if (lvl==maxlvl-1) {
-				ShrinkAllL(WaveletCoeffs_L, buffer, lvl, dir, noisevarlum, madL[lvl] );
+				float vari[3];
+				int edge=0;
+				ShrinkAllL(WaveletCoeffs_L, buffer, lvl, dir, noisevarlum, madL[lvl], NULL, edge );
 			} else {
 				//simple wavelet shrinkage
 				float * sfave = buffer[0]+32;
@@ -2069,11 +2072,12 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
 	}
 
 
-	bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3])//mod JD
+	bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge)//mod JD
 
 	{
 
 		int maxlvl = WaveletCoeffs_L.maxlevel();
+		if(edge==1) maxlvl=3;//for refine denoise edge wavelet
 		int maxWL = 0, maxHL = 0;
 		for (int lvl=0; lvl<maxlvl; lvl++) {
 			if(WaveletCoeffs_L.level_W(lvl) > maxWL)
@@ -2100,7 +2104,7 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
 #endif
 			for (int lvl=0; lvl<maxlvl; lvl++) {
 				for (int dir=1; dir<4; dir++) {
-					ShrinkAllL(WaveletCoeffs_L, buffer, lvl, dir, noisevarlum, madL[lvl]);
+					ShrinkAllL(WaveletCoeffs_L, buffer, lvl, dir, noisevarlum, madL[lvl], vari, edge);
 				}
 			}
 		}
@@ -2160,7 +2164,7 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
 
 
 SSEFUNCTION	void ImProcFunctions::ShrinkAllL(wavelet_decomposition &WaveletCoeffs_L, float **buffer, int level, int dir,
-											float *noisevarlum, float * madL )
+											float *noisevarlum, float * madL, float * vari, int edge )
 
 									{
 		//simple wavelet shrinkage
@@ -2176,7 +2180,12 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAllL(wavelet_decomposition &WaveletCoeff
 		float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(level);
 
 		float mad_L = madL[dir-1] ;
-
+		if(edge==1) {
+			noisevarlum = blurBuffer;		// we need one buffer, but fortunately we don't have to allocate a new one because we can use blurBuffer
+			for (int i=0; i<W_L*H_L; i++) {
+				noisevarlum[i]=vari[level];
+			}	
+		}
 		float levelFactor = mad_L * 5.f / (float)(level+1);
 #ifdef __SSE2__
 		__m128	magv;

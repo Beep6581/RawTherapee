@@ -1166,6 +1166,7 @@ void OpacityCurve::Set(const std::vector<double> &curvePoints, bool &opautili) {
 	}
 }
 
+
 WavCurve::WavCurve() : sum(0.f) {};
 
 void WavCurve::Reset() {
@@ -1198,6 +1199,8 @@ void WavCurve::Set(const std::vector<double> &curvePoints) {
 		Reset();
 	}
 }
+
+
 WavOpacityCurveRG::WavOpacityCurveRG(){};
 
 void WavOpacityCurveRG::Reset() {

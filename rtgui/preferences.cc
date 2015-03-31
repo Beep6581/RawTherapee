@@ -301,7 +301,7 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_WAVELET_LABEL"));
-    appendBehavList (mi, M("TP_WAVELET_THRES"), ADDSET_WA_THRES, true);
+    appendBehavList (mi, M("TP_WAVELET_LEVELS"), ADDSET_WA_THRES, true);
   //  appendBehavList (mi, M("TP_WAVELET_CONTRAST"), ADDSET_WA, true);
     appendBehavList (mi, M("TP_WAVELET_THRESHOLD"), ADDSET_WA_THRESHOLD, true);
     appendBehavList (mi, M("TP_WAVELET_THRESHOLD2"), ADDSET_WA_THRESHOLD2, true);
@@ -318,6 +318,9 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_WAVELET_SKY"), ADDSET_WA_SKYPROTECT, true);
     appendBehavList (mi, M("TP_WAVELET_CONTRA"), ADDSET_WA_CONTRAST, true);
     appendBehavList (mi, M("TP_WAVELET_STRENGTH"), ADDSET_WA_STRENGTH, true);
+    appendBehavList (mi, M("TP_WAVELET_EDGEDETECT"), ADDSET_WA_EDGEDETECT, true);
+    appendBehavList (mi, M("TP_WAVELET_EDGEDETECTTHR"), ADDSET_WA_EDGEDETECTTHR, true);
+    appendBehavList (mi, M("TP_WAVELET_EDGEDETECTTHR2"), ADDSET_WA_EDGEDETECTTHR2, true);
 	
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_PREPROCESS_LABEL"));
@@ -649,7 +652,7 @@ Gtk::Widget* Preferences::getPerformancePanel () {
     // <--- To be hard-coded and removed once tested
     cbdaubech = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_DAUB_LABEL"), Gtk::ALIGN_LEFT));
     cbdaubech->set_tooltip_markup (M("PREFERENCES_DAUB_TOOLTIP"));
-    vbdenoise->pack_start (*cbdaubech, Gtk::PACK_SHRINK);
+ //   vbdenoise->pack_start (*cbdaubech, Gtk::PACK_SHRINK);
     // --->
     fdenoise->add (*vbdenoise);
     mainContainer->pack_start (*fdenoise, Gtk::PACK_SHRINK, 4);

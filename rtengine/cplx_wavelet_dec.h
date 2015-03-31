@@ -120,7 +120,33 @@ namespace rtengine {
 				}
 			}
 		}	
-
+		else if(wavfilt_len==12) {
+			for (int n=0; n<2; n++) {
+				for (int i=0; i<wavfilt_len; i++) {
+					wavfilt_anal[wavfilt_len*(n)+i]  = Daub4_anal12[n][i];
+					wavfilt_synth[wavfilt_len*(n)+i] = Daub4_anal12[n][wavfilt_len-1-i];
+					//n=0 lopass, n=1 hipass
+				}
+			}
+		}	
+		else if(wavfilt_len==16) {
+			for (int n=0; n<2; n++) {
+				for (int i=0; i<wavfilt_len; i++) {
+					wavfilt_anal[wavfilt_len*(n)+i]  = Daub4_anal16[n][i];
+					wavfilt_synth[wavfilt_len*(n)+i] = Daub4_anal16[n][wavfilt_len-1-i];
+					//n=0 lopass, n=1 hipass
+				}
+			}
+		}	
+		else if(wavfilt_len==4) {
+			for (int n=0; n<2; n++) {
+				for (int i=0; i<wavfilt_len; i++) {
+					wavfilt_anal[wavfilt_len*(n)+i]  = Daub4_anal0[n][i];
+					wavfilt_synth[wavfilt_len*(n)+i] = Daub4_anal0[n][wavfilt_len-1-i];
+					//n=0 lopass, n=1 hipass
+				}
+			}
+		}
 		// after coefficient rotation, data structure is:
 		// wavelet_decomp[scale][channel={lo,hi1,hi2,hi3}][pixel_array]
 
