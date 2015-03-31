@@ -44,6 +44,8 @@ enum EditUniqueID {
 	EUID_BlackWhiteLuminance,
 	EUID_BlackWhiteBeforeCurve,
 	EUID_BlackWhiteAfterCurve,
+	EUID_WW_HHCurve,
+	
 };
 
 /// @brief Editing mechanisms

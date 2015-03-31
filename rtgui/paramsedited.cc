@@ -338,11 +338,19 @@ void ParamsEdited::set (bool v) {
 	wavelet.enabled = v;
 	wavelet.strength = v;
 	wavelet.median = v;
+	wavelet.medianlev = v;
+	wavelet.linkedg = v;
+	wavelet.lipst = v;
+	wavelet.Medgreinf = v;
 	wavelet.avoid = v;
 	wavelet.Lmethod = v;
 	wavelet.CLmethod = v;
+	wavelet.Backmethod = v;
 	wavelet.Tilesmethod = v;
+	wavelet.choicemethod = v;
 	wavelet.CHmethod = v;
+	wavelet.CHSLmethod = v;
+	wavelet.EDmethod = v;
 	wavelet.HSmethod = v;
 	wavelet.Dirmethod = v;
 	wavelet.rescon = v;
@@ -353,6 +361,9 @@ void ParamsEdited::set (bool v) {
 	wavelet.thres = v;
 	wavelet.threshold = v;
 	wavelet.threshold2 = v;
+	wavelet.edgedetect = v;
+	wavelet.edgedetectthr = v;
+	wavelet.edgedetectthr2 = v;
 	wavelet.chroma = v;
 	wavelet.chro = v;
 	wavelet.contrast = v;
@@ -366,14 +377,23 @@ void ParamsEdited::set (bool v) {
 	wavelet.hueskin2 = v;
 	wavelet.hllev = v;
 	wavelet.bllev = v;
-	wavelet.clvcurve = v;
+	wavelet.edgcont = v;
+	wavelet.level0noise = v;
+	wavelet.level1noise = v;
+	wavelet.level2noise = v;
+	wavelet.ccwcurve = v;
 	wavelet.opacityCurveRG   = v;
 	wavelet.opacityCurveBY   = v;
+	wavelet.hhcurve     = v;
+	wavelet.Chcurve     = v;
 	wavelet.pastlev = v;
 	wavelet.satlev = v;
 	
 	for(int i = 0; i < 9; i++) {
 		wavelet.c[i] = v;
+	}
+	for(int i = 0; i < 9; i++) {
+		wavelet.ch[i] = v;
 	}
 
 	dirpyrequalizer.enabled = v;
@@ -716,11 +736,19 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         wavelet.enabled = wavelet.enabled && p.wavelet.enabled == other.wavelet.enabled;
         wavelet.strength = wavelet.strength && p.wavelet.strength == other.wavelet.strength;
         wavelet.median = wavelet.median && p.wavelet.median == other.wavelet.median;
+        wavelet.medianlev = wavelet.medianlev && p.wavelet.medianlev == other.wavelet.medianlev;
+        wavelet.linkedg = wavelet.linkedg && p.wavelet.linkedg == other.wavelet.linkedg;
+        wavelet.lipst = wavelet.lipst && p.wavelet.lipst == other.wavelet.lipst;
+        wavelet.Medgreinf = wavelet.Medgreinf && p.wavelet.Medgreinf == other.wavelet.Medgreinf;
         wavelet.avoid = wavelet.avoid && p.wavelet.avoid == other.wavelet.avoid;
         wavelet.Lmethod = wavelet.Lmethod && p.wavelet.Lmethod == other.wavelet.Lmethod;
         wavelet.CLmethod = wavelet.CLmethod && p.wavelet.CLmethod == other.wavelet.CLmethod;
+        wavelet.Backmethod = wavelet.Backmethod && p.wavelet.Backmethod == other.wavelet.Backmethod;
         wavelet.Tilesmethod = wavelet.Tilesmethod && p.wavelet.Tilesmethod == other.wavelet.Tilesmethod;
+        wavelet.choicemethod = wavelet.choicemethod && p.wavelet.choicemethod == other.wavelet.choicemethod;
         wavelet.CHmethod = wavelet.CHmethod && p.wavelet.CHmethod == other.wavelet.CHmethod;
+        wavelet.CHSLmethod = wavelet.CHSLmethod && p.wavelet.CHSLmethod == other.wavelet.CHSLmethod;
+        wavelet.EDmethod = wavelet.EDmethod && p.wavelet.EDmethod == other.wavelet.EDmethod;
         wavelet.HSmethod = wavelet.HSmethod && p.wavelet.HSmethod == other.wavelet.HSmethod;
         wavelet.Dirmethod = wavelet.Dirmethod && p.wavelet.Dirmethod == other.wavelet.Dirmethod;
         wavelet.rescon = wavelet.rescon && p.wavelet.rescon == other.wavelet.rescon;
@@ -730,6 +758,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         wavelet.sky = wavelet.sky && p.wavelet.sky == other.wavelet.sky;
         wavelet.threshold = wavelet.threshold && p.wavelet.threshold == other.wavelet.threshold;
         wavelet.threshold2 = wavelet.threshold2 && p.wavelet.threshold2 == other.wavelet.threshold2;
+        wavelet.edgedetect = wavelet.edgedetect && p.wavelet.edgedetect == other.wavelet.edgedetect;
+        wavelet.edgedetectthr = wavelet.edgedetectthr && p.wavelet.edgedetectthr == other.wavelet.edgedetectthr;
+        wavelet.edgedetectthr2 = wavelet.edgedetectthr2 && p.wavelet.edgedetectthr2 == other.wavelet.edgedetectthr2;
         wavelet.thres = wavelet.thres && p.wavelet.thres == other.wavelet.thres;
         wavelet.chroma = wavelet.chroma && p.wavelet.chroma == other.wavelet.chroma;
         wavelet.chro = wavelet.chro && p.wavelet.chro == other.wavelet.chro;
@@ -743,14 +774,23 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         wavelet.hueskin2 = wavelet.hueskin2 && p.wavelet.hueskin2 == other.wavelet.hueskin2;
         wavelet.hllev = wavelet.hllev && p.wavelet.hllev == other.wavelet.hllev;
         wavelet.bllev = wavelet.bllev && p.wavelet.bllev == other.wavelet.bllev;
+        wavelet.edgcont = wavelet.edgcont && p.wavelet.edgcont == other.wavelet.edgcont;
+        wavelet.level0noise = wavelet.level0noise && p.wavelet.level0noise == other.wavelet.level0noise;
+        wavelet.level1noise = wavelet.level1noise && p.wavelet.level1noise == other.wavelet.level1noise;
+        wavelet.level2noise = wavelet.level2noise && p.wavelet.level2noise == other.wavelet.level2noise;
         wavelet.pastlev = wavelet.pastlev && p.wavelet.pastlev == other.wavelet.pastlev;
         wavelet.satlev = wavelet.satlev && p.wavelet.satlev == other.wavelet.satlev;
-        wavelet.clvcurve = wavelet.clvcurve && p.wavelet.clvcurve == other.wavelet.clvcurve;
+        wavelet.ccwcurve = wavelet.ccwcurve && p.wavelet.ccwcurve == other.wavelet.ccwcurve;
         wavelet.opacityCurveRG = wavelet.opacityCurveRG && p.wavelet.opacityCurveRG == other.wavelet.opacityCurveRG;
         wavelet.opacityCurveBY = wavelet.opacityCurveBY && p.wavelet.opacityCurveBY == other.wavelet.opacityCurveBY;
-        wavelet.skinprotect = wavelet.skinprotect && p.wavelet.skinprotect == other.wavelet.skinprotect;
+        wavelet.hhcurve = wavelet.hhcurve && p.wavelet.hhcurve == other.wavelet.hhcurve;
+        wavelet.Chcurve = wavelet.Chcurve && p.wavelet.Chcurve == other.wavelet.Chcurve;
+		wavelet.skinprotect = wavelet.skinprotect && p.wavelet.skinprotect == other.wavelet.skinprotect;
         for(int i = 0; i < 9; i++) {
             wavelet.c[i] = wavelet.c[i] && p.wavelet.c[i] == other.wavelet.c[i];
+        }
+        for(int i = 0; i < 9; i++) {
+            wavelet.ch[i] = wavelet.ch[i] && p.wavelet.ch[i] == other.wavelet.ch[i];
         }
 
         dirpyrequalizer.enabled = dirpyrequalizer.enabled && p.dirpyrequalizer.enabled == other.dirpyrequalizer.enabled;
@@ -1099,11 +1139,19 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (wavelet.enabled)	toEdit.wavelet.enabled   = mods.wavelet.enabled;
 	if (wavelet.strength)	toEdit.wavelet.strength   = mods.wavelet.strength;
 	if (wavelet.median)	toEdit.wavelet.median   = mods.wavelet.median;
+	if (wavelet.medianlev)	toEdit.wavelet.medianlev   = mods.wavelet.medianlev;
+	if (wavelet.linkedg)	toEdit.wavelet.linkedg   = mods.wavelet.linkedg;
+	if (wavelet.lipst)	toEdit.wavelet.lipst   = mods.wavelet.lipst;
+	if (wavelet.Medgreinf)	toEdit.wavelet.Medgreinf   = mods.wavelet.Medgreinf;
 	if (wavelet.avoid)	toEdit.wavelet.avoid   = mods.wavelet.avoid;
 	if (wavelet.Lmethod)		toEdit.wavelet.Lmethod		= mods.wavelet.Lmethod;
 	if (wavelet.CLmethod)		toEdit.wavelet.CLmethod		= mods.wavelet.CLmethod;
+	if (wavelet.Backmethod)		toEdit.wavelet.Backmethod		= mods.wavelet.Backmethod;
 	if (wavelet.Tilesmethod)		toEdit.wavelet.Tilesmethod		= mods.wavelet.Tilesmethod;
+	if (wavelet.choicemethod)		toEdit.wavelet.choicemethod		= mods.wavelet.choicemethod;
 	if (wavelet.CHmethod)		toEdit.wavelet.CHmethod		= mods.wavelet.CHmethod;
+	if (wavelet.CHSLmethod)		toEdit.wavelet.CHSLmethod		= mods.wavelet.CHSLmethod;
+	if (wavelet.EDmethod)		toEdit.wavelet.EDmethod		= mods.wavelet.EDmethod;
 	if (wavelet.HSmethod)		toEdit.wavelet.HSmethod		= mods.wavelet.HSmethod;
 	if (wavelet.Dirmethod)		toEdit.wavelet.Dirmethod		= mods.wavelet.Dirmethod;
 	if (wavelet.edgthresh)		toEdit.wavelet.edgthresh		= mods.wavelet.edgthresh;
@@ -1113,13 +1161,22 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (wavelet.sup)		toEdit.wavelet.sup		= mods.wavelet.sup;
 	if (wavelet.hllev)	toEdit.wavelet.hllev	= mods.wavelet.hllev;
 	if (wavelet.bllev)	toEdit.wavelet.bllev	= mods.wavelet.bllev;
+	if (wavelet.edgcont)	toEdit.wavelet.edgcont	= mods.wavelet.edgcont;
+	if (wavelet.level0noise)	toEdit.wavelet.level0noise	= mods.wavelet.level0noise;
+	if (wavelet.level1noise)	toEdit.wavelet.level1noise	= mods.wavelet.level1noise;
+	if (wavelet.level2noise)	toEdit.wavelet.level2noise	= mods.wavelet.level2noise;
 	if (wavelet.pastlev)	toEdit.wavelet.pastlev	= mods.wavelet.pastlev;
 	if (wavelet.satlev)	toEdit.wavelet.satlev	= mods.wavelet.satlev;
-	if (wavelet.clvcurve)	toEdit.wavelet.clvcurve	= mods.wavelet.clvcurve;
+	if (wavelet.ccwcurve)	toEdit.wavelet.ccwcurve	= mods.wavelet.ccwcurve;
 	if (wavelet.opacityCurveRG)	toEdit.wavelet.opacityCurveRG	= mods.wavelet.opacityCurveRG;
 	if (wavelet.opacityCurveBY)	toEdit.wavelet.opacityCurveBY	= mods.wavelet.opacityCurveBY;
+	if (wavelet.hhcurve)	toEdit.wavelet.hhcurve	= mods.wavelet.hhcurve;
+	if (wavelet.Chcurve)	toEdit.wavelet.Chcurve	= mods.wavelet.Chcurve;
 	for(int i = 0; i < 9; i++) {
 	    if(wavelet.c[i])  toEdit.wavelet.c[i] = dontforceSet && options.baBehav[ADDSET_WA] ? toEdit.wavelet.c[i] + mods.wavelet.c[i] : mods.wavelet.c[i];
+	}
+	for(int i = 0; i < 9; i++) {
+	    if(wavelet.ch[i])  toEdit.wavelet.ch[i] = dontforceSet && options.baBehav[ADDSET_WA] ? toEdit.wavelet.ch[i] + mods.wavelet.ch[i] : mods.wavelet.ch[i];
 	}
 	if (wavelet.skinprotect)toEdit.wavelet.skinprotect= dontforceSet && options.baBehav[ADDSET_WA_SKINPROTECT] ? toEdit.wavelet.skinprotect + mods.wavelet.skinprotect : mods.wavelet.skinprotect;
 	if (wavelet.hueskin)	toEdit.wavelet.hueskin	= mods.wavelet.hueskin;
@@ -1130,6 +1187,9 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (wavelet.thres)toEdit.wavelet.thres= dontforceSet && options.baBehav[ADDSET_WA_THRES] ? toEdit.wavelet.thres + mods.wavelet.thres : mods.wavelet.thres;
 	if (wavelet.threshold)toEdit.wavelet.threshold= dontforceSet && options.baBehav[ADDSET_WA_THRESHOLD] ? toEdit.wavelet.threshold + mods.wavelet.threshold : mods.wavelet.threshold;
 	if (wavelet.threshold2)toEdit.wavelet.threshold2= dontforceSet && options.baBehav[ADDSET_WA_THRESHOLD2] ? toEdit.wavelet.threshold2 + mods.wavelet.threshold2 : mods.wavelet.threshold2;
+	if (wavelet.edgedetect)toEdit.wavelet.edgedetect= dontforceSet && options.baBehav[ADDSET_WA_EDGEDETECT] ? toEdit.wavelet.edgedetect + mods.wavelet.edgedetect : mods.wavelet.edgedetect;
+	if (wavelet.edgedetectthr)toEdit.wavelet.edgedetectthr= dontforceSet && options.baBehav[ADDSET_WA_EDGEDETECTTHR] ? toEdit.wavelet.edgedetectthr + mods.wavelet.edgedetectthr : mods.wavelet.edgedetectthr;
+	if (wavelet.edgedetectthr2)toEdit.wavelet.edgedetectthr2= dontforceSet && options.baBehav[ADDSET_WA_EDGEDETECTTHR2] ? toEdit.wavelet.edgedetectthr2 + mods.wavelet.edgedetectthr2 : mods.wavelet.edgedetectthr2;
 	if (wavelet.chro)toEdit.wavelet.chro= dontforceSet && options.baBehav[ADDSET_WA_CHRO] ? toEdit.wavelet.chro + mods.wavelet.chro : mods.wavelet.chro;
 	if (wavelet.chroma)toEdit.wavelet.chroma= dontforceSet && options.baBehav[ADDSET_WA_CHROMA] ? toEdit.wavelet.chroma + mods.wavelet.chroma : mods.wavelet.chroma;
 	if (wavelet.contrast)toEdit.wavelet.contrast= dontforceSet && options.baBehav[ADDSET_WA_CONTRAST] ? toEdit.wavelet.contrast + mods.wavelet.contrast : mods.wavelet.contrast;

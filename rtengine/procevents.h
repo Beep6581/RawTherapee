@@ -347,7 +347,7 @@ enum ProcEvent {
 	EvWavlbl=319,	
 	EvWavThreshold2=320,	
 	EvWavavoid=321,	
-	EvWavCLVCurve=322,
+	EvWavCCCurve=322,
 	EvWavpast=323,
 	EvWavsat=324,
 	EvWavCHmet=325,	
@@ -365,7 +365,25 @@ enum ProcEvent {
 	EvWavedgrad=337,	
 	EvWavedgval=338,	
 	EvWavStrength=339,
-
+	EvWavchoicemet=340,
+	EvWavedgreinf=341,
+    EvWaveletch=342,
+	EvWavCHSLmet=343,
+	EvWavedgcont=344,
+	EvWavEDmet=345,
+	EvWavlev0nois=346,	
+	EvWavlev1nois=347,	
+	EvWavlev2nois=348,	
+	EvWavmedianlev=349,	
+	EvWavHHCurve=350,
+	EvWavBackmet=351,
+	EvWavedgedetect=352,
+	EvWavlipst=353,
+	EvWavedgedetectthr=354,
+	EvWavedgedetectthr2=355,
+	EvWavlinkedg=356,
+	EvWavCHCurve=357,
+	
 	NUMOFEVENTS	
 };
 }

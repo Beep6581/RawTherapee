@@ -109,7 +109,7 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
     hueskin->setBgGradient(milestones);
     pack_start(*hueskin);
 
-    gamutlab = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYREQUALIZER_GAMUT")));
+    gamutlab = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYREQUALIZER_ARTIF")));
     gamutlab->set_active (true);
     pack_start(*gamutlab);
     gamutlabConn = gamutlab->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrEqualizer::gamutlabToggled) );

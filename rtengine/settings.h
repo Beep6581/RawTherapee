@@ -74,7 +74,15 @@ namespace rtengine {
 			double			artifact_cbdl;
 			double			level0_cbdl;
 			double			level123_cbdl;
-			
+			double			bot_left;
+			double			top_left;
+			double 			top_right;
+			double 			bot_right;
+			double			ed_detec;
+			double			ed_detecStr;
+			double			ed_low;
+			double			ed_lipinfl;
+			double			ed_lipampl;
         /** Creates a new instance of Settings.
           * @return a pointer to the new Settings instance. */
             static Settings* create  ();

@@ -535,6 +535,9 @@ void Options::setDefaults () {
 			0, //ADDSET_WA_EDGRAD
 			0, //ADDSET_WA_EDGVAL
 			0, //ADDSET_WA_STRENGTH
+			0, //ADDSET_WA_EDGEDETECT
+			0, //ADDSET_WA_EDGEDETECTTHR
+			0, //ADDSET_WA_EDGEDETECTTHR2
 			
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
@@ -580,6 +583,16 @@ void Options::setDefaults () {
     rtSettings.artifact_cbdl = 4.;
     rtSettings.level0_cbdl = 0;
     rtSettings.level123_cbdl = 30;
+	rtSettings.bot_left=0;
+	rtSettings.top_left=10;
+	rtSettings.top_right=40;
+	rtSettings.bot_right=75;
+	rtSettings.ed_detec=3;//between 2 and 10
+	rtSettings.ed_detecStr=1.3;//not use
+	rtSettings.ed_low=15.;//between 5 to 40
+	rtSettings.ed_lipinfl=0.8;//between 0.5 to 0.9
+	rtSettings.ed_lipampl=1.1;//between 1 and 2
+	
 	
     rtSettings.ciecamfloat = true;
     rtSettings.protectred = 60;
@@ -670,6 +683,17 @@ if (keyFile.has_group ("General")) {
     if( keyFile.has_key ("General", "DarkFramesPath"))   rtSettings.darkFramesPath = keyFile.get_string("General", "DarkFramesPath");
     if( keyFile.has_key ("General", "FlatFieldsPath"))   rtSettings.flatFieldsPath = keyFile.get_string("General", "FlatFieldsPath");
     if( keyFile.has_key ("General", "Verbose"))          rtSettings.verbose = keyFile.get_boolean ( "General", "Verbose");
+    if (keyFile.has_key ("General", "BotLeft"))     rtSettings.bot_left          = keyFile.get_double("General", "BotLeft");
+    if (keyFile.has_key ("General", "TopLeft"))     rtSettings.top_left          = keyFile.get_double("General", "TopLeft");
+    if (keyFile.has_key ("General", "TopRight"))     rtSettings.top_right          = keyFile.get_double("General", "TopRight");
+    if (keyFile.has_key ("General", "BotRight"))     rtSettings.bot_right          = keyFile.get_double("General", "BotRight");
+    if (keyFile.has_key ("General", "EDdetec"))     rtSettings.ed_detec          = keyFile.get_double("General", "EDdetec");
+    if (keyFile.has_key ("General", "EDdetecStr"))     rtSettings.ed_detecStr          = keyFile.get_double("General", "EDdetecStr");
+    if (keyFile.has_key ("General", "EDLow"))     rtSettings.ed_low          = keyFile.get_double("General", "EDLow");
+    if (keyFile.has_key ("General", "EDLipinfl"))     rtSettings.ed_lipinfl          = keyFile.get_double("General", "EDLipinfl");
+    if (keyFile.has_key ("General", "EDLipampl"))     rtSettings.ed_lipampl          = keyFile.get_double("General", "EDLipampl");
+
+	
 }
 
 if (keyFile.has_group ("External Editor")) { 
@@ -1009,7 +1033,17 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
     keyFile.set_string  ("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
     keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
+    keyFile.set_double ("General", "BotLeft", rtSettings.bot_left);
+    keyFile.set_double ("General", "TopLeft", rtSettings.top_left);
+    keyFile.set_double ("General", "TopRight", rtSettings.top_right);
+    keyFile.set_double ("General", "BotRight", rtSettings.bot_right);
+    keyFile.set_double ("General", "EDdetec", rtSettings.ed_detec);
+    keyFile.set_double ("General", "EDdetecStr", rtSettings.ed_detecStr);
+    keyFile.set_double ("General", "EDLow", rtSettings.ed_low);
+    keyFile.set_double ("General", "EDLipinfl", rtSettings.ed_lipinfl);
+    keyFile.set_double ("General", "EDLipampl", rtSettings.ed_lipampl);
 
+	
     keyFile.set_integer ("External Editor", "EditorKind", editorToSendTo);
     keyFile.set_string  ("External Editor", "GimpDir", gimpDir);
     keyFile.set_string  ("External Editor", "PhotoshopDir", psDir);

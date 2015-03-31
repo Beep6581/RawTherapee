@@ -62,6 +62,14 @@ PIX_SORT(pp[3],pp[6]); PIX_SORT(pp[1],pp[4]); PIX_SORT(pp[2],pp[5]); \
 PIX_SORT(pp[4],pp[7]); PIX_SORT(pp[4],pp[2]); PIX_SORT(pp[6],pp[4]); \
 PIX_SORT(pp[4],pp[2]); median=pp[4];} //pp4 = median
 
+
+#define med2(a0,a1,a2,a3,a4,median) { \
+pp[0]=a0; pp[1]=a1; pp[2]=a2; pp[3]=a3; pp[4]=a4;  \
+PIX_SORT(pp[0],pp[1]) ; PIX_SORT(pp[3],pp[4]) ; PIX_SORT(pp[0],pp[3]) ;\
+PIX_SORT(pp[1],pp[4]) ; PIX_SORT(pp[1],pp[2]) ; PIX_SORT(pp[2],pp[3]) ;\
+PIX_SORT(pp[1],pp[2]) ; median=pp[2] ;}
+
+
 #define epsilon 0.001f/(TS*TS) //tolerance
 
 
@@ -79,12 +87,14 @@ struct cont_params {
   float conres;
   float conresH;
   float chrores;
+  float hueres;
   float sky;
   float b_l,t_l,b_r,t_r;
   float b_ly,t_ly,b_ry,t_ry;
   float b_lsl,t_lsl,b_rsl,t_rsl;
   float b_lhl,t_lhl,b_rhl,t_rhl;
-  
+  float edg_low, edg_mean, edg_sd, edg_max;
+  float lev0s, lev0n, lev1s, lev1n, lev2s, lev2n;
   float b_lpast,t_lpast,b_rpast,t_rpast;
   float b_lsat,t_lsat,b_rsat,t_rsat;
   int rad;
@@ -97,10 +107,23 @@ struct cont_params {
   bool curv;
   bool opaBY;
   bool opaRG;
+  bool edgcurv;
   int CHmet;
+  int CHSLmet;
+  int EDmet;
   bool HSmet;
   bool avoi;
   float strength;
+  int reinforce;
+  bool detectedge;
+  int backm;
+  float eddet;
+  float eddetthr;
+  bool lips;
+  float eddetthrHi;
+  bool link;
+  bool lip3;
+ 
 };
 
 int wavNestedLevels = 1;
@@ -123,7 +146,17 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 	const short int imheight=lab->H, imwidth=lab->W;
 	struct cont_params cp;
 	cp.avoi = params->wavelet.avoid;
-
+	if(params->wavelet.Medgreinf=="more") cp.reinforce = 1;
+	if(params->wavelet.Medgreinf=="none") cp.reinforce = 2;
+	if(params->wavelet.Medgreinf=="less") cp.reinforce = 3;
+	cp.lip3 = params->wavelet.lipst;
+	if(params->wavelet.Backmethod=="black") cp.backm= 0;
+	if(params->wavelet.Backmethod=="grey") cp.backm = 1;
+	if(params->wavelet.Backmethod=="resid") cp.backm = 2;
+	cp.link=params->wavelet.linkedg;
+	cp.eddet=(float) params->wavelet.edgedetect;
+	cp.eddetthr=(float) params->wavelet.edgedetectthr;
+	cp.eddetthrHi=(float) params->wavelet.edgedetectthr2;
 	int N=imheight*imwidth;
 	int maxmul=params->wavelet.thres;
 	static const float scales[10] = {1.f,2.f,4.f,8.f,16.f,32.f,64.f,128.f,256.f,512.f};
@@ -133,8 +166,23 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 	float atten0 = 0.40f;
 	float atten123=0.90f;
 
-	int DaubLen = settings->daubech ? 8 : 6;
+	//int DaubLen = settings->daubech ? 8 : 6;
+	int DaubLen;
+	if(params->wavelet.choicemethod=="2_")	DaubLen=4;			
+	if(params->wavelet.choicemethod=="4_")	DaubLen=6;			
+	if(params->wavelet.choicemethod=="6_")	DaubLen=8;			
+	if(params->wavelet.choicemethod=="10_")  DaubLen=12;					
+	if(params->wavelet.choicemethod=="14_")  DaubLen=16;					
+	
+	cp.CHSLmet=1;
+//	if(params->wavelet.CHSLmethod=="SL")	cp.CHSLmet=1;			
+//	if(params->wavelet.CHSLmethod=="CU")	cp.CHSLmet=2;			
+	cp.EDmet=1;
+	if(params->wavelet.EDmethod=="SL")	cp.EDmet=1;			
+	if(params->wavelet.EDmethod=="CU")	cp.EDmet=2;			
+	
 	cp.curv=false;
+	cp.edgcurv=false;
 	cp.opaRG=false;
 	cp.opaBY=false;
 	cp.CHmet=0;	
@@ -143,26 +191,31 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 	if(params->wavelet.CHmethod=="link")	cp.CHmet=2;			
 	if(params->wavelet.HSmethod=="with")  cp.HSmet=true;					
 
-	//printf("params->wavelet.strength : %d\n",params->wavelet.strength);
 	cp.strength = min(1.f,max(0.f,((float)params->wavelet.strength / 100.f)));
-	//printf("cp.strength : %f\n",cp.strength);
-	if(wavCLVCcurve) cp.curv=true; 
-	
-	if(cp.curv) {//convert curve in discret values
-		cp.mulC[0]=200.f*(wavCLVCcurve[0]-0.5f);
-		cp.mulC[1]=200.f*(wavCLVCcurve[62]-0.5f);
-		cp.mulC[2]=200.f*(wavCLVCcurve[125]-0.5f);
-		cp.mulC[3]=200.f*(wavCLVCcurve[187]-0.5f);
-		cp.mulC[4]=200.f*(wavCLVCcurve[250]-0.5f);
-		cp.mulC[5]=200.f*(wavCLVCcurve[312]-0.5f);
-		cp.mulC[6]=200.f*(wavCLVCcurve[375]-0.5f);
-		cp.mulC[7]=200.f*(wavCLVCcurve[438]-0.5f);
-		cp.mulC[8]=200.f*(wavCLVCcurve[500]-0.5f);
-	}
-	else {
-         for(int level=0;level<9;level++)
-			cp.mulC[level] = 0.f;
-    }
+
+//	if(wavCLVCcurve) cp.curv=true; 
+	/*	if(cp.CHSLmet==2) {//curve
+		if(cp.curv) {//convert curve in discret values
+			cp.mulC[0]=200.f*(wavCLVCcurve[0]-0.5f);
+			cp.mulC[1]=200.f*(wavCLVCcurve[62]-0.5f);
+			cp.mulC[2]=200.f*(wavCLVCcurve[125]-0.5f);
+			cp.mulC[3]=200.f*(wavCLVCcurve[187]-0.5f);
+			cp.mulC[4]=200.f*(wavCLVCcurve[250]-0.5f);
+			cp.mulC[5]=200.f*(wavCLVCcurve[312]-0.5f);
+			cp.mulC[6]=200.f*(wavCLVCcurve[375]-0.5f);
+			cp.mulC[7]=200.f*(wavCLVCcurve[438]-0.5f);
+			cp.mulC[8]=200.f*(wavCLVCcurve[500]-0.5f);
+		}
+		else {
+			for(int level=0;level<9;level++)
+				cp.mulC[level] = 0.f;
+		}
+		}
+		*/
+//	else if(cp.CHSLmet==1) {//slider
+		for(int m=0;m<maxmul;m++)
+        cp.mulC[m]=waparams.ch[m];	
+//	}	
 	if(waOpacityCurveRG) cp.opaRG=true;
 		
 	if(cp.opaRG) {
@@ -197,7 +250,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
          for(int level=0;level<9;level++)
 			cp.mulopaBY[level] = 0.f;
     }
-	
+	if(wavCLVCcurve) cp.edgcurv=true; 	
 	for(int m=0;m<maxmul;m++)
         cp.mul[m]=waparams.c[m];
         cp.mul[9]=(float) waparams.sup;
@@ -223,6 +276,8 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 		cp.conres=waparams.rescon;
 		cp.conresH=waparams.resconH;
 		cp.chrores=waparams.reschro;
+		//cp.hueres=waparams.reshue;
+		cp.hueres=2.f;
 		cp.th=float(waparams.thr);
 		cp.thH=float(waparams.thrH);
 		cp.sky=waparams.sky;
@@ -238,7 +293,6 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 		cp.t_ry = static_cast<float>(params->wavelet.hueskin2.value[3]) / 100.0f;
 		cp.numlevH=params->wavelet.threshold;
 		
-		cp.numlevH=params->wavelet.threshold;
 		//shadows
 		cp.b_lsl = static_cast<float>(params->wavelet.bllev.value[0]);
 		cp.t_lsl = static_cast<float>(params->wavelet.bllev.value[1]);
@@ -247,12 +301,13 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 		cp.numlevS=params->wavelet.threshold2;
 		int maxlevS=9-cp.numlevH;
 		cp.numlevS = MIN(cp.numlevS,maxlevS);
+		//printf("levHigh=%d levShad=%d\n",cp.numlevH,cp.numlevS);
 		//highlight
 		cp.b_lhl = static_cast<float>(params->wavelet.hllev.value[0]);
 		cp.t_lhl = static_cast<float>(params->wavelet.hllev.value[1]);
 		cp.b_rhl = static_cast<float>(params->wavelet.hllev.value[2]);
 		cp.t_rhl = static_cast<float>(params->wavelet.hllev.value[3]);
-		//printf("H=%d S=%d\n",cp.numlevH,cp.numlevS);
+		//printf("BL=%f TL=%f BR=%f TR=%f\n",cp.b_lhl,cp.t_lhl,cp.b_rhl,cp.t_rhl);
 		//pastel
 		cp.b_lpast = static_cast<float>(params->wavelet.pastlev.value[0]);
 		cp.t_lpast = static_cast<float>(params->wavelet.pastlev.value[1]);
@@ -263,8 +318,22 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 		cp.t_lsat = static_cast<float>(params->wavelet.satlev.value[1]);
 		cp.b_rsat = static_cast<float>(params->wavelet.satlev.value[2]);
 		cp.t_rsat = static_cast<float>(params->wavelet.satlev.value[3]);
-		
-		
+		//edge local contrast	
+		cp.edg_low = static_cast<float>(params->wavelet.edgcont.value[0]);
+		cp.edg_mean = static_cast<float>(params->wavelet.edgcont.value[1]);
+		cp.edg_max = static_cast<float>(params->wavelet.edgcont.value[2]);
+		cp.edg_sd = static_cast<float>(params->wavelet.edgcont.value[3]);
+		//level noise
+		cp.lev0s =static_cast<float>(params->wavelet.level0noise.value[0]);
+		cp.lev0n =static_cast<float>(params->wavelet.level0noise.value[1]);
+		cp.lev1s =static_cast<float>(params->wavelet.level1noise.value[0]);
+		cp.lev1n =static_cast<float>(params->wavelet.level1noise.value[1]);
+		cp.lev2s =static_cast<float>(params->wavelet.level2noise.value[0]);
+		cp.lev2n =static_cast<float>(params->wavelet.level2noise.value[1]);
+
+		cp.detectedge	= false;
+		cp.detectedge = params->wavelet.medianlev;
+		//printf("low=%f mean=%f sd=%f max=%f\n",cp.edg_low,cp.edg_mean,cp.edg_sd,cp.edg_max);
 		int minwin=min(imwidth,imheight);
 		int maxlevelcrop=9;
 		if(cp.mul[9]!=0)
@@ -376,7 +445,9 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 	   float *meanN = new float [9];
 	   float *sigma = new float [9];
 	   float *sigmaN = new float [9];
-		
+	   float *MaxP = new float [9];
+	   float *MaxN = new float [9];
+	   
 		float** varhue = new float*[tileheight];
 		for (int i=0; i<tileheight; i++)
 			varhue[i] = new float[tilewidth];
@@ -514,52 +585,153 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 				int datalen = labco->W * labco->H;
 
 				int levwavL = levwav;
-				//printf("LevwavL before: %d\n",levwavL);
-				if(cp.contrast == 0 && cp.conres == 0.f && cp.conresH == 0.f && cp.val ==0 && params->wavelet.CLmethod=="all") { // no processing of residual L  or edge=> we probably can reduce the number of levels
+				bool ref0=false;
+						if(cp.lev0s > 0.f || cp.lev1s > 0.f || cp.lev2s > 0.f) ref0=true;
+
+				printf("LevwavL before: %d\n",levwavL);
+				if(cp.contrast == 0.f && cp.conres == 0.f && cp.conresH == 0.f && cp.val ==0  && !ref0 && params->wavelet.CLmethod=="all") { // no processing of residual L  or edge=> we probably can reduce the number of levels
 					while(levwavL > 0 && cp.mul[levwavL-1] == 0.f) // cp.mul[level] == 0.f means no changes to level
 						levwavL--;
 				}
-				//printf("LevwavL after: %d\n",levwavL);
+				printf("LevwavL after: %d\n",levwavL);
+				if(levwavL < 3) levwavL=3;//to allow edge  => I always allocate 3 levels..because if user select wavelet it is to do something !!
 				if(levwavL > 0) {
 					wavelet_decomposition* Ldecomp = new wavelet_decomposition (labco->data, labco->W, labco->H, levwavL, 1, skip, max(1,wavNestedLevels), DaubLen );
 					if(!Ldecomp->memoryAllocationFailed) {
-						WaveletcontAllL(labco, varhue, varchro, *Ldecomp, cp, skip);
+						
+					float madL[8][3];
+					bool memoryAllocationFailed = false;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(dynamic) collapse(2) num_threads(wavNestedLevels) if(wavNestedLevels>1)
+#endif				
+					for (int lvl=0; lvl<3; lvl++) {
+						for (int dir=1; dir<4; dir++) {
+							int Wlvl_L = Ldecomp->level_W(lvl);
+							int Hlvl_L = Ldecomp->level_H(lvl);
+							
+							float ** WavCoeffs_L = Ldecomp->level_coeffs(lvl);
+				
+							madL[lvl][dir-1] = SQR(Mad(WavCoeffs_L[dir], Wlvl_L*Hlvl_L));
+						}
+					}
+						int ind=0;
+						bool ref=false;
+						if(cp.lev0s > 0.f || cp.lev1s > 0.f || cp.lev2s > 0.f) ref=true;
+						
+						if(cp.val > 0 || ref) {//edge
+							Evaluate2(*Ldecomp, cp, ind, mean, meanN, sigma, sigmaN, MaxP, MaxN, madL);
+						}
+				//init for edge and denoise
+				float vari[3];
+				
+				vari[0]=8.f*SQR((cp.lev0n/125.0)*(1.0+ cp.lev0n/25.0));
+				vari[1]=8.f*SQR((cp.lev1n/125.0)*(1.0+ cp.lev1n/25.0));
+				vari[2]=8.f*SQR((cp.lev2n/125.0)*(1.0+ cp.lev2n/25.0));
+				int edge=1;
+				if(cp.lev0n > 0.1f || cp.lev1n > 0.1f || cp.lev2n > 0.1f) {
+					vari[0] = max(0.0001f,vari[0]);
+					vari[1] = max(0.0001f,vari[1]);
+					vari[2] = max(0.0001f,vari[2]);
+					float* noisevarlum = NULL;  // we need a dummy to pass it to WaveletDenoiseAllL
+					if(!WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, vari, edge))//
+						memoryAllocationFailed = true;
+				}		
+				ind=1;
+				//Flat curve for Contrast=f(H) in levels
+				FlatCurve* ChCurve = NULL;//curve C=f(H)
+				bool Chutili = false;
+				ChCurve = new FlatCurve(params->wavelet.Chcurve);
+				if (!ChCurve || ChCurve->isIdentity()) {
+					if (ChCurve) {
+						delete ChCurve;
+						ChCurve = NULL;
+					}
+				} else
+					Chutili = true;
+						
+						
+						WaveletcontAllL(labco, varhue, varchro, *Ldecomp, cp, skip, mean, meanN, sigma, sigmaN, MaxP, MaxN, wavCLVCcurve, ChCurve, Chutili);
+						if(cp.val > 0 || ref) {//edge
+							Evaluate2(*Ldecomp, cp, ind, mean, meanN, sigma, sigmaN, MaxP, MaxN, madL);
+						}
+						
 						Ldecomp->reconstruct(labco->data, cp.strength);
 					}
 					delete Ldecomp;
 				}
-				int levwava = levwav;
-				//printf("Levwava before: %d\n",levwava);
-				if(cp.chrores == 0.f && params->wavelet.CLmethod=="all") { // no processing of residual ab => we probably can reduce the number of levels
-					while(levwava > 0 && (((cp.CHmet==2 && (cp.chro == 0.f || cp.mul[levwava-1] == 0.f )) || (cp.CHmet!=2 && (levwava == 10 || (!cp.curv || (cp.curv && cp.mulC[levwava-1] == 0.f)))))) && (!cp.opaRG || levwava == 10 || (cp.opaRG && cp.mulopaRG[levwava-1] == 0.f))) {
-						levwava--;
+				//Flat curve for H=f(H) in residual image
+				FlatCurve* hhCurve = NULL;//curve H=f(H)
+				bool hhutili = false;
+				hhCurve = new FlatCurve(params->wavelet.hhcurve);
+				if (!hhCurve || hhCurve->isIdentity()) {
+					if (hhCurve) {
+						delete hhCurve;
+						hhCurve = NULL;
 					}
-				}
-				//printf("Levwava after: %d\n",levwava);
-				if(levwava > 0) {
-					wavelet_decomposition* adecomp = new wavelet_decomposition (labco->data+datalen, labco->W, labco->H,levwava, 1, skip, max(1,wavNestedLevels), DaubLen );
-					if(!adecomp->memoryAllocationFailed) {
-						WaveletcontAllAB(labco, varhue, varchro, *adecomp, cp, true);
-						adecomp->reconstruct(labco->data+datalen, cp.strength);
+				} else
+					hhutili = true;
+
+				
+				if(!hhutili) {//always a or b
+					int levwava = levwav;
+				//	printf("Levwava before: %d\n",levwava);
+					if(cp.chrores == 0.f && params->wavelet.CLmethod=="all") { // no processing of residual ab => we probably can reduce the number of levels
+						while(levwava > 0 && (((cp.CHmet==2 && (cp.chro == 0.f || cp.mul[levwava-1] == 0.f )) || (cp.CHmet!=2 && (levwava == 10 || (!cp.curv  || (cp.curv && cp.mulC[levwava-1] == 0.f)))))) && (!cp.opaRG || levwava == 10 || (cp.opaRG && cp.mulopaRG[levwava-1] == 0.f)) && ((levwava == 10 ||(cp.CHSLmet==1 && cp.mulC[levwava-1] == 0.f)))) {
+							levwava--;
+						}
 					}
-					delete adecomp;
-				}
-				int levwavb = levwav;
-				//printf("Levwavb before: %d\n",levwavb);
-				if(cp.chrores == 0.f && params->wavelet.CLmethod=="all") { // no processing of residual ab => we probably can reduce the number of levels
-					while(levwavb > 0 && (((cp.CHmet==2 && (cp.chro == 0.f || cp.mul[levwavb-1] == 0.f )) || (cp.CHmet!=2 && (levwavb == 10 || (!cp.curv || (cp.curv && cp.mulC[levwavb-1] == 0.f)))))) && (!cp.opaBY || levwavb == 10 || (cp.opaBY && cp.mulopaBY[levwavb-1] == 0.f))) {
-						levwavb--;
+					//printf("Levwava after: %d\n",levwava);
+					if(levwava > 0) {
+						wavelet_decomposition* adecomp = new wavelet_decomposition (labco->data+datalen, labco->W, labco->H,levwava, 1, skip, max(1,wavNestedLevels), DaubLen );
+						if(!adecomp->memoryAllocationFailed) {
+							WaveletcontAllAB(labco, varhue, varchro, *adecomp, cp, true);
+							adecomp->reconstruct(labco->data+datalen, cp.strength);
+						}
+						delete adecomp;
 					}
-				}
-				//printf("Levwavb after: %d\n",levwavb);
-				if(levwavb > 0) {
-					wavelet_decomposition* bdecomp = new wavelet_decomposition (labco->data+2*datalen, labco->W, labco->H, levwavb, 1, skip, max(1,wavNestedLevels), DaubLen );
-					if(!bdecomp->memoryAllocationFailed) {
-						WaveletcontAllAB(labco, varhue, varchro, *bdecomp, cp, false);
-						bdecomp->reconstruct(labco->data+2*datalen, cp.strength);
+					int levwavb = levwav;
+					//printf("Levwavb before: %d\n",levwavb);
+					if(cp.chrores == 0.f && params->wavelet.CLmethod=="all") { // no processing of residual ab => we probably can reduce the number of levels
+					while(levwavb > 0 && (((cp.CHmet==2 && (cp.chro == 0.f || cp.mul[levwavb-1] == 0.f )) || (cp.CHmet!=2 && (levwavb == 10 || (!cp.curv || (cp.curv && cp.mulC[levwavb-1] == 0.f)))))) && (!cp.opaBY || levwavb == 10 || (cp.opaBY && cp.mulopaBY[levwavb-1] == 0.f)) && ((levwavb == 10 ||(cp.CHSLmet==1 && cp.mulC[levwavb-1] == 0.f)))) {
+							levwavb--;
+						}
 					}
-					delete bdecomp;
-				}
+				//	printf("Levwavb after: %d\n",levwavb);
+					if(levwavb > 0) {
+						wavelet_decomposition* bdecomp = new wavelet_decomposition (labco->data+2*datalen, labco->W, labco->H, levwavb, 1, skip, max(1,wavNestedLevels), DaubLen );
+						if(!bdecomp->memoryAllocationFailed) {
+							WaveletcontAllAB(labco, varhue, varchro, *bdecomp, cp, false);
+							bdecomp->reconstruct(labco->data+2*datalen, cp.strength);
+						}
+						delete bdecomp;
+					}
+				} else {// a and b
+					int levwavab = levwav;
+					printf("Levwavab before: %d\n",levwavab);
+					if(cp.chrores == 0.f && !hhutili && params->wavelet.CLmethod=="all") { // no processing of residual ab => we probably can reduce the number of levels
+						while(levwavab > 0 && (((cp.CHmet==2 && (cp.chro == 0.f || cp.mul[levwavab-1] == 0.f )) || (cp.CHmet!=2 && (levwavab == 10 || (!cp.curv  || (cp.curv && cp.mulC[levwavab-1] == 0.f)))))) && (!cp.opaRG || levwavab == 10 || (cp.opaRG && cp.mulopaRG[levwavab-1] == 0.f)) && ((levwavab == 10 ||(cp.CHSLmet==1 && cp.mulC[levwavab-1] == 0.f)))) {
+							levwavab--;
+						}
+					}
+					printf("Levwavab after: %d\n",levwavab);
+					if(levwavab > 0) {
+						wavelet_decomposition* adecomp = new wavelet_decomposition (labco->data+datalen, labco->W, labco->H,levwavab, 1, skip, max(1,wavNestedLevels), DaubLen );
+						wavelet_decomposition* bdecomp = new wavelet_decomposition (labco->data+2*datalen, labco->W, labco->H, levwavab, 1, skip, max(1,wavNestedLevels), DaubLen );
+						if(!adecomp->memoryAllocationFailed && !bdecomp->memoryAllocationFailed) {
+							WaveletcontAllAB(labco, varhue, varchro, *adecomp, cp, true);
+							WaveletcontAllAB(labco, varhue, varchro, *bdecomp, cp, false);
+							WaveletAandBAllAB(labco, varhue, varchro, *adecomp, *bdecomp, cp, hhCurve, hhutili );
+							
+							adecomp->reconstruct(labco->data+datalen, cp.strength);
+							bdecomp->reconstruct(labco->data+2*datalen, cp.strength);
+							
+						}
+						delete adecomp;
+						delete bdecomp;
+					}
+				}	
+				if (hhCurve)
+					delete hhCurve;
 
 				if(numtiles > 1 || (numtiles == 1 && cp.avoi)) {
 					//calculate mask for feathering output tile overlaps
@@ -733,10 +905,10 @@ omp_set_nested(oldNested);
 			delete dsttmp;
 		}
 		
-	if (settings->verbose) {
+//	if (settings->verbose) {
 		t2e.set();
 		printf("Wavelet performed in %d usec:\n", t2e.etime(t1e));
-	}
+//	}
 		
 }//end o
 
@@ -749,22 +921,44 @@ omp_set_nested(oldNested);
 #undef epsilon
 
 	void ImProcFunctions::Aver( float *  RESTRICT DataList, int datalen, float &averagePlus, float &averageNeg, float &max, float &min) {
+
 		//find absolute mean
-		int averaP=0, averaN=0, count=0, countP=0, countN=0;
-		max=0.f;min=0.f;
-		averagePlus=0.f;averageNeg=0.f;
-		while (count<datalen) {
-			if(DataList[count] >= 0.f) {averaP += abs((int)DataList[count]);	
-			if(abs((int)DataList[count])> max) max=abs((int)DataList[count]);
-			countP++;
+		int countP = 0, countN = 0;
+		float averaP = 0.f, averaN = 0.f;
+		
+		float thres = 5.f;//different fom zero to take into account only data large enough
+
+#ifdef _OPENMP
+#pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
+#endif
+{
+		float lmax = 0.f, lmin = 0.f;
+#ifdef _OPENMP
+#pragma omp for reduction(+:averaP,averaN,countP,countN) nowait
+#endif
+		for(int i=0;i<datalen;i++) {
+			if(DataList[i] >= thres) {
+				averaP += DataList[i];	
+				if(DataList[i]> lmax)
+					lmax = DataList[i];
+				countP++;
 			}
-			if(DataList[count] < 0.f) {averaN += abs((int)DataList[count]);	
-			if(abs((int)DataList[count])> min) min=abs((int)DataList[count]);
-			countN++;
+			else if(DataList[i] < -thres) {
+				averaN += DataList[i];	
+				if(DataList[i] < lmin)
+					lmin = DataList[i];
+				countN++;
 			}
-			
-			count++;
-		}	
+		}
+#ifdef _OPENMP
+#pragma omp critical
+#endif
+{
+		max = max > lmax ? max : lmax;
+		min = min < lmin ? min : lmin;
+}
+}
+
 		averagePlus=averaP/countP;
 		averageNeg=averaN/countN;
 		
@@ -772,96 +966,94 @@ omp_set_nested(oldNested);
 	
 	
 	void ImProcFunctions::Sigma( float *  RESTRICT DataList, int datalen, float averagePlus, float averageNeg, float &sigmaPlus, float &sigmaNeg) {
-	    int count=0, countP=0, countN=0;
-		float variP=0.f,variN=0.f;
-		while (count<datalen) {
-			if(DataList[count] >= 0.f) {variP += SQR(DataList[count] - averagePlus);	
-			countP++;
+	    int countP = 0, countN = 0;
+		float variP = 0.f, variN = 0.f;
+		float thres = 5.f;//different fom zero to take into account only data large enough
+
+#ifdef _OPENMP
+#pragma omp parallel for reduction(+:variP,variN,countP,countN) num_threads(wavNestedLevels) if(wavNestedLevels>1)
+#endif
+		for(int i=0;i<datalen;i++) {
+			if(DataList[i] >= thres) {
+				variP += SQR(DataList[i] - averagePlus);	
+				countP++;
 			}
-			else if(DataList[count] < 0.f) {variN += SQR(DataList[count] - averageNeg);	
-			countN++;
+			else if(DataList[i] <= -thres) {
+				variN += SQR(DataList[i] - averageNeg);
+				countN++;
 			}
-		count++;
 		}
+		
 		sigmaPlus=sqrt(variP/countP);
 		sigmaNeg=sqrt(variN/countN);
 
 	}
 	
-	void ImProcFunctions::Evaluate(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a,
-											wavelet_decomposition &WaveletCoeffs_b, float *av_LL, float *av_aa, float *av_bb,struct cont_params cp, int ind, float *mean, float *meanN, float *sigma, float *sigmaN){
+	void ImProcFunctions::Evaluate2(wavelet_decomposition &WaveletCoeffs_L, 
+									struct cont_params cp, int ind, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, float madL[8][3]){
+StopWatch Stop1("Evaluate2");
 		int maxlvl = WaveletCoeffs_L.maxlevel();
 		for (int lvl=0; lvl<maxlvl; lvl++) {
 
 			int Wlvl_L = WaveletCoeffs_L.level_W(lvl);
 			int Hlvl_L = WaveletCoeffs_L.level_H(lvl);
 
-			int Wlvl_ab = WaveletCoeffs_a.level_W(lvl);
-			int Hlvl_ab = WaveletCoeffs_a.level_H(lvl);
-
-
 			int skip_L = WaveletCoeffs_L.level_stride(lvl);
-			int skip_ab = WaveletCoeffs_a.level_stride(lvl);
 
 			float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
-			float ** WavCoeffs_a = WaveletCoeffs_a.level_coeffs(lvl);
-			float ** WavCoeffs_b = WaveletCoeffs_b.level_coeffs(lvl);
 
-			Eval (WavCoeffs_L, WavCoeffs_a, WavCoeffs_b, lvl, cp, Wlvl_L, Hlvl_L, Wlvl_ab, Hlvl_ab,skip_L, skip_ab, av_LL, av_aa, av_bb, ind, mean, meanN, sigma, sigmaN);		
+			Eval2 (WavCoeffs_L, lvl, cp, Wlvl_L, Hlvl_L, skip_L,  ind, mean, meanN, sigma, sigmaN, MaxP, MaxN, madL[lvl]);		
 		}
 											
 	}										
-	void ImProcFunctions::Eval (float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level,struct cont_params cp,
-									int W_L, int H_L, int W_ab, int H_ab,int skip_L, int skip_ab, float * av_LL, float * av_aa, float * av_bb, int ind, float *mean, float *meanN, float *sigma, float *sigmaN)
+	void ImProcFunctions::Eval2 (float ** WavCoeffs_L,  int level,struct cont_params cp,
+									int W_L, int H_L, int skip_L, int ind, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, float *madL)
 	{
 		const float eps = 0.01f;
 		
 		float ava[4], avb[4], avLP[4], avLN[4];
 		float maxL[4], minL[4], maxa[4], maxb[4];
 		float sigP[4], sigN[4];
-		float AvL,AvN,SL,SN;
-		
+		float AvL,AvN,SL,SN, maxLP, maxLN,MADL;
+		float madLlev[10];
 		float thr= params->wavelet.thres;
 		for (int dir=1; dir<4; dir++) {
-			{
-				float averagePlus=0.f,averageNeg=0.f, max, min;
-			//	Aver(WavCoeffs_L[dir], W_L*H_L,  averagePlus, averageNeg, max, min);
-				Aver(WavCoeffs_b[dir], W_L*H_L,  averagePlus, averageNeg, max, min);
-				avLP[dir] = fabs(averagePlus);
-				avLN[dir] = -fabs(averageNeg);
-				maxL[dir] = max;
-				minL[dir] = -min;
-				float sigmaPlus, sigmaNeg;
-				Sigma(WavCoeffs_b[dir], W_L*H_L, avLP[dir], -avLN[dir], sigmaPlus, sigmaNeg);
-				sigP[dir]=sigmaPlus;
-				sigN[dir]=sigmaNeg;
-			//	printf("dir=%d level=%d avLP=%f max=%f avLN=%f min=%f sigP=%f sigN=%f\n",dir,level,avLP[dir] ,maxL[dir], avLN[dir] ,minL[dir], sigP[dir], sigN[dir]);
-			}
-		
+			Aver(WavCoeffs_L[dir], W_L*H_L,  avLP[dir], avLN[dir], maxL[dir], minL[dir]);
+			Sigma(WavCoeffs_L[dir], W_L*H_L, avLP[dir], avLN[dir], sigP[dir], sigN[dir]);
+		//	printf("dir=%d level=%d avLP=%f max=%f avLN=%f min=%f sigP=%f sigN=%f\n",dir,level,avLP[dir] ,maxL[dir], avLN[dir] ,minL[dir], sigP[dir], sigN[dir]);
 		}
-		AvL=0.f;AvN=0.f;SL=0.f;SN=0.f;
+		AvL=0.f;AvN=0.f;SL=0.f;SN=0.f;maxLP=0.f;maxLN=0.f;MADL=0.f;
 		for (int dir=1; dir<4; dir++) {
 			AvL +=avLP[dir];
 			AvN +=avLN[dir];
 			SL +=sigP[dir];
 			SN +=sigN[dir];
+			maxLP += maxL[dir];
+			maxLN += minL[dir];
+			MADL += madL[dir];
 		}
 		AvL/=3;
 		AvN/=3;
 		SL/=3;
 		SN/=3;
+		maxLP/=3;
+		maxLN/=3;
+		MADL/=3;
+		if(level < 3) MADL=sqrt(MADL);else MADL=0.f;
 		mean[level]=AvL;
 		meanN[level]=AvN;
 		sigma[level]=SL;
 		sigmaN[level]=SN;
-		
-		//printf("Ind=%d Level=%d AvL=%f AvN=%f SL=%f SN=%f\n",ind, level,mean[level],meanN[level],sigma[level],sigmaN[level]);
-		
+		MaxP[level]=maxLP;
+		MaxN[level]=maxLN;
+		if(params->wavelet.CLmethod!="all") {//display only if user choose different from all
+		printf("Ind=%d Level=%d MadL=%f AvL=%f AvN=%f SL=%f SN=%f maxP=%f maxN=%f\n",ind, level,MADL,mean[level],meanN[level],sigma[level],sigmaN[level],MaxP[level],MaxN[level]);
+		}
 	}	
 	
 	void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float **varchrom, wavelet_decomposition &WaveletCoeffs_L, 
-											struct cont_params cp, int skip){
-		
+											struct cont_params cp, int skip, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, const WavCurve & wavCLVCcurve, FlatCurve* ChCurve, bool Chutili){
+		StopWatch Stop1("WaveletcontAllL");
 		int maxlvl = WaveletCoeffs_L.maxlevel();
 		int W_L = WaveletCoeffs_L.level_W(0);
 		int H_L = WaveletCoeffs_L.level_H(0);
@@ -872,7 +1064,6 @@ omp_set_nested(oldNested);
 		float contrast=cp.contrast;
 		float multL=(float)contrast*(maxl-1.f)/100.f + 1.f;	
 		float multH=(float) contrast*(maxh-1.f)/100.f + 1.f;
-
 		double avedbl=0.f; // use double precision for big summations
 		if(contrast != 0.f) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
 #ifdef _OPENMP
@@ -890,7 +1081,24 @@ omp_set_nested(oldNested);
 		float bl=1.f;
 		float factorx=1.f;
 
-		
+		float *koeLi[9];
+		float maxkoeLi[9];
+		float *koeLibuffer = NULL;
+		bool lipschitz =false;	
+		//if(cp.lips)lipschitz=true;//I suppress "logical" normal algorithm, low quality, same time
+		lipschitz=true;
+
+		if(lipschitz==true) {
+		for(int y=0;y<9;y++) maxkoeLi[y]=0.f;
+		koeLibuffer = new float[9*H_L*W_L];
+			for (int i=0; i<9; i++) {
+				koeLi[i] = &koeLibuffer[i*W_L*H_L];
+			}	
+					
+		for(int j=0;j<9;j++)
+			for (int i=0; i<W_L*H_L; i++) 
+				koeLi[j][i]=0.f;
+		}
 #ifdef _OPENMP
 #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
@@ -922,9 +1130,10 @@ omp_set_nested(oldNested);
 #pragma omp for nowait
 #endif				
 			for (int i=0; i<W_L*H_L; i++) {
-				int ii = i/W_L;
-				int jj = i-ii*W_L;
-				float LL = labco->L[ii*2][jj*2];						
+				//int ii = i/W_L;
+				//int jj = i-ii*W_L;
+				//float LL = labco->L[ii*2][jj*2];	
+				float LL=WavCoeffs_L0[i];
 				float LL100 = LL/327.68f;
 				float tran = 5.f;//transition
 				//shadow
@@ -954,6 +1163,105 @@ omp_set_nested(oldNested);
 				}
 			}
 		}
+		//enabled Lipschitz..replace simple by complex edge detection
+		// I found this concept on the web (doctoral thesis on medical Imaging)
+		// I was inspired by the principle of Canny and Lipschitz (continuity and derivability)
+		// I adapted the principle but have profoundly changed the algorithm
+		// One can 1) change all parameters and found good parameters;
+		//one can also chnage in calckoe
+		float edd=settings->ed_detec;
+		float eddlow=settings->ed_low;
+		float eddlipinfl=settings->ed_lipinfl;
+		float eddlipampl=settings->ed_lipampl;
+		
+
+		
+if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory..more time...	
+		float *tmCBuffer = new float[H_L*W_L];
+		float *tmC[H_L];
+		for (int i=0; i<H_L; i++){
+			tmC[i] = &tmCBuffer[i*W_L];
+		}
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic) collapse(2)
+#endif		
+		for (int lvl=0; lvl<3; lvl++) {
+			for (int dir=1; dir<4; dir++) {
+				int W_L = WaveletCoeffs_L.level_W(lvl);
+				int H_L = WaveletCoeffs_L.level_H(lvl);
+
+				float ** WavCoeffs_LL = WaveletCoeffs_L.level_coeffs(lvl);
+				calckoe(WavCoeffs_LL, cp, koeLi,lvl , dir, W_L, H_L, edd, maxkoeLi, tmC);
+				// return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag				
+			}
+		}
+		delete [] tmCBuffer;
+
+		float aamp=1.f+cp.eddetthrHi/100.f;
+
+		for (int lvl=0; lvl<3; lvl++) {
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic,16)
+#endif		
+		for (int i=1; i<H_L-1; i++) {
+				for (int j=1; j<W_L-1; j++) {
+					//treatment of koeLi and maxkoeLi
+					float interm = 0.f;
+					for (int dir=1; dir<4; dir++) {
+					//here I evaluate combinaison of vert / diag / horiz...we are with multiplicators of the signal
+						interm += SQR(koeLi[lvl*3 + dir-1][i*W_L + j]);		
+					}
+					interm = sqrt(interm);
+//					interm /= 1.732f;//interm = pseudo variance koeLi
+					interm *= 0.57736721f;
+					float kampli = 1.f;
+					// I think this double ratio (alph, beta) is better than arctg 
+					float alph = koeLi[lvl*3][i*W_L + j] / koeLi[lvl*3 + 1][i*W_L + j];//ratio between horizontal and vertical
+					float beta = koeLi[lvl*3+2][i*W_L + j] / koeLi[lvl*3 + 1][i*W_L + j];//ratio between diagonal and horizontal
+					
+					float alipinfl=(eddlipampl-1.f)/(1.f-eddlipinfl);
+					float blipinfl=eddlipampl-alipinfl;
+					//alph evaluate the direction of the gradient regularity Lipschitz
+					// if = 1 we are on an edge
+					// if 0 we are not
+					// we can change and use log..or Arctg but why ?? we can change if need ...
+					//Liamp=1 for eddlipinfl
+					//liamp > 1 for alp >eddlipinfl and alph < 1
+					//Liamp < 1 for alp < eddlipinfl and alph > 0	
+					if(alph > 1.f) {alph = 1.f/ alph;}
+					if(beta > 1.f) {beta=1.f/beta;}
+						//take into account diagonal
+						//if in same value OK
+						//if not no edge or reduction
+				    float bet=1.f;
+					//if(cp.lip3) {//enhance algorithm
+						if(alph > eddlipinfl && beta < 0.85f*eddlipinfl) {//0.85 arbitrary value ==> eliminate from edge if H V D too different
+							bet=beta;
+						}
+					//}
+					float AmpLip=1.f;
+					
+					if(alph > eddlipinfl) {AmpLip=alipinfl*alph+blipinfl;kampli=SQR(bet)*AmpLip*aamp;}//If beta low reduce kampli
+					else {AmpLip=(1.f/eddlipinfl)*SQR(SQR(alph*bet));kampli=AmpLip/aamp;}//Strong Reduce if beta low
+					// comparaison betwwen pixel and neighbours to do ==> I think 3 dir above is better
+					
+				   //koeLi[lvl*3][i*W_L + j]  koeLi[lvl*3][(i-1)*W_L + j]  koeLi[lvl*3][(i+1)*W_L + j]
+					//		 koeLi[lvl*3][i*W_L + j+1]  koeLi[lvl*3][i*W_L + j-1])  koeLi[lvl*3][(i-1)*W_L + j-1]
+					//		 koeLi[lvl*3][(i-1)*W_L + j+1] koeLi[lvl*3][(i+1)*W_L + j-1] koeLi[lvl*3][(i+1)*W_L + j+1])
+					
+				// apply to each direction Wavelet level : horizontal / vertiacle / diagonal
+					
+					interm*=kampli;
+					if(interm < cp.eddetthr/eddlow) interm = 0.01f;//eliminate too low values
+					//we can change this part of algo==> not equal but ponderate
+					koeLi[lvl*3][i*W_L + j]=koeLi[lvl*3 + 1][i*W_L + j]=koeLi[lvl*3 + 2][i*W_L + j]=interm;//new value
+					//here KoeLi contains values where gradient is high and coef high, and eliminate low values...
+				}
+			}
+		}	
+		// end 
+}	
+	
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic) collapse(2)
 #endif		
@@ -965,12 +1273,80 @@ omp_set_nested(oldNested);
 
 				float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
 
-				ContAllL (labco,  varhue, varchrom, WavCoeffs_L, WavCoeffs_L0, lvl, dir, cp, Wlvl_L, Hlvl_L, skip);		
+				ContAllL (koeLi, maxkoeLi, lipschitz, maxlvl, labco,  varhue, varchrom, WavCoeffs_L, WavCoeffs_L0, lvl, dir, cp, Wlvl_L, Hlvl_L, skip, mean, meanN, sigma, sigmaN, MaxP, MaxN, wavCLVCcurve, ChCurve, Chutili);		
 			}
 		}
-}		
+		
+		
+}
+		//delete edge detection
+	if(koeLibuffer) {
+		delete [] koeLibuffer;
+	}
 	}
 
+	void ImProcFunctions::WaveletAandBAllAB(LabImage * labco, float ** varhue, float **varchrom, wavelet_decomposition &WaveletCoeffs_a, wavelet_decomposition &WaveletCoeffs_b,
+											 struct cont_params cp, FlatCurve* hhCurve, bool hhutili){
+                StopWatch Stop1("WaveletAandBAllAB");
+                if (hhutili) {  // H=f(H)
+                        int W_L = WaveletCoeffs_a.level_W(0);
+                        int H_L = WaveletCoeffs_a.level_H(0);
+               
+                        float * WavCoeffs_a0 = WaveletCoeffs_a.coeff0;
+                        float * WavCoeffs_b0 = WaveletCoeffs_b.coeff0;
+#ifdef _OPENMP
+#pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
+#endif
+{
+#ifdef __SSE2__
+                        float huebuffer[W_L] ALIGNED64;
+                        float chrbuffer[W_L] ALIGNED64;
+#endif // __SSE2__
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic,16)
+#endif
+                        for (int i=0; i<H_L; i++) {
+#ifdef __SSE2__
+                                // precalculate hue and chr
+                               int k;
+                                for (k=0; k<W_L-3; k+=4) {
+                                        __m128 av = LVFU(WavCoeffs_a0[i*W_L+k]);
+                                        __m128 bv = LVFU(WavCoeffs_b0[i*W_L+k]);
+                                        __m128 huev = xatan2f(bv,av);
+                                        __m128 chrv = _mm_sqrt_ps(SQRV(av)+SQRV(bv));
+                                        STVF(huebuffer[k],huev);
+                                        STVF(chrbuffer[k],chrv);
+                                }
+                                for(;k<W_L;k++) {
+                                        huebuffer[k] = xatan2f(WavCoeffs_b0[i*W_L+k],WavCoeffs_a0[i*W_L+k]);
+                                        chrbuffer[k] = sqrtf(SQR(WavCoeffs_b0[i*W_L+k])+SQR(WavCoeffs_a0[i*W_L+k]))/327.68f;
+                                }
+#endif // __SSE2__
+                                for (int j=0; j<W_L; j++) {
+ 
+#ifdef __SSE2__
+                                        float hueR = huebuffer[j];
+                                        float chR = chrbuffer[j];
+#else
+                                        float hueR=xatan2f(WavCoeffs_b0[i*W_L+j],WavCoeffs_a0[i*W_L+j]);
+                                        float chR = sqrtf(SQR(WavCoeffs_b0[i*W_L+j])+SQR(WavCoeffs_a0[i*W_L+j]));
+#endif
+                                /*      if (editID == EUID_WW_HHCurve) {//H pipette
+                                                        float valpar =Color::huelab_to_huehsv2(hueR);
+                                                        editWhatever->v(i,j) = valpar;
+                                                }
+                                */             
+                                        float valparam = float((hhCurve->getVal(Color::huelab_to_huehsv2(hueR))-0.5f) * 1.7f) +hueR;//get H=f(H)  1.7 optimisation !
+                                        float2 sincosval = xsincosf(valparam);
+                                        WavCoeffs_a0[i*W_L+j]=chR*sincosval.y;
+                                        WavCoeffs_b0[i*W_L+j]=chR*sincosval.x;
+                                }
+                        } 
+}	
+	}
+											 
+}
+											 
 	void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float **varchrom, wavelet_decomposition &WaveletCoeffs_ab,
 											 struct cont_params cp, const bool useChannelA){
 		
@@ -1054,8 +1430,144 @@ omp_set_nested(oldNested);
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	void ImProcFunctions::ContAllL (LabImage * labco, float ** varhue, float **varchrom, float ** WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, struct cont_params cp,
-									int W_L, int H_L, int skip)
+void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, float *koeLi[9], int level, int dir, int W_L, int H_L, float edd, float *maxkoeLi, float **tmC){
+	int borderL = 2;
+	if(cp.eddetthr < 30.f) {
+			borderL = 1;
+		// I calculate coefficients with r size matrix 3x3 r=1 ; 5x5 r=2; 7x7 r=3
+		/*
+		float k[2*r][2*r];
+		for(int i=1;i<=(2*r+1);i++) {
+					for(int j=1;j<=(2*r+1);j++) {
+						k[i][j]=(1.f/6.283*sigma*sigma)*exp(-SQR(i-r-1)+SQR(j-r-1)/2.f*SQR(sigma));
+					}		
+		}
+		//I could also use Gauss.h for 3x3
+		// If necessary I can put a 7x7 matrix
+		*/
+		for (int i=1; i<H_L-1; i++) {//sigma=0.55
+			for (int j=1; j<W_L-1; j++) {
+				tmC[i][j]=(8.94f*WavCoeffs_LL[dir][i*W_L + j] + 1.71f*(WavCoeffs_LL[dir][(i-1)*W_L + j] + 1.71f*WavCoeffs_LL[dir][(i+1)*W_L + j]
+							+ 1.71f*WavCoeffs_LL[dir][i*W_L + j+1] + 1.71f*WavCoeffs_LL[dir][i*W_L + j-1]) + 0.33f*WavCoeffs_LL[dir][(i-1)*W_L + j-1]
+							+0.33f*WavCoeffs_LL[dir][(i-1)*W_L + j+1]+0.33f*WavCoeffs_LL[dir][(i+1)*W_L + j-1]+0.33f*WavCoeffs_LL[dir][(i+1)*W_L + j+1]) * 0.0584795f;
+				// apply to each direction Wavelet level : horizontal / vertiacle / diagonal
+				
+				
+			}
+		}	
+	}
+	else if(cp.eddetthr >= 30.f && cp.eddetthr < 50.f) {
+		borderL = 1;
+
+		for (int i=1; i<H_L-1; i++) {//sigma=0.85
+			for (int j=1; j<W_L-1; j++) {
+				tmC[i][j]=(4.0091f*WavCoeffs_LL[dir][i*W_L + j] + 2.0068f*(WavCoeffs_LL[dir][(i-1)*W_L + j] + 2.0068f*WavCoeffs_LL[dir][(i+1)*W_L + j]
+							+ 2.0068f*WavCoeffs_LL[dir][i*W_L + j+1] + 2.0068f*WavCoeffs_LL[dir][i*W_L + j-1]) + 1.0045f*WavCoeffs_LL[dir][(i-1)*W_L + j-1]
+							+1.0045f*WavCoeffs_LL[dir][(i-1)*W_L + j+1]+1.0045f*WavCoeffs_LL[dir][(i+1)*W_L + j-1]+1.0045f*WavCoeffs_LL[dir][(i+1)*W_L + j+1]) * 0.062288f;
+				// apply to each direction Wavelet level : horizontal / vertiacle / diagonal
+				
+				
+			}
+		}	
+	}
+	
+	
+	else if(cp.eddetthr >= 50.f && cp.eddetthr < 75.f) {
+		borderL = 1;
+		for (int i=1; i<H_L-1; i++) {
+			for (int j=1; j<W_L-1; j++) {//sigma=1.1
+				tmC[i][j]=(3.025f*WavCoeffs_LL[dir][i*W_L + j] + 2.001f*(WavCoeffs_LL[dir][(i-1)*W_L + j] + 2.001f*WavCoeffs_LL[dir][(i+1)*W_L + j]
+							+ 2.001f*WavCoeffs_LL[dir][i*W_L + j+1] + 2.001f*WavCoeffs_LL[dir][i*W_L + j-1]) + 1.323f*WavCoeffs_LL[dir][(i-1)*W_L + j-1]
+							+1.323f*WavCoeffs_LL[dir][(i-1)*W_L + j+1]+1.323f*WavCoeffs_LL[dir][(i+1)*W_L + j-1]+1.323f*WavCoeffs_LL[dir][(i+1)*W_L + j+1]) * 0.06127f;
+			}	
+		}
+	} 
+	else if(cp.eddetthr >= 75.f) {	
+		for (int i=2; i<H_L-2; i++) {
+			for (int j=2; j<W_L-2; j++) {
+				// Gaussian 1.1
+				// 0.5 2 3 2 0.5
+				// 2 7 10 7 2
+				// 3 10 15 10 3
+				// 2 7 10 7 2
+				// 0.5 2 3 2 0.5
+				// divi	113	
+				//Gaussian 1.4
+				// 2 4 5 4 2
+				// 4 9 12 9 4
+				// 5 12 15 12 5
+				// 4 9 12 9 4
+				// 2 4 5 4 2
+				// divi	159	
+				if(cp.eddetthr < 85.f){//sigma=1.1
+				tmC[i][j]=(15.f*WavCoeffs_LL[dir][i*W_L + j] + 10.f*WavCoeffs_LL[dir][(i-1)*W_L + j] + 10.f*WavCoeffs_LL[dir][(i+1)*W_L + j]
+							+ 10.f*WavCoeffs_LL[dir][i*W_L + j+1] + 10.f*WavCoeffs_LL[dir][i*W_L + j-1] + 7.f*WavCoeffs_LL[dir][(i-1)*W_L + j-1]
+							+7.f*WavCoeffs_LL[dir][(i-1)*W_L + j+1]+7.f*WavCoeffs_LL[dir][(i+1)*W_L + j-1]+7.f*WavCoeffs_LL[dir][(i+1)*W_L + j+1]
+							+3.f*WavCoeffs_LL[dir][(i-2)*W_L + j]+3.f*WavCoeffs_LL[dir][(i+2)*W_L + j]+3.f*WavCoeffs_LL[dir][i*W_L + j-2]+3.f*WavCoeffs_LL[dir][i*W_L + j+2]
+							+2.f*WavCoeffs_LL[dir][(i-2)*W_L + j-1]+2.f*WavCoeffs_LL[dir][(i-2)*W_L + j+1]+2.f*WavCoeffs_LL[dir][(i+2)*W_L + j+1]+2.f*WavCoeffs_LL[dir][(i+2)*W_L + j-1]
+							+2.f*WavCoeffs_LL[dir][(i-1)*W_L + j-2]+2.f*WavCoeffs_LL[dir][(i-1)*W_L + j+2]+2.f*WavCoeffs_LL[dir][(i+1)*W_L + j+2]+2.f*WavCoeffs_LL[dir][(i+1)*W_L + j-2]
+							+0.5f*WavCoeffs_LL[dir][(i-2)*W_L + j-2]+0.5f*WavCoeffs_LL[dir][(i-2)*W_L + j+2]+0.5f*WavCoeffs_LL[dir][(i+2)*W_L + j-2]+0.5f*WavCoeffs_LL[dir][(i+2)*W_L + j+2]
+							)*0.0088495f;
+				
+				}			
+				else {//sigma=1.4
+				tmC[i][j]=(15.f*WavCoeffs_LL[dir][i*W_L + j] + 12.f*WavCoeffs_LL[dir][(i-1)*W_L + j] + 12.f*WavCoeffs_LL[dir][(i+1)*W_L + j]
+							+ 12.f*WavCoeffs_LL[dir][i*W_L + j+1] + 12.f*WavCoeffs_LL[dir][i*W_L + j-1] + 9.f*WavCoeffs_LL[dir][(i-1)*W_L + j-1]
+							+9.f*WavCoeffs_LL[dir][(i-1)*W_L + j+1]+9.f*WavCoeffs_LL[dir][(i+1)*W_L + j-1]+9.f*WavCoeffs_LL[dir][(i+1)*W_L + j+1]
+							+5.f*WavCoeffs_LL[dir][(i-2)*W_L + j]+5.f*WavCoeffs_LL[dir][(i+2)*W_L + j]+5.f*WavCoeffs_LL[dir][i*W_L + j-2]+5.f*WavCoeffs_LL[dir][i*W_L + j+2]
+							+4.f*WavCoeffs_LL[dir][(i-2)*W_L + j-1]+4.f*WavCoeffs_LL[dir][(i-2)*W_L + j+1]+4.f*WavCoeffs_LL[dir][(i+2)*W_L + j+1]+4.f*WavCoeffs_LL[dir][(i+2)*W_L + j-1]
+							+4.f*WavCoeffs_LL[dir][(i-1)*W_L + j-2]+4.f*WavCoeffs_LL[dir][(i-1)*W_L + j+2]+4.f*WavCoeffs_LL[dir][(i+1)*W_L + j+2]+4.f*WavCoeffs_LL[dir][(i+1)*W_L + j-2]
+							+2.f*WavCoeffs_LL[dir][(i-2)*W_L + j-2]+2.f*WavCoeffs_LL[dir][(i-2)*W_L + j+2]+2.f*WavCoeffs_LL[dir][(i+2)*W_L + j-2]+2.f*WavCoeffs_LL[dir][(i+2)*W_L + j+2]
+							)*0.0062893f;
+				}	
+							
+
+									// apply to each direction Wavelet level : horizontal / vertiacle / diagonal
+			}
+		}
+	}
+				/*
+				// I suppress these 2 convolutions ==> lees good results==> probably because structure data different and also I compare to original value which have + and -
+					for(int i = borderL; i < H_L-borderL; i++ ) {//[-1 0 1] x==>j
+						for(int j = borderL; j < W_L-borderL; j++) {
+						tmC[i][j]=-	WavCoeffs_LL[dir][(i)*W_L + j-1] + 	WavCoeffs_LL[dir][(i)*W_L + j+1];
+						}
+					}
+					for(int i = borderL; i < H_L-borderL; i++ ) {//[1 0 -1] y==>i
+						for(int j = borderL; j < W_L-borderL; j++) {
+						tmC[i][j]= - WavCoeffs_LL[dir][(i-1)*W_L + j] + WavCoeffs_LL[dir][(i+1)*W_L + j];
+						}
+					}
+				*/
+				
+					float thr=40.f;//avoid artifact eg. noise...to test
+					float thr2=1.5f*edd;//edd can be modified in option ed_detect
+					thr2+=cp.eddet/30.f;//to test
+					float diffFactor = (cp.eddet/100.f);
+					for(int i = borderL; i < H_L-borderL; i++ ) {
+						for(int j = borderL; j < W_L-borderL; j++) {
+								// my own algo : probably a little false, but simpler as Lipschitz !
+								// Thr2 = maximum of the function ==> Lipsitch says = probably edge
+//								float temp = WavCoeffs_LL[dir][i*W_L + j];
+//								if(temp>=0.f &&  temp < thr) temp = thr;
+//								if(temp < 0.f &&  temp > -thr) temp = -thr;
+								float temp = max(fabsf(WavCoeffs_LL[dir][i*W_L + j]), thr );
+								koeLi[level*3 + dir-1][i*W_L + j]= min(thr2,fabs(tmC[i][j]/temp));// limit maxi
+								//it will be more complicated to calculate both Wh and Wv, but we have also Wd==> pseudo Lipschitz
+								if(koeLi[level*3+ dir-1][i*W_L + j] > maxkoeLi[level*3+ dir-1])
+									maxkoeLi[level*3+ dir-1] = koeLi[level*3 + dir-1][i*W_L + j];
+								float diff = maxkoeLi[level*3+ dir-1] - koeLi[level*3 + dir-1][i*W_L + j];
+								diff *= diffFactor;
+								koeLi[level*3 + dir-1][i*W_L + j] = maxkoeLi[level*3 + dir-1] - diff;
+						}
+					}
+
+}
+	
+	
+	
+	void ImProcFunctions::ContAllL (float *koeLi[9], float *maxkoeLi, bool lipschitz, int maxlvl, LabImage * labco, float ** varhue, float **varchrom, float ** WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, struct cont_params cp,
+									int W_L, int H_L, int skip, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, const WavCurve & wavCLVCcurve, FlatCurve* ChCurve, bool Chutili)
 	{
 		
 		static const float scales[10] = {1.f,2.f,4.f,8.f,16.f,32.f,64.f,128.f,256.f,512.f};
@@ -1063,21 +1575,290 @@ omp_set_nested(oldNested);
 		for(int sc=0;sc<10;sc++)
 			scaleskip[sc]=scales[sc]/skip;
 		float atten01234 = 0.80f;
+		float t_r=settings->top_right;
+		float t_l=settings->top_left;
+		float b_r=settings->bot_right;
+		float b_l=settings->bot_left;
+		float edd=settings->ed_detec;
+		float eddlow=settings->ed_low;
+		float eddstrength=settings->ed_detecStr;
+		float aedstr=(eddstrength-1.f)/90.f;
+		float bedstr=1.f-10.f*aedstr;
 		
+		bool refi=false;
+	//	if(cp.lev0s > 0.f || cp.lev1s > 0.f || cp.lev2s > 0.f) refi=true;
+	//	if(cp.val > 0 || refi) {//edge
 		if(cp.val > 0) {//edge
-		float rad =	((float)cp.rad)/60.f;//radius ==> not too high value to avoid artifacts
-		float value = ((float)cp.val)/8.f;//strength
-		//value /= skip;
-		if (scaleskip[1] < 1.f) value *= (atten01234*scaleskip[1]);//for zoom < 100% reduce strength...I choose level 1...but!!
-		float al0 = 1.f + ((float)cp.til)/50.f;
-		float al10 =1.0f;//arbitrary value ==> less = take into account high levels
-		float ak =-(al0-al10)/10.f;//10 = maximum levels
-		float bk =al0;
-		float koef = ak*level+bk;//modulate for levels : more levels high, more koef low ==> concentrated action on low levelsn but without forfot high levels
-        float edge = 1.f + value * exp (-pow(fabs(rad - level),koef));//estimate edge "pseudo variance"
-				for (int i=0; i<W_L*H_L; i++) {
-						WavCoeffs_L[dir][i] *= edge;
+					float * koe;
+					float maxkoe=0.f;
+			if(lipschitz==false) {
+					koe = new float [H_L*W_L];
+					for (int i=0; i<W_L*H_L; i++) koe[i]=0.f;
+					maxkoe=0.f;
+					
+				if(cp.detectedge) {//
+					float** tmC;
+					int borderL = 1;
+					tmC = new float*[H_L];
+					for (int i=0; i<H_L; i++){
+						tmC[i] = new float[W_L];
+					}
+					{
+						for (int i=1; i<H_L-1; i++) {
+								for (int j=1; j<W_L-1; j++) {
+									//edge detection wavelet TMC Canny	
+									// also possible to detect noise with 5x5 instead of 3x3
+									tmC[i][j]=(4.f*WavCoeffs_L[dir][i*W_L + j] + 2.f*WavCoeffs_L[dir][(i-1)*W_L + j] + 2.f*WavCoeffs_L[dir][(i+1)*W_L + j]
+												+ 2.f*WavCoeffs_L[dir][i*W_L + j+1] + 2.f*WavCoeffs_L[dir][i*W_L + j-1] + WavCoeffs_L[dir][(i-1)*W_L + j-1]
+												+WavCoeffs_L[dir][(i-1)*W_L + j+1]+WavCoeffs_L[dir][(i+1)*W_L + j-1]+WavCoeffs_L[dir][(i+1)*W_L + j+1])/16.f;
+
+									// apply to each direction Wavelet level : horizontal / vertiacle / diagonal
+								}	
+						}
+					}
+					
+					
+					
+					
+					for(int i = borderL; i < H_L-borderL; i++ ) {
+						for(int j = borderL; j < W_L-borderL; j++) {
+								// my own algo : probably a little false, but simpler as Lipschitz !
+								float thr=40.f;//avoid artifact eg. noise...to test
+								float thr2=edd;//edd can be modified in option ed_detect
+								thr2+=cp.eddet/30.f;//to test
+								float temp = WavCoeffs_L[dir][i*W_L + j];
+								if(temp>=0.f &&  temp < thr) temp= thr;
+								if(temp < 0.f &&  temp > -thr) temp= -thr;
+								koe[i*W_L + j]= min(thr2,fabs(tmC[i][j]/temp));
+								
+								if(koe[i*W_L + j] > maxkoe)  maxkoe=koe[i*W_L + j];
+								float diff=maxkoe-koe[i*W_L + j];
+								diff *=(cp.eddet/100.f);
+								float interm=maxkoe-diff;
+								if(interm < cp.eddetthr/30.f) interm = 0.01f;
+								
+								koe[i*W_L + j]=interm;
+								
+						}
+					}
+					//printf("maxkoe=%f \n",maxkoe); 
+
+					for (int i=0; i<H_L; i++){
+						delete [] tmC[i];
+					}
+					delete [] tmC;
+					
 				}
+			}	
+		  //end detect edge
+			float rad =	((float)cp.rad)/60.f;//radius ==> not too high value to avoid artifacts
+			float value = ((float)cp.val)/8.f;//strength
+			if (scaleskip[1] < 1.f) value *= (atten01234*scaleskip[1]);//for zoom < 100% reduce strength...I choose level 1...but!!
+			float edge=1.f;
+			float lim0=20.f;//arbitrary limit for low radius and level between 2 or 3 to 30 maxi
+			float lev = float (level);
+			float repart=(float)cp.til;	
+			float brepart;
+			if(cp.reinforce==1) brepart=3.f;
+			if(cp.reinforce==3) brepart=0.5f; //arbitrary value to increase / decrease repart, between 1 and 0
+			float arepart=-(brepart-1.f)/(lim0/60.f);
+			if (cp.reinforce !=2) {if(rad < lim0/60.f) repart *= (arepart*rad + brepart);}//linear repartition of repart
+			
+			float al0 = 1.f + (repart)/50.f;
+			float al10 =1.0f;//arbitrary value ==> less = take into account high levels
+		//	float ak =-(al0-al10)/10.f;//10 = maximum levels
+			float ak =-(al0-al10)/10.f;//10 = maximum levels
+			float bk =al0;
+			float koef = ak*level+bk;//modulate for levels : more levels high, more koef low ==> concentrated action on low levels, without or near for high levels
+			float expkoef= -pow(fabs(rad - lev),koef);//reduce effect for high levels
+			if (cp.reinforce==3) {if(rad < lim0/60.f && level==0) expkoef *= repart;}//reduce effect for low values of rad and level=0==> quasi only level 1 is effective
+			if (cp.reinforce==1) {if(rad < lim0/60.f && level==1) expkoef /= repart;}//increase effect for low values of rad and level=1==> quasi only level 0 is effective
+			float coefsd=0.85f;//arbitray value to reduce effect after sigma in all case
+			float coefmean=0.85f;//arbitray value to reduce effect after sigma in all case
+//			edge = 1.f + value * exp (expkoef);//estimate edge "pseudo variance"
+			//take into account local contrast
+			float refin= value * exp (expkoef);
+			if(cp.link==true){//combi
+				{
+				if(level==0) refin *= (1.f + cp.lev0s/50.f);// we can change this sensibility!
+				if(level==1) refin *= (1.f + cp.lev1s/50.f);
+				if(level==2) refin *= (1.f + cp.lev2s/50.f);	
+				}	
+			}
+			float edgePrecalc = 1.f + refin; //estimate edge "pseudo variance"
+				
+			if(cp.EDmet==2) {//curve
+			float insigma=0.666f;//SD
+			float logmax=log(MaxP[level]);//log Max
+			float rapX=(mean[level]+sigma[level])/MaxP[level];//rapport between sD / max
+			float inx=log(insigma);
+			float iny=log(rapX);
+			float rap=inx/iny;//koef 
+			float asig=0.166f/sigma[level];
+			float bsig=0.5f-asig*mean[level];
+			float amean=0.5f/mean[level];
+			float absciss;
+			float kinterm;
+			float kmul;
+			for (int i=0; i<W_L*H_L; i++) {
+				if(cp.detectedge) {
+					if(lipschitz==false) {
+						if(cp.eddet > 10.f) edge=(aedstr*cp.eddet+bedstr)*(edgePrecalc*(1.f+koe[i]))/(1.f+0.9f*maxkoe);
+						else edge=(edgePrecalc*(1.f+koe[i]))/(1.f+0.9f*maxkoe);
+					}
+				if(lipschitz==true) {
+						if(level < 3) edge = 1.f +(edgePrecalc-1.f)*(koeLi[level*3][i])/(1.f+0.9f*maxkoeLi[level*3+ dir-1]);
+						else edge = edgePrecalc;
+					}
+				}	
+				else edge = edgePrecalc;
+				
+				if(cp.edgcurv) {
+				if(fabs(WavCoeffs_L[dir][i])>= (mean[level]+sigma[level])){//for max
+					float valcour=log(fabs(WavCoeffs_L[dir][i]));
+					float valc=valcour-logmax;
+					float vald=valc*rap;
+					absciss=exp(vald);
+					
+				}
+				else if(fabs(WavCoeffs_L[dir][i])>=mean[level] &&  fabs(WavCoeffs_L[dir][i]) < (mean[level]+sigma[level])){
+					absciss=asig*fabs(WavCoeffs_L[dir][i])+bsig;
+				}
+				else if(fabs(WavCoeffs_L[dir][i]) < mean[level]){
+					absciss=amean*fabs(WavCoeffs_L[dir][i]);
+				}
+				// Threshold adjuster settings==> approximative for curve
+				//kmul about average cbrt(3--40 / 10)==>1.5 to 2.5
+				//kmul about SD   10--60  / 35 ==> 2
+				// kmul about low  cbrt((5.f+cp.edg_low)/5.f);==> 1.5
+				// kmul about max ==> 9
+				// we can change these values
+				// result is different not best or bad than threshold slider...but similar
+				float abssd=4.f;//amplification reference
+				float bbssd=2.f;//mini ampli
+				float maxamp=2.5f;//maxi ampli at end
+				float maxampd=10.f;//maxi ampli at end
+				float a_abssd=(maxamp - abssd)/0.333f;
+				float b_abssd=maxamp-a_abssd;
+				float da_abssd=(maxampd - abssd)/0.333f;
+				float db_abssd=maxampd-da_abssd;
+				float am=(abssd-bbssd)/0.666f;
+				float kmuld=0.f;
+				if(absciss>0.666f && absciss < 1.f) {kmul=a_abssd*absciss + b_abssd;kmuld=da_abssd*absciss + db_abssd;}//about max  ==> kinterm 
+				else kmul = kmuld = absciss*am+bbssd;
+				kinterm=1.f;
+				float kc= kmul*(wavCLVCcurve[absciss*500.f]-0.5f);
+				float kcd= kmuld*(wavCLVCcurve[absciss*500.f]-0.5f);
+				float reduceeffect=0.6f;
+				if(kc >=0.f)
+					kinterm = 1.f + reduceeffect*kmul*(wavCLVCcurve[absciss*500.f]-0.5f);//about 1 to 3 general and big amplification for max (under 0)					
+				else 
+					kinterm = 1.f - (SQR(kcd))/10.f;
+				
+				if(kinterm<0.f) kinterm=0.01f;
+				edge *= kinterm;
+					if(edge < 1.f)
+						edge=1.f;
+				}
+				WavCoeffs_L[dir][i] *=  edge;
+			}
+			}
+			else if(cp.EDmet==1) {//threshold adjuster
+			float MaxPCompare = MaxP[level]*SQR(cp.edg_max/100.f);//100 instead of b_r...case if b_r < 100
+			float MaxNCompare = MaxN[level]*SQR(cp.edg_max/100.f);//always rduce a little edge for near max values
+			float edgeSdCompare = (mean[level]+1.5f*sigma[level])*SQR(cp.edg_sd/t_r);// 1.5 standard deviation #80%  range between mean 50% and 80%
+			float edgeMeanCompare = mean[level]*SQR(cp.edg_mean/t_l);
+			float edgeLowCompare = (5.f+SQR(cp.edg_low));
+			float edgeMeanFactor = cbrt(cp.edg_mean/t_l);
+			float interm;
+			if(cp.edg_low < 10.f) interm= cbrt((5.f+cp.edg_low)/5.f);
+			else interm=1.437f;//cbrt(3);
+			float edgeLowFactor = interm;
+			float edgeSdFactor = cp.edg_sd/t_r;
+			float edgeMaxFactor = SQR(cp.edg_max/b_r);
+			float edgMaxFsup=(cp.edg_max/b_r);//reduce increase of effect for high values contrast..if slider > b_r	
+			
+			for (int i=0; i<W_L*H_L; i++) {
+				
+				if(cp.detectedge) {
+					if(lipschitz==false) {
+						if(cp.eddet > 10.f) edge=(aedstr*cp.eddet+bedstr)*(edgePrecalc*(1.f+koe[i]))/(1.f+0.9f*maxkoe);
+						else edge=(edgePrecalc*(1.f+koe[i]))/(1.f+0.9f*maxkoe);
+					}
+				if(lipschitz==true) {
+						if(level < 3) edge = 1.f +(edgePrecalc-1.f)*(koeLi[level*3][i])/(1.f+0.9f*maxkoeLi[level*3+ dir-1]);
+						else edge = edgePrecalc;
+					}
+				}	
+				else edge = edgePrecalc;
+				
+				//algorithm that take into account local contrast
+				// I use a thresholdadjuster with
+				// Bottom left ==> minimal low value for local contrast (not 0, but 5...we can change)
+				// 0 10*10 35*35 100*100 substantially correspond to the true distribution of low value, mean, standard-deviation and max (ed 5, 50, 400, 4000
+				// Top left ==> mean reference value (for each level), we can change cbrt(cp.edg_mean/10.f)
+				// Top Right==> standard deviation (for each level) we can change (cp.edg_sd/35.f)
+				// bottom right ==> Max for positif and negatif contrast we can change cp.edg_max/100.f
+				// If we move sliders to the left, local contrast is reduced
+				// if we move sliders to the right local contrast is increased
+				// MaxP, MaxN, mean, sigma are calculated if necessary (val > 0) by evaluate2(), eval2(), aver() , sigma()
+				if(b_r < 100.f  && cp.edg_max/b_r > 1.f) {//in case of b_r < 100 and slider move to right
+					if (WavCoeffs_L[dir][i] > MaxPCompare*cp.edg_max/b_r) {
+						edge *= edgMaxFsup;
+						if(edge < 1.f)
+							edge=1.f;
+					}
+					else if (WavCoeffs_L[dir][i] < MaxNCompare*cp.edg_max/b_r) {
+						edge *= edgMaxFsup;
+						if(edge < 1.f)
+							edge=1.f;
+					}					
+				}	
+					
+				if (WavCoeffs_L[dir][i] > MaxPCompare) {
+					edge *= edgeMaxFactor;
+					if(edge < 1.f)
+						edge=1.f;
+				}//reduce edge if > new max
+				else if (WavCoeffs_L[dir][i] < MaxNCompare) {
+					edge *= edgeMaxFactor;
+					if(edge < 1.f)  
+						edge=1.f;
+				}
+				
+				if (fabs(WavCoeffs_L[dir][i]) >= edgeMeanCompare && fabs(WavCoeffs_L[dir][i]) < edgeSdCompare) {
+				//if (fabs(WavCoeffs_L[dir][i]) > edgeSdCompare) {
+					edge *= edgeSdFactor;
+					if(edge < 1.f)
+						edge=1.f;
+				}//mofify effect if sd change
+				if (fabs(WavCoeffs_L[dir][i]) < edgeMeanCompare) {
+					edge *= edgeMeanFactor;
+					if(edge < 1.f)
+						edge=1.f;
+				} // modify effect if mean change
+				if (fabs(WavCoeffs_L[dir][i]) < edgeLowCompare) {
+					edge *= edgeLowFactor;
+					if(edge < 1.f)
+						edge=1.f;
+				}
+				WavCoeffs_L[dir][i] *= edge;
+			}
+		}
+	if(lipschitz==false) {	
+		delete [] koe;
+	}	
+		}
+		
+	
+		if(cp.link==false)	{	//used both with denoise 1 2 3
+		float refine=0.f;
+		for (int i=0; i<W_L*H_L; i++) {
+				if(level==0) refine = cp.lev0s/40.f;
+				if(level==1) refine = cp.lev1s/40.f;
+				if(level==2) refine = cp.lev2s/40.f;
+				WavCoeffs_L[dir][i]*=(1.f + refine);
+			}
 		}
 		
 		
@@ -1133,12 +1914,20 @@ omp_set_nested(oldNested);
 					else beta=abet[8];
 				}
 				float scale = 1.f;
-				float LL100;
+				float scale2=1.f;
+				
+				float LL100, LL100res, LL100init, kH[maxlvl];
 				if(useChromAndHue) {
 					int ii=i/W_L;
 					int jj=i-ii*W_L;
 					float LL = labco->L[ii*2][jj*2];
-					LL100=LL/327.68f;
+					LL100=LL100init=LL/327.68f;
+					LL100res=WavCoeffs_L0[i]/327.68f;
+					float delta=fabs(LL100init-LL100res)/(maxlvl/2);
+					for(int ml=0;ml<maxlvl;ml++) {
+						if(ml < maxlvl/2) kH[ml]=(LL100res+ml*delta)/LL100res;// fixed a priori max to level middle
+						else kH[ml]=(LL100init-ml*delta)/LL100res;
+					}	
 					float modhue = varhue[ii][jj];
 					modchro = varchrom[ii*2][jj*2];
 					// hue chroma skin with initial lab datas
@@ -1152,23 +1941,38 @@ omp_set_nested(oldNested);
 						else
 							scale=1.f;
 					}
+					
 				}
+				if(Chutili){
+					int i_i=i/W_L;
+					int j_j=i-i_i*W_L;
+					double lr;
+					float modhue2 = varhue[i_i][j_j];
+					float valparam = float((ChCurve->getVal(lr=Color::huelab_to_huehsv2(modhue2))-0.5f));//get valparam=f(H)
+					
+					if(valparam > 0.f) scale2=1.f + 3.f* valparam;//arbitrary value
+					else scale2 = 1.f + 1.9f*valparam;//near 0 but not zero if curve # 0
+					
+				//curve Contrast / hue
+				
+				}
+				//
 				//linear transition HL
-				float alpha = (1024.f + 15.f *(float) cpMul*scale*beta)/1024.f ;	
+				float alpha = (1024.f + 15.f *(float) cpMul*scale*scale2*beta)/1024.f ;	
 				if(cp.HSmet){					
-					float aaal=(1.f-alpha)/(cp.b_lhl-cp.t_lhl);
-					float bbal=1.f-aaal*cp.b_lhl;
-					float aaar=(alpha-1.f)/(cp.t_rhl-cp.b_rhl);
-					float bbbr=1.f-cp.b_rhl*aaar;
+					float aaal=(1.f-alpha)/((cp.b_lhl-cp.t_lhl)*kH[level]);
+					float bbal=1.f-aaal*cp.b_lhl*kH[level];
+					float aaar=(alpha-1.f)/(cp.t_rhl-cp.b_rhl)*kH[level];
+					float bbbr=1.f-cp.b_rhl*aaar*kH[level];
 					//linear transition Shadows
 					float aaalS=(1.f-alpha)/(cp.b_lsl-cp.t_lsl);
 					float bbalS=1.f-aaalS*cp.b_lsl;
 					float aaarS=(alpha-1.f)/(cp.t_rsl-cp.b_rsl);
 					float bbbrS=1.f-cp.b_rsl*aaarS;
 					if(level <=cp.numlevH) {//in function of levels
-						if((LL100 > cp.t_lhl && LL100 < cp.t_rhl)) kLlev=alpha; 
-						else if((LL100 > cp.b_lhl && LL100 <= cp.t_lhl)) kLlev=aaal*LL100+bbal; 	
-						else if((LL100 > cp.t_rhl && LL100 <= cp.b_rhl)) kLlev=aaar*LL100+bbbr; 	
+						if((LL100 > cp.t_lhl*kH[level] && LL100 < cp.t_rhl*kH[level])) {kLlev=alpha;}
+						else if((LL100 > cp.b_lhl*kH[level] && LL100 <= cp.t_lhl*kH[level])) kLlev=aaal*LL100+bbal; 	
+						else if((LL100 > cp.t_rhl*kH[level] && LL100 <= cp.b_rhl*kH[level])) kLlev=aaar*LL100+bbbr; 	
 						else 	kLlev=1.f;
 					}
 					if(level >=(9-cp.numlevS)) {
@@ -1176,8 +1980,8 @@ omp_set_nested(oldNested);
 						else if((LL100 > cp.b_lsl && LL100 <= cp.t_lsl)) kLlev=aaalS*LL100+bbalS; 	
 						else if((LL100 > cp.t_rsl && LL100 <= cp.b_rsl)) kLlev=aaarS*LL100+bbbrS; 	
 						else 	kLlev=1.f;
-					} else
-						kLlev=alpha;
+					} 
+				
 				}
 				else kLlev=alpha;	
 				WavCoeffs_L[dir][i]*=(kLlev);
@@ -1210,72 +2014,63 @@ omp_set_nested(oldNested);
 		else if(params->wavelet.Dirmethod=="thr") choiceDir=3;	
 		else if(params->wavelet.Dirmethod=="all") choiceDir=0;	
 
-	//	printf("LUm lev=%d clev=%d dir=%d\n",choicelevel,choiceClevel,choiceDir);
-	if(choiceClevel==0) {
-		if(choiceDir==0) {
-			if(level == 0)
-				for (int i=0; i<W_L*H_L; i++) {
-//					WavCoeffs_L0[i] =0.f;
-				}
-			if(level != choicelevel){
-				for (int dir=1; dir<4; dir++) {	
+		int dir1 = (choiceDir == 2) ? 1 : 2;
+		int dir2 = (choiceDir == 3) ? 1 : 3;
+		if(choiceClevel<3) { // not all levels visible, paint residual
+			if(level == 0) {
+				if(cp.backm!=2) { // nothing to change when residual is used as background
+					float backGroundColor = (cp.backm==1) ? 12000.f : 0.f;
 					for (int i=0; i<W_L*H_L; i++) {
-						WavCoeffs_L[dir][i] =0.f;
-					}
-				}
-			}
-		} else {
-			if(level != choicelevel) {
-				for (int i=0; i<W_L*H_L; i++) {
-//					WavCoeffs_L0[i] =0.f;	
-					
-					if(choiceDir==1)	{WavCoeffs_L[2][i] =0.f;WavCoeffs_L[3][i] =0.f;}
-					else if(choiceDir==2)	{WavCoeffs_L[1][i] =0.f;WavCoeffs_L[3][i] =0.f;}
-					else if(choiceDir==3)	{WavCoeffs_L[2][i] =0.f;WavCoeffs_L[1][i] =0.f;}
-				}
-			}
-		}
-	} else if(choiceClevel==1) {
-		if(choiceDir==0) {
-			if(level >= choicelevel) {
-				for (int dir=1; dir<4; dir++) {	
-					for (int i=0; i<W_L*H_L; i++) {
-						WavCoeffs_L[dir][i] =0.f;
-//						WavCoeffs_L0[i] =0.f;
+						WavCoeffs_L0[i] = backGroundColor;
 					}
 				}
 			}
 		}
-		else {
-			if(level >= choicelevel) {
-				for (int i=0; i<W_L*H_L; i++) {
-//					WavCoeffs_L0[i] =0.f;
-					
-					if(choiceDir==1)	{WavCoeffs_L[2][i] =0.f;WavCoeffs_L[3][i] =0.f;}
-					else if(choiceDir==2)	{WavCoeffs_L[1][i] =0.f;WavCoeffs_L[3][i] =0.f;}
-					else if(choiceDir==3)	{WavCoeffs_L[2][i] =0.f;WavCoeffs_L[1][i] =0.f;}
-				}
-			}
-		}
-	} else if(choiceClevel==2) {
-		if(choiceDir==0) {
-			if(level <= choicelevel) {
+		if(choiceClevel==0) { // Only one level
+			if(level != choicelevel){ // zero all for the levels != choicelevel
 				for (int dir=1; dir<4; dir++) {	
 					for (int i=0; i<W_L*H_L; i++) {
-						WavCoeffs_L[dir][i] =0.f;
+						WavCoeffs_L[dir][i] = 0.f;
+					}
+				}
+			} else { // zero the unwanted directions for level == choicelevel
+				for (int i=0; i<W_L*H_L; i++) {
+					WavCoeffs_L[dir1][i] = WavCoeffs_L[dir2][i] = 0.f;
+				}
+			}
+		} else if(choiceClevel==1) { // Only below level
+			if(choiceDir==0) { // All directions
+				if(level >= choicelevel) {
+					for (int dir=1; dir<4; dir++) {	
+						for (int i=0; i<W_L*H_L; i++) {
+							WavCoeffs_L[dir][i] =0.f;
+						}
+					}
+				}
+			} else { // zero the unwanted directions for level >= choicelevel
+				if(level >= choicelevel) {
+					for (int i=0; i<W_L*H_L; i++) {
+						WavCoeffs_L[dir1][i] = WavCoeffs_L[dir2][i] = 0.f;
 					}
 				}
 			}
-		} else {
-			if(level <= choicelevel) {
-				for (int i=0; i<W_L*H_L; i++) {
-					if(choiceDir==1)	{WavCoeffs_L[2][i] =0.f;WavCoeffs_L[3][i] =0.f;}
-					else if(choiceDir==2)	{WavCoeffs_L[1][i] =0.f;WavCoeffs_L[3][i] =0.f;}
-					else if(choiceDir==3)	{WavCoeffs_L[2][i] =0.f;WavCoeffs_L[1][i] =0.f;}
+		} else if(choiceClevel==2) { // Only above level
+			if(choiceDir==0) { // All directions
+				if(level <= choicelevel) {
+					for (int dir=1; dir<4; dir++) {	
+						for (int i=0; i<W_L*H_L; i++) {
+							WavCoeffs_L[dir][i] =0.f;
+						}
+					}
+				}
+			} else { // zero the unwanted directions for level >= choicelevel
+				if(level <= choicelevel) {
+					for (int i=0; i<W_L*H_L; i++) {
+						WavCoeffs_L[dir1][i] = WavCoeffs_L[dir2][i] = 0.f;
+					}
 				}
 			}
 		}
-	}
 		
 	}
 
@@ -1313,8 +2108,10 @@ omp_set_nested(oldNested);
 			}
 		}
 		//Curve chro
+		
 		float cpMulC = cp.mulC[level];
-		if(cp.curv && cp.CHmet!=2 && level < 9 && cpMulC != 0.f) { // cpMulC == 0.f means all will be multiplied by 1.f, so we can skip
+	//	if( (cp.curv || cp.CHSLmet==1) && cp.CHmet!=2 && level < 9 && cpMulC != 0.f) { // cpMulC == 0.f means all will be multiplied by 1.f, so we can skip
+		if( cp.CHmet!=2 && level < 9 && cpMulC != 0.f) { // cpMulC == 0.f means all will be multiplied by 1.f, so we can skip
 			float modchro, modhue, kClev;
 			const float skinprot = params->wavelet.skinprotect;
 			const float skinprotneg = -skinprot;
@@ -1427,55 +2224,48 @@ omp_set_nested(oldNested);
 		else if(params->wavelet.Dirmethod=="thr") choiceDir=3;	
 		else if(params->wavelet.Dirmethod=="all") choiceDir=0;	
 
-	//	printf("LUm lev=%d clev=%d dir=%d\n",choicelevel,choiceClevel,choiceDir);
-		if(choiceClevel==0) {
-			if(choiceDir==0) {
-				if(level == 0)
+		int dir1 = (choiceDir == 2) ? 1 : 2;
+		int dir2 = (choiceDir == 3) ? 1 : 3;
+		if(choiceClevel<3) { // not all levels visible, paint residual
+			if(level == 0) {
+				if(cp.backm!=2) { // nothing to change when residual is used as background
+					float backGroundChroma = (cp.backm==1) ? 0.f : 0.f;//we can change first to colorized...
 					for (int i=0; i<W_ab*H_ab; i++) {
-	//					WavCoeffs_ab0[i] =0.f;
+						WavCoeffs_ab0[i] = backGroundChroma;
 					}
-				if(level != choicelevel){
+				}
+			}
+		}
+		if(choiceClevel==0) { // Only one level
+			if(level != choicelevel){ // zero all for the levels != choicelevel
+				for (int dir=1; dir<4; dir++) {	
+					for (int i=0; i<W_ab*H_ab; i++) {
+						WavCoeffs_ab[dir][i] = 0.f;
+					}
+				}
+			} else { // zero the unwanted directions for level == choicelevel
+				for (int i=0; i<W_ab*H_ab; i++) {
+					WavCoeffs_ab[dir1][i] = WavCoeffs_ab[dir2][i] = 0.f;
+				}
+			}
+		} else if(choiceClevel==1) { // Only below level
+			if(choiceDir==0) { // All directions
+				if(level >= choicelevel) {
 					for (int dir=1; dir<4; dir++) {	
 						for (int i=0; i<W_ab*H_ab; i++) {
 							WavCoeffs_ab[dir][i] =0.f;
 						}
 					}
 				}
-			} else {
-				if(level != choicelevel) {
-					for (int i=0; i<W_ab*H_ab; i++) {
-	//					WavCoeffs_ab0[i] =0.f;	
-						
-						if(choiceDir==1)	{WavCoeffs_ab[2][i] =0.f;WavCoeffs_ab[3][i] =0.f;}
-						else if(choiceDir==2)	{WavCoeffs_ab[1][i] =0.f;WavCoeffs_ab[3][i] =0.f;}
-						else if(choiceDir==3)	{WavCoeffs_ab[2][i] =0.f;WavCoeffs_ab[1][i] =0.f;}
-					}
-				}
-			}
-		} else if(choiceClevel==1) {
-			if(choiceDir==0) {
-				if(level >= choicelevel) {
-					for (int dir=1; dir<4; dir++) {	
-						for (int i=0; i<W_ab*H_ab; i++) {
-							WavCoeffs_ab[dir][i] =0.f;
-	//						WavCoeffs_ab0[i] =0.f;
-						}
-					}
-				}
-			}
-			else {
+			} else { // zero the unwanted directions for level >= choicelevel
 				if(level >= choicelevel) {
 					for (int i=0; i<W_ab*H_ab; i++) {
-	//					WavCoeffs_L0[i] =0.f;
-						
-						if(choiceDir==1)	{WavCoeffs_ab[2][i] =0.f;WavCoeffs_ab[3][i] =0.f;}
-						else if(choiceDir==2)	{WavCoeffs_ab[1][i] =0.f;WavCoeffs_ab[3][i] =0.f;}
-						else if(choiceDir==3)	{WavCoeffs_ab[2][i] =0.f;WavCoeffs_ab[1][i] =0.f;}
+						WavCoeffs_ab[dir1][i] = WavCoeffs_ab[dir2][i] = 0.f;
 					}
 				}
 			}
-		} else if(choiceClevel==2) {
-			if(choiceDir==0) {
+		} else if(choiceClevel==2) { // Only above level
+			if(choiceDir==0) { // All directions
 				if(level <= choicelevel) {
 					for (int dir=1; dir<4; dir++) {	
 						for (int i=0; i<W_ab*H_ab; i++) {
@@ -1483,12 +2273,10 @@ omp_set_nested(oldNested);
 						}
 					}
 				}
-			} else {
+			} else { // zero the unwanted directions for level >= choicelevel
 				if(level <= choicelevel) {
 					for (int i=0; i<W_ab*H_ab; i++) {
-						if(choiceDir==1)	{WavCoeffs_ab[2][i] =0.f;WavCoeffs_ab[3][i] =0.f;}
-						else if(choiceDir==2)	{WavCoeffs_ab[1][i] =0.f;WavCoeffs_ab[3][i] =0.f;}
-						else if(choiceDir==3)	{WavCoeffs_ab[2][i] =0.f;WavCoeffs_ab[1][i] =0.f;}
+						WavCoeffs_ab[dir1][i] = WavCoeffs_ab[dir2][i] = 0.f;
 					}
 				}
 			}

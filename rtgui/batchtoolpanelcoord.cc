@@ -148,7 +148,7 @@ void BatchToolPanelCoordinator::initSession () {
 
 			shadowshighlights->setAdjusterBehavior (false, false, false);
 			dirpyrequalizer->setAdjusterBehavior (false, false, false);
-			wavelet->setAdjusterBehavior (false, false, false,false,false,false,false,false,false,false,false,false,false,false,false,false,false);
+			wavelet->setAdjusterBehavior (false, false, false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false, false, false);
 			dirpyrdenoise->setAdjusterBehavior (false, false,false,false,false,false, false);
 			bayerpreprocess->setAdjusterBehavior (false, false);
 			rawcacorrection->setAdjusterBehavior (false);
@@ -186,7 +186,7 @@ void BatchToolPanelCoordinator::initSession () {
 			blackwhite->setAdjusterBehavior (options.baBehav[ADDSET_BLACKWHITE_HUES],options.baBehav[ADDSET_BLACKWHITE_GAMMA]);
 			shadowshighlights->setAdjusterBehavior (options.baBehav[ADDSET_SH_HIGHLIGHTS], options.baBehav[ADDSET_SH_SHADOWS], options.baBehav[ADDSET_SH_LOCALCONTRAST]);
 			dirpyrequalizer->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYREQ], options.baBehav[ADDSET_DIRPYREQ_THRESHOLD], options.baBehav[ADDSET_DIRPYREQ_SKINPROTECT]);
-			wavelet->setAdjusterBehavior (options.baBehav[ADDSET_WA], options.baBehav[ADDSET_WA_THRESHOLD], options.baBehav[ADDSET_WA_THRESHOLD2],options.baBehav[ADDSET_WA_THRES],options.baBehav[ADDSET_WA_CHRO],options.baBehav[ADDSET_WA_CHROMA],options.baBehav[ADDSET_WA_CONTRAST],options.baBehav[ADDSET_WA_SKINPROTECT],options.baBehav[ADDSET_WA_RESCHRO],options.baBehav[ADDSET_WA_RESCON],options.baBehav[ADDSET_WA_RESCONH],options.baBehav[ADDSET_WA_THRR],options.baBehav[ADDSET_WA_THRRH],options.baBehav[ADDSET_WA_SKYPROTECT], options.baBehav[ADDSET_WA_EDGRAD],options.baBehav[ADDSET_WA_EDGVAL],options.baBehav[ADDSET_WA_STRENGTH]);
+			wavelet->setAdjusterBehavior (options.baBehav[ADDSET_WA], options.baBehav[ADDSET_WA_THRESHOLD], options.baBehav[ADDSET_WA_THRESHOLD2],options.baBehav[ADDSET_WA_THRES],options.baBehav[ADDSET_WA_CHRO],options.baBehav[ADDSET_WA_CHROMA],options.baBehav[ADDSET_WA_CONTRAST],options.baBehav[ADDSET_WA_SKINPROTECT],options.baBehav[ADDSET_WA_RESCHRO],options.baBehav[ADDSET_WA_RESCON],options.baBehav[ADDSET_WA_RESCONH],options.baBehav[ADDSET_WA_THRR],options.baBehav[ADDSET_WA_THRRH],options.baBehav[ADDSET_WA_SKYPROTECT], options.baBehav[ADDSET_WA_EDGRAD],options.baBehav[ADDSET_WA_EDGVAL],options.baBehav[ADDSET_WA_STRENGTH],options.baBehav[ADDSET_WA_EDGEDETECT], options.baBehav[ADDSET_WA_EDGEDETECTTHR], options.baBehav[ADDSET_WA_EDGEDETECTTHR2]);
 			dirpyrdenoise->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYRDN_LUMA],options.baBehav[ADDSET_DIRPYRDN_LUMDET],options.baBehav[ADDSET_DIRPYRDN_CHROMA],options.baBehav[ADDSET_DIRPYRDN_CHROMARED],options.baBehav[ADDSET_DIRPYRDN_CHROMABLUE], options.baBehav[ADDSET_DIRPYRDN_GAMMA], options.baBehav[ADDSET_DIRPYRDN_PASSES]);
 			bayerpreprocess->setAdjusterBehavior (options.baBehav[ADDSET_PREPROCESS_LINEDENOISE], options.baBehav[ADDSET_PREPROCESS_GREENEQUIL]);
 			rawcacorrection->setAdjusterBehavior (options.baBehav[ADDSET_RAWCACORR]);
@@ -304,6 +304,7 @@ void BatchToolPanelCoordinator::initSession () {
 			if (options.baBehav[ADDSET_WA_EDGRAD]) pparams.wavelet.edgrad = 0;
 			if (options.baBehav[ADDSET_WA_EDGVAL]) pparams.wavelet.edgval = 0;
 			if (options.baBehav[ADDSET_WA_STRENGTH]) pparams.wavelet.strength = 0;
+			if (options.baBehav[ADDSET_WA_EDGEDETECT]) pparams.wavelet.edgedetect = 0;
 
 			
 			if (options.baBehav[ADDSET_DIRPYRDN_LUMA]) pparams.dirpyrDenoise.luma = 0;

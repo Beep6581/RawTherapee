@@ -856,18 +856,31 @@ typedef std::map<Glib::ustring, std::vector<Glib::ustring> > IPTCPairs;
 class WaveletParams {
 
     public:
-        std::vector<double>   clvcurve;
+        std::vector<double>   ccwcurve;
         std::vector<double> opacityCurveRG;
         std::vector<double> opacityCurveBY;
+        std::vector<double> hhcurve;
+        std::vector<double> Chcurve;
         bool enabled;
         bool median;
+        bool medianlev;
+        bool linkedg;
+        bool lipst;
+	//	bool edgreinf;
         bool avoid;
         int strength;
         int c[9];
+        int ch[9];
+		
         Glib::ustring Lmethod;
         Glib::ustring CLmethod;
+        Glib::ustring Backmethod;
         Glib::ustring Tilesmethod;
+        Glib::ustring choicemethod;
         Glib::ustring CHmethod;
+        Glib::ustring Medgreinf;
+        Glib::ustring CHSLmethod;
+        Glib::ustring EDmethod;
         Glib::ustring Dirmethod;
         Glib::ustring HSmethod;
 		int rescon;
@@ -880,6 +893,9 @@ class WaveletParams {
 		int chro;	
 		int threshold;
 		int threshold2;
+		int edgedetect;
+		int edgedetectthr;
+		int edgedetectthr2;
 		int contrast;
 		int edgrad;	
 		int edgval;	
@@ -893,12 +909,16 @@ class WaveletParams {
         Threshold<int> bllev;
         Threshold<int> pastlev;
         Threshold<int> satlev;
+        Threshold<int> edgcont;
+        Threshold<int> level0noise;
+        Threshold<int> level1noise;
+        Threshold<int> level2noise;
 	
 	
 		WaveletParams ();
 		void setDefaults(); 
         void getCurves(WavCurve &cCurve,WavOpacityCurveRG &opacityCurveLUTRG , WavOpacityCurveBY &opacityCurveLUTBY) const;
-        static void getDefaultCLVCurve(std::vector<double> &curve);	
+        static void getDefaultCCWCurve(std::vector<double> &curve);	
         static void getDefaultOpacityCurveRG(std::vector<double> &curve);
         static void getDefaultOpacityCurveBY(std::vector<double> &curve);
 		
