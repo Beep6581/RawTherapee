@@ -23,7 +23,7 @@
 
 ParamsEdited::ParamsEdited () {
 
-    set (false);
+    set (true);
 }
 
 void ParamsEdited::set (bool v) {

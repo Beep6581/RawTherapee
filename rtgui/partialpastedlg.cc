@@ -630,15 +630,10 @@ void PartialPasteDlg::metaicmToggled () {
 void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, ParamsEdited* dstPE, const rtengine::procparams::ProcParams* srcPP, const ParamsEdited* srcPE) {
 
     ParamsEdited falsePE;  // falsePE is a workaround to set a group of ParamsEdited to false
-    ParamsEdited filterPE; // Contains the initial information about the loaded values
+    ParamsEdited filterPE; // Contains the initial information about the loaded values ; filterPE is set to TRUE (default) so everything has to be copied
     if (srcPE) {
         filterPE = *srcPE;
     }
-    else {
-        // By default, everything has to be copied
-        filterPE.set(true);
-    }
-
 
     // the general section is always ignored, whichever operation we use the PartialPaste for
     filterPE.general = falsePE.general;

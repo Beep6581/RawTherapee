@@ -3120,7 +3120,7 @@ PartialProfile::PartialProfile(bool createInstance) {
     }
     else {
         pparams = NULL;
-        pedited=NULL;
+        pedited = NULL;
     }
 }
 
@@ -3155,7 +3155,10 @@ PartialProfile::PartialProfile(const ProcParams* pp, const ParamsEdited* pe) {
 int PartialProfile::load (Glib::ustring fName) {
     if (!pparams) pparams = new ProcParams();
     if (!pedited) pedited = new ParamsEdited();
-    return pparams->load(fName, pedited);
+    if (fName == DEFPROFILE_INTERNAL)
+        return 0;
+    else
+        return pparams->load(fName, pedited);
 }
 
 void PartialProfile::deleteInstance () {
