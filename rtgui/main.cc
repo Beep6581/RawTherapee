@@ -544,7 +544,7 @@ int processLineParams( int argc, char **argv )
 	if (useDefault) {
 		rawParams = new rtengine::procparams::PartialProfile(true);
 		Glib::ustring profPath = options.findProfilePath(options.defProfRaw);
-		if (options.is_defProfRawMissing() || profPath.empty() || rawParams->load(Glib::build_filename(profPath, Glib::path_get_basename(options.defProfRaw) + paramFileExtension))) {
+		if (options.is_defProfRawMissing() || profPath.empty() || rawParams->load(profPath==DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(profPath, Glib::path_get_basename(options.defProfRaw) + paramFileExtension))) {
 			std::cerr << "Error: default raw processing profile not found" << std::endl;
 			rawParams->deleteInstance();
 			delete rawParams;
@@ -553,7 +553,7 @@ int processLineParams( int argc, char **argv )
 		}
 		imgParams = new rtengine::procparams::PartialProfile(true);
 		profPath = options.findProfilePath(options.defProfImg);
-		if (options.is_defProfImgMissing() || profPath.empty() || imgParams->load(Glib::build_filename(profPath, Glib::path_get_basename(options.defProfImg) + paramFileExtension))) {
+		if (options.is_defProfImgMissing() || profPath.empty() || imgParams->load(profPath==DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(profPath, Glib::path_get_basename(options.defProfImg) + paramFileExtension))) {
 			std::cerr << "Error: default non-raw processing profile not found" << std::endl;
 			imgParams->deleteInstance();
 			delete imgParams;
@@ -564,7 +564,6 @@ int processLineParams( int argc, char **argv )
 		}
 	}
 
-	ParamsEdited paramsEdited;
 	for( size_t iFile=0; iFile< inputFiles.size(); iFile++){
 
 		// Has to be reinstanciated at each profile to have a ProcParams object with default values

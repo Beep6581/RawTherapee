@@ -326,7 +326,6 @@ void ToolPanelCoordinator::profileChange  (const PartialProfile *nparams, rtengi
         ParamsEdited pe;
         std::vector<rtengine::procparams::ProcParams> lParams(2);
         lParams[0]=*params; lParams[1]=*mergedParams;
-        pe.set(true);
         pe.initFrom (lParams);
 
         filterRawRefresh = pe.raw.isUnchanged() && pe.lensProf.isUnchanged();
