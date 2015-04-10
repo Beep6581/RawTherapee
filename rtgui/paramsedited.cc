@@ -21,9 +21,9 @@
 #include "options.h"
 #include "addsetids.h"
 
-ParamsEdited::ParamsEdited () {
+ParamsEdited::ParamsEdited (bool value) {
 
-    set (true);
+    set (value);
 }
 
 void ParamsEdited::set (bool v) {

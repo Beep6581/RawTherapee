@@ -323,7 +323,7 @@ void ToolPanelCoordinator::profileChange  (const PartialProfile *nparams, rtengi
     // Derive the effective changes, if it's a profile change, to prevent slow RAW rerendering if not necessary
     bool filterRawRefresh=false;
     if (event!=rtengine::EvPhotoLoaded) {
-        ParamsEdited pe;
+        ParamsEdited pe(true);
         std::vector<rtengine::procparams::ProcParams> lParams(2);
         lParams[0]=*params; lParams[1]=*mergedParams;
         pe.initFrom (lParams);

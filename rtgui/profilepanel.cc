@@ -574,7 +574,7 @@ void ProfilePanel::selection_changed () {
         const PartialProfile* s = profileStore.getProfile (pse);
         if (s) {
             if (fillMode->get_active() && s->pedited) {
-                ParamsEdited pe;
+                ParamsEdited pe(true);
                 PartialProfile s2(s->pparams, &pe, false);
                 changeTo (&s2, pse->label+"+");
             }
@@ -631,7 +631,7 @@ void ProfilePanel::initProfile (const Glib::ustring& profileFullPath, ProcParams
         delete lastsaved; lastsaved = NULL;
     }
     if (lastSaved) {
-        ParamsEdited* pe = new ParamsEdited();
+        ParamsEdited* pe = new ParamsEdited(true);
         // copying the provided last saved profile to ProfilePanel::lastsaved
         lastsaved = new PartialProfile(lastSaved, pe);
     }

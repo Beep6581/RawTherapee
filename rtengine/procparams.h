@@ -1178,7 +1178,7 @@ class PartialProfile {
         ParamsEdited* pedited;
         PartialProfile& operator=(PartialProfile& rhs) { pparams=rhs.pparams; pedited=rhs.pedited; return *this; };
 
-        PartialProfile      (bool createInstance=false);
+        PartialProfile      (bool createInstance=false, bool paramsEditedValue=false);
         PartialProfile      (ProcParams* pp, ParamsEdited* pe=NULL, bool fullCopy=false);
         PartialProfile      (const ProcParams* pp, const ParamsEdited* pe=NULL);
         void deleteInstance ();

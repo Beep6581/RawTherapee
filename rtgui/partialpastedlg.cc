@@ -630,7 +630,7 @@ void PartialPasteDlg::metaicmToggled () {
 void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, ParamsEdited* dstPE, const rtengine::procparams::ProcParams* srcPP, const ParamsEdited* srcPE) {
 
     ParamsEdited falsePE;  // falsePE is a workaround to set a group of ParamsEdited to false
-    ParamsEdited filterPE; // Contains the initial information about the loaded values ; filterPE is set to TRUE (default) so everything has to be copied
+    ParamsEdited filterPE(true); // Contains the initial information about the loaded values
     if (srcPE) {
         filterPE = *srcPE;
     }
