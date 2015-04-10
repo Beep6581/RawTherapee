@@ -542,7 +542,7 @@ int processLineParams( int argc, char **argv )
 		return 2;
 
 	if (useDefault) {
-		rawParams = new rtengine::procparams::PartialProfile(true);
+		rawParams = new rtengine::procparams::PartialProfile(true, true);
 		Glib::ustring profPath = options.findProfilePath(options.defProfRaw);
 		if (options.is_defProfRawMissing() || profPath.empty() || rawParams->load(profPath==DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(profPath, Glib::path_get_basename(options.defProfRaw) + paramFileExtension))) {
 			std::cerr << "Error: default raw processing profile not found" << std::endl;

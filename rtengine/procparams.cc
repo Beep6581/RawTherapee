@@ -3113,10 +3113,10 @@ bool ProcParams::operator!= (const ProcParams& other) {
     return !(*this==other);
 }
 
-PartialProfile::PartialProfile(bool createInstance) {
+PartialProfile::PartialProfile(bool createInstance, bool paramsEditedValue) {
     if (createInstance) {
         pparams = new ProcParams();
-        pedited = new ParamsEdited();
+        pedited = new ParamsEdited(paramsEditedValue);
     }
     else {
         pparams = NULL;

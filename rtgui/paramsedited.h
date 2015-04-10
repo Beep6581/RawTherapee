@@ -664,7 +664,7 @@ class ParamsEdited {
         bool                          exif;
         bool                          iptc;
 
-        ParamsEdited ();
+        ParamsEdited (bool value=false);
 
         void set   (bool v);
         void initFrom (const std::vector<rtengine::procparams::ProcParams>& src);

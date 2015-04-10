@@ -152,7 +152,7 @@ void History::historySelectionChanged () {
             bTreeView->get_selection()->unselect_all ();
         if (row && tpc) {
             ProcParams pparams = row[historyColumns.params];
-            ParamsEdited pe;
+            ParamsEdited pe(true);
             PartialProfile pp(&pparams, &pe);
             ParamsEdited paramsEdited = row[historyColumns.paramsEdited];
             tpc->profileChange (&pp, EvHistoryBrowsed, row[historyColumns.text], &paramsEdited);
@@ -177,7 +177,7 @@ void History::bookmarkSelectionChanged () {
             hTreeView->get_selection()->unselect_all ();
         if (row && tpc) {
             ProcParams pparams = row[bookmarkColumns.params];
-            ParamsEdited pe;
+            ParamsEdited pe(true);
             PartialProfile pp(&pparams, &pe);
             ParamsEdited paramsEdited = row[bookmarkColumns.paramsEdited];
             tpc->profileChange (&pp, EvBookmarkSelected, row[bookmarkColumns.text], &paramsEdited);
