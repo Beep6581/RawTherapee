@@ -617,8 +617,11 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 						int ind=0;
 						bool ref=false;
 						if(cp.lev0s > 0.f || cp.lev1s > 0.f || cp.lev2s > 0.f) ref=true;
-						
-						if(cp.val > 0 || ref) {//edge
+						bool contr=false;
+						for(int f=0;f<levwavL;f++) {
+							if(cp.mul[f]!=0.f) contr=true;
+						}
+						if(cp.val > 0 || ref || contr) {//edge
 							Evaluate2(*Ldecomp, cp, ind, mean, meanN, sigma, sigmaN, MaxP, MaxN, madL);
 						}
 				//init for edge and denoise
@@ -651,7 +654,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 						
 						
 						WaveletcontAllL(labco, varhue, varchro, *Ldecomp, cp, skip, mean, meanN, sigma, sigmaN, MaxP, MaxN, wavCLVCcurve, ChCurve, Chutili);
-						if(cp.val > 0 || ref) {//edge
+						if(cp.val > 0 || ref || contr) {//edge
 							Evaluate2(*Ldecomp, cp, ind, mean, meanN, sigma, sigmaN, MaxP, MaxN, madL);
 						}
 						
@@ -1073,12 +1076,24 @@ StopWatch Stop1("Evaluate2");
 				avedbl += WavCoeffs_L0[i];
 			}
 		}
+		float max0=0.f;
+		float min0=50000.f;
+#ifdef _OPENMP
+//#pragma omp parallel for num_threads(wavNestedLevels) if(wavNestedLevels>1)
+#endif		
+		for (int i=0; i<W_L*H_L; i++) {
+			if(WavCoeffs_L0[i]	> max0) max0=WavCoeffs_L0[i];
+			if(WavCoeffs_L0[i]	< min0) min0=WavCoeffs_L0[i];
+		
+		}
+		max0/=327.68f;
+		min0/=327.68f;
 		float ave = avedbl / (double)(W_L*H_L);
 		float av=ave/327.68f;
-		float ah=(multH-1.f)/(av-100.f);//av ==> lumaref
-		float bh=1.f-100.f*ah;
-		float al=(multL-1.f)/av;
-		float bl=1.f;
+		float ah=(multH-1.f)/(av-max0);//
+		float bh=1.f-max0*ah;
+		float al=(multL-1.f)/(av-min0);
+		float bl=1.f-min0*al;
 		float factorx=1.f;
 
 		float *koeLi[9];
@@ -1115,7 +1130,7 @@ StopWatch Stop1("Evaluate2");
 						prov=WavCoeffs_L0[i];
 						WavCoeffs_L0[i]=ave+kh*(WavCoeffs_L0[i]-ave);
 					} else {
-						float kl = al*(WavCoeffs_L0[i]/327.68f)+1.f;
+						float kl = al*(WavCoeffs_L0[i]/327.68f)+bl;
 						prov=WavCoeffs_L0[i];
 						WavCoeffs_L0[i]=ave-kl*(ave-WavCoeffs_L0[i]);
 					}
@@ -1871,23 +1886,19 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 		
 			//to adjust increase contrast with local contrast
 	
-			//for each pixel
-			float k[9]={0.95f, 0.85f, 0.7f, 0.6f, 0.45f, 0.3f, 0.2f, 0.15f, 0.1f};//values to tested with several images
-			float meath[9]={1000.f, 1500.f, 2000.f, 2500.f, 3000.f, 3500.f, 4000.f, 4500.f, 6000.f};//values to tested with several images
-			float ampli[9]={1.2f, 1.4f, 1.7f, 2.2f, 2.5f, 3.f, 3.5f, 4.f, 4.5f};
-			float mea[9];
-			float tr=cp.th;//suppress 2 slider 
-			tr=90.f;
-		
-			for(int j=0;j<9;j++) mea[j]=meath[j]*(1.f+(ampli[j]-1.f)*(tr/100.f));
-			//
-			//float uni=(float) cp.contrast;
-			float uni = 95.f;
-			float bbet=1.f;
-			float abet[9];
-			for(int h=0;h<9;h++) abet[h]=((k[h]-1.f)/100.f)*uni+bbet;
+			//for each pixel and each level
 			float beta;
-		
+			float mea[9];
+			mea[0]=mean[level]/6.f;
+			mea[1]=mean[level]/2.f;
+			mea[2]=mean[level];// 50% data
+			mea[3]=mean[level] + sigma[level]/2.f;
+			mea[4]=mean[level] + sigma[level];//66%
+			mea[5]=mean[level] + 1.2f*sigma[level];
+			mea[6]=mean[level] + 1.5f*sigma[level];//
+			mea[7]=mean[level] + 2.f*sigma[level];//95%
+			mea[8]=mean[level] + 2.5f*sigma[level];//99%
+			
 			bool skinControl = (skinprot != 0.f);
 			bool useChromAndHue = (skinprot != 0.f || cp.HSmet);
 			float modchro, kLlev;
@@ -1899,19 +1910,18 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 					beta=1.f;// disabled for negatives values "less contrast"
 				} else {
 					float WavCL = fabsf(WavCoeffs_L[dir][i]);
-					if(WavCL < 30.f) beta=0.6f;//preserve very low contrast (sky...)
-					else if(WavCL < 100.f) beta=0.8f;
-					else if(WavCL < mea[0]) beta=1.f;//no changes
-					else if(WavCL < mea[1]) beta=abet[0];//linear regression
-					else if(WavCL < mea[2]) beta=abet[1];
-					else if(WavCL < mea[3]) beta=abet[2];
-					else if(WavCL < mea[4]) beta=abet[3];
-					else if(WavCL < mea[5]) beta=abet[4];
-					else if(WavCL < mea[6]) beta=abet[5];
-					else if(WavCL < mea[7]) beta=abet[6];
-					else if(WavCL < mea[8]) beta=abet[7];
-					// next condition is automatically true, so skip the if
-					else beta=abet[8];
+					//reduction amplification: max action between mean / 2 and mean + sigma
+					// arbitrary coefficient, we can add a slider !!
+					if(WavCL < mea[0]) beta=0.6f;//preserve very low contrast (sky...)
+					else if(WavCL < mea[1]) beta=0.8f;
+					else if(WavCL < mea[2]) beta=1.f;//standard
+					else if(WavCL < mea[3]) beta=1.f;
+					else if(WavCL < mea[4]) beta=0.8f;//+sigma
+					else if(WavCL < mea[5]) beta=0.6f;
+					else if(WavCL < mea[6]) beta=0.4f;
+					else if(WavCL < mea[7]) beta=0.2f;// + 2 sigma
+					else if(WavCL < mea[8]) beta=0.1f;
+					else beta =0.0f;
 				}
 				float scale = 1.f;
 				float scale2=1.f;
