@@ -930,7 +930,8 @@ omp_set_nested(oldNested);
 		float averaP = 0.f, averaN = 0.f;
 		
 		float thres = 5.f;//different fom zero to take into account only data large enough
-
+		max=0.f;
+		min=0.f;
 #ifdef _OPENMP
 #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
@@ -1068,6 +1069,9 @@ StopWatch Stop1("Evaluate2");
 		float multL=(float)contrast*(maxl-1.f)/100.f + 1.f;	
 		float multH=(float) contrast*(maxh-1.f)/100.f + 1.f;
 		double avedbl=0.f; // use double precision for big summations
+		float max0 = 0.f;	
+		float min0 = FLT_MAX;
+		
 		if(contrast != 0.f) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
 #ifdef _OPENMP
 #pragma omp parallel for reduction(+:avedbl) num_threads(wavNestedLevels) if(wavNestedLevels>1)
@@ -1075,17 +1079,37 @@ StopWatch Stop1("Evaluate2");
 			for (int i=0; i<W_L*H_L; i++) {
 				avedbl += WavCoeffs_L0[i];
 			}
+		
+#pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
+{
+	float lminL = FLT_MAX;
+	float lmaxL = 0.f;
+#pragma omp for
+	for(int i = 0; i < W_L*H_L; i++) {
+		if(WavCoeffs_L0[i] < lminL) lminL = WavCoeffs_L0[i];
+		if(WavCoeffs_L0[i] > lmaxL) lmaxL = WavCoeffs_L0[i];
+		
+	}
+#pragma omp critical
+	{ 	if(lminL < min0) min0 = lminL;
+		if(lmaxL > max0) max0 = lmaxL;
+	}
+	
+}
+		
 		}
-		float max0=0.f;
-		float min0=50000.f;
+		
+		
+		
 #ifdef _OPENMP
 //#pragma omp parallel for num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif		
-		for (int i=0; i<W_L*H_L; i++) {
+	/*	for (int i=0; i<W_L*H_L; i++) {
 			if(WavCoeffs_L0[i]	> max0) max0=WavCoeffs_L0[i];
 			if(WavCoeffs_L0[i]	< min0) min0=WavCoeffs_L0[i];
 		
 		}
+		*/
 		max0/=327.68f;
 		min0/=327.68f;
 		float ave = avedbl / (double)(W_L*H_L);
