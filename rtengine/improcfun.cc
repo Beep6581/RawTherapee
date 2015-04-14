@@ -170,7 +170,7 @@ void ImProcFunctions::CAT02 (Imagefloat* baseImg, const ProcParams* params)
 	}
 }
 */
-void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* params, LUTu & histogram, double gamma) {
+void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* params, LUTu & histogram) {
 
 	// set up monitor transform
 	Glib::ustring wprofile = params->icm.working;

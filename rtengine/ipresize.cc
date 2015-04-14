@@ -19,9 +19,6 @@
 
 #include "improcfun.h"
 #include "rt_math.h"
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 #include "sleef.c"
 #include "opthelper.h"
 //#define PROFILE
@@ -44,8 +41,10 @@ static inline float Lanc(float x, float a)
     }
 }
 
-static void Lanczos(const Image16* src, Image16* dst, float scale)
+/* This Function is not used anymore
+void ImProcFunctions::Lanczos(const Image16* src, Image16* dst, float scale)
 {
+
     const float delta = 1.0f / scale;
     const float a = 3.0f;
     const float sc = min(scale, 1.0f);
@@ -168,37 +167,29 @@ static void Lanczos(const Image16* src, Image16* dst, float scale)
     delete[] lb;
 }
 }
+*/
 
-// this function is implemented for future use and not tested yet
-SSEFUNCTION static void Lanczos(const LabImage* src, LabImage* dst, float scale)
+SSEFUNCTION void ImProcFunctions::Lanczos(const LabImage* src, LabImage* dst, float scale)
 {
     const float delta = 1.0f / scale;
     const float a = 3.0f;
     const float sc = min(scale, 1.0f);
     const int support = static_cast<int>(2.0f * a / sc) + 1;
 
-#pragma omp parallel    
-{
-    // storage for precomputed parameters for horisontal interpolation
+    // storage for precomputed parameters for horizontal interpolation
     float * wwh = new float[support * dst->W];
     int * jj0 = new int[dst->W];
     int * jj1 = new int[dst->W];
-    
-    // temporal storage for vertically-interpolated row of pixels
-    float * lL = new float[src->W];
-    float * la = new float[src->W];
-    float * lb = new float[src->W];
 
-    // Phase 1: precompute coefficients for horisontal interpolation
-    
+    // Phase 1: precompute coefficients for horizontal interpolation
     for (int j = 0; j < dst->W; j++) {
-    
+
         // x coord of the center of pixel on src image
         float x0 = (static_cast<float>(j) + 0.5f) * delta - 0.5f;
 
-        // weights for interpolation in horisontal direction
+        // weights for interpolation in horizontal direction
         float * w = wwh + j * support;
-        
+
         // sum of weights used for normalization
         float ws = 0.0f;
 
@@ -212,28 +203,38 @@ SSEFUNCTION static void Lanczos(const LabImage* src, LabImage* dst, float scale)
             w[k] = Lanc(z, a);
             ws += w[k];
         }
-        
+
         // normalize weights
         for (int k = 0; k < support; k++) {
             w[k] /= ws;
         }
     }
+
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+    // temporal storage for vertically-interpolated row of pixels
+    float * lL = new float[src->W];
+    float * la = new float[src->W];
+    float * lb = new float[src->W];
+    // weights for interpolation in y direction
+    float w[support] ALIGNED64;
+
     // Phase 2: do actual interpolation
+#ifdef _OPENMP
 #pragma omp for
+#endif
     for (int i = 0; i < dst->H; i++) {
-        
         // y coord of the center of pixel on src image
         float y0 = (static_cast<float>(i) + 0.5f) * delta - 0.5f;
-        
-        // weights for interpolation in y direction
-        float w[support];
-        
+
         // sum of weights used for normalization
-        float ws= 0.0f;
+        float ws = 0.0f;
 
         int ii0 = max(0, static_cast<int>(floorf(y0 - a / sc)) + 1);
         int ii1 = min(src->H, static_cast<int>(floorf(y0 + a / sc)) + 1);
-        
+
         // calculate weights for vertical interpolation
         for (int ii = ii0; ii < ii1; ii++) {
             int k = ii - ii0;
@@ -246,91 +247,74 @@ SSEFUNCTION static void Lanczos(const LabImage* src, LabImage* dst, float scale)
         for (int k = 0; k < support; k++) {
             w[k] /= ws;
         }
-        
+
         // Do vertical interpolation. Store results.
-#ifdef __SSE299__		// actually disabled. To enable replace __SSE299__ by __SSE2__
-		__m128 Lv,av,bv,wkv;
+#ifdef __SSE2__
 		int j;
+		__m128 Lv,av,bv,wkv;
         for (j = 0; j < src->W-3; j+=4) {
 			Lv = _mm_setzero_ps();
 			av = _mm_setzero_ps();
 			bv = _mm_setzero_ps();
-            
+
             for (int ii = ii0; ii < ii1; ii++) {
                 int k = ii - ii0;
-				wkv = LVFU(w[k]);
+				wkv = _mm_set1_ps(w[k]);
 				Lv += wkv * LVFU(src->L[ii][j]);
 				av += wkv * LVFU(src->a[ii][j]);
 				bv += wkv * LVFU(src->b[ii][j]);
             }
-            
-            _mm_storeu_ps(&lL[j],Lv);
-            _mm_storeu_ps(&la[j],av);
-            _mm_storeu_ps(&lb[j],bv);
-        }
-        for (; j < src->W; j++) {
-            
-            float L = 0.0f, a = 0.0f, b = 0.0f;
-            
-            for (int ii = ii0; ii < ii1; ii++) {
-                int k = ii - ii0;
-            
-                L += w[k] * src->L[ii][j];
-                a += w[k] * src->a[ii][j];
-                b += w[k] * src->b[ii][j];
-            }
-            
-            lL[j] = L;
-            la[j] = a;
-            lb[j] = b;
-        }
 
+            STVF(lL[j],Lv);
+            STVF(la[j],av);
+            STVF(lb[j],bv);
+        }
 #else
-        for (int j = 0; j < src->W; j++) {
-            
+		int j=0;
+#endif
+        for (; j < src->W; j++) {
             float L = 0.0f, a = 0.0f, b = 0.0f;
 
             for (int ii = ii0; ii < ii1; ii++) {
                 int k = ii - ii0;
-            
+
                 L += w[k] * src->L[ii][j];
                 a += w[k] * src->a[ii][j];
                 b += w[k] * src->b[ii][j];
             }
-            
+
             lL[j] = L;
             la[j] = a;
             lb[j] = b;
         }
-#endif
+
         // Do horizontal interpolation
         for(int j = 0; j < dst->W; j++) {
 
             float * wh = wwh + support * j;
-            
+
             float L = 0.0f, a = 0.0f, b = 0.0f;
-            
+
             for (int jj = jj0[j]; jj < jj1[j]; jj++) {
                 int k = jj - jj0[j];
-            
+
                 L += wh[k] * lL[jj];
                 a += wh[k] * la[jj];
                 b += wh[k] * lb[jj];
             }
-            
+
             dst->L[i][j] = L;
             dst->a[i][j] = a;
             dst->b[i][j] = b;
         }
     }
-    
-    delete[] wwh;
+	delete[] lL;
+	delete[] la;
+	delete[] lb;
+}
     delete[] jj0;
     delete[] jj1;
-    delete[] lL;
-    delete[] la;
-    delete[] lb;
-}
+	delete[] wwh;
 }
 
 float ImProcFunctions::resizeScale (const ProcParams* params, int fw, int fh, int &imw, int &imh) {
@@ -397,13 +381,30 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
 #ifdef PROFILE
     time_t t1 = clock();
 #endif
-
+	// Nearest neighbour algorithm
+#ifdef _OPENMP
+#pragma omp parallel for if (multiThread)
+#endif
+	for (int i=0; i<dst->height; i++) {
+		int sy = i/dScale;
+		sy = LIM(sy, 0, src->height-1);
+		for (int j=0; j<dst->width; j++) {
+			int sx = j/dScale;
+			sx = LIM(sx, 0, src->width-1);
+			dst->r(i,j) = src->r(sy,sx);
+			dst->g(i,j) = src->g(sy,sx);
+			dst->b(i,j) = src->b(sy,sx);
+		}
+	}
+/* not used anymore
     if(params->resize.method == "Lanczos" ||
        params->resize.method == "Downscale (Better)" ||
        params->resize.method == "Downscale (Faster)"
       ) {
         Lanczos(src, dst, dScale);
+    } else {
     }
+
     else if (params->resize.method.substr(0,7)=="Bicubic") {
         float Av = -0.5f;
         if (params->resize.method=="Bicubic (Sharper)")
@@ -505,7 +506,7 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
             }
         }
     }
-
+*/
 #ifdef PROFILE    
     time_t t2 = clock();
     std::cout << "Resize: " << params->resize.method << ": "

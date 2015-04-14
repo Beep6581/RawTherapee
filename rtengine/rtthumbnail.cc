@@ -826,7 +826,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     LUTu hist16C (65536);
 
 	double gamma = isRaw ? Color::sRGBGamma : 0;  // usually in ImageSource, but we don't have that here
-    ipf.firstAnalysis (baseImg, &params, hist16,  gamma);
+    ipf.firstAnalysis (baseImg, &params, hist16);
 
     // perform transform
     if (ipf.needsTransform()) {

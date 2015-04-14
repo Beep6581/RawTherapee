@@ -319,7 +319,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	
         imgsrc->convertColorSpace(orig_prev, params.icm, currWB, params.raw);
 
-        ipf.firstAnalysis (orig_prev, &params, vhist16, imgsrc->getGamma());
+        ipf.firstAnalysis (orig_prev, &params, vhist16);
     }
     readyphase++;
 
