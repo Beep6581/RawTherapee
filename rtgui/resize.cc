@@ -42,12 +42,8 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     combos->attach (*appliesTo, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
 	method = Gtk::manage (new MyComboBoxText ());
-	method->append_text (M("TP_RESIZE_NEAREST"));
-	method->append_text (M("TP_RESIZE_BILINEAR"));
-	method->append_text (M("TP_RESIZE_BICUBIC"));
-	method->append_text (M("TP_RESIZE_BICUBICSF"));
-	method->append_text (M("TP_RESIZE_BICUBICSH"));
 	method->append_text (M("TP_RESIZE_LANCZOS"));
+	method->append_text (M("TP_RESIZE_NEAREST"));
 	method->set_active (0);
 
     label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_METHOD")));
@@ -142,24 +138,12 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited) {
     else if (pp->resize.appliesTo == "Full image")
     	appliesTo->set_active (1);
 
-    method->set_active (2);
-    if (pp->resize.method == "Nearest")
+    if (pp->resize.method == "Lanczos")
         method->set_active (0);
-    else if (pp->resize.method == "Bilinear")
+    else if (pp->resize.method == "Nearest")
         method->set_active (1);
-    else if (pp->resize.method == "Bicubic")
-        method->set_active (2);
-    else if (pp->resize.method == "Bicubic (Softer)")
-        method->set_active (3);
-    else if (pp->resize.method == "Bicubic (Sharper)")
-        method->set_active (4);
-    else if (pp->resize.method == "Lanczos")
-        method->set_active (5);
-    else if (pp->resize.method == "Downscale (Better)" ||
-             pp->resize.method == "Downscale (Faster)")
-    {
-        method->set_active (5);
-    }
+    else
+        method->set_active (0);
 
     wDirty = false;
     hDirty = false;
@@ -171,7 +155,7 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited) {
         if (!pedited->resize.appliesTo)
             appliesTo->set_active (2);
         if (!pedited->resize.method)
-            method->set_active (8);
+            method->set_active (3);
         if (!pedited->resize.dataspec) 
             spec->set_active (4);
         set_inconsistent (multiImage && !pedited->resize.enabled);
@@ -196,19 +180,11 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited) {
     else if (appliesTo->get_active_row_number() == 1)
         pp->resize.appliesTo = "Full image";
 
-    pp->resize.method = "Bicubic";
+    pp->resize.method = "Lanczos";
     if (method->get_active_row_number() == 0) 
-        pp->resize.method = "Nearest";
-    else if (method->get_active_row_number() == 1) 
-        pp->resize.method = "Bilinear";
-    else if (method->get_active_row_number() == 2) 
-        pp->resize.method = "Bicubic";
-    else if (method->get_active_row_number() == 3) 
-        pp->resize.method = "Bicubic (Softer)";
-    else if (method->get_active_row_number() == 4) 
-        pp->resize.method = "Bicubic (Sharper)";
-    else if (method->get_active_row_number() == 5) 
         pp->resize.method = "Lanczos";
+    else if (method->get_active_row_number() == 1) 
+        pp->resize.method = "Nearest";
         
     pp->resize.dataspec = dataSpec;
     pp->resize.width = w->get_value_as_int ();
@@ -220,7 +196,7 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->resize.enabled   = !get_inconsistent();
         pedited->resize.dataspec  = dataSpec != 4;
         pedited->resize.appliesTo = appliesTo->get_active_row_number() != 2;
-        pedited->resize.method    = method->get_active_row_number() != 8;
+        pedited->resize.method    = method->get_active_row_number() != 3;
         if (pedited->resize.dataspec) {
             pedited->resize.scale     = scale->getEditedState ();
             pedited->resize.width     = wDirty;

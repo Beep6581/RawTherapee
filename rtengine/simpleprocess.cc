@@ -571,7 +571,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     LUTu hist16 (65536);
     LUTu hist16C (65536);
 	
-    ipf.firstAnalysis (baseImg, &params, hist16, imgsrc->getGamma());
+    ipf.firstAnalysis (baseImg, &params, hist16);
 
     // perform transform (excepted resizing)
     if (ipf.needsTransform()) {
@@ -853,6 +853,11 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     if (pl) pl->setProgress (0.60);
 
+    int imw, imh;
+    double tmpScale = ipf.resizeScale(&params, fw, fh, imw, imh);
+	bool labResize = params.resize.enabled && params.resize.method != "Nearest" && tmpScale != 1.0;
+    LabImage *tmplab;
+
     // crop and convert to rgb16
     int cx = 0, cy = 0, cw = labView->W, ch = labView->H;
     if (params.crop.enabled) {
@@ -860,13 +865,36 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         cy = params.crop.y;
         cw = params.crop.w;
         ch = params.crop.h;
+        if(labResize) { // crop lab data
+			tmplab = new LabImage(cw,ch);
+			for(int row = 0;row<ch;row++) {
+				for(int col = 0;col<cw;col++) {
+					tmplab->L[row][col] = labView->L[row+cy][col+cx];
+					tmplab->a[row][col] = labView->a[row+cy][col+cx];
+					tmplab->b[row][col] = labView->b[row+cy][col+cx];
+				}
+			}
+			delete labView;
+			labView = tmplab;
+			cx = 0;
+			cy = 0;
+        }
+    }
+
+    if (labResize) { // resize lab data
+        // resize image
+        tmplab = new LabImage(imw,imh);
+        ipf.Lanczos (labView, tmplab, tmpScale);
+        delete labView;
+        labView = tmplab;
+		cw = labView->W;
+		ch = labView->H;
     }
 
     Image16* readyImg = NULL;
     cmsHPROFILE jprof = NULL;
     bool customGamma = false;
     bool useLCMS = false;
-
     if(params.icm.gamma != "default" || params.icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
         cmsMLU *DescriptionMLU, *CopyrightMLU, *DmndMLU, *DmddMLU;// for modification TAG
 
@@ -1045,16 +1073,12 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	}
     if (pl) pl->setProgress (0.70);
 
-    int imw, imh;
-    double tmpScale = ipf.resizeScale(&params, fw, fh, imw, imh);
-    if (tmpScale != 1.0) {
-        // resize image
+    if (tmpScale != 1.0 && params.resize.method == "Nearest") { // resize rgb data (gamma applied)
         Image16* tempImage = new Image16 (imw, imh);
         ipf.resize (readyImg, tempImage, tmpScale);
         delete readyImg;
         readyImg = tempImage;
     }
-
 
     if (tunnelMetaData)
         readyImg->setMetadata (ii->getMetaData()->getExifData ());

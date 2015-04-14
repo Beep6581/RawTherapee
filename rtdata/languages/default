@@ -1533,10 +1533,6 @@ TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
 TP_RESIZE_APPLIESTO;Applies to:
-TP_RESIZE_BICUBICSF;Bicubic (softer)
-TP_RESIZE_BICUBICSH;Bicubic (sharper)
-TP_RESIZE_BICUBIC;Bicubic
-TP_RESIZE_BILINEAR;Bilinear
 TP_RESIZE_CROPPEDAREA;Cropped Area
 TP_RESIZE_FITBOX;Bounding Box
 TP_RESIZE_FULLIMAGE;Full Image

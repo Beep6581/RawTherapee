@@ -1212,10 +1212,6 @@ TP_RAW_DMETHOD;Methode
 TP_RAW_FALSECOLOR;Falschfarbenunterdrückung\nStufen
 TP_RAW_LABEL;Farbinterpolation
 TP_RESIZE_APPLIESTO;Gilt für:
-TP_RESIZE_BICUBICSF;Bikubisch (weicher)
-TP_RESIZE_BICUBICSH;Bikubisch (schärfer)
-TP_RESIZE_BICUBIC;Bikubisch
-TP_RESIZE_BILINEAR;Bilinear
 TP_RESIZE_CROPPEDAREA;Ausschnitt
 TP_RESIZE_FITBOX;Begrenzungsrahmen
 TP_RESIZE_FULLIMAGE;Ganzes Bild

@@ -218,7 +218,7 @@ class ImProcFunctions {
 		bool needsTransform   ();
 		bool needsPCVignetting ();
 
-		void firstAnalysis    (Imagefloat* working, const ProcParams* params, LUTu & vhist16, double gamma);
+		void firstAnalysis    (Imagefloat* working, const ProcParams* params, LUTu & vhist16);
 		void rgbProc          (Imagefloat* working, LabImage* lab, EditBuffer *editBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
 		                       SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit , float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clcurve, LUTf & cl2curve, const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,
 		                       const ToneCurve & customToneCurvebw1,const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob);
@@ -253,7 +253,8 @@ class ImProcFunctions {
 		float resizeScale     (const ProcParams* params, int fw, int fh, int &imw, int &imh);
 		void lab2monitorRgb   (LabImage* lab, Image8* image);
 		void resize           (Image16* src, Image16* dst, float dScale);
-	//	void Lanczoslab (LabImage* src, LabImage* dst, float scale);
+		void Lanczos (const LabImage* src, LabImage* dst, float scale);
+//		void Lanczos (const Image16* src, Image16* dst, float scale);
 		
 		void deconvsharpening (LabImage* lab, float** buffer);
 		void deconvsharpeningcam (CieImage* ncie, float** buffer);
