@@ -330,7 +330,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 	unsigned filter = ri->get_filters();
 	int firstgreen = 1;
 	// locate first green location in the first row
-	if(ri->getSensorType()!=ST_FUJI_XTRANS)
+	if(ri->getSensorType()==ST_BAYER)
 		while (!FISGREEN(filter,1,firstgreen))
 			firstgreen++;
 
@@ -415,9 +415,14 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 				}
 			}
 		} else {
-			for (int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
-				rofs = row * width;
-				for (int col = firstgreen, x = 0; col < width - 1 && x < tmpw; col += hskip, x++) {
+			int iwidth = ri->get_iwidth();
+			int iheight = ri->get_iheight();
+			int left_margin = ri->get_leftmargin();
+			firstgreen += left_margin;
+			int top_margin = ri->get_topmargin();
+			for (int row = 1 + top_margin, y = 0; row < iheight + top_margin  - 1 && y < tmph; row += vskip, y++) {
+				rofs = row * iwidth;
+				for (int col = firstgreen, x = 0; col < iwidth + left_margin - 1 && x < tmpw; col += hskip, x++) {
 					int ofs = rofs + col;
 					tmpImg->r(y,x) = image[ofs][0];
 					tmpImg->g(y,x) = image[ofs][1];
@@ -493,7 +498,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 				tpp->aeHistogram[((int)(image[i* width+j][0]))>>tpp->aeHistCompression]+=gadd;
 				tpp->aeHistogram[((int)(image[i* width+j][0]))>>tpp->aeHistCompression]+=badd;
 			}
-		} else if(ri->getSensorType()!=ST_FUJI_XTRANS) {
+		} else if(ri->getSensorType()==ST_BAYER) {
 			for (int j = start; j < end; j++)
 				if (FISGREEN(filter,i,j))
 					tpp->aeHistogram[((int)(tpp->camwbGreen*image[i* width+j][1]))>>tpp->aeHistCompression]+=gadd;
@@ -501,7 +506,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 					tpp->aeHistogram[((int)(tpp->camwbRed * image[i* width+j][0]))>>tpp->aeHistCompression]+=radd;
 				else if (FISBLUE(filter,i,j))
 					tpp->aeHistogram[((int)(tpp->camwbBlue *image[i* width+j][2]))>>tpp->aeHistCompression]+=badd;
-		} else {
+		} else if(ri->getSensorType()==ST_FUJI_XTRANS) {
 			for (int j = start; j < end; j++)
 				if (ri->ISXTRANSGREEN(i,j))
 					tpp->aeHistogram[((int)(tpp->camwbGreen*image[i* width+j][1]))>>tpp->aeHistCompression]+=gadd;
@@ -509,6 +514,12 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 					tpp->aeHistogram[((int)(tpp->camwbRed * image[i* width+j][0]))>>tpp->aeHistCompression]+=radd;
 				else if (ri->ISXTRANSBLUE(i,j))
 					tpp->aeHistogram[((int)(tpp->camwbBlue *image[i* width+j][2]))>>tpp->aeHistCompression]+=badd;
+		} else /* if(ri->getSensorType()==ST_FOVEON) */{
+			for (int j = start; j < end; j++) {
+				tpp->aeHistogram[((int)(image[i* width+j][0]*2.f))>>tpp->aeHistCompression]+=radd;
+				tpp->aeHistogram[((int)(image[i* width+j][1]))>>tpp->aeHistCompression]+=gadd;
+				tpp->aeHistogram[((int)(image[i* width+j][2]*0.5f))>>tpp->aeHistCompression]+=badd;
+			}
 		}
 	}
 
@@ -530,7 +541,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 			start = 32;
 			end = width - 32;
 		}
-		if(ri->getSensorType()!=ST_FUJI_XTRANS) {
+		if(ri->getSensorType()==ST_BAYER) {
 			for (int j = start; j < end; j++) {
 				if (!filter) {
 					double d = tpp->defGain * image[i * width + j][0];
@@ -560,7 +571,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 					bn++;
 				}
 			}
-		} else  {
+		} else if(ri->getSensorType()==ST_FUJI_XTRANS) {
 			for (int j = start; j < end; j++) {
 				if (ri->ISXTRANSGREEN(i,j)) {
 					double d = tpp->defGain * image[i * width + j][1];
@@ -580,6 +591,24 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 					double d = tpp->defGain * image[i * width + j][2];
 					if (d > 64000.)
 						continue;
+					avg_b += d;
+					bn++;
+				}
+			}
+		} else /* if(ri->getSensorType()==ST_FOVEON) */ {
+			for (int j = start; j < end; j++) {
+				double d = tpp->defGain * image[i * width + j][0];
+				if (d <= 64000.) {
+					avg_r += d;
+					rn++;
+				}
+				d = tpp->defGain * image[i * width + j][1];
+				if (d <= 64000.) {
+					avg_g += d;
+					gn++;
+				}
+				d = tpp->defGain * image[i * width + j][2];
+				if (d <= 64000.) {
 					avg_b += d;
 					bn++;
 				}

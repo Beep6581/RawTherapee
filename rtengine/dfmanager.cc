@@ -121,7 +121,7 @@ void dfInfo::updateRawImage()
 			int H = ri->get_height();
 			int W = ri->get_width();
 			ri->compress_image();
-            int rSize = W*((ri->getSensorType()!=ST_NONE)?1:3);
+            int rSize = W*((ri->getSensorType()==ST_BAYER || ri->getSensorType()==ST_FUJI_XTRANS)?1:3);
 			acc_t **acc = new acc_t*[H];
 			for( int row=0; row<H;row++)
 				acc[row] = new acc_t[rSize ];
@@ -137,7 +137,7 @@ void dfInfo::updateRawImage()
 				if( !temp->loadRaw(true)){
 					temp->compress_image();		//\ TODO would be better working on original, because is temporary
 					nFiles++;
-					if( ri->getSensorType()!=ST_NONE ){
+					if( ri->getSensorType()==ST_BAYER || ri->getSensorType()==ST_FUJI_XTRANS ){
 						for( int row=0; row<H;row++){
 							for( int col=0; col < W;col++)
 								acc[row][col] += temp->data[row][col];
@@ -174,7 +174,7 @@ void dfInfo::updateRawImage()
 void dfInfo::updateBadPixelList( RawImage *df )
 {
 	const float threshold=10.f/8.f;
-	if( ri->getSensorType()!=ST_NONE ){
+	if( ri->getSensorType()==ST_BAYER || ri->getSensorType()==ST_FUJI_XTRANS ){
 		std::vector<badPix> badPixelsTemp;
 
 #pragma omp parallel

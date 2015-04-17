@@ -1,5 +1,5 @@
---- dcraw.c	2014-07-24 16:15:36.700261700 +0200
-+++ dcraw.cc	2015-02-10 18:21:01.213732653 +0100
+--- dcraw.c	2015-04-17 13:02:57 +0000
++++ dcraw.cc	2015-04-17 13:09:41 +0000
 @@ -1,3 +1,15 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -647,6 +647,15 @@
    struct decode *cur;
    int i, len;
  
+@@ -2960,7 +3255,7 @@
+ 	pred[c] += diff[dindex->leaf];
+ 	if (pred[c] >> 16 && ~pred[c] >> 16) derror();
+       }
+-      FORC3 image[row*width+col][c] = pred[c];
++      FORC3 image[row*width+col][c] = pred[c] < 0 ? 0 : pred[c];
+     }
+   }
+ }
 @@ -3571,6 +3866,8 @@
    if (load_raw == &CLASS phase_one_load_raw ||
        load_raw == &CLASS phase_one_load_raw_c)
@@ -1375,7 +1384,15 @@
        case 34892: load_raw = &CLASS    lossy_dng_load_raw;  break;
        default:    load_raw = 0;
      }
-@@ -8347,7 +8385,7 @@
+@@ -8268,6 +8306,7 @@
+     if (height   > width) pixel_aspect = 2;
+     filters = 0;
+     simple_coeff(0);
++   	adobe_coeff (make, model);
+   } else if (!strcmp(make,"Canon") && tiff_bps == 15) {
+     switch (width) {
+       case 3344: width -= 66;
+@@ -8347,7 +8386,7 @@
      width -= 44;
    } else if (!strcmp(model,"D3200") ||
  	     !strcmp(model,"D600")  ||
@@ -1384,7 +1401,7 @@
      width -= 46;
    } else if (!strcmp(model,"D4") ||
  	     !strcmp(model,"Df")) {
-@@ -8567,24 +8605,53 @@
+@@ -8567,24 +8606,53 @@
      if (load_raw == &CLASS lossless_jpeg_load_raw)
        load_raw = &CLASS hasselblad_load_raw;
      if (raw_width == 7262) {
@@ -1440,7 +1457,7 @@
      } else if (raw_width == 4090) {
        strcpy (model, "V96C");
        height -= (top_margin = 6);
-@@ -8637,6 +8704,7 @@
+@@ -8637,6 +8705,7 @@
        filters = 0x16161616;
      }
    } else if (!strcmp(make,"Leica") || !strcmp(make,"Panasonic")) {
@@ -1448,7 +1465,7 @@
      if ((flen - data_offset) / (raw_width*8/7) == raw_height)
        load_raw = &CLASS panasonic_load_raw;
      if (!load_raw) {
-@@ -8654,6 +8722,7 @@
+@@ -8654,6 +8723,7 @@
        }
      filters = 0x01010101 * (uchar) "\x94\x61\x49\x16"
  	[((filters-1) ^ (left_margin & 1) ^ (top_margin << 1)) & 3];
@@ -1456,7 +1473,7 @@
    } else if (!strcmp(model,"C770UZ")) {
      height = 1718;
      width  = 2304;
-@@ -8883,6 +8952,14 @@
+@@ -8883,6 +8953,14 @@
      memcpy (rgb_cam, cmatrix, sizeof cmatrix);
      raw_color = 0;
    }
@@ -1471,7 +1488,7 @@
    if (raw_color) adobe_coeff (make, model);
    if (load_raw == &CLASS kodak_radc_load_raw)
      if (raw_color) adobe_coeff ("Apple","Quicktake");
-@@ -8899,7 +8976,7 @@
+@@ -8899,7 +8977,7 @@
    if (!tiff_bps) tiff_bps = 12;
    if (!maximum) maximum = (1 << tiff_bps) - 1;
    if (!load_raw || height < 22 || width < 22 ||
@@ -1480,7 +1497,7 @@
      is_raw = 0;
  #ifdef NO_JASPER
    if (load_raw == &CLASS redcine_load_raw) {
-@@ -8978,195 +9055,250 @@
+@@ -8978,195 +9056,250 @@
  }
  #endif
  
@@ -1906,7 +1923,7 @@
  struct tiff_tag {
    ushort tag, type;
    int count;
-@@ -9188,585 +9320,12 @@
+@@ -9188,585 +9321,12 @@
    unsigned gps[26];
    char desc[512], make[64], model[64], soft[32], date[20], artist[64];
  };

@@ -110,6 +110,7 @@ protected:
   int maximum_c4[4];
   bool isBayer() const { return (filters!=0 && filters!=9); }
   bool isXtrans() const { return filters==9; }
+  bool isFoveon() const { return is_foveon; }
 
 public:
 
@@ -117,6 +118,10 @@ public:
   std::string get_filename() const { return filename;}
   int get_width()  const { return width; }
   int get_height() const { return height; }
+  int get_iwidth()  const { return iwidth; }
+  int get_iheight()  const { return iheight; }
+  int get_leftmargin()  const { return left_margin; }
+  int get_topmargin() const { return top_margin; }
   int get_FujiWidth() const { return fuji_width; }
   eSensorType getSensorType();
 

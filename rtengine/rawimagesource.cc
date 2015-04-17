@@ -330,7 +330,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 #pragma omp for
 #endif
 	for (int ix=0; ix<imheight; ix++) { int i=sy1+skip*ix;if (i>=maxy-skip) i=maxy-skip-1; // avoid trouble
-		if (ri->getSensorType()!=ST_NONE || ri->get_colors() == 1) {
+		if (ri->getSensorType()==ST_BAYER || ri->getSensorType()==ST_FUJI_XTRANS || ri->get_colors() == 1) {
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {if (jx>=maxx-skip) jx=maxx-skip-1; // avoid trouble
             	float rtot,gtot,btot;
             	rtot=gtot=btot=0;
@@ -1118,6 +1118,8 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
 
     if(ri->getSensorType()==ST_FUJI_XTRANS)
 		border = 7;
+    else if(ri->getSensorType()==ST_FOVEON)
+		border = 0;
 
     if ( ri->get_profile() )
         embProfile = cmsOpenProfileFromMem (ri->get_profile(), ri->get_profileLen());
@@ -1390,7 +1392,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 		cfa_linedn(0.00002*(raw.bayersensor.linenoise));
 	}
 	
-	if ( (raw.ca_autocorrect || fabs(raw.cared)>0.001 || fabs(raw.cablue)>0.001) && ri->getSensorType()!=ST_FUJI_XTRANS ) {  // Auto CA correction disabled for X-Trans, for now...
+	if ( (raw.ca_autocorrect || fabs(raw.cared)>0.001 || fabs(raw.cablue)>0.001) && ri->getSensorType() == ST_BAYER ) {  // Auto CA correction disabled for X-Trans, for now...
 		if (plistener) {
 			plistener->setProgressStr ("CA Auto Correction...");
 			plistener->setProgress (0.0);
@@ -1707,7 +1709,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 {
 	unsigned short black[4]={ri->get_cblack(0),ri->get_cblack(1),ri->get_cblack(2),ri->get_cblack(3)};
 
-	if (ri->getSensorType()!=ST_NONE) {
+	if (ri->getSensorType()==ST_BAYER || ri->getSensorType()==ST_FUJI_XTRANS) {
 		if (!rawData)
 			rawData(W,H);
 		if (riDark && W == riDark->get_width() && H == riDark->get_height()) { // This works also for xtrans-sensors, because black[0] to black[4] are equal for these
@@ -1953,7 +1955,7 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWP
 
 	//adjust black level  (eg Canon)
 	bool isMono = false;
-	if (getSensorType()==ST_BAYER) {
+	if (getSensorType()==ST_BAYER || getSensorType()==ST_FOVEON ) {
 
 		black_lev[0]=raw.bayersensor.black1;//R
 		black_lev[1]=raw.bayersensor.black0;//G1
