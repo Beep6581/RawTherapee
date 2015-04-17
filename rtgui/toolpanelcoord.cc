@@ -92,8 +92,8 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     // and a separate Demosaic and Black Level tool will be created in an "X-Trans sensor" tool
 
     // X-Trans demozaic methods: "3-pass (best), 1-pass (medium), fast"
-    // Mettre à jour les profils fournis pour inclure les nouvelles section Raw, notamment pour "Default High ISO"
-    // Valeurs par défaut:
+    // Mettre  jour les profils fournis pour inclure les nouvelles section Raw, notamment pour "Default High ISO"
+    // Valeurs par dfaut:
     //     Best -> low ISO
     //     Medium -> High ISO
 
