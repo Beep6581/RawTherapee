@@ -641,7 +641,6 @@ PARTIALPASTE_METAICMGROUP;Impostazioni di metadati e Gestione Colore
 PARTIALPASTE_PCVIGNETTE;Filtro Vignettatura
 PARTIALPASTE_PERSPECTIVE;Prospettiva
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Bilanciamento del verde
-PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Filtro dei pixel surriscaldati/guasti
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtro per rumore a bande
 PARTIALPASTE_RAWCACORR_AUTO;Autocorrezione AC
 PARTIALPASTE_RAWCACORR_CABLUE;Correzione AC blu
@@ -1240,8 +1239,6 @@ TP_PERSPECTIVE_VERTICAL;Verticale
 TP_PFCURVE_CURVEEDITOR_CH;Tonalità
 TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controlla la forza di defringe dal colore.\nPiù alto = di più,\nPiù basso = di meno.
 TP_PREPROCESS_GREENEQUIL;Bilanciamento del verde
-TP_PREPROCESS_HOTDEADPIXFILT;Filtro pixel surriscaldati/guasti
-TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Prova ad eliminare i pixel surriscaldati e guasti.
 TP_PREPROCESS_LABEL;Pre-elaborazione
 TP_PREPROCESS_LINEDENOISE;Filtro per rumore a bande
 TP_PREPROCESS_NO_FOUND;Nessuno presente

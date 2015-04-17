@@ -577,6 +577,7 @@ HISTORY_MSG_355;Wavelet edgedetect thresholdLow
 HISTORY_MSG_356;Wavelet edgedetect thresholdHi
 HISTORY_MSG_357;Wavelet Denoise link
 HISTORY_MSG_358;Wavelet Contrast Hue curve
+HISTORY_MSG_359;Hot/Dead - Threshold
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1526,6 +1527,8 @@ TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
 TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.
 TP_RAW_FALSECOLOR;False color suppression steps
+TP_RAW_HD;Threshold
+TP_RAW_HD_TOOLTIP;Lower values make hot/dead pixel detection more aggressive, but false positives may lead to artifacts. If you notice any artifacts appearing when enabling the Hot/Dead Pixel Filters, gradually increase the threshold value until they disappear.
 TP_RAW_LABEL;Demosaicing
 TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.

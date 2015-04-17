@@ -634,7 +634,6 @@ PARTIALPASTE_METAICMGROUP;Metadata/ICM inställningar
 PARTIALPASTE_PCVIGNETTE;Vinjetteringsfilter
 PARTIALPASTE_PERSPECTIVE;Perspektiv
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Grönbalansering
-PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Tillämpa het- och dödpixelfilter
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Linjärt brusfilter
 PARTIALPASTE_RAWCACORR_AUTO;Reducera kromatiska abberationer automatiskt
 PARTIALPASTE_RAWCACORR_CABLUE;Blå
@@ -1226,8 +1225,6 @@ TP_PERSPECTIVE_VERTICAL;Vertikal
 TP_PFCURVE_CURVEEDITOR_CH;Nyans
 TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Kontrollerar överstrålning efter färg. Högre = mer, lägre = mindre.
 TP_PREPROCESS_GREENEQUIL;Grönbalansering
-TP_PREPROCESS_HOTDEADPIXFILT;Filtrera heta- och döda pixlar
-TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Försöker att ta bort heta och döda pixlar i bilden
 TP_PREPROCESS_LABEL;Förbehandling
 TP_PREPROCESS_LINEDENOISE;Linjärt brusfilter
 TP_PREPROCESS_NO_FOUND;Inga hittade

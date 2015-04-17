@@ -22,7 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerpreprocess", M("TP_PREPROCESS_LABEL"), true)
+BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RAW_LABEL"), true)
 {
 	Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
 	hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_DMETHOD") +": ")),Gtk::PACK_SHRINK, 4);

@@ -383,7 +383,7 @@ enum ProcEvent {
 	EvWavedgedetectthr2=355,
 	EvWavlinkedg=356,
 	EvWavCHCurve=357,
-	
+	EvPreProcessHotDeadThresh=358,
 	NUMOFEVENTS	
 };
 }

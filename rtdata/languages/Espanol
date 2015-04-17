@@ -759,7 +759,6 @@ PARTIALPASTE_PCVIGNETTE;Filtro quitar viñeteado
 PARTIALPASTE_PERSPECTIVE;Perspectiva
 PARTIALPASTE_PREPROCESS_DEADPIXFILT;Aplicar filtro Pixel Muerto
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Equilibrio del verde
-PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Filtrar píxel caliente/muerto
 PARTIALPASTE_PREPROCESS_HOTPIXFILT;Aplicar filtro Pixel Caliente
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtro de ruido de línea
 PARTIALPASTE_RAWCACORR_AUTO;Auto corrección de Aberración Cromática
@@ -881,7 +880,6 @@ PREFERENCES_HISTOGRAMPOSITIONLEFT;Histograma en panel izquierdo
 PREFERENCES_HISTOGRAMWORKING;Usar perfil de trabajo para el histograma principal y el navegador
 PREFERENCES_HISTOGRAM_TOOLTIP;Si está activado, el perfil de trabajo se utiliza para renderizar el histograma principal y el panel navegador, de lo contrario se utiliza el perfil de Gamma Corregida de salida.
 PREFERENCES_HLTHRESHOLD;Umbral de luces altas cortadas
-PREFERENCES_HOTDEADPIXFILT;Aplicar filtro de píxel dañado
 PREFERENCES_ICCDIR;Carpeta con perfiles de color ICC
 PREFERENCES_IMPROCPARAMS;Parámetros de procesamiento de imágenes predeterminados
 PREFERENCES_INTENT_ABSOLUTE;Colorimétrico absoluto
@@ -1531,8 +1529,6 @@ TP_PREPROCESS_FLATFIELDBLURRADIUS;Radio de difuminado de campo plano
 TP_PREPROCESS_FLATFIELDBLURTYPE;Tipo de difuminado de campo plano
 TP_PREPROCESS_FLATFIELDFILE;Archivo de campo plano
 TP_PREPROCESS_GREENEQUIL;Equilibrado de verdes
-TP_PREPROCESS_HOTDEADPIXFILT;Aplicar filtro de píxel dañado
-TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Intenta eliminar píxeles calientes o muertos
 TP_PREPROCESS_HOTPIXFILT;Filtro Pixel Caliente
 TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Trata de eliminar los píxeles calientes.
 TP_PREPROCESS_LABEL;Preprocesado

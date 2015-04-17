@@ -38,6 +38,13 @@ PreProcess::PreProcess () : FoldableToolPanel(this, "preprocess", M("TP_PREPROCE
 	hotdeadPixel->pack_start( *hotPixel, Gtk::PACK_SHRINK);
 	hotdeadPixel->pack_start( *deadPixel, Gtk::PACK_SHRINK, 0);
 	pack_start(*hotdeadPixel, Gtk::PACK_SHRINK, 0);
+	hdThreshold = Gtk::manage (new Adjuster (M("TP_RAW_HD"),20,200,2,100));
+	hdThreshold->set_tooltip_markup (M("TP_RAW_HD_TOOLTIP"));
+	hdThreshold->setAdjusterListener (this);
+	if (hdThreshold->delay < 1000) hdThreshold->delay = 1000;
+	hdThreshold->show();
+	pack_start( *hdThreshold, Gtk::PACK_SHRINK, 4);
+
 //	hotdeadPixel->show();
 	hpixelconn = hotPixel->signal_toggled().connect ( sigc::mem_fun(*this, &PreProcess::hotPixelChanged), true);
 	dpixelconn = deadPixel->signal_toggled().connect ( sigc::mem_fun(*this, &PreProcess::deadPixelChanged), true);
@@ -57,7 +64,7 @@ void PreProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
 	lastDead = pp->raw.deadPixelFilter;
 	hotPixel->set_active (pp->raw.hotPixelFilter);
 	deadPixel->set_active (pp->raw.deadPixelFilter);
-
+	hdThreshold->setValue (pp->raw.hotdeadpix_thresh);
 	hpixelconn.block (false);
 	dpixelconn.block (false);
 	enableListener ();
@@ -67,10 +74,19 @@ void PreProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 {
 	pp->raw.hotPixelFilter = hotPixel->get_active();
 	pp->raw.deadPixelFilter = deadPixel->get_active();
-
+	pp->raw.hotdeadpix_thresh = hdThreshold->getIntValue();
 	if (pedited) {
+		pedited->raw.hotDeadPixelThresh = hdThreshold->getEditedState ();
 		pedited->raw.hotPixelFilter = !hotPixel->get_inconsistent();
 		pedited->raw.deadPixelFilter = !deadPixel->get_inconsistent();
+	}
+}
+
+void PreProcess::adjusterChanged (Adjuster* a, double newval)
+{
+	if (listener) {
+		if (a == hdThreshold)
+			listener->panelChanged (EvPreProcessHotDeadThresh, a->getTextValue() );
 	}
 }
 

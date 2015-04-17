@@ -706,10 +706,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     if (!raw_ca_autocorrect->get_active ())    filterPE.raw.caCorrection       = falsePE.raw.caCorrection;
     if (!raw_cared->get_active ())             filterPE.raw.caRed              = falsePE.raw.caRed;
     if (!raw_cablue->get_active ())            filterPE.raw.caBlue             = falsePE.raw.caBlue;
-    if (!raw_hotpix_filt->get_active ())     { filterPE.raw.hotPixelFilter     = falsePE.raw.hotPixelFilter;
-                                               filterPE.raw.hotDeadPixelThresh = falsePE.raw.hotDeadPixelThresh; }
-    if (!raw_deadpix_filt->get_active ())    { filterPE.raw.deadPixelFilter    = falsePE.raw.deadPixelFilter;
-                                               filterPE.raw.hotDeadPixelThresh = falsePE.raw.hotDeadPixelThresh; }
+    if (!raw_hotpix_filt->get_active ())     { filterPE.raw.hotPixelFilter     = falsePE.raw.hotPixelFilter; }
+    if (!raw_deadpix_filt->get_active ())    { filterPE.raw.deadPixelFilter    = falsePE.raw.deadPixelFilter; }
+    if (!raw_deadpix_filt->get_active () && !raw_hotpix_filt->get_active ())
+                                               filterPE.raw.hotDeadPixelThresh = falsePE.raw.hotDeadPixelThresh;
     if (!df_file->get_active ())               filterPE.raw.darkFrame          = falsePE.raw.darkFrame;
     if (!df_AutoSelect->get_active ())         filterPE.raw.dfAuto             = falsePE.raw.dfAuto;
     if (!ff_file->get_active ())               filterPE.raw.ff_file            = falsePE.raw.ff_file;

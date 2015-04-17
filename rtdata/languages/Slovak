@@ -550,7 +550,6 @@ TP_PERSPECTIVE_HORIZONTAL;Horizontálne
 TP_PERSPECTIVE_LABEL;Perspektíva
 TP_PERSPECTIVE_VERTICAL;Vertikálne
 TP_PREPROCESS_GREENEQUIL;Vyvažovanie zelenej
-TP_PREPROCESS_HOTDEADPIXFILT;Použiť filter na horúce/mŕtve pixely
 TP_PREPROCESS_LINEDENOISE;Filter šumu vedenia
 TP_RAWCACORR_AUTO;Použiť automatickú úpravu CA
 TP_RAW_DCBENHANCE;Použiť vylepšovací krok DCB

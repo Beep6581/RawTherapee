@@ -136,7 +136,7 @@ FlatFieldAutoSelect=false
 CA=true
 HotPixelFilter=true
 DeadPixelFilter=false
-HotDeadPixelThresh=40
+HotDeadPixelThresh=100
 
 [RAW Bayer]
 Method=amaze
