@@ -63,7 +63,7 @@ namespace rtengine {
         ST_NONE,   // use this value if the image is already demosaiced (i.e. not a raw file)
         ST_BAYER,
         ST_FUJI_XTRANS,
-        //ST_FOVEON,
+        ST_FOVEON,
         //ST_FUJI_EXR
     } eSensorType;
 

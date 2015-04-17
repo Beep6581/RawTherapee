@@ -50,6 +50,8 @@ eSensorType RawImage::getSensorType() {
 		return ST_BAYER;
 	else if (isXtrans())
 		return ST_FUJI_XTRANS;
+	else if (isFoveon())
+		return ST_FOVEON;
 
 	return ST_NONE;
 }
@@ -403,6 +405,25 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
 		  crop_masked_pixels();
 		  free (raw_image);
 		  raw_image=NULL;
+	  } else {
+		  if (cc && cc->has_rawCrop()) { // foveon images
+			  int lm, tm, w, h;
+			  cc->get_rawCrop(lm, tm, w, h);
+			  left_margin = lm;
+			  top_margin = tm;
+			  if (w < 0) {
+				  width += w;
+				  width -= left_margin;
+			  } else if (w > 0) {
+				  width = min((int)width,w);
+			  }
+			  if (h < 0) {
+				  height += h;
+				  height -= top_margin;
+			  } else if (h > 0) {
+				  height = min((int)height,h);
+			  }
+		  }
 	  }
 
 	  // Load embedded profile
@@ -534,9 +555,9 @@ float** RawImage::compress_image()
         #pragma omp parallel for
 		for (int row = 0; row < height; row++)
 			for (int col = 0; col < width; col++) {
-				this->data[row][3 * col + 0] = image[row * width + col][0];
-				this->data[row][3 * col + 1] = image[row * width + col][1];
-				this->data[row][3 * col + 2] = image[row * width + col][2];
+				this->data[row][3 * col + 0] = image[(row+top_margin) * iwidth + col+left_margin][0];
+				this->data[row][3 * col + 1] = image[(row+top_margin) * iwidth + col+left_margin][1];
+				this->data[row][3 * col + 2] = image[(row+top_margin) * iwidth + col+left_margin][2];
 			}
 	}
 	free(image); // we don't need this anymore

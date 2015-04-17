@@ -3255,7 +3255,7 @@ void CLASS foveon_sd_load_raw()
 	pred[c] += diff[dindex->leaf];
 	if (pred[c] >> 16 && ~pred[c] >> 16) derror();
       }
-      FORC3 image[row*width+col][c] = pred[c];
+      FORC3 image[row*width+col][c] = pred[c] < 0 ? 0 : pred[c];
     }
   }
 }
@@ -8306,6 +8306,7 @@ void CLASS identify()
     if (height   > width) pixel_aspect = 2;
     filters = 0;
     simple_coeff(0);
+   	adobe_coeff (make, model);
   } else if (!strcmp(make,"Canon") && tiff_bps == 15) {
     switch (width) {
       case 3344: width -= 66;

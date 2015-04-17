@@ -57,7 +57,7 @@ void RawImageSource::processRawWhitepoint(float expos, float preser) {
     if (fabs(preser)<0.001f) {
         // No highlight protection - simple mutiplication
 
-        if (ri->getSensorType()!=ST_NONE)
+        if (ri->getSensorType()==ST_BAYER || ri->getSensorType()==ST_FUJI_XTRANS)
 			#pragma omp parallel for
 			for (int row=0;row<height;row++)
 				for (int col=0;col<width;col++)
@@ -71,7 +71,7 @@ void RawImageSource::processRawWhitepoint(float expos, float preser) {
 					rawData[row][col*3+2] *= expos;
 				}
     } else {
-        if (ri->getSensorType()!=ST_NONE) {
+        if (ri->getSensorType()==ST_BAYER || ri->getSensorType()==ST_FUJI_XTRANS) {
 			// Demosaic to allow calculation of luminosity.
 			if(ri->getSensorType()==ST_BAYER)
 				fast_demosaic (0,0,W,H);
@@ -84,7 +84,7 @@ void RawImageSource::processRawWhitepoint(float expos, float preser) {
 #pragma omp parallel
 {
 		float maxValFloatThr = 0.f;
-        if (ri->getSensorType()!=ST_NONE)
+        if (ri->getSensorType()==ST_BAYER || ri->getSensorType()==ST_FUJI_XTRANS)
 #pragma omp for schedule(dynamic,16) nowait
 			for(int row=0;row<height;row++)
 				for (int col=0;col<width;col++) {
@@ -95,8 +95,9 @@ void RawImageSource::processRawWhitepoint(float expos, float preser) {
 #pragma omp for schedule(dynamic,16) nowait
 			for(int row=0;row<height;row++)
 				for (int col=0;col<width;col++) {
-                    for (int c=0;c<3;c++) if (rawData[row][col*3+c]>maxValFloatThr)
-						maxValFloatThr = rawData[row][col*3+c];
+                    for (int c=0;c<3;c++)
+						if (rawData[row][col*3+c]>maxValFloatThr)
+							maxValFloatThr = rawData[row][col*3+c];
                 }
 
 #pragma omp critical
@@ -124,7 +125,7 @@ void RawImageSource::processRawWhitepoint(float expos, float preser) {
                 lut[(int)j] = exp(EV*((float)maxVal-j) / ((float)maxVal-K) * log(2.0));
         }	
 
-		if (ri->getSensorType()!=ST_NONE)
+		if (ri->getSensorType()==ST_BAYER || ri->getSensorType()==ST_FUJI_XTRANS)
 			#pragma omp parallel for schedule(dynamic,16)
 			for(int row=0;row<height;row++)
 				for(int col=0;col<width;col++){
