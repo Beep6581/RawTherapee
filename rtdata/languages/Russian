@@ -644,7 +644,6 @@ PARTIALPASTE_METAICMGROUP;Настройка метаданных/парамет
 PARTIALPASTE_PCVIGNETTE;Фильтр виньетирования
 PARTIALPASTE_PERSPECTIVE;Перспектива
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Выравнивание зелёного канала
-PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Применить фильтр горячих/битых пикселей
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Фильтр полосообразного шума
 PARTIALPASTE_RAWCACORR_AUTO;Автоматическая коррекция ХА
 PARTIALPASTE_RAWCACORR_CABLUE;Синие ХА
@@ -1191,8 +1190,6 @@ TP_PERSPECTIVE_VERTICAL;Вертикальная
 TP_PFCURVE_CURVEEDITOR_CH;Цвет
 TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Контроль силы подавления в зависимости от цвета.\nВыше - сильней, ниже - слабей.
 TP_PREPROCESS_GREENEQUIL;Выравнивание зелёного
-TP_PREPROCESS_HOTDEADPIXFILT;Фильтровать битые пиксели
-TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Попытка подавить засвеченные/битые пиксели
 TP_PREPROCESS_LABEL;Предобработка
 TP_PREPROCESS_LINEDENOISE;Фильтр линейного шума
 TP_PREPROCESS_NO_FOUND;Ничего не найдено

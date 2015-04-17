@@ -654,7 +654,7 @@ void RAWParams::setDefaults() {
     ca_autocorrect = false;
     hotPixelFilter = false;
     deadPixelFilter = false;
-    hotdeadpix_thresh = 40;
+    hotdeadpix_thresh = 100;
 }
 
 void ColorManagementParams::setDefaults() {

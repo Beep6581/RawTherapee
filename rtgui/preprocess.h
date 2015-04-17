@@ -22,9 +22,11 @@
 #include <gtkmm.h>
 //#include "adjuster.h"
 #include "toolpanel.h"
+#include "adjuster.h"
+#include "guiutils.h"
 #include "../rtengine/rawimage.h"
 
-class PreProcess : public ToolParamBlock, /*public AdjusterListener,*/ public FoldableToolPanel {
+class PreProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
   protected:
     Gtk::CheckButton* hotPixel;
@@ -32,7 +34,7 @@ class PreProcess : public ToolParamBlock, /*public AdjusterListener,*/ public Fo
     bool lastHot,lastDead;
     sigc::connection hpixelconn;
     sigc::connection dpixelconn;
-
+    Adjuster* hdThreshold;
   public:
 
     PreProcess ();
@@ -44,6 +46,8 @@ class PreProcess : public ToolParamBlock, /*public AdjusterListener,*/ public Fo
 
     void hotPixelChanged();
     void deadPixelChanged();
+    void adjusterChanged     (Adjuster* a, double newval);
+
 
     //void adjusterChanged     (Adjuster* a, double newval);
     //void setAdjusterBehavior (bool linedenoiseadd, bool greenequiladd);
