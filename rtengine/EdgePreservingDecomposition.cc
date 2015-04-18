@@ -761,8 +761,13 @@ SSEFUNCTION float *EdgePreservingDecomposition::CompressDynamicRange(float *Sour
 	if(Compressed == NULL) Compressed = u;
 
 	//Apply compression, detail boost, unlogging. Compression is done on the logged data and detail boost on unlogged.
-	float temp = CompressionExponent - 1.0f;
-
+//	float temp = CompressionExponent - 1.0f;
+	float temp;
+	if(DetailBoost>0.f) {
+	float betemp=expf(-(2.f-DetailBoost+0.694f))-1.f;//0.694 = log(2)
+	temp = 1.2f*xlogf( -betemp);
+	}
+	else temp= CompressionExponent - 1.0f;
 #ifdef __SSE2__
 #ifdef _OPENMP
 #pragma omp parallel

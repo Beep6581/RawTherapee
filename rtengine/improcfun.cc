@@ -5092,6 +5092,7 @@ if(!params->epd.enabled) return;
 		float stren=params->epd.strength;
 		float edgest=params->epd.edgeStopping;
 		float sca=params->epd.scale;
+		float gamm=params->epd.gamma;
 		float rew=params->epd.reweightingIterates;
 		unsigned int i, N = Wid*Hei;
 		float Qpro= ( 4.0 / c_)  * ( a_w + 4.0 ) ;//estimate Q max if J=100.0
@@ -5106,7 +5107,7 @@ if(!params->epd.enabled) return;
 		#pragma omp parallel for
 		for (int i=0; i<Hei; i++)
 			for (int j=0; j<Wid; j++)
-				ncie->Q_p[i][j] = ncie->Q_p[i][j]/(Qpro);
+				ncie->Q_p[i][j] = gamm*ncie->Q_p[i][j]/(Qpro);
 
 		float Compression = expf(-stren);		//This modification turns numbers symmetric around 0 into exponents.
 		float DetailBoost = stren;
@@ -5125,7 +5126,7 @@ if(!params->epd.enabled) return;
 		#endif
 		for (int i=0; i<Hei; i++)
 			for (int j=0; j<Wid; j++) {
-			ncie->Q_p[i][j]=ncie->Q_p[i][j]*Qpro;
+			ncie->Q_p[i][j]=(ncie->Q_p[i][j]*Qpro)/gamm;
 			ncie->M_p[i][j]*=s;
 		}
 /*
@@ -5180,31 +5181,39 @@ if(!params->epd.enabled) return;
 float stren=params->epd.strength;
 float edgest=params->epd.edgeStopping;
 float sca=params->epd.scale;
+float gamm=params->epd.gamma;
 float rew=params->epd.reweightingIterates;
 	//Pointers to whole data and size of it.
 	float *L = lab->L[0];
 	float *a = lab->a[0];
 	float *b = lab->b[0];
 	unsigned int i, N = lab->W*lab->H;
-
 	EdgePreservingDecomposition epd = EdgePreservingDecomposition(lab->W, lab->H);
 
 	//Due to the taking of logarithms, L must be nonnegative. Further, scale to 0 to 1 using nominal range of L, 0 to 15 bit.
     float minL = FLT_MAX;
+	float maxL = 0.f;
 #pragma omp parallel
 {
 	float lminL = FLT_MAX;
+	float lmaxL = 0.f;
 #pragma omp for
-	for(i = 0; i < N; i++)
+	for(i = 0; i < N; i++) {
 		if(L[i] < lminL) lminL = L[i];
+		if(L[i] > lmaxL) lmaxL = L[i];	
+	}
 #pragma omp critical
     if(lminL < minL) minL = lminL;
+    if(lmaxL > maxL) maxL = lmaxL;
+	
 }
 	if(minL > 0.0f) minL = 0.0f;		//Disable the shift if there are no negative numbers. I wish there were just no negative numbers to begin with.
 #pragma omp parallel for
 	for(i = 0; i < N; i++)
-		L[i] = (L[i] - minL)/32767.0f;
-
+	//{L[i] = (L[i] - minL)/32767.0f;
+	{L[i] = (L[i] - minL)/maxL;
+		L[i]*=gamm;
+	}
 	//Some interpretations.
 	float Compression = expf(-stren);		//This modification turns numbers symmetric around 0 into exponents.
 	float DetailBoost = stren;
@@ -5230,7 +5239,8 @@ fclose(f);*/
 	for(int ii = 0; ii < N; ii++)
 		a[ii] *= s,
 		b[ii] *= s,
-		L[ii] = L[ii]*32767.0f + minL;
+		//L[ii] = L[ii]*32767.0f*(1.f/gamm) + minL;
+		L[ii] = L[ii]*maxL*(1.f/gamm) + minL;
 }
 
 

@@ -578,6 +578,7 @@ HISTORY_MSG_356;Wavelet edgedetect thresholdHi
 HISTORY_MSG_357;Wavelet Denoise link
 HISTORY_MSG_358;Wavelet Contrast Hue curve
 HISTORY_MSG_359;Hot/Dead - Threshold
+HISTORY_MSG_360;TM Gamma
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1337,6 +1338,7 @@ TP_EPD_EDGESTOPPING;Edge stopping
 TP_EPD_LABEL;Tone Mapping
 TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
 TP_EPD_SCALE;Scale
+TP_EPD_GAMMA;Gamma
 TP_EPD_STRENGTH;Strength
 TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
 TP_EXPOSURE_AUTOLEVELS;Auto Levels

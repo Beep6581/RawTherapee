@@ -588,6 +588,7 @@ class EPDParams{
     public:
         bool   enabled;
         double strength;
+        double gamma;
         double edgeStopping;
         double scale;
         int    reweightingIterates;

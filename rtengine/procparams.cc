@@ -845,7 +845,8 @@ void ProcParams::setDefaults () {
     dirpyrDenoise.setDefaults();
 
     epd.enabled = false;
-    epd.strength = 0.25;
+    epd.strength = 0.8;
+    epd.gamma = 1.0;
     epd.edgeStopping = 1.4;
     epd.scale = 1.0;
     epd.reweightingIterates = 0;
@@ -1427,6 +1428,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     //Save epd.
     if (!pedited || pedited->epd.enabled)             keyFile.set_boolean ("EPD", "Enabled", epd.enabled);
     if (!pedited || pedited->epd.strength)            keyFile.set_double  ("EPD", "Strength", epd.strength);
+    if (!pedited || pedited->epd.gamma)          	  keyFile.set_double  ("EPD", "Gamma", epd.gamma);
     if (!pedited || pedited->epd.edgeStopping)        keyFile.set_double  ("EPD", "EdgeStopping", epd.edgeStopping);
     if (!pedited || pedited->epd.scale)               keyFile.set_double  ("EPD", "Scale", epd.scale);
     if (!pedited || pedited->epd.reweightingIterates) keyFile.set_integer ("EPD", "ReweightingIterates", epd.reweightingIterates);
@@ -2228,6 +2230,7 @@ if (keyFile.has_group ("Directional Pyramid Denoising")) {//TODO: No longer an a
 if (keyFile.has_group ("EPD")) {
     if(keyFile.has_key("EPD", "Enabled"))             { epd.enabled = keyFile.get_boolean ("EPD", "Enabled"); if (pedited) pedited->epd.enabled = true; }
     if(keyFile.has_key("EPD", "Strength"))            { epd.strength = keyFile.get_double ("EPD", "Strength"); if (pedited) pedited->epd.strength = true; }
+    if(keyFile.has_key("EPD", "Gamma"))         	   { epd.gamma = keyFile.get_double ("EPD", "Gamma"); if (pedited) pedited->epd.gamma = true; }
     if(keyFile.has_key("EPD", "EdgeStopping"))        { epd.edgeStopping = keyFile.get_double ("EPD", "EdgeStopping"); if (pedited) pedited->epd.edgeStopping = true; }
     if(keyFile.has_key("EPD", "Scale"))               { epd.scale = keyFile.get_double ("EPD", "Scale"); if (pedited) pedited->epd.scale = true; }
     if(keyFile.has_key("EPD", "ReweightingIterates")) { epd.reweightingIterates = keyFile.get_integer ("EPD", "ReweightingIterates"); if (pedited) pedited->epd.reweightingIterates = true; }
@@ -2880,6 +2883,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& dirpyrDenoise.passes == other.dirpyrDenoise.passes
 		&& epd.enabled == other.epd.enabled
 		&& epd.strength == other.epd.strength
+		&& epd.gamma == other.epd.gamma
 		&& epd.edgeStopping == other.epd.edgeStopping
 		&& epd.scale == other.epd.scale
 		&& epd.reweightingIterates == other.epd.reweightingIterates
