@@ -201,6 +201,7 @@ void ParamsEdited::set (bool v) {
 	dirpyrDenoise.rgbmethod      = v;
 	epd.enabled                = v;
 	epd.strength            = v;
+	epd.gamma            = v;
 	epd.edgeStopping        = v;
 	epd.scale               = v;
 	epd.reweightingIterates = v;
@@ -600,6 +601,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
 
         epd.enabled = epd.enabled && p.epd.enabled == other.epd.enabled;
         epd.strength = epd.strength && p.epd.strength == other.epd.strength;
+        epd.gamma = epd.gamma && p.epd.gamma == other.epd.gamma;
         epd.edgeStopping = epd.edgeStopping && p.epd.edgeStopping == other.epd.edgeStopping;
         epd.scale = epd.scale && p.epd.scale == other.epd.scale;
         epd.reweightingIterates = epd.reweightingIterates && p.epd.reweightingIterates == other.epd.reweightingIterates;
@@ -999,6 +1001,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
 	if (epd.enabled)						toEdit.epd.enabled				= mods.epd.enabled;
 	if (epd.strength)						toEdit.epd.strength				= mods.epd.strength;
+	if (epd.gamma)							toEdit.epd.gamma				= mods.epd.gamma;
 	if (epd.edgeStopping)					toEdit.epd.edgeStopping			= mods.epd.edgeStopping;
 	if (epd.scale)							toEdit.epd.scale				= mods.epd.scale;
 	if (epd.reweightingIterates)			toEdit.epd.reweightingIterates	= mods.epd.reweightingIterates;

@@ -26,6 +26,7 @@
 class EdgePreservingDecompositionUI : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 protected:
 	Adjuster *strength;
+	Adjuster *gamma;
 	Adjuster *edgeStopping;
 	Adjuster *scale;
 	Adjuster *reweightingIterates;

@@ -291,6 +291,7 @@ class EPDParamsEdited{
 public:
     bool enabled;
     bool strength;
+    bool gamma;
     bool edgeStopping;
     bool scale;
     bool reweightingIterates;

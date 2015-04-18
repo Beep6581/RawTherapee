@@ -380,6 +380,8 @@ DIRPYREQUALIZER,   //EvWavedgedetectthr
 DIRPYREQUALIZER,   //EvWavedgedetectthr2
 DIRPYREQUALIZER,   //EvWavlinkedg
 DIRPYREQUALIZER,   //EvWavCHCurve
-DARKFRAME		   //EvPreProcessHotDeadThresh
+DARKFRAME,		   //EvPreProcessHotDeadThresh
+SHARPENING			//EvEPDgamma
+
 };
 
