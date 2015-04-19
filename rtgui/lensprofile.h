@@ -36,6 +36,7 @@ protected:
     sigc::connection conLCPFile, conUseDist, conUseVign, conUseCA;
     void updateDisabled(bool enable);
     bool allowFocusDep;
+    bool isRaw;
 
 public:
 

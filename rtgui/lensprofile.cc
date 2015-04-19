@@ -35,13 +35,13 @@ LensProfilePanel::LensProfilePanel () : FoldableToolPanel(this, "lensprof", M("T
     hbLCPFile->pack_start(*lLCPFileHead, Gtk::PACK_SHRINK, 4);
 
     fcbLCPFile = Gtk::manage(new MyFileChooserButton(M("TP_LENSPROFILE_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
-    
+
     Gtk::FileFilter filterLCP;
     filterLCP.set_name(M("TP_LENSPROFILE_FILEDLGFILTERLCP"));
     filterLCP.add_pattern("*.lcp");
     filterLCP.add_pattern("*.LCP");
     fcbLCPFile->add_filter(filterLCP);
-    
+
     Glib::ustring defDir=lcpStore->getDefaultCommonDirectory();
     if (!defDir.empty()) {
 #ifdef WIN32
@@ -94,8 +94,8 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     }
 
     ckbUseDist->set_active (pp->lensProf.useDist);
-    ckbUseVign->set_active (pp->lensProf.useVign);
-    ckbUseCA->set_active   (pp->lensProf.useCA);
+    ckbUseVign->set_active (pp->lensProf.useVign && isRaw);
+    ckbUseCA->set_active   (pp->lensProf.useCA && isRaw);
 
     lcpFileChanged=useDistChanged=useVignChanged=useCAChanged=false;
 
@@ -105,14 +105,15 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 void LensProfilePanel::setRawMeta(bool raw, const rtengine::ImageMetaData* pMeta) {
     if (!raw || pMeta->getFocusDist()<=0) {
         disableListener();
-        
+
         // CA is very focus layer dependend, otherwise it might even worsen things
         allowFocusDep=false;
         ckbUseCA->set_active(false);
         ckbUseCA->set_sensitive(false);
-        
+
         enableListener();
     }
+    isRaw=raw;
 }
 
 void LensProfilePanel::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
@@ -172,6 +173,6 @@ void LensProfilePanel::onUseCAChanged()
 
 void LensProfilePanel::updateDisabled(bool enable) {
     ckbUseDist->set_sensitive(enable);
-    ckbUseVign->set_sensitive(enable);
+    ckbUseVign->set_sensitive(enable && isRaw);
     ckbUseCA->set_sensitive(enable && allowFocusDep);
 }
