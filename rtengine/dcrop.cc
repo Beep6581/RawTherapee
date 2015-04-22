@@ -143,14 +143,7 @@ void Crop::update (int todo) {
     if (todo & (M_INIT|M_LINDENOISE)) {
         MyMutex::MyLock lock(parent->minit);  // Also used in improccoord
 
-        int tr = TR_NONE;
-        if (params.coarse.rotate==90)  tr |= TR_R90;
-        else if (params.coarse.rotate==180) tr |= TR_R180;
-        else if (params.coarse.rotate==270) tr |= TR_R270;
-
-        if (params.coarse.hflip)       tr |= TR_HFLIP;
-        if (params.coarse.vflip)       tr |= TR_VFLIP;
-
+        int tr = getCoarseBitMask(params.coarse);
         if (!needsinitupdate)
             setCropSizes (rqcropx, rqcropy, rqcropw, rqcroph, skip, true);
 			
@@ -907,13 +900,8 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
     int orx, ory, orw, orh;
     ProcParams& params = parent->params;
     parent->ipf.transCoord (parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
-        
-    int tr = TR_NONE;
-    if (params.coarse.rotate==90)  tr |= TR_R90;
-    if (params.coarse.rotate==180) tr |= TR_R180;
-    if (params.coarse.rotate==270) tr |= TR_R270;
-    if (params.coarse.hflip)       tr |= TR_HFLIP;
-    if (params.coarse.vflip)       tr |= TR_VFLIP;
+
+    int tr = getCoarseBitMask(params.coarse);
 
     PreviewProps cp (orx, ory, orw, orh, skip);
     int orW, orH;

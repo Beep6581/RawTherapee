@@ -254,7 +254,7 @@ class ImProcFunctions {
 		void lab2monitorRgb   (LabImage* lab, Image8* image);
 		void resize           (Image16* src, Image16* dst, float dScale);
 		void Lanczos (const LabImage* src, LabImage* dst, float scale);
-//		void Lanczos (const Image16* src, Image16* dst, float scale);
+		void Lanczos (const Image16* src, Image16* dst, float scale);
 		
 		void deconvsharpening (LabImage* lab, float** buffer);
 		void deconvsharpeningcam (CieImage* ncie, float** buffer);

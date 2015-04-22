@@ -63,13 +63,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // acquire image from imagesource
     ImageSource* imgsrc = ii->getImageSource ();
 
-    int tr = TR_NONE;
-    if (params.coarse.rotate==90)  tr |= TR_R90;
-    if (params.coarse.rotate==180) tr |= TR_R180;
-    if (params.coarse.rotate==270) tr |= TR_R270;
-    if (params.coarse.hflip)       tr |= TR_HFLIP;
-    if (params.coarse.vflip)       tr |= TR_VFLIP;
-
+    int tr = getCoarseBitMask(params.coarse);
     int fw, fh;
     imgsrc->getFullSize (fw, fh, tr);
 

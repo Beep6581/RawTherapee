@@ -1181,13 +1181,7 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
     }
     ImProcFunctions ipf (&params, false);
     ipf.transCoord (fw, fh, points, red, green, blue);
-    int tr = TR_NONE;
-    if (params.coarse.rotate==90)  tr |= TR_R90;
-    if (params.coarse.rotate==180) tr |= TR_R180;
-    if (params.coarse.rotate==270) tr |= TR_R270;
-    if (params.coarse.hflip)       tr |= TR_HFLIP;
-    if (params.coarse.vflip)       tr |= TR_VFLIP;
-
+    int tr = getCoarseBitMask(params.coarse);
     // calculate spot wb (copy & pasted from stdimagesource)
     double reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;
