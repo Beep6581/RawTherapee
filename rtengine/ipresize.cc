@@ -41,7 +41,6 @@ static inline float Lanc(float x, float a)
     }
 }
 
-/* This Function is not used anymore
 void ImProcFunctions::Lanczos(const Image16* src, Image16* dst, float scale)
 {
 
@@ -167,7 +166,7 @@ void ImProcFunctions::Lanczos(const Image16* src, Image16* dst, float scale)
     delete[] lb;
 }
 }
-*/
+
 
 SSEFUNCTION void ImProcFunctions::Lanczos(const LabImage* src, LabImage* dst, float scale)
 {
@@ -381,119 +380,13 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
 #ifdef PROFILE
     time_t t1 = clock();
 #endif
+    if(params->resize.method != "Nearest" ) {
+        Lanczos(src, dst, dScale);
+    } else {
 	// Nearest neighbour algorithm
 #ifdef _OPENMP
 #pragma omp parallel for if (multiThread)
 #endif
-	for (int i=0; i<dst->height; i++) {
-		int sy = i/dScale;
-		sy = LIM(sy, 0, src->height-1);
-		for (int j=0; j<dst->width; j++) {
-			int sx = j/dScale;
-			sx = LIM(sx, 0, src->width-1);
-			dst->r(i,j) = src->r(sy,sx);
-			dst->g(i,j) = src->g(sy,sx);
-			dst->b(i,j) = src->b(sy,sx);
-		}
-	}
-/* not used anymore
-    if(params->resize.method == "Lanczos" ||
-       params->resize.method == "Downscale (Better)" ||
-       params->resize.method == "Downscale (Faster)"
-      ) {
-        Lanczos(src, dst, dScale);
-    } else {
-    }
-
-    else if (params->resize.method.substr(0,7)=="Bicubic") {
-        float Av = -0.5f;
-        if (params->resize.method=="Bicubic (Sharper)")
-            Av = -0.75f;
-        else if (params->resize.method=="Bicubic (Softer)")
-            Av = -0.25f;
-		#pragma omp parallel for if (multiThread)
-        for (int i=0; i<dst->height; i++) {
-            float wx[4], wy[4];
-            float Dy = i / dScale;
-            int yc  =  (int) Dy;
-            Dy -= (float)yc;
-            int ys = yc - 1; // smallest y-index used for interpolation
-            // compute vertical weights
-            float t1y = -Av*(Dy-1.0f)*Dy;
-            float t2y = (3.0f - 2.0f*Dy)*Dy*Dy;
-            wy[3] = t1y*Dy;
-            wy[2] = t1y*(Dy - 1.0f) + t2y;
-            wy[1] = -t1y*Dy + 1.0f - t2y;
-            wy[0] = -t1y*(Dy - 1.0f);
-            for (int j = 0; j < dst->width; j++) {
-                float Dx = j / dScale;
-                int xc  =  (int) Dx;
-                Dx -= (float)xc;
-                int xs = xc - 1; // smallest x-index used for interpolation
-                if (ys >= 0 && ys < src->height-3 && xs >= 0 && xs <= src->width-3) {
-                    // compute horizontal weights
-                    float t1 = -Av*(Dx-1.0f)*Dx;
-                    float t2 = (3.0f - 2.0f*Dx)*Dx*Dx;
-                    wx[3] = t1*Dx;
-                    wx[2] = t1*(Dx - 1.0f) + t2;
-                    wx[1] = -t1*Dx + 1.0f - t2;
-                    wx[0] = -t1*(Dx - 1.0f);
-                    // compute weighted sum
-                    int r = 0;
-                    int g = 0;
-                    int b = 0;
-                    for (int x=0; x<4; x++)
-                        for (int y=0; y<4; y++) {
-                            float w = wx[x]*wy[y];
-                            r += w*src->r(ys+y,xs+x);
-                            g += w*src->g(ys+y,xs+x);
-                            b += w*src->b(ys+y,xs+x);
-                        }
-                    dst->r(i,j) = CLIP(r);
-                    dst->g(i,j) = CLIP(g);
-                    dst->b(i,j) = CLIP(b);
-                }
-                else {
-                    xc = LIM(xc, 0, src->width-1);
-                    yc = LIM(yc, 0, src->height-1);
-                    int nx = xc + 1;
-                    if (nx >= src->width)
-                        nx = xc;
-                    int ny = yc + 1;
-                    if (ny >= src->height)
-                        ny = yc;
-                    dst->r(i,j) = (1-Dx)*(1-Dy)*src->r(yc,xc) + (1-Dx)*Dy*src->r(ny,xc) + Dx*(1-Dy)*src->r(yc,nx) + Dx*Dy*src->r(ny,nx);
-                    dst->g(i,j) = (1-Dx)*(1-Dy)*src->g(yc,xc) + (1-Dx)*Dy*src->g(ny,xc) + Dx*(1-Dy)*src->g(yc,nx) + Dx*Dy*src->g(ny,nx);
-                    dst->b(i,j) = (1-Dx)*(1-Dy)*src->b(yc,xc) + (1-Dx)*Dy*src->b(ny,xc) + Dx*(1-Dy)*src->b(yc,nx) + Dx*Dy*src->b(ny,nx);
-                }
-            }
-        }
-    }
-    else if (params->resize.method=="Bilinear") {
-		#pragma omp parallel for if (multiThread)
-        for (int i=0; i<dst->height; i++) {
-            int sy = i/dScale;
-            sy = LIM(sy, 0, src->height-1);
-            float dy = i/dScale - sy;
-            int ny = sy+1;
-            if (ny>=src->height)
-                ny = sy;
-            for (int j=0; j<dst->width; j++) {
-                int sx = j/dScale;
-                sx = LIM(sx, 0, src->width-1);
-                float dx = j/dScale - sx;
-                int nx = sx+1;
-                if (nx>=src->width)
-                    nx = sx;
-                dst->r(i,j) = (1-dx)*(1-dy)*src->r(sy,sx) + (1-dx)*dy*src->r(ny,sx) + dx*(1-dy)*src->r(sy,nx) + dx*dy*src->r(ny,nx);
-                dst->g(i,j) = (1-dx)*(1-dy)*src->g(sy,sx) + (1-dx)*dy*src->g(ny,sx) + dx*(1-dy)*src->g(sy,nx) + dx*dy*src->g(ny,nx);
-                dst->b(i,j) = (1-dx)*(1-dy)*src->b(sy,sx) + (1-dx)*dy*src->b(ny,sx) + dx*(1-dy)*src->b(sy,nx) + dx*dy*src->b(ny,nx);
-            }
-        }
-    }
-    else {
-        // Nearest neighbour algorithm
-		#pragma omp parallel for if (multiThread)
         for (int i=0; i<dst->height; i++) {
             int sy = i/dScale;
             sy = LIM(sy, 0, src->height-1);
@@ -506,7 +399,7 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
             }
         }
     }
-*/
+
 #ifdef PROFILE    
     time_t t2 = clock();
     std::cout << "Resize: " << params->resize.method << ": "

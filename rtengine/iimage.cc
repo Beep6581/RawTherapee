@@ -22,3 +22,22 @@
 const char rtengine::sImage8[] =     "Image8";
 const char rtengine::sImage16[] =    "Image16";
 const char rtengine::sImagefloat[] = "Imagefloat";
+int rtengine::getCoarseBitMask( const procparams::CoarseTransformParams &coarse)
+{
+    int tr = TR_NONE;
+    if (coarse.rotate == 90) {
+        tr |= TR_R90; 
+    } else if (coarse.rotate == 180) { 
+        tr |= TR_R180; 
+    } else if (coarse.rotate == 270) { 
+        tr |= TR_R270; 
+    }
+
+    if (coarse.hflip) {
+        tr |= TR_HFLIP; 
+    }
+    if (coarse.vflip) {
+        tr |= TR_VFLIP; 
+    }
+    return tr;
+}

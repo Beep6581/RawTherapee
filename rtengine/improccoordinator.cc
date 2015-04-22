@@ -255,13 +255,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         params.wb.temperature = currWB.getTemp ();
         params.wb.green = currWB.getGreen ();
 
-        int tr = TR_NONE;
-        if (params.coarse.rotate==90)  tr |= TR_R90;
-        else if (params.coarse.rotate==180) tr |= TR_R180;
-        else if (params.coarse.rotate==270) tr |= TR_R270;
-
-        if (params.coarse.hflip)       tr |= TR_HFLIP;
-        if (params.coarse.vflip)       tr |= TR_VFLIP;
+        int tr = getCoarseBitMask(params.coarse);
 
         imgsrc->getFullSize (fw, fh, tr);
         PreviewProps pp (0, 0, fw, fh, scale);
@@ -754,12 +748,7 @@ void ImProcCoordinator::setScale (int prevscale) {
 
 if (settings->verbose) printf ("setscale before lock\n");
 
-    tr = TR_NONE;
-    if (params.coarse.rotate==90)  tr |= TR_R90;
-    if (params.coarse.rotate==180) tr |= TR_R180;
-    if (params.coarse.rotate==270) tr |= TR_R270;
-    if (params.coarse.hflip)       tr |= TR_HFLIP;
-    if (params.coarse.vflip)       tr |= TR_VFLIP;
+    tr = getCoarseBitMask(params.coarse);
 
     int nW, nH;
     imgsrc->getFullSize (fw, fh, tr);
@@ -905,12 +894,9 @@ void ImProcCoordinator::getSpotWB (int x, int y, int rect, double& temp, double&
             points.push_back (Coord2D (j, i));
 
     ipf.transCoord (fw, fh, points, red, green, blue);
-    int tr = TR_NONE;
-    if (params.coarse.rotate==90)  tr |= TR_R90;
-    if (params.coarse.rotate==180) tr |= TR_R180;
-    if (params.coarse.rotate==270) tr |= TR_R270;
-    if (params.coarse.hflip)       tr |= TR_HFLIP;
-    if (params.coarse.vflip)       tr |= TR_VFLIP;
+
+    int tr = getCoarseBitMask(params.coarse);
+
     ret = imgsrc->getSpotWB (red, green, blue, tr, params.wb.equal);
     currWB = ColorTemp (params.wb.temperature, params.wb.green,params.wb.equal, params.wb.method);
     //double rr,gg,bb;
@@ -961,7 +947,10 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname, bool 
 	MyMutex::MyLock lock(mProcessing);
 	
 	int fW, fH;
-	imgsrc->getFullSize (fW, fH, 0);
+
+    int tr = getCoarseBitMask(params.coarse);
+
+	imgsrc->getFullSize (fW, fH, tr);
 	PreviewProps pp (0, 0, fW, fH, 1);
 	ProcParams ppar = params;
 	ppar.toneCurve.hrenabled = false;
@@ -990,7 +979,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname, bool 
 	if (!apply_wb) {
 		currWB = ColorTemp(); // = no white balance
 	}
-	imgsrc->getImage (currWB, 0, im, pp, ppar.toneCurve, ppar.icm, ppar.raw);
+	imgsrc->getImage (currWB, tr, im, pp, ppar.toneCurve, ppar.icm, ppar.raw);
 	ImProcFunctions ipf (&ppar, true);
 	if (ipf.needsTransform()) {
 		Imagefloat* trImg = new Imagefloat (fW, fH);
@@ -1029,6 +1018,9 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname, bool 
 	}
 	im16->saveTIFF (fname,16,true);
 	delete im16;
+	
+	if (plistener)
+        plistener->setProgressState (false);
 	//im->saveJPEG (fname, 85);
 }
 

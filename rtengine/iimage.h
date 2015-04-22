@@ -48,7 +48,7 @@ namespace rtengine {
     extern const char sImage8[];
     extern const char sImage16[];
     extern const char sImagefloat[];
-
+    int getCoarseBitMask( const procparams::CoarseTransformParams &coarse);
     class ProgressListener;
     class Color;
 
