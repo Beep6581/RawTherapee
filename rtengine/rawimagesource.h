@@ -218,6 +218,7 @@ class RawImageSource : public ImageSource {
         void processRawWhitepoint (float expos, float preser);  // exposure before interpolation
 
         int  interpolateBadPixelsBayer( PixelsMap &bitmapBads );
+        int  interpolateBadPixelsNColours( PixelsMap &bitmapBads, const int colours );
         int  interpolateBadPixelsXtrans( PixelsMap &bitmapBads );
         int  findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels );
 
