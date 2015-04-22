@@ -564,6 +564,85 @@ int RawImageSource::interpolateBadPixelsBayer( PixelsMap &bitmapBads )
 	return counter; // Number of interpolated pixels.
 }
 
+/* interpolateBadPixels3Colours: correct raw pixels looking at the bitmap
+ * takes into consideration if there are multiple bad pixels in the neighborhood
+ */
+int RawImageSource::interpolateBadPixelsNColours( PixelsMap &bitmapBads, const int colours )
+{
+	static const float eps=1.f;	
+	int counter=0;
+#pragma omp parallel for reduction(+:counter) schedule(dynamic,16)
+	for( int row = 2; row < H-2; row++ ){
+		for(int col = 2; col <W-2; col++ ){
+			int sk = bitmapBads.skipIfZero(col,row); //optimization for a stripe all zero
+			if( sk ){
+				col +=sk-1; //-1 is because of col++ in cycle
+				continue;
+			}
+			if(!bitmapBads.get(col,row))
+				continue;
+
+			float wtdsum[colours]={0.f},norm[colours]={0.f};
+			
+			
+			// diagonal interpolation
+			for( int dx=-1;dx<=1;dx+=2){
+				if( bitmapBads.get(col+dx,row-1) || bitmapBads.get(col-dx,row+1))
+					continue;
+                for(int c=0;c<colours;c++) {
+                    float dirwt = 0.70710678f/( fabsf( rawData[row-1][(col+dx)*colours+c]- rawData[row+1][(col-dx)*colours+c])+eps);
+                    wtdsum[c] += dirwt * (rawData[row-1][(col+dx)*colours+c] + rawData[row+1][(col-dx)*colours+c]);
+                    norm[c] += dirwt;
+                }
+			}
+			
+			// horizontal interpolation
+			if(!(bitmapBads.get(col-1,row) || bitmapBads.get(col+1,row))) {
+                for(int c=0;c<colours;c++) {
+    				float dirwt = 1.f/( fabsf( rawData[row][(col-1)*colours+c]- rawData[row][(col+1)*colours+c])+eps);
+				    wtdsum[c] += dirwt * (rawData[row][(col-1)*colours+c] + rawData[row][(col+1)*colours+c]);
+				    norm[c] += dirwt;
+                }
+			}
+			
+			// vertical interpolation
+			if(!(bitmapBads.get(col,row-1) || bitmapBads.get(col,row+1))) {
+                for(int c=0;c<colours;c++) {
+    				float dirwt = 1.f/( fabsf( rawData[row-1][col*colours+c]- rawData[row+1][col*colours+c])+eps);
+	    			wtdsum[c] += dirwt * (rawData[row-1][col*colours+c] + rawData[row+1][col*colours+c]);
+		    		norm[c] += dirwt;
+                }
+			}
+
+			if (LIKELY(norm[0] > 0.f)){ // This means, we found at least one pair of valid pixels in the steps above, likelyhood of this case is about 99.999%
+                for(int c=0;c<colours;c++) {
+    				rawData[row][col*colours+c]= wtdsum[c] / (2.f * norm[c]);//gradient weighted average, Factor of 2.f is an optimization to avoid multiplications in former steps
+                }
+				counter++;
+			} else { //backup plan -- simple average. Same method for all channels. We could improve this, but it's really unlikely that this case happens
+				int tot = 0;
+				float sum[colours] = {0.f};
+				for( int dy=-2;dy<=2;dy+=2){
+					for( int dx=-2;dx<=2;dx+=2){
+						if(bitmapBads.get(col+dx,row+dy))
+							continue;
+		                for(int c=0;c<colours;c++) {
+    						sum[c] += rawData[row+dy][(col+dx)*colours+c];
+		                }
+						tot++;
+					}
+				}
+				if (tot > 0) {
+	                for(int c=0;c<colours;c++) {
+    					rawData[row][col*colours+c] = sum[c]/tot;
+	                }
+					counter ++;
+				}
+			}
+		}
+	}
+	return counter; // Number of interpolated pixels.
+}
 /* interpolateBadPixelsXtrans: correct raw pixels looking at the bitmap
  * takes into consideration if there are multiple bad pixels in the neighborhood
  */
@@ -1380,8 +1459,10 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 	if( totBP )
 		if ( ri->getSensorType()==ST_BAYER )
 			interpolateBadPixelsBayer( bitmapBads );
-		else
+		else if ( ri->getSensorType()==ST_FUJI_XTRANS )
 			interpolateBadPixelsXtrans( bitmapBads );
+        else
+            interpolateBadPixelsNColours( bitmapBads, ri->get_colors() );
 	
 	if ( ri->getSensorType()==ST_BAYER && raw.bayersensor.linenoise >0 ) {
 		if (plistener) {
