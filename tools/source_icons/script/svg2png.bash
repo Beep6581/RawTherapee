@@ -48,7 +48,11 @@ do
     fi
 
     echo "#! /bin/bash" > $DIR_TMP/$FILE_NAME.bash
-    awk -v s="$SVG" -v d="$DIR_OUT"  -F, '{print "inkscape " s " --export-png=" d "/" $1 " -" $2}' $DIR_IN/$FILE >> $DIR_TMP/$FILE_NAME.bash
+    if [[ $OSTYPE == MSYS ]]; then
+        awk -v s="$SVG" -v d="$DIR_OUT"  -F, '{print "\"/c/Program Files (x86)/Inkscape/inkscape.exe\" " s " --export-png=" d "/" $1 " -" $2}' $DIR_IN/$FILE >> $DIR_TMP/$FILE_NAME.bash
+    else
+        awk -v s="$SVG" -v d="$DIR_OUT"  -F, '{print "inkscape " s " --export-png=" d "/" $1 " -" $2}' $DIR_IN/$FILE >> $DIR_TMP/$FILE_NAME.bash
+    fi
 
     awk -v s="$SVG" -v d="$DIR_OUT"  -F, '{print  "mv " d "/" $1  " " d "/" $3}' $DIR_IN/$FILE >> $DIR_TMP/$FILE_NAME.bash
 
