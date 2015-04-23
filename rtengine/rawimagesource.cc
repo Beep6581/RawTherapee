@@ -582,8 +582,9 @@ int RawImageSource::interpolateBadPixelsNColours( PixelsMap &bitmapBads, const i
 			if(!bitmapBads.get(col,row))
 				continue;
 
-			float wtdsum[colours]={0.f},norm[colours]={0.f};
-			
+			float wtdsum[colours], norm[colours];
+			for (int i=0; i<colours; ++i)
+				wtdsum[i] = norm[i] = 0.f;
 			
 			// diagonal interpolation
 			for( int dx=-1;dx<=1;dx+=2){
@@ -621,7 +622,9 @@ int RawImageSource::interpolateBadPixelsNColours( PixelsMap &bitmapBads, const i
 				counter++;
 			} else { //backup plan -- simple average. Same method for all channels. We could improve this, but it's really unlikely that this case happens
 				int tot = 0;
-				float sum[colours] = {0.f};
+				float sum[colours];
+				for (int i=0; i<colours; ++i)
+					sum[i] = 0.f;
 				for( int dy=-2;dy<=2;dy+=2){
 					for( int dx=-2;dx<=2;dx+=2){
 						if(bitmapBads.get(col+dx,row+dy))
