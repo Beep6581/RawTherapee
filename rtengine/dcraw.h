@@ -239,6 +239,11 @@ int raw (unsigned row, unsigned col);
 void phase_one_flat_field (int is_float, int nc);
 void phase_one_correct();
 void phase_one_load_raw();
+void nikon_yuv_load_raw();
+void kodak_c330_load_raw();
+void kodak_c603_load_raw();
+void samsung3_load_raw();
+void parse_qt (int end);
 
 // ph1_bithuff(int nbits, ushort *huff);
 class ph1_bithuff_t {
