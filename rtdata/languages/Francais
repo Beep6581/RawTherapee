@@ -13,8 +13,6 @@ CURVEEDITOR_CURVES;Courbes
 CURVEEDITOR_CURVE;Courbe
 CURVEEDITOR_CUSTOM;Personnalisé
 CURVEEDITOR_DARKS;Zones sombres
-CURVEEDITOR_FILEDLGFILTERANY;Tous les fichiers
-CURVEEDITOR_FILEDLGFILTERCURVE;Fichiers de courbe
 CURVEEDITOR_HIGHLIGHTS;Hautes lumières
 CURVEEDITOR_LIGHTS;Zones claires
 CURVEEDITOR_LINEAR;Linéaire
@@ -625,29 +623,10 @@ MAIN_TOOLTIP_SHOWHIDERP1;Afficher/Cacher le panneau droit\nRaccourci: <b>Alt-l</
 MAIN_TOOLTIP_SHOWHIDETP1;Afficher/Cacher le panneau supérieur\nRaccourci: <b>Shift-L</b>
 MAIN_TOOLTIP_THRESHOLD;Seuil
 MAIN_TOOLTIP_TOGGLE;Comparaison avant/après\nRaccourci: <b>Shift-b</b>
-NAVIGATOR_B_NA;B = n/d
-NAVIGATOR_B_VALUE;B = %1
-NAVIGATOR_G_NA;V = n/d
-NAVIGATOR_G_VALUE;V = %1
-NAVIGATOR_H_NA;T = n/d
-NAVIGATOR_H_VALUE;T = %1
-NAVIGATOR_LAB_A_NA;a = n/d
-NAVIGATOR_LAB_A_VALUE;a = %1
-NAVIGATOR_LAB_B_NA;b = n/d
-NAVIGATOR_LAB_B_VALUE;b = %1
-NAVIGATOR_LAB_L_NA;L = n/d
-NAVIGATOR_LAB_L_VALUE;L = %1
-NAVIGATOR_R_NA;R = n/d
-NAVIGATOR_R_VALUE;R = %1
-NAVIGATOR_S_NA;S = n/d
-NAVIGATOR_S_VALUE;S = %1
-NAVIGATOR_V_NA;V = n/d
-NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_FULL;Largeur = %1, Hauteur = %2
 NAVIGATOR_XY_NA;x = n/d, y = n/d
 OPTIONS_DEFIMG_MISSING;Le profil par défaut pour les <b>images standards</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez également le dossier de vos profils, il peut être manquant ou endommagé\n\nLes valeurs internes pas défaut seront utilisées.
 OPTIONS_DEFRAW_MISSING;Le profil par défaut pour les <b>images Raw</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez également le dossier de vos profils, il peut être manquant ou endommagé\n\nLes valeurs internes pas défaut seront utilisées.
-PARTIALPASTER_FILMSIMULATION;Simulation de Film
 PARTIALPASTE_BASICGROUP;Réglages de base
 PARTIALPASTE_CACORRECTION;Aberration chromatique
 PARTIALPASTE_CHANNELMIXERBW;Noir et Blanc
@@ -820,7 +799,6 @@ PREFERENCES_OUTDIR;Dossier de sortie
 PREFERENCES_OVERLAY_FILENAMES;Superposer les noms de fichier sur les vignettes dans le navigateur de fichier
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Superposer les noms de fichier sur les vignettes dans le panneau d'édition
 PREFERENCES_OVERWRITEOUTPUTFILE;Écraser le fichier s'il existe déjà
-PREFERENCES_PANFACTORFRAME;Amplification du déplacement
 PREFERENCES_PANFACTORLABEL;Facteur
 PREFERENCES_PARSEDEXTADDHINT;Tapez une extension et cliquez ce bouton pour l'ajouter à la liste
 PREFERENCES_PARSEDEXTADD;Ajout de l'extension
@@ -868,8 +846,6 @@ PREFERENCES_USESYSTEMTHEME;Utiliser le thème système
 PREFERENCES_VIEW;Point blanc du périphérique sortie (moniteur, TV, projecteur,...)
 PREFERENCES_WORKFLOW;Habitudes de travail
 PROFILEPANEL_COPYPPASTE;Paramètres à copier
-PROFILEPANEL_FILEDLGFILTERANY;Tous les fichiers
-PROFILEPANEL_FILEDLGFILTERPP;Profils de post-traitement
 PROFILEPANEL_GLOBALPROFILES;Profils fournis
 PROFILEPANEL_LABEL;Profils de post-traitement
 PROFILEPANEL_LOADDLGLABEL;Charger les paramètres de post-traitement...
@@ -907,7 +883,6 @@ SAVEDLG_AUTOSUFFIX;Ajouter automatiquement un suffixe si le fichier existe déj�
 SAVEDLG_FILEFORMAT;Format de fichier
 SAVEDLG_FORCEFORMATOPTS;Forcer les options d'enregistrement
 SAVEDLG_JPEGQUAL;Qualité JPEG
-SAVEDLG_JPGFILTER;Fichiers JPEG
 SAVEDLG_PNGCOMPR;Compression PNG
 SAVEDLG_PUTTOQUEUEHEAD;Placer au début de la file de traitement
 SAVEDLG_PUTTOQUEUETAIL;Placer au fin de la file de traitement
@@ -919,7 +894,6 @@ SAVEDLG_SUBSAMP_1;Meilleure compression
 SAVEDLG_SUBSAMP_2;Équilibré
 SAVEDLG_SUBSAMP_3;Meilleure qualité
 SAVEDLG_SUBSAMP_TOOLTIP;Compression: 4:1:1\nÉquilibré: 4:2:2\nQualité: 4:4:4
-SAVEDLG_TIFFFILTER;Fichiers TIFF
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
 SAVEDLG_WARNFILENAME;Le fichier sera nommé
 SHCSELECTOR_TOOLTIP;Cliquez le bouton droit de la souris\npour réinitialiser la position de ces 3 curseurs
@@ -1081,11 +1055,7 @@ TP_COLORTONING_CHROMAC;Opacité
 TP_COLORTONING_COLOR;Couleur
 TP_COLORTONING_HIGHLIGHT;Hautes lumières
 TP_COLORTONING_HUE;Teinte
-TP_COLORTONING_LABCOL;Couleurs directes
-TP_COLORTONING_LABCOL_TOOLTIP;Lorsque vous déplacez un curseur de saturation, ces couleurs 'direct' sont augmentées.
 TP_COLORTONING_LABEL;Virage Partiel
-TP_COLORTONING_LABINT;-
-TP_COLORTONING_LABINT_TOOLTIP;Lorsque l'image est bleue et que la mixage de la couleur interpolé est rouge, cela résulte en un magenta en fonction du pourcentage d'opacité\nLorsque l'image est rouge et que la mixage de la couleur interpolé est jaune, cela résulte en un orange en fonction du pourcentage d'opacité\nEtc...
 TP_COLORTONING_LAB;Mixage Lab
 TP_COLORTONING_LUMAMODE;Préserver la luminance
 TP_COLORTONING_LUMAMODE_TOOLTIP;Si activé, lorsque vous changez la couleur (rouge, vert, cyan, bleu, etc.), la luminance de chaque pixel est préservé
@@ -1093,7 +1063,6 @@ TP_COLORTONING_LUMA;Luminance
 TP_COLORTONING_METHOD;Méthode
 TP_COLORTONING_METHOD_TOOLTIP;Mixage Lab - RVB courbes - RVB curseurs utilise une interpolation\nBalance couleur(ombres / tons moyens / hautes lumières)\nSaturation 2 couleurs utilise couleurs directes\nDans tous les méthodes vous pouvez activer Noir et Blanc
 TP_COLORTONING_MIDTONES;Tons Moyens
-TP_COLORTONING_NEUTRALCUR;Réinit. courbes
 TP_COLORTONING_NEUTRAL_TIP;Réinitialise toutes les valeurs (Ombres, Tons moyens, Hautes lumières) à leur valeur par défaut.
 TP_COLORTONING_OPACITY;Opacité
 TP_COLORTONING_RGBCURVES;RVB - Courbes
@@ -1117,10 +1086,6 @@ TP_CROP_GTDIAGONALS;Règle des diagonales
 TP_CROP_GTEPASSPORT;Passeport biométrique
 TP_CROP_GTFRAME;Cadre
 TP_CROP_GTGRID;Grille
-TP_CROP_GTHARMMEANS1;Manière harmonique 1
-TP_CROP_GTHARMMEANS2;Manière harmonique 2
-TP_CROP_GTHARMMEANS3;Manière harmonique 3
-TP_CROP_GTHARMMEANS4;Manière harmonique 4
 TP_CROP_GTNONE;Aucun
 TP_CROP_GTRULETHIRDS;Règle des tiers
 TP_CROP_GUIDETYPE;Type de guide:
@@ -1166,10 +1131,7 @@ TP_DIRPYRDENOISE_PASSE;Itérations
 TP_DIRPYRDENOISE_RED;Chrominance - Rouge-Vert
 TP_DIRPYRDENOISE_RGB;RVB
 TP_DIRPYREQUALIZER_ALGO;Domaine des tons chairs
-TP_DIRPYREQUALIZER_ALGO_FI;Fin
-TP_DIRPYREQUALIZER_ALGO_LA;Large
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fin: plus proche des tons chairs, minimisant l'actions sur les autres couleurs\nLarge: évite plus d'artéfacts
-TP_DIRPYREQUALIZER_GAMUT;Réduire les artéfacts
 TP_DIRPYREQUALIZER_HUESKIN;Skin hue
 TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
 TP_DIRPYREQUALIZER_LABEL;Contraste par niveaux de détail
@@ -1262,8 +1224,6 @@ TP_ICM_BLENDCMSMATRIX_TOOLTIP;Activer la récupération des zones brûlées lors
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolé
 TP_ICM_DCPILLUMINANT_TOOLTIP;Sélectionne quel illuminant DCP inclus utiliser. La valeur par défaut est "Interpolé", qui est un mix entre les 2 profils inclus basé sur la Balance des Blancs choisie. Ce paramètre n'est actif que si un fichier DCP Bi-Illuminant avec support de l'interpolation est choisi.
-TP_ICM_FILEDLGFILTERANY;Tous les fichiers
-TP_ICM_FILEDLGFILTERICM;Fichiers de profil
 TP_ICM_INPUTCAMERAICC;Sél. auto du profile de l'APN
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Utilise les profils d'entrée DCP ou ICC spécifiques à RawTherapee, qui sont plus précis qu'une simple matrice.\nDisponible pour certains appareils photo, ces profils sont stoqués dans le dossier /iccprofiles/input.\nCelui dont le nom de fichier correspond au champ EXIF "Modèle" (de l'appareil) est automatiquement sélectionné.
 TP_ICM_INPUTCAMERA;Celui de l'appareil photo
@@ -1326,7 +1286,6 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Peut être utilisé avec le curseur Chromaticité et 
 TP_LENSGEOM_AUTOCROP;Recadrage auto
 TP_LENSGEOM_FILL;Remplir
 TP_LENSGEOM_LABEL;Objectif / Géométrie
-TP_LENSPROFILE_FILEDLGFILTERLCP;Fichiers de correction d'objectif
 TP_LENSPROFILE_LABEL;Profil de correction d'objectif
 TP_LENSPROFILE_USECA;Corr. de l'aber. chromatique
 TP_LENSPROFILE_USEDIST;Corr. de la distortion
@@ -1381,10 +1340,6 @@ TP_RAW_LMMSE_TOOLTIP;Ajoute gamma (niveau 1) + médian (niveau 2-4) + affinage (
 TP_RAW_SENSOR_BAYER_LABEL;Capteur à matrice de Bayer
 TP_RAW_SENSOR_XTRANS_LABEL;Capteur à matrice X-Trans
 TP_RESIZE_APPLIESTO;S'applique à:
-TP_RESIZE_BICUBICSF;Bicubique (Plus doux)
-TP_RESIZE_BICUBICSH;Bicubique (Plus net)
-TP_RESIZE_BICUBIC;Bicubique
-TP_RESIZE_BILINEAR;Bilinéaire
 TP_RESIZE_CROPPEDAREA;La zone recadrée
 TP_RESIZE_FITBOX;Boîte englobante
 TP_RESIZE_FULLIMAGE;L'image entière
@@ -1596,7 +1551,16 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_358;Wavelet Contrast Hue curve
 !HISTORY_MSG_359;Hot/Dead - Threshold
 !HISTORY_MSG_360;TM Gamma
+!NAVIGATOR_B;B:
+!NAVIGATOR_G;G:
+!NAVIGATOR_H;H:
+!NAVIGATOR_LAB_A;a*:
+!NAVIGATOR_LAB_B;b*:
+!NAVIGATOR_LAB_L;L*:
 !NAVIGATOR_NA; --
+!NAVIGATOR_R;R:
+!NAVIGATOR_S;S:
+!NAVIGATOR_V;V:
 !PARTIALPASTE_EQUALIZER;Wavelet Equalizer
 !PARTIALPASTE_FILMSIMULATION;Film Simulation
 !PREFERENCES_AUTLISLOW;Low
@@ -1657,6 +1621,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_BWMIX_ALGO_TOOLTIP;Linear: will produce a normal <b>linear</b> response.\nSpecial effects: will produce special effects by mixing channels <b>non-linearly</b>.
 !TP_COLORTONING_AUTOSAT;Automatic
 !TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Chroma opacity as a function of luminance oC=f(L)
+!TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_DIRPYRDENOISE_99;9x9 (very slow)

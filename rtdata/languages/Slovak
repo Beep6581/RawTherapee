@@ -7,8 +7,6 @@ BATCHQUEUE_AUTOSTART;Auto štart
 BATCH_PROCESSING;Dávkové spracovanie
 CURVEEDITOR_CUSTOM;Vlastné
 CURVEEDITOR_DARKS;Tiene
-CURVEEDITOR_FILEDLGFILTERANY;Všetky súbory
-CURVEEDITOR_FILEDLGFILTERCURVE;Súbory kriviek
 CURVEEDITOR_HIGHLIGHTS;Najvyššie svetlá
 CURVEEDITOR_LIGHTS;Svetlá
 CURVEEDITOR_LINEAR;Lineárna
@@ -249,7 +247,6 @@ MAIN_BUTTON_FULLSCREEN;Celá obrazovka
 MAIN_BUTTON_PREFERENCES;Predvoľby
 MAIN_BUTTON_PUTTOQUEUE;Vložiť do radu
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Pridať súčasný obrázok do radu na spracovanie <b>Ctrl+B</b>
-MAIN_BUTTON_SAVEAS;Ako...
 MAIN_BUTTON_SAVE;Uložiť obrázok
 MAIN_BUTTON_SAVE_TOOLTIP;Uložiť súčasný obrázok <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR;Odoslať do editora
@@ -282,18 +279,6 @@ MAIN_TOOLTIP_INDCLIPPEDH;Indikácia orezania najvyšších svetiel
 MAIN_TOOLTIP_INDCLIPPEDS;Indikácia orezania tieňov
 MAIN_TOOLTIP_QINFO;Rýchle informácie o obrázku
 MAIN_TOOLTIP_TOGGLE;Prepnúť pohľad predtým/potom <b>B</b>
-NAVIGATOR_B_NA;B = n/a
-NAVIGATOR_B_VALUE;B = %1
-NAVIGATOR_G_NA;G = n/a
-NAVIGATOR_G_VALUE;G = %1
-NAVIGATOR_H_NA;H = n/a
-NAVIGATOR_H_VALUE;H = %1
-NAVIGATOR_R_NA;R = n/a
-NAVIGATOR_R_VALUE;R = %1
-NAVIGATOR_S_NA;S = n/a
-NAVIGATOR_S_VALUE;S = %1
-NAVIGATOR_V_NA;V = n/a
-NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = n/a, y = n/a
 PARTIALPASTE_BASICGROUP;Základné nastavenia
 PARTIALPASTE_CACORRECTION;Korekcia C/A
@@ -309,7 +294,6 @@ PARTIALPASTE_ICMSETTINGS;Nastavenia ICM
 PARTIALPASTE_IPTCINFO;IPTC informácie
 PARTIALPASTE_LABCURVE;Krivka svietivosti
 PARTIALPASTE_LENSGROUP;Nastavenia súvisiace s objektívom
-PARTIALPASTE_LUMACURVE;Krivka svietivosti
 PARTIALPASTE_METAICMGROUP;Nastavenia metadát/ICM
 PARTIALPASTE_RESIZE;Zmeniť veľkosť
 PARTIALPASTE_ROTATION;Otočenie
@@ -324,15 +308,9 @@ PREFERENCES_BEHAVIOR;Správanie sa
 PREFERENCES_CACHECLEARALL;Vyčistiť všetko
 PREFERENCES_CACHECLEARPROFILES;Vyčistiť profily
 PREFERENCES_CACHECLEARTHUMBS;Vyčistiť zmenšeniny
-PREFERENCES_CACHEFORMAT1;Vlastné (rýchlejšie a kvalitnejšie)
-PREFERENCES_CACHEFORMAT2;JPEG (menšia veľkosť na disku)
 PREFERENCES_CACHEMAXENTRIES;Maximálny počet vstupov v cache
 PREFERENCES_CACHEOPTS;Možnosti cache
-PREFERENCES_CACHETHUMBFORM;Formát zmenšenín pre cache
 PREFERENCES_CACHETHUMBHEIGHT;Maximálna výška zmenšenín
-PREFERENCES_CLEARDLG_LINE1;Čistím cache
-PREFERENCES_CLEARDLG_LINE2;Môže to pár sekúnd trvať.
-PREFERENCES_CLEARDLG_TITLE;Prosím, čakajte.
 PREFERENCES_CLIPPINGIND;Indikácia orezu
 PREFERENCES_CMETRICINTENT;Kolorimetrický zámer
 PREFERENCES_DATEFORMATHINT;<i>Môžete použiť nasledujúce formátovacie reťazce:</i>\n<b>%y</b><i> : rok</i>\n<b>%m</b><i> : mesiac</i>\n<b>%d</b><i> : deň</i>\n<i>\nNapríklad, slovenský formát je:</i>\n<b>%d.%m.%y</b>
@@ -394,8 +372,6 @@ PREFERENCES_TAB_GENERAL;Všeobecné
 PREFERENCES_TAB_IMPROC;Spracovanie obrazu
 PREFERENCES_USESYSTEMTHEME; Použiť systémový vzhľad
 PREFERENCES_WORKFLOW;Tok práce
-PROFILEPANEL_FILEDLGFILTERANY;Všetky súbory
-PROFILEPANEL_FILEDLGFILTERPP;Profily spracovania
 PROFILEPANEL_LABEL;Profily spracovania
 PROFILEPANEL_LOADDLGLABEL;Načítať parametre spracovania...
 PROFILEPANEL_PCUSTOM;Vlastné
@@ -415,23 +391,18 @@ PROGRESSBAR_READY;Pripravený
 PROGRESSBAR_SAVEJPEG;Ukladám JPEG súbor...
 PROGRESSBAR_SAVEPNG;Ukladám PNG súbor...
 PROGRESSBAR_SAVETIFF;Ukladám TIFF súbor...
-PROGRESSDLG_LOADING;Načítava sa súbor...
-PROGRESSDLG_PROCESSING;Spracúva sa obrázok...
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil zmenený v prehliadači
-PROGRESSDLG_SAVING;Ukladá sa súbor...
 QINFO_ISO;ISO
 QINFO_NOEXIF;Exif údaje sú nedostupné.
 SAVEDLG_AUTOSUFFIX;Automaticky pridať príponu, ak už súbor existuje
 SAVEDLG_FILEFORMAT;Formát súboru
 SAVEDLG_JPEGQUAL;JPEG Kvalita
-SAVEDLG_JPGFILTER;JPEG súbory
 SAVEDLG_PNGCOMPR;PNG Kompresia
 SAVEDLG_PUTTOQUEUEHEAD;Presunúť na čelo radu na spracovanie
 SAVEDLG_PUTTOQUEUETAIL;Presunúť na koniec radu na spracovanie
 SAVEDLG_PUTTOQUEUE;Vložiť do radu na spracovanie
 SAVEDLG_SAVEIMMEDIATELY;Uložiť okamžite
 SAVEDLG_SAVESPP;Uložiť parametre spracovania s obrázkom
-SAVEDLG_TIFFFILTER;TIFF súbory
 SAVEDLG_TIFFUNCOMPRESSED;Nekomprimovaný TIFF
 TOOLBAR_TOOLTIP_CROP;Orezanie výberu (shortcut key: C)
 TOOLBAR_TOOLTIP_HAND;Nástroj ruka (shortcut key: N)
@@ -444,34 +415,12 @@ TP_CHMIXER_BLUE;Modrá
 TP_CHMIXER_GREEN;Zelená
 TP_CHMIXER_LABEL;Mixér kanálov
 TP_CHMIXER_RED;Červená
-TP_COARSETRAF_DEGREE;stupeň:
 TP_COARSETRAF_TOOLTIP_HFLIP;Prevrátiť horizontálne
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Otočiť doľava
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Otočiť doprava
 TP_COARSETRAF_TOOLTIP_VFLIP;Prevrátiť vertikálne
-TP_COLORBOOST_ACHANNEL;Kanál "a"
-TP_COLORBOOST_AMOUNT;Množstvo
-TP_COLORBOOST_AVOIDCOLORCLIP;Vyhnúť sa orezaniu farieb
-TP_COLORBOOST_BCHANNEL;Kanál "b"
-TP_COLORBOOST_CHANNEL;Kanál
-TP_COLORBOOST_CHSEPARATE;oddelené
-TP_COLORBOOST_ENABLESATLIMITER;Povoliť obmedzovať sýtosti
-TP_COLORBOOST_LABEL;Zosilnenie farieb
-TP_COLORBOOST_SATLIMIT;Hranica sýtosti
-TP_COLORDENOISE_EDGESENSITIVE;Citlivá na okraje
-TP_COLORDENOISE_EDGETOLERANCE;Tolerancia okrajov
-TP_COLORDENOISE_LABEL;Redukcia farebného šumu
-TP_COLORDENOISE_RADIUS;Polomer
-TP_COLORSHIFT_BLUEYELLOW;Modrá-žltá
-TP_COLORSHIFT_GREENMAGENTA;Zelená-fialová
-TP_COLORSHIFT_LABEL;Farebný posun
-TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;Pevný pomer:
 TP_CROP_GTDIAGONALS;Pravidlo diagonál
-TP_CROP_GTHARMMEANS1;Harmonický priemer 1
-TP_CROP_GTHARMMEANS2;Harmonický priemer 2
-TP_CROP_GTHARMMEANS3;Harmonický priemer 3
-TP_CROP_GTHARMMEANS4;Harmonický priemer 4
 TP_CROP_GTNONE;Žiadne
 TP_CROP_GTRULETHIRDS;Pravidlo tretín
 TP_CROP_GUIDETYPE;Type vodidiel:
@@ -481,7 +430,6 @@ TP_CROP_SELECTCROP;    Vyberte Orez
 TP_CROP_W;Š
 TP_CROP_X;x
 TP_CROP_Y;y
-TP_DETAIL_AMOUNT;Množstvo
 TP_DIRPYRDENOISE_CHROMA;Farebnosť
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_LABEL;Redukcia šumu pomocou smerovej pyramídy
@@ -495,12 +443,6 @@ TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutrálne
 TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 TP_DISTORTION_AMOUNT;Množstvo
 TP_DISTORTION_LABEL;Zakrivenie
-TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
-TP_EQUALIZER_CONTRAST_PLUS;Kontrast+
-TP_EQUALIZER_FINEST;najjemnejšie
-TP_EQUALIZER_LABEL;Vyrovnávač vlnky
-TP_EQUALIZER_LARGEST;najhrubšie
-TP_EQUALIZER_NEUTRAL;Neutrálne
 TP_EXPOSURE_AUTOLEVELS;Auto úrovne
 TP_EXPOSURE_BLACKLEVEL;Čierna
 TP_EXPOSURE_BRIGHTNESS;Jas
@@ -516,9 +458,6 @@ TP_HLREC_COLOR;Šírenie farieb
 TP_HLREC_LABEL;Obnova najvyšších svetiel
 TP_HLREC_LUMINANCE;Obnova svietivosti
 TP_HLREC_METHOD;Metóda: 
-TP_ICM_FILEDLGFILTERANY;Všetky súbory
-TP_ICM_FILEDLGFILTERICM;Súbory ICC profilu
-TP_ICM_GAMMABEFOREINPUT;Profil aplikuje Gamu
 TP_ICM_INPUTCAMERA;Predvolený aparátu
 TP_ICM_INPUTCUSTOM;Vlastný
 TP_ICM_INPUTDLGLABEL;Vybrať vstupný ICC profil...
@@ -535,17 +474,9 @@ TP_LABCURVE_BRIGHTNESS;Jas
 TP_LABCURVE_CONTRAST;Kontrast
 TP_LABCURVE_CURVEEDITOR;Krivka svietivosti
 TP_LABCURVE_LABEL;Krivka svietivosti
-TP_LABCURVE_SATURATION;Sýtosť
 TP_LENSGEOM_AUTOCROP;Automatické orezanie
 TP_LENSGEOM_FILL;Automatické vyplnenie
 TP_LENSGEOM_LABEL;Objektív/Geometria
-TP_LUMACURVE_BLACKLEVEL;Čierna
-TP_LUMACURVE_BRIGHTNESS;Jas
-TP_LUMACURVE_COMPRHIGHLIGHTS;Kompresia najvyšších svetiel
-TP_LUMACURVE_COMPRSHADOWS;Kompresia tieňov
-TP_LUMACURVE_CONTRAST;Kontrast
-TP_LUMACURVE_CURVEEDITOR;Krivka svietivosti
-TP_LUMACURVE_LABEL;Krivka svietivosti
 TP_PERSPECTIVE_HORIZONTAL;Horizontálne
 TP_PERSPECTIVE_LABEL;Perspektíva
 TP_PERSPECTIVE_VERTICAL;Vertikálne
@@ -554,15 +485,8 @@ TP_PREPROCESS_LINEDENOISE;Filter šumu vedenia
 TP_RAWCACORR_AUTO;Použiť automatickú úpravu CA
 TP_RAW_DCBENHANCE;Použiť vylepšovací krok DCB
 TP_RAW_DCBITERATIONS;Počet iterácií DCB
-TP_RAW_DMETHODBATCH;Dávka
 TP_RAW_DMETHOD;Metóda
 TP_RAW_FALSECOLOR;Kroky potlačenia chybných farieb
-TP_RESIZE_BICUBICSF;Bikubická (Mäkšia)
-TP_RESIZE_BICUBICSH;Bikubická (Ostrejšia)
-TP_RESIZE_BICUBIC;Bikubická
-TP_RESIZE_BILINEAR;Bilineárna
-TP_RESIZE_DOWNSCALEB;Downscale (Lepšie)
-TP_RESIZE_DOWNSCALEF;Downscale (Rýchlejšie)
 TP_RESIZE_HEIGHT;Výška
 TP_RESIZE_H;V:
 TP_RESIZE_LABEL;Zmeniť veľkosť
@@ -572,9 +496,7 @@ TP_RESIZE_SCALE;Pomer
 TP_RESIZE_SPECIFY;Zadať:
 TP_RESIZE_WIDTH;Šírka
 TP_RESIZE_W;Š:
-TP_ROTATE_AUTOCROP;Automatické orezanie
 TP_ROTATE_DEGREE;Stupeň
-TP_ROTATE_FILL;Výplň
 TP_ROTATE_LABEL;Otočiť
 TP_ROTATE_SELECTLINE;Vybrať rovnú čiaru
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Najvyššie svetlá
@@ -1044,10 +966,16 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !MAIN_TOOLTIP_SHOWHIDERP1;Show/Hide the right panel.\nShortcut: <b>Alt-l</b>
 !MAIN_TOOLTIP_SHOWHIDETP1;Show/Hide the top panel.\nShortcut: <b>Shift-l</b>
 !MAIN_TOOLTIP_THRESHOLD;Threshold
+!NAVIGATOR_B;B:
+!NAVIGATOR_G;G:
+!NAVIGATOR_H;H:
 !NAVIGATOR_LAB_A;a*:
 !NAVIGATOR_LAB_B;b*:
 !NAVIGATOR_LAB_L;L*:
 !NAVIGATOR_NA; --
+!NAVIGATOR_R;R:
+!NAVIGATOR_S;S:
+!NAVIGATOR_V;V:
 !NAVIGATOR_XY_FULL;Width: %1, Height: %2
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
@@ -1430,6 +1358,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_CROP_GTEPASSPORT;Biometric Passport
 !TP_CROP_GTFRAME;Frame
 !TP_CROP_GTGRID;Grid
+!TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_CROP_PPI;PPI=

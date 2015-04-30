@@ -32,8 +32,6 @@ CURVEEDITOR_CURVES;Kurven
 CURVEEDITOR_CURVE;Kurve
 CURVEEDITOR_CUSTOM;Angepasst
 CURVEEDITOR_DARKS;Tiefen
-CURVEEDITOR_FILEDLGFILTERANY;Alle Dateien
-CURVEEDITOR_FILEDLGFILTERCURVE;Kurvendateien
 CURVEEDITOR_HIGHLIGHTS;Spitzlichter
 CURVEEDITOR_LIGHTS;Lichter
 CURVEEDITOR_LINEAR;Linear
@@ -560,24 +558,6 @@ MAIN_TOOLTIP_SHOWHIDERP1;Rechtes Bedienfeld ein-/ausblenden <b>Alt+L</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Oberes Bedienfeld ein-/ausblenden <b>Umschalt+L</b>
 MAIN_TOOLTIP_THRESHOLD;Schwellenwert
 MAIN_TOOLTIP_TOGGLE;Vorher/Nachher-Ansicht ein-/ausschalten <b>Umschalt+B</b>
-NAVIGATOR_B_NA;B = k.a.
-NAVIGATOR_B_VALUE;B = %1
-NAVIGATOR_G_NA;G = k.a.
-NAVIGATOR_G_VALUE;G = %1
-NAVIGATOR_H_NA;H = k.a.
-NAVIGATOR_H_VALUE;H = %1
-NAVIGATOR_LAB_A_NA;a = k.a.
-NAVIGATOR_LAB_A_VALUE;a = %1
-NAVIGATOR_LAB_B_NA;b = k.a.
-NAVIGATOR_LAB_B_VALUE;b = %1
-NAVIGATOR_LAB_L_NA;L = k.a.
-NAVIGATOR_LAB_L_VALUE;L = %1
-NAVIGATOR_R_NA;R = k.a.
-NAVIGATOR_R_VALUE;R = %1
-NAVIGATOR_S_NA;S = k.a.
-NAVIGATOR_S_VALUE;S = %1
-NAVIGATOR_V_NA;V = k.a.
-NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_FULL;Breite = %1, Höhe = %2
 NAVIGATOR_XY_NA;x = k.a., y = k.a.
 OPTIONS_DEFIMG_MISSING;Die Standard-Profile für <b>nicht-Raw Photos</b> wurden nicht gefunden oder nicht gesetzt.\n\nBitte prüfen Sie das Profil-Verzeichnis, es fehlt möglicherweise oder ist beschädigt.\n\nEs werden stattdessen interne Standardwerte verwendet.
@@ -653,11 +633,8 @@ PREFERENCES_BLACKBODY;Wolfram
 PREFERENCES_CACHECLEARALL;Alles löschen
 PREFERENCES_CACHECLEARPROFILES;Profile löschen
 PREFERENCES_CACHECLEARTHUMBS;Voransichten löschen
-PREFERENCES_CACHEFORMAT1;Proprietär (schneller und höhere Qualität)
-PREFERENCES_CACHEFORMAT2;JPEG (geringerer Speicherplatzbedarf)
 PREFERENCES_CACHEMAXENTRIES;Höchstzahl der Einträge im Zwischenspeicher
 PREFERENCES_CACHEOPTS;Einstellungen des Zwischenspeichers für Voransichten (Cache)
-PREFERENCES_CACHETHUMBFORM;Format der Voransichten
 PREFERENCES_CACHETHUMBHEIGHT;Maximale Höhe der Voransichten
 PREFERENCES_CIEART;CIECAM02 Optimierung
 PREFERENCES_CIEART_LABEL;Einfache statt doppelte Genauigkeit
@@ -738,7 +715,6 @@ PREFERENCES_OUTDIRTEMPLATE;Vorlage verwenden
 PREFERENCES_OUTDIR;Ausgabeverzeichnis
 PREFERENCES_OVERLAY_FILENAMES;Dateiname und Informationen überlagert über Bild
 PREFERENCES_OVERWRITEOUTPUTFILE;Bestehende Ausgabedateien überschreiben
-PREFERENCES_PANFACTORFRAME;Hand-Werkzeug
 PREFERENCES_PANFACTORLABEL;Schrittweite
 PREFERENCES_PARSEDEXTADDHINT;Nebenstehenden Dateityp (Extension) der obigen Liste hinzufügen
 PREFERENCES_PARSEDEXTADD;Dateityp\nhinzufügen
@@ -785,8 +761,6 @@ PREFERENCES_USESYSTEMTHEME;Systemoberfläche
 PREFERENCES_VIEW;Weißabgleich-Einstellung des Ausgabegerätes (Monitor, TV, Projektor, usw.)
 PREFERENCES_WORKFLOW;Layout
 PROFILEPANEL_COPYPPASTE;Zu kopierende Parameter
-PROFILEPANEL_FILEDLGFILTERANY;Alle Dateien
-PROFILEPANEL_FILEDLGFILTERPP;Bearbeitungsprofile
 PROFILEPANEL_LABEL;Bearbeitungsprofile
 PROFILEPANEL_LOADDLGLABEL;Bearbeitungsprofil laden...
 PROFILEPANEL_LOADPPASTE;Zu ladende Parameter
@@ -818,7 +792,6 @@ QINFO_NOEXIF;Keine Exif-Daten vorhanden.
 SAVEDLG_AUTOSUFFIX;Suffix anfügen, falls unter dem Namen bereits eine Datei existiert
 SAVEDLG_FILEFORMAT;Dateiformat
 SAVEDLG_JPEGQUAL;JPEG-Qualität
-SAVEDLG_JPGFILTER;JPEG-Datei
 SAVEDLG_PNGCOMPR;PNG-Kompression
 SAVEDLG_PUTTOQUEUEHEAD;An den Anfang der Warteschlange für Verarbeitung legen
 SAVEDLG_PUTTOQUEUETAIL;An das Ende der Warteschlange für Verarbeitung legen
@@ -830,7 +803,6 @@ SAVEDLG_SUBSAMP_1;Beste Kompression
 SAVEDLG_SUBSAMP_2;Ausbalanciert
 SAVEDLG_SUBSAMP_3;Beste Qualität
 SAVEDLG_SUBSAMP_TOOLTIP;Beste Kompression: 4:1:1\nAusbalanciert: 4:2:2\nBeste Qualität: 4:4:4
-SAVEDLG_TIFFFILTER;TIFF-Datei
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 SAVEDLG_WARNFILENAME;Die Datei wird gespeichert als
 SHCSELECTOR_TOOLTIP;Um die 3 Regler zurückzusetzen, rechte Maustaste klicken
@@ -892,7 +864,6 @@ TP_CHMIXER_GREEN;Grün-Kanal
 TP_CHMIXER_LABEL;Kanal-Mixer
 TP_CHMIXER_RED;Rot-Kanal
 TP_CHROMATABERR_LABEL;Chromatische Aberration
-TP_COARSETRAF_DEGREE;Grad:
 TP_COARSETRAF_TOOLTIP_HFLIP;Horizontal spiegeln
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Nach links drehen <b>[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Nach rechts drehen <b>]</b>
@@ -966,31 +937,11 @@ TP_COLORAPP_TONECIE;Tone Mapping mittels CIECAM02 Helligkeit (Q)
 TP_COLORAPP_TONECIE_TOOLTIP;Wenn diese Option ausgeschaltet ist, wird Tone Mapping im Lab Farbraum durchgeführt.\nWenn die Option eingeschaltet ist, wird CIECAM02 für Tone Mapping verwendet. Das Tone Mapping (Lab/CIECAM02) Werkzeug muss aktiviert sein, damit diese Option berücksichtigt wird.
 TP_COLORAPP_WBCAM;WB [RT+CAT02] + [Ausgabe]
 TP_COLORAPP_WBRT;WB [RT] + [Ausgabe]
-TP_COLORBOOST_ACHANNEL;Kanal "a"
-TP_COLORBOOST_AMOUNT;Stärke
-TP_COLORBOOST_AVOIDCOLORCLIP;Übersättigung verhindern
-TP_COLORBOOST_BCHANNEL;Kanal "b"
-TP_COLORBOOST_CHANNEL;Kanal
-TP_COLORBOOST_CHSEPARATE;separat
-TP_COLORBOOST_ENABLESATLIMITER;Sättigungsbegrenzung aktivieren
-TP_COLORBOOST_LABEL;Farbverstärkung
-TP_COLORBOOST_SATLIMIT;Sättigungsgrenze
-TP_COLORDENOISE_EDGESENSITIVE;Kantenempfindlichkeit
-TP_COLORDENOISE_EDGETOLERANCE;Kantentoleranz
-TP_COLORDENOISE_LABEL;Farb-Rauschfilter
-TP_COLORDENOISE_RADIUS;Radius
-TP_COLORSHIFT_BLUEYELLOW;Blau-Gelb
-TP_COLORSHIFT_GREENMAGENTA;Grün-Magenta
-TP_COLORSHIFT_LABEL;Farbverschiebung
 TP_CROP_FIXRATIO;Festes\nVerhältnis:
 TP_CROP_GTDIAGONALS;Diagonalregel
 TP_CROP_GTEPASSPORT;Passfoto (biometrisch)
 TP_CROP_GTFRAME;Frame
 TP_CROP_GTGRID;Gitternetz
-TP_CROP_GTHARMMEANS1;Harmonischer Schnitt 1
-TP_CROP_GTHARMMEANS2;Harmonischer Schnitt 2
-TP_CROP_GTHARMMEANS3;Harmonischer Schnitt 3
-TP_CROP_GTHARMMEANS4;Harmonischer Schnitt 4
 TP_CROP_GTNONE;Keine
 TP_CROP_GTRULETHIRDS;Drittelregel
 TP_CROP_GUIDETYPE;Hilfslinien:
@@ -1006,7 +957,6 @@ TP_DARKFRAME_LABEL;Dunkelbild
 TP_DEFRINGE_LABEL;Defringe
 TP_DEFRINGE_RADIUS;Radius
 TP_DEFRINGE_THRESHOLD;Schwellenwert
-TP_DETAIL_AMOUNT;Stärke
 TP_DIRPYRDENOISE_BLUE;Delta Chrominanz Blau
 TP_DIRPYRDENOISE_CHROMA;Chrominanz
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Kann für Raw und Nicht-Raw Bilder verwendet werden.\n\nBei Nicht-Raw Bildern hängt die Rauschreduzierung der Luminanz vom Gamma des Eingabe-Farbprofils ab. Es wird ein sRGB-Gamma angenommen, daher wird die Luminanz-Rauschreduzierung variieren, wenn das Eingabe-Bild ein Farbprofil mit anderem Gamma verwendet.
@@ -1036,13 +986,6 @@ TP_EPD_REWEIGHTINGITERATES;Neugewichtung Iterationen
 TP_EPD_SCALE;Faktor
 TP_EPD_STRENGTH;Stärke
 TP_EPD_TOOLTIP;Tone Mapping ist mit dem Lab Modus (Standard) und CIECAM02 Modus möglich.\n\nFür CIECAM02 Tone Mapping müssen folgende Optionen aktiviert werden:\n1. CIECAM02\n2. Algorithmus="Helligkeit + Buntheit (QM)"\n3. "Tone Mapping mittels CIECAM02 Helligkeit (Q)"
-TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
-TP_EQUALIZER_CONTRAST_PLUS;Kontrast+
-TP_EQUALIZER_FINEST;Feinstes
-TP_EQUALIZER_LABEL;Wavelet-Mixer
-TP_EQUALIZER_LARGEST;Gröbstes
-TP_EQUALIZER_NEUTRAL;Neutral
-TP_EXPOSCORR_LABEL;RAW-Weiß/Schwarz-Punkt
 TP_EXPOSURE_AUTOLEVELS;Auto
 TP_EXPOSURE_AUTOLEVELS_TIP;Automatische Belichtungseinstellungen basierend auf Bildanalyse
 TP_EXPOSURE_BLACKLEVEL;Schwarzpegel
@@ -1065,7 +1008,6 @@ TP_EXPOSURE_TCMODE_LABEL2;Tonewertkurve Modus 2
 TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Saturation and Value Blending
 TP_EXPOSURE_TCMODE_STANDARD;Standard
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
-TP_EXPO_AFTER;Nach Interpolation (vor RGB-Konvertierung)
 TP_FLATFIELD_AUTOSELECT;Automatische Auswahl
 TP_FLATFIELD_BLURRADIUS;Unschärferadius
 TP_FLATFIELD_BLURTYPE;Unschärfetyp
@@ -1104,8 +1046,6 @@ TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;ICC Lichter aus Matrix einmischen
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Stellt bei Verwendung von LUT-basierten\nICC-Profilen die Lichter wieder her.
-TP_ICM_FILEDLGFILTERANY;Alle Dateien
-TP_ICM_FILEDLGFILTERICM;Profildateien
 TP_ICM_INPUTCAMERAICC;Kameraspezifisches Profil
 TP_ICM_INPUTCAMERAICC_TOOLTIP;RawTherapees kameraspezifisches DCP/ICC-Eingabeprofil verwenden, welches präziser als eine einfache Matrix ist; diese im Verzeichnis /dcpprofiles/ (alternativ /iccprofiles/input) abgelegten Profile sind für einige Kameras verfügbar und werden automatisch herangezogen, wenn der Dateiname zum Namen des Kameramodells passt
 TP_ICM_INPUTCAMERA;Kamera-Standard
@@ -1121,23 +1061,15 @@ TP_ICM_INPUTPROFILE;Eingabeprofil
 TP_ICM_LABEL;Farbmanagement
 TP_ICM_NOICM;Kein ICM: sRGB-Ausgabe
 TP_ICM_OUTPUTPROFILE;Ausgabeprofil
-TP_ICM_PREFERREDPROFILE;Bevorzugtes DCP-Profil
-TP_ICM_PREFERREDPROFILE_1;Tageslicht
-TP_ICM_PREFERREDPROFILE_2;Glühlampe
-TP_ICM_PREFERREDPROFILE_3;Leuchtstofflampe
-TP_ICM_PREFERREDPROFILE_4;Blitz
 TP_ICM_SAVEREFERENCE;Referenzbild für Profil speichern
 TP_ICM_TONECURVE;DCP Tonwertkurve verwenden
 TP_ICM_TONECURVE_TOOLTIP;Verwendet die Tonwertkurve, die in DCP profilen eingebetten sein kann.
 TP_ICM_WORKINGPROFILE;Arbeitsfarbraum
 TP_IMPULSEDENOISE_LABEL;Impulsrauschminderung
 TP_IMPULSEDENOISE_THRESH;Schwellenwert
-TP_LABCURVE_AVOIDCOLORCLIP;Farbbeschneidungen verhindern
 TP_LABCURVE_AVOIDCOLORSHIFT;Vermeide Farbverschiebungen
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Anpassung der Farben am Gamut des Arbeitsfarbraums und Munsell Korrektur anwenden
 TP_LABCURVE_BRIGHTNESS;Helligkeit
-TP_LABCURVE_BWTONING;S&W Tonung
-TP_LABCURVE_BWTONING_TIP;Wenn die Option <b>S&amp;W Tonung</b> aktiviert ist, haben die Lab Chromatizität, CC, CH und LC Kurven keine Auswirkung.\nTonung kann mithilfe der <b>a</b> und <b>b</b> Kurven erzielt werden.
 TP_LABCURVE_CHROMATICITY;Chromatizität
 TP_LABCURVE_CONTRAST;Kontrast
 TP_LABCURVE_CURVEEDITOR;Luminanzkurve
@@ -1160,18 +1092,14 @@ TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromatizität gemäß Buntton
 TP_LABCURVE_CURVEEDITOR_LC;LC
 TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminanz gemäß Chromatizität
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminanz Lab L=f(L).\n\nZeigt das Histogramm von L vor der Kurvenkorrektur.\nFür die endgültige Ausgabe verwenden Sie das Haupt-Histogramm.
-TP_LABCURVE_ENABLESATLIMITER;Sättigungsbegrenzung aktivieren
 TP_LABCURVE_LABEL;Lab-Anpassungen
 TP_LABCURVE_LCREDSK;LC auf Rot- und Hauttöne beschränken
 TP_LABCURVE_LCREDSK_TIP;Wenn aktiviert, wird die LC Kurve (Luminanz gemäß Chromatizität) beschränkt auf Rot- und Hauttöne.\nWenn deaktiviert, wird die LC Kurve auf alle Töne angewendet.
 TP_LABCURVE_RSTPROTECTION;Rot- und Hauttöne schützen
 TP_LABCURVE_RSTPRO_TOOLTIP;Kann mit dem Chromatizität-Regler und der CC Kurve verwendet werden.
-TP_LABCURVE_SATLIMIT;Sättigungsgrenze
-TP_LABCURVE_SATURATION;Sättigung
 TP_LENSGEOM_AUTOCROP;Auto-Schneiden
 TP_LENSGEOM_FILL;Auto-Füllen
 TP_LENSGEOM_LABEL;Objektivkorrekturen
-TP_LENSPROFILE_FILEDLGFILTERLCP;Linsen-Korrekturdateien
 TP_LENSPROFILE_LABEL;Linsen-Korrekturprofil
 TP_LENSPROFILE_USECA;CA korrigieren
 TP_LENSPROFILE_USEDIST;Verzerrung korrigieren
@@ -1197,11 +1125,7 @@ TP_PREPROCESS_NO_FOUND;Keins gefunden
 TP_RAWCACORR_AUTO;Automatische Korrektur
 TP_RAWCACORR_CABLUE;Blau
 TP_RAWCACORR_CARED;Rot
-TP_RAWEXPOS_BLACKONE;Schwarzpegel: Rot
 TP_RAWEXPOS_BLACKS;Schwarzpegel
-TP_RAWEXPOS_BLACKTHREE;Schwarzpegel: Grün 2
-TP_RAWEXPOS_BLACKTWO;Schwarzpegel: Blau
-TP_RAWEXPOS_BLACKZERO;Schwarzpegel: Grün 1\n(führend)
 TP_RAWEXPOS_LINEAR;Weißpunkt: Linearer\nKorrekturfaktor
 TP_RAWEXPOS_PRESER;Weißpunkt: Lichter\nbewahrende Korrektur (EV)
 TP_RAWEXPOS_TWOGREEN;Grün-Werte automatisch angleichen
@@ -1502,7 +1426,16 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoes not exist. Please set a correct path in Preferences.
 !MAIN_MSG_SETPATHFIRST;You first have to set a target path in Preferences in order to use this function!
 !MAIN_TAB_INSPECT; Inspect
+!NAVIGATOR_B;B:
+!NAVIGATOR_G;G:
+!NAVIGATOR_H;H:
+!NAVIGATOR_LAB_A;a*:
+!NAVIGATOR_LAB_B;b*:
+!NAVIGATOR_LAB_L;L*:
 !NAVIGATOR_NA; --
+!NAVIGATOR_R;R:
+!NAVIGATOR_S;S:
+!NAVIGATOR_V;V:
 !PARTIALPASTE_CHANNELMIXERBW;Black-and-White
 !PARTIALPASTE_COLORTONING;Color Toning
 !PARTIALPASTE_EQUALIZER;Wavelet Equalizer
@@ -1643,6 +1576,7 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !TP_COLORTONING_TWOBY;Special a* and b*
 !TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
 !TP_COLORTONING_TWOSTD;Standard chroma
+!TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_DIRPYRDENOISE_33;3×3 strong

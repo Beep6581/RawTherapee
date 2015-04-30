@@ -46,8 +46,6 @@ CURVEEDITOR_CURVES;Křivky
 CURVEEDITOR_CURVE;Křivka
 CURVEEDITOR_CUSTOM;Vlastní
 CURVEEDITOR_DARKS;Tmavé
-CURVEEDITOR_FILEDLGFILTERANY;Jakékoliv soubory
-CURVEEDITOR_FILEDLGFILTERCURVE;Soubory křivek
 CURVEEDITOR_HIGHLIGHTS;Světla
 CURVEEDITOR_LIGHTS;Světlé
 CURVEEDITOR_LINEAR;Lineární
@@ -787,7 +785,6 @@ PARTIALPASTE_VIBRANCE;Živost
 PARTIALPASTE_VIGNETTING;Korekce vinětace
 PARTIALPASTE_WHITEBALANCE;Nastavení bílé
 PREFERENCES_ADD;Přidat
-PREFERENCES_APPLNEXTRELOAD;vyžaduje obnovení obrázku
 PREFERENCES_APPLNEXTSTARTUP;vyžaduje restart aplikace
 PREFERENCES_AUTLISLOW;Nízké
 PREFERENCES_AUTLISMAX;Maximální - průměr všech dlaždic
@@ -919,7 +916,6 @@ PREFERENCES_OUTDIR;Výstupní složka
 PREFERENCES_OVERLAY_FILENAMES;Překrýt jména souborů na náhledech v prohlížeči souborů
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Překrýt jména souborů na náhledech v editoru
 PREFERENCES_OVERWRITEOUTPUTFILE;Přepsat existující soubory
-PREFERENCES_PANFACTORFRAME;Zrychlení posunu výřezu
 PREFERENCES_PANFACTORLABEL;Násobitel
 PREFERENCES_PARSEDEXTADDHINT;Vymazat označenou příponu ze seznamu.
 PREFERENCES_PARSEDEXTADD;Přidat příponu
@@ -982,8 +978,6 @@ PREFERENCES_WLTWO;Dvě úrovně
 PREFERENCES_WLZER;Ne
 PREFERENCES_WORKFLOW;Rozvržení
 PROFILEPANEL_COPYPPASTE;Parametry pro kopírování
-PROFILEPANEL_FILEDLGFILTERANY;Jakékoliv soubory
-PROFILEPANEL_FILEDLGFILTERPP;Profily zpracování
 PROFILEPANEL_GLOBALPROFILES;Přiložené profily
 PROFILEPANEL_LABEL;Profily zpracování
 PROFILEPANEL_LOADDLGLABEL;Načíst parametry zpracování...
@@ -1021,7 +1015,6 @@ SAVEDLG_AUTOSUFFIX;Automaticky přidat příponu pokud soubor již existuje
 SAVEDLG_FILEFORMAT;Formát souboru
 SAVEDLG_FORCEFORMATOPTS;Vynutit volby uložení
 SAVEDLG_JPEGQUAL;Kvalita JPEG
-SAVEDLG_JPGFILTER;Soubory JPEG
 SAVEDLG_PNGCOMPR;PNG Komprese
 SAVEDLG_PUTTOQUEUEHEAD;Vložit na začátek fronty
 SAVEDLG_PUTTOQUEUETAIL;Vložit na konec fronty
@@ -1033,7 +1026,6 @@ SAVEDLG_SUBSAMP_1;Nejlepší komprese
 SAVEDLG_SUBSAMP_2;Vyvážené
 SAVEDLG_SUBSAMP_3;Nejlepší kvalita
 SAVEDLG_SUBSAMP_TOOLTIP;Nejlepší komprese: 4:1:1\nVyvážená: 4:2:2\nNejlepší kvalita: 4:4:4
-SAVEDLG_TIFFFILTER;Soubory TIFF
 SAVEDLG_TIFFUNCOMPRESSED;Nekomprimovaný TIFF
 SAVEDLG_WARNFILENAME;Soubor bude pojmenován
 SHCSELECTOR_TOOLTIP;Klikněte pravým tlačítkem myši pro obnovení výchozí pozice těchto tří posuvníků.
@@ -1233,10 +1225,6 @@ TP_CROP_GTDIAGONALS;Pravidlo diagonál
 TP_CROP_GTEPASSPORT;Biometrický pas
 TP_CROP_GTFRAME;Snímek
 TP_CROP_GTGRID;Mřížka
-TP_CROP_GTHARMMEANS1;Zlatý řez 1
-TP_CROP_GTHARMMEANS2;Zlatý řez 2
-TP_CROP_GTHARMMEANS3;Zlatý řez 3
-TP_CROP_GTHARMMEANS4;Zlatý řez 4
 TP_CROP_GTNONE;Nic
 TP_CROP_GTRULETHIRDS;Pravidlo třetin
 TP_CROP_GUIDETYPE;Druh vodítek:
@@ -1319,7 +1307,6 @@ TP_DIRPYRDENOISE_SOFT;3×3
 TP_DIRPYRDENOISE_TILELABEL;Velikost dlaždice=%1, Střed: Tx=%2  Ty=%3
 TP_DIRPYREQUALIZER_ALGO;Rozsah pleťových tónů
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Jemný: blíž k barvám pleti, minimalizuje zásahy na ostatních barvách.\nVelký: více zabrání vzniku artefaktů.
-TP_DIRPYREQUALIZER_GAMUT;Omezení artefaktů
 TP_DIRPYREQUALIZER_HUESKIN;Odstín pleti
 TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;Pyramida je pro horní část, kde je algoritmus nejvíce efektivní.\nKe spodní části, tranzitním zónám.\nPokud potřebujete posunout oblast hodně doleva nebo doprava - nebo pokud se vyskytnou artefakty = <b>vyvážení bílé není správné</b>, můžete mírně zmenšit zónu aby jste zabránili ovlivnění ostatních částí obrázku.
 TP_DIRPYREQUALIZER_LABEL;Kontrast dle detailu úrovní
@@ -1378,8 +1365,6 @@ TP_FLATFIELD_BT_VERTHORIZ;Vodorovně a svisle
 TP_FLATFIELD_BT_VERTICAL;Svisle
 TP_FLATFIELD_CLIPCONTROL;Kontrola oříznutí
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Kontrola oříznutí zabrání oříznutí světel po aplikaci Flat Field. Pokud byly světla oříznuta ještě před aplikací Flat field, může se objevit barevný nádech.
-TP_FLATFIELD_FILEDLGFILTERANY;Jakékoliv soubory
-TP_FLATFIELD_FILEDLGFILTERFF;Stejný formát jako aktuální fotka
 TP_FLATFIELD_LABEL;Flat Field
 TP_GAMMA_CURV;Gama
 TP_GAMMA_FREE;Volná gama
@@ -1415,9 +1400,6 @@ TP_ICM_BLENDCMSMATRIX_TOOLTIP;Povolit obnovení vypálených jasů při použit�
 TP_ICM_DCPILLUMINANT;Osvětlení
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolované
 TP_ICM_DCPILLUMINANT_TOOLTIP;Vyberte které vložené DCP osvětlení se má použít. Ve výchozím stavu se použije "interpolované", což je mix mezi dvěma osvětleními založenými na vyvážení bílé. Nastavené je dostupné pouze v případě, že je povoleno dvojité DCP osvětlení s podporou interpolace.
-TP_ICM_FILEDLGFILTERANY;Jakékoliv soubory
-TP_ICM_FILEDLGFILTERICMDNG;Barevné profily + DNG
-TP_ICM_FILEDLGFILTERICM;Barevné profily
 TP_ICM_INPUTCAMERAICC;Automatický dohledaný profil fotoaparátu
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Použít RawTherapee specifický DCP nebo ICC vstupní barevný profil fotoaparátu jenž je mnohem přesnější než zjednodušená matice. Není dostupné pro všechny fotoaparáty. Profily jsou uloženy ve složkách /iccprofiles/input a /dcpprofiles a jsou automaticky vybrány dle jména souboru shodného s fotoaparátem.
 TP_ICM_INPUTCAMERA;Standard fotoaparátu
@@ -1480,7 +1462,6 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Pracuje s posuvníkem barevnosti a CC křivkou.
 TP_LENSGEOM_AUTOCROP;Automatický ořez
 TP_LENSGEOM_FILL;Automatické vyplnění
 TP_LENSGEOM_LABEL;Objektiv / Geometrie
-TP_LENSPROFILE_FILEDLGFILTERLCP;Soubory korekcí objektivu
 TP_LENSPROFILE_LABEL;Korekční profil objektivu
 TP_LENSPROFILE_USECA;Korekce chromatické aberace
 TP_LENSPROFILE_USEDIST;Korekce zkreslení
@@ -1536,10 +1517,6 @@ TP_RAW_SENSOR_BAYER_LABEL;Snímač s Bayerovou maskou
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;Tří průchodová dává lepší výsledky (doporučeno pro fotky s níským ISO).\nJednoprůchodová je téměř k nerozeznání od tří průchodové pro vysoké ISO a je rychlejší.
 TP_RAW_SENSOR_XTRANS_LABEL;Senzory s X-Trans maticí
 TP_RESIZE_APPLIESTO;Aplikovat na:
-TP_RESIZE_BICUBICSF;Bikubická (měkčí)
-TP_RESIZE_BICUBICSH;Bikubická (ostřejší)
-TP_RESIZE_BICUBIC;Bikubická
-TP_RESIZE_BILINEAR;Bilineární
 TP_RESIZE_CROPPEDAREA;Oblast ořezu
 TP_RESIZE_FITBOX;Výřez
 TP_RESIZE_FULLIMAGE;Celý obrázek
@@ -1639,18 +1616,13 @@ TP_WAVELET_CHRO;Saturované - Pastelové
 TP_WAVELET_CHRO_TOOLTIP;Hranice mezi pastely a nasycením\n 1 - x úroveň nasycení\n x - 9 úroveň pastelů
 TP_WAVELET_CHR;Propojení barev
 TP_WAVELET_CHR_TOOLTIP;Přizpůsobí barevnost jako funkci:\na - kontrast úrovní\nb - síla posuvníku propojení barev 
-TP_WAVELET_CLVCURVE;Barevnost - úrovně
 TP_WAVELET_COLORT;Neprůhlednost červená-zelená  Úrovně
 TP_WAVELET_CONTRAST_MINUS;Kontrast -
 TP_WAVELET_CONTRAST_PLUS;Kontrast +
 TP_WAVELET_CONTRA;Kontrast
 TP_WAVELET_CONTRA_TOOLTIP;Změní kontrast zůstatku obrazu\nFunkce maximálních úrovní
 TP_WAVELET_CONTR;Paleta - nastavení
-TP_WAVELET_CURVEEDITOR_CLV_TOOLTIP;Dává barevnost jako funkci úrovní (absciss???)\nÚrovně jsou nespojité hodnoty
 TP_WAVELET_DALL;Všechny směry
-TP_WAVELET_DISPLAYCHRO;Barevnost a tónování
-TP_WAVELET_DISPLAYGAM;Paleta a nastavení
-TP_WAVELET_DISPLAY;Úrovně a funkce
 TP_WAVELET_DISP;Nastavení náhledu
 TP_WAVELET_DONE;Svisle
 TP_WAVELET_DTHR;Napříč
@@ -1661,7 +1633,6 @@ TP_WAVELET_EDRAD;Poloměr
 TP_WAVELET_EDVAL;Hodnota
 TP_WAVELET_FINEST;Nejjemnější
 TP_WAVELET_HIGHLIGHT;Zvýrazněný rozsah jasů
-TP_WAVELET_HIGHSHA;Projasnění stínů
 TP_WAVELET_HS1;Celý rozsah jasů
 TP_WAVELET_HS2;Stíny/Světla
 TP_WAVELET_HUESKIN;Rozsah odstínů (pleť)
@@ -1677,9 +1648,7 @@ TP_WAVELET_LEVELS_TOOLTIP;Vyberte počet úrovní detailu mezi které bude obrá
 TP_WAVELET_LEVF;Kontrast
 TP_WAVELET_LEVLABEL;Náhled maximálně dostupné úrovně=%1
 TP_WAVELET_LOWLIGHT;Rozsah projasnění stínů
-TP_WAVELET_MAX;max
 TP_WAVELET_MEDI;Omezení artefaktů na modré obloze
-TP_WAVELET_MIN;min
 TP_WAVELET_NEUTRAL;Neutrální
 TP_WAVELET_ONE;Jedna úroveň
 TP_WAVELET_OPACITY;Neprůhlednost modrá-žlutá  Úrovně
@@ -1710,7 +1679,6 @@ TP_WAVELET_TILESIZE;Velikost dlaždice
 TP_WAVELET_TILESLIT;Malé dlaždice
 TP_WAVELET_TILES_TOOLTIP;Zpracování celého obrázku vede k lepší kvalitě a je doporučováno. Naproti tomu dlaždice jsou náhradní řešení pro uživatele s nedostatkem paměti. Paměťové nároky najdete na RawPedii.
 TP_WAVELET_TON;Tónování
-TP_WAVELET_UTIL;Funkce
 TP_WBALANCE_AUTO;Automaticky
 TP_WBALANCE_CAMERA;Fotoaparát
 TP_WBALANCE_CLOUDY;Zataženo
@@ -1806,6 +1774,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
 !PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize read of tiff files
 !PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;When working with folders full of uncompressed tiff files enabling this option can increase performance of thumb generation.
+!TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_DIRPYREQUALIZER_ARTIF;Reduce artifacts

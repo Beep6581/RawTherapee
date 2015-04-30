@@ -12,8 +12,6 @@ CURVEEDITOR_CURVES;Görbék
 CURVEEDITOR_CURVE;Görbe
 CURVEEDITOR_CUSTOM;Egyedi
 CURVEEDITOR_DARKS;Sötétek
-CURVEEDITOR_FILEDLGFILTERANY;Minden állomány
-CURVEEDITOR_FILEDLGFILTERCURVE;Görbék állományai
 CURVEEDITOR_HIGHLIGHTS;Csúcsfények
 CURVEEDITOR_LIGHTS;Középfények
 CURVEEDITOR_LINEAR;Lineáris
@@ -398,7 +396,6 @@ MAIN_BUTTON_FULLSCREEN;Teljes képernyő
 MAIN_BUTTON_PREFERENCES;Beállítások
 MAIN_BUTTON_PUTTOQUEUE;Feldolgozási sorba helyez
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add hozzá a kiválasztott képet a feldolgozási sorhoz <b>Ctrl+B</b>
-MAIN_BUTTON_SAVEAS;másként...
 MAIN_BUTTON_SAVE;Kép mentése
 MAIN_BUTTON_SAVE_TOOLTIP;Kiválasztott kép mentése <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR;Megnyitás külső programmal
@@ -455,24 +452,6 @@ MAIN_TOOLTIP_SHOWHIDERP1;Jobb oldali panel megjelenítése/elrejtése.\nGyorsbil
 MAIN_TOOLTIP_SHOWHIDETP1;Felső panel megjelenítése/elrejtése.\nGyorsbillentyű: <b>Shift-L</b>
 MAIN_TOOLTIP_THRESHOLD;Küszöb
 MAIN_TOOLTIP_TOGGLE;Előtte/utána nézet be- és kikapcsolása <b>B</b>
-NAVIGATOR_B_NA;B = n/a
-NAVIGATOR_B_VALUE;B = %1
-NAVIGATOR_G_NA;G = n/a
-NAVIGATOR_G_VALUE;G = %1
-NAVIGATOR_H_NA;H = n/a
-NAVIGATOR_H_VALUE;H = %1
-NAVIGATOR_LAB_A_NA;A = n/a
-NAVIGATOR_LAB_A_VALUE;A = %1
-NAVIGATOR_LAB_B_NA;B = n/a
-NAVIGATOR_LAB_B_VALUE;B = %1
-NAVIGATOR_LAB_L_NA;L = n/a
-NAVIGATOR_LAB_L_VALUE;L = %1
-NAVIGATOR_R_NA;R = n/a
-NAVIGATOR_R_VALUE;R = %1
-NAVIGATOR_S_NA;S = n/a
-NAVIGATOR_S_VALUE;S = %1
-NAVIGATOR_V_NA;V = n/a
-NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = n/a, y = n/a
 PARTIALPASTE_BASICGROUP;Alapbeállítások
 PARTIALPASTE_CACORRECTION;Kromatikus aberráció
@@ -505,7 +484,6 @@ PARTIALPASTE_IMPULSEDENOISE;Impulse zajszűrés
 PARTIALPASTE_IPTCINFO;IPTC információk
 PARTIALPASTE_LABCURVE;Lab görbe
 PARTIALPASTE_LENSGROUP;Objektív optikai hibáinak javítása
-PARTIALPASTE_LUMACURVE;Luminancia görbe
 PARTIALPASTE_METAICMGROUP;Metaadat/Színprofil beállítások
 PARTIALPASTE_PERSPECTIVE;Perspektíva
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Zöldegyensúly
@@ -539,15 +517,9 @@ PREFERENCES_BEHAVIOR;Viselkedés
 PREFERENCES_CACHECLEARALL;Teljes gyorsítótár törlése
 PREFERENCES_CACHECLEARPROFILES;Feldolg. param. törlése
 PREFERENCES_CACHECLEARTHUMBS;Előnézeti képek törlése
-PREFERENCES_CACHEFORMAT1;Egyedi (gyorsabb és szebb)
-PREFERENCES_CACHEFORMAT2;JPEG (kisebb a háttértáron)
 PREFERENCES_CACHEMAXENTRIES;Gyorsítótárban tárolt képek max. száma
 PREFERENCES_CACHEOPTS;Gyorsítótár beállítások
-PREFERENCES_CACHETHUMBFORM;Előnézeti kép formátuma
 PREFERENCES_CACHETHUMBHEIGHT;Előnézeti kép maximális magassága
-PREFERENCES_CLEARDLG_LINE1;Gyorsítótár ürítése
-PREFERENCES_CLEARDLG_LINE2;Ez eltarthat pár másodpercig.
-PREFERENCES_CLEARDLG_TITLE;Kérem várjon
 PREFERENCES_CLIPPINGIND;Kiégett és bebukott részek jelzése
 PREFERENCES_CMETRICINTENT;Intent
 PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.\nReceives command line params to allow a rules based .pp3 generation:\n[Path raw/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
@@ -608,7 +580,6 @@ PREFERENCES_OUTDIRTEMPLATE;Sablon használata
 PREFERENCES_OUTDIR;Kimeneti alapértelmezett könyvtár
 PREFERENCES_OVERLAY_FILENAMES;Állománynevek megjelenítése az előnézeti képeken
 PREFERENCES_OVERWRITEOUTPUTFILE;A már létező kimeneti állományok felülírása
-PREFERENCES_PANFACTORFRAME;Mozgatás gyorsításának mértéke
 PREFERENCES_PANFACTORLABEL;Faktor
 PREFERENCES_PARSEDEXTADDHINT;A kiterjesztés beírása után ez a gomb felveszi a listára
 PREFERENCES_PARSEDEXTADD;Kiterjesztés hozzáadása
@@ -651,8 +622,6 @@ PREFERENCES_TUNNELMETADATA;IPTC/XMP adatok változatlan átmentése a kimeneti �
 PREFERENCES_USESYSTEMTHEME;Rendszer megjelenésének használata
 PREFERENCES_WORKFLOW;Munkamenet
 PROFILEPANEL_COPYPPASTE;Másolandó paraméterek
-PROFILEPANEL_FILEDLGFILTERANY;Minden állomány
-PROFILEPANEL_FILEDLGFILTERPP;Feldolgozási beállítások
 PROFILEPANEL_LABEL;Feldolgozási beállítások
 PROFILEPANEL_LOADDLGLABEL;Feldolgozási beállítások betöltése...
 PROFILEPANEL_LOADPPASTE;Betöltendő paraméterek
@@ -676,24 +645,18 @@ PROGRESSBAR_READY;Kész
 PROGRESSBAR_SAVEJPEG;JPEG fájl mentése...
 PROGRESSBAR_SAVEPNG;PNG fájl mentése...
 PROGRESSBAR_SAVETIFF;TIFF fájl mentése...
-PROGRESSDLG_LOADING;Fájl betöltése...
-PROGRESSDLG_PROCESSING;Kép feldolgozása...
 PROGRESSDLG_PROFILECHANGEDINBROWSER;A profil az állományböngészőben megváltozott
-PROGRESSDLG_SAVING;Fájl mentése...
 QINFO_ISO;ISO
 QINFO_NOEXIF;EXIF adat nem áll rendelkezésre.
-RBATCHQUEUE_AUTOSTART;Autoindítás
 SAVEDLG_AUTOSUFFIX;Utótag hozzáadása automatikusan, ha az állomány már létezik
 SAVEDLG_FILEFORMAT;Állományformátum
 SAVEDLG_JPEGQUAL;JPEG Minőség
-SAVEDLG_JPGFILTER;JPEG fájlok
 SAVEDLG_PNGCOMPR;PNG Tömörítés
 SAVEDLG_PUTTOQUEUEHEAD;Feldolgozási sorba helyezés az első helyre
 SAVEDLG_PUTTOQUEUETAIL;Feldolgozási sorba helyezés az utolsó helyre
 SAVEDLG_PUTTOQUEUE;Feldolgozási sorba helyezés
 SAVEDLG_SAVEIMMEDIATELY;Mentés azonnal
 SAVEDLG_SAVESPP;Feldolgozási paraméterek mentése a kép mellé
-SAVEDLG_TIFFFILTER;TIFF fájlok
 SAVEDLG_TIFFUNCOMPRESSED;Tömörítetlen TIFF
 TOOLBAR_TOOLTIP_CROP;Vágás (Gyorsbillentyű: C)
 TOOLBAR_TOOLTIP_HAND;"Kéz" eszköz (Gyorsbillentyű: N)
@@ -707,36 +670,14 @@ TP_CHMIXER_GREEN;Zöld
 TP_CHMIXER_LABEL;Színkeverő
 TP_CHMIXER_RED;Piros
 TP_CHROMATABERR_LABEL;Színihiba (kromatikus aberráció)
-TP_COARSETRAF_DEGREE;fok: 
 TP_COARSETRAF_TOOLTIP_HFLIP;Vizszintes tükrözés
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Forgatás balra
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Forgatás jobbra
 TP_COARSETRAF_TOOLTIP_VFLIP;Függőleges tükrözés
-TP_COLORBOOST_ACHANNEL;"a" csatorna
-TP_COLORBOOST_AMOUNT;Mérték
-TP_COLORBOOST_AVOIDCOLORCLIP;Színcsatorna-telítődés elkerülése
-TP_COLORBOOST_BCHANNEL;"b" csatorna
-TP_COLORBOOST_CHANNEL;Csatorna
-TP_COLORBOOST_CHSEPARATE;külön
-TP_COLORBOOST_ENABLESATLIMITER;Telítettség korlátozás
-TP_COLORBOOST_LABEL;Színtelítettség
-TP_COLORBOOST_SATLIMIT;Telítettség korlát
-TP_COLORDENOISE_EDGESENSITIVE;Élérzékeny
-TP_COLORDENOISE_EDGETOLERANCE;Éltolerancia
-TP_COLORDENOISE_LABEL;Színzaj-csökkentés
-TP_COLORDENOISE_RADIUS;Sugár
-TP_COLORSHIFT_BLUEYELLOW;Kék-Sárga
-TP_COLORSHIFT_GREENMAGENTA;Zöld-Lila
-TP_COLORSHIFT_LABEL;Színeltolás
-TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;Rögzített oldalarány
 TP_CROP_GTDIAGONALS;Diagonál módszer
 TP_CROP_GTEPASSPORT;Biometric Passport
 TP_CROP_GTGRID;Rács
-TP_CROP_GTHARMMEANS1;Aranymetszés 1
-TP_CROP_GTHARMMEANS2;Aranymetszés 2
-TP_CROP_GTHARMMEANS3;Aranymetszés 3
-TP_CROP_GTHARMMEANS4;Aranymetszés 4
 TP_CROP_GTNONE;Nincs
 TP_CROP_GTRULETHIRDS;Harmadolás
 TP_CROP_GUIDETYPE;Segédvonal típusa:
@@ -752,7 +693,6 @@ TP_DARKFRAME_LABEL;Fekete referenciakép (dark frame)
 TP_DEFRINGE_LABEL;Színihiba-javítás (defringe)
 TP_DEFRINGE_RADIUS;Sugár
 TP_DEFRINGE_THRESHOLD;Küszöb
-TP_DETAIL_AMOUNT;Mérték
 TP_DIRPYRDENOISE_CHROMA;Színzaj
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_LABEL;Zajcsökkentés
@@ -773,13 +713,6 @@ TP_EPD_LABEL;Tónustérképezés
 TP_EPD_REWEIGHTINGITERATES;Újrasúlyozási ismétlések
 TP_EPD_SCALE;Skála
 TP_EPD_STRENGTH;Erősség
-TP_EQUALIZER_CONTRAST_MINUS;Kontraszt-
-TP_EQUALIZER_CONTRAST_PLUS;Kontraszt+
-TP_EQUALIZER_FINEST;Finom részletek
-TP_EQUALIZER_LABEL;Wavelet equalizer
-TP_EQUALIZER_LARGEST;Durva részletek
-TP_EQUALIZER_NEUTRAL;Semleges
-TP_EXPOSCORR_LABEL;Raw fehér-fekete pont
 TP_EXPOSURE_AUTOLEVELS;Auto szint
 TP_EXPOSURE_AUTOLEVELS_TIP;Az automatikus szintek ki/bekapcsolása, mely a kép elemzése alapján állítja be a paramétereket
 TP_EXPOSURE_BLACKLEVEL;Feketeszint
@@ -794,7 +727,6 @@ TP_EXPOSURE_CURVEEDITOR;Tónusgörbe
 TP_EXPOSURE_EXPCOMP;Exp. Kompenzáció
 TP_EXPOSURE_LABEL;Expozíció
 TP_EXPOSURE_SATURATION;Színtelítettség
-TP_EXPO_AFTER; Interpoláció után (RGB konverzió előtt)
 TP_FLATFIELD_AUTOSELECT;Automatikus választás
 TP_FLATFIELD_BLURRADIUS;Elmosás sugara
 TP_FLATFIELD_BLURTYPE;Elmosás típusa
@@ -813,14 +745,6 @@ TP_HLREC_COLOR;Színterjesztés
 TP_HLREC_LABEL;Kiégett részletek megmentése
 TP_HLREC_LUMINANCE;Luminancia
 TP_HLREC_METHOD;Preferencia:
-TP_HSVEQUALIZER1;Vörös
-TP_HSVEQUALIZER2;Sárga
-TP_HSVEQUALIZER3;Lime
-TP_HSVEQUALIZER4;Zöld
-TP_HSVEQUALIZER5;Aqua
-TP_HSVEQUALIZER6;Kék
-TP_HSVEQUALIZER7;Lila
-TP_HSVEQUALIZER8;Magenta
 TP_HSVEQUALIZER_CHANNEL;HSV Csatorna
 TP_HSVEQUALIZER_HUE;Színárnyalat
 TP_HSVEQUALIZER_LABEL;HSV Equalizer
@@ -828,9 +752,6 @@ TP_HSVEQUALIZER_SAT;Színtelítettség
 TP_HSVEQUALIZER_VAL;Színérték
 TP_ICM_BLENDCMSMATRIX;Csúcsfények és mátrix egybemosása
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Kiégett csúcsfények helyrehozásának engedélyezése LUT-alapú ICC profilok használatánál
-TP_ICM_FILEDLGFILTERANY;inden fájl
-TP_ICM_FILEDLGFILTERICM;ICC színprofil fájl
-TP_ICM_GAMMABEFOREINPUT;Gamma korrekció a bemeneti profil előtt
 TP_ICM_INPUTCAMERAICC;Fényképezőgép-specifikus színprofil
 TP_ICM_INPUTCAMERAICC_TOOLTIP;A RawTherapee saját, fényképezőgép-specifikus színprofiljainak használata bemeneti profilként. Ez a profil pontosabb az egyszerű  mátrixnál, és ha a fényképezőgéphez van elérhető színprofil az iccprofiles/input könyvtárban, akkor azt a RawTherapee a fényképezőgép típus és az állománynév pontos egyezése esetén automatikusan be fogja tölteni.
 TP_ICM_INPUTCAMERA;Fényképezőgép alapértelmezése
@@ -850,24 +771,13 @@ TP_ICM_SAVEREFERENCE;Referenciakép mentése profilkalibráláshoz
 TP_ICM_WORKINGPROFILE;Feldolgozási színprofil
 TP_IMPULSEDENOISE_LABEL;Pontzaj-csökkentés
 TP_IMPULSEDENOISE_THRESH;Küszöb
-TP_LABCURVE_AVOIDCOLORCLIP;Színkiégés elkerülése
 TP_LABCURVE_BRIGHTNESS;Világosság
 TP_LABCURVE_CONTRAST;Kontraszt
 TP_LABCURVE_CURVEEDITOR;Luminanciagörbe
-TP_LABCURVE_ENABLESATLIMITER;Telítettségi küszöb engedélyezése
 TP_LABCURVE_LABEL;Lab görbék
-TP_LABCURVE_SATLIMIT;Telítettségi küszöb
-TP_LABCURVE_SATURATION;Színtelítettség
 TP_LENSGEOM_AUTOCROP;Automatikus vágás
 TP_LENSGEOM_FILL;Automatikus kitöltés
 TP_LENSGEOM_LABEL;Objektív / Geometria
-TP_LUMACURVE_BLACKLEVEL;Fekete szint
-TP_LUMACURVE_BRIGHTNESS;Fényerő
-TP_LUMACURVE_COMPRHIGHLIGHTS;Világos tónusok tömörítése
-TP_LUMACURVE_COMPRSHADOWS;Sötét tónusok tömörítése
-TP_LUMACURVE_CONTRAST;Kontraszt
-TP_LUMACURVE_CURVEEDITOR;Luminanciagörbe
-TP_LUMACURVE_LABEL;Luminancia
 TP_NEUTRAL;Semleges
 TP_NEUTRAL_TIP;Expozíciós paraméterek visszaállítása a semleges értékre
 TP_PERSPECTIVE_HORIZONTAL;Vízszintes
@@ -880,11 +790,7 @@ TP_PREPROCESS_NO_FOUND;Nincs elérhető
 TP_RAWCACORR_AUTO;Színihiba (kromatikus aberráció) automatikus helyesbítése
 TP_RAWCACORR_CABLUE;Kék
 TP_RAWCACORR_CARED;Vörös
-TP_RAWEXPOS_BLACKONE;Feketeszint: vörös
 TP_RAWEXPOS_BLACKS;Feketeszintek
-TP_RAWEXPOS_BLACKTHREE;Feketeszint: zöld 2
-TP_RAWEXPOS_BLACKTWO;Feketeszint: kék
-TP_RAWEXPOS_BLACKZERO;Feketeszint: zöld 1 (vezető)
 TP_RAWEXPOS_LINEAR;Fehérszint: lineáris korrelációs faktor
 TP_RAWEXPOS_PRESER;Fehérszint: csúcsfény-megőrző korrekció (FÉ)
 TP_RAWEXPOS_TWOGREEN;Zöldek együtt
@@ -894,13 +800,7 @@ TP_RAW_DMETHOD;Algoritmus
 TP_RAW_FALSECOLOR;Színhiba-elnyomási lépések
 TP_RAW_LABEL;Deinterpoláció
 TP_RESIZE_APPLIESTO;Érvényesség:
-TP_RESIZE_BICUBICSF;Bicubic (lágyabb)
-TP_RESIZE_BICUBICSH;Bicubic (keményebb)
-TP_RESIZE_BICUBIC;Bicubic
-TP_RESIZE_BILINEAR;Bilineáris
 TP_RESIZE_CROPPEDAREA;Vágott terület
-TP_RESIZE_DOWNSCALEB;Downscale (Jobb minőség)
-TP_RESIZE_DOWNSCALEF;Downscale (Gyorsabb)
 TP_RESIZE_FITBOX;Határolókeret
 TP_RESIZE_FULLIMAGE;Teljes kép
 TP_RESIZE_HEIGHT;Magasság
@@ -918,9 +818,7 @@ TP_RGBCURVES_CHANNEL;Csatorna
 TP_RGBCURVES_GREEN;G
 TP_RGBCURVES_LABEL;RGB görbék
 TP_RGBCURVES_RED;R
-TP_ROTATE_AUTOCROP;Automatikus kivágás
 TP_ROTATE_DEGREE;Fok
-TP_ROTATE_FILL;Kitöltés
 TP_ROTATE_LABEL;Forgatás
 TP_ROTATE_SELECTLINE;    Vízszintes vonal kijelölése
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Csúcsfények
@@ -1266,7 +1164,16 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>9</b>
+!NAVIGATOR_B;B:
+!NAVIGATOR_G;G:
+!NAVIGATOR_H;H:
+!NAVIGATOR_LAB_A;a*:
+!NAVIGATOR_LAB_B;b*:
+!NAVIGATOR_LAB_L;L*:
 !NAVIGATOR_NA; --
+!NAVIGATOR_R;R:
+!NAVIGATOR_S;S:
+!NAVIGATOR_V;V:
 !NAVIGATOR_XY_FULL;Width: %1, Height: %2
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
@@ -1565,6 +1472,7 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
 !TP_COLORTONING_TWOSTD;Standard chroma
 !TP_CROP_GTFRAME;Frame
+!TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_DIRPYRDENOISE_33;3×3 strong

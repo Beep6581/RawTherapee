@@ -1,8 +1,6 @@
 #01 2008-05-14 zeusalmighty
 
 ADJUSTER_RESET_TO_DEFAULT;Επαναφορά προεπιλογών
-CURVEEDITOR_FILEDLGFILTERANY;Οποιοδήποτε αρχείο
-CURVEEDITOR_FILEDLGFILTERCURVE;Αρχεία καμπυλών
 CURVEEDITOR_LINEAR;Γραμμικό
 CURVEEDITOR_LOADDLGLABEL;Φόρτωση καμπύλης...
 CURVEEDITOR_SAVEDLGLABEL;Αποθήκευση καμπλης...
@@ -215,7 +213,6 @@ IPTCPANEL_TITLE;Τίτλος
 IPTCPANEL_TRANSREFERENCEHINT;Ένας κωδικός που αντιπροσωπέυει την τοποθεσία αυθεντικής μετάδοσης (Κωδικός Αυθεντικής Μετάδοσης).
 IPTCPANEL_TRANSREFERENCE;Κωδικός αυθεντικής μετάδοσης
 MAIN_BUTTON_PREFERENCES;Ρυθμίσεις
-MAIN_BUTTON_SAVEAS;Ως...
 MAIN_BUTTON_SAVE;Αποθήκευση εικόνας
 MAIN_BUTTON_SENDTOEDITOR;Send to editor
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
@@ -256,7 +253,6 @@ PARTIALPASTE_EXPOSURE;Exposure
 PARTIALPASTE_ICMSETTINGS;ICM settings
 PARTIALPASTE_IPTCINFO;IPTC info
 PARTIALPASTE_LENSGROUP;Lens related settings
-PARTIALPASTE_LUMACURVE;Luminance curve
 PARTIALPASTE_METAICMGROUP;Metadata/ICM settings
 PARTIALPASTE_RESIZE;Resize
 PARTIALPASTE_ROTATION;Rotation
@@ -268,15 +264,9 @@ PREFERENCES_APPLNEXTSTARTUP;εφαρμόζεται στην επόμενη εκ�
 PREFERENCES_CACHECLEARALL;Clear All
 PREFERENCES_CACHECLEARPROFILES;Clear Profiles
 PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
-PREFERENCES_CACHEFORMAT1;Proprietary (faster and better quality)
-PREFERENCES_CACHEFORMAT2;JPEG (smaller disk footprint)
 PREFERENCES_CACHEMAXENTRIES;Maximal Number of Cache Entries
 PREFERENCES_CACHEOPTS;Cache Options
-PREFERENCES_CACHETHUMBFORM;Cache Thumbnail Format
 PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
-PREFERENCES_CLEARDLG_LINE1;Clearing cache
-PREFERENCES_CLEARDLG_LINE2;This may take a few seconds.
-PREFERENCES_CLEARDLG_TITLE;Please wait
 PREFERENCES_CLIPPINGIND;Ένδειξη ψαλιδίσματος
 PREFERENCES_CMETRICINTENT;Colorimetric Intent
 PREFERENCES_DATEFORMATHINT;<i>YΜπορείτε να χρησιμοποιήσετε τις εξής εντολές μορφοποίησης:</i>\n<b>%y</b><i> : χρονολογία</i>\n<b>%m</b><i> : μήνας</i>\n<b>%d</b><i> : ημέρα</i>\n<i>\nΓια παράδειγμα, η μορφοποίηση ημερομηνίας στην Ελλάδα είναι:</i>\n<b>%y/%m/%d</b>
@@ -329,8 +319,6 @@ PREFERENCES_TAB_BROWSER;Περιήγηση αρχείου
 PREFERENCES_TAB_COLORMGR;Διαχείριση χρώματος
 PREFERENCES_TAB_GENERAL;Γενικά
 PREFERENCES_TAB_IMPROC;Επεξεργασίας εικόνας
-PROFILEPANEL_FILEDLGFILTERANY;Οποιοφήποτε αρχείο
-PROFILEPANEL_FILEDLGFILTERPP;Προφίλ επεξεργασίας
 PROFILEPANEL_LABEL;Προφίλ επεξεργασίας
 PROFILEPANEL_LOADDLGLABEL;Φόρτωση παραμέτρων επεξεργασίας...
 PROFILEPANEL_PCUSTOM;Προσαρμοσμένο
@@ -350,21 +338,16 @@ PROGRESSBAR_READY;Έτοιμο
 PROGRESSBAR_SAVEJPEG;Αποθήκευση αρχείου JPEG...
 PROGRESSBAR_SAVEPNG;Αποθήκευση αρχείου PNG...
 PROGRESSBAR_SAVETIFF;Αποθήκευση αρχείου TIFF...
-PROGRESSDLG_LOADING;Loading file...
-PROGRESSDLG_PROCESSING;Processing image...
-PROGRESSDLG_SAVING;Saving file...
 QINFO_ISO;ISO
 QINFO_NOEXIF;Στοιχεία Exif μη διαθέσιμα.
 SAVEDLG_FILEFORMAT;Είδος αρχείου
 SAVEDLG_JPEGQUAL;Ποιότητα JPEG
-SAVEDLG_JPGFILTER;Αρχεία JPEG
 SAVEDLG_PNGCOMPR;Συμπίεση PNG
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;Αποθήκευση παραμέτρων επεξεργασίας μαζί με την εικόνα
-SAVEDLG_TIFFFILTER;Αρχεία TIFF
 TOOLBAR_TOOLTIP_CROP;Αποκοπή επιλογής (shortcut key: C)
 TOOLBAR_TOOLTIP_HAND;Εργαλείο μετακίνησης (shortcut key: N)
 TOOLBAR_TOOLTIP_STRAIGHTEN;Επιλογή ευθείας γραμμής (shortcut key: S)
@@ -376,34 +359,12 @@ TP_CHMIXER_BLUE;Μπλέ
 TP_CHMIXER_GREEN;Πράσινο
 TP_CHMIXER_LABEL;Μίξη καναλιών
 TP_CHMIXER_RED;Κόκκινο
-TP_COARSETRAF_DEGREE;γωνία:
 TP_COARSETRAF_TOOLTIP_HFLIP;Αναστροφή οριζόντια
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Περιστροφή αριστερά
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Περιστροφή δεξιά
 TP_COARSETRAF_TOOLTIP_VFLIP;Αναστροφή κατακόρυφα
-TP_COLORBOOST_ACHANNEL;κανάλι "a"
-TP_COLORBOOST_AMOUNT;Ένταση
-TP_COLORBOOST_AVOIDCOLORCLIP;Αποφυγή ψαλιδίσματος χρώματος
-TP_COLORBOOST_BCHANNEL;κανάλι "b"
-TP_COLORBOOST_CHANNEL;Κανάλι
-TP_COLORBOOST_CHSEPARATE;ξεχωριστά
-TP_COLORBOOST_ENABLESATLIMITER;Ενεργοποίηση περιορισμού κορεσμού
-TP_COLORBOOST_LABEL;Ενίσχυση χρώματος
-TP_COLORBOOST_SATLIMIT;Περιορισμός κορεσμού
-TP_COLORDENOISE_EDGESENSITIVE;Ευαισθησία ορίων
-TP_COLORDENOISE_EDGETOLERANCE;Ανοχή ορίων
-TP_COLORDENOISE_LABEL;Μείωση χρωματικού θορύβου
-TP_COLORDENOISE_RADIUS;Ακτίνα
-TP_COLORSHIFT_BLUEYELLOW;Μπλέ-Κίτρινο
-TP_COLORSHIFT_GREENMAGENTA;Πράσινο-Magenta
-TP_COLORSHIFT_LABEL;Μετατόπιση χρώματος
-TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;Κλείδωμα αναλογίας:
 TP_CROP_GTDIAGONALS;Κανόνας διαγωνίων
-TP_CROP_GTHARMMEANS1;Harmonic means 1
-TP_CROP_GTHARMMEANS2;Harmonic means 2
-TP_CROP_GTHARMMEANS3;Harmonic means 3
-TP_CROP_GTHARMMEANS4;Harmonic means 4
 TP_CROP_GTNONE;Κανένα
 TP_CROP_GTRULETHIRDS;Κανόνας τρίτων
 TP_CROP_GUIDETYPE;Είδος βοηθών:
@@ -430,9 +391,6 @@ TP_HLREC_COLOR;Διάδοση χρώματος
 TP_HLREC_LABEL;Ανάκτηση φωτεινών σημείων
 TP_HLREC_LUMINANCE;Ανάκτηση Φωτεινότητας
 TP_HLREC_METHOD;Μέθοδος: 
-TP_ICM_FILEDLGFILTERANY;Οποιοδήποτε αρχείο
-TP_ICM_FILEDLGFILTERICM;Αρχεία προφίλ ICC
-TP_ICM_GAMMABEFOREINPUT;Το προφίλ αλλάζει την gamma
 TP_ICM_INPUTCAMERA;Προεπιλογή φωτογραφικής μηχανής
 TP_ICM_INPUTCUSTOM;Προσαρμοσμένο
 TP_ICM_INPUTDLGLABEL;Επιλέξτε προφιλ ICC εισόδου...
@@ -443,28 +401,15 @@ TP_ICM_NOICM;No ICM: sRGB output
 TP_ICM_OUTPUTPROFILE;Προφίλ εξόδου
 TP_ICM_SAVEREFERENCE;Αποθήκευση εικόνας ως αναφορά για δημιουργία προφίλ.
 TP_ICM_WORKINGPROFILE;Παρόν προφίλ
-TP_LUMACURVE_BLACKLEVEL;Μαύρα
-TP_LUMACURVE_BRIGHTNESS;Φωτεινότητα
-TP_LUMACURVE_COMPRHIGHLIGHTS;Συμπίεση φωτεινών σημείων
-TP_LUMACURVE_COMPRSHADOWS;Συμπίεση σκιών
-TP_LUMACURVE_CONTRAST;Αντίθεση
-TP_LUMACURVE_CURVEEDITOR;Καμπύλη φωτεινότητας
-TP_LUMACURVE_LABEL;Καμπύλη φωτεινότητας
 TP_RAW_DMETHOD;Μέθοδος
 TP_RAW_FALSECOLOR;Βήματα καταστολής σφαλμένων χρωμάτων
-TP_RESIZE_BICUBICSF;Bicubic (Softer)
-TP_RESIZE_BICUBICSH;Bicubic (Sharper)
-TP_RESIZE_BICUBIC;Bicubic
-TP_RESIZE_BILINEAR;Bilinear
 TP_RESIZE_H;H:
 TP_RESIZE_LABEL;Αλλαγή μεγέθους
 TP_RESIZE_METHOD;Μέθοδος: 
 TP_RESIZE_NEAREST;Nearest
 TP_RESIZE_SCALE;Κλίμακα
 TP_RESIZE_W;W:
-TP_ROTATE_AUTOCROP;Αυτόματη αποκοπή
 TP_ROTATE_DEGREE;Γωνία
-TP_ROTATE_FILL;Γέμισμα εικόνας
 TP_ROTATE_LABEL;Περιστροφή
 TP_ROTATE_SELECTLINE;    Επιλογή ευθείας
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Φωτεινά σημεία
@@ -1373,6 +1318,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !TP_CROP_GTEPASSPORT;Biometric Passport
 !TP_CROP_GTFRAME;Frame
 !TP_CROP_GTGRID;Grid
+!TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_CROP_PPI;PPI=

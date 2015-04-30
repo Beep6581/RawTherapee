@@ -21,8 +21,6 @@ CURVEEDITOR_CURVES;Krzywe
 CURVEEDITOR_CURVE;Krzywa
 CURVEEDITOR_CUSTOM;Wlasna
 CURVEEDITOR_DARKS;Ciemne
-CURVEEDITOR_FILEDLGFILTERANY;Wszystkie pliki
-CURVEEDITOR_FILEDLGFILTERCURVE;Pliki z krzywymi
 CURVEEDITOR_HIGHLIGHTS;Najjasniejsze
 CURVEEDITOR_LIGHTS;Jasne
 CURVEEDITOR_LINEAR;Liniowa
@@ -819,7 +817,6 @@ PREFERENCES_OUTDIRTEMPLATE;Uzyj schemat
 PREFERENCES_OUTDIR;Katalog wyjsciowy
 PREFERENCES_OVERLAY_FILENAMES;Nakladaj nazwy pliku na miniatury
 PREFERENCES_OVERWRITEOUTPUTFILE;Nadpisuj istniejace pliki
-PREFERENCES_PANFACTORFRAME;Przyspieszenie podczas przesuwania podgladu
 PREFERENCES_PANFACTORLABEL;Wspolczynnik
 PREFERENCES_PARSEDEXTADDHINT;Prosze wprowadzic rozszerzenie i zatwierdzic przyciskiem, by dodac do listy
 PREFERENCES_PARSEDEXTADD;Dodaj rozszerzenie
@@ -867,8 +864,6 @@ PREFERENCES_USESYSTEMTHEME; Uzyj tematu systemowego
 PREFERENCES_VIEW;Balans bieli urzadzenia wyjsciowego (monitora, TV, projektora, widowni, etc.)
 PREFERENCES_WORKFLOW;Tok pracy
 PROFILEPANEL_COPYPPASTE;Parametry do skopiowania
-PROFILEPANEL_FILEDLGFILTERANY;Wszystkie pliki
-PROFILEPANEL_FILEDLGFILTERPP;Profile przetwarzania
 PROFILEPANEL_GLOBALPROFILES;Zalaczone profile przetwarzania
 PROFILEPANEL_LABEL;Profil przetwarzania
 PROFILEPANEL_LOADDLGLABEL;Wczytaj profil przetwarzania koncowego...
@@ -899,8 +894,6 @@ PROGRESSBAR_SAVEJPEG;Zapisywanie pliku JPEG...
 PROGRESSBAR_SAVEPNG;Zapisywanie pliku PNG...
 PROGRESSBAR_SAVETIFF;Zapisywanie pliku TIFF...
 PROGRESSBAR_SNAPSHOT_ADDED;Dodano migawke
-PROGRESSDLG_LOADING;Wczytywanie pliku...
-PROGRESSDLG_PROCESSING;Przetwarzanie zdjecia...
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil zmieniony w przegladarce
 QINFO_ISO;ISO
 QINFO_NOEXIF;Dane Exif niedostepne.
@@ -908,7 +901,6 @@ SAVEDLG_AUTOSUFFIX;Automatycznie dodaj przyrostek, jezeli plik juz istnieje
 SAVEDLG_FILEFORMAT;Format pliku
 SAVEDLG_FORCEFORMATOPTS;Wymus opcje zapisu
 SAVEDLG_JPEGQUAL;Jakosc JPEG
-SAVEDLG_JPGFILTER;Pliki JPEG
 SAVEDLG_PNGCOMPR;Kompresja PNG
 SAVEDLG_PUTTOQUEUEHEAD;Umiesc na poczatku kolejki przetwarzania
 SAVEDLG_PUTTOQUEUETAIL;Umiesc na koncu kolejki przetwarzania
@@ -920,7 +912,6 @@ SAVEDLG_SUBSAMP_1;Najlepsza kompresja
 SAVEDLG_SUBSAMP_2;Pomiedzy
 SAVEDLG_SUBSAMP_3;Najlepsza jakosc
 SAVEDLG_SUBSAMP_TOOLTIP;Najlepsza kompresja: 4:1:1\nPomiedzy: 4:2:2\nNajlepsza jakosc: 4:4:4
-SAVEDLG_TIFFFILTER;Pliki TIFF
 SAVEDLG_TIFFUNCOMPRESSED;Nieskompresowany TIFF
 SAVEDLG_WARNFILENAME;Plik zostanie nazwany
 SHCSELECTOR_TOOLTIP;Kliknij prawym przyciskiem myszki aby zresetowac poycje trzech suwakow.
@@ -1120,10 +1111,6 @@ TP_CROP_GTDIAGONALS;Przekatna
 TP_CROP_GTEPASSPORT;Paszport biometryczny
 TP_CROP_GTFRAME;Ramka
 TP_CROP_GTGRID;Siatka
-TP_CROP_GTHARMMEANS1;Zloty podzial 1
-TP_CROP_GTHARMMEANS2;Zloty podzial 2
-TP_CROP_GTHARMMEANS3;Zloty podzial 3
-TP_CROP_GTHARMMEANS4;Zloty podzial 4
 TP_CROP_GTNONE;Nic
 TP_CROP_GTRULETHIRDS;Trojpodzial
 TP_CROP_GUIDETYPE;Typ pomocy:
@@ -1177,7 +1164,6 @@ TP_DIRPYRDENOISE_SHAL;Standardowa
 TP_DIRPYRDENOISE_SOFT;3x3
 TP_DIRPYREQUALIZER_ALGO;Zakres odcieni skory
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;-
-TP_DIRPYREQUALIZER_GAMUT;Redukcja artefaktow
 TP_DIRPYREQUALIZER_HUESKIN;Odcien skory
 TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;Piramida wyznacza zakres kolorow uwazany jako zakres odcieni skory. Wiekszosc odcieni skory - bialej, czarnej, i pomiedzy - ma te sama odcien. Male poprawki sa dopuszczalne, jednak jesli potrzebna jest wieksza zmiana w lewo lub prawo, lub jesli sa widoczne artefakty, to najprawdopobniej <b>balans bieli jest niepoprawny</b>.
 TP_DIRPYREQUALIZER_LABEL;Kontrast wg. precyzji detali
@@ -1225,7 +1211,6 @@ TP_EXPOSURE_TCMODE_STANDARD;Standardowa
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Wazona standardowa
 TP_EXPOS_BLACKPOINT_LABEL;Punkt czerni raw
 TP_EXPOS_WHITEPOINT_LABEL;Punkt bieli raw
-TP_EXPO_AFTER; Po interpolacji (przed konwersja RGB)
 TP_FILMSIMULATION_LABEL;Symulacja Kliszy
 TP_FILMSIMULATION_STRENGTH;Sila
 TP_FILMSIMULATION_ZEROCLUTSFOUND;Ustaw folder HaldCLUT w Ustawieniach
@@ -1238,8 +1223,6 @@ TP_FLATFIELD_BT_VERTHORIZ;Poziomy + pionowy
 TP_FLATFIELD_BT_VERTICAL;Pionowy
 TP_FLATFIELD_CLIPCONTROL;Zabezpieczenie przed obcinaniem
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Funkcja ta chroni przed obcinaniem podswietlen ktore moze zaistniec przy stosowaniu obrazow type "puste pole". Nalezy zachowac ostroznosc, poniewaz jesli obciete rejony istnieja przed zastosowaniem pustego pola, funkcja ta moze spowodowac zabarwienie tych rejonow ktore powinny byc biale.
-TP_FLATFIELD_FILEDLGFILTERANY;Wszystkie rozszerzenia
-TP_FLATFIELD_FILEDLGFILTERFF;To samo rozszerzenie co obecne zdjecie
 TP_FLATFIELD_LABEL;Puste pole
 TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Dowolna gamma
@@ -1275,9 +1258,6 @@ TP_ICM_BLENDCMSMATRIX_TOOLTIP;Wlacz odzyskiwanie przeswietlonych regionow jesli 
 TP_ICM_DCPILLUMINANT;Iluminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolowany
 TP_ICM_DCPILLUMINANT_TOOLTIP;Wybierz ktory osadzony iluminant DCP nalezy uzyc. Domyslna opcja jest "interpolowany", czyli wartosc jest mieszanina pomiedzy dwoma osadzonymi wartosciami iluminantu zaleznie od balansu bieli. Ten wybor jest mozliwy jedynie kiedy DCP zawiera dwa iluminanty z mozliwoscia interpolacji.
-TP_ICM_FILEDLGFILTERANY;Wszystkie pliki
-TP_ICM_FILEDLGFILTERICMDNG;Profile ICC + DNG
-TP_ICM_FILEDLGFILTERICM;Pliki z profilami ICC
 TP_ICM_INPUTCAMERAICC;Domyslny aparatu lub ICC
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Uzyj profil ICC stworzony specjalnie na potrzeby RawTherapee. Jest bardziej dokladny niz domyslny matrycowy profil ICC, lecz dostepny tylko dla niektorych aparatow.
 TP_ICM_INPUTCAMERA;Domyslny aparatu
@@ -1340,7 +1320,6 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Ma wplyw na suwak Chromatycznosci oraz na krzywa CC.
 TP_LENSGEOM_AUTOCROP;Auto-kadrowanie
 TP_LENSGEOM_FILL;Auto-wypelnienie
 TP_LENSGEOM_LABEL;Obiektyw / Geometria
-TP_LENSPROFILE_FILEDLGFILTERLCP;Profile korekcji obiektywow LCP
 TP_LENSPROFILE_LABEL;Profil korekcji obiektywu LCP
 TP_LENSPROFILE_USECA;Korekja aberacji chromatycznej
 TP_LENSPROFILE_USEDIST;Korekcja dystorsji
@@ -1396,10 +1375,6 @@ TP_RAW_SENSOR_BAYER_LABEL;Matryca z filtrem Bayera
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;Trzy powtorzenia prowadza do najlepszych rezultatow (zalecane dla zdjec o niskim ISO).\nJedno powtorzenie jest prawie nie do odroznienia od trzech dla zdjec o wysokim ISO a jest znacznie szybsze.
 TP_RAW_SENSOR_XTRANS_LABEL;Matryca z filtrem X-Trans
 TP_RESIZE_APPLIESTO;Dotyczy:
-TP_RESIZE_BICUBICSF;Bicubic (Miekko)
-TP_RESIZE_BICUBICSH;Bicubic (Ostro)
-TP_RESIZE_BICUBIC;Bicubic
-TP_RESIZE_BILINEAR;Bilinear
 TP_RESIZE_CROPPEDAREA;Obszaru kadrowanego
 TP_RESIZE_FITBOX;Wymiary obwodu
 TP_RESIZE_FULLIMAGE;Calego zdjecia
@@ -1665,6 +1640,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !PREFERENCES_WLONE;One level
 !PREFERENCES_WLTWO;Two levels
 !PREFERENCES_WLZER;No
+!TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_DIRPYRDENOISE_99;9x9 (very slow)

@@ -1,8 +1,6 @@
 #01 2009-05-03 T. Kauppinen
 
 ADJUSTER_RESET_TO_DEFAULT;Palauta oletusasetukset
-CURVEEDITOR_FILEDLGFILTERANY;Kaikki tiedostot
-CURVEEDITOR_FILEDLGFILTERCURVE;Käyrätiedostot
 CURVEEDITOR_LINEAR;Suora
 CURVEEDITOR_LOADDLGLABEL;Lataa käyrä...
 CURVEEDITOR_SAVEDLGLABEL;Tallenna käyrä...
@@ -215,7 +213,6 @@ IPTCPANEL_TITLE;Otsikko
 IPTCPANEL_TRANSREFERENCEHINT;(Original Transmission Reference) Alkuperäviite.
 IPTCPANEL_TRANSREFERENCE;Alkuperäviite
 MAIN_BUTTON_PREFERENCES;Asetukset
-MAIN_BUTTON_SAVEAS;...
 MAIN_BUTTON_SAVE;Tallenna kuva
 MAIN_BUTTON_SENDTOEDITOR;Avaa ulkoisessa ohjelmassa
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
@@ -256,7 +253,6 @@ PARTIALPASTE_EXPOSURE;Valotus
 PARTIALPASTE_ICMSETTINGS;ICM-profiili
 PARTIALPASTE_IPTCINFO;IPTC-tiedot
 PARTIALPASTE_LENSGROUP;Objektiiviin liittyvät asetukset
-PARTIALPASTE_LUMACURVE;Luminanssikäyrä
 PARTIALPASTE_METAICMGROUP;Metatiedot ja ICM-profiili
 PARTIALPASTE_RESIZE;Koko
 PARTIALPASTE_ROTATION;Oikaisu
@@ -268,15 +264,9 @@ PREFERENCES_APPLNEXTSTARTUP;käytössä käynnistyksen jälkeen
 PREFERENCES_CACHECLEARALL;Tyhjennä kaikki
 PREFERENCES_CACHECLEARPROFILES;Tyhjennä profiilit
 PREFERENCES_CACHECLEARTHUMBS;Tyhjennä esikatselukuvat
-PREFERENCES_CACHEFORMAT1;RawTherapee (nopeampi ja parempilaatuinen)
-PREFERENCES_CACHEFORMAT2;JPEG (pienempi koko)
 PREFERENCES_CACHEMAXENTRIES;Välimuistin koko
 PREFERENCES_CACHEOPTS;Välimuistin asetukset
-PREFERENCES_CACHETHUMBFORM;Välimuistin esikatselukuvien muoto
 PREFERENCES_CACHETHUMBHEIGHT;Suurin esikatselukuvan korkeus
-PREFERENCES_CLEARDLG_LINE1;Välimuistiä tyhjennetään
-PREFERENCES_CLEARDLG_LINE2;Tämä voi kestää joitain sekunteja.
-PREFERENCES_CLEARDLG_TITLE;Odota.
 PREFERENCES_CLIPPINGIND;Leikkautuminen
 PREFERENCES_CMETRICINTENT;Näköistystapa
 PREFERENCES_DATEFORMATHINT;<i>Voit käyttää seuraavia komentoja:</i>\n<b>%y</b><i> : vuosi</i>\n<b>%m</b><i> : kuukausi</i>\n<b>%d</b><i> : päivä</i>\n<i>\nEsimerkiksi, pp.kk.vvvv:</i>\n<b>%d.%m.%y</b>
@@ -329,8 +319,6 @@ PREFERENCES_TAB_BROWSER;Tiedostot
 PREFERENCES_TAB_COLORMGR;Värit
 PREFERENCES_TAB_GENERAL;Yleiset
 PREFERENCES_TAB_IMPROC;Kuvankäsittely
-PROFILEPANEL_FILEDLGFILTERANY;Kaikki tiedostot
-PROFILEPANEL_FILEDLGFILTERPP;Profiilitiedostot
 PROFILEPANEL_LABEL;Käsittelyprofiili
 PROFILEPANEL_LOADDLGLABEL;Lataa käsittelyprofiili...
 PROFILEPANEL_PCUSTOM;Oma
@@ -350,21 +338,16 @@ PROGRESSBAR_READY;Valmis
 PROGRESSBAR_SAVEJPEG;JPEG-tiedostoa tallennetaan...
 PROGRESSBAR_SAVEPNG;PNG-tiedostoa tallennetaan...
 PROGRESSBAR_SAVETIFF;TIFF-tiedostoa tallennetaan...
-PROGRESSDLG_LOADING;Kuvaa ladataan...
-PROGRESSDLG_PROCESSING;Kuvaa käsitellään...
-PROGRESSDLG_SAVING;Tiedostoa tallennetaan...
 QINFO_ISO;ISO
 QINFO_NOEXIF;EXIF-tietoja ei saatavilla.
 SAVEDLG_FILEFORMAT;Tiedostomuoto
 SAVEDLG_JPEGQUAL;JPEG laatu (suurempi luku, parempi laatu)
-SAVEDLG_JPGFILTER;JPEG tiedostot
 SAVEDLG_PNGCOMPR;PNG pakkaus (suurempi luku, enemmän pakkausta)
 SAVEDLG_PUTTOQUEUEHEAD;Laita käsittelyjonon ensimmäiseksi
 SAVEDLG_PUTTOQUEUETAIL;Laita käsittelyjonon viimeiseksi
 SAVEDLG_PUTTOQUEUE;Laita käsittelyjonoon
 SAVEDLG_SAVEIMMEDIATELY;Tallenna heti
 SAVEDLG_SAVESPP;Tallenna kuvankäsittelytiedot kuvan mukana
-SAVEDLG_TIFFFILTER;TIFF tiedostot
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 TOOLBAR_TOOLTIP_CROP;Valitse rajattava alue (pikanäppäin: C)
 TOOLBAR_TOOLTIP_HAND;Kuvan siirtotyökalu (pikanäppäin: N)
@@ -377,34 +360,12 @@ TP_CHMIXER_BLUE;Sininen
 TP_CHMIXER_GREEN;Vihreä
 TP_CHMIXER_LABEL;Kanavat
 TP_CHMIXER_RED;Punainen
-TP_COARSETRAF_DEGREE;astetta
 TP_COARSETRAF_TOOLTIP_HFLIP;Peilaa vaakasuunnassa
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Käännä vasemmalle
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Käännä oikealle
 TP_COARSETRAF_TOOLTIP_VFLIP;Peilaa pystysuunnassa
-TP_COLORBOOST_ACHANNEL;a*
-TP_COLORBOOST_AMOUNT;Määrä
-TP_COLORBOOST_AVOIDCOLORCLIP;Vältä leikkautuminen
-TP_COLORBOOST_BCHANNEL;b*
-TP_COLORBOOST_CHANNEL;Kanava
-TP_COLORBOOST_CHSEPARATE;säädä erikseen
-TP_COLORBOOST_ENABLESATLIMITER;Estä kyllästyminen
-TP_COLORBOOST_LABEL;Värikylläisyys
-TP_COLORBOOST_SATLIMIT;Kyllästymisraja
-TP_COLORDENOISE_EDGESENSITIVE;Reunaherkkä
-TP_COLORDENOISE_EDGETOLERANCE;Reunan tunnistusherkkyys
-TP_COLORDENOISE_LABEL;Värin kohinanvaimennus
-TP_COLORDENOISE_RADIUS;Säde
-TP_COLORSHIFT_BLUEYELLOW;sininen-keltainen
-TP_COLORSHIFT_GREENMAGENTA;vihreä-punainen
-TP_COLORSHIFT_LABEL;Värisävy
-TP_CROP_DPI;Erottelutarkkuus (DPI):
 TP_CROP_FIXRATIO;Pidä kuvasuhde:
 TP_CROP_GTDIAGONALS;Kulmien puolittajat
-TP_CROP_GTHARMMEANS1;Kultainen leikkaus 1
-TP_CROP_GTHARMMEANS2;Kultainen leikkaus 2
-TP_CROP_GTHARMMEANS3;Kultainen leikkaus 3
-TP_CROP_GTHARMMEANS4;Kultainen leikkaus 4
 TP_CROP_GTNONE;Ei mikään
 TP_CROP_GTRULETHIRDS;Kolmijako
 TP_CROP_GUIDETYPE;Sommittelumalli:
@@ -431,9 +392,6 @@ TP_HLREC_COLOR;Värin palautus
 TP_HLREC_LABEL;Huippuvaloalueiden palautus
 TP_HLREC_LUMINANCE;Luminanssin palautus
 TP_HLREC_METHOD;Menetelmä: 
-TP_ICM_FILEDLGFILTERANY;kaikki tiedostot
-TP_ICM_FILEDLGFILTERICM;ICC-profiilitiedostot
-TP_ICM_GAMMABEFOREINPUT;Käytä profiilin gammaa
 TP_ICM_INPUTCAMERA;Kameran oletus
 TP_ICM_INPUTCUSTOM;Oma
 TP_ICM_INPUTDLGLABEL;Valitse lähteen ICC-profiili...
@@ -444,28 +402,15 @@ TP_ICM_NOICM;Ei ICM-profiilia: sRGB
 TP_ICM_OUTPUTPROFILE;Tulosväriprofiili
 TP_ICM_SAVEREFERENCE;Tallenna mallikuva\nprofilointia varten
 TP_ICM_WORKINGPROFILE;Työväriprofiili
-TP_LUMACURVE_BLACKLEVEL;Tummuus
-TP_LUMACURVE_BRIGHTNESS;Kirkkaus
-TP_LUMACURVE_COMPRHIGHLIGHTS;Vaaleiden alueiden vaimennus
-TP_LUMACURVE_COMPRSHADOWS;Tummien alueiden vaimennus
-TP_LUMACURVE_CONTRAST;Kontrasti
-TP_LUMACURVE_CURVEEDITOR;Luminanssin käyrä
-TP_LUMACURVE_LABEL;Luminanssi
 TP_RAW_DMETHOD;Menetelmä
 TP_RAW_FALSECOLOR;Värivääristymien eston määrä
-TP_RESIZE_BICUBICSF;Bikuutiollinen (Pehmeämpi)
-TP_RESIZE_BICUBICSH;Bikuutiollinen (Terävämpi)
-TP_RESIZE_BICUBIC;Bikuutiollinen
-TP_RESIZE_BILINEAR;Bilineaarinen
 TP_RESIZE_H;Kork.:
 TP_RESIZE_LABEL;Koko
 TP_RESIZE_METHOD;Menetelmä: 
 TP_RESIZE_NEAREST;Lähin
 TP_RESIZE_SCALE;Mittakaava
 TP_RESIZE_W;Lev.:
-TP_ROTATE_AUTOCROP;Aseta rajaus
 TP_ROTATE_DEGREE;Astetta
-TP_ROTATE_FILL;Suurenna/pienennä kuva automaattisesti
 TP_ROTATE_LABEL;Oikaisu
 TP_ROTATE_SELECTLINE;Valitse suora linja
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Vaaleiden alueiden vaimennus
@@ -1374,6 +1319,7 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !TP_CROP_GTEPASSPORT;Biometric Passport
 !TP_CROP_GTFRAME;Frame
 !TP_CROP_GTGRID;Grid
+!TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_CROP_PPI;PPI=

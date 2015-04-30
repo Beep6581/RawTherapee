@@ -1,8 +1,6 @@
 #01 2010-02-01 Vitor da Silva Gonçalves
 
 ADJUSTER_RESET_TO_DEFAULT;Restaurar para o padrão
-CURVEEDITOR_FILEDLGFILTERANY;Quaisquer Arquivos
-CURVEEDITOR_FILEDLGFILTERCURVE;Arquivos de curva 
 CURVEEDITOR_LINEAR;Linear
 CURVEEDITOR_LOADDLGLABEL;Carregar Curva...
 CURVEEDITOR_SAVEDLGLABEL;Salvar Curva...
@@ -215,7 +213,6 @@ IPTCPANEL_TITLE;Título
 IPTCPANEL_TRANSREFERENCEHINT;Um código representando a localização da transmissão original.
 IPTCPANEL_TRANSREFERENCE;Trans. Referência
 MAIN_BUTTON_PREFERENCES;Preferências
-MAIN_BUTTON_SAVEAS;Como...
 MAIN_BUTTON_SAVE;Salvar Imagem
 MAIN_BUTTON_SENDTOEDITOR;Enviar ao Editor
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
@@ -256,7 +253,6 @@ PARTIALPASTE_EXPOSURE;Exposição
 PARTIALPASTE_ICMSETTINGS;Configurações ICM 
 PARTIALPASTE_IPTCINFO;informações IPTC 
 PARTIALPASTE_LENSGROUP;Configurações relacionadas à Lente
-PARTIALPASTE_LUMACURVE;Curva de luminância
 PARTIALPASTE_METAICMGROUP;Metadados/configurações ICM
 PARTIALPASTE_RESIZE;Redimensionar
 PARTIALPASTE_ROTATION;Rotação
@@ -268,15 +264,9 @@ PREFERENCES_APPLNEXTSTARTUP;Aplicadas na próxima inicialização
 PREFERENCES_CACHECLEARALL;Limpar Tudo
 PREFERENCES_CACHECLEARPROFILES;Limpar perfis
 PREFERENCES_CACHECLEARTHUMBS;Limpar Miniaturas
-PREFERENCES_CACHEFORMAT1;Proprietário (mais rápido e melhor qualidade)
-PREFERENCES_CACHEFORMAT2;JPEG (Menor espaço em disco)
 PREFERENCES_CACHEMAXENTRIES;Número máximo de entradas no cache
 PREFERENCES_CACHEOPTS;Opções de Cache
-PREFERENCES_CACHETHUMBFORM;Formato das miniaturas no cache
 PREFERENCES_CACHETHUMBHEIGHT;Tamanho máximo das miniaturas
-PREFERENCES_CLEARDLG_LINE1;Limpando cache
-PREFERENCES_CLEARDLG_LINE2;Isto pode levar alguns segundos.
-PREFERENCES_CLEARDLG_TITLE;Por favor aguarde
 PREFERENCES_CLIPPINGIND;Recortando  indicação
 PREFERENCES_CMETRICINTENT;Intenção colorimétrica
 PREFERENCES_DATEFORMATHINT;<i>Você pode usar as seguintes formatações:</i>\n<b>%a</b><i> : ano</i>\n<b>%m</b><i> : mês</i>\n<b>%d</b><i> : dia</i>\n<i>\nPor exemplo, o formato de data húngaro é:</i>\n<b>%a/%m/%d</b>
@@ -329,8 +319,6 @@ PREFERENCES_TAB_BROWSER;Navegador de Arquivos
 PREFERENCES_TAB_COLORMGR;Gerenciamento de Cores
 PREFERENCES_TAB_GENERAL;Geral
 PREFERENCES_TAB_IMPROC;Processamento de Imagem
-PROFILEPANEL_FILEDLGFILTERANY;Quaisquer arquivos
-PROFILEPANEL_FILEDLGFILTERPP;Perfis de pós-processamento
 PROFILEPANEL_LABEL;Perfis de pós-processamento
 PROFILEPANEL_LOADDLGLABEL;Carregar parâmetros de pós-processamento...
 PROFILEPANEL_PCUSTOM;Personalizado
@@ -350,21 +338,16 @@ PROGRESSBAR_READY;Pronto
 PROGRESSBAR_SAVEJPEG;Salvando Arquivo JPEG...
 PROGRESSBAR_SAVEPNG;Salvando Arquivo PNG...
 PROGRESSBAR_SAVETIFF;Salvando Arquivo TIFF...
-PROGRESSDLG_LOADING;Carregando arquivo...
-PROGRESSDLG_PROCESSING;Processando imagem...
-PROGRESSDLG_SAVING;Salvando arquivo...
 QINFO_ISO;ISO
 QINFO_NOEXIF;Dados Exif não disponíveis.
 SAVEDLG_FILEFORMAT;Formato do Arquivo
 SAVEDLG_JPEGQUAL;Qualidade do JPEG
-SAVEDLG_JPGFILTER;Arquivos JPEG
 SAVEDLG_PNGCOMPR;Compressão PNG
 SAVEDLG_PUTTOQUEUEHEAD;Colocar no topo da fila de processamento
 SAVEDLG_PUTTOQUEUETAIL;Colocar no final da fila de processamento
 SAVEDLG_PUTTOQUEUE;Colocar na fila de processamento
 SAVEDLG_SAVEIMMEDIATELY;Salvar Imediatamente
 SAVEDLG_SAVESPP;Salvar parâmetros de processamento com a imagem
-SAVEDLG_TIFFFILTER;Arquivos TIFF 
 TOOLBAR_TOOLTIP_CROP;Seleção de Corte (Tecla de Atalho: C)
 TOOLBAR_TOOLTIP_HAND;Ferramenta Mão (Tecla de Atalho: N)
 TOOLBAR_TOOLTIP_STRAIGHTEN;Seleção de linha reta (Tecla de atalho: S)
@@ -376,34 +359,12 @@ TP_CHMIXER_BLUE;Azul
 TP_CHMIXER_GREEN;Verde
 TP_CHMIXER_LABEL;Misturador de Canais
 TP_CHMIXER_RED;Vermelho
-TP_COARSETRAF_DEGREE;graus:
 TP_COARSETRAF_TOOLTIP_HFLIP;Inverter horizontalmente
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotacionar à esquerda
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotacionar à direita
 TP_COARSETRAF_TOOLTIP_VFLIP;Inverter verticalmente 
-TP_COLORBOOST_ACHANNEL;Canal "a"
-TP_COLORBOOST_AMOUNT;Quantidade
-TP_COLORBOOST_AVOIDCOLORCLIP;Evitar clipping de cor
-TP_COLORBOOST_BCHANNEL;Canal "b"
-TP_COLORBOOST_CHANNEL;Canal
-TP_COLORBOOST_CHSEPARATE;separar
-TP_COLORBOOST_ENABLESATLIMITER;Habilitar limite de saturação
-TP_COLORBOOST_LABEL;Melhoria de Cor
-TP_COLORBOOST_SATLIMIT;Limite de Saturação
-TP_COLORDENOISE_EDGESENSITIVE;Sensitivo a bordas
-TP_COLORDENOISE_EDGETOLERANCE;Tolerância de bordas
-TP_COLORDENOISE_LABEL;Redução de Ruidos da Cor
-TP_COLORDENOISE_RADIUS;Raio
-TP_COLORSHIFT_BLUEYELLOW;Azul-Amarelo
-TP_COLORSHIFT_GREENMAGENTA;Verde-Magenta
-TP_COLORSHIFT_LABEL;Alternância de cor
-TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;Relação Fixa:
 TP_CROP_GTDIAGONALS;Regra das diagonais
-TP_CROP_GTHARMMEANS1;Harmonico 1
-TP_CROP_GTHARMMEANS2;Harmonico 2
-TP_CROP_GTHARMMEANS3;Harmonico 3
-TP_CROP_GTHARMMEANS4;Harmonico 4
 TP_CROP_GTNONE;Nenhum
 TP_CROP_GTRULETHIRDS;Regra de Terceiros
 TP_CROP_GUIDETYPE;Tipo de guia:
@@ -430,9 +391,6 @@ TP_HLREC_COLOR;Propagação de Cores
 TP_HLREC_LABEL;Recuperação de Luz
 TP_HLREC_LUMINANCE;Recuperação de Luminância
 TP_HLREC_METHOD;Método: 
-TP_ICM_FILEDLGFILTERANY;Quaisquer Arquivos
-TP_ICM_FILEDLGFILTERICM;Arquivos de perfis ICC
-TP_ICM_GAMMABEFOREINPUT;Perfil aplica gama
 TP_ICM_INPUTCAMERA;Padrão de Câmera
 TP_ICM_INPUTCUSTOM;Personalizado
 TP_ICM_INPUTDLGLABEL;Selecione perfil de entrada ICC...
@@ -443,28 +401,15 @@ TP_ICM_NOICM;Sem ICM: Saída sRGB
 TP_ICM_OUTPUTPROFILE;Perfil de Saída
 TP_ICM_SAVEREFERENCE;Salvar imagem de referência para perfis
 TP_ICM_WORKINGPROFILE;Perfil Utilizado
-TP_LUMACURVE_BLACKLEVEL;Preto
-TP_LUMACURVE_BRIGHTNESS;Brilho
-TP_LUMACURVE_COMPRHIGHLIGHTS;Compressão da Luz
-TP_LUMACURVE_COMPRSHADOWS;Compressão de Sombras
-TP_LUMACURVE_CONTRAST;Contraste
-TP_LUMACURVE_CURVEEDITOR;Curva de Luminância
-TP_LUMACURVE_LABEL;Curva de Luminância
 TP_RAW_DMETHOD;Método
 TP_RAW_FALSECOLOR;Supressão de cor falsa
-TP_RESIZE_BICUBICSF;Bicúbico (mais suave)
-TP_RESIZE_BICUBICSH;Bicúbic (mais nítido)
-TP_RESIZE_BICUBIC;Bicúbico
-TP_RESIZE_BILINEAR;Bilinear
 TP_RESIZE_H;H:
 TP_RESIZE_LABEL;Redimensionar
 TP_RESIZE_METHOD;Método: 
 TP_RESIZE_NEAREST;Mais Próximo
 TP_RESIZE_SCALE;Escala
 TP_RESIZE_W;W:
-TP_ROTATE_AUTOCROP;Cortar Automaticamente
 TP_ROTATE_DEGREE;Graus
-TP_ROTATE_FILL;Preencher
 TP_ROTATE_LABEL;Rotacionar
 TP_ROTATE_SELECTLINE;    Selecionar Linha Reta
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Luzes
@@ -1374,6 +1319,7 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !TP_CROP_GTEPASSPORT;Biometric Passport
 !TP_CROP_GTFRAME;Frame
 !TP_CROP_GTGRID;Grid
+!TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_CROP_PPI;PPI=
