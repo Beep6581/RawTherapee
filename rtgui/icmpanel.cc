@@ -213,7 +213,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 
 
     Gtk::FileFilter filter_icc;
-    filter_icc.set_name(M("TP_ICM_FILEDLGFILTERICM"));
+    filter_icc.set_name(M("FILECHOOSER_FILTER_COLPROF"));
     filter_icc.add_pattern("*.dcp");
     filter_icc.add_pattern("*.DCP");
     filter_icc.add_pattern("*.icc");
@@ -221,7 +221,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     filter_icc.add_pattern("*.ICC");
     filter_icc.add_pattern("*.ICM");
     Gtk::FileFilter filter_iccdng;
-    filter_iccdng.set_name(M("TP_ICM_FILEDLGFILTERICMDNG"));
+    filter_iccdng.set_name(M("FILECHOOSER_FILTER_COLPROF") + " + DNG");
     filter_iccdng.add_pattern("*.dcp");
     filter_iccdng.add_pattern("*.DCP");
     filter_iccdng.add_pattern("*.dng");
@@ -231,7 +231,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     filter_iccdng.add_pattern("*.ICC");
     filter_iccdng.add_pattern("*.ICM");
     Gtk::FileFilter filter_any;
-    filter_any.set_name(M("TP_ICM_FILEDLGFILTERANY"));
+    filter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
     filter_any.add_pattern("*");
 
     ipDialog->add_filter (filter_icc);
@@ -701,13 +701,13 @@ void ICMPanel::saveReferencePressed () {
     vbox->pack_end(*hbox, Gtk::PACK_SHRINK, 2);
 
     Gtk::FileFilter filter_tif;
-    filter_tif.set_name(M("SAVEDLG_TIFFFILTER"));
+    filter_tif.set_name(M("FILECHOOSER_FILTER_TIFF"));
     filter_tif.add_pattern("*.tif");
     filter_tif.add_pattern("*.tiff");
     dialog.add_filter(filter_tif);
 
     Gtk::FileFilter filter_any;
-    filter_any.set_name(M("TP_ICM_FILEDLGFILTERANY"));
+    filter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
     filter_any.add_pattern("*");
     dialog.add_filter(filter_any);
 

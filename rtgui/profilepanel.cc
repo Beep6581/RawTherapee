@@ -242,12 +242,12 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
     //Add filters, so that only certain file types can be selected:
 
     Gtk::FileFilter filter_pp;
-    filter_pp.set_name(M("PROFILEPANEL_FILEDLGFILTERPP"));
+    filter_pp.set_name(M("FILECHOOSER_FILTER_PP"));
     filter_pp.add_pattern("*"+paramFileExtension);
     dialog.add_filter(filter_pp);
 
     Gtk::FileFilter filter_any;
-    filter_any.set_name(M("PROFILEPANEL_FILEDLGFILTERANY"));
+    filter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
     filter_any.add_pattern("*");
     dialog.add_filter(filter_any);
 
@@ -399,12 +399,12 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
     //Add filters, so that only certain file types can be selected:
 
     Gtk::FileFilter filter_pp;
-    filter_pp.set_name(M("PROFILEPANEL_FILEDLGFILTERPP"));
+    filter_pp.set_name(M("FILECHOOSER_FILTER_PP"));
     filter_pp.add_pattern("*"+paramFileExtension);
     dialog.add_filter(filter_pp);
 
     Gtk::FileFilter filter_any;
-    filter_any.set_name(M("PROFILEPANEL_FILEDLGFILTERANY"));
+    filter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
     filter_any.add_pattern("*");
     dialog.add_filter(filter_any);
 
