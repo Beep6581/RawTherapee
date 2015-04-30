@@ -2,6 +2,7 @@ EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False Colour Suppression
 FILEBROWSER_COLORLABEL_TOOLTIP;Colour label.\n\nUse dropdown menu or shortcuts:\n<b>Shift-Ctrl-0</b> No Colour\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 FILEBROWSER_POPUPCOLORLABEL;Colour label
 FILEBROWSER_SHOWUNCOLORHINT;Show images without a colour label.\nShortcut: <b>Alt-0</b>
+FILECHOOSER_FILTER_COLPROF;Colour profiles
 HISTORY_MSG_46;Colour denoising
 HISTORY_MSG_69;Working colour space
 HISTORY_MSG_70;Output colour space
@@ -77,8 +78,6 @@ TP_GRADIENT_CENTER;Centre
 TP_GRADIENT_CENTER_X;Centre X
 TP_GRADIENT_CENTER_Y;Centre Y
 TP_HLREC_COLOR;Colour Propagation
-TP_ICM_FILEDLGFILTERICMDNG;Colour profiles + DNG
-TP_ICM_FILEDLGFILTERICM;Colour profiles
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input colour profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
 TP_ICM_INPUTCAMERA_TOOLTIP;Use a simple colour matrix from dcraw, an enhanced RawTherapee version (whichever is available based on camera model) or one embedded in the DNG.
 TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own DCP/ICC colour profile file for the camera.
@@ -114,8 +113,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !CURVEEDITOR_CURVE;Curve
 !CURVEEDITOR_CUSTOM;Custom
 !CURVEEDITOR_DARKS;Darks
-!CURVEEDITOR_FILEDLGFILTERANY;Any files
-!CURVEEDITOR_FILEDLGFILTERCURVE;Curve files
 !CURVEEDITOR_HIGHLIGHTS;Highlights
 !CURVEEDITOR_LIGHTS;Lights
 !CURVEEDITOR_LINEAR;Linear
@@ -131,6 +128,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard.
 !CURVEEDITOR_TOOLTIPSAVE;Save current curve.
 !CURVEEDITOR_TYPE;Type:
+!DIRBROWSER_FOLDERS;Folders
 !EDITWINDOW_TITLE;Image Edit
 !EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
 !EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
@@ -223,6 +221,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !FILEBROWSER_POPUPMOVEEND;Move to end of queue
 !FILEBROWSER_POPUPMOVEHEAD;Move to head of queue
 !FILEBROWSER_POPUPMOVETO;Move to...
+!FILEBROWSER_POPUPOPENINEDITOR;Open in Editor
 !FILEBROWSER_POPUPOPEN;Open
 !FILEBROWSER_POPUPPROCESSFAST;Put to queue (Fast export)
 !FILEBROWSER_POPUPPROCESS;Put to queue
@@ -280,6 +279,12 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !FILEBROWSER_UNRANK_TOOLTIP;Unrank.\nShortcut: <b>Shift-0</b>
 !FILEBROWSER_ZOOMINHINT;Increase thumbnail size.\n\nShortcuts:\n<b>+</b> - Multiple Editor Tabs Mode,\n<b>Alt</b>-<b>+</b> - Single Editor Tab Mode.
 !FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size.\n\nShortcuts:\n<b>-</b> - Multiple Editor Tabs Mode,\n<b>Alt</b>-<b>-</b> - Single Editor Tab Mode.
+!FILECHOOSER_FILTER_ANY;All files
+!FILECHOOSER_FILTER_CURVE;Curve files
+!FILECHOOSER_FILTER_LCP;Lens correction profiles
+!FILECHOOSER_FILTER_PP;Processing profiles
+!FILECHOOSER_FILTER_SAME;Same format as current photo
+!FILECHOOSER_FILTER_TIFF;TIFF files
 !GENERAL_ABOUT;About
 !GENERAL_AFTER;After
 !GENERAL_AUTO;Automatic
@@ -618,7 +623,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !HISTORY_MSG_319;Wavelet Highlight range
 !HISTORY_MSG_320;Wavelet Shadow range
 !HISTORY_MSG_321;Wavelet Shadow levels
-!HISTORY_MSG_323;Wavelet Chroma level
+!HISTORY_MSG_323;Wavelet Contrast curve
 !HISTORY_MSG_324;Wavelet Chroma pastel
 !HISTORY_MSG_325;Wavelet Chroma saturated
 !HISTORY_MSG_326;Wavelet Chroma method
@@ -636,6 +641,26 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !HISTORY_MSG_338;Wavelet Edge Radius
 !HISTORY_MSG_339;Wavelet Edge Value
 !HISTORY_MSG_340;Wavelet Strength
+!HISTORY_MSG_341;Wavelet Daubechies
+!HISTORY_MSG_342;Wavelet Reinforce first level
+!HISTORY_MSG_343;Wavelet level chroma
+!HISTORY_MSG_344;Wavelet Meth chroma sl/cur
+!HISTORY_MSG_345;Wavelet Local contrast
+!HISTORY_MSG_346;Wavelet Local contrast Meth
+!HISTORY_MSG_347;Wavelet Level0 + denoise
+!HISTORY_MSG_348;Wavelet Level1 + denoise
+!HISTORY_MSG_349;Wavelet Level2 + denoise
+!HISTORY_MSG_350;Wavelet edgedetect
+!HISTORY_MSG_351;Wavelet Curve Hue
+!HISTORY_MSG_352;Wavelet Background
+!HISTORY_MSG_353;Wavelet edgedetect value
+!HISTORY_MSG_354;Wavelet edgedetect enhance
+!HISTORY_MSG_355;Wavelet edgedetect thresholdLow
+!HISTORY_MSG_356;Wavelet edgedetect thresholdHi
+!HISTORY_MSG_357;Wavelet Denoise link
+!HISTORY_MSG_358;Wavelet Contrast Hue curve
+!HISTORY_MSG_359;Hot/Dead - Threshold
+!HISTORY_MSG_360;TM Gamma
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !HISTORY_SNAPSHOTS;Snapshots
@@ -824,7 +849,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PARTIALPASTE_VIGNETTING;Vignetting correction
 !PARTIALPASTE_WHITEBALANCE;White balance
 !PREFERENCES_ADD;Add
-!PREFERENCES_APPLNEXTRELOAD;image reload required
 !PREFERENCES_APPLNEXTSTARTUP;restart required
 !PREFERENCES_AUTLISLOW;Low
 !PREFERENCES_AUTLISMAX;Max - Average of all tiles
@@ -852,6 +876,11 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
+!PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
+!PREFERENCES_CURVEBBOXPOS_ABOVE;Above
+!PREFERENCES_CURVEBBOXPOS_BELOW;Below
+!PREFERENCES_CURVEBBOXPOS_LEFT;Left
+!PREFERENCES_CURVEBBOXPOS_RIGHT;Right
 !PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\n\nThe path of the communication file (*.ini style, a.k.a. "Keyfile") is added as a command line parameter. It contains various parameters required for the scripts and image Exif to allow a rules-based processing profile generation.\n\n<b>WARNING:</b> You are responsible for using double quotes where necessary if you're using paths containing spaces.
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
@@ -937,6 +966,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_MIN;Mini (100x115)
 !PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs In Own Window Mode
 !PREFERENCES_MULTITAB;Multiple Editor Tabs Mode
+!PREFERENCES_NAVIGATIONFRAME;Navigation
 !PREFERENCES_NOISE;Noise Reduction
 !PREFERENCES_OUTDIRFOLDERHINT;Save images to the selected folder.
 !PREFERENCES_OUTDIRFOLDER;Save to folder
@@ -946,8 +976,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails in the file browser
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-!PREFERENCES_PANFACTORFRAME;Pan Rate Amplification
-!PREFERENCES_PANFACTORLABEL;Factor
+!PREFERENCES_PANFACTORLABEL;Pan rate amplification
 !PREFERENCES_PARSEDEXTADDHINT;Add entered extension to the list.
 !PREFERENCES_PARSEDEXTADD;Add extension
 !PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list.
@@ -964,11 +993,16 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_PROFILESAVEINPUT;Save processing profile next to the input file
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_PSPATH;Adobe Photoshop installation directory
+!PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
+!PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
 !PREFERENCES_RGBDTL_TOOLTIP;Leave the setting at "0" to automatically use as many threads as possible. The more threads run in parallel, the faster the computation. Refer to RawPedia for memory requirements.
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SELECTLANG;Select language
 !PREFERENCES_SELECTTHEME;Select theme
+!PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
+!PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize read of tiff files
+!PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;When working with folders full of uncompressed tiff files enabling this option can increase performance of thumb generation.
 !PREFERENCES_SET;Set
 !PREFERENCES_SHOWBASICEXIF;Show basic Exif info
 !PREFERENCES_SHOWDATETIME;Show date and time
@@ -1008,8 +1042,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_WLZER;No
 !PREFERENCES_WORKFLOW;Layout
 !PROFILEPANEL_COPYPPASTE;Parameters to copy
-!PROFILEPANEL_FILEDLGFILTERANY;Any files
-!PROFILEPANEL_FILEDLGFILTERPP;Processing profiles
 !PROFILEPANEL_GLOBALPROFILES;Bundled profiles
 !PROFILEPANEL_LABEL;Processing Profiles
 !PROFILEPANEL_LOADDLGLABEL;Load Processing Parameters...
@@ -1047,7 +1079,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !SAVEDLG_FILEFORMAT;File format
 !SAVEDLG_FORCEFORMATOPTS;Force saving options
 !SAVEDLG_JPEGQUAL;JPEG quality
-!SAVEDLG_JPGFILTER;JPEG files
 !SAVEDLG_PNGCOMPR;PNG compression
 !SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 !SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
@@ -1059,7 +1090,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !SAVEDLG_SUBSAMP_2;Balanced
 !SAVEDLG_SUBSAMP_3;Best quality
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression: 4:1:1\nBalanced: 4:2:2\nBest quality: 4:4:4
-!SAVEDLG_TIFFFILTER;TIFF files
 !SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 !SAVEDLG_WARNFILENAME;File will be named
 !SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
@@ -1233,12 +1263,11 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_CROP_GTEPASSPORT;Biometric Passport
 !TP_CROP_GTFRAME;Frame
 !TP_CROP_GTGRID;Grid
-!TP_CROP_GTHARMMEANS1;Harmonic Means 1
-!TP_CROP_GTHARMMEANS2;Harmonic Means 2
-!TP_CROP_GTHARMMEANS3;Harmonic Means 3
-!TP_CROP_GTHARMMEANS4;Harmonic Means 4
+!TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTNONE;None
 !TP_CROP_GTRULETHIRDS;Rule of Thirds
+!TP_CROP_GTTRIANGLE1;Golden Triangles 1
+!TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_CROP_GUIDETYPE;Guide type:
 !TP_CROP_H;Height
 !TP_CROP_LABEL;Crop
@@ -1313,7 +1342,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_DIRPYRDENOISE_SHAL;Standard
 !TP_DIRPYRDENOISE_SLI;Slider
 !TP_DIRPYRDENOISE_SOFT;3x3
-!TP_DIRPYREQUALIZER_GAMUT;Reduce artifacts
+!TP_DIRPYREQUALIZER_ARTIF;Reduce artifacts
 !TP_DIRPYREQUALIZER_HUESKIN;Skin hue
 !TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
 !TP_DIRPYREQUALIZER_LABEL;Contrast by Detail Levels
@@ -1330,6 +1359,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_DISTORTION_AUTO_TIP;Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.).
 !TP_DISTORTION_LABEL;Distortion Correction
 !TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_GAMMA;Gamma
 !TP_EPD_LABEL;Tone Mapping
 !TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
 !TP_EPD_SCALE;Scale
@@ -1369,8 +1399,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_FLATFIELD_BT_VERTHORIZ;Vertical + Horizontal
 !TP_FLATFIELD_BT_VERTICAL;Vertical
 !TP_FLATFIELD_CLIPCONTROL;Clip control
-!TP_FLATFIELD_FILEDLGFILTERANY;Any files
-!TP_FLATFIELD_FILEDLGFILTERFF;Same format as current photo
 !TP_FLATFIELD_LABEL;Flat-Field
 !TP_GAMMA_CURV;Gamma
 !TP_GAMMA_FREE;Free gamma
@@ -1402,7 +1430,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
-!TP_ICM_FILEDLGFILTERANY;Any files
 !TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
 !TP_ICM_INPUTCAMERA;Camera standard
 !TP_ICM_INPUTCUSTOM;Custom
@@ -1413,6 +1440,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_ICM_NOICM;No ICM: sRGB Output
 !TP_ICM_OUTPUTPROFILE;Output Profile
 !TP_ICM_SAVEREFERENCE;Save Reference Image for Profiling
+!TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 !TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
 !TP_ICM_TONECURVE;Use DCP's tone curve
 !TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only enabled if the selected DCP has a tone curve.
@@ -1457,7 +1485,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_LENSGEOM_AUTOCROP;Auto-Crop
 !TP_LENSGEOM_FILL;Auto-fill
 !TP_LENSGEOM_LABEL;Lens / Geometry
-!TP_LENSPROFILE_FILEDLGFILTERLCP;Lens correction files
 !TP_LENSPROFILE_LABEL;Lens Correction Profile
 !TP_LENSPROFILE_USECA;Chromatic aberration correction
 !TP_LENSPROFILE_USEDIST;Distortion correction
@@ -1503,6 +1530,8 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 !TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
 !TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.
+!TP_RAW_HD;Threshold
+!TP_RAW_HD_TOOLTIP;Lower values make hot/dead pixel detection more aggressive, but false positives may lead to artifacts. If you notice any artifacts appearing when enabling the Hot/Dead Pixel Filters, gradually increase the threshold value until they disappear.
 !TP_RAW_LABEL;Demosaicing
 !TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.
@@ -1510,10 +1539,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
 !TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
 !TP_RESIZE_APPLIESTO;Applies to:
-!TP_RESIZE_BICUBICSF;Bicubic (softer)
-!TP_RESIZE_BICUBICSH;Bicubic (sharper)
-!TP_RESIZE_BICUBIC;Bicubic
-!TP_RESIZE_BILINEAR;Bilinear
 !TP_RESIZE_CROPPEDAREA;Cropped Area
 !TP_RESIZE_FITBOX;Bounding Box
 !TP_RESIZE_FULLIMAGE;Full Image
@@ -1600,36 +1625,58 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_WAVELET_9;Level 9
 !TP_WAVELET_ALL;All levels in all directions
 !TP_WAVELET_APPLYTO;Apply To
+!TP_WAVELET_B0;Black
+!TP_WAVELET_B1;Grey
+!TP_WAVELET_B2;Residual
+!TP_WAVELET_CCURVE;Local contrast
 !TP_WAVELET_CH1;All chroma
 !TP_WAVELET_CH2;Pastel - Saturated
 !TP_WAVELET_CH3;Link contrast levels
+!TP_WAVELET_CHCU;Curve
 !TP_WAVELET_CHRO;Saturated - Pastel
 !TP_WAVELET_CHRO_TOOLTIP;Limit between pastel and saturated\n 1-x level saturated \n x-9 level pastel
 !TP_WAVELET_CHR;Chroma link
 !TP_WAVELET_CHR_TOOLTIP;Adjust chroma in function of:\na-levels contrasts\nb-Chroma link slider strength
-!TP_WAVELET_CLVCURVE;Chrominance - Levels
+!TP_WAVELET_CHSL;Sliders
+!TP_WAVELET_CHTYPE;Chrominance type
 !TP_WAVELET_COLORT;Opacity Red-Green  Levels
 !TP_WAVELET_CONTRAST_MINUS;Contrast -
 !TP_WAVELET_CONTRAST_PLUS;Contrast +
 !TP_WAVELET_CONTRA;Contrast
 !TP_WAVELET_CONTRA_TOOLTIP;Change contrast residual image\nFunction of  Max Levels
 !TP_WAVELET_CONTR;Gamut - controls
-!TP_WAVELET_CURVEEDITOR_CLV_TOOLTIP;Give chroma in function of levels (absciss)\nLevels are discrets values
+!TP_WAVELET_CTYPE;Chrominance control
+!TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Modify local contral in fonction of original local contrast (absciss)\nLow absciss represents small local contrast (real values about 10..20)\n50% absciss represents average of local contrast (real value about 100..300)\n66% absciss represents standard deviation of local contrast (real value about 300..800)\n100% represents maximum (real value about 3000..8000)
+!TP_WAVELET_CURVEEDITOR_CH;Contrast levels /Hue
+!TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Modify each level contrast in function oh hue\nCareful not to overwrite changes made with skin-tone hue (red)\nOnly active for contrast levels
+!TP_WAVELET_CURVEEDITOR_HH;HH
+!TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Modify Hue in function of Hue, only for residual image
 !TP_WAVELET_DALL;All directions
-!TP_WAVELET_DISPLAYCHRO;Chromaticity and Toning
-!TP_WAVELET_DISPLAYGAM;Gamut and Control
-!TP_WAVELET_DISPLAY;Levels and Utilities
+!TP_WAVELET_DAUB;Edge Quality
+!TP_WAVELET_DAUB_TOOLTIP;Change Daubechies coefficients\nD4=standard quality\nD14=best quality, more discriminant, increase slightly time treatment about 10%\nThese factors affect the detection of edges, but also general quality for firsts levels
 !TP_WAVELET_DISP;Preview Settings
 !TP_WAVELET_DONE;Vertical
 !TP_WAVELET_DTHR;Diagonal
 !TP_WAVELET_DTWO;Horizontal
+!TP_WAVELET_EDCU;Curve
+!TP_WAVELET_EDGCONT;Local contrast
+!TP_WAVELET_EDGCONT_TOOLTIP;If you move sliders to the left contrast decrease...and to the right..increase
+!TP_WAVELET_EDGEDETECTTHR2;Threshold High (detection)
+!TP_WAVELET_EDGEDETECTTHR;Threshold Low (noise)
+!TP_WAVELET_EDGEDETECTTHR_TOOLTIP;You can adjust threshold to avoid apply edge sharpness to thin details (noise in sky...)
+!TP_WAVELET_EDGEDETECT;Gradient sensitivity
+!TP_WAVELET_EDGEDETECT_TOOLTIP;Algorithm detect edge\nMore the slider is moved to the right, more edge gradient with high level are take into account\nThis has an incidence on local contrast, on edge settings and also on noise
 !TP_WAVELET_EDGE;Edge Sharpness (Luminance)
-!TP_WAVELET_EDGTHRESH;Threshold
+!TP_WAVELET_EDGREINF_TOOLTIP;For low radius value, increase/decrease the action of the first level, and decrease/increase the action of second level then the others
+!TP_WAVELET_EDGTHRESH;Detail
+!TP_WAVELET_EDGTHRESH_TOOLTIP;Change the repartition between the first levels and the others\nThe more threshold is high, the more the action is centred on the first levels\nBe carefull to negatives values, they increase the action of high levels and can bring artifacts
 !TP_WAVELET_EDRAD;Radius
-!TP_WAVELET_EDVAL;Value
+!TP_WAVELET_EDRAD_TOOLTIP;Radius is very different from others sharpening tools\nIts value is compared to each level, through a complex function\nIn this sense, a zero radius value produce an effect
+!TP_WAVELET_EDSL;Threshold Sliders
+!TP_WAVELET_EDTYPE;Local contrast control
+!TP_WAVELET_EDVAL;Strength
 !TP_WAVELET_FINEST;Finest
 !TP_WAVELET_HIGHLIGHT;Highlight luminance range
-!TP_WAVELET_HIGHSHA;Highlight Shadows
 !TP_WAVELET_HS1;Whole luminance range
 !TP_WAVELET_HS2;Shadows/Highlights
 !TP_WAVELET_HUESKIN;Hue Range (skin)
@@ -1644,15 +1691,27 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_WAVELET_LEVELS_TOOLTIP;Choose the number of detail levels the image is to be decomposed into. More levels require more RAM and require a longer processing time.
 !TP_WAVELET_LEVF;Contrast
 !TP_WAVELET_LEVLABEL;Preview maximum possible levels=%1
+!TP_WAVELET_LEVONE;Level 2
+!TP_WAVELET_LEVTWO;Level 3
+!TP_WAVELET_LEVZERO;Level 1
+!TP_WAVELET_LINKEDG;Link with Edge-sharpness (strength)
+!TP_WAVELET_LIPST;Enhanced algorithm
+!TP_WAVELET_LIPST_TOOLTIP;This algorithme use Lipschitz regularity\nIt increases the processing time and memory requirements, but it is better at detecting edges.
 !TP_WAVELET_LOWLIGHT;Shadow luminance range
-!TP_WAVELET_MAX;max
+!TP_WAVELET_MEDGREINF;First level
+!TP_WAVELET_MEDILEV;Edge detection
 !TP_WAVELET_MEDI;Reduce artifacts in blue sky
-!TP_WAVELET_MIN;min
 !TP_WAVELET_NEUTRAL;Neutral
+!TP_WAVELET_NOISE;Denoise and refine
+!TP_WAVELET_NOIS;Denoise
 !TP_WAVELET_ONE;One level
 !TP_WAVELET_OPACITY;Opacity Blue-Yellow Levels
 !TP_WAVELET_PASTEL;Pastel chromacity
+!TP_WAVELET_PREVIEWBACK;Background
 !TP_WAVELET_PREVIEWLEVELS;Preview
+!TP_WAVELET_RE1;Reinforced
+!TP_WAVELET_RE2;Unchanged
+!TP_WAVELET_RE3;Reduced
 !TP_WAVELET_RESCHRO;Chromaticity
 !TP_WAVELET_RESCONH;Highlights
 !TP_WAVELET_RESCON;Shadows
@@ -1664,6 +1723,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_WAVELET_SKY;Hue-tones (sky) targetting/protection
 !TP_WAVELET_SKY_TOOLTIP;Increase/reduce chrominance in/out hue range\nAvoid artifacts in blue sky - due to micro-contrast, micro-chroma,...
 !TP_WAVELET_STRENGTH;Strength
+!TP_WAVELET_STREN;Strength
 !TP_WAVELET_SUPE;Extra
 !TP_WAVELET_SUP;Above the level
 !TP_WAVELET_THRESHOLD2;Shadow Levels
@@ -1678,7 +1738,11 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_WAVELET_TILESLIT;Little tiles
 !TP_WAVELET_TILES_TOOLTIP;Processing the full image leads to better quality and is the recommended option, while using tiles is a fall-back solution for users with little RAM. Refer to RawPedia for memory requirements.
 !TP_WAVELET_TON;Toning
-!TP_WAVELET_UTIL;Utilities
+!TP_WAVELET_daub2;D2 - low
+!TP_WAVELET_daub4;D4 - standard
+!TP_WAVELET_daub6;D6 - standard plus
+!TP_WAVELET_daub10;D10 - medium
+!TP_WAVELET_daub14;D14 - high
 !TP_WBALANCE_AUTO;Auto
 !TP_WBALANCE_CAMERA;Camera
 !TP_WBALANCE_CLOUDY;Cloudy
@@ -1727,6 +1791,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !ZOOMPANEL_100;(100%)
 !ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
 !ZOOMPANEL_ZOOM100;Zoom to 100%\nShortcut: <b>z</b>
-!ZOOMPANEL_ZOOMFITSCREEN;Fit to screen\nShortcut: <b>f</b>
+!ZOOMPANEL_ZOOMFITCROPSCREEN;Fit crop to screen\nShortcut: <b>Alt</b>-<b>f</b>
+!ZOOMPANEL_ZOOMFITSCREEN;Fit whole image to screen\nShortcut: <b>f</b>
 !ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
 !ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
