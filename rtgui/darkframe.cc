@@ -54,7 +54,7 @@ DarkFrame::DarkFrame () : FoldableToolPanel(this, "darkframe", M("TP_DARKFRAME_L
 	b_filter_asCurrent = false;
 	Gtk::FileFilter *filter_any = Gtk::manage(new Gtk::FileFilter);
     filter_any->add_pattern("*");
-    filter_any->set_name(M("TP_FLATFIELD_FILEDLGFILTERANY"));
+    filter_any->set_name(M("FILECHOOSER_FILTER_ANY"));
     darkFrameFile->add_filter (*filter_any);
     
     // filters for all supported non-raw extensions       
@@ -132,7 +132,7 @@ void DarkFrame::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 					b_filter_asCurrent = true;
 					Gtk::FileFilter *filter_asCurrent = Gtk::manage(new Gtk::FileFilter);
 					filter_asCurrent->add_pattern("*." + filetype);
-					filter_asCurrent->set_name(M("TP_FLATFIELD_FILEDLGFILTERFF") + " (" + filetype + ")");
+					filter_asCurrent->set_name(M("FILECHOOSER_FILTER_SAME") + " (" + filetype + ")");
 					darkFrameFile->add_filter (*filter_asCurrent);
 					darkFrameFile->set_filter (*filter_asCurrent);
 				}

@@ -675,7 +675,19 @@ Gtk::Widget* Preferences::getColorManagementPanel () {
     iccDir = Gtk::manage (new Gtk::FileChooserButton (M("PREFERENCES_ICCDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     Gtk::Label* pdlabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_ICCDIR")+":", Gtk::ALIGN_LEFT));
 
+    Gtk::FileFilter monProfileFilter_colprof;
+    monProfileFilter_colprof.set_name(M("FILECHOOSER_FILTER_COLPROF"));
+    monProfileFilter_colprof.add_pattern("*.icc");
+    monProfileFilter_colprof.add_pattern("*.ICC");
+    monProfileFilter_colprof.add_pattern("*.icm");
+    monProfileFilter_colprof.add_pattern("*.ICM");
+    Gtk::FileFilter monProfileFilter_any;
+    monProfileFilter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
+    monProfileFilter_any.add_pattern("*");
+
     monProfile = Gtk::manage (new Gtk::FileChooserButton (M("PREFERENCES_MONITORICC"), Gtk::FILE_CHOOSER_ACTION_OPEN));
+    monProfile->add_filter (monProfileFilter_colprof);
+    monProfile->add_filter (monProfileFilter_any);
     Gtk::Label* mplabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_MONITORICC")+":", Gtk::ALIGN_LEFT));
 
 #if defined(WIN32) // Auto-detection not implemented for Linux, see issue 851

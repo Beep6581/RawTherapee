@@ -15,8 +15,6 @@ CURVEEDITOR_CURVES;Curves
 CURVEEDITOR_CURVE;Curve
 CURVEEDITOR_CUSTOM;Custom
 CURVEEDITOR_DARKS;Darks
-CURVEEDITOR_FILEDLGFILTERANY;Any files
-CURVEEDITOR_FILEDLGFILTERCURVE;Curve files
 CURVEEDITOR_HIGHLIGHTS;Highlights
 CURVEEDITOR_LIGHTS;Lights
 CURVEEDITOR_LINEAR;Linear
@@ -187,6 +185,13 @@ FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job
 FILEBROWSER_UNRANK_TOOLTIP;Unrank.\nShortcut: <b>Shift-0</b>
 FILEBROWSER_ZOOMINHINT;Increase thumbnail size.\n\nShortcuts:\n<b>+</b> - Multiple Editor Tabs Mode,\n<b>Alt</b>-<b>+</b> - Single Editor Tab Mode.
 FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size.\n\nShortcuts:\n<b>-</b> - Multiple Editor Tabs Mode,\n<b>Alt</b>-<b>-</b> - Single Editor Tab Mode.
+FILECHOOSER_FILTER_ANY;All files
+FILECHOOSER_FILTER_COLPROF;Color profiles
+FILECHOOSER_FILTER_CURVE;Curve files
+FILECHOOSER_FILTER_LCP;Lens correction profiles
+FILECHOOSER_FILTER_PP;Processing profiles
+FILECHOOSER_FILTER_SAME;Same format as current photo
+FILECHOOSER_FILTER_TIFF;TIFF files
 GENERAL_ABOUT;About
 GENERAL_AFTER;After
 GENERAL_AUTO;Automatic
@@ -776,7 +781,6 @@ PARTIALPASTE_VIBRANCE;Vibrance
 PARTIALPASTE_VIGNETTING;Vignetting correction
 PARTIALPASTE_WHITEBALANCE;White balance
 PREFERENCES_ADD;Add
-PREFERENCES_APPLNEXTRELOAD;image reload required
 PREFERENCES_APPLNEXTSTARTUP;restart required
 PREFERENCES_AUTLISLOW;Low
 PREFERENCES_AUTLISMAX;Max - Average of all tiles
@@ -914,8 +918,6 @@ PREFERENCES_OUTDIR;Output Directory
 PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails in the file browser
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
-PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 PREFERENCES_PANFACTORLABEL;Pan rate amplification
 PREFERENCES_PARSEDEXTADDHINT;Add entered extension to the list.
 PREFERENCES_PARSEDEXTADD;Add extension
@@ -933,6 +935,8 @@ PREFERENCES_PROFILESAVECACHE;Save processing profile to the cache
 PREFERENCES_PROFILESAVEINPUT;Save processing profile next to the input file
 PREFERENCES_PROPERTY;Property
 PREFERENCES_PSPATH;Adobe Photoshop installation directory
+PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
+PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
 PREFERENCES_RGBDTL_TOOLTIP;Leave the setting at "0" to automatically use as many threads as possible. The more threads run in parallel, the faster the computation. Refer to RawPedia for memory requirements.
 PREFERENCES_SELECTFONT;Select font
@@ -981,8 +985,6 @@ PREFERENCES_WLTWO;Two levels
 PREFERENCES_WLZER;No
 PREFERENCES_WORKFLOW;Layout
 PROFILEPANEL_COPYPPASTE;Parameters to copy
-PROFILEPANEL_FILEDLGFILTERANY;Any files
-PROFILEPANEL_FILEDLGFILTERPP;Processing profiles
 PROFILEPANEL_GLOBALPROFILES;Bundled profiles
 PROFILEPANEL_LABEL;Processing Profiles
 PROFILEPANEL_LOADDLGLABEL;Load Processing Parameters...
@@ -1020,7 +1022,6 @@ SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
 SAVEDLG_FILEFORMAT;File format
 SAVEDLG_FORCEFORMATOPTS;Force saving options
 SAVEDLG_JPEGQUAL;JPEG quality
-SAVEDLG_JPGFILTER;JPEG files
 SAVEDLG_PNGCOMPR;PNG compression
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
@@ -1032,7 +1033,6 @@ SAVEDLG_SUBSAMP_1;Best compression
 SAVEDLG_SUBSAMP_2;Balanced
 SAVEDLG_SUBSAMP_3;Best quality
 SAVEDLG_SUBSAMP_TOOLTIP;Best compression: 4:1:1\nBalanced: 4:2:2\nBest quality: 4:4:4
-SAVEDLG_TIFFFILTER;TIFF files
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 SAVEDLG_WARNFILENAME;File will be named
 SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
@@ -1335,10 +1335,10 @@ TP_DISTORTION_AUTO;Auto Distortion Correction
 TP_DISTORTION_AUTO_TIP;Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.).
 TP_DISTORTION_LABEL;Distortion Correction
 TP_EPD_EDGESTOPPING;Edge stopping
+TP_EPD_GAMMA;Gamma
 TP_EPD_LABEL;Tone Mapping
 TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
 TP_EPD_SCALE;Scale
-TP_EPD_GAMMA;Gamma
 TP_EPD_STRENGTH;Strength
 TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
 TP_EXPOSURE_AUTOLEVELS;Auto Levels
@@ -1377,8 +1377,6 @@ TP_FLATFIELD_BT_VERTHORIZ;Vertical + Horizontal
 TP_FLATFIELD_BT_VERTICAL;Vertical
 TP_FLATFIELD_CLIPCONTROL;Clip control
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
-TP_FLATFIELD_FILEDLGFILTERANY;Any files
-TP_FLATFIELD_FILEDLGFILTERFF;Same format as current photo
 TP_FLATFIELD_LABEL;Flat-Field
 TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Free gamma
@@ -1414,9 +1412,6 @@ TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover clipped highlights when using LU
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
-TP_ICM_FILEDLGFILTERANY;Any files
-TP_ICM_FILEDLGFILTERICMDNG;Color profiles + DNG
-TP_ICM_FILEDLGFILTERICM;Color profiles
 TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
 TP_ICM_INPUTCAMERA;Camera standard
@@ -1433,8 +1428,8 @@ TP_ICM_LABEL;Color Management
 TP_ICM_NOICM;No ICM: sRGB Output
 TP_ICM_OUTPUTPROFILE;Output Profile
 TP_ICM_SAVEREFERENCE;Save Reference Image for Profiling
-TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
 TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
+TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
 TP_ICM_TONECURVE;Use DCP's tone curve
 TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only enabled if the selected DCP has a tone curve.
 TP_ICM_WORKINGPROFILE;Working Profile
@@ -1480,7 +1475,6 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Works on the Chromaticity slider and the CC curve.
 TP_LENSGEOM_AUTOCROP;Auto-Crop
 TP_LENSGEOM_FILL;Auto-fill
 TP_LENSGEOM_LABEL;Lens / Geometry
-TP_LENSPROFILE_FILEDLGFILTERLCP;Lens correction files
 TP_LENSPROFILE_LABEL;Lens Correction Profile
 TP_LENSPROFILE_USECA;Chromatic aberration correction
 TP_LENSPROFILE_USEDIST;Distortion correction
@@ -1630,14 +1624,20 @@ TP_WAVELET_9;Level 9
 TP_WAVELET_ALL;All levels in all directions
 TP_WAVELET_APPLYTO;Apply To
 TP_WAVELET_AVOID;Avoid color shift
+TP_WAVELET_B0;Black
+TP_WAVELET_B1;Grey
+TP_WAVELET_B2;Residual
+TP_WAVELET_CCURVE;Local contrast
 TP_WAVELET_CH1;All chroma
 TP_WAVELET_CH2;Pastel - Saturated
 TP_WAVELET_CH3;Link contrast levels
+TP_WAVELET_CHCU;Curve
 TP_WAVELET_CHRO;Saturated - Pastel
 TP_WAVELET_CHRO_TOOLTIP;Limit between pastel and saturated\n 1-x level saturated \n x-9 level pastel
 TP_WAVELET_CHR;Chroma link
 TP_WAVELET_CHR_TOOLTIP;Adjust chroma in function of:\na-levels contrasts\nb-Chroma link slider strength
-TP_WAVELET_CCURVE;Local contrast
+TP_WAVELET_CHSL;Sliders
+TP_WAVELET_CHTYPE;Chrominance type
 TP_WAVELET_COLORT;Opacity Red-Green  Levels
 TP_WAVELET_CONTRAST_MINUS;Contrast -
 TP_WAVELET_CONTRAST_PLUS;Contrast +
@@ -1645,55 +1645,37 @@ TP_WAVELET_CONTRA;Contrast
 TP_WAVELET_CONTRA_TOOLTIP;Change contrast residual image\nFunction of  Max Levels
 TP_WAVELET_CONTR;Gamut - controls
 TP_WAVELET_CTYPE;Chrominance control
-TP_WAVELET_EDTYPE;Local contrast control
-TP_WAVELET_CHTYPE;Chrominance type
 TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Modify local contral in fonction of original local contrast (absciss)\nLow absciss represents small local contrast (real values about 10..20)\n50% absciss represents average of local contrast (real value about 100..300)\n66% absciss represents standard deviation of local contrast (real value about 300..800)\n100% represents maximum (real value about 3000..8000)
+TP_WAVELET_CURVEEDITOR_CH;Contrast levels /Hue
+TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Modify each level contrast in function oh hue\nCareful not to overwrite changes made with skin-tone hue (red)\nOnly active for contrast levels
+TP_WAVELET_CURVEEDITOR_HH;HH
+TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Modify Hue in function of Hue, only for residual image
 TP_WAVELET_DALL;All directions
-TP_WAVELET_DISPLAYCHRO;Chromaticity and Toning
-TP_WAVELET_DISPLAYGAM;Gamut and Control
-TP_WAVELET_DISPLAY;Levels and Utilities
+TP_WAVELET_DAUB;Edge Quality
+TP_WAVELET_DAUB_TOOLTIP;Change Daubechies coefficients\nD4=standard quality\nD14=best quality, more discriminant, increase slightly time treatment about 10%\nThese factors affect the detection of edges, but also general quality for firsts levels
 TP_WAVELET_DISP;Preview Settings
 TP_WAVELET_DONE;Vertical
 TP_WAVELET_DTHR;Diagonal
 TP_WAVELET_DTWO;Horizontal
-TP_WAVELET_DAUB;Edge Quality 
-TP_WAVELET_daub2;D2 - low
-TP_WAVELET_daub4;D4 - standard
-TP_WAVELET_daub6;D6 - standard plus
-TP_WAVELET_daub10;D10 - medium
-TP_WAVELET_daub14;D14 - high
-TP_WAVELET_DAUB_TOOLTIP;Change Daubechies coefficients\nD4=standard quality\nD14=best quality, more discriminant, increase slightly time treatment about 10%\nThese factors affect the detection of edges, but also general quality for firsts levels
-TP_WAVELET_EDGE;Edge Sharpness (Luminance)
-TP_WAVELET_EDGTHRESH;Detail
-TP_WAVELET_EDRAD;Radius
-TP_WAVELET_EDRAD_TOOLTIP;Radius is very different from others sharpening tools\nIts value is compared to each level, through a complex function\nIn this sense, a zero radius value produce an effect
-TP_WAVELET_EDVAL;Strength
-TP_WAVELET_MEDGREINF;First level
-TP_WAVELET_RE1;Reinforced
-TP_WAVELET_RE2;Unchanged
-TP_WAVELET_RE3;Reduced
-TP_WAVELET_NOISE;Denoise and refine
-TP_WAVELET_LEVZERO;Level 1
-TP_WAVELET_LEVONE;Level 2
-TP_WAVELET_LEVTWO;Level 3
-TP_WAVELET_STREN;Strength
-TP_WAVELET_NOIS;Denoise
-TP_WAVELET_LINKEDG;Link with Edge-sharpness (strength)
-TP_WAVELET_MEDILEV;Edge detection
-TP_WAVELET_LIPST;Enhanced algorithm
-TP_WAVELET_LIPST_TOOLTIP;This algorithme use Lipschitz regularity\nIt increases the processing time and memory requirements, but it is better at detecting edges.
-TP_WAVELET_EDGEDETECT;Gradient sensitivity
-TP_WAVELET_EDGEDETECTTHR;Threshold Low (noise)
-TP_WAVELET_EDGEDETECTTHR2;Threshold High (detection)
-TP_WAVELET_EDGEDETECTTHR_TOOLTIP;You can adjust threshold to avoid apply edge sharpness to thin details (noise in sky...)
-TP_WAVELET_EDGEDETECT_TOOLTIP;Algorithm detect edge\nMore the slider is moved to the right, more edge gradient with high level are take into account\nThis has an incidence on local contrast, on edge settings and also on noise
+TP_WAVELET_EDCU;Curve
 TP_WAVELET_EDGCONT;Local contrast
 TP_WAVELET_EDGCONT_TOOLTIP;If you move sliders to the left contrast decrease...and to the right..increase
-TP_WAVELET_EDGTHRESH_TOOLTIP;Change the repartition between the first levels and the others\nThe more threshold is high, the more the action is centred on the first levels\nBe carefull to negatives values, they increase the action of high levels and can bring artifacts 
+TP_WAVELET_EDGEDETECTTHR2;Threshold High (detection)
+TP_WAVELET_EDGEDETECTTHR;Threshold Low (noise)
+TP_WAVELET_EDGEDETECTTHR_TOOLTIP;You can adjust threshold to avoid apply edge sharpness to thin details (noise in sky...)
+TP_WAVELET_EDGEDETECT;Gradient sensitivity
+TP_WAVELET_EDGEDETECT_TOOLTIP;Algorithm detect edge\nMore the slider is moved to the right, more edge gradient with high level are take into account\nThis has an incidence on local contrast, on edge settings and also on noise
+TP_WAVELET_EDGE;Edge Sharpness (Luminance)
 TP_WAVELET_EDGREINF_TOOLTIP;For low radius value, increase/decrease the action of the first level, and decrease/increase the action of second level then the others
+TP_WAVELET_EDGTHRESH;Detail
+TP_WAVELET_EDGTHRESH_TOOLTIP;Change the repartition between the first levels and the others\nThe more threshold is high, the more the action is centred on the first levels\nBe carefull to negatives values, they increase the action of high levels and can bring artifacts 
+TP_WAVELET_EDRAD;Radius
+TP_WAVELET_EDRAD_TOOLTIP;Radius is very different from others sharpening tools\nIts value is compared to each level, through a complex function\nIn this sense, a zero radius value produce an effect
+TP_WAVELET_EDSL;Threshold Sliders
+TP_WAVELET_EDTYPE;Local contrast control
+TP_WAVELET_EDVAL;Strength
 TP_WAVELET_FINEST;Finest
 TP_WAVELET_HIGHLIGHT;Highlight luminance range
-TP_WAVELET_HIGHSHA;Highlight Shadows
 TP_WAVELET_HS1;Whole luminance range
 TP_WAVELET_HS2;Shadows/Highlights
 TP_WAVELET_HUESKIN;Hue Range (skin)
@@ -1708,30 +1690,30 @@ TP_WAVELET_LEVELS;Wavelet levels
 TP_WAVELET_LEVELS_TOOLTIP;Choose the number of detail levels the image is to be decomposed into. More levels require more RAM and require a longer processing time.
 TP_WAVELET_LEVF;Contrast
 TP_WAVELET_LEVLABEL;Preview maximum possible levels=%1
+TP_WAVELET_LEVONE;Level 2
+TP_WAVELET_LEVTWO;Level 3
+TP_WAVELET_LEVZERO;Level 1
+TP_WAVELET_LINKEDG;Link with Edge-sharpness (strength)
+TP_WAVELET_LIPST;Enhanced algorithm
+TP_WAVELET_LIPST_TOOLTIP;This algorithme use Lipschitz regularity\nIt increases the processing time and memory requirements, but it is better at detecting edges.
 TP_WAVELET_LOWLIGHT;Shadow luminance range
-TP_WAVELET_MAX;max
+TP_WAVELET_MEDGREINF;First level
+TP_WAVELET_MEDILEV;Edge detection
 TP_WAVELET_MEDI;Reduce artifacts in blue sky
-TP_WAVELET_MIN;min
 TP_WAVELET_NEUTRAL;Neutral
-TP_WAVELET_CHSL;Sliders
-TP_WAVELET_CHCU;Curve
-TP_WAVELET_EDSL;Threshold Sliders
-TP_WAVELET_EDCU;Curve
+TP_WAVELET_NOISE;Denoise and refine
+TP_WAVELET_NOIS;Denoise
 TP_WAVELET_ONE;One level
 TP_WAVELET_OPACITY;Opacity Blue-Yellow Levels
 TP_WAVELET_PASTEL;Pastel chromacity
-TP_WAVELET_PREVIEWLEVELS;Preview
 TP_WAVELET_PREVIEWBACK;Background
-TP_WAVELET_B0;Black
-TP_WAVELET_B1;Grey
-TP_WAVELET_B2;Residual
+TP_WAVELET_PREVIEWLEVELS;Preview
+TP_WAVELET_RE1;Reinforced
+TP_WAVELET_RE2;Unchanged
+TP_WAVELET_RE3;Reduced
 TP_WAVELET_RESCHRO;Chromaticity
 TP_WAVELET_RESCONH;Highlights
 TP_WAVELET_RESCON;Shadows
-TP_WAVELET_CURVEEDITOR_CH;Contrast levels /Hue
-TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Modify each level contrast in function oh hue\nCareful not to overwrite changes made with skin-tone hue (red)\nOnly active for contrast levels
-TP_WAVELET_CURVEEDITOR_HH;HH
-TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Modify Hue in function of Hue, only for residual image
 TP_WAVELET_RESID;Residual image
 TP_WAVELET_SAT;Saturated chromacity
 TP_WAVELET_SETTINGS;Wavelet Settings
@@ -1740,6 +1722,7 @@ TP_WAVELET_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are tr
 TP_WAVELET_SKY;Hue-tones (sky) targetting/protection
 TP_WAVELET_SKY_TOOLTIP;Increase/reduce chrominance in/out hue range\nAvoid artifacts in blue sky - due to micro-contrast, micro-chroma,...
 TP_WAVELET_STRENGTH;Strength
+TP_WAVELET_STREN;Strength
 TP_WAVELET_SUPE;Extra
 TP_WAVELET_SUP;Above the level
 TP_WAVELET_THRESHOLD2;Shadow Levels
@@ -1754,7 +1737,11 @@ TP_WAVELET_TILESIZE;Tile size
 TP_WAVELET_TILESLIT;Little tiles
 TP_WAVELET_TILES_TOOLTIP;Processing the full image leads to better quality and is the recommended option, while using tiles is a fall-back solution for users with little RAM. Refer to RawPedia for memory requirements.
 TP_WAVELET_TON;Toning
-TP_WAVELET_UTIL;Utilities
+TP_WAVELET_daub2;D2 - low
+TP_WAVELET_daub4;D4 - standard
+TP_WAVELET_daub6;D6 - standard plus
+TP_WAVELET_daub10;D10 - medium
+TP_WAVELET_daub14;D14 - high
 TP_WBALANCE_AUTO;Auto
 TP_WBALANCE_CAMERA;Camera
 TP_WBALANCE_CLOUDY;Cloudy

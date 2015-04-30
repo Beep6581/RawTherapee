@@ -81,7 +81,7 @@ FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_L
 	b_filter_asCurrent = false;
 	Gtk::FileFilter *filter_any = Gtk::manage(new Gtk::FileFilter);
     filter_any->add_pattern("*");
-    filter_any->set_name(M("TP_FLATFIELD_FILEDLGFILTERANY"));
+    filter_any->set_name(M("FILECHOOSER_FILTER_ANY"));
     flatFieldFile->add_filter (*filter_any);
     
     // filters for all supported non-raw extensions       
@@ -182,7 +182,7 @@ void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 					b_filter_asCurrent = true; //prevent re-adding this filter on every pp3 file read
 					Gtk::FileFilter *filter_asCurrent = Gtk::manage(new Gtk::FileFilter);
 					filter_asCurrent->add_pattern("*." + filetype);
-					filter_asCurrent->set_name(M("TP_FLATFIELD_FILEDLGFILTERFF") + " (" + filetype + ")");
+					filter_asCurrent->set_name(M("FILECHOOSER_FILTER_SAME") + " (" + filetype + ")");
 					flatFieldFile->add_filter (*filter_asCurrent);
 					flatFieldFile->set_filter (*filter_asCurrent);
 				}

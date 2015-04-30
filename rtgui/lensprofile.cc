@@ -37,7 +37,7 @@ LensProfilePanel::LensProfilePanel () : FoldableToolPanel(this, "lensprof", M("T
     fcbLCPFile = Gtk::manage(new MyFileChooserButton(M("TP_LENSPROFILE_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
 
     Gtk::FileFilter filterLCP;
-    filterLCP.set_name(M("TP_LENSPROFILE_FILEDLGFILTERLCP"));
+    filterLCP.set_name(M("FILECHOOSER_FILTER_LCP"));
     filterLCP.add_pattern("*.lcp");
     filterLCP.add_pattern("*.LCP");
     fcbLCPFile->add_filter(filterLCP);

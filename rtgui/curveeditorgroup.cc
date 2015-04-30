@@ -369,12 +369,12 @@ Glib::ustring CurveEditorSubGroup::outputFile () {
     dialog.add_button(Gtk::StockID("gtk-save"), Gtk::RESPONSE_APPLY);
 
     Gtk::FileFilter filter_pp;
-    filter_pp.set_name(M("CURVEEDITOR_FILEDLGFILTERCURVE"));
+    filter_pp.set_name(M("FILECHOOSER_FILTER_CURVE"));
     filter_pp.add_pattern("*.rtc");
     dialog.add_filter(filter_pp);
 
     Gtk::FileFilter filter_any;
-    filter_any.set_name(M("CURVEEDITOR_FILEDLGFILTERANY"));
+    filter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
     filter_any.add_pattern("*");
     dialog.add_filter(filter_any);
 
@@ -408,12 +408,12 @@ Glib::ustring CurveEditorSubGroup::inputFile () {
     dialog.add_button(Gtk::StockID("gtk-apply"), Gtk::RESPONSE_APPLY);
 
     Gtk::FileFilter filter_pp;
-    filter_pp.set_name(M("CURVEEDITOR_FILEDLGFILTERCURVE"));
+    filter_pp.set_name(M("FILECHOOSER_FILTER_CURVE"));
     filter_pp.add_pattern("*.rtc");
     dialog.add_filter(filter_pp);
 
     Gtk::FileFilter filter_any;
-    filter_any.set_name(M("CURVEEDITOR_FILEDLGFILTERANY"));
+    filter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
     filter_any.add_pattern("*");
     dialog.add_filter(filter_any);
 
