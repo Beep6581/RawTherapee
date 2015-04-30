@@ -1,8 +1,6 @@
 #01 2008-03-03 Ioritz Ibarguren
 
 ADJUSTER_RESET_TO_DEFAULT;Hasierako balioetara itzuli
-CURVEEDITOR_FILEDLGFILTERANY;Artxibo guztiak
-CURVEEDITOR_FILEDLGFILTERCURVE;Kurba artxiboak
 CURVEEDITOR_LINEAR;Lineala
 CURVEEDITOR_LOADDLGLABEL;Kurba ireki...
 CURVEEDITOR_SAVEDLGLABEL;Kurba gorde...
@@ -215,7 +213,6 @@ IPTCPANEL_TITLE;Title
 IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
 IPTCPANEL_TRANSREFERENCE;Trans. Reference
 MAIN_BUTTON_PREFERENCES;Ezarpenak
-MAIN_BUTTON_SAVEAS;Honela...
 MAIN_BUTTON_SAVE;Irudia gorde
 MAIN_BUTTON_SENDTOEDITOR;Send to editor
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
@@ -256,7 +253,6 @@ PARTIALPASTE_EXPOSURE;Exposure
 PARTIALPASTE_ICMSETTINGS;ICM settings
 PARTIALPASTE_IPTCINFO;IPTC info
 PARTIALPASTE_LENSGROUP;Lens related settings
-PARTIALPASTE_LUMACURVE;Luminance curve
 PARTIALPASTE_METAICMGROUP;Metadata/ICM settings
 PARTIALPASTE_RESIZE;Resize
 PARTIALPASTE_ROTATION;Rotation
@@ -268,15 +264,9 @@ PREFERENCES_APPLNEXTSTARTUP;hurrengo abioan aplikatua
 PREFERENCES_CACHECLEARALL;Clear All
 PREFERENCES_CACHECLEARPROFILES;Clear Profiles
 PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
-PREFERENCES_CACHEFORMAT1;Proprietary (faster and better quality)
-PREFERENCES_CACHEFORMAT2;JPEG (smaller disk footprint)
 PREFERENCES_CACHEMAXENTRIES;Maximal Number of Cache Entries
 PREFERENCES_CACHEOPTS;Cache Options
-PREFERENCES_CACHETHUMBFORM;Cache Thumbnail Format
 PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
-PREFERENCES_CLEARDLG_LINE1;Clearing cache
-PREFERENCES_CLEARDLG_LINE2;This may take a few seconds.
-PREFERENCES_CLEARDLG_TITLE;Please wait
 PREFERENCES_CLIPPINGIND;Itzal/argi moztuen adierazlea
 PREFERENCES_CMETRICINTENT;Saiakera kolorimetrikoa
 PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
@@ -329,8 +319,6 @@ PREFERENCES_TAB_BROWSER;Artxibo arakatzailea
 PREFERENCES_TAB_COLORMGR;Kolore kudeaketa
 PREFERENCES_TAB_GENERAL;Orokorra
 PREFERENCES_TAB_IMPROC;Irudien prozesua
-PROFILEPANEL_FILEDLGFILTERANY;Artxibo guztiak
-PROFILEPANEL_FILEDLGFILTERPP;Prozesu profilak
 PROFILEPANEL_LABEL;Prozesu profilak
 PROFILEPANEL_LOADDLGLABEL;Profilaren aldagaiak ireki...
 PROFILEPANEL_PCUSTOM;Neurrira
@@ -350,21 +338,16 @@ PROGRESSBAR_READY;Prest
 PROGRESSBAR_SAVEJPEG;JPG artxiboa gordetzen...
 PROGRESSBAR_SAVEPNG;PNG artxiboa gordetzen...
 PROGRESSBAR_SAVETIFF;TIFF artxiboa gordetzen...
-PROGRESSDLG_LOADING;Loading file...
-PROGRESSDLG_PROCESSING;Processing image...
-PROGRESSDLG_SAVING;Saving file...
 QINFO_ISO;ISO
 QINFO_NOEXIF;Ez dago EXIF daturik.
 SAVEDLG_FILEFORMAT;Artxiboaren formatua
 SAVEDLG_JPEGQUAL;JPEG kalitatea 
-SAVEDLG_JPGFILTER;JPEG artxiboak
 SAVEDLG_PNGCOMPR;PNG konpresioa
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;Prozesu aldagaiak irudiarekin batera gorde
-SAVEDLG_TIFFFILTER;TIFF artxiboak
 TOOLBAR_TOOLTIP_CROP;Hautapena moztu (shortcut key: C)
 TOOLBAR_TOOLTIP_HAND;Esku tresna (shortcut key: N)
 TOOLBAR_TOOLTIP_STRAIGHTEN;Lerro zuzena hautatu (shortcut key: S)
@@ -376,34 +359,12 @@ TP_CHMIXER_BLUE;Urdina
 TP_CHMIXER_GREEN;Berdea
 TP_CHMIXER_LABEL;Kanal nahastailea
 TP_CHMIXER_RED;Gorria
-TP_COARSETRAF_DEGREE;Graduak:
 TP_COARSETRAF_TOOLTIP_HFLIP;Horizontalki irauli
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Errotazioa ezkerraldera
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Errotazioa eskunialdera
 TP_COARSETRAF_TOOLTIP_VFLIP;Bertikalki irauli
-TP_COLORBOOST_ACHANNEL;"a" kanala
-TP_COLORBOOST_AMOUNT;Kopurua
-TP_COLORBOOST_AVOIDCOLORCLIP;Kolore mozketa ekidin
-TP_COLORBOOST_BCHANNEL;"b" kanala
-TP_COLORBOOST_CHANNEL;Kanala
-TP_COLORBOOST_CHSEPARATE;bananduak
-TP_COLORBOOST_ENABLESATLIMITER;Saturazio muga gaitu
-TP_COLORBOOST_LABEL;Koloreak jaso
-TP_COLORBOOST_SATLIMIT;Saturazio muga
-TP_COLORDENOISE_EDGESENSITIVE;Ertzetara sentikorra
-TP_COLORDENOISE_EDGETOLERANCE;Ertz tolerantzia
-TP_COLORDENOISE_LABEL;Kolore zarata murrizketa
-TP_COLORDENOISE_RADIUS;Erradioa
-TP_COLORSHIFT_BLUEYELLOW;Urdin-Horia
-TP_COLORSHIFT_GREENMAGENTA;Berde-Magenta
-TP_COLORSHIFT_LABEL;Kolore aldaketa
-TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;Erlazio finkoa:
 TP_CROP_GTDIAGONALS;Diagonalen erregela
-TP_CROP_GTHARMMEANS1;Bataz besteko armonikoa 1
-TP_CROP_GTHARMMEANS2;Bataz besteko armonikoa 2
-TP_CROP_GTHARMMEANS3;Bataz besteko armonikoa 3
-TP_CROP_GTHARMMEANS4;Bataz besteko armonikoa 4
 TP_CROP_GTNONE;Bat ere ez
 TP_CROP_GTRULETHIRDS;Herenen erregela
 TP_CROP_GUIDETYPE;Gida mota:
@@ -430,9 +391,6 @@ TP_HLREC_COLOR;Kolorearen hedapena
 TP_HLREC_LABEL;Distiren berreskurapena
 TP_HLREC_LUMINANCE;Argitasun berreskurapena
 TP_HLREC_METHOD;Metodoa: 
-TP_ICM_FILEDLGFILTERANY;Artxibo guztiak
-TP_ICM_FILEDLGFILTERICM;ICC profilen artxiboak
-TP_ICM_GAMMABEFOREINPUT;Profile applies Gamma
 TP_ICM_INPUTCAMERA;Kameraren jatorrizko balioak
 TP_ICM_INPUTCUSTOM;Neurrira
 TP_ICM_INPUTDLGLABEL;Sarrerako ICC profila hautatu...
@@ -443,28 +401,15 @@ TP_ICM_NOICM;ICM-rik ez: sRGB irteera
 TP_ICM_OUTPUTPROFILE;Irteera profila
 TP_ICM_SAVEREFERENCE;Save reference image for profiling
 TP_ICM_WORKINGPROFILE;Lan profila
-TP_LUMACURVE_BLACKLEVEL;Beltza
-TP_LUMACURVE_BRIGHTNESS;Distira
-TP_LUMACURVE_COMPRHIGHLIGHTS;Argi konpresioa
-TP_LUMACURVE_COMPRSHADOWS;Itzal konpresioa
-TP_LUMACURVE_CONTRAST;Kontrastea
-TP_LUMACURVE_CURVEEDITOR;Argitasun kurba
-TP_LUMACURVE_LABEL;Argitasun kurba
 TP_RAW_DMETHOD;Metodoa
 TP_RAW_FALSECOLOR;Okerreko kolore ezabaketa atalak
-TP_RESIZE_BICUBICSF;Bikubikoa (Biguna)
-TP_RESIZE_BICUBICSH;Bikubikoa (Fokatua)
-TP_RESIZE_BICUBIC;Bikubikoa
-TP_RESIZE_BILINEAR;Bilineala
 TP_RESIZE_H;H:
 TP_RESIZE_LABEL;Tamaina aldatu
 TP_RESIZE_METHOD;Metodoa: 
 TP_RESIZE_NEAREST;Gertuena
 TP_RESIZE_SCALE;Eskala
 TP_RESIZE_W;W:
-TP_ROTATE_AUTOCROP;Auto mozketa
 TP_ROTATE_DEGREE;Angelua
-TP_ROTATE_FILL;Bete
 TP_ROTATE_LABEL;Errotazioa
 TP_ROTATE_SELECTLINE;    Lerro zuzena hautatu
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Argiak
@@ -1374,6 +1319,7 @@ TP_WBALANCE_TEMPERATURE;Tenperatura
 !TP_CROP_GTEPASSPORT;Biometric Passport
 !TP_CROP_GTFRAME;Frame
 !TP_CROP_GTGRID;Grid
+!TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_CROP_PPI;PPI=

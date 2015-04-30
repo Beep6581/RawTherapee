@@ -25,8 +25,6 @@ CURVEEDITOR_CURVES;Curven
 CURVEEDITOR_CURVE;Curve
 CURVEEDITOR_CUSTOM;Handmatig
 CURVEEDITOR_DARKS;Schaduwen
-CURVEEDITOR_FILEDLGFILTERANY;Alle bestanden
-CURVEEDITOR_FILEDLGFILTERCURVE;Curvebestanden
 CURVEEDITOR_HIGHLIGHTS;Hoge lichten
 CURVEEDITOR_LIGHTS;Lichten
 CURVEEDITOR_LINEAR;Lineair
@@ -767,7 +765,6 @@ PARTIALPASTE_VIBRANCE;Levendigheid
 PARTIALPASTE_VIGNETTING;Vignetteringscorrectie
 PARTIALPASTE_WHITEBALANCE;Witbalans
 PREFERENCES_ADD;Toevoegen
-PREFERENCES_APPLNEXTRELOAD;Herladen van afbeelding vereist
 PREFERENCES_APPLNEXTSTARTUP;herstart vereist
 PREFERENCES_AUTLISLOW;Laag
 PREFERENCES_AUTLISMAX;Max - Gemiddelde van alle tegels
@@ -897,7 +894,6 @@ PREFERENCES_OUTDIR;Uitvoermap
 PREFERENCES_OVERLAY_FILENAMES;Toon bestandsnamen over miniaturen
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Toon bestandsnaam over miniaturen in het Bewerkingsvenster
 PREFERENCES_OVERWRITEOUTPUTFILE;Overschrijf bestaande output-bestanden
-PREFERENCES_PANFACTORFRAME;Scroll-snelheid ingezoomd beeld
 PREFERENCES_PANFACTORLABEL;Factor
 PREFERENCES_PARSEDEXTADDHINT;Typ nieuwe extensie en druk op knop om aan lijst toe te voegen
 PREFERENCES_PARSEDEXTADD;Voeg extensie toe
@@ -960,8 +956,6 @@ PREFERENCES_WLTWO;Twee niveau's
 PREFERENCES_WLZER;Nee
 PREFERENCES_WORKFLOW;Layout
 PROFILEPANEL_COPYPPASTE;Te kopiëren parameters
-PROFILEPANEL_FILEDLGFILTERANY;Alle bestanden
-PROFILEPANEL_FILEDLGFILTERPP;Profielen
 PROFILEPANEL_GLOBALPROFILES;Gebundelde profielen
 PROFILEPANEL_LABEL;Profielen
 PROFILEPANEL_LOADDLGLABEL;Kies profiel...
@@ -1000,7 +994,6 @@ SAVEDLG_AUTOSUFFIX;Voeg automatisch ophogend nummer (-1, -2..) toe als bestand a
 SAVEDLG_FILEFORMAT;Bestandstype
 SAVEDLG_FORCEFORMATOPTS;Forceer opties voor opslaan
 SAVEDLG_JPEGQUAL;JPEG-kwaliteit
-SAVEDLG_JPGFILTER;JPEG-bestanden
 SAVEDLG_PNGCOMPR;PNG-compressie
 SAVEDLG_PUTTOQUEUEHEAD;Plaats vooraan in verwerkingsrij
 SAVEDLG_PUTTOQUEUETAIL;Plaats achteraan in verwerkingsrij
@@ -1012,7 +1005,6 @@ SAVEDLG_SUBSAMP_1;Beste compressie
 SAVEDLG_SUBSAMP_2;Gebalanceerd
 SAVEDLG_SUBSAMP_3;Beste kwaliteit
 SAVEDLG_SUBSAMP_TOOLTIP;Beste Compressie: 4:1:1\nGebalanceerd: 4:2:2\nBeste kwaliteit: 4:4:4
-SAVEDLG_TIFFFILTER;TIFF-bestanden
 SAVEDLG_TIFFUNCOMPRESSED;Geen compressie
 SAVEDLG_WARNFILENAME;Bestandsnaam wordt
 SHCSELECTOR_TOOLTIP;Klik op de rechtermuisknop om\nde 3 knoppen te verschuiven
@@ -1174,7 +1166,6 @@ TP_COLORAPP_WBRT;WB [RT] + [uitvoer]
 TP_COLORTONING_AB;o C/L
 TP_COLORTONING_AUTOSAT;Automatisch
 TP_COLORTONING_BALANCE;Balans
-TP_COLORTONING_BALANCE_TOOLTIP;Verdeel tinten tussen Schaduwen en Hoge lichten
 TP_COLORTONING_BY;o C/L
 TP_COLORTONING_CHROMAC;Dekking
 TP_COLORTONING_COLOR;Kleur
@@ -1183,7 +1174,6 @@ TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Dekking Chroma op basis van Luminantie (C=
 TP_COLORTONING_HIGHLIGHT;Hoge lichten
 TP_COLORTONING_HUE;Kleurtint
 TP_COLORTONING_LABEL;Kleurtinten
-TP_COLORTONING_LABINT;-
 TP_COLORTONING_LAB;L*a*b* menging
 TP_COLORTONING_LUMAMODE;Behoud luminantie
 TP_COLORTONING_LUMAMODE_TOOLTIP;Wanneer de kleur wijzigt (rood, groen, cyaan, blauw, etc.) blijft de luminatie van elke pixel behouden.
@@ -1214,10 +1204,6 @@ TP_CROP_GTDIAGONALS;Diagonaalmethode
 TP_CROP_GTEPASSPORT;Biometrisch paspoort
 TP_CROP_GTFRAME;Frame
 TP_CROP_GTGRID;Raster
-TP_CROP_GTHARMMEANS1;Harmonische snede 1
-TP_CROP_GTHARMMEANS2;Harmonische snede 2
-TP_CROP_GTHARMMEANS3;Harmonische snede 3
-TP_CROP_GTHARMMEANS4;Harmonische snede 4
 TP_CROP_GTNONE;Geen
 TP_CROP_GTRULETHIRDS;Regel van derden
 TP_CROP_GUIDETYPE;Hulplijnen:
@@ -1281,7 +1267,6 @@ TP_DIRPYRDENOISE_METM_TOOLTIP;De "Alleen Luminantie" en "L*a*b*" methodes worden
 TP_DIRPYRDENOISE_MET_TOOLTIP;Mediaan filters. Hoe groter de omvang, hoe langer de verwerking.\n\n3x3: bewerkt 5 pixels in een 1-pixel reeks.\n3x3 sterk: bewerkt 9 pixels in een 1-pixel reeks.\n5x5 soft: bewerkt 13 pixels in een 2-pixel reeks.\n5x5: bewerkt 25 pixels in een 2-pixel reeks.\n7x7: bewerkt 49 pixels in een 3-pixel reeks.\n9x9: bewerkt 81 pixels in een 4-pixel reeks.\n\nSoms is het mogelijk om een beter resultaat te behalen door meerdere iteraties met een kleinere reeks uit te voeren dan 1 iteratie met een grotere reeks.
 TP_DIRPYRDENOISE_NOISELABELEMPTY;Voorbeeld ruis: Gemiddeld= -   Hoog= -
 TP_DIRPYRDENOISE_NOISELABEL;Voorbeeld ruis: Gemiddeld=%1  Hoog=%2
-TP_DIRPYRDENOISE_NONE;Geen
 TP_DIRPYRDENOISE_NRESID_TOOLTIP;Toont de overgebleven ruisniveau's van het zichtbare deel van de afbeelding in het <b>voorbeeld</b> na wavelet.\n\n>300 Veel ruis\n100-300 Gemiddeld ruis\n50-100 Weinig ruis\n<50 Zeer weinig ruis\n\nVoorzichtig, de waarden zullen verschillen tussen RGB en L*a*b* mode. De RGB waarden zijn minder accuraat omdat de RGB mode luminantie en chrominantie niet volledig scheidt.
 TP_DIRPYRDENOISE_PASSES_TOOLTIP;Een 3x3 filter met drie iteraties geeft meestal een beter resultaat dan eenmaal het 7x7 filter.
 TP_DIRPYRDENOISE_PASSE;Iteraties
@@ -1294,15 +1279,11 @@ TP_DIRPYRDENOISE_RGBM;RGB
 TP_DIRPYRDENOISE_RGB;RGB
 TP_DIRPYRDENOISE_SHALBI;Hoog
 TP_DIRPYRDENOISE_SHAL;Standaard
-TP_DIRPYRDENOISE_SHBI;Dubbel
 TP_DIRPYRDENOISE_SLI;Schuifbalk
 TP_DIRPYRDENOISE_SOFT;3x3
 TP_DIRPYRDENOISE_TILELABEL;Tegel grootte=%1, Centrum: Tx=%2  Ty=%3
 TP_DIRPYREQUALIZER_ALGO;Algoritme Huid
-TP_DIRPYREQUALIZER_ALGO_FI;Fijn
-TP_DIRPYREQUALIZER_ALGO_LA;Groot
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fijn: behoud de kleuren van de huid, minimaliseert de actie op andere kleuren\nGroot: vermijd artefacten
-TP_DIRPYREQUALIZER_GAMUT;Verminder artefacten 
 TP_DIRPYREQUALIZER_HUESKIN;Huidtint
 TP_DIRPYREQUALIZER_LABEL;Detailcontrast (Lab/CIECAM02)
 TP_DIRPYREQUALIZER_LUMACOARSEST;grofste
@@ -1324,7 +1305,6 @@ TP_EPD_REWEIGHTINGITERATES;Herhaling
 TP_EPD_SCALE;Schaal
 TP_EPD_STRENGTH;Sterkte
 TP_EPD_TOOLTIP;Tonemapping is mogelijk via Lab mode (standaard) of CIECAM02 mode.\n\nOm CIECAM02 Tonemapping mode te gebruiken moeten de volgende instellingen worden gekozen: \n1. CIECAM\n2. Algoritme="Helderheid + Kleurrijkheid (QM)"\n3. "Tonemapping gebruik makend van CIECAM02 helderheid (Q)"
-TP_EXPOSCORR_LABEL;RAW Witpunt en Zwartniveau
 TP_EXPOSURE_AUTOLEVELS;Autom. niveaus
 TP_EXPOSURE_AUTOLEVELS_TIP;Activeer automatische niveaus\nActiveer Herstel Hoge lichten indien nodig.
 TP_EXPOSURE_BLACKLEVEL;Schaduwen
@@ -1362,8 +1342,6 @@ TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
 TP_FLATFIELD_BT_VERTICAL;Verticaal
 TP_FLATFIELD_CLIPCONTROL;Clip controle
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip controle vermijd geclipte hoge lichten veroorzaakt door het toepassen van vlakveld. Als er al geclipte hoge lichten waren voor het toepassen van vlakveld dan kan clip controle kleurzweem veroorzaken.
-TP_FLATFIELD_FILEDLGFILTERANY;Alle bestanden
-TP_FLATFIELD_FILEDLGFILTERFF;Hetzelfde formaat als de huidige foto
 TP_FLATFIELD_LABEL;Vlakveld
 TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Vrij gamma
@@ -1399,9 +1377,6 @@ TP_ICM_BLENDCMSMATRIX_TOOLTIP;Activeer om uitgebeten hoge lichten te herstellen 
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpoleren
 TP_ICM_DCPILLUMINANT_TOOLTIP;Kies welk ingebed DCP illuminant moet worden gebruikt. Standaard is dit "interpoleren". Dit is een mix van de twee gebaseerd op de witbalans. De instelling is alleen actief als een Dual-Illuminant DCP met interpolatie is geselecteerd.
-TP_ICM_FILEDLGFILTERANY;Alle bestanden
-TP_ICM_FILEDLGFILTERICMDNG;Kleurprofielen + DNG
-TP_ICM_FILEDLGFILTERICM;ICC-profielbestanden
 TP_ICM_INPUTCAMERAICC;Camera-specifiek kleurprofiel
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Gebruik RawTherapee's camera-specifieke DCP- of ICC-kleurprofiel dat preciezer is dan een eenvoudige matrix. Beschikbaar voor sommige camera's. Deze profielen zijn opgeslagen in de map /iccprofiles/input en worden automatisch opgehaald gebaseerd op de exacte overeenkomst van bestandsnaam met de modelnaam van de camera.
 TP_ICM_INPUTCAMERA;Camera standaard
@@ -1417,11 +1392,6 @@ TP_ICM_INPUTPROFILE;Invoerprofiel
 TP_ICM_LABEL;Kleurbeheer
 TP_ICM_NOICM;Geen ICM: sRGB-uitvoer
 TP_ICM_OUTPUTPROFILE;Uitvoerprofiel
-TP_ICM_PREFERREDPROFILE;Voorkeur DCP-Profiel
-TP_ICM_PREFERREDPROFILE_1;Daglicht
-TP_ICM_PREFERREDPROFILE_2;Gloeilamp
-TP_ICM_PREFERREDPROFILE_3;TL
-TP_ICM_PREFERREDPROFILE_4;Flits
 TP_ICM_SAVEREFERENCE;Bewaar referentiefoto tbv. profiling
 TP_ICM_SAVEREFERENCE_TOOLTIP;Sla de lineare TIFF afbeelding op voordat het invoer profiel is toegepast. Het resultaat kan worden gebruikt voor calibratie en het genereren van een camera profiel.
 TP_ICM_TONECURVE;Gebruik DCP's toon curve
@@ -1469,7 +1439,6 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Kan worden gebruikt met de chromaticiteits schuifbalk
 TP_LENSGEOM_AUTOCROP;Automatisch bijsnijden
 TP_LENSGEOM_FILL;Automatisch uitvullen
 TP_LENSGEOM_LABEL;Objectief / Geometrie
-TP_LENSPROFILE_FILEDLGFILTERLCP;Lenscorrectie bestanden
 TP_LENSPROFILE_LABEL;Lenscorrectie Profielen
 TP_LENSPROFILE_USECA;CA correctie
 TP_LENSPROFILE_USEDIST;Lensvervorming correctie
@@ -1525,10 +1494,6 @@ TP_RAW_SENSOR_BAYER_LABEL;Sensor met Bayer matrix
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass geeft het beste resultaat (aanbevolen voor lage ISO afbeeldingen)\n1-pass geeft hetzelfde resultaat als 3-pass voor hoge ISO afbeeldingen en is sneller.
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor met X-Trans matrix
 TP_RESIZE_APPLIESTO;Toepassen op:
-TP_RESIZE_BICUBICSF;Bikubisch (zachter)
-TP_RESIZE_BICUBICSH;Bikubisch (scherper)
-TP_RESIZE_BICUBIC;Bikubisch
-TP_RESIZE_BILINEAR;Bilineair
 TP_RESIZE_CROPPEDAREA;Uitsnede
 TP_RESIZE_FITBOX;Breedte en hoogte
 TP_RESIZE_FULLIMAGE;Hele foto
@@ -1609,7 +1574,6 @@ TP_VIGNETTING_CENTER_Y;Centrum Y
 TP_VIGNETTING_LABEL;Vignettering Correctie
 TP_VIGNETTING_RADIUS;Straal
 TP_VIGNETTING_STRENGTH;Sterkte
-TP_WAVELET_0;Niveau 0
 TP_WAVELET_1;Niveau 1
 TP_WAVELET_2;Niveau 2
 TP_WAVELET_3;Niveau 3
@@ -1628,18 +1592,13 @@ TP_WAVELET_CHRO;Verzadigd - Pastel
 TP_WAVELET_CHRO_TOOLTIP;Begrens tussen pastel en verzadigd\n 1-x niveau verzadigd\n x-9 niveau pastel
 TP_WAVELET_CHR;Koppel Chroma aan contrast
 TP_WAVELET_CHR_TOOLTIP;Wijzig chroma in combinatie met Contrast niveau's
-TP_WAVELET_CLVCURVE;Chrominantie - Niveau
 TP_WAVELET_COLORT;Dekking Rood-Groen  Niveau
 TP_WAVELET_CONTRAST_MINUS;Contrast -
 TP_WAVELET_CONTRAST_PLUS;Contrast +
 TP_WAVELET_CONTRA;Contrast
 TP_WAVELET_CONTRA_TOOLTIP;Wijzig contrast in de rest van de afbeelding
 TP_WAVELET_CONTR;Gamut - controle
-TP_WAVELET_CURVEEDITOR_CLV_TOOLTIP;Toon chroma als functie van niveau's (x-as)\nNiveau's zijn discrete waarden
 TP_WAVELET_DALL;Alle richtingen
-TP_WAVELET_DISPLAYCHRO;Chromaticiteit en Tonen
-TP_WAVELET_DISPLAYGAM;Gamut en Controle
-TP_WAVELET_DISPLAY;Niveau's en Instellingen
 TP_WAVELET_DISP;Wavelet niveau's
 TP_WAVELET_DONE;Richting: Vertikaal
 TP_WAVELET_DTHR;Richting: Diagonaal
@@ -1650,7 +1609,6 @@ TP_WAVELET_EDRAD;Straal
 TP_WAVELET_EDVAL;Waarde
 TP_WAVELET_FINEST;fijn
 TP_WAVELET_HIGHLIGHT;Hoge lichten: Luminantie Reeks (0..100)
-TP_WAVELET_HIGHSHA;Hoge lichten/Schaduwen
 TP_WAVELET_HS1;Alle luminanties
 TP_WAVELET_HS2;Hoge lichten/Schaduwen
 TP_WAVELET_HUESKIN;Tint reeks (huid)
@@ -1664,9 +1622,7 @@ TP_WAVELET_LEVELS_TOOLTIP;Kies het aantal detail niveau's. Meer niveau's vereise
 TP_WAVELET_LEVF;Contrast
 TP_WAVELET_LEVLABEL;Voorbeeld maximum mogelijke niveau's=%1
 TP_WAVELET_LOWLIGHT;Schaduwen: Luminantie Reeks (0..100)
-TP_WAVELET_MAX;max
 TP_WAVELET_MEDI;Verminder artefacten in blauwe lucht
-TP_WAVELET_MIN;min
 TP_WAVELET_NEUTRAL;Neutraal
 TP_WAVELET_ONE;Eén niveau
 TP_WAVELET_OPACITY;Dekking Blauw-Geel Niveau
@@ -1690,7 +1646,6 @@ TP_WAVELET_THRESHOLD2_TOOLTIP;Alleen niveau's tussen '9' en '9 minus gekozen waa
 TP_WAVELET_THRESHOLD;Hoge lichten: Aantal te gebruiken niveau's (fijn naar grof - leidend)
 TP_WAVELET_THRESHOLD_TOOLTIP;Alleen niveau's boven de gekozen waarde worden behandeld als hoge lichten\nDe andere niveau's worden volledig behandeld
 TP_WAVELET_THRES;Max niveau
-TP_WAVELET_THRES_TOOLTIP;Zet het aantal actieve niveau's
 TP_WAVELET_THRH;Drempel Hoge lichten
 TP_WAVELET_THR;Drempel Schaduwen
 TP_WAVELET_TILESBIG;Grote Tegels
@@ -1700,7 +1655,6 @@ TP_WAVELET_TILESLIT;Kleine Tegels
 TP_WAVELET_TILES;Tegel grootte (* 128)
 TP_WAVELET_TILES_TOOLTIP;De optie 'Volledige afbeelding' geeft een betere kwaliteit en is de aanbevolen keuze. Selecteer Tegels als er onvoldoende geheugen beschikbaar is. Raadpleeg RawPedia voor geheugen aanbevelingen.
 TP_WAVELET_TON;Kleurtinten
-TP_WAVELET_UTIL;Instellingen
 TP_WBALANCE_AUTO;Automatisch
 TP_WBALANCE_CAMERA;Camera
 TP_WBALANCE_CLOUDY;Bewolkt
@@ -1800,6 +1754,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
 !PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize read of tiff files
 !PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;When working with folders full of uncompressed tiff files enabling this option can increase performance of thumb generation.
+!TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_DIRPYREQUALIZER_ARTIF;Reduce artifacts

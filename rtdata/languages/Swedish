@@ -15,8 +15,6 @@ CURVEEDITOR_CURVES;Kurvor
 CURVEEDITOR_CURVE;Kurva
 CURVEEDITOR_CUSTOM;Egen
 CURVEEDITOR_DARKS;Mörka partier
-CURVEEDITOR_FILEDLGFILTERANY;Vilka filer som helst
-CURVEEDITOR_FILEDLGFILTERCURVE;Kurvfiler
 CURVEEDITOR_HIGHLIGHTS;Högdagrar
 CURVEEDITOR_LIGHTS;Ljusa partier
 CURVEEDITOR_LINEAR;Linjär
@@ -573,24 +571,6 @@ MAIN_TOOLTIP_SHOWHIDERP1;Visa/dölj den högra panelen <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Visa/dölj den översta panelen <b>Shift-L</b>
 MAIN_TOOLTIP_THRESHOLD;Tröskelvärde
 MAIN_TOOLTIP_TOGGLE;Växla <b>före</b>/<b>efter</b> vy.\nKortkommando: <b>Shift-b</b>
-NAVIGATOR_B_NA;B = -
-NAVIGATOR_B_VALUE;B = %1
-NAVIGATOR_G_NA;G = -
-NAVIGATOR_G_VALUE;G = %1
-NAVIGATOR_H_NA;H = -
-NAVIGATOR_H_VALUE;H = %1
-NAVIGATOR_LAB_A_NA;A = -
-NAVIGATOR_LAB_A_VALUE;A = %1
-NAVIGATOR_LAB_B_NA;B = -
-NAVIGATOR_LAB_B_VALUE;B = %1
-NAVIGATOR_LAB_L_NA;L = -
-NAVIGATOR_LAB_L_VALUE;L = %1
-NAVIGATOR_R_NA;R = -
-NAVIGATOR_R_VALUE;R = %1
-NAVIGATOR_S_NA;S = -
-NAVIGATOR_S_VALUE;S = %1
-NAVIGATOR_V_NA;V = -
-NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_FULL;Bredd = %1, Höjd = %2
 NAVIGATOR_XY_NA;x = -, y = -
 OPTIONS_DEFIMG_MISSING;Standardprofilen för <b>icke-råbilder</b> kunde inte hittas eller är inte angiven.\n\nVar vänlig kontrollera din profilmapp: den kanske ej finns  eller är skadad.\n\nInterna värden kommer att användas som standard.
@@ -754,7 +734,6 @@ PREFERENCES_OUTDIRTEMPLATE;Använd förinställning
 PREFERENCES_OUTDIR;Utmatningskatalog
 PREFERENCES_OVERLAY_FILENAMES;Visa filnamn över miniatyrbilder
 PREFERENCES_OVERWRITEOUTPUTFILE;Skriv över existerande utfiler
-PREFERENCES_PANFACTORFRAME;Förstärkning av panoreringstakten
 PREFERENCES_PANFACTORLABEL;Faktor
 PREFERENCES_PARSEDEXTADDHINT;Skriv in en filändelse och tryck på den här knappen för att lägga till den i listan
 PREFERENCES_PARSEDEXTADD;Lägg till filtyp
@@ -802,8 +781,6 @@ PREFERENCES_USESYSTEMTHEME;Använd systemtema
 PREFERENCES_VIEW;Utenhetens vitbalansvärde (datorskärm, TV, bildkanon, etc.)
 PREFERENCES_WORKFLOW;Arbetsflöde
 PROFILEPANEL_COPYPPASTE;Parametrar att kopiera
-PROFILEPANEL_FILEDLGFILTERANY;Vilka filer som helst
-PROFILEPANEL_FILEDLGFILTERPP;Efterbehandlingsprofiler
 PROFILEPANEL_GLOBALPROFILES;Förinstallerade profiler
 PROFILEPANEL_LABEL;Efterbehandlingsprofiler
 PROFILEPANEL_LOADDLGLABEL;Ladda efterbehandlingsparametrar...
@@ -841,7 +818,6 @@ SAVEDLG_AUTOSUFFIX;Lägg automatiskt till en ändelse om filnamnet redan exister
 SAVEDLG_FILEFORMAT;Filformat
 SAVEDLG_FORCEFORMATOPTS;Kräv att inställningar sparas
 SAVEDLG_JPEGQUAL;JPEG-kvalitet
-SAVEDLG_JPGFILTER;JPEG-filer
 SAVEDLG_PNGCOMPR;PNG-komprimering
 SAVEDLG_PUTTOQUEUEHEAD;Flytta längst fram i behandlingskön
 SAVEDLG_PUTTOQUEUETAIL;Flytta längst bak i behandlingskön
@@ -852,7 +828,6 @@ SAVEDLG_SUBSAMP_1;Högsta komprimering
 SAVEDLG_SUBSAMP_2;Balanserad
 SAVEDLG_SUBSAMP_3;Högsta kvalitet
 SAVEDLG_SUBSAMP_TOOLTIP;Högsta komprimering: 4:1:1\nBalanserad: 4:2:2\nHögsta kvalitet: 4:4:4
-SAVEDLG_TIFFFILTER;TIFF-filer
 SAVEDLG_TIFFUNCOMPRESSED;Okomprimerad TIFF
 SAVEDLG_WARNFILENAME;Filen kommer att heta
 SHCSELECTOR_TOOLTIP;Klicka på höger musknapp för att återställa\nde tre reglagens positioner
@@ -1015,10 +990,6 @@ TP_CROP_GTDIAGONALS;Diagonalregeln
 TP_CROP_GTEPASSPORT;Biometriskt pass
 TP_CROP_GTFRAME;Ram
 TP_CROP_GTGRID;Rutnät
-TP_CROP_GTHARMMEANS1;Harmoniskt medel 1
-TP_CROP_GTHARMMEANS2;Harmoniskt medel 2
-TP_CROP_GTHARMMEANS3;Harmoniskt medel 3
-TP_CROP_GTHARMMEANS4;Harmoniskt medel 4
 TP_CROP_GTNONE;Ingen
 TP_CROP_GTRULETHIRDS;Tredjedelsregeln
 TP_CROP_GUIDETYPE;Guidetyp:
@@ -1050,10 +1021,7 @@ TP_DIRPYRDENOISE_METHOD_TOOLTIP;För råfiler kan antingen RGB- eller Labmetoder
 TP_DIRPYRDENOISE_RED;Krominans - Röd-Grön
 TP_DIRPYRDENOISE_RGB;RGB
 TP_DIRPYREQUALIZER_ALGO;Algoritm för hudtoner
-TP_DIRPYREQUALIZER_ALGO_FI;Fin
-TP_DIRPYREQUALIZER_ALGO_LA;Stor
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fin: närmre hudens färger, minimerar inverkan på andra färger\nStor: undvik än mer artefakter
-TP_DIRPYREQUALIZER_GAMUT;Reducera artefakter
 TP_DIRPYREQUALIZER_HUESKIN;Nyans på hudtoner
 TP_DIRPYREQUALIZER_LABEL;Kontrast genom detaljnivåer
 TP_DIRPYREQUALIZER_LUMACOARSEST;Grövst
@@ -1075,7 +1043,6 @@ TP_EPD_REWEIGHTINGITERATES;Återviktade iterationer
 TP_EPD_SCALE;Skala
 TP_EPD_STRENGTH;Styrka
 TP_EPD_TOOLTIP;Tonmappning är möjligt via Lab-läge (standard) och CIECAM02-läge.\n\nFör att aktivera CIECAM02- tonmappningsläget, aktivera följande:\n1. CIECAM02\n2. Algoritm="Intensitet + Färgmättnad (QM)"\n3. "Tonmappning mha CIECAM02 intensitet (Q)"
-TP_EXPOSCORR_LABEL;Vit- och svartpunktskorrigering, råformat
 TP_EXPOSURE_AUTOLEVELS;Autonivåer
 TP_EXPOSURE_AUTOLEVELS_TIP;Slå av/på autonivåer för att automatiskt beräkna och använda värden baserat på bildanalys\nAktiverar högdageråterställning om nödvändigt
 TP_EXPOSURE_BLACKLEVEL;Svärta
@@ -1140,8 +1107,6 @@ TP_ICM_BLENDCMSMATRIX_TOOLTIP;Möjliggör återskapande av utbrända högdagrar 
 TP_ICM_DCPILLUMINANT;Ljuskälla
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolerad ljuskälla
 TP_ICM_DCPILLUMINANT_TOOLTIP;Välj vilken inbäddad DCP-ljuskälla som ska användas. Standard är "interpolerad" som är en blandning mellan de två baserad på vitbalans. Valet är endast aktiverat om en DCP från en dubbel ljuskälla med interpoleringsstöd är vald
-TP_ICM_FILEDLGFILTERANY;Vilka filer som helst
-TP_ICM_FILEDLGFILTERICM;Färgprofiler
 TP_ICM_INPUTCAMERAICC;Automatiskt vald kameraprofil
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Använd RawTherapees kameraspecifika DCP- eller ICC-färgprofiler. Dessa profiler är mer exakta än enkla matrisprofiler, men finns inte för alla kameror. Profilerna lagras i /iccprofiles/input- och i /dcpprofiles-katalogerna och hämtas automatiskt baserat på ett filnamn som exakt matchar kameramodellen.
 TP_ICM_INPUTCAMERA;Standard för kameran
@@ -1196,7 +1161,6 @@ TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminans enligt kroma L=f(C)
 TP_LABCURVE_CURVEEDITOR_LH;LH
 TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminans enligt nyans L=f(H)
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminans enligt luminans L=f(L)
-TP_LABCURVE_ENABLESATLIMITER;Slå på mättnadsbegränsare
 TP_LABCURVE_LABEL;Labjusteringar
 TP_LABCURVE_LCREDSK;Begränsa LC till röda färger och hudtoner
 TP_LABCURVE_LCREDSK_TIP;Om aktiverad så påverkar LC-kurvan enbart röda färger och hudtoner.\nOm ej aktiverad så appliceras den till alla färger och toner.
@@ -1205,7 +1169,6 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Kan användas med kromareglaget och CC-kurvan
 TP_LENSGEOM_AUTOCROP;Autobeskärning
 TP_LENSGEOM_FILL;Fyll automatiskt
 TP_LENSGEOM_LABEL;Geometrisk- och distorsionskorrigering
-TP_LENSPROFILE_FILEDLGFILTERLCP;Objektivkorrigeringsfil
 TP_LENSPROFILE_LABEL;Objektivkorrigeringsprofil
 TP_LENSPROFILE_USECA;Korrigera för kromatiska abberationer
 TP_LENSPROFILE_USEDIST;Korrigera distorsion
@@ -1231,11 +1194,7 @@ TP_PREPROCESS_NO_FOUND;Inga hittade
 TP_RAWCACORR_AUTO;Reducera automatiskt kromatiska abberationer
 TP_RAWCACORR_CABLUE;Blå
 TP_RAWCACORR_CARED;Röd
-TP_RAWEXPOS_BLACKONE;Svartpunktsnivå: Röd
 TP_RAWEXPOS_BLACKS;Svartpunktsnivåer
-TP_RAWEXPOS_BLACKTHREE;Svartpunktsnivå: Grön 2
-TP_RAWEXPOS_BLACKTWO;Svartpunktsnivå: Blå
-TP_RAWEXPOS_BLACKZERO;Svartpunktsnivå: Grön 1 (ledaren)
 TP_RAWEXPOS_LINEAR;Vitpunktskorrigering
 TP_RAWEXPOS_PRESER;Bevara högdagrar
 TP_RAWEXPOS_TWOGREEN;Två gröna tillsammans
@@ -1250,10 +1209,6 @@ TP_RAW_LABEL;Demosaicing
 TP_RAW_LMMSEITERATIONS;LMMSE förbättringssteg
 TP_RAW_LMMSE_TOOLTIP;Adderar gamma (steg 1) - adderar median (steg 2,3 och 4), slutligen adderas ett förfiningssteg (steg 5 och 6) för att reducera artefakter och för att förbättra signal/brusförhållandet.
 TP_RESIZE_APPLIESTO;Tillämpas på:
-TP_RESIZE_BICUBICSF;Bikubisk (Mjukare)
-TP_RESIZE_BICUBICSH;Bikubisk (Skarpare)
-TP_RESIZE_BICUBIC;Bikubisk
-TP_RESIZE_BILINEAR;Bilinjär
 TP_RESIZE_CROPPEDAREA;Beskuren yta
 TP_RESIZE_FITBOX;Begränsad yta
 TP_RESIZE_FULLIMAGE;Hela bilden
@@ -1519,7 +1474,16 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_359;Hot/Dead - Threshold
 !HISTORY_MSG_360;TM Gamma
 !MAIN_TAB_INSPECT; Inspect
+!NAVIGATOR_B;B:
+!NAVIGATOR_G;G:
+!NAVIGATOR_H;H:
+!NAVIGATOR_LAB_A;a*:
+!NAVIGATOR_LAB_B;b*:
+!NAVIGATOR_LAB_L;L*:
 !NAVIGATOR_NA; --
+!NAVIGATOR_R;R:
+!NAVIGATOR_S;S:
+!NAVIGATOR_V;V:
 !PARTIALPASTE_COLORTONING;Color Toning
 !PARTIALPASTE_EQUALIZER;Wavelet Equalizer
 !PARTIALPASTE_FILMSIMULATION;Film Simulation
@@ -1622,6 +1586,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_COLORTONING_TWOBY;Special a* and b*
 !TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
 !TP_COLORTONING_TWOSTD;Standard chroma
+!TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_DIRPYRDENOISE_33;3×3 strong

@@ -12,8 +12,6 @@ CURVEEDITOR_CURVES;Corbes
 CURVEEDITOR_CURVE;Corba
 CURVEEDITOR_CUSTOM;A mida
 CURVEEDITOR_DARKS;Foscos
-CURVEEDITOR_FILEDLGFILTERANY;Tots els fitxers
-CURVEEDITOR_FILEDLGFILTERCURVE;Fitxers de corba
 CURVEEDITOR_HIGHLIGHTS;Clars intensos
 CURVEEDITOR_LIGHTS;Clars
 CURVEEDITOR_LINEAR;Lineal
@@ -469,24 +467,6 @@ MAIN_TOOLTIP_SHOWHIDERP1;Mostra/amaga panell dret.\nDrecera: <b>Alt-L</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Mostra/amaga panell superior.\nDrecera: <b>Majús-L</b>
 MAIN_TOOLTIP_THRESHOLD;Llindar
 MAIN_TOOLTIP_TOGGLE;Alterna vista abans/després.\nDrecera: <b>Majús-B</b>
-NAVIGATOR_B_NA;B = n/a
-NAVIGATOR_B_VALUE;B = %1
-NAVIGATOR_G_NA;G = n/a
-NAVIGATOR_G_VALUE;G = %1
-NAVIGATOR_H_NA;H = n/a
-NAVIGATOR_H_VALUE;H = %1
-NAVIGATOR_LAB_A_NA;A = n/a
-NAVIGATOR_LAB_A_VALUE;A = %1
-NAVIGATOR_LAB_B_NA;B = n/a
-NAVIGATOR_LAB_B_VALUE;B = %1
-NAVIGATOR_LAB_L_NA;L = n/a
-NAVIGATOR_LAB_L_VALUE;L = %1
-NAVIGATOR_R_NA;R = n/a
-NAVIGATOR_R_VALUE;R = %1
-NAVIGATOR_S_NA;S = n/a
-NAVIGATOR_S_VALUE;S = %1
-NAVIGATOR_V_NA;V = n/a
-NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_FULL;Amplada = %1, Altura = %2
 NAVIGATOR_XY_NA;x = n/a, y = n/a
 OPTIONS_DEFIMG_MISSING;No es troba el perfil per omissió per a fotografies <b>no-raw</b> o no s'ha especificat.\n\nReviseu el directori de perfils, potser falta o està fet malbé.\n\nEs faran servir els valors interns per omissió.
@@ -556,11 +536,8 @@ PREFERENCES_BEHAVIOR;Comportament
 PREFERENCES_CACHECLEARALL;Esborrar tot
 PREFERENCES_CACHECLEARPROFILES;Esborrar perfils
 PREFERENCES_CACHECLEARTHUMBS;Esborra minifotos
-PREFERENCES_CACHEFORMAT1;Propi (ràpid i millor qualitat)
-PREFERENCES_CACHEFORMAT2;JPEG (ocupa menys espai al disc)
 PREFERENCES_CACHEMAXENTRIES;Màxim nombre d'entrades a la mem. cau
 PREFERENCES_CACHEOPTS;Opcions memòria cau
-PREFERENCES_CACHETHUMBFORM;Format del cau en minifoto
 PREFERENCES_CACHETHUMBHEIGHT;Màxima alçada de minifoto
 PREFERENCES_CLIPPINGIND;Indicador de pèrdues
 PREFERENCES_CMETRICINTENT;Intent colorimètric
@@ -623,7 +600,6 @@ PREFERENCES_OUTDIRTEMPLATE;Usar plantilla
 PREFERENCES_OUTDIR;Directori de sortida
 PREFERENCES_OVERLAY_FILENAMES;Sobreposar noms de fitxer a les minifotos
 PREFERENCES_OVERWRITEOUTPUTFILE;Sobrescriu fitxers en desar-los
-PREFERENCES_PANFACTORFRAME;Ràtio d'amplificació Pan
 PREFERENCES_PANFACTORLABEL;Factor
 PREFERENCES_PARSEDEXTADDHINT;Escriu una extensió i prem aquí per veure la llista
 PREFERENCES_PARSEDEXTADD;Afegir extensió
@@ -666,8 +642,6 @@ PREFERENCES_TUNNELMETADATA;Copia IPTC/XMP sense canvis al fitxer de sortida (en 
 PREFERENCES_USESYSTEMTHEME; Usa tema del sistema
 PREFERENCES_WORKFLOW;Flux de treball
 PROFILEPANEL_COPYPPASTE;Paràmetres a copiar
-PROFILEPANEL_FILEDLGFILTERANY;Tots els fitxers
-PROFILEPANEL_FILEDLGFILTERPP;Perfils de postprocés
 PROFILEPANEL_LABEL;Perfils de postprocés
 PROFILEPANEL_LOADDLGLABEL;Carrega paràm. de postprocés...
 PROFILEPANEL_LOADPPASTE;Paràmetres a carregar
@@ -698,7 +672,6 @@ QINFO_NOEXIF;No hi ha dades Exif.
 SAVEDLG_AUTOSUFFIX;Afegeix automàticament un sufix si el fitxer ja hi és
 SAVEDLG_FILEFORMAT;Format del fitxer
 SAVEDLG_JPEGQUAL;Qualitat JPEG
-SAVEDLG_JPGFILTER;Fitxers JPEG
 SAVEDLG_PNGCOMPR;Compressió PNG
 SAVEDLG_PUTTOQUEUEHEAD;Posa al principi de la cua de procés
 SAVEDLG_PUTTOQUEUETAIL;Posa a la fi de la cua de procés
@@ -710,7 +683,6 @@ SAVEDLG_SUBSAMP_1;Millor compressió
 SAVEDLG_SUBSAMP_2;Equilibrat
 SAVEDLG_SUBSAMP_3;Millor qualitat
 SAVEDLG_SUBSAMP_TOOLTIP;Gran compressió: 4:1:1\nEquilibrat: 4:2:2\nMillor qualitat: 4:4:4
-SAVEDLG_TIFFFILTER;Fitxers TIFF
 SAVEDLG_TIFFUNCOMPRESSED;TIFF no comprimit
 SAVEDLG_WARNFILENAME;El fitxer es dirà
 SHCSELECTOR_TOOLTIP;Clic al botó dret per a restaurar\nla posició dels 3 nivells.
@@ -742,10 +714,6 @@ TP_CROP_GTDIAGONALS;Regla de diagonals
 TP_CROP_GTEPASSPORT;Passaport biomètric
 TP_CROP_GTFRAME;Marc
 TP_CROP_GTGRID;Graella
-TP_CROP_GTHARMMEANS1;Tipus armònic 1
-TP_CROP_GTHARMMEANS2;Tipus armònic 2
-TP_CROP_GTHARMMEANS3;Tipus armònic 3
-TP_CROP_GTHARMMEANS4;Tipus armònic 4
 TP_CROP_GTNONE;No cap
 TP_CROP_GTRULETHIRDS;Regla dels terços
 TP_CROP_GUIDETYPE;Tipus de guia:
@@ -782,7 +750,6 @@ TP_EPD_LABEL;Mapejant tons
 TP_EPD_REWEIGHTINGITERATES;Iteracions de ponderació
 TP_EPD_SCALE;Escala
 TP_EPD_STRENGTH;Intensitat
-TP_EXPOSCORR_LABEL;Raw blanc &amp; punts negres
 TP_EXPOSURE_AUTOLEVELS;Nivells automàtics
 TP_EXPOSURE_AUTOLEVELS_TIP;Activa auto-nivells per a ajustar automàticament els valors dels paràmetres segons anàlisi de la imatge
 TP_EXPOSURE_BLACKLEVEL;Negre
@@ -830,8 +797,6 @@ TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;Barreja clars intensos del perfil de color amb la matriu
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Habilita la recuperació de clars intensos quan s'usen els perfils ICC basats en LUT
-TP_ICM_FILEDLGFILTERANY;Tots els fitxers
-TP_ICM_FILEDLGFILTERICM;Perfils de color
 TP_ICM_INPUTCAMERAICC;Perfil de color del model de càmera detectada.
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Usa d'entrada el perfil de color DCP o ICC específic de càmera de RawTherapee. Aquests perfils són més precisos que els de simple matriu. Disponible per a algunes càmeres. Aquests perfils són als directoris /iccprofiles/input i /dcpprofiles i es carreguen automàticament segons un nom de fitxer que coincideix exactament amb el nom de model de la càmera.
 TP_ICM_INPUTCAMERA;Propi de la càmera
@@ -847,11 +812,6 @@ TP_ICM_INPUTPROFILE;Perfil d'entrada
 TP_ICM_LABEL;Gestió de color
 TP_ICM_NOICM;No cap ICM: Sortida  sRGB
 TP_ICM_OUTPUTPROFILE;Perfil de sortida
-TP_ICM_PREFERREDPROFILE;Perfil DCP preferit
-TP_ICM_PREFERREDPROFILE_1;Llum de dia
-TP_ICM_PREFERREDPROFILE_2;Tungstèn
-TP_ICM_PREFERREDPROFILE_3;Fluorescent
-TP_ICM_PREFERREDPROFILE_4;Flash
 TP_ICM_SAVEREFERENCE;Desa com a imatge de ref. als perfils
 TP_ICM_TONECURVE;Usa la corba de to DCP.
 TP_ICM_TONECURVE_TOOLTIP;Habilita l'ús de corbes de to incloses en els perfils DCP.
@@ -861,8 +821,6 @@ TP_IMPULSEDENOISE_THRESH;Llindar d'impuls RS
 TP_LABCURVE_AVOIDCOLORSHIFT;Evita alteració de color
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fica colors al gamut de l'espai de color de treball\ni aplica la correcció Munsell
 TP_LABCURVE_BRIGHTNESS;Brillantor
-TP_LABCURVE_BWTONING;Ajust de to B&N
-TP_LABCURVE_BWTONING_TIP;Amb l'opció <b>Ajust de tons B/N</b> activada, la cromaticitat Lab i les corbes Cc i Ch no tenen efecte.\nEl tonejament s'assoleix amb les corbes  <b>a</b> i <b>b</b>
 TP_LABCURVE_CHROMATICITY;Cromaticitat
 TP_LABCURVE_CONTRAST;Contrast
 TP_LABCURVE_CURVEEDITOR;Corba de luminància
@@ -892,7 +850,6 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Es maneja amb el control de cromaticitat i la corba C
 TP_LENSGEOM_AUTOCROP;Auto cropa
 TP_LENSGEOM_FILL;Auto omple
 TP_LENSGEOM_LABEL;Lent / Geometria
-TP_LENSPROFILE_FILEDLGFILTERLCP;Fitxers de correcció de lents
 TP_LENSPROFILE_LABEL;Perfil de correcció de lent
 TP_LENSPROFILE_USECA;Usa correcció AC
 TP_LENSPROFILE_USEDIST;Correcció de distorsió
@@ -909,11 +866,7 @@ TP_PREPROCESS_NO_FOUND;No trobat
 TP_RAWCACORR_AUTO;Auto correcció
 TP_RAWCACORR_CABLUE;Blau
 TP_RAWCACORR_CARED;Vermell
-TP_RAWEXPOS_BLACKONE;Nivell negre: Roig
 TP_RAWEXPOS_BLACKS;Nivells negres
-TP_RAWEXPOS_BLACKTHREE;Nivell negre: Verd 2
-TP_RAWEXPOS_BLACKTWO;Nivell negre: Blau
-TP_RAWEXPOS_BLACKZERO;Nivell negre: verd 1 (leader)
 TP_RAWEXPOS_LINEAR;Punt blanc: factor de correcció linear
 TP_RAWEXPOS_PRESER;Punt blanc: correc. clars preservant (EV)
 TP_RAWEXPOS_TWOGREEN;Dos verds junts
@@ -923,10 +876,6 @@ TP_RAW_DMETHOD;Mètode
 TP_RAW_FALSECOLOR;Passos de supressió del fals color
 TP_RAW_LABEL;Demosaicant
 TP_RESIZE_APPLIESTO;S'aplica a:
-TP_RESIZE_BICUBICSF;Bicúbic (Fluix)
-TP_RESIZE_BICUBICSH;Bicúbic (Més intens)
-TP_RESIZE_BICUBIC;Bicúbic
-TP_RESIZE_BILINEAR;Bilinear
 TP_RESIZE_CROPPEDAREA;Àrea cropada
 TP_RESIZE_FITBOX;Capsa d'inclusió
 TP_RESIZE_FULLIMAGE;Imatge sencera
@@ -1283,7 +1232,16 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !MAIN_MSG_SETPATHFIRST;You first have to set a target path in Preferences in order to use this function!
 !MAIN_MSG_WRITEFAILED;Failed to write\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
 !MAIN_TAB_INSPECT; Inspect
+!NAVIGATOR_B;B:
+!NAVIGATOR_G;G:
+!NAVIGATOR_H;H:
+!NAVIGATOR_LAB_A;a*:
+!NAVIGATOR_LAB_B;b*:
+!NAVIGATOR_LAB_L;L*:
 !NAVIGATOR_NA; --
+!NAVIGATOR_R;R:
+!NAVIGATOR_S;S:
+!NAVIGATOR_V;V:
 !PARTIALPASTE_CHANNELMIXERBW;Black-and-White
 !PARTIALPASTE_COLORAPP;CIECAM02
 !PARTIALPASTE_COLORTONING;Color Toning
@@ -1561,6 +1519,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_COLORTONING_TWOBY;Special a* and b*
 !TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
 !TP_COLORTONING_TWOSTD;Standard chroma
+!TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_DIRPYRDENOISE_33;3×3 strong

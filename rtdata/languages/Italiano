@@ -17,8 +17,6 @@ CURVEEDITOR_CURVES;Curve
 CURVEEDITOR_CURVE;Curva
 CURVEEDITOR_CUSTOM;Personalizzata
 CURVEEDITOR_DARKS;Toni Scuri
-CURVEEDITOR_FILEDLGFILTERANY;Qualsiasi file
-CURVEEDITOR_FILEDLGFILTERCURVE;File di curve
 CURVEEDITOR_HIGHLIGHTS;Alteluci
 CURVEEDITOR_LIGHTS;Toni chiari
 CURVEEDITOR_LINEAR;Lineare
@@ -765,7 +763,6 @@ PREFERENCES_OUTDIRTEMPLATE;Usa lo schema
 PREFERENCES_OUTDIR;Cartella di destinazione
 PREFERENCES_OVERLAY_FILENAMES;Mostra i nomi dei file sovrapposti alle miniature
 PREFERENCES_OVERWRITEOUTPUTFILE;Sovrascrivi file esistenti
-PREFERENCES_PANFACTORFRAME;Accelerazione nello scorrimento
 PREFERENCES_PANFACTORLABEL;Fattore
 PREFERENCES_PARSEDEXTADDHINT;Aggiungi l'estensione alla lista.
 PREFERENCES_PARSEDEXTADD;Aggiungi un'estensione
@@ -813,8 +810,6 @@ PREFERENCES_USESYSTEMTHEME;Usa tema di sistema
 PREFERENCES_VIEW;Bilanciamento del bianco del dispositivo di uscita (monitor, TV, proiettore...)
 PREFERENCES_WORKFLOW;Disposizione
 PROFILEPANEL_COPYPPASTE;Parametri da copiare
-PROFILEPANEL_FILEDLGFILTERANY;Qualsiasi file
-PROFILEPANEL_FILEDLGFILTERPP;Profili di sviluppo
 PROFILEPANEL_GLOBALPROFILES;Profili inclusi
 PROFILEPANEL_LABEL;Profili di sviluppo
 PROFILEPANEL_LOADDLGLABEL;Carico i parametri di sviluppo...
@@ -852,7 +847,6 @@ SAVEDLG_AUTOSUFFIX;Aggiungi automaticamente un suffisso se il file esiste già
 SAVEDLG_FILEFORMAT;Formato file
 SAVEDLG_FORCEFORMATOPTS;Opzioni di salvataggio forzato
 SAVEDLG_JPEGQUAL;Qualità JPEG
-SAVEDLG_JPGFILTER;File JPEG
 SAVEDLG_PNGCOMPR;Compressione PNG
 SAVEDLG_PUTTOQUEUEHEAD;Metti in cima alla coda di sviluppo
 SAVEDLG_PUTTOQUEUETAIL;Metti in fondo alla coda di sviluppo
@@ -864,7 +858,6 @@ SAVEDLG_SUBSAMP_1;Migliore Compressione
 SAVEDLG_SUBSAMP_2;Bilanciato
 SAVEDLG_SUBSAMP_3;Migliore Qualità
 SAVEDLG_SUBSAMP_TOOLTIP;Migliore Compressione: 4:1:1\nBilanciato: 4:2:2\nMigliore Qualità: 4:4:4
-SAVEDLG_TIFFFILTER;File TIFF
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compresso
 SAVEDLG_WARNFILENAME;Il file verrà chiamato
 SHCSELECTOR_TOOLTIP;Click destro per ripristinare la posizione di questi tre cursori.
@@ -1028,10 +1021,6 @@ TP_CROP_GTDIAGONALS;Regola delle diagonali
 TP_CROP_GTEPASSPORT;Passaporto Biometrico
 TP_CROP_GTFRAME;Fotogramma
 TP_CROP_GTGRID;Griglia
-TP_CROP_GTHARMMEANS1;Media armonica 1
-TP_CROP_GTHARMMEANS2;Media armonica 2
-TP_CROP_GTHARMMEANS3;Media armonica 3
-TP_CROP_GTHARMMEANS4;Media armonica 4
 TP_CROP_GTNONE;Nessuna
 TP_CROP_GTRULETHIRDS;Regola dei terzi
 TP_CROP_GUIDETYPE;Tipo di guida:
@@ -1063,10 +1052,7 @@ TP_DIRPYRDENOISE_METHOD_TOOLTIP;Per immagini raw può essere usato il metodo RGB
 TP_DIRPYRDENOISE_RED;Crominanza - Rosso-Verde
 TP_DIRPYRDENOISE_RGB;RGB
 TP_DIRPYREQUALIZER_ALGO;Algoritmo Pelle
-TP_DIRPYREQUALIZER_ALGO_FI;Fine
-TP_DIRPYREQUALIZER_ALGO_LA;Ampio
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: più simile ai colori dell'incarnato, minimizzando l'azione di altri colori\nAmpio: evita ulteriori artefatti
-TP_DIRPYREQUALIZER_GAMUT;Riduzione artefatti
 TP_DIRPYREQUALIZER_HUESKIN;Tonalità della Pelle
 TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;Questa piramide è per la parte superiore, con l'algoritmo alla sua massima efficienza.\nNella parte inferiore, le zone di transizione.\nSe devi muovere in modo significativo la zona verso destra o verso sinistra (o se ci sono artefatti): il <b>bilanciamento del bianco è sbagliato</b>\nPuoi ridurre leggermente la zona per evitare che la parte rimante dell'immagine ne sia influenzata
 TP_DIRPYREQUALIZER_LABEL;Contrasto per livelli di dettaglio (CbDL)
@@ -1089,7 +1075,6 @@ TP_EPD_REWEIGHTINGITERATES;Iterazioni di Ribilanciamento
 TP_EPD_SCALE;Scala
 TP_EPD_STRENGTH;Forza
 TP_EPD_TOOLTIP;Il Tone Mapping è possibile in modalità Lab (standard) o CIECAM02.\n\nPer utilizare il Tone Mapping CIECAM02 abilita quste impostazioni: \n 1. CIECAM02\n 2. Algoritmo="Brillanza + Pienezza (QM)"\n 3. "Tone mapping con CIECAM02"
-TP_EXPOSCORR_LABEL;Punti Bianco e Nero del Raw
 TP_EXPOSURE_AUTOLEVELS;Livelli automatici
 TP_EXPOSURE_AUTOLEVELS_TIP;Abilita l'esecuzione dei livelli automatici per impostare automaticamente il cursore Esposizione in base all'analisi dell'immagine.\nSe necessario, abilita Ricostruzione Alteluci.
 TP_EXPOSURE_BLACKLEVEL;Livello del nero
@@ -1154,9 +1139,6 @@ TP_ICM_BLENDCMSMATRIX_TOOLTIP;Abilita per recuperare le alteluci bruciate quando
 TP_ICM_DCPILLUMINANT;Illuminazione
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolato
 TP_ICM_DCPILLUMINANT_TOOLTIP;Seleziona il DCP del tipo di illuminazione da utilizzare. Il predefinito è "interpolato", un mix tra i due basato sul bilanciamento del bianco. Questa impostazione è abilitata solo se è selezionato Doppia Illuminazione con supporto interpolato.
-TP_ICM_FILEDLGFILTERANY;Qualsiasi file
-TP_ICM_FILEDLGFILTERICMDNG;Profili colore + DNG
-TP_ICM_FILEDLGFILTERICM;Profili Colore
 TP_ICM_INPUTCAMERAICC;Specifico della fotocamera
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Utilizza i profili colore di ingresso DCP o ICC di RawTherapee specifici per la fotocamera. Questi profili sono più precisi dei semplici matrix. Non sono però disponibili per tutte le fotocamere. Questi profili sono archiviati nelle cartelle /iccprofiles/input e /dcpprofiles e sono recuperati automaticamente in base all'esatta corrispondenza tra nome del file e modello di fotocamera.
 TP_ICM_INPUTCAMERA;Predefinito della fotocamera
@@ -1219,7 +1201,6 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Può essere utilizzato con il cursore Cromaticità e 
 TP_LENSGEOM_AUTOCROP; Ritaglio automatico
 TP_LENSGEOM_FILL;Adattamento automatico
 TP_LENSGEOM_LABEL;Obiettivo/Geometria
-TP_LENSPROFILE_FILEDLGFILTERLCP;File di Correzione dell'Obiettivo
 TP_LENSPROFILE_LABEL;Profilo di Correzione dell'Obiettivo
 TP_LENSPROFILE_USECA;Correzione dell'Aberrazione Cromatica (AC)
 TP_LENSPROFILE_USEDIST;Correzione della Distorsione
@@ -1245,11 +1226,7 @@ TP_PREPROCESS_NO_FOUND;Nessuno presente
 TP_RAWCACORR_AUTO;Autocorrezione
 TP_RAWCACORR_CABLUE;Blu
 TP_RAWCACORR_CARED;Rosso
-TP_RAWEXPOS_BLACKONE;Punto del Nero: Rosso
 TP_RAWEXPOS_BLACKS;Livelli del nero
-TP_RAWEXPOS_BLACKTHREE;Punto del Nero: Verde 2
-TP_RAWEXPOS_BLACKTWO;Punto del Nero: Blu
-TP_RAWEXPOS_BLACKZERO;Punto del Nero: Verde 1 (riferimento)
 TP_RAWEXPOS_LINEAR;Punto del Bianco - Correzione
 TP_RAWEXPOS_PRESER;Punto del Bianco - Protezione Alteluci
 TP_RAWEXPOS_TWOGREEN;Valori del verde uniti
@@ -1264,10 +1241,6 @@ TP_RAW_LABEL;Demosaicizzazione
 TP_RAW_LMMSEITERATIONS;Passaggi di miglioramento LMMSE
 TP_RAW_LMMSE_TOOLTIP;Aggiunge gamma (passo 1) - Aggiunge mediana (passi 2-4), poi perfeziona (passi 5-6) per ridurre gli artefatti e migliorare il rapporto segnale/rumore.
 TP_RESIZE_APPLIESTO;Applica a:
-TP_RESIZE_BICUBICSF;Bicubico (più graduale)
-TP_RESIZE_BICUBICSH;Bicubico (più definito)
-TP_RESIZE_BICUBIC;Bicubico
-TP_RESIZE_BILINEAR;Bilineare
 TP_RESIZE_CROPPEDAREA;Zona ritagliata
 TP_RESIZE_FITBOX;Riquadro delimitato
 TP_RESIZE_FULLIMAGE;Tutta l'immagine
@@ -1618,6 +1591,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !TP_COLORTONING_TWOBY;Special a* and b*
 !TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
 !TP_COLORTONING_TWOSTD;Standard chroma
+!TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_DIRPYRDENOISE_33;3×3 strong

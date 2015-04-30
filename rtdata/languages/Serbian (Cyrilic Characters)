@@ -11,8 +11,6 @@ CURVEEDITOR_CURVES;Кривуље
 CURVEEDITOR_CURVE;Кривуља
 CURVEEDITOR_CUSTOM;Произвољно
 CURVEEDITOR_DARKS;Тамно
-CURVEEDITOR_FILEDLGFILTERANY;Све датотеке
-CURVEEDITOR_FILEDLGFILTERCURVE;Датотеке са кривама
 CURVEEDITOR_HIGHLIGHTS;Пресветло
 CURVEEDITOR_LIGHTS;Светло
 CURVEEDITOR_LINEAR;Линеарно
@@ -356,7 +354,6 @@ MAIN_BUTTON_FULLSCREEN;Цео екран
 MAIN_BUTTON_PREFERENCES;Поставке
 MAIN_BUTTON_PUTTOQUEUE;Закажи
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Додаје тренутну слику у заказане <b>Ctrl+B</b>
-MAIN_BUTTON_SAVEAS;Као...
 MAIN_BUTTON_SAVE;Сачувај
 MAIN_BUTTON_SAVE_TOOLTIP;Чува тренутну слику <b>Ctrl+С</b>
 MAIN_BUTTON_SENDTOEDITOR;Уреди
@@ -405,24 +402,6 @@ MAIN_TOOLTIP_SHOWHIDELP1;Приказује/сакрива леву површ <
 MAIN_TOOLTIP_SHOWHIDERP1;Приказује/сакрива десну површ <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Приказује/сакрива горњу површ <b>Shift-L</b>
 MAIN_TOOLTIP_TOGGLE;Приказује слику пре и после обраде <b>Б</b>
-NAVIGATOR_B_NA;П = ○
-NAVIGATOR_B_VALUE;П = %1
-NAVIGATOR_G_NA;З = ○
-NAVIGATOR_G_VALUE;З = %1
-NAVIGATOR_H_NA;Х = ○
-NAVIGATOR_H_VALUE;Х = %1
-NAVIGATOR_LAB_A_NA;А = ○
-NAVIGATOR_LAB_A_VALUE;А = %1
-NAVIGATOR_LAB_B_NA;Б = ○
-NAVIGATOR_LAB_B_VALUE;Б = %1
-NAVIGATOR_LAB_L_NA;Л = ○
-NAVIGATOR_LAB_L_VALUE;Л = %1
-NAVIGATOR_R_NA;Ц = ○
-NAVIGATOR_R_VALUE;Ц = %1
-NAVIGATOR_S_NA;С = ○
-NAVIGATOR_S_VALUE;С = %1
-NAVIGATOR_V_NA;В = ○
-NAVIGATOR_V_VALUE;В = %1
 NAVIGATOR_XY_NA;x = ○, y = ○
 PARTIALPASTE_BASICGROUP;Основна подешавања
 PARTIALPASTE_CACORRECTION;Исправљање аберација
@@ -453,7 +432,6 @@ PARTIALPASTE_IMPULSEDENOISE;Импулсно уклањање шума
 PARTIALPASTE_IPTCINFO;ИПТЦ подави
 PARTIALPASTE_LABCURVE;Лаб крива
 PARTIALPASTE_LENSGROUP;Подешавања објектива
-PARTIALPASTE_LUMACURVE;Крива луминасе
 PARTIALPASTE_METAICMGROUP;Метаподаци/ИЦМ подешавања
 PARTIALPASTE_PERSPECTIVE;Перспектива
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Уједначавање зелене
@@ -477,7 +455,6 @@ PARTIALPASTE_SHARPENING;Оштрење
 PARTIALPASTE_SHARPENMICRO;Микроконтраст
 PARTIALPASTE_VIGNETTING;Исправљање вињетарења
 PARTIALPASTE_WHITEBALANCE;Баланс беле
-POPUPBUTTON_SELECTOPTIONHINT;РМБ за измену опције
 PREFERENCES_ADD;Додај
 PREFERENCES_APPLNEXTSTARTUP;примењује се након поновног покретања
 PREFERENCES_AUTOMONPROFILE;Сам примени профиле монитора из оперативног система
@@ -486,15 +463,9 @@ PREFERENCES_BEHAVIOR;Понашање
 PREFERENCES_CACHECLEARALL;Обриши све
 PREFERENCES_CACHECLEARPROFILES;Обриши профиле
 PREFERENCES_CACHECLEARTHUMBS;Обриши приказе
-PREFERENCES_CACHEFORMAT1;Власнички (брже и боље)
-PREFERENCES_CACHEFORMAT2;JPEG (мање места на диску)
 PREFERENCES_CACHEMAXENTRIES;Највећи број мест у остави
 PREFERENCES_CACHEOPTS;Подешавање оставе
-PREFERENCES_CACHETHUMBFORM;Формат умањених приказа
 PREFERENCES_CACHETHUMBHEIGHT;Највећа висина приказа
-PREFERENCES_CLEARDLG_LINE1;Чишћење оставе
-PREFERENCES_CLEARDLG_LINE2;Ово може да потраје неколико секунди.
-PREFERENCES_CLEARDLG_TITLE;Сачекајте
 PREFERENCES_CLIPPINGIND;Показивачи одсечених делова
 PREFERENCES_CMETRICINTENT;Колориметријска намера
 PREFERENCES_CUSTPROFBUILDHINT;Извршна датотека (или скрипта) која се позива када изграђујете нови почетни профил за слику.nПрихвата параметре из командне линије ради прављења .pp3 датотеке на основу неких правила:n[Путања до RAW/JPG] [Путања подразумеваног профила] [Бленда] [Експозиција у s] [Жижна дужина mm] [ИСО] [Објектив] [Фото-апарат]
@@ -555,7 +526,6 @@ PREFERENCES_OUTDIRTEMPLATE;Употреби шаблон
 PREFERENCES_OUTDIR;Излазни директоријум
 PREFERENCES_OVERLAY_FILENAMES;Постави преко умањеног приказа
 PREFERENCES_OVERWRITEOUTPUTFILE;Препиши постојеће излазне датотеке
-PREFERENCES_PANFACTORFRAME;Убрзање при померању платна
 PREFERENCES_PANFACTORLABEL;Фактор
 PREFERENCES_PARSEDEXTADDHINT;Додаје уписану екстензију на списак
 PREFERENCES_PARSEDEXTADD;Додај екстензију
@@ -594,8 +564,6 @@ PREFERENCES_TP_VSCROLLBAR;Сакриј клизаче у области са а�
 PREFERENCES_TUNNELMETADATA;Копирај неизмењене IPTC/XMP (када је слика означена другим програмом)
 PREFERENCES_USESYSTEMTHEME; Користи системску тему
 PREFERENCES_WORKFLOW;Ток обраде
-PROFILEPANEL_FILEDLGFILTERANY;Све датотеке
-PROFILEPANEL_FILEDLGFILTERPP;Профили за обраду
 PROFILEPANEL_LABEL;Профили обраде
 PROFILEPANEL_LOADDLGLABEL;Учитај профил за обраду...
 PROFILEPANEL_PCUSTOM;Произвољно
@@ -616,24 +584,19 @@ PROGRESSBAR_READY;Чекам
 PROGRESSBAR_SAVEJPEG;Чувам JPEG датотеку...
 PROGRESSBAR_SAVEPNG;Чувам PNG датотеку...
 PROGRESSBAR_SAVETIFF;Чувам TIFF датотеку...
-PROGRESSDLG_LOADING;Учитавам датотеку...
-PROGRESSDLG_PROCESSING;Обрађујем слику...
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Профил измењен у разгледачу
-PROGRESSDLG_SAVING;Чувам датотеку...
 P_GAMMA_CURV;гама
 QINFO_ISO;ИСО
 QINFO_NOEXIF;Нису доступни Exif подаци.
 SAVEDLG_AUTOSUFFIX;Сам додај суфикс уколико датотека већ постоји
 SAVEDLG_FILEFORMAT;Формат датотеке
 SAVEDLG_JPEGQUAL;JPEG квалитет
-SAVEDLG_JPGFILTER;JPEG датотеке
 SAVEDLG_PNGCOMPR;PNG паковање
 SAVEDLG_PUTTOQUEUEHEAD;Премешта слику на почетак заказаних
 SAVEDLG_PUTTOQUEUETAIL;Премешта слику на крај заказаних
 SAVEDLG_PUTTOQUEUE;Заказује слику за обраду
 SAVEDLG_SAVEIMMEDIATELY;Одмах сачувај
 SAVEDLG_SAVESPP;Сачувај параметре обраде уз слику
-SAVEDLG_TIFFFILTER;TIFF датотеке
 SAVEDLG_TIFFUNCOMPRESSED;Незапаковани TIFF
 TOOLBAR_TOOLTIP_CROP;Поставља оквир за исецање (пречица: Ц)
 TOOLBAR_TOOLTIP_HAND;Алат за померање (пречица: Н)
@@ -647,35 +610,13 @@ TP_CHMIXER_GREEN;Зелена
 TP_CHMIXER_LABEL;Мешање канала
 TP_CHMIXER_RED;Црвена
 TP_CHROMATABERR_LABEL;Хроматске аберације
-TP_COARSETRAF_DEGREE;степени:
 TP_COARSETRAF_TOOLTIP_HFLIP;Изврће слику хоризонтално
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Окреће слику улево
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Окреће слику удесно
 TP_COARSETRAF_TOOLTIP_VFLIP;Изврће слику вертикално
-TP_COLORBOOST_ACHANNEL;Канал „а“
-TP_COLORBOOST_AMOUNT;Количина
-TP_COLORBOOST_AVOIDCOLORCLIP;Избегни одсецање боја
-TP_COLORBOOST_BCHANNEL;Канал „б“
-TP_COLORBOOST_CHANNEL;Канал
-TP_COLORBOOST_CHSEPARATE;раздвоји
-TP_COLORBOOST_ENABLESATLIMITER;Омогући ограничење засићености
-TP_COLORBOOST_LABEL;Појачање боја
-TP_COLORBOOST_SATLIMIT;Граница за засићеност
-TP_COLORDENOISE_EDGESENSITIVE;Осетљиво на ивице
-TP_COLORDENOISE_EDGETOLERANCE;Толеранција ивице
-TP_COLORDENOISE_LABEL;Уклаљање колорног шума
-TP_COLORDENOISE_RADIUS;Полупречник
-TP_COLORSHIFT_BLUEYELLOW;Плава-Жута
-TP_COLORSHIFT_GREENMAGENTA;Зелена-Магнета
-TP_COLORSHIFT_LABEL;Померај боја
-TP_CROP_DPI;ТПИ=
 TP_CROP_FIXRATIO;Сразмерно:
 TP_CROP_GTDIAGONALS;Правило дијагонала
 TP_CROP_GTGRID;Мрежа
-TP_CROP_GTHARMMEANS1;Златни пресек 1
-TP_CROP_GTHARMMEANS2;Златни пресек 2
-TP_CROP_GTHARMMEANS3;Златни пресек 3
-TP_CROP_GTHARMMEANS4;Златни пресек 4
 TP_CROP_GTNONE;Ништа
 TP_CROP_GTRULETHIRDS;Правило трећина
 TP_CROP_GUIDETYPE;Вођицe:
@@ -691,7 +632,6 @@ TP_DARKFRAME_LABEL;Тамни кадар
 TP_DEFRINGE_LABEL;Уклаљање ореола
 TP_DEFRINGE_RADIUS;Полупречник
 TP_DEFRINGE_THRESHOLD;Праг
-TP_DETAIL_AMOUNT;Количина
 TP_DIRPYRDENOISE_CHROMA;Боја
 TP_DIRPYRDENOISE_GAMMA;Гама
 TP_DIRPYRDENOISE_LABEL;Дирекционо пирамидно уклањање шума
@@ -707,13 +647,6 @@ TP_DISTORTION_AMOUNT;Количина
 TP_DISTORTION_AUTO;Сам исправи изобличења
 TP_DISTORTION_AUTO_TIP;(Експериментално) Аутоматски исправља изобличења неких апарата (М4/3, неки компакти, и др.)
 TP_DISTORTION_LABEL;Изобличења
-TP_EQUALIZER_CONTRAST_MINUS;Контраст -
-TP_EQUALIZER_CONTRAST_PLUS;Контраст +
-TP_EQUALIZER_FINEST;најфиније
-TP_EQUALIZER_LABEL;Таласно уједначење
-TP_EQUALIZER_LARGEST;најгрубље
-TP_EQUALIZER_NEUTRAL;Неутрално
-TP_EXPOSCORR_LABEL;Raw бела тачка
 TP_EXPOSURE_AUTOLEVELS;Ауто-нивои
 TP_EXPOSURE_BLACKLEVEL;Црна
 TP_EXPOSURE_BRIGHTNESS;Осветљеност
@@ -726,7 +659,6 @@ TP_EXPOSURE_CURVEEDITOR;Крива нијанси
 TP_EXPOSURE_EXPCOMP;Компензација
 TP_EXPOSURE_LABEL;Експозиција
 TP_EXPOSURE_SATURATION;Засићеност
-TP_EXPO_AFTER; Пре интерполације (пре превода у РГБ)
 TP_FLATFIELD_AUTOSELECT;Сам изабери
 TP_FLATFIELD_BLURRADIUS;Полупречник замућења
 TP_FLATFIELD_BLURTYPE;Замути
@@ -735,7 +667,6 @@ TP_FLATFIELD_BT_HORIZONTAL;Хоризонтално
 TP_FLATFIELD_BT_VERTHORIZ;Хориз. и вертик.
 TP_FLATFIELD_BT_VERTICAL;Вертикално
 TP_FLATFIELD_LABEL;Равно поље
-TP_GAMMA_COMMENT;(онемогућен је излазни профил, осим „default“)
 TP_GAMMA_FREE;Гама слобода
 TP_GAMMA_OUTPUT;Излазна гама
 TP_GAMMA_SLOP;нагиб (линеарни)
@@ -745,23 +676,12 @@ TP_HLREC_COLOR;Пропагинација боје
 TP_HLREC_LABEL;Чупање светлих делова
 TP_HLREC_LUMINANCE;Извлачење луминансе
 TP_HLREC_METHOD;Начин: 
-TP_HSVEQUALIZER1;Црвена
-TP_HSVEQUALIZER2;Жута
-TP_HSVEQUALIZER3;Лимун
-TP_HSVEQUALIZER4;Зелена
-TP_HSVEQUALIZER5;Водена
-TP_HSVEQUALIZER6;Плава
-TP_HSVEQUALIZER7;Љубичаста
-TP_HSVEQUALIZER8;Магнета
 TP_HSVEQUALIZER_CHANNEL;ХСВ канал
 TP_HSVEQUALIZER_HUE;Нијанса
 TP_HSVEQUALIZER_LABEL;Уједначење ХСВ канала
 TP_HSVEQUALIZER_SAT;Засићеност
 TP_HSVEQUALIZER_VAL;Вредност
 TP_ICM_BLENDCMSMATRIX;Утопи светле делове у матрицу
-TP_ICM_FILEDLGFILTERANY;Било која датотека
-TP_ICM_FILEDLGFILTERICM;ИЦЦ профили
-TP_ICM_GAMMABEFOREINPUT;Профил за примену Гаме
 TP_ICM_INPUTCAMERAICC;Фото-апарат или стандардни ИЦЦ
 TP_ICM_INPUTCAMERA;Подразумевано из апарата
 TP_ICM_INPUTCUSTOM;Произвољно
@@ -776,24 +696,13 @@ TP_ICM_SAVEREFERENCE;Сачувај слику као референцу за п
 TP_ICM_WORKINGPROFILE;Радни профил
 TP_IMPULSEDENOISE_LABEL;Импулсно уклањање шума
 TP_IMPULSEDENOISE_THRESH;Праг
-TP_LABCURVE_AVOIDCOLORCLIP;Онемогући одсецање боје
 TP_LABCURVE_BRIGHTNESS;Осветљеност
 TP_LABCURVE_CONTRAST;Контраст
 TP_LABCURVE_CURVEEDITOR;Крива светлости
-TP_LABCURVE_ENABLESATLIMITER;Укључи граничник засићености
 TP_LABCURVE_LABEL;Лаб крива
-TP_LABCURVE_SATLIMIT;Граничник засићености
-TP_LABCURVE_SATURATION;Засићеност
 TP_LENSGEOM_AUTOCROP;Сам исеци
 TP_LENSGEOM_FILL;Сам попуни
 TP_LENSGEOM_LABEL;Објектив и геометрија
-TP_LUMACURVE_BLACKLEVEL;Црна
-TP_LUMACURVE_BRIGHTNESS;Осветљење
-TP_LUMACURVE_COMPRHIGHLIGHTS;Сабијање светлог
-TP_LUMACURVE_COMPRSHADOWS;Сабијање сенки
-TP_LUMACURVE_CONTRAST;Контраст
-TP_LUMACURVE_CURVEEDITOR;Крива лиминансе
-TP_LUMACURVE_LABEL;Крива луминансе
 TP_PERSPECTIVE_HORIZONTAL;Хоризонтална
 TP_PERSPECTIVE_LABEL;Перспектива
 TP_PERSPECTIVE_VERTICAL;Вертикална
@@ -804,11 +713,7 @@ TP_PREPROCESS_NO_FOUND;Није пронађено
 TP_RAWCACORR_AUTO;Исправи хроматске аберације
 TP_RAWCACORR_CABLUE;Плава
 TP_RAWCACORR_CARED;Црвена
-TP_RAWEXPOS_BLACKONE;Ниво црне: Црвена
 TP_RAWEXPOS_BLACKS;Ниво црне
-TP_RAWEXPOS_BLACKTHREE;Ниво црне: Зелена 2
-TP_RAWEXPOS_BLACKTWO;Ниво црне: Плава
-TP_RAWEXPOS_BLACKZERO;Ниво црне: Зелена 1 (водећа)
 TP_RAWEXPOS_LINEAR;Линеарни фактор корекције
 TP_RAWEXPOS_PRESER;Очување светлих делова
 TP_RAWEXPOS_TWOGREEN;Обе зелене
@@ -818,13 +723,7 @@ TP_RAW_DMETHOD;Начин
 TP_RAW_FALSECOLOR;Кораци за пригушивање лажне боје
 TP_RAW_LABEL;Расклапање мозаика
 TP_RESIZE_APPLIESTO;Примени на:
-TP_RESIZE_BICUBICSF;Бикубично (мекше)
-TP_RESIZE_BICUBICSH;Бикубично (оштрије)
-TP_RESIZE_BICUBIC;Бикубично
-TP_RESIZE_BILINEAR;Билинеарно
 TP_RESIZE_CROPPEDAREA;Исечену област
-TP_RESIZE_DOWNSCALEB;Смањење размере (боље)
-TP_RESIZE_DOWNSCALEF;Смањење размере (брже)
 TP_RESIZE_FITBOX;Ширину и висину
 TP_RESIZE_FULLIMAGE;Целу слику
 TP_RESIZE_HEIGHT;Висину
@@ -837,9 +736,7 @@ TP_RESIZE_SCALE;Умањење
 TP_RESIZE_SPECIFY;Изабери:
 TP_RESIZE_WIDTH;Ширину
 TP_RESIZE_W;Ш:
-TP_ROTATE_AUTOCROP;Сам исеци
 TP_ROTATE_DEGREE;Степени:
-TP_ROTATE_FILL;Попуни
 TP_ROTATE_LABEL;Ротација
 TP_ROTATE_SELECTLINE;    Постави праву линију
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Светло
@@ -1196,7 +1093,16 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !MAIN_TOOLTIP_PREVIEWL;Preview the <b>Luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 !MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
 !MAIN_TOOLTIP_THRESHOLD;Threshold
+!NAVIGATOR_B;B:
+!NAVIGATOR_G;G:
+!NAVIGATOR_H;H:
+!NAVIGATOR_LAB_A;a*:
+!NAVIGATOR_LAB_B;b*:
+!NAVIGATOR_LAB_L;L*:
 !NAVIGATOR_NA; --
+!NAVIGATOR_R;R:
+!NAVIGATOR_S;S:
+!NAVIGATOR_V;V:
 !NAVIGATOR_XY_FULL;Width: %1, Height: %2
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
@@ -1507,6 +1413,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_COLORTONING_TWOSTD;Standard chroma
 !TP_CROP_GTEPASSPORT;Biometric Passport
 !TP_CROP_GTFRAME;Frame
+!TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_DIRPYRDENOISE_33;3×3 strong
