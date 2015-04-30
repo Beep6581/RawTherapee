@@ -26,6 +26,7 @@
 #26 2015-02-17 firefly
 #27 2015-02-21 firefly
 #28 2015-03-03 firefly
+#29 2015-04-20 firefly
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -46,7 +47,7 @@ CURVEEDITOR_HIGHLIGHTS;ハイライト
 CURVEEDITOR_LIGHTS;ライト
 CURVEEDITOR_LINEAR;リニア
 CURVEEDITOR_LOADDLGLABEL;カーブの読み込み...
-CURVEEDITOR_MINMAXCPOINTS;最小/最大 コンロール・ポイント
+CURVEEDITOR_MINMAXCPOINTS;イコライザ
 CURVEEDITOR_NURBS;コントロールケージ
 CURVEEDITOR_PARAMETRIC;パラメトリック
 CURVEEDITOR_SAVEDLGLABEL;カーブの保存...
@@ -584,6 +585,26 @@ HISTORY_MSG_337;ウェーブレット　色相の範囲
 HISTORY_MSG_338;ウェーブレット　シャープネスの半径
 HISTORY_MSG_339;ウェーブレット　シャープネスの適用量
 HISTORY_MSG_340;ウェーブレット　強さ
+HISTORY_MSG_341;ウェーブレット　ドビッシー
+HISTORY_MSG_342;ウェーブレット　最初のレベルを強化
+HISTORY_MSG_343;ウェーブレット　色度のレベル
+HISTORY_MSG_344;ウェーブレット　色度の方式　スライダー/カーブ
+HISTORY_MSG_345;ウェーブレット　ローカルコントラスト
+HISTORY_MSG_346;ウェーブレット　ローカルコントラスト　方式
+HISTORY_MSG_347;ウェーブレット　レベル10+ノイズ低減
+HISTORY_MSG_348;ウェーブレット　レベル11+ノイズ低減
+HISTORY_MSG_349;ウェーブレット　レベル12+ノイズ低減
+HISTORY_MSG_350;ウェーブレット　エッジ検出
+HISTORY_MSG_351;ウェーブレット　色相カーブ
+HISTORY_MSG_352;ウェーブレット　背景
+HISTORY_MSG_353;ウェーブレット　エッジ検出　値
+HISTORY_MSG_354;ウェーブレット　エッジ検出　強化
+HISTORY_MSG_355;ウェーブレット　エッジ検出　しきい値（低）
+HISTORY_MSG_356;ウェーブレット　エッジ検出　しきい値（高）
+HISTORY_MSG_357;ウェーブレット　ノイズ低減　リンク
+HISTORY_MSG_358;ウェーブレット　コントラスト　色相カーブ
+HISTORY_MSG_359;ホット/デッド　しきい値
+HISTORY_MSG_360;トーンマッピング　ガンマ
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;スナップショット
@@ -812,6 +833,11 @@ PREFERENCES_CLUTSCACHE;HaldCLUT cache
 PREFERENCES_CLUTSCACHE_LABEL;cacheに置けるHaldCLUTの最大数
 PREFERENCES_CLUTSDIR;HaldCLUTのディレクトリー
 PREFERENCES_CMETRICINTENT;レンダリング・インテント
+PREFERENCES_CURVEBBOXPOS;カーブのコピーペイストボタンの位置
+PREFERENCES_CURVEBBOXPOS_ABOVE;上
+PREFERENCES_CURVEBBOXPOS_BELOW;下
+PREFERENCES_CURVEBBOXPOS_LEFT;左
+PREFERENCES_CURVEBBOXPOS_RIGHT;右
 PREFERENCES_CUSTPROFBUILDHINT;画像から新規のプロファイルを作成する際に呼び出される実行ファイル (またはスクリプト)\n.PP3生成のルールに基づいたコマンドライン・パラメータを受け取ります\n[raw/JPG・パス] [デフォルトのプロファイルのパス] [f-数値] [露出時間 秒] [焦点距離 mm] [ISO] [レンズ] [カメラ]
 PREFERENCES_CUSTPROFBUILDKEYFORMAT;キーフォーマット
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;名前
@@ -904,6 +930,7 @@ PREFERENCES_MONITORICC;モニター・カラープロファイル
 PREFERENCES_MULTITABDUALMON;独自のウィンドウモードによるマルチ編集タブ
 PREFERENCES_MULTITAB;マルチ編集タブモード
 PREFERENCES_NAVGUIDEBRUSH;ナビゲーターのガイドカラー
+PREFERENCES_NAVIGATIONFRAME;ナビゲーション
 PREFERENCES_NOISE;ノイズ低減
 PREFERENCES_OUTDIRFOLDERHINT;選択したフォルダに画像を保存します
 PREFERENCES_OUTDIRFOLDER;フォルダに保存
@@ -913,8 +940,7 @@ PREFERENCES_OUTDIR;出力ディレクトリ
 PREFERENCES_OVERLAY_FILENAMES;ファイル名をサムネイル上に透過表示する
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;ファイル名を編集パネルのサムネイル上に透過表示する
 PREFERENCES_OVERWRITEOUTPUTFILE;既存ファイルを上書き
-PREFERENCES_PANFACTORFRAME;パンの速度
-PREFERENCES_PANFACTORLABEL;増幅値
+PREFERENCES_PANFACTORLABEL;パン速度の増幅
 PREFERENCES_PARSEDEXTADDHINT;拡張子を記入し このボタンでリストに追加します
 PREFERENCES_PARSEDEXTADD;拡張子の追加
 PREFERENCES_PARSEDEXTDELHINT;選択した拡張子をリストから削除します
@@ -931,11 +957,16 @@ PREFERENCES_PROFILESAVECACHE;処理プロファイルのパラメータをcache�
 PREFERENCES_PROFILESAVEINPUT;処理プロファイルのパラメータを入力ファイルと同じディレクトリに保存
 PREFERENCES_PROPERTY;プロパティ
 PREFERENCES_PSPATH;Adobe Photoshop のインストール・ディレクトリ
+PREFERENCES_REMEMBERZOOMPAN;ズームレベルとパン速度を記憶する
+PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;現在の画像のズームレベルとパン速度を記憶し、新しく開く画像に適用\n\nこのオプションが使えるのは、編集画面のモードが“シングル編集”で、“プレビューのズームレベルが100%以下の場合に使うデモザイク”が“pp3に従う”と設定されている場合だけです。
 PREFERENCES_RGBDTL_LABEL;スレッドの最大数
 PREFERENCES_RGBDTL_TOOLTIP;ノイズ低減は、10メガピクセル画像では128MB程度、40メガピクセル画像では512MBを必要とします、そして更にスレッドごとに128MBが必要です。複数のスレッドを同時に実行すると演算が速くなります。自動的にできる限り多くのスレッドを使用するには"0"の設定のままにします
 PREFERENCES_SELECTFONT;フォント選択
 PREFERENCES_SELECTLANG;言語選択
 PREFERENCES_SELECTTHEME;テーマの選択
+PREFERENCES_SERIALIZE_TIFF_READ;TIFFファイルの読み込み設定
+PREFERENCES_SERIALIZE_TIFF_READ_LABEL;TIFFファイルのシリアル化
+PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;画像フォルダーが多数の非圧縮のTIFFファイルで閉められている場合、このオプションを有効にすることで、サムネイル画像生成の効率が上がります
 PREFERENCES_SET;設定
 PREFERENCES_SHOWBASICEXIF;基本Exif情報を表示
 PREFERENCES_SHOWDATETIME;日付表示
@@ -1228,12 +1259,11 @@ TP_CROP_GTDIAGONALS;対角線
 TP_CROP_GTEPASSPORT;バイオメトリック・パスポート
 TP_CROP_GTFRAME;フレーム
 TP_CROP_GTGRID;グリッド
-TP_CROP_GTHARMMEANS1;調和平均 1
-TP_CROP_GTHARMMEANS2;調和平均 2
-TP_CROP_GTHARMMEANS3;調和平均 3
-TP_CROP_GTHARMMEANS4;調和平均 4
+TP_CROP_GTHARMMEANS;調和平均
 TP_CROP_GTNONE;なし
 TP_CROP_GTRULETHIRDS;三分割
+TP_CROP_GTTRIANGLE1;三角構図1
+TP_CROP_GTTRIANGLE2;三角構図2
 TP_CROP_GUIDETYPE;ガイドタイプ:
 TP_CROP_H;高さ
 TP_CROP_LABEL;切り抜き
@@ -1314,7 +1344,7 @@ TP_DIRPYRDENOISE_SOFT;3x3
 TP_DIRPYRDENOISE_TILELABEL;タイルのサイズ=%1, 中心位置: X座標=%2  Y座標=%3
 TP_DIRPYREQUALIZER_ALGO;肌色の範囲
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;ファイン：撮影の肌色に近い部分に働くアルゴリズム、他の色への影響を最小限に抑えます\n広範：　アーティファクトの増加を避けるアルゴリズムです
-TP_DIRPYREQUALIZER_GAMUT;アーティファクトを軽減
+TP_DIRPYREQUALIZER_ARTIF;アーティファクトを軽減
 TP_DIRPYREQUALIZER_HUESKIN;肌色の色相
 TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;このカーブは上部ほど、アルゴリズムが効率良く働くことを示しています。\n下部ほど、色相の遷移が見られる部分です。\nコントロールポイントを左右に大きく動かす必要が生じたり、アーティファクトが生じたりする場合は、<b>ホワイトバランスが妥当ではない</b>時です。\n他の色への影響を避けるには、調整範囲を少し減らします
 TP_DIRPYREQUALIZER_LABEL;ディテールレベルのコントラスト
@@ -1332,6 +1362,7 @@ TP_DISTORTION_AUTO;自動歪曲収差補正
 TP_DISTORTION_AUTO_TIP;(試用) 自動レンズ収差補正 (M4/3, 一部のコンデジ, etc.)
 TP_DISTORTION_LABEL;歪曲収差補正
 TP_EPD_EDGESTOPPING;エッジ停止
+TP_EPD_GAMMA;ガンマ
 TP_EPD_LABEL;トーンマッピング 
 TP_EPD_REWEIGHTINGITERATES;再加重反復
 TP_EPD_SCALE;スケール
@@ -1429,6 +1460,7 @@ TP_ICM_LABEL;カラー・マネジメント
 TP_ICM_NOICM;No ICM: sRGB 出力
 TP_ICM_OUTPUTPROFILE;出力プロファイル
 TP_ICM_SAVEREFERENCE;プロファイリングを参照する画像を保存
+TP_ICM_SAVEREFERENCE_APPLYWB;ホワイトバランスを適用
 TP_ICM_SAVEREFERENCE_TOOLTIP;入力プロファイルが適用される前のリニアなTIFF画像を保存します。キャリブレーション目的やカメラプロファイルの作成などに使います。
 TP_ICM_TONECURVE;DCPトーンカーブ使用
 TP_ICM_TONECURVE_TOOLTIP;DCPのプロファイルに含まれているトーンカーブを使用することができます
@@ -1524,6 +1556,8 @@ TP_RAW_DMETHOD_PROGRESSBAR;%1 デモザイク中...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;デモザイク・リファイン中...
 TP_RAW_DMETHOD_TOOLTIP;注: IGVとLMMSEは高ISO画像に適しています
 TP_RAW_FALSECOLOR;偽色抑制処理の回数
+TP_RAW_HD;しきい値
+TP_RAW_HD_TOOLTIP;設定値を低くすると、ホット/デッドピクセルの検出が強くなりますが、偽陽性によりアーティファクトが増えるかもしれません。ホット/デッドピクセルフィルターの使用で、アーティファクトの発生が認められた場合は、しきい値を少しずつアーティファクトが消えるまで増やします。
 TP_RAW_LABEL;デモザイク
 TP_RAW_LMMSEITERATIONS;LMMSE 拡張処理
 TP_RAW_LMMSE_TOOLTIP;ガンマ追加 (step 1) - メディアン追加 (step 2,3,4), リファイン追加 (step 5,6) アーティファクトを低減しノイズ比を向上させます
@@ -1531,10 +1565,6 @@ TP_RAW_SENSOR_BAYER_LABEL;ベイヤー配列を使ったセンサー
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-passが最適です（低ISO画像には奨められます)\n高ISO画像の場合、1-passと3-passの違いは殆どありません、処理速度は前者の方が速いです。
 TP_RAW_SENSOR_XTRANS_LABEL;X-Transマトリクスを使ったセンサー
 TP_RESIZE_APPLIESTO;適用領域:
-TP_RESIZE_BICUBICSF;バイキュービック (ソフトに)
-TP_RESIZE_BICUBICSH;バイキュービック (シャープに)
-TP_RESIZE_BICUBIC;バイキュービック
-TP_RESIZE_BILINEAR;バイリニア
 TP_RESIZE_CROPPEDAREA;切り抜き画像
 TP_RESIZE_FITBOX;バウンディング・ボックス
 TP_RESIZE_FULLIMAGE;全画像
@@ -1627,22 +1657,35 @@ TP_WAVELET_9;レベル 9
 TP_WAVELET_ALL;全てのレベルと方向を合わせた画像
 TP_WAVELET_APPLYTO;適用
 TP_WAVELET_AVOID;色ずれの回避
+TP_WAVELET_B0;黒
+TP_WAVELET_B1;グレー
+TP_WAVELET_B2;残差
+TP_WAVELET_CCURVE;ローカルコントラスト
 TP_WAVELET_CH1;全ての色度
 TP_WAVELET_CH2;明清色 - 純色
 TP_WAVELET_CH3;コントラストレベルへリンク
+TP_WAVELET_CHCU;カーブ
 TP_WAVELET_CHRO;純色 - 明清色
 TP_WAVELET_CHRO_TOOLTIP;明清色と純色を調整する範囲を決めます\n 1-xのレベルが純色の調整範囲\n x-9のレベルが明清色の調整範囲
 TP_WAVELET_CHR;クロマリンク
 TP_WAVELET_CHR_TOOLTIP;色度の調整は2通りあります\na 詳細レベルのコントラストに合わせる\nb　クロマリンクのスライダーに合わせる
-TP_WAVELET_CLVCURVE;色度 - レベル
+TP_WAVELET_CHSL;スライダー
+TP_WAVELET_CHTYPE;色の種類
 TP_WAVELET_COLORT;レッド/グリーンの不透明度
 TP_WAVELET_CONTRAST_MINUS;コントラスト -
 TP_WAVELET_CONTRAST_PLUS;コントラスト +
 TP_WAVELET_CONTRA;コントラスト
 TP_WAVELET_CONTRA_TOOLTIP;残差画像のコントラストを変える\nレベル数の設定に応じて効果が違います
 TP_WAVELET_CONTR;色域の抑制
-TP_WAVELET_CURVEEDITOR_CLV_TOOLTIP;レベル（X軸）に応じた色度を返します\nレベルの値は不連続です
+TP_WAVELET_CTYPE;色の制御
+TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;元画像のローカルコントラストに応じてローカルコントラストを調節します\n横軸の低い部分は細かいローカルコントラストを表しています（実質値10~20）\n50%はローカルコントラストの平均（実質値100~300）を表しています\n66%はローカルコントラストの標準偏差（実質値300~800）を表しています\n100%はローカルコントラストの最大値を表しています（実質値3000~8000）
+TP_WAVELET_CURVEEDITOR_CH;コントラストレベル/色相
+TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;色相に応じて各レベルのコントラストを調節します\n肌色トーンと色相（赤）の調節と重複しないように注意します\nコントラストレベルにだけ作用します
+TP_WAVELET_CURVEEDITOR_HH;HH
+TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;色相に応じて、その色相を調節しますが、残差画像にだけに有効です
 TP_WAVELET_DALL;全ての方向
+TP_WAVELET_DAUB;エッジ検出の質
+TP_WAVELET_DAUB_TOOLTIP;ドビッシー係数を変更します\nD4=標準的なエッジ検出の質\nD14=高いエッジ検出の質、判別力が高い、処理時間が約10%増加\n係数の変更はエッジ検出に影響しますが、一般的に細かいレベルの質が向上します
 TP_WAVELET_DISPLAYCHRO;色度とカラートーン
 TP_WAVELET_DISPLAYGAM;色域とその抑制
 TP_WAVELET_DISPLAY;レベルとユーティリティ
@@ -1650,10 +1693,23 @@ TP_WAVELET_DISP;ウェーブレットレベルのプレビューでの表示形�
 TP_WAVELET_DONE;方向: 垂直
 TP_WAVELET_DTHR;方向: 対角線
 TP_WAVELET_DTWO;方向: 水平
+TP_WAVELET_EDCU;カーブ
+TP_WAVELET_EDGCONT;ローカルコントラスト
+TP_WAVELET_EDGCONT_TOOLTIP;スライダーを左に動かすとコントラストが減り、右に動かすと増えます
+TP_WAVELET_EDGEDETECTTHR2;ハイパス（エッジ）
+TP_WAVELET_EDGEDETECTTHR;ローパス（ノイズ）
+TP_WAVELET_EDGEDETECTTHR_TOOLTIP;しきい値を変えることで、薄いディテール（空のノイズなど）に対して、エッジのシャープネス効果が出るのを避けることが出来ます
+TP_WAVELET_EDGEDETECT;グラデーション感度
+TP_WAVELET_EDGEDETECT_TOOLTIP;エッジ検出のアルゴリズム\nスライダーを右に動かすほど、高いレベルでエッジのグラデーションを考慮します\n但し、ローカルコントラストやエッジ検出、ノイズにも影響があります
 TP_WAVELET_EDGE;エッジのシャープネス（輝度）
-TP_WAVELET_EDGTHRESH;しきい値
+TP_WAVELET_EDGREINF_TOOLTIP;半径の値を小さくすると、最初のレベルに対するエッジ検出が作用し、次に2番目のレベル、そして他のレベルに作用します
+TP_WAVELET_EDGTHRESH;ディテール
+TP_WAVELET_EDGTHRESH_TOOLTIP;低いレベルと他のレベルの区分を変更します\nしきい値を高くするほど、効果は低いレベルに重点が置かれます\n注意：マイナス値の設定は高いレベルに重点が置かれますが、アーティファクトが発生するかもしれません
 TP_WAVELET_EDRAD;半径
-TP_WAVELET_EDVAL;適用量
+TP_WAVELET_EDRAD_TOOLTIP;この機能の半径は、他のシャープ化機能のそれとは大きく異なります\n複雑な関数を使って各レベルの値を比較します\nそのため、半径がゼロでも効果が現れます
+TP_WAVELET_EDSL;しきい値スライダー
+TP_WAVELET_EDTYPE;ローカルコントラストの制御
+TP_WAVELET_EDVAL;強さ
 TP_WAVELET_FINEST;最も細かい
 TP_WAVELET_HIGHLIGHT;ハイライトの輝度範囲 (0～100)
 TP_WAVELET_HIGHSHA;シャドウ/ハイライト
@@ -1671,15 +1727,29 @@ TP_WAVELET_LEVELS;ウェーブレットのレベルの数
 TP_WAVELET_LEVELS_TOOLTIP;画像を幾つの詳細レベルに分割するか選択します。分割数が増えればメモリー使用量が増え、処理時間も長くなります。
 TP_WAVELET_LEVF;コントラスト
 TP_WAVELET_LEVLABEL;プレビューで表示可能な最大レベル=%1
+TP_WAVELET_LEVONE;レベル2
+TP_WAVELET_LEVTWO;レベル3
+TP_WAVELET_LEVZERO;レベル1
+TP_WAVELET_LINKEDG;エッジのシャープネスとリンク（強化）
+TP_WAVELET_LIPST;高度なアルゴリズム
+TP_WAVELET_LIPST_TOOLTIP;このアルゴリズムにはリプシッツ連続が使われています\n処理時間とメモリー消費量は増えますが、エッジ検出の精度が上がります
 TP_WAVELET_LOWLIGHT;シャドウの輝度範囲 (0～100)
 TP_WAVELET_MAX;最大
+TP_WAVELET_MEDGREINF;最初のレベル
+TP_WAVELET_MEDILEV;エッジ検出
 TP_WAVELET_MEDI;青空のアーティファクトを軽減
 TP_WAVELET_MIN;最小
 TP_WAVELET_NEUTRAL;ニュートラル
+TP_WAVELET_NOISE;ノイズ低減とリファイン
+TP_WAVELET_NOIS;ノイズ低減
 TP_WAVELET_ONE;選択したレベルの画像だけ
 TP_WAVELET_OPACITY;ブルー/イエローの不透明度
 TP_WAVELET_PASTEL;明清色 色度
+TP_WAVELET_PREVIEWBACK;背景
 TP_WAVELET_PREVIEWLEVELS;形式
+TP_WAVELET_RE1;強化
+TP_WAVELET_RE2;変化なし
+TP_WAVELET_RE3;効果を下げる
 TP_WAVELET_RESCHRO;色度
 TP_WAVELET_RESCONH;ハイライト
 TP_WAVELET_RESCON;シャドウ
@@ -1691,8 +1761,9 @@ TP_WAVELET_SKIN_TOOLTIP;－100にすると肌色のトーンだけが調整の�
 TP_WAVELET_SKY;色相-トーンの目標/保護
 TP_WAVELET_SKY_TOOLTIP;色相範囲の内側の色度を上げ、外側を下げます\n細部のコントラストや色度の強さに起因する青空のアーティファクトを回避します
 TP_WAVELET_STRENGTH;強さ
+TP_WAVELET_STREN;強さ
 TP_WAVELET_SUPE;エキストラ
-TP_WAVELET_SUP;選択したレベルより上と残差画像
+TP_WAVELET_SUP;選択したレベルより上の画像
 TP_WAVELET_THRESHOLD2;シャドウ調整をするレベル
 TP_WAVELET_THRESHOLD2_TOOLTIP;この数値を変更すると、9以下のレベルでシャドウの輝度が調整されます\n他のレベルは輝度範囲全体で調整されます\nシャドウの最大レベルはハイライトのレベルによって制限を受けます（9-ハイライトレベル）
 TP_WAVELET_THRESHOLD;ハイライト調整をするレベル
@@ -1709,6 +1780,11 @@ TP_WAVELET_TILES;タイルサイズ (* 128)
 TP_WAVELET_TILES_TOOLTIP;16Mの画像で、画像全体の調整を選択し、レベル数を10に設定した場合、必要なメモリー量は2Gになります\n24Mの画像でレベル10の場合は2.5G\n35Mの画像でレベル10の場合は3.3G\nメモリー容量の不足を感じる場合はタイルサイズでの調整を選択します
 TP_WAVELET_TON;カラートーン
 TP_WAVELET_UTIL;ユーティリティ
+TP_WAVELET_daub2;D2 - 低い
+TP_WAVELET_daub4;D4 - 標準
+TP_WAVELET_daub6;D6 - 標準プラス
+TP_WAVELET_daub10;D10 - やや高い
+TP_WAVELET_daub14;D14 - 高い
 TP_WBALANCE_AUTO;自動補正
 TP_WBALANCE_CAMERA;カメラ
 TP_WBALANCE_CLOUDY;曇天
@@ -1758,7 +1834,19 @@ TP_WBALANCE_WATER_HEADER;水中
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;新規ディテール ウィンドウを開く
 ZOOMPANEL_ZOOM100;100%にズーム\nショートカット: <b>z</b>
-ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる\nショートカット: <b>f</b>
+ZOOMPANEL_ZOOMFITCROPSCREEN;切り抜き画像を画面に合わせる\nショートカット：　<b>Alt</b>-<b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;画像全体を画面に合わせる\nショートカット: <b>f</b>
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!FILECHOOSER_FILTER_ANY;All files
+!FILECHOOSER_FILTER_COLPROF;Color profiles
+!FILECHOOSER_FILTER_CURVE;Curve files
+!FILECHOOSER_FILTER_LCP;Lens correction profiles
+!FILECHOOSER_FILTER_PP;Processing profiles
+!FILECHOOSER_FILTER_SAME;Same format as current photo
+!FILECHOOSER_FILTER_TIFF;TIFF files
