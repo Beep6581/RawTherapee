@@ -154,12 +154,12 @@ FILEBROWSER_POPUPCOLORLABEL3;Štítek: Zelený
 FILEBROWSER_POPUPCOLORLABEL4;Štítek: Modrý
 FILEBROWSER_POPUPCOLORLABEL5;Štítek: Nachový
 FILEBROWSER_POPUPCOLORLABEL;Barevný štítek
-FILEBROWSER_POPUPOPENINEDITOR;Otevřít v editoru
 FILEBROWSER_POPUPCOPYTO;Kopírovat do...
 FILEBROWSER_POPUPFILEOPERATIONS;Souborové operace
 FILEBROWSER_POPUPMOVEEND;Přesunout na konec fronty
 FILEBROWSER_POPUPMOVEHEAD;Přesunout na začátek fronty
 FILEBROWSER_POPUPMOVETO;Přesunout do...
+FILEBROWSER_POPUPOPENINEDITOR;Otevřít v editoru
 FILEBROWSER_POPUPOPEN;Otevřít
 FILEBROWSER_POPUPPROCESSFAST;Vložit do fronty (Rychlý export)
 FILEBROWSER_POPUPPROCESS;Vložit do fronty
@@ -1764,3 +1764,100 @@ ZOOMPANEL_ZOOMFITSCREEN;Přizpůsobit obrazovce\nZkratka: <b>f</b>
 ZOOMPANEL_ZOOMIN;Přiblížit\nZkratka: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!FILECHOOSER_FILTER_ANY;All files
+!FILECHOOSER_FILTER_COLPROF;Color profiles
+!FILECHOOSER_FILTER_CURVE;Curve files
+!FILECHOOSER_FILTER_LCP;Lens correction profiles
+!FILECHOOSER_FILTER_PP;Processing profiles
+!FILECHOOSER_FILTER_SAME;Same format as current photo
+!FILECHOOSER_FILTER_TIFF;TIFF files
+!HISTORY_MSG_341;Wavelet Daubechies
+!HISTORY_MSG_342;Wavelet Reinforce first level
+!HISTORY_MSG_343;Wavelet level chroma
+!HISTORY_MSG_344;Wavelet Meth chroma sl/cur
+!HISTORY_MSG_345;Wavelet Local contrast
+!HISTORY_MSG_346;Wavelet Local contrast Meth
+!HISTORY_MSG_347;Wavelet Level0 + denoise
+!HISTORY_MSG_348;Wavelet Level1 + denoise
+!HISTORY_MSG_349;Wavelet Level2 + denoise
+!HISTORY_MSG_350;Wavelet edgedetect
+!HISTORY_MSG_351;Wavelet Curve Hue
+!HISTORY_MSG_352;Wavelet Background
+!HISTORY_MSG_353;Wavelet edgedetect value
+!HISTORY_MSG_354;Wavelet edgedetect enhance
+!HISTORY_MSG_355;Wavelet edgedetect thresholdLow
+!HISTORY_MSG_356;Wavelet edgedetect thresholdHi
+!HISTORY_MSG_357;Wavelet Denoise link
+!HISTORY_MSG_358;Wavelet Contrast Hue curve
+!HISTORY_MSG_359;Hot/Dead - Threshold
+!HISTORY_MSG_360;TM Gamma
+!PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
+!PREFERENCES_CURVEBBOXPOS_ABOVE;Above
+!PREFERENCES_CURVEBBOXPOS_BELOW;Below
+!PREFERENCES_CURVEBBOXPOS_LEFT;Left
+!PREFERENCES_CURVEBBOXPOS_RIGHT;Right
+!PREFERENCES_NAVIGATIONFRAME;Navigation
+!PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
+!PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
+!PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
+!PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize read of tiff files
+!PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;When working with folders full of uncompressed tiff files enabling this option can increase performance of thumb generation.
+!TP_CROP_GTTRIANGLE1;Golden Triangles 1
+!TP_CROP_GTTRIANGLE2;Golden Triangles 2
+!TP_DIRPYREQUALIZER_ARTIF;Reduce artifacts
+!TP_EPD_GAMMA;Gamma
+!TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
+!TP_RAW_HD;Threshold
+!TP_RAW_HD_TOOLTIP;Lower values make hot/dead pixel detection more aggressive, but false positives may lead to artifacts. If you notice any artifacts appearing when enabling the Hot/Dead Pixel Filters, gradually increase the threshold value until they disappear.
+!TP_WAVELET_B0;Black
+!TP_WAVELET_B1;Grey
+!TP_WAVELET_B2;Residual
+!TP_WAVELET_CCURVE;Local contrast
+!TP_WAVELET_CHCU;Curve
+!TP_WAVELET_CHSL;Sliders
+!TP_WAVELET_CHTYPE;Chrominance type
+!TP_WAVELET_CTYPE;Chrominance control
+!TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Modify local contral in fonction of original local contrast (absciss)\nLow absciss represents small local contrast (real values about 10..20)\n50% absciss represents average of local contrast (real value about 100..300)\n66% absciss represents standard deviation of local contrast (real value about 300..800)\n100% represents maximum (real value about 3000..8000)
+!TP_WAVELET_CURVEEDITOR_CH;Contrast levels /Hue
+!TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Modify each level contrast in function oh hue\nCareful not to overwrite changes made with skin-tone hue (red)\nOnly active for contrast levels
+!TP_WAVELET_CURVEEDITOR_HH;HH
+!TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Modify Hue in function of Hue, only for residual image
+!TP_WAVELET_DAUB;Edge Quality
+!TP_WAVELET_DAUB_TOOLTIP;Change Daubechies coefficients\nD4=standard quality\nD14=best quality, more discriminant, increase slightly time treatment about 10%\nThese factors affect the detection of edges, but also general quality for firsts levels
+!TP_WAVELET_EDCU;Curve
+!TP_WAVELET_EDGCONT;Local contrast
+!TP_WAVELET_EDGCONT_TOOLTIP;If you move sliders to the left contrast decrease...and to the right..increase
+!TP_WAVELET_EDGEDETECTTHR2;Threshold High (detection)
+!TP_WAVELET_EDGEDETECTTHR;Threshold Low (noise)
+!TP_WAVELET_EDGEDETECTTHR_TOOLTIP;You can adjust threshold to avoid apply edge sharpness to thin details (noise in sky...)
+!TP_WAVELET_EDGEDETECT;Gradient sensitivity
+!TP_WAVELET_EDGEDETECT_TOOLTIP;Algorithm detect edge\nMore the slider is moved to the right, more edge gradient with high level are take into account\nThis has an incidence on local contrast, on edge settings and also on noise
+!TP_WAVELET_EDGREINF_TOOLTIP;For low radius value, increase/decrease the action of the first level, and decrease/increase the action of second level then the others
+!TP_WAVELET_EDGTHRESH_TOOLTIP;Change the repartition between the first levels and the others\nThe more threshold is high, the more the action is centred on the first levels\nBe carefull to negatives values, they increase the action of high levels and can bring artifacts
+!TP_WAVELET_EDRAD_TOOLTIP;Radius is very different from others sharpening tools\nIts value is compared to each level, through a complex function\nIn this sense, a zero radius value produce an effect
+!TP_WAVELET_EDSL;Threshold Sliders
+!TP_WAVELET_EDTYPE;Local contrast control
+!TP_WAVELET_LEVONE;Level 2
+!TP_WAVELET_LEVTWO;Level 3
+!TP_WAVELET_LEVZERO;Level 1
+!TP_WAVELET_LINKEDG;Link with Edge-sharpness (strength)
+!TP_WAVELET_LIPST;Enhanced algorithm
+!TP_WAVELET_LIPST_TOOLTIP;This algorithme use Lipschitz regularity\nIt increases the processing time and memory requirements, but it is better at detecting edges.
+!TP_WAVELET_MEDGREINF;First level
+!TP_WAVELET_MEDILEV;Edge detection
+!TP_WAVELET_NOISE;Denoise and refine
+!TP_WAVELET_NOIS;Denoise
+!TP_WAVELET_PREVIEWBACK;Background
+!TP_WAVELET_RE1;Reinforced
+!TP_WAVELET_RE2;Unchanged
+!TP_WAVELET_RE3;Reduced
+!TP_WAVELET_daub2;D2 - low
+!TP_WAVELET_daub4;D4 - standard
+!TP_WAVELET_daub6;D6 - standard plus
+!TP_WAVELET_daub10;D10 - medium
+!TP_WAVELET_daub14;D14 - high
+!ZOOMPANEL_ZOOMFITCROPSCREEN;Fit crop to screen\nShortcut: <b>Alt</b>-<b>f</b>
