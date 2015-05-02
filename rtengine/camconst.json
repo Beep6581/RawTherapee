@@ -822,7 +822,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
     { // Quality B, does not work with 12bit files 
          "make_model": "Nikon D750",
          "dcraw_matrix": [ 9020,-2890,-715,-4535,12436,2348,-934,1919,7086 ], // adobe dcp d65 DNGv8.7
-         "ranges": { "black": 600, "white": 16300 } // attention.. BL/WL values are for 14bit files, has to be BL150/WL4070 for 12bit files. WL typical 16383 set to 16300 for safety
+         "ranges": { "black": -600, "white": 16300 } // attention.. BL/WL values are for 14bit files, has to be BL150/WL4070 for 12bit files. WL typical 16383 set to 16300 for safety
     },
 
    { // quality B, lacks WL measures at intermediate ISOs (160-250-320 ..) and measures at long exposures with LongExposureNoiseReduction 
@@ -1143,14 +1143,14 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "make_model": "Sigma SD14",
         "dcraw_matrix": [ 16411,-4764,-2383,8110,2603,-645,3135,3878,1984 ], // experimental inverted icc wp12 - build with BL=15
       //  "dcraw_matrix": [ 13804,-4156,-1896,6917,1909,-431,2768,2989,1741 ], // experimental inverted icc wp10 - build with BL=15
-        "ranges": { "black": 15, "white": 4080 },// peripheral black stripes give BL around 37 
+        "ranges": { "black": 15, "white": 4080 },// peripheral black stripes give BL around 37
         "raw_crop": [ 18, 12, 2652, 1768 ]
     },
 
     { // Quality c, correction for frame width
         "make_model": "Sigma SD1",
         "dcraw_matrix": [ 5270,42,-814,3737,5506,124,1112,9714,4510 ], // experimental from icm 1.04477,-0.74838,1.01617, -0.54028,2.52690,-3.83257, 0.54869,-0.69556,3.73746
-        "ranges": { "black": 16, "white": 4070 },// BL is 16 or 31, should be measured at the horizontal black stripe at the top 
+        "ranges": { "black": 16, "white": 4070 },// BL is 16 or 31, should be measured at the horizontal black stripe at the top
         "raw_crop": [ 12, 52, -110, -8 ]
     },
     { // Quality C, correction for frame width, color matrix investigated ..
@@ -1159,17 +1159,16 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
       //  "dcraw_matrix": [ 5666,139,-892,3780,5428,270,1366,9757,4526 ], // experimental inverted icc sunny8161
       // "dcraw_matrix": [ 10288,-2449,-1718,8976,1868,-1608,7011,5039,-249 ], // experimental inverted icc tungsten8130 wp11
       // "dcraw_matrix": [ 5864,679,-1491,2963,7635,-919,-640,13738,2790 ], // experimental inverted icc sunny8160
-      //  "dcraw_matrix": [ 14032,-2231,-1016,-5263,14816,170,-112,183,9113 ], //  hardcoded 
-        "ranges": { "black": 16, "white": 4070 }, // BL is 16 or 31, should be measured at the horizontal black stripe at the top 
-        "raw_crop": [ 12, 52, -110, -8 ] // for small size all numbers/2 
+      //  "dcraw_matrix": [ 14032,-2231,-1016,-5263,14816,170,-112,183,9113 ], //  hardcoded
+        "ranges": { "black": 16, "white": 4070 }, // BL is 16 or 31, should be measured at the horizontal black stripe at the top
+        "raw_crop": [ 12, 52, -110, -8 ] // for small size all numbers/2
     },
     { // Quality C, correction for frame width, color matrix guessed ..
         "make_model": [ "Sigma DP1 Merrill", "Sigma DP2 Merrill", "Sigma DP3 Merrill" ],
         "dcraw_matrix": [ 7211,-1577,-769,4996,3428,440,2717,7117,4699 ], // copy fron SD1 Merrill icc cloudy8140 d65
-        "ranges": { "black": 16, "white": 4070 }, // BL is 16 or 31, should be measured at the horizontal black stripe at the bottom 
-        "raw_crop": [ 12, 0, -110, -62 ] // for small size all numbers/2 
+        "ranges": { "black": 16, "white": 4070 }, // BL is 16 or 31, should be measured at the horizontal black stripe at the bottom
+        "raw_crop": [ 12, 0, -110, -62 ] // for small size all numbers/2
     },
-
 
     { // Quality A, correction for color matrix from Colin Walker's d50 to dng d65
         "make_model": "Sony NEX-C3",
