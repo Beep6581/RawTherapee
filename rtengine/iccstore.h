@@ -65,7 +65,7 @@ class ICCStore {
         MyMutex mutex_;
 
         ICCStore (); 
-        void             loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<Glib::ustring, cmsHPROFILE>& resultProfiles, std::map<Glib::ustring, ProfileContent> &resultProfileContents);
+        void             loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<Glib::ustring, cmsHPROFILE>& resultProfiles, std::map<Glib::ustring, ProfileContent> &resultProfileContents, bool onlyRgb = false);
         
     public:
 

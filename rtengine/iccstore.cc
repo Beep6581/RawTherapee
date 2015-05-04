@@ -81,7 +81,6 @@ cmsHPROFILE
 ICCStore::makeStdGammaProfile(cmsHPROFILE iprof)
 {
     // forgive me for the messy code, quick hack to change gamma of an ICC profile to the RT standard gamma
-    void *buf = NULL;
     if (!iprof) {
         return NULL;
     }
@@ -92,7 +91,6 @@ ICCStore::makeStdGammaProfile(cmsHPROFILE iprof)
     }
     uint8_t *data = new uint8_t[bytesNeeded+1];
     cmsSaveProfileToMem(iprof, data, &bytesNeeded);
-    const size_t len = (int)bytesNeeded;
     const uint8_t *p = &data[128]; // skip 128 byte header
     uint32_t tag_count;
     memcpy(&tag_count, p, 4);
@@ -108,7 +106,7 @@ ICCStore::makeStdGammaProfile(cmsHPROFILE iprof)
     const uint32_t gamma = 0x239;
     int gamma_size = (gamma == 0 || gamma == 256) ? 12 : 14;
     int data_size = (gamma_size + 3) & ~3;
-    for (int i = 0; i < tag_count; i++) {
+    for (uint32_t i = 0; i < tag_count; i++) {
         memcpy(&tags[i], p, 12);
         tags[i].sig = ntohl(tags[i].sig);
         tags[i].offset = ntohl(tags[i].offset);
@@ -130,7 +128,7 @@ ICCStore::makeStdGammaProfile(cmsHPROFILE iprof)
     memcpy(nd, &sz, 4);
     uint32_t offset = 128 + 4 + tag_count * 12;
     uint32_t gamma_offset = 0;
-    for (int i = 0; i < tag_count; i++) {
+    for (uint32_t i = 0; i < tag_count; i++) {
         struct icctag tag;
         tag.sig = htonl(tags[i].sig);
         if (tags[i].sig == 0x62545243 || // bTRC
@@ -289,8 +287,8 @@ void ICCStore::init (Glib::ustring usrICCDir, Glib::ustring rtICCDir) {
     fileProfiles.clear();
     fileProfileContents.clear();
     // RawTherapee's profiles take precedence if a user's profile of the same name exists
-    loadICCs(Glib::build_filename(rtICCDir, "output"), false, fileProfiles, fileProfileContents);
-    loadICCs(usrICCDir, false, fileProfiles, fileProfileContents);
+    loadICCs(Glib::build_filename(rtICCDir, "output"), false, fileProfiles, fileProfileContents, true);
+    loadICCs(usrICCDir, false, fileProfiles, fileProfileContents, true);
 
     // Input profiles
     // Load these to different areas, since the short name (e.g. "NIKON D700" may overlap between system/user and RT dir)
@@ -299,7 +297,7 @@ void ICCStore::init (Glib::ustring usrICCDir, Glib::ustring rtICCDir) {
     loadICCs(Glib::build_filename(rtICCDir, "input"), true, fileStdProfiles, fileStdProfileContents);
 }
 
-void ICCStore::loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<Glib::ustring, cmsHPROFILE>& resultProfiles, std::map<Glib::ustring, ProfileContent> &resultProfileContents) {
+void ICCStore::loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<Glib::ustring, cmsHPROFILE>& resultProfiles, std::map<Glib::ustring, ProfileContent> &resultProfileContents, bool onlyRgb) {
     if (rootDirName!="") {
         std::deque<Glib::ustring> qDirs;
 
@@ -330,7 +328,7 @@ void ICCStore::loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<Glib
                         ProfileContent pc (fname);
                         if (pc.data) {
                             cmsHPROFILE profile = pc.toProfile ();
-                            if (profile) {
+                            if (profile && (!onlyRgb || cmsGetColorSpace(profile) == cmsSigRgbData)) {
                                 resultProfiles[name] = profile;
                                 resultProfileContents[name] = pc;
                             }
