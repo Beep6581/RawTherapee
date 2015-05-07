@@ -35,9 +35,10 @@ set (BASESOURCEFILES
 include_directories (BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 
 if (APPLE)
+    find_package (MacIntegration REQUIRED)
     # At the time of writing Cmake has no module finder for gtkmacintegration so here we have it hard-coded, if installed via macports it should be in /opt/local/...
-    set (EXTRA_LIB_RTGUI gtkmacintegration)
-    set (EXTRA_INCDIR ${EXTRA_INCDIR} /opt/local/include/gtkmacintegration)
+    set (EXTRA_LIB_RTGUI ${MacIntegration_LIBRARIES})
+    set (EXTRA_INCDIR ${EXTRA_INCDIR} ${MacIntegration_INCLUDE_DIRS})
 endif (APPLE)
 if (WIN32)
     set (EXTRA_SRC windirmonitor.cc myicon.rc)
