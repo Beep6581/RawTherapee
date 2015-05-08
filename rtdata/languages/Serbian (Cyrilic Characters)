@@ -825,7 +825,6 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !EXPORT_MAXWIDTH;Maximum width:
 !EXPORT_PUTTOQUEUEFAST;  Put to queue for fast export
 !EXPORT_RAW_DMETHOD;Demosaic method
-!EXPORT_RESIZEMETHOD;Resize method
 !EXTPROGTARGET_1;raw
 !EXTPROGTARGET_2;queue-processed
 !FILEBROWSER_COLORLABEL_TOOLTIP;Color label.\n\nUse dropdown menu or shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple

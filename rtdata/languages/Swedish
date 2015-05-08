@@ -78,7 +78,6 @@ EXPORT_MAXHEIGHT;Maximal höjd:
 EXPORT_MAXWIDTH;Maximal vidd:  
 EXPORT_PUTTOQUEUEFAST; Lägg till i kö för snabbexport
 EXPORT_RAW_DMETHOD;Demosaic-metod
-EXPORT_RESIZEMETHOD;Metod för storleksändring
 EXTPROGTARGET_1;Rå
 EXTPROGTARGET_2;köhanterad
 FILEBROWSER_ADDDELTEMPLATE;Lägg till/ta bort förinställningar...

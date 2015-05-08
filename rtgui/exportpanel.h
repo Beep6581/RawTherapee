@@ -70,8 +70,6 @@ class ExportPanel : public Gtk::VBox {
 
 	    MyComboBoxText* raw_xtrans_method;
 
-	    MyComboBoxText* resize_method;
-
 	    Gtk::Button* btnFastExport;
         Gtk::Button* btnExportLoadSettings;
         Gtk::Button* btnExportSaveSettings;

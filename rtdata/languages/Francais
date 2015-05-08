@@ -78,7 +78,6 @@ EXPORT_MAXHEIGHT;Hauteur maximum:
 EXPORT_MAXWIDTH;Largeur maximum:
 EXPORT_PUTTOQUEUEFAST;Mettre dans la file de traitement\npour Export Rapide
 EXPORT_RAW_DMETHOD;Méthode de dématriçage
-EXPORT_RESIZEMETHOD;Méthode de redimensionnement
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;file de traitement
 FILEBROWSER_ADDDELTEMPLATE;Ajouter/Supprimer le modèle...

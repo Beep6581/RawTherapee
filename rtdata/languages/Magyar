@@ -74,7 +74,6 @@ EXPORT_MAXHEIGHT;Maximum magasság:
 EXPORT_MAXWIDTH;Maximum szélesség:  
 EXPORT_PUTTOQUEUEFAST;  Feldolgozási sorba helyezés expressz exportáláshoz
 EXPORT_RAW_DMETHOD;Interpoláció algoritmusa
-EXPORT_RESIZEMETHOD;Átméretezés algoritmusa
 FILEBROWSER_ADDDELTEMPLATE;Sablon hozzáadása/törlése...
 FILEBROWSER_APPLYPROFILE;Feldolgozási paraméter hozzárendelése
 FILEBROWSER_APPLYPROFILE_PARTIAL;Profil alkalmazása (részleges)

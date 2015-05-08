@@ -82,7 +82,6 @@ EXPORT_MAXHEIGHT;Altezza Massima:
 EXPORT_MAXWIDTH;Larghezza Massima:
 EXPORT_PUTTOQUEUEFAST; Aggiungi alla Coda di sviluppo per l'Esportazione Rapida
 EXPORT_RAW_DMETHOD;Metodo di Demosaicizzazione
-EXPORT_RESIZEMETHOD;Metodo di Ridimensionamento
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;Lavorato dalla Coda
 FILEBROWSER_ADDDELTEMPLATE;Aggiungi/Rimuovi schemi...

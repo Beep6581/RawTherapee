@@ -94,7 +94,6 @@ EXPORT_MAXHEIGHT;Maximale Höhe:
 EXPORT_MAXWIDTH;Maximale Breite:  
 EXPORT_PUTTOQUEUEFAST;In Warteschlange zum schnellen Export
 EXPORT_RAW_DMETHOD;Farbinterpolation\nMethode
-EXPORT_RESIZEMETHOD;Größe ändern\nMethode
 EXTPROGTARGET_1;Raw
 EXTPROGTARGET_2;stapelverarbeitet
 FILEBROWSER_ADDDELTEMPLATE;Vorlagen hinzu/entfernen...

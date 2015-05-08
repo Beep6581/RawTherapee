@@ -74,7 +74,6 @@ EXPORT_MAXHEIGHT;Alçada màxima:
 EXPORT_MAXWIDTH;Ample màxim:
 EXPORT_PUTTOQUEUEFAST;  Posa a la cua per a export. ràpida  
 EXPORT_RAW_DMETHOD;Mètode de demosaicar
-EXPORT_RESIZEMETHOD;Mètode de canvi de tamany
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;cua processada
 FILEBROWSER_ADDDELTEMPLATE;Afeg/Treu plantilles...
