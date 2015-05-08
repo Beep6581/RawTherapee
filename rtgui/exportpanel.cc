@@ -128,18 +128,8 @@ ExportPanel::ExportPanel () : listener (NULL) {
 
 	// Resize options
 
-	resize_method = Gtk::manage (new MyComboBoxText ());
-	resize_method->append_text (M("TP_RESIZE_NEAREST"));
-	resize_method->append_text (M("TP_RESIZE_BILINEAR"));
-	resize_method->append_text (M("TP_RESIZE_BICUBIC"));
-	resize_method->append_text (M("TP_RESIZE_BICUBICSF"));
-	resize_method->append_text (M("TP_RESIZE_BICUBICSH"));
-	resize_method->append_text (M("TP_RESIZE_LANCZOS"));
-	resize_method->set_active (5);
-
 	Gtk::HBox* rmbox = Gtk::manage (new Gtk::HBox ());
-	rmbox->pack_start (*Gtk::manage (new Gtk::Label (M("EXPORT_RESIZEMETHOD"))), Gtk::PACK_SHRINK, 4);
-	rmbox->pack_start (*resize_method);
+	rmbox->pack_start (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_LABEL"))), Gtk::PACK_SHRINK, 4);
 	pack_start (*rmbox, Gtk::PACK_SHRINK, 4);
 
 	Gtk::HBox* wbox = Gtk::manage (new Gtk::HBox ());
@@ -265,19 +255,6 @@ void ExportPanel::SaveSettingsAsDefault(){
 //	options.fastexport_resize_dataspec  = resize_dataspec ;
 
 	options.fastexport_resize_method = "Lanczos";
-    if (resize_method->get_active_row_number() == 0)
-        options.fastexport_resize_method = "Nearest";
-    else if (resize_method->get_active_row_number() == 1)
-        options.fastexport_resize_method = "Bilinear";
-    else if (resize_method->get_active_row_number() == 2)
-        options.fastexport_resize_method = "Bicubic";
-    else if (resize_method->get_active_row_number() == 3)
-        options.fastexport_resize_method = "Bicubic (Softer)";
-    else if (resize_method->get_active_row_number() == 4)
-        options.fastexport_resize_method = "Bicubic (Sharper)";
-    else if (resize_method->get_active_row_number() == 5)
-        options.fastexport_resize_method = "Lanczos";
-
 	options.fastexport_resize_width     = MaxWidth->get_value_as_int ();
 	options.fastexport_resize_height    = MaxHeight->get_value_as_int ();
 }
@@ -329,25 +306,6 @@ void ExportPanel::LoadDefaultSettings(){
 //    resize_scale     = options.fastexport_resize_scale    ;
 //    resize_appliesTo = options.fastexport_resize_appliesTo;
 //    resize_dataspec  = options.fastexport_resize_dataspec ;
-
-    resize_method->set_active (2);
-	if (options.fastexport_resize_method == "Nearest")
-	  resize_method->set_active (0);
-	else if (options.fastexport_resize_method == "Bilinear")
-	  resize_method->set_active (1);
-	else if (options.fastexport_resize_method == "Bicubic")
-	  resize_method->set_active (2);
-	else if (options.fastexport_resize_method == "Bicubic (Softer)")
-	  resize_method->set_active (3);
-	else if (options.fastexport_resize_method == "Bicubic (Sharper)")
-	  resize_method->set_active (4);
-	else if (options.fastexport_resize_method == "Lanczos")
-	  resize_method->set_active (5);
-	else if (options.fastexport_resize_method == "Downscale (Better)" ||
-		   options.fastexport_resize_method == "Downscale (Faster)")
-	{
-	  resize_method->set_active (5);
-	}
 
     MaxWidth->set_value(options.fastexport_resize_width);
     MaxHeight->set_value(options.fastexport_resize_height);

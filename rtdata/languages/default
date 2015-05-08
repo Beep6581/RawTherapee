@@ -81,7 +81,6 @@ EXPORT_MAXHEIGHT;Maximum height:
 EXPORT_MAXWIDTH;Maximum width:
 EXPORT_PUTTOQUEUEFAST;  Put to queue for fast export  
 EXPORT_RAW_DMETHOD;Demosaic method
-EXPORT_RESIZEMETHOD;Resize method
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;queue-processed
 FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...

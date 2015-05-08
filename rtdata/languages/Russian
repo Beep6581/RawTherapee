@@ -82,7 +82,6 @@ EXPORT_MAXHEIGHT;Максимальная высота:
 EXPORT_MAXWIDTH;Максимальная ширина:  
 EXPORT_PUTTOQUEUEFAST; Поставить в очередь для быстрого экспорта
 EXPORT_RAW_DMETHOD;Метод демозаика
-EXPORT_RESIZEMETHOD;Метод масштабирования
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;в очереди обработки
 FILEBROWSER_ADDDELTEMPLATE;Добавить/удалить шаблоны...

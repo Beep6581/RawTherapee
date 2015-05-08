@@ -112,7 +112,6 @@ EXPORT_MAXHEIGHT;Maximální výška:
 EXPORT_MAXWIDTH;Maximální šířka:
 EXPORT_PUTTOQUEUEFAST;  Vložit do fronty pro rychlý export  
 EXPORT_RAW_DMETHOD;Metoda demozajkování
-EXPORT_RESIZEMETHOD;Metoda změny rozměru
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;Zpracování fronty
 FILEBROWSER_ADDDELTEMPLATE;Přidat/Smazat šablony...

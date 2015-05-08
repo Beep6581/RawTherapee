@@ -91,7 +91,6 @@ EXPORT_MAXHEIGHT;Max. hoogte:
 EXPORT_MAXWIDTH;Max. breedte:  
 EXPORT_PUTTOQUEUEFAST;Plaats in verwerkingsrij voor Snelle Export
 EXPORT_RAW_DMETHOD;Demozaïekmethode
-EXPORT_RESIZEMETHOD;Grootte aanpassen: Methode
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;verwerkingsrij
 FILEBROWSER_ADDDELTEMPLATE;Voeg sjablonen toe of verwijder...

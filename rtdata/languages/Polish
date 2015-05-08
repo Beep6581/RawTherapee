@@ -86,7 +86,6 @@ EXPORT_MAXHEIGHT;Maksymalna wysokość:
 EXPORT_MAXWIDTH;Maksymalna szerokość:
 EXPORT_PUTTOQUEUEFAST;  Dodaj do kolejki szybkiego eksportu  
 EXPORT_RAW_DMETHOD;Algorytm demozaikowania
-EXPORT_RESIZEMETHOD;Metoda zmiany rozmiaru
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;wywołane w kolejce
 FILEBROWSER_ADDDELTEMPLATE;Dodaj/Usuń szablon...

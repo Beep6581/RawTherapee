@@ -139,7 +139,6 @@ EXPORT_MAXHEIGHT;Altura máxima:
 EXPORT_MAXWIDTH;Anchura máxima:
 EXPORT_PUTTOQUEUEFAST;  Poner en la cola de Exportación Rápida
 EXPORT_RAW_DMETHOD;Método de interpolado
-EXPORT_RESIZEMETHOD;Método de cambio de tamaño
 EXTPROGTARGET_1;Raw
 EXTPROGTARGET_2;procesado en cola
 FILEBROWSER_ADDDELTEMPLATE;Añadir/Borrar plantillas...
