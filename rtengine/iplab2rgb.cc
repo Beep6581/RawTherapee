@@ -21,18 +21,11 @@
 #include <glibmm.h>
 #include "iccstore.h"
 #include "iccmatrices.h"
-#include "mytime.h"
-#include "../rtgui/icmpanel.h"
 #include "../rtgui/options.h"
 #include "settings.h"
 #include "curves.h"
 #include "alignedbuffer.h"
 #include "color.h"
-
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 namespace rtengine {
 
@@ -46,8 +39,6 @@ const char* wprofnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "Bruce
 const int numprof = 7;
 
 void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
-	//MyTime tBeg,tEnd;
- //   tBeg.set();
 	//gamutmap(lab);
 
 	if (monitorTransform) {
@@ -61,14 +52,13 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
 #pragma omp parallel firstprivate(lab, data, W, H)
 #endif
 {
-        AlignedBuffer<unsigned short> pBuf(3*lab->W);
-        unsigned short *buffer=pBuf.data;
+        AlignedBuffer<double> pBuf(3*lab->W);
+        double *buffer=pBuf.data;
 
 #ifdef _OPENMP
-#pragma omp for schedule(static)
+#pragma omp for schedule(dynamic,16)
 #endif
 		for (int i=0; i<H; i++) {
-            // pre-conversion to integer, since the output is 8 bit anyway, but LCMS is MUCH faster not converting from float
 
             const int ix = i * 3 * W;
             int iy = 0;
@@ -80,36 +70,25 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
             float fy,fx,fz,x_,y_,z_,LL;
 
 			for (int j=0; j<W; j++) {
-								
-				fy = (0.00862069 * rL[j]) / 327.68 + 0.137932; // (L+16)/116
-				fx = (0.002 * ra[j]) / 327.68 + fy;
-				fz = fy - (0.005 * rb[j]) / 327.68;
-				LL=rL[j]/327.68;
-				x_ = Color::f2xyz(fx)*Color::D50x;
-				//y_ = Color::f2xyz(fy);
-				y_= (LL>Color::epskap) ? fy*fy*fy : LL/Color::kappa;
-				
-				z_ = Color::f2xyz(fz)*Color::D50z;
-
-                buffer[iy++] = (unsigned short)CLIP(x_* MAXVALF+0.5);
-                buffer[iy++] = (unsigned short)CLIP(y_* MAXVALF+0.5);
-                buffer[iy++] = (unsigned short)CLIP(z_* MAXVALF+0.5);
+                buffer[iy++] = rL[j]/327.68f;
+                buffer[iy++] = ra[j]/327.68f;
+                buffer[iy++] = rb[j]/327.68f;
 			}
 
             cmsDoTransform (monitorTransform, buffer, data + ix, W);
+		}
 
 } // End of parallelization
 
-		}
 	} else {
 
         int W = lab->W;
         int H = lab->H;
         unsigned char * data = image->data;
 
-//#ifdef _OPENMP
-//#pragma omp parallel for schedule(static) firstprivate(lab, data, W, H) if (multiThread)
-//#endif
+#ifdef _OPENMP
+#pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
 		for (int i=0; i<H; i++) {
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
@@ -143,13 +122,9 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
 			}
 		}
 	}
-
-    //tEnd.set();
-    //printf("lab2rgb %i %d\n", lab->W, tEnd.etime(tBeg));
 }
 
 Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, bool standard_gamma) {
-
 	//gamutmap(lab);
 	
     if (cx<0) cx = 0;
@@ -166,10 +141,11 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         if (standard_gamma) {
             oprofG = ICCStore::makeStdGammaProfile(oprof);
         }
-        cmsHPROFILE iprof = iccStore->getXYZProfile ();
         lcmsMutex->lock ();
-        cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprofG, TYPE_RGB_8, settings->colorimetricIntent,
+        cmsHPROFILE hLab  = cmsCreateLab4Profile(NULL);
+        cmsHTRANSFORM hTransform = cmsCreateTransform (hLab, TYPE_Lab_DBL, oprofG, TYPE_RGB_8, settings->colorimetricIntent,
             cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
+        cmsCloseProfile(hLab);
         lcmsMutex->unlock ();
 
         unsigned char *data = image->data;
@@ -179,37 +155,24 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 #pragma omp parallel
 #endif
 {
-        AlignedBuffer<unsigned short> pBuf(3*cw);
-        unsigned short *buffer=pBuf.data;
+        AlignedBuffer<double> pBuf(3*cw);
+        double *buffer=pBuf.data;
         int condition = cy+ch;
 
 #ifdef _OPENMP
-#pragma omp for firstprivate(lab) schedule(static)
+#pragma omp for firstprivate(lab) schedule(dynamic,16)
 #endif
         for (int i=cy; i<condition; i++) {
-
             const int ix = i * 3 * cw;
             int iy = 0;
-
             float* rL = lab->L[i];
             float* ra = lab->a[i];
             float* rb = lab->b[i];
 
             for (int j=cx; j<cx+cw; j++) {
-				
-				float fy = (0.00862069 * rL[j])/327.68 + 0.137932; // (L+16)/116
-				float fx = (0.002 * ra[j])/327.68 + fy;
-				float fz = fy - (0.005 * rb[j])/327.68;
-				float LL=rL[j]/327.68;
-				
-				float x_ = 65535.0 * Color::f2xyz(fx)*Color::D50x;
-				//float y_ = 65535.0 * Color::f2xyz(fy);
-				float z_ = 65535.0 * Color::f2xyz(fz)*Color::D50z;
-				float y_= (LL>Color::epskap) ? 65535.0*fy*fy*fy : 65535.0*LL/Color::kappa;
-
-                buffer[iy++] = CLIP((int)(x_+0.5));
-                buffer[iy++] = CLIP((int)(y_+0.5));
-                buffer[iy++] = CLIP((int)(z_+0.5));
+                buffer[iy++] = rL[j]/327.68f;
+                buffer[iy++] = ra[j]/327.68f;
+                buffer[iy++] = rb[j]/327.68f;
             }
 
             cmsDoTransform (hTransform, buffer, data + ix, cw);
@@ -232,8 +195,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 				break;
 			}
 		}
-		
-		#pragma omp parallel for if (multiThread)
+#ifdef _OPENMP
+#pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
         for (int i=cy; i<cy+ch; i++) {
 			float R,G,B;
             float* rL = lab->L[i];
