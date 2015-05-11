@@ -186,10 +186,12 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 
 	cmsHPROFILE monitor = iccStore->getProfile ("file:"+monitorProfile);
 	if (monitor) {
-        cmsHPROFILE iprof = iccStore->getXYZProfile ();
         lcmsMutex->lock ();
-		monitorTransform = cmsCreateTransform (iprof, TYPE_RGB_16, monitor, TYPE_RGB_8, settings->colorimetricIntent,
+        cmsHPROFILE iprof  = cmsCreateLab4Profile(NULL);
+		monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_DBL, monitor, TYPE_RGB_8, settings->colorimetricIntent,
             cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is for thread safety, NOOPTIMIZE for precision
+        cmsCloseProfile(iprof);
+
         lcmsMutex->unlock ();
 	}
 #endif
