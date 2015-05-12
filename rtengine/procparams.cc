@@ -575,7 +575,7 @@ void DirPyrDenoiseParams::setDefaults() {
     medmethod = "soft";
     methodmed = "none";
     rgbmethod = "soft";
-    Ldetail = 50;
+    Ldetail = 0;
     chroma = 15;
     redchro = 0;
     bluechro = 0;
