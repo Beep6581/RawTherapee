@@ -19,7 +19,6 @@
 
 #include "shcselector.h"
 #include "multilangmgr.h"
-#include <iomanip>
 #include "mycurve.h"
 
 SHCSelector::SHCSelector() : ColoredBar(RTO_Left2Right), movingPosition(-1), cl(NULL) {
@@ -213,11 +212,11 @@ bool SHCSelector::on_motion_notify_event (GdkEventMotion* event) {
         positions[movingPosition] = tmpPos + (event->x - tmpX) / w;
         if (positions[movingPosition] < 0)
             positions[movingPosition] = 0.0;
-        else if (movingPosition > 0 && positions[movingPosition] < positions[movingPosition-1]+wslider/w)
+        if (movingPosition > 0 && positions[movingPosition] < positions[movingPosition-1]+wslider/w)
             positions[movingPosition] = positions[movingPosition-1]+wslider/w;
         if (positions[movingPosition] > 1.0)
             positions[movingPosition] = 1.0;
-        else if (movingPosition < 2 && positions[movingPosition] > positions[movingPosition+1]-wslider/w)
+        if (movingPosition < 2 && positions[movingPosition] > positions[movingPosition+1]-wslider/w)
             positions[movingPosition] = positions[movingPosition+1]-wslider/w;
 
         if (cl)
