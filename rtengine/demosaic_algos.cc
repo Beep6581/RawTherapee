@@ -2899,8 +2899,6 @@ inline void RawImageSource::dcb_initTileLimits(int &colMin, int &rowMin, int &co
 	if(!x0 ) colMin = TILEBORDER+border;
 	if( y0+TILESIZE+TILEBORDER >= H-border) rowMax = TILEBORDER+H-border-y0;
 	if( x0+TILESIZE+TILEBORDER >= W-border) colMax = TILEBORDER+W-border-x0;
-	if( y0 + rowMax >= H) rowMax = H - y0;
-	if( x0 + colMax >= W) colMax = W - x0;
 }
 
 void RawImageSource::fill_raw( float (*cache )[4], int x0, int y0, float** rawData)
