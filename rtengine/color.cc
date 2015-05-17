@@ -22,6 +22,7 @@
 #include "iccmatrices.h"
 #include "mytime.h"
 #include "sleef.c"
+#include "opthelper.h"
 
 using namespace std;
 
@@ -1113,7 +1114,7 @@ namespace rtengine {
 
 
 
-	void Color::scalered ( float rstprotection, float param, float limit, float HH, float deltaHH, float &scale,float &scaleext)
+	void Color::scalered ( const float rstprotection, const float param, const float limit, const float HH, const float deltaHH, float &scale, float &scaleext)
 	{
 		if(rstprotection<99.9999f) {
 			if(param > limit)
@@ -1129,7 +1130,7 @@ namespace rtengine {
 		}
 	}
 	
-	void Color::transitred (float HH, float Chprov1, float dred, float factorskin, float protect_red, float factorskinext, float deltaHH, float factorsat, float &factor)
+	void Color::transitred (const float HH, float const Chprov1, const float dred, const float factorskin, const float protect_red, const float factorskinext, const float deltaHH, const float factorsat, float &factor)
 	{
 		if(HH>=0.15f && HH<1.3f) {
 			if (Chprov1<dred)
@@ -1495,18 +1496,18 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
      * it can be used before and after treatment (saturation, gamma, luminance, ...)
      *
      * Parameters:
-     *    Labimage *lab   :       RT Lab data
-     *    float *Lold     :       luminance before   - data: i*width + j
-     *    float *Cold     :       chrominance before - data: i*width + j
-     *    bool corMuns    :       performs Munsell correction
+     *    float *labL     :       RT Lab L channel data
+     *    float *laba     :       RT Lab a channel data
+     *    float *labb     :       RT Lab b channel data
+     *    bool corMunsell :       performs Munsell correction
      *    bool lumaMuns   :       (used only if corMuns=true)
      *                            true:  apply luma + chroma Munsell correction if delta L > 10;
      *                            false: only chroma correction only
      *    bool gamut            : performs gamutLch
-     *    Glib::ustring &working: working profile's name
+     *    const double wip[3][3]: matrix for working profile
      *    bool multiThread      : parallelize the loop
      */
-    void Color::LabGamutMunsell(LabImage *lab, float *Lold, float *Cold, bool corMunsell, bool lumaMuns, bool isHLEnabled, bool gamut, const Glib::ustring &working, bool multiThread ) {
+SSEFUNCTION  void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, bool corMunsell, bool lumaMuns, bool isHLEnabled, bool gamut, const double wip[3][3], bool multiThread ) {
 #ifdef _DEBUG
         MyTime t1e,t2e;
         t1e.set();
@@ -1514,42 +1515,58 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         MunsellDebugInfo* MunsDebugInfo=NULL;
         if (corMunsell)
             MunsDebugInfo = new MunsellDebugInfo();
-
-    #pragma omp parallel default(shared) firstprivate(MunsDebugInfo) reduction(+: negat, moreRGB) if (multiThread)
-#else
-    #pragma omp parallel default(shared) if (multiThread)
 #endif
-    {
-
-        //unsigned int  N = lab->W*lab->H;
-        int width = lab->W, height = lab->H;
-        TMatrix wiprof = iccStore->workingSpaceInverseMatrix (working);
-        double wip[3][3] = {
-            {wiprof[0][0],wiprof[0][1],wiprof[0][2]},
-            {wiprof[1][0],wiprof[1][1],wiprof[1][2]},
-            {wiprof[2][0],wiprof[2][1],wiprof[2][2]}
-        };
-        float correctlum=0.0;
-        float correctionHuechroma=0.0;
-
-#pragma omp for schedule(dynamic, 10)
-        for (int i=0; i<height; i++)
-            for (int j=0; j<width; j++) {
-                float HH=xatan2f(lab->b[i][j],lab->a[i][j]);
-                float Chprov1=sqrt(SQR(lab->a[i][j]/327.68f) + SQR(lab->b[i][j]/327.68f));
-                float Lprov1=lab->L[i][j]/327.68f;
-                float Loldd, Coldd;
+        float correctlum = 0.f;
+        float correctionHuechroma = 0.f;
+#ifdef __SSE2__
+            // precalculate H and C using SSE
+            float HHBuffer[N];
+            float CCBuffer[N];
+            __m128 c327d68v = _mm_set1_ps(327.68f);
+            __m128 av,bv;
+            int k;
+            for (k=0; k<N-3; k+=4) {
+                av = LVFU(laba[k]);
+                bv = LVFU(labb[k]);
+                _mm_storeu_ps(&HHBuffer[k],xatan2f(bv,av));
+                _mm_storeu_ps(&CCBuffer[k],_mm_sqrt_ps(SQRV(av)+SQRV(bv))/c327d68v);
+            }
+            for(;k<N;k++) {
+                HHBuffer[k] = xatan2f(labb[k],laba[k]);
+                CCBuffer[k] = sqrt(SQR(laba[k]) + SQR(labb[k]))/327.68f;
+            }
+#endif // __SSE2__
+            for (int j=0; j<N; j++) {
+#ifdef __SSE2__
+                float HH  = HHBuffer[j];
+                float Chprov1 = CCBuffer[j];
+#else
+                float HH=xatan2f(labb[j],laba[j]);
+                float Chprov1=sqrtf(SQR(laba[j]) + SQR(labb[j]))/327.68f;
+#endif
+                float Lprov1=labL[j]/327.68f;
+                float Loldd = Lprov1;
+                float Coldd = Chprov1;
+                float2 sincosval;
                 if(gamut) {
 #ifdef _DEBUG
                     bool neg, more_rgb;
 #endif
-                    float R, G, B;
+                    // According to mathematical laws we can get the sin and cos of HH by simple operations
+                    float R,G,B;
+                    if(Chprov1 == 0.f) {
+                        sincosval.y = 1.f;
+                        sincosval.x = 0.f;
+                    } else {
+                        sincosval.y = laba[j]/(Chprov1*327.68f);
+                        sincosval.x = labb[j]/(Chprov1*327.68f);
+                    }
 
                     //gamut control : Lab values are in gamut
 #ifdef _DEBUG
-                    gamutLchonly(HH, Lprov1, Chprov1, R, G, B, wip, isHLEnabled, 0.15f, 0.96f, neg, more_rgb);
+                    gamutLchonly(HH, sincosval, Lprov1, Chprov1, R,G,B, wip, isHLEnabled, 0.15f, 0.96f, neg, more_rgb);
 #else
-                    gamutLchonly(HH, Lprov1, Chprov1, R, G, B, wip, isHLEnabled, 0.15f, 0.96f);
+                    gamutLchonly(HH, sincosval, Lprov1, Chprov1, R,G,B, wip, isHLEnabled, 0.15f, 0.96f);
 #endif
 
 #ifdef _DEBUG
@@ -1558,11 +1575,9 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 #endif
                 }
 
-                Loldd = Lold[i*width + j];
-                Coldd = Cold[i*width + j];
-                lab->L[i][j] = Lprov1*327.68f;
-                correctionHuechroma = 0.0;
-                correctlum = 0.0;
+                labL[j] = Lprov1*327.68f;
+                correctionHuechroma = 0.f;
+                correctlum = 0.f;
 
                 if(corMunsell)
 #ifdef _DEBUG
@@ -1570,16 +1585,24 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 #else
                     AllMunsellLch(lumaMuns, Lprov1, Loldd, HH, Chprov1, Coldd, correctionHuechroma, correctlum);
 #endif
-
-                HH+=correctlum;        //hue Munsell luminance correction
-
-				correctlum = 0.0f;
-				float2 sincosval = xsincosf(HH+correctionHuechroma);
-				lab->a[i][j] = Chprov1*sincosval.y*327.68f;
-				lab->b[i][j] = Chprov1*sincosval.x*327.68f;
-
+                if(correctlum == 0.f && correctionHuechroma == 0.f) {
+                    if(!gamut) {
+                        if(Coldd == 0.f) {
+                            sincosval.y = 1.f;
+                            sincosval.x = 0.f;
+                        } else {
+                            sincosval.y = laba[j]/(Coldd*327.68f);
+                            sincosval.x = labb[j]/(Coldd*327.68f);
+                        }
+                    }
+                    
+                } else {
+                    HH+=correctlum;        //hue Munsell luminance correction
+                    sincosval = xsincosf(HH+correctionHuechroma);
+                }
+                laba[j] = Chprov1*sincosval.y*327.68f;
+                labb[j] = Chprov1*sincosval.x*327.68f;
             }
-    } // end of parallelization
 
 #ifdef _DEBUG
         t2e.set();
