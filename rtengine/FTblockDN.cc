@@ -1843,7 +1843,7 @@ void ImProcFunctions::Noise_residualAB(wavelet_decomposition &WaveletCoeffs_ab, 
 }
 
 SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3]) {
-	int maxlvl = WaveletCoeffs_L.maxlevel();
+	int maxlvl = min(WaveletCoeffs_L.maxlevel(),5);
 	const float eps = 0.01f;
 
 	int maxWL = 0, maxHL = 0;
@@ -2076,7 +2076,7 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
 
 	{
 
-		int maxlvl = WaveletCoeffs_L.maxlevel();
+		int maxlvl = min(WaveletCoeffs_L.maxlevel(),5);
 		if(edge==1) maxlvl=3;//for refine denoise edge wavelet
 		int maxWL = 0, maxHL = 0;
 		for (int lvl=0; lvl<maxlvl; lvl++) {
