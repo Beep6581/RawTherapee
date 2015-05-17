@@ -259,6 +259,7 @@ class FileCatalog : public Gtk::VBox,
 
                 void showToolBar();
                 void hideToolBar();
+                void filterApplied();
 
 #ifndef _WIN32
                 void on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, bool internal);

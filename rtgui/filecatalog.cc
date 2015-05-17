@@ -564,7 +564,7 @@ void FileCatalog::_refreshProgressBar () {
             hbb = Gtk::manage (new Gtk::HBox ());
         if (!previewsToLoad ) {
             hbb->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
-            int filteredCount=fileBrowser->getNumFiltered();
+            int filteredCount = min(fileBrowser->getNumFiltered(),previewsLoaded);
 
             label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER")+
                 (filteredCount!=previewsLoaded ? " ["+ Glib::ustring::format(filteredCount)+"/" : " (") 
@@ -589,6 +589,11 @@ int refreshProgressBarUI (void* data) {
     (static_cast<FileCatalog*>(data))->_refreshProgressBar ();
     return 0;
 }
+
+void FileCatalog::filterApplied() {
+    g_idle_add (refreshProgressBarUI, this);
+}
+
 
 void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn) {
 
