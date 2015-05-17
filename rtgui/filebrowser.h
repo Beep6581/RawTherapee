@@ -38,6 +38,7 @@ class FileBrowserListener {
 
     public:
         virtual     ~FileBrowserListener    () {}
+        virtual void filterApplied () {}
         virtual void openRequested          (std::vector<Thumbnail*> tbe) {}
         virtual void developRequested       (std::vector<FileBrowserEntry*> tbe, bool fastmode) {}
         virtual void renameRequested        (std::vector<FileBrowserEntry*> tbe) {}

@@ -1181,6 +1181,7 @@ void FileBrowser::applyFilter (const BrowserFilter& filter) {
 
     if (selchanged)
         notifySelectionListener ();
+    tbl->filterApplied();
     redraw ();
 }
 
