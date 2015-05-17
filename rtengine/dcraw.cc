@@ -5587,10 +5587,10 @@ void CLASS parse_kodak_ifd (int base)
 int CLASS parse_tiff_ifd (int base)
 {
   unsigned entries, tag, type, len, plen=16, save;
-  int ifd, use_cm=0, cfa, i, j, c, ima_len=0;
+  int ifd, use_cm=0, cfa, i, j, c, ima_len=0,cm_D65=1;
   char software[64], *cbuf, *cp;
   uchar cfa_pat[16], cfa_pc[] = { 0,1,2,3 }, tab[256];
-  double cc[4][4], cm[4][3], cam_xyz[4][3], num;
+  double cc[2][4][4], cm[2][4][3], cam_xyz[4][3], num;
   double ab[]={ 1,1,1,1 }, asn[] = { 0,0,0,0 }, xyz[] = { 1,1,1 };
   unsigned sony_curve[] = { 0,0,0,0,0,4095 };
   unsigned *buf, sony_offset=0, sony_length=0, sony_key=0;
@@ -5602,7 +5602,10 @@ int CLASS parse_tiff_ifd (int base)
   ifd = tiff_nifds++;
   for (j=0; j < 4; j++)
     for (i=0; i < 4; i++)
-      cc[j][i] = i == j;
+    {
+      cc[0][j][i] = i == j;
+      cc[1][j][i] = i == j;
+    }
   entries = get2();
   if (entries > 512) return 1;
   while (entries--) {
@@ -6014,13 +6017,13 @@ guess_cfa_pc:
       case 50721:			/* ColorMatrix1 */
       case 50722:			/* ColorMatrix2 */
 	FORCC for (j=0; j < 3; j++)
-	  cm[c][j] = getreal(type);
+	  cm[tag-50721][c][j] = getreal(type);
 	use_cm = 1;
 	break;
       case 50723:			/* CameraCalibration1 */
       case 50724:			/* CameraCalibration2 */
 	for (i=0; i < colors; i++)
-	  FORCC cc[i][c] = getreal(type);
+	  FORCC cc[tag-50723][i][c] = getreal(type);
 	break;
       case 50727:			/* AnalogBalance */
 	FORCC ab[c] = getreal(type);
@@ -6043,6 +6046,11 @@ guess_cfa_pc:
       case 50752:
 	read_shorts (cr2_slice, 3);
 	break;
+      case 50778:
+      case 50779:
+         if( get2() == 21 )
+            cm_D65 = (tag-50778);
+         break;
       case 50829:			/* ActiveArea */
 	top_margin = getint(type);
 	left_margin = getint(type);
@@ -6088,11 +6096,11 @@ guess_cfa_pc:
     free (buf);
   }
   for (i=0; i < colors; i++)
-    FORCC cc[i][c] *= ab[i];
+    FORCC cc[cm_D65][i][c] *= ab[i];
   if (use_cm) {
     FORCC for (i=0; i < 3; i++)
       for (cam_xyz[c][i]=j=0; j < colors; j++)
-	cam_xyz[c][i] += cc[c][j] * cm[j][i] * xyz[i];
+	cam_xyz[c][i] += cc[cm_D65][c][j] * cm[cm_D65][j][i] * xyz[i];
     cam_xyz_coeff (cmatrix, cam_xyz);
   }
   if (asn[0]) {
@@ -6100,7 +6108,7 @@ guess_cfa_pc:
     FORCC cam_mul[c] = 1 / asn[c];
   }
   if (!use_cm)
-    FORCC pre_mul[c] /= cc[c][c];
+    FORCC pre_mul[c] /= cc[cm_D65][c][c];
   return 0;
 }
 
@@ -7932,6 +7940,11 @@ void CLASS adobe_coeff (const char *make, const char *model)
           }
           if (white_level > -1) {
               maximum = (ushort)white_level;
+              if(tiff_bps > 0) {
+                unsigned compare = ((uint64_t)1 << tiff_bps) - 1; // use uint64_t to avoid overflow if tiff_bps == 32
+                while(maximum > compare)
+                    maximum >>= 1;
+              }
           }
           if (trans[0]) {
               for (j=0; j < 12; j++) {
@@ -9242,9 +9255,9 @@ dng_skip:
     if (raw_width  < width ) raw_width  = width;
   }
   if (!tiff_bps) tiff_bps = 12;
-  if (!maximum) maximum = (1 << tiff_bps) - 1;
+  if (!maximum) maximum = ((uint64_t)1 << tiff_bps) - 1; // use uint64_t to avoid overflow if tiff_bps == 32
   if (!load_raw || height < 22 || width < 22 ||
-	tiff_bps > 16 || tiff_samples > 6 || colors > 4)
+	tiff_samples > 6 || colors > 4)
     is_raw = 0;
 #ifdef NO_JASPER
   if (load_raw == &CLASS redcine_load_raw) {
