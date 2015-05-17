@@ -1000,24 +1000,24 @@ public:
 	* @brief Munsell gamut correction
 	*
 	* This function is the overall Munsell's corrections, but only on global statement. It may be better to use local statement with AllMunsellLch.
-	* Not for use in a "for" or "do while" loop
 	* They are named accordingly :  gamutLchonly and AllMunsellLch
 	* It can be used before and after treatment (saturation, gamma, luminance, ...)
 	*
-	* @param lab input and output image
+	* @param labL L channel input and output image
 	*            L channel's usual range is [0 ; 100], but values can be negative or >100
+	* @param laba a channel input and output image
+	* @param labb b channel input and output image
 	*            a and b channel's range is usually [-128 ; +128], but values can be >128
-	* @param Lold luminance before [same range than lab.L]
-	* @param Cold chrominance before [0 ; 180 (can be superior)]
-	* @param corMuns performs Munsell correction
+	* @param N Number of pixels to process
+	* @param corMunsell performs Munsell correction
 	* @param lumaMuns whether to apply luma correction or not (used only if corMuns=true)
 	*                 true:  apply luma + chroma Munsell correction if delta L > 10;
 	*                 false: leaves luma untouched
 	* @param gamut performs gamutLch
-	* @param working working profile's name
+	* @param wip matrix for working profile
 	* @param multiThread whether to parallelize the loop or not
 	*/
-	static void LabGamutMunsell (LabImage *lab, float *Lold, float *Cold, bool corMunsell, bool lumaMuns, bool isHLEnabled, bool gamut, const Glib::ustring &working, bool multiThread );
+	static void LabGamutMunsell (float *labL, float *laba, float *labb, const int N, bool corMunsell, bool lumaMuns, bool isHLEnabled, bool gamut, const double wip[3][3], bool multiThread );
 
 
 	/*
@@ -1053,8 +1053,8 @@ public:
 	// -------------------------------- end Munsell
 	
 	
-	static void scalered ( float rstprotection, float param, float limit, float HH, float deltaHH, float &scale, float &scaleext);
-	static void transitred (float HH, float Chprov1, float dred, float factorskin, float protect_red, float factorskinext, float deltaHH, float factorsat, float &factor);
+	static void scalered ( const float rstprotection, const float param, const float limit, const float HH, const float deltaHH, float &scale, float &scaleext);
+	static void transitred (const float HH, const float Chprov1, const float dred, const float factorskin, const float protect_red, const float factorskinext, const float deltaHH, const float factorsat, float &factor);
 	static void skinred ( double J, double h, double sres, double Sp, float dred, float protect_red, int sk, float rstprotection, float ko, double &s);
 	static void skinredfloat ( float J, float h, float sres, float Sp, float dred, float protect_red, int sk, float rstprotection, float ko, float &s);
 //	static void scaleredcdbl ( float skinprot, float param, float limit, float HH, float deltaHH, float &scale,float &scaleext);

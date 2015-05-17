@@ -4286,7 +4286,7 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & cur
 
 
 
-void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve,LUTf & lhskcurve, LUTf & clcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histCLurve, LUTu &histLLCurve, LUTu &histLCurve) {
+SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve,LUTf & lhskcurve, LUTf & clcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histCLurve, LUTu &histLLCurve, LUTu &histLCurve) {
 	int W = lold->W;
 	int H = lold->H;
    // lhskcurve.dump("lh_curve");
@@ -4297,9 +4297,11 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 	LabImage* editLab = NULL;
 	PlanarWhateverData<float>* editWhatever = NULL;
 	EditUniqueID editID = EUID_None;
+	bool editPipette = false;
 	if (editBuffer) {
 		editID = editBuffer->getEditID();
 		if (editID != EUID_None) {
+            editPipette = true;
 			switch  (editBuffer->getDataProvider()->getCurrSubscriber()->getEditBufferType()) {
 			case (BT_IMAGEFLOAT):
 				editImgFloat = editBuffer->getImgFloatBuffer();
@@ -4359,38 +4361,25 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 	LUTf dLcurve;
 
 	LUTu hist16Clad;
-//	LUTu hist16CLlad;
-//	LUTu hist16LLClad;
 	LUTu hist16Llad;
 
-	bool chrop=false;
-	float val;
 	//preparate for histograms CIECAM
 	if(pW!=1){//only with improccoordinator
-		dCcurve(65536,0);
+		dCcurve(48000,0);
 		dLcurve(65536,0);
 		hist16Clad(65536);
-//		hist16CLlad(65536);
-//		hist16LLClad(65536);
 		hist16Llad(65536);
-		
-		chrop = true;
+    	float val;
 		for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
 			val = (double)i / 47999.0;
 			dCcurve[i] = CLIPD(val);
 		}
-	//	for (int i=0; i<65535; i++) {  //  a
-	//		val = (double)i / 65534.0;
-	//		dLcurve[i] = CLIPD(val);
-	//	}
 		for (int i=0; i<65535; i++) {  //  a
 			val = (double)i / 65534.0;
 			dLcurve[i] = CLIPD(val);
 		}
 
 		hist16Clad.clear();
-	//	hist16CLlad.clear();
-	//	hist16LLClad.clear();
 		hist16Llad.clear();
 
 	}
@@ -4401,68 +4390,56 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 	MunsellDebugInfo* MunsDebugInfo = new MunsellDebugInfo();
 #endif
 
-
-	float adjustr=1.0f, adjustbg=1.0f;
+	float adjustr=1.0f;
 
 //	if(params->labCurve.avoidclip ){
 	// parameter to adapt curve C=f(C) to gamut
 
-	if      (params->icm.working=="ProPhoto")   {adjustr =       adjustbg = 1.2f;}// 1.2 instead 1.0 because it's very rare to have C>170..
-	else if (params->icm.working=="Adobe RGB")  {adjustr = 1.8f; adjustbg = 1.4f;}
-	else if (params->icm.working=="sRGB")  	    {adjustr = 2.0f; adjustbg = 1.7f;}
-	else if (params->icm.working=="WideGamut")  {adjustr =       adjustbg = 1.2f;}
-	else if (params->icm.working=="Beta RGB")   {adjustr =       adjustbg = 1.4f;}
-	else if (params->icm.working=="BestRGB")    {adjustr =       adjustbg = 1.4f;}
-	else if (params->icm.working=="BruceRGB")   {adjustr = 1.8f; adjustbg = 1.5f;}
-
-	//adjustr=1.f;
+	if      (params->icm.working=="ProPhoto")   {adjustr = 1.2f;}// 1.2 instead 1.0 because it's very rare to have C>170..
+	else if (params->icm.working=="Adobe RGB")  {adjustr = 1.8f;}
+	else if (params->icm.working=="sRGB")  	    {adjustr = 2.0f;}
+	else if (params->icm.working=="WideGamut")  {adjustr = 1.2f;}
+	else if (params->icm.working=="Beta RGB")   {adjustr = 1.4f;}
+	else if (params->icm.working=="BestRGB")    {adjustr = 1.4f;}
+	else if (params->icm.working=="BruceRGB")   {adjustr = 1.8f;}
 
 	// reference to the params structure has to be done outside of the parallelization to avoid CPU cache problem
-	bool highlight = params->toneCurve.hrenabled; //Get the value if "highlight reconstruction" is activated
-	int chromaticity = params->labCurve.chromaticity;
-	bool bwonly = params->blackwhite.enabled && !params->colorToning.enabled;
-	bool bwToning = params->labCurve.chromaticity==-100  /*|| params->blackwhite.method=="Ch" || params->blackwhite.enabled */ || bwonly;
+	const bool highlight = params->toneCurve.hrenabled; //Get the value if "highlight reconstruction" is activated
+	const int chromaticity = params->labCurve.chromaticity;
+	const float chromapro = (chromaticity + 100.0f)/100.0f;
+	const bool bwonly = params->blackwhite.enabled && !params->colorToning.enabled;
+	const bool bwToning = params->labCurve.chromaticity ==- 100  /*|| params->blackwhite.method=="Ch" || params->blackwhite.enabled */ || bwonly;
 	//if(chromaticity==-100) chromaticity==-99;
-	bool LCredsk = params->labCurve.lcredsk;
-	bool ccut = ccutili;
-	bool clut = clcutili;
-	bool aut = autili;
-	bool but = butili;
-	double rstprotection = 100.-params->labCurve.rstprotection; // Red and Skin Tones Protection
+	const bool LCredsk = params->labCurve.lcredsk;
+	const bool ccut = ccutili;
+	const bool clut = clcutili;
+	const double rstprotection = 100.-params->labCurve.rstprotection; // Red and Skin Tones Protection
 	// avoid color shift is disabled when bwToning is activated and enabled if gamut is true in colorappearanace
-	bool avoidColorShift = (params->labCurve.avoidcolorshift || (params->colorappearance.gamut && params->colorappearance.enabled)) && !bwToning ;
-	int protectRed = settings->protectred;
-	double protectRedH = settings->protectredh;
-	bool gamutLch = settings->gamutLch;
-	float amountchroma = (float) settings->amchroma;
-	// only if user activate Lab adjustements
-	if (avoidColorShift) {
-		if(autili || butili || ccutili ||  cclutili || chutili || lhutili || hhutili || clcutili || utili || chromaticity) {
-			unsigned int N = W*H;
-			float *L = lold->L[0];
-			float *a=  lold->a[0];
-			float *b=  lold->b[0];
-			float* Lold = new float [N];//to save L before any used
-			float* Cold = new float [N];//to save C before any used
-#ifdef _OPENMP
-#pragma omp parallel for if (multiThread)
-#endif // _OPENMP
-			for (unsigned int j=0; j<N; j++){
-				Lold[j]=L[j]/327.68f;
-				Cold[j]=sqrt(SQR(a[j]/327.68f)+SQR(b[j]/327.68f));
-			}
-			Color::LabGamutMunsell(lold, Lold, Cold, /*corMunsell*/true, /*lumaMuns*/false, params->toneCurve.hrenabled, /*gamut*/true, params->icm.working, multiThread);
-			delete [] Lold;
-			delete [] Cold;
-		}
-	}
+	const bool avoidColorShift = (params->labCurve.avoidcolorshift || (params->colorappearance.gamut && params->colorappearance.enabled)) && !bwToning ;
+	const float protectRed = (float)settings->protectred;
+	const double protectRedH = settings->protectredh;
+    float protect_red,protect_redh;
+    protect_red = protectRed;//default=60  chroma: one can put more or less if necessary...in 'option'  40...160
+    if(protect_red < 20.0f) protect_red=20.0; // avoid too low value
+    if(protect_red > 180.0f) protect_red=180.0; // avoid too high value
+    protect_redh=float(protectRedH);//default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1.0
+    if(protect_redh<0.1f) protect_redh=0.1f;//avoid divide by 0 and negatives values
+    if(protect_redh>1.0f) protect_redh=1.0f;//avoid too big values
+    float protect_redhcur = protectRedH;//default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1
+    if(protect_redhcur<0.1f) protect_redhcur=0.1f;//avoid divide by 0 and negatives values:minimal protection for transition
+    if(protect_redhcur>3.5f) protect_redhcur=3.5f;//avoid too big values
 
-#ifdef _DEBUG
-#pragma omp parallel default(shared) firstprivate(highlight, ccut, clut, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew, MunsDebugInfo, pW) if (multiThread)
-#else
-#pragma omp parallel default(shared) firstprivate(highlight, ccut, clut, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew, pW) if (multiThread)
-#endif
-{
+    //increase saturation after denoise : ...approximation
+    float factnoise=1.f;
+    if(params->dirpyrDenoise.enabled) {
+        factnoise=(1.f+params->dirpyrDenoise.chroma/500.f);//levels=5
+//		if(yyyy) factnoise=(1.f+params->dirpyrDenoise.chroma/100.f);//levels=7
+    }
+    const float scaleConst = 100.0f/100.1f;
+
+	
+	const bool gamutLch = settings->gamutLch;
+	const float amountchroma = (float) settings->amchroma;
 
 	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
 	double wip[3][3] = {
@@ -4470,96 +4447,148 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 		{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
 		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}
 	};
-
-
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+	
 	TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
-
 	double wp[3][3] = {
 		{wprof[0][0],wprof[0][1],wprof[0][2]},
 		{wprof[1][0],wprof[1][1],wprof[1][2]},
 		{wprof[2][0],wprof[2][1],wprof[2][2]}};
 
+#ifdef _DEBUG
+#pragma omp parallel default(shared) firstprivate(highlight, ccut, clut, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew, MunsDebugInfo, pW) if (multiThread)
+#else
+#pragma omp parallel if (multiThread)
+#endif
+{
+#ifdef __SSE2__
+        float HHBuffer[W] ALIGNED16;
+        float CCBuffer[W] ALIGNED16;
+#endif
 #pragma omp for schedule(dynamic, 16)
-	for (int i=0; i<H; i++)
+	for (int i=0; i<H; i++) {
+        if (avoidColorShift)
+            // only if user activate Lab adjustments
+            if(autili || butili || ccutili ||  cclutili || chutili || lhutili || hhutili || clcutili || utili || chromaticity) {
+                Color::LabGamutMunsell(lold->L[i],lold->a[i], lold->b[i], W, /*corMunsell*/true, /*lumaMuns*/false, params->toneCurve.hrenabled, /*gamut*/true, wip, multiThread);
+            }
+#ifdef __SSE2__
+        // precalculate some values using SSE
+        if(bwToning || (!autili && !butili)) {
+            __m128 c327d68v = _mm_set1_ps(327.68f);
+            __m128 av,bv;
+            int k;
+            for (k=0; k<W-3; k+=4) {
+                av = LVFU(lold->a[i][k]);
+                bv = LVFU(lold->b[i][k]);
+                STVF(HHBuffer[k],xatan2f(bv,av));
+                STVF(CCBuffer[k],_mm_sqrt_ps(SQRV(av)+SQRV(bv))/c327d68v);
+            }
+            for(;k<W;k++) {
+                HHBuffer[k] = xatan2f(lold->b[i][k],lold->a[i][k]);
+                CCBuffer[k] = sqrt(SQR(lold->a[i][k]) + SQR(lold->b[i][k]))/327.68f;
+            }
+        }
+#endif // __SSE2__
 		for (int j=0; j<W; j++) {
-			float LL=lold->L[i][j]/327.68f;
+			const float Lin=lold->L[i][j];
+			float LL=Lin/327.68f;
 			float CC;
-			CC=sqrt(SQR(lold->a[i][j]) + SQR(lold->b[i][j]))/327.68f;
 			float HH;
-			HH=xatan2f(lold->b[i][j],lold->a[i][j]);
-			// According to mathematical laws we can get the sin and cos of HH by simple operations
-			float2  sincosval;
-			if(CC==0.0f) {
-				sincosval.y = 1.0f;
-				sincosval.x = 0.0f;
-			} else {
-				sincosval.y = lold->a[i][j]/(CC*327.68f);
-				sincosval.x = lold->b[i][j]/(CC*327.68f);
-			}
+			float Chprov;
+			float Chprov1;
+			float memChprov;
+			float2 sincosval;
+            if(bwToning) { // this values will be also set when bwToning is false some lines down
+#ifdef __SSE2__
+                // use precalculated values from above
+                HH = HHBuffer[j];
+                CC = CCBuffer[j];
+#else
+			    HH=xatan2f(lold->b[i][j],lold->a[i][j]);
+			    CC=sqrt(SQR(lold->a[i][j]) + SQR(lold->b[i][j]))/327.68f;
+#endif
+                // According to mathematical laws we can get the sin and cos of HH by simple operations
+                if(CC==0.0f) {
+                    sincosval.y = 1.0f;
+                    sincosval.x = 0.0f;
+                } else {
+                    sincosval.y = lold->a[i][j]/(CC*327.68f);
+                    sincosval.x = lold->b[i][j]/(CC*327.68f);
+                }
 
-			float Chprov=CC;
-			float Chprov1=CC;
-			float memChprov=Chprov;
-				
-			float Lin=lold->L[i][j];
-			float Lprov2=Lin/327.68f;
+                Chprov=CC;
+                Chprov1=CC;
+                memChprov=Chprov;
+            }
 
-			if (editID == EUID_Lab_LCurve) 
+			if (editPipette && editID == EUID_Lab_LCurve) 
 				editWhatever->v(i,j) = LIM01<float>(Lin/32768.0f);// Lab L pipette
 
 			lnew->L[i][j] = curve[Lin];
 
 			float Lprov1=(lnew->L[i][j])/327.68f;
-			float chromaChfactor=1.0f;
-			if (editID == EUID_Lab_aCurve){
-					float chromapipa =lold->a[i][j]+(32768.f*1.28f);
-					editWhatever->v(i,j) = LIM01<float>((chromapipa)/(65536.f*1.28f));}// Lab a pipette
-			if (editID == EUID_Lab_bCurve){
-					float chromapipb =lold->b[i][j]+(32768.f*1.28f);
-					editWhatever->v(i,j) = LIM01<float>((chromapipb)/(65536.f*1.28f));}//Lab b pipette
-		
+
+			if(editPipette) {
+                if (editID == EUID_Lab_aCurve) { // Lab a pipette
+                    float chromapipa =lold->a[i][j]+(32768.f*1.28f);
+                    editWhatever->v(i,j) = LIM01<float>((chromapipa)/(65536.f*1.28f));
+                } else if (editID == EUID_Lab_bCurve) { //Lab b pipette
+                    float chromapipb =lold->b[i][j]+(32768.f*1.28f);
+                    editWhatever->v(i,j) = LIM01<float>((chromapipb)/(65536.f*1.28f));
+                }
+			}
+
 			float atmp, btmp;
-			atmp = acurve[lold->a[i][j]+32768.0f]-32768.0f;// curves Lab a
-			btmp = bcurve[lold->b[i][j]+32768.0f]-32768.0f;// curves Lab b
+
+            atmp = lold->a[i][j];
+            if(autili)
+                atmp = acurve[atmp+32768.0f]-32768.0f;// curves Lab a
+
+            btmp = lold->b[i][j];
+            if(butili)
+                btmp = bcurve[btmp+32768.0f]-32768.0f;// curves Lab b
+
 			if(!bwToning) {	//take into account modification of 'a' and 'b'
-				lold->a[i][j]=atmp;
-				lold->b[i][j]=btmp;
-				CC=sqrt(SQR(lold->a[i][j]) + SQR(lold->b[i][j]))/327.68f;
-				HH=xatan2f(lold->b[i][j],lold->a[i][j]);
+#ifdef __SSE2__
+                if(!autili && !butili) {
+                    // use precalculated values from above
+                    HH = HHBuffer[j];
+                    CC = CCBuffer[j];
+                } else {
+                    CC = sqrt(SQR(atmp) + SQR(btmp))/327.68f;
+                    HH = xatan2f(btmp,atmp);
+                }
+#else
+				CC=sqrt(SQR(atmp) + SQR(btmp))/327.68f;
+				HH=xatan2f(btmp,atmp);
+#endif
 				// According to mathematical laws we can get the sin and cos of HH by simple operations
 				//float2  sincosval;
-				if(CC==0.0f) {
-					sincosval.y = 1.0f;
-					sincosval.x = 0.0f;
+				if(CC == 0.f) {
+					sincosval.y = 1.f;
+					sincosval.x = 0.f;
 				} else {
-					sincosval.y = lold->a[i][j]/(CC*327.68f);
-					sincosval.x = lold->b[i][j]/(CC*327.68f);
+					sincosval.y = atmp/(CC*327.68f);
+					sincosval.x = btmp/(CC*327.68f);
 				}
 				Chprov=CC;
 				Chprov1=CC;
 				memChprov=Chprov;
 			} // now new values of lold with 'a' and 'b'
-			float Chprov2=Chprov1;
-			int poscc,posp,posl;
-			bool inRGB;
-			const float ClipLevel = 65535.0f;
 
-			if (editID == 	EUID_Lab_LHCurve || editID == 	EUID_Lab_CHCurve || editID == 	EUID_Lab_HHCurve) {//H pipette
-						float valpar =Color::huelab_to_huehsv2(HH);
-						editWhatever->v(i,j) = valpar;
-					}
-			
-			
-			
+            if(editPipette)
+			    if (editID == EUID_Lab_LHCurve || editID == EUID_Lab_CHCurve || editID == EUID_Lab_HHCurve) {//H pipette
+    				float valpar =Color::huelab_to_huehsv2(HH);
+					editWhatever->v(i,j) = valpar;
+				}
+
 			if (lhutili) {  // L=f(H)
+    			const float ClipLevel = 65535.f;
 				float l_r;//Luminance Lab in 0..1
 				l_r = Lprov1/100.f;	
 				{
-				double lr;
 				float khue=1.9f;//in reserve in case of!
-				float valparam = float((lhCurve->getVal(lr=Color::huelab_to_huehsv2(HH))-0.5f));//get l_r=f(H)
+				float valparam = float((lhCurve->getVal(Color::huelab_to_huehsv2(HH))-0.5f));//get l_r=f(H)
 				float valparamneg;
 				valparamneg=valparam;		
 				float kcc=(CC/amountchroma);//take Chroma into account...40 "middle low" of chromaticity (arbitrary and simple), one can imagine other algorithme
@@ -4575,8 +4604,9 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 
 				Lprov1=l_r*100.f;
 
-				Chprov2 = sqrt(SQR(atmp/327.68f)+SQR(btmp/327.68f));
+				float Chprov2 = sqrt(SQR(atmp)+SQR(btmp))/327.68f;
 				//Gamut control especialy fot negative values slightly different of gamutlchonly
+				bool inRGB;
 				do {
 					inRGB=true;	
 					float aprov1=Chprov2*sincosval.y;
@@ -4602,9 +4632,8 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 						inRGB = false;
 					}	
 				}
-				while (!inRGB)	;
-					
-//				float2  sincosval = xsincosf(HH);
+				while (!inRGB);
+
 				atmp=327.68f*Chprov2*sincosval.y;
 				btmp=327.68f*Chprov2*sincosval.x;
 			}
@@ -4613,87 +4642,59 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 			if (chutili) {
 				double hr = Color::huelab_to_huehsv2(HH);
 				float chparam = float((chCurve->getVal(hr)-0.5f) * 2.0f);//get C=f(H)
-				chromaChfactor=1.0f+chparam;
+				float chromaChfactor=1.0f+chparam;
+                atmp *= chromaChfactor;//apply C=f(H)
+                btmp *= chromaChfactor;
 			}
-			
-			atmp *= chromaChfactor;//apply C=f(H)
-			btmp *= chromaChfactor;
-			
+
 			if (hhutili) {  // H=f(H)
 				//hue Lab in -PI +PI
-				double hr;
-				float valparam = float((hhCurve->getVal(hr=Color::huelab_to_huehsv2(HH))-0.5f) * 1.7f) +HH;//get H=f(H)  1.7 optimisation !
+				float valparam = float((hhCurve->getVal(Color::huelab_to_huehsv2(HH))-0.5f) * 1.7f) +HH;//get H=f(H)  1.7 optimisation !
 				HH = valparam;
 				sincosval = xsincosf(HH);
 			}
-			
-			//simulate very approximative gamut f(L) : with pyramid transition
-			float dred=55.0f;//C red value limit
-			if     (Lprov1<25.0f)   dred = 40.0f;
-			else if(Lprov1<30.0f)   dred = 3.0f*Lprov1 -35.0f;
-			else if(Lprov1<70.0f)   dred = 55.0f;
-			else if(Lprov1<75.0f)   dred = -3.0f*Lprov1 +265.0f;
-			else                    dred = 40.0f;
-			// end pyramid
-	//		if(params->dirpyrDenoise.enabled && chromaticity ==0) chromaticity = 0.5f;
-				
+
 			if(!bwToning){
-				float factorskin, factorsat, factor, factorskinext, interm;
-				float scale = 100.0f/100.1f;//reduction in normal zone
-				float scaleext=1.0f;//reduction in transition zone
-				float protect_red,protect_redh;
-				float deltaHH;//HH value transition
-				protect_red=float(protectRed);//default=60  chroma: one can put more or less if necessary...in 'option'  40...160
-				if(protect_red < 20.0f) protect_red=20.0; // avoid too low value
-				if(protect_red > 180.0f) protect_red=180.0; // avoid too high value
-				protect_redh=float(protectRedH);//default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1.0
-				if(protect_redh<0.1f) protect_redh=0.1f;//avoid divide by 0 and negatives values
-				if(protect_redh>1.0f) protect_redh=1.0f;//avoid too big values
+				float factorskin, factorsat, factorskinext;
+				if(chromapro > 1.f) {
+                    float scale = scaleConst;//reduction in normal zone
+                    float scaleext = 1.f;//reduction in transition zone
+                    Color::scalered ( rstprotection, chromapro, 0.0, HH, protect_redh, scale, scaleext);//1.0
+					float interm = (chromapro - 1.f);
+					factorskin = 1.f + (interm*scale);
+					factorskinext = 1.f+ (interm*scaleext);
+				} else {
+					factorskin = chromapro ; // +(chromapro)*scale;
+					factorskinext = chromapro ;// +(chromapro)*scaleext;
+                }
+				factorsat = chromapro * factnoise;
+			
+                //simulate very approximative gamut f(L) : with pyramid transition
+                float dred /*=55.f*/;//C red value limit
+                if     (Lprov1<25.f)   dred = 40.f;
+                else if(Lprov1<30.f)   dred = 3.f * Lprov1 -35.f;
+                else if(Lprov1<70.f)   dred = 55.f;
+                else if(Lprov1<75.f)   dred = -3.f * Lprov1 + 265.f;
+                else                   dred = 40.f;
+                // end pyramid
 
-				deltaHH=protect_redh;//transition hue
-				float chromapro	= (chromaticity	+ 100.0f)/100.0f;
-				if(chromapro>0.0) Color::scalered ( rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);//1.0
-				if(chromapro>1.0) {
-					interm=(chromapro-1.0f)*100.0f;
-					factorskin= 1.0f+(interm*scale)/100.0f;
-					factorskinext=1.0f+(interm*scaleext)/100.0f;
-				}
-				else {
-					//factorskin= chromapro*scale;
-					//factorskinext= chromapro*scaleext;
-					factorskin= chromapro ; // +(chromapro)*scale;
-					factorskinext= chromapro ;// +(chromapro)*scaleext;
-
-					}
-				factorsat=chromapro;
-				//increase saturation after denoise : ...approximation
-				float factnoise=1.f;
-				if(params->dirpyrDenoise.enabled) {
-					factnoise=(1.f+params->dirpyrDenoise.chroma/500.f);//levels=5
-					
-					
-			//		if(yyyy) factnoise=(1.f+params->dirpyrDenoise.chroma/100.f);//levels=7
-				}
-				factorsat*=factnoise;
-				
-				factor=factorsat;
 				// Test if chroma is in the normal range first
-				Color::transitred ( HH, Chprov1, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);
-				atmp *= factor;
-				btmp *= factor;
-			if (editID == EUID_Lab_CLCurve) 
-				editWhatever->v(i,j) = LIM01<float>(Lprov2/100.f);// Lab C=f(L) pipette
+				Color::transitred ( HH, Chprov1, dred, factorskin, protect_red, factorskinext, protect_redh, factorsat, factorsat);
+				atmp *= factorsat;
+				btmp *= factorsat;
+
+			    if (editPipette && editID == EUID_Lab_CLCurve) 
+				    editWhatever->v(i,j) = LIM01<float>(LL/100.f);// Lab C=f(L) pipette
 
 				if (clut) { // begin C=f(L)
 					float factorskin,factorsat,factor,factorskinext,interm;
-					float chroma = sqrt(SQR(atmp)+SQR(btmp)+0.001f);
-					float chromaCfactor=(clcurve[Lprov2*655.35f])/(Lprov2*655.35f);//apply C=f(L)
+					float chromaCfactor=(clcurve[LL*655.35f])/(LL*655.35f);//apply C=f(L)
 					float curf=0.7f;//empirical coeff because curve is more progressive
 					float scale = 100.0f/100.1f;//reduction in normal zone for curve C
 					float scaleext=1.0f;//reduction in transition zone for curve C
 					float protect_redcur,protect_redhcur;//perhaps the same value than protect_red and protect_redh
 					float deltaHH;//HH value transition for C curve
-					protect_redcur=curf*float(protectRed);//default=60  chroma: one can put more or less if necessary...in 'option'  40...160==> curf =because curve is more progressive
+					protect_redcur=curf*protectRed;//default=60  chroma: one can put more or less if necessary...in 'option'  40...160==> curf =because curve is more progressive
 					if(protect_redcur < 20.0f) protect_redcur=20.0; // avoid too low value
 					if(protect_redcur > 180.0f) protect_redcur=180.0; // avoid too high value
 					protect_redhcur=curf*float(protectRedH);//default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1.0 ==> curf =because curve is more progressive
@@ -4723,7 +4724,7 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 		//		editWhatever->v(i,j) = LIM01<float>(Lprov2/100.f);// Lab C=f(L) pipette
 
 				// I have placed C=f(C) after all C treatments to assure maximum amplitude of "C"
-				if (editID == EUID_Lab_CCurve){
+				if (editPipette && editID == EUID_Lab_CCurve){
 					float chromapip = sqrt(SQR(atmp)+SQR(btmp)+0.001f);
 					editWhatever->v(i,j) = LIM01<float>((chromapip)/(48000.f));}//Lab C=f(C) pipette
 				
@@ -4736,7 +4737,7 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 					float scaleext=1.0f;//reduction in transition zone for curve CC
 					float protect_redcur,protect_redhcur;//perhaps the same value than protect_red and protect_redh
 					float deltaHH;//HH value transition for CC curve
-					protect_redcur=curf*float(protectRed);//default=60  chroma: one can put more or less if necessary...in 'option'  40...160==> curf =because curve is more progressive
+					protect_redcur=curf*protectRed;//default=60  chroma: one can put more or less if necessary...in 'option'  40...160==> curf =because curve is more progressive
 					if(protect_redcur < 20.0f) protect_redcur=20.0; // avoid too low value
 					if(protect_redcur > 180.0f) protect_redcur=180.0; // avoid too high value
 					protect_redhcur=curf*float(protectRedH);//default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1.0 ==> curf =because curve is more progressive
@@ -4764,38 +4765,27 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 					atmp *= factor;
 					btmp *= factor;
 				}
-		//		if (editID == EUID_Lab_CCurve){
-		//			float chromapip = sqrt(SQR(atmp)+SQR(btmp)+0.001f);
-		//			editWhatever->v(i,j) = LIM01<float>((chromapip)/(48000.f));}//Lab C=f(C) pipette
-				
 			}
 			// end chroma C=f(C)
 
 			//update histogram C
 			if(pW!=1){//only with improccoordinator
-				posp=CLIP((int)sqrt((atmp*atmp + btmp*btmp)));
+				int posp=CLIP((int)sqrt((atmp*atmp + btmp*btmp)));
 				hist16Clad[posp]++;
-			//	hist16CLlad[posp]++;
-			//	hist16LLClad[posp]++;
-				
 			}
 
-				if (editID == EUID_Lab_LCCurve){
-					float chromapiplc = sqrt(SQR(atmp)+SQR(btmp)+0.001f);
-					editWhatever->v(i,j) = LIM01<float>((chromapiplc)/(48000.f));}//Lab L=f(C) pipette
+            if (editPipette && editID == EUID_Lab_LCCurve){
+                float chromapiplc = sqrt(SQR(atmp)+SQR(btmp)+0.001f);
+                editWhatever->v(i,j) = LIM01<float>((chromapiplc)/(48000.f));
+            }//Lab L=f(C) pipette
 			
 			
-			if (!bwToning) {	//apply curve L=f(C) for skin and rd...but also for extended color ==> near green and blue (see 'curf')
+			if (cclutili && !bwToning) {	//apply curve L=f(C) for skin and rd...but also for extended color ==> near green and blue (see 'curf')
 
 				const float xx=0.25f;//soft : between 0.2 and 0.4
-				float protect_redhcur;
-				float curf=1.0f;
-				float deltaHH;
-				protect_redhcur=curf*float(protectRedH);//default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1
-				if(protect_redhcur<0.1f) protect_redhcur=0.1f;//avoid divide by 0 and negatives values:minimal protection for transition
-				if(protect_redhcur>3.5f) protect_redhcur=3.5f;//avoid too big values
+				float skdeltaHH;
 
-				deltaHH=protect_redhcur;//transition hue
+				skdeltaHH=protect_redhcur;//transition hue
 
 				float skbeg=-0.05f;//begin hue skin
 				float skend=1.60f;//end hue skin
@@ -4803,28 +4793,39 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 				float aa,bb;
 				float zz=0.0f;
 				float yy=0.0f;
-				if(Chprov1 < chrmin) yy=(Chprov1/chrmin)*(Chprov1/chrmin)*xx;else yy=xx;//avoid artifact for low C
-				if(!LCredsk) {skbeg=-3.1415; skend=3.14159; deltaHH=0.001f;}
-					if(HH>skbeg && HH < skend ) zz=yy;
-					else if(HH>skbeg-deltaHH && HH<=skbeg) {aa=yy/deltaHH;bb=-aa*(skbeg-deltaHH); zz=aa*HH+bb;}//transition
-					else if(HH>=skend && HH < skend+deltaHH) {aa=-yy/deltaHH;bb=-aa*(skend+deltaHH);zz=aa*HH+bb;}//transition
+				if(Chprov1 < chrmin) 
+				    yy=SQR(Chprov1/chrmin)*xx;
+                else 
+                    yy=xx;//avoid artifact for low C
+				if(!LCredsk) {
+                    skbeg=-3.1415;
+                    skend=3.14159; 
+                    skdeltaHH=0.001f;
+                }
+				if(HH>skbeg && HH < skend ) {
+				    zz=yy;
+				} else if(HH>skbeg-skdeltaHH && HH<=skbeg) { //transition
+                    aa=yy/skdeltaHH;
+                    bb=-aa*(skbeg-skdeltaHH); 
+                    zz=aa*HH+bb;
+                } else if(HH>=skend && HH < skend+skdeltaHH) { //transition
+                    aa=-yy/skdeltaHH;
+                    bb=-aa*(skend+skdeltaHH);
+                    zz=aa*HH+bb;
+                }
 
 				float chroma=sqrt(SQR(atmp)+SQR(btmp)+0.001f);
 				float Lc = (lhskcurve[chroma*adjustr])/(chroma*adjustr);//apply L=f(C)
 				Lc=(Lc-1.0f)*zz+1.0f;//reduct action
 				Lprov1*=Lc;//adjust luminance
-				}
-				//update histo LC
-                if(pW!=1){//only with improccoordinator
-					 posl=CLIP((int(Lprov1*327.68f)));
-					int posll=CLIP((int(Chprov1*327.68f)));
-					
-					//hist16LLClad[posll]++;
-					hist16Llad[posl]++;
-					
-				}
+            }
+            //update histo LC
+            if(pW!=1){//only with improccoordinator
+                int posl=CLIP((int(Lprov1*327.68f)));
+                hist16Llad[posl]++;
+            }
 
-			Chprov1 = sqrt(SQR(atmp/327.68f)+SQR(btmp/327.68f));
+			Chprov1 = sqrt(SQR(atmp)+SQR(btmp))/327.68f;
 
 			// labCurve.bwtoning option allows to decouple modulation of a & b curves by saturation
 			// with bwtoning enabled the net effect of a & b curves is visible
@@ -4842,17 +4843,16 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 					bool neg=false;
 					bool more_rgb=false;
 					//gamut control : Lab values are in gamut
-					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
+					Color::gamutLchonly(HH, sincosval, Lprov1,Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
 #else
 					//gamut control : Lab values are in gamut
-					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
+					Color::gamutLchonly(HH, sincosval,Lprov1,Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
 #endif
 					lnew->L[i][j]=Lprov1*327.68f;
 //					float2 sincosval = xsincosf(HH);
 					lnew->a[i][j]=327.68f*Chprov1*sincosval.y;
 					lnew->b[i][j]=327.68f*Chprov1*sincosval.x;
-				}
-				else {
+				} else {
 					//use gamutbdy
 					//Luv limiter
 					float Y,u,v;
@@ -4862,32 +4862,32 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 				}
 
 				if (utili || autili || butili || ccut || clut || cclutili || chutili || lhutili || hhutili || clcutili || chromaticity) {
-					float correctionHue=0.0f; // Munsell's correction
-					float correctlum=0.0f;
+					float correctionHue=0.f; // Munsell's correction
+					float correctlum=0.f;
 
 					Lprov1=lnew->L[i][j]/327.68f;
-					Chprov=sqrt(SQR(lnew->a[i][j]/327.68f)+ SQR(lnew->b[i][j]/327.68f));
+					Chprov=sqrt(SQR(lnew->a[i][j])+ SQR(lnew->b[i][j]))/327.68f;
 
 #ifdef _DEBUG
-					Color::AllMunsellLch(/*lumaMuns*/true, Lprov1,Lprov2,HH,Chprov,memChprov,correctionHue,correctlum, MunsDebugInfo);
+					Color::AllMunsellLch(/*lumaMuns*/true, Lprov1,LL,HH,Chprov,memChprov,correctionHue,correctlum, MunsDebugInfo);
 #else
-					Color::AllMunsellLch(/*lumaMuns*/true, Lprov1,Lprov2,HH,Chprov,memChprov,correctionHue,correctlum);
+					Color::AllMunsellLch(/*lumaMuns*/true, Lprov1,LL,HH,Chprov,memChprov,correctionHue,correctlum);
 #endif
-
-					if(fabs(correctionHue) < 0.015f) HH+=correctlum;	// correct only if correct Munsell chroma very little.
-			/*		if((HH>0.0f && HH < 1.6f)	&& memChprov < 70.0f) HH+=correctlum;//skin correct
-					else if(fabs(correctionHue) < 0.3f) HH+=0.08f*correctlum;
-					else if(fabs(correctionHue) < 0.2f) HH+=0.25f*correctlum;
-					else if(fabs(correctionHue) < 0.1f) HH+=0.35f*correctlum;
-					else if(fabs(correctionHue) < 0.015f) HH+=correctlum;	// correct only if correct Munsell chroma very little.
-			*/
-					float2 sincosval = xsincosf(HH+correctionHue);
-			
+                    if(correctionHue != 0.f || correctlum != 0.f) {
+                        if(fabs(correctionHue) < 0.015f)
+                            HH+=correctlum;	// correct only if correct Munsell chroma very little.
+                /*		if((HH>0.0f && HH < 1.6f)	&& memChprov < 70.0f) HH+=correctlum;//skin correct
+                        else if(fabs(correctionHue) < 0.3f) HH+=0.08f*correctlum;
+                        else if(fabs(correctionHue) < 0.2f) HH+=0.25f*correctlum;
+                        else if(fabs(correctionHue) < 0.1f) HH+=0.35f*correctlum;
+                        else if(fabs(correctionHue) < 0.015f) HH+=correctlum;	// correct only if correct Munsell chroma very little.
+                */
+                        sincosval = xsincosf(HH+correctionHue);
+                    }
 					lnew->a[i][j]=327.68f*Chprov*sincosval.y;// apply Munsell
 					lnew->b[i][j]=327.68f*Chprov*sincosval.x;
 				}
-			}
-			else {
+			} else {
 //				if(Lprov1 > maxlp) maxlp=Lprov1;
 //				if(Lprov1 < minlp) minlp=Lprov1;
 				if(!bwToning){
@@ -4902,34 +4902,23 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 					lnew->b[i][j] = btmp;
 				}
 			}
-		//	}
 		}
-
+    }
 } // end of parallelization
 
     //update histogram C  with data chromaticity and not with CC curve
 	if(pW!=1){//only with improccoordinator
 		for (int i=0; i<48000; i++) {//32768*1.414  + ...
-			if (chrop) {
-				float hval = dCcurve[i];
-				int hi = (int)(255.0*CLIPD(hval)); //
-				histCCurve[hi] += hist16Clad[i] ;
-			//	histCLurve[hi] += hist16CLlad[i] ;
-			//	histLLCurve[hi] += hist16LLClad[i] ;
-				
-			}
+            float hval = dCcurve[i];
+            int hi = (int)(255.0*CLIPD(hval)); //
+            histCCurve[hi] += hist16Clad[i] ;
 		}
 		   //update histogram L  with data luminance
 		for (int i=0; i<65535; i++) {
-			if (chrop) {
-				float hlval = dLcurve[i];
-				int hli = (int)(255.0*CLIPD(hlval));
-				histLCurve[hli] += hist16Llad[i] ;
-			//	histLLCurve[hli] += hist16LLClad[i] ;
-				
-			}
-		}
-		
+            float hlval = dLcurve[i];
+            int hli = (int)(255.0*CLIPD(hlval));
+            histLCurve[hli] += hist16Llad[i] ;
+        }
 	}
 
 #ifdef _DEBUG
