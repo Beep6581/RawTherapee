@@ -1577,16 +1577,16 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         keyFile.set_integer_list("Wavelet",   "Edgcont", thresh);
     }
     if (!pedited || pedited->wavelet.level0noise) {
-        Glib::ArrayHandle<int> thresh (wavelet.level0noise.value, 2, Glib::OWNERSHIP_NONE);
-        keyFile.set_integer_list("Wavelet",   "Level0noise", thresh);
+        Glib::ArrayHandle<double> thresh (wavelet.level0noise.value, 2, Glib::OWNERSHIP_NONE);
+        keyFile.set_double_list("Wavelet",   "Level0noise", thresh);
     }
-    if (!pedited || pedited->wavelet.level0noise) {
-        Glib::ArrayHandle<int> thresh (wavelet.level1noise.value, 2, Glib::OWNERSHIP_NONE);
-        keyFile.set_integer_list("Wavelet",   "Level1noise", thresh);
+    if (!pedited || pedited->wavelet.level1noise) {
+        Glib::ArrayHandle<double> thresh (wavelet.level1noise.value, 2, Glib::OWNERSHIP_NONE);
+        keyFile.set_double_list("Wavelet",   "Level1noise", thresh);
     }
     if (!pedited || pedited->wavelet.level2noise) {
-        Glib::ArrayHandle<int> thresh (wavelet.level0noise.value, 2, Glib::OWNERSHIP_NONE);
-        keyFile.set_integer_list("Wavelet",   "Level2noise", thresh);
+        Glib::ArrayHandle<double> thresh (wavelet.level2noise.value, 2, Glib::OWNERSHIP_NONE);
+        keyFile.set_double_list("Wavelet",   "Level2noise", thresh);
     }
 	
     if (!pedited || pedited->wavelet.threshold)  keyFile.set_integer  ("Wavelet", "ThresholdHighlight",  wavelet.threshold);
@@ -2447,17 +2447,17 @@ if (keyFile.has_group ("Wavelet")) {
         if (pedited) pedited->wavelet.edgcont = true;
     }
     if (keyFile.has_key ("Wavelet", "Level0noise"))   {
-        Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Wavelet", "Level0noise");
+        Glib::ArrayHandle<double> thresh = keyFile.get_double_list ("Wavelet", "Level0noise");
         wavelet.level0noise.setValues(thresh.data()[0], thresh.data()[1]);
         if (pedited) pedited->wavelet.level0noise = true;
     }
     if (keyFile.has_key ("Wavelet", "Level1noise"))   {
-        Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Wavelet", "Level1noise");
+        Glib::ArrayHandle<double> thresh = keyFile.get_double_list ("Wavelet", "Level1noise");
         wavelet.level1noise.setValues(thresh.data()[0], thresh.data()[1]);
         if (pedited) pedited->wavelet.level1noise = true;
     }
     if (keyFile.has_key ("Wavelet", "Level2noise"))   {
-        Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Wavelet", "Level2noise");
+        Glib::ArrayHandle<double> thresh = keyFile.get_double_list ("Wavelet", "Level2noise");
         wavelet.level2noise.setValues(thresh.data()[0], thresh.data()[1]);
         if (pedited) pedited->wavelet.level2noise = true;
     }

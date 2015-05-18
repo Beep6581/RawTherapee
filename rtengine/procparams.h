@@ -911,9 +911,9 @@ class WaveletParams {
         Threshold<int> pastlev;
         Threshold<int> satlev;
         Threshold<int> edgcont;
-        Threshold<int> level0noise;
-        Threshold<int> level1noise;
-        Threshold<int> level2noise;
+        Threshold<double> level0noise;
+        Threshold<double> level1noise;
+        Threshold<double> level2noise;
 	
 	
 		WaveletParams ();

@@ -1035,9 +1035,9 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
     pastlev->setValue<int>(pp->wavelet.pastlev);
     satlev->setValue<int>(pp->wavelet.satlev);
     edgcont->setValue<int>(pp->wavelet.edgcont);
-    level0noise->setValue<int>(pp->wavelet.level0noise);
-    level1noise->setValue<int>(pp->wavelet.level1noise);
-    level2noise->setValue<int>(pp->wavelet.level2noise);
+    level0noise->setValue<double>(pp->wavelet.level0noise);
+    level1noise->setValue<double>(pp->wavelet.level1noise);
+    level2noise->setValue<double>(pp->wavelet.level2noise);
     strength->setValue(pp->wavelet.strength);
     for (int i = 0; i < 9; i++) {
         correction[i]->setValue(pp->wavelet.c[i]);
@@ -1126,9 +1126,9 @@ void Wavelet::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->wavelet.hllev          = hllev->getValue<int> ();
     pp->wavelet.bllev          = bllev->getValue<int> ();
     pp->wavelet.edgcont      	= edgcont->getValue<int> ();
-    pp->wavelet.level0noise      	= level0noise->getValue<int> ();
-    pp->wavelet.level1noise      	= level1noise->getValue<int> ();
-    pp->wavelet.level2noise      	= level2noise->getValue<int> ();
+    pp->wavelet.level0noise      	= level0noise->getValue<double> ();
+    pp->wavelet.level1noise      	= level1noise->getValue<double> ();
+    pp->wavelet.level2noise      	= level2noise->getValue<double> ();
     pp->wavelet.ccwcurve  	= ccshape->getCurve ();
     pp->wavelet.opacityCurveRG = opacityShapeRG->getCurve ();
     pp->wavelet.opacityCurveBY = opacityShapeBY->getCurve ();
@@ -1338,9 +1338,9 @@ void Wavelet::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
     pastlev->setDefault<int> (defParams->wavelet.pastlev);
     satlev->setDefault<int> (defParams->wavelet.satlev);
     edgcont->setDefault<int> (defParams->wavelet.edgcont);
-    level0noise->setDefault<int> (defParams->wavelet.level0noise);
-    level1noise->setDefault<int> (defParams->wavelet.level1noise);
-    level2noise->setDefault<int> (defParams->wavelet.level2noise);
+    level0noise->setDefault<double> (defParams->wavelet.level0noise);
+    level1noise->setDefault<double> (defParams->wavelet.level1noise);
+    level2noise->setDefault<double> (defParams->wavelet.level2noise);
     
     if (pedited) {
 	rescon->setDefault (defParams->wavelet.rescon);
