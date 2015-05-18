@@ -52,6 +52,7 @@ class EditorPanel : public Gtk::VBox,
     private:
 
         Glib::ustring lastSaveAsFileName;
+        bool realized;
 
     protected:      
         Gtk::ProgressBar  *progressLabel;
@@ -134,7 +135,6 @@ class EditorPanel : public Gtk::VBox,
 
 
     public:
-
         EditorPanel (FilePanel* filePanel = NULL);
         virtual ~EditorPanel ();
 
@@ -148,7 +148,7 @@ class EditorPanel : public Gtk::VBox,
         void writeOptions();
 
         void showTopPanel(bool show);
-
+        bool isRealized() { return realized; }
         // progresslistener interface
         void setProgress (double p);
         void setProgressStr (Glib::ustring str);
