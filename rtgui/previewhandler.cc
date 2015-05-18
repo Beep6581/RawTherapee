@@ -206,8 +206,8 @@ Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int desiredW, int desir
     Glib::RefPtr<Gdk::Pixbuf> resPixbuf;
 
     if (previewImg) {
-        double zoom1 = (double)desiredW / previewImg->get_width();
-        double zoom2 = (double)desiredH / previewImg->get_height();
+        double zoom1 = (double)max(desiredW,20) / previewImg->get_width();  // too small values lead to extremely increased processing time in scale function, Issue 2783
+        double zoom2 = (double)max(desiredH,20) / previewImg->get_height(); // ""
         double zoom = zoom1<zoom2 ? zoom1 : zoom2;
         
         resPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, image->getWidth()*zoom, image->getHeight()*zoom);
