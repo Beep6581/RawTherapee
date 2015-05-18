@@ -589,7 +589,7 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
     if( bpanel )
        bpanel->saveOptions ();
   
-    if (isSingleTabMode() || simpleEditor) {
+    if ((isSingleTabMode() || simpleEditor) && epanel->isRealized()) {
        epanel->saveProfile();
        epanel->writeOptions ();
     }

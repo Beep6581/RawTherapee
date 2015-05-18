@@ -32,7 +32,7 @@
 using namespace rtengine::procparams;
 
 EditorPanel::EditorPanel (FilePanel* filePanel) 
-    : beforePreviewHandler(NULL), beforeIarea(NULL), beforeBox(NULL), afterBox(NULL), afterHeaderBox(NULL), parent(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL), iHistoryShow(NULL), iHistoryHide(NULL), iBeforeLockON(NULL),iBeforeLockOFF(NULL), iRightPanel_1_Show(NULL), iRightPanel_1_Hide(NULL), iTopPanel_1_Show(NULL), iTopPanel_1_Hide(NULL), openThm(NULL) {
+    : beforePreviewHandler(NULL), beforeIarea(NULL), beforeBox(NULL), afterBox(NULL), afterHeaderBox(NULL), parent(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL), iHistoryShow(NULL), iHistoryHide(NULL), iBeforeLockON(NULL),iBeforeLockOFF(NULL), iRightPanel_1_Show(NULL), iRightPanel_1_Hide(NULL), iTopPanel_1_Show(NULL), iTopPanel_1_Hide(NULL), openThm(NULL), realized(false) {
 
     epih = new EditorPanelIdleHelper;
     epih->epanel = this;
@@ -436,7 +436,7 @@ void EditorPanel::setAspect () {
 }
 
 void EditorPanel::on_realize () {
-    
+    realized = true;
     Gtk::VBox::on_realize ();
     // This line is needed to avoid autoexpansion of the window :-/
     vboxright->set_size_request (options.toolPanelWidth, -1);
