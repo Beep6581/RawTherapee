@@ -84,7 +84,9 @@ protected:
 	unsigned int maxs;
 	float maxsf;
 	T * data;
-	unsigned int clip, size;
+	unsigned int clip;
+	unsigned int size;
+	unsigned int upperBound;  // always equals size-1, parameter created for performance reason
 private:
 	unsigned int owner;
 #if defined( __SSE2__ ) && defined( __x86_64__ )
@@ -109,6 +111,7 @@ public:
 		data = new T[s];
 		owner = 1;
 		size = s;
+		upperBound = size-1;
 		maxs=size-2;
 		maxsf = (float)maxs;
 #if defined( __SSE2__ ) && defined( __x86_64__ )
@@ -131,6 +134,7 @@ public:
 		data = new T[s];
 		owner = 1;
 		size = s;
+		upperBound = size-1;
 		maxs=size-2;
 		maxsf = (float)maxs;
 #if defined( __SSE2__ ) && defined( __x86_64__ )
@@ -155,6 +159,7 @@ public:
 		data = new T[s];
 		owner = 1;
 		size = s;
+		upperBound = size-1;
 		maxs=size-2;
 		maxsf = (float)maxs;
 #if defined( __SSE2__ ) && defined( __x86_64__ )
@@ -199,7 +204,7 @@ public:
 	 *  @return number of element in the array
 	 */
 	int getUpperBound() {
-		return size>0 ? size-1 : 0;
+		return size>0 ? upperBound : 0;
 	}
 
 	LUT<T> & operator=(LUT<T> &rhs) {
@@ -214,6 +219,7 @@ public:
 	      this->owner=1;
 	      memcpy(this->data,rhs.data,rhs.size*sizeof(T));
 	      this->size=rhs.size;
+	      this->upperBound=rhs.upperBound;
 	      this->maxs=this->size-2;
 		  this->maxsf = (float)this->maxs;
 #if defined( __SSE2__ ) && defined( __x86_64__ )
@@ -228,7 +234,7 @@ public:
 	  }
 	// use with integer indices
 	T& operator[](int index) const {
-		return data[ rtengine::LIM<int>(index, 0, size-1) ];
+		return data[ rtengine::LIM<int>(index, 0, upperBound) ];
 	}
 
 #if defined( __SSE2__ ) && defined( __x86_64__ )
@@ -350,7 +356,7 @@ public:
 		else if (index > maxsf)
 		{
 			if (clip & LUT_CLIP_ABOVE)
-				return data[size - 1];
+				return data[upperBound];
 			idx =maxs;
 		}
 		float diff = index - (float) idx;
@@ -359,6 +365,27 @@ public:
 		return (p1 + p2*diff);
 	}
 
+	// Return the value for "index" that is in the [0-1] range.
+	T getVal01 (float index) const {
+		index *= float(upperBound);
+		int idx = (int)index;  // don't use floor! The difference in negative space is no problems here
+		if (index<0.f)
+		{
+			if (clip & LUT_CLIP_BELOW)
+				return data[0];
+			idx=0;
+		}
+		else if (index > maxsf)
+		{
+			if (clip & LUT_CLIP_ABOVE)
+				return data[upperBound];
+			idx =maxs;
+		}
+		float diff = index - (float) idx;
+		T p1 = data[idx];
+		T p2 = data[idx + 1]-p1;
+		return (p1 + p2*diff);
+	}
 
 #ifndef NDEBUG
 	// Debug facility ; dump the content of the LUT in a file. No control of the filename is done
@@ -393,9 +420,15 @@ public:
 		data = NULL;
 		owner = 1;
 		size = 0;
+		upperBound=0;
 		maxs=0;
     }
 };
+
+
+
+// TODO: HOMBRE: HueLUT is actually unused, could we delete this class now that LUT::getVal01 has been created?
+
 
 /** @brief LUT subclass handling hue values specifically.
     The array has a fixed size of float values and have to be in the [0.; 1.] range in both axis (no error checking implemented) */
@@ -413,7 +446,7 @@ class HueLUT : public LUTf {
 
 		// use with integer indices
 		float& operator[](int index) const {
-			return data[ rtengine::LIM<int>(index, 0, size-1) ];
+			return data[ rtengine::LIM<int>(index, 0, upperBound) ];
 		}
 
 		// use with float indices in the [0.;1.] range
@@ -422,7 +455,7 @@ class HueLUT : public LUTf {
 			if (index<0.f)
 				return data[0];
 			else if (index > 1.f)
-				return data[size - 1];
+				return data[upperBound];
 
 			float balance = index - float(idx/500.f);
 			float h1 = data[idx];

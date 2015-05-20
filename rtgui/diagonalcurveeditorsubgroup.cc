@@ -27,6 +27,7 @@
 #include "shcselector.h"
 #include "adjuster.h"
 #include "mycurve.h"
+#include "mydiagonalcurve.h"
 #include "curveeditor.h"
 #include "diagonalcurveeditorsubgroup.h"
 
@@ -34,6 +35,8 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
 	editedAdjuster = NULL;
 	editedAdjusterValue = 0;
+
+	curveBBoxPos = options.curvebboxpos;
 
 	valLinear = (int)DCT_Linear;
 	valUnchanged = (int)DCT_Unchanged;
@@ -66,6 +69,9 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	saveCustom->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
 	loadCustom = Gtk::manage (new Gtk::Button ());
 	loadCustom->add (*Gtk::manage (new RTImage ("gtk-open.png")));
+	editPointCustom = Gtk::manage (new Gtk::ToggleButton ());
+	editPointCustom->add (*Gtk::manage (new RTImage ("gtk-edit.png")));
+	editPointCustom->set_tooltip_text(M("CURVEEDITOR_EDITPOINT_HINT"));
 	editCustom = Gtk::manage (new Gtk::ToggleButton());
 	editCustom->add (*Gtk::manage (new RTImage ("editmodehand.png")));
 	editCustom->set_tooltip_text(M("EDIT_PIPETTE_TOOLTIP"));
@@ -75,6 +81,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	custombbox->pack_end (*copyCustom, Gtk::PACK_SHRINK, 0);
 	custombbox->pack_end (*saveCustom, Gtk::PACK_SHRINK, 0);
 	custombbox->pack_end (*loadCustom, Gtk::PACK_SHRINK, 0);
+	custombbox->pack_start(*editPointCustom, Gtk::PACK_SHRINK, 0);
 	custombbox->pack_start(*editCustom, Gtk::PACK_SHRINK, 0);
 
 	customCurveAndButtons->pack_start (*customCurve, Gtk::PACK_EXPAND_WIDGET, 0);
@@ -90,12 +97,21 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	} else if (options.curvebboxpos==3) {
 		customCurveAndButtons->reorder_child(*custombbox, 0);
 	}
+
+	customCoordAdjuster = Gtk::manage (new CoordinateAdjuster(customCurve, this));
+	customCurveBox->pack_start(*customCoordAdjuster, Gtk::PACK_SHRINK, 0);
+	if (options.curvebboxpos == 2)
+		customCurveBox->reorder_child(*customCoordAdjuster, 2);
+	customCoordAdjuster->show_all();
+
 	customCurveBox->show_all ();
+	customCoordAdjuster->hide();
 
 	saveCustom->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::savePressed) );
 	loadCustom->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::loadPressed) );
 	copyCustom->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::copyPressed) );
 	pasteCustom->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::pastePressed) );
+	editPointCustomConn = editPointCustom->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::editPointToggled), editPointCustom) );
 	editCustomConn = editCustom->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::editToggled), editCustom) );
 
 	saveCustom->set_tooltip_text (M("CURVEEDITOR_TOOLTIPSAVE"));
@@ -130,6 +146,9 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	saveNURBS->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
 	loadNURBS = Gtk::manage (new Gtk::Button ());
 	loadNURBS->add (*Gtk::manage (new RTImage ("gtk-open.png")));
+	editPointNURBS = Gtk::manage (new Gtk::ToggleButton ());
+	editPointNURBS->add (*Gtk::manage (new RTImage ("gtk-edit.png")));
+	editPointNURBS->set_tooltip_text(M("CURVEEDITOR_EDITPOINT_HINT"));
 	editNURBS = Gtk::manage (new Gtk::ToggleButton());
 	editNURBS->add (*Gtk::manage (new RTImage ("editmodehand.png")));
 	editNURBS->set_tooltip_text(M("EDIT_PIPETTE_TOOLTIP"));
@@ -138,6 +157,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	NURBSbbox->pack_end (*copyNURBS, Gtk::PACK_SHRINK, 0);
 	NURBSbbox->pack_end (*saveNURBS, Gtk::PACK_SHRINK, 0);
 	NURBSbbox->pack_end (*loadNURBS, Gtk::PACK_SHRINK, 0);
+	NURBSbbox->pack_start(*editPointNURBS, Gtk::PACK_SHRINK, 0);
 	NURBSbbox->pack_start(*editNURBS, Gtk::PACK_SHRINK, 0);
 
 	NURBSCurveAndButtons->pack_start (*NURBSCurve, Gtk::PACK_EXPAND_WIDGET, 0);
@@ -153,12 +173,21 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	} else if (options.curvebboxpos==3) {
 		NURBSCurveAndButtons->reorder_child(*NURBSbbox, 0);
 	}
+
+	NURBSCoordAdjuster = Gtk::manage (new CoordinateAdjuster(NURBSCurve, this));
+	NURBSCurveBox->pack_start(*NURBSCoordAdjuster, Gtk::PACK_SHRINK, 0);
+	if (options.curvebboxpos == 2)
+		NURBSCurveBox->reorder_child(*NURBSCoordAdjuster, 2);
+	NURBSCoordAdjuster->show_all();
+
 	NURBSCurveBox->show_all ();
+	NURBSCoordAdjuster->hide();
 
 	saveNURBS->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::savePressed) );
 	loadNURBS->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::loadPressed) );
 	pasteNURBS->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::pastePressed) );
 	copyNURBS->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::copyPressed) );
+	editPointNURBSConn = editPointNURBS->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::editPointToggled), editPointNURBS) );
 	editNURBSConn = editNURBS->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::editToggled), editNURBS) );
 
 	saveNURBS->set_tooltip_text (M("CURVEEDITOR_TOOLTIPSAVE"));
@@ -320,17 +349,17 @@ void DiagonalCurveEditorSubGroup::editModeSwitchedOff () {
 	bool prevState;
 	prevState = editCustomConn.block(true);
 	editCustom->set_active(false);
-	customCurve->pipetteMouseOver(NULL, 0);
+	customCurve->pipetteMouseOver(NULL, NULL, 0);
 	customCurve->setDirty(true);
 	if (!prevState) editCustomConn.block(false);
 	prevState = editNURBSConn.block(true);
 	editNURBS->set_active(false);
-	NURBSCurve->pipetteMouseOver(NULL, 0);
+	NURBSCurve->pipetteMouseOver(NULL, NULL, 0);
 	NURBSCurve->setDirty(true);
 	if (!prevState) editNURBSConn.block(false);
 	prevState = editParamConn.block(true);
 	editParam->set_active(false);
-	paramCurve->pipetteMouseOver(NULL, 0);
+	paramCurve->pipetteMouseOver(NULL, NULL, 0);
 	paramCurve->setDirty(true);
 	if (!prevState) editParamConn.block(false);
 }
@@ -339,12 +368,12 @@ void DiagonalCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, i
 	CurveEditor *curveEditor = static_cast<DiagonalCurveEditor*>(parent->displayedCurve);
 	switch((DiagonalCurveType)(curveEditor->curveType->getSelected())) {
 	case (DCT_Spline):
-		customCurve->pipetteMouseOver(provider, modifierKey);
+		customCurve->pipetteMouseOver(curveEditor, provider, modifierKey);
 		customCurve->setDirty(true);
 		break;
 	case (DCT_Parametric):
 	{
-		paramCurve->pipetteMouseOver(provider, modifierKey);
+		paramCurve->pipetteMouseOver(curveEditor, provider, modifierKey);
 		paramCurve->setDirty(true);
 		float pipetteVal = 0.f;
 		editedAdjuster = NULL;
@@ -392,7 +421,7 @@ void DiagonalCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, i
 	}
 		break;
 	case (DCT_NURBS):
-		NURBSCurve->pipetteMouseOver(provider, modifierKey);
+		NURBSCurve->pipetteMouseOver(curveEditor, provider, modifierKey);
 		NURBSCurve->setDirty(true);
 		break;
 	default:	// (DCT_Linear, DCT_Unchanged)
@@ -460,6 +489,20 @@ void DiagonalCurveEditorSubGroup::pipetteDrag(EditDataProvider *provider, int mo
 		// ... do nothing
 		break;
 	}
+}
+
+void DiagonalCurveEditorSubGroup::showCoordinateAdjuster(CoordinateProvider *provider) {
+	if (provider == customCurve) {
+		if (!editPointCustom->get_active()) editPointCustom->set_active(true);
+	}
+	else if (provider == NURBSCurve) {
+		if (!editPointNURBS->get_active()) editPointNURBS->set_active(true);
+	}
+}
+
+void DiagonalCurveEditorSubGroup::stopNumericalAdjustment() {
+	customCurve->stopNumericalAdjustment();
+	NURBSCurve->stopNumericalAdjustment();
 }
 
 /*
@@ -771,6 +814,31 @@ void DiagonalCurveEditorSubGroup::pastePressed () {
 		}
 	}
 	return;
+}
+
+void DiagonalCurveEditorSubGroup::editPointToggled(Gtk::ToggleButton *button) {
+	if (button->get_active()) {
+		customCoordAdjuster->show();
+		NURBSCoordAdjuster->show();
+	}
+	else {
+		if (customCoordAdjuster) {
+			customCurve->stopNumericalAdjustment();
+			customCoordAdjuster->hide();
+			NURBSCurve->stopNumericalAdjustment();
+			NURBSCoordAdjuster->hide();
+		}
+	}
+	if (button == editPointCustom) {
+		editPointNURBSConn.block(true);
+		editPointNURBS->set_active(!editPointNURBS->get_active());
+		editPointNURBSConn.block(false);
+	}
+	else {
+		editPointCustomConn.block(true);
+		editPointCustom->set_active(!editPointCustom->get_active());
+		editPointCustomConn.block(false);
+	}
 }
 
 void DiagonalCurveEditorSubGroup::editToggled (Gtk::ToggleButton *button) {

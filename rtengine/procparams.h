@@ -193,7 +193,8 @@ class ToneCurveParams {
             TC_MODE_STD,               // Standard modes, the curve is applied on all component individually
             TC_MODE_WEIGHTEDSTD,       // Weighted standard mode
             TC_MODE_FILMLIKE,          // Film-like mode, as defined in Adobe's reference code
-            TC_MODE_SATANDVALBLENDING  // Modify the Saturation and Value channel
+            TC_MODE_SATANDVALBLENDING, // Modify the Saturation and Value channel
+            TC_MODE_LUMINANCE          // Modify the Luminance channel with coefficients from Rec 709's
         };
 
         bool        autoexp;

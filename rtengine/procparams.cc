@@ -1065,6 +1065,9 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         case (ToneCurveParams::TC_MODE_WEIGHTEDSTD):
             method = "WeightedStd";
             break;
+        case (ToneCurveParams::TC_MODE_LUMINANCE):
+            method = "Luminance";
+            break;
         }
         keyFile.set_string  ("Exposure", "CurveMode", method);
     }
@@ -1082,6 +1085,9 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
             break;
         case (ToneCurveParams::TC_MODE_WEIGHTEDSTD):
             method = "WeightedStd";
+            break;
+        case (ToneCurveParams::TC_MODE_LUMINANCE):
+            method = "Luminance";
             break;
         }
         keyFile.set_string  ("Exposure", "CurveMode2", method);
@@ -1909,6 +1915,7 @@ if (keyFile.has_group ("Exposure")) {
         else if (sMode == "FilmLike")            toneCurve.curveMode = ToneCurveParams::TC_MODE_FILMLIKE;
         else if (sMode == "SatAndValueBlending") toneCurve.curveMode = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
         else if (sMode == "WeightedStd")         toneCurve.curveMode = ToneCurveParams::TC_MODE_WEIGHTEDSTD;
+        else if (sMode == "Luminance")           toneCurve.curveMode = ToneCurveParams::TC_MODE_LUMINANCE;
         if (pedited) pedited->toneCurve.curveMode = true; 
     }
     if (keyFile.has_key ("Exposure", "CurveMode2"))      {
@@ -1916,7 +1923,7 @@ if (keyFile.has_group ("Exposure")) {
         if      (sMode == "Standard")            toneCurve.curveMode2 = ToneCurveParams::TC_MODE_STD;
         else if (sMode == "FilmLike")            toneCurve.curveMode2 = ToneCurveParams::TC_MODE_FILMLIKE;
         else if (sMode == "SatAndValueBlending") toneCurve.curveMode2 = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
-        else if (sMode == "WeightedStd")         toneCurve.curveMode2 = ToneCurveParams::TC_MODE_WEIGHTEDSTD;
+        else if (sMode == "Luminance")           toneCurve.curveMode2 = ToneCurveParams::TC_MODE_LUMINANCE;
         if (pedited) pedited->toneCurve.curveMode2 = true;
     }
     if (ppVersion>200) {

@@ -37,6 +37,9 @@ MyFlatCurve::MyFlatCurve () {
 
     //bghist = new unsigned int[256];
 
+    editedPos.resize(4);
+    editedPos.at(0) = editedPos.at(1) = editedPos.at(2) = editedPos.at(3) = 0.0;
+
     signal_event().connect( sigc::mem_fun(*this, &MyFlatCurve::handleEvents) );
 
     // By default, we create a curve with 8 control points
@@ -55,7 +58,7 @@ std::vector<double> MyFlatCurve::get_vector (int veclen) {
 
     // Get the curve control points
     std::vector<double> curveDescr = getPoints ();
-    rtengine::FlatCurve* rtcurve = new rtengine::FlatCurve (curveDescr, periodic, veclen*1.2 > 5000 ? 5000 : veclen*1.2);
+    rtengine::FlatCurve rtcurve(curveDescr, periodic, veclen*1.2 > 5000 ? 5000 : veclen*1.2);
 
     // Create the sample values that will be converted
     std::vector<double> samples;
@@ -64,11 +67,27 @@ std::vector<double> MyFlatCurve::get_vector (int veclen) {
         samples.at(i) = (double) i / (veclen - 1.0);
 
     // Converting the values
-    rtcurve->getVal (samples, convertedValues);
+    rtcurve.getVal (samples, convertedValues);
 
     // Cleanup and return
-    delete rtcurve;
     return convertedValues;
+}
+
+void MyFlatCurve::get_LUT (LUTf &lut) {
+
+    int size = lut.getSize();
+
+    // Get the curve control points
+    std::vector<double> curveDescr = getPoints ();
+    rtengine::FlatCurve rtcurve(curveDescr, periodic, lut.getUpperBound()*1.2 > 5000 ? 5000 : lut.getUpperBound()*1.2);
+
+    double t;
+    double maxVal = double(lut.getUpperBound());
+    for (int i = 0; i < size; i++) {
+        t = double(i) / maxVal;
+        lut[i] = rtcurve.getVal (t);
+    }
+    return;
 }
 
 void MyFlatCurve::interpolate () {
@@ -76,14 +95,10 @@ void MyFlatCurve::interpolate () {
     prevGraphW = graphW;
     prevGraphH = graphH;
     int nbPoints = graphW-2;
-    point.resize (nbPoints);
-    std::vector<double> vector = get_vector (nbPoints);
-    for (int i = 0; i < nbPoints; ++i) {
-        float currX = float(i)/float(nbPoints-1);
-        point.at(i).setCoords(float(graphX)+1.5f+float(graphW-3)*currX, float(graphY)-1.5f-float(graphH-3)*float(vector.at(i)));
-    }
-    upoint.clear ();
-    lpoint.clear ();
+    point(nbPoints);
+    get_LUT (point);
+    upoint.reset ();
+    lpoint.reset ();
 
     curveIsDirty = false;
 }
@@ -98,7 +113,8 @@ void MyFlatCurve::draw () {
         return;
 
     // re-calculate curve if dimensions changed
-    if (curveIsDirty || prevGraphW != graphW || prevGraphH != graphH || (int)point.size() != graphW-2)
+    int currPointSize = point.getUpperBound();
+    if (curveIsDirty || /*prevGraphW != graphW || prevGraphH != graphH ||*/ (currPointSize==200 && (graphW-3>200)) || (currPointSize>200 && (graphW-2<=200 || graphW-3!=currPointSize)))
         interpolate ();
 
     double innerW = double(graphW-2);
@@ -228,21 +244,29 @@ void MyFlatCurve::draw () {
                     cr->set_line_width (coloredLineWidth);
 
                     // draw the lit_point's horizontal line
-                    if (i == lit_point) {
-
+                    bool drawHLine = false;
+                    if (edited_point>-1) {
+                        if (i == edited_point) {
+                            cr->set_line_width (2*coloredLineWidth);
+                            drawHLine = true;
+                        }
+                    }
+                    else if (i == lit_point) {
                         if ( (area&(FCT_Area_H|FCT_Area_V|FCT_Area_Point)) || editedHandle==FCT_EditedHandle_CPointUD) {
-
                             if (editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointY)) {
                                 cr->set_line_width (2*coloredLineWidth);
+                                drawHLine = true;
                             }
-
-                            colorProvider->colorForValue(curve.x.at(i), curve.y.at(i), CCET_HORIZONTAL_BAR, colorCallerId, this);
-                            cr->set_source_rgb (ccRed, ccGreen, ccBlue);
-
-                            cr->move_to (double(graphX+1) , double(graphY-1) - innerH*curve.y.at(lit_point));
-                            cr->rel_line_to (innerW, 0.);
-                            cr->stroke ();
                         }
+                    }
+                    if (drawHLine) {
+                        int point = edited_point>-1 ? edited_point : lit_point;
+                        colorProvider->colorForValue(curve.x.at(i), curve.y.at(i), CCET_HORIZONTAL_BAR, colorCallerId, this);
+                        cr->set_source_rgb (ccRed, ccGreen, ccBlue);
+
+                        cr->move_to (double(graphX+1) , double(graphY-1) - innerH*curve.y.at(point));
+                        cr->rel_line_to (innerW, 0.);
+                        cr->stroke ();
                     }
                 }
             }
@@ -252,12 +276,13 @@ void MyFlatCurve::draw () {
     else {
         cr->set_source_rgb (0.5, 0.0, 0.0);
 
-        if ((lit_point>-1) && ((area&(FCT_Area_H|FCT_Area_V|FCT_Area_Point)) || editedHandle==FCT_EditedHandle_CPointUD) ) {
+        if (edited_point>-1 || ((lit_point>-1) && ((area&(FCT_Area_H|FCT_Area_V|FCT_Area_Point)) || editedHandle==FCT_EditedHandle_CPointUD)) ) {
             // draw the lit_point's vertical line
-            if (editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointY)) {
+            if (edited_point>-1 || (editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointY))) {
                 cr->set_line_width (2.0);
             }
-            cr->move_to (double(graphX)+1 + innerW*curve.x.at(lit_point), double(graphY-1));
+            int point = edited_point>-1 ? edited_point : lit_point;
+            cr->move_to (double(graphX)+1 + innerW*curve.x.at(point), double(graphY-1));
             cr->rel_line_to (0., -innerH);
             cr->stroke ();
             cr->set_line_width (1.0);
@@ -266,7 +291,7 @@ void MyFlatCurve::draw () {
             if (editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointY)) {
                 cr->set_line_width (2.0);
             }
-            cr->move_to (double(graphX+1) , double(graphY-1) - innerH*curve.y.at(lit_point));
+            cr->move_to (double(graphX+1) , double(graphY-1) - innerH*curve.y.at(point));
             cr->rel_line_to (innerW, 0.);
             cr->stroke ();
             cr->set_line_width (1.0);
@@ -282,7 +307,7 @@ void MyFlatCurve::draw () {
     cr->stroke ();
 
     double lineMinLength = 1. / graphW * SQUARE * 0.9;
-    if (lit_point!=-1 && getHandles(lit_point) && curve.x.at(lit_point)!=-1.) {
+    if (tanHandlesDisplayed && lit_point!=-1 && getHandles(lit_point) && curve.x.at(lit_point)!=-1.) {
         double x = double(graphX+1) + innerW*curve.x.at(lit_point);
         double y = double(graphY) - innerH*curve.y.at(lit_point);
         double x2;
@@ -353,26 +378,30 @@ void MyFlatCurve::draw () {
     // draw curve
     c = style->get_fg (state);
     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-    cr->move_to (point.at(0).x, point.at(0).y);
-    for (int i=1; i<(int)point.size(); i++)
-        cr->line_to (double(point.at(i).x), double(point.at(i).y));
+    float graphH_ = float(graphH-3);
+    float graphX_ = float(graphX)+1.5;
+    float graphY_ = float(graphY)-1.5;
+    cr->move_to (graphX_, getVal(point, 0)*-graphH_+graphY_);
+    for (int i=1; i<graphW-2; ++i)
+        cr->line_to (float(i)+graphX_, getVal(point, i)*-graphH_+graphY_);
     cr->stroke ();
 
     // draw bullets
     //if (curve.type!=FCT_Parametric)
         for (int i = 0; i < (int)curve.x.size(); ++i) {
             if (curve.x.at(i) != -1.) {
-                if (i == lit_point) {
-                    if (colorProvider) {
+                if (i == edited_point)
+                    cr->set_source_rgb (1.0, 0.0, 0.0);
+                else if (i == lit_point) {
+                    if (colorProvider && edited_point==-1) {
                         colorProvider->colorForValue(curve.x.at(i), curve.y.at(i), CCET_POINT, colorCallerId, this);
                         cr->set_source_rgb (ccRed, ccGreen, ccBlue);
                     }
                     else
                         cr->set_source_rgb (1.0, 0.0, 0.0);
                 }
-                else if (i == snapToElmt) {
+                else if (i == snapToElmt || i == edited_point)
                     cr->set_source_rgb (1.0, 0.0, 0.0);
-                }
                 else if (curve.y.at(i) == 0.5)
                     cr->set_source_rgb (0.0, 0.5, 0.0);
                 else
@@ -383,6 +412,15 @@ void MyFlatCurve::draw () {
 
                 cr->arc (x, y, (double)RADIUS, 0, 2*M_PI);
                 cr->fill ();
+
+                if (i == edited_point) {
+                    cr->set_source_rgb (1.0, 0.0, 0.0);
+                    cr->set_line_width(2.);
+                    cr->arc (x, y, RADIUS+3.5, 0, 2*M_PI);
+                    cr->stroke();
+                    cr->set_line_width(1.);
+                }
+
             }
         }
     // endif
@@ -499,7 +537,8 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 		// setDrawRectangle will allocate the backbuffer Surface
 		if (setDrawRectangle(win, 0, 0, get_allocation().get_width(),  get_allocation().get_height())) {
 			setDirty(true);
-			curveIsDirty = true;
+			if (prevGraphW > 200 || graphW > 200)
+				curveIsDirty = true;
 		}
 		draw ();
 		GdkRectangle *rectangle = &(event->expose.area);
@@ -510,7 +549,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 	}
 
 	case Gdk::BUTTON_PRESS:
-		//if (curve.type!=FCT_Parametric) {
+		if (edited_point==-1) {  //curve.type!=FCT_Parametric) {
 			if (event->button.button == 1) {
 				buttonPressed = true;
 				add_modal_grab ();
@@ -543,6 +582,10 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 					curve.leftTangent.insert (itlt, 0);
 					curve.rightTangent.insert (itrt, 0);
 					num++;
+
+					if (mod_type & GDK_CONTROL_MASK) {
+						clampedY = point.getVal01(clampedX);
+					}
 
 					// the graph is refreshed only if a new point is created
 					curve.x.at(closest_point) = clampedX;
@@ -593,14 +636,85 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 				default:
 					break;
 				}
+			}
+			else if (event->button.button == 3) {
+				/*  get the pointer position  */
+				getCursorPosition(Gdk::EventType(event->type), event->motion.is_hint!=0, int(event->button.x), int(event->button.y), Gdk::ModifierType(event->button.state));
+				getMouseOverArea();
+				if (lit_point>-1 && lit_point!=edited_point) {
+					if (editedHandle == FCT_EditedHandle_None) {
+						if (area == FCT_Area_Point || area == FCT_Area_V) {
+							// the cursor is close to an existing point
+							if (!coordinateAdjuster->is_visible())
+								coordinateAdjuster->showMe(this);
 
+							new_type = CSArrow;
+							tanHandlesDisplayed = false;
+							edited_point = lit_point;
+							setDirty(true);
+							draw ();
+							std::vector<CoordinateAdjuster::Boundaries> newBoundaries(4);
+							unsigned int size = curve.x.size();
+							if      (edited_point == 0)      { newBoundaries.at(0).minVal = 0.;                          newBoundaries.at(0).maxVal = curve.x.at(1);              }
+							else if (edited_point == size-1) { newBoundaries.at(0).minVal = curve.x.at(edited_point-1);  newBoundaries.at(0).maxVal = 1.;                         }
+							else if (curve.x.size() > 2)     { newBoundaries.at(0).minVal = curve.x.at(edited_point-1);  newBoundaries.at(0).maxVal = curve.x.at(edited_point+1); }
+							newBoundaries.at(1).minVal = 0.;  newBoundaries.at(1).maxVal = 1.;
+							newBoundaries.at(2).minVal = 0.;  newBoundaries.at(2).maxVal = 1.;
+							newBoundaries.at(3).minVal = 0.;  newBoundaries.at(3).maxVal = 1.;
+							retval = true;
+							editedPos.at(0) = curve.x.at(edited_point);
+							editedPos.at(1) = curve.y.at(edited_point);
+							editedPos.at(2) = curve.leftTangent.at(edited_point);
+							editedPos.at(3) = curve.rightTangent.at(edited_point);
+							coordinateAdjuster->setPos(editedPos);
+							coordinateAdjuster->startNumericalAdjustment(newBoundaries);
+						}
+					}
+				}
+				retval = true;
 			}
 			if (buttonPressed) retval = true;
-		//}
+		}
+		else {  // if (edited_point > -1)
+			if (event->button.button == 3) {
+				// do we edit another point?
+				/*  get the pointer position  */
+				getCursorPosition(Gdk::EventType(event->type), event->motion.is_hint!=0, int(event->button.x), int(event->button.y), Gdk::ModifierType(event->button.state));
+				getMouseOverArea();
+				if (area == FCT_Area_Point || area == FCT_Area_V) {
+					// the cursor is close to an existing point
+					if (lit_point != edited_point) {
+						edited_point = lit_point;
+						setDirty(true);
+						draw ();
+						std::vector<CoordinateAdjuster::Boundaries> newBoundaries(4);
+						unsigned int size = curve.x.size();
+						if      (edited_point == 0)      { newBoundaries.at(0).minVal = 0.;                          newBoundaries.at(0).maxVal = curve.x.at(1);              }
+						else if (edited_point == size-1) { newBoundaries.at(0).minVal = curve.x.at(edited_point-1);  newBoundaries.at(0).maxVal = 1.;                         }
+						else if (curve.x.size() > 2)     { newBoundaries.at(0).minVal = curve.x.at(edited_point-1);  newBoundaries.at(0).maxVal = curve.x.at(edited_point+1); }
+						newBoundaries.at(1).minVal = 0.;  newBoundaries.at(1).maxVal = 1.;
+						newBoundaries.at(2).minVal = 0.;  newBoundaries.at(2).maxVal = 1.;
+						newBoundaries.at(3).minVal = 0.;  newBoundaries.at(3).maxVal = 1.;
+						editedPos.at(0) = curve.x.at(edited_point);
+						editedPos.at(1) = curve.y.at(edited_point);
+						editedPos.at(2) = curve.leftTangent.at(edited_point);
+						editedPos.at(3) = curve.rightTangent.at(edited_point);
+						coordinateAdjuster->switchAdjustedPoint(editedPos, newBoundaries);
+						retval = true;
+					}
+				}
+				else if (area == FCT_Area_Insertion) {
+					// the cursor is inside the graph but away from existing points
+					new_type = CSPlus;
+					curveIsDirty = true;
+					stopNumericalAdjustment();
+				}
+			}
+		}
 		break;
 
 	case Gdk::BUTTON_RELEASE:
-		//if (curve.type!=FCT_Parametric) {
+		if (edited_point==-1) {  //curve.type!=FCT_Parametric) {
 			if (buttonPressed && event->button.button == 1) {
 				int src, dst;
 				buttonPressed = false;
@@ -684,7 +798,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 				retval = true;
 				//notifyListener ();
 			}
-		//}
+		}
 		break;
 
 	case Gdk::MOTION_NOTIFY:
@@ -722,7 +836,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 
 			case (FCT_EditedHandle_None): {
 
-				if ((lit_point != -1 && previous_lit_point != lit_point) && (area&(FCT_Area_V|FCT_Area_Point))) {
+				if ((lit_point != -1 && previous_lit_point != lit_point) && (area&(FCT_Area_V|FCT_Area_Point)) && edited_point==-1) {
 
 					bool sameSide = false;
 
@@ -771,54 +885,92 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 						}
 					}
 				}
-				else if (lit_point == -1) {
+				else if (lit_point == -1 || edited_point>-1) {
 					tanHandlesDisplayed = false;
 				}
 
 
-				switch (area) {
+				if (edited_point==-1) {
+					switch (area) {
 
-				case (FCT_Area_Insertion):
-					new_type = CSPlus;
-					break;
-				case (FCT_Area_Point):
-					//new_type = CSMove;
-					//break;
-				case (FCT_Area_V):
-					new_type = CSMove;
-					break;
-				case (FCT_Area_H):
-					new_type = CSResizeHeight;
-					break;
-				case (FCT_Area_LeftTan):
-					new_type = CSMoveLeft;
-					break;
-				case (FCT_Area_RightTan):
-					new_type = CSMoveRight;
-					break;
-				case (FCT_Area_None):
-				default:
-					new_type = CSArrow;
-					break;
+					case (FCT_Area_Insertion):
+						new_type = CSPlus;
+						break;
+					case (FCT_Area_Point):
+						//new_type = CSMove;
+						//break;
+					case (FCT_Area_V):
+						new_type = CSMove;
+						break;
+					case (FCT_Area_H):
+						new_type = CSResizeHeight;
+						break;
+					case (FCT_Area_LeftTan):
+						new_type = CSMoveLeft;
+						break;
+					case (FCT_Area_RightTan):
+						new_type = CSMoveRight;
+						break;
+					case (FCT_Area_None):
+					default:
+						new_type = CSArrow;
+						break;
+					}
 				}
 
 				if ((lit_point != previous_lit_point) || (prevArea != area)) {
 					setDirty(true);
 					draw ();
 				}
+
+				if (coordinateAdjuster->is_visible() && edited_point==-1) {
+					if (lit_point > -1) {
+						if (lit_point != previous_lit_point) {
+							editedPos.at(0) = curve.x.at(lit_point);
+							editedPos.at(1) = curve.y.at(lit_point);
+							editedPos.at(2) = curve.leftTangent.at(lit_point);
+							editedPos.at(3) = curve.rightTangent.at(lit_point);
+						}
+						coordinateAdjuster->setPos(editedPos);
+					}
+					else if (area == FCT_Area_Insertion) {
+						editedPos.at(0) = clampedX;
+						editedPos.at(1) = clampedY;
+						editedPos.at(2) = 0.;
+						editedPos.at(3) = 0.;
+						coordinateAdjuster->setPos(editedPos);
+					}
+					else {
+						editedPos.at(0) = editedPos.at(1) = editedPos.at(2) = editedPos.at(3) = 0;
+						coordinateAdjuster->setPos(editedPos);
+					}
+				}
 				break;
 			}
 
 			case (FCT_EditedHandle_CPoint):
 				movePoint(true, true);
+				if (coordinateAdjuster->is_visible()) {
+					editedPos.at(0) = curve.x.at(lit_point);
+					editedPos.at(1) = curve.y.at(lit_point);
+					coordinateAdjuster->setPos(editedPos);
+				}
 				break;
 
 			case (FCT_EditedHandle_CPointX):
 				movePoint(true, false);
+				if (coordinateAdjuster->is_visible()) {
+					editedPos.at(0) = curve.x.at(lit_point);
+					coordinateAdjuster->setPos(editedPos);
+				}
 				break;
 
 			case (FCT_EditedHandle_CPointY):
 				movePoint(false, true);
+				if (coordinateAdjuster->is_visible()) {
+					editedPos.at(1) = curve.y.at(lit_point);
+					coordinateAdjuster->setPos(editedPos);
+				}
 				break;
 
 			case (FCT_EditedHandle_LeftTan): {
@@ -843,6 +995,10 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 					setDirty(true);
 					draw ();
 					notifyListener ();
+					if (coordinateAdjuster->is_visible()) {
+						editedPos.at(2) = curve.leftTangent.at(lit_point);
+						coordinateAdjuster->setPos(editedPos);
+					}
 				}
 				break;
 			}
@@ -869,6 +1025,8 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 					setDirty(true);
 					draw ();
 					notifyListener ();
+					editedPos.at(3) = curve.rightTangent.at(lit_point);
+					coordinateAdjuster->setPos(editedPos);
 				}
 				break;
 			}
@@ -878,6 +1036,23 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 
 			default:
 				break;
+			}
+
+			if (edited_point==-1) {
+				if (lit_point == -1) {
+					editedPos.at(0) = editedPos.at(1) = editedPos.at(2) = editedPos.at(3) = 0;
+				}
+				else if (editedPos.at(0) != curve.x.at(lit_point)
+					  || editedPos.at(1) != curve.y.at(lit_point)
+					  || editedPos.at(2) != curve.leftTangent.at(lit_point)
+					  || editedPos.at(3) != curve.rightTangent.at(lit_point))
+				{
+					editedPos.at(0) = curve.x.at(lit_point);
+					editedPos.at(1) = curve.y.at(lit_point);
+					editedPos.at(2) = curve.leftTangent.at(lit_point);
+					editedPos.at(3) = curve.rightTangent.at(lit_point);
+					coordinateAdjuster->setPos(editedPos);
+				}
 			}
 		}
 
@@ -908,7 +1083,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 	return retval;
 }
 
-void MyFlatCurve::pipetteMouseOver (EditDataProvider *provider, int modifierKey) {
+void MyFlatCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider, int modifierKey) {
 	if (!provider) {
 		// occurs when leaving the preview area -> cleanup the curve editor
 		pipetteR = pipetteG = pipetteB = -1.f;
@@ -921,7 +1096,7 @@ void MyFlatCurve::pipetteMouseOver (EditDataProvider *provider, int modifierKey)
 	pipetteB = provider->pipetteVal[2];
 	pipetteVal = 0.f;
 	if (listener)
-		pipetteVal = listener->blendPipetteValues(pipetteR, pipetteG, pipetteB);
+		pipetteVal = listener->blendPipetteValues(ce, pipetteR, pipetteG, pipetteB);
 	else {
 		int n = 0;
 		if (pipetteR != -1.f) {
@@ -958,7 +1133,8 @@ void MyFlatCurve::pipetteMouseOver (EditDataProvider *provider, int modifierKey)
 	// get the pointer position
 	int px = graphX + int(float(graphW)*pipetteVal);  // WARNING: converting pipetteVal from float to int, precision loss here!
 	getCursorPosition(Gdk::EventType(Gdk::BUTTON_PRESS), false, px, graphY, Gdk::ModifierType(modifierKey));
-	getMouseOverArea();
+	if (edited_point==-1)
+		getMouseOverArea();
 
 	if (area==FCT_Area_Point)
 		area = FCT_Area_V;
@@ -966,13 +1142,26 @@ void MyFlatCurve::pipetteMouseOver (EditDataProvider *provider, int modifierKey)
 	snapToMinDistY = snapToMinDistX = 10.;
 	snapToValY = snapToValX = 0.;
 
-	if (editedHandle==FCT_EditedHandle_None && lit_point != previous_lit_point) {
-		setDirty(true);
-		draw ();
+	if (edited_point==-1) {
+		if (editedHandle==FCT_EditedHandle_None && lit_point != previous_lit_point) {
+			setDirty(true);
+			draw ();
+		}
+	}
+	else
+		draw();
+
+	if (edited_point==-1) {
+		editedPos.at(0) = pipetteVal;
+		editedPos.at(1) = point.getVal01(pipetteVal);
+		coordinateAdjuster->setPos(editedPos);
 	}
 }
 
 void MyFlatCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) {
+	if (edited_point>-1)
+		return;
+
 	buttonPressed = true;
 
 	// get the pointer position
@@ -1040,6 +1229,9 @@ void MyFlatCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifier
 }
 
 void MyFlatCurve::pipetteButton1Released(EditDataProvider *provider) {
+	if (edited_point>-1)
+		return;
+
 	buttonPressed = false;
 	remove_modal_grab ();
 
@@ -1057,6 +1249,8 @@ void MyFlatCurve::pipetteButton1Released(EditDataProvider *provider) {
 }
 
 void MyFlatCurve::pipetteDrag(EditDataProvider *provider, int modifierKey) {
+	if (edited_point>-1)
+		return;
 
 	snapToMinDistY = snapToMinDistX = 10.;
 	snapToValY = snapToValX = 0.;
@@ -1423,6 +1617,7 @@ std::vector<double> MyFlatCurve::getPoints () {
 
 void MyFlatCurve::setPoints (const std::vector<double>& p) {
     int ix = 0;
+    stopNumericalAdjustment();
     FlatCurveType t = (FlatCurveType)p[ix++];
     curve.type = t;
     if (t==FCT_MinMaxCPoints) {
@@ -1442,6 +1637,38 @@ void MyFlatCurve::setPoints (const std::vector<double>& p) {
     queue_draw ();
 }
 
+void MyFlatCurve::setPos(double pos, int chanIdx) {
+    assert (edited_point > -1);
+    switch (chanIdx) {
+    case (0):
+        curve.x.at(edited_point) = pos;
+        break;
+    case (1):
+        curve.y.at(edited_point) = pos;
+        break;
+    case (2):
+        curve.leftTangent.at(edited_point) = pos;
+        break;
+    case (3):
+        curve.rightTangent.at(edited_point) = pos;
+        break;
+    }
+    curveIsDirty = true;
+    setDirty(true);
+    draw();
+    notifyListener ();
+}
+
+void MyFlatCurve::stopNumericalAdjustment() {
+    if (edited_point>-1) {
+        edited_point = lit_point = -1;
+        area = FCT_Area_None;
+        coordinateAdjuster->stopNumericalAdjustment();
+        setDirty(true);
+        draw();
+    }
+}
+
 void MyFlatCurve::setType (FlatCurveType t) {
 
     curve.type = t;
@@ -1450,6 +1677,8 @@ void MyFlatCurve::setType (FlatCurveType t) {
 
 void MyFlatCurve::reset(const std::vector<double> &resetCurve, double identityValue) {
     calcDimensions();
+
+    stopNumericalAdjustment();
 
     // If a resetCurve exist (non empty)
     if (!resetCurve.empty()) {

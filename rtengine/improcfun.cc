@@ -2658,6 +2658,17 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 						}
 					}
 				}
+				else if (curveMode==ToneCurveParams::TC_MODE_LUMINANCE){ // apply the curve to the luminance channel
+					const LuminanceToneCurve& userToneCurve = static_cast<const LuminanceToneCurve&>(customToneCurve1);
+					for (int i=istart,ti=0; i<tH; i++,ti++) {
+						for (int j=jstart,tj=0; j<tW; j++,tj++) {
+							rtemp[ti*TS+tj] = CLIP<float>(rtemp[ti*TS+tj]);
+							gtemp[ti*TS+tj] = CLIP<float>(gtemp[ti*TS+tj]);
+							btemp[ti*TS+tj] = CLIP<float>(btemp[ti*TS+tj]);
+							userToneCurve.Apply(rtemp[ti*TS+tj], gtemp[ti*TS+tj], btemp[ti*TS+tj]);
+						}
+					}
+				}
 			}
 
 			if (editID == EUID_ToneCurve2) {  // filling the pipette buffer
@@ -2697,6 +2708,14 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 				}
 				else if (curveMode2==ToneCurveParams::TC_MODE_WEIGHTEDSTD){ // apply the curve to the rgb channels, weighted
 					const WeightedStdToneCurve& userToneCurve = static_cast<const WeightedStdToneCurve&>(customToneCurve2);
+					for (int i=istart,ti=0; i<tH; i++,ti++) {
+						for (int j=jstart,tj=0; j<tW; j++,tj++) {
+							userToneCurve.Apply(rtemp[ti*TS+tj], gtemp[ti*TS+tj], btemp[ti*TS+tj]);
+						}
+					}
+				}
+				else if (curveMode2==ToneCurveParams::TC_MODE_LUMINANCE){ // apply the curve to the luminance channel
+					const LuminanceToneCurve& userToneCurve = static_cast<const LuminanceToneCurve&>(customToneCurve2);
 					for (int i=istart,ti=0; i<tH; i++,ti++) {
 						for (int j=jstart,tj=0; j<tW; j++,tj++) {
 							userToneCurve.Apply(rtemp[ti*TS+tj], gtemp[ti*TS+tj], btemp[ti*TS+tj]);

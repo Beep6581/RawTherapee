@@ -19,6 +19,8 @@
 #ifndef _CURVELISTENER_
 #define _CURVELISTENER_
 
+#include <vector>
+
 class CurveEditor;
 
 class CurveListener {
@@ -37,7 +39,7 @@ class CurveListener {
          * @param ce CurveEditor that we want to reset
          * @param curve Actual curve for the return value. The actual curve type (given by the first value of the vector)
          *              should be kept the same. Change the curve type if REALLY necessary! */
-        virtual bool getResetCurve(CurveEditor *ce, std::vector<double> &curve) { return false; };
+        virtual bool getResetCurve(CurveEditor *ce, std::vector<double> &curve) { return false; }
 
         /** @brief Blend pipette values from its different channels into a single value
         If the buffer has more than one channel and one channel, this method will blend them together.
@@ -45,7 +47,7 @@ class CurveListener {
         @param chan2 second channel's value
         @param chan3 third channel's value
         @return the blended value */
-        virtual float blendPipetteValues(float chan1, float chan2, float chan3) {
+        virtual float blendPipetteValues(CurveEditor *ce, float chan1, float chan2, float chan3) {
             float retVal = 0.f;
             int n = 0;
             if (chan1 != -1.f) {

@@ -154,8 +154,14 @@ public:
 	* @return luminance value
 	*/
 	// xyz_sRGBD65 : conversion matrix from XYZ to sRGB for D65 illuminant: we use diagonal values
-	static float rgbLuminance(float r, float g, float b) { return r*float(xyz_sRGBd65[1][0]) + g*float(xyz_sRGBd65[1][1]) + b*float(xyz_sRGBd65[1][2]); }
-	static double rgbLuminance(double r, double g, double b) { return r*xyz_sRGBd65[1][0] + g*xyz_sRGBd65[1][1] + b*xyz_sRGBd65[1][2]; }
+	static float rgbLuminance(float r, float g, float b) {
+		// WArning: The sum of xyz_sRGBd65[1][] is > 1.0 (i.e. 1.0000001), so we use our own adapted values)
+		// 0.2126729,  0.7151521,  0.0721750
+		return r*0.2126729f + g*0.7151521f + b*0.0721750f;
+	}
+	static double rgbLuminance(double r, double g, double b) {
+		return r*0.2126729 + g*0.7151521 + b*0.0721750;
+	}
 
 
 	/**

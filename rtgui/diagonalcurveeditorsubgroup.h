@@ -46,18 +46,23 @@ protected:
 	Adjuster *editedAdjuster;
 	int editedAdjusterValue;
 
+	CoordinateAdjuster *customCoordAdjuster;
+	CoordinateAdjuster *NURBSCoordAdjuster;
+
 	Gtk::Button*       saveCustom;
 	Gtk::Button*       loadCustom;
 	Gtk::Button*       copyCustom;
 	Gtk::Button*       pasteCustom;
+	Gtk::ToggleButton* editPointCustom;
 	Gtk::ToggleButton* editCustom;
-	sigc::connection   editCustomConn;
+	sigc::connection   editCustomConn, editPointCustomConn;
 	Gtk::Button*       saveNURBS;
 	Gtk::Button*       loadNURBS;
 	Gtk::Button*       copyNURBS;
 	Gtk::Button*       pasteNURBS;
+	Gtk::ToggleButton* editPointNURBS;
 	Gtk::ToggleButton* editNURBS;
-	sigc::connection   editNURBSConn;
+	sigc::connection   editNURBSConn, editPointNURBSConn;
 	Gtk::Button*       saveParam;
 	Gtk::Button*       loadParam;
 	Gtk::Button*       copyParam;
@@ -80,6 +85,8 @@ public:
 	void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
 	void pipetteButton1Released(EditDataProvider *provider);
 	void pipetteDrag(EditDataProvider *provider, int modifierKey);
+	void showCoordinateAdjuster(CoordinateProvider *provider);
+	void stopNumericalAdjustment();
 
 	bool curveReset (CurveEditor *ce);
 
@@ -91,6 +98,7 @@ protected:
 	void loadPressed ();
 	void copyPressed ();
 	void pastePressed ();
+	void editPointToggled(Gtk::ToggleButton *button);
 	void editToggled (Gtk::ToggleButton *button);
 	void removeEditor ();
 	const std::vector<double> getCurveFromGUI (int type);

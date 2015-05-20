@@ -33,12 +33,15 @@ protected:
 
 	MyFlatCurve* CPointsCurve;
 
+	CoordinateAdjuster *CPointsCoordAdjuster;
+
 	Gtk::Button*       saveCPoints;
 	Gtk::Button*       loadCPoints;
 	Gtk::Button*       copyCPoints;
 	Gtk::Button*       pasteCPoints;
+	Gtk::ToggleButton* editPointCPoints;
 	Gtk::ToggleButton* editCPoints;
-	sigc::connection   editCPointsConn;
+	sigc::connection   editCPointsConn, editPointCPointsConn;
 
 public:
 	FlatCurveEditorSubGroup(CurveEditorGroup* prt, Glib::ustring& curveDir);
@@ -53,6 +56,8 @@ public:
 	void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
 	void pipetteButton1Released(EditDataProvider *provider);
 	void pipetteDrag(EditDataProvider *provider, int modifierKey);
+	void showCoordinateAdjuster(CoordinateProvider *provider);
+	void stopNumericalAdjustment();
 
 	bool curveReset (CurveEditor *ce);
 
@@ -66,6 +71,7 @@ protected:
 	void pastePressed ();
 	void removeEditor ();
 	const std::vector<double> getCurveFromGUI (int type);
+	void editPointToggled(Gtk::ToggleButton *button);
 	void editToggled (Gtk::ToggleButton *button);
 };
 

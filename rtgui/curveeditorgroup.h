@@ -89,9 +89,11 @@ protected:
 	void updateGUI (CurveEditor* ce);
 	void curveResetPressed ();
 	void curveChanged ();
-	float blendPipetteValues(float chan1, float chan2, float chan3);
+	float blendPipetteValues(CurveEditor* ce, float chan1, float chan2, float chan3);
 	void setUnChanged (bool uc, CurveEditor* ce);
 };
+
+class CoordinateProvider;
 
 class CurveEditorSubGroup {
 
@@ -105,6 +107,7 @@ protected:
 	int valLinear;
 	int valUnchanged;
 	CurveEditorGroup *parent;
+	int curveBBoxPos; // 0=above, 1=right, 2=below, 3=left
 
 	ColoredBar* leftBar;
 	ColoredBar* bottomBar;
@@ -119,6 +122,9 @@ public:
 	virtual void switchGUI() = 0;
 	virtual void refresh(CurveEditor *curveToRefresh) = 0;
 	virtual void editModeSwitchedOff() = 0;
+
+	virtual void showCoordinateAdjuster(CoordinateProvider *provider) = 0;
+	virtual void stopNumericalAdjustment() = 0;
 
 	virtual void pipetteMouseOver(EditDataProvider *provider, int modifierKey) =0;
 	virtual void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) =0;

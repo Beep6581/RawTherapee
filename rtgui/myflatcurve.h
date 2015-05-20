@@ -110,6 +110,7 @@ class MyFlatCurve : public MyCurve {
 		bool getHandles(int n);
 		CursorShape motionNotify(CursorShape type, double minDistanceX, double minDistanceY, int num);
 		std::vector<double> get_vector (int veclen);
+		void get_LUT (LUTf &lut);
 
 	public:
 		MyFlatCurve ();
@@ -122,10 +123,13 @@ class MyFlatCurve : public MyCurve {
 		void reset (const std::vector<double> &resetCurve, double identityValue=0.5);
 		//void updateBackgroundHistogram (unsigned int* hist);
 
-		void pipetteMouseOver (EditDataProvider *provider, int modifierKey);
+		void pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider, int modifierKey);
 		void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
 		void pipetteButton1Released(EditDataProvider *provider);
 		void pipetteDrag(EditDataProvider *provider, int modifierKey);
+
+		void setPos(double pos, int chanIdx);
+		virtual void stopNumericalAdjustment();
 };
 
 #endif
