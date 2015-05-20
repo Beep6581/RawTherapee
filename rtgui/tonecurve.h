@@ -84,6 +84,7 @@ class ToneCurve : public ToolParamBlock, public AdjusterListener, public Foldabl
     void autoOpenCurve       ();
     void setEditProvider     (EditDataProvider *provider);
 
+    virtual float blendPipetteValues (CurveEditor *ce, float chan1, float chan2, float chan3);
 
     void adjusterChanged (Adjuster* a, double newval);
     void neutral_pressed ();

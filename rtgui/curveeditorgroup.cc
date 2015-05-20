@@ -46,6 +46,10 @@ CurveEditorGroup::~CurveEditorGroup() {
 
 void CurveEditorGroup::hideCurrentCurve() {
 	// Setting the curve type to 'Unchanged' hide the CurveEditor
+	if (diagonalSubGroup)
+		diagonalSubGroup->stopNumericalAdjustment();
+	if (flatSubGroup)
+		flatSubGroup->stopNumericalAdjustment();
 	if (displayedCurve)
 		displayedCurve->curveType->set_active(false);
 }
@@ -280,10 +284,10 @@ void CurveEditorGroup::curveChanged () {
 /*
  * Listener called when the user has modified the curve
  */
-float CurveEditorGroup::blendPipetteValues (float chan1, float chan2, float chan3) {
+float CurveEditorGroup::blendPipetteValues (CurveEditor* ce, float chan1, float chan2, float chan3) {
 
 	if (cl)
-		return cl->blendPipetteValues(chan1, chan2, chan3);
+		return cl->blendPipetteValues(ce, chan1, chan2, chan3);
 
 	return -1.f;
 }

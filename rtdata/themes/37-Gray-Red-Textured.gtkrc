@@ -153,6 +153,13 @@ style "clearlooks-spinbutton" {
 	}
 }
 
+style "clearlooks-axisadjuster" = "clearlooks-spinbutton" {
+	# background
+	base[INSENSITIVE] = @rt_tool_bg
+	# text
+	text[INSENSITIVE] = @rt_fg_color
+}
+
 style "clearlooks-framelessspinbutton" {
 
 	# IMPORTANT!
@@ -880,6 +887,7 @@ widget "*.MyExpanderTitle" style "clearlooks-expander"
 widget "*.ExpanderBox" style "clearlooks-toolFrame"
 widget "*.ExpanderBox.*.MyExpanderTitle" style "clearlooks-subexpander"
 widget "*.ExpanderBox.*.MyExpanderTitle.*" style "clearlooks-subexpander"
+widget "*.AxisAdjuster" style "clearlooks-axisadjuster"
 
 # The window of the tooltip is called "gtk-tooltip"
 ##################################################################

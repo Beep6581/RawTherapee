@@ -2,13 +2,15 @@
 #define _PPVERSION_
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 322
+#define PPVERSION 323
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
-   322	2015-01-31
-		[Wavelet] new tool using wavelet levels
+   323  2015-10-05
+        [Exposure] Added 'Luminance' tone curve mode
+   322  2015-01-31
+        [Wavelet] new tool using wavelet levels
    321  2014-08-17
         [Film Simulation] new  tool using HALDCLUT files
    320  2014-07-02  (yes, same version number... this is an error due to a wrong version number set in comment of previous change)

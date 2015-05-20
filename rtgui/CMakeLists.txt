@@ -4,7 +4,7 @@ set (BASESOURCEFILES
     exportpanel.cc cursormanager.cc rtwindow.cc renamedlg.cc recentbrowser.cc placesbrowser.cc filepanel.cc editorpanel.cc batchqueuepanel.cc
     ilabel.cc thumbbrowserbase.cc adjuster.cc filebrowserentry.cc filebrowser.cc filethumbnailbuttonset.cc
     cachemanager.cc cacheimagedata.cc shcselector.cc perspective.cc thresholdselector.cc thresholdadjuster.cc
-    clipboard.cc thumbimageupdater.cc bqentryupdater.cc lensgeom.cc coloredbar.cc edit.cc
+    clipboard.cc thumbimageupdater.cc bqentryupdater.cc lensgeom.cc coloredbar.cc edit.cc coordinateadjuster.cc
     coarsepanel.cc cacorrection.cc  chmixer.cc blackwhite.cc
     resize.cc icmpanel.cc crop.cc shadowshighlights.cc
     impulsedenoise.cc dirpyrdenoise.cc epd.cc

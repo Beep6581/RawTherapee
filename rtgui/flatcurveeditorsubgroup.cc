@@ -28,6 +28,7 @@
 #include "shcselector.h"
 #include "adjuster.h"
 #include "mycurve.h"
+#include "myflatcurve.h"
 #include "curveeditor.h"
 #include "flatcurveeditorsubgroup.h"
 
@@ -36,6 +37,8 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 	valLinear = (int)FCT_Linear;
 	valUnchanged = (int)FCT_Unchanged;
 	parent = prt;
+
+	curveBBoxPos = options.curvebboxpos;
 
 	// ControlPoints curve
 	CPointsCurveBox = new Gtk::VBox ();
@@ -63,6 +66,9 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 	loadCPoints = Gtk::manage (new Gtk::Button ());
 	loadCPoints->add (*Gtk::manage (new RTImage ("gtk-open.png")));
 	editCPoints = Gtk::manage (new Gtk::ToggleButton());
+	editPointCPoints = Gtk::manage (new Gtk::ToggleButton ());
+	editPointCPoints->add (*Gtk::manage (new RTImage ("gtk-edit.png")));
+	editPointCPoints->set_tooltip_text(M("CURVEEDITOR_EDITPOINT_HINT"));
 	editCPoints->add (*Gtk::manage (new RTImage ("editmodehand.png")));
 	editCPoints->set_tooltip_text(M("EDIT_PIPETTE_TOOLTIP"));
 	editCPoints->hide();
@@ -71,6 +77,7 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 	CPointsbbox->pack_end (*copyCPoints, Gtk::PACK_SHRINK, 0);
 	CPointsbbox->pack_end (*saveCPoints, Gtk::PACK_SHRINK, 0);
 	CPointsbbox->pack_end (*loadCPoints, Gtk::PACK_SHRINK, 0);
+	CPointsbbox->pack_start(*editPointCPoints, Gtk::PACK_SHRINK, 0);
 	CPointsbbox->pack_start(*editCPoints, Gtk::PACK_SHRINK, 0);
 
 	CPointsCurveAndButtons->pack_start (*CPointsCurve, Gtk::PACK_EXPAND_WIDGET, 0);
@@ -86,12 +93,29 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 	} else if (options.curvebboxpos==3) {
 		CPointsCurveAndButtons->reorder_child(*CPointsbbox, 0);
 	}
+
+	{
+	std::vector<Axis> axis;
+	axis.resize(4);
+	axis.at(0).setValues(M("CURVEEDITOR_AXIS_IN"), 5, 0.001, 0.01, 0., 1.);
+	axis.at(1).setValues(M("CURVEEDITOR_AXIS_OUT"), 5, 0.001, 0.01, 0., 1.);
+	axis.at(2).setValues(M("CURVEEDITOR_AXIS_LEFT_TAN"), 5, 0.01, 0.1, 0., 1.);
+	axis.at(3).setValues(M("CURVEEDITOR_AXIS_RIGHT_TAN"), 5, 0.01, 0.1, 0., 1.);
+	CPointsCoordAdjuster = Gtk::manage (new CoordinateAdjuster(CPointsCurve, this, axis));
+	CPointsCurveBox->pack_start(*CPointsCoordAdjuster, Gtk::PACK_SHRINK, 0);
+	if (options.curvebboxpos == 2)
+		CPointsCurveBox->reorder_child(*CPointsCoordAdjuster, 2);
+	CPointsCoordAdjuster->show_all();
+	}
+
 	CPointsCurveBox->show_all ();
+	CPointsCoordAdjuster->hide();
 
 	saveCPoints->signal_clicked().connect( sigc::mem_fun(*this, &FlatCurveEditorSubGroup::savePressed) );
 	loadCPoints->signal_clicked().connect( sigc::mem_fun(*this, &FlatCurveEditorSubGroup::loadPressed) );
 	copyCPoints->signal_clicked().connect( sigc::mem_fun(*this, &FlatCurveEditorSubGroup::copyPressed) );
 	pasteCPoints->signal_clicked().connect( sigc::mem_fun(*this, &FlatCurveEditorSubGroup::pastePressed) );
+	editPointCPointsConn = editPointCPoints->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &FlatCurveEditorSubGroup::editPointToggled), editPointCPoints) );
 	editCPointsConn = editCPoints->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &FlatCurveEditorSubGroup::editToggled), editCPoints) );
 
 	saveCPoints->set_tooltip_text (M("CURVEEDITOR_TOOLTIPSAVE"));
@@ -117,6 +141,17 @@ FlatCurveEditor* FlatCurveEditorSubGroup::addCurve(Glib::ustring curveLabel, boo
 	return newCE;
 }
 
+void FlatCurveEditorSubGroup::showCoordinateAdjuster(CoordinateProvider *provider) {
+	if (provider == CPointsCurve) {
+		if (!editPointCPoints->get_active()) editPointCPoints->set_active(true);
+	}
+}
+
+void FlatCurveEditorSubGroup::stopNumericalAdjustment() {
+	CPointsCurve->stopNumericalAdjustment();
+}
+
+
 /*
  * Force the resize of the curve editor, if the displayed one is the requested one
  */
@@ -140,7 +175,7 @@ void FlatCurveEditorSubGroup::editModeSwitchedOff () {
 	// toggling off all edit buttons, even if only one is toggle on
 	bool prevState = editCPointsConn.block(true);
 	editCPoints->set_active(false);
-	CPointsCurve->pipetteMouseOver(NULL, 0);
+	CPointsCurve->pipetteMouseOver(NULL, NULL, 0);
 	CPointsCurve->setDirty(true);
 	if (!prevState) editCPointsConn.block(false);
 }
@@ -149,7 +184,7 @@ void FlatCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, int m
 	CurveEditor *curveEditor = static_cast<FlatCurveEditor*>(parent->displayedCurve);
 	switch((FlatCurveType)(curveEditor->curveType->getSelected())) {
 	case (FCT_MinMaxCPoints):
-		CPointsCurve->pipetteMouseOver(provider, modifierKey);
+		CPointsCurve->pipetteMouseOver(curveEditor, provider, modifierKey);
 		CPointsCurve->setDirty(true);
 		break;
 	default:	// (DCT_Linear, DCT_Unchanged)
@@ -378,6 +413,15 @@ void FlatCurveEditorSubGroup::pastePressed () {
 		}
 	}
 	return;
+}
+
+void FlatCurveEditorSubGroup::editPointToggled(Gtk::ToggleButton *button) {
+	if (button->get_active())
+		CPointsCoordAdjuster->show();
+	else {
+		CPointsCurve->stopNumericalAdjustment();
+		CPointsCoordAdjuster->hide();
+	}
 }
 
 void FlatCurveEditorSubGroup::editToggled (Gtk::ToggleButton *button) {

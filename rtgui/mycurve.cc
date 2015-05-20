@@ -36,6 +36,7 @@ MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal
     sized = RS_Pending;
     snapToElmt = -100;
     curveIsDirty = true;
+    edited_point = -1;
 
     set_extension_events(Gdk::EXTENSION_EVENTS_ALL);
 #if defined (__APPLE__)
@@ -112,6 +113,15 @@ bool MyCurve::snapCoordinateY(double testedVal, double realVal) {
 		return true;
 	}
 	return false;
+}
+
+float MyCurve::getVal(LUTf &curve, int x) {
+	if ((graphW-2) == curve.getSize()) {
+		return curve[x];
+	}
+	else {
+		return curve.getVal01(float(x)/(graphW-3));
+	}
 }
 
 void MyCurve::on_style_changed (const Glib::RefPtr<Gtk::Style>& style) {

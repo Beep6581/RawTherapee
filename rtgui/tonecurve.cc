@@ -123,6 +123,7 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
   toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_WEIGHTEDSTD"));
   toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_FILMLIKE"));
   toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_SATANDVALBLENDING"));
+  toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_LUMINANCE"));
   toneCurveMode->set_active (0);
   toneCurveMode->set_tooltip_text(M("TP_EXPOSURE_TCMODE_LABEL1"));
 
@@ -148,6 +149,7 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
   toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_WEIGHTEDSTD"));
   toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_FILMLIKE"));
   toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_SATANDVALBLENDING"));
+  toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_LUMINANCE"));
   toneCurveMode2->set_active (0);
   toneCurveMode2->set_tooltip_text(M("TP_EXPOSURE_TCMODE_LABEL2"));
 
@@ -224,10 +226,10 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
         shape->setUnChanged (!pedited->toneCurve.curve);
         shape2->setUnChanged (!pedited->toneCurve.curve2);
         if (!pedited->toneCurve.curveMode) {
-            toneCurveMode->set_active(4);
+            toneCurveMode->set_active(5);
         }
         if (!pedited->toneCurve.curveMode2) {
-            toneCurveMode2->set_active(4);
+            toneCurveMode2->set_active(5);
         }
     }
     if (pedited)
@@ -292,12 +294,14 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
     else if (tcMode == 1) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_WEIGHTEDSTD;
     else if (tcMode == 2) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_FILMLIKE;
     else if (tcMode == 3) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
+    else if (tcMode == 4) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_LUMINANCE;
 
     tcMode = toneCurveMode2->get_active_row_number();
     if      (tcMode == 0) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_STD;
     else if (tcMode == 1) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_WEIGHTEDSTD;
     else if (tcMode == 2) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_FILMLIKE;
     else if (tcMode == 3) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
+    else if (tcMode == 4) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_LUMINANCE;
 
     if (pedited) {
         pedited->toneCurve.expcomp    = expcomp->getEditedState ();
@@ -312,8 +316,8 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->toneCurve.clip       = clipDirty;
         pedited->toneCurve.curve      = !shape->isUnChanged ();
         pedited->toneCurve.curve2     = !shape2->isUnChanged ();
-        pedited->toneCurve.curveMode  = toneCurveMode->get_active_row_number() != 4;
-        pedited->toneCurve.curveMode2 = toneCurveMode2->get_active_row_number() != 4;
+        pedited->toneCurve.curveMode  = toneCurveMode->get_active_row_number() != 5;
+        pedited->toneCurve.curveMode2 = toneCurveMode2->get_active_row_number() != 5;
     }
     if (pedited) {
         pedited->toneCurve.method     = method->get_active_row_number()!=4;
@@ -444,6 +448,19 @@ void ToneCurve::curveMode2Changed () {
 bool ToneCurve::curveMode2Changed_ () {
     if (listener) listener->panelChanged (EvToneCurveMode2, toneCurveMode2->get_active_text());
     return false;
+}
+
+float ToneCurve::blendPipetteValues(CurveEditor *ce, float chan1, float chan2, float chan3) {
+    // assuming that all the channels are used...
+    if (ce == shape) {
+        if (toneCurveMode->get_active_row_number() == 4)
+            return chan1*0.2126729f + chan2*0.7151521f + chan3*0.0721750f;
+    }
+    else if (ce == shape2) {
+        if (toneCurveMode2->get_active_row_number() == 4)
+            return chan1*0.2126729f + chan2*0.7151521f + chan3*0.0721750f;
+    }
+    return CurveListener::blendPipetteValues(ce, chan1, chan2, chan3);
 }
 
 void ToneCurve::adjusterChanged (Adjuster* a, double newval) {

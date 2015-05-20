@@ -24,6 +24,7 @@
 #include "curvelistener.h"
 #include "cursormanager.h"
 #include "coloredbar.h"
+#include "coordinateadjuster.h"
 #include "../rtengine/LUT.h"
 #include "guiutils.h"
 #include "options.h"
@@ -59,8 +60,9 @@ enum ResizeState {
 };
 
 class MyCurveIdleHelper;
+class CurveEditor;
 
-class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller {
+class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller, public CoordinateProvider {
 
 	friend class MyCurveIdleHelper;
 
@@ -72,14 +74,14 @@ class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller {
 		ColoredBar *leftBar;
 		ColoredBar *bottomBar;
 		CursorShape cursor_type;
-		int graphX, graphY, graphW, graphH; /// dimensions of the graphic area, excluding surrounding space for the points of for the colored bar
+		int graphX, graphY, graphW, graphH; /// position and dimensions of the graphic area, excluding surrounding space for the points of for the colored bar
 		int prevGraphW, prevGraphH;         /// previous inner width and height of the editor
 		Gdk::ModifierType mod_type;
 		int cursorX;		/// X coordinate in the graph of the cursor
 		int cursorY;		/// Y coordinate in the graph of the cursor
-		std::vector< Point<float> > point;
-		std::vector< Point<float> > upoint;
-		std::vector< Point<float> > lpoint;
+		LUTf point;
+		LUTf upoint;
+		LUTf lpoint;
 		bool buttonPressed;
 		/**
 		 * snapToElmt, which will be used for the Y axis only,  must be interpreted like this:
@@ -98,10 +100,14 @@ class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller {
 		enum ResizeState sized;
 		bool curveIsDirty;
 
+		int edited_point;  // > -1 when a point is being numerically edited
+		std::vector<double> editedPos;
+
 		virtual std::vector<double> get_vector (int veclen) = 0;
 		int getGraphMinSize() { return GRAPH_SIZE + RADIUS + 1; }
 		bool snapCoordinateX(double testedVal, double realVal);
 		bool snapCoordinateY(double testedVal, double realVal);
+		float getVal(LUTf &curve, int x);
 
 		// return value = new requested height
 		int calcDimensions ();
@@ -123,7 +129,7 @@ class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller {
 		virtual bool handleEvents (GdkEvent* event) = 0;
 		virtual void reset (const std::vector<double> &resetCurve, double identityValue=0.5) = 0;
 
-		virtual void pipetteMouseOver (EditDataProvider *provider, int modifierKey) =0;
+		virtual void pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider, int modifierKey) =0;
 		virtual void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) =0;
 		virtual void pipetteButton1Released(EditDataProvider *provider) =0;
 		virtual void pipetteDrag(EditDataProvider *provider, int modifierKey) =0;

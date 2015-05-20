@@ -585,6 +585,11 @@ class WeightedStdToneCurve : public ToneCurve {
     void Apply(float& r, float& g, float& b) const;
 };
 
+class LuminanceToneCurve : public ToneCurve {
+  public:
+    void Apply(float& r, float& g, float& b) const;
+};
+
 class WeightedStdToneCurvebw : public ToneCurve {
   private:
     float Triangle(float refX, float refY, float X2) const;
@@ -668,6 +673,18 @@ inline void AdobeToneCurvebw::RGBTone (float& r, float& g, float& b) const {
     r = lutToneCurve[rold];
     b = lutToneCurve[bold];
     g = b + ((r - b) * (gold - bold) / (rold - bold));
+}
+
+// Modifying the Luminance channel only
+inline void LuminanceToneCurve::Apply(float &r, float &g, float &b) const {
+	assert (lutToneCurve);
+
+	float currLuminance = r*0.2126729f + g*0.7151521f + b*0.0721750f;
+	float newLuminance = lutToneCurve[currLuminance];
+	float coef = newLuminance/currLuminance;
+	r = LIM<float>(r*coef, 0.f, 65535.f);
+	g = LIM<float>(g*coef, 0.f, 65535.f);
+	b = LIM<float>(b*coef, 0.f, 65535.f);
 }
 
 inline float WeightedStdToneCurve::Triangle(float a, float a1, float b) const {

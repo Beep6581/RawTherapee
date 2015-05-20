@@ -49,7 +49,7 @@ class MyDiagonalCurve : public MyCurve {
 
 	protected:
 		DiagonalCurveDescr curve;
-		int grab_point;		// the point that the user is moving
+		int grab_point;		// the point that the user is moving by mouse
 		int closest_point;	// the point that is the closest from the cursor
 		int lit_point;		// the point that is lit when the cursor is near it
 		double clampedX;	// clamped grabbed point X coordinates in the [0;1] range
@@ -63,12 +63,18 @@ class MyDiagonalCurve : public MyCurve {
 		int activeParam;
 		unsigned int* bghist;	// histogram values
 		bool bghistvalid;
+
 		void draw (int handle);
 		void interpolate ();
-		void getCursorPosition(Gdk::EventType evType, bool isHint, int evX, int evY, Gdk::ModifierType modifierKey);
 		void findClosestPoint();
 		CursorShape motionNotify(CursorShape type, double minDistanceX, double minDistanceY, int num);
 		std::vector<double> get_vector (int veclen);
+		void get_LUT (LUTf &lut);
+		// Get the cursor position and unclamped position from the curve given an X value ; BEWARE: can be time consuming, use with care
+		void getCursorPositionFromCurve(float x);
+		void getCursorPositionFromCurve(int x);
+		// Get the cursor position and unclamped value depending on cursor's position in the graph
+		void getCursorPosition(Gdk::EventType evType, bool isHint, int evX, int evY, Gdk::ModifierType modifierKey);
 
 	public:
 		MyDiagonalCurve ();
@@ -81,10 +87,13 @@ class MyDiagonalCurve : public MyCurve {
 		void reset (const std::vector<double> &resetCurve, double identityValue=0.5);
 		void updateBackgroundHistogram (LUTu & hist);
 
-		void pipetteMouseOver (EditDataProvider *provider, int modifierKey);
+		void pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider, int modifierKey);
 		void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
 		void pipetteButton1Released(EditDataProvider *provider);
 		void pipetteDrag(EditDataProvider *provider, int modifierKey);
+
+		virtual void setPos(double pos, int chanIdx);
+		virtual void stopNumericalAdjustment();
 };
 
 #endif

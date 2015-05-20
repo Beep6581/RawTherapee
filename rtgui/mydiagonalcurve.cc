@@ -33,6 +33,9 @@ MyDiagonalCurve::MyDiagonalCurve () : activeParam(-1), bghistvalid(false) {
 
     bghist = new unsigned int[256];
 
+    editedPos.resize(2);
+    editedPos.at(0) = editedPos.at(1) = 0.0;
+
     signal_event().connect( sigc::mem_fun(*this, &MyDiagonalCurve::handleEvents) );
 
     curve.type = DCT_Spline;
@@ -82,47 +85,77 @@ std::vector<double> MyDiagonalCurve::get_vector (int veclen) {
 
     // calculate remaining points
     std::vector<double> curveDescr = getPoints ();
-    rtengine::DiagonalCurve* rtcurve = new rtengine::DiagonalCurve (curveDescr, veclen*1.2);
+    rtengine::DiagonalCurve rtcurve(curveDescr, veclen*1.2);
     std::vector<double> t;
     t.resize (veclen);
     for (int i = 0; i < veclen; i++)
         t[i] = (double) i / (veclen - 1.0);
-    rtcurve->getVal (t, vector);
-    delete rtcurve;
+    rtcurve.getVal (t, vector);
     return vector;
+}
+
+void MyDiagonalCurve::get_LUT (LUTf &lut) {
+
+    int size = lut.getSize();
+
+    if (curve.type != DCT_Parametric) {
+        // count active points:
+        double prev =- 1.0;
+        int active = 0;
+        int firstact = -1;
+        for (int i = 0; i < (int)curve.x.size(); ++i)
+            if (curve.x.at(i) > prev) {
+                if (firstact < 0)
+                  firstact = i;
+                prev = curve.x.at(i);
+                ++active;
+            }
+        // handle degenerate case:
+        if (active < 2) {
+            double ry;
+            if (active > 0)
+                ry = curve.y.at(firstact);
+            else
+                ry = 0.0;
+            if (ry < 0.0) ry = 0.0;
+            if (ry > 1.0) ry = 1.0;
+            for (int x = 0; x < size; ++x)
+                lut[x] = ry;
+            return;
+        }
+    }
+
+    // calculate remaining points
+    std::vector<double> curveDescr = getPoints ();
+    rtengine::DiagonalCurve rtcurve(curveDescr, lut.getUpperBound()*1.2);
+    double t;
+    double maxVal = double(lut.getUpperBound());
+    for (int i = 0; i < size; i++) {
+        t = double(i) / maxVal;
+        lut[i] = rtcurve.getVal (t);
+    }
+    return;
 }
 
 void MyDiagonalCurve::interpolate () {
 
     prevGraphW = graphW;
     prevGraphH = graphH;
-    int nbPoints = graphW-2;
-    point.resize (nbPoints);
-    std::vector<double> vector = get_vector (nbPoints);
-    for (int i = 0; i < nbPoints; ++i) {
-        float currX = float(i)/float(nbPoints-1);
-        point.at(i).setCoords(float(graphX)+1.5f+float(graphW-3)*currX, float(graphY)-1.5f-float(graphH-3)*float(vector.at(i)));
-    }
-    upoint.clear ();
-    lpoint.clear ();
+    int nbPoints = rtengine::max(graphW-2,201);
+    point(nbPoints);
+    get_LUT (point);
+    upoint.reset();
+    lpoint.reset ();
 
     if (curve.type==DCT_Parametric && activeParam>0) {
         double tmp = curve.x.at(activeParam-1);
         if (activeParam>=4) {
-            upoint.resize(nbPoints);
-            lpoint.resize(nbPoints);
+            upoint(nbPoints);
+            lpoint(nbPoints);
             curve.x.at(activeParam-1) = 100;
-            vector = get_vector (nbPoints);
-            for (int i = 0; i < nbPoints; ++i) {
-                float currX = float(i)/float(nbPoints-1);
-                upoint.at(i).setCoords(float(graphX)+1.5f+float(graphW-3)*currX, float(graphY)-1.5f-float(graphH-3)*float(vector.at(i)));
-            }
+            get_LUT(upoint);
             curve.x.at(activeParam-1) = -100;
-            vector = get_vector (nbPoints);
-            for (int i = 0; i < nbPoints; ++i) {
-                float currX = float(i)/float(nbPoints-1);
-                 lpoint.at(i).setCoords(float(graphX)+1.5f+float(graphW-3)*currX, float(graphY)-1.5f-float(graphH-3)*float(vector.at(i)));
-            }
+            get_LUT (lpoint);
             curve.x.at(activeParam-1) = tmp;
         }
     }
@@ -140,8 +173,10 @@ void MyDiagonalCurve::draw (int handle) {
         return;
 
     // re-calculate curve if dimensions changed
-    if (curveIsDirty || prevGraphW != graphW || prevGraphH != graphH || int(point.size()) != graphW-2)
+    int currPointSize = point.getUpperBound();
+    if (curveIsDirty || /*prevGraphW != graphW || prevGraphH != graphH ||*/ (currPointSize==200 && (graphW-3>200)) || (currPointSize>200 && (graphW-2<=200 || graphW-3!=currPointSize)))
         interpolate ();
+    currPointSize = point.getUpperBound();
 
     Gtk::StateType state = !is_sensitive() ? Gtk::STATE_INSENSITIVE : Gtk::STATE_NORMAL;
 
@@ -214,15 +249,16 @@ void MyDiagonalCurve::draw (int handle) {
     cr->set_line_width (1.0);
 
     // draw upper and lower bounds
-    if (curve.type==DCT_Parametric && activeParam>0 && lpoint.size()>1 && upoint.size()>1) {
+    float graphH_ = float(graphH-3);
+    float graphX_ = float(graphX)+1.5;
+    float graphY_ = float(graphY)-1.5;
+    if (curve.type==DCT_Parametric && activeParam>0 && lpoint.getUpperBound()>1 && upoint.getUpperBound()>1) {
         cr->set_source_rgba (0.0, 0.0, 0.0, 0.15);
-        cr->move_to (upoint[0].x, upoint[0].y);
-        for (int i=1; i<(int)upoint.size(); i++)
-            cr->line_to (upoint[i].x, upoint[i].y);
-        cr->line_to (lpoint[lpoint.size()-1].x, lpoint[lpoint.size()-1].y);
-        for (int i=(int)lpoint.size()-2; i>=0; i--)
-            cr->line_to (lpoint[i].x, lpoint[i].y);
-        cr->line_to (upoint[0].x, upoint[0].y);
+        cr->move_to (graphX_, getVal(upoint, 0)*-graphH_+graphY_);
+        for (int i=1; i<graphW-2; ++i)
+            cr->line_to (float(i)+graphX_, getVal(upoint, i)*-graphH_+graphY_);
+        for (int i=graphW-3; i>=0; --i)
+            cr->line_to (float(i)+graphX_, getVal(lpoint, i)*-graphH_+graphY_);
         cr->fill ();
     }
 
@@ -299,10 +335,9 @@ void MyDiagonalCurve::draw (int handle) {
 
     // draw curve
     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-    cr->move_to (double(point.at(0).x), double(point.at(0).y));
-    for (int i=1; i<(int)point.size(); i++) {
-        cr->line_to (double(point.at(i).x), double(point.at(i).y));
-    }
+    cr->move_to (graphX_, getVal(point, 0)*-graphH_+graphY_);
+    for (int i=1; i<graphW-2; ++i)
+        cr->line_to (float(i)+graphX_, getVal(point, i)*-graphH_+graphY_);
     cr->stroke ();
 
     // draw the left colored bar
@@ -348,7 +383,7 @@ void MyDiagonalCurve::draw (int handle) {
                     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
             }
             else {
-                if (i == handle || i == snapToElmt)
+                if (i == handle || i == snapToElmt || i == edited_point)
                     cr->set_source_rgb (1.0, 0.0, 0.0);
                 else
                     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
@@ -359,6 +394,14 @@ void MyDiagonalCurve::draw (int handle) {
 
             cr->arc (x, y, RADIUS+0.5, 0, 2*M_PI);
             cr->fill ();
+
+            if (i == edited_point) {
+                cr->set_line_width(2.);
+                cr->arc (x, y, RADIUS+3.5, 0, 2*M_PI);
+                cr->stroke();
+                cr->set_line_width(1.);
+            }
+
         }
     }
     setDirty(false);
@@ -408,7 +451,8 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 		// setDrawRectangle will allocate the backbuffer Surface
 		if (setDrawRectangle(win, 0, 0, get_allocation().get_width(),  get_allocation().get_height())) {
 			setDirty(true);
-			curveIsDirty = true;
+			if (prevGraphW > 200 || graphW > 200)
+				curveIsDirty = true;
 		}
 		draw (lit_point);
 		GdkRectangle *rectangle = &(event->expose.area);
@@ -421,50 +465,118 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 	case Gdk::BUTTON_PRESS:
 		snapToElmt = -100;
 		if (curve.type!=DCT_Parametric) {
-			if (event->button.button == 1) {
-				std::vector<double>::iterator itx, ity;
-				buttonPressed = true;
-				add_modal_grab ();
+			if (edited_point == -1) {
+				if (event->button.button == 1) {
+					std::vector<double>::iterator itx, ity;
+					buttonPressed = true;
+					add_modal_grab ();
 
-				// get the pointer position
-				getCursorPosition(Gdk::EventType(event->type), event->motion.is_hint!=0, int(event->button.x), int(event->button.y), Gdk::ModifierType(event->button.state));
-				findClosestPoint();
+					// get the pointer position
+					getCursorPosition(Gdk::EventType(event->type), event->motion.is_hint!=0, int(event->button.x), int(event->button.y), Gdk::ModifierType(event->button.state));
+					findClosestPoint();
 
-				new_type = CSMove;
-				if (distanceX > minDistanceX) {
-					/* insert a new control point */
-					if (num > 0) {
-						if (clampedX > curve.x.at(closest_point))
-							++closest_point;
+					new_type = CSMove;
+					if (distanceX > minDistanceX) {
+						if (mod_type & GDK_CONTROL_MASK) {
+							clampedY = point.getVal01(clampedX);
+						}
+						/* insert a new control point */
+						if (num > 0) {
+							if (clampedX > curve.x.at(closest_point))
+								++closest_point;
+						}
+						itx = curve.x.begin();
+						ity = curve.y.begin();
+						for (int i=0; i<closest_point; i++) { itx++; ity++; }
+						curve.x.insert (itx, 0);
+						curve.y.insert (ity, 0);
+						num++;
+
+						// the graph is refreshed only if a new point is created
+						curve.x.at(closest_point) = clampedX;
+						curve.y.at(closest_point) = clampedY;
+
+						curveIsDirty = true;
+						setDirty(true);
+						draw (closest_point);
+						notifyListener ();
 					}
-					itx = curve.x.begin();
-					ity = curve.y.begin();
-					for (int i=0; i<closest_point; i++) { itx++; ity++; }
-					curve.x.insert (itx, 0);
-					curve.y.insert (ity, 0);
-					num++;
-
-					// the graph is refreshed only if a new point is created (snaped to a pixel)
-					curve.x.at(closest_point) = clampedX;
-					curve.y.at(closest_point) = clampedY;
-
-					curveIsDirty = true;
-					setDirty(true);
-					draw (closest_point);
-					notifyListener ();
+					grab_point = closest_point;
+					lit_point = closest_point;
+					ugpX = curve.x.at(closest_point);
+					ugpY = curve.y.at(closest_point);
 				}
-				grab_point = closest_point;
-				lit_point = closest_point;
-				ugpX = curve.x.at(closest_point);
-				ugpY = curve.y.at(closest_point);
+				else if (event->button.button == 3) {
+					if (lit_point>-1 && grab_point==-1) {
+						if (!coordinateAdjuster->is_visible())
+							coordinateAdjuster->showMe(this);
+
+						edited_point = lit_point;
+						std::vector<CoordinateAdjuster::Boundaries> newBoundaries(2);
+						unsigned int size = curve.x.size();
+						if      (edited_point == 0)      { newBoundaries.at(0).minVal = 0.;                          newBoundaries.at(0).maxVal = curve.x.at(1);              }
+						else if (edited_point == size-1) { newBoundaries.at(0).minVal = curve.x.at(edited_point-1);  newBoundaries.at(0).maxVal = 1.;                         }
+						else if (curve.x.size() > 2)     { newBoundaries.at(0).minVal = curve.x.at(edited_point-1);  newBoundaries.at(0).maxVal = curve.x.at(edited_point+1); }
+						newBoundaries.at(1).minVal = 0.;  newBoundaries.at(1).maxVal = 1.;
+						editedPos.at(0) = curve.x.at(edited_point);
+						editedPos.at(1) = curve.y.at(edited_point);
+						coordinateAdjuster->setPos(editedPos);
+						coordinateAdjuster->startNumericalAdjustment(newBoundaries);
+						setDirty(true);
+						draw (lit_point);
+						new_type = CSArrow;
+						retval = true;
+					}
+				}
+				if (buttonPressed) retval = true;
 			}
-			if (buttonPressed) retval = true;
+			else { // if (edited_point > -1)
+				if (event->button.button == 3) {
+					// do we edit another point?
+					if (edited_point>-1 && grab_point==-1) {
+						/*  get the pointer position  */
+						getCursorPosition(Gdk::EventType(event->type), event->motion.is_hint!=0, int(event->button.x), int(event->button.y), Gdk::ModifierType(event->button.state));
+						findClosestPoint();
+						if (cursorX>=0 && cursorX<=graphW && cursorY>=0 && cursorY<=graphH) {
+							if (distanceX <= minDistanceX) {
+								// the cursor is close to an existing point
+								lit_point = closest_point;
+								if (lit_point != edited_point) {
+									edited_point = lit_point;
+									curveIsDirty = true;
+									setDirty(true);
+									draw (lit_point);
+									std::vector<CoordinateAdjuster::Boundaries> newBoundaries;
+									newBoundaries.resize(2);
+									unsigned int size = curve.x.size();
+									if      (edited_point == 0)      { newBoundaries.at(0).minVal = 0.;                          newBoundaries.at(0).maxVal = curve.x.at(1);           }
+									else if (edited_point == size-1) { newBoundaries.at(0).minVal = curve.x.at(edited_point-1);  newBoundaries.at(0).maxVal = 1.;                      }
+									else if (curve.x.size() > 2)     { newBoundaries.at(0).minVal = curve.x.at(edited_point-1);  newBoundaries.at(0).maxVal = curve.x.at(edited_point+1); }
+									newBoundaries.at(1).minVal = 0.;  newBoundaries.at(1).maxVal = 1.;
+									retval = true;
+									editedPos.at(0) = curve.x.at(edited_point);
+									editedPos.at(1) = curve.y.at(edited_point);
+									coordinateAdjuster->switchAdjustedPoint(editedPos, newBoundaries);
+								}
+							}
+							else {
+								// the cursor is inside the graph but away from existing points
+								new_type = CSPlus;
+								curveIsDirty = true;
+								stopNumericalAdjustment();
+							}
+						}
+						retval = true;
+					}
+				}
+			}
+			retval = true;
 		}
 		break;
 
 	case Gdk::BUTTON_RELEASE:
 		snapToElmt = -100;
-		if (curve.type!=DCT_Parametric) {
+		if (curve.type!=DCT_Parametric && edited_point==-1) {
 			if (buttonPressed && event->button.button == 1) {
 				std::vector<double>::iterator itx, ity;
 				int src, dst;
@@ -542,25 +654,56 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 			getCursorPosition(Gdk::EventType(event->type), event->motion.is_hint!=0, int(event->button.x), int(event->button.y), Gdk::ModifierType(event->button.state));
 
 			if (grab_point == -1) {
-				// there's no point currently being moved
-				int previous_lit_point = lit_point;
-				findClosestPoint();
-				if (cursorX<0 || cursorX>graphW || cursorY<0 || cursorY>graphH) {
-					// the cursor has left the graph area
-					new_type = CSArrow;
-					lit_point = -1;
+				if (edited_point==-1) {
+					// there's no point currently being moved
+					int previous_lit_point = lit_point;
+					findClosestPoint();
+					if (cursorX<0 || cursorX>graphW || cursorY<0 || cursorY>graphH) {
+						// the cursor has left the graph area
+						new_type = CSArrow;
+						lit_point = -1;
+					}
+					else if (distanceX <= minDistanceX) {
+						// the cursor is close to an existing point
+						new_type = CSMove;
+						lit_point = closest_point;
+					}
+					else {
+						// the cursor is inside the graph but away from existing points
+						new_type = CSPlus;
+						lit_point = -1;
+					}
+					if (lit_point != previous_lit_point) {
+						setDirty(true);
+						draw (lit_point);
+						if (lit_point > -1) {
+							editedPos.at(0) = curve.x.at(lit_point);
+							editedPos.at(1) = curve.y.at(lit_point);
+						}
+						coordinateAdjuster->setPos(editedPos);
+					}
+					if (lit_point == -1 && new_type == CSPlus) {
+						editedPos.at(0) = clampedX;
+						editedPos.at(1) = clampedY;
+						coordinateAdjuster->setPos(editedPos);
+					}
 				}
-				else if (distanceX <= minDistanceX) {
-					new_type = CSMove;
-					lit_point = closest_point;
-				}
-				else {
-					new_type = CSPlus;
-					lit_point = -1;
-				}
-				if (lit_point != previous_lit_point) {
-					setDirty(true);
-					draw (lit_point);
+				else { // if (edited_point > -1)
+					// there's no point currently being moved
+					int previous_lit_point = lit_point;
+					findClosestPoint();
+					if (distanceX <= minDistanceX) {
+						// the cursor is close to an existing point
+						lit_point = closest_point;
+					}
+					else {
+						// the cursor is outside the graph or inside the graph but away from existing points
+						lit_point = -1;
+					}
+					if (lit_point != previous_lit_point) {
+						setDirty(true);
+						draw (lit_point);
+					}
 				}
 			}
 			else {
@@ -646,6 +789,12 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 					setDirty(true);
 					draw (lit_point);
 					notifyListener ();
+
+					if (coordinateAdjuster->is_visible()) {
+						editedPos.at(0) = curve.x.at(grab_point);
+						editedPos.at(1) = curve.y.at(grab_point);
+						coordinateAdjuster->setPos(editedPos);
+					}
 				}
 			}
 		}
@@ -669,7 +818,7 @@ CursorShape MyDiagonalCurve::motionNotify(CursorShape type, double minDistanceX,
 	return new_type;
 }
 
-void MyDiagonalCurve::pipetteMouseOver (EditDataProvider *provider, int modifierKey) {
+void MyDiagonalCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider, int modifierKey) {
 	if (!provider) {
 		// occurs when leaving the preview area -> cleanup the curve editor
 		pipetteR = pipetteG = pipetteB = -1.f;
@@ -681,8 +830,9 @@ void MyDiagonalCurve::pipetteMouseOver (EditDataProvider *provider, int modifier
 	pipetteG = provider->pipetteVal[1];
 	pipetteB = provider->pipetteVal[2];
 	pipetteVal = 0.f;
-	if (listener)
-		pipetteVal = listener->blendPipetteValues(pipetteR, pipetteG, pipetteB);
+	if (listener) {
+		pipetteVal = listener->blendPipetteValues(ce, pipetteR, pipetteG, pipetteB);
+	}
 	else {
 		int n = 0;
 		if (pipetteR != -1.f) {
@@ -713,33 +863,45 @@ void MyDiagonalCurve::pipetteMouseOver (EditDataProvider *provider, int modifier
 
 	if (curve.type == DCT_Linear || curve.type == DCT_Spline || curve.type == DCT_NURBS) {
 		// get the pointer position
-		int px = graphX + int(float(graphW)*pipetteVal);  // WARNING: converting pipetteVal from float to int, precision loss here!
-		getCursorPosition(Gdk::MOTION_NOTIFY, false, px, graphY, Gdk::ModifierType(modifierKey));
+		getCursorPositionFromCurve(pipetteVal);
 
-		if (grab_point == -1) {
-			// there's no point currently being moved
-			int previous_lit_point = lit_point;
-			findClosestPoint();
-			if (cursorX<0 || cursorX>graphW || cursorY<0 || cursorY>graphH) {
-				// the cursor has left the graph area
-				lit_point = -1;
+		if (edited_point==-1) {
+			if (grab_point == -1) {
+				// there's no point currently being moved
+				int previous_lit_point = lit_point;
+				findClosestPoint();
+				if (cursorX<0 || cursorX>graphW || cursorY<0 || cursorY>graphH) {
+					// the cursor has left the graph area
+					lit_point = -1;
+				}
+				else if (distanceX <= minDistanceX) {
+					lit_point = closest_point;
+				}
+				else {
+					lit_point = -1;
+				}
+				if (lit_point != previous_lit_point) {
+					setDirty(true);
+					draw (lit_point);
+				}
 			}
-			else if (distanceX <= minDistanceX) {
-				lit_point = closest_point;
-			}
-			else {
-				lit_point = -1;
-			}
-			if (lit_point != previous_lit_point) {
-				setDirty(true);
-				draw (lit_point);
-			}
+		}
+		else
+			draw(lit_point);
+
+		if (edited_point==-1) {
+			editedPos.at(0) = pipetteVal;
+			editedPos.at(1) = point.getVal01(pipetteVal);
+			coordinateAdjuster->setPos(editedPos);
 		}
 	}
 }
 
 
 void MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) {
+	if (edited_point>1)
+		return;
+
 	int num = (int)curve.x.size();
 
 	/* graphW and graphH are the size of the graph */
@@ -756,13 +918,10 @@ void MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modi
 		buttonPressed = true;
 
 		// get the pointer position
-		int px = graphX + int(float(graphW)*pipetteVal);  // WARNING: converting pipetteVal from float to int, precision loss here!
-		getCursorPosition(Gdk::BUTTON_PRESS, false, px, graphY, Gdk::ModifierType(modifierKey));
+		getCursorPositionFromCurve(pipetteVal);
 		findClosestPoint();
 
 		if (distanceX > minDistanceX) {
-			rtengine::DiagonalCurve rtCurve(getPoints(), 200);
-
 			/* insert a new control point */
 			if (num > 0) {
 				if (clampedX > curve.x.at(closest_point))
@@ -771,17 +930,25 @@ void MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modi
 			itx = curve.x.begin();
 			ity = curve.y.begin();
 			for (int i=0; i<closest_point; i++) { itx++; ity++; }
+			lit_point = closest_point;
 			curve.x.insert (itx, 0);
 			curve.y.insert (ity, 0);
-			num++;
 
-			// the graph is refreshed only if a new point is created (snaped to a pixel)
-			curve.x.at(closest_point) = clampedX;
-			curve.y.at(closest_point) = clampedY = rtCurve.getVal(pipetteVal);
+			// the graph is refreshed only if a new point is created (snapped to a pixel)
+			curve.x.at(lit_point) = clampedX;
+			curve.y.at(lit_point) = clampedY;
+
+			if (lit_point>-1 && grab_point==-1 && coordinateAdjuster->is_visible()) {
+				std::vector<double> position;
+				position.resize(2);
+				position.at(0) = clampedX;
+				position.at(1) = clampedY;
+				coordinateAdjuster->setPos(position);
+			}
 
 			curveIsDirty = true;
 			setDirty(true);
-			draw (closest_point);
+			draw (lit_point);
 			notifyListener ();
 		}
 		grab_point = closest_point;
@@ -792,6 +959,9 @@ void MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modi
 }
 
 void MyDiagonalCurve::pipetteButton1Released(EditDataProvider *provider) {
+	if (edited_point>1)
+		return;
+
 	/* graphW and graphH are the size of the graph */
 	calcDimensions();
 
@@ -827,7 +997,7 @@ void MyDiagonalCurve::pipetteButton1Released(EditDataProvider *provider) {
 }
 
 void MyDiagonalCurve::pipetteDrag(EditDataProvider *provider, int modifierKey) {
-	if (curve.type==DCT_Parametric || graphW<0 || graphH<0)
+	if (edited_point>-1 || curve.type==DCT_Parametric || graphW<0 || graphH<0)
 		return;
 
 	snapToMinDistY = snapToMinDistX = 10.;
@@ -837,7 +1007,7 @@ void MyDiagonalCurve::pipetteDrag(EditDataProvider *provider, int modifierKey) {
 	/* graphW and graphH are the size of the graph */
 	calcDimensions();
 
-	getCursorPosition(Gdk::MOTION_NOTIFY, false, cursorX+graphX, graphY+provider->deltaScreen.y, Gdk::ModifierType(modifierKey));
+	getCursorPosition(Gdk::MOTION_NOTIFY, false, cursorX+graphX, graphY-cursorY+provider->deltaPrevScreen.y, Gdk::ModifierType(modifierKey));
 
 	// we memorize the previous position of the point, for optimization purpose
 	double prevPosX = curve.x.at(grab_point);
@@ -888,7 +1058,36 @@ void MyDiagonalCurve::pipetteDrag(EditDataProvider *provider, int modifierKey) {
 		setDirty(true);
 		draw (lit_point);
 		notifyListener ();
+
+		if (lit_point>-1 && coordinateAdjuster->is_visible()) {
+			std::vector<double> position;
+			position.resize(2);
+			position.at(0) = curve.x.at(grab_point);
+			position.at(1) = curve.y.at(grab_point);
+			coordinateAdjuster->setPos(position);
+		}
+
 	}
+}
+
+void MyDiagonalCurve::getCursorPositionFromCurve(float x) {
+
+	// the graph is refreshed only if a new point is created (snaped to a pixel)
+	clampedX = x;
+	clampedY = point.getVal01(x);
+
+	cursorX = int(clampedX*float(graphW-3)) + graphX+1.5;
+	cursorY = graphY - int(clampedY*float(graphH-3));
+}
+
+// x = cursor position found in the event
+void MyDiagonalCurve::getCursorPositionFromCurve(int x) {
+
+	// the graph is refreshed only if a new point is created (snaped to a pixel)
+	cursorX = x-graphX;
+	clampedX = (float(cursorX)-1.5) / float(graphW-3);
+	clampedY = point.getVal01(clampedX);
+	cursorY = graphY - int(float(1.-clampedY)*float(graphH-3));
 }
 
 void MyDiagonalCurve::getCursorPosition(Gdk::EventType evType, bool isHint, int evX, int evY, Gdk::ModifierType modifierKey) {
@@ -1006,6 +1205,7 @@ std::vector<double> MyDiagonalCurve::getPoints () {
 
 void MyDiagonalCurve::setPoints (const std::vector<double>& p) {
     int ix = 0;
+    stopNumericalAdjustment();
     DiagonalCurveType t = (DiagonalCurveType)p[ix++];
     curve.type = t;
     if (t==DCT_Parametric) {
@@ -1026,6 +1226,29 @@ void MyDiagonalCurve::setPoints (const std::vector<double>& p) {
     curveIsDirty = true;
     setDirty(true);
     queue_draw ();
+}
+
+void MyDiagonalCurve::setPos(double pos, int chanIdx) {
+    assert (edited_point > -1);
+    if (chanIdx == 0) {
+        curve.x.at(edited_point) = pos;
+    }
+    else if (chanIdx == 1) {
+        curve.y.at(edited_point) = pos;
+    }
+    curveIsDirty = true;
+    setDirty(true);
+    draw(lit_point);
+    notifyListener ();
+}
+
+void MyDiagonalCurve::stopNumericalAdjustment() {
+    if (edited_point>-1) {
+        edited_point = grab_point = lit_point = -1;
+        coordinateAdjuster->stopNumericalAdjustment();
+        setDirty(true);
+        draw(lit_point);
+    }
 }
 
 void MyDiagonalCurve::setType (DiagonalCurveType t) {
@@ -1080,6 +1303,8 @@ void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist) {
 }
 
 void MyDiagonalCurve::reset(const std::vector<double> &resetCurve, double identityValue) {
+
+    stopNumericalAdjustment();
 
     if (!resetCurve.empty()) {
         setPoints(resetCurve);

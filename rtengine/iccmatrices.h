@@ -30,7 +30,7 @@ const double d50_d65[3][3] =  {{ 1.0478112,  0.0228866, -0.0501270},
 
 // Color space conversion to/from XYZ; color spaces adapted to D65
 const double xyz_sRGBd65[3][3] = {{0.4124564,  0.3575761,  0.1804375},
-									{0.2126729,  0.7151522,  0.0721750},
+									{0.2126729,  0.7151522,  0.0721750},   // WARNING: the summ of this line is > 1.0
 									{0.0193339,  0.1191920,  0.9503041}};
 
 const double sRGBd65_xyz[3][3] = {{ 3.2404542, -1.5371385, -0.4985314},
