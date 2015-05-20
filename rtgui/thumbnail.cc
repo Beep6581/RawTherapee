@@ -415,7 +415,8 @@ void Thumbnail::imageDeveloped () {
         
     cfs.recentlySaved = true;
     cfs.save (getCacheFileName ("data")+".txt");
-    pparams.save (getCacheFileName ("profiles")+paramFileExtension);
+    if (options.saveParamsCache)
+        pparams.save (getCacheFileName ("profiles")+paramFileExtension);
 }
 
 void Thumbnail::imageEnqueued () {
