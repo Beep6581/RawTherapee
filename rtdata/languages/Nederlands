@@ -920,7 +920,6 @@ PREFERENCES_SHOWBASICEXIF;Toon standaard Exif-info
 PREFERENCES_SHOWDATETIME;Toon datum en tijd
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Toon belichtingscompensatie
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;Toon filmstrip werkbalk
-PREFERENCES_SHOWPROFILESELECTOR;Toon profielkiezer
 PREFERENCES_SHTHRESHOLD;Grenswaarde onderbelichting
 PREFERENCES_SIMPLAUT;Gereedschap
 PREFERENCES_SINGLETABVERTAB;Enkel-tab ('filmstrip') modus met verticale tabs

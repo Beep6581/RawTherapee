@@ -375,7 +375,6 @@ void Options::setDefaults () {
     maxInspectorBuffers = 2; //  a rather conservative value for low specced systems...
 	serializeTiffRead = true;
 
-    showProfileSelector = true;
     FileBrowserToolbarSingleRow = false;
     hideTPVScrollbar = false;
     UseIconNoText = true;
@@ -851,7 +850,6 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "HistogramBar"))        histogramBar        = keyFile.get_boolean ("GUI", "HistogramBar");
     if (keyFile.has_key ("GUI", "HistogramFullMode"))   histogramFullMode   = keyFile.get_boolean ("GUI", "HistogramFullMode");
     if (keyFile.has_key ("GUI", "ShowFilmStripToolBar"))        showFilmStripToolBar        = keyFile.get_boolean ("GUI", "ShowFilmStripToolBar");
-    if (keyFile.has_key ("GUI", "ShowProfileSelector"))         showProfileSelector         = keyFile.get_boolean ("GUI", "ShowProfileSelector");
     if (keyFile.has_key ("GUI", "FileBrowserToolbarSingleRow")) FileBrowserToolbarSingleRow = keyFile.get_boolean ("GUI", "FileBrowserToolbarSingleRow");
     if (keyFile.has_key ("GUI", "HideTPVScrollbar"))            hideTPVScrollbar            = keyFile.get_boolean ("GUI", "HideTPVScrollbar");
     if (keyFile.has_key ("GUI", "UseIconNoText"))               UseIconNoText               = keyFile.get_boolean ("GUI", "UseIconNoText");
@@ -1188,7 +1186,6 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("GUI", "HistogramBar", histogramBar);
     keyFile.set_boolean ("GUI", "HistogramFullMode", histogramFullMode);
     keyFile.set_boolean ("GUI", "ShowFilmStripToolBar", showFilmStripToolBar);
-    keyFile.set_boolean ("GUI", "ShowProfileSelector", showProfileSelector);
     keyFile.set_boolean ("GUI", "FileBrowserToolbarSingleRow", FileBrowserToolbarSingleRow);
     keyFile.set_boolean ("GUI", "HideTPVScrollbar", hideTPVScrollbar);
     keyFile.set_boolean ("GUI", "UseIconNoText", UseIconNoText);

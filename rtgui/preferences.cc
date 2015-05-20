@@ -812,11 +812,6 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     hbworkflow2->pack_start (*ckbHistogramWorking);
     vbworkflow->pack_start (*hbworkflow2, Gtk::PACK_SHRINK);
 
-    ckbShowProfileSelector =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SHOWPROFILESELECTOR")) );
-    Gtk::HBox* hbworkflow2d5 = Gtk::manage( new Gtk::HBox () );
-    hbworkflow2d5->pack_start (*ckbShowProfileSelector, Gtk::PACK_SHRINK);
-    vbworkflow->pack_start (*hbworkflow2d5, Gtk::PACK_SHRINK);
-
     Gtk::HBox* hbworkflow3 = Gtk::manage( new Gtk::HBox () );
     ckbFileBrowserToolbarSingleRow =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_FILEBROWSERTOOLBARSINGLEROW")) );
     ckbShowFilmStripToolBar =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SHOWFILMSTRIPTOOLBAR")) );
@@ -1448,7 +1443,6 @@ void Preferences::storePreferences () {
 
     moptions.curvebboxpos = curveBBoxPosC->get_active_row_number();
     moptions.histogramPosition = ckbHistogramPositionLeft->get_active() ? 1 : 2;
-    moptions.showProfileSelector = ckbShowProfileSelector->get_active();
     moptions.FileBrowserToolbarSingleRow = ckbFileBrowserToolbarSingleRow->get_active();
     moptions.showFilmStripToolBar = ckbShowFilmStripToolBar->get_active();
     moptions.hideTPVScrollbar = ckbHideTPVScrollbar->get_active();
@@ -1602,7 +1596,6 @@ void Preferences::fillPreferences () {
     curveBBoxPosC->set_active(moptions.curvebboxpos);
     ckbHistogramPositionLeft->set_active(moptions.histogramPosition==1);
  //   ckbHistogramWorking->set_active(moptions.histogramWorking==1);
-    ckbShowProfileSelector->set_active(moptions.showProfileSelector);
     ckbFileBrowserToolbarSingleRow->set_active(moptions.FileBrowserToolbarSingleRow);
     ckbShowFilmStripToolBar->set_active(moptions.showFilmStripToolBar);
     ckbHideTPVScrollbar->set_active(moptions.hideTPVScrollbar);
@@ -1916,11 +1909,6 @@ void Preferences::workflowUpdate (){
     if(moptions.histogramPosition != options.histogramPosition) {
     	// Update the position of the Histogram
     	parent->updateHistogramPosition(options.histogramPosition, moptions.histogramPosition);
-    }
-	
-    if(moptions.showProfileSelector != options.showProfileSelector) {
-    	// Update the position of the Profile selector
-    	parent->updateTPProfileSelector(moptions.showProfileSelector);
     }
 
 }

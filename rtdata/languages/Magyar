@@ -599,7 +599,6 @@ PREFERENCES_SET;Beállítás
 PREFERENCES_SHOWBASICEXIF;Fontosabb EXIF információk megjelenítése
 PREFERENCES_SHOWDATETIME;Felvétel dátumának és idejének megjelenítése
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Expozíciókompenzáció megjelenítése
-PREFERENCES_SHOWPROFILESELECTOR;Profilválasztó megjelenítése
 PREFERENCES_SHTHRESHOLD;Küszöbérték bebukott árnyékokhoz
 PREFERENCES_SINGLETABVERTAB;Egyetlen fül mód, függőleges előnézeti képek
 PREFERENCES_SINGLETAB;Egyetlen szerkesztőfül

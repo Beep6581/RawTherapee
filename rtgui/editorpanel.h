@@ -196,7 +196,6 @@ class EditorPanel : public Gtk::VBox,
         bool handleShortcutKey (GdkEventKey* event);
 
         bool getIsProcessing() const { return isProcessing; }
-        void updateProfileSelector(bool showMe);
         void updateTPVScrollbar (bool hide);
         void updateTabsUsesIcons (bool useIcons);
         void updateHistogramPosition (int oldPosition, int newPosition);

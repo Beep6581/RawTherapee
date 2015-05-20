@@ -883,7 +883,6 @@ PREFERENCES_SET;Establecer
 PREFERENCES_SHOWBASICEXIF;Mostrar datos Exif básicos
 PREFERENCES_SHOWDATETIME;Mostrar fecha y hora
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Mostrar compensación de exposición
-PREFERENCES_SHOWPROFILESELECTOR;Mostrar selector de perfiles de procesamiento
 PREFERENCES_SHTHRESHOLD;Umbral de sombras cortadas
 PREFERENCES_SINGLETABVERTAB;Modo Editor de pestaña única, pestañas verticales
 PREFERENCES_SINGLETAB;Modo Editor de pestaña única
