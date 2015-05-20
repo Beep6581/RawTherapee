@@ -170,7 +170,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     vboxright->set_border_width (2);
 
-    if (options.showProfileSelector) vboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 2);
+    vboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 2);
     // main notebook
     vboxright->pack_start (*tpc->toolPanelNotebook);
 
@@ -1595,19 +1595,6 @@ void EditorPanel::updateTPVScrollbar (bool hide) {
 
 void EditorPanel::updateTabsUsesIcons (bool useIcons) {
 	tpc->updateTabsUsesIcons (useIcons);
-}
-
-void EditorPanel::updateProfileSelector (bool showMe) {
-	if (showMe) {
-		// add the profile panel
-		vboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 2);
-		vboxright->reorder_child(*ppframe, 0 + (options.histogramPosition==2?1:0));
-		ppframe->show_all();
-	}
-	else {
-		// remove (but don't delete) the profile panel
-		removeIfThere(vboxright, ppframe, false);
-	}
 }
 
 void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition) {

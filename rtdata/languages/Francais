@@ -820,7 +820,6 @@ PREFERENCES_SET;Remplace
 PREFERENCES_SHOWBASICEXIF;Voir les infos EXIF basiques
 PREFERENCES_SHOWDATETIME;Voir la date et l'heure
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Ajoute la compensation d'exposition
-PREFERENCES_SHOWPROFILESELECTOR;Affiche le sélecteur de profils
 PREFERENCES_SHTHRESHOLD;Seuil pour le dépassement de domaine inférieur
 PREFERENCES_SINGLETABVERTAB;Éditeur unique, onglets verticaux
 PREFERENCES_SINGLETAB;Éditeur unique

@@ -545,7 +545,6 @@ PREFERENCES_SELECTTHEME;Тема
 PREFERENCES_SET;Постави
 PREFERENCES_SHOWBASICEXIF;Прикажи основне Exif податке
 PREFERENCES_SHOWDATETIME;Прикажи датум и време
-PREFERENCES_SHOWPROFILESELECTOR;Прикажи избор профила
 PREFERENCES_SHTHRESHOLD;Праг за одсечене тамне делове
 PREFERENCES_SINGLETABVERTAB;Режим у једном листу, вертикални листови
 PREFERENCES_SINGLETAB;Режим у једном листу

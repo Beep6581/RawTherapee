@@ -167,7 +167,6 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
 
     Gtk::CheckButton* ckbHistogramPositionLeft;
     Gtk::CheckButton* ckbHistogramWorking;
-    Gtk::CheckButton* ckbShowProfileSelector;
     Gtk::CheckButton* ckbFileBrowserToolbarSingleRow;
     Gtk::CheckButton* ckbShowFilmStripToolBar;
     Gtk::CheckButton* ckbHideTPVScrollbar;

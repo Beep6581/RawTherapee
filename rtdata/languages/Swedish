@@ -755,7 +755,6 @@ PREFERENCES_SET;Ange
 PREFERENCES_SHOWBASICEXIF;Visa grundlig Exif-information
 PREFERENCES_SHOWDATETIME;Visa datum och tid
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Lägg till exponeringskompensation
-PREFERENCES_SHOWPROFILESELECTOR;Visa profilväljaren
 PREFERENCES_SHTHRESHOLD;Tröskelvärde för skuggor
 PREFERENCES_SINGLETABVERTAB;Enkelfliksläge, vertikala flikar
 PREFERENCES_SINGLETAB;Öppna en bild åt gången

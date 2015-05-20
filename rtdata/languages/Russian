@@ -765,7 +765,6 @@ PREFERENCES_SET;Установить
 PREFERENCES_SHOWBASICEXIF;Показывать основные данные Exif 
 PREFERENCES_SHOWDATETIME;Показывать дату и время
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Показывать компенсацию выдержки
-PREFERENCES_SHOWPROFILESELECTOR;Показать выбор профиля обработки
 PREFERENCES_SHTHRESHOLD;Порог обрезки теней
 PREFERENCES_SINGLETABVERTAB;Одна вкладка редактирования, вертикальная панель вкладок
 PREFERENCES_SINGLETAB;Одна вкладка редактирования

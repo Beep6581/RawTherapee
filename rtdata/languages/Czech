@@ -942,7 +942,6 @@ PREFERENCES_SHOWBASICEXIF;Zobrazovat základní Exif informace
 PREFERENCES_SHOWDATETIME;Zobrazovat datum a čas
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Přidat kompenzaci expozice
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;Zobrazit lištu s filmovým pásem
-PREFERENCES_SHOWPROFILESELECTOR;Zobrazit výběr profilu zpracování
 PREFERENCES_SHTHRESHOLD;Práh oříznutých stínů
 PREFERENCES_SIMPLAUT;Režim nástrojů
 PREFERENCES_SINGLETABVERTAB;Mód jedné karty editoru, svislé karty

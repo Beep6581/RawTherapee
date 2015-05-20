@@ -619,7 +619,6 @@ PREFERENCES_SET;Fixa
 PREFERENCES_SHOWBASICEXIF;Mostra principals dades Exif
 PREFERENCES_SHOWDATETIME;Indica data i hora
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Mostra compensació d'exposició
-PREFERENCES_SHOWPROFILESELECTOR;Mostra selector de perfils de processat
 PREFERENCES_SHTHRESHOLD;Llindar pèrdues en foscos
 PREFERENCES_SINGLETABVERTAB;Mode simple treball, vistes verticals
 PREFERENCES_SINGLETAB;Mode simple treball

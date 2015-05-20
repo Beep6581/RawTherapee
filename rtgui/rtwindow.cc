@@ -717,15 +717,6 @@ void RTWindow::MoveFileBrowserToEditor()
     }
 }
 
-void RTWindow::updateTPProfileSelector (bool showMe) {
-	epanel->updateProfileSelector (showMe);
-
-	std::map<Glib::ustring, EditorPanel*>::const_iterator itr;
-	for(itr = epanels.begin(); itr != epanels.end(); ++itr){
-		((*itr).second)->updateProfileSelector (showMe);
-	}
-}
-
 void RTWindow::updateTPVScrollbar (bool hide) {
 	fpanel->updateTPVScrollbar (hide);
 	epanel->updateTPVScrollbar (hide);
