@@ -43,6 +43,8 @@ class SafeKeyFile : public  Glib::KeyFile
 		int get_integer(const Glib::ustring& group_name, const Glib::ustring& key) const
 			SAFE_KEY_FILE_METHOD(get_integer(group_name,key), get_integer(group_name,key,error), int);
 
+
+/*
 		double get_double(const Glib::ustring& group_name, const Glib::ustring& key) const
 			SAFE_KEY_FILE_METHOD(get_double(group_name,key), get_double(group_name,key,error), double);
 			
@@ -50,7 +52,7 @@ class SafeKeyFile : public  Glib::KeyFile
 	
 		DoubleArrayType get_double_list(const Glib::ustring& group_name, const Glib::ustring& key) const
 			SAFE_KEY_FILE_METHOD_NOINIT(get_double_list(group_name,key), get_double_list(group_name,key,error), DoubleArrayType);
-
+*/
 		typedef std::vector<int> IntArrayType;		
 	
 		IntArrayType get_integer_list(const Glib::ustring& group_name, const Glib::ustring& key) const
@@ -58,11 +60,47 @@ class SafeKeyFile : public  Glib::KeyFile
 
 		Glib::ustring get_string(const Glib::ustring& group_name, const Glib::ustring& key) const
 			SAFE_KEY_FILE_METHOD_NOINIT(get_string(group_name,key), get_string(group_name,key,error), Glib::ustring);
-			
+
+		double get_double(const Glib::ustring& group_name, const Glib::ustring& key) const {
+		    Glib::ustring temp = get_string( group_name, key);
+		    if(temp.data() != "") {
+		        double tmpdbl;
+                if(sscanf(temp.data(), "%lf", &tmpdbl))
+                    return tmpdbl;
+                else
+                    return 0.0;
+		    }
+            return 0.0;
+		}
+
 		typedef std::vector<Glib::ustring> StringArrayType;
 			
 		StringArrayType get_string_list(const Glib::ustring& group_name, const Glib::ustring& key) const
 			SAFE_KEY_FILE_METHOD_NOINIT(get_string_list(group_name,key), get_string_list(group_name,key,error), StringArrayType);
+
+		typedef std::vector<double> DoubleArrayType;		
+	
+		DoubleArrayType get_double_list(const Glib::ustring& group_name, const Glib::ustring& key) const {
+            StringArrayType temp = get_string_list(group_name, key);
+            DoubleArrayType tempdouble;
+            unsigned int n = temp.size();
+            if(n) {
+                tempdouble.reserve(n);
+          	    for (unsigned int i=0; i<n; i++) {
+                    if(temp[i].data() != "") {
+                        double tmpdbl;
+                        if(sscanf(temp[i].data(), "%lf", &tmpdbl))
+                            tempdouble.push_back(tmpdbl);
+                        else
+                            tempdouble.push_back(0.0);
+                    } else {
+                        tempdouble.push_back(0.0);
+                    }
+          	    }
+            }
+            return tempdouble;
+		}
+
 
 		StringArrayType get_keys(const Glib::ustring& group_name) const
 			SAFE_KEY_FILE_METHOD_NOINIT(get_keys(group_name), get_keys(group_name,error), StringArrayType);
