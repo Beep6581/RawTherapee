@@ -5587,7 +5587,7 @@ void CLASS parse_kodak_ifd (int base)
 int CLASS parse_tiff_ifd (int base)
 {
   unsigned entries, tag, type, len, plen=16, save;
-  int ifd, use_cm=0, cfa, i, j, c, ima_len=0,cm_D65=1;
+  int ifd, use_cm=0, cfa, i, j, c, ima_len=0,cm_D65=0;
   char software[64], *cbuf, *cp;
   uchar cfa_pat[16], cfa_pc[] = { 0,1,2,3 }, tab[256];
   double cc[2][4][4], cm[2][4][3], cam_xyz[4][3], num;
