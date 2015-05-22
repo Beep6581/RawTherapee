@@ -63,9 +63,9 @@ class SafeKeyFile : public  Glib::KeyFile
 
 		double get_double(const Glib::ustring& group_name, const Glib::ustring& key) const {
 		    Glib::ustring temp = get_string( group_name, key);
-		    if(temp.data() != "") {
+		    if(!temp.empty()) {
 		        double tmpdbl;
-                if(sscanf(temp.data(), "%lf", &tmpdbl))
+                if(sscanf(temp.c_str(), "%lf", &tmpdbl))
                     return tmpdbl;
                 else
                     return 0.0;
@@ -87,9 +87,9 @@ class SafeKeyFile : public  Glib::KeyFile
             if(n) {
                 tempdouble.reserve(n);
           	    for (unsigned int i=0; i<n; i++) {
-                    if(temp[i].data() != "") {
+                    if(!temp[i].empty()) {
                         double tmpdbl;
-                        if(sscanf(temp[i].data(), "%lf", &tmpdbl))
+                        if(sscanf(temp[i].c_str(), "%lf", &tmpdbl))
                             tempdouble.push_back(tmpdbl);
                         else
                             tempdouble.push_back(0.0);
