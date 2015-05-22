@@ -44,7 +44,7 @@ class SafeKeyFile : public  Glib::KeyFile
 			SAFE_KEY_FILE_METHOD(get_integer(group_name,key), get_integer(group_name,key,error), int);
 
 
-/*
+
 		double get_double(const Glib::ustring& group_name, const Glib::ustring& key) const
 			SAFE_KEY_FILE_METHOD(get_double(group_name,key), get_double(group_name,key,error), double);
 			
@@ -52,7 +52,7 @@ class SafeKeyFile : public  Glib::KeyFile
 	
 		DoubleArrayType get_double_list(const Glib::ustring& group_name, const Glib::ustring& key) const
 			SAFE_KEY_FILE_METHOD_NOINIT(get_double_list(group_name,key), get_double_list(group_name,key,error), DoubleArrayType);
-*/
+
 		typedef std::vector<int> IntArrayType;		
 	
 		IntArrayType get_integer_list(const Glib::ustring& group_name, const Glib::ustring& key) const
@@ -60,7 +60,7 @@ class SafeKeyFile : public  Glib::KeyFile
 
 		Glib::ustring get_string(const Glib::ustring& group_name, const Glib::ustring& key) const
 			SAFE_KEY_FILE_METHOD_NOINIT(get_string(group_name,key), get_string(group_name,key,error), Glib::ustring);
-
+/*
 		double get_double(const Glib::ustring& group_name, const Glib::ustring& key) const {
 		    Glib::ustring temp = get_string( group_name, key);
 		    if(!temp.empty()) {
@@ -72,12 +72,12 @@ class SafeKeyFile : public  Glib::KeyFile
 		    }
             return 0.0;
 		}
-
+*/
 		typedef std::vector<Glib::ustring> StringArrayType;
 			
 		StringArrayType get_string_list(const Glib::ustring& group_name, const Glib::ustring& key) const
 			SAFE_KEY_FILE_METHOD_NOINIT(get_string_list(group_name,key), get_string_list(group_name,key,error), StringArrayType);
-
+/*
 		typedef std::vector<double> DoubleArrayType;		
 	
 		DoubleArrayType get_double_list(const Glib::ustring& group_name, const Glib::ustring& key) const {
@@ -100,7 +100,7 @@ class SafeKeyFile : public  Glib::KeyFile
             }
             return tempdouble;
 		}
-
+*/
 
 		StringArrayType get_keys(const Glib::ustring& group_name) const
 			SAFE_KEY_FILE_METHOD_NOINIT(get_keys(group_name), get_keys(group_name,error), StringArrayType);
