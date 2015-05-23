@@ -455,7 +455,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
                 // load 4 channel white level here, will be used if available
                 if (RT_whitelevel_from_constant) {
                     maximum_c4[i] = cc->get_WhiteLevel(i, iso_speed, aperture);
-                    if(tiff_bps > 0 && !isFoveon()) {
+                    if(tiff_bps > 0 && maximum_c4[i] > 0 && !isFoveon()) {
                         unsigned compare = ((uint64_t)1 << tiff_bps) - 1; // use uint64_t to avoid overflow if tiff_bps == 32
                         while(maximum_c4[i] > compare)
                             maximum_c4[i] >>= 1;
