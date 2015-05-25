@@ -20,7 +20,6 @@
 #include "curves.h"
 #include "mytime.h"
 #include "refreshmap.h"
-#include "simpleprocess.h"
 #include "../rtgui/ppversion.h"
 #include "colortemp.h"
 #include "improcfun.h"
@@ -133,9 +132,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if (todo==CROP && ipf.needsPCVignetting())
         todo |= TRANSFORM; // Change about Crop does affect TRANSFORM
 
-    // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
-    ipf.setScale (scale);
-
     bool highDetailNeeded = false;
 
     if (options.prevdemo==PD_Sidecar) highDetailNeeded = true; //i#2664
@@ -199,7 +195,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             else if (imgsrc->getSensorType() == ST_FUJI_XTRANS)
                 printf("Demosaic X-Trans image with using method: %s\n",rp.xtranssensor.method.c_str());
         }
-        imgsrc->isRAW();
 
         imgsrc->demosaic( rp );
 
@@ -258,59 +253,57 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         int tr = getCoarseBitMask(params.coarse);
 
         imgsrc->getFullSize (fw, fh, tr);
-        PreviewProps pp (0, 0, fw, fh, scale);
 
         // Will (re)allocate the preview's buffers
         setScale (scale);
+        PreviewProps pp (0, 0, fw, fh, scale);
+       // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
+        ipf.setScale (scale);
 
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.toneCurve, params.icm, params.raw);
         //ColorTemp::CAT02 (orig_prev, &params)	;
 
-		Imagefloat *calclum = NULL ;
-		DirPyrDenoiseParams denoiseParams = params.dirpyrDenoise;
-
-		denoiseParams.getCurves(noiseLCurve,noiseCCurve);
-		int nbw=6;//nb tile W
-		int nbh=4;//
-		
-		float *ch_M = new float [nbw*nbh];//allocate memory
-		float *max_r = new float [nbw*nbh];//allocate memory
-		float *max_b = new float [nbw*nbh];//allocate memory
-		
-		if(denoiseParams.Lmethod == "CUR") {
-			if(noiseLCurve)
-				denoiseParams.luma = 0.5f;
-			else
-				denoiseParams.luma = 0.0f;
-		} else if(denoiseParams.Lmethod == "SLI")
-			noiseLCurve.Reset();
-		
-
-		if((noiseLCurve || noiseCCurve) &&  denoiseParams.enabled && (scale==1)){//only allocate memory if enabled and scale=1	
-			// we only need image reduced to 1/4 here
-			calclum = new Imagefloat ((pW+1)/2, (pH+1)/2);//for luminance denoise curve
-			for(int ii=0;ii<pH;ii+=2){
-				for(int jj=0;jj<pW;jj+=2){
-					calclum->r(ii>>1,jj>>1) = orig_prev->r(ii,jj);
-					calclum->g(ii>>1,jj>>1) = orig_prev->g(ii,jj);
-					calclum->b(ii>>1,jj>>1) = orig_prev->b(ii,jj);
-				}
-			}
-			imgsrc->convertColorSpace(calclum, params.icm, currWB, params.raw);//claculate values after colorspace conversion
-		}
-		//always enabled to calculated auto Chroma
+/* Issue 2785, disabled some 1:1 tools
         if (todo & M_LINDENOISE) {
+            DirPyrDenoiseParams denoiseParams = params.dirpyrDenoise;
 			if (denoiseParams.enabled && (scale==1)) {
-			printf("IMPROC\n");
-			int kall=1;
-			ipf.RGB_denoise(kall, orig_prev, orig_prev, calclum, ch_M, max_r, max_b, imgsrc->isRAW(), denoiseParams, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
-		}
-		}
-	//	delete calclum;
-	delete [] ch_M;
-	delete [] max_r;
-	delete [] max_b;
-	
+                Imagefloat *calclum = NULL ;
+
+                denoiseParams.getCurves(noiseLCurve,noiseCCurve);
+                int nbw=6;//nb tile W
+                int nbh=4;//
+                
+                float ch_M[nbw*nbh];
+                float max_r[nbw*nbh];
+                float max_b[nbw*nbh];
+                
+                if(denoiseParams.Lmethod == "CUR") {
+                    if(noiseLCurve)
+                        denoiseParams.luma = 0.5f;
+                    else
+                        denoiseParams.luma = 0.0f;
+                } else if(denoiseParams.Lmethod == "SLI")
+                    noiseLCurve.Reset();
+                
+
+                if(noiseLCurve || noiseCCurve){//only allocate memory if enabled and scale=1	
+                    // we only need image reduced to 1/4 here
+                    calclum = new Imagefloat ((pW+1)/2, (pH+1)/2);//for luminance denoise curve
+                    for(int ii=0;ii<pH;ii+=2){
+                        for(int jj=0;jj<pW;jj+=2){
+                            calclum->r(ii>>1,jj>>1) = orig_prev->r(ii,jj);
+                            calclum->g(ii>>1,jj>>1) = orig_prev->g(ii,jj);
+                            calclum->b(ii>>1,jj>>1) = orig_prev->b(ii,jj);
+                        }
+                    }
+                    imgsrc->convertColorSpace(calclum, params.icm, currWB, params.raw);//claculate values after colorspace conversion
+                }
+
+                int kall=1;
+                ipf.RGB_denoise(kall, orig_prev, orig_prev, calclum, ch_M, max_r, max_b, imgsrc->isRAW(), denoiseParams, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
+			}
+        }
+*/
         imgsrc->convertColorSpace(orig_prev, params.icm, currWB, params.raw);
 
         ipf.firstAnalysis (orig_prev, &params, vhist16);
@@ -467,12 +460,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             }
     }
     readyphase++;
-//    utili=false;
-//    autili=false;
-//    butili=false;
-//    ccutili=false;
-//    cclutili=false;
-//    clcutili=false;
+
     if ((todo & M_LUMACURVE) || (todo & M_CROP)) {
         utili = false;
         CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lhist16Cropped,
@@ -511,6 +499,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) ipf.EPDToneMap(nprevl,5,1);
         // for all treatments Defringe, Sharpening, Contrast detail , Microcontrast they are activated if "CIECAM" function are disabled
         readyphase++;
+
+/* Issue 2785, disabled some 1:1 tools
         if (scale==1) {
             if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)){
                 progress ("Denoising luminance impulse...",100*readyphase/numofphases);
@@ -549,6 +539,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
                 readyphase++;
             }
         }
+*/
         //if (scale==1) {
             if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)){
                 progress ("Pyramid wavelet...",100*readyphase/numofphases);
@@ -557,17 +548,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
                 readyphase++;
             }
         //}
-        TMatrix wprofa = iccStore->workingSpaceMatrix (params.icm.working);
-        double wpa[3][3] = {
-            {wprofa[0][0],wprofa[0][1],wprofa[0][2]},
-            {wprofa[1][0],wprofa[1][1],wprofa[1][2]},
-            {wprofa[2][0],wprofa[2][1],wprofa[2][2]}};
-        TMatrix wiprofa = iccStore->workingSpaceInverseMatrix (params.icm.working);
-        double wipa[3][3] = {
-            {wiprofa[0][0],wiprofa[0][1],wiprofa[0][2]},
-            {wiprofa[1][0],wiprofa[1][1],wiprofa[1][2]},
-            {wiprofa[2][0],wiprofa[2][1],wiprofa[2][2]}
-        };
 		
 		if((params.wavelet.enabled)) {
 			WaveletParams WaveParams = params.wavelet;
@@ -628,9 +608,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             int begh=0;
             int endh=pH;
             float d;
-            double dd;
             bool execsharp=false;
-            if(scale==1) execsharp=true;
 
             if(!ncie)
                 ncie = new CieImage (pW, pH);
@@ -639,20 +617,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
                 CAMBrightCurveJ(32768,0);
             if (!CAMBrightCurveQ && (params.colorappearance.algo=="QM" || params.colorappearance.algo=="ALL"))
                 CAMBrightCurveQ(32768,0);
-            if(settings->ciecamfloat){
-                ipf.ciecam_02float (ncie, float(adap), begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, execsharp, d, scale, 1);
-                if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*(double)d);
-                if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) acListener->adapCamChanged(adap);//real value of adapt scene luminosity
-            }
-            else {
-                ipf.ciecam_02 (ncie, adap, begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, execsharp, dd, scale, 1);
-                if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*dd);
-                if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) acListener->adapCamChanged(adap);
-            }
+            // Issue 2785, only float version of ciecam02 for navigator and pan background
+            ipf.ciecam_02float (ncie, float(adap), begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, execsharp, d, scale, 1);
+            if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*(double)d);
+            if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) acListener->adapCamChanged(adap);//real value of adapt scene luminosity
 
             readyphase++;
-        }
-        else {
+        } else {
             // CIECAM is disabled, we free up its image buffer to save some space
             if (ncie)
                 delete ncie; ncie=NULL;
@@ -678,12 +649,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         {
             ipf.lab2monitorRgb (nprevl, previmg);
             delete workimg;
-            Glib::ustring outProfile=params.icm.output;
-            Glib::ustring workProfile=params.icm.working;
+            Glib::ustring outProfile = params.icm.output;
 
-            if(settings->HistogramWorking) workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, workProfile, true);
-            else {
-                if (params.icm.output=="" || params.icm.output==ColorManagementParams::NoICMString) outProfile="sRGB";
+            if(settings->HistogramWorking) {
+                Glib::ustring workProfile = params.icm.working;
+                workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, workProfile, true);
+            } else {
+                if (params.icm.output=="" || params.icm.output==ColorManagementParams::NoICMString)
+                    outProfile="sRGB";
                 workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, outProfile, false);
             }
         }
@@ -746,15 +719,20 @@ void ImProcCoordinator::freeAll () {
  */
 void ImProcCoordinator::setScale (int prevscale) {
 
-if (settings->verbose) printf ("setscale before lock\n");
+    if (settings->verbose)
+        printf ("setscale before lock\n");
 
     tr = getCoarseBitMask(params.coarse);
 
     int nW, nH;
     imgsrc->getFullSize (fw, fh, tr);
 
-    PreviewProps pp (0, 0, fw, fh, prevscale);
-    imgsrc->getSize (tr, pp, nW, nH);
+    prevscale++;
+    do {
+        prevscale--;
+        PreviewProps pp (0, 0, fw, fh, prevscale);
+        imgsrc->getSize (tr, pp, nW, nH);
+    } while(nH<400 && prevscale>1 && (nW*nH < 1000000) ); // sctually hardcoded values, perhaps a better choice is possible
 
     if (settings->verbose) printf ("setscale starts (%d, %d)\n", nW, nH);
 

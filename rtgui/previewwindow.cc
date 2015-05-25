@@ -21,7 +21,7 @@
 #include "imagearea.h"
 #include "cursormanager.h"
 
-PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL), imageArea(NULL), isMoving(false), imgX(0), imgY(0), imgW(0), imgH(0), zoom(0.0) {
+PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL), imageArea(NULL), imgX(0), imgY(0), imgW(0), imgH(0), zoom(0.0), isMoving(false), needsUpdate(false) {
 
     rconn = signal_size_allocate().connect( sigc::mem_fun(*this, &PreviewWindow::on_resized) );
 }
@@ -49,8 +49,10 @@ void PreviewWindow::updatePreviewImage () {
 
     int W = get_width(), H = get_height();
     Glib::RefPtr<Gdk::Window> wind = get_window();
-    if( ! wind )
+    if( ! wind ) {
+        needsUpdate = true;
     	return;
+    }
     backBuffer = Gdk::Pixmap::create (wind, W, H, -1);
     backBuffer->draw_rectangle (get_style()->get_base_gc(Gtk::STATE_NORMAL), true, 0, 0, W, H);
     if (previewHandler) {
@@ -95,9 +97,10 @@ bool PreviewWindow::on_expose_event (GdkEventExpose* event) {
                 mainCropWin->addCropWindowListener (this);
         }
 
-        if (get_width()!=bufferW && get_height()!=bufferH)
+        if ((get_width()!=bufferW && get_height()!=bufferH) || needsUpdate) {
+            needsUpdate = false;
             updatePreviewImage ();
-            
+        }
         window->draw_drawable (get_style()->get_base_gc(Gtk::STATE_NORMAL), backBuffer, 0, 0, 0, 0, -1, -1);
 
         if (mainCropWin && zoom > 0.0) {

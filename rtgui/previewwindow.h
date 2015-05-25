@@ -27,7 +27,6 @@ class PreviewWindow : public Gtk::DrawingArea, public PreviewListener, public Cr
 
     private:      
         Glib::RefPtr<Gdk::Pixmap> backBuffer;
-        int oldwidth, oldheight;
         PreviewHandler* previewHandler;
         sigc::connection rconn;
         CropWindow* mainCropWin;
@@ -36,6 +35,7 @@ class PreviewWindow : public Gtk::DrawingArea, public PreviewListener, public Cr
         double zoom;
 		int press_x, press_y;
 		bool isMoving;
+		bool needsUpdate;
 		
         void updatePreviewImage     ();
         void getObservedFrameArea   (int& x, int& y, int& w, int& h);
