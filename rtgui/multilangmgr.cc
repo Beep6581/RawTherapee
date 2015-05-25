@@ -140,6 +140,7 @@ Glib::ustring MultiLangMgr::getOSUserLanguage() {
 #elif defined(__linux__) || defined(__APPLE__)
         char *tmplocale;
         tmplocale = setlocale(LC_CTYPE,"");
+        setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
         if(tmplocale)
             langName = TranslateRFC2Language(tmplocale);
 #endif

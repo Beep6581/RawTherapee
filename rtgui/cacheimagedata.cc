@@ -22,6 +22,7 @@
 #include "../rtengine/safekeyfile.h"
 #include "../rtengine/safegtk.h"
 #include "version.h"
+#include <locale.h>
 
 CacheImageData::CacheImageData () 
     : md5(""), supported(false), format(FT_Invalid), rankOld(-1), inTrashOld(false), recentlySaved(false),
@@ -32,7 +33,7 @@ CacheImageData::CacheImageData ()
  * Load the General, DateTime, ExifInfo, File info and ExtraRawInfo sections of the image data file
  */
 int CacheImageData::load (const Glib::ustring& fname) {
-
+    setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
     rtengine::SafeKeyFile keyFile;
     
     try {

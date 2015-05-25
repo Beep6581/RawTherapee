@@ -34,6 +34,7 @@
 #include "../rtgui/paramsedited.h"
 #include "dcp.h"
 #include "../rtgui/options.h"
+#include <locale.h>
 #define APPVERSION VERSION
 
 using namespace std;
@@ -1854,7 +1855,7 @@ int ProcParams::write (Glib::ustring &fname, Glib::ustring &content) const {
 }
 
 int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited) {
-
+    setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
     if (fname.empty())
         return 1;
 

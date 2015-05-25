@@ -646,7 +646,7 @@ void Options::filterOutParsedExtensions () {
 }
 
 int Options::readFromFile (Glib::ustring fname) {
-
+    setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
     rtengine::SafeKeyFile keyFile;
 
     if( !safe_file_test(fname,Glib::FILE_TEST_EXISTS))

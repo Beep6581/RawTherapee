@@ -39,6 +39,7 @@
 #include "jpeg.h"
 #include "../rtgui/ppversion.h"
 #include "improccoordinator.h"
+#include <locale.h>
 
 
 extern Options options;
@@ -1528,7 +1529,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname) {
 }
 
 bool Thumbnail::readData  (const Glib::ustring& fname) {
-
+    setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
     SafeKeyFile keyFile;
     
     try {
