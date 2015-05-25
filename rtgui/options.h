@@ -284,6 +284,10 @@ class Options {
     Glib::ustring lastVibranceCurvesDir;
     Glib::ustring lastProfilingReferenceDir;
     Glib::ustring lastBWCurvesDir;
+    
+    size_t maxRecentFolders;                   // max. number of recent folders stored in options file
+    std::vector<Glib::ustring> recentFolders;  // List containing all recent folders
+
 
     Options ();
 

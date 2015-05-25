@@ -18,6 +18,7 @@
  */
 #include "recentbrowser.h"
 #include "multilangmgr.h"
+#include "options.h"
 
 using namespace rtengine;
 
@@ -27,6 +28,9 @@ RecentBrowser::RecentBrowser () : listener (NULL) {
 
     Gtk::Frame* frame = Gtk::manage (new Gtk::Frame (M("MAIN_FRAME_RECENT")));
     frame->add (*recentDirs);
+    for(size_t i=0;i<options.recentFolders.size();i++) {
+        recentDirs->append_text (options.recentFolders[i]);
+    }
 
     pack_start (*frame, Gtk::PACK_SHRINK, 4);
 
@@ -43,6 +47,24 @@ void RecentBrowser::selectionChanged () {
 }
 
 void RecentBrowser::dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile) {
+    
+    size_t numFolders = options.recentFolders.size();
+    if(numFolders>0) { // search entry and move to top if it exists
+        size_t i;
+        for(i=0;i<numFolders;i++) {
+            if(options.recentFolders[i] == dirname) {
+                break;
+            }
+        }
+        if(i>0) {
+            if(i<numFolders) {
+               options.recentFolders.erase(options.recentFolders.begin()+i);
+            }
+            options.recentFolders.insert(options.recentFolders.begin(),dirname);
+        }
+    } else {
+        options.recentFolders.insert(options.recentFolders.begin(),dirname);
+    }
 
     conn.block (true);
 

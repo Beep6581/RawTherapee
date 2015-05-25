@@ -122,6 +122,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
 	
     Gtk::SpinButton*   maxThumbSize;
     Gtk::SpinButton*   maxCacheEntries;
+    Gtk::SpinButton*   maxRecentFolders;
     Gtk::Button*       clearThumbnails;
     Gtk::Button*       clearProfiles;
     Gtk::Button*       clearAll;
