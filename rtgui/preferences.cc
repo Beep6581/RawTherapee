@@ -1117,6 +1117,16 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     vbro->pack_start (*sameThumbSize, Gtk::PACK_SHRINK, 0);
     vbro->pack_start (*ckbInternalThumbIfUntouched, Gtk::PACK_SHRINK, 0);
 
+    Gtk::HBox* hbrecent = Gtk::manage( new Gtk::HBox () );
+    Gtk::Label* labrecent = Gtk::manage( new Gtk::Label (M("PREFERENCES_MAXRECENTFOLDERS")+":") );
+    maxRecentFolders = Gtk::manage( new Gtk::SpinButton () );
+    hbrecent->pack_start (*labrecent, Gtk::PACK_SHRINK, 4);
+    hbrecent->pack_start (*maxRecentFolders, Gtk::PACK_SHRINK, 4);
+    maxRecentFolders->set_digits (0);
+    maxRecentFolders->set_increments (1, 5);
+    maxRecentFolders->set_range (1, 25);
+    vbro->pack_start (*hbrecent, Gtk::PACK_SHRINK, 4);
+
     fro->add (*vbro);  
 
 
@@ -1412,6 +1422,7 @@ void Preferences::storePreferences () {
         moptions.parseExtensionsEnabled.push_back (c[i][extensionColumns.enabled]);
     }
 
+    moptions.maxRecentFolders = (int)maxRecentFolders->get_value();
     moptions.maxThumbnailHeight = (int)maxThumbSize->get_value ();
     moptions.maxCacheEntries = (int)maxCacheEntries->get_value ();
     moptions.overlayedFileNames = overlayedFileNames->get_active ();
@@ -1575,6 +1586,7 @@ void Preferences::fillPreferences () {
     }
        
     maxThumbSize->set_value (moptions.maxThumbnailHeight);
+    maxRecentFolders->set_value(moptions.maxRecentFolders);
     maxCacheEntries->set_value (moptions.maxCacheEntries);
     overlayedFileNames->set_active (moptions.overlayedFileNames);
     filmStripOverlayedFileNames->set_active(moptions.filmStripOverlayedFileNames);

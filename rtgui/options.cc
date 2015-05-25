@@ -631,7 +631,7 @@ void Options::setDefaults () {
 	lastVibranceCurvesDir = "";
 	lastProfilingReferenceDir = "";
 	lastBWCurvesDir = "";
-	
+    maxRecentFolders = 15;
 }
 
 Options* Options::copyFrom (Options* other) {
@@ -780,6 +780,9 @@ if (keyFile.has_group ("File Browser")) {
     if (keyFile.has_key ("File Browser", "menuGroupFileOperations"))     menuGroupFileOperations     = keyFile.get_boolean ("File Browser", "menuGroupFileOperations");
     if (keyFile.has_key ("File Browser", "menuGroupProfileOperations"))  menuGroupProfileOperations  = keyFile.get_boolean ("File Browser", "menuGroupProfileOperations");
     if (keyFile.has_key ("File Browser", "menuGroupExtProg"))            menuGroupExtProg            = keyFile.get_boolean ("File Browser", "menuGroupExtProg");
+    if (keyFile.has_key ("File Browser", "MaxRecentFolders"))    maxRecentFolders    = keyFile.get_integer ("File Browser", "MaxRecentFolders");
+    recentFolders.reserve(maxRecentFolders+10); // reserve some more than maxRecentFolders, because at runtime it stores more than that
+    if (keyFile.has_key ("File Browser", "RecentFolders"))    recentFolders    = keyFile.get_string_list ("File Browser", "RecentFolders");
 }
 
 if (keyFile.has_group ("Clipping Indication")) { 
@@ -1082,7 +1085,14 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("File Browser", "menuGroupFileOperations", menuGroupFileOperations);
     keyFile.set_boolean ("File Browser", "menuGroupProfileOperations", menuGroupProfileOperations);
     keyFile.set_boolean ("File Browser", "menuGroupExtProg", menuGroupExtProg);
-   
+    keyFile.set_integer ("File Browser", "MaxRecentFolders", maxRecentFolders);
+    {
+        std::vector<Glib::ustring> temp;
+        temp.reserve(maxRecentFolders);
+        for(unsigned int i=0;i<std::min(recentFolders.size(),maxRecentFolders);i++)
+            temp.push_back(recentFolders[i]);
+        keyFile.set_string_list ("File Browser", "RecentFolders", temp);
+    }
     keyFile.set_integer ("Clipping Indication", "HighlightThreshold", highlightThreshold);
     keyFile.set_integer ("Clipping Indication", "ShadowThreshold", shadowThreshold);
     keyFile.set_boolean ("Clipping Indication", "BlinkClipped", blinkClipped);
