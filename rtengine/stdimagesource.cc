@@ -247,16 +247,19 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent,
                                                        cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
         lcmsMutex->unlock ();
+        if(hTransform) {
+            // Convert to the [0.0 ; 1.0] range
+            im->normalizeFloatTo1();
 
-        // Convert to the [0.0 ; 1.0] range
-        im->normalizeFloatTo1();
+            im->ExecCMSTransform(hTransform);
 
-        im->ExecCMSTransform(hTransform);
+            // Converting back to the [0.0 ; 65535.0] range
+            im->normalizeFloatTo65535();
 
-        // Converting back to the [0.0 ; 65535.0] range
-        im->normalizeFloatTo65535();
-
-        cmsDeleteTransform(hTransform);
+            cmsDeleteTransform(hTransform);
+        } else {
+            printf("Could not convert from %s to %s\n",in == embedded ? "embedded profile" : cmp.input.data(),cmp.working.data());
+        }
     }
 }
 
