@@ -98,7 +98,7 @@ int processLineParams( int argc, char **argv );
 int main(int argc, char **argv)
 {
     setlocale(LC_ALL,"");
-
+    setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
     // Uncomment the following line if you want to use the "--g-fatal-warnings" command line flag
     //gtk_init (&argc, &argv);
 
