@@ -321,7 +321,7 @@ void Options::setDefaults () {
     theme = "25-Gray-Gray";
     slimUI = false;
     useSystemTheme = false;
-    maxThumbnailHeight = 400;
+    maxThumbnailHeight = 250;
     maxCacheEntries = 20000;
     thumbInterp = 1;
     autoSuffix = true;
