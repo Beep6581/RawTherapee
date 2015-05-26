@@ -217,7 +217,7 @@ void StdImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams 
 void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, IIOSampleFormat sampleFormat) {
 
     bool skipTransform = false;
-    cmsHPROFILE in;
+    cmsHPROFILE in = NULL;
     cmsHPROFILE out = iccStore->workingSpace (cmp.working);
     if (cmp.input=="(embedded)" || cmp.input=="" || cmp.input=="(camera)" || cmp.input=="(cameraICC)") {
         if (embedded)
@@ -242,7 +242,11 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         }
     }
 
-    if (!skipTransform && cmp.input!="(none)") {
+    if (!skipTransform && in) {
+        if(in == embedded && cmsGetColorSpace(in) != cmsSigRgbData) { // if embedded profile is not an RGB profile, use sRGB
+            printf("embedded profile is not an RGB profile, using sRGB as input profile\n");
+            in = iccStore->getsRGBProfile ();
+        } 
         lcmsMutex->lock ();
         cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent,
                                                        cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
