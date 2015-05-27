@@ -6624,6 +6624,7 @@ void CLASS parse_phase_one (int base)
   load_raw = ph1.format < 3 ?
 	&CLASS phase_one_load_raw : &CLASS phase_one_load_raw_c;
   maximum = 0xffff;
+  tiff_bps = 16;
   strcpy (make, "Phase One");
   if (model[0]) return;
   switch (raw_height) {
