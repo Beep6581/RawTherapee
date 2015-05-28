@@ -1924,6 +1924,7 @@ if (keyFile.has_group ("Exposure")) {
         if      (sMode == "Standard")            toneCurve.curveMode2 = ToneCurveParams::TC_MODE_STD;
         else if (sMode == "FilmLike")            toneCurve.curveMode2 = ToneCurveParams::TC_MODE_FILMLIKE;
         else if (sMode == "SatAndValueBlending") toneCurve.curveMode2 = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
+        else if (sMode == "WeightedStd")         toneCurve.curveMode2 = ToneCurveParams::TC_MODE_WEIGHTEDSTD;
         else if (sMode == "Luminance")           toneCurve.curveMode2 = ToneCurveParams::TC_MODE_LUMINANCE;
         if (pedited) pedited->toneCurve.curveMode2 = true;
     }
