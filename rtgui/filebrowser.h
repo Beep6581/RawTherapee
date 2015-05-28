@@ -133,7 +133,7 @@ class FileBrowser  : public ThumbBrowserBase,
     void requestRanking (int rank);
     void requestColorLabel(int colorlabel);
     void notifySelectionListener ();
-    
+    void openRequested( std::vector<FileBrowserEntry*> mselected);
     ExportPanel* exportPanel;
 
     type_trash_changed m_trash_changed;

@@ -234,6 +234,7 @@ FileBrowser::FileBrowser ()
     selall->add_accelerator ("activate", pmenu->get_accel_group(), GDK_a, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     trash->add_accelerator ("activate", pmenu->get_accel_group(), GDK_Delete, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
     untrash->add_accelerator ("activate", pmenu->get_accel_group(), GDK_Delete, Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
+    open->add_accelerator ("activate", pmenu->get_accel_group(), GDK_Return, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
     develop->add_accelerator ("activate", pmenu->get_accel_group(), GDK_B, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     copyprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_C, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     pasteprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_V, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
@@ -574,12 +575,8 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
         }
     }
 
-    if (m==open) {
-        std::vector<Thumbnail*> entries;
-        for (size_t i=0; i<mselected.size(); i++)
-            entries.push_back (mselected[i]->thumbnail);
-        tbl->openRequested (entries);
-     }
+    if (m==open)
+        openRequested(mselected);
     else if (m==remove)
         tbl->deleteRequested (mselected, false);
 	else if (m==removeInclProc)
@@ -965,7 +962,12 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
         selectLast (shift);
         return true;
     }
-
+    else if(event->keyval==GDK_Return || event->keyval==GDK_KP_Enter) {
+        std::vector<FileBrowserEntry*> mselected;
+        for (size_t i=0; i<selected.size(); i++)
+            mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
+        openRequested(mselected);
+    }
     else if (event->keyval==GDK_F5) {
         int dest = 1;
         if (event->state & GDK_SHIFT_MASK)
@@ -1751,4 +1753,13 @@ void FileBrowser::updateProfileList () {
 
     profileStore.releaseFileList();
     subMenuList.clear();
+}
+
+void FileBrowser::openRequested( std::vector<FileBrowserEntry*> mselected) {
+    std::vector<Thumbnail*> entries;
+    // in Single Editor Mode open only last selected image
+    size_t openStart = options.tabbedUI ? 0 : ( mselected.size() > 0 ? mselected.size()-1 : 0);
+    for (size_t i=openStart; i<mselected.size(); i++)
+        entries.push_back (mselected[i]->thumbnail);
+    tbl->openRequested (entries);
 }
