@@ -1552,14 +1552,14 @@ void Preferences::fillPreferences () {
     edOther->set_active (moptions.editorToSendTo==3);
 #ifdef WIN32    
     edPS->set_active (moptions.editorToSendTo==2);
-    if (safe_file_test (moptions.gimpDir, Glib::FILE_TEST_IS_DIR)) 
-        gimpDir->set_filename (moptions.gimpDir);
+    if (safe_file_test (moptions.gimpDir, Glib::FILE_TEST_IS_DIR))
+        gimpDir->set_current_folder (moptions.gimpDir);
     if (safe_file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) 
-        psDir->set_filename (moptions.psDir);
+        psDir->set_current_folder (moptions.psDir);
 #elif defined __APPLE__
   edPS->set_active (moptions.editorToSendTo==2);
   if (safe_file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR))
-    psDir->set_filename (moptions.psDir); 
+    psDir->set_current_folder (moptions.psDir); 
 #endif
     editorToSendTo->set_text (moptions.customEditorProg);
 
@@ -1617,13 +1617,9 @@ void Preferences::fillPreferences () {
     clutCacheSizeSB->set_value(moptions.clutCacheSize);
     maxInspectorBuffersSB->set_value(moptions.maxInspectorBuffers);
 
-    //darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );
-    //updateDFinfos();
     darkFrameDir->set_current_folder( moptions.rtSettings.darkFramesPath );
     darkFrameChanged ();
     
-    //flatFieldDir->set_filename( moptions.rtSettings.flatFieldsPath );
-    //updateFFinfos();
     flatFieldDir->set_current_folder( moptions.rtSettings.flatFieldsPath );
     flatFieldChanged ();
 
