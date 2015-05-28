@@ -183,16 +183,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
         const char* data((const char*)fdata(ri->get_thumbOffset(),ri->get_file()));
         if ( (unsigned char)data[1] == 0xd8 )
         {
-#if defined( __WIN32__ ) && defined( __x86_64__ )
-			// This is a hack for Issue 2425, because loadJPEGFromMemory crashes on Win64 when jpg marker is incorrect
-			// (should be 0xff 0xd8, but is 0x02 0xd8 for mrw files)
-        	std::string suffix = fname.length() > 4 ? fname.substr(fname.length()-3) : "";
-        	for (int i = 0; i < suffix.length(); i++) suffix[i] = std::tolower(suffix[i]);
-			if(suffix != "mrw" || (unsigned char)data[0] == 0xff)
-				err = img->loadJPEGFromMemory(data,ri->get_thumbLength());
-#else
             err = img->loadJPEGFromMemory(data,ri->get_thumbLength());
-#endif
         }
         else
         {

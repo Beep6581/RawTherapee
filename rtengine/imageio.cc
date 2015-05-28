@@ -338,69 +338,103 @@ int ImageIO::loadPNG  (Glib::ustring fname) {
     return IMIO_SUCCESS;
 }
 
+typedef struct  {
+	struct jpeg_error_mgr pub;	/* "public" fields */
+	jmp_buf setjmp_buffer;	/* for return to caller */
+} my_error_mgr;
+
+void my_error_exit (j_common_ptr cinfo) {
+	/* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
+	my_error_mgr *myerr = (my_error_mgr*) cinfo->err;
+	/* Always display the message. */
+	/* We could postpone this until after returning, if we chose. */
+	(*cinfo->err->output_message) (cinfo);
+
+	/* Return control to the setjmp point */
+#if defined( WIN32 ) && defined( __x86_64__ )
+	__builtin_longjmp(myerr->setjmp_buffer, 1);
+#else
+	longjmp(myerr->setjmp_buffer, 1);
+#endif
+}
+
+
 int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
 {
     jpeg_decompress_struct cinfo;
-    jpeg_error_mgr jerr;
-    cinfo.err = my_jpeg_std_error(&jerr);
     jpeg_create_decompress(&cinfo);
-
     jpeg_memory_src (&cinfo,(const JOCTET*)buffer,bufsize);
-    if ( setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 )
-    {
-        if (pl) {
-            pl->setProgressStr ("PROGRESSBAR_LOADJPEG");
-            pl->setProgress (0.0);
 
-        }
+	/* We use our private extension JPEG error handler.
+	   Note that this struct must live as long as the main JPEG parameter
+	   struct, to avoid dangling-pointer problems.
+	*/
+	my_error_mgr jerr;
+	/* We set up the normal JPEG error routines, then override error_exit. */
+	cinfo.err = jpeg_std_error(&jerr.pub);
+	jerr.pub.error_exit = my_error_exit;
 
-        setup_read_icc_profile (&cinfo);
+	/* Establish the setjmp return context for my_error_exit to use. */
+#if defined( WIN32 ) && defined( __x86_64__ )
+	if (__builtin_setjmp(jerr.setjmp_buffer)) {
+#else
+	if (setjmp(jerr.setjmp_buffer)) {
+#endif
+		/* If we get here, the JPEG code has signaled an error.
+		   We need to clean up the JPEG object and return.
+		*/
+		jpeg_destroy_decompress(&cinfo);
+		return IMIO_READERROR;
+	}
 
-        //jpeg_memory_src (&cinfo,buffer,bufsize);
-        jpeg_read_header(&cinfo, TRUE);
 
-		deleteLoadedProfileData();
-		loadedProfileDataJpg = true;
-        bool hasprofile = read_icc_profile (&cinfo, (JOCTET**)&loadedProfileData, (unsigned int*)&loadedProfileLength);
-        if (hasprofile) 
-            embProfile = cmsOpenProfileFromMem (loadedProfileData, loadedProfileLength);
-        else 
-            embProfile = NULL;
+    if (pl) {
+        pl->setProgressStr ("PROGRESSBAR_LOADJPEG");
+        pl->setProgress (0.0);
 
-        jpeg_start_decompress(&cinfo);
-
-        unsigned int width = cinfo.output_width;
-        unsigned int height = cinfo.output_height;
-
-        allocate (width, height);
-
-        unsigned char *row=new unsigned char[width*3];
-        while (cinfo.output_scanline < height) {
-            if (jpeg_read_scanlines(&cinfo,&row,1) < 1) {
-                jpeg_finish_decompress(&cinfo);
-                jpeg_destroy_decompress(&cinfo);
-                delete [] row;
-                return IMIO_READERROR;
-            }
-            setScanline (cinfo.output_scanline-1, row, 8);
-
-            if (pl && !(cinfo.output_scanline%100))
-                pl->setProgress ((double)(cinfo.output_scanline)/cinfo.output_height);
-        }
-        delete [] row;
-
-        jpeg_finish_decompress(&cinfo);
-        jpeg_destroy_decompress(&cinfo);
-        if (pl) {
-            pl->setProgressStr ("PROGRESSBAR_READY");
-            pl->setProgress (1.0);
-        }
-        return IMIO_SUCCESS;
     }
-    else {
-        jpeg_destroy_decompress(&cinfo);
-        return IMIO_READERROR;
+
+    setup_read_icc_profile (&cinfo);
+
+    jpeg_read_header(&cinfo, TRUE);
+
+    deleteLoadedProfileData();
+    loadedProfileDataJpg = true;
+    bool hasprofile = read_icc_profile (&cinfo, (JOCTET**)&loadedProfileData, (unsigned int*)&loadedProfileLength);
+    if (hasprofile) 
+        embProfile = cmsOpenProfileFromMem (loadedProfileData, loadedProfileLength);
+    else 
+        embProfile = NULL;
+
+    jpeg_start_decompress(&cinfo);
+
+    unsigned int width = cinfo.output_width;
+    unsigned int height = cinfo.output_height;
+
+    allocate (width, height);
+
+    unsigned char *row=new unsigned char[width*3];
+    while (cinfo.output_scanline < height) {
+        if (jpeg_read_scanlines(&cinfo,&row,1) < 1) {
+            jpeg_finish_decompress(&cinfo);
+            jpeg_destroy_decompress(&cinfo);
+            delete [] row;
+            return IMIO_READERROR;
+        }
+        setScanline (cinfo.output_scanline-1, row, 8);
+
+        if (pl && !(cinfo.output_scanline%100))
+            pl->setProgress ((double)(cinfo.output_scanline)/cinfo.output_height);
     }
+    delete [] row;
+
+    jpeg_finish_decompress(&cinfo);
+    jpeg_destroy_decompress(&cinfo);
+    if (pl) {
+        pl->setProgressStr ("PROGRESSBAR_READY");
+        pl->setProgress (1.0);
+    }
+    return IMIO_SUCCESS;
 }
 
 int ImageIO::loadJPEG (Glib::ustring fname) {
@@ -836,25 +870,6 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps) {
 }
 
 
-typedef struct  {
-	struct jpeg_error_mgr pub;	/* "public" fields */
-	jmp_buf setjmp_buffer;	/* for return to caller */
-} my_error_mgr;
-
-void my_error_exit (j_common_ptr cinfo) {
-	/* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
-	my_error_mgr *myerr = (my_error_mgr*) cinfo->err;
-	/* Always display the message. */
-	/* We could postpone this until after returning, if we chose. */
-	(*cinfo->err->output_message) (cinfo);
-
-	/* Return control to the setjmp point */
-#if defined( WIN32 ) && defined( __x86_64__ )
-	__builtin_longjmp(myerr->setjmp_buffer, 1);
-#else
-	longjmp(myerr->setjmp_buffer, 1);
-#endif
-}
 
 // Quality 0..100, subsampling: 1=low quality, 2=medium, 3=high
 int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp) {
