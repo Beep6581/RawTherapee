@@ -27,6 +27,8 @@
 #27 2015-02-21 firefly
 #28 2015-03-03 firefly
 #29 2015-04-20 firefly
+#30 2015-05-01 firefly
+#31 2015-05-31 firefly
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -37,10 +39,15 @@ ADJUSTER_RESET_TO_DEFAULT;デフォルト値に戻す
 BATCHQUEUE_AUTOSTART;オートスタート
 BATCHQUEUE_DESTFILENAME;パスとファイル名
 BATCH_PROCESSING;バッチ処理
+CURVEEDITOR_AXIS_IN;I:
+CURVEEDITOR_AXIS_LEFT_TAN;LT:
+CURVEEDITOR_AXIS_OUT;O:
+CURVEEDITOR_AXIS_RIGHT_TAN;RT:
 CURVEEDITOR_CURVES;カーブ
 CURVEEDITOR_CURVE;カーブ
 CURVEEDITOR_CUSTOM;カスタム
 CURVEEDITOR_DARKS;ダーク
+CURVEEDITOR_EDITPOINT_HINT;ボタンを押すと数値で入出力を編集出来ます\n\n編集したいカーブ上のポイントを右クリックします\n編集を無効にする場合はポイント以外の部分んで右クリックします
 CURVEEDITOR_HIGHLIGHTS;ハイライト
 CURVEEDITOR_LIGHTS;ライト
 CURVEEDITOR_LINEAR;リニア
@@ -210,6 +217,13 @@ FILEBROWSER_TOOLTIP_STOPPROCESSING;新しいrawファイルが送られて来た
 FILEBROWSER_UNRANK_TOOLTIP;ランクなし\nショートカット: <b>Shift-0</b>
 FILEBROWSER_ZOOMINHINT;サムネイルサイズの拡大\nショートカット: <b>+</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt-+</b>
 FILEBROWSER_ZOOMOUTHINT;サムネイルサイズの縮小\nショートカット: <b>-</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt--</b>
+FILECHOOSER_FILTER_ANY;全てのファイル
+FILECHOOSER_FILTER_COLPROF;カラープロファイル
+FILECHOOSER_FILTER_CURVE;カーブファイル
+FILECHOOSER_FILTER_LCP;レンズ補正プロファイル
+FILECHOOSER_FILTER_PP;処理プロファイル
+FILECHOOSER_FILTER_SAME;現在の画像と同じフォーマット
+FILECHOOSER_FILTER_TIFF;TIFFファイル
 GENERAL_ABOUT;RawTherapeeについて..
 GENERAL_AFTER;補正後
 GENERAL_AUTO;自動
@@ -912,6 +926,7 @@ PREFERENCES_LANGAUTODETECT;OSの言語設定を使用
 PREFERENCES_LEVAUTDN;ノイズ低減のレベル
 PREFERENCES_LEVDN;セルのサイズ
 PREFERENCES_LISS;自動（多分割スムージング）
+PREFERENCES_MAXRECENTFOLDERS;直近のフォルダーの最大数
 PREFERENCES_MAX;最大（タイル）
 PREFERENCES_MED;中 (タイルの半分)
 PREFERENCES_MENUGROUPEXTPROGS;"..で開く"のグループ
@@ -1035,7 +1050,6 @@ PROGRESSBAR_SNAPSHOT_ADDED;スナップショット追加
 PROGRESSDLG_PROFILECHANGEDINBROWSER;ブラウザでプロファイルの変更
 QINFO_ISO;ISO
 QINFO_NOEXIF;Exifデータがありません
-REFERENCES_PREVDEMO_LABEL;拡大率100％以下の場合に、プレビューで使われるデモザイク方式:
 SAVEDLG_AUTOSUFFIX;ファイルが存在する場合、自動的に末尾に文字を加える
 SAVEDLG_FILEFORMAT;ファイル形式
 SAVEDLG_FORCEFORMATOPTS;強制保存オプション
@@ -1378,6 +1392,7 @@ TP_EXPOSURE_SATURATION;彩度
 TP_EXPOSURE_TCMODE_FILMLIKE;フィルム調
 TP_EXPOSURE_TCMODE_LABEL1;カーブ・モード1
 TP_EXPOSURE_TCMODE_LABEL2;カーブ・モード2
+TP_EXPOSURE_TCMODE_LUMINANCE;輝度
 TP_EXPOSURE_TCMODE_SATANDVALBLENDING;彩度と明度のブレンド
 TP_EXPOSURE_TCMODE_STANDARD;標準
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;加重平均
@@ -1733,7 +1748,7 @@ TP_WAVELET_RESCHRO;色度
 TP_WAVELET_RESCONH;ハイライト
 TP_WAVELET_RESCON;シャドウ
 TP_WAVELET_RESID;残差画像
-TP_WAVELET_SAT;純色 色度
+TP_WAVELET_SAT;飽和した色度
 TP_WAVELET_SETTINGS;ウェーブレットの設定
 TP_WAVELET_SKIN;色相-トーン (肌色) の目標/保護
 TP_WAVELET_SKIN_TOOLTIP;－100にすると肌色のトーンだけが調整の対象になります\n0にすると全てのカラートーンが調整されます\n＋100にすると肌色のトーンは保護され、他のカラートーンが調整されます
@@ -1747,15 +1762,13 @@ TP_WAVELET_THRESHOLD2;シャドウ調整をするレベル
 TP_WAVELET_THRESHOLD2_TOOLTIP;この数値を変更すると、9以下のレベルでシャドウの輝度が調整されます\n他のレベルは輝度範囲全体で調整されます\nシャドウの最大レベルはハイライトのレベルによって制限を受けます（9-ハイライトレベル）
 TP_WAVELET_THRESHOLD;ハイライト調整をするレベル
 TP_WAVELET_THRESHOLD_TOOLTIP;この数値を変更すると、その一つ上のレベルだけがハイライトの輝度で調整されます\n他のレベルは輝度範囲全体で調整されます
-TP_WAVELET_THRES;最大のレベル数
 TP_WAVELET_THRH;ハイライトのしきい値
 TP_WAVELET_THR;シャドウのしきい値
 TP_WAVELET_TILESBIG;大きいタイル
 TP_WAVELET_TILESFULL;画像全体
 TP_WAVELET_TILESIZE;タイルのサイズ
 TP_WAVELET_TILESLIT;小さいタイル
-TP_WAVELET_TILES;タイルサイズ (* 128)
-TP_WAVELET_TILES_TOOLTIP;16Mの画像で、画像全体の調整を選択し、レベル数を10に設定した場合、必要なメモリー量は2Gになります\n24Mの画像でレベル10の場合は2.5G\n35Mの画像でレベル10の場合は3.3G\nメモリー容量の不足を感じる場合はタイルサイズでの調整を選択します
+TP_WAVELET_TILES_TOOLTIP;画像全体を処理する方が良い結果をもたらすので、推奨される選択です。タイルによる処理はRAMの容量が小さいユーザー向けです。必要なメモリー容量に関してはRawPediaを参照して下さい。
 TP_WAVELET_TON;カラートーン
 TP_WAVELET_daub2;D2 - 低い
 TP_WAVELET_daub4;D4 - 標準
@@ -1816,14 +1829,3 @@ ZOOMPANEL_ZOOMFITSCREEN;画像全体を画面に合わせる\nショートカッ
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!FILECHOOSER_FILTER_ANY;All files
-!FILECHOOSER_FILTER_COLPROF;Color profiles
-!FILECHOOSER_FILTER_CURVE;Curve files
-!FILECHOOSER_FILTER_LCP;Lens correction profiles
-!FILECHOOSER_FILTER_PP;Processing profiles
-!FILECHOOSER_FILTER_SAME;Same format as current photo
-!FILECHOOSER_FILTER_TIFF;TIFF files
