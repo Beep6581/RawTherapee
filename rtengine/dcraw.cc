@@ -7931,6 +7931,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
     }
   if (load_raw == &CLASS sony_arw2_load_raw) { // RT: arw2 scale fix
       black <<= 2;
+      tiff_bps += 2;
   }
   { /* Check for RawTherapee table overrides and extensions */
       int black_level, white_level;
