@@ -372,7 +372,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	if(pp->icm.input.substr(0,5) != "file:" && !ipDialog->get_filename().empty())
 		ipDialog->set_filename(pp->icm.input);
 
-    if (pp->icm.input == "(none)" && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
+    if (pp->icm.input == "(none)") {
         inone->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
         updateDCP(pp->icm.dcpIlluminant, "");
@@ -387,10 +387,16 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
         ckbBlendCMSMatrix->set_sensitive (true);
         updateDCP(pp->icm.dcpIlluminant, "");
     }
-    else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state()==Gtk::STATE_INSENSITIVE) {
+    else if ((pp->icm.input == "(cameraICC)") && icamera->get_state()!=Gtk::STATE_INSENSITIVE && icameraICC->get_state()==Gtk::STATE_INSENSITIVE) {
         // this is the case when (cameraICC) is instructed by packaged profiles, but ICC file is not found
         // therefore falling back UI to explicitly reflect the (camera) option
         icamera->set_active (true);
+        ckbBlendCMSMatrix->set_sensitive (false);
+        updateDCP(pp->icm.dcpIlluminant, "");
+    }
+    else if ((pp->icm.input == "(cameraICC)") && icamera->get_state()==Gtk::STATE_INSENSITIVE && icameraICC->get_state()==Gtk::STATE_INSENSITIVE) {
+        // If neither (camera) nor (cameraICC) are available, as is the case when loading a non-raw, activate (embedded).
+        iembedded->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
         updateDCP(pp->icm.dcpIlluminant, "");
     }
