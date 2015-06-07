@@ -908,7 +908,7 @@ void ProcParams::setDefaults () {
     crop.y          = -1;
     crop.w          = 15000;
     crop.h          = 15000;
-    crop.fixratio   = true;
+    crop.fixratio   = false;
     crop.ratio      = "3:2";
     crop.orientation= "As Image";
     crop.guide      = "Rule of thirds";
