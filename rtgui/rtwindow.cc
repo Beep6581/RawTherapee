@@ -394,7 +394,7 @@ void RTWindow::on_mainNB_switch_page(GtkNotebookPage* page, guint page_num) {
 void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
     if (options.multiDisplayMode>0) {
         EditWindow * wndEdit = EditWindow::getInstance(this);
-        wndEdit->show_all();
+        wndEdit->show();
         wndEdit->addEditorPanel(ep,name);
     } else {
         ep->setParent (this);
