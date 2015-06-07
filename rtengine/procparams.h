@@ -36,6 +36,8 @@ class NoiseCurve;
 class WavCurve;
 class WavOpacityCurveRG;
 class WavOpacityCurveBY;
+class WavOpacityCurveW;
+class WavOpacityCurveWL;
 
 namespace procparams {
 
@@ -861,8 +863,11 @@ class WaveletParams {
         std::vector<double>   ccwcurve;
         std::vector<double> opacityCurveRG;
         std::vector<double> opacityCurveBY;
+        std::vector<double> opacityCurveW;
+        std::vector<double> opacityCurveWL;
         std::vector<double> hhcurve;
         std::vector<double> Chcurve;
+        std::vector<double> wavclCurve;
         bool enabled;
         bool median;
         bool medianlev;
@@ -870,7 +875,10 @@ class WaveletParams {
         bool lipst;
 	//	bool edgreinf;
         bool avoid;
+        bool tmr;
         int strength;
+        int balance;
+        int iter;
         int c[9];
         int ch[9];
 		
@@ -883,11 +891,15 @@ class WaveletParams {
         Glib::ustring Medgreinf;
         Glib::ustring CHSLmethod;
         Glib::ustring EDmethod;
+        Glib::ustring BAmethod;
+        Glib::ustring TMmethod;
         Glib::ustring Dirmethod;
         Glib::ustring HSmethod;
 		int rescon;
 		int resconH;
 		int reschro;	
+		double tmrs;	
+		double gamma;	
 		int sup;
 		double sky;
 		int thres;
@@ -919,10 +931,12 @@ class WaveletParams {
 	
 		WaveletParams ();
 		void setDefaults(); 
-        void getCurves(WavCurve &cCurve,WavOpacityCurveRG &opacityCurveLUTRG , WavOpacityCurveBY &opacityCurveLUTBY) const;
+        void getCurves(WavCurve &cCurve,WavOpacityCurveRG &opacityCurveLUTRG , WavOpacityCurveBY &opacityCurveLUTBY, WavOpacityCurveW &opacityCurveLUTW, WavOpacityCurveWL &opacityCurveLUTWL) const;
         static void getDefaultCCWCurve(std::vector<double> &curve);	
         static void getDefaultOpacityCurveRG(std::vector<double> &curve);
         static void getDefaultOpacityCurveBY(std::vector<double> &curve);
+        static void getDefaultOpacityCurveW(std::vector<double> &curve);
+        static void getDefaultOpacityCurveWL(std::vector<double> &curve);
 		
 };
 

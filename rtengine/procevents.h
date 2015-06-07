@@ -385,6 +385,16 @@ enum ProcEvent {
 	EvWavCHCurve=357,
 	EvPreProcessHotDeadThresh=358,
 	EvEPDgamma=359,	
+	EvWavtmr=360,
+	EvWavTMmet=361,
+	EvWavtmrs=362,
+	EvWavbalance=363,
+	EvWaviter=364,
+	EvWavgamma=365,
+	EvWavCLCurve=366,	
+	EvWavopacity=367,
+	EvWavBAmet=368,
+	EvWavopacityWL=369,
 	
 	NUMOFEVENTS	
 };

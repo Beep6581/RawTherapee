@@ -27,10 +27,10 @@ EdgePreservingDecompositionUI::EdgePreservingDecompositionUI () : FoldableToolPa
 
 	setEnabledTooltipMarkup(M("TP_EPD_TOOLTIP"));
 
-	strength = Gtk::manage(new Adjuster (M("TP_EPD_STRENGTH"), -1.0, 2.0, 0.01, 0.8));
+	strength = Gtk::manage(new Adjuster (M("TP_EPD_STRENGTH"), -1.0, 2.0, 0.01, 0.5));
 	gamma = Gtk::manage(new Adjuster (M("TP_EPD_GAMMA"), 0.8, 1.5, 0.01, 1.));
 	edgeStopping = Gtk::manage(new Adjuster (M("TP_EPD_EDGESTOPPING"), 0.1, 4.0, 0.01, 1.4));
-	scale = Gtk::manage(new Adjuster (M("TP_EPD_SCALE"), 0.1, 10.0, 0.01, 1.0));
+	scale = Gtk::manage(new Adjuster (M("TP_EPD_SCALE"), 0.1, 10.0, 0.01, 0.3));
 	reweightingIterates	= Gtk::manage(new Adjuster (M("TP_EPD_REWEIGHTINGITERATES"), 0, 9, 1, 0));
 
 	strength->setAdjusterListener(this);
@@ -65,7 +65,11 @@ void EdgePreservingDecompositionUI::read(const ProcParams *pp, const ParamsEdite
 	}
 
 	setEnabled(pp->epd.enabled);
-
+	strength->set_sensitive (true);	
+	if(pp->wavelet.enabled){
+		if(pp->wavelet.tmrs==0) {strength->set_sensitive (true);gamma->set_sensitive (true);}
+		else {strength->set_sensitive (false);gamma->set_sensitive (false);}
+	}
 	strength->setValue(pp->epd.strength);
 	gamma->setValue(pp->epd.gamma);
 	edgeStopping->setValue(pp->epd.edgeStopping);
@@ -82,7 +86,10 @@ void EdgePreservingDecompositionUI::write(ProcParams *pp, ParamsEdited *pedited)
 	pp->epd.scale = scale->getValue();
 	pp->epd.reweightingIterates = reweightingIterates->getValue();
 	pp->epd.enabled = getEnabled();
-	
+	strength->set_sensitive (true);
+	if(pp->wavelet.enabled){
+		if(pp->wavelet.tmrs==0) {strength->set_sensitive (true);gamma->set_sensitive (true);} else {strength->set_sensitive (false);gamma->set_sensitive (false);}
+	}
 	if(pedited){
 		pedited->epd.strength = strength->getEditedState();
 		pedited->epd.gamma = gamma->getEditedState();

@@ -425,6 +425,39 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 			dCurve = NULL;
 		}
 }
+// add curve Lab wavelet : Cont=f(L)
+void CurveFactory::curveWavContL ( bool & wavcontlutili,const std::vector<double>& wavclcurvePoints, LUTf & wavclCurve, /*LUTu & histogramwavcl, LUTu & outBeforeWavCLurveHistogram,*/int skip){
+		bool needed;
+		DiagonalCurve* dCurve = NULL;
+		
+	//	if (outBeforeWavCLurveHistogram)		
+	//		outBeforeWavCLurveHistogram.clear();
+		bool histNeededCL = false;
+
+		needed = false;
+		if (!wavclcurvePoints.empty() && wavclcurvePoints[0]!=0) {
+			dCurve = new DiagonalCurve (wavclcurvePoints, CURVES_MIN_POLY_POINTS/skip);
+		//	if (outBeforeWavCLurveHistogram)
+		//		histNeededCL = true;
+			
+			if (dCurve && !dCurve->isIdentity())
+				{needed = true;wavcontlutili=true;}
+		}
+	//	if(histNeededCL)
+			for (int i=0; i<32768; i++) {//32768*1.414  + ...
+				int hi = (int)(255.0*CLIPD((float)i / 32767.0)); //
+			//	outBeforeWavCLurveHistogram[hi] += histogramwavcl[i] ;
+			}
+
+		
+		fillCurveArray(dCurve, wavclCurve, skip, needed);
+	//	wavclCurve.dump("WL");
+
+		if (dCurve) {
+			delete dCurve;
+			dCurve = NULL;
+		}
+}
 
 // add curve Colortoning : C=f(L)
 void CurveFactory::curveToningCL ( bool & clctoningutili,const std::vector<double>& clcurvePoints, LUTf & clToningCurve,int skip){
@@ -1254,6 +1287,57 @@ void WavOpacityCurveBY::Set(const std::vector<double> &curvePoints) {
 	}
 }
 
+WavOpacityCurveW::WavOpacityCurveW(){};
+
+void WavOpacityCurveW::Reset() {
+	lutOpacityCurveW.reset();
+}
+
+void WavOpacityCurveW::Set(const Curve &pCurve) {
+	if (pCurve.isIdentity()) {
+		lutOpacityCurveW.reset(); // raise this value if the quality suffers from this number of samples
+		return;
+	}
+	lutOpacityCurveW(501); // raise this value if the quality suffers from this number of samples
+
+	for (int i=0; i<501; i++) lutOpacityCurveW[i] = pCurve.getVal(double(i)/500.);
+}
+
+void WavOpacityCurveW::Set(const std::vector<double> &curvePoints) {
+	if (!curvePoints.empty() && curvePoints[0]>FCT_Linear && curvePoints[0]<FCT_Unchanged) {
+		FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS/2);
+		tcurve.setIdentityValue(0.);
+		Set(tcurve);
+	} else {
+		Reset();
+	}
+}
+
+WavOpacityCurveWL::WavOpacityCurveWL(){};
+
+void WavOpacityCurveWL::Reset() {
+	lutOpacityCurveWL.reset();
+}
+
+void WavOpacityCurveWL::Set(const Curve &pCurve) {
+	if (pCurve.isIdentity()) {
+		lutOpacityCurveWL.reset(); // raise this value if the quality suffers from this number of samples
+		return;
+	}
+	lutOpacityCurveWL(501); // raise this value if the quality suffers from this number of samples
+
+	for (int i=0; i<501; i++) lutOpacityCurveWL[i] = pCurve.getVal(double(i)/500.);
+}
+
+void WavOpacityCurveWL::Set(const std::vector<double> &curvePoints) {
+	if (!curvePoints.empty() && curvePoints[0]>FCT_Linear && curvePoints[0]<FCT_Unchanged) {
+		FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS/2);
+		tcurve.setIdentityValue(0.);
+		Set(tcurve);
+	} else {
+		Reset();
+	}
+}
 
 
 NoiseCurve::NoiseCurve() : sum(0.f) {};

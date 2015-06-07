@@ -596,6 +596,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	LUTf clcurve (65536,0);
 	LUTf clToningcurve (65536,0);
 	LUTf cl2Toningcurve (65536,0);
+	LUTf wavclCurve (65536,0);
 
 	LUTf rCurve (65536,0);
 	LUTf gCurve (65536,0);
@@ -773,13 +774,19 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	WavCurve wavCLVCurve;
     WavOpacityCurveRG waOpacityCurveRG;
     WavOpacityCurveBY waOpacityCurveBY;
+    WavOpacityCurveW waOpacityCurveW;
+    WavOpacityCurveWL waOpacityCurveWL;
 	
-	params.wavelet.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY);
+	params.wavelet.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL );
 	
 	// directional pyramid wavelet
 	if((params.colorappearance.enabled && !settings->autocielab)  || !params.colorappearance.enabled) ipf.dirpyrequalizer (labView, 1);//TODO: this is the luminance tonecurve, not the RGB one
     int kall=2;
-	if((params.wavelet.enabled))	ipf.ip_wavelet(labView, labView, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, 1);		
+	bool wavcontlutili=false;	
+	
+	CurveFactory::curveWavContL(wavcontlutili, params.wavelet.wavclCurve, wavclCurve,/* hist16C, dummy,*/ 1);
+	
+	if((params.wavelet.enabled))	ipf.ip_wavelet(labView, labView, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, wavcontlutili, 1);		
 	wavCLVCurve.Reset();
 
 	//Colorappearance and tone-mapping associated
