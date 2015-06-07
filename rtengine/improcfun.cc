@@ -5099,6 +5099,8 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, float w_h, int Wid, int Hei, int begh, int endh, float minQ, float maxQ, unsigned int Iterates, int skip){
 
 if(!params->epd.enabled) return;
+if(params->wavelet.enabled  && params->wavelet.tmrs!=0) return;
+
 		float stren=params->epd.strength;
 		float edgest=params->epd.edgeStopping;
 		float sca=params->epd.scale;
@@ -5188,6 +5190,8 @@ void ImProcFunctions::EPDToneMap(LabImage *lab, unsigned int Iterates, int skip)
 	//Enabled? Leave now if not.
 //	if(!p->enabled) return;
 if(!params->epd.enabled) return;
+if(params->wavelet.enabled  && params->wavelet.tmrs!=0) return;
+
 float stren=params->epd.strength;
 float edgest=params->epd.edgeStopping;
 float sca=params->epd.scale;

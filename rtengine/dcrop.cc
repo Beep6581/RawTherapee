@@ -632,6 +632,7 @@ void Crop::update (int todo) {
         bool ccutili=parent->ccutili;
         bool clcutili=parent->clcutili;
         bool cclutili=parent->cclutili;
+        bool wavcontlutili=parent->wavcontlutili;
 
         LUTu dummy;
         parent->ipf.chromiLuminanceCurve (this, 1,labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili,cclutili, clcutili, dummy, dummy, dummy, dummy);
@@ -713,10 +714,14 @@ void Crop::update (int todo) {
 			WavCurve wavCLVCurve;
 			WavOpacityCurveRG waOpacityCurveRG;
 			WavOpacityCurveBY waOpacityCurveBY;
-			
-			params.wavelet.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY);
+			WavOpacityCurveW waOpacityCurveW;
+			WavOpacityCurveWL waOpacityCurveWL;
+			LUTf wavclCurve;
+			LUTu dummy;
 
-			parent->ipf.ip_wavelet(labnCrop, labnCrop, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, skip);
+			params.wavelet.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
+
+			parent->ipf.ip_wavelet(labnCrop, labnCrop, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, parent->wavclCurve, wavcontlutili, skip);
 		}
 
 		//     }

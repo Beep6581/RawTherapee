@@ -37,6 +37,7 @@ protected:
     Glib::RefPtr<Gtk::Tooltip> srTTips;
     Glib::RefPtr<Gdk::Pixbuf> bgPixbuf;
     Glib::RefPtr<Gdk::Pixbuf> srPixbuf;
+    CurveEditorGroup* curveEditorG;
 
     CurveEditorGroup* CCWcurveEditorG;
     CurveEditorGroup* curveEditorRES;
@@ -47,8 +48,13 @@ protected:
     FlatCurveEditor* opacityShapeRG;
     CurveEditorGroup* opacityCurveEditorG;
     FlatCurveEditor* opacityShapeBY;
+    CurveEditorGroup* opacityCurveEditorW;
+    CurveEditorGroup* opacityCurveEditorWL;
+    FlatCurveEditor* opacityShape;
+    FlatCurveEditor* opacityShapeWL;
     FlatCurveEditor*   hhshape;
     FlatCurveEditor*   Chshape;
+    DiagonalCurveEditor* clshape;
 	
     FlatCurveEditor* ccshape;
     Gtk::CheckButton * display;
@@ -62,9 +68,11 @@ protected:
 //    Gtk::CheckButton * edgreinf;
     Gtk::CheckButton * lipst;
     Gtk::CheckButton * avoid;
+    Gtk::CheckButton * tmr;
     Gtk::ToggleButton * tbresid;
     Gtk::ToggleButton * tbcontrast;
     Gtk::ToggleButton * tbgamut;
+    Gtk::ToggleButton * tbfinal;
     Gtk::ToggleButton * tbchroma;
     Gtk::ToggleButton * tbtoning;
     Gtk::ToggleButton * tbnoise;
@@ -79,6 +87,8 @@ protected:
     Adjuster* rescon; 
     Adjuster* resconH; 
     Adjuster* reschro; 
+    Adjuster* tmrs; 
+    Adjuster* gamma; 
     Adjuster* sup; 
     Adjuster* sky; 
     Adjuster* thres; 
@@ -92,6 +102,8 @@ protected:
     Adjuster* edgval;
     Adjuster* edgthresh;
     Adjuster* strength;
+    Adjuster* balance;
+    Adjuster* iter;
 	
     ThresholdAdjuster* hueskin;
     ThresholdAdjuster* hueskin2;
@@ -117,6 +129,10 @@ protected:
     sigc::connection  CHSLmethodconn;
     MyComboBoxText*   EDmethod;
     sigc::connection  EDmethodconn;
+    MyComboBoxText*   BAmethod;
+    sigc::connection  BAmethodconn;
+    MyComboBoxText*   TMmethod;
+    sigc::connection  TMmethodconn;
     MyComboBoxText*   HSmethod;
     sigc::connection  HSmethodconn;
     MyComboBoxText*   CLmethod;
@@ -141,6 +157,7 @@ protected:
 	Gtk::Frame* edgeFrame;
 	Gtk::Frame* noiseFrame;
     Gtk::Frame* contrastSHFrame;
+	Gtk::Frame* finalFrame;
     Gtk::Label* colLabel;
     Gtk::Label* interLabel;
 	Gtk::Label* wavLabels;
@@ -150,11 +167,14 @@ protected:
 	Gtk::Label* labmC;
 	Gtk::Label* labmch;
 	Gtk::Label* labmED;
+	Gtk::Label* labmTM;
+	Gtk::Label* labmBA;
 	Gtk::Label* labmedgr;
 	Gtk::Label* labmednois;	
 	Gtk::Expander* expcontrast;	
 	Gtk::Expander* expresid;
 	Gtk::Expander* expgamut;	
+	Gtk::Expander* expfinal;	
 	Gtk::Expander* expchroma;	
 	Gtk::Expander* exptoning;	
 	Gtk::Expander* expdisplay;	
@@ -169,6 +189,8 @@ protected:
     Gtk::HBox* choiceHBox;
 	Gtk::HBox* ctboxCH;
 	Gtk::HBox* ctboxED;
+	Gtk::HBox* ctboxTM;
+	Gtk::HBox* ctboxBA;
 	Gtk::HBox* ctboxch;
 	Gtk::HBox* edbox;
 	Gtk::HBox* ednoisbox;
@@ -179,14 +201,18 @@ protected:
     Gtk::Label* previewLevelsLabel;
     Gtk::Label* previewBackLabel;
 	
-    sigc::connection expConn,  medianConn, avoidConn, medianlevConn, linkedgConn, lipstConn;
+    sigc::connection expConn,  medianConn, avoidConn, tmrConn, medianlevConn, linkedgConn, lipstConn;
     sigc::connection neutralPressedConn;
     sigc::connection contrastPlusPressedConn;
     sigc::connection contrastMinusPressedConn;
     sigc::connection neutralchPressedConn;
 
-    bool lastdisplay, lastdisplaygam,lastdisplayres,lastdisplaychro, lastdisplaylevel,lastmedian, lastmedianlev, lastlinkedg, lastavoid, lastlipst;
+    bool lastdisplay, lastdisplaygam,lastdisplayres,lastdisplaychro, lastdisplaylevel,lastmedian, lastmedianlev, lastlinkedg, lastavoid, lastlipst, lasttmr;
 	int nextnlevel;
+	double tr;
+	double br;
+	double tl;
+	double bl;
 
 public:
 
@@ -211,7 +237,7 @@ public:
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
     void adjusterChanged2 (ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
-	void setAdjusterBehavior (bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd,bool chromaadd, bool contrastadd, bool skinadd, bool reschroadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool skyadd, bool edgradadd, bool edgvaladd, bool strengthadd, bool edgedetectadd, bool edgedetectthradd, bool edgedetectthr2add);
+	void setAdjusterBehavior (bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd,bool chromaadd, bool contrastadd, bool skinadd, bool reschroadd, bool tmrsadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool skyadd, bool edgradadd, bool edgvaladd, bool strengthadd, bool gammaadd, bool edgedetectadd, bool edgedetectthradd, bool edgedetectthr2add);
    
     void adjusterChanged (Adjuster* a, double newval);
 	void adjusterChanged       (ThresholdAdjuster* a, double newBottom, double newTop);
@@ -225,9 +251,11 @@ public:
     void expresidTog ();
     void expdisplayTog ();
     void expgamutTog ();
+    void expfinalTog ();
     void expchromaTog ();
     void exptoningTog ();
     void avoidToggled ();
+    void tmrToggled ();
     void neutralPressed ();
     void neutralchPressed ();
     void contrastPlusPressed ();
@@ -238,6 +266,8 @@ public:
     void MedgreinfChanged      ();
     void CHSLmethodChanged      ();
     void EDmethodChanged      ();
+    void BAmethodChanged      ();
+    void TMmethodChanged      ();
     void HSmethodChanged      ();
     void CLmethodChanged      ();
     void BackmethodChanged      ();

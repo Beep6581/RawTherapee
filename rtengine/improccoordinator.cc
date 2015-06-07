@@ -45,6 +45,7 @@ ImProcCoordinator::ImProcCoordinator ()
       satcurve(65536,0),
       lhskcurve(65536,0),
       clcurve(65536,0),
+	  wavclCurve(65536,0),
       clToningcurve(65536,0),
       cl2Toningcurve(65536,0),
 	  Noisecurve(65536,0),
@@ -84,7 +85,7 @@ ImProcCoordinator::ImProcCoordinator ()
 	  fullw(1),fullh(1),
       pW(-1), pH(-1),
       plistener(NULL), imageListener(NULL), aeListener(NULL), acListener(NULL),abwListener(NULL),actListener(NULL),adnListener(NULL), awavListener(NULL), hListener(NULL), 
-      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false),utili(false),autili(false),
+      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false),utili(false),autili(false),wavcontlutili(false),
 	  butili(false),ccutili(false),cclutili(false),clcutili(false),opautili(false)
 
     {}
@@ -549,14 +550,22 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             }
         //}
 		
+        wavcontlutili = false;
+		//CurveFactory::curveWavContL ( wavcontlutili,params.wavelet.lcurve, wavclCurve, LUTu & histogramwavcl, LUTu & outBeforeWavCLurveHistogram,int skip);
+        CurveFactory::curveWavContL(wavcontlutili, params.wavelet.wavclCurve, wavclCurve , /*lhist16CLlad, histCLurve,*/ scale==1 ? 1 : 16);
+		
+		
 		if((params.wavelet.enabled)) {
 			WaveletParams WaveParams = params.wavelet;
-			WaveParams.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY);
+	//		WaveParams.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY);
+			WaveParams.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
 		
 			int kall=0;
 			progress ("Wavelet...",100*readyphase/numofphases);
-			ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, scale);		
-		}
+		//	ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, scale);		
+			ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, wavcontlutili, scale);		
+
+			}
 
         
         if(params.colorappearance.enabled){

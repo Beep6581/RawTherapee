@@ -92,6 +92,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         LUTf satcurve;
         LUTf lhskcurve;
         LUTf clcurve;
+		LUTf wavclCurve;
         LUTf clToningcurve;
         LUTf cl2Toningcurve;
         LUTf Noisecurve;
@@ -123,6 +124,8 @@ class ImProcCoordinator : public StagedImageProcessor {
 		WavCurve wavCLVCurve;	
         WavOpacityCurveRG waOpacityCurveRG;
         WavOpacityCurveBY waOpacityCurveBY;
+        WavOpacityCurveW waOpacityCurveW;
+        WavOpacityCurveWL waOpacityCurveWL;
 		
         ColorAppearance customColCurve1;
         ColorAppearance customColCurve2;
@@ -181,7 +184,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         bool cclutili;
         bool clcutili;
 		bool opautili;
-
+		bool wavcontlutili;
         void startProcessing ();
         void process ();
 

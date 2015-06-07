@@ -537,6 +537,8 @@ void Options::setDefaults () {
 			0, //ADDSET_WA_EDGEDETECT
 			0, //ADDSET_WA_EDGEDETECTTHR
 			0, //ADDSET_WA_EDGEDETECTTHR2
+			0, //ADDSET_WA_TMRS
+			0, //ADDSET_WA_GAMMA
 			
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);

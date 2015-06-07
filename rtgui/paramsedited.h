@@ -478,18 +478,23 @@ class WaveletParamsEdited {
     public:
         bool enabled;
         bool strength;
+        bool balance;
+        bool iter;
         bool median;
 		bool medianlev;
 		bool linkedg;
 		bool lipst;
 		bool Medgreinf;
         bool avoid;
+        bool tmr;
 		bool c[9];
 		bool ch[9];
 		bool Lmethod;
 		bool CHmethod;
 		bool CHSLmethod;
 		bool EDmethod;
+		bool BAmethod;
+		bool TMmethod;
 		bool HSmethod;
 		bool CLmethod;
 		bool Backmethod;
@@ -499,6 +504,8 @@ class WaveletParamsEdited {
 		bool rescon;
 		bool resconH;
 		bool reschro;
+		bool tmrs;
+		bool gamma;
 		bool sup;
 		bool sky;
 		bool thres;
@@ -527,10 +534,13 @@ class WaveletParamsEdited {
 		bool ccwcurve;
         bool opacityCurveBY;
         bool opacityCurveRG;		
+        bool opacityCurveW;		
+        bool opacityCurveWL;		
         bool hhcurve;
         bool Chcurve;
         bool pastlev;
         bool satlev;	
+		bool wavclCurve;
 };
 
 class DirPyrEqualizerParamsEdited {
