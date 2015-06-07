@@ -910,7 +910,7 @@ void ProcParams::setDefaults () {
     crop.h          = 15000;
     crop.fixratio   = true;
     crop.ratio      = "3:2";
-    crop.orientation= "Landscape";
+    crop.orientation= "As Image";
     crop.guide      = "Rule of thirds";
     
     coarse.setDefaults();

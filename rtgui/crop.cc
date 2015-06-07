@@ -168,7 +168,8 @@ Crop::Crop (): FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true) 
 
   orientation->append_text (M("GENERAL_LANDSCAPE"));
   orientation->append_text (M("GENERAL_PORTRAIT"));
-  orientation->set_active (0);
+  orientation->append_text (M("GENERAL_ASIMAGE"));
+  orientation->set_active (2);
 
   guide->append_text (M("TP_CROP_GTNONE"));
   guide->append_text (M("TP_CROP_GTFRAME"));
@@ -267,6 +268,8 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
         orientation->set_active (flip_orientation ? 1 : 0);
     else if (pp->crop.orientation == "Portrait")
         orientation->set_active (flip_orientation ? 0 : 1);
+    else
+        orientation->set_active (2);
 
     if (pp->crop.guide == "None")
         guide->set_active (0);
@@ -349,7 +352,8 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited) {
       pp->crop.orientation = flip_orientation ? "Portrait" : "Landscape";
   else if (orientation->get_active_row_number()==1)
       pp->crop.orientation = flip_orientation ? "Landscape" : "Portrait";
-
+  else
+      pp->crop.orientation = "As Image";
   if (guide->get_active_row_number()==0)
     pp->crop.guide = "None";
   else if (guide->get_active_row_number()==1)
@@ -400,20 +404,13 @@ void Crop::trim (ProcParams* pp, int ow, int oh) {
 		pp->crop.fixratio = false;
 	}
 	else {
-		bool unsetRatio = false;
 		if ((xmin + pp->crop.w) > ow) {
 			// crop overflow in the width dimension ; we trim it
 			pp->crop.w = ow-xmin;
-			unsetRatio = true;
 		}
 		if ((ymin + pp->crop.h) > oh) {
 			// crop overflow in the height dimension ; we trim it
 			pp->crop.h = oh-ymin;
-			unsetRatio = true;
-		}
-		if (unsetRatio) {
-			// the ratio is certainly not respected anymore, so we set it off
-			pp->crop.fixratio = false;
 		}
 	}
 }
@@ -430,7 +427,7 @@ void Crop::selectPressed () {
 
 void Crop::notifyListener () {
 
-    if (listener && getEnabled ())
+    if (listener && getEnabled ()) {
         if (nw == 1 && nh == 1) {
             setEnabled(false);
             nx = (int)x->get_value ();
@@ -441,6 +438,7 @@ void Crop::notifyListener () {
         }
         else
             listener->panelChanged (EvCrop, Glib::ustring::compose ("%1=%2, %3=%4\n%5=%6, %7=%8", M("TP_CROP_X"), nx, M("TP_CROP_Y"), ny, M("TP_CROP_W"), nw, M("TP_CROP_H"), nh));
+    }
 }
 
 void Crop::enabledChanged () {
@@ -1037,8 +1035,10 @@ double Crop::getRatio () {
 
   if (orientation->get_active_row_number()==0)
     return r;
-  else
+  else if(orientation->get_active_row_number()==1)
     return 1.0 / r;
+  else return maxh <= maxw ? r : 1.0 /r;
+    
 }
 
 void Crop::setBatchMode (bool batchMode) {
