@@ -215,7 +215,7 @@ namespace rtengine {
 		 * Applies a Haar filter 
 		 *
 		 */
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for num_threads(numThreads) if(numThreads>1)
 #endif
 		for (int k=0; k<height; k++) {
@@ -234,18 +234,18 @@ namespace rtengine {
 		 * Applies a Haar filter 
 		 *
 		 */
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel num_threads(numThreads) if(numThreads>1)
 #endif
 {
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for nowait
 #endif
 		for(int i = 0; i < skip; i++) {
 			for(int j=0;j<width;j++)
 				dst[width*i+j] = (srcLo[i*width+j] + srcHi[i*width+j]);			
 		}
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for
 #endif
 		for(int i = skip; i < height; i++) {
@@ -394,7 +394,7 @@ namespace rtengine {
 
 		// calculate coefficients
 		int shift = skip*(taps-offset-1);//align filter with data
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for num_threads(numThreads) if(numThreads>1)
 #endif
 		for (int k=0; k<height; k++) {
@@ -450,7 +450,7 @@ namespace rtengine {
 		__m128 fourv = _mm_set1_ps(4.f);
 		__m128 srcFactorv = _mm_set1_ps(srcFactor);
 		__m128 dstFactorv = _mm_set1_ps(blend);
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for num_threads(numThreads) if(numThreads>1)
 #endif
 		for(int i = 0; i < dstheight; i++) {
@@ -509,7 +509,7 @@ namespace rtengine {
 		// calculate coefficients
 		int shift=skip*(taps-offset-1);//align filter with data
 
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for num_threads(numThreads) if(numThreads>1)
 #endif
 		for(int i = 0; i < dstheight; i++) {
@@ -550,14 +550,14 @@ namespace rtengine {
 				}
 			}
 		}
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel num_threads(numThreads) if(numThreads>1)
 #endif
 {
 		T tmpLo[m_w] ALIGNED64;
 		T tmpHi[m_w] ALIGNED64;
 		if(subsamp_out) {
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for
 #endif
 			for(int row=0;row<m_h;row+=2) {
@@ -566,7 +566,7 @@ namespace rtengine {
 				AnalysisFilterSubsampHorizontal (tmpHi, wavcoeffs[2], wavcoeffs[3], filterH, filterH+taps, taps, offset, m_w, m_w2, row/2);
 			}
 		} else {
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for
 #endif
 			for(int row=0;row<m_h;row++) {
@@ -580,7 +580,7 @@ namespace rtengine {
 #else
 	template<typename T> template<typename E> void wavelet_level<T>::decompose_level(E *src, E *dst, float *filterV, float *filterH, int taps, int offset) { 
 
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel num_threads(numThreads) if(numThreads>1)
 #endif
 {
@@ -588,7 +588,7 @@ namespace rtengine {
 		T tmpHi[m_w] ALIGNED64;
 		/* filter along rows and columns */
 		if(subsamp_out) {
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for
 #endif
 			for(int row=0;row<m_h;row+=2) {
@@ -597,7 +597,7 @@ namespace rtengine {
 				AnalysisFilterSubsampHorizontal (tmpHi, wavcoeffs[2], wavcoeffs[3], filterH, filterH+taps, taps, offset, m_w, m_w2, row/2);
 			}
 		} else {
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for
 #endif
 			for(int row=0;row<m_h;row++) {
