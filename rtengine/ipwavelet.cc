@@ -439,6 +439,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 		numthreads = MIN(numtiles,omp_get_max_threads());
 		if(maxnumberofthreadsforwavelet > 0)
 			numthreads = MIN(numthreads,maxnumberofthreadsforwavelet);
+#ifdef _RT_NESTED_OPENMP
 		wavNestedLevels = omp_get_max_threads() / numthreads;
 		bool oldNested = omp_get_nested();
 		if(wavNestedLevels < 2)
@@ -448,6 +449,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 		if(maxnumberofthreadsforwavelet > 0)
 			while(wavNestedLevels*numthreads > maxnumberofthreadsforwavelet)
 				wavNestedLevels--;
+#endif
 		if(settings->verbose)
 			printf("Ip Wavelet uses %d main thread(s) and up to %d nested thread(s) for each main thread\n",numthreads,wavNestedLevels);
 
@@ -493,16 +495,16 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 						for (int i=0; i<tileheight; i++)
 							Lold[i] = LoldBuffer + i*tilewidth;
 					}
-						
+
 				} else {
 					labco = new LabImage(width,height);
 					Lold = lab->L;
 				}
-				
-#ifdef _OPENMP
+
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
-				
+
 					for (int i=tiletop; i<tilebottom; i++) {
 						int i1 = i - tiletop;
 						int j;
@@ -554,7 +556,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 						}
 					}
 	
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 					for (int i=1; i<hei-1; i++) {
@@ -618,7 +620,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 						
 					float madL[8][3];
 					bool memoryAllocationFailed = false;
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for schedule(dynamic) collapse(2) num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif				
 					for (int lvl=0; lvl<3; lvl++) {
@@ -777,9 +779,9 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 					}
 					bool highlight = params->toneCurve.hrenabled;
 
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for schedule(dynamic,16) num_threads(wavNestedLevels) if(wavNestedLevels>1)
-#endif				
+#endif
 					for (int i=tiletop; i<tilebottom; i++){
 							int i1 = i-tiletop;
 							float L,a,b;
@@ -928,7 +930,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 		delete [] sigmaN;
 		
 }
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 omp_set_nested(oldNested);
 #endif	
 		if(numtiles > 1) {
@@ -936,10 +938,10 @@ omp_set_nested(oldNested);
 			delete dsttmp;
 		}
 		
-//	if (settings->verbose) {
+	if (settings->verbose) {
 		t2e.set();
 		printf("Wavelet performed in %d usec:\n", t2e.etime(t1e));
-//	}
+	}
 		
 }//end o
 
@@ -960,12 +962,12 @@ omp_set_nested(oldNested);
 		float thres = 5.f;//different fom zero to take into account only data large enough
 		max=0.f;
 		min=0.f;
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 {
 		float lmax = 0.f, lmin = 0.f;
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for reduction(+:averaP,averaN,countP,countN) nowait
 #endif
 		for(int i=0;i<datalen;i++) {
@@ -982,7 +984,7 @@ omp_set_nested(oldNested);
 				countN++;
 			}
 		}
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp critical
 #endif
 {
@@ -1002,7 +1004,7 @@ omp_set_nested(oldNested);
 		float variP = 0.f, variN = 0.f;
 		float thres = 5.f;//different fom zero to take into account only data large enough
 
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for reduction(+:variP,variN,countP,countN) num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 		for(int i=0;i<datalen;i++) {
@@ -1087,7 +1089,7 @@ float *ImProcFunctions::ContrastDR(float *Source, int skip, struct cont_params c
 	int n=W_L*H_L;
 	if(Contrast == NULL) Contrast = new float[n];
 	memcpy(Contrast, Source, n*sizeof(float));
-#ifdef _OPENMP	
+#ifdef _RT_NESTED_OPENMP	
 #pragma omp parallel for
 #endif	
 				for (int i=0; i<W_L*H_L; i++) {//contrast
@@ -1122,12 +1124,12 @@ SSEFUNCTION float *ImProcFunctions::CompressDR(float *Source, int skip, struct c
 	int n=W_L*H_L;
 	
 #ifdef __SSE2__
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel
 #endif
 {
 	__m128 epsv = _mm_set1_ps( eps );
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for
 #endif
 	for(int ii = 0; ii < n-3; ii+=4)
@@ -1137,7 +1139,7 @@ SSEFUNCTION float *ImProcFunctions::CompressDR(float *Source, int skip, struct c
 		Source[ii] = xlogf(Source[ii] + eps);
 
 #else
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for
 #endif
 	for(int ii = 0; ii < n; ii++)
@@ -1168,7 +1170,7 @@ SSEFUNCTION float *ImProcFunctions::CompressDR(float *Source, int skip, struct c
 	
 	
 #ifdef __SSE2__
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel
 #endif
 {
@@ -1176,7 +1178,7 @@ SSEFUNCTION float *ImProcFunctions::CompressDR(float *Source, int skip, struct c
 	__m128 epsv = _mm_set1_ps( eps );
 	__m128 DetailBoostv = _mm_set1_ps( DetailBoost );
 	__m128 tempv = _mm_set1_ps( temp );
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for
 #endif
 	for(int i = 0; i < n-3; i+=4){
@@ -1195,7 +1197,7 @@ SSEFUNCTION float *ImProcFunctions::CompressDR(float *Source, int skip, struct c
 	}
 	
 #else
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for
 #endif
 	for(int i = 0; i < n; i++){
@@ -1218,7 +1220,9 @@ void ImProcFunctions::ContrastResid(float * WavCoeffs_L0,  unsigned int Iterates
 		cp.TMmeth=2;//default after testing
 		if(cp.TMmeth ==1) {min0 = 0.0f;max0=32768.f;}
 		else if (cp.TMmeth ==2) {min0 = 0.0f;}
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for
+#endif
 			for(int i = 0; i < W_L*H_L; i++)
 				{ WavCoeffs_L0[i]= (WavCoeffs_L0[i] - min0)/max0;
 					WavCoeffs_L0[i]*=gamm;
@@ -1232,9 +1236,9 @@ void ImProcFunctions::ContrastResid(float * WavCoeffs_L0,  unsigned int Iterates
 			CompressDR(WavCoeffs_L0, skip, cp, W_L, H_L, Compression,DetailBoost,max0, min0, ave, ah, bh, al, bl, factorx, WavCoeffs_L0);
 
 
-			#ifdef _OPENMP
-			#pragma omp parallel for            // removed schedule(dynamic,10)
-			#endif
+#ifdef _RT_NESTED_OPENMP
+#pragma omp parallel for            // removed schedule(dynamic,10)
+#endif
 			for(int ii = 0; ii < W_L*H_L; ii++)
 				WavCoeffs_L0[ii] = WavCoeffs_L0[ii]*max0*(1.f/gamm) + min0;	
 	}	
@@ -1255,7 +1259,9 @@ void ImProcFunctions::ContrastResid(float * WavCoeffs_L0,  unsigned int Iterates
 		if(cp.TMmeth ==1) {min0 = 0.0f;max0=32768.f;}
 		else if (cp.TMmeth ==2) {min0 = 0.0f;}
 		//	max0=32768.f;
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for
+#endif
 			for(int i = 0; i < W_L*H_L; i++)
 				{ WavCoeffs_L0[i]= (WavCoeffs_L0[i] - min0)/max0;
 					WavCoeffs_L0[i]*=gamm;
@@ -1272,9 +1278,9 @@ void ImProcFunctions::ContrastResid(float * WavCoeffs_L0,  unsigned int Iterates
 		    epd.CompressDynamicRange(WavCoeffs_L0, sca/float(skip), edgest, Compression, DetailBoost, Iterates, rew, WavCoeffs_L0);
 
 	//Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
-			#ifdef _OPENMP
-			#pragma omp parallel for            // removed schedule(dynamic,10)
-			#endif
+#ifdef _RT_NESTED_OPENMP
+#pragma omp parallel for            // removed schedule(dynamic,10)
+#endif
 			for(int ii = 0; ii < W_L*H_L; ii++)
 				WavCoeffs_L0[ii] = WavCoeffs_L0[ii]*max0*(1.f/gamm) + min0;	
 	}	
@@ -1288,7 +1294,7 @@ void ImProcFunctions::WaveletcontAllLfinal(LabImage * labco, float ** varhue, fl
 		float * WavCoeffs_L0 = WaveletCoeffs_L.coeff0;
 		
 		
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for schedule(dynamic) collapse(2)
 #endif		
 		for (int dir=1; dir<4; dir++) {
@@ -1326,24 +1332,31 @@ void ImProcFunctions::WaveletcontAllLfinal(LabImage * labco, float ** varhue, fl
 		float min0 = FLT_MAX;
 		
 		if(contrast != 0.f || cp.tonemap) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for reduction(+:avedbl) num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 			for (int i=0; i<W_L*H_L; i++) {
 				avedbl += WavCoeffs_L0[i];
 			}
 		
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
+#endif
 {
 	float lminL = FLT_MAX;
 	float lmaxL = 0.f;
+
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for
+#endif
 	for(int i = 0; i < W_L*H_L; i++) {
 		if(WavCoeffs_L0[i] < lminL) lminL = WavCoeffs_L0[i];
 		if(WavCoeffs_L0[i] > lmaxL) lmaxL = WavCoeffs_L0[i];
 		
 	}
+#ifdef _RT_NESTED_OPENMP
 #pragma omp critical
+#endif
 	{ 	if(lminL < min0) min0 = lminL;
 		if(lmaxL > max0) max0 = lmaxL;
 	}
@@ -1389,13 +1402,13 @@ if(cp.tonemap && cp.contmet==2) {
 			for (int i=0; i<W_L*H_L; i++) 
 				koeLi[j][i]=0.f;
 		}
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 {
 		if(contrast != 0.f) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
   {
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for
 #endif						
 			for (int i=0; i<W_L*H_L; i++) {//contrast
@@ -1421,14 +1434,17 @@ if(cp.tonemap && cp.contmet==2) {
 if(cp.tonemap && cp.contmet==1) {
 	float maxp=max0*256.f;
 	float minp=min0*256.f;
-	#pragma omp single
+#ifdef _RT_NESTED_OPENMP
+#pragma omp single
+#endif
 		ContrastResid(WavCoeffs_L0, 5, skip, cp, W_L, H_L, maxp, minp, ave, ah, bh, al, bl, factorx );
 }
+#ifdef _RT_NESTED_OPENMP
 #pragma omp barrier
-		
+#endif		
 		
 		if(cp.conres != 0.f || cp.conresH != 0.f) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for nowait
 #endif				
 			for (int i=0; i<W_L*H_L; i++) {
@@ -1481,7 +1497,7 @@ if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory
 		for (int i=0; i<H_L; i++){
 			tmC[i] = &tmCBuffer[i*W_L];
 		}
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for schedule(dynamic) collapse(2)
 #endif		
 		for (int lvl=0; lvl<3; lvl++) {
@@ -1499,7 +1515,7 @@ if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory
 		float aamp=1.f+cp.eddetthrHi/100.f;
 
 		for (int lvl=0; lvl<3; lvl++) {
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for schedule(dynamic,16)
 #endif		
 		for (int i=1; i<H_L-1; i++) {
@@ -1561,7 +1577,7 @@ if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory
 		// end 
 }	
 	
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for schedule(dynamic) collapse(2)
 #endif		
 		for (int dir=1; dir<4; dir++) {
@@ -1593,7 +1609,7 @@ if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory
                
                         float * WavCoeffs_a0 = WaveletCoeffs_a.coeff0;
                         float * WavCoeffs_b0 = WaveletCoeffs_b.coeff0;
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 {
@@ -1601,7 +1617,7 @@ if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory
                         float huebuffer[W_L] ALIGNED64;
                         float chrbuffer[W_L] ALIGNED64;
 #endif // __SSE2__
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for schedule(dynamic,16)
 #endif
                         for (int i=0; i<H_L; i++) {
@@ -1655,13 +1671,13 @@ if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory
 	
 		float * WavCoeffs_ab0 = WaveletCoeffs_ab.coeff0;
 		
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 {
 		if(cp.chrores != 0.f) { // cp.chrores == 0.f means all will be multiplied by 1.f, so we can skip the processing of residual
 
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for nowait
 #endif				
 			for (int i=0; i<W_L*H_L; i++) {
@@ -1707,7 +1723,7 @@ if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory
 			}
 		}
 
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for schedule(dynamic) collapse(2)
 #endif		
 		for (int dir=1; dir<4; dir++) {

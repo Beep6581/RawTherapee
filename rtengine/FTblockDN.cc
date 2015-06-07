@@ -646,6 +646,7 @@ do {
 	int numthreads = MIN(numtiles,omp_get_max_threads());
 	if(options.rgbDenoiseThreadLimit > 0)
 		numthreads = MIN(numthreads,options.rgbDenoiseThreadLimit);
+#ifdef _RT_NESTED_OPENMP
 	denoiseNestedLevels = omp_get_max_threads() / numthreads;
 	bool oldNested = omp_get_nested();
 	if(denoiseNestedLevels < 2)
@@ -655,6 +656,7 @@ do {
 	if(options.rgbDenoiseThreadLimit > 0)
 		while(denoiseNestedLevels*numthreads > options.rgbDenoiseThreadLimit)
 			denoiseNestedLevels--;
+#endif
 	if(settings->verbose)
 		printf("RGB_denoise uses %d main thread(s) and up to %d nested thread(s) for each main thread\n",numthreads,denoiseNestedLevels);
 #endif
@@ -736,7 +738,7 @@ do {
 
 				if(!denoiseMethodRgb){//lab mode
 						//modification Jacques feb 2013 and july 2014
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
 					for (int i=tiletop; i<tilebottom; i++) {
@@ -781,7 +783,7 @@ do {
 						}
 					}
 				} else {//RGB mode
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
 					for (int i=tiletop; i<tilebottom; i++) {
@@ -814,7 +816,7 @@ do {
 					}
 				}
 			} else {//image is not raw; use Lab parametrization
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
 				for (int i=tiletop; i<tilebottom; i++) {
@@ -928,7 +930,7 @@ do {
 				if(!memoryAllocationFailed) {
 					// precalculate madL, because it's used in adecomp and bdecomp
 					int maxlvl = Ldecomp->maxlevel();
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for schedule(dynamic) collapse(2) num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
 					for (int lvl=0; lvl<maxlvl; lvl++) {
@@ -1023,7 +1025,7 @@ do {
 							if(!memoryAllocationFailed) {
 								// copy labdn->L to Lin before it gets modified by reconstruction
 								Lin = new array2D<float>(width,height);
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
 								for(int i=0;i<height;i++)
@@ -1134,14 +1136,14 @@ do {
 						fLbloxArray[i] = (float*) fftwf_malloc(max_numblox_W*TS*TS*sizeof(float));
 					}
 
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 				int masterThread = omp_get_thread_num();
 #endif
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
 {
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 				int subThread = masterThread * denoiseNestedLevels + omp_get_thread_num();
 #else
 				int subThread = 0;
@@ -1151,7 +1153,7 @@ do {
 				float *fLblox = fLbloxArray[subThread];
 				float pBuf[width + TS + 2*blkrad*offset] ALIGNED16;
 				float nbrwt[TS*TS] ALIGNED64;
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for
 #endif
 				for (int vblk=0; vblk<numblox_H; vblk++) {
@@ -1239,7 +1241,7 @@ do {
 	}
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
 				for (int i=0; i<height; i++) {
@@ -1283,8 +1285,8 @@ do {
 				realred /= 100.f;
 				realblue /= 100.f;
 
-#ifdef _OPENMP
-#pragma omp parallel for schedule(dynamic,16) num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
+#ifdef _RT_NESTED_OPENMP
+#pragma omp parallel for schedule(dynamic,16) num_threads(denoiseNestedLevels)
 #endif
 				for (int i=tiletop; i<tilebottom; i++){
 					int i1 = i-tiletop;
@@ -1329,8 +1331,8 @@ do {
 					}
 				}
 				} else {//RGB mode
-#ifdef _OPENMP
-#pragma omp parallel for num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
+#ifdef _RT_NESTED_OPENMP
+#pragma omp parallel for num_threads(denoiseNestedLevels)
 #endif
 				for (int i=tiletop; i<tilebottom; i++){
 					int i1 = i-tiletop;
@@ -1365,8 +1367,8 @@ do {
 
 				}
 			} else {
-#ifdef _OPENMP
-#pragma omp parallel for num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
+#ifdef _RT_NESTED_OPENMP
+#pragma omp parallel for num_threads(denoiseNestedLevels)
 #endif
 				for (int i=tiletop; i<tilebottom; i++){
 					int i1 = i-tiletop;
@@ -1427,7 +1429,7 @@ do {
 		}
 	}
 	
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 omp_set_nested(oldNested);
 #endif
 	//copy denoised image to output
@@ -1854,7 +1856,7 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
 			maxHL = WaveletCoeffs_L.level_H(lvl);
 	}
 	bool memoryAllocationFailed = false;
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
 {
@@ -1868,7 +1870,7 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
 	
 	if(!memoryAllocationFailed) {
 	
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for schedule(dynamic) collapse(2)
 #endif
 		for (int lvl=maxlvl-1; lvl>=0; lvl--) {//for levels less than max, use level diff to make edge mask
@@ -1968,7 +1970,7 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
 				maxHL = WaveletCoeffs_L.level_H(lvl);
 		}
 		bool memoryAllocationFailed = false;
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
 {
@@ -1983,7 +1985,7 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
 		if(!memoryAllocationFailed) {
 		
 
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for schedule(dynamic) collapse(2)
 #endif
 		for (int lvl=0; lvl<maxlvl; lvl++) {
@@ -2001,7 +2003,7 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
 			}	
 		}
 		
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for schedule(dynamic) collapse(2)
 #endif
 		for (int lvl=maxlvl-1; lvl>=0; lvl--) {//for levels less than max, use level diff to make edge mask
@@ -2086,7 +2088,7 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
 				maxHL = WaveletCoeffs_L.level_H(lvl);
 		}
 		bool memoryAllocationFailed = false;
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
 {
@@ -2099,7 +2101,7 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
 		}
 		
 		if(!memoryAllocationFailed) {
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for schedule(dynamic) collapse(2)
 #endif
 			for (int lvl=0; lvl<maxlvl; lvl++) {
@@ -2130,7 +2132,7 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
 				maxHL = WaveletCoeffs_L.level_H(lvl);
 		}
 		bool memoryAllocationFailed = false;
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
 {
@@ -2143,7 +2145,7 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
 		}
 		
 		if(!memoryAllocationFailed) {
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp for schedule(dynamic) collapse(2)
 #endif
 			for (int lvl=0; lvl<maxlvl; lvl++) {
@@ -2589,7 +2591,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 	for (int i=0; i<hei; i++)
 		bcalc[i] = new float[wid];
 
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for if(multiThread)
 #endif
 	for(int ii=0;ii<hei;ii++){
@@ -2707,7 +2709,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 			//fill tile from image; convert RGB to "luma/chroma"
 
 			if (isRAW) {//image is raw; use channel differences for chroma channels
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for if(multiThread)
 #endif
 					for (int i=tiletop; i<tilebottom; i+=2) {
@@ -2747,7 +2749,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 						}
 #endif
 					}
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for if(multiThread)
 #endif
 					for (int i=tiletop; i<tilebottom; i+=2) {
@@ -2762,7 +2764,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 					}
 				if (!denoiseMethodRgb){//lab mode, modification Jacques feb 2013 and july 2014
 
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for if(multiThread)
 #endif
 				for (int i=tiletop; i<tilebottom; i++) {
@@ -2883,17 +2885,17 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 				schoice=2;
 
 			const int levwav=5;
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp parallel sections if(multiThread)
 #endif
 {
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp section
 #endif
 {
 			adecomp = new wavelet_decomposition (labdn->data+datalen, labdn->W, labdn->H, levwav, 1 );
 }
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP
 #pragma omp section
 #endif
 {
