@@ -272,13 +272,24 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     iTrashEmpty = new RTImage("trash-show-empty.png") ;
     iTrashFull  = new RTImage("trash-show-full.png") ;
 
-    bTrash = Gtk::manage(  new Gtk::ToggleButton () );
+    bTrash = Gtk::manage( new Gtk::ToggleButton () );
     bTrash->set_image (*iTrashEmpty);
     bTrash->set_relief (Gtk::RELIEF_NONE);
     bTrash->set_tooltip_markup (M("FILEBROWSER_SHOWTRASHHINT"));   
     bCateg[17] = bTrash->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bTrash, true));
     bTrash->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
+
+    iNotTrash = new RTImage("trash-hide-deleted.png") ;
+
+    bNotTrash = Gtk::manage( new Gtk::ToggleButton () );
+    bNotTrash->set_image (*iNotTrash);
+    bNotTrash->set_relief (Gtk::RELIEF_NONE);
+    bNotTrash->set_tooltip_markup (M("FILEBROWSER_SHOWNOTTRASHHINT"));
+    bCateg[18] = bNotTrash->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bNotTrash, true));
+    bNotTrash->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
+
     buttonBar->pack_start (*bTrash, Gtk::PACK_SHRINK);
+    buttonBar->pack_start (*bNotTrash, Gtk::PACK_SHRINK);
     buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
     fileBrowser->trash_changed().connect( sigc::mem_fun(*this, &FileCatalog::trashChanged) );
 
@@ -300,6 +311,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     // 15 - bRecentlySaved[0]
     // 16 - bRecentlySaved[1]
     // 17 - bTrash
+    // 18 - bNotTrash
 
     categoryButtons[0] = bFilterClear;
     categoryButtons[1] = bUnRanked;
@@ -309,6 +321,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     for (int i=0; i<2; i++){ categoryButtons[i+13] = bEdited[i];}
     for (int i=0; i<2; i++){ categoryButtons[i+15] = bRecentlySaved[i];}
     categoryButtons[17] = bTrash;
+    categoryButtons[18] = bNotTrash;
 
     exifInfo = Gtk::manage(new Gtk::ToggleButton ());
     exifInfo->set_image (*Gtk::manage(new RTImage ("info.png")));
@@ -1104,8 +1117,11 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b, bool isMouseClick
     // The event is process here, we can clear modifierKey now, it'll be set again on the next even
     modifierKey = 0;
 
-	for (int i=0; i<18; i++)
-		bCateg[i].block (true);
+    const int numCateg = sizeof(bCateg) / sizeof(bCateg[0]);
+    const int numButtons = sizeof(categoryButtons) / sizeof(categoryButtons[0]);
+
+    for (int i=0; i<numCateg; i++)
+        bCateg[i].block (true);
 
     // button already toggled when entering this function from a mouse click, so
     // we switch it back to its initial state.
@@ -1120,7 +1136,7 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b, bool isMouseClick
 		//we look how many stars are already toggled on, if any
 		int toggled_stars_count=0, buttons=0, start_star=0, toggled_button=0;
 
-		for (int i=0; i<18; i++) {
+        for (int i=0; i<numButtons; i++) {
 			if (categoryButtons[i]->get_active()) {
 				if (i>0 && i<17) {
 					toggled_stars_count ++;
@@ -1133,8 +1149,14 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b, bool isMouseClick
 
 		// if no modifier key is pressed, 
 		if (!(control_down || shift_down)) {
+            // if we're deselecting non-trashed
+            if (toggled_button == 18 && (buttons & (1 << toggled_button))) {
+                categoryButtons[0]->set_active (true);
+                for (int i=1; i<numButtons; i++)
+                    categoryButtons[i]->set_active (false);
+            }
 			// if we're deselecting the only star still active
-			if (toggled_stars_count == 1 && (buttons & (1 << toggled_button))) {
+            else if (toggled_stars_count == 1 && (buttons & (1 << toggled_button))) {
 				// activate clear-filters
 				categoryButtons[0]->set_active (true);
 				// deactivate the toggled filter
@@ -1147,11 +1169,11 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b, bool isMouseClick
 			}
 			else {
 				// activate the toggled filter, deactivate the rest
-				for (int i=0; i<18; i++)
+                for (int i=0; i<numButtons; i++)
 					categoryButtons[i]->set_active (i==toggled_button);
 			}
 		}
-		//modifier key allowed only for stars and color labels
+        //modifier key allowed only for stars and color labels...
 		else if (toggled_button>0 && toggled_button<17) {
 			if (control_down) {
 				//control is pressed
@@ -1199,6 +1221,11 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b, bool isMouseClick
 				//if more than one star & color label is selected, do nothing
 			}
 		}
+        // ...or non-trashed with Control modifier
+        else if (toggled_button == 18 && control_down)
+        {
+            bNotTrash->set_active (!bNotTrash->get_active ());
+        }
 
 		bool active_now, active_before;
 
@@ -1261,7 +1288,7 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b, bool isMouseClick
 		fileBrowser->setScrollPosition (hScrollPos[lastScrollPos], vScrollPos[lastScrollPos]);
     }
 
-	for (int i=0; i<18; i++)
+    for (int i=0; i<numCateg; i++)
 		bCateg[i].block (false);
 }
 
@@ -1273,29 +1300,30 @@ BrowserFilter FileCatalog::getFilter () {
 	bool anyCLabelFilterActive = bUnCLabeled->get_active () || bCLabel[0]->get_active ()|| bCLabel[1]->get_active ()|| bCLabel[2]->get_active ()|| bCLabel[3]->get_active ()|| bCLabel[4]->get_active ();
 	bool anyEditedFilterActive = bEdited[0]->get_active() || bEdited[1]->get_active();
 	bool anyRecentlySavedFilterActive = bRecentlySaved[0]->get_active() || bRecentlySaved[1]->get_active();
+    const bool nonTrashedActive = bNotTrash->get_active();
 	/*
 	 * filter is setup in 2 steps
 	 * Step 1: handle individual filters
 	*/
-    filter.showRanked[0] = bFilterClear->get_active() || bUnRanked->get_active () || bTrash->get_active () ||
+    filter.showRanked[0] = bFilterClear->get_active() || bUnRanked->get_active () || bTrash->get_active () || nonTrashedActive ||
                            anyCLabelFilterActive || anyEditedFilterActive || anyRecentlySavedFilterActive;
 
-    filter.showCLabeled[0] = bFilterClear->get_active() || bUnCLabeled->get_active () || bTrash->get_active ()  ||
+    filter.showCLabeled[0] = bFilterClear->get_active() || bUnCLabeled->get_active () || bTrash->get_active ()  || nonTrashedActive ||
         		             anyRankFilterActive || anyEditedFilterActive || anyRecentlySavedFilterActive;
 
     for (int i=1; i<=5; i++){
-        filter.showRanked[i] = bFilterClear->get_active() || bRank[i-1]->get_active () || bTrash->get_active () ||
+        filter.showRanked[i] = bFilterClear->get_active() || bRank[i-1]->get_active () || bTrash->get_active () || nonTrashedActive ||
                                anyCLabelFilterActive || anyEditedFilterActive || anyRecentlySavedFilterActive;
 
-        filter.showCLabeled[i] = bFilterClear->get_active() || bCLabel[i-1]->get_active () || bTrash->get_active ()  ||
+        filter.showCLabeled[i] = bFilterClear->get_active() || bCLabel[i-1]->get_active () || bTrash->get_active ()  || nonTrashedActive ||
                                  anyRankFilterActive || anyEditedFilterActive || anyRecentlySavedFilterActive;
     }
 
     for (int i=0; i<2; i++){
-    	filter.showEdited[i] = bFilterClear->get_active() || bEdited[i]->get_active () || bTrash->get_active ()  ||
+        filter.showEdited[i] = bFilterClear->get_active() || bEdited[i]->get_active () || bTrash->get_active ()  || nonTrashedActive ||
                                anyRankFilterActive || anyCLabelFilterActive || anyRecentlySavedFilterActive;
 
-    	filter.showRecentlySaved[i] = bFilterClear->get_active() || bRecentlySaved[i]->get_active () || bTrash->get_active ()  ||
+        filter.showRecentlySaved[i] = bFilterClear->get_active() || bRecentlySaved[i]->get_active () || bTrash->get_active ()  || nonTrashedActive ||
     	                          anyRankFilterActive || anyCLabelFilterActive || anyEditedFilterActive;
     }
     if( options.rtSettings.verbose ){
@@ -1318,7 +1346,8 @@ BrowserFilter FileCatalog::getFilter () {
     	(anyRankFilterActive && anyRecentlySavedFilterActive ) ||
     	(anyCLabelFilterActive && anyEditedFilterActive ) ||
     	(anyCLabelFilterActive && anyRecentlySavedFilterActive ) ||
-        (anyEditedFilterActive && anyRecentlySavedFilterActive)){
+        (anyEditedFilterActive && anyRecentlySavedFilterActive) ||
+        (nonTrashedActive && (anyRankFilterActive || anyCLabelFilterActive || anyEditedFilterActive || anyRecentlySavedFilterActive))){
 
     	filter.multiselect = true;
     	filter.showRanked[0] = anyRankFilterActive?bUnRanked->get_active ():true;
@@ -1343,7 +1372,7 @@ BrowserFilter FileCatalog::getFilter () {
     }
 
 
-    filter.showTrash = bFilterClear->get_active() || bTrash->get_active ();
+    filter.showTrash = bTrash->get_active () || !bNotTrash->get_active ();
     filter.showNotTrash = !bTrash->get_active ();
     if (!filterPanel)
 		filter.exifFilterEnabled = false;
