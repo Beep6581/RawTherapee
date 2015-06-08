@@ -1,0 +1,32 @@
+The repository tools/source_icons contains source icons (in SVG format) and the script to generate PNG icons for both Dark and Light themes.
+
+tools/source_icons/scalable
+---------------------------
+- Contains icons in SVG format.
+- A sidecar *.file for each *.svg file.
+- The sidecar *.file has the following format:
+	-> Fields are separated by a comma.
+	-> The first field defines the PNG filename to be created.
+	-> The second field indicates either the width (e.g. w22) or the height (e.g. h16) in pixels for the PNG file.
+	-> The third field is optional. It indicates the icon category (e.g. actions, devices, places). If not indicated, the icon is assumed to belong to "actions".
+
+tools/source_icons/script
+-------------------------
+- The main script which creates the icons is make_all_icon_theme.bash
+- Launch:
+    ./make_all_icon_theme.bash /path/to/new/svg/icons/ /tmp/png
+- An archive with all the icons will be created in /tmp/png
+
+Guidelines for icon name
+------------------------
+- Use stock item names when prebuilt icons exist (e.g. gtk-open.png). See http://developer.gnome.org/gtk/2.24/gtk-Stock-Items.html
+- Use "-" to separate words (e.g. panel-to-left.png)
+- Avoid the use of the icon's size as a suffix in the filename (colour.png and not colour-24.png). If needed, use the suffix -large or -small (gtk-close-small.png).
+
+How to easily work with new icons
+---------------------------------
+1- Have a dir which contains only the new SVG files
+2- Creates a .file for each .svg (change "w22" and "actions" as needed, explained above):
+     for f in *.svg; do printf "%s\n" "${f%%.*}.png,w22,actions" > "${f%%.*}.file"; done
+3- Makes the PNG icons (you need to run the script from it's containing dir):
+     cd ~/rawtherapee/tools/source_icons/script && ./make_all_icon_theme.bash /path/to/new/svg/icons/ /tmp/png

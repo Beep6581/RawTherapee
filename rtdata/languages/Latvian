@@ -1,0 +1,1802 @@
+#01 YYYY-MM-DD by nickname
+
+ADJUSTER_RESET_TO_DEFAULT;Atmest uz noklusēto
+CURVEEDITOR_LINEAR;Lineāri
+CURVEEDITOR_LOADDLGLABEL;Ielādēt līkni...
+CURVEEDITOR_SAVEDLGLABEL;Saglabāt līkni...
+CURVEEDITOR_TOOLTIPLINEAR;Iztaisnot līkni
+CURVEEDITOR_TOOLTIPLOAD;Ielādēt līkni no faila
+CURVEEDITOR_TOOLTIPSAVE;Saglabāt esošo līkni
+DIRBROWSER_FOLDERS;Mapes
+EXIFFILTER_APERTURE;Atvērums
+EXIFFILTER_CAMERA;Kamera
+EXIFFILTER_FOCALLEN;Fokusa garums
+EXIFFILTER_ISO;ISO
+EXIFFILTER_LENS;Lēca
+EXIFFILTER_SHUTTER;Slēdzis
+EXIFPANEL_ADDEDITHINT;Pielikt jaunu birku vai labot birku
+EXIFPANEL_ADDEDIT;Pielikt/Labot
+EXIFPANEL_ADDTAGDLG_ENTERVALUE;Ievadiet vērtību
+EXIFPANEL_ADDTAGDLG_SELECTTAG;Izvēlēt birku
+EXIFPANEL_ADDTAGDLG_TITLE;Pielikt/Labot birku
+EXIFPANEL_KEEPHINT;Atstāt izvēlētās birkas kad raksta izvades failu
+EXIFPANEL_KEEP;Atstāt
+EXIFPANEL_REMOVEHINT;Noņemt izvēlētās birkas kad raksta izvades failu
+EXIFPANEL_REMOVE;Noņemt
+EXIFPANEL_RESETALLHINT;Atmest visas birkas uz to noklusētajām vērtībām
+EXIFPANEL_RESETALL;Atmest visu
+EXIFPANEL_RESETHINT;Atmest izvēlētās birkas uz to noklusētajām vērtībām
+EXIFPANEL_RESET;Atmest
+EXIFPANEL_SUBDIRECTORY;Subdirektorijs
+FILEBROWSER_APPLYPROFILE;Lietot profilu
+FILEBROWSER_CLEARPROFILE;Notīrīt profilu
+FILEBROWSER_COPYPROFILE;Kopēt profilu
+FILEBROWSER_DELETEDLGLABEL;Faila dzēšanas apstiprinājums
+FILEBROWSER_DELETEDLGMSG;Vai tiešām dzēst %1 atzīmētos filus?
+FILEBROWSER_EMPTYTRASHHINT;Galīgi izdzēst atkritnes failus
+FILEBROWSER_EMPTYTRASH;Izmest atkritumus
+FILEBROWSER_PARTIALPASTEPROFILE;Daļēja ielīmēšana
+FILEBROWSER_PASTEPROFILE;Ielīmēt profilu
+FILEBROWSER_POPUPCANCELJOB;Atcelt darbu
+FILEBROWSER_POPUPMOVEEND;Pārvietot uz rindas beigām
+FILEBROWSER_POPUPMOVEHEAD;Pārvietot uz rindas sākumu
+FILEBROWSER_POPUPOPENINEDITOR;Atvērt redaktorā
+FILEBROWSER_POPUPOPEN;Atvērt
+FILEBROWSER_POPUPPROCESS;Ielikt apstrādes rindā
+FILEBROWSER_POPUPREMOVE;Dzēst no failu sistēmas
+FILEBROWSER_POPUPRENAME;Pārsaukt
+FILEBROWSER_POPUPSELECTALL;Atzīmēt visu
+FILEBROWSER_POPUPTRASH;Izmest atkritnē
+FILEBROWSER_POPUPUNRANK;Nevērtēt
+FILEBROWSER_POPUPUNTRASH;Izņemt no atkritnes
+FILEBROWSER_RENAMEDLGLABEL;Pārsaukt failu
+FILEBROWSER_RENAMEDLGMSG;Pārsaukt failu "%1" uz:
+FILEBROWSER_SHOWDIRHINT;Rādīt visus direktorija attēlus
+FILEBROWSER_SHOWRANK1HINT;Rādīt attēlus ar 1 zvaigzni
+FILEBROWSER_SHOWRANK2HINT;Rādīt attēlus ar 2 zvaigznēm
+FILEBROWSER_SHOWRANK3HINT;Rādīt attēlus ar 3 zvaigznēm
+FILEBROWSER_SHOWRANK4HINT;Rādīt attēlus ar 4 zvaigznēm
+FILEBROWSER_SHOWRANK5HINT;Rādīt attēlus ar 5 zvaigznēm
+FILEBROWSER_SHOWTRASHHINT;Rādīt atkritni
+FILEBROWSER_SHOWUNRANKHINT;Rādīt nevērtētus attēlus
+FILEBROWSER_STARTPROCESSINGHINT;Sākt attēlu rindas apstrādi/saglabāšanu
+FILEBROWSER_STARTPROCESSING;Sākt apstrādi
+FILEBROWSER_STOPPROCESSINGHINT;Apturēt attēlu apstrādi
+FILEBROWSER_STOPPROCESSING;Apturēt apstrādi
+FILEBROWSER_THUMBSIZE;Sīktēlu izmērs
+FILEBROWSER_ZOOMINHINT;Palielināt sīktēlus
+FILEBROWSER_ZOOMOUTHINT;Samazināt sīktēlus
+GENERAL_ABOUT;Par
+GENERAL_CANCEL;Atcelt
+GENERAL_DISABLED;Atslēgts
+GENERAL_DISABLE;Atslēgt
+GENERAL_ENABLED;Ieslēgts
+GENERAL_ENABLE;Ieslēgt
+GENERAL_LANDSCAPE;Ainava
+GENERAL_NA;n/a
+GENERAL_NO;Nē
+GENERAL_OK;Labi
+GENERAL_PORTRAIT;Portrets
+GENERAL_SAVE;Saglabāt
+HISTOGRAM_TOOLTIP_B;Rādīt/Slēpt Zilā histogrammu
+HISTOGRAM_TOOLTIP_G;Rādīt/Slēpt Zaļā histogrammu
+HISTOGRAM_TOOLTIP_L;Rādīt/Slēpt CIELAB Spīduma histogrammu
+HISTOGRAM_TOOLTIP_R;Rādīt/Slēpt Sarkanā histogrammu
+HISTORY_CHANGED;Mainīts
+HISTORY_CUSTOMCURVE;Pielāgota līkne
+HISTORY_DELSNAPSHOT;Noņemt grāmtzīmi
+HISTORY_FROMCLIPBOARD;No starplikas
+HISTORY_LABEL;Vēsture
+HISTORY_MSG_1;Attēls ielādēts
+HISTORY_MSG_2;Profils ielādēts
+HISTORY_MSG_3;Profils izmainīts
+HISTORY_MSG_4;Vēstures pārlūkošana
+HISTORY_MSG_5;Gaišums
+HISTORY_MSG_6;Kontrasts
+HISTORY_MSG_7;Melnais
+HISTORY_MSG_8;Ekspozīcijas labošana
+HISTORY_MSG_9;Izgaismojumu spiešana
+HISTORY_MSG_10;Ēnu spiešana
+HISTORY_MSG_11;Toņa līkne
+HISTORY_MSG_12;Auto Ekspozīcija
+HISTORY_MSG_13;Ekspozīcijas cirpšana
+HISTORY_MSG_14;Spīduma Gaišums
+HISTORY_MSG_15;Spīduma Kontrasts
+HISTORY_MSG_16;Spīduma Melnais
+HISTORY_MSG_17;Spīduma Izgaismojumu spiešana
+HISTORY_MSG_18;Spīduma Ēnu spiešana
+HISTORY_MSG_19;Spīduma Līkne
+HISTORY_MSG_20;Asināšana
+HISTORY_MSG_21;Asināšanas radiuss
+HISTORY_MSG_22;Asināšanas apjoms
+HISTORY_MSG_23;Asināšanas slieksnis
+HISTORY_MSG_24;Asināt tikai malas
+HISTORY_MSG_25;Asināšanas malu meklēšanas radiuss
+HISTORY_MSG_26;Asināšanas malu iecietība
+HISTORY_MSG_27;Asināšanas caurumu kontrole
+HISTORY_MSG_28;Caurumu kontroles apjoms
+HISTORY_MSG_29;Asināšanas metode
+HISTORY_MSG_30;Atritināšanas radiuss
+HISTORY_MSG_31;Atritināšanas apjoms
+HISTORY_MSG_32;Atritināšanas slāpēšana
+HISTORY_MSG_33;Atritināšanas soļi
+HISTORY_MSG_34;Izvairīties no krāsu cirpšanas
+HISTORY_MSG_35;Piesātinājuma ierobežojums
+HISTORY_MSG_36;Piesātinājuma robeža
+HISTORY_MSG_37;Krāsu pastiprināšana
+HISTORY_MSG_38;Baltā līdzsvara metode
+HISTORY_MSG_39;Krāsu temperatūra
+HISTORY_MSG_40;Baltā līdzsvara nokrāsa
+HISTORY_MSG_41;Krāsu nobīde "A"
+HISTORY_MSG_42;Krāsu nobīde "B"
+HISTORY_MSG_43;Spīduma trokšņu slāpēšana
+HISTORY_MSG_44;Spož. trokšņu slāpēšanas radiuss
+HISTORY_MSG_45;Spož. trokšņu slāpēšanas malu iecietība
+HISTORY_MSG_46;Krāsu trokšņu slāpēšana
+HISTORY_MSG_47;Krāsu trokšņu slāpēšanas radiuss
+HISTORY_MSG_48;Krāsu trokšņu slāpēšanas malu iecietība
+HISTORY_MSG_49;Krāsu trokšņu slāpēšanas malu jutīgums
+HISTORY_MSG_50;Ēnu/Izgaismojumu rīks
+HISTORY_MSG_51;Izgaismojumu pastiprināšana
+HISTORY_MSG_52;Ēnu pastiprināšana
+HISTORY_MSG_53;Izgaismojumu toņa platums
+HISTORY_MSG_54;Ēnu toņa platums
+HISTORY_MSG_55;Vietējais kontrasts
+HISTORY_MSG_56;Ēnu/Izgaismojumu radiuss
+HISTORY_MSG_57;Raupja pagriešana
+HISTORY_MSG_58;Horizontāla apmešana
+HISTORY_MSG_59;Vertikāla apmešana
+HISTORY_MSG_60;Pagriešana
+HISTORY_MSG_61;Pagriešana
+HISTORY_MSG_62;Lēcu kropļojumu labošana
+HISTORY_MSG_63;Grāmatzīme izvēlēta
+HISTORY_MSG_64;Kadrējums
+HISTORY_MSG_65;Krāsu nobīdes labošana
+HISTORY_MSG_66;Izgaismojumu atgūšana
+HISTORY_MSG_67;Izgaismojumu atgūšanas apjoms
+HISTORY_MSG_68;Izgaismojumu atgūšanas metode
+HISTORY_MSG_69;Krāsu telpa darbam
+HISTORY_MSG_70;Krāsu telpa izvadei
+HISTORY_MSG_71;Ievades krāsu telpa
+HISTORY_MSG_72;Vinjetes labošana
+HISTORY_MSG_73;Kanālu jaucējs
+HISTORY_MSG_74;Izmēra mērogs
+HISTORY_MSG_75;Izmērmaiņas metode
+HISTORY_MSG_76;Exif metadati
+HISTORY_MSG_77;IPTC metadati
+HISTORY_MSG_78;Norādīti izmērmaiņas dati
+HISTORY_MSG_79;Izmērmaiņas platums
+HISTORY_MSG_80;Izmērmaiņas augstums
+HISTORY_MSG_81;Izmērmaiņa ieslēgta
+HISTORY_NEWSNAPSHOT;Jauna grāmtzīme
+HISTORY_SNAPSHOTS;Grāmtzīmes
+HISTORY_SNAPSHOT;Grāmtzīme
+IPTCPANEL_AUTHORSPOSITIONHINT;Objekta radītāja amapts (By-line Title).
+IPTCPANEL_AUTHORSPOSITION;Autora amats
+IPTCPANEL_AUTHOR;Autors
+IPTCPANEL_CAPTIONHINT;Datu tekstveida apraksts (Caption - Abstract)
+IPTCPANEL_CAPTIONWRITERHINT;Personas vārfds, kura ir iesaistīta attēla, virsraksta vai kopsavilkuma rakstīšanā, rediģēšanā vai labošānā (Writer - Editor)
+IPTCPANEL_CAPTIONWRITER;Virsraksta autors
+IPTCPANEL_CAPTION;Virsraksts
+IPTCPANEL_CATEGORYHINT;Attēla radītājs identificē attēla subjektu (Category).
+IPTCPANEL_CATEGORY;Kategorija
+IPTCPANEL_CITYHINT;Attēla izcelsmes pilsēta (City).
+IPTCPANEL_CITY;Pilsēta
+IPTCPANEL_COPYHINT;Kopēt IPTC iestatījumus uz starpliku
+IPTCPANEL_COPYRIGHTHINT;Jebkāds nepieciešamais brīdinājums par autortiesībām (Copyright Notice).
+IPTCPANEL_COPYRIGHT;Autortiesības
+IPTCPANEL_COUNTRYHINT;Attēla sākotnējās izveidošanas valsts (Country - Primary Location Name).
+IPTCPANEL_COUNTRY;Valsts
+IPTCPANEL_CREDITHINT;Identificē attēla sniedzēju, nav obligāti radītājs vai īpašnieks (Credit).
+IPTCPANEL_CREDIT;Pateicība
+IPTCPANEL_DATECREATEDHINT;Attēla intelektuālā satura radīšanas datums; Formāts: ggggmmdd (Date Created).
+IPTCPANEL_DATECREATED;Izveidošanas datums
+IPTCPANEL_EMBEDDEDHINT;Attiestatīt uz attēla iegultajiem IPTC datiem
+IPTCPANEL_EMBEDDED;Iegultais
+IPTCPANEL_HEADLINEHINT;Publicējams raksts, kas satur attēla konspektu (Headline).
+IPTCPANEL_HEADLINE;Konspekts
+IPTCPANEL_INSTRUCTIONSHINT;Citi redaktora norādījumi par attēla lietošanu (Special Instructions).
+IPTCPANEL_INSTRUCTIONS;Norādījumi
+IPTCPANEL_KEYWORDSHINT;Norāda vārdus specifiskas informācijas iegūšanai (Keywords).
+IPTCPANEL_KEYWORDS;Atslēgvārdi
+IPTCPANEL_PASTEHINT;Ielīmēt IPTC iestatījumus no starplikas
+IPTCPANEL_PROVINCEHINT;Attēla izcelsmes valsts vai province (Province-State).
+IPTCPANEL_PROVINCE;Province
+IPTCPANEL_RESETHINT;Atiestatīt uz profila noklusējumu
+IPTCPANEL_RESET;Atiestate
+IPTCPANEL_SOURCEHINT;Attēla intelektuālā īpašuma īpašnieks (Source).
+IPTCPANEL_SOURCE;Avots
+IPTCPANEL_SUPPCATEGORIESHINT;Precizē attēla subjektu (Supplemental Categories).
+IPTCPANEL_SUPPCATEGORIES;Apakškategorija
+IPTCPANEL_TITLEHINT;Attēla saīsināts nosaukums (Object Name).
+IPTCPANEL_TITLE;Nosaukums
+IPTCPANEL_TRANSREFERENCEHINT;Kods, kas norāda uz attēla sākotnējas pārneses vietu (Original Transmission Reference).
+IPTCPANEL_TRANSREFERENCE;Pārneses atsauce
+MAIN_BUTTON_PREFERENCES;Iestatījumi
+MAIN_BUTTON_SAVE;Saglabāt attēlu
+MAIN_BUTTON_SENDTOEDITOR;Sūtīt uz redaktoru
+MAIN_FRAME_BATCHQUEUE;Batch Queue 
+MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES;Places 
+MAIN_FRAME_PLACES_ADD;Add
+MAIN_FRAME_PLACES_DEL;Del
+MAIN_FRAME_RECENT;Recent Folders 
+MAIN_MSG_ALREADYEXISTS;Fails jau ir.
+MAIN_MSG_CANNOTLOAD;Nevaru ielādēt attēlu
+MAIN_MSG_CANNOTSAVE;Faila saglabāšanas kļūda
+MAIN_MSG_CANNOTSTARTEDITOR;Nevar uzsākt redaktoru.
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Lūdzu ievadiet pareizu ceļu dialogā "Uzstādījumi".
+MAIN_MSG_QOVERWRITE;Vai pārrakstīt to?
+MAIN_TAB_COLOR;Krāsa
+MAIN_TAB_DETAIL;Detaļas
+MAIN_TAB_DEVELOP;Develop
+MAIN_TAB_EXIF;Exif
+MAIN_TAB_EXPOSURE;Ekspozīcija
+MAIN_TAB_FILTER;Filter
+MAIN_TAB_IPTC;IPTC
+MAIN_TAB_METADATA;Metadati
+MAIN_TAB_TRANSFORM;Pārveidot
+MAIN_TOOLTIP_HIDEHP;Rādīt/slēpt kreiso ielaidumu (ieskaitot vēsturi, saīsne: H)
+MAIN_TOOLTIP_INDCLIPPEDH;Izgaismojumu cirpšanas pazīme
+MAIN_TOOLTIP_INDCLIPPEDS;Ēnu cirpšanas pazīme
+MAIN_TOOLTIP_QINFO;Ātrā info uz attēla
+PARTIALPASTE_BASICGROUP;Pamata uzstādījumi
+PARTIALPASTE_CACORRECTION;Krāsu novirzes labošana
+PARTIALPASTE_COARSETRANS;90 grādu rotēšana / apmešana
+PARTIALPASTE_COLORGROUP;Krāsu uzstādījumi
+PARTIALPASTE_COMPOSITIONGROUP;Kompozīcijas uzstādījumi
+PARTIALPASTE_CROP;Apcirpt
+PARTIALPASTE_DIALOGLABEL;Daļēji ielīmēt apstrādes profilu
+PARTIALPASTE_DISTORTION;Kropļojumu labošana
+PARTIALPASTE_EXIFCHANGES;exif datu izmaiņas
+PARTIALPASTE_EXPOSURE;Ekspozīcija
+PARTIALPASTE_ICMSETTINGS;ICM uzstādījumi
+PARTIALPASTE_IPTCINFO;IPTC info
+PARTIALPASTE_LENSGROUP;Lēcas uzstādījumi
+PARTIALPASTE_METAGROUP;Metadati
+PARTIALPASTE_RESIZE;Izmērmaiņa
+PARTIALPASTE_ROTATION;Rotācija
+PARTIALPASTE_SHADOWSHIGHLIGHTS;Ēnas/izgaismojumi
+PARTIALPASTE_SHARPENING;Asināšana
+PARTIALPASTE_VIGNETTING;Vinjetes labošana
+PARTIALPASTE_WHITEBALANCE;Baltā līdzsvarss
+PREFERENCES_APPLNEXTSTARTUP;lietos nākamā reizē
+PREFERENCES_CACHECLEARALL;Attīrīt visu
+PREFERENCES_CACHECLEARPROFILES;Attīrīt Profilus
+PREFERENCES_CACHECLEARTHUMBS;Attīrīt sīktēlus
+PREFERENCES_CACHEMAXENTRIES;Maksimālais keša ierakstu skaits
+PREFERENCES_CACHEOPTS;Keša opcijas
+PREFERENCES_CACHETHUMBHEIGHT;Keša maksimālais sīktēla augstums
+PREFERENCES_CLIPPINGIND;Cirpšanas pazīme
+PREFERENCES_CMETRICINTENT;Kolorimetrijas nolūks
+PREFERENCES_DATEFORMATHINT;Jūs varat lietot šāduas formatēšanas parametrus:\n%y : gads\n%m : mēnesis\n%d : diena\n\nPiemēram, ungāru datuma formāts ir:\n%y/%m/%d
+PREFERENCES_DATEFORMAT;Datuma formāts
+PREFERENCES_DEFAULTLANG;Noklusētā valoda
+PREFERENCES_DEFAULTTHEME;Noklusētā tēma
+PREFERENCES_DIRHOME;Mājas mape
+PREFERENCES_DIRLAST;Pēdējā lietotā mape
+PREFERENCES_DIROTHER;Cita
+PREFERENCES_DIRSELECTDLG;Izvēlies attēlu mapi sākumam...
+PREFERENCES_DIRSOFTWARE;Uzstādīšanas mape
+PREFERENCES_EDITORCMDLINE;Cita komandrinda
+PREFERENCES_EXTERNALEDITOR;Ārējais redaktors
+PREFERENCES_FBROWSEROPTS;Failu pārlūka iespējas
+PREFERENCES_FILEFORMAT;Faila formāts
+PREFERENCES_FORIMAGE;Attēlu failiem
+PREFERENCES_FORRAW;RAW failiem
+PREFERENCES_GIMPPATH;GIMP instalācijas direktorijs
+PREFERENCES_HLTHRESHOLD;Cirpto izgaismojumu slieksnis
+PREFERENCES_ICCDIR;ICC profilu mape
+PREFERENCES_IMPROCPARAMS;Noklusētie attēla apstrādes parametri
+PREFERENCES_INTENT_ABSOLUTE;Absolūtā kolorimetrija
+PREFERENCES_INTENT_PERCEPTUAL;Uztverams
+PREFERENCES_INTENT_RELATIVE;Relatīvā kolorimetrija
+PREFERENCES_INTENT_SATURATION;Piesātinājums
+PREFERENCES_MONITORICC;Monitora Profils
+PREFERENCES_OUTDIRFOLDERHINT;Likt saglabātos attēlus norādītajā mapē
+PREFERENCES_OUTDIRFOLDER;Saglabāt mapē
+PREFERENCES_OUTDIRTEMPLATEHINT;Jūs varat lietot šādas formatēšanas virknes:\n%f, %d1, %d2, ..., %p1, %p2, ...\n\nŠīs formatēšanas virknes attiecas uz direktorijiem un RAW faila apakšceļiem.\n\nPiemēram, ja ir atvērts /home/tom/image/02-09-2006/dsc0012.nef, formatējuma virkņu nozīme ir:\n%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n\nJa vēlaties rezultātu saglabāt turpat pie oriģināla, rakstiet:\n%p1/%f\n\nJa vēlaties rezultātu saglabāt direktorijā 'converted' pie oriģināla, rakstiet:\n%p1/converted/%f\n\nJa vēlaties rezultātu saglabāt direktorijā '/home/tom/converted' paturot to pašu datumu apakšdirektoriju, rakstiet:\n%p2/converted/%d1/%f
+PREFERENCES_OUTDIRTEMPLATE;Lietot veidni
+PREFERENCES_OUTDIR;Izvades mape
+PREFERENCES_PARSEDEXTADDHINT;Ierakstiet paplašinājumu un nospiediet šo pogu lai pievienotu sarakstam
+PREFERENCES_PARSEDEXTADD;Pielikt paplašinājumu
+PREFERENCES_PARSEDEXTDELHINT;Dzēst atzīmēto paplašinājumu no saraksta
+PREFERENCES_PARSEDEXT;Parsētie paplašīnājumi
+PREFERENCES_PROFILEHANDLING;Apstrādes profilu politika
+PREFERENCES_PROFILELOADPR;Profilu ielādes prioritāte
+PREFERENCES_PROFILEPRCACHE;Profils kešā
+PREFERENCES_PROFILEPRFILE;Profils pie ievades faila
+PREFERENCES_PROFILESAVECACHE;Saglabāt apstrādes profilu kešā
+PREFERENCES_PROFILESAVEINPUT;Saglabāt apstrādes profilu pie ievades faila
+PREFERENCES_PSPATH;Adobe Photoshop instalācijas direktorijs
+PREFERENCES_SELECTLANG;Izvēlies valodu
+PREFERENCES_SELECTTHEME;Izvēlieties tēmu
+PREFERENCES_SHOWBASICEXIF;Rādīt Exif pamatdatus
+PREFERENCES_SHOWDATETIME;Rādīt datumu un laiku
+PREFERENCES_SHTHRESHOLD;Cirpto ēnu slieksnis
+PREFERENCES_STARTUPIMDIR;Attēlu mape sākumā
+PREFERENCES_TAB_BROWSER;Failu pārlūks
+PREFERENCES_TAB_COLORMGR;Krāsu pārvaldība
+PREFERENCES_TAB_GENERAL;Vispārīgi
+PREFERENCES_TAB_IMPROC;Attēlu apstrāde
+PROFILEPANEL_LABEL;Apstrādes profili
+PROFILEPANEL_LOADDLGLABEL;Ielādēt apstrādes profilu...
+PROFILEPANEL_PCUSTOM;Pielāgots
+PROFILEPANEL_PFILE;No faila
+PROFILEPANEL_PLASTSAVED;Pēdējais saglabātais
+PROFILEPANEL_SAVEDLGLABEL;Saglabāt apstrādes profilu...
+PROFILEPANEL_TOOLTIPCOPY;Kopēt esošo profilu uz starpliku
+PROFILEPANEL_TOOLTIPLOAD;Ielādēt profilu no faila
+PROFILEPANEL_TOOLTIPPASTE;Ielīmēt profilu no starplikas
+PROFILEPANEL_TOOLTIPSAVE;Saglabāt šībrīža profilu
+PROGRESSBAR_LOADING;Attēla ielāde...
+PROGRESSBAR_LOADJPEG;Ielādēju JPEG failu...
+PROGRESSBAR_LOADPNG;Ielādēju PNG failu...
+PROGRESSBAR_LOADTIFF;Ielādēju TIFF failu...
+PROGRESSBAR_PROCESSING;Attēla apstrāde...
+PROGRESSBAR_READY;Gatavs
+PROGRESSBAR_SAVEJPEG;Saglabāju JPEG failu...
+PROGRESSBAR_SAVEPNG;Saglabāju PNG failu...
+PROGRESSBAR_SAVETIFF;Saglabāju TIFF failu...
+QINFO_ISO;ISO
+QINFO_NOEXIF;Exif dati nav pieejami.
+SAVEDLG_FILEFORMAT;Faila formāts
+SAVEDLG_JPEGQUAL;JPEG Kvalitāte
+SAVEDLG_PNGCOMPR;PNG Spiešana
+SAVEDLG_PUTTOQUEUEHEAD;Likt apstrādes rindas sākumā
+SAVEDLG_PUTTOQUEUETAIL;Likt apstrādes rindas beigās
+SAVEDLG_PUTTOQUEUE;Likt apstrādes rindā
+SAVEDLG_SAVEIMMEDIATELY;Saglabāt tūlīt
+SAVEDLG_SAVESPP;Saglabāt apstrādes profilu ar attēlu
+TOOLBAR_TOOLTIP_CROP;Kadrēšanas rīks (saīsne: C)
+TOOLBAR_TOOLTIP_HAND;Plaukstas rīks (saīsne: N)
+TOOLBAR_TOOLTIP_STRAIGHTEN;Līmeņošanas rīks (saīsne: S)
+TOOLBAR_TOOLTIP_WB;Punkta baltā līdzsvara rīks (saīsne: W)
+TP_CACORRECTION_BLUE;Zils
+TP_CACORRECTION_LABEL;Lēcas krāsu nobīdes
+TP_CACORRECTION_RED;Sarkans
+TP_CHMIXER_BLUE;Zils
+TP_CHMIXER_GREEN;Zaļš
+TP_CHMIXER_LABEL;Kanālu jaucējs
+TP_CHMIXER_RED;Sarkans
+TP_COARSETRAF_TOOLTIP_HFLIP;Apmest horizontāli
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Pagriezt pa kreisi
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Pagriezt pa labi
+TP_COARSETRAF_TOOLTIP_VFLIP;Apmest vertikāli
+TP_CROP_FIXRATIO;Attiecība:
+TP_CROP_GTDIAGONALS;Diagonāles
+TP_CROP_GTNONE;Nekādas
+TP_CROP_GTRULETHIRDS;Trešdaļas
+TP_CROP_GUIDETYPE;Vadlīnijas:
+TP_CROP_H;A
+TP_CROP_LABEL;Kadrējums
+TP_CROP_SELECTCROP;    Norādīt kadrējumu
+TP_CROP_W;P
+TP_CROP_X;x
+TP_CROP_Y;y
+TP_DISTORTION_AMOUNT;Apjoms
+TP_DISTORTION_LABEL;Lēcas kropļojums
+TP_EXPOSURE_AUTOLEVELS;Auto Līmeņi
+TP_EXPOSURE_BLACKLEVEL;Melnais
+TP_EXPOSURE_BRIGHTNESS;Gaišums
+TP_EXPOSURE_CLIP;Cirpt
+TP_EXPOSURE_COMPRHIGHLIGHTS;Izgaismojumu spiešana
+TP_EXPOSURE_COMPRSHADOWS;Ēnu spiešana
+TP_EXPOSURE_CONTRAST;Kontrasts
+TP_EXPOSURE_CURVEEDITOR;Toņa līkne
+TP_EXPOSURE_EXPCOMP;Eksp. nobīde
+TP_EXPOSURE_LABEL;Ekspozīcija
+TP_HLREC_CIELAB;CIELab maisījums
+TP_HLREC_COLOR;Krāsu pavairošana
+TP_HLREC_LABEL;Izgaismojumu atgūšana
+TP_HLREC_LUMINANCE;Spīduma atgūšana
+TP_HLREC_METHOD;Metode:
+TP_ICM_INPUTCAMERA;Kameras noklusētais
+TP_ICM_INPUTCUSTOM;Pielāgots
+TP_ICM_INPUTDLGLABEL;Izvēlies Ievades ICC Profilu...
+TP_ICM_INPUTEMBEDDED;Lietot iegulto, ja var
+TP_ICM_INPUTPROFILE;Ievades profils
+TP_ICM_LABEL;ICM
+TP_ICM_NOICM;Bez ICM: sRGB izvade
+TP_ICM_OUTPUTPROFILE;Izvades profils
+TP_ICM_SAVEREFERENCE;Saglabāt atsauces attēlu profila izveidei
+TP_ICM_WORKINGPROFILE;Darba profils
+TP_RAW_DMETHOD;Metode
+TP_RAW_FALSECOLOR;Neīsto krāsu slāpēšanas soļi
+TP_RESIZE_H;A:
+TP_RESIZE_LABEL;Izmērmaiņa
+TP_RESIZE_METHOD;Metode:
+TP_RESIZE_NEAREST;Tuvākais
+TP_RESIZE_SCALE;Mērogs
+TP_RESIZE_W;P:
+TP_ROTATE_DEGREE;Grādi
+TP_ROTATE_LABEL;Pagriezt
+TP_ROTATE_SELECTLINE;    Norādīt līmeni
+TP_SHADOWSHLIGHTS_HIGHLIGHTS;Izgaismojumi
+TP_SHADOWSHLIGHTS_HLTONALW;Toņa platums
+TP_SHADOWSHLIGHTS_LABEL;Ēnas/Izgaismojumi
+TP_SHADOWSHLIGHTS_LOCALCONTR;Vietējais kontrasts
+TP_SHADOWSHLIGHTS_RADIUS;Radiuss
+TP_SHADOWSHLIGHTS_SHADOWS;Ēnas
+TP_SHADOWSHLIGHTS_SHTONALW;Toņa platums
+TP_SHARPENING_AMOUNT;Apjoms
+TP_SHARPENING_EDRADIUS;Radiuss
+TP_SHARPENING_EDTOLERANCE;Iecietība pret malām
+TP_SHARPENING_HALOCONTROL;Caurumu kontole
+TP_SHARPENING_HCAMOUNT;Apjoms
+TP_SHARPENING_LABEL;Asināšana
+TP_SHARPENING_METHOD;Metode
+TP_SHARPENING_ONLYEDGES;Asināt tikai malas
+TP_SHARPENING_RADIUS;Radiuss
+TP_SHARPENING_RLD;RL atritināšana
+TP_SHARPENING_RLD_AMOUNT;Apjoms
+TP_SHARPENING_RLD_DAMPING;Slāpēšana
+TP_SHARPENING_RLD_ITERATIONS;Soļi
+TP_SHARPENING_THRESHOLD;Slieksnis
+TP_SHARPENING_USM;Neasā maska
+TP_VIGNETTING_AMOUNT;Apjoms
+TP_VIGNETTING_LABEL;Vinjetes Labošana
+TP_VIGNETTING_RADIUS;Radiuss
+TP_WBALANCE_AUTO;Auto
+TP_WBALANCE_CAMERA;Kamera
+TP_WBALANCE_CUSTOM;Pielāgots
+TP_WBALANCE_GREEN;Nokrāsa
+TP_WBALANCE_LABEL;Baltā līdzsvars
+TP_WBALANCE_METHOD;Metode
+TP_WBALANCE_SIZE;izmērs:
+TP_WBALANCE_SPOTWB;Punkta BL
+TP_WBALANCE_TEMPERATURE;Temperatūra
+﻿#
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!ABOUT_TAB_BUILD;Version
+!ABOUT_TAB_CREDITS;Credits
+!ABOUT_TAB_LICENSE;License
+!ABOUT_TAB_RELEASENOTES;Release Notes
+!ABOUT_TAB_SPLASH;Splash
+!BATCHQUEUE_AUTOSTART;Auto-start
+!BATCHQUEUE_DESTFILENAME;Path and file name
+!BATCH_PROCESSING;Batch Processing
+!CURVEEDITOR_CURVES;Curves
+!CURVEEDITOR_CURVE;Curve
+!CURVEEDITOR_CUSTOM;Custom
+!CURVEEDITOR_DARKS;Darks
+!CURVEEDITOR_HIGHLIGHTS;Highlights
+!CURVEEDITOR_LIGHTS;Lights
+!CURVEEDITOR_MINMAXCPOINTS;Equalizer
+!CURVEEDITOR_NURBS;Control cage
+!CURVEEDITOR_PARAMETRIC;Parametric
+!CURVEEDITOR_SHADOWS;Shadows
+!CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard.
+!CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard.
+!CURVEEDITOR_TYPE;Type:
+!EDITWINDOW_TITLE;Image Edit
+!EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
+!EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
+!EXIFFILTER_EXPOSURECOMPENSATION;Exposure compensation (EV)
+!EXIFFILTER_FILETYPE;File type
+!EXIFFILTER_METADATAFILTER;Enable metadata filters
+!EXPORT_BYPASS_ALL;Select / Unselect All
+!EXPORT_BYPASS_DEFRINGE;Bypass Defringe
+!EXPORT_BYPASS_DIRPYRDENOISE;Bypass Noise Reduction
+!EXPORT_BYPASS_DIRPYREQUALIZER;Bypass Contrast by Detail Levels
+!EXPORT_BYPASS_EQUALIZER;Bypass Wavelet Levels
+!EXPORT_BYPASS_RAW_CA;Bypass [raw] Chromatic Aberration Correction
+!EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False Color Suppression
+!EXPORT_BYPASS_RAW_DCB_ENHANCE;Bypass [raw] DCB Enhancement Steps
+!EXPORT_BYPASS_RAW_DCB_ITERATIONS;Bypass [raw] DCB Iterations
+!EXPORT_BYPASS_RAW_DF;Bypass [raw] Dark-Frame
+!EXPORT_BYPASS_RAW_FF;Bypass [raw] Flat-Field
+!EXPORT_BYPASS_RAW_GREENTHRESH;Bypass [raw] Green Equilibration
+!EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line Noise Filter
+!EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
+!EXPORT_BYPASS_SHARPENEDGE;Bypass Edge Sharpening
+!EXPORT_BYPASS_SHARPENING;Bypass Sharpening
+!EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast
+!EXPORT_BYPASS_SH_HQ;Bypass Sharp Mask Shadows/Highlights
+!EXPORT_FASTEXPORTOPTIONS;<b>Fast Export Options</b>
+!EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
+!EXPORT_MAXHEIGHT;Maximum height:
+!EXPORT_MAXWIDTH;Maximum width:
+!EXPORT_PUTTOQUEUEFAST;  Put to queue for fast export
+!EXPORT_RAW_DMETHOD;Demosaic method
+!EXTPROGTARGET_1;raw
+!EXTPROGTARGET_2;queue-processed
+!FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
+!FILEBROWSER_APPLYPROFILE_PARTIAL;Apply - partial
+!FILEBROWSER_AUTODARKFRAME;Auto dark-frame
+!FILEBROWSER_AUTOFLATFIELD;Auto flat-field
+!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path.
+!FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n\nKeyboard shortcuts:\n<b>Ctrl-o</b> to focus to the path text box.\n<b>Enter</b> / <b>Ctrl-Enter</b> to browse there;\n<b>Esc</b> to clear changes.\n<b>Shift-Esc</b> to remove focus.\n\nPath shortcuts:\n<b>~</b>	- user's home directory.\n<b>!</b>	- user's pictures directory
+!FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
+!FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
+!FILEBROWSER_CACHE;Cache
+!FILEBROWSER_COLORLABEL_TOOLTIP;Color label.\n\nUse dropdown menu or shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
+!FILEBROWSER_CURRENT_NAME;Current name:
+!FILEBROWSER_DARKFRAME;Dark-frame
+!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
+!FILEBROWSER_EXEC_CPB;Custom Profile Builder
+!FILEBROWSER_EXTPROGMENU;Open with
+!FILEBROWSER_FLATFIELD;Flat-Field
+!FILEBROWSER_MOVETODARKFDIR;Move to dark-frames directory
+!FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat-fields directory
+!FILEBROWSER_NEW_NAME;New name:
+!FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
+!FILEBROWSER_POPUPCOLORLABEL0;Label: None
+!FILEBROWSER_POPUPCOLORLABEL1;Label: Red
+!FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
+!FILEBROWSER_POPUPCOLORLABEL3;Label: Green
+!FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
+!FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
+!FILEBROWSER_POPUPCOLORLABEL;Color label
+!FILEBROWSER_POPUPCOPYTO;Copy to...
+!FILEBROWSER_POPUPFILEOPERATIONS;File operations
+!FILEBROWSER_POPUPMOVETO;Move to...
+!FILEBROWSER_POPUPPROCESSFAST;Put to queue (Fast export)
+!FILEBROWSER_POPUPPROFILEOPERATIONS;Processing profile operations
+!FILEBROWSER_POPUPRANK0;Unrank
+!FILEBROWSER_POPUPRANK1;Rank 1 *
+!FILEBROWSER_POPUPRANK2;Rank 2 **
+!FILEBROWSER_POPUPRANK3;Rank 3 ***
+!FILEBROWSER_POPUPRANK4;Rank 4 ****
+!FILEBROWSER_POPUPRANK5;Rank 5 *****
+!FILEBROWSER_POPUPRANK;Rank
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete with output from queue
+!FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
+!FILEBROWSER_QUERYHINT;Type filenames to search for. Supports partial filenames. Separate the search terms using commas, e.g.\n<i>1001,1004,1199</i>\n\nExclude search terms by prefixing them with <i>!=</i>\ne.g.\n<i>!=1001,1004,1199</i>\n\nShortcuts:\n<b>Ctrl-f</b> - focus the Find box,\n<b>Enter</b> - search,\n<b>Esc</b> - clear the Find box,\n<b>Shift-Esc</b> - defocus the Find box.
+!FILEBROWSER_QUERYLABEL; Find:
+!FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: <b>Shift-1</b>
+!FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: <b>Shift-2</b>
+!FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
+!FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>Shift-4</b>
+!FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>Shift-5</b>
+!FILEBROWSER_SELECTDARKFRAME;Select dark-frame...
+!FILEBROWSER_SELECTFLATFIELD;Select flat-field...
+!FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red.\nShortcut: <b>Alt-1</b>
+!FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yellow.\nShortcut: <b>Alt-2</b>
+!FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green.\nShortcut: <b>Alt-3</b>
+!FILEBROWSER_SHOWCOLORLABEL4HINT;Show images labeled Blue.\nShortcut: <b>Alt-4</b>
+!FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple.\nShortcut: <b>Alt-5</b>
+!FILEBROWSER_SHOWEDITEDHINT;Show edited images.\nShortcut: <b>7</b>
+!FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images.\nShortcut: <b>6</b>
+!FILEBROWSER_SHOWEXIFINFO;Show Exif info.\n\nShortcuts:\n<b>i</b> - Multiple Editor Tabs Mode,\n<b>Alt-i</b> - Single Editor Tab Mode.
+!FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show saved images.\nShortcut: <b>Alt-7</b>
+!FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show unsaved images.\nShortcut: <b>Alt-6</b>
+!FILEBROWSER_SHOWUNCOLORHINT;Show images without a color label.\nShortcut: <b>Alt-0</b>
+!FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives.
+!FILEBROWSER_UNRANK_TOOLTIP;Unrank.\nShortcut: <b>Shift-0</b>
+!FILECHOOSER_FILTER_ANY;All files
+!FILECHOOSER_FILTER_COLPROF;Color profiles
+!FILECHOOSER_FILTER_CURVE;Curve files
+!FILECHOOSER_FILTER_LCP;Lens correction profiles
+!FILECHOOSER_FILTER_PP;Processing profiles
+!FILECHOOSER_FILTER_SAME;Same format as current photo
+!FILECHOOSER_FILTER_TIFF;TIFF files
+!GENERAL_AFTER;After
+!GENERAL_AUTO;Automatic
+!GENERAL_BEFORE;Before
+!GENERAL_CLOSE;Close
+!GENERAL_FILE;File
+!GENERAL_NONE;None
+!GENERAL_UNCHANGED;(Unchanged)
+!GENERAL_WARNING;Warning
+!HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.\nRight-click on image preview to freeze/unfreeze.
+!HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
+!HISTOGRAM_TOOLTIP_FULL;Toggle full (off) or scaled (on) histogram.
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram.
+!HISTORY_MSG_82;Profile changed
+!HISTORY_MSG_83;S/H - Sharp mask
+!HISTORY_MSG_84;Perspective correction
+!HISTORY_MSG_85;LCP
+!HISTORY_MSG_86;RGB curves - Luminosity mode
+!HISTORY_MSG_87;Impulse noise reduction
+!HISTORY_MSG_88;Impulse NR threshold
+!HISTORY_MSG_89;Noise Reduction
+!HISTORY_MSG_90;NR - Luminance
+!HISTORY_MSG_91;NR - Chrominance master
+!HISTORY_MSG_92;NR - Gamma
+!HISTORY_MSG_93;CbDL - Value
+!HISTORY_MSG_94;Contrast by Detail Levels
+!HISTORY_MSG_95;L*a*b* - Chromaticity
+!HISTORY_MSG_96;L*a*b* - a* curve
+!HISTORY_MSG_97;L*a*b* - b* curve
+!HISTORY_MSG_98;Demosaicing method
+!HISTORY_MSG_99;Hot pixel filter
+!HISTORY_MSG_100;RGB Saturation
+!HISTORY_MSG_101;HSV - Hue
+!HISTORY_MSG_102;HSV - Saturation
+!HISTORY_MSG_103;HSV - Value
+!HISTORY_MSG_104;HSV Equalizer
+!HISTORY_MSG_105;Defringe
+!HISTORY_MSG_106;Defringe - Radius
+!HISTORY_MSG_107;Defringe - Threshold
+!HISTORY_MSG_108;Highlight Compr. Threshold
+!HISTORY_MSG_109;Resize - Bounding box
+!HISTORY_MSG_110;Resize - Applies to
+!HISTORY_MSG_111;L*a*b* - Avoid color shift
+!HISTORY_MSG_112;--unused--
+!HISTORY_MSG_113;L*a*b* - Protection
+!HISTORY_MSG_114;DCB iterations
+!HISTORY_MSG_115;False color suppression
+!HISTORY_MSG_116;DCB enhancement
+!HISTORY_MSG_117;Raw CA correction - Red
+!HISTORY_MSG_118;Raw CA correction - Blue
+!HISTORY_MSG_119;Line noise filter
+!HISTORY_MSG_120;Green equilibration
+!HISTORY_MSG_121;Raw CA Correction - Auto
+!HISTORY_MSG_122;Dark-Frame - Auto-selection
+!HISTORY_MSG_123;Dark-Frame - File
+!HISTORY_MSG_124;White point correction
+!HISTORY_MSG_125;Highlight preservation
+!HISTORY_MSG_126;Flat-Field - File
+!HISTORY_MSG_127;Flat-Field - Auto-selection
+!HISTORY_MSG_128;Flat-Field - Blur radius
+!HISTORY_MSG_129;Flat-Field - Blur type
+!HISTORY_MSG_130;Auto distorion correction
+!HISTORY_MSG_131;NR - Luma
+!HISTORY_MSG_132;NR - Chroma
+!HISTORY_MSG_133;Output gamma
+!HISTORY_MSG_134;Free gamma
+!HISTORY_MSG_135;Free gamma
+!HISTORY_MSG_136;Free gamma slope
+!HISTORY_MSG_137;Black level - Green 1
+!HISTORY_MSG_138;Black level - Red
+!HISTORY_MSG_139;Black level - Blue
+!HISTORY_MSG_140;Black level - Green 2
+!HISTORY_MSG_141;Black level - Link greens
+!HISTORY_MSG_142;ES - Iterations
+!HISTORY_MSG_143;ES - Quantity
+!HISTORY_MSG_144;Microcontrast - Quantity
+!HISTORY_MSG_145;Microcontrast - Uniformity
+!HISTORY_MSG_146;Edge sharpening
+!HISTORY_MSG_147;ES - Luminance only
+!HISTORY_MSG_148;Microcontrast
+!HISTORY_MSG_149;Microcontrast - 3x3 matrix
+!HISTORY_MSG_150;Post-demosaic artifact/noise reduction
+!HISTORY_MSG_151;Vibrance
+!HISTORY_MSG_152;Vib - Pastel tones
+!HISTORY_MSG_153;Vib - Saturated tones
+!HISTORY_MSG_154;Vib - Protect skin-tones
+!HISTORY_MSG_155;Vib - Avoid color shift
+!HISTORY_MSG_156;Vib - Link pastel/saturated
+!HISTORY_MSG_157;Vib - P/S threshold
+!HISTORY_MSG_158;TM - Strength
+!HISTORY_MSG_159;TM - Edge stopping
+!HISTORY_MSG_160;TM - Scale
+!HISTORY_MSG_161;TM - Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
+!HISTORY_MSG_163;RGB curves - Red
+!HISTORY_MSG_164;RGB curves - Green
+!HISTORY_MSG_165;RGB curves - Blue
+!HISTORY_MSG_166;Neutral levels
+!HISTORY_MSG_167;--unused--
+!HISTORY_MSG_168;L*a*b* - CC curve
+!HISTORY_MSG_169;L*a*b* - CH curve
+!HISTORY_MSG_170;Vibrance - HH curve
+!HISTORY_MSG_171;L*a*b* - LC curve
+!HISTORY_MSG_172;L*a*b* - Restrict LC
+!HISTORY_MSG_173;NR - Luminance detail
+!HISTORY_MSG_174;CIECAM02
+!HISTORY_MSG_175;CAM02 - CAT02 adaptation
+!HISTORY_MSG_176;CAM02 - Viewing surround
+!HISTORY_MSG_177;CAM02 - Scene luminosity
+!HISTORY_MSG_178;CAM02 - Viewing luminosity
+!HISTORY_MSG_179;CAM02 - White-point model
+!HISTORY_MSG_180;CAM02 - Lightness (J)
+!HISTORY_MSG_181;CAM02 - Chroma (C)
+!HISTORY_MSG_182;CAM02 - Automatic CAT02
+!HISTORY_MSG_183;CAM02 - Contrast (J)
+!HISTORY_MSG_184;CAM02 - Scene surround
+!HISTORY_MSG_185;CAM02 - Gamut control
+!HISTORY_MSG_186;CAM02 - Algorithm
+!HISTORY_MSG_187;CAM02 - Red/skin prot.
+!HISTORY_MSG_188;CAM02 - Brightness (Q)
+!HISTORY_MSG_189;CAM02 - Contrast (Q)
+!HISTORY_MSG_190;CAM02 - Saturation (S)
+!HISTORY_MSG_191;CAM02 - Colorfulness (M)
+!HISTORY_MSG_192;CAM02 - Hue (h)
+!HISTORY_MSG_193;CAM02 - Tone curve 1
+!HISTORY_MSG_194;CAM02 - Tone curve 2
+!HISTORY_MSG_195;CAM02 - Tone curve 1
+!HISTORY_MSG_196;CAM02 - Tone curve 2
+!HISTORY_MSG_197;CAM02 - Color curve
+!HISTORY_MSG_198;CAM02 - Color curve
+!HISTORY_MSG_199;CAM02 - Output histograms
+!HISTORY_MSG_200;CAM02 - Tone mapping
+!HISTORY_MSG_201;NR - Chrominance - R&amp;G
+!HISTORY_MSG_202;NR - Chrominance - B&amp;Y
+!HISTORY_MSG_203;NR - Method
+!HISTORY_MSG_204;LMMSE enhancement steps
+!HISTORY_MSG_205;CAM02 - Hot/bad pixel filter
+!HISTORY_MSG_206;CAT02 - Auto scene luminosity
+!HISTORY_MSG_207;Defringe - Hue curve
+!HISTORY_MSG_208;WB - B/R equalizer
+!HISTORY_MSG_210;GF - Angle
+!HISTORY_MSG_211;Graduated Filter
+!HISTORY_MSG_212;VF - Strength
+!HISTORY_MSG_213;Vignette Filter
+!HISTORY_MSG_214;Black-and-White
+!HISTORY_MSG_215;B&amp;W - CM - Red
+!HISTORY_MSG_216;B&amp;W - CM - Green
+!HISTORY_MSG_217;B&amp;W - CM - Blue
+!HISTORY_MSG_218;B&amp;W - Gamma - Red
+!HISTORY_MSG_219;B&amp;W - Gamma - Green
+!HISTORY_MSG_220;B&amp;W - Gamma - Blue
+!HISTORY_MSG_221;B&amp;W - Color filter
+!HISTORY_MSG_222;B&amp;W - Presets
+!HISTORY_MSG_223;B&amp;W - CM - Orange
+!HISTORY_MSG_224;B&amp;W - CM - Yellow
+!HISTORY_MSG_225;B&amp;W - CM - Cyan
+!HISTORY_MSG_226;B&amp;W - CM - Magenta
+!HISTORY_MSG_227;B&amp;W - CM - Purple
+!HISTORY_MSG_228;B&amp;W - Luminance equalizer
+!HISTORY_MSG_229;B&amp;W - Luminance equalizer
+!HISTORY_MSG_230;B&amp;W - Mode
+!HISTORY_MSG_231;B&amp;W - 'Before' curve
+!HISTORY_MSG_232;B&amp;W - 'Before' curve type
+!HISTORY_MSG_233;B&amp;W - 'After' curve
+!HISTORY_MSG_234;B&amp;W - 'After' curve type
+!HISTORY_MSG_235;B&amp;W - Auto channel mixer
+!HISTORY_MSG_236;--unused--
+!HISTORY_MSG_237;B&amp;W - Mixer
+!HISTORY_MSG_238;GF - Feather
+!HISTORY_MSG_239;GF - Strength
+!HISTORY_MSG_240;GF - Center
+!HISTORY_MSG_241;VF - Feather
+!HISTORY_MSG_242;VF - Roundness
+!HISTORY_MSG_243;VC - Radius
+!HISTORY_MSG_244;VC - Strength
+!HISTORY_MSG_245;VC - Center
+!HISTORY_MSG_246;L*a*b* - CL curve
+!HISTORY_MSG_247;L*a*b* - LH curve
+!HISTORY_MSG_248;L*a*b* - HH curve
+!HISTORY_MSG_249;CbDL - Threshold
+!HISTORY_MSG_250;NR - Enhanced
+!HISTORY_MSG_251;B&amp;W - Algorithm
+!HISTORY_MSG_252;CbDL - Skin-tones
+!HISTORY_MSG_253;CbDL - Reduce artifacts
+!HISTORY_MSG_254;CbDL - Skin hue
+!HISTORY_MSG_255;NR - Median filter
+!HISTORY_MSG_256;NR - Median type
+!HISTORY_MSG_257;Color Toning
+!HISTORY_MSG_258;CT - Color curve
+!HISTORY_MSG_259;CT - Opacity curve
+!HISTORY_MSG_260;CT - a*[b*] opacity
+!HISTORY_MSG_261;CT - Method
+!HISTORY_MSG_262;CT - b* opacity
+!HISTORY_MSG_263;CT - Shadows - Red
+!HISTORY_MSG_264;CT - Shadows - Green
+!HISTORY_MSG_265;CT - Shadows - Blue
+!HISTORY_MSG_266;CT - Mid - Red
+!HISTORY_MSG_267;CT - Mid - Green
+!HISTORY_MSG_268;CT - Mid - Blue
+!HISTORY_MSG_269;CT - High - Red
+!HISTORY_MSG_270;CT - High - Green
+!HISTORY_MSG_271;CT - High - Blue
+!HISTORY_MSG_272;CT - Balance
+!HISTORY_MSG_273;CT - Reset
+!HISTORY_MSG_274;CT - Sat. Shadows
+!HISTORY_MSG_275;CT - Sat. Highlights
+!HISTORY_MSG_276;CT - Opacity
+!HISTORY_MSG_277;--unused--
+!HISTORY_MSG_278;CT - Preserve luminance
+!HISTORY_MSG_279;CT - Shadows
+!HISTORY_MSG_280;CT - Highlights
+!HISTORY_MSG_281;CT - Sat. strength
+!HISTORY_MSG_282;CT - Sat. threshold
+!HISTORY_MSG_283;CT - Strength
+!HISTORY_MSG_284;CT - Auto sat. protection
+!HISTORY_MSG_285;NR - Median - Method
+!HISTORY_MSG_286;NR - Median - Type
+!HISTORY_MSG_287;NR - Median - Iterations
+!HISTORY_MSG_288;Flat Field - Clip control
+!HISTORY_MSG_289;Flat Field - Clip control - Auto
+!HISTORY_MSG_290;Black Level - Red
+!HISTORY_MSG_291;Black Level - Green
+!HISTORY_MSG_292;Black Level - Blue
+!HISTORY_MSG_293;Film Simulation
+!HISTORY_MSG_294;Film Simulation - Strength
+!HISTORY_MSG_295;Film Simulation - Film
+!HISTORY_MSG_296;NR - Luminance curve
+!HISTORY_MSG_297;NR - Quality
+!HISTORY_MSG_298;Dead pixel filter
+!HISTORY_MSG_299;NR - Chrominance curve
+!HISTORY_MSG_300;-
+!HISTORY_MSG_301;NR - Luma control
+!HISTORY_MSG_302;NR - Chroma method
+!HISTORY_MSG_303;NR - Chroma method
+!HISTORY_MSG_304;Wavelet Level
+!HISTORY_MSG_305;Wavelet Level
+!HISTORY_MSG_306;Wavelet N° level
+!HISTORY_MSG_307;Wavelet Ch level
+!HISTORY_MSG_308;Wavelet Direction
+!HISTORY_MSG_309;Wavelet Edge threshold
+!HISTORY_MSG_310;Wavelet Hue-tones sky
+!HISTORY_MSG_311;Wavelet Max Levels
+!HISTORY_MSG_312;Wavelet Shadow Threshold
+!HISTORY_MSG_313;Wavelet Pastel Saturated
+!HISTORY_MSG_314;Wavelet Artifacts blue sky
+!HISTORY_MSG_315;Wavelet Contrast Residual
+!HISTORY_MSG_316;Wavelet Skin tones
+!HISTORY_MSG_317;Wavelet Skin hue
+!HISTORY_MSG_318;Wavelet Highlight levels
+!HISTORY_MSG_319;Wavelet Highlight range
+!HISTORY_MSG_320;Wavelet Shadow range
+!HISTORY_MSG_321;Wavelet Shadow levels
+!HISTORY_MSG_322;Wavelet Avoid color shift
+!HISTORY_MSG_323;Wavelet Contrast curve
+!HISTORY_MSG_324;Wavelet Chroma pastel
+!HISTORY_MSG_325;Wavelet Chroma saturated
+!HISTORY_MSG_326;Wavelet Chroma method
+!HISTORY_MSG_327;Wavelet Contrast method
+!HISTORY_MSG_328;Wavelet Chroma link
+!HISTORY_MSG_329;Wavelet Opacity RG
+!HISTORY_MSG_330;Wavelet Opacity BY
+!HISTORY_MSG_331;Wavelet Extra
+!HISTORY_MSG_332;Wavelet Tiles Method
+!HISTORY_MSG_333;Wavelet Shadow Residual
+!HISTORY_MSG_334;Wavelet Chroma
+!HISTORY_MSG_335;Wavelet Highlight Residual
+!HISTORY_MSG_336;Wavelet Highlight threshold
+!HISTORY_MSG_337;Wavelet Hue range
+!HISTORY_MSG_338;Wavelet Edge Radius
+!HISTORY_MSG_339;Wavelet Edge Value
+!HISTORY_MSG_340;Wavelet Strength
+!HISTORY_MSG_341;Wavelet Daubechies
+!HISTORY_MSG_342;Wavelet Reinforce first level
+!HISTORY_MSG_343;Wavelet level chroma
+!HISTORY_MSG_344;Wavelet Meth chroma sl/cur
+!HISTORY_MSG_345;Wavelet Local contrast
+!HISTORY_MSG_346;Wavelet Local contrast Meth
+!HISTORY_MSG_347;Wavelet Level0 + denoise
+!HISTORY_MSG_348;Wavelet Level1 + denoise
+!HISTORY_MSG_349;Wavelet Level2 + denoise
+!HISTORY_MSG_350;Wavelet edgedetect
+!HISTORY_MSG_351;Wavelet Curve Hue
+!HISTORY_MSG_352;Wavelet Background
+!HISTORY_MSG_353;Wavelet edgedetect value
+!HISTORY_MSG_354;Wavelet edgedetect enhance
+!HISTORY_MSG_355;Wavelet edgedetect thresholdLow
+!HISTORY_MSG_356;Wavelet edgedetect thresholdHi
+!HISTORY_MSG_357;Wavelet Denoise link
+!HISTORY_MSG_358;Wavelet Contrast Hue curve
+!HISTORY_MSG_359;Hot/Dead - Threshold
+!HISTORY_MSG_360;TM Gamma
+!HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
+!MAIN_BUTTON_FULLSCREEN;Fullscreen
+!MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
+!MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
+!MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser or Filmstrip with the Editor to reveal the thumbnail of the currently opened image, and clear any active filters.\nShortcut: <b>x</b>\n\nAs above, but without clearing active filters:\nShortcut: <b>y</b>\n(Note that the thumbnail of the opened image will not be shown if filtered out).
+!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+b</b>
+!MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+s</b>
+!MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+e</b>
+!MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
+!MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
+!MAIN_FRAME_BATCHQUEUE_TOOLTIP;Processing queue.\nShortcut: <b>Ctrl-F3</b>
+!MAIN_FRAME_EDITOR;Editor
+!MAIN_FRAME_EDITOR_TOOLTIP;Editor.\nShortcut: <b>Ctrl-F4</b>
+!MAIN_FRAME_FILEBROWSER_TOOLTIP;File browser.\nShortcut: <b>Ctrl-F2</b>
+!MAIN_MSG_EMPTYFILENAME;Filename unspecified!
+!MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue-processed first.
+!MAIN_MSG_NAVIGATOR;Navigator
+!MAIN_MSG_OPERATIONCANCELLED;Operation cancelled
+!MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoes not exist. Please set a correct path in Preferences.
+!MAIN_MSG_SETPATHFIRST;You first have to set a target path in Preferences in order to use this function!
+!MAIN_MSG_WRITEFAILED;Failed to write\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
+!MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-c</b>
+!MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-d</b>
+!MAIN_TAB_EXPORT; Fast Export
+!MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-e</b>
+!MAIN_TAB_INSPECT; Inspect
+!MAIN_TAB_METADATA_TOOLTIP;Shortcut: <b>Alt-m</b>
+!MAIN_TAB_RAW;Raw
+!MAIN_TAB_RAW_TOOLTIP;Shortcut: <b>Alt-r</b>
+!MAIN_TAB_TRANSFORM_TOOLTIP;Shortcut: <b>Alt-t</b>
+!MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>9</b>
+!MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
+!MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>9</b>
+!MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History.\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
+!MAIN_TOOLTIP_PREVIEWB;Preview the <b>Blue channel</b>.\nShortcut: <b>b</b>
+!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-f</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels.\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom, about 10-30%.
+!MAIN_TOOLTIP_PREVIEWG;Preview the <b>Green channel</b>.\nShortcut: <b>g</b>
+!MAIN_TOOLTIP_PREVIEWL;Preview the <b>Luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
+!MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
+!MAIN_TOOLTIP_SHOWHIDELP1;Show/Hide the left panel.\nShortcut: <b>l</b>
+!MAIN_TOOLTIP_SHOWHIDERP1;Show/Hide the right panel.\nShortcut: <b>Alt-l</b>
+!MAIN_TOOLTIP_SHOWHIDETP1;Show/Hide the top panel.\nShortcut: <b>Shift-l</b>
+!MAIN_TOOLTIP_THRESHOLD;Threshold
+!MAIN_TOOLTIP_TOGGLE;Toggle the <b>Before</b>/<b>After</b> view.\nShortcut: <b>Shift-b</b>
+!NAVIGATOR_B;B:
+!NAVIGATOR_G;G:
+!NAVIGATOR_H;H:
+!NAVIGATOR_LAB_A;a*:
+!NAVIGATOR_LAB_B;b*:
+!NAVIGATOR_LAB_L;L*:
+!NAVIGATOR_NA; --
+!NAVIGATOR_R;R:
+!NAVIGATOR_S;S:
+!NAVIGATOR_V;V:
+!NAVIGATOR_XY_FULL;Width: %1, Height: %2
+!NAVIGATOR_XY_NA;x: --, y: --
+!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+!PARTIALPASTE_CHANNELMIXERBW;Black-and-White
+!PARTIALPASTE_CHANNELMIXER;Channel mixer
+!PARTIALPASTE_COLORAPP;CIECAM02
+!PARTIALPASTE_COLORTONING;Color Toning
+!PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto-fill
+!PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark-frame auto-selection
+!PARTIALPASTE_DARKFRAMEFILE;Dark-frame file
+!PARTIALPASTE_DEFRINGE;Defringe
+!PARTIALPASTE_DETAILGROUP;Detail Settings
+!PARTIALPASTE_DIRPYRDENOISE;Noise reduction
+!PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
+!PARTIALPASTE_EPD;Tone mapping
+!PARTIALPASTE_EQUALIZER;Wavelet Equalizer
+!PARTIALPASTE_EVERYTHING;Everything
+!PARTIALPASTE_FILMSIMULATION;Film Simulation
+!PARTIALPASTE_FLATFIELDAUTOSELECT;Flat-field auto-selection
+!PARTIALPASTE_FLATFIELDBLURRADIUS;Flat-field blur radius
+!PARTIALPASTE_FLATFIELDBLURTYPE;Flat-field blur type
+!PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
+!PARTIALPASTE_FLATFIELDFILE;Flat-field file
+!PARTIALPASTE_GRADIENT;Graduated filter
+!PARTIALPASTE_HSVEQUALIZER;HSV equalizer
+!PARTIALPASTE_ICMGAMMA;Output gamma
+!PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
+!PARTIALPASTE_LABCURVE;L*a*b* adjustments
+!PARTIALPASTE_LENSPROFILE;Lens correction profile
+!PARTIALPASTE_PCVIGNETTE;Vignette filter
+!PARTIALPASTE_PERSPECTIVE;Perspective
+!PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
+!PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
+!PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
+!PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
+!PARTIALPASTE_RAWCACORR_AUTO;CA auto-correction
+!PARTIALPASTE_RAWCACORR_CABLUE;CA blue
+!PARTIALPASTE_RAWCACORR_CARED;CA red
+!PARTIALPASTE_RAWEXPOS_BLACK;Black levels
+!PARTIALPASTE_RAWEXPOS_LINEAR;White point correction
+!PARTIALPASTE_RAWEXPOS_PRESER;Highlight preservation
+!PARTIALPASTE_RAWGROUP;Raw Settings
+!PARTIALPASTE_RAW_DCBENHANCE;DCB enhancement
+!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
+!PARTIALPASTE_RAW_DMETHOD;Demosaic method
+!PARTIALPASTE_RAW_FALSECOLOR;Demosaic false color suppression steps
+!PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
+!PARTIALPASTE_RGBCURVES;RGB curves
+!PARTIALPASTE_SHARPENEDGE;Edges
+!PARTIALPASTE_SHARPENMICRO;Microcontrast
+!PARTIALPASTE_VIBRANCE;Vibrance
+!PREFERENCES_ADD;Add
+!PREFERENCES_AUTLISLOW;Low
+!PREFERENCES_AUTLISMAX;Max - Average of all tiles
+!PREFERENCES_AUTLISSTD;High
+!PREFERENCES_AUTLISVLOW;None
+!PREFERENCES_AUTLOW;Low
+!PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
+!PREFERENCES_AUTSTD;Standard
+!PREFERENCES_BATCH_PROCESSING;Batch Processing
+!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
+!PREFERENCES_BEHADDALL;All to 'Add'
+!PREFERENCES_BEHAVIOR;Behavior
+!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
+!PREFERENCES_BEHSETALL;All to 'Set'
+!PREFERENCES_BLACKBODY;Tungsten
+!PREFERENCES_CIEART;CIECAM02 optimization
+!PREFERENCES_CIEART_FRAME;CIECAM02-Specific Settings
+!PREFERENCES_CIEART_LABEL;Use float precision instead of double
+!PREFERENCES_CIEART_TOOLTIP;If enabled, CIECAM02 calculations are performed in the single-precision floating-point format instead of the double-precision one. This provides a small increase in speed at the expense of a negligible loss of quality.
+!PREFERENCES_CLUTSCACHE;HaldCLUT Cache
+!PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
+!PREFERENCES_CLUTSDIR;HaldCLUT directory
+!PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
+!PREFERENCES_CURVEBBOXPOS_ABOVE;Above
+!PREFERENCES_CURVEBBOXPOS_BELOW;Below
+!PREFERENCES_CURVEBBOXPOS_LEFT;Left
+!PREFERENCES_CURVEBBOXPOS_RIGHT;Right
+!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\n\nThe path of the communication file (*.ini style, a.k.a. "Keyfile") is added as a command line parameter. It contains various parameters required for the scripts and image Exif to allow a rules-based processing profile generation.\n\n<b>WARNING:</b> You are responsible for using double quotes where necessary if you're using paths containing spaces.
+!PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
+!PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
+!PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
+!PREFERENCES_CUSTPROFBUILDPATH;Executable path
+!PREFERENCES_CUSTPROFBUILD;Custom Processing Profile Builder
+!PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
+!PREFERENCES_D50;5000K
+!PREFERENCES_D55;5500K
+!PREFERENCES_D60;6000K
+!PREFERENCES_D65;6500K
+!PREFERENCES_DARKFRAMEFOUND;Found
+!PREFERENCES_DARKFRAMESHOTS;shots
+!PREFERENCES_DARKFRAMETEMPLATES;templates
+!PREFERENCES_DARKFRAME;Dark-Frame
+!PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
+!PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
+!PREFERENCES_DIRDARKFRAMES;Dark-frames directory
+!PREFERENCES_EDITORLAYOUT;Editor Layout
+!PREFERENCES_EXPAUT;Expert
+!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low resolution display)
+!PREFERENCES_FILMSIMULATION;Film Simulation
+!PREFERENCES_FLATFIELDFOUND;Found
+!PREFERENCES_FLATFIELDSDIR;Flat-fields directory
+!PREFERENCES_FLATFIELDSHOTS;shots
+!PREFERENCES_FLATFIELDTEMPLATES;templates
+!PREFERENCES_FLATFIELD;Flat-Field
+!PREFERENCES_FLUOF2;Fluorescent F2
+!PREFERENCES_FLUOF7;Fluorescent F7
+!PREFERENCES_FLUOF11;Fluorescent F11
+!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Editor's panel and the File Browser
+!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
+!PREFERENCES_GREY05;Yb=05 CIE L#30
+!PREFERENCES_GREY10;Yb=10 CIE L#40
+!PREFERENCES_GREY15;Yb=15 CIE L#45
+!PREFERENCES_GREY18;Yb=18 CIE L#50
+!PREFERENCES_GREY23;Yb=23 CIE L#55
+!PREFERENCES_GREY30;Yb=30 CIE L#60
+!PREFERENCES_GREY40;Yb=40 CIE L#70
+!PREFERENCES_GREYSC18;Yb=18 CIE L#50
+!PREFERENCES_GREYSCA;Automatic
+!PREFERENCES_GREYSC;Scene Yb luminance (%)
+!PREFERENCES_GREY;Output device's Yb luminance (%)
+!PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
+!PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
+!PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
+!PREFERENCES_IMG_RELOAD_NEEDED;These changes require the image to be reloaded (or a new image to be opened) to take effect.
+!PREFERENCES_INSPECT_LABEL;Inspect
+!PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of cached images
+!PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
+!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show embedded JPEG thumbnail if raw is unedited
+!PREFERENCES_LANGAUTODETECT;Use system language
+!PREFERENCES_LEVAUTDN;Denoising level
+!PREFERENCES_LEVDN;Cell size
+!PREFERENCES_LISS;Auto multi-zone smoothing
+!PREFERENCES_MAX;Maxi (Tile)
+!PREFERENCES_MED;Medium (Tile/2)
+!PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
+!PREFERENCES_MENUGROUPFILEOPERATIONS;Group "File operations"
+!PREFERENCES_MENUGROUPLABEL;Group "Color label"
+!PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group "Processing profile operations"
+!PREFERENCES_MENUGROUPRANK;Group "Rank"
+!PREFERENCES_MENUOPTIONS;Context Menu Options
+!PREFERENCES_METADATA;Metadata
+!PREFERENCES_MIN;Mini (100x115)
+!PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs In Own Window Mode
+!PREFERENCES_MULTITAB;Multiple Editor Tabs Mode
+!PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
+!PREFERENCES_NAVIGATIONFRAME;Navigation
+!PREFERENCES_NOISE;Noise Reduction
+!PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails in the file browser
+!PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
+!PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
+!PREFERENCES_PANFACTORLABEL;Pan rate amplification
+!PREFERENCES_PREVDEMO;Preview Demosaic Method
+!PREFERENCES_PREVDEMO_FAST;Fast
+!PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
+!PREFERENCES_PREVDEMO_SIDECAR;As in PP3
+!PREFERENCES_PROPERTY;Property
+!PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
+!PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
+!PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
+!PREFERENCES_RGBDTL_TOOLTIP;Leave the setting at "0" to automatically use as many threads as possible. The more threads run in parallel, the faster the computation. Refer to RawPedia for memory requirements.
+!PREFERENCES_SELECTFONT;Select font
+!PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
+!PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize read of tiff files
+!PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;When working with folders full of uncompressed tiff files enabling this option can increase performance of thumb generation.
+!PREFERENCES_SET;Set
+!PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
+!PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
+!PREFERENCES_SIMPLAUT;Tool mode
+!PREFERENCES_SINGLETABVERTAB;Single Editor Tab Mode, Vertical Tabs
+!PREFERENCES_SINGLETAB;Single Editor Tab Mode
+!PREFERENCES_SLIMUI;Slim interface
+!PREFERENCES_SMA;Small (250x287)
+!PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
+!PREFERENCES_SND_HELP;Enter a full file path to set a sound, or leave blank for no sound.\nFor system sounds on Windows use "SystemDefault", "SystemAsterisk" etc., and on Linux use "complete", "window-attention" etc.
+!PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
+!PREFERENCES_SND_TRESHOLDSECS;After seconds
+!PREFERENCES_STDAUT;Standard
+!PREFERENCES_TAB_PERFORMANCE;Performance & Quality
+!PREFERENCES_TAB_SOUND;Sounds
+!PREFERENCES_TIMAX;High
+!PREFERENCES_TINB;Number of tiles
+!PREFERENCES_TISTD;Standard
+!PREFERENCES_TP_LABEL;Tool panel:
+!PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
+!PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
+!PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
+!PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
+!PREFERENCES_USESYSTEMTHEME;Use system theme
+!PREFERENCES_VIEW;Output device's white balance (monitor, TV, projector, viewing, etc.)
+!PREFERENCES_WAVLEV;Increase wavelet level in quality 'high'
+!PREFERENCES_WLONE;One level
+!PREFERENCES_WLTWO;Two levels
+!PREFERENCES_WLZER;No
+!PREFERENCES_WORKFLOW;Layout
+!PROFILEPANEL_COPYPPASTE;Parameters to copy
+!PROFILEPANEL_GLOBALPROFILES;Bundled profiles
+!PROFILEPANEL_LOADPPASTE;Parameters to load
+!PROFILEPANEL_MODE_TIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
+!PROFILEPANEL_MYPROFILES;My profiles
+!PROFILEPANEL_PASTEPPASTE;Parameters to paste
+!PROFILEPANEL_PINTERNAL;Neutral
+!PROFILEPANEL_SAVEPPASTE;Parameters to save
+!PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
+!PROGRESSBAR_NOIMAGES;No images found
+!PROGRESSBAR_PROCESSING_PROFILESAVED;Processing profile saved
+!PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
+!PROGRESSDLG_PROFILECHANGEDINBROWSER;Processing profile changed in browser
+!SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
+!SAVEDLG_FORCEFORMATOPTS;Force saving options
+!SAVEDLG_SUBSAMP;Subsampling
+!SAVEDLG_SUBSAMP_1;Best compression
+!SAVEDLG_SUBSAMP_2;Balanced
+!SAVEDLG_SUBSAMP_3;Best quality
+!SAVEDLG_SUBSAMP_TOOLTIP;Best compression: 4:1:1\nBalanced: 4:2:2\nBest quality: 4:4:4
+!SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
+!SAVEDLG_WARNFILENAME;File will be named
+!SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
+!THRESHOLDSELECTOR_BL;Bottom-left
+!THRESHOLDSELECTOR_BR;Bottom-right
+!THRESHOLDSELECTOR_B;Bottom
+!THRESHOLDSELECTOR_HINT;Hold the <b>Shift</b> key to move individual control points.
+!THRESHOLDSELECTOR_TL;Top-left
+!THRESHOLDSELECTOR_TR;Top-right
+!THRESHOLDSELECTOR_T;Top
+!TP_BWMIX_ALGO;Algorithm OYCPM
+!TP_BWMIX_ALGO_LI;Linear
+!TP_BWMIX_ALGO_SP;Special effects
+!TP_BWMIX_ALGO_TOOLTIP;Linear: will produce a normal <b>linear</b> response.\nSpecial effects: will produce special effects by mixing channels <b>non-linearly</b>.
+!TP_BWMIX_AUTOCH;Auto
+!TP_BWMIX_AUTOCH_TIP;Calculate values optimizing Channel Mixer.
+!TP_BWMIX_CC_ENABLED;Adjust complementary color
+!TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colors in ROYGCBPM mode.
+!TP_BWMIX_CHANNEL;Luminance equalizer
+!TP_BWMIX_CURVEEDITOR1;'Before' curve
+!TP_BWMIX_CURVEEDITOR2;'After' curve
+!TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tone curve, after B&amp;W conversion, at the end of treatment.
+!TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before B&amp;W conversion.\nMay take into account the color components.
+!TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H).\nPay attention to extreme values as they may cause artifacts.
+!TP_BWMIX_FILTER;Color Filter
+!TP_BWMIX_FILTER_BLUEGREEN;Blue-Green
+!TP_BWMIX_FILTER_BLUE;Blue
+!TP_BWMIX_FILTER_GREENYELLOW;Green-Yellow
+!TP_BWMIX_FILTER_GREEN;Green
+!TP_BWMIX_FILTER_NONE;None
+!TP_BWMIX_FILTER_PURPLE;Purple
+!TP_BWMIX_FILTER_REDYELLOW;Red-Yellow
+!TP_BWMIX_FILTER_RED;Red
+!TP_BWMIX_FILTER_TOOLTIP;The color filter simulates shots taken with a colored filter placed in front of the lens. Colored filters reduce the transmission of specific color ranges and therefore affect their lightness. E.g. a red filter darkens blue skies.
+!TP_BWMIX_FILTER_YELLOW;Yellow
+!TP_BWMIX_GAMMA;Gamma Correction
+!TP_BWMIX_GAM_TOOLTIP;Correct gamma for each RGB channel.
+!TP_BWMIX_LABEL;Black-and-White
+!TP_BWMIX_MET;Method
+!TP_BWMIX_MET_CHANMIX;Channel Mixer
+!TP_BWMIX_MET_DESAT;Desaturation
+!TP_BWMIX_MET_LUMEQUAL;Luminance Equalizer
+!TP_BWMIX_MIXC;Mixer
+!TP_BWMIX_NEUTRAL;Reset mixer
+!TP_BWMIX_NEUTRAL_TIP;Reset all values (Color Filter, Channel Mixer) to default.
+!TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
+!TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all the mixer options.\n"Total" displays the sum of the RGB values:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
+!TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behavior.
+!TP_BWMIX_SETTING;Presets
+!TP_BWMIX_SETTING_TOOLTIP;Different presets (film, landscape, etc.) or manual Channel Mixer settings.
+!TP_BWMIX_SET_HIGHCONTAST;High contrast
+!TP_BWMIX_SET_HIGHSENSIT;High Sensitivity
+!TP_BWMIX_SET_HYPERPANCHRO;Hyper Panchromatic
+!TP_BWMIX_SET_INFRARED;Infrared
+!TP_BWMIX_SET_LANDSCAPE;Landscape
+!TP_BWMIX_SET_LOWSENSIT;Low Sensitivity
+!TP_BWMIX_SET_LUMINANCE;Luminance
+!TP_BWMIX_SET_NORMCONTAST;Normal Contrast
+!TP_BWMIX_SET_ORTHOCHRO;Orthochromatic
+!TP_BWMIX_SET_PANCHRO;Panchromatic
+!TP_BWMIX_SET_PORTRAIT;Portrait
+!TP_BWMIX_SET_RGBABS;Absolute RGB
+!TP_BWMIX_SET_RGBREL;Relative RGB
+!TP_BWMIX_SET_ROYGCBPMABS;Absolute ROYGCBPM
+!TP_BWMIX_SET_ROYGCBPMREL;Relative ROYGCBPM
+!TP_BWMIX_TCMODE_FILMLIKE;B&W Film-like
+!TP_BWMIX_TCMODE_SATANDVALBLENDING;B&W Saturation and Value Blending
+!TP_BWMIX_TCMODE_STANDARD;B&W Standard
+!TP_BWMIX_TCMODE_WEIGHTEDSTD;B&W Weighted Standard
+!TP_BWMIX_VAL;L
+!TP_CHROMATABERR_LABEL;Chromatic Aberration
+!TP_COLORAPP_ADAPTSCENE;Scene luminosity
+!TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environement (cd/m²).\n1) Calculated from the Exif data:\nShutter speed - ISO speed - F number - camera exposure correction.\n2) Calculated from the raw white point and RT's Exposure Compensation slider.
+!TP_COLORAPP_ADAPTVIEWING;Viewing luminosity (cd/m²)
+!TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environnement\n(usually 16cd/m²).
+!TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RawTherapee calculates an optimum value from Exif data.\nTo set the value manually, uncheck the checkbox first.
+!TP_COLORAPP_ALGO;Algorithm
+!TP_COLORAPP_ALGO_ALL;All
+!TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
+!TP_COLORAPP_ALGO_JS;Lightness + Saturation (JS)
+!TP_COLORAPP_ALGO_QM;Brightness + Colorfulness (QM)
+!TP_COLORAPP_ALGO_TOOLTIP;Lets you choose between parameter subsets or all parameters.
+!TP_COLORAPP_BADPIXSL;Hot/bad pixel filter
+!TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n0 = No effect\n1 = Median\n2 = Gaussian.\nAlternatively, adjust the image to avoid very dark shadows.\n\nThese artifacts are due to limitations of CIECAM02.
+!TP_COLORAPP_BRIGHT;Brightness (Q)
+!TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02 takes into account the white's luminosity and differs from L*a*b* and RGB brightness.
+!TP_COLORAPP_CHROMA;Chroma (C)
+!TP_COLORAPP_CHROMA_M;Colorfulnes (M)
+!TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM02 differs from L*a*b* and RGB colorfulness.
+!TP_COLORAPP_CHROMA_S;Saturation (S)
+!TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM02 differs from L*a*b* and RGB saturation.
+!TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02 differs from L*a*b* and RGB chroma.
+!TP_COLORAPP_CIECAT_DEGREE;CAT02 adaptation
+!TP_COLORAPP_CONTRAST;Contrast (J)
+!TP_COLORAPP_CONTRAST_Q;Contrast (Q)
+!TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast in CIECAM02 for the Q slider; it differs from L*a*b* and RGB contrast.
+!TP_COLORAPP_CONTRAST_TOOLTIP;Contrast in CIECAM02 for the J slider; it differs from L*a*b* and RGB contrast.
+!TP_COLORAPP_CURVEEDITOR1;Tone curve 1
+!TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L* (L*a*b*) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of J or Q after CIECAM02.\n\nJ and Q are not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
+!TP_COLORAPP_CURVEEDITOR2;Tone curve 2
+!TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the second exposure tone curve.
+!TP_COLORAPP_CURVEEDITOR3;Color curve
+!TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of C, s or M after CIECAM02.\n\nC, s and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
+!TP_COLORAPP_DATACIE;CIECAM02 output histograms in curves
+!TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show L*a*b* values before CIECAM02 adjustments.
+!TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended).
+!TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002.
+!TP_COLORAPP_GAMUT;Gamut control (L*a*b*)
+!TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
+!TP_COLORAPP_HUE;Hue (h)
+!TP_COLORAPP_HUE_TOOLTIP;Hue (h) - angle between 0° and 360°.
+!TP_COLORAPP_LABEL;CIE Color Appearance Model 2002
+!TP_COLORAPP_LABEL_CAM02;Image Adjustments
+!TP_COLORAPP_LABEL_SCENE;Scene Conditions
+!TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
+!TP_COLORAPP_LIGHT;Lightness (J)
+!TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 differs from L*a*b* and RGB lightness.
+!TP_COLORAPP_MODEL;WP Model
+!TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in <i>Preferences > Color Management</i>.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in <i>Preferences - Color Management</i>.
+!TP_COLORAPP_RSTPRO;Red & skin-tones protection
+!TP_COLORAPP_RSTPRO_TOOLTIP;Red and skin-tones protection (sliders and curves).
+!TP_COLORAPP_SHARPCIE;--unused--
+!TP_COLORAPP_SHARPCIE_TOOLTIP;--unused--
+!TP_COLORAPP_SURROUND;Surround
+!TP_COLORAPP_SURROUND_AVER;Average
+!TP_COLORAPP_SURROUND_DARK;Dark
+!TP_COLORAPP_SURROUND_DIM;Dim
+!TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
+!TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slighty dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
+!TP_COLORAPP_SURSOURCE;Dark surround
+!TP_COLORAPP_SURSOURCE_TOOLTIP;Can be used if image has a dark border.
+!TP_COLORAPP_TCMODE_BRIGHTNESS;Brightness
+!TP_COLORAPP_TCMODE_CHROMA;Chroma
+!TP_COLORAPP_TCMODE_COLORF;Colorfulness
+!TP_COLORAPP_TCMODE_LABEL1;Curve mode 1
+!TP_COLORAPP_TCMODE_LABEL2;Curve mode 2
+!TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
+!TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
+!TP_COLORAPP_TCMODE_SATUR;Saturation
+!TP_COLORAPP_TONECIE;Tone mapping using CIECAM02
+!TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
+!TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
+!TP_COLORAPP_WBRT;WB [RT] + [output]
+!TP_COLORTONING_AB;o C/L
+!TP_COLORTONING_AUTOSAT;Automatic
+!TP_COLORTONING_BALANCE;Balance
+!TP_COLORTONING_BY;o C/L
+!TP_COLORTONING_CHROMAC;Opacity
+!TP_COLORTONING_COLOR;Color
+!TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Chroma opacity as a function of luminance oC=f(L)
+!TP_COLORTONING_HIGHLIGHT;Highlights
+!TP_COLORTONING_HUE;Hue
+!TP_COLORTONING_LABEL;Color Toning
+!TP_COLORTONING_LAB;L*a*b* blending
+!TP_COLORTONING_LUMAMODE;Preserve luminance
+!TP_COLORTONING_LUMAMODE_TOOLTIP;If enabled, when you change color (red, green, cyan, blue, etc.) the luminance of each pixel is preserved.
+!TP_COLORTONING_LUMA;Luminance
+!TP_COLORTONING_METHOD;Method
+!TP_COLORTONING_METHOD_TOOLTIP;"L*a*b* blending", "RGB sliders" and "RGB curves" use interpolated color blending.\n"Color balance (Shadows/Midtones/Highlights)" and "Saturation 2 colors" use direct colors.\n\nThe Black-and-White tool can be enabled when using any color toning method, which allows for color toning.
+!TP_COLORTONING_MIDTONES;Midtones
+!TP_COLORTONING_NEUTRAL;Reset sliders
+!TP_COLORTONING_NEUTRAL_TIP;Reset all values (Shadows, Midtones, Highlights) to default.
+!TP_COLORTONING_OPACITY;Opacity
+!TP_COLORTONING_RGBCURVES;RGB - Curves
+!TP_COLORTONING_RGBSLIDERS;RGB - Sliders
+!TP_COLORTONING_SATURATEDOPACITY;Strength
+!TP_COLORTONING_SATURATIONTHRESHOLD;Threshold
+!TP_COLORTONING_SA;Saturation Protection
+!TP_COLORTONING_SHADOWS;Shadows
+!TP_COLORTONING_SPLITCOCO;Color Balance Shadows/Midtones/Highlights
+!TP_COLORTONING_SPLITCO;Shadows/Midtones/Highlights
+!TP_COLORTONING_SPLITLR;Saturation 2 colors
+!TP_COLORTONING_STRENGTH;Strength
+!TP_COLORTONING_STR;Strength
+!TP_COLORTONING_TWO2;Special chroma '2 colors'
+!TP_COLORTONING_TWOALL;Special chroma
+!TP_COLORTONING_TWOBY;Special a* and b*
+!TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
+!TP_COLORTONING_TWOSTD;Standard chroma
+!TP_CROP_GTEPASSPORT;Biometric Passport
+!TP_CROP_GTFRAME;Frame
+!TP_CROP_GTGRID;Grid
+!TP_CROP_GTHARMMEANS;Harmonic Means
+!TP_CROP_GTTRIANGLE1;Golden Triangles 1
+!TP_CROP_GTTRIANGLE2;Golden Triangles 2
+!TP_CROP_PPI;PPI=
+!TP_DARKFRAME_AUTOSELECT;Auto-selection
+!TP_DARKFRAME_LABEL;Dark-Frame
+!TP_DEFRINGE_LABEL;Defringe
+!TP_DEFRINGE_RADIUS;Radius
+!TP_DEFRINGE_THRESHOLD;Threshold
+!TP_DIRPYRDENOISE_33;3×3 strong
+!TP_DIRPYRDENOISE_55SOFT;5×5
+!TP_DIRPYRDENOISE_55;5×5 strong
+!TP_DIRPYRDENOISE_77;7×7 (slow)
+!TP_DIRPYRDENOISE_99;9x9 (very slow)
+!TP_DIRPYRDENOISE_ABM;Chroma only
+!TP_DIRPYRDENOISE_AUTO;Automatic global
+!TP_DIRPYRDENOISE_AUTO_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !
+!TP_DIRPYRDENOISE_AUT;Automatic global
+!TP_DIRPYRDENOISE_BLUE;Chrominance - Blue-Yellow
+!TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
+!TP_DIRPYRDENOISE_CCCURVE;Chrominance curve
+!TP_DIRPYRDENOISE_CHROMAFR;Chrominance
+!TP_DIRPYRDENOISE_CHROMA;Chrominance - Master
+!TP_DIRPYRDENOISE_CTYPE;Auto method
+!TP_DIRPYRDENOISE_CTYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nAutomatic multi-zones\nNo preview - works only during saving, but using the "Preview" method by matching the tile size and center to the preview size and center you can get an idea of the expected results.\nThe image is divided into tiles (about 10 to 70 depending on image size) and each tile receives its own chrominance noise reduction settings.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
+!TP_DIRPYRDENOISE_CURVEEDITOR_CC;Chroma
+!TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
+!TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modulates action of 'Luminance' denoise
+!TP_DIRPYRDENOISE_CUR;Curve
+!TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on the gamma of the input color profile. An sRGB gamma is assumed, thus if the image uses an input color profile of a different gamma, the effects of luminance noise reduction will differ.
+!TP_DIRPYRDENOISE_ENH;Enhanced mode
+!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase.
+!TP_DIRPYRDENOISE_GAMMA;Gamma
+!TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
+!TP_DIRPYRDENOISE_LABEL;Noise Reduction
+!TP_DIRPYRDENOISE_LABM;L*a*b*
+!TP_DIRPYRDENOISE_LAB;L*a*b*
+!TP_DIRPYRDENOISE_LCURVE;Luminance curve
+!TP_DIRPYRDENOISE_LDETAIL;Luminance - Detail
+!TP_DIRPYRDENOISE_LM;Luminance only
+!TP_DIRPYRDENOISE_LPLABM;Weighted L* (little) + a*b* (normal)
+!TP_DIRPYRDENOISE_LTYPE;Luminance control
+!TP_DIRPYRDENOISE_LUMAFR;Luminance
+!TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet on luminance and Fourier transform for luminance detail
+!TP_DIRPYRDENOISE_LUMA;Luminance
+!TP_DIRPYRDENOISE_MANU;Manual
+!TP_DIRPYRDENOISE_MAN;Manual
+!TP_DIRPYRDENOISE_MEDMETHOD;Median method
+!TP_DIRPYRDENOISE_MEDTYPE;Median type
+!TP_DIRPYRDENOISE_MED;Median Filter
+!TP_DIRPYRDENOISE_MED_TOOLTIP;Enabled median denoising
+!TP_DIRPYRDENOISE_METHOD11;Quality
+!TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
+!TP_DIRPYRDENOISE_METHOD;Method
+!TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or L*a*b* methods can be used.\n\nFor non-raw images the L*a*b* method will be used, regardless of the selection.
+!TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "L*a*b*" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
+!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired size. The larger the size, the longer it takes.\n\n3x3 soft: treats 5 pixels in a 1-pixel range.\n3x3: treats 9 pixels in a 1-pixel range.\n5x5 soft: treats 13 pixels in a 2-pixel range.\n5x5: treats 25 pixels in a 2-pixel range.\n7x7: treats 49 pixels in a 3-pixel range.\n9x9: treats 81 pixels in a 4-pixel range.\n\nSometimes it is possible to achieve higher quality running several iterations with a small range than one iteration with a large range.
+!TP_DIRPYRDENOISE_NOISELABELEMPTY;Preview noise: Mean= -   High= -
+!TP_DIRPYRDENOISE_NOISELABEL;Preview noise: Mean=%1  High=%2
+!TP_DIRPYRDENOISE_NRESID_TOOLTIP;Displays the remaining noise levels of the part of the image visible in the <b>preview</b> after wavelet.\n\n>300 Very noisy\n100-300 Noisy\n50-100 A little noisy\n<50 Very low noise\n\nBeware, the values will differ between RGB and L*a*b* mode. The RGB values are less accurate because the RGB mode does not completely separate luminance and chrominance.
+!TP_DIRPYRDENOISE_PASSES;Median iterations
+!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying a 3x3 median filter with three iterations often leads to better results than applying 7x7 once.
+!TP_DIRPYRDENOISE_PON;Auto multi-zones
+!TP_DIRPYRDENOISE_PREVLABEL;Preview size=%1, Center: Px=%2  Py=%3
+!TP_DIRPYRDENOISE_PREV;Preview
+!TP_DIRPYRDENOISE_PRE;Preview multi-zones
+!TP_DIRPYRDENOISE_RED;Chrominance - Red-Green
+!TP_DIRPYRDENOISE_RGBM;RGB
+!TP_DIRPYRDENOISE_RGB;RGB
+!TP_DIRPYRDENOISE_SHALBI;High
+!TP_DIRPYRDENOISE_SHAL;Standard
+!TP_DIRPYRDENOISE_SLI;Slider
+!TP_DIRPYRDENOISE_SOFT;3x3
+!TP_DIRPYRDENOISE_TILELABEL;Tile size=%1, Center: Tx=%2  Ty=%3
+!TP_DIRPYREQUALIZER_ALGO;Skin Color Range
+!TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts.
+!TP_DIRPYREQUALIZER_ARTIF;Reduce artifacts
+!TP_DIRPYREQUALIZER_HUESKIN;Skin hue
+!TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
+!TP_DIRPYREQUALIZER_LABEL;Contrast by Detail Levels
+!TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
+!TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast -
+!TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast +
+!TP_DIRPYREQUALIZER_LUMAFINEST;Finest
+!TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
+!TP_DIRPYREQUALIZER_SKIN;Skin-tones targetting/protection
+!TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
+!TP_DIRPYREQUALIZER_THRESHOLD;Threshold
+!TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
+!TP_DISTORTION_AUTO;Auto Distortion Correction
+!TP_DISTORTION_AUTO_TIP;Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.).
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_GAMMA;Gamma
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
+!TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
+!TP_EXPOSURE_AUTOLEVELS_TIP;Toggles execution of Auto Levels to automatically set Exposure slider values based on an image analysis.\nEnables Highlight Reconstruction if necessary.
+!TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in Auto Levels operation.
+!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight compression threshold
+!TP_EXPOSURE_CURVEEDITOR1;Tone curve 1
+!TP_EXPOSURE_CURVEEDITOR2;Tone curve 2
+!TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Please refer to the "Exposure > Tone Curves" RawPedia article to learn how to achieve the best results by using two tone curves.
+!TP_EXPOSURE_SATURATION;Saturation
+!TP_EXPOSURE_TCMODE_FILMLIKE;Film-like
+!TP_EXPOSURE_TCMODE_LABEL1;Curve mode 1
+!TP_EXPOSURE_TCMODE_LABEL2;Curve mode 2
+!TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Saturation and Value Blending
+!TP_EXPOSURE_TCMODE_STANDARD;Standard
+!TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
+!TP_EXPOS_BLACKPOINT_LABEL;Raw Black Points
+!TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
+!TP_FILMSIMULATION_LABEL;Film Simulation
+!TP_FILMSIMULATION_STRENGTH;Strength
+!TP_FILMSIMULATION_ZEROCLUTSFOUND;Set HaldCLUT directory in Preferences
+!TP_FLATFIELD_AUTOSELECT;Auto-selection
+!TP_FLATFIELD_BLURRADIUS;Blur radius
+!TP_FLATFIELD_BLURTYPE;Blur type
+!TP_FLATFIELD_BT_AREA;Area
+!TP_FLATFIELD_BT_HORIZONTAL;Horizontal
+!TP_FLATFIELD_BT_VERTHORIZ;Vertical + Horizontal
+!TP_FLATFIELD_BT_VERTICAL;Vertical
+!TP_FLATFIELD_CLIPCONTROL;Clip control
+!TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
+!TP_FLATFIELD_LABEL;Flat-Field
+!TP_GAMMA_CURV;Gamma
+!TP_GAMMA_FREE;Free gamma
+!TP_GAMMA_OUTPUT;Output gamma
+!TP_GAMMA_SLOP;Slope (linear)
+!TP_GENERAL_11SCALE_TOOLTIP;The effects of this tool are only visible or only accurate at a preview scale of 1:1.
+!TP_GRADIENT_CENTER;Center
+!TP_GRADIENT_CENTER_X;Center X
+!TP_GRADIENT_CENTER_X_TOOLTIP;Shift gradient to the left (negative values) or right (positive values).
+!TP_GRADIENT_CENTER_Y;Center Y
+!TP_GRADIENT_CENTER_Y_TOOLTIP;Shift gradient up (negative values) or down (positive values).
+!TP_GRADIENT_DEGREE;Angle
+!TP_GRADIENT_DEGREE_TOOLTIP;Rotation angle in degrees.
+!TP_GRADIENT_FEATHER;Feather
+!TP_GRADIENT_FEATHER_TOOLTIP;Gradient width in percent of the image diagonal.
+!TP_GRADIENT_LABEL;Graduated Filter
+!TP_GRADIENT_STRENGTH;Strength
+!TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops.
+!TP_HLREC_BLEND;Blend
+!TP_HLREC_ENA_TOOLTIP;Could be activated by Auto Levels.
+!TP_HSVEQUALIZER_CHANNEL;Channel
+!TP_HSVEQUALIZER_HUE;H
+!TP_HSVEQUALIZER_LABEL;HSV Equalizer
+!TP_HSVEQUALIZER_SAT;S
+!TP_HSVEQUALIZER_VAL;V
+!TP_ICM_BLENDCMSMATRIX;Blend ICC highlights with matrix
+!TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover clipped highlights when using LUT-based ICC profiles.
+!TP_ICM_DCPILLUMINANT;Illuminant
+!TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
+!TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
+!TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
+!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
+!TP_ICM_INPUTCAMERA_TOOLTIP;Use a simple color matrix from dcraw, an enhanced RawTherapee version (whichever is available based on camera model) or one embedded in the DNG.
+!TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own DCP/ICC color profile file for the camera.
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files.
+!TP_ICM_INPUTNONE;No profile
+!TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all.\nUse only in special cases.
+!TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
+!TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
+!TP_ICM_TONECURVE;Use DCP's tone curve
+!TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only enabled if the selected DCP has a tone curve.
+!TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
+!TP_IMPULSEDENOISE_THRESH;Threshold
+!TP_LABCURVE_AVOIDCOLORSHIFT;Avoid color shift
+!TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction.
+!TP_LABCURVE_BRIGHTNESS;Lightness
+!TP_LABCURVE_CHROMATICITY;Chromaticity
+!TP_LABCURVE_CHROMA_TOOLTIP;To apply B&amp;W toning, set Chromaticity to -100.
+!TP_LABCURVE_CONTRAST;Contrast
+!TP_LABCURVE_CURVEEDITOR;Luminance Curve
+!TP_LABCURVE_CURVEEDITOR_A_RANGE1;Green Saturated
+!TP_LABCURVE_CURVEEDITOR_A_RANGE2;Green Pastel
+!TP_LABCURVE_CURVEEDITOR_A_RANGE3;Red Pastel
+!TP_LABCURVE_CURVEEDITOR_A_RANGE4;Red Saturated
+!TP_LABCURVE_CURVEEDITOR_B_RANGE1;Blue Saturated
+!TP_LABCURVE_CURVEEDITOR_B_RANGE2;Blue Pastel
+!TP_LABCURVE_CURVEEDITOR_B_RANGE3;Yellow Pastel
+!TP_LABCURVE_CURVEEDITOR_B_RANGE4;Yellow Saturated
+!TP_LABCURVE_CURVEEDITOR_CC;CC
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutral
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Dull
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturated
+!TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity according to chromaticity C=f(C)
+!TP_LABCURVE_CURVEEDITOR_CH;CH
+!TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to hue C=f(H)
+!TP_LABCURVE_CURVEEDITOR_CL;CL
+!TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
+!TP_LABCURVE_CURVEEDITOR_HH;HH
+!TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Hue according to hue H=f(H)
+!TP_LABCURVE_CURVEEDITOR_LC;LC
+!TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to chromaticity L=f(C)
+!TP_LABCURVE_CURVEEDITOR_LH;LH
+!TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
+!TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance according to luminance L=f(L)
+!TP_LABCURVE_LABEL;L*a*b* Adjustments
+!TP_LABCURVE_LCREDSK;Restrict LC to red and skin-tones
+!TP_LABCURVE_LCREDSK_TIP;If enabled, the LC Curve affects only red and skin-tones.\nIf disabled, it applies to all tones.
+!TP_LABCURVE_RSTPROTECTION;Red and skin-tones protection
+!TP_LABCURVE_RSTPRO_TOOLTIP;Works on the Chromaticity slider and the CC curve.
+!TP_LENSGEOM_AUTOCROP;Auto-Crop
+!TP_LENSGEOM_FILL;Auto-fill
+!TP_LENSGEOM_LABEL;Lens / Geometry
+!TP_LENSPROFILE_LABEL;Lens Correction Profile
+!TP_LENSPROFILE_USECA;Chromatic aberration correction
+!TP_LENSPROFILE_USEDIST;Distortion correction
+!TP_LENSPROFILE_USEVIGN;Vignetting correction
+!TP_NEUTRAL;Neutral
+!TP_NEUTRAL_TIP;Resets exposure sliders to neutral values.\nApplies to the same controls that Auto Levels applies to, regardless of whether you used Auto Levels or not.
+!TP_PCVIGNETTE_FEATHER;Feather
+!TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering:\n0 = corners only,\n50 = halfway to center,\n100 = to center.
+!TP_PCVIGNETTE_LABEL;Vignette Filter
+!TP_PCVIGNETTE_ROUNDNESS;Roundness
+!TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Roundness:\n0 = rectangle,\n50 = fitted ellipse,\n100 = circle.
+!TP_PCVIGNETTE_STRENGTH;Strength
+!TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filter strength in stops (reached in corners).
+!TP_PERSPECTIVE_HORIZONTAL;Horizontal
+!TP_PERSPECTIVE_LABEL;Perspective
+!TP_PERSPECTIVE_VERTICAL;Vertical
+!TP_PFCURVE_CURVEEDITOR_CH;Hue
+!TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color.\nHigher = more,\nLower = less.
+!TP_PREPROCESS_DEADPIXFILT;Dead pixel filter
+!TP_PREPROCESS_DEADPIXFILT_TOOLTIP;Tries to suppress dead pixels.
+!TP_PREPROCESS_GREENEQUIL;Green equilibration
+!TP_PREPROCESS_HOTPIXFILT;Hot pixel filter
+!TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Tries to suppress hot pixels.
+!TP_PREPROCESS_LABEL;Preprocessing
+!TP_PREPROCESS_LINEDENOISE;Line noise filter
+!TP_PREPROCESS_NO_FOUND;None found
+!TP_RAWCACORR_AUTO;Auto-correction
+!TP_RAWCACORR_CABLUE;Blue
+!TP_RAWCACORR_CARED;Red
+!TP_RAWEXPOS_BLACKS;Black Levels
+!TP_RAWEXPOS_BLACK_0;Green 1 (lead)
+!TP_RAWEXPOS_BLACK_1;Red
+!TP_RAWEXPOS_BLACK_2;Blue
+!TP_RAWEXPOS_BLACK_3;Green 2
+!TP_RAWEXPOS_BLACK_BLUE;Blue
+!TP_RAWEXPOS_BLACK_GREEN;Green
+!TP_RAWEXPOS_BLACK_RED;Red
+!TP_RAWEXPOS_LINEAR;White-point correction
+!TP_RAWEXPOS_PRESER;Highlight preservation
+!TP_RAWEXPOS_RGB;Red, Green, Blue
+!TP_RAWEXPOS_TWOGREEN;Link greens
+!TP_RAW_DCBENHANCE;DCB enhancement
+!TP_RAW_DCBITERATIONS;Number of DCB iterations
+!TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
+!TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
+!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.
+!TP_RAW_HD;Threshold
+!TP_RAW_HD_TOOLTIP;Lower values make hot/dead pixel detection more aggressive, but false positives may lead to artifacts. If you notice any artifacts appearing when enabling the Hot/Dead Pixel Filters, gradually increase the threshold value until they disappear.
+!TP_RAW_LABEL;Demosaicing
+!TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
+!TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.
+!TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
+!TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
+!TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
+!TP_RESIZE_APPLIESTO;Applies to:
+!TP_RESIZE_CROPPEDAREA;Cropped Area
+!TP_RESIZE_FITBOX;Bounding Box
+!TP_RESIZE_FULLIMAGE;Full Image
+!TP_RESIZE_HEIGHT;Height
+!TP_RESIZE_LANCZOS;Lanczos
+!TP_RESIZE_SPECIFY;Specify:
+!TP_RESIZE_WIDTH;Width
+!TP_RGBCURVES_BLUE;B
+!TP_RGBCURVES_CHANNEL;Channel
+!TP_RGBCURVES_GREEN;G
+!TP_RGBCURVES_LABEL;RGB Curves
+!TP_RGBCURVES_LUMAMODE;Luminosity mode
+!TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity mode</b> allows to vary the contribution of R, G and B channels to the luminosity of the image, without altering image color.
+!TP_RGBCURVES_RED;R
+!TP_SAVEDIALOG_OK_TIP;Shortcut: <b>Ctrl-Enter</b>
+!TP_SHADOWSHLIGHTS_SHARPMASK;Sharp mask
+!TP_SHARPENEDGE_AMOUNT;Quantity
+!TP_SHARPENEDGE_LABEL;Edges
+!TP_SHARPENEDGE_PASSES;Iterations
+!TP_SHARPENEDGE_THREE;Luminance only
+!TP_SHARPENING_TOOLTIP;Expect a slightly different effect when using with CIECAM02. If difference is observed, adjust to taste.
+!TP_SHARPENMICRO_AMOUNT;Quantity
+!TP_SHARPENMICRO_LABEL;Microcontrast
+!TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
+!TP_SHARPENMICRO_UNIFORMITY;Uniformity
+!TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin-tones
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Red/Purple
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Red
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Red/Yellow
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;Yellow
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Hue according to hue H=f(H)
+!TP_VIBRANCE_LABEL;Vibrance
+!TP_VIBRANCE_PASTELS;Pastel Tones
+!TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
+!TP_VIBRANCE_PROTECTSKINS;Protect skin-tones
+!TP_VIBRANCE_PSTHRESHOLD;Pastel/saturated tones threshold
+!TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Saturation threshold
+!TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;The vertical axis represents pastel tones at the bottom and saturated tones at the top.\nThe horizontal axis represents the saturation range.
+!TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Pastel/saturated transition's weighting
+!TP_VIBRANCE_SATURATED;Saturated Tones
+!TP_VIGNETTING_CENTER;Center
+!TP_VIGNETTING_CENTER_X;Center X
+!TP_VIGNETTING_CENTER_Y;Center Y
+!TP_VIGNETTING_STRENGTH;Strength
+!TP_WAVELET_1;Level 1
+!TP_WAVELET_2;Level 2
+!TP_WAVELET_3;Level 3
+!TP_WAVELET_4;Level 4
+!TP_WAVELET_5;Level 5
+!TP_WAVELET_6;Level 6
+!TP_WAVELET_7;Level 7
+!TP_WAVELET_8;Level 8
+!TP_WAVELET_9;Level 9
+!TP_WAVELET_ALL;All levels in all directions
+!TP_WAVELET_APPLYTO;Apply To
+!TP_WAVELET_AVOID;Avoid color shift
+!TP_WAVELET_B0;Black
+!TP_WAVELET_B1;Grey
+!TP_WAVELET_B2;Residual
+!TP_WAVELET_CCURVE;Local contrast
+!TP_WAVELET_CH1;All chroma
+!TP_WAVELET_CH2;Pastel - Saturated
+!TP_WAVELET_CH3;Link contrast levels
+!TP_WAVELET_CHCU;Curve
+!TP_WAVELET_CHRO;Saturated - Pastel
+!TP_WAVELET_CHRO_TOOLTIP;Limit between pastel and saturated\n 1-x level saturated \n x-9 level pastel
+!TP_WAVELET_CHR;Chroma link
+!TP_WAVELET_CHR_TOOLTIP;Adjust chroma in function of:\na-levels contrasts\nb-Chroma link slider strength
+!TP_WAVELET_CHSL;Sliders
+!TP_WAVELET_CHTYPE;Chrominance type
+!TP_WAVELET_COLORT;Opacity Red-Green  Levels
+!TP_WAVELET_CONTRAST_MINUS;Contrast -
+!TP_WAVELET_CONTRAST_PLUS;Contrast +
+!TP_WAVELET_CONTRA;Contrast
+!TP_WAVELET_CONTRA_TOOLTIP;Change contrast residual image\nFunction of  Max Levels
+!TP_WAVELET_CONTR;Gamut - controls
+!TP_WAVELET_CTYPE;Chrominance control
+!TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Modify local contral in fonction of original local contrast (absciss)\nLow absciss represents small local contrast (real values about 10..20)\n50% absciss represents average of local contrast (real value about 100..300)\n66% absciss represents standard deviation of local contrast (real value about 300..800)\n100% represents maximum (real value about 3000..8000)
+!TP_WAVELET_CURVEEDITOR_CH;Contrast levels /Hue
+!TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Modify each level contrast in function oh hue\nCareful not to overwrite changes made with skin-tone hue (red)\nOnly active for contrast levels
+!TP_WAVELET_CURVEEDITOR_HH;HH
+!TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Modify Hue in function of Hue, only for residual image
+!TP_WAVELET_DALL;All directions
+!TP_WAVELET_DAUB;Edge Quality
+!TP_WAVELET_DAUB_TOOLTIP;Change Daubechies coefficients\nD4=standard quality\nD14=best quality, more discriminant, increase slightly time treatment about 10%\nThese factors affect the detection of edges, but also general quality for firsts levels
+!TP_WAVELET_DISP;Preview Settings
+!TP_WAVELET_DONE;Vertical
+!TP_WAVELET_DTHR;Diagonal
+!TP_WAVELET_DTWO;Horizontal
+!TP_WAVELET_EDCU;Curve
+!TP_WAVELET_EDGCONT;Local contrast
+!TP_WAVELET_EDGCONT_TOOLTIP;If you move sliders to the left contrast decrease...and to the right..increase
+!TP_WAVELET_EDGEDETECTTHR2;Threshold High (detection)
+!TP_WAVELET_EDGEDETECTTHR;Threshold Low (noise)
+!TP_WAVELET_EDGEDETECTTHR_TOOLTIP;You can adjust threshold to avoid apply edge sharpness to thin details (noise in sky...)
+!TP_WAVELET_EDGEDETECT;Gradient sensitivity
+!TP_WAVELET_EDGEDETECT_TOOLTIP;Algorithm detect edge\nMore the slider is moved to the right, more edge gradient with high level are take into account\nThis has an incidence on local contrast, on edge settings and also on noise
+!TP_WAVELET_EDGE;Edge Sharpness (Luminance)
+!TP_WAVELET_EDGREINF_TOOLTIP;For low radius value, increase/decrease the action of the first level, and decrease/increase the action of second level then the others
+!TP_WAVELET_EDGTHRESH;Detail
+!TP_WAVELET_EDGTHRESH_TOOLTIP;Change the repartition between the first levels and the others\nThe more threshold is high, the more the action is centred on the first levels\nBe carefull to negatives values, they increase the action of high levels and can bring artifacts
+!TP_WAVELET_EDRAD;Radius
+!TP_WAVELET_EDRAD_TOOLTIP;Radius is very different from others sharpening tools\nIts value is compared to each level, through a complex function\nIn this sense, a zero radius value produce an effect
+!TP_WAVELET_EDSL;Threshold Sliders
+!TP_WAVELET_EDTYPE;Local contrast control
+!TP_WAVELET_EDVAL;Strength
+!TP_WAVELET_FINEST;Finest
+!TP_WAVELET_HIGHLIGHT;Highlight luminance range
+!TP_WAVELET_HS1;Whole luminance range
+!TP_WAVELET_HS2;Shadows/Highlights
+!TP_WAVELET_HUESKIN;Hue Range (skin)
+!TP_WAVELET_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
+!TP_WAVELET_HUESKY;Hue Range (sky)
+!TP_WAVELET_HUESKY_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
+!TP_WAVELET_INF;Below or equal the level
+!TP_WAVELET_LABEL;Wavelet levels
+!TP_WAVELET_LARGEST;Coarsest
+!TP_WAVELET_LEVCH;Chromaticity
+!TP_WAVELET_LEVELS;Wavelet levels
+!TP_WAVELET_LEVELS_TOOLTIP;Choose the number of detail levels the image is to be decomposed into. More levels require more RAM and require a longer processing time.
+!TP_WAVELET_LEVF;Contrast
+!TP_WAVELET_LEVLABEL;Preview maximum possible levels=%1
+!TP_WAVELET_LEVONE;Level 2
+!TP_WAVELET_LEVTWO;Level 3
+!TP_WAVELET_LEVZERO;Level 1
+!TP_WAVELET_LINKEDG;Link with Edge-sharpness (strength)
+!TP_WAVELET_LIPST;Enhanced algorithm
+!TP_WAVELET_LIPST_TOOLTIP;This algorithme use Lipschitz regularity\nIt increases the processing time and memory requirements, but it is better at detecting edges.
+!TP_WAVELET_LOWLIGHT;Shadow luminance range
+!TP_WAVELET_MEDGREINF;First level
+!TP_WAVELET_MEDILEV;Edge detection
+!TP_WAVELET_MEDI;Reduce artifacts in blue sky
+!TP_WAVELET_NEUTRAL;Neutral
+!TP_WAVELET_NOISE;Denoise and refine
+!TP_WAVELET_NOIS;Denoise
+!TP_WAVELET_ONE;One level
+!TP_WAVELET_OPACITY;Opacity Blue-Yellow Levels
+!TP_WAVELET_PASTEL;Pastel chromacity
+!TP_WAVELET_PREVIEWBACK;Background
+!TP_WAVELET_PREVIEWLEVELS;Preview
+!TP_WAVELET_RE1;Reinforced
+!TP_WAVELET_RE2;Unchanged
+!TP_WAVELET_RE3;Reduced
+!TP_WAVELET_RESCHRO;Chromaticity
+!TP_WAVELET_RESCONH;Highlights
+!TP_WAVELET_RESCON;Shadows
+!TP_WAVELET_RESID;Residual image
+!TP_WAVELET_SAT;Saturated chromacity
+!TP_WAVELET_SETTINGS;Wavelet Settings
+!TP_WAVELET_SKIN;Hue-tones (skin) targetting/protection
+!TP_WAVELET_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
+!TP_WAVELET_SKY;Hue-tones (sky) targetting/protection
+!TP_WAVELET_SKY_TOOLTIP;Increase/reduce chrominance in/out hue range\nAvoid artifacts in blue sky - due to micro-contrast, micro-chroma,...
+!TP_WAVELET_STRENGTH;Strength
+!TP_WAVELET_STREN;Strength
+!TP_WAVELET_SUPE;Extra
+!TP_WAVELET_SUP;Above the level
+!TP_WAVELET_THRESHOLD2;Shadow Levels
+!TP_WAVELET_THRESHOLD2_TOOLTIP;If you change this value, only level between 9 and 9 minus value, will be treated with shadow luminance levels\nOthers level will be full treated\nMax level shadow is limited by value of highlight level (9-highlight level)
+!TP_WAVELET_THRESHOLD;Highlight levels
+!TP_WAVELET_THRESHOLD_TOOLTIP;If you change this value, only level beyond will be treated with highlight luminance levels\nOthers level will be full treated
+!TP_WAVELET_THRH;Threshold highlights
+!TP_WAVELET_THR;Threshold shadows
+!TP_WAVELET_TILESBIG;Big tiles
+!TP_WAVELET_TILESFULL;Full image
+!TP_WAVELET_TILESIZE;Tile size
+!TP_WAVELET_TILESLIT;Little tiles
+!TP_WAVELET_TILES_TOOLTIP;Processing the full image leads to better quality and is the recommended option, while using tiles is a fall-back solution for users with little RAM. Refer to RawPedia for memory requirements.
+!TP_WAVELET_TON;Toning
+!TP_WAVELET_daub2;D2 - low
+!TP_WAVELET_daub4;D4 - standard
+!TP_WAVELET_daub6;D6 - standard plus
+!TP_WAVELET_daub10;D10 - medium
+!TP_WAVELET_daub14;D14 - high
+!TP_WBALANCE_CLOUDY;Cloudy
+!TP_WBALANCE_DAYLIGHT;Daylight (sunny)
+!TP_WBALANCE_EQBLUERED;Blue/Red equalizer
+!TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behavior of "white balance" by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater),\nb) are far from conditions where calibrations were performed,\nc) where the matrices or ICC profiles are unsuitable.
+!TP_WBALANCE_FLASH55;Leica
+!TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
+!TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
+!TP_WBALANCE_FLASH_HEADER;Flash
+!TP_WBALANCE_FLUO1;F1 - Daylight
+!TP_WBALANCE_FLUO2;F2 - Cool White
+!TP_WBALANCE_FLUO3;F3 - White
+!TP_WBALANCE_FLUO4;F4 - Warm White
+!TP_WBALANCE_FLUO5;F5 - Daylight
+!TP_WBALANCE_FLUO6;F6 - Lite White
+!TP_WBALANCE_FLUO7;F7 - D65 Daylight Simulator
+!TP_WBALANCE_FLUO8;F8 - D50 / Sylvania F40 Design
+!TP_WBALANCE_FLUO9;F9 - Cool White Deluxe
+!TP_WBALANCE_FLUO10;F10 - Philips TL85
+!TP_WBALANCE_FLUO11;F11 - Philips TL84
+!TP_WBALANCE_FLUO12;F12 - Philips TL83
+!TP_WBALANCE_FLUO_HEADER;Fluorescent
+!TP_WBALANCE_GTI;GTI
+!TP_WBALANCE_HMI;HMI
+!TP_WBALANCE_JUDGEIII;JudgeIII
+!TP_WBALANCE_LAMP_HEADER;Lamp
+!TP_WBALANCE_LED_CRS;CRS SP12 WWMR16
+!TP_WBALANCE_LED_HEADER;LED
+!TP_WBALANCE_LED_LSI;LSI Lumelex 2040
+!TP_WBALANCE_SHADE;Shade
+!TP_WBALANCE_SOLUX35;Solux 3500K
+!TP_WBALANCE_SOLUX41;Solux 4100K
+!TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
+!TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
+!TP_WBALANCE_TUNGSTEN;Tungsten
+!TP_WBALANCE_WATER1;UnderWater 1
+!TP_WBALANCE_WATER2;UnderWater 2
+!TP_WBALANCE_WATER_HEADER;UnderWater
+!ZOOMPANEL_100;(100%)
+!ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
+!ZOOMPANEL_ZOOM100;Zoom to 100%\nShortcut: <b>z</b>
+!ZOOMPANEL_ZOOMFITCROPSCREEN;Fit crop to screen\nShortcut: <b>Alt</b>-<b>f</b>
+!ZOOMPANEL_ZOOMFITSCREEN;Fit whole image to screen\nShortcut: <b>f</b>
+!ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
+!ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
