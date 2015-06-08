@@ -634,7 +634,7 @@ PARTIALPASTE_IPTCINFO;Informazioni IPTC
 PARTIALPASTE_LABCURVE;Regolazioni Lab
 PARTIALPASTE_LENSGROUP;Impostazioni dell'Obiettivo
 PARTIALPASTE_LENSPROFILE;Profilo di Correzione dell'Obiettivo
-PARTIALPASTE_METAICMGROUP;Impostazioni di metadati e Gestione Colore
+PARTIALPASTE_METAGROUP;Impostazioni di metadati
 PARTIALPASTE_PCVIGNETTE;Filtro Vignettatura
 PARTIALPASTE_PERSPECTIVE;Prospettiva
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Bilanciamento del verde

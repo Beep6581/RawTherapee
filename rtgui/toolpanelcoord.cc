@@ -38,7 +38,8 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     colorPanel      = Gtk::manage (new ToolVBox ());
     transformPanel  = Gtk::manage (new ToolVBox ());
     rawPanel        = Gtk::manage (new ToolVBox ());
-
+    waveletPanel    = Gtk::manage (new ToolVBox ());
+    
     coarse              = Gtk::manage (new CoarsePanel ());
     toneCurve           = Gtk::manage (new ToneCurve ());
     shadowshighlights   = Gtk::manage (new ShadowsHighlights ());
@@ -119,7 +120,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (detailsPanel, dirpyrdenoise);                      toolPanels.push_back (dirpyrdenoise);
     addPanel (detailsPanel, defringe);                           toolPanels.push_back (defringe);
     addPanel (detailsPanel, dirpyrequalizer);                    toolPanels.push_back (dirpyrequalizer);
-    addPanel (detailsPanel, wavelet);                            toolPanels.push_back (wavelet);
+    addPanel (waveletPanel, wavelet);                            toolPanels.push_back (wavelet);
     addPanel (transformPanel, crop);                             toolPanels.push_back (crop);
     addPanel (transformPanel, resize);                           toolPanels.push_back (resize);
     addPanel (transformPanel, lensgeom);                         toolPanels.push_back (lensgeom);
@@ -160,11 +161,11 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     colorPanelSW       = Gtk::manage (new MyScrolledWindow ());
     transformPanelSW   = Gtk::manage (new MyScrolledWindow ());
     rawPanelSW         = Gtk::manage (new MyScrolledWindow ());
-
+    waveletPanelSW     = Gtk::manage (new MyScrolledWindow ());
     updateVScrollbars (options.hideTPVScrollbar);
 
     // load panel endings
-    for (int i=0; i<5; i++) {
+    for (int i=0; i<6; i++) {
 		vbPanelEnd[i] = Gtk::manage (new Gtk::VBox ());
 		imgPanelEnd[i] = Gtk::manage (new RTImage("PanelEnding.png"));
 		imgPanelEnd[i]->show ();
@@ -192,6 +193,11 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     rawPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,0);
     rawPanel->pack_start (*vbPanelEnd[4],Gtk::PACK_SHRINK,0);
 
+    waveletPanelSW->add       (*waveletPanel);
+    waveletPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,0);
+    waveletPanel->pack_start (*vbPanelEnd[5],Gtk::PACK_SHRINK,0);
+
+
     TOITypes type = options.UseIconNoText ? TOI_ICON : TOI_TEXT;
 
     toiE = Gtk::manage (new TextOrIcon ("exposure.png" , M("MAIN_TAB_EXPOSURE") , M("MAIN_TAB_EXPOSURE_TOOLTIP") , type));
@@ -199,6 +205,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     toiC = Gtk::manage (new TextOrIcon ("colour.png"   , M("MAIN_TAB_COLOR")    , M("MAIN_TAB_COLOR_TOOLTIP")    , type));
     toiT = Gtk::manage (new TextOrIcon ("transform.png", M("MAIN_TAB_TRANSFORM"), M("MAIN_TAB_TRANSFORM_TOOLTIP"), type));
     toiR = Gtk::manage (new TextOrIcon ("raw.png"      , M("MAIN_TAB_RAW")      , M("MAIN_TAB_RAW_TOOLTIP")      , type));
+    toiW = Gtk::manage (new TextOrIcon ("wavelet.png"  , M("MAIN_TAB_WAVELET")  , M("MAIN_TAB_WAVELET_TOOLTIP") , type));
     toiM = Gtk::manage (new TextOrIcon ("meta.png"     , M("MAIN_TAB_METADATA") , M("MAIN_TAB_METADATA_TOOLTIP") , type));
 
 	toolPanelNotebook->append_page (*exposurePanelSW,  *toiE);
@@ -206,6 +213,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
 	toolPanelNotebook->append_page (*colorPanelSW,     *toiC);
 	toolPanelNotebook->append_page (*transformPanelSW, *toiT);
 	toolPanelNotebook->append_page (*rawPanelSW,       *toiR);
+	toolPanelNotebook->append_page (*waveletPanelSW,   *toiW);
 	toolPanelNotebook->append_page (*metadataPanel,    *toiM);
 
     toolPanelNotebook->set_current_page (0);
@@ -639,8 +647,11 @@ bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event) {
 			case GDK_r:
 				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*rawPanelSW));
 				return true;
+            case GDK_w:
+				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*waveletPanelSW));
+    			return true;
 			case GDK_m:
-				if (metadataPanel){
+                if (metadataPanel){
 					toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*metadataPanel));
 					return true;
 				}

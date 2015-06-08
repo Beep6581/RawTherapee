@@ -26,7 +26,7 @@ MAIN_TOOLTIP_BACKCOLOR2;Background colour of the preview: <b>White</b>\nShortcut
 PARTIALPASTE_COLORGROUP;Colour Related Settings
 PARTIALPASTE_COLORTONING;Colour Toning
 PARTIALPASTE_ICMSETTINGS;Colour management settings
-PARTIALPASTE_METAICMGROUP;Metadata/Colour Management Settings
+PARTIALPASTE_METAGROUP;Metadata
 PARTIALPASTE_RAW_FALSECOLOR;Demosaic false colour suppression steps
 PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor colour profile
 PREFERENCES_BEHAVIOR;Behaviour

@@ -152,6 +152,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ToolVBox* colorPanel;
         ToolVBox* transformPanel;
         ToolVBox* rawPanel;
+        ToolVBox* waveletPanel;
         Gtk::Notebook* metadataPanel;
         ExifPanel* exifpanel;
         IPTCPanel* iptcpanel;
@@ -163,6 +164,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         TextOrIcon* toiT;
         TextOrIcon* toiR;
         TextOrIcon* toiM;
+        TextOrIcon* toiW;
 
         Gtk::Label* labelE;
         Gtk::Label* labelD;
@@ -177,14 +179,15 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         Gtk::Image* imgIconT;
         Gtk::Image* imgIconR;
         Gtk::Image* imgIconM;
-        Gtk::Image* imgPanelEnd[5];
-        Gtk::VBox* vbPanelEnd[5];
+        Gtk::Image* imgPanelEnd[6];
+        Gtk::VBox* vbPanelEnd[6];
 
         Gtk::ScrolledWindow* exposurePanelSW;
         Gtk::ScrolledWindow* detailsPanelSW;
         Gtk::ScrolledWindow* colorPanelSW;
         Gtk::ScrolledWindow* transformPanelSW;
         Gtk::ScrolledWindow* rawPanelSW;
+        Gtk::ScrolledWindow* waveletPanelSW;
 
         std::vector<MyExpander*> expList;
         

@@ -618,7 +618,7 @@ PARTIALPASTE_IPTCINFO;Данные IPTC
 PARTIALPASTE_LABCURVE;Настройка Lab
 PARTIALPASTE_LENSGROUP;Параметры связанные с объективом
 PARTIALPASTE_LENSPROFILE;Профиль коррекции объектива
-PARTIALPASTE_METAICMGROUP;Настройка метаданных/параметров ICM
+PARTIALPASTE_METAGROUP;Настройка метаданных
 PARTIALPASTE_PCVIGNETTE;Фильтр виньетирования
 PARTIALPASTE_PERSPECTIVE;Перспектива
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Выравнивание зелёного канала

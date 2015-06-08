@@ -36,8 +36,9 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* color;
         Gtk::CheckButton* lens;
         Gtk::CheckButton* composition;
-        Gtk::CheckButton* metaicm;
+        Gtk::CheckButton* meta;
         Gtk::CheckButton* raw;
+        Gtk::CheckButton* wav;
 
         // options in basic:
         Gtk::CheckButton* wb;
@@ -58,9 +59,13 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* dirpyrden;
         Gtk::CheckButton* defringe;
         Gtk::CheckButton* dirpyreq;
+
+        // options in wavelet
         Gtk::CheckButton* wavelet;
 
         // options in color:
+        Gtk::CheckButton* icm;
+        Gtk::CheckButton* gam;
         Gtk::CheckButton* vibrance;
         Gtk::CheckButton* chmixer;
         Gtk::CheckButton* blackwhite;
@@ -68,7 +73,6 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* filmSimulation;
         Gtk::CheckButton* rgbcurves;
         Gtk::CheckButton* colortoning;
-       // Gtk::CheckButton* icm;
 
         // options in lens:
         Gtk::CheckButton* distortion;
@@ -84,11 +88,10 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* perspective;
         Gtk::CheckButton* commonTrans;
 
-        // options in metaicm:
+        // options in meta:
         Gtk::CheckButton* exifch;
         Gtk::CheckButton* iptc;
-        Gtk::CheckButton* icm;
-        Gtk::CheckButton* gam;
+
 
         // options in raw:
         Gtk::CheckButton* raw_expos;
@@ -116,10 +119,10 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* ff_BlurType;
         Gtk::CheckButton* ff_ClipControl;
 
-        sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaicmConn, rawConn;
+        sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaConn, rawConn, wavConn;
 
         sigc::connection wbConn, exposureConn, shConn, pcvignetteConn, gradientConn, labcurveConn, colorappearanceConn;
-        sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, waveqConn, defringeConn, epdConn, dirpyreqConn, waveletConn;
+        sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, defringeConn, epdConn, dirpyreqConn, waveletConn;
         sigc::connection vibranceConn, chmixerConn, hsveqConn, rgbcurvesConn, chmixerbwConn, colortoningConn, filmSimulationConn;
         sigc::connection distortionConn, cacorrConn, vignettingConn, lcpConn;
         sigc::connection coarserotConn, finerotConn, cropConn, resizeConn, perspectiveConn, commonTransConn;
@@ -138,8 +141,9 @@ class PartialPasteDlg : public Gtk::Dialog {
         void colorToggled ();
         void lensToggled ();
         void compositionToggled ();
-        void metaicmToggled ();
+        void metaToggled ();
         void rawToggled ();
+        void wavToggled ();
 };
 
 #endif

@@ -695,6 +695,8 @@ MAIN_TAB_RAW;Raw
 MAIN_TAB_RAW_TOOLTIP;Shortcut: <b>Alt-r</b>
 MAIN_TAB_TRANSFORM;Transform
 MAIN_TAB_TRANSFORM_TOOLTIP;Shortcut: <b>Alt-t</b>
+MAIN_TAB_WAVELET;Wavelet
+MAIN_TAB_WAVELET_TOOLTIP;Shortcut: <b>Alt-w</b>
 MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>9</b>
@@ -766,7 +768,7 @@ PARTIALPASTE_IPTCINFO;IPTC
 PARTIALPASTE_LABCURVE;L*a*b* adjustments
 PARTIALPASTE_LENSGROUP;Lens related settings
 PARTIALPASTE_LENSPROFILE;Lens correction profile
-PARTIALPASTE_METAICMGROUP;Metadata/Color Management Settings
+PARTIALPASTE_METAGROUP;Metadata
 PARTIALPASTE_PCVIGNETTE;Vignette filter
 PARTIALPASTE_PERSPECTIVE;Perspective
 PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
@@ -794,6 +796,7 @@ PARTIALPASTE_SHARPENING;Sharpening (USM/RL)
 PARTIALPASTE_SHARPENMICRO;Microcontrast
 PARTIALPASTE_VIBRANCE;Vibrance
 PARTIALPASTE_VIGNETTING;Vignetting correction
+PARTIALPASTE_WAVELETGROUP;Wavelet processing
 PARTIALPASTE_WHITEBALANCE;White balance
 PREFERENCES_ADD;Add
 PREFERENCES_APPLNEXTSTARTUP;restart required

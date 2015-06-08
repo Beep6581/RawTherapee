@@ -39,10 +39,12 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     lens        ->set_name("partialPasteHeader");
     composition = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COMPOSITIONGROUP")));
     composition ->set_name("partialPasteHeader");
-    metaicm     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_METAICMGROUP")));
-    metaicm     ->set_name("partialPasteHeader");
+    meta     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_METAGROUP")));
+    meta     ->set_name("partialPasteHeader");
     raw         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWGROUP")));
     raw         ->set_name("partialPasteHeader");
+    wav         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_WAVELETGROUP")));
+    wav         ->set_name("partialPasteHeader");
 
     // options in basic:
     wb          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_WHITEBALANCE")));
@@ -53,6 +55,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     gradient    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_GRADIENT")));
     labcurve    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LABCURVE")));
     colorappearance= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COLORAPP")));
+
     // options in detail:
     sharpen     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHARPENING")));
     sharpenedge = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHARPENEDGE")));
@@ -60,9 +63,13 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     impden		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IMPULSEDENOISE")));
     dirpyreq    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYREQUALIZER")));
     defringe    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DEFRINGE")));
-    wavelet    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EQUALIZER")));
+
+    // options in wavelet:
+    wavelet    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EQUALIZER"))); //TODO - rename to wavelet
 
     // options in color:
+    icm         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ICMSETTINGS")));
+    //gam         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ICMGAMMA")));
     vibrance    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_VIBRANCE")));
     chmixer     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CHANNELMIXER")));
     blackwhite   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CHANNELMIXERBW")));
@@ -86,11 +93,9 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     perspective = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PERSPECTIVE")));
     commonTrans = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COMMONTRANSFORMPARAMS")));
 
-    // options in metaicm:
+    // options in meta:
     exifch      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EXIFCHANGES")));
     iptc        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IPTCINFO")));
-    icm         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ICMSETTINGS")));
-    gam         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ICMGAMMA")));
 
     // options in raw:
     raw_expos           = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWEXPOS_LINEAR")));
@@ -118,15 +123,15 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     ff_BlurType         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDBLURTYPE")));
     ff_ClipControl      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDCLIPCONTROL")));
 
-    Gtk::VBox* vboxes[7];
-    Gtk::HSeparator* hseps[7];
-    for (int i=0; i<7; i++) {
+    Gtk::VBox* vboxes[8];
+    Gtk::HSeparator* hseps[8];
+    for (int i=0; i<8; i++) {
         vboxes[i] = Gtk::manage (new Gtk::VBox ());
         vboxes[i]->set_border_width (6);
         hseps[i] = Gtk::manage (new Gtk::HSeparator ());
         hseps[i]->set_name("partialPasteHeaderSep");
     }
-    
+    //BASIC
     vboxes[0]->pack_start (*basic, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*hseps[0], Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*wb, Gtk::PACK_SHRINK, 2);
@@ -138,6 +143,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     vboxes[0]->pack_start (*labcurve, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*colorappearance, Gtk::PACK_SHRINK, 2);
 
+    //DETAIL
     vboxes[1]->pack_start (*detail, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*hseps[1], Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*sharpen, Gtk::PACK_SHRINK, 2);
@@ -147,11 +153,12 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     vboxes[1]->pack_start (*dirpyrden, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*defringe, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*dirpyreq, Gtk::PACK_SHRINK, 2);
-    //vboxes[1]->pack_start (*waveq, Gtk::PACK_SHRINK, 2);
-    vboxes[1]->pack_start (*wavelet, Gtk::PACK_SHRINK, 2);
 
+    //COLOR
     vboxes[2]->pack_start (*color, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*hseps[2], Gtk::PACK_SHRINK, 2);
+    vboxes[2]->pack_start (*icm, Gtk::PACK_SHRINK, 2);
+    //vboxes[2]->pack_start (*gam, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*vibrance, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*chmixer, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*blackwhite, Gtk::PACK_SHRINK, 2);
@@ -160,6 +167,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     vboxes[2]->pack_start (*rgbcurves, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*colortoning, Gtk::PACK_SHRINK, 2);
 
+    //LENS
     vboxes[3]->pack_start (*lens, Gtk::PACK_SHRINK, 2);
     vboxes[3]->pack_start (*hseps[3], Gtk::PACK_SHRINK, 2);
     vboxes[3]->pack_start (*distortion, Gtk::PACK_SHRINK, 2);
@@ -167,6 +175,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     vboxes[3]->pack_start (*vignetting, Gtk::PACK_SHRINK, 2);
     vboxes[3]->pack_start (*lcp, Gtk::PACK_SHRINK, 2);
 
+    //COMPOSITION
     vboxes[4]->pack_start (*composition, Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*hseps[4], Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*coarserot, Gtk::PACK_SHRINK, 2);
@@ -176,13 +185,12 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     vboxes[4]->pack_start (*perspective, Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*commonTrans, Gtk::PACK_SHRINK, 2);
 
-    vboxes[5]->pack_start (*metaicm, Gtk::PACK_SHRINK, 2);
+    //WAVELET
+    vboxes[5]->pack_start (*wav, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*hseps[5], Gtk::PACK_SHRINK, 2);
-    vboxes[5]->pack_start (*exifch, Gtk::PACK_SHRINK, 2);
-    vboxes[5]->pack_start (*iptc, Gtk::PACK_SHRINK, 2);
-    vboxes[5]->pack_start (*icm, Gtk::PACK_SHRINK, 2);
-    vboxes[5]->pack_start (*gam, Gtk::PACK_SHRINK, 2);
+    vboxes[5]->pack_start (*wavelet, Gtk::PACK_SHRINK, 2);
 
+    //RAW
     vboxes[6]->pack_start (*raw, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*hseps[6], Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*raw_method, Gtk::PACK_SHRINK, 2);
@@ -214,6 +222,12 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
 	vboxes[6]->pack_start (*raw_cared, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*raw_cablue, Gtk::PACK_SHRINK, 2);
 
+    //META
+	vboxes[7]->pack_start (*meta, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*hseps[7], Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*exifch, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*iptc, Gtk::PACK_SHRINK, 2);
+
     Gtk::VBox* vbCol1 = Gtk::manage (new Gtk::VBox ());
     Gtk::VBox* vbCol2 = Gtk::manage (new Gtk::VBox ());
     Gtk::VBox* vbCol3 = Gtk::manage (new Gtk::VBox ());
@@ -226,7 +240,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
         vbCol1->pack_start (*vboxes[i], Gtk::PACK_SHRINK, 2);
     for (int i=3; i<6; i++)
         vbCol2->pack_start (*vboxes[i], Gtk::PACK_SHRINK, 2);
-    for (int i=6; i<7; i++)
+    for (int i=6; i<8; i++)
         vbCol3->pack_start (*vboxes[i], Gtk::PACK_SHRINK, 2);
 
 	Gtk::VBox* vbtop = Gtk::manage (new Gtk::VBox ());
@@ -264,8 +278,9 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     colorConn       = color->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::colorToggled));    
     lensConn        = lens->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::lensToggled));    
     compositionConn = composition->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::compositionToggled));    
-    metaicmConn     = metaicm->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::metaicmToggled));    
+    metaConn     = meta->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::metaToggled));
     rawConn         = raw->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::rawToggled));
+    wavConn         = wav->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::wavToggled));
 
     wbConn          = wb->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));    
     exposureConn    = exposure->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));    
@@ -282,10 +297,12 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     impdenConn		= impden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     dirpyrdenConn   = dirpyrden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     dirpyreqConn	= dirpyreq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
-    //waveqConn	    = waveq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     defringeConn    = defringe->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
-    waveletConn	= wavelet->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
 
+    waveletConn	= wavelet->signal_toggled().connect (sigc::bind (sigc::mem_fun(*wav, &Gtk::CheckButton::set_inconsistent), true));
+
+    icmConn         = icm->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
+   //gamcsconn		= gam->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     vibranceConn    = vibrance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     chmixerConn     = chmixer->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     chmixerbwConn   = blackwhite->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
@@ -306,10 +323,8 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     perspectiveConn = perspective->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     commonTransConn = commonTrans->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
 
-    exifchConn      = exifch->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));    
-    iptcConn        = iptc->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));    
-    icmConn         = icm->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));    
-    gamcsconn		= gam->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));
+    exifchConn      = exifch->signal_toggled().connect (sigc::bind (sigc::mem_fun(*meta, &Gtk::CheckButton::set_inconsistent), true));
+    iptcConn        = iptc->signal_toggled().connect (sigc::bind (sigc::mem_fun(*meta, &Gtk::CheckButton::set_inconsistent), true));
 
     raw_methodConn         = raw_method->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_ccStepsConn         = raw_ccSteps->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
@@ -350,8 +365,9 @@ void PartialPasteDlg::everythingToggled () {
 	colorConn.block (true);
 	lensConn.block (true);
 	compositionConn.block (true);
-	metaicmConn.block (true);
+	metaConn.block (true);
 	rawConn.block (true);
+	wavConn.block (true);
 
 	everything->set_inconsistent (false);
 
@@ -361,8 +377,9 @@ void PartialPasteDlg::everythingToggled () {
     color->set_active(everything->get_active());
     lens->set_active(everything->get_active());
     composition->set_active(everything->get_active());
-    metaicm->set_active(everything->get_active());
+    meta->set_active(everything->get_active());
     raw->set_active(everything->get_active());
+    wav->set_active(everything->get_active());
 
     //toggle group children
     PartialPasteDlg::basicToggled ();
@@ -370,16 +387,18 @@ void PartialPasteDlg::everythingToggled () {
     PartialPasteDlg::colorToggled ();
     PartialPasteDlg::lensToggled ();
     PartialPasteDlg::compositionToggled ();
-    PartialPasteDlg::metaicmToggled ();
+    PartialPasteDlg::metaToggled ();
     PartialPasteDlg::rawToggled ();
+    PartialPasteDlg::wavToggled ();
 
 	basicConn.block (false);
 	detailConn.block (false);
 	colorConn.block (false);
 	lensConn.block (false);
 	compositionConn.block (false);
-	metaicmConn.block (false);
+	metaConn.block (false);
 	rawConn.block (false);
+	wavConn.block (false);
 }
 
 void PartialPasteDlg::rawToggled () {
@@ -500,7 +519,6 @@ void PartialPasteDlg::detailToggled () {
     dirpyrdenConn.block (true);
     defringeConn.block (true);
     dirpyreqConn.block (true);
-    //waveqConn.block (true);
 
     detail->set_inconsistent (false);
 
@@ -511,8 +529,6 @@ void PartialPasteDlg::detailToggled () {
     dirpyrden->set_active (detail->get_active ());
     defringe->set_active (detail->get_active ());
     dirpyreq->set_active (detail->get_active ());
-    //waveq->set_active (detail->get_active ());
-    wavelet->set_active (detail->get_active ());
 
     sharpenConn.block (false);
     gradsharpenConn.block(false);
@@ -521,11 +537,22 @@ void PartialPasteDlg::detailToggled () {
     dirpyrdenConn.block (false);
     defringeConn.block (false);
     dirpyreqConn.block (false);
-    //waveqConn.block (false);
+}
+
+void PartialPasteDlg::wavToggled () {
+
+    waveletConn.block (true);
+
+    wav->set_inconsistent (false);
+    wavelet->set_active (wav->get_active ());
+
+    waveletConn.block (false);
 }
 
 void PartialPasteDlg::colorToggled () {
 
+    icmConn.block (true);
+    //gamcsconn.block (true);
     vibranceConn.block (true);
     chmixerConn.block (true);
     chmixerbwConn.block (true);
@@ -533,9 +560,10 @@ void PartialPasteDlg::colorToggled () {
     filmSimulationConn.block (true);
     rgbcurvesConn.block (true);
     colortoningConn.block (true);
-    gamcsconn.block (true);
-    color->set_inconsistent (false);
 
+    color->set_inconsistent (false);
+    icm->set_active (color->get_active ());
+    //gam->set_active (color->get_active ());
     vibrance->set_active (color->get_active ());
     chmixer->set_active (color->get_active ());
     blackwhite->set_active (color->get_active ());
@@ -543,8 +571,9 @@ void PartialPasteDlg::colorToggled () {
     filmSimulation->set_active (color->get_active ());
     rgbcurves->set_active (color->get_active ());
     colortoning->set_active(color->get_active ());
-    icm->set_active (color->get_active ());
 
+    icmConn.block (false);
+    //gamcsconn.block (false);
     vibranceConn.block (false);
     chmixerbwConn.block (false);	
     chmixerConn.block (false);
@@ -552,8 +581,6 @@ void PartialPasteDlg::colorToggled () {
     filmSimulationConn.block (false);
     rgbcurvesConn.block (false);
     colortoningConn.block (false);
-    gamcsconn.block (false);
-
 }
 
 void PartialPasteDlg::lensToggled () {
@@ -602,24 +629,17 @@ void PartialPasteDlg::compositionToggled () {
     commonTransConn.block (false);
 }
 
-void PartialPasteDlg::metaicmToggled () {
+void PartialPasteDlg::metaToggled () {
 
     exifchConn.block (true);
     iptcConn.block (true);
-    icmConn.block (true);
-    gamcsconn.block (true);
-    metaicm->set_inconsistent (false);
+    meta->set_inconsistent (false);
 
-    exifch->set_active (metaicm->get_active ());
-    iptc->set_active (metaicm->get_active ());
-    icm->set_active (metaicm->get_active ());
-    gam->set_active (metaicm->get_active ());
+    exifch->set_active (meta->get_active ());
+    iptc->set_active (meta->get_active ());
 
     exifchConn.block (false);
     iptcConn.block (false);
-    icmConn.block (false);
-    gamcsconn.block (false);
-
 }
 
 
@@ -656,8 +676,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     if (!dirpyreq->get_active ())    filterPE.dirpyrequalizer = falsePE.dirpyrequalizer;
     if (!defringe->get_active ())    filterPE.defringe        = falsePE.defringe;
     if (!dirpyrden->get_active ())   filterPE.dirpyrDenoise   = falsePE.dirpyrDenoise;
+
     if (!wavelet->get_active ())    filterPE.wavelet = falsePE.wavelet;
 
+    if (!icm->get_active ())         filterPE.icm          = falsePE.icm;
     if (!vibrance->get_active ())    filterPE.vibrance     = falsePE.vibrance;
     if (!chmixer->get_active ())     filterPE.chmixer      = falsePE.chmixer;
     if (!blackwhite->get_active ())  filterPE.blackwhite   = falsePE.blackwhite;
@@ -665,7 +687,6 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     if (!filmSimulation->get_active ()) filterPE.filmSimulation  = falsePE.filmSimulation;
     if (!rgbcurves->get_active ())   filterPE.rgbCurves    = falsePE.rgbCurves;
     if (!colortoning->get_active ()) filterPE.colorToning  = falsePE.colorToning;
-    if (!icm->get_active ())         filterPE.icm          = falsePE.icm;
 
     if (!distortion->get_active ())  filterPE.distortion   = falsePE.distortion;
     if (!cacorr->get_active ())      filterPE.cacorrection = falsePE.cacorrection;
@@ -681,7 +702,6 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!exifch->get_active ())      filterPE.exif = falsePE.exif;
     if (!iptc->get_active ())        filterPE.iptc = falsePE.iptc;
-    if (!icm->get_active ())         filterPE.icm  = falsePE.icm;
 
     if (!raw_method->get_active ()) {          filterPE.raw.bayersensor.method   = falsePE.raw.bayersensor.method;
                                                filterPE.raw.xtranssensor.method  = falsePE.raw.xtranssensor.method; }
