@@ -443,6 +443,9 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry) {
         initEntry (entry);
     }
     redraw ();
+
+    // newly added item might have been already trashed in a previous session
+    trash_changed().emit();
 }
 
 FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname) {
