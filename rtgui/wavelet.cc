@@ -59,95 +59,59 @@ Wavelet::Wavelet () :  FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"),
 	dispFrame = Gtk::manage (new Gtk::Frame () );
 	expdisplay = Gtk::manage (new Gtk::Expander (M("TP_WAVELET_DISP")));
 	Gtk::HBox* hbdisplay = Gtk::manage( new Gtk::HBox());
-	tbdisplay = Gtk::manage( new Gtk::ToggleButton());
 	dispFrame->add(*expdisplay);
 	hbdisplay->set_spacing(8); 
-	hbdisplay->pack_start(*tbdisplay);
-	tbdisplay->signal_toggled().connect( sigc::mem_fun(this, &Wavelet::expdisplayTog));	
 	
 	levelFrame = Gtk::manage (new Gtk::Frame () );
 	expcontrast = Gtk::manage (new Gtk::Expander (M("TP_WAVELET_LEVF")));
 	Gtk::HBox* hbcontrast = Gtk::manage( new Gtk::HBox());
-	tbcontrast = Gtk::manage( new Gtk::ToggleButton());
 	levelFrame->add(*expcontrast);
 	hbcontrast->set_spacing(8); 
-	hbcontrast->pack_start(*tbcontrast);
-	tbcontrast->signal_toggled().connect( sigc::mem_fun(this, &Wavelet::expcontrastTog));	
 
 	chromaFrame = Gtk::manage (new Gtk::Frame () );
 	expchroma = Gtk::manage (new Gtk::Expander (M("TP_WAVELET_LEVCH")));
 	Gtk::HBox* hbchroma = Gtk::manage( new Gtk::HBox());
-	tbchroma = Gtk::manage( new Gtk::ToggleButton());
 	chromaFrame->add(*expchroma);
 	hbchroma->set_spacing(8); 
-	hbchroma->pack_start(*tbchroma); 
-	tbchroma->signal_toggled().connect( sigc::mem_fun(this, &Wavelet::expchromaTog));	
 
 	toningFrame = Gtk::manage (new Gtk::Frame () );
 	exptoning = Gtk::manage (new Gtk::Expander (M("TP_WAVELET_TON")));
 	Gtk::HBox* hbtoning = Gtk::manage( new Gtk::HBox());
-	tbtoning = Gtk::manage( new Gtk::ToggleButton());
 	toningFrame->add(*exptoning);
 	hbtoning->set_spacing(8); 
-	hbtoning->pack_start(*tbtoning);
-	tbtoning->signal_toggled().connect( sigc::mem_fun(this, &Wavelet::exptoningTog));	
 
 	noiseFrame = Gtk::manage (new Gtk::Frame () );
 	expnoise = Gtk::manage (new Gtk::Expander (M("TP_WAVELET_NOISE")));
 	Gtk::HBox* hbnoise = Gtk::manage( new Gtk::HBox());
-	tbnoise = Gtk::manage( new Gtk::ToggleButton());
 	noiseFrame->add(*expnoise);
 	hbnoise->set_spacing(8); 
-	hbnoise->pack_start(*tbnoise);
 
 	edgeFrame = Gtk::manage (new Gtk::Frame () );
 	expedge = Gtk::manage (new Gtk::Expander (M("TP_WAVELET_EDGE")));
 	Gtk::HBox* hbedge = Gtk::manage( new Gtk::HBox());
-	tbedge = Gtk::manage( new Gtk::ToggleButton());
 	edgeFrame->add(*expedge);
 	hbedge->set_spacing(8); 
-	hbedge->pack_start(*tbedge);
-//	tbtoning->signal_toggled().connect( sigc::mem_fun(this, &Wavelet::exptoningTog));	
 	
 	controlFrame = Gtk::manage (new Gtk::Frame () );
 	expgamut = Gtk::manage (new Gtk::Expander (M("TP_WAVELET_CONTR")));
 	Gtk::HBox* hbgamut = Gtk::manage( new Gtk::HBox());
-	tbgamut = Gtk::manage( new Gtk::ToggleButton());
 	controlFrame->add(*expgamut);
 	hbgamut->set_spacing(8); 
-	hbgamut->pack_start(*tbgamut); 
-	tbgamut->signal_toggled().connect( sigc::mem_fun(this, &Wavelet::expgamutTog));	
     
-	igRes = new RTImage ("histValue.png");
 	residualFrame = Gtk::manage (new Gtk::Frame () );
 	expresid = Gtk::manage (new Gtk::Expander (M("TP_WAVELET_RESID")));
 	hbresid = Gtk::manage( new Gtk::HBox());
-	cbresid = Gtk::manage( new Gtk::CheckButton());
-	tbresid = Gtk::manage( new Gtk::ToggleButton());
-    tbresid->set_relief(Gtk::RELIEF_NONE);
-    tbresid->set_image(*igRes);
-	
-//	Gtk::Label* l = Gtk::manage( new Gtk::Label("Sample label")); // just an example label
 	residualFrame->add(*expresid);
 	hbresid->set_spacing(8); // set spacing fo the horizontal box.
-	hbresid->pack_start(*tbresid); // add a toggle button to the box. you might want to change the text / icons to roll / unroll
-	//hbresid->pack_start(*cbresid); // add a CheckButton to the box.
-//	residualFrame->set_label_widget(*hbresid); // put the box as label for the frame.	
-	tbresid->signal_toggled().connect( sigc::mem_fun(this, &Wavelet::expresidTog));	
 	
 	
 	finalFrame = Gtk::manage (new Gtk::Frame () );
 	expfinal = Gtk::manage (new Gtk::Expander (M("TP_WAVELET_FINAL")));
 	Gtk::HBox* hbfinal = Gtk::manage( new Gtk::HBox());
-	tbfinal = Gtk::manage( new Gtk::ToggleButton());
 	finalFrame->add(*expfinal);
 	hbfinal->set_spacing(8); 
-	hbfinal->pack_start(*tbfinal); 
-	tbfinal->signal_toggled().connect( sigc::mem_fun(this, &Wavelet::expfinalTog));	
-	
+
 	//****************************************************
-
-
 
 	// Wavelet Settings
     settingsFrame = Gtk::manage (new Gtk::Frame (M("TP_WAVELET_SETTINGS")));
@@ -270,17 +234,17 @@ Wavelet::Wavelet () :  FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"),
 	
     levBox->pack_start(*buttonBox, Gtk::PACK_SHRINK, 2);
 
-        Gtk::Button * contrastMinusButton = Gtk::manage (new Gtk::Button(M("TP_WAVELET_CONTRAST_MINUS")));
-        buttonBox->pack_start(*contrastMinusButton, Gtk::PACK_SHRINK, 2);
-        contrastMinusPressedConn = contrastMinusButton->signal_pressed().connect( sigc::mem_fun(*this, &Wavelet::contrastMinusPressed));
+    Gtk::Button * contrastMinusButton = Gtk::manage (new Gtk::Button(M("TP_WAVELET_CONTRAST_MINUS")));
+    buttonBox->pack_start(*contrastMinusButton, Gtk::PACK_SHRINK, 2);
+    contrastMinusPressedConn = contrastMinusButton->signal_pressed().connect( sigc::mem_fun(*this, &Wavelet::contrastMinusPressed));
 
-        Gtk::Button * neutralButton = Gtk::manage (new Gtk::Button(M("TP_WAVELET_NEUTRAL")));
-        buttonBox->pack_start(*neutralButton, Gtk::PACK_SHRINK, 2);
-        neutralPressedConn = neutralButton->signal_pressed().connect( sigc::mem_fun(*this, &Wavelet::neutralPressed));
-        
-        Gtk::Button * contrastPlusButton = Gtk::manage (new Gtk::Button(M("TP_WAVELET_CONTRAST_PLUS")));
-        buttonBox->pack_start(*contrastPlusButton, Gtk::PACK_SHRINK, 2);
-        contrastPlusPressedConn = contrastPlusButton->signal_pressed().connect( sigc::mem_fun(*this, &Wavelet::contrastPlusPressed));
+    Gtk::Button * neutralButton = Gtk::manage (new Gtk::Button(M("TP_WAVELET_NEUTRAL")));
+    buttonBox->pack_start(*neutralButton, Gtk::PACK_SHRINK, 2);
+    neutralPressedConn = neutralButton->signal_pressed().connect( sigc::mem_fun(*this, &Wavelet::neutralPressed));
+    
+    Gtk::Button * contrastPlusButton = Gtk::manage (new Gtk::Button(M("TP_WAVELET_CONTRAST_PLUS")));
+    buttonBox->pack_start(*contrastPlusButton, Gtk::PACK_SHRINK, 2);
+    contrastPlusPressedConn = contrastPlusButton->signal_pressed().connect( sigc::mem_fun(*this, &Wavelet::contrastPlusPressed));
 
     buttonBox->show_all_children();
 	
@@ -292,12 +256,12 @@ Wavelet::Wavelet () :  FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"),
     {
         Glib::ustring ss;
         switch( i ){
-        case 0:
-            ss =Glib::ustring::compose( "%1 (%2)",(i+1), M("TP_WAVELET_FINEST"));break;
-        case 8:
-        	ss =Glib::ustring::compose( "%1 (%2)",(i+1), M("TP_WAVELET_LARGEST"));break;
-        default:
-        	ss =Glib::ustring::compose( "%1",(i+1));
+            case 0:
+                ss =Glib::ustring::compose( "%1 (%2)",(i+1), M("TP_WAVELET_FINEST"));break;
+            case 8:
+                ss =Glib::ustring::compose( "%1 (%2)",(i+1), M("TP_WAVELET_LARGEST"));break;
+            default:
+                ss =Glib::ustring::compose( "%1",(i+1));
         }
         
         correction[i] = Gtk::manage ( new Adjuster (ss, -100, 350, 1, 0) );
@@ -2284,7 +2248,6 @@ void Wavelet::adjusterChanged (Adjuster* a, double newval) {
     }    
 }
 
-
 void Wavelet::enabledChanged () {
     if (!batchMode) {
         int y=thres->getValue();
@@ -2309,76 +2272,6 @@ void Wavelet::enabledChanged () {
             listener->panelChanged (EvWavEnabled, M("GENERAL_DISABLED"));
     }
 }
-void Wavelet::expresidTog () {
-	if (tbresid->get_active ()) {
-	//residualFrame->setExpanded(true);
-	//expresid->setExpanded(true);
-	//hbresid->setExpanded(true);
-		//	residualFrame->show();
-	
-	}
-	else {
-	//expresid->setExpanded(false);
-	
-	//residualFrame->setExpanded(false);
-		//residualFrame->hide();
-		
-	}
-	
-}
-void Wavelet::expcontrastTog () {
-	if (tbcontrast->get_active ()) {
-			levelFrame->show();	
-	}
-	else {
-		levelFrame->hide();	
-	}
-}
-
-void Wavelet::expchromaTog () {
-	if (tbchroma->get_active ()) {
-			chromaFrame->show();	
-	}
-	else {
-		chromaFrame->hide();	
-	}
-}
-
-void Wavelet::expgamutTog () {
-	if (tbcontrast->get_active ()) {
-			controlFrame->show();
-	}
-	else {
-		controlFrame->hide();		
-	}
-}	
-
-void Wavelet::expfinalTog () {
-	if (tbcontrast->get_active ()) {
-			finalFrame->show();
-	}
-	else {
-		finalFrame->hide();		
-	}
-}	
-
-void Wavelet::expdisplayTog () {
-	if (tbdisplay->get_active ()) {
-			dispFrame->show();
-	}
-	else {
-		dispFrame->hide();	
-	}
-}	
-void Wavelet::exptoningTog () {
-	if (tbtoning->get_active ()) {
-			toningFrame->show();
-	}
-	else {
-		toningFrame->hide();	
-	}
-}	
-
 
 void Wavelet::medianToggled () {
 

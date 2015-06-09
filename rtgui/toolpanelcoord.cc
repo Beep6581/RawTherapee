@@ -18,7 +18,6 @@
  */
 #include "multilangmgr.h"
 #include "toolpanelcoord.h"
-#include "ilabel.h"
 #include "options.h"
 #include "../rtengine/imagesource.h"
 #include "../rtengine/dfmanager.h"
@@ -185,6 +184,10 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     colorPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,0);
     colorPanel->pack_start (*vbPanelEnd[2],Gtk::PACK_SHRINK,4);
 
+    waveletPanelSW->add       (*waveletPanel);
+    waveletPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,0);
+    waveletPanel->pack_start (*vbPanelEnd[5],Gtk::PACK_SHRINK,0);
+
     transformPanelSW->add (*transformPanel);
     transformPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,0);
     transformPanel->pack_start (*vbPanelEnd[3],Gtk::PACK_SHRINK,4);
@@ -193,9 +196,6 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     rawPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,0);
     rawPanel->pack_start (*vbPanelEnd[4],Gtk::PACK_SHRINK,0);
 
-    waveletPanelSW->add       (*waveletPanel);
-    waveletPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,0);
-    waveletPanel->pack_start (*vbPanelEnd[5],Gtk::PACK_SHRINK,0);
 
 
     TOITypes type = options.UseIconNoText ? TOI_ICON : TOI_TEXT;
@@ -203,17 +203,17 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     toiE = Gtk::manage (new TextOrIcon ("exposure.png" , M("MAIN_TAB_EXPOSURE") , M("MAIN_TAB_EXPOSURE_TOOLTIP") , type));
     toiD = Gtk::manage (new TextOrIcon ("detail.png"   , M("MAIN_TAB_DETAIL")   , M("MAIN_TAB_DETAIL_TOOLTIP")   , type));
     toiC = Gtk::manage (new TextOrIcon ("colour.png"   , M("MAIN_TAB_COLOR")    , M("MAIN_TAB_COLOR_TOOLTIP")    , type));
+    toiW = Gtk::manage (new TextOrIcon ("wavelet.png"  , M("MAIN_TAB_WAVELET")  , M("MAIN_TAB_WAVELET_TOOLTIP") , type));
     toiT = Gtk::manage (new TextOrIcon ("transform.png", M("MAIN_TAB_TRANSFORM"), M("MAIN_TAB_TRANSFORM_TOOLTIP"), type));
     toiR = Gtk::manage (new TextOrIcon ("raw.png"      , M("MAIN_TAB_RAW")      , M("MAIN_TAB_RAW_TOOLTIP")      , type));
-    toiW = Gtk::manage (new TextOrIcon ("wavelet.png"  , M("MAIN_TAB_WAVELET")  , M("MAIN_TAB_WAVELET_TOOLTIP") , type));
     toiM = Gtk::manage (new TextOrIcon ("meta.png"     , M("MAIN_TAB_METADATA") , M("MAIN_TAB_METADATA_TOOLTIP") , type));
 
 	toolPanelNotebook->append_page (*exposurePanelSW,  *toiE);
 	toolPanelNotebook->append_page (*detailsPanelSW,   *toiD);
 	toolPanelNotebook->append_page (*colorPanelSW,     *toiC);
+	toolPanelNotebook->append_page (*waveletPanelSW,   *toiW);
 	toolPanelNotebook->append_page (*transformPanelSW, *toiT);
 	toolPanelNotebook->append_page (*rawPanelSW,       *toiR);
-	toolPanelNotebook->append_page (*waveletPanelSW,   *toiW);
 	toolPanelNotebook->append_page (*metadataPanel,    *toiM);
 
     toolPanelNotebook->set_current_page (0);
@@ -668,6 +668,7 @@ void ToolPanelCoordinator::updateVScrollbars (bool hide) {
     colorPanelSW->set_policy        (Gtk::POLICY_AUTOMATIC, policy);
     transformPanelSW->set_policy    (Gtk::POLICY_AUTOMATIC, policy);
     rawPanelSW->set_policy          (Gtk::POLICY_AUTOMATIC, policy);
+    waveletPanelSW->set_policy      (Gtk::POLICY_AUTOMATIC, policy);
 }
 
 void ToolPanelCoordinator::updateTabsHeader (bool useIcons) {
