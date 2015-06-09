@@ -69,17 +69,7 @@ protected:
     Gtk::CheckButton * lipst;
     Gtk::CheckButton * avoid;
     Gtk::CheckButton * tmr;
-    Gtk::ToggleButton * tbresid;
-    Gtk::ToggleButton * tbcontrast;
-    Gtk::ToggleButton * tbgamut;
-    Gtk::ToggleButton * tbfinal;
-    Gtk::ToggleButton * tbchroma;
-    Gtk::ToggleButton * tbtoning;
-    Gtk::ToggleButton * tbnoise;
-    Gtk::ToggleButton * tbdisplay;
-    Gtk::ToggleButton * tbedge;
-    Gtk::CheckButton * cbresid;
-	Gtk::Image* igRes;
+
 	Gtk::Button * neutralchButton;
 	
     Adjuster* correction[9]; 
@@ -222,16 +212,6 @@ public:
     void setEditProvider     (EditDataProvider *provider);
     void autoOpenCurve  ();
 
- //   virtual Gtk::Expander* getExpander     () { return NULL; }
- //   virtual void           setExpanded     (bool expanded) {}
- //   virtual bool           getExpanded     () { return false; }
-
-
-
-     /*   Gtk::Expander * getExpander() { return expresid; }
-        void setExpanded (bool expanded) { if (expresid) expresid->set_expanded( expanded ); }
-        bool getExpanded () { if (expresid) return expresid->get_expanded(); return false; }
-	*/
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
@@ -247,13 +227,6 @@ public:
     void medianlevToggled ();
     void linkedgToggled ();
     void lipstToggled ();
-    void expcontrastTog ();
-    void expresidTog ();
-    void expdisplayTog ();
-    void expgamutTog ();
-    void expfinalTog ();
-    void expchromaTog ();
-    void exptoningTog ();
     void avoidToggled ();
     void tmrToggled ();
     void neutralPressed ();
