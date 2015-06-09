@@ -1734,6 +1734,12 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!CURVEEDITOR_AXIS_IN;I:
+!CURVEEDITOR_AXIS_LEFT_TAN;LT:
+!CURVEEDITOR_AXIS_OUT;O:
+!CURVEEDITOR_AXIS_RIGHT_TAN;RT:
+!CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
+!FILEBROWSER_SHOWNOTTRASHHINT;Show only non-deleted images.
 !FILECHOOSER_FILTER_ANY;All files
 !FILECHOOSER_FILTER_COLPROF;Color profiles
 !FILECHOOSER_FILTER_CURVE;Curve files
@@ -1741,31 +1747,46 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !FILECHOOSER_FILTER_PP;Processing profiles
 !FILECHOOSER_FILTER_SAME;Same format as current photo
 !FILECHOOSER_FILTER_TIFF;TIFF files
-!HISTORY_MSG_341;Wavelet Daubechies
-!HISTORY_MSG_342;Wavelet Reinforce first level
-!HISTORY_MSG_343;Wavelet level chroma
-!HISTORY_MSG_344;Wavelet Meth chroma sl/cur
-!HISTORY_MSG_345;Wavelet Local contrast
-!HISTORY_MSG_346;Wavelet Local contrast Meth
-!HISTORY_MSG_347;Wavelet Level0 + denoise
-!HISTORY_MSG_348;Wavelet Level1 + denoise
-!HISTORY_MSG_349;Wavelet Level2 + denoise
-!HISTORY_MSG_350;Wavelet edgedetect
-!HISTORY_MSG_351;Wavelet Curve Hue
-!HISTORY_MSG_352;Wavelet Background
-!HISTORY_MSG_353;Wavelet edgedetect value
-!HISTORY_MSG_354;Wavelet edgedetect enhance
-!HISTORY_MSG_355;Wavelet edgedetect thresholdLow
-!HISTORY_MSG_356;Wavelet edgedetect thresholdHi
-!HISTORY_MSG_357;Wavelet Denoise link
-!HISTORY_MSG_358;Wavelet Contrast Hue curve
+!GENERAL_ASIMAGE;As Image
+!HISTORY_MSG_341;W - Edge performance
+!HISTORY_MSG_342;W - ES - First level
+!HISTORY_MSG_343;W - Chroma levels
+!HISTORY_MSG_344;W - Meth chroma sl/cur
+!HISTORY_MSG_345;W - ES - Local contrast
+!HISTORY_MSG_346;W - ES - Local contrast method
+!HISTORY_MSG_347;W - Denoise - Level 0
+!HISTORY_MSG_348;W - Denoise - Level 1
+!HISTORY_MSG_349;W - Denoise - Level 2
+!HISTORY_MSG_350;W - ES - Edge detection
+!HISTORY_MSG_351;W - Residual - HH curve
+!HISTORY_MSG_352;W - Background
+!HISTORY_MSG_353;W - ES - Gradient sensitivity
+!HISTORY_MSG_354;W - ES - Enhance
+!HISTORY_MSG_355;W - ES - Threshold low
+!HISTORY_MSG_356;W - ES - Threshold high
+!HISTORY_MSG_357;W - Denoise - Link with ES
+!HISTORY_MSG_358;W - Gamut - CH
 !HISTORY_MSG_359;Hot/Dead - Threshold
 !HISTORY_MSG_360;TM Gamma
+!HISTORY_MSG_361;W - Final - Chroma balance
+!HISTORY_MSG_362;W - Residual - Compression method
+!HISTORY_MSG_363;W - Residual - Compression strength
+!HISTORY_MSG_364;W - Final - Contrast balance
+!HISTORY_MSG_365;W - Final - Delta balance
+!HISTORY_MSG_366;W - Residual - Compression gamma
+!HISTORY_MSG_367;W - ES - Local contrast curve
+!HISTORY_MSG_368;W - Final - Contrast balance
+!HISTORY_MSG_369;W - Final - Balance method
+!HISTORY_MSG_370;W - Final - Local contrast curve
+!MAIN_TAB_WAVELET;Wavelet
+!MAIN_TAB_WAVELET_TOOLTIP;Shortcut: <b>Alt-w</b>
+!PARTIALPASTE_WAVELETGROUP;Wavelet processing
 !PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
 !PREFERENCES_CURVEBBOXPOS_LEFT;Left
 !PREFERENCES_CURVEBBOXPOS_RIGHT;Right
+!PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 !PREFERENCES_NAVIGATIONFRAME;Navigation
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
@@ -1777,51 +1798,85 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_DIRPYREQUALIZER_ARTIF;Reduce artifacts
 !TP_EPD_GAMMA;Gamma
+!TP_EXPOSURE_TCMODE_LUMINANCE;Luminance
 !TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 !TP_RAW_HD;Threshold
 !TP_RAW_HD_TOOLTIP;Lower values make hot/dead pixel detection more aggressive, but false positives may lead to artifacts. If you notice any artifacts appearing when enabling the Hot/Dead Pixel Filters, gradually increase the threshold value until they disappear.
 !TP_WAVELET_B0;Black
 !TP_WAVELET_B1;Grey
 !TP_WAVELET_B2;Residual
+!TP_WAVELET_BACUR;Curve
+!TP_WAVELET_BALANCE;Contrast balance d/v-h
+!TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chromaticity or residual tone mapping are activated, the effect due to balance is amplified.
+!TP_WAVELET_BALCHRO;Chroma balance
+!TP_WAVELET_BALCHRO_TOOLTIP;If enabled, the 'Contrast balance' curve or slider also modifies chromaticity balance.
+!TP_WAVELET_BANONE;None
+!TP_WAVELET_BASLI;Slider
+!TP_WAVELET_BATYPE;Contrast balance method
 !TP_WAVELET_CCURVE;Local contrast
 !TP_WAVELET_CHCU;Curve
 !TP_WAVELET_CHSL;Sliders
-!TP_WAVELET_CHTYPE;Chrominance type
+!TP_WAVELET_CHTYPE;Chrominance method
+!TP_WAVELET_COMBOTH;Both
+!TP_WAVELET_COMPCONT;Contrast
+!TP_WAVELET_COMPGAMMA;Compression gamma
+!TP_WAVELET_COMPGAMMA_TOOLTIP;Adjusting the gamma of the residual image allow you to equilibrate the data and histogram.
+!TP_WAVELET_COMPGAMMA_TOOLTIP;Adjust gamma for residual image and compression.\nAllow to equilibrate data and histogram
+!TP_WAVELET_COMPTM;Tone mapping
+!TP_WAVELET_CONTEDIT;'After' Contrast curve
+!TP_WAVELET_CONTEDIT;'After' contrast curve
 !TP_WAVELET_CTYPE;Chrominance control
-!TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Modify local contral in fonction of original local contrast (absciss)\nLow absciss represents small local contrast (real values about 10..20)\n50% absciss represents average of local contrast (real value about 100..300)\n66% absciss represents standard deviation of local contrast (real value about 300..800)\n100% represents maximum (real value about 3000..8000)
-!TP_WAVELET_CURVEEDITOR_CH;Contrast levels /Hue
-!TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Modify each level contrast in function oh hue\nCareful not to overwrite changes made with skin-tone hue (red)\nOnly active for contrast levels
+!TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Modifies local contrast as a function of the original local contrast (absciss)\nLow absciss represents small local contrast (real values about 10..20)\n50% absciss represents average of local contrast (real value about 100..300)\n66% absciss represents standard deviation of local contrast (real value about 300..800)\n100% represents maximum (real value about 3000..8000)
+!TP_WAVELET_CURVEEDITOR_CH;Contrast levels=f(Hue)
+!TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Modifies each level's contrast as a function oh hue.\nTake care not to overwrite changes made with the Gamut Hue controls.\nThe curve will only have an effect when wavelet contrast level sliders are non-zero.
+!TP_WAVELET_CURVEEDITOR_CL;L
+!TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Applies a final contrast luminance curve at the end of the wavelet treatment.
+!TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Apply a contrast luminance curve at the end of wavelet level threatment
 !TP_WAVELET_CURVEEDITOR_HH;HH
-!TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Modify Hue in function of Hue, only for residual image
-!TP_WAVELET_DAUB;Edge Quality
-!TP_WAVELET_DAUB_TOOLTIP;Change Daubechies coefficients\nD4=standard quality\nD14=best quality, more discriminant, increase slightly time treatment about 10%\nThese factors affect the detection of edges, but also general quality for firsts levels
+!TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Modifies the residual image's hue as a function of hue.
+!TP_WAVELET_DAUB;Edge performance
+!TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the firsts levels. However the quality is not strictly related to this coefficient and can vary with images and uses.
 !TP_WAVELET_EDCU;Curve
 !TP_WAVELET_EDGCONT;Local contrast
-!TP_WAVELET_EDGCONT_TOOLTIP;If you move sliders to the left contrast decrease...and to the right..increase
-!TP_WAVELET_EDGEDETECTTHR2;Threshold High (detection)
-!TP_WAVELET_EDGEDETECTTHR;Threshold Low (noise)
-!TP_WAVELET_EDGEDETECTTHR_TOOLTIP;You can adjust threshold to avoid apply edge sharpness to thin details (noise in sky...)
+!TP_WAVELET_EDGCONT_TOOLTIP;Adjusting the points to the left decreases contrast, and to the right increases it.\nBottom-left, Top-Left, Top-Right, Bottom-right represent respectively local contast for low values, mean, mean+stdev, maxima
+!TP_WAVELET_EDGEDETECTTHR2;Threshold high (detection)
+!TP_WAVELET_EDGEDETECTTHR;Threshold low (noise)
+!TP_WAVELET_EDGEDETECTTHR_TOOLTIP;This adjuster lets you target edge detection for example to avoid applying edge sharpness to fine details, such as noise in the sky.
 !TP_WAVELET_EDGEDETECT;Gradient sensitivity
-!TP_WAVELET_EDGEDETECT_TOOLTIP;Algorithm detect edge\nMore the slider is moved to the right, more edge gradient with high level are take into account\nThis has an incidence on local contrast, on edge settings and also on noise
-!TP_WAVELET_EDGREINF_TOOLTIP;For low radius value, increase/decrease the action of the first level, and decrease/increase the action of second level then the others
-!TP_WAVELET_EDGTHRESH_TOOLTIP;Change the repartition between the first levels and the others\nThe more threshold is high, the more the action is centred on the first levels\nBe carefull to negatives values, they increase the action of high levels and can bring artifacts
-!TP_WAVELET_EDRAD_TOOLTIP;Radius is very different from others sharpening tools\nIts value is compared to each level, through a complex function\nIn this sense, a zero radius value produce an effect
+!TP_WAVELET_EDGEDETECT_TOOLTIP;Moving the slider to the right increases edge sensitivity. This affects local contrast, edge settings and noise.
+!TP_WAVELET_EDGREINF_TOOLTIP;Reinforce or reduce the action of the first level, do the opposite to the second level, and leave the rest unchanged.
+!TP_WAVELET_EDGTHRESH_TOOLTIP;Change the repartition between the first levels and the others. The higher the threshold the more the action is centred on the first levels. Be careful with negative values, they increase the action of high levels and can introduce artifacts.
+!TP_WAVELET_EDRAD_TOOLTIP;This radius adjustment is very different from those in other sharpening tools. Its value is compared to each level through a complex function. In this sense, a value of zero still has an effect.
 !TP_WAVELET_EDSL;Threshold Sliders
-!TP_WAVELET_EDTYPE;Local contrast control
+!TP_WAVELET_EDTYPE;Local contrast method
+!TP_WAVELET_FINAL;Final Touchup
+!TP_WAVELET_ITER;Delta balance levels
+!TP_WAVELET_ITER_TOOLTIP;Left: increase low levels and reduce high levels,\nRight: reduce low levels and increase high levels.
 !TP_WAVELET_LEVONE;Level 2
 !TP_WAVELET_LEVTWO;Level 3
 !TP_WAVELET_LEVZERO;Level 1
-!TP_WAVELET_LINKEDG;Link with Edge-sharpness (strength)
+!TP_WAVELET_LINKEDG;Link with Edge Sharpness' Strength
 !TP_WAVELET_LIPST;Enhanced algorithm
-!TP_WAVELET_LIPST_TOOLTIP;This algorithme use Lipschitz regularity\nIt increases the processing time and memory requirements, but it is better at detecting edges.
+!TP_WAVELET_LIPST_TOOLTIP;This algorithm uses Lipschitz regularity to increase edge detection quality at a cost of increased processing time and memory requirements.
 !TP_WAVELET_MEDGREINF;First level
 !TP_WAVELET_MEDILEV;Edge detection
-!TP_WAVELET_NOISE;Denoise and refine
+!TP_WAVELET_NOISE;Denoise and Refine
 !TP_WAVELET_NOIS;Denoise
+!TP_WAVELET_OPACITYWL;Final local contrast
+!TP_WAVELET_OPACITYWL_TOOLTIP;Modify final local contrast in function of last local contrast (absciss) for all levels decomposition\nTake into account: \na)contrast levels \nb)edge sharpness \nc)contrast balance\nd)decomposition-recomposition\nLow absciss represents small local contrast (real values about 10..20)\n50% absciss represents average of local contrast (real value about 200..1000)\n66% absciss represents standard deviation of local contrast (real value about 1000..2000)\n100% represents maximum (real value about 5000..13000)
+!TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the wavelet treatment.\n\nThe left side represents the smallest local contrast, progressing to the largest local contrast on the right.
+!TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
 !TP_WAVELET_PREVIEWBACK;Background
 !TP_WAVELET_RE1;Reinforced
 !TP_WAVELET_RE2;Unchanged
 !TP_WAVELET_RE3;Reduced
+!TP_WAVELET_TMHIGH;High
+!TP_WAVELET_TMLOWHIGH;Low+High
+!TP_WAVELET_TMNONE;None
+!TP_WAVELET_TMSTD;Standard
+!TP_WAVELET_TMSTRENGTH;Compression strength
+!TP_WAVELET_TMSTRENGTH_TOOLTIP;Control the strength of tone mapping or contrast compression of the residual image. When the value is different from 0, the Strength and Gamma sliders of the Tone Mapping tool in the Exposure tab will become grayed out.
+!TP_WAVELET_TMTYPE;Compression method
 !TP_WAVELET_daub2;D2 - low
 !TP_WAVELET_daub4;D4 - standard
 !TP_WAVELET_daub6;D6 - standard plus

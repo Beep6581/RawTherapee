@@ -1829,3 +1829,55 @@ ZOOMPANEL_ZOOMFITSCREEN;画像全体を画面に合わせる\nショートカッ
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!FILEBROWSER_SHOWNOTTRASHHINT;Show only non-deleted images.
+!GENERAL_ASIMAGE;As Image
+!HISTORY_MSG_361;W - Final - Chroma balance
+!HISTORY_MSG_362;W - Residual - Compression method
+!HISTORY_MSG_363;W - Residual - Compression strength
+!HISTORY_MSG_364;W - Final - Contrast balance
+!HISTORY_MSG_365;W - Final - Delta balance
+!HISTORY_MSG_366;W - Residual - Compression gamma
+!HISTORY_MSG_367;W - ES - Local contrast curve
+!HISTORY_MSG_368;W - Final - Contrast balance
+!HISTORY_MSG_369;W - Final - Balance method
+!HISTORY_MSG_370;W - Final - Local contrast curve
+!MAIN_TAB_WAVELET;Wavelet
+!MAIN_TAB_WAVELET_TOOLTIP;Shortcut: <b>Alt-w</b>
+!PARTIALPASTE_WAVELETGROUP;Wavelet processing
+!TP_WAVELET_BACUR;Curve
+!TP_WAVELET_BALANCE;Contrast balance d/v-h
+!TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chromaticity or residual tone mapping are activated, the effect due to balance is amplified.
+!TP_WAVELET_BALCHRO;Chroma balance
+!TP_WAVELET_BALCHRO_TOOLTIP;If enabled, the 'Contrast balance' curve or slider also modifies chromaticity balance.
+!TP_WAVELET_BANONE;None
+!TP_WAVELET_BASLI;Slider
+!TP_WAVELET_BATYPE;Contrast balance method
+!TP_WAVELET_COMBOTH;Both
+!TP_WAVELET_COMPCONT;Contrast
+!TP_WAVELET_COMPGAMMA;Compression gamma
+!TP_WAVELET_COMPGAMMA_TOOLTIP;Adjusting the gamma of the residual image allow you to equilibrate the data and histogram.
+!TP_WAVELET_COMPGAMMA_TOOLTIP;Adjust gamma for residual image and compression.\nAllow to equilibrate data and histogram
+!TP_WAVELET_COMPTM;Tone mapping
+!TP_WAVELET_CONTEDIT;'After' Contrast curve
+!TP_WAVELET_CONTEDIT;'After' contrast curve
+!TP_WAVELET_CURVEEDITOR_CL;L
+!TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Applies a final contrast luminance curve at the end of the wavelet treatment.
+!TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Apply a contrast luminance curve at the end of wavelet level threatment
+!TP_WAVELET_FINAL;Final Touchup
+!TP_WAVELET_ITER;Delta balance levels
+!TP_WAVELET_ITER_TOOLTIP;Left: increase low levels and reduce high levels,\nRight: reduce low levels and increase high levels.
+!TP_WAVELET_OPACITYWL;Final local contrast
+!TP_WAVELET_OPACITYWL_TOOLTIP;Modify final local contrast in function of last local contrast (absciss) for all levels decomposition\nTake into account: \na)contrast levels \nb)edge sharpness \nc)contrast balance\nd)decomposition-recomposition\nLow absciss represents small local contrast (real values about 10..20)\n50% absciss represents average of local contrast (real value about 200..1000)\n66% absciss represents standard deviation of local contrast (real value about 1000..2000)\n100% represents maximum (real value about 5000..13000)
+!TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the wavelet treatment.\n\nThe left side represents the smallest local contrast, progressing to the largest local contrast on the right.
+!TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
+!TP_WAVELET_TMHIGH;High
+!TP_WAVELET_TMLOWHIGH;Low+High
+!TP_WAVELET_TMNONE;None
+!TP_WAVELET_TMSTD;Standard
+!TP_WAVELET_TMSTRENGTH;Compression strength
+!TP_WAVELET_TMSTRENGTH_TOOLTIP;Control the strength of tone mapping or contrast compression of the residual image. When the value is different from 0, the Strength and Gamma sliders of the Tone Mapping tool in the Exposure tab will become grayed out.
+!TP_WAVELET_TMTYPE;Compression method
