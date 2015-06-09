@@ -502,7 +502,7 @@ void WaveletParams::setDefaults() {
     medianlev = false;  
     linkedg = true;  
     lipst = false;  
-    Medgreinf = "none";  
+    Medgreinf = "less"; //"none";
     avoid = false;
     tmr = false;
     strength = 100;
