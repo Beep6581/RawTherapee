@@ -98,16 +98,16 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
 //  pack_start(*algoHBox);	
     algoconn = algo->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrEqualizer::algoChanged) );
 */
-    skinprotect	= Gtk::manage ( new Adjuster (M("TP_DIRPYREQUALIZER_SKIN"), -100, 100, 1, 0.) );
-    skinprotect->setAdjusterListener(this);
-    pack_start(*skinprotect);
-    skinprotect->set_tooltip_markup (M("TP_DIRPYREQUALIZER_SKIN_TOOLTIP"));
-
     hueskin = Gtk::manage (new ThresholdAdjuster (M("TP_DIRPYREQUALIZER_HUESKIN"), -40., 210., -5., 25., 170., 120., 0, false));        //default (b_l 0, t_l 30, b_r 170, t_r 120);
     hueskin->set_tooltip_markup (M("TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP"));
 
     hueskin->setBgGradient(milestones);
     pack_start(*hueskin);
+
+    skinprotect	= Gtk::manage ( new Adjuster (M("TP_DIRPYREQUALIZER_SKIN"), -100, 100, 1, 0.) );
+    skinprotect->setAdjusterListener(this);
+    pack_start(*skinprotect);
+    skinprotect->set_tooltip_markup (M("TP_DIRPYREQUALIZER_SKIN_TOOLTIP"));
 
     gamutlab = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYREQUALIZER_ARTIF")));
     gamutlab->set_active (true);

@@ -598,17 +598,17 @@ Wavelet::Wavelet () :  FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"),
     medianConn = median->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::medianToggled) );
     conBox->pack_start(*median);
 
-    skinprotect	= Gtk::manage ( new Adjuster (M("TP_WAVELET_SKIN"), -100, 100, 1, 0.) );
-    skinprotect->setAdjusterListener(this);
-    conBox->pack_start(*skinprotect);
-    skinprotect->set_tooltip_markup (M("TP_WAVELET_SKIN_TOOLTIP"));
-
-    hueskin = Gtk::manage (new ThresholdAdjuster (M("TP_WAVELET_HUESKIN"), -314., 314., -5., 25., 170., 120., 0, false));  
+    hueskin = Gtk::manage (new ThresholdAdjuster (M("TP_WAVELET_HUESKIN"), -314., 314., -5., 25., 170., 120., 0, false));
     hueskin->set_tooltip_markup (M("TP_WAVELET_HUESKIN_TOOLTIP"));
 
     hueskin->setBgGradient(milestones);
     conBox->pack_start(*hueskin);
     hueskin->setAdjusterListener (this);
+
+    skinprotect	= Gtk::manage ( new Adjuster (M("TP_WAVELET_SKIN"), -100, 100, 1, 0.) );
+    skinprotect->setAdjusterListener(this);
+    conBox->pack_start(*skinprotect);
+    skinprotect->set_tooltip_markup (M("TP_WAVELET_SKIN_TOOLTIP"));
 
 	curveEditorGAM = new CurveEditorGroup (options.lastWaveletCurvesDir);
 	curveEditorGAM->setCurveListener (this);
@@ -696,7 +696,7 @@ Wavelet::Wavelet () :  FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"),
     Gtk::HSeparator *separatorR1 = Gtk::manage (new  Gtk::HSeparator());
     resBox->pack_start(*separatorR1, Gtk::PACK_SHRINK, 2);
 	
-    hueskin2 = Gtk::manage (new ThresholdAdjuster (M("TP_WAVELET_HUESKY"), -314., 314., -260., -250, -130., -140., 0, false));  
+    hueskin2 = Gtk::manage (new ThresholdAdjuster (M("TP_WAVELET_HUESKY"), -314., 314., -260., -250, -130., -140., 0, false));
     hueskin2->set_tooltip_markup (M("TP_WAVELET_HUESKY_TOOLTIP"));
     hueskin2->setBgGradient(milestones);
 	resBox->pack_start(*hueskin2);
