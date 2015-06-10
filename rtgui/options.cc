@@ -798,6 +798,9 @@ if (keyFile.has_group ("Performance")) {
     if( keyFile.has_key ("Performance", "NRauto"))                rtSettings.nrauto          = keyFile.get_double  ("Performance", "NRauto");
     if( keyFile.has_key ("Performance", "NRautomax"))             rtSettings.nrautomax       = keyFile.get_double  ("Performance", "NRautomax");
     if( keyFile.has_key ("Performance", "NRhigh"))                rtSettings.nrhigh          = keyFile.get_double  ("Performance", "NRhigh");
+    if(rtSettings.nrhigh == 0.0) { //avoid crash by division by zero in noise reduction
+        rtSettings.nrhigh = 0.45;
+    }
     if( keyFile.has_key ("Performance", "NRWavlevel"))            rtSettings.nrwavlevel      = keyFile.get_integer ("Performance", "NRWavlevel");
     if (keyFile.has_key ("Performance", "LevNR"))                 rtSettings.leveldnv        = keyFile.get_integer ("Performance", "LevNR");
     if (keyFile.has_key ("Performance", "LevNRTI"))               rtSettings.leveldnti       = keyFile.get_integer ("Performance", "LevNRTI");
