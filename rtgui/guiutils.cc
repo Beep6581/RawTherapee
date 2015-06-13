@@ -75,7 +75,7 @@ bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference) {
 
     Glib::ListHandle<Gtk::Widget*> list = cont->get_children ();
     Glib::ListHandle<Gtk::Widget*>::iterator i = list.begin ();
-    for (; i!=list.end() && *i!=w; i++);
+    for (; i!=list.end() && *i!=w; ++i);
     if (i!=list.end()) {
         if (increference)
             w->reference ();
@@ -212,17 +212,17 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                 // To have even distribution, normalize it a bit
                 const int longSideNumLines=10;
 
-                int w=rectx2-rectx1, h=recty2-recty1, shortSideNumLines;
+                int w=rectx2-rectx1, h=recty2-recty1;
                 if (w>longSideNumLines && h>longSideNumLines) {
                     if (w>h) {
                         for (int i=1;i<longSideNumLines;i++) vert_ratios.push_back ((double)i/longSideNumLines);
                     
-                        shortSideNumLines=(int)round(h*(double)longSideNumLines/w);
+                        int shortSideNumLines=(int)round(h*(double)longSideNumLines/w);
                         for (int i=1;i<shortSideNumLines;i++) horiz_ratios.push_back ((double)i/shortSideNumLines);
                     } else {
                         for (int i=1;i<longSideNumLines;i++) horiz_ratios.push_back ((double)i/longSideNumLines);
                     
-                        shortSideNumLines=(int)round(w*(double)longSideNumLines/h);
+                        int shortSideNumLines=(int)round(w*(double)longSideNumLines/h);
                         for (int i=1;i<shortSideNumLines;i++) vert_ratios.push_back ((double)i/shortSideNumLines);
                     }
                 }
@@ -310,7 +310,7 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
         } else if (cparams.guide=="Golden Triangle 1" || cparams.guide=="Golden Triangle 2") {
         	// main diagonal
 			if(cparams.guide=="Golden Triangle 2") {
-				std:swap(rectx1,rectx2);
+				std::swap(rectx1,rectx2);
 			}
 			cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
 			cr->move_to (rectx1, recty1);
@@ -815,13 +815,11 @@ MySpinButton::MySpinButton () {
 
 void MySpinButton::updateSize() {
 	double vMin, vMax;
-	double step, page;
 	int maxAbs;
 	unsigned int digits, digits2;
 	unsigned int maxLen;
 
 	get_range(vMin, vMax);
-	get_increments (step, page);
 
 	digits = get_digits();
 	maxAbs = (int)(fmax(fabs(vMin), fabs(vMax))+0.000001);
@@ -837,13 +835,21 @@ void MySpinButton::updateSize() {
 }
 
 bool MySpinButton::on_key_press_event (GdkEventKey* event) {
-	bool rcode = Gtk::Widget::on_key_press_event(event);
+    double vMin, vMax;
+    get_range(vMin, vMax);
 	if ( (event->string[0] >= 'a' && event->string[0] <= 'z')
 	   ||(event->string[0] >= 'A' && event->string[0] <= 'Z')
-	   || event->string[0] == '+'
-	)
-		return false;
-	return rcode;
+	   || event->string[0] == '+' || (event->string[0] == '-' && vMin >= 0)
+       || event->string[0] == '=' || event->string[0] == '_'
+	) 
+	    return false;
+    else {
+        if(event->string[0] == ',') {
+            event->keyval = GDK_period;
+            event->string[0] = '.';
+        }
+	    return Gtk::Widget::on_key_press_event(event);
+    }
 }
 
 bool MySpinButton::on_scroll_event (GdkEventScroll* event) {
@@ -865,6 +871,14 @@ bool MyHScale::on_scroll_event (GdkEventScroll* event) {
 	}
 	// ... otherwise the scroll event is sent back to an upper level
 	return false;
+}
+
+bool MyHScale::on_key_press_event (GdkEventKey* event) {
+
+	if ( event->string[0] == '+' || event->string[0] == '-' )
+		return false;
+    else
+	    return Gtk::Widget::on_key_press_event(event);
 }
 
 MyFileChooserButton::MyFileChooserButton (const Glib::ustring& title, Gtk::FileChooserAction action) : Gtk::FileChooserButton(title, action) {

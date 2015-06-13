@@ -32,7 +32,7 @@
 using namespace rtengine::procparams;
 
 EditorPanel::EditorPanel (FilePanel* filePanel) 
-    : beforePreviewHandler(NULL), beforeIarea(NULL), beforeBox(NULL), afterBox(NULL), afterHeaderBox(NULL), parent(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL), iHistoryShow(NULL), iHistoryHide(NULL), iBeforeLockON(NULL),iBeforeLockOFF(NULL), iRightPanel_1_Show(NULL), iRightPanel_1_Hide(NULL), iTopPanel_1_Show(NULL), iTopPanel_1_Hide(NULL), openThm(NULL), realized(false) {
+    : realized(false), iHistoryShow(NULL), iHistoryHide(NULL), iTopPanel_1_Show(NULL), iTopPanel_1_Hide(NULL), iRightPanel_1_Show(NULL), iRightPanel_1_Hide(NULL), iBeforeLockON(NULL),iBeforeLockOFF(NULL), beforePreviewHandler(NULL), beforeIarea(NULL), beforeBox(NULL), afterBox(NULL), afterHeaderBox(NULL), parent(NULL), openThm(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL) {
 
     epih = new EditorPanelIdleHelper;
     epih->epanel = this;
@@ -952,10 +952,12 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 					return true;
 				case GDK_plus:
 				case GDK_equal:
+                case GDK_KP_Add:
                     iareapanel->imageArea->zoomPanel->zoomInClicked();
 					return true;
 				case GDK_minus:
 				case GDK_underscore:
+                case GDK_KP_Subtract:
                     iareapanel->imageArea->zoomPanel->zoomOutClicked();
 					return true;
 				case GDK_z://GDK_1
@@ -995,7 +997,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 					return true;
 
 				case GDK_F5:
-					openThm->openDefaultViewer(event->state & GDK_SHIFT_MASK ? 2 : 1);
+					openThm->openDefaultViewer((event->state & GDK_SHIFT_MASK) ? 2 : 1);
 					return true;
 				case GDK_y: // synchronize filebrowser with image in Editor
 			    	if (!simpleEditor && fPanel && !fname.empty()){
