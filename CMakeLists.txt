@@ -56,6 +56,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${PROC_FLAGS}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${PROC_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PROC_FLAGS}")
 
+#stop compile on typos like std:swap (missing colon will be detected as unused label)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=unused-label")
+
 if (WIN32)
     # we additionnally look in the MinGW path first then in the Gtkmm path,
     # so if you wish to build some dependant library, you have to install them in MinGW to use them
