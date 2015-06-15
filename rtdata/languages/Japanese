@@ -29,6 +29,7 @@
 #29 2015-04-20 firefly
 #30 2015-05-01 firefly
 #31 2015-05-31 firefly
+#32 2015-06-13 firefly
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -110,8 +111,8 @@ EXPORT_BYPASS_SHARPENMICRO;マイクロコントラストを迂回
 EXPORT_BYPASS_SH_HQ;シャドウ/ハイライト(高画質)を迂回
 EXPORT_FASTEXPORTOPTIONS;<b>高速書き出しオプション</b>
 EXPORT_INSTRUCTIONS;現像の設定に要する時間と手間を省くために、高速書き出しを優先させるオプションです。処理速度が優先される場合や、既定の現像パラメータを変えずに何枚ものリサイズ画像が要求される場合に奨められる方法で、低解像度画像を迅速に生成します。
-EXPORT_MAXHEIGHT;最大高: 
-EXPORT_MAXWIDTH;最大幅: 
+EXPORT_MAXHEIGHT;最大高:
+EXPORT_MAXWIDTH;最大幅:
 EXPORT_PUTTOQUEUEFAST; 高速書き出しのキューに追加
 EXPORT_RAW_DMETHOD;デモザイクの方式
 EXTPROGTARGET_1;raw
@@ -198,6 +199,7 @@ FILEBROWSER_SHOWDIRHINT;全ての絞り込みをクリア\nショートカット
 FILEBROWSER_SHOWEDITEDHINT;編集済み画像を表示\nショートカット: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;未編集画像を表示\nショートカット: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;EXIF情報を表示\nショートカット: <b>i</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt-i</b>
+FILEBROWSER_SHOWNOTTRASHHINT;削除されていない画像だけ表示
 FILEBROWSER_SHOWRANK1HINT;１つ星ランクを表示\nショートカット: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;２つ星ランクを表示\nショートカット: <b>2</b>
 FILEBROWSER_SHOWRANK3HINT;３つ星ランクを表示\nショートカット: <b>3</b>
@@ -226,6 +228,7 @@ FILECHOOSER_FILTER_SAME;現在の画像と同じフォーマット
 FILECHOOSER_FILTER_TIFF;TIFFファイル
 GENERAL_ABOUT;RawTherapeeについて..
 GENERAL_AFTER;補正後
+GENERAL_ASIMAGE;画像通り
 GENERAL_AUTO;自動
 GENERAL_BEFORE;補正前
 GENERAL_CANCEL;キャンセル
@@ -406,7 +409,7 @@ HISTORY_MSG_146;エッジ シャープ化
 HISTORY_MSG_147;エッジ シャープ化 - 輝度のみ
 HISTORY_MSG_148;マイクロコントラスト
 HISTORY_MSG_149;マイクロコントラスト - 3x3 マトリクス
-HISTORY_MSG_150;デモザイク後にアーティファクト/ノイズ低減
+HISTORY_MSG_150;デモザイク後にアーティファクトとノイズを軽減
 HISTORY_MSG_151;自然な彩度
 HISTORY_MSG_152;自然な彩度 - 明清色トーン
 HISTORY_MSG_153;自然な彩度 - 純色トーン
@@ -507,15 +510,15 @@ HISTORY_MSG_248;L*a*b* HH　カーブ
 HISTORY_MSG_249;ディテールレベルのコントラスト - しきい値
 HISTORY_MSG_250;ノイズ低減　-　強化
 HISTORY_MSG_251;白黒 - アルゴリズム
-HISTORY_MSG_252;ディテールレベルのコントラスト　肌色トーン
-HISTORY_MSG_253;ディテールレベルのコントラスト　アーティファクトを軽減
-HISTORY_MSG_254;ディテールレベルのコントラスト　肌色の色相
+HISTORY_MSG_252;CbDL　肌色の目標/保護
+HISTORY_MSG_253;CbDL　アーティファクトを軽減
+HISTORY_MSG_254;CbDL　肌色の色相
 HISTORY_MSG_255;ノイズ低減　-　メディアン
 HISTORY_MSG_256;ノイズ低減 - フィルターの種類
 HISTORY_MSG_257;カラートーン調整
 HISTORY_MSG_258;カラートーン調整　-　カラーのカーブ
 HISTORY_MSG_259;カラートーン調整　-　不透明度のカーブ
-HISTORY_MSG_260;カラートーン調整　-　a*(b*)の不透明度 
+HISTORY_MSG_260;カラートーン調整　-　a*(b*)の不透明度
 HISTORY_MSG_261;カラートーン調整　-　方法
 HISTORY_MSG_262;カラートーン調整　-　b*の不透明度
 HISTORY_MSG_263;カラートーン調整　-　シャドウのレッド
@@ -543,7 +546,7 @@ HISTORY_MSG_284;カラートーン調整　-　自動彩度
 HISTORY_MSG_285;メディアンの方式
 HISTORY_MSG_286;メディアンフィルターの種類
 HISTORY_MSG_287;フィルタリングの回数
-HISTORY_MSG_288;フラットフィールド　クリッピングコントロール	
+HISTORY_MSG_288;フラットフィールド　クリッピングコントロール
 HISTORY_MSG_289;フラットフィールド　クリッピングコントロール　自動
 HISTORY_MSG_290;黒レベル　－　レッド
 HISTORY_MSG_291;黒レベル　－　グリーン
@@ -559,63 +562,73 @@ HISTORY_MSG_300;-
 HISTORY_MSG_301;輝度ノイズの調整方法
 HISTORY_MSG_302;色ノイズの調整方法
 HISTORY_MSG_303;色ノイズの調整方法
-HISTORY_MSG_304;ウェーブレットのレベル
-HISTORY_MSG_305;ウェーブレット　各コントラスト
-HISTORY_MSG_306;ウェーブレット 表示レベル
-HISTORY_MSG_307;ウェーブレット プレビューの表示
-HISTORY_MSG_308;ウェーブレット 方向
-HISTORY_MSG_309;ウェーブレット タイル
-HISTORY_MSG_310;ウェーブレット 色相-トーン　空
-HISTORY_MSG_311;ウェーブレット レベルの最大数
-HISTORY_MSG_312;ウェーブレット　シャドウのしきい値 
-HISTORY_MSG_313;ウェーブレット　明清色/純色
-HISTORY_MSG_314;ウェーブレット　青空のアーティファクト
-HISTORY_MSG_315;ウェーブレット　コントラスト　残差画像
-HISTORY_MSG_316;ウェーブレット　肌色のトーン
-HISTORY_MSG_317;ウェーブレット　肌色の色相
-HISTORY_MSG_318;ウェーブレットのレベル　ハイライト
-HISTORY_MSG_319;ウェーブレット　ハイライトの範囲 
-HISTORY_MSG_320;ウェーブレット　シャドウの範囲 
-HISTORY_MSG_321;ウェーブレットのレベル　シャドウ 
-HISTORY_MSG_322;ウェーブレット　色ずれの回避 
-HISTORY_MSG_323;ウェーブレットのレベル　色度 
-HISTORY_MSG_324;ウェーブレット　明清色の色度 
-HISTORY_MSG_325;ウェーブレット　純色の色度 
-HISTORY_MSG_326;ウェーブレット　色度調整の方法 
-HISTORY_MSG_327;ウェーブレット　コントラスト調整の方法 
-HISTORY_MSG_328;ウェーブレット　色度　コントラストとのリンク
-HISTORY_MSG_329;ウェーブレット　レッド/グリーンの不透明度
-HISTORY_MSG_330;ウェーブレット　ブルー/イエローの不透明度
-HISTORY_MSG_331;ウェーブレット　エキストラレベル
-HISTORY_MSG_332;ウェーブレット　タイルの種類
-HISTORY_MSG_333;ウェーブレット　シャドウ　残差画像
-HISTORY_MSG_334;ウェーブレット　色度
-HISTORY_MSG_335;ウェーブレット　ハイライト　残差画像
-HISTORY_MSG_336;ウェーブレット　ハイライトのしきい値
-HISTORY_MSG_337;ウェーブレット　色相の範囲
-HISTORY_MSG_338;ウェーブレット　シャープネスの半径
-HISTORY_MSG_339;ウェーブレット　シャープネスの適用量
-HISTORY_MSG_340;ウェーブレット　強さ
-HISTORY_MSG_341;ウェーブレット　ドビッシー
-HISTORY_MSG_342;ウェーブレット　最初のレベルを強化
-HISTORY_MSG_343;ウェーブレット　色度のレベル
-HISTORY_MSG_344;ウェーブレット　色度の方式　スライダー/カーブ
-HISTORY_MSG_345;ウェーブレット　ローカルコントラスト
-HISTORY_MSG_346;ウェーブレット　ローカルコントラスト　方式
-HISTORY_MSG_347;ウェーブレット　レベル10+ノイズ低減
-HISTORY_MSG_348;ウェーブレット　レベル11+ノイズ低減
-HISTORY_MSG_349;ウェーブレット　レベル12+ノイズ低減
-HISTORY_MSG_350;ウェーブレット　エッジ検出
-HISTORY_MSG_351;ウェーブレット　色相カーブ
-HISTORY_MSG_352;ウェーブレット　背景
-HISTORY_MSG_353;ウェーブレット　エッジ検出　値
-HISTORY_MSG_354;ウェーブレット　エッジ検出　強化
-HISTORY_MSG_355;ウェーブレット　エッジ検出　しきい値（低）
-HISTORY_MSG_356;ウェーブレット　エッジ検出　しきい値（高）
-HISTORY_MSG_357;ウェーブレット　ノイズ低減　リンク
-HISTORY_MSG_358;ウェーブレット　コントラスト　色相カーブ
+HISTORY_MSG_304;W-　コントラストレベル
+HISTORY_MSG_305;ウェーブレットのレベル
+HISTORY_MSG_306;W-　プレビュー
+HISTORY_MSG_307;W-　プレビュー
+HISTORY_MSG_308;W-　プレビューの方向
+HISTORY_MSG_309;W-　ES　ディテール
+HISTORY_MSG_310;W-　残差　青空の目標/保護
+HISTORY_MSG_311;W- ウェーブレットのレベル
+HISTORY_MSG_312;W-　残差　シャドウのしきい値
+HISTORY_MSG_313;W-　色度　明星色/純色
+HISTORY_MSG_314;W-　色域　アーティファクトの軽減
+HISTORY_MSG_315;W-　残差　コントラスト
+HISTORY_MSG_316;W-　色域　肌色の目標/保護
+HISTORY_MSG_317;W-　色域　肌色の色相
+HISTORY_MSG_318;W-　コントラスト　ハイライトレベル
+HISTORY_MSG_319;W-　コントラスト　ハイライト範囲
+HISTORY_MSG_320;W-　コントラスト　シャドウ範囲
+HISTORY_MSG_321;W-　コントラスト　シャドウレベル
+HISTORY_MSG_322;W-　色域　色ずれの回避
+HISTORY_MSG_323;W-　ES　ローカルコントラスト
+HISTORY_MSG_324;W-　色度　明星色
+HISTORY_MSG_325;W-　色度　純色
+HISTORY_MSG_326;W-　色度　方法
+HISTORY_MSG_327;W-　コントラスト　適用先
+HISTORY_MSG_328;W-　色度　リンクを強化
+HISTORY_MSG_329;W-　色調　R/Gの不透明度
+HISTORY_MSG_330;W-　色調　B/Yの不透明度
+HISTORY_MSG_331;W-　コントラストレベル　エキストラ
+HISTORY_MSG_332;W-　タイルの種類
+HISTORY_MSG_333;W-　残差　シャドウ
+HISTORY_MSG_334;W-　残差　色度
+HISTORY_MSG_335;W-　残差　ハイライト
+HISTORY_MSG_336;W-　残差　ハイライトのしきい値
+HISTORY_MSG_337;W-　残差　青空の色相
+HISTORY_MSG_338;W-　ES　半径
+HISTORY_MSG_339;W-　ES　強さ
+HISTORY_MSG_340;W-　強さ
+HISTORY_MSG_341;W-　エッジパフォーマンス
+HISTORY_MSG_342;W-　ES　最初のレベル
+HISTORY_MSG_343;W-　色度のレベル
+HISTORY_MSG_344;W-　色度　方式　スライダー/カーブ
+HISTORY_MSG_345;W-　ES　ローカルコントラスト
+HISTORY_MSG_346;W-　ES　ローカルコントラスト　方式
+HISTORY_MSG_347;W-　ノイズ低減とリファイン　レベル0
+HISTORY_MSG_348;W-　ノイズ低減とリファイン　レベル1
+HISTORY_MSG_349;W-　ノイズ低減とリファイン　レベル2
+HISTORY_MSG_350;W-　ES　エッジ検出
+HISTORY_MSG_351;W-　残差　HHカーブ
+HISTORY_MSG_352;W-　背景色
+HISTORY_MSG_353;W-　ES　グラデーション感度
+HISTORY_MSG_354;W-　ES　強化
+HISTORY_MSG_355;W-　ES　しきい値（低）
+HISTORY_MSG_356;W-　ES　しきい値（高）
+HISTORY_MSG_357;W-　ノイズ低減　ESとリンク
+HISTORY_MSG_358;W-　色域　CHカーブ
 HISTORY_MSG_359;ホット/デッド　しきい値
 HISTORY_MSG_360;トーンマッピング　ガンマ
+HISTORY_MSG_361;W-　最終　色度バランス
+HISTORY_MSG_362;W-　残差　圧縮の方法
+HISTORY_MSG_363;W-　残差　圧縮の強さ
+HISTORY_MSG_364;W-　最終　コントラストバランス
+HISTORY_MSG_365;W-　最終　デルタバランス
+HISTORY_MSG_366;W-　残差　圧縮のガンマ
+HISTORY_MSG_367;W-　ES　ローカルコントラストカーブ
+HISTORY_MSG_368;W-　最終　コントラストバランス
+HISTORY_MSG_369;W-　最終　バランスの方法
+HISTORY_MSG_370;W-　最終　ローカルコントラストカーブ
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;スナップショット
@@ -671,16 +684,16 @@ MAIN_BUTTON_SAVE_TOOLTIP;現在の画像を保存\nショートカット: <b>Ctr
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;現在の画像を外部エディタで編集\nショートカット: <b>Ctrl+e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;表示/非表示 すべてのパネル\nショートカット: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;フルスクリーン解除
-MAIN_FRAME_BATCHQUEUE;キュー 
+MAIN_FRAME_BATCHQUEUE;キュー
 MAIN_FRAME_BATCHQUEUE_TOOLTIP;キューで処理します\nショートカット:  <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;編集
 MAIN_FRAME_EDITOR_TOOLTIP; 編集\nショートカット: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;ファイルブラウザ
 MAIN_FRAME_FILEBROWSER_TOOLTIP; ファイル・ブラウザ\nショートカット: <b>Ctrl-F2</b>
-MAIN_FRAME_PLACES;場所 
+MAIN_FRAME_PLACES;場所
 MAIN_FRAME_PLACES_ADD;追加
 MAIN_FRAME_PLACES_DEL;削除
-MAIN_FRAME_RECENT;最近開いたフォルダ 
+MAIN_FRAME_RECENT;最近開いたフォルダ
 MAIN_MSG_ALREADYEXISTS;ファイルはすでに存在します
 MAIN_MSG_CANNOTLOAD;画像読み込みできません
 MAIN_MSG_CANNOTSAVE;ファイル保存エラー
@@ -712,6 +725,8 @@ MAIN_TAB_RAW;raw
 MAIN_TAB_RAW_TOOLTIP;ショートカット: <b>Alt-r</b>
 MAIN_TAB_TRANSFORM;変形
 MAIN_TAB_TRANSFORM_TOOLTIP;ショートカット: <b>Alt-t</b>
+MAIN_TAB_WAVELET;ウェーブレット
+MAIN_TAB_WAVELET_TOOLTIP;ショートカット: <b>Alt-w</b>
 MAIN_TOOLTIP_BACKCOLOR0;プレビューの背景色を指定します: <b>テーマに基づく</b>\nショートカット: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;プレビューの背景色を指定します: <b>黒</b>\nショートカットt: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;プレビューの背景色を指定します: <b>白</b>\nショートカット: <b>9</b>
@@ -811,6 +826,7 @@ PARTIALPASTE_SHARPENING;シャープ化 (USM/RL)
 PARTIALPASTE_SHARPENMICRO;マイクロコントラスト
 PARTIALPASTE_VIBRANCE;自然な彩度
 PARTIALPASTE_VIGNETTING;周辺光量補正
+PARTIALPASTE_WAVELETGROUP;ウェーブレット処理
 PARTIALPASTE_WHITEBALANCE;ホワイトバランス
 PREFERENCES_ADD;追加
 PREFERENCES_APPLNEXTSTARTUP;要再起動
@@ -1200,7 +1216,7 @@ TP_COLORAPP_LIGHT_TOOLTIP;CIECAM02の明度は L*a*b*やRGBの明度とは異な
 TP_COLORAPP_MODEL;ホワイトポイント・モデル
 TP_COLORAPP_MODEL_TOOLTIP;<b>WB [RT] + [出力]:</b>\nRTのホワイトバランスは、撮影環境に使用されます。CIECAM02はD50の設定, 出力デバイスのホワイトバランスは「環境設定」の「カラーマネジメント」の設定\n\n<b>WB [RT+CAT02] + [出力]:</b>\nRTのホワイトバランス設定は、CAT02で使用され、出力デバイスのホワイトバランスは環境設定の値を使用します
 TP_COLORAPP_RSTPRO;レッドと肌色トーンを保護
-TP_COLORAPP_RSTPRO_TOOLTIP;レッドと肌色トーンを保護 (スライダーとカーブ)
+TP_COLORAPP_RSTPRO_TOOLTIP;レッドと肌色トーンを保護はスライダーとカーブの両方に影響します
 TP_COLORAPP_SHARPCIE;Q/C で､シャープ化、ディテールレベルのコントラストとフリンジ低減
 TP_COLORAPP_SHARPCIE_TOOLTIP;有効にした場合、シャープ化、ディテールレベルのコントラストとフリンジ低減は、CIECAM02を使用します
 TP_COLORAPP_SURROUND;周囲環境
@@ -1279,7 +1295,7 @@ TP_CROP_X;X
 TP_CROP_Y;Y
 TP_DARKFRAME_AUTOSELECT;自動選択
 TP_DARKFRAME_LABEL;ダークフレーム
-TP_DEFRINGE_LABEL;フリンジ低減 
+TP_DEFRINGE_LABEL;フリンジ低減
 TP_DEFRINGE_RADIUS;半径
 TP_DEFRINGE_THRESHOLD;しきい値
 TP_DIRPYRDENOISE_33;強い3x3
@@ -1358,7 +1374,7 @@ TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;コントラスト-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;コントラスト+
 TP_DIRPYREQUALIZER_LUMAFINEST;細かい
 TP_DIRPYREQUALIZER_LUMANEUTRAL;ニュートラル
-TP_DIRPYREQUALIZER_SKIN;肌色トーン　目標／保護
+TP_DIRPYREQUALIZER_SKIN;肌色の目標／保護
 TP_DIRPYREQUALIZER_SKIN_TOOLTIP;-100　肌色トーンの調整が目的になります\n0 全ての色調が調整の対象です\n+100　肌色が保護され、他の色調が調整されます
 TP_DIRPYREQUALIZER_THRESHOLD;しきい値
 TP_DIRPYREQUALIZER_TOOLTIP;肌色（色相、色度、明度）と他の色の間の遷移でアーティファクトが発生するのを軽減します
@@ -1368,11 +1384,11 @@ TP_DISTORTION_AUTO_TIP;(試用) 自動レンズ収差補正 (M4/3, 一部のコ�
 TP_DISTORTION_LABEL;歪曲収差補正
 TP_EPD_EDGESTOPPING;エッジ停止
 TP_EPD_GAMMA;ガンマ
-TP_EPD_LABEL;トーンマッピング 
+TP_EPD_LABEL;トーンマッピング
 TP_EPD_REWEIGHTINGITERATES;再加重反復
 TP_EPD_SCALE;スケール
 TP_EPD_STRENGTH;強さ
-TP_EPD_TOOLTIP;トーンマッピングは、L*a*b*モード(標準)またはCIECAM02モードを介して可能です\n\n CIECAM02トーンマッピングモードは以下の設定を有効にします:\n 1. CIECAM02\n 2. アルゴリズム="明るさ + 鮮やかさ (QM)"\n 3. "CIECAM02 明るさ(Q)でトーンマッピング"
+TP_EPD_TOOLTIP;トーンマッピングは、L*a*b*モード(標準)またはCIECAM02モードを介して可能です\n\nL*a*b*モードの場合、トーンマッピングはウェーブレット機能の残差画像にも使えます\n\n CIECAM02トーンマッピングモードは以下の設定を有効にします:\n 1. CIECAM02\n 2. アルゴリズム="明るさ + 鮮やかさ (QM)"\n 3. "CIECAM02 明るさ(Q)でトーンマッピング"
 TP_EXPOSURE_AUTOLEVELS;自動露光補正
 TP_EXPOSURE_AUTOLEVELS_TIP;画像を解析し露光補正を自動で設定します
 TP_EXPOSURE_BLACKLEVEL;黒レベル
@@ -1434,7 +1450,7 @@ TP_HLREC_COLOR;色の波及
 TP_HLREC_ENA_TOOLTIP;自動露光でも動作可
 TP_HLREC_LABEL;ハイライト復元
 TP_HLREC_LUMINANCE;輝度復元
-TP_HLREC_METHOD;方式: 
+TP_HLREC_METHOD;方式:
 TP_HSVEQUALIZER_CHANNEL;HSV チャンネル
 TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;HSV イコライザ
@@ -1572,7 +1588,7 @@ TP_RESIZE_HEIGHT;高さ
 TP_RESIZE_H;H:
 TP_RESIZE_LABEL;リサイズ
 TP_RESIZE_LANCZOS;ランチョス
-TP_RESIZE_METHOD;方式: 
+TP_RESIZE_METHOD;方式:
 TP_RESIZE_NEAREST;ニアリスト
 TP_RESIZE_SCALE;スケール
 TP_RESIZE_SPECIFY;条件指定:
@@ -1590,13 +1606,13 @@ TP_ROTATE_LABEL;回転
 TP_ROTATE_SELECTLINE;直線選択・角度補正ツール
 TP_SAVEDIALOG_OK_TIP;ショートカット <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;ハイライトを暗く
-TP_SHADOWSHLIGHTS_HLTONALW;ハイライト トーンの幅
+TP_SHADOWSHLIGHTS_HLTONALW;ハイライトトーンの幅
 TP_SHADOWSHLIGHTS_LABEL;シャドウ/ハイライト
 TP_SHADOWSHLIGHTS_LOCALCONTR;ローカルコントラスト
 TP_SHADOWSHLIGHTS_RADIUS;半径
 TP_SHADOWSHLIGHTS_SHADOWS;シャドウを明るく
 TP_SHADOWSHLIGHTS_SHARPMASK;シャープマスク
-TP_SHADOWSHLIGHTS_SHTONALW;シャドウ トーンの幅
+TP_SHADOWSHLIGHTS_SHTONALW;シャドウトーンの幅
 TP_SHARPENEDGE_AMOUNT;適用量
 TP_SHARPENEDGE_LABEL;エッジ
 TP_SHARPENEDGE_PASSES;反復
@@ -1606,7 +1622,7 @@ TP_SHARPENING_EDRADIUS;半径
 TP_SHARPENING_EDTOLERANCE;エッジ許容
 TP_SHARPENING_HALOCONTROL;ハロ抑制
 TP_SHARPENING_HCAMOUNT;適用量
-TP_SHARPENING_LABEL;シャープ化 
+TP_SHARPENING_LABEL;シャープ化
 TP_SHARPENING_METHOD;方式
 TP_SHARPENING_ONLYEDGES;エッジのみシャープ化
 TP_SHARPENING_RADIUS;半径
@@ -1618,7 +1634,7 @@ TP_SHARPENING_THRESHOLD;しきい値
 TP_SHARPENING_TOOLTIP;CIECAM02で使用する場合、わずかに異なる結果が予想されます。違いが認められた場合、好みに合わせて調整します
 TP_SHARPENING_USM;アンシャープマスク
 TP_SHARPENMICRO_AMOUNT;適用量
-TP_SHARPENMICRO_LABEL;マイクロコントラスト 
+TP_SHARPENMICRO_LABEL;マイクロコントラスト
 TP_SHARPENMICRO_MATRIX;3×3マトリクスの代わりに 5×5
 TP_SHARPENMICRO_UNIFORMITY;均等
 TP_VIBRANCE_AVOIDCOLORSHIFT;色ずれを回避
@@ -1660,108 +1676,131 @@ TP_WAVELET_AVOID;色ずれの回避
 TP_WAVELET_B0;黒
 TP_WAVELET_B1;グレー
 TP_WAVELET_B2;残差
+TP_WAVELET_BACUR;カーブ
+TP_WAVELET_BALANCE;コントラストバランス　斜め/垂直-水平
+TP_WAVELET_BALANCE_TOOLTIP;ウェーブレットの方向で垂直-水平と斜めのバランスを変えます\nコントラスト、色度、或いは残差画像のトーンマッピングが有効の場合、バランスにより効果が増幅されます
+TP_WAVELET_BALCHRO;色度のバランス
+TP_WAVELET_BALCHRO_TOOLTIP;有効にすると、’コントラストバランス’のカーブやスライダーも色度のバランスに影響します
+TP_WAVELET_BANONE;なし
+TP_WAVELET_BASLI;スライダー
+TP_WAVELET_BATYPE;バランス方式
 TP_WAVELET_CCURVE;ローカルコントラスト
-TP_WAVELET_CH1;全ての色度
+TP_WAVELET_CH1;全ての色
 TP_WAVELET_CH2;明清色 - 純色
-TP_WAVELET_CH3;コントラストレベルへリンク
+TP_WAVELET_CH3;コントラストのレベルとリンク
 TP_WAVELET_CHCU;カーブ
-TP_WAVELET_CHRO;純色 - 明清色
-TP_WAVELET_CHRO_TOOLTIP;明清色と純色を調整する範囲を決めます\n 1-xのレベルが純色の調整範囲\n x-9のレベルが明清色の調整範囲
-TP_WAVELET_CHR;クロマリンク
-TP_WAVELET_CHR_TOOLTIP;色度の調整は2通りあります\na 詳細レベルのコントラストに合わせる\nb　クロマリンクのスライダーに合わせる
+TP_WAVELET_CHRO;純色 - 明清色のしきい値
+TP_WAVELET_CHRO_TOOLTIP;どのレベルで明清色と純色を調整するか決めます\n1-x：純色を調整するレベルの範囲\nx-9：明清色を調整するレベルの範囲\n\n但し、値がレベルの総数より多い場合は機能が無効となります
+TP_WAVELET_CHR;色度とコントラストのリンクの強さ
+TP_WAVELET_CHR_TOOLTIP;色度を”コントラストレベル”と”色度とコントラストのリンクの強さ”の相関関係で調整します
 TP_WAVELET_CHSL;スライダー
-TP_WAVELET_CHTYPE;色の種類
+TP_WAVELET_CHTYPE;調整の方法
 TP_WAVELET_COLORT;レッド/グリーンの不透明度
+TP_WAVELET_COMBOTH;両方
+TP_WAVELET_COMPCONT;コントラスト
+TP_WAVELET_COMPGAMMA;ガンマの圧縮
+TP_WAVELET_COMPGAMMA_TOOLTIP;残差画像のガンマを調整することで、画像データとヒストグラムの均衡を図ります。
+TP_WAVELET_COMPTM;トーンマッピング
+TP_WAVELET_CONTEDIT;'後の' コントラストカーブ
 TP_WAVELET_CONTRAST_MINUS;コントラスト -
 TP_WAVELET_CONTRAST_PLUS;コントラスト +
 TP_WAVELET_CONTRA;コントラスト
-TP_WAVELET_CONTRA_TOOLTIP;残差画像のコントラストを変える\nレベル数の設定に応じて効果が違います
-TP_WAVELET_CONTR;色域の抑制
+TP_WAVELET_CONTRA_TOOLTIP;残差画像のコントラストを変えます
+TP_WAVELET_CONTR;色域
 TP_WAVELET_CTYPE;色の制御
 TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;元画像のローカルコントラストに応じてローカルコントラストを調節します\n横軸の低い部分は細かいローカルコントラストを表しています（実質値10~20）\n50%はローカルコントラストの平均（実質値100~300）を表しています\n66%はローカルコントラストの標準偏差（実質値300~800）を表しています\n100%はローカルコントラストの最大値を表しています（実質値3000~8000）
-TP_WAVELET_CURVEEDITOR_CH;コントラストレベル/色相
-TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;色相に応じて各レベルのコントラストを調節します\n肌色トーンと色相（赤）の調節と重複しないように注意します\nコントラストレベルにだけ作用します
+TP_WAVELET_CURVEEDITOR_CH;コントラストレベル=f(色相)
+TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;色相に応じて各レベルのコントラストを調節します\n色域抑制のカーブ調整と重複しないように注意します\nウェーブレットのコントラストレベルスライダー値が0の場合は効果はありません
+TP_WAVELET_CURVEEDITOR_CL;L
+TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;ウェーブレットの処理工程の最後で最終的な輝度のコントラストカーブを適用します
 TP_WAVELET_CURVEEDITOR_HH;HH
-TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;色相に応じて、その色相を調節しますが、残差画像にだけに有効です
+TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;色相に応じて、残差画像の色相を調整します
 TP_WAVELET_DALL;全ての方向
-TP_WAVELET_DAUB;エッジ検出の質
-TP_WAVELET_DAUB_TOOLTIP;ドビッシー係数を変更します\nD4=標準的なエッジ検出の質\nD14=高いエッジ検出の質、判別力が高い、処理時間が約10%増加\n係数の変更はエッジ検出に影響しますが、一般的に細かいレベルの質が向上します
-TP_WAVELET_DISP;ウェーブレットレベルのプレビューでの表示形式
-TP_WAVELET_DONE;方向: 垂直
-TP_WAVELET_DTHR;方向: 対角線
-TP_WAVELET_DTWO;方向: 水平
+TP_WAVELET_DAUB;エッジ検出の効果
+TP_WAVELET_DAUB_TOOLTIP;ドブシー関数の係数を変更します\nD4=標準的なエッジ検出の効果\nD14=通常はエッジ検出の効果が高いが、処理時間が約10%増加\n\n初めのレベルの質だけでなくエッジ検出にも影響します。但し、レベル質は厳格に係数の種類に比例している訳ではありません。画像や使い方にも影響されます。
+TP_WAVELET_DISP;プレビューでの表示形式
+TP_WAVELET_DONE;垂直
+TP_WAVELET_DTHR;対角線
+TP_WAVELET_DTWO;水平
 TP_WAVELET_EDCU;カーブ
 TP_WAVELET_EDGCONT;ローカルコントラスト
-TP_WAVELET_EDGCONT_TOOLTIP;スライダーを左に動かすとコントラストが減り、右に動かすと増えます
-TP_WAVELET_EDGEDETECTTHR2;ハイパス（エッジ）
-TP_WAVELET_EDGEDETECTTHR;ローパス（ノイズ）
-TP_WAVELET_EDGEDETECTTHR_TOOLTIP;しきい値を変えることで、薄いディテール（空のノイズなど）に対して、エッジのシャープネス効果が出るのを避けることが出来ます
+TP_WAVELET_EDGCONT_TOOLTIP;スライダーを左に動かすとコントラストが減り、右に動かすと増えます\n底部の左、天井部の左、底部の右、天井部の右は、それぞれ低いコントラスト、平均的コントラスト、平均+1標準偏差のコントラスト、最も高いコントラストを示しています
+TP_WAVELET_EDGEDETECTTHR2;しきい値　高（エッジ検出）
+TP_WAVELET_EDGEDETECTTHR;しきい値　低（ノイズ）
+TP_WAVELET_EDGEDETECTTHR_TOOLTIP;しきい値を変えることで、エッジ検出の目標を調整します。例えば、青空の中のノイズが先鋭化しないようにします。
 TP_WAVELET_EDGEDETECT;グラデーション感度
-TP_WAVELET_EDGEDETECT_TOOLTIP;エッジ検出のアルゴリズム\nスライダーを右に動かすほど、高いレベルでエッジのグラデーションを考慮します\n但し、ローカルコントラストやエッジ検出、ノイズにも影響があります
-TP_WAVELET_EDGE;エッジのシャープネス（輝度）
-TP_WAVELET_EDGREINF_TOOLTIP;半径の値を小さくすると、最初のレベルに対するエッジ検出が作用し、次に2番目のレベル、そして他のレベルに作用します
+TP_WAVELET_EDGEDETECT_TOOLTIP;スライダーを右に動かすと、エッジ検出の感度が上がります。これはローカルコントラスト、しきい値　高、しきい値　低にも影響します
+TP_WAVELET_EDGE;エッジのシャープネス
+TP_WAVELET_EDGREINF_TOOLTIP;最初のレベルに対する作用を強めたり、弱めたりし、次のレベルに対してはその逆を行います、他のレベルは変わりません
 TP_WAVELET_EDGTHRESH;ディテール
-TP_WAVELET_EDGTHRESH_TOOLTIP;低いレベルと他のレベルの区分を変更します\nしきい値を高くするほど、効果は低いレベルに重点が置かれます\n注意：マイナス値の設定は高いレベルに重点が置かれますが、アーティファクトが発生するかもしれません
+TP_WAVELET_EDGTHRESH_TOOLTIP;低いレベルと他のレベルの区分を変更します。しきい値を高くするほど、低いレベルに作用の重点が置かれます。注意：マイナス値の設定は高いレベルに重点が置かれ、アーティファクトが発生することがあります。
 TP_WAVELET_EDRAD;半径
-TP_WAVELET_EDRAD_TOOLTIP;この機能の半径は、他のシャープ化機能のそれとは大きく異なります\n複雑な関数を使って各レベルの値を比較します\nそのため、半径がゼロでも効果が現れます
+TP_WAVELET_EDRAD_TOOLTIP;この機能の半径は、他のシャープ化機能の半径とは大きく異なります。複雑な関数を使って各レベルの値を比較します。そのため、半径がゼロでも何らかの効果があります
 TP_WAVELET_EDSL;しきい値スライダー
-TP_WAVELET_EDTYPE;ローカルコントラストの制御
+TP_WAVELET_EDTYPE;ローカルコントラストの方式
 TP_WAVELET_EDVAL;強さ
+TP_WAVELET_FINAL;最終調整
 TP_WAVELET_FINEST;最も細かい
-TP_WAVELET_HIGHLIGHT;ハイライトの輝度範囲 (0～100)
+TP_WAVELET_HIGHLIGHT;ハイライトの輝度範囲
 TP_WAVELET_HS1;全輝度範囲
 TP_WAVELET_HS2;シャドウ-ハイライト
-TP_WAVELET_HUESKIN;色相の範囲(デフォルト：肌色)
-TP_WAVELET_HUESKIN_TOOLTIP;このピラミッド型カーブは上部ほど、アルゴリズムの効率が良い部分です\n下部ほど色相の変化が激しい部分を示しています\nスライダーを極端に左右に動かす必要がある場合、或いはアーティファクトが発生している場合は：<b>ホワイトバランスが誤っています</b>\n範囲を若干狭めることで画像の他の部分が影響を受けないようにすることが出来ます
+TP_WAVELET_HUESKIN;肌色の色相
+TP_WAVELET_HUESKIN_TOOLTIP;底部の2つのポイントは、色相変化が始まる部分に設定されています、天井部の2つのポイントは変化が終わる所で、色相調整の効果が最も高い部分です\n\n設定ポイントを著しく動かす必要がある場合、或いはアーティファクトが発生するようであれば、<b>ホワイトバランスが不適切</b>と考えられます
 TP_WAVELET_HUESKY;色相の範囲（デフォルト：青空）
-TP_WAVELET_HUESKY_TOOLTIP;このピラミッド型カーブは上部ほど、アルゴリズムの効率が良い部分です\n下部ほど色相の変化が激しい部分を示しています\nスライダーを極端に左右に動かす必要がある場合、或いはアーティファクトが発生している場合は：<b>ホワイトバランスが誤っています</b>\n範囲を若干狭めることで画像の他の部分が影響を受けないようにすることが出来ます
+TP_WAVELET_HUESKY_TOOLTIP;底部の2つのポイントは、色相変化が始まる部分に設定されています、天井部の2つのポイントは変化が終わる所で、色相調整の効果が最も高い部分です\n\n設定ポイントを著しく動かす必要がある場合、或いはアーティファクトが発生するようであれば、<b>ホワイトバランスが不適切</b>と考えられます
 TP_WAVELET_INF;選択したレベル以下の画像
-TP_WAVELET_LABEL;ウェーブレットのレベル
+TP_WAVELET_ITER;デルタバランスのレベル
+TP_WAVELET_ITER_TOOLTIP;スライダーを左に動かすと、低いレベルのデルタが増え、高いレベルのデルタが減ります\n右に動かすとその逆です
+TP_WAVELET_LABEL;ウェーブレット
 TP_WAVELET_LARGEST;最も粗い
 TP_WAVELET_LEVCH;色度
-TP_WAVELET_LEVELS;ウェーブレットのレベルの数
+TP_WAVELET_LEVELS;ウェーブレット　レベルの数
 TP_WAVELET_LEVELS_TOOLTIP;画像を幾つの詳細レベルに分割するか選択します。分割数が増えればメモリー使用量が増え、処理時間も長くなります。
 TP_WAVELET_LEVF;コントラスト
 TP_WAVELET_LEVLABEL;プレビューで表示可能な最大レベル=%1
 TP_WAVELET_LEVONE;レベル2
 TP_WAVELET_LEVTWO;レベル3
 TP_WAVELET_LEVZERO;レベル1
-TP_WAVELET_LINKEDG;エッジのシャープネスとリンク（強化）
+TP_WAVELET_LINKEDG;エッジのシャープネスの強さとリンク
 TP_WAVELET_LIPST;高度なアルゴリズム
-TP_WAVELET_LIPST_TOOLTIP;このアルゴリズムにはリプシッツ連続が使われています\n処理時間とメモリー消費量は増えますが、エッジ検出の精度が上がります
-TP_WAVELET_LOWLIGHT;シャドウの輝度範囲 (0～100)
+TP_WAVELET_LIPST_TOOLTIP;リプシッツ連続というアルゴリズムを使います。処理時間とメモリー消費量は増えますが、エッジ検出の精度は上がります
+TP_WAVELET_LOWLIGHT;シャドウの輝度範囲
 TP_WAVELET_MEDGREINF;最初のレベル
 TP_WAVELET_MEDILEV;エッジ検出
 TP_WAVELET_MEDI;青空のアーティファクトを軽減
 TP_WAVELET_NEUTRAL;ニュートラル
 TP_WAVELET_NOISE;ノイズ低減とリファイン
 TP_WAVELET_NOIS;ノイズ低減
-TP_WAVELET_ONE;選択したレベルの画像だけ
+TP_WAVELET_ONE;選択したレベルだけ
+TP_WAVELET_OPACITYWL;最終的なローカルコントラスト
+TP_WAVELET_OPACITYWL_TOOLTIP;ウェーブレット処理の最後で最終的なローカルコントラストを調整します\n\nイコライザは左から右に向かって、最も細かいローカルコントラストから大きいローカルコントラストを表しています
+TP_WAVELET_OPACITYWL_TOOLTIP;分解された全てのレベルの画像に対し、最後に施されたローカルコントラスト（横座標）に応じて、最終的なローカルコントラストを調整します\n調整にあたっては以下の点を考慮します: \na)コントラストレベル\nb)エッジのシャープネス\nc)コントラストのバランス\nd)分解‐再合成の影響\n横座標の低い部分は細かいローカルコントラストを意味します（実数値をしては10～20）\n横座標の50％は平均的なローカルコントラストを代表しています（実数値をしては200～1000）\n横座標の66％は1標準偏差に収まるローカルコントラストを代表しています（実数値としては1000～2000）\n横座標の100％部分はローカルコントラストの最大値です（実数値として約5000～13000）
+TP_WAVELET_OPACITYW;コントラストバランス　d/v-hカーブ
 TP_WAVELET_OPACITY;ブルー/イエローの不透明度
-TP_WAVELET_PASTEL;明清色 色度
+TP_WAVELET_PASTEL;明清色の色度
 TP_WAVELET_PREVIEWBACK;背景
-TP_WAVELET_PREVIEWLEVELS;形式
-TP_WAVELET_RE1;強化
-TP_WAVELET_RE2;変化なし
-TP_WAVELET_RE3;効果を下げる
+TP_WAVELET_PREVIEWLEVELS;プレビュー
+TP_WAVELET_RE1;強める
+TP_WAVELET_RE2;変えない
+TP_WAVELET_RE3;弱める
 TP_WAVELET_RESCHRO;色度
 TP_WAVELET_RESCONH;ハイライト
 TP_WAVELET_RESCON;シャドウ
 TP_WAVELET_RESID;残差画像
-TP_WAVELET_SAT;飽和した色度
+TP_WAVELET_SAT;純色の色度
 TP_WAVELET_SETTINGS;ウェーブレットの設定
 TP_WAVELET_SKIN;色相-トーン (肌色) の目標/保護
 TP_WAVELET_SKIN_TOOLTIP;－100にすると肌色のトーンだけが調整の対象になります\n0にすると全てのカラートーンが調整されます\n＋100にすると肌色のトーンは保護され、他のカラートーンが調整されます
-TP_WAVELET_SKY;色相-トーンの目標/保護
-TP_WAVELET_SKY_TOOLTIP;色相範囲の内側の色度を上げ、外側を下げます\n細部のコントラストや色度の強さに起因する青空のアーティファクトを回避します
+TP_WAVELET_SKY;色相-トーン（青空）の目標/保護
+TP_WAVELET_SKY_TOOLTIP;－100にすると青空のトーンだけが調整の対象になります\n0にすると全てのカラートーンが調整されます\n＋100にすると青空のトーンは保護され、他のカラートーンが調整されます
 TP_WAVELET_STRENGTH;強さ
 TP_WAVELET_STREN;強さ
 TP_WAVELET_SUPE;エキストラ
 TP_WAVELET_SUP;選択したレベルより上の画像
-TP_WAVELET_THRESHOLD2;シャドウ調整をするレベル
-TP_WAVELET_THRESHOLD2_TOOLTIP;この数値を変更すると、9以下のレベルでシャドウの輝度が調整されます\n他のレベルは輝度範囲全体で調整されます\nシャドウの最大レベルはハイライトのレベルによって制限を受けます（9-ハイライトレベル）
-TP_WAVELET_THRESHOLD;ハイライト調整をするレベル
-TP_WAVELET_THRESHOLD_TOOLTIP;この数値を変更すると、その一つ上のレベルだけがハイライトの輝度で調整されます\n他のレベルは輝度範囲全体で調整されます
+TP_WAVELET_THRESHOLD2;シャドウを調整するレベル
+TP_WAVELET_THRESHOLD2_TOOLTIP;レベル9と（9-設定値）のレベルの間でシャドウの輝度が調整されます。他のレベルは輝度範囲全体で調整されます。
+TP_WAVELET_THRESHOLD;ハイライトを調整するレベル
+TP_WAVELET_THRESHOLD_TOOLTIP;設定値以上のレベルだけが、ハイライトの輝度で調整されます。他のレベルは輝度範囲全体で調整されます。選べる設定値の最大数はシャドウレベルの設定に左右されます。
 TP_WAVELET_THRH;ハイライトのしきい値
 TP_WAVELET_THR;シャドウのしきい値
 TP_WAVELET_TILESBIG;大きいタイル
@@ -1769,6 +1808,13 @@ TP_WAVELET_TILESFULL;画像全体
 TP_WAVELET_TILESIZE;タイルのサイズ
 TP_WAVELET_TILESLIT;小さいタイル
 TP_WAVELET_TILES_TOOLTIP;画像全体を処理する方が良い結果をもたらすので、推奨される選択です。タイルによる処理はRAMの容量が小さいユーザー向けです。必要なメモリー容量に関してはRawPediaを参照して下さい。
+TP_WAVELET_TMHIGH;高
+TP_WAVELET_TMLOWHIGH;低と高に偏重
+TP_WAVELET_TMNONE;なし
+TP_WAVELET_TMSTD;標準
+TP_WAVELET_TMSTRENGTH;残差の効力を圧縮
+TP_WAVELET_TMSTRENGTH_TOOLTIP;トーンマッピングの強さや残差画像のコントラストの圧縮を加減します。値が0以外の場合、露光補正パネルのトーンマッピングでは、強さとガンマのスライダー無効となります
+TP_WAVELET_TMTYPE;圧縮の方法
 TP_WAVELET_TON;カラートーン
 TP_WAVELET_daub2;D2 - 低い
 TP_WAVELET_daub4;D4 - 標準
@@ -1829,55 +1875,3 @@ ZOOMPANEL_ZOOMFITSCREEN;画像全体を画面に合わせる\nショートカッ
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!FILEBROWSER_SHOWNOTTRASHHINT;Show only non-deleted images.
-!GENERAL_ASIMAGE;As Image
-!HISTORY_MSG_361;W - Final - Chroma balance
-!HISTORY_MSG_362;W - Residual - Compression method
-!HISTORY_MSG_363;W - Residual - Compression strength
-!HISTORY_MSG_364;W - Final - Contrast balance
-!HISTORY_MSG_365;W - Final - Delta balance
-!HISTORY_MSG_366;W - Residual - Compression gamma
-!HISTORY_MSG_367;W - ES - Local contrast curve
-!HISTORY_MSG_368;W - Final - Contrast balance
-!HISTORY_MSG_369;W - Final - Balance method
-!HISTORY_MSG_370;W - Final - Local contrast curve
-!MAIN_TAB_WAVELET;Wavelet
-!MAIN_TAB_WAVELET_TOOLTIP;Shortcut: <b>Alt-w</b>
-!PARTIALPASTE_WAVELETGROUP;Wavelet processing
-!TP_WAVELET_BACUR;Curve
-!TP_WAVELET_BALANCE;Contrast balance d/v-h
-!TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chromaticity or residual tone mapping are activated, the effect due to balance is amplified.
-!TP_WAVELET_BALCHRO;Chroma balance
-!TP_WAVELET_BALCHRO_TOOLTIP;If enabled, the 'Contrast balance' curve or slider also modifies chromaticity balance.
-!TP_WAVELET_BANONE;None
-!TP_WAVELET_BASLI;Slider
-!TP_WAVELET_BATYPE;Contrast balance method
-!TP_WAVELET_COMBOTH;Both
-!TP_WAVELET_COMPCONT;Contrast
-!TP_WAVELET_COMPGAMMA;Compression gamma
-!TP_WAVELET_COMPGAMMA_TOOLTIP;Adjusting the gamma of the residual image allow you to equilibrate the data and histogram.
-!TP_WAVELET_COMPGAMMA_TOOLTIP;Adjust gamma for residual image and compression.\nAllow to equilibrate data and histogram
-!TP_WAVELET_COMPTM;Tone mapping
-!TP_WAVELET_CONTEDIT;'After' Contrast curve
-!TP_WAVELET_CONTEDIT;'After' contrast curve
-!TP_WAVELET_CURVEEDITOR_CL;L
-!TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Applies a final contrast luminance curve at the end of the wavelet treatment.
-!TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Apply a contrast luminance curve at the end of wavelet level threatment
-!TP_WAVELET_FINAL;Final Touchup
-!TP_WAVELET_ITER;Delta balance levels
-!TP_WAVELET_ITER_TOOLTIP;Left: increase low levels and reduce high levels,\nRight: reduce low levels and increase high levels.
-!TP_WAVELET_OPACITYWL;Final local contrast
-!TP_WAVELET_OPACITYWL_TOOLTIP;Modify final local contrast in function of last local contrast (absciss) for all levels decomposition\nTake into account: \na)contrast levels \nb)edge sharpness \nc)contrast balance\nd)decomposition-recomposition\nLow absciss represents small local contrast (real values about 10..20)\n50% absciss represents average of local contrast (real value about 200..1000)\n66% absciss represents standard deviation of local contrast (real value about 1000..2000)\n100% represents maximum (real value about 5000..13000)
-!TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the wavelet treatment.\n\nThe left side represents the smallest local contrast, progressing to the largest local contrast on the right.
-!TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
-!TP_WAVELET_TMHIGH;High
-!TP_WAVELET_TMLOWHIGH;Low+High
-!TP_WAVELET_TMNONE;None
-!TP_WAVELET_TMSTD;Standard
-!TP_WAVELET_TMSTRENGTH;Compression strength
-!TP_WAVELET_TMSTRENGTH_TOOLTIP;Control the strength of tone mapping or contrast compression of the residual image. When the value is different from 0, the Strength and Gamma sliders of the Tone Mapping tool in the Exposure tab will become grayed out.
-!TP_WAVELET_TMTYPE;Compression method
