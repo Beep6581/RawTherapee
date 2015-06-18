@@ -68,6 +68,7 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
   reset->set_relief (Gtk::RELIEF_NONE);
   reset->set_border_width (0);
   reset->set_tooltip_text (M("ADJUSTER_RESET_TO_DEFAULT"));
+  reset->set_can_focus(false);
 
   spin = Gtk::manage (new MySpinButton ());
   spin->set_has_frame(false);
