@@ -1097,6 +1097,7 @@ void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring 
 
                     if (deltaBase) {
                         HSDApply(DeltaInfo, deltaBase, hs, ss, vs, h, s, v);
+                        hs=h; ss=s; vs=v;
                     }
                     if (aLookTable) {
                         HSDApply(LookInfo, aLookTable, hs, ss, vs, h, s, v);
