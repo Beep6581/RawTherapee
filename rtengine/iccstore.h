@@ -56,8 +56,8 @@ class ICCStore {
         std::map<Glib::ustring, ProfileContent> fileProfileContents;
 
         // these contain standard profiles from RT. keys are all in uppercase
+        std::map<Glib::ustring, Glib::ustring>  fileStdProfilesFileNames;
         std::map<Glib::ustring, cmsHPROFILE>    fileStdProfiles;
-        std::map<Glib::ustring, ProfileContent> fileStdProfileContents;
 
         cmsHPROFILE xyz;
         cmsHPROFILE srgb;
@@ -65,7 +65,7 @@ class ICCStore {
         MyMutex mutex_;
 
         ICCStore (); 
-        void             loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<Glib::ustring, cmsHPROFILE>& resultProfiles, std::map<Glib::ustring, ProfileContent> &resultProfileContents, bool onlyRgb = false);
+        void             loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<Glib::ustring, cmsHPROFILE>& resultProfiles, std::map<Glib::ustring, ProfileContent> *resultProfileContents, bool prefetch = false, bool onlyRgb = false);
         
     public:
 

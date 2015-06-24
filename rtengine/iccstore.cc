@@ -264,11 +264,34 @@ cmsHPROFILE ICCStore::getStdProfile (Glib::ustring name) {
 
 	MyMutex::MyLock lock(mutex_);
 
-
     std::map<Glib::ustring, cmsHPROFILE>::iterator r = fileStdProfiles.find (name.uppercase());
-    if (r==fileStdProfiles.end()) return NULL;
-    
-    return r->second;
+    if (r==fileStdProfiles.end()) {
+        // profile is not yet in store
+        std::map<Glib::ustring, Glib::ustring>::iterator f = fileStdProfilesFileNames.find (name.uppercase());
+        if(f!=fileStdProfilesFileNames.end()) {
+            // but there exists one => load it
+            ProfileContent pc (f->second);
+            if (pc.data) {
+                cmsHPROFILE profile = pc.toProfile ();
+                if (profile) {
+                    fileStdProfiles[name.uppercase()] = profile;
+                }
+                // profile is not valid or it is now stored => remove entry from fileStdProfilesFileNames
+                fileStdProfilesFileNames.erase(f);
+                return profile;
+            } else {
+                // profile not valid => remove entry from fileStdProfilesFileNames
+                fileStdProfilesFileNames.erase(f);
+                return NULL;
+            }
+        } else {
+            // profile does not exist
+            return NULL;
+        }
+    } else {
+        // return profile from store
+        return r->second;
+    }
 }
 
 ProfileContent ICCStore::getContent (Glib::ustring name) {
@@ -287,17 +310,17 @@ void ICCStore::init (Glib::ustring usrICCDir, Glib::ustring rtICCDir) {
     fileProfiles.clear();
     fileProfileContents.clear();
     // RawTherapee's profiles take precedence if a user's profile of the same name exists
-    loadICCs(Glib::build_filename(rtICCDir, "output"), false, fileProfiles, fileProfileContents, true);
-    loadICCs(usrICCDir, false, fileProfiles, fileProfileContents, true);
+    loadICCs(Glib::build_filename(rtICCDir, "output"), false, fileProfiles, &fileProfileContents, true, true);
+    loadICCs(usrICCDir, false, fileProfiles, &fileProfileContents, true, true);
 
     // Input profiles
     // Load these to different areas, since the short name (e.g. "NIKON D700" may overlap between system/user and RT dir)
     fileStdProfiles.clear();
-    fileStdProfileContents.clear();
-    loadICCs(Glib::build_filename(rtICCDir, "input"), true, fileStdProfiles, fileStdProfileContents);
+    fileStdProfilesFileNames.clear();
+    loadICCs(Glib::build_filename(rtICCDir, "input"), true, fileStdProfiles, NULL);
 }
 
-void ICCStore::loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<Glib::ustring, cmsHPROFILE>& resultProfiles, std::map<Glib::ustring, ProfileContent> &resultProfileContents, bool onlyRgb) {
+void ICCStore::loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<Glib::ustring, cmsHPROFILE>& resultProfiles, std::map<Glib::ustring, ProfileContent> *resultProfileContents, bool prefetch, bool onlyRgb) {
     if (rootDirName!="") {
         std::deque<Glib::ustring> qDirs;
 
@@ -325,12 +348,17 @@ void ICCStore::loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<Glib
                     size_t lastdot = sname.find_last_of ('.');
                     if (lastdot!=Glib::ustring::npos && lastdot<=sname.size()-4 && (!sname.casefold().compare (lastdot, 4, ".icm") || !sname.casefold().compare (lastdot, 4, ".icc"))) {
                         Glib::ustring name = nameUpper ? sname.substr(0,lastdot).uppercase() : sname.substr(0,lastdot);
-                        ProfileContent pc (fname);
-                        if (pc.data) {
-                            cmsHPROFILE profile = pc.toProfile ();
-                            if (profile && (!onlyRgb || cmsGetColorSpace(profile) == cmsSigRgbData)) {
-                                resultProfiles[name] = profile;
-                                resultProfileContents[name] = pc;
+                        if(!prefetch) {
+                            fileStdProfilesFileNames[name] = fname;
+                        } else {
+                            ProfileContent pc (fname);
+                            if (pc.data) {
+                                cmsHPROFILE profile = pc.toProfile ();
+                                if (profile && (!onlyRgb || cmsGetColorSpace(profile) == cmsSigRgbData)) {
+                                    resultProfiles[name] = profile;
+                                    if(resultProfileContents)
+                                        (*resultProfileContents)[name] = pc;
+                                }
                             }
                         }
                     }
@@ -370,9 +398,8 @@ void ICCStore::findDefaultMonitorProfile() {
 	if (options.rtSettings.verbose) printf("Default monitor profile is: %s\n", defaultMonitorProfile.c_str());
 }
 
-ProfileContent::ProfileContent (Glib::ustring fileName) {
+ProfileContent::ProfileContent (Glib::ustring fileName) : data(NULL), length(0) {
 
-    data = NULL;
     FILE* f = safe_g_fopen (fileName, "rb");
     if (!f)
         return;
@@ -396,10 +423,8 @@ ProfileContent::ProfileContent (const ProfileContent& other) {
         data = NULL;
 }
 
-ProfileContent::ProfileContent (cmsHPROFILE hProfile) {
+ProfileContent::ProfileContent (cmsHPROFILE hProfile) : data(NULL), length(0) {
 
-    data = NULL;
-    length = 0;
     if (hProfile != NULL) {
         cmsUInt32Number bytesNeeded = 0;
         cmsSaveProfileToMem(hProfile, 0, &bytesNeeded);
