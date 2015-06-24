@@ -578,7 +578,7 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
     if (tag!=NULL) {
         DeltaInfo.iHueDivisions=tag->toInt(0); DeltaInfo.iSatDivisions=tag->toInt(4); DeltaInfo.iValDivisions=tag->toInt(8);
 
-        tag = tagDir->getTag(TagProfileLookTableEncoding);
+        tag = tagDir->getTag(TagProfileHueSatMapEncoding);
         DeltaInfo.sRGBGamma = tag != NULL && tag->toInt(0);
 
         tag = tagDir->getTag(TagProfileHueSatMapData1);
