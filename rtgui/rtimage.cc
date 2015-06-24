@@ -20,64 +20,67 @@
 
 #include "rtimage.h"
 #include "../rtengine/safegtk.h"
-#include "../rtengine/safekeyfile.h"
 
 extern Glib::ustring argv0;
 extern Options options;
 
 std::vector<Glib::ustring> imagesPaths;
-std::vector<RTImage*>       imagesList;			// List of images in order to live update them on theme switch
+std::map<Glib::ustring,Glib::RefPtr<Gdk::Pixbuf> > pixBufMap; // List of image buffers in order to live update them on theme switch and to avoid a lot of file accesses
 
 /*
  * RTImage is a derived class of Gtk::Image, in order to handle theme related iconsets
  */
 RTImage::RTImage(Glib::ustring fileName, Glib::ustring rtlFileName) : Gtk::Image() {
-	Glib::ustring path;
+	Glib::ustring mapKey;
 	if (rtlFileName.length()) {
-		const Gtk::TextDirection dir = get_direction();
-		if (dir == Gtk::TEXT_DIR_RTL)
-			path = findIconAbsolutePath(rtlFileName);
-		else
-			path = findIconAbsolutePath(fileName);
+		if (get_direction() == Gtk::TEXT_DIR_RTL) {
+		    mapKey = rtlFileName;
+		} else {
+		    mapKey = fileName;
+		}
+	} else {
+	    mapKey = fileName;
 	}
-	else
-		path = findIconAbsolutePath(fileName);
-
-	set(path);
-	imagesList.push_back(this);
-}
-
-RTImage::~RTImage() {
-	// Remove the image from the global images list
-	std::vector<RTImage*>::iterator i = std::find (imagesList.begin(), imagesList.end(), this);
-	if (i!=imagesList.end())
-		imagesList.erase(i);
+    
+    std::map<Glib::ustring,Glib::RefPtr<Gdk::Pixbuf> >::iterator it;
+    it = pixBufMap.find(mapKey);
+    if (it != pixBufMap.end()) {
+        set(it->second);
+    } else {
+        Glib::RefPtr<Gdk::Pixbuf> tempPixPuf = Gdk::Pixbuf::create_from_file(findIconAbsolutePath(mapKey));
+        pixBufMap.insert(std::pair<Glib::ustring,Glib::RefPtr<Gdk::Pixbuf> >(mapKey, tempPixPuf));
+        set(tempPixPuf);
+    }
 }
 
 void RTImage::updateImages() {
-	for (unsigned int i=0; i<imagesList.size(); i++) {
-		Glib::ustring oldPath = imagesList[i]->property_file();
-		Glib::ustring fileName = Glib::path_get_basename(oldPath);
-		imagesList[i]->clear();
-		Glib::ustring fullPath = findIconAbsolutePath(fileName);
-		imagesList[i]->set(fullPath);
-	}
+    std::map<Glib::ustring,Glib::RefPtr<Gdk::Pixbuf> >::iterator it;
+    for (it=pixBufMap.begin(); it!=pixBufMap.end(); ++it) {
+        Glib::ustring fullPath = findIconAbsolutePath(it->first);
+        it->second = Gdk::Pixbuf::create_from_file(fullPath);
+    }
 }
 
-// TODO: Maybe this could be optimized: in order to avoid looking up for an icon file in the filesystem on each popupmenu selection, maybe we could find a way to copy the image data from another RTImage
+// DONE (was TODO: Maybe this could be optimized: in order to avoid looking up for an icon file in the filesystem on each popupmenu selection, maybe we could find a way to copy the image data from another RTImage)
 void RTImage::changeImage(Glib::ustring &newImage) {
 	clear();
-	Glib::ustring fullPath = findIconAbsolutePath(newImage);
-	set(fullPath);
+    std::map<Glib::ustring,Glib::RefPtr<Gdk::Pixbuf> >::iterator it;
+    it = pixBufMap.find(newImage);
+    if (it != pixBufMap.end()) {
+        set(it->second);
+    } else {
+        Glib::ustring fullPath = findIconAbsolutePath(newImage);
+        Glib::RefPtr<Gdk::Pixbuf> tempPixPuf = Gdk::Pixbuf::create_from_file(fullPath);
+        pixBufMap.insert(std::pair<Glib::ustring,Glib::RefPtr<Gdk::Pixbuf> >(newImage, tempPixPuf));
+        set(tempPixPuf);
+    }
 }
 
 Glib::ustring RTImage::findIconAbsolutePath(const Glib::ustring &iconFName) {
 	Glib::ustring path;
 	for (unsigned int i=0; i<imagesPaths.size(); i++) {
 		path = Glib::build_filename(imagesPaths[i], iconFName);
-		//printf("\"%s\" \n", path.c_str());
 		if (safe_file_test(path, Glib::FILE_TEST_EXISTS)) {
-			//printf("Found!\n");
 			return path;
 		}
 	}

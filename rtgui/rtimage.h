@@ -25,7 +25,6 @@
 class RTImage : public Gtk::Image {
 public:
 	RTImage(Glib::ustring fileName, Glib::ustring rtlFileName = "");
-	~RTImage();
 	static void setPaths(Options &opt);
 	static void updateImages();
 	void changeImage(Glib::ustring &newImage);
