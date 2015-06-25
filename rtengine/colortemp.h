@@ -190,9 +190,16 @@ class ColorTemp {
 		    if(c-0.1 < 0.0) c1=-1; else c1=1;
 			return c1*(100.0 / fl) * pow( (27.13 * fabs( c - 0.1 )) / (400.0 - fabs( c - 0.1 )), 1.0 / 0.42 );
 		}
-		static float inverse_nonlinear_adaptationfloat( float c, float fl ) {
-		    if(c-0.1f < 0.f) fl*=-1.f;
-		    return (100.0f / fl) * pow_F( (27.13f * fabsf( c - 0.1f )) / (400.0f - fabsf( c - 0.1f )), 2.38095238f );
+        static float inverse_nonlinear_adaptationfloat( float c, float fl ) {
+            c -= 0.1f;
+            if(c < 0.f) {
+                fl *= -1.f;
+                if(c < -399.99f) // avoid nan values
+                    c = -399.99f;
+            } else if(c > 399.99f) { // avoid nan values
+                c = 399.99f;
+            }
+            return (100.0f / fl) * pow_F( (27.13f * fabsf( c )) / (400.0f - fabsf( c )), 2.38095238f );
 		}
 		
 		

@@ -930,8 +930,7 @@ void ColorTemp::curvecolorfloat(float satind, float satval, float &sres, float p
 		if (sres>parsat) sres=parsat;
 		if (sres<0.f) sres=0.f;
 	} else {
-		if (satind < -0.1f)
-			sres = satval*(1.f+(satind)/100.f);
+		sres = satval*(1.f+(satind)/100.f);
 	}
 }
 

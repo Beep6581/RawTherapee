@@ -1478,15 +1478,15 @@ if(settings->viewinggreySc==1) yb=18.0f;//fixed
 			Qpro=Q;
 			Mpro=M;
 			spro=s;
-			// we cannot have all algoritms with all chroma curves
+			// we cannot have all algorithms with all chroma curves
 			if(alg==1) 	{
 				// Lightness saturation
 				if(Jpro > 99.9f)
 					Jpro = 99.9f;
-				Jpro=(CAMBrightCurveJ[(float)(Jpro*327.68f)])/327.68f;//ligthness CIECAM02 + contrast
+				Jpro=(CAMBrightCurveJ[(float)(Jpro*327.68f)])/327.68f;//lightness CIECAM02 + contrast
 				float sres;
 				float Sp=spro/100.0f;
-				float parsat=1.5f;  //parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation)
+				float parsat=1.5f;  //parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfulness (personal evaluation)
 				ColorTemp::curvecolorfloat(schr, Sp , sres, parsat);
 				float dred=100.f;// in C mode
 				float protect_red=80.0f; // in C mode
@@ -1519,7 +1519,7 @@ if(settings->viewinggreySc==1) yb=18.0f;//fixed
 				if(alg!=2) {
 					if(Jpro > 99.9f)
 						Jpro = 99.9f;
-					Jpro=(CAMBrightCurveJ[(float)(Jpro*327.68f)])/327.68f;//ligthness CIECAM02 + contrast
+					Jpro=(CAMBrightCurveJ[(float)(Jpro*327.68f)])/327.68f;//lightness CIECAM02 + contrast
 				}
 				float Sp=spro/100.0f;
 				ColorTemp::curvecolorfloat(schr, Sp , sres, 1.5f);
@@ -1538,10 +1538,11 @@ if(settings->viewinggreySc==1) yb=18.0f;//fixed
 //				else if(Jpro < 2.f && Cpro > 15.f) Cpro=15.f;
 //				else if(Jpro < 4.f && Cpro > 30.f) Cpro=30.f;
 //				else if(Jpro < 7.f && Cpro > 50.f) Cpro=50.f;
-
-				hpro=hpro+hue;
-				if( hpro < 0.0f )
-					hpro += 360.0f;//hue
+				if(alg==3) {
+                    hpro=hpro+hue;
+                    if( hpro < 0.0f )
+                        hpro += 360.0f;//hue
+				}
 			}
 
 	 if (hasColCurve1) {//curve 1 with Lightness and Brightness
@@ -4646,7 +4647,7 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, 
 						inRGB=false;
 					}
 					else if (!highlight && (R>ClipLevel || G>ClipLevel || B>ClipLevel)) {
-						if (Lprov1 > 99.999f) Lprov1 = 99.98f;
+						if (Lprov1 > 99.98f) Lprov1 = 99.98f;
 						Chprov2 *= 0.95f;
 						inRGB = false;
 					}	
