@@ -58,8 +58,8 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) {
     start = Gtk::manage (new Gtk::ToggleButton (M("FILEBROWSER_STARTPROCESSING")));
     stop = Gtk::manage (new Gtk::ToggleButton (M("FILEBROWSER_STOPPROCESSING")));
     autoStart = Gtk::manage (new Gtk::CheckButton (M("BATCHQUEUE_AUTOSTART")));
-    start->set_tooltip_text (M("FILEBROWSER_STARTPROCESSINGHINT"));
-    stop->set_tooltip_text (M("FILEBROWSER_STOPPROCESSINGHINT"));
+    start->set_tooltip_markup (M("FILEBROWSER_STARTPROCESSINGHINT"));
+    stop->set_tooltip_markup (M("FILEBROWSER_STOPPROCESSINGHINT"));
     autoStart->set_tooltip_text (M("FILEBROWSER_TOOLTIP_STOPPROCESSING"));
     start->set_active (false);
     stop->set_active (true);
@@ -331,5 +331,17 @@ void BatchQueuePanel::formatChanged (Glib::ustring f) {
 }
 
 bool BatchQueuePanel::handleShortcutKey (GdkEventKey* event) {
-	return batchQueue->keyPressed (event);
+    bool ctrl = event->state & GDK_CONTROL_MASK;
+    if (ctrl){
+        switch(event->keyval) {
+            case GDK_s:
+                if (start->get_active()) {
+                    stopBatchProc();
+                } else {
+                    startBatchProc();
+                }
+                return true;
+        }
+    }
+    return batchQueue->keyPressed (event);
 }
