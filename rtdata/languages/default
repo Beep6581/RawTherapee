@@ -181,9 +181,9 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show unsaved images.\nShortcut: <b>Alt-6</b
 FILEBROWSER_SHOWTRASHHINT;Show contents of trash.\nShortcut: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Show images without a color label.\nShortcut: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Show unranked images.\nShortcut: <b>0</b>
-FILEBROWSER_STARTPROCESSINGHINT;Start processing the images in the queue.
+FILEBROWSER_STARTPROCESSINGHINT;Start processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 FILEBROWSER_STARTPROCESSING;Start processing
-FILEBROWSER_STOPPROCESSINGHINT;Stop processing the images in the queue.
+FILEBROWSER_STOPPROCESSINGHINT;Stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 FILEBROWSER_STOPPROCESSING;Stop processing
 FILEBROWSER_THUMBSIZE;Thumbnail size
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives.
