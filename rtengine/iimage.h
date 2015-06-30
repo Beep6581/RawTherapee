@@ -19,11 +19,8 @@
 #ifndef _IIMAGE_
 #define _IIMAGE_
 
-#include <lcms2.h>
-#include <glib/gstdio.h>
 #include <glibmm.h>
 #include <vector>
-#include "../rtgui/threadutils.h"
 #include "rt_math.h"
 #include "alignedbuffer.h"
 #include "imagedimensions.h"
@@ -31,7 +28,6 @@
 #include "coord2d.h"
 #include "procparams.h"
 #include "color.h"
-#include "colortemp.h"
 
 #define TR_NONE     0
 #define TR_R90      1

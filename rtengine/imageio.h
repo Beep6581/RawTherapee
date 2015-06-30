@@ -35,7 +35,7 @@
 #include "../rtexif/rtexif.h"
 #include "imagedimensions.h"
 #include "iimage.h"
-#include "../rtgui/threadutils.h"
+#include "colortemp.h"
 
 namespace rtengine {
 

@@ -19,7 +19,7 @@
 #ifndef _OPTIONS_
 #define _OPTIONS_
 
-#include <glibmm.h>
+#include <gtkmm.h>
 #include "../rtengine/rtengine.h"
 
 #define STARTUPDIR_CURRENT 0
