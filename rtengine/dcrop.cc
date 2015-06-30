@@ -22,7 +22,6 @@
 #include "mytime.h"
 #include "refreshmap.h"
 #include "rt_math.h"
-#include "colortemp.h"
 // "ceil" rounding
 #define SKIPS(a,b) ((a) / (b) + ((a) % (b) > 0))
 
@@ -213,8 +212,8 @@ void Crop::update (int todo) {
 				int CenterPreview_Y=trafy+(trafh*skip)/2;
 				int minimuX=20000;
 				int minimuY=20000;
-				int poscenterX;
-				int poscenterY;
+				int poscenterX=0;
+				int poscenterY=0;
 				for(int cc=0;cc<numtiles_W;cc++) {
 					if(abs(centerTile_X[cc]-CenterPreview_X) < minimuX) {minimuX=abs(centerTile_X[cc]-CenterPreview_X);poscenterX=cc;}
 				}
@@ -657,22 +656,9 @@ void Crop::update (int todo) {
             parent->ipf.dirpyrequalizer (labnCrop, skip);
 		//	parent->ipf.Lanczoslab (labnCrop,labnCrop , 1.f/skip);
 		}
-        TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
-        double wp[3][3] = {
-            {wprof[0][0],wprof[0][1],wprof[0][2]},
-            {wprof[1][0],wprof[1][1],wprof[1][2]},
-            {wprof[2][0],wprof[2][1],wprof[2][2]}};
-        TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params.icm.working);
-        double wip[3][3] = {
-            {wiprof[0][0],wiprof[0][1],wiprof[0][2]},
-            {wiprof[1][0],wiprof[1][1],wiprof[1][2]},
-            {wiprof[2][0],wiprof[2][1],wiprof[2][2]}
-        };
+
 		   
-		   
-			
-		   
-		   int kall=0;
+        int kall=0;
 		int minwin=min(labnCrop->W,labnCrop->H);
 		int maxlevelcrop=10;
 	//	if(cp.mul[9]!=0)maxlevelcrop=10;

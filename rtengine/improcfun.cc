@@ -39,6 +39,7 @@
 #include "EdgePreservingDecomposition.h"
 #include "improccoordinator.h"
 #include "clutstore.h"
+#include "ciecam02.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -413,14 +414,14 @@ if(params->colorappearance.enabled) {
 				CAMBrightCurveJ(65536,0);
 				CAMBrightCurveJ.dirty = false;
 			}
-			ColorTemp::curveJ (jli, contra, 1, CAMBrightCurveJ, hist16J);//lightness and contrast J
+			Ciecam02::curveJ (jli, contra, 1, CAMBrightCurveJ, hist16J);//lightness and contrast J
 		}
 		if (needQ) {
 			if (!CAMBrightCurveQ) {
 				CAMBrightCurveQ(65536,0);
 				CAMBrightCurveQ.dirty = false;
 			}
-			ColorTemp::curveJ (qbri, qcontra, 1, CAMBrightCurveQ, hist16Q);//brightness and contrast Q
+			Ciecam02::curveJ (qbri, qcontra, 1, CAMBrightCurveQ, hist16Q);//brightness and contrast Q
 		}
 	}
 if(settings->viewinggreySc==0){//auto	
@@ -450,9 +451,9 @@ if(settings->viewinggreySc==1)	yb=18.0;
     if(params->colorappearance.wbmodel=="RawT") {xw1=96.46;yw1=100.0;zw1=82.445;xw2=xwd;yw2=ywd;zw2=zwd;}	//use RT WB; CAT 02 is used for output device (see prefreneces)
     else if(params->colorappearance.wbmodel=="RawTCAT02") {xw1=xw;yw1=yw;zw1=zw;xw2=xwd;yw2=ywd;zw2=zwd;}	// Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
 	double cz,wh, pfl;
-	ColorTemp::initcam1(gamu, yb, pilot, f, la,xw, yw, zw, n, d, nbb, ncb,cz, aw, wh, pfl, fl, c);
+	Ciecam02::initcam1(gamu, yb, pilot, f, la,xw, yw, zw, n, d, nbb, ncb,cz, aw, wh, pfl, fl, c);
 	double nj,dj,nbbj,ncbj,czj,awj,flj;
-	ColorTemp::initcam2(gamu,yb2, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj,czj, awj, flj);
+	Ciecam02::initcam2(gamu,yb2, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj,czj, awj, flj);
 
 
 
@@ -497,7 +498,7 @@ if(settings->viewinggreySc==1)	yb=18.0;
 			y=(double)y1/655.35;
 			z=(double)z1/655.35;
 			//process source==> normal
-			ColorTemp::xyz2jchqms_ciecam02( J, C,  h,
+			Ciecam02::xyz2jchqms_ciecam02( J, C,  h,
                            Q,  M,  s, aw, fl, wh,
                            x,  y,  z,
                            xw1, yw1,  zw1,
@@ -524,7 +525,7 @@ if(settings->viewinggreySc==1)	yb=18.0;
 				double parsat=1.5;
 				parsat=1.5;//parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation)
 				if(schr==-100.0) schr=-99.8;
-				ColorTemp::curvecolor(schr, Sp , sres, parsat);
+				Ciecam02::curvecolor(schr, Sp , sres, parsat);
 				double coe=pow(fl,0.25);
 				float dred=100.f;// in C mode
 				float protect_red=80.0f; // in C mode
@@ -550,7 +551,7 @@ if(settings->viewinggreySc==1)	yb=18.0;
 				double parsat=2.5;
 				if(mchr==-100.0) mchr=-99.8 ;
 				if(mchr==100.0) mchr=99.9;
-				if(alg==3 || alg==2) ColorTemp::curvecolor(mchr, Mp , sres, parsat); else ColorTemp::curvecolor(0.0, Mp , sres, parsat);//colorfullness
+				if(alg==3 || alg==2) Ciecam02::curvecolor(mchr, Mp , sres, parsat); else Ciecam02::curvecolor(0.0, Mp , sres, parsat);//colorfullness
 				float dred=100.f;//in C mode
 				float protect_red=80.0f;// in C mode
 				dred *=coe;//in M mode
@@ -571,7 +572,7 @@ if(settings->viewinggreySc==1)	yb=18.0;
 				parsat=1.5;
 				if(schr==-100.0) schr=-99.;
 				if(schr==100.0) schr=98.;
-				if(alg==3) ColorTemp::curvecolor(schr, Sp , sres, parsat);	else ColorTemp::curvecolor(0.0, Sp , sres, parsat);	//saturation
+				if(alg==3) Ciecam02::curvecolor(schr, Sp , sres, parsat);	else Ciecam02::curvecolor(0.0, Sp , sres, parsat);	//saturation
 				dred=100.f;// in C mode
 				protect_red=80.0f; // in C mode
 				dred = 100.0 * sqrt((dred*coe)/Q);
@@ -584,7 +585,7 @@ if(settings->viewinggreySc==1)	yb=18.0;
 				Cp=Cpro/100.0;
 				parsat=1.8;//parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation : for not)
 				if(chr==-100.0) chr=-99.8;
-				if(alg!=2) ColorTemp::curvecolor(chr, Cp , sres, parsat);else ColorTemp::curvecolor(0.0, Cp , sres, parsat);	//chroma
+				if(alg!=2) Ciecam02::curvecolor(chr, Cp , sres, parsat);else Ciecam02::curvecolor(0.0, Cp , sres, parsat);	//chroma
 				dred=55.f;
 				protect_red=30.0f;
 				sk=1;
@@ -859,7 +860,7 @@ if(settings->viewinggreySc==1)	yb=18.0;
 			double xx,yy,zz;
 			//double nj, nbbj, ncbj, flj, czj, dj, awj;
 			//process normal==> viewing
-			ColorTemp::jch2xyz_ciecam02( xx, yy, zz,
+			Ciecam02::jch2xyz_ciecam02( xx, yy, zz,
 			                             J,  C, h,
 			                             xw2, yw2,  zw2,
 			                             yb2, la2,
@@ -1066,7 +1067,7 @@ if((params->colorappearance.tonecie || (params->colorappearance.tonecie && param
 			}
 			//end histograms
 		//	double nd, nbbd, ncbd, fld, czd, dd, awd;
-			ColorTemp::jch2xyz_ciecam02( xx, yy, zz,
+			Ciecam02::jch2xyz_ciecam02( xx, yy, zz,
 			                             ncie->J_p[i][j],  ncie->C_p[i][j], ncie->h_p[i][j],
 			                             xw2, yw2,  zw2,
 			                             yb2, la2,
@@ -1367,22 +1368,22 @@ if(params->colorappearance.enabled) {
 		//evaluate lightness, contrast
 		if (needJ) {
 			if (!CAMBrightCurveJ) {
-				CAMBrightCurveJ(32768,0);
+				CAMBrightCurveJ(32768,LUT_CLIP_ABOVE);
 				CAMBrightCurveJ.dirty = false;
 			}
 			float jli=params->colorappearance.jlight;
 			float contra=params->colorappearance.contrast;
-			ColorTemp::curveJfloat (jli, contra, 1, CAMBrightCurveJ, hist16J);//lightness and contrast J
+			Ciecam02::curveJfloat (jli, contra, 1, CAMBrightCurveJ, hist16J);//lightness and contrast J
 		}
 		if (needQ) {
 			if (!CAMBrightCurveQ) {
-				CAMBrightCurveQ(32768,0);
+				CAMBrightCurveQ(32768,LUT_CLIP_ABOVE);
 				CAMBrightCurveQ.clear();
 				CAMBrightCurveQ.dirty = false;
 			}
 			float qbri=params->colorappearance.qbright;
 			float qcontra=params->colorappearance.qcontrast;
-			ColorTemp::curveJfloat (qbri, qcontra, 1, CAMBrightCurveQ, hist16Q);//brightness and contrast Q
+			Ciecam02::curveJfloat (qbri, qcontra, 1, CAMBrightCurveQ, hist16Q);//brightness and contrast Q
 		}
 	}
 
@@ -1413,10 +1414,10 @@ if(settings->viewinggreySc==1) yb=18.0f;//fixed
     if(params->colorappearance.wbmodel=="RawT") {xw1=96.46f;yw1=100.0f;zw1=82.445f;xw2=xwd;yw2=ywd;zw2=zwd;}	//use RT WB; CAT 02 is used for output device (see prefreneces)
     else if(params->colorappearance.wbmodel=="RawTCAT02") {xw1=xw;yw1=yw;zw1=zw;xw2=xwd;yw2=ywd;zw2=zwd;}	// Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
 	float cz,wh, pfl;
-	ColorTemp::initcam1float(gamu, yb, pilot, f, la,xw, yw, zw, n, d, nbb, ncb,cz, aw, wh, pfl, fl, c);
+	Ciecam02::initcam1float(gamu, yb, pilot, f, la,xw, yw, zw, n, d, nbb, ncb,cz, aw, wh, pfl, fl, c);
 	const float pow1 = pow_F( 1.64f - pow_F( 0.29f, n ), 0.73f );
 	float nj,dj,nbbj,ncbj,czj,awj,flj;
-	ColorTemp::initcam2float(gamu,yb2, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj,czj, awj, flj);
+	Ciecam02::initcam2float(gamu,yb2, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj,czj, awj, flj);
 	const float pow1n = pow_F( 1.64f - pow_F( 0.29f, nj ), 0.73f );
 
 	const float epsil=0.0001f;
@@ -1466,7 +1467,7 @@ if(settings->viewinggreySc==1) yb=18.0f;//fixed
 			y=(float)y1/655.35f;
 			z=(float)z1/655.35f;
 			//process source==> normal
-			ColorTemp::xyz2jchqms_ciecam02float( J, C,  h,
+			Ciecam02::xyz2jchqms_ciecam02float( J, C,  h,
                            Q,  M,  s, aw, fl, wh,
                            x,  y,  z,
                            xw1, yw1,  zw1,
@@ -1479,15 +1480,22 @@ if(settings->viewinggreySc==1) yb=18.0f;//fixed
 			Mpro=M;
 			spro=s;
 			// we cannot have all algorithms with all chroma curves
+			if(alg==0) {
+				Jpro = CAMBrightCurveJ[Jpro*327.68f]/327.68f; //lightness CIECAM02 + contrast
+				Qpro = QproFactor * sqrtf(Jpro);
+				float Cp = (spro*spro*Qpro)/(1000000.f);
+				Cpro = Cp * 100.f;
+				float sres;
+				Ciecam02::curvecolorfloat(chr, Cp , sres, 1.8f);
+				Color::skinredfloat(Jpro, hpro, sres, Cp, 55.f, 30.f,1,rstprotection, 100.f, Cpro);
+			}
 			if(alg==1) 	{
 				// Lightness saturation
-				if(Jpro > 99.9f)
-					Jpro = 99.9f;
-				Jpro=(CAMBrightCurveJ[(float)(Jpro*327.68f)])/327.68f;//lightness CIECAM02 + contrast
+				Jpro = CAMBrightCurveJ[Jpro*327.68f]/327.68f;//lightness CIECAM02 + contrast
 				float sres;
 				float Sp=spro/100.0f;
-				float parsat=1.5f;  //parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfulness (personal evaluation)
-				ColorTemp::curvecolorfloat(schr, Sp , sres, parsat);
+				float parsat=1.5f;  //parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation)
+				Ciecam02::curvecolorfloat(schr, Sp , sres, parsat);
 				float dred=100.f;// in C mode
 				float protect_red=80.0f; // in C mode
 				dred = 100.0f * sqrtf((dred*coe)/Qpro);
@@ -1495,18 +1503,13 @@ if(settings->viewinggreySc==1) yb=18.0f;//fixed
 				Color::skinredfloat(Jpro, hpro, sres, Sp, dred, protect_red,0,rstprotection,100.f, spro);
 				Qpro = QproFactor * sqrtf(Jpro);
 				Cpro=(spro*spro*Qpro)/(10000.0f);
-				}
-			else if(alg==3 || alg==0  || alg==2) {
-				if(alg==3 || alg==2) {
-					float coef=32760.f/wh;
-					if(Qpro*coef >= 32767.0f)
-						Qpro=(CAMBrightCurveQ[32767])/coef;//brightness and contrast
-					else
-						Qpro=(CAMBrightCurveQ[(float)(Qpro*coef)])/coef;//brightness and contrast
-				}
+			}
+			else if(alg==2) {
+                float coef=32767.f/wh;
+                Qpro=(CAMBrightCurveQ[(float)(Qpro*coef)])/coef;//brightness and contrast
 				float Mp, sres;
 				Mp=Mpro/100.0f;
-				ColorTemp::curvecolorfloat(mchr, Mp , sres, 2.5f);
+				Ciecam02::curvecolorfloat(mchr, Mp , sres, 2.5f);
 				float dred=100.f;//in C mode
 				float protect_red=80.0f;// in C mode
 				dred *=coe;//in M mode
@@ -1516,13 +1519,30 @@ if(settings->viewinggreySc==1) yb=18.0f;//fixed
 				Cpro= Mpro/coe;
 				Qpro = (Qpro == 0.f ? epsil : Qpro); // avoid division by zero
 				spro = 100.0f * sqrtf( Mpro / Qpro );
-				if(alg!=2) {
-					if(Jpro > 99.9f)
-						Jpro = 99.9f;
-					Jpro=(CAMBrightCurveJ[(float)(Jpro*327.68f)])/327.68f;//lightness CIECAM02 + contrast
-				}
+			}
+			else if(alg==3) {
+				float coef=32760.f/wh;
+				if(Qpro*coef >= 32767.0f)
+					Qpro=(CAMBrightCurveQ[32767])/coef;//brightness and contrast
+				else
+					Qpro=(CAMBrightCurveQ[(float)(Qpro*coef)])/coef;//brightness and contrast
+				float Mp, sres;
+				Mp=Mpro/100.0f;
+				Ciecam02::curvecolorfloat(mchr, Mp , sres, 2.5f);
+				float dred=100.f;//in C mode
+				float protect_red=80.0f;// in C mode
+				dred *=coe;//in M mode
+				protect_red	*=coe;//M mode
+				Color::skinredfloat(Jpro, hpro, sres, Mp, dred, protect_red,0,rstprotection,100.f, Mpro);
+				Jpro = SQR((10.f*Qpro)/wh);
+				Cpro= Mpro/coe;
+				Qpro = (Qpro == 0.f ? epsil : Qpro); // avoid division by zero
+				spro = 100.0f * sqrtf( Mpro / Qpro );
+				if(Jpro > 99.9f)
+					Jpro = 99.9f;
+				Jpro=(CAMBrightCurveJ[(float)(Jpro*327.68f)])/327.68f;//lightness CIECAM02 + contrast
 				float Sp=spro/100.0f;
-				ColorTemp::curvecolorfloat(schr, Sp , sres, 1.5f);
+				Ciecam02::curvecolorfloat(schr, Sp , sres, 1.5f);
 				dred=100.f;// in C mode
 				protect_red=80.0f; // in C mode
 				dred = 100.0f * sqrtf((dred*coe)/Q);
@@ -1531,19 +1551,17 @@ if(settings->viewinggreySc==1) yb=18.0f;//fixed
 				Qpro = QproFactor * sqrtf(Jpro);
 				float Cp=(spro*spro*Qpro)/(1000000.f);
 				Cpro = Cp*100.f;
-				ColorTemp::curvecolorfloat(chr, Cp , sres, 1.8f);
+				Ciecam02::curvecolorfloat(chr, Cp , sres, 1.8f);
 				Color::skinredfloat(Jpro, hpro, sres, Cp, 55.f, 30.f,1,rstprotection, 100.f, Cpro);
 // disabled this code, Issue 2690
 //				if(Jpro < 1.f && Cpro > 12.f) Cpro=12.f;//reduce artifacts by "pseudo gamut control CIECAM"
 //				else if(Jpro < 2.f && Cpro > 15.f) Cpro=15.f;
 //				else if(Jpro < 4.f && Cpro > 30.f) Cpro=30.f;
 //				else if(Jpro < 7.f && Cpro > 50.f) Cpro=50.f;
-				if(alg==3) {
-                    hpro=hpro+hue;
-                    if( hpro < 0.0f )
-                        hpro += 360.0f;//hue
+                hpro=hpro+hue;
+                if( hpro < 0.0f )
+                    hpro += 360.0f;//hue
 				}
-			}
 
 	 if (hasColCurve1) {//curve 1 with Lightness and Brightness
 		if (curveMode==ColorAppearanceParams::TC_MODE_LIGHT){
@@ -1782,7 +1800,7 @@ if(LabPassOne){
 			float xx,yy,zz;
 			//process normal==> viewing
 
-			ColorTemp::jch2xyz_ciecam02float( xx, yy, zz,
+			Ciecam02::jch2xyz_ciecam02float( xx, yy, zz,
 			                             J,  C, h,
 			                             xw2, yw2,  zw2,
 			                             yb2, la2,
@@ -2048,7 +2066,7 @@ if((params->colorappearance.tonecie && (epdEnabled)) || (params->sharpening.enab
 				}
 				//end histograms
 
-				ColorTemp::jch2xyz_ciecam02float( xx, yy, zz,
+				Ciecam02::jch2xyz_ciecam02float( xx, yy, zz,
 											 ncie->J_p[i][j],  ncie_C_p, ncie->h_p[i][j],
 											 xw2, yw2,  zw2,
 											 yb2, la2,

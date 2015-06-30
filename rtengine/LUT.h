@@ -239,7 +239,7 @@ public:
 
 #if defined( __SSE2__ ) && defined( __x86_64__ )
 	__m128 operator[](__m128 indexv ) const {
-		printf("don't use this operator. It's not ready for production");
+//		printf("don't use this operator. It's not ready for production");
 		return _mm_setzero_ps();
 
 		// convert floats to ints

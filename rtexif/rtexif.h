@@ -27,6 +27,7 @@
 #include <iomanip>
 #include <cstdlib>
 #include <cmath>
+#include <glibmm.h>
 #include "../rtengine/procparams.h"
 #include "../rtengine/safekeyfile.h"
 

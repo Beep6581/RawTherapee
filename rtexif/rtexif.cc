@@ -229,7 +229,7 @@ bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring 
     std::vector<const TagDirectory *> tagDirList;
     std::vector<Glib::ustring> tagDirPaths;
 
-    FILE *f;
+    FILE *f = NULL;
     if (!keyFile) {
         // open the file in write mode
         f = safe_g_fopen (commFName, "wt");
@@ -658,8 +658,9 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
 
     if( tag == 0xc634 ){ // DNGPrivateData
         int currPos = ftell(f);
-        char buffer[32],*p=buffer;
-        while( fread (p, 1, 1, f ) && *p != 0 && p-buffer<sizeof(buffer)-1 )p++;
+        const int buffersize = 32;
+        char buffer[buffersize],*p=buffer;
+        while( fread (p, 1, 1, f ) && *p != 0 && p-buffer<buffersize-1 )p++;
         *p=0;
         if( !strncmp(buffer,"Adobe",5) ){
             fread (buffer, 1, 14, f );
@@ -1151,7 +1152,7 @@ double Tag::toDouble (int ofs) {
  */
 double *Tag::toDoubleArray(int ofs) {
     double *values = new double[count];
-    for (int i=0; i<count; ++i) {
+    for (unsigned int i=0; i<count; ++i) {
         values[i] = toDouble(ofs+i*getTypeSize(type));
     }
     return values;
@@ -1178,7 +1179,7 @@ void Tag::toString (char* buffer, int ofs) {
 
   if (type==UNDEFINED && !directory) {
       bool isstring = true;
-      int i=0;
+      unsigned int i=0;
       for (i=0; i+ofs<count && i<64 && value[i+ofs]; i++)
         if (value[i+ofs]<32 || value[i+ofs]>126)
             isstring = false;
@@ -1709,7 +1710,7 @@ parse_leafdata(TagDirectory* root, ByteOrder order) {
     int iso_speed = 0;
     int rotation_angle = 0;
     int found_count = 0;
-    while (pos + sizeof(hdr) <= valuesize && found_count < 2) {
+    while (pos + (int)sizeof(hdr) <= valuesize && found_count < 2) {
         hdr = (char *)&value[pos];
         if (strncmp(hdr, PKTS_tag, 4) != 0) {
             // in a few cases the header can be offset a few bytes, don't know why

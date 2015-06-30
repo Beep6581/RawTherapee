@@ -20,15 +20,11 @@
 #define _RAWIMAGESOURCE_
 
 #include "imagesource.h"
-#include <lcms2.h>
 #include "dcp.h"
 #include "array2D.h"
 #include "curves.h"
-#include <fftw3.h>
 #include "color.h"
 #include "iimage.h"
-#include "../rtgui/cacheimagedata.h"
-#include "../rtgui/threadutils.h"
 
 #define HR_SCALE 2
 
@@ -223,8 +219,6 @@ class RawImageSource : public ImageSource {
         int  findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels );
 
         void cfa_linedn (float linenoiselevel);//Emil's line denoise
-        void cfa_tile_denoise (fftwf_complex * fcfablox, int vblk, int hblk, int numblox_H, int numblox_W, float noisevar, float * rolloff );
-        void cfa_output_tile_row (float *cfabloxrow, float ** cfahipassdn, float ** tilemask_out, int height, int width, int top, int blkrad);
 
         void green_equilibrate (float greenthresh);//Emil's green equilibration
 

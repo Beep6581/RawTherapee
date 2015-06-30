@@ -6,7 +6,6 @@
 
 #include "rawimage.h"
 #include "settings.h"
-#include "colortemp.h"
 #include "camconst.h"
 #include "utils.h"
 #ifdef WIN32
