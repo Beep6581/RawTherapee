@@ -312,7 +312,6 @@ void FilePanel::optionsChanged () {
 bool FilePanel::handleShortcutKey (GdkEventKey* event) {
 
     bool ctrl = event->state & GDK_CONTROL_MASK;
-    bool shift = event->state & GDK_SHIFT_MASK;
     
     if (!ctrl) {
         switch(event->keyval) {

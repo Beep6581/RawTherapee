@@ -1633,7 +1633,7 @@ void Preferences::fillPreferences () {
         for (size_t i=0; i<moptions.baBehav.size(); i++)
             for (Gtk::TreeIter sections=behModel->children().begin();  sections!=behModel->children().end(); sections++) 
                 for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++) 
-                    if (adjs->get_value (behavColumns.addsetid) == i) {
+                    if (adjs->get_value (behavColumns.addsetid) == (int)i) {
                         adjs->set_value (behavColumns.badd, moptions.baBehav[i]==1);
                         adjs->set_value (behavColumns.bset, moptions.baBehav[i]!=1);
                         break;
@@ -2025,7 +2025,7 @@ void Preferences::behAddAllPressed () {
         for (size_t i=0; i<moptions.baBehav.size(); i++)
             for (Gtk::TreeIter sections=behModel->children().begin();  sections!=behModel->children().end(); sections++)
                 for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++)
-                    if (adjs->get_value (behavColumns.addsetid) == i) {
+                    if (adjs->get_value (behavColumns.addsetid) == (int)i) {
                         adjs->set_value (behavColumns.badd, true);
                         adjs->set_value (behavColumns.bset, false);
                         break;
@@ -2039,7 +2039,7 @@ void Preferences::behSetAllPressed () {
         for (size_t i=0; i<moptions.baBehav.size(); i++)
             for (Gtk::TreeIter sections=behModel->children().begin();  sections!=behModel->children().end(); sections++)
                 for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++)
-                    if (adjs->get_value (behavColumns.addsetid) == i) {
+                    if (adjs->get_value (behavColumns.addsetid) == (int)i) {
                         adjs->set_value (behavColumns.badd, false);
                         adjs->set_value (behavColumns.bset, true);
                         break;

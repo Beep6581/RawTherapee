@@ -25,7 +25,7 @@
 
 using namespace rtengine::procparams;
 
-BatchToolPanelCoordinator::BatchToolPanelCoordinator (FilePanel* parent) : ToolPanelCoordinator(), parent(parent), somethingChanged(false) {
+BatchToolPanelCoordinator::BatchToolPanelCoordinator (FilePanel* parent) : ToolPanelCoordinator(), somethingChanged(false), parent(parent) {
 
 	blockedUpdate = false;
 	// remove exif panel and iptc panel

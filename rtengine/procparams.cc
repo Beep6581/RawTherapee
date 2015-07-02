@@ -16,23 +16,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <glib/gstdio.h>
-#include <glibmm.h>
-#include <sstream>
-#include <cstring>
+//#include <glib/gstdio.h>
+#include "procparams.h"
 #include "rt_math.h"
 #include "safegtk.h"
+#include "safekeyfile.h"
+#include "dcp.h"
 #include "../rtgui/multilangmgr.h"
-#include "procparams.h"
 #include "../rtgui/version.h"
 #include "../rtgui/ppversion.h"
-#include "../rtgui/mydiagonalcurve.h"
-#include "../rtgui/myflatcurve.h"
-#include "safekeyfile.h"
-#include "rawimage.h"
-#include "../rtgui/ppversion.h"
 #include "../rtgui/paramsedited.h"
-#include "dcp.h"
 #include "../rtgui/options.h"
 #include <locale.h>
 #define APPVERSION VERSION
@@ -802,6 +795,21 @@ void ProcParams::setDefaults () {
     sharpening.deconviter       = 30;
     sharpening.deconvdamping    = 20;
     sharpening.deconvamount     = 75;
+
+    prsharpening.enabled          = false;
+    prsharpening.radius           = 0.5;
+    prsharpening.amount           = 200;
+    prsharpening.threshold.setValues(20, 80, 2000, 1200);
+    prsharpening.edgesonly        = false;
+    prsharpening.edges_radius     = 1.9;
+    prsharpening.edges_tolerance  = 1800;
+    prsharpening.halocontrol      = false;
+    prsharpening.halocontrol_amount = 85;
+    prsharpening.method           = "usm";
+    prsharpening.deconvradius     = 0.5;
+    prsharpening.deconviter       = 100;
+    prsharpening.deconvdamping    = 0;
+    prsharpening.deconvamount     = 100;
 
     vibrance.enabled            = false;
     vibrance.pastels            = 0;
@@ -1573,6 +1581,25 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->resize.dataspec)        keyFile.set_integer ("Resize", "DataSpecified",  resize.dataspec);
     if (!pedited || pedited->resize.width)           keyFile.set_integer ("Resize", "Width",  resize.width);
     if (!pedited || pedited->resize.height)          keyFile.set_integer ("Resize", "Height", resize.height);
+
+    if (!pedited || pedited->prsharpening.enabled)            keyFile.set_boolean ("PostResizeSharpening", "Enabled",             prsharpening.enabled);
+    if (!pedited || pedited->prsharpening.method)             keyFile.set_string  ("PostResizeSharpening", "Method",              prsharpening.method);
+    if (!pedited || pedited->prsharpening.radius)             keyFile.set_double  ("PostResizeSharpening", "Radius",              prsharpening.radius);
+    if (!pedited || pedited->prsharpening.amount)             keyFile.set_integer ("PostResizeSharpening", "Amount",              prsharpening.amount);
+    if (!pedited || pedited->prsharpening.threshold) {
+        Glib::ArrayHandle<int> thresh (prsharpening.threshold.value, 4, Glib::OWNERSHIP_NONE);
+        keyFile.set_integer_list("PostResizeSharpening",   "Threshold", thresh);
+    }
+    if (!pedited || pedited->prsharpening.edgesonly)          keyFile.set_boolean ("PostResizeSharpening", "OnlyEdges",           prsharpening.edgesonly);
+    if (!pedited || pedited->prsharpening.edges_radius)       keyFile.set_double  ("PostResizeSharpening", "EdgedetectionRadius", prsharpening.edges_radius);
+    if (!pedited || pedited->prsharpening.edges_tolerance)    keyFile.set_integer ("PostResizeSharpening", "EdgeTolerance",       prsharpening.edges_tolerance);
+    if (!pedited || pedited->prsharpening.halocontrol)        keyFile.set_boolean ("PostResizeSharpening", "HalocontrolEnabled",  prsharpening.halocontrol);
+    if (!pedited || pedited->prsharpening.halocontrol_amount) keyFile.set_integer ("PostResizeSharpening", "HalocontrolAmount",   prsharpening.halocontrol_amount);
+    if (!pedited || pedited->prsharpening.deconvradius)       keyFile.set_double  ("PostResizeSharpening", "DeconvRadius",        prsharpening.deconvradius);
+    if (!pedited || pedited->prsharpening.deconvamount)       keyFile.set_integer ("PostResizeSharpening", "DeconvAmount",        prsharpening.deconvamount);
+    if (!pedited || pedited->prsharpening.deconvdamping)      keyFile.set_integer ("PostResizeSharpening", "DeconvDamping",       prsharpening.deconvdamping);
+    if (!pedited || pedited->prsharpening.deconviter)         keyFile.set_integer ("PostResizeSharpening", "DeconvIterations",    prsharpening.deconviter);
+
 
     // save color management settings
     if (!pedited || pedited->icm.input)              keyFile.set_string  ("Color Management", "InputProfile",   relativePathIfInside(fname, fnameAbsolute, icm.input));
@@ -2433,6 +2460,34 @@ if (keyFile.has_group ("Resize")) {
     if (keyFile.has_key ("Resize", "Height"))        { resize.height    = keyFile.get_integer ("Resize", "Height"); if (pedited) pedited->resize.height = true; }
 }
 
+    // load post resize sharpening
+if (keyFile.has_group ("PostResizeSharpening")) {
+    if (keyFile.has_key ("PostResizeSharpening", "Enabled"))              { prsharpening.enabled          = keyFile.get_boolean ("PostResizeSharpening", "Enabled"); if (pedited) pedited->prsharpening.enabled = true; }
+    if (keyFile.has_key ("PostResizeSharpening", "Radius"))               { prsharpening.radius           = keyFile.get_double  ("PostResizeSharpening", "Radius"); if (pedited) pedited->prsharpening.radius = true; }
+    if (keyFile.has_key ("PostResizeSharpening", "Amount"))               { prsharpening.amount           = keyFile.get_integer ("PostResizeSharpening", "Amount"); if (pedited) pedited->prsharpening.amount = true; }
+    if (keyFile.has_key ("PostResizeSharpening", "Threshold"))            {
+        if (ppVersion < 302) {
+            int thresh = min(keyFile.get_integer ("PostResizeSharpening", "Threshold"), 2000);
+            prsharpening.threshold.setValues(thresh, thresh, 2000, 2000); // TODO: 2000 is the maximum value and is taken of rtgui/sharpening.cc ; should be changed by the tool modularization
+        }
+        else {
+            Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("PostResizeSharpening", "Threshold");
+            prsharpening.threshold.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 2000), min(thresh.data()[3], 2000));
+        }
+        if (pedited) pedited->prsharpening.threshold = true;
+    }
+    if (keyFile.has_key ("PostResizeSharpening", "OnlyEdges"))            { prsharpening.edgesonly        = keyFile.get_boolean ("PostResizeSharpening", "OnlyEdges"); if (pedited) pedited->prsharpening.edgesonly = true; }
+    if (keyFile.has_key ("PostResizeSharpening", "EdgedetectionRadius"))  { prsharpening.edges_radius     = keyFile.get_double  ("PostResizeSharpening", "EdgedetectionRadius"); if (pedited) pedited->prsharpening.edges_radius = true; }
+    if (keyFile.has_key ("PostResizeSharpening", "EdgeTolerance"))        { prsharpening.edges_tolerance  = keyFile.get_integer ("PostResizeSharpening", "EdgeTolerance"); if (pedited) pedited->prsharpening.edges_tolerance = true; }
+    if (keyFile.has_key ("PostResizeSharpening", "HalocontrolEnabled"))   { prsharpening.halocontrol      = keyFile.get_boolean ("PostResizeSharpening", "HalocontrolEnabled"); if (pedited) pedited->prsharpening.halocontrol = true; }
+    if (keyFile.has_key ("PostResizeSharpening", "HalocontrolAmount"))    { prsharpening.halocontrol_amount = keyFile.get_integer ("PostResizeSharpening", "HalocontrolAmount"); if (pedited) pedited->prsharpening.halocontrol_amount = true; }
+    if (keyFile.has_key ("PostResizeSharpening", "Method"))               { prsharpening.method           = keyFile.get_string  ("PostResizeSharpening", "Method"); if (pedited) pedited->prsharpening.method = true; }
+    if (keyFile.has_key ("PostResizeSharpening", "DeconvRadius"))         { prsharpening.deconvradius     = keyFile.get_double  ("PostResizeSharpening", "DeconvRadius"); if (pedited) pedited->prsharpening.deconvradius = true; }
+    if (keyFile.has_key ("PostResizeSharpening", "DeconvAmount"))         { prsharpening.deconvamount     = keyFile.get_integer ("PostResizeSharpening", "DeconvAmount"); if (pedited) pedited->prsharpening.deconvamount = true; }
+    if (keyFile.has_key ("PostResizeSharpening", "DeconvDamping"))        { prsharpening.deconvdamping    = keyFile.get_integer ("PostResizeSharpening", "DeconvDamping"); if (pedited) pedited->prsharpening.deconvdamping = true; }
+    if (keyFile.has_key ("PostResizeSharpening", "DeconvIterations"))     { prsharpening.deconviter       = keyFile.get_integer ("PostResizeSharpening", "DeconvIterations"); if (pedited) pedited->prsharpening.deconviter = true; }
+}
+
     // load color management settings
 if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "InputProfile"))   { icm.input          = expandRelativePath(fname, "file:", keyFile.get_string ("Color Management", "InputProfile")); if (pedited) pedited->icm.input = true; }
@@ -2899,6 +2954,20 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& sharpening.deconvradius == other.sharpening.deconvradius
 		&& sharpening.deconviter == other.sharpening.deconviter
 		&& sharpening.deconvdamping == other.sharpening.deconvdamping
+		&& prsharpening.enabled == other.prsharpening.enabled
+		&& prsharpening.radius == other.prsharpening.radius
+		&& prsharpening.amount == other.prsharpening.amount
+		&& prsharpening.threshold == other.prsharpening.threshold
+		&& prsharpening.edgesonly == other.prsharpening.edgesonly
+		&& prsharpening.edges_radius == other.prsharpening.edges_radius
+		&& prsharpening.edges_tolerance == other.prsharpening.edges_tolerance
+		&& prsharpening.halocontrol == other.prsharpening.halocontrol
+		&& prsharpening.halocontrol_amount== other.prsharpening.halocontrol_amount
+		&& prsharpening.method == other.prsharpening.method
+		&& prsharpening.deconvamount == other.prsharpening.deconvamount
+		&& prsharpening.deconvradius == other.prsharpening.deconvradius
+		&& prsharpening.deconviter == other.prsharpening.deconviter
+		&& prsharpening.deconvdamping == other.prsharpening.deconvdamping
 		&& vibrance.enabled == other.vibrance.enabled
 		&& vibrance.pastels == other.vibrance.pastels
 		&& vibrance.saturated == other.vibrance.saturated

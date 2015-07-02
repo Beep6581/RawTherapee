@@ -145,14 +145,14 @@ public:
     }
 
     ~AlignedBufferMP() {
-        for (int i=0;i<buffers.size();i++) delete buffers[i];
+        for (size_t i=0;i<buffers.size();i++) delete buffers[i];
     }
 
     AlignedBuffer<T>* acquire() {
         MyMutex::MyLock lock(mtx);
 
         // Find available buffer
-        for (int i=0;i<buffers.size();i++) {
+        for (size_t i=0;i<buffers.size();i++) {
             if (!buffers[i]->inUse) {
                 buffers[i]->inUse=true;
                 return buffers[i];

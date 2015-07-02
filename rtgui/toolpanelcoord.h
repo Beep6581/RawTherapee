@@ -77,6 +77,7 @@
 #include "rgbcurves.h"
 #include "colortoning.h"
 #include "filmsimulation.h"
+#include "prsharpening.h"
 #include "guiutils.h"
 
 class ImageEditorCoordinator;
@@ -111,6 +112,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ChMixer* chmixer;
         BlackWhite* blackwhite;
         Resize* resize;
+        PrSharpening* prsharpening;
         ICMPanel* icm;
         Crop* crop;
         ToneCurve* toneCurve;

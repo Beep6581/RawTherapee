@@ -391,6 +391,21 @@ DIRPYREQUALIZER,   //EvWavgamma
 DIRPYREQUALIZER,   //EvWavCLCurve
 DIRPYREQUALIZER,		//EvWavopacity
 DIRPYREQUALIZER,		//EvWavBAmet
-DIRPYREQUALIZER		//EvWavopacityWL
+DIRPYREQUALIZER,		//EvWavopacityWL
+RESIZE,              // EvPrShrEnabled
+RESIZE,              // EvPrShrRadius
+RESIZE,              // EvPrShrAmount
+RESIZE,              // EvPrShrThresh
+RESIZE,              // EvPrShrEdgeOnly
+RESIZE,              // EvPrShrEdgeRadius=375,
+RESIZE,              // EvPrShrEdgeTolerance=376,
+RESIZE,              // EvPrShrHaloControl=377,
+RESIZE,              // EvPrShrHaloAmount=378,
+RESIZE,              // EvPrShrMethod=379,
+RESIZE,              // EvPrShrDRadius=380,
+RESIZE,              // EvPrShrDAmount=381,
+RESIZE,              // EvPrShrDDamping=382,
+RESIZE              // EvPrShrDIterations=383,
+
 };
 

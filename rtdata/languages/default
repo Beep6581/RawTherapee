@@ -235,15 +235,15 @@ HISTORY_MSG_1;Photo loaded
 HISTORY_MSG_2;PP3 loaded
 HISTORY_MSG_3;PP3 changed
 HISTORY_MSG_4;History browsing
-HISTORY_MSG_5;Lightness
-HISTORY_MSG_6;Contrast
-HISTORY_MSG_7;Black
-HISTORY_MSG_8;Exposure compensation
-HISTORY_MSG_9;Highlight compression
-HISTORY_MSG_10;Shadow compression
-HISTORY_MSG_11;Tone curve 1
-HISTORY_MSG_12;Auto levels
-HISTORY_MSG_13;Exposure clipping
+HISTORY_MSG_5;Exposure - Lightness
+HISTORY_MSG_6;Exposure - Contrast
+HISTORY_MSG_7;Exposure - Black
+HISTORY_MSG_8;Exposure - Compensation
+HISTORY_MSG_9;Exposure - Highlight compression
+HISTORY_MSG_10;Exposure - Shadow compression
+HISTORY_MSG_11;Exposure - Tone curve 1
+HISTORY_MSG_12;Exposure - Auto levels
+HISTORY_MSG_13;Exposure - Clip
 HISTORY_MSG_14;L*a*b* - Lightness
 HISTORY_MSG_15;L*a*b* - Contrast
 HISTORY_MSG_16;-
@@ -259,7 +259,7 @@ HISTORY_MSG_25;USM - Edge detection radius
 HISTORY_MSG_26;USM - Edge tolerance
 HISTORY_MSG_27;USM - Halo control
 HISTORY_MSG_28;USM - Halo control amount
-HISTORY_MSG_29;Sharpening method
+HISTORY_MSG_29;Sharpening - Method
 HISTORY_MSG_30;RLD - Radius
 HISTORY_MSG_31;RLD - Amount
 HISTORY_MSG_32;RLD - Damping
@@ -267,13 +267,13 @@ HISTORY_MSG_33;RLD - Iterations
 HISTORY_MSG_34;LCP distortion correction
 HISTORY_MSG_35;LCP vignetting correction
 HISTORY_MSG_36;LCP CA correction
-HISTORY_MSG_37;Auto levels
-HISTORY_MSG_38;White balance method
+HISTORY_MSG_37;Exposure - Auto levels
+HISTORY_MSG_38;White Balance - Method
 HISTORY_MSG_39;WB - Temperature
 HISTORY_MSG_40;WB - Tint
-HISTORY_MSG_41;Tone curve 1 mode
-HISTORY_MSG_42;Tone curve 2
-HISTORY_MSG_43;Tone curve 2 mode
+HISTORY_MSG_41;Exposure - Tone curve 1 mode
+HISTORY_MSG_42;Exposure - Tone curve 2
+HISTORY_MSG_43;Exposure - Tone curve 2 mode
 HISTORY_MSG_44;Lum. denoising radius
 HISTORY_MSG_45;Lum. denoising edge tolerance
 HISTORY_MSG_46;Color denoising
@@ -283,8 +283,8 @@ HISTORY_MSG_49;DCP illuminant
 HISTORY_MSG_50;Shadows/Highlights
 HISTORY_MSG_51;S/H - Highlights
 HISTORY_MSG_52;S/H - Shadows
-HISTORY_MSG_53;S/H - Highlight tonal width
-HISTORY_MSG_54;S/H - Shadow tonal width
+HISTORY_MSG_53;S/H - Highlights tonal width
+HISTORY_MSG_54;S/H - Shadows tonal width
 HISTORY_MSG_55;S/H - Local contrast
 HISTORY_MSG_56;S/H - Radius
 HISTORY_MSG_57;Coarse rotation
@@ -296,9 +296,9 @@ HISTORY_MSG_62;Distortion correction
 HISTORY_MSG_63;Snapshot selected
 HISTORY_MSG_64;Crop
 HISTORY_MSG_65;CA correction
-HISTORY_MSG_66;Highlight reconstruction
-HISTORY_MSG_67;HR reconstruction amount
-HISTORY_MSG_68;HL reconstruction method
+HISTORY_MSG_66;Exposure - Highlight reconstruction
+HISTORY_MSG_67;Exposure - HLR amount
+HISTORY_MSG_68;Exposure - HLR method
 HISTORY_MSG_69;Working color space
 HISTORY_MSG_70;Output color space
 HISTORY_MSG_71;Input color space
@@ -316,8 +316,8 @@ HISTORY_MSG_82;Profile changed
 HISTORY_MSG_83;S/H - Sharp mask
 HISTORY_MSG_84;Perspective correction
 HISTORY_MSG_85;LCP
-HISTORY_MSG_86;RGB curves - Luminosity mode
-HISTORY_MSG_87;Impulse noise reduction
+HISTORY_MSG_86;RGB Curves - Luminosity mode
+HISTORY_MSG_87;Impulse Noise Reduction
 HISTORY_MSG_88;Impulse NR threshold
 HISTORY_MSG_89;Noise Reduction
 HISTORY_MSG_90;NR - Luminance
@@ -330,7 +330,7 @@ HISTORY_MSG_96;L*a*b* - a* curve
 HISTORY_MSG_97;L*a*b* - b* curve
 HISTORY_MSG_98;Demosaicing method
 HISTORY_MSG_99;Hot pixel filter
-HISTORY_MSG_100;RGB Saturation
+HISTORY_MSG_100;Exposure - Saturation
 HISTORY_MSG_101;HSV - Hue
 HISTORY_MSG_102;HSV - Saturation
 HISTORY_MSG_103;HSV - Value
@@ -338,7 +338,7 @@ HISTORY_MSG_104;HSV Equalizer
 HISTORY_MSG_105;Defringe
 HISTORY_MSG_106;Defringe - Radius
 HISTORY_MSG_107;Defringe - Threshold
-HISTORY_MSG_108;Highlight Compr. Threshold
+HISTORY_MSG_108;Exposure - HLC threshold
 HISTORY_MSG_109;Resize - Bounding box
 HISTORY_MSG_110;Resize - Applies to
 HISTORY_MSG_111;L*a*b* - Avoid color shift
@@ -393,10 +393,10 @@ HISTORY_MSG_159;TM - Edge stopping
 HISTORY_MSG_160;TM - Scale
 HISTORY_MSG_161;TM - Reweighting iterates
 HISTORY_MSG_162;Tone Mapping
-HISTORY_MSG_163;RGB curves - Red
-HISTORY_MSG_164;RGB curves - Green
-HISTORY_MSG_165;RGB curves - Blue
-HISTORY_MSG_166;Neutral levels
+HISTORY_MSG_163;RGB Curves - Red
+HISTORY_MSG_164;RGB Curves - Green
+HISTORY_MSG_165;RGB Curves - Blue
+HISTORY_MSG_166;Exposure - Neutral
 HISTORY_MSG_167;--unused--
 HISTORY_MSG_168;L*a*b* - CC curve
 HISTORY_MSG_169;L*a*b* - CH curve
@@ -425,7 +425,7 @@ HISTORY_MSG_191;CAM02 - Colorfulness (M)
 HISTORY_MSG_192;CAM02 - Hue (h)
 HISTORY_MSG_193;CAM02 - Tone curve 1
 HISTORY_MSG_194;CAM02 - Tone curve 2
-HISTORY_MSG_195;CAM02 - Tone curve 1 
+HISTORY_MSG_195;CAM02 - Tone curve 1
 HISTORY_MSG_196;CAM02 - Tone curve 2
 HISTORY_MSG_197;CAM02 - Color curve
 HISTORY_MSG_198;CAM02 - Color curve
@@ -600,6 +600,20 @@ HISTORY_MSG_367;W - ES - Local contrast curve
 HISTORY_MSG_368;W - Final - Contrast balance
 HISTORY_MSG_369;W - Final - Balance method
 HISTORY_MSG_370;W - Final - Local contrast curve
+HISTORY_MSG_371;Post-Resize Sharpening
+HISTORY_MSG_372;PRS USM - Radius
+HISTORY_MSG_373;PRS USM - Amount
+HISTORY_MSG_374;PRS USM - Threshold
+HISTORY_MSG_375;PRS USM - Sharpen only edges
+HISTORY_MSG_376;PRS USM - Edge detection radius
+HISTORY_MSG_377;PRS USM - Edge tolerance
+HISTORY_MSG_378;PRS USM - Halo control
+HISTORY_MSG_379;PRS USM - Halo control amount
+HISTORY_MSG_380;PRS - Method
+HISTORY_MSG_381;PRS RLD - Radius
+HISTORY_MSG_382;PRS RLD - Amount
+HISTORY_MSG_383;PRS RLD - Damping
+HISTORY_MSG_384;PRS RLD - Iterations
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -732,12 +746,12 @@ OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not b
 OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 PARTIALPASTE_BASICGROUP;Basic Settings
 PARTIALPASTE_CACORRECTION;Chromatic aberration correction
-PARTIALPASTE_CHANNELMIXERBW;Black-and-White
+PARTIALPASTE_CHANNELMIXERBW;Black-and-white
 PARTIALPASTE_CHANNELMIXER;Channel mixer
-PARTIALPASTE_COARSETRANS;Coarse rotation / flipping
+PARTIALPASTE_COARSETRANS;Coarse rotation/flipping
 PARTIALPASTE_COLORAPP;CIECAM02
 PARTIALPASTE_COLORGROUP;Color Related Settings
-PARTIALPASTE_COLORTONING;Color Toning
+PARTIALPASTE_COLORTONING;Color toning
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto-fill
 PARTIALPASTE_COMPOSITIONGROUP;Composition Settings
 PARTIALPASTE_CROP;Crop
@@ -750,11 +764,11 @@ PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
 PARTIALPASTE_DISTORTION;Distortion correction
 PARTIALPASTE_EPD;Tone mapping
-PARTIALPASTE_EQUALIZER;Wavelet Equalizer
+PARTIALPASTE_EQUALIZER;Wavelet levels
 PARTIALPASTE_EVERYTHING;Everything
 PARTIALPASTE_EXIFCHANGES;Exif
 PARTIALPASTE_EXPOSURE;Exposure
-PARTIALPASTE_FILMSIMULATION;Film Simulation
+PARTIALPASTE_FILMSIMULATION;Film simulation
 PARTIALPASTE_FLATFIELDAUTOSELECT;Flat-field auto-selection
 PARTIALPASTE_FLATFIELDBLURRADIUS;Flat-field blur radius
 PARTIALPASTE_FLATFIELDBLURTYPE;Flat-field blur type
@@ -767,7 +781,7 @@ PARTIALPASTE_ICMSETTINGS;Color management settings
 PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
 PARTIALPASTE_IPTCINFO;IPTC
 PARTIALPASTE_LABCURVE;L*a*b* adjustments
-PARTIALPASTE_LENSGROUP;Lens related settings
+PARTIALPASTE_LENSGROUP;Lens Related Settings
 PARTIALPASTE_LENSPROFILE;Lens correction profile
 PARTIALPASTE_METAGROUP;Metadata
 PARTIALPASTE_PCVIGNETTE;Vignette filter
@@ -784,9 +798,9 @@ PARTIALPASTE_RAWEXPOS_LINEAR;White point correction
 PARTIALPASTE_RAWEXPOS_PRESER;Highlight preservation
 PARTIALPASTE_RAWGROUP;Raw Settings
 PARTIALPASTE_RAW_DCBENHANCE;DCB enhancement
-PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
+PARTIALPASTE_RAW_DCBITERATIONS;DCB iterations
 PARTIALPASTE_RAW_DMETHOD;Demosaic method
-PARTIALPASTE_RAW_FALSECOLOR;Demosaic false color suppression steps
+PARTIALPASTE_RAW_FALSECOLOR;False color suppression
 PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 PARTIALPASTE_RESIZE;Resize
 PARTIALPASTE_RGBCURVES;RGB curves
@@ -797,7 +811,7 @@ PARTIALPASTE_SHARPENING;Sharpening (USM/RL)
 PARTIALPASTE_SHARPENMICRO;Microcontrast
 PARTIALPASTE_VIBRANCE;Vibrance
 PARTIALPASTE_VIGNETTING;Vignetting correction
-PARTIALPASTE_WAVELETGROUP;Wavelet processing
+PARTIALPASTE_WAVELETGROUP;Wavelet Levels
 PARTIALPASTE_WHITEBALANCE;White balance
 PREFERENCES_ADD;Add
 PREFERENCES_APPLNEXTSTARTUP;restart required
@@ -1521,6 +1535,8 @@ TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Tries to suppress hot pixels.
 TP_PREPROCESS_LABEL;Preprocessing
 TP_PREPROCESS_LINEDENOISE;Line noise filter
 TP_PREPROCESS_NO_FOUND;None found
+TP_PRSHARPENING_LABEL;Post-Resize Sharpening
+TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 TP_RAWCACORR_AUTO;Auto-correction
 TP_RAWCACORR_CABLUE;Blue
 TP_RAWCACORR_CARED;Red
@@ -1578,7 +1594,7 @@ TP_ROTATE_SELECTLINE;Select Straight Line
 TP_SAVEDIALOG_OK_TIP;Shortcut: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Highlights
 TP_SHADOWSHLIGHTS_HLTONALW;Highlights tonal width
-TP_SHADOWSHLIGHTS_LABEL;Shadows/highlights
+TP_SHADOWSHLIGHTS_LABEL;Shadows/Highlights
 TP_SHADOWSHLIGHTS_LOCALCONTR;Local contrast
 TP_SHADOWSHLIGHTS_RADIUS;Radius
 TP_SHADOWSHLIGHTS_SHADOWS;Shadows
@@ -1725,10 +1741,10 @@ TP_WAVELET_HUESKY_TOOLTIP;The bottom points set the beginning of the transition 
 TP_WAVELET_INF;Below or equal the level
 TP_WAVELET_ITER;Delta balance levels
 TP_WAVELET_ITER_TOOLTIP;Left: increase low levels and reduce high levels,\nRight: reduce low levels and increase high levels.
-TP_WAVELET_LABEL;Wavelet levels
+TP_WAVELET_LABEL;Wavelet Levels
 TP_WAVELET_LARGEST;Coarsest
 TP_WAVELET_LEVCH;Chromaticity
-TP_WAVELET_LEVELS;Wavelet levels
+TP_WAVELET_LEVELS;Wavelet Levels
 TP_WAVELET_LEVELS_TOOLTIP;Choose the number of detail levels the image is to be decomposed into. More levels require more RAM and require a longer processing time.
 TP_WAVELET_LEVF;Contrast
 TP_WAVELET_LEVLABEL;Preview maximum possible levels = %1

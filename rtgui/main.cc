@@ -320,7 +320,6 @@ int processLineParams( int argc, char **argv )
 	std::vector<Glib::ustring> inputFiles;
 	Glib::ustring outputPath = "";
 	std::vector<rtengine::procparams::PartialProfile*> processingParams;
-	bool isDirectory=false;
 	bool outputDirectory=false;
 	bool overwriteFiles=false;
 	bool sideProcParams=false;
@@ -429,7 +428,6 @@ int processLineParams( int argc, char **argv )
 						continue;
 					}
 					if( safe_file_test( safe_filename_to_utf8(argv[iArg]), Glib::FILE_TEST_IS_DIR )){
-						isDirectory = true;
 						std::vector<Glib::ustring> names;
 						Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path ( argv[iArg] );
 						safe_build_file_list (dir, names, argv[iArg] );

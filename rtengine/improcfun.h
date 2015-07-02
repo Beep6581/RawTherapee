@@ -68,7 +68,7 @@ class ImProcFunctions {
 		void transformLuminanceOnly (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH, int fW, int fH);
 		void transformHighQuality   (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LCPMapper *pLCPMap, bool fullImage);
 
-		void sharpenHaloCtrl    (LabImage* lab, float** blurmap, float** base, int W, int H);
+		void sharpenHaloCtrl    (LabImage* lab, float** blurmap, float** base, int W, int H, SharpeningParams &sharpenParam);
 		void sharpenHaloCtrlcam (CieImage* ncie, float** blurmap, float** base, int W, int H);
 		void firstAnalysisThread(Imagefloat* original, Glib::ustring wprofile, unsigned int* histogram, int row_from, int row_to);
 		void dcdamping          (float** aI, float** aO, float damping, int W, int H);
@@ -246,7 +246,7 @@ class ImProcFunctions {
 		void chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve,LUTf & satclcurve, LUTf &clcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histCLurve, LUTu &histLCurve, LUTu &histLurve);
 		void vibrance         (LabImage* lab);//Jacques' vibrance
 		void colorCurve       (LabImage* lold, LabImage* lnew);
-		void sharpening       (LabImage* lab, float** buffer);
+		void sharpening       (LabImage* lab, float** buffer, SharpeningParams &sharpenParam);
 		void sharpeningcam    (CieImage* ncie, float** buffer);
 		void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH,
 		                       double focalLen, double focalLen35mm, float focusDist, int rawRotationDeg, bool fullImage);
@@ -256,7 +256,7 @@ class ImProcFunctions {
 		void Lanczos (const LabImage* src, LabImage* dst, float scale);
 		void Lanczos (const Image16* src, Image16* dst, float scale);
 		
-		void deconvsharpening (LabImage* lab, float** buffer);
+		void deconvsharpening (LabImage* lab, float** buffer, SharpeningParams &sharpenParam);
 		void deconvsharpeningcam (CieImage* ncie, float** buffer);
 		void MLsharpen (LabImage* lab);// Manuel's clarity / sharpening
 		void MLmicrocontrast(LabImage* lab ); //Manuel's microcontrast

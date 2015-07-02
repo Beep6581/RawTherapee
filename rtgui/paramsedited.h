@@ -638,6 +638,7 @@ class ParamsEdited {
         RGBCurvesParamsEdited         rgbCurves;
         ColorToningEdited             colorToning;
         SharpeningParamsEdited        sharpening;
+        SharpeningParamsEdited        prsharpening;
         SharpenEdgeParamsEdited       sharpenEdge;
         SharpenMicroParamsEdited      sharpenMicro;
         VibranceParamsEdited          vibrance;

@@ -21,7 +21,6 @@
 
 #include <glibmm.h>
 #include <vector>
-#include <cassert>
 #include <cstdio>
 #include <cmath>
 #include "LUT.h"
@@ -1085,6 +1084,7 @@ class ProcParams {
         RGBCurvesParams         rgbCurves;       ///< RGB curves parameters
         ColorToningParams       colorToning;     ///< Color Toning parameters
         SharpeningParams        sharpening;      ///< Sharpening parameters
+        SharpeningParams        prsharpening;    ///< Sharpening parameters for post resize sharpening
         SharpenEdgeParams       sharpenEdge;     ///< Sharpen edge parameters
         SharpenMicroParams      sharpenMicro;    ///< Sharpen microcontrast parameters
         VibranceParams          vibrance;        ///< Vibrance parameters

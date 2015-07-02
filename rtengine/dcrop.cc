@@ -646,7 +646,7 @@ void Crop::update (int todo) {
             parent->ipf.MLsharpen (labnCrop);
             if((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {
                 parent->ipf.MLmicrocontrast (labnCrop);
-                parent->ipf.sharpening (labnCrop, (float**)cbuffer);
+                parent->ipf.sharpening (labnCrop, (float**)cbuffer, params.sharpening);
             }
         }
      //   if (skip==1) {
