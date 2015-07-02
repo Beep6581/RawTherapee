@@ -22,12 +22,7 @@
 #include "bilateral2.h"
 #include "rt_math.h"
 #include "sleef.c"
-#ifdef __SSE2__
-#include "sleefsseavx.c"
-#endif
-#ifdef _OPENMP
-#include <omp.h>
-#endif
+#include "opthelper.h"
 
 using namespace std;
 
@@ -40,11 +35,7 @@ namespace rtengine {
 
 
 extern const Settings* settings;
-#if defined( __SSE__ ) && defined( WIN32 )
-__attribute__((force_align_arg_pointer)) void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, int H) {
-#else
-void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, int H) {
-#endif
+SSEFUNCTION void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, int H) {
 
 	const float dampingFac=-2.0/(damping*damping);
 
@@ -114,8 +105,8 @@ void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, i
 #endif
 }
 
-void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
-	if (params->sharpening.enabled==false || params->sharpening.deconvamount<1)
+void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2, SharpeningParams &sharpenParam) {
+	if (sharpenParam.enabled==false || sharpenParam.deconvamount<1)
 		return;
 
 	int W = lab->W, H = lab->H;
@@ -135,13 +126,13 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 	{
     AlignedBufferMP<double> buffer(max(W,H));
 
-	float damping = params->sharpening.deconvdamping / 5.0;
-	bool needdamp = params->sharpening.deconvdamping > 0;
-	for (int k=0; k<params->sharpening.deconviter; k++) {
+	float damping = sharpenParam.deconvdamping / 5.0;
+	bool needdamp = sharpenParam.deconvdamping > 0;
+	for (int k=0; k<sharpenParam.deconviter; k++) {
 
 		// apply blur function (gaussian blur)
-        gaussHorizontal<float> (tmpI, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
-        gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
+        gaussHorizontal<float> (tmpI, tmp, buffer, W, H, sharpenParam.deconvradius / scale);
+        gaussVertical<float>   (tmp, tmp, buffer, W, H, sharpenParam.deconvradius / scale);
 
 		if (!needdamp) {
 #ifdef _OPENMP
@@ -155,8 +146,8 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 		else
 			dcdamping (tmp, lab->L, damping, W, H);
 
-        gaussHorizontal<float> (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
-        gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
+        gaussHorizontal<float> (tmp, tmp, buffer, W, H, sharpenParam.deconvradius / scale);
+        gaussVertical<float>   (tmp, tmp, buffer, W, H, sharpenParam.deconvradius / scale);
 
 #ifdef _OPENMP
 #pragma omp for
@@ -166,7 +157,7 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 				tmpI[i][j] = tmpI[i][j] * tmp[i][j];
 	} // end for
 
-	float p2 = params->sharpening.deconvamount / 100.0;
+	float p2 = sharpenParam.deconvamount / 100.0;
 	float p1 = 1.0 - p2;
 
 #ifdef _OPENMP
@@ -183,101 +174,109 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 	delete [] tmpI;
 }
 
-void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
+void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &sharpenParam) {
 
-	if (params->sharpening.method=="rld") {
-		deconvsharpening (lab, b2);
+	if (sharpenParam.method=="rld") {
+		deconvsharpening (lab, b2, sharpenParam);
 		return;
 	}
 
 	// Rest is UNSHARP MASK
-	if (params->sharpening.enabled==false || params->sharpening.amount<1 || lab->W<8 || lab->H<8)
+	if (sharpenParam.enabled==false || sharpenParam.amount<1 || lab->W<8 || lab->H<8)
 		return;
 
 	int W = lab->W, H = lab->H;
 	float** b3 = NULL;
 	float** labCopy = NULL;
 	
-	if (params->sharpening.edgesonly) {
+	if (sharpenParam.edgesonly) {
 		b3 = new float*[H];
 		for (int i=0; i<H; i++)
 			b3[i] = new float[W];
 	}
 
-	if (params->sharpening.halocontrol && !params->sharpening.edgesonly) {
+	if (sharpenParam.halocontrol && !sharpenParam.edgesonly) {
 		// We only need the lab parameter copy in this special case
 	    labCopy = new float*[H];
 		for( int i=0; i<H; i++ ) {
 		    labCopy[i] = new float[W];
 		}
 	}
+#ifdef _OPENMP
 #pragma omp parallel
+#endif
 	{
 
 
     AlignedBufferMP<double> buffer(max(W,H));
-	if (params->sharpening.edgesonly==false) {
+	if (sharpenParam.edgesonly==false) {
 
-		gaussHorizontal<float> (lab->L, b2, buffer, W, H, params->sharpening.radius / scale);
-		gaussVertical<float>   (b2,     b2, buffer, W, H, params->sharpening.radius / scale);
+		gaussHorizontal<float> (lab->L, b2, buffer, W, H, sharpenParam.radius / scale);
+		gaussVertical<float>   (b2,     b2, buffer, W, H, sharpenParam.radius / scale);
 	}
 	else {
-		bilateral<float, float> (lab->L, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, multiThread);
-		gaussHorizontal<float> (b3, b2, buffer, W, H, params->sharpening.radius / scale);
-		gaussVertical<float>   (b2, b2, buffer, W, H, params->sharpening.radius / scale);
+		bilateral<float, float> (lab->L, (float**)b3, b2, W, H, sharpenParam.edges_radius / scale, sharpenParam.edges_tolerance, multiThread);
+		gaussHorizontal<float> (b3, b2, buffer, W, H, sharpenParam.radius / scale);
+		gaussVertical<float>   (b2, b2, buffer, W, H, sharpenParam.radius / scale);
 	}
 
 	float** base = lab->L;
-	if (params->sharpening.edgesonly)
+	if (sharpenParam.edgesonly)
 		base = b3;
 
-	if (params->sharpening.halocontrol==false) {
-		#pragma omp for
+	if (sharpenParam.halocontrol==false) {
+#ifdef _OPENMP
+#pragma omp for
+#endif
 		for (int i=0; i<H; i++)
 			for (int j=0; j<W; j++) {
 				const float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
 				float diff = base[i][j] - b2[i][j];
-				float delta = params->sharpening.threshold.multiply<float, float, float>(
+				float delta = sharpenParam.threshold.multiply<float, float, float>(
 				              min(ABS(diff), upperBound),					// X axis value = absolute value of the difference, truncated to the max value of this field
-				              params->sharpening.amount * diff * 0.01f		// Y axis max value
+				              sharpenParam.amount * diff * 0.01f		// Y axis max value
 				              );
 				lab->L[i][j] = lab->L[i][j] + delta;
 			}
 	}
 	else {
-		if (!params->sharpening.edgesonly) {
+		if (!sharpenParam.edgesonly) {
 			// make a deep copy of lab->L
+#ifdef _OPENMP
 #pragma omp for
+#endif
 			for( int i=0; i<H; i++ )
 				for( int j=0; j<W; j++ )
 					labCopy[i][j] = lab->L[i][j];
 			base = labCopy;
 		}
-		sharpenHaloCtrl (lab, b2, base, W, H);
+		sharpenHaloCtrl (lab, b2, base, W, H, sharpenParam);
 	}
 
 	} // end parallel
 
-	if (params->sharpening.halocontrol && !params->sharpening.edgesonly) {
+	if (sharpenParam.halocontrol && !sharpenParam.edgesonly) {
 		// delete the deep copy
 		for( int i=0; i<H; i++ ) delete[] labCopy[i];
 		delete[] labCopy;
 	}
 
-	if (params->sharpening.edgesonly) {
+	if (sharpenParam.edgesonly) {
 		for (int i=0; i<H; i++)
 			delete [] b3[i];
 		delete [] b3;
 	}
 }
 
-void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** base, int W, int H) {
+void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** base, int W, int H, SharpeningParams &sharpenParam) {
 
-	float scale = (100.f - params->sharpening.halocontrol_amount) * 0.01f;
-	float sharpFac = params->sharpening.amount * 0.01f;
+	float scale = (100.f - sharpenParam.halocontrol_amount) * 0.01f;
+	float sharpFac = sharpenParam.amount * 0.01f;
 	float** nL = base;
 
+#ifdef _OPENMP
 #pragma omp for
+#endif
 	for (int i=2; i<H-2; i++) {
 		float max1=0, max2=0, min1=0, min2=0, maxn, minn, np1, np2, np3, min_, max_, labL;
 		for (int j=2; j<W-2; j++) {
@@ -303,7 +302,7 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
 			float diff = nL[i][j] - blurmap[i][j];
 
 			const float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
-			float delta = params->sharpening.threshold.multiply<float, float, float>(
+			float delta = sharpenParam.threshold.multiply<float, float, float>(
 			              min(ABS(diff), upperBound),	// X axis value = absolute value of the difference
 			              sharpFac * diff				// Y axis max value = sharpening.amount * signed difference
 			              );
@@ -368,15 +367,19 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 	for (p=0; p<passes; p++)
 		for (c=0; c<=channels; c++) {// c=0 Luminance only
 
+#ifdef _OPENMP
 #pragma omp parallel for private(offset) shared(L)
+#endif
 			for (offset=0; offset<width*height; offset++) {
 				int ii = offset/width;
 				int kk = offset-ii*width;
 				if      (c==0) L[offset] = lab->L[ii][kk]/327.68f; // adjust to RT and to 0..100
 				else if (c==1) L[offset] = lab->a[ii][kk]/327.68f;
-				else if (c==2) L[offset] = lab->b[ii][kk]/327.68f;
+				else /*if (c==2) */ L[offset] = lab->b[ii][kk]/327.68f;
 			}
+#ifdef _OPENMP
 #pragma omp parallel for private(j,i,iii,kkk, templab,offset,wH,wV,wD1,wD2,s,lumH,lumV,lumD1,lumD2,v,contrast,f1,f2,f3,f4,difT,difB,difL,difR,difLT,difLB,difRT,difRB) shared(lab,L,amount)
+#endif
 			for(j=2; j<height-2; j++)
 				for(i=2,offset=j*width+i; i<width-2; i++,offset++) {
 					// weight functions
@@ -395,7 +398,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 					int kk = offset-ii*width;
 					if      (c==0) lumH=lumV=lumD1=lumD2=v=lab->L[ii][kk]/327.68f;
 					else if (c==1) lumH=lumV=lumD1=lumD2=v=lab->a[ii][kk]/327.68f;
-					else if (c==2) lumH=lumV=lumD1=lumD2=v=lab->b[ii][kk]/327.68f;
+					else /* if (c==2) */ lumH=lumV=lumD1=lumD2=v=lab->b[ii][kk]/327.68f;
 
 
 					// contrast detection
@@ -557,13 +560,17 @@ void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
 
 	float chmax=8.0f;
 	LM = new float[width*height];//allocation for Luminance
+#ifdef _OPENMP
 #pragma omp parallel for private(offset, i,j) shared(LM)
+#endif
 	for(j=0; j<height; j++)
 		for(i=0,offset=j*width+i; i<width; i++,offset++) {
 			LM[offset] = lab->L[j][i]/327.68f;// adjust to 0.100 and to RT variables
 		}
 
+#ifdef _OPENMP
 #pragma omp parallel for private(j,i,offset,s,signs,v,n,row,col,offset2,contrast,temp,temp2,temp3,tempL,temp4) shared(lab,LM,amount,chmax,unif,k,L98,L95,L92,L90,L87,L83,L80,L75,L70,L63,L58,Cont0,Cont1,Cont2,Cont3,Cont4,Cont5)
+#endif
 	for(j=k; j<height-k; j++)
 		for(i=k,offset=j*width+i; i<width-k; i++,offset++) {
 			s=amount;
@@ -577,7 +584,7 @@ void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
 					n++;
 				}
 			if      (k==1) contrast = sqrt(fabs(LM[offset+1]-LM[offset-1])*fabs(LM[offset+1]-LM[offset-1])+fabs(LM[offset+width]-LM[offset-width])*fabs(LM[offset+width]-LM[offset-width]))/chmax; //for 3x3
-			else if (k==2) contrast = sqrt(fabs(LM[offset+1]-LM[offset-1])*fabs(LM[offset+1]-LM[offset-1])+fabs(LM[offset+width]-LM[offset-width])*fabs(LM[offset+width]-LM[offset-width])
+			else /* if (k==2) */ contrast = sqrt(fabs(LM[offset+1]-LM[offset-1])*fabs(LM[offset+1]-LM[offset-1])+fabs(LM[offset+width]-LM[offset-width])*fabs(LM[offset+width]-LM[offset-width])
 									      +fabs(LM[offset+2]-LM[offset-2])*fabs(LM[offset+2]-LM[offset-2])+fabs(LM[offset+2*width]-LM[offset-2*width])*fabs(LM[offset+2*width]-LM[offset-2*width]))/(2*chmax);  //for 5x5
 
 			if (contrast>1.0f)
@@ -755,13 +762,17 @@ void ImProcFunctions::MLmicrocontrastcam(CieImage* ncie) {
 
 	float chmax=8.0f;
 	LM = new float[width*height];//allocation for Luminance
+#ifdef _OPENMP
 #pragma omp parallel for private(offset, i,j) shared(LM)
+#endif
 	for(j=0; j<height; j++)
 		for(i=0,offset=j*width+i; i<width; i++,offset++) {
 			LM[offset] = ncie->sh_p[j][i]/327.68f;// adjust to 0.100 and to RT variables
 		}
 
+#ifdef _OPENMP
 #pragma omp parallel for private(j,i,offset,s,signs,v,n,row,col,offset2,contrast,temp,temp2,temp3,tempL,temp4) shared(ncie,LM,amount,chmax,unif,k,L98,L95,L92,L90,L87,L83,L80,L75,L70,L63,L58,Cont0,Cont1,Cont2,Cont3,Cont4,Cont5)
+#endif
 	for(j=k; j<height-k; j++)
 		for(i=k,offset=j*width+i; i<width-k; i++,offset++) {
 			s=amount;
@@ -775,7 +786,7 @@ void ImProcFunctions::MLmicrocontrastcam(CieImage* ncie) {
 					n++;
 				}
 			if      (k==1) contrast = sqrt(fabs(LM[offset+1]-LM[offset-1])*fabs(LM[offset+1]-LM[offset-1])+fabs(LM[offset+width]-LM[offset-width])*fabs(LM[offset+width]-LM[offset-width]))/chmax; //for 3x3
-			else if (k==2) contrast = sqrt(fabs(LM[offset+1]-LM[offset-1])*fabs(LM[offset+1]-LM[offset-1])+fabs(LM[offset+width]-LM[offset-width])*fabs(LM[offset+width]-LM[offset-width])
+			else /* if (k==2) */ contrast = sqrt(fabs(LM[offset+1]-LM[offset-1])*fabs(LM[offset+1]-LM[offset-1])+fabs(LM[offset+width]-LM[offset-width])*fabs(LM[offset+width]-LM[offset-width])
 									      +fabs(LM[offset+2]-LM[offset-2])*fabs(LM[offset+2]-LM[offset-2])+fabs(LM[offset+2*width]-LM[offset-2*width])*fabs(LM[offset+2*width]-LM[offset-2*width]))/(2*chmax);  //for 5x5
 
 			if (contrast>1.0f)
@@ -900,9 +911,6 @@ void ImProcFunctions::MLmicrocontrastcam(CieImage* ncie) {
 		printf("Micro-contrast  %d usec\n", t2e.etime(t1e));
 
 }
-
-
-
 
 void ImProcFunctions::deconvsharpeningcam (CieImage* ncie, float** b2) {
 
@@ -1030,7 +1038,9 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2) {
 		base = b3;
 
 	if (params->sharpening.halocontrol==false) {
-		#pragma omp for
+#ifdef _OPENMP
+#pragma omp for
+#endif
 		for (int i=0; i<H; i++)
 			for (int j=0; j<W; j++) {
 				const float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
@@ -1045,7 +1055,9 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2) {
 	else {
         if (!params->sharpening.edgesonly) {
             // make a deep copy of lab->L
+#ifdef _OPENMP
 #pragma omp for
+#endif
             for( int i=0; i<H; i++ )
                 for( int j=0; j<W; j++ )
                     ncieCopy[i][j] = ncie->sh_p[i][j];
@@ -1075,7 +1087,9 @@ void ImProcFunctions::sharpenHaloCtrlcam (CieImage* ncie, float** blurmap, float
 	float sharpFac = params->sharpening.amount * 0.01f;
 	float** nL = base;
 
+#ifdef _OPENMP
 #pragma omp for
+#endif
 	for (int i=2; i<H-2; i++) {
 		float max1=0, max2=0, min1=0, min2=0, maxn, minn, np1, np2, np3, min_, max_, labL;
 		for (int j=2; j<W-2; j++) {

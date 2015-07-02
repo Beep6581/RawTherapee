@@ -30,7 +30,7 @@ set (BASESOURCEFILES
     darkframe.cc flatfield.cc rawcacorrection.cc rawexposure.cc wavelet.cc
     dirpyrequalizer.cc hsvequalizer.cc defringe.cc
     popupcommon.cc popupbutton.cc popuptogglebutton.cc sharpenedge.cc sharpenmicro.cc colorappearance.cc
-    filmsimulation.cc)
+    filmsimulation.cc prsharpening.cc)
 
 include_directories (BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 

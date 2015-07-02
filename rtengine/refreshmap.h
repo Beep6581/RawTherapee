@@ -19,11 +19,9 @@
 #ifndef __REFRESHMAP__
 #define __REFRESHMAP__
 
-#include <glibmm.h>
-
-// Use M_VOID is you wish to update the proc params without updating the preview at all !
+// Use M_VOID if you wish to update the proc params without updating the preview at all !
 #define M_VOID       (1<<15)
-// Use M_MINUPDATE if you you wish to update the preview without modifying the image (think about it like a "refreshPreview")
+// Use M_MINUPDATE if you wish to update the preview without modifying the image (think about it like a "refreshPreview")
 // Must NOT be used with other event (i.e. will be used for MINUPDATE only)
 #define M_MINUPDATE  (1<<14)
 // Force high quality

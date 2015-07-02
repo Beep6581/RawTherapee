@@ -1598,11 +1598,25 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_368;W - Final - Contrast balance
 !HISTORY_MSG_369;W - Final - Balance method
 !HISTORY_MSG_370;W - Final - Local contrast curve
+!HISTORY_MSG_371;Post-Resize Sharpening
+!HISTORY_MSG_372;PRS USM - Radius
+!HISTORY_MSG_373;PRS USM - Amount
+!HISTORY_MSG_374;PRS USM - Threshold
+!HISTORY_MSG_375;PRS USM - Sharpen only edges
+!HISTORY_MSG_376;PRS USM - Edge detection radius
+!HISTORY_MSG_377;PRS USM - Edge tolerance
+!HISTORY_MSG_378;PRS USM - Halo control
+!HISTORY_MSG_379;PRS USM - Halo control amount
+!HISTORY_MSG_380;PRS - Method
+!HISTORY_MSG_381;PRS RLD - Radius
+!HISTORY_MSG_382;PRS RLD - Amount
+!HISTORY_MSG_383;PRS RLD - Damping
+!HISTORY_MSG_384;PRS RLD - Iterations
 !MAIN_TAB_INSPECT; Inspect
 !MAIN_TAB_WAVELET;Wavelet
 !MAIN_TAB_WAVELET_TOOLTIP;Shortcut: <b>Alt-w</b>
-!PARTIALPASTE_EQUALIZER;Wavelet Equalizer
-!PARTIALPASTE_WAVELETGROUP;Wavelet processing
+!PARTIALPASTE_EQUALIZER;Wavelet levels
+!PARTIALPASTE_WAVELETGROUP;Wavelet Levels
 !PREFERENCES_AUTLISLOW;Low
 !PREFERENCES_AUTLISMAX;Max - Average of all tiles
 !PREFERENCES_AUTLISSTD;High
@@ -1693,6 +1707,8 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_EPD_GAMMA;Gamma
 !TP_EXPOSURE_TCMODE_LUMINANCE;Luminance
 !TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
+!TP_PRSHARPENING_LABEL;Post-Resize Sharpening
+!TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 !TP_RAW_HD;Threshold
 !TP_RAW_HD_TOOLTIP;Lower values make hot/dead pixel detection more aggressive, but false positives may lead to artifacts. If you notice any artifacts appearing when enabling the Hot/Dead Pixel Filters, gradually increase the threshold value until they disappear.
 !TP_WAVELET_1;Level 1
@@ -1788,10 +1804,10 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_WAVELET_INF;Below or equal the level
 !TP_WAVELET_ITER;Delta balance levels
 !TP_WAVELET_ITER_TOOLTIP;Left: increase low levels and reduce high levels,\nRight: reduce low levels and increase high levels.
-!TP_WAVELET_LABEL;Wavelet levels
+!TP_WAVELET_LABEL;Wavelet Levels
 !TP_WAVELET_LARGEST;Coarsest
 !TP_WAVELET_LEVCH;Chromaticity
-!TP_WAVELET_LEVELS;Wavelet levels
+!TP_WAVELET_LEVELS;Wavelet Levels
 !TP_WAVELET_LEVELS_TOOLTIP;Choose the number of detail levels the image is to be decomposed into. More levels require more RAM and require a longer processing time.
 !TP_WAVELET_LEVF;Contrast
 !TP_WAVELET_LEVLABEL;Preview maximum possible levels = %1

@@ -395,6 +395,20 @@ enum ProcEvent {
 	EvWavopacity=367,
 	EvWavBAmet=368,
 	EvWavopacityWL=369,
+    EvPrShrEnabled=370,
+    EvPrShrRadius=371,
+    EvPrShrAmount=372,
+    EvPrShrThresh=373,
+    EvPrShrEdgeOnly=374,
+    EvPrShrEdgeRadius=375,
+    EvPrShrEdgeTolerance=376,
+    EvPrShrHaloControl=377,
+    EvPrShrHaloAmount=378,
+    EvPrShrMethod=379,
+    EvPrShrDRadius=380,
+    EvPrShrDAmount=381,
+    EvPrShrDDamping=382,
+    EvPrShrDIterations=383,
 	
 	NUMOFEVENTS	
 };

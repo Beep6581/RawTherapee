@@ -39,11 +39,14 @@ class Resize : public ToolParamBlock, public AdjusterListener, public FoldableTo
     int                cropw, croph;
     sigc::connection   sconn, aconn, wconn, hconn;
     bool               wDirty, hDirty;
+    ToolParamBlock*    packBox;
 
   public:
 
     Resize ();
     ~Resize ();
+
+    Gtk::Box* getPackBox () { return packBox; }
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);

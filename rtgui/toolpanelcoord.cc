@@ -25,8 +25,6 @@
 #include "../rtengine/improcfun.h"
 #include "../rtengine/procevents.h"
 #include "../rtengine/refreshmap.h"
-#include "guiutils.h"
-#include "rtimage.h"
 
 using namespace rtengine::procparams;
 
@@ -67,6 +65,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     chmixer             = Gtk::manage (new ChMixer ());
     blackwhite          = Gtk::manage (new BlackWhite ());
     resize              = Gtk::manage (new Resize ());
+    prsharpening        = Gtk::manage (new PrSharpening());
     crop                = Gtk::manage (new Crop ());
     icm                 = Gtk::manage (new ICMPanel ());
     exifpanel           = Gtk::manage (new ExifPanel ());
@@ -122,6 +121,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (waveletPanel, wavelet);                            toolPanels.push_back (wavelet);
     addPanel (transformPanel, crop);                             toolPanels.push_back (crop);
     addPanel (transformPanel, resize);                           toolPanels.push_back (resize);
+    addPanel (resize->getPackBox(), prsharpening);               toolPanels.push_back (prsharpening);
     addPanel (transformPanel, lensgeom);                         toolPanels.push_back (lensgeom);
     addPanel (lensgeom->getPackBox(), rotate);                   toolPanels.push_back (rotate);
     addPanel (lensgeom->getPackBox(), perspective);              toolPanels.push_back (perspective);
@@ -142,8 +142,6 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (rawPanel, preprocess);                             toolPanels.push_back (preprocess);
     addPanel (rawPanel, darkframe);                              toolPanels.push_back (darkframe);
     addPanel (rawPanel, flatfield);                              toolPanels.push_back (flatfield);
- 
- 
 
     toolPanels.push_back (coarse);
     toolPanels.push_back (exifpanel);

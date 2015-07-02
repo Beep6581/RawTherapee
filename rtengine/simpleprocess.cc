@@ -26,15 +26,10 @@
 #include "processingjob.h"
 #include <glibmm.h>
 #include "../rtgui/options.h"
-#include <iostream>
 #include "rawimagesource.h"
-#include "../rtgui/ppversion.h"
 #include "../rtgui/multilangmgr.h"
 #include "mytime.h"
 #undef THREAD_PRIORITY_NORMAL
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 namespace rtengine {
 extern const Settings* settings;
@@ -764,7 +759,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             for (int i=0; i<fh; i++)
                 buffer[i] = new float[fw];
 
-        ipf.sharpening (labView, (float**)buffer);
+        ipf.sharpening (labView, (float**)buffer, params.sharpening);
 
             for (int i=0; i<fh; i++)
                 delete [] buffer[i];
@@ -890,6 +885,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         labView = tmplab;
 		cw = labView->W;
 		ch = labView->H;
+		if(params.prsharpening.enabled) {			
+            float **buffer = new float*[ch];
+                for (int i=0; i<ch; i++)
+                    buffer[i] = new float[cw];
+
+            ipf.sharpening (labView, (float**)buffer, params.prsharpening);
+
+                for (int i=0; i<ch; i++)
+                    delete [] buffer[i];
+                    delete [] buffer;
+        }
     }
 
     Image16* readyImg = NULL;
