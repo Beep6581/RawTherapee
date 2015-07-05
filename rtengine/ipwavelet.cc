@@ -135,6 +135,14 @@ struct cont_params {
 	bool opaW;
 	int BAmet;
 	bool bam;
+	float blhigh;
+	float grhigh;
+	float blmed;
+	float grmed;
+	float bllow;
+	float grlow;
+	bool cbena;
+	
 };
 
 int wavNestedLevels = 1;
@@ -215,7 +223,15 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 	cp.EDmet=1;
 	if(params->wavelet.EDmethod=="SL")	cp.EDmet=1;			
 	if(params->wavelet.EDmethod=="CU")	cp.EDmet=2;			
-	
+
+	cp.cbena= params->wavelet.cbenab;
+	cp.blhigh=(float)params->wavelet.bluehigh;
+	cp.grhigh=(float)params->wavelet.greenhigh;
+	cp.blmed=(float)params->wavelet.bluemed;
+	cp.grmed=(float)params->wavelet.greenmed;
+	cp.bllow=(float)params->wavelet.bluelow;
+	cp.grlow=(float)params->wavelet.greenlow;
+	printf("blmed=%f grmed=%f\n",cp.blmed,cp.grmed);
 	cp.curv=false;
 	cp.edgcurv=false;
 	cp.diagcurv=false;
@@ -699,7 +715,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 				if(!hhutili) {//always a or b
 					int levwava = levwav;
 				//	printf("Levwava before: %d\n",levwava);
-					if(cp.chrores == 0.f && params->wavelet.CLmethod=="all") { // no processing of residual ab => we probably can reduce the number of levels
+					if(cp.chrores == 0.f && params->wavelet.CLmethod=="all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
 						while(levwava > 0 && !cp.diag &&(((cp.CHmet==2 && (cp.chro == 0.f || cp.mul[levwava-1] == 0.f )) || (cp.CHmet!=2 && (levwava == 10 || (!cp.curv  || (cp.curv && cp.mulC[levwava-1] == 0.f)))))) && (!cp.opaRG || levwava == 10 || (cp.opaRG && cp.mulopaRG[levwava-1] == 0.f)) && ((levwava == 10 ||(cp.CHSLmet==1 && cp.mulC[levwava-1] == 0.f)))) {
 							levwava--;
 						}
@@ -715,7 +731,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 					}
 					int levwavb = levwav;
 					//printf("Levwavb before: %d\n",levwavb);
-					if(cp.chrores == 0.f && params->wavelet.CLmethod=="all") { // no processing of residual ab => we probably can reduce the number of levels
+					if(cp.chrores == 0.f && params->wavelet.CLmethod=="all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
 					while(levwavb > 0 &&  !cp.diag && (((cp.CHmet==2 && (cp.chro == 0.f || cp.mul[levwavb-1] == 0.f )) || (cp.CHmet!=2 && (levwavb == 10 || (!cp.curv || (cp.curv && cp.mulC[levwavb-1] == 0.f)))))) && (!cp.opaBY || levwavb == 10 || (cp.opaBY && cp.mulopaBY[levwavb-1] == 0.f)) && ((levwavb == 10 ||(cp.CHSLmet==1 && cp.mulC[levwavb-1] == 0.f)))) {
 							levwavb--;
 						}
@@ -1080,9 +1096,9 @@ omp_set_nested(oldNested);
 		sigmaN[level]=SN;
 		MaxP[level]=maxLP;
 		MaxN[level]=maxLN;
-		if(params->wavelet.CLmethod!="all") {//display only if user choose different from all
-		printf("Ind=%d Level=%d MadL=%f AvL=%f AvN=%f SL=%f SN=%f maxP=%f maxN=%f\n",ind, level,MADL,mean[level],meanN[level],sigma[level],sigmaN[level],MaxP[level],MaxN[level]);
-		}
+	//	if(params->wavelet.CLmethod!="all") {//display only if user choose different from all
+	//	printf("Ind=%d Level=%d MadL=%f AvL=%f AvN=%f SL=%f SN=%f maxP=%f maxN=%f\n",ind, level,MADL,mean[level],meanN[level],sigma[level],sigmaN[level],MaxP[level],MaxN[level]);
+	//	}
 	}	
 
 float *ImProcFunctions::ContrastDR(float *Source, int skip, struct cont_params cp, int W_L, int H_L, float Compression,float DetailBoost,float max0, float min0, float ave, float ah, float bh, float al, float bl, float factorx, float *Contrast){	
@@ -1720,9 +1736,68 @@ if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory
 				*/		
 				}
 				WavCoeffs_ab0[i]*=(1.f+cp.chrores*(scale)/100.f);
+				
 			}
 		}
+		
+		if(cp.cbena) {//if user select Toning and color balance
+		
+#ifdef _RT_NESTED_OPENMP
+#pragma omp for nowait
+#endif				
+			for (int i=0; i<W_L*H_L; i++) {
+				int ii = i/W_L;
+				int jj = i-ii*W_L;
+				float LL = (labco->L[ii*2][jj*2])/327.68f;//I use labco but I can use also WavCoeffs_L0 (more exact but more memory)
 
+				float sca=1.f;//amplifer - reducter...about 1, but perhaps 0.6 or 1.3
+				if(useChannelA) {//green red (little magenta)
+					//transition to avoid artifacts with 6 between 30 to 36 and  63 to 69
+					float aa=(cp.grmed-cp.grlow)/6.f;
+					float bb= cp.grlow-30.f*aa;
+					float aaa=(cp.grhigh-cp.grmed)/6.f;
+					float bbb= cp.grmed-63.f*aaa;
+					
+					if(LL < 30.f)//shadows
+						WavCoeffs_ab0[i]+=cp.grlow*(sca)*300.f;
+					else if(LL >= 30.f && LL < 36.f) {//transition
+						float tr=aa*LL+bb;
+						WavCoeffs_ab0[i]+= tr*(sca)*300.f;
+					}
+					else if(LL >= 36.f && LL < 63.f)//midtones
+						WavCoeffs_ab0[i]+=cp.grmed*(sca)*300.f;
+					else if(LL >= 63.f && LL < 69.f) {//transition
+						float trh=aaa*LL+bbb;
+						WavCoeffs_ab0[i]+=trh*(sca)*300.f;	
+					}	
+					else if(LL >= 69.f)//highlights
+						WavCoeffs_ab0[i]+=cp.grhigh*(sca)*300.f;
+				}
+				else {//blue yellow
+					//transition with 6 between 30 to 36 and 63 to 69					
+					float aa1=(cp.blmed-cp.bllow)/6.f;
+					float bb1= cp.bllow-30.f*aa1;
+					float aaa1=(cp.blhigh-cp.blmed)/6.f;
+					float bbb1= cp.blmed-63.f*aaa1;
+					
+					if(LL < 30.f)
+						WavCoeffs_ab0[i]+=cp.bllow*(sca)*300.f;
+					else if(LL >= 30.f && LL < 36.f) {
+						float tr1=aa1*LL+bb1;
+						WavCoeffs_ab0[i]+=tr1*(sca)*300.f;
+					}
+					else if(LL >= 36.f && LL < 63.f)
+						WavCoeffs_ab0[i]+=cp.blmed*(sca)*300.f;
+					else if(LL >= 63.f && LL < 69.f) {
+						float trh1=aaa1*LL+bbb1;
+						WavCoeffs_ab0[i]+=trh1*(sca)*300.f;	
+					}		
+					else if(LL >= 69.f)
+						WavCoeffs_ab0[i]+=cp.blhigh*(sca)*300.f;
+				}	
+			}		
+		}
+		
 #ifdef _RT_NESTED_OPENMP
 #pragma omp for schedule(dynamic) collapse(2)
 #endif		
@@ -2645,9 +2720,12 @@ if(cp.BAmet==1){
 		}
 
 		if(useOpacity && level < 9 && mulOpacity != 0.f) { //toning
+
 			float beta = (1024.f + 20.f * mulOpacity)/1024.f ;
+			//float beta = (1000.f * mulOpacity);
 			for (int i=0; i<W_ab*H_ab; i++)
 				WavCoeffs_ab[dir][i] *= beta;			
+			//	WavCoeffs_ab[dir][i] += beta;			
 		}
 		
 if(waOpacityCurveW) cp.opaW=true;

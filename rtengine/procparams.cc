@@ -494,6 +494,7 @@ void WaveletParams::setDefaults() {
     median = false;  
     medianlev = false;  
     linkedg = true;  
+    cbenab = false;  
     lipst = false;  
     Medgreinf = "less"; //"none";
     avoid = false;
@@ -1627,6 +1628,13 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->wavelet.Backmethod)  keyFile.set_string  ("Wavelet", "BackMethod",  wavelet.Backmethod);
     if (!pedited || pedited->wavelet.Lmethod)  keyFile.set_string  ("Wavelet", "LevMethod",  wavelet.Lmethod);
     if (!pedited || pedited->wavelet.Dirmethod)  keyFile.set_string  ("Wavelet", "DirMethod",  wavelet.Dirmethod);
+	if (!pedited || pedited->wavelet.greenhigh)    keyFile.set_integer ("Wavelet", "CBgreenhigh", wavelet.greenhigh);
+	if (!pedited || pedited->wavelet.greenmed)    keyFile.set_integer ("Wavelet", "CBgreenmed", wavelet.greenmed);
+	if (!pedited || pedited->wavelet.greenlow)    keyFile.set_integer ("Wavelet", "CBgreenlow", wavelet.greenlow);
+	if (!pedited || pedited->wavelet.bluehigh)    keyFile.set_integer ("Wavelet", "CBbluehigh", wavelet.bluehigh);
+	if (!pedited || pedited->wavelet.bluemed)    keyFile.set_integer ("Wavelet", "CBbluemed", wavelet.bluemed);
+	if (!pedited || pedited->wavelet.bluelow)    keyFile.set_integer ("Wavelet", "CBbluelow", wavelet.bluelow);
+	
     for(int i = 0; i < 9; i++)
     {
         std::stringstream ss;
@@ -1727,6 +1735,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->wavelet.median)    keyFile.set_boolean ("Wavelet", "Median", wavelet.median);
     if (!pedited || pedited->wavelet.medianlev)    keyFile.set_boolean ("Wavelet", "Medianlev", wavelet.medianlev);
     if (!pedited || pedited->wavelet.linkedg)    keyFile.set_boolean ("Wavelet", "Linkedg", wavelet.linkedg);
+    if (!pedited || pedited->wavelet.cbenab)    keyFile.set_boolean ("Wavelet", "CBenab", wavelet.cbenab);
     if (!pedited || pedited->wavelet.lipst)    keyFile.set_boolean ("Wavelet", "Lipst", wavelet.lipst);
  //   if (!pedited || pedited->wavelet.edgreinf)    keyFile.set_boolean ("Wavelet", "Edgreinf", wavelet.edgreinf);
     if (!pedited || pedited->wavelet.skinprotect) keyFile.set_double ("Wavelet", "Skinprotect", wavelet.skinprotect);
@@ -2511,6 +2520,13 @@ if (keyFile.has_group ("Wavelet")) {
     if (keyFile.has_key ("Wavelet", "Median")) {wavelet.median = keyFile.get_boolean ("Wavelet", "Median");if (pedited) pedited->wavelet.median = true;}
     if (keyFile.has_key ("Wavelet", "Medianlev")) {wavelet.medianlev = keyFile.get_boolean ("Wavelet", "Medianlev");if (pedited) pedited->wavelet.medianlev = true;}
     if (keyFile.has_key ("Wavelet", "Linkedg")) {wavelet.linkedg = keyFile.get_boolean ("Wavelet", "Linkedg");if (pedited) pedited->wavelet.linkedg = true;}
+    if (keyFile.has_key ("Wavelet", "CBenab")) {wavelet.cbenab = keyFile.get_boolean ("Wavelet", "CBenab");if (pedited) pedited->wavelet.cbenab = true;}
+	if (keyFile.has_key ("Wavelet", "CBgreenhigh"))   { wavelet.greenhigh = keyFile.get_integer ("Wavelet", "CBgreenhigh"); if (pedited) pedited->wavelet.greenhigh = true; }
+	if (keyFile.has_key ("Wavelet", "CBgreenmed"))   { wavelet.greenmed = keyFile.get_integer ("Wavelet", "CBgreenmed"); if (pedited) pedited->wavelet.greenmed = true; }
+	if (keyFile.has_key ("Wavelet", "CBgreenlow"))   { wavelet.greenlow = keyFile.get_integer ("Wavelet", "CBgreenlow"); if (pedited) pedited->wavelet.greenlow = true; }
+	if (keyFile.has_key ("Wavelet", "CBbluehigh"))   { wavelet.bluehigh = keyFile.get_integer ("Wavelet", "CBbluehigh"); if (pedited) pedited->wavelet.bluehigh = true; }
+	if (keyFile.has_key ("Wavelet", "CBbluemed"))   { wavelet.bluemed = keyFile.get_integer ("Wavelet", "CBbluemed"); if (pedited) pedited->wavelet.bluemed = true; }
+	if (keyFile.has_key ("Wavelet", "CBbluelow"))   { wavelet.bluelow = keyFile.get_integer ("Wavelet", "CBbluelow"); if (pedited) pedited->wavelet.bluelow = true; }
  //   if (keyFile.has_key ("Wavelet", "Edgreinf")) {wavelet.edgreinf = keyFile.get_boolean ("Wavelet", "Edgreinf");if (pedited) pedited->wavelet.edgreinf = true;}
     if (keyFile.has_key ("Wavelet", "Lipst")) {wavelet.lipst = keyFile.get_boolean ("Wavelet", "Lipst");if (pedited) pedited->wavelet.lipst = true;}
     if (keyFile.has_key ("Wavelet", "AvoidColorShift")) {wavelet.avoid = keyFile.get_boolean ("Wavelet", "AvoidColorShift");if (pedited) pedited->wavelet.avoid = true;}
@@ -3196,6 +3212,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& wavelet.median == other.wavelet.median
 		&& wavelet.medianlev == other.wavelet.medianlev
 		&& wavelet.linkedg == other.wavelet.linkedg
+		&& wavelet.cbenab == other.wavelet.cbenab
 		&& wavelet.lipst == other.wavelet.lipst
 		&& wavelet.Medgreinf == other.wavelet.Medgreinf
 		&& wavelet.edgrad == other.wavelet.edgrad
@@ -3229,6 +3246,12 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& wavelet.skinprotect == other.wavelet.skinprotect
 		&& wavelet.strength == other.wavelet.strength
 		&& wavelet.balance == other.wavelet.balance
+		&& wavelet.greenhigh == other.wavelet.greenhigh
+		&& wavelet.greenmed == other.wavelet.greenmed
+		&& wavelet.greenlow == other.wavelet.greenlow
+		&& wavelet.bluehigh == other.wavelet.bluehigh
+		&& wavelet.bluemed == other.wavelet.bluemed
+		&& wavelet.bluelow == other.wavelet.bluelow
 		&& wavelet.iter == other.wavelet.iter
 		&& dirpyrequalizer == other.dirpyrequalizer
 	//	&& dirpyrequalizer.algo == other.dirpyrequalizer.algo

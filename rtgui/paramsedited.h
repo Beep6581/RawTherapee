@@ -483,6 +483,7 @@ class WaveletParamsEdited {
         bool median;
 		bool medianlev;
 		bool linkedg;
+		bool cbenab;
 		bool lipst;
 		bool Medgreinf;
         bool avoid;
@@ -541,6 +542,13 @@ class WaveletParamsEdited {
         bool pastlev;
         bool satlev;	
 		bool wavclCurve;
+        bool greenlow;
+        bool bluelow;
+        bool greenmed;
+        bool bluemed;
+        bool greenhigh;
+        bool bluehigh;
+		
 };
 
 class DirPyrEqualizerParamsEdited {
