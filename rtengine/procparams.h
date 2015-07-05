@@ -871,6 +871,14 @@ class WaveletParams {
         bool median;
         bool medianlev;
         bool linkedg;
+        bool cbenab;
+        double greenlow;
+        double bluelow;
+        double greenmed;
+        double bluemed;
+        double greenhigh;
+        double bluehigh;
+		
         bool lipst;
 	//	bool edgreinf;
         bool avoid;

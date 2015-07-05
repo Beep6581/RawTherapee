@@ -729,6 +729,93 @@ Wavelet::Wavelet () :  FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"),
 
 	resBox->pack_start (*curveEditorRES, Gtk::PACK_SHRINK, 4);
 	
+	//color balance
+    Gtk::HSeparator *separatorCB = Gtk::manage (new  Gtk::HSeparator());
+
+	Gtk::VBox *chanMixerHLBox = Gtk::manage (new Gtk::VBox());
+	Gtk::VBox *chanMixerMidBox = Gtk::manage (new Gtk::VBox());
+	Gtk::VBox *chanMixerShadowsBox = Gtk::manage (new Gtk::VBox());
+
+	cbenab	= Gtk::manage (new Gtk::CheckButton (M("TP_WAVELET_CBENAB")));
+    cbenab->set_active (true);
+    cbenabConn = cbenab->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::cbenabToggled) );
+	cbenab->set_tooltip_text (M("TP_WAVELET_CB_TOOLTIP"));
+
+	
+	Gtk::Image* iblueR   = Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
+	Gtk::Image* iyelL    = Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
+	Gtk::Image* imagL    = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
+	Gtk::Image* igreenR  = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+
+	Gtk::Image* iblueRm  = Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
+	Gtk::Image* iyelLm   = Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
+	Gtk::Image* imagLm   = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
+	Gtk::Image* igreenRm = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+
+	Gtk::Image* iblueRh  = Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
+	Gtk::Image* iyelLh   = Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
+	Gtk::Image* imagLh   = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
+	Gtk::Image* igreenRh = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+
+	
+	
+	greenhigh = Gtk::manage (new Adjuster ("", -100., 100., 1., 0., igreenRh, imagLh));
+	bluehigh  = Gtk::manage (new Adjuster ("", -100., 100., 1., 0., iblueRh, iyelLh));
+
+	greenmed  = Gtk::manage (new Adjuster ("", -100., 100., 1., 0.,  igreenRm, imagLm));
+	bluemed   = Gtk::manage (new Adjuster ("", -100., 100., 1., 0. , iblueRm , iyelLm));
+
+	greenlow  = Gtk::manage (new Adjuster ("", -100., 100., 1., 0.,  igreenR, imagL));
+	bluelow   = Gtk::manage (new Adjuster ("", -100., 100., 1., 0., iblueR , iyelL));
+	
+	chanMixerHLBox->pack_start (*greenhigh);
+	chanMixerHLBox->pack_start (*bluehigh);
+	chanMixerMidBox->pack_start (*greenmed);
+	chanMixerMidBox->pack_start (*bluemed);
+	chanMixerShadowsBox->pack_start (*greenlow);
+	chanMixerShadowsBox->pack_start (*bluelow);
+
+	greenlow->setAdjusterListener (this);
+	bluelow->setAdjusterListener (this);
+	greenmed->setAdjusterListener (this);
+	bluemed->setAdjusterListener (this);
+	greenhigh->setAdjusterListener (this);
+	bluehigh->setAdjusterListener (this);
+	
+	
+	resBox->pack_start(*separatorCB, Gtk::PACK_SHRINK);
+	
+	chanMixerHLFrame = Gtk::manage (new Gtk::Frame(M("TP_COLORTONING_HIGHLIGHT")));
+	chanMixerMidFrame = Gtk::manage (new Gtk::Frame(M("TP_COLORTONING_MIDTONES")));
+	chanMixerShadowsFrame = Gtk::manage (new Gtk::Frame(M("TP_COLORTONING_SHADOWS")));
+	
+	chanMixerHLFrame->add(*chanMixerHLBox);
+	chanMixerMidFrame->add(*chanMixerMidBox);
+	chanMixerShadowsFrame->add(*chanMixerShadowsBox);
+	resBox->pack_start(*cbenab);
+	
+	resBox->pack_start(*chanMixerHLFrame, Gtk::PACK_SHRINK);
+	resBox->pack_start(*chanMixerMidFrame, Gtk::PACK_SHRINK);
+	resBox->pack_start(*chanMixerShadowsFrame, Gtk::PACK_SHRINK);
+
+	//--------------------- Reset sliders  ---------------------------
+	neutrHBox = Gtk::manage (new Gtk::HBox ());
+	neutrHBox->set_border_width (2);
+
+	neutral = Gtk::manage (new Gtk::Button (M("TP_COLORTONING_NEUTRAL")));
+	RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
+	neutral->set_image(*resetImg);
+	neutral->set_tooltip_text (M("TP_COLORTONING_NEUTRAL_TIP"));
+	neutralconn = neutral->signal_pressed().connect( sigc::mem_fun(*this, &Wavelet::neutral_pressed) );
+	neutral->show();
+	neutrHBox->pack_start (*neutral);
+
+	resBox->pack_start (*neutrHBox);
+
+	
+	
+	
+	
 //--------------------------------------   
 	//final touchup
 	ctboxBA = Gtk::manage (new Gtk::HBox ());
@@ -901,6 +988,20 @@ void Wavelet::updatewavLabel () {
 			}
 	}
 }
+// Will only reset the chanel mixer
+void Wavelet::neutral_pressed () {
+	disableListener();
+	greenlow->resetValue(false);
+	bluelow->resetValue(false);
+	greenmed->resetValue(false);
+	bluemed->resetValue(false);
+	greenhigh->resetValue(false);
+	bluehigh->resetValue(false);
+
+	enableListener();
+	if (listener && getEnabled())
+		listener->panelChanged (EvWavNeutral, M("ADJUSTER_RESET_TO_DEFAULT"));
+}
 
 void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
@@ -918,6 +1019,7 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
     TMmethodconn.block(true);
     HSmethodconn.block(true);
     MedgreinfConn.block(true);
+    cbenabConn.block(true);
 	HSmethod->set_active (1);
 	
     if (pp->wavelet.HSmethod=="without")
@@ -1099,11 +1201,21 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
 		edgedetectthr2->setEditedState (pedited->wavelet.edgedetectthr2 ? Edited : UnEdited);
 		chroma->setEditedState (pedited->wavelet.chroma ? Edited : UnEdited);
 		chro->setEditedState (pedited->wavelet.chro ? Edited : UnEdited);
+
+		greenlow->setEditedState (pedited->wavelet.greenlow ? Edited : UnEdited);
+		bluelow->setEditedState (pedited->wavelet.bluelow ? Edited : UnEdited);
+		greenmed->setEditedState (pedited->wavelet.greenmed ? Edited : UnEdited);
+		bluemed->setEditedState (pedited->wavelet.bluemed ? Edited : UnEdited);
+		greenhigh->setEditedState (pedited->wavelet.greenhigh ? Edited : UnEdited);
+		bluehigh->setEditedState (pedited->wavelet.bluehigh ? Edited : UnEdited);
+		
+		
         median->set_inconsistent (!pedited->wavelet.median);
         medianlev->set_inconsistent (!pedited->wavelet.medianlev);
         linkedg->set_inconsistent (!pedited->wavelet.linkedg);
      //   edgreinf->set_inconsistent (!pedited->wavelet.edgreinf);
-        lipst->set_inconsistent (!pedited->wavelet.lipst);
+        cbenab->set_inconsistent (!pedited->wavelet.cbenab);
+		lipst->set_inconsistent (!pedited->wavelet.lipst);
 		contrast->setEditedState (pedited->wavelet.contrast ? Edited : UnEdited);
 		edgrad->setEditedState (pedited->wavelet.edgrad ? Edited : UnEdited);
 		edgval->setEditedState (pedited->wavelet.edgval ? Edited : UnEdited);
@@ -1154,6 +1266,9 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
     linkedgConn.block (true);
     linkedg->set_active (pp->wavelet.linkedg);
     linkedgConn.block (false);
+    cbenabConn.block (true);
+    cbenab->set_active (pp->wavelet.cbenab);
+    cbenabConn.block (false);
 	
     lipstConn.block (true);
     lipst->set_active (pp->wavelet.lipst);
@@ -1165,6 +1280,7 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
     lastmedian = pp->wavelet.median;
     lastmedianlev = pp->wavelet.medianlev;
     lastlinkedg = pp->wavelet.linkedg;
+    lastcbenab = pp->wavelet.cbenab;
     lastlipst = pp->wavelet.lipst;
     lastavoid = pp->wavelet.avoid;
     lasttmr = pp->wavelet.tmr;
@@ -1197,6 +1313,14 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
     pastlev->setValue<int>(pp->wavelet.pastlev);
     satlev->setValue<int>(pp->wavelet.satlev);
     edgcont->setValue<int>(pp->wavelet.edgcont);
+	
+	greenlow->setValue    (pp->wavelet.greenlow);
+	bluelow->setValue    (pp->wavelet.bluelow);
+	greenmed->setValue    (pp->wavelet.greenmed);
+	bluemed->setValue    (pp->wavelet.bluemed);
+	greenhigh->setValue    (pp->wavelet.greenhigh);
+	bluehigh->setValue    (pp->wavelet.bluehigh);	
+	
     level0noise->setValue<double>(pp->wavelet.level0noise);
     level1noise->setValue<double>(pp->wavelet.level1noise);
     level2noise->setValue<double>(pp->wavelet.level2noise);
@@ -1247,6 +1371,7 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	medianlevToggled () ;
 	linkedgToggled () ;
 	lipstToggled () ;
+	cbenabToggled () ;
 
     enableListener ();
 }
@@ -1288,6 +1413,7 @@ void Wavelet::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->wavelet.medianlev         = medianlev->get_active ();
     pp->wavelet.linkedg         = linkedg->get_active ();
     //pp->wavelet.edgreinf 		= edgreinf->get_active ();
+    pp->wavelet.cbenab         = cbenab->get_active ();
     pp->wavelet.lipst         = lipst->get_active ();
 	pp->wavelet.contrast       =  contrast->getValue();
 	pp->wavelet.edgrad         =  edgrad->getValue();
@@ -1320,6 +1446,14 @@ void Wavelet::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->wavelet.satlev         = satlev->getValue<int> ();
 	pp->wavelet.strength = (int) strength->getValue();
 	pp->wavelet.balance = (int) balance->getValue();
+	
+	pp->wavelet.greenlow  = greenlow->getValue ();
+	pp->wavelet.bluelow   = bluelow->getValue ();
+	pp->wavelet.greenmed  = greenmed->getValue ();
+	pp->wavelet.bluemed   = bluemed->getValue ();
+	pp->wavelet.greenhigh = greenhigh->getValue ();
+	pp->wavelet.bluehigh  = bluehigh->getValue ();
+	
 	pp->wavelet.iter = (int) iter->getValue();
     pp->wavelet.wavclCurve = clshape->getCurve ();
 
@@ -1337,6 +1471,7 @@ void Wavelet::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->wavelet.median         = !median->get_inconsistent();
         pedited->wavelet.medianlev         = !medianlev->get_inconsistent();
         pedited->wavelet.linkedg         = !linkedg->get_inconsistent();
+        pedited->wavelet.cbenab         = !cbenab->get_inconsistent();
         pedited->wavelet.lipst         = !lipst->get_inconsistent();
 		pedited->wavelet.Medgreinf 			=  Medgreinf->get_active_row_number() != 2;
         pedited->wavelet.Lmethod        = Lmethod->get_active_row_number() != 8;
@@ -1391,6 +1526,13 @@ void Wavelet::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->wavelet.pastlev        = pastlev->getEditedState ();
         pedited->wavelet.satlev         = satlev->getEditedState ();
         pedited->wavelet.strength       = strength->getEditedState ();
+		pedited->wavelet.greenlow   = greenlow->getEditedState ();
+		pedited->wavelet.bluelow    = bluelow->getEditedState ();
+		pedited->wavelet.greenmed   = greenmed->getEditedState ();
+		pedited->wavelet.bluemed    = bluemed->getEditedState ();
+		pedited->wavelet.greenhigh  = greenhigh->getEditedState ();
+		pedited->wavelet.bluehigh   = bluehigh->getEditedState ();
+		
         pedited->wavelet.balance       = balance->getEditedState ();
         pedited->wavelet.iter       = iter->getEditedState ();
         pedited->wavelet.wavclCurve   = !clshape->isUnChanged ();
@@ -1560,8 +1702,22 @@ void Wavelet::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
     level0noise->setDefault<double> (defParams->wavelet.level0noise);
     level1noise->setDefault<double> (defParams->wavelet.level1noise);
     level2noise->setDefault<double> (defParams->wavelet.level2noise);
+	
+	greenlow->setDefault (defParams->wavelet.greenlow);
+	bluelow->setDefault (defParams->wavelet.bluelow);
+	greenmed->setDefault (defParams->wavelet.greenmed);
+	bluemed->setDefault (defParams->wavelet.bluemed);
+	greenhigh->setDefault (defParams->wavelet.greenhigh);
+	bluehigh->setDefault (defParams->wavelet.bluehigh);
     
     if (pedited) {
+	greenlow->setDefaultEditedState (pedited->wavelet.greenlow ? Edited : UnEdited);
+	bluelow->setDefaultEditedState (pedited->wavelet.bluelow ? Edited : UnEdited);
+	greenmed->setDefaultEditedState (pedited->wavelet.greenmed ? Edited : UnEdited);
+	bluemed->setDefaultEditedState (pedited->wavelet.bluemed ? Edited : UnEdited);
+	greenhigh->setDefaultEditedState (pedited->wavelet.greenhigh ? Edited : UnEdited);
+	bluehigh->setDefaultEditedState (pedited->wavelet.bluehigh ? Edited : UnEdited);
+		
 	rescon->setDefault (defParams->wavelet.rescon);
 	resconH->setDefault (defParams->wavelet.resconH);
 	reschro->setDefault (defParams->wavelet.reschro);
@@ -2215,7 +2371,42 @@ void Wavelet::adjusterChanged (Adjuster* a, double newval) {
                          Glib::ustring::format(std::fixed, std::setprecision(2), iter->getValue()))
             );
         }
-		
+        else if (a == greenhigh ) {
+            listener->panelChanged (EvWavgreenhigh,
+                         Glib::ustring::compose("%1",
+                         Glib::ustring::format(std::fixed, std::setprecision(0), greenhigh->getValue()))
+            );
+		}	
+        else if (a == bluehigh ) {
+            listener->panelChanged (EvWavbluehigh,
+                         Glib::ustring::compose("%1",
+                         Glib::ustring::format(std::fixed, std::setprecision(0), bluehigh->getValue()))
+            );
+		}	
+        else if (a == greenmed ) {
+            listener->panelChanged (EvWavgreenmed,
+                         Glib::ustring::compose("%1",
+                         Glib::ustring::format(std::fixed, std::setprecision(0), greenmed->getValue()))
+            );
+		}	
+        else if (a == bluemed ) {
+            listener->panelChanged (EvWavbluemed,
+                         Glib::ustring::compose("%1",
+                         Glib::ustring::format(std::fixed, std::setprecision(0), bluemed->getValue()))
+            );
+		}	
+        else if (a == greenlow ) {
+            listener->panelChanged (EvWavgreenlow,
+                         Glib::ustring::compose("%1",
+                         Glib::ustring::format(std::fixed, std::setprecision(0), greenlow->getValue()))
+            );
+		}	
+        else if (a == bluelow ) {
+            listener->panelChanged (EvWavbluelow,
+                         Glib::ustring::compose("%1",
+                         Glib::ustring::format(std::fixed, std::setprecision(0), bluelow->getValue()))
+            );
+		}
 	
         else if (a == correction[0] || a == correction[1] || a == correction[2] || a == correction[3] || a == correction[4] || a == correction[5] || a == correction[6] || a == correction[7] || a == correction[8] ) {
             listener->panelChanged (EvWavelet,
@@ -2370,6 +2561,46 @@ void Wavelet::linkedgToggled () {
     }
 }
 
+void Wavelet::cbenabToggled () {
+	if(cbenab->get_active ()) {
+		chanMixerHLFrame->show();
+		chanMixerMidFrame->show();
+		chanMixerShadowsFrame->show();
+		neutrHBox->show();
+	}
+	else {
+		chanMixerHLFrame->hide();
+		chanMixerMidFrame->hide();
+		chanMixerShadowsFrame->hide();	
+		neutrHBox->hide();
+	}	
+
+    if (batchMode) {
+        if (cbenab->get_inconsistent()) {
+            cbenab->set_inconsistent (false);
+            cbenabConn.block (true);
+            cbenab->set_active (false);
+            cbenabConn.block (false);
+        }
+        else if (lastcbenab)
+           cbenab->set_inconsistent (true);
+
+        lastcbenab = cbenab->get_active ();
+    }
+				
+
+    if (listener && getEnabled()) {
+        if (cbenab->get_active () ){
+			
+            listener->panelChanged (EvWavcbenab, M("GENERAL_ENABLED"));
+		}
+        else {
+			
+            listener->panelChanged (EvWavcbenab, M("GENERAL_DISABLED"));
+		}
+    }
+	
+}
 
 
 void Wavelet::lipstToggled () {

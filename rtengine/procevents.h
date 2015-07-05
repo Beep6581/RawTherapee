@@ -409,8 +409,16 @@ enum ProcEvent {
     EvPrShrDAmount=381,
     EvPrShrDDamping=382,
     EvPrShrDIterations=383,
-	
-	NUMOFEVENTS	
+    EvWavcbenab=384,
+    EvWavgreenhigh=385,
+    EvWavbluehigh=386,
+    EvWavgreenmed=387,
+    EvWavbluemed=388,
+    EvWavgreenlow=389,
+    EvWavbluelow=390,
+    EvWavNeutral=391,
+
+    NUMOFEVENTS
 };
 }
 #endif

@@ -535,9 +535,9 @@ HISTORY_MSG_302;NR - Chroma method
 HISTORY_MSG_303;NR - Chroma method
 HISTORY_MSG_304;W - Contrast levels
 HISTORY_MSG_305;Wavelet Levels
-HISTORY_MSG_306;W - Preview
-HISTORY_MSG_307;W - Preview
-HISTORY_MSG_308;W - Preview direction
+HISTORY_MSG_306;W - Process
+HISTORY_MSG_307;W - Process
+HISTORY_MSG_308;W - Process direction
 HISTORY_MSG_309;W - ES - Detail
 HISTORY_MSG_310;W - Residual - Sky tar/prot
 HISTORY_MSG_311;W - Wavelet levels
@@ -614,6 +614,14 @@ HISTORY_MSG_381;PRS RLD - Radius
 HISTORY_MSG_382;PRS RLD - Amount
 HISTORY_MSG_383;PRS RLD - Damping
 HISTORY_MSG_384;PRS RLD - Iterations
+HISTORY_MSG_385;W - Residual - Color Balance
+HISTORY_MSG_386;W - Residual - CB green high
+HISTORY_MSG_387;W - Residual - CB blue high
+HISTORY_MSG_388;W - Residual - CB green mid
+HISTORY_MSG_389;W - Residual - CB blue mid
+HISTORY_MSG_390;W - Residual - CB green low
+HISTORY_MSG_391;W - Residual - CB blue low
+HISTORY_MSG_392;W - Residual - CB Reset
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1708,10 +1716,10 @@ TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Modifies the residual image's hue as a functio
 TP_WAVELET_DALL;All directions
 TP_WAVELET_DAUB;Edge performance
 TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the firsts levels. However the quality is not strictly related to this coefficient and can vary with images and uses.
-TP_WAVELET_DISP;Preview Settings
 TP_WAVELET_DONE;Vertical
 TP_WAVELET_DTHR;Diagonal
 TP_WAVELET_DTWO;Horizontal
+TP_WAVELET_DISP;Wavelet settings
 TP_WAVELET_EDCU;Curve
 TP_WAVELET_EDGCONT;Local contrast
 TP_WAVELET_EDGCONT_TOOLTIP;Adjusting the points to the left decreases contrast, and to the right increases it.\nBottom-left, Top-Left, Top-Right, Bottom-right represent respectively local contast for low values, mean, mean+stdev, maxima
@@ -1769,7 +1777,7 @@ TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
 TP_WAVELET_OPACITY;Opacity Blue-Yellow
 TP_WAVELET_PASTEL;Pastel chromaticity
 TP_WAVELET_PREVIEWBACK;Background
-TP_WAVELET_PREVIEWLEVELS;Preview
+TP_WAVELET_PREVIEWLEVELS;Process
 TP_WAVELET_RE1;Reinforced
 TP_WAVELET_RE2;Unchanged
 TP_WAVELET_RE3;Reduced
@@ -1811,6 +1819,9 @@ TP_WAVELET_daub4;D4 - standard
 TP_WAVELET_daub6;D6 - standard plus
 TP_WAVELET_daub10;D10 - medium
 TP_WAVELET_daub14;D14 - high
+TP_WAVELET_CBTYPE;Toning and Color Balance
+TP_WAVELET_CBENAB;Toning and Color Balance
+TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
 TP_WBALANCE_AUTO;Auto
 TP_WBALANCE_CAMERA;Camera
 TP_WBALANCE_CLOUDY;Cloudy

@@ -405,7 +405,15 @@ RESIZE,              // EvPrShrMethod=379,
 RESIZE,              // EvPrShrDRadius=380,
 RESIZE,              // EvPrShrDAmount=381,
 RESIZE,              // EvPrShrDDamping=382,
-RESIZE              // EvPrShrDIterations=383,
+RESIZE,              // EvPrShrDIterations=383,
+DIRPYREQUALIZER,     // EvWavcbenab
+DIRPYREQUALIZER,     // EvWavgreenhigh
+DIRPYREQUALIZER,     // EvWavbluehigh
+DIRPYREQUALIZER,     // EvWavgreenmed
+DIRPYREQUALIZER,     // EvWavbluemed	
+DIRPYREQUALIZER,     // EvWavgreenlow
+DIRPYREQUALIZER,     // EvWavbluelow	
+DIRPYREQUALIZER      // EvWavNeutral	
 
 };
 

@@ -44,6 +44,8 @@ protected:
     CurveEditorGroup* curveEditorGAM;
     Gtk::HSeparator* colorSep;
     Gtk::HSeparator* separator3;
+    Gtk::HSeparator* separatorCB;
+	
     CurveEditorGroup* opaCurveEditorG;
     FlatCurveEditor* opacityShapeRG;
     CurveEditorGroup* opacityCurveEditorG;
@@ -55,6 +57,7 @@ protected:
     FlatCurveEditor*   hhshape;
     FlatCurveEditor*   Chshape;
     DiagonalCurveEditor* clshape;
+    Gtk::VBox* chanMixerBox;
 	
     FlatCurveEditor* ccshape;
     Gtk::CheckButton * display;
@@ -66,6 +69,7 @@ protected:
     Gtk::CheckButton * medianlev;
     Gtk::CheckButton * linkedg;
 //    Gtk::CheckButton * edgreinf;
+    Gtk::CheckButton * cbenab;
     Gtk::CheckButton * lipst;
     Gtk::CheckButton * avoid;
     Gtk::CheckButton * tmr;
@@ -94,6 +98,12 @@ protected:
     Adjuster* strength;
     Adjuster* balance;
     Adjuster* iter;
+    Adjuster* greenlow;
+    Adjuster* bluelow;
+    Adjuster* greenmed;
+    Adjuster* bluemed;
+    Adjuster* greenhigh;
+    Adjuster* bluehigh;
 	
     ThresholdAdjuster* hueskin;
     ThresholdAdjuster* hueskin2;
@@ -148,12 +158,17 @@ protected:
 	Gtk::Frame* noiseFrame;
     Gtk::Frame* contrastSHFrame;
 	Gtk::Frame* finalFrame;
+	Gtk::Frame *chanMixerHLFrame;
+	Gtk::Frame *chanMixerMidFrame;
+	Gtk::Frame *chanMixerShadowsFrame;
+	
     Gtk::Label* colLabel;
     Gtk::Label* interLabel;
 	Gtk::Label* wavLabels;
 	Gtk::Label* wavLabelsch;
     Gtk::Label* hsmethodLabel;
 	Gtk::Label* choiceLabel;
+	Gtk::Label* ColorBalanceLabel;
 	Gtk::Label* labmC;
 	Gtk::Label* labmch;
 	Gtk::Label* labmED;
@@ -180,6 +195,8 @@ protected:
 	Gtk::HBox* ctboxCH;
 	Gtk::HBox* ctboxED;
 	Gtk::HBox* ctboxTM;
+	Gtk::HBox* ctboxCB;
+	
 	Gtk::HBox* ctboxBA;
 	Gtk::HBox* ctboxch;
 	Gtk::HBox* edbox;
@@ -190,14 +207,16 @@ protected:
     Gtk::Label* tilesizeLabel;
     Gtk::Label* previewLevelsLabel;
     Gtk::Label* previewBackLabel;
+    Gtk::Button* neutral;
+    Gtk::HBox* neutrHBox;
 	
-    sigc::connection expConn,  medianConn, avoidConn, tmrConn, medianlevConn, linkedgConn, lipstConn;
+    sigc::connection expConn,  medianConn, avoidConn, tmrConn, medianlevConn, linkedgConn, lipstConn, cbenabConn, neutralconn;
     sigc::connection neutralPressedConn;
     sigc::connection contrastPlusPressedConn;
     sigc::connection contrastMinusPressedConn;
     sigc::connection neutralchPressedConn;
 
-    bool lastdisplay, lastdisplaygam,lastdisplayres,lastdisplaychro, lastdisplaylevel,lastmedian, lastmedianlev, lastlinkedg, lastavoid, lastlipst, lasttmr;
+    bool lastdisplay, lastdisplaygam,lastdisplayres,lastdisplaychro, lastdisplaylevel,lastmedian, lastmedianlev, lastlinkedg, lastavoid, lastlipst, lasttmr, lastcbenab;
 	int nextnlevel;
 	double tr;
 	double br;
@@ -226,6 +245,7 @@ public:
     void medianToggled ();
     void medianlevToggled ();
     void linkedgToggled ();
+    void cbenabToggled ();
     void lipstToggled ();
     void avoidToggled ();
     void tmrToggled ();
@@ -250,6 +270,7 @@ public:
     void wavChanged (double nlevel);
     bool wavComputed_ ();
 	void updatewavLabel      ();
+    void neutral_pressed       ();
 	
 };
 
