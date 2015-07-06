@@ -597,10 +597,11 @@ void Crop::update (int todo) {
 
     if (todo & M_RGBCURVE) {
 	    double rrm, ggm, bbm;
+        DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, parent->currWB);
         parent->ipf.rgbProc (baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
                              params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, satLimit ,satLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve,parent->cl2Toningcurve,
                              parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW,rrm, ggm, bbm,
-                             parent->bwAutoR, parent->bwAutoG, parent->bwAutoB);
+                             parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf);
     }
     /*xref=000;yref=000;
     if (colortest && cropw>115 && croph>115)

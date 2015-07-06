@@ -51,14 +51,23 @@ namespace rtengine {
         };
 
         double mColorMatrix1[3][3],mColorMatrix2[3][3];
-        bool hasColorMatrix1, hasColorMatrix2, hasForwardMatrix1, hasForwardMatrix2, hasToneCurve, willInterpolate;
+        bool hasColorMatrix1, hasColorMatrix2, hasForwardMatrix1, hasForwardMatrix2, hasToneCurve, hasBaselineExposureOffset, willInterpolate;
         double mForwardMatrix1[3][3],mForwardMatrix2[3][3];
         double temperature1, temperature2;
+        double baselineExposureOffset;
         HSBModify *aDeltas1,*aDeltas2,*aLookTable;
         HSDTableInfo DeltaInfo,LookInfo;
         short iLightSource1,iLightSource2;
 
         AdobeToneCurve toneCurve;
+        struct {
+            double m2ProPhoto[3][3];
+            double m2Work[3][3];
+            bool alreadyProPhoto;
+            bool useToneCurve;
+            bool applyLookTable;
+            float blScale;
+        } applyState;
 
         void dngref_XYCoord2Temperature(const double whiteXY[2], double *temp, double *tint) const;
         void dngref_FindXYZtoCamera(const double whiteXY[2], int preferredIlluminant, double (*xyzToCamera)[3]) const;
@@ -72,9 +81,13 @@ namespace rtengine {
         ~DCPProfile();
 
         bool getHasToneCurve() { return hasToneCurve; }
+        bool getHasLookTable() { return !!aLookTable; }
+        bool getHasHueSatMap() { return !!aDeltas1; }
+        bool getHasBaselineExposureOffset() { return hasBaselineExposureOffset; }
         void getIlluminants(int &i1, double &temp1, int &i2, double &temp2, bool &willInterpolate_) { i1 = iLightSource1; i2 = iLightSource2; temp1 = temperature1, temp2 = temperature2; willInterpolate_ = willInterpolate; };
-        void Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, double pre_mul[3], double camMatrix[3][3], float rawWhiteFac=1, bool useToneCurve=false) const;
-        void Apply(Image16 *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, double pre_mul[3], double camMatrix[3][3], bool useToneCurve) const;
+        void Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, double pre_mul[3], double camMatrix[3][3], float rawWhiteFac=1, bool useToneCurve=false, bool applyHueSatMap=true, bool applyLookTable=false) const;
+        void setStep2ApplyState(Glib::ustring workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure);
+        void step2ApplyTile(float *r, float *g, float *b, int width, int height, int tileWidth, float exp_scale) const;
     };
 
     class DCPStore {

@@ -310,9 +310,10 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     gm/=area;
     bm/=area;
 	
-	hlmax[0]=chmax[0]*rm*area;
-	hlmax[1]=chmax[1]*gm*area;
-	hlmax[2]=chmax[2]*bm*area;
+    // raw clip levels after white balance
+    hlmax[0]=65535 * rm / min(rm, gm, bm);
+    hlmax[1]=65535 * gm / min(rm, gm, bm);
+    hlmax[2]=65535 * bm / min(rm, gm, bm);
 
 
 #ifdef _OPENMP
@@ -344,7 +345,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 				rtot*=rm;
 				gtot*=gm;
 				btot*=bm;
-				if (!hrp.hrenabled)
+				if (!hrp.hrenabled && (rtot > hlmax[0] || gtot > hlmax[1] || btot > hlmax[2]))
 				{
 					rtot=CLIP(rtot);
 					gtot=CLIP(gtot);
@@ -368,7 +369,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 				rtot*=rm;
 				gtot*=gm;
 				btot*=bm;
-				if (!hrp.hrenabled)
+				if (!hrp.hrenabled && (rtot > hlmax[0] || gtot > hlmax[1] || btot > hlmax[2]))
 				{
 					rtot=CLIP(rtot);
 					gtot=CLIP(gtot);
@@ -456,6 +457,17 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     //colorSpaceConversion (image, cmp, raw, embProfile, camProfile, xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
 }
 
+DCPProfile *RawImageSource::getDCP(ColorManagementParams cmp, ColorTemp &wb) {
+    DCPProfile *dcpProf = NULL;
+    cmsHPROFILE dummy;
+    findInputProfile(cmp.input, NULL, (static_cast<const ImageData*>(getMetaData()))->getCamera(), &dcpProf, dummy);
+    if (dcpProf == NULL) {
+        return NULL;
+    }
+    dcpProf->setStep2ApplyState(cmp.working, cmp.toneCurve, cmp.applyLookTable, cmp.applyBaselineExposureOffset);
+    return dcpProf;
+}
+    
 void RawImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb, RAWParams raw) {
     double pre_mul[3] = { ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2) };
     colorSpaceConversion (image, cmp, wb, pre_mul, raw, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
@@ -2420,7 +2432,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
 
     if (dcpProf!=NULL) {
         // DCP processing
-        dcpProf->Apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul, camMatrix, raw.expos, cmp.toneCurve);
+        dcpProf->Apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul, camMatrix, raw.expos, false, cmp.applyHueSatMap, false);
         return;
     }
 
@@ -2845,7 +2857,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // derived from Dcraw "blend_highlights()"
 //  very effective to reduce (or remove) the magenta, but with levels of grey !
-void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int width, float maxval, float* pre_mul, const RAWParams &raw, float* hlmax)
+void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int width, float maxval, float* hlmax)
 	{
 		const int ColorCount=3;
 
@@ -3054,10 +3066,8 @@ void RawImageSource::hlRecovery (std::string method, float* red, float* green, f
         HLRecovery_CIELab (red, green, blue, red, green, blue, width, 65535.0, imatrices.xyz_cam, imatrices.cam_xyz);
     /*else if (method=="Color")
         HLRecovery_ColorPropagation (red, green, blue, i, sx1, width, skip);*/
-	else if (method=="Blend")	// derived from Dcraw
-			{	float pre_mul[4];
-				for(int c=0;c<4;c++) pre_mul[c]=ri->get_pre_mul(c);
-				HLRecovery_blend(red, green, blue, width, 65535.0, pre_mul, raw, hlmax );}
+    else if (method=="Blend")	// derived from Dcraw
+        HLRecovery_blend(red, green, blue, width, 65535.0, hlmax);
 
 }
 	

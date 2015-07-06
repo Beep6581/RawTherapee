@@ -622,6 +622,9 @@ HISTORY_MSG_389;W - Residual - CB blue mid
 HISTORY_MSG_390;W - Residual - CB green low
 HISTORY_MSG_391;W - Residual - CB blue low
 HISTORY_MSG_392;W - Residual - CB Reset
+HISTORY_MSG_393;Use DCP's look table
+HISTORY_MSG_394;Use DCP's baseline exposure offset
+HISTORY_MSG_395;Use DCP's base table
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1449,6 +1452,12 @@ TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;HSV Equalizer
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
+TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Use DCP's baseline exposure offset
+TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only enabled if the selected DCP has any.
+TP_ICM_APPLYHUESATMAP;Use DCP's base table
+TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only enabled if the selected DCP has one.
+TP_ICM_APPLYLOOKTABLE;Use DCP's look table
+TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only enabled if the selected DCP has one.
 TP_ICM_BLENDCMSMATRIX;Blend ICC highlights with matrix
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover clipped highlights when using LUT-based ICC profiles.
 TP_ICM_DCPILLUMINANT;Illuminant

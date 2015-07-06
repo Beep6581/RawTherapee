@@ -490,7 +490,7 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
     const int TagCalibrationIlluminant1=50778, TagCalibrationIlluminant2=50779;
     const int TagProfileLookTableData=50982, TagProfileLookTableDims=50981;  // ProfileLookup is the low quality variant
     const int TagProfileHueSatMapEncoding=51107, TagProfileLookTableEncoding=51108;
-    const int TagProfileToneCurve=50940;
+    const int TagProfileToneCurve=50940, TagBaselineExposureOffset=51109;
 
     aDeltas1=aDeltas2=aLookTable=NULL;
 
@@ -511,6 +511,8 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
     hasColorMatrix1 = false;
     hasColorMatrix2 = false;
     hasToneCurve = false;
+    hasBaselineExposureOffset = false;
+    baselineExposureOffset = 0;
     tag = tagDir->getTag(TagForwardMatrix1);
     if (tag) {
         hasForwardMatrix1 = true;
@@ -628,6 +630,12 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
         }
     }
 
+    tag = tagDir->getTag(TagBaselineExposureOffset);
+    if (tag) {
+        hasBaselineExposureOffset = true;
+        baselineExposureOffset = tag->toDouble();
+    }
+
     // Read tone curve points, if any, but disable to RTs own profiles
     // the DCP tone curve is subjective and of low quality in comparison to RTs tone curves
     tag = tagDir->getTag(TagProfileToneCurve);
@@ -683,7 +691,9 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
 }
 
 DCPProfile::~DCPProfile() {
-    delete[] aDeltas1; delete[] aDeltas2;
+    delete[] aDeltas1;
+    delete[] aDeltas2;
+    delete[] aLookTable;
 }
 
 void DCPProfile::HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, const float hs, const float ss, const float vs, float &h, float &s, float &v) const {
@@ -1025,7 +1035,7 @@ void DCPProfile::dngref_NeutralToXY(double neutral[3], int preferredIlluminant, 
     XY[1] = lastXY[1];
 }
 
-void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], float rawWhiteFac, bool useToneCurve) const {
+void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], float rawWhiteFac, bool useToneCurve, bool applyHueSatMap, bool applyLookTable) const {
 
     TMatrix mWork = iccStore->workingSpaceInverseMatrix (workingSpace);
 
@@ -1033,10 +1043,12 @@ void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring 
     MakeXYZCAM(wb, pre_mul, camWbMatrix, preferredIlluminant, mXYZCAM);
     HSBModify *deleteTableHandle;
     const HSBModify *deltaBase = MakeHueSatMap(wb, preferredIlluminant, &deleteTableHandle);
+    if (!deltaBase) applyHueSatMap = false;
+    if (!aLookTable) applyLookTable = false;
 
     useToneCurve&=toneCurve;
 
-    if (deltaBase == NULL && aLookTable == NULL && !useToneCurve) {
+    if (!applyHueSatMap && !applyLookTable && !useToneCurve) {
         //===== The fast path: no LUT and not tone curve- Calculate matrix for direct conversion raw>working space
         double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
         for (int i=0; i<3; i++) 
@@ -1083,7 +1095,7 @@ void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring 
                 newb = m2ProPhoto[2][0]*pImg->r(y,x) + m2ProPhoto[2][1]*pImg->g(y,x) + m2ProPhoto[2][2]*pImg->b(y,x);
 
                 // if point is in negative area, just the matrix, but not the LUT
-                if ((deltaBase || aLookTable) && newr>=0 && newg>=0 && newb>=0) {
+                if ((applyHueSatMap || applyLookTable) && newr>=0 && newg>=0 && newb>=0) {
                     Color::rgb2hsv(newr, newg, newb, h , s, v);
                     h*=6.f;  // RT calculates in [0,1]
 
@@ -1095,11 +1107,11 @@ void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring 
                         hs=h; ss=s; vs=v;
                     }
 
-                    if (deltaBase) {
+                    if (applyHueSatMap) {
                         HSDApply(DeltaInfo, deltaBase, hs, ss, vs, h, s, v);
                         hs=h; ss=s; vs=v;
                     }
-                    if (aLookTable) {
+                    if (applyLookTable) {
                         HSDApply(LookInfo, aLookTable, hs, ss, vs, h, s, v);
                     }
 
@@ -1122,39 +1134,115 @@ void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring 
     if (deleteTableHandle) delete[] deleteTableHandle;
 }
 
-// Integer variant is legacy, only used for thumbs. Simply take the matrix here
-void DCPProfile::Apply(Image16 *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], bool useToneCurve) const {
-    TMatrix mWork = iccStore->workingSpaceInverseMatrix (workingSpace);
+void DCPProfile::setStep2ApplyState(Glib::ustring workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure) {
 
-    double mXYZCAM[3][3];
-    MakeXYZCAM(wb, pre_mul, camWbMatrix, preferredIlluminant, mXYZCAM);
+    applyState.useToneCurve = useToneCurve;
+    applyState.applyLookTable = applyLookTable;
+    applyState.blScale = 1.0;
+    if (!aLookTable) applyState.applyLookTable = false;
+    if (!hasToneCurve) applyState.useToneCurve = false;
+    if (hasBaselineExposureOffset && applyBaselineExposure) {
+        applyState.blScale = powf(2, baselineExposureOffset);
+    }
 
-    useToneCurve&=toneCurve;
+    if (workingSpace == "ProPhoto") {
+        applyState.alreadyProPhoto = true;
+    } else {
+        applyState.alreadyProPhoto = false;
+        TMatrix mWork;
 
-    // Calculate matrix for direct conversion raw>working space
-    double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-    for (int i=0; i<3; i++) 
-        for (int j=0; j<3; j++)
-            for (int k=0; k<3; k++)
-                mat[i][j] += mWork[i][k] * mXYZCAM[k][j];
+        mWork = iccStore->workingSpaceMatrix (workingSpace);
+        memset(applyState.m2ProPhoto, 0, sizeof(applyState.m2ProPhoto));
+        for (int i=0; i<3; i++)
+            for (int j=0; j<3; j++)
+                for (int k=0; k<3; k++)
+                    applyState.m2ProPhoto[i][j] += prophoto_xyz[i][k] * mWork[k][j];
 
-    // Apply the matrix part
-#pragma omp parallel for
-    for (int y=0; y<pImg->height; y++) {
-        float newr, newg, newb;
-        for (int x=0; x<pImg->width; x++) {
-            newr = mat[0][0]*pImg->r(y,x) + mat[0][1]*pImg->g(y,x) + mat[0][2]*pImg->b(y,x);
-            newg = mat[1][0]*pImg->r(y,x) + mat[1][1]*pImg->g(y,x) + mat[1][2]*pImg->b(y,x);
-            newb = mat[2][0]*pImg->r(y,x) + mat[2][1]*pImg->g(y,x) + mat[2][2]*pImg->b(y,x);
-
-            // tone curve
-            if (useToneCurve) toneCurve.Apply(newr, newg, newb);
-
-            pImg->r(y,x) = CLIP((int)newr); pImg->g(y,x) = CLIP((int)newg); pImg->b(y,x) = CLIP((int)newb);
-        }
+        mWork = iccStore->workingSpaceInverseMatrix (workingSpace);
+        memset(applyState.m2Work, 0, sizeof(applyState.m2Work));
+        for (int i=0; i<3; i++)
+            for (int j=0; j<3; j++)
+                for (int k=0; k<3; k++)
+                    applyState.m2Work[i][j] += mWork[i][k] * xyz_prophoto[k][j];
     }
 }
 
+void DCPProfile::step2ApplyTile(float *rc, float *gc, float *bc, int width, int height, int tileWidth, float exp_scale) const {
+
+#define FCLIP(a) ((a)>0.0?((a)<65535.5?(a):65535.5):0.0)
+#define CLIP01(a) ((a)>0?((a)<1?(a):1):0)
+
+    exp_scale *= applyState.blScale;
+    if (!applyState.useToneCurve && !applyState.applyLookTable) {
+        if (exp_scale == 1.0) {
+            return;
+        }
+        for (int y=0; y<height; y++) {
+            for (int x=0; x<width; x++) {
+                rc[y*tileWidth+x] *= exp_scale;
+                gc[y*tileWidth+x] *= exp_scale;
+                bc[y*tileWidth+x] *= exp_scale;
+            }
+        }
+    } else {
+        for (int y=0; y<height; y++) {
+            for (int x=0; x<width; x++) {
+                float r = rc[y*tileWidth+x];
+                float g = gc[y*tileWidth+x];
+                float b = bc[y*tileWidth+x];
+                if (exp_scale != 1.0) {
+                    r *= exp_scale;
+                    g *= exp_scale;
+                    b *= exp_scale;
+                }
+                float newr, newg, newb;
+                if (applyState.alreadyProPhoto) {
+                    newr = r;
+                    newg = g;
+                    newb = b;
+                } else {
+                    newr = applyState.m2ProPhoto[0][0]*r + applyState.m2ProPhoto[0][1]*g + applyState.m2ProPhoto[0][2]*b;
+                    newg = applyState.m2ProPhoto[1][0]*r + applyState.m2ProPhoto[1][1]*g + applyState.m2ProPhoto[1][2]*b;
+                    newb = applyState.m2ProPhoto[2][0]*r + applyState.m2ProPhoto[2][1]*g + applyState.m2ProPhoto[2][2]*b;
+                }
+
+                // with looktable and tonecurve we need to clip
+                newr = FCLIP(newr);
+                newg = FCLIP(newg);
+                newb = FCLIP(newb);
+
+                if (applyState.applyLookTable) {
+                    float h, s, v;
+                    Color::rgb2hsv(newr, newg, newb, h, s, v);
+                    h*=6.f;  // RT calculates in [0,1]
+
+                    HSDApply(LookInfo, aLookTable, h, s, v, h, s, v);
+                    s = CLIP01(s);
+                    v = CLIP01(v);
+
+                    // RT range correction
+                    if (h < 0.0f) h += 6.0f;
+                    if (h >= 6.0f) h -= 6.0f;
+                    h/=6.f;
+                    Color::hsv2rgb( h, s, v, newr, newg, newb);
+                }
+                if (applyState.useToneCurve) {
+                    toneCurve.Apply(newr, newg, newb);
+                }
+
+                if (applyState.alreadyProPhoto) {
+                    rc[y*tileWidth+x] = newr;
+                    gc[y*tileWidth+x] = newg;
+                    bc[y*tileWidth+x] = newb;
+                } else {
+                    rc[y*tileWidth+x] = applyState.m2Work[0][0]*newr + applyState.m2Work[0][1]*newg + applyState.m2Work[0][2]*newb;
+                    gc[y*tileWidth+x] = applyState.m2Work[1][0]*newr + applyState.m2Work[1][1]*newg + applyState.m2Work[1][2]*newb;
+                    bc[y*tileWidth+x] = applyState.m2Work[2][0]*newr + applyState.m2Work[2][1]*newg + applyState.m2Work[2][2]*newb;
+                }
+            }
+        }
+    }
+}
 
 // Generates as singleton
 DCPStore* DCPStore::getInstance()

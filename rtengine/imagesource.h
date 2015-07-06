@@ -25,6 +25,7 @@
 #include "colortemp.h"
 #include "procparams.h"
 #include "coord2d.h"
+#include "dcp.h"
 #include "LUT.h"
 #include "imagedata.h"
 #include "image8.h"
@@ -94,6 +95,7 @@ class ImageSource : public InitialImage {
         virtual ImageData*     getImageData () =0;
         virtual ImageMatrices* getImageMatrices () =0;
         virtual bool        isRAW() const =0;
+        virtual DCPProfile* getDCP(ColorManagementParams cmp, ColorTemp &wb) { return NULL; };
 
         virtual void        setProgressListener (ProgressListener* pl) {}
 

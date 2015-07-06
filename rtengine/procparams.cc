@@ -697,7 +697,10 @@ void RAWParams::setDefaults() {
 void ColorManagementParams::setDefaults() {
     input   = "(cameraICC)";
     blendCMSMatrix = false;
-    toneCurve = false;
+    toneCurve = true;
+    applyLookTable = true;
+    applyBaselineExposureOffset = true;
+    applyHueSatMap = true;
     dcpIlluminant = 0;
     working = "ProPhoto";
     output  = "RT_sRGB";
@@ -1605,6 +1608,9 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     // save color management settings
     if (!pedited || pedited->icm.input)              keyFile.set_string  ("Color Management", "InputProfile",   relativePathIfInside(fname, fnameAbsolute, icm.input));
     if (!pedited || pedited->icm.toneCurve)          keyFile.set_boolean ("Color Management", "ToneCurve",   icm.toneCurve);
+    if (!pedited || pedited->icm.applyLookTable)     keyFile.set_boolean ("Color Management", "ApplyLookTable",   icm.applyLookTable);
+    if (!pedited || pedited->icm.applyBaselineExposureOffset)     keyFile.set_boolean ("Color Management", "ApplyBaselineExposureOffset",   icm.applyBaselineExposureOffset);
+    if (!pedited || pedited->icm.applyHueSatMap)     keyFile.set_boolean ("Color Management", "ApplyHueSatMap",   icm.applyHueSatMap);
     if (!pedited || pedited->icm.blendCMSMatrix)     keyFile.set_boolean ("Color Management", "BlendCMSMatrix",   icm.blendCMSMatrix);
     if (!pedited || pedited->icm.dcpIlluminant)      keyFile.set_integer ("Color Management", "DCPIlluminant",   icm.dcpIlluminant);
     if (!pedited || pedited->icm.working)            keyFile.set_string  ("Color Management", "WorkingProfile", icm.working);
@@ -2501,6 +2507,9 @@ if (keyFile.has_group ("PostResizeSharpening")) {
 if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "InputProfile"))   { icm.input          = expandRelativePath(fname, "file:", keyFile.get_string ("Color Management", "InputProfile")); if (pedited) pedited->icm.input = true; }
     if (keyFile.has_key ("Color Management", "ToneCurve"))      { icm.toneCurve      = keyFile.get_boolean ("Color Management", "ToneCurve"); if (pedited) pedited->icm.toneCurve = true; }
+    if (keyFile.has_key ("Color Management", "ApplyLookTable"))      { icm.applyLookTable      = keyFile.get_boolean ("Color Management", "ApplyLookTable"); if (pedited) pedited->icm.applyLookTable = true; }
+    if (keyFile.has_key ("Color Management", "ApplyBaselineExposureOffset"))      { icm.applyBaselineExposureOffset      = keyFile.get_boolean ("Color Management", "ApplyBaselineExposureOffset"); if (pedited) pedited->icm.applyBaselineExposureOffset = true; }
+    if (keyFile.has_key ("Color Management", "ApplyHueSatMap"))      { icm.applyHueSatMap      = keyFile.get_boolean ("Color Management", "ApplyHueSatMap"); if (pedited) pedited->icm.applyHueSatMap = true; }
     if (keyFile.has_key ("Color Management", "BlendCMSMatrix")) { icm.blendCMSMatrix = keyFile.get_boolean ("Color Management", "BlendCMSMatrix"); if (pedited) pedited->icm.blendCMSMatrix = true; }
     if (keyFile.has_key ("Color Management", "DCPIlluminant"))  { icm.dcpIlluminant  = keyFile.get_integer ("Color Management", "DCPIlluminant"); if (pedited) pedited->icm.dcpIlluminant = true; }
     if (keyFile.has_key ("Color Management", "WorkingProfile")) { icm.working        = keyFile.get_string ("Color Management", "WorkingProfile"); if (pedited) pedited->icm.working = true; }
@@ -3175,6 +3184,9 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& raw.hotdeadpix_thresh == other.raw.hotdeadpix_thresh
 		&& icm.input == other.icm.input
 		&& icm.toneCurve == other.icm.toneCurve
+		&& icm.applyLookTable == other.icm.applyLookTable
+		&& icm.applyBaselineExposureOffset == other.icm.applyBaselineExposureOffset
+		&& icm.applyHueSatMap == other.icm.applyHueSatMap
 		&& icm.blendCMSMatrix == other.icm.blendCMSMatrix
 		&& icm.dcpIlluminant == other.icm.dcpIlluminant
 		&& icm.working == other.icm.working
