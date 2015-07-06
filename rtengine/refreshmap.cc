@@ -67,7 +67,7 @@ RGBCURVE,         // EvToneCurveMode2,
 0,                // EvLDNEdgeTolerance: obsolete,
 0,                // EvCDNEnabled:obsolete,
 ALL,              // EvBlendCMSMatrix,
-ALL,              // EvDCPToneCurve,
+RGBCURVE,         // EvDCPToneCurve,
 ALL,              // EvDCPIlluminant,
 RETINEX,          // EvSHEnabled,
 RGBCURVE,         // EvSHHighlights,
@@ -413,7 +413,10 @@ DIRPYREQUALIZER,     // EvWavgreenmed
 DIRPYREQUALIZER,     // EvWavbluemed	
 DIRPYREQUALIZER,     // EvWavgreenlow
 DIRPYREQUALIZER,     // EvWavbluelow	
-DIRPYREQUALIZER      // EvWavNeutral	
+DIRPYREQUALIZER,     // EvWavNeutral	
+RGBCURVE,            // EvDCPApplyLookTable,
+RGBCURVE,            // EvDCPApplyBaselineExposureOffset,
+ALL                  // EvDCPApplyHueSatMap
 
 };
 

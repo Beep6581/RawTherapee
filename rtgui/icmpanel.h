@@ -44,6 +44,12 @@ class ICMPanel : public ToolParamBlock, public AdjusterListener, public Foldable
         //bool freegamma;
         bool lastToneCurve;
         sigc::connection tcurveconn;
+        bool lastApplyLookTable;
+        sigc::connection ltableconn;
+        bool lastApplyBaselineExposureOffset;
+        sigc::connection beoconn;
+        bool lastApplyHueSatMap;
+        sigc::connection hsmconn;
         bool lastBlendCMSMatrix;
         bool isBatchMode;
         sigc::connection blendcmsconn;
@@ -61,6 +67,9 @@ class ICMPanel : public ToolParamBlock, public AdjusterListener, public Foldable
         Gtk::Label*        dcpIllLabel;
         MyComboBoxText*    dcpIll;
         Gtk::CheckButton*  ckbToneCurve;
+        Gtk::CheckButton*  ckbApplyLookTable;
+        Gtk::CheckButton*  ckbApplyBaselineExposureOffset;
+        Gtk::CheckButton*  ckbApplyHueSatMap;
         Gtk::CheckButton*  ckbBlendCMSMatrix;
         MyComboBoxText*    wnames;
         MyComboBoxText*    wgamma;
@@ -101,6 +110,9 @@ class ICMPanel : public ToolParamBlock, public AdjusterListener, public Foldable
         void blendCMSMatrixChanged();
         void dcpIlluminantChanged();
         void toneCurveChanged();
+        void applyLookTableChanged();
+        void applyBaselineExposureOffsetChanged();
+        void applyHueSatMapChanged();
 
         void setRawMeta (bool raw, const rtengine::ImageData* pMeta);
         void saveReferencePressed ();

@@ -912,7 +912,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
 	ipf.g = gamma;
 	ipf.iGamma = true;
-	CurveFactory::complexCurve (expcomp, black/65535.0, hlcompr, hlcomprthresh,
+	CurveFactory::complexCurve (0.0, black/65535.0, hlcompr, hlcomprthresh,
 								params.toneCurve.shcompr, bright, contr, ipf.g, !ipf.iGamma,
 								params.toneCurve.curveMode, params.toneCurve.curve,
 								params.toneCurve.curveMode2, params.toneCurve.curve2,
@@ -966,7 +966,15 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     autor = autog = autob = -9000.f; // This will ask to compute the "auto" values for the B&W tool
 
 	LabImage* labView = new LabImage (fw,fh);
-    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
+        DCPProfile *dcpProf = NULL;
+        if (isRaw) {
+            cmsHPROFILE dummy;
+            RawImageSource::findInputProfile(params.icm.input, NULL, camName, &dcpProf, dummy);
+            if (dcpProf != NULL) {
+                dcpProf->setStep2ApplyState(params.icm.working, params.icm.toneCurve, params.icm.applyLookTable, params.icm.applyBaselineExposureOffset);
+            }
+        }
+        ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf);
 
     // freeing up some memory
     customToneCurve1.Reset();

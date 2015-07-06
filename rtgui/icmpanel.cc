@@ -32,7 +32,7 @@ extern Options options;
 
 ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunchanged(NULL), icmplistener(NULL), lastRefFilename("") {
 
-    isBatchMode = lastToneCurve = lastBlendCMSMatrix = lastgamfree = false;
+    isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = lastBlendCMSMatrix = lastgamfree = false;
 
     ipDialog = Gtk::manage (new MyFileChooserButton (M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
     ipDialog->set_tooltip_text (M("TP_ICM_INPUTCUSTOM_TOOLTIP"));
@@ -98,10 +98,34 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     hb->pack_start(*dcpIll);
     iVBox->pack_start (*hb, Gtk::PACK_SHRINK, 2);
 
+    Gtk::VBox* c1VBox = Gtk::manage ( new Gtk::VBox());
+    Gtk::VBox* c2VBox = Gtk::manage ( new Gtk::VBox());
+
     ckbToneCurve = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_TONECURVE")));
     ckbToneCurve->set_sensitive (false);
     ckbToneCurve->set_tooltip_text (M("TP_ICM_TONECURVE_TOOLTIP"));
-    iVBox->pack_start (*ckbToneCurve, Gtk::PACK_SHRINK, 2);
+    c1VBox->pack_start (*ckbToneCurve, Gtk::PACK_SHRINK, 2);
+
+    ckbApplyLookTable = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYLOOKTABLE")));
+    ckbApplyLookTable->set_sensitive (false);
+    ckbApplyLookTable->set_tooltip_text (M("TP_ICM_APPLYLOOKTABLE_TOOLTIP"));
+    c1VBox->pack_start (*ckbApplyLookTable, Gtk::PACK_SHRINK, 2);
+
+    ckbApplyHueSatMap = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYHUESATMAP")));
+    ckbApplyHueSatMap->set_sensitive (false);
+    ckbApplyHueSatMap->set_tooltip_text (M("TP_ICM_APPLYHUESATMAP_TOOLTIP"));
+    c2VBox->pack_start (*ckbApplyHueSatMap, Gtk::PACK_SHRINK, 2);
+
+    ckbApplyBaselineExposureOffset = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYBASELINEEXPOSUREOFFSET")));
+    ckbApplyBaselineExposureOffset->set_sensitive (false);
+    ckbApplyBaselineExposureOffset->set_tooltip_text (M("TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP"));
+    c2VBox->pack_start (*ckbApplyBaselineExposureOffset, Gtk::PACK_SHRINK, 2);
+
+    Gtk::HBox* dcpHBox = Gtk::manage (new Gtk::HBox ());
+    dcpHBox->show ();
+    dcpHBox->pack_start (*c1VBox, Gtk::PACK_EXPAND_WIDGET, 2);
+    dcpHBox->pack_start (*c2VBox, Gtk::PACK_EXPAND_WIDGET, 2);
+    iVBox->pack_start (*dcpHBox, Gtk::PACK_SHRINK, 2);
 
     ckbBlendCMSMatrix = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_BLENDCMSMATRIX")));
     ckbBlendCMSMatrix->set_sensitive (false);
@@ -247,6 +271,9 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 
     gamcsconn = freegamma->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::GamChanged));
     tcurveconn = ckbToneCurve->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::toneCurveChanged));
+    ltableconn = ckbApplyLookTable->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::applyLookTableChanged));
+    beoconn = ckbApplyBaselineExposureOffset->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::applyBaselineExposureOffsetChanged));
+    hsmconn = ckbApplyHueSatMap->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::applyHueSatMapChanged));
     blendcmsconn = ckbBlendCMSMatrix->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::blendCMSMatrixChanged));
 
     icamera->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
@@ -264,6 +291,9 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name) {
 
     if (isBatchMode) {
         ckbToneCurve->set_sensitive (true);
+        ckbApplyLookTable->set_sensitive (true);
+        ckbApplyBaselineExposureOffset->set_sensitive (true);
+        ckbApplyHueSatMap->set_sensitive (true);
         dcpIllLabel->set_sensitive (true);
         dcpIll->set_sensitive (true);
         if (dcpTemperatures[0] != 0 || dcpTemperatures[1] != 0) {
@@ -289,6 +319,9 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name) {
         return;
     }
     ckbToneCurve->set_sensitive (false);
+    ckbApplyLookTable->set_sensitive (false);
+    ckbApplyBaselineExposureOffset->set_sensitive (false);
+    ckbApplyHueSatMap->set_sensitive (false);
     dcpIllLabel->set_sensitive (false);
     dcpIll->set_sensitive (false);
     if (ifromfile->get_active() && dcpStore->isValidDCPFileName(dcp_name)) {
@@ -296,8 +329,15 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name) {
         if (dcp) {
             if (dcp->getHasToneCurve()) {
                 ckbToneCurve->set_sensitive (true);
-            } else {
-                ckbToneCurve->set_active (false);
+            }
+            if (dcp->getHasLookTable()) {
+                ckbApplyLookTable->set_sensitive (true);
+            }
+            if (dcp->getHasBaselineExposureOffset()) {
+                ckbApplyBaselineExposureOffset->set_sensitive (true);
+            }
+            if (dcp->getHasHueSatMap()) {
+                ckbApplyHueSatMap->set_sensitive (true);
             }
             int i1, i2;
             double temp1, temp2;
@@ -367,6 +407,9 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
     ipc.block (true);
     gamcsconn.block (true);
     tcurveconn.block(true);
+    ltableconn.block(true);
+    beoconn.block(true);
+    hsmconn.block(true);
     blendcmsconn.block(true);
 
 	if(pp->icm.input.substr(0,5) != "file:" && !ipDialog->get_filename().empty())
@@ -426,6 +469,12 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     ckbToneCurve->set_active (pp->icm.toneCurve);
     lastToneCurve = pp->icm.toneCurve;
+    ckbApplyLookTable->set_active (pp->icm.applyLookTable);
+    lastApplyLookTable = pp->icm.applyLookTable;
+    ckbApplyBaselineExposureOffset->set_active (pp->icm.applyBaselineExposureOffset);
+    lastApplyBaselineExposureOffset = pp->icm.applyBaselineExposureOffset;
+    ckbApplyHueSatMap->set_active (pp->icm.applyHueSatMap);
+    lastApplyHueSatMap = pp->icm.applyHueSatMap;
 
     ckbBlendCMSMatrix->set_active (pp->icm.blendCMSMatrix);
     lastBlendCMSMatrix = pp->icm.blendCMSMatrix;
@@ -442,6 +491,9 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
     if (pedited) {
         iunchanged->set_active (!pedited->icm.input);
         ckbToneCurve->set_inconsistent(!pedited->icm.toneCurve);
+        ckbApplyLookTable->set_inconsistent(!pedited->icm.applyLookTable);
+        ckbApplyBaselineExposureOffset->set_inconsistent(!pedited->icm.applyBaselineExposureOffset);
+        ckbApplyHueSatMap->set_inconsistent(!pedited->icm.applyHueSatMap);
         ckbBlendCMSMatrix->set_inconsistent(!pedited->icm.blendCMSMatrix);
         if (!pedited->icm.working)
             wnames->set_active_text(M("GENERAL_UNCHANGED"));
@@ -460,6 +512,9 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     blendcmsconn.block(false);
     tcurveconn.block(false);
+    ltableconn.block(false);
+    beoconn.block(false);
+    hsmconn.block(false);
     gamcsconn.block (false);
     ipc.block (false);
 
@@ -496,7 +551,24 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
     else
         pp->icm.output  = onames->get_active_text();
     pp->icm.freegamma = freegamma->get_active();
-    pp->icm.toneCurve = ckbToneCurve->get_active ();
+
+    if (ifromfile->get_active() && pp->icm.input.substr(0,5) == "file:" && dcpStore->isValidDCPFileName(pp->icm.input.substr(5))) {
+        DCPProfile* dcp = dcpStore->getProfile(pp->icm.input.substr(5), false);
+        if (dcp) {
+            if (dcp->getHasToneCurve()) {
+                pp->icm.toneCurve = ckbToneCurve->get_active ();
+            }
+            if (dcp->getHasLookTable()) {
+                pp->icm.applyLookTable = ckbApplyLookTable->get_active ();
+            }
+            if (dcp->getHasBaselineExposureOffset()) {
+                pp->icm.applyBaselineExposureOffset = ckbApplyBaselineExposureOffset->get_active ();
+            }
+            if (dcp->getHasHueSatMap()) {
+                pp->icm.applyHueSatMap = ckbApplyHueSatMap->get_active ();
+            }
+        }
+    }
     pp->icm.blendCMSMatrix = ckbBlendCMSMatrix->get_active ();
     pp->icm.gampos =(double) gampos->getValue();
     pp->icm.slpos =(double) slpos->getValue();
@@ -507,6 +579,9 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->icm.output = onames->get_active_text()!=M("GENERAL_UNCHANGED");
         pedited->icm.dcpIlluminant = dcpIll->get_active_text()!=M("GENERAL_UNCHANGED");
         pedited->icm.toneCurve = !ckbToneCurve->get_inconsistent ();
+        pedited->icm.applyLookTable = !ckbApplyLookTable->get_inconsistent ();
+        pedited->icm.applyBaselineExposureOffset = !ckbApplyBaselineExposureOffset->get_inconsistent ();
+        pedited->icm.applyHueSatMap = !ckbApplyHueSatMap->get_inconsistent ();
         pedited->icm.blendCMSMatrix = !ckbBlendCMSMatrix->get_inconsistent ();
         pedited->icm.gamma = wgamma->get_active_text()!=M("GENERAL_UNCHANGED");
         pedited->icm.freegamma =!freegamma->get_inconsistent();
@@ -583,6 +658,60 @@ void ICMPanel::toneCurveChanged() {
 
     if (listener)
         listener->panelChanged (EvDCPToneCurve, ckbToneCurve->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+}
+
+void ICMPanel::applyLookTableChanged() {
+    if (batchMode) {
+        if (ckbApplyLookTable->get_inconsistent()) {
+            ckbApplyLookTable->set_inconsistent (false);
+            ltableconn.block (true);
+            ckbApplyLookTable->set_active (false);
+            ltableconn.block (false);
+        }
+        else if (lastApplyLookTable)
+            ckbApplyLookTable->set_inconsistent (true);
+
+        lastApplyLookTable = ckbApplyLookTable->get_active ();
+    }
+
+    if (listener)
+        listener->panelChanged (EvDCPApplyLookTable, ckbApplyLookTable->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+}
+
+void ICMPanel::applyBaselineExposureOffsetChanged() {
+    if (batchMode) {
+        if (ckbApplyBaselineExposureOffset->get_inconsistent()) {
+            ckbApplyBaselineExposureOffset->set_inconsistent (false);
+            beoconn.block (true);
+            ckbApplyBaselineExposureOffset->set_active (false);
+            beoconn.block (false);
+        }
+        else if (lastApplyBaselineExposureOffset)
+            ckbApplyBaselineExposureOffset->set_inconsistent (true);
+
+        lastApplyBaselineExposureOffset = ckbApplyBaselineExposureOffset->get_active ();
+    }
+
+    if (listener)
+        listener->panelChanged (EvDCPApplyBaselineExposureOffset, ckbApplyBaselineExposureOffset->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+}
+
+void ICMPanel::applyHueSatMapChanged() {
+    if (batchMode) {
+        if (ckbApplyHueSatMap->get_inconsistent()) {
+            ckbApplyHueSatMap->set_inconsistent (false);
+            hsmconn.block (true);
+            ckbApplyHueSatMap->set_active (false);
+            hsmconn.block (false);
+        }
+        else if (lastApplyHueSatMap)
+            ckbApplyHueSatMap->set_inconsistent (true);
+
+        lastApplyHueSatMap = ckbApplyHueSatMap->get_active ();
+    }
+
+    if (listener)
+        listener->panelChanged (EvDCPApplyHueSatMap, ckbApplyHueSatMap->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
 }
 
 void ICMPanel::ipChanged () {

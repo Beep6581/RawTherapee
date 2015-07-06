@@ -356,7 +356,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         //complexCurve also calculated pre-curves histogram depending on crop
         ipf.g = imgsrc->getGamma();
         ipf.iGamma = true;
-        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0,
+        CurveFactory::complexCurve (/*params.toneCurve.expcomp*/ 0.0, params.toneCurve.black/65535.0,
                                     params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh,
                                     params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast,
                                     ipf.g, !ipf.iGamma, params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,
@@ -433,8 +433,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 			double rrm=33.;
 			double ggm=33.;
 			double bbm=33.;
+
+			DCPProfile *dcpProf = imgsrc->getDCP(params.icm, currWB);
             ipf.rgbProc (oprevi, oprevl, NULL, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
-                         rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
+                         rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, dcpProf);
             if(params.blackwhite.enabled && params.blackwhite.autoc && abwListener) {
                 if (settings->verbose)
                     printf("ImProcCoordinator / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", bwAutoR, bwAutoG, bwAutoB);

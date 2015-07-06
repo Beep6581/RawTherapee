@@ -608,7 +608,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
 	ipf.g = imgsrc->getGamma();
 	ipf.iGamma = true;
-	CurveFactory::complexCurve (expcomp, black/65535.0, hlcompr, hlcomprthresh, params.toneCurve.shcompr, bright, contr, ipf.g, !ipf.iGamma,
+	CurveFactory::complexCurve (0.0, black/65535.0, hlcompr, hlcomprthresh, params.toneCurve.shcompr, bright, contr, ipf.g, !ipf.iGamma,
 	                            params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,
 	                            hist16, dummy, curve1, curve2, curve, dummy, customToneCurve1, customToneCurve2 );
 
@@ -660,7 +660,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 		} 
 	
     autor = -9000.f; // This will ask to compute the "auto" values for the B&W tool (have to be inferior to -5000)
-    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve,customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
+    DCPProfile *dcpProf = imgsrc->getDCP(params.icm, currWB);
+    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve,customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf);
     if (settings->verbose)
         printf("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);
 

@@ -417,6 +417,9 @@ enum ProcEvent {
     EvWavgreenlow=389,
     EvWavbluelow=390,
     EvWavNeutral=391,
+    EvDCPApplyLookTable=392,
+    EvDCPApplyBaselineExposureOffset=393,
+    EvDCPApplyHueSatMap=394,
 
     NUMOFEVENTS
 };

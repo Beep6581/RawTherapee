@@ -63,7 +63,6 @@ class RawImageSource : public ImageSource {
         static DiagonalCurve *phaseOneIccCurveInv;
         static LUTf invGrad;  // for fast_demosaic
         static LUTf initInvGrad ();
-        static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in);
         static void colorSpaceConversion_ (Imagefloat* im, ColorManagementParams &cmp, ColorTemp &wb, double pre_mul[3], const RAWParams &raw, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
 
     protected:
@@ -176,8 +175,10 @@ class RawImageSource : public ImageSource {
         void        setProgressListener (ProgressListener* pl) { plistener = pl; }
         void        getAutoExpHistogram (LUTu & histogram, int& histcompr);
         void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
-
+        DCPProfile *getDCP(ColorManagementParams cmp, ColorTemp &wb);
+            
         void convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb, RAWParams raw);
+        static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in);
         static void colorSpaceConversion   (Imagefloat* im, ColorManagementParams cmp, ColorTemp &wb, double pre_mul[3], RAWParams raw, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName) {
             colorSpaceConversion_ (im, cmp, wb, pre_mul, raw, embedded, camprofile, cam, camName);
         }
@@ -193,7 +194,7 @@ class RawImageSource : public ImageSource {
 
         static void HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval);
         static void HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval, double cam[3][3], double icam[3][3]);
-        static void HLRecovery_blend (float* rin, float* gin, float* bin, int width, float maxval, float* pre_mul, const RAWParams &raw, float* hlmax);
+        static void HLRecovery_blend (float* rin, float* gin, float* bin, int width, float maxval, float* hlmax);
 	static void init ();
 	static void cleanup ();
 

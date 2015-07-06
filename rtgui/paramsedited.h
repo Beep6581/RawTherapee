@@ -463,6 +463,9 @@ class ColorManagementParamsEdited {
     public:
         bool input;
         bool toneCurve;
+        bool applyLookTable;
+        bool applyBaselineExposureOffset;
+        bool applyHueSatMap;
         bool blendCMSMatrix;
         bool dcpIlluminant;
         bool working;

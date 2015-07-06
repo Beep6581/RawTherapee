@@ -2186,19 +2186,55 @@ float mo=0.f;
 		
 }
 
+static inline void
+filmlike_clip_rgb_tone(float *r, float *g, float *b, const float L)
+{
+	float r_ = *r > L ? L : *r;
+	float b_ = *b > L ? L : *b;
+	float g_ = b_ + ((r_ - b_) * (*g - *b) / (*r - *b));
+	*r = r_;
+	*g = g_;
+	*b = b_;
+}
 
-
+static void
+filmlike_clip(float *r, float *g, float *b)
+{
+	// This is Adobe's hue-stable film-like curve with a diagonal, ie only used for clipping. Can probably be further optimized.
+	const float L = 65535.0;
+	if (*r >= *g) {
+		if (*g > *b) {         // Case 1: r >= g >  b
+			filmlike_clip_rgb_tone(r, g, b, L);
+		} else if (*b > *r) {  // Case 2: b >  r >= g
+			filmlike_clip_rgb_tone(b, r, g, L);
+		} else if (*b > *g) {  // Case 3: r >= b >  g
+			filmlike_clip_rgb_tone(r, b, g, L);
+		} else {               // Case 4: r >= g == b
+			*r = *r > L ? L : *r;
+			*g = *g > L ? L : *g;
+			*b = *g;
+		}
+	} else {
+		if (*r >= *b) {        // Case 5: g >  r >= b
+			filmlike_clip_rgb_tone(g, r, b, L);
+		} else if (*b > *g) {  // Case 6: b >  g >  r
+			filmlike_clip_rgb_tone(b, g, r, L);
+		} else {               // Case 7: g >= b >  r
+			filmlike_clip_rgb_tone(g, b, r, L);
+		}
+	}
+}
 
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *editBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                                SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit ,float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili,  LUTf & clToningcurve,LUTf & cl2Toningcurve,
-                               const ToneCurve & customToneCurve1,const ToneCurve & customToneCurve2, const ToneCurve & customToneCurvebw1,const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob ) {
-    rgbProc (working, lab, editBuffer, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve,customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm, autor, autog, autob, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh);
+                               const ToneCurve & customToneCurve1,const ToneCurve & customToneCurve2, const ToneCurve & customToneCurvebw1,const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf ) {
+	rgbProc (working, lab, editBuffer, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, satLimit ,satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve,customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm, autor, autog, autob, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh, dcpProf);
 }
 
 // Process RGB image and convert to LAB space
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *editBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                                SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit ,float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clToningcurve,LUTf & cl2Toningcurve,
-                               const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,  const ToneCurve & customToneCurvebw1,const ToneCurve & customToneCurvebw2,double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh) {
+                               const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,  const ToneCurve & customToneCurvebw1,const ToneCurve & customToneCurvebw2,double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh, DCPProfile *dcpProf) {
 
     LUTf iGammaLUTf;
     Imagefloat *tmpImage=NULL;
@@ -2592,9 +2628,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 
 				//TODO: proper treatment of out-of-gamut colors
 					//float tonefactor = hltonecurve[(0.299f*r+0.587f*g+0.114f*b)];
-					float tonefactor=((r<MAXVALF ? hltonecurve[r] : CurveFactory::hlcurve (exp_scale, comp, hlrange, r) ) +
-									  (g<MAXVALF ? hltonecurve[g] : CurveFactory::hlcurve (exp_scale, comp, hlrange, g) ) +
-									  (b<MAXVALF ? hltonecurve[b] : CurveFactory::hlcurve (exp_scale, comp, hlrange, b) ) )/3.0;
+					float tonefactor=((r<MAXVALF ? hltonecurve[r] : CurveFactory::hlcurve (1.0, comp, hlrange, r) ) +
+									  (g<MAXVALF ? hltonecurve[g] : CurveFactory::hlcurve (1.0, comp, hlrange, g) ) +
+									  (b<MAXVALF ? hltonecurve[b] : CurveFactory::hlcurve (1.0, comp, hlrange, b) ) )/3.0;
 
 					rtemp[ti*TS+tj] = r*tonefactor;
 					gtemp[ti*TS+tj] = g*tonefactor;
@@ -2617,6 +2653,37 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 					btemp[ti*TS+tj] = btemp[ti*TS+tj]*tonefactor;
 				}
 			}
+
+			if (dcpProf != NULL) {
+				dcpProf->step2ApplyTile(rtemp, gtemp, btemp, tW-jstart, tH-istart, TS, exp_scale);
+			}
+			for (int i=istart,ti=0; i<tH; i++,ti++) {
+				for (int j=jstart,tj=0; j<tW; j++,tj++) {
+					float r = rtemp[ti*TS+tj];
+					float g = gtemp[ti*TS+tj];
+					float b = btemp[ti*TS+tj];
+
+					// exposure scaling
+					if (dcpProf == NULL) {
+						// There was no DCP pass, scaling not applied so we apply it here
+						r *= exp_scale;
+						g *= exp_scale;
+						b *= exp_scale;
+					}
+
+					// clip out of gamut colors, without distorting color too bad
+					if (r < 0) r = 0;
+					if (g < 0) g = 0;
+					if (b < 0) b = 0;
+					if (r > 65535 || g > 65535 || b > 65535) {
+						filmlike_clip(&r, &g, &b);
+					}
+
+					rtemp[ti*TS+tj] = r;
+					gtemp[ti*TS+tj] = g;
+					btemp[ti*TS+tj] = b;
+				}
+                        }
 
 			for (int i=istart,ti=0; i<tH; i++,ti++) {
 				for (int j=jstart,tj=0; j<tW; j++,tj++) {
