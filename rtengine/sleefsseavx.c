@@ -1315,5 +1315,12 @@ static INLINE vfloat SQRV(vfloat a){
 	return _mm_mul_ps( a,a );
 }
 
+static inline void vswap( vmask condition, vfloat &a, vfloat &b) {
+    vfloat temp = vself(condition, a, b); // the larger of the two
+    condition = vnotm(condition); // invert the mask
+    a = vself(condition, a, b); // the smaller of the two
+    b = temp;
+}
+
 #endif // __SSE2__
 #endif // SLEEFSSEAVX

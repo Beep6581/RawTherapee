@@ -1418,6 +1418,7 @@ if(settings->viewinggreySc==1) yb=18.0f;//fixed
 	const float pow1 = pow_F( 1.64f - pow_F( 0.29f, n ), 0.73f );
 	float nj,dj,nbbj,ncbj,czj,awj,flj;
 	Ciecam02::initcam2float(gamu,yb2, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj,czj, awj, flj);
+	const float reccmcz = 1.f / (c2*czj);
 	const float pow1n = pow_F( 1.64f - pow_F( 0.29f, nj ), 0.73f );
 
 	const float epsil=0.0001f;
@@ -1440,29 +1441,97 @@ if(settings->viewinggreySc==1) yb=18.0f;//fixed
 		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}
 	};
 	
-	
+#ifdef __SSE2__
+    int bufferLength = ((width+3)/4) * 4; // bufferLength has to be a multiple of 4
+#endif
 #ifndef _DEBUG	
 #pragma omp parallel
 #endif
 {	
 	float minQThr = 10000.f;
 	float maxQThr = -1000.f;
-#ifndef _DEBUG
-#pragma omp for schedule(dynamic, 10)
+#ifdef __SSE2__
+    // one line buffer per channel and thread
+	float Jbuffer[bufferLength] ALIGNED16;
+	float Cbuffer[bufferLength] ALIGNED16;
+	float hbuffer[bufferLength] ALIGNED16;
+	float Qbuffer[bufferLength] ALIGNED16;
+	float Mbuffer[bufferLength] ALIGNED16;
+	float sbuffer[bufferLength] ALIGNED16;
 #endif
-	for (int i=0; i<height; i++)
-		for (int j=0; j<width; j++) {
+#ifndef _DEBUG
+#pragma omp for schedule(dynamic, 16)
+#endif
+	for (int i=0; i<height; i++) {
+#ifdef __SSE2__
+        // vectorized conversion from Lab to jchqms
+        int k;
+        vfloat x,y,z;
+		vfloat J, C, h, Q, M, s;
 
+        vfloat c655d35 = F2V(655.35f);
+        for(k=0;k<width-3;k+=4) {
+            Color::Lab2XYZ(LVFU(lab->L[i][k]),LVFU(lab->a[i][k]),LVFU(lab->b[i][k]),x,y,z);
+            x = x/c655d35;
+            y = y/c655d35;
+            z = z/c655d35;
+			Ciecam02::xyz2jchqms_ciecam02float( J, C,  h,
+                           Q,  M,  s, F2V(aw), F2V(fl), F2V(wh),
+                           x,  y,  z,
+                           F2V(xw1), F2V(yw1),  F2V(zw1),
+                           F2V(yb),  F2V(la),
+                           F2V(f), F2V(c),  F2V(nc), F2V(pow1), F2V(nbb), F2V(ncb), F2V(pfl), F2V(cz), F2V(d));
+            STVF(Jbuffer[k],J);
+            STVF(Cbuffer[k],C);
+            STVF(hbuffer[k],h);
+            STVF(Qbuffer[k],Q);
+            STVF(Mbuffer[k],M);
+            STVF(sbuffer[k],s);
+        }
+        for(;k<width;k++) {
+			float L=lab->L[i][k];
+			float a=lab->a[i][k];
+			float b=lab->b[i][k];
+			float x,y,z;
+			//convert Lab => XYZ
+			Color::Lab2XYZ(L, a, b, x, y, z);
+			x = x/655.35f;
+			y = y/655.35f;
+			z = z/655.35f;
+			float J, C, h, Q, M, s;
+			Ciecam02::xyz2jchqms_ciecam02float( J, C,  h,
+                           Q,  M,  s, aw, fl, wh,
+                           x,  y,  z,
+                           xw1, yw1,  zw1,
+                           yb,  la,
+                           f, c,  nc,  pilot, gamu, pow1, nbb, ncb, pfl, cz, d);
+            Jbuffer[k] = J;
+            Cbuffer[k] = C;
+            hbuffer[k] = h;
+            Qbuffer[k] = Q;
+            Mbuffer[k] = M;
+            sbuffer[k] = s;
+        }
+#endif // __SSE2__
+		for (int j=0; j<width; j++) {
+			float J, C, h, Q, M, s;
+			
+#ifdef __SSE2__
+            // use precomputed values from above
+            J = Jbuffer[j];
+            C = Cbuffer[j];
+            h = hbuffer[j];
+            Q = Qbuffer[j];
+            M = Mbuffer[j];
+            s = sbuffer[j];
+#else
+			float x,y,z;
 			float L=lab->L[i][j];
 			float a=lab->a[i][j];
 			float b=lab->b[i][j];
 			float x1,y1,z1;
-			float x,y,z;
 			//convert Lab => XYZ
 			Color::Lab2XYZ(L, a, b, x1, y1, z1);
-			float J, C, h, Q, M, s;
-			float Jpro,Cpro, hpro, Qpro, Mpro, spro;
-
 			x=(float)x1/655.35f;
 			y=(float)y1/655.35f;
 			z=(float)z1/655.35f;
@@ -1473,6 +1542,8 @@ if(settings->viewinggreySc==1) yb=18.0f;//fixed
                            xw1, yw1,  zw1,
                            yb,  la,
                            f, c,  nc,  pilot, gamu, pow1, nbb, ncb, pfl, cz, d);
+#endif
+			float Jpro,Cpro, hpro, Qpro, Mpro, spro;
 			Jpro=J;
 			Cpro=C;
 			hpro=h;
@@ -1797,6 +1868,12 @@ if(settings->viewinggreySc==1) yb=18.0f;//fixed
 				}
 			}
 if(LabPassOne){
+#ifdef __SSE2__
+            // write to line buffers
+            Jbuffer[j] = J;
+            Cbuffer[j] = C;
+            hbuffer[j] = h;
+#else
 			float xx,yy,zz;
 			//process normal==> viewing
 
@@ -1805,22 +1882,13 @@ if(LabPassOne){
 			                             xw2, yw2,  zw2,
 			                             yb2, la2,
 			                             f2,  c2, nc2, gamu, pow1n, nbbj, ncbj, flj, czj, dj, awj);
+            float x,y,z;
 			x=(float)xx*655.35f;
 			y=(float)yy*655.35f;
 			z=(float)zz*655.35f;
 			float Ll,aa,bb;
 			//convert xyz=>lab
 			Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
-#ifdef _DEBUG
-			if(Ll > 70000.f && J < 1.f) {
-#pragma omp critical
-{
-				printf("Why is Ll so big when J is so small?\n");
-				printf("J : %f, Ll : %f, xx : %f, yy : %f, zz : %f\n",J,Ll,xx,yy,zz);
-				printf("J : %f, C : %f, h : %f\n",J,C,h);
-}
-			}
-#endif
 			
 		// gamut control in Lab mode; I must study how to do with cIECAM only
 		if(gamu==1) {
@@ -1857,9 +1925,66 @@ if(LabPassOne){
 			lab->a[i][j]=aa;
 			lab->b[i][j]=bb;
 		}
+#endif
 		}
 		}
 		}
+#ifdef __SSE2__
+        // process line buffers
+        float *xbuffer = Qbuffer;
+        float *ybuffer = Mbuffer;
+        float *zbuffer = sbuffer;
+        for(k=0;k<bufferLength;k+=4) {
+            Ciecam02::jch2xyz_ciecam02float( x, y, z,
+                             LVF(Jbuffer[k]), LVF(Cbuffer[k]), LVF(hbuffer[k]),
+                             F2V(xw2), F2V(yw2), F2V(zw2),
+                             F2V(yb2), F2V(la2),
+                             F2V(f2),  F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz));
+            STVF(xbuffer[k],x*c655d35);
+            STVF(ybuffer[k],y*c655d35);
+            STVF(zbuffer[k],z*c655d35);
+        }
+        // XYZ2Lab uses a lookup table. The function behind that lut is a cube root.
+        // SSE can't beat the speed of that lut, so it doesn't make sense to use SSE
+        for(int j=0;j<width;j++) {
+            float Ll,aa,bb;
+                //convert xyz=>lab
+            Color::XYZ2Lab(xbuffer[j], ybuffer[j], zbuffer[j], Ll, aa, bb);
+
+            // gamut control in Lab mode; I must study how to do with cIECAM only
+            if(gamu==1) {
+                float HH, Lprov1, Chprov1;
+                Lprov1=Ll/327.68f;
+                Chprov1=sqrtf(SQR(aa) + SQR(bb))/327.68f;
+                HH=xatan2f(bb,aa);
+                float2  sincosval;
+                if(Chprov1==0.0f) {
+                    sincosval.y = 1.f;
+                    sincosval.x = 0.0f;
+                } else {
+                    sincosval.y = aa/(Chprov1*327.68f);
+                    sincosval.x = bb/(Chprov1*327.68f);
+                }
+#ifdef _DEBUG
+                bool neg=false;
+                bool more_rgb=false;
+                //gamut control : Lab values are in gamut
+                Color::gamutLchonly(sincosval,Lprov1,Chprov1, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
+#else
+                //gamut control : Lab values are in gamut
+                Color::gamutLchonly(sincosval,Lprov1,Chprov1, wip, highlight, 0.15f, 0.96f);
+#endif
+                lab->L[i][j]=Lprov1*327.68f;
+                lab->a[i][j]=327.68f*Chprov1*sincosval.y;
+                lab->b[i][j]=327.68f*Chprov1*sincosval.x;
+            } else {
+                lab->L[i][j]=Ll;
+                lab->a[i][j]=aa;
+                lab->b[i][j]=bb;
+            }
+        }
+#endif
+    }
 #pragma omp critical
 {
 	if(minQThr < minQ)
@@ -2023,12 +2148,20 @@ if((params->colorappearance.tonecie && (epdEnabled)) || (params->sharpening.enab
 #pragma omp parallel
 #endif
 {
-
+#ifdef __SSE2__
+    // one line buffer per channel
+	float Jbuffer[bufferLength] ALIGNED16;
+	float Cbuffer[bufferLength] ALIGNED16;
+	float hbuffer[bufferLength] ALIGNED16;
+	float *xbuffer = Jbuffer; // we can use one of the above buffers
+	float *ybuffer = Cbuffer; //             "
+	float *zbuffer = hbuffer; //             "
+#endif
 
 #ifndef _DEBUG
 		#pragma omp for schedule(dynamic, 10)
 #endif
-		for (int i=0; i<height; i++) // update CIECAM with new values after tone-mapping
+		for (int i=0; i<height; i++) { // update CIECAM with new values after tone-mapping
 			for (int j=0; j<width; j++) {
 				float xx,yy,zz;
 				float x,y,z;
@@ -2066,6 +2199,11 @@ if((params->colorappearance.tonecie && (epdEnabled)) || (params->sharpening.enab
 				}
 				//end histograms
 
+#ifdef __SSE2__
+                Jbuffer[j] = ncie->J_p[i][j];
+                Cbuffer[j] = ncie_C_p;
+                hbuffer[j] = ncie->h_p[i][j];
+#else
 				Ciecam02::jch2xyz_ciecam02float( xx, yy, zz,
 											 ncie->J_p[i][j],  ncie_C_p, ncie->h_p[i][j],
 											 xw2, yw2,  zw2,
@@ -2109,7 +2247,65 @@ if((params->colorappearance.tonecie && (epdEnabled)) || (params->sharpening.enab
 					lab->a[i][j]=aa;
 					lab->b[i][j]=bb;
 				}
+#endif
 			}
+#ifdef __SSE2__
+            // process line buffers
+            int k;
+            vfloat x,y,z;
+            vfloat c655d35 = F2V(655.35f);
+            for(k=0;k<bufferLength;k+=4) {
+                Ciecam02::jch2xyz_ciecam02float( x, y, z,
+                                         LVF(Jbuffer[k]), LVF(Cbuffer[k]), LVF(hbuffer[k]),
+                                         F2V(xw2), F2V(yw2), F2V(zw2),
+                                         F2V(yb2), F2V(la2),
+                                         F2V(f2), F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz));
+                x *= c655d35;
+                y *= c655d35;
+                z *= c655d35;
+                STVF(xbuffer[k],x);
+                STVF(ybuffer[k],y);
+                STVF(zbuffer[k],z);
+            }
+            // XYZ2Lab uses a lookup table. The function behind that lut is a cube root.
+            // SSE can't beat the speed of that lut, so it doesn't make sense to use SSE
+            for(int j=0;j<width;j++) {
+				float Ll,aa,bb;
+				//convert xyz=>lab
+				Color::XYZ2Lab(xbuffer[j], ybuffer[j], zbuffer[j], Ll, aa, bb);
+				if(gamu==1) {
+					float Lprov1, Chprov1;
+					Lprov1=Ll/327.68f;
+					Chprov1=sqrtf(SQR(aa) + SQR(bb))/327.68f;
+					float2  sincosval;
+					if(Chprov1==0.0f) {
+						sincosval.y = 1.f;
+						sincosval.x = 0.0f;
+					} else {
+						sincosval.y = aa/(Chprov1*327.68f);
+						sincosval.x = bb/(Chprov1*327.68f);
+					}
+#ifdef _DEBUG
+					bool neg=false;
+					bool more_rgb=false;
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(sincosval,Lprov1,Chprov1, wipa, highlight, 0.15f, 0.96f, neg, more_rgb);
+#else
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(sincosval,Lprov1,Chprov1, wipa, highlight, 0.15f, 0.96f);
+#endif
+					lab->L[i][j]=Lprov1*327.68f;
+					lab->a[i][j]=327.68f*Chprov1*sincosval.y;
+					lab->b[i][j]=327.68f*Chprov1*sincosval.x;
+				} else {
+					lab->L[i][j]=Ll;
+					lab->a[i][j]=aa;
+					lab->b[i][j]=bb;
+				}
+
+            }
+#endif // __SSE2__
+        }
 
 } //end parallelization
 
