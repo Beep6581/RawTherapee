@@ -316,6 +316,9 @@ public:
 	*/
 	static void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z);
 
+#ifdef __SSE2__
+    static void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z);
+#endif // __SSE2__
 
 	/**
 	* @brief Convert xyz in Lab
@@ -439,7 +442,15 @@ public:
 
 		return (f > epsilonExpInv3) ? f*f*f : (116.f * f - 16.f) * kappaInv;
 	}
-
+#ifdef __SSE2__
+	static inline vfloat f2xyz(vfloat f) {
+		const vfloat epsilonExpInv3 = F2V(0.20689655f); // 6.0f/29.0f;
+		const vfloat kappaInv = F2V(0.0011070565f); // 27.0f/24389.0f;  // inverse of kappa
+		vfloat res1 = f*f*f;
+		vfloat res2 = (116.f * f - 16.f) * kappaInv;
+		return vself(vmaskf_gt(f, epsilonExpInv3), res1, res2);
+	}
+#endif
 
 	/**
 	 * @brief Calculate the effective direction (up or down) to linearly interpolating 2 colors so that it follows the shortest or longest path

@@ -859,6 +859,25 @@ namespace rtengine {
         y=(LL>epskap) ? 65535.0f*fy*fy*fy : 65535.0f*LL/kappa;
     }
 
+#ifdef __SSE2__
+    void Color::Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z) {
+        vfloat c327d68 = F2V(327.68f);
+        L /= c327d68;
+        a /= c327d68;
+        b /= c327d68;
+        vfloat fy = F2V(0.00862069f) * L + F2V(0.137932f);
+        vfloat fx = F2V(0.002f) * a + fy;
+        vfloat fz = fy - (F2V(0.005f) * b);
+        vfloat c65535 = F2V(65535.f);
+        x = c65535*f2xyz(fx)*F2V(D50x);
+        z = c65535*f2xyz(fz)*F2V(D50z);
+        vfloat res1 = fy*fy*fy;
+        vfloat res2 = L / F2V(kappa);
+		y = vself(vmaskf_gt(L, F2V(epskap)), res1, res2);
+		y *= c65535;
+    }
+#endif // __SSE2__
+
     void Color::XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b) {
 
         float x = X/D50x;

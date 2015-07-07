@@ -64,6 +64,7 @@ typedef __m128i vint2;
 #endif
 
 #define ZEROV _mm_setzero_ps()
+#define F2V(a) _mm_set1_ps((a))
 
 static INLINE vint vrint_vi_vd(vdouble vd) { return _mm_cvtpd_epi32(vd); }
 static INLINE vint vtruncate_vi_vd(vdouble vd) { return _mm_cvttpd_epi32(vd); }
@@ -126,6 +127,7 @@ static INLINE vmask vandm(vmask x, vmask y) { return _mm_and_si128(x, y); }
 static INLINE vmask vandnotm(vmask x, vmask y) { return _mm_andnot_si128(x, y); }
 static INLINE vmask vorm(vmask x, vmask y) { return _mm_or_si128(x, y); }
 static INLINE vmask vxorm(vmask x, vmask y) { return _mm_xor_si128(x, y); }
+static INLINE vmask vnotm(vmask x) { return _mm_xor_si128(x, _mm_cmpeq_epi32(_mm_setzero_si128(), _mm_setzero_si128())); }
 
 static INLINE vmask vmask_eq(vdouble x, vdouble y) { return (__m128i)_mm_cmpeq_pd(x, y); }
 static INLINE vmask vmask_neq(vdouble x, vdouble y) { return (__m128i)_mm_cmpneq_pd(x, y); }
