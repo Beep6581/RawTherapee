@@ -516,7 +516,7 @@ void WaveletParams::setDefaults() {
 	Backmethod      	 = "grey";
 	Dirmethod      	 = "all";
 	Tilesmethod      	 = "full";
-	choicemethod      	 = "4_";
+	daubcoeffmethod      	 = "4_";
 	rescon      = 0;
 	resconH      = 0;
 	reschro      = 0;
@@ -1629,7 +1629,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
 	if (!pedited || pedited->wavelet.iter)    keyFile.set_integer ("Wavelet", "Iter", wavelet.iter);
 	if (!pedited || pedited->wavelet.thres)  keyFile.set_integer  ("Wavelet", "MaxLev",  wavelet.thres);
     if (!pedited || pedited->wavelet.Tilesmethod)  keyFile.set_string  ("Wavelet", "TilesMethod",  wavelet.Tilesmethod);
-    if (!pedited || pedited->wavelet.choicemethod)  keyFile.set_string  ("Wavelet", "DaubMethod",  wavelet.choicemethod);
+    if (!pedited || pedited->wavelet.daubcoeffmethod)  keyFile.set_string  ("Wavelet", "DaubMethod",  wavelet.daubcoeffmethod);
     if (!pedited || pedited->wavelet.CLmethod)  keyFile.set_string  ("Wavelet", "ChoiceLevMethod",  wavelet.CLmethod);
     if (!pedited || pedited->wavelet.Backmethod)  keyFile.set_string  ("Wavelet", "BackMethod",  wavelet.Backmethod);
     if (!pedited || pedited->wavelet.Lmethod)  keyFile.set_string  ("Wavelet", "LevMethod",  wavelet.Lmethod);
@@ -2544,7 +2544,7 @@ if (keyFile.has_group ("Wavelet")) {
     if (keyFile.has_key ("Wavelet", "ChoiceLevMethod"))     {wavelet.CLmethod  = keyFile.get_string  ("Wavelet", "ChoiceLevMethod"); if (pedited) pedited->wavelet.CLmethod = true; }
     if (keyFile.has_key ("Wavelet", "BackMethod"))     {wavelet.Backmethod  = keyFile.get_string  ("Wavelet", "BackMethod"); if (pedited) pedited->wavelet.Backmethod = true; }
     if (keyFile.has_key ("Wavelet", "TilesMethod"))     {wavelet.Tilesmethod  = keyFile.get_string  ("Wavelet", "TilesMethod"); if (pedited) pedited->wavelet.Tilesmethod = true; }
-    if (keyFile.has_key ("Wavelet", "DaubMethod"))     {wavelet.choicemethod  = keyFile.get_string  ("Wavelet", "DaubMethod"); if (pedited) pedited->wavelet.choicemethod = true; }
+    if (keyFile.has_key ("Wavelet", "DaubMethod"))     {wavelet.daubcoeffmethod  = keyFile.get_string  ("Wavelet", "DaubMethod"); if (pedited) pedited->wavelet.daubcoeffmethod = true; }
     if (keyFile.has_key ("Wavelet", "CHromaMethod"))     {wavelet.CHmethod  = keyFile.get_string  ("Wavelet", "CHromaMethod"); if (pedited) pedited->wavelet.CHmethod = true; }
     if (keyFile.has_key ("Wavelet", "Medgreinf"))     {wavelet.Medgreinf  = keyFile.get_string  ("Wavelet", "Medgreinf"); if (pedited) pedited->wavelet.Medgreinf = true; }
     if (keyFile.has_key ("Wavelet", "CHSLromaMethod"))     {wavelet.CHSLmethod  = keyFile.get_string  ("Wavelet", "CHSLromaMethod"); if (pedited) pedited->wavelet.CHSLmethod = true; }
@@ -3200,7 +3200,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& wavelet.CLmethod == other.wavelet.CLmethod
 		&& wavelet.Backmethod == other.wavelet.Backmethod
 		&& wavelet.Tilesmethod == other.wavelet.Tilesmethod
-		&& wavelet.choicemethod == other.wavelet.choicemethod
+		&& wavelet.daubcoeffmethod == other.wavelet.daubcoeffmethod
 		&& wavelet.CHmethod == other.wavelet.CHmethod
 		&& wavelet.CHSLmethod == other.wavelet.CHSLmethod
 		&& wavelet.EDmethod == other.wavelet.EDmethod

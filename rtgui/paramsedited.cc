@@ -372,7 +372,7 @@ void ParamsEdited::set (bool v) {
 	wavelet.CLmethod = v;
 	wavelet.Backmethod = v;
 	wavelet.Tilesmethod = v;
-	wavelet.choicemethod = v;
+	wavelet.daubcoeffmethod = v;
 	wavelet.CHmethod = v;
 	wavelet.CHSLmethod = v;
 	wavelet.EDmethod = v;
@@ -803,7 +803,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         wavelet.CLmethod = wavelet.CLmethod && p.wavelet.CLmethod == other.wavelet.CLmethod;
         wavelet.Backmethod = wavelet.Backmethod && p.wavelet.Backmethod == other.wavelet.Backmethod;
         wavelet.Tilesmethod = wavelet.Tilesmethod && p.wavelet.Tilesmethod == other.wavelet.Tilesmethod;
-        wavelet.choicemethod = wavelet.choicemethod && p.wavelet.choicemethod == other.wavelet.choicemethod;
+        wavelet.daubcoeffmethod = wavelet.daubcoeffmethod && p.wavelet.daubcoeffmethod == other.wavelet.daubcoeffmethod;
         wavelet.CHmethod = wavelet.CHmethod && p.wavelet.CHmethod == other.wavelet.CHmethod;
         wavelet.CHSLmethod = wavelet.CHSLmethod && p.wavelet.CHSLmethod == other.wavelet.CHSLmethod;
         wavelet.EDmethod = wavelet.EDmethod && p.wavelet.EDmethod == other.wavelet.EDmethod;
@@ -1238,7 +1238,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (wavelet.CLmethod)		toEdit.wavelet.CLmethod		= mods.wavelet.CLmethod;
 	if (wavelet.Backmethod)		toEdit.wavelet.Backmethod		= mods.wavelet.Backmethod;
 	if (wavelet.Tilesmethod)		toEdit.wavelet.Tilesmethod		= mods.wavelet.Tilesmethod;
-	if (wavelet.choicemethod)		toEdit.wavelet.choicemethod		= mods.wavelet.choicemethod;
+	if (wavelet.daubcoeffmethod)		toEdit.wavelet.daubcoeffmethod		= mods.wavelet.daubcoeffmethod;
 	if (wavelet.CHmethod)		toEdit.wavelet.CHmethod		= mods.wavelet.CHmethod;
 	if (wavelet.CHSLmethod)		toEdit.wavelet.CHSLmethod		= mods.wavelet.CHSLmethod;
 	if (wavelet.EDmethod)		toEdit.wavelet.EDmethod		= mods.wavelet.EDmethod;

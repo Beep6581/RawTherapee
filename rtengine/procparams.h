@@ -896,7 +896,7 @@ class WaveletParams {
         Glib::ustring CLmethod;
         Glib::ustring Backmethod;
         Glib::ustring Tilesmethod;
-        Glib::ustring choicemethod;
+        Glib::ustring daubcoeffmethod;
         Glib::ustring CHmethod;
         Glib::ustring Medgreinf;
         Glib::ustring CHSLmethod;
