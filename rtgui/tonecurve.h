@@ -41,6 +41,7 @@ class ToneCurve : public ToolParamBlock, public AdjusterListener, public Foldabl
     Gtk::HBox* hlrbox;
 
     Gtk::ToggleButton* autolevels;
+    Gtk::Label* lclip;
     MySpinButton* sclip;
     Gtk::Button* neutral;
     Adjuster* expcomp;

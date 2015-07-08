@@ -41,19 +41,19 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
 
    setEnabledTooltipMarkup(M("TP_SHARPENING_TOOLTIP"));
 
-    Gtk::HBox * buttonBox1 = Gtk::manage (new Gtk::HBox());
-    pack_start(*buttonBox1, Gtk::PACK_SHRINK, 2);
+    Gtk::HBox * buttonBox1 = Gtk::manage (new Gtk::HBox(true, 10));
+    pack_start(*buttonBox1);
 
         Gtk::Button * lumacontrastMinusButton = Gtk::manage (new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")));
-        buttonBox1->pack_start(*lumacontrastMinusButton, Gtk::PACK_SHRINK, 2);
+        buttonBox1->pack_start(*lumacontrastMinusButton);
         lumacontrastMinusPressedConn = lumacontrastMinusButton->signal_pressed().connect( sigc::mem_fun(*this, &DirPyrEqualizer::lumacontrastMinusPressed));
 
         Gtk::Button * lumaneutralButton = Gtk::manage (new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")));
-        buttonBox1->pack_start(*lumaneutralButton, Gtk::PACK_SHRINK, 2);
+        buttonBox1->pack_start(*lumaneutralButton);
         lumaneutralPressedConn = lumaneutralButton->signal_pressed().connect( sigc::mem_fun(*this, &DirPyrEqualizer::lumaneutralPressed));
-        
+
         Gtk::Button * lumacontrastPlusButton = Gtk::manage (new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")));
-        buttonBox1->pack_start(*lumacontrastPlusButton, Gtk::PACK_SHRINK, 2);
+        buttonBox1->pack_start(*lumacontrastPlusButton);
         lumacontrastPlusPressedConn = lumacontrastPlusButton->signal_pressed().connect( sigc::mem_fun(*this, &DirPyrEqualizer::lumacontrastPlusPressed));
 
     buttonBox1->show_all_children();
