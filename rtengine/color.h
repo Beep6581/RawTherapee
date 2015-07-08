@@ -447,7 +447,7 @@ public:
 		const vfloat epsilonExpInv3 = F2V(0.20689655f); // 6.0f/29.0f;
 		const vfloat kappaInv = F2V(0.0011070565f); // 27.0f/24389.0f;  // inverse of kappa
 		vfloat res1 = f*f*f;
-		vfloat res2 = (116.f * f - 16.f) * kappaInv;
+		vfloat res2 = (F2V(116.f) * f - F2V(16.f)) * kappaInv;
 		return vself(vmaskf_gt(f, epsilonExpInv3), res1, res2);
 	}
 #endif
