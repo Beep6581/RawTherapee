@@ -994,6 +994,17 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname, bool 
 		delete im;
 		im = tmpim;
 	}
+
+        // image may contain out of range samples, clip them to avoid wrap-arounds
+#pragma omp parallel for
+        for(int i=0;i<im->height;i++) {
+            for(int j=0;j<im->width;j++) {
+                im->r(i,j) = CLIP(im->r(i,j));
+                im->g(i,j) = CLIP(im->g(i,j));
+                im->b(i,j) = CLIP(im->b(i,j));
+            }
+        }
+
 	Image16* im16 = im->to16();
 	delete im;
 
