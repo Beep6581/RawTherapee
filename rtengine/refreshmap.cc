@@ -362,7 +362,7 @@ DIRPYREQUALIZER,  // EvWavHueskin2
 DIRPYREQUALIZER,  // EvWavedgrad
 DIRPYREQUALIZER,  // EvWavedgval
 DIRPYREQUALIZER,  // EvWavStrngth
-DIRPYREQUALIZER,  // EvWavchoicemet
+DIRPYREQUALIZER,  // EvWavdaubcoeffmet
 DIRPYREQUALIZER,  // EvWavedgreinf
 DIRPYREQUALIZER,  // EvWaveletch
 DIRPYREQUALIZER,  //EvWavCHSLmet

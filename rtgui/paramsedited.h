@@ -503,7 +503,7 @@ class WaveletParamsEdited {
 		bool CLmethod;
 		bool Backmethod;
 		bool Tilesmethod;
-		bool choicemethod;
+		bool daubcoeffmethod;
 		bool Dirmethod;
 		bool rescon;
 		bool resconH;

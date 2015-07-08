@@ -45,6 +45,7 @@ protected:
     Gtk::HSeparator* colorSep;
     Gtk::HSeparator* separator3;
     Gtk::HSeparator* separatorCB;
+    Gtk::HSeparator* separatorNeutral;
 	
     CurveEditorGroup* opaCurveEditorG;
     FlatCurveEditor* opacityShapeRG;
@@ -141,8 +142,8 @@ protected:
     sigc::connection  Backmethodconn;
     MyComboBoxText*   Tilesmethod;
     sigc::connection  Tilesmethodconn;
-    MyComboBoxText*   choicemethod;
-    sigc::connection  choicemethodconn;
+    MyComboBoxText*   daubcoeffmethod;
+    sigc::connection  daubcoeffmethodconn;
     MyComboBoxText*   Dirmethod;
     sigc::connection  Dirmethodconn;
     MyComboBoxText*   Medgreinf;
@@ -161,13 +162,13 @@ protected:
 	Gtk::Frame *chanMixerHLFrame;
 	Gtk::Frame *chanMixerMidFrame;
 	Gtk::Frame *chanMixerShadowsFrame;
+	Gtk::Frame *dFrame;
 	
     Gtk::Label* colLabel;
     Gtk::Label* interLabel;
 	Gtk::Label* wavLabels;
-	Gtk::Label* wavLabelsch;
     Gtk::Label* hsmethodLabel;
-	Gtk::Label* choiceLabel;
+	Gtk::Label* daubcoeffLabel;
 	Gtk::Label* ColorBalanceLabel;
 	Gtk::Label* labmC;
 	Gtk::Label* labmch;
@@ -176,26 +177,26 @@ protected:
 	Gtk::Label* labmBA;
 	Gtk::Label* labmedgr;
 	Gtk::Label* labmednois;	
-	Gtk::Expander* expcontrast;	
-	Gtk::Expander* expresid;
-	Gtk::Expander* expgamut;	
-	Gtk::Expander* expfinal;	
-	Gtk::Expander* expchroma;	
-	Gtk::Expander* exptoning;	
-	Gtk::Expander* expdisplay;	
-	Gtk::Expander* expnoise;	
-	Gtk::Expander* expedge;	
-	Gtk::HBox* hbresid;
-    Gtk::HBox* tilesizeHBox;
-    Gtk::HBox* previewLevelsHBox;
-    Gtk::HBox* previewBackHBox;
-    Gtk::HBox* previewLDirHBox;
-    Gtk::HBox* hsmethodHBox;
-    Gtk::HBox* choiceHBox;
+	MyExpander* expchroma;	
+	MyExpander* expcontrast;	
+	MyExpander* expedge;	
+	MyExpander* expfinal;	
+	MyExpander* expgamut;	
+	MyExpander* expnoise;	
+	MyExpander* expresid;
+	MyExpander* expsettings;	
+	MyExpander* exptoning;	
+	Gtk::HBox* ctboxCB;
 	Gtk::HBox* ctboxCH;
 	Gtk::HBox* ctboxED;
 	Gtk::HBox* ctboxTM;
-	Gtk::HBox* ctboxCB;
+	Gtk::HBox* hbresid;
+    Gtk::HBox* backgroundHBox;
+    Gtk::HBox* daubcoeffHBox;
+    Gtk::HBox* hsmethodHBox;
+    Gtk::HBox* levdirMainHBox;
+    Gtk::HBox* levdirSubHBox;
+    Gtk::HBox* tilesizeHBox;
 	
 	Gtk::HBox* ctboxBA;
 	Gtk::HBox* ctboxch;
@@ -205,8 +206,8 @@ protected:
     Gtk::VBox* settingsVBox;
     Gtk::VBox* contrastSHVBox;
     Gtk::Label* tilesizeLabel;
-    Gtk::Label* previewLevelsLabel;
-    Gtk::Label* previewBackLabel;
+    Gtk::Label* levdirMainLabel;
+    Gtk::Label* backgroundLabel;
     Gtk::Button* neutral;
     Gtk::HBox* neutrHBox;
 	
@@ -254,7 +255,7 @@ public:
     void contrastPlusPressed ();
     void contrastMinusPressed ();
     void LmethodChanged      ();
-    void choicemethodChanged      ();
+    void daubcoeffmethodChanged      ();
     void CHmethodChanged      ();
     void MedgreinfChanged      ();
     void CHSLmethodChanged      ();

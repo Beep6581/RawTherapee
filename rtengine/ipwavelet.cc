@@ -211,11 +211,11 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 
 	//int DaubLen = settings->daubech ? 8 : 6;
 	int DaubLen;
-	if(params->wavelet.choicemethod=="2_")	DaubLen=4;			
-	if(params->wavelet.choicemethod=="4_")	DaubLen=6;			
-	if(params->wavelet.choicemethod=="6_")	DaubLen=8;			
-	if(params->wavelet.choicemethod=="10_")  DaubLen=12;					
-	if(params->wavelet.choicemethod=="14_")  DaubLen=16;					
+	if(params->wavelet.daubcoeffmethod=="2_")	DaubLen=4;			
+	if(params->wavelet.daubcoeffmethod=="4_")	DaubLen=6;			
+	if(params->wavelet.daubcoeffmethod=="6_")	DaubLen=8;			
+	if(params->wavelet.daubcoeffmethod=="10_")  DaubLen=12;					
+	if(params->wavelet.daubcoeffmethod=="14_")  DaubLen=16;					
 	
 	cp.CHSLmet=1;
 //	if(params->wavelet.CHSLmethod=="SL")	cp.CHSLmet=1;			
@@ -231,7 +231,6 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 	cp.grmed=(float)params->wavelet.greenmed;
 	cp.bllow=(float)params->wavelet.bluelow;
 	cp.grlow=(float)params->wavelet.greenlow;
-	printf("blmed=%f grmed=%f\n",cp.blmed,cp.grmed);
 	cp.curv=false;
 	cp.edgcurv=false;
 	cp.diagcurv=false;
