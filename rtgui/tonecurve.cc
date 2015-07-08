@@ -37,17 +37,20 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
 //----------- Auto Levels ----------------------------------
   abox = Gtk::manage (new Gtk::HBox ());
   abox->set_border_width (2);
+  abox->set_spacing (10);
 
   autolevels = Gtk::manage (new Gtk::ToggleButton (M("TP_EXPOSURE_AUTOLEVELS")));
   autolevels->set_tooltip_markup (M("TP_EXPOSURE_AUTOLEVELS_TIP"));
   autoconn = autolevels->signal_toggled().connect( sigc::mem_fun(*this, &ToneCurve::autolevels_toggled) );
 
+  lclip = Gtk::manage (new Gtk::Label (M("TP_EXPOSURE_CLIP")));
+  lclip->set_tooltip_text (M("TP_EXPOSURE_CLIP_TIP"));
+
   sclip = Gtk::manage (new MySpinButton ());
   sclip->set_range (0.0, 0.99);
-  sclip->set_increments (0.01, 0.01);
+  sclip->set_increments (0.01, 0.10);
   sclip->set_value (0.02);
   sclip->set_digits (2);
-  sclip->set_tooltip_text (M("TP_EXPOSURE_CLIP_TIP"));
   sclip->signal_value_changed().connect( sigc::mem_fun(*this, &ToneCurve::clip_changed) );
 
   neutral = Gtk::manage (new Gtk::Button (M("TP_NEUTRAL")));
@@ -55,12 +58,11 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
   neutralconn = neutral->signal_pressed().connect( sigc::mem_fun(*this, &ToneCurve::neutral_pressed) );
   neutral->show();
 
-  abox->pack_start (*autolevels);
+  abox->pack_start (*autolevels, true, true, 0);
   // pack_end is used for these controls as autolevels is replaceable using pack_start in batchmode
-  abox->pack_end (*neutral);
-  abox->pack_end (*Gtk::manage (new Gtk::Label (" "))); //spacer
-  abox->pack_end (*sclip);
-  abox->pack_end (*Gtk::manage (new Gtk::Label (M("TP_EXPOSURE_CLIP"))));
+  abox->pack_end (*neutral, true, true, 0);
+  abox->pack_end (*sclip, false, false, 0);
+  abox->pack_end (*lclip, false, false, 0);
   pack_start (*abox);
 
 //-------------- Highlight Reconstruction -----------------
