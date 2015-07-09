@@ -69,7 +69,6 @@ protected:
     Gtk::CheckButton * median;
     Gtk::CheckButton * medianlev;
     Gtk::CheckButton * linkedg;
-//    Gtk::CheckButton * edgreinf;
     Gtk::CheckButton * cbenab;
     Gtk::CheckButton * lipst;
     Gtk::CheckButton * avoid;
@@ -225,54 +224,65 @@ protected:
 	double bl;
 
 public:
-
     Wavelet ();
     virtual ~Wavelet ();
-    void curveChanged 	(CurveEditor* ce);
-    void setEditProvider     (EditDataProvider *provider);
-    void autoOpenCurve  ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
-    void setBatchMode   (bool batchMode);
-    void adjusterChanged2 (ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
-	void setAdjusterBehavior (bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd,bool chromaadd, bool contrastadd, bool skinadd, bool reschroadd, bool tmrsadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool skyadd, bool edgradadd, bool edgvaladd, bool strengthadd, bool gammaadd, bool edgedetectadd, bool edgedetectthradd, bool edgedetectthr2add);
-   
+    bool wavComputed_ ();
+    void adjusterChanged       (ThresholdAdjuster* a, double newBottom, double newTop);
     void adjusterChanged (Adjuster* a, double newval);
-	void adjusterChanged       (ThresholdAdjuster* a, double newBottom, double newTop);
-	
+    void adjusterChanged2 (ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
+    void autoOpenCurve  ();
+    void curveChanged 	(CurveEditor* ce);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
+    void setAdjusterBehavior (bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd,bool chromaadd, bool contrastadd, bool skinadd, bool reschroadd, bool tmrsadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool skyadd, bool edgradadd, bool edgvaladd, bool strengthadd, bool gammaadd, bool edgedetectadd, bool edgedetectthradd, bool edgedetectthr2add);
+    void setBatchMode   (bool batchMode);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void setEditProvider     (EditDataProvider *provider);
+    void updateToolState(std::vector<int> &tpOpen);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void writeOptions(std::vector<int> &tpOpen);
+
+private:
+    void foldAllButSettings (GdkEventButton* event);
+    void foldAllButContrast (GdkEventButton* event);
+    void foldAllButChroma (GdkEventButton* event);
+    void foldAllButToning (GdkEventButton* event);
+    void foldAllButNoise (GdkEventButton* event);
+    void foldAllButEdge (GdkEventButton* event);
+    void foldAllButGamut (GdkEventButton* event);
+    void foldAllButResid (GdkEventButton* event);
+    void foldAllButFinal (GdkEventButton* event);
+    void foldAllButOne (MyExpander * whichOne);
+
+    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
+    void BAmethodChanged      ();
+    void BackmethodChanged      ();
+    void CHSLmethodChanged      ();
+    void CHmethodChanged      ();
+    void CLmethodChanged      ();
+    void DirmethodChanged      ();
+    void EDmethodChanged      ();
+    void HSmethodChanged      ();
+    void LmethodChanged      ();
+    void MedgreinfChanged      ();
+    void TMmethodChanged      ();
+    void TilesmethodChanged      ();
+    void avoidToggled ();
+    void cbenabToggled ();
+    void contrastMinusPressed ();
+    void contrastPlusPressed ();
+    void daubcoeffmethodChanged      ();
     void enabledChanged ();
+    void linkedgToggled ();
+    void lipstToggled ();
     void medianToggled ();
     void medianlevToggled ();
-    void linkedgToggled ();
-    void cbenabToggled ();
-    void lipstToggled ();
-    void avoidToggled ();
-    void tmrToggled ();
     void neutralPressed ();
-    void neutralchPressed ();
-    void contrastPlusPressed ();
-    void contrastMinusPressed ();
-    void LmethodChanged      ();
-    void daubcoeffmethodChanged      ();
-    void CHmethodChanged      ();
-    void MedgreinfChanged      ();
-    void CHSLmethodChanged      ();
-    void EDmethodChanged      ();
-    void BAmethodChanged      ();
-    void TMmethodChanged      ();
-    void HSmethodChanged      ();
-    void CLmethodChanged      ();
-    void BackmethodChanged      ();
-    void TilesmethodChanged      ();
-    void DirmethodChanged      ();
-    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
-    void wavChanged (double nlevel);
-    bool wavComputed_ ();
-	void updatewavLabel      ();
     void neutral_pressed       ();
-	
+    void neutralchPressed ();
+    void tmrToggled ();
+    void updatewavLabel      ();
+    void wavChanged (double nlevel);
 };
 
 #endif

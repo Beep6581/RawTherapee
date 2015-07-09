@@ -5,7 +5,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,7 +18,6 @@
  */
 
 #include "wavelet.h"
-#include <iomanip>
 #include <cmath>
 #include "edit.h"
 #include "guiutils.h"
@@ -27,7 +26,7 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 extern Options options;
 
-Wavelet::Wavelet () :  FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), true, true) {
+Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), true, true) {
     std::vector<GradientMilestone> milestones;
     CurveListener::setMulti(true);
     nextnlevel=7.;
@@ -56,14 +55,23 @@ Wavelet::Wavelet () :  FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"),
     std::vector<double> defaultCurve;
 
     expsettings = new MyExpander (false, M("TP_WAVELET_SETTINGS"));
+    expsettings->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButSettings) );
     expcontrast = new MyExpander (false, M("TP_WAVELET_LEVF"));
+    expcontrast->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButContrast) );
     expchroma = new MyExpander (false, M("TP_WAVELET_LEVCH"));
+    expchroma->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButChroma) );
     exptoning = new MyExpander (false,M("TP_WAVELET_TON"));
+    exptoning->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButToning) );
     expnoise = new MyExpander (false, M("TP_WAVELET_NOISE"));
+    expnoise->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButNoise) );
     expedge = new MyExpander (false, M("TP_WAVELET_EDGE"));
+    expedge->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButEdge) );
     expgamut = new MyExpander (false, M("TP_WAVELET_CONTR"));
+    expgamut->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButGamut) );
     expresid = new MyExpander (false, M("TP_WAVELET_RESID"));
+    expresid->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButResid) );
     expfinal = new MyExpander (false, M("TP_WAVELET_FINAL"));
+    expfinal->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButFinal) );
 
 // Wavelet Settings
     settingsVBox = Gtk::manage (new Gtk::VBox());
@@ -2618,6 +2626,98 @@ void Wavelet::contrastMinusPressed () {
         int inc = -1 * (9 - i);
         correction[i]->setValue(correction[i]->getValue() + inc);
         adjusterChanged(correction[i], correction[i]->getValue());
+    }
+}
+
+void Wavelet::foldAllButSettings (GdkEventButton* event) {
+    if (event->button == 3) {
+        foldAllButOne(expsettings);
+    }
+}
+
+void Wavelet::foldAllButContrast (GdkEventButton* event) {
+    if (event->button == 3) {
+        foldAllButOne(expcontrast);
+    }
+}
+
+void Wavelet::foldAllButChroma (GdkEventButton* event) {
+    if (event->button == 3) {
+        foldAllButOne(expchroma);
+    }
+}
+
+void Wavelet::foldAllButToning (GdkEventButton* event) {
+    if (event->button == 3) {
+        foldAllButOne(exptoning);
+    }
+}
+
+void Wavelet::foldAllButNoise (GdkEventButton* event) {
+    if (event->button == 3) {
+        foldAllButOne(expnoise);
+    }
+}
+
+void Wavelet::foldAllButEdge (GdkEventButton* event) {
+    if (event->button == 3) {
+        foldAllButOne(expedge);
+    }
+}
+
+void Wavelet::foldAllButGamut (GdkEventButton* event) {
+    if (event->button == 3) {
+        foldAllButOne(expgamut);
+    }
+}
+
+void Wavelet::foldAllButResid (GdkEventButton* event) {
+    if (event->button == 3) {
+        foldAllButOne(expresid);
+    }
+}
+
+void Wavelet::foldAllButFinal (GdkEventButton* event) {
+    if (event->button == 3) {
+        foldAllButOne(expfinal);
+    }
+}
+
+void Wavelet::foldAllButOne (MyExpander * whichOne) {
+    expsettings->set_expanded(expsettings == whichOne);
+    expcontrast->set_expanded(expcontrast == whichOne);
+    expchroma->set_expanded(expchroma == whichOne);
+    exptoning->set_expanded(exptoning == whichOne);
+    expnoise->set_expanded(expnoise == whichOne);
+    expedge->set_expanded(expedge == whichOne);
+    expgamut->set_expanded(expgamut == whichOne);
+    expresid->set_expanded(expresid == whichOne);
+    expfinal->set_expanded(expfinal == whichOne);
+}
+
+void Wavelet::writeOptions(std::vector<int> &tpOpen) {
+    tpOpen.push_back (expsettings->get_expanded ());
+    tpOpen.push_back (expcontrast->get_expanded ());
+    tpOpen.push_back (expchroma->get_expanded ());
+    tpOpen.push_back (exptoning->get_expanded ());
+    tpOpen.push_back (expnoise->get_expanded ());
+    tpOpen.push_back (expedge->get_expanded ());
+    tpOpen.push_back (expgamut->get_expanded ());
+    tpOpen.push_back (expresid->get_expanded ());
+    tpOpen.push_back (expfinal->get_expanded ());
+}
+
+void Wavelet::updateToolState(std::vector<int> &tpOpen) {
+    if(tpOpen.size() == 9) {
+        expsettings->set_expanded(tpOpen.at(0));
+        expcontrast->set_expanded(tpOpen.at(1));
+        expchroma->set_expanded(tpOpen.at(2));
+        exptoning->set_expanded(tpOpen.at(3));
+        expnoise->set_expanded(tpOpen.at(4));
+        expedge->set_expanded(tpOpen.at(5));
+        expgamut->set_expanded(tpOpen.at(6));
+        expresid->set_expanded(tpOpen.at(7));
+        expfinal->set_expanded(tpOpen.at(8));
     }
 }
 
