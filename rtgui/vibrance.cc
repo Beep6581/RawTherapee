@@ -19,7 +19,6 @@
 
 #include "vibrance.h"
 #include "../rtengine/color.h"
-#include <iomanip>
 
 using namespace rtengine;
 using namespace rtengine::procparams;

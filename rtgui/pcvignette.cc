@@ -2,7 +2,6 @@
  *  This file is part of RawTherapee.
  */
 #include "pcvignette.h"
-#include <iomanip>
 
 using namespace rtengine;
 using namespace rtengine::procparams;

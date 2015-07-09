@@ -18,7 +18,6 @@
  */
 #include "colorappearance.h"
 #include <cmath>
-#include <iomanip>
 #include "guiutils.h"
 #include "../rtengine/color.h"
 
