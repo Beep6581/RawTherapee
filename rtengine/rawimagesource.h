@@ -63,7 +63,7 @@ class RawImageSource : public ImageSource {
         static DiagonalCurve *phaseOneIccCurveInv;
         static LUTf invGrad;  // for fast_demosaic
         static LUTf initInvGrad ();
-        static void colorSpaceConversion_ (Imagefloat* im, ColorManagementParams &cmp, ColorTemp &wb, double pre_mul[3], const RAWParams &raw, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
+        static void colorSpaceConversion_ (Imagefloat* im, ColorManagementParams &cmp, ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
 
     protected:
         MyMutex getImageMutex;  // locks getImage
@@ -177,10 +177,10 @@ class RawImageSource : public ImageSource {
         void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
         DCPProfile *getDCP(ColorManagementParams cmp, ColorTemp &wb);
             
-        void convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb, RAWParams raw);
+        void convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb);
         static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in);
-        static void colorSpaceConversion   (Imagefloat* im, ColorManagementParams cmp, ColorTemp &wb, double pre_mul[3], RAWParams raw, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName) {
-            colorSpaceConversion_ (im, cmp, wb, pre_mul, raw, embedded, camprofile, cam, camName);
+        static void colorSpaceConversion   (Imagefloat* im, ColorManagementParams cmp, ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName) {
+            colorSpaceConversion_ (im, cmp, wb, pre_mul, embedded, camprofile, cam, camName);
         }
         static void inverse33 (const double (*coeff)[3], double (*icoeff)[3]);
 

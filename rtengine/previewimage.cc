@@ -127,7 +127,7 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
 			Imagefloat* image = new rtengine::Imagefloat (fw, fh);
 			rawImage.getImage (wb, TR_NONE, image, pp, params.toneCurve, params.icm, params.raw);
 			output = new Image8(fw, fh);
-			rawImage.convertColorSpace(image, params.icm, wb, params.raw);
+			rawImage.convertColorSpace(image, params.icm, wb);
 			StopWatch Stop1("inspector loop");
 #pragma omp parallel for schedule(dynamic, 10)
 			for (int i=0; i<fh; ++i)

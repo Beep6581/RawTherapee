@@ -453,8 +453,6 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
         else if (ri->getSensorType()==ST_FUJI_XTRANS)
             processFalseColorCorrection (image, raw.xtranssensor.ccSteps);
     }
-    // *** colorSpaceConversion was here ***
-    //colorSpaceConversion (image, cmp, raw, embProfile, camProfile, xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
 }
 
 DCPProfile *RawImageSource::getDCP(ColorManagementParams cmp, ColorTemp &wb) {
@@ -468,9 +466,9 @@ DCPProfile *RawImageSource::getDCP(ColorManagementParams cmp, ColorTemp &wb) {
     return dcpProf;
 }
     
-void RawImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb, RAWParams raw) {
+void RawImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb) {
     double pre_mul[3] = { ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2) };
-    colorSpaceConversion (image, cmp, wb, pre_mul, raw, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
+    colorSpaceConversion (image, cmp, wb, pre_mul, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2419,7 +2417,7 @@ lab2ProphotoRgbD50(float L, float A, float B, float& r, float& g, float& b)
 }
 
 // Converts raw image including ICC input profile to working space - floating point version
-void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParams &cmp, ColorTemp &wb, double pre_mul[3], const RAWParams &raw, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName) {
+void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParams &cmp, ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName) {
 
 //    MyTime t1, t2, t3;
 //    t1.set ();
@@ -2432,7 +2430,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
 
     if (dcpProf!=NULL) {
         // DCP processing
-        dcpProf->Apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul, camMatrix, raw.expos, false, cmp.applyHueSatMap, false);
+        dcpProf->Apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul, camMatrix, false, cmp.applyHueSatMap, false);
         return;
     }
 

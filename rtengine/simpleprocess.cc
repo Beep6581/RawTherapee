@@ -195,7 +195,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 								provicalc->b(ii>>1,jj>>1) = origCropPart->b(ii,jj);
 							}
 						}
-						imgsrc->convertColorSpace(provicalc, params.icm, currWB, params.raw);//for denoise luminance curve
+						imgsrc->convertColorSpace(provicalc, params.icm, currWB);//for denoise luminance curve
 						float maxr=0.f;
 						float maxb=0.f;
 						float pondcorrec=1.0f;
@@ -351,7 +351,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 								provicalc->b(ii>>1,jj>>1) = origCropPart->b(ii,jj);
 							}
 						}
-						imgsrc->convertColorSpace(provicalc, params.icm, currWB, params.raw);//for denoise luminance curve
+						imgsrc->convertColorSpace(provicalc, params.icm, currWB);//for denoise luminance curve
 						int nb = 0;
 						float chaut=0.f, redaut=0.f, blueaut=0.f, maxredaut=0.f, maxblueaut=0.f, minredaut=0.f, minblueaut=0.f, nresi=0.f, highresi=0.f, chromina=0.f, sigma=0.f, lumema=0.f, sigma_L=0.f, redyel=0.f, skinc=0.f, nsknc=0.f;
 						ipf.RGB_denoise_info(origCropPart, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope,  params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), chaut, nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
@@ -529,7 +529,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 				calclum->b(ii>>1,jj>>1) = baseImg->b(ii,jj);
 			}
 		}
-		imgsrc->convertColorSpace(calclum, params.icm, currWB, params.raw);
+		imgsrc->convertColorSpace(calclum, params.icm, currWB);
 	}
     if (denoiseParams.enabled) {
        // CurveFactory::denoiseLL(lldenoiseutili, denoiseParams.lcurve, Noisecurve,1);
@@ -554,7 +554,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     delete [] Max_R_;
     delete [] Max_B_;
 	
-    imgsrc->convertColorSpace(baseImg, params.icm, currWB, params.raw);
+    imgsrc->convertColorSpace(baseImg, params.icm, currWB);
 
     // perform first analysis
     LUTu hist16 (65536);

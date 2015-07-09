@@ -257,7 +257,7 @@ void Crop::update (int todo) {
 						provicalc->b(ii>>1,jj>>1) = origCrop->b(ii,jj);
 					}
 				}
-				parent->imgsrc->convertColorSpace(provicalc, params.icm, parent->currWB, params.raw);//for denoise luminance curve
+				parent->imgsrc->convertColorSpace(provicalc, params.icm, parent->currWB);//for denoise luminance curve
 
 				float maxr=0.f;
 				float maxb=0.f;
@@ -351,7 +351,7 @@ void Crop::update (int todo) {
 							provicalc->b(ii>>1,jj>>1) = origCropPart->b(ii,jj);
 						}
 					}
-					parent->imgsrc->convertColorSpace(provicalc, params.icm, parent->currWB, params.raw);//for denoise luminance curve
+					parent->imgsrc->convertColorSpace(provicalc, params.icm, parent->currWB);//for denoise luminance curve
 
 					float pondcorrec=1.0f;
 					float chaut=0.f, redaut=0.f, blueaut=0.f, maxredaut=0.f, maxblueaut=0.f, minredaut=0.f, minblueaut=0.f, nresi=0.f, highresi=0.f, chromina=0.f, sigma=0.f, lumema=0.f, sigma_L=0.f, redyel=0.f, skinc=0.f, nsknc=0.f;
@@ -497,7 +497,7 @@ void Crop::update (int todo) {
 				}
 			}
 		
-			parent->imgsrc->convertColorSpace(calclum, params.icm, parent->currWB, params.raw);//for denoise luminance curve
+			parent->imgsrc->convertColorSpace(calclum, params.icm, parent->currWB);//for denoise luminance curve
 		}
 
 		if(skip!=1) if(parent->adnListener) parent->adnListener->noiseChanged(0.f, 0.f);	
@@ -519,7 +519,7 @@ void Crop::update (int todo) {
 				
 			}
 		}	
-        parent->imgsrc->convertColorSpace(origCrop, params.icm, parent->currWB, params.raw);
+        parent->imgsrc->convertColorSpace(origCrop, params.icm, parent->currWB);
 
 	delete [] ch_M;
 	delete [] max_r;
