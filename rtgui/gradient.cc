@@ -3,7 +3,6 @@
  */
 #include "gradient.h"
 #include "rtimage.h"
-#include <iomanip>
 #include "../rtengine/rt_math.h"
 
 using namespace rtengine;

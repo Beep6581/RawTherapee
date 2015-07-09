@@ -2,7 +2,6 @@
  *  This file is part of RawTherapee.
  */
 #include "colortoning.h"
-#include <iomanip>
 #include "mycurve.h"
 
 using namespace rtengine;

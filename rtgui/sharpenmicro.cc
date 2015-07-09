@@ -20,7 +20,6 @@
 #include "guiutils.h"
 #include "../rtengine/safegtk.h"
 #include <sstream>
-#include <iomanip>
 #include <cmath>
 
 using namespace rtengine;

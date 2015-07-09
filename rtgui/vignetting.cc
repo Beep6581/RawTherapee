@@ -17,7 +17,6 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "vignetting.h"
-#include <iomanip>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
