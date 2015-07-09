@@ -440,6 +440,16 @@ void ToolPanelCoordinator::updateToolState() {
     for (size_t i=0; i<options.tpOpen.size(); i++)
         if (i<expList.size())
             expList.at(i)->set_expanded (options.tpOpen.at(i));
+
+    size_t sizeWavelet = options.tpOpen.size() - expList.size();
+    if(sizeWavelet > 0) {
+        std::vector<int> temp;
+        temp.resize(sizeWavelet);
+        for (size_t i=0; i<sizeWavelet; i++)
+            temp[i] = options.tpOpen.at(i+expList.size());
+        wavelet->updateToolState(temp);
+        wavelet->setExpanded(true);
+    }
 }
 
 void ToolPanelCoordinator::readOptions () {
@@ -453,6 +463,7 @@ void ToolPanelCoordinator::writeOptions () {
     options.tpOpen.clear ();
     for (size_t i=0; i<expList.size(); i++)
         options.tpOpen.push_back (expList.at(i)->get_expanded ());
+    wavelet->writeOptions(options.tpOpen);
 }
 
 
