@@ -347,9 +347,16 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 				btot*=bm;
 				if (!hrp.hrenabled && (rtot > hlmax[0] || gtot > hlmax[1] || btot > hlmax[2]))
 				{
-					rtot=CLIP(rtot);
-					gtot=CLIP(gtot);
-					btot=CLIP(btot);
+					// make a sort of luminance recovery. Note that as we don't desaturate
+					// surrounding unclipped highlights the transition into clipping may not
+					// be smooth, meaning that stuff like RGB-HSV desaturation will look bad.
+					// We accept this drawback though, those that really need highlight reconstruction
+					// should enable that.
+					float L = rtot*0.2126729f + gtot*0.7151521f + btot*0.0721750f;
+					rtot = gtot = btot = L;
+					//rtot=CLIP(rtot);
+					//gtot=CLIP(gtot);
+					//btot=CLIP(btot);
 				}
 				line_red[j] = rtot;
 				line_grn[j] = gtot;
@@ -371,9 +378,11 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 				btot*=bm;
 				if (!hrp.hrenabled && (rtot > hlmax[0] || gtot > hlmax[1] || btot > hlmax[2]))
 				{
-					rtot=CLIP(rtot);
-					gtot=CLIP(gtot);
-					btot=CLIP(btot);
+					float L = rtot*0.2126729f + gtot*0.7151521f + btot*0.0721750f;
+					rtot = gtot = btot = L;
+					//rtot=CLIP(rtot);
+					//gtot=CLIP(gtot);
+					//btot=CLIP(btot);
 				}
 				line_red[j] = rtot;
 				line_grn[j] = gtot;
