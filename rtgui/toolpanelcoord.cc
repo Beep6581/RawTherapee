@@ -441,12 +441,11 @@ void ToolPanelCoordinator::updateToolState() {
         if (i<expList.size())
             expList.at(i)->set_expanded (options.tpOpen.at(i));
 
-    size_t sizeWavelet = options.tpOpen.size() - expList.size();
-    if(sizeWavelet > 0) {
+    if(options.tpOpen.size()>expList.size()) {
+        size_t sizeWavelet = options.tpOpen.size() - expList.size();
         std::vector<int> temp;
-        temp.resize(sizeWavelet);
         for (size_t i=0; i<sizeWavelet; i++)
-            temp[i] = options.tpOpen.at(i+expList.size());
+            temp.push_back(options.tpOpen.at(i+expList.size()));
         wavelet->updateToolState(temp);
         wavelet->setExpanded(true);
     }
