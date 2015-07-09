@@ -65,7 +65,7 @@ class StdImageSource : public ImageSource {
 
         void        setProgressListener (ProgressListener* pl) { plistener = pl; }
 
-        void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb, RAWParams raw);// RAWParams raw will not be used for non-raw files (see imagesource.h)
+        void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb);// RAWParams raw will not be used for non-raw files (see imagesource.h)
         static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, IIOSampleFormat sampleFormat);
         //static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded);
 

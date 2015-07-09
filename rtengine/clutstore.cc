@@ -165,7 +165,7 @@ Imagefloat* HaldCLUT::loadFile( Glib::ustring filename, Glib::ustring workingCol
 
         imgSrc.getImage (currWB, TR_NONE, baseImg, pp, procparams::ToneCurveParams(), icm, procparams::RAWParams());
         if ( !workingColorSpace.empty() ) {
-            imgSrc.convertColorSpace(baseImg, icm, currWB, procparams::RAWParams());
+            imgSrc.convertColorSpace(baseImg, icm, currWB);
         }
         result = baseImg;
     }

@@ -79,7 +79,7 @@ class ImageSource : public InitialImage {
         // true is ready to provide the AutoWB, i.e. when the image has been demosaiced for RawImageSource
         virtual bool        isWBProviderReady () =0;
 
-        virtual void        convertColorSpace    (Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb, RAWParams raw) =0;// DIRTY HACK: this method is derived in rawimagesource and strimagesource, but (...,RAWParams raw) will be used ONLY for raw images
+        virtual void        convertColorSpace    (Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb) =0;// DIRTY HACK: this method is derived in rawimagesource and strimagesource, but (...,RAWParams raw) will be used ONLY for raw images
         virtual void        getAutoWBMultipliers (double &rm, double &gm, double &bm) =0;
         virtual ColorTemp   getWB       () =0;
         virtual ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal) =0;
