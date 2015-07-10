@@ -36,7 +36,8 @@ RAWExposure::RAWExposure () : FoldableToolPanel(this, "rawexposure", M("TP_EXPOS
 	PexPreser->show();
 
 	pack_start( *PexPos, Gtk::PACK_SHRINK, 4);//exposi
-	pack_start( *PexPreser, Gtk::PACK_SHRINK, 4);
+        // raw highlight exposure setting is obsolete, removing from GUI
+	//pack_start( *PexPreser, Gtk::PACK_SHRINK, 4);
 }
 
 void RAWExposure::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
