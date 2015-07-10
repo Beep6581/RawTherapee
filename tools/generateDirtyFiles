@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Search files for keywords, then do something to the files which don't match
+
+# Path to the RawTherapee repository
+pushd $HOME/rawtherapee >/dev/null
+unset uses match m u
+# Key to search for, e.g. an include
+IFS="" read -a match <<< $(grep -rni iomanip rt* | cut -d ":" -f1 | sort -uV)
+# Keys to search for which should be used by the one above, e.g. the functions given by the include
+IFS="" read -a uses <<< $(egrep -si "setiosflags|resetiosflags|setbase|setfill|setprecision|setw|get_money|put_money|get_time|put_time" rtgui/* rtengine/* rtexif/* | sed 's/	/ /g' | cut -d ":" -f 1 | sort -Vu)
+for m in ${match[@]}; do
+    for u in ${uses[@]}; do
+        if [[ $m == $u ]]; then
+            godmode=true;
+        fi
+    done
+    if [[ $godmode != true ]]; then
+# Do something to the files which match the first key but not the second bunch of keys, e.g. remove the include from the files which don't use any of the functions it provides.
+        echo "$m to be cleaned"
+        sed -i '/#include <iomanip>/d' "$m"
+    fi
+    unset godmode
+done
+popd >/dev/null

@@ -1,0 +1,66 @@
+This is the directory where all translations should go.
+
+Translations are loaded for a given term at three levels:
+
+  1) default
+  2) <Language>
+  3) <Language> <Locale/Variant>
+
+Developers who are adding a new feature should add new strings *only* to 
+default.  This file should be comprised of basic English text.  It will be used 
+in the event that there are no more specific languages specified.  Once you 
+have modified default, you should run ./tools/generateTranslationDiffs (Bash 
+script) which will re-generate the localizations with commented out additions 
+which you have just added.
+
+Translators should in general implement the <Language> file.  This is the 
+generic translation for a given language; for instance, 'French', 'German', 
+'Norsk', etc.  If a string exists in this file (and the user has specified this 
+language), then RawTherapee will override the value in default with the value 
+in <Language>.  Please note that the filename for this file must not contain 
+any spaces.
+
+In some situations, translations may differ based on region, locale, etc.  A 
+good example of this is the difference in spelling between 'color' (American 
+English) and 'colour' (British English). In this case, the vast majority of 
+strings are identical between English and English (UK); however, to keep the 
+proper spelling in Britain, we have a locale file called 'English (UK)' which
+contains the differences between the two.  RawTherapee uses locale files when:
+  a) The user has selected a language which has a space in the file name
+  b) There is another file which is identical to the locale file up until the 
+     space (i.e., 'English' to the locale file 'English (UK)').
+
+If a locale file is used, it is applied in the same manner as <Language> is to 
+default.  The locale will override any keys present from the ones in the 
+language file (and in turn, the default).
+
+After the generateTranslationDiffs has been run, all untranslated terms for 
+a given language/locale will exist at the end of the file, prefixed by a ! 
+comment marker.  Translators should go through this section of the file and 
+translate all terms which they can. After you have translated a line, just 
+remove the ! comment marker.  Comments may be included using the #xx comment 
+marker, where xx is a numeric prefix used to make sure automated sorting keeps 
+comments in the right order, e.g.:
+  #00 Comment line 1...
+  #01 Line 2...
+  #02 3, etc.
+
+To create a file with only Latin characters from a non-Latin one, you can use 
+sed with the "y" command. For example, to create a latin-only "Polish (Latin 
+Characters)" file from the non-latin "Polish" one:
+  sed 'y/ĄĆĘŁŃÓŚŹŻąćęłńóśźż/ACELNOSZZacelnoszz/' < Polish > "Polish (Latin Characters)"
+
+You can use this Wikipedia "Character sets" category page to help you find all 
+the characters in the language file you want to convert into Latin-only:
+  http://en.wikipedia.org/wiki/Category:Character_sets
+
+To convert all line terminators in all language files to CRLF (dos/mac/unix)
+you can use vim:
+  a) cd rtdata/languages
+     vim
+  b) In vim, type:
+     :set ffs=dos
+     :args *
+     :argdo w
+  c) vim will process all language files. Once done, you can close it:
+     :q

@@ -1,0 +1,20 @@
+[Version]
+AppVersion=4.2.2
+Version=322
+
+[Luminance Curve]
+Brightness=0
+Contrast=0
+Chromaticity=0
+AvoidColorShift=false
+RedAndSkinTonesProtection=0
+LCredsk=true
+LCurve=3;0;0;0.055044034166268768;0;0.52103559870550098;1;1;1;
+aCurve=0;
+bCurve=0;
+ccCurve=3;0;0;0.10679611650485436;0.30420711974110037;1;1;
+chCurve=0;
+lhCurve=0;
+hhCurve=0;
+LcCurve=0;
+ClCurve=3;0;0;0.3592233009708739;0.3592233009708739;0.40129449838187703;0.40129449838187703;1;0.0032362459546936488;

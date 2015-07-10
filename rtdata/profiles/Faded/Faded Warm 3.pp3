@@ -1,0 +1,97 @@
+[Version]
+AppVersion=4.2.84
+Version=322
+
+[Exposure]
+Auto=false
+Clip=0.02
+Brightness=0
+Contrast=0
+Saturation=0
+Black=0
+HighlightCompr=70
+HighlightComprThreshold=0
+ShadowCompr=50
+CurveMode=SatAndValueBlending
+CurveMode2=FilmLike
+Curve=3;0;0;0.23320158102766808;0.58893280632411094;0.69169960474308201;0.96047430830039549;1;1;
+Curve2=3;0;0;0.12213438735177862;0.012648221343873525;0.46245059288537577;0.41250131169330889;1;1;
+
+[Channel Mixer]
+Red=80;0;20;
+Green=0;60;40;
+Blue=-20;20;20;
+
+[Black & White]
+Enabled=false
+
+[Luminance Curve]
+Brightness=0
+Contrast=0
+Chromaticity=-29
+AvoidColorShift=false
+RedAndSkinTonesProtection=0
+LCredsk=true
+LCurve=0;
+aCurve=0;
+bCurve=0;
+ccCurve=0;
+chCurve=0;
+LcCurve=0;
+ClCurve=0;
+lhCurve=0;
+hhCurve=0;
+
+[Vibrance]
+Enabled=false
+Pastels=0
+Saturated=0
+PSThreshold=0;75;
+ProtectSkins=false
+AvoidColorShift=false
+PastSatTog=true
+SkinTonesCurve=0;
+
+[Color appearance]
+Enabled=false
+
+[Directional Pyramid Denoising]
+Enabled=true
+Luma=0
+Ldetail=0
+Chroma=20
+Method=Lab
+Redchro=0
+Bluechro=0
+Gamma=1.7
+
+[EPD]
+Enabled=false
+Strength=0.25
+EdgeStopping=1.40
+Scale=1
+ReweightingIterates=0
+
+[Shadows & Highlights]
+Enabled=false
+
+[HSV Equalizer]
+HCurve=0;
+SCurve=0;
+VCurve=0;
+
+[Film Simulation]
+Enabled=false
+
+[Wavelet]
+Enabled=false
+
+[RGB Curves]
+LumaMode=false
+rCurve=3;0;0;0.051383399209486022;0.17391304347826081;1;1;
+gCurve=3;0;0;1;1;
+bCurve=3;0;0;0.051383399209486022;0.17391304347826081;0.57312252964427013;0.95652173913043359;1;1;
+
+[ColorToning]
+Enabled=false
+

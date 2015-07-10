@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+hgBranch="`hg branch`"
+hgLatesttag="`hg parents --template '{latesttag}'`"
+hgLatesttagdistance="`hg parents --template '{latesttagdistance}'`"
+hgChangeset="`hg parents --template '{node|short}'`"
+
+echo "set(HG_BRANCH $hgBranch)
+set(HG_VERSION $hgLatesttag.$hgLatesttagdistance)
+set(HG_CHANGESET $hgChangeset)
+set(HG_TAGDISTANCE $hgLatesttagdistance)" > ReleaseInfo.cmake
+

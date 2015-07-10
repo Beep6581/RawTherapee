@@ -1,0 +1,41 @@
+# Only important or pre-first run parameters are left in this global option file.
+# After the first run, all the parameters will be available in this global option file
+# or in a new local option file, depending on the MultiUser value below
+
+# Most ot the options are modifiable through the Preference window
+
+[General]
+# Setting MultiUser to false will use the application's installation directory as cache directory,
+# which can be usefull if you want to keep the application and all the cache datas in a single place,
+# an external HD for example
+MultiUser=true
+
+[File Browser]
+# Image filename extensions to be looked for, and their corresponding search state (0/1 -> skip/include)
+ParseExtensions=3fr;arw;cr2;crf;crw;dcr;dng;fff;iiq;jpg;jpeg;kdc;mef;mos;mrw;nef;nrw;orf;pef;png;raf;raw;rw2;rwl;rwz;sr2;srf;srw;tif;tiff;x3f;
+ParseExtensionsEnabled=1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;0;1;1;1;1;1;1;1;1;1;1;1;
+
+[Output]
+PathTemplate=%p1/converted/%f
+
+[Profiles]
+# if this is set to a path of a custom program, it will receive the EXIFs as parameters and must generate a PP3 preset file for the given raw/JPG
+# Parameters: <Path to raw/JPG> <Path to default profile> <fNumber> <expose in seconds> <focal length in mm> <ISO> <Lens> <Camera>
+CustomProfileBuilder=
+
+[GUI]
+Font=Sans 12
+
+# Set here an absolute or relative path (to the rawtherapee.exe file) to the directory containing your own profiles.
+# If MultiUser=true, each user will have their own "options" file, and can set a common or different absolu path
+#Directory=profiles
+
+# Uncomment and set UseBundledProfiles to false if you don't want to be polluted by RawTherapee's bundled profiles
+# Warning: if you don't set RawDefault and ImgDefault to one of your own profile, Internal values will be used instead
+#UseBundledProfiles=true
+
+# Default profile name (without extension) to use for raw images
+#RawDefault=${G}/Default
+
+# Default profile name (without extension) to use for standard (8bits) images
+#ImgDefault=Neutral
