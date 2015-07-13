@@ -308,6 +308,9 @@ void ParamsEdited::set (bool v) {
 	resize.enabled   = v;
 	icm.input        = v;
 	icm.toneCurve = v;
+	icm.applyLookTable = v;
+	icm.applyBaselineExposureOffset = v;
+	icm.applyHueSatMap = v;
 	icm.blendCMSMatrix = v;
 	icm.dcpIlluminant = v;
 	icm.working      = v;
@@ -739,6 +742,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         resize.enabled = resize.enabled && p.resize.enabled == other.resize.enabled;
         icm.input = icm.input && p.icm.input == other.icm.input;
         icm.toneCurve = icm.toneCurve && p.icm.toneCurve == other.icm.toneCurve;
+        icm.applyLookTable = icm.applyLookTable && p.icm.applyLookTable == other.icm.applyLookTable;
+        icm.applyBaselineExposureOffset = icm.applyBaselineExposureOffset && p.icm.applyBaselineExposureOffset == other.icm.applyBaselineExposureOffset;
+        icm.applyHueSatMap = icm.applyHueSatMap && p.icm.applyHueSatMap == other.icm.applyHueSatMap;
         icm.blendCMSMatrix = icm.blendCMSMatrix && p.icm.blendCMSMatrix == other.icm.blendCMSMatrix;
         icm.dcpIlluminant = icm.dcpIlluminant && p.icm.dcpIlluminant == other.icm.dcpIlluminant;
         icm.working = icm.working && p.icm.working == other.icm.working;
@@ -1168,6 +1174,9 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (resize.enabled)	    toEdit.resize.enabled 	= mods.resize.enabled;
 	if (icm.input)		    toEdit.icm.input 	    = mods.icm.input;
     if (icm.toneCurve)      toEdit.icm.toneCurve = mods.icm.toneCurve;
+    if (icm.applyLookTable)      toEdit.icm.applyLookTable = mods.icm.applyLookTable;
+    if (icm.applyBaselineExposureOffset)      toEdit.icm.applyBaselineExposureOffset = mods.icm.applyBaselineExposureOffset;
+    if (icm.applyHueSatMap)      toEdit.icm.applyHueSatMap = mods.icm.applyHueSatMap;
     if (icm.blendCMSMatrix)	toEdit.icm.blendCMSMatrix = mods.icm.blendCMSMatrix;
     if (icm.dcpIlluminant) toEdit.icm.dcpIlluminant = mods.icm.dcpIlluminant;
 	if (icm.working)		toEdit.icm.working 	    = mods.icm.working;
