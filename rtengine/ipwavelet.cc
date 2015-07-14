@@ -142,6 +142,13 @@ struct cont_params {
 	float bllow;
 	float grlow;
 	bool cbena;
+	bool contena;
+	bool chromena;
+	bool edgeena;
+	bool resena;
+	bool finena;
+	bool toningena;
+	bool noiseena;
 	
 };
 
@@ -192,6 +199,20 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 	
 	cp.tmstrength=params->wavelet.tmrs;
 	//cp.tonemap = params->wavelet.tmr;
+	cp.contena=true;
+	cp.contena=params->wavelet.expcontrast;
+	cp.chromena=true;
+	cp.chromena=params->wavelet.expchroma;
+	cp.edgeena=true;
+	cp.edgeena=params->wavelet.expedge;
+	cp.resena=true;
+	cp.resena=params->wavelet.expresid;
+	cp.finena=true;
+	cp.finena=params->wavelet.expfinal;
+	cp.toningena=true;
+	cp.toningena=params->wavelet.exptoning;
+	cp.noiseena=true;
+	cp.noiseena=params->wavelet.expnoise;
 	
 	if(params->wavelet.Backmethod=="black") cp.backm= 0;
 	if(params->wavelet.Backmethod=="grey") cp.backm = 1;
@@ -620,7 +641,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 
 				int levwavL = levwav;
 				bool ref0=false;
-						if(cp.lev0s > 0.f || cp.lev1s > 0.f || cp.lev2s > 0.f) ref0=true;
+						if((cp.lev0s > 0.f || cp.lev1s > 0.f || cp.lev2s > 0.f) && cp.noiseena) ref0=true;
 
 			//	printf("LevwavL before: %d\n",levwavL);
 				if(cp.contrast == 0.f && cp.tonemap==false && cp.conres == 0.f && cp.conresH == 0.f && cp.val ==0  && !ref0 && params->wavelet.CLmethod=="all") { // no processing of residual L  or edge=> we probably can reduce the number of levels
@@ -650,7 +671,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 					}
 						int ind=0;
 						bool ref=false;
-						if(cp.lev0s > 0.f || cp.lev1s > 0.f || cp.lev2s > 0.f) ref=true;
+						if((cp.lev0s > 0.f || cp.lev1s > 0.f || cp.lev2s > 0.f) && cp.noiseena) ref=true;
 						bool contr=false;
 						for(int f=0;f<levwavL;f++) {
 							if(cp.mul[f]!=0.f) contr=true;
@@ -665,7 +686,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 				vari[1]=8.f*SQR((cp.lev1n/125.0)*(1.0+ cp.lev1n/25.0));
 				vari[2]=8.f*SQR((cp.lev2n/125.0)*(1.0+ cp.lev2n/25.0));
 				int edge=1;
-				if(cp.lev0n > 0.1f || cp.lev1n > 0.1f || cp.lev2n > 0.1f) {
+				if((cp.lev0n > 0.1f || cp.lev1n > 0.1f || cp.lev2n > 0.1f) && cp.noiseena) {
 					vari[0] = max(0.0001f,vari[0]);
 					vari[1] = max(0.0001f,vari[1]);
 					vari[2] = max(0.0001f,vari[2]);
@@ -864,7 +885,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 									L = labco->L[i1][j1];
 									const float Lin=labco->L[i1][j1];
 
-									if(wavclCurve) {labco->L[i1][j1] =(0.5f*Lin  + 1.5f*wavclCurve[Lin])/2.f;}//apply contrast curve
+									if(wavclCurve  && cp.finena) {labco->L[i1][j1] =(0.5f*Lin  + 1.5f*wavclCurve[Lin])/2.f;}//apply contrast curve
 									L = labco->L[i1][j1];
 
 									float Lprov1=L/327.68f;
@@ -904,7 +925,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 									L = labco->L[i1][j1];
 									const float Lin=labco->L[i1][j1];
 								
-									if(wavclCurve) {labco->L[i1][j1] = (0.5f*Lin + 1.5f*wavclCurve[Lin])/2.f;}//apply contrast curve
+									if(wavclCurve  && cp.finena) {labco->L[i1][j1] = (0.5f*Lin + 1.5f*wavclCurve[Lin])/2.f;}//apply contrast curve
 									L = labco->L[i1][j1];
 									a = labco->a[i1][j1];
 									b = labco->b[i1][j1];
@@ -1346,7 +1367,7 @@ void ImProcFunctions::WaveletcontAllLfinal(LabImage * labco, float ** varhue, fl
 		float max0 = 0.f;	
 		float min0 = FLT_MAX;
 		
-		if(contrast != 0.f || cp.tonemap) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
+		if(contrast != 0.f || cp.tonemap  && cp.resena) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
 #ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for reduction(+:avedbl) num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
@@ -1383,7 +1404,7 @@ void ImProcFunctions::WaveletcontAllLfinal(LabImage * labco, float ** varhue, fl
 	//		printf("MAXmax0=%f MINmin0=%f\n",max0,min0);
 		
 //tone mapping
-if(cp.tonemap && cp.contmet==2) {
+if(cp.tonemap && cp.contmet==2  && cp.resena) {
 	//iterate = 5
     EPDToneMapResid(WavCoeffs_L0, 5, skip, cp, W_L, H_L, max0, min0);
  
@@ -1421,7 +1442,7 @@ if(cp.tonemap && cp.contmet==2) {
 #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 {
-		if(contrast != 0.f) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
+		if(contrast != 0.f  && cp.resena) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
   {
 #ifdef _RT_NESTED_OPENMP
 #pragma omp for
@@ -1446,7 +1467,7 @@ if(cp.tonemap && cp.contmet==2) {
 		}
 		}
 		
-if(cp.tonemap && cp.contmet==1) {
+if(cp.tonemap && cp.contmet==1  && cp.resena) {
 	float maxp=max0*256.f;
 	float minp=min0*256.f;
 #ifdef _RT_NESTED_OPENMP
@@ -1458,7 +1479,7 @@ if(cp.tonemap && cp.contmet==1) {
 #pragma omp barrier
 #endif		
 		
-		if(cp.conres != 0.f || cp.conresH != 0.f) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
+		if((cp.conres != 0.f || cp.conresH != 0.f) && cp.resena) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
 #ifdef _RT_NESTED_OPENMP
 #pragma omp for nowait
 #endif				
@@ -1545,9 +1566,10 @@ if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory
 //					interm /= 1.732f;//interm = pseudo variance koeLi
 					interm *= 0.57736721f;
 					float kampli = 1.f;
+					float eps=0.0001f;
 					// I think this double ratio (alph, beta) is better than arctg 
-					float alph = koeLi[lvl*3][i*W_L + j] / koeLi[lvl*3 + 1][i*W_L + j];//ratio between horizontal and vertical
-					float beta = koeLi[lvl*3+2][i*W_L + j] / koeLi[lvl*3 + 1][i*W_L + j];//ratio between diagonal and horizontal
+					float alph = koeLi[lvl*3][i*W_L + j] / (koeLi[lvl*3 + 1][i*W_L + j]+eps);//ratio between horizontal and vertical
+					float beta = koeLi[lvl*3+2][i*W_L + j] / (koeLi[lvl*3 + 1][i*W_L + j]+eps);//ratio between diagonal and horizontal
 					
 					float alipinfl=(eddlipampl-1.f)/(1.f-eddlipinfl);
 					float blipinfl=eddlipampl-alipinfl;
@@ -1618,7 +1640,7 @@ if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory
 	void ImProcFunctions::WaveletAandBAllAB(LabImage * labco, float ** varhue, float **varchrom, wavelet_decomposition &WaveletCoeffs_a, wavelet_decomposition &WaveletCoeffs_b,
 											 struct cont_params cp, const WavOpacityCurveW & waOpacityCurveW, FlatCurve* hhCurve, bool hhutili){
              //   StopWatch Stop1("WaveletAandBAllAB");
-                if (hhutili) {  // H=f(H)
+                if (hhutili  && cp.resena) {  // H=f(H)
                         int W_L = WaveletCoeffs_a.level_W(0);
                         int H_L = WaveletCoeffs_a.level_H(0);
                
@@ -1690,7 +1712,7 @@ if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory
 #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 {
-		if(cp.chrores != 0.f) { // cp.chrores == 0.f means all will be multiplied by 1.f, so we can skip the processing of residual
+		if(cp.chrores != 0.f  && cp.resena) { // cp.chrores == 0.f means all will be multiplied by 1.f, so we can skip the processing of residual
 
 #ifdef _RT_NESTED_OPENMP
 #pragma omp for nowait
@@ -1739,7 +1761,7 @@ if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory
 			}
 		}
 		
-		if(cp.cbena) {//if user select Toning and color balance
+		if(cp.cbena  && cp.resena) {//if user select Toning and color balance
 		
 #ifdef _RT_NESTED_OPENMP
 #pragma omp for nowait
@@ -1974,7 +1996,7 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 		bool lipschitz=true;
 		float edge=1.f;
 		bool curvdiag=true;
-			if(curvdiag) {//curve
+			if(curvdiag  && cp.finena) {//curve
 			float insigma=0.666f;//SD
 			float logmax=log(MaxP[level]);//log Max
 			float rapX=(mean[level]+sigma[level])/MaxP[level];//rapport between sD / max
@@ -2115,7 +2137,7 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 		bool refi=false;
 	//	if(cp.lev0s > 0.f || cp.lev1s > 0.f || cp.lev2s > 0.f) refi=true;
 	//	if(cp.val > 0 || refi) {//edge
-		if(cp.val > 0) {//edge
+		if(cp.val > 0  && cp.edgeena) {
 					float * koe;
 					float maxkoe=0.f;
 			if(lipschitz==false) {
@@ -2205,7 +2227,7 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 //			edge = 1.f + value * exp (expkoef);//estimate edge "pseudo variance"
 			//take into account local contrast
 			float refin= value * exp (expkoef);
-			if(cp.link==true){//combi
+			if(cp.link==true  && cp.noiseena){//combi
 				{
 				if(level==0) refin *= (1.f + cp.lev0s/50.f);// we can change this sensibility!
 				if(level==1) refin *= (1.f + cp.lev1s/50.f);
@@ -2228,32 +2250,36 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 			float absciss;
 			float kinterm;
 			float kmul;
-			for (int i=0; i<W_L*H_L; i++) {
+		//	for (int i=0; i<W_L*H_L; i++) {
+			int borderL = 1;
+			for(int i = borderL; i < H_L-borderL; i++ ) {
+				for(int j = borderL; j < W_L-borderL; j++) {
+				int k=i*W_L + j;
 				if(cp.detectedge) {
 					if(lipschitz==false) {
-						if(cp.eddet > 10.f) edge=(aedstr*cp.eddet+bedstr)*(edgePrecalc*(1.f+koe[i]))/(1.f+0.9f*maxkoe);
-						else edge=(edgePrecalc*(1.f+koe[i]))/(1.f+0.9f*maxkoe);
+						if(cp.eddet > 10.f) edge=(aedstr*cp.eddet+bedstr)*(edgePrecalc*(1.f+koe[k]))/(1.f+0.9f*maxkoe);
+						else edge=(edgePrecalc*(1.f+koe[k]))/(1.f+0.9f*maxkoe);
 					}
 				if(lipschitz==true) {
-						if(level < 3) edge = 1.f +(edgePrecalc-1.f)*(koeLi[level*3][i])/(1.f+0.9f*maxkoeLi[level*3+ dir-1]);
+						if(level < 3) edge = 1.f +(edgePrecalc-1.f)*(koeLi[level*3][k])/(1.f+0.9f*maxkoeLi[level*3+ dir-1]);
 						else edge = edgePrecalc;
 					}
 				}	
 				else edge = edgePrecalc;
 				
 				if(cp.edgcurv) {
-				if(fabs(WavCoeffs_L[dir][i])>= (mean[level]+sigma[level])){//for max
-					float valcour=log(fabs(WavCoeffs_L[dir][i]));
+				if(fabs(WavCoeffs_L[dir][k])>= (mean[level]+sigma[level])){//for max
+					float valcour=log(fabs(WavCoeffs_L[dir][k]));
 					float valc=valcour-logmax;
 					float vald=valc*rap;
 					absciss=exp(vald);
 					
 				}
-				else if(fabs(WavCoeffs_L[dir][i])>=mean[level] &&  fabs(WavCoeffs_L[dir][i]) < (mean[level]+sigma[level])){
-					absciss=asig*fabs(WavCoeffs_L[dir][i])+bsig;
+				else if(fabs(WavCoeffs_L[dir][k])>=mean[level] &&  fabs(WavCoeffs_L[dir][k]) < (mean[level]+sigma[level])){
+					absciss=asig*fabs(WavCoeffs_L[dir][k])+bsig;
 				}
-				else if(fabs(WavCoeffs_L[dir][i]) < mean[level]){
-					absciss=amean*fabs(WavCoeffs_L[dir][i]);
+				else if(fabs(WavCoeffs_L[dir][k]) < mean[level]){
+					absciss=amean*fabs(WavCoeffs_L[dir][k]);
 				}
 				// Threshold adjuster settings==> approximative for curve
 				//kmul about average cbrt(3--40 / 10)==>1.5 to 2.5
@@ -2288,7 +2314,8 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 					if(edge < 1.f)
 						edge=1.f;
 				}
-				WavCoeffs_L[dir][i] *=  edge;
+				WavCoeffs_L[dir][k] *=  edge;
+				}
 			}
 			}
 			else if(cp.EDmet==1) {//threshold adjuster
@@ -2306,15 +2333,19 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 			float edgeMaxFactor = SQR(cp.edg_max/b_r);
 			float edgMaxFsup=(cp.edg_max/b_r);//reduce increase of effect for high values contrast..if slider > b_r	
 			
-			for (int i=0; i<W_L*H_L; i++) {
-				
+			//for (int i=0; i<W_L*H_L; i++) {
+			int borderL = 1;
+			for(int i = borderL; i < H_L-borderL; i++ ) {
+				for(int j = borderL; j < W_L-borderL; j++) {
+				int k=i*W_L + j;
+
 				if(cp.detectedge) {
 					if(lipschitz==false) {
-						if(cp.eddet > 10.f) edge=(aedstr*cp.eddet+bedstr)*(edgePrecalc*(1.f+koe[i]))/(1.f+0.9f*maxkoe);
-						else edge=(edgePrecalc*(1.f+koe[i]))/(1.f+0.9f*maxkoe);
+						if(cp.eddet > 10.f) edge=(aedstr*cp.eddet+bedstr)*(edgePrecalc*(1.f+koe[k]))/(1.f+0.9f*maxkoe);
+						else edge=(edgePrecalc*(1.f+koe[k]))/(1.f+0.9f*maxkoe);
 					}
 				if(lipschitz==true) {
-						if(level < 3) edge = 1.f +(edgePrecalc-1.f)*(koeLi[level*3][i])/(1.f+0.9f*maxkoeLi[level*3+ dir-1]);
+						if(level < 3) edge = 1.f +(edgePrecalc-1.f)*(koeLi[level*3][k])/(1.f+0.9f*maxkoeLi[level*3+ dir-1]);
 						else edge = edgePrecalc;
 					}
 				}	
@@ -2331,46 +2362,47 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 				// if we move sliders to the right local contrast is increased
 				// MaxP, MaxN, mean, sigma are calculated if necessary (val > 0) by evaluate2(), eval2(), aver() , sigma()
 				if(b_r < 100.f  && cp.edg_max/b_r > 1.f) {//in case of b_r < 100 and slider move to right
-					if (WavCoeffs_L[dir][i] > MaxPCompare*cp.edg_max/b_r) {
+					if (WavCoeffs_L[dir][k] > MaxPCompare*cp.edg_max/b_r) {
 						edge *= edgMaxFsup;
 						if(edge < 1.f)
 							edge=1.f;
 					}
-					else if (WavCoeffs_L[dir][i] < MaxNCompare*cp.edg_max/b_r) {
+					else if (WavCoeffs_L[dir][k] < MaxNCompare*cp.edg_max/b_r) {
 						edge *= edgMaxFsup;
 						if(edge < 1.f)
 							edge=1.f;
 					}					
 				}	
 					
-				if (WavCoeffs_L[dir][i] > MaxPCompare) {
+				if (WavCoeffs_L[dir][k] > MaxPCompare) {
 					edge *= edgeMaxFactor;
 					if(edge < 1.f)
 						edge=1.f;
 				}//reduce edge if > new max
-				else if (WavCoeffs_L[dir][i] < MaxNCompare) {
+				else if (WavCoeffs_L[dir][k] < MaxNCompare) {
 					edge *= edgeMaxFactor;
 					if(edge < 1.f)  
 						edge=1.f;
 				}
 				
-				if (fabs(WavCoeffs_L[dir][i]) >= edgeMeanCompare && fabs(WavCoeffs_L[dir][i]) < edgeSdCompare) {
+				if (fabs(WavCoeffs_L[dir][k]) >= edgeMeanCompare && fabs(WavCoeffs_L[dir][k]) < edgeSdCompare) {
 				//if (fabs(WavCoeffs_L[dir][i]) > edgeSdCompare) {
 					edge *= edgeSdFactor;
 					if(edge < 1.f)
 						edge=1.f;
 				}//mofify effect if sd change
-				if (fabs(WavCoeffs_L[dir][i]) < edgeMeanCompare) {
+				if (fabs(WavCoeffs_L[dir][k]) < edgeMeanCompare) {
 					edge *= edgeMeanFactor;
 					if(edge < 1.f)
 						edge=1.f;
 				} // modify effect if mean change
-				if (fabs(WavCoeffs_L[dir][i]) < edgeLowCompare) {
+				if (fabs(WavCoeffs_L[dir][k]) < edgeLowCompare) {
 					edge *= edgeLowFactor;
 					if(edge < 1.f)
 						edge=1.f;
 				}
-				WavCoeffs_L[dir][i] *= edge;
+				WavCoeffs_L[dir][k] *= edge;
+			}
 			}
 		}
 	if(lipschitz==false) {	
@@ -2379,7 +2411,7 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 		}
 		
 	
-		if(cp.link==false)	{	//used both with denoise 1 2 3
+		if(cp.link==false && cp.noiseena)	{	//used both with denoise 1 2 3
 		float refine=0.f;
 		for (int i=0; i<W_L*H_L; i++) {
 				if(level==0) refine = cp.lev0s/40.f;
@@ -2391,7 +2423,7 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 		
 		
 		float cpMul = cp.mul[level];
-		if(cpMul != 0.f) { // cpMul == 0.f means all will be multiplied by 1.f, so we can skip this
+		if(cpMul != 0.f && cp.contena) { // cpMul == 0.f means all will be multiplied by 1.f, so we can skip this
 		
 			const float skinprot = params->wavelet.skinprotect;
 			const float skinprotneg = -skinprot;
@@ -2489,7 +2521,7 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 				}
 				*/
 				float alpha = (1024.f + 15.f *(float) cpMul*scale*scale2*beta*diagacc)/1024.f ;	
-				if(cp.HSmet){					
+				if(cp.HSmet  && cp.chromena){					
 					float aaal=(1.f-alpha)/((cp.b_lhl-cp.t_lhl)*kH[level]);
 					float bbal=1.f-aaal*cp.b_lhl*kH[level];
 					float aaar=(alpha-1.f)/(cp.t_rhl-cp.b_rhl)*kH[level];
@@ -2520,7 +2552,7 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 		}
 if(waOpacityCurveW) cp.opaW=true;
 		
-if(cp.bam) {	
+if(cp.bam && cp.finena) {  	
 if(cp.opaW && cp.BAmet==2){
 		int iteration = cp.ite;
 		int itplus=7+iteration;
@@ -2605,7 +2637,7 @@ if(cp.BAmet==1){
 									int W_ab, int H_ab, const bool useChannelA)
 	{
 		float cpMul = cp.mul[level];
-		if(cpMul != 0.f && cp.CHmet==2 && cp.chro != 0.f) { // cpMul == 0.f or cp.chro = 0.f means all will be multiplied by 1.f, so we can skip this
+		if(cpMul != 0.f && cp.CHmet==2 && cp.chro != 0.f  && cp.chromena) { // cpMul == 0.f or cp.chro = 0.f means all will be multiplied by 1.f, so we can skip this
 			const float skinprot = params->wavelet.skinprotect;
 			const float skinprotneg = -skinprot;
 			const float factorHard = (1.f - skinprotneg/100.f);
@@ -2638,7 +2670,7 @@ if(cp.BAmet==1){
 		
 		float cpMulC = cp.mulC[level];
 	//	if( (cp.curv || cp.CHSLmet==1) && cp.CHmet!=2 && level < 9 && cpMulC != 0.f) { // cpMulC == 0.f means all will be multiplied by 1.f, so we can skip
-		if( cp.CHmet!=2 && level < 9 && cpMulC != 0.f) { // cpMulC == 0.f means all will be multiplied by 1.f, so we can skip
+		if( cp.CHmet!=2 && level < 9 && cpMulC != 0.f  && cp.chromena) { // cpMulC == 0.f means all will be multiplied by 1.f, so we can skip
 			float modchro, modhue, kClev;
 			const float skinprot = params->wavelet.skinprotect;
 			const float skinprotneg = -skinprot;
@@ -2718,7 +2750,7 @@ if(cp.BAmet==1){
 			mulOpacity = cp.mulopaBY[level];
 		}
 
-		if(useOpacity && level < 9 && mulOpacity != 0.f) { //toning
+		if((useOpacity && level < 9 && mulOpacity != 0.f) && cp.toningena) { //toning
 
 			float beta = (1024.f + 20.f * mulOpacity)/1024.f ;
 			//float beta = (1000.f * mulOpacity);

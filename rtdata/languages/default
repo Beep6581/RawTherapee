@@ -625,6 +625,13 @@ HISTORY_MSG_392;W - Residual - CB Reset
 HISTORY_MSG_393;Use DCP's look table
 HISTORY_MSG_394;Use DCP's baseline exposure offset
 HISTORY_MSG_395;Use DCP's base table
+HISTORY_MSG_396;W - Contrast sub-tool
+HISTORY_MSG_397;W - Chroma sub-tool
+HISTORY_MSG_398;W - ES sub-tool
+HISTORY_MSG_399;W - Residual sub-tool
+HISTORY_MSG_400;W - Final sub-tool
+HISTORY_MSG_401;W - Toning sub-tool
+HISTORY_MSG_402;W - Denoise sub-tool
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots

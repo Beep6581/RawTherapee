@@ -75,7 +75,6 @@ protected:
     Gtk::CheckButton * tmr;
 
 	Gtk::Button * neutralchButton;
-	
     Adjuster* correction[9]; 
     Adjuster* correctionch[9]; 
     Adjuster* rescon; 
@@ -197,7 +196,7 @@ protected:
     Gtk::HBox* levdirSubHBox;
     Gtk::HBox* tilesizeHBox;
 	
-	Gtk::HBox* ctboxBA;
+	Gtk::HBox* ctboxFI;
 	Gtk::HBox* ctboxch;
 	Gtk::HBox* edbox;
 	Gtk::HBox* ednoisbox;

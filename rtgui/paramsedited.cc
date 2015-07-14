@@ -424,6 +424,17 @@ void ParamsEdited::set (bool v) {
 	
 	wavelet.pastlev = v;
 	wavelet.satlev = v;
+//	wavelet.enacont = v;
+//	wavelet.enachrom = v;
+//	wavelet.enaedge = v;
+//	wavelet.enares = v;
+	wavelet.expfinal = v;
+	wavelet.expcontrast = v;
+	wavelet.expchroma = v;
+	wavelet.expedge = v;
+	wavelet.expresid = v;
+	wavelet.exptoning = v;
+	wavelet.expnoise = v;
 	
 	for(int i = 0; i < 9; i++) {
 		wavelet.c[i] = v;
@@ -857,6 +868,15 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         wavelet.hhcurve = wavelet.hhcurve && p.wavelet.hhcurve == other.wavelet.hhcurve;
         wavelet.Chcurve = wavelet.Chcurve && p.wavelet.Chcurve == other.wavelet.Chcurve;
 		wavelet.skinprotect = wavelet.skinprotect && p.wavelet.skinprotect == other.wavelet.skinprotect;
+    //    wavelet.enacont = wavelet.enacont && p.wavelet.enacont == other.wavelet.enacont;
+        wavelet.expcontrast = wavelet.expcontrast && p.wavelet.expcontrast == other.wavelet.expcontrast;
+        wavelet.expchroma = wavelet.expchroma && p.wavelet.expchroma == other.wavelet.expchroma;
+        wavelet.expedge = wavelet.expedge && p.wavelet.expedge == other.wavelet.expedge;
+        wavelet.expresid = wavelet.expresid && p.wavelet.expresid == other.wavelet.expresid;
+        wavelet.expfinal = wavelet.expfinal && p.wavelet.expfinal == other.wavelet.expfinal;
+        wavelet.exptoning = wavelet.exptoning && p.wavelet.exptoning == other.wavelet.exptoning;
+        wavelet.expnoise = wavelet.expnoise && p.wavelet.expnoise == other.wavelet.expnoise;
+		
         for(int i = 0; i < 9; i++) {
             wavelet.c[i] = wavelet.c[i] && p.wavelet.c[i] == other.wavelet.c[i];
         }
@@ -1276,6 +1296,15 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (wavelet.hhcurve)	toEdit.wavelet.hhcurve	= mods.wavelet.hhcurve;
 	if (wavelet.Chcurve)	toEdit.wavelet.Chcurve	= mods.wavelet.Chcurve;
 	if (wavelet.wavclCurve)	toEdit.wavelet.wavclCurve	= mods.wavelet.wavclCurve;
+	//if (wavelet.enacont)	toEdit.wavelet.enacont   = mods.wavelet.enacont;
+	if (wavelet.expcontrast)	toEdit.wavelet.expcontrast   = mods.wavelet.expcontrast;
+	if (wavelet.expchroma)	toEdit.wavelet.expchroma   = mods.wavelet.expchroma;
+	if (wavelet.expedge)	toEdit.wavelet.expedge   = mods.wavelet.expedge;
+	if (wavelet.expresid)	toEdit.wavelet.expresid   = mods.wavelet.expresid;
+	if (wavelet.expfinal)	toEdit.wavelet.expfinal   = mods.wavelet.expfinal;
+	if (wavelet.exptoning)	toEdit.wavelet.exptoning   = mods.wavelet.exptoning;
+	if (wavelet.expnoise)	toEdit.wavelet.expnoise   = mods.wavelet.expnoise;
+	
 	for(int i = 0; i < 9; i++) {
 	    if(wavelet.c[i])  toEdit.wavelet.c[i] = dontforceSet && options.baBehav[ADDSET_WA] ? toEdit.wavelet.c[i] + mods.wavelet.c[i] : mods.wavelet.c[i];
 	}
