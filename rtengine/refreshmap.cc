@@ -416,7 +416,14 @@ DIRPYREQUALIZER,     // EvWavbluelow
 DIRPYREQUALIZER,     // EvWavNeutral	
 RGBCURVE,            // EvDCPApplyLookTable,
 RGBCURVE,            // EvDCPApplyBaselineExposureOffset,
-ALL                  // EvDCPApplyHueSatMap
+ALL,                  // EvDCPApplyHueSatMap
+DIRPYREQUALIZER,     // EvWavenacont	
+DIRPYREQUALIZER,     // EvWavenachrom
+DIRPYREQUALIZER,     // EvWavenaedge
+DIRPYREQUALIZER,     // EvWavenares
+DIRPYREQUALIZER,     // EvWavenafin
+DIRPYREQUALIZER,     // EvWavenatoning
+DIRPYREQUALIZER     // EvWavenanoise
 
 };
 

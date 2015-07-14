@@ -889,8 +889,15 @@ class WaveletParams {
         int strength;
         int balance;
         int iter;
+		bool expcontrast;
+		bool expchroma;
         int c[9];
         int ch[9];
+		bool expedge;
+		bool expresid;
+		bool expfinal;
+		bool exptoning;
+		bool expnoise;
 		
         Glib::ustring Lmethod;
         Glib::ustring CLmethod;

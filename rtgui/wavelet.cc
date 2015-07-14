@@ -56,21 +56,21 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 
     expsettings = new MyExpander (false, M("TP_WAVELET_SETTINGS"));
     expsettings->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButSettings) );
-    expcontrast = new MyExpander (false, M("TP_WAVELET_LEVF"));
+    expcontrast = new MyExpander (true, M("TP_WAVELET_LEVF"));
     expcontrast->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButContrast) );
-    expchroma = new MyExpander (false, M("TP_WAVELET_LEVCH"));
+    expchroma = new MyExpander (true, M("TP_WAVELET_LEVCH"));
     expchroma->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButChroma) );
-    exptoning = new MyExpander (false,M("TP_WAVELET_TON"));
+    exptoning = new MyExpander (true,M("TP_WAVELET_TON"));
     exptoning->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButToning) );
-    expnoise = new MyExpander (false, M("TP_WAVELET_NOISE"));
+    expnoise = new MyExpander (true, M("TP_WAVELET_NOISE"));
     expnoise->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButNoise) );
-    expedge = new MyExpander (false, M("TP_WAVELET_EDGE"));
+    expedge = new MyExpander (true, M("TP_WAVELET_EDGE"));
     expedge->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButEdge) );
     expgamut = new MyExpander (false, M("TP_WAVELET_CONTR"));
     expgamut->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButGamut) );
-    expresid = new MyExpander (false, M("TP_WAVELET_RESID"));
+    expresid = new MyExpander (true, M("TP_WAVELET_RESID"));
     expresid->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButResid) );
-    expfinal = new MyExpander (false, M("TP_WAVELET_FINAL"));
+    expfinal = new MyExpander (true, M("TP_WAVELET_FINAL"));
     expfinal->signal_button_release_event().connect_notify( sigc::mem_fun(this, &Wavelet::foldAllButFinal) );
 
 // Wavelet Settings
@@ -171,6 +171,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 	Gtk::VBox * levBox = Gtk::manage (new Gtk::VBox());
 	levBox->set_border_width(4);	
 	levBox->set_spacing(2);
+	
 	
     Gtk::HBox * buttonBox = Gtk::manage (new Gtk::HBox(true, 10));
 	wavLabels = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
@@ -527,7 +528,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 	Gtk::VBox * resBox = Gtk::manage (new Gtk::VBox());
 	resBox->set_border_width(4);	
 	resBox->set_spacing(2);
-	
+
 	rescon  = Gtk::manage (new Adjuster (M("TP_WAVELET_RESCON"), -100, 100, 1, 0));
 	rescon->setAdjusterListener (this);
     resBox->pack_start(*rescon, Gtk::PACK_SHRINK);	
@@ -694,17 +695,26 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 	resBox->pack_start (*neutrHBox);
 
 // Final Touchup
-	ctboxBA = Gtk::manage (new Gtk::HBox ());
-	labmBA = Gtk::manage (new Gtk::Label (M("TP_WAVELET_BATYPE")+":"));
-	ctboxBA->pack_start (*labmBA, Gtk::PACK_SHRINK, 1);
+	Gtk::VBox * ctboxBA = Gtk::manage (new Gtk::VBox());
 
+	ctboxBA->set_border_width(4);	
+	ctboxBA->set_spacing(2);
+
+	//Gtk::HSeparator *separatorfin = Gtk::manage (new  Gtk::HSeparator());
+    //ctboxBA->pack_start(*separatorfin, Gtk::PACK_SHRINK, 2);
+    ctboxFI = Gtk::manage (new Gtk::HBox());
+	
+	labmBA = Gtk::manage (new Gtk::Label (M("TP_WAVELET_BATYPE")+":"));
+	ctboxFI->pack_start (*labmBA, Gtk::PACK_SHRINK, 1);
+	
 	BAmethod = Gtk::manage (new MyComboBoxText ());
 	BAmethod->append_text (M("TP_WAVELET_BANONE"));
 	BAmethod->append_text (M("TP_WAVELET_BASLI"));
 	BAmethod->append_text (M("TP_WAVELET_BACUR"));
 	BAmethodconn = BAmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::BAmethodChanged) );
-    ctboxBA->pack_start(*BAmethod);
-
+    ctboxFI->pack_start(*BAmethod);
+	ctboxBA->pack_start(*ctboxFI);
+	
     balance  = Gtk::manage (new Adjuster (M("TP_WAVELET_BALANCE"), -30, 100, 1, 0));
     balance->setAdjusterListener (this);
 	balance->set_tooltip_text (M("TP_WAVELET_BALANCE_TOOLTIP"));
@@ -1036,8 +1046,17 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
         if (!pedited->wavelet.Medgreinf)
             Medgreinf->set_active (2);
 
+		
+		
         set_inconsistent (multiImage && !pedited->wavelet.enabled);
         ccshape->setUnChanged  (!pedited->wavelet.ccwcurve);
+		expcontrast->set_inconsistent   (!pedited->wavelet.expcontrast);
+		expchroma->set_inconsistent   (!pedited->wavelet.expchroma);
+		expedge->set_inconsistent   (!pedited->wavelet.expedge);
+		expresid->set_inconsistent   (!pedited->wavelet.expresid);
+		expfinal->set_inconsistent   (!pedited->wavelet.expfinal);
+		exptoning->set_inconsistent   (!pedited->wavelet.exptoning);
+		expnoise->set_inconsistent   (!pedited->wavelet.expnoise);
 		opacityShapeRG->setCurve (pp->wavelet.opacityCurveRG);
  		opacityShapeBY->setCurve (pp->wavelet.opacityCurveBY);
 		opacityShape->setCurve (pp->wavelet.opacityCurveW);
@@ -1104,6 +1123,8 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
         for(int i = 0; i < 9; i++) {
             correctionch[i]->setEditedState (pedited->wavelet.ch[i] ? Edited : UnEdited);
         }
+		
+		
     }
     ccshape->setCurve   (pp->wavelet.ccwcurve);
     opacityShapeRG->setCurve   (pp->wavelet.opacityCurveRG);
@@ -1113,6 +1134,13 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
     hhshape->setCurve  (pp->wavelet.hhcurve);
     Chshape->setCurve  (pp->wavelet.Chcurve);
     clshape->setCurve  (pp->wavelet.wavclCurve);
+	expcontrast->setEnabled (pp->wavelet.expcontrast);
+	expchroma->setEnabled (pp->wavelet.expchroma);
+	expedge->setEnabled (pp->wavelet.expedge);
+	expresid->setEnabled (pp->wavelet.expresid);
+	expfinal->setEnabled (pp->wavelet.expfinal);
+	exptoning->setEnabled (pp->wavelet.exptoning);
+	expnoise->setEnabled (pp->wavelet.expnoise);
 
     setEnabled(pp->wavelet.enabled);
     avoidConn.block (true);
@@ -1194,9 +1222,11 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
     for (int i = 0; i < 9; i++) {
         correction[i]->setValue(pp->wavelet.c[i]);
     }
+	
     for (int i = 0; i < 9; i++) {
         correctionch[i]->setValue(pp->wavelet.ch[i]);
     }
+
 	int y;
 	y=thres->getValue();
 	int z;
@@ -1317,6 +1347,13 @@ void Wavelet::write (ProcParams* pp, ParamsEdited* pedited) {
 	pp->wavelet.bluemed   = bluemed->getValue ();
 	pp->wavelet.greenhigh = greenhigh->getValue ();
 	pp->wavelet.bluehigh  = bluehigh->getValue ();
+	pp->wavelet.expcontrast   = expcontrast->getEnabled();
+	pp->wavelet.expchroma   = expchroma->getEnabled();
+	pp->wavelet.expedge   = expedge->getEnabled();
+	pp->wavelet.expresid   = expresid->getEnabled();
+	pp->wavelet.expfinal   = expfinal->getEnabled();
+	pp->wavelet.exptoning   = exptoning->getEnabled();
+	pp->wavelet.expnoise   = expnoise->getEnabled();
 	
 	pp->wavelet.iter = (int) iter->getValue();
     pp->wavelet.wavclCurve = clshape->getCurve ();
@@ -1400,6 +1437,13 @@ void Wavelet::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->wavelet.balance       = balance->getEditedState ();
         pedited->wavelet.iter       = iter->getEditedState ();
         pedited->wavelet.wavclCurve   = !clshape->isUnChanged ();
+        pedited->wavelet.expcontrast  = !expcontrast->get_inconsistent();
+        pedited->wavelet.expchroma  = !expchroma->get_inconsistent();
+        pedited->wavelet.expedge  = !expedge->get_inconsistent();
+        pedited->wavelet.expresid  = !expresid->get_inconsistent();
+        pedited->wavelet.expfinal  = !expfinal->get_inconsistent();
+        pedited->wavelet.exptoning  = !exptoning->get_inconsistent();
+        pedited->wavelet.expnoise  = !expnoise->get_inconsistent();
 
         for(int i = 0; i < 9; i++) {
             pedited->wavelet.c[i]       = correction[i]->getEditedState();
@@ -1501,6 +1545,7 @@ void Wavelet::write (ProcParams* pp, ParamsEdited* pedited) {
 	
 	
 }
+
 void Wavelet::curveChanged (CurveEditor* ce) {
 
     if (listener && getEnabled()) {
@@ -2229,11 +2274,11 @@ void Wavelet::adjusterChanged (Adjuster* a, double newval) {
             listener->panelChanged (EvWavbluelow,
                          Glib::ustring::compose("%1",
                          Glib::ustring::format(std::fixed, std::setprecision(0), bluelow->getValue()))
-            );
+            );  
 		}
 	
-        else if (a == correction[0] || a == correction[1] || a == correction[2] || a == correction[3] || a == correction[4] || a == correction[5] || a == correction[6] || a == correction[7] || a == correction[8] ) {
-            listener->panelChanged (EvWavelet,
+		if ((a == correction[0] || a == correction[1] || a == correction[2] || a == correction[3] || a == correction[4] || a == correction[5] || a == correction[6] || a == correction[7] || a == correction[8])) {
+		   listener->panelChanged (EvWavelet,
                          Glib::ustring::compose("%1, %2, %3, %4, %5, %6, %7, %8, %9",
                          Glib::ustring::format(std::fixed, std::setprecision(0), correction[0]->getValue()),
                          Glib::ustring::format(std::fixed, std::setprecision(0), correction[1]->getValue()),
@@ -2638,31 +2683,78 @@ void Wavelet::foldAllButSettings (GdkEventButton* event) {
 void Wavelet::foldAllButContrast (GdkEventButton* event) {
     if (event->button == 3) {
         foldAllButOne(expcontrast);
+		
+		
     }
+    if (listener) {
+        if (expcontrast->getEnabled ())
+           { listener->panelChanged (EvWavenacont, M("GENERAL_ENABLED"));
+		   }
+        else
+           { listener->panelChanged (EvWavenacont, M("GENERAL_DISABLED"));
+		   }   
+    }  
+	
 }
 
 void Wavelet::foldAllButChroma (GdkEventButton* event) {
     if (event->button == 3) {
         foldAllButOne(expchroma);
     }
+    if (listener) {
+        if (expchroma->getEnabled ())
+           { listener->panelChanged (EvWavenachrom, M("GENERAL_ENABLED"));
+		   }
+        else
+           { listener->panelChanged (EvWavenachrom, M("GENERAL_DISABLED"));
+		   }   
+    }  
+	
 }
 
 void Wavelet::foldAllButToning (GdkEventButton* event) {
     if (event->button == 3) {
         foldAllButOne(exptoning);
     }
+    if (listener) {
+        if (exptoning->getEnabled ())
+           { listener->panelChanged (EvWavenatoning, M("GENERAL_ENABLED"));
+		   }
+        else
+           { listener->panelChanged (EvWavenatoning, M("GENERAL_DISABLED"));
+		   }   
+    }  
+	
 }
 
 void Wavelet::foldAllButNoise (GdkEventButton* event) {
     if (event->button == 3) {
         foldAllButOne(expnoise);
     }
+    if (listener) {
+        if (expnoise->getEnabled ())
+           { listener->panelChanged (EvWavenanoise, M("GENERAL_ENABLED"));
+		   }
+        else
+           { listener->panelChanged (EvWavenanoise, M("GENERAL_DISABLED"));
+		   }   
+    }  
+	
 }
 
 void Wavelet::foldAllButEdge (GdkEventButton* event) {
     if (event->button == 3) {
         foldAllButOne(expedge);
     }
+    if (listener) {
+        if (expedge->getEnabled ())
+           { listener->panelChanged (EvWavenaedge, M("GENERAL_ENABLED"));
+		   }
+        else
+           { listener->panelChanged (EvWavenaedge, M("GENERAL_DISABLED"));
+		   }   
+    }  
+	
 }
 
 void Wavelet::foldAllButGamut (GdkEventButton* event) {
@@ -2675,12 +2767,31 @@ void Wavelet::foldAllButResid (GdkEventButton* event) {
     if (event->button == 3) {
         foldAllButOne(expresid);
     }
+    if (listener) {
+        if (expresid->getEnabled ())
+           { listener->panelChanged (EvWavenares, M("GENERAL_ENABLED"));
+		   }
+        else
+           { listener->panelChanged (EvWavenares, M("GENERAL_DISABLED"));
+		   }   
+    }  
+	
+	
 }
 
 void Wavelet::foldAllButFinal (GdkEventButton* event) {
     if (event->button == 3) {
         foldAllButOne(expfinal);
     }
+    if (listener) {
+        if (expfinal->getEnabled ())
+           { listener->panelChanged (EvWavenafin, M("GENERAL_ENABLED"));
+		   }
+        else
+           { listener->panelChanged (EvWavenafin, M("GENERAL_DISABLED"));
+		   }   
+    }  
+	
 }
 
 void Wavelet::foldAllButOne (MyExpander * whichOne) {

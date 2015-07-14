@@ -551,6 +551,14 @@ class WaveletParamsEdited {
         bool bluemed;
         bool greenhigh;
         bool bluehigh;
+		bool enacont;
+		bool expcontrast;
+		bool expchroma;
+		bool expedge;
+		bool expresid;
+		bool expfinal;
+		bool exptoning;
+		bool expnoise;
 		
 };
 

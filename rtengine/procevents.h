@@ -420,6 +420,13 @@ enum ProcEvent {
     EvDCPApplyLookTable=392,
     EvDCPApplyBaselineExposureOffset=393,
     EvDCPApplyHueSatMap=394,
+    EvWavenacont=395,
+    EvWavenachrom=396,
+    EvWavenaedge=397,
+    EvWavenares=398,
+    EvWavenafin=399,
+    EvWavenatoning=400,
+    EvWavenanoise=401,
 
     NUMOFEVENTS
 };

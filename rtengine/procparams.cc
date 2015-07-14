@@ -554,6 +554,13 @@ void WaveletParams::setDefaults() {
     hhcurve.push_back(FCT_Linear);
     Chcurve.clear ();
     Chcurve.push_back(FCT_Linear);
+	expcontrast=true;
+	expchroma=true;
+	expedge=true;
+	expresid=true;
+	expfinal=true;
+	exptoning=true;
+	expnoise=true;
 	
     for(int i = 0; i < 9; i ++)
     {
@@ -1640,6 +1647,13 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
 	if (!pedited || pedited->wavelet.bluehigh)    keyFile.set_integer ("Wavelet", "CBbluehigh", wavelet.bluehigh);
 	if (!pedited || pedited->wavelet.bluemed)    keyFile.set_integer ("Wavelet", "CBbluemed", wavelet.bluemed);
 	if (!pedited || pedited->wavelet.bluelow)    keyFile.set_integer ("Wavelet", "CBbluelow", wavelet.bluelow);
+    if (!pedited || pedited->wavelet.expcontrast)    keyFile.set_boolean ("Wavelet", "Expcontrast", wavelet.expcontrast);
+    if (!pedited || pedited->wavelet.expchroma)    keyFile.set_boolean ("Wavelet", "Expchroma", wavelet.expchroma);
+    if (!pedited || pedited->wavelet.expedge)    keyFile.set_boolean ("Wavelet", "Expedge", wavelet.expedge);
+    if (!pedited || pedited->wavelet.expresid)    keyFile.set_boolean ("Wavelet", "Expresid", wavelet.expresid);
+    if (!pedited || pedited->wavelet.expfinal)    keyFile.set_boolean ("Wavelet", "Expfinal", wavelet.expfinal);
+    if (!pedited || pedited->wavelet.exptoning)    keyFile.set_boolean ("Wavelet", "Exptoning", wavelet.exptoning);
+    if (!pedited || pedited->wavelet.expnoise)    keyFile.set_boolean ("Wavelet", "Expnoise", wavelet.expnoise);
 	
     for(int i = 0; i < 9; i++)
     {
@@ -2637,6 +2651,8 @@ if (keyFile.has_group ("Wavelet")) {
 	
 	
     if(keyFile.has_key ("Wavelet", "Skinprotect")) { wavelet.skinprotect = keyFile.get_double ("Wavelet", "Skinprotect"); if (pedited) pedited->wavelet.skinprotect = true; }
+    if (keyFile.has_key ("Wavelet", "Expcontrast")) {wavelet.expcontrast = keyFile.get_boolean ("Wavelet", "Expcontrast");if (pedited) pedited->wavelet.expcontrast = true;}
+    if (keyFile.has_key ("Wavelet", "Expchroma")) {wavelet.expchroma = keyFile.get_boolean ("Wavelet", "Expchroma");if (pedited) pedited->wavelet.expchroma = true;}
     for(int i = 0; i < 9; i ++)
     {
         std::stringstream ss;
@@ -2649,6 +2665,12 @@ if (keyFile.has_group ("Wavelet")) {
         ss << "Chroma" << (i+1);
         if(keyFile.has_key ("Wavelet", ss.str())) {wavelet.ch[i] = keyFile.get_integer ("Wavelet", ss.str()); if (pedited) pedited->wavelet.ch[i]   = true;} 
     }
+    if (keyFile.has_key ("Wavelet", "Expedge")) {wavelet.expedge = keyFile.get_boolean ("Wavelet", "Expedge");if (pedited) pedited->wavelet.expedge = true;}
+    if (keyFile.has_key ("Wavelet", "Expresid")) {wavelet.expresid = keyFile.get_boolean ("Wavelet", "Expresid");if (pedited) pedited->wavelet.expresid = true;}
+    if (keyFile.has_key ("Wavelet", "Expfinal")) {wavelet.expfinal = keyFile.get_boolean ("Wavelet", "Expfinal");if (pedited) pedited->wavelet.expfinal = true;}
+    if (keyFile.has_key ("Wavelet", "Exptoning")) {wavelet.exptoning = keyFile.get_boolean ("Wavelet", "Exptoning");if (pedited) pedited->wavelet.exptoning = true;}
+    if (keyFile.has_key ("Wavelet", "Expnoise")) {wavelet.expnoise = keyFile.get_boolean ("Wavelet", "Expnoise");if (pedited) pedited->wavelet.expnoise = true;}
+	
 	
 }
 
@@ -3222,6 +3244,13 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& wavelet.tmr == other.wavelet.tmr
 		&& wavelet.contrast == other.wavelet.contrast
 		&& wavelet.median == other.wavelet.median
+		&& wavelet.expcontrast == other.wavelet.expcontrast
+		&& wavelet.expchroma == other.wavelet.expchroma
+		&& wavelet.expedge == other.wavelet.expedge
+		&& wavelet.expresid == other.wavelet.expresid
+		&& wavelet.expfinal == other.wavelet.expfinal
+		&& wavelet.exptoning == other.wavelet.exptoning
+		&& wavelet.expnoise == other.wavelet.expnoise
 		&& wavelet.medianlev == other.wavelet.medianlev
 		&& wavelet.linkedg == other.wavelet.linkedg
 		&& wavelet.cbenab == other.wavelet.cbenab
