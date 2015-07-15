@@ -89,6 +89,7 @@ RawImageSource::RawImageSource ()
 	embProfile = NULL;
 	rgbSourceModified = false;
 	hlmax[0] = hlmax[1] = hlmax[2] = hlmax[3] = 0.f;
+	clmax[0] = clmax[1] = clmax[2] = clmax[3] = 0.f;
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -304,18 +305,17 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 	
     int maxx=this->W,maxy=this->H,skip=pp.skip;
 
+    // raw clip levels after white balance
+    hlmax[0]=clmax[0]*rm;
+    hlmax[1]=clmax[1]*gm;
+    hlmax[2]=clmax[2]*bm;
+
     //if (sx1+skip*imwidth>maxx) imwidth --; // very hard to fix this situation without an 'if' in the loop.
     float area=skip*skip;
     rm/=area;
     gm/=area;
     bm/=area;
 	
-    // raw clip levels after white balance
-    hlmax[0]=65535 * rm / min(rm, gm, bm);
-    hlmax[1]=65535 * gm / min(rm, gm, bm);
-    hlmax[2]=65535 * bm / min(rm, gm, bm);
-
-
 #ifdef _OPENMP
 #pragma omp parallel if(!d1x)		// omp disabled for D1x to avoid race conditions (see Issue 1088 http://code.google.com/p/rawtherapee/issues/detail?id=1088)
     {
@@ -345,7 +345,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 				rtot*=rm;
 				gtot*=gm;
 				btot*=bm;
-				if (!hrp.hrenabled && (rtot > hlmax[0] || gtot > hlmax[1] || btot > hlmax[2]))
+				if (!hrp.hrenabled && (rtot >= hlmax[0] || gtot >= hlmax[1] || btot >= hlmax[2]))
 				{
 					// make a sort of luminance recovery. Note that as we don't desaturate
 					// surrounding unclipped highlights the transition into clipping may not
@@ -376,7 +376,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 				rtot*=rm;
 				gtot*=gm;
 				btot*=bm;
-				if (!hrp.hrenabled && (rtot > hlmax[0] || gtot > hlmax[1] || btot > hlmax[2]))
+				if (!hrp.hrenabled && (rtot >= hlmax[0] || gtot >= hlmax[1] || btot >= hlmax[2]))
 				{
 					float L = rtot*0.2126729f + gtot*0.7151521f + btot*0.0721750f;
 					rtot = gtot = btot = L;
@@ -2080,11 +2080,13 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWP
 	for(int i=0; i<4 ;i++) cblacksom[i] = max( c_black[i]+black_lev[i], 0.0f ); // adjust black level
         initialGain = calculate_scale_mul(scale_mul, ref_pre_mul, c_white, cblacksom, isMono, ri->get_colors()); // recalculate scale colors with adjusted levels
         //fprintf(stderr, "recalc: %f [%f %f %f %f]\n", initialGain, scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
+	for(int i=0; i<4 ;i++) clmax[i] = (c_white[i] - cblacksom[i]) * scale_mul[i]; // raw clip level
         
 	// this seems strange, but it works
 
 		// scale image colors
 
+	// FIXME 2015-07-15: possible cleanup: chmax[] is no longer used, clmax[] has replaced it
 	if( ri->getSensorType()==ST_BAYER){
 #pragma omp parallel
 {
