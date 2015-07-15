@@ -2824,10 +2824,11 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 
 				//TODO: proper treatment of out-of-gamut colors
 					//float tonefactor = hltonecurve[(0.299f*r+0.587f*g+0.114f*b)];
-					float tonefactor=((r<MAXVALF ? hltonecurve[r] : CurveFactory::hlcurve (1.0, comp, hlrange, r) ) +
-									  (g<MAXVALF ? hltonecurve[g] : CurveFactory::hlcurve (1.0, comp, hlrange, g) ) +
-									  (b<MAXVALF ? hltonecurve[b] : CurveFactory::hlcurve (1.0, comp, hlrange, b) ) )/3.0;
+					float tonefactor=((r<MAXVALF ? hltonecurve[r] : CurveFactory::hlcurve (exp_scale, comp, hlrange, r) ) +
+									  (g<MAXVALF ? hltonecurve[g] : CurveFactory::hlcurve (exp_scale, comp, hlrange, g) ) +
+									  (b<MAXVALF ? hltonecurve[b] : CurveFactory::hlcurve (exp_scale, comp, hlrange, b) ) )/3.0;
 
+					// note: tonefactor includes exposure scaling, that is here exposure slider and highlight compression takes place
 					rtemp[ti*TS+tj] = r*tonefactor;
 					gtemp[ti*TS+tj] = g*tonefactor;
 					btemp[ti*TS+tj] = b*tonefactor;
@@ -2851,21 +2852,13 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 			}
 
 			if (dcpProf != NULL) {
-				dcpProf->step2ApplyTile(rtemp, gtemp, btemp, tW-jstart, tH-istart, TS, exp_scale);
+				dcpProf->step2ApplyTile(rtemp, gtemp, btemp, tW-jstart, tH-istart, TS);
 			}
 			for (int i=istart,ti=0; i<tH; i++,ti++) {
 				for (int j=jstart,tj=0; j<tW; j++,tj++) {
 					float r = rtemp[ti*TS+tj];
 					float g = gtemp[ti*TS+tj];
 					float b = btemp[ti*TS+tj];
-
-					// exposure scaling
-					if (dcpProf == NULL) {
-						// There was no DCP pass, scaling not applied so we apply it here
-						r *= exp_scale;
-						g *= exp_scale;
-						b *= exp_scale;
-					}
 
 					// clip out of gamut colors, without distorting color too bad
 					if (r < 0) r = 0;

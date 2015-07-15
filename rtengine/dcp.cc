@@ -1429,11 +1429,12 @@ void DCPProfile::setStep2ApplyState(Glib::ustring workingSpace, bool useToneCurv
     }
 }
 
-void DCPProfile::step2ApplyTile(float *rc, float *gc, float *bc, int width, int height, int tileWidth, float exp_scale) const {
+void DCPProfile::step2ApplyTile(float *rc, float *gc, float *bc, int width, int height, int tileWidth) const {
 
 #define FCLIP(a) ((a)>0.0?((a)<65535.5?(a):65535.5):0.0)
 #define CLIP01(a) ((a)>0?((a)<1?(a):1):0)
 
+    float exp_scale = 1.0;
     exp_scale *= applyState.blScale;
     if (!applyState.useToneCurve && !applyState.applyLookTable) {
         if (exp_scale == 1.0) {

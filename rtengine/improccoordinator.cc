@@ -356,7 +356,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         //complexCurve also calculated pre-curves histogram depending on crop
         ipf.g = imgsrc->getGamma();
         ipf.iGamma = true;
-        CurveFactory::complexCurve (/*params.toneCurve.expcomp*/ 0.0, params.toneCurve.black/65535.0,
+        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0,
                                     params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh,
                                     params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast,
                                     ipf.g, !ipf.iGamma, params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,
