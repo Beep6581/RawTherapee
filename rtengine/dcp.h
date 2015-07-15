@@ -87,7 +87,7 @@ namespace rtengine {
         void getIlluminants(int &i1, double &temp1, int &i2, double &temp2, bool &willInterpolate_) { i1 = iLightSource1; i2 = iLightSource2; temp1 = temperature1, temp2 = temperature2; willInterpolate_ = willInterpolate; };
         void Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, double pre_mul[3], double camMatrix[3][3], bool useToneCurve=false, bool applyHueSatMap=true, bool applyLookTable=false) const;
         void setStep2ApplyState(Glib::ustring workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure);
-        void step2ApplyTile(float *r, float *g, float *b, int width, int height, int tileWidth, float exp_scale) const;
+        void step2ApplyTile(float *r, float *g, float *b, int width, int height, int tileWidth) const;
     };
 
     class DCPStore {

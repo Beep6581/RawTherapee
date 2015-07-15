@@ -912,7 +912,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
 	ipf.g = gamma;
 	ipf.iGamma = true;
-	CurveFactory::complexCurve (0.0, black/65535.0, hlcompr, hlcomprthresh,
+	CurveFactory::complexCurve (expcomp, black/65535.0, hlcompr, hlcomprthresh,
 								params.toneCurve.shcompr, bright, contr, ipf.g, !ipf.iGamma,
 								params.toneCurve.curveMode, params.toneCurve.curve,
 								params.toneCurve.curveMode2, params.toneCurve.curve2,
