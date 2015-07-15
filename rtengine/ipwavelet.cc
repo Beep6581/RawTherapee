@@ -149,6 +149,7 @@ struct cont_params {
 	bool finena;
 	bool toningena;
 	bool noiseena;
+	int maxilev;
 	
 };
 
@@ -223,6 +224,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 	cp.eddetthrHi=(float) params->wavelet.edgedetectthr2;
 	int N=imheight*imwidth;
 	int maxmul=params->wavelet.thres;
+	cp.maxilev=maxmul;
 	static const float scales[10] = {1.f,2.f,4.f,8.f,16.f,32.f,64.f,128.f,256.f,512.f};
 	float scaleskip[10];
 	for(int sc=0;sc<10;sc++)
@@ -2067,20 +2069,33 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 			}
 		}
 		if(choiceClevel==0) { // Only one level
-			if(level != choicelevel){ // zero all for the levels != choicelevel
-				for (int dir=1; dir<4; dir++) {	
-					for (int i=0; i<W_L*H_L; i++) {
-						WavCoeffs_L[dir][i] = 0.f;
+		
+			if(choiceDir==0) { // All directions
+				if(level != choicelevel){ // zero all for the levels != choicelevel
+					for (int dir=1; dir<4; dir++) {	
+						for (int i=0; i<W_L*H_L; i++) {
+							WavCoeffs_L[dir][i] = 0.f;
+						}
 					}
-				}
+				}		
 			} else { // zero the unwanted directions for level == choicelevel
-				for (int i=0; i<W_L*H_L; i++) {
-					WavCoeffs_L[dir1][i] = WavCoeffs_L[dir2][i] = 0.f;
+			
+			   if(choicelevel >= cp.maxilev) {
+					for (int dir=1; dir<4; dir++) {	
+						for (int i=0; i<W_L*H_L; i++) {
+							WavCoeffs_L[dir][i] = 0.f;
+						}
+					}			
+				}	
+				else if(level != choicelevel){ // zero all for the levels != choicelevel					
+					for (int i=0; i<W_L*H_L; i++) {
+						WavCoeffs_L[dir1][i] = WavCoeffs_L[dir2][i] = 0.f;
+					}
 				}
 			}
 		} else if(choiceClevel==1) { // Only below level
 			if(choiceDir==0) { // All directions
-				if(level >= choicelevel) {
+				if(level > choicelevel) {
 					for (int dir=1; dir<4; dir++) {	
 						for (int i=0; i<W_L*H_L; i++) {
 							WavCoeffs_L[dir][i] =0.f;
@@ -2088,7 +2103,7 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 					}
 				}
 			} else { // zero the unwanted directions for level >= choicelevel
-				if(level >= choicelevel) {
+				if(level > choicelevel) {
 					for (int i=0; i<W_L*H_L; i++) {
 						WavCoeffs_L[dir1][i] = WavCoeffs_L[dir2][i] = 0.f;
 					}
@@ -2104,7 +2119,16 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 					}
 				}
 			} else { // zero the unwanted directions for level >= choicelevel
-				if(level <= choicelevel) {
+			   if(choicelevel >= cp.maxilev) {
+					for (int dir=1; dir<4; dir++) {	
+						for (int i=0; i<W_L*H_L; i++) {
+							WavCoeffs_L[dir][i] = 0.f;
+						}
+					}			
+				}	
+			
+			
+				else if(level <= choicelevel) {
 					for (int i=0; i<W_L*H_L; i++) {
 						WavCoeffs_L[dir1][i] = WavCoeffs_L[dir2][i] = 0.f;
 					}
@@ -2865,20 +2889,31 @@ if(cp.BAmet==1){
 			}
 		}
 		if(choiceClevel==0) { // Only one level
-			if(level != choicelevel){ // zero all for the levels != choicelevel
-				for (int dir=1; dir<4; dir++) {	
-					for (int i=0; i<W_ab*H_ab; i++) {
-						WavCoeffs_ab[dir][i] = 0.f;
+			if(choiceDir==0) { // All directions
+				if(level != choicelevel){ // zero all for the levels != choicelevel
+					for (int dir=1; dir<4; dir++) {	
+						for (int i=0; i<W_ab*H_ab; i++) {
+							WavCoeffs_ab[dir][i] = 0.f;
+						}
 					}
-				}
+				}	
 			} else { // zero the unwanted directions for level == choicelevel
-				for (int i=0; i<W_ab*H_ab; i++) {
-					WavCoeffs_ab[dir1][i] = WavCoeffs_ab[dir2][i] = 0.f;
+			   if(choicelevel >= cp.maxilev) {
+					for (int dir=1; dir<4; dir++) {	
+						for (int i=0; i<W_ab*H_ab; i++) {
+							WavCoeffs_ab[dir][i] = 0.f;
+						}
+					}	
+				}	
+				else if(level != choicelevel){ // zero all for the levels != choicelevel		
+					for (int i=0; i<W_ab*H_ab; i++) {
+						WavCoeffs_ab[dir1][i] = WavCoeffs_ab[dir2][i] = 0.f;
+					}
 				}
 			}
 		} else if(choiceClevel==1) { // Only below level
 			if(choiceDir==0) { // All directions
-				if(level >= choicelevel) {
+				if(level > choicelevel) {
 					for (int dir=1; dir<4; dir++) {	
 						for (int i=0; i<W_ab*H_ab; i++) {
 							WavCoeffs_ab[dir][i] =0.f;
@@ -2886,7 +2921,7 @@ if(cp.BAmet==1){
 					}
 				}
 			} else { // zero the unwanted directions for level >= choicelevel
-				if(level >= choicelevel) {
+				if(level > choicelevel) {
 					for (int i=0; i<W_ab*H_ab; i++) {
 						WavCoeffs_ab[dir1][i] = WavCoeffs_ab[dir2][i] = 0.f;
 					}
@@ -2902,7 +2937,14 @@ if(cp.BAmet==1){
 					}
 				}
 			} else { // zero the unwanted directions for level >= choicelevel
-				if(level <= choicelevel) {
+			   if(choicelevel >= cp.maxilev) {
+					for (int dir=1; dir<4; dir++) {	
+						for (int i=0; i<W_ab*H_ab; i++) {
+							WavCoeffs_ab[dir][i] = 0.f;
+						}
+					}	
+				}	
+				else if(level <= choicelevel) {
 					for (int i=0; i<W_ab*H_ab; i++) {
 						WavCoeffs_ab[dir1][i] = WavCoeffs_ab[dir2][i] = 0.f;
 					}
