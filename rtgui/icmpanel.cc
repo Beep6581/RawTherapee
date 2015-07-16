@@ -80,9 +80,12 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     ifromfile->set_group (opts);
     inone->set_group (opts);
 
-    Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
-    hb->show ();
-    dcpIllLabel = Gtk::manage (new Gtk::Label ("DCP " + M("TP_ICM_DCPILLUMINANT")+":"));
+    dcpFrame = Gtk::manage (new Gtk::Frame ("DCP"));
+    Gtk::VBox* dcpFrameVBox = Gtk::manage (new Gtk::VBox ());
+    dcpFrameVBox->set_border_width(4);
+
+    Gtk::HBox* dcpIllHBox = Gtk::manage (new Gtk::HBox ());
+    dcpIllLabel = Gtk::manage (new Gtk::Label (M("TP_ICM_DCPILLUMINANT")+":"));
     dcpIllLabel->set_tooltip_text (M("TP_ICM_DCPILLUMINANT_TOOLTIP"));
     dcpIllLabel->show ();
     dcpIll = Gtk::manage (new MyComboBoxText ());
@@ -94,38 +97,35 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     dcpTemperatures[0] = 0;
     dcpTemperatures[1] = 0;
     ignoreDcpSignal = true;
-    hb->pack_start(*dcpIllLabel, Gtk::PACK_SHRINK, 4);
-    hb->pack_start(*dcpIll);
-    iVBox->pack_start (*hb, Gtk::PACK_SHRINK, 2);
+    dcpIllHBox->pack_start(*dcpIllLabel, Gtk::PACK_SHRINK, 4);
+    dcpIllHBox->pack_start(*dcpIll);
 
-    Gtk::VBox* c1VBox = Gtk::manage ( new Gtk::VBox());
-    Gtk::VBox* c2VBox = Gtk::manage ( new Gtk::VBox());
-
+    Gtk::HBox* c1HBox = Gtk::manage ( new Gtk::HBox(true, 4));
     ckbToneCurve = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_TONECURVE")));
     ckbToneCurve->set_sensitive (false);
     ckbToneCurve->set_tooltip_text (M("TP_ICM_TONECURVE_TOOLTIP"));
-    c1VBox->pack_start (*ckbToneCurve, Gtk::PACK_SHRINK, 2);
-
-    ckbApplyLookTable = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYLOOKTABLE")));
-    ckbApplyLookTable->set_sensitive (false);
-    ckbApplyLookTable->set_tooltip_text (M("TP_ICM_APPLYLOOKTABLE_TOOLTIP"));
-    c1VBox->pack_start (*ckbApplyLookTable, Gtk::PACK_SHRINK, 2);
-
     ckbApplyHueSatMap = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYHUESATMAP")));
     ckbApplyHueSatMap->set_sensitive (false);
     ckbApplyHueSatMap->set_tooltip_text (M("TP_ICM_APPLYHUESATMAP_TOOLTIP"));
-    c2VBox->pack_start (*ckbApplyHueSatMap, Gtk::PACK_SHRINK, 2);
+    c1HBox->pack_start (*ckbToneCurve);
+    c1HBox->pack_start (*ckbApplyHueSatMap);
 
+    Gtk::HBox* c2HBox = Gtk::manage ( new Gtk::HBox(true, 4));
+    ckbApplyLookTable = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYLOOKTABLE")));
+    ckbApplyLookTable->set_sensitive (false);
+    ckbApplyLookTable->set_tooltip_text (M("TP_ICM_APPLYLOOKTABLE_TOOLTIP"));
     ckbApplyBaselineExposureOffset = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYBASELINEEXPOSUREOFFSET")));
     ckbApplyBaselineExposureOffset->set_sensitive (false);
     ckbApplyBaselineExposureOffset->set_tooltip_text (M("TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP"));
-    c2VBox->pack_start (*ckbApplyBaselineExposureOffset, Gtk::PACK_SHRINK, 2);
+    c2HBox->pack_start (*ckbApplyLookTable);
+    c2HBox->pack_start (*ckbApplyBaselineExposureOffset);
 
-    Gtk::HBox* dcpHBox = Gtk::manage (new Gtk::HBox ());
-    dcpHBox->show ();
-    dcpHBox->pack_start (*c1VBox, Gtk::PACK_EXPAND_WIDGET, 2);
-    dcpHBox->pack_start (*c2VBox, Gtk::PACK_EXPAND_WIDGET, 2);
-    iVBox->pack_start (*dcpHBox, Gtk::PACK_SHRINK, 2);
+    dcpFrameVBox->pack_start(*dcpIllHBox);
+    dcpFrameVBox->pack_start(*c1HBox);
+    dcpFrameVBox->pack_start(*c2HBox);
+    dcpFrame->add(*dcpFrameVBox);
+    dcpFrame->set_sensitive(false);
+    iVBox->pack_start (*dcpFrame);
 
     ckbBlendCMSMatrix = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_BLENDCMSMATRIX")));
     ckbBlendCMSMatrix->set_sensitive (false);
@@ -210,6 +210,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 
     Gtk::VBox *fgVBox = Gtk::manage ( new Gtk::VBox());
     fgVBox->set_spacing(0);
+    fgVBox->set_border_width(4);
 
     freegamma = Gtk::manage(new Gtk::CheckButton((M("TP_GAMMA_FREE"))));
     freegamma->set_active (false);
@@ -290,6 +291,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name) {
 
     if (isBatchMode) {
+        dcpFrame->set_sensitive(true);
         ckbToneCurve->set_sensitive (true);
         ckbApplyLookTable->set_sensitive (true);
         ckbApplyBaselineExposureOffset->set_sensitive (true);
@@ -324,9 +326,11 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name) {
     ckbApplyHueSatMap->set_sensitive (false);
     dcpIllLabel->set_sensitive (false);
     dcpIll->set_sensitive (false);
+    dcpFrame->set_sensitive(false);
     if (ifromfile->get_active() && dcpStore->isValidDCPFileName(dcp_name)) {
         DCPProfile* dcp = dcpStore->getProfile(dcp_name, false);
         if (dcp) {
+            dcpFrame->set_sensitive(true);
             if (dcp->getHasToneCurve()) {
                 ckbToneCurve->set_sensitive (true);
             }

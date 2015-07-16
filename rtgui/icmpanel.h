@@ -37,6 +37,7 @@ class ICMPanelListener {
 class ICMPanel : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
 
     protected:
+        Gtk::Frame*        dcpFrame;
         Adjuster* gampos;
         Adjuster* slpos;
         bool lastgamfree;

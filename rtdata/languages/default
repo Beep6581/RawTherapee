@@ -278,7 +278,7 @@ HISTORY_MSG_44;Lum. denoising radius
 HISTORY_MSG_45;Lum. denoising edge tolerance
 HISTORY_MSG_46;Color denoising
 HISTORY_MSG_47;Blend ICC highlights with matrix
-HISTORY_MSG_48;Use DCP's tone curve
+HISTORY_MSG_48;DCP - Tone curve
 HISTORY_MSG_49;DCP illuminant
 HISTORY_MSG_50;Shadows/Highlights
 HISTORY_MSG_51;S/H - Highlights
@@ -622,9 +622,9 @@ HISTORY_MSG_389;W - Residual - CB blue mid
 HISTORY_MSG_390;W - Residual - CB green low
 HISTORY_MSG_391;W - Residual - CB blue low
 HISTORY_MSG_392;W - Residual - CB Reset
-HISTORY_MSG_393;Use DCP's look table
-HISTORY_MSG_394;Use DCP's baseline exposure offset
-HISTORY_MSG_395;Use DCP's base table
+HISTORY_MSG_393;DCP - Look table
+HISTORY_MSG_394;DCP - Baseline exposure
+HISTORY_MSG_395;DCP - Base table
 HISTORY_MSG_396;W - Contrast sub-tool
 HISTORY_MSG_397;W - Chroma sub-tool
 HISTORY_MSG_398;W - ES sub-tool
@@ -1459,11 +1459,11 @@ TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;HSV Equalizer
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
-TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Use DCP's baseline exposure offset
+TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Baseline exposure
 TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only enabled if the selected DCP has any.
-TP_ICM_APPLYHUESATMAP;Use DCP's base table
+TP_ICM_APPLYHUESATMAP;Base table
 TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only enabled if the selected DCP has one.
-TP_ICM_APPLYLOOKTABLE;Use DCP's look table
+TP_ICM_APPLYLOOKTABLE;Look table
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only enabled if the selected DCP has one.
 TP_ICM_BLENDCMSMATRIX;Blend ICC highlights with matrix
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover clipped highlights when using LUT-based ICC profiles.
@@ -1488,7 +1488,7 @@ TP_ICM_OUTPUTPROFILE;Output Profile
 TP_ICM_SAVEREFERENCE;Save Reference Image for Profiling
 TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
-TP_ICM_TONECURVE;Use DCP's tone curve
+TP_ICM_TONECURVE;Tone curve
 TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only enabled if the selected DCP has a tone curve.
 TP_ICM_WORKINGPROFILE;Working Profile
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
