@@ -1875,3 +1875,61 @@ ZOOMPANEL_ZOOMFITSCREEN;画像全体を画面に合わせる\nショートカッ
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_371;Post-Resize Sharpening
+!HISTORY_MSG_372;PRS USM - Radius
+!HISTORY_MSG_373;PRS USM - Amount
+!HISTORY_MSG_374;PRS USM - Threshold
+!HISTORY_MSG_375;PRS USM - Sharpen only edges
+!HISTORY_MSG_376;PRS USM - Edge detection radius
+!HISTORY_MSG_377;PRS USM - Edge tolerance
+!HISTORY_MSG_378;PRS USM - Halo control
+!HISTORY_MSG_379;PRS USM - Halo control amount
+!HISTORY_MSG_380;PRS - Method
+!HISTORY_MSG_381;PRS RLD - Radius
+!HISTORY_MSG_382;PRS RLD - Amount
+!HISTORY_MSG_383;PRS RLD - Damping
+!HISTORY_MSG_384;PRS RLD - Iterations
+!HISTORY_MSG_385;W - Residual - Color Balance
+!HISTORY_MSG_386;W - Residual - CB green high
+!HISTORY_MSG_387;W - Residual - CB blue high
+!HISTORY_MSG_388;W - Residual - CB green mid
+!HISTORY_MSG_389;W - Residual - CB blue mid
+!HISTORY_MSG_390;W - Residual - CB green low
+!HISTORY_MSG_391;W - Residual - CB blue low
+!HISTORY_MSG_392;W - Residual - CB Reset
+!HISTORY_MSG_393;DCP - Look table
+!HISTORY_MSG_394;DCP - Baseline exposure
+!HISTORY_MSG_395;DCP - Base table
+!HISTORY_MSG_396;W - Contrast sub-tool
+!HISTORY_MSG_397;W - Chroma sub-tool
+!HISTORY_MSG_398;W - ES sub-tool
+!HISTORY_MSG_399;W - Residual sub-tool
+!HISTORY_MSG_400;W - Final sub-tool
+!HISTORY_MSG_401;W - Toning sub-tool
+!HISTORY_MSG_402;W - Denoise sub-tool
+!TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Baseline exposure
+!TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only enabled if the selected DCP has any.
+!TP_ICM_APPLYHUESATMAP;Base table
+!TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only enabled if the selected DCP has one.
+!TP_ICM_APPLYLOOKTABLE;Look table
+!TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only enabled if the selected DCP has one.
+!TP_PRSHARPENING_LABEL;Post-Resize Sharpening
+!TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
+!TP_WAVELET_BACKGROUND;Background
+!TP_WAVELET_CBENAB;Toning and Color Balance
+!TP_WAVELET_CBTYPE;Toning and Color Balance
+!TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
+!TP_WAVELET_DAUB2;D2 - low
+!TP_WAVELET_DAUB4;D4 - standard
+!TP_WAVELET_DAUB6;D6 - standard plus
+!TP_WAVELET_DAUB10;D10 - medium
+!TP_WAVELET_DAUB14;D14 - high
+!TP_WAVELET_LEVDIR_ALL;All levels in all directions
+!TP_WAVELET_LEVDIR_INF;Below or equal the level
+!TP_WAVELET_LEVDIR_ONE;One level
+!TP_WAVELET_LEVDIR_SUP;Above the level
+!TP_WAVELET_PROC;Process
