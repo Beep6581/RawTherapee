@@ -181,9 +181,9 @@
 !FILEBROWSER_SHOWTRASHHINT;Show contents of trash.\nShortcut: <b>Ctrl-t</b>
 !FILEBROWSER_SHOWUNCOLORHINT;Show images without a color label.\nShortcut: <b>Alt-0</b>
 !FILEBROWSER_SHOWUNRANKHINT;Show unranked images.\nShortcut: <b>0</b>
-!FILEBROWSER_STARTPROCESSINGHINT;Start processing the images in the queue.
+!FILEBROWSER_STARTPROCESSINGHINT;Start processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !FILEBROWSER_STARTPROCESSING;Start processing
-!FILEBROWSER_STOPPROCESSINGHINT;Stop processing the images in the queue.
+!FILEBROWSER_STOPPROCESSINGHINT;Stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !FILEBROWSER_STOPPROCESSING;Stop processing
 !FILEBROWSER_THUMBSIZE;Thumbnail size
 !FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives.
@@ -235,15 +235,15 @@
 !HISTORY_MSG_2;PP3 loaded
 !HISTORY_MSG_3;PP3 changed
 !HISTORY_MSG_4;History browsing
-!HISTORY_MSG_5;Lightness
-!HISTORY_MSG_6;Contrast
-!HISTORY_MSG_7;Black
-!HISTORY_MSG_8;Exposure compensation
-!HISTORY_MSG_9;Highlight compression
-!HISTORY_MSG_10;Shadow compression
-!HISTORY_MSG_11;Tone curve 1
-!HISTORY_MSG_12;Auto levels
-!HISTORY_MSG_13;Exposure clipping
+!HISTORY_MSG_5;Exposure - Lightness
+!HISTORY_MSG_6;Exposure - Contrast
+!HISTORY_MSG_7;Exposure - Black
+!HISTORY_MSG_8;Exposure - Compensation
+!HISTORY_MSG_9;Exposure - Highlight compression
+!HISTORY_MSG_10;Exposure - Shadow compression
+!HISTORY_MSG_11;Exposure - Tone curve 1
+!HISTORY_MSG_12;Exposure - Auto levels
+!HISTORY_MSG_13;Exposure - Clip
 !HISTORY_MSG_14;L*a*b* - Lightness
 !HISTORY_MSG_15;L*a*b* - Contrast
 !HISTORY_MSG_16;-
@@ -259,7 +259,7 @@
 !HISTORY_MSG_26;USM - Edge tolerance
 !HISTORY_MSG_27;USM - Halo control
 !HISTORY_MSG_28;USM - Halo control amount
-!HISTORY_MSG_29;Sharpening method
+!HISTORY_MSG_29;Sharpening - Method
 !HISTORY_MSG_30;RLD - Radius
 !HISTORY_MSG_31;RLD - Amount
 !HISTORY_MSG_32;RLD - Damping
@@ -267,24 +267,24 @@
 !HISTORY_MSG_34;LCP distortion correction
 !HISTORY_MSG_35;LCP vignetting correction
 !HISTORY_MSG_36;LCP CA correction
-!HISTORY_MSG_37;Auto levels
-!HISTORY_MSG_38;White balance method
+!HISTORY_MSG_37;Exposure - Auto levels
+!HISTORY_MSG_38;White Balance - Method
 !HISTORY_MSG_39;WB - Temperature
 !HISTORY_MSG_40;WB - Tint
-!HISTORY_MSG_41;Tone curve 1 mode
-!HISTORY_MSG_42;Tone curve 2
-!HISTORY_MSG_43;Tone curve 2 mode
+!HISTORY_MSG_41;Exposure - Tone curve 1 mode
+!HISTORY_MSG_42;Exposure - Tone curve 2
+!HISTORY_MSG_43;Exposure - Tone curve 2 mode
 !HISTORY_MSG_44;Lum. denoising radius
 !HISTORY_MSG_45;Lum. denoising edge tolerance
 !HISTORY_MSG_46;Color denoising
 !HISTORY_MSG_47;Blend ICC highlights with matrix
-!HISTORY_MSG_48;Use DCP's tone curve
+!HISTORY_MSG_48;DCP - Tone curve
 !HISTORY_MSG_49;DCP illuminant
 !HISTORY_MSG_50;Shadows/Highlights
 !HISTORY_MSG_51;S/H - Highlights
 !HISTORY_MSG_52;S/H - Shadows
-!HISTORY_MSG_53;S/H - Highlight tonal width
-!HISTORY_MSG_54;S/H - Shadow tonal width
+!HISTORY_MSG_53;S/H - Highlights tonal width
+!HISTORY_MSG_54;S/H - Shadows tonal width
 !HISTORY_MSG_55;S/H - Local contrast
 !HISTORY_MSG_56;S/H - Radius
 !HISTORY_MSG_57;Coarse rotation
@@ -296,9 +296,9 @@
 !HISTORY_MSG_63;Snapshot selected
 !HISTORY_MSG_64;Crop
 !HISTORY_MSG_65;CA correction
-!HISTORY_MSG_66;Highlight reconstruction
-!HISTORY_MSG_67;HR reconstruction amount
-!HISTORY_MSG_68;HL reconstruction method
+!HISTORY_MSG_66;Exposure - Highlight reconstruction
+!HISTORY_MSG_67;Exposure - HLR amount
+!HISTORY_MSG_68;Exposure - HLR method
 !HISTORY_MSG_69;Working color space
 !HISTORY_MSG_70;Output color space
 !HISTORY_MSG_71;Input color space
@@ -316,8 +316,8 @@
 !HISTORY_MSG_83;S/H - Sharp mask
 !HISTORY_MSG_84;Perspective correction
 !HISTORY_MSG_85;LCP
-!HISTORY_MSG_86;RGB curves - Luminosity mode
-!HISTORY_MSG_87;Impulse noise reduction
+!HISTORY_MSG_86;RGB Curves - Luminosity mode
+!HISTORY_MSG_87;Impulse Noise Reduction
 !HISTORY_MSG_88;Impulse NR threshold
 !HISTORY_MSG_89;Noise Reduction
 !HISTORY_MSG_90;NR - Luminance
@@ -330,7 +330,7 @@
 !HISTORY_MSG_97;L*a*b* - b* curve
 !HISTORY_MSG_98;Demosaicing method
 !HISTORY_MSG_99;Hot pixel filter
-!HISTORY_MSG_100;RGB Saturation
+!HISTORY_MSG_100;Exposure - Saturation
 !HISTORY_MSG_101;HSV - Hue
 !HISTORY_MSG_102;HSV - Saturation
 !HISTORY_MSG_103;HSV - Value
@@ -338,7 +338,7 @@
 !HISTORY_MSG_105;Defringe
 !HISTORY_MSG_106;Defringe - Radius
 !HISTORY_MSG_107;Defringe - Threshold
-!HISTORY_MSG_108;Highlight Compr. Threshold
+!HISTORY_MSG_108;Exposure - HLC threshold
 !HISTORY_MSG_109;Resize - Bounding box
 !HISTORY_MSG_110;Resize - Applies to
 !HISTORY_MSG_111;L*a*b* - Avoid color shift
@@ -393,10 +393,10 @@
 !HISTORY_MSG_160;TM - Scale
 !HISTORY_MSG_161;TM - Reweighting iterates
 !HISTORY_MSG_162;Tone Mapping
-!HISTORY_MSG_163;RGB curves - Red
-!HISTORY_MSG_164;RGB curves - Green
-!HISTORY_MSG_165;RGB curves - Blue
-!HISTORY_MSG_166;Neutral levels
+!HISTORY_MSG_163;RGB Curves - Red
+!HISTORY_MSG_164;RGB Curves - Green
+!HISTORY_MSG_165;RGB Curves - Blue
+!HISTORY_MSG_166;Exposure - Neutral
 !HISTORY_MSG_167;--unused--
 !HISTORY_MSG_168;L*a*b* - CC curve
 !HISTORY_MSG_169;L*a*b* - CH curve
@@ -535,9 +535,9 @@
 !HISTORY_MSG_303;NR - Chroma method
 !HISTORY_MSG_304;W - Contrast levels
 !HISTORY_MSG_305;Wavelet Levels
-!HISTORY_MSG_306;W - Preview
-!HISTORY_MSG_307;W - Preview
-!HISTORY_MSG_308;W - Preview direction
+!HISTORY_MSG_306;W - Process
+!HISTORY_MSG_307;W - Process
+!HISTORY_MSG_308;W - Process direction
 !HISTORY_MSG_309;W - ES - Detail
 !HISTORY_MSG_310;W - Residual - Sky tar/prot
 !HISTORY_MSG_311;W - Wavelet levels
@@ -600,6 +600,38 @@
 !HISTORY_MSG_368;W - Final - Contrast balance
 !HISTORY_MSG_369;W - Final - Balance method
 !HISTORY_MSG_370;W - Final - Local contrast curve
+!HISTORY_MSG_371;Post-Resize Sharpening
+!HISTORY_MSG_372;PRS USM - Radius
+!HISTORY_MSG_373;PRS USM - Amount
+!HISTORY_MSG_374;PRS USM - Threshold
+!HISTORY_MSG_375;PRS USM - Sharpen only edges
+!HISTORY_MSG_376;PRS USM - Edge detection radius
+!HISTORY_MSG_377;PRS USM - Edge tolerance
+!HISTORY_MSG_378;PRS USM - Halo control
+!HISTORY_MSG_379;PRS USM - Halo control amount
+!HISTORY_MSG_380;PRS - Method
+!HISTORY_MSG_381;PRS RLD - Radius
+!HISTORY_MSG_382;PRS RLD - Amount
+!HISTORY_MSG_383;PRS RLD - Damping
+!HISTORY_MSG_384;PRS RLD - Iterations
+!HISTORY_MSG_385;W - Residual - Color Balance
+!HISTORY_MSG_386;W - Residual - CB green high
+!HISTORY_MSG_387;W - Residual - CB blue high
+!HISTORY_MSG_388;W - Residual - CB green mid
+!HISTORY_MSG_389;W - Residual - CB blue mid
+!HISTORY_MSG_390;W - Residual - CB green low
+!HISTORY_MSG_391;W - Residual - CB blue low
+!HISTORY_MSG_392;W - Residual - CB Reset
+!HISTORY_MSG_393;DCP - Look table
+!HISTORY_MSG_394;DCP - Baseline exposure
+!HISTORY_MSG_395;DCP - Base table
+!HISTORY_MSG_396;W - Contrast sub-tool
+!HISTORY_MSG_397;W - Chroma sub-tool
+!HISTORY_MSG_398;W - ES sub-tool
+!HISTORY_MSG_399;W - Residual sub-tool
+!HISTORY_MSG_400;W - Final sub-tool
+!HISTORY_MSG_401;W - Toning sub-tool
+!HISTORY_MSG_402;W - Denoise sub-tool
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !HISTORY_SNAPSHOTS;Snapshots
@@ -732,12 +764,12 @@
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !PARTIALPASTE_BASICGROUP;Basic Settings
 !PARTIALPASTE_CACORRECTION;Chromatic aberration correction
-!PARTIALPASTE_CHANNELMIXERBW;Black-and-White
+!PARTIALPASTE_CHANNELMIXERBW;Black-and-white
 !PARTIALPASTE_CHANNELMIXER;Channel mixer
-!PARTIALPASTE_COARSETRANS;Coarse rotation / flipping
+!PARTIALPASTE_COARSETRANS;Coarse rotation/flipping
 !PARTIALPASTE_COLORAPP;CIECAM02
 !PARTIALPASTE_COLORGROUP;Color Related Settings
-!PARTIALPASTE_COLORTONING;Color Toning
+!PARTIALPASTE_COLORTONING;Color toning
 !PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto-fill
 !PARTIALPASTE_COMPOSITIONGROUP;Composition Settings
 !PARTIALPASTE_CROP;Crop
@@ -750,11 +782,11 @@
 !PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
 !PARTIALPASTE_DISTORTION;Distortion correction
 !PARTIALPASTE_EPD;Tone mapping
-!PARTIALPASTE_EQUALIZER;Wavelet Equalizer
+!PARTIALPASTE_EQUALIZER;Wavelet levels
 !PARTIALPASTE_EVERYTHING;Everything
 !PARTIALPASTE_EXIFCHANGES;Exif
 !PARTIALPASTE_EXPOSURE;Exposure
-!PARTIALPASTE_FILMSIMULATION;Film Simulation
+!PARTIALPASTE_FILMSIMULATION;Film simulation
 !PARTIALPASTE_FLATFIELDAUTOSELECT;Flat-field auto-selection
 !PARTIALPASTE_FLATFIELDBLURRADIUS;Flat-field blur radius
 !PARTIALPASTE_FLATFIELDBLURTYPE;Flat-field blur type
@@ -767,7 +799,7 @@
 !PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
 !PARTIALPASTE_IPTCINFO;IPTC
 !PARTIALPASTE_LABCURVE;L*a*b* adjustments
-!PARTIALPASTE_LENSGROUP;Lens related settings
+!PARTIALPASTE_LENSGROUP;Lens Related Settings
 !PARTIALPASTE_LENSPROFILE;Lens correction profile
 !PARTIALPASTE_METAGROUP;Metadata
 !PARTIALPASTE_PCVIGNETTE;Vignette filter
@@ -784,9 +816,9 @@
 !PARTIALPASTE_RAWEXPOS_PRESER;Highlight preservation
 !PARTIALPASTE_RAWGROUP;Raw Settings
 !PARTIALPASTE_RAW_DCBENHANCE;DCB enhancement
-!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
+!PARTIALPASTE_RAW_DCBITERATIONS;DCB iterations
 !PARTIALPASTE_RAW_DMETHOD;Demosaic method
-!PARTIALPASTE_RAW_FALSECOLOR;Demosaic false color suppression steps
+!PARTIALPASTE_RAW_FALSECOLOR;False color suppression
 !PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !PARTIALPASTE_RESIZE;Resize
 !PARTIALPASTE_RGBCURVES;RGB curves
@@ -797,7 +829,7 @@
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_VIGNETTING;Vignetting correction
-!PARTIALPASTE_WAVELETGROUP;Wavelet processing
+!PARTIALPASTE_WAVELETGROUP;Wavelet Levels
 !PARTIALPASTE_WHITEBALANCE;White balance
 !PREFERENCES_ADD;Add
 !PREFERENCES_APPLNEXTSTARTUP;restart required
@@ -1427,6 +1459,12 @@
 !TP_HSVEQUALIZER_LABEL;HSV Equalizer
 !TP_HSVEQUALIZER_SAT;S
 !TP_HSVEQUALIZER_VAL;V
+!TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Baseline exposure
+!TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only enabled if the selected DCP has any.
+!TP_ICM_APPLYHUESATMAP;Base table
+!TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only enabled if the selected DCP has one.
+!TP_ICM_APPLYLOOKTABLE;Look table
+!TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only enabled if the selected DCP has one.
 !TP_ICM_BLENDCMSMATRIX;Blend ICC highlights with matrix
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover clipped highlights when using LUT-based ICC profiles.
 !TP_ICM_DCPILLUMINANT;Illuminant
@@ -1450,7 +1488,7 @@
 !TP_ICM_SAVEREFERENCE;Save Reference Image for Profiling
 !TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 !TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
-!TP_ICM_TONECURVE;Use DCP's tone curve
+!TP_ICM_TONECURVE;Tone curve
 !TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only enabled if the selected DCP has a tone curve.
 !TP_ICM_WORKINGPROFILE;Working Profile
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
@@ -1521,6 +1559,8 @@
 !TP_PREPROCESS_LABEL;Preprocessing
 !TP_PREPROCESS_LINEDENOISE;Line noise filter
 !TP_PREPROCESS_NO_FOUND;None found
+!TP_PRSHARPENING_LABEL;Post-Resize Sharpening
+!TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 !TP_RAWCACORR_AUTO;Auto-correction
 !TP_RAWCACORR_CABLUE;Blue
 !TP_RAWCACORR_CARED;Red
@@ -1578,7 +1618,7 @@
 !TP_SAVEDIALOG_OK_TIP;Shortcut: <b>Ctrl-Enter</b>
 !TP_SHADOWSHLIGHTS_HIGHLIGHTS;Highlights
 !TP_SHADOWSHLIGHTS_HLTONALW;Highlights tonal width
-!TP_SHADOWSHLIGHTS_LABEL;Shadows/highlights
+!TP_SHADOWSHLIGHTS_LABEL;Shadows/Highlights
 !TP_SHADOWSHLIGHTS_LOCALCONTR;Local contrast
 !TP_SHADOWSHLIGHTS_RADIUS;Radius
 !TP_SHADOWSHLIGHTS_SHADOWS;Shadows
@@ -1641,12 +1681,12 @@
 !TP_WAVELET_7;Level 7
 !TP_WAVELET_8;Level 8
 !TP_WAVELET_9;Level 9
-!TP_WAVELET_ALL;All levels in all directions
 !TP_WAVELET_APPLYTO;Apply To
 !TP_WAVELET_AVOID;Avoid color shift
 !TP_WAVELET_B0;Black
 !TP_WAVELET_B1;Grey
 !TP_WAVELET_B2;Residual
+!TP_WAVELET_BACKGROUND;Background
 !TP_WAVELET_BACUR;Curve
 !TP_WAVELET_BALANCE;Contrast balance d/v-h
 !TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chromaticity or residual tone mapping are activated, the effect due to balance is amplified.
@@ -1655,6 +1695,9 @@
 !TP_WAVELET_BANONE;None
 !TP_WAVELET_BASLI;Slider
 !TP_WAVELET_BATYPE;Contrast balance method
+!TP_WAVELET_CBENAB;Toning and Color Balance
+!TP_WAVELET_CBTYPE;Toning and Color Balance
+!TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
 !TP_WAVELET_CCURVE;Local contrast
 !TP_WAVELET_CH1;Whole chromaticity range
 !TP_WAVELET_CH2;Saturated/pastel
@@ -1670,10 +1713,8 @@
 !TP_WAVELET_COMBOTH;Both
 !TP_WAVELET_COMPCONT;Contrast
 !TP_WAVELET_COMPGAMMA;Compression gamma
-!TP_WAVELET_COMPGAMMA_TOOLTIP;Adjusting the gamma of the residual image allow you to equilibrate the data and histogram.
-!TP_WAVELET_COMPGAMMA_TOOLTIP;Adjust gamma for residual image and compression.\nAllow to equilibrate data and histogram
+!TP_WAVELET_COMPGAMMA_TOOLTIP;Adjusting the gamma of the residual image allows you to equilibrate the data and histogram.
 !TP_WAVELET_COMPTM;Tone mapping
-!TP_WAVELET_CONTEDIT;'After' Contrast curve
 !TP_WAVELET_CONTEDIT;'After' contrast curve
 !TP_WAVELET_CONTRAST_MINUS;Contrast -
 !TP_WAVELET_CONTRAST_PLUS;Contrast +
@@ -1686,13 +1727,16 @@
 !TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Modifies each level's contrast as a function oh hue.\nTake care not to overwrite changes made with the Gamut Hue controls.\nThe curve will only have an effect when wavelet contrast level sliders are non-zero.
 !TP_WAVELET_CURVEEDITOR_CL;L
 !TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Applies a final contrast luminance curve at the end of the wavelet treatment.
-!TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Apply a contrast luminance curve at the end of wavelet level threatment
 !TP_WAVELET_CURVEEDITOR_HH;HH
 !TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Modifies the residual image's hue as a function of hue.
 !TP_WAVELET_DALL;All directions
+!TP_WAVELET_DAUB2;D2 - low
+!TP_WAVELET_DAUB4;D4 - standard
+!TP_WAVELET_DAUB6;D6 - standard plus
+!TP_WAVELET_DAUB10;D10 - medium
+!TP_WAVELET_DAUB14;D14 - high
 !TP_WAVELET_DAUB;Edge performance
 !TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the firsts levels. However the quality is not strictly related to this coefficient and can vary with images and uses.
-!TP_WAVELET_DISP;Preview Settings
 !TP_WAVELET_DONE;Vertical
 !TP_WAVELET_DTHR;Diagonal
 !TP_WAVELET_DTWO;Horizontal
@@ -1722,12 +1766,15 @@
 !TP_WAVELET_HUESKIN_TOOLTIP;The bottom points set the beginning of the transition zone, and the upper points the end of it, where the effect is at its maximum.\n\nIf you need to move the area significantly, or if there are artifacts, then the <b>white balance is incorrect</b>.
 !TP_WAVELET_HUESKY;Sky hue
 !TP_WAVELET_HUESKY_TOOLTIP;The bottom points set the beginning of the transition zone, and the upper points the end of it, where the effect is at its maximum.\n\nIf you need to move the area significantly, or if there are artifacts, then the <b>white balance is incorrect</b>.
-!TP_WAVELET_INF;Below or equal the level
 !TP_WAVELET_ITER;Delta balance levels
 !TP_WAVELET_ITER_TOOLTIP;Left: increase low levels and reduce high levels,\nRight: reduce low levels and increase high levels.
-!TP_WAVELET_LABEL;Wavelet levels
+!TP_WAVELET_LABEL;Wavelet Levels
 !TP_WAVELET_LARGEST;Coarsest
 !TP_WAVELET_LEVCH;Chromaticity
+!TP_WAVELET_LEVDIR_ALL;All levels in all directions
+!TP_WAVELET_LEVDIR_INF;Below or equal the level
+!TP_WAVELET_LEVDIR_ONE;One level
+!TP_WAVELET_LEVDIR_SUP;Above the level
 !TP_WAVELET_LEVELS;Wavelet levels
 !TP_WAVELET_LEVELS_TOOLTIP;Choose the number of detail levels the image is to be decomposed into. More levels require more RAM and require a longer processing time.
 !TP_WAVELET_LEVF;Contrast
@@ -1745,22 +1792,19 @@
 !TP_WAVELET_NEUTRAL;Neutral
 !TP_WAVELET_NOISE;Denoise and Refine
 !TP_WAVELET_NOIS;Denoise
-!TP_WAVELET_ONE;One level
 !TP_WAVELET_OPACITYWL;Final local contrast
-!TP_WAVELET_OPACITYWL_TOOLTIP;Modify final local contrast in function of last local contrast (absciss) for all levels decomposition\nTake into account: \na)contrast levels \nb)edge sharpness \nc)contrast balance\nd)decomposition-recomposition\nLow absciss represents small local contrast (real values about 10..20)\n50% absciss represents average of local contrast (real value about 200..1000)\n66% absciss represents standard deviation of local contrast (real value about 1000..2000)\n100% represents maximum (real value about 5000..13000)
 !TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the wavelet treatment.\n\nThe left side represents the smallest local contrast, progressing to the largest local contrast on the right.
 !TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
 !TP_WAVELET_OPACITY;Opacity Blue-Yellow
 !TP_WAVELET_PASTEL;Pastel chromaticity
-!TP_WAVELET_PREVIEWBACK;Background
-!TP_WAVELET_PREVIEWLEVELS;Preview
+!TP_WAVELET_PROC;Process
 !TP_WAVELET_RE1;Reinforced
 !TP_WAVELET_RE2;Unchanged
 !TP_WAVELET_RE3;Reduced
 !TP_WAVELET_RESCHRO;Chromaticity
 !TP_WAVELET_RESCONH;Highlights
 !TP_WAVELET_RESCON;Shadows
-!TP_WAVELET_RESID;Residual image
+!TP_WAVELET_RESID;Residual Image
 !TP_WAVELET_SAT;Saturated chromaticity
 !TP_WAVELET_SETTINGS;Wavelet Settings
 !TP_WAVELET_SKIN;Skin targetting/protection
@@ -1770,7 +1814,6 @@
 !TP_WAVELET_STRENGTH;Strength
 !TP_WAVELET_STREN;Strength
 !TP_WAVELET_SUPE;Extra
-!TP_WAVELET_SUP;Above the level
 !TP_WAVELET_THRESHOLD2;Shadow levels
 !TP_WAVELET_THRESHOLD2_TOOLTIP;Only levels between 9 and 9 minus the value will be affected by the shadow luminance range. Other levels will be fully treated. The highest level possible is limited by the highlight level value (9 minus highlight level value).
 !TP_WAVELET_THRESHOLD;Highlight levels
@@ -1790,11 +1833,6 @@
 !TP_WAVELET_TMSTRENGTH_TOOLTIP;Control the strength of tone mapping or contrast compression of the residual image. When the value is different from 0, the Strength and Gamma sliders of the Tone Mapping tool in the Exposure tab will become grayed out.
 !TP_WAVELET_TMTYPE;Compression method
 !TP_WAVELET_TON;Toning
-!TP_WAVELET_daub2;D2 - low
-!TP_WAVELET_daub4;D4 - standard
-!TP_WAVELET_daub6;D6 - standard plus
-!TP_WAVELET_daub10;D10 - medium
-!TP_WAVELET_daub14;D14 - high
 !TP_WBALANCE_AUTO;Auto
 !TP_WBALANCE_CAMERA;Camera
 !TP_WBALANCE_CLOUDY;Cloudy
