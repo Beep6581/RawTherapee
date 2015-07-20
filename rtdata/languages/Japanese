@@ -30,6 +30,7 @@
 #30 2015-05-01 firefly
 #31 2015-05-31 firefly
 #32 2015-06-13 firefly
+#33 2015-07-20 firefly
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -210,9 +211,9 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;最近保存されていない画像を表�
 FILEBROWSER_SHOWTRASHHINT;ゴミ箱の内容を表示\nショートカット: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;カラー・ラベルのない画像を表示\nショートカット: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;ランクなし画像を表示\nショートカット:  <b>0</b>
-FILEBROWSER_STARTPROCESSINGHINT;処理開始/キュー画像の保存
+FILEBROWSER_STARTPROCESSINGHINT;キューにある画像の処理を開始\n\nショートカット:<b>Ctrl</b>+<b>s</b>
 FILEBROWSER_STARTPROCESSING;処理開始
-FILEBROWSER_STOPPROCESSINGHINT;画像処理の中止
+FILEBROWSER_STOPPROCESSINGHINT;キューにある画像の処理を中止\n\nショートカット:<b>Ctrl</b>+<b>s</b>
 FILEBROWSER_STOPPROCESSING;処理中止
 FILEBROWSER_THUMBSIZE;サムネイルのサイズ
 FILEBROWSER_TOOLTIP_STOPPROCESSING;新しいrawファイルが送られて来たら自動的に現像処理を開始します
@@ -564,7 +565,7 @@ HISTORY_MSG_302;色ノイズの調整方法
 HISTORY_MSG_303;色ノイズの調整方法
 HISTORY_MSG_304;W-　コントラストレベル
 HISTORY_MSG_305;ウェーブレットのレベル
-HISTORY_MSG_306;W-　プレビュー
+HISTORY_MSG_306;W-　プロセス
 HISTORY_MSG_307;W-　プレビュー
 HISTORY_MSG_308;W-　プレビューの方向
 HISTORY_MSG_309;W-　ES　ディテール
@@ -629,6 +630,38 @@ HISTORY_MSG_367;W-　ES　ローカルコントラストカーブ
 HISTORY_MSG_368;W-　最終　コントラストバランス
 HISTORY_MSG_369;W-　最終　バランスの方法
 HISTORY_MSG_370;W-　最終　ローカルコントラストカーブ
+HISTORY_MSG_371;リサイズ後のシャープ化（PRS）
+HISTORY_MSG_372;PRS アンシャープマスク - 半径
+HISTORY_MSG_373;PRS アンシャープマスク - 適用量
+HISTORY_MSG_374;PRS アンシャープマスク - しきい値
+HISTORY_MSG_375;PRS アンシャープマスク - エッジのみ
+HISTORY_MSG_376;PRS アンシャープマスク - 半径
+HISTORY_MSG_377;PRS アンシャープマスク - エッジの許容
+HISTORY_MSG_378;PRS アンシャープマスク - ハロ抑制
+HISTORY_MSG_379;PRS アンシャープマスク - 適用量
+HISTORY_MSG_380;PRS - 方式
+HISTORY_MSG_381;PRS RLD - 半径
+HISTORY_MSG_382;PRS RLD - 適用量
+HISTORY_MSG_383;PRS RLD - 減衰
+HISTORY_MSG_384;PRS RLD - 繰り返し
+HISTORY_MSG_385;W - 残差 - カラーバランス（CB）
+HISTORY_MSG_386;W - 残差 - CB ハイライトのグリーン
+HISTORY_MSG_387;W - 残差 - CB ハイライトのブルー
+HISTORY_MSG_388;W - 残差 - CB 中間のグリーン
+HISTORY_MSG_389;W - 残差 - CB 中間のブルー
+HISTORY_MSG_390;W - 残差 - CB シャドウのグリーン
+HISTORY_MSG_391;W - 残差 - CB シャドウのブルー
+HISTORY_MSG_392;W - 残差 - CB リセット
+HISTORY_MSG_393;DCP - ルックテーブル
+HISTORY_MSG_394;DCP - 基本露出
+HISTORY_MSG_395;DCP - ベーステーブル
+HISTORY_MSG_396;W - コントラスト サブツール
+HISTORY_MSG_397;W - 色度 サブツール
+HISTORY_MSG_398;W - ES サブツール
+HISTORY_MSG_399;W - 残差 サブツール
+HISTORY_MSG_400;W - 最終 サブツール
+HISTORY_MSG_401;W - カラートーン サブツール
+HISTORY_MSG_402;W - ノイズ低減 サブツール
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;スナップショット
@@ -815,7 +848,7 @@ PARTIALPASTE_RAWGROUP;raw 設定
 PARTIALPASTE_RAW_DCBENHANCE;DCB 拡張処理適用
 PARTIALPASTE_RAW_DCBITERATIONS;DCB反復の数
 PARTIALPASTE_RAW_DMETHOD;デモザイクの方法
-PARTIALPASTE_RAW_FALSECOLOR;デモザイク 偽色抑制の処理段階
+PARTIALPASTE_RAW_FALSECOLOR;デモザイク 偽色の
 PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE 拡張処理
 PARTIALPASTE_RESIZE;リサイズ
 PARTIALPASTE_RGBCURVES;RGB カーブ
@@ -986,7 +1019,7 @@ PREFERENCES_PROPERTY;プロパティ
 PREFERENCES_PSPATH;Adobe Photoshop のインストール・ディレクトリ
 PREFERENCES_REMEMBERZOOMPAN;ズームレベルとパン速度を記憶する
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;現在の画像のズームレベルとパン速度を記憶し、新しく開く画像に適用\n\nこのオプションが使えるのは、編集画面のモードが“シングル編集”で、“プレビューのズームレベルが100%以下の場合に使うデモザイク”が“pp3に従う”と設定されている場合だけです。
-PREFERENCES_RGBDTL_LABEL;スレッドの最大数
+PREFERENCES_RGBDTL_LABEL;ノイズ低減とウェーブレットのための最大スレッド数
 PREFERENCES_RGBDTL_TOOLTIP;ノイズ低減は、10メガピクセル画像では128MB程度、40メガピクセル画像では512MBを必要とします、そして更にスレッドごとに128MBが必要です。複数のスレッドを同時に実行すると演算が速くなります。自動的にできる限り多くのスレッドを使用するには"0"の設定のままにします
 PREFERENCES_SELECTFONT;フォント選択
 PREFERENCES_SELECTLANG;言語選択
@@ -1103,7 +1136,7 @@ TP_BWMIX_AUTOCH;オート
 TP_BWMIX_AUTOCH_TIP;チャンネルミキサーの最適値を計算します
 TP_BWMIX_CC_ENABLED;補色の調整
 TP_BWMIX_CC_TOOLTIP;ROYGCBPMモードの中で補色の調整を自動で行います
-TP_BWMIX_CHANNEL;輝度イコライザー
+TP_BWMIX_CHANNEL;輝度イコライザ
 TP_BWMIX_CURVEEDITOR1;‘前の‘カーブ
 TP_BWMIX_CURVEEDITOR2;‘後の‘カーブ
 TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;処理最終段階で白黒変換を施した後のトーンカーブ
@@ -1456,6 +1489,12 @@ TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;HSV イコライザ
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
+TP_ICM_APPLYBASELINEEXPOSUREOFFSET;基本露出オフセット
+TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;DCPに埋め込まれている基本露出オフセットを用います。但し、適用するDCPにこのタグがある場合に限ります。
+TP_ICM_APPLYHUESATMAP;ベーステーブル
+TP_ICM_APPLYHUESATMAP_TOOLTIP;DCPに埋め込まれているベーステーブル（色相彩度マップ）を用います。但し、適用するDCPにこのタグがある場合に限ります。
+TP_ICM_APPLYLOOKTABLE;ルックテーブル
+TP_ICM_APPLYLOOKTABLE_TOOLTIP;DCPに埋め込まれているルックテーブルを用います。但し、適用するDCPにこのタグがある場合に限ります。
 TP_ICM_BLENDCMSMATRIX;マトリクスとハイライト・ブレンド
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;LUTベースのICCプロファイルを使用するときに白トビを修復
 TP_ICM_DCPILLUMINANT;光源
@@ -1550,6 +1589,8 @@ TP_PREPROCESS_HOTPIXFILT_TOOLTIP;ホットピクセルの圧縮を試みます
 TP_PREPROCESS_LABEL;前処理
 TP_PREPROCESS_LINEDENOISE;ラインノイズ フィルタ
 TP_PREPROCESS_NO_FOUND;未検出
+TP_PRSHARPENING_LABEL;リサイズ後のシャープ化
+TP_PRSHARPENING_TOOLTIP;リサイズ後の画像をシャープ化します。但し、リサイズの方式がランチョスの場合に限ります。プレビュー画面でこの機能の効果を見ることは出来ません。使用法に関してはRawPediaを参照して下さい。
 TP_RAWCACORR_AUTO;自動補正
 TP_RAWCACORR_CABLUE;ブルー
 TP_RAWCACORR_CARED;レッド
@@ -1585,7 +1626,7 @@ TP_RESIZE_CROPPEDAREA;切り抜き画像
 TP_RESIZE_FITBOX;バウンディング・ボックス
 TP_RESIZE_FULLIMAGE;全画像
 TP_RESIZE_HEIGHT;高さ
-TP_RESIZE_H;H:
+TP_RESIZE_H;高さ:
 TP_RESIZE_LABEL;リサイズ
 TP_RESIZE_LANCZOS;ランチョス
 TP_RESIZE_METHOD;方式:
@@ -1593,7 +1634,7 @@ TP_RESIZE_NEAREST;ニアリスト
 TP_RESIZE_SCALE;スケール
 TP_RESIZE_SPECIFY;条件指定:
 TP_RESIZE_WIDTH;幅
-TP_RESIZE_W;W:
+TP_RESIZE_W;幅:
 TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;チャンネル
 TP_RGBCURVES_GREEN;G
@@ -1670,12 +1711,12 @@ TP_WAVELET_6;レベル 6
 TP_WAVELET_7;レベル 7
 TP_WAVELET_8;レベル 8
 TP_WAVELET_9;レベル 9
-TP_WAVELET_ALL;全てのレベルと方向を合わせた画像
 TP_WAVELET_APPLYTO;適用
 TP_WAVELET_AVOID;色ずれの回避
 TP_WAVELET_B0;黒
 TP_WAVELET_B1;グレー
 TP_WAVELET_B2;残差
+TP_WAVELET_BACKGROUND;背景
 TP_WAVELET_BACUR;カーブ
 TP_WAVELET_BALANCE;コントラストバランス　斜め/垂直-水平
 TP_WAVELET_BALANCE_TOOLTIP;ウェーブレットの方向で垂直-水平と斜めのバランスを変えます\nコントラスト、色度、或いは残差画像のトーンマッピングが有効の場合、バランスにより効果が増幅されます
@@ -1684,6 +1725,9 @@ TP_WAVELET_BALCHRO_TOOLTIP;有効にすると、’コントラストバラン�
 TP_WAVELET_BANONE;なし
 TP_WAVELET_BASLI;スライダー
 TP_WAVELET_BATYPE;バランス方式
+TP_WAVELET_CBENAB;カラートーンとカラーバランス
+TP_WAVELET_CBTYPE;カラートーンとカラーバランス
+TP_WAVELET_CB_TOOLTIP;高い値は、’カラートーン’と併用するか、或いはカラートーンは使わないで単独で使います。\n低い値の場合は前景の色合いを変えずに背景(sky, ...) のホワイトバランスを変えるような効果を得られます。一般的にはコントラストが高くなる印象があります。
 TP_WAVELET_CCURVE;ローカルコントラスト
 TP_WAVELET_CH1;全ての色
 TP_WAVELET_CH2;明清色 - 純色
@@ -1716,9 +1760,13 @@ TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;ウェーブレットの処理工程の最後�
 TP_WAVELET_CURVEEDITOR_HH;HH
 TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;色相に応じて、残差画像の色相を調整します
 TP_WAVELET_DALL;全ての方向
+TP_WAVELET_DAUB2;D2 - 低い
+TP_WAVELET_DAUB4;D4 - 標準
+TP_WAVELET_DAUB6;D6 - 標準プラス
+TP_WAVELET_DAUB10;D10 - やや高い
+TP_WAVELET_DAUB14;D14 - 高い
 TP_WAVELET_DAUB;エッジ検出の効果
 TP_WAVELET_DAUB_TOOLTIP;ドブシー関数の係数を変更します\nD4=標準的なエッジ検出の効果\nD14=通常はエッジ検出の効果が高いが、処理時間が約10%増加\n\n初めのレベルの質だけでなくエッジ検出にも影響します。但し、レベル質は厳格に係数の種類に比例している訳ではありません。画像や使い方にも影響されます。
-TP_WAVELET_DISP;プレビューでの表示形式
 TP_WAVELET_DONE;垂直
 TP_WAVELET_DTHR;対角線
 TP_WAVELET_DTWO;水平
@@ -1748,12 +1796,15 @@ TP_WAVELET_HUESKIN;肌色の色相
 TP_WAVELET_HUESKIN_TOOLTIP;底部の2つのポイントは、色相変化が始まる部分に設定されています、天井部の2つのポイントは変化が終わる所で、色相調整の効果が最も高い部分です\n\n設定ポイントを著しく動かす必要がある場合、或いはアーティファクトが発生するようであれば、<b>ホワイトバランスが不適切</b>と考えられます
 TP_WAVELET_HUESKY;色相の範囲（デフォルト：青空）
 TP_WAVELET_HUESKY_TOOLTIP;底部の2つのポイントは、色相変化が始まる部分に設定されています、天井部の2つのポイントは変化が終わる所で、色相調整の効果が最も高い部分です\n\n設定ポイントを著しく動かす必要がある場合、或いはアーティファクトが発生するようであれば、<b>ホワイトバランスが不適切</b>と考えられます
-TP_WAVELET_INF;選択したレベル以下の画像
 TP_WAVELET_ITER;デルタバランスのレベル
 TP_WAVELET_ITER_TOOLTIP;スライダーを左に動かすと、低いレベルのデルタが増え、高いレベルのデルタが減ります\n右に動かすとその逆です
 TP_WAVELET_LABEL;ウェーブレット
 TP_WAVELET_LARGEST;最も粗い
 TP_WAVELET_LEVCH;色度
+TP_WAVELET_LEVDIR_ALL;全てのレベルと方向を合わせた画像
+TP_WAVELET_LEVDIR_INF;選択したレベル以下を合わせた画像
+TP_WAVELET_LEVDIR_ONE;選択したレベルだけの画像
+TP_WAVELET_LEVDIR_SUP;選択したレベルより上を合わせた画像
 TP_WAVELET_LEVELS;ウェーブレット　レベルの数
 TP_WAVELET_LEVELS_TOOLTIP;画像を幾つの詳細レベルに分割するか選択します。分割数が増えればメモリー使用量が増え、処理時間も長くなります。
 TP_WAVELET_LEVF;コントラスト
@@ -1771,15 +1822,12 @@ TP_WAVELET_MEDI;青空のアーティファクトを軽減
 TP_WAVELET_NEUTRAL;ニュートラル
 TP_WAVELET_NOISE;ノイズ低減とリファイン
 TP_WAVELET_NOIS;ノイズ低減
-TP_WAVELET_ONE;選択したレベルだけ
 TP_WAVELET_OPACITYWL;最終的なローカルコントラスト
 TP_WAVELET_OPACITYWL_TOOLTIP;ウェーブレット処理の最後で最終的なローカルコントラストを調整します\n\nイコライザは左から右に向かって、最も細かいローカルコントラストから大きいローカルコントラストを表しています
-TP_WAVELET_OPACITYWL_TOOLTIP;分解された全てのレベルの画像に対し、最後に施されたローカルコントラスト（横座標）に応じて、最終的なローカルコントラストを調整します\n調整にあたっては以下の点を考慮します: \na)コントラストレベル\nb)エッジのシャープネス\nc)コントラストのバランス\nd)分解‐再合成の影響\n横座標の低い部分は細かいローカルコントラストを意味します（実数値をしては10～20）\n横座標の50％は平均的なローカルコントラストを代表しています（実数値をしては200～1000）\n横座標の66％は1標準偏差に収まるローカルコントラストを代表しています（実数値としては1000～2000）\n横座標の100％部分はローカルコントラストの最大値です（実数値として約5000～13000）
 TP_WAVELET_OPACITYW;コントラストバランス　d/v-hカーブ
 TP_WAVELET_OPACITY;ブルー/イエローの不透明度
 TP_WAVELET_PASTEL;明清色の色度
-TP_WAVELET_PREVIEWBACK;背景
-TP_WAVELET_PREVIEWLEVELS;プレビュー
+TP_WAVELET_PROC;プロセス
 TP_WAVELET_RE1;強める
 TP_WAVELET_RE2;変えない
 TP_WAVELET_RE3;弱める
@@ -1796,7 +1844,6 @@ TP_WAVELET_SKY_TOOLTIP;－100にすると青空のトーンだけが調整の対
 TP_WAVELET_STRENGTH;強さ
 TP_WAVELET_STREN;強さ
 TP_WAVELET_SUPE;エキストラ
-TP_WAVELET_SUP;選択したレベルより上の画像
 TP_WAVELET_THRESHOLD2;シャドウを調整するレベル
 TP_WAVELET_THRESHOLD2_TOOLTIP;レベル9と（9-設定値）のレベルの間でシャドウの輝度が調整されます。他のレベルは輝度範囲全体で調整されます。
 TP_WAVELET_THRESHOLD;ハイライトを調整するレベル
@@ -1816,11 +1863,6 @@ TP_WAVELET_TMSTRENGTH;残差の効力を圧縮
 TP_WAVELET_TMSTRENGTH_TOOLTIP;トーンマッピングの強さや残差画像のコントラストの圧縮を加減します。値が0以外の場合、露光補正パネルのトーンマッピングでは、強さとガンマのスライダー無効となります
 TP_WAVELET_TMTYPE;圧縮の方法
 TP_WAVELET_TON;カラートーン
-TP_WAVELET_daub2;D2 - 低い
-TP_WAVELET_daub4;D4 - 標準
-TP_WAVELET_daub6;D6 - 標準プラス
-TP_WAVELET_daub10;D10 - やや高い
-TP_WAVELET_daub14;D14 - 高い
 TP_WBALANCE_AUTO;自動補正
 TP_WBALANCE_CAMERA;カメラ
 TP_WBALANCE_CLOUDY;曇天
@@ -1875,61 +1917,3 @@ ZOOMPANEL_ZOOMFITSCREEN;画像全体を画面に合わせる\nショートカッ
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_371;Post-Resize Sharpening
-!HISTORY_MSG_372;PRS USM - Radius
-!HISTORY_MSG_373;PRS USM - Amount
-!HISTORY_MSG_374;PRS USM - Threshold
-!HISTORY_MSG_375;PRS USM - Sharpen only edges
-!HISTORY_MSG_376;PRS USM - Edge detection radius
-!HISTORY_MSG_377;PRS USM - Edge tolerance
-!HISTORY_MSG_378;PRS USM - Halo control
-!HISTORY_MSG_379;PRS USM - Halo control amount
-!HISTORY_MSG_380;PRS - Method
-!HISTORY_MSG_381;PRS RLD - Radius
-!HISTORY_MSG_382;PRS RLD - Amount
-!HISTORY_MSG_383;PRS RLD - Damping
-!HISTORY_MSG_384;PRS RLD - Iterations
-!HISTORY_MSG_385;W - Residual - Color Balance
-!HISTORY_MSG_386;W - Residual - CB green high
-!HISTORY_MSG_387;W - Residual - CB blue high
-!HISTORY_MSG_388;W - Residual - CB green mid
-!HISTORY_MSG_389;W - Residual - CB blue mid
-!HISTORY_MSG_390;W - Residual - CB green low
-!HISTORY_MSG_391;W - Residual - CB blue low
-!HISTORY_MSG_392;W - Residual - CB Reset
-!HISTORY_MSG_393;DCP - Look table
-!HISTORY_MSG_394;DCP - Baseline exposure
-!HISTORY_MSG_395;DCP - Base table
-!HISTORY_MSG_396;W - Contrast sub-tool
-!HISTORY_MSG_397;W - Chroma sub-tool
-!HISTORY_MSG_398;W - ES sub-tool
-!HISTORY_MSG_399;W - Residual sub-tool
-!HISTORY_MSG_400;W - Final sub-tool
-!HISTORY_MSG_401;W - Toning sub-tool
-!HISTORY_MSG_402;W - Denoise sub-tool
-!TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Baseline exposure
-!TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only enabled if the selected DCP has any.
-!TP_ICM_APPLYHUESATMAP;Base table
-!TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only enabled if the selected DCP has one.
-!TP_ICM_APPLYLOOKTABLE;Look table
-!TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only enabled if the selected DCP has one.
-!TP_PRSHARPENING_LABEL;Post-Resize Sharpening
-!TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
-!TP_WAVELET_BACKGROUND;Background
-!TP_WAVELET_CBENAB;Toning and Color Balance
-!TP_WAVELET_CBTYPE;Toning and Color Balance
-!TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
-!TP_WAVELET_DAUB2;D2 - low
-!TP_WAVELET_DAUB4;D4 - standard
-!TP_WAVELET_DAUB6;D6 - standard plus
-!TP_WAVELET_DAUB10;D10 - medium
-!TP_WAVELET_DAUB14;D14 - high
-!TP_WAVELET_LEVDIR_ALL;All levels in all directions
-!TP_WAVELET_LEVDIR_INF;Below or equal the level
-!TP_WAVELET_LEVDIR_ONE;One level
-!TP_WAVELET_LEVDIR_SUP;Above the level
-!TP_WAVELET_PROC;Process
