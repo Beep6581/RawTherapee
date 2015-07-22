@@ -886,7 +886,11 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         labView = tmplab;
 		cw = labView->W;
 		ch = labView->H;
-		if(params.prsharpening.enabled) {			
+		if(params.prsharpening.enabled) {
+            for(int i=0;i<ch;i++)
+                for(int j=0;j<cw;j++)
+                    labView->L[i][j] = labView->L[i][j] < 0.f ? 0.f : labView->L[i][j];
+
             float **buffer = new float*[ch];
                 for (int i=0; i<ch; i++)
                     buffer[i] = new float[cw];
