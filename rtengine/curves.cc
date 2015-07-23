@@ -340,6 +340,11 @@ void CurveFactory::curveBW (
 		LUTu & histogrambw, LUTu & outBeforeCCurveHistogrambw,//for Luminance
 		ToneCurve & customToneCurvebw1, ToneCurve & customToneCurvebw2, int skip)
 {
+	const float gamma_ = Color::sRGBGamma;
+	const float start = expf(gamma_*logf( -0.055 / ((1.0/gamma_-1.0)*1.055 )));
+	const float slope = 1.055 * powf (start, 1.0/gamma_-1) - 0.055/start;
+	const float mul = 1.055;
+	const float add = 0.055;
 
 	outBeforeCCurveHistogrambw.clear();
 	bool histNeeded = false;
@@ -355,7 +360,7 @@ void CurveFactory::curveBW (
 	}
 	if (tcurve) {
 		if (!tcurve->isIdentity())
-			customToneCurvebw2.Set(tcurve);
+			customToneCurvebw2.Set(tcurve, gamma_, start, slope, mul, add);
 		delete tcurve;
 		tcurve = NULL;
 	}
@@ -370,7 +375,7 @@ void CurveFactory::curveBW (
 	}
 	if (tcurve) {
 		if (!tcurve->isIdentity())
-			customToneCurvebw1.Set(tcurve);
+			customToneCurvebw1.Set(tcurve, gamma_, start, slope, mul, add);
 		delete tcurve;
 		tcurve = NULL;
 	}
@@ -617,7 +622,7 @@ void CurveFactory::curveToningLL ( bool & llctoningutili,const std::vector<doubl
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	SSEFUNCTION void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
-									 double shcompr, double br, double contr, double gamma_, bool igamma_,
+									 double shcompr, double br, double contr, 
 									 procparams::ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints,
 									 procparams::ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
 									 LUTu & histogram, LUTu & histogramCropped,
@@ -626,32 +631,17 @@ void CurveFactory::curveToningLL ( bool & llctoningutili,const std::vector<doubl
 									 ToneCurve & customToneCurve1,
 									 ToneCurve & customToneCurve2,
 									 int skip) {
-		
-		
-		//double def_mul = pow (2.0, defmul);
-		
-		/*printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f
-				gamma= %f, skip= %d \n",def_mul,ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);*/
-		
-		// compute parameters of the gamma curve
-		/*double start = exp(gamma_*log( -0.099 / ((1.0/gamma_-1.0)*1.099 )));
-		double slope = 1.099 * pow (start, 1.0/gamma_-1) - 0.099/start;
-		double mul = 1.099;
-		double add = 0.099;
-		// gamma BT709*/
-		
-		//normalize gamma to sRGB
-		double start = exp(gamma_*log( -0.055 / ((1.0/gamma_-1.0)*1.055 )));
-		double slope = 1.055 * pow (start, 1.0/gamma_-1) - 0.055/start;
-		double mul = 1.055;
-		double add = 0.055;
+
+		// the curve shapes are defined in sRGB gamma, but the output curves will operate on linear floating point data,
+		// hence we do both forward and inverse gamma conversions here.
+		const float gamma_ = Color::sRGBGamma;
+		const float start = expf(gamma_*logf( -0.055 / ((1.0/gamma_-1.0)*1.055 )));
+		const float slope = 1.055 * powf (start, 1.0/gamma_-1) - 0.055/start;
+		const float mul = 1.055;
+		const float add = 0.055;
 		
 		// a: slope of the curve, black: starting point at the x axis
-		double a = pow (2.0, ecomp);
-		
-		
-		// check if inverse gamma is needed at the end
-		bool needigamma = igamma_ && gamma_>1.;
+		const float a = powf (2.0, ecomp);
 		
 		// clear array that stores histogram valid before applying the custom curve
 		outBeforeCCurveHistogram.clear();
@@ -727,9 +717,8 @@ void CurveFactory::curveToningLL ( bool & llctoningutili,const std::vector<doubl
 		float	val2 = simplebasecurve (val, black, 0.015*shcompr);
 		shCurve[0] = CLIPD(val2)/val;
 		val = 0.0;
-				// gamma correction
-		if (gamma_>1.)
-			val = gamma (val, gamma_, start, slope, mul, add);
+		// gamma correction
+		val = gamma (val, gamma_, start, slope, mul, add);
 		
 		// apply brightness curve
 		if (brightcurve)
@@ -747,8 +736,7 @@ void CurveFactory::curveToningLL ( bool & llctoningutili,const std::vector<doubl
 			shCurve[i] = CLIPD(val2)/val;
 
 			// gamma correction
-			if (gamma_>1.)
-				val = gamma (val, gamma_, start, slope, mul, add);
+			val = gamma (val, gamma_, start, slope, mul, add);
 			
 			// apply brightness curve
 			if (brightcurve)
@@ -825,7 +813,7 @@ void CurveFactory::curveToningLL ( bool & llctoningutili,const std::vector<doubl
 		}
 		if (tcurve) {
 			if (!tcurve->isIdentity())
-				customToneCurve2.Set(tcurve);
+				customToneCurve2.Set(tcurve, gamma_, start, slope, mul, add);
 			delete tcurve;
 			tcurve = NULL;
 		}
@@ -844,7 +832,7 @@ void CurveFactory::curveToningLL ( bool & llctoningutili,const std::vector<doubl
 		}
 		if (tcurve) {
 			if (!tcurve->isIdentity())
-				customToneCurve1.Set(tcurve);
+				customToneCurve1.Set(tcurve, gamma_, start, slope, mul, add);
 			delete tcurve;
 			tcurve = NULL;
 		}
@@ -904,11 +892,7 @@ void CurveFactory::curveToningLL ( bool & llctoningutili,const std::vector<doubl
 				int hi = (int)(255.0*(hval));
 				outBeforeCCurveHistogram[hi] += histogram/*Cropped*/[i] ;
 			}
-
-			// if inverse gamma is needed, do it (standard sRGB inverse gamma is applied)
-			if (needigamma)
-				val = igamma (val, gamma_, start, slope, mul, add);
-
+			val = igamma (val, gamma_, start, slope, mul, add);
 			outCurve[i] = (65535.f * val);
 		}
 
@@ -1137,7 +1121,13 @@ void CurveFactory::curveToningLL ( bool & llctoningutili,const std::vector<doubl
 				outCurve(65536, 0);
 			for (int i=0; i<65536; i++) {
 				// apply custom/parametric/NURBS curve, if any
-				float val = tcurve->getVal ((float)i/65536.0f);
+
+				// RGB curves are defined with sRGB gamma, but operate on linear data
+				float val = float(i)/65535.f;
+				val = CurveFactory::gamma2 (val);
+				val = tcurve->getVal(val);
+				val = CurveFactory::igamma2 (val);
+				//float val = tcurve->getVal ((float)i/65536.0f);
 				outCurve[i] = (65536.0f * val);
 			}
 			delete tcurve;
@@ -1165,9 +1155,20 @@ void ToneCurve::Reset() {
 }
 
 // Fill a LUT with X/Y, ranged 0xffff
-void ToneCurve::Set(Curve *pCurve) {
-    lutToneCurve(65536);
-    for (int i=0; i<65536; i++) lutToneCurve[i] = pCurve->getVal(double(i)/65535.) * 65535.;
+void ToneCurve::Set(Curve *pCurve, float gamma, float start, float slope, float mul, float add) {
+	lutToneCurve(65536);
+	if (gamma <= 0.0 || gamma == 1.) {
+		for (int i=0; i<65536; i++) lutToneCurve[i] = (float)pCurve->getVal(float(i)/65535.f) * 65535.f;
+	} else {
+		// apply gamma, that is 'pCurve' is defined with the given gamma and here we convert it to a curve in linear space
+		for (int i=0; i<65536; i++) {
+			float val = float(i)/65535.f;
+			val = CurveFactory::gamma (val, gamma, start, slope, mul, add);
+			val = pCurve->getVal(val);
+			val = CurveFactory::igamma (val, gamma, start, slope, mul, add);
+			lutToneCurve[i] = val * 65535.f;
+		}
+	}
 }
 
 void OpacityCurve::Reset() {

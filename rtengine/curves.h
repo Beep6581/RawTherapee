@@ -181,12 +181,24 @@ class CurveFactory {
     static inline double igamma2           (double x) {
                                             return x <= 0.03928 ? x/12.92 : exp(log((x+0.055)/1.055)*sRGBGammaCurve);
                                           }
+    static inline float gamma2            (float x) {
+                                            return x <= 0.00304 ? x*12.92 : 1.055*expf(logf(x)/sRGBGammaCurve)-0.055;
+                                          }
+    static inline float igamma2           (float x) {
+                                            return x <= 0.03928 ? x/12.92 : expf(logf((x+0.055)/1.055)*sRGBGammaCurve);
+                                          }
     // gamma function with adjustable parameters
     static inline double gamma            (double x, double gamma, double start, double slope, double mul, double add){
                                             return (x <= start ? x*slope : exp(log(x)/gamma)*mul-add);
                                           }
     static inline double igamma           (double x, double gamma, double start, double slope, double mul, double add){
 											return (x <= start*slope ? x/slope : exp(log((x+add)/mul)*gamma) );
+										  }
+    static inline float gamma            (float x, float gamma, float start, float slope, float mul, float add){
+                                            return (x <= start ? x*slope : expf(logf(x)/gamma)*mul-add);
+                                          }
+    static inline float igamma           (float x, float gamma, float start, float slope, float mul, float add){
+											return (x <= start*slope ? x/slope : expf(logf((x+add)/mul)*gamma) );
 										  }
 											
 	static inline float hlcurve (const float exp_scale, const float comp, const float hlrange, float level) 
@@ -208,7 +220,7 @@ class CurveFactory {
 
   public:
     static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
-							  double gamma_, bool igamma_, procparams::ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints, procparams::ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2, 
+							  procparams::ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints, procparams::ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2, 
 							  
 							  LUTu & histogram, LUTu & histogramCropped,
 							  LUTf & hlCurve, LUTf & shCurve,LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2, 
@@ -348,7 +360,7 @@ class ToneCurve {
     virtual ~ToneCurve() {};
 
     void Reset();
-    void Set(Curve *pCurve);
+    void Set(Curve *pCurve, float gamma=0, float start=0, float slope=0, float mul=0, float add=0);
     operator bool (void) const { return lutToneCurve; }
 };
 

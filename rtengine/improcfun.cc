@@ -2432,7 +2432,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
                                SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit ,float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clToningcurve,LUTf & cl2Toningcurve,
                                const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,  const ToneCurve & customToneCurvebw1,const ToneCurve & customToneCurvebw2,double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh, DCPProfile *dcpProf) {
 
-    LUTf iGammaLUTf;
+    LUTf fGammaLUTf;
     Imagefloat *tmpImage=NULL;
 
     // NOTE: We're getting all 3 pointers here, but this function may not need them all, so one could optimize this
@@ -2688,20 +2688,11 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 	}
 	bool hasgammabw = gammabwr!=1.f || gammabwg!=1.f || gammabwb!=1.f;
 
-	//normalize gamma to sRGB
-	double start = exp(g*log( -0.055 / ((1.0/g-1.0)*1.055 )));
-	double slope = 1.055 * pow (start, 1.0/g-1) - 0.055/start;
-	double mul = 1.055;
-	double add = 0.055;
-
-	if (iGamma && g > 1.) {
-		iGammaLUTf(65535);
+	fGammaLUTf(65535);
 #pragma omp parallel for
-		for (int i=0; i<65536; i++) {
-			iGammaLUTf[i] = float(CurveFactory::igamma (double(i)/65535., g, start, slope, mul, add)*65535.);
-		}
+	for (int i=0; i<65536; i++) {
+		fGammaLUTf[i] = CurveFactory::gamma2 (float(i)/65535.f) * 65535.f;
 	}
-
 	if (hasColorToning || blackwhite)
 		tmpImage = new Imagefloat(working->width,working->height);
 
@@ -2887,9 +2878,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 			if (editID == EUID_ToneCurve1) {  // filling the pipette buffer
 				for (int i=istart,ti=0; i<tH; i++,ti++) {
 					for (int j=jstart,tj=0; j<tW; j++,tj++) {
-						editIFloatTmpR[ti*TS+tj] = CLIP(rtemp[ti*TS+tj]/65535.f);
-						editIFloatTmpG[ti*TS+tj] = CLIP(gtemp[ti*TS+tj]/65535.f);
-						editIFloatTmpB[ti*TS+tj] = CLIP(btemp[ti*TS+tj]/65535.f);
+						editIFloatTmpR[ti*TS+tj] = CLIP(fGammaLUTf[rtemp[ti*TS+tj]]/65535.f);
+						editIFloatTmpG[ti*TS+tj] = CLIP(fGammaLUTf[gtemp[ti*TS+tj]]/65535.f);
+						editIFloatTmpB[ti*TS+tj] = CLIP(fGammaLUTf[btemp[ti*TS+tj]]/65535.f);
 					}
 				}
 			}
@@ -2949,9 +2940,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 			if (editID == EUID_ToneCurve2) {  // filling the pipette buffer
 				for (int i=istart,ti=0; i<tH; i++,ti++) {
 					for (int j=jstart,tj=0; j<tW; j++,tj++) {
-						editIFloatTmpR[ti*TS+tj] = CLIP(rtemp[ti*TS+tj]/65535.f);
-						editIFloatTmpG[ti*TS+tj] = CLIP(gtemp[ti*TS+tj]/65535.f);
-						editIFloatTmpB[ti*TS+tj] = CLIP(btemp[ti*TS+tj]/65535.f);
+						editIFloatTmpR[ti*TS+tj] = CLIP(fGammaLUTf[rtemp[ti*TS+tj]]/65535.f);
+						editIFloatTmpG[ti*TS+tj] = CLIP(fGammaLUTf[gtemp[ti*TS+tj]]/65535.f);
+						editIFloatTmpB[ti*TS+tj] = CLIP(fGammaLUTf[btemp[ti*TS+tj]]/65535.f);
 					}
 				}
 			}
@@ -2999,35 +2990,24 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 				}
 			}
 
-			if (iGammaLUTf) {
-				for (int i=istart,ti=0; i<tH; i++,ti++) {
-					for (int j=jstart,tj=0; j<tW; j++,tj++) {
-						// apply inverse gamma
-						rtemp[ti*TS+tj] = iGammaLUTf[ rtemp[ti*TS+tj] ];
-						gtemp[ti*TS+tj] = iGammaLUTf[ gtemp[ti*TS+tj] ];
-						btemp[ti*TS+tj] = iGammaLUTf[ btemp[ti*TS+tj] ];
-					}
-				}
-			}
-
 			if (editID == EUID_RGB_R) {
 				for (int i=istart,ti=0; i<tH; i++,ti++) {
 					for (int j=jstart,tj=0; j<tW; j++,tj++) {
-						editWhateverTmp[ti*TS+tj] = rtemp[ti*TS+tj]/65536.f;
+						editWhateverTmp[ti*TS+tj] = fGammaLUTf[rtemp[ti*TS+tj]]/65536.f;
 					}
 				}
 			}
 			else if (editID == EUID_RGB_G) {
 				for (int i=istart,ti=0; i<tH; i++,ti++) {
 					for (int j=jstart,tj=0; j<tW; j++,tj++) {
-						editWhateverTmp[ti*TS+tj] = gtemp[ti*TS+tj]/65536.f;
+						editWhateverTmp[ti*TS+tj] = fGammaLUTf[gtemp[ti*TS+tj]]/65536.f;
 					}
 				}
 			}
 			else if (editID == EUID_RGB_B) {
 				for (int i=istart,ti=0; i<tH; i++,ti++) {
 					for (int j=jstart,tj=0; j<tW; j++,tj++) {
-						editWhateverTmp[ti*TS+tj] = btemp[ti*TS+tj]/65536.f;
+						editWhateverTmp[ti*TS+tj] = fGammaLUTf[btemp[ti*TS+tj]]/65536.f;
 					}
 				}
 			}
@@ -3379,9 +3359,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 			if (editID == EUID_BlackWhiteBeforeCurve) {
 				for (int i=istart,ti=0; i<tH; i++,ti++) {
 					for (int j=jstart,tj=0; j<tW; j++,tj++) {
-						editIFloatTmpR[ti*TS+tj] = CLIP(rtemp[ti*TS+tj]/65535.f);
-						editIFloatTmpG[ti*TS+tj] = CLIP(gtemp[ti*TS+tj]/65535.f);
-						editIFloatTmpB[ti*TS+tj] = CLIP(btemp[ti*TS+tj]/65535.f);
+						editIFloatTmpR[ti*TS+tj] = CLIP(fGammaLUTf[rtemp[ti*TS+tj]]/65535.f);
+						editIFloatTmpG[ti*TS+tj] = CLIP(fGammaLUTf[gtemp[ti*TS+tj]]/65535.f);
+						editIFloatTmpB[ti*TS+tj] = CLIP(fGammaLUTf[btemp[ti*TS+tj]]/65535.f);
 					}
 				}
 			}
@@ -3748,7 +3728,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 #endif
 			for (int i=0; i<tH; i++) {
 				for (int j=0; j<tW; j++) {
-					editWhatever->v(i,j) = CLIP(tmpImage->r(i,j)/65535.f);  // assuming that r=g=b
+					editWhatever->v(i,j) = CLIP(fGammaLUTf[tmpImage->r(i,j)]/65535.f);  // assuming that r=g=b
 				}
 			}
 		}
@@ -5732,7 +5712,7 @@ fclose(f);*/
 		
 		double gavg = 0.;
 		for (int i=0; i<65536>>histcompr; i++)
-		gavg += histogram[i] * CurveFactory::gamma2((int)(corr*(i<<histcompr)<65535 ? corr*(i<<histcompr) : 65535)) / sum;
+		gavg += histogram[i] * CurveFactory::gamma2((float)(corr*(i<<histcompr)<65535 ? corr*(i<<histcompr) : 65535)) / sum;
 		if (black < gavg) {
 			int maxwhiteclip = (gavg - black) * 4 / 3 + black; // dont let whiteclip be such large that the histogram average goes above 3/4
 			if (whiteclipg < maxwhiteclip)

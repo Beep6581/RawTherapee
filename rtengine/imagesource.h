@@ -86,8 +86,6 @@ class ImageSource : public InitialImage {
 
         virtual double      getDefGain  () { return 1.0; }
 
-        virtual double      getGamma    () { return 0.0; }
-
         virtual void        getFullSize (int& w, int& h, int tr = TR_NONE) {}
         virtual void        getSize     (int tran, PreviewProps pp, int& w, int& h) {}
         virtual int         getRotateDegree() const { return 0; }

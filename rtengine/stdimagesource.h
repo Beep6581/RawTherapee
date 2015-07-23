@@ -53,7 +53,6 @@ class StdImageSource : public ImageSource {
         void        getAutoExpHistogram (LUTu &histogram, int& histcompr);
 
         double      getDefGain  () { return 0.0; }
-        double      getGamma    () { return 0.0; }
 
         void        getFullSize (int& w, int& h, int tr = TR_NONE);
         void        getSize     (int tran, PreviewProps pp, int& w, int& h);
