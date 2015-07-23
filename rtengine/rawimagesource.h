@@ -162,8 +162,6 @@ class RawImageSource : public ImageSource {
 
         double      getDefGain  () { return defGain; }
 
-        double      getGamma    () { return Color::sRGBGamma; }
-
         void        getFullSize (int& w, int& h, int tr = TR_NONE);
         void        getSize     (int tran, PreviewProps pp, int& w, int& h);
         int         getRotateDegree() const { return ri->get_rotateDegree(); }

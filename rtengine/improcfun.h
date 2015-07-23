@@ -185,8 +185,6 @@ class ImProcFunctions {
 
 	public:
 
-		bool iGamma; // true if inverse gamma has to be applied in rgbProc
-		double g;
 		static LUTf cachef;
 		double lumimul[3];
 //		float chau;
@@ -211,7 +209,7 @@ class ImProcFunctions {
 		static void cleanupCache ();
 		
 		ImProcFunctions       (const ProcParams* iparams, bool imultiThread=true)
-			: monitorTransform(NULL), params(iparams), scale(1), multiThread(imultiThread), iGamma(true), g(0.0) {}
+			: monitorTransform(NULL), params(iparams), scale(1), multiThread(imultiThread) {}
 		~ImProcFunctions      ();
 		
 		void setScale         (double iscale);
