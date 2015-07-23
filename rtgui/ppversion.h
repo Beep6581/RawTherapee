@@ -2,11 +2,12 @@
 #define _PPVERSION_
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 324
+#define PPVERSION 325
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
+   325  2015-07-23 Normalized RGB pipeline curve gammas to sRGB (before it was a mix between sRGB and 1.0 and depended on file format)
    323  2015-10-05
         [Exposure] Added 'Luminance' tone curve mode
    322  2015-01-31
