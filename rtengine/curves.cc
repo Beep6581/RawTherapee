@@ -340,7 +340,7 @@ void CurveFactory::curveBW (
 		LUTu & histogrambw, LUTu & outBeforeCCurveHistogrambw,//for Luminance
 		ToneCurve & customToneCurvebw1, ToneCurve & customToneCurvebw2, int skip)
 {
-	const float gamma_ = Color::sRGBGamma;
+	const float gamma_ = Color::sRGBGammaCurve;
 	const float start = expf(gamma_*logf( -0.055 / ((1.0/gamma_-1.0)*1.055 )));
 	const float slope = 1.055 * powf (start, 1.0/gamma_-1) - 0.055/start;
 	const float mul = 1.055;
@@ -634,7 +634,7 @@ void CurveFactory::curveToningLL ( bool & llctoningutili,const std::vector<doubl
 
 		// the curve shapes are defined in sRGB gamma, but the output curves will operate on linear floating point data,
 		// hence we do both forward and inverse gamma conversions here.
-		const float gamma_ = Color::sRGBGamma;
+		const float gamma_ = Color::sRGBGammaCurve;
 		const float start = expf(gamma_*logf( -0.055 / ((1.0/gamma_-1.0)*1.055 )));
 		const float slope = 1.055 * powf (start, 1.0/gamma_-1) - 0.055/start;
 		const float mul = 1.055;
