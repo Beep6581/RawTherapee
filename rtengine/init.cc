@@ -20,6 +20,7 @@
 #include "iccstore.h"
 #include "dcp.h"
 #include "camconst.h"
+#include "curves.h"
 #include "rawimagesource.h"
 #include "improcfun.h"
 #include "improccoordinator.h"
@@ -47,6 +48,7 @@ int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDi
     profileStore.init ();
     ProcParams::init ();
     Color::init ();
+    PerceptualToneCurve::init ();
     RawImageSource::init ();
     ImProcFunctions::initCache ();
     Thumbnail::initGamma ();
@@ -61,6 +63,7 @@ void cleanup () {
 
     ProcParams::cleanup ();
     Color::cleanup ();
+    PerceptualToneCurve::cleanup ();
     ImProcFunctions::cleanupCache ();
     Thumbnail::cleanupGamma ();
     RawImageSource::cleanup ();
