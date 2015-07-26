@@ -22,6 +22,9 @@
 #include <vector>
 #include <cstring>
 #include <algorithm>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #include "rt_math.h"
 
@@ -1620,5 +1623,444 @@ void ColorGradientCurve::getVal(float index, float &r, float &g, float &b) const
 	b = lut3[index*500.f];
 }
 
+// this is a generic cubic spline implementation, to clean up we could probably use something already existing elsewhere
+void PerceptualToneCurve::cubic_spline(const float x[], const float y[], const int len, const float out_x[], float out_y[], const int out_len) {
+    int i, j;
+
+    float **A = (float **)malloc(2 * len * sizeof(*A));
+    float *As = (float *)calloc(1, 2 * len * 2 * len * sizeof(*As));
+    float *b = (float *)calloc(1, 2*len*sizeof(*b));
+    float *c = (float *)calloc(1, 2*len*sizeof(*c));
+    float *d = (float *)calloc(1, 2*len*sizeof(*d));
+
+    for (i = 0; i < 2*len; i++) {
+        A[i] = &As[2*len*i];
+    }
+
+    for (i = len-1; i > 0; i--) {
+        b[i] = (y[i] - y[i-1]) / (x[i] - x[i-1]);
+        d[i-1] = x[i] - x[i-1];
+    }
+
+    for (i = 1; i < len-1; i++) {
+        A[i][i] = 2 * (d[i-1] + d[i]);
+        if (i > 1) {
+            A[i][i-1] = d[i-1];
+            A[i-1][i] = d[i-1];
+        }
+        A[i][len-1] = 6 * (b[i+1] - b[i]);
+    }
+
+    for(i = 1; i < len-2; i++) {
+        float v = A[i+1][i] / A[i][i];
+        for(j = 1; j <= len-1; j++) {
+            A[i+1][j] -= v * A[i][j];
+        }
+    }
+
+    for(i = len-2; i > 0; i--) {
+        float acc = 0;
+        for(j = i; j <= len-2; j++) {
+            acc += A[i][j]*c[j];
+        }
+        c[i] = (A[i][len-1] - acc) / A[i][i];
+    }
+
+    for (i = 0; i < out_len; i++) {
+        float x_out = out_x[i];
+        float y_out = 0;
+        for (j = 0; j < len-1; j++) {
+            if (x[j] <= x_out && x_out <= x[j+1]) {
+                float v = x_out - x[j];
+                y_out = y[j] +
+                    ((y[j+1] - y[j]) / d[j] - (2 * d[j] * c[j] + c[j+1] * d[j]) / 6) * v +
+                    (c[j] * 0.5) * v*v +
+                    ((c[j+1] - c[j]) / (6 * d[j])) * v*v*v;
+            }
+        }
+        out_y[i] = y_out;
+    }
+    free(A);
+    free(As);
+    free(b);
+    free(c);
+    free(d);
+}
+
+// generic function for finding minimum of f(x) in the a-b range using the interval halving method
+float PerceptualToneCurve::find_minimum_interval_halving(float (*func)(float x, void *arg), void *arg, float a, float b, float tol, int nmax) {
+	float L = b - a;
+	float x = (a + b) * 0.5;
+	for (int i = 0; i < nmax; i++) {
+		float f_x = func(x, arg);
+		if ((b - a) * 0.5 < tol) {
+			return x;
+		}
+		float x1 = a + L/4;
+		float f_x1 = func(x1, arg);
+		if (f_x1 < f_x) {
+			b = x;
+			x = x1;
+		} else {
+			float x2 = b - L/4;
+			float f_x2 = func(x2, arg);
+			if (f_x2 < f_x) {
+				a = x;
+				x = x2;
+			} else {
+				a = x1;
+				b = x2;
+			}
+		}
+		L = b - a;
+	}
+	return x;
+}
+
+struct find_tc_slope_fun_arg {
+	const ToneCurve * tc;
+};
+
+float PerceptualToneCurve::find_tc_slope_fun(float k, void *arg)
+{
+	struct find_tc_slope_fun_arg *a = (struct find_tc_slope_fun_arg *)arg;
+	float areasum = 0;
+	const int steps = 10;
+	for (int i = 0; i < steps; i++) {
+		float x = 0.1 + ((float)i / (steps-1)) * 0.5; // testing (sRGB) range [0.1 - 0.6], ie ignore highligths and dark shadows
+		float y = CurveFactory::gamma2(a->tc->lutToneCurve[CurveFactory::igamma2(x) * 65535] / 65535.0);
+		float y1 = k * x;
+		if (y1 > 1) y1 = 1;
+		areasum += (y - y1) * (y - y1); // square is a rough approx of (twice) the area, but it's fine for our purposes
+	}
+	return areasum;
+}
+
+float PerceptualToneCurve::get_curve_val(float x, float range[2], float lut[], size_t lut_size) {
+	float xm = (x - range[0]) / (range[1] - range[0]) * (lut_size - 1);
+	if (xm <= 0) {
+		return lut[0];
+	}
+	int idx = (int)xm;
+	if (idx >= lut_size-1) {
+		return lut[lut_size-1];
+	}
+	float d = xm - (float)idx; // [0 .. 1]
+	return (1.0 - d) * lut[idx] + d * lut[idx+1];
+}
+
+// calculate a single value that represents the contrast of the tone curve
+float PerceptualToneCurve::calculateToneCurveContrastValue(void) const {
+
+	// find linear y = k*x the best approximates the curve, which is the linear scaling/exposure component that does not contribute any contrast
+
+	// Note: the analysis is made on the gamma encoded curve, as the LUT is linear we make backwards gamma to
+	struct find_tc_slope_fun_arg arg = { this };
+	float k = find_minimum_interval_halving(find_tc_slope_fun, &arg, 0.1, 5.0, 0.01, 20); // normally found in 8 iterations
+	//fprintf(stderr, "average slope: %f\n", k);
+
+        float maxslope = 0;
+        {
+		// look at midtone slope
+		const float xd = 0.07;
+		const float tx[] = { 0.30, 0.35, 0.40, 0.45 }; // we only look in the midtone range
+		for (int i = 0; i < sizeof(tx)/sizeof(tx[0]); i++) {
+			float x0 = tx[i] - xd;
+			float y0 = CurveFactory::gamma2(lutToneCurve[CurveFactory::igamma2(x0) * 65535.f] / 65535.f) - k * x0;
+			float x1 = tx[i] + xd;
+			float y1 = CurveFactory::gamma2(lutToneCurve[CurveFactory::igamma2(x1) * 65535.f] / 65535.f) - k * x1;
+			float slope = 1.0 + (y1 - y0) / (x1 - x0);
+			if (slope > maxslope) {
+				maxslope = slope;
+			}
+		}
+
+		// look at slope at (light) shadows and (dark) highlights
+		float e_maxslope = 0;
+		{
+			const float tx[] = { 0.20, 0.25, 0.50, 0.55 }; // we only look in the midtone range
+			for (int i = 0; i < sizeof(tx)/sizeof(tx[0]); i++) {
+				float x0 = tx[i] - xd;
+				float y0 = CurveFactory::gamma2(lutToneCurve[CurveFactory::igamma2(x0) * 65535.f] / 65535.f) - k * x0;
+				float x1 = tx[i] + xd;
+				float y1 = CurveFactory::gamma2(lutToneCurve[CurveFactory::igamma2(x1) * 65535.f] / 65535.f) - k * x1;
+				float slope = 1.0 + (y1 - y0) / (x1 - x0);
+				if (slope > e_maxslope) {
+					e_maxslope = slope;
+				}
+			}
+		}
+		//fprintf(stderr, "%.3f %.3f\n", maxslope, e_maxslope);
+		// midtone slope is more important for contrast, but weigh in some slope from brights and darks too.
+		maxslope = maxslope * 0.7 + e_maxslope * 0.3;
+        }
+	return maxslope;
+}
+
+void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurveState & state) const {
+	float x,y,z;
+	cmsCIEXYZ XYZ;
+	cmsJCh JCh;
+
+	int thread_idx = 0;
+#ifdef _OPENMP
+	thread_idx = omp_get_thread_num();
+#endif
+	if (!state.isProphoto) {
+		// convert to prophoto space to make sure the same result is had regardless of working color space
+		float newr = state.Working2Prophoto[0][0]*r + state.Working2Prophoto[0][1]*g + state.Working2Prophoto[0][2]*b;
+		float newg = state.Working2Prophoto[1][0]*r + state.Working2Prophoto[1][1]*g + state.Working2Prophoto[1][2]*b;
+		float newb = state.Working2Prophoto[2][0]*r + state.Working2Prophoto[2][1]*g + state.Working2Prophoto[2][2]*b;
+		r = newr;
+		g = newg;
+		b = newb;
+	}
+
+	const AdobeToneCurve& adobeTC = static_cast<const AdobeToneCurve&>((const ToneCurve&)*this);
+	float ar = r;
+	float ag = g;
+	float ab = b;
+	adobeTC.Apply(ar, ag, ab);
+
+	if (ar >= 65535.f && ag >= 65535.f && ab >= 65535.f) {
+		// clip fast path, will also avoid strange colors of clipped highlights
+		r = g = b = 65535.f;
+		return;
+	}
+
+	// ProPhoto constants for luminance, that is xyz_prophoto[1][]
+	const float Yr = 0.2880402f;
+	const float Yg = 0.7118741f;
+	const float Yb = 0.0000857f;
+
+	// we use the Adobe (RGB-HSV hue-stabilized) curve to decide luminance, which generally leads to a less contrasty result
+	// compared to a pure luminance curve. We do this to be more compatible with the most popular curves.
+        float oldLuminance = r*Yr + g*Yg + b*Yb;
+        float newLuminance = ar*Yr + ag*Yg + ab*Yb;
+        float Lcoef = newLuminance/oldLuminance;
+        r = LIM<float>(r*Lcoef, 0.f, 65535.f);
+        g = LIM<float>(g*Lcoef, 0.f, 65535.f);
+        b = LIM<float>(b*Lcoef, 0.f, 65535.f);
+
+	// move to JCh so we can modulate chroma based on the global contrast-related chroma scaling factor
+	Color::Prophotoxyz(r,g,b,x,y,z);
+	XYZ = (cmsCIEXYZ){ .X = x * 100.0f/65535, .Y = y * 100.0f/65535, .Z = z * 100.0f/65535 };
+	cmsCIECAM02Forward(h02[thread_idx], &XYZ, &JCh);
+
+        float cmul = state.cmul_contrast; // chroma scaling factor
+
+	// depending on color, the chroma scaling factor can be fine-tuned below
+
+	{ // decrease chroma scaling sligthly of extremely saturated colors
+		float saturated_scale_factor = 0.95;
+		const float lolim = 35; // lower limit, below this chroma all colors will keep original chroma scaling factor
+		const float hilim = 60; // high limit, above this chroma the chroma scaling factor is multiplied with the saturated scale factor value above
+		if (JCh.C < lolim) {
+			// chroma is low enough, don't scale
+			saturated_scale_factor = 1.0;
+		} else if (JCh.C < hilim) {
+			// S-curve transition between low and high limit
+			float x = (JCh.C - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
+			if (x < 0.5) {
+				x = 0.5 * powf(2*x, 2);
+			} else {
+				x = 0.5 + 0.5 * (1-powf(1-2*(x-0.5), 2));
+			}
+			saturated_scale_factor = 1.0*(1.0-x) + saturated_scale_factor*x;
+		} else {
+			// do nothing, high saturation color, keep scale factor
+		}
+		cmul *= saturated_scale_factor;
+	}
+
+	{ // increase chroma scaling slightly of shadows
+		float nL = CurveFactory::gamma2(newLuminance / 65535); // apply gamma so we make comparison and transition with a more perceptual lightness scale
+		float dark_scale_factor = 1.20;
+		//float dark_scale_factor = 1.0 + state.debug.p2 / 100.0f;
+		const float lolim = 0.15;
+		const float hilim = 0.50;
+		if (nL < lolim) {
+			// do nothing, keep scale factor
+		} else if (nL < hilim) {
+			// S-curve transition
+			float x = (nL - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
+			if (x < 0.5) {
+				x = 0.5 * powf(2*x, 2);
+			} else {
+				x = 0.5 + 0.5 * (1-powf(1-2*(x-0.5), 2));
+			}
+			dark_scale_factor = dark_scale_factor*(1.0-x) + 1.0*x;
+		} else {
+			dark_scale_factor = 1.0;
+		}
+		cmul *= dark_scale_factor;
+	}
+
+	JCh.C *= cmul;
+	cmsCIECAM02Reverse(h02[thread_idx], &JCh, &XYZ);
+	Color::xyz2Prophoto(XYZ.X,XYZ.Y,XYZ.Z,r,g,b);
+	if (!isfinite(r)) r = 1.0;
+	if (!isfinite(g)) g = 1.0;
+	if (!isfinite(b)) b = 1.0;
+	r *= 655.35;
+	g *= 655.35;
+	b *= 655.35;
+        r = LIM<float>(r, 0.f, 65535.f);
+        g = LIM<float>(g, 0.f, 65535.f);
+        b = LIM<float>(b, 0.f, 65535.f);
+
+	{ // limit saturation increase in rgb space to avoid severe clipping and flattening in extreme highlights
+
+		// we use the RGB-HSV hue-stable "Adobe" curve as reference. For S-curve contrast it increases
+		// saturation greatly, but desaturates extreme highlights and thus provide a smooth transition to
+		// the white point. However the desaturation effect is quite strong so we make a weighting
+		float ah,as,av,h,s,v;
+		Color::rgb2hsv(ar,ag,ab, ah,as,av);
+		Color::rgb2hsv(r,g,b, h,s,v);
+
+		float sat_scale = as <= 0.0 ? 1.0 : s / as; // saturation scale compared to Adobe curve
+		float keep = 0.2;
+		const float lolim = 1.00; // only mix in the Adobe curve if we have increased saturation compared to it
+		const float hilim = 1.20;
+		if (sat_scale < lolim) {
+			// saturation is low enough, don't desaturate
+			keep = 1.0;
+		} else if (sat_scale < hilim) {
+			// S-curve transition
+			float x = (sat_scale - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
+			if (x < 0.5) {
+				x = 0.5 * powf(2*x, 2);
+			} else {
+				x = 0.5 + 0.5 * (1-powf(1-2*(x-0.5), 2));
+			}
+			keep = 1.0*(1.0-x) + keep*x;
+		} else {
+			// do nothing, very high increase, keep minimum amount
+		}
+		if (keep < 1.0) {
+			// mix in some of the Adobe curve result
+			r = r * keep + (1.0 - keep) * ar;
+			g = g * keep + (1.0 - keep) * ag;
+			b = b * keep + (1.0 - keep) * ab;
+		}
+	}
+
+	if (!state.isProphoto) {
+		float newr = state.Prophoto2Working[0][0]*r + state.Prophoto2Working[0][1]*g + state.Prophoto2Working[0][2]*b;
+		float newg = state.Prophoto2Working[1][0]*r + state.Prophoto2Working[1][1]*g + state.Prophoto2Working[1][2]*b;
+		float newb = state.Prophoto2Working[2][0]*r + state.Prophoto2Working[2][1]*g + state.Prophoto2Working[2][2]*b;
+		r = newr;
+		g = newg;
+		b = newb;
+	}
+}
+
+cmsContext * PerceptualToneCurve::c02;
+cmsHANDLE * PerceptualToneCurve::h02;
+float PerceptualToneCurve::cf_range[2];
+float PerceptualToneCurve::cf[1000];
+
+void PerceptualToneCurve::init() {
+
+	{ // init ciecam02 state, used for chroma scalings
+		cmsViewingConditions vc;
+		vc.whitePoint = *cmsD50_XYZ();
+		vc.whitePoint.X *= 100;
+		vc.whitePoint.Y *= 100;
+		vc.whitePoint.Z *= 100;
+		vc.Yb = 20;
+		vc.La = 20;
+		vc.surround = AVG_SURROUND;
+		vc.D_value = 1.0;
+
+		int thread_count = 1;
+#ifdef _OPENMP
+		thread_count = omp_get_max_threads();
+#endif
+		h02 = (cmsHANDLE *)malloc(sizeof(h02[0]) * (thread_count + 1));
+		c02 = (cmsContext *)malloc(sizeof(c02[0]) * (thread_count + 1));
+		h02[thread_count] = NULL;
+		c02[thread_count] = NULL;
+		// little cms requires one state per thread, for thread safety
+		for (int i = 0; i < thread_count; i++) {
+			c02[i] = cmsCreateContext(NULL, NULL);
+			h02[i] = cmsCIECAM02Init(c02[i], &vc);
+		}
+	}
+
+	{ // init contrast-value-to-chroma-scaling conversion curve
+
+		// contrast value in the left column, chroma scaling in the right. Handles for a spline.
+		// Put the columns in a file (without commas) and you can plot the spline with gnuplot: "plot 'curve.txt' smooth csplines"
+		// A spline can easily get overshoot issues so if you fine-tune the values here make sure that the resulting spline is smooth afterwards, by
+		// plotting it for example.
+		const float p[] = {
+			0.60, 0.70, // lowest contrast
+			0.70, 0.80,
+			0.90, 0.94,
+			0.99, 1.00,
+			1.00, 1.00, // 1.0 (linear curve) to 1.0, no scaling
+			1.07, 1.00,
+			1.08, 1.00,
+			1.11, 1.02,
+			1.20, 1.08,
+			1.30, 1.12,
+			1.80, 1.20,
+			2.00, 1.22  // highest contrast
+		};
+
+		const size_t in_len = sizeof(p)/sizeof(p[0])/2;
+		float in_x[in_len];
+		float in_y[in_len];
+		for (size_t i = 0; i < in_len; i++) {
+			in_x[i]= p[2*i+0];
+			in_y[i]= p[2*i+1];
+		}
+		const size_t out_len = sizeof(cf)/sizeof(cf[0]);
+		float out_x[out_len];
+		for (size_t i = 0; i < out_len; i++) {
+			out_x[i] = in_x[0] + (in_x[in_len-1] - in_x[0]) * (float)i / (out_len-1);
+		}
+		cubic_spline(in_x, in_y, in_len, out_x, cf, out_len);
+		cf_range[0] = in_x[0];
+		cf_range[1] = in_x[in_len-1];
+	}
+}
+
+void PerceptualToneCurve::cleanup() {
+	for (int i = 0; h02[i] != NULL; i++) {
+		cmsCIECAM02Done(h02[i]);
+		cmsDeleteContext(c02[i]);
+	}
+	free(h02);
+	free(c02);
+}
+
+void PerceptualToneCurve::initApplyState(PerceptualToneCurveState & state, Glib::ustring workingSpace) const {
+
+	// Get the curve's contrast value, and convert to a chroma scaling
+        const float contrast_value = calculateToneCurveContrastValue();
+        state.cmul_contrast = get_curve_val(contrast_value, cf_range, cf, sizeof(cf)/sizeof(cf[0]));
+	//fprintf(stderr, "contrast value: %f => chroma scaling %f\n", contrast_value, state.cmul_contrast);
+
+	// Create state for converting to/from prophoto (if necessary)
+	if (workingSpace == "ProPhoto") {
+		state.isProphoto = true;
+	} else {
+		state.isProphoto = false;
+		TMatrix Work = iccStore->workingSpaceMatrix(workingSpace);
+		memset(state.Working2Prophoto, 0, sizeof(state.Working2Prophoto));
+		for (int i=0; i<3; i++)
+			for (int j=0; j<3; j++)
+				for (int k=0; k<3; k++)
+					state.Working2Prophoto[i][j] += prophoto_xyz[i][k] * Work[k][j];
+		Work = iccStore->workingSpaceInverseMatrix (workingSpace);
+		memset(state.Prophoto2Working, 0, sizeof(state.Prophoto2Working));
+		for (int i=0; i<3; i++)
+			for (int j=0; j<3; j++)
+				for (int k=0; k<3; k++)
+					state.Prophoto2Working[i][j] += Work[i][k] * xyz_prophoto[k][j];
+	}
+}
 
 }

@@ -2587,6 +2587,16 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
     bool hasToneCurvebw1 = bool(customToneCurvebw1);
     bool hasToneCurvebw2 = bool(customToneCurvebw2);
 
+	PerceptualToneCurveState ptc1ApplyState, ptc2ApplyState;
+	if (hasToneCurve1 && curveMode==ToneCurveParams::TC_MODE_PERCEPTUAL) {
+		const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&>(customToneCurve1);
+		userToneCurve.initApplyState(ptc1ApplyState, params->icm.working);
+	}
+	if (hasToneCurve2 && curveMode2==ToneCurveParams::TC_MODE_PERCEPTUAL) {
+		const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&>(customToneCurve2);
+		userToneCurve.initApplyState(ptc2ApplyState, params->icm.working);
+ 	}
+
     bool hasColorToning = params->colorToning.enabled && bool(ctOpacityCurve) &&  bool(ctColorCurve);
   //  float satLimit = float(params->colorToning.satProtectionThreshold)/100.f*0.7f+0.3f;
   //  float satLimitOpacity = 1.f-(float(params->colorToning.saturatedOpacity)/100.f);
@@ -2935,6 +2945,17 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 						}
 					}
 				}
+				else if (curveMode==ToneCurveParams::TC_MODE_PERCEPTUAL){ // apply curve while keeping color appearance constant
+					const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&>(customToneCurve1);
+					for (int i=istart,ti=0; i<tH; i++,ti++) {
+						for (int j=jstart,tj=0; j<tW; j++,tj++) {
+							rtemp[ti*TS+tj] = CLIP<float>(rtemp[ti*TS+tj]);
+							gtemp[ti*TS+tj] = CLIP<float>(gtemp[ti*TS+tj]);
+							btemp[ti*TS+tj] = CLIP<float>(btemp[ti*TS+tj]);
+							userToneCurve.Apply(rtemp[ti*TS+tj], gtemp[ti*TS+tj], btemp[ti*TS+tj], ptc1ApplyState);
+						}
+					}
+				}
 			}
 
 			if (editID == EUID_ToneCurve2) {  // filling the pipette buffer
@@ -2985,6 +3006,14 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 					for (int i=istart,ti=0; i<tH; i++,ti++) {
 						for (int j=jstart,tj=0; j<tW; j++,tj++) {
 							userToneCurve.Apply(rtemp[ti*TS+tj], gtemp[ti*TS+tj], btemp[ti*TS+tj]);
+						}
+					}
+				}
+				else if (curveMode2==ToneCurveParams::TC_MODE_PERCEPTUAL){ // apply curve while keeping color appearance constant
+					const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&>(customToneCurve2);
+					for (int i=istart,ti=0; i<tH; i++,ti++) {
+						for (int j=jstart,tj=0; j<tW; j++,tj++) {
+							userToneCurve.Apply(rtemp[ti*TS+tj], gtemp[ti*TS+tj], btemp[ti*TS+tj], ptc2ApplyState);
 						}
 					}
 				}

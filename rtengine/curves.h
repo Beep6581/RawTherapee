@@ -638,6 +638,36 @@ class LuminanceToneCurve : public ToneCurve {
     void Apply(float& r, float& g, float& b) const;
 };
 
+class PerceptualToneCurveState {
+  public:
+    bool isProphoto;
+    float Working2Prophoto[3][3];
+    float Prophoto2Working[3][3];
+    float cmul_contrast;
+};
+
+// Tone curve whose purpose is to keep the color appearance constant, that is the curve changes contrast
+// but colors appears to have the same hue and saturation as before. As contrast and saturation is tightly
+// coupled in human vision saturation is modulated based on the curve's contrast, and that way the appearance
+// can be kept perceptually constant (within limits).
+class PerceptualToneCurve : public ToneCurve {
+  private:
+    static cmsHANDLE *h02;
+    static cmsContext *c02;
+    static float cf_range[2];
+    static float cf[1000];
+    static void cubic_spline(const float x[], const float y[], const int len, const float out_x[], float out_y[], const int out_len);
+    static float find_minimum_interval_halving(float (*func)(float x, void *arg), void *arg, float a, float b, float tol, int nmax);
+    static float find_tc_slope_fun(float k, void *arg);
+    static float get_curve_val(float x, float range[2], float lut[], size_t lut_size);
+    float calculateToneCurveContrastValue() const;
+  public:
+    static void init();
+    static void cleanup();
+    void initApplyState(PerceptualToneCurveState & state, Glib::ustring workingSpace) const;
+    void Apply(float& r, float& g, float& b, PerceptualToneCurveState & state) const;
+};
+
 class WeightedStdToneCurvebw : public ToneCurve {
   private:
     float Triangle(float refX, float refY, float X2) const;

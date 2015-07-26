@@ -126,6 +126,7 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
   toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_FILMLIKE"));
   toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_SATANDVALBLENDING"));
   toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_LUMINANCE"));
+  toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_PERCEPTUAL"));
   toneCurveMode->set_active (0);
   toneCurveMode->set_tooltip_text(M("TP_EXPOSURE_TCMODE_LABEL1"));
 
@@ -152,6 +153,7 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
   toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_FILMLIKE"));
   toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_SATANDVALBLENDING"));
   toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_LUMINANCE"));
+  toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_PERCEPTUAL"));
   toneCurveMode2->set_active (0);
   toneCurveMode2->set_tooltip_text(M("TP_EXPOSURE_TCMODE_LABEL2"));
 
@@ -228,10 +230,10 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
         shape->setUnChanged (!pedited->toneCurve.curve);
         shape2->setUnChanged (!pedited->toneCurve.curve2);
         if (!pedited->toneCurve.curveMode) {
-            toneCurveMode->set_active(5);
+            toneCurveMode->set_active(6);
         }
         if (!pedited->toneCurve.curveMode2) {
-            toneCurveMode2->set_active(5);
+            toneCurveMode2->set_active(6);
         }
     }
     if (pedited)
@@ -297,6 +299,7 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
     else if (tcMode == 2) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_FILMLIKE;
     else if (tcMode == 3) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
     else if (tcMode == 4) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_LUMINANCE;
+    else if (tcMode == 5) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_PERCEPTUAL;
 
     tcMode = toneCurveMode2->get_active_row_number();
     if      (tcMode == 0) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_STD;
@@ -304,6 +307,7 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
     else if (tcMode == 2) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_FILMLIKE;
     else if (tcMode == 3) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
     else if (tcMode == 4) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_LUMINANCE;
+    else if (tcMode == 5) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_PERCEPTUAL;
 
     if (pedited) {
         pedited->toneCurve.expcomp    = expcomp->getEditedState ();
