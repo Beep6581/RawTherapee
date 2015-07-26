@@ -309,6 +309,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     hlmax[0]=clmax[0]*rm;
     hlmax[1]=clmax[1]*gm;
     hlmax[2]=clmax[2]*bm;
+    const bool has_clipping = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]);
 
     //if (sx1+skip*imwidth>maxx) imwidth --; // very hard to fix this situation without an 'if' in the loop.
     float area=skip*skip;
@@ -345,18 +346,15 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 				rtot*=rm;
 				gtot*=gm;
 				btot*=bm;
-				if (!hrp.hrenabled && (rtot >= hlmax[0] || gtot >= hlmax[1] || btot >= hlmax[2]))
-				{
-					// make a sort of luminance recovery. Note that as we don't desaturate
-					// surrounding unclipped highlights the transition into clipping may not
-					// be smooth, meaning that stuff like RGB-HSV desaturation will look bad.
-					// We accept this drawback though, those that really need highlight reconstruction
-					// should enable that.
-					float L = rtot*0.2126729f + gtot*0.7151521f + btot*0.0721750f;
-					rtot = gtot = btot = L;
-					//rtot=CLIP(rtot);
-					//gtot=CLIP(gtot);
-					//btot=CLIP(btot);
+				if (!hrp.hrenabled && has_clipping) {
+					// note: as hlmax[] can be larger than CLIP and we can later apply negative
+					// exposure this means that we can clip away local highlights which actually
+					// are not clipped. We have to do that though as we only check pixel by pixel
+					// and don't know if this will transition into a clipped area, if so we need
+					// to clip also surrounding to make a good color transition
+					rtot=CLIP(rtot);
+					gtot=CLIP(gtot);
+					btot=CLIP(btot);
 				}
 				line_red[j] = rtot;
 				line_grn[j] = gtot;
@@ -376,13 +374,10 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 				rtot*=rm;
 				gtot*=gm;
 				btot*=bm;
-				if (!hrp.hrenabled && (rtot >= hlmax[0] || gtot >= hlmax[1] || btot >= hlmax[2]))
-				{
-					float L = rtot*0.2126729f + gtot*0.7151521f + btot*0.0721750f;
-					rtot = gtot = btot = L;
-					//rtot=CLIP(rtot);
-					//gtot=CLIP(gtot);
-					//btot=CLIP(btot);
+				if (!hrp.hrenabled && has_clipping) {
+					rtot=CLIP(rtot);
+					gtot=CLIP(gtot);
+					btot=CLIP(btot);
 				}
 				line_red[j] = rtot;
 				line_grn[j] = gtot;
@@ -2086,7 +2081,6 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWP
 
 		// scale image colors
 
-	// FIXME 2015-07-15: possible cleanup: chmax[] is no longer used, clmax[] has replaced it
 	if( ri->getSensorType()==ST_BAYER){
 #pragma omp parallel
 {
@@ -2101,7 +2095,6 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWP
 				int c4 = ( c == 1 && !(row&1) ) ? 3 : c;      // four  colors,  0=R, 1=G1, 2=B, 3=G2
 				val-=cblacksom[c4];
 				val*=scale_mul[c4];
-				
 				rawData[row][col] = (val);
 				tmpchmax[c] = max(tmpchmax[c],val);
 			}
