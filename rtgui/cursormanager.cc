@@ -98,13 +98,13 @@ void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape sha
     else if (shape==CSSpotWB)
         window->set_cursor (*cWB);
     else if (shape==CSCropSelect)
-        window->set_cursor (*cCropSelection);
+        window->set_cursor (*cHand);
     else if (shape==CSMoveLeft)
         window->set_cursor (*cLeftTanMove);
     else if (shape==CSMoveRight)
         window->set_cursor (*cRightTanMove);
     else if (shape==CSStraighten)
-        window->set_cursor (*cCropSelection);
+        window->set_cursor (*cHand);
     else if (shape==CSWait)
         window->set_cursor (*cWait);
     else if (shape==CSPlus)
