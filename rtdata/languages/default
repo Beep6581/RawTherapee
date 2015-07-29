@@ -1488,6 +1488,7 @@ TP_ICM_NOICM;No ICM: sRGB Output
 TP_ICM_OUTPUTPROFILE;Output Profile
 TP_ICM_SAVEREFERENCE;Save Reference Image for Profiling
 TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
+TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
 TP_ICM_TONECURVE;Tone curve
 TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only enabled if the selected DCP has a tone curve.
