@@ -1827,6 +1827,10 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
 		r = g = b = 65535.f;
 		return;
 	}
+	if (ar <= 0.f && ag <= 0.f && ab <= 0.f) {
+		r = g = b = 0;
+		return;
+	}
 
 	// ProPhoto constants for luminance, that is xyz_prophoto[1][]
 	const float Yr = 0.2880402f;
@@ -1846,6 +1850,18 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
 	Color::Prophotoxyz(r,g,b,x,y,z);
 	XYZ = (cmsCIEXYZ){ .X = x * 100.0f/65535, .Y = y * 100.0f/65535, .Z = z * 100.0f/65535 };
 	cmsCIECAM02Forward(h02[thread_idx], &XYZ, &JCh);
+	if (!isfinite(JCh.J) || !isfinite(JCh.C) || !isfinite(JCh.h)) {
+		// this can happen for dark noise colors or colors outside human gamut. Then we just return the curve's result.
+		if (!state.isProphoto) {
+			float newr = state.Prophoto2Working[0][0]*r + state.Prophoto2Working[0][1]*g + state.Prophoto2Working[0][2]*b;
+			float newg = state.Prophoto2Working[1][0]*r + state.Prophoto2Working[1][1]*g + state.Prophoto2Working[1][2]*b;
+			float newb = state.Prophoto2Working[2][0]*r + state.Prophoto2Working[2][1]*g + state.Prophoto2Working[2][2]*b;
+			r = newr;
+			g = newg;
+			b = newb;
+		}
+		return;
+	}
 
         float cmul = state.cmul_contrast; // chroma scaling factor
 
@@ -1896,12 +1912,42 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
 		cmul *= dark_scale_factor;
 	}
 
+	{ // to avoid strange CIECAM02 chroma errors on close-to-shadow-clipping colors we reduce chroma scaling towards 1.0 for black colors
+		float dark_scale_factor = 1.0 / cmul;
+		const float lolim = 4;
+		const float hilim = 7;
+		if (JCh.J < lolim) {
+			// do nothing, keep scale factor
+		} else if (JCh.J < hilim) {
+			// S-curve transition
+			float x = (JCh.J - lolim) / (hilim - lolim);
+			if (x < 0.5) {
+				x = 0.5 * powf(2*x, 2);
+			} else {
+				x = 0.5 + 0.5 * (1-powf(1-2*(x-0.5), 2));
+			}
+			dark_scale_factor = dark_scale_factor*(1.0-x) + 1.0*x;
+		} else {
+			dark_scale_factor = 1.0;
+		}
+		cmul *= dark_scale_factor;
+	}
+
 	JCh.C *= cmul;
 	cmsCIECAM02Reverse(h02[thread_idx], &JCh, &XYZ);
+	if (!isfinite(XYZ.X) || !isfinite(XYZ.Y) || !isfinite(XYZ.Z)) {
+		// can happen for colors on the rim of being outside gamut, that worked without chroma scaling but not with. Then we return only the curve's result.
+		if (!state.isProphoto) {
+			float newr = state.Prophoto2Working[0][0]*r + state.Prophoto2Working[0][1]*g + state.Prophoto2Working[0][2]*b;
+			float newg = state.Prophoto2Working[1][0]*r + state.Prophoto2Working[1][1]*g + state.Prophoto2Working[1][2]*b;
+			float newb = state.Prophoto2Working[2][0]*r + state.Prophoto2Working[2][1]*g + state.Prophoto2Working[2][2]*b;
+			r = newr;
+			g = newg;
+			b = newb;
+		}
+		return;
+	}
 	Color::xyz2Prophoto(XYZ.X,XYZ.Y,XYZ.Z,r,g,b);
-	if (!isfinite(r)) r = 1.0;
-	if (!isfinite(g)) g = 1.0;
-	if (!isfinite(b)) b = 1.0;
 	r *= 655.35;
 	g *= 655.35;
 	b *= 655.35;
