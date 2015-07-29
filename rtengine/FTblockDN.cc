@@ -1880,7 +1880,7 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
 			
 			float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
 			if (lvl==maxlvl-1) {
-				float vari[3];
+				float vari[4];
 				int edge=0;
 				ShrinkAllL(WaveletCoeffs_L, buffer, lvl, dir, noisevarlum, madL[lvl], NULL, edge );
 			} else {
@@ -2079,7 +2079,7 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
 	{
 
 		int maxlvl = min(WaveletCoeffs_L.maxlevel(),5);
-		if(edge==1) maxlvl=3;//for refine denoise edge wavelet
+		if(edge==1) maxlvl=4;//for refine denoise edge wavelet
 		int maxWL = 0, maxHL = 0;
 		for (int lvl=0; lvl<maxlvl; lvl++) {
 			if(WaveletCoeffs_L.level_W(lvl) > maxWL)
@@ -2092,11 +2092,12 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
 #pragma omp parallel num_threads(denoiseNestedLevels) if(denoiseNestedLevels>1)
 #endif
 {
-		float *buffer[3];
+		float *buffer[4];
 		buffer[0] = new (std::nothrow) float[maxWL*maxHL+32];
 		buffer[1] = new (std::nothrow) float[maxWL*maxHL+64];
 		buffer[2] = new (std::nothrow) float[maxWL*maxHL+96];
-		if(buffer[0] == NULL || buffer[1] == NULL || buffer[2] == NULL) {
+		buffer[3] = new (std::nothrow) float[maxWL*maxHL+128];
+		if(buffer[0] == NULL || buffer[1] == NULL || buffer[2] == NULL || buffer[3] == NULL) {
 			memoryAllocationFailed = true;
 		}
 		
@@ -2110,7 +2111,7 @@ SSEFUNCTION	bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
 				}
 			}
 		}
-		for(int i=2;i>=0;i--)
+		for(int i=3;i>=0;i--)
 			if(buffer[i] != NULL)
 				delete [] buffer[i];
 }
@@ -2180,7 +2181,7 @@ SSEFUNCTION	void ImProcFunctions::ShrinkAllL(wavelet_decomposition &WaveletCoeff
 		int H_L = WaveletCoeffs_L.level_H(level);
 
 		float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(level);
-
+//		printf("OK lev=%d\n",level);
 		float mad_L = madL[dir-1] ;
 		if(edge==1) {
 			noisevarlum = blurBuffer;		// we need one buffer, but fortunately we don't have to allocate a new one because we can use blurBuffer

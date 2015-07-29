@@ -95,7 +95,7 @@ struct cont_params {
 	float b_lsl,t_lsl,b_rsl,t_rsl;
 	float b_lhl,t_lhl,b_rhl,t_rhl;
 	float edg_low, edg_mean, edg_sd, edg_max;
-	float lev0s, lev0n, lev1s, lev1n, lev2s, lev2n;
+	float lev0s, lev0n, lev1s, lev1n, lev2s, lev2n, lev3s, lev3n;
 	float b_lpast,t_lpast,b_rpast,t_rpast;
 	float b_lsat,t_lsat,b_rsat,t_rsat;
 	int rad;
@@ -150,7 +150,10 @@ struct cont_params {
 	bool toningena;
 	bool noiseena;
 	int maxilev;
-	
+	float edgsens;
+	float edgampl;
+	int neigh;
+	bool lipp;
 };
 
 int wavNestedLevels = 1;
@@ -179,7 +182,12 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 	if(params->wavelet.Medgreinf=="more") cp.reinforce = 1;
 	if(params->wavelet.Medgreinf=="none") cp.reinforce = 2;
 	if(params->wavelet.Medgreinf=="less") cp.reinforce = 3;
-	cp.lip3 = params->wavelet.lipst;
+	
+	if(params->wavelet.NPmethod=="none") cp.lip3 = false;
+	if(params->wavelet.NPmethod=="low") {cp.lip3 = true;cp.neigh=0;}
+	if(params->wavelet.NPmethod=="high") {cp.lip3 = true;cp.neigh=1;}
+	
+	cp.lipp = params->wavelet.lipst;
 	cp.diag = params->wavelet.tmr;
 	cp.balan = (float)params->wavelet.balance; 
 	cp.ite = params->wavelet.iter; 
@@ -222,6 +230,13 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 	cp.eddet=(float) params->wavelet.edgedetect;
 	cp.eddetthr=(float) params->wavelet.edgedetectthr;
 	cp.eddetthrHi=(float) params->wavelet.edgedetectthr2;
+	
+	cp.edgsens=60.f;
+    cp.edgampl=10.f;
+	if(cp.lipp) {
+	cp.edgsens=(float) params->wavelet.edgesensi;
+	cp.edgampl=(float) params->wavelet.edgeampli;
+	}
 	int N=imheight*imwidth;
 	int maxmul=params->wavelet.thres;
 	cp.maxilev=maxmul;
@@ -385,6 +400,8 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 		cp.lev1n =static_cast<float>(params->wavelet.level1noise.value[1]);
 		cp.lev2s =static_cast<float>(params->wavelet.level2noise.value[0]);
 		cp.lev2n =static_cast<float>(params->wavelet.level2noise.value[1]);
+		cp.lev3s =static_cast<float>(params->wavelet.level3noise.value[0]);
+		cp.lev3n =static_cast<float>(params->wavelet.level3noise.value[1]);
 
 		cp.detectedge	= false;
 		cp.detectedge = params->wavelet.medianlev;
@@ -643,7 +660,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 
 				int levwavL = levwav;
 				bool ref0=false;
-						if((cp.lev0s > 0.f || cp.lev1s > 0.f || cp.lev2s > 0.f) && cp.noiseena) ref0=true;
+						if((cp.lev0s > 0.f || cp.lev1s > 0.f || cp.lev2s > 0.f || cp.lev3s > 0.f) && cp.noiseena) ref0=true;
 
 			//	printf("LevwavL before: %d\n",levwavL);
 				if(cp.contrast == 0.f && cp.tonemap==false && cp.conres == 0.f && cp.conresH == 0.f && cp.val ==0  && !ref0 && params->wavelet.CLmethod=="all") { // no processing of residual L  or edge=> we probably can reduce the number of levels
@@ -651,7 +668,12 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 						levwavL--;
 				}
 			//	printf("LevwavL after: %d\n",levwavL);
-				if(levwavL < 3) levwavL=3;//to allow edge  => I always allocate 3 levels..because if user select wavelet it is to do something !!
+			//	if(cp.noiseena){
+					if(levwavL < 4 ) levwavL=4;//to allow edge  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
+			//	}
+			//	else {
+			//		if(levwavL < 3) levwavL=3;//to allow edge  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
+			//	}
 				if(levwavL > 0) {
 					wavelet_decomposition* Ldecomp = new wavelet_decomposition (labco->data, labco->W, labco->H, levwavL, 1, skip, max(1,wavNestedLevels), DaubLen );
 					if(!Ldecomp->memoryAllocationFailed) {
@@ -661,7 +683,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 #ifdef _RT_NESTED_OPENMP
 #pragma omp parallel for schedule(dynamic) collapse(2) num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif				
-					for (int lvl=0; lvl<3; lvl++) {
+					for (int lvl=0; lvl<4; lvl++) {
 						for (int dir=1; dir<4; dir++) {
 							int Wlvl_L = Ldecomp->level_W(lvl);
 							int Hlvl_L = Ldecomp->level_H(lvl);
@@ -673,7 +695,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 					}
 						int ind=0;
 						bool ref=false;
-						if((cp.lev0s > 0.f || cp.lev1s > 0.f || cp.lev2s > 0.f) && cp.noiseena) ref=true;
+						if((cp.lev0s > 0.f || cp.lev1s > 0.f || cp.lev2s > 0.f || cp.lev3s > 0.f) && cp.noiseena) ref=true;
 						bool contr=false;
 						for(int f=0;f<levwavL;f++) {
 							if(cp.mul[f]!=0.f) contr=true;
@@ -682,16 +704,18 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 							Evaluate2(*Ldecomp, cp, ind, mean, meanN, sigma, sigmaN, MaxP, MaxN, madL);
 						}
 				//init for edge and denoise
-				float vari[3];
+				float vari[4];
 				
 				vari[0]=8.f*SQR((cp.lev0n/125.0)*(1.0+ cp.lev0n/25.0));
 				vari[1]=8.f*SQR((cp.lev1n/125.0)*(1.0+ cp.lev1n/25.0));
 				vari[2]=8.f*SQR((cp.lev2n/125.0)*(1.0+ cp.lev2n/25.0));
+				vari[3]=8.f*SQR((cp.lev3n/125.0)*(1.0+ cp.lev3n/25.0));
 				int edge=1;
-				if((cp.lev0n > 0.1f || cp.lev1n > 0.1f || cp.lev2n > 0.1f) && cp.noiseena) {
+				if((cp.lev0n > 0.1f || cp.lev1n > 0.1f || cp.lev2n > 0.1f || cp.lev3n > 0.1f) && cp.noiseena) {
 					vari[0] = max(0.0001f,vari[0]);
 					vari[1] = max(0.0001f,vari[1]);
 					vari[2] = max(0.0001f,vari[2]);
+					vari[3] = max(0.0001f,vari[3]);
 					float* noisevarlum = NULL;  // we need a dummy to pass it to WaveletDenoiseAllL
 					if(!WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, vari, edge))//
 						memoryAllocationFailed = true;
@@ -1111,7 +1135,7 @@ omp_set_nested(oldNested);
 		maxLP/=3;
 		maxLN/=3;
 		MADL/=3;
-		if(level < 3) MADL=sqrt(MADL);else MADL=0.f;
+		if(level < 4) MADL=sqrt(MADL);else MADL=0.f;
 		mean[level]=AvL;
 		meanN[level]=AvN;
 		sigma[level]=SL;
@@ -1423,20 +1447,23 @@ if(cp.tonemap && cp.contmet==2  && cp.resena) {
 		float al=(multL-1.f)/(av-min0);
 		float bl=1.f-min0*al;
 		float factorx=1.f;
-		float *koeLi[9];
-		float maxkoeLi[9];
+//		float *koeLi[9];
+//		float maxkoeLi[9];
+		float *koeLi[12];
+		float maxkoeLi[12];
+		
 		float *koeLibuffer = NULL;
 		bool lipschitz =false;	
 		lipschitz=true;
 
 		if(lipschitz==true) {
-		for(int y=0;y<9;y++) maxkoeLi[y]=0.f;
-		koeLibuffer = new float[9*H_L*W_L];
-			for (int i=0; i<9; i++) {
+		for(int y=0;y<12;y++) maxkoeLi[y]=0.f;//9
+		koeLibuffer = new float[12*H_L*W_L];//12
+			for (int i=0; i<12; i++) {//9
 				koeLi[i] = &koeLibuffer[i*W_L*H_L];
 			}	
 					
-		for(int j=0;j<9;j++)
+		for(int j=0;j<12;j++)//9
 			for (int i=0; i<W_L*H_L; i++) 
 				koeLi[j][i]=0.f;
 		}
@@ -1523,10 +1550,12 @@ if(cp.tonemap && cp.contmet==1  && cp.resena) {
 		// One can 1) change all parameters and found good parameters;
 		//one can also chnage in calckoe
 		float edd=settings->ed_detec;
-		float eddlow=settings->ed_low;
-		float eddlipinfl=settings->ed_lipinfl;
-		float eddlipampl=settings->ed_lipampl;
-		
+		float eddlow=settings->ed_low;//5 to 40
+	//	float eddlipinfl=settings->ed_lipinfl;
+	//	float eddlipampl=settings->ed_lipampl;
+		float eddlipinfl=0.005f*cp.edgsens + 0.4f;
+		float eddlipampl=1.f + cp.edgampl/50.f;
+	//	float eddlow=5.f + cp.edgampl/2.f;//settings->ed_low;//5 to 40
 
 		
 if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory..more time...	
@@ -1538,7 +1567,7 @@ if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory
 #ifdef _RT_NESTED_OPENMP
 #pragma omp for schedule(dynamic) collapse(2)
 #endif		
-		for (int lvl=0; lvl<3; lvl++) {
+		for (int lvl=0; lvl<4; lvl++) {
 			for (int dir=1; dir<4; dir++) {
 				int W_L = WaveletCoeffs_L.level_W(lvl);
 				int H_L = WaveletCoeffs_L.level_H(lvl);
@@ -1551,8 +1580,7 @@ if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory
 		delete [] tmCBuffer;
 
 		float aamp=1.f+cp.eddetthrHi/100.f;
-
-		for (int lvl=0; lvl<3; lvl++) {
+		for (int lvl=0; lvl<4; lvl++) {
 #ifdef _RT_NESTED_OPENMP
 #pragma omp for schedule(dynamic,16)
 #endif		
@@ -1560,16 +1588,29 @@ if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory
 				for (int j=1; j<W_L-1; j++) {
 					//treatment of koeLi and maxkoeLi
 					float interm = 0.f;
+					if(cp.lip3 && cp.lipp){
+					// comparaison betwwen pixel and neighbours
+						float kneigh, somm;
+						if(cp.neigh==0) {kneigh=38.f;somm=50.f;}
+						else if(cp.neigh==1) {kneigh=28.f;somm=40.f;}
+						for (int dir=1; dir<4; dir++) {//neighbours proxi	
+							koeLi[lvl*3 + dir-1][i*W_L + j] = (kneigh*koeLi[lvl*3 + dir-1][i*W_L + j] + 2.f*koeLi[lvl*3+dir-1][(i-1)*W_L + j] + 2.f*koeLi[lvl*3 + dir-1][(i+1)*W_L + j]
+							+ 2.f*koeLi[lvl*3 + dir-1][i*W_L + j+1] + 2.f*koeLi[lvl*3 + dir-1][i*W_L + j-1] + koeLi[lvl*3 + dir-1][(i-1)*W_L + j-1]
+							+ koeLi[lvl*3 + dir-1][(i-1)*W_L + j+1] +koeLi[lvl*3 +dir-1][(i+1)*W_L + j-1] +koeLi[lvl*3 + dir-1][(i+1)*W_L + j+1])/somm;
+						}
+					}
 					for (int dir=1; dir<4; dir++) {
 					//here I evaluate combinaison of vert / diag / horiz...we are with multiplicators of the signal
 						interm += SQR(koeLi[lvl*3 + dir-1][i*W_L + j]);		
 					}
 					interm = sqrt(interm);
+					
 //					interm /= 1.732f;//interm = pseudo variance koeLi
 					interm *= 0.57736721f;
 					float kampli = 1.f;
 					float eps=0.0001f;
 					// I think this double ratio (alph, beta) is better than arctg 
+					
 					float alph = koeLi[lvl*3][i*W_L + j] / (koeLi[lvl*3 + 1][i*W_L + j]+eps);//ratio between horizontal and vertical
 					float beta = koeLi[lvl*3+2][i*W_L + j] / (koeLi[lvl*3 + 1][i*W_L + j]+eps);//ratio between diagonal and horizontal
 					
@@ -1598,13 +1639,15 @@ if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory
 					if(alph > eddlipinfl) {AmpLip=alipinfl*alph+blipinfl;kampli=SQR(bet)*AmpLip*aamp;}//If beta low reduce kampli
 					else {AmpLip=(1.f/eddlipinfl)*SQR(SQR(alph*bet));kampli=AmpLip/aamp;}//Strong Reduce if beta low
 					// comparaison betwwen pixel and neighbours to do ==> I think 3 dir above is better
-					
-				   //koeLi[lvl*3][i*W_L + j]  koeLi[lvl*3][(i-1)*W_L + j]  koeLi[lvl*3][(i+1)*W_L + j]
-					//		 koeLi[lvl*3][i*W_L + j+1]  koeLi[lvl*3][i*W_L + j-1])  koeLi[lvl*3][(i-1)*W_L + j-1]
-					//		 koeLi[lvl*3][(i-1)*W_L + j+1] koeLi[lvl*3][(i+1)*W_L + j-1] koeLi[lvl*3][(i+1)*W_L + j+1])
-					
+			/*		if(cp.lip3){
+					koeLi[lvl*3][i*W_L + j] = (koeLi[lvl*3][i*W_L + j] + koeLi[lvl*3][(i-1)*W_L + j] + koeLi[lvl*3][(i+1)*W_L + j]
+							+ koeLi[lvl*3][i*W_L + j+1] + koeLi[lvl*3][i*W_L + j-1] + koeLi[lvl*3][(i-1)*W_L + j-1]
+							+ koeLi[lvl*3][(i-1)*W_L + j+1] +koeLi[lvl*3][(i+1)*W_L + j-1] +koeLi[lvl*3][(i+1)*W_L + j+1])/9.f;
+					}
+			*/		
 				// apply to each direction Wavelet level : horizontal / vertiacle / diagonal
-					
+				   //interm += SQR(koeLi[lvl*3 + dir-1][i*W_L + j]);		
+				
 					interm*=kampli;
 					if(interm < cp.eddetthr/eddlow) interm = 0.01f;//eliminate too low values
 					//we can change this part of algo==> not equal but ponderate
@@ -1845,7 +1888,7 @@ if(cp.detectedge && lipschitz==true) {	//enabled Lipschitz control...more memory
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, float *koeLi[9], int level, int dir, int W_L, int H_L, float edd, float *maxkoeLi, float **tmC){
+void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, float *koeLi[12], int level, int dir, int W_L, int H_L, float edd, float *maxkoeLi, float **tmC){
 	int borderL = 2;
 //	printf("cpedth=%f\n",cp.eddetthr);
 	if(cp.eddetthr < 30.f) {
@@ -1901,6 +1944,8 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 	
 	else if(cp.eddetthr >= 75.f) {	
 			borderL = 2;
+		//if(cp.lip3 && level > 1) {
+		if(level > 1) {// do not activate 5x5 if level 0 or 1
 
 		for (int i=2; i<H_L-2; i++) {
 			for (int j=2; j<W_L-2; j++) {
@@ -1945,6 +1990,7 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 									// apply to each direction Wavelet level : horizontal / vertiacle / diagonal
 			}
 		}
+	}
 
 	}
 	
@@ -2139,7 +2185,7 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 
 	}
 	
-	void ImProcFunctions::ContAllL (float *koeLi[9], float *maxkoeLi, bool lipschitz, int maxlvl, LabImage * labco, float ** varhue, float **varchrom, float ** WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, struct cont_params cp,
+	void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschitz, int maxlvl, LabImage * labco, float ** varhue, float **varchrom, float ** WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, struct cont_params cp,
 									int W_L, int H_L, int skip, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, const WavCurve & wavCLVCcurve, const WavOpacityCurveW & waOpacityCurveW, FlatCurve* ChCurve, bool Chutili)
 	{
 		
@@ -2256,6 +2302,7 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 				if(level==0) refin *= (1.f + cp.lev0s/50.f);// we can change this sensibility!
 				if(level==1) refin *= (1.f + cp.lev1s/50.f);
 				if(level==2) refin *= (1.f + cp.lev2s/50.f);	
+				if(level==3) refin *= (1.f + cp.lev3s/50.f);	
 				}	
 			}
 			float edgePrecalc = 1.f + refin; //estimate edge "pseudo variance"
@@ -2285,7 +2332,7 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 						else edge=(edgePrecalc*(1.f+koe[k]))/(1.f+0.9f*maxkoe);
 					}
 				if(lipschitz==true) {
-						if(level < 3) edge = 1.f +(edgePrecalc-1.f)*(koeLi[level*3][k])/(1.f+0.9f*maxkoeLi[level*3+ dir-1]);
+						if(level < 4) edge = 1.f +(edgePrecalc-1.f)*(koeLi[level*3][k])/(1.f+0.9f*maxkoeLi[level*3+ dir-1]);
 						else edge = edgePrecalc;
 					}
 				}	
@@ -2369,7 +2416,7 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 						else edge=(edgePrecalc*(1.f+koe[k]))/(1.f+0.9f*maxkoe);
 					}
 				if(lipschitz==true) {
-						if(level < 3) edge = 1.f +(edgePrecalc-1.f)*(koeLi[level*3][k])/(1.f+0.9f*maxkoeLi[level*3+ dir-1]);
+						if(level < 4) edge = 1.f +(edgePrecalc-1.f)*(koeLi[level*3][k])/(1.f+0.9f*maxkoeLi[level*3+ dir-1]);
 						else edge = edgePrecalc;
 					}
 				}	
@@ -2441,6 +2488,7 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 				if(level==0) refine = cp.lev0s/40.f;
 				if(level==1) refine = cp.lev1s/40.f;
 				if(level==2) refine = cp.lev2s/40.f;
+				if(level==3) refine = cp.lev3s/40.f;
 				WavCoeffs_L[dir][i]*=(1.f + refine);
 			}
 		}

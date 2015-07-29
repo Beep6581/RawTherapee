@@ -909,6 +909,7 @@ class WaveletParams {
         Glib::ustring Medgreinf;
         Glib::ustring CHSLmethod;
         Glib::ustring EDmethod;
+        Glib::ustring NPmethod;
         Glib::ustring BAmethod;
         Glib::ustring TMmethod;
         Glib::ustring Dirmethod;
@@ -928,6 +929,8 @@ class WaveletParams {
 		int edgedetect;
 		int edgedetectthr;
 		int edgedetectthr2;
+		int edgesensi;
+		int edgeampli;
 		int contrast;
 		int edgrad;	
 		int edgval;	
@@ -945,6 +948,7 @@ class WaveletParams {
         Threshold<double> level0noise;
         Threshold<double> level1noise;
         Threshold<double> level2noise;
+        Threshold<double> level3noise;
 	
 	
 		WaveletParams ();

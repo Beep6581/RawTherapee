@@ -427,7 +427,10 @@ enum ProcEvent {
     EvWavenafin=399,
     EvWavenatoning=400,
     EvWavenanoise=401,
-
+	EvWavedgesensi=402,
+	EvWavedgeampli=403,
+	EvWavlev3nois=404,
+	EvWavNPmet=405,
     NUMOFEVENTS
 };
 }
