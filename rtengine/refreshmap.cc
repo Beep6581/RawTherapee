@@ -423,7 +423,11 @@ DIRPYREQUALIZER,     // EvWavenaedge
 DIRPYREQUALIZER,     // EvWavenares
 DIRPYREQUALIZER,     // EvWavenafin
 DIRPYREQUALIZER,     // EvWavenatoning
-DIRPYREQUALIZER     // EvWavenanoise
+DIRPYREQUALIZER,     // EvWavenanoise
+DIRPYREQUALIZER,     // EvWavedgesensi
+DIRPYREQUALIZER,     // EvWavedgeampli
+DIRPYREQUALIZER,      //EvWavlev3nois
+DIRPYREQUALIZER       //EvWavNPmet
 
 };
 

@@ -96,7 +96,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 	strength  = Gtk::manage (new Adjuster (M("TP_WAVELET_STRENGTH"), 0, 100, 1, 100));
 	strength->setAdjusterListener (this);
 
-	thres = Gtk::manage (new Adjuster (M("TP_WAVELET_LEVELS"), 3, 9, 1, 7));
+	thres = Gtk::manage (new Adjuster (M("TP_WAVELET_LEVELS"), 4, 9, 1, 7));//3
 	thres->set_tooltip_text (M("TP_WAVELET_LEVELS_TOOLTIP"));
 	thres->setAdjusterListener (this);
 
@@ -392,9 +392,14 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 	level2noise->setAdjusterListener (this);
 	level2noise->setUpdatePolicy(RTUP_DYNAMIC);
 
+	level3noise = Gtk::manage (new ThresholdAdjuster (M("TP_WAVELET_LEVTHRE"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., NULL, false));
+	level3noise->setAdjusterListener (this);
+	level3noise->setUpdatePolicy(RTUP_DYNAMIC);
+
 	noiseBox->pack_start( *level0noise, Gtk::PACK_SHRINK, 0);
 	noiseBox->pack_start( *level1noise, Gtk::PACK_SHRINK, 0);
 	noiseBox->pack_start( *level2noise, Gtk::PACK_SHRINK, 0);
+	noiseBox->pack_start( *level3noise, Gtk::PACK_SHRINK, 0);
 
 // Edge Sharpness
 	Gtk::VBox * edgBox = Gtk::manage (new Gtk::VBox());
@@ -472,6 +477,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 	medianlev = Gtk::manage (new Gtk::CheckButton (M("TP_WAVELET_MEDILEV")));
 	medianlev->set_active (true);
 	medianlevConn = medianlev->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::medianlevToggled) );
+	medianlev->set_tooltip_text (M("TP_WAVELET_MEDILEV_TOOLTIP"));
 
 	Gtk::HSeparator *separatored1 = Gtk::manage (new  Gtk::HSeparator());
 	edgBox->pack_start(*separatored1, Gtk::PACK_SHRINK, 2);
@@ -481,7 +487,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 	edgBox->pack_start (*eddebox);
 	edgBox->pack_start(*medianlev);
 
-	edgedetect = Gtk::manage (new Adjuster (M("TP_WAVELET_EDGEDETECT"), 0, 100, 1, 80));
+	edgedetect = Gtk::manage (new Adjuster (M("TP_WAVELET_EDGEDETECT"), 0, 100, 1, 90));
 	edgedetect->setAdjusterListener (this);
 	edgedetect->set_tooltip_text (M("TP_WAVELET_EDGEDETECT_TOOLTIP"));
 	edgBox->pack_start(*edgedetect);
@@ -496,11 +502,49 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 	edgedetectthr2->setAdjusterListener (this);
 	edgBox->pack_start(*edgedetectthr2);
 
+
+	separatoredge = Gtk::manage (new Gtk::HSeparator());
+
+	edgBox->pack_start(*separatoredge, Gtk::PACK_SHRINK, 2);
+	
 	lipst = Gtk::manage (new Gtk::CheckButton (M("TP_WAVELET_LIPST")));
 	lipst->set_active (true);
 	lipstConn = lipst->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::lipstToggled) );
-	lipst->set_tooltip_text (M("TP_WAVELET_LIPST_TOOLTIP"));
+//	lipst->set_tooltip_text (M("TP_WAVELET_LIPST_TOOLTIP"));
+	edgBox->pack_start(*lipst);
+	
+	edgesensi = Gtk::manage (new Adjuster (M("TP_WAVELET_EDGESENSI"), 0, 100, 1, 60));
+	edgesensi->setAdjusterListener (this); 
+	edgBox->pack_start(*edgesensi);
 
+
+	edgeampli = Gtk::manage (new Adjuster (M("TP_WAVELET_EDGEAMPLI"), 0, 100, 1, 10));
+	edgeampli->setAdjusterListener (this); 
+	edgBox->pack_start(*edgeampli);
+	
+
+	Gtk::VBox * ctboxES = Gtk::manage (new Gtk::VBox());
+
+	ctboxES->set_border_width(4);
+	ctboxES->set_spacing(2);
+
+	ctboxNP = Gtk::manage (new Gtk::HBox());
+
+	labmNP = Gtk::manage (new Gtk::Label (M("TP_WAVELET_NPTYPE")+":"));
+	ctboxNP->pack_start (*labmNP, Gtk::PACK_SHRINK, 1);
+
+	NPmethod = Gtk::manage (new MyComboBoxText ());
+	NPmethod->append_text (M("TP_WAVELET_NPNONE"));
+	NPmethod->append_text (M("TP_WAVELET_NPLOW"));
+	NPmethod->append_text (M("TP_WAVELET_NPHIGH"));
+	NPmethodconn = NPmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::NPmethodChanged) );
+	NPmethod->set_tooltip_text (M("TP_WAVELET_NPTYPE_TOOLTIP"));
+	
+	ctboxNP->pack_start(*NPmethod);
+	ctboxES->pack_start(*ctboxNP);
+	
+	edgBox->pack_start(*ctboxES);
+	
 // Gamut
 	Gtk::VBox * conBox = Gtk::manage (new Gtk::VBox());
 	conBox->set_border_width(4);
@@ -911,6 +955,7 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	CHmethodconn.block(true);
 	CHSLmethodconn.block(true);
 	EDmethodconn.block(true);
+	NPmethodconn.block(true);
 	BAmethodconn.block(true);
 	TMmethodconn.block(true);
 	HSmethodconn.block(true);
@@ -964,6 +1009,13 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	else if (pp->wavelet.EDmethod=="CU")
 		EDmethod->set_active (1);
 
+	if (pp->wavelet.NPmethod=="none")
+		NPmethod->set_active (0);
+	else if (pp->wavelet.NPmethod=="low")
+		NPmethod->set_active (1);
+	else if (pp->wavelet.NPmethod=="high")
+		NPmethod->set_active (2);
+	
 	//BAmethod->set_active (0);
 	if (pp->wavelet.BAmethod=="none")
 		BAmethod->set_active (0);
@@ -1112,6 +1164,8 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	edgedetect->setValue(pp->wavelet.edgedetect);
 	edgedetectthr->setValue(pp->wavelet.edgedetectthr);
 	edgedetectthr2->setValue(pp->wavelet.edgedetectthr2);
+	edgesensi->setValue(pp->wavelet.edgesensi);
+	edgeampli->setValue(pp->wavelet.edgeampli);
 	hllev->setValue<int>(pp->wavelet.hllev);
 	bllev->setValue<int>(pp->wavelet.bllev);
 	pastlev->setValue<int>(pp->wavelet.pastlev);
@@ -1128,6 +1182,7 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	level0noise->setValue<double>(pp->wavelet.level0noise);
 	level1noise->setValue<double>(pp->wavelet.level1noise);
 	level2noise->setValue<double>(pp->wavelet.level2noise);
+	level3noise->setValue<double>(pp->wavelet.level3noise);
 	strength->setValue(pp->wavelet.strength);
 	balance->setValue(pp->wavelet.balance);
 	iter->setValue(pp->wavelet.iter);
@@ -1164,6 +1219,8 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
 			CHSLmethod->set_active_text(M("GENERAL_UNCHANGED"));
 		if (!pedited->wavelet.EDmethod)
 			EDmethod->set_active_text(M("GENERAL_UNCHANGED"));
+		if (!pedited->wavelet.NPmethod)
+			NPmethod->set_active_text(M("GENERAL_UNCHANGED"));
 		if (!pedited->wavelet.BAmethod)
 			BAmethod->set_active_text(M("GENERAL_UNCHANGED"));
 		if (!pedited->wavelet.TMmethod)
@@ -1207,6 +1264,8 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
 		edgedetect->setEditedState (pedited->wavelet.edgedetect ? Edited : UnEdited);
 		edgedetectthr->setEditedState (pedited->wavelet.edgedetectthr ? Edited : UnEdited);
 		edgedetectthr2->setEditedState (pedited->wavelet.edgedetectthr2 ? Edited : UnEdited);
+		edgesensi->setEditedState (pedited->wavelet.edgesensi ? Edited : UnEdited);
+		edgeampli->setEditedState (pedited->wavelet.edgeampli ? Edited : UnEdited);
 		chroma->setEditedState (pedited->wavelet.chroma ? Edited : UnEdited);
 		chro->setEditedState (pedited->wavelet.chro ? Edited : UnEdited);
 
@@ -1240,6 +1299,7 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
 		level0noise->setEditedState 	(pedited->wavelet.level0noise ? Edited : UnEdited);
 		level1noise->setEditedState 	(pedited->wavelet.level1noise ? Edited : UnEdited);
 		level2noise->setEditedState 	(pedited->wavelet.level2noise ? Edited : UnEdited);
+		level3noise->setEditedState 	(pedited->wavelet.level3noise ? Edited : UnEdited);
 
 		for(int i = 0; i < 9; i++) {
 			correction[i]->setEditedState (pedited->wavelet.c[i] ? Edited : UnEdited);
@@ -1272,10 +1332,12 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
 		//MedgreinfUpdateUI();
 		//CHSLmethodUpdateUI();
 		EDmethodUpdateUI();
+		NPmethodUpdateUI();
 		BAmethodUpdateUI();
 		TMmethodUpdateUI();
 		//BackmethodUpdateUI();
 		CLmethodUpdateUI();
+		lipstUpdateUI ();
 		//TilesmethodUpdateUI();
 		//daubcoeffmethodUpdateUI();
 		//DirmethodUpdateUI();
@@ -1300,6 +1362,7 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	CHmethodconn.block(false);
 	CHSLmethodconn.block(false);
 	EDmethodconn.block(false);
+	NPmethodconn.block(false);
 	BAmethodconn.block(false);
 	TMmethodconn.block(false);
 	HSmethodconn.block(false);
@@ -1368,12 +1431,15 @@ void Wavelet::write (ProcParams* pp, ParamsEdited* pedited) {
 	pp->wavelet.edgedetect     = edgedetect->getValue();
 	pp->wavelet.edgedetectthr  = edgedetectthr->getValue();
 	pp->wavelet.edgedetectthr2 = edgedetectthr2->getValue();
+	pp->wavelet.edgesensi     = edgesensi->getValue();
+	pp->wavelet.edgeampli     = edgeampli->getValue();
 	pp->wavelet.hllev          = hllev->getValue<int> ();
 	pp->wavelet.bllev          = bllev->getValue<int> ();
 	pp->wavelet.edgcont        = edgcont->getValue<int> ();
 	pp->wavelet.level0noise    = level0noise->getValue<double> ();
 	pp->wavelet.level1noise    = level1noise->getValue<double> ();
 	pp->wavelet.level2noise    = level2noise->getValue<double> ();
+	pp->wavelet.level3noise    = level3noise->getValue<double> ();
 	pp->wavelet.ccwcurve       = ccshape->getCurve ();
 	pp->wavelet.opacityCurveRG = opacityShapeRG->getCurve ();
 	pp->wavelet.opacityCurveBY = opacityShapeBY->getCurve ();
@@ -1426,6 +1492,7 @@ void Wavelet::write (ProcParams* pp, ParamsEdited* pedited) {
 		pedited->wavelet.CHmethod        = CHmethod->get_active_text() != M("GENERAL_UNCHANGED");
 		pedited->wavelet.CHSLmethod      = CHSLmethod->get_active_text() != M("GENERAL_UNCHANGED");
 		pedited->wavelet.EDmethod        = EDmethod->get_active_text() != M("GENERAL_UNCHANGED");
+		pedited->wavelet.NPmethod        = NPmethod->get_active_text() != M("GENERAL_UNCHANGED");
 		pedited->wavelet.BAmethod        = BAmethod->get_active_text() != M("GENERAL_UNCHANGED");
 		pedited->wavelet.TMmethod        = TMmethod->get_active_text() != M("GENERAL_UNCHANGED");
 		pedited->wavelet.HSmethod        = HSmethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -1444,6 +1511,8 @@ void Wavelet::write (ProcParams* pp, ParamsEdited* pedited) {
 		pedited->wavelet.edgedetect      = edgedetect->getEditedState();
 		pedited->wavelet.edgedetectthr   = edgedetectthr->getEditedState();
 		pedited->wavelet.edgedetectthr2  = edgedetectthr2->getEditedState();
+		pedited->wavelet.edgesensi 	     = edgesensi->getEditedState();
+		pedited->wavelet.edgeampli       = edgeampli->getEditedState();
 		pedited->wavelet.chroma          = chroma->getEditedState();
 		pedited->wavelet.chro            = chro->getEditedState();
 		pedited->wavelet.contrast        = contrast->getEditedState();
@@ -1460,6 +1529,7 @@ void Wavelet::write (ProcParams* pp, ParamsEdited* pedited) {
 		pedited->wavelet.level0noise     = level0noise->getEditedState ();
 		pedited->wavelet.level1noise     = level1noise->getEditedState ();
 		pedited->wavelet.level2noise     = level2noise->getEditedState ();
+		pedited->wavelet.level3noise     = level3noise->getEditedState ();
 		pedited->wavelet.opacityCurveRG  = !opacityShapeRG->isUnChanged ();
 		pedited->wavelet.opacityCurveBY  = !opacityShapeBY->isUnChanged ();
 		pedited->wavelet.opacityCurveW   = !opacityShape->isUnChanged ();
@@ -1516,6 +1586,13 @@ void Wavelet::write (ProcParams* pp, ParamsEdited* pedited) {
 			pp->wavelet.EDmethod = "SL";
 		else if (EDmethod->get_active_row_number()==1)
 			pp->wavelet.EDmethod = "CU";
+
+		if (NPmethod->get_active_row_number()==0)
+			pp->wavelet.NPmethod = "none";
+		else if (NPmethod->get_active_row_number()==1)
+			pp->wavelet.NPmethod = "low";
+		else if (NPmethod->get_active_row_number()==2)
+			pp->wavelet.NPmethod = "high";
 		
 		if (BAmethod->get_active_row_number()==0)
 			pp->wavelet.BAmethod = "none";
@@ -1630,6 +1707,8 @@ void Wavelet::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
 	edgedetect->setDefault (defParams->wavelet.edgedetect);
 	edgedetectthr->setDefault (defParams->wavelet.edgedetectthr);
 	edgedetectthr2->setDefault (defParams->wavelet.edgedetectthr2);
+	edgesensi->setDefault (defParams->wavelet.edgesensi);
+	edgeampli->setDefault (defParams->wavelet.edgeampli);
 	chroma->setDefault (defParams->wavelet.chroma);
 	chro->setDefault (defParams->wavelet.chro);
 	contrast->setDefault (defParams->wavelet.contrast);
@@ -1648,6 +1727,7 @@ void Wavelet::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
 	level0noise->setDefault<double> (defParams->wavelet.level0noise);
 	level1noise->setDefault<double> (defParams->wavelet.level1noise);
 	level2noise->setDefault<double> (defParams->wavelet.level2noise);
+	level3noise->setDefault<double> (defParams->wavelet.level3noise);
 
 	greenlow->setDefault (defParams->wavelet.greenlow);
 	bluelow->setDefault (defParams->wavelet.bluelow);
@@ -1677,6 +1757,8 @@ void Wavelet::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
 		edgedetect->setDefaultEditedState(pedited->wavelet.edgedetect ? Edited : UnEdited);
 		edgedetectthr->setDefaultEditedState(pedited->wavelet.edgedetectthr ? Edited : UnEdited);
 		edgedetectthr2->setDefaultEditedState(pedited->wavelet.edgedetectthr2 ? Edited : UnEdited);
+		edgesensi->setDefaultEditedState(pedited->wavelet.edgesensi ? Edited : UnEdited);
+		edgeampli->setDefaultEditedState(pedited->wavelet.edgeampli ? Edited : UnEdited);
 		chroma->setDefaultEditedState(pedited->wavelet.chroma ? Edited : UnEdited);
 		chro->setDefaultEditedState(pedited->wavelet.chro ? Edited : UnEdited);
 		contrast->setDefaultEditedState(pedited->wavelet.contrast ? Edited : UnEdited);
@@ -1699,6 +1781,7 @@ void Wavelet::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
 		level0noise->setDefaultEditedState(pedited->wavelet.level0noise ? Edited : UnEdited);
 		level1noise->setDefaultEditedState(pedited->wavelet.level1noise ? Edited : UnEdited);
 		level2noise->setDefaultEditedState(pedited->wavelet.level2noise ? Edited : UnEdited);
+		level3noise->setDefaultEditedState(pedited->wavelet.level3noise ? Edited : UnEdited);
 
 		for (int i = 0; i < 9; i++) {
 			correction[i]->setDefaultEditedState(pedited->wavelet.c[i] ? Edited : UnEdited);
@@ -1721,6 +1804,8 @@ void Wavelet::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
 			edgedetect->setDefaultEditedState(Irrelevant);
 			edgedetectthr->setDefaultEditedState(Irrelevant);
 			edgedetectthr2->setDefaultEditedState(Irrelevant);
+			edgesensi->setDefaultEditedState(Irrelevant);
+			edgeampli->setDefaultEditedState(Irrelevant);
 			chroma->setDefaultEditedState(Irrelevant);
 			chro->setDefaultEditedState(Irrelevant);
 			contrast->setDefaultEditedState(Irrelevant);
@@ -1738,6 +1823,7 @@ void Wavelet::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
 			level0noise->setDefaultEditedState (Irrelevant);
 			level1noise->setDefaultEditedState (Irrelevant);
 			level2noise->setDefaultEditedState (Irrelevant);
+			level3noise->setDefaultEditedState (Irrelevant);
 			pastlev->setDefaultEditedState (Irrelevant);
 			satlev->setDefaultEditedState (Irrelevant);
 			strength->setDefaultEditedState (Irrelevant);
@@ -1762,6 +1848,10 @@ void Wavelet::adjusterChanged (ThresholdAdjuster* a, double newBottom, double ne
 		}
 		else if(a==level2noise) { 
 		listener->panelChanged (EvWavlev2nois,
+								Glib::ustring::compose(Glib::ustring(M("TP_WAVELET_NOIS")+": %1"+"\n"+M("TP_WAVELET_STREN")+": %2"), int(newTop), int(newBottom)));
+		}
+		else if(a==level3noise) { 
+		listener->panelChanged (EvWavlev3nois,
 								Glib::ustring::compose(Glib::ustring(M("TP_WAVELET_NOIS")+": %1"+"\n"+M("TP_WAVELET_STREN")+": %2"), int(newTop), int(newBottom)));
 		}
 		
@@ -1912,6 +2002,20 @@ void Wavelet::EDmethodChanged() {
 	if (listener && (multiImage||getEnabled()) )
 		listener->panelChanged (EvWavEDmet, EDmethod->get_active_text ());
 }
+
+void Wavelet::NPmethodUpdateUI() {
+	if (!batchMode) {
+		
+	}
+}
+void Wavelet::NPmethodChanged() {
+	NPmethodUpdateUI();
+	if (listener && (multiImage||getEnabled()) ) {
+		listener->panelChanged (EvWavNPmet, NPmethod->get_active_text ());
+	}
+}
+
+
 
 void Wavelet::BAmethodUpdateUI() {
 	if (!batchMode) {
@@ -2082,6 +2186,7 @@ void Wavelet::setBatchMode (bool batchMode) {
 	Medgreinf->append_text (M("GENERAL_UNCHANGED"));
 	CHSLmethod->append_text (M("GENERAL_UNCHANGED"));
 	EDmethod->append_text (M("GENERAL_UNCHANGED"));
+	NPmethod->append_text (M("GENERAL_UNCHANGED"));
 	BAmethod->append_text (M("GENERAL_UNCHANGED"));
 	TMmethod->append_text (M("GENERAL_UNCHANGED"));
 	HSmethod->append_text (M("GENERAL_UNCHANGED"));
@@ -2106,6 +2211,8 @@ void Wavelet::setBatchMode (bool batchMode) {
 	edgedetect->showEditedCB ();
 	edgedetectthr->showEditedCB ();
 	edgedetectthr2->showEditedCB ();
+	edgesensi->showEditedCB ();
+	edgeampli->showEditedCB ();
 	chroma->showEditedCB ();
 	chro->showEditedCB ();
 	contrast->showEditedCB ();
@@ -2128,6 +2235,7 @@ void Wavelet::setBatchMode (bool batchMode) {
 	level0noise->showEditedCB ();
 	level1noise->showEditedCB ();
 	level2noise->showEditedCB ();
+	level3noise->showEditedCB ();
 
 	ToolPanel::setBatchMode (batchMode);
 
@@ -2201,6 +2309,10 @@ void Wavelet::adjusterChanged (Adjuster* a, double newval) {
 			listener->panelChanged (EvWavedgedetectthr, edgedetectthr->getTextValue());
 		else if (a == edgedetectthr2 )
 			listener->panelChanged (EvWavedgedetectthr2, edgedetectthr2->getTextValue());
+		else if (a == edgesensi )
+			listener->panelChanged (EvWavedgesensi, edgesensi->getTextValue());
+		else if (a == edgeampli )
+			listener->panelChanged (EvWavedgeampli, edgeampli->getTextValue());
 		else if (a == edgrad )
 			listener->panelChanged (EvWavedgrad, edgrad->getTextValue());
 		else if (a == edgval )
@@ -2321,17 +2433,30 @@ void Wavelet::medianlevUpdateUI () {
 	if (!batchMode) {
 		if (medianlev->get_active ()){
 			edgedetect->show();
-			//lipst->show();
+			lipst->show();
+			separatoredge->show();
+
 			edgedetectthr->show();
 			edgedetectthr2->show();
-			//if (lipst->get_active ()) edgedetectthr2->show();
-			//else edgedetectthr2->hide();
+		//	edgesensi->show();			
+		//	edgeampli->show();			
+		//	NPmethod->show();
+		//	labmNP->show();
+			if (lipst->get_active ()) {edgesensi->show();edgeampli->show();NPmethod->show(); labmNP->show();}
+
+			else {edgesensi->hide();edgeampli->hide();NPmethod->hide(); labmNP->hide();}
 		}
 		else {
 			edgedetect->hide();
-			//lipst->hide();
+			lipst->hide();
 			edgedetectthr->hide();
 			edgedetectthr2->hide();
+			edgesensi->hide();
+			edgeampli->hide();
+			separatoredge->hide();
+			NPmethod->hide();
+			labmNP->hide();
+			
 		}
 	}
 }
@@ -2430,16 +2555,25 @@ void Wavelet::cbenabToggled () {
 }
 
 
-/*
+
 void Wavelet::lipstUpdateUI () {
 	if (!batchMode) {
-		if (lipst->get_active ())
-			edgedetectthr2->show();
-		else
-			edgedetectthr2->hide();
+		if (lipst->get_active ()) {
+			NPmethod->show();
+			edgesensi->show();			
+			edgeampli->show();			
+			labmNP->show();
+		}
+		else  {
+			NPmethod->hide();
+			edgesensi->hide();			
+			edgeampli->hide();			
+			labmNP->hide();
+			
+		}	
 	}
 }
-*/
+
 
 void Wavelet::lipstToggled () {
 
@@ -2455,7 +2589,7 @@ void Wavelet::lipstToggled () {
 
 		lastlipst = lipst->get_active ();
 	}
-	//lipstUpdateUI();
+	lipstUpdateUI();
 
 	if (listener && (multiImage || getEnabled ())) {
 		if (lipst->get_inconsistent())
@@ -2607,7 +2741,6 @@ void Wavelet::setAdjusterBehavior (bool multiplieradd, bool thresholdadd, bool t
 
 
 void Wavelet::neutralPressed () {
-
 	for (int i = 0; i < 9; i++) {
 		correction[i]->setValue(0);
 		adjusterChanged(correction[i], 0);

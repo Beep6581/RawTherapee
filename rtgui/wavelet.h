@@ -46,6 +46,7 @@ protected:
 	Gtk::HSeparator* separator3;
 	Gtk::HSeparator* separatorCB;
 	Gtk::HSeparator* separatorNeutral;
+	Gtk::HSeparator* separatoredge;
 
 	CurveEditorGroup* opaCurveEditorG;
 	FlatCurveEditor* opacityShapeRG;
@@ -114,12 +115,15 @@ protected:
 	ThresholdAdjuster* level0noise;
 	ThresholdAdjuster* level1noise;
 	ThresholdAdjuster* level2noise;
+	ThresholdAdjuster* level3noise;
 	
 	Adjuster* threshold;
 	Adjuster* threshold2;
 	Adjuster* edgedetect;
 	Adjuster* edgedetectthr;
 	Adjuster* edgedetectthr2;
+	Adjuster* edgesensi;
+	Adjuster* edgeampli;
 	MyComboBoxText*   Lmethod;
 	sigc::connection  Lmethodconn;
 	MyComboBoxText*   CHmethod;
@@ -130,6 +134,8 @@ protected:
 	sigc::connection  EDmethodconn;
 	MyComboBoxText*   BAmethod;
 	sigc::connection  BAmethodconn;
+	MyComboBoxText*   NPmethod;
+	sigc::connection  NPmethodconn;
 	MyComboBoxText*   TMmethod;
 	sigc::connection  TMmethodconn;
 	MyComboBoxText*   HSmethod;
@@ -173,6 +179,7 @@ protected:
 	Gtk::Label* labmED;
 	Gtk::Label* labmTM;
 	Gtk::Label* labmBA;
+	Gtk::Label* labmNP;
 	Gtk::Label* labmedgr;
 	Gtk::Label* labmednois;
 	MyExpander* expchroma;
@@ -197,6 +204,7 @@ protected:
 	Gtk::HBox* tilesizeHBox;
 	
 	Gtk::HBox* ctboxFI;
+	Gtk::HBox* ctboxNP;
 	Gtk::HBox* ctboxch;
 	Gtk::HBox* edbox;
 	Gtk::HBox* ednoisbox;
@@ -249,6 +257,7 @@ private:
 
 	virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
 	void BAmethodChanged ();
+	void NPmethodChanged ();
 	void BackmethodChanged ();
 	void CHSLmethodChanged ();
 	void CHmethodChanged ();
@@ -281,6 +290,7 @@ private:
 	void CHmethodUpdateUI();
 //	void CHSLmethodChangedUI();
 	void EDmethodUpdateUI();
+	void NPmethodUpdateUI();
 	void BAmethodUpdateUI();
 	void TMmethodUpdateUI();
 //	void BackmethodUpdateUI();
@@ -294,7 +304,7 @@ private:
 	void enabledUpdateUI ();
 	void medianlevUpdateUI ();
 	void cbenabUpdateUI ();
-//	void lipstUpdateUI ();
+	void lipstUpdateUI ();
 
 
 	void enableToggled(MyExpander *expander);

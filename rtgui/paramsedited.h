@@ -498,6 +498,7 @@ class WaveletParamsEdited {
 		bool CHSLmethod;
 		bool EDmethod;
 		bool BAmethod;
+		bool NPmethod;
 		bool TMmethod;
 		bool HSmethod;
 		bool CLmethod;
@@ -518,6 +519,8 @@ class WaveletParamsEdited {
 		bool edgedetect;
 		bool edgedetectthr;
 		bool edgedetectthr2;
+		bool edgesensi;
+		bool edgeampli;
 		bool chro;
 		bool chroma;
 		bool contrast;
@@ -535,6 +538,7 @@ class WaveletParamsEdited {
         bool level0noise;
         bool level1noise;
         bool level2noise;
+        bool level3noise;
 		bool ccwcurve;
         bool opacityCurveBY;
         bool opacityCurveRG;		

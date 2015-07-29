@@ -379,6 +379,7 @@ void ParamsEdited::set (bool v) {
 	wavelet.CHmethod = v;
 	wavelet.CHSLmethod = v;
 	wavelet.EDmethod = v;
+	wavelet.NPmethod = v;
 	wavelet.BAmethod = v;
 	wavelet.TMmethod = v;
 	wavelet.HSmethod = v;
@@ -396,6 +397,8 @@ void ParamsEdited::set (bool v) {
 	wavelet.edgedetect = v;
 	wavelet.edgedetectthr = v;
 	wavelet.edgedetectthr2 = v;
+	wavelet.edgesensi = v;
+	wavelet.edgeampli = v;
 	wavelet.chroma = v;
 	wavelet.chro = v;
 	wavelet.contrast = v;
@@ -413,6 +416,7 @@ void ParamsEdited::set (bool v) {
 	wavelet.level0noise = v;
 	wavelet.level1noise = v;
 	wavelet.level2noise = v;
+	wavelet.level3noise = v;
 	wavelet.ccwcurve = v;
 	wavelet.opacityCurveRG   = v;
 	wavelet.opacityCurveBY   = v;
@@ -824,6 +828,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         wavelet.CHmethod = wavelet.CHmethod && p.wavelet.CHmethod == other.wavelet.CHmethod;
         wavelet.CHSLmethod = wavelet.CHSLmethod && p.wavelet.CHSLmethod == other.wavelet.CHSLmethod;
         wavelet.EDmethod = wavelet.EDmethod && p.wavelet.EDmethod == other.wavelet.EDmethod;
+        wavelet.NPmethod = wavelet.NPmethod && p.wavelet.NPmethod == other.wavelet.NPmethod;
         wavelet.BAmethod = wavelet.BAmethod && p.wavelet.BAmethod == other.wavelet.BAmethod;
         wavelet.TMmethod = wavelet.TMmethod && p.wavelet.TMmethod == other.wavelet.TMmethod;
         wavelet.HSmethod = wavelet.HSmethod && p.wavelet.HSmethod == other.wavelet.HSmethod;
@@ -840,6 +845,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         wavelet.edgedetect = wavelet.edgedetect && p.wavelet.edgedetect == other.wavelet.edgedetect;
         wavelet.edgedetectthr = wavelet.edgedetectthr && p.wavelet.edgedetectthr == other.wavelet.edgedetectthr;
         wavelet.edgedetectthr2 = wavelet.edgedetectthr2 && p.wavelet.edgedetectthr2 == other.wavelet.edgedetectthr2;
+        wavelet.edgesensi = wavelet.edgesensi && p.wavelet.edgesensi == other.wavelet.edgesensi;
+        wavelet.edgeampli = wavelet.edgeampli && p.wavelet.edgeampli == other.wavelet.edgeampli;
         wavelet.thres = wavelet.thres && p.wavelet.thres == other.wavelet.thres;
         wavelet.chroma = wavelet.chroma && p.wavelet.chroma == other.wavelet.chroma;
         wavelet.chro = wavelet.chro && p.wavelet.chro == other.wavelet.chro;
@@ -857,6 +864,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         wavelet.level0noise = wavelet.level0noise && p.wavelet.level0noise == other.wavelet.level0noise;
         wavelet.level1noise = wavelet.level1noise && p.wavelet.level1noise == other.wavelet.level1noise;
         wavelet.level2noise = wavelet.level2noise && p.wavelet.level2noise == other.wavelet.level2noise;
+        wavelet.level3noise = wavelet.level3noise && p.wavelet.level3noise == other.wavelet.level3noise;
         wavelet.pastlev = wavelet.pastlev && p.wavelet.pastlev == other.wavelet.pastlev;
         wavelet.satlev = wavelet.satlev && p.wavelet.satlev == other.wavelet.satlev;
         wavelet.ccwcurve = wavelet.ccwcurve && p.wavelet.ccwcurve == other.wavelet.ccwcurve;
@@ -1271,6 +1279,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (wavelet.CHmethod)		toEdit.wavelet.CHmethod		= mods.wavelet.CHmethod;
 	if (wavelet.CHSLmethod)		toEdit.wavelet.CHSLmethod		= mods.wavelet.CHSLmethod;
 	if (wavelet.EDmethod)		toEdit.wavelet.EDmethod		= mods.wavelet.EDmethod;
+	if (wavelet.NPmethod)		toEdit.wavelet.NPmethod		= mods.wavelet.NPmethod;
 	if (wavelet.BAmethod)		toEdit.wavelet.BAmethod		= mods.wavelet.BAmethod;
 	if (wavelet.TMmethod)		toEdit.wavelet.TMmethod		= mods.wavelet.TMmethod;
 	if (wavelet.HSmethod)		toEdit.wavelet.HSmethod		= mods.wavelet.HSmethod;
@@ -1286,6 +1295,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (wavelet.level0noise)	toEdit.wavelet.level0noise	= mods.wavelet.level0noise;
 	if (wavelet.level1noise)	toEdit.wavelet.level1noise	= mods.wavelet.level1noise;
 	if (wavelet.level2noise)	toEdit.wavelet.level2noise	= mods.wavelet.level2noise;
+	if (wavelet.level3noise)	toEdit.wavelet.level3noise	= mods.wavelet.level3noise;
 	if (wavelet.pastlev)	toEdit.wavelet.pastlev	= mods.wavelet.pastlev;
 	if (wavelet.satlev)	toEdit.wavelet.satlev	= mods.wavelet.satlev;
 	if (wavelet.ccwcurve)	toEdit.wavelet.ccwcurve	= mods.wavelet.ccwcurve;
@@ -1314,6 +1324,8 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (wavelet.skinprotect)toEdit.wavelet.skinprotect= dontforceSet && options.baBehav[ADDSET_WA_SKINPROTECT] ? toEdit.wavelet.skinprotect + mods.wavelet.skinprotect : mods.wavelet.skinprotect;
 	if (wavelet.hueskin)	toEdit.wavelet.hueskin	= mods.wavelet.hueskin;
 	if (wavelet.hueskin2)	toEdit.wavelet.hueskin2	= mods.wavelet.hueskin2;
+	if (wavelet.edgesensi)	toEdit.wavelet.edgesensi	= mods.wavelet.edgesensi;
+	if (wavelet.edgeampli)	toEdit.wavelet.edgeampli	= mods.wavelet.edgeampli;
 	if (wavelet.resconH)toEdit.wavelet.resconH= dontforceSet && options.baBehav[ADDSET_WA_RESCONH] ? toEdit.wavelet.resconH + mods.wavelet.resconH : mods.wavelet.resconH;
 	if (wavelet.reschro)toEdit.wavelet.reschro= dontforceSet && options.baBehav[ADDSET_WA_RESCHRO] ? toEdit.wavelet.reschro + mods.wavelet.reschro : mods.wavelet.reschro;
 	if (wavelet.tmrs)toEdit.wavelet.tmrs= dontforceSet && options.baBehav[ADDSET_WA_TMRS] ? toEdit.wavelet.tmrs + mods.wavelet.tmrs : mods.wavelet.tmrs;
