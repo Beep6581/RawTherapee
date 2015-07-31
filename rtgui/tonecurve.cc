@@ -322,8 +322,8 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->toneCurve.clip       = clipDirty;
         pedited->toneCurve.curve      = !shape->isUnChanged ();
         pedited->toneCurve.curve2     = !shape2->isUnChanged ();
-        pedited->toneCurve.curveMode  = toneCurveMode->get_active_row_number() != 5;
-        pedited->toneCurve.curveMode2 = toneCurveMode2->get_active_row_number() != 5;
+        pedited->toneCurve.curveMode  = toneCurveMode->get_active_row_number() != 6;
+        pedited->toneCurve.curveMode2 = toneCurveMode2->get_active_row_number() != 6;
     }
     if (pedited) {
         pedited->toneCurve.method     = method->get_active_row_number()!=4;
