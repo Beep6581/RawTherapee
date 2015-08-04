@@ -603,8 +603,14 @@ void Ciecam02::calculate_abfloat( float &aa, float &bb, float h, float e, float 
     if (swapValues) {
         std::swap(sinh,cosh);
     }
+    float c1 = 1.f;
+    float c2 = sinh / cosh;
 
-    float div = ((e / (t * cosh)) - (-0.31362f - (p3 * 0.15681f)) - ((0.01924f - (p3 * 4.49038f)) * (sinh / cosh)));
+    if (swapValues) {
+        std::swap(c1,c2);
+    }
+
+    float div = ((e / (t * cosh)) - (-0.31362f - (p3 * 0.15681f)) * c1 - ((0.01924f - (p3 * 4.49038f)) * (c2)));
     // for large values of t the above calculation can change its sign which results in a hue shift of 180 degree
     // so we have to check the sign to avoid this shift.
     // Additionally it seems useful to limit the minimum value of div
@@ -631,8 +637,11 @@ void Ciecam02::calculate_abfloat( vfloat &aa, vfloat &bb, vfloat h, vfloat e, vf
     vfloat p3 = F2V(1.05f);
     vmask swapMask = vmaskf_gt(vabsf(sinh), vabsf(cosh));
     vswap(swapMask, sinh, cosh);
-
-    vfloat div = ((e / (t * cosh)) - (F2V(-0.31362f) - (p3 * F2V(0.15681f))) - ((F2V(0.01924f) - (p3 * F2V(4.49038f))) * (sinh / cosh)));
+    vfloat c1 = F2V(1.f);
+    vfloat c2 = sinh/cosh;
+    vswap(swapMask, c1, c2);
+    
+    vfloat div = ((e / (t * cosh)) - (F2V(-0.31362f) - (p3 * F2V(0.15681f))) * c1 - ((F2V(0.01924f) - (p3 * F2V(4.49038f))) * (c2)));
     // for large values of t the above calculation can change its sign which results in a hue shift of 180 degree
     // so we have to check the sign to avoid this shift.
     // Additionally it seems useful to limit the minimum value of div
