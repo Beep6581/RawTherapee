@@ -64,7 +64,8 @@
 #define EXIF             M_VOID
 #define IPTC             M_VOID
 #define DIRPYREQUALIZER	(M_COLOR|M_LUMINANCE)
-#define OUTPUTPROFIL    (M_COLOR|M_LUMINANCE)
+#define OUTPUTPROFILE   (M_COLOR|M_LUMINANCE)
+#define INPUTPROFILE     WHITEBALANCE
 #define GAMMA           (M_COLOR|M_LUMINANCE)
 #define MINUPDATE        M_MINUPDATE
 #define NONE             0
