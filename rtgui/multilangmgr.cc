@@ -18,14 +18,14 @@
  */
 #ifdef WIN32
 // Desired auto detect function is Vista+
-#if __GNUC__ == 4 && __GNUC_MINOR__ >= 8
+#if (__GNUC__ == 4 && __GNUC_MINOR__ >= 8) || __GNUC__ > 4
 #define WINVER 0x0600 // switching to WINVER for gcc 4.8.1 support on Winx64
 #else
 #define _WIN32_WINNT 0x0600
 #endif
 #include <windows.h>
 #include <winnls.h>
-#if __GNUC__ == 4 && __GNUC_MINOR__ >= 8
+#if (__GNUC__ == 4 && __GNUC_MINOR__ >= 8) || __GNUC__ > 4
 #undef WINVER
 #else
 #undef _WIN32_WINNT
