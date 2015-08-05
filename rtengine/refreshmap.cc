@@ -89,8 +89,8 @@ ALLNORAW,         // EvHREnabled,
 ALLNORAW,         // EvHRAmount,
 ALLNORAW,         // EvHRMethod,
 ALL,              // EvWProfile,
-OUTPUTPROFIL,     // EvOProfile,
-ALL,              // EvIProfile,
+OUTPUTPROFILE,    // EvOProfile,
+INPUTPROFILE,     // EvIProfile,
 TRANSFORM,        // EvVignettingAmount,
 RGBCURVE,         // EvChMixer,
 RESIZE,           // EvResizeScale,
@@ -416,7 +416,7 @@ DIRPYREQUALIZER,     // EvWavbluelow
 DIRPYREQUALIZER,     // EvWavNeutral	
 RGBCURVE,            // EvDCPApplyLookTable,
 RGBCURVE,            // EvDCPApplyBaselineExposureOffset,
-ALL,                  // EvDCPApplyHueSatMap
+INPUTPROFILE,        // EvDCPApplyHueSatMap
 DIRPYREQUALIZER,     // EvWavenacont	
 DIRPYREQUALIZER,     // EvWavenachrom
 DIRPYREQUALIZER,     // EvWavenaedge
