@@ -1848,7 +1848,9 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
 
 	// move to JCh so we can modulate chroma based on the global contrast-related chroma scaling factor
 	Color::Prophotoxyz(r,g,b,x,y,z);
-	XYZ = (cmsCIEXYZ){ .X = x * 100.0f/65535, .Y = y * 100.0f/65535, .Z = z * 100.0f/65535 };
+	XYZ.X = x * 100.0f/65535;
+	XYZ.Y = y * 100.0f/65535;
+	XYZ.Z = z * 100.0f/65535;
 	cmsCIECAM02Forward(h02[thread_idx], &XYZ, &JCh);
 	if (!isfinite(JCh.J) || !isfinite(JCh.C) || !isfinite(JCh.h)) {
 		// this can happen for dark noise colors or colors outside human gamut. Then we just return the curve's result.
