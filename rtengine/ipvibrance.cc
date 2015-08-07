@@ -175,12 +175,9 @@ void ImProcFunctions::vibrance (LabImage* lab) {
     MunsellDebugInfo* MunsDebugInfo = NULL;
     if (avoidcolorshift)
     	MunsDebugInfo = new MunsellDebugInfo();
-
-#pragma omp parallel default(shared) firstprivate(lab, width, height, chromaPastel, chromaSatur, highlight, limitpastelsatur, \
-		transitionweighting, protectskins, avoidcolorshift, MunsDebugInfo) reduction(+: negat, moreRGB, negsat, moresat) if (multiThread)
+#pragma omp parallel default(shared) firstprivate(lab, width, height, chromaPastel, chromaSatur, highlight, limitpastelsatur, transitionweighting, protectskins, avoidcolorshift, MunsDebugInfo) reduction(+: negat, moreRGB, negsat, moresat) if (multiThread)
 #else
-#pragma omp parallel default(shared) if (multiThread)// firstprivate(lab, width, height, chromaPastel, chromaSatur, highlight, limitpastelsatur, \
-		transitionweighting, protectskins, avoidcolorshift) if (multiThread)
+#pragma omp parallel default(shared) if (multiThread)
 #endif
 {
 
