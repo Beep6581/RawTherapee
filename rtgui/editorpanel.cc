@@ -1287,17 +1287,17 @@ void EditorPanel::sendToGimpPressed () {
 
 void EditorPanel::openPreviousEditorImage() {
 	if (!simpleEditor && fPanel && !fname.empty())
-		fPanel->fileCatalog->openNextPreviousEditorImage(fname, true, NAV_PREVIOUS);
+		fPanel->fileCatalog->openNextPreviousEditorImage(fname, false, NAV_PREVIOUS);
 }
 
 void EditorPanel::openNextEditorImage() {
 	if (!simpleEditor && fPanel && !fname.empty())
-		fPanel->fileCatalog->openNextPreviousEditorImage(fname, true, NAV_NEXT);
+		fPanel->fileCatalog->openNextPreviousEditorImage(fname, false, NAV_NEXT);
 }
 
 void EditorPanel::syncFileBrowser() { // synchronize filebrowser with image in Editor
 	if (!simpleEditor && fPanel && !fname.empty())
-		fPanel->fileCatalog->selectImage(fname, true);
+		fPanel->fileCatalog->selectImage(fname, false);
 }
 
 bool EditorPanel::idle_sendToGimp( ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname){
