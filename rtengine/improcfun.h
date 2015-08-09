@@ -270,9 +270,9 @@ class ImProcFunctions {
 		void dirpyrequalizer  (LabImage* lab, int scale);//Emil's wavelet
 		
 		void EPDToneMapResid(float * WavCoeffs_L0, unsigned int Iterates,  int skip, struct cont_params cp, int W_L, int H_L, float max0, float min0);
-		float *CompressDR(float *Source, int skip, struct cont_params cp, int W_L, int H_L, float Compression,float DetailBoost,float max0, float min0, float ave, float ah, float bh, float al, float bl, float factorx, float *Compressed);
-		void ContrastResid(float * WavCoeffs_L0, unsigned int Iterates,  int skip, struct cont_params cp, int W_L, int H_L, float max0, float min0, float ave, float ah, float bh, float al, float bl, float factorx);
-		float *ContrastDR(float *Source, int skip, struct cont_params cp, int W_L, int H_L, float Compression,float DetailBoost,float max0, float min0, float ave, float ah, float bh, float al, float bl, float factorx, float *Contrast=NULL);
+		float *CompressDR(float *Source, int skip, struct cont_params &cp, int W_L, int H_L, float Compression,float DetailBoost,float max0, float min0, float ave, float ah, float bh, float al, float bl, float factorx, float *Compressed);
+		void ContrastResid(float * WavCoeffs_L0, unsigned int Iterates,  int skip, struct cont_params &cp, int W_L, int H_L, float max0, float min0, float ave, float ah, float bh, float al, float bl, float factorx);
+		float *ContrastDR(float *Source, int skip, struct cont_params &cp, int W_L, int H_L, float Compression,float DetailBoost,float max0, float min0, float ave, float ah, float bh, float al, float bl, float factorx, float *Contrast=NULL);
 		
 		void EPDToneMap(LabImage *lab, unsigned int Iterates = 0, int skip = 1);
 		void EPDToneMapCIE(CieImage *ncie, float a_w, float c_, float w_h, int Wid, int Hei, int begh, int endh, float minQ, float maxQ, unsigned int Iterates=0, int skip =1);
@@ -294,18 +294,18 @@ class ImProcFunctions {
 		void ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveBY & waOpacityCurveBY,  const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, LUTf &wavclCurve, bool wavcontlutili, int skip);
 		
 		void WaveletcontAllL(LabImage * lab, float **varhue, float **varchrom, wavelet_decomposition &WaveletCoeffs_L, 
-											struct cont_params cp, int skip, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN,  const WavCurve & wavCLVCcurve, const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, FlatCurve* ChCurve, bool Chutili);
+											struct cont_params &cp, int skip, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN,  const WavCurve & wavCLVCcurve, const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, FlatCurve* ChCurve, bool Chutili);
 		void WaveletcontAllLfinal(LabImage * lab, float **varhue, float **varchrom, wavelet_decomposition &WaveletCoeffs_L, 
-											struct cont_params cp, int skip, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN,  const WavCurve & wavCLVCcurve, const WavOpacityCurveWL & waOpacityCurveWL, FlatCurve* ChCurve, bool Chutili);
+											struct cont_params &cp, int skip, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN,  const WavCurve & wavCLVCcurve, const WavOpacityCurveWL & waOpacityCurveWL, FlatCurve* ChCurve, bool Chutili);
 		void WaveletcontAllAB(LabImage * lab, float **varhue, float **varchrom, wavelet_decomposition &WaveletCoeffs_a,const WavOpacityCurveW & waOpacityCurveW,
-											struct cont_params cp, const bool useChannelA);
+											struct cont_params &cp, const bool useChannelA);
 		void WaveletAandBAllAB(LabImage * lab, float **varhue, float **varchrom, wavelet_decomposition &WaveletCoeffs_a, wavelet_decomposition &WaveletCoeffs_b,
-											struct cont_params cp, const WavOpacityCurveW & waOpacityCurveW, FlatCurve* hhcurve, bool hhutili);
-		void ContAllL (float **koeLi, float *maxkoeLi, bool lipschitz, int maxlvl, LabImage * lab, float **varhue, float **varchrom, float ** WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, struct cont_params cp,
+											struct cont_params &cp, const WavOpacityCurveW & waOpacityCurveW, FlatCurve* hhcurve, bool hhutili);
+		void ContAllL (float **koeLi, float *maxkoeLi, bool lipschitz, int maxlvl, LabImage * lab, float **varhue, float **varchrom, float ** WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, struct cont_params &cp,
 									int W_L, int H_L, int skip, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN,  const WavCurve & wavCLVCcurve, const WavOpacityCurveW & waOpacityCurveW, FlatCurve* ChCurve, bool Chutili);
-		void finalContAllL (int maxlvl, LabImage * lab, float **varhue, float **varchrom, float ** WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, struct cont_params cp,
+		void finalContAllL (int maxlvl, LabImage * lab, float **varhue, float **varchrom, float ** WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, struct cont_params &cp,
 									int W_L, int H_L, int skip, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN,  const WavCurve & wavCLVCcurve, const WavOpacityCurveWL & waOpacityCurveWL, FlatCurve* ChCurve, bool Chutili);
-		void ContAllAB (LabImage * lab, int maxlvl, float **varhue, float **varchrom, float ** WavCoeffs_a, float * WavCoeffs_a0, int level, int dir, const WavOpacityCurveW & waOpacityCurveW, struct cont_params cp,
+		void ContAllAB (LabImage * lab, int maxlvl, float **varhue, float **varchrom, float ** WavCoeffs_a, float * WavCoeffs_a0, int level, int dir, const WavOpacityCurveW & waOpacityCurveW, struct cont_params &cp,
 									int W_ab, int H_ab, const bool useChannelA);
 		void Evaluate2(wavelet_decomposition &WaveletCoeffs_L, 
 										struct cont_params cp, int ind, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, float madL[8][3]);
