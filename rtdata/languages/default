@@ -1747,17 +1747,17 @@ TP_WAVELET_DONE;Vertical
 TP_WAVELET_DTHR;Diagonal
 TP_WAVELET_DTWO;Horizontal
 TP_WAVELET_EDCU;Curve
-TP_WAVELET_EDGEAMPLI;Base amplification
 TP_WAVELET_EDGCONT;Local contrast
 TP_WAVELET_EDGCONT_TOOLTIP;Adjusting the points to the left decreases contrast, and to the right increases it.\nBottom-left, Top-Left, Top-Right, Bottom-right represent respectively local contast for low values, mean, mean+stdev, maxima
+TP_WAVELET_EDGEAMPLI;Base amplification
 TP_WAVELET_EDGEDETECTTHR2;Threshold high (detection)
 TP_WAVELET_EDGEDETECTTHR;Threshold low (noise)
 TP_WAVELET_EDGEDETECTTHR_TOOLTIP;This adjuster lets you target edge detection for example to avoid applying edge sharpness to fine details, such as noise in the sky.
 TP_WAVELET_EDGEDETECT;Gradient sensitivity
 TP_WAVELET_EDGEDETECT_TOOLTIP;Moving the slider to the right increases edge sensitivity. This affects local contrast, edge settings and noise.
+TP_WAVELET_EDGESENSI;Edge sensitivity
 TP_WAVELET_EDGE;Edge Sharpness
 TP_WAVELET_EDGREINF_TOOLTIP;Reinforce or reduce the action of the first level, do the opposite to the second level, and leave the rest unchanged.
-TP_WAVELET_EDGESENSI;Edge sensitivity
 TP_WAVELET_EDGTHRESH;Detail
 TP_WAVELET_EDGTHRESH_TOOLTIP;Change the repartition between the first levels and the others. The higher the threshold the more the action is centred on the first levels. Be careful with negative values, they increase the action of high levels and can introduce artifacts.
 TP_WAVELET_EDRAD;Radius
@@ -1788,9 +1788,9 @@ TP_WAVELET_LEVELS_TOOLTIP;Choose the number of detail levels the image is to be 
 TP_WAVELET_LEVF;Contrast
 TP_WAVELET_LEVLABEL;Preview maximum possible levels = %1
 TP_WAVELET_LEVONE;Level 2
+TP_WAVELET_LEVTHRE;Level 4
 TP_WAVELET_LEVTWO;Level 3
 TP_WAVELET_LEVZERO;Level 1
-TP_WAVELET_LEVTHRE;Level 4
 TP_WAVELET_LINKEDG;Link with Edge Sharpness' Strength
 TP_WAVELET_LIPST;Enhanced algoritm
 TP_WAVELET_LIPST_TOOLTIP;This algorithm uses the proximity of a pixel and eight of its neighbors. If less difference, edges are reinforced.
@@ -1802,9 +1802,9 @@ TP_WAVELET_MEDI;Reduce artifacts in blue sky
 TP_WAVELET_NEUTRAL;Neutral
 TP_WAVELET_NOISE;Denoise and Refine
 TP_WAVELET_NOIS;Denoise
-TP_WAVELET_NPNONE;None
-TP_WAVELET_NPLOW;Low
 TP_WAVELET_NPHIGH;High
+TP_WAVELET_NPLOW;Low
+TP_WAVELET_NPNONE;None
 TP_WAVELET_NPTYPE;Neighboring pixels
 TP_WAVELET_NPTYPE_TOOLTIP;This algorithm uses the proximity of a pixel and eight of its neighbors. If less difference, edges are reinforced.
 TP_WAVELET_OPACITYWL;Final local contrast

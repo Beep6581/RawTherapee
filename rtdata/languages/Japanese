@@ -1917,3 +1917,22 @@ ZOOMPANEL_ZOOMFITSCREEN;画像全体を画面に合わせる\nショートカッ
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_403;W - ES - Edge sensitivity
+!HISTORY_MSG_404;W - ES - Base amplification
+!HISTORY_MSG_405;W - Denoise - Level 4
+!HISTORY_MSG_406;W - ES - Neighboring pixels
+!TP_EXPOSURE_TCMODE_PERCEPTUAL;Perceptual
+!TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
+!TP_WAVELET_EDGEAMPLI;Base amplification
+!TP_WAVELET_EDGESENSI;Edge sensitivity
+!TP_WAVELET_LEVTHRE;Level 4
+!TP_WAVELET_MEDILEV_TOOLTIP;When you enable Edge Detection, it is recommanded:\n- to disabled low contrast levels to avoid artifacts,\n- to use high values of gradient sensitivity.\n\nYou can modulate the strength with 'refine' from Denoise and Refine.
+!TP_WAVELET_NPHIGH;High
+!TP_WAVELET_NPLOW;Low
+!TP_WAVELET_NPNONE;None
+!TP_WAVELET_NPTYPE;Neighboring pixels
+!TP_WAVELET_NPTYPE_TOOLTIP;This algorithm uses the proximity of a pixel and eight of its neighbors. If less difference, edges are reinforced.
