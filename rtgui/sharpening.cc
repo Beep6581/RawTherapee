@@ -17,9 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "sharpening.h"
-#include <iomanip>
 #include <cmath>
-#include "guiutils.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -68,6 +66,7 @@ Sharpening::Sharpening () : FoldableToolPanel(this,"sharpening", M("TP_SHARPENIN
    amount = Gtk::manage (new Adjuster (M("TP_SHARPENING_AMOUNT"), 1, 1000, 1, 200));
    radius = Gtk::manage (new Adjuster (M("TP_SHARPENING_RADIUS"), 0.3, 3, 0.01, 0.5));
    threshold = Gtk::manage (new ThresholdAdjuster (M("TP_SHARPENING_THRESHOLD"), 0., 2000., 20., 80., 2000., 1200., 0, false));
+   threshold->setAdjusterListener (this);
    threshold->setBgGradient(milestones);
    pack_start(*hsep6a, Gtk::PACK_SHRINK, 2);
 
@@ -321,10 +320,11 @@ void Sharpening::adjusterChanged (Adjuster* a, double newval) {
     }
 }
 
-//void Sharpening::adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {
 void Sharpening::adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {
     if (listener && (multiImage||getEnabled()) ) {
-        listener->panelChanged (EvShrThresh, threshold->getHistoryString());
+        if(a==threshold) {
+            listener->panelChanged (EvShrThresh, threshold->getHistoryString());
+        }
     }
 }
 
