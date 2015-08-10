@@ -858,14 +858,14 @@ TP_WBALANCE_TEMPERATURE;Isı
 !HISTORY_MSG_344;W - Meth chroma sl/cur
 !HISTORY_MSG_345;W - ES - Local contrast
 !HISTORY_MSG_346;W - ES - Local contrast method
-!HISTORY_MSG_347;W - Denoise - Level 0
-!HISTORY_MSG_348;W - Denoise - Level 1
-!HISTORY_MSG_349;W - Denoise - Level 2
+!HISTORY_MSG_347;W - Denoise - Level 1
+!HISTORY_MSG_348;W - Denoise - Level 2
+!HISTORY_MSG_349;W - Denoise - Level 3
 !HISTORY_MSG_350;W - ES - Edge detection
 !HISTORY_MSG_351;W - Residual - HH curve
 !HISTORY_MSG_352;W - Background
 !HISTORY_MSG_353;W - ES - Gradient sensitivity
-!HISTORY_MSG_354;W - ES - Enhance
+!HISTORY_MSG_354;W - ES - Enhanced
 !HISTORY_MSG_355;W - ES - Threshold low
 !HISTORY_MSG_356;W - ES - Threshold high
 !HISTORY_MSG_357;W - Denoise - Link with ES
@@ -914,6 +914,10 @@ TP_WBALANCE_TEMPERATURE;Isı
 !HISTORY_MSG_400;W - Final sub-tool
 !HISTORY_MSG_401;W - Toning sub-tool
 !HISTORY_MSG_402;W - Denoise sub-tool
+!HISTORY_MSG_403;W - ES - Edge sensitivity
+!HISTORY_MSG_404;W - ES - Base amplification
+!HISTORY_MSG_405;W - Denoise - Level 4
+!HISTORY_MSG_406;W - ES - Neighboring pixels
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
@@ -1478,6 +1482,7 @@ TP_WBALANCE_TEMPERATURE;Isı
 !TP_EXPOSURE_TCMODE_LABEL1;Curve mode 1
 !TP_EXPOSURE_TCMODE_LABEL2;Curve mode 2
 !TP_EXPOSURE_TCMODE_LUMINANCE;Luminance
+!TP_EXPOSURE_TCMODE_PERCEPTUAL;Perceptual
 !TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Saturation and Value Blending
 !TP_EXPOSURE_TCMODE_STANDARD;Standard
 !TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
@@ -1539,6 +1544,7 @@ TP_WBALANCE_TEMPERATURE;Isı
 !TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all.\nUse only in special cases.
 !TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
+!TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 !TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
 !TP_ICM_TONECURVE;Tone curve
 !TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only enabled if the selected DCP has a tone curve.
@@ -1704,9 +1710,9 @@ TP_WBALANCE_TEMPERATURE;Isı
 !TP_WAVELET_BACKGROUND;Background
 !TP_WAVELET_BACUR;Curve
 !TP_WAVELET_BALANCE;Contrast balance d/v-h
-!TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chromaticity or residual tone mapping are activated, the effect due to balance is amplified.
+!TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chroma or residual tone mapping are activated, the effect due to balance is amplified.
 !TP_WAVELET_BALCHRO;Chroma balance
-!TP_WAVELET_BALCHRO_TOOLTIP;If enabled, the 'Contrast balance' curve or slider also modifies chromaticity balance.
+!TP_WAVELET_BALCHRO_TOOLTIP;If enabled, the 'Contrast balance' curve or slider also modifies chroma balance.
 !TP_WAVELET_BANONE;None
 !TP_WAVELET_BASLI;Slider
 !TP_WAVELET_BATYPE;Contrast balance method
@@ -1714,14 +1720,14 @@ TP_WBALANCE_TEMPERATURE;Isı
 !TP_WAVELET_CBTYPE;Toning and Color Balance
 !TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
 !TP_WAVELET_CCURVE;Local contrast
-!TP_WAVELET_CH1;Whole chromaticity range
+!TP_WAVELET_CH1;Whole chroma range
 !TP_WAVELET_CH2;Saturated/pastel
 !TP_WAVELET_CH3;Link contrast levels
 !TP_WAVELET_CHCU;Curve
 !TP_WAVELET_CHRO;Saturated/pastel threshold
 !TP_WAVELET_CHRO_TOOLTIP;Sets the wavelet level which will be the threshold between saturated and pastel colors.\n1-x: saturated\nx-9: pastel\n\nIf the value exceeds the amount of wavelet levels you are using then it will be ignored.
 !TP_WAVELET_CHR;Chroma-contrast link strength
-!TP_WAVELET_CHR_TOOLTIP;Adjusts chromaticity as a function of "contrast levels" and "chroma-contrast link strength"
+!TP_WAVELET_CHR_TOOLTIP;Adjusts chroma as a function of "contrast levels" and "chroma-contrast link strength"
 !TP_WAVELET_CHSL;Sliders
 !TP_WAVELET_CHTYPE;Chrominance method
 !TP_WAVELET_COLORT;Opacity Red-Green
@@ -1758,11 +1764,13 @@ TP_WBALANCE_TEMPERATURE;Isı
 !TP_WAVELET_EDCU;Curve
 !TP_WAVELET_EDGCONT;Local contrast
 !TP_WAVELET_EDGCONT_TOOLTIP;Adjusting the points to the left decreases contrast, and to the right increases it.\nBottom-left, Top-Left, Top-Right, Bottom-right represent respectively local contast for low values, mean, mean+stdev, maxima
+!TP_WAVELET_EDGEAMPLI;Base amplification
 !TP_WAVELET_EDGEDETECTTHR2;Threshold high (detection)
 !TP_WAVELET_EDGEDETECTTHR;Threshold low (noise)
 !TP_WAVELET_EDGEDETECTTHR_TOOLTIP;This adjuster lets you target edge detection for example to avoid applying edge sharpness to fine details, such as noise in the sky.
 !TP_WAVELET_EDGEDETECT;Gradient sensitivity
 !TP_WAVELET_EDGEDETECT_TOOLTIP;Moving the slider to the right increases edge sensitivity. This affects local contrast, edge settings and noise.
+!TP_WAVELET_EDGESENSI;Edge sensitivity
 !TP_WAVELET_EDGE;Edge Sharpness
 !TP_WAVELET_EDGREINF_TOOLTIP;Reinforce or reduce the action of the first level, do the opposite to the second level, and leave the rest unchanged.
 !TP_WAVELET_EDGTHRESH;Detail
@@ -1785,7 +1793,7 @@ TP_WBALANCE_TEMPERATURE;Isı
 !TP_WAVELET_ITER_TOOLTIP;Left: increase low levels and reduce high levels,\nRight: reduce low levels and increase high levels.
 !TP_WAVELET_LABEL;Wavelet Levels
 !TP_WAVELET_LARGEST;Coarsest
-!TP_WAVELET_LEVCH;Chromaticity
+!TP_WAVELET_LEVCH;Chroma
 !TP_WAVELET_LEVDIR_ALL;All levels in all directions
 !TP_WAVELET_LEVDIR_INF;Below or equal the level
 !TP_WAVELET_LEVDIR_ONE;One level
@@ -1795,32 +1803,39 @@ TP_WBALANCE_TEMPERATURE;Isı
 !TP_WAVELET_LEVF;Contrast
 !TP_WAVELET_LEVLABEL;Preview maximum possible levels = %1
 !TP_WAVELET_LEVONE;Level 2
+!TP_WAVELET_LEVTHRE;Level 4
 !TP_WAVELET_LEVTWO;Level 3
 !TP_WAVELET_LEVZERO;Level 1
 !TP_WAVELET_LINKEDG;Link with Edge Sharpness' Strength
-!TP_WAVELET_LIPST;Enhanced algorithm
-!TP_WAVELET_LIPST_TOOLTIP;This algorithm uses Lipschitz regularity to increase edge detection quality at a cost of increased processing time and memory requirements.
+!TP_WAVELET_LIPST;Enhanced algoritm
+!TP_WAVELET_LIPST_TOOLTIP;This algorithm uses the proximity of a pixel and eight of its neighbors. If less difference, edges are reinforced.
 !TP_WAVELET_LOWLIGHT;Shadow luminance range
 !TP_WAVELET_MEDGREINF;First level
 !TP_WAVELET_MEDILEV;Edge detection
+!TP_WAVELET_MEDILEV_TOOLTIP;When you enable Edge Detection, it is recommanded:\n- to disabled low contrast levels to avoid artifacts,\n- to use high values of gradient sensitivity.\n\nYou can modulate the strength with 'refine' from Denoise and Refine.
 !TP_WAVELET_MEDI;Reduce artifacts in blue sky
 !TP_WAVELET_NEUTRAL;Neutral
 !TP_WAVELET_NOISE;Denoise and Refine
 !TP_WAVELET_NOIS;Denoise
+!TP_WAVELET_NPHIGH;High
+!TP_WAVELET_NPLOW;Low
+!TP_WAVELET_NPNONE;None
+!TP_WAVELET_NPTYPE;Neighboring pixels
+!TP_WAVELET_NPTYPE_TOOLTIP;This algorithm uses the proximity of a pixel and eight of its neighbors. If less difference, edges are reinforced.
 !TP_WAVELET_OPACITYWL;Final local contrast
 !TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the wavelet treatment.\n\nThe left side represents the smallest local contrast, progressing to the largest local contrast on the right.
 !TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
 !TP_WAVELET_OPACITY;Opacity Blue-Yellow
-!TP_WAVELET_PASTEL;Pastel chromaticity
+!TP_WAVELET_PASTEL;Pastel chroma
 !TP_WAVELET_PROC;Process
 !TP_WAVELET_RE1;Reinforced
 !TP_WAVELET_RE2;Unchanged
 !TP_WAVELET_RE3;Reduced
-!TP_WAVELET_RESCHRO;Chromaticity
+!TP_WAVELET_RESCHRO;Chroma
 !TP_WAVELET_RESCONH;Highlights
 !TP_WAVELET_RESCON;Shadows
 !TP_WAVELET_RESID;Residual Image
-!TP_WAVELET_SAT;Saturated chromaticity
+!TP_WAVELET_SAT;Saturated chroma
 !TP_WAVELET_SETTINGS;Wavelet Settings
 !TP_WAVELET_SKIN;Skin targetting/protection
 !TP_WAVELET_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
