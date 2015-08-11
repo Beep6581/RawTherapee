@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -20,7 +20,8 @@
 #include "multilangmgr.h"
 #include "rtimage.h"
 
-FavoritBrowser::FavoritBrowser () : listener (NULL), lastSelectedDir ("") {
+FavoritBrowser::FavoritBrowser () : listener (NULL), lastSelectedDir ("")
+{
 
     scrollw = Gtk::manage (new Gtk::ScrolledWindow ());
     scrollw->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
@@ -29,10 +30,10 @@ FavoritBrowser::FavoritBrowser () : listener (NULL), lastSelectedDir ("") {
     frame->add (*scrollw);
 
     pack_start (*frame);
-    
+
     treeView = Gtk::manage (new Gtk::TreeView ());
     scrollw->add (*treeView);
-    
+
     favoritModel = Gtk::ListStore::create (favoritColumns);
     treeView->set_model (favoritModel);
     treeView->set_headers_visible (false);
@@ -64,36 +65,47 @@ FavoritBrowser::FavoritBrowser () : listener (NULL), lastSelectedDir ("") {
     show_all ();
 }
 
-void FavoritBrowser::selectionChanged () {
+void FavoritBrowser::selectionChanged ()
+{
 
     Glib::RefPtr<Gtk::TreeSelection> selection = treeView->get_selection();
     Gtk::TreeModel::iterator iter = selection->get_selected();
-    if (iter && listener) 
+
+    if (iter && listener) {
         listener->selectDir (iter->get_value (favoritColumns.fulldir));
+    }
 }
 
-void FavoritBrowser::dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile) {
+void FavoritBrowser::dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile)
+{
 
     lastSelectedDir = dirname;
 }
 
-void FavoritBrowser::addPressed () {
+void FavoritBrowser::addPressed ()
+{
 
-    if (lastSelectedDir=="")
+    if (lastSelectedDir == "") {
         return;
+    }
 
     // check if the dirname is already in the list. If yes, return.
     Gtk::TreeModel::iterator iter = favoritModel->children ().begin();
+
     while (iter != favoritModel->children().end()) {
-        if (iter->get_value (favoritColumns.fulldir) == lastSelectedDir) 
+        if (iter->get_value (favoritColumns.fulldir) == lastSelectedDir) {
             return;
+        }
+
         iter++;
     }
 
     Glib::RefPtr<Gio::File> hfile = Gio::File::create_for_parse_name (lastSelectedDir);
+
     if (hfile) {
         Glib::RefPtr<Gio::FileInfo> info = hfile->query_info ();
-        if (info) { 
+
+        if (info) {
             Gtk::TreeModel::Row newrow = *(favoritModel->append());
             newrow[favoritColumns.shortdir] = info->get_display_name ();
             newrow[favoritColumns.fulldir] = lastSelectedDir;
@@ -102,13 +114,15 @@ void FavoritBrowser::addPressed () {
     }
 }
 
-void FavoritBrowser::delPressed () {
+void FavoritBrowser::delPressed ()
+{
 
     // lookup the selected item in the bookmark
     Glib::RefPtr<Gtk::TreeSelection> selection = treeView->get_selection();
     Gtk::TreeModel::iterator iter = selection->get_selected();
 
-    if (iter)
+    if (iter) {
         favoritModel->erase (iter);
+    }
 }
 

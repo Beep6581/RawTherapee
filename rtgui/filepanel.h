@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -34,73 +34,79 @@
 
 class RTWindow;
 class FilePanel : public Gtk::HPaned,
-                  public FileSelectionListener,  
-                  public PParamsChangeListener
+    public FileSelectionListener,
+    public PParamsChangeListener
 {
 
-    protected:
-        //DirBrowser* dirBrowser;
-        PlacesBrowser* placesBrowser;
-        RecentBrowser* recentBrowser;
-       // FileCatalog* fileCatalog;   // filecatalog is the file browser with the button bar above it
+protected:
+    //DirBrowser* dirBrowser;
+    PlacesBrowser* placesBrowser;
+    RecentBrowser* recentBrowser;
+    // FileCatalog* fileCatalog;   // filecatalog is the file browser with the button bar above it
 
-        Inspector* inspectorPanel;
-        Gtk::VPaned* tpcPaned;
-        BatchToolPanelCoordinator* tpc;
-        History* history;
-        //FilterPanel* filterPanel;
-        RTWindow* parent;
-        Gtk::Notebook* rightNotebook;
-        sigc::connection rightNotebookSwitchConn;
+    Inspector* inspectorPanel;
+    Gtk::VPaned* tpcPaned;
+    BatchToolPanelCoordinator* tpc;
+    History* history;
+    //FilterPanel* filterPanel;
+    RTWindow* parent;
+    Gtk::Notebook* rightNotebook;
+    sigc::connection rightNotebookSwitchConn;
 
-        struct pendingLoad {
-            bool complete;
-            ProgressConnector<rtengine::InitialImage*> *pc;
-            Thumbnail *thm;
-        };
-        MyMutex pendingLoadMutex;
-        std::vector<struct pendingLoad*> pendingLoads;
+    struct pendingLoad {
+        bool complete;
+        ProgressConnector<rtengine::InitialImage*> *pc;
+        Thumbnail *thm;
+    };
+    MyMutex pendingLoadMutex;
+    std::vector<struct pendingLoad*> pendingLoads;
 
-        int error;
+    int error;
 
-        void on_NB_switch_page(GtkNotebookPage* page, guint page_num);
+    void on_NB_switch_page(GtkNotebookPage* page, guint page_num);
 
-    public:
-        FilePanel ();
-        ~FilePanel ();
+public:
+    FilePanel ();
+    ~FilePanel ();
 
-        Gtk::Paned* placespaned;
-        Gtk::HPaned* dirpaned;
+    Gtk::Paned* placespaned;
+    Gtk::HPaned* dirpaned;
 
-        Gtk::HBox* rightBox;
+    Gtk::HBox* rightBox;
 
-        DirBrowser* dirBrowser;
-        FilterPanel* filterPanel;
-        ExportPanel* exportPanel;
-        FileCatalog* fileCatalog;
-        Gtk::Paned *ribbonPane;
+    DirBrowser* dirBrowser;
+    FilterPanel* filterPanel;
+    ExportPanel* exportPanel;
+    FileCatalog* fileCatalog;
+    Gtk::Paned *ribbonPane;
 
-        void setParent (RTWindow* p) { parent = p; }
-        void init (); // dont call it directly, the constructor calls it as idle source
-        void on_realize ();
-        void setAspect();
-        void open (const Glib::ustring& d); // open a file or a directory
-        void refreshEditedState (const std::set<Glib::ustring>& efiles) { fileCatalog->refreshEditedState (efiles); }
-        void loadingThumbs(Glib::ustring str, double rate);
+    void setParent (RTWindow* p)
+    {
+        parent = p;
+    }
+    void init (); // dont call it directly, the constructor calls it as idle source
+    void on_realize ();
+    void setAspect();
+    void open (const Glib::ustring& d); // open a file or a directory
+    void refreshEditedState (const std::set<Glib::ustring>& efiles)
+    {
+        fileCatalog->refreshEditedState (efiles);
+    }
+    void loadingThumbs(Glib::ustring str, double rate);
 
-        // call this before closing RT: it saves file browser's related things into options
-        void saveOptions ();
+    // call this before closing RT: it saves file browser's related things into options
+    void saveOptions ();
 
-        // interface fileselectionlistener
-        bool fileSelected           (Thumbnail* thm);
-        bool addBatchQueueJobs ( std::vector<BatchQueueEntry*> &entries );
+    // interface fileselectionlistener
+    bool fileSelected           (Thumbnail* thm);
+    bool addBatchQueueJobs ( std::vector<BatchQueueEntry*> &entries );
 
-        void optionsChanged         ();
-        bool imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> * );
+    void optionsChanged         ();
+    bool imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> * );
 
-        bool handleShortcutKey (GdkEventKey* event);
-        void updateTPVScrollbar (bool hide);
-        void updateTabsUsesIcons (bool useIcons);
+    bool handleShortcutKey (GdkEventKey* event);
+    void updateTPVScrollbar (bool hide);
+    void updateTabsUsesIcons (bool useIcons);
 };
 
 #endif

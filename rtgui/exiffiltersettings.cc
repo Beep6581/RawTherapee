@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,12 +18,14 @@
  */
 #include "exiffiltersettings.h"
 
-ExifFilterSettings::ExifFilterSettings () {
+ExifFilterSettings::ExifFilterSettings ()
+{
 
-    clear (); 
+    clear ();
 }
 
-void ExifFilterSettings::clear () {
+void ExifFilterSettings::clear ()
+{
     fnumberFrom = 100;
     fnumberTo = 0;
     shutterFrom = 100;
@@ -36,13 +38,13 @@ void ExifFilterSettings::clear () {
     cameras.clear ();
     expcomp.clear ();
     filetypes.clear ();
-	
-	filterFNumber = false;
-	filterShutter = false;
-	filterFocalLen = false;
-	filterISO = false;
-	filterExpComp = false;
-	filterCamera = false;
-	filterLens = false;
-	filterFiletype = false;
+
+    filterFNumber = false;
+    filterShutter = false;
+    filterFocalLen = false;
+    filterISO = false;
+    filterExpComp = false;
+    filterCamera = false;
+    filterLens = false;
+    filterFiletype = false;
 }

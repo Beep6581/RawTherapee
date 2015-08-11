@@ -22,50 +22,50 @@
 
 /// @brief List of pipette editing operation
 enum EditUniqueID {
-	EUID_None,  /// special value (default)
+    EUID_None,  /// special value (default)
 
-	EUID_ToneCurve1,
-	EUID_ToneCurve2,
-	EUID_Lab_LCurve,
-	EUID_Lab_CCurve,
-	EUID_Lab_LCCurve,
-	EUID_Lab_CLCurve,	
-	EUID_Lab_LHCurve,	
-	EUID_Lab_CHCurve,	
-	EUID_Lab_HHCurve,
-	EUID_Lab_aCurve,
-	EUID_Lab_bCurve,	
-	EUID_RGB_R,
-	EUID_RGB_G,
-	EUID_RGB_B,
-	EUID_HSV_H,
-	EUID_HSV_S,
-	EUID_HSV_V,
-	EUID_BlackWhiteLuminance,
-	EUID_BlackWhiteBeforeCurve,
-	EUID_BlackWhiteAfterCurve,
-	EUID_WW_HHCurve,
-	
+    EUID_ToneCurve1,
+    EUID_ToneCurve2,
+    EUID_Lab_LCurve,
+    EUID_Lab_CCurve,
+    EUID_Lab_LCCurve,
+    EUID_Lab_CLCurve,
+    EUID_Lab_LHCurve,
+    EUID_Lab_CHCurve,
+    EUID_Lab_HHCurve,
+    EUID_Lab_aCurve,
+    EUID_Lab_bCurve,
+    EUID_RGB_R,
+    EUID_RGB_G,
+    EUID_RGB_B,
+    EUID_HSV_H,
+    EUID_HSV_S,
+    EUID_HSV_V,
+    EUID_BlackWhiteLuminance,
+    EUID_BlackWhiteBeforeCurve,
+    EUID_BlackWhiteAfterCurve,
+    EUID_WW_HHCurve,
+
 };
 
 /// @brief Editing mechanisms
 //  TODO: Look out if it has to be a bitfield to allow both mechanisms at a time
 enum EditType {
-	ET_PIPETTE,  /// Will trigger dedicated methods; can have a geometry list to be displayed, but without "mouse over" capabilities
-	ET_OBJECTS   /// The objects are geometrical widgets with "mouse over" capabilities
+    ET_PIPETTE,  /// Will trigger dedicated methods; can have a geometry list to be displayed, but without "mouse over" capabilities
+    ET_OBJECTS   /// The objects are geometrical widgets with "mouse over" capabilities
 };
 
 /// @brief Buffer type for ET_PIPETTE type editing
 enum BufferType {
-	BT_IMAGEFLOAT,
-	BT_LABIMAGE,
-	BT_SINGLEPLANE_FLOAT
+    BT_IMAGEFLOAT,
+    BT_LABIMAGE,
+    BT_SINGLEPLANE_FLOAT
 };
 
 /// @brief Number of object to be handled (for optimization purpose)
 enum ObjectMode {
-	OM_255,   /// less or equal than 255 objects
-	OM_65535  /// less or equal than 65535 objects
+    OM_255,   /// less or equal than 255 objects
+    OM_65535  /// less or equal than 65535 objects
 };
 
 #endif

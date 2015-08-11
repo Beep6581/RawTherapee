@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -25,20 +25,24 @@
 #include "multilangmgr.h"
 #include "guiutils.h"
 
-class RecentBrowser : public Gtk::VBox, public DirSelectionListener {
+class RecentBrowser : public Gtk::VBox, public DirSelectionListener
+{
 
-        Gtk::ComboBoxText*              recentDirs;
-        sigc::connection             conn;
-        DirBrowserRemoteInterface*   listener;
+    Gtk::ComboBoxText*              recentDirs;
+    sigc::connection             conn;
+    DirBrowserRemoteInterface*   listener;
 
-    public:
-    
-        RecentBrowser ();
-        
-        void setDirBrowserRemoteInterface (DirBrowserRemoteInterface* l) { listener = l; }
-        
-        void selectionChanged ();
-        void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile="");
+public:
+
+    RecentBrowser ();
+
+    void setDirBrowserRemoteInterface (DirBrowserRemoteInterface* l)
+    {
+        listener = l;
+    }
+
+    void selectionChanged ();
+    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile = "");
 };
 
 #endif

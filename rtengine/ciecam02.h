@@ -90,7 +90,7 @@ public:
                                        float J, float C, float h,
                                        float xw, float yw, float zw,
                                        float yb, float la,
-                                       float f, float c, float nc,int gamu,float n, float nbb, float ncb, float fl, float cz, float d, float aw );
+                                       float f, float c, float nc, int gamu, float n, float nbb, float ncb, float fl, float cz, float d, float aw );
 #else
     static void jch2xyz_ciecam02float( vfloat &x, vfloat &y, vfloat &z,
                                        vfloat J, vfloat C, vfloat h,
@@ -114,14 +114,14 @@ public:
                               float &cz, float &aw, float &fl);
 
     static void xyz2jchqms_ciecam02( double &J, double &C, double &h,
-                                     double &Q, double &M, double &s,double &aw, double &fl, double &wh,
+                                     double &Q, double &M, double &s, double &aw, double &fl, double &wh,
                                      double x, double y, double z,
                                      double xw, double yw, double zw,
                                      double yb, double la,
-                                     double f, double c, double nc,  double pilotd,int gamu , double n, double nbb, double ncb, double pfl, double cz, double d );
+                                     double f, double c, double nc,  double pilotd, int gamu , double n, double nbb, double ncb, double pfl, double cz, double d );
 
     static void xyz2jchqms_ciecam02float( float &J, float &C, float &h,
-                                          float &Q, float &M, float &s,float &aw, float &fl, float &wh,
+                                          float &Q, float &M, float &s, float &aw, float &fl, float &wh,
                                           float x, float y, float z,
                                           float xw, float yw, float zw,
                                           float yb, float la,
@@ -129,7 +129,7 @@ public:
 
 #ifdef __SSE2__
     static void xyz2jchqms_ciecam02float( vfloat &J, vfloat &C, vfloat &h,
-                                          vfloat &Q, vfloat &M, vfloat &s,vfloat aw, vfloat fl, vfloat wh,
+                                          vfloat &Q, vfloat &M, vfloat &s, vfloat aw, vfloat fl, vfloat wh,
                                           vfloat x, vfloat y, vfloat z,
                                           vfloat xw, vfloat yw, vfloat zw,
                                           vfloat yb, vfloat la,

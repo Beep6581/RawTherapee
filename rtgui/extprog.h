@@ -7,7 +7,7 @@
 *  it under the terms of the GNU General Public License as published by
 *  the Free Software Foundation, either version 3 of the License, or
 *  (at your option) any later version.
-* 
+*
 *  RawTherapee is distributed in the hope that it will be useful,
 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
 *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -24,7 +24,8 @@
 #include <list>
 #include "threadutils.h"
 
-class ExtProgAction {
+class ExtProgAction
+{
 public:
     ExtProgAction();
     ExtProgAction(const ExtProgAction* other, int target);
@@ -40,7 +41,8 @@ public:
 };
 
 // Stores all external programs that could be called by the user
-class ExtProgStore {
+class ExtProgStore
+{
     MyMutex mtx;  // covers actions
 
     bool SearchProg(Glib::ustring name, Glib::ustring exePath, Glib::ustring exePath86, int maxVer, bool allowRaw, bool allowQueueProcess);

@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,47 +21,49 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ShadowsHighlights::ShadowsHighlights () : FoldableToolPanel(this, "shadowshighlights", M("TP_SHADOWSHLIGHTS_LABEL"), false, true) {
+ShadowsHighlights::ShadowsHighlights () : FoldableToolPanel(this, "shadowshighlights", M("TP_SHADOWSHLIGHTS_LABEL"), false, true)
+{
 
-  hq = Gtk::manage (new Gtk::CheckButton (M("TP_SHADOWSHLIGHTS_SHARPMASK")));
-  hq->set_active (false);
-  pack_start (*hq);
-  hqConn = hq->signal_toggled().connect( sigc::mem_fun(*this, &ShadowsHighlights::hqChanged) );
+    hq = Gtk::manage (new Gtk::CheckButton (M("TP_SHADOWSHLIGHTS_SHARPMASK")));
+    hq->set_active (false);
+    pack_start (*hq);
+    hqConn = hq->signal_toggled().connect( sigc::mem_fun(*this, &ShadowsHighlights::hqChanged) );
 
-  pack_start (*Gtk::manage (new  Gtk::HSeparator()));
-  highlights   = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0));
-  h_tonalwidth = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_HLTONALW"), 10, 100, 1, 80));
-  pack_start (*highlights);
-  pack_start (*h_tonalwidth);
+    pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+    highlights   = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0));
+    h_tonalwidth = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_HLTONALW"), 10, 100, 1, 80));
+    pack_start (*highlights);
+    pack_start (*h_tonalwidth);
 
-  pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+    pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-  shadows      = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_SHADOWS"), 0, 100, 1, 0));
-  s_tonalwidth = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_SHTONALW"), 10, 100, 1, 80));
-  pack_start (*shadows);
-  pack_start (*s_tonalwidth);
+    shadows      = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_SHADOWS"), 0, 100, 1, 0));
+    s_tonalwidth = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_SHTONALW"), 10, 100, 1, 80));
+    pack_start (*shadows);
+    pack_start (*s_tonalwidth);
 
-  pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+    pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-  lcontrast = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_LOCALCONTR"), 0, 100, 1, 0));
-  pack_start (*lcontrast);
+    lcontrast = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_LOCALCONTR"), 0, 100, 1, 0));
+    pack_start (*lcontrast);
 
-  pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+    pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-  radius = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_RADIUS"), 5, 100, 1, 30));
-  pack_start (*radius);
+    radius = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_RADIUS"), 5, 100, 1, 30));
+    pack_start (*radius);
 
-  radius->setAdjusterListener (this);
-  highlights->setAdjusterListener (this); 
-  h_tonalwidth->setAdjusterListener (this); 
-  shadows->setAdjusterListener (this); 
-  s_tonalwidth->setAdjusterListener (this); 
-  lcontrast->setAdjusterListener (this); 
-  
-  show_all_children ();
+    radius->setAdjusterListener (this);
+    highlights->setAdjusterListener (this);
+    h_tonalwidth->setAdjusterListener (this);
+    shadows->setAdjusterListener (this);
+    s_tonalwidth->setAdjusterListener (this);
+    lcontrast->setAdjusterListener (this);
+
+    show_all_children ();
 }
 
-void ShadowsHighlights::read (const ProcParams* pp, const ParamsEdited* pedited) {
+void ShadowsHighlights::read (const ProcParams* pp, const ParamsEdited* pedited)
+{
 
     disableListener ();
 
@@ -94,7 +96,8 @@ void ShadowsHighlights::read (const ProcParams* pp, const ParamsEdited* pedited)
     enableListener ();
 }
 
-void ShadowsHighlights::write (ProcParams* pp, ParamsEdited* pedited) {
+void ShadowsHighlights::write (ProcParams* pp, ParamsEdited* pedited)
+{
 
     pp->sh.radius        = (int)radius->getValue ();
     pp->sh.localcontrast = (int)lcontrast->getValue ();
@@ -117,7 +120,8 @@ void ShadowsHighlights::write (ProcParams* pp, ParamsEdited* pedited) {
     }
 }
 
-void ShadowsHighlights::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
+void ShadowsHighlights::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
+{
 
     radius->setDefault (defParams->sh.radius);
     lcontrast->setDefault (defParams->sh.localcontrast);
@@ -133,8 +137,7 @@ void ShadowsHighlights::setDefaults (const ProcParams* defParams, const ParamsEd
         h_tonalwidth->setDefaultEditedState (pedited->sh.htonalwidth ? Edited : UnEdited);
         shadows->setDefaultEditedState      (pedited->sh.shadows ? Edited : UnEdited);
         s_tonalwidth->setDefaultEditedState (pedited->sh.stonalwidth ? Edited : UnEdited);
-    }
-    else {
+    } else {
         radius->setDefaultEditedState       (Irrelevant);
         lcontrast->setDefaultEditedState    (Irrelevant);
         highlights->setDefaultEditedState   (Irrelevant);
@@ -144,40 +147,45 @@ void ShadowsHighlights::setDefaults (const ProcParams* defParams, const ParamsEd
     }
 }
 
-void ShadowsHighlights::adjusterChanged (Adjuster* a, double newval) {
+void ShadowsHighlights::adjusterChanged (Adjuster* a, double newval)
+{
 
     if (listener && getEnabled()) {
 
         Glib::ustring costr = Glib::ustring::format ((int)a->getValue());
 
-        if (a==highlights) 
+        if (a == highlights) {
             listener->panelChanged (EvSHHighlights, costr);
-        else if (a==h_tonalwidth) 
+        } else if (a == h_tonalwidth) {
             listener->panelChanged (EvSHHLTonalW, costr);
-        else if (a==shadows) 
+        } else if (a == shadows) {
             listener->panelChanged (EvSHShadows, costr);
-        else if (a==s_tonalwidth) 
+        } else if (a == s_tonalwidth) {
             listener->panelChanged (EvSHSHTonalW, costr);
-        else if (a==radius) 
+        } else if (a == radius) {
             listener->panelChanged (EvSHRadius, costr);
-        else if (a==lcontrast) 
+        } else if (a == lcontrast) {
             listener->panelChanged (EvSHLContrast, costr);
+        }
     }
 }
 
-void ShadowsHighlights::enabledChanged () {
+void ShadowsHighlights::enabledChanged ()
+{
 
     if (listener) {
-        if (get_inconsistent())
+        if (get_inconsistent()) {
             listener->panelChanged (EvSHEnabled, M("GENERAL_UNCHANGED"));
-        else if (getEnabled())
+        } else if (getEnabled()) {
             listener->panelChanged (EvSHEnabled, M("GENERAL_ENABLED"));
-        else
+        } else {
             listener->panelChanged (EvSHEnabled, M("GENERAL_DISABLED"));
+        }
     }
 }
 
-void ShadowsHighlights::hqChanged () {
+void ShadowsHighlights::hqChanged ()
+{
 
     if (batchMode) {
         if (hq->get_inconsistent()) {
@@ -185,22 +193,24 @@ void ShadowsHighlights::hqChanged () {
             hqConn.block (true);
             hq->set_active (false);
             hqConn.block (false);
-        }
-        else if (lastHQ)
+        } else if (lastHQ) {
             hq->set_inconsistent (true);
+        }
 
         lastHQ = hq->get_active ();
     }
-    
+
     if (listener) {
-        if (hq->get_active())
+        if (hq->get_active()) {
             listener->panelChanged (EvSHHighQuality, M("GENERAL_ENABLED"));
-        else
+        } else {
             listener->panelChanged (EvSHHighQuality, M("GENERAL_DISABLED"));
+        }
     }
 }
 
-void ShadowsHighlights::setBatchMode (bool batchMode) {
+void ShadowsHighlights::setBatchMode (bool batchMode)
+{
 
     ToolPanel::setBatchMode (batchMode);
     radius->showEditedCB ();
@@ -211,16 +221,18 @@ void ShadowsHighlights::setBatchMode (bool batchMode) {
     s_tonalwidth->showEditedCB ();
 }
 
-void ShadowsHighlights::setAdjusterBehavior (bool hadd, bool sadd, bool lcadd) {
+void ShadowsHighlights::setAdjusterBehavior (bool hadd, bool sadd, bool lcadd)
+{
 
-	highlights->setAddMode(hadd);
-	shadows->setAddMode(sadd);
-	lcontrast->setAddMode(lcadd);
+    highlights->setAddMode(hadd);
+    shadows->setAddMode(sadd);
+    lcontrast->setAddMode(lcadd);
 }
 
-void ShadowsHighlights::trimValues (rtengine::procparams::ProcParams* pp) {
+void ShadowsHighlights::trimValues (rtengine::procparams::ProcParams* pp)
+{
 
-	highlights->trimValue(pp->sh.highlights);
-	shadows->trimValue(pp->sh.shadows);
-	lcontrast->trimValue(pp->sh.localcontrast);
+    highlights->trimValue(pp->sh.highlights);
+    shadows->trimValue(pp->sh.shadows);
+    lcontrast->trimValue(pp->sh.localcontrast);
 }

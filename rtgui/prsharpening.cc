@@ -67,7 +67,7 @@ PrSharpening::PrSharpening () : FoldableToolPanel(this, "prsharpening", M("TP_PR
     amount = Gtk::manage (new Adjuster (M("TP_SHARPENING_AMOUNT"), 1, 1000, 1, 200));
     radius = Gtk::manage (new Adjuster (M("TP_SHARPENING_RADIUS"), 0.3, 3, 0.01, 0.5));
     threshold = Gtk::manage (new ThresholdAdjuster (M("TP_SHARPENING_THRESHOLD"), 0., 2000., 20., 80., 2000., 1200., 0, false));
-	threshold->setAdjusterListener (this);
+    threshold->setAdjusterListener (this);
     threshold->setBgGradient(milestones);
     pack_start(*hsep6a, Gtk::PACK_SHRINK, 2);
 
@@ -437,11 +437,12 @@ void PrSharpening::method_changed ()
 
 }
 
-void PrSharpening::adjusterChanged (ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) {
-    if (listener && (multiImage||getEnabled()) ) {
-		if(a==threshold) { 
-		    listener->panelChanged (EvPrShrThresh,threshold->getHistoryString());
-		}
+void PrSharpening::adjusterChanged (ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
+{
+    if (listener && (multiImage || getEnabled()) ) {
+        if(a == threshold) {
+            listener->panelChanged (EvPrShrThresh, threshold->getHistoryString());
+        }
     }
 }
 

@@ -22,13 +22,14 @@
 #include <gtkmm.h>
 #include "options.h"
 
-class RTImage : public Gtk::Image {
+class RTImage : public Gtk::Image
+{
 public:
-	RTImage(Glib::ustring fileName, Glib::ustring rtlFileName = "");
-	static void setPaths(Options &opt);
-	static void updateImages();
-	void changeImage(Glib::ustring &newImage);
-	static Glib::ustring findIconAbsolutePath(const Glib::ustring &iconFName);
+    RTImage(Glib::ustring fileName, Glib::ustring rtlFileName = "");
+    static void setPaths(Options &opt);
+    static void updateImages();
+    void changeImage(Glib::ustring &newImage);
+    static Glib::ustring findIconAbsolutePath(const Glib::ustring &iconFName);
 };
 
 #endif

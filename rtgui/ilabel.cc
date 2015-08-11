@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -20,7 +20,8 @@
 
 ILabel::ILabel (Glib::ustring lab) : label(lab) {}
 
-void ILabel::on_realize() {
+void ILabel::on_realize()
+{
 
     Gtk::DrawingArea::on_realize();
     add_events(Gdk::EXPOSURE_MASK);
@@ -29,10 +30,11 @@ void ILabel::on_realize() {
     fn->set_markup (label);
     int labw, labh;
     fn->get_pixel_size (labw, labh);
-    set_size_request (2+labw,2+labh);
+    set_size_request (2 + labw, 2 + labh);
 }
 
-bool ILabel::on_expose_event (GdkEventExpose* event) {
+bool ILabel::on_expose_event (GdkEventExpose* event)
+{
 
     Glib::RefPtr<Gtk::Style> style = get_style ();
     Glib::RefPtr<Gdk::Window> window = get_window();
@@ -51,11 +53,12 @@ bool ILabel::on_expose_event (GdkEventExpose* event) {
     return true;
 }
 
-void ILabel::on_style_changed (const Glib::RefPtr<Gtk::Style>& style) {
+void ILabel::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
+{
 
     Glib::RefPtr<Pango::Layout> fn = create_pango_layout(label);
     fn->set_markup (label);
     int labw, labh;
     fn->get_pixel_size (labw, labh);
-    set_size_request (2+labw,2+labh);
+    set_size_request (2 + labw, 2 + labh);
 }

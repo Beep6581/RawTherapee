@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -39,21 +39,21 @@
 
 void* mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset)
 {
-	HANDLE handle = CreateFileMapping((HANDLE)_get_osfhandle(fd), NULL, PAGE_WRITECOPY, 0, 0, NULL);
+    HANDLE handle = CreateFileMapping((HANDLE)_get_osfhandle(fd), NULL, PAGE_WRITECOPY, 0, 0, NULL);
 
-	if (handle != NULL) {
-		start = MapViewOfFile(handle, FILE_MAP_COPY, 0, offset, length);
-		CloseHandle(handle);
-                return start;
-	}
+    if (handle != NULL) {
+        start = MapViewOfFile(handle, FILE_MAP_COPY, 0, offset, length);
+        CloseHandle(handle);
+        return start;
+    }
 
-	return MAP_FAILED;
+    return MAP_FAILED;
 }
 
 int munmap(void *start, size_t length)
 {
-	UnmapViewOfFile(start);
-	return 0;
+    UnmapViewOfFile(start);
+    return 0;
 }
 
 #else // WIN32
@@ -68,315 +68,362 @@ int munmap(void *start, size_t length)
 
 IMFILE* fopen (const char* fname)
 {
-	int fd = safe_open_ReadOnly(fname);
-	if ( fd < 0 )
-		return 0;
+    int fd = safe_open_ReadOnly(fname);
 
-	struct stat stat_buffer;
-	if ( fstat(fd,&stat_buffer) < 0 )
-	{
-		printf("no stat\n");
-		close(fd);
-		return 0;
-	}
+    if ( fd < 0 ) {
+        return 0;
+    }
 
-	void* data = mmap(0,stat_buffer.st_size,PROT_READ,MAP_PRIVATE,fd,0);
-	if ( data == MAP_FAILED )
-	{
-		printf("no mmap\n");
-		close(fd);
-		return 0;
-	}
+    struct stat stat_buffer;
 
-	IMFILE* mf = new IMFILE;
+    if ( fstat(fd, &stat_buffer) < 0 ) {
+        printf("no stat\n");
+        close(fd);
+        return 0;
+    }
 
-        memset(mf, 0, sizeof(*mf));
-	mf->fd = fd;
-	mf->pos = 0;
-	mf->size = stat_buffer.st_size;
-	mf->data = (char*)data;
-	mf->eof = false;
+    void* data = mmap(0, stat_buffer.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+
+    if ( data == MAP_FAILED ) {
+        printf("no mmap\n");
+        close(fd);
+        return 0;
+    }
+
+    IMFILE* mf = new IMFILE;
+
+    memset(mf, 0, sizeof(*mf));
+    mf->fd = fd;
+    mf->pos = 0;
+    mf->size = stat_buffer.st_size;
+    mf->data = (char*)data;
+    mf->eof = false;
 
 #ifdef BZIP_SUPPORT
-	{
-	  bool bzip = false;
-	  Glib::ustring bname = Glib::path_get_basename(fname);
-	  size_t lastdot = bname.find_last_of ('.');
-	  if (lastdot!=bname.npos)
-	    bzip = bname.substr (lastdot).casefold() == Glib::ustring(".bz2").casefold();
-      
-	  if (bzip) {
-	    int ret;
+    {
+        bool bzip = false;
+        Glib::ustring bname = Glib::path_get_basename(fname);
+        size_t lastdot = bname.find_last_of ('.');
 
-	    // initialize bzip stream structure
-	    bz_stream stream;
-	    stream.bzalloc = 0;
-	    stream.bzfree = 0;
-	    stream.opaque = 0;
-	    ret = BZ2_bzDecompressInit(&stream, 0, 0);
+        if (lastdot != bname.npos) {
+            bzip = bname.substr (lastdot).casefold() == Glib::ustring(".bz2").casefold();
+        }
 
-	    if (ret != BZ_OK) {
-	      printf("bzip initialization failed with error %d\n", ret);
-	    }
-	    else {
-	      // allocate initial buffer for decompressed data
-	      unsigned int buffer_out_count = 0; // bytes of decompressed data
-	      unsigned int buffer_size = 10*1024*1024; // 10 MB, extended dynamically if needed
-	      char* buffer = 0;
+        if (bzip) {
+            int ret;
 
-	      stream.next_in = mf->data; // input data address
-	      stream.avail_in = mf->size;
+            // initialize bzip stream structure
+            bz_stream stream;
+            stream.bzalloc = 0;
+            stream.bzfree = 0;
+            stream.opaque = 0;
+            ret = BZ2_bzDecompressInit(&stream, 0, 0);
 
-	      while (ret == BZ_OK) {
-		buffer = static_cast<char*>( realloc(buffer, buffer_size)); // allocate/resize buffer
-		if (!buffer) free(buffer);
+            if (ret != BZ_OK) {
+                printf("bzip initialization failed with error %d\n", ret);
+            } else {
+                // allocate initial buffer for decompressed data
+                unsigned int buffer_out_count = 0; // bytes of decompressed data
+                unsigned int buffer_size = 10 * 1024 * 1024; // 10 MB, extended dynamically if needed
+                char* buffer = 0;
 
-		stream.next_out = buffer + buffer_out_count; // output data adress
-		stream.avail_out = buffer_size - buffer_out_count;
+                stream.next_in = mf->data; // input data address
+                stream.avail_in = mf->size;
 
-		ret = BZ2_bzDecompress(&stream);
+                while (ret == BZ_OK) {
+                    buffer = static_cast<char*>( realloc(buffer, buffer_size)); // allocate/resize buffer
 
-		buffer_size *= 2; // increase buffer size for next iteration
-		buffer_out_count = stream.total_out_lo32;
-		if (stream.total_out_hi32 > 0)
-		  printf("bzip decompressed data byte count high byte is nonzero: %d\n", stream.total_out_hi32);
-	      }
+                    if (!buffer) {
+                        free(buffer);
+                    }
 
-	      if (ret == BZ_STREAM_END) {
-		//delete [] mf->data;
-		// close memory mapping, setting fd -1 will ensure deletion of mf->data upon fclose()
-		mf->fd = -1;
-		munmap((void*)mf->data,mf->size);
-		close(mf->fd);
+                    stream.next_out = buffer + buffer_out_count; // output data adress
+                    stream.avail_out = buffer_size - buffer_out_count;
 
-		char* realData = new char [buffer_out_count];
-		memcpy(realData, buffer, buffer_out_count);
+                    ret = BZ2_bzDecompress(&stream);
 
-		mf->data = realData;
-		mf->size = buffer_out_count;
-	      }
-	      else
-		printf("bzip decompression failed with error %d\n", ret);
+                    buffer_size *= 2; // increase buffer size for next iteration
+                    buffer_out_count = stream.total_out_lo32;
 
-	      // cleanup
-	      free(buffer);
-	      ret = BZ2_bzDecompressEnd(&stream);
-	      if (ret != BZ_OK)
-		printf("bzip cleanup failed with error %d\n", ret);
-	    }
-	  }
-	}
+                    if (stream.total_out_hi32 > 0) {
+                        printf("bzip decompressed data byte count high byte is nonzero: %d\n", stream.total_out_hi32);
+                    }
+                }
+
+                if (ret == BZ_STREAM_END) {
+                    //delete [] mf->data;
+                    // close memory mapping, setting fd -1 will ensure deletion of mf->data upon fclose()
+                    mf->fd = -1;
+                    munmap((void*)mf->data, mf->size);
+                    close(mf->fd);
+
+                    char* realData = new char [buffer_out_count];
+                    memcpy(realData, buffer, buffer_out_count);
+
+                    mf->data = realData;
+                    mf->size = buffer_out_count;
+                } else {
+                    printf("bzip decompression failed with error %d\n", ret);
+                }
+
+                // cleanup
+                free(buffer);
+                ret = BZ2_bzDecompressEnd(&stream);
+
+                if (ret != BZ_OK) {
+                    printf("bzip cleanup failed with error %d\n", ret);
+                }
+            }
+        }
+    }
 #endif // BZIP_SUPPORT
-
-	return mf;
-}
-
-IMFILE* gfopen (const char* fname)
-{
-	return fopen(fname);
-}
-#else
-
-IMFILE* fopen (const char* fname) {
-
-	FILE* f = g_fopen (fname, "rb");
-    if (!f)
-        return NULL;
-    IMFILE* mf = new IMFILE;
-        memset(mf, 0, sizeof(*mf));
-	fseek (f, 0, SEEK_END);
-	mf->size = ftell (f);
-	mf->data = new char [mf->size];
-	fseek (f, 0, SEEK_SET);
-	fread (mf->data, 1, mf->size, f);
-	fclose (f);
-	mf->pos = 0;
-	mf->eof = false;
 
     return mf;
 }
 
-IMFILE* gfopen (const char* fname) {
+IMFILE* gfopen (const char* fname)
+{
+    return fopen(fname);
+}
+#else
 
-	FILE* f = g_fopen (fname, "rb");
-    if (!f)
+IMFILE* fopen (const char* fname)
+{
+
+    FILE* f = g_fopen (fname, "rb");
+
+    if (!f) {
         return NULL;
+    }
+
     IMFILE* mf = new IMFILE;
-        memset(mf, 0, sizeof(*mf));
-	fseek (f, 0, SEEK_END);
-	mf->size = ftell (f);
-	mf->data = new char [mf->size];
-	fseek (f, 0, SEEK_SET);
-	fread (mf->data, 1, mf->size, f);
-	fclose (f);
-	mf->pos = 0;
-	mf->eof = false;
+    memset(mf, 0, sizeof(*mf));
+    fseek (f, 0, SEEK_END);
+    mf->size = ftell (f);
+    mf->data = new char [mf->size];
+    fseek (f, 0, SEEK_SET);
+    fread (mf->data, 1, mf->size, f);
+    fclose (f);
+    mf->pos = 0;
+    mf->eof = false;
+
+    return mf;
+}
+
+IMFILE* gfopen (const char* fname)
+{
+
+    FILE* f = g_fopen (fname, "rb");
+
+    if (!f) {
+        return NULL;
+    }
+
+    IMFILE* mf = new IMFILE;
+    memset(mf, 0, sizeof(*mf));
+    fseek (f, 0, SEEK_END);
+    mf->size = ftell (f);
+    mf->data = new char [mf->size];
+    fseek (f, 0, SEEK_SET);
+    fread (mf->data, 1, mf->size, f);
+    fclose (f);
+    mf->pos = 0;
+    mf->eof = false;
 
 #ifdef BZIP_SUPPORT
     {
-      bool bzip = false;
-      Glib::ustring bname = Glib::path_get_basename(fname);
-      size_t lastdot = bname.find_last_of ('.');
-      if (lastdot!=bname.npos)
-        bzip = bname.substr (lastdot).casefold() == Glib::ustring(".bz2").casefold();
-      
-      if (bzip) {
-	int ret;
+        bool bzip = false;
+        Glib::ustring bname = Glib::path_get_basename(fname);
+        size_t lastdot = bname.find_last_of ('.');
 
-	// initialize bzip stream structure
-	bz_stream stream;
-	stream.bzalloc = 0;
-	stream.bzfree = 0;
-	stream.opaque = 0;
-	ret = BZ2_bzDecompressInit(&stream, 0, 0);
+        if (lastdot != bname.npos) {
+            bzip = bname.substr (lastdot).casefold() == Glib::ustring(".bz2").casefold();
+        }
 
-	if (ret != BZ_OK) {
-	  printf("bzip initialization failed with error %d\n", ret);
-	}
-	else {
-	  // allocate initial buffer for decompressed data
-	  unsigned int buffer_out_count = 0; // bytes of decompressed data
-	  unsigned int buffer_size = 10*1024*1024; // 10 MB, extended dynamically if needed
-	  char* buffer = 0;
+        if (bzip) {
+            int ret;
 
-	  stream.next_in = mf->data; // input data address
-	  stream.avail_in = mf->size;
+            // initialize bzip stream structure
+            bz_stream stream;
+            stream.bzalloc = 0;
+            stream.bzfree = 0;
+            stream.opaque = 0;
+            ret = BZ2_bzDecompressInit(&stream, 0, 0);
 
-	  while (ret == BZ_OK) {
-	    buffer = static_cast<char*>( realloc(buffer, buffer_size)); // allocate/resize buffer
-	    if (!buffer) free(buffer);
+            if (ret != BZ_OK) {
+                printf("bzip initialization failed with error %d\n", ret);
+            } else {
+                // allocate initial buffer for decompressed data
+                unsigned int buffer_out_count = 0; // bytes of decompressed data
+                unsigned int buffer_size = 10 * 1024 * 1024; // 10 MB, extended dynamically if needed
+                char* buffer = 0;
 
-	    stream.next_out = buffer + buffer_out_count; // output data adress
-	    stream.avail_out = buffer_size - buffer_out_count;
+                stream.next_in = mf->data; // input data address
+                stream.avail_in = mf->size;
 
-	    ret = BZ2_bzDecompress(&stream);
+                while (ret == BZ_OK) {
+                    buffer = static_cast<char*>( realloc(buffer, buffer_size)); // allocate/resize buffer
 
-	    buffer_size *= 2; // increase buffer size for next iteration
-	    buffer_out_count = stream.total_out_lo32;
-	    if (stream.total_out_hi32 > 0)
-	      printf("bzip decompressed data byte count high byte is nonzero: %d\n", stream.total_out_hi32);
-	  }
+                    if (!buffer) {
+                        free(buffer);
+                    }
 
-	  if (ret == BZ_STREAM_END) {
-	    delete [] mf->data;
-	    char* realData = new char [buffer_out_count];
-	    memcpy(realData, buffer, buffer_out_count);
+                    stream.next_out = buffer + buffer_out_count; // output data adress
+                    stream.avail_out = buffer_size - buffer_out_count;
 
-	    mf->data = realData;
-	    mf->size = buffer_out_count;
-	  }
-	  else
-	    printf("bzip decompression failed with error %d\n", ret);
+                    ret = BZ2_bzDecompress(&stream);
 
-	  // cleanup
-	  free(buffer);
-	  ret = BZ2_bzDecompressEnd(&stream);
-	  if (ret != BZ_OK)
-	    printf("bzip cleanup failed with error %d\n", ret);
-	}
-      }
+                    buffer_size *= 2; // increase buffer size for next iteration
+                    buffer_out_count = stream.total_out_lo32;
+
+                    if (stream.total_out_hi32 > 0) {
+                        printf("bzip decompressed data byte count high byte is nonzero: %d\n", stream.total_out_hi32);
+                    }
+                }
+
+                if (ret == BZ_STREAM_END) {
+                    delete [] mf->data;
+                    char* realData = new char [buffer_out_count];
+                    memcpy(realData, buffer, buffer_out_count);
+
+                    mf->data = realData;
+                    mf->size = buffer_out_count;
+                } else {
+                    printf("bzip decompression failed with error %d\n", ret);
+                }
+
+                // cleanup
+                free(buffer);
+                ret = BZ2_bzDecompressEnd(&stream);
+
+                if (ret != BZ_OK) {
+                    printf("bzip cleanup failed with error %d\n", ret);
+                }
+            }
+        }
     }
 #endif // BZIP_SUPPORT
     return mf;
 }
 #endif //MYFILE_MMAP
 
-IMFILE* fopen (unsigned* buf, int size) {
+IMFILE* fopen (unsigned* buf, int size)
+{
 
-	IMFILE* mf = new IMFILE;
-        memset(mf, 0, sizeof(*mf));
-	mf->fd = -1;
-	mf->size = size;
-	mf->data = new char [mf->size];
-	memcpy ((void*)mf->data, buf, size);
-	mf->pos = 0;
-	mf->eof = false;
-	return mf;
+    IMFILE* mf = new IMFILE;
+    memset(mf, 0, sizeof(*mf));
+    mf->fd = -1;
+    mf->size = size;
+    mf->data = new char [mf->size];
+    memcpy ((void*)mf->data, buf, size);
+    mf->pos = 0;
+    mf->eof = false;
+    return mf;
 }
 
-void fclose (IMFILE* f) {
+void fclose (IMFILE* f)
+{
 #ifdef MYFILE_MMAP
-	if ( f->fd == -1 )
-	{
-		delete [] f->data;
-	}
-	else
-	{
-		munmap((void*)f->data,f->size);
-		close(f->fd);
-	}
+
+    if ( f->fd == -1 ) {
+        delete [] f->data;
+    } else {
+        munmap((void*)f->data, f->size);
+        close(f->fd);
+    }
+
 #else
-	delete [] f->data;
+    delete [] f->data;
 #endif
-	delete f;
+    delete f;
 }
 
-int fscanf (IMFILE* f, const char* s ...) {
-        // fscanf not easily wrapped since we have no terminating \0 at end
-        // of file data and vsscanf() won't tell us how many characters that
-        // were parsed. However, only dcraw.cc code use it and only for "%f" and
-        // "%d", so we make a dummy fscanf here just to support dcraw case.
-        char buf[50], *endptr;
-        int copy_sz = f->size - f->pos;
-        if (copy_sz > sizeof(buf)) {
-            copy_sz = sizeof(buf) - 1;
+int fscanf (IMFILE* f, const char* s ...)
+{
+    // fscanf not easily wrapped since we have no terminating \0 at end
+    // of file data and vsscanf() won't tell us how many characters that
+    // were parsed. However, only dcraw.cc code use it and only for "%f" and
+    // "%d", so we make a dummy fscanf here just to support dcraw case.
+    char buf[50], *endptr;
+    int copy_sz = f->size - f->pos;
+
+    if (copy_sz > sizeof(buf)) {
+        copy_sz = sizeof(buf) - 1;
+    }
+
+    memcpy(buf, &f->data[f->pos], copy_sz);
+    buf[copy_sz] = '\0';
+    va_list ap;
+    va_start (ap, s);
+
+    if (strcmp(s, "%d") == 0) {
+        int i = strtol(buf, &endptr, 10);
+
+        if (endptr == buf) {
+            return 0;
         }
-        memcpy(buf, &f->data[f->pos], copy_sz);
-        buf[copy_sz] = '\0';
-	va_list ap;
-        va_start (ap, s);
-        if (strcmp(s, "%d") == 0) {
-            int i = strtol(buf, &endptr, 10);
-            if (endptr == buf) {
-                return 0;
-            }
-            int *pi = va_arg(ap, int*);
-            *pi = i;
-        } else if (strcmp(s, "%f") == 0) {
-            float f = strtof(buf, &endptr);
-            if (endptr == buf) {
-                return 0;
-            }
-            float *pf = va_arg(ap, float*);
-            *pf = f;
+
+        int *pi = va_arg(ap, int*);
+        *pi = i;
+    } else if (strcmp(s, "%f") == 0) {
+        float f = strtof(buf, &endptr);
+
+        if (endptr == buf) {
+            return 0;
         }
-        va_end (ap);
-        f->pos += endptr - buf;
-        return 1;
+
+        float *pf = va_arg(ap, float*);
+        *pf = f;
+    }
+
+    va_end (ap);
+    f->pos += endptr - buf;
+    return 1;
 }
 
 
-char* fgets (char* s, int n, IMFILE* f) {
+char* fgets (char* s, int n, IMFILE* f)
+{
 
-	if (f->pos>=f->size) {
-		f->eof = true;
-		return NULL;
-	}
-	int i = 0;
-	do s[i++] = f->data[f->pos++];		
-	while (i<n && f->pos<f->size);
-	return s;
+    if (f->pos >= f->size) {
+        f->eof = true;
+        return NULL;
+    }
+
+    int i = 0;
+
+    do {
+        s[i++] = f->data[f->pos++];
+    } while (i < n && f->pos < f->size);
+
+    return s;
 }
 
-void imfile_set_plistener(IMFILE *f, rtengine::ProgressListener *plistener, double progress_range) {
-	f->plistener = plistener;
-	f->progress_range = progress_range;
-	f->progress_next = f->size / 10 + 1;
-	f->progress_current = 0;
+void imfile_set_plistener(IMFILE *f, rtengine::ProgressListener *plistener, double progress_range)
+{
+    f->plistener = plistener;
+    f->progress_range = progress_range;
+    f->progress_next = f->size / 10 + 1;
+    f->progress_current = 0;
 }
 
-void imfile_update_progress(IMFILE *f) {
-	if (!f->plistener || f->progress_current < f->progress_next) {
-		return;
-	}
-	do {
-		f->progress_next += f->size / 10 + 1;
-	} while (f->progress_next < f->progress_current);
-	double p = (double)f->progress_current / f->size;
-	if (p > 1.0) {
-		/* this can happen if same bytes are read over and over again. Progress bar is not intended
-		   to be exact, just give some progress indication for normal raw file access patterns */
-		p = 1.0;
-	}
-	f->plistener->setProgress(p * f->progress_range);
+void imfile_update_progress(IMFILE *f)
+{
+    if (!f->plistener || f->progress_current < f->progress_next) {
+        return;
+    }
+
+    do {
+        f->progress_next += f->size / 10 + 1;
+    } while (f->progress_next < f->progress_current);
+
+    double p = (double)f->progress_current / f->size;
+
+    if (p > 1.0) {
+        /* this can happen if same bytes are read over and over again. Progress bar is not intended
+           to be exact, just give some progress indication for normal raw file access patterns */
+        p = 1.0;
+    }
+
+    f->plistener->setProgress(p * f->progress_range);
 }

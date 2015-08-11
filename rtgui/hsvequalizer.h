@@ -5,7 +5,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -16,7 +16,7 @@
  *
  *  2010 Ilya Popov <ilia_popov@rambler.ru>
  */
- 
+
 #ifndef HSVEQUALIZER_H_INCLUDED
 #define HSVEQUALIZER_H_INCLUDED
 
@@ -34,25 +34,25 @@ class HSVEqualizer : public ToolParamBlock, public AdjusterListener, public Fold
 
 protected:
 
-	CurveEditorGroup*  curveEditorG;
-	FlatCurveEditor*   hshape;
-	FlatCurveEditor*   sshape;
-	FlatCurveEditor*   vshape;
+    CurveEditorGroup*  curveEditorG;
+    FlatCurveEditor*   hshape;
+    FlatCurveEditor*   sshape;
+    FlatCurveEditor*   vshape;
 
 public:
 
     HSVEqualizer ();
     virtual ~HSVEqualizer ();
 
-    void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-    void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
     void curveChanged    (CurveEditor* ce);
     //void setDefaults     (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode    (bool batchMode);
     void setEditProvider (EditDataProvider *provider);
     void autoOpenCurve   ();
     virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
-   
+
     //void adjusterChanged (Adjuster* a, double newval);
 };
 

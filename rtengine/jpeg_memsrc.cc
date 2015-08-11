@@ -28,10 +28,10 @@
 /* Expanded data source object for memory input */
 
 typedef struct {
-  struct jpeg_source_mgr pub; /* public fields */
-  jmp_buf error_jmp_buf;      /* error handler for this instance */
+    struct jpeg_source_mgr pub; /* public fields */
+    jmp_buf error_jmp_buf;      /* error handler for this instance */
 
-  JOCTET eoi_buffer[2];		/* a place to put a dummy EOI */
+    JOCTET eoi_buffer[2];     /* a place to put a dummy EOI */
 } my_source_mgr;
 
 typedef my_source_mgr * my_src_ptr;
@@ -45,10 +45,10 @@ typedef my_source_mgr * my_src_ptr;
 static void
 init_source (j_decompress_ptr cinfo)
 {
-  /* No work, since jpeg_memory_src set up the buffer pointer and count.
-   * Indeed, if we want to read multiple JPEG images from one buffer,
-   * this *must* not do anything to the pointer.
-   */
+    /* No work, since jpeg_memory_src set up the buffer pointer and count.
+     * Indeed, if we want to read multiple JPEG images from one buffer,
+     * this *must* not do anything to the pointer.
+     */
 }
 
 
@@ -68,17 +68,17 @@ init_source (j_decompress_ptr cinfo)
 static boolean
 fill_input_buffer(j_decompress_ptr cinfo)
 {
-  my_src_ptr src = (my_src_ptr) cinfo->src;
+    my_src_ptr src = (my_src_ptr) cinfo->src;
 
-  WARNMS(cinfo, JWRN_JPEG_EOF);
+    WARNMS(cinfo, JWRN_JPEG_EOF);
 
-  /* Create a fake EOI marker */
-  src->eoi_buffer[0] = (JOCTET) 0xFF;
-  src->eoi_buffer[1] = (JOCTET) JPEG_EOI;
-  src->pub.next_input_byte = src->eoi_buffer;
-  src->pub.bytes_in_buffer = 2;
+    /* Create a fake EOI marker */
+    src->eoi_buffer[0] = (JOCTET) 0xFF;
+    src->eoi_buffer[1] = (JOCTET) JPEG_EOI;
+    src->pub.next_input_byte = src->eoi_buffer;
+    src->pub.bytes_in_buffer = 2;
 
-  return TRUE;
+    return TRUE;
 }
 
 
@@ -95,19 +95,20 @@ fill_input_buffer(j_decompress_ptr cinfo)
 static void
 skip_input_data (j_decompress_ptr cinfo, long num_bytes)
 {
-  my_src_ptr src = (my_src_ptr) cinfo->src;
+    my_src_ptr src = (my_src_ptr) cinfo->src;
 
-  if (num_bytes > 0) {
-    while (num_bytes > (long) src->pub.bytes_in_buffer) {
-      num_bytes -= (long) src->pub.bytes_in_buffer;
-      (void) fill_input_buffer(cinfo);
-      /* note we assume that fill_input_buffer will never return FALSE,
-       * so suspension need not be handled.
-       */
+    if (num_bytes > 0) {
+        while (num_bytes > (long) src->pub.bytes_in_buffer) {
+            num_bytes -= (long) src->pub.bytes_in_buffer;
+            (void) fill_input_buffer(cinfo);
+            /* note we assume that fill_input_buffer will never return FALSE,
+             * so suspension need not be handled.
+             */
+        }
+
+        src->pub.next_input_byte += (size_t) num_bytes;
+        src->pub.bytes_in_buffer -= (size_t) num_bytes;
     }
-    src->pub.next_input_byte += (size_t) num_bytes;
-    src->pub.bytes_in_buffer -= (size_t) num_bytes;
-  }
 }
 
 
@@ -132,7 +133,7 @@ skip_input_data (j_decompress_ptr cinfo, long num_bytes)
 static void
 term_source (j_decompress_ptr cinfo)
 {
-  /* no work necessary here */
+    /* no work necessary here */
 }
 
 
@@ -143,27 +144,27 @@ term_source (j_decompress_ptr cinfo)
 GLOBAL(void)
 jpeg_memory_src (j_decompress_ptr cinfo, const JOCTET * buffer, size_t bufsize)
 {
-  my_src_ptr src;
+    my_src_ptr src;
 
-  /* The source object is made permanent so that a series of JPEG images
-   * can be read from a single buffer by calling jpeg_memory_src
-   * only before the first one.
-   * This makes it unsafe to use this manager and a different source
-   * manager serially with the same JPEG object.  Caveat programmer.
-   */
-  if (cinfo->src == NULL) {	/* first time for this JPEG object? */
-    cinfo->src = (struct jpeg_source_mgr *)
-      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
-				  sizeof(my_source_mgr));
-  }
+    /* The source object is made permanent so that a series of JPEG images
+     * can be read from a single buffer by calling jpeg_memory_src
+     * only before the first one.
+     * This makes it unsafe to use this manager and a different source
+     * manager serially with the same JPEG object.  Caveat programmer.
+     */
+    if (cinfo->src == NULL) { /* first time for this JPEG object? */
+        cinfo->src = (struct jpeg_source_mgr *)
+                     (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
+                             sizeof(my_source_mgr));
+    }
 
-  src = (my_src_ptr) cinfo->src;
-  src->pub.init_source = init_source;
-  src->pub.fill_input_buffer = fill_input_buffer;
-  src->pub.skip_input_data = skip_input_data;
-  src->pub.resync_to_restart = jpeg_resync_to_restart; /* use default method */
-  src->pub.term_source = term_source;
+    src = (my_src_ptr) cinfo->src;
+    src->pub.init_source = init_source;
+    src->pub.fill_input_buffer = fill_input_buffer;
+    src->pub.skip_input_data = skip_input_data;
+    src->pub.resync_to_restart = jpeg_resync_to_restart; /* use default method */
+    src->pub.term_source = term_source;
 
-  src->pub.next_input_byte = buffer;
-  src->pub.bytes_in_buffer = bufsize;
+    src->pub.next_input_byte = buffer;
+    src->pub.bytes_in_buffer = bufsize;
 }

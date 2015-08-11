@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -22,20 +22,22 @@
 #include "../rtengine/rtengine.h"
 #include <glibmm.h>
 
-class ProfileChangeListener {
+class ProfileChangeListener
+{
 
-    public:
-        virtual     ~ProfileChangeListener() {}
-        virtual void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited=NULL) {}
-        virtual void setDefaults    (rtengine::procparams::ProcParams* defparams) {}
+public:
+    virtual     ~ProfileChangeListener() {}
+    virtual void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = NULL) {}
+    virtual void setDefaults    (rtengine::procparams::ProcParams* defparams) {}
 };
 
-class BatchProfileChangeListener {
+class BatchProfileChangeListener
+{
 
-    public:
-        virtual     ~BatchProfileChangeListener() {}
-        virtual void beginBatchProfileChange(int numberOfEntries) {}
-        virtual void endBatchProfileChange() {}
+public:
+    virtual     ~BatchProfileChangeListener() {}
+    virtual void beginBatchProfileChange(int numberOfEntries) {}
+    virtual void endBatchProfileChange() {}
 };
 
 

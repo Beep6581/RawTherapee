@@ -23,39 +23,44 @@
 
 class CurveEditorSubGroup;
 
-class Axis {
+class Axis
+{
 public:
-	Glib::ustring label;
-	unsigned int decimal;
-	double increment;
-	double pageIncrement;
-	double rangeLowerBound;
-	double rangeUpperBound;
+    Glib::ustring label;
+    unsigned int decimal;
+    double increment;
+    double pageIncrement;
+    double rangeLowerBound;
+    double rangeUpperBound;
 
-	Axis();
-	Axis(Glib::ustring label, unsigned int decimal, double increment, double pageIncrement, double valMin, double valMax);
-	void setValues(Glib::ustring label, unsigned int decimal, double increment, double pageIncrement, double valMin, double valMax);
+    Axis();
+    Axis(Glib::ustring label, unsigned int decimal, double increment, double pageIncrement, double valMin, double valMax);
+    void setValues(Glib::ustring label, unsigned int decimal, double increment, double pageIncrement, double valMin, double valMax);
 };
 
 class CoordinateAdjuster;
 /**
  * @brief Object that will emit NewCoordinates events
  */
-class CoordinateProvider {
+class CoordinateProvider
+{
 protected:
-	CoordinateAdjuster *coordinateAdjuster;
+    CoordinateAdjuster *coordinateAdjuster;
 public:
-	CoordinateProvider() : coordinateAdjuster(NULL) {}
-	virtual ~CoordinateProvider() {}
-	void setListener(CoordinateAdjuster *adjuster) { coordinateAdjuster = adjuster; }
+    CoordinateProvider() : coordinateAdjuster(NULL) {}
+    virtual ~CoordinateProvider() {}
+    void setListener(CoordinateAdjuster *adjuster)
+    {
+        coordinateAdjuster = adjuster;
+    }
 
-	/** @brief Update the position of the edited point ; will trigger events
-	 *
-	 * @param pos New position
-	 * @param chanIdx Chanel index as given in the std::vector upon instantiation
-	 */
-	virtual void setPos(double pos, int chanIdx)=0;
-	virtual void stopNumericalAdjustment()=0;
+    /** @brief Update the position of the edited point ; will trigger events
+     *
+     * @param pos New position
+     * @param chanIdx Chanel index as given in the std::vector upon instantiation
+     */
+    virtual void setPos(double pos, int chanIdx) = 0;
+    virtual void stopNumericalAdjustment() = 0;
 };
 
 /**
@@ -65,91 +70,94 @@ public:
  *
  * The position of the Axis in the vector will be used in the communication between the Adjuster and the Provider to identify the Axis
  */
-class CoordinateAdjuster : public Gtk::HBox {
+class CoordinateAdjuster : public Gtk::HBox
+{
 
 public:
-	//-------------------------------- AxisAdjuster -------------------
-	class AxisAdjuster {
-	private:
-		char idx;
-	public:
-		CoordinateAdjuster *parent;
-		Gtk::Label *label;
-		Gtk::SpinButton *spinButton;
-		sigc::connection spinButtonConn;
-		float rangeLowerBound;
-		float rangeUpperBound;
+    //-------------------------------- AxisAdjuster -------------------
+    class AxisAdjuster
+    {
+    private:
+        char idx;
+    public:
+        CoordinateAdjuster *parent;
+        Gtk::Label *label;
+        Gtk::SpinButton *spinButton;
+        sigc::connection spinButtonConn;
+        float rangeLowerBound;
+        float rangeUpperBound;
 
-		AxisAdjuster(CoordinateAdjuster *parent, const Axis *axis, char index);
+        AxisAdjuster(CoordinateAdjuster *parent, const Axis *axis, char index);
 
-		// used to update the AxisAdjuster's parameters
-		void updateGUI(const Axis &axis);
-		// useed to update the displayed value
-		void setValue(double newValue);
-		//bool keyPressed(GdkEventKey* event);
-		void valueChanged();
-	};
-	//----------------------------------------------------------------
+        // used to update the AxisAdjuster's parameters
+        void updateGUI(const Axis &axis);
+        // useed to update the displayed value
+        void setValue(double newValue);
+        //bool keyPressed(GdkEventKey* event);
+        void valueChanged();
+    };
+    //----------------------------------------------------------------
 
-	//-------------------------------- Boundaries  -------------------
-	class Boundaries {
-	public:
-		double minVal;
-		double maxVal;
-	};
-	//---------------------------------------------------------------
+    //-------------------------------- Boundaries  -------------------
+    class Boundaries
+    {
+    public:
+        double minVal;
+        double maxVal;
+    };
+    //---------------------------------------------------------------
 
 private:
-	typedef enum {
-		CA_STATUS_IDLE,
-		CA_STATUS_EDITING,
-		CA_STATUS_END_EDITING
-	} Status;
+    typedef enum {
+        CA_STATUS_IDLE,
+        CA_STATUS_EDITING,
+        CA_STATUS_END_EDITING
+    } Status;
 
-	std::vector<AxisAdjuster*> axisAdjusters;
-	Status status;
-	CurveEditorSubGroup *parent;
+    std::vector<AxisAdjuster*> axisAdjusters;
+    Status status;
+    CurveEditorSubGroup *parent;
 
-	void createWidgets(const std::vector<Axis> &axis);
+    void createWidgets(const std::vector<Axis> &axis);
 
 protected:
 
-	friend class AxisAdjuster;
+    friend class AxisAdjuster;
 
-	CoordinateProvider *coordinateProvider;
+    CoordinateProvider *coordinateProvider;
 
-	void updatePos(char index, double value);
+    void updatePos(char index, double value);
 
 
 public:
 
-	/// Basic X/Y adjuster, in the [0-1] range
-	CoordinateAdjuster(CoordinateProvider *provider, CurveEditorSubGroup *parent);
-	/// For more complex adjuster
-	CoordinateAdjuster(CoordinateProvider *provider, CurveEditorSubGroup *parent, const std::vector<Axis> &axis);
+    /// Basic X/Y adjuster, in the [0-1] range
+    CoordinateAdjuster(CoordinateProvider *provider, CurveEditorSubGroup *parent);
+    /// For more complex adjuster
+    CoordinateAdjuster(CoordinateProvider *provider, CurveEditorSubGroup *parent, const std::vector<Axis> &axis);
 
-	virtual ~CoordinateAdjuster() {}
+    virtual ~CoordinateAdjuster() {}
 
-	// Update the Axis list, e.g. on Curve change, but MUST have the same axis count
-	void setAxis(const std::vector<Axis> &axis);
+    // Update the Axis list, e.g. on Curve change, but MUST have the same axis count
+    void setAxis(const std::vector<Axis> &axis);
 
-	/** @brief Update the numbers in the spin buttons ; doesn't trigger any event
-	 *
-	 * @param pos Vector that gives the values of each channels
-	 */
-	void setPos(std::vector<double> &pos);
+    /** @brief Update the numbers in the spin buttons ; doesn't trigger any event
+     *
+     * @param pos Vector that gives the values of each channels
+     */
+    void setPos(std::vector<double> &pos);
 
-	/// Start the adjustment session (enable the widget)
-	void startNumericalAdjustment(const std::vector<Boundaries> &newBoundaries);
+    /// Start the adjustment session (enable the widget)
+    void startNumericalAdjustment(const std::vector<Boundaries> &newBoundaries);
 
-	/// Edit another point
-	void switchAdjustedPoint(std::vector<double> &pos, const std::vector<Boundaries> &newBoundaries);
+    /// Edit another point
+    void switchAdjustedPoint(std::vector<double> &pos, const std::vector<Boundaries> &newBoundaries);
 
-	/// Trigger the event to show the CoordinateAdjuster
-	void showMe(CoordinateProvider *provider);
+    /// Trigger the event to show the CoordinateAdjuster
+    void showMe(CoordinateProvider *provider);
 
-	/// Stop the adjustment session (disable the widget, i.e. you won't be able to edit the values)
-	void stopNumericalAdjustment();
+    /// Stop the adjustment session (disable the widget, i.e. you won't be able to edit the values)
+    void stopNumericalAdjustment();
 
 };
 

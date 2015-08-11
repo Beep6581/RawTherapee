@@ -25,9 +25,10 @@
 #include "toolpanel.h"
 
 
-class BayerProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel{
+class BayerProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+{
 
-  protected:
+protected:
 
     MyComboBoxText* method;
     Adjuster* ccSteps;
@@ -42,15 +43,15 @@ class BayerProcess : public ToolParamBlock, public AdjusterListener, public Fold
     bool lastDCBen;
     int oldSelection;
     //bool lastALLen;
-    sigc::connection methodconn,dcbEnhconn;  //,allEnhconn;
-  public:
+    sigc::connection methodconn, dcbEnhconn; //,allEnhconn;
+public:
 
     BayerProcess ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
     void setBatchMode   (bool batchMode);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
 
     void methodChanged ();
     void adjusterChanged     (Adjuster* a, double newval);

@@ -20,29 +20,43 @@
 #ifndef _IMAGEDIMENSIONS_
 #define _IMAGEDIMENSIONS_
 
-class PreviewProps {
-	public:
-		int x, y, w, h, skip;
-		PreviewProps (int _x, int _y, int _w, int _h, int _skip)
-					 : x(_x), y(_y), w(_w), h(_h), skip(_skip) {}
+class PreviewProps
+{
+public:
+    int x, y, w, h, skip;
+    PreviewProps (int _x, int _y, int _w, int _h, int _skip)
+        : x(_x), y(_y), w(_w), h(_h), skip(_skip) {}
 };
 
 /*
  * Description of an image dimension, with getter and setter
  */
-class ImageDimensions {
+class ImageDimensions
+{
 
-	public:
-		int width;
-		int height;
+public:
+    int width;
+    int height;
 
-	public:
-		ImageDimensions() : width(-1), height(-1) {}
-		int getW       () { return width;  }
-		int getH       () { return height; }
-		int getWidth   () { return width;  }
-		int getHeight  () { return height; }
-		void transform (PreviewProps pp, int tran, int &sx1, int &sy1, int &sx2, int &sy2);
+public:
+    ImageDimensions() : width(-1), height(-1) {}
+    int getW       ()
+    {
+        return width;
+    }
+    int getH       ()
+    {
+        return height;
+    }
+    int getWidth   ()
+    {
+        return width;
+    }
+    int getHeight  ()
+    {
+        return height;
+    }
+    void transform (PreviewProps pp, int tran, int &sx1, int &sy1, int &sx2, int &sy2);
 };
 
 

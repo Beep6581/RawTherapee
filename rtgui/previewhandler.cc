@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -23,7 +23,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-PreviewHandler::PreviewHandler () : image(NULL), previewScale(1.) {
+PreviewHandler::PreviewHandler () : image(NULL), previewScale(1.)
+{
 
     pih = new PreviewHandlerIdleHelper;
     pih->phandler = this;
@@ -31,12 +32,14 @@ PreviewHandler::PreviewHandler () : image(NULL), previewScale(1.) {
     pih->pending = 0;
 }
 
-PreviewHandler::~PreviewHandler () {
+PreviewHandler::~PreviewHandler ()
+{
 
-    if (pih->pending)
+    if (pih->pending) {
         pih->destroyed = true;
-    else
+    } else {
         delete pih;
+    }
 }
 
 //----------------previewimagelistener functions--------------------
@@ -48,15 +51,18 @@ struct iaimgpar {
     CropParams cp;
 };
 
-int setImageUI (void* data) {
+int setImageUI (void* data)
+{
     iaimgpar* iap = static_cast<iaimgpar*>(data);
     PreviewHandlerIdleHelper* pih = iap->pih;
 
     if (pih->destroyed) {
-        if (pih->pending == 1)
+        if (pih->pending == 1) {
             delete pih;
-        else    
+        } else {
             pih->pending--;
+        }
+
         delete iap;
 
         return 0;
@@ -67,19 +73,20 @@ int setImageUI (void* data) {
         oldImg->getMutex().lock ();
         pih->phandler->image = iap->image;
         oldImg->getMutex().unlock ();
-    }
-    else    
+    } else {
         pih->phandler->image = iap->image;
+    }
 
     pih->phandler->cropParams = iap->cp;
     pih->phandler->previewScale = iap->scale;
     pih->pending--;
     delete iap;
-    
+
     return 0;
 }
 
-void PreviewHandler::setImage (rtengine::IImage8* i, double scale, rtengine::procparams::CropParams cp) { 
+void PreviewHandler::setImage (rtengine::IImage8* i, double scale, rtengine::procparams::CropParams cp)
+{
 
     pih->pending++;
 
@@ -93,27 +100,31 @@ void PreviewHandler::setImage (rtengine::IImage8* i, double scale, rtengine::pro
 }
 
 
-int delImageUI (void* data) {
+int delImageUI (void* data)
+{
 
     iaimgpar* iap = static_cast<iaimgpar*>(data);
     PreviewHandlerIdleHelper* pih = iap->pih;
 
     if (pih->destroyed) {
-        if (pih->pending == 1)
+        if (pih->pending == 1) {
             delete pih;
-        else    
+        } else {
             pih->pending--;
+        }
+
         delete iap;
 
         return 0;
     }
-    
+
     if (pih->phandler->image) {
         IImage8* oldImg = pih->phandler->image;
         oldImg->getMutex().lock ();
         pih->phandler->image = NULL;
         oldImg->getMutex().unlock ();
-    }    
+    }
+
     iap->image->free ();
     pih->phandler->previewImgMutex.lock ();
     pih->phandler->previewImg.clear ();
@@ -125,7 +136,8 @@ int delImageUI (void* data) {
     return 0;
 }
 
-void PreviewHandler::delImage (IImage8* i) { 
+void PreviewHandler::delImage (IImage8* i)
+{
 
     pih->pending++;
 
@@ -136,23 +148,26 @@ void PreviewHandler::delImage (IImage8* i) {
     g_idle_add (delImageUI, iap);
 }
 
-int imageReadyUI (void* data) {
-    
+int imageReadyUI (void* data)
+{
+
     iaimgpar* iap = static_cast<iaimgpar*>(data);
     PreviewHandlerIdleHelper* pih = iap->pih;
-    
+
     if (pih->destroyed) {
-        if (pih->pending == 1)
+        if (pih->pending == 1) {
             delete pih;
-        else    
+        } else {
             pih->pending--;
+        }
+
         delete iap;
 
         return 0;
     }
 
     pih->phandler->previewImgMutex.lock ();
-    pih->phandler->previewImg = Gdk::Pixbuf::create_from_data (pih->phandler->image->getData(), Gdk::COLORSPACE_RGB, false, 8, pih->phandler->image->getWidth(), pih->phandler->image->getHeight(), 3*pih->phandler->image->getWidth());    
+    pih->phandler->previewImg = Gdk::Pixbuf::create_from_data (pih->phandler->image->getData(), Gdk::COLORSPACE_RGB, false, 8, pih->phandler->image->getWidth(), pih->phandler->image->getHeight(), 3 * pih->phandler->image->getWidth());
     pih->phandler->previewImgMutex.unlock ();
     pih->phandler->cropParams = iap->cp;
     pih->phandler->previewImageChanged ();
@@ -162,7 +177,8 @@ int imageReadyUI (void* data) {
     return 0;
 }
 
-void PreviewHandler::imageReady (CropParams cp) {
+void PreviewHandler::imageReady (CropParams cp)
+{
 
     pih->pending++;
     iaimgpar* iap = new iaimgpar;
@@ -171,27 +187,41 @@ void PreviewHandler::imageReady (CropParams cp) {
     g_idle_add (imageReadyUI, iap);
 }
 
-Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int x, int y, int w, int h, double zoom) {
+Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int x, int y, int w, int h, double zoom)
+{
     MyMutex::MyLock lock(previewImgMutex);
 
     Glib::RefPtr<Gdk::Pixbuf> resPixbuf;
 
     if (previewImg) {
-        double totalZoom = zoom*previewScale;
-        if (w>previewImg->get_width()*totalZoom)
-            w = image->getWidth()*totalZoom;
-        if (h>previewImg->get_height()*totalZoom)
-            h = image->getHeight()*totalZoom;           
-        int ix = x*zoom;
-        int iy = y*zoom;
-        if (ix<0)
+        double totalZoom = zoom * previewScale;
+
+        if (w > previewImg->get_width()*totalZoom) {
+            w = image->getWidth() * totalZoom;
+        }
+
+        if (h > previewImg->get_height()*totalZoom) {
+            h = image->getHeight() * totalZoom;
+        }
+
+        int ix = x * zoom;
+        int iy = y * zoom;
+
+        if (ix < 0) {
             ix = 0;
-        if (iy<0)
+        }
+
+        if (iy < 0) {
             iy = 0;
-        if ((ix+w)/totalZoom>previewImg->get_width())
-            ix = previewImg->get_width()*totalZoom - w;
-        if ((iy+h)/totalZoom>previewImg->get_height())
-            iy = previewImg->get_height()*totalZoom - h;
+        }
+
+        if ((ix + w) / totalZoom > previewImg->get_width()) {
+            ix = previewImg->get_width() * totalZoom - w;
+        }
+
+        if ((iy + h) / totalZoom > previewImg->get_height()) {
+            iy = previewImg->get_height() * totalZoom - h;
+        }
 
         resPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, w, h);
         previewImg->scale (resPixbuf, 0, 0, w, h, -ix, -iy, totalZoom, totalZoom, Gdk::INTERP_NEAREST);
@@ -200,17 +230,18 @@ Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int x, int y, int w, in
     return resPixbuf;
 }
 
-Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int desiredW, int desiredH, double& zoom_) {
+Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int desiredW, int desiredH, double& zoom_)
+{
     MyMutex::MyLock lock(previewImgMutex);
 
     Glib::RefPtr<Gdk::Pixbuf> resPixbuf;
 
     if (previewImg) {
-        double zoom1 = (double)max(desiredW,20) / previewImg->get_width();  // too small values lead to extremely increased processing time in scale function, Issue 2783
-        double zoom2 = (double)max(desiredH,20) / previewImg->get_height(); // ""
-        double zoom = zoom1<zoom2 ? zoom1 : zoom2;
-        
-        resPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, image->getWidth()*zoom, image->getHeight()*zoom);
+        double zoom1 = (double)max(desiredW, 20) / previewImg->get_width(); // too small values lead to extremely increased processing time in scale function, Issue 2783
+        double zoom2 = (double)max(desiredH, 20) / previewImg->get_height(); // ""
+        double zoom = zoom1 < zoom2 ? zoom1 : zoom2;
+
+        resPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, image->getWidth() * zoom, image->getHeight() * zoom);
         previewImg->scale (resPixbuf, 0, 0, previewImg->get_width()*zoom, previewImg->get_height()*zoom, 0, 0, zoom, zoom, Gdk::INTERP_BILINEAR);
         zoom_ = zoom / previewScale;
     }
@@ -218,8 +249,10 @@ Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int desiredW, int desir
     return resPixbuf;
 }
 
-void PreviewHandler::previewImageChanged () {
-    
-    for (std::list<PreviewListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
+void PreviewHandler::previewImageChanged ()
+{
+
+    for (std::list<PreviewListener*>::iterator i = listeners.begin(); i != listeners.end(); i++) {
         (*i)->previewImageChanged ();
+    }
 }

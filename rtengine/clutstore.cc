@@ -17,27 +17,32 @@ CLUTStore::CLUTStore()
 CLUT* CLUTStore::getClut( const Glib::ustring& filename )
 {
     CLUT *result = 0;
-	m_mutex.lock();
-	Cluts::iterator cluts_it = m_cluts.find(filename);
-	if (cluts_it == m_cluts.end()) {
-		if (m_cluts.size() >= options.clutCacheSize) {
-			// Evict a "random" entry from cache
-			Cluts::iterator victim_it = m_cluts.begin();
-			if (--victim_it->second.first == -1) {
-				delete victim_it->second.second;
-				m_cluts.erase(victim_it);
-			}
-		}
-		cluts_it = m_cluts.insert(std::make_pair(filename, std::make_pair(0, new HaldCLUT))).first;
-		cluts_it->second.second->load( filename );
+    m_mutex.lock();
+    Cluts::iterator cluts_it = m_cluts.find(filename);
+
+    if (cluts_it == m_cluts.end()) {
+        if (m_cluts.size() >= options.clutCacheSize) {
+            // Evict a "random" entry from cache
+            Cluts::iterator victim_it = m_cluts.begin();
+
+            if (--victim_it->second.first == -1) {
+                delete victim_it->second.second;
+                m_cluts.erase(victim_it);
+            }
+        }
+
+        cluts_it = m_cluts.insert(std::make_pair(filename, std::make_pair(0, new HaldCLUT))).first;
+        cluts_it->second.second->load( filename );
     }
+
     if (cluts_it->second.second->isValid()) {
         result = cluts_it->second.second;
         ++cluts_it->second.first;
     } else {
-		delete cluts_it->second.second;
-		m_cluts.erase(cluts_it);
-	}
+        delete cluts_it->second.second;
+        m_cluts.erase(cluts_it);
+    }
+
     m_mutex.unlock();
 
     return result;
@@ -45,33 +50,38 @@ CLUT* CLUTStore::getClut( const Glib::ustring& filename )
 
 void CLUTStore::releaseClut( const CLUT* clut )
 {
-	m_mutex.lock();
-	for (Cluts::iterator cluts_it = m_cluts.begin(); cluts_it != m_cluts.end(); ++cluts_it) {
-		if (cluts_it->second.second == clut) {
-			if (--cluts_it->second.first == -1) {
-				delete cluts_it->second.second;
-				m_cluts.erase(cluts_it);
-			}
-			break;
-		}
-	}
-	m_mutex.unlock();
+    m_mutex.lock();
+
+    for (Cluts::iterator cluts_it = m_cluts.begin(); cluts_it != m_cluts.end(); ++cluts_it) {
+        if (cluts_it->second.second == clut) {
+            if (--cluts_it->second.first == -1) {
+                delete cluts_it->second.second;
+                m_cluts.erase(cluts_it);
+            }
+
+            break;
+        }
+    }
+
+    m_mutex.unlock();
 }
 
 void CLUTStore::clearCache()
 {
-	m_mutex.lock();
-	for (Cluts::iterator cluts_it = m_cluts.begin(); cluts_it != m_cluts.end();) {
-		if (--cluts_it->second.first == -1) {
-			delete cluts_it->second.second;
-			Cluts::iterator tmp = cluts_it;
-			++cluts_it;
-			m_cluts.erase(tmp);
-		} else {
-			++cluts_it;
-		}
-	}
-	m_mutex.unlock();
+    m_mutex.lock();
+
+    for (Cluts::iterator cluts_it = m_cluts.begin(); cluts_it != m_cluts.end();) {
+        if (--cluts_it->second.first == -1) {
+            delete cluts_it->second.second;
+            Cluts::iterator tmp = cluts_it;
+            ++cluts_it;
+            m_cluts.erase(tmp);
+        } else {
+            ++cluts_it;
+        }
+    }
+
+    m_mutex.unlock();
 }
 
 void rtengine::splitClutFilename( Glib::ustring filename, Glib::ustring &name, Glib::ustring &extension, Glib::ustring &profileName )
@@ -80,11 +90,13 @@ void rtengine::splitClutFilename( Glib::ustring filename, Glib::ustring &name, G
     name = filename;
     //remove dirs
     size_t lastSlashPos = filename.find_last_of( "/" );
+
     if ( lastSlashPos == Glib::ustring::npos ) {
         lastSlashPos = filename.find_last_of( "\\" );
     }
 
     size_t lastDotPos = filename.find_last_of( '.' );
+
     if ( lastDotPos != Glib::ustring::npos ) {
         name = filename.substr( 0, lastDotPos );
         extension = filename.substr( lastDotPos + 1, Glib::ustring::npos );
@@ -92,8 +104,10 @@ void rtengine::splitClutFilename( Glib::ustring filename, Glib::ustring &name, G
 
     profileName = "sRGB"; // sRGB by default
     static std::vector<Glib::ustring> workingProfiles = rtengine::getWorkingProfiles();
+
     for ( std::vector<Glib::ustring>::iterator it = workingProfiles.begin(); it != workingProfiles.end(); ++it ) {
         Glib::ustring &currentProfile = *it;
+
         if ( std::search( name.rbegin(), name.rend(), currentProfile.rbegin(), currentProfile.rend() ) == name.rbegin() ) {
             profileName = currentProfile;
             name = name.substr( 0, name.size() - currentProfile.size() );
@@ -105,9 +119,9 @@ void rtengine::splitClutFilename( Glib::ustring filename, Glib::ustring &name, G
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 HaldCLUT::HaldCLUT()
-:   m_clutImage( 0 ),
-    m_level (0),
-    m_profile( "sRGB" )
+    :   m_clutImage( 0 ),
+        m_level (0),
+        m_profile( "sRGB" )
 {
 }
 
@@ -121,12 +135,13 @@ HaldCLUT::~HaldCLUT()
 
 void HaldCLUT::load( Glib::ustring filename )
 {
-	m_clutImage = loadFile( filename, "", m_level );
-	Glib::ustring name, ext;
-	splitClutFilename( filename, name, ext, m_profile );
-	if ( m_clutImage ) {
-		m_filename = filename;
-	}
+    m_clutImage = loadFile( filename, "", m_level );
+    Glib::ustring name, ext;
+    splitClutFilename( filename, name, ext, m_profile );
+
+    if ( m_clutImage ) {
+        m_filename = filename;
+    }
 }
 
 Glib::ustring HaldCLUT::profile() const
@@ -138,6 +153,7 @@ Imagefloat* HaldCLUT::loadFile( Glib::ustring filename, Glib::ustring workingCol
 {
     Imagefloat *result = 0;
     StdImageSource imgSrc;
+
     if ( !safe_file_test( filename, Glib::FILE_TEST_EXISTS ) || imgSrc.load(filename) ) {
         return result;
     }
@@ -146,10 +162,13 @@ Imagefloat* HaldCLUT::loadFile( Glib::ustring filename, Glib::ustring workingCol
     imgSrc.getFullSize (fw, fh, TR_NONE);
 
     bool valid = false;
+
     //test on Hald format, copypasted from http://www.quelsolaar.com/technology/clut.html
     if ( fw == fh ) {
         outLevel = 1;
+
         for(; outLevel * outLevel * outLevel < fw; outLevel++);
+
         if( !( outLevel * outLevel * outLevel > fw ) ) {
             valid = true;
         }
@@ -164,12 +183,15 @@ Imagefloat* HaldCLUT::loadFile( Glib::ustring filename, Glib::ustring workingCol
         icm.working = workingColorSpace;
 
         imgSrc.getImage (currWB, TR_NONE, baseImg, pp, procparams::ToneCurveParams(), icm, procparams::RAWParams());
+
         if ( !workingColorSpace.empty() ) {
             imgSrc.convertColorSpace(baseImg, icm, currWB);
         }
+
         result = baseImg;
     }
-    return result;  
+
+    return result;
 }
 
 void HaldCLUT::loadClut( Imagefloat *img, RawClut &outClut )
@@ -179,6 +201,7 @@ void HaldCLUT::loadClut( Imagefloat *img, RawClut &outClut )
     int x_size = img->getW();
     outClut.resize( x_size * y_size * 3 );
     int clutIdx = 0;
+
     //int level = m_level * m_level;  (unused)
     for(int y = 0; y < y_size; y++) {
         for(int x = 0; x < x_size; x++) {
@@ -195,10 +218,11 @@ Imagefloat* HaldCLUT::generateIdentImage( int level )
 {
     int imageWidth = level * level * level;
     Imagefloat *resultImg = new Imagefloat( imageWidth, imageWidth );
-    
+
     int cubeSideSize = level * level;
     float step = MAXVALF / (cubeSideSize - 1);
     int pos = 0;
+
     for( int b = 0; b < cubeSideSize; ++b ) {
         for ( int g = 0; g < cubeSideSize; ++g ) {
             for ( int r = 0; r < cubeSideSize; ++r ) {
@@ -211,6 +235,7 @@ Imagefloat* HaldCLUT::generateIdentImage( int level )
             }
         }
     }
+
     return resultImg;
 }
 
@@ -241,22 +266,34 @@ void HaldCLUT::correct( const HaldCLUT::RawClut& clut, int level, float rr, floa
     level =  level * level;
 
     red = rr * (float)(level - 1);
-    if(red > level - 2)
+
+    if(red > level - 2) {
         red = (float)level - 2;
-    if(red < 0)
+    }
+
+    if(red < 0) {
         red = 0;
+    }
 
     green = gg * (float)(level - 1);
-    if(green > level - 2)
+
+    if(green > level - 2) {
         green = (float)level - 2;
-    if(green < 0)
+    }
+
+    if(green < 0) {
         green = 0;
+    }
 
     blue = bb * (float)(level - 1);
-    if(blue > level - 2)
+
+    if(blue > level - 2) {
         blue = (float)level - 2;
-    if(blue < 0)
+    }
+
+    if(blue < 0) {
         blue = 0;
+    }
 
     r = rr * (float)(level - 1) - red;
     g = gg * (float)(level - 1) - green;
@@ -319,22 +356,34 @@ void HaldCLUT::correct( Imagefloat &clutImage, int level, float rr, float gg, fl
     int imageSideSize = clutImage.getW();
 
     red = rr * (float)(level - 1);
-    if(red > level - 2)
+
+    if(red > level - 2) {
         red = (float)level - 2;
-    if(red < 0)
+    }
+
+    if(red < 0) {
         red = 0;
+    }
 
     green = gg * (float)(level - 1);
-    if(green > level - 2)
+
+    if(green > level - 2) {
         green = (float)level - 2;
-    if(green < 0)
+    }
+
+    if(green < 0) {
         green = 0;
+    }
 
     blue = bb * (float)(level - 1);
-    if(blue > level - 2)
+
+    if(blue > level - 2) {
         blue = (float)level - 2;
-    if(blue < 0)
+    }
+
+    if(blue < 0) {
         blue = 0;
+    }
 
     r = rr * (float)(level - 1) - red;
     g = gg * (float)(level - 1) - green;

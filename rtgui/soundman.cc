@@ -49,17 +49,19 @@ void SoundManager::init()
 // param is either file name or name of the system event on Windows (e.g. "SystemAsterisk" or "SystemDefault").
 void SoundManager::playSoundAsync(const Glib::ustring &sound)
 {
-     if (sound.empty() || !options.sndEnable) return;
+    if (sound.empty() || !options.sndEnable) {
+        return;
+    }
 
 #ifdef WIN32
-    DWORD sndParam=SND_ASYNC | SND_NODEFAULT;
+    DWORD sndParam = SND_ASYNC | SND_NODEFAULT;
 
-    if (sound.find('.')!=Glib::ustring::npos) {
+    if (sound.find('.') != Glib::ustring::npos) {
         // contain dot, so it's a filename
-        sndParam|=SND_FILENAME;
+        sndParam |= SND_FILENAME;
     } else {
         // no dot, so it's a system event
-        sndParam|=SND_ALIAS;
+        sndParam |= SND_ALIAS;
     }
 
     wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (sound.c_str(), -1, NULL, NULL, NULL);

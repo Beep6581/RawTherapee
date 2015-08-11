@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -23,7 +23,8 @@
 
 CursorManager cursorManager;
 
-void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWin) {
+void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWin)
+{
 
     cResizeWidth = new Gdk::Cursor (Gdk::SB_H_DOUBLE_ARROW);
     cResizeHeight = new Gdk::Cursor (Gdk::SB_V_DOUBLE_ARROW);
@@ -62,59 +63,63 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWin) {
 }
 
 /* Set the cursor of the given window */
-void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape shape) {
+void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape shape)
+{
 
-    if (shape==CSArrow)
-       // set_cursor without any arguments to select system default
+    if (shape == CSArrow)
+        // set_cursor without any arguments to select system default
+    {
         window->set_cursor ();
-    else if (shape==CSOpenHand)
+    } else if (shape == CSOpenHand) {
         window->set_cursor (*cHand);
-    else if (shape==CSClosedHand)
+    } else if (shape == CSClosedHand) {
         window->set_cursor (*cClosedHand);
-    else if (shape==CSMove)
+    } else if (shape == CSMove) {
         window->set_cursor (*cCropMove);
-    else if (shape==CSResizeWidth)
+    } else if (shape == CSResizeWidth) {
         window->set_cursor (*cResizeWidth);
-    else if (shape==CSResizeHeight)
+    } else if (shape == CSResizeHeight) {
         window->set_cursor (*cResizeHeight);
-    else if (shape==CSResizeDiagonal)
+    } else if (shape == CSResizeDiagonal) {
         window->set_cursor (*cResizeDiag);
-    else if (shape==CSResizeTopLeft)
+    } else if (shape == CSResizeTopLeft) {
         window->set_cursor (*cResizeTopLeft);
-    else if (shape==CSResizeTopRight)
+    } else if (shape == CSResizeTopRight) {
         window->set_cursor (*cResizeTopRight);
-    else if (shape==CSResizeBottomLeft)
+    } else if (shape == CSResizeBottomLeft) {
         window->set_cursor (*cResizeBottomLeft);
-    else if (shape==CSResizeBottomRight)
+    } else if (shape == CSResizeBottomRight) {
         window->set_cursor (*cResizeBottomRight);
-    else if (shape==CSMove2D)
+    } else if (shape == CSMove2D) {
         window->set_cursor (*cMove2D);
-    else if (shape==CSMove1DH)
+    } else if (shape == CSMove1DH) {
         window->set_cursor (*cMove1DH);
-    else if (shape==CSMove1DV)
+    } else if (shape == CSMove1DV) {
         window->set_cursor (*cMove1DV);
-    else if (shape==CSMoveRotate)
+    } else if (shape == CSMoveRotate) {
         window->set_cursor (*cMoveRotate);
-    else if (shape==CSSpotWB)
+    } else if (shape == CSSpotWB) {
         window->set_cursor (*cWB);
-    else if (shape==CSCropSelect)
+    } else if (shape == CSCropSelect) {
         window->set_cursor (*cHand);
-    else if (shape==CSMoveLeft)
+    } else if (shape == CSMoveLeft) {
         window->set_cursor (*cLeftTanMove);
-    else if (shape==CSMoveRight)
+    } else if (shape == CSMoveRight) {
         window->set_cursor (*cRightTanMove);
-    else if (shape==CSStraighten)
+    } else if (shape == CSStraighten) {
         window->set_cursor (*cHand);
-    else if (shape==CSWait)
+    } else if (shape == CSWait) {
         window->set_cursor (*cWait);
-    else if (shape==CSPlus)
+    } else if (shape == CSPlus) {
         window->set_cursor (*cAdd);
-    else if (shape==CSEmpty)
+    } else if (shape == CSEmpty) {
         window->set_cursor (*cHidden);
+    }
 }
 
 /* Set the cursor of the main window */
-void CursorManager::setCursor (CursorShape shape) {
-	setCursor(mainWindow, shape);
+void CursorManager::setCursor (CursorShape shape)
+{
+    setCursor(mainWindow, shape);
 }
 

@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -23,31 +23,32 @@
 #include "lwbutton.h"
 #include <vector>
 
-class LWButtonSet {
+class LWButtonSet
+{
 
-    protected:
-        std::vector<LWButton*> buttons;
-        int aw, ah, ax, ay;
-    public: 
-        LWButtonSet ();
-        ~LWButtonSet ();
-        
-        void add (LWButton* b);
-        
-        void    getMinimalDimensions (int& w, int& h);
-        void    getAllocatedDimensions (int& w, int& h);
-        void    arrangeButtons (int x, int y, int w, int h);
-        void    setColors     (const Gdk::Color& bg, const Gdk::Color& fg);
-        bool    motionNotify  (int x, int y);
-        bool    pressNotify   (int x, int y);
-        bool    releaseNotify (int x, int y);
-        void    move          (int nx, int ny);
-        bool    inside        (int x, int y);
+protected:
+    std::vector<LWButton*> buttons;
+    int aw, ah, ax, ay;
+public:
+    LWButtonSet ();
+    ~LWButtonSet ();
 
-        Glib::ustring getToolTip (int x, int y);
-        
-        void    setButtonListener   (LWButtonListener* bl);
-        void    redraw              (Cairo::RefPtr<Cairo::Context> context);
+    void add (LWButton* b);
+
+    void    getMinimalDimensions (int& w, int& h);
+    void    getAllocatedDimensions (int& w, int& h);
+    void    arrangeButtons (int x, int y, int w, int h);
+    void    setColors     (const Gdk::Color& bg, const Gdk::Color& fg);
+    bool    motionNotify  (int x, int y);
+    bool    pressNotify   (int x, int y);
+    bool    releaseNotify (int x, int y);
+    void    move          (int nx, int ny);
+    bool    inside        (int x, int y);
+
+    Glib::ustring getToolTip (int x, int y);
+
+    void    setButtonListener   (LWButtonListener* bl);
+    void    redraw              (Cairo::RefPtr<Cairo::Context> context);
 };
 
 #endif

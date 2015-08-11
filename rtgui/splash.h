@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,32 +21,37 @@
 
 #include <gtkmm.h>
 
-class SplashImage : public Gtk::DrawingArea {
+class SplashImage : public Gtk::DrawingArea
+{
 
-    private:
-        Glib::RefPtr<Gdk::GC> gc_;
-        Glib::RefPtr<Gdk::Pixbuf> pixbuf;
-        Glib::RefPtr<Pango::Layout> version;
-    
-    public:
-              SplashImage ();
-        void on_realize ();
-        bool on_expose_event (GdkEventExpose* event);
+private:
+    Glib::RefPtr<Gdk::GC> gc_;
+    Glib::RefPtr<Gdk::Pixbuf> pixbuf;
+    Glib::RefPtr<Pango::Layout> version;
+
+public:
+    SplashImage ();
+    void on_realize ();
+    bool on_expose_event (GdkEventExpose* event);
 };
 
 //class Splash : public Gtk::Window {
-class Splash : public Gtk::Dialog {
+class Splash : public Gtk::Dialog
+{
 
-  private:
+private:
     SplashImage* splashImage;
     Gtk::Notebook* nb;
     Gtk::ScrolledWindow* releaseNotesSW;
 
-  public:
+public:
     Splash (Gtk::Window& parent, int maxtime);
     Splash (Gtk::Window& parent);
 
-    bool hasReleaseNotes() { return releaseNotesSW != NULL; };
+    bool hasReleaseNotes()
+    {
+        return releaseNotesSW != NULL;
+    };
     void showReleaseNotes();
     bool on_timer ();
     //virtual bool on_button_release_event (GdkEventButton* event);

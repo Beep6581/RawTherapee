@@ -24,12 +24,13 @@
 #include <gtkmm.h>
 #include "popupcommon.h"
 
-class PopUpButton : public Gtk::Button, public PopUpCommon {
+class PopUpButton : public Gtk::Button, public PopUpCommon
+{
 
 public:
-	PopUpButton (const Glib::ustring& label = "");
-	void show ();
-	void set_tooltip_text (const Glib::ustring &text);
+    PopUpButton (const Glib::ustring& label = "");
+    void show ();
+    void set_tooltip_text (const Glib::ustring &text);
 };
 
 #endif

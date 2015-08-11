@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -26,9 +26,10 @@
 #include "curveeditorgroup.h"
 #include "colorprovider.h"
 
-class LCurve : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider {
+class LCurve : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider
+{
 
-  protected:
+protected:
     CurveEditorGroup* curveEditorG;
     Adjuster* brightness;
     Adjuster* contrast;
@@ -41,27 +42,27 @@ class LCurve : public ToolParamBlock, public AdjusterListener, public FoldableTo
     FlatCurveEditor*   chshape;
     FlatCurveEditor*   lhshape;
     FlatCurveEditor*   hhshape;
-	
+
     DiagonalCurveEditor* clshape;
 
     //%%%%%%%%%%%%%%%%
     Gtk::CheckButton* avoidcolorshift;
     Gtk::CheckButton* lcredsk;
-	
+
     Adjuster* rstprotection;
     sigc::connection  bwtconn, acconn, lcconn;
     bool lastACVal, lastLCVal;
-	
+
     //%%%%%%%%%%%%%%%%
 
-  public:
+public:
 
     LCurve ();
     ~LCurve ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
     void setBatchMode   (bool batchMode);
     void autoOpenCurve  ();
     void setEditProvider     (EditDataProvider *provider);
@@ -70,9 +71,9 @@ class LCurve : public ToolParamBlock, public AdjusterListener, public FoldableTo
 
     void curveChanged (CurveEditor* ce);
     void adjusterChanged (Adjuster* a, double newval);
-	void avoidcolorshift_toggled ();
+    void avoidcolorshift_toggled ();
     void lcredsk_toggled();
-	
+
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
 
     virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);

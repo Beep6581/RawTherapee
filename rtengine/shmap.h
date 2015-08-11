@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -22,27 +22,29 @@
 #include "imagefloat.h"
 #include "image16.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
-class SHMap {
+class SHMap
+{
 
-    public: 
-        float** map;
-        float   max_f, min_f, avg;
-        
-		 SHMap (int w, int h, bool multiThread);
-		~SHMap ();
+public:
+    float** map;
+    float   max_f, min_f, avg;
 
-		void update (Imagefloat* img, double radius, double lumi[3], bool hq, int skip);
-		void forceStat (float max_, float min_, float avg_);
+    SHMap (int w, int h, bool multiThread);
+    ~SHMap ();
 
-	private:
-		int W, H;
-		bool multiThread;
+    void update (Imagefloat* img, double radius, double lumi[3], bool hq, int skip);
+    void forceStat (float max_, float min_, float avg_);
 
-		void fillLuminance( Imagefloat * img, float **luminance, double lumi[3] );
-		void dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale);
-		
+private:
+    int W, H;
+    bool multiThread;
+
+    void fillLuminance( Imagefloat * img, float **luminance, double lumi[3] );
+    void dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale);
+
 };
 }
 #endif

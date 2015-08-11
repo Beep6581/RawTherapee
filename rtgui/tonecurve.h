@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -27,16 +27,17 @@
 #include "mycurve.h"
 #include "guiutils.h"
 
-class ToneCurve : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoExpListener,public CurveListener {
+class ToneCurve : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoExpListener, public CurveListener
+{
 
-  protected:
+protected:
     // from HLRecovery
     Gtk::CheckButton*   hrenabled;
     MyComboBoxText*     method;
     sigc::connection    methconn;
     sigc::connection    enaconn;
     bool                lasthrEnabled;
-  
+
     Gtk::HBox* abox;
     Gtk::HBox* hlrbox;
 
@@ -71,14 +72,14 @@ class ToneCurve : public ToolParamBlock, public AdjusterListener, public Foldabl
     int nextHlcomprthresh;
     bool nextHLRecons;
 
-  public:
+public:
 
     ToneCurve ();
     ~ToneCurve ();
 
-    void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-    void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
+    void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
     void setBatchMode        (bool batchMode);
     void setAdjusterBehavior (bool expadd, bool hlcompadd, bool hlcompthreshadd, bool bradd, bool blackadd, bool shcompadd, bool contradd, bool satadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
@@ -104,7 +105,7 @@ class ToneCurve : public ToolParamBlock, public AdjusterListener, public Foldabl
     void expandCurve (bool isExpanded);
     bool isCurveExpanded ();
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
- 
+
     void setRaw (bool raw);
 
     void hrenabledChanged ();

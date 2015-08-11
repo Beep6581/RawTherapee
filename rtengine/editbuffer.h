@@ -23,65 +23,94 @@
 #include "array2D.h"
 #include "iimage.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
 /// @brief Structure that contains information about and pointers to the Edit buffer
-class EditBuffer {
+class EditBuffer
+{
 private:
 
-	// Used to draw the objects where the color correspond to the object's ID, in order to find the correct object when hovering
-	Cairo::RefPtr<Cairo::ImageSurface> objectMap;
-	// If more than 254 objects has to be handled, objectMap2 contains the "upper part" of the 16 bit int value. objectMap2 will be NULL otherwise.
-	Cairo::RefPtr<Cairo::ImageSurface> objectMap2;
-	ObjectMode objectMode;
+    // Used to draw the objects where the color correspond to the object's ID, in order to find the correct object when hovering
+    Cairo::RefPtr<Cairo::ImageSurface> objectMap;
+    // If more than 254 objects has to be handled, objectMap2 contains the "upper part" of the 16 bit int value. objectMap2 will be NULL otherwise.
+    Cairo::RefPtr<Cairo::ImageSurface> objectMap2;
+    ObjectMode objectMode;
 
 protected:
 
-	// To avoid duplicated information, we points to a EditDataProvider that contains the current EditSubscriber
-	// instead of pointing to the EditSubscriber directly
-	::EditDataProvider* dataProvider;
+    // To avoid duplicated information, we points to a EditDataProvider that contains the current EditSubscriber
+    // instead of pointing to the EditSubscriber directly
+    ::EditDataProvider* dataProvider;
 
-	// TODO: Unfortunately, buffer can be of several type, each one representing a floating point image. Maybe we could unify everything one day!?
-	// Only one of the following pointers will be allocated at a time, if any; "one chunk" allocation
-	Imagefloat* imgFloatBuffer;
-	LabImage* LabBuffer;
-	PlanarWhateverData<float> singlePlaneBuffer;
+    // TODO: Unfortunately, buffer can be of several type, each one representing a floating point image. Maybe we could unify everything one day!?
+    // Only one of the following pointers will be allocated at a time, if any; "one chunk" allocation
+    Imagefloat* imgFloatBuffer;
+    LabImage* LabBuffer;
+    PlanarWhateverData<float> singlePlaneBuffer;
 
-	bool ready;  // flag that indicates if the _pipette_ buffer is ready
+    bool ready;  // flag that indicates if the _pipette_ buffer is ready
 
-	void                       createBuffer(int width, int height);
-	void                       resize(int newWidth, int newHeight, EditSubscriber* newSubscriber);
-	void                       resize(int newWidth, int newHeight);
-	void                       flush();
+    void                       createBuffer(int width, int height);
+    void                       resize(int newWidth, int newHeight, EditSubscriber* newSubscriber);
+    void                       resize(int newWidth, int newHeight);
+    void                       flush();
 
 public:
-	EditBuffer(::EditDataProvider *dataProvider);
-	~EditBuffer();
+    EditBuffer(::EditDataProvider *dataProvider);
+    ~EditBuffer();
 
-	/** @brief Getter to know if the pipette buffer is correctly filled */
-	bool                       isReady() { return ready; }
+    /** @brief Getter to know if the pipette buffer is correctly filled */
+    bool                       isReady()
+    {
+        return ready;
+    }
 
-	/** @brief Setter to tell that the pipette buffer is correctly filled
-	 *  You have to use this method once the pipette is filled, so it can be read. */
-	void                       setReady() { ready = true; }
+    /** @brief Setter to tell that the pipette buffer is correctly filled
+     *  You have to use this method once the pipette is filled, so it can be read. */
+    void                       setReady()
+    {
+        ready = true;
+    }
 
-	void                       setObjectMode(ObjectMode newType);
-	::EditDataProvider*        getDataProvider() { return dataProvider; }
-	EditUniqueID               getEditID();
-	Imagefloat*                getImgFloatBuffer() { return imgFloatBuffer; }
-	LabImage*                  getLabBuffer() { return LabBuffer; }
-	PlanarWhateverData<float>* getSinglePlaneBuffer() { return &singlePlaneBuffer; }
-	ObjectMode                 getObjectMode() { return objectMode; }
+    void                       setObjectMode(ObjectMode newType);
+    ::EditDataProvider*        getDataProvider()
+    {
+        return dataProvider;
+    }
+    EditUniqueID               getEditID();
+    Imagefloat*                getImgFloatBuffer()
+    {
+        return imgFloatBuffer;
+    }
+    LabImage*                  getLabBuffer()
+    {
+        return LabBuffer;
+    }
+    PlanarWhateverData<float>* getSinglePlaneBuffer()
+    {
+        return &singlePlaneBuffer;
+    }
+    ObjectMode                 getObjectMode()
+    {
+        return objectMode;
+    }
 
-	Cairo::RefPtr<Cairo::ImageSurface> &getObjectMap () { return objectMap;  }
-	Cairo::RefPtr<Cairo::ImageSurface> &getObjectMap2() { return objectMap2; }
+    Cairo::RefPtr<Cairo::ImageSurface> &getObjectMap ()
+    {
+        return objectMap;
+    }
+    Cairo::RefPtr<Cairo::ImageSurface> &getObjectMap2()
+    {
+        return objectMap2;
+    }
 
-	// return true if the buffer has been allocated
-	bool                       bufferCreated();
+    // return true if the buffer has been allocated
+    bool                       bufferCreated();
 
-	int                        getObjectID(const Coord& location);
-	// get the pipette values
-	void                       getPipetteData(float* v, int x, int y, int squareSize);
+    int                        getObjectID(const Coord& location);
+    // get the pipette values
+    void                       getPipetteData(float* v, int x, int y, int squareSize);
 };
 
 }

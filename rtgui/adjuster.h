@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -24,9 +24,10 @@
 #include "guiutils.h"
 
 class Adjuster;
-class AdjusterListener {
+class AdjusterListener
+{
 
-  public:
+public:
     virtual ~AdjusterListener() {};
     virtual void adjusterChanged (Adjuster* a, double newval) {}
     virtual void adjusterAutoToggled (Adjuster* a, bool newval) {}
@@ -34,9 +35,10 @@ class AdjusterListener {
 
 typedef double(*double2double_fun)(double val);
 
-class Adjuster : public Gtk::VBox {
+class Adjuster : public Gtk::VBox
+{
 
-  protected:
+protected:
     Glib::ustring adjustmentName;
     Gtk::HBox* hbox;
     Gtk::Label* label;
@@ -53,8 +55,8 @@ class Adjuster : public Gtk::VBox {
     sigc::connection buttonReleaseSlider;
     sigc::connection buttonReleaseSpin;
     bool listenerReady;
-    double defaultVal;			// current default value (it can change when switching from ADD or SET mode)
-    double ctorDefaultVal;		// default value at construction time
+    double defaultVal;          // current default value (it can change when switching from ADD or SET mode)
+    double ctorDefaultVal;      // default value at construction time
     EditedState editedState;
     EditedState defEditedState;
     EditedState autoState;
@@ -73,51 +75,92 @@ class Adjuster : public Gtk::VBox {
     void   refreshLabelStyle ();
     double2double_fun value2slider, slider2value;
 
-  public:
+public:
 
     int delay;
 
-    Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon1=NULL, Gtk::Image *imgIcon2=NULL, double2double_fun slider2value=NULL, double2double_fun value2slider=NULL);
+    Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon1 = NULL, Gtk::Image *imgIcon2 = NULL, double2double_fun slider2value = NULL, double2double_fun value2slider = NULL);
     virtual ~Adjuster ();
 
     // Add an "Automatic" checkbox next to the reset button.
-    void addAutoButton(Glib::ustring tooltip="");
+    void addAutoButton(Glib::ustring tooltip = "");
     // Remove the "Automatic" checkbox next to the reset button.
     void delAutoButton();
     // Send back the value of og the Auto checkbox
-    bool getAutoValue () { return automatic!=NULL ? automatic->get_active () : false; }
+    bool getAutoValue ()
+    {
+        return automatic != NULL ? automatic->get_active () : false;
+    }
     void setAutoValue (bool a);
     bool notifyListenerAutoToggled ();
     void autoToggled ();
-    void setAutoInconsistent (bool i) { if (automatic) automatic->set_inconsistent(i);  }
-    bool getAutoInconsistent () { return automatic ? automatic->get_inconsistent() : true /* we have to return something */; }
+    void setAutoInconsistent (bool i)
+    {
+        if (automatic) {
+            automatic->set_inconsistent(i);
+        }
+    }
+    bool getAutoInconsistent ()
+    {
+        return automatic ? automatic->get_inconsistent() : true /* we have to return something */;
+    }
 
-    void setAdjusterListener (AdjusterListener* alistener) { adjusterListener = alistener; }
+    void setAdjusterListener (AdjusterListener* alistener)
+    {
+        adjusterListener = alistener;
+    }
 
     // return the value trimmed to the limits at construction time
-    double getValue () { return shapeValue(spin->get_value ()); }
+    double getValue ()
+    {
+        return shapeValue(spin->get_value ());
+    }
     // return the value trimmed to the limits at construction time
-    int getIntValue () { return spin->get_value_as_int (); }
+    int getIntValue ()
+    {
+        return spin->get_value_as_int ();
+    }
     // return the value trimmed to the limits at construction time,
     // method only used by the history manager, so decoration is added if addMode=true
-    Glib::ustring getTextValue () { if (addMode) return Glib::ustring::compose("<i>%1</i>", spin->get_text ()); else return spin->get_text (); }
+    Glib::ustring getTextValue ()
+    {
+        if (addMode) {
+            return Glib::ustring::compose("<i>%1</i>", spin->get_text ());
+        } else {
+            return spin->get_text ();
+        }
+    }
 
-    void setLabel (Glib::ustring lbl) { label->set_label(lbl); }
+    void setLabel (Glib::ustring lbl)
+    {
+        label->set_label(lbl);
+    }
     void setValue (double a);
     void setLimits (double vmin, double vmax, double vstep, double vdefault);
     void setEnabled (bool enabled);
     void setDefault (double def);
     // will let the adjuster throw it's "changed" signal when the mouse button is released. Can work altogether with the delay value.
-    void throwOnButtonRelease(bool throwOnBRelease=true);
-    void setNbDisplayedChars (int nbr) { spin->set_width_chars(nbr); }
+    void throwOnButtonRelease(bool throwOnBRelease = true);
+    void setNbDisplayedChars (int nbr)
+    {
+        spin->set_width_chars(nbr);
+    }
     void setEditedState (EditedState eState);
     EditedState getEditedState ();
     void setDefaultEditedState (EditedState eState);
     void showEditedCB ();
-    bool block(bool isBlocked) { bool oldValue = blocked; blocked = isBlocked; return oldValue; }
+    bool block(bool isBlocked)
+    {
+        bool oldValue = blocked;
+        blocked = isBlocked;
+        return oldValue;
+    }
 
     void setAddMode(bool addM);
-    bool getAddMode() { return addMode; };
+    bool getAddMode()
+    {
+        return addMode;
+    };
     void spinChanged ();
     void sliderChanged ();
     bool notifyListener ();

@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -29,9 +29,10 @@
 #include "guiutils.h"
 #include "rtimage.h"
 
-class ProfilePanel : public Gtk::VBox, public PParamsChangeListener, public ProfileStoreListener {
+class ProfilePanel : public Gtk::VBox, public PParamsChangeListener, public ProfileStoreListener
+{
 
-  private:
+private:
 
     rtengine::procparams::PartialProfile* storedPProfile;
     Glib::ustring storedValue;
@@ -50,7 +51,7 @@ class ProfilePanel : public Gtk::VBox, public PParamsChangeListener, public Prof
     Gtk::TreeIter addCustomRow ();
     Gtk::TreeIter addLastSavedRow ();
 
-  protected:
+protected:
 
     static PartialPasteDlg* partialProfileDlg;
     Gtk::Button* save;
@@ -66,12 +67,15 @@ class ProfilePanel : public Gtk::VBox, public PParamsChangeListener, public Prof
 
     void changeTo (const rtengine::procparams::PartialProfile* newpp, Glib::ustring profname);
 
-  public:
+public:
 
-    ProfilePanel (bool readOnly=false);
+    ProfilePanel (bool readOnly = false);
     virtual ~ProfilePanel ();
 
-    void setProfileChangeListener (ProfileChangeListener* ppl) { tpc = ppl; }
+    void setProfileChangeListener (ProfileChangeListener* ppl)
+    {
+        tpc = ppl;
+    }
 
     static void init ();
     static void cleanup ();
@@ -83,7 +87,7 @@ class ProfilePanel : public Gtk::VBox, public PParamsChangeListener, public Prof
     void setInitialFileName (const Glib::ustring& filename);
 
     // PParamsChangeListener interface
-    void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited=NULL);
+    void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited = NULL);
 
     // gui callbacks
     void save_clicked (GdkEventButton* event);

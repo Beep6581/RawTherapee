@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -19,7 +19,7 @@
 #ifndef _EDITEDSTATE_
 #define _EDITEDSTATE_
 
-enum EditedState { UnEdited=0, Edited=1, Irrelevant=2 };
+enum EditedState { UnEdited = 0, Edited = 1, Irrelevant = 2 };
 
 #endif
 

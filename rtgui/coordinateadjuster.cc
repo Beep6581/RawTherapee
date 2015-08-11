@@ -23,176 +23,196 @@
 #include "curveeditorgroup.h"
 
 Axis::Axis()
-  : label(""), decimal(5), increment(0.001), pageIncrement(0.01), rangeLowerBound(0.), rangeUpperBound(1.)
+    : label(""), decimal(5), increment(0.001), pageIncrement(0.01), rangeLowerBound(0.), rangeUpperBound(1.)
 {}
 
-Axis::Axis(Glib::ustring label, unsigned int decimal, double increment, double pageIncrement, double valMin=0.0, double valMax=1.0)
-  : label(label), decimal(decimal), increment(increment), pageIncrement(pageIncrement), rangeLowerBound(valMin), rangeUpperBound(valMax)
+Axis::Axis(Glib::ustring label, unsigned int decimal, double increment, double pageIncrement, double valMin = 0.0, double valMax = 1.0)
+    : label(label), decimal(decimal), increment(increment), pageIncrement(pageIncrement), rangeLowerBound(valMin), rangeUpperBound(valMax)
 {}
 
-void Axis::setValues(Glib::ustring label, unsigned int decimal, double increment, double pageIncrement, double valMin, double valMax) {
-	this->label = label;
-	this->decimal = decimal;
-	this->increment = increment;
-	this->pageIncrement = pageIncrement;
-	this->rangeLowerBound = valMin;
-	this->rangeUpperBound = valMax;
+void Axis::setValues(Glib::ustring label, unsigned int decimal, double increment, double pageIncrement, double valMin, double valMax)
+{
+    this->label = label;
+    this->decimal = decimal;
+    this->increment = increment;
+    this->pageIncrement = pageIncrement;
+    this->rangeLowerBound = valMin;
+    this->rangeUpperBound = valMax;
 }
 
-CoordinateAdjuster::AxisAdjuster::AxisAdjuster(CoordinateAdjuster *parent, const Axis *axis, char index) : idx(index), parent(parent) {
-	label = Gtk::manage( new Gtk::Label(axis->label) );
-	spinButton = Gtk::manage( new Gtk::SpinButton() );
+CoordinateAdjuster::AxisAdjuster::AxisAdjuster(CoordinateAdjuster *parent, const Axis *axis, char index) : idx(index), parent(parent)
+{
+    label = Gtk::manage( new Gtk::Label(axis->label) );
+    spinButton = Gtk::manage( new Gtk::SpinButton() );
 
-	label = Gtk::manage (new Gtk::Label(axis->label));
-	//label->set_alignment(Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    label = Gtk::manage (new Gtk::Label(axis->label));
+    //label->set_alignment(Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
 
-	spinButton = Gtk::manage (new Gtk::SpinButton());
-	spinButton->set_name("AxisAdjuster");
-	spinButton->set_digits(axis->decimal);
-	spinButton->set_increments(axis->increment, axis->pageIncrement);
-	spinButton->set_range(axis->rangeLowerBound, axis->rangeUpperBound);
-	spinButton->set_sensitive(false);
-	spinButtonConn = spinButton->signal_value_changed().connect( sigc::mem_fun(*this, &CoordinateAdjuster::AxisAdjuster::valueChanged) );
-	//spinButton->signal_key_press_event().connect( sigc::mem_fun(*this, &CoordinateAdjuster::AxisAdjuster::keyPressed) );
+    spinButton = Gtk::manage (new Gtk::SpinButton());
+    spinButton->set_name("AxisAdjuster");
+    spinButton->set_digits(axis->decimal);
+    spinButton->set_increments(axis->increment, axis->pageIncrement);
+    spinButton->set_range(axis->rangeLowerBound, axis->rangeUpperBound);
+    spinButton->set_sensitive(false);
+    spinButtonConn = spinButton->signal_value_changed().connect( sigc::mem_fun(*this, &CoordinateAdjuster::AxisAdjuster::valueChanged) );
+    //spinButton->signal_key_press_event().connect( sigc::mem_fun(*this, &CoordinateAdjuster::AxisAdjuster::keyPressed) );
 }
 
-void CoordinateAdjuster::AxisAdjuster::updateGUI(const Axis &axis) {
-	label->set_text(axis.label);
-	spinButton->set_digits(axis.decimal);
-	spinButton->set_increments(axis.increment, axis.pageIncrement);
-	spinButton->set_range(axis.rangeLowerBound, axis.rangeUpperBound);
-	spinButton->set_sensitive(false);
-	rangeLowerBound = axis.rangeLowerBound;
-	rangeUpperBound = axis.rangeUpperBound;
+void CoordinateAdjuster::AxisAdjuster::updateGUI(const Axis &axis)
+{
+    label->set_text(axis.label);
+    spinButton->set_digits(axis.decimal);
+    spinButton->set_increments(axis.increment, axis.pageIncrement);
+    spinButton->set_range(axis.rangeLowerBound, axis.rangeUpperBound);
+    spinButton->set_sensitive(false);
+    rangeLowerBound = axis.rangeLowerBound;
+    rangeUpperBound = axis.rangeUpperBound;
 }
 
-void CoordinateAdjuster::AxisAdjuster::setValue(double newValue) {
-	float range = rangeUpperBound-rangeLowerBound;
-	spinButtonConn.block(true);
-	spinButton->set_value(newValue*range+rangeLowerBound);
-	spinButtonConn.block(false);
+void CoordinateAdjuster::AxisAdjuster::setValue(double newValue)
+{
+    float range = rangeUpperBound - rangeLowerBound;
+    spinButtonConn.block(true);
+    spinButton->set_value(newValue * range + rangeLowerBound);
+    spinButtonConn.block(false);
 }
 
-void CoordinateAdjuster::AxisAdjuster::valueChanged() {
-	float range = rangeUpperBound-rangeLowerBound;
-	parent->updatePos(idx, (spinButton->get_value()-rangeLowerBound)/range);
+void CoordinateAdjuster::AxisAdjuster::valueChanged()
+{
+    float range = rangeUpperBound - rangeLowerBound;
+    parent->updatePos(idx, (spinButton->get_value() - rangeLowerBound) / range);
 }
 
 CoordinateAdjuster::CoordinateAdjuster(CoordinateProvider *provider, CurveEditorSubGroup *parent, const std::vector<Axis> &axis)
-  : status(CA_STATUS_IDLE), parent(parent), coordinateProvider(provider)
+    : status(CA_STATUS_IDLE), parent(parent), coordinateProvider(provider)
 {
-	provider->setListener(this);
-	createWidgets(axis);
+    provider->setListener(this);
+    createWidgets(axis);
 }
 
 CoordinateAdjuster::CoordinateAdjuster(CoordinateProvider *provider, CurveEditorSubGroup *parent)
-  : status(CA_STATUS_IDLE), parent(parent), coordinateProvider(provider)
+    : status(CA_STATUS_IDLE), parent(parent), coordinateProvider(provider)
 {
-	std::vector<Axis> defaultAxis;
-	Axis X(M("CURVEEDITOR_AXIS_IN"), 3, 0.1, 1., 0., 100.);
-	Axis Y(M("CURVEEDITOR_AXIS_OUT"), 3, 0.1, 1., 0., 100.);
-	defaultAxis.push_back(X);
-	defaultAxis.push_back(Y);
+    std::vector<Axis> defaultAxis;
+    Axis X(M("CURVEEDITOR_AXIS_IN"), 3, 0.1, 1., 0., 100.);
+    Axis Y(M("CURVEEDITOR_AXIS_OUT"), 3, 0.1, 1., 0., 100.);
+    defaultAxis.push_back(X);
+    defaultAxis.push_back(Y);
 
-	provider->setListener(this);
-	createWidgets(defaultAxis);
+    provider->setListener(this);
+    createWidgets(defaultAxis);
 }
 
-void CoordinateAdjuster::createWidgets(const std::vector<Axis> &axis) {
-	unsigned int count = axis.size();
-	if (!count) {
-		printf("CoordinateAdjuster - Error: the Axis list is empty!\n");
-		return;
-	}
-	assert (count <= 4);
+void CoordinateAdjuster::createWidgets(const std::vector<Axis> &axis)
+{
+    unsigned int count = axis.size();
 
-	axisAdjusters.resize(axis.size());
+    if (!count) {
+        printf("CoordinateAdjuster - Error: the Axis list is empty!\n");
+        return;
+    }
 
-	set_spacing(3);
+    assert (count <= 4);
 
-	AxisAdjuster *currAdjuster = NULL;
+    axisAdjusters.resize(axis.size());
 
-	for (unsigned int i=0; i<count; ++i) {
-		const Axis *currAxis = &(axis.at(i));
-		axisAdjusters.at(i) = new AxisAdjuster(this, currAxis, i);
-		currAdjuster = axisAdjusters.at(i);
-		currAdjuster->rangeLowerBound = currAxis->rangeLowerBound;
-		currAdjuster->rangeUpperBound = currAxis->rangeUpperBound;
+    set_spacing(3);
 
-		pack_start(*(currAdjuster->label), Gtk::PACK_SHRINK, 0);
-		pack_start(*(currAdjuster->spinButton), Gtk::PACK_SHRINK, 0);
-	}
+    AxisAdjuster *currAdjuster = NULL;
+
+    for (unsigned int i = 0; i < count; ++i) {
+        const Axis *currAxis = &(axis.at(i));
+        axisAdjusters.at(i) = new AxisAdjuster(this, currAxis, i);
+        currAdjuster = axisAdjusters.at(i);
+        currAdjuster->rangeLowerBound = currAxis->rangeLowerBound;
+        currAdjuster->rangeUpperBound = currAxis->rangeUpperBound;
+
+        pack_start(*(currAdjuster->label), Gtk::PACK_SHRINK, 0);
+        pack_start(*(currAdjuster->spinButton), Gtk::PACK_SHRINK, 0);
+    }
 }
 
-void CoordinateAdjuster::updatePos(char index, double value) {
-	coordinateProvider->setPos(value, index);
+void CoordinateAdjuster::updatePos(char index, double value)
+{
+    coordinateProvider->setPos(value, index);
 }
 
-void CoordinateAdjuster::setAxis(const std::vector<Axis> &axis) {
-	assert (axis.size() == axisAdjusters.size());
-	for (size_t i = 0; i<axisAdjusters.size(); ++i) {
-		axisAdjusters.at(i)->updateGUI(axis.at(i));
-	}
+void CoordinateAdjuster::setAxis(const std::vector<Axis> &axis)
+{
+    assert (axis.size() == axisAdjusters.size());
+
+    for (size_t i = 0; i < axisAdjusters.size(); ++i) {
+        axisAdjusters.at(i)->updateGUI(axis.at(i));
+    }
 }
 
-void CoordinateAdjuster::setPos(std::vector<double> &pos) {
-	if (is_visible()) {
-		for (size_t i=0; i<pos.size(); ++i) {
-			axisAdjusters.at(i)->setValue(pos.at(i));
-		}
-	}
+void CoordinateAdjuster::setPos(std::vector<double> &pos)
+{
+    if (is_visible()) {
+        for (size_t i = 0; i < pos.size(); ++i) {
+            axisAdjusters.at(i)->setValue(pos.at(i));
+        }
+    }
 }
 
-void CoordinateAdjuster::startNumericalAdjustment(const std::vector<Boundaries> &newBoundaries) {
-	for (size_t i=0; i<axisAdjusters.size(); ++i) {
-		Gtk::SpinButton *currSpinButton = axisAdjusters.at(i)->spinButton;
-		currSpinButton->set_sensitive(true);
-		float range = axisAdjusters.at(i)->rangeUpperBound-axisAdjusters.at(i)->rangeLowerBound;
-		currSpinButton->set_range(newBoundaries.at(i).minVal*range+axisAdjusters.at(i)->rangeLowerBound, newBoundaries.at(i).maxVal*range+axisAdjusters.at(i)->rangeUpperBound);
-	}
-	axisAdjusters.at(0)->spinButton->grab_focus();
-	status = CA_STATUS_EDITING;
+void CoordinateAdjuster::startNumericalAdjustment(const std::vector<Boundaries> &newBoundaries)
+{
+    for (size_t i = 0; i < axisAdjusters.size(); ++i) {
+        Gtk::SpinButton *currSpinButton = axisAdjusters.at(i)->spinButton;
+        currSpinButton->set_sensitive(true);
+        float range = axisAdjusters.at(i)->rangeUpperBound - axisAdjusters.at(i)->rangeLowerBound;
+        currSpinButton->set_range(newBoundaries.at(i).minVal * range + axisAdjusters.at(i)->rangeLowerBound, newBoundaries.at(i).maxVal * range + axisAdjusters.at(i)->rangeUpperBound);
+    }
+
+    axisAdjusters.at(0)->spinButton->grab_focus();
+    status = CA_STATUS_EDITING;
 }
 
-void CoordinateAdjuster::switchAdjustedPoint(std::vector<double> &pos, const std::vector<Boundaries> &newBoundaries) {
-	if (status != CA_STATUS_EDITING)
-		return;
+void CoordinateAdjuster::switchAdjustedPoint(std::vector<double> &pos, const std::vector<Boundaries> &newBoundaries)
+{
+    if (status != CA_STATUS_EDITING) {
+        return;
+    }
 
-	for (size_t i=0; i<axisAdjusters.size(); ++i) {
-		AxisAdjuster *currAxis = axisAdjusters.at(i);
+    for (size_t i = 0; i < axisAdjusters.size(); ++i) {
+        AxisAdjuster *currAxis = axisAdjusters.at(i);
 
-		// disable events
-		currAxis->spinButtonConn.block(true);
+        // disable events
+        currAxis->spinButtonConn.block(true);
 
-		// To avoid trimmed values, we have to...
+        // To avoid trimmed values, we have to...
 
-		// ...enlarge range to the maximum
-		currAxis->spinButton->set_range(axisAdjusters.at(i)->rangeLowerBound, axisAdjusters.at(i)->rangeUpperBound);
+        // ...enlarge range to the maximum
+        currAxis->spinButton->set_range(axisAdjusters.at(i)->rangeLowerBound, axisAdjusters.at(i)->rangeUpperBound);
 
-		// ...set the new value
-		currAxis->setValue(pos.at(i));
+        // ...set the new value
+        currAxis->setValue(pos.at(i));
 
-		// ...narrow the range to the new interval
-		float range = axisAdjusters.at(i)->rangeUpperBound-axisAdjusters.at(i)->rangeLowerBound;
-		currAxis->spinButton->set_range(newBoundaries.at(i).minVal*range+axisAdjusters.at(i)->rangeLowerBound, newBoundaries.at(i).maxVal*range+axisAdjusters.at(i)->rangeUpperBound);
+        // ...narrow the range to the new interval
+        float range = axisAdjusters.at(i)->rangeUpperBound - axisAdjusters.at(i)->rangeLowerBound;
+        currAxis->spinButton->set_range(newBoundaries.at(i).minVal * range + axisAdjusters.at(i)->rangeLowerBound, newBoundaries.at(i).maxVal * range + axisAdjusters.at(i)->rangeUpperBound);
 
-		// enable events
-		currAxis->spinButtonConn.block(false);
-	}
-	axisAdjusters.at(0)->spinButton->grab_focus();
-	status = CA_STATUS_EDITING;
+        // enable events
+        currAxis->spinButtonConn.block(false);
+    }
+
+    axisAdjusters.at(0)->spinButton->grab_focus();
+    status = CA_STATUS_EDITING;
 }
 
-void CoordinateAdjuster::showMe(CoordinateProvider *provider) {
-	parent->showCoordinateAdjuster(provider);
+void CoordinateAdjuster::showMe(CoordinateProvider *provider)
+{
+    parent->showCoordinateAdjuster(provider);
 }
 
-void CoordinateAdjuster::stopNumericalAdjustment() {
-	for (size_t i=0; i<axisAdjusters.size(); ++i) {
-		axisAdjusters.at(i)->spinButtonConn.block(true);
-		axisAdjusters.at(i)->spinButton->set_sensitive(false);
-		axisAdjusters.at(i)->spinButton->set_range(axisAdjusters.at(i)->rangeLowerBound, axisAdjusters.at(i)->rangeUpperBound);
-		axisAdjusters.at(i)->spinButtonConn.block(false);
-	}
-	status = CA_STATUS_IDLE;
+void CoordinateAdjuster::stopNumericalAdjustment()
+{
+    for (size_t i = 0; i < axisAdjusters.size(); ++i) {
+        axisAdjusters.at(i)->spinButtonConn.block(true);
+        axisAdjusters.at(i)->spinButton->set_sensitive(false);
+        axisAdjusters.at(i)->spinButton->set_range(axisAdjusters.at(i)->rangeLowerBound, axisAdjusters.at(i)->rangeUpperBound);
+        axisAdjusters.at(i)->spinButtonConn.block(false);
+    }
+
+    status = CA_STATUS_IDLE;
 }

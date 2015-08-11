@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -25,84 +25,107 @@
 #include "profilechangelistener.h"
 #include "paramsedited.h"
 
-class HistoryBeforeLineListener {
+class HistoryBeforeLineListener
+{
 
-    public:
-        virtual void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) {}
+public:
+    virtual void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) {}
 };
 
-class History : public Gtk::VBox, public PParamsChangeListener {
+class History : public Gtk::VBox, public PParamsChangeListener
+{
 
+public:
+
+    class HistoryColumns : public Gtk::TreeModel::ColumnRecord
+    {
     public:
-
-        class HistoryColumns : public Gtk::TreeModel::ColumnRecord {
-            public:
-                Gtk::TreeModelColumn<Glib::ustring>  realText;
-                Gtk::TreeModelColumn<Glib::ustring>  text;
-                Gtk::TreeModelColumn<Glib::ustring>  value;
-                Gtk::TreeModelColumn<rtengine::procparams::ProcParams>     params;
-                Gtk::TreeModelColumn<rtengine::ProcEvent>    chev;
-                Gtk::TreeModelColumn<ParamsEdited>     paramsEdited;
-                HistoryColumns() { add(text); add(realText); add(value); add(chev); add(params); add(paramsEdited); }
-        };
-        HistoryColumns historyColumns;
-        class BookmarkColumns : public Gtk::TreeModel::ColumnRecord {
-            public:
-                Gtk::TreeModelColumn<Glib::ustring>  text;
-                Gtk::TreeModelColumn<rtengine::procparams::ProcParams>     params;
-                Gtk::TreeModelColumn<ParamsEdited>     paramsEdited;
-                BookmarkColumns() { add(text); add(params); add(paramsEdited); }
-        };
-        BookmarkColumns bookmarkColumns;
-
-    protected:    
-        Gtk::VPaned*            historyVPaned;
-        Gtk::ScrolledWindow*    hscrollw;
-        Gtk::TreeView*          hTreeView;
-        Glib::RefPtr<Gtk::ListStore> historyModel;
-
-        Gtk::ScrolledWindow*    bscrollw;
-        Gtk::TreeView*          bTreeView;
-        Glib::RefPtr<Gtk::ListStore> bookmarkModel;
-
-        Gtk::Button*            addBookmark;
-        Gtk::Button*            delBookmark;
-
-        sigc::connection        selchangehist;
-        sigc::connection        selchangebm;
-        
-        HistoryBeforeLineListener * blistener;
-        ProfileChangeListener* tpc;
-        ParamsEdited defParamsEdited;
-        int bmnum;        
-        
+        Gtk::TreeModelColumn<Glib::ustring>  realText;
+        Gtk::TreeModelColumn<Glib::ustring>  text;
+        Gtk::TreeModelColumn<Glib::ustring>  value;
+        Gtk::TreeModelColumn<rtengine::procparams::ProcParams>     params;
+        Gtk::TreeModelColumn<rtengine::ProcEvent>    chev;
+        Gtk::TreeModelColumn<ParamsEdited>     paramsEdited;
+        HistoryColumns()
+        {
+            add(text);
+            add(realText);
+            add(value);
+            add(chev);
+            add(params);
+            add(paramsEdited);
+        }
+    };
+    HistoryColumns historyColumns;
+    class BookmarkColumns : public Gtk::TreeModel::ColumnRecord
+    {
     public:
-        
-        History (bool bookmarkSupport = true);
+        Gtk::TreeModelColumn<Glib::ustring>  text;
+        Gtk::TreeModelColumn<rtengine::procparams::ProcParams>     params;
+        Gtk::TreeModelColumn<ParamsEdited>     paramsEdited;
+        BookmarkColumns()
+        {
+            add(text);
+            add(params);
+            add(paramsEdited);
+        }
+    };
+    BookmarkColumns bookmarkColumns;
 
-        void setProfileChangeListener     (ProfileChangeListener* tpc_) { tpc = tpc_; }
-        void setHistoryBeforeLineListener (HistoryBeforeLineListener* bll) { blistener = bll; }
-        
-        // pparamschangelistener interface
-        void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited=NULL);
-        void clearParamChanges ();
+protected:
+    Gtk::VPaned*            historyVPaned;
+    Gtk::ScrolledWindow*    hscrollw;
+    Gtk::TreeView*          hTreeView;
+    Glib::RefPtr<Gtk::ListStore> historyModel;
 
-        void historySelectionChanged ();
-        void bookmarkSelectionChanged ();
-        void initHistory ();
+    Gtk::ScrolledWindow*    bscrollw;
+    Gtk::TreeView*          bTreeView;
+    Glib::RefPtr<Gtk::ListStore> bookmarkModel;
 
-        bool getBeforeLineParams (rtengine::procparams::ProcParams& params);
-        
-        void addBookmarkWithText (Glib::ustring text);
-        void addBookmarkPressed ();
-        void delBookmarkPressed ();
+    Gtk::Button*            addBookmark;
+    Gtk::Button*            delBookmark;
 
-        void resized (Gtk::Allocation& req);
+    sigc::connection        selchangehist;
+    sigc::connection        selchangebm;
 
-        void undo ();
-        void redo ();
+    HistoryBeforeLineListener * blistener;
+    ProfileChangeListener* tpc;
+    ParamsEdited defParamsEdited;
+    int bmnum;
 
-        bool blistenerLock;
+public:
+
+    History (bool bookmarkSupport = true);
+
+    void setProfileChangeListener     (ProfileChangeListener* tpc_)
+    {
+        tpc = tpc_;
+    }
+    void setHistoryBeforeLineListener (HistoryBeforeLineListener* bll)
+    {
+        blistener = bll;
+    }
+
+    // pparamschangelistener interface
+    void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited = NULL);
+    void clearParamChanges ();
+
+    void historySelectionChanged ();
+    void bookmarkSelectionChanged ();
+    void initHistory ();
+
+    bool getBeforeLineParams (rtengine::procparams::ProcParams& params);
+
+    void addBookmarkWithText (Glib::ustring text);
+    void addBookmarkPressed ();
+    void delBookmarkPressed ();
+
+    void resized (Gtk::Allocation& req);
+
+    void undo ();
+    void redo ();
+
+    bool blistenerLock;
 };
 
 #endif

@@ -5,7 +5,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -22,38 +22,39 @@
 #include "editorpanel.h"
 #include <set>
 
-class EditWindow : public Gtk::Window {
+class EditWindow : public Gtk::Window
+{
 
-    private:
-        RTWindow* parent;
+private:
+    RTWindow* parent;
 
-        Gtk::Notebook* mainNB;
-        std::set<Glib::ustring> filesEdited;
-        std::map<Glib::ustring, EditorPanel*> epanels;
+    Gtk::Notebook* mainNB;
+    std::set<Glib::ustring> filesEdited;
+    std::map<Glib::ustring, EditorPanel*> epanels;
 
-        bool isFullscreen;
-        void toggleFullscreen ();
+    bool isFullscreen;
+    void toggleFullscreen ();
 
-    public:
-        // Check if the system has more than one display and option is set
-        static bool isMultiDisplayEnabled();
+public:
+    // Check if the system has more than one display and option is set
+    static bool isMultiDisplayEnabled();
 
-        // Should only be created once, auto-creates window on correct display
-        static EditWindow* getInstance(RTWindow* p);  
+    // Should only be created once, auto-creates window on correct display
+    static EditWindow* getInstance(RTWindow* p);
 
-        EditWindow (RTWindow* p);
+    EditWindow (RTWindow* p);
 
-        void addEditorPanel (EditorPanel* ep,const std::string &name);
-        void remEditorPanel (EditorPanel* ep);
-        bool selectEditorPanel(const std::string &name);
+    void addEditorPanel (EditorPanel* ep, const std::string &name);
+    void remEditorPanel (EditorPanel* ep);
+    bool selectEditorPanel(const std::string &name);
 
-        bool keyPressed (GdkEventKey* event);
-        bool on_delete_event(GdkEventAny* event);
-        bool on_window_state_event(GdkEventWindowState* event);
-        void on_mainNB_switch_page(GtkNotebookPage* page, guint page_num);
-        void set_title_decorated(Glib::ustring fname);
+    bool keyPressed (GdkEventKey* event);
+    bool on_delete_event(GdkEventAny* event);
+    bool on_window_state_event(GdkEventWindowState* event);
+    void on_mainNB_switch_page(GtkNotebookPage* page, guint page_num);
+    void set_title_decorated(Glib::ustring fname);
 
-        void on_realize ();
+    void on_realize ();
 };
 
 #endif

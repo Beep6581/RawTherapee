@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -24,20 +24,21 @@
 #include "toolpanel.h"
 #include "lensgeomlistener.h"
 
-class Rotate : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
+class Rotate : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+{
 
-  protected:
+protected:
     Adjuster*           degree;
     Gtk::Button*        selectStraight;
     LensGeomListener*   rlistener;
 
-  public:
+public:
 
     Rotate ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
     void setBatchMode   (bool batchMode);
 
     void straighten (double deg);
@@ -46,7 +47,10 @@ class Rotate : public ToolParamBlock, public AdjusterListener, public FoldableTo
     void setAdjusterBehavior    (bool rotadd);
     void trimValues             (rtengine::procparams::ProcParams* pp);
     void selectStraightPressed  ();
-    void setLensGeomListener    (LensGeomListener* l) { rlistener = l; }
+    void setLensGeomListener    (LensGeomListener* l)
+    {
+        rlistener = l;
+    }
 };
 
 #endif

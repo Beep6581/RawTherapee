@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -25,72 +25,81 @@
 #include <string>
 #include "../rtgui/threadutils.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
 typedef const double (*TMatrix)[3];
 
-class ProfileContent {
+class ProfileContent
+{
 
-    public:
-        char* data;
-        int   length;
+public:
+    char* data;
+    int   length;
 
-        ProfileContent (): data(NULL), length(0) {}
-        ProfileContent (Glib::ustring fileName);
-        ProfileContent (const ProfileContent& other);
-        ProfileContent (cmsHPROFILE hProfile);
-        ~ProfileContent ();
-        ProfileContent& operator= (const rtengine::ProfileContent& other);
-        cmsHPROFILE toProfile ();
+    ProfileContent (): data(NULL), length(0) {}
+    ProfileContent (Glib::ustring fileName);
+    ProfileContent (const ProfileContent& other);
+    ProfileContent (cmsHPROFILE hProfile);
+    ~ProfileContent ();
+    ProfileContent& operator= (const rtengine::ProfileContent& other);
+    cmsHPROFILE toProfile ();
 };
 
-class ICCStore {
+class ICCStore
+{
 
-        std::map<Glib::ustring, cmsHPROFILE> wProfiles;
-        std::map<Glib::ustring, cmsHPROFILE> wProfilesGamma;
-        std::map<Glib::ustring, TMatrix> wMatrices;
-        std::map<Glib::ustring, TMatrix> iwMatrices;
-        
-        // these contain profiles from user/system directory (supplied on init)
-        std::map<Glib::ustring, cmsHPROFILE>    fileProfiles;
-        std::map<Glib::ustring, ProfileContent> fileProfileContents;
+    std::map<Glib::ustring, cmsHPROFILE> wProfiles;
+    std::map<Glib::ustring, cmsHPROFILE> wProfilesGamma;
+    std::map<Glib::ustring, TMatrix> wMatrices;
+    std::map<Glib::ustring, TMatrix> iwMatrices;
 
-        // these contain standard profiles from RT. keys are all in uppercase
-        std::map<Glib::ustring, Glib::ustring>  fileStdProfilesFileNames;
-        std::map<Glib::ustring, cmsHPROFILE>    fileStdProfiles;
+    // these contain profiles from user/system directory (supplied on init)
+    std::map<Glib::ustring, cmsHPROFILE>    fileProfiles;
+    std::map<Glib::ustring, ProfileContent> fileProfileContents;
 
-        cmsHPROFILE xyz;
-        cmsHPROFILE srgb;
+    // these contain standard profiles from RT. keys are all in uppercase
+    std::map<Glib::ustring, Glib::ustring>  fileStdProfilesFileNames;
+    std::map<Glib::ustring, cmsHPROFILE>    fileStdProfiles;
 
-        MyMutex mutex_;
+    cmsHPROFILE xyz;
+    cmsHPROFILE srgb;
 
-        ICCStore (); 
-        void             loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<Glib::ustring, cmsHPROFILE>& resultProfiles, std::map<Glib::ustring, ProfileContent> *resultProfileContents, bool prefetch = false, bool onlyRgb = false);
-        
-    public:
+    MyMutex mutex_;
 
-        static ICCStore* getInstance(void);
-        static cmsHPROFILE makeStdGammaProfile(cmsHPROFILE iprof);
+    ICCStore ();
+    void             loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<Glib::ustring, cmsHPROFILE>& resultProfiles, std::map<Glib::ustring, ProfileContent> *resultProfileContents, bool prefetch = false, bool onlyRgb = false);
 
-        Glib::ustring    defaultMonitorProfile;  // Main monitors standard profile name, from OS
-        void             findDefaultMonitorProfile();
+public:
 
-        int              numOfWProfiles ();
-        cmsHPROFILE      createFromMatrix (const double matrix[3][3], bool gamma=false, Glib::ustring name="");
-        cmsHPROFILE      workingSpace (Glib::ustring name);
-        cmsHPROFILE      workingSpaceGamma (Glib::ustring name);
-        TMatrix          workingSpaceMatrix (Glib::ustring name);
-        TMatrix          workingSpaceInverseMatrix (Glib::ustring name);
-        
-        cmsHPROFILE      getProfile   (Glib::ustring name);
-        cmsHPROFILE      getStdProfile(Glib::ustring name);
+    static ICCStore* getInstance(void);
+    static cmsHPROFILE makeStdGammaProfile(cmsHPROFILE iprof);
 
-        void             init         (Glib::ustring usrICCDir, Glib::ustring stdICCDir);
-        ProfileContent   getContent   (Glib::ustring name);
+    Glib::ustring    defaultMonitorProfile;  // Main monitors standard profile name, from OS
+    void             findDefaultMonitorProfile();
 
-        cmsHPROFILE      getXYZProfile ()  { return xyz;  }
-        cmsHPROFILE      getsRGBProfile () { return srgb; }
-        std::vector<Glib::ustring> getOutputProfiles ();
+    int              numOfWProfiles ();
+    cmsHPROFILE      createFromMatrix (const double matrix[3][3], bool gamma = false, Glib::ustring name = "");
+    cmsHPROFILE      workingSpace (Glib::ustring name);
+    cmsHPROFILE      workingSpaceGamma (Glib::ustring name);
+    TMatrix          workingSpaceMatrix (Glib::ustring name);
+    TMatrix          workingSpaceInverseMatrix (Glib::ustring name);
+
+    cmsHPROFILE      getProfile   (Glib::ustring name);
+    cmsHPROFILE      getStdProfile(Glib::ustring name);
+
+    void             init         (Glib::ustring usrICCDir, Glib::ustring stdICCDir);
+    ProfileContent   getContent   (Glib::ustring name);
+
+    cmsHPROFILE      getXYZProfile ()
+    {
+        return xyz;
+    }
+    cmsHPROFILE      getsRGBProfile ()
+    {
+        return srgb;
+    }
+    std::vector<Glib::ustring> getOutputProfiles ();
 };
 
 #define iccStore ICCStore::getInstance()
@@ -98,4 +107,4 @@ class ICCStore {
 //extern const char* wpnames[];
 }
 #endif
-                                                      
+

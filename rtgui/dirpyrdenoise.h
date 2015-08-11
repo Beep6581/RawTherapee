@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -28,18 +28,19 @@
 #include "guiutils.h"
 #include "options.h"
 
-class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoChromaListener, public CurveListener, public ColorProvider {
+class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoChromaListener, public CurveListener, public ColorProvider
+{
 
-  protected:
+protected:
     CurveEditorGroup* NoiscurveEditorG;
     CurveEditorGroup* CCcurveEditorG;
-	Adjuster* luma;
-	Adjuster* Ldetail;
-	Adjuster* chroma;
-	Adjuster* redchro;
-	Adjuster* bluechro;	
-	Adjuster* gamma;
-	Adjuster* passes;
+    Adjuster* luma;
+    Adjuster* Ldetail;
+    Adjuster* chroma;
+    Adjuster* redchro;
+    Adjuster* bluechro;
+    Adjuster* gamma;
+    Adjuster* passes;
     FlatCurveEditor* lshape;
     FlatCurveEditor* ccshape;
 
@@ -50,10 +51,10 @@ class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public Fol
     bool lastmedian;
     Gtk::CheckButton* autochroma;
     bool lastautochroma;
-	Gtk::Label*    NoiseLabels;
-	Gtk::Label*    TileLabels;
-	Gtk::Label*    PrevLabels;
-	
+    Gtk::Label*    NoiseLabels;
+    Gtk::Label*    TileLabels;
+    Gtk::Label*    PrevLabels;
+
 //    Gtk::CheckButton* perform;
 //    bool lastperform;
 //    sigc::connection perfconn;
@@ -76,31 +77,31 @@ class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public Fol
     MyComboBoxText*   rgbmethod;
     sigc::connection  rgbmethodconn;
     Gtk::HBox* ctboxrgb;
-	double nextchroma;
-	double nextred;
-	double nextblue;
-	double nextnresid;
-	double nexthighresid;
+    double nextchroma;
+    double nextred;
+    double nextblue;
+    double nextnresid;
+    double nexthighresid;
     Gtk::HBox* ctboxL;
     Gtk::HBox* ctboxC;
     Gtk::HBox* ctboxC2;
-	int nexttileX;
-	int nexttileY;
-	int nextprevX;
-	int nextprevY;
-	int nextsizeT;
-	int nextsizeP;
-	
-  public:
+    int nexttileX;
+    int nexttileY;
+    int nextprevX;
+    int nextprevY;
+    int nextsizeT;
+    int nextsizeP;
+
+public:
 
     DirPyrDenoise ();
     ~DirPyrDenoise ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
     void setBatchMode   (bool batchMode);
-    void curveChanged 	(CurveEditor* ce);
+    void curveChanged   (CurveEditor* ce);
     void setEditProvider     (EditDataProvider *provider);
     void autoOpenCurve  ();
 
@@ -115,14 +116,14 @@ class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public Fol
     bool noiseComputed_ ();
     void noiseTilePrev (int tileX, int tileY, int prevX, int prevY, int sizeT, int sizeP);
     bool TilePrevComputed_ ();
-	
+
 //    void perform_toggled  ();
-	void updateNoiseLabel      ();
+    void updateNoiseLabel      ();
     void LmethodChanged      ();
     void CmethodChanged      ();
     void C2methodChanged      ();
-	void updateTileLabel      ();
-	void updatePrevLabel      ();
+    void updateTileLabel      ();
+    void updatePrevLabel      ();
 
     void dmethodChanged      ();
     void medmethodChanged      ();
@@ -133,8 +134,8 @@ class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public Fol
 
     void setAdjusterBehavior (bool lumaadd, bool lumdetadd, bool chromaadd, bool chromaredadd, bool chromablueadd, bool gammaadd, bool passesadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
-	Glib::ustring getSettingString ();
-	
+    Glib::ustring getSettingString ();
+
 };
 
 #endif

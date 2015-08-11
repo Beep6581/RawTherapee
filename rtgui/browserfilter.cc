@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,14 +18,17 @@
  */
 #include "browserfilter.h"
 
-BrowserFilter::BrowserFilter () : exifFilterEnabled (false) {
+BrowserFilter::BrowserFilter () : exifFilterEnabled (false)
+{
 
     showTrash = true;
-    for (int i=0; i<6; i++){
+
+    for (int i = 0; i < 6; i++) {
         showRanked[i] = true;
         showCLabeled[i] = true;
     }
-    for (int i=0; i<2; i++){
+
+    for (int i = 0; i < 2; i++) {
         showEdited[i] = true;
         showRecentlySaved[i] = true;
     }

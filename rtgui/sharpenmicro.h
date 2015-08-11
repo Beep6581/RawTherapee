@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -28,32 +28,33 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class SharpenMicro : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
+class SharpenMicro : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+{
 
 protected:
 
-	Gtk::CheckButton* matrix;
-	Adjuster* amount;
-	Adjuster* uniformity;
+    Gtk::CheckButton* matrix;
+    Adjuster* amount;
+    Adjuster* uniformity;
 
-	sigc::connection matrixconn;
-	bool lastmatrix;
+    sigc::connection matrixconn;
+    bool lastmatrix;
 
 public:
 
-	SharpenMicro           ();
+    SharpenMicro           ();
 
-	void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-	void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-	void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
-	void setBatchMode        (bool batchMode);
-	void trimValues          (rtengine::procparams::ProcParams* pp);
-	void setAdjusterBehavior (bool amountadd, bool uniformityadd );
-	void adjusterChanged     (Adjuster* a, double newval);
+    void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
+    void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
+    void setBatchMode        (bool batchMode);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
+    void setAdjusterBehavior (bool amountadd, bool uniformityadd );
+    void adjusterChanged     (Adjuster* a, double newval);
 
     void enabledChanged      ();
-	void matrix_toggled      ();
-	
+    void matrix_toggled      ();
+
 
 };
 

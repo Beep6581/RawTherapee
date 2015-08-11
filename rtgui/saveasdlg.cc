@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -23,15 +23,16 @@
 #include "rtimage.h"
 
 extern Options options;
-SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
+SaveAsDialog::SaveAsDialog (Glib::ustring initialDir)
+{
 
-	set_title(M("GENERAL_SAVE"));
+    set_title(M("GENERAL_SAVE"));
 
     Gtk::VBox* vbox = get_vbox ();
 
     fchooser = Gtk::manage( new Gtk::FileChooserWidget (Gtk::FILE_CHOOSER_ACTION_SAVE) );
     fchooser->set_current_folder (initialDir);
-    fchooser->signal_file_activated().connect(sigc::mem_fun(*this,&SaveAsDialog::okPressed));
+    fchooser->signal_file_activated().connect(sigc::mem_fun(*this, &SaveAsDialog::okPressed));
 
     filter_jpg.set_name(M("SAVEDLG_JPGFILTER"));
     filter_jpg.add_pattern("*.jpg");
@@ -69,8 +70,9 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
     saveMethod[1]->set_group (g);
     saveMethod[2]->set_group (g);
 
-    if (options.saveMethodNum >= 0 && options.saveMethodNum < 3)
+    if (options.saveMethodNum >= 0 && options.saveMethodNum < 3) {
         saveMethod[options.saveMethodNum]->set_active (true);
+    }
 
     saveMethod[0]->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::saveImmediatlyClicked) );
     saveMethod[1]->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::putToQueueClicked) );
@@ -80,10 +82,10 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
     forceFormatOpts = Gtk::manage( new Gtk::CheckButton (M("SAVEDLG_FORCEFORMATOPTS")) );
     forceFormatOpts->set_active(options.forceFormatOpts);
-    forceFormatOpts->set_sensitive(options.saveMethodNum>0);
+    forceFormatOpts->set_sensitive(options.saveMethodNum > 0);
     forceFormatOpts->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::forceFmtOptsSwitched) );
     // update sensitivity of the SaveFormatPanel
-    formatOpts->set_sensitive(options.saveMethodNum==0 || options.forceFormatOpts);
+    formatOpts->set_sensitive(options.saveMethodNum == 0 || options.forceFormatOpts);
 
 // Unique filename option
 // ~~~~~~~~~~~~~~~~~~~~~~
@@ -97,7 +99,7 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
 
     ok->set_image (*Gtk::manage(new RTImage ("gtk-apply.png")));
     cancel->set_image (*Gtk::manage(new RTImage ("gtk-cancel.png")));
-    
+
     ok->set_tooltip_markup (M("TP_SAVEDIALOG_OK_TIP"));
 
     ok->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::okPressed) );
@@ -106,6 +108,7 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
 // pack everything
 // ~~~~~~~~~~~~~~~
     Gtk::VBox* vbox_bottomRight = Gtk::manage(new Gtk::VBox ());
+
     // There is no queue in simple mode, so no need to choose
     if (!simpleEditor) {
         vbox_bottomRight->pack_start (*saveMethod[0], Gtk::PACK_SHRINK, 2);
@@ -113,6 +116,7 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
         vbox_bottomRight->pack_start (*saveMethod[2], Gtk::PACK_SHRINK, 2);
         vbox_bottomRight->pack_start (*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 5);
     }
+
     vbox_bottomRight->pack_start (*forceFormatOpts, Gtk::PACK_SHRINK, 4);
     vbox_bottomRight->pack_start (*autoSuffix, Gtk::PACK_SHRINK, 4);
 
@@ -133,70 +137,87 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
     signal_key_press_event().connect( sigc::mem_fun(*this, &SaveAsDialog::keyPressed) );
 }
 
-void SaveAsDialog::saveImmediatlyClicked () {
+void SaveAsDialog::saveImmediatlyClicked ()
+{
     forceFormatOpts->set_sensitive(false);
     formatOpts->set_sensitive(true);
 }
 
-void SaveAsDialog::putToQueueClicked () {
+void SaveAsDialog::putToQueueClicked ()
+{
     forceFormatOpts->set_sensitive(true);
     formatOpts->set_sensitive(forceFormatOpts->get_active());
 }
 
-void SaveAsDialog::forceFmtOptsSwitched () {
+void SaveAsDialog::forceFmtOptsSwitched ()
+{
     formatOpts->set_sensitive(forceFormatOpts->get_active());
 }
 
-bool SaveAsDialog::getForceFormatOpts () {
+bool SaveAsDialog::getForceFormatOpts ()
+{
 
     return forceFormatOpts->get_active();
 }
 
-bool SaveAsDialog::getAutoSuffix () {
+bool SaveAsDialog::getAutoSuffix ()
+{
 
     return autoSuffix->get_active();
 }
 
-bool SaveAsDialog::getImmediately () {
+bool SaveAsDialog::getImmediately ()
+{
 
     return simpleEditor ? true : saveMethod[0]->get_active ();
 }
 
-bool SaveAsDialog::getToHeadOfQueue () {
+bool SaveAsDialog::getToHeadOfQueue ()
+{
 
     return saveMethod[1]->get_active ();
 }
 
-bool SaveAsDialog::getToTailOfQueue () {
+bool SaveAsDialog::getToTailOfQueue ()
+{
 
     return saveMethod[2]->get_active ();
 }
 
-int SaveAsDialog::getSaveMethodNum () {
-    if (simpleEditor)
+int SaveAsDialog::getSaveMethodNum ()
+{
+    if (simpleEditor) {
         return 0;
+    }
+
     for (int i = 0; i < 3; i++)
-        if (saveMethod[i]->get_active())
+        if (saveMethod[i]->get_active()) {
             return i;
+        }
+
     return -1;
 }
 
-Glib::ustring SaveAsDialog::getFileName () {
+Glib::ustring SaveAsDialog::getFileName ()
+{
 
     return fname;
 }
 
-Glib::ustring SaveAsDialog::getDirectory () {
+Glib::ustring SaveAsDialog::getDirectory ()
+{
 
     return fchooser->get_current_folder ();
 }
 
-SaveFormat SaveAsDialog::getFormat () {
+SaveFormat SaveAsDialog::getFormat ()
+{
 
     return formatOpts->getFormat ();
 }
 
-void SaveAsDialog::okPressed () {
+void SaveAsDialog::okPressed ()
+{
 
     fname = fchooser->get_filename();
 
@@ -217,74 +238,84 @@ void SaveAsDialog::okPressed () {
     bool extIsJpeg  = (extLower == "jpg" || extLower == "jpeg" || extLower == "jpe");
     bool extIsTiff  = (extLower == "tif" || extLower == "tiff");
     bool extIsPng   = (extLower == "png");
-    if (extIsEmpty || !(extIsJpeg || extIsTiff || extIsPng)) { 
+
+    if (extIsEmpty || !(extIsJpeg || extIsTiff || extIsPng)) {
         // extension is either empty or unfamiliar.
         fname += Glib::ustring (".") + sf.format;
     } else if (    !(sf.format == "jpg" && extIsJpeg)
-                && !(sf.format == "tif" && extIsTiff)
-                && !(sf.format == "png" && extIsPng )    ) {
+                   && !(sf.format == "tif" && extIsTiff)
+                   && !(sf.format == "png" && extIsPng )    ) {
         // create dialog to warn user that the filename may have two extensions on the end.
         Glib::ustring msg_ = Glib::ustring ("<b>") + M("GENERAL_WARNING") + ": "
                              + M("SAVEDLG_WARNFILENAME") + " \"" + Glib::path_get_basename (fname)
                              + "." + sf.format + "\"</b>";
         Gtk::MessageDialog msgd (*this, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK_CANCEL, true);
-        if (msgd.run () == Gtk::RESPONSE_OK)
+
+        if (msgd.run () == Gtk::RESPONSE_OK) {
             fname += Glib::ustring (".") + sf.format;
-        else
+        } else {
             return;
+        }
     }
 
     response (Gtk::RESPONSE_OK);
 }
 
-void SaveAsDialog::cancelPressed () {
+void SaveAsDialog::cancelPressed ()
+{
 
     fname = fchooser->get_filename();
     response (Gtk::RESPONSE_CANCEL);
 }
 
-void SaveAsDialog::formatChanged (Glib::ustring f) {
+void SaveAsDialog::formatChanged (Glib::ustring f)
+{
 
-    if (f=="jpg")
+    if (f == "jpg") {
         fchooser->set_filter (filter_jpg);
-    else if (f=="png") 
+    } else if (f == "png") {
         fchooser->set_filter (filter_png);
-    else if (f=="tif")
+    } else if (f == "tif") {
         fchooser->set_filter (filter_tif);
+    }
 }
 
-void SaveAsDialog::setInitialFileName (Glib::ustring fname) {
+void SaveAsDialog::setInitialFileName (Glib::ustring fname)
+{
 
     fchooser->set_current_name(fname);
 }
 
-void SaveAsDialog::setImagePath (Glib::ustring ipath) {
+void SaveAsDialog::setImagePath (Glib::ustring ipath)
+{
 
     Glib::ustring path = Glib::path_get_dirname(ipath);
 
     //Add the image's path to the Shortcut list
 #ifdef WIN32
+
     // Dirty workaround, waiting for a clean solution by using exceptions!
     if (!safe_is_shortcut_dir(path))
 #endif
-    try {
-        fchooser->add_shortcut_folder(path);
-    }
-    catch (Glib::Error &err) {}
+        try {
+            fchooser->add_shortcut_folder(path);
+        } catch (Glib::Error &err) {}
 }
 
 
-bool SaveAsDialog::keyPressed (GdkEventKey* event) {
+bool SaveAsDialog::keyPressed (GdkEventKey* event)
+{
 
-		bool ctrl = event->state & GDK_CONTROL_MASK;
+    bool ctrl = event->state & GDK_CONTROL_MASK;
 
-		if (ctrl){
-			switch(event->keyval) {
-				case GDK_Return:  // Ctrl-Enter equivalent to pressing OK button
-				case GDK_KP_Enter:
-					SaveAsDialog::okPressed();
-					return true;
-			}
-		}
-		return false;
+    if (ctrl) {
+        switch(event->keyval) {
+        case GDK_Return:  // Ctrl-Enter equivalent to pressing OK button
+        case GDK_KP_Enter:
+            SaveAsDialog::okPressed();
+            return true;
+        }
+    }
+
+    return false;
 }

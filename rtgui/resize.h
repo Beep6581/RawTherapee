@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -25,9 +25,10 @@
 #include "toolpanel.h"
 #include "guiutils.h"
 
-class Resize : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::SizeListener {
+class Resize : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::SizeListener
+{
 
-  protected:
+protected:
     Adjuster*          scale;
     Gtk::VBox*         sizeBox;
     MyComboBoxText*    appliesTo;
@@ -41,16 +42,19 @@ class Resize : public ToolParamBlock, public AdjusterListener, public FoldableTo
     bool               wDirty, hDirty;
     ToolParamBlock*    packBox;
 
-  public:
+public:
 
     Resize ();
     ~Resize ();
 
-    Gtk::Box* getPackBox () { return packBox; }
+    Gtk::Box* getPackBox ()
+    {
+        return packBox;
+    }
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
     void setBatchMode   (bool batchMode);
 
     void adjusterChanged  (Adjuster* a, double newval);
@@ -59,17 +63,17 @@ class Resize : public ToolParamBlock, public AdjusterListener, public FoldableTo
     void appliesToChanged ();
     void methodChanged    ();
     void specChanged      ();
-    void update           (bool isCropped, int cw, int ch, int ow=0, int oh=0);
+    void update           (bool isCropped, int cw, int ch, int ow = 0, int oh = 0);
     void setGUIFromCrop   (bool isCropped, int cw, int ch);
     void sizeChanged      (int w, int h, int ow, int oh);
     void setDimensions    ();
     void enabledChanged   ();
 
-  private:
+private:
     void fitBoxScale ();
     int getComputedWidth ();
-   	int getComputedHeight ();
-   	void notifyBBox ();
+    int getComputedHeight ();
+    void notifyBBox ();
     void updateGUI ();
 };
 

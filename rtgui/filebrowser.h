@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -34,19 +34,23 @@
 class ProfileStoreLabel;
 class FileBrowser;
 class FileBrowserEntry;
-class FileBrowserListener {
+class FileBrowserListener
+{
 
-    public:
-        virtual     ~FileBrowserListener    () {}
-        virtual void filterApplied () {}
-        virtual void openRequested          (std::vector<Thumbnail*> tbe) {}
-        virtual void developRequested       (std::vector<FileBrowserEntry*> tbe, bool fastmode) {}
-        virtual void renameRequested        (std::vector<FileBrowserEntry*> tbe) {}
-        virtual void deleteRequested        (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed) {}
-        virtual void copyMoveRequested      (std::vector<FileBrowserEntry*> tbe, bool moveRequested) {}
-        virtual void selectionChanged       (std::vector<Thumbnail*> tbe) {}
-        virtual void clearFromCacheRequested(std::vector<FileBrowserEntry*> tbe, bool leavenotrace) {}
-        virtual bool isInTabMode            () { return false; }
+public:
+    virtual     ~FileBrowserListener    () {}
+    virtual void filterApplied () {}
+    virtual void openRequested          (std::vector<Thumbnail*> tbe) {}
+    virtual void developRequested       (std::vector<FileBrowserEntry*> tbe, bool fastmode) {}
+    virtual void renameRequested        (std::vector<FileBrowserEntry*> tbe) {}
+    virtual void deleteRequested        (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed) {}
+    virtual void copyMoveRequested      (std::vector<FileBrowserEntry*> tbe, bool moveRequested) {}
+    virtual void selectionChanged       (std::vector<Thumbnail*> tbe) {}
+    virtual void clearFromCacheRequested(std::vector<FileBrowserEntry*> tbe, bool leavenotrace) {}
+    virtual bool isInTabMode            ()
+    {
+        return false;
+    }
 };
 
 struct FileBrowserIdleHelper {
@@ -59,13 +63,14 @@ struct FileBrowserIdleHelper {
  * Class handling actions common to all thumbnails of the file browser
  */
 class FileBrowser  : public ThumbBrowserBase,
-                     public LWButtonListener,
-                     public ExportPanelListener,
-                     public ProfileStoreListener {
+    public LWButtonListener,
+    public ExportPanelListener,
+    public ProfileStoreListener
+{
 
     typedef sigc::signal<void> type_trash_changed;
 
-  protected:
+protected:
 
     Gtk::MenuItem* rank[6];
     Gtk::ImageMenuItem* colorlabel[6];
@@ -75,7 +80,7 @@ class FileBrowser  : public ThumbBrowserBase,
     Gtk::ImageMenuItem* developfast;
     Gtk::MenuItem* rename;
     Gtk::MenuItem* remove;
-	Gtk::MenuItem* removeInclProc;
+    Gtk::MenuItem* removeInclProc;
     Gtk::MenuItem* open;
     Gtk::MenuItem* selall;
     Gtk::MenuItem* copyTo;
@@ -115,7 +120,7 @@ class FileBrowser  : public ThumbBrowserBase,
     Gtk::ImageMenuItem* colorlabel_pop[6];
     Gtk::Menu* pmenuColorLabels;
     void* colorLabel_actionData;
-    void menuColorlabelActivated (Gtk::MenuItem* m); // use only when menu is invoked via FileBrowser::buttonPressed to pass actionData 
+    void menuColorlabelActivated (Gtk::MenuItem* m); // use only when menu is invoked via FileBrowser::buttonPressed to pass actionData
 
     Glib::RefPtr<Gtk::AccelGroup> pmaccelgroup;
 
@@ -137,26 +142,35 @@ class FileBrowser  : public ThumbBrowserBase,
     ExportPanel* exportPanel;
 
     type_trash_changed m_trash_changed;
-    
-  public:
-   
+
+public:
+
     FileBrowser ();
     ~FileBrowser ();
 
     void addEntry (FileBrowserEntry* entry); // can be called from any thread
-    void addEntry_ (FileBrowserEntry* entry); // this must be executed inside the gtk thread 
+    void addEntry_ (FileBrowserEntry* entry); // this must be executed inside the gtk thread
     FileBrowserEntry*  delEntry (const Glib::ustring& fname);    // return the entry if found here return NULL otherwise
     void close ();
-    
-    void setBatchPParamsChangeListener (BatchPParamsChangeListener* l) { bppcl = l; }
-    void setFileBrowserListener (FileBrowserListener* l) { tbl = l; }
-     
+
+    void setBatchPParamsChangeListener (BatchPParamsChangeListener* l)
+    {
+        bppcl = l;
+    }
+    void setFileBrowserListener (FileBrowserListener* l)
+    {
+        tbl = l;
+    }
+
     void menuItemActivated (Gtk::MenuItem* m);
     void applyMenuItemActivated (ProfileStoreLabel *label);
     void applyPartialMenuItemActivated (ProfileStoreLabel *label);
 
     void applyFilter (const BrowserFilter& filter);
-    int getNumFiltered(){ return numFiltered;}
+    int getNumFiltered()
+    {
+        return numFiltered;
+    }
 
     void buttonPressed (LWButton* button, int actionCode, void* actionData);
     void redrawNeeded  (LWButton* button);
@@ -168,7 +182,10 @@ class FileBrowser  : public ThumbBrowserBase,
     void saveThumbnailHeight (int height);
     int  getThumbnailHeight ();
 
-    bool isInTabMode() { return tbl ? tbl->isInTabMode() : false; }
+    bool isInTabMode()
+    {
+        return tbl ? tbl->isInTabMode() : false;
+    }
 
     void openNextImage ();
     void openPrevImage ();
@@ -182,12 +199,12 @@ class FileBrowser  : public ThumbBrowserBase,
 
     void thumbRearrangementNeeded ();
     void _thumbRearrangementNeeded ();
-    
+
     void selectionChanged ();
-    
+
     void setExportPanel (ExportPanel* expanel);
-	// exportpanel interface
-	void exportRequested();
+    // exportpanel interface
+    void exportRequested();
 
     void updateProfileList ();
 

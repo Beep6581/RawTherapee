@@ -24,21 +24,22 @@
 #include "toolpanel.h"
 #include "../rtengine/rawimage.h"
 
-class BayerPreProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
+class BayerPreProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+{
 
-  protected:
+protected:
 
     Adjuster* lineDenoise;
     Adjuster* greenEqThreshold;
 
-  public:
+public:
 
     BayerPreProcess ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
     void setBatchMode   (bool batchMode);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
 
     void adjusterChanged     (Adjuster* a, double newval);
     void hotDeadPixelChanged();

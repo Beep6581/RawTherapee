@@ -21,28 +21,30 @@
 
 #include "image16.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
-class CieImage {
+class CieImage
+{
 private:
-	bool fromImage;
+    bool fromImage;
 
 public:
-	int W, H;
-	float * data[6];
-	float** J_p;
-	float** Q_p;
-	float** M_p;
-	float** C_p;
-	float** sh_p;
-//	float** ch_p;
-	float** h_p;
+    int W, H;
+    float * data[6];
+    float** J_p;
+    float** Q_p;
+    float** M_p;
+    float** C_p;
+    float** sh_p;
+//  float** ch_p;
+    float** h_p;
 
-	CieImage (int w, int h);
-	~CieImage ();
+    CieImage (int w, int h);
+    ~CieImage ();
 
-	//Copies image data in Img into this instance.
-	void CopyFrom(CieImage *Img);
+    //Copies image data in Img into this instance.
+    void CopyFrom(CieImage *Img);
 };
 
 }

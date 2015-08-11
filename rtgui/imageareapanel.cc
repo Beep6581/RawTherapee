@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,7 +18,8 @@
  */
 #include "imageareapanel.h"
 
-ImageAreaPanel::ImageAreaPanel () : before(NULL), after(NULL) {
+ImageAreaPanel::ImageAreaPanel () : before(NULL), after(NULL)
+{
 
     set_border_width (2);
 
@@ -38,57 +39,65 @@ ImageAreaPanel::ImageAreaPanel () : before(NULL), after(NULL) {
 
 }
 
-ImageAreaPanel::~ImageAreaPanel () {
+ImageAreaPanel::~ImageAreaPanel ()
+{
 
     delete imageArea;
 }
 
-void ImageAreaPanel::syncBeforeAfterViews () {
+void ImageAreaPanel::syncBeforeAfterViews ()
+{
 
-    if (before && this==after)
+    if (before && this == after) {
         before->synchronize ();
-    else if (after && this==before)
+    } else if (after && this == before) {
         after->synchronize ();
+    }
 
     queue_draw ();
 }
 
-void ImageAreaPanel::setBeforeAfterViews (ImageAreaPanel* bef, ImageAreaPanel* aft) {
+void ImageAreaPanel::setBeforeAfterViews (ImageAreaPanel* bef, ImageAreaPanel* aft)
+{
 
     before = bef;
     after = aft;
     syncBeforeAfterViews ();
 }
 
-void ImageAreaPanel::zoomChanged () {
+void ImageAreaPanel::zoomChanged ()
+{
 
-    if (after && this==before)
+    if (after && this == before) {
         after->imageArea->setZoom (imageArea->getZoom ());
-    else if (before && this==after)
+    } else if (before && this == after) {
         before->imageArea->setZoom (imageArea->getZoom ());
+    }
 }
 
-void ImageAreaPanel::synchronize () {
+void ImageAreaPanel::synchronize ()
+{
 
-    if (after && this==before) {
+    if (after && this == before) {
         int imgw, imgh, x, y;
         after->imageArea->getScrollImageSize (imgw, imgh);
         after->imageArea->getScrollPosition (x, y);
-        if (imgw>0 && imgh>0) {
+
+        if (imgw > 0 && imgh > 0) {
             int bimgw, bimgh;
             imageArea->getScrollImageSize (bimgw, bimgh);
-            imageArea->setScrollPosition (x*bimgw/imgw, y*bimgh/imgh);
+            imageArea->setScrollPosition (x * bimgw / imgw, y * bimgh / imgh);
             imageArea->queue_draw ();
         }
-    }
-    else if (before && this==after) {
+    } else if (before && this == after) {
         int imgw, imgh, x, y;
         before->imageArea->getScrollImageSize (imgw, imgh);
         before->imageArea->getScrollPosition (x, y);
-        if (imgw>0 && imgh>0) {
+
+        if (imgw > 0 && imgh > 0) {
             int bimgw, bimgh;
             imageArea->getScrollImageSize (bimgw, bimgh);
-            imageArea->setScrollPosition (x*bimgw/imgw, y*bimgh/imgh);
+            imageArea->setScrollPosition (x * bimgw / imgw, y * bimgh / imgh);
             imageArea->queue_draw ();
         }
     }

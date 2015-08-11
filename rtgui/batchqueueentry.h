@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -32,7 +32,8 @@ struct BatchQueueEntryIdleHelper {
     int pending;
 };
 
-class BatchQueueEntry : public ThumbBrowserEntryBase, public BQEntryUpdateListener {
+class BatchQueueEntry : public ThumbBrowserEntryBase, public BQEntryUpdateListener
+{
 
     guint8* opreview;
     int origpw, origph;
@@ -52,13 +53,13 @@ public:
     int sequence;
     SaveFormat saveFormat;
     bool forceFormatOpts;
-  
-    BatchQueueEntry (rtengine::ProcessingJob* job, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm=NULL);
+
+    BatchQueueEntry (rtengine::ProcessingJob* job, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm = NULL);
     ~BatchQueueEntry ();
 
     void refreshThumbnailImage ();
     void calcThumbnailSize ();
-    
+
     void drawProgressBar (Glib::RefPtr<Gdk::Window> win, Glib::RefPtr<Gdk::GC> gc, const Gdk::Color& foregr, const Gdk::Color& backgr, int x, int w, int y, int h);
 
     void removeButtonSet ();

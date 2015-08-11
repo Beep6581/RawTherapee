@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -27,56 +27,56 @@
 #include "thumbnaillistener.h"
 
 class FilePanel;
-class BatchToolPanelCoordinator : 
-                                public ToolPanelCoordinator, 
-                                public FileSelectionChangeListener,
-                                public BatchPParamsChangeListener,
-                                public ThumbnailListener
+class BatchToolPanelCoordinator :
+    public ToolPanelCoordinator,
+    public FileSelectionChangeListener,
+    public BatchPParamsChangeListener,
+    public ThumbnailListener
 {
-    protected:
-        rtengine::procparams::ProcParams pparams;
-        ParamsEdited pparamsEdited;
-        std::vector<Thumbnail*> selected;
-        std::vector<Glib::ustring> selFileNames;
-        std::vector<rtengine::procparams::ProcParams> initialPP;
-        bool somethingChanged;
-        bool blockedUpdate;
-        FilePanel* parent;
+protected:
+    rtengine::procparams::ProcParams pparams;
+    ParamsEdited pparamsEdited;
+    std::vector<Thumbnail*> selected;
+    std::vector<Glib::ustring> selFileNames;
+    std::vector<rtengine::procparams::ProcParams> initialPP;
+    bool somethingChanged;
+    bool blockedUpdate;
+    FilePanel* parent;
 
-        void closeSession (bool save=true);
-        void initSession ();
+    void closeSession (bool save = true);
+    void initSession ();
 
-    public:
-    
-        BatchToolPanelCoordinator (FilePanel* parent);
+public:
 
-        // FileSelectionChangeListener interface
-        void selectionChanged (const std::vector<Thumbnail*>& selected);
+    BatchToolPanelCoordinator (FilePanel* parent);
 
-        // toolpanellistener interface
-        void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr);
+    // FileSelectionChangeListener interface
+    void selectionChanged (const std::vector<Thumbnail*>& selected);
 
-        // profilechangelistener interface
-        void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited=NULL);
+    // toolpanellistener interface
+    void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr);
 
-        // wbprovider interface
-        void getAutoWB (double& temp, double& green, double equal);
-        void getCamWB (double& temp, double& green);
+    // profilechangelistener interface
+    void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = NULL);
 
-        // thumbnaillistener interface
-        void procParamsChanged (Thumbnail* thm, int whoChangedIt);
+    // wbprovider interface
+    void getAutoWB (double& temp, double& green, double equal);
+    void getCamWB (double& temp, double& green);
 
-        // batchpparamschangelistener interface
-        void beginBatchPParamsChange(int numberOfEntries);
-        void endBatchPParamsChange();
+    // thumbnaillistener interface
+    void procParamsChanged (Thumbnail* thm, int whoChangedIt);
 
-        // imageareatoollistener interface
-        void spotWBselected (int x, int y, Thumbnail* thm=NULL);
-        void cropSelectionReady ();
-        void rotateSelectionReady (double rotate_deg, Thumbnail* thm=NULL);
-        CropGUIListener* startCropEditing (Thumbnail* thm=NULL);
+    // batchpparamschangelistener interface
+    void beginBatchPParamsChange(int numberOfEntries);
+    void endBatchPParamsChange();
 
-        void optionsChanged ();
+    // imageareatoollistener interface
+    void spotWBselected (int x, int y, Thumbnail* thm = NULL);
+    void cropSelectionReady ();
+    void rotateSelectionReady (double rotate_deg, Thumbnail* thm = NULL);
+    CropGUIListener* startCropEditing (Thumbnail* thm = NULL);
+
+    void optionsChanged ();
 };
 
 #endif

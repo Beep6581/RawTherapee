@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -37,33 +37,36 @@
 #define DEFPROFILE_IMG      "Neutral"
 // Profile name to use for internal values' profile
 #define DEFPROFILE_INTERNAL "Neutral"
- 
-class SaveFormat {
 
-    public:
-        Glib::ustring format;
-        int pngBits;
-        int pngCompression;
-        int jpegQuality;
-        int jpegSubSamp;  // 1=best compression, 3=best quality
-        int tiffBits;
-        bool tiffUncompressed;
-        bool saveParams;
-        SaveFormat () : format("jpg"), pngBits(8), pngCompression(6), jpegQuality(90), jpegSubSamp(2), tiffBits(8), tiffUncompressed(true), saveParams(true) {};
+class SaveFormat
+{
+
+public:
+    Glib::ustring format;
+    int pngBits;
+    int pngCompression;
+    int jpegQuality;
+    int jpegSubSamp;  // 1=best compression, 3=best quality
+    int tiffBits;
+    bool tiffUncompressed;
+    bool saveParams;
+    SaveFormat () : format("jpg"), pngBits(8), pngCompression(6), jpegQuality(90), jpegSubSamp(2), tiffBits(8), tiffUncompressed(true), saveParams(true) {};
 };
 
-enum ThFileType {FT_Invalid=-1, FT_None=0, FT_Raw=1, FT_Jpeg=2, FT_Tiff=3, FT_Png=4, FT_Custom=5, FT_Tiff16=6, FT_Png16=7, FT_Custom16=8}; 
-enum PPLoadLocation {PLL_Cache=0, PLL_Input=1};
-enum CPBKeyType {CPBKT_TID=0, CPBKT_NAME=1, CPBKT_TID_NAME=2};
-enum prevdemo_t {PD_Sidecar=1, PD_Fast=0};
+enum ThFileType {FT_Invalid = -1, FT_None = 0, FT_Raw = 1, FT_Jpeg = 2, FT_Tiff = 3, FT_Png = 4, FT_Custom = 5, FT_Tiff16 = 6, FT_Png16 = 7, FT_Custom16 = 8};
+enum PPLoadLocation {PLL_Cache = 0, PLL_Input = 1};
+enum CPBKeyType {CPBKT_TID = 0, CPBKT_NAME = 1, CPBKT_TID_NAME = 2};
+enum prevdemo_t {PD_Sidecar = 1, PD_Fast = 0};
 
-namespace rtengine {
-	class SafeKeyFile;
+namespace rtengine
+{
+class SafeKeyFile;
 }
 
-class Options {
+class Options
+{
 
-  private:
+private:
     bool defProfRawMissing;
     bool defProfImgMissing;
     Glib::ustring userProfilePath;
@@ -85,11 +88,11 @@ class Options {
      * @return @c true if @p destination was changed
      */
     bool safeDirGet(const rtengine::SafeKeyFile& keyFile, const Glib::ustring& section,
-            const Glib::ustring& entryName, Glib::ustring& destination);
+                    const Glib::ustring& entryName, Glib::ustring& destination);
 
-  public:
+public:
     bool savesParamsAtExit;
-    SaveFormat saveFormat,saveFormatBatch;
+    SaveFormat saveFormat, saveFormatBatch;
     Glib::ustring savePathTemplate;
     Glib::ustring savePathFolder;
     bool saveUsePathTemplate;
@@ -137,7 +140,7 @@ class Options {
     bool multiUser;
     static Glib::ustring rtdir;
     Glib::ustring version;
-    int thumbSize,thumbSizeTab, thumbSizeQueue;
+    int thumbSize, thumbSizeTab, thumbSizeQueue;
     bool sameThumbSize;     // Will use only one thumb size for the file browser and the single editor tab, and avoid recomputing them
     bool showHistory;
     int showFilePanelState; // 0: normal, 1: maximized, 2: normal, 3: hidden
@@ -194,7 +197,7 @@ class Options {
     bool showFileNames;
     bool filmStripShowFileNames;
     bool tabbedUI;
-    int previewSizeTab,previewSizeBrowser;
+    int previewSizeTab, previewSizeBrowser;
     bool rememberZoomAndPan;
     int multiDisplayMode;  // 0=none, 1=Edit panels on other display
     std::vector<double> cutOverlayBrush;  // Red;Green;Blue;Alpha , all ranging 0..1
@@ -284,7 +287,7 @@ class Options {
     Glib::ustring lastVibranceCurvesDir;
     Glib::ustring lastProfilingReferenceDir;
     Glib::ustring lastBWCurvesDir;
-    
+
     size_t maxRecentFolders;                   // max. number of recent folders stored in options file
     std::vector<Glib::ustring> recentFolders;  // List containing all recent folders
 
@@ -301,15 +304,33 @@ class Options {
 
     // if multiUser=false, send back the global profile path
     Glib::ustring getPreferredProfilePath();
-    Glib::ustring getUserProfilePath() { return userProfilePath; }
-    Glib::ustring getGlobalProfilePath() { return globalProfilePath; }
+    Glib::ustring getUserProfilePath()
+    {
+        return userProfilePath;
+    }
+    Glib::ustring getGlobalProfilePath()
+    {
+        return globalProfilePath;
+    }
     Glib::ustring findProfilePath(Glib::ustring &profName);
     bool        has_retained_extention (Glib::ustring fname);
     bool        is_extention_enabled(Glib::ustring ext);
-    bool        is_defProfRawMissing() { return defProfRawMissing; }
-    bool        is_defProfImgMissing() { return defProfImgMissing; }
-    void        setDefProfRawMissing(bool value) { defProfRawMissing = value; }
-    void        setDefProfImgMissing(bool value) { defProfImgMissing = value; }
+    bool        is_defProfRawMissing()
+    {
+        return defProfRawMissing;
+    }
+    bool        is_defProfImgMissing()
+    {
+        return defProfImgMissing;
+    }
+    void        setDefProfRawMissing(bool value)
+    {
+        defProfRawMissing = value;
+    }
+    void        setDefProfImgMissing(bool value)
+    {
+        defProfImgMissing = value;
+    }
 };
 
 extern Options options;

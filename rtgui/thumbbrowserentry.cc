@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,41 +18,52 @@
  */
 #include <thumbbrowserentry.h>
 
-FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname) 
-    : ThumbBrowserEntryBase (fname), thumbnail(thm) {
-    
+FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
+    : ThumbBrowserEntryBase (fname), thumbnail(thm)
+{
+
     previewOwner = false;
     italicstyle = thumbnail->getType() != FT_Raw;
     datetimeline = thumbnail->getDateTimeString ();
     exifline = thumbnail->getExifString ();
 }
 
-void ThumbBrowserEntry::obtainThumbnailSize () {
+void ThumbBrowserEntry::obtainThumbnailSize ()
+{
 
-    if (thumbnail)
+    if (thumbnail) {
         thumbnail->getThumbnailSize (prew, preh);
+    }
 }
 Glib::RefPtr<Gdk::Pixbuf> ThumbBrowserEntry::editedIcon;
 Glib::RefPtr<Gdk::Pixbuf> ThumbBrowserEntry::recentlySavedIcon;
 Glib::RefPtr<Gdk::Pixbuf> ThumbBrowserEntry::enqueuedIcon;
-std::vector<Glib::RefPtr<Gdk::Pixbuf> > ThumbBrowserEntry::getIconsOnImageArea () {
+std::vector<Glib::RefPtr<Gdk::Pixbuf> > ThumbBrowserEntry::getIconsOnImageArea ()
+{
 
     std::vector<Glib::RefPtr<Gdk::Pixbuf> > ret;
-    
-    if (!thumbnail)
+
+    if (!thumbnail) {
         return ret;
+    }
 
-    if (thumbnail->hasProcParams() && editedIcon)
+    if (thumbnail->hasProcParams() && editedIcon) {
         ret.push_back (editedIcon);
-    if (thumbnail->isRecentlySaved() && recentlySavedIcon)
-        ret.push_back (recentlySavedIcon);
-    if (thumbnail->isEnqueued () && enqueuedIcon)
-        ret.push_back (enqueuedIcon);
+    }
 
-   return ret;
+    if (thumbnail->isRecentlySaved() && recentlySavedIcon) {
+        ret.push_back (recentlySavedIcon);
+    }
+
+    if (thumbnail->isEnqueued () && enqueuedIcon) {
+        ret.push_back (enqueuedIcon);
+    }
+
+    return ret;
 }
 
-ThumbnailButtonSet* ThumbBrowserEntry::getThumbButtonSet () {
+ThumbnailButtonSet* ThumbBrowserEntry::getThumbButtonSet ()
+{
 
     return (ThumbnailButtonSet*)buttonSet;
 }

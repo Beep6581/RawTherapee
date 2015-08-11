@@ -7,7 +7,8 @@
 #include <vector>
 #include <map>
 
-namespace rtengine { 
+namespace rtengine
+{
 
 // simple CLUT interface
 class CLUT
@@ -37,9 +38,9 @@ public:
     static Imagefloat* loadFile( Glib::ustring filename, Glib::ustring workingColorSpace, int &outLevel );
 
 private:
-    
+
     void loadClut( Imagefloat *img, RawClut &outClut );
-    
+
     Imagefloat *m_clutImage;
     int m_level;
     Glib::ustring m_filename;
@@ -51,26 +52,27 @@ class CLUTStore
 {
 public:
     CLUTStore();
-    
+
     CLUT* getClut( const Glib::ustring& filename );
     void releaseClut( const CLUT* clut );
 
-	void clearCache();
+    void clearCache();
 
 private:
-	typedef std::map<Glib::ustring, std::pair<int, HaldCLUT*> > Cluts;
-	
-	Cluts m_cluts;
+    typedef std::map<Glib::ustring, std::pair<int, HaldCLUT*> > Cluts;
+
+    Cluts m_cluts;
     MyMutex m_mutex;
 };
 
 void splitClutFilename( Glib::ustring filename, Glib::ustring &name, Glib::ustring &extension, Glib::ustring &profileName );
 
-}; //namespace rtengine 
+}; //namespace rtengine
 
 extern rtengine::CLUTStore clutStore;
 
-namespace rtengine {
+namespace rtengine
+{
 
 //support class for automate call of clutStore.releaseClut()
 class ClutPtr
@@ -78,16 +80,28 @@ class ClutPtr
 public:
     ClutPtr() : m_point( 0 ) {}
     explicit ClutPtr(CLUT *p) : m_point( p ) {}
-    ~ClutPtr() { clutStore.releaseClut( m_point ); }
-    const CLUT* operator-> () const { return m_point; }
-    operator bool() const { return m_point != 0; }
-    void set( CLUT *p ) { m_point = p; }
+    ~ClutPtr()
+    {
+        clutStore.releaseClut( m_point );
+    }
+    const CLUT* operator-> () const
+    {
+        return m_point;
+    }
+    operator bool() const
+    {
+        return m_point != 0;
+    }
+    void set( CLUT *p )
+    {
+        m_point = p;
+    }
 
 private:
     ClutPtr& operator=(ClutPtr const& cp );
     CLUT *m_point;
 };
 
-}; //namespace rtengine 
+}; //namespace rtengine
 
 #endif

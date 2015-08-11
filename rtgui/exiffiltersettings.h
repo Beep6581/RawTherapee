@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -22,32 +22,33 @@
 #include <set>
 #include <string>
 
-class ExifFilterSettings {
+class ExifFilterSettings
+{
 
-    public:
-        std::set<std::string> filetypes;
-        std::set<std::string> cameras;
-        std::set<std::string> lenses;
-        std::set<std::string> expcomp;
-        double fnumberFrom;
-        double fnumberTo;
-        double shutterFrom;
-        double shutterTo;
-        double focalFrom;
-        double focalTo;
-        int isoFrom;
-        int isoTo;
+public:
+    std::set<std::string> filetypes;
+    std::set<std::string> cameras;
+    std::set<std::string> lenses;
+    std::set<std::string> expcomp;
+    double fnumberFrom;
+    double fnumberTo;
+    double shutterFrom;
+    double shutterTo;
+    double focalFrom;
+    double focalTo;
+    int isoFrom;
+    int isoTo;
 
-		bool filterFNumber;
-		bool filterShutter;
-		bool filterFocalLen;
-		bool filterISO;
-		bool filterExpComp;
-		bool filterCamera;
-		bool filterLens;
-		bool filterFiletype;
-		
-         ExifFilterSettings ();
+    bool filterFNumber;
+    bool filterShutter;
+    bool filterFocalLen;
+    bool filterISO;
+    bool filterExpComp;
+    bool filterCamera;
+    bool filterLens;
+    bool filterFiletype;
+
+    ExifFilterSettings ();
     void clear ();
 };
 

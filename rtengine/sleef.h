@@ -1,9 +1,9 @@
 typedef struct {
-  double x, y;
+    double x, y;
 } double2;
 
 typedef struct {
-  float x, y;
+    float x, y;
 } float2;
 
 double xsin(double d);

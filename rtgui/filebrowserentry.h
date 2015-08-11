@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -39,9 +39,10 @@ struct FileBrowserEntryIdleHelper {
 };
 
 class FileThumbnailButtonSet;
-class FileBrowserEntry : public ThumbBrowserEntryBase, 
-                        public ThumbnailListener, 
-                        public ThumbImageUpdateListener {
+class FileBrowserEntry : public ThumbBrowserEntryBase,
+    public ThumbnailListener,
+    public ThumbImageUpdateListener
+{
 
     double scale;
     static bool iconsLoaded;
@@ -53,7 +54,7 @@ class FileBrowserEntry : public ThumbBrowserEntryBase,
     rtengine::procparams::CropParams cropParams;
     CropGUIListener* cropgl;
     FileBrowserEntryIdleHelper* feih;
-    
+
     ImgEditState state;
 
     bool onArea (CursorArea a, int x, int y);
@@ -66,15 +67,18 @@ public:
     static Glib::RefPtr<Gdk::Pixbuf> editedIcon;
     static Glib::RefPtr<Gdk::Pixbuf> recentlySavedIcon;
     static Glib::RefPtr<Gdk::Pixbuf> enqueuedIcon;
-    
+
     FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname);
     ~FileBrowserEntry ();
     void draw ();
-    
-    void setImageAreaToolListener (ImageAreaToolListener* l) { iatlistener = l; }
+
+    void setImageAreaToolListener (ImageAreaToolListener* l)
+    {
+        iatlistener = l;
+    }
 
     FileThumbnailButtonSet* getThumbButtonSet ();
-    
+
     void refreshThumbnailImage ();
     void refreshQuickThumbnailImage ();
     void calcThumbnailSize ();

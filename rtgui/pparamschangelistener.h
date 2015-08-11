@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -23,20 +23,22 @@
 #include <glibmm.h>
 #include "paramsedited.h"
 
-class PParamsChangeListener {
+class PParamsChangeListener
+{
 
-    public:
-        virtual     ~PParamsChangeListener() {}
-        virtual void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited=NULL) {}
-        virtual void clearParamChanges () {}
+public:
+    virtual     ~PParamsChangeListener() {}
+    virtual void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited = NULL) {}
+    virtual void clearParamChanges () {}
 };
 
-class BatchPParamsChangeListener {
+class BatchPParamsChangeListener
+{
 
-    public:
-        virtual     ~BatchPParamsChangeListener() {}
-        virtual void beginBatchPParamsChange(int numberOfEntries) {}
-        virtual void endBatchPParamsChange() {}
+public:
+    virtual     ~BatchPParamsChangeListener() {}
+    virtual void beginBatchPParamsChange(int numberOfEntries) {}
+    virtual void endBatchPParamsChange() {}
 };
 
 #endif

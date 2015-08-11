@@ -24,55 +24,56 @@
 
 class FlatCurveEditor;
 
-class FlatCurveEditorSubGroup: public CurveEditorSubGroup  {
+class FlatCurveEditorSubGroup: public CurveEditorSubGroup
+{
 
-	friend class FlatCurveEditor;
+    friend class FlatCurveEditor;
 
 protected:
-	Gtk::VBox* CPointsCurveBox;
+    Gtk::VBox* CPointsCurveBox;
 
-	MyFlatCurve* CPointsCurve;
+    MyFlatCurve* CPointsCurve;
 
-	CoordinateAdjuster *CPointsCoordAdjuster;
+    CoordinateAdjuster *CPointsCoordAdjuster;
 
-	Gtk::Button*       saveCPoints;
-	Gtk::Button*       loadCPoints;
-	Gtk::Button*       copyCPoints;
-	Gtk::Button*       pasteCPoints;
-	Gtk::ToggleButton* editPointCPoints;
-	Gtk::ToggleButton* editCPoints;
-	sigc::connection   editCPointsConn, editPointCPointsConn;
+    Gtk::Button*       saveCPoints;
+    Gtk::Button*       loadCPoints;
+    Gtk::Button*       copyCPoints;
+    Gtk::Button*       pasteCPoints;
+    Gtk::ToggleButton* editPointCPoints;
+    Gtk::ToggleButton* editCPoints;
+    sigc::connection   editCPointsConn, editPointCPointsConn;
 
 public:
-	FlatCurveEditorSubGroup(CurveEditorGroup* prt, Glib::ustring& curveDir);
-	virtual ~FlatCurveEditorSubGroup();
+    FlatCurveEditorSubGroup(CurveEditorGroup* prt, Glib::ustring& curveDir);
+    virtual ~FlatCurveEditorSubGroup();
 
-	FlatCurveEditor* addCurve(Glib::ustring curveLabel = "", bool periodic = true);
-	//virtual void updateBackgroundHistogram (CurveEditor* ce);
-	void switchGUI();
-	void refresh(CurveEditor *curveToRefresh);
-	void editModeSwitchedOff();
-	void pipetteMouseOver(EditDataProvider *provider, int modifierKey);
-	void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
-	void pipetteButton1Released(EditDataProvider *provider);
-	void pipetteDrag(EditDataProvider *provider, int modifierKey);
-	void showCoordinateAdjuster(CoordinateProvider *provider);
-	void stopNumericalAdjustment();
+    FlatCurveEditor* addCurve(Glib::ustring curveLabel = "", bool periodic = true);
+    //virtual void updateBackgroundHistogram (CurveEditor* ce);
+    void switchGUI();
+    void refresh(CurveEditor *curveToRefresh);
+    void editModeSwitchedOff();
+    void pipetteMouseOver(EditDataProvider *provider, int modifierKey);
+    void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
+    void pipetteButton1Released(EditDataProvider *provider);
+    void pipetteDrag(EditDataProvider *provider, int modifierKey);
+    void showCoordinateAdjuster(CoordinateProvider *provider);
+    void stopNumericalAdjustment();
 
-	bool curveReset (CurveEditor *ce);
+    bool curveReset (CurveEditor *ce);
 
 protected:
-	void storeCurveValues (CurveEditor* ce, const std::vector<double>& p);
-	void storeDisplayedCurve ();
-	void restoreDisplayedHistogram ();
-	void savePressed ();
-	void loadPressed ();
-	void copyPressed ();
-	void pastePressed ();
-	void removeEditor ();
-	const std::vector<double> getCurveFromGUI (int type);
-	void editPointToggled(Gtk::ToggleButton *button);
-	void editToggled (Gtk::ToggleButton *button);
+    void storeCurveValues (CurveEditor* ce, const std::vector<double>& p);
+    void storeDisplayedCurve ();
+    void restoreDisplayedHistogram ();
+    void savePressed ();
+    void loadPressed ();
+    void copyPressed ();
+    void pastePressed ();
+    void removeEditor ();
+    const std::vector<double> getCurveFromGUI (int type);
+    void editPointToggled(Gtk::ToggleButton *button);
+    void editToggled (Gtk::ToggleButton *button);
 };
 
 #endif

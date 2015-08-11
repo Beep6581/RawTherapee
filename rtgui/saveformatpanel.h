@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -24,41 +24,46 @@
 #include "guiutils.h"
 #include "options.h"
 
-class FormatChangeListener {
+class FormatChangeListener
+{
 
-    public:
-        virtual void formatChanged (Glib::ustring f) {}
+public:
+    virtual void formatChanged (Glib::ustring f) {}
 
 };
 
-class SaveFormatPanel : public Gtk::VBox, public AdjusterListener {
+class SaveFormatPanel : public Gtk::VBox, public AdjusterListener
+{
 
-    protected:
-        Adjuster*           jpegqual;
-        Adjuster*           pngcompr;
-        Gtk::CheckButton*   tiffuncompressed;
-        MyComboBoxText*     format;
-        MyComboBoxText*     jpegSubSamp;
-        Gtk::VBox*          formatopts;
-        Gtk::HBox*          jpegSubSampBox;
-        Gtk::Label*         jpegSubSampHead;
-        int                 oformat;
-        FormatChangeListener* listener;
-        Glib::ustring       fstr[5];
-        Gtk::CheckButton*   savespp;
-        
-        
-    public:
-    
-                    SaveFormatPanel ();
-                    ~SaveFormatPanel ();
-        void        setListener     (FormatChangeListener* l) { listener = l; }
+protected:
+    Adjuster*           jpegqual;
+    Adjuster*           pngcompr;
+    Gtk::CheckButton*   tiffuncompressed;
+    MyComboBoxText*     format;
+    MyComboBoxText*     jpegSubSamp;
+    Gtk::VBox*          formatopts;
+    Gtk::HBox*          jpegSubSampBox;
+    Gtk::Label*         jpegSubSampHead;
+    int                 oformat;
+    FormatChangeListener* listener;
+    Glib::ustring       fstr[5];
+    Gtk::CheckButton*   savespp;
 
-        void        init            (SaveFormat& sf);
-        SaveFormat  getFormat       ();
-        
-        void        formatChanged   ();
-        void        adjusterChanged (Adjuster* a, double newval);
+
+public:
+
+    SaveFormatPanel ();
+    ~SaveFormatPanel ();
+    void        setListener     (FormatChangeListener* l)
+    {
+        listener = l;
+    }
+
+    void        init            (SaveFormat& sf);
+    SaveFormat  getFormat       ();
+
+    void        formatChanged   ();
+    void        adjusterChanged (Adjuster* a, double newval);
 };
 
 #endif

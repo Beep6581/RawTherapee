@@ -27,43 +27,47 @@
 #include "rtimage.h"
 
 
-class PopUpCommon {
+class PopUpCommon
+{
 
 public:
-	typedef sigc::signal<void, int> type_signal_changed;
-	type_signal_changed signal_changed();
-	Gtk::HBox* buttonGroup;		// this is the widget to be packed
+    typedef sigc::signal<void, int> type_signal_changed;
+    type_signal_changed signal_changed();
+    Gtk::HBox* buttonGroup;     // this is the widget to be packed
 
-	PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "");
-	virtual ~PopUpCommon ();
-	bool addEntry (Glib::ustring fileName, Glib::ustring label);
-	bool setSelected (int entryNum);
-	int  getSelected () { return selected; }
-	void setButtonHint();
-	void show ();
-	void set_tooltip_text (const Glib::ustring &text);
+    PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "");
+    virtual ~PopUpCommon ();
+    bool addEntry (Glib::ustring fileName, Glib::ustring label);
+    bool setSelected (int entryNum);
+    int  getSelected ()
+    {
+        return selected;
+    }
+    void setButtonHint();
+    void show ();
+    void set_tooltip_text (const Glib::ustring &text);
 
 private:
-	type_signal_changed message;
+    type_signal_changed message;
 
-	/*
-	   TODO: MenuItem::get_label() doesn't return any string, or an empty string !?
-	   That's why we store entries strings in sItems, but it would be nice to get ride of it...
-	*/
-	std::vector<Glib::ustring> sItems;
-	std::vector<Glib::ustring> imageFilenames;
-	std::vector<RTImage*> images;
-	std::vector<Gtk::ImageMenuItem*> items;
-	Glib::ustring buttonHint;
-	RTImage* buttonImage;
-	Gtk::HBox* imageContainer;
-	Gtk::Menu* menu;
-	Gtk::Button* button;
-	int selected;
-	bool hasMenu;
+    /*
+       TODO: MenuItem::get_label() doesn't return any string, or an empty string !?
+       That's why we store entries strings in sItems, but it would be nice to get ride of it...
+    */
+    std::vector<Glib::ustring> sItems;
+    std::vector<Glib::ustring> imageFilenames;
+    std::vector<RTImage*> images;
+    std::vector<Gtk::ImageMenuItem*> items;
+    Glib::ustring buttonHint;
+    RTImage* buttonImage;
+    Gtk::HBox* imageContainer;
+    Gtk::Menu* menu;
+    Gtk::Button* button;
+    int selected;
+    bool hasMenu;
 
-	void showMenu(GdkEventButton* event);
-	void entrySelected (int i);
+    void showMenu(GdkEventButton* event);
+    void entrySelected (int i);
 
 };
 

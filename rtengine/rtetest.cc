@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -17,24 +17,28 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "rtengine.h"
-#include <iostream> 
+#include <iostream>
 //#include <giomm.h>
 #include <helpers.h>
 
-class PListener : public rtengine::ProgressListener {
-    
-    public:
-        void setProgressStr (Glib::ustring str) {
-            std::cout << str << std::endl;
-        }
-        void setProgress (double p) {
-            std::cout << p << std::endl;
-        }
+class PListener : public rtengine::ProgressListener
+{
+
+public:
+    void setProgressStr (Glib::ustring str)
+    {
+        std::cout << str << std::endl;
+    }
+    void setProgress (double p)
+    {
+        std::cout << p << std::endl;
+    }
 };
 
-int main (int argc, char* argv[]) {
+int main (int argc, char* argv[])
+{
 
-    if (argc<4) {
+    if (argc < 4) {
         std::cout << "Usage: rtcmd <infile> <paramfile> <outfile>" << std::endl;
         exit(1);
     }
@@ -47,14 +51,17 @@ int main (int argc, char* argv[]) {
     s.monitorProfile = "";
 
     Glib::thread_init ();
-    rtengine::init (s,"");
+    rtengine::init (s, "");
     PListener pl;
 
     rtengine::InitialImage* ii;
     int errorCode;
     ii = rtengine::InitialImage::load (argv[1], true, errorCode, &pl);
-    if (!ii)
+
+    if (!ii) {
         ii = rtengine::InitialImage::load (argv[1], false, errorCode, &pl);
+    }
+
     if (!ii) {
         std::cout << "Input file not supported." << std::endl;
         exit(2);
