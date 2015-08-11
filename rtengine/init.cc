@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -30,17 +30,19 @@
 #include "../rtgui/profilestore.h"
 #include "../rtgui/threadutils.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
 const Settings* settings;
 
 MyMutex* lcmsMutex = NULL;
 
-int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir) {
+int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir)
+{
 
     settings = s;
     iccStore->init (s->iccDirectory, baseDir + "/iccprofiles");
-	iccStore->findDefaultMonitorProfile();
+    iccStore->findDefaultMonitorProfile();
 
     dcpStore->init (baseDir + "/dcpprofiles");
 
@@ -56,10 +58,11 @@ int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDi
     lcmsMutex = new MyMutex;
     dfm.init( s->darkFramesPath );
     ffm.init( s->flatFieldsPath );
-	return 0;
+    return 0;
 }
 
-void cleanup () {
+void cleanup ()
+{
 
     ProcParams::cleanup ();
     Color::cleanup ();
@@ -69,24 +72,28 @@ void cleanup () {
     RawImageSource::cleanup ();
 }
 
-StagedImageProcessor* StagedImageProcessor::create (InitialImage* initialImage) {
+StagedImageProcessor* StagedImageProcessor::create (InitialImage* initialImage)
+{
 
     ImProcCoordinator* ipc = new ImProcCoordinator ();
     ipc->assign (initialImage->getImageSource ());
     return ipc;
 }
 
-void StagedImageProcessor::destroy (StagedImageProcessor* sip) {
+void StagedImageProcessor::destroy (StagedImageProcessor* sip)
+{
 
     delete sip;
 }
 
-Settings* Settings::create  () {
-    
+Settings* Settings::create  ()
+{
+
     return new Settings;
 }
 
-void Settings::destroy (Settings* s) {
+void Settings::destroy (Settings* s)
+{
 
     delete s;
 }

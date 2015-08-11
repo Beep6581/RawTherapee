@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -23,17 +23,24 @@
 #include <string>
 #include <glibmm.h>
 
-class MultiLangMgr {
+class MultiLangMgr
+{
 
     std::map<std::string, Glib::ustring> transTable;
     MultiLangMgr* fallBack;
-    
+
     Glib::ustring TranslateRFC2Language(Glib::ustring rfcName);
 
-    public: 
+public:
     MultiLangMgr () : fallBack (NULL) {}
-    MultiLangMgr (Glib::ustring fname) : fallBack (NULL) { load (fname); }
-    MultiLangMgr (Glib::ustring fname, MultiLangMgr* fb) : fallBack (NULL) { load (fname, fb); }
+    MultiLangMgr (Glib::ustring fname) : fallBack (NULL)
+    {
+        load (fname);
+    }
+    MultiLangMgr (Glib::ustring fname, MultiLangMgr* fb) : fallBack (NULL)
+    {
+        load (fname, fb);
+    }
 
     bool load (Glib::ustring fname, MultiLangMgr* fb = NULL);
     bool save (Glib::ustring fname);

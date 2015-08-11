@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -17,24 +17,28 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "rtengine.h"
-#include <iostream> 
+#include <iostream>
 //#include <giomm.h>
 #include <helpers.h>
 
-class PListener : public rtengine::ProgressListener {
-    
-    public:
-        void setProgressStr (Glib::ustring str) {
-            std::cout << str << std::endl;
-        }
-        void setProgress (double p) {
-            std::cout << p << std::endl;
-        }
+class PListener : public rtengine::ProgressListener
+{
+
+public:
+    void setProgressStr (Glib::ustring str)
+    {
+        std::cout << str << std::endl;
+    }
+    void setProgress (double p)
+    {
+        std::cout << p << std::endl;
+    }
 };
 
-int main (int argc, char* argv[]) {
+int main (int argc, char* argv[])
+{
 
-    if (argc<4) {
+    if (argc < 4) {
         std::cout << "Usage: rtcmd <infile> <paramfile> <outfile>" << std::endl;
         exit(1);
     }
@@ -51,7 +55,7 @@ int main (int argc, char* argv[]) {
     // init rtengine
     rtengine::init (s);
     // the settings can be modified later through the "s" pointer without calling any api function
-    
+
     // Create a listener object. Any class is appropriate that inherits from rtengine::ProgressListener
     PListener pl;
 
@@ -59,8 +63,11 @@ int main (int argc, char* argv[]) {
     rtengine::InitialImage* ii;
     int errorCode;
     ii = rtengine::InitialImage::load (argv[1], true, errorCode, &pl);
-    if (!ii)
+
+    if (!ii) {
         ii = rtengine::InitialImage::load (argv[1], false, errorCode, &pl);
+    }
+
     if (!ii) {
         std::cout << "Input file not supported." << std::endl;
         exit(2);
@@ -70,7 +77,7 @@ int main (int argc, char* argv[]) {
     rtengine::procparams::ProcParams params;
     params.load (argv[2]);
 
-/* First, simplest scenario. Develope image and save it in a file */
+    /* First, simplest scenario. Develope image and save it in a file */
     // create a processing job with the loaded image and the current processing parameters
     rtengine::ProcessingJob* job = ProcessingJob::create (i, params);
     // process image. The error is given back in errorcode.

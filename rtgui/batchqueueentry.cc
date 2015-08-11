@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -31,138 +31,158 @@ Glib::RefPtr<Gdk::Pixbuf> BatchQueueEntry::savedAsIcon;
 BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm)
     : ThumbBrowserEntryBase(fname),
       opreview(NULL), origpw(prevw), origph(prevh), opreviewDone(false),
-      job(pjob), progress(0), outFileName(""), sequence(0), forceFormatOpts(false) {
+      job(pjob), progress(0), outFileName(""), sequence(0), forceFormatOpts(false)
+{
 
-    thumbnail=thm;
+    thumbnail = thm;
     params = pparams;
 
-    #if 1 //ndef WIN32
+#if 1 //ndef WIN32
     // The BatchQueueEntryIdleHelper tracks if an entry has been deleted while it was sitting waiting for "idle"
     bqih = new BatchQueueEntryIdleHelper;
     bqih->bqentry = this;
     bqih->destroyed = false;
     bqih->pending = 0;
-    #endif
+#endif
 
     if (!iconsLoaded) {
         savedAsIcon = safe_create_from_file ("gtk-save.png");
         iconsLoaded = true;
     }
 
-    if (thumbnail)
+    if (thumbnail) {
         thumbnail->increaseRef ();
+    }
 }
 
-BatchQueueEntry::~BatchQueueEntry () {
+BatchQueueEntry::~BatchQueueEntry ()
+{
 
     batchQueueEntryUpdater.removeJobs (this);
-    if (opreview) delete [] opreview; opreview=NULL;
-    if (thumbnail)
-        thumbnail->decreaseRef ();
 
-    if (bqih->pending)
+    if (opreview) {
+        delete [] opreview;
+    }
+
+    opreview = NULL;
+
+    if (thumbnail) {
+        thumbnail->decreaseRef ();
+    }
+
+    if (bqih->pending) {
         bqih->destroyed = true;
-    else
+    } else {
         delete bqih;
+    }
 }
 
-void BatchQueueEntry::refreshThumbnailImage () {
+void BatchQueueEntry::refreshThumbnailImage ()
+{
 
     if (!opreviewDone) {
         // creating the image buffer first
         //if (!opreview) opreview = new guint8[(origpw+1) * origph * 3];
         // this will asynchronously compute the original preview and land at this.updateImage
         batchQueueEntryUpdater.process (NULL, origpw, origph, preh, this, &params, thumbnail);
-    }
-    else {
+    } else {
         // this will asynchronously land at this.updateImage
         batchQueueEntryUpdater.process (opreview, origpw, origph, preh, this);
     }
 }
 
-void BatchQueueEntry::calcThumbnailSize () {
+void BatchQueueEntry::calcThumbnailSize ()
+{
 
     prew = preh * origpw / origph;
 }
 
 
-void BatchQueueEntry::drawProgressBar (Glib::RefPtr<Gdk::Window> win, Glib::RefPtr<Gdk::GC> gc, const Gdk::Color& foregr, const Gdk::Color& backgr, int x, int w, int y, int h) {
+void BatchQueueEntry::drawProgressBar (Glib::RefPtr<Gdk::Window> win, Glib::RefPtr<Gdk::GC> gc, const Gdk::Color& foregr, const Gdk::Color& backgr, int x, int w, int y, int h)
+{
 
-  if (processing) {
-    Cairo::RefPtr<Cairo::Context> cr = win->create_cairo_context();
-    cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
-    double px = x + w/6.0;
-    double pw = w*2.0/3.0;
-    double py = y + h/4.0;
-    double ph = h/2.0;
-    cr->move_to (px, py);    
-    cr->line_to (px+pw, py);    
-    cr->set_line_width (ph);
-    cr->set_line_cap (Cairo::LINE_CAP_ROUND);
-    cr->set_source_rgb (foregr.get_red_p(), foregr.get_green_p(), foregr.get_blue_p());
-    cr->stroke ();
+    if (processing) {
+        Cairo::RefPtr<Cairo::Context> cr = win->create_cairo_context();
+        cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
+        double px = x + w / 6.0;
+        double pw = w * 2.0 / 3.0;
+        double py = y + h / 4.0;
+        double ph = h / 2.0;
+        cr->move_to (px, py);
+        cr->line_to (px + pw, py);
+        cr->set_line_width (ph);
+        cr->set_line_cap (Cairo::LINE_CAP_ROUND);
+        cr->set_source_rgb (foregr.get_red_p(), foregr.get_green_p(), foregr.get_blue_p());
+        cr->stroke ();
 
-    cr->move_to (px, py);    
-    cr->line_to (px+pw, py);    
-    cr->set_line_width (ph*3.0/4.0);
-    cr->set_source_rgb (backgr.get_red_p(), backgr.get_green_p(), backgr.get_blue_p());
-    cr->stroke ();
+        cr->move_to (px, py);
+        cr->line_to (px + pw, py);
+        cr->set_line_width (ph * 3.0 / 4.0);
+        cr->set_source_rgb (backgr.get_red_p(), backgr.get_green_p(), backgr.get_blue_p());
+        cr->stroke ();
 
-    cr->move_to (px, py);    
-    cr->line_to (px+pw*progress, py);    
-    cr->set_line_width (ph/2.0);
-    cr->set_source_rgb (foregr.get_red_p(), foregr.get_green_p(), foregr.get_blue_p());
-    cr->stroke ();
-  }
+        cr->move_to (px, py);
+        cr->line_to (px + pw * progress, py);
+        cr->set_line_width (ph / 2.0);
+        cr->set_source_rgb (foregr.get_red_p(), foregr.get_green_p(), foregr.get_blue_p());
+        cr->stroke ();
+    }
 }
 
-void BatchQueueEntry::removeButtonSet () {
+void BatchQueueEntry::removeButtonSet ()
+{
 
     delete buttonSet;
     buttonSet = NULL;
 }
 
-std::vector<Glib::RefPtr<Gdk::Pixbuf> > BatchQueueEntry::getIconsOnImageArea () {
+std::vector<Glib::RefPtr<Gdk::Pixbuf> > BatchQueueEntry::getIconsOnImageArea ()
+{
 
     std::vector<Glib::RefPtr<Gdk::Pixbuf> > ret;
 
-    if (!outFileName.empty())
+    if (!outFileName.empty()) {
         ret.push_back (savedAsIcon);
+    }
 
-   return ret;
+    return ret;
 }
 
-void BatchQueueEntry::getIconSize (int& w, int& h) {
+void BatchQueueEntry::getIconSize (int& w, int& h)
+{
 
     w = savedAsIcon->get_width ();
     h = savedAsIcon->get_height ();
 }
 
 
-Glib::ustring BatchQueueEntry::getToolTip (int x, int y) {
+Glib::ustring BatchQueueEntry::getToolTip (int x, int y)
+{
     // get the parent class' tooltip first
     Glib::ustring tooltip = ThumbBrowserEntryBase::getToolTip(x, y);
 
     // add the saving param options
     if (!outFileName.empty()) {
         tooltip += Glib::ustring::compose("\n\n%1: %2", M("BATCHQUEUE_DESTFILENAME"), outFileName);
+
         if (forceFormatOpts) {
             tooltip += Glib::ustring::compose("\n\n%1: %2 (%3 bits)", M("SAVEDLG_FILEFORMAT"), saveFormat.format,
-                       saveFormat.format == "png" ? saveFormat.pngBits :
-                                                    saveFormat.format == "tif" ? saveFormat.tiffBits : 8);
+                                              saveFormat.format == "png" ? saveFormat.pngBits :
+                                              saveFormat.format == "tif" ? saveFormat.tiffBits : 8);
+
             if (saveFormat.format == "jpg") {
                 tooltip += Glib::ustring::compose("\n%1: %2\n%3: %4",
-                           M("SAVEDLG_JPEGQUAL"), saveFormat.jpegQuality,
-                           M("SAVEDLG_SUBSAMP"),
-                           saveFormat.jpegSubSamp==1 ? M("SAVEDLG_SUBSAMP_1") :
-                                                      saveFormat.jpegSubSamp==2 ? M("SAVEDLG_SUBSAMP_2") :
-                                                                                  M("SAVEDLG_SUBSAMP_3"));
-            }
-            else if (saveFormat.format == "png")
+                                                  M("SAVEDLG_JPEGQUAL"), saveFormat.jpegQuality,
+                                                  M("SAVEDLG_SUBSAMP"),
+                                                  saveFormat.jpegSubSamp == 1 ? M("SAVEDLG_SUBSAMP_1") :
+                                                  saveFormat.jpegSubSamp == 2 ? M("SAVEDLG_SUBSAMP_2") :
+                                                  M("SAVEDLG_SUBSAMP_3"));
+            } else if (saveFormat.format == "png") {
                 tooltip += Glib::ustring::compose("\n%1: %2", M("SAVEDLG_PNGCOMPR"), saveFormat.pngCompression);
-            else if (saveFormat.format == "tif") {
-                if (saveFormat.tiffUncompressed)
-                tooltip += Glib::ustring::compose("\n%1", M("SAVEDLG_TIFFUNCOMPRESSED"));
+            } else if (saveFormat.format == "tif") {
+                if (saveFormat.tiffUncompressed) {
+                    tooltip += Glib::ustring::compose("\n%1", M("SAVEDLG_TIFFUNCOMPRESSED"));
+                }
             }
         }
     }
@@ -174,10 +194,11 @@ Glib::ustring BatchQueueEntry::getToolTip (int x, int y) {
 struct BQUpdateParam {
     BatchQueueEntryIdleHelper* bqih;
     guint8* img;
-    int w,h;
+    int w, h;
 };
 
-int updateImageUIThread (void* data) {
+int updateImageUIThread (void* data)
+{
 
     BQUpdateParam* params = static_cast<BQUpdateParam*>(data);
 
@@ -187,50 +208,57 @@ int updateImageUIThread (void* data) {
 
     // If the BQEntry was destroyed meanwhile, remove all the IdleHelper if all entries came through
     if (bqih->destroyed) {
-        if (bqih->pending == 1)
+        if (bqih->pending == 1) {
             delete bqih;
-        else
+        } else {
             bqih->pending--;
+        }
+
         delete [] params->img;
         delete params;
 
         return 0;
     }
-    
+
     bqih->bqentry->_updateImage (params->img, params->w, params->h);
     bqih->pending--;
-    
+
     delete params;
     return 0;
 }
 
 // Starts a copy of img->preview via GTK thread
-void BatchQueueEntry::updateImage (guint8* img, int w, int h, int origw, int origh, guint8* newOPreview) {
+void BatchQueueEntry::updateImage (guint8* img, int w, int h, int origw, int origh, guint8* newOPreview)
+{
 
     // since the update itself is already called in an async thread and there are problem with accessing opreview in thumbbrowserbase,
     // it's safer to do this synchronously
     {
         GThreadLock lock;
 
-        _updateImage(img,w,h);
+        _updateImage(img, w, h);
     }
 }
 
-void BatchQueueEntry::_updateImage (guint8* img, int w, int h) {
+void BatchQueueEntry::_updateImage (guint8* img, int w, int h)
+{
 
     if (preh == h) {
 
-        #if PROTECT_VECTORS
+#if PROTECT_VECTORS
         MYWRITERLOCK(l, lockRW);
-        #endif
+#endif
 
         prew = w;
         assert (preview == NULL);
-        preview = new guint8 [prew*preh*3];
-        memcpy (preview, img, prew*preh*3);
-        if (parent)
+        preview = new guint8 [prew * preh * 3];
+        memcpy (preview, img, prew * preh * 3);
+
+        if (parent) {
             parent->redrawNeeded (this);
+        }
     }
+
     delete [] img;
 }
 

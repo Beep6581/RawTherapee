@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -24,13 +24,14 @@
 #include "edit.h"
 #include <gtkmm.h>
 
-class CropHandlerListener {
+class CropHandlerListener
+{
 
-    public:
-        virtual ~CropHandlerListener() {}
-        virtual void cropImageUpdated    () {}
-        virtual void cropWindowChanged   () {}
-        virtual void initialImageArrived () {}
+public:
+    virtual ~CropHandlerListener() {}
+    virtual void cropImageUpdated    () {}
+    virtual void cropWindowChanged   () {}
+    virtual void initialImageArrived () {}
 };
 
 class CropHandler;
@@ -40,72 +41,79 @@ struct CropHandlerIdleHelper {
     int pending;
 };
 
-class CropHandler : public rtengine::DetailedCropListener, public rtengine::SizeListener {
+class CropHandler : public rtengine::DetailedCropListener, public rtengine::SizeListener
+{
 
     friend int createpixbufs (void* data);
 
-    protected:
-        int zoom;
-        int ww, wh;             // size of the crop view on the screen
-        int cx, cy, cw, ch;     // position and size of the requested crop
-        int cropX, cropY, cropW, cropH; // position and size of the crop corresponding to cropPixbuf
-        bool enabled;
-        unsigned char* cropimg;
-        unsigned char* cropimgtrue;
-        int cropimg_width, cropimg_height, cix, ciy, ciw, cih, cis;
-        bool initial;
-        bool isLowUpdatePriority;
+protected:
+    int zoom;
+    int ww, wh;             // size of the crop view on the screen
+    int cx, cy, cw, ch;     // position and size of the requested crop
+    int cropX, cropY, cropW, cropH; // position and size of the crop corresponding to cropPixbuf
+    bool enabled;
+    unsigned char* cropimg;
+    unsigned char* cropimgtrue;
+    int cropimg_width, cropimg_height, cix, ciy, ciw, cih, cis;
+    bool initial;
+    bool isLowUpdatePriority;
 
-        rtengine::StagedImageProcessor* ipc;
-        rtengine::DetailedCrop* crop;
+    rtengine::StagedImageProcessor* ipc;
+    rtengine::DetailedCrop* crop;
 
-        CropHandlerListener* listener;
-        CropHandlerIdleHelper* chi;
+    CropHandlerListener* listener;
+    CropHandlerIdleHelper* chi;
 
-        void    compDim ();
+    void    compDim ();
 
-    public:
+public:
 
-        void    update  ();
+    void    update  ();
 
 
-        rtengine::procparams::CropParams cropParams;
-        rtengine::procparams::ColorManagementParams colorParams;
-        Glib::RefPtr<Gdk::Pixbuf> cropPixbuf;
-        Glib::RefPtr<Gdk::Pixbuf> cropPixbuftrue;
+    rtengine::procparams::CropParams cropParams;
+    rtengine::procparams::ColorManagementParams colorParams;
+    Glib::RefPtr<Gdk::Pixbuf> cropPixbuf;
+    Glib::RefPtr<Gdk::Pixbuf> cropPixbuftrue;
 
-        MyMutex cimg;
+    MyMutex cimg;
 
-        CropHandler ();
-        ~CropHandler ();
+    CropHandler ();
+    ~CropHandler ();
 
-        void    setCropHandlerListener (CropHandlerListener* l) { listener = l; }
-        void    setEditSubscriber      (EditSubscriber* newSubscriber);
+    void    setCropHandlerListener (CropHandlerListener* l)
+    {
+        listener = l;
+    }
+    void    setEditSubscriber      (EditSubscriber* newSubscriber);
 
-        void    newImage    (rtengine::StagedImageProcessor* ipc_, bool isDetailWindow);
-        void    setZoom     (int z, int centerx=-1, int centery=-1);
-        double  getFitZoom  ();
-        double  getFitCropZoom();
-        void    setWSize    (int w, int h);
-        void    getWSize    (int& w, int &h);
-        void    setPosition (int x, int y, bool update=true);
-        void    getPosition (int& x, int& y);
-        void    getSize     (int& w, int& h);
-        void    getFullImageSize (int& w, int& h);
+    void    newImage    (rtengine::StagedImageProcessor* ipc_, bool isDetailWindow);
+    void    setZoom     (int z, int centerx = -1, int centery = -1);
+    double  getFitZoom  ();
+    double  getFitCropZoom();
+    void    setWSize    (int w, int h);
+    void    getWSize    (int& w, int &h);
+    void    setPosition (int x, int y, bool update = true);
+    void    getPosition (int& x, int& y);
+    void    getSize     (int& w, int& h);
+    void    getFullImageSize (int& w, int& h);
 
-        void    setEnabled (bool e);
-        bool    getEnabled ();
+    void    setEnabled (bool e);
+    bool    getEnabled ();
 
-        rtengine::DetailedCrop* getCrop() { return crop; }
+    rtengine::DetailedCrop* getCrop()
+    {
+        return crop;
+    }
 
-        // DetailedCropListener interface
-        void    setDetailedCrop (rtengine::IImage8* im, rtengine::IImage8* imworking,rtengine::procparams::ColorManagementParams cmp,
-                                 rtengine::procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip);
-        bool    getWindow (int& cwx, int& cwy, int& cww, int& cwh, int& cskip);
-        // SizeListener interface
-        void    sizeChanged  (int w, int h, int ow, int oh);
+    // DetailedCropListener interface
+    void    setDetailedCrop (rtengine::IImage8* im, rtengine::IImage8* imworking, rtengine::procparams::ColorManagementParams cmp,
+                             rtengine::procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip);
+    bool    getWindow (int& cwx, int& cwy, int& cww, int& cwh, int& cskip);
+    // SizeListener interface
+    void    sizeChanged  (int w, int h, int ow, int oh);
 
-        void    cutRectToImgBounds (int& x, int& y, int& w, int& h);
+    void    cutRectToImgBounds (int& x, int& y, int& w, int& h);
 };
 
 #endif

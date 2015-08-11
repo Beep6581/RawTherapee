@@ -28,166 +28,188 @@
 using namespace rtengine;
 using namespace procparams;
 
-PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext, const PreviewImageMode mode) {
-	rtengine::Thumbnail* tpp=NULL;
-
-	if (mode==PIM_EmbeddedPreviewOnly || mode==PIM_EmbeddedOrRaw) {
-
-		const unsigned char *data = NULL;
-
-		int width=-1, height=-1;
-		if (ext.lowercase()=="jpg" || ext.lowercase()=="jpeg") {
-			// int deg = infoFromImage (fname);
-			tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., true);
-			if (tpp)
-				data = tpp->getImage8Data();
-		}
-		else if (ext.lowercase()=="png") {
-			tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., true);
-			if (tpp)
-				data = tpp->getImage8Data();
-		}
-		else if (ext.lowercase()=="tif" || ext.lowercase()=="tiff") {
-			// int deg = infoFromImage (fname);
-			tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., true);
-			if (tpp)
-				data = tpp->getImage8Data();
-		}
-		else {
-			rtengine::RawMetaDataLocation ri;
-			tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, width, height, 1, true, true);
-			if (tpp)
-				data = tpp->getImage8Data();
-		}
-
-		if (tpp) {
-			if (data) {
-				int w, h;
-				double scale = 1.;
-				if (tpp)
-					tpp->getDimensions(w, h, scale);
-				previewImage = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, w, h);
-				previewImage->flush();
-
-#pragma omp parallel
+PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext, const PreviewImageMode mode)
 {
-				const unsigned char *src;
-				unsigned char *dst;
-#pragma omp for schedule(static,10)
-				for (unsigned int i=0; i<(unsigned int)(h); i++) {
-					src = data + i*w*3;
-					dst = previewImage->get_data() + i*w*4;
-					for (unsigned int j=0; j<(unsigned int)(w); j++) {
-						unsigned char r = *(src++);
-						unsigned char g = *(src++);
-						unsigned char b = *(src++);
+    rtengine::Thumbnail* tpp = NULL;
+
+    if (mode == PIM_EmbeddedPreviewOnly || mode == PIM_EmbeddedOrRaw) {
+
+        const unsigned char *data = NULL;
+
+        int width = -1, height = -1;
+
+        if (ext.lowercase() == "jpg" || ext.lowercase() == "jpeg") {
+            // int deg = infoFromImage (fname);
+            tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., true);
+
+            if (tpp) {
+                data = tpp->getImage8Data();
+            }
+        } else if (ext.lowercase() == "png") {
+            tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., true);
+
+            if (tpp) {
+                data = tpp->getImage8Data();
+            }
+        } else if (ext.lowercase() == "tif" || ext.lowercase() == "tiff") {
+            // int deg = infoFromImage (fname);
+            tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., true);
+
+            if (tpp) {
+                data = tpp->getImage8Data();
+            }
+        } else {
+            rtengine::RawMetaDataLocation ri;
+            tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, width, height, 1, true, true);
+
+            if (tpp) {
+                data = tpp->getImage8Data();
+            }
+        }
+
+        if (tpp) {
+            if (data) {
+                int w, h;
+                double scale = 1.;
+
+                if (tpp) {
+                    tpp->getDimensions(w, h, scale);
+                }
+
+                previewImage = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, w, h);
+                previewImage->flush();
+
+                #pragma omp parallel
+                {
+                    const unsigned char *src;
+                    unsigned char *dst;
+                    #pragma omp for schedule(static,10)
+
+                    for (unsigned int i = 0; i < (unsigned int)(h); i++) {
+                        src = data + i * w * 3;
+                        dst = previewImage->get_data() + i * w * 4;
+
+                        for (unsigned int j = 0; j < (unsigned int)(w); j++) {
+                            unsigned char r = *(src++);
+                            unsigned char g = *(src++);
+                            unsigned char b = *(src++);
 
 #if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
-						*(dst++) = b;
-						*(dst++) = g;
-						*(dst++) = r;
-						*(dst++) = 0;
+                            *(dst++) = b;
+                            *(dst++) = g;
+                            *(dst++) = r;
+                            *(dst++) = 0;
 #else
-						*(dst++) = 0;
-						*(dst++) = r;
-						*(dst++) = g;
-						*(dst++) = b;
+                            *(dst++) = 0;
+                            *(dst++) = r;
+                            *(dst++) = g;
+                            *(dst++) = b;
 #endif
-					}
-				}
-}
-				previewImage->mark_dirty();
-			}
-		}
-	}
+                        }
+                    }
+                }
+                previewImage->mark_dirty();
+            }
+        }
+    }
 
-	if ((mode==PIM_EmbeddedOrRaw && !tpp) || mode==PIM_ForceRaw) {
-		RawImageSource rawImage;
-		int error = rawImage.load(fname, true);
-		if (!error) {
-			rtengine::Image8 *output = NULL;
-			const unsigned char *data = NULL;
-			int fw, fh;
-			procparams::ProcParams params;
-			/*rtengine::RAWParams raw;
-			rtengine::LensProfParams lensProf;
-			rtengine::procparams::ToneCurveParams toneCurve;
-			rtengine::procparams::ColorManagementParams icm;
-			rtengine::CoarseTransformParams coarse;*/
-			ColorTemp wb = rawImage.getWB ();
-			rawImage.getFullSize (fw, fh, TR_NONE);
-			PreviewProps pp (0, 0, fw, fh, 1);
-			params.icm.input = Glib::ustring("(embedded)");
-			params.raw.bayersensor.method = RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::fast];
-			params.raw.deadPixelFilter = false;
-			params.raw.ca_autocorrect = false;
-			params.raw.xtranssensor.method = RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::fast];
-			rawImage.preprocess(params.raw, params.lensProf, params.coarse);
-			rawImage.demosaic(params.raw);
-			Imagefloat* image = new rtengine::Imagefloat (fw, fh);
-			rawImage.getImage (wb, TR_NONE, image, pp, params.toneCurve, params.icm, params.raw);
-			output = new Image8(fw, fh);
-			rawImage.convertColorSpace(image, params.icm, wb);
-			StopWatch Stop1("inspector loop");
-#pragma omp parallel for schedule(dynamic, 10)
-			for (int i=0; i<fh; ++i)
-				for (int j=0; j<fw; ++j) {
-					image->r(i,j) = Color::gamma2curve[image->r(i,j)];
-					image->g(i,j) = Color::gamma2curve[image->g(i,j)];
-					image->b(i,j) = Color::gamma2curve[image->b(i,j)];
-				}
-			Stop1.stop();
+    if ((mode == PIM_EmbeddedOrRaw && !tpp) || mode == PIM_ForceRaw) {
+        RawImageSource rawImage;
+        int error = rawImage.load(fname, true);
 
-			image->resizeImgTo<Image8>(fw, fh, TI_Nearest, output);
-			data = output->getData();
+        if (!error) {
+            rtengine::Image8 *output = NULL;
+            const unsigned char *data = NULL;
+            int fw, fh;
+            procparams::ProcParams params;
+            /*rtengine::RAWParams raw;
+            rtengine::LensProfParams lensProf;
+            rtengine::procparams::ToneCurveParams toneCurve;
+            rtengine::procparams::ColorManagementParams icm;
+            rtengine::CoarseTransformParams coarse;*/
+            ColorTemp wb = rawImage.getWB ();
+            rawImage.getFullSize (fw, fh, TR_NONE);
+            PreviewProps pp (0, 0, fw, fh, 1);
+            params.icm.input = Glib::ustring("(embedded)");
+            params.raw.bayersensor.method = RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::fast];
+            params.raw.deadPixelFilter = false;
+            params.raw.ca_autocorrect = false;
+            params.raw.xtranssensor.method = RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::fast];
+            rawImage.preprocess(params.raw, params.lensProf, params.coarse);
+            rawImage.demosaic(params.raw);
+            Imagefloat* image = new rtengine::Imagefloat (fw, fh);
+            rawImage.getImage (wb, TR_NONE, image, pp, params.toneCurve, params.icm, params.raw);
+            output = new Image8(fw, fh);
+            rawImage.convertColorSpace(image, params.icm, wb);
+            StopWatch Stop1("inspector loop");
+            #pragma omp parallel for schedule(dynamic, 10)
+
+            for (int i = 0; i < fh; ++i)
+                for (int j = 0; j < fw; ++j) {
+                    image->r(i, j) = Color::gamma2curve[image->r(i, j)];
+                    image->g(i, j) = Color::gamma2curve[image->g(i, j)];
+                    image->b(i, j) = Color::gamma2curve[image->b(i, j)];
+                }
+
+            Stop1.stop();
+
+            image->resizeImgTo<Image8>(fw, fh, TI_Nearest, output);
+            data = output->getData();
 
 
-			if (data) {
-				int w, h;
-				double scale = 1.;
-				w = output->getWidth();
-				h = output->getHeight();
-				previewImage = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, w, h);
-				previewImage->flush();
+            if (data) {
+                int w, h;
+                double scale = 1.;
+                w = output->getWidth();
+                h = output->getHeight();
+                previewImage = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, w, h);
+                previewImage->flush();
 
-#pragma omp parallel
-{
-				const unsigned char *src;
-				unsigned char *dst;
-#pragma omp for schedule(static,10)
-				for (unsigned int i=0; i<(unsigned int)(h); i++) {
-					src = data + i*w*3;
-					dst = previewImage->get_data() + i*w*4;
-					for (unsigned int j=0; j<(unsigned int)(w); j++) {
-						unsigned char r = *(src++);
-						unsigned char g = *(src++);
-						unsigned char b = *(src++);
+                #pragma omp parallel
+                {
+                    const unsigned char *src;
+                    unsigned char *dst;
+                    #pragma omp for schedule(static,10)
+
+                    for (unsigned int i = 0; i < (unsigned int)(h); i++) {
+                        src = data + i * w * 3;
+                        dst = previewImage->get_data() + i * w * 4;
+
+                        for (unsigned int j = 0; j < (unsigned int)(w); j++) {
+                            unsigned char r = *(src++);
+                            unsigned char g = *(src++);
+                            unsigned char b = *(src++);
 #if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
-						*(dst++) = b;
-						*(dst++) = g;
-						*(dst++) = r;
-						*(dst++) = 0;
+                            *(dst++) = b;
+                            *(dst++) = g;
+                            *(dst++) = r;
+                            *(dst++) = 0;
 #else
-						*(dst++) = 0;
-						*(dst++) = r;
-						*(dst++) = g;
-						*(dst++) = b;
+                            *(dst++) = 0;
+                            *(dst++) = r;
+                            *(dst++) = g;
+                            *(dst++) = b;
 #endif
-					}
-				}
+                        }
+                    }
+                }
+
+                if (output) {
+                    delete output;
+                }
+
+                previewImage->mark_dirty();
+            }
+        }
+    }
+
+    if (tpp) {
+        delete tpp;
+    }
+
 }
-				if (output)
-					delete output;
-				previewImage->mark_dirty();
-			}
-		}
-	}
 
-	if (tpp)
-		delete tpp;
-
-}
-
-Cairo::RefPtr<Cairo::ImageSurface> PreviewImage::getImage() {
-	return previewImage;
+Cairo::RefPtr<Cairo::ImageSurface> PreviewImage::getImage()
+{
+    return previewImage;
 }

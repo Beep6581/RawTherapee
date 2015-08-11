@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -22,7 +22,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-CoarsePanel::CoarsePanel () : ToolPanel () {
+CoarsePanel::CoarsePanel () : ToolPanel ()
+{
 
     degree = 0;
     degreechanged = true;
@@ -50,7 +51,7 @@ CoarsePanel::CoarsePanel () : ToolPanel () {
     vflip->add (*flipvi);
     vflip->set_relief(Gtk::RELIEF_NONE);
     pack_start (*vflip);
-    
+
     rotate_left->set_tooltip_markup (M("TP_COARSETRAF_TOOLTIP_ROTLEFT"));
     rotate_right->set_tooltip_markup (M("TP_COARSETRAF_TOOLTIP_ROTRIGHT"));
     vflip->set_tooltip_text (M("TP_COARSETRAF_TOOLTIP_VFLIP"));
@@ -64,7 +65,8 @@ CoarsePanel::CoarsePanel () : ToolPanel () {
     show_all_children ();
 }
 
-void CoarsePanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
+void CoarsePanel::read (const ProcParams* pp, const ParamsEdited* pedited)
+{
 
     disableListener ();
 
@@ -76,27 +78,30 @@ void CoarsePanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
         degreechanged = false;
         oldhflip = pp->coarse.hflip;
         oldvflip = pp->coarse.vflip;
-    }
-    else {
+    } else {
         hflip->set_active (pp->coarse.hflip);
         vflip->set_active (pp->coarse.vflip);
     }
+
     enableListener ();
 }
 
-void CoarsePanel::write (ProcParams* pp, ParamsEdited* pedited) {
+void CoarsePanel::write (ProcParams* pp, ParamsEdited* pedited)
+{
 
     if (pedited) {
         pedited->coarse.rotate = degreechanged;
         pedited->coarse.hflip = oldhflip != hflip->get_active ();
         pedited->coarse.vflip = oldvflip != vflip->get_active ();
     }
+
     pp->coarse.rotate = degree;
     pp->coarse.hflip = hflip->get_active ();
     pp->coarse.vflip = vflip->get_active ();
 }
 
-void CoarsePanel::initBatchBehavior () {
+void CoarsePanel::initBatchBehavior ()
+{
 
     disableListener ();
 
@@ -107,47 +112,61 @@ void CoarsePanel::initBatchBehavior () {
     enableListener ();
 }
 
-void CoarsePanel::rotateLeft () {
+void CoarsePanel::rotateLeft ()
+{
 
     //Rotate one way or the opposite depending if the image is already flipped or not
-    if ( (vflip->get_active()) == (hflip->get_active ()) )
-       degree = (degree + 270) % 360;
-    else
-       degree = (degree + 90) % 360;
+    if ( (vflip->get_active()) == (hflip->get_active ()) ) {
+        degree = (degree + 270) % 360;
+    } else {
+        degree = (degree + 90) % 360;
+    }
+
     degreechanged = true;
-    if (listener)
-        listener->panelChanged (EvCTRotate, Glib::ustring::format (degree));
-}
-
-void CoarsePanel::rotateRight () {
-
-    //Rotate one way or the opposite depending if the image is already flipped or not
-    if ( (vflip->get_active()) == (hflip->get_active ()) )
-       degree = (degree + 90) % 360;
-    else
-       degree = (degree + 270) % 360;
-    degreechanged = true;
-    if (listener)
-        listener->panelChanged (EvCTRotate, Glib::ustring::format (degree));
-}
-
-void CoarsePanel::flipHorizontal () {
 
     if (listener) {
-        if (hflip->get_active ())
-            listener->panelChanged (EvCTHFlip, M("GENERAL_ENABLED"));
-        else
-            listener->panelChanged (EvCTHFlip, M("GENERAL_DISABLED"));
+        listener->panelChanged (EvCTRotate, Glib::ustring::format (degree));
     }
 }
 
-void CoarsePanel::flipVertical   () {
+void CoarsePanel::rotateRight ()
+{
+
+    //Rotate one way or the opposite depending if the image is already flipped or not
+    if ( (vflip->get_active()) == (hflip->get_active ()) ) {
+        degree = (degree + 90) % 360;
+    } else {
+        degree = (degree + 270) % 360;
+    }
+
+    degreechanged = true;
 
     if (listener) {
-        if (vflip->get_active ())
+        listener->panelChanged (EvCTRotate, Glib::ustring::format (degree));
+    }
+}
+
+void CoarsePanel::flipHorizontal ()
+{
+
+    if (listener) {
+        if (hflip->get_active ()) {
+            listener->panelChanged (EvCTHFlip, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (EvCTHFlip, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
+void CoarsePanel::flipVertical   ()
+{
+
+    if (listener) {
+        if (vflip->get_active ()) {
             listener->panelChanged (EvCTVFlip, M("GENERAL_ENABLED"));
-        else
+        } else {
             listener->panelChanged (EvCTVFlip, M("GENERAL_DISABLED"));
+        }
     }
 }
 

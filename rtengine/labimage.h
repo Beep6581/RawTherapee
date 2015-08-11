@@ -19,50 +19,64 @@
 #ifndef _LABIMAGE_H_
 #define _LABIMAGE_H_
 
-namespace rtengine {
+namespace rtengine
+{
 
-class LabImage {
+class LabImage
+{
 private:
-	bool fromImage;
-	void allocLab(int w, int h) {
-	    L = new float*[H];
-		a = new float*[H];
-		b = new float*[H];
+    bool fromImage;
+    void allocLab(int w, int h)
+    {
+        L = new float*[H];
+        a = new float*[H];
+        b = new float*[H];
 
-		data = new float [W*H*3];
-		float * index = data;
-		for (int i=0; i<H; i++)
-			L[i] = index + i*W;
-		index+=W*H;
-		for (int i=0; i<H; i++)
-			a[i] = index + i*W;
-		index+=W*H;
+        data = new float [W * H * 3];
+        float * index = data;
 
-		for (int i=0; i<H; i++)
-			b[i] = index + i*W;
-	};
+        for (int i = 0; i < H; i++) {
+            L[i] = index + i * W;
+        }
+
+        index += W * H;
+
+        for (int i = 0; i < H; i++) {
+            a[i] = index + i * W;
+        }
+
+        index += W * H;
+
+        for (int i = 0; i < H; i++) {
+            b[i] = index + i * W;
+        }
+    };
 public:
-	int W, H;
-	float * data;
-	float** L;
-	float** a;
-	float** b;
+    int W, H;
+    float * data;
+    float** L;
+    float** a;
+    float** b;
 
-	LabImage (int w, int h);
-	~LabImage ();
+    LabImage (int w, int h);
+    ~LabImage ();
 
-	//Copies image data in Img into this instance.
-	void CopyFrom(LabImage *Img);
-	void getPipetteData (float &L, float &a, float &b, int posX, int posY, int squareSize);
-	void deleteLab( ) {
-		if (!fromImage) {
-			delete [] L;
-			delete [] a;
-			delete [] b;
-			delete [] data;
-		}
-	}
-	void reallocLab( ) { allocLab(W,H); };
+    //Copies image data in Img into this instance.
+    void CopyFrom(LabImage *Img);
+    void getPipetteData (float &L, float &a, float &b, int posX, int posY, int squareSize);
+    void deleteLab( )
+    {
+        if (!fromImage) {
+            delete [] L;
+            delete [] a;
+            delete [] b;
+            delete [] data;
+        }
+    }
+    void reallocLab( )
+    {
+        allocLab(W, H);
+    };
 
 };
 

@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -24,29 +24,30 @@
 #include "filebrowserentry.h"
 
 class FileBrowserEntry;
-class FileThumbnailButtonSet : public LWButtonSet {
+class FileThumbnailButtonSet : public LWButtonSet
+{
 
-        static bool iconsLoaded;
-        
-    public:
-        static Cairo::RefPtr<Cairo::ImageSurface> rankIcon;
-        static Cairo::RefPtr<Cairo::ImageSurface> gRankIcon;
-        static Cairo::RefPtr<Cairo::ImageSurface> unRankIcon;
-        static Cairo::RefPtr<Cairo::ImageSurface> trashIcon;
-        static Cairo::RefPtr<Cairo::ImageSurface> unTrashIcon;
-        static Cairo::RefPtr<Cairo::ImageSurface> processIcon;
-        
-        static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_0;
-        static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_1;
-        static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_2;
-        static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_3;
-        static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_4;
-        static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_5;
+    static bool iconsLoaded;
 
-        FileThumbnailButtonSet (FileBrowserEntry* myEntry);
-        void    setRank (int stars);
-        void    setColorLabel (int colorlabel);
-        void    setInTrash (bool inTrash);
+public:
+    static Cairo::RefPtr<Cairo::ImageSurface> rankIcon;
+    static Cairo::RefPtr<Cairo::ImageSurface> gRankIcon;
+    static Cairo::RefPtr<Cairo::ImageSurface> unRankIcon;
+    static Cairo::RefPtr<Cairo::ImageSurface> trashIcon;
+    static Cairo::RefPtr<Cairo::ImageSurface> unTrashIcon;
+    static Cairo::RefPtr<Cairo::ImageSurface> processIcon;
+
+    static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_0;
+    static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_1;
+    static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_2;
+    static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_3;
+    static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_4;
+    static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_5;
+
+    FileThumbnailButtonSet (FileBrowserEntry* myEntry);
+    void    setRank (int stars);
+    void    setColorLabel (int colorlabel);
+    void    setInTrash (bool inTrash);
 
 };
 

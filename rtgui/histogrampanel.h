@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -41,11 +41,12 @@ struct HistogramRGBAreaIdleHelper {
     int pending;
 };
 
-class HistogramRGBArea : public Gtk::DrawingArea {
+class HistogramRGBArea : public Gtk::DrawingArea
+{
 
-  typedef const double (*TMatrix)[3];
+    typedef const double (*TMatrix)[3];
 
-  protected:
+protected:
 
     Glib::RefPtr<Gdk::GC> rgbgc_;
     Glib::RefPtr<Gdk::Pixmap> overlay;
@@ -80,7 +81,7 @@ class HistogramRGBArea : public Gtk::DrawingArea {
 
     HistogramRGBAreaIdleHelper* harih;
 
-  public:
+public:
 
     HistogramRGBArea();
     ~HistogramRGBArea();
@@ -89,7 +90,10 @@ class HistogramRGBArea : public Gtk::DrawingArea {
     void updateFreeze (bool f);
     bool getFreeze ();
     bool getShow ();
-    void setParent (Gtk::VBox* p) { parent = p; };
+    void setParent (Gtk::VBox* p)
+    {
+        parent = p;
+    };
 
     void update (int val, int rh, int gh, int bh);
     void updateOptions (bool r, bool g, bool b, bool l, bool raw, bool show, bool c);
@@ -98,20 +102,22 @@ class HistogramRGBArea : public Gtk::DrawingArea {
     bool on_expose_event(GdkEventExpose* event);
     bool on_button_press_event (GdkEventButton* event);
     void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
-  private:
-  	void rgb2lab (Glib::ustring profile, Glib::ustring profileW,int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b);
+private:
+    void rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b);
     // Some ...
 };
 
 
-class FullModeListener {
-  public:
+class FullModeListener
+{
+public:
     virtual void toggle_button_full () {}
 };
 
-class HistogramArea : public Gtk::DrawingArea{  
+class HistogramArea : public Gtk::DrawingArea
+{
 
-  protected:
+protected:
 
     Glib::RefPtr<Gdk::GC> gc_;
     Glib::RefPtr<Gdk::Pixmap> backBuffer;
@@ -136,9 +142,9 @@ class HistogramArea : public Gtk::DrawingArea{
 
     HistogramAreaIdleHelper* haih;
 
-  public:
-         
-    HistogramArea(FullModeListener *fml=NULL);
+public:
+
+    HistogramArea(FullModeListener *fml = NULL);
     ~HistogramArea();
 
     void renderHistogram ();
@@ -148,20 +154,21 @@ class HistogramArea : public Gtk::DrawingArea{
     bool on_expose_event(GdkEventExpose* event);
     bool on_button_press_event (GdkEventButton* event);
     void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
-  private:
+private:
     void drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
-				   LUTu & data, double scale, int hsize, int vsize);
+                   LUTu & data, double scale, int hsize, int vsize);
     void drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
-				   LUTu & data, double scale, int hsize, int & ui, int & oi);
+                   LUTu & data, double scale, int hsize, int & ui, int & oi);
 };
 
-class HistogramPanel : public Gtk::HBox, public PointerMotionListener, public FullModeListener {
+class HistogramPanel : public Gtk::HBox, public PointerMotionListener, public FullModeListener
+{
 
-  protected:
+protected:
 
-	Gtk::VBox* gfxVBox;
-	Gtk::VBox* buttonVBox;
-	HistogramArea* histogramArea;
+    Gtk::VBox* gfxVBox;
+    Gtk::VBox* buttonVBox;
+    HistogramArea* histogramArea;
     HistogramRGBArea* histogramRGBArea;
     Gtk::ToggleButton* showRed;
     Gtk::ToggleButton* showGreen;
@@ -170,8 +177,8 @@ class HistogramPanel : public Gtk::HBox, public PointerMotionListener, public Fu
     Gtk::ToggleButton* showRAW;
     Gtk::ToggleButton* showFull;
     Gtk::ToggleButton* showBAR;
-	Gtk::ToggleButton* showChro;
-    
+    Gtk::ToggleButton* showChro;
+
     Gtk::Image *redImage;
     Gtk::Image *greenImage;
     Gtk::Image *blueImage;
@@ -193,17 +200,18 @@ class HistogramPanel : public Gtk::HBox, public PointerMotionListener, public Fu
 
     sigc::connection rconn;
     void setHistInvalid ();
-    
-  public:
+
+public:
 
     HistogramPanel ();
     ~HistogramPanel ();
 
-    void histogramChanged (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw, LUTu &histChroma) { 
+    void histogramChanged (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw, LUTu &histChroma)
+    {
         histogramArea->update (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw, histChroma);
     }
     // pointermotionlistener interface
-    void pointerMoved (bool validPos, Glib::ustring profile, Glib::ustring profileW,int x, int y, int r, int g, int b);
+    void pointerMoved (bool validPos, Glib::ustring profile, Glib::ustring profileW, int x, int y, int r, int g, int b);
     // added pointermotionlistener interface
     void toggleFreeze();
     // TODO should be protected
@@ -216,8 +224,8 @@ class HistogramPanel : public Gtk::HBox, public PointerMotionListener, public Fu
     void value_toggled ();
     void raw_toggled ();
     void full_toggled ();
-	void chro_toggled ();
-	void bar_toggled ();
+    void chro_toggled ();
+    void bar_toggled ();
     void rgbv_toggled ();
     void resized (Gtk::Allocation& req);
 

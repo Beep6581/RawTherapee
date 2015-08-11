@@ -25,9 +25,10 @@
 #include "toolpanel.h"
 
 
-class XTransProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel{
+class XTransProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+{
 
-  protected:
+protected:
 
     MyComboBoxText* method;
     Adjuster* ccSteps;
@@ -35,14 +36,14 @@ class XTransProcess : public ToolParamBlock, public AdjusterListener, public Fol
     int oldSelection;
     sigc::connection methodconn;
 
-  public:
+public:
 
     XTransProcess ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
     void setBatchMode   (bool batchMode);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
 
     void methodChanged ();
     void adjusterChanged     (Adjuster* a, double newval);

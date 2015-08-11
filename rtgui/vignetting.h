@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -23,22 +23,23 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class Vignetting : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
+class Vignetting : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+{
 
-  protected:
+protected:
     Adjuster* amount;
     Adjuster* radius;
     Adjuster* strength;
     Adjuster* centerX;
     Adjuster* centerY;
 
-  public:
+public:
 
     Vignetting ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
     void setBatchMode   (bool batchMode);
 
     void adjusterChanged (Adjuster* a, double newval);

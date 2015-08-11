@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -25,22 +25,25 @@
 #include "guiutils.h"
 #include <vector>
 
-class CropPanelListener {
+class CropPanelListener
+{
 
-  public:
+public:
     virtual void cropSelectRequested () {}
 };
 
-class CropRatio {
+class CropRatio
+{
 
-    public:
-        Glib::ustring label;
-        double value;
+public:
+    Glib::ustring label;
+    double value;
 };
 
-class Crop : public ToolParamBlock, public CropGUIListener, public FoldableToolPanel, public rtengine::SizeListener {
+class Crop : public ToolParamBlock, public CropGUIListener, public FoldableToolPanel, public rtengine::SizeListener
+{
 
-  protected:
+protected:
     Gtk::CheckButton* fixr;
     MyComboBoxText* ratio;
     MyComboBoxText* orientation;
@@ -66,14 +69,14 @@ class Crop : public ToolParamBlock, public CropGUIListener, public FoldableToolP
     void adjustCropToRatio();
     std::vector<CropRatio>   cropratio;
 
-  public:
+public:
 
     Crop ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
     void setBatchMode   (bool batchMode);
-    
+
     void ratioChanged   ();
     void ratioFixedChanged ();  // The toggle button
     void refreshSize    ();
@@ -83,7 +86,7 @@ class Crop : public ToolParamBlock, public CropGUIListener, public FoldableToolP
     void positionChanged ();
     void widthChanged   ();
     void heightChanged  ();
-    bool refreshSpins   (bool notify=false);
+    bool refreshSpins   (bool notify = false);
     void notifyListener ();
     void sizeChanged    (int w, int h, int ow, int oh);
     void trim           (rtengine::procparams::ProcParams* pp, int ow, int oh);
@@ -105,7 +108,10 @@ class Crop : public ToolParamBlock, public CropGUIListener, public FoldableToolP
     bool inImageArea        (int x, int y);
     double getRatio         ();
 
-    void setCropPanelListener (CropPanelListener* cl) { clistener = cl; }
+    void setCropPanelListener (CropPanelListener* cl)
+    {
+        clistener = cl;
+    }
 
     void resizeScaleChanged (double rsc);
     void hFlipCrop          ();

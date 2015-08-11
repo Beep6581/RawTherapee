@@ -24,26 +24,27 @@
 #include "toolpanel.h"
 #include "../rtengine/rawimage.h"
 
-class XTransRAWExposure : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
+class XTransRAWExposure : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+{
 
 protected:
-	Adjuster* PexBlackRed;
-	Adjuster* PexBlackGreen;
-	Adjuster* PexBlackBlue;
+    Adjuster* PexBlackRed;
+    Adjuster* PexBlackGreen;
+    Adjuster* PexBlackBlue;
 
 private:
-//	Gtk::CheckButton*  PextwoGreen;
+//  Gtk::CheckButton*  PextwoGreen;
 public:
 
-	XTransRAWExposure ();
+    XTransRAWExposure ();
 
-	void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-	void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-	void setBatchMode   (bool batchMode);
-	void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
-	void adjusterChanged     (Adjuster* a, double newval);
-	void setAdjusterBehavior (bool pexblackadd);
-	void trimValues          (rtengine::procparams::ProcParams* pp);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
+    void setBatchMode   (bool batchMode);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
+    void adjusterChanged     (Adjuster* a, double newval);
+    void setAdjusterBehavior (bool pexblackadd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 
 #endif

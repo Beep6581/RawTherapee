@@ -23,7 +23,8 @@
 #include "toolpanel.h"
 #include "guiutils.h"
 
-class LensProfilePanel : public ToolParamBlock, public FoldableToolPanel {
+class LensProfilePanel : public ToolParamBlock, public FoldableToolPanel
+{
 
 protected:
 
@@ -32,7 +33,7 @@ protected:
     Gtk::HBox *hbLCPFile;
     Gtk::Button *btnReset;
     Gtk::Label *lLCPFileHead;
-    bool lcpFileChanged,useDistChanged,useVignChanged,useCAChanged;
+    bool lcpFileChanged, useDistChanged, useVignChanged, useCAChanged;
     sigc::connection conLCPFile, conUseDist, conUseVign, conUseCA;
     void updateDisabled(bool enable);
     bool allowFocusDep;
@@ -42,8 +43,8 @@ public:
 
     LensProfilePanel ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
     void setRawMeta     (bool raw, const rtengine::ImageMetaData* pMeta);
 
     void onLCPFileChanged ();

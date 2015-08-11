@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -23,7 +23,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Distortion::Distortion (): FoldableToolPanel(this, "distortion", M("TP_DISTORTION_LABEL")) {
+Distortion::Distortion (): FoldableToolPanel(this, "distortion", M("TP_DISTORTION_LABEL"))
+{
 
     rlistener = NULL;
     autoDistor = Gtk::manage (new Gtk::Button (M("TP_DISTORTION_AUTO")));
@@ -37,12 +38,13 @@ Distortion::Distortion (): FoldableToolPanel(this, "distortion", M("TP_DISTORTIO
     Gtk::Image* idistR =   Gtk::manage (new RTImage ("distortion-barrel.png"));
 
     distor = Gtk::manage (new Adjuster (M("TP_DISTORTION_AMOUNT"), -0.5, 0.5, 0.001, 0, idistL, idistR));
-    distor->setAdjusterListener (this); 
+    distor->setAdjusterListener (this);
     distor->show();
     pack_start (*distor);
 }
 
-void Distortion::read (const ProcParams* pp, const ParamsEdited* pedited) {
+void Distortion::read (const ProcParams* pp, const ParamsEdited* pedited)
+{
 
     disableListener ();
 
@@ -51,11 +53,12 @@ void Distortion::read (const ProcParams* pp, const ParamsEdited* pedited) {
     }
 
     distor->setValue (pp->distortion.amount);
-    
+
     enableListener ();
 }
 
-void Distortion::write (ProcParams* pp, ParamsEdited* pedited) {
+void Distortion::write (ProcParams* pp, ParamsEdited* pedited)
+{
 
     pp->distortion.amount = distor->getValue ();
 
@@ -64,34 +67,40 @@ void Distortion::write (ProcParams* pp, ParamsEdited* pedited) {
     }
 }
 
-void Distortion::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
+void Distortion::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
+{
 
     distor->setDefault (defParams->distortion.amount);
 
     if (pedited) {
         distor->setDefaultEditedState (pedited->distortion.amount ? Edited : UnEdited);
-    }
-    else  {
+    } else  {
         distor->setDefaultEditedState (Irrelevant);
     }
 }
 
-void Distortion::adjusterChanged (Adjuster* a, double newval) {
+void Distortion::adjusterChanged (Adjuster* a, double newval)
+{
 
-    if (listener) 
+    if (listener) {
         listener->panelChanged (EvDISTAmount, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), a->getValue()));
+    }
 }
 
-void Distortion::setBatchMode (bool batchMode) {
+void Distortion::setBatchMode (bool batchMode)
+{
 
     ToolPanel::setBatchMode (batchMode);
+
     if (batchMode) {
         autoDistor->set_sensitive(false);
     }
+
     distor->showEditedCB ();
 }
 
-void Distortion::idPressed () {
+void Distortion::idPressed ()
+{
     if (!batchMode) {
         if (rlistener) {
             double new_amount = rlistener->autoDistorRequested();
@@ -101,12 +110,14 @@ void Distortion::idPressed () {
     }
 }
 
-void Distortion::setAdjusterBehavior (bool vadd) {
+void Distortion::setAdjusterBehavior (bool vadd)
+{
 
-	distor->setAddMode(vadd);
+    distor->setAddMode(vadd);
 }
 
-void Distortion::trimValues (rtengine::procparams::ProcParams* pp) {
+void Distortion::trimValues (rtengine::procparams::ProcParams* pp)
+{
 
-	distor->trimValue(pp->distortion.amount);
+    distor->trimValue(pp->distortion.amount);
 }

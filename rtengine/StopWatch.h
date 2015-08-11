@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -20,36 +20,50 @@
  */
 
 #ifndef STOPWATCH_H
-#define	STOPWATCH_H
+#define STOPWATCH_H
 #include <iostream>
 #include "mytime.h"
 
-class StopWatch {
+class StopWatch
+{
 public:
-    StopWatch( ) { stopped = false; }
-    StopWatch( const char* msg) { message = msg; start(); stopped = false; }
-    ~StopWatch() { if(!stopped) stop(); }
+    StopWatch( )
+    {
+        stopped = false;
+    }
+    StopWatch( const char* msg)
+    {
+        message = msg;
+        start();
+        stopped = false;
+    }
+    ~StopWatch()
+    {
+        if(!stopped) {
+            stop();
+        }
+    }
     void start()
     {
-    	startTime.set();
+        startTime.set();
     };
     void stop()
     {
-    	stopTime.set();
-    	long elapsedTime = stopTime.etime(startTime) / 1000;
-        std::cout << message << " took " << elapsedTime << " ms" <<std::endl;
+        stopTime.set();
+        long elapsedTime = stopTime.etime(startTime) / 1000;
+        std::cout << message << " took " << elapsedTime << " ms" << std::endl;
         stopped = true;
     }
     void stop(const char *msg)
     {
-    	message = msg;
-    	stop();
+        message = msg;
+        stop();
     };
 private:
-	MyTime startTime;
-	MyTime stopTime;
+    MyTime startTime;
+    MyTime stopTime;
     const char *message;
     bool stopped;
 };
 
-#endif	/* STOPWATCH_H */
+#endif  /* STOPWATCH_H */

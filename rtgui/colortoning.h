@@ -13,10 +13,11 @@
 #include "thresholdadjuster.h"
 #include "colorprovider.h"
 
-class ColorToning : public ToolParamBlock, public FoldableToolPanel,  public rtengine::AutoColorTonListener,public CurveListener, public ColorProvider,
-                    public ThresholdAdjusterListener, public AdjusterListener {
+class ColorToning : public ToolParamBlock, public FoldableToolPanel,  public rtengine::AutoColorTonListener, public CurveListener, public ColorProvider,
+    public ThresholdAdjusterListener, public AdjusterListener
+{
 
-  protected:
+protected:
     //Gtk::HSeparator* splitSep;
     Gtk::HSeparator* satLimiterSep;
     Gtk::HSeparator* colorSep;
@@ -29,7 +30,7 @@ class ColorToning : public ToolParamBlock, public FoldableToolPanel,  public rte
     DiagonalCurveEditor* clshape;
     DiagonalCurveEditor* cl2shape;
     Gtk::HBox* ctbox;
-	Gtk::Frame *p1Frame;
+    Gtk::Frame *p1Frame;
 
     Gtk::VBox* chanMixerBox;
     MyComboBoxText* method;
@@ -76,19 +77,19 @@ class ColorToning : public ToolParamBlock, public FoldableToolPanel,  public rte
     bool lastLumamode;
     sigc::connection lumamodeConn;
 
-  public:
+public:
     ColorToning ();
     ~ColorToning();
-    void read                  (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-    void write                 (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void read                  (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write                 (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
     void setBatchMode          (bool batchMode);
-    void setDefaults           (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void setDefaults           (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
     void trimValues            (rtengine::procparams::ProcParams* pp);
     void adjusterChanged       (Adjuster* a, double newval);
     void adjusterChanged       (ThresholdAdjuster* a, double newBottom, double newTop);
     void setAdjusterBehavior   (bool splitAdd, bool satThresholdAdd, bool satOpacityAdd, bool strprotectAdd, bool balanceAdd);
     void neutral_pressed       ();
-  //void neutralCurves_pressed ();
+    //void neutralCurves_pressed ();
     void autoColorTonChanged   (int bwct, int satthres, int satprot);
     bool CTComp_               ();
 

@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -28,31 +28,32 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class SharpenEdge : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
+class SharpenEdge : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+{
 
 protected:
 
-	Adjuster* passes;
-	Adjuster* amount;
-	Gtk::CheckButton* threechannels;
+    Adjuster* passes;
+    Adjuster* amount;
+    Gtk::CheckButton* threechannels;
 
-	sigc::connection chanthreeconn;
-	bool lastchanthree;
+    sigc::connection chanthreeconn;
+    bool lastchanthree;
 
 public:
 
-	SharpenEdge              ();
+    SharpenEdge              ();
 
-	void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-	void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-	void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
-	void setBatchMode        (bool batchMode);
-	void trimValues          (rtengine::procparams::ProcParams* pp);
-	void setAdjusterBehavior (bool amountadd, bool passadd);
-	void adjusterChanged     (Adjuster* a, double newval);
+    void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
+    void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
+    void setBatchMode        (bool batchMode);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
+    void setAdjusterBehavior (bool amountadd, bool passadd);
+    void adjusterChanged     (Adjuster* a, double newval);
 
     void enabledChanged      ();
-	void chanthree_toggled   ();
+    void chanthree_toggled   ();
 
 };
 

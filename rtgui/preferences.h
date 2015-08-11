@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -25,32 +25,46 @@
 #include <vector>
 #include "rtwindow.h"
 
-class Preferences : public Gtk::Dialog, public ProfileStoreListener {
+class Preferences : public Gtk::Dialog, public ProfileStoreListener
+{
 
-        class ExtensionColumns : public Gtk::TreeModel::ColumnRecord {
-            public:
-                Gtk::TreeModelColumn<bool>  enabled;
-                Gtk::TreeModelColumn<Glib::ustring>  ext;
-                ExtensionColumns() { add(enabled); add(ext); }
-        };
-        ExtensionColumns extensionColumns;
-        Glib::RefPtr<Gtk::ListStore> extensionModel;
-
-
-        class BehavColumns : public Gtk::TreeModel::ColumnRecord {
-            public:
-                Gtk::TreeModelColumn<Glib::ustring> label;
-                Gtk::TreeModelColumn<bool>          badd;
-                Gtk::TreeModelColumn<bool>          bset;
-                Gtk::TreeModelColumn<bool>          visible;
-                Gtk::TreeModelColumn<int>           addsetid;
-                BehavColumns() { add(label); add(badd); add(bset); add(visible); add(addsetid); }
-        };
-        Glib::RefPtr<Gtk::TreeStore> behModel;
-        BehavColumns behavColumns;
+    class ExtensionColumns : public Gtk::TreeModel::ColumnRecord
+    {
+    public:
+        Gtk::TreeModelColumn<bool>  enabled;
+        Gtk::TreeModelColumn<Glib::ustring>  ext;
+        ExtensionColumns()
+        {
+            add(enabled);
+            add(ext);
+        }
+    };
+    ExtensionColumns extensionColumns;
+    Glib::RefPtr<Gtk::ListStore> extensionModel;
 
 
-  protected:
+    class BehavColumns : public Gtk::TreeModel::ColumnRecord
+    {
+    public:
+        Gtk::TreeModelColumn<Glib::ustring> label;
+        Gtk::TreeModelColumn<bool>          badd;
+        Gtk::TreeModelColumn<bool>          bset;
+        Gtk::TreeModelColumn<bool>          visible;
+        Gtk::TreeModelColumn<int>           addsetid;
+        BehavColumns()
+        {
+            add(label);
+            add(badd);
+            add(bset);
+            add(visible);
+            add(addsetid);
+        }
+    };
+    Glib::RefPtr<Gtk::TreeStore> behModel;
+    BehavColumns behavColumns;
+
+
+protected:
     Splash* splash;
     ProfileStoreComboBox* rprofiles;
     Gtk::TreeIter currRawRow; // :)
@@ -82,14 +96,14 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
 
     Gtk::FileChooserButton* iccDir;
     Gtk::FileChooserButton* monProfile;
-	Gtk::CheckButton* cbAutoMonProfile;
-	//Gtk::CheckButton* cbAutocielab;
-	Gtk::CheckButton* cbciecamfloat;
-	Gtk::CheckButton* cbdaubech;
-	Gtk::SpinButton*  hlThresh;
-	Gtk::SpinButton*  shThresh;
+    Gtk::CheckButton* cbAutoMonProfile;
+    //Gtk::CheckButton* cbAutocielab;
+    Gtk::CheckButton* cbciecamfloat;
+    Gtk::CheckButton* cbdaubech;
+    Gtk::SpinButton*  hlThresh;
+    Gtk::SpinButton*  shThresh;
 
-	Gtk::SpinButton*  panFactor;
+    Gtk::SpinButton*  panFactor;
     Gtk::CheckButton* rememberZoomPanCheckbutton;
 
     Gtk::ComboBoxText* intent;
@@ -119,7 +133,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
     Gtk::FontButton* fontbutton;
     Gtk::ColorButton* butCropCol;
     Gtk::ColorButton* butNavGuideCol;
-	
+
     Gtk::SpinButton*   maxThumbSize;
     Gtk::SpinButton*   maxCacheEntries;
     Gtk::SpinButton*   maxRecentFolders;
@@ -154,14 +168,14 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
     Gtk::ComboBoxText* loadParamsPreference;
     Gtk::ComboBoxText* editorLayout;
     RTWindow* parent;
-	
+
     Gtk::CheckButton* ckbSndEnable;
     Gtk::Entry* txtSndBatchQueueDone;
     Gtk::Entry* txtSndLngEditProcDone;
-	Gtk::SpinButton* spbSndLngEditProcDoneSecs;
-	
+    Gtk::SpinButton* spbSndLngEditProcDoneSecs;
+
     Gtk::CheckButton* ckbTunnelMetaData;
-	Gtk::CheckButton* ckbInternalThumbIfUntouched;
+    Gtk::CheckButton* ckbInternalThumbIfUntouched;
 
     Gtk::Entry* txtCustProfBuilderPath;
     Gtk::ComboBoxText* custProfBuilderLabelType;
@@ -210,17 +224,17 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
     Gtk::Widget* getBatchProcPanel ();
     Gtk::Widget* getPerformancePanel ();
     Gtk::Widget* getSoundPanel ();
-    
-  public:
-	Preferences (RTWindow *rtwindow);
-	~Preferences ();
-    
+
+public:
+    Preferences (RTWindow *rtwindow);
+    ~Preferences ();
+
     void savePressed ();
     void loadPressed ();
     void okPressed ();
     void cancelPressed ();
     void aboutPressed ();
-	void autoMonProfileToggled ();
+    void autoMonProfileToggled ();
     void sndEnableToggled ();
     void langAutoDetectToggled ();
     void autocielabToggled ();

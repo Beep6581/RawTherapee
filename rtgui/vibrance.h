@@ -27,49 +27,49 @@
 #include "toolpanel.h"
 
 class Vibrance : public ToolParamBlock, public AdjusterListener, public ThresholdCurveProvider, public ThresholdAdjusterListener,
-                 public FoldableToolPanel, public CurveListener
+    public FoldableToolPanel, public CurveListener
 {
 
 protected:
-	CurveEditorGroup* curveEditorGG;
+    CurveEditorGroup* curveEditorGG;
 
-	Adjuster* pastels;
-	Adjuster* saturated;
+    Adjuster* pastels;
+    Adjuster* saturated;
     ThresholdAdjuster* psThreshold;
-	Gtk::CheckButton* protectSkins;
-	Gtk::CheckButton* avoidColorShift;
-	Gtk::CheckButton* pastSatTog;
-	DiagonalCurveEditor* skinTonesCurve;
+    Gtk::CheckButton* protectSkins;
+    Gtk::CheckButton* avoidColorShift;
+    Gtk::CheckButton* pastSatTog;
+    DiagonalCurveEditor* skinTonesCurve;
 
-	bool lastProtectSkins;
-	bool lastAvoidColorShift;
-	bool lastPastSatTog;
+    bool lastProtectSkins;
+    bool lastAvoidColorShift;
+    bool lastPastSatTog;
 
-	sigc::connection pskinsconn;
-	sigc::connection ashiftconn;
-	sigc::connection pastsattogconn;
+    sigc::connection pskinsconn;
+    sigc::connection ashiftconn;
+    sigc::connection pastsattogconn;
 
 public:
 
-	Vibrance                 ();
-	~Vibrance                ();
+    Vibrance                 ();
+    ~Vibrance                ();
 
-	void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-	void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-	void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
-	void setBatchMode        (bool batchMode);
-	void trimValues          (rtengine::procparams::ProcParams* pp);
-	void setAdjusterBehavior (bool pastelsadd, bool saturatedadd);
-	void adjusterChanged     (Adjuster* a, double newval);
-	void adjusterChanged     (ThresholdAdjuster* a, int newBottom, int newTop);
-	void curveChanged        ();
+    void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
+    void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
+    void setBatchMode        (bool batchMode);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
+    void setAdjusterBehavior (bool pastelsadd, bool saturatedadd);
+    void adjusterChanged     (Adjuster* a, double newval);
+    void adjusterChanged     (ThresholdAdjuster* a, int newBottom, int newTop);
+    void curveChanged        ();
     void autoOpenCurve       ();
 
     void enabledChanged          ();
-	void protectskins_toggled    ();
-	void avoidcolorshift_toggled ();
-	void pastsattog_toggled      ();
-	std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const;
+    void protectskins_toggled    ();
+    void avoidcolorshift_toggled ();
+    void pastsattog_toggled      ();
+    std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const;
 };
 
 

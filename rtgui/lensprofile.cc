@@ -42,7 +42,8 @@ LensProfilePanel::LensProfilePanel () : FoldableToolPanel(this, "lensprof", M("T
     filterLCP.add_pattern("*.LCP");
     fcbLCPFile->add_filter(filterLCP);
 
-    Glib::ustring defDir=lcpStore->getDefaultCommonDirectory();
+    Glib::ustring defDir = lcpStore->getDefaultCommonDirectory();
+
     if (!defDir.empty()) {
 #ifdef WIN32
         fcbLCPFile->set_show_hidden(true);  // ProgramData is hidden on Windows
@@ -71,7 +72,7 @@ LensProfilePanel::LensProfilePanel () : FoldableToolPanel(this, "lensprof", M("T
     ckbUseVign->signal_toggled().connect( sigc::mem_fun(*this, &LensProfilePanel::onUseVignChanged) );
     ckbUseCA->signal_toggled().connect( sigc::mem_fun(*this, &LensProfilePanel::onUseCAChanged) );
 
-    allowFocusDep=true;
+    allowFocusDep = true;
 }
 
 void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
@@ -83,13 +84,15 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
         updateDisabled(true);
     } else {
         Glib::ustring fname = fcbLCPFile->get_filename();
-        if (!pp->lensProf.lcpFile.empty())
+
+        if (!pp->lensProf.lcpFile.empty()) {
             fcbLCPFile->unselect_filename(fname);
-		else {
-			Glib::ustring lastFolder = fcbLCPFile->get_current_folder();
-			fcbLCPFile->set_filename("");
-			fcbLCPFile->set_current_folder(lastFolder);	
-		}
+        } else {
+            Glib::ustring lastFolder = fcbLCPFile->get_current_folder();
+            fcbLCPFile->set_filename("");
+            fcbLCPFile->set_current_folder(lastFolder);
+        }
+
         updateDisabled(false);
     }
 
@@ -97,31 +100,34 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     ckbUseVign->set_active (pp->lensProf.useVign && isRaw);
     ckbUseCA->set_active   (pp->lensProf.useCA && isRaw);
 
-    lcpFileChanged=useDistChanged=useVignChanged=useCAChanged=false;
+    lcpFileChanged = useDistChanged = useVignChanged = useCAChanged = false;
 
     enableListener ();
 }
 
-void LensProfilePanel::setRawMeta(bool raw, const rtengine::ImageMetaData* pMeta) {
-    if (!raw || pMeta->getFocusDist()<=0) {
+void LensProfilePanel::setRawMeta(bool raw, const rtengine::ImageMetaData* pMeta)
+{
+    if (!raw || pMeta->getFocusDist() <= 0) {
         disableListener();
 
         // CA is very focus layer dependend, otherwise it might even worsen things
-        allowFocusDep=false;
+        allowFocusDep = false;
         ckbUseCA->set_active(false);
         ckbUseCA->set_sensitive(false);
 
         enableListener();
     }
-    isRaw=raw;
+
+    isRaw = raw;
 }
 
 void LensProfilePanel::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
-    if (lcpStore->isValidLCPFileName(fcbLCPFile->get_filename()))
+    if (lcpStore->isValidLCPFileName(fcbLCPFile->get_filename())) {
         pp->lensProf.lcpFile = fcbLCPFile->get_filename();
-    else
+    } else {
         pp->lensProf.lcpFile = "";
+    }
 
     pp->lensProf.useDist = ckbUseDist->get_active();
     pp->lensProf.useVign = ckbUseVign->get_active();
@@ -137,41 +143,53 @@ void LensProfilePanel::write( rtengine::procparams::ProcParams* pp, ParamsEdited
 
 void LensProfilePanel::onLCPFileChanged()
 {
-    lcpFileChanged=true;
+    lcpFileChanged = true;
     updateDisabled(lcpStore->isValidLCPFileName(fcbLCPFile->get_filename()));
 
-    if (listener)
+    if (listener) {
         listener->panelChanged (EvLCPFile, Glib::path_get_basename(fcbLCPFile->get_filename()));
+    }
 }
 
 void LensProfilePanel::onLCPFileReset()
 {
-    lcpFileChanged=true;
+    lcpFileChanged = true;
 
     fcbLCPFile->unselect_filename(fcbLCPFile->get_filename());
     updateDisabled(false);
 
-    if (listener)
+    if (listener) {
         listener->panelChanged (EvLCPFile, M("GENERAL_NONE"));
+    }
 }
 
 void LensProfilePanel::onUseDistChanged()
 {
-    useDistChanged=true;
-    if (listener) listener->panelChanged (EvLCPUseDist, ckbUseDist->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    useDistChanged = true;
+
+    if (listener) {
+        listener->panelChanged (EvLCPUseDist, ckbUseDist->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
 }
 void LensProfilePanel::onUseVignChanged()
 {
-    useVignChanged=true;
-    if (listener) listener->panelChanged (EvLCPUseVign, ckbUseVign->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    useVignChanged = true;
+
+    if (listener) {
+        listener->panelChanged (EvLCPUseVign, ckbUseVign->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
 }
 void LensProfilePanel::onUseCAChanged()
 {
-    useCAChanged=true;
-    if (listener) listener->panelChanged (EvLCPUseCA, ckbUseCA->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    useCAChanged = true;
+
+    if (listener) {
+        listener->panelChanged (EvLCPUseCA, ckbUseCA->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
 }
 
-void LensProfilePanel::updateDisabled(bool enable) {
+void LensProfilePanel::updateDisabled(bool enable)
+{
     ckbUseDist->set_sensitive(enable);
     ckbUseVign->set_sensitive(enable && isRaw);
     ckbUseCA->set_sensitive(enable && allowFocusDep);

@@ -23,10 +23,11 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-SensorBayer::SensorBayer () : FoldableToolPanel(this, "sensorbayer", M("TP_RAW_SENSOR_BAYER_LABEL")) {
+SensorBayer::SensorBayer () : FoldableToolPanel(this, "sensorbayer", M("TP_RAW_SENSOR_BAYER_LABEL"))
+{
 
-	packBox = Gtk::manage (new ToolParamBlock ());
-	pack_start (*packBox);
+    packBox = Gtk::manage (new ToolParamBlock ());
+    pack_start (*packBox);
 
-	show_all ();
+    show_all ();
 }

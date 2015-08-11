@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -27,27 +27,34 @@ ProfileStore profileStore;
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ProfileStore::ProfileStore () : parseMutex(NULL), storeState(STORESTATE_NOTINITIALIZED), internalDefaultProfile(NULL), internalDefaultEntry(NULL) {
+ProfileStore::ProfileStore () : parseMutex(NULL), storeState(STORESTATE_NOTINITIALIZED), internalDefaultProfile(NULL), internalDefaultEntry(NULL)
+{
     internalDefaultProfile = new AutoPartialProfile();
     internalDefaultProfile->set(true);
 }
 
-bool ProfileStore::init () {
-    if (storeState == STORESTATE_DELETED)
+bool ProfileStore::init ()
+{
+    if (storeState == STORESTATE_DELETED) {
         return false;
+    }
+
     if (storeState == STORESTATE_NOTINITIALIZED) {
         storeState = STORESTATE_BEINGINITIALIZED;
         parseMutex = new MyMutex();
         _parseProfiles ();
         storeState = STORESTATE_INITIALIZED;
     }
+
     return true;
 }
 
-ProfileStore::~ProfileStore () {
+ProfileStore::~ProfileStore ()
+{
 
-    if (storeState == STORESTATE_NOTINITIALIZED)
+    if (storeState == STORESTATE_NOTINITIALIZED) {
         return;
+    }
 
     // This lock prevent object's suppression while scanning the directories
     storeState = STORESTATE_DELETED;
@@ -71,28 +78,33 @@ ProfileStore::~ProfileStore () {
  * This method will scan the directory tree again and update the profile list. When finished,
  * the listeners will be called in order to update with the new list
  */
-void ProfileStore::parseProfiles () {
+void ProfileStore::parseProfiles ()
+{
 
     if (!init())
         // I don't even know if this situation can occur
-        return;
-
-    for (std::list<ProfileStoreListener*>::iterator i=listeners.begin(); i!=listeners.end(); ++i)
-        (*i)->storeCurrentValue();
-
     {
-    MyMutex::MyLock lock(*parseMutex);
-
-    _parseProfiles ();
+        return;
     }
 
-    for (std::list<ProfileStoreListener*>::iterator i=listeners.begin(); i!=listeners.end(); ++i) {
+    for (std::list<ProfileStoreListener*>::iterator i = listeners.begin(); i != listeners.end(); ++i) {
+        (*i)->storeCurrentValue();
+    }
+
+    {
+        MyMutex::MyLock lock(*parseMutex);
+
+        _parseProfiles ();
+    }
+
+    for (std::list<ProfileStoreListener*>::iterator i = listeners.begin(); i != listeners.end(); ++i) {
         (*i)->updateProfileList();
         (*i)->restoreValue();
     }
 }
 
-void ProfileStore::_parseProfiles () {
+void ProfileStore::_parseProfiles ()
+{
 
     // Acquire the GUI, since the tree model can interact with combobox
     GThreadLock threadLock;
@@ -111,6 +123,7 @@ void ProfileStore::_parseProfiles () {
     Glib::ustring virtualPath("${U}");
     Glib::ustring currDir("${U}");
     parseDir (p1, virtualPath, currDir, 0, 0, displayLevel0);
+
     if (displayLevel0) {
         virtualPath = "${G}";
         currDir = "${G}";
@@ -121,8 +134,10 @@ void ProfileStore::_parseProfiles () {
     std::sort(entries.begin(), entries.end(), SortProfiles() );
 
     // entries and partProfiles are empty, but the entry and profiles already exist (they have survived to clearFileList and clearProfileList)
-    if (!internalDefaultEntry)
+    if (!internalDefaultEntry) {
         internalDefaultEntry = new ProfileStoreEntry(Glib::ustring("(") + M("PROFILEPANEL_PINTERNAL") + Glib::ustring(")"), PSET_FILE, 0, 0);
+    }
+
     entries.push_back(internalDefaultEntry);
     partProfiles[internalDefaultEntry] = internalDefaultProfile;
 
@@ -130,18 +145,24 @@ void ProfileStore::_parseProfiles () {
     // Check if the default profiles has been found.
     if (findEntryFromFullPathU(options.defProfRaw) == NULL) {
         options.setDefProfRawMissing(true);
-        if (options.rtSettings.verbose)
+
+        if (options.rtSettings.verbose) {
             printf("WARNING: Default profile \"%s\" for raw images not found!\n", options.defProfRaw.c_str());
+        }
     }
+
     if (findEntryFromFullPathU(options.defProfImg) == NULL) {
         options.setDefProfImgMissing(true);
-        if (options.rtSettings.verbose)
+
+        if (options.rtSettings.verbose) {
             printf("WARNING: Default profile \"%s\" for standard images not found!\n", options.defProfImg.c_str());
+        }
     }
 }
 
 /// @return Returns true if some files has been found (directories are ignored)
-bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath, Glib::ustring& currDir, unsigned int parentId, unsigned char level, bool displayLevel0) {
+bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath, Glib::ustring& currDir, unsigned int parentId, unsigned char level, bool displayLevel0)
+{
 
     bool fileFound = false;
     unsigned int folder = 0; // folder's own Id
@@ -151,14 +172,15 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
 
         // add this entry to the folder list
         folders.push_back(virtualPath);
-        folder = (unsigned int)(folders.size())-1;
+        folder = (unsigned int)(folders.size()) - 1;
 
-        if (level>0 || displayLevel0) {
+        if (level > 0 || displayLevel0) {
             // replace the virtual folder name by a localized text
-            if (currDir == "${U}")
+            if (currDir == "${U}") {
                 currDir = M("PROFILEPANEL_MYPROFILES");
-            else if (currDir == "${G}")
+            } else if (currDir == "${G}") {
                 currDir = M("PROFILEPANEL_GLOBALPROFILES");
+            }
 
             // add this localized text to the file list
             entries.push_back( new ProfileStoreEntry(currDir, PSET_FOLDER, parentId, folder) );
@@ -167,34 +189,41 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
         // walking through the directory
         Glib::Dir* dir = NULL;
         dir = new Glib::Dir (realPath);
-        for (Glib::DirIterator i = dir->begin(); i!=dir->end(); ++i) {
+
+        for (Glib::DirIterator i = dir->begin(); i != dir->end(); ++i) {
             currDir = *i;
-            if (currDir == "." || currDir == "..")
+
+            if (currDir == "." || currDir == "..") {
                 continue;
+            }
 
             Glib::ustring fname = Glib::build_filename(realPath, currDir);
+
             if (safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
                 Glib::ustring vp(Glib::build_filename(virtualPath, currDir));
                 Glib::ustring rp(Glib::build_filename(realPath,    currDir));
-                fileFound = parseDir (rp, vp, currDir, folder, level+1, 0);
-            }
-            else {
+                fileFound = parseDir (rp, vp, currDir, folder, level + 1, 0);
+            } else {
                 size_t lastdot = currDir.find_last_of ('.');
-                if (lastdot!=Glib::ustring::npos && lastdot<=currDir.size()-4 && !currDir.casefold().compare (lastdot, 4, paramFileExtension)) {
-                    // file found
-                    if( options.rtSettings.verbose )
-                        printf ("Processing file %s...", fname.c_str());
 
-                    Glib::ustring name = currDir.substr(0,lastdot);
+                if (lastdot != Glib::ustring::npos && lastdot <= currDir.size() - 4 && !currDir.casefold().compare (lastdot, 4, paramFileExtension)) {
+                    // file found
+                    if( options.rtSettings.verbose ) {
+                        printf ("Processing file %s...", fname.c_str());
+                    }
+
+                    Glib::ustring name = currDir.substr(0, lastdot);
 
                     // create the partial profile
                     AutoPartialProfile *pProf = new AutoPartialProfile();
                     int res = pProf->load (fname);
-                    if (!res && pProf->pparams->ppVersion>=220) {
+
+                    if (!res && pProf->pparams->ppVersion >= 220) {
                         fileFound = true;
 
-                        if( options.rtSettings.verbose )
+                        if( options.rtSettings.verbose ) {
                             printf ("OK\n");
+                        }
 
                         // adding this file to the list
                         ProfileStoreEntry* filePSE = new ProfileStoreEntry(name, PSET_FILE, folder, 0);
@@ -203,17 +232,17 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
                         // map the partial profile
                         partProfiles[filePSE] = pProf;
                         //partProfiles.insert( std::pair<ProfileStoreEntry*, rtengine::procparams::AutoPartialProfile*> (filePSE, pProf) );
-                    }
-                    else if( options.rtSettings.verbose ) {
+                    } else if( options.rtSettings.verbose ) {
                         printf ("failed!\n");
                     }
                 }
             }
         }
+
         delete dir;
     }
 
-    if (!fileFound && (level>0 || displayLevel0)) {
+    if (!fileFound && (level > 0 || displayLevel0)) {
         // no files found in this level, we delete the subdirectory entry
         folders.pop_back();
         entries.pop_back();
@@ -222,12 +251,14 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
     return fileFound;
 }
 
-int ProfileStore::findFolderId(const Glib::ustring &path) {
-    for (std::vector<Glib::ustring>::iterator i=folders.begin(); i!=folders.end(); i++) {
+int ProfileStore::findFolderId(const Glib::ustring &path)
+{
+    for (std::vector<Glib::ustring>::iterator i = folders.begin(); i != folders.end(); i++) {
         if (*i == path) {
             return i - folders.begin();
         }
     }
+
     return -1;
 }
 
@@ -237,29 +268,36 @@ int ProfileStore::findFolderId(const Glib::ustring &path) {
   *                  but have to begin with a virtual location ( ${G} or ${U} )
   *                  Will return null on invalid path or if the entry can't be found
   */
-const ProfileStoreEntry* ProfileStore::findEntryFromFullPathU(Glib::ustring path) {
+const ProfileStoreEntry* ProfileStore::findEntryFromFullPathU(Glib::ustring path)
+{
 
-    if (path.empty())
+    if (path.empty()) {
         return NULL;
+    }
 
-    if (path == DEFPROFILE_INTERNAL)
+    if (path == DEFPROFILE_INTERNAL) {
         return internalDefaultEntry;
+    }
 
     size_t lastdot = path.find_last_of ('.');
-    if (lastdot!=Glib::ustring::npos && lastdot<=path.size()-4 && !path.casefold().compare (lastdot, 4, paramFileExtension))
+
+    if (lastdot != Glib::ustring::npos && lastdot <= path.size() - 4 && !path.casefold().compare (lastdot, 4, paramFileExtension))
         // removing the extension
-        path = path.substr(0,lastdot);
+    {
+        path = path.substr(0, lastdot);
+    }
 
     // dir separator may come from options file and may be \ or /, we convert them to G_DIR_SEPARATOR_S
-    if (path.size() > 4 && (path[4] == '/' || path[4] == '\\'))
-        path = path.substr(0,4) + G_DIR_SEPARATOR_S + path.substr(5);
+    if (path.size() > 4 && (path[4] == '/' || path[4] == '\\')) {
+        path = path.substr(0, 4) + G_DIR_SEPARATOR_S + path.substr(5);
+    }
 
     // removing the filename
     Glib::ustring fName = Glib::path_get_basename(path);
+
     if (!fName.empty()) {
-        path = path.substr(0, path.length()-fName.length());
-    }
-    else {
+        path = path.substr(0, path.length() - fName.length());
+    } else {
         // path is malformed, returning NULL;
         return NULL;
     }
@@ -274,52 +312,64 @@ const ProfileStoreEntry* ProfileStore::findEntryFromFullPathU(Glib::ustring path
     }
 
     // 2. find the entry that match the given filename and parentFolderId
-    for (std::vector<const ProfileStoreEntry*>::iterator i=entries.begin(); i!=entries.end(); i++) {
-        if (((*i)->parentFolderId)==parentFolderId  &&  (*i)->label==fName)
+    for (std::vector<const ProfileStoreEntry*>::iterator i = entries.begin(); i != entries.end(); i++) {
+        if (((*i)->parentFolderId) == parentFolderId  &&  (*i)->label == fName) {
             return *i;
+        }
     }
+
     return NULL;
 }
 
 /** Protected version of findEntryFromFullPathU */
-const ProfileStoreEntry* ProfileStore::findEntryFromFullPath(Glib::ustring path) {
+const ProfileStoreEntry* ProfileStore::findEntryFromFullPath(Glib::ustring path)
+{
     MyMutex::MyLock lock(*parseMutex);
     return findEntryFromFullPathU(path);
 }
 
-const PartialProfile* ProfileStore::getProfile (Glib::ustring path) {
+const PartialProfile* ProfileStore::getProfile (Glib::ustring path)
+{
 
     if (!init())
         // I don't even know if this situation can occur
+    {
         return NULL;
+    }
 
     const ProfileStoreEntry *pse = findEntryFromFullPath(path);
-    if (!pse)
+
+    if (!pse) {
         return NULL;
+    }
 
     return getProfile(pse);
 }
 
-const PartialProfile* ProfileStore::getProfile (const ProfileStoreEntry* entry) {
+const PartialProfile* ProfileStore::getProfile (const ProfileStoreEntry* entry)
+{
 
     if (!init())
         // I don't even know if this situation can occur
+    {
         return NULL;
+    }
 
     MyMutex::MyLock lock(*parseMutex);
 
-    if (entry == internalDefaultEntry)
+    if (entry == internalDefaultEntry) {
         return internalDefaultProfile;
+    }
 
     std::map<const ProfileStoreEntry*, rtengine::procparams::AutoPartialProfile*>::iterator iter = partProfiles.find(entry);
+
     if (iter != partProfiles.end()) {
         return iter->second;
-    }
-    else {
+    } else {
         // This shouldn't happen!
-        #ifndef NDEBUG
+#ifndef NDEBUG
         printf("WARNING! Profile not found!\n");
-        #endif
+#endif
         return NULL;
     }
 }
@@ -329,7 +379,8 @@ const PartialProfile* ProfileStore::getProfile (const ProfileStoreEntry* entry) 
  * This method grants you unique access to the vector list through Mutex locking.
  * When you're done with the file list, you MUST call the releaseFileList method to release the lock.
  */
-const std::vector<const ProfileStoreEntry*>* ProfileStore::getFileList () {
+const std::vector<const ProfileStoreEntry*>* ProfileStore::getFileList ()
+{
     /*if (!init()) {
         // I don't even know if this situation can occur
         return NULL;
@@ -340,7 +391,8 @@ const std::vector<const ProfileStoreEntry*>* ProfileStore::getFileList () {
     return &entries;
 }
 
-void ProfileStore::releaseFileList() {
+void ProfileStore::releaseFileList()
+{
     parseMutex->unlock();
 }
 
@@ -349,16 +401,22 @@ void ProfileStore::releaseFileList() {
  * If the profile doesn't already exist in the profile list,
  * it will add it with default internal values, so this method never fails
  */
-const ProcParams* ProfileStore::getDefaultProcParams (bool isRaw) {
+const ProcParams* ProfileStore::getDefaultProcParams (bool isRaw)
+{
 
     if (!init())
         // I don't even know if this situation can occur
+    {
         return NULL;
+    }
+
     //Note: the mutex is locked in getProfile, called below
 
     const PartialProfile* pProf = getProfile (isRaw ? options.defProfRaw : options.defProfImg);
 
-    if (!pProf) pProf = internalDefaultProfile;
+    if (!pProf) {
+        pProf = internalDefaultProfile;
+    }
 
     return pProf->pparams;
 }
@@ -368,50 +426,70 @@ const ProcParams* ProfileStore::getDefaultProcParams (bool isRaw) {
  * If it doesn't already exist in the profile list, it will add it with default internal values,
  * so this method will never fails
  */
-const PartialProfile* ProfileStore::getDefaultPartialProfile (bool isRaw) {
+const PartialProfile* ProfileStore::getDefaultPartialProfile (bool isRaw)
+{
 
     if (!init())
         // I don't even know if this situation can occur
+    {
         return NULL;
+    }
+
     //Note: the mutex is locked in getProfile, called below
 
     const PartialProfile* pProf = getProfile (isRaw ? options.defProfRaw : options.defProfImg);
 
-    if (!pProf) pProf = internalDefaultProfile;
+    if (!pProf) {
+        pProf = internalDefaultProfile;
+    }
 
     return pProf;
 }
 
-const Glib::ustring ProfileStore::getPathFromId(int folderId) {
-	return folders.at(folderId);
+const Glib::ustring ProfileStore::getPathFromId(int folderId)
+{
+    return folders.at(folderId);
 }
 
 
-void ProfileStore::clearFileList() {
-    for (std::vector<const ProfileStoreEntry*>::iterator i=entries.begin(); i!=entries.end(); ++i)
-        if (*i != internalDefaultEntry) delete *i;
+void ProfileStore::clearFileList()
+{
+    for (std::vector<const ProfileStoreEntry*>::iterator i = entries.begin(); i != entries.end(); ++i)
+        if (*i != internalDefaultEntry) {
+            delete *i;
+        }
+
     entries.clear();
 }
 
-void ProfileStore::clearProfileList() {
-    for (std::map<const ProfileStoreEntry*, rtengine::procparams::AutoPartialProfile*>::iterator i=partProfiles.begin(); i!=partProfiles.end(); ++i)
-        if (i->second != internalDefaultProfile) delete i->second;
+void ProfileStore::clearProfileList()
+{
+    for (std::map<const ProfileStoreEntry*, rtengine::procparams::AutoPartialProfile*>::iterator i = partProfiles.begin(); i != partProfiles.end(); ++i)
+        if (i->second != internalDefaultProfile) {
+            delete i->second;
+        }
+
     partProfiles.clear();
 }
 
-void ProfileStore::addListener(ProfileStoreListener *listener) {
+void ProfileStore::addListener(ProfileStoreListener *listener)
+{
     listeners.push_back(listener);
 }
 
-void ProfileStore::removeListener(ProfileStoreListener *listener) {
+void ProfileStore::removeListener(ProfileStoreListener *listener)
+{
     listeners.remove(listener);
 }
 
-void ProfileStore::dumpFolderList() {
+void ProfileStore::dumpFolderList()
+{
     printf("Folder list:\n------------\n");
-    for (unsigned int i=0; i<folders.size(); i++) {
+
+    for (unsigned int i = 0; i < folders.size(); i++) {
         printf(" #%3d - %s\n", i, folders.at(i).c_str());
     }
+
     printf("\n");
 }
 
@@ -419,23 +497,27 @@ ProfileStoreEntry::ProfileStoreEntry() : label(""), type(PSET_FOLDER), parentFol
 
 ProfileStoreEntry::ProfileStoreEntry(Glib::ustring label, PSEType type, unsigned short parentFolder, unsigned short folder) : label(label), type(type), parentFolderId(parentFolder), folderId(folder) {}
 
-void ProfileStoreEntry::setValues(Glib::ustring label, PSEType type, unsigned short parentFolder, unsigned short folder) {
+void ProfileStoreEntry::setValues(Glib::ustring label, PSEType type, unsigned short parentFolder, unsigned short folder)
+{
     this->label = label;
     this->type = type;
     parentFolderId = parentFolder;
     folderId = folder;
 }
 
-ProfileStoreLabel::ProfileStoreLabel(const ProfileStoreEntry *entry) : Gtk::Label(entry->label), entry(entry) {
+ProfileStoreLabel::ProfileStoreLabel(const ProfileStoreEntry *entry) : Gtk::Label(entry->label), entry(entry)
+{
     set_alignment(0, 0.5);
     show();
 }
 
-ProfileStoreComboBox::ProfileStoreComboBox () {
+ProfileStoreComboBox::ProfileStoreComboBox ()
+{
     updateProfileList();
 }
 
-Glib::ustring ProfileStoreComboBox::getCurrentLabel() {
+Glib::ustring ProfileStoreComboBox::getCurrentLabel()
+{
     Glib::ustring currLabel;
     Gtk::TreeModel::iterator currRow = get_active();
 
@@ -443,31 +525,37 @@ Glib::ustring ProfileStoreComboBox::getCurrentLabel() {
         const ProfileStoreEntry *currEntry = (*currRow)[methodColumns.profileStoreEntry];
         return currEntry->label;
     }
+
     return currLabel;
 }
 
-const ProfileStoreEntry* ProfileStoreComboBox::getSelectedEntry() {
+const ProfileStoreEntry* ProfileStoreComboBox::getSelectedEntry()
+{
     Gtk::TreeModel::iterator currRow_ = get_active();
     Gtk::TreeModel::Row currRow = *currRow_;
-    if (currRow)
+
+    if (currRow) {
         return currRow[methodColumns.profileStoreEntry];
-    else
+    } else {
         return NULL;
+    }
 }
 
 /** @brief Recursive method to update the combobox entries */
-void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, int parentFolderId, bool initial, const std::vector<const ProfileStoreEntry*> *entryList) {
-    for (std::vector<const ProfileStoreEntry*>::const_iterator i=entryList->begin(); i!=entryList->end(); i++) {
+void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, int parentFolderId, bool initial, const std::vector<const ProfileStoreEntry*> *entryList)
+{
+    for (std::vector<const ProfileStoreEntry*>::const_iterator i = entryList->begin(); i != entryList->end(); i++) {
         if ((*i)->parentFolderId == parentFolderId) {  // filtering the entry of the same folder
             if ((*i)->type == PSET_FOLDER) {
                 Glib::ustring folderPath( profileStore.getPathFromId((*i)->folderId) );
+
                 if (options.useBundledProfiles || ((folderPath != "${G}" ) && (folderPath != "${U}" ))) {
                     // creating the new submenu
                     Gtk::TreeModel::Row newSubMenu;
+
                     if (initial) {
                         newSubMenu = *(refTreeModel->append());
-                    }
-                    else {
+                    } else {
                         newSubMenu = *(refTreeModel->append(parentRow->children()));
                     }
 
@@ -476,17 +564,19 @@ void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, 
                     newSubMenu[methodColumns.profileStoreEntry] = *i;
 
                     refreshProfileList_ (&newSubMenu, (*i)->folderId, false, entryList);
-                }
-                else
+                } else {
                     refreshProfileList_ (parentRow, (*i)->folderId, true, entryList);
-            }
-            else {
+                }
+            } else {
                 Gtk::TreeModel::Row newItem;
+
                 // creating a menu entry
-                if (initial)
+                if (initial) {
                     newItem = *(refTreeModel->append());
-                else
+                } else {
                     newItem = *(refTreeModel->append(parentRow->children()));
+                }
+
                 newItem[methodColumns.label] = (*i)->label;
                 newItem[methodColumns.profileStoreEntry] = *i;
             }
@@ -499,7 +589,8 @@ void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, 
   *
   * This method has to be called by the ProfileStoreListener having a ProfileStoreComboBox.
   */
-void ProfileStoreComboBox::updateProfileList () {
+void ProfileStoreComboBox::updateProfileList ()
+{
 
     // clear items
     clear();
@@ -528,64 +619,77 @@ void ProfileStoreComboBox::updateProfileList () {
     pack_start(methodColumns.label, false);
 }
 
-Gtk::TreeIter ProfileStoreComboBox::findRowFromEntry_ (Gtk::TreeModel::Children childs, const ProfileStoreEntry *pse) {
+Gtk::TreeIter ProfileStoreComboBox::findRowFromEntry_ (Gtk::TreeModel::Children childs, const ProfileStoreEntry *pse)
+{
     Gtk::TreeModel::Row row;
     Gtk::TreeIter rowInSubLevel;
+
     for(Gtk::TreeModel::Children::iterator iter = childs.begin(); iter != childs.end(); ++iter) {
         row = *iter;
         // Hombre: is there a smarter way of knowing if this row has childs?
         const ProfileStoreEntry *pse_ = row[methodColumns.profileStoreEntry];
+
         if (pse_->type == PSET_FOLDER) {
             rowInSubLevel = findRowFromEntry_ (iter->children(), pse);
+
             if (rowInSubLevel) {
                 // entry found
                 return rowInSubLevel;
             }
-        }
-        else if (pse_ == pse) {
+        } else if (pse_ == pse) {
             // entry found
             return iter;
         }
     }
+
     return childs.end();
 }
 
-Gtk::TreeIter ProfileStoreComboBox::findRowFromEntry (const ProfileStoreEntry *pse) {
+Gtk::TreeIter ProfileStoreComboBox::findRowFromEntry (const ProfileStoreEntry *pse)
+{
     Gtk::TreeModel::Children childs = refTreeModel->children();
+
     if (pse) {
         Gtk::TreeIter row = findRowFromEntry_ (childs, pse);
         return row;
     }
+
     return childs.end();
 }
 
-Gtk::TreeIter ProfileStoreComboBox::findRowFromFullPath_ (Gtk::TreeModel::Children childs, int parentFolderId, Glib::ustring &name) {
+Gtk::TreeIter ProfileStoreComboBox::findRowFromFullPath_ (Gtk::TreeModel::Children childs, int parentFolderId, Glib::ustring &name)
+{
     Gtk::TreeModel::Row row;
     Gtk::TreeIter rowInSubLevel;
+
     for(Gtk::TreeModel::Children::iterator iter = childs.begin(); iter != childs.end(); ++iter) {
         row = *iter;
         // Hombre: is there a smarter way of knowing if this row has childs?
         const ProfileStoreEntry *pse = row[methodColumns.profileStoreEntry];
+
         if (pse->type == PSET_FOLDER) {
             rowInSubLevel = findRowFromFullPath_ (iter->children(), parentFolderId, name);
+
             if (rowInSubLevel) {
                 // entry found
                 return rowInSubLevel;
             }
-        }
-        else if (parentFolderId==pse->parentFolderId && name==pse->label) {
+        } else if (parentFolderId == pse->parentFolderId && name == pse->label) {
             // entry found
             return iter;
         }
     }
+
     return childs.end();
 }
 
-Gtk::TreeIter ProfileStoreComboBox::findRowFromFullPath (Glib::ustring path) {
+Gtk::TreeIter ProfileStoreComboBox::findRowFromFullPath (Glib::ustring path)
+{
     Gtk::TreeIter row;
 
-    if (path.empty())
+    if (path.empty()) {
         return row;
+    }
 
     if (path == DEFPROFILE_INTERNAL) {
         row = findRowFromEntry(profileStore.getInternalDefaultPSE());
@@ -594,10 +698,10 @@ Gtk::TreeIter ProfileStoreComboBox::findRowFromFullPath (Glib::ustring path) {
 
     // removing the filename
     Glib::ustring fName = Glib::path_get_basename(path);
+
     if (!fName.empty()) {
-        path = path.substr(0, path.length()-fName.length());
-    }
-    else {
+        path = path.substr(0, path.length() - fName.length());
+    } else {
         // path is malformed;
         return row;
     }
@@ -606,8 +710,9 @@ Gtk::TreeIter ProfileStoreComboBox::findRowFromFullPath (Glib::ustring path) {
     int parentFolderId = profileStore.findFolderId(path);
 
     // 1. find the path in the folder list
-    if (parentFolderId != -1)
+    if (parentFolderId != -1) {
         row = findRowFromFullPath_ (refTreeModel->children(), parentFolderId, fName);
+    }
 
     return row;
 }
@@ -616,74 +721,94 @@ Gtk::TreeIter ProfileStoreComboBox::findRowFromFullPath (Glib::ustring path) {
   * @return The absolute full path of the active row entry, or the "Internal" keyword,
   *         or an empty string if the ComboBox is in an invalid state
   */
-Glib::ustring ProfileStoreComboBox::getFullPathFromActiveRow() {
+Glib::ustring ProfileStoreComboBox::getFullPathFromActiveRow()
+{
     Glib::ustring path;
     Gtk::TreeModel::iterator currRowI = get_active();
-    if (!currRowI)
+
+    if (!currRowI) {
         return path;
+    }
 
     Gtk::TreeModel::Row currRow = *currRowI;
 
     if (currRow) {
 
         const ProfileStoreEntry *currEntry = currRow[methodColumns.profileStoreEntry];
-        if (!currEntry)
-            return path;
 
-        if (currEntry == profileStore.getInternalDefaultPSE())
+        if (!currEntry) {
+            return path;
+        }
+
+        if (currEntry == profileStore.getInternalDefaultPSE()) {
             return Glib::ustring(DEFPROFILE_INTERNAL);
+        }
 
         path = Glib::build_filename(profileStore.getPathFromId(currEntry->parentFolderId), currEntry->label);
     }
+
     return path;
 }
 
-bool ProfileStoreComboBox::setActiveRowFromFullPath(Glib::ustring path) {
+bool ProfileStoreComboBox::setActiveRowFromFullPath(Glib::ustring path)
+{
     if (!path.empty()) {
         Gtk::TreeIter row = findRowFromFullPath(path);
+
         if (row) {
             set_active(row);
             return true;
         }
     }
+
     return false;
 }
 
-bool ProfileStoreComboBox::setActiveRowFromEntry(const ProfileStoreEntry *pse) {
+bool ProfileStoreComboBox::setActiveRowFromEntry(const ProfileStoreEntry *pse)
+{
     if (pse) {
         Gtk::TreeIter row = findRowFromEntry(pse);
+
         if (row) {
             set_active(row);
             return true;
         }
     }
+
     return false;
 }
 
-bool ProfileStoreComboBox::setInternalEntry () {
+bool ProfileStoreComboBox::setInternalEntry ()
+{
     return setActiveRowFromEntry(profileStore.getInternalDefaultPSE());
 }
 
 /** @brief Get the row from the first level of the tree that match the provided name */
-Gtk::TreeIter ProfileStoreComboBox::getRowFromLabel(Glib::ustring name) {
+Gtk::TreeIter ProfileStoreComboBox::getRowFromLabel(Glib::ustring name)
+{
     Gtk::TreeIter row;
     Gtk::TreeModel::Children childs = refTreeModel->children();
+
     if (!name.empty()) {
         Gtk::TreeModel::Row currRow;
+
         for(Gtk::TreeModel::Children::iterator iter = childs.begin(); iter != childs.end(); ++iter) {
             currRow = *iter;
             const ProfileStoreEntry *pse = currRow[methodColumns.profileStoreEntry];
+
             if (pse->label == name) {
                 return currRow;
             }
         }
     }
+
     return childs.end();
     //return refTreeModel->get_iter(""); // is this fast? We want to send back a null, anvalid or end() iterator object here
 }
 
 /** @brief Add a new row to the first level of the tree */
-Gtk::TreeIter ProfileStoreComboBox::addRow(const ProfileStoreEntry *profileStoreEntry) {
+Gtk::TreeIter ProfileStoreComboBox::addRow(const ProfileStoreEntry *profileStoreEntry)
+{
     Gtk::TreeIter newEntry = refTreeModel->append();
     Gtk::TreeModel::Row row = *newEntry;
     row[methodColumns.label] = profileStoreEntry->label;

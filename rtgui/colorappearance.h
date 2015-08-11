@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -28,9 +28,10 @@
 #include "guiutils.h"
 #include "colorprovider.h"
 
-class ColorAppearance : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoCamListener, public CurveListener,  public ColorProvider {
+class ColorAppearance : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoCamListener, public CurveListener,  public ColorProvider
+{
 
-  protected:
+protected:
     Glib::RefPtr<Gtk::Tooltip> bgTTips;
     Glib::RefPtr<Gtk::Tooltip> srTTips;
     Glib::RefPtr<Gdk::Pixbuf> bgPixbuf;
@@ -56,10 +57,10 @@ class ColorAppearance : public ToolParamBlock, public AdjusterListener, public F
     //Adjuster* edge;
     Gtk::CheckButton* surrsource;
     Gtk::CheckButton* gamut;
- //   Gtk::CheckButton* badpix;
+//   Gtk::CheckButton* badpix;
     Gtk::CheckButton* datacie;
     Gtk::CheckButton* tonecie;
-  //  Gtk::CheckButton* sharpcie;
+    //  Gtk::CheckButton* sharpcie;
 
     MyComboBoxText*   surround;
     sigc::connection  surroundconn;
@@ -77,26 +78,26 @@ class ColorAppearance : public ToolParamBlock, public AdjusterListener, public F
     DiagonalCurveEditor* shape;
     DiagonalCurveEditor* shape2;
     DiagonalCurveEditor* shape3;
-	double nextCcam, nextCadap;
+    double nextCcam, nextCadap;
     bool lastAutoDegree;
-	bool lastAutoAdapscen;
+    bool lastAutoAdapscen;
     bool lastsurr;
     bool lastgamut;
-//	bool lastbadpix;
-	bool lastdatacie;
-	bool lasttonecie;
- //	bool lastsharpcie;
-	bool bgTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
+//  bool lastbadpix;
+    bool lastdatacie;
+    bool lasttonecie;
+// bool lastsharpcie;
+    bool bgTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     bool srTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
 
-  public:
+public:
 
     ColorAppearance ();
     ~ColorAppearance ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
     void setBatchMode   (bool batchMode);
     void adjusterChanged     (Adjuster* a, double newval);
     void adjusterAutoToggled (Adjuster* a, bool newval);
@@ -107,7 +108,7 @@ class ColorAppearance : public ToolParamBlock, public AdjusterListener, public F
     void algoChanged         ();
     void surrsource_toggled  ();
     void gamut_toggled       ();
- //   void badpix_toggled       ();
+//   void badpix_toggled       ();
     void datacie_toggled     ();
     void tonecie_toggled     ();
 //    void sharpcie_toggled     ();
@@ -115,7 +116,7 @@ class ColorAppearance : public ToolParamBlock, public AdjusterListener, public F
     bool autoCamComputed_ ();
     void adapCamChanged (double cadap);
     bool adapCamComputed_ ();
-	
+
     void curveChanged        (CurveEditor* ce);
     void curveMode1Changed   ();
     bool curveMode1Changed_  ();

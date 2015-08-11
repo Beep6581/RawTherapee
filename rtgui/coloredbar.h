@@ -26,29 +26,30 @@
  * Parent class for all colored bar type; a ColorProvider has to be set
  * thanks to "setColorProvider" to be able to display colors inside the bar
  */
-class ColoredBar : public BackBuffer, public ColorCaller {
+class ColoredBar : public BackBuffer, public ColorCaller
+{
 
-	private:
-		void draw();
+private:
+    void draw();
 
-	protected:
-		eRTOrientation orientation;
-		std::vector<GradientMilestone> bgGradient;
+protected:
+    eRTOrientation orientation;
+    std::vector<GradientMilestone> bgGradient;
 
-	public:
-		ColoredBar (eRTOrientation orient);
+public:
+    ColoredBar (eRTOrientation orient);
 
-		void expose(Glib::RefPtr<Gdk::Window> destWindow);
-		void expose(Cairo::RefPtr<Cairo::ImageSurface> destSurface);
-		void expose(BackBuffer *backBuffer);
+    void expose(Glib::RefPtr<Gdk::Window> destWindow);
+    void expose(Cairo::RefPtr<Cairo::ImageSurface> destSurface);
+    void expose(BackBuffer *backBuffer);
 
-		bool canGetColors();
+    bool canGetColors();
 
-		// Method for convenience; if no Gradient provided, the ColoredBar will ask colors on a per pixel basis
-		void setBgGradient (const std::vector<GradientMilestone> &milestones);
-		// by clearing the gradient, the ColorProvider will have to provide colors on a per pixel basis if a ColorProvider
-		// has been set, through ColorProvider::colorForValue on next ColoredBar::expose
-		void clearBgGradient ();
+    // Method for convenience; if no Gradient provided, the ColoredBar will ask colors on a per pixel basis
+    void setBgGradient (const std::vector<GradientMilestone> &milestones);
+    // by clearing the gradient, the ColorProvider will have to provide colors on a per pixel basis if a ColorProvider
+    // has been set, through ColorProvider::colorForValue on next ColoredBar::expose
+    void clearBgGradient ();
 };
 
 #endif

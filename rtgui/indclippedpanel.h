@@ -6,7 +6,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,22 +21,29 @@
 #include <gtkmm.h>
 
 class ImageArea;
-class IndicateClippedPanel : public Gtk::HBox {
+class IndicateClippedPanel : public Gtk::HBox
+{
 
-	protected:
-        Gtk::ToggleButton* indclippedh;
-        Gtk::ToggleButton* indclippeds;
-		ImageArea* imageArea;
-		
-	public:
-		IndicateClippedPanel (ImageArea* ia);
+protected:
+    Gtk::ToggleButton* indclippedh;
+    Gtk::ToggleButton* indclippeds;
+    ImageArea* imageArea;
 
-		void buttonToggled   ();
-		
-        void toggleClipped (bool highlights);  // inverts a toggle programmatically
+public:
+    IndicateClippedPanel (ImageArea* ia);
 
-		bool showClippedShadows    () { return indclippeds->get_active (); }
-		bool showClippedHighlights () { return indclippedh->get_active (); }
+    void buttonToggled   ();
+
+    void toggleClipped (bool highlights);  // inverts a toggle programmatically
+
+    bool showClippedShadows    ()
+    {
+        return indclippeds->get_active ();
+    }
+    bool showClippedHighlights ()
+    {
+        return indclippedh->get_active ();
+    }
 };
 
 #endif

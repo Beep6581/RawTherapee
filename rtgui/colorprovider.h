@@ -26,26 +26,31 @@ class ColorProvider;
 /*
  * The ColorCaller is the class that will query the ColorProvider
  */
-class ColorCaller {
-	protected:
-		// a class can handle several ColorCaller;
-		// colorCallerId will let the provider identify the caller
-		int colorCallerId;
-		ColorProvider* colorProvider;
+class ColorCaller
+{
+protected:
+    // a class can handle several ColorCaller;
+    // colorCallerId will let the provider identify the caller
+    int colorCallerId;
+    ColorProvider* colorProvider;
 
-	public:
-		enum ElemType {
-			CCET_POINT,
-			CCET_VERTICAL_BAR,
-			CCET_HORIZONTAL_BAR,
-			CCET_BACKGROUND
-		};
-		double ccRed;
-		double ccGreen;
-		double ccBlue;
+public:
+    enum ElemType {
+        CCET_POINT,
+        CCET_VERTICAL_BAR,
+        CCET_HORIZONTAL_BAR,
+        CCET_BACKGROUND
+    };
+    double ccRed;
+    double ccGreen;
+    double ccBlue;
 
-		ColorCaller() : colorCallerId(-1), colorProvider(NULL), ccRed(0.), ccGreen(0.), ccBlue(0.) {}
-		void setColorProvider (ColorProvider* p, int id) { colorProvider = p; colorCallerId = id; }
+    ColorCaller() : colorCallerId(-1), colorProvider(NULL), ccRed(0.), ccGreen(0.), ccBlue(0.) {}
+    void setColorProvider (ColorProvider* p, int id)
+    {
+        colorProvider = p;
+        colorCallerId = id;
+    }
 };
 
 /*
@@ -54,11 +59,12 @@ class ColorCaller {
  * you don't need to declare the instanciator class as BEING a ColorProvider, you'll
  * still be able to set gradients for e.g. ColoredBar(s)
  */
-class ColorProvider {
+class ColorProvider
+{
 
-	public:
-		virtual ~ColorProvider() {};
-		virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) {};
+public:
+    virtual ~ColorProvider() {};
+    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) {};
 };
 
 #endif

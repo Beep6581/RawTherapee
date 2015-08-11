@@ -22,16 +22,20 @@
 #include <gtkmm.h>
 #include "toolpanel.h"
 
-class SensorBayer : public ToolParamBlock, public FoldableToolPanel {
+class SensorBayer : public ToolParamBlock, public FoldableToolPanel
+{
 
-  protected:
+protected:
     ToolParamBlock*     packBox;
 
-  public:
+public:
 
     SensorBayer ();
 
-    Gtk::Box* getPackBox () { return packBox; }
+    Gtk::Box* getPackBox ()
+    {
+        return packBox;
+    }
 };
 
 #endif

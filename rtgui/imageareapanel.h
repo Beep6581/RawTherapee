@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -22,24 +22,25 @@
 #include "imagearea.h"
 
 class ImageArea;
-class ImageAreaPanel : public Gtk::VBox {
+class ImageAreaPanel : public Gtk::VBox
+{
 
-    protected:
+protected:
 
-        ImageAreaPanel *before, *after;
+    ImageAreaPanel *before, *after;
 
-        void synchronize ();
-   
-    public:
-        ImageArea*   imageArea;
+    void synchronize ();
 
-        ImageAreaPanel  ();
-        ~ImageAreaPanel ();
+public:
+    ImageArea*   imageArea;
 
-        void zoomChanged        ();
-        
-        void setBeforeAfterViews (ImageAreaPanel* bef, ImageAreaPanel* aft);
-        void syncBeforeAfterViews();
+    ImageAreaPanel  ();
+    ~ImageAreaPanel ();
+
+    void zoomChanged        ();
+
+    void setBeforeAfterViews (ImageAreaPanel* bef, ImageAreaPanel* aft);
+    void syncBeforeAfterViews();
 };
 
 #endif

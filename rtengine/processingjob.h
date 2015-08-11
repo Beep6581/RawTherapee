@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,23 +21,37 @@
 
 #include "rtengine.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
-class ProcessingJobImpl : public ProcessingJob {
+class ProcessingJobImpl : public ProcessingJob
+{
 
-    public:
-        Glib::ustring fname;
-        bool isRaw;
-        InitialImage* initialImage;
-        procparams::ProcParams pparams;
-        
-        ProcessingJobImpl (const Glib::ustring& fn, bool iR, const procparams::ProcParams& pp)
-           : fname(fn), isRaw(iR), initialImage(NULL) { pparams = pp; }
+public:
+    Glib::ustring fname;
+    bool isRaw;
+    InitialImage* initialImage;
+    procparams::ProcParams pparams;
 
-        ProcessingJobImpl (InitialImage* iImage, const procparams::ProcParams& pp)
-           : fname(""), initialImage(iImage) { pparams = pp; iImage->increaseRef(); }
-           
-        ~ProcessingJobImpl () { if (initialImage) initialImage->decreaseRef(); }
+    ProcessingJobImpl (const Glib::ustring& fn, bool iR, const procparams::ProcParams& pp)
+        : fname(fn), isRaw(iR), initialImage(NULL)
+    {
+        pparams = pp;
+    }
+
+    ProcessingJobImpl (InitialImage* iImage, const procparams::ProcParams& pp)
+        : fname(""), initialImage(iImage)
+    {
+        pparams = pp;
+        iImage->increaseRef();
+    }
+
+    ~ProcessingJobImpl ()
+    {
+        if (initialImage) {
+            initialImage->decreaseRef();
+        }
+    }
 };
 
 }

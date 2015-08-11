@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -22,15 +22,17 @@
 #include <gtkmm.h>
 #include "coloredbar.h"
 
-class SHCListener {
-    public:
-        virtual ~SHCListener() {}
-        virtual void shcChanged () {}
+class SHCListener
+{
+public:
+    virtual ~SHCListener() {}
+    virtual void shcChanged () {}
 };
 
-class SHCSelector : public Gtk::DrawingArea, public ColoredBar {
+class SHCSelector : public Gtk::DrawingArea, public ColoredBar
+{
 
-  protected:
+protected:
 
     int movingPosition;
     double tmpX, tmpPos;
@@ -38,22 +40,25 @@ class SHCSelector : public Gtk::DrawingArea, public ColoredBar {
     double defaults[3];
     double positions[3];
     double wslider;
-    
+
     // left margin, essentially a workaround to take care of an eventual right colored bar (e.g. for curves)
     int leftMargin;
     // right margin, essentially a workaround to take care of an eventual right colored bar
     int rightMargin;
 
-	const static int hb = 3;  // horizontal border
-	const static int vb = 2;  // vertical border
+    const static int hb = 3;  // horizontal border
+    const static int vb = 2;  // vertical border
 
-	SHCListener* cl;
+    SHCListener* cl;
 
-  public:
-         
+public:
+
     SHCSelector();
 
-    void setSHCListener (SHCListener* l) { cl = l;; }
+    void setSHCListener (SHCListener* l)
+    {
+        cl = l;;
+    }
 
     void setMargins(int left, int right);
     void setDefaults (double spos, double cpos, double hpos);

@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -22,24 +22,25 @@
 #include "exiffiltersettings.h"
 #include <glibmm.h>
 
-class BrowserFilter {
+class BrowserFilter
+{
 
-    public:
-        bool showRanked[6];
-        bool showCLabeled[6];
-        bool showTrash;
-        bool showNotTrash;
-        bool showEdited[2];
-        bool showRecentlySaved[2];
-        bool multiselect;
+public:
+    bool showRanked[6];
+    bool showCLabeled[6];
+    bool showTrash;
+    bool showNotTrash;
+    bool showEdited[2];
+    bool showRecentlySaved[2];
+    bool multiselect;
 
-        Glib::ustring queryString;
-        Glib::ustring queryFileName;
+    Glib::ustring queryString;
+    Glib::ustring queryFileName;
 
-        bool exifFilterEnabled;
-        ExifFilterSettings exifFilter;
-        
-        BrowserFilter ();
+    bool exifFilterEnabled;
+    ExifFilterSettings exifFilter;
+
+    BrowserFilter ();
 };
 
 #endif

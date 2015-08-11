@@ -17,7 +17,7 @@ public:
     void addUnchangedEntry();
 
 private:
-    class ClutColumns : public Gtk::TreeModel::ColumnRecord 
+    class ClutColumns : public Gtk::TreeModel::ColumnRecord
     {
     public:
         Gtk::TreeModelColumn<Glib::ustring> label;

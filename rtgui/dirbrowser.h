@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -31,25 +31,32 @@ class DirBrowser : public Gtk::VBox, public DirBrowserRemoteInterface
 #ifdef WIN32
     , public WinDirChangeListener
 #endif
- {
+{
 
-  private:
+private:
 
     Glib::RefPtr<Gtk::TreeStore> dirTreeModel;
-    
+
     struct DirTreeColumns : public Gtk::TreeModelColumnRecord {
-      public:
+    public:
         Gtk::TreeModelColumn<Glib::ustring> filename;
         Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon1;
         Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon2;
         Gtk::TreeModelColumn<Glib::ustring> dirname;
-        #ifdef WIN32
+#ifdef WIN32
         Gtk::TreeModelColumn<Glib::RefPtr<WinDirMonitor>  > monitor;
-        #else
+#else
         Gtk::TreeModelColumn<Glib::RefPtr<Gio::FileMonitor> > monitor;
-        #endif
-        
-        DirTreeColumns() { add(icon1); add(icon2); add(filename); add(dirname); add(monitor); }
+#endif
+
+        DirTreeColumns()
+        {
+            add(icon1);
+            add(icon2);
+            add(filename);
+            add(dirname);
+            add(monitor);
+        }
     };
 
     DirTreeColumns dtColumns;
@@ -74,22 +81,22 @@ class DirBrowser : public Gtk::VBox, public DirBrowserRemoteInterface
 
     bool expandSuccess;
 
-    #ifdef WIN32
+#ifdef WIN32
     int volumes;
-    public:
+public:
     void updateVolumes ();
-	void updateDirTree  (const Gtk::TreeModel::iterator& iter);
-	void updateDirTreeRoot  ();
+    void updateDirTree  (const Gtk::TreeModel::iterator& iter);
+    void updateDirTreeRoot  ();
     void winDirChanged ();
-    private:
+private:
     void addRoot (char letter);
-    #endif
+#endif
     void addDir (const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirname);
     Gtk::TreePath expandToDir (const Glib::ustring& dirName);
     void updateDir (const Gtk::TreeModel::iterator& iter);
     void notifyListeners ();
 
-  public:
+public:
     DirBrowser ();
 
     void fillDirTree ();
@@ -97,9 +104,12 @@ class DirBrowser : public Gtk::VBox, public DirBrowserRemoteInterface
     void row_expanded   (const Gtk::TreeModel::iterator& iter, const Gtk::TreeModel::Path& path);
     void row_activated  (const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column);
     void file_changed   (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirName);
-    void open           (const Glib::ustring& dirName, const Glib::ustring& fileName=""); // goes to dir "dirName" and selects file "fileName"
-    void addDirSelectionListener (DirSelectionListener* l) { dllisteners.push_back (l); }
+    void open           (const Glib::ustring& dirName, const Glib::ustring& fileName = ""); // goes to dir "dirName" and selects file "fileName"
+    void addDirSelectionListener (DirSelectionListener* l)
+    {
+        dllisteners.push_back (l);
+    }
     void selectDir      (Glib::ustring dir);
-};    
+};
 
 #endif

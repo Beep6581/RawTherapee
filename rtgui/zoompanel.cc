@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,20 +21,21 @@
 #include "imagearea.h"
 #include "rtimage.h"
 
-ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea) {
+ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea)
+{
 
     set_border_width (0);
 
     Gtk::Image* imageOut = Gtk::manage (new RTImage ("gtk-zoom-out.png"));
-    imageOut->set_padding(0,0);
+    imageOut->set_padding(0, 0);
     Gtk::Image* imageIn = Gtk::manage (new RTImage ("gtk-zoom-in.png"));
-    imageIn->set_padding(0,0);
-    Gtk::Image* image11 =Gtk::manage ( new RTImage ("gtk-zoom-100.png"));
-    image11->set_padding(0,0);
+    imageIn->set_padding(0, 0);
+    Gtk::Image* image11 = Gtk::manage ( new RTImage ("gtk-zoom-100.png"));
+    image11->set_padding(0, 0);
     Gtk::Image* imageFit = Gtk::manage (new RTImage ("gtk-zoom-fit.png"));
-    imageFit->set_padding(0,0);
+    imageFit->set_padding(0, 0);
     Gtk::Image* imageFitCrop = Gtk::manage (new RTImage ("gtk-zoom-crop.png"));
-    imageFit->set_padding(0,0);
+    imageFit->set_padding(0, 0);
 
     zoomOut = Gtk::manage (new Gtk::Button());
     zoomOut->add (*imageOut);
@@ -62,7 +63,7 @@ ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea) {
     pack_start (*zoomLabel, Gtk::PACK_SHRINK, 4);
 
     Gtk::Image* imageCrop = Gtk::manage (new RTImage ("new-detail-window.png"));
-    imageCrop->set_padding(0,0);
+    imageCrop->set_padding(0, 0);
     newCrop = Gtk::manage (new Gtk::Button());
     newCrop->add (*imageCrop);
     newCrop->set_relief(Gtk::RELIEF_NONE);
@@ -87,49 +88,62 @@ ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea) {
     zoomLabel->set_text (M("ZOOMPANEL_100"));
 }
 
-void ZoomPanel::zoomInClicked () {
-
-    if (iarea->mainCropWindow)
-        iarea->mainCropWindow->zoomIn ();
-}
-
-void ZoomPanel::zoomOutClicked () {
-
-    if (iarea->mainCropWindow) 
-        iarea->mainCropWindow->zoomOut ();
-}
-
-void ZoomPanel::zoomFitClicked () {
-
-    if (iarea->mainCropWindow) 
-        iarea->mainCropWindow->zoomFit ();
-}
-
-void ZoomPanel::zoomFitCropClicked () {
-
-    if (iarea->mainCropWindow) 
-        iarea->mainCropWindow->zoomFitCrop ();
-}
-
-void ZoomPanel::zoom11Clicked () {
-
-    if (iarea->mainCropWindow) 
-        iarea->mainCropWindow->zoom11 ();
-}
-
-void ZoomPanel::refreshZoomLabel () {
+void ZoomPanel::zoomInClicked ()
+{
 
     if (iarea->mainCropWindow) {
-        int z = (int)(iarea->mainCropWindow->getZoom () * 100);
-		if (z<100) {
-			zoomLabel->set_text (Glib::ustring::compose(" %1%%", z));
-		} else {
-			zoomLabel->set_text (Glib::ustring::compose("%1%%", z));
-		}
+        iarea->mainCropWindow->zoomIn ();
     }
 }
 
-void ZoomPanel::newCropClicked () {
-    
+void ZoomPanel::zoomOutClicked ()
+{
+
+    if (iarea->mainCropWindow) {
+        iarea->mainCropWindow->zoomOut ();
+    }
+}
+
+void ZoomPanel::zoomFitClicked ()
+{
+
+    if (iarea->mainCropWindow) {
+        iarea->mainCropWindow->zoomFit ();
+    }
+}
+
+void ZoomPanel::zoomFitCropClicked ()
+{
+
+    if (iarea->mainCropWindow) {
+        iarea->mainCropWindow->zoomFitCrop ();
+    }
+}
+
+void ZoomPanel::zoom11Clicked ()
+{
+
+    if (iarea->mainCropWindow) {
+        iarea->mainCropWindow->zoom11 ();
+    }
+}
+
+void ZoomPanel::refreshZoomLabel ()
+{
+
+    if (iarea->mainCropWindow) {
+        int z = (int)(iarea->mainCropWindow->getZoom () * 100);
+
+        if (z < 100) {
+            zoomLabel->set_text (Glib::ustring::compose(" %1%%", z));
+        } else {
+            zoomLabel->set_text (Glib::ustring::compose("%1%%", z));
+        }
+    }
+}
+
+void ZoomPanel::newCropClicked ()
+{
+
     iarea->addCropWindow ();
 }

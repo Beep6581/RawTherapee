@@ -23,9 +23,10 @@
 #include "toolpanel.h"
 #include "lensgeomlistener.h"
 
-class LensGeometry : public ToolParamBlock, public FoldableToolPanel {
+class LensGeometry : public ToolParamBlock, public FoldableToolPanel
+{
 
-  protected:
+protected:
     Gtk::Button*        autoCrop;
     LensGeomListener*   rlistener;
     Gtk::CheckButton*   fill;
@@ -33,19 +34,25 @@ class LensGeometry : public ToolParamBlock, public FoldableToolPanel {
     sigc::connection    fillConn;
     ToolParamBlock*           packBox;
 
-  public:
+public:
 
     LensGeometry ();
 
-    Gtk::Box* getPackBox () { return packBox; }
+    Gtk::Box* getPackBox ()
+    {
+        return packBox;
+    }
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
     void setBatchMode   (bool batchMode);
 
     void fillPressed            ();
     void autoCropPressed        ();
-    void setLensGeomListener    (LensGeomListener* l) { rlistener = l; }
+    void setLensGeomListener    (LensGeomListener* l)
+    {
+        rlistener = l;
+    }
 };
 
 #endif

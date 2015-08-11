@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -33,11 +33,12 @@
 #include "edit.h"
 
 class ImageAreaPanel;
-class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public EditDataProvider {
+class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public EditDataProvider
+{
 
     friend class ZoomPanel;
 
-  protected:
+protected:
 
     Glib::ustring infotext;
     Glib::RefPtr<Pango::Layout> ilayout;
@@ -46,7 +47,7 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public Edi
     bool showClippedH, showClippedS;
 
     ImageAreaPanel* parent;
-  
+
     std::list<CropWindow*> cropWins;
     PreviewHandler* previewHandler;
     rtengine::StagedImageProcessor* ipc;
@@ -61,7 +62,7 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public Edi
     CropWindow* getCropWindow (int x, int y);
     bool firstOpen;
     int fullImageWidth, fullImageHeight;
-  public:
+public:
     CropWindow* mainCropWindow;
     CropWindow* flawnOverWindow;
     ZoomPanel* zoomPanel;
@@ -73,8 +74,14 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public Edi
     ~ImageArea ();
 
     void setImProcCoordinator (rtengine::StagedImageProcessor* ipc_);
-    void setPreviewModePanel(PreviewModePanel* previewModePanel_){previewModePanel = previewModePanel_;};
-    void setIndicateClippedPanel(IndicateClippedPanel* indClippedPanel_){indClippedPanel = indClippedPanel_;};
+    void setPreviewModePanel(PreviewModePanel* previewModePanel_)
+    {
+        previewModePanel = previewModePanel_;
+    };
+    void setIndicateClippedPanel(IndicateClippedPanel* indClippedPanel_)
+    {
+        indClippedPanel = indClippedPanel_;
+    };
 
     void getScrollImageSize (int& w, int& h);
     void getScrollPosition  (int& x, int& y);
@@ -99,9 +106,15 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public Edi
     void            setCropGUIListener       (CropGUIListener* l);
     void            setPointerMotionListener  (PointerMotionListener* pml);
     void            setPointerMotionHListener (PointerMotionListener* pml);
-    void            setImageAreaToolListener (ImageAreaToolListener* l) { listener = l; }
+    void            setImageAreaToolListener (ImageAreaToolListener* l)
+    {
+        listener = l;
+    }
     void            setPreviewHandler        (PreviewHandler* ph);
-    PreviewHandler* getPreviewHandler        ()                         { return previewHandler; }
+    PreviewHandler* getPreviewHandler        ()
+    {
+        return previewHandler;
+    }
 
     void grabFocus          (CropWindow* cw);
     void unGrabFocus        ();
@@ -116,8 +129,8 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public Edi
     void redraw             ();
 
     void zoomFit     ();
-    double getZoom   ();  
-    void   setZoom   (double zoom);  
+    double getZoom   ();
+    void   setZoom   (double zoom);
 
     // EditDataProvider interface
     void subscribe(EditSubscriber *subscriber);
@@ -126,11 +139,14 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public Edi
 
     // CropWindowListener interface
     void cropPositionChanged   (CropWindow* cw);
-    void cropWindowSizeChanged (CropWindow* cw);  
+    void cropWindowSizeChanged (CropWindow* cw);
     void cropZoomChanged       (CropWindow* cw);
     void initialImageArrived   (CropWindow* cw) ;
 
-    CropWindow* getMainCropWindow () { return mainCropWindow; }
+    CropWindow* getMainCropWindow ()
+    {
+        return mainCropWindow;
+    }
 };
 
 

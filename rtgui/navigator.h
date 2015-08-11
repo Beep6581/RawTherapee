@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -24,32 +24,33 @@
 #include "pointermotionlistener.h"
 #include "../rtengine/iccstore.h"
 
-class Navigator : public Gtk::Frame, public PointerMotionListener {
+class Navigator : public Gtk::Frame, public PointerMotionListener
+{
 
-	typedef const double (*TMatrix)[3];
+    typedef const double (*TMatrix)[3];
 
-	protected:
-		Gtk::Label* position;
-		Gtk::Label *R, *G, *B;
-		Gtk::Label *H, *S, *V;
-		Gtk::Label *LAB_A, *LAB_B, *LAB_L;
+protected:
+    Gtk::Label* position;
+    Gtk::Label *R, *G, *B;
+    Gtk::Label *H, *S, *V;
+    Gtk::Label *LAB_A, *LAB_B, *LAB_L;
 
-		Gtk::Label *lR, *lG, *lB;
-		Gtk::Label *lH, *lS, *lV;
-		Gtk::Label *lLAB_A, *lLAB_B, *lLAB_L;
+    Gtk::Label *lR, *lG, *lB;
+    Gtk::Label *lH, *lS, *lV;
+    Gtk::Label *lLAB_A, *lLAB_B, *lLAB_L;
 
-		void rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b);
-		
-		void setInvalid (int fullWidth=-1, int fullHeight=-1);
+    void rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b);
 
-	public:
-		PreviewWindow* previewWindow;
+    void setInvalid (int fullWidth = -1, int fullHeight = -1);
 
-		Navigator ();
+public:
+    PreviewWindow* previewWindow;
 
-		// pointermotionlistener interface
-	//	void pointerMoved (bool validPos, int x, int y, int r, int g, int b);
-		void pointerMoved (bool validPos, Glib::ustring profile, Glib::ustring profileW,int x, int y, int r, int g, int b);
+    Navigator ();
+
+    // pointermotionlistener interface
+    //  void pointerMoved (bool validPos, int x, int y, int r, int g, int b);
+    void pointerMoved (bool validPos, Glib::ustring profile, Glib::ustring profileW, int x, int y, int r, int g, int b);
 
 };
 

@@ -24,22 +24,23 @@
 #include "toolpanel.h"
 #include "../rtengine/rawimage.h"
 
-class RAWExposure : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
+class RAWExposure : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+{
 
 protected:
-	Adjuster* PexPos;
-	Adjuster* PexPreser;
+    Adjuster* PexPos;
+    Adjuster* PexPreser;
 
 private:
-//	Gtk::CheckButton*  PextwoGreen;
+//  Gtk::CheckButton*  PextwoGreen;
 public:
 
-	RAWExposure ();
+    RAWExposure ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
     void setBatchMode   (bool batchMode);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
     void adjusterChanged     (Adjuster* a, double newval);
     void setAdjusterBehavior (bool pexposadd, bool pexpreseradd);
     void trimValues          (rtengine::procparams::ProcParams* pp);

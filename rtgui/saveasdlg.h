@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -24,9 +24,10 @@
 #include "saveformatpanel.h"
 #include "options.h"
 
-class SaveAsDialog : public Gtk::Dialog, public FormatChangeListener {
+class SaveAsDialog : public Gtk::Dialog, public FormatChangeListener
+{
 
-  protected:
+protected:
     Gtk::FileChooserWidget* fchooser;
     Gtk::CheckButton* autoSuffix;
     Gtk::CheckButton* forceFormatOpts;
@@ -43,9 +44,9 @@ class SaveAsDialog : public Gtk::Dialog, public FormatChangeListener {
     void  saveImmediatlyClicked ();
     void  putToQueueClicked ();
 
-  public:
+public:
     SaveAsDialog (Glib::ustring initialDir);
-    
+
     Glib::ustring   getFileName        ();
     Glib::ustring   getDirectory       ();
     SaveFormat      getFormat          ();

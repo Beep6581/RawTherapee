@@ -6,7 +6,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -26,20 +26,22 @@
 #include "lwbuttonset.h"
 #include "thumbbrowserbase.h"
 
-class BatchQueueListener {
+class BatchQueueListener
+{
 
-    public:
-        virtual ~BatchQueueListener () {}
-        virtual void queueSizeChanged     (int qsize, bool queueEmptied, bool queueError, Glib::ustring queueErrorMessage) =0;
-        virtual bool canStartNext         () =0;
+public:
+    virtual ~BatchQueueListener () {}
+    virtual void queueSizeChanged     (int qsize, bool queueEmptied, bool queueError, Glib::ustring queueErrorMessage) = 0;
+    virtual bool canStartNext         () = 0;
 };
 
 class FileCatalog;
-class BatchQueue  : public ThumbBrowserBase, 
-                    public rtengine::BatchProcessingListener, 
-                    public LWButtonListener {  
+class BatchQueue  : public ThumbBrowserBase,
+    public rtengine::BatchProcessingListener,
+    public LWButtonListener
+{
 
-  protected:
+protected:
     int getMaxThumbnailHeight() const;
     void saveThumbnailHeight (int height);
     int  getThumbnailHeight ();
@@ -49,14 +51,14 @@ class BatchQueue  : public ThumbBrowserBase,
     int sequence; // holds the current sequence index
 
     Glib::ustring nameTemplate;
-    
+
     Gtk::ImageMenuItem* cancel;
     Gtk::ImageMenuItem* head;
     Gtk::ImageMenuItem* tail;
     Gtk::MenuItem* selall;
     Gtk::MenuItem* open;
     Gtk::Menu* pmenu;
-    
+
     Glib::RefPtr<Gtk::AccelGroup> pmaccelgroup;
 
     BatchQueueListener* listener;
@@ -66,11 +68,11 @@ class BatchQueue  : public ThumbBrowserBase,
     bool saveBatchQueue( );
     void notifyListener (bool queueEmptied);
 
-  public:
+public:
     BatchQueue (FileCatalog* aFileCatalog);
     ~BatchQueue ();
 
-    void addEntries (std::vector<BatchQueueEntry*> &entries, bool head=false, bool save=true);
+    void addEntries (std::vector<BatchQueueEntry*> &entries, bool head = false, bool save = true);
     void cancelItems (std::vector<ThumbBrowserEntryBase*>* items);
     void headItems (std::vector<ThumbBrowserEntryBase*>* items);
     void tailItems (std::vector<ThumbBrowserEntryBase*>* items);
@@ -80,12 +82,13 @@ class BatchQueue  : public ThumbBrowserBase,
 
     void startProcessing ();
 
-    bool hasJobs () {
+    bool hasJobs ()
+    {
         // not sure that this lock is necessary, but it's safer to keep it...
         // TODO: Check for Linux
-        #if PROTECT_VECTORS
+#if PROTECT_VECTORS
         MYREADERLOCK(l, entryRW);
-        #endif
+#endif
         return (!fd.empty());
     }
 
@@ -97,8 +100,11 @@ class BatchQueue  : public ThumbBrowserBase,
     bool keyPressed (GdkEventKey* event);
     void buttonPressed (LWButton* button, int actionCode, void* actionData);
     void redrawNeeded  (LWButton* button);
-    
-    void setBatchQueueListener (BatchQueueListener* l) { listener = l; }
+
+    void setBatchQueueListener (BatchQueueListener* l)
+    {
+        listener = l;
+    }
 
     bool loadBatchQueue ();
     void resizeLoadedQueue();

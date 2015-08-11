@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   simpleprocess.h
  * Author: askv
  *
@@ -6,21 +6,22 @@
  */
 
 #ifndef SIMPLEPROCESS_H
-#define	SIMPLEPROCESS_H
+#define SIMPLEPROCESS_H
 
-#ifdef	__cplusplus
+#ifdef  __cplusplus
 extern "C" {
 #endif
 
-    
 
 
-#ifdef	__cplusplus
+
+#ifdef  __cplusplus
 }
 #endif
-namespace rtengine {
+namespace rtengine
+{
 
 extern Glib::Thread *batchThread;
 }
-#endif	/* SIMPLEPROCESS_H */
+#endif  /* SIMPLEPROCESS_H */
 

@@ -5,7 +5,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -25,54 +25,58 @@ using namespace rtengine::procparams;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-HSVEqualizer::HSVEqualizer () : FoldableToolPanel(this, "hsvequalizer", M("TP_HSVEQUALIZER_LABEL")) {
-	
-	std::vector<GradientMilestone> bottomMilestones;
-	float R, G, B;
-	// -0.1 rad < Hue < 1.6 rad
-	for (int i=0; i<7; i++) {
-		float x = float(i)*(1.0f/6.0);
-		Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
-		bottomMilestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
-	}
+HSVEqualizer::HSVEqualizer () : FoldableToolPanel(this, "hsvequalizer", M("TP_HSVEQUALIZER_LABEL"))
+{
 
-	curveEditorG = new CurveEditorGroup (options.lastHsvCurvesDir, M("TP_HSVEQUALIZER_CHANNEL"));
-	curveEditorG->setCurveListener (this);
+    std::vector<GradientMilestone> bottomMilestones;
+    float R, G, B;
 
-	hshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_HUE")));
-	hshape->setEditID(EUID_HSV_H, BT_SINGLEPLANE_FLOAT);
-	hshape->setBottomBarBgGradient(bottomMilestones);
-	//hshape->setLeftBarColorProvider(this);  Not working yet
-	hshape->setCurveColorProvider(this, 1);
+    // -0.1 rad < Hue < 1.6 rad
+    for (int i = 0; i < 7; i++) {
+        float x = float(i) * (1.0f / 6.0);
+        Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
+        bottomMilestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
+    }
 
-	sshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_SAT")));
-	sshape->setEditID(EUID_HSV_S, BT_SINGLEPLANE_FLOAT);
-	sshape->setBottomBarBgGradient(bottomMilestones);
-	//sshape->setLeftBarColorProvider(this);  Not working yet
-	sshape->setCurveColorProvider(this, 2);
+    curveEditorG = new CurveEditorGroup (options.lastHsvCurvesDir, M("TP_HSVEQUALIZER_CHANNEL"));
+    curveEditorG->setCurveListener (this);
 
-	vshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_VAL")));
-	vshape->setEditID(EUID_HSV_V, BT_SINGLEPLANE_FLOAT);
-	vshape->setBottomBarBgGradient(bottomMilestones);
-	//vshape->setLeftBarColorProvider(this);  Not working yet
-	vshape->setCurveColorProvider(this, 3);
+    hshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_HUE")));
+    hshape->setEditID(EUID_HSV_H, BT_SINGLEPLANE_FLOAT);
+    hshape->setBottomBarBgGradient(bottomMilestones);
+    //hshape->setLeftBarColorProvider(this);  Not working yet
+    hshape->setCurveColorProvider(this, 1);
 
-	// This will add the reset button at the end of the curveType buttons
-	curveEditorG->curveListComplete();
+    sshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_SAT")));
+    sshape->setEditID(EUID_HSV_S, BT_SINGLEPLANE_FLOAT);
+    sshape->setBottomBarBgGradient(bottomMilestones);
+    //sshape->setLeftBarColorProvider(this);  Not working yet
+    sshape->setCurveColorProvider(this, 2);
 
-	pack_start (*curveEditorG, Gtk::PACK_SHRINK, 4);
+    vshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_VAL")));
+    vshape->setEditID(EUID_HSV_V, BT_SINGLEPLANE_FLOAT);
+    vshape->setBottomBarBgGradient(bottomMilestones);
+    //vshape->setLeftBarColorProvider(this);  Not working yet
+    vshape->setCurveColorProvider(this, 3);
 
-	//curveEditorG->show();
+    // This will add the reset button at the end of the curveType buttons
+    curveEditorG->curveListComplete();
+
+    pack_start (*curveEditorG, Gtk::PACK_SHRINK, 4);
+
+    //curveEditorG->show();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-HSVEqualizer::~HSVEqualizer () {
-	delete curveEditorG;
+HSVEqualizer::~HSVEqualizer ()
+{
+    delete curveEditorG;
 }
 
 
-void HSVEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited) {
+void HSVEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited)
+{
 
     disableListener ();
 
@@ -83,27 +87,36 @@ void HSVEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited) {
     }
 
     hshape->setCurve         (pp->hsvequalizer.hcurve);
-	sshape->setCurve         (pp->hsvequalizer.scurve);
+    sshape->setCurve         (pp->hsvequalizer.scurve);
     vshape->setCurve         (pp->hsvequalizer.vcurve);
-	
+
     enableListener ();
 }
 
-void HSVEqualizer::setEditProvider (EditDataProvider *provider) {
+void HSVEqualizer::setEditProvider (EditDataProvider *provider)
+{
     hshape->setEditProvider(provider);
     sshape->setEditProvider(provider);
     vshape->setEditProvider(provider);
 }
 
-void HSVEqualizer::autoOpenCurve () {
+void HSVEqualizer::autoOpenCurve ()
+{
     // Open up the first curve if selected
     bool active = hshape->openIfNonlinear();
-    if (!active) sshape->openIfNonlinear();
-    if (!active) vshape->openIfNonlinear();
+
+    if (!active) {
+        sshape->openIfNonlinear();
+    }
+
+    if (!active) {
+        vshape->openIfNonlinear();
+    }
 }
 
-void HSVEqualizer::write (ProcParams* pp, ParamsEdited* pedited) {
-	
+void HSVEqualizer::write (ProcParams* pp, ParamsEdited* pedited)
+{
+
     pp->hsvequalizer.hcurve = hshape->getCurve ();
     pp->hsvequalizer.scurve = sshape->getCurve ();
     pp->hsvequalizer.vcurve = vshape->getCurve ();
@@ -122,57 +135,66 @@ void HSVEqualizer::write (ProcParams* pp, ParamsEdited* pedited) {
  * If more than one curve has been added, the curve listener is automatically
  * set to 'multi=true', and send a pointer of the modified curve in a parameter
  */
-void HSVEqualizer::curveChanged (CurveEditor* ce) {
+void HSVEqualizer::curveChanged (CurveEditor* ce)
+{
 
     if (listener) {
-    	if (ce == hshape)
-        	listener->panelChanged (EvHSVEqualizerH, M("HISTORY_CUSTOMCURVE"));
-    	if (ce == sshape)
-        	listener->panelChanged (EvHSVEqualizerS, M("HISTORY_CUSTOMCURVE"));
-    	if (ce == vshape)
-        	listener->panelChanged (EvHSVEqualizerV, M("HISTORY_CUSTOMCURVE"));
-	}
+        if (ce == hshape) {
+            listener->panelChanged (EvHSVEqualizerH, M("HISTORY_CUSTOMCURVE"));
+        }
+
+        if (ce == sshape) {
+            listener->panelChanged (EvHSVEqualizerS, M("HISTORY_CUSTOMCURVE"));
+        }
+
+        if (ce == vshape) {
+            listener->panelChanged (EvHSVEqualizerV, M("HISTORY_CUSTOMCURVE"));
+        }
+    }
 }
 
-void HSVEqualizer::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) {
+void HSVEqualizer::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller)
+{
 
-	float r, g, b;
+    float r, g, b;
 
-	if (elemType==ColorCaller::CCET_VERTICAL_BAR)
-		valY = 0.5;
+    if (elemType == ColorCaller::CCET_VERTICAL_BAR) {
+        valY = 0.5;
+    }
 
-	if (callerId == 1) {        // Hue = f(Hue)
+    if (callerId == 1) {        // Hue = f(Hue)
 
-		float h = float((valY - 0.5) * 2. + valX);
-		if (h > 1.0f)
-			h -= 1.0f;
-		else if (h < 0.0f)
-			h += 1.0f;
-		Color::hsv2rgb01(h, 0.5f, 0.5f, r, g, b);
-		caller->ccRed = double(r);
-		caller->ccGreen = double(g);
-		caller->ccBlue = double(b);
-	}
-	else if (callerId == 2) {   // Saturation = f(Hue)
-		Color::hsv2rgb01(float(valX), float(valY), 0.5f, r, g, b);
-		caller->ccRed = double(r);
-		caller->ccGreen = double(g);
-		caller->ccBlue = double(b);
-	}
-	else if (callerId == 3) {   // Value = f(Hue)
-		Color::hsv2rgb01(float(valX), 0.5f, float(valY), r, g, b);
-		caller->ccRed = double(r);
-		caller->ccGreen = double(g);
-		caller->ccBlue = double(b);
-	}
-	else {
-		printf("Error: no curve displayed!\n");
-	}
+        float h = float((valY - 0.5) * 2. + valX);
+
+        if (h > 1.0f) {
+            h -= 1.0f;
+        } else if (h < 0.0f) {
+            h += 1.0f;
+        }
+
+        Color::hsv2rgb01(h, 0.5f, 0.5f, r, g, b);
+        caller->ccRed = double(r);
+        caller->ccGreen = double(g);
+        caller->ccBlue = double(b);
+    } else if (callerId == 2) { // Saturation = f(Hue)
+        Color::hsv2rgb01(float(valX), float(valY), 0.5f, r, g, b);
+        caller->ccRed = double(r);
+        caller->ccGreen = double(g);
+        caller->ccBlue = double(b);
+    } else if (callerId == 3) { // Value = f(Hue)
+        Color::hsv2rgb01(float(valX), 0.5f, float(valY), r, g, b);
+        caller->ccRed = double(r);
+        caller->ccGreen = double(g);
+        caller->ccBlue = double(b);
+    } else {
+        printf("Error: no curve displayed!\n");
+    }
 
 }
 
-void HSVEqualizer::setBatchMode (bool batchMode) {
-	
+void HSVEqualizer::setBatchMode (bool batchMode)
+{
+
     ToolPanel::setBatchMode (batchMode);
 
     curveEditorG->setBatchMode (batchMode);

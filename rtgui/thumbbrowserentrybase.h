@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -25,7 +25,8 @@
 #include "threadutils.h"
 
 class ThumbBrowserBase;
-class ThumbBrowserEntryBase {
+class ThumbBrowserEntryBase
+{
 
 public:
     enum eWithFilename {
@@ -36,7 +37,7 @@ public:
 
 protected:
     int fnlabw, fnlabh; // dimensions of the filename label
-    int dtlabw, dtlabh; // dimensions of the date/time label 
+    int dtlabw, dtlabh; // dimensions of the date/time label
     int exlabw, exlabh; // dimensions of the exif label
     int prew;       // width of the thumbnail
     int preh;       // height of the thumbnail
@@ -49,7 +50,7 @@ protected:
     int sideMargin;
     int lowerMargin;
 
-    
+
     MyRWMutex lockRW;  // Locks access to all image thumb changing actions
 
     guint8* preview;  // holds the preview image. used in updateBackBuffer. TODO Olli: Make a cache to reduce mem significantly
@@ -57,7 +58,7 @@ protected:
     Glib::ustring dispname;
 
     LWButtonSet* buttonSet;
-    
+
     int width;      // minimal width
     int height;     // minimal height
 // set by arrangeFiles() of thumbbrowser
@@ -67,24 +68,24 @@ protected:
     int starty;     // y coord. in the widget
 
     int ofsX, ofsY; // offset due to the scrolling of the parent
-    
+
     int redrawRequests;
-    
+
     ThumbBrowserBase* parent;
-    
+
     Glib::RefPtr<Gdk::Pixmap> backBuffer;
     bool bbSelected, bbFramed;
     guint8* bbPreview;
     std::vector<Glib::RefPtr<Gdk::Pixbuf> > bbIcons;
-    
+
     void drawFrame (Cairo::RefPtr<Cairo::Context> cr, const Gdk::Color& bg, const Gdk::Color& fg);
     void getTextSizes (int& w, int& h);
-    
+
     // called during updateBackBuffer for custom overlays
     virtual void customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c) {}
-    
-  public:
-  
+
+public:
+
     Thumbnail* thumbnail;
 
 // thumbnail preview properties:
@@ -93,7 +94,7 @@ protected:
     Glib::ustring exifline;
     Glib::ustring datetimeline;
 
-// misc attributes  
+// misc attributes
     bool selected;
     bool drawable;
     bool filtered;
@@ -104,27 +105,57 @@ protected:
     bool recentlysaved;
     bool updatepriority;
     eWithFilename withFilename;
-  
-    ThumbBrowserEntryBase   (const Glib::ustring& fname);   
+
+    ThumbBrowserEntryBase   (const Glib::ustring& fname);
     virtual ~ThumbBrowserEntryBase  ();
-    
-    void setParent (ThumbBrowserBase* l) { parent = l; }
+
+    void setParent (ThumbBrowserBase* l)
+    {
+        parent = l;
+    }
 
     void updateBackBuffer   ();
-    void resize             (int h);  
+    void resize             (int h);
     virtual void draw       ();
-    
-    void addButtonSet       (LWButtonSet* bs);
-    int getMinimalHeight    () { return height; }
-    int getMinimalWidth     () { return width; }
 
-    int getEffectiveWidth   () const { return exp_width; }
-    int getEffectiveHeight  () const { return exp_height; }
-    int getPreviewHeight    () const { return preh; }
-    int getStartX           () const { return startx; }
-    int getStartY           () const { return starty; }
-    int getX                () const { return ofsX+startx; }
-    int getY                () const { return ofsY+starty; }
+    void addButtonSet       (LWButtonSet* bs);
+    int getMinimalHeight    ()
+    {
+        return height;
+    }
+    int getMinimalWidth     ()
+    {
+        return width;
+    }
+
+    int getEffectiveWidth   () const
+    {
+        return exp_width;
+    }
+    int getEffectiveHeight  () const
+    {
+        return exp_height;
+    }
+    int getPreviewHeight    () const
+    {
+        return preh;
+    }
+    int getStartX           () const
+    {
+        return startx;
+    }
+    int getStartY           () const
+    {
+        return starty;
+    }
+    int getX                () const
+    {
+        return ofsX + startx;
+    }
+    int getY                () const
+    {
+        return ofsY + starty;
+    }
 
     bool inside             (int x, int y);
     void getPosInImgSpace   (int x, int y, rtengine::Coord2D &coord);
@@ -132,16 +163,27 @@ protected:
     void setPosition        (int x, int y, int w, int h);
     void setOffset (int x, int y);
 
-    bool operator< (ThumbBrowserEntryBase& other) { return shortname.casefold()>other.shortname.casefold(); } 
-    
+    bool operator< (ThumbBrowserEntryBase& other)
+    {
+        return shortname.casefold() > other.shortname.casefold();
+    }
+
     virtual void refreshThumbnailImage () {}
     virtual void refreshQuickThumbnailImage () {}
     virtual void calcThumbnailSize () {}
 
     virtual void drawProgressBar (Glib::RefPtr<Gdk::Window> win, Glib::RefPtr<Gdk::GC> gc, const Gdk::Color& foregr, const Gdk::Color& backgr, int x, int w, int y, int h) {}
 
-    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea () { std::vector<Glib::RefPtr<Gdk::Pixbuf> >  r; return r; }
-    virtual void getIconSize (int& w, int& h) { w=0; h=0; }
+    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea ()
+    {
+        std::vector<Glib::RefPtr<Gdk::Pixbuf> >  r;
+        return r;
+    }
+    virtual void getIconSize (int& w, int& h)
+    {
+        w = 0;
+        h = 0;
+    }
 
     virtual bool    motionNotify  (int x, int y);
     virtual bool    pressNotify   (int button, int type, int bstate, int x, int y);

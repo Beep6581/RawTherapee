@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -19,12 +19,13 @@
 #ifndef _POINTERMOTIONLISTENER_
 #define _POINTERMOTIONLISTENER_
 
-class PointerMotionListener {
+class PointerMotionListener
+{
 
-	public:
-//		virtual void pointerMoved (bool validPos, int x, int y, int r, int g, int b) {}
-	virtual void pointerMoved (bool validPos, Glib::ustring profile, Glib::ustring profileW,int x, int y, int r, int g, int b) {}		
-	virtual void toggleFreeze () {}
+public:
+//      virtual void pointerMoved (bool validPos, int x, int y, int r, int g, int b) {}
+    virtual void pointerMoved (bool validPos, Glib::ustring profile, Glib::ustring profileW, int x, int y, int r, int g, int b) {}
+    virtual void toggleFreeze () {}
 };
 
 #endif

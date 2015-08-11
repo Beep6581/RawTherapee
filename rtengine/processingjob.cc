@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,21 +18,25 @@
  */
 #include "processingjob.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
-ProcessingJob* ProcessingJob::create (const Glib::ustring& fname, bool isRaw, const procparams::ProcParams& pparams) {
+ProcessingJob* ProcessingJob::create (const Glib::ustring& fname, bool isRaw, const procparams::ProcParams& pparams)
+{
 
     return new ProcessingJobImpl (fname, isRaw, pparams);
 }
 
-ProcessingJob* ProcessingJob::create (InitialImage* initialImage, const procparams::ProcParams& pparams) {
+ProcessingJob* ProcessingJob::create (InitialImage* initialImage, const procparams::ProcParams& pparams)
+{
 
     return new ProcessingJobImpl (initialImage, pparams);
 }
 
-void ProcessingJob::destroy (ProcessingJob* job) {
+void ProcessingJob::destroy (ProcessingJob* job)
+{
 
-  delete static_cast<ProcessingJobImpl*>(job);
+    delete static_cast<ProcessingJobImpl*>(job);
 }
 
 }

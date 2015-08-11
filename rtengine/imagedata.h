@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -28,11 +28,13 @@
 #include <libiptcdata/iptc-data.h>
 #include "rtengine.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
-class ImageData : public ImageMetaData {
+class ImageData : public ImageMetaData
+{
 
-  protected:
+protected:
     rtexif::TagDirectory* root;
     IptcData* iptc;
 
@@ -49,32 +51,82 @@ class ImageData : public ImageMetaData {
     std::string lens;
 
     void extractInfo ();
-    
-  public:
 
-    ImageData (Glib::ustring fname, RawMetaDataLocation* rml=NULL);
+public:
+
+    ImageData (Glib::ustring fname, RawMetaDataLocation* rml = NULL);
     virtual ~ImageData ();
 
-    const rtexif::TagDirectory*   getExifData () const { return root; }
+    const rtexif::TagDirectory*   getExifData () const
+    {
+        return root;
+    }
     const procparams::IPTCPairs   getIPTCData () const;
 
-    bool hasExif () const { return root && root->getCount(); }
-    bool hasIPTC () const { return iptc; }
+    bool hasExif () const
+    {
+        return root && root->getCount();
+    }
+    bool hasIPTC () const
+    {
+        return iptc;
+    }
 
-    struct tm   getDateTime () const { return time;      }
-    time_t      getDateTimeAsTS() const { return timeStamp; }
-    int         getISOSpeed () const { return iso_speed; }
-    double      getFNumber  () const { return aperture;  }
-    double      getFocalLen () const { return focal_len;   }
-    double      getFocalLen35mm () const { return focal_len35mm;   }
-    float       getFocusDist () const { return focus_dist; }
-    double      getShutterSpeed () const { return shutter;   }
-    double      getExpComp  () const { return expcomp;   }
-    std::string getMake     () const { return make;      }
-    std::string getModel    () const { return model;     }
-    std::string getLens     () const { return lens;      }
-    std::string getSerialNumber () const { return serial;}
-    std::string getOrientation () const { return orientation; }
+    struct tm   getDateTime () const {
+        return time;
+    }
+    time_t      getDateTimeAsTS() const
+    {
+        return timeStamp;
+    }
+    int         getISOSpeed () const
+    {
+        return iso_speed;
+    }
+    double      getFNumber  () const
+    {
+        return aperture;
+    }
+    double      getFocalLen () const
+    {
+        return focal_len;
+    }
+    double      getFocalLen35mm () const
+    {
+        return focal_len35mm;
+    }
+    float       getFocusDist () const
+    {
+        return focus_dist;
+    }
+    double      getShutterSpeed () const
+    {
+        return shutter;
+    }
+    double      getExpComp  () const
+    {
+        return expcomp;
+    }
+    std::string getMake     () const
+    {
+        return make;
+    }
+    std::string getModel    () const
+    {
+        return model;
+    }
+    std::string getLens     () const
+    {
+        return lens;
+    }
+    std::string getSerialNumber () const
+    {
+        return serial;
+    }
+    std::string getOrientation () const
+    {
+        return orientation;
+    }
 };
 }
 #endif

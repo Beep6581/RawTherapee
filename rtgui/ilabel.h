@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,15 +21,16 @@
 
 #include <gtkmm.h>
 
-class ILabel : public Gtk::DrawingArea {
+class ILabel : public Gtk::DrawingArea
+{
 
     Glib::ustring label;
 
-    public:
-        ILabel (Glib::ustring lab);
-        bool on_expose_event(GdkEventExpose* event);
-        void on_realize();
-        void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
+public:
+    ILabel (Glib::ustring lab);
+    bool on_expose_event(GdkEventExpose* event);
+    void on_realize();
+    void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
 };
 
 #endif

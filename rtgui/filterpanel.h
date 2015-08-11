@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -22,54 +22,62 @@
 #include <gtkmm.h>
 #include "exiffiltersettings.h"
 
-class FilterPanelListener {
+class FilterPanelListener
+{
 
-    public:
-        virtual void exifFilterChanged () {}
+public:
+    virtual void exifFilterChanged () {}
 };
 
-class FilterPanel : public Gtk::VBox {
+class FilterPanel : public Gtk::VBox
+{
 
-	protected:
-        Gtk::ListViewText*      filetype;
-        Gtk::ListViewText*      camera;
-        Gtk::ListViewText*      lens;
-        Gtk::ListViewText*      expcomp;
-        Gtk::Entry* fnumberFrom;
-        Gtk::Entry* fnumberTo;
-        Gtk::Entry* shutterFrom;
-        Gtk::Entry* shutterTo;
-        Gtk::Entry* focalFrom;
-        Gtk::Entry* focalTo;
-        Gtk::Entry* isoFrom;
-        Gtk::Entry* isoTo;
-        Gtk::CheckButton* enabled;
-        Gtk::CheckButton* enaFNumber;
-        Gtk::CheckButton* enaShutter;
-        Gtk::CheckButton* enaFocalLen;
-        Gtk::CheckButton* enaISO;
-        Gtk::CheckButton* enaExpComp;
-        Gtk::CheckButton* enaCamera;
-        Gtk::CheckButton* enaLens;
-        Gtk::CheckButton* enaFiletype;
+protected:
+    Gtk::ListViewText*      filetype;
+    Gtk::ListViewText*      camera;
+    Gtk::ListViewText*      lens;
+    Gtk::ListViewText*      expcomp;
+    Gtk::Entry* fnumberFrom;
+    Gtk::Entry* fnumberTo;
+    Gtk::Entry* shutterFrom;
+    Gtk::Entry* shutterTo;
+    Gtk::Entry* focalFrom;
+    Gtk::Entry* focalTo;
+    Gtk::Entry* isoFrom;
+    Gtk::Entry* isoTo;
+    Gtk::CheckButton* enabled;
+    Gtk::CheckButton* enaFNumber;
+    Gtk::CheckButton* enaShutter;
+    Gtk::CheckButton* enaFocalLen;
+    Gtk::CheckButton* enaISO;
+    Gtk::CheckButton* enaExpComp;
+    Gtk::CheckButton* enaCamera;
+    Gtk::CheckButton* enaLens;
+    Gtk::CheckButton* enaFiletype;
 
-        int conns;
-        sigc::connection sChange[22];
+    int conns;
+    sigc::connection sChange[22];
 
-        ExifFilterSettings curefs;
-        FilterPanelListener* listener;
+    ExifFilterSettings curefs;
+    FilterPanelListener* listener;
 
-    public:
-        FilterPanel ();
+public:
+    FilterPanel ();
 
-        void setFilterPanelListener (FilterPanelListener* l) { listener = l; }
+    void setFilterPanelListener (FilterPanelListener* l)
+    {
+        listener = l;
+    }
 
-        void setFilter (ExifFilterSettings& defefs, bool updateLists);
-        ExifFilterSettings getFilter ();
-        bool isEnabled ();
+    void setFilter (ExifFilterSettings& defefs, bool updateLists);
+    ExifFilterSettings getFilter ();
+    bool isEnabled ();
 
-        void valueChanged ();
-        void setEnabled(bool enabledState){enabled->set_active(enabledState);}
+    void valueChanged ();
+    void setEnabled(bool enabledState)
+    {
+        enabled->set_active(enabledState);
+    }
 };
 
 #endif

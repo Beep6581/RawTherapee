@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -24,73 +24,75 @@
 #include "thumbbrowserentrybase.h"
 #include <glib.h>
 
-class ThumbImageUpdateListener {
+class ThumbImageUpdateListener
+{
 
 public:
 
-	/** 
-	 * @brief Called when thumbnail image is update
-	 * 
-	 * @param img new thumbnail image
-	 * @param scale scale (??)
-	 * @param cropParams how it was cropped (??)
-	 *
-	 * @note no locks are held when called back
-	 */
-	virtual void updateImage (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams) {}
+    /**
+     * @brief Called when thumbnail image is update
+     *
+     * @param img new thumbnail image
+     * @param scale scale (??)
+     * @param cropParams how it was cropped (??)
+     *
+     * @note no locks are held when called back
+     */
+    virtual void updateImage (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams) {}
 };
 
-class ThumbImageUpdater {
+class ThumbImageUpdater
+{
 
-  public:
+public:
 
-	/** 
-	 * @brief Singleton entry point.
-	 * 
-	 * @return Pointer to thumbnail image updater.
-	 */
-	static ThumbImageUpdater* getInstance(void);
+    /**
+     * @brief Singleton entry point.
+     *
+     * @return Pointer to thumbnail image updater.
+     */
+    static ThumbImageUpdater* getInstance(void);
 
-	/** 
-	 * @brief Add an thumbnail image update request.
-	 *
-	 * Code will add the request to the queue and, if needed, start a pool
-	 * thread to process it.
-	 * 
-	 * @param t thumbnail
-	 * @param params processing params (?)
-	 * @param height how big
-	 * @param priority if \c true then run as soon as possible
-	 * @param l listener waiting on update
-	 */
+    /**
+     * @brief Add an thumbnail image update request.
+     *
+     * Code will add the request to the queue and, if needed, start a pool
+     * thread to process it.
+     *
+     * @param t thumbnail
+     * @param params processing params (?)
+     * @param height how big
+     * @param priority if \c true then run as soon as possible
+     * @param l listener waiting on update
+     */
     void add(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade, ThumbImageUpdateListener* l);
 
-	/** 
-	 * @brief Remove jobs associated with listener \c l.
-	 * 
-	 * Jobs being processed will be finished. Will not return till all jobs for
-	 * \c l have been completed.
-	 *
-	 * @param listener jobs associated with this will be stopped
-	 */
+    /**
+     * @brief Remove jobs associated with listener \c l.
+     *
+     * Jobs being processed will be finished. Will not return till all jobs for
+     * \c l have been completed.
+     *
+     * @param listener jobs associated with this will be stopped
+     */
     void removeJobs(ThumbImageUpdateListener* listener);
 
-	/** 
-	 * @brief Stop processing and remove all jobs.
-	 *
-	 * Will not return till all running jobs have completed.
-	 */
+    /**
+     * @brief Stop processing and remove all jobs.
+     *
+     * Will not return till all running jobs have completed.
+     */
     void removeAllJobs(void);
 
-  private:
+private:
 
-	ThumbImageUpdater();
+    ThumbImageUpdater();
 
-	class Impl;
-	Impl* impl_;
+    class Impl;
+    Impl* impl_;
 };
 
-/** 
+/**
  * @brief Singleton boiler plate.
  *
  * To use: \c thumbImageUpdater->start() ,

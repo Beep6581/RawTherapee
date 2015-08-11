@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,13 +21,14 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Vignetting::Vignetting () : FoldableToolPanel(this, "vignetting", M("TP_VIGNETTING_LABEL")) {
+Vignetting::Vignetting () : FoldableToolPanel(this, "vignetting", M("TP_VIGNETTING_LABEL"))
+{
 
     amount = Gtk::manage (new Adjuster (M("TP_VIGNETTING_AMOUNT"), -100, 100, 1, 0));
-    amount->setAdjusterListener (this); 
+    amount->setAdjusterListener (this);
 
     radius = Gtk::manage (new Adjuster (M("TP_VIGNETTING_RADIUS"), 0, 100, 1, 50));
-    radius->setAdjusterListener (this); 
+    radius->setAdjusterListener (this);
 
     strength = Gtk::manage (new Adjuster (M("TP_VIGNETTING_STRENGTH"), 1, 100, 1, 1));
     strength->setAdjusterListener (this);
@@ -47,7 +48,8 @@ Vignetting::Vignetting () : FoldableToolPanel(this, "vignetting", M("TP_VIGNETTI
     show_all();
 }
 
-void Vignetting::read (const ProcParams* pp, const ParamsEdited* pedited) {
+void Vignetting::read (const ProcParams* pp, const ParamsEdited* pedited)
+{
 
     disableListener ();
 
@@ -68,7 +70,8 @@ void Vignetting::read (const ProcParams* pp, const ParamsEdited* pedited) {
     enableListener ();
 }
 
-void Vignetting::write (ProcParams* pp, ParamsEdited* pedited) {
+void Vignetting::write (ProcParams* pp, ParamsEdited* pedited)
+{
 
     pp->vignetting.amount = amount->getIntValue ();
     pp->vignetting.radius = radius->getIntValue ();
@@ -76,7 +79,7 @@ void Vignetting::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->vignetting.centerX = centerX->getIntValue ();
     pp->vignetting.centerY = centerY->getIntValue ();
 
-    if (pedited) { 
+    if (pedited) {
         pedited->vignetting.amount = amount->getEditedState ();
         pedited->vignetting.radius = radius->getEditedState ();
         pedited->vignetting.strength = strength->getEditedState ();
@@ -85,7 +88,8 @@ void Vignetting::write (ProcParams* pp, ParamsEdited* pedited) {
     }
 }
 
-void Vignetting::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
+void Vignetting::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
+{
 
     amount->setDefault (defParams->vignetting.amount);
     radius->setDefault (defParams->vignetting.radius);
@@ -99,8 +103,7 @@ void Vignetting::setDefaults (const ProcParams* defParams, const ParamsEdited* p
         strength->setDefaultEditedState (pedited->vignetting.strength ? Edited : UnEdited);
         centerX->setDefaultEditedState (pedited->vignetting.centerX ? Edited : UnEdited);
         centerY->setDefaultEditedState (pedited->vignetting.centerY ? Edited : UnEdited);
-    }
-    else {
+    } else {
         amount->setDefaultEditedState (Irrelevant);
         radius->setDefaultEditedState (Irrelevant);
         strength->setDefaultEditedState (Irrelevant);
@@ -109,39 +112,44 @@ void Vignetting::setDefaults (const ProcParams* defParams, const ParamsEdited* p
     }
 }
 
-void Vignetting::adjusterChanged (Adjuster* a, double newval) {
+void Vignetting::adjusterChanged (Adjuster* a, double newval)
+{
 
     if (listener)  {
-        if (a == amount)
+        if (a == amount) {
             listener->panelChanged (EvVignettingAmount, amount->getTextValue());
-        else if (a == radius)
+        } else if (a == radius) {
             listener->panelChanged (EvVignettingRadius, radius->getTextValue());
-        else if (a == strength)
+        } else if (a == strength) {
             listener->panelChanged (EvVignettingStrenght, strength->getTextValue());
-        else if (a == centerX || a == centerY)
+        } else if (a == centerX || a == centerY) {
             listener->panelChanged (EvVignettingCenter, Glib::ustring::compose ("X=%1\nY=%2", centerX->getTextValue(), centerY->getTextValue()));
+        }
     }
 }
 
-void Vignetting::setAdjusterBehavior (bool amountadd, bool radiusadd, bool strengthadd, bool centeradd) {
+void Vignetting::setAdjusterBehavior (bool amountadd, bool radiusadd, bool strengthadd, bool centeradd)
+{
 
-	amount->setAddMode(amountadd);
-	radius->setAddMode(radiusadd);
-	strength->setAddMode(strengthadd);
-	centerX->setAddMode(centeradd);
-	centerY->setAddMode(centeradd);
+    amount->setAddMode(amountadd);
+    radius->setAddMode(radiusadd);
+    strength->setAddMode(strengthadd);
+    centerX->setAddMode(centeradd);
+    centerY->setAddMode(centeradd);
 }
 
-void Vignetting::trimValues (rtengine::procparams::ProcParams* pp) {
+void Vignetting::trimValues (rtengine::procparams::ProcParams* pp)
+{
 
-	amount->trimValue(pp->vignetting.amount);
-	radius->trimValue(pp->vignetting.radius);
-	strength->trimValue(pp->vignetting.strength);
-	centerX->trimValue(pp->vignetting.centerX);
-	centerY->trimValue(pp->vignetting.centerY);
+    amount->trimValue(pp->vignetting.amount);
+    radius->trimValue(pp->vignetting.radius);
+    strength->trimValue(pp->vignetting.strength);
+    centerX->trimValue(pp->vignetting.centerX);
+    centerY->trimValue(pp->vignetting.centerY);
 }
 
-void Vignetting::setBatchMode (bool batchMode) {
+void Vignetting::setBatchMode (bool batchMode)
+{
 
     ToolPanel::setBatchMode (batchMode);
     amount->showEditedCB ();

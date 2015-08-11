@@ -27,13 +27,15 @@
  * Creates a button with a contextual menu where you can select an item that the button content will reflect
  *
  * Parameters:
- * 		label = label displayed in the button
+ *      label = label displayed in the button
  */
 PopUpButton::PopUpButton (const Glib::ustring& label) : Gtk::Button(), PopUpCommon(this, label) { }
 
-void PopUpButton::show() {
-	PopUpCommon::show();
+void PopUpButton::show()
+{
+    PopUpCommon::show();
 }
-void PopUpButton::set_tooltip_text (const Glib::ustring &text) {
-	PopUpCommon::set_tooltip_text (text);
+void PopUpButton::set_tooltip_text (const Glib::ustring &text)
+{
+    PopUpCommon::set_tooltip_text (text);
 }

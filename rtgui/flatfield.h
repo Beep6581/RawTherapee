@@ -26,47 +26,49 @@
 #include "../rtengine/rawimage.h"
 #include "guiutils.h"
 
-class FFProvider {
-  public:
+class FFProvider
+{
+public:
     virtual ~FFProvider() {}
     virtual rtengine::RawImage* getFF() = 0;
     virtual Glib::ustring GetCurrentImageFilePath() = 0;
     // add other info here
 };
 
-class FlatField : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
+class FlatField : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+{
 
 protected:
 
-	MyFileChooserButton *flatFieldFile;
-	std::auto_ptr<FileChooserLastFolderPersister> flatFieldFilePersister;
-	Gtk::Label *ffLabel;
-	Gtk::Label *ffInfo;
-	Gtk::Button *flatFieldFileReset;
-	Gtk::CheckButton* flatFieldAutoSelect;
-	Adjuster* flatFieldClipControl;
-	Adjuster* flatFieldBlurRadius;
-	MyComboBoxText* flatFieldBlurType;
-	Gtk::HBox *hbff;
-	bool ffChanged;
-	bool lastFFAutoSelect;
-	bool lastFFAutoClipCtrl;
-	FFProvider *ffp;
-	sigc::connection flatFieldFileconn, flatFieldAutoSelectconn, flatFieldBlurTypeconn;
+    MyFileChooserButton *flatFieldFile;
+    std::auto_ptr<FileChooserLastFolderPersister> flatFieldFilePersister;
+    Gtk::Label *ffLabel;
+    Gtk::Label *ffInfo;
+    Gtk::Button *flatFieldFileReset;
+    Gtk::CheckButton* flatFieldAutoSelect;
+    Adjuster* flatFieldClipControl;
+    Adjuster* flatFieldBlurRadius;
+    MyComboBoxText* flatFieldBlurType;
+    Gtk::HBox *hbff;
+    bool ffChanged;
+    bool lastFFAutoSelect;
+    bool lastFFAutoClipCtrl;
+    FFProvider *ffp;
+    sigc::connection flatFieldFileconn, flatFieldAutoSelectconn, flatFieldBlurTypeconn;
     Glib::ustring lastShortcutPath;
     bool b_filter_asCurrent;
     bool israw;
 
 public:
 
-	FlatField ();
+    FlatField ();
 
-	void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-    void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
     void setBatchMode        (bool batchMode);
     void setAdjusterBehavior (bool clipctrladd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
-    void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
 
     void adjusterChanged            (Adjuster* a, double newval);
     void adjusterAutoToggled        (Adjuster* a, bool newval);
@@ -75,7 +77,10 @@ public:
     void flatFieldAutoSelectChanged ();
     void flatFieldBlurTypeChanged   ();
     void setShortcutPath(Glib::ustring path);
-    void setFFProvider              (FFProvider* p) { ffp = p; };
+    void setFFProvider              (FFProvider* p)
+    {
+        ffp = p;
+    };
 };
 
 #endif

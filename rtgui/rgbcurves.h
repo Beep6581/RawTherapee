@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -26,25 +26,26 @@
 #include "curveeditorgroup.h"
 #include "colorprovider.h"
 
-class RGBCurves : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider {
+class RGBCurves : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider
+{
 
-  protected:
-	CurveEditorGroup* curveEditorG;
-	DiagonalCurveEditor* Rshape;
-	DiagonalCurveEditor* Gshape;
-	DiagonalCurveEditor* Bshape;
+protected:
+    CurveEditorGroup* curveEditorG;
+    DiagonalCurveEditor* Rshape;
+    DiagonalCurveEditor* Gshape;
+    DiagonalCurveEditor* Bshape;
 
     Gtk::CheckButton* lumamode;
     bool lastLumamode;
     sigc::connection lumamodeConn;
 
-  public:
+public:
 
     RGBCurves ();
     ~RGBCurves ();
 
-    void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-    void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
     void setBatchMode    (bool batchMode);
     void setEditProvider (EditDataProvider *provider);
     void autoOpenCurve   ();

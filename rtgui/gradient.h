@@ -9,12 +9,13 @@
 #include "toolpanel.h"
 #include "edit.h"
 
-class Gradient : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public EditSubscriber {
+class Gradient : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public EditSubscriber
+{
 
-  private:
+private:
     int lastObject;
 
-  protected:
+protected:
     Gtk::HBox *editHBox;
     Gtk::ToggleButton* edit;
     Adjuster* degree;
@@ -30,14 +31,14 @@ class Gradient : public ToolParamBlock, public AdjusterListener, public Foldable
 
     void editToggled ();
 
-  public:
+public:
 
     Gradient ();
     ~Gradient ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
     void setBatchMode   (bool batchMode);
 
     void updateGeometry (int centerX_, int centerY_, double feather_, double degree_);

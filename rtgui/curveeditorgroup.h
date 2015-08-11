@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -39,117 +39,131 @@ class FlatCurveEditorSubGroup;
  * - to start a new line of curve button, use the 'newLine' method
  * - if you add more than one curve, you must add a "CurveEditor* ce" parameter to your listener
  */
-class CurveEditorGroup : public Gtk::VBox, public CurveListener {
+class CurveEditorGroup : public Gtk::VBox, public CurveListener
+{
 
-	friend class CurveEditor;
-	friend class CurveEditorSubGroup;
-	friend class DiagonalCurveEditorSubGroup;
-	friend class FlatCurveEditorSubGroup;
+    friend class CurveEditor;
+    friend class CurveEditorSubGroup;
+    friend class DiagonalCurveEditorSubGroup;
+    friend class FlatCurveEditorSubGroup;
 
 private:
-	Glib::ustring& curveDir;
+    Glib::ustring& curveDir;
 
 protected:
-	Gtk::Label* curveGroupLabel;
-	Gtk::Button* curve_reset;
-	std::vector<CurveEditor*> curveEditors;
-	CurveEditor* displayedCurve;
-	FlatCurveEditorSubGroup* flatSubGroup;
-	DiagonalCurveEditorSubGroup* diagonalSubGroup;
+    Gtk::Label* curveGroupLabel;
+    Gtk::Button* curve_reset;
+    std::vector<CurveEditor*> curveEditors;
+    CurveEditor* displayedCurve;
+    FlatCurveEditorSubGroup* flatSubGroup;
+    DiagonalCurveEditorSubGroup* diagonalSubGroup;
 
-	CurveListener* cl;
+    CurveListener* cl;
 
-	unsigned int numberOfPackedCurve;
+    unsigned int numberOfPackedCurve;
 
 public:
-	/**
-	 * @param curveDir The folder used by load and save dialogs for the curve.
-	 *                 This variable will be updated with actions in the
-	 *                 dialogs.
-	 */
+    /**
+     * @param curveDir The folder used by load and save dialogs for the curve.
+     *                 This variable will be updated with actions in the
+     *                 dialogs.
+     */
 
-	CurveEditorGroup(Glib::ustring& curveDir, Glib::ustring groupLabel = "");
-	~CurveEditorGroup();
-	void newLine();
-	void curveListComplete();
-	void setBatchMode (bool batchMode);
-	void setCurveExternal (CurveEditor* ce, const std::vector<double>& c);
-	void setCurveListener (CurveListener* l) { cl = l; }
-	void setTooltip (Glib::ustring ttip);
-	CurveEditor* getDisplayedCurve () { return displayedCurve; }
-	//void on_realize ();
-	CurveEditor* addCurve(CurveType cType, Glib::ustring curveLabel, Gtk::Widget *relatedWidget=NULL, bool periodic=true);
+    CurveEditorGroup(Glib::ustring& curveDir, Glib::ustring groupLabel = "");
+    ~CurveEditorGroup();
+    void newLine();
+    void curveListComplete();
+    void setBatchMode (bool batchMode);
+    void setCurveExternal (CurveEditor* ce, const std::vector<double>& c);
+    void setCurveListener (CurveListener* l)
+    {
+        cl = l;
+    }
+    void setTooltip (Glib::ustring ttip);
+    CurveEditor* getDisplayedCurve ()
+    {
+        return displayedCurve;
+    }
+    //void on_realize ();
+    CurveEditor* addCurve(CurveType cType, Glib::ustring curveLabel, Gtk::Widget *relatedWidget = NULL, bool periodic = true);
 
 protected:
-	//void curveTypeToggled ();
-	void curveTypeToggled (CurveEditor* ce);
-	//void typeSelectionChanged (int n);
-	void typeSelectionChanged (CurveEditor* ce, int n);
-	void hideCurrentCurve ();
-	void updateGUI (CurveEditor* ce);
-	void curveResetPressed ();
-	void curveChanged ();
-	float blendPipetteValues(CurveEditor* ce, float chan1, float chan2, float chan3);
-	void setUnChanged (bool uc, CurveEditor* ce);
+    //void curveTypeToggled ();
+    void curveTypeToggled (CurveEditor* ce);
+    //void typeSelectionChanged (int n);
+    void typeSelectionChanged (CurveEditor* ce, int n);
+    void hideCurrentCurve ();
+    void updateGUI (CurveEditor* ce);
+    void curveResetPressed ();
+    void curveChanged ();
+    float blendPipetteValues(CurveEditor* ce, float chan1, float chan2, float chan3);
+    void setUnChanged (bool uc, CurveEditor* ce);
 };
 
 class CoordinateProvider;
 
-class CurveEditorSubGroup {
+class CurveEditorSubGroup
+{
 
-	friend class CurveEditorGroup;
+    friend class CurveEditorGroup;
 
 private:
-	Glib::ustring& curveDir;
-	Glib::ustring lastFilename;
+    Glib::ustring& curveDir;
+    Glib::ustring lastFilename;
 
 protected:
-	int valLinear;
-	int valUnchanged;
-	CurveEditorGroup *parent;
-	int curveBBoxPos; // 0=above, 1=right, 2=below, 3=left
+    int valLinear;
+    int valUnchanged;
+    CurveEditorGroup *parent;
+    int curveBBoxPos; // 0=above, 1=right, 2=below, 3=left
 
-	ColoredBar* leftBar;
-	ColoredBar* bottomBar;
+    ColoredBar* leftBar;
+    ColoredBar* bottomBar;
 
 
 public:
-	virtual ~CurveEditorSubGroup();
-	int getValUnchanged() { return valUnchanged; }
-	int getValLinear() { return valLinear; }
-	void updateEditButton(CurveEditor* curve, Gtk::ToggleButton *button, sigc::connection &connection);
-	virtual void updateBackgroundHistogram (CurveEditor* ce) {}
-	virtual void switchGUI() = 0;
-	virtual void refresh(CurveEditor *curveToRefresh) = 0;
-	virtual void editModeSwitchedOff() = 0;
+    virtual ~CurveEditorSubGroup();
+    int getValUnchanged()
+    {
+        return valUnchanged;
+    }
+    int getValLinear()
+    {
+        return valLinear;
+    }
+    void updateEditButton(CurveEditor* curve, Gtk::ToggleButton *button, sigc::connection &connection);
+    virtual void updateBackgroundHistogram (CurveEditor* ce) {}
+    virtual void switchGUI() = 0;
+    virtual void refresh(CurveEditor *curveToRefresh) = 0;
+    virtual void editModeSwitchedOff() = 0;
 
-	virtual void showCoordinateAdjuster(CoordinateProvider *provider) = 0;
-	virtual void stopNumericalAdjustment() = 0;
+    virtual void showCoordinateAdjuster(CoordinateProvider *provider) = 0;
+    virtual void stopNumericalAdjustment() = 0;
 
-	virtual void pipetteMouseOver(EditDataProvider *provider, int modifierKey) =0;
-	virtual void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) =0;
-	virtual void pipetteButton1Released(EditDataProvider *provider) =0;
-	virtual void pipetteDrag(EditDataProvider *provider, int modifierKey) =0;
+    virtual void pipetteMouseOver(EditDataProvider *provider, int modifierKey) = 0;
+    virtual void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) = 0;
+    virtual void pipetteButton1Released(EditDataProvider *provider) = 0;
+    virtual void pipetteDrag(EditDataProvider *provider, int modifierKey) = 0;
 
-	virtual bool curveReset (CurveEditor *ce) = 0; // Reset a curve editor, return TRUE if successful (curve changed)
+    virtual bool curveReset (CurveEditor *ce) = 0; // Reset a curve editor, return TRUE if successful (curve changed)
 
 protected:
 
-	/**
-	 * @param curveDir The folder used by load and save dialogs for the curve.
-	 *                 This variable will be updated with actions in the
-	 *                 dialogs.
-	 */
-	CurveEditorSubGroup(Glib::ustring& curveDir);
+    /**
+     * @param curveDir The folder used by load and save dialogs for the curve.
+     *                 This variable will be updated with actions in the
+     *                 dialogs.
+     */
+    CurveEditorSubGroup(Glib::ustring& curveDir);
 
-	Glib::ustring outputFile ();
-	Glib::ustring inputFile ();
+    Glib::ustring outputFile ();
+    Glib::ustring inputFile ();
 
-	virtual void storeCurveValues (CurveEditor* ce, const std::vector<double>& p) = 0;
-	virtual void storeDisplayedCurve () = 0;
-	virtual void restoreDisplayedHistogram() {};
-	virtual void removeEditor () = 0;
-	virtual const std::vector<double> getCurveFromGUI (int type) = 0;
+    virtual void storeCurveValues (CurveEditor* ce, const std::vector<double>& p) = 0;
+    virtual void storeDisplayedCurve () = 0;
+    virtual void restoreDisplayedHistogram() {};
+    virtual void removeEditor () = 0;
+    virtual const std::vector<double> getCurveFromGUI (int type) = 0;
 
 };
 

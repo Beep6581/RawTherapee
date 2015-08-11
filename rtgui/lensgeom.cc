@@ -23,57 +23,65 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LensGeometry::LensGeometry () : FoldableToolPanel(this, "lensgeom", M("TP_LENSGEOM_LABEL")), rlistener(NULL) {
+LensGeometry::LensGeometry () : FoldableToolPanel(this, "lensgeom", M("TP_LENSGEOM_LABEL")), rlistener(NULL)
+{
 
-  fill = Gtk::manage (new Gtk::CheckButton (M("TP_LENSGEOM_FILL")));
-  pack_start (*fill);
+    fill = Gtk::manage (new Gtk::CheckButton (M("TP_LENSGEOM_FILL")));
+    pack_start (*fill);
 
-  autoCrop = Gtk::manage (new Gtk::Button (M("TP_LENSGEOM_AUTOCROP")));
-  autoCrop->set_image (*Gtk::manage (new RTImage ("crop-auto.png")));
-  pack_start (*autoCrop, Gtk::PACK_SHRINK, 2);
+    autoCrop = Gtk::manage (new Gtk::Button (M("TP_LENSGEOM_AUTOCROP")));
+    autoCrop->set_image (*Gtk::manage (new RTImage ("crop-auto.png")));
+    pack_start (*autoCrop, Gtk::PACK_SHRINK, 2);
 
-  packBox = Gtk::manage (new ToolParamBlock ());
-  pack_start (*packBox);
+    packBox = Gtk::manage (new ToolParamBlock ());
+    pack_start (*packBox);
 
-  autoCrop->signal_pressed().connect( sigc::mem_fun(*this, &LensGeometry::autoCropPressed) );
-  fillConn = fill->signal_toggled().connect( sigc::mem_fun(*this, &LensGeometry::fillPressed) );
+    autoCrop->signal_pressed().connect( sigc::mem_fun(*this, &LensGeometry::autoCropPressed) );
+    fillConn = fill->signal_toggled().connect( sigc::mem_fun(*this, &LensGeometry::fillPressed) );
 
-  fill->set_active (true);
-  show_all ();
+    fill->set_active (true);
+    show_all ();
 }
 
-void LensGeometry::read (const ProcParams* pp, const ParamsEdited* pedited) {
+void LensGeometry::read (const ProcParams* pp, const ParamsEdited* pedited)
+{
 
     disableListener ();
 
-    if (pedited)
+    if (pedited) {
         fill->set_inconsistent (!pedited->commonTrans.autofill);
+    }
 
     fillConn.block (true);
     fill->set_active (pp->commonTrans.autofill);
     fillConn.block (false);
-	autoCrop->set_sensitive (!pp->commonTrans.autofill);
+    autoCrop->set_sensitive (!pp->commonTrans.autofill);
 
     lastFill = pp->commonTrans.autofill;
 
     enableListener ();
 }
 
-void LensGeometry::write (ProcParams* pp, ParamsEdited* pedited) {
+void LensGeometry::write (ProcParams* pp, ParamsEdited* pedited)
+{
 
     pp->commonTrans.autofill   = fill->get_active ();
 
-    if (pedited)
+    if (pedited) {
         pedited->commonTrans.autofill   = !fill->get_inconsistent();
+    }
 }
 
-void LensGeometry::autoCropPressed () {
+void LensGeometry::autoCropPressed ()
+{
 
-    if (rlistener)
+    if (rlistener) {
         rlistener->autoCropRequested ();
+    }
 }
 
-void LensGeometry::fillPressed () {
+void LensGeometry::fillPressed ()
+{
 
     if (batchMode) {
         if (fill->get_inconsistent()) {
@@ -81,24 +89,26 @@ void LensGeometry::fillPressed () {
             fillConn.block (true);
             fill->set_active (false);
             fillConn.block (false);
-        }
-        else if (lastFill)
+        } else if (lastFill) {
             fill->set_inconsistent (true);
+        }
 
         lastFill = fill->get_active ();
+    } else {
+        autoCrop->set_sensitive (!fill->get_active());
     }
-    else
-    	autoCrop->set_sensitive (!fill->get_active());
 
     if (listener) {
-    	if (fill->get_active ())
-    		listener->panelChanged (EvTransAutoFill, M("GENERAL_ENABLED"));
-    	else
-    		listener->panelChanged (EvTransAutoFill, M("GENERAL_DISABLED"));
+        if (fill->get_active ()) {
+            listener->panelChanged (EvTransAutoFill, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (EvTransAutoFill, M("GENERAL_DISABLED"));
+        }
     }
 }
 
-void LensGeometry::setBatchMode (bool batchMode) {
+void LensGeometry::setBatchMode (bool batchMode)
+{
 
     ToolPanel::setBatchMode (batchMode);
     removeIfThere (this, autoCrop);

@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -23,9 +23,10 @@
 #include "toolenum.h"
 #include "rtimage.h"
 
-class ToolBarListener {
+class ToolBarListener
+{
 
-  public:
+public:
     virtual ~ToolBarListener() {}
     /// Callback when a tool is selected
     virtual void toolSelected (ToolMode tool) {}
@@ -34,12 +35,13 @@ class ToolBarListener {
     virtual void editModeSwitchedOff () {}
 };
 
-class ToolBar : public Gtk::HBox {
-  private:
+class ToolBar : public Gtk::HBox
+{
+private:
     RTImage* handimg;
     RTImage* editinghandimg;
 
-  protected:
+protected:
     Gtk::ToggleButton* handTool;
     Gtk::ToggleButton* wbTool;
     Gtk::ToggleButton* cropTool;
@@ -52,14 +54,20 @@ class ToolBar : public Gtk::HBox {
     sigc::connection  cropConn;
     sigc::connection  straConn;
 
-  public:
+public:
     ToolBar ();
     ~ToolBar ();
 
     void     setTool (ToolMode tool);
-    ToolMode getTool () { return current; }
+    ToolMode getTool ()
+    {
+        return current;
+    }
 
-    void setToolBarListener (ToolBarListener* tpl) { listener = tpl; }
+    void setToolBarListener (ToolBarListener* tpl)
+    {
+        listener = tpl;
+    }
 
     void startEditMode();
     void stopEditMode();

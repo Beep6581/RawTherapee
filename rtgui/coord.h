@@ -22,141 +22,163 @@
 class PolarCoord;
 
 // Do not confuse with rtengine::Coord2D, Coord is for the GUI
-class Coord {
+class Coord
+{
 public:
-	int x;
-	int y;
+    int x;
+    int y;
 
-	Coord() : x(-1), y(-1) {}
-	Coord(int x, int y) : x(x), y(y) {}
+    Coord() : x(-1), y(-1) {}
+    Coord(int x, int y) : x(x), y(y) {}
 
-	void set (int x, int y) {
-		this->x = x;
-		this->y = y;
-	}
+    void set (int x, int y)
+    {
+        this->x = x;
+        this->y = y;
+    }
 
-	void setFromPolar(PolarCoord polar);
+    void setFromPolar(PolarCoord polar);
 
-	/// @brief Clip the coord to stay in the width x height bounds
-	/// @return true if the x or y coordinate has changed
-	bool clip(int width, int height) {
-		int trimmedX = rtengine::LIM<int>(x, 0, width);
-		int trimmedY = rtengine::LIM<int>(y, 0, height);
-		bool retval = trimmedX!=x || trimmedY!=y;
-		x = trimmedX;
-		y = trimmedY;
-		return retval;
-	}
+    /// @brief Clip the coord to stay in the width x height bounds
+    /// @return true if the x or y coordinate has changed
+    bool clip(int width, int height)
+    {
+        int trimmedX = rtengine::LIM<int>(x, 0, width);
+        int trimmedY = rtengine::LIM<int>(y, 0, height);
+        bool retval = trimmedX != x || trimmedY != y;
+        x = trimmedX;
+        y = trimmedY;
+        return retval;
+    }
 
-	void operator+=(const Coord & rhs) {
-		x += rhs.x;
-		y += rhs.y;
-	}
-	void operator-=(const Coord & rhs) {
-		x -= rhs.x;
-		y -= rhs.y;
-	}
-	void operator*=(double scale) {
-		x *= scale;
-		y *= scale;
-	}
-	Coord operator+(Coord & rhs) {
-		Coord result(x+rhs.x, y+rhs.y);
-		return result;
-	}
-	Coord operator-(Coord & rhs) {
-		Coord result(x-rhs.x, y-rhs.y);
-		return result;
-	}
-	Coord operator*(double scale) {
-		Coord result(x*scale, y*scale);
-		return result;
-	}
+    void operator+=(const Coord & rhs)
+    {
+        x += rhs.x;
+        y += rhs.y;
+    }
+    void operator-=(const Coord & rhs)
+    {
+        x -= rhs.x;
+        y -= rhs.y;
+    }
+    void operator*=(double scale)
+    {
+        x *= scale;
+        y *= scale;
+    }
+    Coord operator+(Coord & rhs)
+    {
+        Coord result(x + rhs.x, y + rhs.y);
+        return result;
+    }
+    Coord operator-(Coord & rhs)
+    {
+        Coord result(x - rhs.x, y - rhs.y);
+        return result;
+    }
+    Coord operator*(double scale)
+    {
+        Coord result(x * scale, y * scale);
+        return result;
+    }
 };
 
-class PolarCoord {
+class PolarCoord
+{
 public:
-	double radius;
-	double angle; // degree
+    double radius;
+    double angle; // degree
 
-	PolarCoord() : radius(1.), angle(0.) {}
-	PolarCoord(double radius, double angle) : radius(radius), angle(angle) {}
+    PolarCoord() : radius(1.), angle(0.) {}
+    PolarCoord(double radius, double angle) : radius(radius), angle(angle) {}
 
-	void set (double radius, double angle) {
-		this->radius = radius;
-		this->angle = angle;
-	}
+    void set (double radius, double angle)
+    {
+        this->radius = radius;
+        this->angle = angle;
+    }
 
-	void setFromCartesian(Coord start, Coord end) {
-		Coord delta(end.x-start.x, end.y-start.y);
-		setFromCartesian(delta);
-	}
+    void setFromCartesian(Coord start, Coord end)
+    {
+        Coord delta(end.x - start.x, end.y - start.y);
+        setFromCartesian(delta);
+    }
 
-	void setFromCartesian(Coord delta) {
-		if (!delta.x && !delta.y) {
-			// null vector, we set to a default value
-			radius = 1.;
-			angle = 0.;
-			return;
-		}
-		double x_ = double(delta.x);
-		double y_ = double(delta.y);
-		radius = sqrt(x_*x_+y_*y_);
-		if (delta.x>0.) {
-			if (delta.y>=0.)
-				angle = atan(y_/x_)/(2*M_PI)*360.;
-			else if (delta.y<0.)
-				angle = (atan(y_/x_)+2*M_PI)/(2*M_PI)*360.;
-		}
-		else if (delta.x<0.)
-			angle = (atan(y_/x_)+M_PI)/(2*M_PI)*360.;
-		else if (delta.x==0.) {
-			if (delta.y>0.)
-				angle = 90.;
-			else
-				angle = 270.;
-		}
-	}
+    void setFromCartesian(Coord delta)
+    {
+        if (!delta.x && !delta.y) {
+            // null vector, we set to a default value
+            radius = 1.;
+            angle = 0.;
+            return;
+        }
 
-	void operator+=(const PolarCoord & rhs) {
-		Coord thisCoord, rhsCoord;
-		thisCoord.setFromPolar(*this);
-		rhsCoord.setFromPolar(rhs);
-		thisCoord += rhsCoord;
-		setFromCartesian(thisCoord);
-	}
-	void operator-=(const PolarCoord & rhs) {
-		Coord thisCoord, rhsCoord;
-		thisCoord.setFromPolar(*this);
-		rhsCoord.setFromPolar(rhs);
-		thisCoord -= rhsCoord;
-		setFromCartesian(thisCoord);
-	}
-	void operator*=(double scale) {
-		radius *= scale;
-	}
-	PolarCoord operator+(PolarCoord & rhs) {
-		Coord thisCoord, rhsCoord;
-		thisCoord.setFromPolar(*this);
-		rhsCoord.setFromPolar(rhs);
-		thisCoord += rhsCoord;
-		PolarCoord result;
-		result.setFromCartesian(thisCoord);
-		return result;
-	}
-	PolarCoord operator-(PolarCoord & rhs) {
-		Coord thisCoord, rhsCoord;
-		thisCoord.setFromPolar(*this);
-		rhsCoord.setFromPolar(rhs);
-		thisCoord -= rhsCoord;
-		PolarCoord result;
-		result.setFromCartesian(thisCoord);
-		return result;
-	}
-	Coord operator*(double scale) {
-		Coord result(radius*scale, angle);
-		return result;
-	}
+        double x_ = double(delta.x);
+        double y_ = double(delta.y);
+        radius = sqrt(x_ * x_ + y_ * y_);
+
+        if (delta.x > 0.) {
+            if (delta.y >= 0.) {
+                angle = atan(y_ / x_) / (2 * M_PI) * 360.;
+            } else if (delta.y < 0.) {
+                angle = (atan(y_ / x_) + 2 * M_PI) / (2 * M_PI) * 360.;
+            }
+        } else if (delta.x < 0.) {
+            angle = (atan(y_ / x_) + M_PI) / (2 * M_PI) * 360.;
+        } else if (delta.x == 0.) {
+            if (delta.y > 0.) {
+                angle = 90.;
+            } else {
+                angle = 270.;
+            }
+        }
+    }
+
+    void operator+=(const PolarCoord & rhs)
+    {
+        Coord thisCoord, rhsCoord;
+        thisCoord.setFromPolar(*this);
+        rhsCoord.setFromPolar(rhs);
+        thisCoord += rhsCoord;
+        setFromCartesian(thisCoord);
+    }
+    void operator-=(const PolarCoord & rhs)
+    {
+        Coord thisCoord, rhsCoord;
+        thisCoord.setFromPolar(*this);
+        rhsCoord.setFromPolar(rhs);
+        thisCoord -= rhsCoord;
+        setFromCartesian(thisCoord);
+    }
+    void operator*=(double scale)
+    {
+        radius *= scale;
+    }
+    PolarCoord operator+(PolarCoord & rhs)
+    {
+        Coord thisCoord, rhsCoord;
+        thisCoord.setFromPolar(*this);
+        rhsCoord.setFromPolar(rhs);
+        thisCoord += rhsCoord;
+        PolarCoord result;
+        result.setFromCartesian(thisCoord);
+        return result;
+    }
+    PolarCoord operator-(PolarCoord & rhs)
+    {
+        Coord thisCoord, rhsCoord;
+        thisCoord.setFromPolar(*this);
+        rhsCoord.setFromPolar(rhs);
+        thisCoord -= rhsCoord;
+        PolarCoord result;
+        result.setFromCartesian(thisCoord);
+        return result;
+    }
+    Coord operator*(double scale)
+    {
+        Coord result(radius * scale, angle);
+        return result;
+    }
 
 };
 

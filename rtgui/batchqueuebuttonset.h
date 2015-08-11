@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -23,16 +23,17 @@
 #include <gtkmm.h>
 
 class BatchQueueEntry;
-class BatchQueueButtonSet : public LWButtonSet {
+class BatchQueueButtonSet : public LWButtonSet
+{
 
-        static bool iconsLoaded;
-        
-    public:
-        static Cairo::RefPtr<Cairo::ImageSurface> cancelIcon;
-        static Cairo::RefPtr<Cairo::ImageSurface> headIcon;
-        static Cairo::RefPtr<Cairo::ImageSurface> tailIcon;
+    static bool iconsLoaded;
 
-        BatchQueueButtonSet (BatchQueueEntry* myEntry);
+public:
+    static Cairo::RefPtr<Cairo::ImageSurface> cancelIcon;
+    static Cairo::RefPtr<Cairo::ImageSurface> headIcon;
+    static Cairo::RefPtr<Cairo::ImageSurface> tailIcon;
+
+    BatchQueueButtonSet (BatchQueueEntry* myEntry);
 };
 
 #endif

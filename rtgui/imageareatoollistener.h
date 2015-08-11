@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -23,16 +23,26 @@
 #include "thumbnail.h"
 #include "cropguilistener.h"
 
-class ImageAreaToolListener {
+class ImageAreaToolListener
+{
 
-  public:
-    virtual void spotWBselected (int x, int y, Thumbnail* thm=NULL) {}
-    virtual int  getSpotWBRectSize () { return 8; }
+public:
+    virtual void spotWBselected (int x, int y, Thumbnail* thm = NULL) {}
+    virtual int  getSpotWBRectSize ()
+    {
+        return 8;
+    }
     virtual void cropSelectionReady () {}
-    virtual void rotateSelectionReady (double rotate_deg, Thumbnail* thm=NULL) {}
-    virtual ToolBar* getToolBar () { return NULL; }
-    virtual void removeWbTool() =0;
-    virtual CropGUIListener* startCropEditing (Thumbnail* thm=NULL) { return NULL; }
+    virtual void rotateSelectionReady (double rotate_deg, Thumbnail* thm = NULL) {}
+    virtual ToolBar* getToolBar ()
+    {
+        return NULL;
+    }
+    virtual void removeWbTool() = 0;
+    virtual CropGUIListener* startCropEditing (Thumbnail* thm = NULL)
+    {
+        return NULL;
+    }
 };
 
 #endif

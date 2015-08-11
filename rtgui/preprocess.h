@@ -26,21 +26,22 @@
 #include "guiutils.h"
 #include "../rtengine/rawimage.h"
 
-class PreProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
+class PreProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+{
 
-  protected:
+protected:
     Gtk::CheckButton* hotPixel;
     Gtk::CheckButton* deadPixel;
-    bool lastHot,lastDead;
+    bool lastHot, lastDead;
     sigc::connection hpixelconn;
     sigc::connection dpixelconn;
     Adjuster* hdThreshold;
-  public:
+public:
 
     PreProcess ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
     //void setBatchMode   (bool batchMode);
     //void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
 

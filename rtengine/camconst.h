@@ -7,14 +7,16 @@
 #include <glibmm.h>
 #include <map>
 
-namespace rtengine {
+namespace rtengine
+{
 
 struct camera_const_levels {
-	int levels[4];
+    int levels[4];
 };
 
-class CameraConst {
-  private:
+class CameraConst
+{
+private:
     Glib::ustring make_model;
     short dcraw_matrix[12];
     int raw_crop[4];
@@ -29,7 +31,7 @@ class CameraConst {
     static bool parseApertureScaling(CameraConst *cc, void *ji);
     bool get_Levels(struct camera_const_levels & lvl, int bw, int iso, float fnumber);
 
-  public:
+public:
     static CameraConst *parseEntry(void *cJSON, const char *make_model);
     bool has_dcrawMatrix(void);
     void update_dcrawMatrix(const short *other);
@@ -43,14 +45,15 @@ class CameraConst {
     void update_Levels(const CameraConst *other);
 };
 
-class CameraConstantsStore {
-  private:
+class CameraConstantsStore
+{
+private:
     std::map<Glib::ustring, CameraConst *> mCameraConstants;
 
     CameraConstantsStore();
     bool parse_camera_constants_file(Glib::ustring filename);
 
-  public:
+public:
     static void initCameraConstants(Glib::ustring baseDir, Glib::ustring userSettingsDir);
     static CameraConstantsStore *getInstance(void);
     CameraConst *get(const char make[], const char model[]);

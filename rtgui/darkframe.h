@@ -25,42 +25,47 @@
 #include "../rtengine/rawimage.h"
 #include "guiutils.h"
 
-class DFProvider {
-  public:
+class DFProvider
+{
+public:
     virtual rtengine::RawImage* getDF() = 0;
     virtual Glib::ustring GetCurrentImageFilePath() = 0;
     // add other info here
 };
 
-class DarkFrame : public ToolParamBlock, public FoldableToolPanel {
+class DarkFrame : public ToolParamBlock, public FoldableToolPanel
+{
 
 protected:
 
-	MyFileChooserButton *darkFrameFile;
-	std::auto_ptr<FileChooserLastFolderPersister> darkFrameFilePersister;
+    MyFileChooserButton *darkFrameFile;
+    std::auto_ptr<FileChooserLastFolderPersister> darkFrameFilePersister;
     Gtk::HBox *hbdf;
     Gtk::Button *btnReset;
     Gtk::Label *dfLabel;
-	Gtk::Label *dfInfo;
+    Gtk::Label *dfInfo;
     Gtk::CheckButton* dfAuto;
     bool dfChanged;
-	bool lastDFauto;
+    bool lastDFauto;
     DFProvider *dfp;
-	sigc::connection dfautoconn, dfFile;
+    sigc::connection dfautoconn, dfFile;
     bool b_filter_asCurrent;
     bool israw;
 
 public:
 
-	DarkFrame ();
+    DarkFrame ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
 
     void darkFrameChanged ();
     void darkFrameReset   ();
     void dfAutoChanged    ();
-    void setDFProvider    (DFProvider* p) { dfp = p; };
+    void setDFProvider    (DFProvider* p)
+    {
+        dfp = p;
+    };
 };
 
 #endif

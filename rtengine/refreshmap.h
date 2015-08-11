@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -25,7 +25,7 @@
 // Must NOT be used with other event (i.e. will be used for MINUPDATE only)
 #define M_MINUPDATE  (1<<14)
 // Force high quality
-#define M_HIGHQUAL   (1<<13)   
+#define M_HIGHQUAL   (1<<13)
 
 // Elementary functions that can be done to
 // the preview image when an event occurs
@@ -63,7 +63,7 @@
 #define RESIZE           M_VOID
 #define EXIF             M_VOID
 #define IPTC             M_VOID
-#define DIRPYREQUALIZER	(M_COLOR|M_LUMINANCE)
+#define DIRPYREQUALIZER (M_COLOR|M_LUMINANCE)
 #define OUTPUTPROFILE   (M_COLOR|M_LUMINANCE)
 #define INPUTPROFILE     WHITEBALANCE
 #define GAMMA           (M_COLOR|M_LUMINANCE)
@@ -72,4 +72,4 @@
 #define ALLNORAW        (M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 
 extern int refreshmap[];
-#endif    
+#endif
