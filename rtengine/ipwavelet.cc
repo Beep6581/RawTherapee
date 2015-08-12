@@ -1157,7 +1157,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                             for(col = 0; col < rowWidth - 3; col += 4) {
                                 av = LVFU(labco->a[i1][col]);
                                 bv = LVFU(labco->b[i1][col]);
-                                _mm_store_ps(&atan2Buffer[col], xatan2f(bv, av));
+                                STVF(atan2Buffer[col], xatan2f(bv, av));
 
                                 cv = _mm_sqrt_ps(SQRV(av) + SQRV(bv));
                                 yv = av / cv;
@@ -1165,9 +1165,9 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                                 xyMask = vmaskf_eq(zerov, cv);
                                 yv = vself(xyMask, onev, yv);
                                 xv = vself(xyMask, zerov, xv);
-                                _mm_store_ps(&yBuffer[col], yv);
-                                _mm_store_ps(&xBuffer[col], xv);
-                                _mm_store_ps(&chprovBuffer[col], cv / c327d68v);
+                                STVF(yBuffer[col], yv);
+                                STVF(xBuffer[col], xv);
+                                STVF(chprovBuffer[col], cv / c327d68v);
 
                             }
 
