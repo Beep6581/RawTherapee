@@ -31,6 +31,7 @@
 #31 2015-05-31 firefly
 #32 2015-06-13 firefly
 #33 2015-07-20 firefly
+#34 2015-08-12 firefly
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -606,9 +607,9 @@ HISTORY_MSG_343;W-　色度のレベル
 HISTORY_MSG_344;W-　色度　方式　スライダー/カーブ
 HISTORY_MSG_345;W-　ES　ローカルコントラスト
 HISTORY_MSG_346;W-　ES　ローカルコントラスト　方式
-HISTORY_MSG_347;W-　ノイズ低減とリファイン　レベル0
-HISTORY_MSG_348;W-　ノイズ低減とリファイン　レベル1
-HISTORY_MSG_349;W-　ノイズ低減とリファイン　レベル2
+HISTORY_MSG_347;W-　ノイズ低減とリファイン　レベル1
+HISTORY_MSG_348;W-　ノイズ低減とリファイン　レベル2
+HISTORY_MSG_349;W-　ノイズ低減とリファイン　レベル3
 HISTORY_MSG_350;W-　ES　エッジ検出
 HISTORY_MSG_351;W-　残差　HHカーブ
 HISTORY_MSG_352;W-　背景色
@@ -662,6 +663,10 @@ HISTORY_MSG_399;W - 残差 サブツール
 HISTORY_MSG_400;W - 最終 サブツール
 HISTORY_MSG_401;W - カラートーン サブツール
 HISTORY_MSG_402;W - ノイズ低減 サブツール
+HISTORY_MSG_403;W - ES - エッジ検出の感度
+HISTORY_MSG_404;W - ES - 基底値の増幅
+HISTORY_MSG_405;W - ノイズ低減とリファイン　レベル4
+HISTORY_MSG_406;W - ES - 隣接するピクセルに対する効果
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;スナップショット
@@ -1442,6 +1447,7 @@ TP_EXPOSURE_TCMODE_FILMLIKE;フィルム調
 TP_EXPOSURE_TCMODE_LABEL1;カーブ・モード1
 TP_EXPOSURE_TCMODE_LABEL2;カーブ・モード2
 TP_EXPOSURE_TCMODE_LUMINANCE;輝度
+TP_EXPOSURE_TCMODE_PERCEPTUAL;知覚的
 TP_EXPOSURE_TCMODE_SATANDVALBLENDING;彩度と明度のブレンド
 TP_EXPOSURE_TCMODE_STANDARD;標準
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;加重平均
@@ -1517,6 +1523,7 @@ TP_ICM_NOICM;No ICM: sRGB 出力
 TP_ICM_OUTPUTPROFILE;出力プロファイル
 TP_ICM_SAVEREFERENCE;プロファイリングを参照する画像を保存
 TP_ICM_SAVEREFERENCE_APPLYWB;ホワイトバランスを適用
+TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;一般的に、ICCプロファイルを作成するための画像を保存する際に適用するホワイトバランスです、DCPプロファイルを作成する時は適用しません。
 TP_ICM_SAVEREFERENCE_TOOLTIP;入力プロファイルが適用される前のリニアなTIFF画像を保存します。キャリブレーション目的やカメラプロファイルの作成などに使います。
 TP_ICM_TONECURVE;DCPトーンカーブ使用
 TP_ICM_TONECURVE_TOOLTIP;DCPのプロファイルに含まれているトーンカーブを使用することができます
@@ -1773,11 +1780,13 @@ TP_WAVELET_DTWO;水平
 TP_WAVELET_EDCU;カーブ
 TP_WAVELET_EDGCONT;ローカルコントラスト
 TP_WAVELET_EDGCONT_TOOLTIP;スライダーを左に動かすとコントラストが減り、右に動かすと増えます\n底部の左、天井部の左、底部の右、天井部の右は、それぞれ低いコントラスト、平均的コントラスト、平均+1標準偏差のコントラスト、最も高いコントラストを示しています
+TP_WAVELET_EDGEAMPLI;基底値の増幅
 TP_WAVELET_EDGEDETECTTHR2;しきい値　高（エッジ検出）
 TP_WAVELET_EDGEDETECTTHR;しきい値　低（ノイズ）
 TP_WAVELET_EDGEDETECTTHR_TOOLTIP;しきい値を変えることで、エッジ検出の目標を調整します。例えば、青空の中のノイズが先鋭化しないようにします。
 TP_WAVELET_EDGEDETECT;グラデーション感度
 TP_WAVELET_EDGEDETECT_TOOLTIP;スライダーを右に動かすと、エッジ検出の感度が上がります。これはローカルコントラスト、しきい値　高、しきい値　低にも影響します
+TP_WAVELET_EDGESENSI;エッジ検出の感度
 TP_WAVELET_EDGE;エッジのシャープネス
 TP_WAVELET_EDGREINF_TOOLTIP;最初のレベルに対する作用を強めたり、弱めたりし、次のレベルに対してはその逆を行います、他のレベルは変わりません
 TP_WAVELET_EDGTHRESH;ディテール
@@ -1810,6 +1819,7 @@ TP_WAVELET_LEVELS_TOOLTIP;画像を幾つの詳細レベルに分割するか選
 TP_WAVELET_LEVF;コントラスト
 TP_WAVELET_LEVLABEL;プレビューで表示可能な最大レベル=%1
 TP_WAVELET_LEVONE;レベル2
+TP_WAVELET_LEVTHRE;レベル 4
 TP_WAVELET_LEVTWO;レベル3
 TP_WAVELET_LEVZERO;レベル1
 TP_WAVELET_LINKEDG;エッジのシャープネスの強さとリンク
@@ -1818,10 +1828,16 @@ TP_WAVELET_LIPST_TOOLTIP;リプシッツ連続というアルゴリズムを使�
 TP_WAVELET_LOWLIGHT;シャドウの輝度範囲
 TP_WAVELET_MEDGREINF;最初のレベル
 TP_WAVELET_MEDILEV;エッジ検出
+TP_WAVELET_MEDILEV_TOOLTIP;エッジの検出を有効にした際には、次の操作が奨められます：\n- アーティファクト発生を避けるため低いレベルのコントラストを使わない\n- グラデーション感度では高い値を使う\n\n効果を和らげるには、ノイズ低減とリファインの’リファイン’を下げる
 TP_WAVELET_MEDI;青空のアーティファクトを軽減
 TP_WAVELET_NEUTRAL;ニュートラル
 TP_WAVELET_NOISE;ノイズ低減とリファイン
 TP_WAVELET_NOIS;ノイズ低減
+TP_WAVELET_NPHIGH;高い
+TP_WAVELET_NPLOW;低い
+TP_WAVELET_NPNONE;なし
+TP_WAVELET_NPTYPE;隣接するピクセルに対する効果
+TP_WAVELET_NPTYPE_TOOLTIP;このアルゴリズムは近傍する8つのピクセルを使って比較します。違いが少ない場合に、エッジを強化します。
 TP_WAVELET_OPACITYWL;最終的なローカルコントラスト
 TP_WAVELET_OPACITYWL_TOOLTIP;ウェーブレット処理の最後で最終的なローカルコントラストを調整します\n\nイコライザは左から右に向かって、最も細かいローカルコントラストから大きいローカルコントラストを表しています
 TP_WAVELET_OPACITYW;コントラストバランス　d/v-hカーブ
@@ -1921,18 +1937,5 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_403;W - ES - Edge sensitivity
-!HISTORY_MSG_404;W - ES - Base amplification
-!HISTORY_MSG_405;W - Denoise - Level 4
-!HISTORY_MSG_406;W - ES - Neighboring pixels
-!TP_EXPOSURE_TCMODE_PERCEPTUAL;Perceptual
-!TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
-!TP_WAVELET_EDGEAMPLI;Base amplification
-!TP_WAVELET_EDGESENSI;Edge sensitivity
-!TP_WAVELET_LEVTHRE;Level 4
-!TP_WAVELET_MEDILEV_TOOLTIP;When you enable Edge Detection, it is recommanded:\n- to disabled low contrast levels to avoid artifacts,\n- to use high values of gradient sensitivity.\n\nYou can modulate the strength with 'refine' from Denoise and Refine.
-!TP_WAVELET_NPHIGH;High
-!TP_WAVELET_NPLOW;Low
-!TP_WAVELET_NPNONE;None
-!TP_WAVELET_NPTYPE;Neighboring pixels
-!TP_WAVELET_NPTYPE_TOOLTIP;This algorithm uses the proximity of a pixel and eight of its neighbors. If less difference, edges are reinforced.
+!GENERAL_APPLY;Apply
+!GENERAL_OPEN;Open
