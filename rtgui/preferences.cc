@@ -676,12 +676,14 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     Gtk::VBox* mvbcm = Gtk::manage (new Gtk::VBox ());
     mvbcm->set_border_width (4);
 
-    Gtk::Label* intlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_CMETRICINTENT") + ":", Gtk::ALIGN_LEFT));
+    /*
+    Gtk::Label* intlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_CMETRICINTENT")+":", Gtk::ALIGN_LEFT));
     intent = Gtk::manage (new Gtk::ComboBoxText ());
     intent->append_text (M("PREFERENCES_INTENT_PERCEPTUAL"));
     intent->append_text (M("PREFERENCES_INTENT_RELATIVE"));
     intent->append_text (M("PREFERENCES_INTENT_SATURATION"));
     intent->append_text (M("PREFERENCES_INTENT_ABSOLUTE"));
+    */
 
     iccDir = Gtk::manage (new Gtk::FileChooserButton (M("PREFERENCES_ICCDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     Gtk::Label* pdlabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_ICCDIR") + ":", Gtk::ALIGN_LEFT));
@@ -707,8 +709,8 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
 #endif
 
     Gtk::Table* colt = Gtk::manage (new Gtk::Table (3, 2));
-    colt->attach (*intlab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colt->attach (*intent, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    //colt->attach (*intlab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    //colt->attach (*intent, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     colt->attach (*pdlabel, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colt->attach (*iccDir, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
 #if !defined(__APPLE__) // monitor profile not supported on apple
@@ -1425,7 +1427,7 @@ void Preferences::storePreferences ()
     moptions.rtSettings.autoMonitorProfile  = cbAutoMonProfile->get_active ();
 #endif
     moptions.rtSettings.iccDirectory        = iccDir->get_filename ();
-    moptions.rtSettings.colorimetricIntent  = intent->get_active_row_number ();
+    //moptions.rtSettings.colorimetricIntent  = intent->get_active_row_number ();
     moptions.rtSettings.viewingdevice       = view->get_active_row_number ();
     moptions.rtSettings.viewingdevicegrey   = grey->get_active_row_number ();
     moptions.rtSettings.viewinggreySc   = greySc->get_active_row_number ();
@@ -1554,7 +1556,7 @@ void Preferences::fillPreferences ()
         iccDir->set_current_folder (moptions.rtSettings.iccDirectory);
     }
 
-    intent->set_active (moptions.rtSettings.colorimetricIntent);
+    //intent->set_active (moptions.rtSettings.colorimetricIntent);
     view->set_active (moptions.rtSettings.viewingdevice);
     grey->set_active (moptions.rtSettings.viewingdevicegrey);
     greySc->set_active (moptions.rtSettings.viewinggreySc);

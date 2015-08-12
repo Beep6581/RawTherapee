@@ -98,6 +98,14 @@ ImProcFunctions::~ImProcFunctions ()
     if (monitorTransform != NULL) {
         cmsDeleteTransform (monitorTransform);
     }
+
+    if (output2monitorTransform != NULL) {
+        cmsDeleteTransform (output2monitorTransform);
+    }
+
+    if (lab2outputTransform != NULL) {
+        cmsDeleteTransform (lab2outputTransform);
+    }
 }
 
 void ImProcFunctions::setScale (double iscale)
@@ -184,11 +192,21 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
     // set up monitor transform
     Glib::ustring wprofile = params->icm.working;
 
-    if (monitorTransform) {
+    if (monitorTransform != NULL) {
         cmsDeleteTransform (monitorTransform);
     }
 
+    if (output2monitorTransform != NULL) {
+        cmsDeleteTransform (output2monitorTransform);
+    }
+
+    if (lab2outputTransform != NULL) {
+        cmsDeleteTransform (lab2outputTransform);
+    }
+
     monitorTransform = NULL;
+    output2monitorTransform = NULL;
+    lab2outputTransform = NULL;
 
 #if !defined(__APPLE__) // No support for monitor profiles on OS X, all data is sRGB
     Glib::ustring monitorProfile = settings->monitorProfile;
@@ -205,10 +223,25 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
     if (monitor) {
         lcmsMutex->lock ();
         cmsHPROFILE iprof  = cmsCreateLab4Profile(NULL);
-        monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_DBL, monitor, TYPE_RGB_8, settings->colorimetricIntent,
+        monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, INTENT_RELATIVE_COLORIMETRIC,
                                                cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is for thread safety, NOOPTIMIZE for precision
-        cmsCloseProfile(iprof);
 
+        Glib::ustring outputProfile;
+
+        if (params->icm.output != "" && params->icm.output != ColorManagementParams::NoICMString) {
+            outputProfile = params->icm.output;
+            cmsHPROFILE jprof = iccStore->getProfile(outputProfile);
+
+            if (jprof) {
+                lab2outputTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, jprof, TYPE_RGB_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
+
+                if (monitor) {
+                    output2monitorTransform = cmsCreateTransform (jprof, TYPE_RGB_FLT, monitor, TYPE_RGB_8, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
+                }
+            }
+        }
+
+        cmsCloseProfile(iprof);
         lcmsMutex->unlock ();
     }
 

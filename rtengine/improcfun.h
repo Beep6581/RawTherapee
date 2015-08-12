@@ -60,6 +60,8 @@ class ImProcFunctions
     static LUTf gamma2curve;
 
     cmsHTRANSFORM monitorTransform;
+    cmsHTRANSFORM lab2outputTransform;
+    cmsHTRANSFORM output2monitorTransform;
 
     const ProcParams* params;
     double scale;
@@ -222,7 +224,7 @@ public:
     static void cleanupCache ();
 
     ImProcFunctions       (const ProcParams* iparams, bool imultiThread = true)
-        : monitorTransform(NULL), params(iparams), scale(1), multiThread(imultiThread) {}
+        : monitorTransform(NULL), lab2outputTransform(NULL), output2monitorTransform(NULL), params(iparams), scale(1), multiThread(imultiThread) {}
     ~ImProcFunctions      ();
 
     void setScale         (double iscale);

@@ -54,8 +54,8 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
         #pragma omp parallel firstprivate(lab, data, W, H)
 #endif
         {
-            AlignedBuffer<double> pBuf(3 * lab->W);
-            double *buffer = pBuf.data;
+            AlignedBuffer<float> pBuf(3 * lab->W);
+            float *buffer = pBuf.data;
 
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
@@ -78,7 +78,13 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
                     buffer[iy++] = rb[j] / 327.68f;
                 }
 
-                cmsDoTransform (monitorTransform, buffer, data + ix, W);
+                if (!settings->HistogramWorking && output2monitorTransform && lab2outputTransform) {
+                    AlignedBuffer<float> buf(3 * W);
+                    cmsDoTransform (lab2outputTransform, buffer, buf.data, W);
+                    cmsDoTransform (output2monitorTransform, buf.data, data + ix, W);
+                } else {
+                    cmsDoTransform (monitorTransform, buffer, data + ix, W);
+                }
             }
 
         } // End of parallelization
@@ -161,7 +167,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 
         lcmsMutex->lock ();
         cmsHPROFILE hLab  = cmsCreateLab4Profile(NULL);
-        cmsHTRANSFORM hTransform = cmsCreateTransform (hLab, TYPE_Lab_DBL, oprofG, TYPE_RGB_8, settings->colorimetricIntent,
+        cmsHTRANSFORM hTransform = cmsCreateTransform (hLab, TYPE_Lab_DBL, oprofG, TYPE_RGB_8, INTENT_RELATIVE_COLORIMETRIC,
                                    cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
         cmsCloseProfile(hLab);
         lcmsMutex->unlock ();
@@ -316,7 +322,7 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 
         cmsHPROFILE iprof = iccStore->getXYZProfile ();
         lcmsMutex->lock ();
-        cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprof, TYPE_RGB_16, settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
+        cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprof, TYPE_RGB_16, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
         lcmsMutex->unlock ();
 
         image->ExecCMSTransform(hTransform);
@@ -587,7 +593,7 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 
         cmsHPROFILE iprof = iccStore->getXYZProfile ();
         lcmsMutex->lock ();
-        cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprofdef, TYPE_RGB_16, settings->colorimetricIntent,  cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
+        cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprofdef, TYPE_RGB_16, INTENT_RELATIVE_COLORIMETRIC,  cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
         lcmsMutex->unlock ();
 
         image->ExecCMSTransform(hTransform);
