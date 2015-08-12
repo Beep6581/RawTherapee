@@ -1,5 +1,3 @@
-syntax: glob
-
 *~
 *.orig
 
@@ -8,11 +6,15 @@ syntax: glob
 .settings
 .directory
 
+CMakeCache.txt
 CMakeFiles
+CMakeScripts
 Makefile
 cmake_install.cmake
-CMakeCache.txt
+install_manifest.txt
 
+build
+Build
 Debug
 RelWithDebInfo
 MinSizeRel
@@ -29,5 +31,15 @@ install_manifest.txt
 AboutThisBuild.txt
 clean
 
-syntax: regexp
-^Win32CMakeOptions-MK1\.txt$
+*.7z
+*.bz
+*.bz2
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.xz
+*.zip
+
