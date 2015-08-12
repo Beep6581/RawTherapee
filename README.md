@@ -17,6 +17,9 @@ http://rawtherapee.com/shared/source/
 Source code documentation:
 http://michaelezra.com/projects/rt/documentation/
 
+Git handbook:
+http://git-scm.com/book/en/
+
 ## Compilation, patching and Git
 Refer to RawPedia for dependency requirements:
 http://rawpedia.rawtherapee.com/Linux
@@ -41,9 +44,9 @@ Then replace the number in `-j8` below with this number. This will make compilat
 
 Now you will make an out-of-source compilation of RawTherapee, it will be built into the ~/repo-rt/build/release folder, and then you will move this folder to your home directory and rename it to "rawtherapee", so make sure there is no ~/rawtherapee folder already!
 ```
-mkdir build && cd build
-cmake -DCMAKE_BUILD_TYPE="release" -DPROC_TARGET_NUMBER="2" -DBUILD_BUNDLE="ON" -DBINDIR="." -DDATADIR="." -DCACHE_NAME_SUFFIX=4
-make -j8 install
+mkdir build && cd build && \
+cmake -DCMAKE_BUILD_TYPE="release" -DPROC_TARGET_NUMBER="2" -DBUILD_BUNDLE="ON" -DBINDIR="." -DDATADIR="." -DCACHE_NAME_SUFFIX=4 .. && \
+make -j8 install && \
 mv release ~/rawtherapee
 ```
 
