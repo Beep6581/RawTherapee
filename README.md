@@ -1,7 +1,7 @@
 # RawTherapee
-A powerful cross-platform raw photo processing program
+![RawTherapee logo](http://rawtherapee.com/images/logos/rawtherapee_logo_discuss.png)
 
-RawTherapee is a cross-platform raw photo processing program, released under the GNU General Public License Version 3. It is written in C++ using a GTK+ front-end and a patched version of dcraw for reading raw files. It is notable for the advanced control it gives the user over the demosaicing and developing process.
+RawTherapee is a powerful, cross-platform raw photo processing program, released under the GNU General Public License Version 3. It is written in C++ using a GTK+ front-end and a patched version of dcraw for reading raw files. It is notable for the advanced control it gives the user over the demosaicing and developing process.
 
 Website:
 http://rawtherapee.com/
