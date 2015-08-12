@@ -34,8 +34,7 @@ class ThumbBrowserBase  :  public Gtk::VBox
 
     class Internal : public Gtk::DrawingArea
     {
-
-        Glib::RefPtr<Gdk::GC> gc_;
+        //Cairo::RefPtr<Cairo::Context> cc;
         int ofsX, ofsY;
         ThumbBrowserBase* parent;
         bool dirty;
@@ -43,7 +42,7 @@ class ThumbBrowserBase  :  public Gtk::VBox
         Internal ();
         void setParent (ThumbBrowserBase* p);
         void on_realize();
-        bool on_expose_event(GdkEventExpose* event);
+        bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
         bool on_button_press_event (GdkEventButton* event);
         bool on_button_release_event (GdkEventButton* event);
         bool on_motion_notify_event (GdkEventMotion* event);
@@ -162,7 +161,7 @@ public:
     {
         return fd;
     }
-    void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
+    void on_style_updated ();
     void redraw ();   // arrange files and draw area
     void refreshThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw
     void refreshQuickThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw

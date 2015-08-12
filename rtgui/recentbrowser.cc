@@ -31,7 +31,7 @@ RecentBrowser::RecentBrowser () : listener (NULL)
     frame->add (*recentDirs);
 
     for(size_t i = 0; i < options.recentFolders.size(); i++) {
-        recentDirs->append_text (options.recentFolders[i]);
+        recentDirs->append (options.recentFolders[i]);
     }
 
     pack_start (*frame, Gtk::PACK_SHRINK, 4);
@@ -55,11 +55,10 @@ void RecentBrowser::dirSelected (const Glib::ustring& dirname, const Glib::ustri
 {
 
     size_t numFolders = options.recentFolders.size();
+    size_t i;
 
     if(numFolders > 0) { // search entry and move to top if it exists
-        size_t i;
-
-        for(i = 0; i < numFolders; i++) {
+        for(i = 0; i < numFolders; ++i) {
             if(options.recentFolders[i] == dirname) {
                 break;
             }
@@ -78,10 +77,12 @@ void RecentBrowser::dirSelected (const Glib::ustring& dirname, const Glib::ustri
 
     conn.block (true);
 
-    recentDirs->remove_text (dirname);
-    recentDirs->prepend_text (dirname);
+    if (i > 0) {
+        recentDirs->remove_text (i);
+    }
+
+    recentDirs->prepend (dirname);
     recentDirs->set_active_text (dirname);
 
     conn.block (false);
 }
-

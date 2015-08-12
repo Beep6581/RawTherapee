@@ -19,12 +19,12 @@
 #include "history.h"
 #include "multilangmgr.h"
 #include "rtimage.h"
+#include "guiutils.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
 Glib::ustring eventDescrArray[NUMOFEVENTS];
-extern Glib::ustring argv0;
 
 History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1)
 {
@@ -77,13 +77,19 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1)
     pack_end (*hsepb, Gtk::PACK_SHRINK, 0);
 
     Gtk::HBox* ahbox = Gtk::manage (new Gtk::HBox ());
-    addBookmark = Gtk::manage (new Gtk::Button (M("HISTORY_NEWSNAPSHOT")));
+    addBookmark = Gtk::manage (new Gtk::Button ());  // M("HISTORY_NEWSNAPSHOT")
+    setExpandAlignProperties(addBookmark, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    //addBookmark->get_style_context()->set_junction_sides(Gtk::JUNCTION_RIGHT);
+    addBookmark->get_style_context()->add_class("Left");
     addBookmark->set_tooltip_markup (M("HISTORY_NEWSNAPSHOT_TOOLTIP"));
     Gtk::Image* addimg = Gtk::manage (new RTImage ("gtk-add.png"));
     addBookmark->set_image (*addimg);
     ahbox->pack_start (*addBookmark);
 
-    delBookmark = Gtk::manage (new Gtk::Button (M("HISTORY_DELSNAPSHOT")));
+    delBookmark = Gtk::manage (new Gtk::Button ());  // M("HISTORY_DELSNAPSHOT")
+    setExpandAlignProperties(delBookmark, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    //delBookmark->get_style_context()->set_junction_sides(Gtk::JUNCTION_LEFT);
+    delBookmark->get_style_context()->add_class("Right");
     Gtk::Image* delimg = Gtk::manage (new RTImage ("list-remove.png"));
     delBookmark->set_image (*delimg);
     ahbox->pack_start (*delBookmark);
@@ -278,7 +284,7 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
 
 
     if (!selection->get_selected_rows().empty()) {
-        Gtk::TreeView::Selection::ListHandle_Path selp = selection->get_selected_rows();
+        std::vector<Gtk::TreeModel::Path> selp = selection->get_selected_rows();
         hTreeView->scroll_to_row (*selp.begin());
     }
 
@@ -345,7 +351,7 @@ void History::undo ()
         int size = historyModel->children().size ();
 
         if (size > 1) {
-            selection->select (historyModel->children()[size - 2]);
+            selection->select (historyModel->children().operator [](size - 2));
         }
     }
 }
@@ -366,7 +372,7 @@ void History::redo ()
         int size = historyModel->children().size ();
 
         if (size > 1) {
-            selection->select (historyModel->children()[size - 2]);
+            selection->select (historyModel->children().operator [](size - 2));
         }
     }
 }

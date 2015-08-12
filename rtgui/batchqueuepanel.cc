@@ -61,8 +61,8 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
 
     // construct batch queue panel with the extra "start" and "stop" button
     Gtk::VBox* batchQueueButtonBox = Gtk::manage (new Gtk::VBox);
-    start = Gtk::manage (new Gtk::ToggleButton (M("FILEBROWSER_STARTPROCESSING")));
-    stop = Gtk::manage (new Gtk::ToggleButton (M("FILEBROWSER_STOPPROCESSING")));
+    start = Gtk::manage (new Gtk::ToggleButton ());
+    stop = Gtk::manage (new Gtk::ToggleButton ());
     autoStart = Gtk::manage (new Gtk::CheckButton (M("BATCHQUEUE_AUTOSTART")));
     start->set_tooltip_markup (M("FILEBROWSER_STARTPROCESSINGHINT"));
     stop->set_tooltip_markup (M("FILEBROWSER_STOPPROCESSINGHINT"));
@@ -72,8 +72,10 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
     autoStart->set_active (options.procQueueEnabled);
 
     start->set_image (*Gtk::manage (new RTImage ("gtk-media-play.png")));
+    start->get_style_context()->add_class("BIG");
     startConnection = start->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::startBatchProc));
     stop->set_image (*Gtk::manage (new RTImage ("gtk-media-stop.png")));
+    stop->get_style_context()->add_class("BIG");
     stopConnection = stop->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::stopBatchProc));
     batchQueueButtonBox->pack_start (*start, Gtk::PACK_SHRINK, 4);
     batchQueueButtonBox->pack_start (*stop, Gtk::PACK_SHRINK, 4);
@@ -95,7 +97,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
     useFolder = Gtk::manage (new Gtk::RadioButton (M("PREFERENCES_OUTDIRFOLDER") + ":"));
     hb3->pack_start (*useFolder, Gtk::PACK_SHRINK, 4);
 
-#if defined(__APPLE__) || defined(__linux__)
+#if 0 //defined(__APPLE__) || defined(__linux__)
     // At the time of writing (2013-11-11) the gtkmm FileChooserButton with ACTION_SELECT_FOLDER
     // is so buggy on these platforms (OS X and Linux) that we rather employ this ugly button hack.
     // When/if GTKMM gets fixed we can go back to use the FileChooserButton, like we do on Windows.
@@ -105,7 +107,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
     outdirFolderButton->signal_pressed().connect( sigc::mem_fun(*this, &BatchQueuePanel::pathFolderButtonPressed) );
     outdirFolderButton->set_tooltip_markup (M("PREFERENCES_OUTDIRFOLDERHINT"));
     outdirFolderButton->set_label(makeFolderLabel(options.savePathFolder));
-    Gtk::Image* folderImg = Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU));
+    Gtk::Image* folderImg = Gtk::manage (new RTImage ("gtk-directory.png"));
     folderImg->show ();
     outdirFolderButton->set_image (*folderImg);
     outdirFolder = 0;
@@ -131,9 +133,10 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
     // Output file format selection
     fformat = Gtk::manage (new Gtk::Frame (M("PREFERENCES_FILEFORMAT")));
     saveFormatPanel = Gtk::manage (new SaveFormatPanel ());
+    setExpandAlignProperties(saveFormatPanel, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     fformat->add (*saveFormatPanel);
+    fformat->set_border_width(4);
 
-    saveFormatPanel->init (options.saveFormatBatch);
     outdirTemplate->set_text (options.savePathTemplate);
     useTemplate->set_active (options.saveUsePathTemplate);
     useFolder->set_active (!options.saveUsePathTemplate);
@@ -149,8 +152,8 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
     pack_start (*topBox, Gtk::PACK_SHRINK);
 
     topBox->pack_start (*batchQueueButtonBox, Gtk::PACK_SHRINK, 4);
-    topBox->pack_start (*fdir);
-    topBox->pack_start (*fformat, Gtk::PACK_SHRINK, 4);
+    topBox->pack_start (*fdir, Gtk::PACK_EXPAND_WIDGET, 4);
+    topBox->pack_start (*fformat, Gtk::PACK_EXPAND_WIDGET, 4);
 
     // add middle browser area
     pack_start (*batchQueue);
@@ -183,6 +186,8 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
     batchQueue->setBatchQueueListener (this);
 
     show_all ();
+
+    saveFormatPanel->init (options.saveFormatBatch);
 
     if (batchQueue->loadBatchQueue ()) {
         g_idle_add_full (G_PRIORITY_LOW, processLoadedBatchQueueUIThread, batchQueue, NULL);
@@ -218,7 +223,10 @@ void BatchQueuePanel::updateTab (int qsize, int forceOrientation)
         vbb->set_spacing (2);
         vbb->set_tooltip_markup (M("MAIN_FRAME_BATCHQUEUE_TOOLTIP"));
         vbb->show_all ();
-        nb->set_tab_label(*this, *vbb);
+
+        if (nb) {
+            nb->set_tab_label(*this, *vbb);
+        }
     } else {
         Gtk::HBox* hbb = Gtk::manage (new Gtk::HBox ());
 
@@ -236,7 +244,10 @@ void BatchQueuePanel::updateTab (int qsize, int forceOrientation)
         hbb->set_spacing (2);
         hbb->set_tooltip_markup (M("MAIN_FRAME_BATCHQUEUE_TOOLTIP"));
         hbb->show_all ();
-        nb->set_tab_label(*this, *hbb);
+
+        if (nb) {
+            nb->set_tab_label(*this, *hbb);
+        }
     }
 }
 
@@ -326,8 +337,8 @@ void BatchQueuePanel::pathFolderButtonPressed ()
 {
 
     Gtk::FileChooserDialog fc(M("PREFERENCES_OUTDIRFOLDER"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
-    fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
-    fc.add_button( Gtk::StockID("gtk-ok"), Gtk::RESPONSE_OK);
+    fc.add_button( "_Cancel", Gtk::RESPONSE_CANCEL); // STOCKICON WAS THERE
+    fc.add_button( "_OK", Gtk::RESPONSE_OK); // STOCKICON WAS THERE
     fc.set_filename(options.savePathFolder);
     fc.set_transient_for(*parent);
     int result = fc.run();
@@ -361,7 +372,7 @@ bool BatchQueuePanel::handleShortcutKey (GdkEventKey* event)
 
     if (ctrl) {
         switch(event->keyval) {
-        case GDK_s:
+        case GDK_KEY_s:
             if (start->get_active()) {
                 stopBatchProc();
             } else {

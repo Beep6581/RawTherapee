@@ -51,6 +51,17 @@ protected:
 
     SHCListener* cl;
 
+    Gtk::SizeRequestMode get_request_mode_vfunc () const;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
+    void get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const;
+    void on_realize();
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
+    bool on_button_press_event (GdkEventButton* event);
+    bool on_button_release_event (GdkEventButton* event);
+    bool on_motion_notify_event (GdkEventMotion* event);
+
 public:
 
     SHCSelector();
@@ -64,11 +75,6 @@ public:
     void setDefaults (double spos, double cpos, double hpos);
     void setPositions (double spos, double cpos, double hpos);
     void getPositions (double& spos, double& cpos, double& hpos);
-    void on_realize();
-    bool on_expose_event(GdkEventExpose* event);
-    bool on_button_press_event (GdkEventButton* event);
-    bool on_button_release_event (GdkEventButton* event);
-    bool on_motion_notify_event (GdkEventMotion* event);
     void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
     bool reset ();
     void refresh();

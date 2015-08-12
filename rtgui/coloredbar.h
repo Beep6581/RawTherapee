@@ -42,6 +42,7 @@ public:
     void expose(Glib::RefPtr<Gdk::Window> destWindow);
     void expose(Cairo::RefPtr<Cairo::ImageSurface> destSurface);
     void expose(BackBuffer *backBuffer);
+    void expose(const Cairo::RefPtr< Cairo::Context> &cr);
 
     bool canGetColors();
 

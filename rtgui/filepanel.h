@@ -63,7 +63,7 @@ protected:
 
     int error;
 
-    void on_NB_switch_page(GtkNotebookPage* page, guint page_num);
+    void on_NB_switch_page(Gtk::Widget* page, guint page_num);
 
 public:
     FilePanel ();

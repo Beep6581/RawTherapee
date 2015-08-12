@@ -196,7 +196,7 @@ protected:
 
     bool hasChanged;
 
-    void addPanel (Gtk::Box* where, FoldableToolPanel* panel);
+    void addPanel (Gtk::Box* where, FoldableToolPanel* panel, int level = 1);
     void foldThemAll (GdkEventButton* event);
     void updateVScrollbars (bool hide);
     void updateTabsHeader (bool useIcons);

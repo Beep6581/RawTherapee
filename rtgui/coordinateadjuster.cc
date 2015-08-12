@@ -46,7 +46,7 @@ CoordinateAdjuster::AxisAdjuster::AxisAdjuster(CoordinateAdjuster *parent, const
     spinButton = Gtk::manage( new Gtk::SpinButton() );
 
     label = Gtk::manage (new Gtk::Label(axis->label));
-    //label->set_alignment(Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    //label->set_alignment(Gtk::ALIGN_MIDDLE, Gtk::ALIGN_MIDDLE);
 
     spinButton = Gtk::manage (new Gtk::SpinButton());
     spinButton->set_name("AxisAdjuster");

@@ -33,6 +33,7 @@ class ThresholdAdjusterListener
 {
 
 public:
+    virtual ~ThresholdAdjusterListener() {}
     // to be used by listener that has created a ThresholdAdjuster with with single threshold and precision > 0
     virtual void adjusterChanged (ThresholdAdjuster* a, double newBottom, double newTop) {}
     // to be used by listener that has created a ThresholdAdjuster with with double threshold and precision > 0

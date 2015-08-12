@@ -29,6 +29,7 @@ class ThumbImageUpdateListener
 
 public:
 
+    virtual ~ThumbImageUpdateListener() {}
     /**
      * @brief Called when thumbnail image is update
      *

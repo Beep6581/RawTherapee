@@ -25,14 +25,12 @@ class SplashImage : public Gtk::DrawingArea
 {
 
 private:
-    Glib::RefPtr<Gdk::GC> gc_;
     Glib::RefPtr<Gdk::Pixbuf> pixbuf;
     Glib::RefPtr<Pango::Layout> version;
 
 public:
     SplashImage ();
-    void on_realize ();
-    bool on_expose_event (GdkEventExpose* event);
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
 };
 
 //class Splash : public Gtk::Window {

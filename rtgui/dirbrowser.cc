@@ -57,7 +57,7 @@ DirBrowser::DirBrowser () : dirTreeModel(),
     dirtree->set_rules_hint(false);
     dirtree->set_reorderable(false);
     dirtree->set_enable_search(false);
-    scrolledwindow4->set_flags(Gtk::CAN_FOCUS);
+    scrolledwindow4->set_can_focus(true);
     scrolledwindow4->set_border_width(2);
     scrolledwindow4->set_shadow_type(Gtk::SHADOW_NONE);
     scrolledwindow4->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
@@ -356,7 +356,7 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath)
 {
 
     Gtk::TreeModel::Path path;
-    path.append_index(0);
+    path.push_back(0);
 
     char* dcpy = strdup (absDirPath.c_str());
     char* dir = strtok (dcpy, "/\\");
@@ -366,9 +366,9 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath)
 #ifndef WIN32
     Gtk::TreeModel::iterator j = dirTreeModel->get_iter (path);
     path.up ();
-    path.append_index (0);
+    path.push_back (0);
     row_expanded(j, path);
-    path.append_index (0);
+    path.push_back (0);
 #endif
 
     while (dir) {
@@ -394,14 +394,14 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath)
             if (str == dirstr) {
 #endif
                 path.up ();
-                path.append_index (ix);
+                path.push_back (ix);
                 row_expanded(i, path);
-                path.append_index (0);
+                path.push_back (0);
                 break;
             }
 
-            ix++;
-            i++;
+            ++ix;
+            ++i;
         }
 
         count++;

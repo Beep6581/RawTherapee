@@ -25,7 +25,7 @@
 using namespace std;
 
 ThumbBrowserBase::ThumbBrowserBase ()
-    : lastClicked(NULL), previewHeight(options.thumbSize), numOfCols(1), inspector(NULL), isInspectorActive(false)
+    : inspector(NULL), isInspectorActive(false), lastClicked(NULL), previewHeight(options.thumbSize), numOfCols(1)
 {
     location = THLOC_FILEBROWSER;
     inW = -1;
@@ -48,9 +48,6 @@ ThumbBrowserBase::ThumbBrowserBase ()
     internal.setParent (this);
 
     show_all ();
-
-    hscroll.set_update_policy (Gtk::UPDATE_CONTINUOUS);
-    vscroll.set_update_policy (Gtk::UPDATE_CONTINUOUS);
 
     vscroll.signal_value_changed().connect( sigc::mem_fun(*this, &ThumbBrowserBase::scrollChanged) );
     hscroll.signal_value_changed().connect( sigc::mem_fun(*this, &ThumbBrowserBase::scrollChanged) );
@@ -638,9 +635,9 @@ void ThumbBrowserBase::Internal::on_realize()
 
     Gtk::DrawingArea::on_realize();
     Glib::RefPtr<Gdk::Window> window = get_window();
-    set_flags (Gtk::CAN_FOCUS);
+    set_can_focus(true);
     add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK | Gdk::KEY_PRESS_MASK);
-    gc_ = Gdk::GC::create(window);
+    //cc = window->create_cairo_context();
     set_has_tooltip (true);
     signal_query_tooltip().connect( sigc::mem_fun(*this, &ThumbBrowserBase::Internal::on_query_tooltip) );
 }
@@ -670,7 +667,7 @@ bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_t
     }
 }
 
-void ThumbBrowserBase::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
+void ThumbBrowserBase::on_style_updated ()
 {
     // GUI will be acquired by refreshThumbImages
     refreshThumbImages ();
@@ -678,6 +675,9 @@ void ThumbBrowserBase::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
 
 ThumbBrowserBase::Internal::Internal () : ofsX(0), ofsY(0), parent(NULL), dirty(true)
 {
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    style->add_class(GTK_STYLE_CLASS_BACKGROUND);
+    style->add_class(GTK_STYLE_CLASS_FLAT);
 }
 
 void ThumbBrowserBase::Internal::setParent (ThumbBrowserBase* p)
@@ -710,7 +710,8 @@ bool ThumbBrowserBase::Internal::on_button_press_event (GdkEventButton* event)
     GdkRectangle rect;
     rect.x = 0;
     rect.y = 0;
-    window->get_size (rect.width, rect.height);
+    rect.width = window->get_width();
+    rect.height = window->get_height();
 
     gdk_window_invalidate_rect (window->gobj(), &rect, true);
     gdk_window_process_updates (window->gobj(), true);
@@ -871,7 +872,7 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
 
 }
 
-bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event)
+bool ThumbBrowserBase::Internal::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
     // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
 
@@ -882,10 +883,13 @@ bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event)
     int w = get_width();
     int h = get_height();
 
-    window->clear();
     // draw thumbnails
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context ();
+    cr->set_antialias(Cairo::ANTIALIAS_NONE);
+    cr->set_line_join(Cairo::LINE_JOIN_MITER);
+    style->render_background(cr, 0., 0., w, h);
     Glib::RefPtr<Pango::Context> context = get_pango_context ();
-    context->set_font_description (get_style()->get_font());
+    context->set_font_description (style->get_font());
 
     {
 #if PROTECT_VECTORS

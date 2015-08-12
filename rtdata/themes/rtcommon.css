@@ -1,0 +1,198 @@
+/*
+  This file is part of RawTherapee.
+
+  Copyright (c) 2004-2011 Gabor Horvath <hgabor@rawtherapee.com>
+
+  RawTherapee is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+ 
+  RawTherapee is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+
+
+ Please keep this gtkrc in sync with the other ones from Clearlooks based themes.
+*/
+
+@define-color rt_salt_pinch        #95B0DB;
+@define-color rt_base_color        #dddddd;
+@define-color rt_fg_color          #0A0A0A;
+@define-color rt_tooltip_fg_color  #000000;
+@define-color rt_selected_bg_color #95B0DB;
+@define-color rt_selected_fg_color #FFFFFF;
+@define-color rt_text_color        #000000;
+@define-color rt_bg_color          #A1A1A1;
+@define-color rt_tooltip_bg_color  #F5F5B5;
+@define-color rt_tool_bg           #a0a0a0;
+@define-color rt_tool_border       #7d7d7d;
+
+GtkLabel, GtkComboBox, GtkEntry, GtkDrawingArea, GtkTreeView, GtkListTree {
+	color: #AAAAAA;
+}
+
+GtkFrame > GtkLabel {
+	color: #EEEEEE;
+}
+
+GtkComboBox:insensitive, GtkButton:insensitive {
+	color: #686868;
+}
+
+ProgressBar {
+	padding: 5px;
+}
+
+GtkDrawingArea {
+	border-radius: 0;
+}
+
+GtkDrawingArea:selected {
+	color: #CCCCCC;
+	background-color: #505050;
+}
+
+GtkDrawingArea:active {
+	color: #D8D8D8;
+	background-color: #505050;
+}
+
+GtkDrawingArea:hover {
+	color: #D8D8D8;
+}
+
+GtkLabel:insensitive, GtkEntry:insensitive, GtkSpinButton:insensitive {
+	color: rgba(128,128,128,0.5);
+}
+
+/* Normal state */
+GtkImage {
+	margin: 2px;
+	padding: 2px;
+}
+
+GtkFrame {
+	background-color: rgba(128,128,128,0.15);
+}
+
+GtkNotebook tab GtkLabel,
+GtkNotebook tab GtkImage {
+	margin: 2px;
+	padding: 4px;
+	font-size: 120%;
+	font-weight: bold;
+}
+
+GtkNotebook {
+	padding: 5px;
+}
+
+GtkButton {
+	margin: 2px;
+	padding: 2px;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 4px;
+	color: #AAAAAA;
+}
+GtkButton.RTFlat {
+	border-style: none;
+	border-radius: 0;
+}
+GtkButton.RTFlat:hover {
+	border-style: none;
+}
+
+/* Horizontal group of buttons in 1 column */
+GtkButton.Top {
+	border-radius: 4px 4px 0 0;
+	border-style: solid solid none solid;
+	margin-bottom: 0;
+}
+GtkButton.MiddleV {
+	border-radius: 0;
+	border-style: none solid none solid;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+GtkButton.Bottom {
+	border-radius: 0 0 4px 4px;
+	border-style: none solid solid solid;
+	margin-top: 0;
+}
+/* Horizontal group of buttons in 1 row */
+GtkButton.Left {
+	border-radius: 4px 0 0 4px;
+	border-style: solid none solid solid;
+	margin-right: 0;
+}
+GtkButton.MiddleH {
+	border-radius: 0;
+	border-style: solid none solid none;
+	margin-left: 0;
+	margin-right: 0;
+}
+GtkButton.Right {
+	border-radius: 0 4px 4px 0;
+	border-style: solid solid solid none;
+	margin-left: 0;
+}
+
+GtkEntry, GtkSpinButton {
+	padding: 2px;
+	margin: 2px;
+}
+
+
+GtkNotebook tab GtkButton, GtkNotebook tab GtkImage {
+	padding: 1px;
+}
+
+GtkMenu {
+	background-color: #1A1A1A;
+}
+
+GtkMenu GtkSeparator {
+}
+
+#ExpanderBox {
+	background-color: #2F3333;
+	border-color: #252525;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 4px;
+}
+
+#ExpanderBox2 {
+	background-color: #424747;
+	border-color: #282b2b;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 4px;
+}
+
+#MyExpanderTitle {
+	font-size: 120%;
+}
+#MyExpanderTitle GtkLabel {
+	color: #CCCCCC;
+}
+#MyExpanderTitle:hover {
+	background-color: rgba(230, 255, 255, 0.15);
+}
+#MyExpanderTitle:hover GtkLabel {
+	color: #D8D8D8;
+}
+
+#ExpanderBox2 GtkSeparator, #ExpanderBox3 GtkSeparator {
+	color: #1A1A1A;
+}
+
+.BIG {
+	padding: 8pt;
+}

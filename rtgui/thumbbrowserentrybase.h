@@ -23,6 +23,8 @@
 #include "lwbuttonset.h"
 #include "thumbnail.h"
 #include "threadutils.h"
+#include "guiutils.h"
+#include "cursormanager.h"
 
 class ThumbBrowserBase;
 class ThumbBrowserEntryBase
@@ -73,12 +75,13 @@ protected:
 
     ThumbBrowserBase* parent;
 
-    Glib::RefPtr<Gdk::Pixmap> backBuffer;
+    Glib::RefPtr<BackBuffer> backBuffer;
     bool bbSelected, bbFramed;
     guint8* bbPreview;
     std::vector<Glib::RefPtr<Gdk::Pixbuf> > bbIcons;
+    CursorShape cursor_type;
 
-    void drawFrame (Cairo::RefPtr<Cairo::Context> cr, const Gdk::Color& bg, const Gdk::Color& fg);
+    void drawFrame (Cairo::RefPtr<Cairo::Context> cr, const Gdk::RGBA& bg, const Gdk::RGBA& fg);
     void getTextSizes (int& w, int& h);
 
     // called during updateBackBuffer for custom overlays
@@ -172,7 +175,7 @@ public:
     virtual void refreshQuickThumbnailImage () {}
     virtual void calcThumbnailSize () {}
 
-    virtual void drawProgressBar (Glib::RefPtr<Gdk::Window> win, Glib::RefPtr<Gdk::GC> gc, const Gdk::Color& foregr, const Gdk::Color& backgr, int x, int w, int y, int h) {}
+    virtual void drawProgressBar (Glib::RefPtr<Gdk::Window> win, const Gdk::RGBA& foregr, const Gdk::RGBA& backgr, int x, int w, int y, int h) {}
 
     virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea ()
     {

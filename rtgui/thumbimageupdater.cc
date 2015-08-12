@@ -81,12 +81,8 @@ public:
     Glib::ThreadPool* threadPool_;
 
     // Need to be a Glib::Threads::Mutex because used in a Glib::Threads::Cond object...
-    // This is the only exceptions in RT so far, MyMutex is used everywhere else
-#ifdef WIN32
-    Glib::Mutex mutex_;
-#else
+    // This is the only exceptions along with GThreadMutex (guiutils.cc), MyMutex is used everywhere else
     Glib::Threads::Mutex mutex_;
-#endif
 
     JobList jobs_;
 
@@ -94,11 +90,7 @@ public:
 
     bool inactive_waiting_;
 
-#ifdef WIN32
-    Glib::Cond inactive_;
-#else
     Glib::Threads::Cond inactive_;
-#endif
 
     void
     processNextJob()
@@ -106,11 +98,7 @@ public:
         Job j;
 
         {
-#ifdef WIN32
-            Glib::Mutex::Lock lock(mutex_);
-#else
             Glib::Threads::Mutex::Lock lock(mutex_);
-#endif
 
             // nothing to do; could be jobs have been removed
             if ( jobs_.empty() ) {
@@ -173,12 +161,7 @@ public:
         }
 
         {
-#ifdef WIN32
-            Glib::Mutex::Lock lock(mutex_);
-#else
             Glib::Threads::Mutex::Lock lock(mutex_);
-#endif
-
 
             if ( --active_ == 0 &&
                     inactive_waiting_ ) {
@@ -215,11 +198,7 @@ ThumbImageUpdater::add(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade,
         return;
     }
 
-#ifdef WIN32
-    Glib::Mutex::Lock lock(impl_->mutex_);
-#else
     Glib::Threads::Mutex::Lock lock(impl_->mutex_);
-#endif
 
     // look up if an older version is in the queue
     Impl::JobList::iterator i(impl_->jobs_.begin());
@@ -251,11 +230,7 @@ ThumbImageUpdater::removeJobs(ThumbImageUpdateListener* listener)
 {
     DEBUG("removeJobs(%p)", listener);
 
-#ifdef WIN32
-    Glib::Mutex::Lock lock(impl_->mutex_);
-#else
     Glib::Threads::Mutex::Lock lock(impl_->mutex_);
-#endif
 
     for( Impl::JobList::iterator i(impl_->jobs_.begin()); i != impl_->jobs_.end(); ) {
         if (i->listener_ == listener) {
@@ -282,11 +257,7 @@ ThumbImageUpdater::removeAllJobs(void)
 {
     DEBUG("stop");
 
-#ifdef WIN32
-    Glib::Mutex::Lock lock(impl_->mutex_);
-#else
     Glib::Threads::Mutex::Lock lock(impl_->mutex_);
-#endif
 
     impl_->jobs_.clear();
 

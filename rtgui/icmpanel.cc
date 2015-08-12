@@ -91,9 +91,9 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     dcpIllLabel->show ();
     dcpIll = Gtk::manage (new MyComboBoxText ());
     dcpIll->set_tooltip_text (M("TP_ICM_DCPILLUMINANT_TOOLTIP"));
-    dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
-    dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 1");
-    dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 2");
+    dcpIll->append (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
+    dcpIll->append (M("TP_ICM_DCPILLUMINANT") + " 1");
+    dcpIll->append (M("TP_ICM_DCPILLUMINANT") + " 2");
     dcpIll->show ();
     dcpTemperatures[0] = 0;
     dcpTemperatures[1] = 0;
@@ -134,7 +134,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     // blend cms matrix no longer used
     //iVBox->pack_start (*ckbBlendCMSMatrix, Gtk::PACK_SHRINK, 2);
 
-    saveRef = Gtk::manage (new Gtk::Button (M("TP_ICM_SAVEREFERENCE")));
+    saveRef = Gtk::manage (new Gtk::Button ());  // M("TP_ICM_SAVEREFERENCE")
     saveRef->set_image (*Gtk::manage (new RTImage ("gtk-save-large.png")));
     saveRef->set_tooltip_markup (M("TP_ICM_SAVEREFERENCE_TOOLTIP"));
     iVBox->pack_start (*saveRef, Gtk::PACK_SHRINK, 2);
@@ -159,7 +159,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     std::vector<Glib::ustring> wpnames = rtengine::getWorkingProfiles ();
 
     for (size_t i = 0; i < wpnames.size(); i++) {
-        wnames->append_text (wpnames[i]);
+        wnames->append (wpnames[i]);
     }
 
     wnames->set_active (0);
@@ -182,13 +182,13 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     onames = Gtk::manage (new MyComboBoxText ());
     oVBox->pack_start (*onames, Gtk::PACK_SHRINK);
 
-    onames->append_text (M("TP_ICM_NOICM"));
+    onames->append (M("TP_ICM_NOICM"));
     onames->set_active (0);
 
     std::vector<Glib::ustring> opnames = iccStore->getOutputProfiles ();
 
     for (size_t i = 0; i < opnames.size(); i++) {
-        onames->append_text (opnames[i]);
+        onames->append (opnames[i]);
     }
 
     onames->set_active (0);
@@ -208,7 +208,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     std::vector<Glib::ustring> wpgamma = rtengine::getGamma ();
 
     for (size_t i = 0; i < wpgamma.size(); i++) {
-        wgamma->append_text (wpgamma[i]);
+        wgamma->append (wpgamma[i]);
     }
 
     wgamma->set_active (0);
@@ -252,27 +252,27 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     // ---------------------------- Output gamma list entries
 
 
-    Gtk::FileFilter filter_icc;
-    filter_icc.set_name(M("FILECHOOSER_FILTER_COLPROF"));
-    filter_icc.add_pattern("*.dcp");
-    filter_icc.add_pattern("*.DCP");
-    filter_icc.add_pattern("*.icc");
-    filter_icc.add_pattern("*.icm");
-    filter_icc.add_pattern("*.ICC");
-    filter_icc.add_pattern("*.ICM");
-    Gtk::FileFilter filter_iccdng;
-    filter_iccdng.set_name(M("FILECHOOSER_FILTER_COLPROF") + " + DNG");
-    filter_iccdng.add_pattern("*.dcp");
-    filter_iccdng.add_pattern("*.DCP");
-    filter_iccdng.add_pattern("*.dng");
-    filter_iccdng.add_pattern("*.DNG");
-    filter_iccdng.add_pattern("*.icc");
-    filter_iccdng.add_pattern("*.icm");
-    filter_iccdng.add_pattern("*.ICC");
-    filter_iccdng.add_pattern("*.ICM");
-    Gtk::FileFilter filter_any;
-    filter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
-    filter_any.add_pattern("*");
+    Glib::RefPtr<Gtk::FileFilter> filter_icc = Gtk::FileFilter::create();
+    filter_icc->set_name(M("FILECHOOSER_FILTER_COLPROF"));
+    filter_icc->add_pattern("*.dcp");
+    filter_icc->add_pattern("*.DCP");
+    filter_icc->add_pattern("*.icc");
+    filter_icc->add_pattern("*.icm");
+    filter_icc->add_pattern("*.ICC");
+    filter_icc->add_pattern("*.ICM");
+    Glib::RefPtr<Gtk::FileFilter> filter_iccdng = Gtk::FileFilter::create();
+    filter_iccdng->set_name(M("FILECHOOSER_FILTER_COLPROF") + " + DNG");
+    filter_iccdng->add_pattern("*.dcp");
+    filter_iccdng->add_pattern("*.DCP");
+    filter_iccdng->add_pattern("*.dng");
+    filter_iccdng->add_pattern("*.DNG");
+    filter_iccdng->add_pattern("*.icc");
+    filter_iccdng->add_pattern("*.icm");
+    filter_iccdng->add_pattern("*.ICC");
+    filter_iccdng->add_pattern("*.ICM");
+    Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
+    filter_any->set_name(M("FILECHOOSER_FILTER_ANY"));
+    filter_any->add_pattern("*");
 
     ipDialog->add_filter (filter_icc);
     ipDialog->add_filter (filter_iccdng);
@@ -318,11 +318,11 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
         if (dcpTemperatures[0] != 0 || dcpTemperatures[1] != 0) {
             int curr_active = dcpIll->get_active_row_number();
             ignoreDcpSignal = true;
-            dcpIll->clear_items ();
-            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
-            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 1");
-            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 2");
-            dcpIll->append_text (M("GENERAL_UNCHANGED"));
+            dcpIll->remove_all ();
+            dcpIll->append (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
+            dcpIll->append (M("TP_ICM_DCPILLUMINANT") + " 1");
+            dcpIll->append (M("TP_ICM_DCPILLUMINANT") + " 2");
+            dcpIll->append (M("GENERAL_UNCHANGED"));
             dcpTemperatures[0] = 0;
             dcpTemperatures[1] = 0;
             dcpIll->set_active (curr_active);
@@ -382,10 +382,10 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
                     sprintf(tempstr2, "%.0fK", temp2);
                     int curr_active = dcpIll->get_active_row_number();
                     ignoreDcpSignal = true;
-                    dcpIll->clear_items ();
-                    dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
-                    dcpIll->append_text (tempstr1);
-                    dcpIll->append_text (tempstr2);
+                    dcpIll->remove_all ();
+                    dcpIll->append (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
+                    dcpIll->append (tempstr1);
+                    dcpIll->append (tempstr2);
                     dcpTemperatures[0] = temp1;
                     dcpTemperatures[1] = temp2;
                     dcpIll->set_active (curr_active);
@@ -422,13 +422,13 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
         if (dcpTemperatures[0] != 0 || dcpTemperatures[1] != 0) {
             int curr_active = dcpIll->get_active_row_number();
             ignoreDcpSignal = true;
-            dcpIll->clear_items ();
-            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
-            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 1");
-            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 2");
+            dcpIll->remove_all ();
+            dcpIll->append (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
+            dcpIll->append (M("TP_ICM_DCPILLUMINANT") + " 1");
+            dcpIll->append (M("TP_ICM_DCPILLUMINANT") + " 2");
 
             if (isBatchMode) {
-                dcpIll->append_text (M("GENERAL_UNCHANGED"));
+                dcpIll->append (M("GENERAL_UNCHANGED"));
             }
 
             dcpTemperatures[0] = 0;
@@ -460,26 +460,26 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
         inone->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
         updateDCP(pp->icm.dcpIlluminant, "");
-    } else if (pp->icm.input == "(embedded)" || ((pp->icm.input == "(camera)" || pp->icm.input == "") && icamera->get_state() == Gtk::STATE_INSENSITIVE)) {
+    } else if (pp->icm.input == "(embedded)" || ((pp->icm.input == "(camera)" || pp->icm.input == "") && icamera->get_state() == Gtk::STATE_FLAG_INSENSITIVE)) {
         iembedded->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
         updateDCP(pp->icm.dcpIlluminant, "");
-    } else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state() != Gtk::STATE_INSENSITIVE) {
+    } else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state() != Gtk::STATE_FLAG_INSENSITIVE) {
         icameraICC->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (true);
         updateDCP(pp->icm.dcpIlluminant, "");
-    } else if ((pp->icm.input == "(cameraICC)") && icamera->get_state() != Gtk::STATE_INSENSITIVE && icameraICC->get_state() == Gtk::STATE_INSENSITIVE) {
+    } else if ((pp->icm.input == "(cameraICC)") && icamera->get_state() != Gtk::STATE_FLAG_INSENSITIVE && icameraICC->get_state() == Gtk::STATE_FLAG_INSENSITIVE) {
         // this is the case when (cameraICC) is instructed by packaged profiles, but ICC file is not found
         // therefore falling back UI to explicitly reflect the (camera) option
         icamera->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
         updateDCP(pp->icm.dcpIlluminant, "");
-    } else if ((pp->icm.input == "(cameraICC)") && icamera->get_state() == Gtk::STATE_INSENSITIVE && icameraICC->get_state() == Gtk::STATE_INSENSITIVE) {
+    } else if ((pp->icm.input == "(cameraICC)") && icamera->get_state() == Gtk::STATE_FLAG_INSENSITIVE && icameraICC->get_state() == Gtk::STATE_FLAG_INSENSITIVE) {
         // If neither (camera) nor (cameraICC) are available, as is the case when loading a non-raw, activate (embedded).
         iembedded->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
         updateDCP(pp->icm.dcpIlluminant, "");
-    } else if ((pp->icm.input == "(camera)" || pp->icm.input == "") && icamera->get_state() != Gtk::STATE_INSENSITIVE) {
+    } else if ((pp->icm.input == "(camera)" || pp->icm.input == "") && icamera->get_state() != Gtk::STATE_FLAG_INSENSITIVE) {
         icamera->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
         updateDCP(pp->icm.dcpIlluminant, "");
@@ -907,26 +907,26 @@ void ICMPanel::saveReferencePressed ()
     FileChooserLastFolderPersister persister(&dialog, options.lastProfilingReferenceDir);
     dialog.set_current_name (lastRefFilename);
 
-    dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
-    dialog.add_button(Gtk::StockID("gtk-save"), Gtk::RESPONSE_OK);
+    dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
+    dialog.add_button(M("GENERAL_SAVE"), Gtk::RESPONSE_OK);
 
     Gtk::CheckButton applyWB(M("TP_ICM_SAVEREFERENCE_APPLYWB"));
     applyWB.set_tooltip_text (M("TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP"));
     applyWB.set_active(true);
     Gtk::HBox* hbox = Gtk::manage( new Gtk::HBox() );
     hbox->pack_end(applyWB, Gtk::PACK_SHRINK, 2);
-    Gtk::VBox *vbox = dialog.get_vbox();
-    vbox->pack_end(*hbox, Gtk::PACK_SHRINK, 2);
+    Gtk::Box *box = dialog.get_content_area();
+    box->pack_end(*hbox, Gtk::PACK_SHRINK, 2);
 
-    Gtk::FileFilter filter_tif;
-    filter_tif.set_name(M("FILECHOOSER_FILTER_TIFF"));
-    filter_tif.add_pattern("*.tif");
-    filter_tif.add_pattern("*.tiff");
+    Glib::RefPtr<Gtk::FileFilter> filter_tif = Gtk::FileFilter::create();
+    filter_tif->set_name(M("FILECHOOSER_FILTER_TIFF"));
+    filter_tif->add_pattern("*.tif");
+    filter_tif->add_pattern("*.tiff");
     dialog.add_filter(filter_tif);
 
-    Gtk::FileFilter filter_any;
-    filter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
-    filter_any.add_pattern("*");
+    Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
+    filter_any->set_name(M("FILECHOOSER_FILTER_ANY"));
+    filter_any->add_pattern("*");
     dialog.add_filter(filter_any);
 
     dialog.show_all_children();
@@ -969,10 +969,10 @@ void ICMPanel::setBatchMode (bool batchMode)
     iVBox->pack_start (*iunchanged, Gtk::PACK_SHRINK, 4);
     iVBox->reorder_child (*iunchanged, 5);
     removeIfThere (this, saveRef);
-    onames->append_text (M("GENERAL_UNCHANGED"));
-    wnames->append_text (M("GENERAL_UNCHANGED"));
-    wgamma->append_text (M("GENERAL_UNCHANGED"));
-    dcpIll->append_text (M("GENERAL_UNCHANGED"));
+    onames->append (M("GENERAL_UNCHANGED"));
+    wnames->append (M("GENERAL_UNCHANGED"));
+    wgamma->append (M("GENERAL_UNCHANGED"));
+    dcpIll->append (M("GENERAL_UNCHANGED"));
     gampos->showEditedCB ();
     slpos->showEditedCB ();
 }

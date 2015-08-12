@@ -139,7 +139,7 @@ void RTImage::setPaths(Options &opt)
         Glib::ustring iSet;
 
         if (keyFile.has_key ("General", "Iconset")) {
-            iSet = keyFile.get_string ("General", "Iconset");
+            iSet = "Dark";    //keyFile.get_string ("General", "Iconset");
         }
 
         if (iSet.length()) {

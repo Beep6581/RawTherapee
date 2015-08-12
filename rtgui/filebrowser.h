@@ -73,11 +73,11 @@ class FileBrowser  : public ThumbBrowserBase,
 protected:
 
     Gtk::MenuItem* rank[6];
-    Gtk::ImageMenuItem* colorlabel[6];
+    MyImageMenuItem* colorlabel[6];
     Gtk::MenuItem* trash;
     Gtk::MenuItem* untrash;
-    Gtk::ImageMenuItem* develop;
-    Gtk::ImageMenuItem* developfast;
+    Gtk::MenuItem* develop;
+    Gtk::MenuItem* developfast;
     Gtk::MenuItem* rename;
     Gtk::MenuItem* remove;
     Gtk::MenuItem* removeInclProc;
@@ -89,7 +89,7 @@ protected:
     Gtk::MenuItem* menuRank;
     Gtk::MenuItem* menuLabel;
     Gtk::MenuItem* menuFileOperations;
-    Gtk::ImageMenuItem* menuProfileOperations;
+    MyImageMenuItem* menuProfileOperations;
     Gtk::MenuItem* menuExtProg;
     Gtk::MenuItem** amiExtProg;
     Gtk::MenuItem* miOpenDefaultViewer;
@@ -117,7 +117,7 @@ protected:
     Gtk::MenuItem* clearFromCacheFull;
     Gtk::Menu* pmenu;
 
-    Gtk::ImageMenuItem* colorlabel_pop[6];
+    MyImageMenuItem* colorlabel_pop[6];
     Gtk::Menu* pmenuColorLabels;
     void* colorLabel_actionData;
     void menuColorlabelActivated (Gtk::MenuItem* m); // use only when menu is invoked via FileBrowser::buttonPressed to pass actionData

@@ -52,31 +52,28 @@ BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(NULL), fileCatal
     pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
     p++;
 
-    pmenu->attach (*Gtk::manage(head = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPMOVEHEAD"))), 0, 1, p, p + 1);
+    pmenu->attach (*Gtk::manage(head = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEHEAD"), "toleftend.png")), 0, 1, p, p + 1);
     p++;
-    head->set_image(*Gtk::manage(new RTImage ("toleftend.png")));
 
-    pmenu->attach (*Gtk::manage(tail = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPMOVEEND"))), 0, 1, p, p + 1);
+    pmenu->attach (*Gtk::manage(tail = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEEND"), "torightend.png")), 0, 1, p, p + 1);
     p++;
-    tail->set_image(*Gtk::manage(new RTImage ("torightend.png")));
 
     pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
     p++;
 
-    pmenu->attach (*Gtk::manage(cancel = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"))), 0, 1, p, p + 1);
+    pmenu->attach (*Gtk::manage(cancel = new MyImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"), "gtk-close.png")), 0, 1, p, p + 1);
     p++;
-    cancel->set_image(*Gtk::manage(new RTImage ("gtk-close.png")));
 
     pmenu->show_all ();
 
     // Accelerators
     pmaccelgroup = Gtk::AccelGroup::create ();
     pmenu->set_accel_group (pmaccelgroup);
-    open->add_accelerator ("activate", pmenu->get_accel_group(), GDK_e, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
-    selall->add_accelerator ("activate", pmenu->get_accel_group(), GDK_a, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
-    head->add_accelerator ("activate", pmenu->get_accel_group(), GDK_Home, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
-    tail->add_accelerator ("activate", pmenu->get_accel_group(), GDK_End, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
-    cancel->add_accelerator ("activate", pmenu->get_accel_group(), GDK_Delete, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
+    open->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_e, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
+    selall->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_a, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
+    head->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_Home, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
+    tail->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_End, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
+    cancel->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_Delete, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
 
     open->signal_activate().connect(sigc::mem_fun(*this, &BatchQueue::openLastSelectedItemInEditor));
     cancel->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &BatchQueue::cancelItems), &selected));
@@ -154,19 +151,19 @@ bool BatchQueue::keyPressed (GdkEventKey* event)
 {
     bool ctrl  = event->state & GDK_CONTROL_MASK;
 
-    if ((event->keyval == GDK_A || event->keyval == GDK_a) && ctrl) {
+    if ((event->keyval == GDK_KEY_A || event->keyval == GDK_KEY_a) && ctrl) {
         selectAll ();
         return true;
-    } else if ((event->keyval == GDK_E || event->keyval == GDK_e) && ctrl) {
+    } else if ((event->keyval == GDK_KEY_E || event->keyval == GDK_KEY_e) && ctrl) {
         openLastSelectedItemInEditor();
         return true;
-    } else if (event->keyval == GDK_Home) {
+    } else if (event->keyval == GDK_KEY_Home) {
         headItems (&selected);
         return true;
-    } else if (event->keyval == GDK_End) {
+    } else if (event->keyval == GDK_KEY_End) {
         tailItems (&selected);
         return true;
-    } else if (event->keyval == GDK_Delete) {
+    } else if (event->keyval == GDK_KEY_Delete) {
         cancelItems (&selected);
         return true;
     }
@@ -1052,7 +1049,6 @@ struct NLParams {
 
 int bqnotifylistenerUI (void* data)
 {
-    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     NLParams* params = static_cast<NLParams*>(data);
     params->listener->queueSizeChanged (params->qsize, params->queueEmptied, params->queueError, params->queueErrorMessage);
     delete params;
@@ -1074,7 +1070,7 @@ void BatchQueue::notifyListener (bool queueEmptied)
         }
         params->queueEmptied = queueEmptied;
         params->queueError = false;
-        g_idle_add (bqnotifylistenerUI, params);
+        add_idle (bqnotifylistenerUI, params);
     }
 }
 
@@ -1104,6 +1100,6 @@ void BatchQueue::error (Glib::ustring msg)
         params->queueEmptied = false;
         params->queueError = true;
         params->queueErrorMessage = msg;
-        g_idle_add (bqnotifylistenerUI, params);
+        add_idle (bqnotifylistenerUI, params);
     }
 }

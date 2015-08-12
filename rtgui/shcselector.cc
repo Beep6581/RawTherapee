@@ -30,11 +30,44 @@ SHCSelector::SHCSelector() : ColoredBar(RTO_Left2Right), movingPosition(-1), cl(
     leftMargin = RADIUS;
     rightMargin = RADIUS;
 
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    style->add_class(GTK_STYLE_CLASS_DEFAULT);
+    style->add_class(GTK_STYLE_CLASS_SCALE);
+    style->add_class(GTK_STYLE_CLASS_SLIDER);
+
     // TODO: This is a hack :) ; change this name to a specific one and create a new entry in all gtkrc theme files
     set_name("ThresholdSelector");
     set_can_focus(false);
-    set_size_request (-1, 12);
     set_tooltip_text(M("SHCSELECTOR_TOOLTIP"));
+}
+
+Gtk::SizeRequestMode SHCSelector::get_request_mode_vfunc () const
+{
+    return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
+}
+
+void SHCSelector::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+{
+    int minimumWidth = 0;
+    int naturalWidth = 0;
+    get_preferred_width_vfunc (minimumWidth, naturalWidth);
+    get_preferred_height_for_width_vfunc (minimumWidth, minimum_height, natural_height);
+}
+
+void SHCSelector::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    minimum_width = 100;
+    natural_width = 150;
+}
+
+void SHCSelector::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+{
+    natural_height = minimum_height = 14;
+}
+
+void SHCSelector::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+{
+    get_preferred_width_vfunc (minimum_width, natural_width);
 }
 
 void SHCSelector::setMargins(int left, int right)
@@ -73,14 +106,13 @@ void SHCSelector::on_realize()
 
     Gtk::DrawingArea::on_realize();
 
-    add_events(Gdk::EXPOSURE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
+    add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
 }
 
-bool SHCSelector::on_expose_event(GdkEventExpose* event)
+bool SHCSelector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
 
-    Gdk::Color c;
-    Cairo::RefPtr<Cairo::Context> cr = get_window()->create_cairo_context();
+    Gdk::RGBA c;
 
     int w = get_width () - leftMargin - rightMargin;
     int h = get_height ();
@@ -88,8 +120,17 @@ bool SHCSelector::on_expose_event(GdkEventExpose* event)
     wslider = std::max(int(h / 5), 10);
     double hwslider = double(wslider) / 2.;
 
-    Gtk::StateType state = !is_sensitive() ? Gtk::STATE_INSENSITIVE : Gtk::STATE_NORMAL;
-    Glib::RefPtr<Gtk::Style> style = get_style();
+    Gtk::StateFlags state = !is_sensitive() ? Gtk::STATE_FLAG_INSENSITIVE : Gtk::STATE_FLAG_NORMAL;
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+
+
+
+
+    //style->render_background(cr, leftMargin, 0, w, h);
+    //return true;
+
+
+
 
     // clear bg
 
@@ -103,61 +144,93 @@ bool SHCSelector::on_expose_event(GdkEventExpose* event)
         // this will eventually create/update the off-screen pixmap
         setDrawRectangle(win, leftMargin + 1, 1, w - 2, int(float(h) * 5.5f / 7.f + 0.5f));
         // that we're displaying here
-        ColoredBar::expose(win);
-    } else {
-        // solid background
-        c = style->get_bg (state);
-
-        if (state == Gtk::STATE_INSENSITIVE) {
-            cr->set_source_rgb (c.get_red_p() * 0.96, c.get_green_p() * 0.96, c.get_blue_p() * 0.96);
-        } else {
-            cr->set_source_rgb (c.get_red_p() * 0.85, c.get_green_p() * 0.85, c.get_blue_p() * 0.85);
-        }
-
-        // draw the box's background
-        cr->rectangle (leftMargin + 1, 1, w - 2, int(float(h) * 5.5f / 7.f + 0.5f));
-        cr->fill();
+        ColoredBar::expose(cr);
     }
+
+    /*  useless
+    else {
+        // solid background
+        // draw the box's background
+        style->render_background(cr, leftMargin+1, 1, w-2, int(float(h)*5.5f/7.f+0.5f));
+    }
+    */
 
     // draw the box's borders
     cr->set_line_width (1.);
+    c = style->get_border_color(state);
+    cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
     cr->rectangle (leftMargin + 0.5, 0.5, w - 1, int(float(h) * 5.5f / 7.f + 0.5f) + 1);
-    c = style->get_bg (state);
-
-    if (state == Gtk::STATE_INSENSITIVE) {
-        cr->set_source_rgb (c.get_red_p() * 0.85, c.get_green_p() * 0.85, c.get_blue_p() * 0.85);
-    } else {
-        cr->set_source_rgb (c.get_red_p() * 0.7, c.get_green_p() * 0.7, c.get_blue_p() * 0.7);
-    }
-
     cr->stroke ();
 
     // draw sliders
-    //cr->set_line_width (1.0);
+    //cr->set_line_width (1.);
     for (int i = 0; i < 3; i++) {
-        cr->move_to (leftMargin + 0.5 + (w - 1)*positions[i] + hwslider, double(h) - 0.5);
-        cr->rel_line_to (0., double(-h / 3));
-        cr->rel_line_to (-hwslider, double(-h / 3));
-        cr->rel_line_to (-hwslider, double(h / 3));
-        cr->rel_line_to (0., double(h / 3));
-        cr->close_path();
-        // normal
-        c = style->get_bg (is_sensitive() ? Gtk::STATE_ACTIVE : Gtk::STATE_INSENSITIVE);
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-        cr->fill_preserve ();
-        c = style->get_bg (state);
-
-        if (state == Gtk::STATE_INSENSITIVE) {
-            cr->set_source_rgb (c.get_red_p() * 0.85, c.get_green_p() * 0.85, c.get_blue_p() * 0.85);
+        if (i == movingPosition) {
+            style->set_state(Gtk::STATE_FLAG_ACTIVE);
+        }
+        /*
+        else if (i==litCursor)
+            style->set_state(Gtk::STATE_FLAG_PRELIGHT);
+        */
+        else if (!is_sensitive()) {
+            style->set_state(Gtk::STATE_FLAG_INSENSITIVE);
         } else {
-            cr->set_source_rgb (c.get_red_p() * 0.7, c.get_green_p() * 0.7, c.get_blue_p() * 0.7);
+            style->set_state(Gtk::STATE_FLAG_NORMAL);
         }
 
-        cr->stroke ();
+        style->render_slider(cr, leftMargin + 0.5 + (w - 1)*positions[i] - hwslider, vb, wslider, h - vb, Gtk::ORIENTATION_HORIZONTAL);
+        style->set_state(Gtk::STATE_FLAG_NORMAL);
     }
 
+    /*
+    for (int i=0; i<3; i++) {
+        double posX = leftMargin+0.5+(w-1)*positions[i];
+        double arrowY = h-(h*3.5/7.-0.5)-vb;
+        double baseY = h-0.5-vb;
+        double centerY = (arrowY+baseY)/2.;
+        cr->move_to (posX, arrowY);
+        cr->line_to (posX+hwslider, centerY);
+        cr->line_to (posX+hwslider, baseY);
+        cr->line_to (posX-hwslider, baseY);
+        cr->line_to (posX-hwslider, centerY);
+        cr->close_path();
+        if (i==movingPosition) {
+            // moved (selected)
+            c = style->get_background_color(Gtk::STATE_FLAG_SELECTED);
+            cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+            cr->fill_preserve ();
+            c = style->get_border_color (Gtk::STATE_FLAG_SELECTED);
+            cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+            cr->stroke ();
+        }
+        */
+
+    /*
+    else if (i==litCursor) {
+        // prelight
+        c = style->get_background_color(Gtk::STATE_FLAG_PRELIGHT);
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+        cr->fill_preserve ();
+        c = style->get_border_color (Gtk::STATE_FLAG_PRELIGHT);
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+        cr->stroke ();
+    }
+    */
+
+    /*
+    else {
+        // normal
+        c = style->get_background_color(is_sensitive() ? Gtk::STATE_FLAG_ACTIVE : Gtk::STATE_FLAG_INSENSITIVE);
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+        cr->fill_preserve ();
+        c = style->get_border_color (is_sensitive() ? Gtk::STATE_FLAG_ACTIVE : Gtk::STATE_FLAG_INSENSITIVE);
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+        cr->stroke ();
+    }
+    }
+    */
+
     // draw text for the slider that is being moved
-    Glib::RefPtr<Pango::Context> context = get_pango_context () ;
     cr->set_line_width (0.5);
 
     if (movingPosition >= 0) {
@@ -167,8 +240,8 @@ bool SHCSelector::on_expose_event(GdkEventExpose* event)
         Glib::RefPtr<Pango::Layout> layout = create_pango_layout(Glib::ustring::format(std::setprecision(2), positions[i]));
         layout->get_pixel_size(layout_width, layout_height);
         offset = positions[i] > 0.5 ? -layout_width - 1 - hwslider : 1 + hwslider;
-        c = style->get_bg (state);
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        c = style->get_background_color(state);
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
 
         cr->set_line_width(3.);
         cr->set_line_join(Cairo::LINE_JOIN_ROUND);
@@ -177,8 +250,8 @@ bool SHCSelector::on_expose_event(GdkEventExpose* event)
         cr->move_to (leftMargin + w * positions[i] + offset, 0.);
         layout->add_to_cairo_context (cr);
         cr->stroke_preserve();
-        c = style->get_fg (Gtk::STATE_PRELIGHT);
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        c = style->get_color(Gtk::STATE_FLAG_PRELIGHT);
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
         cr->fill ();
     }
 

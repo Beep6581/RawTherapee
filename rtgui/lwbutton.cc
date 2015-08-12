@@ -71,15 +71,15 @@ Cairo::RefPtr<Cairo::ImageSurface> LWButton::getIcon ()
     return icon;
 }
 
-void LWButton::setColors (const Gdk::Color& bg, const Gdk::Color& fg)
+void LWButton::setColors (const Gdk::RGBA& bg, const Gdk::RGBA& fg)
 {
 
-    bgr = bg.get_red_p ();
-    bgg = bg.get_green_p ();
-    bgb = bg.get_blue_p ();
-    fgr = fg.get_red_p ();
-    fgg = fg.get_green_p ();
-    fgb = fg.get_blue_p ();
+    bgr = bg.get_red ();
+    bgg = bg.get_green ();
+    bgb = bg.get_blue ();
+    fgr = fg.get_red ();
+    fgg = fg.get_green ();
+    fgb = fg.get_blue ();
 }
 
 bool LWButton::inside (int x, int y)

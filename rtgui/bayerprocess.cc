@@ -29,7 +29,7 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     method = Gtk::manage (new MyComboBoxText ());
 
     for( size_t i = 0; i < procparams::RAWParams::BayerSensor::numMethods; i++) {
-        method->append_text(procparams::RAWParams::BayerSensor::methodstring[i]);
+        method->append(procparams::RAWParams::BayerSensor::methodstring[i]);
     }
 
     method->set_active(0);
@@ -188,7 +188,7 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
 
 void BayerProcess::setBatchMode(bool batchMode)
 {
-    method->append_text (M("GENERAL_UNCHANGED"));
+    method->append (M("GENERAL_UNCHANGED"));
     method->set_active(procparams::RAWParams::BayerSensor::numMethods); // No name
     dcbOptions->hide();
     lmmseOptions->hide();

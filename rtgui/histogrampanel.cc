@@ -29,7 +29,6 @@
 
 using namespace rtengine;
 
-extern Glib::ustring argv0;
 extern Options options;
 
 
@@ -39,16 +38,28 @@ extern Options options;
 HistogramPanel::HistogramPanel ()
 {
 
+    set_vexpand(false);
+    set_hexpand(true);
+    set_valign(Gtk::ALIGN_START);
+    set_halign(Gtk::ALIGN_FILL);
+
     histogramArea = Gtk::manage (new HistogramArea (this));
+    histogramArea->set_hexpand(true);
+    histogramArea->set_vexpand(true);
     histogramRGBArea = Gtk::manage (new HistogramRGBArea ());
+    histogramRGBArea->set_hexpand(true);
+    histogramRGBArea->set_vexpand(false);
+    histogramRGBArea->set_halign(Gtk::ALIGN_FILL);
+    histogramRGBArea->set_valign(Gtk::ALIGN_END);
     histogramRGBArea->show();
 
-    gfxVBox = Gtk::manage (new Gtk::VBox (false, 2));
-    histogramRGBArea->setParent(gfxVBox);
-    gfxVBox->pack_start (*histogramArea, Gtk::PACK_EXPAND_WIDGET, 0);
+    gfxGrid = Gtk::manage (new Gtk::Grid ());
+    gfxGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
+    histogramRGBArea->setParent(gfxGrid);
+    gfxGrid->add(*histogramArea);
 
     if (options.histogramBar) {
-        gfxVBox->pack_start (*histogramRGBArea, Gtk::PACK_SHRINK, 0);
+        gfxGrid->add (*histogramRGBArea);
     }
 
     redImage   = new RTImage ("histRed.png");
@@ -113,7 +124,8 @@ HistogramPanel::HistogramPanel ()
     showFull->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_FULL"));
     showBAR->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_BAR"));
 
-    buttonVBox = Gtk::manage (new Gtk::VBox (false, 2));
+    buttonGrid = Gtk::manage (new Gtk::Grid ());
+    buttonGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
     showRed->set_active (true);
     showGreen->set_active (true);
     showBlue->set_active (true);
@@ -133,6 +145,39 @@ HistogramPanel::HistogramPanel ()
     showFull->set_image  (showFull->get_active()  ? *fullImage  : *fullImage_g);
     showBAR->set_image   (showBAR->get_active()   ? *barImage   : *barImage_g);
 
+    showRed->set_hexpand(false);
+    showRed->set_vexpand(false);
+    showRed->set_halign(Gtk::ALIGN_CENTER);
+    showRed->set_valign(Gtk::ALIGN_START);
+    showGreen->set_hexpand(false);
+    showGreen->set_vexpand(false);
+    showGreen->set_halign(Gtk::ALIGN_CENTER);
+    showGreen->set_valign(Gtk::ALIGN_START);
+    showBlue->set_hexpand(false);
+    showRed->set_vexpand(false);
+    showBlue->set_halign(Gtk::ALIGN_CENTER);
+    showBlue->set_valign(Gtk::ALIGN_START);
+    showValue->set_hexpand(false);
+    showValue->set_vexpand(false);
+    showValue->set_halign(Gtk::ALIGN_CENTER);
+    showValue->set_valign(Gtk::ALIGN_START);
+    showChro->set_hexpand(false);
+    showChro->set_vexpand(false);
+    showChro->set_halign(Gtk::ALIGN_CENTER);
+    showChro->set_valign(Gtk::ALIGN_START);
+    showRAW->set_hexpand(false);
+    showRAW->set_vexpand(false);
+    showRAW->set_halign(Gtk::ALIGN_CENTER);
+    showRAW->set_valign(Gtk::ALIGN_START);
+    showFull->set_hexpand(false);
+    showFull->set_vexpand(false);
+    showFull->set_halign(Gtk::ALIGN_CENTER);
+    showFull->set_valign(Gtk::ALIGN_START);
+    showBAR->set_hexpand(false);
+    showBAR->set_vexpand(false);
+    showBAR->set_halign(Gtk::ALIGN_CENTER);
+    showBAR->set_valign(Gtk::ALIGN_START);
+
     showRed->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::red_toggled), showRed );
     showGreen->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::green_toggled), showGreen );
     showBlue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::blue_toggled), showBlue );
@@ -142,22 +187,22 @@ HistogramPanel::HistogramPanel ()
     showFull->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::full_toggled), showFull );
     showBAR->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::bar_toggled), showBAR );
 
-    buttonVBox->pack_start (*showRed, Gtk::PACK_SHRINK, 0);
-    buttonVBox->pack_start (*showGreen, Gtk::PACK_SHRINK, 0);
-    buttonVBox->pack_start (*showBlue, Gtk::PACK_SHRINK, 0);
-    buttonVBox->pack_start (*showValue, Gtk::PACK_SHRINK, 0);
-    buttonVBox->pack_start (*showChro, Gtk::PACK_SHRINK, 0);
-    buttonVBox->pack_start (*showRAW, Gtk::PACK_SHRINK, 0);
-    buttonVBox->pack_start (*showFull, Gtk::PACK_SHRINK, 0);
-    buttonVBox->pack_start (*showBAR, Gtk::PACK_SHRINK, 0);
+    buttonGrid->add (*showRed);
+    buttonGrid->add (*showGreen);
+    buttonGrid->add (*showBlue);
+    buttonGrid->add (*showValue);
+    buttonGrid->add (*showChro);
+    buttonGrid->add (*showRAW);
+    buttonGrid->add (*showFull);
+    buttonGrid->add (*showBAR);
 
     // Put the button vbox next to the window's border to be less disturbing
     if (options.histogramPosition == 1) {
-        pack_start (*buttonVBox, Gtk::PACK_SHRINK, 2);
-        pack_start (*gfxVBox, Gtk::PACK_EXPAND_WIDGET, 2);
+        add (*buttonGrid);
+        add (*gfxGrid);
     } else {
-        pack_start (*gfxVBox, Gtk::PACK_EXPAND_WIDGET, 2);
-        pack_start (*buttonVBox, Gtk::PACK_SHRINK, 2);
+        add (*gfxGrid);
+        add (*buttonGrid);
     }
 
     show_all ();
@@ -190,42 +235,32 @@ HistogramPanel::~HistogramPanel ()
 void HistogramPanel::resized (Gtk::Allocation& req)
 {
 
+    /*
     rconn.block (true);
 
-    int gHeight = req.get_width() / 2;
-
-    if (gHeight > 150) {
-        gHeight = 150;
-    } else if (gHeight < 100) {
-        gHeight = 100;
-    }
-
-    int bHeight = req.get_width() / 30;
-
-    if (bHeight >  10) {
-        bHeight =  10;
-    } else if (bHeight < 5  ) {
-        bHeight = 5;
-    }
-
+    int gHeight = req.get_width()/2;
+    if (gHeight > 150) gHeight = 150; else if (gHeight < 100) gHeight = 100;
+    int bHeight = req.get_width()/30;
+    if (bHeight >  10) bHeight =  10; else if (bHeight < 5  ) bHeight = 5;
     histogramArea->set_size_request (req.get_width(), gHeight);
     histogramRGBArea->set_size_request (req.get_width(), bHeight);
 
     rconn.block (false);
+    */
 
-    histogramArea->renderHistogram ();
+    histogramArea->updateBackBuffer ();
     histogramArea->queue_draw ();
 
     if (histogramRGBArea->getFreeze() == true) {
         histogramRGBArea->updateFreeze(false);
         // set histogramRGBArea invalid;
-        histogramRGBArea->renderRGBMarks(-1, -1, -1);
+        histogramRGBArea->updateBackBuffer(-1, -1, -1);
         // re-set freeze to old state
         histogramRGBArea->updateFreeze(true);
         histogramRGBArea->queue_draw ();
     } else {
         // set histogramRGBArea invalid;
-        histogramRGBArea->renderRGBMarks(-1, -1, -1);
+        histogramRGBArea->updateBackBuffer(-1, -1, -1);
         histogramRGBArea->queue_draw ();
     }
 }
@@ -292,14 +327,14 @@ void HistogramPanel::rgbv_toggled ()
     histogramArea->queue_draw ();
 
     histogramRGBArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showRAW->get_active(), showBAR->get_active(), showChro->get_active());
-    histogramRGBArea->renderRGBMarks (0, 0, 0);
+    histogramRGBArea->updateBackBuffer (0, 0, 0);
     histogramArea->queue_draw ();
 }
 
 void HistogramPanel::setHistRGBInvalid ()
 {
     // do something to un-show vertical bars
-    histogramRGBArea->renderRGBMarks(-1, -1, -1);
+    histogramRGBArea->updateBackBuffer(-1, -1, -1);
     histogramRGBArea->queue_draw ();
 }
 
@@ -320,25 +355,31 @@ void HistogramPanel::pointerMoved (bool validPos, Glib::ustring profile, Glib::u
 
     if (!validPos) {
         // do something to un-show vertical bars
-        histogramRGBArea->renderRGBMarks(-1, -1, -1);
+        histogramRGBArea->updateBackBuffer(-1, -1, -1);
         histogramRGBArea->queue_draw ();
     } else {
         // do something to show vertical bars
-        histogramRGBArea->renderRGBMarks(r, g, b, profile, profileW);
+        histogramRGBArea->updateBackBuffer(r, g, b, profile, profileW);
         histogramRGBArea->queue_draw ();
     }
 }
 
 /*
  * Move the vertical button bar to the right side
- * only allowed values for align are Gtk::ALIGN_LEFT and Gtk::ALIGN_RIGHT
+ * only allowed values for align are Gtk::POS_LEFT and Gtk::POS_RIGHT
  */
-void HistogramPanel::reorder (Gtk::AlignmentEnum align)
+void HistogramPanel::reorder (Gtk::PositionType align)
 {
-    if (align == Gtk::ALIGN_LEFT) {
-        reorder_child(*buttonVBox, 0);
+    if (align == Gtk::POS_LEFT) {
+        gfxGrid->reference();
+        removeIfThere(this, gfxGrid, false);
+        add (*gfxGrid);
+        gfxGrid->unreference();
     } else {
-        reorder_child(*buttonVBox, 1);
+        buttonGrid->reference();
+        removeIfThere(this, buttonGrid, false);
+        add (*buttonGrid);
+        buttonGrid->unreference();
     }
 }
 
@@ -357,6 +398,8 @@ HistogramRGBArea::HistogramRGBArea () ://needChroma unactive by default
     frozen(false), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(true), rawMode(false), showMode(options.histogramBar), barDisplayed(options.histogramBar), needChroma(false)
 {
 
+    //set_size_request(60, 12);
+
     harih = new HistogramRGBAreaIdleHelper;
     harih->harea = this;
     harih->destroyed = false;
@@ -371,6 +414,45 @@ HistogramRGBArea::~HistogramRGBArea ()
     } else {
         delete harih;
     }
+}
+
+
+Gtk::SizeRequestMode HistogramRGBArea::get_request_mode_vfunc () const
+{
+    return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
+}
+
+void HistogramRGBArea::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+{
+    int minimumWidth = 0;
+    int naturalWidth = 0;
+    get_preferred_width_vfunc(minimumWidth, naturalWidth);
+    get_preferred_height_for_width_vfunc (minimumWidth, minimum_height, natural_height);
+}
+
+void HistogramRGBArea::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    minimum_width = 60;
+    natural_width = 200;
+}
+
+void HistogramRGBArea::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+{
+    int bHeight = width / 30;
+
+    if (bHeight >  10) {
+        bHeight =  10;
+    } else if (bHeight < 5  ) {
+        bHeight = 5;
+    }
+
+    minimum_height = bHeight;
+    natural_height = bHeight;
+}
+
+void HistogramRGBArea::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+{
+    get_preferred_width_vfunc (minimum_width, natural_width);
 }
 
 bool HistogramRGBArea::getFreeze()
@@ -389,14 +471,9 @@ void HistogramRGBArea::updateFreeze (bool f)
     return;
 }
 
-void HistogramRGBArea::renderRGBMarks (int r, int g, int b, Glib::ustring profile, Glib::ustring profileW)
+void HistogramRGBArea::updateBackBuffer (int r, int g, int b, Glib::ustring profile, Glib::ustring profileW)
 {
-
-    if (!is_realized ()) {
-        return;
-    }
-
-    if (frozen)  {
+    if (!get_realized () || frozen || !showMode) {
         return;
     }
 
@@ -404,83 +481,76 @@ void HistogramRGBArea::renderRGBMarks (int r, int g, int b, Glib::ustring profil
     GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
 
     Glib::RefPtr<Gdk::Window> window = get_window();
-    int winx, winy, winw, winh, wind;
-    window->get_geometry(winx, winy, winw, winh, wind);
+    int winx, winy, winw, winh;
+    window->get_geometry(winx, winy, winw, winh);
 
-    overlay = Gdk::Pixmap::create (window, winw, winh, -1);
-    Glib::RefPtr<Gdk::GC> ovrl = Gdk::GC::create(overlay);
+    // This will create or update the size of the BackBuffer::surface
+    setDrawRectangle(window, 0, 0, winw, winh, true);
 
-    Glib::RefPtr<Gtk::Style> style = get_style ();
+    if (surface)  {
+        Cairo::RefPtr<Cairo::Context> cc = Cairo::Context::create(surface);
+        Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+        Gdk::RGBA c;
 
-    if (!showMode)  {
-        ovrl->set_foreground (style->get_bg (Gtk::STATE_NORMAL));
-        overlay->draw_rectangle (ovrl, true, 0, 0, winw, winh);
+        cc->set_antialias(Cairo::ANTIALIAS_NONE);
+        cc->set_line_join(Cairo::LINE_JOIN_MITER);
+        cc->set_source_rgb (mgray.get_red(), mgray.get_green(), mgray.get_blue());
+        cc->rectangle(0, 0, winw, winh);
+        cc->fill();
 
-        if (rgbgc_ && overlay) {
-            window->draw_drawable (rgbgc_, overlay, 0, 0, 0, 0, -1, -1);
-        }
+        cc->set_line_width (1.0);
 
-        return;
-    } else {
-        ovrl->set_foreground (mgray);
-        overlay->draw_rectangle (ovrl, true, 0, 0, winw, winh);
-
-        if (rgbgc_ && overlay) {
-            window->draw_drawable (rgbgc_, overlay, 0, 0, 0, 0, -1, -1);
-        }
-    }
-
-    Cairo::RefPtr<Cairo::Context> cr = overlay->create_cairo_context();
-    cr->set_line_width (1.0);
-
-    if ( r != -1 && g != -1 && b != -1 ) {
-        if (needRed) {
-            // Red
-            cr->set_source_rgb(1.0, 0.0, 0.0);
-            cr->move_to((int)(r * (winw / 256.0)), 0);
-            cr->line_to((int)(r * (winw / 256.0)), winh - 0);
-            cr->stroke();
-        }
-
-        if (needGreen) {
-            // Green
-            cr->set_source_rgb(0.0, 1.0, 0.0);
-            cr->move_to((int)(g * (winw / 256.0)), 0);
-            cr->line_to((int)(g * (winw / 256.0)), winh - 0);
-            cr->stroke();
-        }
-
-        if (needBlue) {
-            // Blue
-            cr->set_source_rgb(0.0, 0.0, 1.0);
-            cr->move_to((int)(b * (winw / 256.0)), 0);
-            cr->line_to((int)(b * (winw / 256.0)), winh - 0);
-            cr->stroke();
-        }
-
-        if(needLuma || needChroma) {
-            float Lab_L, Lab_a, Lab_b;
-            rgb2lab( profile, profileW, r, g, b, Lab_L, Lab_a, Lab_b);
-
-            if (needLuma) {
-                // Luma
-                cr->set_source_rgb(1.0, 1.0, 1.0);
-                cr->move_to((int)((Lab_L) * (winw / 100.0)), 0);
-                cr->line_to((int)((Lab_L) * (winw / 100.0)), winh - 0);
-                cr->stroke();
+        if ( r != -1 && g != -1 && b != -1 ) {
+            if (needRed) {
+                // Red
+                cc->set_source_rgb(1.0, 0.0, 0.0);
+                cc->move_to((int)(r * (winw / 256.0)), 0);
+                cc->line_to((int)(r * (winw / 256.0)), winh - 0);
+                cc->stroke();
             }
 
-            if (needChroma) {
-                // Chroma
-                float chromaval = sqrt(Lab_a * Lab_a + Lab_b * Lab_b) / 1.8;
-                //  float chromaval = sqrt(Lab_a*Lab_a + Lab_b*Lab_b);
-                cr->set_source_rgb(0.0, 0.0, 0.0);
-                cr->move_to((int)(chromaval * (winw / 100.0)), 0);
-                cr->line_to((int)(chromaval * (winw / 100.0)), winh - 0);
-                cr->stroke();
+            if (needGreen) {
+                // Green
+                cc->set_source_rgb(0.0, 1.0, 0.0);
+                cc->move_to((int)(g * (winw / 256.0)), 0);
+                cc->line_to((int)(g * (winw / 256.0)), winh - 0);
+                cc->stroke();
+            }
+
+            if (needBlue) {
+                // Blue
+                cc->set_source_rgb(0.0, 0.0, 1.0);
+                cc->move_to((int)(b * (winw / 256.0)), 0);
+                cc->line_to((int)(b * (winw / 256.0)), winh - 0);
+                cc->stroke();
+            }
+
+            if(needLuma || needChroma) {
+                float Lab_L, Lab_a, Lab_b;
+                rgb2lab( profile, profileW, r, g, b, Lab_L, Lab_a, Lab_b);
+
+                if (needLuma) {
+                    // Luma
+                    cc->set_source_rgb(1.0, 1.0, 1.0);
+                    cc->move_to((int)((Lab_L) * (winw / 100.0)), 0);
+                    cc->line_to((int)((Lab_L) * (winw / 100.0)), winh - 0);
+                    cc->stroke();
+                }
+
+                if (needChroma) {
+                    // Chroma
+                    float chromaval = sqrt(Lab_a * Lab_a + Lab_b * Lab_b) / 1.8;
+                    //  float chromaval = sqrt(Lab_a*Lab_a + Lab_b*Lab_b);
+                    cc->set_source_rgb(0.0, 0.0, 0.0);
+                    cc->move_to((int)(chromaval * (winw / 100.0)), 0);
+                    cc->line_to((int)(chromaval * (winw / 100.0)), winh - 0);
+                    cc->stroke();
+                }
             }
         }
     }
+
+    setDirty(false);
 }
 
 void HistogramRGBArea::rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b)
@@ -646,7 +716,7 @@ int histrgbupdate (void* data)
         return 0;
     }
 
-    harih->harea->renderRGBMarks(-1, -1, -1);
+    harih->harea->updateBackBuffer(-1, -1, -1);
     harih->harea->queue_draw ();
 
     harih->pending--;
@@ -686,7 +756,7 @@ void HistogramRGBArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, 
 
     if (bar && !barDisplayed) {
         // Toggled on, add (show) the widget
-        parent->pack_start(*this, Gtk::PACK_SHRINK, 0);
+        parent->add(*this);
         options.histogramBar = true;
         barDisplayed = true;
     } else if (!bar && barDisplayed) {
@@ -709,36 +779,27 @@ void HistogramRGBArea::on_realize ()
 
     Gtk::DrawingArea::on_realize();
     Glib::RefPtr<Gdk::Window> window = get_window();
-    rgbgc_ = Gdk::GC::create(window);
-    add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK);
+    add_events(Gdk::BUTTON_PRESS_MASK);
 
-    Glib::RefPtr<Gdk::Colormap> rgbcolormap = get_default_colormap();
-    black = Gdk::Color ("black");
-    red = Gdk::Color ("red");
-    green = Gdk::Color ("green");
-    blue = Gdk::Color ("blue");
-    lgray = Gdk::Color ("gray75");
-    mgray = Gdk::Color ("gray50");
-    dgray = Gdk::Color ("gray25");
-    rgbcolormap->alloc_color(black);
-    rgbcolormap->alloc_color(white);
-    rgbcolormap->alloc_color(red);
-    rgbcolormap->alloc_color(green);
-    rgbcolormap->alloc_color(blue);
-    rgbcolormap->alloc_color(lgray);
-    rgbcolormap->alloc_color(mgray);
-    rgbcolormap->alloc_color(dgray);
-
+    black = Gdk::RGBA ("black");
+    red = Gdk::RGBA ("red");
+    green = Gdk::RGBA ("green");
+    blue = Gdk::RGBA ("blue");
+    lgray = Gdk::RGBA ("gray75");
+    mgray = Gdk::RGBA ("gray50");
+    dgray = Gdk::RGBA ("gray25");
 }
 
-bool HistogramRGBArea::on_expose_event(GdkEventExpose* event)
+bool HistogramRGBArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
 
-    Glib::RefPtr<Gdk::Window> window = get_window();
+    // on_realize & updateBackBuffer have to be called before
+    if (surface) {
+        if (isDirty()) { // not sure this could happen...
+            updateBackBuffer(-1, -1, -1);
+        }
 
-    // on_realize & RenderRGBMarks have to be called before
-    if (rgbgc_ && overlay) {
-        window->draw_drawable (rgbgc_, overlay, 0, 0, 0, 0, -1, -1);
+        copySurface(cr, NULL);
     }
 
     return true;
@@ -754,10 +815,10 @@ bool HistogramRGBArea::on_button_press_event (GdkEventButton* event)
     return true;
 }
 
-void HistogramRGBArea::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
+void HistogramRGBArea::on_style_updated ()
 {
 
-    white = get_style()->get_base(Gtk::STATE_NORMAL);
+    white = get_style_context()->get_color(Gtk::STATE_FLAG_NORMAL);
     queue_draw ();
 }
 
@@ -774,6 +835,8 @@ HistogramArea::HistogramArea (FullModeListener *fml) : //needChroma unactive by 
     ghist(256);
     bhist(256);
     chist(256);
+
+    //set_size_request(100, -1);
 
     haih = new HistogramAreaIdleHelper;
     haih->harea = this;
@@ -792,6 +855,44 @@ HistogramArea::~HistogramArea ()
 
 }
 
+Gtk::SizeRequestMode HistogramArea::get_request_mode_vfunc () const
+{
+    return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
+}
+
+void HistogramArea::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+{
+    int minimumWidth = 0;
+    int naturalWidth = 0;
+    get_preferred_width_vfunc (minimumWidth, naturalWidth);
+    get_preferred_height_for_width_vfunc (minimumWidth, minimum_height, natural_height);
+}
+
+void HistogramArea::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    minimum_width = 60;
+    natural_width = 200;
+}
+
+void HistogramArea::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+{
+    int gHeight = width / 2;
+
+    if (gHeight > 150) {
+        gHeight = 150;
+    } else if (gHeight < 100) {
+        gHeight = 100;
+    }
+
+    minimum_height = gHeight * 0.7;
+    natural_height = gHeight;
+}
+
+void HistogramArea::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+{
+    get_preferred_width_vfunc (minimum_width, natural_width);
+}
+
 void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, bool full, bool c)
 {
 
@@ -803,7 +904,7 @@ void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, boo
     fullMode  = !full;
     needChroma = c;
 
-    renderHistogram ();
+    updateBackBuffer ();
 }
 
 int histupdateUI (void* data)
@@ -821,7 +922,7 @@ int histupdateUI (void* data)
         return 0;
     }
 
-    haih->harea->renderHistogram ();
+    haih->harea->updateBackBuffer ();
     haih->harea->queue_draw ();
 
     haih->pending--;
@@ -852,23 +953,26 @@ void HistogramArea::update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu
     g_idle_add (histupdateUI, haih);
 }
 
-void HistogramArea::renderHistogram ()
+void HistogramArea::updateBackBuffer ()
 {
 
-    if (!is_realized ()) {
+    if (!get_realized ()) {
         return;
     }
 
     Glib::RefPtr<Gdk::Window> window = get_window();
-    int winx, winy, winw, winh, wind;
-    window->get_geometry(winx, winy, winw, winh, wind);
+    int winx, winy, winw, winh;
+    window->get_geometry(winx, winy, winw, winh);
 
-    backBuffer = Gdk::Pixmap::create (window, winw, winh, -1);
+    // This will create or update the size of the BackBuffer::surface
+    setDrawRectangle(window, 0, 0, winw, winh, true);
 
-    Glib::RefPtr<Gdk::GC> bgc = Gdk::GC::create(backBuffer);
+    Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
 
-    bgc->set_foreground (white);
-    backBuffer->draw_rectangle (bgc, true, 0, 0, winw, winh);
+    cr->set_antialias(Cairo::ANTIALIAS_NONE);
+    cr->set_source_rgb (white.get_red(), white.get_green(), white.get_blue());
+    cr->rectangle(0, 0, w, h);
+    cr->fill();
 
     if (valid) {
         // For RAW mode use the other hists
@@ -968,73 +1072,92 @@ void HistogramArea::renderHistogram ()
             realhistheight = winh - 2;
         }
 
-        Cairo::RefPtr<Cairo::Context> cr = backBuffer->create_cairo_context();
         cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
         cr->set_line_width (1.0);
 
         int ui = 0, oi = 0;
 
         if (needLuma && !rawMode) {
-            drawCurve(cr, lhist, realhistheight, winw, winh);
+            drawCurve(cr, lhist, realhistheight, w, h);
             cr->set_source_rgb (0.75, 0.75, 0.75);
             cr->fill_preserve ();
             cr->set_source_rgb (0.5, 0.5, 0.5);
             cr->stroke ();
 
-            drawMarks(cr, lhist, realhistheight, winw, ui, oi);
+            drawMarks(cr, lhist, realhistheight, w, ui, oi);
         }
 
         if (needChroma && !rawMode) {
-            drawCurve(cr, chist, realhistheight, winw, winh);
+            drawCurve(cr, chist, realhistheight, w, h);
             cr->set_source_rgb (0.6, 0.6, 0.6);
             //  cr->fill_preserve ();
             //   cr->set_source_rgb (0.2, 0.2, 0.1);
             cr->stroke ();
 
-            drawMarks(cr, chist, realhistheight, winw, ui, oi);
+            drawMarks(cr, chist, realhistheight, w, ui, oi);
         }
 
         if (needRed) {
-            drawCurve(cr, rhchanged, realhistheight, winw, winh);
+            drawCurve(cr, rhchanged, realhistheight, w, h);
             cr->set_source_rgb (1.0, 0.0, 0.0);
             cr->stroke ();
 
-            drawMarks(cr, rhchanged, realhistheight, winw, ui, oi);
+            drawMarks(cr, rhchanged, realhistheight, w, ui, oi);
         }
 
         if (needGreen) {
-            drawCurve(cr, ghchanged, realhistheight, winw, winh);
+            drawCurve(cr, ghchanged, realhistheight, w, h);
             cr->set_source_rgb (0.0, 1.0, 0.0);
             cr->stroke ();
 
-            drawMarks(cr, ghchanged, realhistheight, winw, ui, oi);
+            drawMarks(cr, ghchanged, realhistheight, w, ui, oi);
         }
 
         if (needBlue) {
-            drawCurve(cr, bhchanged, realhistheight, winw, winh);
+            drawCurve(cr, bhchanged, realhistheight, w, h);
             cr->set_source_rgb (0.0, 0.0, 1.0);
             cr->stroke ();
 
-            drawMarks(cr, bhchanged, realhistheight, winw, ui, oi);
+            drawMarks(cr, bhchanged, realhistheight, w, ui, oi);
         }
     }
 
-    bgc->set_foreground (mgray);
-    backBuffer->draw_rectangle (bgc, false, 0, 0, winw - 1, winh - 1);
+    cr->set_antialias(Cairo::ANTIALIAS_NONE);
+    cr->set_line_join(Cairo::LINE_JOIN_BEVEL);
+    cr->set_source_rgb (mgray.get_red(), mgray.get_green(), mgray.get_blue());
+    cr->rectangle(0.5, 0.5, w - 1, h - 1);
+    cr->stroke();
 
-    bgc->set_line_attributes (1, Gdk::LINE_ON_OFF_DASH, Gdk::CAP_NOT_LAST, Gdk::JOIN_MITER);
+    cr->set_line_join(Cairo::LINE_JOIN_MITER);
+    std::valarray<double> ch_ds (1);
+    ch_ds[0] = 4;
+    cr->set_dash (ch_ds, 0);
 
-    backBuffer->draw_line (bgc, winw / 4, 0, winw / 4, winh);
-    backBuffer->draw_line (bgc, 2 * winw / 4, 0, 2 * winw / 4, winh);
-    backBuffer->draw_line (bgc, 3 * winw / 4, 0, 3 * winw / 4, winh);
-    backBuffer->draw_line (bgc, 0, winh / 4, winw, winh / 4);
-    backBuffer->draw_line (bgc, 0, 2 * winh / 4, winw, 2 * winh / 4);
-    backBuffer->draw_line (bgc, 0, 3 * winh / 4, winw, 3 * winh / 4);
+    cr->move_to(w / 4 + 0.5, 1.5);
+    cr->line_to(w / 4 + 0.5, h - 2);
+    cr->stroke();
+    cr->move_to(2 * w / 4 + 0.5, 1.5);
+    cr->line_to(2 * w / 4 + 0.5, h - 2);
+    cr->stroke();
+    cr->move_to(3 * w / 4 + 0.5, 1.5);
+    cr->line_to(3 * w / 4 + 0.5, h - 2);
+    cr->stroke();
+    cr->move_to(1.5, w / 4 + 0.5);
+    cr->line_to(w - 2, w / 4 + 0.5);
+    cr->stroke();
+    cr->move_to(1.5, 2 * w / 4 + 0.5);
+    cr->line_to(w - 2, 2 * w / 4 + 0.5);
+    cr->stroke();
+    cr->move_to(1.5, 3 * w / 4 + 0.5);
+    cr->line_to(w - 2, 3 * w / 4 + 0.5);
+    cr->stroke();
 
-    bgc->set_line_attributes (1, Gdk::LINE_SOLID, Gdk::CAP_NOT_LAST, Gdk::JOIN_MITER);
+    cr->unset_dash();
 
-    oldwidth = winw;
-    oldheight = winh;
+    oldwidth = w;
+    oldheight = h;
+
+    setDirty(false);
 }
 
 void HistogramArea::on_realize ()
@@ -1042,26 +1165,15 @@ void HistogramArea::on_realize ()
 
     Gtk::DrawingArea::on_realize();
     Glib::RefPtr<Gdk::Window> window = get_window();
-    gc_ = Gdk::GC::create(window);
-    add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK);
-    Glib::RefPtr<Gdk::Colormap> colormap = get_default_colormap();
+    add_events(Gdk::BUTTON_PRESS_MASK);
 
-    black = Gdk::Color ("black");
-    red = Gdk::Color ("red");
-    green = Gdk::Color ("green");
-    blue = Gdk::Color ("blue");
-    lgray = Gdk::Color ("gray75");
-    mgray = Gdk::Color ("gray50");
-    dgray = Gdk::Color ("gray25");
-    colormap->alloc_color(black);
-    colormap->alloc_color(white);
-    colormap->alloc_color(red);
-    colormap->alloc_color(green);
-    colormap->alloc_color(blue);
-    colormap->alloc_color(lgray);
-    colormap->alloc_color(mgray);
-    colormap->alloc_color(dgray);
-
+    black = Gdk::RGBA ("black");
+    red = Gdk::RGBA ("red");
+    green = Gdk::RGBA ("green");
+    blue = Gdk::RGBA ("blue");
+    lgray = Gdk::RGBA ("gray75");
+    mgray = Gdk::RGBA ("gray50");
+    dgray = Gdk::RGBA ("gray25");
 }
 
 void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
@@ -1076,7 +1188,9 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
             val = vsize - 1;
         }
 
-        cr->line_to ((i / 255.0) * (hsize - 1), vsize - 1 - val);
+        double posX = (i / 255.0) * (hsize - 1);
+        double posY = vsize - 1 - val;
+        cr->line_to (posX, posY);
     }
 
     cr->line_to (hsize - 1, vsize - 1);
@@ -1098,26 +1212,26 @@ void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
     cr->fill();
 }
 
-void HistogramArea::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
+void HistogramArea::on_style_updated ()
 {
 
-    white = get_style()->get_base(Gtk::STATE_NORMAL);
+    white = get_style_context()->get_color(Gtk::STATE_FLAG_NORMAL);
     queue_draw ();
 }
 
-bool HistogramArea::on_expose_event(GdkEventExpose* event)
+bool HistogramArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
 
     Glib::RefPtr<Gdk::Window> window = get_window();
 
-    int winx, winy, winw, winh, wind;
-    window->get_geometry(winx, winy, winw, winh, wind);
+    int winx, winy, winw, winh;
+    window->get_geometry(winx, winy, winw, winh);
 
     if (winw != oldwidth && winh != oldheight) {
-        renderHistogram ();
+        updateBackBuffer ();
     }
 
-    window->draw_drawable (gc_, backBuffer, 0, 0, 0, 0, -1, -1);
+    copySurface(cr, NULL);
 
     return true;
 }
@@ -1133,7 +1247,7 @@ bool HistogramArea::on_button_press_event (GdkEventButton* event)
             myFullModeListener->toggle_button_full ();
         }
 
-        renderHistogram ();
+        updateBackBuffer ();
         queue_draw ();
     }
 

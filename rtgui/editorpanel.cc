@@ -180,7 +180,6 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     // Save buttons
     Gtk::HBox* iops = Gtk::manage (new Gtk::HBox ());
 
-    //Gtk::Image *saveButtonImage = Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON));
     Gtk::Image *saveButtonImage =  Gtk::manage (new RTImage ("gtk-save-large.png"));
     saveimgas = Gtk::manage (new Gtk::Button ());
     saveimgas->add(*saveButtonImage);
@@ -206,9 +205,15 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // Status box
     statusBox = Gtk::manage (new Gtk::HBox ());
+    cssProvider = Gtk::CssProvider::create();
     progressLabel = Gtk::manage (new Gtk::ProgressBar());
+    progressLabel->set_show_text(true);
+    setExpandAlignProperties(progressLabel, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     progressLabel->set_fraction(0.0);
-    //progressLabel->modify_bg( Gtk::STATE_NORMAL,Gdk::Color("grey") );  // Disable, because in single mode this is may be permanent red without processing
+
+    if (cssProvider) {
+        progressLabel->get_style_context()->add_provider (cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);    // Can't find the gtkmm version of the enum!
+    }
 
     statusBox->pack_start (*progressLabel);
     iops->pack_start(*statusBox, Gtk::PACK_SHRINK, 2);
@@ -497,7 +502,7 @@ void EditorPanel::on_realize ()
     realized = true;
     Gtk::VBox::on_realize ();
     // This line is needed to avoid autoexpansion of the window :-/
-    vboxright->set_size_request (options.toolPanelWidth, -1);
+    //vboxright->set_size_request (options.toolPanelWidth, -1);
     tpc->updateToolState();
 }
 
@@ -693,11 +698,12 @@ struct spparams {
     double val;
     Glib::ustring str;
     Gtk::ProgressBar *pProgress;
+    Glib::RefPtr<Gtk::CssProvider> cssProvider;
+
 };
 
 int setprogressStrUI( void *p )
 {
-    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     spparams *s = static_cast<spparams*>(p);
 
     if( ! s->str.empty() ) {
@@ -707,10 +713,14 @@ int setprogressStrUI( void *p )
     if( s->val >= 0 ) {
         s->pProgress->set_fraction( s->val );
 
-        if( s->val < 1.0 ) {
-            s->pProgress->modify_bg( Gtk::STATE_NORMAL, Gdk::Color("red") );
-        } else {
-            s->pProgress->modify_bg( Gtk::STATE_NORMAL, Gdk::Color("grey") );
+        if (s->cssProvider) {
+            if( s->val < 1.0 ) {
+                s->cssProvider->load_from_data("ProgressBar { background-color: red }");
+            } else {
+                s->cssProvider->load_from_data("ProgressBar { background-color: grey }");
+            }
+
+            s->pProgress->get_style_context()->set_background(s->pProgress->get_window());
         }
     }
 
@@ -723,7 +733,7 @@ void EditorPanel::setProgress (double p)
     spparams *s = new spparams;
     s->val = p;
     s->pProgress = progressLabel;
-    g_idle_add (setprogressStrUI, s);
+    add_idle (setprogressStrUI, s);
 }
 
 void EditorPanel::setProgressStr (Glib::ustring str)
@@ -732,7 +742,7 @@ void EditorPanel::setProgressStr (Glib::ustring str)
     s->str = str;
     s->val = -1;
     s->pProgress = progressLabel;
-    g_idle_add (setprogressStrUI, s);
+    add_idle (setprogressStrUI, s);
 }
 
 // This is only called from the ThreadUI, so within the gtk thread
@@ -992,7 +1002,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
 
     // Editor Layout
     switch(event->keyval) {
-    case GDK_L:
+    case GDK_KEY_L:
         if (tbTopPanel_1) {
             tbTopPanel_1->set_active (!tbTopPanel_1->get_active());    // toggle top panel
         }
@@ -1008,7 +1018,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
         return true;
         break;
 
-    case GDK_l:
+    case GDK_KEY_l:
         if (!shift && !alt /*&& !ctrl*/) {
             hidehp->set_active (!hidehp->get_active()); // toggle History (left panel)
             return true;
@@ -1027,7 +1037,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
 
         break;
 
-    case GDK_m: // Maximize preview panel: hide top AND right AND history panels
+    case GDK_KEY_m: // Maximize preview panel: hide top AND right AND history panels
         if (!ctrl && !alt) {
             toggleSidePanels();
             return true;
@@ -1035,7 +1045,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
 
         break;
 
-    case GDK_M: // Maximize preview panel: hide top AND right AND history panels AND (fit image preview)
+    case GDK_KEY_M: // Maximize preview panel: hide top AND right AND history panels AND (fit image preview)
         if (!ctrl && !alt) {
             toggleSidePanelsZoomFit();
             return true;
@@ -1064,83 +1074,83 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
         if (!ctrl) {
             // Normal
             switch(event->keyval) {
-            case GDK_bracketright:
+            case GDK_KEY_bracketright:
                 tpc->coarse->rotateRight();
                 return true;
 
-            case GDK_bracketleft:
+            case GDK_KEY_bracketleft:
                 tpc->coarse->rotateLeft();
                 return true;
 
-            case GDK_i:
-            case GDK_I:
+            case GDK_KEY_i:
+            case GDK_KEY_I:
                 info->set_active (!info->get_active());
                 return true;
 
-            case GDK_B:
+            case GDK_KEY_B:
                 beforeAfter->set_active (!beforeAfter->get_active());
                 return true;
 
-            case GDK_plus:
-            case GDK_equal:
-            case GDK_KP_Add:
+            case GDK_KEY_plus:
+            case GDK_KEY_equal:
+            case GDK_KEY_KP_Add:
                 iareapanel->imageArea->zoomPanel->zoomInClicked();
                 return true;
 
-            case GDK_minus:
-            case GDK_underscore:
-            case GDK_KP_Subtract:
+            case GDK_KEY_minus:
+            case GDK_KEY_underscore:
+            case GDK_KEY_KP_Subtract:
                 iareapanel->imageArea->zoomPanel->zoomOutClicked();
                 return true;
 
-            case GDK_z://GDK_1
+            case GDK_KEY_z://GDK_1
                 iareapanel->imageArea->zoomPanel->zoom11Clicked();
                 return true;
 
             /*
             #ifndef __WIN32__
-                            case GDK_9: // toggle background color of the preview
+                            case GDK_KEY_9: // toggle background color of the preview
                                 iareapanel->imageArea->previewModePanel->togglebackColor();
                                 return true;
             #endif
             */
-            case GDK_r: //preview mode Red
+            case GDK_KEY_r: //preview mode Red
                 iareapanel->imageArea->previewModePanel->toggleR();
                 return true;
 
-            case GDK_g: //preview mode Green
+            case GDK_KEY_g: //preview mode Green
                 iareapanel->imageArea->previewModePanel->toggleG();
                 return true;
 
-            case GDK_b: //preview mode Blue
+            case GDK_KEY_b: //preview mode Blue
                 iareapanel->imageArea->previewModePanel->toggleB();
                 return true;
 
-            case GDK_v: //preview mode Luminosity
+            case GDK_KEY_v: //preview mode Luminosity
                 iareapanel->imageArea->previewModePanel->toggleL();
                 return true;
 
-            case GDK_F: //preview mode Focus Mask
+            case GDK_KEY_F: //preview mode Focus Mask
                 iareapanel->imageArea->previewModePanel->toggleFocusMask();
                 return true;
 
-            case GDK_f:
+            case GDK_KEY_f:
                 iareapanel->imageArea->zoomPanel->zoomFitClicked();
                 return true;
 
-            case GDK_less:
+            case GDK_KEY_less:
                 iareapanel->imageArea->indClippedPanel->toggleClipped(true);
                 return true;
 
-            case GDK_greater:
+            case GDK_KEY_greater:
                 iareapanel->imageArea->indClippedPanel->toggleClipped(false);
                 return true;
 
-            case GDK_F5:
+            case GDK_KEY_F5:
                 openThm->openDefaultViewer((event->state & GDK_SHIFT_MASK) ? 2 : 1);
                 return true;
 
-            case GDK_y: // synchronize filebrowser with image in Editor
+            case GDK_KEY_y: // synchronize filebrowser with image in Editor
                 if (!simpleEditor && fPanel && !fname.empty()) {
                     fPanel->fileCatalog->selectImage(fname, false);
                     return true;
@@ -1148,7 +1158,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
 
                 break; // to avoid gcc complain
 
-            case GDK_x: // clear filters and synchronize filebrowser with image in Editor
+            case GDK_KEY_x: // clear filters and synchronize filebrowser with image in Editor
                 if (!simpleEditor && fPanel && !fname.empty()) {
                     fPanel->fileCatalog->selectImage(fname, true);
                     return true;
@@ -1159,35 +1169,35 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
         } else {
             // With control
             switch (event->keyval) {
-            case GDK_S:
+            case GDK_KEY_S:
                 saveProfile();
                 setProgressStr(M("PROGRESSBAR_PROCESSING_PROFILESAVED"));
                 return true;
 
-            case GDK_s:
+            case GDK_KEY_s:
                 saveAsPressed();
                 return true;
 
-            case GDK_b:
+            case GDK_KEY_b:
                 if (!simpleEditor) {
                     queueImgPressed();
                 }
 
                 return true;
 
-            case GDK_e:
+            case GDK_KEY_e:
                 sendToGimpPressed();
                 return true;
 
-            case GDK_z:
+            case GDK_KEY_z:
                 history->undo ();
                 return true;
 
-            case GDK_Z:
+            case GDK_KEY_Z:
                 history->redo ();
                 return true;
 
-            case GDK_F5:
+            case GDK_KEY_F5:
                 openThm->openDefaultViewer(3);
                 return true;
             }
@@ -1196,12 +1206,12 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
 
     if (alt) {
         switch (event->keyval) {
-        case GDK_s:
+        case GDK_KEY_s:
             history->addBookmarkPressed ();
             setProgressStr(M("PROGRESSBAR_SNAPSHOT_ADDED"));
             return true;
 
-        case GDK_f:
+        case GDK_KEY_f:
             iareapanel->imageArea->zoomPanel->zoomFitCropClicked();
             return true;
         }
@@ -1209,7 +1219,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
 
     if (shift) {
         switch (event->keyval) {
-        case GDK_F3: // open Previous image from Editor's perspective
+        case GDK_KEY_F3: // open Previous image from Editor's perspective
             if (!simpleEditor && fPanel && !fname.empty()) {
                 EditorPanel::openPreviousEditorImage();
                 return true;
@@ -1217,7 +1227,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
 
             break; // to avoid gcc complain
 
-        case GDK_F4: // open next image from Editor's perspective
+        case GDK_KEY_F4: // open next image from Editor's perspective
             if (!simpleEditor && fPanel && !fname.empty()) {
                 EditorPanel::openNextEditorImage();
                 return true;
@@ -1880,7 +1890,7 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
             histogramPanel->unreference();
         }
 
-        histogramPanel->reorder(Gtk::ALIGN_LEFT);
+        histogramPanel->reorder(Gtk::POS_LEFT);
         leftbox->reorder_child(*histogramPanel, 0);
         break;
 
@@ -1900,7 +1910,7 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
             histogramPanel->unreference();
         }
 
-        histogramPanel->reorder(Gtk::ALIGN_RIGHT);
+        histogramPanel->reorder(Gtk::POS_RIGHT);
         vboxright->reorder_child(*histogramPanel, 0);
         break;
     }

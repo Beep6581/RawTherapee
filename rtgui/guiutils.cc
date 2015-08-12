@@ -15,6 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <cairomm/cairomm.h>
 #include "../rtengine/rt_math.h"
 
 #include "guiutils.h"
@@ -26,6 +27,8 @@
 #include "multilangmgr.h"
 
 #include <assert.h>
+
+//extern Glib::Threads::Thread* mainThread;
 
 using namespace std;
 
@@ -39,6 +42,66 @@ Glib::RefPtr<Gdk::Pixbuf> MyExpander::enabledPBuf;
 Glib::RefPtr<Gdk::Pixbuf> MyExpander::disabledPBuf;
 Glib::RefPtr<Gdk::Pixbuf> MyExpander::openedPBuf;
 Glib::RefPtr<Gdk::Pixbuf> MyExpander::closedPBuf;
+
+guint add_idle (GSourceFunc function, gpointer data)
+{
+    return gdk_threads_add_idle(function, data);
+    //gtk_main_iteration_do(false);
+}
+
+
+/*
+gboolean giveMeAGo(void* data) {
+    GThreadLock *threadMutex = static_cast<GThreadLock*>(data);
+    printf("A\n");
+    Glib::Threads::Mutex::Lock GUILock(threadMutex->GUI);
+    printf("B\n");
+    {
+    Glib::Threads::Mutex::Lock operationLock(threadMutex->operation);
+    printf("C\n");
+
+    threadMutex->operationCond.signal();
+    printf("D\n");
+    operationLock.release();  // because we're not sure that "lock" destructor happens here...
+    }
+    threadMutex->GUICond.wait(threadMutex->GUI);
+    printf("E\n");
+
+    GUILock.release();
+
+    return false;
+}
+
+GThreadLock::GThreadLock() : sameThread(false) {
+    if (Glib::Threads::Thread::self() == mainThread) {
+        sameThread = true;
+        return;
+    }
+
+    printf("10\n");
+    {
+    Glib::Threads::Mutex::Lock operationLock(operation);
+
+    printf("20\n");
+    gdk_threads_add_idle(giveMeAGo, this);
+
+    printf("30\n");
+    operationCond.wait(operation);
+    printf("40\n");
+    operationLock.release();
+    }
+}
+
+GThreadLock::~GThreadLock() {
+    if (!sameThread) {
+        printf("50\n");
+        Glib::Threads::Mutex::Lock lock(GUI);
+        printf("60\n");
+        GUICond.signal();
+        printf("Fin\n");
+    }
+}
+*/
 
 Glib::ustring escapeHtmlChars(const Glib::ustring &src)
 {
@@ -72,6 +135,14 @@ Glib::ustring escapeHtmlChars(const Glib::ustring &src)
     }
 
     return dst;
+}
+
+void setExpandAlignProperties(Gtk::Widget *widget, bool hExpand, bool vExpand, enum Gtk::Align hAlign, enum Gtk::Align vAlign)
+{
+    widget->set_hexpand(hExpand);
+    widget->set_vexpand(vExpand);
+    widget->set_halign(hAlign);
+    widget->set_valign(vAlign);
 }
 
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference)
@@ -404,17 +475,15 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
     cr->reset_clip ();
 }
 
-bool ExpanderBox::on_expose_event(GdkEventExpose* event)
-{
-    bool retVal = Gtk::EventBox::on_expose_event(event);
+/*
+bool ExpanderBox::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) {
 
     if (!options.useSystemTheme) {
         Glib::RefPtr<Gdk::Window> window = get_window();
-        Glib::RefPtr<Gtk::Style> style = get_style ();
-        Cairo::RefPtr<Cairo::Context> cr = window->create_cairo_context();
+        Glib::RefPtr<Gtk::StyleContext> style = get_style_context ();
 
-        int x_, y_, w_, h_, foo;
-        window->get_geometry(x_, y_, w_, h_, foo);
+        int x_, y_, w_, h_;
+        window->get_geometry(x_, y_, w_, h_);
         double x = 0.;
         double y = 0.;
         double w = double(w_);
@@ -423,19 +492,22 @@ bool ExpanderBox::on_expose_event(GdkEventExpose* event)
         cr->set_antialias (Cairo::ANTIALIAS_NONE);
 
         // draw a frame
+        style->render_background(cr, x, y, w, h);
+        / *
         cr->set_line_width (1.0);
-        Gdk::Color c = style->get_fg (Gtk::STATE_NORMAL);
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-        cr->move_to(x + 0.5, y + 0.5);
-        cr->line_to(x + w, y + 0.5);
-        cr->line_to(x + w, y + h);
-        cr->line_to(x + 0.5, y + h);
-        cr->line_to(x + 0.5, y + 0.5);
+        Gdk::RGBA c = style->get_color (Gtk::STATE_FLAG_NORMAL);
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+        cr->move_to(x+0.5, y+0.5);
+        cr->line_to(x+w, y+0.5);
+        cr->line_to(x+w, y+h);
+        cr->line_to(x+0.5, y+h);
+        cr->line_to(x+0.5, y+0.5);
         cr->stroke ();
+        * /
     }
-
-    return retVal;
+    return Gtk::EventBox::on_draw(cr);
 }
+*/
 
 ExpanderBox::ExpanderBox( Gtk::Container *p): pC(p)
 {
@@ -443,9 +515,20 @@ ExpanderBox::ExpanderBox( Gtk::Container *p): pC(p)
     updateStyle();
 }
 
-void ExpanderBox::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
+void ExpanderBox::on_style_updated ()
 {
     updateStyle();
+}
+
+void ExpanderBox::setLevel(int level)
+{
+    if (level <= 1) {
+        set_name("ExpanderBox");
+    } else if (level == 2) {
+        set_name("ExpanderBox2");
+    } else if (level >= 3) {
+        set_name("ExpanderBox3");
+    }
 }
 
 void ExpanderBox::updateStyle()
@@ -561,7 +644,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     }
 
     label = Gtk::manage(new Gtk::Label());
-    label->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER);
+    label->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     label->set_markup(Glib::ustring("<b>") + escapeHtmlChars(titleLabel) + Glib::ustring("</b>"));
     headerHBox->pack_start(*label, Gtk::PACK_EXPAND_WIDGET, 0);
 
@@ -618,6 +701,13 @@ void MyExpander::updateStyle()
 
     if (expBox) {
         expBox->updateStyle();
+    }
+}
+
+void MyExpander::setLevel (int level)
+{
+    if (expBox) {
+        expBox->setLevel(level);
     }
 }
 
@@ -819,7 +909,6 @@ bool MyExpander::on_enabled_change(GdkEventButton* event)
  */
 MyScrolledWindow::MyScrolledWindow ()
 {
-    set_size_request(-1, 30);
 }
 
 bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event)
@@ -829,8 +918,8 @@ bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event)
         return true;
     }
 
-    Gtk::Adjustment *adjust = get_vadjustment();
-    Gtk::VScrollbar *scroll = get_vscrollbar();
+    Glib::RefPtr<Gtk::Adjustment> adjust = get_vadjustment();
+    Gtk::Scrollbar *scroll = get_vscrollbar();
 
     if (adjust && scroll) {
         double upper = adjust->get_upper();
@@ -865,6 +954,16 @@ bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event)
     return true;
 }
 
+void MyScrolledWindow::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+{
+    natural_height = minimum_height = 50;
+}
+
+void MyScrolledWindow::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+{
+    natural_height = minimum_height = 50;
+}
+
 MyComboBoxText::MyComboBoxText ()
 {
     set_size_request(40, -1);
@@ -882,6 +981,16 @@ bool MyComboBoxText::on_scroll_event (GdkEventScroll* event)
     // ... otherwise the scroll event is sent back to an upper level
     return false;
 }
+
+void MyComboBoxText::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    minimum_width = natural_width = 70;
+}
+void MyComboBoxText::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+{
+    minimum_width = natural_width = 70;
+}
+
 
 MyComboBox::MyComboBox ()
 {
@@ -901,17 +1010,26 @@ bool MyComboBox::on_scroll_event (GdkEventScroll* event)
     return false;
 }
 
+void MyComboBox::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    minimum_width = natural_width = 70;
+}
+void MyComboBox::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+{
+    minimum_width = natural_width = 70;
+}
+
 MySpinButton::MySpinButton ()
 {
     Gtk::Border border;
-    border.bottom = 0;
-    border.top = 0;
-    border.left = 3;
-    border.right = 3;
+    border.set_bottom(0);
+    border.set_top(0);
+    border.set_left(3);
+    border.set_right(3);
     set_inner_border(border);
     set_numeric(true);
     set_wrap(false);
-    set_alignment(Gtk::ALIGN_RIGHT);
+    set_alignment(Gtk::ALIGN_END);
 }
 
 void MySpinButton::updateSize()
@@ -936,6 +1054,7 @@ void MySpinButton::updateSize()
     maxLen = digits + digits2 + (vMin < 0 ? 1 : 0) + (digits > 0 ? 1 : 0);
     set_max_length(maxLen);
     set_width_chars(maxLen);
+    set_max_width_chars(maxLen);
 }
 
 bool MySpinButton::on_key_press_event (GdkEventKey* event)
@@ -951,7 +1070,7 @@ bool MySpinButton::on_key_press_event (GdkEventKey* event)
         return false;
     } else {
         if(event->string[0] == ',') {
-            event->keyval = GDK_period;
+            event->keyval = GDK_KEY_period;
             event->string[0] = '.';
         }
 
@@ -1100,13 +1219,70 @@ void TextOrIcon::switchTo(TOITypes type)
     show_all();
 }
 
+MyImageMenuItem::MyImageMenuItem(Glib::ustring label, Glib::ustring imageFileName)
+{
+    box = Gtk::manage (new Gtk::Grid());
+    this->label = Gtk::manage( new Gtk::Label(label));
+    box->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+
+    if (!imageFileName.empty()) {
+        image = Gtk::manage( new RTImage(imageFileName) );
+        box->attach_next_to(*image, Gtk::POS_LEFT, 1, 1);
+    }
+
+    box->attach_next_to(*this->label, Gtk::POS_RIGHT, 1, 1);
+    box->set_column_spacing(4);
+    box->set_row_spacing(0);
+    add(*box);
+}
+
+const RTImage *MyImageMenuItem::getImage()
+{
+    return image;
+}
+
+
 BackBuffer::BackBuffer() : x(0), y(0), w(0), h(0), offset(0, 0), dirty(true) {}
+BackBuffer::BackBuffer(int width, int height, Cairo::Format format) : x(0), y(0), w(width), h(height), offset(0, 0), dirty(true)
+{
+    if (w > 0 && h > 0) {
+        surface = Cairo::ImageSurface::create(format, w, h);
+    } else {
+        w = h = 0;
+    }
+}
+
+BackBuffer::BackBuffer(int width, int height, Glib::RefPtr<Gdk::Window> referenceWindow) : x(0), y(0), w(width), h(height), offset(0, 0), dirty(true)
+{
+    if (w > 0 && h > 0 && referenceWindow) {
+        Cairo::RefPtr<Cairo::Surface> surf = referenceWindow->create_similar_image_surface(Cairo::FORMAT_RGB24, w, h, 0);
+        Cairo::SurfaceType type = surf->get_type();
+
+        if (type == Cairo::SURFACE_TYPE_IMAGE || type == Cairo::SURFACE_TYPE_WIN32) {
+            surface = Cairo::RefPtr<Cairo::ImageSurface>::cast_static(surf);
+
+            if (!surface || !surface->get_width() || !surface->get_height()) {
+                printf("ERRRROOOOORRRR!\n");
+            }
+        } else {
+            printf("ERROR: wrong surface type. 0 or 7 was expected, but we've got %d instead.\n", type);
+        }
+    } else {
+        w = h = 0;
+    }
+}
 
 void BackBuffer::setSrcOffset(int x, int y)
 {
     // values will be clamped when used...
     offset.x = x;
     offset.y = y;
+}
+
+// Note: newW & newH must be > 0
+bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window, Gdk::Rectangle &rectangle, bool updateBackBufferSize)
+{
+    return setDrawRectangle(window, rectangle.get_x(), rectangle.get_y(), rectangle.get_width(), rectangle.get_height(), updateBackBufferSize);
 }
 
 // Note: newW & newH must be > 0
@@ -1122,7 +1298,7 @@ bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, in
     h = newH;
 
     // WARNING: we're assuming that the surface type won't change during all the execution time of RT. I guess it may be wrong when the user change the gfx card display settings!?
-    if (updateBackBufferSize && newSize && window) {
+    if (((updateBackBufferSize && newSize) || !surface) && window) {
         // allocate a new Surface
         surface.clear();  // ... don't know if this is necessary?
         surface = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, w, h);
@@ -1130,6 +1306,12 @@ bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, in
     }
 
     return dirty;
+}
+
+// Note: newW & newH must be > 0
+bool BackBuffer::setDrawRectangle(Cairo::Format format, Gdk::Rectangle &rectangle, bool updateBackBufferSize)
+{
+    return setDrawRectangle(format, rectangle.get_x(), rectangle.get_y(), rectangle.get_width(), rectangle.get_height(), updateBackBufferSize);
 }
 
 // Note: newW & newH must be > 0
@@ -1145,7 +1327,7 @@ bool BackBuffer::setDrawRectangle(Cairo::Format format, int newX, int newY, int 
     h = newH;
 
     // WARNING: we're assuming that the surface type won't change during all the execution time of RT. I guess it may be wrong when the user change the gfx card display settings!?
-    if (updateBackBufferSize && newSize) {
+    if ((updateBackBufferSize && newSize) || !surface) {
         // allocate a new Surface
         surface.clear();  // ... don't know if this is necessary?
         surface = Cairo::ImageSurface::create(format, w, h);
@@ -1156,9 +1338,57 @@ bool BackBuffer::setDrawRectangle(Cairo::Format format, int newX, int newY, int 
 }
 
 /*
+ * Copy uint8 RGB raw data to an ImageSurface. We're assuming that the source contains enough data for the given srcX, srcY, srcW, srcH -> no error checking!
+ */
+void BackBuffer::copyRGBCharData(const unsigned char *srcData, int srcX, int srcY, int srcW, int srcH, int srcRowStride, int dstX, int dstY)
+{
+    const unsigned char *src;
+    unsigned char *dst;
+    unsigned char r, g, b;
+
+    if (!surface) {
+        return;
+    }
+
+    //printf("copyRGBCharData:    src: (X:%d Y:%d, W:%d H:%d)  /  dst: (X: %d Y:%d)\n", srcX, srcY, srcW, srcH, dstX, dstY);
+
+    unsigned char *dstData = surface->get_data();
+    int surfW = surface->get_width();
+    int surfH = surface->get_height();
+
+    if (!srcData || dstX >= surfW || dstY >= surfH || srcW <= 0 || srcH <= 0 || srcX < 0 || srcY < 0) {
+        return;
+    }
+
+    for (unsigned int i = 0; i < (unsigned int)(srcH); ++i) {
+        if (dstY + i >= surfH) {
+            break;
+        }
+
+        src = srcData + i * srcRowStride;
+        dst = dstData + ((dstY + i) * surfW + dstX) * 4;
+
+        for (unsigned int j = 0; j < (unsigned int)(srcW); ++j) {
+            if (dstX + j >= surfW) {
+                break;
+            }
+
+            r = *(src++);
+            g = *(src++);
+            b = *(src++);
+
+            rtengine::poke255_uc(dst, r, g, b);
+        }
+    }
+
+    surface->mark_dirty();
+
+}
+
+/*
  * Copy the backbuffer to a Gdk::Window
  */
-void BackBuffer::copySurface(Glib::RefPtr<Gdk::Window> window, GdkRectangle *rectangle)
+void BackBuffer::copySurface(Glib::RefPtr<Gdk::Window> window, Gdk::Rectangle *destRectangle)
 {
     if (surface && window) {
         // TODO: look out if window can be different on each call, and if not, store a reference to the window
@@ -1171,13 +1401,20 @@ void BackBuffer::copySurface(Glib::RefPtr<Gdk::Window> window, GdkRectangle *rec
 
         // now copy the off-screen Surface to the destination Surface
         Cairo::RefPtr<Cairo::Context> crDest = Cairo::Context::create(destSurface);
-        crDest->set_source(surface, x - offsetX, y - offsetY);
         crDest->set_line_width(0.);
 
-        if (rectangle) {
-            crDest->rectangle(rectangle->x, rectangle->y, rectangle->width, rectangle->height);
+        if (destRectangle) {
+            crDest->set_source(surface, -offsetX + destRectangle->get_x(), -offsetY + destRectangle->get_y());
+            int w_ = destRectangle->get_width() > 0 ? destRectangle->get_width() : w;
+            int h_ = destRectangle->get_height() > 0 ? destRectangle->get_height() : h;
+            //printf("BackBuffer::copySurface / rectangle1(%d, %d, %d, %d)\n", destRectangle->get_x(), destRectangle->get_y(), w_, h_);
+            crDest->rectangle(destRectangle->get_x(), destRectangle->get_y(), w_, h_);
+            //printf("BackBuffer::copySurface / rectangle1\n");
         } else {
+            crDest->set_source(surface, -offsetX + x, -offsetY + y);
+            //printf("BackBuffer::copySurface / rectangle2(%d, %d, %d, %d)\n", x, y, w, h);
             crDest->rectangle(x, y, w, h);
+            //printf("BackBuffer::copySurface / rectangle2\n");
         }
 
         crDest->fill();
@@ -1187,22 +1424,35 @@ void BackBuffer::copySurface(Glib::RefPtr<Gdk::Window> window, GdkRectangle *rec
 /*
  * Copy the BackBuffer to another BackBuffer
  */
-void BackBuffer::copySurface(BackBuffer *destBackBuffer, GdkRectangle *rectangle)
+void BackBuffer::copySurface(BackBuffer *destBackBuffer, Gdk::Rectangle *destRectangle)
 {
     if (surface && destBackBuffer) {
+        Cairo::RefPtr<Cairo::ImageSurface> destSurface = destBackBuffer->getSurface();
+
+        if (!destSurface) {
+            return;
+        }
+
         // compute the source offset
         int offsetX = rtengine::LIM<int>(offset.x, 0, surface->get_width());
         int offsetY = rtengine::LIM<int>(offset.y, 0, surface->get_height());
 
         // now copy the off-screen Surface to the destination Surface
-        Cairo::RefPtr<Cairo::Context> crDest = Cairo::Context::create(destBackBuffer->getSurface());
-        crDest->set_source(surface, x - offsetX, y - offsetY);
+        Cairo::RefPtr<Cairo::Context> crDest = Cairo::Context::create(destSurface);
         crDest->set_line_width(0.);
 
-        if (rectangle) {
-            crDest->rectangle(rectangle->x, rectangle->y, rectangle->width, rectangle->height);
+        if (destRectangle) {
+            crDest->set_source(surface, -offsetX + destRectangle->get_x(), -offsetY + destRectangle->get_y());
+            int w_ = destRectangle->get_width() > 0 ? destRectangle->get_width() : w;
+            int h_ = destRectangle->get_height() > 0 ? destRectangle->get_height() : h;
+            //printf("BackBuffer::copySurface / rectangle3(%d, %d, %d, %d)\n", destRectangle->get_x(), destRectangle->get_y(), w_, h_);
+            crDest->rectangle(destRectangle->get_x(), destRectangle->get_y(), w_, h_);
+            //printf("BackBuffer::copySurface / rectangle3\n");
         } else {
+            crDest->set_source(surface, -offsetX + x, -offsetY + y);
+            //printf("BackBuffer::copySurface / rectangle4(%d, %d, %d, %d)\n", x, y, w, h);
             crDest->rectangle(x, y, w, h);
+            //printf("BackBuffer::copySurface / rectangle4\n");
         }
 
         crDest->fill();
@@ -1212,7 +1462,7 @@ void BackBuffer::copySurface(BackBuffer *destBackBuffer, GdkRectangle *rectangle
 /*
  * Copy the BackBuffer to another Cairo::Surface
  */
-void BackBuffer::copySurface(Cairo::RefPtr<Cairo::ImageSurface> destSurface, GdkRectangle *rectangle)
+void BackBuffer::copySurface(Cairo::RefPtr<Cairo::ImageSurface> destSurface, Gdk::Rectangle *destRectangle)
 {
     if (surface && destSurface) {
         // compute the source offset
@@ -1221,13 +1471,54 @@ void BackBuffer::copySurface(Cairo::RefPtr<Cairo::ImageSurface> destSurface, Gdk
 
         // now copy the off-screen Surface to the destination Surface
         Cairo::RefPtr<Cairo::Context> crDest = Cairo::Context::create(destSurface);
-        crDest->set_source(surface, x - offsetX, y - offsetY);
         crDest->set_line_width(0.);
 
-        if (rectangle) {
-            crDest->rectangle(rectangle->x, rectangle->y, rectangle->width, rectangle->height);
+        if (destRectangle) {
+            crDest->set_source(surface, -offsetX + destRectangle->get_x(), -offsetY + destRectangle->get_y());
+            int w_ = destRectangle->get_width() > 0 ? destRectangle->get_width() : w;
+            int h_ = destRectangle->get_height() > 0 ? destRectangle->get_height() : h;
+            //printf("BackBuffer::copySurface / rectangle5(%d, %d, %d, %d)\n", destRectangle->get_x(), destRectangle->get_y(), w_, h_);
+            crDest->rectangle(destRectangle->get_x(), destRectangle->get_y(), w_, h_);
+            //printf("BackBuffer::copySurface / rectangle5\n");
         } else {
+            crDest->set_source(surface, -offsetX + x, -offsetY + y);
+            //printf("BackBuffer::copySurface / rectangle6(%d, %d, %d, %d)\n", x, y, w, h);
             crDest->rectangle(x, y, w, h);
+            //printf("BackBuffer::copySurface / rectangle6\n");
+        }
+
+        crDest->fill();
+    }
+}
+
+/*
+ * Copy the BackBuffer to another Cairo::Surface
+ */
+void BackBuffer::copySurface(Cairo::RefPtr<Cairo::Context> crDest, Gdk::Rectangle *destRectangle)
+{
+    if (surface && crDest) {
+        // compute the source offset
+        int offsetX = rtengine::LIM<int>(offset.x, 0, surface->get_width());
+        int offsetY = rtengine::LIM<int>(offset.y, 0, surface->get_height());
+
+        // now copy the off-screen Surface to the destination Surface
+        int srcSurfW = surface->get_width();
+        int srcSurfH = surface->get_height();
+        //printf("srcSurf:  w: %d, h: %d\n", srcSurfW, srcSurfH);
+        crDest->set_line_width(0.);
+
+        if (destRectangle) {
+            crDest->set_source(surface, -offsetX + destRectangle->get_x(), -offsetY + destRectangle->get_y());
+            int w_ = destRectangle->get_width() > 0 ? destRectangle->get_width() : w;
+            int h_ = destRectangle->get_height() > 0 ? destRectangle->get_height() : h;
+            //printf("BackBuffer::copySurface / rectangle7(%d, %d, %d, %d)\n", destRectangle->get_x(), destRectangle->get_y(), w_, h_);
+            crDest->rectangle(destRectangle->get_x(), destRectangle->get_y(), w_, h_);
+            //printf("BackBuffer::copySurface / rectangle7\n");
+        } else {
+            crDest->set_source(surface, -offsetX + x, -offsetY + y);
+            //printf("BackBuffer::copySurface / rectangle8(%d, %d, %d, %d)\n", x, y, w, h);
+            crDest->rectangle(x, y, w, h);
+            //printf("BackBuffer::copySurface / rectangle8\n");
         }
 
         crDest->fill();

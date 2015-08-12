@@ -130,7 +130,7 @@ FilePanel::FilePanel () : parent(NULL)
     fileCatalog->setFileSelectionChangeListener (tpc);
 
     fileCatalog->setFileSelectionListener (this);
-    g_idle_add (FilePanelInitUI, this);
+    add_idle (FilePanelInitUI, this);
 
     show_all ();
 }
@@ -172,7 +172,6 @@ void FilePanel::setAspect ()
 void FilePanel::init ()
 {
 
-    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     dirBrowser->fillDirTree ();
     placesBrowser->refreshPlacesList ();
 
@@ -194,7 +193,7 @@ void FilePanel::init ()
     }
 }
 
-void FilePanel::on_NB_switch_page(GtkNotebookPage* page, guint page_num)
+void FilePanel::on_NB_switch_page(Gtk::Widget* page, guint page_num)
 {
     if (page_num == 1) {
         // switching the inspector "on"

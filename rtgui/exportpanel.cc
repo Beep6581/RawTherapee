@@ -37,7 +37,7 @@ ExportPanel::ExportPanel () : listener (NULL)
     Gtk::Label* labExportTitle = Gtk::manage ( new Gtk::Label (M("EXPORT_FASTEXPORTOPTIONS")) );
     labExportTitle->set_use_markup (true);
     labExportTitle->set_tooltip_text (M("EXPORT_INSTRUCTIONS"));
-    labExportTitle->set_alignment(Gtk::ALIGN_LEFT);
+    labExportTitle->set_alignment(Gtk::ALIGN_START);
     pack_start(*labExportTitle, Gtk::PACK_SHRINK, 4);
 
     bypass_ALL              = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_ALL")));
@@ -66,7 +66,7 @@ ExportPanel::ExportPanel () : listener (NULL)
     raw_bayer_method = Gtk::manage (new MyComboBoxText ());
 
     for( size_t i = 0; i < procparams::RAWParams::BayerSensor::numMethods; i++) {
-        raw_bayer_method->append_text(procparams::RAWParams::BayerSensor::methodstring[i]);
+        raw_bayer_method->append(procparams::RAWParams::BayerSensor::methodstring[i]);
     }
 
     raw_bayer_method->set_active(0);
@@ -89,7 +89,7 @@ ExportPanel::ExportPanel () : listener (NULL)
     raw_xtrans_method = Gtk::manage (new MyComboBoxText ());
 
     for( size_t i = 0; i < procparams::RAWParams::XTransSensor::numMethods; i++) {
-        raw_xtrans_method->append_text(procparams::RAWParams::XTransSensor::methodstring[i]);
+        raw_xtrans_method->append(procparams::RAWParams::XTransSensor::methodstring[i]);
     }
 
     raw_xtrans_method->set_active(0);
@@ -149,17 +149,22 @@ ExportPanel::ExportPanel () : listener (NULL)
     pack_start (*hbox, Gtk::PACK_SHRINK, 4);
 
     MaxWidth->set_digits (0);
+    MaxWidth->set_width_chars(5);
+    MaxWidth->set_max_width_chars(5);
     MaxWidth->set_increments (1, 100);
     MaxWidth->set_value (options.fastexport_resize_width);
     MaxWidth->set_range (32, 3000);
 
     MaxHeight->set_digits (0);
+    MaxHeight->set_width_chars(5);
+    MaxHeight->set_max_width_chars(5);
     MaxHeight->set_increments (1, 100);
     MaxHeight->set_value (options.fastexport_resize_height);
     MaxHeight->set_range (32, 3000);
 
     // Buttons
-    btnFastExport =  Gtk::manage ( new Gtk::Button (M("EXPORT_PUTTOQUEUEFAST")) );
+    btnFastExport =  Gtk::manage ( new Gtk::Button () );
+    btnFastExport->set_tooltip_text(M("EXPORT_PUTTOQUEUEFAST"));
     btnFastExport->set_image (*Gtk::manage (new RTImage ("processing.png")));
     pack_start(*btnFastExport, Gtk::PACK_SHRINK, 4);
 

@@ -26,7 +26,7 @@ ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname)
       prex(0), prey(0), upperMargin(6), borderWidth(1), textGap(6), sideMargin(8), lowerMargin(8),
       preview(NULL), dispname(Glib::path_get_basename (fname)), buttonSet(NULL), width(0), height(0),
       exp_width(0), exp_height(0), startx(0), starty(0), ofsX(0), ofsY(0), redrawRequests(0),
-      parent(NULL), bbSelected(false), bbFramed(false), bbPreview(NULL),
+      parent(NULL), bbSelected(false), bbFramed(false), bbPreview(NULL), cursor_type(CSUndefined),
       thumbnail(NULL), filename(fname), shortname(dispname), exifline(""), datetimeline(""),
       selected(false), drawable(false), filtered(false), framed(false), processing(false), italicstyle(false),
       edited(false), recentlysaved(false), updatepriority(false), withFilename(WFNAME_NONE) {}
@@ -64,34 +64,44 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
         return;
     }
 
-    backBuffer = Gdk::Pixmap::create (win, exp_width, exp_height);
+    backBuffer = Glib::RefPtr<BackBuffer> ( new BackBuffer (exp_width, exp_height, win) );
 
-    // If thumbnail is hidden by a filter drawing to it will crash
-    int backbuffer_w = 0, backbuffer_h = 0;
-    backBuffer->get_size(backbuffer_w, backbuffer_h);
-
+    // If thumbnail is hidden by a filter, drawing to it will crash
     // if either with or height is zero then return early
-    if (backbuffer_w * backbuffer_h == 0) {
+    if (!backBuffer->getWidth() || !backBuffer->getHeight()) {
         return;
     }
+
+    Cairo::RefPtr<Cairo::ImageSurface> surface = backBuffer->getSurface();
 
     bbSelected = selected;
     bbFramed = framed;
     bbPreview = preview;
 
-    Glib::RefPtr<Gdk::GC> gc_ = Gdk::GC::create (backBuffer);
+    Cairo::RefPtr<Cairo::Context> cc = Cairo::Context::create(surface);
 
-    Gdk::Color textn = w->get_style()->get_text(Gtk::STATE_NORMAL);
-    Gdk::Color texts = w->get_style()->get_text(Gtk::STATE_SELECTED);
-    Gdk::Color bgn = w->get_style()->get_bg(Gtk::STATE_NORMAL);
-    Gdk::Color bgs = w->get_style()->get_bg(Gtk::STATE_SELECTED);
+    Glib::RefPtr<Gtk::StyleContext> style = w->get_style_context();
+    Gdk::RGBA txtn;
+    style->lookup_color("text", txtn);
+    Gdk::RGBA textn = style->get_color(Gtk::STATE_FLAG_NORMAL);
+    Gdk::RGBA texts = style->get_color(Gtk::STATE_FLAG_SELECTED);
+    Gdk::RGBA bgn = style->get_background_color(Gtk::STATE_FLAG_NORMAL);
+    Gdk::RGBA bgs = style->get_background_color(Gtk::STATE_FLAG_SELECTED);
 
     // clear area, draw frames and background
-    gc_->set_foreground (bgn);
-    gc_->set_background (bgn);
-    backBuffer->draw_rectangle (gc_, true, 0, 0, exp_width, exp_height);
-    Cairo::RefPtr<Cairo::Context> cr = backBuffer->create_cairo_context();
-    drawFrame (cr, bgs, bgn);
+    style->render_background(cc, 0., 0., exp_width, exp_height);
+    /*
+    cc->set_line_width(0.);
+    cc->set_line_cap(Cairo::LINE_CAP_BUTT);
+    cc->set_antialias(Cairo::ANTIALIAS_NONE);
+    cc->set_source_rgb(bgn.get_red(), bgn.get_green(), bgn.get_blue());
+    cc->rectangle(0., 0., exp_width, exp_height);
+    cc->fill();
+    */
+
+    cc->set_antialias(Cairo::ANTIALIAS_SUBPIXEL);
+
+    drawFrame (cc, bgs, bgn);
 
     // calculate height of button set
     int bsHeight = 0;
@@ -102,15 +112,15 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
     }
 
     // draw preview frame
-    //backBuffer->draw_rectangle (gc_, false, (exp_width-prew)/2, upperMargin+bsHeight, prew+1, preh+1);
+    //backBuffer->draw_rectangle (cc, false, (exp_width-prew)/2, upperMargin+bsHeight, prew+1, preh+1);
     // draw thumbnail image
     if (preview) {
         prex = borderWidth + (exp_width - prew) / 2;
         prey = upperMargin + bsHeight + borderWidth;
-        backBuffer->draw_rgb_image (gc_, prex, prey, prew, preh, Gdk::RGB_DITHER_NONE, preview, prew * 3);
+        backBuffer->copyRGBCharData(preview, 0, 0, prew, preh, prew * 3, prex, prey);
     }
 
-    customBackBufferUpdate (cr);
+    customBackBufferUpdate (cc);
 
     // draw icons onto the thumbnail area
     bbIcons = getIconsOnImageArea ();
@@ -125,16 +135,16 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
 
     if ((parent->getLocation() != ThumbBrowserBase::THLOC_EDITOR && options.showFileNames && options.overlayedFileNames)
             || (parent->getLocation() == ThumbBrowserBase::THLOC_EDITOR && options.filmStripShowFileNames && options.filmStripOverlayedFileNames)) {
-        cr->begin_new_path ();
-        cr->rectangle (istartx, istarty, prew, fnlabh + dtlabh + exlabh + 2 * iofs_y);
+        cc->begin_new_path ();
+        cc->rectangle (istartx, istarty, prew, fnlabh + dtlabh + exlabh + 2 * iofs_y);
 
-        if ((texts.get_red_p() + texts.get_green_p() + texts.get_blue_p()) / 3 > 0.5) {
-            cr->set_source_rgba (0, 0, 0, 0.5);
+        if ((texts.get_red() + texts.get_green() + texts.get_blue()) / 3 > 0.5) {
+            cc->set_source_rgba (0, 0, 0, 0.5);
         } else {
-            cr->set_source_rgba (1, 1, 1, 0.5);
+            cc->set_source_rgba (1, 1, 1, 0.5);
         }
 
-        cr->fill ();
+        cc->fill ();
     }
 
     istartx += iofs_x;
@@ -155,22 +165,25 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
         if ((parent->getLocation() != ThumbBrowserBase::THLOC_EDITOR && (!options.showFileNames || !options.overlayedFileNames))
                 || (parent->getLocation() == ThumbBrowserBase::THLOC_EDITOR && (!options.filmStripShowFileNames || !options.filmStripOverlayedFileNames))) {
             // Draw the transparent black background around icons
-            cr->begin_new_path ();
-            cr->move_to(istartx - igap, istarty);
-            cr->rel_line_to(igap, -igap);
-            cr->rel_line_to(iwidth, 0);
-            cr->rel_line_to(igap, igap);
-            cr->rel_line_to(0, iheight);
-            cr->rel_line_to(-igap, igap);
-            cr->rel_line_to(-iwidth, 0);
-            cr->rel_line_to(-igap, -igap);
-            cr->rel_line_to(0, -iheight);
-            cr->set_source_rgba (0, 0, 0, 0.6);
-            cr->fill ();
+            cc->begin_new_path ();
+            cc->move_to(istartx - igap, istarty);
+            cc->rel_line_to(igap, -igap);
+            cc->rel_line_to(iwidth, 0);
+            cc->rel_line_to(igap, igap);
+            cc->rel_line_to(0, iheight);
+            cc->rel_line_to(-igap, igap);
+            cc->rel_line_to(-iwidth, 0);
+            cc->rel_line_to(-igap, -igap);
+            cc->rel_line_to(0, -iheight);
+            cc->set_source_rgba (0, 0, 0, 0.6);
+            cc->fill ();
         }
 
         for (size_t i = 0; i < bbIcons.size(); i++) {
-            backBuffer->draw_pixbuf (gc_, bbIcons[i], 0, 0, istartx, istarty, bbIcons[i]->get_width(), bbIcons[i]->get_height(), Gdk::RGB_DITHER_NONE, 0, 0);
+            // Draw the image at 110, 90, except for the outermost 10 pixels.
+            Gdk::Cairo::set_source_pixbuf(cc, bbIcons[i], istartx, istarty);
+            cc->rectangle(istartx, istarty, bbIcons[i]->get_width(), bbIcons[i]->get_height());
+            cc->fill();
             istartx += bbIcons[i]->get_width() + igap;
         }
     }
@@ -202,14 +215,19 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
 
             textposy = upperMargin + bsHeight + 2 * borderWidth + preh + borderWidth + textGap;
             textw = exp_width - 2 * textGap;
-            gc_->set_foreground (selected ? texts : textn);
+
+            if (selected) {
+                cc->set_source_rgb(texts.get_red(), texts.get_green(), texts.get_blue());
+            } else {
+                cc->set_source_rgb(textn.get_red(), textn.get_green(), textn.get_blue());
+            }
         } else {
             textposx_fn = istartx;
             textposx_ex = istartx;
             textposx_dt = istartx;
             textposy = istarty;
             textw = prew - (istartx - prex);
-            gc_->set_foreground (texts);
+            cc->set_source_rgb(texts.get_red(), texts.get_green(), texts.get_blue());
         }
 
         // draw file name
@@ -227,7 +245,9 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
         Glib::RefPtr<Pango::Layout> fn = w->create_pango_layout (dispname);
         fn->set_width (textw * Pango::SCALE);
         fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
-        backBuffer->draw_layout(gc_, textposx_fn, textposy, fn);
+        cc->move_to(textposx_fn, textposy);
+        fn->add_to_cairo_context (cc);
+        cc->fill();
 
         fontd.set_weight (Pango::WEIGHT_NORMAL);
         fontd.set_style (Pango::STYLE_NORMAL);
@@ -241,7 +261,9 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
                 fn = w->create_pango_layout (datetimeline);
                 fn->set_width (textw * Pango::SCALE);
                 fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
-                backBuffer->draw_layout(gc_, textposx_dt, textposy + tpos, fn);
+                cc->move_to(textposx_dt, textposy + tpos);
+                fn->add_to_cairo_context (cc);
+                cc->fill();
                 tpos += dtlabh;
             }
 
@@ -250,7 +272,9 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
                 fn = w->create_pango_layout (exifline);
                 fn->set_width (textw * Pango::SCALE);
                 fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
-                backBuffer->draw_layout (gc_, textposx_ex, textposy + tpos, fn);
+                cc->move_to(textposx_ex, textposy + tpos);
+                fn->add_to_cairo_context (cc);
+                cc->fill();
                 tpos += exlabh;
             }
         }
@@ -270,7 +294,8 @@ void ThumbBrowserEntryBase::getTextSizes (int& infow, int& infoh)
     dispname = shortname;
 
     Glib::RefPtr<Pango::Context> context = w->get_pango_context () ;
-    context->set_font_description (w->get_style()->get_font());
+    context->set_font_description (w->get_style_context()->get_font());
+
 
     // filename:
     Pango::FontDescription fontd = context->get_font_description ();
@@ -393,49 +418,46 @@ void ThumbBrowserEntryBase::resize (int h)
         delete [] preview;
         preview = NULL;
         refreshThumbnailImage ();
-    } else {
-        backBuffer.clear();    // This will force a backBuffer update on queue_draw
+    } else if (backBuffer) {
+        backBuffer->setDirty(true);    // This will force a backBuffer update on queue_draw
     }
 
     drawable = true;
 }
 
-void ThumbBrowserEntryBase::drawFrame (Cairo::RefPtr<Cairo::Context> cr, const Gdk::Color& bg, const Gdk::Color& fg)
+void ThumbBrowserEntryBase::drawFrame (Cairo::RefPtr<Cairo::Context> cc, const Gdk::RGBA& bg, const Gdk::RGBA& fg)
 {
 
-    int radius = 8;
+    int radius = 4;
 
     if (selected || framed) {
-        cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
-        cr->move_to (radius, 0);
-        cr->arc (exp_width - 1 - radius, radius, radius, -M_PI / 2, 0);
-        cr->arc (exp_width - 1 - radius, exp_height - 1 - radius, radius, 0, M_PI / 2);
-        cr->arc (radius, exp_height - 1 - radius, radius, M_PI / 2, M_PI);
-        cr->arc (radius, radius, radius, M_PI, -M_PI / 2);
-        cr->close_path ();
+        cc->move_to (radius, 0);
+        cc->arc (exp_width - 1 - radius, radius, radius, -M_PI / 2, 0);
+        cc->arc (exp_width - 1 - radius, exp_height - 1 - radius, radius, 0, M_PI / 2);
+        cc->arc (radius, exp_height - 1 - radius, radius, M_PI / 2, M_PI);
+        cc->arc (radius, radius, radius, M_PI, -M_PI / 2);
+        cc->close_path ();
 
         if (selected) {
-            cr->set_source_rgb (bg.get_red_p(), bg.get_green_p(), bg.get_blue_p());
-            cr->fill_preserve ();
+            cc->set_source_rgb (bg.get_red(), bg.get_green(), bg.get_blue());
+            cc->fill_preserve ();
         }
 
-        cr->set_source_rgb (bg.get_red_p() * 2 / 3, bg.get_green_p() * 2 / 3, bg.get_blue_p() * 2 / 3);
-        cr->set_line_width (1.0);
-        cr->stroke ();
-
+        cc->set_source_rgb (bg.get_red() * 2 / 3, bg.get_green() * 2 / 3, bg.get_blue() * 2 / 3);
+        cc->set_line_width (1.0);
+        cc->stroke ();
     }
 
     if (framed) {
-        cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
-        cr->move_to (+2 + 0.5 + radius, +2 + 0.5);
-        cr->arc (-2 + 0.5 + exp_width - 1 - radius, +2 + 0.5 + radius, radius, -M_PI / 2, 0);
-        cr->arc (-2 + 0.5 + exp_width - 1 - radius, -2 + 0.5 + exp_height - 1 - radius, radius, 0, M_PI / 2);
-        cr->arc (+2 + 0.5 + radius, -2 + exp_height - 1 - radius, radius, M_PI / 2, M_PI);
-        cr->arc (+2 + 0.5 + radius, +2 + radius, radius, M_PI, -M_PI / 2);
-        cr->close_path ();
-        cr->set_source_rgb (fg.get_red_p(), fg.get_green_p(), fg.get_blue_p());
-        cr->set_line_width (2.0);
-        cr->stroke ();
+        cc->move_to (+2 + 0.5 + radius, +2 + 0.5);
+        cc->arc (-2 + 0.5 + exp_width - 1 - radius, +2 + 0.5 + radius, radius, -M_PI / 2, 0);
+        cc->arc (-2 + 0.5 + exp_width - 1 - radius, -2 + 0.5 + exp_height - 1 - radius, radius, 0, M_PI / 2);
+        cc->arc (+2 + 0.5 + radius, -2 + exp_height - 1 - radius, radius, M_PI / 2, M_PI);
+        cc->arc (+2 + 0.5 + radius, +2 + radius, radius, M_PI, -M_PI / 2);
+        cc->close_path ();
+        cc->set_source_rgb (fg.get_red(), fg.get_green(), fg.get_blue());
+        cc->set_line_width (2.0);
+        cc->stroke ();
     }
 }
 
@@ -453,33 +475,38 @@ void ThumbBrowserEntryBase::draw ()
     int bbWidth, bbHeight;
 
     if (backBuffer) {
-        backBuffer->get_size (bbWidth, bbHeight);
+        bbWidth = backBuffer->getWidth();
+        bbHeight = backBuffer->getHeight();
     }
 
     if (!backBuffer || selected != bbSelected || framed != bbFramed || preview != bbPreview
-            || exp_width != bbWidth || exp_height != bbHeight || getIconsOnImageArea () != bbIcons) {
+            || exp_width != bbWidth || exp_height != bbHeight || getIconsOnImageArea () != bbIcons || backBuffer->isDirty()) {
         updateBackBuffer ();
     }
 
     Gtk::Widget* w = parent->getDrawingArea ();
 
-    Glib::RefPtr<Gdk::GC> gc_ = Gdk::GC::create (w->get_window());
+    Glib::RefPtr<Gdk::Window> win = w->get_window();
+    Cairo::RefPtr<Cairo::Context> cc = win->create_cairo_context();
+    Glib::RefPtr<Gtk::StyleContext> sc = w->get_style_context();
 
-//   Gdk::Color textn = w->get_style()->get_text(Gtk::STATE_NORMAL);
-    //  Gdk::Color texts = w->get_style()->get_text(Gtk::STATE_SELECTED);
-    Gdk::Color bgn = w->get_style()->get_bg(Gtk::STATE_NORMAL);
-    Gdk::Color bgs = w->get_style()->get_bg(Gtk::STATE_SELECTED);
-
-    w->get_window()->draw_drawable (gc_, backBuffer, 0, 0, startx + ofsX, starty + ofsY);
+//  Gdk::RGBA textn = sc->get_color(Gtk::STATE_FLAG_NORMAL);
+//  Gdk::RGBA texts = sc->get_color(Gtk::STATE_FLAG_SELECTED);
+    Gdk::RGBA bgn = sc->get_background_color(Gtk::STATE_FLAG_NORMAL);
+    Gdk::RGBA bgs = sc->get_background_color(Gtk::STATE_FLAG_SELECTED);
+    int w_ = startx + ofsX;
+    int h_ = starty + ofsY;
+    cc->set_source(backBuffer->getSurface(), w_, h_);
+    cc->rectangle(w_, h_, backBuffer->getWidth(), backBuffer->getHeight());
+    cc->fill();
 
     // check icon set changes!!!
 
-//    drawProgressBar (window, gc_, selected ? texts : textn, selected ? bgs : bgn, ofsX+startx, exp_width, ofsY+starty + upperMargin+bsHeight+borderWidth+preh+borderWidth+textGap+tpos, fnlabh);
+//    drawProgressBar (window, cc, selected ? texts : textn, selected ? bgs : bgn, ofsX+startx, exp_width, ofsY+starty + upperMargin+bsHeight+borderWidth+preh+borderWidth+textGap+tpos, fnlabh);
 
     // redraw button set above the thumbnail
     if (buttonSet) {
         buttonSet->setColors (selected ? bgs : bgn, selected ? bgn : bgs);
-        Cairo::RefPtr<Cairo::Context> cc = w->get_window()->create_cairo_context();
         buttonSet->redraw (cc);
     }
 }

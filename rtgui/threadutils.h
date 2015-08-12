@@ -44,29 +44,19 @@
 //#define PROTECT_VECTORS 1
 //#undef TRACE_MYRWMUTEX
 //#define TRACE_MYRWMUTEX 1
-//#undef STRICT_MUTEX
-//#define STRICT_MUTEX 1
 
 /**
  * @brief Custom Mutex to replace Glib::Threads::Mutex, which behave differently on windows (recursive) and linux (non-recursive), by a recursive and "debugable" one
  *
- * This implementation will behave like a Glib::Threads::RecMutex (STRICT_MUTEX=0) or a Glib::Threads::Mutex (STRICT_MUTEX=1), but in this case, the application will
- * crash instead of freezing.
+ * This implementation will behave like a  Glib::Threads::Mutex, but the application will crash instead of freezing.
  *
  * In Debug builds, a printf will let you know that the MyMutex was already locked
- *
- * The default and recommended mode is STRICT_MUTEX=1
  */
 
-#ifdef WIN32
-class MyMutex : public Glib::RecMutex
-{
-#else
 class MyMutex : public Glib::Threads::RecMutex
 {
-#endif
 
-#if STRICT_MUTEX || !defined(NDEBUG)
+#ifndef NDEBUG
 private:
     bool alreadyLocked;
 #endif
@@ -74,7 +64,7 @@ private:
 public:
     class MyLock;
 
-#if STRICT_MUTEX || !defined(NDEBUG)
+#ifndef NDEBUG
     MyMutex() : alreadyLocked(false) {}
 #else
     MyMutex() {}
@@ -82,18 +72,13 @@ public:
 
     void lock()
     {
-#ifdef WIN32
-        Glib::RecMutex::lock();
-#else
         Glib::Threads::RecMutex::lock();
-#endif
-#if STRICT_MUTEX || !defined(NDEBUG)
+#ifndef NDEBUG
 
         if (alreadyLocked) {
 #ifndef NDEBUG
             std::cout << "Warning: MyMutex already locked!" << std::endl; // breakpoint
 #endif
-#if STRICT_MUTEX
 #ifndef NDEBUG
 #ifdef WIN32
             DebugBreak();
@@ -103,7 +88,6 @@ public:
 #else
             raise(SIGINT);
 #endif
-#endif
         }
 
         alreadyLocked = true;
@@ -112,20 +96,13 @@ public:
 
     bool trylock()
     {
-#ifdef WIN32
-
-        if (Glib::RecMutex::trylock())
-#else
-        if (Glib::Threads::RecMutex::trylock())
-#endif
-        {
-#if STRICT_MUTEX || !defined(NDEBUG)
+        if (Glib::Threads::RecMutex::trylock()) {
+#ifndef NDEBUG
 
             if (alreadyLocked) {
 #ifndef NDEBUG
                 std::cout << "Warning: MyMutex already locked!" << std::endl; // breakpoint
 #endif
-#if STRICT_MUTEX
 #ifndef NDEBUG
 #ifdef WIN32
                 DebugBreak();
@@ -134,7 +111,6 @@ public:
 #endif
 #else
                 raise(SIGINT);
-#endif
 #endif
             }
 
@@ -149,14 +125,10 @@ public:
     // Warning: the base class of MyMutex is RecMutex, but the mutex is said "unlocked" on first occurrence of "unlock", to avoid overhead.
     void unlock()
     {
-#if STRICT_MUTEX || !defined(NDEBUG)
+#ifndef NDEBUG
         alreadyLocked = false;
 #endif
-#ifdef WIN32
-        Glib::RecMutex::unlock();
-#else
         Glib::Threads::RecMutex::unlock();
-#endif
     }
 };
 
@@ -221,13 +193,8 @@ private:
 class MyRWMutex
 {
 public:
-#ifdef WIN32
-    Glib::Mutex handlerMutex;  // Having a recursive or non-recursive mutex is not important here, so we can use Glib::Mutex
-    Glib::Cond  access;
-#else
     Glib::Threads::Mutex handlerMutex;  // Having a recursive or non-recursive mutex is not important here, so we can use Glib::Threads::Mutex
     Glib::Threads::Cond  access;
-#endif
     size_t      writerCount;
     size_t      readerCount;
 #if TRACE_MYRWMUTEX

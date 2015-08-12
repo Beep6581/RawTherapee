@@ -28,6 +28,7 @@
 #include <list>
 #include "cropguilistener.h"
 #include "pointermotionlistener.h"
+#include "cursormanager.h"
 
 class CropWindow;
 class CropWindowListener
@@ -54,6 +55,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener, public E
     bool fitZoomEnabled;
     bool fitZoom;
     bool isLowUpdatePriority;
+    CursorShape cursor_type;
 
     // decoration
     LWButton *bZoomIn, *bZoomOut, *bZoom100, /**bZoomFit,*/ *bClose;

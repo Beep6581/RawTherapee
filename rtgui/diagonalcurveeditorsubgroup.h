@@ -30,9 +30,9 @@ class DiagonalCurveEditorSubGroup : public CurveEditorSubGroup, public SHCListen
     friend class DiagonalCurveEditor;
 
 protected:
-    Gtk::VBox* customCurveBox;
-    Gtk::VBox* NURBSCurveBox;
-    Gtk::VBox* paramCurveBox;
+    Gtk::Grid* customCurveGrid;
+    Gtk::Grid* NURBSCurveGrid;
+    Gtk::Grid* paramCurveGrid;
 
     MyDiagonalCurve* customCurve;
     MyDiagonalCurve* NURBSCurve;

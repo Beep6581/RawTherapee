@@ -33,27 +33,29 @@ void ILabel::on_realize()
     set_size_request (2 + labw, 2 + labh);
 }
 
-bool ILabel::on_expose_event (GdkEventExpose* event)
+bool ILabel::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
 
-    Glib::RefPtr<Gtk::Style> style = get_style ();
-    Glib::RefPtr<Gdk::Window> window = get_window();
-    Glib::RefPtr<Gdk::GC> gc_ = style->get_bg_gc(get_state());
-    Cairo::RefPtr<Cairo::Context> cr = window->create_cairo_context();
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context ();
 
-    Gdk::Color c = style->get_fg (get_state());
-    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+    Gtk::StateFlags state = get_state_flags();
+    Gdk::RGBA c = style->get_background_color(state);
+    cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
     cr->rectangle (0, 0, get_width (), get_height());
     cr->fill ();
 
     Glib::RefPtr<Pango::Layout> fn = create_pango_layout (label);
     fn->set_markup (label);
-    window->draw_layout(gc_, 1, 1, fn);
+    cr->move_to(1., 1.);
+    fn->add_to_cairo_context(cr);
+    c = style->get_color (state);
+    cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+    cr->fill();
 
     return true;
 }
 
-void ILabel::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
+void ILabel::on_style_updated ()
 {
 
     Glib::RefPtr<Pango::Layout> fn = create_pango_layout(label);

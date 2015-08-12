@@ -50,15 +50,15 @@ Navigator::Navigator ()
     lLAB_L = Gtk::manage (new Gtk::Label (M("NAVIGATOR_LAB_L")));
 
     // left-align labels
-    lR->set_alignment(Gtk::ALIGN_LEFT);
-    lG->set_alignment(Gtk::ALIGN_LEFT);
-    lB->set_alignment(Gtk::ALIGN_LEFT);
-    lH->set_alignment(Gtk::ALIGN_LEFT);
-    lS->set_alignment(Gtk::ALIGN_LEFT);
-    lV->set_alignment(Gtk::ALIGN_LEFT);
-    lLAB_A->set_alignment(Gtk::ALIGN_LEFT);
-    lLAB_B->set_alignment(Gtk::ALIGN_LEFT);
-    lLAB_L->set_alignment(Gtk::ALIGN_LEFT);
+    lR->set_alignment(Gtk::ALIGN_START);
+    lG->set_alignment(Gtk::ALIGN_START);
+    lB->set_alignment(Gtk::ALIGN_START);
+    lH->set_alignment(Gtk::ALIGN_START);
+    lS->set_alignment(Gtk::ALIGN_START);
+    lV->set_alignment(Gtk::ALIGN_START);
+    lLAB_A->set_alignment(Gtk::ALIGN_START);
+    lLAB_B->set_alignment(Gtk::ALIGN_START);
+    lLAB_L->set_alignment(Gtk::ALIGN_START);
 
     //values
     R = Gtk::manage (new Gtk::Label ());
@@ -72,15 +72,15 @@ Navigator::Navigator ()
     LAB_L = Gtk::manage (new Gtk::Label ());
 
     // right-align values
-    R->set_alignment(Gtk::ALIGN_RIGHT);
-    G->set_alignment(Gtk::ALIGN_RIGHT);
-    B->set_alignment(Gtk::ALIGN_RIGHT);
-    H->set_alignment(Gtk::ALIGN_RIGHT);
-    S->set_alignment(Gtk::ALIGN_RIGHT);
-    V->set_alignment(Gtk::ALIGN_RIGHT);
-    LAB_A->set_alignment(Gtk::ALIGN_RIGHT);
-    LAB_B->set_alignment(Gtk::ALIGN_RIGHT);
-    LAB_L->set_alignment(Gtk::ALIGN_RIGHT);
+    R->set_alignment(Gtk::ALIGN_END);
+    G->set_alignment(Gtk::ALIGN_END);
+    B->set_alignment(Gtk::ALIGN_END);
+    H->set_alignment(Gtk::ALIGN_END);
+    S->set_alignment(Gtk::ALIGN_END);
+    V->set_alignment(Gtk::ALIGN_END);
+    LAB_A->set_alignment(Gtk::ALIGN_END);
+    LAB_B->set_alignment(Gtk::ALIGN_END);
+    LAB_L->set_alignment(Gtk::ALIGN_END);
 
     // set font family and size
     Glib::ustring fontname;
@@ -97,28 +97,33 @@ Navigator::Navigator ()
     fontname = "Menlo";
 #endif
 
-    if (fontname != "") {
-        R->modify_font(Pango::FontDescription(fontname));
-        G->modify_font(Pango::FontDescription(fontname));
-        B->modify_font(Pango::FontDescription(fontname));
-        H->modify_font(Pango::FontDescription(fontname));
-        S->modify_font(Pango::FontDescription(fontname));
-        V->modify_font(Pango::FontDescription(fontname));
-        LAB_A->modify_font(Pango::FontDescription(fontname));
-        LAB_B->modify_font(Pango::FontDescription(fontname));
-        LAB_L->modify_font(Pango::FontDescription(fontname));
+    if (0) { // (fontname!=""){
+        Glib::RefPtr<Gtk::CssProvider> cssProvider = Gtk::CssProvider::create();
 
-        lR->modify_font(Pango::FontDescription(fontname));
-        lG->modify_font(Pango::FontDescription(fontname));
-        lB->modify_font(Pango::FontDescription(fontname));
-        lH->modify_font(Pango::FontDescription(fontname));
-        lS->modify_font(Pango::FontDescription(fontname));
-        lV->modify_font(Pango::FontDescription(fontname));
-        lLAB_A->modify_font(Pango::FontDescription(fontname));
-        lLAB_B->modify_font(Pango::FontDescription(fontname));
-        lLAB_L->modify_font(Pango::FontDescription(fontname));
+        if (cssProvider) {
+            cssProvider->load_from_data("Label { font-name: " + fontname + " }");
+            R->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+            G->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+            B->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+            H->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+            S->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+            V->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+            LAB_A->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+            LAB_B->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+            LAB_L->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
 
-        position->modify_font(Pango::FontDescription(fontname));
+            lR->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+            lG->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+            lB->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+            lH->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+            lS->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+            lV->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+            lLAB_A->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+            lLAB_B->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+            lLAB_L->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+
+            position->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
+        }
     }
 
     // setup the tables

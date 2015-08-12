@@ -120,9 +120,9 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     tilesizeLabel = Gtk::manage (new Gtk::Label (M("TP_WAVELET_TILESIZE") + ":"));
     //tilesizeLabel->set_alignment(Gtk::ALIGN_START);
     Tilesmethod = Gtk::manage (new MyComboBoxText ());
-    Tilesmethod->append_text (M("TP_WAVELET_TILESFULL"));
-    Tilesmethod->append_text (M("TP_WAVELET_TILESBIG"));
-    Tilesmethod->append_text (M("TP_WAVELET_TILESLIT"));
+    Tilesmethod->append (M("TP_WAVELET_TILESFULL"));
+    Tilesmethod->append (M("TP_WAVELET_TILESBIG"));
+    Tilesmethod->append (M("TP_WAVELET_TILESLIT"));
     Tilesmethodconn = Tilesmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::TilesmethodChanged) );
     Tilesmethod->set_tooltip_text (M("TP_WAVELET_TILES_TOOLTIP"));
     tilesizeHBox->pack_start(*tilesizeLabel, Gtk::PACK_SHRINK, 4);
@@ -132,11 +132,11 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     daubcoeffLabel = Gtk::manage (new Gtk::Label (M("TP_WAVELET_DAUB") + ":"));
     daubcoeffmethod = Gtk::manage (new MyComboBoxText ());
     daubcoeffmethod->set_sensitive(true);
-    daubcoeffmethod->append_text (M("TP_WAVELET_DAUB2"));
-    daubcoeffmethod->append_text (M("TP_WAVELET_DAUB4"));
-    daubcoeffmethod->append_text (M("TP_WAVELET_DAUB6"));
-    daubcoeffmethod->append_text (M("TP_WAVELET_DAUB10"));
-    daubcoeffmethod->append_text (M("TP_WAVELET_DAUB14"));
+    daubcoeffmethod->append (M("TP_WAVELET_DAUB2"));
+    daubcoeffmethod->append (M("TP_WAVELET_DAUB4"));
+    daubcoeffmethod->append (M("TP_WAVELET_DAUB6"));
+    daubcoeffmethod->append (M("TP_WAVELET_DAUB10"));
+    daubcoeffmethod->append (M("TP_WAVELET_DAUB14"));
     daubcoeffmethodconn = daubcoeffmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::daubcoeffmethodChanged) );
     daubcoeffmethod->set_tooltip_text (M("TP_WAVELET_DAUB_TOOLTIP"));
     daubcoeffHBox->pack_start(*daubcoeffLabel, Gtk::PACK_SHRINK, 4);
@@ -144,9 +144,9 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 
     backgroundHBox = Gtk::manage (new Gtk::HBox());
     Backmethod = Gtk::manage (new MyComboBoxText ());
-    Backmethod->append_text (M("TP_WAVELET_B0"));
-    Backmethod->append_text (M("TP_WAVELET_B1"));
-    Backmethod->append_text (M("TP_WAVELET_B2"));
+    Backmethod->append (M("TP_WAVELET_B0"));
+    Backmethod->append (M("TP_WAVELET_B1"));
+    Backmethod->append (M("TP_WAVELET_B2"));
     Backmethodconn = Backmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::BackmethodChanged) );
     backgroundLabel = Gtk::manage (new Gtk::Label (M("TP_WAVELET_BACKGROUND") + ":"));
     backgroundHBox->pack_start(*backgroundLabel, Gtk::PACK_SHRINK, 4);
@@ -154,10 +154,10 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 
     levdirMainHBox = Gtk::manage (new Gtk::HBox());
     CLmethod = Gtk::manage (new MyComboBoxText ());
-    CLmethod->append_text (M("TP_WAVELET_LEVDIR_ONE"));
-    CLmethod->append_text (M("TP_WAVELET_LEVDIR_INF"));
-    CLmethod->append_text (M("TP_WAVELET_LEVDIR_SUP"));
-    CLmethod->append_text (M("TP_WAVELET_LEVDIR_ALL"));
+    CLmethod->append (M("TP_WAVELET_LEVDIR_ONE"));
+    CLmethod->append (M("TP_WAVELET_LEVDIR_INF"));
+    CLmethod->append (M("TP_WAVELET_LEVDIR_SUP"));
+    CLmethod->append (M("TP_WAVELET_LEVDIR_ALL"));
     CLmethodconn = CLmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::CLmethodChanged) );
     levdirMainLabel = Gtk::manage (new Gtk::Label (M("TP_WAVELET_PROC") + ":"));
     levdirMainHBox->pack_start(*levdirMainLabel, Gtk::PACK_SHRINK, 4);
@@ -167,24 +167,24 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     Lmethod = Gtk::manage (new MyComboBoxText ());
     Lmethod->set_sensitive(false);
     Lmethod->set_sensitive(false);
-    Lmethod->append_text (M("TP_WAVELET_1"));
-    Lmethod->append_text (M("TP_WAVELET_2"));
-    Lmethod->append_text (M("TP_WAVELET_3"));
-    Lmethod->append_text (M("TP_WAVELET_4"));
-    Lmethod->append_text (M("TP_WAVELET_5"));
-    Lmethod->append_text (M("TP_WAVELET_6"));
-    Lmethod->append_text (M("TP_WAVELET_7"));
-    Lmethod->append_text (M("TP_WAVELET_8"));
-    Lmethod->append_text (M("TP_WAVELET_9"));
-    Lmethod->append_text (M("TP_WAVELET_SUPE"));
-    Lmethod->append_text (M("TP_WAVELET_RESID"));
+    Lmethod->append (M("TP_WAVELET_1"));
+    Lmethod->append (M("TP_WAVELET_2"));
+    Lmethod->append (M("TP_WAVELET_3"));
+    Lmethod->append (M("TP_WAVELET_4"));
+    Lmethod->append (M("TP_WAVELET_5"));
+    Lmethod->append (M("TP_WAVELET_6"));
+    Lmethod->append (M("TP_WAVELET_7"));
+    Lmethod->append (M("TP_WAVELET_8"));
+    Lmethod->append (M("TP_WAVELET_9"));
+    Lmethod->append (M("TP_WAVELET_SUPE"));
+    Lmethod->append (M("TP_WAVELET_RESID"));
     Lmethod->set_active(0);
     Dirmethod = Gtk::manage (new MyComboBoxText ());
     Dirmethod->set_sensitive(false);
-    Dirmethod->append_text (M("TP_WAVELET_DONE"));
-    Dirmethod->append_text (M("TP_WAVELET_DTWO"));
-    Dirmethod->append_text (M("TP_WAVELET_DTHR"));
-    Dirmethod->append_text (M("TP_WAVELET_DALL"));
+    Dirmethod->append (M("TP_WAVELET_DONE"));
+    Dirmethod->append (M("TP_WAVELET_DTWO"));
+    Dirmethod->append (M("TP_WAVELET_DTHR"));
+    Dirmethod->append (M("TP_WAVELET_DALL"));
     Lmethodconn = Lmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::LmethodChanged) );
     Dirmethodconn = Dirmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::DirmethodChanged) );
     levdirSubHBox->pack_start(*Lmethod);
@@ -255,8 +255,8 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     contrastSHVBox->set_spacing(2);
 
     HSmethod = Gtk::manage (new MyComboBoxText ());
-    HSmethod->append_text (M("TP_WAVELET_HS1"));
-    HSmethod->append_text (M("TP_WAVELET_HS2"));
+    HSmethod->append (M("TP_WAVELET_HS1"));
+    HSmethod->append (M("TP_WAVELET_HS2"));
     HSmethodconn = HSmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::HSmethodChanged) );
 
     hllev = Gtk::manage (new ThresholdAdjuster (M("TP_WAVELET_HIGHLIGHT"), 0., 100., 50., 75., 100., 98., 0, false));
@@ -293,9 +293,9 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     ctboxch->pack_start (*labmch, Gtk::PACK_SHRINK, 1);
 
     CHmethod = Gtk::manage (new MyComboBoxText ());
-    CHmethod->append_text (M("TP_WAVELET_CH1"));
-    CHmethod->append_text (M("TP_WAVELET_CH2"));
-    CHmethod->append_text (M("TP_WAVELET_CH3"));
+    CHmethod->append (M("TP_WAVELET_CH1"));
+    CHmethod->append (M("TP_WAVELET_CH2"));
+    CHmethod->append (M("TP_WAVELET_CH3"));
     CHmethodconn = CHmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::CHmethodChanged) );
     ctboxch->pack_start(*CHmethod);
     chBox->pack_start(*ctboxch);
@@ -305,8 +305,8 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     ctboxCH->pack_start (*labmC, Gtk::PACK_SHRINK, 1);
 
     CHSLmethod = Gtk::manage (new MyComboBoxText ());
-    CHSLmethod->append_text (M("TP_WAVELET_CHSL"));
-    CHSLmethod->append_text (M("TP_WAVELET_CHCU"));
+    CHSLmethod->append (M("TP_WAVELET_CHSL"));
+    CHSLmethod->append (M("TP_WAVELET_CHCU"));
     CHSLmethodconn = CHSLmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::CHSLmethodChanged) );
     ctboxCH->pack_start(*CHSLmethod);
 
@@ -450,9 +450,9 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     edbox->pack_start (*labmedgr, Gtk::PACK_SHRINK, 1);
 
     Medgreinf = Gtk::manage (new MyComboBoxText ());
-    Medgreinf->append_text (M("TP_WAVELET_RE1"));
-    Medgreinf->append_text (M("TP_WAVELET_RE2"));
-    Medgreinf->append_text (M("TP_WAVELET_RE3"));
+    Medgreinf->append (M("TP_WAVELET_RE1"));
+    Medgreinf->append (M("TP_WAVELET_RE2"));
+    Medgreinf->append (M("TP_WAVELET_RE3"));
     MedgreinfConn = Medgreinf->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::MedgreinfChanged) );
     Medgreinf->set_tooltip_markup (M("TP_WAVELET_EDGREINF_TOOLTIP"));
     edbox->pack_start(*Medgreinf);
@@ -466,8 +466,8 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     ctboxED->pack_start (*labmED, Gtk::PACK_SHRINK, 1);
 
     EDmethod = Gtk::manage (new MyComboBoxText ());
-    EDmethod->append_text (M("TP_WAVELET_EDSL"));
-    EDmethod->append_text (M("TP_WAVELET_EDCU"));
+    EDmethod->append (M("TP_WAVELET_EDSL"));
+    EDmethod->append (M("TP_WAVELET_EDCU"));
     EDmethodconn = EDmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::EDmethodChanged) );
     ctboxED->pack_start(*EDmethod);
     edgBox->pack_start (*ctboxED);
@@ -559,9 +559,9 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     ctboxNP->pack_start (*labmNP, Gtk::PACK_SHRINK, 1);
 
     NPmethod = Gtk::manage (new MyComboBoxText ());
-    NPmethod->append_text (M("TP_WAVELET_NPNONE"));
-    NPmethod->append_text (M("TP_WAVELET_NPLOW"));
-    NPmethod->append_text (M("TP_WAVELET_NPHIGH"));
+    NPmethod->append (M("TP_WAVELET_NPNONE"));
+    NPmethod->append (M("TP_WAVELET_NPLOW"));
+    NPmethod->append (M("TP_WAVELET_NPHIGH"));
     NPmethodconn = NPmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::NPmethodChanged) );
     NPmethod->set_tooltip_text (M("TP_WAVELET_NPTYPE_TOOLTIP"));
 
@@ -647,8 +647,8 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     resBox->pack_start(*separatorR0, Gtk::PACK_SHRINK, 2);
 
     TMmethod = Gtk::manage (new MyComboBoxText ());
-    TMmethod->append_text (M("TP_WAVELET_COMPCONT"));
-    TMmethod->append_text (M("TP_WAVELET_COMPTM"));
+    TMmethod->append (M("TP_WAVELET_COMPCONT"));
+    TMmethod->append (M("TP_WAVELET_COMPTM"));
     TMmethodconn = TMmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::TMmethodChanged) );
     ctboxTM->pack_start(*TMmethod);
     resBox->pack_start (*ctboxTM);
@@ -793,9 +793,9 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     ctboxFI->pack_start (*labmBA, Gtk::PACK_SHRINK, 1);
 
     BAmethod = Gtk::manage (new MyComboBoxText ());
-    BAmethod->append_text (M("TP_WAVELET_BANONE"));
-    BAmethod->append_text (M("TP_WAVELET_BASLI"));
-    BAmethod->append_text (M("TP_WAVELET_BACUR"));
+    BAmethod->append (M("TP_WAVELET_BANONE"));
+    BAmethod->append (M("TP_WAVELET_BASLI"));
+    BAmethod->append (M("TP_WAVELET_BACUR"));
     BAmethodconn = BAmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::BAmethodChanged) );
     ctboxFI->pack_start(*BAmethod);
     ctboxBA->pack_start(*ctboxFI);
@@ -880,30 +880,39 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 //-----------------------------
 
     expsettings->add(*settingsVBox);
+    expsettings->setLevel(2);
     pack_start (*expsettings);
 
     expcontrast->add(*levBox);
+    expcontrast->setLevel(2);
     pack_start (*expcontrast);
 
     expchroma->add(*chBox);
+    expchroma->setLevel(2);
     pack_start (*expchroma);
 
     exptoning->add(*tonBox);
+    exptoning->setLevel(2);
     pack_start (*exptoning);
 
     expnoise->add(*noiseBox);
+    expnoise->setLevel(2);
     pack_start (*expnoise);
 
     expedge->add(*edgBox);
+    expedge->setLevel(2);
     pack_start (*expedge);
 
     expgamut->add(*conBox);
+    expgamut->setLevel(2);
     pack_start (*expgamut);
 
     expresid->add(*resBox);
+    expresid->setLevel(2);
     pack_start(*expresid);
 
     expfinal->add(*finalBox);
+    expfinal->setLevel(2);
     pack_start(*expfinal);
 }
 
@@ -2331,20 +2340,20 @@ void Wavelet::LmethodChanged()
 
 void Wavelet::setBatchMode (bool batchMode)
 {
-    Lmethod->append_text (M("GENERAL_UNCHANGED"));
-    CLmethod->append_text (M("GENERAL_UNCHANGED"));
-    Backmethod->append_text (M("GENERAL_UNCHANGED"));
-    Tilesmethod->append_text (M("GENERAL_UNCHANGED"));
-    daubcoeffmethod->append_text (M("GENERAL_UNCHANGED"));
-    CHmethod->append_text (M("GENERAL_UNCHANGED"));
-    Medgreinf->append_text (M("GENERAL_UNCHANGED"));
-    CHSLmethod->append_text (M("GENERAL_UNCHANGED"));
-    EDmethod->append_text (M("GENERAL_UNCHANGED"));
-    NPmethod->append_text (M("GENERAL_UNCHANGED"));
-    BAmethod->append_text (M("GENERAL_UNCHANGED"));
-    TMmethod->append_text (M("GENERAL_UNCHANGED"));
-    HSmethod->append_text (M("GENERAL_UNCHANGED"));
-    Dirmethod->append_text (M("GENERAL_UNCHANGED"));
+    Lmethod->append (M("GENERAL_UNCHANGED"));
+    CLmethod->append (M("GENERAL_UNCHANGED"));
+    Backmethod->append (M("GENERAL_UNCHANGED"));
+    Tilesmethod->append (M("GENERAL_UNCHANGED"));
+    daubcoeffmethod->append (M("GENERAL_UNCHANGED"));
+    CHmethod->append (M("GENERAL_UNCHANGED"));
+    Medgreinf->append (M("GENERAL_UNCHANGED"));
+    CHSLmethod->append (M("GENERAL_UNCHANGED"));
+    EDmethod->append (M("GENERAL_UNCHANGED"));
+    NPmethod->append (M("GENERAL_UNCHANGED"));
+    BAmethod->append (M("GENERAL_UNCHANGED"));
+    TMmethod->append (M("GENERAL_UNCHANGED"));
+    HSmethod->append (M("GENERAL_UNCHANGED"));
+    Dirmethod->append (M("GENERAL_UNCHANGED"));
     CCWcurveEditorG->setBatchMode (batchMode);
     opaCurveEditorG->setBatchMode (batchMode);
     opacityCurveEditorG->setBatchMode (batchMode);

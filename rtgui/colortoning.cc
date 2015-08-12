@@ -15,11 +15,11 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     //---------------method
 
     method = Gtk::manage (new MyComboBoxText ());
-    method->append_text (M("TP_COLORTONING_LAB"));
-    method->append_text (M("TP_COLORTONING_RGBSLIDERS"));
-    method->append_text (M("TP_COLORTONING_RGBCURVES"));
-    method->append_text (M("TP_COLORTONING_SPLITCOCO"));
-    method->append_text (M("TP_COLORTONING_SPLITLR"));
+    method->append (M("TP_COLORTONING_LAB"));
+    method->append (M("TP_COLORTONING_RGBSLIDERS"));
+    method->append (M("TP_COLORTONING_RGBCURVES"));
+    method->append (M("TP_COLORTONING_SPLITCOCO"));
+    method->append (M("TP_COLORTONING_SPLITLR"));
     method->set_active (0);
     method->set_tooltip_text (M("TP_COLORTONING_METHOD_TOOLTIP"));
 
@@ -79,10 +79,10 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     //----------------------red green  blue yellow colours
 
     twocolor = Gtk::manage (new MyComboBoxText ());
-    twocolor->append_text (M("TP_COLORTONING_TWOSTD"));
-    twocolor->append_text (M("TP_COLORTONING_TWOALL"));
-    twocolor->append_text (M("TP_COLORTONING_TWOBY"));
-    twocolor->append_text (M("TP_COLORTONING_TWO2"));
+    twocolor->append (M("TP_COLORTONING_TWOSTD"));
+    twocolor->append (M("TP_COLORTONING_TWOALL"));
+    twocolor->append (M("TP_COLORTONING_TWOBY"));
+    twocolor->append (M("TP_COLORTONING_TWO2"));
     twocolor->set_tooltip_text (M("TP_COLORTONING_TWOCOLOR_TOOLTIP"));
     twocolor->set_active (0);
 
@@ -297,8 +297,6 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     neutrHBox->set_border_width (2);
 
     neutral = Gtk::manage (new Gtk::Button (M("TP_COLORTONING_NEUTRAL")));
-    RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
-    neutral->set_image(*resetImg);
     neutral->set_tooltip_text (M("TP_COLORTONING_NEUTRAL_TIP"));
     neutralconn = neutral->signal_pressed().connect( sigc::mem_fun(*this, &ColorToning::neutral_pressed) );
     neutral->show();
@@ -664,7 +662,6 @@ void ColorToning::adjusterChanged (ThresholdAdjuster* a, double newBottom, doubl
 
 int CTChanged_UI (void* data)
 {
-    GThreadLock lock;
     (static_cast<ColorToning*>(data))->CTComp_ ();
     return 0;
 }
@@ -675,7 +672,7 @@ void ColorToning::autoColorTonChanged(int bwct, int satthres, int satprot)
     nextbw = bwct;
     nextsatth = satthres;
     nextsatpr = satprot;
-    g_idle_add (CTChanged_UI, this);
+    add_idle (CTChanged_UI, this);
 }
 
 bool ColorToning::CTComp_ ()
@@ -1101,8 +1098,8 @@ void ColorToning::trimValues (rtengine::procparams::ProcParams* pp)
 void ColorToning::setBatchMode (bool batchMode)
 {
     ToolPanel::setBatchMode (batchMode);
-    method->append_text (M("GENERAL_UNCHANGED"));
-    twocolor->append_text (M("GENERAL_UNCHANGED"));
+    method->append (M("GENERAL_UNCHANGED"));
+    twocolor->append (M("GENERAL_UNCHANGED"));
     hlColSat->showEditedCB ();
     shadowsColSat->showEditedCB ();
     redlow->showEditedCB ();

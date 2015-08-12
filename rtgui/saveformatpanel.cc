@@ -23,61 +23,102 @@
 SaveFormatPanel::SaveFormatPanel () : listener (NULL)
 {
 
-    jpegqual = new Adjuster (M("SAVEDLG_JPEGQUAL"), 0, 100, 1, 100);
-    jpegqual->setAdjusterListener (this);
-    jpegqual->show ();
 
-    jpegSubSampBox = Gtk::manage (new Gtk::HBox ());
+    // ---------------------  FILE FORMAT SELECTOR
 
-    jpegSubSampHead = Gtk::manage (new Gtk::Label (M("SAVEDLG_SUBSAMP") + Glib::ustring(":")) );
-    jpegSubSampHead->show ();
-    jpegSubSampBox->pack_start (*jpegSubSampHead, Gtk::PACK_SHRINK, 4);
+
+    Gtk::Grid* hb1 = Gtk::manage (new Gtk::Grid ());
+    hb1->set_column_spacing(5);
+    hb1->set_row_spacing(5);
+    setExpandAlignProperties(hb1, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    Gtk::Label* flab = Gtk::manage (new Gtk::Label (M("SAVEDLG_FILEFORMAT") + ":"));
+    setExpandAlignProperties(flab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    format = Gtk::manage (new MyComboBoxText ());
+    setExpandAlignProperties(format, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    format->append ("JPEG (8 bit)");
+    format->append ("TIFF (8 bit)");
+    format->append ("TIFF (16 bit)");
+    format->append ("PNG (8 bit)");
+    format->append ("PNG (16 bit)");
+    format->set_active (0);
+    format->signal_changed().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged) );
+
+    hb1->attach (*flab, 0, 0, 1, 1);
+    hb1->attach (*format, 1, 0, 1, 1);
+
+
+    // ---------------------  JPEG OPTIONS
+
+
+    jpegOpts = Gtk::manage (new Gtk::Grid ());
+    jpegOpts->set_column_spacing(15);
+    jpegOpts->set_row_spacing(5);
+    setExpandAlignProperties(jpegOpts, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    jpegQual = new Adjuster (M("SAVEDLG_JPEGQUAL"), 0, 100, 1, 100);
+    setExpandAlignProperties(jpegQual, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    jpegQual->setAdjusterListener (this);
+    jpegQual->show ();
+
+    jpegSubSampLabel = Gtk::manage (new Gtk::Label (M("SAVEDLG_SUBSAMP") + Glib::ustring(":")) );
+    setExpandAlignProperties(jpegSubSampLabel, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    jpegSubSampLabel->show ();
 
     jpegSubSamp = Gtk::manage (new MyComboBoxText ());
-    jpegSubSamp->append_text (M("SAVEDLG_SUBSAMP_1"));
-    jpegSubSamp->append_text (M("SAVEDLG_SUBSAMP_2"));
-    jpegSubSamp->append_text (M("SAVEDLG_SUBSAMP_3"));
+    setExpandAlignProperties(jpegSubSamp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    jpegSubSamp->append (M("SAVEDLG_SUBSAMP_1"));
+    jpegSubSamp->append (M("SAVEDLG_SUBSAMP_2"));
+    jpegSubSamp->append (M("SAVEDLG_SUBSAMP_3"));
     jpegSubSamp->set_tooltip_text (M("SAVEDLG_SUBSAMP_TOOLTIP"));
     jpegSubSamp->set_active (2);
     jpegSubSamp->signal_changed().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged) );
     jpegSubSamp->show ();
 
-    jpegSubSampBox->pack_end (*jpegSubSamp);
-    jpegSubSampBox->show ();
+    jpegOpts->attach(*jpegQual, 0, 0, 1, 2);
+    jpegOpts->attach(*jpegSubSampLabel, 1, 0, 1, 1);
+    jpegOpts->attach(*jpegSubSamp, 1, 1, 1, 1);
 
-    pngcompr = new Adjuster (M("SAVEDLG_PNGCOMPR"), 0, 6, 1, 6);
-    pngcompr->setAdjusterListener (this);
-    pngcompr->show ();
-    tiffuncompressed = new Gtk::CheckButton (M("SAVEDLG_TIFFUNCOMPRESSED"));
-    tiffuncompressed->signal_toggled().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
-    tiffuncompressed->show();
+    jpegOpts->show ();
 
-    Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
-    Gtk::Label* flab = Gtk::manage (new Gtk::Label (M("SAVEDLG_FILEFORMAT") + ":"));
-    hb1->pack_start (*flab, Gtk::PACK_SHRINK, 4);
-    format = Gtk::manage (new MyComboBoxText ());
-    format->append_text ("JPEG (8 bit)");
-    format->append_text ("TIFF (8 bit)");
-    format->append_text ("TIFF (16 bit)");
-    format->append_text ("PNG (8 bit)");
-    format->append_text ("PNG (16 bit)");
-    format->set_active (0);
-    oformat = 0;
-    format->signal_changed().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged) );
-    hb1->pack_start (*format);
-    pack_start (*hb1, Gtk::PACK_SHRINK, 4);
 
-    formatopts = Gtk::manage (new Gtk::VBox ());
-    formatopts->pack_start (*jpegqual, Gtk::PACK_SHRINK, 4);
-    formatopts->pack_start (*jpegSubSampBox, Gtk::PACK_SHRINK, 4);
-    pack_start (*formatopts, Gtk::PACK_SHRINK, 4);
+    // ---------------------  PNG OPTIONS
 
-    savespp = Gtk::manage (new Gtk::CheckButton (M("SAVEDLG_SAVESPP")));
-    savespp->signal_toggled().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
-    pack_start (*savespp, Gtk::PACK_SHRINK, 4);
 
-    show_all ();
-    set_border_width (4);
+    pngCompr = new Adjuster (M("SAVEDLG_PNGCOMPR"), 0, 6, 1, 6);
+    setExpandAlignProperties(pngCompr, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    pngCompr->setAdjusterListener (this);
+    pngCompr->show ();
+
+
+    // ---------------------  TIFF OPTIONS
+
+
+    tiffUncompressed = new Gtk::CheckButton (M("SAVEDLG_TIFFUNCOMPRESSED"));
+    setExpandAlignProperties(tiffUncompressed, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    tiffUncompressed->signal_toggled().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
+    tiffUncompressed->show();
+
+
+    // ---------------------  MAIN BOX
+
+
+    savesPP = Gtk::manage (new Gtk::CheckButton (M("SAVEDLG_SAVESPP")));
+    savesPP->signal_toggled().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
+
+    set_column_spacing(5);
+    set_row_spacing(5);
+
+    attach (*hb1, 0, 0, 1, 1);
+    attach (*jpegOpts, 0, 1, 1, 1);
+    attach (*tiffUncompressed, 0, 2, 1, 1);
+    attach (*pngCompr, 0, 3, 1, 1);
+    attach (*savesPP, 0, 4, 1, 2);
+
+    hb1->show_all();
+    savesPP->show_all();
+    jpegOpts->show_all();
+    tiffUncompressed->hide();
+    pngCompr->hide();
 
     fstr[0] = "jpg";
     fstr[1] = "tif";
@@ -87,9 +128,9 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL)
 }
 SaveFormatPanel::~SaveFormatPanel ()
 {
-    delete jpegqual;
-    delete pngcompr;
-    delete tiffuncompressed;
+    delete jpegQual;
+    delete pngCompr;
+    delete tiffUncompressed;
 }
 
 void SaveFormatPanel::init (SaveFormat &sf)
@@ -112,10 +153,10 @@ void SaveFormatPanel::init (SaveFormat &sf)
 
     jpegSubSamp->set_active (sf.jpegSubSamp - 1);
 
-    pngcompr->setValue (sf.pngCompression);
-    jpegqual->setValue (sf.jpegQuality);
-    savespp->set_active (sf.saveParams);
-    tiffuncompressed->set_active (sf.tiffUncompressed);
+    pngCompr->setValue (sf.pngCompression);
+    jpegQual->setValue (sf.jpegQuality);
+    savesPP->set_active (sf.saveParams);
+    tiffUncompressed->set_active (sf.tiffUncompressed);
     listener = tmp;
 }
 
@@ -139,25 +180,16 @@ SaveFormat SaveFormatPanel::getFormat ()
         sf.tiffBits = 8;
     }
 
-    sf.pngCompression   = (int) pngcompr->getValue ();
-    sf.jpegQuality      = (int) jpegqual->getValue ();
+    sf.pngCompression   = (int) pngCompr->getValue ();
+    sf.jpegQuality      = (int) jpegQual->getValue ();
     sf.jpegSubSamp      = jpegSubSamp->get_active_row_number() + 1;
-    sf.tiffUncompressed = tiffuncompressed->get_active();
-    sf.saveParams       = savespp->get_active ();
+    sf.tiffUncompressed = tiffUncompressed->get_active();
+    sf.saveParams       = savesPP->get_active ();
     return sf;
 }
 
 void SaveFormatPanel::formatChanged ()
 {
-
-    if (oformat == 0) {
-        removeIfThere (formatopts, jpegqual);
-        removeIfThere (formatopts, jpegSubSampBox);
-    } else if (oformat == 3 || oformat == 4) {
-        removeIfThere (formatopts, pngcompr);
-    } else if (oformat == 1 || oformat == 2) {
-        removeIfThere (formatopts, tiffuncompressed);
-    }
 
     int act = format->get_active_row_number();
 
@@ -168,15 +200,18 @@ void SaveFormatPanel::formatChanged ()
     Glib::ustring fr = fstr[act];
 
     if (fr == "jpg") {
-        formatopts->pack_start (*jpegqual, Gtk::PACK_SHRINK, 4);
-        formatopts->pack_start (*jpegSubSampBox, Gtk::PACK_SHRINK, 4);
+        jpegOpts->show_all();
+        tiffUncompressed->hide();
+        pngCompr->hide();
     } else if (fr == "png") {
-        formatopts->pack_start (*pngcompr, Gtk::PACK_SHRINK, 4);
+        jpegOpts->hide();
+        tiffUncompressed->hide();
+        pngCompr->show_all();
     } else if (fr == "tif") {
-        formatopts->pack_start (*tiffuncompressed, Gtk::PACK_SHRINK, 4);
+        jpegOpts->hide();
+        tiffUncompressed->show_all();
+        pngCompr->hide();
     }
-
-    oformat = act;
 
     if (listener) {
         listener->formatChanged (fr);

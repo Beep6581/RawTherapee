@@ -20,8 +20,6 @@
 #include "multilangmgr.h"
 #include "../rtengine/safegtk.h"
 
-extern Glib::ustring argv0;
-
 bool BatchQueueButtonSet::iconsLoaded = false;
 
 Cairo::RefPtr<Cairo::ImageSurface> BatchQueueButtonSet::cancelIcon;

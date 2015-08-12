@@ -82,14 +82,19 @@ int InspectorBuffer::infoFromImage (const Glib::ustring& fname)
     return deg;
 }
 
-Inspector::Inspector () : currImage(NULL), zoom(0.0), active(false) {}
+Inspector::Inspector () : currImage(NULL), zoom(0.0), active(false)
+{
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    style->add_class(GTK_STYLE_CLASS_BACKGROUND);
+    style->add_class(GTK_STYLE_CLASS_FLAT);
+}
 
 Inspector::~Inspector()
 {
     deleteBuffers();
 }
 
-bool Inspector::on_expose_event (GdkEventExpose* event)
+bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
 
     Glib::RefPtr<Gdk::Window> win = get_window();
@@ -114,7 +119,8 @@ bool Inspector::on_expose_event (GdkEventExpose* event)
         Coord topLeft;
         Coord displayedSize;
         Coord dest(0, 0);
-        win->get_size(availableSize.x, availableSize.y);
+        availableSize.x = win->get_width();
+        availableSize.y = win->get_height();
         int imW = currImage->imgBuffer.getWidth();
         int imH = currImage->imgBuffer.getHeight();
 
@@ -158,22 +164,25 @@ bool Inspector::on_expose_event (GdkEventExpose* event)
 
         // Draw!
 
-        Gdk::Color c;
-        Cairo::RefPtr<Cairo::Context> cr = win->create_cairo_context();
-        Glib::RefPtr<Gtk::Style> style = get_style();
+        Gdk::RGBA c;
+        Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
 
         // draw the background
-        c = style->get_bg (Gtk::STATE_NORMAL);
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        style->render_background(cr, 0, 0, get_width(), get_height());
+
+        /* --- old method
+        c = style->get_background_color (Gtk::STATE_FLAG_NORMAL);
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
         cr->set_line_width (0);
         cr->rectangle (0, 0, availableSize.x, availableSize.y);
         cr->fill ();
+        */
 
         currImage->imgBuffer.copySurface(win);
 
         // draw the frame
-        c = style->get_fg (Gtk::STATE_NORMAL);
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        c = style->get_border_color (Gtk::STATE_FLAG_NORMAL);
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
         cr->set_line_width (1);
         cr->rectangle (0.5, 0.5, availableSize.x - 1, availableSize.y - 1);
         cr->stroke ();
