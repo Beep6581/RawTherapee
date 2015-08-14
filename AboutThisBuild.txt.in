@@ -1,6 +1,6 @@
-Branch: ${HG_BRANCH}
-Version: ${HG_VERSION_SUFFIX}
-Changeset: ${HG_CHANGESET}
+Branch: ${GIT_BRANCH}
+Version: ${GIT_VERSION_SUFFIX}
+Changeset: ${GIT_CHANGESET}
 Compiler: ${COMPILER_INFO}
 Processor: ${PROC_LABEL}
 System: ${SYSTEM}

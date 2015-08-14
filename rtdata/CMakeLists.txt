@@ -19,16 +19,6 @@ else (WIN32)
 endif (WIN32)
 
 if (WIN32)
-	find_file(HG_CMD hg.exe HINTS ENV Path PATH_SUFFIXES ../)
-	# Fail if Mercurial is not installed
-	if (HG_CMD STREQUAL HG_CMD-NOTFOUND)
-		message(FATAL_ERROR "hg command not found!")
-	else (HG_CMD STREQUAL HG_CMD-NOTFOUND)
-		message(STATUS "hg command found: ${HG_CMD}")
-		execute_process(COMMAND ${HG_CMD} -R "${PROJECT_SOURCE_DIR}" parents --template={latesttag} WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}" OUTPUT_VARIABLE HG_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-		execute_process(COMMAND ${HG_CMD} -R "${PROJECT_SOURCE_DIR}" parents --template={latesttagdistance} WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}" OUTPUT_VARIABLE HG_TAGDISTANCE OUTPUT_STRIP_TRAILING_WHITESPACE)
-	endif (HG_CMD STREQUAL HG_CMD-NOTFOUND)
-
 	if (CMAKE_SIZEOF_VOID_P EQUAL 4)
 		set(BUILD_BIT_DEPTH 32)
 		# 32 bits builds has to be installable on 64 bits system, to support WinXP/64.
