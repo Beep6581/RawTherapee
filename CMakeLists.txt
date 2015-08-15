@@ -1,6 +1,5 @@
 if (WIN32)
   cmake_minimum_required(VERSION 2.8.4)
-  cmake_policy(SET CMP0015 OLD)
 else (WIN32)
   cmake_minimum_required(VERSION 2.6)
 endif (WIN32)
@@ -352,7 +351,6 @@ add_custom_target(AboutFile ALL
     COMMAND ${ABOUT_COMMAND_WITH_ARGS}
     COMMENT "Creating the about file")
 
-add_dependencies(AboutFile Debug Release MinSizeRel RelWithDebInfo)
 ## END: Generating AboutThisBuild.txt
 
 install (FILES AUTHORS.txt DESTINATION "${CREDITSDIR}")
