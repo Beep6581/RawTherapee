@@ -1196,7 +1196,11 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
         }
 
         // buffer for the exif and iptc
-        unsigned char* buffer = new unsigned char[165535];  //TODO: Is it really 165535... or 65535 ?
+        int bufferSize = 165535;
+        if(profileData)
+            bufferSize += profileLength;
+        
+        unsigned char* buffer = new unsigned char[bufferSize];  //TODO: Is it really 165535... or 65535 ?
         unsigned char* iptcdata = NULL;
         unsigned int iptclen = 0;
 
@@ -1213,7 +1217,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 
         // The maximum lenght is strangely not the same than for the JPEG file...
         // Which maximum length is the good one ?
-        if (size > 0 && size < 165530) {
+        if (size > 0 && size < bufferSize) {
             fwrite (buffer, size, 1, file);
         }
 
