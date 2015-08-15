@@ -1953,7 +1953,9 @@ void Preferences::fontChanged ()
 void Preferences::switchThemeTo(Glib::ustring newTheme, bool slimInterface)
 {
 
-    Glib::ustring filename(argv0 + "/themes/" + options.theme + ".css");
+    //Glib::ustring filename(argv0 + "/themes/" + options.theme + ".css");
+    // Forcing the default dark theme
+    Glib::ustring filename(argv0 + "/themes/rtcommon.css");
 
     if (!css) {
         css = Gtk::CssProvider::create();
@@ -1970,14 +1972,20 @@ void Preferences::switchThemeTo(Glib::ustring newTheme, bool slimInterface)
     options.slimUI = slimInterface;
 
     if (slimInterface) {
+        bool slimCreated = false;
         if (!cssSlim) {
             cssSlim = Gtk::CssProvider::create();
+            slimCreated = true;
         }
 
         filename = argv0 + "/themes/slim.css";
 
         try {
             cssSlim->load_from_path (filename);
+            if (slimCreated) {
+                Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
+                Gtk::StyleContext::add_provider_for_screen(screen, cssSlim, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+            }
         } catch (Glib::Error &err) {
             printf("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
         } catch (...) {

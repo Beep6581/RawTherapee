@@ -17,7 +17,30 @@
   along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-* {
+ProgressBar {
+	padding: 2px;
+}
+
+GtkNotebook {
+	padding: 2px;
+}
+
+GtkNotebook tab GtkLabel {
+	padding: 2px;
+}
+
+GtkNotebook tab GtkButton {
 	padding: 1px;
-	margin: 1px;
+}
+
+GtkNotebook tab GtkImage {
+	padding: 1px;
+}
+
+GtkImage {
+	padding: 1px;
+}
+
+.BIG {
+	padding: 4pt;
 }

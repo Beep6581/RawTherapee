@@ -533,7 +533,7 @@ void ExpanderBox::setLevel(int level)
 
 void ExpanderBox::updateStyle()
 {
-    set_border_width(options.slimUI ? 2 : 8);  // Outer space around the tool's frame 2:7
+    set_border_width(options.slimUI ? 2 : 7);
 }
 
 void ExpanderBox::show_all()

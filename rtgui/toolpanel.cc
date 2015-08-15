@@ -55,8 +55,8 @@ void ToolParamBlock::updateStyle()
         set_spacing(2);       // Vertical space between parameters in a single tool
         set_border_width(6);  // Space separating the parameters of a tool and its surrounding frame  6
     } else {
-        set_spacing(4);       // Vertical space between parameters in a single tool
-        set_border_width(8);  // Space separating the parameters of a tool and its surrounding frame  8
+        set_spacing(2);       // Vertical space between parameters in a single tool
+        set_border_width(7);  // Space separating the parameters of a tool and its surrounding frame  8
     }
 }
 

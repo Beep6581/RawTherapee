@@ -20,6 +20,7 @@
  Please keep this gtkrc in sync with the other ones from Clearlooks based themes.
 */
 
+/* Declared for reference, they're actually unused */
 @define-color rt_salt_pinch        #95B0DB;
 @define-color rt_base_color        #dddddd;
 @define-color rt_fg_color          #0A0A0A;
@@ -34,6 +35,10 @@
 
 GtkLabel, GtkComboBox, GtkEntry, GtkDrawingArea, GtkTreeView, GtkListTree {
 	color: #AAAAAA;
+}
+
+GtkButton, GtkCheckButton, GtkLabel {
+	padding: 0px;
 }
 
 GtkFrame > GtkLabel {
@@ -80,21 +85,25 @@ GtkFrame {
 	background-color: rgba(128,128,128,0.15);
 }
 
-GtkNotebook tab GtkLabel,
-GtkNotebook tab GtkImage {
-	margin: 2px;
+GtkNotebook {
+	padding: 4px;
+}
+
+GtkNotebook tab GtkLabel {
 	padding: 4px;
 	font-size: 120%;
 	font-weight: bold;
 }
 
-GtkNotebook {
-	padding: 5px;
+GtkNotebook tab GtkButton {
+	padding: 2px;
+}
+
+GtkNotebook tab GtkImage {
+	padding: 2px;
 }
 
 GtkButton {
-	margin: 2px;
-	padding: 2px;
 	border-style: solid;
 	border-width: 1px;
 	border-radius: 4px;
@@ -144,13 +153,8 @@ GtkButton.Right {
 }
 
 GtkEntry, GtkSpinButton {
-	padding: 2px;
-	margin: 2px;
-}
-
-
-GtkNotebook tab GtkButton, GtkNotebook tab GtkImage {
 	padding: 1px;
+	margin: 1px;
 }
 
 GtkMenu {
