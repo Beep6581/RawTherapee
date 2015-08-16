@@ -5590,7 +5590,9 @@ int CLASS parse_tiff_ifd (int base)
   int ifd, use_cm=0, cfa, i, j, c, ima_len=0,cm_D65=0;
   char software[64], *cbuf, *cp;
   uchar cfa_pat[16], cfa_pc[] = { 0,1,2,3 }, tab[256];
-  double cc[2][4][4], cm[2][4][3], cam_xyz[4][3], num;
+  double cc[2][4][4];
+  double cm[2][4][3] = {NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN};
+  double cam_xyz[4][3], num;
   double ab[]={ 1,1,1,1 }, asn[] = { 0,0,0,0 }, xyz[] = { 1,1,1 };
   unsigned sony_curve[] = { 0,0,0,0,0,4095 };
   unsigned *buf, sony_offset=0, sony_length=0, sony_key=0;
@@ -6095,9 +6097,12 @@ guess_cfa_pc:
     ifp = sfp;
     free (buf);
   }
+
   for (i=0; i < colors; i++)
     FORCC cc[cm_D65][i][c] *= ab[i];
   if (use_cm) {
+    if(cm_D65 == 1 && std::isnan(cm[1][0][0]))
+        cm_D65 = 0;
     FORCC for (i=0; i < 3; i++)
       for (cam_xyz[c][i]=j=0; j < colors; j++)
 	cam_xyz[c][i] += cc[cm_D65][c][j] * cm[cm_D65][j][i] * xyz[i];
