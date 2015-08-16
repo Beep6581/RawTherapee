@@ -23,7 +23,7 @@
 #define OPTHELPER_H
 
 #ifdef __SSE2__
-#include "sleefsseavx.c"
+    #include "sleefsseavx.c"
 #ifdef __GNUC__
 #if defined(WIN32) && !defined( __x86_64__ )
 // needed for actual versions of GCC with 32-Bit Windows
