@@ -33,6 +33,7 @@
 #include "LUT.h"
 #include "curves.h"
 #include "opthelper.h"
+#include "ciecam02.h"
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
 
@@ -2083,14 +2084,14 @@ float PerceptualToneCurve::calculateToneCurveContrastValue(void) const
 void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurveState & state) const
 {
     float x, y, z;
-    cmsCIEXYZ XYZ;
-    cmsJCh JCh;
+//  cmsCIEXYZ XYZ;
+//  cmsJCh JCh;
 
-    int thread_idx = 0;
-#ifdef _OPENMP
-    thread_idx = omp_get_thread_num();
-#endif
-
+    /*  int thread_idx = 0;
+    #ifdef _OPENMP
+        thread_idx = omp_get_thread_num();
+    #endif
+    */
     if (!state.isProphoto) {
         // convert to prophoto space to make sure the same result is had regardless of working color space
         float newr = state.Working2Prophoto[0][0] * r + state.Working2Prophoto[0][1] * g + state.Working2Prophoto[0][2] * b;
@@ -2134,12 +2135,21 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
 
     // move to JCh so we can modulate chroma based on the global contrast-related chroma scaling factor
     Color::Prophotoxyz(r, g, b, x, y, z);
-    XYZ.X = x * 100.0f / 65535;
-    XYZ.Y = y * 100.0f / 65535;
-    XYZ.Z = z * 100.0f / 65535;
-    cmsCIECAM02Forward(h02[thread_idx], &XYZ, &JCh);
 
-    if (!isfinite(JCh.J) || !isfinite(JCh.C) || !isfinite(JCh.h)) {
+//  XYZ = (cmsCIEXYZ){ .X = x * 0.0015259022f, .Y = y * 0.0015259022f, .Z = z * 0.0015259022f };
+    float J, C, h;
+    Ciecam02::xyz2jch_ciecam02float( J, C, h,
+                                     aw, fl,
+                                     x * 0.0015259022f,  y * 0.0015259022f,  z * 0.0015259022f,
+                                     xw, yw,  zw,
+                                     c,  nc, n, nbb, ncb, cz, d);
+
+
+//  cmsCIECAM02Forward(h02[thread_idx], &XYZ, &JCh);
+//  XYZ.X = x * 0.0015259022f;
+//  XYZ.Y = y * 0.0015259022f;
+//  XYZ.Z = z * 0.0015259022f;
+    if (!isfinite(J) || !isfinite(C) || !isfinite(h)) {
         // this can happen for dark noise colors or colors outside human gamut. Then we just return the curve's result.
         if (!state.isProphoto) {
             float newr = state.Prophoto2Working[0][0] * r + state.Prophoto2Working[0][1] * g + state.Prophoto2Working[0][2] * b;
@@ -2159,24 +2169,26 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
 
     {
         // decrease chroma scaling sligthly of extremely saturated colors
-        float saturated_scale_factor = 0.95;
-        const float lolim = 35; // lower limit, below this chroma all colors will keep original chroma scaling factor
-        const float hilim = 60; // high limit, above this chroma the chroma scaling factor is multiplied with the saturated scale factor value above
+        float saturated_scale_factor = 0.95f;
+        const float lolim = 35.f; // lower limit, below this chroma all colors will keep original chroma scaling factor
+        const float hilim = 60.f; // high limit, above this chroma the chroma scaling factor is multiplied with the saturated scale factor value above
 
-        if (JCh.C < lolim) {
+        if (C < lolim) {
             // chroma is low enough, don't scale
-            saturated_scale_factor = 1.0;
-        } else if (JCh.C < hilim) {
+            saturated_scale_factor = 1.f;
+        } else if (C < hilim) {
             // S-curve transition between low and high limit
-            float x = (JCh.C - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
+            float x = (C - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
 
-            if (x < 0.5) {
-                x = 0.5 * powf(2 * x, 2);
+            if (x < 0.5f) {
+                x = 2.f * SQR(x);
+//              x = 0.5f * powf(2*x, 2);
             } else {
-                x = 0.5 + 0.5 * (1 - powf(1 - 2 * (x - 0.5), 2));
+                x = 1.f - 2.f * SQR(1 - x);
+//              x = 1.f - 0.5f * powf(2-2*x, 2);
             }
 
-            saturated_scale_factor = 1.0 * (1.0 - x) + saturated_scale_factor * x;
+            saturated_scale_factor = (1.f - x) + saturated_scale_factor * x;
         } else {
             // do nothing, high saturation color, keep scale factor
         }
@@ -2186,11 +2198,11 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
 
     {
         // increase chroma scaling slightly of shadows
-        float nL = CurveFactory::gamma2(newLuminance / 65535); // apply gamma so we make comparison and transition with a more perceptual lightness scale
-        float dark_scale_factor = 1.20;
+        float nL = gamma2curve[newLuminance]; // apply gamma so we make comparison and transition with a more perceptual lightness scale
+        float dark_scale_factor = 1.20f;
         //float dark_scale_factor = 1.0 + state.debug.p2 / 100.0f;
-        const float lolim = 0.15;
-        const float hilim = 0.50;
+        const float lolim = 0.15f;
+        const float hilim = 0.50f;
 
         if (nL < lolim) {
             // do nothing, keep scale factor
@@ -2198,15 +2210,17 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
             // S-curve transition
             float x = (nL - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
 
-            if (x < 0.5) {
-                x = 0.5 * powf(2 * x, 2);
+            if (x < 0.5f) {
+                x = 2.f * SQR(x);
+//              x = 0.5f * powf(2*x, 2);
             } else {
-                x = 0.5 + 0.5 * (1 - powf(1 - 2 * (x - 0.5), 2));
+                x = 1.f - 2.f * SQR(1 - x);
+//              x = 1.f - 0.5f * (powf(2-2*x, 2));
             }
 
-            dark_scale_factor = dark_scale_factor * (1.0 - x) + 1.0 * x;
+            dark_scale_factor = dark_scale_factor * (1.0f - x) + x;
         } else {
-            dark_scale_factor = 1.0;
+            dark_scale_factor = 1.f;
         }
 
         cmul *= dark_scale_factor;
@@ -2214,34 +2228,41 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
 
     {
         // to avoid strange CIECAM02 chroma errors on close-to-shadow-clipping colors we reduce chroma scaling towards 1.0 for black colors
-        float dark_scale_factor = 1.0 / cmul;
-        const float lolim = 4;
-        const float hilim = 7;
+        float dark_scale_factor = 1.f / cmul;
+        const float lolim = 4.f;
+        const float hilim = 7.f;
 
-        if (JCh.J < lolim) {
+        if (J < lolim) {
             // do nothing, keep scale factor
-        } else if (JCh.J < hilim) {
+        } else if (J < hilim) {
             // S-curve transition
-            float x = (JCh.J - lolim) / (hilim - lolim);
+            float x = (J - lolim) / (hilim - lolim);
 
-            if (x < 0.5) {
-                x = 0.5 * powf(2 * x, 2);
+            if (x < 0.5f) {
+                x = 2.f * SQR(x);
+//              x = 0.5f * powf(2*x, 2);
             } else {
-                x = 0.5 + 0.5 * (1 - powf(1 - 2 * (x - 0.5), 2));
+                x = 1.f - 2.f * SQR(1 - x);
+//              x = 1.f - 0.5f * (powf(2-2*x, 2));
             }
 
-            dark_scale_factor = dark_scale_factor * (1.0 - x) + 1.0 * x;
+            dark_scale_factor = dark_scale_factor * (1.f - x) + x;
         } else {
-            dark_scale_factor = 1.0;
+            dark_scale_factor = 1.f;
         }
 
         cmul *= dark_scale_factor;
     }
 
-    JCh.C *= cmul;
-    cmsCIECAM02Reverse(h02[thread_idx], &JCh, &XYZ);
+    C *= cmul;
+//  cmsCIECAM02Reverse(h02[thread_idx], &JCh, &XYZ);
 
-    if (!isfinite(XYZ.X) || !isfinite(XYZ.Y) || !isfinite(XYZ.Z)) {
+    Ciecam02::jch2xyz_ciecam02float( x, y, z,
+                                     J, C, h,
+                                     xw, yw,  zw,
+                                     f,  c, nc, 1, n, nbb, ncb, fl, cz, d, aw );
+
+    if (!isfinite(x) || !isfinite(y) || !isfinite(z)) {
         // can happen for colors on the rim of being outside gamut, that worked without chroma scaling but not with. Then we return only the curve's result.
         if (!state.isProphoto) {
             float newr = state.Prophoto2Working[0][0] * r + state.Prophoto2Working[0][1] * g + state.Prophoto2Working[0][2] * b;
@@ -2255,10 +2276,10 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
         return;
     }
 
-    Color::xyz2Prophoto(XYZ.X, XYZ.Y, XYZ.Z, r, g, b);
-    r *= 655.35;
-    g *= 655.35;
-    b *= 655.35;
+    Color::xyz2Prophoto(x, y, z, r, g, b);
+    r *= 655.35f;
+    g *= 655.35f;
+    b *= 655.35f;
     r = LIM<float>(r, 0.f, 65535.f);
     g = LIM<float>(g, 0.f, 65535.f);
     b = LIM<float>(b, 0.f, 65535.f);
@@ -2273,34 +2294,36 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
         Color::rgb2hsv(ar, ag, ab, ah, as, av);
         Color::rgb2hsv(r, g, b, h, s, v);
 
-        float sat_scale = as <= 0.0 ? 1.0 : s / as; // saturation scale compared to Adobe curve
-        float keep = 0.2;
-        const float lolim = 1.00; // only mix in the Adobe curve if we have increased saturation compared to it
-        const float hilim = 1.20;
+        float sat_scale = as <= 0.f ? 1.f : s / as; // saturation scale compared to Adobe curve
+        float keep = 0.2f;
+        const float lolim = 1.00f; // only mix in the Adobe curve if we have increased saturation compared to it
+        const float hilim = 1.20f;
 
         if (sat_scale < lolim) {
             // saturation is low enough, don't desaturate
-            keep = 1.0;
+            keep = 1.f;
         } else if (sat_scale < hilim) {
             // S-curve transition
             float x = (sat_scale - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
 
-            if (x < 0.5) {
-                x = 0.5 * powf(2 * x, 2);
+            if (x < 0.5f) {
+                x = 2.f * SQR(x);
+//              x = 0.5f * powf(2*x, 2);
             } else {
-                x = 0.5 + 0.5 * (1 - powf(1 - 2 * (x - 0.5), 2));
+                x = 1.f - 2.f * SQR(1 - x);
+//              x = 1.f - 0.5f * (powf(2-2*x, 2));
             }
 
-            keep = 1.0 * (1.0 - x) + keep * x;
+            keep = (1.f - x) + keep * x;
         } else {
             // do nothing, very high increase, keep minimum amount
         }
 
-        if (keep < 1.0) {
+        if (keep < 1.f) {
             // mix in some of the Adobe curve result
-            r = r * keep + (1.0 - keep) * ar;
-            g = g * keep + (1.0 - keep) * ag;
-            b = b * keep + (1.0 - keep) * ab;
+            r = r * keep + (1.f - keep) * ar;
+            g = g * keep + (1.f - keep) * ag;
+            b = b * keep + (1.f - keep) * ab;
         }
     }
 
@@ -2314,42 +2337,58 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
     }
 }
 
-cmsContext * PerceptualToneCurve::c02;
-cmsHANDLE * PerceptualToneCurve::h02;
+//cmsContext * PerceptualToneCurve::c02;
+//cmsHANDLE * PerceptualToneCurve::h02;
 float PerceptualToneCurve::cf_range[2];
 float PerceptualToneCurve::cf[1000];
+LUTf PerceptualToneCurve::gamma2curve;
+float PerceptualToneCurve::f, PerceptualToneCurve::c, PerceptualToneCurve::nc, PerceptualToneCurve::yb, PerceptualToneCurve::la, PerceptualToneCurve::xw, PerceptualToneCurve::yw, PerceptualToneCurve::zw, PerceptualToneCurve::gamut;
+float PerceptualToneCurve::n, PerceptualToneCurve::d, PerceptualToneCurve::nbb, PerceptualToneCurve::ncb, PerceptualToneCurve::cz, PerceptualToneCurve::aw, PerceptualToneCurve::wh, PerceptualToneCurve::pfl, PerceptualToneCurve::fl, PerceptualToneCurve::pow1;
 
 void PerceptualToneCurve::init()
 {
 
-    {
-        // init ciecam02 state, used for chroma scalings
-        cmsViewingConditions vc;
-        vc.whitePoint = *cmsD50_XYZ();
-        vc.whitePoint.X *= 100;
-        vc.whitePoint.Y *= 100;
-        vc.whitePoint.Z *= 100;
-        vc.Yb = 20;
-        vc.La = 20;
-        vc.surround = AVG_SURROUND;
-        vc.D_value = 1.0;
+    /*  { // init ciecam02 state, used for chroma scalings
 
-        int thread_count = 1;
-#ifdef _OPENMP
-        thread_count = omp_get_max_threads();
-#endif
-        h02 = (cmsHANDLE *)malloc(sizeof(h02[0]) * (thread_count + 1));
-        c02 = (cmsContext *)malloc(sizeof(c02[0]) * (thread_count + 1));
-        h02[thread_count] = NULL;
-        c02[thread_count] = NULL;
-
-        // little cms requires one state per thread, for thread safety
-        for (int i = 0; i < thread_count; i++) {
-            c02[i] = cmsCreateContext(NULL, NULL);
-            h02[i] = cmsCIECAM02Init(c02[i], &vc);
+            cmsViewingConditions vc;
+            vc.whitePoint = *cmsD50_XYZ();
+            vc.whitePoint.X *= 100;
+            vc.whitePoint.Y *= 100;
+            vc.whitePoint.Z *= 100;
+    */
+    xw = 96.42f;
+    yw = 100.0f;
+    zw = 82.49f;
+    /*
+            vc.Yb = 20;
+            vc.La = 20;
+            vc.surround = AVG_SURROUND;
+    */
+    yb = 20;
+    la = 20;
+    f  = 1.00f;
+    c  = 0.69f;
+    nc = 1.00f;
+//      vc.D_value = 1.0;
+    Ciecam02::initcam1float(gamut, yb, 1.f, f, la, xw, yw, zw, n, d, nbb, ncb,
+                            cz, aw, wh, pfl, fl, c);
+    pow1 = pow_F( 1.64f - pow_F( 0.29f, n ), 0.73f );
+    /*
+            int thread_count = 1;
+    #ifdef _OPENMP
+            thread_count = omp_get_max_threads();
+    #endif
+            h02 = (cmsHANDLE *)malloc(sizeof(h02[0]) * (thread_count + 1));
+            c02 = (cmsContext *)malloc(sizeof(c02[0]) * (thread_count + 1));
+            h02[thread_count] = NULL;
+            c02[thread_count] = NULL;
+            // little cms requires one state per thread, for thread safety
+            for (int i = 0; i < thread_count; i++) {
+                c02[i] = cmsCreateContext(NULL, NULL);
+                h02[i] = cmsCIECAM02Init(c02[i], &vc);
+            }
         }
-    }
-
+    */
     {
         // init contrast-value-to-chroma-scaling conversion curve
 
@@ -2392,17 +2431,12 @@ void PerceptualToneCurve::init()
         cf_range[0] = in_x[0];
         cf_range[1] = in_x[in_len - 1];
     }
-}
+    gamma2curve(65536, 0);
 
-void PerceptualToneCurve::cleanup()
-{
-    for (int i = 0; h02[i] != NULL; i++) {
-        cmsCIECAM02Done(h02[i]);
-        cmsDeleteContext(c02[i]);
+    for (int i = 0; i < 65536; i++) {
+        gamma2curve[i] = CurveFactory::gamma2(i / 65535.0);
     }
 
-    free(h02);
-    free(c02);
 }
 
 void PerceptualToneCurve::initApplyState(PerceptualToneCurveState & state, Glib::ustring workingSpace) const
