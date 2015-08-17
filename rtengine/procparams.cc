@@ -882,6 +882,11 @@ void ProcParams::setDefaults ()
     labCurve.brightness      = 0;
     labCurve.contrast        = 0;
     labCurve.chromaticity    = 0;
+    labCurve.str      = 70;
+    labCurve.scal        = 3;
+    labCurve.neigh      = 80;
+    labCurve.gain        = 1;
+    labCurve.offs    = 0;
     labCurve.avoidcolorshift = false;
     labCurve.lcredsk = true;
     labCurve.rstprotection   = 0;
@@ -899,6 +904,7 @@ void ProcParams::setDefaults ()
     labCurve.lhcurve.push_back(FCT_Linear);
     labCurve.hhcurve.clear ();
     labCurve.hhcurve.push_back(FCT_Linear);
+    labCurve.dehazmet      = "none";
 
     labCurve.lccurve.clear ();
     labCurve.lccurve.push_back(DCT_Linear);
@@ -1537,6 +1543,22 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->labCurve.chromaticity) {
         keyFile.set_integer ("Luminance Curve", "Chromaticity",               labCurve.chromaticity);
     }
+    if (!pedited || pedited->labCurve.str) {
+        keyFile.set_integer ("Luminance Curve", "Str",               labCurve.str);
+    }
+    if (!pedited || pedited->labCurve.scal) {
+        keyFile.set_integer ("Luminance Curve", "Scal",               labCurve.scal);
+    }
+
+    if (!pedited || pedited->labCurve.neigh) {
+        keyFile.set_integer ("Luminance Curve", "Neigh",               labCurve.neigh);
+    }
+    if (!pedited || pedited->labCurve.gain) {
+        keyFile.set_integer ("Luminance Curve", "Gain",               labCurve.gain);
+    }
+    if (!pedited || pedited->labCurve.offs) {
+        keyFile.set_integer ("Luminance Curve","Offs",               labCurve.offs);
+    }
 
     if (!pedited || pedited->labCurve.avoidcolorshift) {
         keyFile.set_boolean ("Luminance Curve", "AvoidColorShift",            labCurve.avoidcolorshift);
@@ -1588,6 +1610,9 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->labCurve.lccurve)  {
         Glib::ArrayHandle<double> lccurve = labCurve.lccurve;
         keyFile.set_double_list("Luminance Curve", "LcCurve", lccurve);
+    }
+    if (!pedited || pedited->labCurve.dehazmet) {
+        keyFile.set_string  ("Luminance Curve", "Dehazmet",labCurve.dehazmet);
     }
 
     if (!pedited || pedited->labCurve.clcurve)  {
@@ -3653,6 +3678,42 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                     pedited->labCurve.contrast = true;
                 }
             }
+            if (keyFile.has_key ("Luminance Curve", "Neigh"))     {
+                labCurve.neigh   = keyFile.get_integer ("Luminance Curve", "Neigh");
+
+                if (pedited) {
+                    pedited->labCurve.neigh = true;
+                }
+            }
+            if (keyFile.has_key ("Luminance Curve", "Str"))     {
+                labCurve.str   = keyFile.get_integer ("Luminance Curve", "Str");
+
+                if (pedited) {
+                    pedited->labCurve.str = true;
+                }
+            }
+            if (keyFile.has_key ("Luminance Curve", "Scal"))     {
+                labCurve.scal   = keyFile.get_integer ("Luminance Curve", "Scal");
+
+                if (pedited) {
+                    pedited->labCurve.scal = true;
+                }
+            }
+
+            if (keyFile.has_key ("Luminance Curve", "Gain"))     {
+                labCurve.gain   = keyFile.get_integer ("Luminance Curve", "Gain");
+
+                if (pedited) {
+                    pedited->labCurve.gain = true;
+                }
+            }
+            if (keyFile.has_key ("Luminance Curve", "Offs"))     {
+                labCurve.offs   = keyFile.get_integer ("Luminance Curve", "Offs");
+
+                if (pedited) {
+                    pedited->labCurve.offs = true;
+                }
+            }
 
             if (ppVersion < 303) {
                 // transform Saturation into Chromaticity
@@ -3766,6 +3827,13 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->labCurve.lhcurve = true;
+                }
+            }
+            if (keyFile.has_key ("Luminance Curve", "Dehazmet"))     {
+                labCurve.dehazmet  = keyFile.get_string  ("Luminance Curve", "Dehazmet");
+
+                if (pedited) {
+                    pedited->labCurve.dehazmet = true;
                 }
             }
 
@@ -7004,6 +7072,13 @@ bool ProcParams::operator== (const ProcParams& other)
         && labCurve.hhcurve == other.labCurve.hhcurve
         && labCurve.lccurve == other.labCurve.lccurve
         && labCurve.clcurve == other.labCurve.clcurve
+        && labCurve.str == other.labCurve.str
+        && labCurve.scal == other.labCurve.scal
+        && labCurve.neigh == other.labCurve.neigh
+        && labCurve.gain == other.labCurve.gain
+        && labCurve.offs == other.labCurve.offs
+        && labCurve.dehazmet == other.labCurve.dehazmet
+        
         && labCurve.brightness == other.labCurve.brightness
         && labCurve.contrast == other.labCurve.contrast
         && labCurve.chromaticity == other.labCurve.chromaticity

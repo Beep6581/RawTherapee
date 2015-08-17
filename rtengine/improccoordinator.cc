@@ -576,6 +576,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         nprevl->CopyFrom(oprevl);
 
         progress ("Applying Color Boost...", 100 * readyphase / numofphases);
+        ipf.MSR(nprevl, nprevl->W, nprevl->H, 1);
 
         ipf.chromiLuminanceCurve (NULL, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histCLurve, histLLCurve, histLCurve);
         ipf.vibrance(nprevl);

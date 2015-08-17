@@ -34,6 +34,12 @@ protected:
     Adjuster* brightness;
     Adjuster* contrast;
     Adjuster* chromaticity;
+    Adjuster* str;
+    Adjuster* scal;
+    Adjuster* neigh;
+    Adjuster* gain;
+    Adjuster* offs;
+   
     DiagonalCurveEditor* lshape;
     DiagonalCurveEditor* ashape;
     DiagonalCurveEditor* bshape;
@@ -42,6 +48,9 @@ protected:
     FlatCurveEditor*   chshape;
     FlatCurveEditor*   lhshape;
     FlatCurveEditor*   hhshape;
+    Gtk::Label* labmdh;
+    Gtk::HBox* dhbox;
+    MyComboBoxText*   dehazmet;
 
     DiagonalCurveEditor* clshape;
 
@@ -50,7 +59,7 @@ protected:
     Gtk::CheckButton* lcredsk;
 
     Adjuster* rstprotection;
-    sigc::connection  bwtconn, acconn, lcconn;
+    sigc::connection  bwtconn, acconn, lcconn, dehazmetConn;
     bool lastACVal, lastLCVal;
 
     //%%%%%%%%%%%%%%%%
@@ -77,6 +86,12 @@ public:
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
 
     virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
+    
+ private:	
+    void dehazmetChanged();
+
+
+   
 };
 
 #endif

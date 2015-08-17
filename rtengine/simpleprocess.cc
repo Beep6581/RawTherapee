@@ -901,6 +901,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                                    params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve, params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve,
                                    hist16C, hist16C, dummy, dummy,
                                    1);
+    ipf.MSR(labView, labView->W, labView->H, 1);
 
     ipf.chromiLuminanceCurve (NULL, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy, dummy, dummy);
 

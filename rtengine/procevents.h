@@ -432,6 +432,13 @@ enum ProcEvent {
     EvWavedgeampli = 403,
     EvWavlev3nois = 404,
     EvWavNPmet = 405,
+    Evdehazmet = 406,
+    EvLneigh = 407,
+    EvLgain = 408,
+    EvLoffs = 409,
+    EvLstr = 410,
+    EvLscal = 411,
+    
     NUMOFEVENTS
 };
 }

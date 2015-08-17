@@ -61,6 +61,13 @@ public:
     bool brightness;
     bool contrast;
     bool chromaticity;
+    bool str;
+    bool scal;
+    bool neigh;
+    bool gain;
+    bool offs;
+    bool dehazmet;
+    
     bool avoidcolorshift;
     bool rstprotection;
     bool lcurve;

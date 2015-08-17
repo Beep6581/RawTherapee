@@ -283,6 +283,13 @@ public:
     bool    avoidcolorshift;
     double  rstprotection;
     bool    lcredsk;
+    int     str;
+    int     scal;
+    int     neigh;
+    int     gain;
+    int     offs;
+    Glib::ustring dehazmet;
+   
 };
 
 /**

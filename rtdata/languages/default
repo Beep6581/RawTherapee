@@ -636,6 +636,12 @@ HISTORY_MSG_403;W - ES - Edge sensitivity
 HISTORY_MSG_404;W - ES - Base amplification
 HISTORY_MSG_405;W - Denoise - Level 4
 HISTORY_MSG_406;W - ES - Neighboring pixels
+HISTORY_MSG_407;Dehaze met
+HISTORY_MSG_408;Dehaze neighboring
+HISTORY_MSG_409;Dehaze gain
+HISTORY_MSG_410;Dehaze offset
+HISTORY_MSG_411;Dehaze strength
+HISTORY_MSG_412;Dehaze scales
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1536,6 +1542,18 @@ TP_LABCURVE_LCREDSK;Restrict LC to red and skin-tones
 TP_LABCURVE_LCREDSK_TIP;If enabled, the LC Curve affects only red and skin-tones.\nIf disabled, it applies to all tones.
 TP_LABCURVE_RSTPROTECTION;Red and skin-tones protection
 TP_LABCURVE_RSTPRO_TOOLTIP;Works on the Chromaticity slider and the CC curve.
+TP_LABCURVE_STR;Strength
+TP_LABCURVE_SCAL;Scales
+TP_LABCURVE_NEIGH;Neighboring pixels
+TP_LABCURVE_GAIN;Gain
+TP_LABCURVE_OFFS;Offset
+TP_DEHAZE_LAB;Dehaze 
+TP_DEHAZE_LAB_TOOLTIP;Use Retinex algorithm (Lab) to improve dehaze..defog...
+TP_DEHAZE_MET;Dehaze method
+TP_DEHAZ_NONE;None
+TP_DEHAZ_UNI;Uniform
+TP_DEHAZ_LOW;Low
+TP_DEHAZ_HIGH;High
 TP_LENSGEOM_AUTOCROP;Auto-Crop
 TP_LENSGEOM_FILL;Auto-fill
 TP_LENSGEOM_LABEL;Lens / Geometry
