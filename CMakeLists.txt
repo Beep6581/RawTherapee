@@ -13,6 +13,16 @@ endif ()
 
 string (TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
 
+# assuming that Linux and Apple users will have gtk2 built by their installed gcc
+if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
+  if (GCC_VERSION VERSION_GREATER 5.0 OR GCC_VERSION VERSION_EQUAL 5.0)
+    message(STATUS "Gcc Version >= 5.0 ; adding -D_GLIBCXX_USE_CXX11_ABI=0 to build with Gtk2")
+    add_definitions (-D_GLIBCXX_USE_CXX11_ABI=0)
+	# see here : https://gcc.gnu.org/gcc-5/changes.html#libstdcxx
+  endif()
+endif()
+
 if (UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
   add_definitions (-D_DEBUG)
 else ()
