@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-hgBranch="`hg branch`"
-hgLatesttag="`hg parents --template '{latesttag}'`"
-hgLatesttagdistance="`hg parents --template '{latesttagdistance}'`"
-hgChangeset="`hg parents --template '{node|short}'`"
+gitBranch="`git symbolic-ref --short -q HEAD`"
+gitVersion="`git describe --tags --always`"
+gitLatesttag="`echo $gitVersion | sed 's/-.*//'`"
+gitLatesttagdistance="`echo $gitVersion | sed 's/.*-\(.*\)-g.*/\1/'`"
+gitChangeset="`git rev-parse --verify HEAD`"
 
-echo "set(HG_BRANCH $hgBranch)
-set(HG_VERSION $hgLatesttag.$hgLatesttagdistance)
-set(HG_CHANGESET $hgChangeset)
-set(HG_TAGDISTANCE $hgLatesttagdistance)" > ReleaseInfo.cmake
+echo "set(GIT_BRANCH $gitBranch)
+set(GIT_VERSION $gitLatesttag.$gitLatesttagdistance)
+set(GIT_CHANGESET $gitChangeset)
+set(GIT_TAGDISTANCE $gitLatesttagdistance)" > ReleaseInfo.cmake
 
