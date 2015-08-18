@@ -50,7 +50,7 @@ if (WIN32)
             message(STATUS "git command found: ${GIT_CMD}")
         endif ()
 
-        execute_process(COMMAND ${GIT_CMD} -C "${PROJECT_SOURCE_DIR}" describe --tags --always OUTPUT_VARIABLE GIT_VERSION_WHOLE OUTPUT_STRIP_TRAILING_WHITESPACE)
+        execute_process(COMMAND ${GIT_CMD} describe --tags --always OUTPUT_VARIABLE GIT_VERSION_WHOLE OUTPUT_STRIP_TRAILING_WHITESPACE WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
         string(REGEX REPLACE "-.*" "" GIT_VERSION ${GIT_VERSION_WHOLE})
         string(REGEX REPLACE ".*-(.*)-g.*" "\\1" GIT_TAGDISTANCE ${GIT_VERSION_WHOLE})
     else (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
