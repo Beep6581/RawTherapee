@@ -23,8 +23,8 @@
 
 
 #define MyAppName "RawTherapee"
-#define MyAppVersion "${HG_VERSION}"
-#define MyAppFullVersion "${HG_VERSION}.${HG_TAGDISTANCE}"
+#define MyAppVersion "${GIT_VERSION}"
+#define MyAppFullVersion "${GIT_VERSION}.${GIT_TAGDISTANCE}"
 #define MyAppPublisher "rawtherapee.com"
 #define MyAppURL "http://www.rawtherapee.com/"
 #define MyAppExeName "rawtherapee.exe"

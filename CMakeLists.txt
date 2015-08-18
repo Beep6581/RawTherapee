@@ -1,6 +1,5 @@
 if (WIN32)
   cmake_minimum_required(VERSION 2.8.4)
-  cmake_policy(SET CMP0015 OLD)
 else (WIN32)
   cmake_minimum_required(VERSION 2.6)
 endif (WIN32)
@@ -13,6 +12,16 @@ if (CMAKE_BUILD_TYPE STREQUAL "")
 endif ()
 
 string (TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
+
+# assuming that Linux and Apple users will have gtk2 built by their installed gcc
+if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
+  if (GCC_VERSION VERSION_GREATER 5.0 OR GCC_VERSION VERSION_EQUAL 5.0)
+    message(STATUS "Gcc Version >= 5.0 ; adding -D_GLIBCXX_USE_CXX11_ABI=0 to build with Gtk2")
+    add_definitions (-D_GLIBCXX_USE_CXX11_ABI=0)
+	# see here : https://gcc.gnu.org/gcc-5/changes.html#libstdcxx
+  endif()
+endif()
 
 if (UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
   add_definitions (-D_DEBUG)
@@ -352,7 +361,6 @@ add_custom_target(AboutFile ALL
     COMMAND ${ABOUT_COMMAND_WITH_ARGS}
     COMMENT "Creating the about file")
 
-add_dependencies(AboutFile Debug Release MinSizeRel RelWithDebInfo)
 ## END: Generating AboutThisBuild.txt
 
 install (FILES AUTHORS.txt DESTINATION "${CREDITSDIR}")

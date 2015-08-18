@@ -6405,7 +6405,7 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, 
     }
 
     //  t2e.set();
-    //  printf("Chromil took %d �sec\n",t2e.etime(t1e));
+    //  printf("Chromil took %d nsec\n",t2e.etime(t1e));
 }
 
 
