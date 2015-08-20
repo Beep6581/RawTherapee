@@ -115,10 +115,10 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         // this will eventually create/update the off-screen pixmap
 
         // compute the displayed area
-        Coord availableSize;
-        Coord topLeft;
-        Coord displayedSize;
-        Coord dest(0, 0);
+        rtengine::Coord availableSize;
+        rtengine::Coord topLeft;
+        rtengine::Coord displayedSize;
+        rtengine::Coord dest(0, 0);
         availableSize.x = win->get_width();
         availableSize.y = win->get_height();
         int imW = currImage->imgBuffer.getWidth();
