@@ -40,7 +40,7 @@
 #include "improccoordinator.h"
 #include "clutstore.h"
 #include "ciecam02.h"
-#include "StopWatch.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -3171,7 +3171,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
                                SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit , float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clToningcurve, LUTf & cl2Toningcurve,
                                const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,  const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh, DCPProfile *dcpProf)
 {
-    StopWatch Stop1("rgbProc");
     LUTf fGammaLUTf;
     Imagefloat *tmpImage = NULL;
 

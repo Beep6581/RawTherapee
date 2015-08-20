@@ -2084,14 +2084,7 @@ float PerceptualToneCurve::calculateToneCurveContrastValue(void) const
 void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurveState & state) const
 {
     float x, y, z;
-//  cmsCIEXYZ XYZ;
-//  cmsJCh JCh;
 
-    /*  int thread_idx = 0;
-    #ifdef _OPENMP
-        thread_idx = omp_get_thread_num();
-    #endif
-    */
     if (!state.isProphoto) {
         // convert to prophoto space to make sure the same result is had regardless of working color space
         float newr = state.Working2Prophoto[0][0] * r + state.Working2Prophoto[0][1] * g + state.Working2Prophoto[0][2] * b;
@@ -2136,7 +2129,6 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
     // move to JCh so we can modulate chroma based on the global contrast-related chroma scaling factor
     Color::Prophotoxyz(r, g, b, x, y, z);
 
-//  XYZ = (cmsCIEXYZ){ .X = x * 0.0015259022f, .Y = y * 0.0015259022f, .Z = z * 0.0015259022f };
     float J, C, h;
     Ciecam02::xyz2jch_ciecam02float( J, C, h,
                                      aw, fl,
@@ -2145,10 +2137,6 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
                                      c,  nc, n, nbb, ncb, cz, d);
 
 
-//  cmsCIECAM02Forward(h02[thread_idx], &XYZ, &JCh);
-//  XYZ.X = x * 0.0015259022f;
-//  XYZ.Y = y * 0.0015259022f;
-//  XYZ.Z = z * 0.0015259022f;
     if (!isfinite(J) || !isfinite(C) || !isfinite(h)) {
         // this can happen for dark noise colors or colors outside human gamut. Then we just return the curve's result.
         if (!state.isProphoto) {
@@ -2182,10 +2170,8 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
 
             if (x < 0.5f) {
                 x = 2.f * SQR(x);
-//              x = 0.5f * powf(2*x, 2);
             } else {
                 x = 1.f - 2.f * SQR(1 - x);
-//              x = 1.f - 0.5f * powf(2-2*x, 2);
             }
 
             saturated_scale_factor = (1.f - x) + saturated_scale_factor * x;
@@ -2212,10 +2198,8 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
 
             if (x < 0.5f) {
                 x = 2.f * SQR(x);
-//              x = 0.5f * powf(2*x, 2);
             } else {
                 x = 1.f - 2.f * SQR(1 - x);
-//              x = 1.f - 0.5f * (powf(2-2*x, 2));
             }
 
             dark_scale_factor = dark_scale_factor * (1.0f - x) + x;
@@ -2240,10 +2224,8 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
 
             if (x < 0.5f) {
                 x = 2.f * SQR(x);
-//              x = 0.5f * powf(2*x, 2);
             } else {
                 x = 1.f - 2.f * SQR(1 - x);
-//              x = 1.f - 0.5f * (powf(2-2*x, 2));
             }
 
             dark_scale_factor = dark_scale_factor * (1.f - x) + x;
@@ -2255,7 +2237,6 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
     }
 
     C *= cmul;
-//  cmsCIECAM02Reverse(h02[thread_idx], &JCh, &XYZ);
 
     Ciecam02::jch2xyz_ciecam02float( x, y, z,
                                      J, C, h,
@@ -2308,10 +2289,8 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
 
             if (x < 0.5f) {
                 x = 2.f * SQR(x);
-//              x = 0.5f * powf(2*x, 2);
             } else {
                 x = 1.f - 2.f * SQR(1 - x);
-//              x = 1.f - 0.5f * (powf(2-2*x, 2));
             }
 
             keep = (1.f - x) + keep * x;
@@ -2337,8 +2316,6 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
     }
 }
 
-//cmsContext * PerceptualToneCurve::c02;
-//cmsHANDLE * PerceptualToneCurve::h02;
 float PerceptualToneCurve::cf_range[2];
 float PerceptualToneCurve::cf[1000];
 LUTf PerceptualToneCurve::gamma2curve;
@@ -2348,47 +2325,20 @@ float PerceptualToneCurve::n, PerceptualToneCurve::d, PerceptualToneCurve::nbb, 
 void PerceptualToneCurve::init()
 {
 
-    /*  { // init ciecam02 state, used for chroma scalings
-
-            cmsViewingConditions vc;
-            vc.whitePoint = *cmsD50_XYZ();
-            vc.whitePoint.X *= 100;
-            vc.whitePoint.Y *= 100;
-            vc.whitePoint.Z *= 100;
-    */
+    // init ciecam02 state, used for chroma scalings
     xw = 96.42f;
     yw = 100.0f;
     zw = 82.49f;
-    /*
-            vc.Yb = 20;
-            vc.La = 20;
-            vc.surround = AVG_SURROUND;
-    */
     yb = 20;
     la = 20;
     f  = 1.00f;
     c  = 0.69f;
     nc = 1.00f;
-//      vc.D_value = 1.0;
+
     Ciecam02::initcam1float(gamut, yb, 1.f, f, la, xw, yw, zw, n, d, nbb, ncb,
                             cz, aw, wh, pfl, fl, c);
     pow1 = pow_F( 1.64f - pow_F( 0.29f, n ), 0.73f );
-    /*
-            int thread_count = 1;
-    #ifdef _OPENMP
-            thread_count = omp_get_max_threads();
-    #endif
-            h02 = (cmsHANDLE *)malloc(sizeof(h02[0]) * (thread_count + 1));
-            c02 = (cmsContext *)malloc(sizeof(c02[0]) * (thread_count + 1));
-            h02[thread_count] = NULL;
-            c02[thread_count] = NULL;
-            // little cms requires one state per thread, for thread safety
-            for (int i = 0; i < thread_count; i++) {
-                c02[i] = cmsCreateContext(NULL, NULL);
-                h02[i] = cmsCIECAM02Init(c02[i], &vc);
-            }
-        }
-    */
+
     {
         // init contrast-value-to-chroma-scaling conversion curve
 
