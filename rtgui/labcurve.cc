@@ -235,10 +235,11 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"))
     dehazVBox->pack_start(*dhbox);
 
     str = Gtk::manage (new Adjuster (M("TP_LABCURVE_STR"), 0, 100., 1., 70.));
-    scal   = Gtk::manage (new Adjuster (M("TP_LABCURVE_SCAL"), 1, 8., 1., 3.));
+    scal   = Gtk::manage (new Adjuster (M("TP_LABCURVE_SCAL"), 1, 6., 1., 3.));
     neigh = Gtk::manage (new Adjuster (M("TP_LABCURVE_NEIGH"), 6, 100., 1., 80.));
-    gain   = Gtk::manage (new Adjuster (M("TP_LABCURVE_GAIN"), 0.9, 1.1, 0.01, 1.));
-    offs   = Gtk::manage (new Adjuster (M("TP_LABCURVE_OFFS"), -50, 50, 1, 0));
+    gain   = Gtk::manage (new Adjuster (M("TP_LABCURVE_GAIN"), 0.8, 1.4, 0.01, 1.));
+    offs   = Gtk::manage (new Adjuster (M("TP_LABCURVE_OFFS"), -10, 5, 0.1, 0));
+    vart   = Gtk::manage (new Adjuster (M("TP_LABCURVE_VART"), 0.5, 15., 0.01, 1));
     dehazVBox->pack_start (*str);
     str->show ();
 
@@ -248,17 +249,20 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"))
     dehazVBox->pack_start (*neigh);
     neigh->show ();
 
- //   dehazVBox->pack_start (*gain);
- //   gain->show ();
+//    dehazVBox->pack_start (*gain);
+//    gain->show ();
 
- //   dehazVBox->pack_start (*offs);
+//    dehazVBox->pack_start (*offs);
  //   offs->show ();
+//    dehazVBox->pack_start (*vart);
+ //   vart->show ();
 
     str->setAdjusterListener (this);
     scal->setAdjusterListener (this);
     neigh->setAdjusterListener (this);
     gain->setAdjusterListener (this);
     offs->setAdjusterListener (this);
+    vart->setAdjusterListener (this);
     dehazFrame->add(*dehazVBox);
     pack_start (*dehazFrame);
 
@@ -289,9 +293,13 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
         neigh->setEditedState (pedited->labCurve.neigh ? Edited : UnEdited);
         gain->setEditedState (pedited->labCurve.gain ? Edited : UnEdited);
         offs->setEditedState (pedited->labCurve.offs ? Edited : UnEdited);
+        vart->setEditedState (pedited->labCurve.vart ? Edited : UnEdited);
 
+    //    if (!pedited->labCurve.dehazmet) {
+     //       dehazmet->set_active (3);
+     //   }
         if (!pedited->labCurve.dehazmet) {
-            dehazmet->set_active (3);
+            dehazmet->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
         //%%%%%%%%%%%%%%%%%%%%%%
@@ -316,8 +324,9 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
     offs->setValue  (pp->labCurve.offs);
     str->setValue    (pp->labCurve.str);
     scal->setValue      (pp->labCurve.scal);
+    vart->setValue  (pp->labCurve.vart);
     
-    dehazmet->set_active (0);
+//    dehazmet->set_active (0);
     if (pp->labCurve.dehazmet == "none") {
         dehazmet->set_active (0);
     } else if (pp->labCurve.dehazmet == "uni") {
@@ -426,6 +435,7 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
     pp->labCurve.neigh    = neigh->getValue ();
     pp->labCurve.gain      = (int)gain->getValue ();
     pp->labCurve.offs  = (int)offs->getValue ();
+    pp->labCurve.vart  = (int)vart->getValue ();
 
     //%%%%%%%%%%%%%%%%%%%%%%
     pp->labCurve.avoidcolorshift = avoidcolorshift->get_active ();
@@ -454,7 +464,8 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->labCurve.lcredsk         = !lcredsk->get_inconsistent();
 
         pedited->labCurve.rstprotection   = rstprotection->getEditedState ();
-        pedited->labCurve.dehazmet  = dehazmet->get_active_row_number() != 3;
+   //     pedited->labCurve.dehazmet  = dehazmet->get_active_row_number() != 3;
+        pedited->labCurve.dehazmet    = dehazmet->get_active_text() != M("GENERAL_UNCHANGED");
        
         //%%%%%%%%%%%%%%%%%%%%%%
         pedited->labCurve.str   = str->getEditedState ();
@@ -462,6 +473,7 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->labCurve.neigh   = neigh->getEditedState ();
         pedited->labCurve.gain     = gain->getEditedState ();
         pedited->labCurve.offs = offs->getEditedState ();
+        pedited->labCurve.vart = vart->getEditedState ();
 
 
         pedited->labCurve.lcurve    = !lshape->isUnChanged ();
@@ -473,6 +485,9 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->labCurve.hhcurve   = !hhshape->isUnChanged ();
         pedited->labCurve.lccurve   = !lcshape->isUnChanged ();
         pedited->labCurve.clcurve   = !clshape->isUnChanged ();
+        
+        
+    }
     if (dehazmet->get_active_row_number() == 0) {
         pp->labCurve.dehazmet = "none";
     } else if (dehazmet->get_active_row_number() == 1) {
@@ -482,9 +497,8 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
     } else if (dehazmet->get_active_row_number() == 3) {
         pp->labCurve.dehazmet = "high";
     }
-        
-        
-    }
+    
+    
 }
 
 void LCurve::dehazmetChanged()
@@ -507,6 +521,7 @@ void LCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pedit
     offs->setDefault (defParams->labCurve.offs);
     str->setDefault (defParams->labCurve.str);
     scal->setDefault (defParams->labCurve.scal);
+    vart->setDefault (defParams->labCurve.vart);
 
     if (pedited) {
         brightness->setDefaultEditedState (pedited->labCurve.brightness ? Edited : UnEdited);
@@ -518,6 +533,7 @@ void LCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pedit
         offs->setDefaultEditedState (pedited->labCurve.offs ? Edited : UnEdited);
         str->setDefaultEditedState (pedited->labCurve.str ? Edited : UnEdited);
         scal->setDefaultEditedState (pedited->labCurve.scal ? Edited : UnEdited);
+        vart->setDefaultEditedState (pedited->labCurve.vart ? Edited : UnEdited);
 
     } else {
         brightness->setDefaultEditedState (Irrelevant);
@@ -527,6 +543,7 @@ void LCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pedit
         neigh->setDefaultEditedState (Irrelevant);
         gain->setDefaultEditedState (Irrelevant);
         offs->setDefaultEditedState (Irrelevant);
+        vart->setDefaultEditedState (Irrelevant);
         str->setDefaultEditedState (Irrelevant);
         scal->setDefaultEditedState (Irrelevant);
     }
@@ -682,6 +699,10 @@ void LCurve::adjusterChanged (Adjuster* a, double newval)
         if (listener) {
             listener->panelChanged (EvLoffs, costr);
         }
+    } else if (a == vart) {
+        if (listener) {
+            listener->panelChanged (EvLvart, costr);
+        }
        
     } else if (a == chromaticity) {
         if (multiImage) {
@@ -774,6 +795,7 @@ void LCurve::setBatchMode (bool batchMode)
     offs->showEditedCB ();
     str->showEditedCB ();
     scal->showEditedCB ();
+    vart->showEditedCB ();
 
     curveEditorG->setBatchMode (batchMode);
     lcshape->setBottomBarColorProvider(NULL, -1);
@@ -810,4 +832,5 @@ void LCurve::trimValues (rtengine::procparams::ProcParams* pp)
     neigh->trimValue(pp->labCurve.neigh);
     gain->trimValue(pp->labCurve.gain);
     offs->trimValue(pp->labCurve.offs);
+    vart->trimValue(pp->labCurve.vart);
 }

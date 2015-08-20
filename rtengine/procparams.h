@@ -289,6 +289,7 @@ public:
     int     gain;
     int     offs;
     Glib::ustring dehazmet;
+    int     vart;
    
 };
 

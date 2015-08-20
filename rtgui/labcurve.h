@@ -39,6 +39,7 @@ protected:
     Adjuster* neigh;
     Adjuster* gain;
     Adjuster* offs;
+    Adjuster* vart;
    
     DiagonalCurveEditor* lshape;
     DiagonalCurveEditor* ashape;

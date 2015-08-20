@@ -64,6 +64,7 @@ void ParamsEdited::set (bool v)
     labCurve.neigh    = v;
     labCurve.gain    = v;
     labCurve.offs    = v;
+    labCurve.vart    = v;
     labCurve.brightness  = v;
     labCurve.contrast    = v;
     labCurve.chromaticity    = v;
@@ -525,6 +526,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         labCurve.neigh = labCurve.neigh && p.labCurve.neigh == other.labCurve.neigh;
         labCurve.gain = labCurve.gain && p.labCurve.gain == other.labCurve.gain;
         labCurve.offs = labCurve.offs && p.labCurve.offs == other.labCurve.offs;
+        labCurve.vart = labCurve.vart && p.labCurve.vart == other.labCurve.vart;
         labCurve.brightness = labCurve.brightness && p.labCurve.brightness == other.labCurve.brightness;
         labCurve.contrast = labCurve.contrast && p.labCurve.contrast == other.labCurve.contrast;
         labCurve.chromaticity = labCurve.chromaticity && p.labCurve.chromaticity == other.labCurve.chromaticity;
@@ -1072,6 +1074,9 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     }
     if (labCurve.offs) {
         toEdit.labCurve.offs   = mods.labCurve.offs;
+    }
+    if (labCurve.vart) {
+        toEdit.labCurve.vart   = mods.labCurve.vart;
     }
 
     if (labCurve.avoidcolorshift) {

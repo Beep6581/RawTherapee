@@ -887,6 +887,7 @@ void ProcParams::setDefaults ()
     labCurve.neigh      = 80;
     labCurve.gain        = 1;
     labCurve.offs    = 0;
+    labCurve.vart    = 1;
     labCurve.avoidcolorshift = false;
     labCurve.lcredsk = true;
     labCurve.rstprotection   = 0;
@@ -1558,6 +1559,9 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     }
     if (!pedited || pedited->labCurve.offs) {
         keyFile.set_integer ("Luminance Curve","Offs",               labCurve.offs);
+    }
+    if (!pedited || pedited->labCurve.vart) {
+        keyFile.set_integer ("Luminance Curve","Vart",               labCurve.vart);
     }
 
     if (!pedited || pedited->labCurve.avoidcolorshift) {
@@ -3712,6 +3716,13 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->labCurve.offs = true;
+                }
+            }
+            if (keyFile.has_key ("Luminance Curve", "Vart"))     {
+                labCurve.vart   = keyFile.get_integer ("Luminance Curve", "Vart");
+
+                if (pedited) {
+                    pedited->labCurve.vart = true;
                 }
             }
 
@@ -7078,6 +7089,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && labCurve.gain == other.labCurve.gain
         && labCurve.offs == other.labCurve.offs
         && labCurve.dehazmet == other.labCurve.dehazmet
+        && labCurve.vart == other.labCurve.vart
         
         && labCurve.brightness == other.labCurve.brightness
         && labCurve.contrast == other.labCurve.contrast

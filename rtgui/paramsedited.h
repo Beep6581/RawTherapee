@@ -67,6 +67,7 @@ public:
     bool gain;
     bool offs;
     bool dehazmet;
+    bool vart;
     
     bool avoidcolorshift;
     bool rstprotection;
