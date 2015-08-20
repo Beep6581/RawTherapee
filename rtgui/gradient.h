@@ -8,6 +8,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 #include "edit.h"
+#include "guiutils.h"
 
 class Gradient : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public EditSubscriber
 {
@@ -26,7 +27,7 @@ protected:
     double draggedPointOldAngle;
     double draggedPointAdjusterAngle;
     double draggedFeatherOffset;
-    Coord draggedCenter;
+    rtengine::Coord draggedCenter;
     sigc::connection editConn;
 
     void editToggled ();
@@ -55,7 +56,7 @@ public:
     bool mouseOver(int modifierKey);
     bool button1Pressed(int modifierKey);
     bool button1Released();
-    bool drag(int modifierKey);
+    bool drag1(int modifierKey);
     void switchOffEditMode ();
 };
 

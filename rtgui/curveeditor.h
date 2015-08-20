@@ -35,9 +35,8 @@ class CurveEditorSubGroup;
  */
 
 
-/*
- * This class is an interface between RT and the curve editor group ; it handles the methods
- * related to a specific curve. It is created by CurveEditorGroup::addCurve
+/** @brief This class is an interface between RT and the curve editor group
+ * It handles the methods related to a specific curve. It is created by CurveEditorGroup::addCurve
  */
 class CurveEditor : public EditSubscriber
 {
@@ -131,7 +130,7 @@ public:
     bool mouseOver(int modifierKey);
     bool button1Pressed(int modifierKey);
     bool button1Released();
-    bool drag(int modifierKey);
+    bool drag1(int modifierKey);
     CursorShape getCursor(int objectID);
 
 
