@@ -146,7 +146,7 @@ void Gradient::updateGeometry(int centerX_, int centerY_, double feather_, doubl
         dataProvider->getImageSize(imW, imH);
         double decay = feather_ * sqrt(double(imW) * double(imW) + double(imH) * double(imH)) / 200.;
 
-        Coord origin(imW / 2 + centerX_ * imW / 200.f, imH / 2 + centerY_ * imH / 200.f);
+        rtengine::Coord origin(imW / 2 + centerX_ * imW / 200.f, imH / 2 + centerY_ * imH / 200.f);
 
         Line *currLine;
         Circle *currCircle;
@@ -397,10 +397,11 @@ bool Gradient::mouseOver(int modifierKey)
 
 bool Gradient::button1Pressed(int modifierKey)
 {
-    if (!(modifierKey & (GDK_CONTROL_MASK | GDK_CONTROL_MASK))) {
+    EditDataProvider *provider = getEditProvider();
+
+    if (!(modifierKey & GDK_CONTROL_MASK)) {
         // button press is valid (no modifier key)
         PolarCoord pCoord;
-        EditDataProvider *provider = getEditProvider();
         int imW, imH;
         provider->getImageSize(imW, imH);
         double halfSizeW = imW / 2.;
@@ -408,8 +409,8 @@ bool Gradient::button1Pressed(int modifierKey)
         draggedCenter.set(int(halfSizeW + halfSizeW * (centerX->getValue() / 100.)), int(halfSizeH + halfSizeH * (centerY->getValue() / 100.)));
 
         // trick to get the correct angle (clockwise/counter-clockwise)
-        Coord p1 = draggedCenter;
-        Coord p2 = provider->posImage;
+        rtengine::Coord p1 = draggedCenter;
+        rtengine::Coord p2 = provider->posImage;
         int p = p1.y;
         p1.y = p2.y;
         p2.y = p;
@@ -422,9 +423,9 @@ bool Gradient::button1Pressed(int modifierKey)
         if (lastObject == 2 || lastObject == 3) {
             // Dragging a line to change the angle
             PolarCoord draggedPoint;
-            Coord currPos;
+            rtengine::Coord currPos;
             currPos = provider->posImage;
-            Coord centerPos = draggedCenter;
+            rtengine::Coord centerPos = draggedCenter;
 
             double diagonal = sqrt(double(imW) * double(imW) + double(imH) * double(imH));
 
@@ -444,6 +445,7 @@ bool Gradient::button1Pressed(int modifierKey)
             draggedFeatherOffset -= (feather->getValue() / 200. * diagonal);
         }
 
+        EditSubscriber::dragging = true;
         return false;
     } else {
         // this will let this class ignore further drag events
@@ -464,10 +466,11 @@ bool Gradient::button1Pressed(int modifierKey)
 bool Gradient::button1Released()
 {
     draggedPointOldAngle = -1000.;
+    EditSubscriber::dragging = false;
     return true;
 }
 
-bool Gradient::drag(int modifierKey)
+bool Gradient::drag1(int modifierKey)
 {
     // compute the polar coordinate of the mouse position
     EditDataProvider *provider = getEditProvider();
@@ -480,9 +483,9 @@ bool Gradient::drag(int modifierKey)
 
         // Dragging a line to change the angle
         PolarCoord draggedPoint;
-        Coord currPos;
+        rtengine::Coord currPos;
         currPos = provider->posImage + provider->deltaImage;
-        Coord centerPos = draggedCenter;
+        rtengine::Coord centerPos = draggedCenter;
 
         // trick to get the correct angle (clockwise/counter-clockwise)
         int p = centerPos.y;
@@ -523,9 +526,9 @@ bool Gradient::drag(int modifierKey)
     } else if (lastObject == 2 || lastObject == 3) {
         // Dragging the upper or lower feather bar
         PolarCoord draggedPoint;
-        Coord currPos;
+        rtengine::Coord currPos;
         currPos = provider->posImage + provider->deltaImage;
-        Coord centerPos = draggedCenter;
+        rtengine::Coord centerPos = draggedCenter;
 
         double diagonal = sqrt(double(imW) * double(imW) + double(imH) * double(imH));
 
@@ -561,7 +564,7 @@ bool Gradient::drag(int modifierKey)
         }
     } else if (lastObject == 4) {
         // Dragging the circle to change the center
-        Coord currPos;
+        rtengine::Coord currPos;
         draggedCenter += provider->deltaPrevImage;
         currPos = draggedCenter;
         currPos.clip(imW, imH);

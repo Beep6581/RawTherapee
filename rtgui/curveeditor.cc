@@ -422,7 +422,7 @@ bool CurveEditor::button1Released()
     return true;
 }
 
-bool CurveEditor::drag(int modifierKey)
+bool CurveEditor::drag1(int modifierKey)
 {
     EditDataProvider* provider = getEditProvider();
     subGroup->pipetteDrag(provider, modifierKey);

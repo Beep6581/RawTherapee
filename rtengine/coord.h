@@ -16,12 +16,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _COORD_H_
-#define _COORD_H_
+#ifndef __COORD__
+#define __COORD__
+
+#include "rt_math.h"
+
+namespace rtengine
+{
 
 class PolarCoord;
 
-// Do not confuse with rtengine::Coord2D, Coord is for the GUI
+// Do not confuse with rtengine::Coord2D, this one is for the GUI
 class Coord
 {
 public:
@@ -49,6 +54,16 @@ public:
         x = trimmedX;
         y = trimmedY;
         return retval;
+    }
+
+    bool operator== (const Coord& other) const
+    {
+        return other.x == x && other.y == y;
+    }
+
+    bool operator!= (const Coord& other) const
+    {
+        return other.x != x || other.y != y;
     }
 
     void operator+=(const Coord & rhs)
@@ -91,6 +106,14 @@ public:
 
     PolarCoord() : radius(1.), angle(0.) {}
     PolarCoord(double radius, double angle) : radius(radius), angle(angle) {}
+    PolarCoord(Coord start, Coord end) : radius(1.), angle(0.)
+    {
+        setFromCartesian(start, end);
+    }
+    PolarCoord(Coord delta) : radius(1.), angle(0.)
+    {
+        setFromCartesian(delta);
+    }
 
     void set (double radius, double angle)
     {
@@ -132,6 +155,16 @@ public:
                 angle = 270.;
             }
         }
+    }
+
+    bool operator== (const PolarCoord& other) const
+    {
+        return other.radius == radius && other.angle == angle;
+    }
+
+    bool operator!= (const PolarCoord& other) const
+    {
+        return other.radius != radius || other.angle != angle;
     }
 
     void operator+=(const PolarCoord & rhs)
@@ -181,5 +214,8 @@ public:
     }
 
 };
+
+
+}
 
 #endif

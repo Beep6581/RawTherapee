@@ -110,10 +110,10 @@ bool Inspector::on_expose_event (GdkEventExpose* event)
         // this will eventually create/update the off-screen pixmap
 
         // compute the displayed area
-        Coord availableSize;
-        Coord topLeft;
-        Coord displayedSize;
-        Coord dest(0, 0);
+        rtengine::Coord availableSize;
+        rtengine::Coord topLeft;
+        rtengine::Coord displayedSize;
+        rtengine::Coord dest(0, 0);
         win->get_size(availableSize.x, availableSize.y);
         int imW = currImage->imgBuffer.getWidth();
         int imH = currImage->imgBuffer.getHeight();
