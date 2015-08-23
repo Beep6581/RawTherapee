@@ -27,17 +27,27 @@ http://rawpedia.rawtherapee.com/Linux
 The instructions below will be merged into that article on RawPedia soon.
 
 Clone the source code either using HTTPS:
-`git clone https://github.com/Beep6581/RawTherapee ~/repo-rt`
+```
+git clone https://github.com/Beep6581/RawTherapee ~/repo-rt
+```
 or using SSH (see https://help.github.com/articles/generating-ssh-keys/ ):
-`git clone git@github.com:Beep6581/RawTherapee.git ~/repo-rt`
+```
+git clone git@github.com:Beep6581/RawTherapee.git ~/repo-rt
+```
 or update a previously cloned repository:
-`cd ~/repo-rt && git fetch`
+```
+cd ~/repo-rt && git fetch
+```
 
 Apply a patch:
 If you want to apply a patch, use "git apply" if you just want to apply without committing, or "git am" if you want to automatically apply and commit:
-`git apply /downloads/some.patch`
+```
+git apply /downloads/some.patch
+```
 or
-`git am /downloads/some.patch`
+```
+git am /downloads/some.patch
+```
 
 Compile:
 To find out how many threads your CPU supports, run:
