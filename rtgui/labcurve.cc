@@ -233,29 +233,46 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"))
   //  dehazmet->set_tooltip_markup (M("TP_DEHAZ_MET_TOOLTIP"));
     dhbox->pack_start(*dehazmet);
     dehazVBox->pack_start(*dhbox);
+    
+    curveEditorGD = new CurveEditorGroup (options.lastLabCurvesDir, M("TP_LABCURVE_CONTEDIT"));
+    curveEditorGD->setCurveListener (this);
+    cdshape = static_cast<DiagonalCurveEditor*>(curveEditorGD->addCurve(CT_Diagonal, M("TP_LABCURVE_CURVEEDITOR_CD")));
+    cdshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CD_TOOLTIP"));
+    std::vector<GradientMilestone> milestones22;
 
-    str = Gtk::manage (new Adjuster (M("TP_LABCURVE_STR"), 0, 100., 1., 70.));
+    milestones22.push_back( GradientMilestone(0., 0., 0., 0.) );
+    milestones22.push_back( GradientMilestone(1., 1., 1., 1.) );
+    cdshape->setBottomBarBgGradient(milestones22);
+    cdshape->setLeftBarBgGradient(milestones22);
+
+    curveEditorGD->curveListComplete();
+
+    str = Gtk::manage (new Adjuster (M("TP_LABCURVE_STR"), 0, 100., 1., 60.));
     scal   = Gtk::manage (new Adjuster (M("TP_LABCURVE_SCAL"), 1, 6., 1., 3.));
     neigh = Gtk::manage (new Adjuster (M("TP_LABCURVE_NEIGH"), 6, 100., 1., 80.));
-    gain   = Gtk::manage (new Adjuster (M("TP_LABCURVE_GAIN"), 0.8, 1.4, 0.01, 1.));
-    offs   = Gtk::manage (new Adjuster (M("TP_LABCURVE_OFFS"), -10, 5, 0.1, 0));
-    vart   = Gtk::manage (new Adjuster (M("TP_LABCURVE_VART"), 0.5, 15., 0.01, 1));
+    gain   = Gtk::manage (new Adjuster (M("TP_LABCURVE_GAIN"), 70, 130, 1, 100));
+    offs   = Gtk::manage (new Adjuster (M("TP_LABCURVE_OFFS"), 0, 40, 0.1, 0));
+    vart   = Gtk::manage (new Adjuster (M("TP_LABCURVE_VART"), 100, 160, 1, 125));
     dehazVBox->pack_start (*str);
     str->show ();
-
+    
+    dehazVBox->pack_start (*curveEditorGD, Gtk::PACK_SHRINK, 4);
+    curveEditorGD->show();
+    
     dehazVBox->pack_start (*scal);
     scal->show ();
 
     dehazVBox->pack_start (*neigh);
     neigh->show ();
 
-//    dehazVBox->pack_start (*gain);
-//    gain->show ();
+    dehazVBox->pack_start (*gain);
+    gain->show ();
 
 //    dehazVBox->pack_start (*offs);
- //   offs->show ();
-//    dehazVBox->pack_start (*vart);
- //   vart->show ();
+//    offs->show ();
+    
+    dehazVBox->pack_start (*vart);
+    vart->show ();
 
     str->setAdjusterListener (this);
     scal->setAdjusterListener (this);
@@ -271,6 +288,8 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"))
 LCurve::~LCurve ()
 {
     delete curveEditorG;
+    delete curveEditorGD;
+   
 }
 
 void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
@@ -313,6 +332,7 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
         hhshape->setUnChanged  (!pedited->labCurve.hhcurve);
         lcshape->setUnChanged  (!pedited->labCurve.lccurve);
         clshape->setUnChanged  (!pedited->labCurve.clcurve);
+        cdshape->setUnChanged  (!pedited->labCurve.cdcurve);
     }
 
     brightness->setValue    (pp->labCurve.brightness);
@@ -364,6 +384,7 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
     hhshape->setCurve  (pp->labCurve.hhcurve);
     lcshape->setCurve  (pp->labCurve.lccurve);
     clshape->setCurve  (pp->labCurve.clcurve);
+    cdshape->setCurve  (pp->labCurve.cdcurve);
 
     queue_draw();
     dehazmetConn.block(false);
@@ -407,6 +428,10 @@ void LCurve::autoOpenCurve ()
     if (!active) {
         clshape->openIfNonlinear();
     }
+    
+    if (!active) {
+        cdshape->openIfNonlinear();
+    }
 }
 
 void LCurve::setEditProvider  (EditDataProvider *provider)
@@ -415,6 +440,7 @@ void LCurve::setEditProvider  (EditDataProvider *provider)
     ccshape->setEditProvider(provider);
     lcshape->setEditProvider(provider);
     clshape->setEditProvider(provider);
+    cdshape->setEditProvider(provider);
     lhshape->setEditProvider(provider);
     chshape->setEditProvider(provider);
     hhshape->setEditProvider(provider);
@@ -453,6 +479,7 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
     pp->labCurve.hhcurve = hhshape->getCurve ();
     pp->labCurve.lccurve = lcshape->getCurve ();
     pp->labCurve.clcurve = clshape->getCurve ();
+    pp->labCurve.cdcurve = cdshape->getCurve ();
 
     if (pedited) {
         pedited->labCurve.brightness   = brightness->getEditedState ();
@@ -485,6 +512,7 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->labCurve.hhcurve   = !hhshape->isUnChanged ();
         pedited->labCurve.lccurve   = !lcshape->isUnChanged ();
         pedited->labCurve.clcurve   = !clshape->isUnChanged ();
+        pedited->labCurve.cdcurve   = !cdshape->isUnChanged ();
         
         
     }
@@ -650,6 +678,11 @@ void LCurve::curveChanged (CurveEditor* ce)
         if (ce == clshape) {
             listener->panelChanged (EvLCLCurve, M("HISTORY_CUSTOMCURVE"));
         }
+        
+        if (ce == cdshape) {
+            listener->panelChanged (EvLCDCurve, M("HISTORY_CUSTOMCURVE"));
+        }
+        
     }
 }
 
@@ -796,6 +829,7 @@ void LCurve::setBatchMode (bool batchMode)
     str->showEditedCB ();
     scal->showEditedCB ();
     vart->showEditedCB ();
+    curveEditorGD->setBatchMode (batchMode);
 
     curveEditorG->setBatchMode (batchMode);
     lcshape->setBottomBarColorProvider(NULL, -1);

@@ -882,12 +882,12 @@ void ProcParams::setDefaults ()
     labCurve.brightness      = 0;
     labCurve.contrast        = 0;
     labCurve.chromaticity    = 0;
-    labCurve.str      = 70;
+    labCurve.str      = 60;
     labCurve.scal        = 3;
     labCurve.neigh      = 80;
-    labCurve.gain        = 1;
+    labCurve.gain        = 100;
     labCurve.offs    = 0;
-    labCurve.vart    = 1;
+    labCurve.vart    = 125;
     labCurve.avoidcolorshift = false;
     labCurve.lcredsk = true;
     labCurve.rstprotection   = 0;
@@ -911,6 +911,8 @@ void ProcParams::setDefaults ()
     labCurve.lccurve.push_back(DCT_Linear);
     labCurve.clcurve.clear ();
     labCurve.clcurve.push_back(DCT_Linear);
+    labCurve.cdcurve.clear ();
+    labCurve.cdcurve.push_back(DCT_Linear);
 
     rgbCurves.lumamode          = false;
     rgbCurves.rcurve.clear ();
@@ -1624,6 +1626,11 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         keyFile.set_double_list("Luminance Curve", "ClCurve", clcurve);
     }
 
+    if (!pedited || pedited->labCurve.cdcurve)  {
+        Glib::ArrayHandle<double> cdcurve = labCurve.cdcurve;
+        keyFile.set_double_list("Luminance Curve", "CDCurve", cdcurve);
+    }
+    
     // save sharpening
     if (!pedited || pedited->sharpening.enabled) {
         keyFile.set_boolean ("Sharpening", "Enabled",             sharpening.enabled);
@@ -3872,6 +3879,14 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Luminance Curve", "CDCurve"))         {
+                labCurve.cdcurve            = keyFile.get_double_list ("Luminance Curve", "CDCurve");
+
+                if (pedited) {
+                    pedited->labCurve.cdcurve = true;
+                }
+            }
+            
         }
 
         // load sharpening
@@ -7083,6 +7098,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && labCurve.hhcurve == other.labCurve.hhcurve
         && labCurve.lccurve == other.labCurve.lccurve
         && labCurve.clcurve == other.labCurve.clcurve
+        && labCurve.cdcurve == other.labCurve.cdcurve
         && labCurve.str == other.labCurve.str
         && labCurve.scal == other.labCurve.scal
         && labCurve.neigh == other.labCurve.neigh

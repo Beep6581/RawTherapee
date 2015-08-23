@@ -81,6 +81,7 @@ public:
     bool hhcurve;
     bool lccurve;
     bool clcurve;
+    bool cdcurve;
 
     bool enabled;
     bool method;

@@ -69,12 +69,15 @@ public:
     virtual int         load        (Glib::ustring fname, bool batch = false) = 0;
     virtual void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse) {};
     virtual void        demosaic    (const RAWParams &raw) {};
+    virtual void        dehaz       (RAWParams raw, ColorManagementParams cmp, LCurveParams lcur, LUTf & cdcurve, bool dehacontlutili) {};
     virtual void        flushRawData       () {};
     virtual void        flushRGB           () {};
     virtual void        HLRecovery_Global  (ToneCurveParams hrp) {};
     virtual void        HLRecovery_inpaint (float** red, float** green, float** blue) {};
+    virtual void        MSR(LabImage* lab, int width, int height, int skip, LCurveParams lcur) {};
 
     virtual bool        IsrgbSourceModified() = 0; // tracks whether cached rgb output of demosaic has been modified
+   // virtual void        MSR(LabImage* lab, int width, int height, int skip, const LCurveParams  &lcur);
 
     // use right after demosaicing image, add coarse transformation and put the result in the provided Imagefloat*
     virtual void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, ToneCurveParams hlp, ColorManagementParams cmp, RAWParams raw) {}

@@ -35,7 +35,7 @@
 #include <string.h>  
 #include "rtengine.h"
 #include "gauss.h"
-
+#include "rawimagesource.h"
 #include "improcfun.h"
 #define MAX_DEHAZE_SCALES   6
 #define clipdehaz( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )   
@@ -100,25 +100,29 @@ void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L )
 
 
 
-void ImProcFunctions::MSR(LabImage* lab, int width, int height, int skip)
+void RawImageSource::MSR(LabImage* lab, int width, int height, int skip, LCurveParams lcur)
     
     {   
       float         pond;
       float         mean, stddv;
       float         mini, delta, maxi;
       float eps = 2.f;
-      float gain = (float) params->labCurve.gain;//def =1  not use
-      float offset  = 1.f;
-      float neg=(float) params->labCurve.offs;//def = 0  not use
-      float strength = (float) params->labCurve.str;
-      int scal =  params->labCurve.scal;//def=3
-      int  nei = (int) 2.5f*params->labCurve.neigh;//def = 200
-      int vart= params->labCurve.vart;
+      float gain = (float) lcur.gain;//def =1  not use
+      gain=1.f;
+      float gain2 = (float) lcur.gain;//def =1  not use
+      gain2/=100.f;
+      float offset =(float) lcur.offs;//def = 0  not use
+      offset = 0.f;
+      float strength = (float) lcur.str;
+      int scal =  lcur.scal;//def=3
+      int  nei = (int) 2.5f*lcur.neigh;//def = 200
+      float vart = (float)lcur.vart;//variance
+      vart /=100.f;
       int modedehaz;
-      if(params->labCurve.dehazmet=="none") modedehaz=-1;//enabled disabled
-      if(params->labCurve.dehazmet=="uni") modedehaz=0;
-      if(params->labCurve.dehazmet=="low") modedehaz=1;
-      if(params->labCurve.dehazmet=="high") modedehaz=2;
+      if(lcur.dehazmet=="none") modedehaz=-1;//enabled disabled
+      if(lcur.dehazmet=="uni") modedehaz=0;
+      if(lcur.dehazmet=="low") modedehaz=1;
+      if(lcur.dehazmet=="high") modedehaz=2;
       if (modedehaz !=-1) {//enabled
         int H_L=height;
         int W_L=width;
@@ -171,9 +175,10 @@ void ImProcFunctions::MSR(LabImage* lab, int width, int height, int skip)
 #pragma omp parallel
 #endif 
                 {
-                AlignedBufferMP<double> buffer(max(W_L,H_L));
-                gaussHorizontal<float> (in, out, buffer, W_L, H_L, DehazeScales[scale]);
-                gaussVertical<float>   (out, out, buffer,W_L, H_L, DehazeScales[scale]);
+                AlignedBufferMP<double>* pBuffer = new AlignedBufferMP<double> (max(W_L, H_L));
+                gaussHorizontal<float> (in, out, *pBuffer, W_L, H_L, DehazeScales[scale]);
+                gaussVertical<float>   (out, out, *pBuffer,W_L, H_L, DehazeScales[scale]);
+                delete pBuffer;
                 }
                 for ( int i=0; i < H_L; i++)
                     for (int j=0; j < W_L; j++)
@@ -210,13 +215,10 @@ float beta=16384.0f;
      
             mean=0.f;stddv=0.f;
             mean_stddv( dst, mean, stddv, W_L, H_L);
-            float nstdv=1.25f;
             
-            mini = mean - 1.2f*stddv;
-            maxi = mean + 1.2f*stddv;
-        //    mini = neg;
+            mini = mean - vart*stddv;
+            maxi = mean + vart*stddv;
             delta = maxi - mini;
-         //   delta = vart;
                 printf("maxi=%f mini=%f mean=%f std=%f delta=%f\n", maxi, mini, mean, stddv, delta);
      
             if ( !delta ) delta = 1.0f;
@@ -225,7 +227,7 @@ float beta=16384.0f;
 #endif
              for ( int i=0; i < H_L; i ++ )
                 for (int j=0; j< W_L; j++) {
-                    float cd = vart*32768.f * ( dst[i][j] - mini ) / delta;
+                    float cd = gain2*32768.f * ( dst[i][j] - mini ) / delta;
                     src[i][j] = clipdehaz( cd, 0.f, 32768.f );
                     lab->L[i][j]=((100.f - strength)* lab->L[i][j] + strength * src[i][j])/100.f;
                 }

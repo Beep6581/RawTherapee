@@ -115,13 +115,25 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     if (pl) {
         pl->setProgress (0.30);
     }
+    LUTf cdcurve (65536, 0);
+    
+    bool dehacontlutili=false;
+    CurveFactory::curveDehaContL (dehacontlutili,  params.labCurve.cdcurve, cdcurve, 1);
+   
+    if(params.labCurve.dehazmet!="none")
+        imgsrc->dehaz( params.raw, params.icm, params.labCurve, cdcurve,  dehacontlutili );//enabled Dehaze
 
-    imgsrc->HLRecovery_Global( params.toneCurve );
 
     if (pl) {
         pl->setProgress (0.40);
     }
+    imgsrc->HLRecovery_Global( params.toneCurve );
 
+    
+    if (pl) {
+        pl->setProgress (0.45);
+    }
+    
     // set the color temperature
     ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
 
@@ -610,7 +622,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     imgsrc->getImage (currWB, tr, baseImg, pp, params.toneCurve, params.icm, params.raw);
 
     if (pl) {
-        pl->setProgress (0.45);
+        pl->setProgress (0.50);
     }
 
 //  LUTf Noisecurve (65536,0);
@@ -847,7 +859,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     shmap = NULL;
 
     if (pl) {
-        pl->setProgress (0.5);
+        pl->setProgress (0.55);
     }
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -901,7 +913,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                                    params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve, params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve,
                                    hist16C, hist16C, dummy, dummy,
                                    1);
-    ipf.MSR(labView, labView->W, labView->H, 1);
+ //   ipf.MSR(labView, labView->W, labView->H, 1);
 
     ipf.chromiLuminanceCurve (NULL, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy, dummy, dummy);
 

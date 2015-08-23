@@ -439,7 +439,7 @@ enum ProcEvent {
     EvLstr = 410,
     EvLscal = 411,
     EvLvart = 412,
-    
+    EvLCDCurve = 413,   
     NUMOFEVENTS
 };
 }

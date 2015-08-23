@@ -31,6 +31,7 @@ class LCurve : public ToolParamBlock, public AdjusterListener, public FoldableTo
 
 protected:
     CurveEditorGroup* curveEditorG;
+    CurveEditorGroup* curveEditorGD;
     Adjuster* brightness;
     Adjuster* contrast;
     Adjuster* chromaticity;
@@ -54,6 +55,7 @@ protected:
     MyComboBoxText*   dehazmet;
 
     DiagonalCurveEditor* clshape;
+    DiagonalCurveEditor* cdshape;
 
     //%%%%%%%%%%%%%%%%
     Gtk::CheckButton* avoidcolorshift;

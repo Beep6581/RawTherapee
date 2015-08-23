@@ -46,6 +46,7 @@ ImProcCoordinator::ImProcCoordinator ()
       satcurve(65536, 0),
       lhskcurve(65536, 0),
       clcurve(65536, 0),
+      cdcurve(65536, 0),
       wavclCurve(65536, 0),
       clToningcurve(65536, 0),
       cl2Toningcurve(65536, 0),
@@ -163,7 +164,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
     }
 
     RAWParams rp = params.raw;
-
+    ColorManagementParams cmp = params.icm;
+    LCurveParams  lcur = params.labCurve;
     if( !highDetailNeeded ) {
         // if below 100% magnification, take a fast path
         if(rp.bayersensor.method != RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::none] && rp.bayersensor.method != RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::mono]) {
@@ -219,7 +221,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             }
         }
 
-        imgsrc->demosaic( rp );
+        imgsrc->demosaic( rp);//enabled demosaic
+       
 
         if (highDetailNeeded) {
             highDetailRawComputed = true;
@@ -231,7 +234,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             highDetailRawComputed = false;
         }
     }
-
+        bool dehacontlutili=false;
+        CurveFactory::curveDehaContL (dehacontlutili,  params.labCurve.cdcurve, cdcurve, 1);
+   
+    if (todo & M_INIT  || params.labCurve.dehazmet!="none"){
+       if(params.labCurve.dehazmet!="none")
+            imgsrc->dehaz( params.raw, params.icm, params.labCurve, cdcurve,  dehacontlutili);//enabled Dehaze
+        
+    }
     // Updating toneCurve.hrenabled if necessary
     // It has to be done there, because the next 'if' statement will use the value computed here
     if (todo & M_AUTOEXP) {
@@ -248,8 +258,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     if (todo & (M_INIT | M_LINDENOISE)) {
         MyMutex::MyLock initLock(minit);  // Also used in crop window
-
-        imgsrc->HLRecovery_Global( params.toneCurve ); // this handles Color HLRecovery
+        
+        imgsrc->HLRecovery_Global( params.toneCurve); // this handles Color HLRecovery 
+  
 
         if (settings->verbose) {
             printf ("Applying white balance, color correction & sRBG conversion...\n");
@@ -294,7 +305,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.toneCurve, params.icm, params.raw);
         //ColorTemp::CAT02 (orig_prev, &params) ;
-
+     //   printf("orig_prevW=%d\n  scale=%d",orig_prev->width, scale);
         /* Issue 2785, disabled some 1:1 tools
                 if (todo & M_LINDENOISE) {
                     DirPyrDenoiseParams denoiseParams = params.dirpyrDenoise;
@@ -576,7 +587,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         nprevl->CopyFrom(oprevl);
 
         progress ("Applying Color Boost...", 100 * readyphase / numofphases);
-        ipf.MSR(nprevl, nprevl->W, nprevl->H, 1);
+     //   ipf.MSR(nprevl, nprevl->W, nprevl->H, 1);
 
         ipf.chromiLuminanceCurve (NULL, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histCLurve, histLLCurve, histLCurve);
         ipf.vibrance(nprevl);

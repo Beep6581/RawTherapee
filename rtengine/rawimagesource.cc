@@ -1734,7 +1734,6 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     return;
 }
-
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::demosaic(const RAWParams &raw)
@@ -1787,8 +1786,10 @@ void RawImageSource::demosaic(const RAWParams &raw)
     }
 
     t2.set();
+               
 
     rgbSourceModified = false;
+    
 
     if( settings->verbose ) {
         if (getSensorType() == ST_BAYER) {
@@ -1797,8 +1798,82 @@ void RawImageSource::demosaic(const RAWParams &raw)
             printf("Demosaicing X-Trans data: %s - %d usec\n", raw.xtranssensor.method.c_str(), t2.etime(t1));
         }
     }
-
 }
+
+void RawImageSource::dehaz(RAWParams raw, ColorManagementParams cmp, LCurveParams  lcur, LUTf & cdcurve, bool dehacontlutili)
+{
+    
+    MyTime t4, t5;
+    t4.set();
+    if(!rgbSourceModified) {
+        if (settings->verbose) {
+                printf ("Applying DeHaze\n");
+        }
+        
+        TMatrix wprof = iccStore->workingSpaceMatrix (cmp.working);
+        TMatrix wiprof = iccStore->workingSpaceInverseMatrix (cmp.working);
+   
+     double wip[3][3] = {
+        {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+        {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+        {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+    };
+
+    double wp[3][3] = {
+        {wprof[0][0], wprof[0][1], wprof[0][2]},
+        {wprof[1][0], wprof[1][1], wprof[1][2]},
+        {wprof[2][0], wprof[2][1], wprof[2][2]}
+    };
+    LabImage * labdeha = new LabImage(W, H);
+
+         #pragma omp parallel for  
+                for (int i = 0; i <H; i++ )
+                    for (int j=0; j<W; j++) {
+                                float X, Y, Z, L, aa, bb;
+                                //rgb=>lab
+                                Color::rgbxyz(red[i][j], green[i][j], blue[i][j], X, Y, Z, wp);
+                                //convert Lab
+                                Color::XYZ2Lab(X, Y, Z, L, aa, bb);
+                                labdeha->L[i][j]=L;
+                             //   if(lcur.dehazmet !="none") {
+                                if(dehacontlutili) labdeha->L[i][j]=cdcurve[L];//apply curve to equalize histogram
+                             //   }
+                                labdeha->a[i][j]=aa;
+                                labdeha->b[i][j]=bb;
+                                
+                    }
+                    
+                MSR(labdeha, W, H, 1, lcur); 
+
+        #pragma omp parallel for      
+                for (int i = 0; i <H; i++ )
+                    for (int j=0; j<W; j++) {
+                                float L2,a2,b2,x_,y_,z_;
+                                float R,G,B;
+                                L2=labdeha->L[i][j];
+                                a2=labdeha->a[i][j];
+                                b2=labdeha->b[i][j]; 
+                                Color::Lab2XYZ(L2, a2, b2, x_, y_, z_) ;
+                                Color::xyz2rgb(x_, y_, z_, R, G, B, wip);
+                                red[i][j]=R;
+                                green[i][j]=G;
+                                blue[i][j]=B;           
+                    }    
+                    
+    delete labdeha;
+                   
+     t5.set();
+               
+
+
+    if( settings->verbose ) {
+             printf("Dehaz=%d usec\n",  t5.etime(t4));
+       
+    }
+    rgbSourceModified = true;
+    }
+}
+
 
 void RawImageSource::flushRawData()
 {
@@ -1827,18 +1902,18 @@ void RawImageSource::flushRGB()
     }
 }
 
-void RawImageSource::HLRecovery_Global(ToneCurveParams hrp )
+void RawImageSource::HLRecovery_Global(ToneCurveParams hrp)
 {
     if (hrp.hrenabled && hrp.method == "Color") {
         if(!rgbSourceModified) {
             if (settings->verbose) {
                 printf ("Applying Highlight Recovery: Color propagation...\n");
             }
-
             HLRecovery_inpaint (red, green, blue);
             rgbSourceModified = true;
         }
     }
+   
 }
 
 

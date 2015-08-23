@@ -277,6 +277,7 @@ public:
     std::vector<double>   hhcurve;
     std::vector<double>   lccurve;
     std::vector<double>   clcurve;
+    std::vector<double>   cdcurve;
     int     brightness;
     int     contrast;
     int     chromaticity;
