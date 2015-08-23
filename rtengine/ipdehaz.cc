@@ -37,6 +37,7 @@
 #include "gauss.h"
 #include "rawimagesource.h"
 #include "improcfun.h"
+#include "StopWatch.h"
 #define MAX_DEHAZE_SCALES   6
 #define clipdehaz( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )   
  
@@ -86,6 +87,7 @@ void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L )
     
     vsquared = 0.0f;
     mean = 0.0f;
+// #pragma omp parallel for reduction(+:mean,vsquared) // will enable this later, because naturally it leads to differences
              for (int i = 0; i <H_L; i++ )
                 for (int j=0; j<W_L; j++) {
                     mean += dst[i][j];
@@ -102,16 +104,17 @@ void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L )
 
 void RawImageSource::MSR(LabImage* lab, int width, int height, int skip, LCurveParams lcur)
     
-    {   
+    {
+StopWatch Stop1("MSR");
       float         pond;
       float         mean, stddv;
       float         mini, delta, maxi;
       float eps = 2.f;
-      //float gain = (float) lcur.gain;//def =1  not use
+//      float gain = (float) lcur.gain;//def =1  not use
       float gain=1.f;
       float gain2 = (float) lcur.gain;//def =1  not use
       gain2/=100.f;
-      float offse =(float) lcur.offs;//
+      float offse =(float) lcur.offs;//def = 0  not use
       float offset = 0.f;
       float strength = (float) lcur.str;
       int scal =  lcur.scal;//def=3
@@ -130,7 +133,6 @@ void RawImageSource::MSR(LabImage* lab, int width, int height, int skip, LCurveP
         src = new float*[H_L];
         for (int i = 0; i < H_L; i++) {
             src[i] = new float[W_L];
-            memset( src[i], 0, W_L * sizeof (float) );
         }
         float** dst;
         dst = new float*[H_L];
@@ -142,13 +144,11 @@ void RawImageSource::MSR(LabImage* lab, int width, int height, int skip, LCurveP
         in = new float*[H_L];
         for (int i = 0; i < H_L; i++) {
             in[i] = new float[W_L];
-            memset( in[i], 0, W_L * sizeof (float) );
         }
         float** out;
         out = new float*[H_L];
         for (int i = 0; i < H_L; i++) {
             out[i] = new float[W_L];
-            memset( out[i], 0, W_L * sizeof (float) );
         }
                 
         for (int i=0; i< H_L; i++) {
@@ -161,12 +161,12 @@ void RawImageSource::MSR(LabImage* lab, int width, int height, int skip, LCurveP
         pond = 1.0f / (float) scal;
         
 #ifdef _OPENMP
-#pragma omp for
+#pragma omp parallel for
 #endif
         for (int i = 0; i < H_L ; i++ )
              for (int j=0; j<W_L; j++)
                 {
-                    in[i][j] = (float)(src[i][j] + eps);   //avoid log(0)
+                    in[i][j] = (src[i][j] + eps);   //avoid log(0)
                 }
          
         for ( int scale = 0; scale < scal; scale++ )
@@ -180,10 +180,13 @@ void RawImageSource::MSR(LabImage* lab, int width, int height, int skip, LCurveP
                 gaussVertical<float>   (out, out, *pBuffer,W_L, H_L, DehazeScales[scale]);
                 delete pBuffer;
                 }
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
                 for ( int i=0; i < H_L; i++)
                     for (int j=0; j < W_L; j++)
                     {
-                        dst[i][j] +=  pond * (float)( log(src[i][j] + eps) - log(out[i][j]) );
+                        dst[i][j] +=  pond * ( xlogf((in[i][j])/out[i][j]) );
                     }
             }
 
@@ -196,21 +199,16 @@ void RawImageSource::MSR(LabImage* lab, int width, int height, int skip, LCurveP
     }
     delete [] out;
 
-
-
-
-
 float beta=16384.0f;
-
+float logBeta = xlogf(beta);
 
 #ifdef _OPENMP
-#pragma omp for
+#pragma omp parallel for
 #endif
             for (int i=0; i< H_L; i++ )
                 for (int j=0; j<W_L; j++)
                 {
-                    float logsrc = (float)log( (float) src[i][j] + eps );
-                    dst[i][j] = (gain * ((float)(log(beta * (src[i][j] + eps)) - logsrc) * dst[i][j]) + offset);
+                    dst[i][j] = (gain * (logBeta * dst[i][j]) + offset);
                 }
      
             mean=0.f;stddv=0.f;
@@ -219,17 +217,16 @@ float beta=16384.0f;
             mini = mean - vart*stddv;
             maxi = mean + vart*stddv;
             delta = maxi - mini;
-                printf("maxi=%f mini=%f mean=%f std=%f delta=%f\n", maxi, mini, mean, stddv, delta);
+//                printf("maxi=%f mini=%f mean=%f std=%f delta=%f\n", maxi, mini, mean, stddv, delta);
      
             if ( !delta ) delta = 1.0f;
 #ifdef _OPENMP
-#pragma omp for
+#pragma omp parallel for
 #endif
              for ( int i=0; i < H_L; i ++ )
                 for (int j=0; j< W_L; j++) {
                     float cd = gain2*32768.f * (( dst[i][j] - mini ) / delta) + offse;
-                    src[i][j] = clipdehaz( cd, 0.f, 32768.f );
-                    lab->L[i][j]=((100.f - strength)* lab->L[i][j] + strength * src[i][j])/100.f;
+                    lab->L[i][j]=((100.f - strength)* lab->L[i][j] + strength * clipdehaz( cd, 0.f, 32768.f ))/100.f;
                 }
                 
         for (int i = 0; i < H_L; i++) {
