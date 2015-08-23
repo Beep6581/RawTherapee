@@ -318,7 +318,7 @@ class NALensDataInterpreter : public Interpreter
 {
     std::map<std::string, std::string> lenses;
 public:
-    NALensDataInterpreter ()    // From EXIFTOOL database 'Nikon.pm' V2.80
+    NALensDataInterpreter ()
     {
         /*  The key is a composite string made of 8 HEX bytes
          *  LensIDNumber LensFStops MinFocalLength MaxFocalLength MaxApertureAtMinFocal MaxApertureAtMaxFocal MCUVersion and LensType */
