@@ -251,7 +251,7 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"))
     scal   = Gtk::manage (new Adjuster (M("TP_LABCURVE_SCAL"), 1, 6., 1., 3.));
     neigh = Gtk::manage (new Adjuster (M("TP_LABCURVE_NEIGH"), 6, 100., 1., 80.));
     gain   = Gtk::manage (new Adjuster (M("TP_LABCURVE_GAIN"), 70, 130, 1, 100));
-    offs   = Gtk::manage (new Adjuster (M("TP_LABCURVE_OFFS"), 0, 40, 0.1, 0));
+    offs   = Gtk::manage (new Adjuster (M("TP_LABCURVE_OFFS"), 0, 500, 1, 0));
     vart   = Gtk::manage (new Adjuster (M("TP_LABCURVE_VART"), 100, 160, 1, 125));
     dehazVBox->pack_start (*str);
     str->show ();
@@ -268,8 +268,8 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"))
     dehazVBox->pack_start (*gain);
     gain->show ();
 
-//    dehazVBox->pack_start (*offs);
-//    offs->show ();
+    dehazVBox->pack_start (*offs);
+    offs->show ();
     
     dehazVBox->pack_start (*vart);
     vart->show ();

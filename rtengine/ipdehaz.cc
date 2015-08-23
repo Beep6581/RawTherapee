@@ -107,12 +107,12 @@ void RawImageSource::MSR(LabImage* lab, int width, int height, int skip, LCurveP
       float         mean, stddv;
       float         mini, delta, maxi;
       float eps = 2.f;
-      float gain = (float) lcur.gain;//def =1  not use
-      gain=1.f;
+      //float gain = (float) lcur.gain;//def =1  not use
+      float gain=1.f;
       float gain2 = (float) lcur.gain;//def =1  not use
       gain2/=100.f;
-      float offset =(float) lcur.offs;//def = 0  not use
-      offset = 0.f;
+      float offse =(float) lcur.offs;//
+      float offset = 0.f;
       float strength = (float) lcur.str;
       int scal =  lcur.scal;//def=3
       int  nei = (int) 2.5f*lcur.neigh;//def = 200
@@ -227,7 +227,7 @@ float beta=16384.0f;
 #endif
              for ( int i=0; i < H_L; i ++ )
                 for (int j=0; j< W_L; j++) {
-                    float cd = gain2*32768.f * ( dst[i][j] - mini ) / delta;
+                    float cd = gain2*32768.f * (( dst[i][j] - mini ) / delta) + offse;
                     src[i][j] = clipdehaz( cd, 0.f, 32768.f );
                     lab->L[i][j]=((100.f - strength)* lab->L[i][j] + strength * src[i][j])/100.f;
                 }
