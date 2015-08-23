@@ -1054,15 +1054,15 @@ class SALensID2Interpreter : public IntLensInterpreter< int >
 public:
     SALensID2Interpreter ()
     {
-        choices.insert(p_t(00000, "Unknown E-mount lens or other lens"));
-        choices.insert(p_t(00001, "Sony LA-EA1 Adapter"));
-        choices.insert(p_t(00002, "Sony LA-EA2 Adapter"));
-        choices.insert(p_t(00003, "Sony LA-EA3 Adapter"));
-        choices.insert(p_t(00006, "Sony LA-EA4 Adapter"));
-        choices.insert(p_t(00044, "Metabones Canon EF Smart Adapter"));
-        choices.insert(p_t(00078, "Metabones Canon EF Smart Adapter Mark III or IV"));
-        choices.insert(p_t(00234, "Adapter only - no lens attached"));
-        choices.insert(p_t(00239, "Metabones Canon EF Speed Booster"));
+        choices.insert(p_t(0, "Unknown E-mount lens or other lens"));
+        choices.insert(p_t(1, "Sony LA-EA1 Adapter"));
+        choices.insert(p_t(2, "Sony LA-EA2 Adapter"));
+        choices.insert(p_t(3, "Sony LA-EA3 Adapter"));
+        choices.insert(p_t(6, "Sony LA-EA4 Adapter"));
+        choices.insert(p_t(44, "Metabones Canon EF Smart Adapter"));
+        choices.insert(p_t(78, "Metabones Canon EF Smart Adapter Mark III or IV"));
+        choices.insert(p_t(234, "Adapter only - no lens attached"));
+        choices.insert(p_t(239, "Metabones Canon EF Speed Booster"));
         choices.insert(p_t(32784, "Sony E 16mm F2.8"));
         choices.insert(p_t(32785, "Sony E 18-55mm F3.5-5.6 OSS"));
         choices.insert(p_t(32786, "Sony E 55-210mm F4.5-6.3 OSS"));
