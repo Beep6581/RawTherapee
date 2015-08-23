@@ -26,8 +26,10 @@ http://rawpedia.rawtherapee.com/Linux
 
 The instructions below will be merged into that article on RawPedia soon.
 
-Clone the source code:
+Clone the source code either using HTTPS:
 `git clone https://github.com/Beep6581/RawTherapee ~/repo-rt`
+or using SSH (see https://help.github.com/articles/generating-ssh-keys/ ):
+`git clone git@github.com:Beep6581/RawTherapee.git ~/repo-rt`
 or update a previously cloned repository:
 `cd ~/repo-rt && git fetch`
 
