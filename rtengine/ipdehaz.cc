@@ -37,6 +37,7 @@
 #include "gauss.h"
 #include "rawimagesource.h"
 #include "improcfun.h"
+#include "opthelper.h"
 #include "StopWatch.h"
 #define MAX_DEHAZE_SCALES   6
 #define clipdehaz( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )   
@@ -83,11 +84,10 @@ void  dehaze_scales( float* scales, int nscales, int mode, int s)
 void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L )
     {
     float vsquared;
-    int i, j;
     
     vsquared = 0.0f;
     mean = 0.0f;
-// #pragma omp parallel for reduction(+:mean,vsquared) // will enable this later, because naturally it leads to differences
+#pragma omp parallel for reduction(+:mean,vsquared) // this leads to differences, but parallel summation is more accurate
              for (int i = 0; i <H_L; i++ )
                 for (int j=0; j<W_L; j++) {
                     mean += dst[i][j];
@@ -129,46 +129,40 @@ StopWatch Stop1("MSR");
       if (modedehaz !=-1) {//enabled
         int H_L=height;
         int W_L=width;
-        float** src;
-        src = new float*[H_L];
-        for (int i = 0; i < H_L; i++) {
-            src[i] = new float[W_L];
-        }
+
+
         float** dst;
         dst = new float*[H_L];
         for (int i = 0; i < H_L; i++) {
             dst[i] = new float[W_L];
             memset( dst[i], 0, W_L * sizeof (float) );
         }
-        float** in;
-        in = new float*[H_L];
-        for (int i = 0; i < H_L; i++) {
-            in[i] = new float[W_L];
-        }
+
         float** out;
         out = new float*[H_L];
         for (int i = 0; i < H_L; i++) {
             out[i] = new float[W_L];
         }
-                
+
+        float** src;
+        src = new float*[H_L];
+        for (int i = 0; i < H_L; i++) {
+            src[i] = new float[W_L];
+        }
+
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
         for (int i=0; i< H_L; i++) {
             for (int j=0; j<W_L; j++) {
                 src[i][j]=lab->L[i][j] + eps;
             }
         }
+
         dehaze_scales( DehazeScales, scal, modedehaz, nei );
        
         pond = 1.0f / (float) scal;
-        
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-        for (int i = 0; i < H_L ; i++ )
-             for (int j=0; j<W_L; j++)
-                {
-                    in[i][j] = (src[i][j] + eps);   //avoid log(0)
-                }
-         
+
         for ( int scale = 0; scale < scal; scale++ )
             {
 #ifdef _OPENMP
@@ -176,31 +170,52 @@ StopWatch Stop1("MSR");
 #endif 
                 {
                 AlignedBufferMP<double>* pBuffer = new AlignedBufferMP<double> (max(W_L, H_L));
-                gaussHorizontal<float> (in, out, *pBuffer, W_L, H_L, DehazeScales[scale]);
+                gaussHorizontal<float> (src, out, *pBuffer, W_L, H_L, DehazeScales[scale]);
                 gaussVertical<float>   (out, out, *pBuffer,W_L, H_L, DehazeScales[scale]);
                 delete pBuffer;
                 }
+#ifdef __SSE2__
+#ifdef _OPENMP
+#pragma omp parallel
+{
+                vfloat pondv = F2V(pond);
+#pragma omp for
+#endif
+                for ( int i=0; i < H_L; i++) {
+                    int j;
+                    for (j=0; j < W_L-3; j+=4)
+                    {
+                        _mm_storeu_ps(&dst[i][j], LVFU(dst[i][j]) + pondv * ( xlogf(LVFU(src[i][j])/LVFU(out[i][j])) ));
+                    }
+                    for (;j < W_L; j++)
+                    {
+                        dst[i][j] +=  pond * ( xlogf((src[i][j])/out[i][j]) );
+                    }
+                }
+}
+#else
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
                 for ( int i=0; i < H_L; i++)
                     for (int j=0; j < W_L; j++)
                     {
-                        dst[i][j] +=  pond * ( xlogf((in[i][j])/out[i][j]) );
+                        dst[i][j] +=  pond * ( xlogf((src[i][j])/out[i][j]) );
                     }
+#endif
             }
 
-     for (int i = 0; i < H_L; i++) {
-        delete [] in[i];
-    }
-    delete [] in;
       for (int i = 0; i < H_L; i++) {
         delete [] out[i];
     }
     delete [] out;
+    for (int i = 0; i < H_L; i++) {
+        delete [] src[i];
+    }
+    delete [] src;       
 
 float beta=16384.0f;
-float logBeta = xlogf(beta);
+float logBetaGain = xlogf(beta) * gain;
 
 #ifdef _OPENMP
 #pragma omp parallel for
@@ -208,9 +223,8 @@ float logBeta = xlogf(beta);
             for (int i=0; i< H_L; i++ )
                 for (int j=0; j<W_L; j++)
                 {
-                    dst[i][j] = (gain * (logBeta * dst[i][j]) + offset);
+                    dst[i][j] = logBetaGain * dst[i][j];
                 }
-     
             mean=0.f;stddv=0.f;
             mean_stddv( dst, mean, stddv, W_L, H_L);
             
@@ -220,26 +234,22 @@ float logBeta = xlogf(beta);
 //                printf("maxi=%f mini=%f mean=%f std=%f delta=%f\n", maxi, mini, mean, stddv, delta);
      
             if ( !delta ) delta = 1.0f;
+            float cdfactor = gain2 * 32768.f / delta;
+            strength /= 100.f;
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
              for ( int i=0; i < H_L; i ++ )
                 for (int j=0; j< W_L; j++) {
-                    float cd = gain2*32768.f * (( dst[i][j] - mini ) / delta) + offse;
-                    lab->L[i][j]=((100.f - strength)* lab->L[i][j] + strength * clipdehaz( cd, 0.f, 32768.f ))/100.f;
+                    float cd = cdfactor * ( dst[i][j] - mini ) + offse;
+                    lab->L[i][j]=((1.f - strength)* lab->L[i][j] + strength * clipdehaz( cd, 0.f, 32768.f ));
                 }
                 
         for (int i = 0; i < H_L; i++) {
             delete [] dst[i];
         }
         delete [] dst;
-        for (int i = 0; i < H_L; i++) {
-            delete [] src[i];
-        }
-        delete [] src;       
       } 
     }   
 
 }
-
- 
