@@ -83,18 +83,16 @@ void  dehaze_scales( float* scales, int nscales, int mode, int s)
 
 void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L )
     {
-    float vsquared;
-    
-    vsquared = 0.0f;
-    mean = 0.0f;
-#pragma omp parallel for reduction(+:mean,vsquared) // this leads to differences, but parallel summation is more accurate
+    float vsquared = 0.f;
+    float sum = 0.f;
+#pragma omp parallel for reduction(+:sum,vsquared) // this leads to differences, but parallel summation is more accurate
              for (int i = 0; i <H_L; i++ )
                 for (int j=0; j<W_L; j++) {
-                    mean += dst[i][j];
+                    sum += dst[i][j];
                     vsquared += (dst[i][j] * dst[i][j]);
                 }
-    
-    mean /= (float) W_L*H_L;
+
+    mean = sum / (float) (W_L*H_L);
     vsquared /= (float) W_L*H_L;
     stddv = ( vsquared - (mean * mean) );
     stddv = (float)sqrt(stddv);
