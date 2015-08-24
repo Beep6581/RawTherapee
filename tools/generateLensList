@@ -18,7 +18,7 @@ hash xmlstarlet 2>/dev/null || { echo >&2 "XMLStarlet not found, install it firs
 
 unset cam cams
 
-cams=("canon" "olympus" "pentax" "sony")
+cams=("canon" "nikon" "olympus" "pentax" "sony")
 tmpdir="/tmp/rt-generateLensList"
 
 head -n 15 "$0" | tail -n 14
@@ -32,12 +32,20 @@ mkdir -p "$tmpdir" || { printf '%s\n' "Error creating $tmpdir" ""; exit 1; }
 echo
 
 for cam in "${cams[@]}"; do
-    printf '%s\n' "Saving ${tmpdir}/${cam}"
-    xmlstarlet sel -T -t -m "taginfo/table/tag[@name='LensType']/values/key" -v "concat(@id,'	',val)" -n < <(exiftool -listx -"$cam":all) > "${tmpdir}/cam" || { printf '%s\n' "Saving failed: ${tmpdir}/cam"; exit 1; }
-    sort -fuV "${tmpdir}/cam" > "${tmpdir}/${cam}"
-    rm -f "${tmpdir}/cam"
+    if [[ "$cam" != nikon ]]; then
+        printf '%s\n' "Saving ${tmpdir}/${cam}"
+        xmlstarlet sel -T -t -m "taginfo/table/tag[@name='LensType']/values/key" -v "concat(@id,'	',val)" -n < <(exiftool -listx -"$cam":all) > "${tmpdir}/cam" || { printf '%s\n' "Saving failed: ${tmpdir}/cam"; exit 1; }
+        sort -fuV "${tmpdir}/cam" > "${tmpdir}/${cam}"
+        rm -f "${tmpdir}/cam"
+    fi
     case $cam in
         canon) sed -r -i -e '/-1\tn\/a/d' -e 's/([0-9]+)[0-9.]*\t/\1, "/' -e 's/^/        choices.insert(p_t(/' -e 's/$/"));/' "${tmpdir}/canon" ;;
+        nikon)
+            # Nikon LensIDs are composite tags
+            printf '%s\n' "Saving ${tmpdir}/nikon"
+            xmlstarlet sel -T -t -m "taginfo/table/tag[@name='LensID']/values/key" -v "concat(@id,'	',val)" -n < <(exiftool -listx -composite:all) > "${tmpdir}/nikon" || { printf '%s\n' "Saving failed: ${tmpdir}/nikon"; exit 1; }
+            sed -r -i -e '/^...	/d' -e 's/^/        lenses["/' -e 's/([A-F0-9]+)[A-F0-9.]*\t/\1"] = "/' -e 's/$/";/' "${tmpdir}/nikon"
+            ;;
         olympus) sed -i -e '/0 00 00\tNone/d' -e 's/^/        lenses["0/' -e 's/\t/"] = "/' -e 's/$/";/' "${tmpdir}/olympus" ;;
         pentax) sed -r -i -e 's/^/        choices.insert(p_t(256 * /' -e 's/([0-9]+) ([0-9]+)([0-9.]*)/\1 + \2/' -e 's/\t/, "/' -e 's/$/"));/' "${tmpdir}/pentax" ;;
         sony)
@@ -46,7 +54,7 @@ for cam in "${cams[@]}"; do
             xmlstarlet sel -T -t -m "taginfo/table/tag[@name='LensType2']/values/key" -v "concat(@id,'	',val)" -n < <(exiftool -listx -sony:all) > "${tmpdir}/cam" || { printf '%s\n' "Saving failed: ${tmpdir}/cam"; exit 1; }
             sort -fuV "${tmpdir}/cam" > "${tmpdir}/sony-lenstype2"
             rm -f "${tmpdir}/cam"
-            sed -r -i -e '/255\tTamron Lens (255)/d' -e 's/([0-9]+)[0-9.]*\t/\1, "/' -e 's/^/        choices.insert(p_t(/' -e 's/$/"));/' ${tmpdir}/sony ${tmpdir}/sony-lenstype2
+            sed -r -i -e '/255\tTamron Lens (255)/d' -e 's/([0-9]+)[0-9.]*\t/\1, "/' -e 's/^/        choices.insert(p_t(/' -e 's/$/"));/' "${tmpdir}/sony" "${tmpdir}/sony-lenstype2"
             ;;
     esac
 
