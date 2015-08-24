@@ -20,7 +20,8 @@ http://michaelezra.com/projects/rt/documentation/
 Git handbook:
 http://git-scm.com/book/en/
 
-## Compilation, patching and Git
+## Compilation, branches and Git
+Before compiling RawTherapee you need to have the dependencies installed.
 Refer to RawPedia for dependency requirements:
 http://rawpedia.rawtherapee.com/Linux
 
@@ -37,7 +38,7 @@ git clone git@github.com:Beep6581/RawTherapee.git ~/repo-rt
 ```
 or update a previously cloned repository:
 ```
-cd ~/repo-rt && git fetch
+cd ~/repo-rt && git pull
 ```
 
 ### Optionally pick a branch
