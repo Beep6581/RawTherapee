@@ -226,6 +226,14 @@ float logBetaGain = xlogf(beta) * gain;
             mean=0.f;stddv=0.f;
             mean_stddv( dst, mean, stddv, W_L, H_L);
             
+/*            for (int i=0; i< H_L; i++ )
+                for (int j=0; j<W_L; j++)
+                {
+                 if(dst[i][j] > (mean + 1.5f * stddv)) dst[i][j] = mean + 1.5f * stddv;
+                 if(dst[i][j] < (mean - 1.5f * stddv)) dst[i][j] = mean - 1.5f * stddv;
+                
+                }  
+*/                
             mini = mean - vart*stddv;
             maxi = mean + vart*stddv;
             delta = maxi - mini;
