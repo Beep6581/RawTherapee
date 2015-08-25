@@ -37,7 +37,6 @@
 #include "mytime.h"
 #include "sleef.c"
 #include "opthelper.h"
-#include "StopWatch.h"
 #include "EdgePreservingDecomposition.h"
 
 #ifdef _OPENMP
@@ -164,7 +163,6 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 
 
 {
-    StopWatch Stop1("ip_wavelet");
     MyTime t1e, t2e ;
     t1e.set();
 
