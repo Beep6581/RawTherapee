@@ -59,6 +59,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)
     colorappearance     = Gtk::manage (new ColorAppearance ());
     whitebalance        = Gtk::manage (new WhiteBalance ());
     vignetting          = Gtk::manage (new Vignetting ());
+    dehaz               = Gtk::manage (new Dehaz ());
     gradient            = Gtk::manage (new Gradient ());
     pcvignette          = Gtk::manage (new PCVignette ());
     perspective         = Gtk::manage (new PerspCorrection ());
@@ -125,6 +126,8 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)
     toolPanels.push_back (colortoning);
     addPanel (exposurePanel, epd);
     toolPanels.push_back (epd);
+    addPanel (exposurePanel, dehaz);
+    toolPanels.push_back (dehaz);
     addPanel (exposurePanel, pcvignette);
     toolPanels.push_back (pcvignette);
     addPanel (exposurePanel, gradient);

@@ -208,6 +208,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         OR HLR gets disabled when Color method was selected
     */
     // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
+    
+    //I forced dehazmet with toneCurve.hrenabled=true==> probably another way ??
+
+    bool hrdehaz=false;
+    if(!params.toneCurve.hrenabled) if(params.dehaz.enabled) {hrdehaz=true; params.toneCurve.hrenabled=true;}
+
     if (   (todo & M_RAW)
             || (!highDetailRawComputed && highDetailNeeded)
             || ( params.toneCurve.hrenabled && params.toneCurve.method != "Color" && imgsrc->IsrgbSourceModified())
@@ -235,13 +241,16 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
     }
         bool dehacontlutili=false;
-        CurveFactory::curveDehaContL (dehacontlutili,  params.labCurve.cdcurve, cdcurve, 1);
+        CurveFactory::curveDehaContL (dehacontlutili,  params.dehaz.cdcurve, cdcurve, 1);
    
-    if (todo & M_INIT  || params.labCurve.dehazmet!="none"){
-       if(params.labCurve.dehazmet!="none")
-            imgsrc->dehaz( params.raw, params.icm, params.labCurve, cdcurve,  dehacontlutili);//enabled Dehaze
+    if (todo & M_INIT  || params.dehaz.enabled){
+       if(params.dehaz.enabled)
+            imgsrc->dehaz( params.raw, params.icm, params.dehaz, cdcurve,  dehacontlutili);//enabled Dehaze
         
     }
+    if(hrdehaz==true) params.toneCurve.hrenabled=false;
+    
+    
     // Updating toneCurve.hrenabled if necessary
     // It has to be done there, because the next 'if' statement will use the value computed here
     if (todo & M_AUTOEXP) {

@@ -31,17 +31,10 @@ class LCurve : public ToolParamBlock, public AdjusterListener, public FoldableTo
 
 protected:
     CurveEditorGroup* curveEditorG;
-    CurveEditorGroup* curveEditorGD;
+//    CurveEditorGroup* curveEditorGD;
     Adjuster* brightness;
     Adjuster* contrast;
     Adjuster* chromaticity;
-    Adjuster* str;
-    Adjuster* scal;
-    Adjuster* neigh;
-    Adjuster* gain;
-    Adjuster* offs;
-    Adjuster* vart;
-   
     DiagonalCurveEditor* lshape;
     DiagonalCurveEditor* ashape;
     DiagonalCurveEditor* bshape;
@@ -52,7 +45,6 @@ protected:
     FlatCurveEditor*   hhshape;
     Gtk::Label* labmdh;
     Gtk::HBox* dhbox;
-    MyComboBoxText*   dehazmet;
 
     DiagonalCurveEditor* clshape;
     DiagonalCurveEditor* cdshape;
@@ -62,7 +54,7 @@ protected:
     Gtk::CheckButton* lcredsk;
 
     Adjuster* rstprotection;
-    sigc::connection  bwtconn, acconn, lcconn, dehazmetConn;
+    sigc::connection  bwtconn, acconn, lcconn;
     bool lastACVal, lastLCVal;
 
     //%%%%%%%%%%%%%%%%
@@ -90,8 +82,7 @@ public:
 
     virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
     
- private:	
-    void dehazmetChanged();
+ private:
 
 
    

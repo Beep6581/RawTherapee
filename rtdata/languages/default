@@ -644,6 +644,8 @@ HISTORY_MSG_411;Dehaze strength
 HISTORY_MSG_412;Dehaze scales
 HISTORY_MSG_413;Dehaze var
 HISTORY_MSG_414;Dehaze histogram
+HISTORY_MSG_415;Dehaze enabled
+HISTORY_MSG_416;Dehaze transmission
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1547,15 +1549,29 @@ TP_LABCURVE_LCREDSK;Restrict LC to red and skin-tones
 TP_LABCURVE_LCREDSK_TIP;If enabled, the LC Curve affects only red and skin-tones.\nIf disabled, it applies to all tones.
 TP_LABCURVE_RSTPROTECTION;Red and skin-tones protection
 TP_LABCURVE_RSTPRO_TOOLTIP;Works on the Chromaticity slider and the CC curve.
-TP_LABCURVE_STR;Strength
-TP_LABCURVE_SCAL;Scales
-TP_LABCURVE_NEIGH;Neighboring pixels
-TP_LABCURVE_GAIN;Gain
-TP_LABCURVE_OFFS;Offset
+TP_DEHAZ_STR;Strength
+TP_DEHAZ_STR_TOOLTIP;Mixture in proportion to the original image and that obtained by Retinex algoritm
+TP_DEHAZ_RETIN;Complete Retinex algoritm
+TP_DEHAZ_LAB;Retinex
+TP_DEHAZ_LAB_TOOLTIP;Use all component of Retinex algorihm, to improve results
+TP_DEHAZ_LABEL;Dehaze
+TP_DEHAZ_SCAL;Scales
+TP_DEHAZ_SCAL_TOOLTIP;Low scales increase contrast but give relief effect\nHigh scales  can increase noise, but give more natural images
+TP_DEHAZ_NEIGH;Neighboring pixels
+TP_DEHAZ_NEIGH_TOOLTIP;Take into account, neighboring pixels, by Gauss function
+TP_DEHAZ_GAIN;Gain
+TP_DEHAZ_OFFS;Offset
+TP_DEHAZ_GAIN_TOOLTIP;Acts on the transmission in combination with offset, this is very different from others settings\nUsed for black or white pixels, and for better balance the histogram
 TP_DEHAZE_LAB;Dehaze 
+TP_DEHAZ_CONTEDIT;Histogram equalizer
+TP_DEHAZ_CURVEEDITOR_CD;L=f(L)
+TP_DEHAZ_CURVEEDITOR_CD_TOOLTIP;Correct Raw data, to reduce halos and artifacts
+TP_DEHAZ_TRANSMISSION;Transmission map
 TP_DEHAZE_LAB_TOOLTIP;Use Retinex algorithm (Lab) to improve dehaze..defog...
-TP_LABCURVE_VART;Variance
+TP_DEHAZ_VART;Variance
+TP_DEHAZ_VART_TOOLTIP;Low variance increase local contrast and saturation, but can leeds to artifacts
 TP_DEHAZE_MET;Dehaze method
+TP_DEHAZ_MET_TOOLTIP;Low :reinforce low light\nUniform :expect to equalize action\nHigh : reinforce high light
 TP_DEHAZ_NONE;None
 TP_DEHAZ_UNI;Uniform
 TP_DEHAZ_LOW;Low

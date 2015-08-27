@@ -49,6 +49,17 @@ void ParamsEdited::set (bool v)
     toneCurve.expcomp    = v;
     toneCurve.hrenabled   = v;
     toneCurve.method    = v;
+    dehaz.cdcurve    = v;
+    dehaz.dehazmet    = v;
+    dehaz.enabled    = v;
+    dehaz.str    = v;
+    dehaz.scal    = v;
+    dehaz.neigh    = v;
+    dehaz.gain    = v;
+    dehaz.offs    = v;
+    dehaz.vart    = v;
+    dehaz.transmissionCurve   = v;
+    dehaz.retinex = v;
     labCurve.lcurve      = v;
     labCurve.acurve      = v;
     labCurve.bcurve      = v;
@@ -58,14 +69,6 @@ void ParamsEdited::set (bool v)
     labCurve.hhcurve     = v;
     labCurve.lccurve    = v;
     labCurve.clcurve    = v;
-    labCurve.cdcurve    = v;
-    labCurve.dehazmet    = v;
-    labCurve.str    = v;
-    labCurve.scal    = v;
-    labCurve.neigh    = v;
-    labCurve.gain    = v;
-    labCurve.offs    = v;
-    labCurve.vart    = v;
     labCurve.brightness  = v;
     labCurve.contrast    = v;
     labCurve.chromaticity    = v;
@@ -512,6 +515,17 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         toneCurve.expcomp = toneCurve.expcomp && p.toneCurve.expcomp == other.toneCurve.expcomp;
         toneCurve.hrenabled = toneCurve.hrenabled && p.toneCurve.hrenabled == other.toneCurve.hrenabled;
         toneCurve.method = toneCurve.method && p.toneCurve.method == other.toneCurve.method;
+        dehaz.cdcurve = dehaz.cdcurve && p.dehaz.cdcurve == other.dehaz.cdcurve;
+        dehaz.transmissionCurve = dehaz.transmissionCurve && p.dehaz.transmissionCurve == other.dehaz.transmissionCurve;
+        dehaz.dehazmet = dehaz.dehazmet && p.dehaz.dehazmet == other.dehaz.dehazmet;
+        dehaz.str = dehaz.str && p.dehaz.str == other.dehaz.str;
+        dehaz.scal = dehaz.scal && p.dehaz.scal == other.dehaz.scal;
+        dehaz.neigh = dehaz.neigh && p.dehaz.neigh == other.dehaz.neigh;
+        dehaz.gain = dehaz.gain && p.dehaz.gain == other.dehaz.gain;
+        dehaz.offs = dehaz.offs && p.dehaz.offs == other.dehaz.offs;
+        dehaz.vart = dehaz.vart && p.dehaz.vart == other.dehaz.vart;
+        dehaz.enabled = dehaz.enabled && p.dehaz.enabled == other.dehaz.enabled;      
+        dehaz.retinex = dehaz.retinex && p.dehaz.retinex == other.dehaz.retinex;      
         labCurve.lcurve = labCurve.lcurve && p.labCurve.lcurve == other.labCurve.lcurve;
         labCurve.acurve = labCurve.acurve && p.labCurve.acurve == other.labCurve.acurve;
         labCurve.bcurve = labCurve.bcurve && p.labCurve.bcurve == other.labCurve.bcurve;
@@ -521,14 +535,6 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         labCurve.hhcurve = labCurve.hhcurve && p.labCurve.hhcurve == other.labCurve.hhcurve;
         labCurve.lccurve = labCurve.lccurve && p.labCurve.lccurve == other.labCurve.lccurve;
         labCurve.clcurve = labCurve.clcurve && p.labCurve.clcurve == other.labCurve.clcurve;
-        labCurve.cdcurve = labCurve.cdcurve && p.labCurve.cdcurve == other.labCurve.cdcurve;
-        labCurve.dehazmet = labCurve.dehazmet && p.labCurve.dehazmet == other.labCurve.dehazmet;
-        labCurve.str = labCurve.str && p.labCurve.str == other.labCurve.str;
-        labCurve.scal = labCurve.scal && p.labCurve.scal == other.labCurve.scal;
-        labCurve.neigh = labCurve.neigh && p.labCurve.neigh == other.labCurve.neigh;
-        labCurve.gain = labCurve.gain && p.labCurve.gain == other.labCurve.gain;
-        labCurve.offs = labCurve.offs && p.labCurve.offs == other.labCurve.offs;
-        labCurve.vart = labCurve.vart && p.labCurve.vart == other.labCurve.vart;
         labCurve.brightness = labCurve.brightness && p.labCurve.brightness == other.labCurve.brightness;
         labCurve.contrast = labCurve.contrast && p.labCurve.contrast == other.labCurve.contrast;
         labCurve.chromaticity = labCurve.chromaticity && p.labCurve.chromaticity == other.labCurve.chromaticity;
@@ -1010,7 +1016,49 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (toneCurve.method) {
         toEdit.toneCurve.method   = mods.toneCurve.method;
     }
+   
+    if (dehaz.enabled) {
+        toEdit.dehaz.enabled        = mods.dehaz.enabled;
+    }
 
+    if (dehaz.cdcurve) {
+        toEdit.dehaz.cdcurve    = mods.dehaz.cdcurve;
+    }
+    
+    if (dehaz.transmissionCurve) {
+        toEdit.dehaz.transmissionCurve    = mods.dehaz.transmissionCurve;
+    }
+
+    if (dehaz.str) {
+        toEdit.dehaz.str   = mods.dehaz.str;
+    }
+
+    if (dehaz.scal) {
+        toEdit.dehaz.scal   = mods.dehaz.scal;
+    }
+    
+    if (dehaz.retinex) {
+        toEdit.dehaz.retinex  = mods.dehaz.retinex;
+    }
+    
+    if (dehaz.enabled) {
+        toEdit.dehaz.enabled        = mods.dehaz.enabled;
+    }
+    
+    if (dehaz.neigh) {
+        toEdit.dehaz.neigh   = mods.dehaz.neigh;
+    }
+    
+    if (dehaz.gain) {
+        toEdit.dehaz.gain   = mods.dehaz.gain;
+    }
+    if (dehaz.offs) {
+        toEdit.dehaz.offs   = mods.dehaz.offs;
+    }
+    if (dehaz.vart) {
+        toEdit.dehaz.vart   = mods.dehaz.vart;
+    }
+    
     if (labCurve.lcurve) {
         toEdit.labCurve.lcurve        = mods.labCurve.lcurve;
     }
@@ -1042,15 +1090,15 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (labCurve.lccurve) {
         toEdit.labCurve.lccurve    = mods.labCurve.lccurve;
     }
-    if (labCurve.dehazmet) {
-        toEdit.labCurve.dehazmet    = mods.labCurve.dehazmet;
-    }
+//    if (labCurve.dehazmet) {
+//        toEdit.labCurve.dehazmet    = mods.labCurve.dehazmet;
+//    }
     if (labCurve.clcurve) {
         toEdit.labCurve.clcurve    = mods.labCurve.clcurve;
     }
-    if (labCurve.cdcurve) {
-        toEdit.labCurve.cdcurve    = mods.labCurve.cdcurve;
-    }
+ //   if (labCurve.cdcurve) {
+ //       toEdit.labCurve.cdcurve    = mods.labCurve.cdcurve;
+  //  }
 
     if (labCurve.brightness) {
         toEdit.labCurve.brightness   = dontforceSet && options.baBehav[ADDSET_LC_BRIGHTNESS] ? toEdit.labCurve.brightness + mods.labCurve.brightness : mods.labCurve.brightness;
@@ -1062,26 +1110,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (labCurve.chromaticity) {
         toEdit.labCurve.chromaticity = dontforceSet && options.baBehav[ADDSET_LC_CHROMATICITY] ? toEdit.labCurve.chromaticity + mods.labCurve.chromaticity : mods.labCurve.chromaticity;
-    }
-    if (labCurve.str) {
-        toEdit.labCurve.str   = mods.labCurve.str;
-    }
-
-    if (labCurve.scal) {
-        toEdit.labCurve.scal   = mods.labCurve.scal;
-    }
-    
-    if (labCurve.neigh) {
-        toEdit.labCurve.neigh   = mods.labCurve.neigh;
-    }
-    if (labCurve.gain) {
-        toEdit.labCurve.gain   = mods.labCurve.gain;
-    }
-    if (labCurve.offs) {
-        toEdit.labCurve.offs   = mods.labCurve.offs;
-    }
-    if (labCurve.vart) {
-        toEdit.labCurve.vart   = mods.labCurve.vart;
     }
 
     if (labCurve.avoidcolorshift) {

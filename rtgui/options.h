@@ -278,6 +278,7 @@ public:
     Glib::ustring lastFlatfieldDir;
     Glib::ustring lastRgbCurvesDir;
     Glib::ustring lastLabCurvesDir;
+    Glib::ustring lastDehazDir;
     Glib::ustring lastDenoiseCurvesDir;
     Glib::ustring lastWaveletCurvesDir;
     Glib::ustring lastPFCurvesDir;

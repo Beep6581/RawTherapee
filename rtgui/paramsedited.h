@@ -55,12 +55,10 @@ public:
     bool method;
 };
 
-class LCurveParamsEdited
+class DehazParamsEdited
 {
 public:
-    bool brightness;
-    bool contrast;
-    bool chromaticity;
+    bool enabled;
     bool str;
     bool scal;
     bool neigh;
@@ -68,7 +66,20 @@ public:
     bool offs;
     bool dehazmet;
     bool vart;
-    
+    bool method;
+    bool transmissionCurve;
+    bool cdcurve;
+    bool retinex;
+   
+};
+
+
+class LCurveParamsEdited
+{
+public:
+    bool brightness;
+    bool contrast;
+    bool chromaticity;
     bool avoidcolorshift;
     bool rstprotection;
     bool lcurve;
@@ -81,8 +92,6 @@ public:
     bool hhcurve;
     bool lccurve;
     bool clcurve;
-    bool cdcurve;
-
     bool enabled;
     bool method;
 };
@@ -708,6 +717,7 @@ public:
     LCurveParamsEdited            labCurve;
     RGBCurvesParamsEdited         rgbCurves;
     ColorToningEdited             colorToning;
+    DehazParamsEdited             dehaz;  
     SharpeningParamsEdited        sharpening;
     SharpeningParamsEdited        prsharpening;
     SharpenEdgeParamsEdited       sharpenEdge;

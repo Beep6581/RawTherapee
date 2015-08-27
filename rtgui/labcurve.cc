@@ -210,85 +210,11 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"))
     hsepdh->show ();
     pack_start (*hsepdh, Gtk::PACK_EXPAND_WIDGET, 4);
 
-    Gtk::Frame* dehazFrame = Gtk::manage (new Gtk::Frame (M("TP_DEHAZE_LAB")) );
-    dehazFrame->set_tooltip_text(M("TP_DEHAZE_LAB_TOOLTIP"));
-    dehazFrame->set_border_width(0);
-    dehazFrame->set_label_align(0.025, 0.5);
-
-    Gtk::VBox * dehazVBox = Gtk::manage ( new Gtk::VBox());
-    dehazVBox->set_border_width(4);
-    dehazVBox->set_spacing(2);
-
-    dhbox = Gtk::manage (new Gtk::HBox ());
-    labmdh = Gtk::manage (new Gtk::Label (M("TP_DEHAZE_MET") + ":"));
-    dhbox->pack_start (*labmdh, Gtk::PACK_SHRINK, 1);
-
-    dehazmet = Gtk::manage (new MyComboBoxText ());
-    dehazmet->append_text (M("TP_DEHAZ_NONE"));
-    dehazmet->append_text (M("TP_DEHAZ_UNI"));
-    dehazmet->append_text (M("TP_DEHAZ_LOW"));
-    dehazmet->append_text (M("TP_DEHAZ_HIGH"));
-    dehazmet->set_active(0);
-    dehazmetConn = dehazmet->signal_changed().connect ( sigc::mem_fun(*this, &LCurve::dehazmetChanged) );
-  //  dehazmet->set_tooltip_markup (M("TP_DEHAZ_MET_TOOLTIP"));
-    dhbox->pack_start(*dehazmet);
-    dehazVBox->pack_start(*dhbox);
-    
-    curveEditorGD = new CurveEditorGroup (options.lastLabCurvesDir, M("TP_LABCURVE_CONTEDIT"));
-    curveEditorGD->setCurveListener (this);
-    cdshape = static_cast<DiagonalCurveEditor*>(curveEditorGD->addCurve(CT_Diagonal, M("TP_LABCURVE_CURVEEDITOR_CD")));
-    cdshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CD_TOOLTIP"));
-    std::vector<GradientMilestone> milestones22;
-
-    milestones22.push_back( GradientMilestone(0., 0., 0., 0.) );
-    milestones22.push_back( GradientMilestone(1., 1., 1., 1.) );
-    cdshape->setBottomBarBgGradient(milestones22);
-    cdshape->setLeftBarBgGradient(milestones22);
-
-    curveEditorGD->curveListComplete();
-
-    str = Gtk::manage (new Adjuster (M("TP_LABCURVE_STR"), 0, 100., 1., 60.));
-    scal   = Gtk::manage (new Adjuster (M("TP_LABCURVE_SCAL"), 1, 6., 1., 3.));
-    neigh = Gtk::manage (new Adjuster (M("TP_LABCURVE_NEIGH"), 6, 100., 1., 80.));
-    gain   = Gtk::manage (new Adjuster (M("TP_LABCURVE_GAIN"), 50, 150, 1, 100));
-    offs   = Gtk::manage (new Adjuster (M("TP_LABCURVE_OFFS"), 0, 3000, 1, 0));
-    vart   = Gtk::manage (new Adjuster (M("TP_LABCURVE_VART"), 80, 300, 1, 125));
-    dehazVBox->pack_start (*str);
-    str->show ();
-    
-    dehazVBox->pack_start (*curveEditorGD, Gtk::PACK_SHRINK, 4);
-    curveEditorGD->show();
-    
-    dehazVBox->pack_start (*scal);
-    scal->show ();
-
-    dehazVBox->pack_start (*neigh);
-    neigh->show ();
-
-    dehazVBox->pack_start (*gain);
-    gain->show ();
-
-    dehazVBox->pack_start (*offs);
-    offs->show ();
-    
-    dehazVBox->pack_start (*vart);
-    vart->show ();
-
-    str->setAdjusterListener (this);
-    scal->setAdjusterListener (this);
-    neigh->setAdjusterListener (this);
-    gain->setAdjusterListener (this);
-    offs->setAdjusterListener (this);
-    vart->setAdjusterListener (this);
-    dehazFrame->add(*dehazVBox);
-    pack_start (*dehazFrame);
-
 }
 
 LCurve::~LCurve ()
 {
     delete curveEditorG;
-    delete curveEditorGD;
    
 }
 
@@ -296,30 +222,16 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
 {
 
     disableListener ();
-    dehazmetConn.block(true);
 
     if (pedited) {
         brightness->setEditedState (pedited->labCurve.brightness ? Edited : UnEdited);
         contrast->setEditedState (pedited->labCurve.contrast ? Edited : UnEdited);
-       chromaticity->setEditedState (pedited->labCurve.chromaticity ? Edited : UnEdited);
+        chromaticity->setEditedState (pedited->labCurve.chromaticity ? Edited : UnEdited);
 
         //%%%%%%%%%%%%%%%%%%%%%%
         rstprotection->setEditedState (pedited->labCurve.rstprotection ? Edited : UnEdited);
         avoidcolorshift->set_inconsistent (!pedited->labCurve.avoidcolorshift);
         lcredsk->set_inconsistent (!pedited->labCurve.lcredsk);
-        str->setEditedState (pedited->labCurve.str ? Edited : UnEdited);
-        scal->setEditedState (pedited->labCurve.scal ? Edited : UnEdited);
-        neigh->setEditedState (pedited->labCurve.neigh ? Edited : UnEdited);
-        gain->setEditedState (pedited->labCurve.gain ? Edited : UnEdited);
-        offs->setEditedState (pedited->labCurve.offs ? Edited : UnEdited);
-        vart->setEditedState (pedited->labCurve.vart ? Edited : UnEdited);
-
-    //    if (!pedited->labCurve.dehazmet) {
-     //       dehazmet->set_active (3);
-     //   }
-        if (!pedited->labCurve.dehazmet) {
-            dehazmet->set_active_text(M("GENERAL_UNCHANGED"));
-        }
 
         //%%%%%%%%%%%%%%%%%%%%%%
 
@@ -332,32 +244,12 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
         hhshape->setUnChanged  (!pedited->labCurve.hhcurve);
         lcshape->setUnChanged  (!pedited->labCurve.lccurve);
         clshape->setUnChanged  (!pedited->labCurve.clcurve);
-        cdshape->setUnChanged  (!pedited->labCurve.cdcurve);
     }
 
     brightness->setValue    (pp->labCurve.brightness);
     contrast->setValue      (pp->labCurve.contrast);
     chromaticity->setValue  (pp->labCurve.chromaticity);
     adjusterChanged(chromaticity, pp->labCurve.chromaticity); // To update the GUI sensitiveness
-    neigh->setValue    (pp->labCurve.neigh);
-    gain->setValue      (pp->labCurve.gain);
-    offs->setValue  (pp->labCurve.offs);
-    str->setValue    (pp->labCurve.str);
-    scal->setValue      (pp->labCurve.scal);
-    vart->setValue  (pp->labCurve.vart);
-    
-//    dehazmet->set_active (0);
-    if (pp->labCurve.dehazmet == "none") {
-        dehazmet->set_active (0);
-    } else if (pp->labCurve.dehazmet == "uni") {
-        dehazmet->set_active (1);
-    } else if (pp->labCurve.dehazmet == "low") {
-        dehazmet->set_active (2);
-    } else if (pp->labCurve.dehazmet == "high") {
-        dehazmet->set_active (3);
-    }
-    dehazmetChanged ();
-
     //%%%%%%%%%%%%%%%%%%%%%%
     rstprotection->setValue (pp->labCurve.rstprotection);
 
@@ -384,10 +276,8 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
     hhshape->setCurve  (pp->labCurve.hhcurve);
     lcshape->setCurve  (pp->labCurve.lccurve);
     clshape->setCurve  (pp->labCurve.clcurve);
-    cdshape->setCurve  (pp->labCurve.cdcurve);
 
     queue_draw();
-    dehazmetConn.block(false);
 
     enableListener ();
 }
@@ -429,9 +319,6 @@ void LCurve::autoOpenCurve ()
         clshape->openIfNonlinear();
     }
     
-    if (!active) {
-        cdshape->openIfNonlinear();
-    }
 }
 
 void LCurve::setEditProvider  (EditDataProvider *provider)
@@ -440,7 +327,6 @@ void LCurve::setEditProvider  (EditDataProvider *provider)
     ccshape->setEditProvider(provider);
     lcshape->setEditProvider(provider);
     clshape->setEditProvider(provider);
-    cdshape->setEditProvider(provider);
     lhshape->setEditProvider(provider);
     chshape->setEditProvider(provider);
     hhshape->setEditProvider(provider);
@@ -456,13 +342,6 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
     pp->labCurve.brightness    = brightness->getValue ();
     pp->labCurve.contrast      = (int)contrast->getValue ();
     pp->labCurve.chromaticity  = (int)chromaticity->getValue ();
-    pp->labCurve.str    = str->getValue ();
-    pp->labCurve.scal      = (int)scal->getValue ();
-    pp->labCurve.neigh    = neigh->getValue ();
-    pp->labCurve.gain      = (int)gain->getValue ();
-    pp->labCurve.offs  = (int)offs->getValue ();
-    pp->labCurve.vart  = (int)vart->getValue ();
-
     //%%%%%%%%%%%%%%%%%%%%%%
     pp->labCurve.avoidcolorshift = avoidcolorshift->get_active ();
     pp->labCurve.lcredsk         = lcredsk->get_active ();
@@ -479,7 +358,6 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
     pp->labCurve.hhcurve = hhshape->getCurve ();
     pp->labCurve.lccurve = lcshape->getCurve ();
     pp->labCurve.clcurve = clshape->getCurve ();
-    pp->labCurve.cdcurve = cdshape->getCurve ();
 
     if (pedited) {
         pedited->labCurve.brightness   = brightness->getEditedState ();
@@ -491,17 +369,6 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->labCurve.lcredsk         = !lcredsk->get_inconsistent();
 
         pedited->labCurve.rstprotection   = rstprotection->getEditedState ();
-   //     pedited->labCurve.dehazmet  = dehazmet->get_active_row_number() != 3;
-        pedited->labCurve.dehazmet    = dehazmet->get_active_text() != M("GENERAL_UNCHANGED");
-       
-        //%%%%%%%%%%%%%%%%%%%%%%
-        pedited->labCurve.str   = str->getEditedState ();
-        pedited->labCurve.scal     = scal->getEditedState ();
-        pedited->labCurve.neigh   = neigh->getEditedState ();
-        pedited->labCurve.gain     = gain->getEditedState ();
-        pedited->labCurve.offs = offs->getEditedState ();
-        pedited->labCurve.vart = vart->getEditedState ();
-
 
         pedited->labCurve.lcurve    = !lshape->isUnChanged ();
         pedited->labCurve.acurve    = !ashape->isUnChanged ();
@@ -512,30 +379,11 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->labCurve.hhcurve   = !hhshape->isUnChanged ();
         pedited->labCurve.lccurve   = !lcshape->isUnChanged ();
         pedited->labCurve.clcurve   = !clshape->isUnChanged ();
-        pedited->labCurve.cdcurve   = !cdshape->isUnChanged ();
         
         
     }
-    if (dehazmet->get_active_row_number() == 0) {
-        pp->labCurve.dehazmet = "none";
-    } else if (dehazmet->get_active_row_number() == 1) {
-        pp->labCurve.dehazmet = "uni";
-    } else if (dehazmet->get_active_row_number() == 2) {
-        pp->labCurve.dehazmet = "low";
-    } else if (dehazmet->get_active_row_number() == 3) {
-        pp->labCurve.dehazmet = "high";
-    }
-    
     
 }
-
-void LCurve::dehazmetChanged()
-{
-    if (listener) { 
-        listener->panelChanged (Evdehazmet, dehazmet->get_active_text ());
-    }
- }
-
 
 void LCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
 {
@@ -544,36 +392,16 @@ void LCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pedit
     contrast->setDefault (defParams->labCurve.contrast);
     chromaticity->setDefault (defParams->labCurve.chromaticity);
     rstprotection->setDefault (defParams->labCurve.rstprotection);
-    neigh->setDefault (defParams->labCurve.neigh);
-    gain->setDefault (defParams->labCurve.gain);
-    offs->setDefault (defParams->labCurve.offs);
-    str->setDefault (defParams->labCurve.str);
-    scal->setDefault (defParams->labCurve.scal);
-    vart->setDefault (defParams->labCurve.vart);
-
     if (pedited) {
         brightness->setDefaultEditedState (pedited->labCurve.brightness ? Edited : UnEdited);
         contrast->setDefaultEditedState (pedited->labCurve.contrast ? Edited : UnEdited);
         chromaticity->setDefaultEditedState (pedited->labCurve.chromaticity ? Edited : UnEdited);
         rstprotection->setDefaultEditedState (pedited->labCurve.rstprotection ? Edited : UnEdited);
-       neigh->setDefaultEditedState (pedited->labCurve.neigh ? Edited : UnEdited);
-        gain->setDefaultEditedState (pedited->labCurve.gain ? Edited : UnEdited);
-        offs->setDefaultEditedState (pedited->labCurve.offs ? Edited : UnEdited);
-        str->setDefaultEditedState (pedited->labCurve.str ? Edited : UnEdited);
-        scal->setDefaultEditedState (pedited->labCurve.scal ? Edited : UnEdited);
-        vart->setDefaultEditedState (pedited->labCurve.vart ? Edited : UnEdited);
-
     } else {
         brightness->setDefaultEditedState (Irrelevant);
         contrast->setDefaultEditedState (Irrelevant);
         chromaticity->setDefaultEditedState (Irrelevant);
         rstprotection->setDefaultEditedState (Irrelevant);
-        neigh->setDefaultEditedState (Irrelevant);
-        gain->setDefaultEditedState (Irrelevant);
-        offs->setDefaultEditedState (Irrelevant);
-        vart->setDefaultEditedState (Irrelevant);
-        str->setDefaultEditedState (Irrelevant);
-        scal->setDefaultEditedState (Irrelevant);
     }
 }
 
@@ -679,9 +507,6 @@ void LCurve::curveChanged (CurveEditor* ce)
             listener->panelChanged (EvLCLCurve, M("HISTORY_CUSTOMCURVE"));
         }
         
-        if (ce == cdshape) {
-            listener->panelChanged (EvLCDCurve, M("HISTORY_CUSTOMCURVE"));
-        }
         
     }
 }
@@ -711,32 +536,6 @@ void LCurve::adjusterChanged (Adjuster* a, double newval)
         if (listener) {
             listener->panelChanged (EvLRSTProtection, costr);
         }
-    } else if (a == neigh) {
-        if (listener) {
-            listener->panelChanged (EvLneigh, costr);
-        }
-    } else if (a == str) {
-        if (listener) {
-            listener->panelChanged (EvLstr, costr);
-        }
-    } else if (a == scal) {
-        if (listener) {
-            listener->panelChanged (EvLscal, costr);
-        }
-
-    } else if (a == gain) {
-        if (listener) {
-            listener->panelChanged (EvLgain, costr);
-        }
-    } else if (a == offs) {
-        if (listener) {
-            listener->panelChanged (EvLoffs, costr);
-        }
-    } else if (a == vart) {
-        if (listener) {
-            listener->panelChanged (EvLvart, costr);
-        }
-       
     } else if (a == chromaticity) {
         if (multiImage) {
             //if chromaticity==-100 (lowest value), we enter the B&W mode and avoid color shift and rstprotection has no effect
@@ -822,15 +621,6 @@ void LCurve::setBatchMode (bool batchMode)
     contrast->showEditedCB ();
     chromaticity->showEditedCB ();
     rstprotection->showEditedCB ();
-    dehazmet->append_text (M("GENERAL_UNCHANGED"));
-    neigh->showEditedCB ();
-    gain->showEditedCB ();
-    offs->showEditedCB ();
-    str->showEditedCB ();
-    scal->showEditedCB ();
-    vart->showEditedCB ();
-    curveEditorGD->setBatchMode (batchMode);
-
     curveEditorG->setBatchMode (batchMode);
     lcshape->setBottomBarColorProvider(NULL, -1);
     lcshape->setLeftBarColorProvider(NULL, -1);
@@ -861,10 +651,4 @@ void LCurve::trimValues (rtengine::procparams::ProcParams* pp)
     brightness->trimValue(pp->labCurve.brightness);
     contrast->trimValue(pp->labCurve.contrast);
     chromaticity->trimValue(pp->labCurve.chromaticity);
-    str->trimValue(pp->labCurve.str);
-    scal->trimValue(pp->labCurve.scal);
-    neigh->trimValue(pp->labCurve.neigh);
-    gain->trimValue(pp->labCurve.gain);
-    offs->trimValue(pp->labCurve.offs);
-    vart->trimValue(pp->labCurve.vart);
 }

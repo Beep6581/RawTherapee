@@ -151,7 +151,7 @@ public:
     int         load        (Glib::ustring fname, bool batch = false);
     void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse);
     void        demosaic    (const RAWParams &raw);
-    void        dehaz       (RAWParams raw, ColorManagementParams cmp, LCurveParams  lcur, LUTf & cdcurve, bool dehacontlutili);
+    void        dehaz       (RAWParams raw, ColorManagementParams cmp, DehazParams  lcur, LUTf & cdcurve, bool dehacontlutili);
     void        flushRawData      ();
     void        flushRGB          ();
     void        HLRecovery_Global (ToneCurveParams hrp);
@@ -227,7 +227,7 @@ public:
 
     void boxblur2(float** src, float** dst, int H, int W, int box );
     void boxblur_resamp(float **src, float **dst, int H, int W, int box, int samp );
-    void MSR(LabImage* lab, int width, int height, int skip, LCurveParams lcur);
+    void MSR(LabImage* lab, int width, int height, int skip, DehazParams lcur);
 
     //void boxblur_resamp(float **red, float **green, float **blue, int H, int W, float thresh[3], float max[3],
     //                multi_array2D<float,3> & hfsize, multi_array2D<float,3> & hilite, int box );

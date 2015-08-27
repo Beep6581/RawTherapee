@@ -259,6 +259,32 @@ public:
     void setDefaults();
     static bool HLReconstructionNecessary(LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw);
 };
+/**
+  * Parameters of Dehaz
+  */
+class DehazParams
+{
+
+public:
+    bool enabled;
+    std::vector<double>   cdcurve;
+    std::vector<double> transmissionCurve;
+    int     str;
+    int     scal;
+    int     neigh;
+    int     gain;
+    int     offs;
+    Glib::ustring dehazmet;
+    int     vart;
+    bool    retinex;
+    DehazParams ();
+    void setDefaults();  
+  //  void getCurves(transmissionCurve &transmissionCurveLUT) const;
+
+    static void getDefaulttransmissionCurve(std::vector<double> &curve);
+    static void getDefaultCDCurve(std::vector<double> &curve);
+    
+};
 
 
 /**
@@ -277,21 +303,12 @@ public:
     std::vector<double>   hhcurve;
     std::vector<double>   lccurve;
     std::vector<double>   clcurve;
-    std::vector<double>   cdcurve;
     int     brightness;
     int     contrast;
     int     chromaticity;
     bool    avoidcolorshift;
     double  rstprotection;
     bool    lcredsk;
-    int     str;
-    int     scal;
-    int     neigh;
-    int     gain;
-    int     offs;
-    Glib::ustring dehazmet;
-    int     vart;
-   
 };
 
 /**
@@ -1196,6 +1213,7 @@ class ProcParams
 public:
     ToneCurveParams         toneCurve;       ///< Tone curve parameters
     LCurveParams            labCurve;        ///< CIELAB luminance curve parameters
+    DehazParams             dehaz;           ///< Dehaz parameters
     RGBCurvesParams         rgbCurves;       ///< RGB curves parameters
     ColorToningParams       colorToning;     ///< Color Toning parameters
     SharpeningParams        sharpening;      ///< Sharpening parameters

@@ -177,6 +177,10 @@ void Options::updatePaths()
     if (lastLabCurvesDir.empty() || !safe_file_test (lastLabCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastLabCurvesDir, Glib::FILE_TEST_IS_DIR)) {
         lastLabCurvesDir = preferredPath;
     }
+    
+    if (lastDehazDir.empty() || !safe_file_test (lastDehazDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastLabCurvesDir, Glib::FILE_TEST_IS_DIR)) {
+        lastDehazDir = preferredPath;
+    }
 
     if (lastDenoiseCurvesDir.empty() || !safe_file_test (lastDenoiseCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastDenoiseCurvesDir, Glib::FILE_TEST_IS_DIR)) {
         lastDenoiseCurvesDir = preferredPath;
@@ -682,6 +686,7 @@ void Options::setDefaults ()
     // at the end of the "updatePaths" method.
     lastRgbCurvesDir = "";
     lastLabCurvesDir = "";
+    lastDehazDir = "";
     lastDenoiseCurvesDir = "";
     lastWaveletCurvesDir = "";
     lastPFCurvesDir = "";
@@ -1733,6 +1738,7 @@ int Options::readFromFile (Glib::ustring fname)
                 safeDirGet(keyFile, "Dialogs", "LastFlatfieldDir", lastFlatfieldDir);
                 safeDirGet(keyFile, "Dialogs", "LastRgbCurvesDir", lastRgbCurvesDir);
                 safeDirGet(keyFile, "Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
+                safeDirGet(keyFile, "Dialogs", "LastDehazDir", lastDehazDir);
                 safeDirGet(keyFile, "Dialogs", "LastDenoiseCurvesDir", lastDenoiseCurvesDir);
                 safeDirGet(keyFile, "Dialogs", "LastWaveletCurvesDir", lastWaveletCurvesDir);
                 safeDirGet(keyFile, "Dialogs", "LastPFCurvesDir", lastPFCurvesDir);
@@ -2069,6 +2075,7 @@ int Options::saveToFile (Glib::ustring fname)
     keyFile.set_string ("Dialogs", "LastFlatfieldDir", lastFlatfieldDir);
     keyFile.set_string ("Dialogs", "LastRgbCurvesDir", lastRgbCurvesDir);
     keyFile.set_string ("Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
+    keyFile.set_string ("Dialogs", "LastDehazDir", lastDehazDir);
     keyFile.set_string ("Dialogs", "LastDenoiseCurvesDir", lastDenoiseCurvesDir);
     keyFile.set_string ("Dialogs", "LastWaveletCurvesDir", lastWaveletCurvesDir);
     keyFile.set_string ("Dialogs", "LastPFCurvesDir", lastPFCurvesDir);

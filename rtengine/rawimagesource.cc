@@ -1800,7 +1800,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
     }
 }
 
-void RawImageSource::dehaz(RAWParams raw, ColorManagementParams cmp, LCurveParams  lcur, LUTf & cdcurve, bool dehacontlutili)
+void RawImageSource::dehaz(RAWParams raw, ColorManagementParams cmp, DehazParams  lcur, LUTf & cdcurve, bool dehacontlutili)
 {
     
     MyTime t4, t5;

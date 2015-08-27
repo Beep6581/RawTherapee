@@ -100,7 +100,7 @@ void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L )
 
 
 
-void RawImageSource::MSR(LabImage* lab, int width, int height, int skip, LCurveParams lcur)
+void RawImageSource::MSR(LabImage* lab, int width, int height, int skip, DehazParams lcur)
     
     {
 StopWatch Stop1("MSR");
@@ -120,11 +120,11 @@ StopWatch Stop1("MSR");
       float vart = (float)lcur.vart;//variance
       vart /=100.f;
       int modedehaz;
-      if(lcur.dehazmet=="none") modedehaz=-1;//enabled disabled
       if(lcur.dehazmet=="uni") modedehaz=0;
       if(lcur.dehazmet=="low") modedehaz=1;
       if(lcur.dehazmet=="high") modedehaz=2;
-      if (modedehaz !=-1) {//enabled
+   //   if (modedehaz !=-1) {//enabled
+      if (lcur.enabled) {//enabled
         int H_L=height;
         int W_L=width;
 
