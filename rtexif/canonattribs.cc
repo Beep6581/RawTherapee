@@ -809,7 +809,7 @@ public:
         choices.insert(p_t(747, "Canon EF 100-400mm f/4.5-5.6L IS II USM"));
         choices.insert(p_t(4142, "Canon EF-S 18-135mm f/3.5-5.6 IS STM"));
         choices.insert(p_t(4143, "Canon EF-M 18-55mm f/3.5-5.6 IS STM or Tamron Lens"));
-        choices.insert(p_t(4143, "Tamron 18-200mm F/3.5-6.3 Di III VC"));
+        choices.insert(p_t(4143, "Tamron 18-200mm f/3.5-6.3 Di III VC"));
         choices.insert(p_t(4144, "Canon EF 40mm f/2.8 STM"));
         choices.insert(p_t(4145, "Canon EF-M 22mm f/2 STM"));
         choices.insert(p_t(4146, "Canon EF-S 18-55mm f/3.5-5.6 IS STM"));
