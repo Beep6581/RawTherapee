@@ -181,13 +181,24 @@ StopWatch Stop1("MSR");
 #endif
                 for ( int i=0; i < H_L; i++) {
                     int j;
-                    for (j=0; j < W_L-3; j+=4)
+                    
+                  //  for (j=0; j < W_L-3; j+=4)
                     {
-                        _mm_storeu_ps(&dst[i][j], LVFU(dst[i][j]) + pondv * ( xlogf(LVFU(src[i][j])/LVFU(out[i][j])) ));
+                       
+                    //    _mm_storeu_ps(&dst[i][j], LVFU(dst[i][j]) + pondv * ( xlogf(LVFU(src[i][j])/LVFU(out[i][j])) ));
                     }
-                    for (;j < W_L; j++)
+                    
+                  //  for (;j < W_L; j++)
+                     for (int j=0;j < W_L; j++)
+                       
                     {
-                        dst[i][j] +=  pond * ( xlogf((src[i][j])/out[i][j]) );
+                        float limds =(src[i][j])/out[i][j];
+                        if(limds > 10000.f) limds=10000.f;
+                        if(limds < 0.0001f) limds=0.0001f;
+                        
+                      //  dst[i][j] +=  pond * ( xlogf((src[i][j])/out[i][j]) );
+                        dst[i][j] +=  pond * ( xlogf((limds) ));
+                        
                     }
                 }
 }
@@ -198,6 +209,10 @@ StopWatch Stop1("MSR");
                 for ( int i=0; i < H_L; i++)
                     for (int j=0; j < W_L; j++)
                     {
+                        float limds =(src[i][j])/out[i][j];
+                        if(limds > 10000.f) limds=10000.f;
+                        if(limds < 0.0001f) limds=0.0001f;
+                        
                         dst[i][j] +=  pond * ( xlogf((src[i][j])/out[i][j]) );
                     }
 #endif
@@ -226,18 +241,10 @@ float logBetaGain = xlogf(beta) * gain;
             mean=0.f;stddv=0.f;
             mean_stddv( dst, mean, stddv, W_L, H_L);
             
-/*            for (int i=0; i< H_L; i++ )
-                for (int j=0; j<W_L; j++)
-                {
-                 if(dst[i][j] > (mean + 1.5f * stddv)) dst[i][j] = mean + 1.5f * stddv;
-                 if(dst[i][j] < (mean - 1.5f * stddv)) dst[i][j] = mean - 1.5f * stddv;
-                
-                }  
-*/                
             mini = mean - vart*stddv;
             maxi = mean + vart*stddv;
             delta = maxi - mini;
-//                printf("maxi=%f mini=%f mean=%f std=%f delta=%f\n", maxi, mini, mean, stddv, delta);
+                printf("maxi=%f mini=%f mean=%f std=%f delta=%f\n", maxi, mini, mean, stddv, delta);
      
             if ( !delta ) delta = 1.0f;
             float cdfactor = gain2 * 32768.f / delta;
@@ -250,7 +257,6 @@ float logBetaGain = xlogf(beta) * gain;
                     float cd = cdfactor * ( dst[i][j] - mini ) + offse;
                     lab->L[i][j]=((1.f - strength)* lab->L[i][j] + strength * clipdehaz( cd, 0.f, 32768.f ));
                 }
-                
         for (int i = 0; i < H_L; i++) {
             delete [] dst[i];
         }

@@ -1040,11 +1040,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (dehaz.retinex) {
         toEdit.dehaz.retinex  = mods.dehaz.retinex;
     }
-    
-    if (dehaz.enabled) {
-        toEdit.dehaz.enabled        = mods.dehaz.enabled;
-    }
-    
+        
     if (dehaz.neigh) {
         toEdit.dehaz.neigh   = mods.dehaz.neigh;
     }
