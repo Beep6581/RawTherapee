@@ -1133,7 +1133,13 @@ bool Tag::parseMakerNote(FILE* f, int base, ByteOrder bom )
             int basepos = ftell (f);
             fread (value, 1, 18, f);
             directory = new TagDirectory*[2];
-            directory[0] = new TagDirectory (parent, f, basepos + 10, nikon3Attribs, bom);
+            // byte order for makernotes can be different from exif byte order. We have to get it from makernotes header
+            ByteOrder MakerNoteOrder;
+            if(value[10] == 'M' && value[11] == 'M')
+                MakerNoteOrder = rtexif::MOTOROLA;
+            else
+                MakerNoteOrder = rtexif::INTEL;
+            directory[0] = new TagDirectory (parent, f, basepos + 10, nikon3Attribs, MakerNoteOrder);
             directory[1] = NULL;
         }
     } else if ( make.find( "Canon" ) != std::string::npos  ) {
