@@ -406,7 +406,10 @@ void ImageData::extractInfo ()
                 rtexif::Tag* flt = mnote->getTagP ("LensInfo/FocalLength");
 
                 if (flt) {
-                    focal_len = flt->toDouble ();
+                    // Don't replace Exif focal_len if Makernotes focal_len is 0
+                    if (flt->toDouble() > 0) {
+                        focal_len = flt->toDouble ();
+                    }
                 } else if ((flt = mnote->getTagP ("FocalLength"))) {
                     rtexif::Tag* flt = mnote->getTag ("FocalLength");
                     focal_len = flt->toDouble ();
