@@ -20,24 +20,35 @@ http://michaelezra.com/projects/rt/documentation/
 Git handbook:
 http://git-scm.com/book/en/
 
-## Compilation, patching and Git
+## Compilation, branches and Git
+Before compiling RawTherapee you need to have the dependencies installed.
 Refer to RawPedia for dependency requirements:
 http://rawpedia.rawtherapee.com/Linux
 
 The instructions below will be merged into that article on RawPedia soon.
 
-Clone the source code:
-`git clone https://github.com/Beep6581/RawTherapee ~/repo-rt`
+### Clone the source code
+Clone the source code either using HTTPS:
+```
+git clone https://github.com/Beep6581/RawTherapee ~/repo-rt
+```
+or using SSH (see https://help.github.com/articles/generating-ssh-keys/ ):
+```
+git clone git@github.com:Beep6581/RawTherapee.git ~/repo-rt
+```
 or update a previously cloned repository:
-`cd ~/repo-rt && git fetch`
+```
+cd ~/repo-rt && git pull
+```
 
-Apply a patch:
-If you want to apply a patch, use "git apply" if you just want to apply without committing, or "git am" if you want to automatically apply and commit:
-`git apply /downloads/some.patch`
-or
-`git am /downloads/some.patch`
+### Optionally pick a branch
+New features and bug fixes are made on their own branches. Once tested, those branches are merged into the "master" branch. We used to test new features and bug fixes by sharing patches (.diff files) but git makes branching easy and branching makes sharing patches unnecessary.
+To test a new feature or bug fix, just checkout [the right branch](https://github.com/Beep6581/RawTherapee/branches/active) before compiling:
+```
+git checkout <branchname>
+```
 
-Compile:
+### Compile and run
 To find out how many threads your CPU supports, run:
 `grep -c processor /proc/cpuinfo`
 Then replace the number in `-j8` below with this number. This will make compilation faster but it will have no effect on the speed of running RawTherapee.
