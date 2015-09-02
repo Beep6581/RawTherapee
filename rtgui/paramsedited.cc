@@ -1029,6 +1029,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.dehaz.transmissionCurve    = mods.dehaz.transmissionCurve;
     }
 
+    if (dehaz.dehazmet) {
+        toEdit.dehaz.dehazmet    = mods.dehaz.dehazmet;
+    }
+
     if (dehaz.str) {
         toEdit.dehaz.str   = mods.dehaz.str;
     }

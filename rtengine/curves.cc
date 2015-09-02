@@ -505,12 +505,8 @@ void CurveFactory::curveCL ( bool & clcutili, const std::vector<double>& clcurve
 
 void CurveFactory::curveDehaContL ( bool & dehacontlutili, const std::vector<double>& dehaclcurvePoints, LUTf & dehaclCurve, int skip)
 {
-    bool needed;
+    bool needed = false;
     DiagonalCurve* dCurve = NULL;
-
-    bool histNeededCL = false;
-
-    needed = false;
 
     if (!dehaclcurvePoints.empty() && dehaclcurvePoints[0] != 0) {
         dCurve = new DiagonalCurve (dehaclcurvePoints, CURVES_MIN_POLY_POINTS / skip);
@@ -521,11 +517,6 @@ void CurveFactory::curveDehaContL ( bool & dehacontlutili, const std::vector<dou
         }
     }
 
-    for (int i = 0; i < 32768; i++) { //32768*1.414  + ...
-        int hi = (int)(255.0 * CLIPD((float)i / 32767.0)); //
-    }
-
-
     fillCurveArray(dCurve, dehaclCurve, skip, needed);
 
     if (dCurve) {
@@ -533,8 +524,6 @@ void CurveFactory::curveDehaContL ( bool & dehacontlutili, const std::vector<dou
         dCurve = NULL;
     }
 }
-
-
 
 // add curve Lab wavelet : Cont=f(L)
 void CurveFactory::curveWavContL ( bool & wavcontlutili, const std::vector<double>& wavclcurvePoints, LUTf & wavclCurve, /*LUTu & histogramwavcl, LUTu & outBeforeWavCLurveHistogram,*/int skip)

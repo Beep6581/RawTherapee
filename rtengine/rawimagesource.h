@@ -227,7 +227,7 @@ public:
 
     void boxblur2(float** src, float** dst, int H, int W, int box );
     void boxblur_resamp(float **src, float **dst, int H, int W, int box, int samp );
-    void MSR(LabImage* lab, int width, int height, int skip, DehazParams lcur);
+    void MSR(float** luminance, float **originalLuminance, int width, int height, DehazParams lcur);
 
     //void boxblur_resamp(float **red, float **green, float **blue, int H, int W, float thresh[3], float max[3],
     //                multi_array2D<float,3> & hfsize, multi_array2D<float,3> & hilite, int box );
