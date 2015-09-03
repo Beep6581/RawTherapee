@@ -1342,6 +1342,39 @@ void ColorAppearance::Set(Curve *pCurve)
     }
 }
 
+//
+DehaztransmissionCurve::DehaztransmissionCurve() {};
+
+void DehaztransmissionCurve::Reset()
+{
+    luttransmission.reset();
+}
+
+void DehaztransmissionCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        luttransmission.reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    luttransmission(501); // raise this value if the quality suffers from this number of samples
+
+    for (int i = 0; i < 501; i++) {
+        luttransmission[i] = pCurve.getVal(double(i) / 500.);
+    }
+}
+
+void DehaztransmissionCurve::Set(const std::vector<double> &curvePoints)
+{
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        tcurve.setIdentityValue(0.);
+        Set(tcurve);
+    } else {
+        Reset();
+    }
+}
+
 void ToneCurve::Reset()
 {
     lutToneCurve.reset();

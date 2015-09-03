@@ -123,12 +123,17 @@ DehazParams::DehazParams ()
 
 void DehazParams::getDefaulttransmissionCurve(std::vector<double> &curve)
 {
-    double v[16] = { 0.00, 0.3, 0.35, 0.00,
-                     0.25, 0.5, 0.35, 0.35,
-                     0.70, 0.5, 0.35, 0.35,
-                     1.00, 0.7, 0.00, 0.00
-                   };
-    curve.resize(17);
+    /*   double v[8] =   {   0.0, 0.50, 0.35, 0.35,
+                           1.0, 0.50, 0.35, 0.35,
+                       };
+    */
+    double v[12] =   {   0.00, 0.25, 0.35, 0.35,
+                         0.60, 0.90, 0.35, 0.35,
+                         1.00, 0.50, 0.35, 0.35,
+                     };
+
+
+    curve.resize(13);
     curve.at(0 ) = double(FCT_MinMaxCPoints);
 
     for (size_t i = 1; i < curve.size(); ++i) {
@@ -139,12 +144,12 @@ void DehazParams::getDefaulttransmissionCurve(std::vector<double> &curve)
 void DehazParams::getDefaultCDCurve(std::vector<double> &curve)
 {
     double v[12] = { 0.00, 0.00,
-                    0.185, 0.,
-                    0.235, 0.25,
-                    0.5, 0.5,
-                    0.8, 0.8,
-                    1.0, 1.0,
-                  };
+                     0.185, 0.,
+                     0.235, 0.25,
+                     0.5, 0.5,
+                     0.8, 0.8,
+                     1.0, 1.0,
+                   };
 
     curve.resize(13);
     curve.at(0) = double(DCT_NURBS);
@@ -163,16 +168,19 @@ void DehazParams::setDefaults()
     gain        = 100;
     offs    = 0;
     vart    = 125;
+    limd = 8;
     getDefaulttransmissionCurve(transmissionCurve);
     getDefaultCDCurve(cdcurve);
     dehazmet = "uni";
     retinex = false;
+    medianmap = true;
+
 }
 
-//void DehazParams::getCurves(transmissionCurve &transmissionCurveLUT) const
-//{
-  //  opacityCurveLUT.Set(this->opacityCurve);
-//}
+void DehazParams::getCurves(DehaztransmissionCurve &transmissionCurveLUT) const
+{
+    transmissionCurveLUT.Set(this->transmissionCurve);
+}
 
 
 ColorToningParams::ColorToningParams () : hlColSat(60, 80, false), shadowsColSat(80, 208, false)
@@ -1438,48 +1446,63 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     }
 
     //save dehaz
-      
+
     if (!pedited || pedited->dehaz.str) {
         keyFile.set_integer ("Dehaz", "Str",               dehaz.str);
     }
+
     if (!pedited || pedited->dehaz.scal) {
         keyFile.set_integer ("Dehaz", "Scal",               dehaz.scal);
     }
+
     if (!pedited || pedited->dehaz.enabled) {
         keyFile.set_boolean ("Dehaz", "Enabled", dehaz.enabled);
     }
-    
+
     if (!pedited || pedited->dehaz.retinex) {
         keyFile.set_boolean ("Dehaz", "Retinex", dehaz.retinex);
     }
 
+    if (!pedited || pedited->dehaz.medianmap) {
+        keyFile.set_boolean ("Dehaz", "Median", dehaz.medianmap);
+    }
+
+
+
     if (!pedited || pedited->dehaz.neigh) {
         keyFile.set_integer ("Dehaz", "Neigh",               dehaz.neigh);
     }
+
     if (!pedited || pedited->dehaz.gain) {
         keyFile.set_integer ("Dehaz", "Gain",               dehaz.gain);
     }
+
     if (!pedited || pedited->dehaz.offs) {
-        keyFile.set_integer ("Dehaz","Offs",               dehaz.offs);
+        keyFile.set_integer ("Dehaz", "Offs",               dehaz.offs);
     }
+
     if (!pedited || pedited->dehaz.vart) {
-        keyFile.set_integer ("Dehaz","Vart",               dehaz.vart);
+        keyFile.set_integer ("Dehaz", "Vart",               dehaz.vart);
     }
-    
+
+    if (!pedited || pedited->dehaz.limd) {
+        keyFile.set_integer ("Dehaz", "Limd",               dehaz.limd);
+    }
+
     if (!pedited || pedited->dehaz.dehazmet) {
-        keyFile.set_string  ("Dehaz", "Dehazmet",dehaz.dehazmet);
+        keyFile.set_string  ("Dehaz", "Dehazmet", dehaz.dehazmet);
     }
-    
+
     if (!pedited || pedited->dehaz.cdcurve)  {
         Glib::ArrayHandle<double> cdcurve = dehaz.cdcurve;
         keyFile.set_double_list("Dehaz", "CDCurve", cdcurve);
     }
-    
+
     if (!pedited || pedited->dehaz.transmissionCurve)  {
         Glib::ArrayHandle<double> transmissionCurve = dehaz.transmissionCurve;
         keyFile.set_double_list("Dehaz", "TransmissionCurve", transmissionCurve);
     }
-    
+
     // save channel mixer
     if (!pedited || pedited->chmixer.red[0] || pedited->chmixer.red[1] || pedited->chmixer.red[2]) {
         Glib::ArrayHandle<int> rmix (chmixer.red, 3, Glib::OWNERSHIP_NONE);
@@ -1691,6 +1714,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         Glib::ArrayHandle<double> lccurve = labCurve.lccurve;
         keyFile.set_double_list("Luminance Curve", "LcCurve", lccurve);
     }
+
     if (!pedited || pedited->labCurve.clcurve)  {
         Glib::ArrayHandle<double> clcurve = labCurve.clcurve;
         keyFile.set_double_list("Luminance Curve", "ClCurve", clcurve);
@@ -3736,9 +3760,10 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
         }
+
         //load dehaz
         if (keyFile.has_group ("Dehaz")) {
-           
+
             if (keyFile.has_key ("Dehaz", "Retinex"))       {
                 dehaz.retinex = keyFile.get_boolean ("Dehaz", "Retinex");
 
@@ -3746,7 +3771,15 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                     pedited->dehaz.retinex = true;
                 }
             }
-            
+
+            if (keyFile.has_key ("Dehaz", "Median"))       {
+                dehaz.medianmap = keyFile.get_boolean ("Dehaz", "Median");
+
+                if (pedited) {
+                    pedited->dehaz.medianmap = true;
+                }
+            }
+
             if (keyFile.has_key ("Dehaz", "Dehazmet"))     {
                 dehaz.dehazmet  = keyFile.get_string  ("Dehaz", "Dehazmet");
 
@@ -3754,20 +3787,23 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                     pedited->dehaz.dehazmet = true;
                 }
             }
-             if (keyFile.has_key ("Dehaz", "Enabled"))       {
+
+            if (keyFile.has_key ("Dehaz", "Enabled"))       {
                 dehaz.enabled = keyFile.get_boolean ("Dehaz", "Enabled");
+
                 if (pedited) {
                     pedited->dehaz.enabled = true;
                 }
             }
-       
-           if (keyFile.has_key ("Dehaz", "Neigh"))     {
+
+            if (keyFile.has_key ("Dehaz", "Neigh"))     {
                 dehaz.neigh   = keyFile.get_integer ("Dehaz", "Neigh");
 
                 if (pedited) {
                     pedited->dehaz.neigh = true;
                 }
             }
+
             if (keyFile.has_key ("Dehaz", "Str"))     {
                 dehaz.str   = keyFile.get_integer ("Dehaz", "Str");
 
@@ -3775,6 +3811,7 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                     pedited->dehaz.str = true;
                 }
             }
+
             if (keyFile.has_key ("Dehaz", "Scal"))     {
                 dehaz.scal   = keyFile.get_integer ("Dehaz", "Scal");
 
@@ -3790,6 +3827,7 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                     pedited->dehaz.gain = true;
                 }
             }
+
             if (keyFile.has_key ("Dehaz", "Offs"))     {
                 dehaz.offs   = keyFile.get_integer ("Dehaz", "Offs");
 
@@ -3797,6 +3835,7 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                     pedited->dehaz.offs = true;
                 }
             }
+
             if (keyFile.has_key ("Dehaz", "Vart"))     {
                 dehaz.vart   = keyFile.get_integer ("Dehaz", "Vart");
 
@@ -3804,7 +3843,15 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                     pedited->dehaz.vart = true;
                 }
             }
-            
+
+            if (keyFile.has_key ("Dehaz", "Limd"))     {
+                dehaz.limd   = keyFile.get_integer ("Dehaz", "Limd");
+
+                if (pedited) {
+                    pedited->dehaz.limd = true;
+                }
+            }
+
             if (keyFile.has_key ("Dehaz", "CDCurve"))         {
                 dehaz.cdcurve            = keyFile.get_double_list ("Dehaz", "CDCurve");
 
@@ -3812,6 +3859,7 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                     pedited->dehaz.cdcurve = true;
                 }
             }
+
             if (keyFile.has_key ("Dehaz", "TransmissionCurve"))         {
                 dehaz.transmissionCurve            = keyFile.get_double_list ("Dehaz", "TransmissionCurve");
 
@@ -3820,8 +3868,8 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
         }
-       
-        
+
+
         // load luma curve
         if (keyFile.has_group ("Luminance Curve")) {
             if (keyFile.has_key ("Luminance Curve", "Brightness"))     {
@@ -3839,6 +3887,7 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                     pedited->labCurve.contrast = true;
                 }
             }
+
             if (ppVersion < 303) {
                 // transform Saturation into Chromaticity
                 // if Saturation == 0, should we set BWToning on?
@@ -3953,6 +4002,7 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                     pedited->labCurve.lhcurve = true;
                 }
             }
+
             if (keyFile.has_key ("Luminance Curve", "hhCurve"))         {
                 labCurve.hhcurve            = keyFile.get_double_list ("Luminance Curve", "hhCurve");
 
@@ -7185,11 +7235,13 @@ bool ProcParams::operator== (const ProcParams& other)
         && dehaz.scal == other.dehaz.scal
         && dehaz.neigh == other.dehaz.neigh
         && dehaz.gain == other.dehaz.gain
+        && dehaz.limd == other.dehaz.limd
         && dehaz.offs == other.dehaz.offs
         && dehaz.dehazmet == other.dehaz.dehazmet
         && dehaz.vart == other.dehaz.vart
+        && dehaz.medianmap == other.dehaz.medianmap
         && dehaz.enabled == other.dehaz.enabled
-        && dehaz.retinex == other.dehaz.retinex      
+        && dehaz.retinex == other.dehaz.retinex
         && labCurve.lcurve == other.labCurve.lcurve
         && labCurve.acurve == other.labCurve.acurve
         && labCurve.bcurve == other.labCurve.bcurve

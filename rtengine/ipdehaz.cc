@@ -34,8 +34,18 @@
 #include "improcfun.h"
 #include "opthelper.h"
 #include "StopWatch.h"
-#define MAX_DEHAZE_SCALES   6
+#define MAX_DEHAZE_SCALES   8
 #define clipdehaz( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
+
+#define med3(a0,a1,a2,a3,a4,a5,a6,a7,a8,median) { \
+pp[0]=a0; pp[1]=a1; pp[2]=a2; pp[3]=a3; pp[4]=a4; pp[5]=a5; pp[6]=a6; pp[7]=a7; pp[8]=a8; \
+PIX_SORT(pp[1],pp[2]); PIX_SORT(pp[4],pp[5]); PIX_SORT(pp[7],pp[8]); \
+PIX_SORT(pp[0],pp[1]); PIX_SORT(pp[3],pp[4]); PIX_SORT(pp[6],pp[7]); \
+PIX_SORT(pp[1],pp[2]); PIX_SORT(pp[4],pp[5]); PIX_SORT(pp[7],pp[8]); \
+PIX_SORT(pp[0],pp[3]); PIX_SORT(pp[5],pp[8]); PIX_SORT(pp[4],pp[7]); \
+PIX_SORT(pp[3],pp[6]); PIX_SORT(pp[1],pp[4]); PIX_SORT(pp[2],pp[5]); \
+PIX_SORT(pp[4],pp[7]); PIX_SORT(pp[4],pp[2]); PIX_SORT(pp[6],pp[4]); \
+PIX_SORT(pp[4],pp[2]); median=pp[4];} //pp4 = median
 
 namespace rtengine
 {
@@ -44,7 +54,7 @@ extern const Settings* settings;
 
 static float DehazeScales[MAX_DEHAZE_SCALES];
 
-void  dehaze_scales( float* scales, int nscales, int mode, int s)
+void dehaze_scales( float* scales, int nscales, int mode, int s)
 {
     if ( nscales == 1 ) {
         scales[0] =  (float)s / 2.f;
@@ -73,24 +83,103 @@ void  dehaze_scales( float* scales, int nscales, int mode, int s)
         }
     }
 }
-
-void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L, const float factor )
+void mean_stddv2( float **dst, float &mean, float &stddv, int W_L, int H_L, float &maxtr, float &mintr)
 {
     // summation using double precision to avoid too large summation error for large pictures
     double vsquared = 0.f;
     double sum = 0.f;
-
+    maxtr = -999999.f;
+    mintr = 999999.f;
 #ifdef _OPENMP
-    #pragma omp parallel for reduction(+:sum,vsquared) // this can lead to differences, but parallel summation is more accurate
+    #pragma omp parallel
+#endif
+    {
+        float lmax = -999999.f, lmin = 999999.f;
+#ifdef _OPENMP
+        #pragma omp for reduction(+:sum,vsquared) nowait // this leads to differences, but parallel summation is more accurate
 #endif
 
-    for (int i = 0; i < H_L; i++ )
-        for (int j = 0; j < W_L; j++) {
-            sum += dst[i][j];
-            vsquared += (dst[i][j] * dst[i][j]);
+        for (int i = 0; i < H_L; i++ )
+            for (int j = 0; j < W_L; j++) {
+                sum += dst[i][j];
+                vsquared += (dst[i][j] * dst[i][j]);
+
+                if ( dst[i][j] > lmax) {
+                    lmax = dst[i][j] ;
+                }
+
+                if ( dst[i][j] < lmin) {
+                    lmin = dst[i][j] ;
+                }
+
+            }
+
+#ifdef _OPENMP
+        #pragma omp critical
+#endif
+        {
+            maxtr = maxtr > lmax ? maxtr : lmax;
+            mintr = mintr < lmin ? mintr : lmin;
         }
 
+    }
+    mean = sum / (double) (W_L * H_L);
+    vsquared /= (double) W_L * H_L;
+    stddv = ( vsquared - (mean * mean) );
+    stddv = (float)sqrt(stddv);
+}
+
+
+
+
+
+
+void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L, const float factor, float &maxtr, float &mintr)
+
+{
+    // summation using double precision to avoid too large summation error for large pictures
+    double vsquared = 0.f;
+    double sum = 0.f;
+    maxtr = 0.f;
+    mintr = 0.f;
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        float lmax = 0.f, lmin = 0.f;
+
+#ifdef _OPENMP
+        #pragma omp for reduction(+:sum,vsquared) // this can lead to differences, but parallel summation is more accurate
+#endif
+
+        for (int i = 0; i < H_L; i++ )
+            for (int j = 0; j < W_L; j++) {
+                sum += dst[i][j];
+                vsquared += (dst[i][j] * dst[i][j]);
+
+                if ( dst[i][j] > lmax) {
+                    lmax = dst[i][j] ;
+                }
+
+                if ( dst[i][j] < lmin) {
+                    lmin = dst[i][j] ;
+                }
+
+            }
+
+#ifdef _OPENMP
+        #pragma omp critical
+#endif
+        {
+            maxtr = maxtr > lmax ? maxtr : lmax;
+            mintr = mintr < lmin ? mintr : lmin;
+        }
+
+    }
+
     sum *= factor;
+    maxtr *= factor;
+    mintr *= factor;
     vsquared *= (factor * factor);
     mean = sum / (float) (W_L * H_L);
     vsquared /= (float) W_L * H_L;
@@ -98,27 +187,31 @@ void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L, const
     stddv = (float)sqrt(stddv);
 }
 
-void RawImageSource::MSR(float** luminance, float** originalLuminance, int width, int height, DehazParams lcur)
+void RawImageSource::MSR(float** luminance, float** originalLuminance, int width, int height, DehazParams deh, const DehaztransmissionCurve & dehatransmissionCurve)
 {
-    if (lcur.enabled) {//enabled
+    if (deh.enabled) {//enabled
         StopWatch Stop1("MSR");
-        float         mean, stddv;
+        float         mean, stddv, maxtr, mintr;
         float         mini, delta, maxi;
         float eps = 2.f;
-        float gain2 = (float) lcur.gain / 100.f; //def =1  not use
-        float offse = (float) lcur.offs; //def = 0  not use
-        int scal =  lcur.scal; //def=3
-        int nei = (int) 2.5f * lcur.neigh; //def = 200
-        float vart = (float)lcur.vart / 100.f;//variance
-        float strength = (float) lcur.str / 100.f; // Blend with original L channel data
+        float gain2 = (float) deh.gain / 100.f; //def =1  not use
+        float offse = (float) deh.offs; //def = 0  not use
+        int scal =  deh.scal; //def=3
+        int nei = (int) 2.8f * deh.neigh; //def = 220
+        float vart = (float)deh.vart / 100.f;//variance
+        float strength = (float) deh.str / 100.f; // Blend with original L channel data
+        float limD = (float) deh.limd;
+        limD = pow(limD, 1.7f);//about 2500 enough
+        float ilimD = 1.f / limD;
 
-        int modedehaz = 0; // default to 0 ( lcur.dehazmet == "uni" )
+        int modedehaz = 0; // default to 0 ( deh.dehazmet == "uni" )
+        bool execcur = false;
 
-        if (lcur.dehazmet == "low") {
+        if (deh.dehazmet == "low") {
             modedehaz = 1;
         }
 
-        if (lcur.dehazmet == "high") {
+        if (deh.dehazmet == "high") {
             modedehaz = 2;
         }
 
@@ -157,22 +250,23 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
         #pragma omp parallel
 #endif
         {
-        AlignedBufferMP<double>* pBuffer = new AlignedBufferMP<double> (max(W_L, H_L));
+            AlignedBufferMP<double>* pBuffer = new AlignedBufferMP<double> (max(W_L, H_L));
 
-        for ( int scale = 0; scale < scal; scale++ ) {
+            for ( int scale = 0; scale < scal; scale++ ) {
                 gaussHorizontal<float> (src, out, *pBuffer, W_L, H_L, DehazeScales[scale]);
                 gaussVertical<float>   (out, out, *pBuffer, W_L, H_L, DehazeScales[scale]);
+
 #ifdef __SSE2__
                 vfloat pondv = F2V(pond);
-                vfloat limMinv = F2V(0.0001f);
-                vfloat limMaxv = F2V(10000.f);
+                vfloat limMinv = F2V(ilimD);
+                vfloat limMaxv = F2V(limD);
+
 #endif
 #ifdef _OPENMP
                 #pragma omp for
 #endif
 
-                for (int i = 0; i < H_L; i++)
-                {
+                for (int i = 0; i < H_L; i++) {
                     int j = 0;
 #ifdef __SSE2__
 
@@ -183,10 +277,11 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
 #endif
 
                     for (; j < W_L; j++) {
-                        luminance[i][j] +=  pond * xlogf(LIM(src[i][j] / out[i][j], 0.0001f, 10000.f));
+                        luminance[i][j] +=  pond * xlogf(LIM(src[i][j] / out[i][j], ilimD, limD));
                     }
                 }
             }
+
             delete pBuffer;
         }
 
@@ -195,14 +290,136 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
 
         float logBetaGain = xlogf(16384.f);
 
+        if (dehatransmissionCurve) {
+            execcur = true;
+        }
+
+//I re-execute  luminance[i][j] = logBetaGain * luminance[i][j] because I call 2 times (or one) mean_stdvv
+// no difference or very little in time
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+
+        for (int i = 0; i < H_L; i++ )
+            for (int j = 0; j < W_L; j++) {
+                luminance[i][j] = logBetaGain * luminance[i][j];
+            }
+
         mean = 0.f;
         stddv = 0.f;
-        mean_stddv( luminance, mean, stddv, W_L, H_L, logBetaGain);
+        // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
+
+        mean_stddv2( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
+//        printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
+
+        //  mean_stddv( luminance, mean, stddv, W_L, H_L, logBetaGain, maxtr, mintr);
+        if (execcur) { //if curve
+            float asig = 0.166666f / stddv;
+            float bsig = 0.5f - asig * mean;
+            //float insigma = 0.66666f; //SD
+            float amean = 0.5f / mean;
+            float asign = 0.166666f / stddv;
+            float bsign = 0.5f - asign * mean;
+            float amax = 0.333333f / (maxtr - mean - stddv);
+            float bmax = 1.f - amax * maxtr;
+            float amin = 0.333333f / (mean - stddv - mintr);
+            float bmin = -amin * mintr;
+
+#ifdef _OPENMP
+            #pragma omp parallel
+#endif
+            {
+                float absciss;
+#ifdef _OPENMP
+                #pragma omp for schedule(dynamic,16)
+#endif
+
+                for (int i = 0; i < H_L; i++ )
+                    for (int j = 0; j < W_L; j++) { //for mintr to maxtr evalate absciss in function of original transmission
+                        if (luminance[i][j] >= mean && luminance[i][j] < mean + stddv) {
+                            absciss = asig * luminance[i][j]  + bsig;
+                        } else if (luminance[i][j] >= mean + stddv) {
+                            absciss = amax * luminance[i][j]  + bmax;
+                        } else if (/*luminance[i][j] < mean && */luminance[i][j] > mean - stddv) {
+                            absciss = asign * luminance[i][j]  + bsign;
+                        } else { /*if(luminance[i][j] <= mean - stddv)*/
+                            absciss = amin * luminance[i][j]  + bmin;
+                        }
+
+                        float kmul = 2.5f;
+                        float kinterm = 1.f + kmul * (dehatransmissionCurve[absciss * 500.f] - 0.5f); //new transmission
+                        luminance[i][j] *= kinterm;
+//                        luminance[i][j] *= 1.000001f;
+                    }
+            }
+
+            // median filter on transmission  ==> reduce artifacts
+            if (deh.medianmap) {
+                int wid = W_L;
+                int hei = H_L;
+                float *tmL[hei] ALIGNED16;
+                float *tmLBuffer = new float[wid * hei];
+                int borderL = 1;
+
+                for (int i = 0; i < hei; i++) {
+                    tmL[i] = &tmLBuffer[i * wid];
+                }
+
+                /*
+                                    for(int i = borderL; i < hei - borderL; i++ ) {
+                                        for(int j = borderL; j < wid - borderL; j++) {
+                                            tmL[i][j] = luminance[i][j];
+                                        }
+                                    }
+                */
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+
+                for (int i = borderL; i < hei - borderL; i++) {
+                    float pp[9], temp;
+
+                    for (int j = borderL; j < wid - borderL; j++) {
+                        med3(luminance[i][j], luminance[i - 1][j], luminance[i + 1][j], luminance[i][j + 1], luminance[i][j - 1], luminance[i - 1][j - 1], luminance[i - 1][j + 1], luminance[i + 1][j - 1], luminance[i + 1][j + 1], tmL[i][j]); //3x3
+                    }
+                }
+
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+
+                for (int i = borderL; i < hei - borderL; i++ ) {
+                    for (int j = borderL; j < wid - borderL; j++) {
+                        luminance[i][j] = tmL[i][j];
+                    }
+                }
+
+                delete [] tmLBuffer;
+
+            }
+
+            // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
+            //  mean_stddv( luminance, mean, stddv, W_L, H_L, 1.f, maxtr, mintr);
+            mean_stddv2( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
+
+        }
+
+        float epsil = 0.1f;
 
         mini = mean - vart * stddv;
+
+        if (mini < mintr) {
+            mini = mintr + epsil;
+        }
+
         maxi = mean + vart * stddv;
+
+        if (maxi > maxtr) {
+            maxi = maxtr - epsil;
+        }
+
         delta = maxi - mini;
-        printf("maxi=%f mini=%f mean=%f std=%f delta=%f\n", maxi, mini, mean, stddv, delta);
+        printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
 
         if ( !delta ) {
             delta = 1.0f;
@@ -215,7 +432,8 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
 
         for ( int i = 0; i < H_L; i ++ )
             for (int j = 0; j < W_L; j++) {
-                float cd = cdfactor * ( luminance[i][j] * logBetaGain - mini ) + offse;
+                //   float cd = cdfactor * ( luminance[i][j] * logBetaGain - mini ) + offse;
+                float cd = cdfactor * ( luminance[i][j]  - mini ) + offse;
                 luminance[i][j] = clipdehaz( cd, 0.f, 32768.f ) * strength + (1.f - strength) * originalLuminance[i][j];
             }
     }

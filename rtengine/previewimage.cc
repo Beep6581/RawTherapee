@@ -122,7 +122,7 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
             const unsigned char *data = NULL;
             int fw, fh;
             LUTf cdcurve;
-            bool dehacontlutili=false;
+            bool dehacontlutili = false;
 
             procparams::ProcParams params;
             /*rtengine::RAWParams raw;
@@ -140,7 +140,6 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
             params.raw.xtranssensor.method = RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::fast];
             rawImage.preprocess(params.raw, params.lensProf, params.coarse);
             rawImage.demosaic(params.raw);
-            rawImage.dehaz(params.raw, params.icm, params.dehaz, cdcurve, dehacontlutili);
             Imagefloat* image = new rtengine::Imagefloat (fw, fh);
             rawImage.getImage (wb, TR_NONE, image, pp, params.toneCurve, params.icm, params.raw);
             output = new Image8(fw, fh);

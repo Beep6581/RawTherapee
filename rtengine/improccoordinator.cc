@@ -166,6 +166,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
     RAWParams rp = params.raw;
     ColorManagementParams cmp = params.icm;
     LCurveParams  lcur = params.labCurve;
+
     if( !highDetailNeeded ) {
         // if below 100% magnification, take a fast path
         if(rp.bayersensor.method != RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::none] && rp.bayersensor.method != RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::mono]) {
@@ -208,11 +209,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         OR HLR gets disabled when Color method was selected
     */
     // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
-    
-    //I forced dehazmet with toneCurve.hrenabled=true==> probably another way ??
-
-    bool hrdehaz=false;
-    if(!params.toneCurve.hrenabled) if(params.dehaz.enabled) {hrdehaz=true; params.toneCurve.hrenabled=true;}
 
     if (   (todo & M_RAW)
             || (!highDetailRawComputed && highDetailNeeded)
@@ -228,7 +224,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
 
         imgsrc->demosaic( rp);//enabled demosaic
-       
 
         if (highDetailNeeded) {
             highDetailRawComputed = true;
@@ -239,18 +234,17 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         } else {
             highDetailRawComputed = false;
         }
+
+        if (params.dehaz.enabled) {
+            bool dehacontlutili = false;
+            CurveFactory::curveDehaContL (dehacontlutili,  params.dehaz.cdcurve, cdcurve, 1);
+            DehazParams DehaParams = params.dehaz;
+            DehaParams.getCurves(dehatransmissionCurve);
+            imgsrc->dehaz( params.raw, params.icm, params.dehaz, cdcurve, dehatransmissionCurve, dehacontlutili);//enabled Dehaze
+
+        }
     }
-        bool dehacontlutili=false;
-        CurveFactory::curveDehaContL (dehacontlutili,  params.dehaz.cdcurve, cdcurve, 1);
-   
-    if (todo & M_INIT  || params.dehaz.enabled){
-       if(params.dehaz.enabled)
-            imgsrc->dehaz( params.raw, params.icm, params.dehaz, cdcurve,  dehacontlutili);//enabled Dehaze
-        
-    }
-    if(hrdehaz==true) params.toneCurve.hrenabled=false;
-    
-    
+
     // Updating toneCurve.hrenabled if necessary
     // It has to be done there, because the next 'if' statement will use the value computed here
     if (todo & M_AUTOEXP) {
@@ -267,9 +261,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     if (todo & (M_INIT | M_LINDENOISE)) {
         MyMutex::MyLock initLock(minit);  // Also used in crop window
-        
-        imgsrc->HLRecovery_Global( params.toneCurve); // this handles Color HLRecovery 
-  
+
+        imgsrc->HLRecovery_Global( params.toneCurve); // this handles Color HLRecovery
+
 
         if (settings->verbose) {
             printf ("Applying white balance, color correction & sRBG conversion...\n");
@@ -314,7 +308,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.toneCurve, params.icm, params.raw);
         //ColorTemp::CAT02 (orig_prev, &params) ;
-     //   printf("orig_prevW=%d\n  scale=%d",orig_prev->width, scale);
+        //   printf("orig_prevW=%d\n  scale=%d",orig_prev->width, scale);
         /* Issue 2785, disabled some 1:1 tools
                 if (todo & M_LINDENOISE) {
                     DirPyrDenoiseParams denoiseParams = params.dirpyrDenoise;
@@ -596,7 +590,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         nprevl->CopyFrom(oprevl);
 
         progress ("Applying Color Boost...", 100 * readyphase / numofphases);
-     //   ipf.MSR(nprevl, nprevl->W, nprevl->H, 1);
+        //   ipf.MSR(nprevl, nprevl->W, nprevl->H, 1);
 
         ipf.chromiLuminanceCurve (NULL, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histCLurve, histLLCurve, histLCurve);
         ipf.vibrance(nprevl);

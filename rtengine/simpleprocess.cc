@@ -115,25 +115,30 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     if (pl) {
         pl->setProgress (0.30);
     }
-   
+
     if(params.dehaz.enabled) { //enabled Dehaze
         LUTf cdcurve (65536, 0);
-        
-        bool dehacontlutili=false;
+        DehaztransmissionCurve dehatransmissionCurve;
+
+        bool dehacontlutili = false;
         CurveFactory::curveDehaContL (dehacontlutili,  params.dehaz.cdcurve, cdcurve, 1);
-        imgsrc->dehaz( params.raw, params.icm, params.dehaz, cdcurve,  dehacontlutili );
+        DehazParams DehaParams = params.dehaz;
+        DehaParams.getCurves(dehatransmissionCurve);
+
+        imgsrc->dehaz( params.raw, params.icm, params.dehaz, cdcurve,  dehatransmissionCurve, dehacontlutili );
     }
 
     if (pl) {
         pl->setProgress (0.40);
     }
+
     imgsrc->HLRecovery_Global( params.toneCurve );
 
-    
+
     if (pl) {
         pl->setProgress (0.45);
     }
-    
+
     // set the color temperature
     ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
 
@@ -913,7 +918,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                                    params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve, params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve,
                                    hist16C, hist16C, dummy, dummy,
                                    1);
- //   ipf.MSR(labView, labView->W, labView->H, 1);
+//   ipf.MSR(labView, labView->W, labView->H, 1);
 
     ipf.chromiLuminanceCurve (NULL, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy, dummy, dummy);
 

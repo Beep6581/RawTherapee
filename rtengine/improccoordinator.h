@@ -129,6 +129,7 @@ protected:
     WavOpacityCurveBY waOpacityCurveBY;
     WavOpacityCurveW waOpacityCurveW;
     WavOpacityCurveWL waOpacityCurveWL;
+    DehaztransmissionCurve dehatransmissionCurve;
 
     ColorAppearance customColCurve1;
     ColorAppearance customColCurve2;

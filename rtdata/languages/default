@@ -84,7 +84,7 @@ EXPORT_FASTEXPORTOPTIONS;<b>Fast Export Options</b>
 EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
 EXPORT_MAXHEIGHT;Maximum height:
 EXPORT_MAXWIDTH;Maximum width:
-EXPORT_PUTTOQUEUEFAST;  Put to queue for fast export  
+EXPORT_PUTTOQUEUEFAST;  Put to queue for fast export
 EXPORT_RAW_DMETHOD;Demosaic method
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;queue-processed
@@ -151,7 +151,7 @@ FILEBROWSER_POPUPUNRANK;Unrank
 FILEBROWSER_POPUPUNTRASH;Remove from trash
 FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
 FILEBROWSER_QUERYHINT;Type filenames to search for. Supports partial filenames. Separate the search terms using commas, e.g.\n<i>1001,1004,1199</i>\n\nExclude search terms by prefixing them with <i>!=</i>\ne.g.\n<i>!=1001,1004,1199</i>\n\nShortcuts:\n<b>Ctrl-f</b> - focus the Find box,\n<b>Enter</b> - search,\n<b>Esc</b> - clear the Find box,\n<b>Shift-Esc</b> - defocus the Find box.
-FILEBROWSER_QUERYLABEL; Find: 
+FILEBROWSER_QUERYLABEL; Find:
 FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: <b>Shift-1</b>
 FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: <b>Shift-2</b>
 FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
@@ -636,16 +636,19 @@ HISTORY_MSG_403;W - ES - Edge sensitivity
 HISTORY_MSG_404;W - ES - Base amplification
 HISTORY_MSG_405;W - Denoise - Level 4
 HISTORY_MSG_406;W - ES - Neighboring pixels
-HISTORY_MSG_407;Dehaze met
+HISTORY_MSG_407;Dehaze method
 HISTORY_MSG_408;Dehaze neighboring
 HISTORY_MSG_409;Dehaze gain
 HISTORY_MSG_410;Dehaze offset
 HISTORY_MSG_411;Dehaze strength
 HISTORY_MSG_412;Dehaze scales
-HISTORY_MSG_413;Dehaze var
+HISTORY_MSG_413;Dehaze variance
 HISTORY_MSG_414;Dehaze histogram
-HISTORY_MSG_415;Dehaze enabled
-HISTORY_MSG_416;Dehaze transmission
+HISTORY_MSG_415;Dehaze transmission
+HISTORY_MSG_416;Dehaze enabled
+HISTORY_MSG_417;Dehaze Retinex complete
+HISTORY_MSG_418;Dehaze transmission median
+HISTORY_MSG_419;Dehaze threshold
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -728,12 +731,12 @@ MAIN_TAB_COLOR;Color
 MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-c</b>
 MAIN_TAB_DETAIL;Detail
 MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-d</b>
-MAIN_TAB_DEVELOP; Develop 
+MAIN_TAB_DEVELOP; Develop
 MAIN_TAB_EXIF;Exif
-MAIN_TAB_EXPORT; Fast Export 
+MAIN_TAB_EXPORT; Fast Export
 MAIN_TAB_EXPOSURE;Exposure
 MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-e</b>
-MAIN_TAB_FILTER; Filter 
+MAIN_TAB_FILTER; Filter
 MAIN_TAB_INSPECT; Inspect
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
@@ -1557,21 +1560,25 @@ TP_DEHAZ_LAB_TOOLTIP;Use all component of Retinex algorihm, to improve results
 TP_DEHAZ_LABEL;Dehaze
 TP_DEHAZ_SCAL;Scales
 TP_DEHAZ_SCAL_TOOLTIP;Low scales increase contrast but give relief effect\nHigh scales  can increase noise, but give more natural images
+TP_DEHAZ_LIMD;Threshold
+TP_DEHAZ_LIMD_TOOLTIP;Limits in/out - in = image source - out = image Gauss
+TP_DEHAZ_MEDI;Transmission median filter
 TP_DEHAZ_NEIGH;Neighboring pixels
 TP_DEHAZ_NEIGH_TOOLTIP;Take into account, neighboring pixels, by Gauss function
 TP_DEHAZ_GAIN;Gain
 TP_DEHAZ_OFFS;Offset
 TP_DEHAZ_GAIN_TOOLTIP;Acts on the transmission in combination with offset, this is very different from others settings\nUsed for black or white pixels, and for better balance the histogram
-TP_DEHAZE_LAB;Dehaze 
+TP_DEHAZE_LAB;Dehaze
 TP_DEHAZ_CONTEDIT;Histogram equalizer
 TP_DEHAZ_CURVEEDITOR_CD;L=f(L)
 TP_DEHAZ_CURVEEDITOR_CD_TOOLTIP;Correct Raw data, to reduce halos and artifacts
 TP_DEHAZ_TRANSMISSION;Transmission map
+TP_DEHAZ_TRANS_TOOLTIP;Modify transmission in function of transmission\nAbscissa : transmission from negatives values (min), mean, and positives values (max)\nOrdonate : amplification - reduction
 TP_DEHAZE_LAB_TOOLTIP;Use Retinex algorithm (Lab) to improve dehaze..defog...
 TP_DEHAZ_VART;Variance
 TP_DEHAZ_VART_TOOLTIP;Low variance increase local contrast and saturation, but can leeds to artifacts
 TP_DEHAZE_MET;Dehaze method
-TP_DEHAZ_MET_TOOLTIP;Low :reinforce low light\nUniform :expect to equalize action\nHigh : reinforce high light
+TP_DEHAZ_MET_TOOLTIP;For Retinex algorithm\nLow :reinforce low light\nUniform :expect to equalize action\nHigh : reinforce high light
 TP_DEHAZ_NONE;None
 TP_DEHAZ_UNI;Uniform
 TP_DEHAZ_LOW;Low

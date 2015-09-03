@@ -38,6 +38,7 @@ class WavOpacityCurveRG;
 class WavOpacityCurveBY;
 class WavOpacityCurveW;
 class WavOpacityCurveWL;
+class DehaztransmissionCurve;
 
 namespace procparams
 {
@@ -276,14 +277,16 @@ public:
     int     offs;
     Glib::ustring dehazmet;
     int     vart;
+    int     limd;
+    bool    medianmap;
     bool    retinex;
     DehazParams ();
-    void setDefaults();  
-  //  void getCurves(transmissionCurve &transmissionCurveLUT) const;
+    void setDefaults();
+    void getCurves(DehaztransmissionCurve &transmissionCurveLUT) const;
 
     static void getDefaulttransmissionCurve(std::vector<double> &curve);
     static void getDefaultCDCurve(std::vector<double> &curve);
-    
+
 };
 
 

@@ -14,7 +14,7 @@
 #include "colorprovider.h"
 
 class Dehaz : public ToolParamBlock, public FoldableToolPanel,  public CurveListener,
-     public AdjusterListener
+    public AdjusterListener
 {
 
 protected:
@@ -25,24 +25,26 @@ protected:
     Adjuster* gain;
     Adjuster* offs;
     Adjuster* vart;
-   
+    Adjuster* limd;
+
     Gtk::Label* labmdh;
     Gtk::HBox* dhbox;
     MyComboBoxText*   dehazmet;
     Gtk::CheckButton* retinex;
     Gtk::Frame* dehazFrame;
+    Gtk::CheckButton* medianmap;
 
     DiagonalCurveEditor* cdshape;
     CurveEditorGroup* transmissionCurveEditorG;
     sigc::connection dehazmetConn;
     FlatCurveEditor* transmissionShape;
-    bool lastretinex;
-    sigc::connection retinexConn;
+    bool lastretinex, lastmedianmap;
+    sigc::connection retinexConn, medianmapConn;
 
 public:
     Dehaz   ();
     ~Dehaz  ();
-    
+
     void read                  (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
     void write                 (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
     void setBatchMode          (bool batchMode);
@@ -52,6 +54,7 @@ public:
 //    void setAdjusterBehavior   (bool splitAdd, bool satThresholdAdd, bool satOpacityAdd, bool strprotectAdd, bool balanceAdd);
     void autoOpenCurve         ();
     void retinexChanged        ();
+    void medianmapChanged        ();
 
     void enabledChanged        ();
     void curveChanged          (CurveEditor* ce);

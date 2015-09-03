@@ -58,6 +58,8 @@ void ParamsEdited::set (bool v)
     dehaz.gain    = v;
     dehaz.offs    = v;
     dehaz.vart    = v;
+    dehaz.limd    = v;
+    dehaz.medianmap = v;
     dehaz.transmissionCurve   = v;
     dehaz.retinex = v;
     labCurve.lcurve      = v;
@@ -524,8 +526,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         dehaz.gain = dehaz.gain && p.dehaz.gain == other.dehaz.gain;
         dehaz.offs = dehaz.offs && p.dehaz.offs == other.dehaz.offs;
         dehaz.vart = dehaz.vart && p.dehaz.vart == other.dehaz.vart;
-        dehaz.enabled = dehaz.enabled && p.dehaz.enabled == other.dehaz.enabled;      
-        dehaz.retinex = dehaz.retinex && p.dehaz.retinex == other.dehaz.retinex;      
+        dehaz.limd = dehaz.limd && p.dehaz.limd == other.dehaz.limd;
+        dehaz.medianmap = dehaz.medianmap && p.dehaz.medianmap == other.dehaz.medianmap;
+        dehaz.enabled = dehaz.enabled && p.dehaz.enabled == other.dehaz.enabled;
+        dehaz.retinex = dehaz.retinex && p.dehaz.retinex == other.dehaz.retinex;
         labCurve.lcurve = labCurve.lcurve && p.labCurve.lcurve == other.labCurve.lcurve;
         labCurve.acurve = labCurve.acurve && p.labCurve.acurve == other.labCurve.acurve;
         labCurve.bcurve = labCurve.bcurve && p.labCurve.bcurve == other.labCurve.bcurve;
@@ -1016,7 +1020,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (toneCurve.method) {
         toEdit.toneCurve.method   = mods.toneCurve.method;
     }
-   
+
     if (dehaz.enabled) {
         toEdit.dehaz.enabled        = mods.dehaz.enabled;
     }
@@ -1024,7 +1028,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (dehaz.cdcurve) {
         toEdit.dehaz.cdcurve    = mods.dehaz.cdcurve;
     }
-    
+
     if (dehaz.transmissionCurve) {
         toEdit.dehaz.transmissionCurve    = mods.dehaz.transmissionCurve;
     }
@@ -1040,25 +1044,35 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (dehaz.scal) {
         toEdit.dehaz.scal   = mods.dehaz.scal;
     }
-    
+
     if (dehaz.retinex) {
         toEdit.dehaz.retinex  = mods.dehaz.retinex;
     }
-        
+
+    if (dehaz.medianmap) {
+        toEdit.dehaz.medianmap  = mods.dehaz.medianmap;
+    }
+
     if (dehaz.neigh) {
         toEdit.dehaz.neigh   = mods.dehaz.neigh;
     }
-    
+
+    if (dehaz.limd) {
+        toEdit.dehaz.limd   = mods.dehaz.limd;
+    }
+
     if (dehaz.gain) {
         toEdit.dehaz.gain   = mods.dehaz.gain;
     }
+
     if (dehaz.offs) {
         toEdit.dehaz.offs   = mods.dehaz.offs;
     }
+
     if (dehaz.vart) {
         toEdit.dehaz.vart   = mods.dehaz.vart;
     }
-    
+
     if (labCurve.lcurve) {
         toEdit.labCurve.lcurve        = mods.labCurve.lcurve;
     }
@@ -1090,15 +1104,17 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (labCurve.lccurve) {
         toEdit.labCurve.lccurve    = mods.labCurve.lccurve;
     }
+
 //    if (labCurve.dehazmet) {
 //        toEdit.labCurve.dehazmet    = mods.labCurve.dehazmet;
 //    }
     if (labCurve.clcurve) {
         toEdit.labCurve.clcurve    = mods.labCurve.clcurve;
     }
- //   if (labCurve.cdcurve) {
- //       toEdit.labCurve.cdcurve    = mods.labCurve.cdcurve;
-  //  }
+
+//   if (labCurve.cdcurve) {
+//       toEdit.labCurve.cdcurve    = mods.labCurve.cdcurve;
+    //  }
 
     if (labCurve.brightness) {
         toEdit.labCurve.brightness   = dontforceSet && options.baBehav[ADDSET_LC_BRIGHTNESS] ? toEdit.labCurve.brightness + mods.labCurve.brightness : mods.labCurve.brightness;

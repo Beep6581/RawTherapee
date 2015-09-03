@@ -429,6 +429,32 @@ public:
     };
 };
 
+class DehaztransmissionCurve
+{
+private:
+    LUTf luttransmission;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    virtual ~DehaztransmissionCurve() {};
+    DehaztransmissionCurve();
+
+    void Reset();
+    void Set(const Curve *pCurve);
+    void Set(const std::vector<double> &curvePoints);
+    float operator[](float index) const
+    {
+        return luttransmission[index];
+    }
+
+    operator bool (void) const
+    {
+        return luttransmission;
+    }
+};
+
+
+
 class ToneCurve
 {
 public:

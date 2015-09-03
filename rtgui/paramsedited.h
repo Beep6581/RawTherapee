@@ -66,11 +66,13 @@ public:
     bool offs;
     bool dehazmet;
     bool vart;
+    bool limd;
     bool method;
     bool transmissionCurve;
     bool cdcurve;
     bool retinex;
-   
+    bool medianmap;
+
 };
 
 
@@ -717,7 +719,7 @@ public:
     LCurveParamsEdited            labCurve;
     RGBCurvesParamsEdited         rgbCurves;
     ColorToningEdited             colorToning;
-    DehazParamsEdited             dehaz;  
+    DehazParamsEdited             dehaz;
     SharpeningParamsEdited        sharpening;
     SharpeningParamsEdited        prsharpening;
     SharpenEdgeParamsEdited       sharpenEdge;

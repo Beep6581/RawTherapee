@@ -428,18 +428,20 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DIRPYREQUALIZER,     // EvWavedgeampli
     DIRPYREQUALIZER,      //EvWavlev3nois
     DIRPYREQUALIZER,       //EvWavNPmet
-    ALLNORAW,   // Evdehazmet
-    ALLNORAW,   // EvLneigh
-    ALLNORAW,   // EvLgain
-    ALLNORAW,   // EvLoffs
-    ALLNORAW,   // EvLstr
-    ALLNORAW,   // EvLscal
-    ALLNORAW,   // EvLvart
-    ALLNORAW,   // EvLCDCurve
-    ALLNORAW,   // EvDehazOpacity
-    ALLNORAW,   // EvDehazEnabled
-    ALLNORAW   // EvDehazretinex
-    
+    DEMOSAIC,  // Evdehazmet
+    DEMOSAIC,   // EvLneigh
+    DEMOSAIC,   // EvLgain
+    DEMOSAIC,   // EvLoffs
+    DEMOSAIC,   // EvLstr
+    DEMOSAIC,   // EvLscal
+    DEMOSAIC,   // EvLvart
+    DEMOSAIC,   // EvLCDCurve
+    DEMOSAIC,   // EvDehazOpacity
+    DEMOSAIC,   // EvDehazEnabled
+    DEMOSAIC,   // EvDehazretinex
+    DEMOSAIC,   // EvDehazmedianmap
+    DEMOSAIC   // EvLlimd
+
 
 };
 
