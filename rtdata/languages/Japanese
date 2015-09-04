@@ -1933,9 +1933,3 @@ ZOOMPANEL_ZOOMFITSCREEN;画像全体を画面に合わせる\nショートカッ
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!GENERAL_APPLY;Apply
-!GENERAL_OPEN;Open
