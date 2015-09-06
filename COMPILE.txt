@@ -488,8 +488,8 @@ OS X
           -DBINDIR="." \
           -DDATADIR="." \
           -DCACHE_NAME_SUFFIX=4 \
-          -DCMAKE_C_COMPILER="/Users/helmi/www/clang/build_llvm/bin/clang" \
-          -DCMAKE_CXX_COMPILER="/Users/helmi/www/clang/build_llvm/bin/clang++" \
+          -DCMAKE_C_COMPILER="/tmp/clang/build_llvm/bin/clang" \
+          -DCMAKE_CXX_COMPILER="/tmp/clang/build_llvm/bin/clang++" \
           -DCMAKE_C_FLAGS="-I/opt/local/include/libomp" \
           -DCMAKE_CXX_FLAGS="-I/opt/local/include/libomp" \
           <path to source directory>
