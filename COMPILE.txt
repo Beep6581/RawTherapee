@@ -134,7 +134,7 @@ WINDOWS
       - CMake
           http://www.cmake.org/cmake/resources/software.html
         Use "Windows (Win32 Installer)", the newest version.
-        
+
       - >=GTK+ 2.24.18
           http://hexchat.github.io/gtk-win32/
 
@@ -459,14 +459,18 @@ OS X
     - XCode Development Tools (you only need a subset of these, but it is
       probably easier to just install all of them)
     - MacPorts
+      - Add following line to /opt/local/etc/macports/variants.conf:
+          +no_gnome +no_x11 +quartz -x11
       - To install the dependencies, run:
-          sudo port install cairo +quartz -x11 pango +quartz -x11 gdk-pixbuf2 -x11 gtk2 +quartz libsigcxx2 gtk-osx-application +no_python
-      - gtkmm port will fail to install. Use `-s’ option.
-          sudo port -s install gtkmm
+          sudo port install cairo pango gdk-pixbuf2 gtk2 libsigcxx2 gtk-osx-application-gtk2 gtkmm
       - To install other dependencies and tools.
-          sudo port install gtk-engines2 lcms2 libiptcdata fftw-3-single cmake gcc47
-      - If you don't already have Mercurial installed, run:
-          sudo port install mercurial
+          sudo port install gtk-engines2 lcms2 libiptcdata fftw-3-single cmake
+      - Install compiler, either
+          sudo port install gcc47
+          or
+          Clang with OpenMP by follow instructions at https://clang-omp.github.io/
+      - If you don't already have Git installed, run:
+          sudo port install git
 
 
   COMPILE
@@ -474,9 +478,21 @@ OS X
     - Make build directory.
         mkdir build
         cd build
-    - To enable OpenMP, assuming you have installed gcc47), type:
+    - To enable OpenMP, for gcc47, type:
         cmake -D CMAKE_C_COMPILER=gcc-mp-4.7 -D CMAKE_CXX_COMPILER=g++-mp-4.7 \
         <path to source directory>
+    - or if using Clang with OpenMP
+        cmake -v -D CMAKE_BUILD_TYPE=Release \
+          -DPROC_TARGET_NUMBER="1" \
+          -DBUILD_BUNDLE="ON" \
+          -DBINDIR="." \
+          -DDATADIR="." \
+          -DCACHE_NAME_SUFFIX=4 \
+          -DCMAKE_C_COMPILER="/Users/helmi/www/clang/build_llvm/bin/clang" \
+          -DCMAKE_CXX_COMPILER="/Users/helmi/www/clang/build_llvm/bin/clang++" \
+          -DCMAKE_C_FLAGS="-I/opt/local/include/libomp" \
+          -DCMAKE_CXX_FLAGS="-I/opt/local/include/libomp" \
+          <path to source directory>
 
     If you want to upload a build, you should set some additional information
     about your processor. There are two possibilities:
@@ -492,7 +508,7 @@ OS X
          PROC_LABEL parameter (see point 1 righ above).
 
     - Type:
-        make install
+        make -j4 install
     - Type:
         make macosx_bundle
     - You will find a disk image in the build directory; this is the
