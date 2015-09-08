@@ -86,7 +86,7 @@ ImProcCoordinator::ImProcCoordinator ()
       bcurvehist(256), bcurvehistCropped(256), bbeforehist(256),
       fullw(1), fullh(1),
       pW(-1), pH(-1),
-      plistener(NULL), imageListener(NULL), aeListener(NULL), acListener(NULL), abwListener(NULL), actListener(NULL), adnListener(NULL), awavListener(NULL), hListener(NULL),
+      plistener(NULL), imageListener(NULL), aeListener(NULL), acListener(NULL), abwListener(NULL), actListener(NULL), adnListener(NULL), awavListener(NULL), dehaListener(NULL), hListener(NULL),
       resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false), wavcontlutili(false),
       butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false)
 
@@ -240,9 +240,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             CurveFactory::curveDehaContL (dehacontlutili,  params.dehaz.cdcurve, cdcurve, 1);
             DehazParams DehaParams = params.dehaz;
             DehaParams.getCurves(dehatransmissionCurve);
-            imgsrc->dehaz( params.raw, params.icm, params.dehaz, cdcurve, dehatransmissionCurve, dehacontlutili);//enabled Dehaze
+            float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
+            imgsrc->dehaz( params.raw, params.icm, params.dehaz, cdcurve, dehatransmissionCurve, dehacontlutili, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);//enabled Dehaze
+            if(dehaListener) {
+                    dehaListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+            }
 
-        }
+            }
     }
 
     // Updating toneCurve.hrenabled if necessary

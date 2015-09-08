@@ -13,8 +13,9 @@
 #include "thresholdadjuster.h"
 #include "colorprovider.h"
 
-class Dehaz : public ToolParamBlock, public FoldableToolPanel,  public CurveListener,
+class Dehaz : public ToolParamBlock, public FoldableToolPanel,  public rtengine::DehazListener, public CurveListener,
     public AdjusterListener
+    
 {
 
 protected:
@@ -33,7 +34,18 @@ protected:
     Gtk::CheckButton* retinex;
     Gtk::Frame* dehazFrame;
     Gtk::CheckButton* medianmap;
-
+    double nextmin;
+    double nextmax;
+    double nextminiT;
+    double nextmaxiT;
+    double nextmeanT;
+    double nextminT;
+    double nextmaxT;
+    double nextsigma;
+    
+    Gtk::Label* mMLabels;
+    Gtk::Label* transLabels;
+    
     DiagonalCurveEditor* cdshape;
     CurveEditorGroup* transmissionCurveEditorG;
     sigc::connection dehazmetConn;
@@ -55,6 +67,10 @@ public:
     void autoOpenCurve         ();
     void retinexChanged        ();
     void medianmapChanged        ();
+    void minmaxChanged (double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax);
+    bool minmaxComputed_ ();
+    void updateLabel      ();
+    void updateTrans      ();
 
     void enabledChanged        ();
     void curveChanged          (CurveEditor* ce);

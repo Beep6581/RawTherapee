@@ -124,8 +124,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         CurveFactory::curveDehaContL (dehacontlutili,  params.dehaz.cdcurve, cdcurve, 1);
         DehazParams DehaParams = params.dehaz;
         DehaParams.getCurves(dehatransmissionCurve);
-
-        imgsrc->dehaz( params.raw, params.icm, params.dehaz, cdcurve,  dehatransmissionCurve, dehacontlutili );
+        float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
+        imgsrc->dehaz( params.raw, params.icm, params.dehaz, cdcurve,  dehatransmissionCurve, dehacontlutili, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
     }
 
     if (pl) {

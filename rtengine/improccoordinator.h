@@ -154,7 +154,8 @@ protected:
     AutoColorTonListener* actListener;
     AutoChromaListener* adnListener;
     WaveletListener* awavListener;
-
+    DehazListener* dehaListener;
+    
     HistogramListener* hListener;
     std::vector<SizeListener*> sizeListeners;
 
@@ -298,6 +299,10 @@ public:
     void setAutoChromaListener  (AutoChromaListener* adn)
     {
         adnListener = adn;
+    }
+    void setDehazListener  (DehazListener* adh)
+    {
+        dehaListener = adh;
     }
     void setWaveletListener  (WaveletListener* awa)
     {

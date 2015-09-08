@@ -478,6 +478,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setAutoColorTonListener (colortoning);
         ipc->setAutoChromaListener (dirpyrdenoise);
         ipc->setWaveletListener (wavelet);
+        ipc->setDehazListener (dehaz);
 
         ipc->setSizeListener (crop);
         ipc->setSizeListener (resize);

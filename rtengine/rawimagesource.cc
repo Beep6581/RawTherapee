@@ -1800,7 +1800,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
     }
 }
 
-void RawImageSource::dehaz(RAWParams raw, ColorManagementParams cmp, DehazParams  deh, LUTf & cdcurve, const DehaztransmissionCurve & dehatransmissionCurve, bool dehacontlutili)
+void RawImageSource::dehaz(RAWParams raw, ColorManagementParams cmp, DehazParams  deh, LUTf & cdcurve, const DehaztransmissionCurve & dehatransmissionCurve, bool dehacontlutili, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
 
     MyTime t4, t5;
@@ -1863,7 +1863,7 @@ void RawImageSource::dehaz(RAWParams raw, ColorManagementParams cmp, DehazParams
             labdeha->b[i - border][j - border] = bb;
         }
 
-    MSR(labdeha->L, labTmp, WNew, HNew, deh, dehatransmissionCurve);
+    MSR(labdeha->L, labTmp, WNew, HNew, deh, dehatransmissionCurve, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
     delete [] labTmpBuffer;
 

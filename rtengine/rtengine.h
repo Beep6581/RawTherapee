@@ -287,6 +287,14 @@ public :
 
 };
 
+class DehazListener
+{
+public :
+    virtual ~DehazListener() {}
+    virtual void minmaxChanged (double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax) {}
+
+};
+
 class AutoColorTonListener
 {
 public :
@@ -405,6 +413,7 @@ public:
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
     virtual void        setAutoChromaListener   (AutoChromaListener* l) = 0;
+    virtual void        setDehazListener        (DehazListener* l) = 0;
     virtual void        setWaveletListener      (WaveletListener* l) = 0;
 
     virtual ~StagedImageProcessor () {}

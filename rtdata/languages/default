@@ -1552,6 +1552,10 @@ TP_LABCURVE_LCREDSK;Restrict LC to red and skin-tones
 TP_LABCURVE_LCREDSK_TIP;If enabled, the LC Curve affects only red and skin-tones.\nIf disabled, it applies to all tones.
 TP_LABCURVE_RSTPROTECTION;Red and skin-tones protection
 TP_LABCURVE_RSTPRO_TOOLTIP;Works on the Chromaticity slider and the CC curve.
+TP_DEHAZ_MLABEL;Restored haze-free Min=%1 Max=%2 
+TP_DEHAZ_MLABEL_TOOLTIP;Should be near of min=0 max=32768\nRestored image with no mixture
+TP_DEHAZ_TLABEL;TR m=%1 M=%2 Me=%3 Si=%4 Tm=%5 TM=%6
+TP_DEHAZ_TLABEL_TOOLTIP;Transmission map result\nm=Mini M=Maxi used by Variance\nMe=Mean Si=Sigma\nTm=Min TM=Max of Transmission map
 TP_DEHAZ_STR;Strength
 TP_DEHAZ_STR_TOOLTIP;Mixture in proportion to the original image and that obtained by Retinex algoritm
 TP_DEHAZ_RETIN;Complete Retinex algoritm

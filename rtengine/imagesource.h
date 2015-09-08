@@ -70,13 +70,13 @@ public:
     virtual void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse) {};
     virtual void        demosaic    (const RAWParams &raw) {};
 //    virtual void   //     dehaz       (RAWParams raw, ColorManagementParams cmp, DehazParams lcur, LUTf & cdcurve, bool dehacontlutili) {};
-    virtual void        dehaz       (RAWParams raw, ColorManagementParams cmp, DehazParams deh, LUTf & cdcurve, const DehaztransmissionCurve & dehatransmissionCurve, bool dehacontlutili) {};
+    virtual void        dehaz       (RAWParams raw, ColorManagementParams cmp, DehazParams deh, LUTf & cdcurve, const DehaztransmissionCurve & dehatransmissionCurve, bool dehacontlutili, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax) {};
     virtual void        flushRawData       () {};
     virtual void        flushRGB           () {};
     virtual void        HLRecovery_Global  (ToneCurveParams hrp) {};
     virtual void        HLRecovery_inpaint (float** red, float** green, float** blue) {};
 //   virtual void        MSR(LabImage* lab, int width, int height, int skip, DehazParams lcur) {};
-    virtual void        MSR(LabImage* lab, int width, int height, int skip, DehazParams deh, const DehaztransmissionCurve & dehatransmissionCurve) {};
+    virtual void        MSR(LabImage* lab, int width, int height, int skip, DehazParams deh, const DehaztransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax) {};
 
     virtual bool        IsrgbSourceModified() = 0; // tracks whether cached rgb output of demosaic has been modified
     // virtual void        MSR(LabImage* lab, int width, int height, int skip, const LCurveParams  &lcur);

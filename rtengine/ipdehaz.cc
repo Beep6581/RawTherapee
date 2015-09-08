@@ -16,10 +16,21 @@
 *  You should have received a copy of the GNU General Public License
 *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 
+    *   adaptation to Rawtherapee 
+    *   2015 Jacques Desmis <jdesmis@gmail.com>
+    *   2015 Ingo Weyrich <heckflosse@i-weyrich.de>
+
     * D. J. Jobson, Z. Rahman, and G. A. Woodell. A multi-scale
     * Retinex for bridging the gap between color images and the
     * human observation of scenes. IEEE Transactions on Image Processing,
     * 1997, 6(7): 965-976
+    
+    * Fan Guo Zixing Cai Bin Xie Jin Tang
+    * School of Information Science and Engineering, Central South University Changsha, China
+
+    * Weixing Wang and Lian Xu   
+    * College of Physics and Information Engineering, Fuzhou University, Fuzhou, China
+    
     * inspired from 2003 Fabien Pelisson <Fabien.Pelisson@inrialpes.fr>
 
 */
@@ -187,12 +198,13 @@ void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L, const
     stddv = (float)sqrt(stddv);
 }
 
-void RawImageSource::MSR(float** luminance, float** originalLuminance, int width, int height, DehazParams deh, const DehaztransmissionCurve & dehatransmissionCurve)
+void RawImageSource::MSR(float** luminance, float** originalLuminance, int width, int height, DehazParams deh, const DehaztransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
     if (deh.enabled) {//enabled
         StopWatch Stop1("MSR");
         float         mean, stddv, maxtr, mintr;
-        float         mini, delta, maxi;
+      //  float         mini, delta, maxi;
+        float         delta;
         float eps = 2.f;
         float gain2 = (float) deh.gain / 100.f; //def =1  not use
         float offse = (float) deh.offs; //def = 0  not use
@@ -426,17 +438,43 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
         }
 
         float cdfactor = gain2 * 32768.f / delta;
+        maxCD =-9999999.f;
+        minCD =9999999.f;
+        
 #ifdef _OPENMP
-        #pragma omp parallel for
+       #pragma omp parallel 
 #endif
-
+    {
+    float cdmax = -999999.f, cdmin = 999999.f;
+       
+#ifdef _OPENMP
+       #pragma omp for
+#endif
         for ( int i = 0; i < H_L; i ++ )
             for (int j = 0; j < W_L; j++) {
                 //   float cd = cdfactor * ( luminance[i][j] * logBetaGain - mini ) + offse;
                 float cd = cdfactor * ( luminance[i][j]  - mini ) + offse;
+                if(cd > cdmax) cdmax=cd;
+                if(cd < cdmin) cdmin=cd;
+                
+                
                 luminance[i][j] = clipdehaz( cd, 0.f, 32768.f ) * strength + (1.f - strength) * originalLuminance[i][j];
             }
+#ifdef _OPENMP
+        #pragma omp critical
+#endif
+        {
+            maxCD = maxCD > cdmax ? maxCD : cdmax;
+            minCD = minCD < cdmin ? minCD : cdmin;
+        }
+
     }
+    //    printf("cdmin=%f cdmax=%f\n",minCD, maxCD);
+    Tmean = mean;
+    Tsigma = stddv;
+    Tmin = mintr;
+    Tmax = maxtr;
+    }    
 }
 
 }

@@ -158,7 +158,7 @@ void Crop::update (int todo)
     int heiIm = parent->fh;
 
     bool needstransform  = parent->ipf.needsTransform();
-
+    
     if (todo & (M_INIT | M_LINDENOISE)) {
         MyMutex::MyLock lock(parent->minit);  // Also used in improccoord
 
@@ -305,7 +305,6 @@ void Crop::update (int todo)
                 if(parent->adnListener) {
                     parent->adnListener->noiseTilePrev (centerTile_X[poscenterX], centerTile_Y[poscenterY], CenterPreview_X, CenterPreview_Y, crW, trafw * skip);
                 }
-
                 // I have tried "blind" some solutions..to move review ...but GUI is not my truc !
                 //  int W,H;
                 //  cropgl->cropMoved (centerTile_X[poscenterX],centerTile_Y[poscenterY] , W, H);

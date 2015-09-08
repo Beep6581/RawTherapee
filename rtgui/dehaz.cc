@@ -11,7 +11,15 @@ Dehaz::Dehaz () : FoldableToolPanel(this, "dehaz", M("TP_DEHAZ_LABEL"), false, t
 {
     CurveListener::setMulti(true);
     std::vector<GradientMilestone> milestones;
-
+    nextmin =0.;
+    nextmax =0.;
+    nextminiT = 0.;
+    nextmaxiT = 0.;
+    nextmeanT = 0.;
+    nextsigma = 0.;
+    nextminT = 0.;
+    nextmaxT = 0.;
+    
     dehazFrame = Gtk::manage (new Gtk::Frame (M("TP_DEHAZ_LAB")) );
     dehazFrame->set_tooltip_text(M("TP_DEHAZ_LAB_TOOLTIP"));
     dehazFrame->set_border_width(0);
@@ -86,7 +94,13 @@ Dehaz::Dehaz () : FoldableToolPanel(this, "dehaz", M("TP_DEHAZ_LABEL"), false, t
 
     dehazVBox->pack_start (*retinex);
     retinex->show ();
+    
+    mMLabels = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
+    mMLabels->set_tooltip_markup (M("TP_DEHAZ_MLABEL_TOOLTIP"));
 
+    transLabels = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
+    transLabels->set_tooltip_markup (M("TP_DEHAZ_TLABEL_TOOLTIP"));
+    
     scal   = Gtk::manage (new Adjuster (M("TP_DEHAZ_SCAL"), 1, 8., 1., 3.));
     gain   = Gtk::manage (new Adjuster (M("TP_DEHAZ_GAIN"), 20, 200, 1, 100));//50 150
     offs   = Gtk::manage (new Adjuster (M("TP_DEHAZ_OFFS"), -10000, 10000, 1, 0));
@@ -102,6 +116,12 @@ Dehaz::Dehaz () : FoldableToolPanel(this, "dehaz", M("TP_DEHAZ_LABEL"), false, t
     medianmap->set_active (true);
     medianmapConn  = medianmap->signal_toggled().connect( sigc::mem_fun(*this, &Dehaz::medianmapChanged) );
 
+    RetiVBox->pack_start (*mMLabels);
+    mMLabels->show ();
+
+    RetiVBox->pack_start (*transLabels);
+    transLabels->show ();
+    
     RetiVBox->pack_start (*curveEditorGD, Gtk::PACK_SHRINK, 4);
     curveEditorGD->show();
 
@@ -151,6 +171,77 @@ Dehaz::~Dehaz()
     delete transmissionCurveEditorG;
 
 }
+int minmaxChangedUI (void* data)
+{
+    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
+    (static_cast<Dehaz*>(data))->minmaxComputed_ ();
+    return 0;
+}
+
+void Dehaz::minmaxChanged (double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax)
+{ 
+    nextmin = cdmin;
+    nextmax = cdma;
+    nextminiT = mini;
+    nextmaxiT = maxi;
+    nextmeanT = Tmean;
+    nextsigma = Tsigma;
+    nextminT = Tmin;
+    nextmaxT = Tmax;
+    g_idle_add (minmaxChangedUI, this);
+    
+}
+
+bool Dehaz::minmaxComputed_ ()
+{
+
+    disableListener ();
+    enableListener ();
+    updateLabel ();
+    updateTrans ();
+    return false;
+    
+}
+void Dehaz::updateLabel ()
+{
+    if (!batchMode) {
+        float nX, nY;
+        nX = nextmin;
+        nY = nextmax;
+        {
+            mMLabels->set_text(
+                Glib::ustring::compose(M("TP_DEHAZ_MLABEL"),
+                                       Glib::ustring::format(std::fixed, std::setprecision(0), nX),
+                                       Glib::ustring::format(std::fixed, std::setprecision(0), nY))
+            );
+        }
+    }
+}
+
+void Dehaz::updateTrans ()
+{
+    if (!batchMode) {
+        float nm, nM, nZ, nA, nB, nS;
+        nm = nextminiT;
+        nM = nextmaxiT;
+        nZ = nextmeanT;
+        nA = nextminT;
+        nB = nextmaxT;
+        nS = nextsigma;
+        {
+            transLabels->set_text(
+                Glib::ustring::compose(M("TP_DEHAZ_TLABEL"),
+                                       Glib::ustring::format(std::fixed, std::setprecision(1), nm),
+                                       Glib::ustring::format(std::fixed, std::setprecision(1), nM),
+                                       Glib::ustring::format(std::fixed, std::setprecision(1), nZ),
+                                       Glib::ustring::format(std::fixed, std::setprecision(1), nS),
+                                       Glib::ustring::format(std::fixed, std::setprecision(1), nA),
+                                       Glib::ustring::format(std::fixed, std::setprecision(1), nB))
+            );
+        }
+    }
+}
+
 
 
 void Dehaz::read (const ProcParams* pp, const ParamsEdited* pedited)
@@ -235,6 +326,8 @@ void Dehaz::retinexUpdateUI ()
             vart->show();
             limd->show();
             medianmap->show();
+            mMLabels->show();
+            transLabels->show();
             transmissionCurveEditorG->show();
             curveEditorGD->show();
             dehazFrame->show();
@@ -244,6 +337,8 @@ void Dehaz::retinexUpdateUI ()
             offs->hide();
             vart->hide();
             limd->hide();
+            mMLabels->hide();
+            transLabels->hide();
             medianmap->hide();
             transmissionCurveEditorG->hide();
             curveEditorGD->hide();
