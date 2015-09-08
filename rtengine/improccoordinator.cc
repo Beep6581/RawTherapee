@@ -242,11 +242,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             DehaParams.getCurves(dehatransmissionCurve);
             float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
             imgsrc->dehaz( params.raw, params.icm, params.dehaz, cdcurve, dehatransmissionCurve, dehacontlutili, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);//enabled Dehaze
+
             if(dehaListener) {
-                    dehaListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+                dehaListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
             }
 
-            }
+        }
     }
 
     // Updating toneCurve.hrenabled if necessary

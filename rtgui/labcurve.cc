@@ -215,7 +215,7 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"))
 LCurve::~LCurve ()
 {
     delete curveEditorG;
-   
+
 }
 
 void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
@@ -318,7 +318,7 @@ void LCurve::autoOpenCurve ()
     if (!active) {
         clshape->openIfNonlinear();
     }
-    
+
 }
 
 void LCurve::setEditProvider  (EditDataProvider *provider)
@@ -379,10 +379,10 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->labCurve.hhcurve   = !hhshape->isUnChanged ();
         pedited->labCurve.lccurve   = !lcshape->isUnChanged ();
         pedited->labCurve.clcurve   = !clshape->isUnChanged ();
-        
-        
+
+
     }
-    
+
 }
 
 void LCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
@@ -392,6 +392,7 @@ void LCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pedit
     contrast->setDefault (defParams->labCurve.contrast);
     chromaticity->setDefault (defParams->labCurve.chromaticity);
     rstprotection->setDefault (defParams->labCurve.rstprotection);
+
     if (pedited) {
         brightness->setDefaultEditedState (pedited->labCurve.brightness ? Edited : UnEdited);
         contrast->setDefaultEditedState (pedited->labCurve.contrast ? Edited : UnEdited);
@@ -506,8 +507,8 @@ void LCurve::curveChanged (CurveEditor* ce)
         if (ce == clshape) {
             listener->panelChanged (EvLCLCurve, M("HISTORY_CUSTOMCURVE"));
         }
-        
-        
+
+
     }
 }
 

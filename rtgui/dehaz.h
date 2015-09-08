@@ -15,7 +15,7 @@
 
 class Dehaz : public ToolParamBlock, public FoldableToolPanel,  public rtengine::DehazListener, public CurveListener,
     public AdjusterListener
-    
+
 {
 
 protected:
@@ -42,10 +42,10 @@ protected:
     double nextminT;
     double nextmaxT;
     double nextsigma;
-    
+
     Gtk::Label* mMLabels;
     Gtk::Label* transLabels;
-    
+
     DiagonalCurveEditor* cdshape;
     CurveEditorGroup* transmissionCurveEditorG;
     sigc::connection dehazmetConn;

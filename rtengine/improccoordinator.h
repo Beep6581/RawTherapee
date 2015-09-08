@@ -155,7 +155,7 @@ protected:
     AutoChromaListener* adnListener;
     WaveletListener* awavListener;
     DehazListener* dehaListener;
-    
+
     HistogramListener* hListener;
     std::vector<SizeListener*> sizeListeners;
 

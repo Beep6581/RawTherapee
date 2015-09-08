@@ -11,15 +11,15 @@ Dehaz::Dehaz () : FoldableToolPanel(this, "dehaz", M("TP_DEHAZ_LABEL"), false, t
 {
     CurveListener::setMulti(true);
     std::vector<GradientMilestone> milestones;
-    nextmin =0.;
-    nextmax =0.;
+    nextmin = 0.;
+    nextmax = 0.;
     nextminiT = 0.;
     nextmaxiT = 0.;
     nextmeanT = 0.;
     nextsigma = 0.;
     nextminT = 0.;
     nextmaxT = 0.;
-    
+
     dehazFrame = Gtk::manage (new Gtk::Frame (M("TP_DEHAZ_LAB")) );
     dehazFrame->set_tooltip_text(M("TP_DEHAZ_LAB_TOOLTIP"));
     dehazFrame->set_border_width(0);
@@ -94,13 +94,13 @@ Dehaz::Dehaz () : FoldableToolPanel(this, "dehaz", M("TP_DEHAZ_LABEL"), false, t
 
     dehazVBox->pack_start (*retinex);
     retinex->show ();
-    
+
     mMLabels = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
     mMLabels->set_tooltip_markup (M("TP_DEHAZ_MLABEL_TOOLTIP"));
 
     transLabels = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
     transLabels->set_tooltip_markup (M("TP_DEHAZ_TLABEL_TOOLTIP"));
-    
+
     scal   = Gtk::manage (new Adjuster (M("TP_DEHAZ_SCAL"), 1, 8., 1., 3.));
     gain   = Gtk::manage (new Adjuster (M("TP_DEHAZ_GAIN"), 20, 200, 1, 100));//50 150
     offs   = Gtk::manage (new Adjuster (M("TP_DEHAZ_OFFS"), -10000, 10000, 1, 0));
@@ -121,7 +121,7 @@ Dehaz::Dehaz () : FoldableToolPanel(this, "dehaz", M("TP_DEHAZ_LABEL"), false, t
 
     RetiVBox->pack_start (*transLabels);
     transLabels->show ();
-    
+
     RetiVBox->pack_start (*curveEditorGD, Gtk::PACK_SHRINK, 4);
     curveEditorGD->show();
 
@@ -179,7 +179,7 @@ int minmaxChangedUI (void* data)
 }
 
 void Dehaz::minmaxChanged (double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax)
-{ 
+{
     nextmin = cdmin;
     nextmax = cdma;
     nextminiT = mini;
@@ -189,7 +189,7 @@ void Dehaz::minmaxChanged (double cdma, double cdmin, double mini, double maxi, 
     nextminT = Tmin;
     nextmaxT = Tmax;
     g_idle_add (minmaxChangedUI, this);
-    
+
 }
 
 bool Dehaz::minmaxComputed_ ()
@@ -200,7 +200,7 @@ bool Dehaz::minmaxComputed_ ()
     updateLabel ();
     updateTrans ();
     return false;
-    
+
 }
 void Dehaz::updateLabel ()
 {

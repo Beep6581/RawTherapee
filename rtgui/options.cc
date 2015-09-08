@@ -177,7 +177,7 @@ void Options::updatePaths()
     if (lastLabCurvesDir.empty() || !safe_file_test (lastLabCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastLabCurvesDir, Glib::FILE_TEST_IS_DIR)) {
         lastLabCurvesDir = preferredPath;
     }
-    
+
     if (lastDehazDir.empty() || !safe_file_test (lastDehazDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastLabCurvesDir, Glib::FILE_TEST_IS_DIR)) {
         lastDehazDir = preferredPath;
     }
