@@ -21,7 +21,7 @@
 
 #include <gtkmm.h>
 #include "guiutils.h"
-#include "coord.h"
+#include "../rtengine/coord.h"
 
 class InspectorBuffer
 {
@@ -42,7 +42,7 @@ class Inspector : public Gtk::DrawingArea
 {
 
 private:
-    Coord center;
+    rtengine::Coord center;
     std::vector<InspectorBuffer*> images;
     InspectorBuffer* currImage;
     double zoom;

@@ -2049,8 +2049,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                                                         Q,  M,  s, F2V(aw), F2V(fl), F2V(wh),
                                                         x,  y,  z,
                                                         F2V(xw1), F2V(yw1),  F2V(zw1),
-                                                        F2V(yb),  F2V(la),
-                                                        F2V(f), F2V(c),  F2V(nc), F2V(pow1), F2V(nbb), F2V(ncb), F2V(pfl), F2V(cz), F2V(d));
+                                                        F2V(c),  F2V(nc), F2V(pow1), F2V(nbb), F2V(ncb), F2V(pfl), F2V(cz), F2V(d));
                     STVF(Jbuffer[k], J);
                     STVF(Cbuffer[k], C);
                     STVF(hbuffer[k], h);
@@ -2074,8 +2073,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                                                         Q,  M,  s, aw, fl, wh,
                                                         x,  y,  z,
                                                         xw1, yw1,  zw1,
-                                                        yb,  la,
-                                                        f, c,  nc,  pilot, gamu, pow1, nbb, ncb, pfl, cz, d);
+                                                        c,  nc, gamu, pow1, nbb, ncb, pfl, cz, d);
                     Jbuffer[k] = J;
                     Cbuffer[k] = C;
                     hbuffer[k] = h;
@@ -2113,8 +2111,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                                                         Q,  M,  s, aw, fl, wh,
                                                         x,  y,  z,
                                                         xw1, yw1,  zw1,
-                                                        yb,  la,
-                                                        f, c,  nc,  pilot, gamu, pow1, nbb, ncb, pfl, cz, d);
+                                                        c,  nc, gamu, pow1, nbb, ncb, pfl, cz, d);
 #endif
                     float Jpro, Cpro, hpro, Qpro, Mpro, spro;
                     Jpro = J;
@@ -2545,7 +2542,6 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             Ciecam02::jch2xyz_ciecam02float( xx, yy, zz,
                                                              J,  C, h,
                                                              xw2, yw2,  zw2,
-                                                             yb2, la2,
                                                              f2,  c2, nc2, gamu, pow1n, nbbj, ncbj, flj, czj, dj, awj);
                             float x, y, z;
                             x = (float)xx * 655.35f;
@@ -2607,7 +2603,6 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                     Ciecam02::jch2xyz_ciecam02float( x, y, z,
                                                      LVF(Jbuffer[k]), LVF(Cbuffer[k]), LVF(hbuffer[k]),
                                                      F2V(xw2), F2V(yw2), F2V(zw2),
-                                                     F2V(yb2), F2V(la2),
                                                      F2V(f2),  F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz));
                     STVF(xbuffer[k], x * c655d35);
                     STVF(ybuffer[k], y * c655d35);
@@ -2936,7 +2931,6 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         Ciecam02::jch2xyz_ciecam02float( xx, yy, zz,
                                                          ncie->J_p[i][j],  ncie_C_p, ncie->h_p[i][j],
                                                          xw2, yw2,  zw2,
-                                                         yb2, la2,
                                                          f2,  c2, nc2, gamu, pow1n, nbbj, ncbj, flj, czj, dj, awj);
                         x = (float)xx * 655.35f;
                         y = (float)yy * 655.35f;
@@ -2992,7 +2986,6 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         Ciecam02::jch2xyz_ciecam02float( x, y, z,
                                                          LVF(Jbuffer[k]), LVF(Cbuffer[k]), LVF(hbuffer[k]),
                                                          F2V(xw2), F2V(yw2), F2V(zw2),
-                                                         F2V(yb2), F2V(la2),
                                                          F2V(f2), F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz));
                         x *= c655d35;
                         y *= c655d35;
@@ -3178,7 +3171,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
                                SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit , float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clToningcurve, LUTf & cl2Toningcurve,
                                const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,  const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh, DCPProfile *dcpProf)
 {
-
     LUTf fGammaLUTf;
     Imagefloat *tmpImage = NULL;
 

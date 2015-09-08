@@ -1,6 +1,5 @@
 if (WIN32)
   cmake_minimum_required(VERSION 2.8.4)
-  cmake_policy(SET CMP0015 OLD)
 else (WIN32)
   cmake_minimum_required(VERSION 2.6)
 endif (WIN32)
@@ -13,6 +12,16 @@ if (CMAKE_BUILD_TYPE STREQUAL "")
 endif ()
 
 string (TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
+
+# assuming that Linux and Apple users will have gtk2 built by their installed gcc
+if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
+  if (GCC_VERSION VERSION_GREATER 5.0 OR GCC_VERSION VERSION_EQUAL 5.0)
+    message(STATUS "Gcc Version >= 5.0 ; adding -D_GLIBCXX_USE_CXX11_ABI=0 to build with Gtk2")
+    add_definitions (-D_GLIBCXX_USE_CXX11_ABI=0)
+	# see here : https://gcc.gnu.org/gcc-5/changes.html#libstdcxx
+  endif()
+endif()
 
 if (UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
   add_definitions (-D_DEBUG)
@@ -44,6 +53,14 @@ if ((NOT(PROC_TARGET_NUMBER EQUAL 0)) AND (NOT(PROC_TARGET_NUMBER EQUAL 2)))
 endif ()
 if (NOT(PROC_TARGET_NUMBER EQUAL 0))
 	set (PROC_FLAGS ${PROC_TARGET_${PROC_TARGET_NUMBER}_FLAGS})
+endif ()
+if (UNIX AND PROC_LABEL STREQUAL "undefined")
+    execute_process(COMMAND uname -p OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE cpu)
+    if ("${cpu}" STREQUAL "unknown")
+        set(PROC_LABEL "${CMAKE_SYSTEM_PROCESSOR}")
+    else ()
+        set (PROC_LABEL "${cpu}")
+    endif ()
 endif ()
 
 # if it exists, the PROC_FORCED_LABEL value is loaded in PROC_LABEL to override the one of ProcessorTargets
@@ -352,7 +369,6 @@ add_custom_target(AboutFile ALL
     COMMAND ${ABOUT_COMMAND_WITH_ARGS}
     COMMENT "Creating the about file")
 
-add_dependencies(AboutFile Debug Release MinSizeRel RelWithDebInfo)
 ## END: Generating AboutThisBuild.txt
 
 install (FILES AUTHORS.txt DESTINATION "${CREDITSDIR}")

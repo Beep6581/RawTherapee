@@ -26,13 +26,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#ifdef __SSE__
-#if defined( WIN32 ) && defined(__x86_64__)
-#include <intrin.h>
-#else
-#include <xmmintrin.h>
-#endif
-#endif
+#include "opthelper.h"
 
 // classical filtering if the support window is small:
 
@@ -88,13 +82,8 @@ template<class T> void gaussVertical3 (T** src, T** dst, AlignedBufferMP<double>
 }
 
 #ifdef __SSE__
-#ifdef WIN32
-template<class T> __attribute__((force_align_arg_pointer)) void gaussVertical3Sse (T** src, T** dst, int W, int H, const float c0, const float c1)
+template<class T> SSEFUNCTION void gaussVertical3Sse (T** src, T** dst, int W, int H, const float c0, const float c1)
 {
-#else
-template<class T> void gaussVertical3Sse (T** src, T** dst, int W, int H, const float c0, const float c1)
-{
-#endif
     __m128 Tv, Tm1v, Tp1v;
     __m128 c0v, c1v;
     c0v = _mm_set1_ps(c0);
@@ -107,7 +96,7 @@ template<class T> void gaussVertical3Sse (T** src, T** dst, int W, int H, const 
         Tm1v = _mm_loadu_ps( &src[0][i] );
         _mm_storeu_ps( &dst[0][i], Tm1v);
 
-        if(H > 1) {
+        if (H > 1) {
             Tv = _mm_loadu_ps( &src[1][i]);
         }
 
@@ -126,7 +115,7 @@ template<class T> void gaussVertical3Sse (T** src, T** dst, int W, int H, const 
     #pragma omp for
 #endif
 
-    for(int i = W - (W % 4); i < W; i++) {
+    for (int i = W - (W % 4); i < W; i++) {
         dst[0][i] = src[0][i];
 
         for (int j = 1; j < H - 1; j++) {
@@ -138,13 +127,8 @@ template<class T> void gaussVertical3Sse (T** src, T** dst, int W, int H, const 
 }
 
 
-#ifdef WIN32
-template<class T> __attribute__((force_align_arg_pointer)) void gaussHorizontal3Sse (T** src, T** dst, int W, int H, const float c0, const float c1)
+template<class T> SSEFUNCTION void gaussHorizontal3Sse (T** src, T** dst, int W, int H, const float c0, const float c1)
 {
-#else
-template<class T> void gaussHorizontal3Sse (T** src, T** dst, int W, int H, const float c0, const float c1)
-{
-#endif
     float tmp[W][4] __attribute__ ((aligned (16)));
 
     __m128 Tv, Tm1v, Tp1v;
@@ -162,7 +146,7 @@ template<class T> void gaussHorizontal3Sse (T** src, T** dst, int W, int H, cons
         dst[i + 3][0] = src[i + 3][0];
         Tm1v = _mm_set_ps( src[i][0], src[i + 1][0], src[i + 2][0], src[i + 3][0] );
 
-        if(W > 1) {
+        if (W > 1) {
             Tv = _mm_set_ps( src[i][1], src[i + 1][1], src[i + 2][1], src[i + 3][1] );
         }
 
@@ -191,7 +175,7 @@ template<class T> void gaussHorizontal3Sse (T** src, T** dst, int W, int H, cons
     #pragma omp for
 #endif
 
-    for(int i = H - (H % 4); i < H; i++) {
+    for (int i = H - (H % 4); i < H; i++) {
         dst[i][0] = src[i][0];
 
         for (int j = 1; j < W - 1; j++) {
@@ -205,18 +189,15 @@ template<class T> void gaussHorizontal3Sse (T** src, T** dst, int W, int H, cons
 
 
 // fast gaussian approximation if the support window is large
-#ifdef WIN32
-template<class T> __attribute__((force_align_arg_pointer)) void gaussHorizontalSse (T** src, T** dst, int W, int H, float sigma)
+template<class T> SSEFUNCTION void gaussHorizontalSse (T** src, T** dst, int W, int H, float sigma)
 {
-#else
-template<class T> void gaussHorizontalSse (T** src, T** dst, int W, int H, float sigma)
-{
-#endif
 
     if (sigma < 0.25) {
         // dont perform filtering
         if (src != dst)
+#ifdef _OPENMP
             #pragma omp for
+#endif
             for (int i = 0; i < H; i++) {
                 memcpy (dst[i], src[i], W * sizeof(T));
             }
@@ -279,7 +260,10 @@ template<class T> void gaussHorizontalSse (T** src, T** dst, int W, int H, float
     b1v = _mm_set1_ps(b1);
     b2v = _mm_set1_ps(b2);
     b3v = _mm_set1_ps(b3);
+
+#ifdef _OPENMP
     #pragma omp for
+#endif
 
     for (int i = 0; i < H - 3; i += 4) {
         tmpV[0] = src[i + 3][0];
@@ -351,9 +335,11 @@ template<class T> void gaussHorizontalSse (T** src, T** dst, int W, int H, float
     }
 
 // Borders are done without SSE
+#ifdef _OPENMP
     #pragma omp for
+#endif
 
-    for(int i = H - (H % 4); i < H; i++) {
+    for (int i = H - (H % 4); i < H; i++) {
         tmp[0][0] = B * src[i][0] + b1 * src[i][0] + b2 * src[i][0] + b3 * src[i][0];
         tmp[1][0] = B * src[i][1] + b1 * tmp[0][0]  + b2 * src[i][0] + b3 * src[i][0];
         tmp[2][0] = B * src[i][2] + b1 * tmp[1][0]  + b2 * tmp[0][0]  + b3 * src[i][0];
@@ -389,7 +375,7 @@ template<class T> void gaussHorizontal (T** src, T** dst, AlignedBufferMP<double
 
 #ifdef __SSE__
 
-    if(sigma < 70) { // bigger sigma only with double precision
+    if (sigma < 70) { // bigger sigma only with double precision
         gaussHorizontalSse<T> (src, dst, W, H, sigma);
         return;
     }
@@ -399,7 +385,9 @@ template<class T> void gaussHorizontal (T** src, T** dst, AlignedBufferMP<double
     if (sigma < 0.25) {
         // dont perform filtering
         if (src != dst)
+#ifdef _OPENMP
             #pragma omp for
+#endif
             for (int i = 0; i < H; i++) {
                 memcpy (dst[i], src[i], W * sizeof(T));
             }
@@ -451,7 +439,9 @@ template<class T> void gaussHorizontal (T** src, T** dst, AlignedBufferMP<double
             M[i][j] /= (1.0 + b1 - b2 + b3) * (1.0 + b2 + (b1 - b3) * b3);
         }
 
+#ifdef _OPENMP
     #pragma omp for
+#endif
 
     for (int i = 0; i < H; i++) {
         AlignedBuffer<double>* pBuf = buffer.acquire();
@@ -486,18 +476,15 @@ template<class T> void gaussHorizontal (T** src, T** dst, AlignedBufferMP<double
 }
 
 #ifdef __SSE__
-#ifdef WIN32
-template<class T> __attribute__((force_align_arg_pointer)) void gaussVerticalSse (T** src, T** dst, int W, int H, float sigma)
+template<class T> SSEFUNCTION void gaussVerticalSse (T** src, T** dst, int W, int H, float sigma)
 {
-#else
-template<class T> void gaussVerticalSse (T** src, T** dst, int W, int H, float sigma)
-{
-#endif
 
     if (sigma < 0.25) {
         // dont perform filtering
         if (src != dst)
+#ifdef _OPENMP
             #pragma omp for
+#endif
             for (int i = 0; i < H; i++) {
                 memcpy (dst[i], src[i], W * sizeof(T));
             }
@@ -614,9 +601,11 @@ template<class T> void gaussVerticalSse (T** src, T** dst, int W, int H, float s
     }
 
 // Borders are done without SSE
+#ifdef _OPENMP
     #pragma omp for
+#endif
 
-    for(int i = W - (W % 4); i < W; i++) {
+    for (int i = W - (W % 4); i < W; i++) {
         tmp[0][0] = B * src[0][i] + b1 * src[0][i] + b2 * src[0][i] + b3 * src[0][i];
         tmp[1][0] = B * src[1][i] + b1 * tmp[0][0] + b2 * src[0][i] + b3 * src[0][i];
         tmp[2][0] = B * src[2][i] + b1 * tmp[1][0] + b2 * tmp[0][0] + b3 * src[0][i];
@@ -651,7 +640,7 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBufferMP<double> 
 
 #ifdef __SSE__
 
-    if(sigma < 70) { // bigger sigma only with double precision
+    if (sigma < 70) { // bigger sigma only with double precision
         gaussVerticalSse<T> (src, dst, W, H, sigma);
         return;
     }
@@ -659,9 +648,11 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBufferMP<double> 
 #endif
 
     if (sigma < 0.25) {
-        // dont perform filtering
+        // don't perform filtering
         if (src != dst)
+#ifdef _OPENMP
             #pragma omp for
+#endif
             for (int i = 0; i < H; i++) {
                 memcpy (dst[i], src[i], W * sizeof(T));
             }
@@ -713,38 +704,81 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBufferMP<double> 
             M[i][j] /= (1.0 + b1 - b2 + b3) * (1.0 + b2 + (b1 - b3) * b3);
         }
 
+    // process 'numcols' columns for better usage of L1 cpu cache (especially faster for large values of H)
+    static const int numcols = 4;
+    double temp2[H][numcols] ALIGNED16;
+    double temp2Hm1[numcols], temp2H[numcols], temp2Hp1[numcols];
 #ifdef _OPENMP
-    #pragma omp for
+    #pragma omp for nowait
 #endif
 
-    for (int i = 0; i < W; i++) {
-        AlignedBuffer<double>* pBuf = buffer.acquire();
-        double* temp2 = pBuf->data;
-        temp2[0] = B * src[0][i] + b1 * src[0][i] + b2 * src[0][i] + b3 * src[0][i];
-        temp2[1] = B * src[1][i] + b1 * temp2[0]  + b2 * src[0][i] + b3 * src[0][i];
-        temp2[2] = B * src[2][i] + b1 * temp2[1]  + b2 * temp2[0]  + b3 * src[0][i];
-
-        for (int j = 3; j < H; j++) {
-            temp2[j] = B * src[j][i] + b1 * temp2[j - 1] + b2 * temp2[j - 2] + b3 * temp2[j - 3];
+    for (int i = 0; i < W - numcols + 1; i += numcols) {
+        for (int k = 0; k < numcols; k++) {
+            temp2[0][k] = B * src[0][i + k] + b1 * src[0][i + k] + b2 * src[0][i + k] + b3 * src[0][i + k];
+            temp2[1][k] = B * src[1][i + k] + b1 * temp2[0][k] + b2 * src[0][i + k] + b3 * src[0][i + k];
+            temp2[2][k] = B * src[2][i + k] + b1 * temp2[1][k] + b2 * temp2[0][k] + b3 * src[0][i + k];
         }
 
-        double temp2Hm1 = src[H - 1][i] + M[0][0] * (temp2[H - 1] - src[H - 1][i]) + M[0][1] * (temp2[H - 2] - src[H - 1][i]) + M[0][2] * (temp2[H - 3] - src[H - 1][i]);
-        double temp2H   = src[H - 1][i] + M[1][0] * (temp2[H - 1] - src[H - 1][i]) + M[1][1] * (temp2[H - 2] - src[H - 1][i]) + M[1][2] * (temp2[H - 3] - src[H - 1][i]);
-        double temp2Hp1 = src[H - 1][i] + M[2][0] * (temp2[H - 1] - src[H - 1][i]) + M[2][1] * (temp2[H - 2] - src[H - 1][i]) + M[2][2] * (temp2[H - 3] - src[H - 1][i]);
+        for (int j = 3; j < H; j++) {
+            for (int k = 0; k < numcols; k++) {
+                temp2[j][k] = B * src[j][i + k] + b1 * temp2[j - 1][k] + b2 * temp2[j - 2][k] + b3 * temp2[j - 3][k];
+            }
+        }
 
-        temp2[H - 1] = temp2Hm1;
-        temp2[H - 2] = B * temp2[H - 2] + b1 * temp2[H - 1] + b2 * temp2H + b3 * temp2Hp1;
-        temp2[H - 3] = B * temp2[H - 3] + b1 * temp2[H - 2] + b2 * temp2[H - 1] + b3 * temp2H;
+        for (int k = 0; k < numcols; k++) {
+            temp2Hm1[k] = src[H - 1][i + k] + M[0][0] * (temp2[H - 1][k] - src[H - 1][i + k]) + M[0][1] * (temp2[H - 2][k] - src[H - 1][i + k]) + M[0][2] * (temp2[H - 3][k] - src[H - 1][i + k]);
+            temp2H[k]   = src[H - 1][i + k] + M[1][0] * (temp2[H - 1][k] - src[H - 1][i + k]) + M[1][1] * (temp2[H - 2][k] - src[H - 1][i + k]) + M[1][2] * (temp2[H - 3][k] - src[H - 1][i + k]);
+            temp2Hp1[k] = src[H - 1][i + k] + M[2][0] * (temp2[H - 1][k] - src[H - 1][i + k]) + M[2][1] * (temp2[H - 2][k] - src[H - 1][i + k]) + M[2][2] * (temp2[H - 3][k] - src[H - 1][i + k]);
+        }
+
+        for (int k = 0; k < numcols; k++) {
+            temp2[H - 1][k] = temp2Hm1[k];
+            temp2[H - 2][k] = B * temp2[H - 2][k] + b1 * temp2[H - 1][k] + b2 * temp2H[k] + b3 * temp2Hp1[k];
+            temp2[H - 3][k] = B * temp2[H - 3][k] + b1 * temp2[H - 2][k] + b2 * temp2[H - 1][k] + b3 * temp2H[k];
+        }
 
         for (int j = H - 4; j >= 0; j--) {
-            temp2[j] = B * temp2[j] + b1 * temp2[j + 1] + b2 * temp2[j + 2] + b3 * temp2[j + 3];
+            for (int k = 0; k < numcols; k++) {
+                temp2[j][k] = B * temp2[j][k] + b1 * temp2[j + 1][k] + b2 * temp2[j + 2][k] + b3 * temp2[j + 3][k];
+            }
         }
 
         for (int j = 0; j < H; j++) {
-            dst[j][i] = (T)temp2[j];
+            for (int k = 0; k < numcols; k++) {
+                dst[j][i + k] = (T)temp2[j][k];
+            }
+        }
+    }
+
+#ifdef _OPENMP
+    #pragma omp single
+#endif
+
+    // process remaining column
+    for (int i = W - (W % numcols); i < W; i++) {
+        temp2[0][0] = B * src[0][i] + b1 * src[0][i] + b2 * src[0][i] + b3 * src[0][i];
+        temp2[1][0] = B * src[1][i] + b1 * temp2[0][0]  + b2 * src[0][i] + b3 * src[0][i];
+        temp2[2][0] = B * src[2][i] + b1 * temp2[1][0]  + b2 * temp2[0][0]  + b3 * src[0][i];
+
+        for (int j = 3; j < H; j++) {
+            temp2[j][0] = B * src[j][i] + b1 * temp2[j - 1][0] + b2 * temp2[j - 2][0] + b3 * temp2[j - 3][0];
         }
 
-        buffer.release(pBuf);
+        double temp2Hm1 = src[H - 1][i] + M[0][0] * (temp2[H - 1][0] - src[H - 1][i]) + M[0][1] * (temp2[H - 2][0] - src[H - 1][i]) + M[0][2] * (temp2[H - 3][0] - src[H - 1][i]);
+        double temp2H   = src[H - 1][i] + M[1][0] * (temp2[H - 1][0] - src[H - 1][i]) + M[1][1] * (temp2[H - 2][0] - src[H - 1][i]) + M[1][2] * (temp2[H - 3][0] - src[H - 1][i]);
+        double temp2Hp1 = src[H - 1][i] + M[2][0] * (temp2[H - 1][0] - src[H - 1][i]) + M[2][1] * (temp2[H - 2][0] - src[H - 1][i]) + M[2][2] * (temp2[H - 3][0] - src[H - 1][i]);
+
+        temp2[H - 1][0] = temp2Hm1;
+        temp2[H - 2][0] = B * temp2[H - 2][0] + b1 * temp2[H - 1][0] + b2 * temp2H + b3 * temp2Hp1;
+        temp2[H - 3][0] = B * temp2[H - 3][0] + b1 * temp2[H - 2][0] + b2 * temp2[H - 1][0] + b3 * temp2H;
+
+        for (int j = H - 4; j >= 0; j--) {
+            temp2[j][0] = B * temp2[j][0] + b1 * temp2[j + 1][0] + b2 * temp2[j + 2][0] + b3 * temp2[j + 3][0];
+        }
+
+        for (int j = 0; j < H; j++) {
+            dst[j][i] = (T)temp2[j][0];
+        }
     }
 }
 

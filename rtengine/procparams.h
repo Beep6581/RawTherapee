@@ -24,6 +24,7 @@
 #include <cstdio>
 #include <cmath>
 #include "LUT.h"
+#include "coord.h"
 
 class ParamsEdited;
 
@@ -1251,7 +1252,7 @@ public:
     ResizeParams            resize;          ///< Resize parameters
     ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing
     RAWParams               raw;             ///< RAW parameters before demosaicing
-    WaveletParams           wavelet;       ///< wavelet wavelet parameters
+    WaveletParams           wavelet;         ///< Wavelet parameters
     DirPyrEqualizerParams   dirpyrequalizer; ///< directional pyramid wavelet parameters
     HSVEqualizerParams      hsvequalizer;    ///< hsv wavelet parameters
     FilmSimulationParams    filmSimulation;  ///< film simulation parameters

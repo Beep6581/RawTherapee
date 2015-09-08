@@ -66,7 +66,6 @@ void cleanup ()
 
     ProcParams::cleanup ();
     Color::cleanup ();
-    PerceptualToneCurve::cleanup ();
     ImProcFunctions::cleanupCache ();
     Thumbnail::cleanupGamma ();
     RawImageSource::cleanup ();

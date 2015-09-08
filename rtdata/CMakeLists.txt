@@ -19,16 +19,6 @@ else (WIN32)
 endif (WIN32)
 
 if (WIN32)
-	find_file(HG_CMD hg.exe HINTS ENV Path PATH_SUFFIXES ../)
-	# Fail if Mercurial is not installed
-	if (HG_CMD STREQUAL HG_CMD-NOTFOUND)
-		message(FATAL_ERROR "hg command not found!")
-	else (HG_CMD STREQUAL HG_CMD-NOTFOUND)
-		message(STATUS "hg command found: ${HG_CMD}")
-		execute_process(COMMAND ${HG_CMD} -R "${PROJECT_SOURCE_DIR}" parents --template={latesttag} WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}" OUTPUT_VARIABLE HG_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-		execute_process(COMMAND ${HG_CMD} -R "${PROJECT_SOURCE_DIR}" parents --template={latesttagdistance} WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}" OUTPUT_VARIABLE HG_TAGDISTANCE OUTPUT_STRIP_TRAILING_WHITESPACE)
-	endif (HG_CMD STREQUAL HG_CMD-NOTFOUND)
-
 	if (CMAKE_SIZEOF_VOID_P EQUAL 4)
 		set(BUILD_BIT_DEPTH 32)
 		# 32 bits builds has to be installable on 64 bits system, to support WinXP/64.
@@ -46,6 +36,27 @@ if (WIN32)
 		# set part of the output archive name
 		set(SYSTEM_NAME "WinVista")
 	endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
+
+    # If we find ReleaseInfo.cmake we use the info from there and don't need Git to be installed
+    find_file(REL_INFO_FILE ReleaseInfo.cmake PATHS "${PROJECT_SOURCE_DIR}" NO_DEFAULT_PATH)
+    if (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
+        # we look for the git command in this paths by order of preference
+        find_file(GIT_CMD git.exe HINTS ENV Path PATH_SUFFIXES ../)
+
+        # Fail if Git is not installed
+        if (GIT_CMD STREQUAL GIT_CMD-NOTFOUND)
+            message(FATAL_ERROR "git command not found!")
+        else ()
+            message(STATUS "git command found: ${GIT_CMD}")
+        endif ()
+
+        execute_process(COMMAND ${GIT_CMD} describe --tags --always OUTPUT_VARIABLE GIT_VERSION_WHOLE OUTPUT_STRIP_TRAILING_WHITESPACE WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
+        string(REGEX REPLACE "-.*" "" GIT_VERSION ${GIT_VERSION_WHOLE})
+        string(REGEX REPLACE ".*-(.*)-g.*" "\\1" GIT_TAGDISTANCE ${GIT_VERSION_WHOLE})
+    else (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
+        include("${PROJECT_SOURCE_DIR}/ReleaseInfo.cmake")
+    endif (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
+
     configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/win/InnoSetup/WindowsInnoSetup.iss.in" "${CMAKE_CURRENT_BINARY_DIR}/WindowsInnoSetup.iss")
     install (FILES "${CMAKE_CURRENT_BINARY_DIR}/WindowsInnoSetup.iss" DESTINATION ${BINDIR})
 endif (WIN32)

@@ -884,7 +884,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !HISTORY_MSG_164;RGB Curves - Green
 !HISTORY_MSG_165;RGB Curves - Blue
 !HISTORY_MSG_166;Exposure - Neutral
-!HISTORY_MSG_167;--unused--
+!HISTORY_MSG_167;Demosaicing method
 !HISTORY_MSG_168;L*a*b* - CC curve
 !HISTORY_MSG_169;L*a*b* - CH curve
 !HISTORY_MSG_170;Vibrance - HH curve

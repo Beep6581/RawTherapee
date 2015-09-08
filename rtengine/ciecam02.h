@@ -55,13 +55,13 @@ private:
     static float nonlinear_adaptationfloat( float c, float fl );
     static double inverse_nonlinear_adaptation( double c, double fl );
 
-#ifndef __SSE2__
+
     static float inverse_nonlinear_adaptationfloat( float c, float fl );
     static void calculate_abfloat( float &aa, float &bb, float h, float e, float t, float nbb, float a );
     static void Aab_to_rgbfloat( float &r, float &g, float &b, float A, float aa, float bb, float nbb );
     static void hpe_to_xyzfloat   ( float &x,  float &y,  float &z,  float r, float g, float b );
     static void cat02_to_xyzfloat ( float &x,  float &y,  float &z,  float r, float g, float b, int gamu );
-#else
+#ifdef __SSE2__
     static vfloat inverse_nonlinear_adaptationfloat( vfloat c, vfloat fl );
     static void calculate_abfloat( vfloat &aa, vfloat &bb, vfloat h, vfloat e, vfloat t, vfloat nbb, vfloat a );
     static void Aab_to_rgbfloat( vfloat &r, vfloat &g, vfloat &b, vfloat A, vfloat aa, vfloat bb, vfloat nbb );
@@ -85,17 +85,15 @@ public:
                                   double yb, double la,
                                   double f, double c, double nc, int gamu, double n, double nbb, double ncb, double fl, double cz, double d, double aw);
 
-#ifndef __SSE2__
+
     static void jch2xyz_ciecam02float( float &x, float &y, float &z,
                                        float J, float C, float h,
                                        float xw, float yw, float zw,
-                                       float yb, float la,
                                        float f, float c, float nc, int gamu, float n, float nbb, float ncb, float fl, float cz, float d, float aw );
-#else
+#ifdef __SSE2__
     static void jch2xyz_ciecam02float( vfloat &x, vfloat &y, vfloat &z,
                                        vfloat J, vfloat C, vfloat h,
                                        vfloat xw, vfloat yw, vfloat zw,
-                                       vfloat yb, vfloat la,
                                        vfloat f, vfloat nc, vfloat n, vfloat nbb, vfloat ncb, vfloat fl, vfloat d, vfloat aw, vfloat reccmcz );
 #endif
     /**
@@ -120,20 +118,24 @@ public:
                                      double yb, double la,
                                      double f, double c, double nc,  double pilotd, int gamu , double n, double nbb, double ncb, double pfl, double cz, double d );
 
+    static void xyz2jch_ciecam02float( float &J, float &C, float &h,
+                                       float aw, float fl,
+                                       float x, float y, float z,
+                                       float xw, float yw, float zw,
+                                       float c, float nc, float n, float nbb, float ncb, float cz, float d  );
+
     static void xyz2jchqms_ciecam02float( float &J, float &C, float &h,
                                           float &Q, float &M, float &s, float &aw, float &fl, float &wh,
                                           float x, float y, float z,
                                           float xw, float yw, float zw,
-                                          float yb, float la,
-                                          float f, float c, float nc,  float pilotd, int gamu, float n, float nbb, float ncb, float pfl, float cz, float d  );
+                                          float c, float nc, int gamu, float n, float nbb, float ncb, float pfl, float cz, float d  );
 
 #ifdef __SSE2__
     static void xyz2jchqms_ciecam02float( vfloat &J, vfloat &C, vfloat &h,
                                           vfloat &Q, vfloat &M, vfloat &s, vfloat aw, vfloat fl, vfloat wh,
                                           vfloat x, vfloat y, vfloat z,
                                           vfloat xw, vfloat yw, vfloat zw,
-                                          vfloat yb, vfloat la,
-                                          vfloat f, vfloat c, vfloat nc, vfloat n, vfloat nbb, vfloat ncb, vfloat pfl, vfloat cz, vfloat d  );
+                                          vfloat c, vfloat nc, vfloat n, vfloat nbb, vfloat ncb, vfloat pfl, vfloat cz, vfloat d  );
 
 
 #endif

@@ -22,6 +22,7 @@
 #include "../rtgui/edit.h"
 #include "array2D.h"
 #include "iimage.h"
+#include "coord.h"
 
 namespace rtengine
 {

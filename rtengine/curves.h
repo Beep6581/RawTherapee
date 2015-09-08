@@ -827,10 +827,10 @@ public:
 class PerceptualToneCurveState
 {
 public:
-    bool isProphoto;
     float Working2Prophoto[3][3];
     float Prophoto2Working[3][3];
     float cmul_contrast;
+    bool isProphoto;
 };
 
 // Tone curve whose purpose is to keep the color appearance constant, that is the curve changes contrast
@@ -840,10 +840,13 @@ public:
 class PerceptualToneCurve : public ToneCurve
 {
 private:
-    static cmsHANDLE *h02;
-    static cmsContext *c02;
     static float cf_range[2];
     static float cf[1000];
+    static LUTf gamma2curve;
+    // for ciecam02
+    static float f, c, nc, yb, la, xw, yw, zw, gamut;
+    static float n, d, nbb, ncb, cz, aw, wh, pfl, fl, pow1;
+
     static void cubic_spline(const float x[], const float y[], const int len, const float out_x[], float out_y[], const int out_len);
     static float find_minimum_interval_halving(float (*func)(float x, void *arg), void *arg, float a, float b, float tol, int nmax);
     static float find_tc_slope_fun(float k, void *arg);
@@ -851,7 +854,6 @@ private:
     float calculateToneCurveContrastValue() const;
 public:
     static void init();
-    static void cleanup();
     void initApplyState(PerceptualToneCurveState & state, Glib::ustring workingSpace) const;
     void Apply(float& r, float& g, float& b, PerceptualToneCurveState & state) const;
 };
