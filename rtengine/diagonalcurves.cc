@@ -70,6 +70,10 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
                 identity = false;
             }
 
+            if(x[0] == 0.f && x[1] == 0.f)
+                // Avoid crash when first two points are at x = 0 (git Issue 2888)
+                x[1] = 0.5f;
+
             if (!identity) {
                 if (kind == DCT_Spline && N > 2) {
                     spline_cubic_set ();

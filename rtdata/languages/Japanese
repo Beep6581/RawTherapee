@@ -428,7 +428,7 @@ HISTORY_MSG_163;RGB カーブ - レッド
 HISTORY_MSG_164;RGB カーブ - グリーン
 HISTORY_MSG_165;RGB カーブ - ブルー
 HISTORY_MSG_166;ニュートラル・レベル
-HISTORY_MSG_167;--未使用--
+HISTORY_MSG_167;デモザイク 方式
 HISTORY_MSG_168;L*a*b* CC カーブ
 HISTORY_MSG_169;L*a*b* CH カーブ
 HISTORY_MSG_170;自然な彩度 - カーブ
@@ -1933,9 +1933,3 @@ ZOOMPANEL_ZOOMFITSCREEN;画像全体を画面に合わせる\nショートカッ
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!GENERAL_APPLY;Apply
-!GENERAL_OPEN;Open

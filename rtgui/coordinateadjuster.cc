@@ -161,7 +161,7 @@ void CoordinateAdjuster::startNumericalAdjustment(const std::vector<Boundaries> 
         Gtk::SpinButton *currSpinButton = axisAdjusters.at(i)->spinButton;
         currSpinButton->set_sensitive(true);
         float range = axisAdjusters.at(i)->rangeUpperBound - axisAdjusters.at(i)->rangeLowerBound;
-        currSpinButton->set_range(newBoundaries.at(i).minVal * range + axisAdjusters.at(i)->rangeLowerBound, newBoundaries.at(i).maxVal * range + axisAdjusters.at(i)->rangeUpperBound);
+        currSpinButton->set_range(newBoundaries.at(i).minVal * range + axisAdjusters.at(i)->rangeLowerBound, newBoundaries.at(i).maxVal * range + axisAdjusters.at(i)->rangeLowerBound);
     }
 
     axisAdjusters.at(0)->spinButton->grab_focus();
@@ -190,7 +190,7 @@ void CoordinateAdjuster::switchAdjustedPoint(std::vector<double> &pos, const std
 
         // ...narrow the range to the new interval
         float range = axisAdjusters.at(i)->rangeUpperBound - axisAdjusters.at(i)->rangeLowerBound;
-        currAxis->spinButton->set_range(newBoundaries.at(i).minVal * range + axisAdjusters.at(i)->rangeLowerBound, newBoundaries.at(i).maxVal * range + axisAdjusters.at(i)->rangeUpperBound);
+        currAxis->spinButton->set_range(newBoundaries.at(i).minVal * range + axisAdjusters.at(i)->rangeLowerBound, newBoundaries.at(i).maxVal * range + axisAdjusters.at(i)->rangeLowerBound);
 
         // enable events
         currAxis->spinButtonConn.block(false);
