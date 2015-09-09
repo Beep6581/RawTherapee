@@ -445,7 +445,7 @@ enum ProcEvent {
     EvDehazretinex = 416,
     EvDehazmedianmap = 417,
     EvLlimd = 418,
-
+    EvdehazColorSpace = 419,
     NUMOFEVENTS
 };
 }

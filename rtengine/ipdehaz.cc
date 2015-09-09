@@ -206,7 +206,9 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
         //  float         mini, delta, maxi;
         float         delta;
         float eps = 2.f;
+        bool useHsl = deh.dehazcolorspace == "HSL";
         float gain2 = (float) deh.gain / 100.f; //def =1  not use
+        gain2 = useHsl ? gain2 * 0.5f : gain2;
         float offse = (float) deh.offs; //def = 0  not use
         int scal =  deh.scal; //def=3
         int nei = (int) 2.8f * deh.neigh; //def = 220
@@ -214,8 +216,8 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
         float strength = (float) deh.str / 100.f; // Blend with original L channel data
         float limD = (float) deh.limd;
         limD = pow(limD, 1.7f);//about 2500 enough
+        limD *= useHsl ? 10.f : 1.f;
         float ilimD = 1.f / limD;
-
         int modedehaz = 0; // default to 0 ( deh.dehazmet == "uni" )
         bool execcur = false;
 
@@ -281,15 +283,24 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
                 for (int i = 0; i < H_L; i++) {
                     int j = 0;
 #ifdef __SSE2__
-
-                    for (; j < W_L - 3; j += 4) {
-                        _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  xlogf(LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
+                    if(useHsl) {
+                        for (; j < W_L - 3; j += 4) {
+                            _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  (LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
+                        }
+                    } else {
+                        for (; j < W_L - 3; j += 4) {
+                            _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  xlogf(LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
+                        }
                     }
-
 #endif
-
-                    for (; j < W_L; j++) {
-                        luminance[i][j] +=  pond * xlogf(LIM(src[i][j] / out[i][j], ilimD, limD));
+                    if(useHsl) {
+                        for (; j < W_L; j++) {
+                            luminance[i][j] +=  pond * (LIM(src[i][j] / out[i][j], ilimD, limD));
+                        }
+                    } else {
+                        for (; j < W_L; j++) {
+                            luminance[i][j] +=  pond * xlogf(LIM(src[i][j] / out[i][j], ilimD, limD));
+                        }
                     }
                 }
             }

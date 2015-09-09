@@ -40,6 +40,7 @@
 #include <omp.h>
 #endif
 #include "opthelper.h"
+#include "Stopwatch.h"
 
 namespace rtengine
 {
@@ -1839,6 +1840,26 @@ void RawImageSource::dehaz(RAWParams raw, ColorManagementParams cmp, DehazParams
         labTmp[i] = &labTmpBuffer[i * WNew];
     }
 
+    bool useHsl = deh.dehazcolorspace == "HSL";
+    if(useHsl) {
+        for (int i = border; i < H - border; i++ )
+            for (int j = border; j < W - border; j++) {
+                float H,S,L;
+                //rgb=>lab
+                Color::rgb2hsl(red[i][j], green[i][j], blue[i][j],H,S,L);
+                L *= 65535.f;
+                labTmp[i - border][j - border] = L;
+
+                if(dehacontlutili) {
+                    L = cdcurve[L];    //apply curve to equalize histogram
+                }
+
+                labdeha->L[i - border][j - border] = L;
+                labdeha->a[i - border][j - border] = H;
+                labdeha->b[i - border][j - border] = S;
+            }
+    } else {
+
     // Conversion rgb -> lab is hard to vectorize because it uses a lut (that's not the main problem)
     // and it uses a condition inside XYZ2Lab which is almost impossible to vectorize without making it slower...
 #ifdef _OPENMP
@@ -1862,11 +1883,25 @@ void RawImageSource::dehaz(RAWParams raw, ColorManagementParams cmp, DehazParams
             labdeha->a[i - border][j - border] = aa;
             labdeha->b[i - border][j - border] = bb;
         }
+    }
 
     MSR(labdeha->L, labTmp, WNew, HNew, deh, dehatransmissionCurve, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
     delete [] labTmpBuffer;
 
+    if(useHsl) {
+        for (int i = border; i < H - border; i++ ) {
+            int j = border;
+            for (; j < W - border; j++) {
+                float R, G, B;
+                Color::hsl2rgb(labdeha->a[i - border][j - border],labdeha->b[i - border][j - border],labdeha->L[i - border][j - border]/65535.f,R,G,B);
+                red[i][j] = R;
+                green[i][j] = G;
+                blue[i][j] = B;
+            }
+        }
+
+    } else {
 #ifdef __SSE2__
     vfloat wipv[3][3];
 
@@ -1911,6 +1946,7 @@ void RawImageSource::dehaz(RAWParams raw, ColorManagementParams cmp, DehazParams
             green[i][j] = G;
             blue[i][j] = B;
         }
+    }
     }
 
     delete labdeha;

@@ -51,6 +51,7 @@ void ParamsEdited::set (bool v)
     toneCurve.method    = v;
     dehaz.cdcurve    = v;
     dehaz.dehazmet    = v;
+    dehaz.dehazcolorspace    = v;
     dehaz.enabled    = v;
     dehaz.str    = v;
     dehaz.scal    = v;
@@ -520,6 +521,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         dehaz.cdcurve = dehaz.cdcurve && p.dehaz.cdcurve == other.dehaz.cdcurve;
         dehaz.transmissionCurve = dehaz.transmissionCurve && p.dehaz.transmissionCurve == other.dehaz.transmissionCurve;
         dehaz.dehazmet = dehaz.dehazmet && p.dehaz.dehazmet == other.dehaz.dehazmet;
+        dehaz.dehazcolorspace = dehaz.dehazcolorspace && p.dehaz.dehazcolorspace == other.dehaz.dehazcolorspace;
         dehaz.str = dehaz.str && p.dehaz.str == other.dehaz.str;
         dehaz.scal = dehaz.scal && p.dehaz.scal == other.dehaz.scal;
         dehaz.neigh = dehaz.neigh && p.dehaz.neigh == other.dehaz.neigh;
@@ -1035,6 +1037,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (dehaz.dehazmet) {
         toEdit.dehaz.dehazmet    = mods.dehaz.dehazmet;
+    }
+
+    if (dehaz.dehazcolorspace) {
+        toEdit.dehaz.dehazcolorspace    = mods.dehaz.dehazcolorspace;
     }
 
     if (dehaz.str) {

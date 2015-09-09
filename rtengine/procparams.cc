@@ -172,6 +172,7 @@ void DehazParams::setDefaults()
     getDefaulttransmissionCurve(transmissionCurve);
     getDefaultCDCurve(cdcurve);
     dehazmet = "uni";
+    dehazcolorspace = "Lab";
     retinex = false;
     medianmap = true;
 
@@ -1491,6 +1492,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
 
     if (!pedited || pedited->dehaz.dehazmet) {
         keyFile.set_string  ("Dehaz", "Dehazmet", dehaz.dehazmet);
+    }
+
+    if (!pedited || pedited->dehaz.dehazcolorspace) {
+        keyFile.set_string  ("Dehaz", "Dehazcolorspace", dehaz.dehazcolorspace);
     }
 
     if (!pedited || pedited->dehaz.cdcurve)  {
@@ -3785,6 +3790,14 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->dehaz.dehazmet = true;
+                }
+            }
+
+            if (keyFile.has_key ("Dehaz", "Dehazcolorspace"))     {
+                dehaz.dehazcolorspace  = keyFile.get_string  ("Dehaz", "Dehazcolorspace");
+
+                if (pedited) {
+                    pedited->dehaz.dehazcolorspace = true;
                 }
             }
 
@@ -7238,6 +7251,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && dehaz.limd == other.dehaz.limd
         && dehaz.offs == other.dehaz.offs
         && dehaz.dehazmet == other.dehaz.dehazmet
+        && dehaz.dehazcolorspace == other.dehaz.dehazcolorspace
         && dehaz.vart == other.dehaz.vart
         && dehaz.medianmap == other.dehaz.medianmap
         && dehaz.enabled == other.dehaz.enabled

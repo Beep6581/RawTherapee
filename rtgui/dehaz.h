@@ -31,6 +31,7 @@ protected:
     Gtk::Label* labmdh;
     Gtk::HBox* dhbox;
     MyComboBoxText*   dehazmet;
+    MyComboBoxText*   dehazcolorspace;
     Gtk::CheckButton* retinex;
     Gtk::Frame* dehazFrame;
     Gtk::CheckButton* medianmap;
@@ -49,6 +50,7 @@ protected:
     DiagonalCurveEditor* cdshape;
     CurveEditorGroup* transmissionCurveEditorG;
     sigc::connection dehazmetConn;
+    sigc::connection dehazColorSpaceConn;
     FlatCurveEditor* transmissionShape;
     bool lastretinex, lastmedianmap;
     sigc::connection retinexConn, medianmapConn;
@@ -75,6 +77,7 @@ public:
     void enabledChanged        ();
     void curveChanged          (CurveEditor* ce);
     void dehazmetChanged();
+    void dehazColorSpaceChanged();
     void retinexUpdateUI();
 
 };

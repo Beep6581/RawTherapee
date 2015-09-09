@@ -65,6 +65,7 @@ public:
     bool gain;
     bool offs;
     bool dehazmet;
+    bool dehazcolorspace;
     bool vart;
     bool limd;
     bool method;

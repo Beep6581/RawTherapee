@@ -44,7 +44,18 @@ Dehaz::Dehaz () : FoldableToolPanel(this, "dehaz", M("TP_DEHAZ_LABEL"), false, t
     dehazmet->set_active(0);
     dehazmetConn = dehazmet->signal_changed().connect ( sigc::mem_fun(*this, &Dehaz::dehazmetChanged) );
     dehazmet->set_tooltip_markup (M("TP_DEHAZ_MET_TOOLTIP"));
+
+    dehazcolorspace = Gtk::manage (new MyComboBoxText ());
+    dehazcolorspace->append_text (M("TP_DEHAZ_LABSAPCE"));
+    dehazcolorspace->append_text (M("TP_DEHAZ_HSLSPACE"));
+    dehazcolorspace->set_active(0);
+    dehazmetConn = dehazcolorspace->signal_changed().connect ( sigc::mem_fun(*this, &Dehaz::dehazColorSpaceChanged) );
+    dehazcolorspace->set_tooltip_markup (M("TP_DEHAZ_COLORSPACE_TOOLTIP"));
+    
+    
+    
     dhbox->pack_start(*dehazmet);
+    dhbox->pack_start(*dehazcolorspace);
     dehazVBox->pack_start(*dhbox);
     std::vector<double> defaultCurve;
 
@@ -266,6 +277,10 @@ void Dehaz::read (const ProcParams* pp, const ParamsEdited* pedited)
             dehazmet->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
+        if (!pedited->dehaz.dehazcolorspace) {
+            dehazcolorspace->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+
         cdshape->setUnChanged  (!pedited->dehaz.cdcurve);
         transmissionShape->setUnChanged (!pedited->dehaz.transmissionCurve);
 
@@ -301,6 +316,14 @@ void Dehaz::read (const ProcParams* pp, const ParamsEdited* pedited)
     }
 
     dehazmetChanged ();
+
+    if (pp->dehaz.dehazcolorspace == "Lab") {
+        dehazcolorspace->set_active (0);
+    } else if (pp->dehaz.dehazcolorspace == "HSL") {
+        dehazcolorspace->set_active (1);
+    }
+    dehazColorSpaceChanged();
+
     retinexConn.block(false);
     retinexChanged ();
     retinexConn.block(false);
@@ -311,6 +334,7 @@ void Dehaz::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     cdshape->setCurve  (pp->dehaz.cdcurve);
     dehazmetConn.block(false);
+    dehazColorSpaceConn.block(false);
     transmissionShape->setCurve (pp->dehaz.transmissionCurve);
 
 
@@ -367,6 +391,7 @@ void Dehaz::write (ProcParams* pp, ParamsEdited* pedited)
 
     if (pedited) {
         pedited->dehaz.dehazmet    = dehazmet->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->dehaz.dehazcolorspace    = dehazcolorspace->get_active_text() != M("GENERAL_UNCHANGED");
 
         //%%%%%%%%%%%%%%%%%%%%%%
         pedited->dehaz.str   = str->getEditedState ();
@@ -391,12 +416,25 @@ void Dehaz::write (ProcParams* pp, ParamsEdited* pedited)
     } else if (dehazmet->get_active_row_number() == 2) {
         pp->dehaz.dehazmet = "high";
     }
+
+    if (dehazcolorspace->get_active_row_number() == 0) {
+        pp->dehaz.dehazcolorspace = "Lab";
+    } else if (dehazcolorspace->get_active_row_number() == 1) {
+        pp->dehaz.dehazcolorspace = "HSL";
+    }
 }
 
 void Dehaz::dehazmetChanged()
 {
     if (listener) {
         listener->panelChanged (Evdehazmet, dehazmet->get_active_text ());
+    }
+}
+
+void Dehaz::dehazColorSpaceChanged()
+{
+    if (listener) {
+        listener->panelChanged (EvdehazColorSpace, dehazcolorspace->get_active_text ());
     }
 }
 

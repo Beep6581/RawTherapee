@@ -277,6 +277,7 @@ public:
     int     gain;
     int     offs;
     Glib::ustring dehazmet;
+    Glib::ustring dehazcolorspace;
     int     vart;
     int     limd;
     bool    medianmap;
