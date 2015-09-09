@@ -20,6 +20,7 @@ class Dehaz : public ToolParamBlock, public FoldableToolPanel,  public rtengine:
 
 protected:
     CurveEditorGroup* curveEditorGD;
+    CurveEditorGroup* curveEditorGDH;
     Adjuster* str;
     Adjuster* scal;
     Adjuster* neigh;
@@ -27,6 +28,7 @@ protected:
     Adjuster* offs;
     Adjuster* vart;
     Adjuster* limd;
+    MyExpander* expretinex;
 
     Gtk::Label* labmdh;
     Gtk::HBox* dhbox;
@@ -48,6 +50,7 @@ protected:
     Gtk::Label* transLabels;
 
     DiagonalCurveEditor* cdshape;
+    DiagonalCurveEditor* cdshapeH;
     CurveEditorGroup* transmissionCurveEditorG;
     sigc::connection dehazmetConn;
     sigc::connection dehazColorSpaceConn;
@@ -65,7 +68,6 @@ public:
     void setDefaults           (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
     void trimValues            (rtengine::procparams::ProcParams* pp);
     void adjusterChanged       (Adjuster* a, double newval);
-//    void setAdjusterBehavior   (bool splitAdd, bool satThresholdAdd, bool satOpacityAdd, bool strprotectAdd, bool balanceAdd);
     void autoOpenCurve         ();
     void retinexChanged        ();
     void medianmapChanged        ();
@@ -79,6 +81,13 @@ public:
     void dehazmetChanged();
     void dehazColorSpaceChanged();
     void retinexUpdateUI();
+    void ColorSpaceUpdateUI();
+    void writeOptions (std::vector<int> &tpOpen);
+    void updateToolState (std::vector<int> &tpOpen);
+    void setAdjusterBehavior (bool strAdd, bool neighAdd, bool scalAdd, bool limdAdd, bool gainAdd, bool offsAdd, bool vartAdd);
+ 
+private:
+    void foldAllButMe (GdkEventButton* event, MyExpander *expander);
 
 };
 

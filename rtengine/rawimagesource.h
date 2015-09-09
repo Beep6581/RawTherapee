@@ -152,7 +152,7 @@ public:
     void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse);
     void        demosaic    (const RAWParams &raw);
 //    void        dehaz       (RAWParams raw, ColorManagementParams cmp, DehazParams  lcur, LUTf & cdcurve, bool dehacontlutili);
-    void        dehaz       (RAWParams raw, ColorManagementParams cmp, DehazParams  deh, LUTf & cdcurve, const DehaztransmissionCurve & dehatransmissionCurve, bool dehacontlutili, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
+    void        dehaz       (RAWParams raw, ColorManagementParams cmp, DehazParams  deh, LUTf & cdcurve, LUTf & cdHcurve, const DehaztransmissionCurve & dehatransmissionCurve, bool dehacontlutili, bool dehaHcontlutili, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
     void        flushRawData      ();
     void        flushRGB          ();
     void        HLRecovery_Global (ToneCurveParams hrp);

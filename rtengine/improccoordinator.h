@@ -95,6 +95,7 @@ protected:
     LUTf lhskcurve;
     LUTf clcurve;
     LUTf cdcurve;
+    LUTf cdHcurve;
     LUTf wavclCurve;
     LUTf clToningcurve;
     LUTf cl2Toningcurve;

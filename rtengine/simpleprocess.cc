@@ -118,14 +118,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     if(params.dehaz.enabled) { //enabled Dehaze
         LUTf cdcurve (65536, 0);
+        LUTf cdHcurve (65536, 0);
         DehaztransmissionCurve dehatransmissionCurve;
 
         bool dehacontlutili = false;
+        bool dehaHcontlutili = false;
         CurveFactory::curveDehaContL (dehacontlutili,  params.dehaz.cdcurve, cdcurve, 1);
+        CurveFactory::curveDehaHContL (dehaHcontlutili,  params.dehaz.cdHcurve, cdHcurve, 1);
         DehazParams DehaParams = params.dehaz;
         DehaParams.getCurves(dehatransmissionCurve);
         float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-        imgsrc->dehaz( params.raw, params.icm, params.dehaz, cdcurve,  dehatransmissionCurve, dehacontlutili, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+        imgsrc->dehaz( params.raw, params.icm, params.dehaz, cdcurve, cdHcurve, dehatransmissionCurve, dehacontlutili, dehaHcontlutili, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
     }
 
     if (pl) {

@@ -270,6 +270,7 @@ class DehazParams
 public:
     bool enabled;
     std::vector<double>   cdcurve;
+    std::vector<double>   cdHcurve;
     std::vector<double> transmissionCurve;
     int     str;
     int     scal;
@@ -288,6 +289,7 @@ public:
 
     static void getDefaulttransmissionCurve(std::vector<double> &curve);
     static void getDefaultCDCurve(std::vector<double> &curve);
+    static void getDefaultCDHCurve(std::vector<double> &curve);
 
 };
 

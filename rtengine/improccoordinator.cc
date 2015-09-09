@@ -47,6 +47,7 @@ ImProcCoordinator::ImProcCoordinator ()
       lhskcurve(65536, 0),
       clcurve(65536, 0),
       cdcurve(65536, 0),
+      cdHcurve(65536, 0),
       wavclCurve(65536, 0),
       clToningcurve(65536, 0),
       cl2Toningcurve(65536, 0),
@@ -237,11 +238,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         if (params.dehaz.enabled) {
             bool dehacontlutili = false;
+            bool dehaHcontlutili = false;
             CurveFactory::curveDehaContL (dehacontlutili,  params.dehaz.cdcurve, cdcurve, 1);
+            CurveFactory::curveDehaHContL (dehaHcontlutili,  params.dehaz.cdHcurve, cdHcurve, 1);
             DehazParams DehaParams = params.dehaz;
             DehaParams.getCurves(dehatransmissionCurve);
             float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-            imgsrc->dehaz( params.raw, params.icm, params.dehaz, cdcurve, dehatransmissionCurve, dehacontlutili, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);//enabled Dehaze
+            imgsrc->dehaz( params.raw, params.icm, params.dehaz, cdcurve, cdHcurve, dehatransmissionCurve, dehacontlutili, dehaHcontlutili, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);//enabled Dehaze
 
             if(dehaListener) {
                 dehaListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);

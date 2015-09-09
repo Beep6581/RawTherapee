@@ -441,7 +441,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DEMOSAIC,   // EvDehazretinex
     DEMOSAIC,   // EvDehazmedianmap
     DEMOSAIC,   // EvLlimd
-    DEMOSAIC    // Evdehazcolorspace
+    DEMOSAIC,    // Evdehazcolorspace
+    DEMOSAIC    // EvLCDHCurve
 
 
 };

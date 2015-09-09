@@ -107,8 +107,15 @@
 #define ADDSET_WA_EDGEDETECTTHR2        99
 #define ADDSET_WA_TMRS                  100
 #define ADDSET_WA_GAMMA                 101
+#define ADDSET_DH_STR                   102
+#define ADDSET_DH_SCAL                  103
+#define ADDSET_DH_NEIGH                 104
+#define ADDSET_DH_LIMD                  105
+#define ADDSET_DH_GAIN                  106
+#define ADDSET_DH_OFFS                  107
+#define ADDSET_DH_VART                  108
 
 // When adding items, make sure to update ADDSET_PARAM_NUM
-#define ADDSET_PARAM_NUM                102 // THIS IS USED AS A DELIMITER!!
+#define ADDSET_PARAM_NUM                109 // THIS IS USED AS A DELIMITER!!
 
 #endif

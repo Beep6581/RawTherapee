@@ -70,7 +70,7 @@ public:
     virtual void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse) {};
     virtual void        demosaic    (const RAWParams &raw) {};
 //    virtual void   //     dehaz       (RAWParams raw, ColorManagementParams cmp, DehazParams lcur, LUTf & cdcurve, bool dehacontlutili) {};
-    virtual void        dehaz       (RAWParams raw, ColorManagementParams cmp, DehazParams deh, LUTf & cdcurve, const DehaztransmissionCurve & dehatransmissionCurve, bool dehacontlutili, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax) {};
+    virtual void        dehaz       (RAWParams raw, ColorManagementParams cmp, DehazParams deh, LUTf & cdcurve, LUTf & cdHcurve, const DehaztransmissionCurve & dehatransmissionCurve, bool dehacontlutili, bool dehaHcontlutili, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax) {};
     virtual void        flushRawData       () {};
     virtual void        flushRGB           () {};
     virtual void        HLRecovery_Global  (ToneCurveParams hrp) {};

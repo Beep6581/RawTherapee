@@ -71,6 +71,7 @@ public:
     bool method;
     bool transmissionCurve;
     bool cdcurve;
+    bool cdHcurve;
     bool retinex;
     bool medianmap;
 

@@ -159,10 +159,27 @@ void DehazParams::getDefaultCDCurve(std::vector<double> &curve)
     }
 }
 
+void DehazParams::getDefaultCDHCurve(std::vector<double> &curve)
+{
+    double v[6] = { 0.00, 0.00,
+                     0.5, 0.5,
+                     1.0, 1.0,
+                   };
+
+    curve.resize(7);
+    curve.at(0) = double(DCT_NURBS);
+
+    for (size_t i = 1; i < curve.size(); ++i) {
+        curve.at(i) = v[i - 1];
+    }
+}
+
+
+
 void DehazParams::setDefaults()
 {
     enabled = false;
-    str      = 60;
+    str      = 30;
     scal        = 3;
     neigh      = 80;
     gain        = 100;
@@ -171,6 +188,7 @@ void DehazParams::setDefaults()
     limd = 8;
     getDefaulttransmissionCurve(transmissionCurve);
     getDefaultCDCurve(cdcurve);
+    getDefaultCDHCurve(cdHcurve);
     dehazmet = "uni";
     dehazcolorspace = "Lab";
     retinex = false;
@@ -1501,6 +1519,11 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->dehaz.cdcurve)  {
         Glib::ArrayHandle<double> cdcurve = dehaz.cdcurve;
         keyFile.set_double_list("Dehaz", "CDCurve", cdcurve);
+    }
+    
+    if (!pedited || pedited->dehaz.cdHcurve)  {
+        Glib::ArrayHandle<double> cdHcurve = dehaz.cdHcurve;
+        keyFile.set_double_list("Dehaz", "CDHCurve", cdHcurve);
     }
 
     if (!pedited || pedited->dehaz.transmissionCurve)  {
@@ -3870,6 +3893,14 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->dehaz.cdcurve = true;
+                }
+            }
+            
+            if (keyFile.has_key ("Dehaz", "CDHCurve"))         {
+                dehaz.cdHcurve            = keyFile.get_double_list ("Dehaz", "CDHCurve");
+
+                if (pedited) {
+                    pedited->dehaz.cdHcurve = true;
                 }
             }
 
@@ -7243,6 +7274,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && toneCurve.hrenabled == other.toneCurve.hrenabled
         && toneCurve.method == other.toneCurve.method
         && dehaz.cdcurve == other.dehaz.cdcurve
+        && dehaz.cdHcurve == other.dehaz.cdHcurve
         && dehaz.transmissionCurve == other.dehaz.transmissionCurve
         && dehaz.str == other.dehaz.str
         && dehaz.scal == other.dehaz.scal

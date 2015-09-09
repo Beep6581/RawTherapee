@@ -1801,7 +1801,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
     }
 }
 
-void RawImageSource::dehaz(RAWParams raw, ColorManagementParams cmp, DehazParams  deh, LUTf & cdcurve, const DehaztransmissionCurve & dehatransmissionCurve, bool dehacontlutili, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
+void RawImageSource::dehaz(RAWParams raw, ColorManagementParams cmp, DehazParams  deh, LUTf & cdcurve, LUTf & cdHcurve, const DehaztransmissionCurve & dehatransmissionCurve, bool dehacontlutili, bool dehaHcontlutili, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
 
     MyTime t4, t5;
@@ -1850,8 +1850,8 @@ void RawImageSource::dehaz(RAWParams raw, ColorManagementParams cmp, DehazParams
                 L *= 65535.f;
                 labTmp[i - border][j - border] = L;
 
-                if(dehacontlutili) {
-                    L = cdcurve[L];    //apply curve to equalize histogram
+                if(dehaHcontlutili) {
+                    L = cdHcurve[L];    //apply curve to equalize histogram
                 }
 
                 labdeha->L[i - border][j - border] = L;

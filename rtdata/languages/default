@@ -643,12 +643,14 @@ HISTORY_MSG_410;Dehaze offset
 HISTORY_MSG_411;Dehaze strength
 HISTORY_MSG_412;Dehaze scales
 HISTORY_MSG_413;Dehaze variance
-HISTORY_MSG_414;Dehaze histogram
+HISTORY_MSG_414;Dehaze histogram Lab
 HISTORY_MSG_415;Dehaze transmission
 HISTORY_MSG_416;Dehaze enabled
 HISTORY_MSG_417;Dehaze Retinex complete
 HISTORY_MSG_418;Dehaze transmission median
 HISTORY_MSG_419;Dehaze threshold
+HISTORY_MSG_420;Dehaze Space
+HISTORY_MSG_421;Dehaze Histogram HSL
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -800,6 +802,7 @@ PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
 PARTIALPASTE_DISTORTION;Distortion correction
 PARTIALPASTE_EPD;Tone mapping
 PARTIALPASTE_EQUALIZER;Wavelet levels
+PARTIALPASTE_DEHAZ;Dehaze
 PARTIALPASTE_EVERYTHING;Everything
 PARTIALPASTE_EXIFCHANGES;Exif
 PARTIALPASTE_EXPOSURE;Exposure
@@ -1556,6 +1559,8 @@ TP_DEHAZ_MLABEL;Restored haze-free Min=%1 Max=%2
 TP_DEHAZ_MLABEL_TOOLTIP;Should be near of min=0 max=32768\nRestored image with no mixture
 TP_DEHAZ_TLABEL;TR m=%1 M=%2 Me=%3 Si=%4 Tm=%5 TM=%6
 TP_DEHAZ_TLABEL_TOOLTIP;Transmission map result\nm=Mini M=Maxi used by Variance\nMe=Mean Si=Sigma\nTm=Min TM=Max of Transmission map
+TP_DEHAZ_LABSPACE;L*a*b*
+TP_DEHAZ_HSLSPACE;HSL
 TP_DEHAZ_STR;Strength
 TP_DEHAZ_STR_TOOLTIP;Mixture in proportion to the original image and that obtained by Retinex algoritm
 TP_DEHAZ_RETIN;Complete Retinex algoritm
@@ -1573,7 +1578,9 @@ TP_DEHAZ_GAIN;Gain
 TP_DEHAZ_OFFS;Offset
 TP_DEHAZ_GAIN_TOOLTIP;Acts on the transmission in combination with offset, this is very different from others settings\nUsed for black or white pixels, and for better balance the histogram
 TP_DEHAZE_LAB;Dehaze
-TP_DEHAZ_CONTEDIT;Histogram equalizer
+TP_DEHAZ_CONTEDIT;Histogram equalizer L*a*b*
+TP_DEHAZ_CONTEDITH;Histogram equalizer HSL
+TP_DEHAZ_COLORSPACE_TOOLTIP;Choice between L*a*b and HSL\nYou may have to adjust the histogram curve, and adjust other settings differently.\n Prefer restaured Haze-free Min#0 Max#32768
 TP_DEHAZ_CURVEEDITOR_CD;L=f(L)
 TP_DEHAZ_CURVEEDITOR_CD_TOOLTIP;Correct Raw data, to reduce halos and artifacts
 TP_DEHAZ_TRANSMISSION;Transmission map

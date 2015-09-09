@@ -50,6 +50,7 @@ void ParamsEdited::set (bool v)
     toneCurve.hrenabled   = v;
     toneCurve.method    = v;
     dehaz.cdcurve    = v;
+    dehaz.cdHcurve    = v;
     dehaz.dehazmet    = v;
     dehaz.dehazcolorspace    = v;
     dehaz.enabled    = v;
@@ -519,6 +520,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         toneCurve.hrenabled = toneCurve.hrenabled && p.toneCurve.hrenabled == other.toneCurve.hrenabled;
         toneCurve.method = toneCurve.method && p.toneCurve.method == other.toneCurve.method;
         dehaz.cdcurve = dehaz.cdcurve && p.dehaz.cdcurve == other.dehaz.cdcurve;
+        dehaz.cdHcurve = dehaz.cdHcurve && p.dehaz.cdHcurve == other.dehaz.cdHcurve;
         dehaz.transmissionCurve = dehaz.transmissionCurve && p.dehaz.transmissionCurve == other.dehaz.transmissionCurve;
         dehaz.dehazmet = dehaz.dehazmet && p.dehaz.dehazmet == other.dehaz.dehazmet;
         dehaz.dehazcolorspace = dehaz.dehazcolorspace && p.dehaz.dehazcolorspace == other.dehaz.dehazcolorspace;
@@ -1030,6 +1032,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (dehaz.cdcurve) {
         toEdit.dehaz.cdcurve    = mods.dehaz.cdcurve;
     }
+    
+    if (dehaz.cdHcurve) {
+        toEdit.dehaz.cdHcurve    = mods.dehaz.cdHcurve;
+    }
 
     if (dehaz.transmissionCurve) {
         toEdit.dehaz.transmissionCurve    = mods.dehaz.transmissionCurve;
@@ -1044,11 +1050,11 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     }
 
     if (dehaz.str) {
-        toEdit.dehaz.str   = mods.dehaz.str;
+        toEdit.dehaz.str   = dontforceSet && options.baBehav[ADDSET_DH_STR] ? toEdit.dehaz.str + mods.dehaz.str : mods.dehaz.str;
     }
 
     if (dehaz.scal) {
-        toEdit.dehaz.scal   = mods.dehaz.scal;
+        toEdit.dehaz.scal   = dontforceSet && options.baBehav[ADDSET_DH_SCAL] ? toEdit.dehaz.scal + mods.dehaz.scal : mods.dehaz.scal;
     }
 
     if (dehaz.retinex) {
@@ -1060,23 +1066,23 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     }
 
     if (dehaz.neigh) {
-        toEdit.dehaz.neigh   = mods.dehaz.neigh;
+        toEdit.dehaz.neigh   = dontforceSet && options.baBehav[ADDSET_DH_NEIGH] ? toEdit.dehaz.neigh + mods.dehaz.neigh : mods.dehaz.neigh;
     }
 
     if (dehaz.limd) {
-        toEdit.dehaz.limd   = mods.dehaz.limd;
+        toEdit.dehaz.limd   = dontforceSet && options.baBehav[ADDSET_DH_LIMD] ? toEdit.dehaz.limd + mods.dehaz.limd : mods.dehaz.limd;
     }
 
     if (dehaz.gain) {
-        toEdit.dehaz.gain   = mods.dehaz.gain;
-    }
+        toEdit.dehaz.gain   = dontforceSet && options.baBehav[ADDSET_DH_GAIN] ? toEdit.dehaz.gain + mods.dehaz.gain : mods.dehaz.gain;
+   }
 
     if (dehaz.offs) {
-        toEdit.dehaz.offs   = mods.dehaz.offs;
+        toEdit.dehaz.offs   = dontforceSet && options.baBehav[ADDSET_DH_OFFS] ? toEdit.dehaz.offs + mods.dehaz.offs : mods.dehaz.offs;
     }
 
     if (dehaz.vart) {
-        toEdit.dehaz.vart   = mods.dehaz.vart;
+        toEdit.dehaz.vart   = dontforceSet && options.baBehav[ADDSET_DH_VART] ? toEdit.dehaz.vart + mods.dehaz.vart : mods.dehaz.vart;
     }
 
     if (labCurve.lcurve) {

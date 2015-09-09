@@ -46,7 +46,7 @@ Dehaz::Dehaz () : FoldableToolPanel(this, "dehaz", M("TP_DEHAZ_LABEL"), false, t
     dehazmet->set_tooltip_markup (M("TP_DEHAZ_MET_TOOLTIP"));
 
     dehazcolorspace = Gtk::manage (new MyComboBoxText ());
-    dehazcolorspace->append_text (M("TP_DEHAZ_LABSAPCE"));
+    dehazcolorspace->append_text (M("TP_DEHAZ_LABSPACE"));
     dehazcolorspace->append_text (M("TP_DEHAZ_HSLSPACE"));
     dehazcolorspace->set_active(0);
     dehazmetConn = dehazcolorspace->signal_changed().connect ( sigc::mem_fun(*this, &Dehaz::dehazColorSpaceChanged) );
@@ -74,6 +74,22 @@ Dehaz::Dehaz () : FoldableToolPanel(this, "dehaz", M("TP_DEHAZ_LABEL"), false, t
 
     curveEditorGD->curveListComplete();
 
+    curveEditorGDH = new CurveEditorGroup (options.lastDehazDir, M("TP_DEHAZ_CONTEDITH"));
+    curveEditorGDH->setCurveListener (this);
+    rtengine::DehazParams::getDefaultCDHCurve(defaultCurve);
+    cdshapeH = static_cast<DiagonalCurveEditor*>(curveEditorGDH->addCurve(CT_Diagonal, M("TP_DEHAZ_CURVEEDITOR_CD")));
+    cdshapeH->setResetCurve(DiagonalCurveType(defaultCurve.at(0)), defaultCurve);
+    cdshapeH->setTooltip(M("TP_DEHAZ_CURVEEDITOR_CD_TOOLTIP"));
+    std::vector<GradientMilestone> milestones22H;
+
+    milestones22H.push_back( GradientMilestone(0., 0., 0., 0.) );
+    milestones22H.push_back( GradientMilestone(1., 1., 1., 1.) );
+    cdshapeH->setBottomBarBgGradient(milestones22H);
+    cdshapeH->setLeftBarBgGradient(milestones22H);
+
+    curveEditorGDH->curveListComplete();
+    
+    
     transmissionCurveEditorG = new CurveEditorGroup (options.lastDehazDir, M("TP_DEHAZ_TRANSMISSION"));
     transmissionCurveEditorG->setCurveListener (this);
 
@@ -88,10 +104,13 @@ Dehaz::Dehaz () : FoldableToolPanel(this, "dehaz", M("TP_DEHAZ_LABEL"), false, t
 
 
 
-    str = Gtk::manage (new Adjuster (M("TP_DEHAZ_STR"), 0, 100., 1., 60.));
+    str = Gtk::manage (new Adjuster (M("TP_DEHAZ_STR"), 0, 100., 1., 30.));
     str->set_tooltip_markup (M("TP_DEHAZ_STR_TOOLTIP"));
     neigh = Gtk::manage (new Adjuster (M("TP_DEHAZ_NEIGH"), 6, 100., 1., 80.));
 
+    expretinex = new MyExpander (false, M("TP_DEHAZ_RETIN"));
+    expretinex->signal_button_release_event().connect_notify( sigc::bind( sigc::mem_fun(this, &Dehaz::foldAllButMe), expretinex) );
+    
     retinex = Gtk::manage (new Gtk::CheckButton (M("TP_DEHAZ_RETIN")));
     retinex->set_active (true);
     retinexConn  = retinex->signal_toggled().connect( sigc::mem_fun(*this, &Dehaz::retinexChanged) );
@@ -103,8 +122,8 @@ Dehaz::Dehaz () : FoldableToolPanel(this, "dehaz", M("TP_DEHAZ_LABEL"), false, t
     neigh->show ();
     neigh->set_tooltip_markup (M("TP_DEHAZ_NEIGH_TOOLTIP"));
 
-    dehazVBox->pack_start (*retinex);
-    retinex->show ();
+//   dehazVBox->pack_start (*retinex);
+//    retinex->show ();
 
     mMLabels = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
     mMLabels->set_tooltip_markup (M("TP_DEHAZ_MLABEL_TOOLTIP"));
@@ -136,6 +155,9 @@ Dehaz::Dehaz () : FoldableToolPanel(this, "dehaz", M("TP_DEHAZ_LABEL"), false, t
     RetiVBox->pack_start (*curveEditorGD, Gtk::PACK_SHRINK, 4);
     curveEditorGD->show();
 
+    RetiVBox->pack_start (*curveEditorGDH, Gtk::PACK_SHRINK, 4);
+    curveEditorGDH->show();
+    
     RetiVBox->pack_start (*scal);
     scal->show ();
 
@@ -157,6 +179,8 @@ Dehaz::Dehaz () : FoldableToolPanel(this, "dehaz", M("TP_DEHAZ_LABEL"), false, t
     RetiVBox->pack_start (*medianmap);
     medianmap->show ();
 
+    expretinex->add(*RetiVBox);
+    
     str->setAdjusterListener (this);
     scal->setAdjusterListener (this);
     neigh->setAdjusterListener (this);
@@ -165,12 +189,14 @@ Dehaz::Dehaz () : FoldableToolPanel(this, "dehaz", M("TP_DEHAZ_LABEL"), false, t
     vart->setAdjusterListener (this);
     limd->setAdjusterListener (this);
     pack_start (*dehazVBox);
-    dehazFrame->add(*RetiVBox);
-    pack_start (*dehazFrame);
-    dehazFrame->hide();
+//    dehazFrame->add(*RetiVBox);
+//    pack_start (*dehazFrame);
+//    dehazFrame->hide();
+    pack_start (*expretinex);
 
     disableListener();
     retinexChanged();
+    dehazColorSpaceChanged();
     medianmapChanged();
     enableListener();
 
@@ -179,9 +205,34 @@ Dehaz::Dehaz () : FoldableToolPanel(this, "dehaz", M("TP_DEHAZ_LABEL"), false, t
 Dehaz::~Dehaz()
 {
     delete curveEditorGD;
+    delete curveEditorGDH;
     delete transmissionCurveEditorG;
 
 }
+
+void Dehaz::foldAllButMe (GdkEventButton* event, MyExpander *expander)
+{
+    if (event->button == 3) {
+        expretinex->set_expanded(expretinex == expander);
+    }
+}
+
+void Dehaz::writeOptions(std::vector<int> &tpOpen)
+{
+    tpOpen.push_back (expretinex->get_expanded ());
+}
+
+void Dehaz::updateToolState(std::vector<int> &tpOpen)
+{
+    if(tpOpen.size() == 9) {
+        expretinex->set_expanded(tpOpen.at(0));
+    }
+}
+
+
+
+
+
 int minmaxChangedUI (void* data)
 {
     GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
@@ -282,6 +333,7 @@ void Dehaz::read (const ProcParams* pp, const ParamsEdited* pedited)
         }
 
         cdshape->setUnChanged  (!pedited->dehaz.cdcurve);
+        cdshapeH->setUnChanged  (!pedited->dehaz.cdHcurve);
         transmissionShape->setUnChanged (!pedited->dehaz.transmissionCurve);
 
     }
@@ -322,7 +374,6 @@ void Dehaz::read (const ProcParams* pp, const ParamsEdited* pedited)
     } else if (pp->dehaz.dehazcolorspace == "HSL") {
         dehazcolorspace->set_active (1);
     }
-    dehazColorSpaceChanged();
 
     retinexConn.block(false);
     retinexChanged ();
@@ -333,7 +384,10 @@ void Dehaz::read (const ProcParams* pp, const ParamsEdited* pedited)
     medianmapConn.block(false);
 
     cdshape->setCurve  (pp->dehaz.cdcurve);
+    cdshapeH->setCurve  (pp->dehaz.cdHcurve);
     dehazmetConn.block(false);
+    dehazColorSpaceConn.block(false);    
+    dehazColorSpaceChanged();    
     dehazColorSpaceConn.block(false);
     transmissionShape->setCurve (pp->dehaz.transmissionCurve);
 
@@ -354,6 +408,7 @@ void Dehaz::retinexUpdateUI ()
             transLabels->show();
             transmissionCurveEditorG->show();
             curveEditorGD->show();
+            curveEditorGDH->show();
             dehazFrame->show();
         } else  {
             scal->hide();
@@ -366,6 +421,7 @@ void Dehaz::retinexUpdateUI ()
             medianmap->hide();
             transmissionCurveEditorG->hide();
             curveEditorGD->hide();
+            curveEditorGDH->hide();            
             dehazFrame->hide();
         }
     }
@@ -384,6 +440,7 @@ void Dehaz::write (ProcParams* pp, ParamsEdited* pedited)
     pp->dehaz.vart  = (int)vart->getValue ();
     pp->dehaz.limd  = (int)limd->getValue ();
     pp->dehaz.cdcurve = cdshape->getCurve ();
+    pp->dehaz.cdHcurve = cdshapeH->getCurve ();
     pp->dehaz.transmissionCurve = transmissionShape->getCurve ();
     pp->dehaz.enabled      = getEnabled();
     pp->dehaz.retinex                = retinex->get_active();
@@ -402,6 +459,7 @@ void Dehaz::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->dehaz.vart = vart->getEditedState ();
         pedited->dehaz.limd = limd->getEditedState ();
         pedited->dehaz.cdcurve   = !cdshape->isUnChanged ();
+        pedited->dehaz.cdHcurve   = !cdshapeH->isUnChanged ();
         pedited->dehaz.transmissionCurve  = !transmissionShape->isUnChanged ();
         pedited->dehaz.enabled       = !get_inconsistent();
         pedited->dehaz.retinex       = !retinex->get_inconsistent();
@@ -431,8 +489,25 @@ void Dehaz::dehazmetChanged()
     }
 }
 
+void Dehaz::ColorSpaceUpdateUI ()
+{
+    if (!batchMode) {
+         if(dehazcolorspace->get_active_row_number() == 0) {
+             curveEditorGD->show();
+             curveEditorGDH->hide();
+        } else if(dehazcolorspace->get_active_row_number() == 1) {
+             curveEditorGD->hide();
+             curveEditorGDH->show();  
+        }
+    }
+}
+
+
 void Dehaz::dehazColorSpaceChanged()
 {
+
+    ColorSpaceUpdateUI();
+  
     if (listener) {
         listener->panelChanged (EvdehazColorSpace, dehazcolorspace->get_active_text ());
     }
@@ -529,12 +604,19 @@ void Dehaz::setDefaults (const ProcParams* defParams, const ParamsEdited* pedite
         scal->setDefaultEditedState (Irrelevant);
     }
 }
-/*
-void Dehaz::setAdjusterBehavior (bool splitAdd, bool satThresholdAdd, bool satOpacityAdd, bool strprotectAdd, bool balanceAdd)
-{
 
-}
-*/
+void Dehaz::setAdjusterBehavior (bool strAdd, bool neighAdd, bool scalAdd, bool limdAdd, bool gainAdd, bool offsAdd, bool vartAdd)
+ {
+ 
+    str->setAddMode(strAdd);
+    neigh->setAddMode(neighAdd);
+    scal->setAddMode(scalAdd);
+    limd->setAddMode(limdAdd);
+    gain->setAddMode(gainAdd);
+    offs->setAddMode(offsAdd);
+    vart->setAddMode(vartAdd);
+ }
+
 
 void Dehaz::adjusterChanged (Adjuster* a, double newval)
 {
@@ -556,7 +638,7 @@ void Dehaz::adjusterChanged (Adjuster* a, double newval)
     } else if (a == vart) {
         listener->panelChanged (EvLvart, vart->getTextValue());
     } else if (a == limd) {
-        listener->panelChanged (EvLlimd, vart->getTextValue());
+        listener->panelChanged (EvLlimd, limd->getTextValue());
     }
 
 }
@@ -566,6 +648,7 @@ void Dehaz::adjusterChanged (Adjuster* a, double newval)
 void Dehaz::autoOpenCurve  ()
 {
     cdshape->openIfNonlinear();
+    cdshapeH->openIfNonlinear();
     transmissionShape->openIfNonlinear();
 
 }
@@ -576,6 +659,8 @@ void Dehaz::curveChanged (CurveEditor* ce)
     if (listener && getEnabled()) {
         if (ce == cdshape) {
             listener->panelChanged (EvLCDCurve, M("HISTORY_CUSTOMCURVE"));
+        } else if (ce == cdshapeH) {
+            listener->panelChanged (EvLCDHCurve, M("HISTORY_CUSTOMCURVE"));            
         } else if (ce == transmissionShape) {
             listener->panelChanged (EvDehaztransmission, M("HISTORY_CUSTOMCURVE"));
         }
@@ -620,6 +705,7 @@ void Dehaz::setBatchMode (bool batchMode)
     vart->showEditedCB ();
     limd->showEditedCB ();
     curveEditorGD->setBatchMode (batchMode);
+    curveEditorGDH->setBatchMode (batchMode);
     transmissionCurveEditorG->setBatchMode (batchMode);
 
 
