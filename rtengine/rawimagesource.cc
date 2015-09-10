@@ -40,7 +40,7 @@
 #include <omp.h>
 #endif
 #include "opthelper.h"
-#include "Stopwatch.h"
+#include "StopWatch.h"
 
 namespace rtengine
 {
