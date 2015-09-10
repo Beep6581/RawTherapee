@@ -1560,7 +1560,8 @@ TP_DEHAZ_MLABEL_TOOLTIP;Should be near of min=0 max=32768\nRestored image with n
 TP_DEHAZ_TLABEL;TR m=%1 M=%2 Me=%3 Si=%4 Tm=%5 TM=%6
 TP_DEHAZ_TLABEL_TOOLTIP;Transmission map result\nm=Mini M=Maxi used by Variance\nMe=Mean Si=Sigma\nTm=Min TM=Max of Transmission map
 TP_DEHAZ_LABSPACE;L*a*b*
-TP_DEHAZ_HSLSPACE;HSL
+TP_DEHAZ_HSLSPACE;HSL-Log
+TP_DEHAZ_HSLSPACELIN;HSL-Lin
 TP_DEHAZ_STR;Strength
 TP_DEHAZ_STR_TOOLTIP;Mixture in proportion to the original image and that obtained by Retinex algoritm
 TP_DEHAZ_RETIN;Complete Retinex algoritm

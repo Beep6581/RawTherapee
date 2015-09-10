@@ -48,6 +48,7 @@ Dehaz::Dehaz () : FoldableToolPanel(this, "dehaz", M("TP_DEHAZ_LABEL"), false, t
     dehazcolorspace = Gtk::manage (new MyComboBoxText ());
     dehazcolorspace->append_text (M("TP_DEHAZ_LABSPACE"));
     dehazcolorspace->append_text (M("TP_DEHAZ_HSLSPACE"));
+    dehazcolorspace->append_text (M("TP_DEHAZ_HSLSPACELIN"));
     dehazcolorspace->set_active(0);
     dehazmetConn = dehazcolorspace->signal_changed().connect ( sigc::mem_fun(*this, &Dehaz::dehazColorSpaceChanged) );
     dehazcolorspace->set_tooltip_markup (M("TP_DEHAZ_COLORSPACE_TOOLTIP"));
@@ -373,8 +374,9 @@ void Dehaz::read (const ProcParams* pp, const ParamsEdited* pedited)
         dehazcolorspace->set_active (0);
     } else if (pp->dehaz.dehazcolorspace == "HSL") {
         dehazcolorspace->set_active (1);
+    } else if (pp->dehaz.dehazcolorspace == "HSLLIN") {
+        dehazcolorspace->set_active (2);
     }
-
     retinexConn.block(false);
     retinexChanged ();
     retinexConn.block(false);
@@ -479,6 +481,8 @@ void Dehaz::write (ProcParams* pp, ParamsEdited* pedited)
         pp->dehaz.dehazcolorspace = "Lab";
     } else if (dehazcolorspace->get_active_row_number() == 1) {
         pp->dehaz.dehazcolorspace = "HSL";
+    } else if (dehazcolorspace->get_active_row_number() == 2) {
+        pp->dehaz.dehazcolorspace = "HSLLIN";
     }
 }
 

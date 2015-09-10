@@ -1841,13 +1841,15 @@ void RawImageSource::dehaz(RAWParams raw, ColorManagementParams cmp, DehazParams
     }
 
     bool useHsl = deh.dehazcolorspace == "HSL";
-    if(useHsl) {
+    bool useHslLin = deh.dehazcolorspace == "HSLLIN";
+    if(useHsl || useHslLin) {
         for (int i = border; i < H - border; i++ )
             for (int j = border; j < W - border; j++) {
                 float H,S,L;
                 //rgb=>lab
                 Color::rgb2hsl(red[i][j], green[i][j], blue[i][j],H,S,L);
-                L *= 65535.f;
+            //    L *= 65535.f;
+                L *= 32768.f;
                 labTmp[i - border][j - border] = L;
 
                 if(dehaHcontlutili) {
@@ -1889,12 +1891,13 @@ void RawImageSource::dehaz(RAWParams raw, ColorManagementParams cmp, DehazParams
 
     delete [] labTmpBuffer;
 
-    if(useHsl) {
+    if(useHsl || useHslLin) {
         for (int i = border; i < H - border; i++ ) {
             int j = border;
             for (; j < W - border; j++) {
                 float R, G, B;
-                Color::hsl2rgb(labdeha->a[i - border][j - border],labdeha->b[i - border][j - border],labdeha->L[i - border][j - border]/65535.f,R,G,B);
+           //     Color::hsl2rgb(labdeha->a[i - border][j - border],labdeha->b[i - border][j - border],labdeha->L[i - border][j - border]/65535.f,R,G,B);
+                Color::hsl2rgb(labdeha->a[i - border][j - border],labdeha->b[i - border][j - border],labdeha->L[i - border][j - border]/32768.f,R,G,B);
                 red[i][j] = R;
                 green[i][j] = G;
                 blue[i][j] = B;
