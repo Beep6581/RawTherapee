@@ -167,7 +167,7 @@ void BatchToolPanelCoordinator::initSession ()
             blackwhite->setAdjusterBehavior (false, false);
             colortoning->setAdjusterBehavior (false, false, false, false, false);
             filmSimulation->setAdjusterBehavior(false);
-            dehaz->setAdjusterBehavior (false, false, false, false, false, false, false);
+            retinex->setAdjusterBehavior (false, false, false, false, false, false, false);
 
             shadowshighlights->setAdjusterBehavior (false, false, false);
             dirpyrequalizer->setAdjusterBehavior (false, false, false);
@@ -204,7 +204,7 @@ void BatchToolPanelCoordinator::initSession ()
 //          colortoning->setAdjusterBehavior (options.baBehav[ADDSET_COLORTONING_SPLIT], options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD], options.baBehav[ADDSET_COLORTONING_SATOPACITY], options.baBehav[ADDSET_COLORTONING_STRPROTECT], options.baBehav[ADDSET_COLORTONING_BALANCE]);
             colortoning->setAdjusterBehavior (options.baBehav[ADDSET_COLORTONING_SPLIT], options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD], options.baBehav[ADDSET_COLORTONING_SATOPACITY], options.baBehav[ADDSET_COLORTONING_STRENGTH], options.baBehav[ADDSET_COLORTONING_BALANCE]);
             filmSimulation->setAdjusterBehavior(options.baBehav[ADDSET_FILMSIMULATION_STRENGTH]);
-            dehaz->setAdjusterBehavior (options.baBehav[ADDSET_DH_STR], options.baBehav[ADDSET_DH_SCAL], options.baBehav[ADDSET_DH_NEIGH], options.baBehav[ADDSET_DH_LIMD], options.baBehav[ADDSET_DH_GAIN], options.baBehav[ADDSET_DH_OFFS], options.baBehav[ADDSET_DH_VART]);
+            retinex->setAdjusterBehavior (options.baBehav[ADDSET_DH_STR], options.baBehav[ADDSET_DH_SCAL], options.baBehav[ADDSET_DH_NEIGH], options.baBehav[ADDSET_DH_LIMD], options.baBehav[ADDSET_DH_GAIN], options.baBehav[ADDSET_DH_OFFS], options.baBehav[ADDSET_DH_VART]);
 
             chmixer->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER] );
             blackwhite->setAdjusterBehavior (options.baBehav[ADDSET_BLACKWHITE_HUES], options.baBehav[ADDSET_BLACKWHITE_GAMMA]);
@@ -579,31 +579,31 @@ void BatchToolPanelCoordinator::initSession ()
             }
             
             if (options.baBehav[ADDSET_DH_STR]) {
-                pparams.dehaz.str = 0;
+                pparams.retinex.str = 0;
             }
             
             if (options.baBehav[ADDSET_DH_SCAL]) {
-                pparams.dehaz.scal = 0;
+                pparams.retinex.scal = 0;
             }
             
             if (options.baBehav[ADDSET_DH_NEIGH]) {
-                pparams.dehaz.neigh = 0;
+                pparams.retinex.neigh = 0;
             }
             
             if (options.baBehav[ADDSET_DH_LIMD]) {
-                pparams.dehaz.limd = 0;
+                pparams.retinex.limd = 0;
             }
             
             if (options.baBehav[ADDSET_DH_GAIN]) {
-                pparams.dehaz.gain = 0;
+                pparams.retinex.gain = 0;
             }
             
             if (options.baBehav[ADDSET_DH_OFFS]) {
-                pparams.dehaz.offs = 0;
+                pparams.retinex.offs = 0;
             }
             
             if (options.baBehav[ADDSET_DH_VART]) {
-                pparams.dehaz.vart = 0;
+                pparams.retinex.vart = 0;
             }
 
 

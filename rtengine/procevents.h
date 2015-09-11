@@ -432,7 +432,7 @@ enum ProcEvent {
     EvWavedgeampli = 403,
     EvWavlev3nois = 404,
     EvWavNPmet = 405,
-    Evdehazmet = 406,
+    EvretinexMethod = 406,
     EvLneigh = 407,
     EvLgain = 408,
     EvLoffs = 409,
@@ -440,13 +440,12 @@ enum ProcEvent {
     EvLscal = 411,
     EvLvart = 412,
     EvLCDCurve = 413,
-    EvDehaztransmission = 414,
-    EvDehazEnabled = 415,
-    EvDehazretinex = 416,
-    EvDehazmedianmap = 417,
-    EvLlimd = 418,
-    EvdehazColorSpace = 419,
-    EvLCDHCurve = 420,
+    EvRetinextransmission = 414,
+    EvRetinexEnabled = 415,
+    EvRetinexmedianmap = 416,
+    EvLlimd = 417,
+    EvretinexColorSpace = 406, //change to 418 if we want a separate history entry "Retinex - Color space"
+    EvLCDHCurve = 419,
     NUMOFEVENTS
 };
 }

@@ -1366,14 +1366,14 @@ void ColorAppearance::Set(Curve *pCurve)
 }
 
 //
-DehaztransmissionCurve::DehaztransmissionCurve() {};
+RetinextransmissionCurve::RetinextransmissionCurve() {};
 
-void DehaztransmissionCurve::Reset()
+void RetinextransmissionCurve::Reset()
 {
     luttransmission.reset();
 }
 
-void DehaztransmissionCurve::Set(const Curve &pCurve)
+void RetinextransmissionCurve::Set(const Curve &pCurve)
 {
     if (pCurve.isIdentity()) {
         luttransmission.reset(); // raise this value if the quality suffers from this number of samples
@@ -1387,7 +1387,7 @@ void DehaztransmissionCurve::Set(const Curve &pCurve)
     }
 }
 
-void DehaztransmissionCurve::Set(const std::vector<double> &curvePoints)
+void RetinextransmissionCurve::Set(const std::vector<double> &curvePoints)
 {
     if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);

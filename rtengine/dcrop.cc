@@ -807,7 +807,7 @@ void Crop::update (int todo)
         bool wavcontlutili = parent->wavcontlutili;
 
         LUTu dummy;
-        int modedehaz;
+        int moderetinex;
         //    parent->ipf.MSR(labnCrop, labnCrop->W, labnCrop->H, 1);
         parent->ipf.chromiLuminanceCurve (this, 1, labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy, dummy, dummy);
         parent->ipf.vibrance (labnCrop);

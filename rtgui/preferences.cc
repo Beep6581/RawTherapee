@@ -171,14 +171,14 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M("TP_EXPOSURE_SATURATION"), ADDSET_TC_SATURATION, false);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M("TP_DEHAZ_LABEL"));
-    appendBehavList (mi, M("TP_DEHAZ_STR"), ADDSET_DH_STR, false);
-    appendBehavList (mi, M("TP_DEHAZ_NEIGH"), ADDSET_DH_NEIGH, false);
-    appendBehavList (mi, M("TP_DEHAZ_SCAL"), ADDSET_DH_SCAL, false);
-    appendBehavList (mi, M("TP_DEHAZ_GAIN"), ADDSET_DH_GAIN, false);
-    appendBehavList (mi, M("TP_DEHAZ_OFFS"), ADDSET_DH_OFFS, false);
-    appendBehavList (mi, M("TP_DEHAZ_LIMD"), ADDSET_DH_LIMD, false);
-    appendBehavList (mi, M("TP_DEHAZ_VART"), ADDSET_DH_VART, false);
+    mi->set_value (behavColumns.label, M("TP_RETINEX_LABEL"));
+    appendBehavList (mi, M("TP_RETINEX_STRENGTH"), ADDSET_DH_STR, false);
+    appendBehavList (mi, M("TP_RETINEX_NEIGH"), ADDSET_DH_NEIGH, false);
+    appendBehavList (mi, M("TP_RETINEX_SCAL"), ADDSET_DH_SCAL, false);
+    appendBehavList (mi, M("TP_RETINEX_GAIN"), ADDSET_DH_GAIN, false);
+    appendBehavList (mi, M("TP_RETINEX_OFFS"), ADDSET_DH_OFFS, false);
+    appendBehavList (mi, M("TP_RETINEX_LIMD"), ADDSET_DH_LIMD, false);
+    appendBehavList (mi, M("TP_RETINEX_VART"), ADDSET_DH_VART, false);
     
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_SHADOWSHLIGHTS_LABEL"));

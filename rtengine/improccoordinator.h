@@ -130,7 +130,7 @@ protected:
     WavOpacityCurveBY waOpacityCurveBY;
     WavOpacityCurveW waOpacityCurveW;
     WavOpacityCurveWL waOpacityCurveWL;
-    DehaztransmissionCurve dehatransmissionCurve;
+    RetinextransmissionCurve dehatransmissionCurve;
 
     ColorAppearance customColCurve1;
     ColorAppearance customColCurve2;
@@ -155,7 +155,7 @@ protected:
     AutoColorTonListener* actListener;
     AutoChromaListener* adnListener;
     WaveletListener* awavListener;
-    DehazListener* dehaListener;
+    RetinexListener* dehaListener;
 
     HistogramListener* hListener;
     std::vector<SizeListener*> sizeListeners;
@@ -301,7 +301,7 @@ public:
     {
         adnListener = adn;
     }
-    void setDehazListener  (DehazListener* adh)
+    void setRetinexListener  (RetinexListener* adh)
     {
         dehaListener = adh;
     }

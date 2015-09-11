@@ -116,12 +116,12 @@ void CropParams::mapToResized(int resizedWidth, int resizedHeight, int scale, in
     }
 }
 
-DehazParams::DehazParams ()
+RetinexParams::RetinexParams ()
 {
     setDefaults ();
 }
 
-void DehazParams::getDefaulttransmissionCurve(std::vector<double> &curve)
+void RetinexParams::getDefaulttransmissionCurve(std::vector<double> &curve)
 {
     /*   double v[8] =   {   0.0, 0.50, 0.35, 0.35,
                            1.0, 0.50, 0.35, 0.35,
@@ -141,17 +141,16 @@ void DehazParams::getDefaulttransmissionCurve(std::vector<double> &curve)
     }
 }
 
-void DehazParams::getDefaultCDCurve(std::vector<double> &curve)
+void RetinexParams::getDefaultCDCurve(std::vector<double> &curve)
 {
-    double v[12] = { 0.00, 0.00,
-                     0.185, 0.,
-                     0.235, 0.25,
+    double v[10] = { 0., 0.,
+                     0.25, 0.25,
                      0.5, 0.5,
-                     0.8, 0.8,
-                     1.0, 1.0,
+                     0.75, 0.75,
+                     1., 1.,
                    };
 
-    curve.resize(13);
+    curve.resize(11);
     curve.at(0) = double(DCT_NURBS);
 
     for (size_t i = 1; i < curve.size(); ++i) {
@@ -159,7 +158,7 @@ void DehazParams::getDefaultCDCurve(std::vector<double> &curve)
     }
 }
 
-void DehazParams::getDefaultCDHCurve(std::vector<double> &curve)
+void RetinexParams::getDefaultCDHCurve(std::vector<double> &curve)
 {
     double v[6] = { 0.00, 0.00,
                      0.5, 0.5,
@@ -176,27 +175,26 @@ void DehazParams::getDefaultCDHCurve(std::vector<double> &curve)
 
 
 
-void DehazParams::setDefaults()
+void RetinexParams::setDefaults()
 {
     enabled = false;
-    str      = 30;
+    str      = 20;
     scal        = 3;
     neigh      = 80;
-    gain        = 100;
+    gain        = 50;
     offs    = 0;
     vart    = 125;
     limd = 8;
     getDefaulttransmissionCurve(transmissionCurve);
     getDefaultCDCurve(cdcurve);
     getDefaultCDHCurve(cdHcurve);
-    dehazmet = "uni";
-    dehazcolorspace = "Lab";
-    retinex = false;
+    retinexMethod = "high";
+    retinexcolorspace = "Lab";
     medianmap = true;
 
 }
 
-void DehazParams::getCurves(DehaztransmissionCurve &transmissionCurveLUT) const
+void RetinexParams::getCurves(RetinextransmissionCurve &transmissionCurveLUT) const
 {
     transmissionCurveLUT.Set(this->transmissionCurve);
 }
@@ -1464,71 +1462,67 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         keyFile.set_double_list("Exposure", "Curve2", tcurve);
     }
 
-    //save dehaz
+    //save retinex
 
-    if (!pedited || pedited->dehaz.str) {
-        keyFile.set_integer ("Dehaz", "Str",               dehaz.str);
+    if (!pedited || pedited->retinex.str) {
+        keyFile.set_integer ("Retinex", "Str",               retinex.str);
     }
 
-    if (!pedited || pedited->dehaz.scal) {
-        keyFile.set_integer ("Dehaz", "Scal",               dehaz.scal);
+    if (!pedited || pedited->retinex.scal) {
+        keyFile.set_integer ("Retinex", "Scal",               retinex.scal);
     }
 
-    if (!pedited || pedited->dehaz.enabled) {
-        keyFile.set_boolean ("Dehaz", "Enabled", dehaz.enabled);
+    if (!pedited || pedited->retinex.enabled) {
+        keyFile.set_boolean ("Retinex", "Enabled", retinex.enabled);
     }
 
-    if (!pedited || pedited->dehaz.retinex) {
-        keyFile.set_boolean ("Dehaz", "Retinex", dehaz.retinex);
-    }
-
-    if (!pedited || pedited->dehaz.medianmap) {
-        keyFile.set_boolean ("Dehaz", "Median", dehaz.medianmap);
+    if (!pedited || pedited->retinex.medianmap) {
+        keyFile.set_boolean ("Retinex", "Median", retinex.medianmap);
     }
 
 
 
-    if (!pedited || pedited->dehaz.neigh) {
-        keyFile.set_integer ("Dehaz", "Neigh",               dehaz.neigh);
+    if (!pedited || pedited->retinex.neigh) {
+        keyFile.set_integer ("Retinex", "Neigh",               retinex.neigh);
     }
 
-    if (!pedited || pedited->dehaz.gain) {
-        keyFile.set_integer ("Dehaz", "Gain",               dehaz.gain);
+    if (!pedited || pedited->retinex.gain) {
+        keyFile.set_integer ("Retinex", "Gain",               retinex.gain);
     }
 
-    if (!pedited || pedited->dehaz.offs) {
-        keyFile.set_integer ("Dehaz", "Offs",               dehaz.offs);
+    if (!pedited || pedited->retinex.offs) {
+        keyFile.set_integer ("Retinex", "Offs",               retinex.offs);
     }
 
-    if (!pedited || pedited->dehaz.vart) {
-        keyFile.set_integer ("Dehaz", "Vart",               dehaz.vart);
+    if (!pedited || pedited->retinex.vart) {
+        keyFile.set_integer ("Retinex", "Vart",               retinex.vart);
     }
 
-    if (!pedited || pedited->dehaz.limd) {
-        keyFile.set_integer ("Dehaz", "Limd",               dehaz.limd);
+    if (!pedited || pedited->retinex.limd) {
+        keyFile.set_integer ("Retinex", "Limd",               retinex.limd);
     }
 
-    if (!pedited || pedited->dehaz.dehazmet) {
-        keyFile.set_string  ("Dehaz", "Dehazmet", dehaz.dehazmet);
+    if (!pedited || pedited->retinex.retinexMethod) {
+        keyFile.set_string  ("Retinex", "RetinexMethod", retinex.retinexMethod);
     }
 
-    if (!pedited || pedited->dehaz.dehazcolorspace) {
-        keyFile.set_string  ("Dehaz", "Dehazcolorspace", dehaz.dehazcolorspace);
+    if (!pedited || pedited->retinex.retinexcolorspace) {
+        keyFile.set_string  ("Retinex", "Retinexcolorspace", retinex.retinexcolorspace);
     }
 
-    if (!pedited || pedited->dehaz.cdcurve)  {
-        Glib::ArrayHandle<double> cdcurve = dehaz.cdcurve;
-        keyFile.set_double_list("Dehaz", "CDCurve", cdcurve);
-    }
-    
-    if (!pedited || pedited->dehaz.cdHcurve)  {
-        Glib::ArrayHandle<double> cdHcurve = dehaz.cdHcurve;
-        keyFile.set_double_list("Dehaz", "CDHCurve", cdHcurve);
+    if (!pedited || pedited->retinex.cdcurve)  {
+        Glib::ArrayHandle<double> cdcurve = retinex.cdcurve;
+        keyFile.set_double_list("Retinex", "CDCurve", cdcurve);
     }
 
-    if (!pedited || pedited->dehaz.transmissionCurve)  {
-        Glib::ArrayHandle<double> transmissionCurve = dehaz.transmissionCurve;
-        keyFile.set_double_list("Dehaz", "TransmissionCurve", transmissionCurve);
+    if (!pedited || pedited->retinex.cdHcurve)  {
+        Glib::ArrayHandle<double> cdHcurve = retinex.cdHcurve;
+        keyFile.set_double_list("Retinex", "CDHCurve", cdHcurve);
+    }
+
+    if (!pedited || pedited->retinex.transmissionCurve)  {
+        Glib::ArrayHandle<double> transmissionCurve = retinex.transmissionCurve;
+        keyFile.set_double_list("Retinex", "TransmissionCurve", transmissionCurve);
     }
 
     // save channel mixer
@@ -3789,126 +3783,118 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
             }
         }
 
-        //load dehaz
-        if (keyFile.has_group ("Dehaz")) {
+        //load retinex
+        if (keyFile.has_group ("Retinex")) {
 
-            if (keyFile.has_key ("Dehaz", "Retinex"))       {
-                dehaz.retinex = keyFile.get_boolean ("Dehaz", "Retinex");
+            if (keyFile.has_key ("Retinex", "Median"))       {
+                retinex.medianmap = keyFile.get_boolean ("Retinex", "Median");
 
                 if (pedited) {
-                    pedited->dehaz.retinex = true;
+                    pedited->retinex.medianmap = true;
                 }
             }
 
-            if (keyFile.has_key ("Dehaz", "Median"))       {
-                dehaz.medianmap = keyFile.get_boolean ("Dehaz", "Median");
+            if (keyFile.has_key ("Retinex", "Retinexmet"))     {
+                retinex.retinexMethod  = keyFile.get_string  ("Retinex", "Retinexmet");
 
                 if (pedited) {
-                    pedited->dehaz.medianmap = true;
+                    pedited->retinex.retinexMethod = true;
                 }
             }
 
-            if (keyFile.has_key ("Dehaz", "Dehazmet"))     {
-                dehaz.dehazmet  = keyFile.get_string  ("Dehaz", "Dehazmet");
+            if (keyFile.has_key ("Retinex", "Retinexcolorspace"))     {
+                retinex.retinexcolorspace  = keyFile.get_string  ("Retinex", "Retinexcolorspace");
 
                 if (pedited) {
-                    pedited->dehaz.dehazmet = true;
+                    pedited->retinex.retinexcolorspace = true;
                 }
             }
 
-            if (keyFile.has_key ("Dehaz", "Dehazcolorspace"))     {
-                dehaz.dehazcolorspace  = keyFile.get_string  ("Dehaz", "Dehazcolorspace");
+            if (keyFile.has_key ("Retinex", "Enabled"))       {
+                retinex.enabled = keyFile.get_boolean ("Retinex", "Enabled");
 
                 if (pedited) {
-                    pedited->dehaz.dehazcolorspace = true;
+                    pedited->retinex.enabled = true;
                 }
             }
 
-            if (keyFile.has_key ("Dehaz", "Enabled"))       {
-                dehaz.enabled = keyFile.get_boolean ("Dehaz", "Enabled");
+            if (keyFile.has_key ("Retinex", "Neigh"))     {
+                retinex.neigh   = keyFile.get_integer ("Retinex", "Neigh");
 
                 if (pedited) {
-                    pedited->dehaz.enabled = true;
+                    pedited->retinex.neigh = true;
                 }
             }
 
-            if (keyFile.has_key ("Dehaz", "Neigh"))     {
-                dehaz.neigh   = keyFile.get_integer ("Dehaz", "Neigh");
+            if (keyFile.has_key ("Retinex", "Str"))     {
+                retinex.str   = keyFile.get_integer ("Retinex", "Str");
 
                 if (pedited) {
-                    pedited->dehaz.neigh = true;
+                    pedited->retinex.str = true;
                 }
             }
 
-            if (keyFile.has_key ("Dehaz", "Str"))     {
-                dehaz.str   = keyFile.get_integer ("Dehaz", "Str");
+            if (keyFile.has_key ("Retinex", "Scal"))     {
+                retinex.scal   = keyFile.get_integer ("Retinex", "Scal");
 
                 if (pedited) {
-                    pedited->dehaz.str = true;
+                    pedited->retinex.scal = true;
                 }
             }
 
-            if (keyFile.has_key ("Dehaz", "Scal"))     {
-                dehaz.scal   = keyFile.get_integer ("Dehaz", "Scal");
+            if (keyFile.has_key ("Retinex", "Gain"))     {
+                retinex.gain   = keyFile.get_integer ("Retinex", "Gain");
 
                 if (pedited) {
-                    pedited->dehaz.scal = true;
+                    pedited->retinex.gain = true;
                 }
             }
 
-            if (keyFile.has_key ("Dehaz", "Gain"))     {
-                dehaz.gain   = keyFile.get_integer ("Dehaz", "Gain");
+            if (keyFile.has_key ("Retinex", "Offs"))     {
+                retinex.offs   = keyFile.get_integer ("Retinex", "Offs");
 
                 if (pedited) {
-                    pedited->dehaz.gain = true;
+                    pedited->retinex.offs = true;
                 }
             }
 
-            if (keyFile.has_key ("Dehaz", "Offs"))     {
-                dehaz.offs   = keyFile.get_integer ("Dehaz", "Offs");
+            if (keyFile.has_key ("Retinex", "Vart"))     {
+                retinex.vart   = keyFile.get_integer ("Retinex", "Vart");
 
                 if (pedited) {
-                    pedited->dehaz.offs = true;
+                    pedited->retinex.vart = true;
                 }
             }
 
-            if (keyFile.has_key ("Dehaz", "Vart"))     {
-                dehaz.vart   = keyFile.get_integer ("Dehaz", "Vart");
+            if (keyFile.has_key ("Retinex", "Limd"))     {
+                retinex.limd   = keyFile.get_integer ("Retinex", "Limd");
 
                 if (pedited) {
-                    pedited->dehaz.vart = true;
+                    pedited->retinex.limd = true;
                 }
             }
 
-            if (keyFile.has_key ("Dehaz", "Limd"))     {
-                dehaz.limd   = keyFile.get_integer ("Dehaz", "Limd");
+            if (keyFile.has_key ("Retinex", "CDCurve"))         {
+                retinex.cdcurve            = keyFile.get_double_list ("Retinex", "CDCurve");
 
                 if (pedited) {
-                    pedited->dehaz.limd = true;
+                    pedited->retinex.cdcurve = true;
                 }
             }
 
-            if (keyFile.has_key ("Dehaz", "CDCurve"))         {
-                dehaz.cdcurve            = keyFile.get_double_list ("Dehaz", "CDCurve");
+            if (keyFile.has_key ("Retinex", "CDHCurve"))         {
+                retinex.cdHcurve            = keyFile.get_double_list ("Retinex", "CDHCurve");
 
                 if (pedited) {
-                    pedited->dehaz.cdcurve = true;
-                }
-            }
-            
-            if (keyFile.has_key ("Dehaz", "CDHCurve"))         {
-                dehaz.cdHcurve            = keyFile.get_double_list ("Dehaz", "CDHCurve");
-
-                if (pedited) {
-                    pedited->dehaz.cdHcurve = true;
+                    pedited->retinex.cdHcurve = true;
                 }
             }
 
-            if (keyFile.has_key ("Dehaz", "TransmissionCurve"))         {
-                dehaz.transmissionCurve            = keyFile.get_double_list ("Dehaz", "TransmissionCurve");
+            if (keyFile.has_key ("Retinex", "TransmissionCurve"))         {
+                retinex.transmissionCurve            = keyFile.get_double_list ("Retinex", "TransmissionCurve");
 
                 if (pedited) {
-                    pedited->dehaz.transmissionCurve = true;
+                    pedited->retinex.transmissionCurve = true;
                 }
             }
         }
@@ -7273,21 +7259,20 @@ bool ProcParams::operator== (const ProcParams& other)
         && toneCurve.curveMode2 == other.toneCurve.curveMode2
         && toneCurve.hrenabled == other.toneCurve.hrenabled
         && toneCurve.method == other.toneCurve.method
-        && dehaz.cdcurve == other.dehaz.cdcurve
-        && dehaz.cdHcurve == other.dehaz.cdHcurve
-        && dehaz.transmissionCurve == other.dehaz.transmissionCurve
-        && dehaz.str == other.dehaz.str
-        && dehaz.scal == other.dehaz.scal
-        && dehaz.neigh == other.dehaz.neigh
-        && dehaz.gain == other.dehaz.gain
-        && dehaz.limd == other.dehaz.limd
-        && dehaz.offs == other.dehaz.offs
-        && dehaz.dehazmet == other.dehaz.dehazmet
-        && dehaz.dehazcolorspace == other.dehaz.dehazcolorspace
-        && dehaz.vart == other.dehaz.vart
-        && dehaz.medianmap == other.dehaz.medianmap
-        && dehaz.enabled == other.dehaz.enabled
-        && dehaz.retinex == other.dehaz.retinex
+        && retinex.cdcurve == other.retinex.cdcurve
+        && retinex.cdHcurve == other.retinex.cdHcurve
+        && retinex.transmissionCurve == other.retinex.transmissionCurve
+        && retinex.str == other.retinex.str
+        && retinex.scal == other.retinex.scal
+        && retinex.neigh == other.retinex.neigh
+        && retinex.gain == other.retinex.gain
+        && retinex.limd == other.retinex.limd
+        && retinex.offs == other.retinex.offs
+        && retinex.retinexMethod == other.retinex.retinexMethod
+        && retinex.retinexcolorspace == other.retinex.retinexcolorspace
+        && retinex.vart == other.retinex.vart
+        && retinex.medianmap == other.retinex.medianmap
+        && retinex.enabled == other.retinex.enabled
         && labCurve.lcurve == other.labCurve.lcurve
         && labCurve.acurve == other.labCurve.acurve
         && labCurve.bcurve == other.labCurve.bcurve

@@ -116,19 +116,19 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         pl->setProgress (0.30);
     }
 
-    if(params.dehaz.enabled) { //enabled Dehaze
+    if(params.retinex.enabled) { //enabled Retinex
         LUTf cdcurve (65536, 0);
         LUTf cdHcurve (65536, 0);
-        DehaztransmissionCurve dehatransmissionCurve;
+        RetinextransmissionCurve dehatransmissionCurve;
 
         bool dehacontlutili = false;
         bool dehaHcontlutili = false;
-        CurveFactory::curveDehaContL (dehacontlutili,  params.dehaz.cdcurve, cdcurve, 1);
-        CurveFactory::curveDehaHContL (dehaHcontlutili,  params.dehaz.cdHcurve, cdHcurve, 1);
-        DehazParams DehaParams = params.dehaz;
+        CurveFactory::curveDehaContL (dehacontlutili,  params.retinex.cdcurve, cdcurve, 1);
+        CurveFactory::curveDehaHContL (dehaHcontlutili,  params.retinex.cdHcurve, cdHcurve, 1);
+        RetinexParams DehaParams = params.retinex;
         DehaParams.getCurves(dehatransmissionCurve);
         float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-        imgsrc->dehaz( params.raw, params.icm, params.dehaz, cdcurve, cdHcurve, dehatransmissionCurve, dehacontlutili, dehaHcontlutili, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+        imgsrc->retinex( params.raw, params.icm, params.retinex, cdcurve, cdHcurve, dehatransmissionCurve, dehacontlutili, dehaHcontlutili, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
     }
 
     if (pl) {

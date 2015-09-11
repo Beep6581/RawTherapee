@@ -55,7 +55,7 @@ public:
     bool method;
 };
 
-class DehazParamsEdited
+class RetinexParamsEdited
 {
 public:
     bool enabled;
@@ -64,8 +64,8 @@ public:
     bool neigh;
     bool gain;
     bool offs;
-    bool dehazmet;
-    bool dehazcolorspace;
+    bool retinexMethod;
+    bool retinexcolorspace;
     bool vart;
     bool limd;
     bool method;
@@ -721,7 +721,7 @@ public:
     LCurveParamsEdited            labCurve;
     RGBCurvesParamsEdited         rgbCurves;
     ColorToningEdited             colorToning;
-    DehazParamsEdited             dehaz;
+    RetinexParamsEdited             retinex;
     SharpeningParamsEdited        sharpening;
     SharpeningParamsEdited        prsharpening;
     SharpenEdgeParamsEdited       sharpenEdge;

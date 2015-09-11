@@ -59,7 +59,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)
     colorappearance     = Gtk::manage (new ColorAppearance ());
     whitebalance        = Gtk::manage (new WhiteBalance ());
     vignetting          = Gtk::manage (new Vignetting ());
-    dehaz               = Gtk::manage (new Dehaz ());
+    retinex               = Gtk::manage (new Retinex ());
     gradient            = Gtk::manage (new Gradient ());
     pcvignette          = Gtk::manage (new PCVignette ());
     perspective         = Gtk::manage (new PerspCorrection ());
@@ -126,8 +126,8 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)
     toolPanels.push_back (colortoning);
     addPanel (exposurePanel, epd);
     toolPanels.push_back (epd);
-    addPanel (exposurePanel, dehaz);
-    toolPanels.push_back (dehaz);
+    addPanel (exposurePanel, retinex);
+    toolPanels.push_back (retinex);
     addPanel (exposurePanel, pcvignette);
     toolPanels.push_back (pcvignette);
     addPanel (exposurePanel, gradient);
@@ -478,7 +478,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setAutoColorTonListener (colortoning);
         ipc->setAutoChromaListener (dirpyrdenoise);
         ipc->setWaveletListener (wavelet);
-        ipc->setDehazListener (dehaz);
+        ipc->setRetinexListener (retinex);
 
         ipc->setSizeListener (crop);
         ipc->setSizeListener (resize);

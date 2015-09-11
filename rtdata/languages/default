@@ -636,21 +636,20 @@ HISTORY_MSG_403;W - ES - Edge sensitivity
 HISTORY_MSG_404;W - ES - Base amplification
 HISTORY_MSG_405;W - Denoise - Level 4
 HISTORY_MSG_406;W - ES - Neighboring pixels
-HISTORY_MSG_407;Dehaze method
-HISTORY_MSG_408;Dehaze neighboring
-HISTORY_MSG_409;Dehaze gain
-HISTORY_MSG_410;Dehaze offset
-HISTORY_MSG_411;Dehaze strength
-HISTORY_MSG_412;Dehaze scales
-HISTORY_MSG_413;Dehaze variance
-HISTORY_MSG_414;Dehaze histogram Lab
-HISTORY_MSG_415;Dehaze transmission
-HISTORY_MSG_416;Dehaze enabled
-HISTORY_MSG_417;Dehaze Retinex complete
-HISTORY_MSG_418;Dehaze transmission median
-HISTORY_MSG_419;Dehaze threshold
-HISTORY_MSG_420;Dehaze Space
-HISTORY_MSG_421;Dehaze Histogram HSL
+HISTORY_MSG_407;Retinex - Method
+HISTORY_MSG_408;Retinex - Neighboring
+HISTORY_MSG_409;Retinex - Gain
+HISTORY_MSG_410;Retinex - Offset
+HISTORY_MSG_411;Retinex - Strength
+HISTORY_MSG_412;Retinex - Scales
+HISTORY_MSG_413;Retinex - Variance
+HISTORY_MSG_414;Retinex - Histogram - Lab
+HISTORY_MSG_415;Retinex - Transmission
+HISTORY_MSG_416;Retinex
+HISTORY_MSG_417;Retinex - Transmission median
+HISTORY_MSG_418;Retinex - Threshold
+HISTORY_MSG_419;Retinex - Color space
+HISTORY_MSG_420;Retinex - Histogram - HSL
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -802,7 +801,7 @@ PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
 PARTIALPASTE_DISTORTION;Distortion correction
 PARTIALPASTE_EPD;Tone mapping
 PARTIALPASTE_EQUALIZER;Wavelet levels
-PARTIALPASTE_DEHAZ;Dehaze
+PARTIALPASTE_RETINEX;Retinex
 PARTIALPASTE_EVERYTHING;Everything
 PARTIALPASTE_EXIFCHANGES;Exif
 PARTIALPASTE_EXPOSURE;Exposure
@@ -1555,46 +1554,39 @@ TP_LABCURVE_LCREDSK;Restrict LC to red and skin-tones
 TP_LABCURVE_LCREDSK_TIP;If enabled, the LC Curve affects only red and skin-tones.\nIf disabled, it applies to all tones.
 TP_LABCURVE_RSTPROTECTION;Red and skin-tones protection
 TP_LABCURVE_RSTPRO_TOOLTIP;Works on the Chromaticity slider and the CC curve.
-TP_DEHAZ_MLABEL;Restored haze-free Min=%1 Max=%2 
-TP_DEHAZ_MLABEL_TOOLTIP;Should be near of min=0 max=32768\nRestored image with no mixture
-TP_DEHAZ_TLABEL;TR m=%1 M=%2 Me=%3 Si=%4 Tm=%5 TM=%6
-TP_DEHAZ_TLABEL_TOOLTIP;Transmission map result\nm=Mini M=Maxi used by Variance\nMe=Mean Si=Sigma\nTm=Min TM=Max of Transmission map
-TP_DEHAZ_LABSPACE;L*a*b*
-TP_DEHAZ_HSLSPACE;HSL-Log
-TP_DEHAZ_HSLSPACELIN;HSL-Lin
-TP_DEHAZ_STR;Strength
-TP_DEHAZ_STR_TOOLTIP;Mixture in proportion to the original image and that obtained by Retinex algoritm
-TP_DEHAZ_RETIN;Complete Retinex algoritm
-TP_DEHAZ_LAB;Retinex
-TP_DEHAZ_LAB_TOOLTIP;Use all component of Retinex algorihm, to improve results
-TP_DEHAZ_LABEL;Dehaze
-TP_DEHAZ_SCAL;Scales
-TP_DEHAZ_SCAL_TOOLTIP;Low scales increase contrast but give relief effect\nHigh scales  can increase noise, but give more natural images
-TP_DEHAZ_LIMD;Threshold
-TP_DEHAZ_LIMD_TOOLTIP;Limits in/out - in = image source - out = image Gauss
-TP_DEHAZ_MEDI;Transmission median filter
-TP_DEHAZ_NEIGH;Neighboring pixels
-TP_DEHAZ_NEIGH_TOOLTIP;Take into account, neighboring pixels, by Gauss function
-TP_DEHAZ_GAIN;Gain
-TP_DEHAZ_OFFS;Offset
-TP_DEHAZ_GAIN_TOOLTIP;Acts on the transmission in combination with offset, this is very different from others settings\nUsed for black or white pixels, and for better balance the histogram
-TP_DEHAZE_LAB;Dehaze
-TP_DEHAZ_CONTEDIT;Histogram equalizer L*a*b*
-TP_DEHAZ_CONTEDITH;Histogram equalizer HSL
-TP_DEHAZ_COLORSPACE_TOOLTIP;Choice between L*a*b and HSL\nYou may have to adjust the histogram curve, and adjust other settings differently.\n Prefer restaured Haze-free Min#0 Max#32768
-TP_DEHAZ_CURVEEDITOR_CD;L=f(L)
-TP_DEHAZ_CURVEEDITOR_CD_TOOLTIP;Correct Raw data, to reduce halos and artifacts
-TP_DEHAZ_TRANSMISSION;Transmission map
-TP_DEHAZ_TRANS_TOOLTIP;Modify transmission in function of transmission\nAbscissa : transmission from negatives values (min), mean, and positives values (max)\nOrdonate : amplification - reduction
-TP_DEHAZE_LAB_TOOLTIP;Use Retinex algorithm (Lab) to improve dehaze..defog...
-TP_DEHAZ_VART;Variance
-TP_DEHAZ_VART_TOOLTIP;Low variance increase local contrast and saturation, but can leeds to artifacts
-TP_DEHAZE_MET;Dehaze method
-TP_DEHAZ_MET_TOOLTIP;For Retinex algorithm\nLow :reinforce low light\nUniform :expect to equalize action\nHigh : reinforce high light
-TP_DEHAZ_NONE;None
-TP_DEHAZ_UNI;Uniform
-TP_DEHAZ_LOW;Low
-TP_DEHAZ_HIGH;High
+TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
+TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
+TP_RETINEX_CURVEEDITOR_CD;L=f(L)
+TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Correct raw data to reduce halos and artifacts
+TP_RETINEX_GAIN;Gain
+TP_RETINEX_GAIN_TOOLTIP;Acts on the transmission in combination with offset, this is very different from others settings. Used for black or white pixels, and for better balance the histogram.
+TP_RETINEX_HIGH;High
+TP_RETINEX_HSLSPACE_LIN;HSL-Linear
+TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
+TP_RETINEX_LABEL;Retinex
+TP_RETINEX_LABSPACE;L*a*b*
+TP_RETINEX_LOW;Low
+TP_RETINEX_MEDIAN;Transmission median filter
+TP_RETINEX_METHOD;Method
+TP_RETINEX_METHOD_TOOLTIP;Low: Reinforce low light,\nUniform: Equalize action,\nHigh: Reinforce high light.
+TP_RETINEX_MLABEL;Restored haze-free Min=%1 Max=%2
+TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
+TP_RETINEX_NEIGHBOR;Neighboring pixels
+TP_RETINEX_NONE;None
+TP_RETINEX_OFFSET;Offset
+TP_RETINEX_SCALES;Scales
+TP_RETINEX_SCALES_TOOLTIP;Low scales increase contrast but give relief effect.\nHigh scales can increase noise, but give more natural images.
+TP_RETINEX_SETTINGS;Settings
+TP_RETINEX_STRENGTH;Strength
+TP_RETINEX_THRESHOLD;Threshold
+TP_RETINEX_THRESHOLD_TOOLTIP;Limits in/out - in = image source - out = image Gauss
+TP_RETINEX_TLABEL;TR m=%1 M=%2 Me=%3 Si=%4 Tm=%5 TM=%6
+TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nm=Mini M=Maxi used by Variance.\nMe=Mean Si=Sigma\nTm=Min TM=Max of transmission map.
+TP_RETINEX_TRANSMISSION;Transmission map
+TP_RETINEX_TRANSMISSION_TOOLTIP;Modify transmission in function of transmission\nAbscissa : transmission from negatives values (min), mean, and positives values (max)\nOrdonate : amplification - reduction
+TP_RETINEX_UNIFORM;Uniform
+TP_RETINEX_VARIANCE;Variance
+TP_RETINEX_VARIANCE_TOOLTIP;Low variance increase local contrast and saturation, but can lead to artifacts.
 TP_LENSGEOM_AUTOCROP;Auto-Crop
 TP_LENSGEOM_FILL;Auto-fill
 TP_LENSGEOM_LABEL;Lens / Geometry

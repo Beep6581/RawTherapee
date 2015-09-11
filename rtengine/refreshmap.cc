@@ -102,7 +102,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RESIZE,           // EvResizeHeight
     RESIZE,           // EvResizeEnabled
     ALL,              // EvProfileChangeNotification
-    RETINEX,          // EvShrHighQuality
+//    RETINEX,          // EvShrHighQuality
     TRANSFORM,        // EvPerspCorr
     DARKFRAME,        // EvLCPFile
     RGBCURVE,         // EvRGBrCurveLumamode
@@ -428,7 +428,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DIRPYREQUALIZER,     // EvWavedgeampli
     DIRPYREQUALIZER,      //EvWavlev3nois
     DIRPYREQUALIZER,       //EvWavNPmet
-    DEMOSAIC,  // Evdehazmet
+    DEMOSAIC,  // EvretinexMethod
     DEMOSAIC,   // EvLneigh
     DEMOSAIC,   // EvLgain
     DEMOSAIC,   // EvLoffs
@@ -436,12 +436,12 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DEMOSAIC,   // EvLscal
     DEMOSAIC,   // EvLvart
     DEMOSAIC,   // EvLCDCurve
-    DEMOSAIC,   // EvDehazOpacity
-    DEMOSAIC,   // EvDehazEnabled
-    DEMOSAIC,   // EvDehazretinex
-    DEMOSAIC,   // EvDehazmedianmap
+    DEMOSAIC,   // EvRetinexOpacity
+    DEMOSAIC,   // EvRetinexEnabled
+    DEMOSAIC,   // EvRetinexretinex <-- TODO we can probably delete this
+    DEMOSAIC,   // EvRetinexmedianmap
     DEMOSAIC,   // EvLlimd
-    DEMOSAIC,    // Evdehazcolorspace
+    DEMOSAIC,    // Evretinexcolorspace
     DEMOSAIC    // EvLCDHCurve
 
 

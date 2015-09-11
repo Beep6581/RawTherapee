@@ -39,7 +39,7 @@ class WavOpacityCurveRG;
 class WavOpacityCurveBY;
 class WavOpacityCurveW;
 class WavOpacityCurveWL;
-class DehaztransmissionCurve;
+class RetinextransmissionCurve;
 
 namespace procparams
 {
@@ -262,9 +262,9 @@ public:
     static bool HLReconstructionNecessary(LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw);
 };
 /**
-  * Parameters of Dehaz
+  * Parameters of Retinex
   */
-class DehazParams
+class RetinexParams
 {
 
 public:
@@ -277,15 +277,14 @@ public:
     int     neigh;
     int     gain;
     int     offs;
-    Glib::ustring dehazmet;
-    Glib::ustring dehazcolorspace;
+    Glib::ustring retinexMethod;
+    Glib::ustring retinexcolorspace;
     int     vart;
     int     limd;
     bool    medianmap;
-    bool    retinex;
-    DehazParams ();
+    RetinexParams ();
     void setDefaults();
-    void getCurves(DehaztransmissionCurve &transmissionCurveLUT) const;
+    void getCurves(RetinextransmissionCurve &transmissionCurveLUT) const;
 
     static void getDefaulttransmissionCurve(std::vector<double> &curve);
     static void getDefaultCDCurve(std::vector<double> &curve);
@@ -1220,7 +1219,7 @@ class ProcParams
 public:
     ToneCurveParams         toneCurve;       ///< Tone curve parameters
     LCurveParams            labCurve;        ///< CIELAB luminance curve parameters
-    DehazParams             dehaz;           ///< Dehaz parameters
+    RetinexParams             retinex;           ///< Retinex parameters
     RGBCurvesParams         rgbCurves;       ///< RGB curves parameters
     ColorToningParams       colorToning;     ///< Color Toning parameters
     SharpeningParams        sharpening;      ///< Sharpening parameters

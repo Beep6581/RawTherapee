@@ -1801,14 +1801,14 @@ void RawImageSource::demosaic(const RAWParams &raw)
     }
 }
 
-void RawImageSource::dehaz(RAWParams raw, ColorManagementParams cmp, DehazParams  deh, LUTf & cdcurve, LUTf & cdHcurve, const DehaztransmissionCurve & dehatransmissionCurve, bool dehacontlutili, bool dehaHcontlutili, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
+void RawImageSource::retinex(RAWParams raw, ColorManagementParams cmp, RetinexParams  deh, LUTf & cdcurve, LUTf & cdHcurve, const RetinextransmissionCurve & dehatransmissionCurve, bool dehacontlutili, bool dehaHcontlutili, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
 
     MyTime t4, t5;
     t4.set();
 
     if (settings->verbose) {
-        printf ("Applying DeHaze\n");
+        printf ("Applying Retinex\n");
     }
 
     TMatrix wprof = iccStore->workingSpaceMatrix (cmp.working);
@@ -1840,8 +1840,8 @@ void RawImageSource::dehaz(RAWParams raw, ColorManagementParams cmp, DehazParams
         labTmp[i] = &labTmpBuffer[i * WNew];
     }
 
-    bool useHsl = deh.dehazcolorspace == "HSL";
-    bool useHslLin = deh.dehazcolorspace == "HSLLIN";
+    bool useHsl = deh.retinexcolorspace == "HSLLOG";
+    bool useHslLin = deh.retinexcolorspace == "HSLLIN";
     if(useHsl || useHslLin) {
         for (int i = border; i < H - border; i++ )
             for (int j = border; j < W - border; j++) {
@@ -1957,7 +1957,7 @@ void RawImageSource::dehaz(RAWParams raw, ColorManagementParams cmp, DehazParams
     t5.set();
 
     if( settings->verbose ) {
-        printf("Dehaz=%d usec\n",  t5.etime(t4));
+        printf("Retinex=%d usec\n",  t5.etime(t4));
     }
 
 }

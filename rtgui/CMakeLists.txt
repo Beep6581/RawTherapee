@@ -17,7 +17,7 @@ set (BASESOURCEFILES
     previewloader.cc rtimage.cc inspector.cc
     histogrampanel.cc history.cc  imagearea.cc
     imageareapanel.cc iptcpanel.cc labcurve.cc main.cc
-    multilangmgr.cc mycurve.cc myflatcurve.cc mydiagonalcurve.cc options.cc dehaz.cc
+    multilangmgr.cc mycurve.cc myflatcurve.cc mydiagonalcurve.cc options.cc retinex.cc
     preferences.cc profilepanel.cc saveasdlg.cc
     saveformatpanel.cc soundman.cc splash.cc
     thumbnail.cc tonecurve.cc toolbar.cc

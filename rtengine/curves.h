@@ -430,15 +430,15 @@ public:
     };
 };
 
-class DehaztransmissionCurve
+class RetinextransmissionCurve
 {
 private:
     LUTf luttransmission;  // 0xffff range
     void Set(const Curve &pCurve);
 
 public:
-    virtual ~DehaztransmissionCurve() {};
-    DehaztransmissionCurve();
+    virtual ~RetinextransmissionCurve() {};
+    RetinextransmissionCurve();
 
     void Reset();
     void Set(const Curve *pCurve);

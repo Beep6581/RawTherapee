@@ -49,21 +49,21 @@ void ParamsEdited::set (bool v)
     toneCurve.expcomp    = v;
     toneCurve.hrenabled   = v;
     toneCurve.method    = v;
-    dehaz.cdcurve    = v;
-    dehaz.cdHcurve    = v;
-    dehaz.dehazmet    = v;
-    dehaz.dehazcolorspace    = v;
-    dehaz.enabled    = v;
-    dehaz.str    = v;
-    dehaz.scal    = v;
-    dehaz.neigh    = v;
-    dehaz.gain    = v;
-    dehaz.offs    = v;
-    dehaz.vart    = v;
-    dehaz.limd    = v;
-    dehaz.medianmap = v;
-    dehaz.transmissionCurve   = v;
-    dehaz.retinex = v;
+    retinex.cdcurve    = v;
+    retinex.cdHcurve    = v;
+    retinex.retinexMethod    = v;
+    retinex.retinexcolorspace    = v;
+    retinex.enabled    = v;
+    retinex.str    = v;
+    retinex.scal    = v;
+    retinex.neigh    = v;
+    retinex.gain    = v;
+    retinex.offs    = v;
+    retinex.vart    = v;
+    retinex.limd    = v;
+    retinex.medianmap = v;
+    retinex.transmissionCurve   = v;
+    retinex.retinex = v;
     labCurve.lcurve      = v;
     labCurve.acurve      = v;
     labCurve.bcurve      = v;
@@ -519,21 +519,20 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         toneCurve.expcomp = toneCurve.expcomp && p.toneCurve.expcomp == other.toneCurve.expcomp;
         toneCurve.hrenabled = toneCurve.hrenabled && p.toneCurve.hrenabled == other.toneCurve.hrenabled;
         toneCurve.method = toneCurve.method && p.toneCurve.method == other.toneCurve.method;
-        dehaz.cdcurve = dehaz.cdcurve && p.dehaz.cdcurve == other.dehaz.cdcurve;
-        dehaz.cdHcurve = dehaz.cdHcurve && p.dehaz.cdHcurve == other.dehaz.cdHcurve;
-        dehaz.transmissionCurve = dehaz.transmissionCurve && p.dehaz.transmissionCurve == other.dehaz.transmissionCurve;
-        dehaz.dehazmet = dehaz.dehazmet && p.dehaz.dehazmet == other.dehaz.dehazmet;
-        dehaz.dehazcolorspace = dehaz.dehazcolorspace && p.dehaz.dehazcolorspace == other.dehaz.dehazcolorspace;
-        dehaz.str = dehaz.str && p.dehaz.str == other.dehaz.str;
-        dehaz.scal = dehaz.scal && p.dehaz.scal == other.dehaz.scal;
-        dehaz.neigh = dehaz.neigh && p.dehaz.neigh == other.dehaz.neigh;
-        dehaz.gain = dehaz.gain && p.dehaz.gain == other.dehaz.gain;
-        dehaz.offs = dehaz.offs && p.dehaz.offs == other.dehaz.offs;
-        dehaz.vart = dehaz.vart && p.dehaz.vart == other.dehaz.vart;
-        dehaz.limd = dehaz.limd && p.dehaz.limd == other.dehaz.limd;
-        dehaz.medianmap = dehaz.medianmap && p.dehaz.medianmap == other.dehaz.medianmap;
-        dehaz.enabled = dehaz.enabled && p.dehaz.enabled == other.dehaz.enabled;
-        dehaz.retinex = dehaz.retinex && p.dehaz.retinex == other.dehaz.retinex;
+        retinex.cdcurve = retinex.cdcurve && p.retinex.cdcurve == other.retinex.cdcurve;
+        retinex.cdHcurve = retinex.cdHcurve && p.retinex.cdHcurve == other.retinex.cdHcurve;
+        retinex.transmissionCurve = retinex.transmissionCurve && p.retinex.transmissionCurve == other.retinex.transmissionCurve;
+        retinex.retinexMethod = retinex.retinexMethod && p.retinex.retinexMethod == other.retinex.retinexMethod;
+        retinex.retinexcolorspace = retinex.retinexcolorspace && p.retinex.retinexcolorspace == other.retinex.retinexcolorspace;
+        retinex.str = retinex.str && p.retinex.str == other.retinex.str;
+        retinex.scal = retinex.scal && p.retinex.scal == other.retinex.scal;
+        retinex.neigh = retinex.neigh && p.retinex.neigh == other.retinex.neigh;
+        retinex.gain = retinex.gain && p.retinex.gain == other.retinex.gain;
+        retinex.offs = retinex.offs && p.retinex.offs == other.retinex.offs;
+        retinex.vart = retinex.vart && p.retinex.vart == other.retinex.vart;
+        retinex.limd = retinex.limd && p.retinex.limd == other.retinex.limd;
+        retinex.medianmap = retinex.medianmap && p.retinex.medianmap == other.retinex.medianmap;
+        retinex.enabled = retinex.enabled && p.retinex.enabled == other.retinex.enabled;
         labCurve.lcurve = labCurve.lcurve && p.labCurve.lcurve == other.labCurve.lcurve;
         labCurve.acurve = labCurve.acurve && p.labCurve.acurve == other.labCurve.acurve;
         labCurve.bcurve = labCurve.bcurve && p.labCurve.bcurve == other.labCurve.bcurve;
@@ -1025,64 +1024,60 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.toneCurve.method   = mods.toneCurve.method;
     }
 
-    if (dehaz.enabled) {
-        toEdit.dehaz.enabled        = mods.dehaz.enabled;
+    if (retinex.enabled) {
+        toEdit.retinex.enabled        = mods.retinex.enabled;
     }
 
-    if (dehaz.cdcurve) {
-        toEdit.dehaz.cdcurve    = mods.dehaz.cdcurve;
-    }
-    
-    if (dehaz.cdHcurve) {
-        toEdit.dehaz.cdHcurve    = mods.dehaz.cdHcurve;
+    if (retinex.cdcurve) {
+        toEdit.retinex.cdcurve    = mods.retinex.cdcurve;
     }
 
-    if (dehaz.transmissionCurve) {
-        toEdit.dehaz.transmissionCurve    = mods.dehaz.transmissionCurve;
+    if (retinex.cdHcurve) {
+        toEdit.retinex.cdHcurve    = mods.retinex.cdHcurve;
     }
 
-    if (dehaz.dehazmet) {
-        toEdit.dehaz.dehazmet    = mods.dehaz.dehazmet;
+    if (retinex.transmissionCurve) {
+        toEdit.retinex.transmissionCurve    = mods.retinex.transmissionCurve;
     }
 
-    if (dehaz.dehazcolorspace) {
-        toEdit.dehaz.dehazcolorspace    = mods.dehaz.dehazcolorspace;
+    if (retinex.retinexMethod) {
+        toEdit.retinex.retinexMethod    = mods.retinex.retinexMethod;
     }
 
-    if (dehaz.str) {
-        toEdit.dehaz.str   = dontforceSet && options.baBehav[ADDSET_DH_STR] ? toEdit.dehaz.str + mods.dehaz.str : mods.dehaz.str;
+    if (retinex.retinexcolorspace) {
+        toEdit.retinex.retinexcolorspace    = mods.retinex.retinexcolorspace;
     }
 
-    if (dehaz.scal) {
-        toEdit.dehaz.scal   = dontforceSet && options.baBehav[ADDSET_DH_SCAL] ? toEdit.dehaz.scal + mods.dehaz.scal : mods.dehaz.scal;
+    if (retinex.str) {
+        toEdit.retinex.str   = dontforceSet && options.baBehav[ADDSET_DH_STR] ? toEdit.retinex.str + mods.retinex.str : mods.retinex.str;
     }
 
-    if (dehaz.retinex) {
-        toEdit.dehaz.retinex  = mods.dehaz.retinex;
+    if (retinex.scal) {
+        toEdit.retinex.scal   = dontforceSet && options.baBehav[ADDSET_DH_SCAL] ? toEdit.retinex.scal + mods.retinex.scal : mods.retinex.scal;
     }
 
-    if (dehaz.medianmap) {
-        toEdit.dehaz.medianmap  = mods.dehaz.medianmap;
+    if (retinex.medianmap) {
+        toEdit.retinex.medianmap  = mods.retinex.medianmap;
     }
 
-    if (dehaz.neigh) {
-        toEdit.dehaz.neigh   = dontforceSet && options.baBehav[ADDSET_DH_NEIGH] ? toEdit.dehaz.neigh + mods.dehaz.neigh : mods.dehaz.neigh;
+    if (retinex.neigh) {
+        toEdit.retinex.neigh   = dontforceSet && options.baBehav[ADDSET_DH_NEIGH] ? toEdit.retinex.neigh + mods.retinex.neigh : mods.retinex.neigh;
     }
 
-    if (dehaz.limd) {
-        toEdit.dehaz.limd   = dontforceSet && options.baBehav[ADDSET_DH_LIMD] ? toEdit.dehaz.limd + mods.dehaz.limd : mods.dehaz.limd;
+    if (retinex.limd) {
+        toEdit.retinex.limd   = dontforceSet && options.baBehav[ADDSET_DH_LIMD] ? toEdit.retinex.limd + mods.retinex.limd : mods.retinex.limd;
     }
 
-    if (dehaz.gain) {
-        toEdit.dehaz.gain   = dontforceSet && options.baBehav[ADDSET_DH_GAIN] ? toEdit.dehaz.gain + mods.dehaz.gain : mods.dehaz.gain;
+    if (retinex.gain) {
+        toEdit.retinex.gain   = dontforceSet && options.baBehav[ADDSET_DH_GAIN] ? toEdit.retinex.gain + mods.retinex.gain : mods.retinex.gain;
    }
 
-    if (dehaz.offs) {
-        toEdit.dehaz.offs   = dontforceSet && options.baBehav[ADDSET_DH_OFFS] ? toEdit.dehaz.offs + mods.dehaz.offs : mods.dehaz.offs;
+    if (retinex.offs) {
+        toEdit.retinex.offs   = dontforceSet && options.baBehav[ADDSET_DH_OFFS] ? toEdit.retinex.offs + mods.retinex.offs : mods.retinex.offs;
     }
 
-    if (dehaz.vart) {
-        toEdit.dehaz.vart   = dontforceSet && options.baBehav[ADDSET_DH_VART] ? toEdit.dehaz.vart + mods.dehaz.vart : mods.dehaz.vart;
+    if (retinex.vart) {
+        toEdit.retinex.vart   = dontforceSet && options.baBehav[ADDSET_DH_VART] ? toEdit.retinex.vart + mods.retinex.vart : mods.retinex.vart;
     }
 
     if (labCurve.lcurve) {
@@ -1117,8 +1112,8 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.labCurve.lccurve    = mods.labCurve.lccurve;
     }
 
-//    if (labCurve.dehazmet) {
-//        toEdit.labCurve.dehazmet    = mods.labCurve.dehazmet;
+//    if (labCurve.retinexMethod) {
+//        toEdit.labCurve.retinexMethod    = mods.labCurve.retinexMethod;
 //    }
     if (labCurve.clcurve) {
         toEdit.labCurve.clcurve    = mods.labCurve.clcurve;

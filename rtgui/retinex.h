@@ -1,8 +1,8 @@
 /*
  *  This file is part of RawTherapee.
  */
-#ifndef _DEHAZ_H_
-#define _DEHAZ_H_
+#ifndef _RETINEX_H_
+#define _RETINEX_H_
 
 #include <gtkmm.h>
 #include "adjuster.h"
@@ -13,7 +13,7 @@
 #include "thresholdadjuster.h"
 #include "colorprovider.h"
 
-class Dehaz : public ToolParamBlock, public FoldableToolPanel,  public rtengine::DehazListener, public CurveListener,
+class Retinex : public ToolParamBlock, public FoldableToolPanel,  public rtengine::RetinexListener, public CurveListener,
     public AdjusterListener
 
 {
@@ -28,14 +28,12 @@ protected:
     Adjuster* offs;
     Adjuster* vart;
     Adjuster* limd;
-    MyExpander* expretinex;
+    MyExpander* expsettings;
 
     Gtk::Label* labmdh;
     Gtk::HBox* dhbox;
-    MyComboBoxText*   dehazmet;
-    MyComboBoxText*   dehazcolorspace;
-    Gtk::CheckButton* retinex;
-    Gtk::Frame* dehazFrame;
+    MyComboBoxText*   retinexMethod;
+    MyComboBoxText*   retinexcolorspace;
     Gtk::CheckButton* medianmap;
     double nextmin;
     double nextmax;
@@ -52,15 +50,15 @@ protected:
     DiagonalCurveEditor* cdshape;
     DiagonalCurveEditor* cdshapeH;
     CurveEditorGroup* transmissionCurveEditorG;
-    sigc::connection dehazmetConn;
-    sigc::connection dehazColorSpaceConn;
+    sigc::connection retinexMethodConn;
+    sigc::connection retinexColorSpaceConn;
     FlatCurveEditor* transmissionShape;
-    bool lastretinex, lastmedianmap;
-    sigc::connection retinexConn, medianmapConn;
+    bool lastmedianmap;
+    sigc::connection medianmapConn;
 
 public:
-    Dehaz   ();
-    ~Dehaz  ();
+    Retinex   ();
+    ~Retinex  ();
 
     void read                  (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
     void write                 (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
@@ -69,7 +67,6 @@ public:
     void trimValues            (rtengine::procparams::ProcParams* pp);
     void adjusterChanged       (Adjuster* a, double newval);
     void autoOpenCurve         ();
-    void retinexChanged        ();
     void medianmapChanged        ();
     void minmaxChanged (double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax);
     bool minmaxComputed_ ();
@@ -78,14 +75,13 @@ public:
 
     void enabledChanged        ();
     void curveChanged          (CurveEditor* ce);
-    void dehazmetChanged();
-    void dehazColorSpaceChanged();
-    void retinexUpdateUI();
+    void retinexMethodChanged();
+    void retinexColorSpaceChanged();
     void ColorSpaceUpdateUI();
     void writeOptions (std::vector<int> &tpOpen);
     void updateToolState (std::vector<int> &tpOpen);
     void setAdjusterBehavior (bool strAdd, bool neighAdd, bool scalAdd, bool limdAdd, bool gainAdd, bool offsAdd, bool vartAdd);
- 
+
 private:
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);
 

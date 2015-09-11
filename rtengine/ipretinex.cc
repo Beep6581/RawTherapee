@@ -45,8 +45,8 @@
 #include "improcfun.h"
 #include "opthelper.h"
 #include "StopWatch.h"
-#define MAX_DEHAZE_SCALES   8
-#define clipdehaz( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
+#define MAX_RETINEX_SCALES   8
+#define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 
 #define med3(a0,a1,a2,a3,a4,a5,a6,a7,a8,median) { \
 pp[0]=a0; pp[1]=a1; pp[2]=a2; pp[3]=a3; pp[4]=a4; pp[5]=a5; pp[6]=a6; pp[7]=a7; pp[8]=a8; \
@@ -63,9 +63,9 @@ namespace rtengine
 
 extern const Settings* settings;
 
-static float DehazeScales[MAX_DEHAZE_SCALES];
+static float RetinexScales[MAX_RETINEX_SCALES];
 
-void dehaze_scales( float* scales, int nscales, int mode, int s)
+void retinex_scales( float* scales, int nscales, int mode, int s)
 {
     if ( nscales == 1 ) {
         scales[0] =  (float)s / 2.f;
@@ -198,7 +198,7 @@ void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L, const
     stddv = (float)sqrt(stddv);
 }
 
-void RawImageSource::MSR(float** luminance, float** originalLuminance, int width, int height, DehazParams deh, const DehaztransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
+void RawImageSource::MSR(float** luminance, float** originalLuminance, int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
     if (deh.enabled) {//enabled
         StopWatch Stop1("MSR");
@@ -206,8 +206,8 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
         //  float         mini, delta, maxi;
         float         delta;
         float eps = 2.f;
-        bool useHsl = deh.dehazcolorspace == "HSL";
-        bool useHslLin = deh.dehazcolorspace == "HSLLIN";
+        bool useHsl = deh.retinexcolorspace == "HSLLOG";
+        bool useHslLin = deh.retinexcolorspace == "HSLLIN";
         float gain2 = (float) deh.gain / 100.f; //def =1  not use
         gain2 = useHslLin ? gain2 * 0.5f : gain2;
         float offse = (float) deh.offs; //def = 0  not use
@@ -219,18 +219,18 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
         limD = pow(limD, 1.7f);//about 2500 enough
         limD *= useHslLin ? 10.f : 1.f;
         float ilimD = 1.f / limD;
-        int modedehaz = 0; // default to 0 ( deh.dehazmet == "uni" )
+        int moderetinex = 2; // default to 2 ( deh.retinexMethod == "high" )
         bool execcur = false;
 
-        if (deh.dehazmet == "low") {
-            modedehaz = 1;
+        if (deh.retinexMethod == "uni") {
+            moderetinex = 0;
         }
 
-        if (deh.dehazmet == "high") {
-            modedehaz = 2;
+        if (deh.retinexMethod == "low") {
+            moderetinex = 1;
         }
 
-        dehaze_scales( DehazeScales, scal, modedehaz, nei );
+        retinex_scales( RetinexScales, scal, moderetinex, nei );
 
         int H_L = height;
         int W_L = width;
@@ -268,8 +268,8 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
             AlignedBufferMP<double>* pBuffer = new AlignedBufferMP<double> (max(W_L, H_L));
 
             for ( int scale = 0; scale < scal; scale++ ) {
-                gaussHorizontal<float> (src, out, *pBuffer, W_L, H_L, DehazeScales[scale]);
-                gaussVertical<float>   (out, out, *pBuffer, W_L, H_L, DehazeScales[scale]);
+                gaussHorizontal<float> (src, out, *pBuffer, W_L, H_L, RetinexScales[scale]);
+                gaussVertical<float>   (out, out, *pBuffer, W_L, H_L, RetinexScales[scale]);
 
 #ifdef __SSE2__
                 vfloat pondv = F2V(pond);
@@ -477,7 +477,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
                     }
 
 
-                    luminance[i][j] = clipdehaz( cd, 0.f, 32768.f ) * strength + (1.f - strength) * originalLuminance[i][j];
+                    luminance[i][j] = clipretinex( cd, 0.f, 32768.f ) * strength + (1.f - strength) * originalLuminance[i][j];
                 }
 
 #ifdef _OPENMP
