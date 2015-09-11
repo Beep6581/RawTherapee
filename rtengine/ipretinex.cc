@@ -329,7 +329,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
 //        printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
 
         //  mean_stddv( luminance, mean, stddv, W_L, H_L, logBetaGain, maxtr, mintr);
-        if (execcur) { //if curve
+        if (execcur && mean != 0.f && stddv != 0.f) { //if curve
             float asig = 0.166666f / stddv;
             float bsig = 0.5f - asig * mean;
             //float insigma = 0.66666f; //SD
