@@ -89,7 +89,10 @@ private:
     // Separated from init() to keep the code clear
     static void initMunsell ();
     static double hue2rgb(double p, double q, double t);
-
+    static float hue2rgbfloat(float p, float q, float t);
+#ifdef __SSE2__
+    static vfloat hue2rgb(vfloat p, vfloat q, vfloat t);
+#endif
 public:
 
     typedef enum Channel {
@@ -179,7 +182,10 @@ public:
     * @param l luminance channel [0; 1] (return value)
     */
     static void rgb2hsl (float r, float g, float b, float &h, float &s, float &l);
-
+    static void rgb2hslfloat (float r, float g, float b, float &h, float &s, float &l);
+#ifdef __SSE2__
+    static void rgb2hsl (vfloat r, vfloat g, vfloat b, vfloat &h, vfloat &s, vfloat &l);
+#endif
 
     /**
     * @brief Convert hue/saturation/luminance in red/green/blue
@@ -191,6 +197,10 @@ public:
     * @param b blue channel [0 ; 65535] (return value)
     */
     static void hsl2rgb (float h, float s, float l, float &r, float &g, float &b);
+    static void hsl2rgbfloat (float h, float s, float l, float &r, float &g, float &b);
+#ifdef __SSE2__
+    static void hsl2rgb (vfloat h, vfloat s, vfloat l, vfloat &r, vfloat &g, vfloat &b);
+#endif
 
     /**
     * @brief Convert hue/saturation/luminance in red/green/blue

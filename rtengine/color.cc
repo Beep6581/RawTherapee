@@ -280,6 +280,70 @@ void Color::rgb2hsl(float r, float g, float b, float &h, float &s, float &l)
     }
 }
 
+void Color::rgb2hslfloat(float r, float g, float b, float &h, float &s, float &l)
+{
+
+    float m = min(r, g, b);
+    float M = max(r, g, b);
+    float C = M - m;
+
+    l = (M + m) * 7.6295109e-6f; // (0.5f / 65535.f)
+
+    if (fabsf(C) < 0.65535f) { // 0.00001f * 65535.f
+        h = 0.f;
+        s = 0.f;
+    } else {
+
+        if (l <= 0.5f) {
+            s = (M - m) / (M + m);
+        } else {
+            s = (M - m) / (131070.f - M - m); // 131070.f = 2.f * 65535.f
+        }
+
+        if ( r == M ) {
+            h = (g - b);
+        } else if ( g == M ) {
+            h = (2.f * C) + (b - r);
+        } else {
+            h = (4.f * C) + (r - g);
+        }
+
+        h /= (6.f * C);
+
+        if ( h < 0.f ) {
+            h += 1.f;
+        } else if ( h > 1.f ) {
+            h -= 1.f;
+        }
+    }
+}
+
+#ifdef __SSE2__
+void Color::rgb2hsl(vfloat r, vfloat g, vfloat b, vfloat &h, vfloat &s, vfloat &l)
+{
+    vfloat maxv = _mm_max_ps(r, _mm_max_ps(g, b));
+    vfloat minv = _mm_min_ps(r, _mm_min_ps(g, b));
+    vfloat C = maxv - minv;
+    vfloat tempv = maxv + minv;
+    l = (tempv) * F2V(7.6295109e-6f);
+    s = (maxv - minv);
+    s /= vself(vmaskf_gt(l, F2V(0.5f)), F2V(131070.f) - tempv, tempv);
+
+    h = F2V(4.f) * C + r - g;
+    h = vself(vmaskf_eq(g, maxv), F2V(2.f) * C + b - r, h);
+    h = vself(vmaskf_eq(r, maxv), g - b, h);
+
+    h /= (F2V(6.f) * C);
+    vfloat onev = F2V(1.f);
+    h = vself(vmaskf_lt(h, ZEROV), h + onev, h);
+    h = vself(vmaskf_gt(h, onev), h - onev, h);
+
+    vmask zeromask = vmaskf_lt(vabsf(C), F2V(0.65535f));
+    h = vself(zeromask, ZEROV, h);
+    s = vself(zeromask, ZEROV, s);
+}
+#endif
+
 double Color::hue2rgb(double p, double q, double t)
 {
     if (t < 0.) {
@@ -298,6 +362,42 @@ double Color::hue2rgb(double p, double q, double t)
         return p;
     }
 }
+
+float Color::hue2rgbfloat(float p, float q, float t)
+{
+    if (t < 0.f) {
+        t += 6.f;
+    } else if( t > 6.f) {
+        t -= 6.f;
+    }
+
+    if      (t < 1.f) {
+        return p + (q - p) * t;
+    } else if (t < 3.f) {
+        return q;
+    } else if (t < 4.f) {
+        return p + (q - p) * (4.f - t);
+    } else {
+        return p;
+    }
+}
+
+#ifdef __SSE2__
+vfloat Color::hue2rgb(vfloat p, vfloat q, vfloat t)
+{
+    vfloat fourv = F2V(4.f);
+    vfloat threev = F2V(3.f);
+    vfloat sixv = threev + threev;
+    t = vself(vmaskf_lt(t, ZEROV), t + sixv, t);
+    t = vself(vmaskf_gt(t, sixv), t - sixv, t);
+
+    vfloat temp1 = p + (q - p) * t;
+    vfloat temp2 = p + (q - p) * (fourv - t);
+    vfloat result = vself(vmaskf_lt(t, fourv), temp2, p);
+    result = vself(vmaskf_lt(t, threev), q, result);
+    return vself(vmaskf_lt(t, fourv - threev), temp1, result);
+}
+#endif
 
 void Color::hsl2rgb (float h, float s, float l, float &r, float &g, float &b)
 {
@@ -323,6 +423,53 @@ void Color::hsl2rgb (float h, float s, float l, float &r, float &g, float &b)
         b = float(65535.0 * hue2rgb (m1, m2, h_ * 6.0 - 2.0));
     }
 }
+
+void Color::hsl2rgbfloat (float h, float s, float l, float &r, float &g, float &b)
+{
+
+    if (s == 0.f) {
+        r = g = b = 65535.f * l;    //  achromatic
+    } else {
+        float m2;
+
+        if (l <= 0.5f) {
+            m2 = l * (1.f + s);
+        } else {
+            m2 = l + s - l * s;
+        }
+
+        float m1 = 2.f * l - m2;
+
+        r = 65535.f * hue2rgbfloat (m1, m2, h * 6.f + 2.f);
+        g = 65535.f * hue2rgbfloat (m1, m2, h * 6.f);
+        b = 65535.f * hue2rgbfloat (m1, m2, h * 6.f - 2.f);
+    }
+}
+
+#ifdef __SSE2__
+void Color::hsl2rgb (vfloat h, vfloat s, vfloat l, vfloat &r, vfloat &g, vfloat &b)
+{
+
+    vfloat m2 = s * l;
+    m2 = vself(vmaskf_gt(l, F2V(0.5f)), s - m2, m2);
+    m2 += l;
+
+    vfloat twov = F2V(2.f);
+    vfloat c65535v = F2V(65535.f);
+    vfloat m1 = l + l - m2;
+
+    h *= F2V(6.f);
+    r = c65535v * hue2rgb (m1, m2, h + twov);
+    g = c65535v * hue2rgb (m1, m2, h);
+    b = c65535v * hue2rgb (m1, m2, h - twov);
+
+    vmask selectsMask = vmaskf_eq(ZEROV, s);
+    vfloat lc65535v = c65535v * l;
+    r = vself(selectsMask, lc65535v, r);
+    g = vself(selectsMask, lc65535v, g);
+    b = vself(selectsMask, lc65535v, b);
+}
+#endif
 
 void Color::hsl2rgb01 (float h, float s, float l, float &r, float &g, float &b)
 {

@@ -1842,49 +1842,83 @@ void RawImageSource::retinex(RAWParams raw, ColorManagementParams cmp, RetinexPa
 
     bool useHsl = deh.retinexcolorspace == "HSLLOG";
     bool useHslLin = deh.retinexcolorspace == "HSLLIN";
+
     if(useHsl || useHslLin) {
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+#ifdef __SSE2__
+            vfloat c32768 = F2V(32768.f);
+#endif
+#ifdef _OPENMP
+            #pragma omp for
+#endif
+
+            for (int i = border; i < H - border; i++ )
+            {
+                int j = border;
+#ifdef __SSE2__
+
+                for (; j < W - border - 3; j += 4) {
+                    vfloat H, S, L;
+                    Color::rgb2hsl(LVFU(red[i][j]), LVFU(green[i][j]), LVFU(blue[i][j]), H, S, L);
+                    _mm_storeu_ps(&labdeha->a[i - border][j - border], H);
+                    _mm_storeu_ps(&labdeha->b[i - border][j - border], S);
+                    L *= c32768;
+                    _mm_storeu_ps(&labTmp[i - border][j - border], L);
+
+                    if(dehaHcontlutili) { // curve is not vectorized
+                        for (int k = 0; k < 4; k++) {
+                            labdeha->L[i - border][j - border + k] = cdHcurve[labTmp[i - border][j - border + k]];
+                        }
+                    } else {
+                        _mm_storeu_ps(&labdeha->L[i - border][j - border], L);
+                    }
+                }
+
+#endif
+
+                for (; j < W - border; j++) {
+                    float H, S, L;
+                    //rgb=>lab
+                    Color::rgb2hslfloat(red[i][j], green[i][j], blue[i][j], labdeha->a[i - border][j - border], labdeha->b[i - border][j - border], L);
+                    L *= 32768.f;
+                    labTmp[i - border][j - border] = L;
+
+                    if(dehaHcontlutili) {
+                        labdeha->L[i - border][j - border] = cdHcurve[labTmp[i - border][j - border]];
+                    } else {
+                        labdeha->L[i - border][j - border] = labTmp[i - border][j - border];
+                    }
+                }
+            }
+        }
+    } else {
+
+        // Conversion rgb -> lab is hard to vectorize because it uses a lut (that's not the main problem)
+        // and it uses a condition inside XYZ2Lab which is almost impossible to vectorize without making it slower...
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+
         for (int i = border; i < H - border; i++ )
             for (int j = border; j < W - border; j++) {
-                float H,S,L;
+                float X, Y, Z, L, aa, bb;
                 //rgb=>lab
-                Color::rgb2hsl(red[i][j], green[i][j], blue[i][j],H,S,L);
-            //    L *= 65535.f;
-                L *= 32768.f;
+                Color::rgbxyz(red[i][j], green[i][j], blue[i][j], X, Y, Z, wp);
+                //convert Lab
+                Color::XYZ2Lab(X, Y, Z, L, aa, bb);
                 labTmp[i - border][j - border] = L;
 
-                if(dehaHcontlutili) {
-                    L = cdHcurve[L];    //apply curve to equalize histogram
+                if(dehacontlutili) {
+                    L = cdcurve[L];    //apply curve to equalize histogram
                 }
 
                 labdeha->L[i - border][j - border] = L;
-                labdeha->a[i - border][j - border] = H;
-                labdeha->b[i - border][j - border] = S;
+                labdeha->a[i - border][j - border] = aa;
+                labdeha->b[i - border][j - border] = bb;
             }
-    } else {
-
-    // Conversion rgb -> lab is hard to vectorize because it uses a lut (that's not the main problem)
-    // and it uses a condition inside XYZ2Lab which is almost impossible to vectorize without making it slower...
-#ifdef _OPENMP
-    #pragma omp parallel for
-#endif
-
-    for (int i = border; i < H - border; i++ )
-        for (int j = border; j < W - border; j++) {
-            float X, Y, Z, L, aa, bb;
-            //rgb=>lab
-            Color::rgbxyz(red[i][j], green[i][j], blue[i][j], X, Y, Z, wp);
-            //convert Lab
-            Color::XYZ2Lab(X, Y, Z, L, aa, bb);
-            labTmp[i - border][j - border] = L;
-
-            if(dehacontlutili) {
-                L = cdcurve[L];    //apply curve to equalize histogram
-            }
-
-            labdeha->L[i - border][j - border] = L;
-            labdeha->a[i - border][j - border] = aa;
-            labdeha->b[i - border][j - border] = bb;
-        }
     }
 
     MSR(labdeha->L, labTmp, WNew, HNew, deh, dehatransmissionCurve, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
@@ -1892,64 +1926,77 @@ void RawImageSource::retinex(RAWParams raw, ColorManagementParams cmp, RetinexPa
     delete [] labTmpBuffer;
 
     if(useHsl || useHslLin) {
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+
         for (int i = border; i < H - border; i++ ) {
             int j = border;
+#ifdef __SSE2__
+            vfloat c32768 = F2V(32768.f);
+
+            for (; j < W - border - 3; j += 4) {
+                vfloat R, G, B;
+                Color::hsl2rgb(LVFU(labdeha->a[i - border][j - border]), LVFU(labdeha->b[i - border][j - border]), LVFU(labdeha->L[i - border][j - border]) / c32768, R, G, B);
+
+                _mm_storeu_ps(&red[i][j], R);
+                _mm_storeu_ps(&green[i][j], G);
+                _mm_storeu_ps(&blue[i][j], B);
+            }
+
+#endif
+
             for (; j < W - border; j++) {
-                float R, G, B;
-           //     Color::hsl2rgb(labdeha->a[i - border][j - border],labdeha->b[i - border][j - border],labdeha->L[i - border][j - border]/65535.f,R,G,B);
-                Color::hsl2rgb(labdeha->a[i - border][j - border],labdeha->b[i - border][j - border],labdeha->L[i - border][j - border]/32768.f,R,G,B);
-                red[i][j] = R;
-                green[i][j] = G;
-                blue[i][j] = B;
+                Color::hsl2rgbfloat(labdeha->a[i - border][j - border], labdeha->b[i - border][j - border], labdeha->L[i - border][j - border] / 32768.f, red[i][j], green[i][j], blue[i][j]);
             }
         }
 
     } else {
 #ifdef __SSE2__
-    vfloat wipv[3][3];
+        vfloat wipv[3][3];
 
-    for(int i = 0; i < 3; i++)
-        for(int j = 0; j < 3; j++) {
-            wipv[i][j] = F2V(wiprof[i][j]);
-        }
+        for(int i = 0; i < 3; i++)
+            for(int j = 0; j < 3; j++) {
+                wipv[i][j] = F2V(wiprof[i][j]);
+            }
 
 #endif // __SSE2__
 #ifdef _OPENMP
-    #pragma omp parallel for
+        #pragma omp parallel for
 #endif
 
-    for (int i = border; i < H - border; i++ ) {
-        int j = border;
+        for (int i = border; i < H - border; i++ ) {
+            int j = border;
 #ifdef __SSE2__
 
-        for (; j < W - border - 3; j += 4) {
-            vfloat L2, a2, b2, x_, y_, z_;
-            vfloat R, G, B;
-            L2 = LVFU(labdeha->L[i - border][j - border]);
-            a2 = LVFU(labdeha->a[i - border][j - border]);
-            b2 = LVFU(labdeha->b[i - border][j - border]);
-            Color::Lab2XYZ(L2, a2, b2, x_, y_, z_) ;
-            Color::xyz2rgb(x_, y_, z_, R, G, B, wipv);
-            _mm_storeu_ps(&red[i][j], R);
-            _mm_storeu_ps(&green[i][j], G);
-            _mm_storeu_ps(&blue[i][j], B);
-        }
+            for (; j < W - border - 3; j += 4) {
+                vfloat L2, a2, b2, x_, y_, z_;
+                vfloat R, G, B;
+                L2 = LVFU(labdeha->L[i - border][j - border]);
+                a2 = LVFU(labdeha->a[i - border][j - border]);
+                b2 = LVFU(labdeha->b[i - border][j - border]);
+                Color::Lab2XYZ(L2, a2, b2, x_, y_, z_) ;
+                Color::xyz2rgb(x_, y_, z_, R, G, B, wipv);
+                _mm_storeu_ps(&red[i][j], R);
+                _mm_storeu_ps(&green[i][j], G);
+                _mm_storeu_ps(&blue[i][j], B);
+            }
 
 #endif
 
-        for (; j < W - border; j++) {
-            float L2, a2, b2, x_, y_, z_;
-            float R, G, B;
-            L2 = labdeha->L[i - border][j - border];
-            a2 = labdeha->a[i - border][j - border];
-            b2 = labdeha->b[i - border][j - border];
-            Color::Lab2XYZ(L2, a2, b2, x_, y_, z_) ;
-            Color::xyz2rgb(x_, y_, z_, R, G, B, wip);
-            red[i][j] = R;
-            green[i][j] = G;
-            blue[i][j] = B;
+            for (; j < W - border; j++) {
+                float L2, a2, b2, x_, y_, z_;
+                float R, G, B;
+                L2 = labdeha->L[i - border][j - border];
+                a2 = labdeha->a[i - border][j - border];
+                b2 = labdeha->b[i - border][j - border];
+                Color::Lab2XYZ(L2, a2, b2, x_, y_, z_) ;
+                Color::xyz2rgb(x_, y_, z_, R, G, B, wip);
+                red[i][j] = R;
+                green[i][j] = G;
+                blue[i][j] = B;
+            }
         }
-    }
     }
 
     delete labdeha;

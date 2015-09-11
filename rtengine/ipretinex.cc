@@ -259,7 +259,8 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
             out[i] = &outBuffer[i * W_L];
         }
 
-        float pond = 1.0f / (float) scal;
+        float logBetaGain = xlogf(16384.f);
+        float pond = logBetaGain / (float) scal;
 
 #ifdef _OPENMP
         #pragma omp parallel
@@ -284,6 +285,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
                 for (int i = 0; i < H_L; i++) {
                     int j = 0;
 #ifdef __SSE2__
+
                     if(useHslLin) {
                         for (; j < W_L - 3; j += 4) {
                             _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  (LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
@@ -293,7 +295,9 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
                             _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  xlogf(LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
                         }
                     }
+
 #endif
+
                     if(useHslLin) {
                         for (; j < W_L; j++) {
                             luminance[i][j] +=  pond * (LIM(src[i][j] / out[i][j], ilimD, limD));
@@ -312,22 +316,10 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
         delete [] outBuffer;
         delete [] srcBuffer;
 
-        float logBetaGain = xlogf(16384.f);
 
         if (dehatransmissionCurve) {
             execcur = true;
         }
-
-//I re-execute  luminance[i][j] = logBetaGain * luminance[i][j] because I call 2 times (or one) mean_stdvv
-// no difference or very little in time
-#ifdef _OPENMP
-        #pragma omp parallel for
-#endif
-
-        for (int i = 0; i < H_L; i++ )
-            for (int j = 0; j < W_L; j++) {
-                luminance[i][j] = logBetaGain * luminance[i][j];
-            }
 
         mean = 0.f;
         stddv = 0.f;
