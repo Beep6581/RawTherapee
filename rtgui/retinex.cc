@@ -432,11 +432,14 @@ void Retinex::retinexMethodChanged()
 
 void Retinex::ColorSpaceUpdateUI ()
 {
-    if (!batchMode) {
+    if (!batchMode) {  
          if(retinexcolorspace->get_active_row_number() == 0) {
              curveEditorGD->show();
              curveEditorGDH->hide();
         } else if(retinexcolorspace->get_active_row_number() == 1) {
+             curveEditorGD->hide();
+             curveEditorGDH->show();
+        } else if(retinexcolorspace->get_active_row_number() == 2) {
              curveEditorGD->hide();
              curveEditorGDH->show();
         }
