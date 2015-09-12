@@ -166,12 +166,47 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     expsettings->add(*settingsVBox);
 
     str->setAdjusterListener (this);
+
+    if (str->delay < 200) {
+        str->delay = 200;
+    }
+
     scal->setAdjusterListener (this);
+
+    if (scal->delay < 200) {
+        scal->delay = 200;
+    }
+
     neigh->setAdjusterListener (this);
+
+    if (neigh->delay < 200) {
+        neigh->delay = 200;
+    }
+
     gain->setAdjusterListener (this);
+
+    if (gain->delay < 200) {
+        gain->delay = 200;
+    }
+
     offs->setAdjusterListener (this);
+
+    if (offs->delay < 200) {
+        offs->delay = 200;
+    }
+
     vart->setAdjusterListener (this);
+
+    if (vart->delay < 200) {
+        vart->delay = 200;
+    }
+
     limd->setAdjusterListener (this);
+
+    if (limd->delay < 200) {
+        limd->delay = 200;
+    }
+
     pack_start (*retinexVBox);
     pack_start (*expsettings);
 
@@ -432,16 +467,16 @@ void Retinex::retinexMethodChanged()
 
 void Retinex::ColorSpaceUpdateUI ()
 {
-    if (!batchMode) {  
-         if(retinexcolorspace->get_active_row_number() == 0) {
-             curveEditorGD->show();
-             curveEditorGDH->hide();
+    if (!batchMode) {
+        if(retinexcolorspace->get_active_row_number() == 0) {
+            curveEditorGD->show();
+            curveEditorGDH->hide();
         } else if(retinexcolorspace->get_active_row_number() == 1) {
-             curveEditorGD->hide();
-             curveEditorGDH->show();
+            curveEditorGD->hide();
+            curveEditorGDH->show();
         } else if(retinexcolorspace->get_active_row_number() == 2) {
-             curveEditorGD->hide();
-             curveEditorGDH->show();
+            curveEditorGD->hide();
+            curveEditorGDH->show();
         }
     }
 }
@@ -519,7 +554,7 @@ void Retinex::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
 }
 
 void Retinex::setAdjusterBehavior (bool strAdd, bool neighAdd, bool scalAdd, bool limdAdd, bool gainAdd, bool offsAdd, bool vartAdd)
- {
+{
 
     str->setAddMode(strAdd);
     neigh->setAddMode(neighAdd);
@@ -528,7 +563,7 @@ void Retinex::setAdjusterBehavior (bool strAdd, bool neighAdd, bool scalAdd, boo
     gain->setAddMode(gainAdd);
     offs->setAddMode(offsAdd);
     vart->setAddMode(vartAdd);
- }
+}
 
 
 void Retinex::adjusterChanged (Adjuster* a, double newval)
