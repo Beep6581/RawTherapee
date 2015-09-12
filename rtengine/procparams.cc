@@ -143,14 +143,14 @@ void RetinexParams::getDefaulttransmissionCurve(std::vector<double> &curve)
 
 void RetinexParams::getDefaultCDCurve(std::vector<double> &curve)
 {
-    double v[10] = { 0., 0.,
-                     0.25, 0.25,
-                     0.5, 0.5,
-                     0.75, 0.75,
+    double v[4] = { 0., 0.,
+                 //    0.25, 0.25,
+                  //   0.5, 0.5,
+                 //    0.75, 0.75,
                      1., 1.,
                    };
 
-    curve.resize(11);
+    curve.resize(5);
     curve.at(0) = double(DCT_NURBS);
 
     for (size_t i = 1; i < curve.size(); ++i) {
@@ -160,12 +160,12 @@ void RetinexParams::getDefaultCDCurve(std::vector<double> &curve)
 
 void RetinexParams::getDefaultCDHCurve(std::vector<double> &curve)
 {
-    double v[6] = { 0.00, 0.00,
-                     0.5, 0.5,
+    double v[4] = { 0.00, 0.00,
+                  //   0.5, 0.5,
                      1.0, 1.0,
                    };
 
-    curve.resize(7);
+    curve.resize(5);
     curve.at(0) = double(DCT_NURBS);
 
     for (size_t i = 1; i < curve.size(); ++i) {

@@ -1870,7 +1870,7 @@ void RawImageSource::retinex(RAWParams raw, ColorManagementParams cmp, RetinexPa
 
                     if(dehaHcontlutili) { // curve is not vectorized
                         for (int k = 0; k < 4; k++) {
-                            labdeha->L[i - border][j - border + k] = cdHcurve[labTmp[i - border][j - border + k]];
+                            labdeha->L[i - border][j - border + k] = cdHcurve[2.f*labTmp[i - border][j - border + k]]/2.f;
                         }
                     } else {
                         _mm_storeu_ps(&labdeha->L[i - border][j - border], L);
@@ -1887,7 +1887,7 @@ void RawImageSource::retinex(RAWParams raw, ColorManagementParams cmp, RetinexPa
                     labTmp[i - border][j - border] = L;
 
                     if(dehaHcontlutili) {
-                        labdeha->L[i - border][j - border] = cdHcurve[labTmp[i - border][j - border]];
+                        labdeha->L[i - border][j - border] = cdHcurve[2.f*labTmp[i - border][j - border]]/2.f;
                     } else {
                         labdeha->L[i - border][j - border] = labTmp[i - border][j - border];
                     }
@@ -1901,7 +1901,6 @@ void RawImageSource::retinex(RAWParams raw, ColorManagementParams cmp, RetinexPa
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
-
         for (int i = border; i < H - border; i++ )
             for (int j = border; j < W - border; j++) {
                 float X, Y, Z, L, aa, bb;
@@ -1912,7 +1911,7 @@ void RawImageSource::retinex(RAWParams raw, ColorManagementParams cmp, RetinexPa
                 labTmp[i - border][j - border] = L;
 
                 if(dehacontlutili) {
-                    L = cdcurve[L];    //apply curve to equalize histogram
+                    L = cdcurve[L*2.f]/2.f;    //apply curve to equalize histogram
                 }
 
                 labdeha->L[i - border][j - border] = L;
