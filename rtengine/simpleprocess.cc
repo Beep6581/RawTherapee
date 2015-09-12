@@ -118,17 +118,14 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     if(params.retinex.enabled) { //enabled Retinex
         LUTf cdcurve (65536, 0);
-        LUTf cdHcurve (65536, 0);
         RetinextransmissionCurve dehatransmissionCurve;
-
         bool dehacontlutili = false;
-        bool dehaHcontlutili = false;
-        CurveFactory::curveDehaContL (dehacontlutili,  params.retinex.cdcurve, cdcurve, 1);
-        CurveFactory::curveDehaHContL (dehaHcontlutili,  params.retinex.cdHcurve, cdHcurve, 1);
-        RetinexParams DehaParams = params.retinex;
-        DehaParams.getCurves(dehatransmissionCurve);
+        bool useHsl = false;
+        multi_array2D<float, 3> conversionBuffer(1, 1);
+        imgsrc->retinexPrepareBuffers(params.icm, params.retinex, conversionBuffer);
+        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, dehatransmissionCurve, dehacontlutili, useHsl);
         float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-        imgsrc->retinex( params.raw, params.icm, params.retinex, cdcurve, cdHcurve, dehatransmissionCurve, dehacontlutili, dehaHcontlutili, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+        imgsrc->retinex( params.icm, params.retinex, cdcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
     }
 
     if (pl) {

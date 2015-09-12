@@ -1801,49 +1801,15 @@ void RawImageSource::demosaic(const RAWParams &raw)
     }
 }
 
-void RawImageSource::retinex(RAWParams raw, ColorManagementParams cmp, RetinexParams  deh, LUTf & cdcurve, LUTf & cdHcurve, const RetinextransmissionCurve & dehatransmissionCurve, bool dehacontlutili, bool dehaHcontlutili, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
+
+void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexParams retinexParams, multi_array2D<float, 3> &conversionBuffer)
 {
+    bool useHsl = (retinexParams.retinexcolorspace == "HSLLOG" || retinexParams.retinexcolorspace == "HSLLIN");
+    conversionBuffer[0] (W - 2 * border, H - 2 * border);
+    conversionBuffer[1] (W - 2 * border, H - 2 * border);
+    conversionBuffer[2] (W - 2 * border, H - 2 * border);
 
-    MyTime t4, t5;
-    t4.set();
-
-    if (settings->verbose) {
-        printf ("Applying Retinex\n");
-    }
-
-    TMatrix wprof = iccStore->workingSpaceMatrix (cmp.working);
-    TMatrix wiprof = iccStore->workingSpaceInverseMatrix (cmp.working);
-
-    double wip[3][3] = {
-        {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
-        {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
-        {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
-    };
-
-    double wp[3][3] = {
-        {wprof[0][0], wprof[0][1], wprof[0][2]},
-        {wprof[1][0], wprof[1][1], wprof[1][2]},
-        {wprof[2][0], wprof[2][1], wprof[2][2]}
-    };
-
-    // We need a buffer with original L data to allow correct blending
-    // red, green and blue still have original size of raw, but we can't use the borders
-    const int HNew = H - 2 * border;
-    const int WNew = W - 2 * border;
-
-    LabImage * labdeha = new LabImage(WNew, HNew);
-
-    float *labTmp[HNew] ALIGNED16;
-    float *labTmpBuffer = new float[HNew * WNew];
-
-    for (int i = 0; i < HNew; i++) {
-        labTmp[i] = &labTmpBuffer[i * WNew];
-    }
-
-    bool useHsl = deh.retinexcolorspace == "HSLLOG";
-    bool useHslLin = deh.retinexcolorspace == "HSLLIN";
-
-    if(useHsl || useHslLin) {
+    if(useHsl) {
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
@@ -1863,18 +1829,10 @@ void RawImageSource::retinex(RAWParams raw, ColorManagementParams cmp, RetinexPa
                 for (; j < W - border - 3; j += 4) {
                     vfloat H, S, L;
                     Color::rgb2hsl(LVFU(red[i][j]), LVFU(green[i][j]), LVFU(blue[i][j]), H, S, L);
-                    _mm_storeu_ps(&labdeha->a[i - border][j - border], H);
-                    _mm_storeu_ps(&labdeha->b[i - border][j - border], S);
+                    _mm_storeu_ps(&conversionBuffer[0][i - border][j - border], H);
+                    _mm_storeu_ps(&conversionBuffer[1][i - border][j - border], S);
                     L *= c32768;
-                    _mm_storeu_ps(&labTmp[i - border][j - border], L);
-
-                    if(dehaHcontlutili) { // curve is not vectorized
-                        for (int k = 0; k < 4; k++) {
-                            labdeha->L[i - border][j - border + k] = cdHcurve[2.f*labTmp[i - border][j - border + k]]/2.f;
-                        }
-                    } else {
-                        _mm_storeu_ps(&labdeha->L[i - border][j - border], L);
-                    }
+                    _mm_storeu_ps(&conversionBuffer[2][i - border][j - border], L);
                 }
 
 #endif
@@ -1882,25 +1840,26 @@ void RawImageSource::retinex(RAWParams raw, ColorManagementParams cmp, RetinexPa
                 for (; j < W - border; j++) {
                     float H, S, L;
                     //rgb=>lab
-                    Color::rgb2hslfloat(red[i][j], green[i][j], blue[i][j], labdeha->a[i - border][j - border], labdeha->b[i - border][j - border], L);
+                    Color::rgb2hslfloat(red[i][j], green[i][j], blue[i][j], conversionBuffer[0][i - border][j - border], conversionBuffer[1][i - border][j - border], L);
                     L *= 32768.f;
-                    labTmp[i - border][j - border] = L;
-
-                    if(dehaHcontlutili) {
-                        labdeha->L[i - border][j - border] = cdHcurve[2.f*labTmp[i - border][j - border]]/2.f;
-                    } else {
-                        labdeha->L[i - border][j - border] = labTmp[i - border][j - border];
-                    }
+                    conversionBuffer[2][i - border][j - border] = L;
                 }
             }
         }
     } else {
+        TMatrix wprof = iccStore->workingSpaceMatrix (cmp.working);
+        double wp[3][3] = {
+            {wprof[0][0], wprof[0][1], wprof[0][2]},
+            {wprof[1][0], wprof[1][1], wprof[1][2]},
+            {wprof[2][0], wprof[2][1], wprof[2][2]}
+        };
 
         // Conversion rgb -> lab is hard to vectorize because it uses a lut (that's not the main problem)
         // and it uses a condition inside XYZ2Lab which is almost impossible to vectorize without making it slower...
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
+
         for (int i = border; i < H - border; i++ )
             for (int j = border; j < W - border; j++) {
                 float X, Y, Z, L, aa, bb;
@@ -1908,23 +1867,60 @@ void RawImageSource::retinex(RAWParams raw, ColorManagementParams cmp, RetinexPa
                 Color::rgbxyz(red[i][j], green[i][j], blue[i][j], X, Y, Z, wp);
                 //convert Lab
                 Color::XYZ2Lab(X, Y, Z, L, aa, bb);
-                labTmp[i - border][j - border] = L;
-
-                if(dehacontlutili) {
-                    L = cdcurve[L*2.f]/2.f;    //apply curve to equalize histogram
-                }
-
-                labdeha->L[i - border][j - border] = L;
-                labdeha->a[i - border][j - border] = aa;
-                labdeha->b[i - border][j - border] = bb;
+                conversionBuffer[0][i - border][j - border] = aa;
+                conversionBuffer[1][i - border][j - border] = bb;
+                conversionBuffer[2][i - border][j - border] = L;
             }
     }
+}
 
-    MSR(labdeha->L, labTmp, WNew, HNew, deh, dehatransmissionCurve, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+void RawImageSource::retinexPrepareCurves(RetinexParams retinexParams, LUTf &cdcurve, RetinextransmissionCurve &retinextransmissionCurve, bool &retinexcontlutili, bool &useHsl)
+{
+    useHsl = (retinexParams.retinexcolorspace == "HSLLOG" || retinexParams.retinexcolorspace == "HSLLIN");
 
-    delete [] labTmpBuffer;
+    if(useHsl) {
+        CurveFactory::curveDehaContL (retinexcontlutili, retinexParams.cdHcurve, cdcurve, 1);
+    } else {
+        CurveFactory::curveDehaContL (retinexcontlutili, retinexParams.cdcurve, cdcurve, 1);
+    }
 
-    if(useHsl || useHslLin) {
+    retinexParams.getCurves(retinextransmissionCurve);
+}
+
+void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 3> &conversionBuffer, bool dehacontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
+{
+
+    MyTime t4, t5;
+    t4.set();
+
+    if (settings->verbose) {
+        printf ("Applying Retinex\n");
+    }
+
+    // We need a buffer with original L data to allow correct blending
+    // red, green and blue still have original size of raw, but we can't use the borders
+    const int HNew = H - 2 * border;
+    const int WNew = W - 2 * border;
+
+    array2D<float> LBuffer (WNew, HNew);
+    float **temp = conversionBuffer[2]; // one less dereference
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
+
+    for (int i = 0; i < H - 2 * border; i++ )
+        if(dehacontlutili)
+            for (int j = 0; j < W - 2 * border; j++) {
+                LBuffer[i][j] = cdcurve[2.f * temp[i][j]] / 2.f;
+            }
+        else
+            for (int j = 0; j < W - 2 * border; j++) {
+                LBuffer[i][j] = temp[i][j];
+            }
+
+    MSR(LBuffer, conversionBuffer[2], WNew, HNew, deh, dehatransmissionCurve, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+
+    if(useHsl) {
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -1936,7 +1932,7 @@ void RawImageSource::retinex(RAWParams raw, ColorManagementParams cmp, RetinexPa
 
             for (; j < W - border - 3; j += 4) {
                 vfloat R, G, B;
-                Color::hsl2rgb(LVFU(labdeha->a[i - border][j - border]), LVFU(labdeha->b[i - border][j - border]), LVFU(labdeha->L[i - border][j - border]) / c32768, R, G, B);
+                Color::hsl2rgb(LVFU(conversionBuffer[0][i - border][j - border]), LVFU(conversionBuffer[1][i - border][j - border]), LVFU(LBuffer[i - border][j - border]) / c32768, R, G, B);
 
                 _mm_storeu_ps(&red[i][j], R);
                 _mm_storeu_ps(&green[i][j], G);
@@ -1946,11 +1942,19 @@ void RawImageSource::retinex(RAWParams raw, ColorManagementParams cmp, RetinexPa
 #endif
 
             for (; j < W - border; j++) {
-                Color::hsl2rgbfloat(labdeha->a[i - border][j - border], labdeha->b[i - border][j - border], labdeha->L[i - border][j - border] / 32768.f, red[i][j], green[i][j], blue[i][j]);
+                Color::hsl2rgbfloat(conversionBuffer[0][i - border][j - border], conversionBuffer[1][i - border][j - border], LBuffer[i - border][j - border] / 32768.f, red[i][j], green[i][j], blue[i][j]);
             }
         }
 
     } else {
+        TMatrix wiprof = iccStore->workingSpaceInverseMatrix (cmp.working);
+
+        double wip[3][3] = {
+            {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+            {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+            {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+        };
+
 #ifdef __SSE2__
         vfloat wipv[3][3];
 
@@ -1969,12 +1973,9 @@ void RawImageSource::retinex(RAWParams raw, ColorManagementParams cmp, RetinexPa
 #ifdef __SSE2__
 
             for (; j < W - border - 3; j += 4) {
-                vfloat L2, a2, b2, x_, y_, z_;
+                vfloat x_, y_, z_;
                 vfloat R, G, B;
-                L2 = LVFU(labdeha->L[i - border][j - border]);
-                a2 = LVFU(labdeha->a[i - border][j - border]);
-                b2 = LVFU(labdeha->b[i - border][j - border]);
-                Color::Lab2XYZ(L2, a2, b2, x_, y_, z_) ;
+                Color::Lab2XYZ(LVFU(LBuffer[i - border][j - border]), LVFU(conversionBuffer[0][i - border][j - border]), LVFU(conversionBuffer[1][i - border][j - border]), x_, y_, z_) ;
                 Color::xyz2rgb(x_, y_, z_, R, G, B, wipv);
                 _mm_storeu_ps(&red[i][j], R);
                 _mm_storeu_ps(&green[i][j], G);
@@ -1984,12 +1985,9 @@ void RawImageSource::retinex(RAWParams raw, ColorManagementParams cmp, RetinexPa
 #endif
 
             for (; j < W - border; j++) {
-                float L2, a2, b2, x_, y_, z_;
+                float x_, y_, z_;
                 float R, G, B;
-                L2 = labdeha->L[i - border][j - border];
-                a2 = labdeha->a[i - border][j - border];
-                b2 = labdeha->b[i - border][j - border];
-                Color::Lab2XYZ(L2, a2, b2, x_, y_, z_) ;
+                Color::Lab2XYZ(LBuffer[i - border][j - border], conversionBuffer[0][i - border][j - border], conversionBuffer[1][i - border][j - border], x_, y_, z_) ;
                 Color::xyz2rgb(x_, y_, z_, R, G, B, wip);
                 red[i][j] = R;
                 green[i][j] = G;
@@ -1997,8 +1995,6 @@ void RawImageSource::retinex(RAWParams raw, ColorManagementParams cmp, RetinexPa
             }
         }
     }
-
-    delete labdeha;
 
     t5.set();
 

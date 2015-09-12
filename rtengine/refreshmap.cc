@@ -428,21 +428,21 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DIRPYREQUALIZER,     // EvWavedgeampli
     DIRPYREQUALIZER,      //EvWavlev3nois
     DIRPYREQUALIZER,       //EvWavNPmet
-    DEMOSAIC,  // EvretinexMethod
-    DEMOSAIC,   // EvLneigh
-    DEMOSAIC,   // EvLgain
-    DEMOSAIC,   // EvLoffs
-    DEMOSAIC,   // EvLstr
-    DEMOSAIC,   // EvLscal
-    DEMOSAIC,   // EvLvart
-    DEMOSAIC,   // EvLCDCurve
-    DEMOSAIC,   // EvRetinexOpacity
-    DEMOSAIC,   // EvRetinexEnabled
-    DEMOSAIC,   // EvRetinexretinex <-- TODO we can probably delete this
-    DEMOSAIC,   // EvRetinexmedianmap
-    DEMOSAIC,   // EvLlimd
+    DEMOSAIC,  // Unused?
+    ALLNORAW,   // EvretinexMethod
+    ALLNORAW,   // EvLneigh
+    ALLNORAW,   // EvLgain
+    ALLNORAW,   // EvLoffs was EvLstr
+    ALLNORAW,   // EvLstr was EvLscal
+    ALLNORAW,   // EvLscal was EvLvart
+    ALLNORAW,   // EvLvart was EvLCDCurve
+    ALLNORAW,   // EvRetinexOpacity // not used
+    ALLNORAW,   // EvRetinextransmission
+    DEMOSAIC,   // EvRetinexEnabled was EvRetinexretinex <-- TODO we can probably delete this
+    ALLNORAW,   // EvRetinexmedianmap
+    ALLNORAW,   // EvLlimd
     DEMOSAIC,    // Evretinexcolorspace
-    DEMOSAIC    // EvLCDHCurve
+    ALLNORAW    // EvLCDHCurve
 
 
 };

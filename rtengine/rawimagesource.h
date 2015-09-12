@@ -152,7 +152,9 @@ public:
     void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse);
     void        demosaic    (const RAWParams &raw);
 //    void        retinex       (RAWParams raw, ColorManagementParams cmp, RetinexParams  lcur, LUTf & cdcurve, bool dehacontlutili);
-    void        retinex       (RAWParams raw, ColorManagementParams cmp, RetinexParams  deh, LUTf & cdcurve, LUTf & cdHcurve, const RetinextransmissionCurve & dehatransmissionCurve, bool dehacontlutili, bool dehaHcontlutili, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
+    void        retinex       (ColorManagementParams cmp, RetinexParams  deh, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 3> &conversionBuffer, bool dehacontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
+    void        retinexPrepareCurves       (RetinexParams retinexParams, LUTf &cdcurve, RetinextransmissionCurve &retinextransmissionCurve, bool &retinexcontlutili, bool &useHsl);
+    void        retinexPrepareBuffers      (ColorManagementParams cmp, RetinexParams retinexParams, multi_array2D<float, 3> &conversionBuffer);
     void        flushRawData      ();
     void        flushRGB          ();
     void        HLRecovery_Global (ToneCurveParams hrp);

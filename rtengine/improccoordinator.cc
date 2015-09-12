@@ -46,8 +46,6 @@ ImProcCoordinator::ImProcCoordinator ()
       satcurve(65536, 0),
       lhskcurve(65536, 0),
       clcurve(65536, 0),
-      cdcurve(65536, 0),
-      cdHcurve(65536, 0),
       wavclCurve(65536, 0),
       clToningcurve(65536, 0),
       cl2Toningcurve(65536, 0),
@@ -89,7 +87,7 @@ ImProcCoordinator::ImProcCoordinator ()
       pW(-1), pH(-1),
       plistener(NULL), imageListener(NULL), aeListener(NULL), acListener(NULL), abwListener(NULL), actListener(NULL), adnListener(NULL), awavListener(NULL), dehaListener(NULL), hListener(NULL),
       resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false), wavcontlutili(false),
-      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false)
+      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), conversionBuffer(1, 1)
 
 {}
 
@@ -237,21 +235,23 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
 
         if (params.retinex.enabled) {
-            bool dehacontlutili = false;
-            bool dehaHcontlutili = false;
-            CurveFactory::curveDehaContL (dehacontlutili,  params.retinex.cdcurve, cdcurve, 1);
-            CurveFactory::curveDehaHContL (dehaHcontlutili,  params.retinex.cdHcurve, cdHcurve, 1);
-            RetinexParams DehaParams = params.retinex;
-            DehaParams.getCurves(dehatransmissionCurve);
-            float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-            imgsrc->retinex( params.raw, params.icm, params.retinex, cdcurve, cdHcurve, dehatransmissionCurve, dehacontlutili, dehaHcontlutili, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);//enabled Retinex
-
-            if(dehaListener) {
-                dehaListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
-            }
-
+            imgsrc->retinexPrepareBuffers(params.icm, params.retinex, conversionBuffer);
         }
     }
+
+    if (params.retinex.enabled) {
+        bool dehacontlutili = false;
+        bool useHsl = false;
+        LUTf cdcurve (65536, 0);
+        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, dehatransmissionCurve, dehacontlutili, useHsl);
+        float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
+        imgsrc->retinex( params.icm, params.retinex, cdcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);//enabled Retinex
+
+        if(dehaListener) {
+            dehaListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+        }
+    }
+
 
     // Updating toneCurve.hrenabled if necessary
     // It has to be done there, because the next 'if' statement will use the value computed here

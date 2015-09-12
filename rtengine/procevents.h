@@ -444,7 +444,7 @@ enum ProcEvent {
     EvRetinexEnabled = 415,
     EvRetinexmedianmap = 416,
     EvLlimd = 417,
-    EvretinexColorSpace = 406, //change to 418 if we want a separate history entry "Retinex - Color space"
+    EvretinexColorSpace = 418, //change to 418 if we want a separate history entry "Retinex - Color space"
     EvLCDHCurve = 419,
     NUMOFEVENTS
 };

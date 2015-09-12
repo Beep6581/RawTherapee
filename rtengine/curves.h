@@ -283,7 +283,6 @@ public:
 
     static void curveWavContL ( bool & wavcontlutili, const std::vector<double>& wavclcurvePoints, LUTf & wavclCurve,/* LUTu & histogramwavcl, LUTu & outBeforeWavCLurveHistogram,*/int skip);
     static void curveDehaContL ( bool & dehacontlutili, const std::vector<double>& dehaclcurvePoints, LUTf & dehaclCurve, int skip);
-    static void curveDehaHContL ( bool & dehaHcontlutili, const std::vector<double>& dehaclcurvePoints, LUTf & dehaclCurve, int skip);
 
     static void curveToningCL ( bool & clctoningutili, const std::vector<double>& clcurvePoints, LUTf & clToningCurve, int skip);
     static void curveToningLL ( bool & llctoningutili, const std::vector<double>& llcurvePoints, LUTf & llToningCurve, int skip);

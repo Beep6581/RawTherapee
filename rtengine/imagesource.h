@@ -69,17 +69,16 @@ public:
     virtual int         load        (Glib::ustring fname, bool batch = false) = 0;
     virtual void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse) {};
     virtual void        demosaic    (const RAWParams &raw) {};
-//    virtual void   //     retinex       (RAWParams raw, ColorManagementParams cmp, RetinexParams lcur, LUTf & cdcurve, bool dehacontlutili) {};
-    virtual void        retinex       (RAWParams raw, ColorManagementParams cmp, RetinexParams deh, LUTf & cdcurve, LUTf & cdHcurve, const RetinextransmissionCurve & dehatransmissionCurve, bool dehacontlutili, bool dehaHcontlutili, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax) {};
+    virtual void        retinex       (ColorManagementParams cmp, RetinexParams  deh, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 3> &conversionBuffer, bool dehacontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax) {};
+    virtual void        retinexPrepareCurves       (RetinexParams retinexParams, LUTf &cdcurve, RetinextransmissionCurve &retinextransmissionCurve, bool &retinexcontlutili, bool &useHsl) {};
+    virtual void        retinexPrepareBuffers      (ColorManagementParams cmp, RetinexParams retinexParams, multi_array2D<float, 3> &conversionBuffer) {};
     virtual void        flushRawData       () {};
     virtual void        flushRGB           () {};
     virtual void        HLRecovery_Global  (ToneCurveParams hrp) {};
     virtual void        HLRecovery_inpaint (float** red, float** green, float** blue) {};
-//   virtual void        MSR(LabImage* lab, int width, int height, int skip, RetinexParams lcur) {};
     virtual void        MSR(LabImage* lab, int width, int height, int skip, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax) {};
 
     virtual bool        IsrgbSourceModified() = 0; // tracks whether cached rgb output of demosaic has been modified
-    // virtual void        MSR(LabImage* lab, int width, int height, int skip, const LCurveParams  &lcur);
 
     // use right after demosaicing image, add coarse transformation and put the result in the provided Imagefloat*
     virtual void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, ToneCurveParams hlp, ColorManagementParams cmp, RAWParams raw) {}
