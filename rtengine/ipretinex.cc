@@ -268,9 +268,25 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
         {
             AlignedBufferMP<double>* pBuffer = new AlignedBufferMP<double> (max(W_L, H_L));
 
-            for ( int scale = 0; scale < scal; scale++ ) {
-                gaussHorizontal<float> (src, out, *pBuffer, W_L, H_L, RetinexScales[scale]);
-                gaussVertical<float>   (out, out, *pBuffer, W_L, H_L, RetinexScales[scale]);
+            for ( int scale = scal - 1; scale >= 0; scale-- ) {
+                float ** source;
+                float sigma;
+
+                if(scale == scal - 1) { // probably large sigma. Use double gauss with sigma divided by sqrt(2.0)
+                    sigma = RetinexScales[scale] / sqrt(2.0);
+                    source = src;
+                } else { // reuse result of last iteration
+                    sigma = sqrtf((RetinexScales[scale] * RetinexScales[scale]) / (RetinexScales[scale + 1] * RetinexScales[scale + 1]));
+                    source = out;
+                }
+
+                gaussHorizontal<float> (source, out, *pBuffer, W_L, H_L, sigma);
+                gaussVertical<float>   (out, out, *pBuffer, W_L, H_L, sigma);
+
+                if(scale == scal - 1) { // probably large sigma. Use double gauss with sigma divided by sqrt(2.0)
+                    gaussHorizontal<float> (out, out, *pBuffer, W_L, H_L, sigma);
+                    gaussVertical<float>   (out, out, *pBuffer, W_L, H_L, sigma);
+                }
 
 #ifdef __SSE2__
                 vfloat pondv = F2V(pond);
