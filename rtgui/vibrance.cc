@@ -37,19 +37,16 @@ Vibrance::Vibrance () : FoldableToolPanel(this, "vibrance", M("TP_VIBRANCE_LABEL
     saturated = Gtk::manage(new Adjuster (M("TP_VIBRANCE_SATURATED"), -100., 100., 1., 0.));
     saturated->setAdjusterListener (this);
     saturated->set_sensitive(false);
-    //if (saturated->delay < 1000) saturated->delay = 1000;
     pack_start( *saturated, Gtk::PACK_SHRINK, 0);
 
     pastels = Gtk::manage(new Adjuster (M("TP_VIBRANCE_PASTELS"), -100., 100., 1., 0.));
     pastels->setAdjusterListener (this);
-    //if (pastels->delay < 1000) pastels->delay = 1000;
     pack_start( *pastels, Gtk::PACK_SHRINK, 0);
 
     psThreshold = Gtk::manage (new ThresholdAdjuster (M("TP_VIBRANCE_PSTHRESHOLD"), -100., 100., 0., M("TP_VIBRANCE_PSTHRESHOLD_WEIGTHING"), 0, 0., 100., 75., M("TP_VIBRANCE_PSTHRESHOLD_SATTHRESH"), 0, this, false));
     psThreshold->setAdjusterListener (this);
     psThreshold->set_tooltip_markup(M("TP_VIBRANCE_PSTHRESHOLD_TOOLTIP"));
     psThreshold->set_sensitive(false);
-    //if (psThreshold->delay < 1000) psThreshold->delay = 1000;
     pack_start( *psThreshold, Gtk::PACK_SHRINK, 0);
 
     protectSkins = Gtk::manage (new Gtk::CheckButton (M("TP_VIBRANCE_PROTECTSKINS")));

@@ -29,16 +29,16 @@ RAWExposure::RAWExposure () : FoldableToolPanel(this, "rawexposure", M("TP_EXPOS
     PexPos = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_LINEAR"), 0.1, 16.0, 0.01, 1));
     PexPos->setAdjusterListener (this);
 
-    if (PexPos->delay < 1000) {
-        PexPos->delay = 1000;
+    if (PexPos->delay < options.adjusterMaxDelay) {
+        PexPos->delay = options.adjusterMaxDelay;
     }
 
     PexPos->show();
     PexPreser = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_PRESER"), 0, 2.5, 0.1, 0));
     PexPreser->setAdjusterListener (this);
 
-    if (PexPreser->delay < 1000) {
-        PexPreser->delay = 1000;
+    if (PexPreser->delay < options.adjusterMaxDelay) {
+        PexPreser->delay = options.adjusterMaxDelay;
     }
 
     PexPreser->show();
