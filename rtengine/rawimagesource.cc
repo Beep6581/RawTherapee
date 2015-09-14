@@ -1817,6 +1817,15 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
         #pragma omp parallel
 #endif
         {
+            // one LUT per thread
+            LUTu lhist16RETIThr;
+
+            if(lhist16RETI)
+            {
+                lhist16RETIThr(32769, 0);
+                lhist16RETIThr.clear();
+            }
+
 #ifdef __SSE2__
             vfloat c32768 = F2V(32768.f);
 #endif
@@ -1837,8 +1846,13 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
                     _mm_storeu_ps(&conversionBuffer[1][i - border][j - border], S);
                     L *= c32768;
                     _mm_storeu_ps(&conversionBuffer[2][i - border][j - border], L);
-                    pos =  (INT) clipretinex( conversionBuffer[2][i - border][j - border], 0, 32768);//histogram in curve HSL
-                    lhist16RETI[pos]++;                    
+
+                    if(lhist16RETI) {
+                        for(int p = 0; p < 4; p++) {
+                            pos =  (INT) clipretinex( conversionBuffer[2][i - border][j - border + p], 0.f, 32768.f);//histogram in curve HSL
+                            lhist16RETIThr[pos]++;
+                        }
+                    }
                 }
 
 #endif
@@ -1850,10 +1864,27 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
                     Color::rgb2hslfloat(red[i][j], green[i][j], blue[i][j], conversionBuffer[0][i - border][j - border], conversionBuffer[1][i - border][j - border], L);
                     L *= 32768.f;
                     conversionBuffer[2][i - border][j - border] = L;
-                    pos =  (INT) clipretinex(L, 0, 32768);
-                    lhist16RETI[pos]++;
+
+                    if(lhist16RETI) {
+                        pos =  (INT) clipretinex(L, 0, 32768);
+                        lhist16RETIThr[pos]++;
+                    }
                 }
             }
+
+#ifdef _OPENMP
+            #pragma omp critical
+            {
+                if(lhist16RETI)
+                {
+                    // Add per Thread LUT to global LUT
+                    for(int i = 0; i < 32769; i++) {
+                        lhist16RETI[i] += lhist16RETIThr[i];
+                    }
+                }
+            }
+#endif
+
         }
     } else {
         TMatrix wprof = iccStore->workingSpaceMatrix (cmp.working);
@@ -1866,23 +1897,52 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
         // Conversion rgb -> lab is hard to vectorize because it uses a lut (that's not the main problem)
         // and it uses a condition inside XYZ2Lab which is almost impossible to vectorize without making it slower...
 #ifdef _OPENMP
-        #pragma omp parallel for
+        #pragma omp parallel
+#endif
+        {
+            // one LUT per thread
+            LUTu lhist16RETIThr;
+
+            if(lhist16RETI) {
+                lhist16RETIThr(32769, 0);
+                lhist16RETIThr.clear();
+            }
+
+#ifdef _OPENMP
+            #pragma omp for
 #endif
 
-        for (int i = border; i < H - border; i++ )
-            for (int j = border; j < W - border; j++) {
-                float X, Y, Z, L, aa, bb;
-                int pos;
-                //rgb=>lab
-                Color::rgbxyz(red[i][j], green[i][j], blue[i][j], X, Y, Z, wp);
-                //convert Lab
-                Color::XYZ2Lab(X, Y, Z, L, aa, bb);
-                conversionBuffer[0][i - border][j - border] = aa;
-                conversionBuffer[1][i - border][j - border] = bb;
-                conversionBuffer[2][i - border][j - border] = L;
-                pos =  (INT) clipretinex(L, 0, 32768);
-                lhist16RETI[pos]++;//histogram in Curve Lab
+            for (int i = border; i < H - border; i++ )
+                for (int j = border; j < W - border; j++) {
+                    float X, Y, Z, L, aa, bb;
+                    int pos;
+                    //rgb=>lab
+                    Color::rgbxyz(red[i][j], green[i][j], blue[i][j], X, Y, Z, wp);
+                    //convert Lab
+                    Color::XYZ2Lab(X, Y, Z, L, aa, bb);
+                    conversionBuffer[0][i - border][j - border] = aa;
+                    conversionBuffer[1][i - border][j - border] = bb;
+                    conversionBuffer[2][i - border][j - border] = L;
+
+                    if(lhist16RETI) {
+                        pos =  (INT) clipretinex(L, 0, 32768);
+                        lhist16RETIThr[pos]++;//histogram in Curve Lab
+                    }
+                }
+
+#ifdef _OPENMP
+            #pragma omp critical
+            {
+                if(lhist16RETI) {
+                    // Add per Thread LUT to global LUT
+                    for(int i = 0; i < 32769; i++) {
+                        lhist16RETI[i] += lhist16RETIThr[i];
+                    }
+                }
             }
+#endif
+
+        }
     }
 }
 
@@ -1899,7 +1959,7 @@ void RawImageSource::retinexPrepareCurves(RetinexParams retinexParams, LUTf &cdc
     retinexParams.getCurves(retinextransmissionCurve);
 }
 
-void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 3> &conversionBuffer, bool dehacontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu & lhist16RETI, LUTu &histLRETI)
+void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 3> &conversionBuffer, bool dehacontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI)
 {
 
     MyTime t4, t5;
@@ -1919,42 +1979,72 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf 
     LUTf dLcurve;
     LUTu hist16RET;
     float val;
-    hist16RET(65536, 0);
-    hist16RET.clear();
-    
-    if(dehacontlutili) histLRETI.clear();
-    dLcurve(65536, 0);
-    dLcurve.clear();
-    
+
+    if(dehacontlutili && histLRETI) {
+        hist16RET(32769, 0);
+        hist16RET.clear();
+        histLRETI.clear();
+        dLcurve(32769, 0);
+        dLcurve.clear();
+    }
+
 #ifdef _OPENMP
-    #pragma omp parallel for
+    #pragma omp parallel
+#endif
+    {
+        // one LUT per thread
+        LUTu hist16RETThr;
+
+        if(dehacontlutili && histLRETI) {
+            hist16RETThr(32769, 0);
+            hist16RETThr.clear();
+        }
+
+#ifdef _OPENMP
+        #pragma omp for
 #endif
 
-    for (int i = 0; i < H - 2 * border; i++ )
-        if(dehacontlutili)
-            for (int j = 0; j < W - 2 * border; j++) {
-                LBuffer[i][j] = cdcurve[2.f * temp[i][j]] / 2.f;
-                int pos =  (INT) clipretinex(LBuffer[i][j], 0, 32768);
-                hist16RET[pos]++;//histogram in Curve
+        for (int i = 0; i < H - 2 * border; i++ )
+            if(dehacontlutili)
+                for (int j = 0; j < W - 2 * border; j++) {
+                    LBuffer[i][j] = cdcurve[2.f * temp[i][j]] / 2.f;
+
+                    if(histLRETI) {
+                        int pos = (INT) clipretinex(LBuffer[i][j], 0.f, 32768.f);
+                        hist16RETThr[pos]++; //histogram in Curve
+                    }
+                }
+            else
+                for (int j = 0; j < W - 2 * border; j++) {
+                    LBuffer[i][j] = temp[i][j];
+                }
+
+#ifdef _OPENMP
+        #pragma omp critical
+#endif
+        {
+            if(dehacontlutili && histLRETI) {
+                // Add per Thread LUT to global LUT
+                for(int i = 0; i < 32769; i++) {
+                    hist16RET[i] += hist16RETThr[i];
+                }
             }
-        else
-            for (int j = 0; j < W - 2 * border; j++) {
-                LBuffer[i][j] = temp[i][j];
-            }
-            
-    if(dehacontlutili){//update histogram
-            
-    for (int i = 0; i < 32768; i++) {
-        val = (double)i / 32767.0;
-    dLcurve[i] = CLIPD(val);
+        }
     }
-            
-    for (int i = 0; i < 32768; i++) {
-        float hval = dLcurve[i];
-        int hi = (int)(255.0f * CLIPD(hval));
-        histLRETI[hi] += hist16RET[i];
+
+    if(dehacontlutili && histLRETI) {//update histogram
+        for (int i = 0; i < 32768; i++) {
+            val = (double)i / 32767.0;
+            dLcurve[i] = CLIPD(val);
+        }
+
+        for (int i = 0; i < 32768; i++) {
+            float hval = dLcurve[i];
+            int hi = (int)(255.0f * CLIPD(hval));
+            histLRETI[hi] += hist16RET[i];
+        }
     }
-    }
+
     MSR(LBuffer, conversionBuffer[2], WNew, HNew, deh, dehatransmissionCurve, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
     if(useHsl) {

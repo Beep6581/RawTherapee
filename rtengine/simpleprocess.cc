@@ -118,15 +118,15 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     if(params.retinex.enabled) { //enabled Retinex
         LUTf cdcurve (65536, 0);
-        LUTu dum;
+        LUTu dummy;
         RetinextransmissionCurve dehatransmissionCurve;
         bool dehacontlutili = false;
         bool useHsl = false;
         multi_array2D<float, 3> conversionBuffer(1, 1);
-        imgsrc->retinexPrepareBuffers(params.icm, params.retinex, conversionBuffer, dum);
-        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, dehatransmissionCurve, dehacontlutili, useHsl, dum, dum);
+        imgsrc->retinexPrepareBuffers(params.icm, params.retinex, conversionBuffer, dummy);
+        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, dehatransmissionCurve, dehacontlutili, useHsl, dummy, dummy );
         float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-        imgsrc->retinex( params.icm, params.retinex, cdcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, dum, dum);
+        imgsrc->retinex( params.icm, params.retinex, cdcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, dummy);
     }
 
     if (pl) {
