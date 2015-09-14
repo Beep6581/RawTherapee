@@ -271,12 +271,11 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
             for ( int scale = scal - 1; scale >= 0; scale-- ) {
                 float ** source;
                 float sigma;
-
                 if(scale == scal - 1) { // probably large sigma. Use double gauss with sigma divided by sqrt(2.0)
                     sigma = RetinexScales[scale] / sqrt(2.0);
                     source = src;
                 } else { // reuse result of last iteration
-                    sigma = sqrtf((RetinexScales[scale] * RetinexScales[scale]) / (RetinexScales[scale + 1] * RetinexScales[scale + 1]));
+                    sigma = sqrtf((RetinexScales[scale] * RetinexScales[scale]) - (RetinexScales[scale + 1] * RetinexScales[scale + 1]));
                     source = out;
                 }
 
