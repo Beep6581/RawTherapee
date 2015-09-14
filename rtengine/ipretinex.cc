@@ -70,20 +70,20 @@ void retinex_scales( float* scales, int nscales, int mode, int s)
     if ( nscales == 1 ) {
         scales[0] =  (float)s / 2.f;
     } else if (nscales == 2) {
-        scales[0] = (float) s / 2.f;
-        scales[1] = (float) s;
+        scales[1] = (float) s / 2.f;
+        scales[0] = (float) s;
     } else {
         float size_step = (float) s / (float) nscales;
 
         if (mode == 0) {
             for (int i = 0; i < nscales; ++i ) {
-                scales[i] = 2.0f + (float)i * size_step;
+                scales[nscales - i - 1] = 2.0f + (float)i * size_step;
             }
         } else if (mode == 1) {
             size_step = (float)log(s - 2.0f) / (float) nscales;
 
             for (int i = 0; i < nscales; ++i ) {
-                scales[i] = 2.0f + (float)pow (10.f, (i * size_step) / log (10.f));
+                scales[nscales - i - 1] = 2.0f + (float)pow (10.f, (i * size_step) / log (10.f));
             }
         } else if (mode == 2) {
             size_step = (float) log(s - 2.0f) / (float) nscales;
