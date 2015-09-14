@@ -1849,7 +1849,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 
                     if(lhist16RETI) {
                         for(int p = 0; p < 4; p++) {
-                            pos =  (INT) clipretinex( conversionBuffer[2][i - border][j - border + p], 0.f, 32768.f);//histogram in curve HSL
+                            pos =  (int) clipretinex( conversionBuffer[2][i - border][j - border + p], 0.f, 32768.f);//histogram in curve HSL
                             lhist16RETIThr[pos]++;
                         }
                     }
@@ -1866,7 +1866,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
                     conversionBuffer[2][i - border][j - border] = L;
 
                     if(lhist16RETI) {
-                        pos =  (INT) clipretinex(L, 0, 32768);
+                        pos =  (int) clipretinex(L, 0, 32768);
                         lhist16RETIThr[pos]++;
                     }
                 }
@@ -1925,7 +1925,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
                     conversionBuffer[2][i - border][j - border] = L;
 
                     if(lhist16RETI) {
-                        pos =  (INT) clipretinex(L, 0, 32768);
+                        pos =  (int) clipretinex(L, 0, 32768);
                         lhist16RETIThr[pos]++;//histogram in Curve Lab
                     }
                 }
@@ -2010,7 +2010,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf 
                     LBuffer[i][j] = cdcurve[2.f * temp[i][j]] / 2.f;
 
                     if(histLRETI) {
-                        int pos = (INT) clipretinex(LBuffer[i][j], 0.f, 32768.f);
+                        int pos = (int) clipretinex(LBuffer[i][j], 0.f, 32768.f);
                         hist16RETThr[pos]++; //histogram in Curve
                     }
                 }
