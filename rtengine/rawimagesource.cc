@@ -41,6 +41,9 @@
 #endif
 #include "opthelper.h"
 #include "StopWatch.h"
+#define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
+#undef CLIPD
+#define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
 
 namespace rtengine
 {
@@ -1802,7 +1805,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
 }
 
 
-void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexParams retinexParams, multi_array2D<float, 3> &conversionBuffer)
+void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexParams retinexParams, multi_array2D<float, 3> &conversionBuffer, LUTu &lhist16RETI)
 {
     bool useHsl = (retinexParams.retinexcolorspace == "HSLLOG" || retinexParams.retinexcolorspace == "HSLLIN");
     conversionBuffer[0] (W - 2 * border, H - 2 * border);
@@ -1828,21 +1831,27 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 
                 for (; j < W - border - 3; j += 4) {
                     vfloat H, S, L;
+                    int pos;
                     Color::rgb2hsl(LVFU(red[i][j]), LVFU(green[i][j]), LVFU(blue[i][j]), H, S, L);
                     _mm_storeu_ps(&conversionBuffer[0][i - border][j - border], H);
                     _mm_storeu_ps(&conversionBuffer[1][i - border][j - border], S);
                     L *= c32768;
                     _mm_storeu_ps(&conversionBuffer[2][i - border][j - border], L);
+                    pos =  (INT) clipretinex( conversionBuffer[2][i - border][j - border], 0, 32768);//histogram in curve HSL
+                    lhist16RETI[pos]++;                    
                 }
 
 #endif
 
                 for (; j < W - border; j++) {
                     float H, S, L;
+                    int pos;
                     //rgb=>lab
                     Color::rgb2hslfloat(red[i][j], green[i][j], blue[i][j], conversionBuffer[0][i - border][j - border], conversionBuffer[1][i - border][j - border], L);
                     L *= 32768.f;
                     conversionBuffer[2][i - border][j - border] = L;
+                    pos =  (INT) clipretinex(L, 0, 32768);
+                    lhist16RETI[pos]++;
                 }
             }
         }
@@ -1863,6 +1872,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
         for (int i = border; i < H - border; i++ )
             for (int j = border; j < W - border; j++) {
                 float X, Y, Z, L, aa, bb;
+                int pos;
                 //rgb=>lab
                 Color::rgbxyz(red[i][j], green[i][j], blue[i][j], X, Y, Z, wp);
                 //convert Lab
@@ -1870,24 +1880,26 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
                 conversionBuffer[0][i - border][j - border] = aa;
                 conversionBuffer[1][i - border][j - border] = bb;
                 conversionBuffer[2][i - border][j - border] = L;
+                pos =  (INT) clipretinex(L, 0, 32768);
+                lhist16RETI[pos]++;//histogram in Curve Lab
             }
     }
 }
 
-void RawImageSource::retinexPrepareCurves(RetinexParams retinexParams, LUTf &cdcurve, RetinextransmissionCurve &retinextransmissionCurve, bool &retinexcontlutili, bool &useHsl)
+void RawImageSource::retinexPrepareCurves(RetinexParams retinexParams, LUTf &cdcurve, RetinextransmissionCurve &retinextransmissionCurve, bool &retinexcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI)
 {
     useHsl = (retinexParams.retinexcolorspace == "HSLLOG" || retinexParams.retinexcolorspace == "HSLLIN");
 
     if(useHsl) {
-        CurveFactory::curveDehaContL (retinexcontlutili, retinexParams.cdHcurve, cdcurve, 1);
+        CurveFactory::curveDehaContL (retinexcontlutili, retinexParams.cdHcurve, cdcurve, 1, lhist16RETI, histLRETI);
     } else {
-        CurveFactory::curveDehaContL (retinexcontlutili, retinexParams.cdcurve, cdcurve, 1);
+        CurveFactory::curveDehaContL (retinexcontlutili, retinexParams.cdcurve, cdcurve, 1, lhist16RETI, histLRETI);
     }
 
     retinexParams.getCurves(retinextransmissionCurve);
 }
 
-void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 3> &conversionBuffer, bool dehacontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
+void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 3> &conversionBuffer, bool dehacontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu & lhist16RETI, LUTu &histLRETI)
 {
 
     MyTime t4, t5;
@@ -1904,6 +1916,16 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf 
 
     array2D<float> LBuffer (WNew, HNew);
     float **temp = conversionBuffer[2]; // one less dereference
+    LUTf dLcurve;
+    LUTu hist16RET;
+    float val;
+    hist16RET(65536, 0);
+    hist16RET.clear();
+    
+    if(dehacontlutili) histLRETI.clear();
+    dLcurve(65536, 0);
+    dLcurve.clear();
+    
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
@@ -1912,12 +1934,27 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf 
         if(dehacontlutili)
             for (int j = 0; j < W - 2 * border; j++) {
                 LBuffer[i][j] = cdcurve[2.f * temp[i][j]] / 2.f;
+                int pos =  (INT) clipretinex(LBuffer[i][j], 0, 32768);
+                hist16RET[pos]++;//histogram in Curve
             }
         else
             for (int j = 0; j < W - 2 * border; j++) {
                 LBuffer[i][j] = temp[i][j];
             }
-
+            
+    if(dehacontlutili){//update histogram
+            
+    for (int i = 0; i < 32768; i++) {
+        val = (double)i / 32767.0;
+    dLcurve[i] = CLIPD(val);
+    }
+            
+    for (int i = 0; i < 32768; i++) {
+        float hval = dLcurve[i];
+        int hi = (int)(255.0f * CLIPD(hval));
+        histLRETI[hi] += hist16RET[i];
+    }
+    }
     MSR(LBuffer, conversionBuffer[2], WNew, HNew, deh, dehatransmissionCurve, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
     if(useHsl) {

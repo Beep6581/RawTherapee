@@ -641,6 +641,12 @@ void Retinex::trimValues (rtengine::procparams::ProcParams* pp)
     limd->trimValue(pp->retinex.limd);
 
 }
+void Retinex::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI)
+{
+
+    cdshape->updateBackgroundHistogram (histLRETI);
+    cdshapeH->updateBackgroundHistogram (histLRETI);
+}
 
 void Retinex::setBatchMode (bool batchMode)
 {
