@@ -22,15 +22,11 @@
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
-#include "alignedbuffer.h"
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 #include "opthelper.h"
 
 // classical filtering if the support window is small:
 
-template<class T> void gaussHorizontal3 (T** src, T** dst, AlignedBufferMP<double> &buffer, int W, int H, const float c0, const float c1)
+template<class T> void gaussHorizontal3 (T** src, T** dst, int W, int H, const float c0, const float c1)
 {
 
 #ifdef _OPENMP
@@ -38,8 +34,7 @@ template<class T> void gaussHorizontal3 (T** src, T** dst, AlignedBufferMP<doubl
 #endif
 
     for (int i = 0; i < H; i++) {
-        AlignedBuffer<double>* pBuf = buffer.acquire();
-        T* temp = (T*)pBuf->data;
+        T temp[W] ALIGNED16;
 
         for (int j = 1; j < W - 1; j++) {
             temp[j] = (T)(c1 * (src[i][j - 1] + src[i][j + 1]) + c0 * src[i][j]);
@@ -48,13 +43,11 @@ template<class T> void gaussHorizontal3 (T** src, T** dst, AlignedBufferMP<doubl
         dst[i][0] = src[i][0];
         memcpy (dst[i] + 1, temp + 1, (W - 2)*sizeof(T));
 
-        buffer.release(pBuf);
-
         dst[i][W - 1] = src[i][W - 1];
     }
 }
 
-template<class T> void gaussVertical3 (T** src, T** dst, AlignedBufferMP<double> &buffer, int W, int H, const float c0, const float c1)
+template<class T> void gaussVertical3 (T** src, T** dst, int W, int H, const float c0, const float c1)
 {
 
 #ifdef _OPENMP
@@ -62,8 +55,7 @@ template<class T> void gaussVertical3 (T** src, T** dst, AlignedBufferMP<double>
 #endif
 
     for (int i = 0; i < W; i++) {
-        AlignedBuffer<double>* pBuf = buffer.acquire();
-        T* temp = (T*)pBuf->data;
+        T temp[H] ALIGNED16;
 
         for (int j = 1; j < H - 1; j++) {
             temp[j] = (T)(c1 * (src[j - 1][i] + src[j + 1][i]) + c0 * src[j][i]);
@@ -75,39 +67,37 @@ template<class T> void gaussVertical3 (T** src, T** dst, AlignedBufferMP<double>
             dst[j][i] = temp[j];
         }
 
-        buffer.release(pBuf);
-
         dst[H - 1][i] = src[H - 1][i];
     }
 }
 
-#ifdef __SSE__
+#ifdef __SSE2__
 template<class T> SSEFUNCTION void gaussVertical3Sse (T** src, T** dst, int W, int H, const float c0, const float c1)
 {
     __m128 Tv, Tm1v, Tp1v;
     __m128 c0v, c1v;
-    c0v = _mm_set1_ps(c0);
-    c1v = _mm_set1_ps(c1);
+    c0v = F2V(c0);
+    c1v = F2V(c1);
 #ifdef _OPENMP
     #pragma omp for
 #endif
 
     for (int i = 0; i < W - 3; i += 4) {
-        Tm1v = _mm_loadu_ps( &src[0][i] );
-        _mm_storeu_ps( &dst[0][i], Tm1v);
+        Tm1v = LVFU( src[0][i] );
+        STVFU( dst[0][i], Tm1v);
 
         if (H > 1) {
-            Tv = _mm_loadu_ps( &src[1][i]);
+            Tv = LVFU( src[1][i]);
         }
 
         for (int j = 1; j < H - 1; j++) {
-            Tp1v = _mm_loadu_ps( &src[j + 1][i]);
-            _mm_storeu_ps( &dst[j][i], c1v * (Tp1v + Tm1v) + Tv * c0v);
+            Tp1v = LVFU( src[j + 1][i]);
+            STVFU( dst[j][i], c1v * (Tp1v + Tm1v) + Tv * c0v);
             Tm1v = Tv;
             Tv = Tp1v;
         }
 
-        _mm_storeu_ps( &dst[H - 1][i], _mm_loadu_ps( &src[H - 1][i]));
+        STVFU( dst[H - 1][i], LVFU( src[H - 1][i]));
     }
 
 // Borders are done without SSE
@@ -129,12 +119,12 @@ template<class T> SSEFUNCTION void gaussVertical3Sse (T** src, T** dst, int W, i
 
 template<class T> SSEFUNCTION void gaussHorizontal3Sse (T** src, T** dst, int W, int H, const float c0, const float c1)
 {
-    float tmp[W][4] __attribute__ ((aligned (16)));
+    float tmp[W][4] ALIGNED16;
 
     __m128 Tv, Tm1v, Tp1v;
     __m128 c0v, c1v;
-    c0v = _mm_set1_ps(c0);
-    c1v = _mm_set1_ps(c1);
+    c0v = F2V(c0);
+    c1v = F2V(c1);
 #ifdef _OPENMP
     #pragma omp for
 #endif
@@ -152,7 +142,7 @@ template<class T> SSEFUNCTION void gaussHorizontal3Sse (T** src, T** dst, int W,
 
         for (int j = 1; j < W - 1; j++) {
             Tp1v = _mm_set_ps( src[i][j + 1], src[i + 1][j + 1], src[i + 2][j + 1], src[i + 3][j + 1] );
-            _mm_store_ps( &tmp[j][0], c1v * (Tp1v + Tm1v) + Tv * c0v);
+            STVF( tmp[j][0], c1v * (Tp1v + Tm1v) + Tv * c0v);
             Tm1v = Tv;
             Tv = Tp1v;
         }
@@ -250,16 +240,16 @@ template<class T> SSEFUNCTION void gaussHorizontalSse (T** src, T** dst, int W, 
             M[i][j] /= (1.0 + b1 - b2 + b3) * (1.0 - b1 - b2 - b3);
         }
 
-    float tmp[W][4] __attribute__ ((aligned (16)));
-    float tmpV[4] __attribute__ ((aligned (16)));
+    float tmp[W][4] ALIGNED16;
+    float tmpV[4] ALIGNED16;
     __m128 Rv;
     __m128 Tv, Tm2v, Tm3v;
     __m128 Bv, b1v, b2v, b3v;
     __m128 temp2W, temp2Wp1;
-    Bv = _mm_set1_ps(B);
-    b1v = _mm_set1_ps(b1);
-    b2v = _mm_set1_ps(b2);
-    b3v = _mm_set1_ps(b3);
+    Bv = F2V(B);
+    b1v = F2V(b1);
+    b2v = F2V(b2);
+    b3v = F2V(b3);
 
 #ifdef _OPENMP
     #pragma omp for
@@ -270,47 +260,47 @@ template<class T> SSEFUNCTION void gaussHorizontalSse (T** src, T** dst, int W, 
         tmpV[1] = src[i + 2][0];
         tmpV[2] = src[i + 1][0];
         tmpV[3] = src[i][0];
-        Tv = _mm_load_ps(tmpV);
+        Tv = LVF(tmpV[0]);
         Rv = Tv * (Bv + b1v + b2v + b3v);
         Tm3v = Rv;
-        _mm_store_ps( &tmp[0][0], Rv );
+        STVF( tmp[0][0], Rv );
 
         tmpV[0] = src[i + 3][1];
         tmpV[1] = src[i + 2][1];
         tmpV[2] = src[i + 1][1];
         tmpV[3] = src[i][1];
-        Rv = _mm_load_ps(tmpV) * Bv + Rv * b1v + Tv * (b2v + b3v);
+        Rv = LVF(tmpV[0]) * Bv + Rv * b1v + Tv * (b2v + b3v);
         Tm2v = Rv;
-        _mm_store_ps( &tmp[1][0], Rv );
+        STVF( tmp[1][0], Rv );
 
         tmpV[0] = src[i + 3][2];
         tmpV[1] = src[i + 2][2];
         tmpV[2] = src[i + 1][2];
         tmpV[3] = src[i][2];
-        Rv = _mm_load_ps(tmpV) * Bv + Rv * b1v + Tm3v * b2v + Tv * b3v;
-        _mm_store_ps( &tmp[2][0], Rv );
+        Rv = LVF(tmpV[0]) * Bv + Rv * b1v + Tm3v * b2v + Tv * b3v;
+        STVF( tmp[2][0], Rv );
 
         for (int j = 3; j < W; j++) {
             Tv = Rv;
             Rv = _mm_set_ps(src[i][j], src[i + 1][j], src[i + 2][j], src[i + 3][j]) * Bv + Tv * b1v + Tm2v * b2v + Tm3v * b3v;
-            _mm_store_ps( &tmp[j][0], Rv );
+            STVF( tmp[j][0], Rv );
             Tm3v = Tm2v;
             Tm2v = Tv;
         }
 
         Tv = _mm_set_ps(src[i][W - 1], src[i + 1][W - 1], src[i + 2][W - 1], src[i + 3][W - 1]);
 
-        temp2Wp1 = Tv + _mm_set1_ps(M[2][0]) * (Rv - Tv) + _mm_set1_ps(M[2][1]) * ( Tm2v - Tv ) +  _mm_set1_ps(M[2][2]) * (Tm3v - Tv);
-        temp2W = Tv + _mm_set1_ps(M[1][0]) * (Rv - Tv) + _mm_set1_ps(M[1][1]) * (Tm2v - Tv) + _mm_set1_ps(M[1][2]) * (Tm3v - Tv);
+        temp2Wp1 = Tv + F2V(M[2][0]) * (Rv - Tv) + F2V(M[2][1]) * ( Tm2v - Tv ) +  F2V(M[2][2]) * (Tm3v - Tv);
+        temp2W = Tv + F2V(M[1][0]) * (Rv - Tv) + F2V(M[1][1]) * (Tm2v - Tv) + F2V(M[1][2]) * (Tm3v - Tv);
 
-        Rv = Tv + _mm_set1_ps(M[0][0]) * (Rv - Tv) + _mm_set1_ps(M[0][1]) * (Tm2v - Tv) + _mm_set1_ps(M[0][2]) * (Tm3v - Tv);
-        _mm_store_ps( &tmp[W - 1][0], Rv );
+        Rv = Tv + F2V(M[0][0]) * (Rv - Tv) + F2V(M[0][1]) * (Tm2v - Tv) + F2V(M[0][2]) * (Tm3v - Tv);
+        STVF( tmp[W - 1][0], Rv );
 
         Tm2v = Bv * Tm2v + b1v * Rv + b2v * temp2W + b3v * temp2Wp1;
-        _mm_store_ps( &tmp[W - 2][0], Tm2v );
+        STVF( tmp[W - 2][0], Tm2v );
 
         Tm3v = Bv * Tm3v + b1v * Tm2v + b2v * Rv + b3v * temp2W;
-        _mm_store_ps( &tmp[W - 3][0], Tm3v );
+        STVF( tmp[W - 3][0], Tm3v );
 
         Tv = Rv;
         Rv = Tm3v;
@@ -318,8 +308,8 @@ template<class T> SSEFUNCTION void gaussHorizontalSse (T** src, T** dst, int W, 
 
         for (int j = W - 4; j >= 0; j--) {
             Tv = Rv;
-            Rv = _mm_load_ps(&tmp[j][0]) * Bv + Tv * b1v + Tm2v * b2v + Tm3v * b3v;
-            _mm_store_ps( &tmp[j][0], Rv );
+            Rv = LVF(tmp[j][0]) * Bv + Tv * b1v + Tm2v * b2v + Tm3v * b3v;
+            STVF( tmp[j][0], Rv );
             Tm3v = Tm2v;
             Tm2v = Tv;
         }
@@ -370,10 +360,10 @@ template<class T> SSEFUNCTION void gaussHorizontalSse (T** src, T** dst, int W, 
 
 // fast gaussian approximation if the support window is large
 
-template<class T> void gaussHorizontal (T** src, T** dst, AlignedBufferMP<double> &buffer, int W, int H, double sigma)
+template<class T> void gaussHorizontal (T** src, T** dst, int W, int H, double sigma)
 {
 
-#ifdef __SSE__
+#ifdef __SSE2__
 
     if (sigma < 70) { // bigger sigma only with double precision
         gaussHorizontalSse<T> (src, dst, W, H, sigma);
@@ -401,7 +391,7 @@ template<class T> void gaussHorizontal (T** src, T** dst, AlignedBufferMP<double
         double csum = 2.0 * c1 + 1.0;
         c1 /= csum;
         double c0 = 1.0 / csum;
-        gaussHorizontal3<T> (src, dst, buffer, W, H, c0, c1);
+        gaussHorizontal3<T> (src, dst, W, H, c0, c1);
         return;
     }
 
@@ -439,13 +429,13 @@ template<class T> void gaussHorizontal (T** src, T** dst, AlignedBufferMP<double
             M[i][j] /= (1.0 + b1 - b2 + b3) * (1.0 + b2 + (b1 - b3) * b3);
         }
 
+    double temp2[W] ALIGNED16;
+
 #ifdef _OPENMP
     #pragma omp for
 #endif
 
     for (int i = 0; i < H; i++) {
-        AlignedBuffer<double>* pBuf = buffer.acquire();
-        double* temp2 = pBuf->data;
 
         temp2[0] = B * src[i][0] + b1 * src[i][0] + b2 * src[i][0] + b3 * src[i][0];
         temp2[1] = B * src[i][1] + b1 * temp2[0]  + b2 * src[i][0] + b3 * src[i][0];
@@ -471,11 +461,10 @@ template<class T> void gaussHorizontal (T** src, T** dst, AlignedBufferMP<double
             dst[i][j] = (T)temp2[j];
         }
 
-        buffer.release(pBuf);
     }
 }
 
-#ifdef __SSE__
+#ifdef __SSE2__
 template<class T> SSEFUNCTION void gaussVerticalSse (T** src, T** dst, int W, int H, float sigma)
 {
 
@@ -537,15 +526,15 @@ template<class T> SSEFUNCTION void gaussVerticalSse (T** src, T** dst, int W, in
             M[i][j] /= (1.0 + b1 - b2 + b3) * (1.0 - b1 - b2 - b3);
         }
 
-    float tmp[H][4] __attribute__ ((aligned (16)));
+    float tmp[H][4] ALIGNED16;
     __m128 Rv;
     __m128 Tv, Tm2v, Tm3v;
     __m128 Bv, b1v, b2v, b3v;
     __m128 temp2W, temp2Wp1;
-    Bv = _mm_set1_ps(B);
-    b1v = _mm_set1_ps(b1);
-    b2v = _mm_set1_ps(b2);
-    b3v = _mm_set1_ps(b3);
+    Bv = F2V(B);
+    b1v = F2V(b1);
+    b2v = F2V(b2);
+    b3v = F2V(b3);
 
 
 #ifdef _OPENMP
@@ -553,39 +542,39 @@ template<class T> SSEFUNCTION void gaussVerticalSse (T** src, T** dst, int W, in
 #endif
 
     for (int i = 0; i < W - 3; i += 4) {
-        Tv = _mm_loadu_ps( &src[0][i]);
+        Tv = LVFU( src[0][i]);
         Rv = Tv * (Bv + b1v + b2v + b3v);
         Tm3v = Rv;
-        _mm_store_ps( &tmp[0][0], Rv );
+        STVF( tmp[0][0], Rv );
 
-        Rv = _mm_loadu_ps(&src[1][i]) * Bv + Rv * b1v + Tv * (b2v + b3v);
+        Rv = LVFU(src[1][i]) * Bv + Rv * b1v + Tv * (b2v + b3v);
         Tm2v = Rv;
-        _mm_store_ps( &tmp[1][0], Rv );
+        STVF( tmp[1][0], Rv );
 
-        Rv = _mm_loadu_ps(&src[2][i]) * Bv + Rv * b1v + Tm3v * b2v + Tv * b3v;
-        _mm_store_ps( &tmp[2][0], Rv );
+        Rv = LVFU(src[2][i]) * Bv + Rv * b1v + Tm3v * b2v + Tv * b3v;
+        STVF( tmp[2][0], Rv );
 
         for (int j = 3; j < H; j++) {
             Tv = Rv;
-            Rv = _mm_loadu_ps(&src[j][i]) * Bv +  Tv * b1v + Tm2v * b2v + Tm3v * b3v;
-            _mm_store_ps( &tmp[j][0], Rv );
+            Rv = LVFU(src[j][i]) * Bv +  Tv * b1v + Tm2v * b2v + Tm3v * b3v;
+            STVF( tmp[j][0], Rv );
             Tm3v = Tm2v;
             Tm2v = Tv;
         }
 
-        Tv = _mm_loadu_ps(&src[H - 1][i]);
+        Tv = LVFU(src[H - 1][i]);
 
-        temp2Wp1 = Tv + _mm_set1_ps(M[2][0]) * (Rv - Tv) + _mm_set1_ps(M[2][1]) * (Tm2v - Tv) + _mm_set1_ps(M[2][2]) * (Tm3v - Tv);
-        temp2W = Tv + _mm_set1_ps(M[1][0]) * (Rv - Tv) + _mm_set1_ps(M[1][1]) * (Tm2v - Tv) + _mm_set1_ps(M[1][2]) * (Tm3v - Tv);
+        temp2Wp1 = Tv + F2V(M[2][0]) * (Rv - Tv) + F2V(M[2][1]) * (Tm2v - Tv) + F2V(M[2][2]) * (Tm3v - Tv);
+        temp2W = Tv + F2V(M[1][0]) * (Rv - Tv) + F2V(M[1][1]) * (Tm2v - Tv) + F2V(M[1][2]) * (Tm3v - Tv);
 
-        Rv = Tv + _mm_set1_ps(M[0][0]) * (Rv - Tv) + _mm_set1_ps(M[0][1]) * (Tm2v - Tv) + _mm_set1_ps(M[0][2]) * (Tm3v - Tv);
-        _mm_storeu_ps( &dst[H - 1][i], Rv );
+        Rv = Tv + F2V(M[0][0]) * (Rv - Tv) + F2V(M[0][1]) * (Tm2v - Tv) + F2V(M[0][2]) * (Tm3v - Tv);
+        STVFU( dst[H - 1][i], Rv );
 
         Tm2v = Bv * Tm2v + b1v * Rv + b2v * temp2W + b3v * temp2Wp1;
-        _mm_storeu_ps( &dst[H - 2][i], Tm2v );
+        STVFU( dst[H - 2][i], Tm2v );
 
         Tm3v = Bv * Tm3v + b1v * Tm2v + b2v * Rv + b3v * temp2W;
-        _mm_storeu_ps( &dst[H - 3][i], Tm3v );
+        STVFU( dst[H - 3][i], Tm3v );
 
         Tv = Rv;
         Rv = Tm3v;
@@ -593,8 +582,8 @@ template<class T> SSEFUNCTION void gaussVerticalSse (T** src, T** dst, int W, in
 
         for (int j = H - 4; j >= 0; j--) {
             Tv = Rv;
-            Rv = _mm_load_ps(&tmp[j][0]) * Bv +  Tv * b1v + Tm2v * b2v + Tm3v * b3v;
-            _mm_storeu_ps( &dst[j][i], Rv );
+            Rv = LVF(tmp[j][0]) * Bv +  Tv * b1v + Tm2v * b2v + Tm3v * b3v;
+            STVFU( dst[j][i], Rv );
             Tm3v = Tm2v;
             Tm2v = Tv;
         }
@@ -635,10 +624,10 @@ template<class T> SSEFUNCTION void gaussVerticalSse (T** src, T** dst, int W, in
 
 #endif
 
-template<class T> void gaussVertical (T** src, T** dst, AlignedBufferMP<double> &buffer, int W, int H, double sigma)
+template<class T> void gaussVertical (T** src, T** dst, int W, int H, double sigma)
 {
 
-#ifdef __SSE__
+#ifdef __SSE2__
 
     if (sigma < 70) { // bigger sigma only with double precision
         gaussVerticalSse<T> (src, dst, W, H, sigma);
@@ -666,7 +655,7 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBufferMP<double> 
         double csum = 2.0 * c1 + 1.0;
         c1 /= csum;
         double c0 = 1.0 / csum;
-        gaussVertical3<T> (src, dst, buffer, W, H, c0, c1);
+        gaussVertical3<T> (src, dst, W, H, c0, c1);
         return;
     }
 
@@ -705,7 +694,7 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBufferMP<double> 
         }
 
     // process 'numcols' columns for better usage of L1 cpu cache (especially faster for large values of H)
-    static const int numcols = 4;
+    static const int numcols = 8;
     double temp2[H][numcols] ALIGNED16;
     double temp2Hm1[numcols], temp2H[numcols], temp2Hp1[numcols];
 #ifdef _OPENMP
@@ -732,20 +721,14 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBufferMP<double> 
         }
 
         for (int k = 0; k < numcols; k++) {
-            temp2[H - 1][k] = temp2Hm1[k];
-            temp2[H - 2][k] = B * temp2[H - 2][k] + b1 * temp2[H - 1][k] + b2 * temp2H[k] + b3 * temp2Hp1[k];
-            temp2[H - 3][k] = B * temp2[H - 3][k] + b1 * temp2[H - 2][k] + b2 * temp2[H - 1][k] + b3 * temp2H[k];
+            dst[H - 1][i + k] = temp2[H - 1][k] = temp2Hm1[k];
+            dst[H - 2][i + k] = temp2[H - 2][k] = B * temp2[H - 2][k] + b1 * temp2[H - 1][k] + b2 * temp2H[k] + b3 * temp2Hp1[k];
+            dst[H - 3][i + k] = temp2[H - 3][k] = B * temp2[H - 3][k] + b1 * temp2[H - 2][k] + b2 * temp2[H - 1][k] + b3 * temp2H[k];
         }
 
         for (int j = H - 4; j >= 0; j--) {
             for (int k = 0; k < numcols; k++) {
-                temp2[j][k] = B * temp2[j][k] + b1 * temp2[j + 1][k] + b2 * temp2[j + 2][k] + b3 * temp2[j + 3][k];
-            }
-        }
-
-        for (int j = 0; j < H; j++) {
-            for (int k = 0; k < numcols; k++) {
-                dst[j][i + k] = (T)temp2[j][k];
+                dst[j][i + k] = temp2[j][k] = B * temp2[j][k] + b1 * temp2[j + 1][k] + b2 * temp2[j + 2][k] + b3 * temp2[j + 3][k];
             }
         }
     }
@@ -768,241 +751,35 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBufferMP<double> 
         double temp2H   = src[H - 1][i] + M[1][0] * (temp2[H - 1][0] - src[H - 1][i]) + M[1][1] * (temp2[H - 2][0] - src[H - 1][i]) + M[1][2] * (temp2[H - 3][0] - src[H - 1][i]);
         double temp2Hp1 = src[H - 1][i] + M[2][0] * (temp2[H - 1][0] - src[H - 1][i]) + M[2][1] * (temp2[H - 2][0] - src[H - 1][i]) + M[2][2] * (temp2[H - 3][0] - src[H - 1][i]);
 
-        temp2[H - 1][0] = temp2Hm1;
-        temp2[H - 2][0] = B * temp2[H - 2][0] + b1 * temp2[H - 1][0] + b2 * temp2H + b3 * temp2Hp1;
-        temp2[H - 3][0] = B * temp2[H - 3][0] + b1 * temp2[H - 2][0] + b2 * temp2[H - 1][0] + b3 * temp2H;
+        dst[H - 1][i] = temp2[H - 1][0] = temp2Hm1;
+        dst[H - 2][i] = temp2[H - 2][0] = B * temp2[H - 2][0] + b1 * temp2[H - 1][0] + b2 * temp2H + b3 * temp2Hp1;
+        dst[H - 3][i] = temp2[H - 3][0] = B * temp2[H - 3][0] + b1 * temp2[H - 2][0] + b2 * temp2[H - 1][0] + b3 * temp2H;
 
         for (int j = H - 4; j >= 0; j--) {
-            temp2[j][0] = B * temp2[j][0] + b1 * temp2[j + 1][0] + b2 * temp2[j + 2][0] + b3 * temp2[j + 3][0];
-        }
-
-        for (int j = 0; j < H; j++) {
-            dst[j][i] = (T)temp2[j][0];
+            dst[j][i] = temp2[j][0] = B * temp2[j][0] + b1 * temp2[j + 1][0] + b2 * temp2[j + 2][0] + b3 * temp2[j + 3][0];
         }
     }
 }
 
-
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-template<class T> void gaussDerivH (T** src, T** dst, AlignedBufferMP<double> &buffer, int W, int H, double sigma)
+template<class T> void gaussianBlur(T** src, T** dst, const int W, const int H, const double sigma, bool forceLowSigma = false)
 {
+    double newSigma = sigma;
 
+    if(forceLowSigma) {
+        newSigma /= sqrt(2.0);
 
-    if (sigma < 0.6) {
-        // apply symmetric derivative
-#ifdef _OPENMP
-        #pragma omp for
-#endif
-
-        for (int i = 0; i < H; i++) {
-            AlignedBuffer<double>* pBuf = buffer.acquire();
-            T* temp = (T*)pBuf->data;
-
-            // double* temp = buffer->data;// replaced by 2 lines above
-            for (int j = 1; j < W - 1; j++) {
-                temp[j] = (0.5 * (src[i][j + 1] - src[i][j - 1]) );
-            }
-
-            dst[i][0] = (src[i][1] - src[i][0]);
-
-            //memcpy (dst[i]+1, temp+1, (W-2)*sizeof(T));
-            for (int j = 1; j < W - 1; j++) {
-                dst[i][j] = temp[j];
-            }
-
-            buffer.release(pBuf);
-            dst[i][W - 1] = (src[i][W - 1] - src[i][W - 2]);
+        if(newSigma < 0.6) { // barrier to avoid using simple gauss version for higher radius
+            newSigma = sigma;
+            forceLowSigma = false;
         }
-
-        return;
     }
 
-    // coefficient calculation
-    double q = 0.98711 * sigma - 0.96330;
+    gaussHorizontal<T> (src, dst, W, H, newSigma);
+    gaussVertical<T>   (dst, dst, W, H, newSigma);
 
-    if (sigma < 2.5) {
-        q = 3.97156 - 4.14554 * sqrt (1.0 - 0.26891 * sigma);
-    }
-
-    double b0 = 1.57825 + 2.44413 * q + 1.4281 * q * q + 0.422205 * q * q * q;
-    double b1 = 2.44413 * q + 2.85619 * q * q + 1.26661 * q * q * q;
-    double b2 = -1.4281 * q * q - 1.26661 * q * q * q;
-    double b3 = 0.422205 * q * q * q;
-    double B = 1.0 - (b1 + b2 + b3) / b0;
-
-    b1 /= b0;
-    b2 /= b0;
-    b3 /= b0;
-
-    // From: Bill Triggs, Michael Sdika: Boundary Conditions for Young-van Vliet Recursive Filtering
-    double M[3][3];
-    M[0][0] = -b3 * b1 + 1.0 - b3 * b3 - b2;
-    M[0][1] = (b3 + b1) * (b2 + b3 * b1);
-    M[0][2] = b3 * (b1 + b3 * b2);
-    M[1][0] = b1 + b3 * b2;
-    M[1][1] = -(b2 - 1.0) * (b2 + b3 * b1);
-    M[1][2] = -(b3 * b1 + b3 * b3 + b2 - 1.0) * b3;
-    M[2][0] = b3 * b1 + b2 + b1 * b1 - b2 * b2;
-    M[2][1] = b1 * b2 + b3 * b2 * b2 - b1 * b3 * b3 - b3 * b3 * b3 - b3 * b2 + b3;
-    M[2][2] = b3 * (b1 + b3 * b2);
-
-    for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++) {
-            M[i][j] /= (1.0 + b1 - b2 + b3) * (1.0 + b2 + (b1 - b3) * b3);
-        }
-
-    #pragma omp for
-
-    for (int i = 0; i < H; i++) {
-        AlignedBuffer<double>* pBuf = buffer.acquire();
-        T* temp2 = (T*)pBuf->data;
-        // double* temp2 = buffer->data;// replaced by 2 lines above
-
-        double src0 = (src[i][1] - src[i][0]);
-
-        temp2[0] = B * src0 + b1 * src0 + b2 * src0 + b3 * src0;
-        temp2[1] = B * 0.5 * (src[i][2] - src[i][0]) + b1 * temp2[0]  + b2 * src0 + b3 * src0;
-        temp2[2] = B * 0.5 * (src[i][3] - src[i][1]) + b1 * temp2[1]  + b2 * temp2[0]  + b3 * src0;
-
-        for (int j = 3; j < W - 1; j++) {
-            temp2[j] = B * 0.5 * (src[i][j + 1] - src[i][j - 1]) + b1 * temp2[j - 1] + b2 * temp2[j - 2] + b3 * temp2[j - 3];
-        }
-
-        double srcWm1 = (src[i][W - 1] - src[i][W - 2]);
-
-        temp2[W - 1] = B * srcWm1 + b1 * temp2[W - 2] + b2 * temp2[W - 3] + b3 * temp2[W - 4];
-
-        double temp2Wm1 = srcWm1 + M[0][0] * (temp2[W - 1] - srcWm1) + M[0][1] * (temp2[W - 2] - srcWm1) + M[0][2] * (temp2[W - 3] - srcWm1);
-        double temp2W   = srcWm1 + M[1][0] * (temp2[W - 1] - srcWm1) + M[1][1] * (temp2[W - 2] - srcWm1) + M[1][2] * (temp2[W - 3] - srcWm1);
-        double temp2Wp1 = srcWm1 + M[2][0] * (temp2[W - 1] - srcWm1) + M[2][1] * (temp2[W - 2] - srcWm1) + M[2][2] * (temp2[W - 3] - srcWm1);
-
-        temp2[W - 1] = temp2Wm1;
-        temp2[W - 2] = B * temp2[W - 2] + b1 * temp2[W - 1] + b2 * temp2W + b3 * temp2Wp1;
-        temp2[W - 3] = B * temp2[W - 3] + b1 * temp2[W - 2] + b2 * temp2[W - 1] + b3 * temp2W;
-
-        for (int j = W - 4; j >= 0; j--) {
-            temp2[j] = B * temp2[j] + b1 * temp2[j + 1] + b2 * temp2[j + 2] + b3 * temp2[j + 3];
-        }
-
-        for (int j = 0; j < W; j++) {
-            dst[i][j] = (T)temp2[j];
-        }
-
-        buffer.release(pBuf);
-    }
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-template<class T> void gaussDerivV (T** src, T** dst, AlignedBufferMP<double> &buffer, int W, int H, double sigma)
-{
-
-    if (sigma < 0.6) {
-        // apply symmetric derivative
-#ifdef _OPENMP
-        #pragma omp for
-#endif
-
-        for (int j = 0; j < W; j++) {
-            AlignedBuffer<double>* pBuf = buffer.acquire();
-            T* temp = (T*)pBuf->data;
-
-            // double* temp = buffer->data;// replaced by 2 lines above
-            for (int i = 1; i < H - 1; i++) {
-                temp[i] = (0.5 * (src[i + 1][j] - src[i - 1][j]) );
-            }
-
-            dst[0][j] = (src[1][j] - src[0][j]);
-
-            for (int i = 1; i < H - 1; i++) {
-                dst[i][j] = temp[i];
-            }
-
-            buffer.release(pBuf);
-
-            dst[H - 1][j] = (src[H - 1][j] - src[H - 2][j]);
-        }
-
-        return;
-    }
-
-    // coefficient calculation
-    double q = 0.98711 * sigma - 0.96330;
-
-    if (sigma < 2.5) {
-        q = 3.97156 - 4.14554 * sqrt (1.0 - 0.26891 * sigma);
-    }
-
-    double b0 = 1.57825 + 2.44413 * q + 1.4281 * q * q + 0.422205 * q * q * q;
-    double b1 = 2.44413 * q + 2.85619 * q * q + 1.26661 * q * q * q;
-    double b2 = -1.4281 * q * q - 1.26661 * q * q * q;
-    double b3 = 0.422205 * q * q * q;
-    double B = 1.0 - (b1 + b2 + b3) / b0;
-
-    b1 /= b0;
-    b2 /= b0;
-    b3 /= b0;
-
-    // From: Bill Triggs, Michael Sdika: Boundary Conditions for Young-van Vliet Recursive Filtering
-    double M[3][3];
-    M[0][0] = -b3 * b1 + 1.0 - b3 * b3 - b2;
-    M[0][1] = (b3 + b1) * (b2 + b3 * b1);
-    M[0][2] = b3 * (b1 + b3 * b2);
-    M[1][0] = b1 + b3 * b2;
-    M[1][1] = -(b2 - 1.0) * (b2 + b3 * b1);
-    M[1][2] = -(b3 * b1 + b3 * b3 + b2 - 1.0) * b3;
-    M[2][0] = b3 * b1 + b2 + b1 * b1 - b2 * b2;
-    M[2][1] = b1 * b2 + b3 * b2 * b2 - b1 * b3 * b3 - b3 * b3 * b3 - b3 * b2 + b3;
-    M[2][2] = b3 * (b1 + b3 * b2);
-
-    for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++) {
-            M[i][j] /= (1.0 + b1 - b2 + b3) * (1.0 + b2 + (b1 - b3) * b3);
-        }
-
-#ifdef _OPENMP
-    #pragma omp for
-#endif
-
-    for (int i = 0; i < W; i++) {
-        AlignedBuffer<double>* pBuf = buffer.acquire();
-        T* temp2 = (T*)pBuf->data;
-        // double* temp2 = buffer->data;// replaced by 2 lines above
-
-        double src0 = 0.5 * (src[1][i] - src[0][i]);
-
-        temp2[0] = B * src0 + b1 * src0 + b2 * src0 + b3 * src0;
-        temp2[1] = B * 0.5 * (src[2][i] - src[0][i]) + b1 * temp2[0]  + b2 * src0 + b3 * src0;
-        temp2[2] = B * 0.5 * (src[3][i] - src[1][i]) + b1 * temp2[1]  + b2 * temp2[0]  + b3 * src0;
-
-        for (int j = 3; j < H - 1; j++) {
-            temp2[j] = B * 0.5 * (src[j + 1][i] - src[j - 1][i]) + b1 * temp2[j - 1] + b2 * temp2[j - 2] + b3 * temp2[j - 3];
-        }
-
-        double srcHm1 = 0.5 * (src[H - 1][i] - src[H - 2][i]);
-
-        temp2[H - 1] = B * srcHm1 + b1 * temp2[H - 2] + b2 * temp2[H - 3] + b3 * temp2[H - 4];
-
-        double temp2Hm1 = srcHm1 + M[0][0] * (temp2[H - 1] - srcHm1) + M[0][1] * (temp2[H - 2] - srcHm1) + M[0][2] * (temp2[H - 3] - srcHm1);
-        double temp2H   = srcHm1 + M[1][0] * (temp2[H - 1] - srcHm1) + M[1][1] * (temp2[H - 2] - srcHm1) + M[1][2] * (temp2[H - 3] - srcHm1);
-        double temp2Hp1 = srcHm1 + M[2][0] * (temp2[H - 1] - srcHm1) + M[2][1] * (temp2[H - 2] - srcHm1) + M[2][2] * (temp2[H - 3] - srcHm1);
-
-        temp2[H - 1] = temp2Hm1;
-        temp2[H - 2] = B * temp2[H - 2] + b1 * temp2[H - 1] + b2 * temp2H + b3 * temp2Hp1;
-        temp2[H - 3] = B * temp2[H - 3] + b1 * temp2[H - 2] + b2 * temp2[H - 1] + b3 * temp2H;
-
-        for (int j = H - 4; j >= 0; j--) {
-            temp2[j] = B * temp2[j] + b1 * temp2[j + 1] + b2 * temp2[j + 2] + b3 * temp2[j + 3];
-        }
-
-        for (int j = 0; j < H; j++) {
-            dst[j][i] = (T)temp2[j];
-        }
-
-        buffer.release(pBuf);
+    if(forceLowSigma) {
+        gaussHorizontal<T> (dst, dst, W, H, newSigma);
+        gaussVertical<T>   (dst, dst, W, H, newSigma);
     }
 }
 

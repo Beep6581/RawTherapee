@@ -220,7 +220,6 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
         limD *= useHslLin ? 10.f : 1.f;
         float ilimD = 1.f / limD;
         int moderetinex = 2; // default to 2 ( deh.retinexMethod == "high" )
-        bool execcur = false;
 
         if (deh.retinexMethod == "uni") {
             moderetinex = 0;
@@ -259,32 +258,18 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
             out[i] = &outBuffer[i * W_L];
         }
 
-        float logBetaGain = xlogf(16384.f);
-        float pond = logBetaGain / (float) scal;
+        const float logBetaGain = xlogf(16384.f);
+        const float pond = logBetaGain / (float) scal;
 
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
         {
-            AlignedBufferMP<double>* pBuffer = new AlignedBufferMP<double> (max(W_L, H_L));
-
             for ( int scale = scal - 1; scale >= 0; scale-- ) {
-                float ** source;
-                float sigma;
                 if(scale == scal - 1) { // probably large sigma. Use double gauss with sigma divided by sqrt(2.0)
-                    sigma = RetinexScales[scale] / sqrt(2.0);
-                    source = src;
+                    gaussianBlur<float> (src, out, W_L, H_L, RetinexScales[scale], true);
                 } else { // reuse result of last iteration
-                    sigma = sqrtf((RetinexScales[scale] * RetinexScales[scale]) - (RetinexScales[scale + 1] * RetinexScales[scale + 1]));
-                    source = out;
-                }
-
-                gaussHorizontal<float> (source, out, *pBuffer, W_L, H_L, sigma);
-                gaussVertical<float>   (out, out, *pBuffer, W_L, H_L, sigma);
-
-                if(scale == scal - 1) { // probably large sigma. Use double gauss with sigma divided by sqrt(2.0)
-                    gaussHorizontal<float> (out, out, *pBuffer, W_L, H_L, sigma);
-                    gaussVertical<float>   (out, out, *pBuffer, W_L, H_L, sigma);
+                    gaussianBlur<float> (out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])));
                 }
 
 #ifdef __SSE2__
@@ -324,17 +309,10 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
                     }
                 }
             }
-
-            delete pBuffer;
         }
 
         delete [] outBuffer;
         delete [] srcBuffer;
-
-
-        if (dehatransmissionCurve) {
-            execcur = true;
-        }
 
         mean = 0.f;
         stddv = 0.f;
@@ -344,18 +322,20 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
 //        printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
 
         //  mean_stddv( luminance, mean, stddv, W_L, H_L, logBetaGain, maxtr, mintr);
-        if (execcur && mean != 0.f && stddv != 0.f) { //if curve
+        if (dehatransmissionCurve && mean != 0.f && stddv != 0.f) { //if curve
             float asig = 0.166666f / stddv;
             float bsig = 0.5f - asig * mean;
-            //float insigma = 0.66666f; //SD
-            float amean = 0.5f / mean;
-            float asign = 0.166666f / stddv;
-            float bsign = 0.5f - asign * mean;
             float amax = 0.333333f / (maxtr - mean - stddv);
             float bmax = 1.f - amax * maxtr;
             float amin = 0.333333f / (mean - stddv - mintr);
             float bmin = -amin * mintr;
 
+            asig *= 500.f;
+            bsig *= 500.f;
+            amax *= 500.f;
+            bmax *= 500.f;
+            amin *= 500.f;
+            bmin *= 500.f;
 #ifdef _OPENMP
             #pragma omp parallel
 #endif
@@ -367,20 +347,15 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
 
                 for (int i = 0; i < H_L; i++ )
                     for (int j = 0; j < W_L; j++) { //for mintr to maxtr evalate absciss in function of original transmission
-                        if (luminance[i][j] >= mean && luminance[i][j] < mean + stddv) {
-                            absciss = asig * luminance[i][j]  + bsig;
-                        } else if (luminance[i][j] >= mean + stddv) {
-                            absciss = amax * luminance[i][j]  + bmax;
-                        } else if (/*luminance[i][j] < mean && */luminance[i][j] > mean - stddv) {
-                            absciss = asign * luminance[i][j]  + bsign;
+                        if (LIKELY(fabsf(luminance[i][j] - mean) < stddv)) {
+                            absciss = asig * luminance[i][j] + bsig;
+                        } else if (luminance[i][j] >= mean) {
+                            absciss = amax * luminance[i][j] + bmax;
                         } else { /*if(luminance[i][j] <= mean - stddv)*/
-                            absciss = amin * luminance[i][j]  + bmin;
+                            absciss = amin * luminance[i][j] + bmin;
                         }
 
-                        float kmul = 2.5f;
-                        float kinterm = 1.f + kmul * (dehatransmissionCurve[absciss * 500.f] - 0.5f); //new transmission
-                        luminance[i][j] *= kinterm;
-//                        luminance[i][j] *= 1.000001f;
+                        luminance[i][j] *= (-0.25f + 2.5f * dehatransmissionCurve[absciss]); //new transmission
                     }
             }
 
@@ -396,13 +371,6 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
                     tmL[i] = &tmLBuffer[i * wid];
                 }
 
-                /*
-                                    for(int i = borderL; i < hei - borderL; i++ ) {
-                                        for(int j = borderL; j < wid - borderL; j++) {
-                                            tmL[i][j] = luminance[i][j];
-                                        }
-                                    }
-                */
 #ifdef _OPENMP
                 #pragma omp parallel for
 #endif
