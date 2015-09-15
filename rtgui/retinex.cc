@@ -53,11 +53,10 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     retinexVBox->pack_start(*dhbox);
     std::vector<double> defaultCurve;
 
+    // Histogram equalizer Lab curve
     curveEditorGD = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_CONTEDIT_LAB"));
     curveEditorGD->setCurveListener (this);
-    rtengine::RetinexParams::getDefaultCDCurve(defaultCurve);
     cdshape = static_cast<DiagonalCurveEditor*>(curveEditorGD->addCurve(CT_Diagonal, M("TP_RETINEX_CURVEEDITOR_CD")));
-    cdshape->setResetCurve(DiagonalCurveType(defaultCurve.at(0)), defaultCurve);
     cdshape->setTooltip(M("TP_RETINEX_CURVEEDITOR_CD_TOOLTIP"));
     std::vector<GradientMilestone> milestones22;
 
@@ -68,11 +67,10 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     curveEditorGD->curveListComplete();
 
+    // Histogram equalizer HSL curve
     curveEditorGDH = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_CONTEDIT_HSL"));
     curveEditorGDH->setCurveListener (this);
-    rtengine::RetinexParams::getDefaultCDHCurve(defaultCurve);
     cdshapeH = static_cast<DiagonalCurveEditor*>(curveEditorGDH->addCurve(CT_Diagonal, M("TP_RETINEX_CURVEEDITOR_CD")));
-    cdshapeH->setResetCurve(DiagonalCurveType(defaultCurve.at(0)), defaultCurve);
     cdshapeH->setTooltip(M("TP_RETINEX_CURVEEDITOR_CD_TOOLTIP"));
     std::vector<GradientMilestone> milestones22H;
 
@@ -84,6 +82,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     curveEditorGDH->curveListComplete();
 
 
+    // Transmission map curve
     transmissionCurveEditorG = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_TRANSMISSION"));
     transmissionCurveEditorG->setCurveListener (this);
 
