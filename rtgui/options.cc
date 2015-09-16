@@ -322,7 +322,8 @@ void Options::setDefaults ()
     defProfRaw = DEFPROFILE_RAW;
     defProfImg = DEFPROFILE_IMG;
     dateFormat = "%y-%m-%d";
-    adjusterDelay = 0;
+    adjusterMinDelay = 200;
+    adjusterMaxDelay = 200;
     startupDir = STARTUPDIR_LAST;
     startupPath = "";
     useBundledProfiles = true;
@@ -750,8 +751,12 @@ int Options::readFromFile (Glib::ustring fname)
                     dateFormat      = keyFile.get_string ("General", "DateFormat");
                 }
 
-                if (keyFile.has_key ("General", "AdjusterDelay")) {
-                    adjusterDelay   = keyFile.get_integer ("General", "AdjusterDelay");
+                if (keyFile.has_key ("General", "AdjusterMinDelay")) {
+                    adjusterMinDelay   = keyFile.get_integer ("General", "AdjusterMinDelay");
+                }
+
+                if (keyFile.has_key ("General", "AdjusterMaxDelay")) {
+                    adjusterMaxDelay   = keyFile.get_integer ("General", "AdjusterMaxDelay");
                 }
 
                 if (keyFile.has_key ("General", "StoreLastProfile")) {
@@ -1796,7 +1801,8 @@ int Options::saveToFile (Glib::ustring fname)
 
     keyFile.set_string  ("General", "StartupPath", startupPath);
     keyFile.set_string  ("General", "DateFormat", dateFormat);
-    keyFile.set_integer ("General", "AdjusterDelay", adjusterDelay);
+    keyFile.set_integer ("General", "AdjusterMinDelay", adjusterMinDelay);
+    keyFile.set_integer ("General", "AdjusterMaxDelay", adjusterMaxDelay);
     keyFile.set_boolean ("General", "MultiUser", multiUser);
     keyFile.set_string  ("General", "Language", language);
     keyFile.set_boolean ("General", "LanguageAutoDetect", languageAutoDetect);

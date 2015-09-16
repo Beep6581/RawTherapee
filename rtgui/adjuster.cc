@@ -64,8 +64,7 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
     vStep = vstep;
     addMode = false;
 
-    // TODO: let the user chose the default value of Adjuster::delay, for slow machines
-    delay = options.adjusterDelay;        // delay is no more static, so we can set the delay individually (useful for the RAW editor tab)
+    delay = options.adjusterMinDelay;
 
     set_border_width (0);
     set_column_spacing(0);

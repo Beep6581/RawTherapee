@@ -44,8 +44,8 @@ FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_L
     flatFieldBlurRadius = Gtk::manage(new Adjuster (M("TP_FLATFIELD_BLURRADIUS"), 0, 200, 2, 32));
     flatFieldBlurRadius->setAdjusterListener (this);
 
-    if (flatFieldBlurRadius->delay < 1000) {
-        flatFieldBlurRadius->delay = 1000;
+    if (flatFieldBlurRadius->delay < options.adjusterMaxDelay) {
+        flatFieldBlurRadius->delay = options.adjusterMaxDelay;
     }
 
     flatFieldBlurRadius->show();
@@ -65,8 +65,8 @@ FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_L
     flatFieldClipControl->setAdjusterListener(this);
     flatFieldClipControl->addAutoButton("");
 
-    if (flatFieldClipControl->delay < 1000) {
-        flatFieldClipControl->delay = 1000;
+    if (flatFieldClipControl->delay < options.adjusterMaxDelay) {
+        flatFieldClipControl->delay = options.adjusterMaxDelay;
     }
 
     flatFieldClipControl->show();

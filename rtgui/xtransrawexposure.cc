@@ -29,24 +29,24 @@ XTransRAWExposure::XTransRAWExposure () : FoldableToolPanel(this, "xtransrawexpo
     PexBlackRed = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_RED"), -2048, 2048, 0.1, 0)); //black level
     PexBlackRed->setAdjusterListener (this);
 
-    if (PexBlackRed->delay < 1000) {
-        PexBlackRed->delay = 1000;
+    if (PexBlackRed->delay < options.adjusterMaxDelay) {
+        PexBlackRed->delay = options.adjusterMaxDelay;
     }
 
     PexBlackRed->show();
     PexBlackGreen = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_GREEN"), -2048, 2048, 0.1, 0)); //black level
     PexBlackGreen->setAdjusterListener (this);
 
-    if (PexBlackGreen->delay < 1000) {
-        PexBlackGreen->delay = 1000;
+    if (PexBlackGreen->delay < options.adjusterMaxDelay) {
+        PexBlackGreen->delay = options.adjusterMaxDelay;
     }
 
     PexBlackGreen->show();
     PexBlackBlue = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_BLUE"), -2048, 2048, 0.1, 0)); //black level
     PexBlackBlue->setAdjusterListener (this);
 
-    if (PexBlackBlue->delay < 1000) {
-        PexBlackBlue->delay = 1000;
+    if (PexBlackBlue->delay < options.adjusterMaxDelay) {
+        PexBlackBlue->delay = options.adjusterMaxDelay;
     }
 
     PexBlackBlue->show();

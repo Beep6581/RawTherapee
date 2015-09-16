@@ -34,8 +34,8 @@ SharpenMicro::SharpenMicro () : FoldableToolPanel(this, "sharpenmicro", M("TP_SH
     amount = Gtk::manage(new Adjuster (M("TP_SHARPENMICRO_AMOUNT"), 0, 100, 1, 20));
     amount->setAdjusterListener (this);
 
-    if (amount->delay < 1000) {
-        amount->delay = 1000;
+    if (amount->delay < options.adjusterMaxDelay) {
+        amount->delay = options.adjusterMaxDelay;
     }
 
     amount->show();
@@ -43,8 +43,8 @@ SharpenMicro::SharpenMicro () : FoldableToolPanel(this, "sharpenmicro", M("TP_SH
 
     uniformity->setAdjusterListener (this);
 
-    if (uniformity->delay < 1000) {
-        uniformity->delay = 1000;
+    if (uniformity->delay < options.adjusterMaxDelay) {
+        uniformity->delay = options.adjusterMaxDelay;
     }
 
     uniformity->show();
