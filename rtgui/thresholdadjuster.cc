@@ -17,7 +17,14 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "thresholdadjuster.h"
+
+// class_slot is no longer part of the sigc++ source tree, but starting from which version ?
+#if 1
+#include <sigc++/slot.h>
+#else
 #include <sigc++/class_slot.h>
+#endif
+
 #include <cmath>
 #include "multilangmgr.h"
 #include "../rtengine/rtengine.h"

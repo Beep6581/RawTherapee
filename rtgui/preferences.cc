@@ -16,7 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+// class_slot is no longer part of the sigc++ source tree, but starting from which version ?
+#if 1
+#include <sigc++/slot.h>
+#else
 #include <sigc++/class_slot.h>
+#endif
+
 #include "preferences.h"
 #include "multilangmgr.h"
 #include "splash.h"

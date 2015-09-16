@@ -44,28 +44,28 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 
 
     Gtk::Frame *iFrame = Gtk::manage (new Gtk::Frame(M("TP_ICM_INPUTPROFILE")) );
-    iFrame->set_border_width(0);
+    //iFrame->set_border_width(0);
     iFrame->set_label_align(0.025, 0.5);
 
     iVBox = Gtk::manage ( new Gtk::VBox());
-    iVBox->set_border_width(4);
+    //iVBox->set_border_width(4);
     iVBox->set_spacing(2);
 
     inone = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTNONE")));
     inone->set_tooltip_text (M("TP_ICM_INPUTNONE_TOOLTIP"));
-    iVBox->pack_start (*inone, Gtk::PACK_SHRINK, 2);
+    iVBox->pack_start (*inone, Gtk::PACK_SHRINK);
 
     iembedded = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTEMBEDDED")));
     iembedded->set_tooltip_text (M("TP_ICM_INPUTEMBEDDED_TOOLTIP"));
-    iVBox->pack_start (*iembedded, Gtk::PACK_SHRINK, 2);
+    iVBox->pack_start (*iembedded, Gtk::PACK_SHRINK);
 
     icamera = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTCAMERA")));
     icamera->set_tooltip_text (M("TP_ICM_INPUTCAMERA_TOOLTIP"));
-    iVBox->pack_start (*icamera, Gtk::PACK_SHRINK, 2);
+    iVBox->pack_start (*icamera, Gtk::PACK_SHRINK);
 
     icameraICC = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTCAMERAICC")));
     icameraICC->set_tooltip_text (M("TP_ICM_INPUTCAMERAICC_TOOLTIP"));
-    iVBox->pack_start (*icameraICC, Gtk::PACK_SHRINK, 2);
+    iVBox->pack_start (*icameraICC, Gtk::PACK_SHRINK);
 
     ifromfile = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTCUSTOM") + ":"));
     Gtk::HBox* ffbox = Gtk::manage (new Gtk::HBox ());
@@ -73,7 +73,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     ffbox->pack_start (*ifromfile, Gtk::PACK_SHRINK);
     ffbox->pack_start (*ipDialog);
 
-    iVBox->pack_start (*ffbox, Gtk::PACK_SHRINK, 2);
+    iVBox->pack_start (*ffbox, Gtk::PACK_SHRINK);
 
     opts = icamera->get_group();
     icameraICC->set_group (opts);
@@ -82,14 +82,25 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     inone->set_group (opts);
 
     dcpFrame = Gtk::manage (new Gtk::Frame ("DCP"));
-    Gtk::VBox* dcpFrameVBox = Gtk::manage (new Gtk::VBox ());
-    dcpFrameVBox->set_border_width(4);
 
-    Gtk::HBox* dcpIllHBox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Grid* dcpGrid = Gtk::manage ( new Gtk::Grid());
+    dcpGrid->set_column_homogeneous(false);
+    dcpGrid->set_row_homogeneous(false);
+    dcpGrid->set_column_spacing(2);
+    dcpGrid->set_row_spacing(2);
+
+    Gtk::Grid* dcpIllGrid = Gtk::manage ( new Gtk::Grid());
+    dcpIllGrid->set_column_homogeneous(false);
+    dcpIllGrid->set_row_homogeneous(false);
+    dcpIllGrid->set_column_spacing(2);
+    dcpIllGrid->set_row_spacing(2);
+
     dcpIllLabel = Gtk::manage (new Gtk::Label (M("TP_ICM_DCPILLUMINANT") + ":"));
+    setExpandAlignProperties(dcpIllLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     dcpIllLabel->set_tooltip_text (M("TP_ICM_DCPILLUMINANT_TOOLTIP"));
     dcpIllLabel->show ();
     dcpIll = Gtk::manage (new MyComboBoxText ());
+    setExpandAlignProperties(dcpIll, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     dcpIll->set_tooltip_text (M("TP_ICM_DCPILLUMINANT_TOOLTIP"));
     dcpIll->append (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
     dcpIll->append (M("TP_ICM_DCPILLUMINANT") + " 1");
@@ -98,33 +109,36 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     dcpTemperatures[0] = 0;
     dcpTemperatures[1] = 0;
     ignoreDcpSignal = true;
-    dcpIllHBox->pack_start(*dcpIllLabel, Gtk::PACK_SHRINK, 4);
-    dcpIllHBox->pack_start(*dcpIll);
+    dcpIllGrid->attach_next_to(*dcpIllLabel, Gtk::POS_LEFT, 1, 1);
+    dcpIllGrid->attach_next_to(*dcpIll, *dcpIllLabel, Gtk::POS_RIGHT, 1, 1);
 
-    Gtk::HBox* c1HBox = Gtk::manage ( new Gtk::HBox(true, 4));
     ckbToneCurve = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_TONECURVE")));
     ckbToneCurve->set_sensitive (false);
     ckbToneCurve->set_tooltip_text (M("TP_ICM_TONECURVE_TOOLTIP"));
-    ckbApplyHueSatMap = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYHUESATMAP")));
-    ckbApplyHueSatMap->set_sensitive (false);
-    ckbApplyHueSatMap->set_tooltip_text (M("TP_ICM_APPLYHUESATMAP_TOOLTIP"));
-    c1HBox->pack_start (*ckbToneCurve);
-    c1HBox->pack_start (*ckbApplyHueSatMap);
+    setExpandAlignProperties(ckbToneCurve, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
-    Gtk::HBox* c2HBox = Gtk::manage ( new Gtk::HBox(true, 4));
     ckbApplyLookTable = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYLOOKTABLE")));
     ckbApplyLookTable->set_sensitive (false);
     ckbApplyLookTable->set_tooltip_text (M("TP_ICM_APPLYLOOKTABLE_TOOLTIP"));
+    setExpandAlignProperties(ckbApplyLookTable, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+    ckbApplyHueSatMap = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYHUESATMAP")));
+    ckbApplyHueSatMap->set_sensitive (false);
+    ckbApplyHueSatMap->set_tooltip_text (M("TP_ICM_APPLYHUESATMAP_TOOLTIP"));
+    setExpandAlignProperties(ckbApplyHueSatMap, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
     ckbApplyBaselineExposureOffset = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYBASELINEEXPOSUREOFFSET")));
     ckbApplyBaselineExposureOffset->set_sensitive (false);
     ckbApplyBaselineExposureOffset->set_tooltip_text (M("TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP"));
-    c2HBox->pack_start (*ckbApplyLookTable);
-    c2HBox->pack_start (*ckbApplyBaselineExposureOffset);
+    setExpandAlignProperties(ckbApplyBaselineExposureOffset, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
-    dcpFrameVBox->pack_start(*dcpIllHBox);
-    dcpFrameVBox->pack_start(*c1HBox);
-    dcpFrameVBox->pack_start(*c2HBox);
-    dcpFrame->add(*dcpFrameVBox);
+    dcpGrid->attach_next_to(*ckbToneCurve, Gtk::POS_LEFT, 1, 1);
+    dcpGrid->attach_next_to(*ckbApplyLookTable, *ckbToneCurve, Gtk::POS_RIGHT, 1, 1);
+    dcpGrid->attach_next_to(*ckbApplyHueSatMap, *ckbToneCurve, Gtk::POS_BOTTOM, 1, 1);
+    dcpGrid->attach_next_to(*ckbApplyBaselineExposureOffset, *ckbApplyHueSatMap, Gtk::POS_RIGHT, 1, 1);
+    dcpGrid->attach_next_to(*dcpIllGrid, *ckbToneCurve, Gtk::POS_TOP, 2, 1);
+
+    dcpFrame->add(*dcpGrid);
     dcpFrame->set_sensitive(false);
     iVBox->pack_start (*dcpFrame);
 
@@ -137,21 +151,22 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     saveRef = Gtk::manage (new Gtk::Button ());  // M("TP_ICM_SAVEREFERENCE")
     saveRef->set_image (*Gtk::manage (new RTImage ("gtk-save-large.png")));
     saveRef->set_tooltip_markup (M("TP_ICM_SAVEREFERENCE_TOOLTIP"));
-    iVBox->pack_start (*saveRef, Gtk::PACK_SHRINK, 2);
+    iVBox->pack_start (*saveRef, Gtk::PACK_SHRINK);
 
     iFrame->add(*iVBox);
-    pack_start (*iFrame, Gtk::PACK_EXPAND_WIDGET, 4);
+    pack_start (*iFrame, Gtk::PACK_EXPAND_WIDGET);
 
 
     // ---------------------------- Working profile
 
 
     Gtk::Frame *wFrame = Gtk::manage (new Gtk::Frame(M("TP_ICM_WORKINGPROFILE")) );
-    wFrame->set_border_width(0);
+    //wFrame->set_border_width(0);
     wFrame->set_label_align(0.025, 0.5);
 
     Gtk::VBox *wVBox = Gtk::manage ( new Gtk::VBox());
-    wVBox->set_border_width(4);
+    //wVBox->set_border_width(4);
+    wVBox->set_spacing(2);
 
     wnames = Gtk::manage (new MyComboBoxText ());
     wVBox->pack_start (*wnames, Gtk::PACK_SHRINK);
@@ -165,18 +180,18 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     wnames->set_active (0);
 
     wFrame->add(*wVBox);
-    pack_start (*wFrame, Gtk::PACK_EXPAND_WIDGET, 4);
+    pack_start (*wFrame, Gtk::PACK_EXPAND_WIDGET);
 
 
     // ---------------------------- Output profile
 
 
     Gtk::Frame *oFrame = Gtk::manage (new Gtk::Frame(M("TP_ICM_OUTPUTPROFILE")) );
-    oFrame->set_border_width(0);
+    //oFrame->set_border_width(0);
     oFrame->set_label_align(0.025, 0.5);
 
     Gtk::VBox *oVBox = Gtk::manage ( new Gtk::VBox());
-    oVBox->set_border_width(4);
+    //oVBox->set_border_width(4);
     oVBox->set_spacing(2);
 
     onames = Gtk::manage (new MyComboBoxText ());
@@ -199,11 +214,11 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     Gtk::Label* galab = Gtk::manage (new Gtk::Label (M("TP_GAMMA_OUTPUT") + ":"));
     //galab->set_alignment (0.0, 0.5);
 
-    gaHBox->pack_start (*galab, Gtk::PACK_SHRINK, 4);
+    gaHBox->pack_start (*galab, Gtk::PACK_SHRINK);
     wgamma = Gtk::manage (new MyComboBoxText ());
     gaHBox->pack_start (*wgamma, Gtk::PACK_EXPAND_WIDGET);
 
-    oVBox->pack_start(*gaHBox, Gtk::PACK_EXPAND_WIDGET, 2);
+    oVBox->pack_start(*gaHBox, Gtk::PACK_EXPAND_WIDGET);
 
     std::vector<Glib::ustring> wpgamma = rtengine::getGamma ();
 
@@ -216,8 +231,8 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     Gtk::Frame* fgFrame = Gtk::manage (new Gtk::Frame ());
 
     Gtk::VBox *fgVBox = Gtk::manage ( new Gtk::VBox());
-    fgVBox->set_spacing(0);
-    fgVBox->set_border_width(4);
+    fgVBox->set_spacing(2);
+    //fgVBox->set_border_width(4);
 
     freegamma = Gtk::manage(new Gtk::CheckButton((M("TP_GAMMA_FREE"))));
     freegamma->set_active (false);
@@ -243,10 +258,10 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     fgVBox->pack_start( *slpos, Gtk::PACK_SHRINK);//slope
 
     fgFrame->add(*fgVBox);
-    oVBox->pack_start(*fgFrame, Gtk::PACK_EXPAND_WIDGET, 2);
+    oVBox->pack_start(*fgFrame, Gtk::PACK_EXPAND_WIDGET);
 
     oFrame->add(*oVBox);
-    pack_start (*oFrame, Gtk::PACK_EXPAND_WIDGET, 4);
+    pack_start (*oFrame, Gtk::PACK_EXPAND_WIDGET);
 
 
     // ---------------------------- Output gamma list entries
@@ -460,26 +475,26 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
         inone->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
         updateDCP(pp->icm.dcpIlluminant, "");
-    } else if (pp->icm.input == "(embedded)" || ((pp->icm.input == "(camera)" || pp->icm.input == "") && icamera->get_state() == Gtk::STATE_FLAG_INSENSITIVE)) {
+    } else if (pp->icm.input == "(embedded)" || ((pp->icm.input == "(camera)" || pp->icm.input == "") && icamera->get_state() == Gtk::STATE_INSENSITIVE)) {
         iembedded->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
         updateDCP(pp->icm.dcpIlluminant, "");
-    } else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state() != Gtk::STATE_FLAG_INSENSITIVE) {
+    } else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state() != Gtk::STATE_INSENSITIVE) {
         icameraICC->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (true);
         updateDCP(pp->icm.dcpIlluminant, "");
-    } else if ((pp->icm.input == "(cameraICC)") && icamera->get_state() != Gtk::STATE_FLAG_INSENSITIVE && icameraICC->get_state() == Gtk::STATE_FLAG_INSENSITIVE) {
+    } else if ((pp->icm.input == "(cameraICC)") && icamera->get_state() != Gtk::STATE_INSENSITIVE && icameraICC->get_state() == Gtk::STATE_INSENSITIVE) {
         // this is the case when (cameraICC) is instructed by packaged profiles, but ICC file is not found
         // therefore falling back UI to explicitly reflect the (camera) option
         icamera->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
         updateDCP(pp->icm.dcpIlluminant, "");
-    } else if ((pp->icm.input == "(cameraICC)") && icamera->get_state() == Gtk::STATE_FLAG_INSENSITIVE && icameraICC->get_state() == Gtk::STATE_FLAG_INSENSITIVE) {
+    } else if ((pp->icm.input == "(cameraICC)") && icamera->get_state() == Gtk::STATE_INSENSITIVE && icameraICC->get_state() == Gtk::STATE_INSENSITIVE) {
         // If neither (camera) nor (cameraICC) are available, as is the case when loading a non-raw, activate (embedded).
         iembedded->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
         updateDCP(pp->icm.dcpIlluminant, "");
-    } else if ((pp->icm.input == "(camera)" || pp->icm.input == "") && icamera->get_state() != Gtk::STATE_FLAG_INSENSITIVE) {
+    } else if ((pp->icm.input == "(camera)" || pp->icm.input == "") && icamera->get_state() != Gtk::STATE_INSENSITIVE) {
         icamera->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
         updateDCP(pp->icm.dcpIlluminant, "");

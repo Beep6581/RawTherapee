@@ -255,8 +255,8 @@ void MyDiagonalCurve::draw (int handle)
         cr->set_line_width (1.0);
         double stepSize = (graphW - 3) / 255.0;
         cr->move_to ( double(graphX + 1), double(graphY - 1) );
-        c = style->get_background_color(Gtk::STATE_FLAG_INSENSITIVE);
-        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+        c = style->get_color(state);
+        cr->set_source_rgba (c.get_red(), c.get_green(), c.get_blue(), 0.2);
 
         for (int i = 0; i < 256; i++) {
             double val = double(bghist[i]) * double(graphH - 2) / double(valMax);

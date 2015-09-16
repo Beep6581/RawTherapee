@@ -38,7 +38,7 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1)
 
     // History List
     // ~~~~~~~~~~~~
-    hscrollw = Gtk::manage (new Gtk::ScrolledWindow ());
+    Gtk::ScrolledWindow* hscrollw = Gtk::manage (new Gtk::ScrolledWindow ());
     hscrollw->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
 
     Gtk::Frame* histFrame = Gtk::manage (new Gtk::Frame (M("HISTORY_LABEL")));
@@ -49,24 +49,37 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1)
 
     historyModel = Gtk::ListStore::create (historyColumns);
     hTreeView->set_model (historyModel);
-//    hTreeView->set_headers_visible (false);
+    //hTreeView->set_headers_visible (false);
+    hTreeView->set_hscroll_policy(Gtk::ScrollablePolicy::SCROLL_MINIMUM);
+    hTreeView->set_vscroll_policy(Gtk::ScrollablePolicy::SCROLL_NATURAL);
+    hTreeView->set_size_request(80, -1);
+    hTreeView->set_resize_mode(Gtk::RESIZE_QUEUE);
 
     Gtk::CellRendererText *changecrt = Gtk::manage (new Gtk::CellRendererText());
     Gtk::CellRendererText *valuecrt  = Gtk::manage (new Gtk::CellRendererText());
     Gtk::TreeView::Column *hviewcol = Gtk::manage (new Gtk::TreeView::Column (""));
     hviewcol->pack_start (*changecrt, true);
     hviewcol->add_attribute (changecrt->property_markup (), historyColumns.text);
+    hviewcol->set_expand(true);
     hviewcol->set_resizable (true);
+    hviewcol->set_fixed_width(35);
+    hviewcol->set_min_width(35);
+    hviewcol->set_sizing(Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
 
     Gtk::TreeView::Column *hviewcol2 = Gtk::manage (new Gtk::TreeView::Column (""));
     hviewcol2->pack_start (*valuecrt, true);
     hviewcol2->add_attribute (valuecrt->property_markup (), historyColumns.value);
-    valuecrt->set_property ("xalign", 1.0);
+    hviewcol2->set_expand(true);
+    hviewcol2->set_resizable(true);
+    hviewcol2->set_fixed_width(35);
+    hviewcol2->set_min_width(35);
+    hviewcol2->set_sizing(Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
+    valuecrt->set_alignment(1.f, 0.f);
 
+    hTreeView->set_has_tooltip(true);
+    hTreeView->signal_query_tooltip().connect( sigc::mem_fun(*this, &History::on_query_tooltip) );
     hTreeView->append_column (*hviewcol);
     hTreeView->append_column (*hviewcol2);
-
-    hviewcol2->set_sizing (Gtk::TREE_VIEW_COLUMN_FIXED);
 
     selchangehist = hTreeView->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &History::historySelectionChanged));
 
@@ -97,7 +110,7 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1)
     bscrollw = Gtk::manage (new Gtk::ScrolledWindow ());
 //    bscrollw->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     bscrollw->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
-    bscrollw->set_size_request (-1, 75);
+    bscrollw->set_size_request (-1, 45);
 
     Gtk::Frame* bmFrame = Gtk::manage (new Gtk::Frame (M("HISTORY_SNAPSHOTS")));
     Gtk::VBox* bmBox = Gtk::manage (new Gtk::VBox ());
@@ -128,9 +141,9 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1)
     addBookmark->signal_clicked().connect( sigc::mem_fun(*this, &History::addBookmarkPressed) );
     delBookmark->signal_clicked().connect( sigc::mem_fun(*this, &History::delBookmarkPressed) );
 
-//    hTreeView->set_grid_lines (Gtk::TREE_VIEW_GRID_LINES_HORIZONTAL);
+    //hTreeView->set_grid_lines (Gtk::TREE_VIEW_GRID_LINES_HORIZONTAL);
     hTreeView->set_grid_lines (Gtk::TREE_VIEW_GRID_LINES_BOTH);
-    hTreeView->signal_size_allocate().connect( sigc::mem_fun(*this, &History::resized) );
+    //hTreeView->signal_size_allocate().connect( sigc::mem_fun(*this, &History::resized) );
 
     hTreeView->set_enable_search(false);
     bTreeView->set_enable_search(false);
@@ -377,9 +390,11 @@ void History::redo ()
     }
 }
 
+/*
 void History::resized (Gtk::Allocation& req)
 {
 }
+*/
 
 bool History::getBeforeLineParams (rtengine::procparams::ProcParams& params)
 {
@@ -396,3 +411,44 @@ bool History::getBeforeLineParams (rtengine::procparams::ProcParams& params)
     return true;
 }
 
+bool History::on_query_tooltip(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip) {
+    bool displayTooltip = false;
+
+    Gtk::TreeModel::Path path;
+    int x2 = -1;
+    int y2 = -1;
+    hTreeView->convert_widget_to_bin_window_coords(x, y, x2, y2);
+    bool hasPath = hTreeView->get_path_at_pos(x2, y2, path);
+
+    if (hasPath) {
+        if (path && !path.empty()) {
+            Gtk::TreeModel::iterator iter = historyModel->get_iter(path);
+            if (iter) {
+                Glib::ustring param, val;
+                iter->get_value<Glib::ustring>(1, param);
+                iter->get_value<Glib::ustring>(2, val);
+
+                /*
+                 *
+                 *
+                 * Why this doesn't work ???
+                 *
+                 *
+                 *
+                Gtk::Label *left = Gtk::manage (new Gtk::Label(param+" :"));
+                Gtk::Label *right = Gtk::manage (new Gtk::Label(val));
+                right->set_justify(Gtk::JUSTIFY_LEFT);
+                Gtk::HBox *hbox = Gtk::manage (new Gtk::HBox());
+                hbox->set_spacing(5);
+                hbox->pack_start(*left, Gtk::PACK_SHRINK, 0);
+                hbox->pack_start(*right, Gtk::PACK_SHRINK, 0);
+                tooltip->set_custom(*hbox);
+                */
+
+                tooltip->set_text(param+" : "+val);
+                displayTooltip = true;
+            }
+        }
+    }
+    return displayTooltip;
+}

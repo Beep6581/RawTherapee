@@ -343,6 +343,8 @@ class MyFileChooserButton : public Gtk::FileChooserButton
 
 protected:
     bool on_scroll_event (GdkEventScroll* event);
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
+    void get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const;
 
 public:
     MyFileChooserButton (const Glib::ustring& title, Gtk::FileChooserAction action = Gtk::FILE_CHOOSER_ACTION_OPEN);

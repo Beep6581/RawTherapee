@@ -1115,7 +1115,7 @@ bool MyHScale::on_key_press_event (GdkEventKey* event)
 
 MyFileChooserButton::MyFileChooserButton (const Glib::ustring& title, Gtk::FileChooserAction action) : Gtk::FileChooserButton(title, action)
 {
-    set_size_request(20, -1);
+    //set_size_request(35, -1);
 }
 
 // For an unknown reason (a bug ?), it doesn't work when action = FILE_CHOOSER_ACTION_SELECT_FOLDER !
@@ -1131,6 +1131,16 @@ bool MyFileChooserButton::on_scroll_event (GdkEventScroll* event)
     // ... otherwise the scroll event is sent back to an upper level
     return false;
 }
+
+void MyFileChooserButton::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    minimum_width = natural_width = 35;
+}
+void MyFileChooserButton::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+{
+    minimum_width = natural_width = 35;
+}
+
 
 FileChooserLastFolderPersister::FileChooserLastFolderPersister(
     Gtk::FileChooser* chooser, Glib::ustring& folderVariable) :

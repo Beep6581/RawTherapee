@@ -83,6 +83,7 @@ GtkImage {
 
 GtkFrame {
 	background-color: rgba(128,128,128,0.15);
+	padding: 4px 4px;
 }
 
 GtkNotebook {

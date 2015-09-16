@@ -18,7 +18,14 @@
  */
 #include "tonecurve.h"
 #include "adjuster.h"
+
+// class_slot is no longer part of the sigc++ source tree, but starting from which version ?
+#if 1
+#include <sigc++/slot.h>
+#else
 #include <sigc++/class_slot.h>
+#endif
+
 #include <iomanip>
 #include "ppversion.h"
 #include "edit.h"
