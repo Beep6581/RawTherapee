@@ -650,6 +650,7 @@ HISTORY_MSG_417;Retinex - Transmission median
 HISTORY_MSG_418;Retinex - Threshold
 HISTORY_MSG_419;Retinex - Color space
 HISTORY_MSG_420;Retinex - Histogram - HSL
+HISTORY_MSG_421;Retinex - Gamma
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots

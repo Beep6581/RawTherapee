@@ -288,9 +288,6 @@ public:
     void getCurves(RetinextransmissionCurve &transmissionCurveLUT) const;
 
     static void getDefaulttransmissionCurve(std::vector<double> &curve);
-    static void getDefaultCDCurve(std::vector<double> &curve);
-    static void getDefaultCDHCurve(std::vector<double> &curve);
-
 };
 
 

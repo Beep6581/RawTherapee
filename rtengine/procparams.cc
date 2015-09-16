@@ -123,10 +123,6 @@ RetinexParams::RetinexParams ()
 
 void RetinexParams::getDefaulttransmissionCurve(std::vector<double> &curve)
 {
-    /*   double v[8] =   {   0.0, 0.50, 0.35, 0.35,
-                           1.0, 0.50, 0.35, 0.35,
-                       };
-    */
     double v[12] =   {   0.00, 0.25, 0.35, 0.35,
                          0.60, 0.90, 0.35, 0.35,
                          1.00, 0.50, 0.35, 0.35,
@@ -141,40 +137,6 @@ void RetinexParams::getDefaulttransmissionCurve(std::vector<double> &curve)
     }
 }
 
-void RetinexParams::getDefaultCDCurve(std::vector<double> &curve)
-{
-    double v[4] = { 0., 0.,
-                 //    0.25, 0.25,
-                  //   0.5, 0.5,
-                 //    0.75, 0.75,
-                     1., 1.,
-                   };
-
-    curve.resize(5);
-    curve.at(0) = double(DCT_NURBS);
-
-    for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at(i) = v[i - 1];
-    }
-}
-
-void RetinexParams::getDefaultCDHCurve(std::vector<double> &curve)
-{
-    double v[4] = { 0.00, 0.00,
-                  //   0.5, 0.5,
-                     1.0, 1.0,
-                   };
-
-    curve.resize(5);
-    curve.at(0) = double(DCT_NURBS);
-
-    for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at(i) = v[i - 1];
-    }
-}
-
-
-
 void RetinexParams::setDefaults()
 {
     enabled = false;
@@ -185,14 +147,15 @@ void RetinexParams::setDefaults()
     offs    = 0;
     vart    = 125;
     limd = 8;
-    getDefaulttransmissionCurve(transmissionCurve);
-    getDefaultCDCurve(cdcurve);
-    getDefaultCDHCurve(cdHcurve);
     retinexMethod = "high";
     retinexcolorspace = "Lab";
     gammaretinex = "none";
     medianmap = true;
-
+    cdcurve.clear();
+    cdcurve.push_back(DCT_Linear);
+    cdHcurve.clear();
+    cdHcurve.push_back(DCT_Linear);
+    getDefaulttransmissionCurve(transmissionCurve);
 }
 
 void RetinexParams::getCurves(RetinextransmissionCurve &transmissionCurveLUT) const

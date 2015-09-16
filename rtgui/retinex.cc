@@ -47,17 +47,15 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     retinexcolorspace->set_active(0);
     retinexColorSpaceConn = retinexcolorspace->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::retinexColorSpaceChanged) );
     
-
     dhbox->pack_start(*retinexMethod);
     dhbox->pack_start(*retinexcolorspace);
     retinexVBox->pack_start(*dhbox);
-    std::vector<double> defaultCurve;
 
+
+    // Histogram equalizer Lab curve
     curveEditorGD = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_CONTEDIT_LAB"));
     curveEditorGD->setCurveListener (this);
-    rtengine::RetinexParams::getDefaultCDCurve(defaultCurve);
     cdshape = static_cast<DiagonalCurveEditor*>(curveEditorGD->addCurve(CT_Diagonal, M("TP_RETINEX_CURVEEDITOR_CD")));
-    cdshape->setResetCurve(DiagonalCurveType(defaultCurve.at(0)), defaultCurve);
     cdshape->setTooltip(M("TP_RETINEX_CURVEEDITOR_CD_TOOLTIP"));
     std::vector<GradientMilestone> milestones22;
 
@@ -68,11 +66,11 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     curveEditorGD->curveListComplete();
 
+
+    // Histogram equalizer HSL curve
     curveEditorGDH = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_CONTEDIT_HSL"));
     curveEditorGDH->setCurveListener (this);
-    rtengine::RetinexParams::getDefaultCDHCurve(defaultCurve);
     cdshapeH = static_cast<DiagonalCurveEditor*>(curveEditorGDH->addCurve(CT_Diagonal, M("TP_RETINEX_CURVEEDITOR_CD")));
-    cdshapeH->setResetCurve(DiagonalCurveType(defaultCurve.at(0)), defaultCurve);
     cdshapeH->setTooltip(M("TP_RETINEX_CURVEEDITOR_CD_TOOLTIP"));
     std::vector<GradientMilestone> milestones22H;
 
@@ -84,9 +82,11 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     curveEditorGDH->curveListComplete();
 
 
+    // Transmission map curve
     transmissionCurveEditorG = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_TRANSMISSION"));
     transmissionCurveEditorG->setCurveListener (this);
 
+    std::vector<double> defaultCurve;
     rtengine::RetinexParams::getDefaulttransmissionCurve(defaultCurve);
     transmissionShape = static_cast<FlatCurveEditor*>(transmissionCurveEditorG->addCurve(CT_Flat, "", NULL, false));
     transmissionShape->setIdentityValue(0.);
@@ -257,8 +257,8 @@ void Retinex::writeOptions(std::vector<int> &tpOpen)
 
 void Retinex::updateToolState(std::vector<int> &tpOpen)
 {
-    if(tpOpen.size() == 9) {
-        expsettings->set_expanded(tpOpen.at(0));
+    if(tpOpen.size() == 10) {
+        expsettings->set_expanded(tpOpen.at(9));
     }
 }
 
