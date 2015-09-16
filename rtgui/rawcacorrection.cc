@@ -36,16 +36,16 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROM
     caRed = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CARED"), -4.0, 4.0, 0.1, 0, icaredL, icaredR));
     caRed->setAdjusterListener (this);
 
-    if (caRed->delay < 1000) {
-        caRed->delay = 1000;
+    if (caRed->delay < options.adjusterMaxDelay) {
+        caRed->delay = options.adjusterMaxDelay;
     }
 
     caRed->show();
     caBlue = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CABLUE"), -4.0, 4.0, 0.1, 0, icablueL, icablueR));
     caBlue->setAdjusterListener (this);
 
-    if (caBlue->delay < 1000) {
-        caBlue->delay = 1000;
+    if (caBlue->delay < options.adjusterMaxDelay) {
+        caBlue->delay = options.adjusterMaxDelay;
     }
 
     caBlue->show();

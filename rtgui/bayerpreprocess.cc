@@ -29,8 +29,8 @@ BayerPreProcess::BayerPreProcess () : FoldableToolPanel(this, "bayerpreprocess",
     lineDenoise = Gtk::manage(new Adjuster (M("TP_PREPROCESS_LINEDENOISE"), 0, 1000, 1, 0));
     lineDenoise->setAdjusterListener (this);
 
-    if (lineDenoise->delay < 1000) {
-        lineDenoise->delay = 1000;
+    if (lineDenoise->delay < options.adjusterMaxDelay) {
+        lineDenoise->delay = options.adjusterMaxDelay;
     }
 
     lineDenoise->show();
@@ -38,8 +38,8 @@ BayerPreProcess::BayerPreProcess () : FoldableToolPanel(this, "bayerpreprocess",
     greenEqThreshold = Gtk::manage(new Adjuster (M("TP_PREPROCESS_GREENEQUIL"), 0, 100, 1, 0));
     greenEqThreshold->setAdjusterListener (this);
 
-    if (greenEqThreshold->delay < 1000) {
-        greenEqThreshold->delay = 1000;
+    if (greenEqThreshold->delay < options.adjusterMaxDelay) {
+        greenEqThreshold->delay = options.adjusterMaxDelay;
     }
 
     greenEqThreshold->show();

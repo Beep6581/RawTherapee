@@ -84,8 +84,7 @@ void ThresholdAdjuster::initObject (Glib::ustring label, bool editedcb)
 
     addMode = false;
 
-    // TODO: let the user chose the default value of ThresholdAdjuster::delay, for slow machines
-    delay = options.adjusterDelay;      // delay is no more static, so we can set the delay individually (useful for the RAW editor tab)
+    delay = options.adjusterMinDelay;
 
     set_name("ThresholdAdjuster");
 

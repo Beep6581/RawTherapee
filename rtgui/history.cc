@@ -38,8 +38,13 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1)
 
     // History List
     // ~~~~~~~~~~~~
+<<<<<<< HEAD
     Gtk::ScrolledWindow* hscrollw = Gtk::manage (new Gtk::ScrolledWindow ());
     hscrollw->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
+=======
+    hscrollw = Gtk::manage (new Gtk::ScrolledWindow ());
+    hscrollw->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+>>>>>>> branch 'gtk3' of https://github.com/Beep6581/RawTherapee.git
 
     Gtk::Frame* histFrame = Gtk::manage (new Gtk::Frame (M("HISTORY_LABEL")));
     histFrame->add (*hscrollw);

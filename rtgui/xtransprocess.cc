@@ -42,8 +42,8 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
     ccSteps = Gtk::manage (new Adjuster (M("TP_RAW_FALSECOLOR"), 0, 5, 1, 0 ));
     ccSteps->setAdjusterListener (this);
 
-    if (ccSteps->delay < 1000) {
-        ccSteps->delay = 1000;
+    if (ccSteps->delay < options.adjusterMaxDelay) {
+        ccSteps->delay = options.adjusterMaxDelay;
     }
 
     ccSteps->show();
