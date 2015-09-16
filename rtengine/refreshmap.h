@@ -68,7 +68,6 @@
 #define INPUTPROFILE     WHITEBALANCE
 #define GAMMA           (M_COLOR|M_LUMINANCE)
 #define MINUPDATE        M_MINUPDATE
-#define NONE             0
 #define ALLNORAW        (M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 
 extern int refreshmap[];
