@@ -226,16 +226,16 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     gampos = Gtk::manage(new Adjuster (M("TP_GAMMA_CURV"), 1, 3.5, 0.01, 2.22));
     gampos->setAdjusterListener (this);
 
-    if (gampos->delay < 1000) {
-        gampos->delay = 1000;
+    if (gampos->delay < options.adjusterMaxDelay) {
+        gampos->delay = options.adjusterMaxDelay;
     }
 
     gampos->show();
     slpos = Gtk::manage(new Adjuster (M("TP_GAMMA_SLOP"), 0, 15, 0.01, 4.5));
     slpos->setAdjusterListener (this);
 
-    if (slpos->delay < 1000) {
-        slpos->delay = 1000;
+    if (slpos->delay < options.adjusterMaxDelay) {
+        slpos->delay = options.adjusterMaxDelay;
     }
 
     slpos->show();

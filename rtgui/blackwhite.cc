@@ -205,10 +205,6 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     mixerRed = Gtk::manage(new Adjuster (/*M("TP_BWMIX_RED")*/"", -100, 200, 1, 33, imgIcon[0]));
 
-    if (mixerRed->delay < 50) {
-        mixerRed->delay = 50;
-    }
-
     mixerRed->setAdjusterListener (this);
     mixerRed->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
     mixerRed->show();
@@ -216,20 +212,12 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     mixerGreen = Gtk::manage(new Adjuster (/*M("TP_BWMIX_GREEN")*/"", -100, 200, 1, 33, imgIcon[3]));
 
-    if (mixerGreen->delay < 50) {
-        mixerGreen->delay = 50;
-    }
-
     mixerGreen->setAdjusterListener (this);
     mixerGreen->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
     mixerGreen->show();
     mixerVBox->pack_start( *mixerGreen, Gtk::PACK_SHRINK, 0);
 
     mixerBlue = Gtk::manage(new Adjuster (/*M("TP_BWMIX_BLUE")*/"", -100, 200, 1, 33, imgIcon[5]));
-
-    if (mixerBlue->delay < 50) {
-        mixerBlue->delay = 50;
-    }
 
     mixerBlue->setAdjusterListener (this);
     mixerBlue->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
@@ -257,20 +245,12 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     mixerOrange = Gtk::manage(new Adjuster (/*M("TP_BWMIX_ORANGE")*/"", -100, 200, 1, 33, imgIcon[1]));
 
-    if (mixerOrange->delay < 50) {
-        mixerOrange->delay = 50;
-    }
-
     mixerOrange->setAdjusterListener (this);
     mixerOrange->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
     mixerOrange->show();
     mixerVBox->pack_start( *mixerOrange, Gtk::PACK_SHRINK, 0);
 
     mixerYellow = Gtk::manage(new Adjuster (/*M("TP_BWMIX_YELLOW")*/"", -100, 200, 1, 33, imgIcon[2]));
-
-    if (mixerYellow->delay < 50) {
-        mixerYellow->delay = 50;
-    }
 
     mixerYellow->setAdjusterListener (this);
     mixerYellow->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
@@ -279,10 +259,6 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     mixerCyan = Gtk::manage(new Adjuster (/*M("TP_BWMIX_CYAN")*/"", -100, 200, 1, 33, imgIcon[4]));
 
-    if (mixerCyan->delay < 50) {
-        mixerCyan->delay = 50;
-    }
-
     mixerCyan->setAdjusterListener (this);
     mixerCyan->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
     mixerCyan->show();
@@ -290,20 +266,12 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     mixerPurple = Gtk::manage(new Adjuster (/*M("TP_BWMIX_PURPLE")*/"", -100, 200, 1, 33, imgIcon[6]));
 
-    if (mixerPurple->delay < 50) {
-        mixerPurple->delay = 50;
-    }
-
     mixerPurple->setAdjusterListener (this);
     mixerPurple->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
     mixerPurple->show();
     mixerVBox->pack_start( *mixerPurple, Gtk::PACK_SHRINK, 0);
 
     mixerMagenta = Gtk::manage(new Adjuster (/*M("TP_BWMIX_MAGENTA")*/"", -100, 200, 1, 33, imgIcon[7]));
-
-    if (mixerMagenta->delay < 50) {
-        mixerMagenta->delay = 50;
-    }
 
     mixerMagenta->setAdjusterListener (this);
     mixerMagenta->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
@@ -324,10 +292,6 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     gammaRed = Gtk::manage(new Adjuster (/*M("TP_BWMIX_GAM_RED")*/"", -100, 100, 1, 0, imgIcon[8]));
 
-    if (gammaRed->delay < 50) {
-        gammaRed->delay = 50;
-    }
-
     gammaRed->setAdjusterListener (this);
     gammaRed->set_tooltip_markup (M("TP_BWMIX_GAM_TOOLTIP"));
     gammaRed->show();
@@ -335,20 +299,12 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     gammaGreen = Gtk::manage(new Adjuster (/*M("TP_BWMIX_GAM_GREEN")*/"", -100, 100, 1, 0, imgIcon[9]));
 
-    if (gammaGreen->delay < 50) {
-        gammaGreen->delay = 50;
-    }
-
     gammaGreen->setAdjusterListener (this);
     gammaGreen->set_tooltip_markup (M("TP_BWMIX_GAM_TOOLTIP"));
     gammaGreen->show();
     gammaVBox->pack_start( *gammaGreen, Gtk::PACK_SHRINK, 0);
 
     gammaBlue = Gtk::manage(new Adjuster (/*M("TP_BWMIX_GAM_BLUE")*/"", -100, 100, 1, 0, imgIcon[10]));
-
-    if (gammaBlue->delay < 50) {
-        gammaBlue->delay = 50;
-    }
 
     gammaBlue->setAdjusterListener (this);
     gammaBlue->set_tooltip_markup (M("TP_BWMIX_GAM_TOOLTIP"));

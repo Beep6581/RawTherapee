@@ -50,8 +50,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
 
     degree  = Gtk::manage (new Adjuster (M("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   100.));
 
-    if (degree->delay < 1000) {
-        degree->delay = 1000;
+    if (degree->delay < options.adjusterMaxDelay) {
+        degree->delay = options.adjusterMaxDelay;
     }
 
     degree->throwOnButtonRelease();
@@ -78,8 +78,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
 
     adapscen = Gtk::manage (new Adjuster (M("TP_COLORAPP_ADAPTSCENE"), 0.001, 16384., 0.001, 2000.));// EV -7  ==> EV 17
 
-    if (adapscen->delay < 1000) {
-        adapscen->delay = 1000;
+    if (adapscen->delay < options.adjusterMaxDelay) {
+        adapscen->delay = options.adjusterMaxDelay;
     }
 
     adapscen->throwOnButtonRelease();
@@ -126,8 +126,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
 
     jlight = Gtk::manage (new Adjuster (M("TP_COLORAPP_LIGHT"), -100.0, 100.0, 0.1, 0.));
 
-    if (jlight->delay < 1000) {
-        jlight->delay = 1000;
+    if (jlight->delay < options.adjusterMaxDelay) {
+        jlight->delay = options.adjusterMaxDelay;
     }
 
     jlight->throwOnButtonRelease();
@@ -136,8 +136,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
 
     qbright = Gtk::manage (new Adjuster (M("TP_COLORAPP_BRIGHT"), -100.0, 100.0, 0.1, 0.));
 
-    if (qbright->delay < 1000) {
-        qbright->delay = 1000;
+    if (qbright->delay < options.adjusterMaxDelay) {
+        qbright->delay = options.adjusterMaxDelay;
     }
 
     qbright->throwOnButtonRelease();
@@ -146,8 +146,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
 
     chroma = Gtk::manage (new Adjuster (M("TP_COLORAPP_CHROMA"), -100.0, 100.0, 0.1, 0.));
 
-    if (chroma->delay < 1000) {
-        chroma->delay = 1000;
+    if (chroma->delay < options.adjusterMaxDelay) {
+        chroma->delay = options.adjusterMaxDelay;
     }
 
     chroma->throwOnButtonRelease();
@@ -157,8 +157,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
 
     schroma = Gtk::manage (new Adjuster (M("TP_COLORAPP_CHROMA_S"), -100.0, 100.0, 0.1, 0.));
 
-    if (schroma->delay < 1000) {
-        schroma->delay = 1000;
+    if (schroma->delay < options.adjusterMaxDelay) {
+        schroma->delay = options.adjusterMaxDelay;
     }
 
     schroma->throwOnButtonRelease();
@@ -167,8 +167,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
 
     mchroma = Gtk::manage (new Adjuster (M("TP_COLORAPP_CHROMA_M"), -100.0, 100.0, 0.1, 0.));
 
-    if (mchroma->delay < 1000) {
-        mchroma->delay = 1000;
+    if (mchroma->delay < options.adjusterMaxDelay) {
+        mchroma->delay = options.adjusterMaxDelay;
     }
 
     mchroma->throwOnButtonRelease();
@@ -177,8 +177,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
 
     rstprotection = Gtk::manage ( new Adjuster (M("TP_COLORAPP_RSTPRO"), 0., 100., 0.1, 0.) );
 
-    if (rstprotection->delay < 1000) {
-        rstprotection->delay = 1000;
+    if (rstprotection->delay < options.adjusterMaxDelay) {
+        rstprotection->delay = options.adjusterMaxDelay;
     }
 
     rstprotection->throwOnButtonRelease();
@@ -187,8 +187,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
 
     contrast = Gtk::manage (new Adjuster (M("TP_COLORAPP_CONTRAST"), -100.0, 100.0, 0.1, 0.));
 
-    if (contrast->delay < 1000) {
-        contrast->delay = 1000;
+    if (contrast->delay < options.adjusterMaxDelay) {
+        contrast->delay = options.adjusterMaxDelay;
     }
 
     contrast->throwOnButtonRelease();
@@ -197,8 +197,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
 
     qcontrast = Gtk::manage (new Adjuster (M("TP_COLORAPP_CONTRAST_Q"), -100.0, 100.0, 0.1, 0.));
 
-    if (qcontrast->delay < 1000) {
-        qcontrast->delay = 1000;
+    if (qcontrast->delay < options.adjusterMaxDelay) {
+        qcontrast->delay = options.adjusterMaxDelay;
     }
 
     qcontrast->throwOnButtonRelease();
@@ -208,8 +208,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
 
     colorh = Gtk::manage (new Adjuster (M("TP_COLORAPP_HUE"), -100.0, 100.0, 0.1, 0.));
 
-    if (colorh->delay < 1000) {
-        colorh->delay = 1000;
+    if (colorh->delay < options.adjusterMaxDelay) {
+        colorh->delay = options.adjusterMaxDelay;
     }
 
     colorh->throwOnButtonRelease();
@@ -353,8 +353,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
 
     adaplum = Gtk::manage (new Adjuster (M("TP_COLORAPP_ADAPTVIEWING"), 0.1,  1000., 0.1,   16.));
 
-    if (adaplum->delay < 1000) {
-        adaplum->delay = 1000;
+    if (adaplum->delay < options.adjusterMaxDelay) {
+        adaplum->delay = options.adjusterMaxDelay;
     }
 
     adaplum->throwOnButtonRelease();
@@ -398,8 +398,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
     */
     badpixsl = Gtk::manage (new Adjuster (M("TP_COLORAPP_BADPIXSL"), 0,  2, 1,  0));
 
-    if (badpixsl->delay < 1000) {
-        badpixsl->delay = 1000;
+    if (badpixsl->delay < options.adjusterMaxDelay) {
+        badpixsl->delay = options.adjusterMaxDelay;
     }
 
     badpixsl->throwOnButtonRelease();

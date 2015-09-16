@@ -99,7 +99,8 @@ public:
     Glib::ustring defProfRaw;
     Glib::ustring defProfImg;
     Glib::ustring dateFormat;
-    int adjusterDelay;
+    int adjusterMinDelay;
+    int adjusterMaxDelay;
     int  startupDir;
     Gtk::SortType dirBrowserSortType;
     Glib::ustring startupPath;

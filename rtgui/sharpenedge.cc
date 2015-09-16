@@ -32,15 +32,15 @@ SharpenEdge::SharpenEdge () : FoldableToolPanel(this, "sharpenedge", M("TP_SHARP
     passes = Gtk::manage(new Adjuster (M("TP_SHARPENEDGE_PASSES"), 1, 4, 1, 2));
     passes->setAdjusterListener (this);
 
-    if (passes->delay < 1000) {
-        passes->delay = 1000;
+    if (passes->delay < options.adjusterMaxDelay) {
+        passes->delay = options.adjusterMaxDelay;
     }
 
     amount = Gtk::manage(new Adjuster (M("TP_SHARPENEDGE_AMOUNT"), 0, 100, 1, 50));
     amount->setAdjusterListener (this);
 
-    if (amount->delay < 1000) {
-        amount->delay = 1000;
+    if (amount->delay < options.adjusterMaxDelay) {
+        amount->delay = options.adjusterMaxDelay;
     }
 
     threechannels = Gtk::manage(new Gtk::CheckButton((M("TP_SHARPENEDGE_THREE"))));// L + a + b

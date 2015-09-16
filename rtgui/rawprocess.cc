@@ -44,8 +44,8 @@ RawProcess::RawProcess () : FoldableToolPanel(this)
     dcbIterations = Gtk::manage (new Adjuster (M("TP_RAW_DCBITERATIONS"), 0, 5, 1, 2));
     dcbIterations->setAdjusterListener (this);
 
-    if (dcbIterations->delay < 1000) {
-        dcbIterations->delay = 1000;
+    if (dcbIterations->delay < options.adjusterMaxDelay) {
+        dcbIterations->delay = options.adjusterMaxDelay;
     }
 
     dcbIterations->show();
@@ -61,8 +61,8 @@ RawProcess::RawProcess () : FoldableToolPanel(this)
     lmmseIterations->setAdjusterListener (this);
     lmmseIterations->set_tooltip_markup (M("TP_RAW_LMMSE_TOOLTIP"));
 
-    if (lmmseIterations->delay < 1000) {
-        lmmseIterations->delay = 1000;
+    if (lmmseIterations->delay < options.adjusterMaxDelay) {
+        lmmseIterations->delay = options.adjusterMaxDelay;
     }
 
     lmmseIterations->show();
@@ -73,8 +73,8 @@ RawProcess::RawProcess () : FoldableToolPanel(this)
     ccSteps = Gtk::manage (new Adjuster (M("TP_RAW_FALSECOLOR"), 0, 5, 1, 0 ));
     ccSteps->setAdjusterListener (this);
 
-    if (ccSteps->delay < 1000) {
-        ccSteps->delay = 1000;
+    if (ccSteps->delay < options.adjusterMaxDelay) {
+        ccSteps->delay = options.adjusterMaxDelay;
     }
 
     ccSteps->show();
