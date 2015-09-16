@@ -446,6 +446,7 @@ enum ProcEvent {
     EvLlimd = 417,
     EvretinexColorSpace = 418, //change to 418 if we want a separate history entry "Retinex - Color space"
     EvLCDHCurve = 419,
+    Evretinexgamma = 420,
     NUMOFEVENTS
 };
 }

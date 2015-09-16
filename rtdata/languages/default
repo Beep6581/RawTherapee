@@ -1560,6 +1560,12 @@ TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Correct raw data to reduce halos and artifacts
 TP_RETINEX_GAIN;Gain
 TP_RETINEX_GAIN_TOOLTIP;Acts on the transmission in combination with offset, this is very different from others settings. Used for black or white pixels, and for better balance the histogram.
+TP_RETINEX_GAM;Gamma
+TP_RETINEX_GAMMA_NONE;None
+TP_RETINEX_GAMMA_LOW;Low
+TP_RETINEX_GAMMA_MID;Middle
+TP_RETINEX_GAMMA_HIGH;High
+TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex\nDifferent from Retinex curves or others curves (Lab, Exposure,..)
 TP_RETINEX_HIGH;High
 TP_RETINEX_HSLSPACE_LIN;HSL-Linear
 TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic

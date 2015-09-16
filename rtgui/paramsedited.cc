@@ -53,6 +53,7 @@ void ParamsEdited::set (bool v)
     retinex.cdHcurve    = v;
     retinex.retinexMethod    = v;
     retinex.retinexcolorspace    = v;
+    retinex.gammaretinex    = v;
     retinex.enabled    = v;
     retinex.str    = v;
     retinex.scal    = v;
@@ -524,6 +525,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         retinex.transmissionCurve = retinex.transmissionCurve && p.retinex.transmissionCurve == other.retinex.transmissionCurve;
         retinex.retinexMethod = retinex.retinexMethod && p.retinex.retinexMethod == other.retinex.retinexMethod;
         retinex.retinexcolorspace = retinex.retinexcolorspace && p.retinex.retinexcolorspace == other.retinex.retinexcolorspace;
+        retinex.gammaretinex = retinex.gammaretinex && p.retinex.gammaretinex == other.retinex.gammaretinex;
         retinex.str = retinex.str && p.retinex.str == other.retinex.str;
         retinex.scal = retinex.scal && p.retinex.scal == other.retinex.scal;
         retinex.neigh = retinex.neigh && p.retinex.neigh == other.retinex.neigh;
@@ -1048,6 +1050,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.retinex.retinexcolorspace    = mods.retinex.retinexcolorspace;
     }
 
+    if (retinex.gammaretinex) {
+        toEdit.retinex.gammaretinex    = mods.retinex.gammaretinex;
+    }
+    
     if (retinex.str) {
         toEdit.retinex.str   = dontforceSet && options.baBehav[ADDSET_DH_STR] ? toEdit.retinex.str + mods.retinex.str : mods.retinex.str;
     }

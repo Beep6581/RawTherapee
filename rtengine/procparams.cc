@@ -190,6 +190,7 @@ void RetinexParams::setDefaults()
     getDefaultCDHCurve(cdHcurve);
     retinexMethod = "high";
     retinexcolorspace = "Lab";
+    gammaretinex = "none";
     medianmap = true;
 
 }
@@ -1508,6 +1509,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
 
     if (!pedited || pedited->retinex.retinexcolorspace) {
         keyFile.set_string  ("Retinex", "Retinexcolorspace", retinex.retinexcolorspace);
+    }
+
+    if (!pedited || pedited->retinex.gammaretinex) {
+        keyFile.set_string  ("Retinex", "Gammaretinex", retinex.gammaretinex);
     }
 
     if (!pedited || pedited->retinex.cdcurve)  {
@@ -3810,6 +3815,14 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Retinex", "Gammaretinex"))     {
+                retinex.gammaretinex  = keyFile.get_string  ("Retinex", "Gammaretinex");
+
+                if (pedited) {
+                    pedited->retinex.gammaretinex = true;
+                }
+            }
+            
             if (keyFile.has_key ("Retinex", "Enabled"))       {
                 retinex.enabled = keyFile.get_boolean ("Retinex", "Enabled");
 
@@ -7270,6 +7283,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && retinex.offs == other.retinex.offs
         && retinex.retinexMethod == other.retinex.retinexMethod
         && retinex.retinexcolorspace == other.retinex.retinexcolorspace
+        && retinex.gammaretinex == other.retinex.gammaretinex
         && retinex.vart == other.retinex.vart
         && retinex.medianmap == other.retinex.medianmap
         && retinex.enabled == other.retinex.enabled

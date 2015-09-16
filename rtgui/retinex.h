@@ -32,8 +32,12 @@ protected:
 
     Gtk::Label* labmdh;
     Gtk::HBox* dhbox;
+    Gtk::Label* labgam;
+    Gtk::HBox* gambox;
+    
     MyComboBoxText*   retinexMethod;
     MyComboBoxText*   retinexcolorspace;
+    MyComboBoxText*   gammaretinex;
     Gtk::CheckButton* medianmap;
     double nextmin;
     double nextmax;
@@ -52,6 +56,7 @@ protected:
     CurveEditorGroup* transmissionCurveEditorG;
     sigc::connection retinexMethodConn;
     sigc::connection retinexColorSpaceConn;
+    sigc::connection gammaretinexConn;
     FlatCurveEditor* transmissionShape;
     bool lastmedianmap;
     sigc::connection medianmapConn;
@@ -77,6 +82,7 @@ public:
     void curveChanged          (CurveEditor* ce);
     void retinexMethodChanged();
     void retinexColorSpaceChanged();
+    void gammaretinexChanged();
     void ColorSpaceUpdateUI();
     void writeOptions (std::vector<int> &tpOpen);
     void updateToolState (std::vector<int> &tpOpen);

@@ -442,6 +442,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     ALLNORAW,   // EvRetinexmedianmap
     ALLNORAW,   // EvLlimd
     DEMOSAIC,    // Evretinexcolorspace
+    DEMOSAIC,    // EvRetinexgamma
     ALLNORAW    // EvLCDHCurve
 
 

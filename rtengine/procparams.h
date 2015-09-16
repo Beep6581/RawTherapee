@@ -279,6 +279,7 @@ public:
     int     offs;
     Glib::ustring retinexMethod;
     Glib::ustring retinexcolorspace;
+    Glib::ustring gammaretinex;
     int     vart;
     int     limd;
     bool    medianmap;

@@ -50,6 +50,11 @@ LUTf Color::gammatab_26_11;
 LUTf Color::igammatab_24_17;
 LUTf Color::gammatab_24_17a;
 LUTf Color::gammatab_13_2;
+LUTf Color::igammatab_13_2;
+LUTf Color::gammatab_115_2;
+LUTf Color::igammatab_115_2;
+LUTf Color::gammatab_145_3;
+LUTf Color::igammatab_145_3;
 
 // Wikipedia sRGB: Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single numerical value.
 // The overall gamma is approximately 2.2, consisting of a linear (gamma 1.0) section near black, and a non-linear section elsewhere involving a 2.4 exponent
@@ -162,6 +167,11 @@ void Color::init ()
     igammatab_24_17(65536, 0);
     gammatab_24_17a(65536, LUT_CLIP_ABOVE | LUT_CLIP_BELOW);
     gammatab_13_2(65536, 0);
+    igammatab_13_2(65536, 0);
+    gammatab_115_2(65536, 0);
+    igammatab_115_2(65536, 0);
+    gammatab_145_3(65536, 0);
+    igammatab_145_3(65536, 0);
 
     for (int i = 0; i < 65536; i++) {
         gammatab_srgb[i] = (65535.0 * gamma2 (i / 65535.0));
@@ -199,7 +209,27 @@ void Color::init ()
     for (int i = 0; i < 65536; i++) {
         gammatab_13_2[i] = (65535.0 * gamma13_2 (i / 65535.0));
     }
+    
+    for (int i = 0; i < 65536; i++) {
+        igammatab_13_2[i] = (65535.0 * igamma13_2 (i / 65535.0));
+    }
 
+    for (int i = 0; i < 65536; i++) {
+        gammatab_115_2[i] = (65535.0 * gamma115_2 (i / 65535.0));
+    }
+    
+    for (int i = 0; i < 65536; i++) {
+        igammatab_115_2[i] = (65535.0 * igamma115_2 (i / 65535.0));
+    }
+
+    for (int i = 0; i < 65536; i++) {
+        gammatab_145_3[i] = (65535.0 * gamma145_3 (i / 65535.0));
+    }
+    
+    for (int i = 0; i < 65536; i++) {
+        igammatab_145_3[i] = (65535.0 * igamma145_3 (i / 65535.0));
+    }
+    
     for (int i = 0; i < 65536; i++) {
         gammatab_26_11[i] = (65535.0 * gamma26_11 (i / 65535.0));
     }

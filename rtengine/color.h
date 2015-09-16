@@ -142,6 +142,11 @@ public:
     static LUTf igammatab_24_17;
     static LUTf gammatab_24_17a;
     static LUTf gammatab_13_2;
+    static LUTf igammatab_13_2;
+    static LUTf gammatab_115_2;
+    static LUTf igammatab_115_2;
+    static LUTf gammatab_145_3;
+    static LUTf igammatab_145_3;
 
     // look-up tables for the simple exponential gamma
     static LUTf gammatab;
@@ -951,7 +956,32 @@ public:
     {
         return x <= 0.016613 ? x * 2.0 : 1.009968 * exp(log(x) / 1.3) - 0.016613;
     }
+    
+    static inline double igamma13_2    (double x)
+    {
+        return x <= 0.033226 ? x / 2.0 : exp(log((x + 0.009968) / 1.009968) * 1.3);
+    }
 
+    static inline double gamma115_2     (double x)
+    {
+        return x <= 0.001692 ? x * 2.0 : 1.000508 * exp(log(x) / 1.15) - 0.001692;
+    }
+    
+    static inline double igamma115_2    (double x)
+    {
+        return x <= 0.003384 ? x / 2.0 : exp(log((x + 0.000508) / 1.000508) * 1.15);
+    }
+    
+    static inline double gamma145_3     (double x)
+    {
+        return x <= 0.009115 ? x * 3.0 : 1.012305 * exp(log(x) / 1.45) - 0.009115;
+    }
+    
+    static inline double igamma145_3    (double x)
+    {
+        return x <= 0.027345 ? x / 3.0 : exp(log((x + 0.012305) / 1.012305) * 1.45);
+    }
+    
 
     // gamma function with adjustable parameters
     //same as above with values calculate with Calcgamma above

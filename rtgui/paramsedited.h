@@ -66,6 +66,7 @@ public:
     bool offs;
     bool retinexMethod;
     bool retinexcolorspace;
+    bool gammaretinex;
     bool vart;
     bool limd;
     bool method;

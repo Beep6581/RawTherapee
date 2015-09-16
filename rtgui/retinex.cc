@@ -46,7 +46,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     retinexcolorspace->append_text (M("TP_RETINEX_HSLSPACE_LIN"));
     retinexcolorspace->set_active(0);
     retinexColorSpaceConn = retinexcolorspace->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::retinexColorSpaceChanged) );
-
+    
 
     dhbox->pack_start(*retinexMethod);
     dhbox->pack_start(*retinexcolorspace);
@@ -96,6 +96,18 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     transmissionCurveEditorG->curveListComplete();
 
+    gambox = Gtk::manage (new Gtk::HBox ());
+    labgam = Gtk::manage (new Gtk::Label (M("TP_RETINEX_GAM") + ":"));
+    gambox->pack_start (*labgam, Gtk::PACK_SHRINK, 1);
+    
+    gammaretinex = Gtk::manage (new MyComboBoxText ());
+    gammaretinex->append_text (M("TP_RETINEX_GAMMA_NONE"));
+    gammaretinex->append_text (M("TP_RETINEX_GAMMA_LOW"));
+    gammaretinex->append_text (M("TP_RETINEX_GAMMA_MID"));
+    gammaretinex->append_text (M("TP_RETINEX_GAMMA_HIGH"));
+    gammaretinex->set_active(0);
+    gammaretinexConn = gammaretinex->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::gammaretinexChanged) );
+    gammaretinex->set_tooltip_markup (M("TP_RETINEX_GAMMA_TOOLTIP"));
 
 
     str = Gtk::manage (new Adjuster (M("TP_RETINEX_STRENGTH"), 0, 100., 1., 20.));
@@ -103,7 +115,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     expsettings = new MyExpander (false, M("TP_RETINEX_SETTINGS"));
     expsettings->signal_button_release_event().connect_notify( sigc::bind( sigc::mem_fun(this, &Retinex::foldAllButMe), expsettings) );
-
+    
     retinexVBox->pack_start (*str);
     str->show ();
 
@@ -142,6 +154,11 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     settingsVBox->pack_start (*curveEditorGDH, Gtk::PACK_SHRINK, 4);
     curveEditorGDH->show();
 
+    gambox->pack_start(*gammaretinex);
+    
+    settingsVBox->pack_start(*gambox);
+    gammaretinex->show();
+    
     settingsVBox->pack_start (*scal);
     scal->show ();
 
@@ -212,6 +229,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     disableListener();
     retinexColorSpaceChanged();
+    gammaretinexChanged();
     medianmapChanged();
     enableListener();
 
@@ -326,6 +344,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
     disableListener ();
     retinexMethodConn.block(true);
     retinexColorSpaceConn.block(true);
+    gammaretinexConn.block(true);
 
 
     if (pedited) {
@@ -347,6 +366,10 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
             retinexcolorspace->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
+        if (!pedited->retinex.gammaretinex) {
+            gammaretinex->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+        
         cdshape->setUnChanged  (!pedited->retinex.cdcurve);
         cdshapeH->setUnChanged  (!pedited->retinex.cdHcurve);
         transmissionShape->setUnChanged (!pedited->retinex.transmissionCurve);
@@ -385,8 +408,19 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
         retinexcolorspace->set_active (2);
     }
 
+    if (pp->retinex.gammaretinex == "none") {
+        gammaretinex->set_active (0);
+    } else if (pp->retinex.gammaretinex == "low") {
+        gammaretinex->set_active (1);
+    } else if (pp->retinex.gammaretinex == "mid") {
+        gammaretinex->set_active (2);
+    } else if (pp->retinex.gammaretinex == "hig") {
+        gammaretinex->set_active (3);
+    }
+    
     retinexMethodChanged ();
     retinexColorSpaceChanged();
+    gammaretinexChanged();
 
     medianmapConn.block(true);
     medianmapChanged ();
@@ -397,6 +431,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     retinexMethodConn.block(false);
     retinexColorSpaceConn.block(false);
+    gammaretinexConn.block(false);
     transmissionShape->setCurve (pp->retinex.transmissionCurve);
 
 
@@ -424,6 +459,7 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
     if (pedited) {
         pedited->retinex.retinexMethod    = retinexMethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->retinex.retinexcolorspace    = retinexcolorspace->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->retinex.gammaretinex    = gammaretinex->get_active_text() != M("GENERAL_UNCHANGED");
 
         //%%%%%%%%%%%%%%%%%%%%%%
         pedited->retinex.str   = str->getEditedState ();
@@ -456,6 +492,17 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
     } else if (retinexcolorspace->get_active_row_number() == 2) {
         pp->retinex.retinexcolorspace = "HSLLIN";
     }
+    
+    if (gammaretinex->get_active_row_number() == 0) {
+        pp->retinex.gammaretinex = "none";
+    } else if (gammaretinex->get_active_row_number() == 1) {
+        pp->retinex.gammaretinex = "low";
+    } else if (gammaretinex->get_active_row_number() == 2) {
+        pp->retinex.gammaretinex = "mid";
+    } else if (gammaretinex->get_active_row_number() == 3) {
+        pp->retinex.gammaretinex = "hig";
+    }
+    
 }
 
 void Retinex::retinexMethodChanged()
@@ -489,6 +536,16 @@ void Retinex::retinexColorSpaceChanged()
 
     if (listener) {
         listener->panelChanged (EvretinexColorSpace, retinexcolorspace->get_active_text ());
+    }
+}
+
+void Retinex::gammaretinexChanged()
+{
+
+    ColorSpaceUpdateUI();
+
+    if (listener) {
+        listener->panelChanged (Evretinexgamma, gammaretinex->get_active_text ());
     }
 }
 

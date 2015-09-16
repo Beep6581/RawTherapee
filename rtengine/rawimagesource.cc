@@ -1811,6 +1811,31 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
     conversionBuffer[0] (W - 2 * border, H - 2 * border);
     conversionBuffer[1] (W - 2 * border, H - 2 * border);
     conversionBuffer[2] (W - 2 * border, H - 2 * border);
+    
+        LUTf *retinexgamtab;//gamma before and after Retinex to restore tones
+        if(retinexParams.gammaretinex == "low")
+            retinexgamtab = &(Color::gammatab_115_2);
+        else if(retinexParams.gammaretinex == "mid")
+            retinexgamtab = &(Color::gammatab_13_2);
+        else if(retinexParams.gammaretinex == "hig")
+            retinexgamtab = &(Color::gammatab_145_3);
+        
+if(retinexParams.gammaretinex != "none") {//gamma           
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif        
+        for (int i = border; i < H - border; i++ ) {
+            for (int j = border; j < W - border; j++ ) {
+                float R_,G_,B_;
+                R_=red[i][j];
+                G_=green[i][j];
+                B_=blue[i][j];
+                red[i][j] = (*retinexgamtab)[R_];
+                green[i][j] = (*retinexgamtab)[G_];
+                blue[i][j] = (*retinexgamtab)[B_];
+            }
+        }    
+}
 
     if(useHsl) {
 #ifdef _OPENMP
@@ -1916,8 +1941,16 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
                 for (int j = border; j < W - border; j++) {
                     float X, Y, Z, L, aa, bb;
                     int pos;
+                    float R_,G_,B_;
+                    R_ = red[i][j];
+                    G_ = green[i][j];
+                    B_ = blue[i][j];
                     //rgb=>lab
-                    Color::rgbxyz(red[i][j], green[i][j], blue[i][j], X, Y, Z, wp);
+                //    R_ = (*retinexigamtab)[red[i][j]];
+                //    G_ = (*retinexigamtab)[green[i][j]];
+                //    B_ = (*retinexigamtab)[blue[i][j]];
+                   
+                    Color::rgbxyz(R_, G_, B_, X, Y, Z, wp);
                     //convert Lab
                     Color::XYZ2Lab(X, Y, Z, L, aa, bb);
                     conversionBuffer[0][i - border][j - border] = aa;
@@ -1944,6 +1977,9 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 
         }
     }
+    
+    
+    
 }
 
 void RawImageSource::retinexPrepareCurves(RetinexParams retinexParams, LUTf &cdcurve, RetinextransmissionCurve &retinextransmissionCurve, bool &retinexcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI)
@@ -1968,6 +2004,13 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf 
     if (settings->verbose) {
         printf ("Applying Retinex\n");
     }
+        LUTf *retinexigamtab;//gamma before and after Retinex to restore tones
+        if(deh.gammaretinex == "low")
+            retinexigamtab = &(Color::igammatab_115_2);
+        else if(deh.gammaretinex == "mid")
+            retinexigamtab = &(Color::igammatab_13_2);
+        else if(deh.gammaretinex == "hig")
+            retinexigamtab = &(Color::igammatab_145_3);
 
     // We need a buffer with original L data to allow correct blending
     // red, green and blue still have original size of raw, but we can't use the borders
@@ -2104,9 +2147,11 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf 
                 vfloat R, G, B;
                 Color::Lab2XYZ(LVFU(LBuffer[i - border][j - border]), LVFU(conversionBuffer[0][i - border][j - border]), LVFU(conversionBuffer[1][i - border][j - border]), x_, y_, z_) ;
                 Color::xyz2rgb(x_, y_, z_, R, G, B, wipv);
+                
                 _mm_storeu_ps(&red[i][j], R);
                 _mm_storeu_ps(&green[i][j], G);
-                _mm_storeu_ps(&blue[i][j], B);
+                _mm_storeu_ps(&blue[i][j], B);                
+                
             }
 
 #endif
@@ -2119,8 +2164,25 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf 
                 red[i][j] = R;
                 green[i][j] = G;
                 blue[i][j] = B;
+                
             }
         }
+}
+if(deh.gammaretinex != "none"){//inverse gamma        
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif        
+        for (int i = border; i < H - border; i++ ) {
+            for (int j = border; j < W - border; j++ ) {
+                float R_,G_,B_;
+                R_=red[i][j];
+                G_=green[i][j];
+                B_=blue[i][j];
+                red[i][j] = (*retinexigamtab)[R_];
+                green[i][j] = (*retinexigamtab)[G_];
+                blue[i][j] = (*retinexigamtab)[B_];
+            }
+        }    
     }
 
     t5.set();
