@@ -47,11 +47,10 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     retinexcolorspace->set_active(0);
     retinexColorSpaceConn = retinexcolorspace->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::retinexColorSpaceChanged) );
 
-
     dhbox->pack_start(*retinexMethod);
     dhbox->pack_start(*retinexcolorspace);
     retinexVBox->pack_start(*dhbox);
-    std::vector<double> defaultCurve;
+
 
     // Histogram equalizer Lab curve
     curveEditorGD = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_CONTEDIT_LAB"));
@@ -66,6 +65,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     cdshape->setLeftBarBgGradient(milestones22);
 
     curveEditorGD->curveListComplete();
+
 
     // Histogram equalizer HSL curve
     curveEditorGDH = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_CONTEDIT_HSL"));
@@ -86,6 +86,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     transmissionCurveEditorG = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_TRANSMISSION"));
     transmissionCurveEditorG->setCurveListener (this);
 
+    std::vector<double> defaultCurve;
     rtengine::RetinexParams::getDefaulttransmissionCurve(defaultCurve);
     transmissionShape = static_cast<FlatCurveEditor*>(transmissionCurveEditorG->addCurve(CT_Flat, "", NULL, false));
     transmissionShape->setIdentityValue(0.);
@@ -238,8 +239,8 @@ void Retinex::writeOptions(std::vector<int> &tpOpen)
 
 void Retinex::updateToolState(std::vector<int> &tpOpen)
 {
-    if(tpOpen.size() == 9) {
-        expsettings->set_expanded(tpOpen.at(0));
+    if(tpOpen.size() == 10) {
+        expsettings->set_expanded(tpOpen.at(9));
     }
 }
 

@@ -559,6 +559,7 @@ void ToolPanelCoordinator::writeOptions ()
     }
 
     wavelet->writeOptions(options.tpOpen);
+    retinex->writeOptions(options.tpOpen);
 }
 
 
