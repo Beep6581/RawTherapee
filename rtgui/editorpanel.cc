@@ -51,7 +51,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     // build left side panel
     leftbox = new Gtk::VBox ();
     leftbox->set_border_width (2);
-    leftbox->set_size_request(100, 250);
+    leftbox->set_size_request(230, 250);
 
     histogramPanel = NULL;
 
@@ -169,7 +169,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // build right side panel
     vboxright = new Gtk::VBox (false, 0);
-    vboxright->set_size_request(100, 250);
+    vboxright->set_size_request(250, 250);
 
     vboxright->set_border_width (2);
 
@@ -278,7 +278,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     vboxright->reference ();
 
     if (options.showHistory) {
-        hpanedl->pack1(*leftbox, false, true);
+        hpanedl->pack1(*leftbox, false, false);
         hpanedl->set_position (options.historyPanelWidth);
     }
 
@@ -299,8 +299,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     vbfr->set_size_request(100, 250);
     hpanedl->pack2(*vbfr, true, true);
 
-    hpanedr->pack1(*hpanedl, true, true);
-    hpanedr->pack2(*vboxright, false, true);
+    hpanedr->pack1(*hpanedl, true, false);
+    hpanedr->pack2(*vboxright, false, false);
     hpanedl->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &EditorPanel::leftPaneButtonReleased) );
     hpanedr->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &EditorPanel::rightPaneButtonReleased) );
 
@@ -911,7 +911,7 @@ void EditorPanel::hideHistoryActivated ()
     removeIfThere (hpanedl, leftbox, false);
 
     if (hidehp->get_active()) {
-        hpanedl->pack1 (*leftbox, false, true);
+        hpanedl->pack1 (*leftbox, false, false);
     }
 
     options.showHistory = hidehp->get_active();

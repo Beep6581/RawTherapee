@@ -31,15 +31,20 @@ int FilePanelInitUI (void* data)
 FilePanel::FilePanel () : parent(NULL)
 {
 
+    // Contains everything except for the batch Tool Panel and tabs (Fast Export, Inspect, etc)
     dirpaned = Gtk::manage ( new Gtk::HPaned () );
     dirpaned->set_position (options.dirBrowserWidth);
 
+    // The directory tree
     dirBrowser = Gtk::manage ( new DirBrowser () );
+    // Places
     placesBrowser = Gtk::manage ( new PlacesBrowser () );
+    // Recent Folders
     recentBrowser = Gtk::manage ( new RecentBrowser () );
 
+    // The whole left panel. Contains Places, Recent Folders and Folders.
     placespaned = Gtk::manage ( new Gtk::VPaned () );
-    placespaned->set_size_request(50, 100);
+    placespaned->set_size_request(250, 100);
     placespaned->set_position (options.dirBrowserHeight);
 
     Gtk::VBox* obox = Gtk::manage (new Gtk::VBox ());
@@ -49,11 +54,13 @@ FilePanel::FilePanel () : parent(NULL)
     placespaned->pack1 (*placesBrowser, false, true);
     placespaned->pack2 (*obox, true, true);
 
-    dirpaned->pack1 (*placespaned, false, true);
+    dirpaned->pack1 (*placespaned, false, false);
 
     tpc = new BatchToolPanelCoordinator (this);
     tpc->removeWbTool();
+    // Location bar
     fileCatalog = Gtk::manage ( new FileCatalog (tpc->coarse, tpc->getToolBar(), this) );
+    // Holds the location bar and thumbnails
     ribbonPane = Gtk::manage ( new Gtk::Paned() );
     ribbonPane->add(*fileCatalog);
     ribbonPane->set_size_request(50, 150);
@@ -69,7 +76,7 @@ FilePanel::FilePanel () : parent(NULL)
     fileCatalog->setDirBrowserRemoteInterface (dirBrowser);
 
     rightBox = Gtk::manage ( new Gtk::HBox () );
-    rightBox->set_size_request(50, 100);
+    rightBox->set_size_request(270, 100);
     rightNotebook = Gtk::manage ( new Gtk::Notebook () );
     rightNotebookSwitchConn = rightNotebook->signal_switch_page().connect_notify( sigc::mem_fun(*this, &FilePanel::on_NB_switch_page) );
     //Gtk::VBox* taggingBox = Gtk::manage ( new Gtk::VBox () );
@@ -82,7 +89,6 @@ FilePanel::FilePanel () : parent(NULL)
     Gtk::ScrolledWindow* sFilterPanel = Gtk::manage ( new Gtk::ScrolledWindow() );
     filterPanel = Gtk::manage ( new FilterPanel () );
     sFilterPanel->add (*filterPanel);
-    sFilterPanel->set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
 
     inspectorPanel = new Inspector();
     fileCatalog->setInspector(inspectorPanel);
@@ -125,7 +131,7 @@ FilePanel::FilePanel () : parent(NULL)
     rightBox->pack_start (*rightNotebook);
 
     pack1(*dirpaned, true, true);
-    pack2(*rightBox, false, true);
+    pack2(*rightBox, false, false);
 
     fileCatalog->setFileSelectionChangeListener (tpc);
 
