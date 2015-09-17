@@ -38,13 +38,8 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1)
 
     // History List
     // ~~~~~~~~~~~~
-<<<<<<< HEAD
     Gtk::ScrolledWindow* hscrollw = Gtk::manage (new Gtk::ScrolledWindow ());
     hscrollw->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
-=======
-    hscrollw = Gtk::manage (new Gtk::ScrolledWindow ());
-    hscrollw->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
->>>>>>> branch 'gtk3' of https://github.com/Beep6581/RawTherapee.git
 
     Gtk::Frame* histFrame = Gtk::manage (new Gtk::Frame (M("HISTORY_LABEL")));
     histFrame->add (*hscrollw);
@@ -55,8 +50,8 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1)
     historyModel = Gtk::ListStore::create (historyColumns);
     hTreeView->set_model (historyModel);
     //hTreeView->set_headers_visible (false);
-    hTreeView->set_hscroll_policy(Gtk::ScrollablePolicy::SCROLL_MINIMUM);
-    hTreeView->set_vscroll_policy(Gtk::ScrollablePolicy::SCROLL_NATURAL);
+    hTreeView->set_hscroll_policy(Gtk::SCROLL_MINIMUM);
+    hTreeView->set_vscroll_policy(Gtk::SCROLL_NATURAL);
     hTreeView->set_size_request(80, -1);
     hTreeView->set_resize_mode(Gtk::RESIZE_QUEUE);
 
