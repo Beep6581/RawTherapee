@@ -57,6 +57,8 @@ void ParamsEdited::set (bool v)
     retinex.enabled    = v;
     retinex.str    = v;
     retinex.scal    = v;
+    retinex.gam    = v;
+    retinex.slope    = v;
     retinex.neigh    = v;
     retinex.gain    = v;
     retinex.offs    = v;
@@ -528,6 +530,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         retinex.gammaretinex = retinex.gammaretinex && p.retinex.gammaretinex == other.retinex.gammaretinex;
         retinex.str = retinex.str && p.retinex.str == other.retinex.str;
         retinex.scal = retinex.scal && p.retinex.scal == other.retinex.scal;
+        retinex.gam = retinex.gam && p.retinex.gam == other.retinex.gam;
+        retinex.slope = retinex.slope && p.retinex.slope == other.retinex.slope;
         retinex.neigh = retinex.neigh && p.retinex.neigh == other.retinex.neigh;
         retinex.gain = retinex.gain && p.retinex.gain == other.retinex.gain;
         retinex.offs = retinex.offs && p.retinex.offs == other.retinex.offs;
@@ -1052,6 +1056,14 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (retinex.gammaretinex) {
         toEdit.retinex.gammaretinex    = mods.retinex.gammaretinex;
+    }
+
+    if (retinex.gam) {
+        toEdit.retinex.gam    = mods.retinex.gam;
+    }
+
+    if (retinex.slope) {
+        toEdit.retinex.slope    = mods.retinex.slope;
     }
     
     if (retinex.str) {

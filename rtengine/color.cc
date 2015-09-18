@@ -233,7 +233,7 @@ void Color::init ()
     for (int i = 0; i < 65536; i++) {
         gammatab_26_11[i] = (65535.0 * gamma26_11 (i / 65535.0));
     }
-
+//gammatab_145_3
     for (int i = 0; i < 65536; i++) {
         igammatab_26_11[i] = (65535.0 * igamma26_11 (i / 65535.0));
     }

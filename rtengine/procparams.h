@@ -274,6 +274,8 @@ public:
     std::vector<double> transmissionCurve;
     int     str;
     int     scal;
+    double  gam;
+    double  slope;
     int     neigh;
     int     gain;
     int     offs;

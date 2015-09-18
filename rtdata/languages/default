@@ -650,7 +650,9 @@ HISTORY_MSG_417;Retinex - Transmission median
 HISTORY_MSG_418;Retinex - Threshold
 HISTORY_MSG_419;Retinex - Color space
 HISTORY_MSG_420;Retinex - Histogram - HSL
-HISTORY_MSG_421;Retinex - Gamma
+HISTORY_MSG_421;Retinex - Gamma retinex
+HISTORY_MSG_422;Retinex - gamma
+HISTORY_MSG_423;Retinex - slope
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1561,11 +1563,14 @@ TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Correct raw data to reduce halos and artifacts
 TP_RETINEX_GAIN;Gain
 TP_RETINEX_GAIN_TOOLTIP;Acts on the transmission in combination with offset, this is very different from others settings. Used for black or white pixels, and for better balance the histogram.
-TP_RETINEX_GAM;Gamma
+TP_RETINEX_GAM;Gamma retinex
 TP_RETINEX_GAMMA_NONE;None
 TP_RETINEX_GAMMA_LOW;Low
 TP_RETINEX_GAMMA_MID;Middle
 TP_RETINEX_GAMMA_HIGH;High
+TP_RETINEX_GAMMA_FREE;Free
+TP_RETINEX_GAMMA;Gamma
+TP_RETINEX_SLOPE;Slope
 TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex\nDifferent from Retinex curves or others curves (Lab, Exposure,..)
 TP_RETINEX_HIGH;High
 TP_RETINEX_HSLSPACE_LIN;HSL-Linear

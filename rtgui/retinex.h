@@ -28,6 +28,8 @@ protected:
     Adjuster* offs;
     Adjuster* vart;
     Adjuster* limd;
+    Adjuster* gam;
+    Adjuster* slope;
     MyExpander* expsettings;
 
     Gtk::Label* labmdh;

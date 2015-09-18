@@ -981,6 +981,17 @@ public:
     {
         return x <= 0.027345 ? x / 3.0 : exp(log((x + 0.012305) / 1.012305) * 1.45);
     }
+
+//gamma for Retinex
+    static inline double gammareti      (double x, double gamma, double start, double slope, double mul, double add)
+    {
+        return (x <= start ? x*slope : exp(log(x) / gamma) * mul - add);
+    }
+    static inline double igammareti     (double x, double gamma, double start, double slope, double mul, double add)
+    {
+        return (x <= start * slope ? x / slope : exp(log((x + add) / mul) * gamma) );
+    }
+
     
 
     // gamma function with adjustable parameters

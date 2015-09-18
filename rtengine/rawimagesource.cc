@@ -1813,14 +1813,36 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
     conversionBuffer[2] (W - 2 * border, H - 2 * border);
     
         LUTf *retinexgamtab;//gamma before and after Retinex to restore tones
+        LUTf lutTonereti;
+        lutTonereti(65536);
+        
         if(retinexParams.gammaretinex == "low")
             retinexgamtab = &(Color::gammatab_115_2);
         else if(retinexParams.gammaretinex == "mid")
             retinexgamtab = &(Color::gammatab_13_2);
         else if(retinexParams.gammaretinex == "hig")
             retinexgamtab = &(Color::gammatab_145_3);
+        else if(retinexParams.gammaretinex == "fre"){
+            double g_a0, g_a1, g_a2, g_a3, g_a4, g_a5;
+            double pwr = 1.0 / retinexParams.gam;
+            double gamm = retinexParams.gam;
+            double ts = retinexParams.slope;
+            int mode = 0, imax = 0;
+            Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope
+        //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
+            for (int i = 0; i < 65536; i++) {
+                double val = (i) / 65535.;
+                double start = g_a3;
+                double add = g_a3;
+                double mul = 1. + g_a4;
+                double x;
+                x = Color::gammareti (val, gamm, start, ts, mul , add);
+                lutTonereti[i] = CLIP(x * 65535.);// CLIP avoid in some case extra values
+            }
+            retinexgamtab = &lutTonereti;
+        }
         
-if(retinexParams.gammaretinex != "none") {//gamma           
+if(retinexParams.gammaretinex != "none" && retinexParams.str != 0) {//gamma           
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif        
@@ -1832,7 +1854,7 @@ if(retinexParams.gammaretinex != "none") {//gamma
                 B_=blue[i][j];
                 red[i][j] = (*retinexgamtab)[R_];
                 green[i][j] = (*retinexgamtab)[G_];
-                blue[i][j] = (*retinexgamtab)[B_];
+                blue[i][j] = (*retinexgamtab)[B_];                
             }
         }    
 }
@@ -1946,10 +1968,6 @@ if(retinexParams.gammaretinex != "none") {//gamma
                     G_ = green[i][j];
                     B_ = blue[i][j];
                     //rgb=>lab
-                //    R_ = (*retinexigamtab)[red[i][j]];
-                //    G_ = (*retinexigamtab)[green[i][j]];
-                //    B_ = (*retinexigamtab)[blue[i][j]];
-                   
                     Color::rgbxyz(R_, G_, B_, X, Y, Z, wp);
                     //convert Lab
                     Color::XYZ2Lab(X, Y, Z, L, aa, bb);
@@ -2004,6 +2022,9 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf 
     if (settings->verbose) {
         printf ("Applying Retinex\n");
     }
+        LUTf lutToneireti;  
+        lutToneireti(65536);
+        
         LUTf *retinexigamtab;//gamma before and after Retinex to restore tones
         if(deh.gammaretinex == "low")
             retinexigamtab = &(Color::igammatab_115_2);
@@ -2011,7 +2032,25 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf 
             retinexigamtab = &(Color::igammatab_13_2);
         else if(deh.gammaretinex == "hig")
             retinexigamtab = &(Color::igammatab_145_3);
-
+        else if(deh.gammaretinex == "fre"){
+            double g_a0, g_a1, g_a2, g_a3, g_a4, g_a5;
+            double pwr = 1.0 / deh.gam;
+            double gamm = deh.gam;
+            double ts = deh.slope;
+            int mode = 0, imax = 0;
+            Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope
+        //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
+            for (int i = 0; i < 65536; i++) {
+                double val = (i) / 65535.;
+                double x;
+                double mul = 1. + g_a4;
+                double add = g_a4;
+                double start = g_a2;
+                x = Color::igammareti (val, gamm, start, ts, mul , add);
+                lutToneireti[i] = CLIP(x * 65535.);
+            }
+            retinexigamtab = &lutToneireti;
+        }
     // We need a buffer with original L data to allow correct blending
     // red, green and blue still have original size of raw, but we can't use the borders
     const int HNew = H - 2 * border;
@@ -2164,11 +2203,10 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf 
                 red[i][j] = R;
                 green[i][j] = G;
                 blue[i][j] = B;
-                
             }
         }
 }
-if(deh.gammaretinex != "none"){//inverse gamma        
+if(deh.gammaretinex != "none"  && deh.str !=0){//inverse gamma        
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif        
@@ -2180,7 +2218,7 @@ if(deh.gammaretinex != "none"){//inverse gamma
                 B_=blue[i][j];
                 red[i][j] = (*retinexigamtab)[R_];
                 green[i][j] = (*retinexigamtab)[G_];
-                blue[i][j] = (*retinexigamtab)[B_];
+                blue[i][j] = (*retinexigamtab)[B_];   
             }
         }    
     }

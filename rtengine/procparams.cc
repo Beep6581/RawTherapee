@@ -142,6 +142,8 @@ void RetinexParams::setDefaults()
     enabled = false;
     str      = 20;
     scal        = 3;
+    gam        = 1.30;
+    slope   = 3.;
     neigh      = 80;
     gain        = 50;
     offs    = 0;
@@ -1436,6 +1438,14 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         keyFile.set_integer ("Retinex", "Scal",               retinex.scal);
     }
 
+    if (!pedited || pedited->retinex.gam) {
+        keyFile.set_double ("Retinex", "Gam",               retinex.gam);
+    }
+
+    if (!pedited || pedited->retinex.slope) {
+        keyFile.set_double ("Retinex", "Slope",               retinex.slope);
+    }
+    
     if (!pedited || pedited->retinex.enabled) {
         keyFile.set_boolean ("Retinex", "Enabled", retinex.enabled);
     }
@@ -3818,6 +3828,22 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Retinex", "Gam"))     {
+                retinex.gam   = keyFile.get_double ("Retinex", "Gam");
+
+                if (pedited) {
+                    pedited->retinex.gam = true;
+                }
+            }
+
+            if (keyFile.has_key ("Retinex", "Slope"))     {
+                retinex.slope   = keyFile.get_double ("Retinex", "Slope");
+
+                if (pedited) {
+                    pedited->retinex.slope = true;
+                }
+            }
+            
             if (keyFile.has_key ("Retinex", "Gain"))     {
                 retinex.gain   = keyFile.get_integer ("Retinex", "Gain");
 
@@ -7240,6 +7266,8 @@ bool ProcParams::operator== (const ProcParams& other)
         && retinex.transmissionCurve == other.retinex.transmissionCurve
         && retinex.str == other.retinex.str
         && retinex.scal == other.retinex.scal
+        && retinex.gam == other.retinex.gam
+        && retinex.slope == other.retinex.slope
         && retinex.neigh == other.retinex.neigh
         && retinex.gain == other.retinex.gain
         && retinex.limd == other.retinex.limd
