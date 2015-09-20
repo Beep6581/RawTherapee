@@ -1985,7 +1985,7 @@ void Preferences::switchThemeTo(Glib::ustring newTheme, bool slimInterface)
             slimCreated = true;
         }
 
-        filename = argv0 + "/themes/slim.css";
+        filename = argv0 + "/themes/cookiedough.css";
 
         try {
             cssSlim->load_from_path (filename);

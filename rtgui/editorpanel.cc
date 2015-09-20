@@ -169,7 +169,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // build right side panel
     vboxright = new Gtk::VBox (false, 0);
-    vboxright->set_size_request(250, 250);
+    vboxright->set_size_request(300, 250);
 
     vboxright->set_border_width (2);
 

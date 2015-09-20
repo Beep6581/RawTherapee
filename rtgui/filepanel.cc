@@ -76,7 +76,7 @@ FilePanel::FilePanel () : parent(NULL)
     fileCatalog->setDirBrowserRemoteInterface (dirBrowser);
 
     rightBox = Gtk::manage ( new Gtk::HBox () );
-    rightBox->set_size_request(270, 100);
+    rightBox->set_size_request(350, 100);
     rightNotebook = Gtk::manage ( new Gtk::Notebook () );
     rightNotebookSwitchConn = rightNotebook->signal_switch_page().connect_notify( sigc::mem_fun(*this, &FilePanel::on_NB_switch_page) );
     //Gtk::VBox* taggingBox = Gtk::manage ( new Gtk::VBox () );

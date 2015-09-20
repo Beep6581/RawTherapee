@@ -321,7 +321,7 @@ int main(int argc, char **argv)
         }
 
         if (options.slimUI) {
-            filename = argv0 + "/themes/slim.css";
+            filename = argv0 + "/themes/cookiedough.css";
             cssSlim = Gtk::CssProvider::create();
 
             try {
