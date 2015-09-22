@@ -698,6 +698,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.epd        = falsePE.epd;
     }
 
+    if (!retinex->get_active ()) {
+        filterPE.retinex        = falsePE.retinex;
+    }
+    
     if (!pcvignette->get_active ()) {
         filterPE.pcvignette = falsePE.pcvignette;
     }
