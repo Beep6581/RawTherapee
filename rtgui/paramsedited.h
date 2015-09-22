@@ -77,7 +77,7 @@ public:
     bool cdHcurve;
     bool retinex;
     bool medianmap;
-
+    bool isUnchanged() const;
 };
 
 

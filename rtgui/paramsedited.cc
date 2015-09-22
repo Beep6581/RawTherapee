@@ -1065,7 +1065,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (retinex.slope) {
         toEdit.retinex.slope    = mods.retinex.slope;
     }
-    
+
     if (retinex.str) {
         toEdit.retinex.str   = dontforceSet && options.baBehav[ADDSET_DH_STR] ? toEdit.retinex.str + mods.retinex.str : mods.retinex.str;
     }
@@ -2680,4 +2680,9 @@ bool RAWParamsEdited::isUnchanged() const
 bool LensProfParamsEdited::isUnchanged() const
 {
     return lcpFile;
+}
+
+bool RetinexParamsEdited::isUnchanged() const
+{
+    return enabled && retinexcolorspace && gammaretinex && gam && slope;
 }
