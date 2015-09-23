@@ -567,6 +567,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
         Gtk::Allocation alloc;
         iareapanel->imageArea->on_resized(alloc);
     }
+    history->resetSnapShotNumber();
 }
 
 void EditorPanel::close ()
