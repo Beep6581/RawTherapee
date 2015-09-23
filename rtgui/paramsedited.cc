@@ -1059,19 +1059,19 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     }
 
     if (retinex.gam) {
-        toEdit.retinex.gam    = mods.retinex.gam;
+        toEdit.retinex.gam   = dontforceSet && options.baBehav[ADDSET_RETI_GAM] ? toEdit.retinex.gam + mods.retinex.gam : mods.retinex.gam;
     }
 
     if (retinex.slope) {
-        toEdit.retinex.slope    = mods.retinex.slope;
+        toEdit.retinex.slope   = dontforceSet && options.baBehav[ADDSET_RETI_SLO] ? toEdit.retinex.slope + mods.retinex.slope : mods.retinex.slope;
     }
 
     if (retinex.str) {
-        toEdit.retinex.str   = dontforceSet && options.baBehav[ADDSET_DH_STR] ? toEdit.retinex.str + mods.retinex.str : mods.retinex.str;
+        toEdit.retinex.str   = dontforceSet && options.baBehav[ADDSET_RETI_STR] ? toEdit.retinex.str + mods.retinex.str : mods.retinex.str;
     }
 
     if (retinex.scal) {
-        toEdit.retinex.scal   = dontforceSet && options.baBehav[ADDSET_DH_SCAL] ? toEdit.retinex.scal + mods.retinex.scal : mods.retinex.scal;
+        toEdit.retinex.scal   = dontforceSet && options.baBehav[ADDSET_RETI_SCAL] ? toEdit.retinex.scal + mods.retinex.scal : mods.retinex.scal;
     }
 
     if (retinex.medianmap) {
@@ -1079,23 +1079,23 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     }
 
     if (retinex.neigh) {
-        toEdit.retinex.neigh   = dontforceSet && options.baBehav[ADDSET_DH_NEIGH] ? toEdit.retinex.neigh + mods.retinex.neigh : mods.retinex.neigh;
+        toEdit.retinex.neigh   = dontforceSet && options.baBehav[ADDSET_RETI_NEIGH] ? toEdit.retinex.neigh + mods.retinex.neigh : mods.retinex.neigh;
     }
 
     if (retinex.limd) {
-        toEdit.retinex.limd   = dontforceSet && options.baBehav[ADDSET_DH_LIMD] ? toEdit.retinex.limd + mods.retinex.limd : mods.retinex.limd;
+        toEdit.retinex.limd   = dontforceSet && options.baBehav[ADDSET_RETI_LIMD] ? toEdit.retinex.limd + mods.retinex.limd : mods.retinex.limd;
     }
 
     if (retinex.gain) {
-        toEdit.retinex.gain   = dontforceSet && options.baBehav[ADDSET_DH_GAIN] ? toEdit.retinex.gain + mods.retinex.gain : mods.retinex.gain;
+        toEdit.retinex.gain   = dontforceSet && options.baBehav[ADDSET_RETI_GAIN] ? toEdit.retinex.gain + mods.retinex.gain : mods.retinex.gain;
    }
 
     if (retinex.offs) {
-        toEdit.retinex.offs   = dontforceSet && options.baBehav[ADDSET_DH_OFFS] ? toEdit.retinex.offs + mods.retinex.offs : mods.retinex.offs;
+        toEdit.retinex.offs   = dontforceSet && options.baBehav[ADDSET_RETI_OFFS] ? toEdit.retinex.offs + mods.retinex.offs : mods.retinex.offs;
     }
 
     if (retinex.vart) {
-        toEdit.retinex.vart   = dontforceSet && options.baBehav[ADDSET_DH_VART] ? toEdit.retinex.vart + mods.retinex.vart : mods.retinex.vart;
+        toEdit.retinex.vart   = dontforceSet && options.baBehav[ADDSET_RETI_VART] ? toEdit.retinex.vart + mods.retinex.vart : mods.retinex.vart;
     }
 
     if (labCurve.lcurve) {
@@ -1130,16 +1130,9 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.labCurve.lccurve    = mods.labCurve.lccurve;
     }
 
-//    if (labCurve.retinexMethod) {
-//        toEdit.labCurve.retinexMethod    = mods.labCurve.retinexMethod;
-//    }
     if (labCurve.clcurve) {
         toEdit.labCurve.clcurve    = mods.labCurve.clcurve;
     }
-
-//   if (labCurve.cdcurve) {
-//       toEdit.labCurve.cdcurve    = mods.labCurve.cdcurve;
-    //  }
 
     if (labCurve.brightness) {
         toEdit.labCurve.brightness   = dontforceSet && options.baBehav[ADDSET_LC_BRIGHTNESS] ? toEdit.labCurve.brightness + mods.labCurve.brightness : mods.labCurve.brightness;

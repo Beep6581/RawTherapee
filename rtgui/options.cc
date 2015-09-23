@@ -598,13 +598,15 @@ void Options::setDefaults ()
         0, //ADDSET_WA_EDGEDETECTTHR2
         0, //ADDSET_WA_TMRS
         0, //ADDSET_WA_GAMMA
-        0, //ADDSET_DH_STR
-        0, //ADDSET_DH_SCAL
-        0, //ADDSET_DH_NEIGH
-        0, //ADDSET_DH_LIMD
-        0, //ADDSET_DH_GAIN
-        0, //ADDSET_DH_OFFS
-        0, //ADDSET_DH_VART
+        0, //ADDSET_RETI_STR
+        0, //ADDSET_RETI_SCAL
+        0, //ADDSET_RETI_NEIGH
+        0, //ADDSET_RETI_LIMD
+        0, //ADDSET_RETI_GAIN
+        0, //ADDSET_RETI_OFFS
+        0, //ADDSET_RETI_VART
+        0, //ADDSET_RETI_GAM
+        0, //ADDSET_RETI_SLO
 
     };
     baBehav = std::vector<int> (babehav, babehav + ADDSET_PARAM_NUM);

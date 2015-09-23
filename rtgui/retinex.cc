@@ -658,9 +658,8 @@ void Retinex::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
     }
 }
 
-void Retinex::setAdjusterBehavior (bool strAdd, bool neighAdd, bool scalAdd, bool limdAdd, bool gainAdd, bool offsAdd, bool vartAdd)
+void Retinex::setAdjusterBehavior (bool strAdd, bool neighAdd, bool scalAdd, bool limdAdd, bool gainAdd, bool offsAdd, bool vartAdd, bool gamAdd, bool slopeAdd)
 {
-
     str->setAddMode(strAdd);
     neigh->setAddMode(neighAdd);
     scal->setAddMode(scalAdd);
@@ -668,6 +667,8 @@ void Retinex::setAdjusterBehavior (bool strAdd, bool neighAdd, bool scalAdd, boo
     gain->setAddMode(gainAdd);
     offs->setAddMode(offsAdd);
     vart->setAddMode(vartAdd);
+    gam->setAddMode(gamAdd);
+    slope->setAddMode(slopeAdd);
 }
 
 
