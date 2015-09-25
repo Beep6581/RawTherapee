@@ -25,10 +25,6 @@ using namespace rtengine::procparams;
 Sharpening::Sharpening () : FoldableToolPanel(this, "sharpening", M("TP_SHARPENING_LABEL"), true, true)
 {
 
-    std::vector<GradientMilestone> milestones;
-    milestones.push_back( GradientMilestone(0.0, 0.0, 0.0, 0.0) );
-    milestones.push_back( GradientMilestone(1.0, 1.0, 1.0, 1.0) );
-
     setEnabledTooltipMarkup(M("TP_SHARPENING_TOOLTIP"));
 
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
@@ -68,18 +64,17 @@ Sharpening::Sharpening () : FoldableToolPanel(this, "sharpening", M("TP_SHARPENI
     radius = Gtk::manage (new Adjuster (M("TP_SHARPENING_RADIUS"), 0.3, 3, 0.01, 0.5));
     threshold = Gtk::manage (new ThresholdAdjuster (M("TP_SHARPENING_THRESHOLD"), 0., 2000., 20., 80., 2000., 1200., 0, false));
     threshold->setAdjusterListener (this);
-    threshold->setBgGradient(milestones);
     pack_start(*hsep6a, Gtk::PACK_SHRINK, 2);
 
     pack_start (*usm);
 
     usm->pack_start(*radius);
-    usm->pack_start(*amount);
     usm->pack_start(*threshold);
+    usm->pack_start(*amount);
     hsep6a->show ();
     radius->show ();
-    amount->show ();
     threshold->show ();
+    amount->show ();
 
     Gtk::HSeparator *hsep6 = Gtk::manage (new  Gtk::HSeparator());
     edgesonly = Gtk::manage (new Gtk::CheckButton (M("TP_SHARPENING_ONLYEDGES")));
