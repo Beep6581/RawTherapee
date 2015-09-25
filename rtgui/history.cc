@@ -117,11 +117,12 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1)
     bmFrame->add (*bmBox);
     bmBox->pack_start (*bscrollw, Gtk::PACK_EXPAND_WIDGET, 4);
     bmBox->pack_end (*ahbox, Gtk::PACK_SHRINK, 4);
+    bmBox->set_size_request(-1,60);
 
     if (bookmarkSupport) {
         historyVPaned = Gtk::manage ( new Gtk::VPaned () );
         historyVPaned->pack1 (*histFrame, true, true);
-        historyVPaned->pack2 (*bmFrame, false, true);
+        historyVPaned->pack2 (*bmFrame, false, false);
         pack_start(*historyVPaned);
     } else {
         pack_start (*histFrame);
