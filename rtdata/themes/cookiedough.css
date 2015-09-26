@@ -71,7 +71,7 @@ GtkDrawingArea {
 }
 
 GtkDrawingArea:selected {
-    background-color: #262626;
+    background-color: #565656;
 }
 
 /* Normal state */
