@@ -121,9 +121,9 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir)
     vbox_bottomRight->pack_start (*autoSuffix, Gtk::PACK_SHRINK, 4);
 
     Gtk::HBox* hbox_bottom = Gtk::manage( new Gtk::HBox() );
-    hbox_bottom->pack_start (*formatOpts, Gtk::PACK_SHRINK, 2);
+    hbox_bottom->pack_start (*formatOpts, Gtk::PACK_EXPAND_WIDGET, 2);
     hbox_bottom->pack_start (*Gtk::manage(new Gtk::VSeparator ()), Gtk::PACK_SHRINK, 2);
-    hbox_bottom->pack_start (*vbox_bottomRight, Gtk::PACK_SHRINK, 2);
+    hbox_bottom->pack_start (*vbox_bottomRight, Gtk::PACK_EXPAND_WIDGET, 2);
 
     box->pack_start (*fchooser);
     box->pack_start (*hbox_bottom, Gtk::PACK_SHRINK, 2);
