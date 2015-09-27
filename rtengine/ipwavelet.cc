@@ -3249,7 +3249,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
             */
             float alpha = (1024.f + 15.f * (float) cpMul * scale * scale2 * beta * diagacc) / 1024.f ;
 
-            if(cp.HSmet  && cp.chromena) {
+            if(cp.HSmet  && cp.contena) {
                 float aaal = (1.f - alpha) / ((cp.b_lhl - cp.t_lhl) * kH[level]);
                 float bbal = 1.f - aaal * cp.b_lhl * kH[level];
                 float aaar = (alpha - 1.f) / (cp.t_rhl - cp.b_rhl) * kH[level];
