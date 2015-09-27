@@ -1337,7 +1337,7 @@ TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the
 TP_DIRPYRDENOISE_CCCURVE;Chrominance curve
 TP_DIRPYRDENOISE_CHROMAFR;Chrominance
 TP_DIRPYRDENOISE_CHROMA;Chrominance - Master
-TP_DIRPYRDENOISE_CTYPE;Auto method
+TP_DIRPYRDENOISE_CTYPE;Method
 TP_DIRPYRDENOISE_CTYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nAutomatic multi-zones\nNo preview - works only during saving, but using the "Preview" method by matching the tile size and center to the preview size and center you can get an idea of the expected results.\nThe image is divided into tiles (about 10 to 70 depending on image size) and each tile receives its own chrominance noise reduction settings.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
 TP_DIRPYRDENOISE_CURVEEDITOR_CC;Chroma
 TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
