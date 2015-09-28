@@ -1827,6 +1827,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
             double pwr = 1.0 / retinexParams.gam;
             double gamm = retinexParams.gam;
             double ts = retinexParams.slope;
+           
             int mode = 0, imax = 0;
             Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope
         //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
@@ -1837,6 +1838,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
                 double mul = 1. + g_a4;
                 double x;
                 x = Color::gammareti (val, gamm, start, ts, mul , add);
+                    
                 lutTonereti[i] = CLIP(x * 65535.);// CLIP avoid in some case extra values
             }
             retinexgamtab = &lutTonereti;
@@ -2013,8 +2015,8 @@ void RawImageSource::retinexPrepareCurves(RetinexParams retinexParams, LUTf &cdc
     retinexParams.getCurves(retinextransmissionCurve);
 }
 
-void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 3> &conversionBuffer, bool dehacontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI)
-{
+void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneCurveParams Tc, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 3> &conversionBuffer, bool dehacontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI)
+{ 
 
     MyTime t4, t5;
     t4.set();
@@ -2038,6 +2040,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf 
             double gamm = deh.gam;
             double ts = deh.slope;
             int mode = 0, imax = 0;
+           
             Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope
         //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
             for (int i = 0; i < 65536; i++) {
@@ -2047,6 +2050,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf 
                 double add = g_a4;
                 double start = g_a2;
                 x = Color::igammareti (val, gamm, start, ts, mul , add);
+                    
                 lutToneireti[i] = CLIP(x * 65535.);
             }
             retinexigamtab = &lutToneireti;
@@ -2128,7 +2132,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf 
     }
 
     MSR(LBuffer, conversionBuffer[2], WNew, HNew, deh, dehatransmissionCurve, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
-
+        
     if(useHsl) {
 #ifdef _OPENMP
         #pragma omp parallel for
@@ -2163,7 +2167,39 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, LUTf 
             {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
             {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
         };
+        // gamut control only in Lab mode
+        const bool highlight = Tc.hrenabled;
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+        for (int i = border; i < H - border; i++ ) {
+            for (int j= border; j < W - border; j++) {
+   
+                float Lprov1 = (LBuffer[i - border][j - border])/327.68f;
+                float Chprov1 = sqrt(SQR(conversionBuffer[0][i - border][j - border]) + SQR(conversionBuffer[1][i - border][j - border])) / 327.68f;
+                float  HH = xatan2f(conversionBuffer[1][i - border][j - border], conversionBuffer[0][i - border][j - border]);
+                float2 sincosval;
+                
+                sincosval = xsincosf(HH);
+                float R,G,B;
+#ifdef _DEBUG
+                        bool neg = false;
+                        bool more_rgb = false;
+                        //gamut control : Lab values are in gamut
+                        Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
+#else
+                        //gamut control : Lab values are in gamut
+                        Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
+#endif
 
+
+
+                    conversionBuffer[0][i - border][j - border] = 327.68f * Chprov1 * sincosval.y;
+                    conversionBuffer[1][i - border][j - border] = 327.68f * Chprov1 * sincosval.x;
+                    LBuffer[i - border][j - border] = Lprov1 * 327.68f;
+            }
+        }          
+        //end gamut control
 #ifdef __SSE2__
         vfloat wipv[3][3];
 

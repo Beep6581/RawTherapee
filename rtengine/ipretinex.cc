@@ -355,7 +355,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
                             absciss = amin * luminance[i][j] + bmin;
                         }
 
-                        luminance[i][j] *= (-0.25f + 2.5f * dehatransmissionCurve[absciss]); //new transmission
+                        luminance[i][j] *= (-1.f + 4.f * dehatransmissionCurve[absciss]); //new transmission
                     }
             }
 
