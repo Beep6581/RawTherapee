@@ -93,6 +93,7 @@ private:
     double dcpTemperatures[2];
     bool enableLastICCWorkDirChange;
     Glib::ustring lastRefFilename;
+    Glib::ustring camName;
     void updateDCP(int dcpIlluminant, Glib::ustring dcp_name);
 public:
     ICMPanel ();

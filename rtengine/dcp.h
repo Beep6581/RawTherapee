@@ -76,7 +76,7 @@ class DCPProfile
     void HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, float &h, float &s, float &v) const;
 
 public:
-    DCPProfile(Glib::ustring fname, bool isRTProfile);
+    DCPProfile(Glib::ustring fname);
     ~DCPProfile();
 
     bool getHasToneCurve()
@@ -122,7 +122,7 @@ public:
 
     bool isValidDCPFileName(Glib::ustring filename) const;
 
-    DCPProfile* getProfile(Glib::ustring filename, bool isRTProfile = false);
+    DCPProfile* getProfile(Glib::ustring filename);
     DCPProfile* getStdProfile(Glib::ustring camShortName);
 
     static DCPStore* getInstance();
