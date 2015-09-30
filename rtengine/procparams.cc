@@ -831,8 +831,8 @@ void ColorManagementParams::setDefaults()
 {
     input   = "(cameraICC)";
     blendCMSMatrix = false;
-    toneCurve = true;
-    applyLookTable = true;
+    toneCurve = false;
+    applyLookTable = false;
     applyBaselineExposureOffset = true;
     applyHueSatMap = true;
     dcpIlluminant = 0;
