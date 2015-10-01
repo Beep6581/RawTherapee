@@ -40,6 +40,7 @@
 #include <omp.h>
 #endif
 #include "opthelper.h"
+#include "StopWatch.h"
 
 namespace rtengine
 {
@@ -946,89 +947,112 @@ int RawImageSource::interpolateBadPixelsXtrans( PixelsMap &bitmapBads )
  */
 int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels )
 {
-    float varthresh = (20.0 * (thresh / 100.0) + 1.0 );
-
-    // counter for dead or hot pixels
-    int counter = 0;
+    StopWatch Stop1("findHotDeadPixels");
+    float varthresh = (20.0 * (thresh / 100.0) + 1.0 ) / 24.f;
 
     // allocate temporary buffer
     float (*cfablur);
     cfablur = (float (*)) malloc (H * W * sizeof * cfablur);
 
+    // counter for dead or hot pixels
+    int counter = 0;
+
     #pragma omp parallel
     {
-        #pragma omp for
+        #pragma omp for schedule(dynamic,16) nowait
 
-        for (int i = 0; i < H; i++) {
-            int iprev, inext, jprev, jnext;
+        for (int i = 2; i < H - 2; i++) {
             float p[9], temp;
 
-            if (i < 2) {
-                iprev = i + 2;
-            } else {
-                iprev = i - 2;
-            }
+            for (int j = 2; j < W - 2; j++) {
 
-            if (i > H - 3) {
-                inext = i - 2;
-            } else {
-                inext = i + 2;
-            }
-
-            for (int j = 0; j < W; j++) {
-                if (j < 2) {
-                    jprev = j + 2;
-                } else {
-                    jprev = j - 2;
-                }
-
-                if (j > W - 3) {
-                    jnext = j - 2;
-                } else {
-                    jnext = j + 2;
-                }
-
-                med3x3(rawData[iprev][jprev], rawData[iprev][j], rawData[iprev][jnext],
-                       rawData[i][jprev], rawData[i][j], rawData[i][jnext],
-                       rawData[inext][jprev], rawData[inext][j], rawData[inext][jnext], temp);
+                med3x3(rawData[i - 2][j - 2], rawData[i - 2][j], rawData[i - 2][j + 2],
+                       rawData[i][j - 2], rawData[i][j], rawData[i][j + 2],
+                       rawData[i + 2][j - 2], rawData[i + 2][j], rawData[i + 2][j + 2], temp);
                 cfablur[i * W + j] = rawData[i][j] - temp;
             }
         }
 
+        // process borders. Former version calculated the median using mirrored border which does not make sense because the original pixel loses weight
+        // Setting the difference between pixel and median for border pixels to zero should do the job not worse then former version
+        #pragma omp critical
+        {
+            for(int i = 0; i < 2; i++) {
+                for(int j = 0; j < W; j++) {
+                    cfablur[i * W + j] = 0.f;
+                }
+            }
+
+            for(int i = 2; i < H - 2; i++) {
+                for(int j = 0; j < 2; j++) {
+                    cfablur[i * W + j] = 0.f;
+                }
+
+                for(int j = W - 2; j < W; j++) {
+                    cfablur[i * W + j] = 0.f;
+                }
+            }
+
+            for(int i = H - 2; i < H; i++) {
+                for(int j = 0; j < W; j++) {
+                    cfablur[i * W + j] = 0.f;
+                }
+            }
+        }
+        #pragma omp barrier
         #pragma omp for reduction(+:counter) schedule (dynamic,16)
 
         //cfa pixel heat/death evaluation
-        for (int rr = 0; rr < H; rr++) {
-            int top = max(0, rr - 2);
-            int bottom = min(H - 1, rr + 2);
-            int rrmWpcc = rr * W;
+        for (int rr = 2; rr < H - 2; rr++) {
+            int rrmWpcc = rr * W + 2;
 
-            for (int cc = 0; cc < W; cc++, rrmWpcc++) {
+            for (int cc = 2; cc < W - 2; cc++, rrmWpcc++) {
                 //evaluate pixel for heat/death
                 float pixdev = cfablur[rrmWpcc];
 
-                if((!findDeadPixels) && pixdev <= 0) {
+                if(pixdev == 0.f) {
                     continue;
                 }
 
-                if((!findHotPixels) && pixdev >= 0) {
+                if((!findDeadPixels) && pixdev < 0) {
+                    continue;
+                }
+
+                if((!findHotPixels) && pixdev > 0) {
                     continue;
                 }
 
                 pixdev = fabsf(pixdev);
                 float hfnbrave = -pixdev;
-                int left = max(0, cc - 2);
-                int right = min(W - 1, cc + 2);
 
-                for (int mm = top; mm <= bottom; mm++) {
-                    int mmmWpnn = mm * W + left;
 
-                    for (int nn = left; nn <= right; nn++, mmmWpnn++) {
+#ifdef __SSE2__
+                // sum up 5*4 = 20 values using SSE
+                vfloat sum = vabsf(LVFU(cfablur[(rr - 2) * W + cc - 2])) + vabsf(LVFU(cfablur[(rr - 1) * W + cc - 2]));
+                sum += vabsf(LVFU(cfablur[(rr) * W + cc - 2]));
+                sum += vabsf(LVFU(cfablur[(rr + 1) * W + cc - 2]));
+                sum += vabsf(LVFU(cfablur[(rr + 2) * W + cc - 2]));
+                // horizontally add the values and add the result to hfnbrave
+                hfnbrave += vhadd(sum);
+
+                // add remaining 5 values of last column
+                for (int mm = rr - 2; mm <= rr + 2; mm++) {
+                    hfnbrave += fabsf(cfablur[mm * W + cc + 2]);
+                }
+
+#else
+
+                for (int mm = rr - 2; mm <= rr + 2; mm++) {
+                    int mmmWpnn = mm * W + cc - 2;
+
+                    for (int nn = cc - 2; nn <= cc + 2; nn++, mmmWpnn++) {
                         hfnbrave += fabsf(cfablur[mmmWpnn]);
                     }
                 }
 
-                if (pixdev * ((bottom - top + 1) * (right - left + 1) - 1) > varthresh * hfnbrave) {
+#endif
+
+                if (pixdev > varthresh * hfnbrave) {
                     // mark the pixel as "bad"
                     bpMap.set(cc, rr);
                     counter++;
