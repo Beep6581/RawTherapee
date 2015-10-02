@@ -92,7 +92,6 @@ public:
 
     void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb);// RAWParams raw will not be used for non-raw files (see imagesource.h)
     static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, IIOSampleFormat sampleFormat);
-    //static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded);
 
     static inline double intpow (double a, int b)
     {

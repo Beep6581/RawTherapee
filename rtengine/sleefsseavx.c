@@ -1322,5 +1322,11 @@ static inline void vswap( vmask condition, vfloat &a, vfloat &b) {
     b = temp;
 }
 
+static inline float vhadd( vfloat a )
+{
+    a += _mm_movehl_ps(a, a);
+    return _mm_cvtss_f32(_mm_add_ss(a, _mm_shuffle_ps(a, a, 1)));
+}
+
 #endif // __SSE2__
 #endif // SLEEFSSEAVX
