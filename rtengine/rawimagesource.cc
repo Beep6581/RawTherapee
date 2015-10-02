@@ -39,7 +39,6 @@
 #include <omp.h>
 #endif
 #include "opthelper.h"
-#include "StopWatch.h"
 
 namespace rtengine
 {
@@ -953,7 +952,6 @@ int RawImageSource::interpolateBadPixelsXtrans( PixelsMap &bitmapBads )
  */
 int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels )
 {
-    StopWatch Stop1("findHotDeadPixels");
     float varthresh = (20.0 * (thresh / 100.0) + 1.0 ) / 24.f;
 
     // allocate temporary buffer

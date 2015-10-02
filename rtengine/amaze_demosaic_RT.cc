@@ -31,14 +31,12 @@
 #include "procparams.h"
 #include "sleef.c"
 #include "opthelper.h"
-#include "StopWatch.h"
 
 namespace rtengine
 {
 
 SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh)
 {
-StopWatch Stop1("amaze_demosaic_RT");
 #define HCLIP(x) x //is this still necessary???
     //min(clip_pt,x)
 
