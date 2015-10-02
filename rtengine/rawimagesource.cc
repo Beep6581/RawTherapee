@@ -31,7 +31,6 @@
 #include "curves.h"
 #include "dfmanager.h"
 #include "ffmanager.h"
-#include "slicer.h"
 #include "../rtgui/options.h"
 #include "dcp.h"
 #include "rt_math.h"
@@ -551,7 +550,9 @@ int RawImageSource::interpolateBadPixelsBayer( PixelsMap &bitmapBads )
 {
     static const float eps = 1.f;
     int counter = 0;
+#ifdef _OPENMP
     #pragma omp parallel for reduction(+:counter) schedule(dynamic,16)
+#endif
 
     for( int row = 2; row < H - 2; row++ ) {
         for(int col = 2; col < W - 2; col++ ) {
@@ -666,7 +667,9 @@ int RawImageSource::interpolateBadPixelsNColours( PixelsMap &bitmapBads, const i
 {
     static const float eps = 1.f;
     int counter = 0;
+#ifdef _OPENMP
     #pragma omp parallel for reduction(+:counter) schedule(dynamic,16)
+#endif
 
     for( int row = 2; row < H - 2; row++ ) {
         for(int col = 2; col < W - 2; col++ ) {
@@ -718,7 +721,7 @@ int RawImageSource::interpolateBadPixelsNColours( PixelsMap &bitmapBads, const i
                 }
             }
 
-            if (LIKELY(norm[0] > 0.f)) { // This means, we found at least one pair of valid pixels in the steps above, likelyhood of this case is about 99.999%
+            if (LIKELY(norm[0] > 0.f)) { // This means, we found at least one pair of valid pixels in the steps above, likelihood of this case is about 99.999%
                 for(int c = 0; c < colours; c++) {
                     rawData[row][col * colours + c] = wtdsum[c] / (2.f * norm[c]); //gradient weighted average, Factor of 2.f is an optimization to avoid multiplications in former steps
                 }
@@ -760,13 +763,15 @@ int RawImageSource::interpolateBadPixelsNColours( PixelsMap &bitmapBads, const i
     return counter; // Number of interpolated pixels.
 }
 /* interpolateBadPixelsXtrans: correct raw pixels looking at the bitmap
- * takes into consideration if there are multiple bad pixels in the neighborhood
+ * takes into consideration if there are multiple bad pixels in the neighbourhood
  */
 int RawImageSource::interpolateBadPixelsXtrans( PixelsMap &bitmapBads )
 {
     static const float eps = 1.f;
     int counter = 0;
+#ifdef _OPENMP
     #pragma omp parallel for reduction(+:counter) schedule(dynamic,16)
+#endif
 
     for( int row = 2; row < H - 2; row++ ) {
         for(int col = 2; col < W - 2; col++ ) {
@@ -788,10 +793,10 @@ int RawImageSource::interpolateBadPixelsXtrans( PixelsMap &bitmapBads )
             if(pixelColor == 1) {
                 // green channel. A green pixel can either be a solitary green pixel or a member of a 2x2 square of green pixels
                 if(ri->XTRANSFC(row, col - 1) == ri->XTRANSFC(row, col + 1)) {
-                    // If left and right neighbour have same color, then this is a solitary green pixel
-                    // For these the following pixels will be used for interpolation. Pixel to be interpolated is in center and marked with a P.
+                    // If left and right neighbour have same colour, then this is a solitary green pixel
+                    // For these the following pixels will be used for interpolation. Pixel to be interpolated is in centre and marked with a P.
                     // Pairs of pixels used in this step are numbered. A pair will be used if none of the pixels of the pair is marked bad
-                    // 0 means, the pixel has a different color and will not be used
+                    // 0 means, the pixel has a different colour and will not be used
                     // 0 1 0 2 0
                     // 3 5 0 6 4
                     // 0 0 P 0 0
@@ -830,12 +835,14 @@ int RawImageSource::interpolateBadPixelsXtrans( PixelsMap &bitmapBads )
                     // this is a member of a 2x2 square of green pixels
                     // For these the following pixels will be used for interpolation. Pixel to be interpolated is at position P in the example.
                     // Pairs of pixels used in this step are numbered. A pair will be used if none of the pixels of the pair is marked bad
-                    // 0 means, the pixel has a different color and will not be used
+                    // 0 means, the pixel has a different colour and will not be used
                     // 1 0 0 3
                     // 0 P 2 0
                     // 0 2 1 0
                     // 3 0 0 0
-                    int offset1 = ri->XTRANSFC(row - 1, col - 1) == ri->XTRANSFC(row + 1, col + 1) ? 1 : -1; // pixels marked 1 in above example. Distance to P is sqrt(2) => weighting is 0.70710678f
+
+                    // pixels marked 1 in above example. Distance to P is sqrt(2) => weighting is 0.70710678f
+                    int offset1 = ri->XTRANSFC(row - 1, col - 1) == ri->XTRANSFC(row + 1, col + 1) ? 1 : -1;
 
                     if( !(bitmapBads.get(col - offset1, row - 1) || bitmapBads.get(col + offset1, row + 1))) {
                         float dirwt = 0.70710678f / ( fabsf( rawData[row - 1][col - offset1] - rawData[row + 1][col + offset1]) + eps);
@@ -843,6 +850,7 @@ int RawImageSource::interpolateBadPixelsXtrans( PixelsMap &bitmapBads )
                         norm += dirwt;
                     }
 
+                    // pixels marked 2 in above example. Distance to P is 1 => weighting is 1.f
                     int offsety = (ri->XTRANSFC(row - 1, col) != 1 ? 1 : -1);
                     int offsetx = offset1 * offsety;
 
@@ -866,9 +874,9 @@ int RawImageSource::interpolateBadPixelsXtrans( PixelsMap &bitmapBads )
                 }
             } else {
                 // red and blue channel.
-                // Each red or blue pixel has exactly one neigbour of same color in distance 2 and four neighbours of same color which can be reached by a move of a knight in chess.
+                // Each red or blue pixel has exactly one neighbour of same colour in distance 2 and four neighbours of same colour which can be reached by a move of a knight in chess.
                 // For the distance 2 pixel (marked with an X) we generate a virtual counterpart (marked with a V)
-                // For red and blue channel following pixels will be used for interpolation. Pixel to be interpolated is in center and marked with a P.
+                // For red and blue channel following pixels will be used for interpolation. Pixel to be interpolated is in centre and marked with a P.
                 // Pairs of pixels used in this step are numbered except for distance 2 pixels which are marked X and V. A pair will be used if none of the pixels of the pair is marked bad
                 // 0 1 0 0 0    0 0 X 0 0   remaining cases are symmetric
                 // 0 0 0 0 2    1 0 0 0 2
@@ -876,12 +884,12 @@ int RawImageSource::interpolateBadPixelsXtrans( PixelsMap &bitmapBads )
                 // 0 0 0 0 1    0 0 0 0 0
                 // 0 2 0 0 0    0 2 V 1 0
 
-                // Find two knight moves landing on a pixel of same color as the pixel to be interpolated.
+                // Find two knight moves landing on a pixel of same colour as the pixel to be interpolated.
                 // If we look at first and last row of 5x5 square, we will find exactly two knight pixels.
-                // Additionally we know that the column of this pixel has 1 or -1 horizontal distance to the center pixel
+                // Additionally we know that the column of this pixel has 1 or -1 horizontal distance to the centre pixel
                 // When we find a knight pixel, we get its counterpart, which has distance (+-3,+-3), where the signs of distance depend on the corner of the found knight pixel.
                 // These pixels are marked 1 or 2 in above examples. Distance to P is sqrt(5) => weighting is 0.44721359f
-                // The following loop simply scans the four possible places. To keep things simple, it doesn't stop after finding two knight pixels, because it will not find more than two
+                // The following loop simply scans the four possible places. To keep things simple, it does not stop after finding two knight pixels, because it will not find more than two
                 for(int d1 = -2, offsety = 3; d1 <= 2; d1 += 4, offsety -= 6) {
                     for(int d2 = -1, offsetx = 3; d2 < 1; d2 += 2, offsetx -= 6) {
                         if(ri->XTRANSFC(row + d1, col + d2) == pixelColor) {
@@ -927,10 +935,8 @@ int RawImageSource::interpolateBadPixelsXtrans( PixelsMap &bitmapBads )
                 norm += dirwt;
             }
 
-            if (LIKELY(norm > 0.f)) { // This means, we found at least one pair of valid pixels in the steps above, likelyhood of this case is about 99.999%
+            if (LIKELY(norm > 0.f)) { // This means, we found at least one pair of valid pixels in the steps above, likelihood of this case is about 99.999%
                 rawData[row][col] = wtdsum / (2.f * norm); //gradient weighted average, Factor of 2.f is an optimization to avoid multiplications in former steps
-//#pragma omp critical
-//              printf("%s Pixel at (col/row) : (%4d/%4d) : Original : %f, interpolated: %f\n",pixelColor == 0 ? "Red  " : pixelColor==1 ? "Green" : "Blue ", col-7,row-7,oldval, rawData[row][col]);
                 counter++;
             }
         }
@@ -941,9 +947,9 @@ int RawImageSource::interpolateBadPixelsXtrans( PixelsMap &bitmapBads )
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /*  Search for hot or dead pixels in the image and update the map
- *  For each pixel compare its value to the average of similar color surrounding
+ *  For each pixel compare its value to the average of similar colour surrounding
  *  (Taken from Emil Martinec idea)
- *  (Optimized by Ingo Weyrich 2013)
+ *  (Optimized by Ingo Weyrich 2013 and 2015)
  */
 int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels )
 {
@@ -957,15 +963,18 @@ int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thresh, bool find
     // counter for dead or hot pixels
     int counter = 0;
 
+#ifdef _OPENMP
     #pragma omp parallel
+#endif
     {
+#ifdef _OPENMP
         #pragma omp for schedule(dynamic,16) nowait
+#endif
 
         for (int i = 2; i < H - 2; i++) {
-            float p[9], temp;
+            float p[9], temp; // we need this for med3x3 macro
 
             for (int j = 2; j < W - 2; j++) {
-
                 med3x3(rawData[i - 2][j - 2], rawData[i - 2][j], rawData[i - 2][j + 2],
                        rawData[i][j - 2], rawData[i][j], rawData[i][j + 2],
                        rawData[i + 2][j - 2], rawData[i + 2][j], rawData[i + 2][j + 2], temp);
@@ -975,7 +984,9 @@ int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thresh, bool find
 
         // process borders. Former version calculated the median using mirrored border which does not make sense because the original pixel loses weight
         // Setting the difference between pixel and median for border pixels to zero should do the job not worse then former version
+#ifdef _OPENMP
         #pragma omp critical
+#endif
         {
             for(int i = 0; i < 2; i++) {
                 for(int j = 0; j < W; j++) {
@@ -999,8 +1010,11 @@ int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thresh, bool find
                 }
             }
         }
-        #pragma omp barrier
-        #pragma omp for reduction(+:counter) schedule (dynamic,16)
+#ifdef _OPENMP
+        #pragma omp barrier // barrier because of nowait clause above
+
+        #pragma omp for reduction(+:counter) schedule(dynamic,16)
+#endif
 
         //cfa pixel heat/death evaluation
         for (int rr = 2; rr < H - 2; rr++) {
@@ -1025,7 +1039,6 @@ int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thresh, bool find
                 pixdev = fabsf(pixdev);
                 float hfnbrave = -pixdev;
 
-
 #ifdef __SSE2__
                 // sum up 5*4 = 20 values using SSE
                 vfloat sum = vabsf(LVFU(cfablur[(rr - 2) * W + cc - 2])) + vabsf(LVFU(cfablur[(rr - 1) * W + cc - 2]));
@@ -1043,10 +1056,8 @@ int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thresh, bool find
 #else
 
                 for (int mm = rr - 2; mm <= rr + 2; mm++) {
-                    int mmmWpnn = mm * W + cc - 2;
-
-                    for (int nn = cc - 2; nn <= cc + 2; nn++, mmmWpnn++) {
-                        hfnbrave += fabsf(cfablur[mmmWpnn]);
+                    for (int nn = cc - 2; nn <= cc + 2; nn++) {
+                        hfnbrave += fabsf(cfablur[mm * W + nn]);
                     }
                 }
 
@@ -1563,7 +1574,10 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     int totBP = 0; // Hold count of bad pixels to correct
 
     if(ri->zeroIsBad()) { // mark all pixels with value zero as bad, has to be called before FF and DF. dcraw sets this flag only for some cameras (mainly Panasonic and Leica)
+#ifdef _OPENMP
         #pragma omp parallel for reduction(+:totBP)
+#endif
+
         for(int i = 0; i < H; i++)
             for(int j = 0; j < W; j++) {
                 if(ri->data[i][j] == 0.f) {
@@ -1638,7 +1652,9 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         if (pLCPProf && idata->getFocalLen() > 0.f) {
             LCPMapper map(pLCPProf, idata->getFocalLen(), idata->getFocalLen35mm(), idata->getFocusDist(), idata->getFNumber(), true, false, W, H, coarse, -1);
 
+#ifdef _OPENMP
             #pragma omp parallel for
+#endif
 
             for (int y = 0; y < H; y++) {
                 for (int x = 0; x < W; x++) {
@@ -1672,7 +1688,9 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         int ng1 = 0, ng2 = 0, i = 0;
         double avgg1 = 0., avgg2 = 0.;
 
+#ifdef _OPENMP
         #pragma omp parallel for default(shared) private(i) reduction(+: ng1, ng2, avgg1, avgg2)
+#endif
 
         for (i = border; i < H - border; i++)
             for (int j = border; j < W - border; j++)
@@ -1689,7 +1707,9 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         double corrg1 = ((double)avgg1 / ng1 + (double)avgg2 / ng2) / 2.0 / ((double)avgg1 / ng1);
         double corrg2 = ((double)avgg1 / ng1 + (double)avgg2 / ng2) / 2.0 / ((double)avgg2 / ng2);
 
+#ifdef _OPENMP
         #pragma omp parallel for default(shared)
+#endif
 
         for (int i = border; i < H - border; i++)
             for (int j = border; j < W - border; j++)
@@ -1909,10 +1929,14 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
                     float maxval = 0.f;
                     int c  = FC(m, n);
                     int c4 = ( c == 1 && !(m & 1) ) ? 3 : c;
+#ifdef _OPENMP
                     #pragma omp parallel
+#endif
                     {
                         float maxvalthr = 0.f;
+#ifdef _OPENMP
                         #pragma omp for
+#endif
 
                         for (int row = 0; row < H - m; row += 2) {
                             for (int col = 0; col < W - n; col += 2) {
@@ -1924,7 +1948,9 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
                             }
                         }
 
+#ifdef _OPENMP
                         #pragma omp critical
+#endif
                         {
 
                             if(maxvalthr > maxval) {
@@ -1954,11 +1980,15 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
 
         for (int m = 0; m < 2; m++)
             for (int n = 0; n < 2; n++) {
+#ifdef _OPENMP
                 #pragma omp parallel
+#endif
                 {
                     int c  = FC(m, n);
                     int c4 = ( c == 1 && !(m & 1) ) ? 3 : c;
+#ifdef _OPENMP
                     #pragma omp for
+#endif
 
                     for (int row = 0; row < H - m; row += 2)
                     {
@@ -1994,10 +2024,14 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
             int clipControlGui = 0;
             float maxval = 0.f;
             // xtrans files have only one black level actually, so we can simplify the code a bit
+#ifdef _OPENMP
             #pragma omp parallel
+#endif
             {
                 float maxvalthr = 0.f;
+#ifdef _OPENMP
                 #pragma omp for schedule(dynamic,16) nowait
+#endif
 
                 for (int row = 0; row < H; row++) {
                     for (int col = 0; col < W; col++) {
@@ -2009,7 +2043,9 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
                     }
                 }
 
+#ifdef _OPENMP
                 #pragma omp critical
+#endif
                 {
                     if(maxvalthr > maxval) {
                         maxval = maxvalthr;
@@ -2031,7 +2067,9 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
             refcolor[c] *= limitFactor;
         }
 
+#ifdef _OPENMP
         #pragma omp parallel for
+#endif
 
         for (int row = 0; row < H; row++) {
             for (int col = 0; col < W; col++) {
@@ -2054,7 +2092,9 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
         if(ri->getSensorType() == ST_BAYER) {
             for (int m = 0; m < 2; m++)
                 for (int n = 0; n < 2; n++) {
+#ifdef _OPENMP
                     #pragma omp parallel for
+#endif
 
                     for (int row = 0; row < H - m; row += 2) {
                         int c  = FC(row, 0);
@@ -2068,7 +2108,9 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
                     }
                 }
         } else if(ri->getSensorType() == ST_FUJI_XTRANS) {
+#ifdef _OPENMP
             #pragma omp parallel for
+#endif
 
             for (int row = 0; row < H; row++) {
                 for (int col = 0; col < W; col++) {
@@ -2177,9 +2219,13 @@ SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur
     cfatmp = (float (*)) calloc (H * W, sizeof * cfatmp);
 //  const float hotdeadthresh = 0.5;
 
+#ifdef _OPENMP
     #pragma omp parallel
+#endif
     {
+#ifdef _OPENMP
         #pragma omp for
+#endif
 
         for (int i = 0; i < H; i++) {
             int iprev, inext, jprev, jnext;
@@ -2228,7 +2274,9 @@ SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur
 
         //box blur cfa image; box size = BS
         //horizontal blur
+#ifdef _OPENMP
         #pragma omp for
+#endif
 
         for (int row = 0; row < H; row++) {
             int len = boxW / 2 + 1;
@@ -2267,7 +2315,9 @@ SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur
         __m128  onev = _mm_set1_ps( 1.0f );
         __m128  temp1v, temp2v, lenv, lenp1v, lenm1v;
         int row;
+#ifdef _OPENMP
         #pragma omp for
+#endif
 
         for (int col = 0; col < W - 3; col += 4) {
             lenv = leninitv;
@@ -2356,7 +2406,9 @@ SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur
         }
 
 #else
+#ifdef _OPENMP
         #pragma omp for
+#endif
 
         for (int col = 0; col < W; col++) {
             int len = boxH / 2 + 1;
@@ -2438,12 +2490,15 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
     // scale image colors
 
     if( ri->getSensorType() == ST_BAYER) {
+#ifdef _OPENMP
         #pragma omp parallel
+#endif
         {
             float tmpchmax[3];
             tmpchmax[0] = tmpchmax[1] = tmpchmax[2] = 0.0f;
-
+#ifdef _OPENMP
             #pragma omp for nowait
+#endif
 
             for (int row = winy; row < winy + winh; row ++)
             {
@@ -2458,7 +2513,9 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
                 }
             }
 
+#ifdef _OPENMP
             #pragma omp critical
+#endif
             {
                 chmax[0] = max(tmpchmax[0], chmax[0]);
                 chmax[1] = max(tmpchmax[1], chmax[1]);
@@ -2466,11 +2523,14 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
             }
         }
     } else if ( ri->get_colors() == 1 ) {
+#ifdef _OPENMP
         #pragma omp parallel
+#endif
         {
             float tmpchmax = 0.0f;
-
+#ifdef _OPENMP
             #pragma omp for nowait
+#endif
 
             for (int row = winy; row < winy + winh; row ++)
             {
@@ -2483,18 +2543,23 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
                 }
             }
 
+#ifdef _OPENMP
             #pragma omp critical
+#endif
             {
                 chmax[0] = chmax[1] = chmax[2] = chmax[3] = max(tmpchmax, chmax[0]);
             }
         }
     } else if(ri->getSensorType() == ST_FUJI_XTRANS) {
+#ifdef _OPENMP
         #pragma omp parallel
+#endif
         {
             float tmpchmax[3];
             tmpchmax[0] = tmpchmax[1] = tmpchmax[2] = 0.0f;
-
+#ifdef _OPENMP
             #pragma omp for nowait
+#endif
 
             for (int row = winy; row < winy + winh; row ++)
             {
@@ -2509,7 +2574,9 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
                 }
             }
 
+#ifdef _OPENMP
             #pragma omp critical
+#endif
             {
                 chmax[0] = max(tmpchmax[0], chmax[0]);
                 chmax[1] = max(tmpchmax[1], chmax[1]);
@@ -2517,12 +2584,15 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
             }
         }
     } else {
+#ifdef _OPENMP
         #pragma omp parallel
+#endif
         {
             float tmpchmax[3];
             tmpchmax[0] = tmpchmax[1] = tmpchmax[2] = 0.0f;
-
+#ifdef _OPENMP
             #pragma omp for nowait
+#endif
 
             for (int row = winy; row < winy + winh; row ++)
             {
@@ -2537,7 +2607,9 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
                 }
             }
 
+#ifdef _OPENMP
             #pragma omp critical
+#endif
             {
                 chmax[0] = max(tmpchmax[0], chmax[0]);
                 chmax[1] = max(tmpchmax[1], chmax[1]);
@@ -2850,8 +2922,9 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
                     mat[i][j] += work[i][k] * camMatrix[k][j];    // rgb_xyz * imatrices.xyz_cam
                 }
 
-
+#ifdef _OPENMP
         #pragma omp parallel for
+#endif
 
         for (int i = 0; i < im->height; i++)
             for (int j = 0; j < im->width; j++) {
@@ -3174,91 +3247,6 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
 //        printf ("ICM TIME: %d usec\n", t3.etime(t1));
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-// Converts raw image including ICC input profile to working space - 16bit int version
-/*void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName) {
-    cmsHPROFILE in;
-    DCPProfile *dcpProf;
-
-    if (!findInputProfile(cmp.input, embedded, camName, &dcpProf, in)) return;
-
-    if (dcpProf!=NULL) {
-        dcpProf->Apply(im, (DCPLightType)cmp.preferredProfile, cmp.working, cmp.toneCurve);
-    } else {
-        if (in==NULL) {
-            // Take camprofile from DCRAW
-            // in this case we avoid using the slllllooooooowwww lcms
-            TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
-            double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-            for (int i=0; i<3; i++)
-                for (int j=0; j<3; j++)
-                    for (int k=0; k<3; k++)
-                        mat[i][j] += work[i][k] * camMatrix[k][j]; // rgb_xyz * imatrices.xyz_cam
-
-#pragma omp parallel for
-            for (int i=0; i<im->height; i++)
-                for (int j=0; j<im->width; j++) {
-
-                    float newr = mat[0][0]*im->r(i,j) + mat[0][1]*im->g(i,j) + mat[0][2]*im->b(i,j);
-                    float newg = mat[1][0]*im->r(i,j) + mat[1][1]*im->g(i,j) + mat[1][2]*im->b(i,j);
-                    float newb = mat[2][0]*im->r(i,j) + mat[2][1]*im->g(i,j) + mat[2][2]*im->b(i,j);
-
-                    im->r(i,j) = CLIP((int)newr);
-                    im->g(i,j) = CLIP((int)newg);
-                    im->b(i,j) = CLIP((int)newb);
-                }
-        } else {
-            // Gamma preprocessing
-            float gammaFac, lineFac, lineSum;
-            getProfilePreprocParams(in, gammaFac, lineFac, lineSum);
-
-            if (gammaFac>0) {
-#pragma omp parallel for
-                for ( int h = 0; h < im->height; ++h )
-                    for ( int w = 0; w < im->width; ++w ) {
-                        im->r(h,w)=  (int) (pow ((double)(im->r(h,w) / 65535.0), (double)gammaFac) * 65535.0);
-                        im->g(h,w)=  (int) (pow ((double)(im->g(h,w) / 65535.0), (double)gammaFac) * 65535.0);
-                        im->b(h,w)=  (int) (pow ((double)(im->b(h,w) / 65535.0), (double)gammaFac) * 65535.0);
-                    }
-            }
-
-            cmsHPROFILE out = iccStore->workingSpace (cmp.working);
-            //out = iccStore->workingSpaceGamma (wProfile);
-            lcmsMutex->lock ();
-            cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16, out, TYPE_RGB_16, settings->colorimetricIntent,
-            cmsFLAGS_NOCACHE);  // NOCACHE is important for thread safety
-            lcmsMutex->unlock ();
-
-            if (hTransform) {
-                im->ExecCMSTransform(hTransform);
-
-                // There might be Nikon postprocessings
-                if (lineSum>0) {
-#pragma omp parallel for
-                    for ( int h = 0; h < im->height; ++h )
-                        for ( int w = 0; w < im->width; ++w ) {
-                            im->r(h,w) *= im->r(h,w) * lineFac / 65535.0 + lineSum;
-                            im->g(h,w) *= im->g(h,w) * lineFac / 65535.0 + lineSum;
-                            im->b(h,w) *= im->b(h,w) * lineFac / 65535.0 + lineSum;
-                        }
-                }
-            }
-            else {
-                lcmsMutex->lock ();
-                hTransform = cmsCreateTransform (camprofile, TYPE_RGB_16, out, TYPE_RGB_16,
-                              settings->colorimetricIntent, cmsFLAGS_NOCACHE);
-                lcmsMutex->unlock ();
-
-                im->ExecCMSTransform(hTransform);
-            }
-
-            cmsDeleteTransform(hTransform);
-        }
-    }
-    //t3.set ();
-    //printf ("ICM TIME: %d\n", t3.etime(t1));
-}*/
 
 // Determine RAW input and output profiles. Returns TRUE on success
 bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in)
@@ -3557,11 +3545,15 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
     histogram(65536 >> histcompr);
     histogram.clear();
 
+#ifdef _OPENMP
     #pragma omp parallel
+#endif
     {
         LUTu tmphistogram(65536 >> histcompr);
         tmphistogram.clear();
+#ifdef _OPENMP
         #pragma omp for nowait
+#endif
 
         for (int i = border; i < H - border; i++) {
             int start, end;
@@ -3600,7 +3592,9 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
             }
         }
 
+#ifdef _OPENMP
         #pragma omp critical
+#endif
         {
             for(int i = 0; i < (65536 >> histcompr); i++) {
                 histogram[i] += tmphistogram[i];
