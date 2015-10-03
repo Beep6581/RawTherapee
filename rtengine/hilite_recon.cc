@@ -847,21 +847,22 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
                 green[i][j] = clipfix[1] * factor;
                 blue[i][j]  = clipfix[2] * factor;
             } else {//some channels clipped
+                const float eps = 0.0001f;
                 int notclipped[3] = {pixel[0] < max_f[0] ? 1 : 0, pixel[1] < max_f[1] ? 1 : 0, pixel[2] < max_f[2] ? 1 : 0};
 
                 if (notclipped[0] == 0) { //red clipped
                     red[i][j]  = max(red[i][j], (clipfix[0] * ((notclipped[1] * pixel[1] + notclipped[2] * pixel[2]) /
-                                                 (notclipped[1] * clipfix[1] + notclipped[2] * clipfix[2]))));
+                                                 (notclipped[1] * clipfix[1] + notclipped[2] * clipfix[2] + eps))));
                 }
 
                 if (notclipped[1] == 0) { //green clipped
                     green[i][j] = max(green[i][j], (clipfix[1] * ((notclipped[2] * pixel[2] + notclipped[0] * pixel[0]) /
-                                                    (notclipped[2] * clipfix[2] + notclipped[0] * clipfix[0]))));
+                                                    (notclipped[2] * clipfix[2] + notclipped[0] * clipfix[0] + eps))));
                 }
 
                 if (notclipped[2] == 0) { //blue clipped
                     blue[i][j]  = max(blue[i][j], (clipfix[2] * ((notclipped[0] * pixel[0] + notclipped[1] * pixel[1]) /
-                                                   (notclipped[0] * clipfix[0] + notclipped[1] * clipfix[1]))));
+                                                   (notclipped[0] * clipfix[0] + notclipped[1] * clipfix[1] + eps))));
                 }
             }
 

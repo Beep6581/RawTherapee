@@ -950,7 +950,7 @@ int RawImageSource::interpolateBadPixelsXtrans( PixelsMap &bitmapBads )
  *  (Taken from Emil Martinec idea)
  *  (Optimized by Ingo Weyrich 2013 and 2015)
  */
-int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels )
+SSEFUNCTION int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels )
 {
     float varthresh = (20.0 * (thresh / 100.0) + 1.0 ) / 24.f;
 
