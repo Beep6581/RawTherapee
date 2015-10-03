@@ -1834,7 +1834,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
             for (int i = 0; i < 65536; i++) {
                 double val = (i) / 65535.;
                 double start = g_a3;
-                double add = g_a3;
+                double add = g_a4;
                 double mul = 1. + g_a4;
                 double x;
                 x = Color::gammareti (val, gamm, start, ts, mul , add);
