@@ -365,7 +365,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
         */
         imgsrc->convertColorSpace(orig_prev, params.icm, currWB);
-    printf("improc color r=%f g=%f b=%f\n",orig_prev->r(50, 2300),orig_prev->g(50, 2300),orig_prev->b(50, 2300));
+   // printf("improc color r=%f g=%f b=%f\n",orig_prev->r(50, 2300),orig_prev->g(50, 2300),orig_prev->b(50, 2300));
 
         ipf.firstAnalysis (orig_prev, &params, vhist16);
     }
