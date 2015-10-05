@@ -122,7 +122,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         RetinextransmissionCurve dehatransmissionCurve;
         bool dehacontlutili = false;
         bool useHsl = false;
-        multi_array2D<float, 3> conversionBuffer(1, 1);
+//        multi_array2D<float, 3> conversionBuffer(1, 1);
+        multi_array2D<float, 4> conversionBuffer(1, 1);
         imgsrc->retinexPrepareBuffers(params.icm, params.retinex, conversionBuffer, dummy);
         imgsrc->retinexPrepareCurves(params.retinex, cdcurve, dehatransmissionCurve, dehacontlutili, useHsl, dummy, dummy );
         float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
@@ -626,7 +627,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     Imagefloat* baseImg = new Imagefloat (fw, fh);
     imgsrc->getImage (currWB, tr, baseImg, pp, params.toneCurve, params.icm, params.raw);
-
+//    printf("befo color R=%f G=%f B=%f\n",baseImg->r(50, 2300),baseImg->g(50, 2300),baseImg->b(50, 2300));
     if (pl) {
         pl->setProgress (0.50);
     }
@@ -716,6 +717,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     delete [] Max_B_;
 
     imgsrc->convertColorSpace(baseImg, params.icm, currWB);
+   // printf("after color R=%f G=%f B=%f\n",baseImg->r(50, 2300),baseImg->g(50, 2300),baseImg->b(50, 2300));
 
     // perform first analysis
     LUTu hist16 (65536);

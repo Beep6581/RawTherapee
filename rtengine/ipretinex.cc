@@ -65,7 +65,7 @@ extern const Settings* settings;
 
 static float RetinexScales[MAX_RETINEX_SCALES];
 
-void retinex_scales( float* scales, int nscales, int mode, int s)
+void retinex_scales( float* scales, int nscales, int mode, int s, float high)
 {
     if ( nscales == 1 ) {
         scales[0] =  (float)s / 2.f;
@@ -90,6 +90,12 @@ void retinex_scales( float* scales, int nscales, int mode, int s)
 
             for ( int i = 0; i < nscales; ++i ) {
                 scales[i] = s - (float)pow (10.f, (i * size_step) / log (10.f));
+            }
+        } else if (mode == 3) {
+            size_step = (float) log(s - 2.0f) / (float) nscales;
+
+            for ( int i = 0; i < nscales; ++i ) {
+                scales[i] = high*s - (float)pow (10.f, (i * size_step) / log (10.f));
             }
         }
     }
@@ -198,7 +204,7 @@ void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L, const
     stddv = (float)sqrt(stddv);
 }
 
-void RawImageSource::MSR(float** luminance, float** originalLuminance, int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
+void RawImageSource::MSR(float** luminance, float** originalLuminance, float **exLuminance, int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
     if (deh.enabled) {//enabled
         StopWatch Stop1("MSR");
@@ -220,7 +226,10 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
         limD *= useHslLin ? 10.f : 1.f;
         float ilimD = 1.f / limD;
         int moderetinex = 2; // default to 2 ( deh.retinexMethod == "high" )
-
+        float hig = ((float) deh.highl)/100.f;
+        bool higplus = false ;
+        if(deh.retinexMethod == "highliplus") higplus = true;
+        
         if (deh.retinexMethod == "uni") {
             moderetinex = 0;
         }
@@ -228,8 +237,12 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
         if (deh.retinexMethod == "low") {
             moderetinex = 1;
         }
-
-        retinex_scales( RetinexScales, scal, moderetinex, nei );
+        if (deh.retinexMethod == "highli" || deh.retinexMethod == "highliplus") {
+            moderetinex = 3;
+        }
+        
+        float high = (float) deh.highl;
+        retinex_scales( RetinexScales, scal, moderetinex, nei, high );
 
         int H_L = height;
         int W_L = width;
@@ -284,6 +297,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
 
                 for (int i = 0; i < H_L; i++) {
                     int j = 0;
+                    
 #ifdef __SSE2__
 
                     if(useHslLin) {
@@ -304,7 +318,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
                         }
                     } else {
                         for (; j < W_L; j++) {
-                            luminance[i][j] +=  pond * xlogf(LIM(src[i][j] / out[i][j], ilimD, limD));
+                                luminance[i][j] +=  pond * xlogf(LIM(src[i][j] / out[i][j], ilimD, limD));
                         }
                     }
                 }
@@ -450,9 +464,9 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, int width
                     if(cd < cdmin) {
                         cdmin = cd;
                     }
-
-
-                    luminance[i][j] = clipretinex( cd, 0.f, 32768.f ) * strength + (1.f - strength) * originalLuminance[i][j];
+                    float str = strength;
+                    if(exLuminance[i][j] > 65535.f*hig && higplus) str *= hig;
+                        luminance[i][j] = clipretinex( cd, 0.f, 32768.f ) * str + (1.f - str) * originalLuminance[i][j];
                 }
 
 #ifdef _OPENMP

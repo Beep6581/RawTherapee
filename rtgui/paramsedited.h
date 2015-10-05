@@ -71,6 +71,9 @@ public:
     bool gammaretinex;
     bool vart;
     bool limd;
+    bool highl;
+    bool highlig;
+    bool grbl;
     bool method;
     bool transmissionCurve;
     bool cdcurve;

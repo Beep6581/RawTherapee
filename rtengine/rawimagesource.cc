@@ -1805,12 +1805,14 @@ void RawImageSource::demosaic(const RAWParams &raw)
 }
 
 
-void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexParams retinexParams, multi_array2D<float, 3> &conversionBuffer, LUTu &lhist16RETI)
+//void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexParams retinexParams, multi_array2D<float, 3> &conversionBuffer, LUTu &lhist16RETI)
+void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexParams retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI)
 {
     bool useHsl = (retinexParams.retinexcolorspace == "HSLLOG" || retinexParams.retinexcolorspace == "HSLLIN");
     conversionBuffer[0] (W - 2 * border, H - 2 * border);
     conversionBuffer[1] (W - 2 * border, H - 2 * border);
     conversionBuffer[2] (W - 2 * border, H - 2 * border);
+    conversionBuffer[3] (W - 2 * border, H - 2 * border);
     
         LUTf *retinexgamtab;//gamma before and after Retinex to restore tones
         LUTf lutTonereti;
@@ -1843,6 +1845,44 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
             }
             retinexgamtab = &lutTonereti;
         }
+/*
+//test with amsterdam.pef and other files
+float rr,gg,bb;
+rr=red[50][2300];
+gg=green[50][2300];
+bb=blue[50][2300];
+printf("rr=%f gg=%f bb=%f \n",rr,gg,bb);
+rr=red[1630][370];
+gg=green[1630][370];
+bb=blue[1630][370];
+printf("rr1=%f gg1=%f bb1=%f \n",rr,gg,bb);
+rr=red[380][1630];
+gg=green[380][1630];
+bb=blue[380][1630];
+printf("rr2=%f gg2=%f bb2=%f \n",rr,gg,bb);
+*/
+
+if(retinexParams.highlig < 100 && retinexParams.retinexMethod == "highliplus") {//try to recover magenta...very difficult !
+    float hig = ((float)retinexParams.highlig)/100.f;
+    float higgb = ((float)retinexParams.grbl)/100.f;
+    
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif        
+        for (int i = border; i < H - border; i++ ) {
+            for (int j = border; j < W - border; j++ ) {
+                float R_,G_,B_;
+                R_=red[i][j];
+                G_=green[i][j];
+                B_=blue[i][j];
+                
+                //empirical method to find highlight magenta with no conversion RGB and no white balance
+                //red = master   Gr and Bl default higgb=0.5
+                if(R_>65535.f*hig  && G_ > 65535.f*higgb && B_ > 65535.f*higgb) conversionBuffer[3][i - border][j - border] = R_;
+                else conversionBuffer[3][i - border][j - border] = 0.f;
+            }
+        }    
+}
         
 if(retinexParams.gammaretinex != "none" && retinexParams.str != 0) {//gamma           
 #ifdef _OPENMP
@@ -1854,6 +1894,7 @@ if(retinexParams.gammaretinex != "none" && retinexParams.str != 0) {//gamma
                 R_=red[i][j];
                 G_=green[i][j];
                 B_=blue[i][j];
+               
                 red[i][j] = (*retinexgamtab)[R_];
                 green[i][j] = (*retinexgamtab)[G_];
                 blue[i][j] = (*retinexgamtab)[B_];                
@@ -1969,6 +2010,7 @@ if(retinexParams.gammaretinex != "none" && retinexParams.str != 0) {//gamma
                     R_ = red[i][j];
                     G_ = green[i][j];
                     B_ = blue[i][j];
+                    float k;
                     //rgb=>lab
                     Color::rgbxyz(R_, G_, B_, X, Y, Z, wp);
                     //convert Lab
@@ -1976,7 +2018,8 @@ if(retinexParams.gammaretinex != "none" && retinexParams.str != 0) {//gamma
                     conversionBuffer[0][i - border][j - border] = aa;
                     conversionBuffer[1][i - border][j - border] = bb;
                     conversionBuffer[2][i - border][j - border] = L;
-
+ //                   if(R_>40000.f  && G_ > 30000.f && B_ > 30000.f) conversionBuffer[3][i - border][j - border] = R_;
+ //                   else conversionBuffer[3][i - border][j - border] = 0.f;
                     if(lhist16RETI) {
                         pos =  (int) clipretinex(L, 0, 32768);
                         lhist16RETIThr[pos]++;//histogram in Curve Lab
@@ -2015,7 +2058,8 @@ void RawImageSource::retinexPrepareCurves(RetinexParams retinexParams, LUTf &cdc
     retinexParams.getCurves(retinextransmissionCurve);
 }
 
-void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneCurveParams Tc, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 3> &conversionBuffer, bool dehacontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI)
+//void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneCurveParams Tc, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 3> &conversionBuffer, bool dehacontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI)
+void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneCurveParams Tc, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI)
 { 
 
     MyTime t4, t5;
@@ -2131,7 +2175,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         }
     }
 
-    MSR(LBuffer, conversionBuffer[2], WNew, HNew, deh, dehatransmissionCurve, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+    MSR(LBuffer, conversionBuffer[2], conversionBuffer[3], WNew, HNew, deh, dehatransmissionCurve, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
         
     if(useHsl) {
 #ifdef _OPENMP

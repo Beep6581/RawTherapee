@@ -28,6 +28,9 @@ protected:
     Adjuster* offs;
     Adjuster* vart;
     Adjuster* limd;
+    Adjuster* highl;
+    Adjuster* highlig;
+    Adjuster* grbl;
     Adjuster* gam;
     Adjuster* slope;
     MyExpander* expsettings;

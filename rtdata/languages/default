@@ -653,6 +653,9 @@ HISTORY_MSG_420;Retinex - Histogram - HSL
 HISTORY_MSG_421;Retinex - Gamma retinex
 HISTORY_MSG_422;Retinex - gamma
 HISTORY_MSG_423;Retinex - slope
+HISTORY_MSG_424;Retinex - HL threshold
+HISTORY_MSG_425;Retinex - HL control red
+HISTORY_MSG_426;Retinex - HL control GB
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1573,6 +1576,13 @@ TP_RETINEX_GAMMA;Gamma
 TP_RETINEX_SLOPE;Slope
 TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex\nDifferent from Retinex curves or others curves (Lab, Exposure,..)
 TP_RETINEX_HIGH;High
+TP_RETINEX_HIGHLIG;Highlight
+TP_RETINEX_HIGHLIGPLUS;Highlight More
+TP_RETINEX_HIGHLIGHT;Highlight threshold
+TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm\nNeeds probably to change settings (Neighboring pixels), and increase Raw White-point
+TP_RETINEX_HIGHLIGHT2;Highlight control (red)
+TP_RETINEX_HIGHLIGHT2_TOOLTIP;Acts on RGB channels to reduce magenta (red = master)
+TP_RETINEX_HIGHLIGHT3;Highlight control (blue green)
 TP_RETINEX_HSLSPACE_LIN;HSL-Linear
 TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
 TP_RETINEX_LABEL;Retinex
@@ -1580,7 +1590,7 @@ TP_RETINEX_LABSPACE;L*a*b*
 TP_RETINEX_LOW;Low
 TP_RETINEX_MEDIAN;Transmission median filter
 TP_RETINEX_METHOD;Method
-TP_RETINEX_METHOD_TOOLTIP;Low: Reinforce low light,\nUniform: Equalize action,\nHigh: Reinforce high light.
+TP_RETINEX_METHOD_TOOLTIP;Low: Reinforce low light,\nUniform: Equalize action,\nHigh: Reinforce high light\nHighLight: Try to remove magenta\nHighlight More: Try to remove magenta + RGB action.
 TP_RETINEX_MLABEL;Restored haze-free Min=%1 Max=%2
 TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
 TP_RETINEX_NEIGHBOR;Neighboring pixels

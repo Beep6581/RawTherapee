@@ -36,6 +36,8 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     retinexMethod->append_text (M("TP_RETINEX_LOW"));
     retinexMethod->append_text (M("TP_RETINEX_UNIFORM"));
     retinexMethod->append_text (M("TP_RETINEX_HIGH"));
+    retinexMethod->append_text (M("TP_RETINEX_HIGHLIG"));
+    retinexMethod->append_text (M("TP_RETINEX_HIGHLIGPLUS"));
     retinexMethod->set_active(0);
     retinexMethodConn = retinexMethod->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::retinexMethodChanged) );
     retinexMethod->set_tooltip_markup (M("TP_RETINEX_METHOD_TOOLTIP"));
@@ -115,6 +117,8 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     str = Gtk::manage (new Adjuster (M("TP_RETINEX_STRENGTH"), 0, 100., 1., 20.));
     neigh = Gtk::manage (new Adjuster (M("TP_RETINEX_NEIGHBOR"), 6, 100., 1., 80.));
+    highl   = Gtk::manage (new Adjuster (M("TP_RETINEX_HIGHLIGHT"), 1, 100, 1, 10));
+    highl->set_tooltip_markup (M("TP_RETINEX_HIGHLIGHT_TOOLTIP"));
 
     expsettings = new MyExpander (false, M("TP_RETINEX_SETTINGS"));
     expsettings->signal_button_release_event().connect_notify( sigc::bind( sigc::mem_fun(this, &Retinex::foldAllButMe), expsettings) );
@@ -125,6 +129,9 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     retinexVBox->pack_start (*neigh);
     neigh->show ();
 
+    retinexVBox->pack_start (*highl);
+    highl->show ();
+    
     mMLabels = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
     mMLabels->set_tooltip_markup (M("TP_RETINEX_MLABEL_TOOLTIP"));
 
@@ -136,10 +143,13 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     offs   = Gtk::manage (new Adjuster (M("TP_RETINEX_OFFSET"), -10000, 10000, 1, 0));
     vart   = Gtk::manage (new Adjuster (M("TP_RETINEX_VARIANCE"), 50, 500, 1, 125));
     limd   = Gtk::manage (new Adjuster (M("TP_RETINEX_THRESHOLD"), 2, 100, 1, 8));
+    highlig   = Gtk::manage (new Adjuster (M("TP_RETINEX_HIGHLIGHT2"), 1, 100, 1, 100));
+    grbl   = Gtk::manage (new Adjuster (M("TP_RETINEX_HIGHLIGHT3"), 1, 100, 1, 50));
     gain->set_tooltip_markup (M("TP_RETINEX_GAIN_TOOLTIP"));
     scal->set_tooltip_markup (M("TP_RETINEX_SCALES_TOOLTIP"));
     vart->set_tooltip_markup (M("TP_RETINEX_VARIANCE_TOOLTIP"));
     limd->set_tooltip_markup (M("TP_RETINEX_THRESHOLD_TOOLTIP"));
+    highlig->set_tooltip_markup (M("TP_RETINEX_HIGHLIGHT2_TOOLTIP"));
 
     medianmap = Gtk::manage (new Gtk::CheckButton (M("TP_RETINEX_MEDIAN")));
     medianmap->set_active (true);
@@ -184,6 +194,15 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     settingsVBox->pack_start (*limd);
     limd->show ();
 
+//    settingsVBox->pack_start (*highl);
+//    highl->show ();
+
+    settingsVBox->pack_start (*highlig);
+    highlig->show ();
+
+    settingsVBox->pack_start (*grbl);
+    grbl->show ();
+    
     settingsVBox->pack_start( *transmissionCurveEditorG, Gtk::PACK_SHRINK, 2);
     transmissionCurveEditorG->show();
 
@@ -246,6 +265,24 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
         limd->delay = 200;
     }
 
+    highl->setAdjusterListener (this);
+
+    if (highl->delay < 200) {
+        highl->delay = 200;
+    }
+    
+    highlig->setAdjusterListener (this);
+
+    if (highlig->delay < 200) {
+        highlig->delay = 200;
+    }
+
+    grbl->setAdjusterListener (this);
+
+    if (grbl->delay < 200) {
+        grbl->delay = 200;
+    }
+    
     pack_start (*retinexVBox);
     pack_start (*expsettings);
 
@@ -378,6 +415,9 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
         offs->setEditedState (pedited->retinex.offs ? Edited : UnEdited);
         vart->setEditedState (pedited->retinex.vart ? Edited : UnEdited);
         limd->setEditedState (pedited->retinex.limd ? Edited : UnEdited);
+        highl->setEditedState (pedited->retinex.highl ? Edited : UnEdited);
+        highlig->setEditedState (pedited->retinex.highlig ? Edited : UnEdited);
+        grbl->setEditedState (pedited->retinex.grbl ? Edited : UnEdited);
         set_inconsistent (multiImage && !pedited->retinex.enabled);
         medianmap->set_inconsistent (!pedited->retinex.medianmap);
 
@@ -409,6 +449,9 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
     limd->setValue  (pp->retinex.limd);
     gam->setValue      (pp->retinex.gam);
     slope->setValue      (pp->retinex.slope);
+    highl->setValue  (pp->retinex.highl);
+    highlig->setValue  (pp->retinex.highlig);
+    grbl->setValue  (pp->retinex.grbl);
 
     setEnabled (pp->retinex.enabled);
 
@@ -423,8 +466,11 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
         retinexMethod->set_active (1);
     } else if (pp->retinex.retinexMethod == "high") {
         retinexMethod->set_active (2);
+    } else if (pp->retinex.retinexMethod == "highli") {
+        retinexMethod->set_active (3);
+    } else if (pp->retinex.retinexMethod == "highliplus") {
+        retinexMethod->set_active (4);
     }
-
 
     if (pp->retinex.retinexcolorspace == "Lab") {
         retinexcolorspace->set_active (0);
@@ -480,6 +526,9 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
     pp->retinex.offs  = (int)offs->getValue ();
     pp->retinex.vart  = (int)vart->getValue ();
     pp->retinex.limd  = (int)limd->getValue ();
+    pp->retinex.highl  = (int)highl->getValue ();
+    pp->retinex.highlig  = (int)highlig->getValue ();
+    pp->retinex.grbl  = (int)grbl->getValue ();
     pp->retinex.cdcurve = cdshape->getCurve ();
     pp->retinex.cdHcurve = cdshapeH->getCurve ();
     pp->retinex.transmissionCurve = transmissionShape->getCurve ();
@@ -501,6 +550,9 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->retinex.offs = offs->getEditedState ();
         pedited->retinex.vart = vart->getEditedState ();
         pedited->retinex.limd = limd->getEditedState ();
+        pedited->retinex.highl = highl->getEditedState ();
+        pedited->retinex.highlig = highlig->getEditedState ();
+        pedited->retinex.grbl = grbl->getEditedState ();
         pedited->retinex.cdcurve   = !cdshape->isUnChanged ();
         pedited->retinex.cdHcurve   = !cdshapeH->isUnChanged ();
         pedited->retinex.transmissionCurve  = !transmissionShape->isUnChanged ();
@@ -515,6 +567,10 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
         pp->retinex.retinexMethod = "uni";
     } else if (retinexMethod->get_active_row_number() == 2) {
         pp->retinex.retinexMethod = "high";
+    } else if (retinexMethod->get_active_row_number() == 3) {
+        pp->retinex.retinexMethod = "highli";
+    } else if (retinexMethod->get_active_row_number() == 4) {
+        pp->retinex.retinexMethod = "highliplus";
     }
 
     if (retinexcolorspace->get_active_row_number() == 0) {
@@ -541,8 +597,11 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
 
 void Retinex::retinexMethodChanged()
 {
+    if (retinexMethod->get_active_row_number() == 4) {highl->show();highlig->show();grbl->show();}
+    else if(retinexMethod->get_active_row_number() == 3) {highl->show();highlig->hide();grbl->hide();}
+    else {highl->hide();highlig->hide();grbl->hide();}
     if (listener) {
-        listener->panelChanged (EvretinexMethod, retinexMethod->get_active_text ());
+            listener->panelChanged (EvretinexMethod, retinexMethod->get_active_text ());
     }
 }
 
@@ -631,6 +690,9 @@ void Retinex::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
     scal->setDefault (defParams->retinex.scal);
     vart->setDefault (defParams->retinex.vart);
     limd->setDefault (defParams->retinex.limd);
+    highl->setDefault (defParams->retinex.highl);
+    highlig->setDefault (defParams->retinex.highlig);
+    grbl->setDefault (defParams->retinex.grbl);
     gam->setDefault (defParams->retinex.gam);
     slope->setDefault (defParams->retinex.slope);
 
@@ -642,6 +704,9 @@ void Retinex::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
         scal->setDefaultEditedState (pedited->retinex.scal ? Edited : UnEdited);
         vart->setDefaultEditedState (pedited->retinex.vart ? Edited : UnEdited);
         limd->setDefaultEditedState (pedited->retinex.limd ? Edited : UnEdited);
+        highl->setDefaultEditedState (pedited->retinex.highl ? Edited : UnEdited);
+        highlig->setDefaultEditedState (pedited->retinex.highlig ? Edited : UnEdited);
+        grbl->setDefaultEditedState (pedited->retinex.grbl ? Edited : UnEdited);
         gam->setDefaultEditedState (pedited->retinex.gam ? Edited : UnEdited);
         slope->setDefaultEditedState (pedited->retinex.slope ? Edited : UnEdited);
 
@@ -651,6 +716,9 @@ void Retinex::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
         offs->setDefaultEditedState (Irrelevant);
         vart->setDefaultEditedState (Irrelevant);
         limd->setDefaultEditedState (Irrelevant);
+        highl->setDefaultEditedState (Irrelevant);
+        highlig->setDefaultEditedState (Irrelevant);
+        grbl->setDefaultEditedState (Irrelevant);
         str->setDefaultEditedState (Irrelevant);
         scal->setDefaultEditedState (Irrelevant);
         gam->setDefaultEditedState (Irrelevant);
@@ -693,6 +761,12 @@ void Retinex::adjusterChanged (Adjuster* a, double newval)
         listener->panelChanged (EvLvart, vart->getTextValue());
     } else if (a == limd) {
         listener->panelChanged (EvLlimd, limd->getTextValue());
+    } else if (a == highl) {
+        listener->panelChanged (EvLhighl, highl->getTextValue());
+    } else if (a == highlig) {
+        listener->panelChanged (EvLhighlig, highlig->getTextValue());
+    } else if (a == grbl) {
+        listener->panelChanged (EvLgrbl, grbl->getTextValue());
     } else if (a == gam) {
         listener->panelChanged (EvLgam, gam->getTextValue());
     } else if (a == slope) {
@@ -749,6 +823,9 @@ void Retinex::trimValues (rtengine::procparams::ProcParams* pp)
     offs->trimValue(pp->retinex.offs);
     vart->trimValue(pp->retinex.vart);
     limd->trimValue(pp->retinex.limd);
+    highl->trimValue(pp->retinex.highl);
+    highlig->trimValue(pp->retinex.highlig);
+    grbl->trimValue(pp->retinex.grbl);
     gam->trimValue(pp->retinex.gam);
     slope->trimValue(pp->retinex.slope);
 
@@ -772,6 +849,9 @@ void Retinex::setBatchMode (bool batchMode)
     slope->showEditedCB ();
     vart->showEditedCB ();
     limd->showEditedCB ();
+    highl->showEditedCB ();
+    highlig->showEditedCB ();
+    grbl->showEditedCB ();
     curveEditorGD->setBatchMode (batchMode);
     curveEditorGDH->setBatchMode (batchMode);
     transmissionCurveEditorG->setBatchMode (batchMode);

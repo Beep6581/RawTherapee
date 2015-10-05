@@ -94,7 +94,8 @@ protected:
     LUTf satcurve;
     LUTf lhskcurve;
     LUTf clcurve;
-    multi_array2D<float, 3> conversionBuffer;
+//    multi_array2D<float, 3> conversionBuffer;
+    multi_array2D<float, 4> conversionBuffer;
     LUTf wavclCurve;
     LUTf clToningcurve;
     LUTf cl2Toningcurve;

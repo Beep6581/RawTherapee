@@ -450,6 +450,9 @@ enum ProcEvent {
     Evretinexgamma = 420,
     EvLgam = 421,
     EvLslope = 422,
+    EvLhighl = 423,
+    EvLhighlig = 424,
+    EvLgrbl = 425,
     NUMOFEVENTS
 };
 }

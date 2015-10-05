@@ -284,6 +284,9 @@ public:
     Glib::ustring gammaretinex;
     int     vart;
     int     limd;
+    int     highl;
+    int     highlig;
+    int     grbl;
     bool    medianmap;
     RetinexParams ();
     void setDefaults();
