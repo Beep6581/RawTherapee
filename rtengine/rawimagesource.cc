@@ -983,7 +983,7 @@ SSEFUNCTION int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thres
         // process borders. Former version calculated the median using mirrored border which does not make sense because the original pixel loses weight
         // Setting the difference between pixel and median for border pixels to zero should do the job not worse then former version
 #ifdef _OPENMP
-        #pragma omp critical
+        #pragma omp single
 #endif
         {
             for(int i = 0; i < 2; i++) {

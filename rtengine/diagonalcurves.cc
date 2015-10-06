@@ -72,7 +72,11 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
 
             if(x[0] == 0.f && x[1] == 0.f)
                 // Avoid crash when first two points are at x = 0 (git Issue 2888)
-                x[1] = 0.5f;
+                x[1] = 0.01f;
+
+            if(x[0] == 1.f && x[1] == 1.f)
+                // Avoid crash when first two points are at x = 1 (100 in gui) (git Issue 2923)
+                x[0] = 0.99f;
 
             if (!identity) {
                 if (kind == DCT_Spline && N > 2) {
