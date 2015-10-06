@@ -373,7 +373,7 @@ void Options::setDefaults ()
     languageAutoDetect = langMgr.isOSLanguageDetectSupported();
     lastSaveAsPath = "";
     overwriteOutputFile = false;        // if TRUE, existing output JPGs/PNGs are overwritten, instead of adding ..-1.jpg, -2.jpg etc.
-    theme = "25-Gray-Gray";
+    theme = "cookiedough";
     slimUI = false;
     useSystemTheme = false;
     maxThumbnailHeight = 250;

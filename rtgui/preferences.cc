@@ -909,7 +909,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     theme->set_active (0);
     std::vector<Glib::ustring> themes;
-    parseDir (argv0 + "/themes", themes, ".gtkrc");
+    parseDir (argv0 + "/themes", themes, ".css");
 
     for (size_t i = 0; i < themes.size(); i++) {
         theme->append (themes[i]);
@@ -1338,6 +1338,10 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
     for (Glib::DirIterator i = dir->begin(); i != dir->end(); ++i) {
         Glib::ustring fname = Glib::build_filename(dirname, *i);
         Glib::ustring sname = *i;
+
+        if (sname == "slim.css") {
+            continue;
+        }
 
         // ignore directories
         if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR) && sname.size() >= ext.size() && sname.substr (sname.size() - ext.size(), ext.size()).casefold() == ext) {
@@ -1960,20 +1964,33 @@ void Preferences::fontChanged ()
 void Preferences::switchThemeTo(Glib::ustring newTheme, bool slimInterface)
 {
 
-    //Glib::ustring filename(argv0 + "/themes/" + options.theme + ".css");
-    // Forcing the default dark theme
-    Glib::ustring filename(argv0 + "/themes/rtcommon.css");
+    Glib::ustring filename(argv0 + "/themes/" + newTheme + ".css");
 
     if (!css) {
         css = Gtk::CssProvider::create();
     }
 
+    bool loaded = true;
     try {
         css->load_from_path (filename);
     } catch (Glib::Error &err) {
         printf("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
+        loaded = false;
     } catch (...) {
         printf("Error: Can't load css file \"%s\"\n", filename.c_str());
+        loaded = false;
+    }
+
+    if (!loaded && options.theme != "rtcommon") {
+        try {
+            printf("Trying with \"rtcommon.css\"\n");
+            filename = argv0 + "/themes/rtcommon.css";
+            css->load_from_path (filename);
+        } catch (Glib::Error &err) {
+            printf("Error: Can't load css file \"rtcommon.css\"\nMessage: %s\n", err.what().c_str());
+        } catch (...) {
+            printf("Error: Can't load css file \"%s\"\n", filename.c_str());
+        }
     }
 
     options.slimUI = slimInterface;
@@ -1985,7 +2002,7 @@ void Preferences::switchThemeTo(Glib::ustring newTheme, bool slimInterface)
             slimCreated = true;
         }
 
-        filename = argv0 + "/themes/cookiedough.css";
+        filename = argv0 + "/themes/slim.css";
 
         try {
             cssSlim->load_from_path (filename);

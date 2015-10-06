@@ -101,11 +101,15 @@ Glib::ustring RTImage::findIconAbsolutePath(const Glib::ustring &iconFName)
 
 void RTImage::setPaths(Options &opt)
 {
+    imagesPaths.clear();
+
+    /*
+     * Forcing the Dark theme, so reading the .iconset file is useless for now
+     *
+     *
     Glib::ustring configFilename;
     rtengine::SafeKeyFile keyFile;
     bool hasKeyFile = true;
-
-    imagesPaths.clear();
 
     // system theme will use the theme set in system.iconset
     if (opt.useSystemTheme) {
@@ -119,7 +123,7 @@ void RTImage::setPaths(Options &opt)
     try {
         if (!safe_file_test(configFilename, Glib::FILE_TEST_EXISTS) || !keyFile.load_from_file (configFilename)) {
             // ...otherwise fallback to the iconset set in default.iconset
-            configFilename = Glib::build_filename(argv0, Glib::build_filename("themes", "Default.iconset"));
+            configFilename = Glib::build_filename(argv0, Glib::build_filename("themes", "default.iconset"));
 
             if (!keyFile.load_from_file (configFilename)) {
                 hasKeyFile = false;
@@ -139,7 +143,7 @@ void RTImage::setPaths(Options &opt)
         Glib::ustring iSet;
 
         if (keyFile.has_key ("General", "Iconset")) {
-            iSet = "Dark";    //keyFile.get_string ("General", "Iconset");
+            iSet = keyFile.get_string ("General", "Iconset");
         }
 
         if (iSet.length()) {
@@ -161,7 +165,12 @@ void RTImage::setPaths(Options &opt)
             imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "devices"))));
             imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "places"))));
         }
-    }
+    }*/
+
+    imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename("Dark", "actions"))));
+    imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", "Dark")));
+    imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename("Dark", "devices"))));
+    imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename("Dark", "places"))));
 
     // The images/ folder is the second fallback solution
     imagesPaths.push_back (Glib::build_filename(argv0, "images"));
