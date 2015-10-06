@@ -241,7 +241,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             moderetinex = 3;
         }
         
-        float high = (float) deh.highl;
+        float high = 0.6f*(float) deh.highl;//reduce sensibility
         retinex_scales( RetinexScales, scal, moderetinex, nei, high );
 
         int H_L = height;
@@ -318,7 +318,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                         }
                     } else {
                         for (; j < W_L; j++) {
-                                luminance[i][j] +=  pond * xlogf(LIM(src[i][j] / out[i][j], ilimD, limD));
+                            luminance[i][j] +=  pond * xlogf(LIM(src[i][j] / out[i][j], ilimD, limD));
                         }
                     }
                 }

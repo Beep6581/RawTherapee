@@ -627,7 +627,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     Imagefloat* baseImg = new Imagefloat (fw, fh);
     imgsrc->getImage (currWB, tr, baseImg, pp, params.toneCurve, params.icm, params.raw);
-//    printf("befo color R=%f G=%f B=%f\n",baseImg->r(50, 2300),baseImg->g(50, 2300),baseImg->b(50, 2300));
     if (pl) {
         pl->setProgress (0.50);
     }
@@ -717,7 +716,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     delete [] Max_B_;
 
     imgsrc->convertColorSpace(baseImg, params.icm, currWB);
-   // printf("after color R=%f G=%f B=%f\n",baseImg->r(50, 2300),baseImg->g(50, 2300),baseImg->b(50, 2300));
 
     // perform first analysis
     LUTu hist16 (65536);
@@ -817,7 +815,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         float moyS = 0.f;
         float eqty = 0.f;
         ipf.moyeqt (baseImg, moyS, eqty);//return image : mean saturation and standard dev of saturation
-        //printf("moy=%f ET=%f\n", moyS,eqty);
         float satp = ((moyS + 1.5f * eqty) - 0.3f) / 0.7f; //1.5 sigma ==> 93% pixels with high saturation -0.3 / 0.7 convert to Hombre scale
 
         if(satp >= 0.92f) {
