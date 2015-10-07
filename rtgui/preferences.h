@@ -128,7 +128,6 @@ protected:
 
     Gtk::ComboBoxText* theme;
     Gtk::CheckButton* slimUI;
-    Gtk::HBox* hbtheme;
     Gtk::CheckButton* chUseSystemTheme;
     Gtk::FontButton* fontbutton;
     Gtk::ColorButton* butCropCol;

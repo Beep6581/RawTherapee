@@ -86,6 +86,10 @@ GtkFrame {
 	padding: 4px 4px;
 }
 
+GtkFrame GtkGrid {
+	padding: 4px 4px;
+}
+
 GtkNotebook {
 	padding: 4px;
 }
