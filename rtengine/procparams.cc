@@ -160,6 +160,9 @@ void RetinexParams::setDefaults()
     cdcurve.push_back(DCT_Linear);
     cdHcurve.clear();
     cdHcurve.push_back(DCT_Linear);
+    lhcurve.clear();
+    lhcurve.push_back(DCT_Linear);
+    
     getDefaulttransmissionCurve(transmissionCurve);
 }
 
@@ -1513,6 +1516,11 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         keyFile.set_double_list("Retinex", "CDHCurve", cdHcurve);
     }
 
+    if (!pedited || pedited->retinex.lhcurve)  {
+        Glib::ArrayHandle<double> lhcurve = retinex.lhcurve;
+        keyFile.set_double_list("Retinex", "LHCurve", lhcurve);
+    }
+    
     if (!pedited || pedited->retinex.transmissionCurve)  {
         Glib::ArrayHandle<double> transmissionCurve = retinex.transmissionCurve;
         keyFile.set_double_list("Retinex", "TransmissionCurve", transmissionCurve);
@@ -3931,6 +3939,14 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Retinex", "LHCurve"))         {
+                retinex.lhcurve            = keyFile.get_double_list ("Retinex", "LHCurve");
+
+                if (pedited) {
+                    pedited->retinex.lhcurve = true;
+                }
+            }
+            
             if (keyFile.has_key ("Retinex", "TransmissionCurve"))         {
                 retinex.transmissionCurve            = keyFile.get_double_list ("Retinex", "TransmissionCurve");
 
@@ -7302,6 +7318,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && toneCurve.method == other.toneCurve.method
         && retinex.cdcurve == other.retinex.cdcurve
         && retinex.cdHcurve == other.retinex.cdHcurve
+        && retinex.lhcurve == other.retinex.lhcurve
         && retinex.transmissionCurve == other.retinex.transmissionCurve
         && retinex.str == other.retinex.str
         && retinex.scal == other.retinex.scal

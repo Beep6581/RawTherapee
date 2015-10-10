@@ -271,6 +271,7 @@ public:
     bool enabled;
     std::vector<double>   cdcurve;
     std::vector<double>   cdHcurve;
+    std::vector<double>   lhcurve;
     std::vector<double> transmissionCurve;
     int     str;
     int     scal;

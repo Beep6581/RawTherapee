@@ -453,6 +453,7 @@ enum ProcEvent {
     EvLhighl = 423,
     EvLhighlig = 424,
     EvLgrbl = 425,
+    EvRetinexlhcurve = 426,
     NUMOFEVENTS
 };
 }

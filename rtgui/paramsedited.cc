@@ -51,6 +51,7 @@ void ParamsEdited::set (bool v)
     toneCurve.method    = v;
     retinex.cdcurve    = v;
     retinex.cdHcurve    = v;
+    retinex.lhcurve    = v;
     retinex.retinexMethod    = v;
     retinex.retinexcolorspace    = v;
     retinex.gammaretinex    = v;
@@ -527,6 +528,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         toneCurve.method = toneCurve.method && p.toneCurve.method == other.toneCurve.method;
         retinex.cdcurve = retinex.cdcurve && p.retinex.cdcurve == other.retinex.cdcurve;
         retinex.cdHcurve = retinex.cdHcurve && p.retinex.cdHcurve == other.retinex.cdHcurve;
+        retinex.lhcurve = retinex.lhcurve && p.retinex.lhcurve == other.retinex.lhcurve;
         retinex.transmissionCurve = retinex.transmissionCurve && p.retinex.transmissionCurve == other.retinex.transmissionCurve;
         retinex.retinexMethod = retinex.retinexMethod && p.retinex.retinexMethod == other.retinex.retinexMethod;
         retinex.retinexcolorspace = retinex.retinexcolorspace && p.retinex.retinexcolorspace == other.retinex.retinexcolorspace;
@@ -1048,6 +1050,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.retinex.cdHcurve    = mods.retinex.cdHcurve;
     }
 
+    if (retinex.lhcurve) {
+        toEdit.retinex.lhcurve    = mods.retinex.lhcurve;
+    }
+    
     if (retinex.transmissionCurve) {
         toEdit.retinex.transmissionCurve    = mods.retinex.transmissionCurve;
     }

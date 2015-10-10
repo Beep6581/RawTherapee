@@ -1861,7 +1861,7 @@ gg=green[380][1630];
 bb=blue[380][1630];
 printf("rr2=%f gg2=%f bb2=%f \n",rr,gg,bb);
 */
-
+/*
 if(retinexParams.highlig < 100 && retinexParams.retinexMethod == "highliplus") {//try to recover magenta...very difficult !
     float hig = ((float)retinexParams.highlig)/100.f;
     float higgb = ((float)retinexParams.grbl)/100.f;
@@ -1878,12 +1878,12 @@ if(retinexParams.highlig < 100 && retinexParams.retinexMethod == "highliplus") {
                 
                 //empirical method to find highlight magenta with no conversion RGB and no white balance
                 //red = master   Gr and Bl default higgb=0.5
-                if(R_>65535.f*hig  && G_ > 65535.f*higgb && B_ > 65535.f*higgb) conversionBuffer[3][i - border][j - border] = R_;
-                else conversionBuffer[3][i - border][j - border] = 0.f;
+     //           if(R_>65535.f*hig  && G_ > 65535.f*higgb && B_ > 65535.f*higgb) conversionBuffer[3][i - border][j - border] = R_;
+      //          else conversionBuffer[3][i - border][j - border] = 0.f;
             }
         }    
 }
-        
+*/        
 if(retinexParams.gammaretinex != "none" && retinexParams.str != 0) {//gamma           
 #ifdef _OPENMP
         #pragma omp parallel for
@@ -1936,6 +1936,7 @@ if(retinexParams.gammaretinex != "none" && retinexParams.str != 0) {//gamma
                     _mm_storeu_ps(&conversionBuffer[1][i - border][j - border], S);
                     L *= c32768;
                     _mm_storeu_ps(&conversionBuffer[2][i - border][j - border], L);
+                    _mm_storeu_ps(&conversionBuffer[3][i - border][j - border], H);
 
                     if(lhist16RETI) {
                         for(int p = 0; p < 4; p++) {
@@ -2018,6 +2019,7 @@ if(retinexParams.gammaretinex != "none" && retinexParams.str != 0) {//gamma
                     conversionBuffer[0][i - border][j - border] = aa;
                     conversionBuffer[1][i - border][j - border] = bb;
                     conversionBuffer[2][i - border][j - border] = L;
+                    conversionBuffer[3][i - border][j - border] = xatan2f(bb,aa);
  //                   if(R_>40000.f  && G_ > 30000.f && B_ > 30000.f) conversionBuffer[3][i - border][j - border] = R_;
  //                   else conversionBuffer[3][i - border][j - border] = 0.f;
                     if(lhist16RETI) {
@@ -2118,6 +2120,25 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         dLcurve.clear();
     }
 
+        FlatCurve* chcurve = NULL;//curve c=f(H)
+        bool chutili = false;
+
+        if (deh.enabled && deh.retinexMethod == "highli") {
+            chcurve = new FlatCurve(deh.lhcurve);
+
+            if (!chcurve || chcurve->isIdentity()) {
+                if (chcurve) {
+                    delete chcurve;
+                    chcurve = NULL;
+                }
+            }
+            else {
+                chutili = true;
+            }
+        }
+    
+    
+    
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -2174,10 +2195,30 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
             histLRETI[hi] += hist16RET[i];
         }
     }
-
     MSR(LBuffer, conversionBuffer[2], conversionBuffer[3], WNew, HNew, deh, dehatransmissionCurve, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
         
     if(useHsl) {
+        if(chutili) {   
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif        
+            for (int i = border; i < H - border; i++ ) {
+                int j = border;
+                for (; j < W - border; j++) {
+        
+                float valp;
+                float chr;
+                //   if(chutili) {  // c=f(H)
+                        {
+                            valp = float((chcurve->getVal(conversionBuffer[3][i - border][j - border]) - 0.5f));
+              
+                            conversionBuffer[1][i - border][j - border] *= (1.f + 2.f*valp);
+                        }
+                //    }
+        
+                }
+            }
+        }
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -2223,6 +2264,14 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
                 float Chprov1 = sqrt(SQR(conversionBuffer[0][i - border][j - border]) + SQR(conversionBuffer[1][i - border][j - border])) / 327.68f;
                 float  HH = xatan2f(conversionBuffer[1][i - border][j - border], conversionBuffer[0][i - border][j - border]);
                 float2 sincosval;
+                float valp;
+                float chr;
+                    if(chutili) {  // c=f(H)
+                        {
+                            valp = float((chcurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5f));
+                            Chprov1 *= (1.f + 2.f*valp);
+                        }
+                    }
                 
                 sincosval = xsincosf(HH);
                 float R,G,B;
@@ -2242,7 +2291,8 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
                     conversionBuffer[1][i - border][j - border] = 327.68f * Chprov1 * sincosval.x;
                     LBuffer[i - border][j - border] = Lprov1 * 327.68f;
             }
-        }          
+        }  
+        
         //end gamut control
 #ifdef __SSE2__
         vfloat wipv[3][3];
@@ -2286,6 +2336,10 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
             }
         }
 }
+        if (chcurve) {
+            delete chcurve;
+        }
+
 if(deh.gammaretinex != "none"  && deh.str !=0){//inverse gamma        
 #ifdef _OPENMP
         #pragma omp parallel for

@@ -230,7 +230,7 @@ public:
 
     void boxblur2(float** src, float** dst, int H, int W, int box );
     void boxblur_resamp(float **src, float **dst, int H, int W, int box, int samp );
-    void MSR(float** luminance, float **originalLuminance, float **exLuminance, int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
+    void MSR(float** luminance, float **originalLuminance, float **exLuminance,  int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
 //   void MSR(LabImage* lab, int width, int height, int skip, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve);
 
     //void boxblur_resamp(float **red, float **green, float **blue, int H, int W, float thresh[3], float max[3],

@@ -78,6 +78,7 @@ public:
     bool transmissionCurve;
     bool cdcurve;
     bool cdHcurve;
+    bool lhcurve;
     bool retinex;
     bool medianmap;
     bool isUnchanged() const;

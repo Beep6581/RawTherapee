@@ -656,6 +656,7 @@ HISTORY_MSG_423;Retinex - slope
 HISTORY_MSG_424;Retinex - HL threshold
 HISTORY_MSG_425;Retinex - HL control red
 HISTORY_MSG_426;Retinex - HL control GB
+HISTORY_MSG_427;Retinex - Hue equalizer
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1564,6 +1565,9 @@ TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
 TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
 TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Correct raw data to reduce halos and artifacts
+TP_RETINEX_CONTEDIT_LH;Hue equalizer
+TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
+TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Equalize strength in function of hue\nIf Reinex method='highlight' also acts on the chroma
 TP_RETINEX_GAIN;Gain
 TP_RETINEX_GAIN_TOOLTIP;Acts on the transmission in combination with offset, this is very different from others settings. Used for black or white pixels, and for better balance the histogram.
 TP_RETINEX_GAM;Gamma retinex
@@ -1590,7 +1594,7 @@ TP_RETINEX_LABSPACE;L*a*b*
 TP_RETINEX_LOW;Low
 TP_RETINEX_MEDIAN;Transmission median filter
 TP_RETINEX_METHOD;Method
-TP_RETINEX_METHOD_TOOLTIP;Low: Reinforce low light,\nUniform: Equalize action,\nHigh: Reinforce high light\nHighLight: Try to remove magenta\nHighlight More: Try to remove magenta + RGB action.
+TP_RETINEX_METHOD_TOOLTIP;Low: Reinforce low light,\nUniform: Equalize action,\nHigh: Reinforce high light\nHighLight: Try to remove magenta
 TP_RETINEX_MLABEL;Restored haze-free Min=%1 Max=%2
 TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
 TP_RETINEX_NEIGHBOR;Neighboring pixels

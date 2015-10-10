@@ -14,13 +14,14 @@
 #include "colorprovider.h"
 
 class Retinex : public ToolParamBlock, public FoldableToolPanel,  public rtengine::RetinexListener, public CurveListener,
-    public AdjusterListener
+    public AdjusterListener, public ColorProvider
 
 {
 
 protected:
     CurveEditorGroup* curveEditorGD;
     CurveEditorGroup* curveEditorGDH;
+    CurveEditorGroup* curveEditorGH;
     Adjuster* str;
     Adjuster* scal;
     Adjuster* neigh;
@@ -63,6 +64,7 @@ protected:
     sigc::connection retinexColorSpaceConn;
     sigc::connection gammaretinexConn;
     FlatCurveEditor* transmissionShape;
+    FlatCurveEditor* lhshape;
     bool lastmedianmap;
     sigc::connection medianmapConn;
 
@@ -93,6 +95,8 @@ public:
     void updateToolState (std::vector<int> &tpOpen);
     void setAdjusterBehavior (bool strAdd, bool neighAdd, bool scalAdd, bool limdAdd, bool gainAdd, bool offsAdd, bool vartAdd, bool gamAdd, bool slopeAdd);
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI);
+    
+    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
 
 private:
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);

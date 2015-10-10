@@ -204,7 +204,7 @@ void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L, const
     stddv = (float)sqrt(stddv);
 }
 
-void RawImageSource::MSR(float** luminance, float** originalLuminance, float **exLuminance, int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
+void RawImageSource::MSR(float** luminance, float** originalLuminance, float **exLuminance,  int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
     if (deh.enabled) {//enabled
         StopWatch Stop1("MSR");
@@ -228,6 +228,25 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         int moderetinex = 2; // default to 2 ( deh.retinexMethod == "high" )
         float hig = ((float) deh.highl)/100.f;
         bool higplus = false ;
+        
+        FlatCurve* shcurve = NULL;//curve L=f(H)
+        bool lhutili = false;
+
+        if (deh.enabled) {
+            shcurve = new FlatCurve(deh.lhcurve);
+
+            if (!shcurve || shcurve->isIdentity()) {
+                if (shcurve) {
+                    delete shcurve;
+                    shcurve = NULL;
+                }
+            }
+            else {
+                lhutili = true;
+            }
+        }
+        
+        
         if(deh.retinexMethod == "highliplus") higplus = true;
         
         if (deh.retinexMethod == "uni") {
@@ -442,6 +461,9 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         maxCD = -9999999.f;
         minCD = 9999999.f;
 
+        
+        
+        
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
@@ -465,7 +487,17 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                         cdmin = cd;
                     }
                     float str = strength;
-                    if(exLuminance[i][j] > 65535.f*hig && higplus) str *= hig;
+                    if(lhutili) {  // S=f(H)
+                        {
+                            float HH = exLuminance[i][j];
+                            float valparam;
+                            if(useHsl || useHslLin) valparam = float((shcurve->getVal(HH) - 0.5f));
+                            else valparam = float((shcurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5f));
+                            str *= (1.f + 2.f*valparam);
+                        }
+                    }
+                    
+                //    if(exLuminance[i][j] > 65535.f*hig && higplus) str *= hig;
                         luminance[i][j] = clipretinex( cd, 0.f, 32768.f ) * str + (1.f - str) * originalLuminance[i][j];
                 }
 
@@ -483,6 +515,11 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         Tsigma = stddv;
         Tmin = mintr;
         Tmax = maxtr;
+        
+        if (shcurve) {
+            delete shcurve;
+        }
+        
     }
 }
 

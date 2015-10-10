@@ -37,7 +37,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     retinexMethod->append_text (M("TP_RETINEX_UNIFORM"));
     retinexMethod->append_text (M("TP_RETINEX_HIGH"));
     retinexMethod->append_text (M("TP_RETINEX_HIGHLIG"));
-    retinexMethod->append_text (M("TP_RETINEX_HIGHLIGPLUS"));
+//    retinexMethod->append_text (M("TP_RETINEX_HIGHLIGPLUS"));
     retinexMethod->set_active(0);
     retinexMethodConn = retinexMethod->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::retinexMethodChanged) );
     retinexMethod->set_tooltip_markup (M("TP_RETINEX_METHOD_TOOLTIP"));
@@ -151,6 +151,27 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     limd->set_tooltip_markup (M("TP_RETINEX_THRESHOLD_TOOLTIP"));
     highlig->set_tooltip_markup (M("TP_RETINEX_HIGHLIGHT2_TOOLTIP"));
 
+    curveEditorGH = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_CONTEDIT_LH"));
+    curveEditorGH->setCurveListener (this);
+    
+    lhshape = static_cast<FlatCurveEditor*>(curveEditorGH->addCurve(CT_Flat, M("TP_RETINEX_CURVEEDITOR_LH")));
+    lhshape->setTooltip(M("TP_RETINEX_CURVEEDITOR_LH_TOOLTIP"));
+    lhshape->setCurveColorProvider(this, 4);
+   // lhshape->setEditID(EUID_Lab_LHCurve, BT_SINGLEPLANE_FLOAT);
+   
+    milestones.clear();
+
+    for (int i = 0; i < 7; i++) {
+        float R, G, B;
+        float x = float(i) * (1.0f / 6.0);
+        Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
+        milestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
+    }
+
+    lhshape->setBottomBarBgGradient(milestones);
+   
+    curveEditorGH->curveListComplete();
+    
     medianmap = Gtk::manage (new Gtk::CheckButton (M("TP_RETINEX_MEDIAN")));
     medianmap->set_active (true);
     medianmapConn  = medianmap->signal_toggled().connect( sigc::mem_fun(*this, &Retinex::medianmapChanged) );
@@ -167,6 +188,9 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     settingsVBox->pack_start (*curveEditorGDH, Gtk::PACK_SHRINK, 4);
     curveEditorGDH->show();
 
+    settingsVBox->pack_start (*curveEditorGH, Gtk::PACK_SHRINK, 4);
+    curveEditorGH->show();
+    
     gambox->pack_start(*gammaretinex);
     
     settingsVBox->pack_start(*gambox);
@@ -299,6 +323,7 @@ Retinex::~Retinex()
     delete curveEditorGD;
     delete curveEditorGDH;
     delete transmissionCurveEditorG;
+    delete curveEditorGH;
 
 }
 
@@ -437,6 +462,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
         cdshape->setUnChanged  (!pedited->retinex.cdcurve);
         cdshapeH->setUnChanged  (!pedited->retinex.cdHcurve);
         transmissionShape->setUnChanged (!pedited->retinex.transmissionCurve);
+        lhshape->setUnChanged  (!pedited->retinex.lhcurve);
 
     }
 
@@ -468,8 +494,8 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
         retinexMethod->set_active (2);
     } else if (pp->retinex.retinexMethod == "highli") {
         retinexMethod->set_active (3);
-    } else if (pp->retinex.retinexMethod == "highliplus") {
-        retinexMethod->set_active (4);
+//    } else if (pp->retinex.retinexMethod == "highliplus") {
+//        retinexMethod->set_active (4);
     }
 
     if (pp->retinex.retinexcolorspace == "Lab") {
@@ -502,6 +528,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     cdshape->setCurve  (pp->retinex.cdcurve);
     cdshapeH->setCurve  (pp->retinex.cdHcurve);
+    lhshape->setCurve  (pp->retinex.lhcurve);
 
     retinexMethodConn.block(false);
     retinexColorSpaceConn.block(false);
@@ -530,6 +557,7 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
     pp->retinex.highlig  = (int)highlig->getValue ();
     pp->retinex.grbl  = (int)grbl->getValue ();
     pp->retinex.cdcurve = cdshape->getCurve ();
+    pp->retinex.lhcurve = lhshape->getCurve ();
     pp->retinex.cdHcurve = cdshapeH->getCurve ();
     pp->retinex.transmissionCurve = transmissionShape->getCurve ();
     pp->retinex.enabled      = getEnabled();
@@ -558,6 +586,7 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->retinex.transmissionCurve  = !transmissionShape->isUnChanged ();
         pedited->retinex.enabled       = !get_inconsistent();
         pedited->retinex.medianmap       = !medianmap->get_inconsistent();
+        pedited->retinex.lhcurve   = !lhshape->isUnChanged ();
 
     }
 
@@ -569,8 +598,8 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
         pp->retinex.retinexMethod = "high";
     } else if (retinexMethod->get_active_row_number() == 3) {
         pp->retinex.retinexMethod = "highli";
-    } else if (retinexMethod->get_active_row_number() == 4) {
-        pp->retinex.retinexMethod = "highliplus";
+//    } else if (retinexMethod->get_active_row_number() == 4) {
+//        pp->retinex.retinexMethod = "highliplus";
     }
 
     if (retinexcolorspace->get_active_row_number() == 0) {
@@ -597,8 +626,8 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
 
 void Retinex::retinexMethodChanged()
 {
-    if (retinexMethod->get_active_row_number() == 4) {highl->show();highlig->show();grbl->show();}
-    else if(retinexMethod->get_active_row_number() == 3) {highl->show();highlig->hide();grbl->hide();}
+ //   if (retinexMethod->get_active_row_number() == 4) {highl->show();highlig->show();grbl->show();}
+    if(retinexMethod->get_active_row_number() == 3) {highl->show();highlig->hide();grbl->hide();}
     else {highl->hide();highlig->hide();grbl->hide();}
     if (listener) {
             listener->panelChanged (EvretinexMethod, retinexMethod->get_active_text ());
@@ -608,6 +637,8 @@ void Retinex::retinexMethodChanged()
 void Retinex::ColorSpaceUpdateUI ()
 {
     if (!batchMode) {
+                   curveEditorGH->show();
+ 
         if(retinexcolorspace->get_active_row_number() == 0) {
             curveEditorGD->show();
             curveEditorGDH->hide();
@@ -782,6 +813,7 @@ void Retinex::autoOpenCurve  ()
     cdshape->openIfNonlinear();
     cdshapeH->openIfNonlinear();
     transmissionShape->openIfNonlinear();
+    lhshape->openIfNonlinear();
 
 }
 
@@ -795,6 +827,8 @@ void Retinex::curveChanged (CurveEditor* ce)
             listener->panelChanged (EvLCDHCurve, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == transmissionShape) {
             listener->panelChanged (EvRetinextransmission, M("HISTORY_CUSTOMCURVE"));
+        } else if (ce == lhshape) {
+            listener->panelChanged (EvRetinexlhcurve, M("HISTORY_CUSTOMCURVE"));
         }
     }
 }
@@ -837,6 +871,52 @@ void Retinex::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histL
     cdshapeH->updateBackgroundHistogram (histLRETI);
 }
 
+void Retinex::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)
+{
+
+    float R, G, B;
+
+    if (elemType == ColorCaller::CCET_VERTICAL_BAR) {
+        valY = 0.5;
+    }
+
+    if (callerId == 1) {         // ch - main curve
+
+        Color::hsv2rgb01(float(valX), float(valY), 0.5f, R, G, B);
+    } else if (callerId == 2) {  // cc - bottom bar
+
+        float value = (1.f - 0.7f) * float(valX) + 0.7f;
+        // whole hue range
+        // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
+        Color::hsv2rgb01(float(valY), float(valX), value, R, G, B);
+    } else if (callerId == 3) {  // lc - bottom bar
+
+        float value = (1.f - 0.7f) * float(valX) + 0.7f;
+
+            // whole hue range
+            // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
+            Color::hsv2rgb01(float(valY), float(valX), value, R, G, B);
+    } else if (callerId == 4) {  // LH - bottom bar
+        Color::hsv2rgb01(float(valX), 0.5f, float(valY), R, G, B);
+    } else if (callerId == 5) {  // HH - bottom bar
+        float h = float((valY - 0.5) * 0.3 + valX);
+
+        if (h > 1.0f) {
+            h -= 1.0f;
+        } else if (h < 0.0f) {
+            h += 1.0f;
+        }
+
+        Color::hsv2rgb01(h, 0.5f, 0.5f, R, G, B);
+    }
+
+    caller->ccRed = double(R);
+    caller->ccGreen = double(G);
+    caller->ccBlue = double(B);
+}
+
+
+
 void Retinex::setBatchMode (bool batchMode)
 {
     ToolPanel::setBatchMode (batchMode);
@@ -855,6 +935,7 @@ void Retinex::setBatchMode (bool batchMode)
     curveEditorGD->setBatchMode (batchMode);
     curveEditorGDH->setBatchMode (batchMode);
     transmissionCurveEditorG->setBatchMode (batchMode);
+    curveEditorGH->setBatchMode (batchMode);
 
 
 }
