@@ -421,11 +421,46 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
         { { 1, 1, 1 }, { 1, -1, 1 }, { 1, 1, -1 } }
     };
 
+
+    for(int c=0;c<3;c++)
+        printf("chmax[%d] : %f\tclmax[%d] : %f\tratio[%d] : %f\n",c,chmax[c],c,clmax[c],c,chmax[c]/clmax[c]);
+
+    float factor[3];
+    for(int i=0;i<3;i++)
+        factor[i] = chmax[i]/clmax[i];
+
+    float minFactor = min(factor[0],factor[1],factor[2]);
+    if(minFactor > 1.f) { // all 3 channels clipped
+        // calculate clip factor per channel
+        for(int c=0;c<3;c++)
+            factor[c] /= minFactor;
+        // get max clip factor
+        int maxpos = 0;
+        float maxValNew = 0.f;
+        for(int c=0;c<3;c++)
+            if(chmax[c]/factor[c] > maxValNew) {
+                maxValNew = chmax[c]/factor[c];
+                maxpos = c;
+            }
+        float clipFactor = (clmax[maxpos]) / maxValNew;
+        if(clipFactor < maxpct)
+            // if max clipfactor < clippct (0.95) adjust per channel factors
+            for(int c=0;c<3;c++) {
+                factor[c] *= (maxpct / clipFactor);
+            }
+    } else {
+        factor[0] = factor[1] = factor[2] = 1.f;
+    }
+
+    for(int c=0;c<3;c++) {
+        printf("correction factor [%d] : %f\n",c,factor[c]);
+    }
+
     float max_f[3], thresh[3];
 
     for (int c = 0; c < 3; c++) {
-        thresh[c] = chmax[c] * threshpct;
-        max_f[c] = chmax[c] * maxpct; //min(chmax[0],chmax[1],chmax[2])*maxpct;
+        thresh[c] = chmax[c] * threshpct / factor[c];
+        max_f[c] = chmax[c] * maxpct / factor[c];
     }
 
     float whitept = max(max_f[0], max_f[1], max_f[2]);
