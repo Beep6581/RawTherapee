@@ -467,6 +467,10 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
     float clippt  = min(max_f[0], max_f[1], max_f[2]);
     float medpt   = max_f[0] + max_f[1] + max_f[2] - whitept - clippt;
     float blendpt = blendthresh * clippt;
+    float medFactor[3];
+    for(int c=0;c<3;c++) {
+        medFactor[c] = max(1.0f, max_f[c] / medpt) / (-blendpt);
+    }
 
     multi_array2D<float, 3> channelblur(width, height, 0, 48);
     array2D<float> temp(width, height); // allocate temporary buffer
@@ -1023,9 +1027,9 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
             FOREACHCOLOR rgb[c] = cam[0][c] / ColorCount;
 
             // Copy converted pixel back
-            float rfrac = min(1.0f, max(1.0f, max_f[0] / medpt) * (pixel[0] - blendpt) / (hlmax[0] - blendpt));
-            float gfrac = min(1.0f, max(1.0f, max_f[1] / medpt) * (pixel[1] - blendpt) / (hlmax[1] - blendpt));
-            float bfrac = min(1.0f, max(1.0f, max_f[2] / medpt) * (pixel[2] - blendpt) / (hlmax[2] - blendpt));
+            float rfrac = max(0.f,min(1.0f, medFactor[0] * (pixel[0] - blendpt)));
+            float gfrac = max(0.f,min(1.0f, medFactor[1] * (pixel[1] - blendpt)));
+            float bfrac = max(0.f,min(1.0f, medFactor[2] * (pixel[2] - blendpt)));
 
             if (pixel[0] > blendpt) {
                 rgb_blend[0] = rfrac * rgb[0] + (1 - rfrac) * pixel[0];
