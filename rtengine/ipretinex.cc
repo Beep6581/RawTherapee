@@ -263,8 +263,10 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         if (deh.retinexMethod == "highli" || deh.retinexMethod == "highliplus") {
             moderetinex = 3;
         }
-        
-        float high = 0.6f*(float) deh.highl;//reduce sensibility
+        float aahi = 49.f/99.f;////reduce sensibility 50%
+        float bbhi = 1.f - aahi;
+        float high;
+        high =  bbhi + aahi*(float) deh.highl;
         retinex_scales( RetinexScales, scal, moderetinex, nei, high );
 
         int H_L = height;
