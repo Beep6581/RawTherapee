@@ -30,7 +30,7 @@ protected:
     Adjuster* vart;
     Adjuster* limd;
     Adjuster* highl;
-    Adjuster* highlig;
+    Adjuster* baselog;
     Adjuster* grbl;
     Adjuster* gam;
     Adjuster* slope;

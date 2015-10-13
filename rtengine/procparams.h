@@ -286,8 +286,8 @@ public:
     int     vart;
     int     limd;
     int     highl;
-    int     highlig;
-    int     grbl;
+    double     baselog;
+//    int     grbl;
     bool    medianmap;
     RetinexParams ();
     void setDefaults();

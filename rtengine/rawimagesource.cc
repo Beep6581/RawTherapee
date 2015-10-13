@@ -1829,6 +1829,8 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
             double pwr = 1.0 / retinexParams.gam;
             double gamm = retinexParams.gam;
             double ts = retinexParams.slope;
+            double gamm2 = retinexParams.gam;
+            if(gamm2 < 1.) {pwr = 1./pwr; gamm = 1. / gamm;}
            
             int mode = 0, imax = 0;
             Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope
@@ -1839,7 +1841,10 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
                 double add = g_a4;
                 double mul = 1. + g_a4;
                 double x;
-                x = Color::gammareti (val, gamm, start, ts, mul , add);
+                if(gamm2 < 1.) {start = g_a2; add = g_a4;
+                    x = Color::igammareti (val, gamm, start, ts, mul , add);}
+                else
+                    x = Color::gammareti (val, gamm, start, ts, mul , add);
                     
                 lutTonereti[i] = CLIP(x * 65535.);// CLIP avoid in some case extra values
             }
@@ -2084,9 +2089,11 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
             double g_a0, g_a1, g_a2, g_a3, g_a4, g_a5;
             double pwr = 1.0 / deh.gam;
             double gamm = deh.gam;
+            double gamm2 = gamm;
             double ts = deh.slope;
             int mode = 0, imax = 0;
-           
+            if(gamm2 < 1.) {pwr = 1./pwr; gamm = 1. / gamm;}
+          
             Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope
         //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
             for (int i = 0; i < 65536; i++) {
@@ -2095,7 +2102,10 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
                 double mul = 1. + g_a4;
                 double add = g_a4;
                 double start = g_a2;
-                x = Color::igammareti (val, gamm, start, ts, mul , add);
+                if(gamm2 < 1.) {start = g_a3; add = g_a3;
+                    x = Color::gammareti (val, gamm, start, ts, mul , add);}
+                else
+                    x = Color::igammareti (val, gamm, start, ts, mul , add);
                     
                 lutToneireti[i] = CLIP(x * 65535.);
             }

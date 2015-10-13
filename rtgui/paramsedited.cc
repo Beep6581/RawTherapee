@@ -66,8 +66,8 @@ void ParamsEdited::set (bool v)
     retinex.vart    = v;
     retinex.limd    = v;
     retinex.highl    = v;
-    retinex.highlig    = v;
-    retinex.grbl    = v;
+    retinex.baselog    = v;
+//    retinex.grbl    = v;
     retinex.medianmap = v;
     retinex.transmissionCurve   = v;
     retinex.retinex = v;
@@ -543,8 +543,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         retinex.vart = retinex.vart && p.retinex.vart == other.retinex.vart;
         retinex.limd = retinex.limd && p.retinex.limd == other.retinex.limd;
         retinex.highl = retinex.highl && p.retinex.highl == other.retinex.highl;
-        retinex.highlig = retinex.highlig && p.retinex.highlig == other.retinex.highlig;
-        retinex.grbl = retinex.grbl && p.retinex.grbl == other.retinex.grbl;
+        retinex.baselog = retinex.baselog && p.retinex.baselog == other.retinex.baselog;
+//        retinex.grbl = retinex.grbl && p.retinex.grbl == other.retinex.grbl;
         retinex.medianmap = retinex.medianmap && p.retinex.medianmap == other.retinex.medianmap;
         retinex.enabled = retinex.enabled && p.retinex.enabled == other.retinex.enabled;
         labCurve.lcurve = labCurve.lcurve && p.labCurve.lcurve == other.labCurve.lcurve;
@@ -1102,13 +1102,13 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.retinex.highl   = mods.retinex.highl;
     }
 
-    if (retinex.highlig) {
-        toEdit.retinex.highlig   = mods.retinex.highlig;
+    if (retinex.baselog) {
+        toEdit.retinex.baselog   = mods.retinex.baselog;
     }
 
-    if (retinex.grbl) {
-        toEdit.retinex.grbl   = mods.retinex.grbl;
-    }
+//    if (retinex.grbl) {
+//        toEdit.retinex.grbl   = mods.retinex.grbl;
+//    }
     
     if (retinex.gain) {
         toEdit.retinex.gain   = dontforceSet && options.baBehav[ADDSET_RETI_GAIN] ? toEdit.retinex.gain + mods.retinex.gain : mods.retinex.gain;

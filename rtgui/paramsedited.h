@@ -72,8 +72,8 @@ public:
     bool vart;
     bool limd;
     bool highl;
-    bool highlig;
-    bool grbl;
+    bool baselog;
+//    bool grbl;
     bool method;
     bool transmissionCurve;
     bool cdcurve;

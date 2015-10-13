@@ -228,7 +228,11 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         int moderetinex = 2; // default to 2 ( deh.retinexMethod == "high" )
         float hig = ((float) deh.highl)/100.f;
         bool higplus = false ;
-        
+        float elogt;
+        float hl = deh.baselog;
+        if(hl >= 2.71828f) elogt = 2.71828f + SQR(SQR(hl - 2.71828f));
+        else elogt = hl;
+    //    printf("elo=%f\n",elogt);
         FlatCurve* shcurve = NULL;//curve L=f(H)
         bool lhutili = false;
 
@@ -308,6 +312,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 vfloat pondv = F2V(pond);
                 vfloat limMinv = F2V(ilimD);
                 vfloat limMaxv = F2V(limD);
+                vfloat elogtv = F2V(elogt);
 
 #endif
 #ifdef _OPENMP
@@ -316,7 +321,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
                 for (int i = 0; i < H_L; i++) {
                     int j = 0;
-                    
+                   
 #ifdef __SSE2__
 
                     if(useHslLin) {
@@ -325,7 +330,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                         }
                     } else {
                         for (; j < W_L - 3; j += 4) {
-                            _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  xlogf(LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
+                            _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  xlogf(LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) )/xlogf(elogtv));
                         }
                     }
 
@@ -337,7 +342,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                         }
                     } else {
                         for (; j < W_L; j++) {
-                            luminance[i][j] +=  pond * xlogf(LIM(src[i][j] / out[i][j], ilimD, limD));
+                            luminance[i][j] +=  pond * xlogf(LIM(src[i][j] / out[i][j], ilimD, limD))/log(elogt);//  /logt ?
                         }
                     }
                 }

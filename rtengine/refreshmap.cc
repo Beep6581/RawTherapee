@@ -451,8 +451,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DEMOSAIC,          // EvLgam
     DEMOSAIC,          // EvLslope
     ALLNORAW,          // EvLhighl
-    DEMOSAIC,          // EvLhighlig
-    DEMOSAIC,          // EvLgrbl
+    DEMOSAIC,          // EvLbaselog
+//    DEMOSAIC,          // EvLgrbl
     DEMOSAIC          // EvRetinexlhcurve
 };
 

@@ -150,8 +150,8 @@ void RetinexParams::setDefaults()
     vart    = 125;
     limd = 8;
     highl = 10;
-    highlig = 100;
-    grbl = 50;
+    baselog = 2.71828;
+//    grbl = 50;
     retinexMethod = "high";
     retinexcolorspace = "Lab";
     gammaretinex = "none";
@@ -1486,13 +1486,13 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         keyFile.set_integer ("Retinex", "highl",               retinex.highl);
     }
 
-    if (!pedited || pedited->retinex.highlig) {
-        keyFile.set_integer ("Retinex", "highlig",               retinex.highlig);
+    if (!pedited || pedited->retinex.baselog) {
+        keyFile.set_double ("Retinex", "baselog",               retinex.baselog);
     }
 
-    if (!pedited || pedited->retinex.grbl) {
-        keyFile.set_integer ("Retinex", "grbl",               retinex.grbl);
-    }
+//    if (!pedited || pedited->retinex.grbl) {
+//        keyFile.set_integer ("Retinex", "grbl",               retinex.grbl);
+//    }
     
     if (!pedited || pedited->retinex.retinexMethod) {
         keyFile.set_string  ("Retinex", "RetinexMethod", retinex.retinexMethod);
@@ -3907,22 +3907,22 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
-            if (keyFile.has_key ("Retinex", "highlig"))     {
-                retinex.highlig   = keyFile.get_integer ("Retinex", "highlig");
+            if (keyFile.has_key ("Retinex", "baselog"))     {
+                retinex.baselog   = keyFile.get_double ("Retinex", "baselog");
 
                 if (pedited) {
-                    pedited->retinex.highlig = true;
+                    pedited->retinex.baselog = true;
                 }
             }
 
-            if (keyFile.has_key ("Retinex", "grbl"))     {
+/*            if (keyFile.has_key ("Retinex", "grbl"))     {
                 retinex.grbl   = keyFile.get_integer ("Retinex", "grbl");
 
                 if (pedited) {
                     pedited->retinex.grbl = true;
                 }
             }
-            
+*/            
             if (keyFile.has_key ("Retinex", "CDCurve"))         {
                 retinex.cdcurve            = keyFile.get_double_list ("Retinex", "CDCurve");
 
@@ -7328,8 +7328,8 @@ bool ProcParams::operator== (const ProcParams& other)
         && retinex.gain == other.retinex.gain
         && retinex.limd == other.retinex.limd
         && retinex.highl == other.retinex.highl
-        && retinex.highlig == other.retinex.highlig
-        && retinex.grbl == other.retinex.grbl
+        && retinex.baselog == other.retinex.baselog
+//        && retinex.grbl == other.retinex.grbl
         && retinex.offs == other.retinex.offs
         && retinex.retinexMethod == other.retinex.retinexMethod
         && retinex.retinexcolorspace == other.retinex.retinexcolorspace
