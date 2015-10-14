@@ -18,7 +18,7 @@
  */
 #include "tonecurve.h"
 #include "adjuster.h"
-#include <sigc++/class_slot.h>
+#include <sigc++/slot.h>
 #include <iomanip>
 #include "ppversion.h"
 #include "edit.h"
