@@ -40,6 +40,8 @@ protected:
     Gtk::HBox* dhbox;
     Gtk::Label* labgam;
     Gtk::HBox* gambox;
+    Gtk::Button* neutral;
+    Gtk::HBox* neutrHBox;
     
     MyComboBoxText*   retinexMethod;
     MyComboBoxText*   retinexcolorspace;
@@ -56,11 +58,12 @@ protected:
 
     Gtk::Label* mMLabels;
     Gtk::Label* transLabels;
+    Gtk::Label* transLabels2;
 
     DiagonalCurveEditor* cdshape;
     DiagonalCurveEditor* cdshapeH;
     CurveEditorGroup* transmissionCurveEditorG;
-    sigc::connection retinexMethodConn;
+    sigc::connection retinexMethodConn, neutralconn;
     sigc::connection retinexColorSpaceConn;
     sigc::connection gammaretinexConn;
     FlatCurveEditor* transmissionShape;
@@ -84,6 +87,7 @@ public:
     bool minmaxComputed_ ();
     void updateLabel      ();
     void updateTrans      ();
+    void neutral_pressed       ();
 
     void enabledChanged        ();
     void curveChanged          (CurveEditor* ce);

@@ -147,7 +147,7 @@ void RetinexParams::setDefaults()
     neigh      = 80;
     gain        = 50;
     offs    = 0;
-    vart    = 125;
+    vart    = 200;
     limd = 8;
     highl = 10;
     baselog = 2.71828;

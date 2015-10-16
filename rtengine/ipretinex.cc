@@ -218,6 +218,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         gain2 = useHslLin ? gain2 * 0.5f : gain2;
         float offse = (float) deh.offs; //def = 0  not use
         int scal =  deh.scal; //def=3
+        scal = 3;//disabled scal
         int nei = (int) 2.8f * deh.neigh; //def = 220
         float vart = (float)deh.vart / 100.f;//variance
         float strength = (float) deh.str / 100.f; // Blend with original L channel data
@@ -232,7 +233,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         float hl = deh.baselog;
         if(hl >= 2.71828f) elogt = 2.71828f + SQR(SQR(hl - 2.71828f));
         else elogt = hl;
-    //    printf("elo=%f\n",elogt);
+        elogt = 2.71828f;//disabled baselog
         FlatCurve* shcurve = NULL;//curve L=f(H)
         bool lhutili = false;
 
@@ -458,7 +459,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         }
 
         delta = maxi - mini;
-        printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
+    //    printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
 
         if ( !delta ) {
             delta = 1.0f;

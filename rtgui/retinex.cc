@@ -119,6 +119,8 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     neigh = Gtk::manage (new Adjuster (M("TP_RETINEX_NEIGHBOR"), 6, 100., 1., 80.));
     highl   = Gtk::manage (new Adjuster (M("TP_RETINEX_HIGHLIGHT"), 1, 100, 1, 10));
     highl->set_tooltip_markup (M("TP_RETINEX_HIGHLIGHT_TOOLTIP"));
+    vart   = Gtk::manage (new Adjuster (M("TP_RETINEX_VARIANCE"), 50, 500, 1, 200));
+    vart->set_tooltip_markup (M("TP_RETINEX_VARIANCE_TOOLTIP"));
 
     expsettings = new MyExpander (false, M("TP_RETINEX_SETTINGS"));
     expsettings->signal_button_release_event().connect_notify( sigc::bind( sigc::mem_fun(this, &Retinex::foldAllButMe), expsettings) );
@@ -129,6 +131,9 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     retinexVBox->pack_start (*neigh);
     neigh->show ();
 
+    retinexVBox->pack_start (*vart);
+    vart->show ();
+    
     retinexVBox->pack_start (*highl);
     highl->show ();
     
@@ -137,17 +142,18 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     transLabels = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
     transLabels->set_tooltip_markup (M("TP_RETINEX_TLABEL_TOOLTIP"));
+    transLabels2 = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
 
     scal   = Gtk::manage (new Adjuster (M("TP_RETINEX_SCALES"), 1, 8., 1., 3.));
     gain   = Gtk::manage (new Adjuster (M("TP_RETINEX_GAIN"), 20, 200, 1, 50));
     offs   = Gtk::manage (new Adjuster (M("TP_RETINEX_OFFSET"), -10000, 10000, 1, 0));
-    vart   = Gtk::manage (new Adjuster (M("TP_RETINEX_VARIANCE"), 50, 500, 1, 125));
+//    vart   = Gtk::manage (new Adjuster (M("TP_RETINEX_VARIANCE"), 50, 500, 1, 125));
     limd   = Gtk::manage (new Adjuster (M("TP_RETINEX_THRESHOLD"), 2, 100, 1, 8));
     baselog   = Gtk::manage (new Adjuster (M("TP_RETINEX_BASELOG"), 1.1, 100., 0.001, 2.718));
 //    grbl   = Gtk::manage (new Adjuster (M("TP_RETINEX_HIGHLIGHT3"), 1, 100, 1, 50));
     gain->set_tooltip_markup (M("TP_RETINEX_GAIN_TOOLTIP"));
     scal->set_tooltip_markup (M("TP_RETINEX_SCALES_TOOLTIP"));
-    vart->set_tooltip_markup (M("TP_RETINEX_VARIANCE_TOOLTIP"));
+//    vart->set_tooltip_markup (M("TP_RETINEX_VARIANCE_TOOLTIP"));
     limd->set_tooltip_markup (M("TP_RETINEX_THRESHOLD_TOOLTIP"));
     baselog->set_tooltip_markup (M("TP_RETINEX_BASELOG_TOOLTIP"));
 
@@ -157,7 +163,6 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     lhshape = static_cast<FlatCurveEditor*>(curveEditorGH->addCurve(CT_Flat, M("TP_RETINEX_CURVEEDITOR_LH")));
     lhshape->setTooltip(M("TP_RETINEX_CURVEEDITOR_LH_TOOLTIP"));
     lhshape->setCurveColorProvider(this, 4);
-   // lhshape->setEditID(EUID_Lab_LHCurve, BT_SINGLEPLANE_FLOAT);
    
     milestones.clear();
 
@@ -182,6 +187,9 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     settingsVBox->pack_start (*transLabels);
     transLabels->show ();
 
+    settingsVBox->pack_start (*transLabels2);
+    transLabels2->show ();
+    
     settingsVBox->pack_start (*curveEditorGD, Gtk::PACK_SHRINK, 4);
     curveEditorGD->show();
 
@@ -203,8 +211,8 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     slope->show ();
     
     
-    settingsVBox->pack_start (*scal);
-    scal->show ();
+//    settingsVBox->pack_start (*scal);
+//    scal->show ();
 
     settingsVBox->pack_start (*gain);
     gain->show ();
@@ -212,8 +220,8 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     settingsVBox->pack_start (*offs);
     offs->show ();
 
-    settingsVBox->pack_start (*vart);
-    vart->show ();
+//    settingsVBox->pack_start (*vart);
+//    vart->show ();
 
     settingsVBox->pack_start (*limd);
     limd->show ();
@@ -221,8 +229,8 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 //    settingsVBox->pack_start (*highl);
 //    highl->show ();
 
-    settingsVBox->pack_start (*baselog);
-    baselog->show ();
+//    settingsVBox->pack_start (*baselog);
+//    baselog->show ();
 
 //    settingsVBox->pack_start (*grbl);
 //    grbl->show ();
@@ -232,9 +240,21 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     settingsVBox->pack_start (*medianmap);
     medianmap->show ();
-
     expsettings->add(*settingsVBox);
 
+    neutrHBox = Gtk::manage (new Gtk::HBox ());
+    neutrHBox->set_border_width (2);
+    
+    neutral = Gtk::manage (new Gtk::Button (M("TP_RETINEX_NEUTRAL")));
+    RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
+    neutral->set_image(*resetImg);
+    neutral->set_tooltip_text (M("TP_RETINEX_NEUTRAL_TIP"));
+    neutralconn = neutral->signal_pressed().connect( sigc::mem_fun(*this, &Retinex::neutral_pressed) );
+    neutral->show();
+    neutrHBox->pack_start (*neutral);
+
+    
+    
     str->setAdjusterListener (this);
 
     if (str->delay < 200) {
@@ -309,6 +329,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 */    
     pack_start (*retinexVBox);
     pack_start (*expsettings);
+    pack_start (*neutrHBox);
 
     disableListener();
     retinexColorSpaceChanged();
@@ -326,6 +347,24 @@ Retinex::~Retinex()
     delete curveEditorGH;
 
 }
+void Retinex::neutral_pressed ()
+{
+    neigh->resetValue(false);
+    gain->resetValue(false);
+    offs->resetValue(false);
+    str->resetValue(false);
+    scal->resetValue(false);
+    vart->resetValue(false);
+    limd->resetValue(false);
+    highl->resetValue(false);
+    baselog->resetValue(false);
+    gam->resetValue(false);
+    slope->resetValue(false);
+    transmissionShape->reset();
+    cdshape->reset();
+    cdshapeH->reset();
+    lhshape->reset();
+}    
 
 void Retinex::foldAllButMe (GdkEventButton* event, MyExpander *expander)
 {
@@ -413,10 +452,15 @@ void Retinex::updateTrans ()
                                        Glib::ustring::format(std::fixed, std::setprecision(1), nm),
                                        Glib::ustring::format(std::fixed, std::setprecision(1), nM),
                                        Glib::ustring::format(std::fixed, std::setprecision(1), nZ),
-                                       Glib::ustring::format(std::fixed, std::setprecision(1), nS),
+                                       Glib::ustring::format(std::fixed, std::setprecision(1), nS))
+            );
+            transLabels2->set_text(
+                Glib::ustring::compose(M("TP_RETINEX_TLABEL2"),
                                        Glib::ustring::format(std::fixed, std::setprecision(1), nA),
                                        Glib::ustring::format(std::fixed, std::setprecision(1), nB))
             );
+            
+            
         }
     }
 }

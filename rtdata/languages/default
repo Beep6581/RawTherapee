@@ -1596,6 +1596,8 @@ TP_RETINEX_METHOD_TOOLTIP;Low: Reinforce low light,\nUniform: Equalize action,\n
 TP_RETINEX_MLABEL;Restored haze-free Min=%1 Max=%2
 TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
 TP_RETINEX_NEIGHBOR;Neighboring pixels
+TP_RETINEX_NEUTRAL;Reset
+TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to default
 TP_RETINEX_NONE;None
 TP_RETINEX_OFFSET;Offset
 TP_RETINEX_SCALES;Scales
@@ -1604,8 +1606,9 @@ TP_RETINEX_SETTINGS;Settings
 TP_RETINEX_STRENGTH;Strength
 TP_RETINEX_THRESHOLD;Threshold
 TP_RETINEX_THRESHOLD_TOOLTIP;Limits in/out - in = image source - out = image Gauss
-TP_RETINEX_TLABEL;TR m=%1 M=%2 Me=%3 Si=%4 Tm=%5 TM=%6
-TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nm=Mini M=Maxi used by Variance.\nMe=Mean Si=Sigma\nTm=Min TM=Max of transmission map.
+TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
+TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
+TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max used by Variance.\nMean and Sigma\nTm=Min TM=Max of transmission map.
 TP_RETINEX_TRANSMISSION;Transmission map
 TP_RETINEX_TRANSMISSION_TOOLTIP;Modify transmission in function of transmission\nAbscissa : transmission from negatives values (min), mean, and positives values (max)\nOrdonate : amplification - reduction
 TP_RETINEX_UNIFORM;Uniform
