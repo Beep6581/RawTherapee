@@ -155,14 +155,14 @@ void RetinexParams::setDefaults()
     retinexMethod = "high";
     retinexcolorspace = "Lab";
     gammaretinex = "none";
-    medianmap = true;
+    medianmap = false;
     cdcurve.clear();
     cdcurve.push_back(DCT_Linear);
     cdHcurve.clear();
     cdHcurve.push_back(DCT_Linear);
     lhcurve.clear();
     lhcurve.push_back(DCT_Linear);
-    
+
     getDefaulttransmissionCurve(transmissionCurve);
 }
 
@@ -1451,7 +1451,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->retinex.slope) {
         keyFile.set_double ("Retinex", "Slope",               retinex.slope);
     }
-    
+
     if (!pedited || pedited->retinex.enabled) {
         keyFile.set_boolean ("Retinex", "Enabled", retinex.enabled);
     }
@@ -1493,7 +1493,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
 //    if (!pedited || pedited->retinex.grbl) {
 //        keyFile.set_integer ("Retinex", "grbl",               retinex.grbl);
 //    }
-    
+
     if (!pedited || pedited->retinex.retinexMethod) {
         keyFile.set_string  ("Retinex", "RetinexMethod", retinex.retinexMethod);
     }
@@ -1520,7 +1520,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         Glib::ArrayHandle<double> lhcurve = retinex.lhcurve;
         keyFile.set_double_list("Retinex", "LHCurve", lhcurve);
     }
-    
+
     if (!pedited || pedited->retinex.transmissionCurve)  {
         Glib::ArrayHandle<double> transmissionCurve = retinex.transmissionCurve;
         keyFile.set_double_list("Retinex", "TransmissionCurve", transmissionCurve);
@@ -3818,7 +3818,7 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                     pedited->retinex.gammaretinex = true;
                 }
             }
-            
+
             if (keyFile.has_key ("Retinex", "Enabled"))       {
                 retinex.enabled = keyFile.get_boolean ("Retinex", "Enabled");
 
@@ -3866,7 +3866,7 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                     pedited->retinex.slope = true;
                 }
             }
-            
+
             if (keyFile.has_key ("Retinex", "Gain"))     {
                 retinex.gain   = keyFile.get_integer ("Retinex", "Gain");
 
@@ -3922,7 +3922,7 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                     pedited->retinex.grbl = true;
                 }
             }
-*/            
+*/
             if (keyFile.has_key ("Retinex", "CDCurve"))         {
                 retinex.cdcurve            = keyFile.get_double_list ("Retinex", "CDCurve");
 
@@ -3946,7 +3946,7 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                     pedited->retinex.lhcurve = true;
                 }
             }
-            
+
             if (keyFile.has_key ("Retinex", "TransmissionCurve"))         {
                 retinex.transmissionCurve            = keyFile.get_double_list ("Retinex", "TransmissionCurve");
 

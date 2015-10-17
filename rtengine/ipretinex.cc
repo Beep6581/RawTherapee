@@ -44,7 +44,6 @@
 #include "rawimagesource.h"
 #include "improcfun.h"
 #include "opthelper.h"
-#include "StopWatch.h"
 #define MAX_RETINEX_SCALES   8
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 
@@ -207,7 +206,6 @@ void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L, const
 void RawImageSource::MSR(float** luminance, float** originalLuminance, float **exLuminance,  int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
     if (deh.enabled) {//enabled
-        StopWatch Stop1("MSR");
         float         mean, stddv, maxtr, mintr;
         //  float         mini, delta, maxi;
         float         delta;
@@ -250,10 +248,10 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 lhutili = true;
             }
         }
-        
-        
+
+
         if(deh.retinexMethod == "highliplus") higplus = true;
-        
+
         if (deh.retinexMethod == "uni") {
             moderetinex = 0;
         }
@@ -324,7 +322,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
                 for (int i = 0; i < H_L; i++) {
                     int j = 0;
-                   
+
 #ifdef __SSE2__
 
                     if(useHslLin) {
@@ -469,9 +467,9 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         maxCD = -9999999.f;
         minCD = 9999999.f;
 
-        
-        
-        
+
+
+
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
@@ -504,7 +502,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                             str *= (1.f + 2.f*valparam);
                         }
                     }
-                    
+
                 //    if(exLuminance[i][j] > 65535.f*hig && higplus) str *= hig;
                         luminance[i][j] = clipretinex( cd, 0.f, 32768.f ) * str + (1.f - str) * originalLuminance[i][j];
                 }
@@ -523,11 +521,11 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         Tsigma = stddv;
         Tmin = mintr;
         Tmax = maxtr;
-        
+
         if (shcurve) {
             delete shcurve;
         }
-        
+
     }
 }
 
