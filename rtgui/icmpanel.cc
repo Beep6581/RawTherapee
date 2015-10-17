@@ -30,7 +30,7 @@ using namespace rtengine::procparams;
 
 extern Options options;
 
-ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunchanged(NULL), icmplistener(NULL), lastRefFilename("")
+ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunchanged(NULL), icmplistener(NULL), lastRefFilename(""), camName("")
 {
 
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = lastBlendCMSMatrix = lastgamfree = false;
@@ -348,72 +348,76 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
     dcpIll->set_sensitive (false);
     dcpFrame->set_sensitive(false);
 
-    if (ifromfile->get_active() && dcpStore->isValidDCPFileName(dcp_name)) {
-        DCPProfile* dcp = dcpStore->getProfile(dcp_name, false);
+    DCPProfile* dcp = NULL;
 
-        if (dcp) {
-            dcpFrame->set_sensitive(true);
+    if(dcp_name == "(cameraICC)") {
+        dcp = dcpStore->getStdProfile(camName);
+    } else if (ifromfile->get_active() && dcpStore->isValidDCPFileName(dcp_name)) {
+        dcp = dcpStore->getProfile(dcp_name);
+    }
 
-            if (dcp->getHasToneCurve()) {
-                ckbToneCurve->set_sensitive (true);
+    if (dcp) {
+        dcpFrame->set_sensitive(true);
+
+        if (dcp->getHasToneCurve()) {
+            ckbToneCurve->set_sensitive (true);
+        }
+
+        if (dcp->getHasLookTable()) {
+            ckbApplyLookTable->set_sensitive (true);
+        }
+
+        if (dcp->getHasBaselineExposureOffset()) {
+            ckbApplyBaselineExposureOffset->set_sensitive (true);
+        }
+
+        if (dcp->getHasHueSatMap()) {
+            ckbApplyHueSatMap->set_sensitive (true);
+        }
+
+        int i1, i2;
+        double temp1, temp2;
+        bool willInterpolate;
+        dcp->getIlluminants(i1, temp1, i2, temp2, willInterpolate);
+
+        if (willInterpolate) {
+            if (dcpTemperatures[0] != temp1 || dcpTemperatures[1] != temp2) {
+                char tempstr1[64], tempstr2[64];
+                sprintf(tempstr1, "%.0fK", temp1);
+                sprintf(tempstr2, "%.0fK", temp2);
+                int curr_active = dcpIll->get_active_row_number();
+                ignoreDcpSignal = true;
+                dcpIll->clear_items ();
+                dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
+                dcpIll->append_text (tempstr1);
+                dcpIll->append_text (tempstr2);
+                dcpTemperatures[0] = temp1;
+                dcpTemperatures[1] = temp2;
+                dcpIll->set_active (curr_active);
+                ignoreDcpSignal = false;
             }
 
-            if (dcp->getHasLookTable()) {
-                ckbApplyLookTable->set_sensitive (true);
+            if (dcpIlluminant > 2) {
+                dcpIlluminant = 0;
             }
 
-            if (dcp->getHasBaselineExposureOffset()) {
-                ckbApplyBaselineExposureOffset->set_sensitive (true);
+            if (dcpIll->get_active_row_number() == -1 && dcpIlluminant == -1) {
+                ignoreDcpSignal = true;
+                dcpIll->set_active(0);
+                ignoreDcpSignal = false;
+            } else if (dcpIlluminant >= 0 && dcpIlluminant != dcpIll->get_active_row_number()) {
+                ignoreDcpSignal = true;
+                dcpIll->set_active(dcpIlluminant);
+                ignoreDcpSignal = false;
             }
 
-            if (dcp->getHasHueSatMap()) {
-                ckbApplyHueSatMap->set_sensitive (true);
-            }
-
-            int i1, i2;
-            double temp1, temp2;
-            bool willInterpolate;
-            dcp->getIlluminants(i1, temp1, i2, temp2, willInterpolate);
-
-            if (willInterpolate) {
-                if (dcpTemperatures[0] != temp1 || dcpTemperatures[1] != temp2) {
-                    char tempstr1[64], tempstr2[64];
-                    sprintf(tempstr1, "%.0fK", temp1);
-                    sprintf(tempstr2, "%.0fK", temp2);
-                    int curr_active = dcpIll->get_active_row_number();
-                    ignoreDcpSignal = true;
-                    dcpIll->clear_items ();
-                    dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
-                    dcpIll->append_text (tempstr1);
-                    dcpIll->append_text (tempstr2);
-                    dcpTemperatures[0] = temp1;
-                    dcpTemperatures[1] = temp2;
-                    dcpIll->set_active (curr_active);
-                    ignoreDcpSignal = false;
-                }
-
-                if (dcpIlluminant > 2) {
-                    dcpIlluminant = 0;
-                }
-
-                if (dcpIll->get_active_row_number() == -1 && dcpIlluminant == -1) {
-                    ignoreDcpSignal = true;
-                    dcpIll->set_active(0);
-                    ignoreDcpSignal = false;
-                } else if (dcpIlluminant >= 0 && dcpIlluminant != dcpIll->get_active_row_number()) {
-                    ignoreDcpSignal = true;
-                    dcpIll->set_active(dcpIlluminant);
-                    ignoreDcpSignal = false;
-                }
-
-                dcpIll->set_sensitive (true);
-                dcpIllLabel->set_sensitive (true);
-            } else {
-                if (dcpIll->get_active_row_number() != -1) {
-                    ignoreDcpSignal = true;
-                    dcpIll->set_active(-1);
-                    ignoreDcpSignal = false;
-                }
+            dcpIll->set_sensitive (true);
+            dcpIllLabel->set_sensitive (true);
+        } else {
+            if (dcpIll->get_active_row_number() != -1) {
+                ignoreDcpSignal = true;
+                dcpIll->set_active(-1);
+                ignoreDcpSignal = false;
             }
         }
     }
@@ -467,7 +471,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
     } else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state() != Gtk::STATE_INSENSITIVE) {
         icameraICC->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (true);
-        updateDCP(pp->icm.dcpIlluminant, "");
+        updateDCP(pp->icm.dcpIlluminant, "(cameraICC)");
     } else if ((pp->icm.input == "(cameraICC)") && icamera->get_state() != Gtk::STATE_INSENSITIVE && icameraICC->get_state() == Gtk::STATE_INSENSITIVE) {
         // this is the case when (cameraICC) is instructed by packaged profiles, but ICC file is not found
         // therefore falling back UI to explicitly reflect the (camera) option
@@ -478,7 +482,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
         // If neither (camera) nor (cameraICC) are available, as is the case when loading a non-raw, activate (embedded).
         iembedded->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
-        updateDCP(pp->icm.dcpIlluminant, "");
+        updateDCP(pp->icm.dcpIlluminant, "(cameraICC)");
     } else if ((pp->icm.input == "(camera)" || pp->icm.input == "") && icamera->get_state() != Gtk::STATE_INSENSITIVE) {
         icamera->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
@@ -603,25 +607,29 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
 
     pp->icm.freegamma = freegamma->get_active();
 
+    DCPProfile* dcp = NULL;
+
     if (ifromfile->get_active() && pp->icm.input.substr(0, 5) == "file:" && dcpStore->isValidDCPFileName(pp->icm.input.substr(5))) {
-        DCPProfile* dcp = dcpStore->getProfile(pp->icm.input.substr(5), false);
+        dcp = dcpStore->getProfile(pp->icm.input.substr(5));
+    } else if(icameraICC->get_active()) {
+        dcp = dcpStore->getStdProfile(camName);
+    }
 
-        if (dcp) {
-            if (dcp->getHasToneCurve()) {
-                pp->icm.toneCurve = ckbToneCurve->get_active ();
-            }
+    if (dcp) {
+        if (dcp->getHasToneCurve()) {
+            pp->icm.toneCurve = ckbToneCurve->get_active ();
+        }
 
-            if (dcp->getHasLookTable()) {
-                pp->icm.applyLookTable = ckbApplyLookTable->get_active ();
-            }
+        if (dcp->getHasLookTable()) {
+            pp->icm.applyLookTable = ckbApplyLookTable->get_active ();
+        }
 
-            if (dcp->getHasBaselineExposureOffset()) {
-                pp->icm.applyBaselineExposureOffset = ckbApplyBaselineExposureOffset->get_active ();
-            }
+        if (dcp->getHasBaselineExposureOffset()) {
+            pp->icm.applyBaselineExposureOffset = ckbApplyBaselineExposureOffset->get_active ();
+        }
 
-            if (dcp->getHasHueSatMap()) {
-                pp->icm.applyHueSatMap = ckbApplyHueSatMap->get_active ();
-            }
+        if (dcp->getHasHueSatMap()) {
+            pp->icm.applyHueSatMap = ckbApplyHueSatMap->get_active ();
         }
     }
 
@@ -880,6 +888,7 @@ void ICMPanel::setRawMeta (bool raw, const rtengine::ImageData* pMeta)
     icamera->set_active (raw);
     iembedded->set_active (!raw);
     icamera->set_sensitive (raw);
+    camName = pMeta->getCamera();
     icameraICC->set_sensitive (raw && (iccStore->getStdProfile(pMeta->getCamera()) != NULL || dcpStore->getStdProfile(pMeta->getCamera()) != NULL));
     iembedded->set_sensitive (!raw);
 

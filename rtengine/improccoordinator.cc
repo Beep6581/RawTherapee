@@ -226,13 +226,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
 
         imgsrc->demosaic( rp);//enabled demosaic
+        // if a demosaic happened we should also call getimage later, so we need to set the M_INIT flag
+        todo |= M_INIT;
 
         if (highDetailNeeded) {
             highDetailRawComputed = true;
-
-            if (params.toneCurve.hrenabled && params.toneCurve.method == "Color") {
-                todo |= M_INIT;
-            }
         } else {
             highDetailRawComputed = false;
         }

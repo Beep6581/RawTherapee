@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <sigc++/class_slot.h>
+#include <sigc++/slot.h>
 #include "preferences.h"
 #include "multilangmgr.h"
 #include "splash.h"

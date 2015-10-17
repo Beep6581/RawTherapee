@@ -37,7 +37,6 @@ namespace rtengine
 
 SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh)
 {
-
 #define HCLIP(x) x //is this still necessary???
     //min(clip_pt,x)
 
@@ -1615,10 +1614,10 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
                 if(plistener) {
                     progresscounter++;
 
-                    if(progresscounter % 4 == 0) {
+                    if(progresscounter % 16 == 0) {
                         #pragma omp critical
                         {
-                            progress += (double)4 * ((TS - 32) * (TS - 32)) / (height * width);
+                            progress += (double)16 * ((TS - 32) * (TS - 32)) / (height * width);
 
                             if (progress > 1.0)
                             {

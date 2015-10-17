@@ -17,7 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "thresholdadjuster.h"
-#include <sigc++/class_slot.h>
+#include <sigc++/slot.h>
 #include <cmath>
 #include "multilangmgr.h"
 #include "../rtengine/rtengine.h"
