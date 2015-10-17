@@ -260,7 +260,7 @@ public:
     inline MyReaderLock(MyRWMutex& mutex, const char* name, const char* file, const int line) : rwMutex(mutex), locked(false), locknumber(0)
 #else
 public:
-    inline MyReaderLock(MyRWMutex& mutex) : rwMutex(mutex)
+    inline MyReaderLock(MyRWMutex & mutex) : rwMutex(mutex)
 #endif
 
     {
@@ -496,7 +496,7 @@ public:
     inline MyWriterLock(MyRWMutex& mutex, const char* name, const char* file, const int line) : rwMutex(mutex), locked(false), locknumber(0)
 #else
 public:
-    inline MyWriterLock(MyRWMutex& mutex) : rwMutex(mutex)
+    inline MyWriterLock(MyRWMutex & mutex) : rwMutex(mutex)
 #endif
     {
         // to operate safely
