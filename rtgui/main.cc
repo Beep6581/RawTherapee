@@ -276,6 +276,10 @@ int main(int argc, char **argv)
             simpleEditor = true;
         }
 
+    if (options.theme.empty()) {
+        options.theme = "21-Gray-Gray";
+    }
+
     if (!options.useSystemTheme) {
         std::vector<Glib::ustring> rcfiles;
         rcfiles.push_back (argv0 + "/themes/" + options.theme + ".gtkrc");
