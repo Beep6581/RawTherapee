@@ -283,6 +283,10 @@ int main(int argc, char **argv)
             simpleEditor = true;
         }
 
+    if (options.theme.empty()) {
+        options.theme = "21-Gray-Gray";
+    }
+
     Gtk::Main m(&argc, &argv);
 
     Glib::ustring icon_path = Glib::build_filename(argv0, "images");

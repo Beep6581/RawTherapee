@@ -18,14 +18,7 @@
  */
 #include "tonecurve.h"
 #include "adjuster.h"
-
-// class_slot is no longer part of the sigc++ source tree, but starting from which version ?
-#if 1
 #include <sigc++/slot.h>
-#else
-#include <sigc++/class_slot.h>
-#endif
-
 #include <iomanip>
 #include "ppversion.h"
 #include "edit.h"
@@ -859,7 +852,7 @@ void ToneCurve::trimValues (rtengine::procparams::ProcParams* pp)
     saturation->trimValue(pp->toneCurve.saturation);
 }
 
-void ToneCurve::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, /*LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma)
+void ToneCurve::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, /*LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI)
 {
 
     shape->updateBackgroundHistogram (histToneCurve);

@@ -1242,7 +1242,7 @@ void RawImageSource::border_interpolate2( int winw, int winh, int lborders)
 // Joint Demosaicing and Denoising using High Order Interpolation Techniques
 // Revision 0.9.1a - 09/02/2010 - Contact info: luis.sanz.rodriguez@gmail.com
 // Copyright Luis Sanz Rodriguez 2010
-// Adapted to RT by Jacques Desmis 3/2013
+// Adapted to RawTherapee by Jacques Desmis 3/2013
 
 void RawImageSource::jdl_interpolate_omp()  // from "Lassus"
 {
@@ -1367,7 +1367,7 @@ void RawImageSource::jdl_interpolate_omp()  // from "Lassus"
 // Color demozaicing via directional Linear Minimum Mean Square-error Estimation,
 // IEEE Trans. on Image Processing, vol. 14, pp. 2167-2178,
 // Dec. 2005.
-// Adapted to RT by Jacques Desmis 3/2013
+// Adapted to RawTherapee by Jacques Desmis 3/2013
 // Improved speed and reduced memory consumption by Ingo Weyrich 2/2015
 //TODO Tiles to reduce memory consumption
 SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
@@ -2041,7 +2041,7 @@ SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int i
 *   Visit <http://www.gnu.org/licenses/> for more information.
 *
 ***/
-// Adapted to RT by Jacques Desmis 3/2013
+// Adapted to RawTherapee by Jacques Desmis 3/2013
 // SSE version by Ingo Weyrich 5/2013
 #ifdef __SSE2__
 #define CLIPV(a) LIMV(a,zerov,c65535v)
@@ -2965,7 +2965,7 @@ void RawImageSource::nodemosaic(bool bw)
 /*
    Refinement based on EECI demosaicing algorithm by L. Chang and Y.P. Tan
    Paul Lee
-   Adapted for Rawtherapee - Jacques Desmis 04/2013
+   Adapted for RawTherapee - Jacques Desmis 04/2013
 */
 
 #ifdef __SSE2__

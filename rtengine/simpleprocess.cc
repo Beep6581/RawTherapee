@@ -116,10 +116,29 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         pl->setProgress (0.30);
     }
 
-    imgsrc->HLRecovery_Global( params.toneCurve );
+    if(params.retinex.enabled) { //enabled Retinex
+        LUTf cdcurve (65536, 0);
+        LUTu dummy;
+        RetinextransmissionCurve dehatransmissionCurve;
+        bool dehacontlutili = false;
+        bool useHsl = false;
+//        multi_array2D<float, 3> conversionBuffer(1, 1);
+        multi_array2D<float, 4> conversionBuffer(1, 1);
+        imgsrc->retinexPrepareBuffers(params.icm, params.retinex, conversionBuffer, dummy);
+        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, dehatransmissionCurve, dehacontlutili, useHsl, dummy, dummy );
+        float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
+        imgsrc->retinex( params.icm, params.retinex, params.toneCurve, cdcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, dummy);
+    }
 
     if (pl) {
         pl->setProgress (0.40);
+    }
+
+    imgsrc->HLRecovery_Global( params.toneCurve );
+
+
+    if (pl) {
+        pl->setProgress (0.45);
     }
 
     // set the color temperature
@@ -610,7 +629,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     imgsrc->getImage (currWB, tr, baseImg, pp, params.toneCurve, params.icm, params.raw);
 
     if (pl) {
-        pl->setProgress (0.45);
+        pl->setProgress (0.50);
     }
 
 //  LUTf Noisecurve (65536,0);
@@ -797,7 +816,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         float moyS = 0.f;
         float eqty = 0.f;
         ipf.moyeqt (baseImg, moyS, eqty);//return image : mean saturation and standard dev of saturation
-        //printf("moy=%f ET=%f\n", moyS,eqty);
         float satp = ((moyS + 1.5f * eqty) - 0.3f) / 0.7f; //1.5 sigma ==> 93% pixels with high saturation -0.3 / 0.7 convert to Hombre scale
 
         if(satp >= 0.92f) {
@@ -847,7 +865,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     shmap = NULL;
 
     if (pl) {
-        pl->setProgress (0.5);
+        pl->setProgress (0.55);
     }
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -901,6 +919,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                                    params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve, params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve,
                                    hist16C, hist16C, dummy, dummy,
                                    1);
+//   ipf.MSR(labView, labView->W, labView->H, 1);
 
     ipf.chromiLuminanceCurve (NULL, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy, dummy, dummy);
 

@@ -206,12 +206,16 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"))
     curveEditorG->curveListComplete();
 
     pack_start (*curveEditorG, Gtk::PACK_SHRINK, 4);
+    Gtk::HSeparator *hsepdh = Gtk::manage (new  Gtk::HSeparator());
+    hsepdh->show ();
+    pack_start (*hsepdh, Gtk::PACK_EXPAND_WIDGET, 4);
 
 }
 
 LCurve::~LCurve ()
 {
     delete curveEditorG;
+
 }
 
 void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
@@ -246,7 +250,6 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
     contrast->setValue      (pp->labCurve.contrast);
     chromaticity->setValue  (pp->labCurve.chromaticity);
     adjusterChanged(chromaticity, pp->labCurve.chromaticity); // To update the GUI sensitiveness
-
     //%%%%%%%%%%%%%%%%%%%%%%
     rstprotection->setValue (pp->labCurve.rstprotection);
 
@@ -315,6 +318,7 @@ void LCurve::autoOpenCurve ()
     if (!active) {
         clshape->openIfNonlinear();
     }
+
 }
 
 void LCurve::setEditProvider  (EditDataProvider *provider)
@@ -338,7 +342,6 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
     pp->labCurve.brightness    = brightness->getValue ();
     pp->labCurve.contrast      = (int)contrast->getValue ();
     pp->labCurve.chromaticity  = (int)chromaticity->getValue ();
-
     //%%%%%%%%%%%%%%%%%%%%%%
     pp->labCurve.avoidcolorshift = avoidcolorshift->get_active ();
     pp->labCurve.lcredsk         = lcredsk->get_active ();
@@ -366,7 +369,6 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->labCurve.lcredsk         = !lcredsk->get_inconsistent();
 
         pedited->labCurve.rstprotection   = rstprotection->getEditedState ();
-        //%%%%%%%%%%%%%%%%%%%%%%
 
         pedited->labCurve.lcurve    = !lshape->isUnChanged ();
         pedited->labCurve.acurve    = !ashape->isUnChanged ();
@@ -377,7 +379,10 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->labCurve.hhcurve   = !hhshape->isUnChanged ();
         pedited->labCurve.lccurve   = !lcshape->isUnChanged ();
         pedited->labCurve.clcurve   = !clshape->isUnChanged ();
+
+
     }
+
 }
 
 void LCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
@@ -393,7 +398,6 @@ void LCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pedit
         contrast->setDefaultEditedState (pedited->labCurve.contrast ? Edited : UnEdited);
         chromaticity->setDefaultEditedState (pedited->labCurve.chromaticity ? Edited : UnEdited);
         rstprotection->setDefaultEditedState (pedited->labCurve.rstprotection ? Edited : UnEdited);
-
     } else {
         brightness->setDefaultEditedState (Irrelevant);
         contrast->setDefaultEditedState (Irrelevant);
@@ -503,6 +507,8 @@ void LCurve::curveChanged (CurveEditor* ce)
         if (ce == clshape) {
             listener->panelChanged (EvLCLCurve, M("HISTORY_CUSTOMCURVE"));
         }
+
+
     }
 }
 
@@ -616,14 +622,13 @@ void LCurve::setBatchMode (bool batchMode)
     contrast->showEditedCB ();
     chromaticity->showEditedCB ();
     rstprotection->showEditedCB ();
-
     curveEditorG->setBatchMode (batchMode);
     lcshape->setBottomBarColorProvider(NULL, -1);
     lcshape->setLeftBarColorProvider(NULL, -1);
 }
 
 
-void LCurve::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma)
+void LCurve::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI)
 {
 
     lshape->updateBackgroundHistogram (histLCurve);

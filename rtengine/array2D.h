@@ -23,7 +23,7 @@
  *  Usage:
  *
  *      array2D<type> name (X-size,Y-size);
- *      array2D<type> name (X-size,Y-size type ** data);
+ *      array2D<type> name (X-size,Y-size,type ** data);
  *
  *      creates an array which is valid within the normal C/C++ scope "{ ... }"
  *
@@ -75,7 +75,7 @@ private:
     T ** ptr;
     T * data;
     bool lock; // useful lock to ensure data is not changed anymore.
-    void ar_realloc(int w, int h)
+    void ar_realloc(int w, int h, int offset = 0)
     {
         if ((ptr) && ((h > y) || (4 * h < y))) {
             delete[] ptr;
@@ -92,14 +92,14 @@ private:
         }
 
         if (data == NULL) {
-            data = new T[h * w];
+            data = new T[h * w + offset];
         }
 
         x = w;
         y = h;
 
         for (int i = 0; i < h; i++) {
-            ptr[i] = data + w * i;
+            ptr[i] = data + offset + w * i;
         }
 
         owner = 1;
@@ -184,6 +184,19 @@ public:
         }
     }
 
+    void free()
+    {
+        if ((owner) && (data)) {
+            delete[] data;
+            data = NULL;
+        }
+
+        if (ptr) {
+            delete [] ptr;
+            ptr = NULL;
+        }
+    }
+
     // use with indices
     T * operator[](int index)
     {
@@ -207,7 +220,7 @@ public:
 
     // useful within init of parent object
     // or use as resize of 2D array
-    void operator()(int w, int h, unsigned int flgs = 0)
+    void operator()(int w, int h, unsigned int flgs = 0, int offset = 0)
     {
         flags = flgs;
 
@@ -223,10 +236,10 @@ public:
 
         lock = flags & ARRAY2D_LOCK_DATA;
 
-        ar_realloc(w, h);
+        ar_realloc(w, h, offset);
 
         if (flags & ARRAY2D_CLEAR_DATA) {
-            memset(data, 0, w * h * sizeof(T));
+            memset(data + offset, 0, w * h * sizeof(T));
         }
     }
 
@@ -298,10 +311,10 @@ private:
     array2D<T> list[num];
 
 public:
-    multi_array2D(int x, int y, int flags = 0)
+    multi_array2D(int x, int y, int flags = 0, int offset = 0)
     {
         for (size_t i = 0; i < num; i++) {
-            list[i](x, y, flags);
+            list[i](x, y, flags, (i + 1) * offset);
         }
     }
 
@@ -312,11 +325,7 @@ public:
 
     array2D<T> & operator[](int index)
     {
-        if (static_cast<size_t>(index) >= num) {
-            printf("index %0u is out of range[0..%0lu]", index, num - 1);
-            raise( SIGSEGV);
-        }
-
+        assert(static_cast<size_t>(index) < num);
         return list[index];
     }
 };

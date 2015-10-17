@@ -16,14 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-// class_slot is no longer part of the sigc++ source tree, but starting from which version ?
-#if 1
 #include <sigc++/slot.h>
-#else
-#include <sigc++/class_slot.h>
-#endif
-
 #include "preferences.h"
 #include "multilangmgr.h"
 #include "splash.h"
@@ -174,6 +167,18 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M("TP_EXPOSURE_BRIGHTNESS"), ADDSET_TC_BRIGHTNESS, false);
     appendBehavList (mi, M("TP_EXPOSURE_CONTRAST"), ADDSET_TC_CONTRAST, false);
     appendBehavList (mi, M("TP_EXPOSURE_SATURATION"), ADDSET_TC_SATURATION, false);
+
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_RETINEX_LABEL"));
+    appendBehavList (mi, M("TP_RETINEX_STRENGTH"), ADDSET_RETI_STR, false);
+    appendBehavList (mi, M("TP_RETINEX_NEIGHBOR"), ADDSET_RETI_NEIGH, false);
+    appendBehavList (mi, M("TP_RETINEX_GAMMA"), ADDSET_RETI_GAM, false);
+    appendBehavList (mi, M("TP_RETINEX_SLOPE"), ADDSET_RETI_SLO, false);
+    appendBehavList (mi, M("TP_RETINEX_SCALES"), ADDSET_RETI_SCAL, false);
+    appendBehavList (mi, M("TP_RETINEX_GAIN"), ADDSET_RETI_GAIN, false);
+    appendBehavList (mi, M("TP_RETINEX_OFFSET"), ADDSET_RETI_OFFS, false);
+    appendBehavList (mi, M("TP_RETINEX_THRESHOLD"), ADDSET_RETI_LIMD, false);
+    appendBehavList (mi, M("TP_RETINEX_VARIANCE"), ADDSET_RETI_VART, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_SHADOWSHLIGHTS_LABEL"));

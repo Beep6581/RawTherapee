@@ -19,6 +19,13 @@
 #include "refreshmap.h"
 #include "procevents.h"
 
+
+
+
+
+
+
+// Aligned so the first entry starts on line 30
 int refreshmap[rtengine::NUMOFEVENTS] = {
     ALL,              // EvPhotoLoaded,
     ALL,              // EvProfileLoaded,
@@ -169,7 +176,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     SHARPENING,       // EvSharpenEdgeThreechannels
     SHARPENING,       // EvSharpenMicroEnabled
     SHARPENING,       // EvSharpenMicroMatrix
-    DEMOSAIC,         // EvDemosaicALLEnhanced  // Disabled but not removed for now, may be reintroduced some day
+    DEMOSAIC,         // EvDemosaicALLEnhanced Disabled but not removed for now, may be reintroduced some day
     RGBCURVE,         // EvVibranceEnabled
     RGBCURVE,         // EvVibrancePastels
     RGBCURVE,         // EvVibranceSaturated
@@ -255,7 +262,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RGBCURVE,         // EvBWAfterCurve
     RGBCURVE,         // EvBWAfterCurveMode
     RGBCURVE,         // EvAutoch
-    NONE,             // --unused--
+    0,                // --unused--
     RGBCURVE,         // EvNeutralBW
     TRANSFORM,        // EvGradientFeather
     TRANSFORM,        // EvGradientStrength
@@ -275,14 +282,12 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DIRPYREQUALIZER,  // EvDirPyrEqlgamutlab
     DIRPYREQUALIZER,  // EvDirPyrEqualizerHueskin
     ALLNORAW,         // EvDPDNmedian
-    ALLNORAW,         //EvDPDNmedmet
-//DIRPYREQUALIZER   // EvDirPyrEqualizeralg
+    ALLNORAW,         // EvDPDNmedmet
     RGBCURVE,         // EvColorToningEnabled
     RGBCURVE,         // EvColorToningColor
     RGBCURVE,         // EvColorToningOpacity
     RGBCURVE,         // EvColorToningCLCurve
     RGBCURVE,         // EvColorToningMethod
-//RGBCURVE,       // EvColorToningTwocolor
     RGBCURVE,         // EvColorToningLLCurve
     RGBCURVE,         // EvColorToningredlow
     RGBCURVE,         // EvColorToninggreenlow
@@ -304,27 +309,27 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RGBCURVE,         // EvColorToningHighights
     RGBCURVE,         // EvColorToningSatProtection
     RGBCURVE,         // EvColorToningSatThreshold
-    RGBCURVE,           //EvColorToningStrength
-    RGBCURVE,           //EvColorToningautosat
-    ALLNORAW,           //EvDPDNmetmed
-    ALLNORAW,           //EvDPDNrgbmet
-    ALLNORAW,           //EvDPDNpasses
+    RGBCURVE,         // EvColorToningStrength
+    RGBCURVE,         // EvColorToningautosat
+    ALLNORAW,         // EvDPDNmetmed
+    ALLNORAW,         // EvDPDNrgbmet
+    ALLNORAW,         // EvDPDNpasses
     FLATFIELD,        // EvFlatFieldClipControl
     FLATFIELD,        // EvFlatFieldAutoClipControl
     DARKFRAME,        // EvPreProcessExpBlackRed
     DARKFRAME,        // EvPreProcessExpBlackGreen
     DARKFRAME,        // EvPreProcessExpBlackBlue
-    RGBCURVE,         //EvFilmSimulationEnabled
-    RGBCURVE,         //EvFilmSimulationStrength
-    RGBCURVE,         //EvFilmSimulationFilename
-    ALLNORAW,           //  EvDPDNLCurve
-    ALLNORAW,           //  EvDPDNsmet
+    RGBCURVE,         // EvFilmSimulationEnabled
+    RGBCURVE,         // EvFilmSimulationStrength
+    RGBCURVE,         // EvFilmSimulationFilename
+    ALLNORAW,         // EvDPDNLCurve
+    ALLNORAW,         // EvDPDNsmet
     DARKFRAME,        // EvPreProcessDeadPixel
-    ALLNORAW,           //EvDPDNCCCurve
-    ALLNORAW,           //EvDPDNautochroma
-    ALLNORAW,           //  EvDPDNLmet
-    ALLNORAW,           //  EvDPDNCmet
-    ALLNORAW,           //  EvDPDNC2met
+    ALLNORAW,         // EvDPDNCCCurve
+    ALLNORAW,         // EvDPDNautochroma
+    ALLNORAW,         // EvDPDNLmet
+    ALLNORAW,         // EvDPDNCmet
+    ALLNORAW,         // EvDPDNC2met
     DIRPYREQUALIZER,  // EvWavelet
     DIRPYREQUALIZER,  // EvEnabled
     DIRPYREQUALIZER,  // EvWavLmethod
@@ -365,69 +370,89 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DIRPYREQUALIZER,  // EvWavdaubcoeffmet
     DIRPYREQUALIZER,  // EvWavedgreinf
     DIRPYREQUALIZER,  // EvWaveletch
-    DIRPYREQUALIZER,  //EvWavCHSLmet
-    DIRPYREQUALIZER,   //EvWavedgcont
-    DIRPYREQUALIZER,   //EvWavEDmet
-    DIRPYREQUALIZER,   //EvWavlev0nois
-    DIRPYREQUALIZER,   //EvWavlev1nois
-    DIRPYREQUALIZER,   //EvWavlev2nois
-    DIRPYREQUALIZER,   //EvWavmedianlev
-    DIRPYREQUALIZER,   //EvWavHHCurve
-    DIRPYREQUALIZER,   //EvWavBackmet
-    DIRPYREQUALIZER,   //EvWavedgedetect
-    DIRPYREQUALIZER,   //EvWavlipst
-    DIRPYREQUALIZER,   //EvWavedgedetectthr
-    DIRPYREQUALIZER,   //EvWavedgedetectthr2
-    DIRPYREQUALIZER,   //EvWavlinkedg
-    DIRPYREQUALIZER,   //EvWavCHCurve
-    DARKFRAME,         //EvPreProcessHotDeadThresh
-    SHARPENING,         //EvEPDgamma
-    DIRPYREQUALIZER,   //EvWavtmr
-    DIRPYREQUALIZER,   //EvWavTMmet
-    DIRPYREQUALIZER,   //EvWavtmrs
-    DIRPYREQUALIZER,   //EvWavbalance
-    DIRPYREQUALIZER,   //EvWaviter
-    DIRPYREQUALIZER,   //EvWavgamma
-    DIRPYREQUALIZER,   //EvWavCLCurve
-    DIRPYREQUALIZER,        //EvWavopacity
-    DIRPYREQUALIZER,        //EvWavBAmet
-    DIRPYREQUALIZER,        //EvWavopacityWL
-    RESIZE,              // EvPrShrEnabled
-    RESIZE,              // EvPrShrRadius
-    RESIZE,              // EvPrShrAmount
-    RESIZE,              // EvPrShrThresh
-    RESIZE,              // EvPrShrEdgeOnly
-    RESIZE,              // EvPrShrEdgeRadius=375,
-    RESIZE,              // EvPrShrEdgeTolerance=376,
-    RESIZE,              // EvPrShrHaloControl=377,
-    RESIZE,              // EvPrShrHaloAmount=378,
-    RESIZE,              // EvPrShrMethod=379,
-    RESIZE,              // EvPrShrDRadius=380,
-    RESIZE,              // EvPrShrDAmount=381,
-    RESIZE,              // EvPrShrDDamping=382,
-    RESIZE,              // EvPrShrDIterations=383,
-    DIRPYREQUALIZER,     // EvWavcbenab
-    DIRPYREQUALIZER,     // EvWavgreenhigh
-    DIRPYREQUALIZER,     // EvWavbluehigh
-    DIRPYREQUALIZER,     // EvWavgreenmed
-    DIRPYREQUALIZER,     // EvWavbluemed
-    DIRPYREQUALIZER,     // EvWavgreenlow
-    DIRPYREQUALIZER,     // EvWavbluelow
-    DIRPYREQUALIZER,     // EvWavNeutral
-    RGBCURVE,            // EvDCPApplyLookTable,
-    RGBCURVE,            // EvDCPApplyBaselineExposureOffset,
-    INPUTPROFILE,        // EvDCPApplyHueSatMap
-    DIRPYREQUALIZER,     // EvWavenacont
-    DIRPYREQUALIZER,     // EvWavenachrom
-    DIRPYREQUALIZER,     // EvWavenaedge
-    DIRPYREQUALIZER,     // EvWavenares
-    DIRPYREQUALIZER,     // EvWavenafin
-    DIRPYREQUALIZER,     // EvWavenatoning
-    DIRPYREQUALIZER,     // EvWavenanoise
-    DIRPYREQUALIZER,     // EvWavedgesensi
-    DIRPYREQUALIZER,     // EvWavedgeampli
-    DIRPYREQUALIZER,      //EvWavlev3nois
-    DIRPYREQUALIZER       //EvWavNPmet
-
+    DIRPYREQUALIZER,  // EvWavCHSLmet
+    DIRPYREQUALIZER,  // EvWavedgcont
+    DIRPYREQUALIZER,  // EvWavEDmet
+    DIRPYREQUALIZER,  // EvWavlev0nois
+    DIRPYREQUALIZER,  // EvWavlev1nois
+    DIRPYREQUALIZER,  // EvWavlev2nois
+    DIRPYREQUALIZER,  // EvWavmedianlev
+    DIRPYREQUALIZER,  // EvWavHHCurve
+    DIRPYREQUALIZER,  // EvWavBackmet
+    DIRPYREQUALIZER,  // EvWavedgedetect
+    DIRPYREQUALIZER,  // EvWavlipst
+    DIRPYREQUALIZER,  // EvWavedgedetectthr
+    DIRPYREQUALIZER,  // EvWavedgedetectthr2
+    DIRPYREQUALIZER,  // EvWavlinkedg
+    DIRPYREQUALIZER,  // EvWavCHCurve
+    DARKFRAME,        // EvPreProcessHotDeadThresh
+    SHARPENING,       // EvEPDgamma
+    DIRPYREQUALIZER,  // EvWavtmr
+    DIRPYREQUALIZER,  // EvWavTMmet
+    DIRPYREQUALIZER,  // EvWavtmrs
+    DIRPYREQUALIZER,  // EvWavbalance
+    DIRPYREQUALIZER,  // EvWaviter
+    DIRPYREQUALIZER,  // EvWavgamma
+    DIRPYREQUALIZER,  // EvWavCLCurve
+    DIRPYREQUALIZER,  // EvWavopacity
+    DIRPYREQUALIZER,  // EvWavBAmet
+    DIRPYREQUALIZER,  // EvWavopacityWL
+    RESIZE,           // EvPrShrEnabled
+    RESIZE,           // EvPrShrRadius
+    RESIZE,           // EvPrShrAmount
+    RESIZE,           // EvPrShrThresh
+    RESIZE,           // EvPrShrEdgeOnly
+    RESIZE,           // EvPrShrEdgeRadius=375,
+    RESIZE,           // EvPrShrEdgeTolerance=376,
+    RESIZE,           // EvPrShrHaloControl=377,
+    RESIZE,           // EvPrShrHaloAmount=378,
+    RESIZE,           // EvPrShrMethod=379,
+    RESIZE,           // EvPrShrDRadius=380,
+    RESIZE,           // EvPrShrDAmount=381,
+    RESIZE,           // EvPrShrDDamping=382,
+    RESIZE,           // EvPrShrDIterations=383,
+    DIRPYREQUALIZER,  // EvWavcbenab
+    DIRPYREQUALIZER,  // EvWavgreenhigh
+    DIRPYREQUALIZER,  // EvWavbluehigh
+    DIRPYREQUALIZER,  // EvWavgreenmed
+    DIRPYREQUALIZER,  // EvWavbluemed
+    DIRPYREQUALIZER,  // EvWavgreenlow
+    DIRPYREQUALIZER,  // EvWavbluelow
+    DIRPYREQUALIZER,  // EvWavNeutral
+    RGBCURVE,         // EvDCPApplyLookTable,
+    RGBCURVE,         // EvDCPApplyBaselineExposureOffset,
+    INPUTPROFILE,     // EvDCPApplyHueSatMap
+    DIRPYREQUALIZER,  // EvWavenacont
+    DIRPYREQUALIZER,  // EvWavenachrom
+    DIRPYREQUALIZER,  // EvWavenaedge
+    DIRPYREQUALIZER,  // EvWavenares
+    DIRPYREQUALIZER,  // EvWavenafin
+    DIRPYREQUALIZER,  // EvWavenatoning
+    DIRPYREQUALIZER,  // EvWavenanoise
+    DIRPYREQUALIZER,  // EvWavedgesensi
+    DIRPYREQUALIZER,  // EvWavedgeampli
+    DIRPYREQUALIZER,  // EvWavlev3nois
+    DIRPYREQUALIZER,  // EvWavNPmet
+    ALLNORAW,         // EvretinexMethod
+    ALLNORAW,         // EvLneigh
+    ALLNORAW,         // EvLgain
+    ALLNORAW,         // EvLoffs
+    ALLNORAW,         // EvLstr
+    ALLNORAW,         // EvLscal
+    ALLNORAW,         // EvLvart
+    ALLNORAW,         // EvLCDCurve
+    ALLNORAW,         // EvRetinextransmission
+    DEMOSAIC,         // EvRetinexEnabled
+    ALLNORAW,         // EvRetinexmedianmap
+    ALLNORAW,         // EvLlimd
+    DEMOSAIC,         // Evretinexcolorspace
+    ALLNORAW,         // EvLCDHCurve
+    DEMOSAIC,          // Evretinexgamma
+    DEMOSAIC,          // EvLgam
+    DEMOSAIC,          // EvLslope
+    ALLNORAW,          // EvLhighl
+    DEMOSAIC,          // EvLbaselog
+//    DEMOSAIC,          // EvLgrbl
+    DEMOSAIC          // EvRetinexlhcurve
 };
 

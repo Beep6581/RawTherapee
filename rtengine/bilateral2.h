@@ -26,9 +26,7 @@
 
 #include "rtengine.h"
 #include "rt_math.h"
-#include "alignedbuffer.h"
 #include "mytime.h"
-#include "gauss.h"
 
 #include "array2D.h"
 #ifdef _OPENMP
@@ -147,7 +145,7 @@ using namespace rtengine;
                                                             a31*SULY(3,-5) + a32*SULY(3,-4) + a33*SULY(3,-3) + a34*SULY(3,-2) + a35*SULY(3,-1) + a36*SULY(3,0) + a35*SULY(3,1) + a34*SULY(3,2) + a33*SULY(3,3) + a32*SULY(3,4) + a31*SULY(3,5) + \
                                                             a21*SULY(4,-5) + a22*SULY(4,-4) + a23*SULY(4,-3) + a24*SULY(4,-2) + a25*SULY(4,-1) + a26*SULY(4,0) + a25*SULY(4,1) + a24*SULY(4,2) + a23*SULY(4,3) + a22*SULY(4,4) + a21*SULY(4,5) + \
                                                             a11*SULY(5,-5) + a12*SULY(5,-4) + a13*SULY(5,-3) + a14*SULY(5,-2) + a15*SULY(5,-1) + a16*SULY(5,0) + a15*SULY(5,1) + a14*SULY(5,2) + a13*SULY(5,3) + a12*SULY(5,4) + a11*SULY(5,5); \
- 
+
 
 // sigma = 0.5
 template<class T, class A> void bilateral05 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread)

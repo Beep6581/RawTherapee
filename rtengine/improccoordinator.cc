@@ -55,6 +55,7 @@ ImProcCoordinator::ImProcCoordinator ()
       lhist16(65536), lhist16Cropped(65536),
       lhist16CAM(65536), lhist16CroppedCAM(65536),
       lhist16CCAM(65536),
+      lhist16RETI(65536),
       histCropped(65536),
       lhist16Clad(65536), lhist16CLlad(65536),
       lhist16LClad(65536), lhist16LLClad(65536),
@@ -75,6 +76,8 @@ ImProcCoordinator::ImProcCoordinator ()
       bcabhist(256),
       histChroma(256),
 
+      histLRETI(256),
+
       CAMBrightCurveJ(), CAMBrightCurveQ(),
 
       rCurve(),
@@ -85,9 +88,9 @@ ImProcCoordinator::ImProcCoordinator ()
       bcurvehist(256), bcurvehistCropped(256), bbeforehist(256),
       fullw(1), fullh(1),
       pW(-1), pH(-1),
-      plistener(NULL), imageListener(NULL), aeListener(NULL), acListener(NULL), abwListener(NULL), actListener(NULL), adnListener(NULL), awavListener(NULL), hListener(NULL),
+      plistener(NULL), imageListener(NULL), aeListener(NULL), acListener(NULL), abwListener(NULL), actListener(NULL), adnListener(NULL), awavListener(NULL), dehaListener(NULL), hListener(NULL),
       resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false), wavcontlutili(false),
-      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false)
+      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), conversionBuffer(1, 1)
 
 {}
 
@@ -163,6 +166,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
     }
 
     RAWParams rp = params.raw;
+    ColorManagementParams cmp = params.icm;
+    LCurveParams  lcur = params.labCurve;
 
     if( !highDetailNeeded ) {
         // if below 100% magnification, take a fast path
@@ -206,6 +211,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         OR HLR gets disabled when Color method was selected
     */
     // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
+
     if (   (todo & M_RAW)
             || (!highDetailRawComputed && highDetailNeeded)
             || ( params.toneCurve.hrenabled && params.toneCurve.method != "Color" && imgsrc->IsrgbSourceModified())
@@ -219,18 +225,37 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             }
         }
 
-        imgsrc->demosaic( rp );
+        imgsrc->demosaic( rp);//enabled demosaic
+        // if a demosaic happened we should also call getimage later, so we need to set the M_INIT flag
+        todo |= M_INIT;
 
         if (highDetailNeeded) {
             highDetailRawComputed = true;
-
-            if (params.toneCurve.hrenabled && params.toneCurve.method == "Color") {
-                todo |= M_INIT;
-            }
         } else {
             highDetailRawComputed = false;
         }
+
+        if (params.retinex.enabled) {
+            lhist16RETI.clear();
+
+            imgsrc->retinexPrepareBuffers(params.icm, params.retinex, conversionBuffer, lhist16RETI);
+        }
     }
+
+    if (params.retinex.enabled) {
+        bool dehacontlutili = false;
+        bool useHsl = false;
+        LUTf cdcurve (65536, 0);
+
+        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, dehatransmissionCurve, dehacontlutili, useHsl, lhist16RETI, histLRETI);
+        float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
+        imgsrc->retinex( params.icm, params.retinex,  params.toneCurve, cdcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, histLRETI);//enabled Retinex
+
+        if(dehaListener) {
+            dehaListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+        }
+    }
+
 
     // Updating toneCurve.hrenabled if necessary
     // It has to be done there, because the next 'if' statement will use the value computed here
@@ -249,7 +274,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
     if (todo & (M_INIT | M_LINDENOISE)) {
         MyMutex::MyLock initLock(minit);  // Also used in crop window
 
-        imgsrc->HLRecovery_Global( params.toneCurve ); // this handles Color HLRecovery
+        imgsrc->HLRecovery_Global( params.toneCurve); // this handles Color HLRecovery
+
 
         if (settings->verbose) {
             printf ("Applying white balance, color correction & sRBG conversion...\n");
@@ -294,7 +320,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.toneCurve, params.icm, params.raw);
         //ColorTemp::CAT02 (orig_prev, &params) ;
-
+        //   printf("orig_prevW=%d\n  scale=%d",orig_prev->width, scale);
         /* Issue 2785, disabled some 1:1 tools
                 if (todo & M_LINDENOISE) {
                     DirPyrDenoiseParams denoiseParams = params.dirpyrDenoise;
@@ -576,6 +602,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         nprevl->CopyFrom(oprevl);
 
         progress ("Applying Color Boost...", 100 * readyphase / numofphases);
+        //   ipf.MSR(nprevl, nprevl->W, nprevl->H, 1);
 
         ipf.chromiLuminanceCurve (NULL, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histCLurve, histLLCurve, histLCurve);
         ipf.vibrance(nprevl);
@@ -809,7 +836,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     if (hListener) {
         updateLRGBHistograms ();
-        hListener->histogramChanged (histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, histCCurve, /*histCLurve, histLLCurve,*/ histLCAM, histCCAM, histRedRaw, histGreenRaw, histBlueRaw, histChroma);
+        hListener->histogramChanged (histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, histCCurve, /*histCLurve, histLLCurve,*/ histLCAM, histCCAM, histRedRaw, histGreenRaw, histBlueRaw, histChroma, histLRETI);
     }
 }
 

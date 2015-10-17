@@ -65,11 +65,8 @@ SSEFUNCTION void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, 
     #pragma omp parallel
 #endif
     {
-        AlignedBufferMP<double> buffer(max(src->W, src->H));
-        gaussHorizontal<float> (src->a, tmp1->a, buffer, src->W, src->H, radius);
-        gaussHorizontal<float> (src->b, tmp1->b, buffer, src->W, src->H, radius);
-        gaussVertical<float>   (tmp1->a, tmp1->a, buffer, src->W, src->H, radius);
-        gaussVertical<float>   (tmp1->b, tmp1->b, buffer, src->W, src->H, radius);
+        gaussianBlur<float> (src->a, tmp1->a, src->W, src->H, radius);
+        gaussianBlur<float> (src->b, tmp1->b, src->W, src->H, radius);
     }
 
     float chromave = 0.0f;
@@ -395,11 +392,8 @@ SSEFUNCTION void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * ds
     #pragma omp parallel
 #endif
     {
-        AlignedBufferMP<double> buffer(max(src->W, src->H));
-        gaussHorizontal<float> (sraa, tmaa, buffer, src->W, src->H, radius);
-        gaussHorizontal<float> (srbb, tmbb, buffer, src->W, src->H, radius);
-        gaussVertical<float>   (tmaa, tmaa, buffer, src->W, src->H, radius);
-        gaussVertical<float>   (tmbb, tmbb, buffer, src->W, src->H, radius);
+        gaussianBlur<float> (sraa, tmaa, src->W, src->H, radius);
+        gaussianBlur<float> (srbb, tmbb, src->W, src->H, radius);
     }
 
     float chromave = 0.0f;
@@ -773,19 +767,14 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
     #pragma omp parallel
 #endif
     {
-        AlignedBufferMP<double> buffer(max(src->W, src->H));
-
         //chroma a and b
         if(mode == 2) { //choice of gaussian blur
-            gaussHorizontal<float> (sraa, tmaa, buffer, src->W, src->H, radius);
-            gaussHorizontal<float> (srbb, tmbb, buffer, src->W, src->H, radius);
-            gaussVertical<float>   (tmaa, tmaa, buffer, src->W, src->H, radius);
-            gaussVertical<float>   (tmbb, tmbb, buffer, src->W, src->H, radius);
+            gaussianBlur<float> (sraa, tmaa, src->W, src->H, radius);
+            gaussianBlur<float> (srbb, tmbb, src->W, src->H, radius);
         }
 
         //luma sh_p
-        gaussHorizontal<float> (src->sh_p, tmL, buffer, src->W, src->H, 2.0);//low value to avoid artifacts
-        gaussVertical<float>   (tmL, tmL, buffer, src->W, src->H, 2.0);
+        gaussianBlur<float> (src->sh_p, tmL, src->W, src->H, 2.0);//low value to avoid artifacts
     }
 
     if(mode == 1) { //choice of median
@@ -1386,19 +1375,14 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
     #pragma omp parallel
 #endif
     {
-        AlignedBufferMP<double> buffer(max(src->W, src->H));
-
         //chroma a and b
         if(mode >= 2) { //choice of gaussian blur
-            gaussHorizontal<float> (sraa, tmaa, buffer, src->W, src->H, radius);
-            gaussHorizontal<float> (srbb, tmbb, buffer, src->W, src->H, radius);
-            gaussVertical<float>   (tmaa, tmaa, buffer, src->W, src->H, radius);
-            gaussVertical<float>   (tmbb, tmbb, buffer, src->W, src->H, radius);
+            gaussianBlur<float> (sraa, tmaa, src->W, src->H, radius);
+            gaussianBlur<float> (srbb, tmbb, src->W, src->H, radius);
         }
 
         //luma sh_p
-        gaussHorizontal<float> (src->L, tmL, buffer, src->W, src->H, 2.0);//low value to avoid artifacts
-        gaussVertical<float>   (tmL, tmL, buffer, src->W, src->H, 2.0);
+        gaussianBlur<float> (src->L, tmL, src->W, src->H, 2.0);//low value to avoid artifacts
     }
 
     if(mode == 1) { //choice of median

@@ -5,7 +5,7 @@ This is a development version of RawTherapee. We update the code every day, whic
 
 While we only commit tested and relatively stable code and so the development versions should be fairly stable, you should be aware that:
 - They only had limited testing, so there may be bugs unknown to us.
-- You should report these bugs so they get fixed for the stable release. See www.rawpedia.rawtherapee.com/How_to_write_useful_bug_reports The way tools work in the development versions is likely to change as we tweak and tune them, so your processing profiles may produce different results when used in a future stable versions.
+- You should report these bugs so they get fixed for the stable release. See www.rawpedia.rawtherapee.com/How_to_write_useful_bug_reports The way new tools work in the development versions is likely to change as we tweak and tune them, so your processing profiles may produce different results when used in a future stable versions.
 - Bugs present in the stable versions get fixed, and until a new stable version is released these fixes are present in these development versions, thereby making the development version "more stable" than the previous stable version. At the same time, new features may introduce new bugs :) This is a trade-off you should be aware of.
 
 In order to use RawTherapee efficiently you should know that:
@@ -19,7 +19,7 @@ Refer to RawPedia for information about RawTherapee's tools and how to use them.
 
 DOCUMENTATION
 -------------
-http://rawtherapee.com/documentation
+http://rawtherapee.com/blog/documentation
 http://rawpedia.rawtherapee.com/
 
 REPORTING BUGS
@@ -44,5 +44,5 @@ http://plus.google.com/106783532637761598368
 REVISION HISTORY
 ----------------
 The complete changelog is available at:
-https://code.google.com/p/rawtherapee/source/list
+https://github.com/Beep6581/RawTherapee/commits/master
 

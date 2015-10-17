@@ -250,7 +250,7 @@ public:
       * @param histLuma is the array of size 256 containing the histogram of the luminance channel
       * other for curves backgrounds, histRAW is RAW without colors */
     virtual void histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve,LUTu & histLLCurve, */LUTu & histLCAM, LUTu & histCCAM,
-                                   LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw, LUTu & histChroma) {}
+                                   LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw, LUTu & histChroma, LUTu & histLRETI) {}
 };
 
 /** This listener is used when the auto exposure has been recomputed (e.g. when the clipping ratio changed). */
@@ -284,6 +284,14 @@ public :
     virtual void chromaChanged (double autchroma, double autred, double autblue) {}
     virtual void noiseChanged (double nresid, double highresid) {}
     virtual void noiseTilePrev (int tileX, int tileY, int prevX, int prevY, int sizeT, int sizeP) {}
+
+};
+
+class RetinexListener
+{
+public :
+    virtual ~RetinexListener() {}
+    virtual void minmaxChanged (double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax) {}
 
 };
 
@@ -405,6 +413,7 @@ public:
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
     virtual void        setAutoChromaListener   (AutoChromaListener* l) = 0;
+    virtual void        setRetinexListener        (RetinexListener* l) = 0;
     virtual void        setWaveletListener      (WaveletListener* l) = 0;
 
     virtual ~StagedImageProcessor () {}

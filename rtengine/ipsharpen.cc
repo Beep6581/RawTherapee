@@ -140,16 +140,13 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2, SharpeningPar
     #pragma omp parallel
 #endif
     {
-        AlignedBufferMP<double> buffer(max(W, H));
-
         float damping = sharpenParam.deconvdamping / 5.0;
         bool needdamp = sharpenParam.deconvdamping > 0;
 
         for (int k = 0; k < sharpenParam.deconviter; k++) {
 
             // apply blur function (gaussian blur)
-            gaussHorizontal<float> (tmpI, tmp, buffer, W, H, sharpenParam.deconvradius / scale);
-            gaussVertical<float>   (tmp, tmp, buffer, W, H, sharpenParam.deconvradius / scale);
+            gaussianBlur<float> (tmpI, tmp, W, H, sharpenParam.deconvradius / scale);
 
             if (!needdamp) {
 #ifdef _OPENMP
@@ -165,8 +162,7 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2, SharpeningPar
                 dcdamping (tmp, lab->L, damping, W, H);
             }
 
-            gaussHorizontal<float> (tmp, tmp, buffer, W, H, sharpenParam.deconvradius / scale);
-            gaussVertical<float>   (tmp, tmp, buffer, W, H, sharpenParam.deconvradius / scale);
+            gaussianBlur<float> (tmp, tmp, W, H, sharpenParam.deconvradius / scale);
 
 #ifdef _OPENMP
             #pragma omp for
@@ -238,17 +234,11 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
 #endif
     {
 
-
-        AlignedBufferMP<double> buffer(max(W, H));
-
         if (sharpenParam.edgesonly == false) {
-
-            gaussHorizontal<float> (lab->L, b2, buffer, W, H, sharpenParam.radius / scale);
-            gaussVertical<float>   (b2,     b2, buffer, W, H, sharpenParam.radius / scale);
+            gaussianBlur<float> (lab->L, b2, W, H, sharpenParam.radius / scale);
         } else {
             bilateral<float, float> (lab->L, (float**)b3, b2, W, H, sharpenParam.edges_radius / scale, sharpenParam.edges_tolerance, multiThread);
-            gaussHorizontal<float> (b3, b2, buffer, W, H, sharpenParam.radius / scale);
-            gaussVertical<float>   (b2, b2, buffer, W, H, sharpenParam.radius / scale);
+            gaussianBlur<float> (b3, b2, W, H, sharpenParam.radius / scale);
         }
 
         float** base = lab->L;
@@ -1390,17 +1380,13 @@ void ImProcFunctions::deconvsharpeningcam (CieImage* ncie, float** b2)
     #pragma omp parallel
 #endif
     {
-        AlignedBufferMP<double> buffer(max(W, H));
-
-
         float damping = params->sharpening.deconvdamping / 5.0;
         bool needdamp = params->sharpening.deconvdamping > 0;
 
         for (int k = 0; k < params->sharpening.deconviter; k++) {
 
             // apply blur function (gaussian blur)
-            gaussHorizontal<float> (tmpI, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
-            gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
+            gaussianBlur<float> (tmpI, tmp, W, H, params->sharpening.deconvradius / scale);
 
             if (!needdamp) {
 #ifdef _OPENMP
@@ -1416,8 +1402,7 @@ void ImProcFunctions::deconvsharpeningcam (CieImage* ncie, float** b2)
                 dcdamping (tmp, ncie->sh_p, damping, W, H);
             }
 
-            gaussHorizontal<float> (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
-            gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
+            gaussianBlur<float> (tmp, tmp, W, H, params->sharpening.deconvradius / scale);
 
 
 #ifdef _OPENMP
@@ -1493,17 +1478,11 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
 #endif
     {
 
-
-        AlignedBufferMP<double> buffer(max(W, H));
-
         if (params->sharpening.edgesonly == false) {
-
-            gaussHorizontal<float> (ncie->sh_p, b2, buffer, W, H, params->sharpening.radius / scale);
-            gaussVertical<float>   (b2,     b2, buffer, W, H, params->sharpening.radius / scale);
+            gaussianBlur<float> (ncie->sh_p, b2, W, H, params->sharpening.radius / scale);
         } else {
             bilateral<float, float> (ncie->sh_p, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, multiThread);
-            gaussHorizontal<float> (b3, b2, buffer, W, H, params->sharpening.radius / scale);
-            gaussVertical<float>   (b2, b2, buffer, W, H, params->sharpening.radius / scale);
+            gaussianBlur<float> (b3, b2, W, H, params->sharpening.radius / scale);
         }
 
         float** base = ncie->sh_p;
