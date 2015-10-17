@@ -136,10 +136,10 @@ const float d65_white[3] = { 0.950456, 1, 1.088754 };
 
 #define SQR(x) rtengine::SQR(x)
 #define ABS(x) (((int)(x) ^ ((int)(x) >> 31)) - ((int)(x) >> 31))
-#define MIN(a,b) rtengine::min(a,static_cast<typeof(a)>(b))
-#define MAX(a,b) rtengine::max(a,static_cast<typeof(a)>(b))
-#define LIM(x,min,max) rtengine::LIM(x,static_cast<typeof(x)>(min),static_cast<typeof(x)>(max))
-#define ULIM(x,y,z) rtengine::ULIM(x,static_cast<typeof(x)>(y),static_cast<typeof(x)>(z))
+#define MIN(a,b) rtengine::min(a,static_cast<__typeof__(a)>(b))
+#define MAX(a,b) rtengine::max(a,static_cast<__typeof__(a)>(b))
+#define LIM(x,min,max) rtengine::LIM(x,static_cast<__typeof__(x)>(min),static_cast<__typeof__(x)>(max))
+#define ULIM(x,y,z) rtengine::ULIM(x,static_cast<__typeof__(x)>(y),static_cast<__typeof__(x)>(z))
 #define CLIP(x) rtengine::CLIP(x)
 #define SWAP(a,b) { a=a+b; b=a-b; a=a-b; }
 
