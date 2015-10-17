@@ -796,7 +796,6 @@ PARTIALPASTE_FLATFIELDCLIPCONTROL;Contrôle de l'écrêtage du Champs Uniforme
 PARTIALPASTE_FLATFIELDFILE;Fichier de Champ Uniforme
 PARTIALPASTE_GRADIENT;Filtre Dégradé
 PARTIALPASTE_HSVEQUALIZER;Égaliseur TSV
-PARTIALPASTE_ICMGAMMA;Gamma de sortie
 PARTIALPASTE_ICMSETTINGS;Réglages ICM
 PARTIALPASTE_IMPULSEDENOISE;Réduction du bruit d'impulsion
 PARTIALPASTE_IPTCINFO;Infos IPTC
@@ -1700,7 +1699,6 @@ TP_WAVELET_BANONE;Aucun
 TP_WAVELET_BASLI;Curseur
 TP_WAVELET_BATYPE;Bal. du contraste par
 TP_WAVELET_CBENAB;Virage Partiel et Balance Couleur
-TP_WAVELET_CBTYPE;Virage Partiel et Balance Couleur
 TP_WAVELET_CB_TOOLTIP;Pour les valeurs élevées, produit un virage partiel en les combinant ou non avec les valeurs (courbes) spécifiées dans 'Virage'\nPour les faible valeurs, vous pouvez changer la balance des blancs du fond (ciel, ...) sans changer celui du premier plan, généralement plus contrasté.
 TP_WAVELET_CCURVE;Contraste local
 TP_WAVELET_CH1;Plage chromatique complète
@@ -1714,7 +1712,6 @@ TP_WAVELET_CHR_TOOLTIP;Ajuste le chroma en fonction des "niveaux de contraste" e
 TP_WAVELET_CHSL;Curseurs
 TP_WAVELET_CHTYPE;Méthode de chrominance
 TP_WAVELET_COLORT;Opacité Rouge-Vert
-TP_WAVELET_COMBOTH;Les deux
 TP_WAVELET_COMPCONT;Contraste
 TP_WAVELET_COMPGAMMA;Compression gamma
 TP_WAVELET_COMPGAMMA_TOOLTIP;Ajuster le gamma de l'image résiduelle vous permet d'équiilibrer les données de l'histograme.
@@ -1791,7 +1788,6 @@ TP_WAVELET_LEVTWO;Niveau 3
 TP_WAVELET_LEVZERO;Niveau 1
 TP_WAVELET_LINKEDG;Lier à la 'Force' de la 'Netteté des bords'
 TP_WAVELET_LIPST;Algorithme amélioré
-TP_WAVELET_LIPST_TOOLTIP;Cet algorithme utilise la proximité d'un pixel et huit de ses voisins. Si moins de différence, les bords sont renforcés.
 TP_WAVELET_LOWLIGHT;Plage de luminance des ombres
 TP_WAVELET_MEDGREINF;Premier niveau
 TP_WAVELET_MEDILEV;Détection des bords
@@ -1838,10 +1834,6 @@ TP_WAVELET_TILESFULL;Image entière
 TP_WAVELET_TILESIZE;Méthode de découpage
 TP_WAVELET_TILESLIT;Petites tuiles
 TP_WAVELET_TILES_TOOLTIP;Traiter l'image entière donnera les meilleurs résulats et est l'option recommandé, l'usage des tuiles étant une solution alternative recommandé pour les utilisateurs disposant de peu de RAM. Cf. RawPedia pour la configuration mémoire requise.
-TP_WAVELET_TMHIGH;Haut
-TP_WAVELET_TMLOWHIGH;Bas+Haut
-TP_WAVELET_TMNONE;Aucun
-TP_WAVELET_TMSTD;Standard
 TP_WAVELET_TMSTRENGTH;Force de la compression
 TP_WAVELET_TMSTRENGTH_TOOLTIP;Contrôle la force de la compression tonale ou de la compression de contraste de l'image résiduelle. Lorsque la valeur est différente de 0, les curseurs Force et Gamma de l'outil Compression Tonale dans l'onglet Exposition seront grisés.
 TP_WAVELET_TMTYPE;Méthode de compression
@@ -1901,3 +1893,76 @@ ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre\nRaccourci: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom Avant\nRaccourci: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_407;Retinex - Method
+!HISTORY_MSG_408;Retinex - Neighboring
+!HISTORY_MSG_409;Retinex - Gain
+!HISTORY_MSG_410;Retinex - Offset
+!HISTORY_MSG_411;Retinex - Strength
+!HISTORY_MSG_412;Retinex - Scales
+!HISTORY_MSG_413;Retinex - Variance
+!HISTORY_MSG_414;Retinex - Histogram - Lab
+!HISTORY_MSG_415;Retinex - Transmission
+!HISTORY_MSG_416;Retinex
+!HISTORY_MSG_417;Retinex - Transmission median
+!HISTORY_MSG_418;Retinex - Threshold
+!HISTORY_MSG_419;Retinex - Color space
+!HISTORY_MSG_420;Retinex - Histogram - HSL
+!HISTORY_MSG_421;Retinex - Gamma
+!HISTORY_MSG_422;Retinex - Gamma
+!HISTORY_MSG_423;Retinex - Gamma slope
+!HISTORY_MSG_424;Retinex - HL threshold
+!HISTORY_MSG_425;Retinex - Log base
+!HISTORY_MSG_426;Retinex - Hue equalizer
+!PARTIALPASTE_RETINEX;Retinex
+!TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
+!TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
+!TP_RETINEX_CONTEDIT_LH;Hue equalizer
+!TP_RETINEX_CURVEEDITOR_CD;L=f(L)
+!TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
+!TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
+!TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Strength according to hue Strength=f(H)\nThis curve also acts on chroma when using the "Highlight" retinex method.
+!TP_RETINEX_GAIN;Gain
+!TP_RETINEX_GAIN_TOOLTIP;Acts on the transmission in combination with the offset. This is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
+!TP_RETINEX_GAMMA;Free gamma
+!TP_RETINEX_GAMMA;Gamma
+!TP_RETINEX_GAMMA_FREE;Free
+!TP_RETINEX_GAMMA_HIGH;High
+!TP_RETINEX_GAMMA_LOW;Low
+!TP_RETINEX_GAMMA_MID;Middle
+!TP_RETINEX_GAMMA_NONE;None
+!TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
+!TP_RETINEX_HIGHLIGHT;Highlight threshold
+!TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.
+!TP_RETINEX_HIGHLIG;Highlight
+!TP_RETINEX_HIGH;High
+!TP_RETINEX_HSLSPACE_LIN;HSL-Linear
+!TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
+!TP_RETINEX_LABEL;Retinex
+!TP_RETINEX_LABSPACE;L*a*b*
+!TP_RETINEX_LOW;Low
+!TP_RETINEX_MEDIAN;Transmission median filter
+!TP_RETINEX_METHOD;Method
+!TP_RETINEX_METHOD_TOOLTIP;Low = Reinforce low light,\nUniform = Equalize action,\nHigh = Reinforce high light,\nHighlight = Remove magenta in highlights.
+!TP_RETINEX_MLABEL;Restored haze-free Min=%1 Max=%2
+!TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
+!TP_RETINEX_NEIGHBOR;Neighboring pixels
+!TP_RETINEX_NEUTRAL;Reset
+!TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
+!TP_RETINEX_OFFSET;Offset
+!TP_RETINEX_SETTINGS;Settings
+!TP_RETINEX_SLOPE;Free gamma slope
+!TP_RETINEX_STRENGTH;Strength
+!TP_RETINEX_THRESHOLD;Threshold
+!TP_RETINEX_THRESHOLD_TOOLTIP;Limits in/out.\nIn = image source,\nOut = image gauss.
+!TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
+!TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
+!TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nMean and Sigma\nTm=Min TM=Max of transmission map.
+!TP_RETINEX_TRANSMISSION;Transmission map
+!TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
+!TP_RETINEX_UNIFORM;Uniform
+!TP_RETINEX_VARIANCE;Variance
+!TP_RETINEX_VARIANCE_TOOLTIP;Low variance increase local contrast and saturation, but can lead to artifacts.

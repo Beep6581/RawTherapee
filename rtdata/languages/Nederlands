@@ -727,7 +727,6 @@ PARTIALPASTE_FLATFIELDCLIPCONTROL;Vlakveld clip controle
 PARTIALPASTE_FLATFIELDFILE;Vlakveldopname
 PARTIALPASTE_GRADIENT;Grijsverloop Filter
 PARTIALPASTE_HSVEQUALIZER;HSV-balans
-PARTIALPASTE_ICMGAMMA;Uitvoer gamma
 PARTIALPASTE_ICMSETTINGS;ICM-instellingen
 PARTIALPASTE_IMPULSEDENOISE;Spot ruisonderdrukking
 PARTIALPASTE_IPTCINFO;IPTC-informatie
@@ -1580,7 +1579,6 @@ TP_WAVELET_5;Niveau 5
 TP_WAVELET_6;Niveau 6
 TP_WAVELET_7;Niveau 7
 TP_WAVELET_8;Niveau 8
-TP_WAVELET_ALL;Alle niveau-richtingen
 TP_WAVELET_APPLYTO;Toepassen
 TP_WAVELET_AVOID;Vermijd kleurverschuiving
 TP_WAVELET_CH1;Alle chroma's
@@ -1597,7 +1595,6 @@ TP_WAVELET_CONTRA;Contrast
 TP_WAVELET_CONTRA_TOOLTIP;Wijzig contrast in de rest van de afbeelding
 TP_WAVELET_CONTR;Gamut - controle
 TP_WAVELET_DALL;Alle richtingen
-TP_WAVELET_DISP;Wavelet niveau's
 TP_WAVELET_DONE;Richting: Vertikaal
 TP_WAVELET_DTHR;Richting: Diagonaal
 TP_WAVELET_DTWO;Richting: Horizontaal
@@ -1611,7 +1608,6 @@ TP_WAVELET_HS1;Alle luminanties
 TP_WAVELET_HS2;Hoge lichten/Schaduwen
 TP_WAVELET_HUESKIN;Tint reeks (huid)
 TP_WAVELET_HUESKY;Tint Reeks (lucht)
-TP_WAVELET_INF;Onder of gelijk aan het niveau
 TP_WAVELET_LABEL;Wavelet niveau's
 TP_WAVELET_LARGEST;grof
 TP_WAVELET_LEVCH;Chromaticiteit
@@ -1622,10 +1618,8 @@ TP_WAVELET_LEVLABEL;Voorbeeld maximum mogelijke niveau's=%1
 TP_WAVELET_LOWLIGHT;Schaduwen: Luminantie Reeks (0..100)
 TP_WAVELET_MEDI;Verminder artefacten in blauwe lucht
 TP_WAVELET_NEUTRAL;Neutraal
-TP_WAVELET_ONE;Eén niveau
 TP_WAVELET_OPACITY;Dekking Blauw-Geel Niveau
 TP_WAVELET_PASTEL;Pastel chromaciteit
-TP_WAVELET_PREVIEWLEVELS;Voorbeeld
 TP_WAVELET_RESCHRO;Chromaticiteit
 TP_WAVELET_RESCONH;Hoge lichten
 TP_WAVELET_RESCON;Schaduwen
@@ -1792,8 +1786,29 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_404;W - ES - Base amplification
 !HISTORY_MSG_405;W - Denoise - Level 4
 !HISTORY_MSG_406;W - ES - Neighboring pixels
+!HISTORY_MSG_407;Retinex - Method
+!HISTORY_MSG_408;Retinex - Neighboring
+!HISTORY_MSG_409;Retinex - Gain
+!HISTORY_MSG_410;Retinex - Offset
+!HISTORY_MSG_411;Retinex - Strength
+!HISTORY_MSG_412;Retinex - Scales
+!HISTORY_MSG_413;Retinex - Variance
+!HISTORY_MSG_414;Retinex - Histogram - Lab
+!HISTORY_MSG_415;Retinex - Transmission
+!HISTORY_MSG_416;Retinex
+!HISTORY_MSG_417;Retinex - Transmission median
+!HISTORY_MSG_418;Retinex - Threshold
+!HISTORY_MSG_419;Retinex - Color space
+!HISTORY_MSG_420;Retinex - Histogram - HSL
+!HISTORY_MSG_421;Retinex - Gamma
+!HISTORY_MSG_422;Retinex - Gamma
+!HISTORY_MSG_423;Retinex - Gamma slope
+!HISTORY_MSG_424;Retinex - HL threshold
+!HISTORY_MSG_425;Retinex - Log base
+!HISTORY_MSG_426;Retinex - Hue equalizer
 !MAIN_TAB_WAVELET;Wavelet
 !MAIN_TAB_WAVELET_TOOLTIP;Shortcut: <b>Alt-w</b>
+!PARTIALPASTE_RETINEX;Retinex
 !PARTIALPASTE_WAVELETGROUP;Wavelet Levels
 !PREFERENCES_AUTLISSTD;High
 !PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
@@ -1829,6 +1844,54 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 !TP_RAW_HD;Threshold
 !TP_RAW_HD_TOOLTIP;Lower values make hot/dead pixel detection more aggressive, but false positives may lead to artifacts. If you notice any artifacts appearing when enabling the Hot/Dead Pixel Filters, gradually increase the threshold value until they disappear.
+!TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
+!TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
+!TP_RETINEX_CONTEDIT_LH;Hue equalizer
+!TP_RETINEX_CURVEEDITOR_CD;L=f(L)
+!TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
+!TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
+!TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Strength according to hue Strength=f(H)\nThis curve also acts on chroma when using the "Highlight" retinex method.
+!TP_RETINEX_GAIN;Gain
+!TP_RETINEX_GAIN_TOOLTIP;Acts on the transmission in combination with the offset. This is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
+!TP_RETINEX_GAMMA;Free gamma
+!TP_RETINEX_GAMMA;Gamma
+!TP_RETINEX_GAMMA_FREE;Free
+!TP_RETINEX_GAMMA_HIGH;High
+!TP_RETINEX_GAMMA_LOW;Low
+!TP_RETINEX_GAMMA_MID;Middle
+!TP_RETINEX_GAMMA_NONE;None
+!TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
+!TP_RETINEX_HIGHLIGHT;Highlight threshold
+!TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.
+!TP_RETINEX_HIGHLIG;Highlight
+!TP_RETINEX_HIGH;High
+!TP_RETINEX_HSLSPACE_LIN;HSL-Linear
+!TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
+!TP_RETINEX_LABEL;Retinex
+!TP_RETINEX_LABSPACE;L*a*b*
+!TP_RETINEX_LOW;Low
+!TP_RETINEX_MEDIAN;Transmission median filter
+!TP_RETINEX_METHOD;Method
+!TP_RETINEX_METHOD_TOOLTIP;Low = Reinforce low light,\nUniform = Equalize action,\nHigh = Reinforce high light,\nHighlight = Remove magenta in highlights.
+!TP_RETINEX_MLABEL;Restored haze-free Min=%1 Max=%2
+!TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
+!TP_RETINEX_NEIGHBOR;Neighboring pixels
+!TP_RETINEX_NEUTRAL;Reset
+!TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
+!TP_RETINEX_OFFSET;Offset
+!TP_RETINEX_SETTINGS;Settings
+!TP_RETINEX_SLOPE;Free gamma slope
+!TP_RETINEX_STRENGTH;Strength
+!TP_RETINEX_THRESHOLD;Threshold
+!TP_RETINEX_THRESHOLD_TOOLTIP;Limits in/out.\nIn = image source,\nOut = image gauss.
+!TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
+!TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
+!TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nMean and Sigma\nTm=Min TM=Max of transmission map.
+!TP_RETINEX_TRANSMISSION;Transmission map
+!TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
+!TP_RETINEX_UNIFORM;Uniform
+!TP_RETINEX_VARIANCE;Variance
+!TP_RETINEX_VARIANCE_TOOLTIP;Low variance increase local contrast and saturation, but can lead to artifacts.
 !TP_WAVELET_9;Level 9
 !TP_WAVELET_B0;Black
 !TP_WAVELET_B1;Grey
@@ -1843,22 +1906,20 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_WAVELET_BASLI;Slider
 !TP_WAVELET_BATYPE;Contrast balance method
 !TP_WAVELET_CBENAB;Toning and Color Balance
-!TP_WAVELET_CBTYPE;Toning and Color Balance
 !TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
 !TP_WAVELET_CCURVE;Local contrast
 !TP_WAVELET_CHCU;Curve
 !TP_WAVELET_CHSL;Sliders
 !TP_WAVELET_CHTYPE;Chrominance method
-!TP_WAVELET_COMBOTH;Both
 !TP_WAVELET_COMPCONT;Contrast
 !TP_WAVELET_COMPGAMMA;Compression gamma
 !TP_WAVELET_COMPGAMMA_TOOLTIP;Adjusting the gamma of the residual image allows you to equilibrate the data and histogram.
 !TP_WAVELET_COMPTM;Tone mapping
 !TP_WAVELET_CONTEDIT;'After' contrast curve
 !TP_WAVELET_CTYPE;Chrominance control
-!TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Modifies local contrast as a function of the original local contrast (absciss)\nLow absciss represents small local contrast (real values about 10..20)\n50% absciss represents average of local contrast (real value about 100..300)\n66% absciss represents standard deviation of local contrast (real value about 300..800)\n100% represents maximum (real value about 3000..8000)
+!TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Modifies local contrast as a function of the original local contrast (abscissa).\nLow abscissa values represent small local contrast (real values about 10..20).\n50% abscissa represents average local contrast (real value about 100..300).\n66% abscissa represents standard deviation of local contrast (real value about 300..800).\n100% abscissa represents maximum local contrast (real value about 3000..8000).
 !TP_WAVELET_CURVEEDITOR_CH;Contrast levels=f(Hue)
-!TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Modifies each level's contrast as a function oh hue.\nTake care not to overwrite changes made with the Gamut Hue controls.\nThe curve will only have an effect when wavelet contrast level sliders are non-zero.
+!TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Modifies each level's contrast as a function of hue.\nTake care not to overwrite changes made with the Gamut sub-tool's hue controls.\nThe curve will only have an effect when wavelet contrast level sliders are non-zero.
 !TP_WAVELET_CURVEEDITOR_CL;L
 !TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Applies a final contrast luminance curve at the end of the wavelet treatment.
 !TP_WAVELET_CURVEEDITOR_HH;HH
@@ -1898,7 +1959,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_WAVELET_LEVZERO;Level 1
 !TP_WAVELET_LINKEDG;Link with Edge Sharpness' Strength
 !TP_WAVELET_LIPST;Enhanced algoritm
-!TP_WAVELET_LIPST_TOOLTIP;This algorithm uses the proximity of a pixel and eight of its neighbors. If less difference, edges are reinforced.
 !TP_WAVELET_MEDGREINF;First level
 !TP_WAVELET_MEDILEV;Edge detection
 !TP_WAVELET_MEDILEV_TOOLTIP;When you enable Edge Detection, it is recommanded:\n- to disabled low contrast levels to avoid artifacts,\n- to use high values of gradient sensitivity.\n\nYou can modulate the strength with 'refine' from Denoise and Refine.
@@ -1916,10 +1976,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_WAVELET_RE1;Reinforced
 !TP_WAVELET_RE2;Unchanged
 !TP_WAVELET_RE3;Reduced
-!TP_WAVELET_TMHIGH;High
-!TP_WAVELET_TMLOWHIGH;Low+High
-!TP_WAVELET_TMNONE;None
-!TP_WAVELET_TMSTD;Standard
 !TP_WAVELET_TMSTRENGTH;Compression strength
 !TP_WAVELET_TMSTRENGTH_TOOLTIP;Control the strength of tone mapping or contrast compression of the residual image. When the value is different from 0, the Strength and Gamma sliders of the Tone Mapping tool in the Exposure tab will become grayed out.
 !TP_WAVELET_TMTYPE;Compression method

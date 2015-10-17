@@ -818,7 +818,6 @@ PARTIALPASTE_FLATFIELDCLIPCONTROL;Weißbild: Kontrolle zu heller Bereiche
 PARTIALPASTE_FLATFIELDFILE;Weißbild: Datei
 PARTIALPASTE_GRADIENT;Grauverlaufsfilter
 PARTIALPASTE_HSVEQUALIZER;Farbton (H) / Sättigung (S) / Dynamik (V)
-PARTIALPASTE_ICMGAMMA;Ausgabe-Gamma
 PARTIALPASTE_ICMSETTINGS;ICM-Einstellungen
 PARTIALPASTE_IMPULSEDENOISE;Impulsrauschreduzierung
 PARTIALPASTE_IPTCINFO;IPTC-Informationen
@@ -1722,7 +1721,6 @@ TP_WAVELET_BANONE;Keine
 TP_WAVELET_BASLI;Regler
 TP_WAVELET_BATYPE;Kontrastmethode
 TP_WAVELET_CBENAB;Farbausgleich
-TP_WAVELET_CBTYPE;Farbausgleich
 TP_WAVELET_CCURVE;Lokaler Kontrast
 TP_WAVELET_CH1;Gesamter Farbbereich
 TP_WAVELET_CH2;Sättigung/Pastell
@@ -1735,7 +1733,6 @@ TP_WAVELET_CHR_TOOLTIP;Farbton als Funktion des Kontrasts und der Farbton-Kontra
 TP_WAVELET_CHSL;Regler
 TP_WAVELET_CHTYPE;Chrominanzmethode
 TP_WAVELET_COLORT;Deckkraft Rot/Grün
-TP_WAVELET_COMBOTH;Beide
 TP_WAVELET_COMPCONT;Kontrast
 TP_WAVELET_COMPGAMMA;Gammakompression
 TP_WAVELET_COMPGAMMA_TOOLTIP;Das Anpassen des Gammawerts des Nachbildes ermöglicht das Angleichen der Daten und des Histogramms
@@ -1812,7 +1809,6 @@ TP_WAVELET_LEVTWO;Ebene 3
 TP_WAVELET_LEVZERO;Ebene 1
 TP_WAVELET_LINKEDG;Mit der Kantenschärfungsstärke verlinken
 TP_WAVELET_LIPST;Erweiterter Algorithmus
-TP_WAVELET_LIPST_TOOLTIP;Dieser Algorithmus verwendet einen Pixel und acht seiner Nachbarn. Sind die Unterschiede gering, werden die Ränder verstärkt.
 TP_WAVELET_LOWLIGHT;Schatten-Luminanzbereich
 TP_WAVELET_MEDGREINF;Erste Ebene
 TP_WAVELET_MEDILEV;Kantenerkennung
@@ -1859,10 +1855,6 @@ TP_WAVELET_TILESFULL;Ganzes Bild
 TP_WAVELET_TILESIZE;Kachelgröße
 TP_WAVELET_TILESLIT;Kleine Kacheln
 TP_WAVELET_TILES_TOOLTIP;“Ganzes Bild“ (empfohlen) liefert eine bessere Qualität.\n“Kacheln“ benötigen weniger Speicher und sind nur für Computer mit wenig RAM zu empfehlen.
-TP_WAVELET_TMHIGH;Hoch
-TP_WAVELET_TMLOWHIGH;Niedrig + Hoch
-TP_WAVELET_TMNONE;Keine
-TP_WAVELET_TMSTD;Standard
 TP_WAVELET_TMSTRENGTH;Stärke
 TP_WAVELET_TMSTRENGTH_TOOLTIP;Kontrolliert die Stärke der Dynamik- oder Kontrastkompression des Nachbildes. Ist der Wert ungleich 0, werden die Stärke- und Gammaregler des Dynamikkompressions-Werkzeugs im Belichtungsreiter deaktiviert.
 TP_WAVELET_TMTYPE;Kompression
@@ -1925,4 +1917,73 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!HISTORY_MSG_407;Retinex - Method
+!HISTORY_MSG_408;Retinex - Neighboring
+!HISTORY_MSG_409;Retinex - Gain
+!HISTORY_MSG_410;Retinex - Offset
+!HISTORY_MSG_411;Retinex - Strength
+!HISTORY_MSG_412;Retinex - Scales
+!HISTORY_MSG_413;Retinex - Variance
+!HISTORY_MSG_414;Retinex - Histogram - Lab
+!HISTORY_MSG_415;Retinex - Transmission
+!HISTORY_MSG_416;Retinex
+!HISTORY_MSG_417;Retinex - Transmission median
+!HISTORY_MSG_418;Retinex - Threshold
+!HISTORY_MSG_419;Retinex - Color space
+!HISTORY_MSG_420;Retinex - Histogram - HSL
+!HISTORY_MSG_421;Retinex - Gamma
+!HISTORY_MSG_422;Retinex - Gamma
+!HISTORY_MSG_423;Retinex - Gamma slope
+!HISTORY_MSG_424;Retinex - HL threshold
+!HISTORY_MSG_425;Retinex - Log base
+!HISTORY_MSG_426;Retinex - Hue equalizer
+!PARTIALPASTE_RETINEX;Retinex
+!TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
+!TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
+!TP_RETINEX_CONTEDIT_LH;Hue equalizer
+!TP_RETINEX_CURVEEDITOR_CD;L=f(L)
+!TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
+!TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
+!TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Strength according to hue Strength=f(H)\nThis curve also acts on chroma when using the "Highlight" retinex method.
+!TP_RETINEX_GAIN;Gain
+!TP_RETINEX_GAIN_TOOLTIP;Acts on the transmission in combination with the offset. This is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
+!TP_RETINEX_GAMMA;Free gamma
+!TP_RETINEX_GAMMA;Gamma
+!TP_RETINEX_GAMMA_FREE;Free
+!TP_RETINEX_GAMMA_HIGH;High
+!TP_RETINEX_GAMMA_LOW;Low
+!TP_RETINEX_GAMMA_MID;Middle
+!TP_RETINEX_GAMMA_NONE;None
+!TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
+!TP_RETINEX_HIGHLIGHT;Highlight threshold
+!TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.
+!TP_RETINEX_HIGHLIG;Highlight
+!TP_RETINEX_HIGH;High
+!TP_RETINEX_HSLSPACE_LIN;HSL-Linear
+!TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
+!TP_RETINEX_LABEL;Retinex
+!TP_RETINEX_LABSPACE;L*a*b*
+!TP_RETINEX_LOW;Low
+!TP_RETINEX_MEDIAN;Transmission median filter
+!TP_RETINEX_METHOD;Method
+!TP_RETINEX_METHOD_TOOLTIP;Low = Reinforce low light,\nUniform = Equalize action,\nHigh = Reinforce high light,\nHighlight = Remove magenta in highlights.
+!TP_RETINEX_MLABEL;Restored haze-free Min=%1 Max=%2
+!TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
+!TP_RETINEX_NEIGHBOR;Neighboring pixels
+!TP_RETINEX_NEUTRAL;Reset
+!TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
+!TP_RETINEX_OFFSET;Offset
+!TP_RETINEX_SETTINGS;Settings
+!TP_RETINEX_SLOPE;Free gamma slope
+!TP_RETINEX_STRENGTH;Strength
+!TP_RETINEX_THRESHOLD;Threshold
+!TP_RETINEX_THRESHOLD_TOOLTIP;Limits in/out.\nIn = image source,\nOut = image gauss.
+!TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
+!TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
+!TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nMean and Sigma\nTm=Min TM=Max of transmission map.
+!TP_RETINEX_TRANSMISSION;Transmission map
+!TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
+!TP_RETINEX_UNIFORM;Uniform
+!TP_RETINEX_VARIANCE;Variance
+!TP_RETINEX_VARIANCE_TOOLTIP;Low variance increase local contrast and saturation, but can lead to artifacts.
 !TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
