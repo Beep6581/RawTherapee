@@ -178,6 +178,10 @@ void Options::updatePaths()
         lastLabCurvesDir = preferredPath;
     }
 
+    if (lastRetinexDir.empty() || !safe_file_test (lastRetinexDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastLabCurvesDir, Glib::FILE_TEST_IS_DIR)) {
+        lastRetinexDir = preferredPath;
+    }
+
     if (lastDenoiseCurvesDir.empty() || !safe_file_test (lastDenoiseCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastDenoiseCurvesDir, Glib::FILE_TEST_IS_DIR)) {
         lastDenoiseCurvesDir = preferredPath;
     }
@@ -594,6 +598,15 @@ void Options::setDefaults ()
         0, //ADDSET_WA_EDGEDETECTTHR2
         0, //ADDSET_WA_TMRS
         0, //ADDSET_WA_GAMMA
+        0, //ADDSET_RETI_STR
+        0, //ADDSET_RETI_SCAL
+        0, //ADDSET_RETI_NEIGH
+        0, //ADDSET_RETI_LIMD
+        0, //ADDSET_RETI_GAIN
+        0, //ADDSET_RETI_OFFS
+        0, //ADDSET_RETI_VART
+        0, //ADDSET_RETI_GAM
+        0, //ADDSET_RETI_SLO
 
     };
     baBehav = std::vector<int> (babehav, babehav + ADDSET_PARAM_NUM);
@@ -683,6 +696,7 @@ void Options::setDefaults ()
     // at the end of the "updatePaths" method.
     lastRgbCurvesDir = "";
     lastLabCurvesDir = "";
+    lastRetinexDir = "";
     lastDenoiseCurvesDir = "";
     lastWaveletCurvesDir = "";
     lastPFCurvesDir = "";
@@ -1738,6 +1752,7 @@ int Options::readFromFile (Glib::ustring fname)
                 safeDirGet(keyFile, "Dialogs", "LastFlatfieldDir", lastFlatfieldDir);
                 safeDirGet(keyFile, "Dialogs", "LastRgbCurvesDir", lastRgbCurvesDir);
                 safeDirGet(keyFile, "Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
+                safeDirGet(keyFile, "Dialogs", "LastRetinexDir", lastRetinexDir);
                 safeDirGet(keyFile, "Dialogs", "LastDenoiseCurvesDir", lastDenoiseCurvesDir);
                 safeDirGet(keyFile, "Dialogs", "LastWaveletCurvesDir", lastWaveletCurvesDir);
                 safeDirGet(keyFile, "Dialogs", "LastPFCurvesDir", lastPFCurvesDir);
@@ -2075,6 +2090,7 @@ int Options::saveToFile (Glib::ustring fname)
     keyFile.set_string ("Dialogs", "LastFlatfieldDir", lastFlatfieldDir);
     keyFile.set_string ("Dialogs", "LastRgbCurvesDir", lastRgbCurvesDir);
     keyFile.set_string ("Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
+    keyFile.set_string ("Dialogs", "LastRetinexDir", lastRetinexDir);
     keyFile.set_string ("Dialogs", "LastDenoiseCurvesDir", lastDenoiseCurvesDir);
     keyFile.set_string ("Dialogs", "LastWaveletCurvesDir", lastWaveletCurvesDir);
     keyFile.set_string ("Dialogs", "LastPFCurvesDir", lastPFCurvesDir);

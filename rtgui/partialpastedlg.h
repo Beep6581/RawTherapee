@@ -46,6 +46,7 @@ public:
     Gtk::CheckButton* exposure;
     Gtk::CheckButton* sh;
     Gtk::CheckButton* epd;
+    Gtk::CheckButton* retinex;
     Gtk::CheckButton* pcvignette;
     Gtk::CheckButton* gradient;
     Gtk::CheckButton* labcurve;
@@ -123,7 +124,7 @@ public:
     sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaConn, rawConn, wavConn;
 
     sigc::connection wbConn, exposureConn, shConn, pcvignetteConn, gradientConn, labcurveConn, colorappearanceConn;
-    sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, defringeConn, epdConn, dirpyreqConn, waveletConn;
+    sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, defringeConn, epdConn, dirpyreqConn, waveletConn, retinexConn;
     sigc::connection vibranceConn, chmixerConn, hsveqConn, rgbcurvesConn, chmixerbwConn, colortoningConn, filmSimulationConn;
     sigc::connection distortionConn, cacorrConn, vignettingConn, lcpConn;
     sigc::connection coarserotConn, finerotConn, cropConn, resizeConn, perspectiveConn, commonTransConn;

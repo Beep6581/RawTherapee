@@ -22,6 +22,10 @@
 namespace rtengine
 {
 
+
+
+
+// Aligned so the first entry starts on line 30
 enum ProcEvent {
     EvPhotoLoaded = 0,
     EvProfileLoaded = 1,
@@ -226,7 +230,6 @@ enum ProcEvent {
     EvDPDNredchro = 200,
     EvDPDNbluechro = 201,
     EvDPDNmet = 202,
-//  EvDPDNperform=201,
     EvDemosaicLMMSEIter = 203,
     EvCATbadpix = 204,
     EvCATAutoAdap = 205,
@@ -278,15 +281,13 @@ enum ProcEvent {
     EvDirPyrEqualizerSkin = 251,
     EvDirPyrEqlgamutlab = 252,
     EvDirPyrEqualizerHueskin = 253,
-//  EvDirPyrEqualizeralg=254,
-    EvDPDNmedian = 254,
+    EvDPDNmedian = 254, //  EvDirPyrEqualizeralg=254,
     EvDPDNmedmet = 255,
     EvColorToningEnabled = 256,
     EvColorToningColor = 257,
     EvColorToningOpacity = 258,
-    EvColorToningCLCurve = 259,
+    EvColorToningCLCurve = 259, //  EvColorToningTwocolor=259,
     EvColorToningMethod = 260,
-//  EvColorToningTwocolor=259,
     EvColorToningLLCurve = 261,
     EvColorToningredlow = 262,
     EvColorToninggreenlow = 263,
@@ -432,9 +433,29 @@ enum ProcEvent {
     EvWavedgeampli = 403,
     EvWavlev3nois = 404,
     EvWavNPmet = 405,
+    EvretinexMethod = 406,
+    EvLneigh = 407,
+    EvLgain = 408,
+    EvLoffs = 409,
+    EvLstr = 410,
+    EvLscal = 411,
+    EvLvart = 412,
+    EvLCDCurve = 413,
+    EvRetinextransmission = 414,
+    EvRetinexEnabled = 415,
+    EvRetinexmedianmap = 416,
+    EvLlimd = 417,
+    EvretinexColorSpace = 418, // 418 if we want a separate history entry "Retinex - Color space", 406 if we don't
+    EvLCDHCurve = 419,
+    Evretinexgamma = 420,
+    EvLgam = 421,
+    EvLslope = 422,
+    EvLhighl = 423,
+    EvLbaselog = 424,
+//    EvLgrbl = 425,
+    EvRetinexlhcurve = 425,
     NUMOFEVENTS
 };
 }
 #endif
-
 

@@ -1794,7 +1794,7 @@ The next 3 methods are inspired from:
       This program is in the public domain.
 
    b) Bruce Lindbloom
-      Adapted to Rawtherapee by J.Desmis
+      Adapted to RawTherapee by J.Desmis
 
 this values are often called xBar yBar zBar and are characteristics of a color / illuminant
 

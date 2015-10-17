@@ -74,10 +74,7 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
         #pragma omp parallel
 #endif
         {
-            AlignedBufferMP<double>* pBuffer = new AlignedBufferMP<double> (max(W, H));
-            gaussHorizontal<float> (map, map, *pBuffer, W, H, radius);
-            gaussVertical<float>   (map, map, *pBuffer, W, H, radius);
-            delete pBuffer;
+            gaussianBlur<float> (map, map, W, H, radius);
         }
     }
 

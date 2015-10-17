@@ -51,6 +51,7 @@
 #include "perspective.h"
 #include "rotate.h"
 #include "vignetting.h"
+#include "retinex.h"
 #include "gradient.h"
 #include "pcvignette.h"
 #include "toolbar.h"
@@ -101,6 +102,7 @@ protected:
     WhiteBalance* whitebalance;
     Vignetting* vignetting;
     Gradient* gradient;
+    Retinex*  retinex;
     PCVignette* pcvignette;
     LensGeometry* lensgeom;
     LensProfilePanel* lensProf;
@@ -217,7 +219,7 @@ public:
     {
         return hasChanged;
     }
-    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, /*LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
+    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, /*LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI);
     void foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection);
 
     // multiple listeners can be added that are notified on changes (typical: profile panel and the history)

@@ -282,6 +282,7 @@ public:
     static void curveCL ( bool & clcutili, const std::vector<double>& clcurvePoints, LUTf & clCurve, LUTu & histogramcl, LUTu & outBeforeCLurveHistogram, int skip);
 
     static void curveWavContL ( bool & wavcontlutili, const std::vector<double>& wavclcurvePoints, LUTf & wavclCurve,/* LUTu & histogramwavcl, LUTu & outBeforeWavCLurveHistogram,*/int skip);
+    static void curveDehaContL ( bool & dehacontlutili, const std::vector<double>& dehaclcurvePoints, LUTf & dehaclCurve, int skip, LUTu & histogram, LUTu & outBeforeCurveHistogram);
 
     static void curveToningCL ( bool & clctoningutili, const std::vector<double>& clcurvePoints, LUTf & clToningCurve, int skip);
     static void curveToningLL ( bool & llctoningutili, const std::vector<double>& llcurvePoints, LUTf & llToningCurve, int skip);
@@ -427,6 +428,32 @@ public:
         return kind == FCT_Empty;
     };
 };
+
+class RetinextransmissionCurve
+{
+private:
+    LUTf luttransmission;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    virtual ~RetinextransmissionCurve() {};
+    RetinextransmissionCurve();
+
+    void Reset();
+    void Set(const Curve *pCurve);
+    void Set(const std::vector<double> &curvePoints);
+    float operator[](float index) const
+    {
+        return luttransmission[index];
+    }
+
+    operator bool (void) const
+    {
+        return luttransmission;
+    }
+};
+
+
 
 class ToneCurve
 {

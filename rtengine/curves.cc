@@ -503,6 +503,43 @@ void CurveFactory::curveCL ( bool & clcutili, const std::vector<double>& clcurve
         dCurve = NULL;
     }
 }
+
+void CurveFactory::curveDehaContL ( bool & dehacontlutili, const std::vector<double>& dehaclcurvePoints, LUTf & dehaclCurve, int skip, LUTu & histogram, LUTu & outBeforeCurveHistogram)
+{
+    bool needed = false;
+    DiagonalCurve* dCurve = NULL;
+    outBeforeCurveHistogram.clear();
+    bool histNeeded = false;
+
+    if (!dehaclcurvePoints.empty() && dehaclcurvePoints[0] != 0) {
+        dCurve = new DiagonalCurve (dehaclcurvePoints, CURVES_MIN_POLY_POINTS / skip);
+
+        if (outBeforeCurveHistogram) {
+            histNeeded = true;
+        }
+
+        if (dCurve && !dCurve->isIdentity()) {
+            needed = true;
+            dehacontlutili = true;
+        }
+    }
+
+    if (histNeeded) {
+        for (int i = 0; i < 32768; i++) {
+            double hval = CLIPD((double)i / 32767.0);
+            int hi = (int)(255.0 * hval);
+            outBeforeCurveHistogram[hi] += histogram[i] ;
+        }
+    }
+
+    fillCurveArray(dCurve, dehaclCurve, skip, needed);
+
+    if (dCurve) {
+        delete dCurve;
+        dCurve = NULL;
+    }
+}
+
 // add curve Lab wavelet : Cont=f(L)
 void CurveFactory::curveWavContL ( bool & wavcontlutili, const std::vector<double>& wavclcurvePoints, LUTf & wavclCurve, /*LUTu & histogramwavcl, LUTu & outBeforeWavCLurveHistogram,*/int skip)
 {
@@ -1317,6 +1354,39 @@ void ColorAppearance::Set(Curve *pCurve)
 
     for (int i = 0; i < 65536; i++) {
         lutColCurve[i] = pCurve->getVal(double(i) / 65535.) * 65535.;
+    }
+}
+
+//
+RetinextransmissionCurve::RetinextransmissionCurve() {};
+
+void RetinextransmissionCurve::Reset()
+{
+    luttransmission.reset();
+}
+
+void RetinextransmissionCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        luttransmission.reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    luttransmission(501); // raise this value if the quality suffers from this number of samples
+
+    for (int i = 0; i < 501; i++) {
+        luttransmission[i] = pCurve.getVal(double(i) / 500.);
+    }
+}
+
+void RetinextransmissionCurve::Set(const std::vector<double> &curvePoints)
+{
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        tcurve.setIdentityValue(0.);
+        Set(tcurve);
+    } else {
+        Reset();
     }
 }
 

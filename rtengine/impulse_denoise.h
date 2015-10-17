@@ -65,10 +65,7 @@ SSEFUNCTION void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
     #pragma omp parallel
 #endif
     {
-        AlignedBufferMP<double> buffer(max(width, height));
-
-        gaussHorizontal<float> (lab->L, lpf, buffer, width, height, max(2.0, thresh - 1.0));
-        gaussVertical<float>   (lpf, lpf, buffer, width, height, max(2.0, thresh - 1.0));
+        gaussianBlur<float> (lab->L, lpf, width, height, max(2.0, thresh - 1.0));
     }
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -320,9 +317,7 @@ SSEFUNCTION void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, 
     #pragma omp parallel
 #endif
     {
-        AlignedBufferMP<double> buffer(max(width, height));
-        gaussHorizontal<float> (ncie->sh_p, lpf, buffer, width, height, max(2.0, thresh - 1.0));
-        gaussVertical<float>   (lpf, lpf, buffer, width, height, max(2.0, thresh - 1.0));
+        gaussianBlur<float> (ncie->sh_p, lpf, width, height, max(2.0, thresh - 1.0));
     }
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

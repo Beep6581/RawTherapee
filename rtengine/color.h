@@ -89,7 +89,10 @@ private:
     // Separated from init() to keep the code clear
     static void initMunsell ();
     static double hue2rgb(double p, double q, double t);
-
+    static float hue2rgbfloat(float p, float q, float t);
+#ifdef __SSE2__
+    static vfloat hue2rgb(vfloat p, vfloat q, vfloat t);
+#endif
 public:
 
     typedef enum Channel {
@@ -139,6 +142,11 @@ public:
     static LUTf igammatab_24_17;
     static LUTf gammatab_24_17a;
     static LUTf gammatab_13_2;
+    static LUTf igammatab_13_2;
+    static LUTf gammatab_115_2;
+    static LUTf igammatab_115_2;
+    static LUTf gammatab_145_3;
+    static LUTf igammatab_145_3;
 
     // look-up tables for the simple exponential gamma
     static LUTf gammatab;
@@ -179,7 +187,10 @@ public:
     * @param l luminance channel [0; 1] (return value)
     */
     static void rgb2hsl (float r, float g, float b, float &h, float &s, float &l);
-
+    static void rgb2hslfloat (float r, float g, float b, float &h, float &s, float &l);
+#ifdef __SSE2__
+    static void rgb2hsl (vfloat r, vfloat g, vfloat b, vfloat &h, vfloat &s, vfloat &l);
+#endif
 
     /**
     * @brief Convert hue/saturation/luminance in red/green/blue
@@ -191,6 +202,10 @@ public:
     * @param b blue channel [0 ; 65535] (return value)
     */
     static void hsl2rgb (float h, float s, float l, float &r, float &g, float &b);
+    static void hsl2rgbfloat (float h, float s, float l, float &r, float &g, float &b);
+#ifdef __SSE2__
+    static void hsl2rgb (vfloat h, vfloat s, vfloat l, vfloat &r, vfloat &g, vfloat &b);
+#endif
 
     /**
     * @brief Convert hue/saturation/luminance in red/green/blue
@@ -293,6 +308,9 @@ public:
     */
     static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const double rgb_xyz[3][3]);
     static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const float rgb_xyz[3][3]);
+#ifdef __SSE2__
+    static void xyz2rgb (vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat &b, const vfloat rgb_xyz[3][3]);
+#endif
 
 
     /**
@@ -936,8 +954,44 @@ public:
     */
     static inline double gamma13_2     (double x)
     {
-        return x <= 0.016613 ? x * 2.0 : 1.009968 * exp(log(x) / 1.3) - 0.016613;
+        return x <= 0.016613 ? x * 2.0 : 1.009968 * exp(log(x) / 1.3) - 0.009968;
     }
+
+    static inline double igamma13_2    (double x)
+    {
+        return x <= 0.033226 ? x / 2.0 : exp(log((x + 0.009968) / 1.009968) * 1.3);
+    }
+
+    static inline double gamma115_2     (double x)
+    {
+        return x <= 0.001692 ? x * 2.0 : 1.000508 * exp(log(x) / 1.15) - 0.000508;
+    }
+
+    static inline double igamma115_2    (double x)
+    {
+        return x <= 0.003384 ? x / 2.0 : exp(log((x + 0.000508) / 1.000508) * 1.15);
+    }
+
+    static inline double gamma145_3     (double x)
+    {
+        return x <= 0.009115 ? x * 3.0 : 1.012305 * exp(log(x) / 1.45) - 0.012305;
+    }
+
+    static inline double igamma145_3    (double x)
+    {
+        return x <= 0.027345 ? x / 3.0 : exp(log((x + 0.012305) / 1.012305) * 1.45);
+    }
+
+//gamma for Retinex
+    static inline double gammareti      (double x, double gamma, double start, double slope, double mul, double add)
+    {
+        return (x <= start ? x*slope : exp(log(x) / gamma) * mul - add);
+    }
+    static inline double igammareti     (double x, double gamma, double start, double slope, double mul, double add)
+    {
+        return (x <= start * slope ? x / slope : exp(log((x + add) / mul) * gamma) );
+    }
+
 
 
     // gamma function with adjustable parameters

@@ -567,6 +567,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
         Gtk::Allocation alloc;
         iareapanel->imageArea->on_resized(alloc);
     }
+
     history->resetSnapShotNumber();
 }
 
@@ -1766,14 +1767,14 @@ void EditorPanel::tbBeforeLock_toggled ()
 }
 
 void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, /*LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM,
-                                    LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw , LUTu & histChroma)
+                                    LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw , LUTu & histChroma, LUTu & histLRETI)
 {
 
     if (histogramPanel) {
         histogramPanel->histogramChanged (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw, histChroma);
     }
 
-    tpc->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histCCurve,/*histCLurve,  histLLCurve,*/ histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma);
+    tpc->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histCCurve,/*histCLurve,  histLLCurve,*/ histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
 }
 
 bool EditorPanel::CheckSidePanelsVisibility()

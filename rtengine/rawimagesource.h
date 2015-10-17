@@ -151,6 +151,10 @@ public:
     int         load        (Glib::ustring fname, bool batch = false);
     void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse);
     void        demosaic    (const RAWParams &raw);
+//    void        retinex       (RAWParams raw, ColorManagementParams cmp, RetinexParams  lcur, LUTf & cdcurve, bool dehacontlutili);
+    void        retinex       (ColorManagementParams cmp, RetinexParams  deh, ToneCurveParams Tc, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI);
+    void        retinexPrepareCurves       (RetinexParams retinexParams, LUTf &cdcurve, RetinextransmissionCurve &retinextransmissionCurve, bool &retinexcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI);
+    void        retinexPrepareBuffers      (ColorManagementParams cmp, RetinexParams retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI);
     void        flushRawData      ();
     void        flushRGB          ();
     void        HLRecovery_Global (ToneCurveParams hrp);
@@ -226,6 +230,8 @@ public:
 
     void boxblur2(float** src, float** dst, float** temp, int H, int W, int box );
     void boxblur_resamp(float **src, float **dst, float** temp, int H, int W, int box, int samp );
+    void MSR(float** luminance, float **originalLuminance, float **exLuminance,  int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
+//   void MSR(LabImage* lab, int width, int height, int skip, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve);
 
     //void boxblur_resamp(float **red, float **green, float **blue, int H, int W, float thresh[3], float max[3],
     //                multi_array2D<float,3> & hfsize, multi_array2D<float,3> & hilite, int box );
@@ -271,6 +277,7 @@ protected:
     void jdl_interpolate_omp();
     void igv_interpolate(int winw, int winh);
     void lmmse_interpolate_omp(int winw, int winh, int iterations);
+//   void        MSR(LabImage* lab, int width, int height, int skip, const LCurveParams  &lcur);
 
     void amaze_demosaic_RT(int winx, int winy, int winw, int winh);//Emil's code for AMaZE
     void fast_demosaic(int winx, int winy, int winw, int winh );//Emil's code for fast demosaicing

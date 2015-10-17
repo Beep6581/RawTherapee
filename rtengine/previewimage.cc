@@ -121,6 +121,9 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
             rtengine::Image8 *output = NULL;
             const unsigned char *data = NULL;
             int fw, fh;
+            LUTf cdcurve;
+            bool dehacontlutili = false;
+
             procparams::ProcParams params;
             /*rtengine::RAWParams raw;
             rtengine::LensProfParams lensProf;
