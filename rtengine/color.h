@@ -956,7 +956,7 @@ public:
     {
         return x <= 0.016613 ? x * 2.0 : 1.009968 * exp(log(x) / 1.3) - 0.009968;
     }
-    
+
     static inline double igamma13_2    (double x)
     {
         return x <= 0.033226 ? x / 2.0 : exp(log((x + 0.009968) / 1.009968) * 1.3);
@@ -966,17 +966,17 @@ public:
     {
         return x <= 0.001692 ? x * 2.0 : 1.000508 * exp(log(x) / 1.15) - 0.000508;
     }
-    
+
     static inline double igamma115_2    (double x)
     {
         return x <= 0.003384 ? x / 2.0 : exp(log((x + 0.000508) / 1.000508) * 1.15);
     }
-    
+
     static inline double gamma145_3     (double x)
     {
         return x <= 0.009115 ? x * 3.0 : 1.012305 * exp(log(x) / 1.45) - 0.012305;
     }
-    
+
     static inline double igamma145_3    (double x)
     {
         return x <= 0.027345 ? x / 3.0 : exp(log((x + 0.012305) / 1.012305) * 1.45);
@@ -992,7 +992,7 @@ public:
         return (x <= start * slope ? x / slope : exp(log((x + add) / mul) * gamma) );
     }
 
-    
+
 
     // gamma function with adjustable parameters
     //same as above with values calculate with Calcgamma above

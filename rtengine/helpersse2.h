@@ -22,22 +22,22 @@ typedef __m128i vint2;
 
 //
 #ifdef __GNUC__
-    #if (__GNUC__ == 4 && __GNUC_MINOR__ >= 9) || __GNUC__ > 4
-        #define LVF(x) _mm_load_ps(&x)
-        #define LVFU(x) _mm_loadu_ps(&x)
-        #define STVF(x,y) _mm_store_ps(&x,y)
-        #define STVFU(x,y) _mm_storeu_ps(&x,y)
-    #else // there is a bug in gcc 4.7.x when using openmp and aligned memory and -O3
-        #define LVF(x) _mm_loadu_ps(&x)
-        #define LVFU(x) _mm_loadu_ps(&x)
-        #define STVF(x,y) _mm_storeu_ps(&x,y)
-        #define STVFU(x,y) _mm_storeu_ps(&x,y)
-    #endif
+#if (__GNUC__ == 4 && __GNUC_MINOR__ >= 9) || __GNUC__ > 4
+#define LVF(x) _mm_load_ps(&x)
+#define LVFU(x) _mm_loadu_ps(&x)
+#define STVF(x,y) _mm_store_ps(&x,y)
+#define STVFU(x,y) _mm_storeu_ps(&x,y)
+#else // there is a bug in gcc 4.7.x when using openmp and aligned memory and -O3
+#define LVF(x) _mm_loadu_ps(&x)
+#define LVFU(x) _mm_loadu_ps(&x)
+#define STVF(x,y) _mm_storeu_ps(&x,y)
+#define STVFU(x,y) _mm_storeu_ps(&x,y)
+#endif
 #else
-    #define LVF(x) _mm_load_ps(&x)
-    #define LVFU(x) _mm_loadu_ps(&x)
-    #define STVF(x,y) _mm_store_ps(&x,y)
-    #define STVFU(x,y) _mm_storeu_ps(&x,y)
+#define LVF(x) _mm_load_ps(&x)
+#define LVFU(x) _mm_loadu_ps(&x)
+#define STVF(x,y) _mm_store_ps(&x,y)
+#define STVFU(x,y) _mm_storeu_ps(&x,y)
 #endif
 
 // Load 8 floats from a and combine a[0],a[2],a[4] and a[6] into a vector of 4 floats

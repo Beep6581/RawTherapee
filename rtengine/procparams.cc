@@ -3915,14 +3915,14 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
-/*            if (keyFile.has_key ("Retinex", "grbl"))     {
-                retinex.grbl   = keyFile.get_integer ("Retinex", "grbl");
+            /*            if (keyFile.has_key ("Retinex", "grbl"))     {
+                            retinex.grbl   = keyFile.get_integer ("Retinex", "grbl");
 
-                if (pedited) {
-                    pedited->retinex.grbl = true;
-                }
-            }
-*/
+                            if (pedited) {
+                                pedited->retinex.grbl = true;
+                            }
+                        }
+            */
             if (keyFile.has_key ("Retinex", "CDCurve"))         {
                 retinex.cdcurve            = keyFile.get_double_list ("Retinex", "CDCurve");
 

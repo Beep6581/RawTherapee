@@ -577,31 +577,31 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_WA_GAMMA]) {
                 pparams.wavelet.gamma = 0;
             }
-            
+
             if (options.baBehav[ADDSET_RETI_STR]) {
                 pparams.retinex.str = 0;
             }
-            
+
             if (options.baBehav[ADDSET_RETI_SCAL]) {
                 pparams.retinex.scal = 0;
             }
-            
+
             if (options.baBehav[ADDSET_RETI_NEIGH]) {
                 pparams.retinex.neigh = 0;
             }
-            
+
             if (options.baBehav[ADDSET_RETI_LIMD]) {
                 pparams.retinex.limd = 0;
             }
-            
+
             if (options.baBehav[ADDSET_RETI_GAIN]) {
                 pparams.retinex.gain = 0;
             }
-            
+
             if (options.baBehav[ADDSET_RETI_OFFS]) {
                 pparams.retinex.offs = 0;
             }
-            
+
             if (options.baBehav[ADDSET_RETI_VART]) {
                 pparams.retinex.vart = 0;
             }
@@ -613,7 +613,7 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_RETI_SLO]) {
                 pparams.retinex.slope = 0;
             }
-            
+
             if (options.baBehav[ADDSET_DIRPYRDN_LUMA]) {
                 pparams.dirpyrDenoise.luma = 0;
             }

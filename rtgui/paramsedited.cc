@@ -1053,7 +1053,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (retinex.lhcurve) {
         toEdit.retinex.lhcurve    = mods.retinex.lhcurve;
     }
-    
+
     if (retinex.transmissionCurve) {
         toEdit.retinex.transmissionCurve    = mods.retinex.transmissionCurve;
     }
@@ -1109,10 +1109,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 //    if (retinex.grbl) {
 //        toEdit.retinex.grbl   = mods.retinex.grbl;
 //    }
-    
+
     if (retinex.gain) {
         toEdit.retinex.gain   = dontforceSet && options.baBehav[ADDSET_RETI_GAIN] ? toEdit.retinex.gain + mods.retinex.gain : mods.retinex.gain;
-   }
+    }
 
     if (retinex.offs) {
         toEdit.retinex.offs   = dontforceSet && options.baBehav[ADDSET_RETI_OFFS] ? toEdit.retinex.offs + mods.retinex.offs : mods.retinex.offs;

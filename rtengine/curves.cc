@@ -513,6 +513,7 @@ void CurveFactory::curveDehaContL ( bool & dehacontlutili, const std::vector<dou
 
     if (!dehaclcurvePoints.empty() && dehaclcurvePoints[0] != 0) {
         dCurve = new DiagonalCurve (dehaclcurvePoints, CURVES_MIN_POLY_POINTS / skip);
+
         if (outBeforeCurveHistogram) {
             histNeeded = true;
         }
@@ -522,6 +523,7 @@ void CurveFactory::curveDehaContL ( bool & dehacontlutili, const std::vector<dou
             dehacontlutili = true;
         }
     }
+
     if (histNeeded) {
         for (int i = 0; i < 32768; i++) {
             double hval = CLIPD((double)i / 32767.0);

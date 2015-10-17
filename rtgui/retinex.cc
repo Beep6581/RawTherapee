@@ -321,12 +321,12 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
         baselog->delay = 200;
     }
 
-/*    grbl->setAdjusterListener (this);
+    /*    grbl->setAdjusterListener (this);
 
-    if (grbl->delay < 200) {
-        grbl->delay = 200;
-    }
-*/
+        if (grbl->delay < 200) {
+            grbl->delay = 200;
+        }
+    */
     pack_start (*retinexVBox);
     pack_start (*expsettings);
     pack_start (*neutrHBox);
@@ -671,18 +671,21 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
 void Retinex::retinexMethodChanged()
 {
 
-    if(retinexMethod->get_active_row_number() == 3) highl->show();
-    else highl->hide();
+    if(retinexMethod->get_active_row_number() == 3) {
+        highl->show();
+    } else {
+        highl->hide();
+    }
 
     if (listener) {
-            listener->panelChanged (EvretinexMethod, retinexMethod->get_active_text ());
+        listener->panelChanged (EvretinexMethod, retinexMethod->get_active_text ());
     }
 }
 
 void Retinex::ColorSpaceUpdateUI ()
 {
     if (!batchMode) {
-                   curveEditorGH->show();
+        curveEditorGH->show();
 
         if(retinexcolorspace->get_active_row_number() == 0) {
             curveEditorGD->show();
@@ -941,9 +944,9 @@ void Retinex::colorForValue (double valX, double valY, enum ColorCaller::ElemTyp
 
         float value = (1.f - 0.7f) * float(valX) + 0.7f;
 
-            // whole hue range
-            // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
-            Color::hsv2rgb01(float(valY), float(valX), value, R, G, B);
+        // whole hue range
+        // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
+        Color::hsv2rgb01(float(valY), float(valX), value, R, G, B);
     } else if (callerId == 4) {  // LH - bottom bar
         Color::hsv2rgb01(float(valX), 0.5f, float(valY), R, G, B);
     } else if (callerId == 5) {  // HH - bottom bar

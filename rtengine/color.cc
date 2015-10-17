@@ -209,7 +209,7 @@ void Color::init ()
     for (int i = 0; i < 65536; i++) {
         gammatab_13_2[i] = (65535.0 * gamma13_2 (i / 65535.0));
     }
-    
+
     for (int i = 0; i < 65536; i++) {
         igammatab_13_2[i] = (65535.0 * igamma13_2 (i / 65535.0));
     }
@@ -217,7 +217,7 @@ void Color::init ()
     for (int i = 0; i < 65536; i++) {
         gammatab_115_2[i] = (65535.0 * gamma115_2 (i / 65535.0));
     }
-    
+
     for (int i = 0; i < 65536; i++) {
         igammatab_115_2[i] = (65535.0 * igamma115_2 (i / 65535.0));
     }
@@ -225,14 +225,15 @@ void Color::init ()
     for (int i = 0; i < 65536; i++) {
         gammatab_145_3[i] = (65535.0 * gamma145_3 (i / 65535.0));
     }
-    
+
     for (int i = 0; i < 65536; i++) {
         igammatab_145_3[i] = (65535.0 * igamma145_3 (i / 65535.0));
     }
-    
+
     for (int i = 0; i < 65536; i++) {
         gammatab_26_11[i] = (65535.0 * gamma26_11 (i / 65535.0));
     }
+
 //gammatab_145_3
     for (int i = 0; i < 65536; i++) {
         igammatab_26_11[i] = (65535.0 * igamma26_11 (i / 65535.0));
