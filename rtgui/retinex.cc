@@ -112,7 +112,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     gammaretinexConn = gammaretinex->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::gammaretinexChanged) );
     gammaretinex->set_tooltip_markup (M("TP_RETINEX_GAMMA_TOOLTIP"));
 
-    gam = Gtk::manage (new Adjuster (M("TP_RETINEX_GAMMA"), 0.6, 3.0, 0.01, 1.30));
+    gam = Gtk::manage (new Adjuster (M("TP_RETINEX_FREEGAMMA"), 0.6, 3.0, 0.01, 1.30));
     slope = Gtk::manage (new Adjuster (M("TP_RETINEX_SLOPE"), 1., 20., 0.1, 3.));
 
     str = Gtk::manage (new Adjuster (M("TP_RETINEX_STRENGTH"), 0, 100., 1., 20.));
