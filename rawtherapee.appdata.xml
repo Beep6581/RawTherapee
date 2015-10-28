@@ -13,24 +13,6 @@
         <p>
             All aspects of RawTherapee are documented in the RawPedia wiki. There is also an active forum and IRC channel for interaction with the developers and other users.
         </p>
-        <p>
-            Supported input formats:
-        </p>
-        <ul>
-            <li>Most raw formats including those from Bayer and X-Trans type sensors</li>
-            <li>HDR DNG 1.4 with floating-point data</li>
-            <li>8-bit, 16-bit and 32-bit TIFF (RGB)</li>
-            <li>8-bit and 16-bit PNG (RGB)</li>
-            <li>JPEG</li>
-        </ul>
-        <p>
-            Supported output formats:
-        </p>
-        <ul>
-            <li>JPEG</li>
-            <li>8-bit and 16-bit TIFF</li>
-            <li>8-bit and 16-bit PNG</li>
-        </ul>
     </description>
     <screenshots>
         <screenshot type="default">http://rawtherapee.com/images/screenshots/rt-42_07-hdr-landscape.jpg</screenshot>
