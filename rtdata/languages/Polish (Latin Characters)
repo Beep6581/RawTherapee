@@ -908,7 +908,6 @@ SAVEDLG_SUBSAMP;Subsampling
 SAVEDLG_SUBSAMP_1;Najlepsza kompresja
 SAVEDLG_SUBSAMP_2;Pomiedzy
 SAVEDLG_SUBSAMP_3;Najlepsza jakosc
-SAVEDLG_SUBSAMP_TOOLTIP;Najlepsza kompresja: 4:1:1\nPomiedzy: 4:2:2\nNajlepsza jakosc: 4:4:4
 SAVEDLG_TIFFUNCOMPRESSED;Nieskompresowany TIFF
 SAVEDLG_WARNFILENAME;Plik zostanie nazwany
 SHCSELECTOR_TOOLTIP;Kliknij prawym przyciskiem myszki aby zresetowac poycje trzech suwakow.
@@ -1715,6 +1714,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !PREFERENCES_WLONE;One level
 !PREFERENCES_WLTWO;Two levels
 !PREFERENCES_WLZER;No
+!SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
