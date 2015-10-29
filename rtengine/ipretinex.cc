@@ -44,6 +44,8 @@
 #include "rawimagesource.h"
 #include "improcfun.h"
 #include "opthelper.h"
+#include "StopWatch.h"
+
 #define MAX_RETINEX_SCALES   8
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 
@@ -98,6 +100,9 @@ void retinex_scales( float* scales, int nscales, int mode, int s, float high)
             }
         }
     }
+            for ( int i = 0; i < nscales; ++i )
+                printf("sigma[%d] : %f\n",i,scales[i]);
+
 }
 void mean_stddv2( float **dst, float &mean, float &stddv, int W_L, int H_L, float &maxtr, float &mintr)
 {
@@ -205,6 +210,7 @@ void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L, const
 
 void RawImageSource::MSR(float** luminance, float** originalLuminance, float **exLuminance,  int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
+    StopWatch Stop1("MSR");
     if (deh.enabled) {//enabled
         float         mean, stddv, maxtr, mintr;
         //  float         mini, delta, maxi;

@@ -23,7 +23,7 @@
 #include <cstring>
 #include <cmath>
 #include "opthelper.h"
-
+#include "stdio.h"
 // classical filtering if the support window is small:
 
 template<class T> void gaussHorizontal3 (T** src, T** dst, int W, int H, const float c0, const float c1)
@@ -765,22 +765,32 @@ template<class T> void gaussianBlur(T** src, T** dst, const int W, const int H, 
 {
     double newSigma = sigma;
 
-    if(forceLowSigma) {
+    if(forceLowSigma && newSigma > 170.f) {
         newSigma /= sqrt(2.0);
 
         if(newSigma < 0.6) { // barrier to avoid using simple gauss version for higher radius
             newSigma = sigma;
             forceLowSigma = false;
+            gaussianBlur(src,dst,W,H,newSigma,forceLowSigma);
+        } else {
+            gaussianBlur(src,dst,W,H,newSigma,forceLowSigma);
+            gaussianBlur(dst,dst,W,H,newSigma,forceLowSigma);
         }
-    }
-
-    gaussHorizontal<T> (src, dst, W, H, newSigma);
-    gaussVertical<T>   (dst, dst, W, H, newSigma);
-
-    if(forceLowSigma) {
-        gaussHorizontal<T> (dst, dst, W, H, newSigma);
+    } else {
+        gaussHorizontal<T> (src, dst, W, H, newSigma);
         gaussVertical<T>   (dst, dst, W, H, newSigma);
+
     }
+//    #pragma omp critical
+//    printf("gauss sigma : %f / %f\n",sigma,newSigma);
+
+/*
+    if(forceLowSigma && newSigma > 170.f) {
+        gaussianBlur(dst,dst,W,H,newSigma,forceLowSigma);
+//        gaussHorizontal<T> (dst, dst, W, H, newSigma);
+//        gaussVertical<T>   (dst, dst, W, H, newSigma);
+    }
+*/
 }
 
 #endif
