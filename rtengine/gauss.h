@@ -24,6 +24,7 @@
 #include <cmath>
 #include "opthelper.h"
 #include "stdio.h"
+#include "boxblur.h"
 // classical filtering if the support window is small:
 
 template<class T> void gaussHorizontal3 (T** src, T** dst, int W, int H, const float c0, const float c1)
@@ -74,8 +75,8 @@ template<class T> void gaussVertical3 (T** src, T** dst, int W, int H, const flo
 #ifdef __SSE2__
 template<class T> SSEFUNCTION void gaussVertical3Sse (T** src, T** dst, int W, int H, const float c0, const float c1)
 {
-    __m128 Tv, Tm1v, Tp1v;
-    __m128 c0v, c1v;
+    vfloat Tv, Tm1v, Tp1v;
+    vfloat c0v, c1v;
     c0v = F2V(c0);
     c1v = F2V(c1);
 #ifdef _OPENMP
@@ -121,8 +122,8 @@ template<class T> SSEFUNCTION void gaussHorizontal3Sse (T** src, T** dst, int W,
 {
     float tmp[W][4] ALIGNED16;
 
-    __m128 Tv, Tm1v, Tp1v;
-    __m128 c0v, c1v;
+    vfloat Tv, Tm1v, Tp1v;
+    vfloat c0v, c1v;
     c0v = F2V(c0);
     c1v = F2V(c1);
 #ifdef _OPENMP
@@ -240,12 +241,12 @@ template<class T> SSEFUNCTION void gaussHorizontalSse (T** src, T** dst, int W, 
             M[i][j] /= (1.0 + b1 - b2 + b3) * (1.0 - b1 - b2 - b3);
         }
 
+    vfloat Rv;
+    vfloat Tv, Tm2v, Tm3v;
+    vfloat Bv, b1v, b2v, b3v;
+    vfloat temp2W, temp2Wp1;
     float tmp[W][4] ALIGNED16;
     float tmpV[4] ALIGNED16;
-    __m128 Rv;
-    __m128 Tv, Tm2v, Tm3v;
-    __m128 Bv, b1v, b2v, b3v;
-    __m128 temp2W, temp2Wp1;
     Bv = F2V(B);
     b1v = F2V(b1);
     b2v = F2V(b2);
@@ -527,10 +528,10 @@ template<class T> SSEFUNCTION void gaussVerticalSse (T** src, T** dst, int W, in
         }
 
     float tmp[H][4] ALIGNED16;
-    __m128 Rv;
-    __m128 Tv, Tm2v, Tm3v;
-    __m128 Bv, b1v, b2v, b3v;
-    __m128 temp2W, temp2Wp1;
+    vfloat Rv;
+    vfloat Tv, Tm2v, Tm3v;
+    vfloat Bv, b1v, b2v, b3v;
+    vfloat temp2W, temp2Wp1;
     Bv = F2V(B);
     b1v = F2V(b1);
     b2v = F2V(b2);
@@ -761,36 +762,47 @@ template<class T> void gaussVertical (T** src, T** dst, int W, int H, double sig
     }
 }
 
-template<class T> void gaussianBlur(T** src, T** dst, const int W, const int H, const double sigma, bool forceLowSigma = false)
+template<class T> void gaussianBlur(T** src, T** dst, const int W, const int H, const double sigma, T *buffer = NULL)
 {
-    double newSigma = sigma;
 
-    if(forceLowSigma && newSigma > 170.f) {
-        newSigma /= sqrt(2.0);
-
-        if(newSigma < 0.6) { // barrier to avoid using simple gauss version for higher radius
-            newSigma = sigma;
-            forceLowSigma = false;
-            gaussianBlur(src,dst,W,H,newSigma,forceLowSigma);
-        } else {
-            gaussianBlur(src,dst,W,H,newSigma,forceLowSigma);
-            gaussianBlur(dst,dst,W,H,newSigma,forceLowSigma);
+    if(buffer) { // use iterated boxblur to approximate gaussian blur
+        // Compute ideal averaging filter width and number of iterations
+        int n = 1;
+        double wIdeal = sqrt((12*sigma*sigma)+1);
+        while(wIdeal >= (W/2-1) || wIdeal >= (H/2-1)) {
+            n++;
+            wIdeal = sqrt((12*sigma*sigma/n)+1);
         }
+
+        if(n<3) {
+            n = 3;
+            wIdeal = sqrt((12*sigma*sigma/n)+1);
+        } else if(n>6)
+            n=6;
+
+        int wl = wIdeal;
+        if(wl%2==0) wl--;
+        int wu = wl+2;
+
+        double mIdeal = (12*sigma*sigma - n*wl*wl - 4*n*wl - 3*n)/(-4*wl - 4);
+        int m = round(mIdeal);
+
+        int sizes[n];
+        for(int i=0; i<n; i++) {
+            sizes[i] = i<m?wl:wu;
+        }
+//#pragma omp critical
+//        printf("sigma : %f\tsizes[0] : %d\tsizes[3] : %f\titerations : %d\n",sigma,sizes[0],sqrt((12*sigma*sigma/3)+1),n);
+        rtengine::boxblurnew(src,dst,buffer,sizes[0],sizes[0],W,H);
+        for(int i=1; i<n; i++) {
+            rtengine::boxblurnew(dst,dst,buffer, sizes[i],sizes[i],W,H);
+        }
+
     } else {
-        gaussHorizontal<T> (src, dst, W, H, newSigma);
-        gaussVertical<T>   (dst, dst, W, H, newSigma);
+        gaussHorizontal<T> (src, dst, W, H, sigma);
+        gaussVertical<T>   (dst, dst, W, H, sigma);
 
     }
-//    #pragma omp critical
-//    printf("gauss sigma : %f / %f\n",sigma,newSigma);
-
-/*
-    if(forceLowSigma && newSigma > 170.f) {
-        gaussianBlur(dst,dst,W,H,newSigma,forceLowSigma);
-//        gaussHorizontal<T> (dst, dst, W, H, newSigma);
-//        gaussVertical<T>   (dst, dst, W, H, newSigma);
-    }
-*/
 }
 
 #endif

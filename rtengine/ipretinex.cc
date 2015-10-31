@@ -311,16 +311,17 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
         const float logBetaGain = xlogf(16384.f);
         const float pond = logBetaGain / (float) scal;
+        float *buffer = new float[W_L*H_L];;
 
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
         {
             for ( int scale = scal - 1; scale >= 0; scale-- ) {
-                if(scale == scal - 1) { // probably large sigma. Use double gauss with sigma divided by sqrt(2.0)
-                    gaussianBlur<float> (src, out, W_L, H_L, RetinexScales[scale], true);
+                if(scale == scal - 1) {
+                    gaussianBlur<float> (src, out, W_L, H_L, RetinexScales[scale], buffer);
                 } else { // reuse result of last iteration
-                    gaussianBlur<float> (out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])));
+                    gaussianBlur<float> (out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
                 }
 
 #ifdef __SSE2__
@@ -363,7 +364,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 }
             }
         }
-
+        delete [] buffer;
         delete [] outBuffer;
         delete [] srcBuffer;
 

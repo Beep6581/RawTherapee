@@ -129,6 +129,94 @@ template<class T, class A> void boxblur (T** src, A** dst, int radx, int rady, i
 
 }
 
+template<class T, class A> void boxblurnew (T** src, A** dst, T* buffer, int radx, int rady, int W, int H)
+{
+
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    //box blur image; box range = (radx,rady)
+
+    float* temp = buffer;
+
+    if (radx == 0) {
+#ifdef _OPENMP
+        #pragma omp for
+#endif
+
+        for (int row = 0; row < H; row++)
+            for (int col = 0; col < W; col++) {
+                temp[row * W + col] = (float)src[row][col];
+            }
+    } else {
+        //horizontal blur
+#ifdef _OPENMP
+        #pragma omp for
+#endif
+
+        for (int row = 0; row < H; row++) {
+            int len = radx + 1;
+            temp[row * W + 0] = (float)src[row][0] / len;
+
+            for (int j = 1; j <= radx; j++) {
+                temp[row * W + 0] += (float)src[row][j] / len;
+            }
+
+            for (int col = 1; col <= radx; col++) {
+                temp[row * W + col] = (temp[row * W + col - 1] * len + (float)src[row][col + radx]) / (len + 1);
+                len ++;
+            }
+
+            for (int col = radx + 1; col < W - radx; col++) {
+                temp[row * W + col] = temp[row * W + col - 1] + ((float)(src[row][col + radx] - src[row][col - radx - 1])) / len;
+            }
+
+            for (int col = W - radx; col < W; col++) {
+                temp[row * W + col] = (temp[row * W + col - 1] * len - src[row][col - radx - 1]) / (len - 1);
+                len --;
+            }
+        }
+    }
+
+    if (rady == 0) {
+#ifdef _OPENMP
+        #pragma omp for
+#endif
+
+        for (int row = 0; row < H; row++)
+            for (int col = 0; col < W; col++) {
+                dst[row][col] = temp[row * W + col];
+            }
+    } else {
+        //vertical blur
+#ifdef _OPENMP
+        #pragma omp for
+#endif
+
+        for (int col = 0; col < W; col++) {
+            int len = rady + 1;
+            dst[0][col] = temp[0 * W + col] / len;
+
+            for (int i = 1; i <= rady; i++) {
+                dst[0][col] += temp[i * W + col] / len;
+            }
+
+            for (int row = 1; row <= rady; row++) {
+                dst[row][col] = (dst[(row - 1)][col] * len + temp[(row + rady) * W + col]) / (len + 1);
+                len ++;
+            }
+
+            for (int row = rady + 1; row < H - rady; row++) {
+                dst[row][col] = dst[(row - 1)][col] + (temp[(row + rady) * W + col] - temp[(row - rady - 1) * W + col]) / len;
+            }
+
+            for (int row = H - rady; row < H; row++) {
+                dst[row][col] = (dst[(row - 1)][col] * len - temp[(row - rady - 1) * W + col]) / (len - 1);
+                len --;
+            }
+        }
+    }
+
+}
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
