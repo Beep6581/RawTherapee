@@ -835,7 +835,6 @@ SAVEDLG_SUBSAMP;Субдискретизация
 SAVEDLG_SUBSAMP_1;Лучшая компрессия
 SAVEDLG_SUBSAMP_2;Сбалансированно
 SAVEDLG_SUBSAMP_3;Лучшее качество
-SAVEDLG_SUBSAMP_TOOLTIP;Лучшая компрессия: 4:1:1\nСбалансированно: 4:2:2\nЛучшее качество: 4:4:4
 SAVEDLG_TIFFUNCOMPRESSED;Несжатый TIFF
 SAVEDLG_WARNFILENAME;Файл будет назван
 SHCSELECTOR_TOOLTIP;Нажмите правую кнопку мыши для сброса позиции этих трех ползунков.
@@ -1587,6 +1586,7 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !PREFERENCES_WLONE;One level
 !PREFERENCES_WLTWO;Two levels
 !PREFERENCES_WLZER;No
+!SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !TP_BWMIX_SET_RGBABS;Absolute RGB
 !TP_BWMIX_SET_RGBREL;Relative RGB
 !TP_BWMIX_SET_ROYGCBPMABS;Absolute ROYGCBPM

@@ -3795,8 +3795,8 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
-            if (keyFile.has_key ("Retinex", "Retinexmet"))     {
-                retinex.retinexMethod  = keyFile.get_string  ("Retinex", "Retinexmet");
+            if (keyFile.has_key ("Retinex", "RetinexMethod"))     {
+                retinex.retinexMethod  = keyFile.get_string  ("Retinex", "RetinexMethod");
 
                 if (pedited) {
                     pedited->retinex.retinexMethod = true;

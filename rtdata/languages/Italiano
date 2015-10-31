@@ -854,7 +854,6 @@ SAVEDLG_SUBSAMP;Sottocampionamento
 SAVEDLG_SUBSAMP_1;Migliore Compressione
 SAVEDLG_SUBSAMP_2;Bilanciato
 SAVEDLG_SUBSAMP_3;Migliore Qualità
-SAVEDLG_SUBSAMP_TOOLTIP;Migliore Compressione: 4:1:1\nBilanciato: 4:2:2\nMigliore Qualità: 4:4:4
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compresso
 SAVEDLG_WARNFILENAME;Il file verrà chiamato
 SHCSELECTOR_TOOLTIP;Click destro per ripristinare la posizione di questi tre cursori.
@@ -1630,6 +1629,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !PREFERENCES_WLONE;One level
 !PREFERENCES_WLTWO;Two levels
 !PREFERENCES_WLZER;No
+!SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !TP_COLORTONING_AB;o C/L
 !TP_COLORTONING_AUTOSAT;Automatic
 !TP_COLORTONING_BALANCE;Balance

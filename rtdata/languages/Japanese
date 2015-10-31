@@ -1117,7 +1117,6 @@ SAVEDLG_SUBSAMP;サブ・サンプリング
 SAVEDLG_SUBSAMP_1;高圧縮
 SAVEDLG_SUBSAMP_2;バランス
 SAVEDLG_SUBSAMP_3;高画質
-SAVEDLG_SUBSAMP_TOOLTIP;高圧縮: 4:1:1\nバランス: 4:2:2\n高画質: 4:4:4
 SAVEDLG_TIFFUNCOMPRESSED;非圧縮 TIFF
 SAVEDLG_WARNFILENAME;ファイルに名前が付けられます
 SHCSELECTOR_TOOLTIP;この3つのスライダーの位置をリセットするには\nマウスの右ボタンをクリック
@@ -1950,6 +1949,7 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !HISTORY_MSG_425;Retinex - Log base
 !HISTORY_MSG_426;Retinex - Hue equalizer
 !PARTIALPASTE_RETINEX;Retinex
+!SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
 !TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
 !TP_RETINEX_CONTEDIT_LH;Hue equalizer

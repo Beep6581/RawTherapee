@@ -679,7 +679,6 @@ SAVEDLG_SUBSAMP;Submostreig
 SAVEDLG_SUBSAMP_1;Millor compressió
 SAVEDLG_SUBSAMP_2;Equilibrat
 SAVEDLG_SUBSAMP_3;Millor qualitat
-SAVEDLG_SUBSAMP_TOOLTIP;Gran compressió: 4:1:1\nEquilibrat: 4:2:2\nMillor qualitat: 4:4:4
 SAVEDLG_TIFFUNCOMPRESSED;TIFF no comprimit
 SAVEDLG_WARNFILENAME;El fitxer es dirà
 SHCSELECTOR_TOOLTIP;Clic al botó dret per a restaurar\nla posició dels 3 nivells.
@@ -1426,6 +1425,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PROGRESSBAR_NOIMAGES;No images found
 !PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
 !SAVEDLG_FORCEFORMATOPTS;Force saving options
+!SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !TP_BWMIX_ALGO;Algorithm OYCPM
 !TP_BWMIX_ALGO_LI;Linear
 !TP_BWMIX_ALGO_SP;Special effects

@@ -1039,7 +1039,6 @@ SAVEDLG_SAVESPP;Spara behandlingsparametrarna med bilderna
 SAVEDLG_SUBSAMP_1;Högsta komprimering
 SAVEDLG_SUBSAMP_2;Balanserad
 SAVEDLG_SUBSAMP_3;Högsta kvalitet
-SAVEDLG_SUBSAMP_TOOLTIP;Högsta komprimering: 4:1:1\nBalanserad: 4:2:2\nHögsta kvalitet: 4:4:4
 SAVEDLG_TIFFUNCOMPRESSED;Okomprimerad TIFF
 SAVEDLG_WARNFILENAME;Filen kommer att heta
 SHCSELECTOR_TOOLTIP;Klicka på höger musknapp för att återställa\nde tre reglagens positioner
@@ -1790,6 +1789,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PREFERENCES_MIN;Mini (100x115)
 !PREFERENCES_SIMPLAUT;Tool mode
 !PREFERENCES_TINB;Number of tiles
+!SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Chroma opacity as a function of luminance oC=f(L)
 !TP_COLORTONING_LABEL;Color Toning
 !TP_COLORTONING_LAB;L*a*b* blending
