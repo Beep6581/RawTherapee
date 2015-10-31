@@ -1082,9 +1082,9 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.retinex.str   = dontforceSet && options.baBehav[ADDSET_RETI_STR] ? toEdit.retinex.str + mods.retinex.str : mods.retinex.str;
     }
 
-    if (retinex.scal) {
-        toEdit.retinex.scal   = dontforceSet && options.baBehav[ADDSET_RETI_SCAL] ? toEdit.retinex.scal + mods.retinex.scal : mods.retinex.scal;
-    }
+//    if (retinex.scal) {
+//        toEdit.retinex.scal   = dontforceSet && options.baBehav[ADDSET_RETI_SCAL] ? toEdit.retinex.scal + mods.retinex.scal : mods.retinex.scal;
+//    }
 
     if (retinex.medianmap) {
         toEdit.retinex.medianmap  = mods.retinex.medianmap;
