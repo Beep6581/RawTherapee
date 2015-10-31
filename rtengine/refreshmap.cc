@@ -433,7 +433,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DIRPYREQUALIZER,  // EvWavedgeampli
     DIRPYREQUALIZER,  // EvWavlev3nois
     DIRPYREQUALIZER,  // EvWavNPmet
-    ALLNORAW,         // EvretinexMethod
+    DEMOSAIC,         // EvretinexMethod
     ALLNORAW,         // EvLneigh
     ALLNORAW,         // EvLgain
     ALLNORAW,         // EvLoffs
