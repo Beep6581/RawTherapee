@@ -769,7 +769,7 @@ template<class T> void gaussianBlur(T** src, T** dst, const int W, const int H, 
         // Compute ideal averaging filter width and number of iterations
         int n = 1;
         double wIdeal = sqrt((12*sigma*sigma)+1);
-        while(wIdeal >= (W/2-1) || wIdeal >= (H/2-1)) {
+        while(wIdeal > W || wIdeal > H) {
             n++;
             wIdeal = sqrt((12*sigma*sigma/n)+1);
         }
@@ -789,13 +789,11 @@ template<class T> void gaussianBlur(T** src, T** dst, const int W, const int H, 
 
         int sizes[n];
         for(int i=0; i<n; i++) {
-            sizes[i] = i<m?wl:wu;
+            sizes[i] = ((i<m?wl:wu)-1)/2;
         }
-//#pragma omp critical
-//        printf("sigma : %f\tsizes[0] : %d\tsizes[3] : %f\titerations : %d\n",sigma,sizes[0],sqrt((12*sigma*sigma/3)+1),n);
-        rtengine::boxblurnew(src,dst,buffer,sizes[0],sizes[0],W,H);
+        rtengine::boxblur(src,dst,buffer,sizes[0],sizes[0],W,H);
         for(int i=1; i<n; i++) {
-            rtengine::boxblurnew(dst,dst,buffer, sizes[i],sizes[i],W,H);
+            rtengine::boxblur(dst,dst,buffer, sizes[i],sizes[i],W,H);
         }
 
     } else {

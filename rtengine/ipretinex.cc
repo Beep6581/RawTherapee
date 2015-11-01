@@ -100,9 +100,6 @@ void retinex_scales( float* scales, int nscales, int mode, int s, float high)
             }
         }
     }
-            for ( int i = 0; i < nscales; ++i )
-                printf("sigma[%d] : %f\n",i,scales[i]);
-
 }
 void mean_stddv2( float **dst, float &mean, float &stddv, int W_L, int H_L, float &maxtr, float &mintr)
 {
@@ -210,7 +207,6 @@ void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L, const
 
 void RawImageSource::MSR(float** luminance, float** originalLuminance, float **exLuminance,  int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
-    StopWatch Stop1("MSR");
     if (deh.enabled) {//enabled
         float         mean, stddv, maxtr, mintr;
         //  float         mini, delta, maxi;
@@ -310,8 +306,13 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         }
 
         const float logBetaGain = xlogf(16384.f);
-        const float pond = logBetaGain / (float) scal;
-        float *buffer = new float[W_L*H_L];;
+        float pond = logBetaGain / (float) scal;
+
+        if(!useHslLin) {
+            pond /= log(elogt);
+        }
+
+        float *buffer = new float[W_L * H_L];;
 
 #ifdef _OPENMP
         #pragma omp parallel
@@ -328,7 +329,6 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 vfloat pondv = F2V(pond);
                 vfloat limMinv = F2V(ilimD);
                 vfloat limMaxv = F2V(limD);
-                vfloat elogtv = F2V(elogt);
 
 #endif
 #ifdef _OPENMP
@@ -346,7 +346,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                         }
                     } else {
                         for (; j < W_L - 3; j += 4) {
-                            _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  xlogf(LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ) / xlogf(elogtv));
+                            _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  xlogf(LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
                         }
                     }
 
@@ -358,7 +358,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                         }
                     } else {
                         for (; j < W_L; j++) {
-                            luminance[i][j] +=  pond * xlogf(LIM(src[i][j] / out[i][j], ilimD, limD)) / log(elogt); //  /logt ?
+                            luminance[i][j] +=  pond * xlogf(LIM(src[i][j] / out[i][j], ilimD, limD)); //  /logt ?
                         }
                     }
                 }
