@@ -136,7 +136,6 @@ template<class T, class A> void boxblurnew (T** src, A** dst, T* buffer, int rad
     //box blur image; box range = (radx,rady)
 
     float* temp = buffer;
-
     if (radx == 0) {
 #ifdef _OPENMP
         #pragma omp for
@@ -186,12 +185,41 @@ template<class T, class A> void boxblurnew (T** src, A** dst, T* buffer, int rad
                 dst[row][col] = temp[row * W + col];
             }
     } else {
+        const int numCols = 8; // process numCols columns at once for better usage of L1 cpu cache
         //vertical blur
 #ifdef _OPENMP
         #pragma omp for
 #endif
 
-        for (int col = 0; col < W; col++) {
+        for (int col = 0; col < W-numCols+1; col+=8) {
+            int len = rady + 1;
+            for(int k=0;k<numCols;k++)
+                dst[0][col + k] = temp[0 * W + col + k] / len;
+
+            for (int i = 1; i <= rady; i++) {
+                for(int k=0;k<numCols;k++)
+                    dst[0][col + k] += temp[i * W + col + k] / len;
+            }
+
+            for (int row = 1; row <= rady; row++) {
+                for(int k=0;k<numCols;k++)
+                    dst[row][col+k] = (dst[(row - 1)][col+k] * len + temp[(row + rady) * W + col+k]) / (len + 1);
+                len ++;
+            }
+
+            for (int row = rady + 1; row < H - rady; row++) {
+                for(int k=0;k<numCols;k++)
+                    dst[row][col+k] = dst[(row - 1)][col+k] + (temp[(row + rady) * W + col+k] - temp[(row - rady - 1) * W + col+k]) / len;
+            }
+
+            for (int row = H - rady; row < H; row++) {
+                for(int k=0;k<numCols;k++)
+                    dst[row][col+k] = (dst[(row - 1)][col+k] * len - temp[(row - rady - 1) * W + col+k]) / (len - 1);
+                len --;
+            }
+        }
+#pragma omp single
+        for (int col = W-(W%numCols); col < W; col++) {
             int len = rady + 1;
             dst[0][col] = temp[0 * W + col] / len;
 
