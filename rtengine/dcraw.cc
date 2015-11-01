@@ -1937,9 +1937,11 @@ void CLASS hasselblad_correct()
         const ushort corners_shift[9] = { 2, 1, 2, 1, 0, 1, 2, 1, 2 };
         for (row = 0; row < bh; row++) {
             const ushort maxdist = bw < bh ? bw/2-1 : bh/2-1;
-            const unsigned corners[9][2] = {{0,0},   {0,bw/2},   {0,bw-1},
-                                            {bh/2,0},{bh/2,bw/2},{bh/2,bw-1},
-                                            {bh-1,0},{bh-1,bw/2},{bh-1,bw-1}};
+            const unsigned bwu = (unsigned)bw;
+            const unsigned bhu = (unsigned)bh;
+            const unsigned corners[9][2] = {{0,0},    {0,bwu/2},    {0,bwu-1},
+                                            {bhu/2,0},{bhu/2,bwu/2},{bhu/2,bwu-1},
+                                            {bhu-1,0},{bhu-1,bwu/2},{bhu-1,bwu-1}};
             for (col = 0; col < bw; col++) {
                 for (i = 0; i < 9; i++) {
                     ushort dist = (ushort)sqrt(abs(corners[i][0] - row) * abs(corners[i][0] - row) + abs(corners[i][1] - col) * abs(corners[i][1] - col));
