@@ -242,20 +242,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
     }
 
-    if (params.retinex.enabled) {
-        bool dehacontlutili = false;
-        bool useHsl = false;
-        LUTf cdcurve (65536, 0);
-
-        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, dehatransmissionCurve, dehacontlutili, useHsl, lhist16RETI, histLRETI);
-        float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-        imgsrc->retinex( params.icm, params.retinex,  params.toneCurve, cdcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, histLRETI);//enabled Retinex
-
-        if(dehaListener) {
-            dehaListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
-        }
-    }
-
 
     // Updating toneCurve.hrenabled if necessary
     // It has to be done there, because the next 'if' statement will use the value computed here
@@ -275,7 +261,24 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         MyMutex::MyLock initLock(minit);  // Also used in crop window
 
         imgsrc->HLRecovery_Global( params.toneCurve); // this handles Color HLRecovery
+    }
 
+    if (params.retinex.enabled) {
+        bool dehacontlutili = false;
+        bool useHsl = false;
+        LUTf cdcurve (65536, 0);
+
+        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, dehatransmissionCurve, dehacontlutili, useHsl, lhist16RETI, histLRETI);
+        float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
+        imgsrc->retinex( params.icm, params.retinex,  params.toneCurve, cdcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, histLRETI);//enabled Retinex
+
+        if(dehaListener) {
+            dehaListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+        }
+    }
+
+    if (todo & (M_INIT | M_LINDENOISE)) {
+        MyMutex::MyLock initLock(minit);  // Also used in crop window
 
         if (settings->verbose) {
             printf ("Applying white balance, color correction & sRBG conversion...\n");
