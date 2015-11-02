@@ -55,6 +55,19 @@ public:
     bool method;
 };
 
+class GammaParamsEdited
+{
+public:
+    bool enabled;
+    bool gamm;
+    bool slop;
+    bool gammaMethod;
+    bool outp;
+};
+
+
+
+
 class RetinexParamsEdited
 {
 public:
@@ -535,6 +548,9 @@ public:
     bool slpos;
     bool gamfree;
     bool freegamma;
+    bool rgbicm;
+    bool previewMethod;
+
 };
 class WaveletParamsEdited
 {
@@ -727,6 +743,7 @@ public:
     ToneCurveParamsEdited         toneCurve;
     LCurveParamsEdited            labCurve;
     RGBCurvesParamsEdited         rgbCurves;
+    GammaParamsEdited             gamma;
     ColorToningEdited             colorToning;
     RetinexParamsEdited             retinex;
     SharpeningParamsEdited        sharpening;

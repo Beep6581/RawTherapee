@@ -78,6 +78,7 @@ RawImageSource::RawImageSource ()
     , plistener(NULL)
     , border(4)
     , ri(NULL)
+    , ipf(NULL)
     , cache(NULL)
     , rawData(0, 0)
     , green(0, 0)
@@ -1942,25 +1943,70 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
             }
     }
     */
-    if(retinexParams.gammaretinex != "none" && retinexParams.str != 0) {//gamma
+    if(retinexParams.gammaretinex !="none") {
+        if((retinexParams.gammaretinex == "low" || retinexParams.gammaretinex == "mid"  || retinexParams.gammaretinex=="hig"  || retinexParams.gammaretinex=="fre") && retinexParams.str != 0) {//gamma
 #ifdef _OPENMP
-        #pragma omp parallel for
+            #pragma omp parallel for
 #endif
-
-        for (int i = border; i < H - border; i++ ) {
-            for (int j = border; j < W - border; j++ ) {
-                float R_, G_, B_;
-                R_ = red[i][j];
-                G_ = green[i][j];
-                B_ = blue[i][j];
-
-                red[i][j] = (*retinexgamtab)[R_];
-                green[i][j] = (*retinexgamtab)[G_];
-                blue[i][j] = (*retinexgamtab)[B_];
+//float maxRGB = 0.f;
+//float minRGB = 500000.f;
+            for (int i = border; i < H - border; i++ ) {
+                for (int j = border; j < W - border; j++ ) {
+                    float R_, G_, B_;
+                    R_ = red[i][j];
+                    G_ = green[i][j];
+                    B_ = blue[i][j];
+                    /*   if(R_ > maxRGB) maxRGB=R_;
+                       if(R_ < minRGB) minRGB=R_;
+                       if(G_ > maxRGB) maxRGB=G_;
+                       if(G_ < minRGB) minRGB=G_;
+                       if(B_ > maxRGB) maxRGB=B_;
+                       if(B_ < minRGB) minRGB=B_;
+                    */
+                    if(red[i][j]>0.f && red[i][j] < 65535.f)
+                        red[i][j] = (*retinexgamtab)[R_];
+                    if(green[i][j]>0.f  && green[i][j] < 65535.f)
+                        green[i][j] = (*retinexgamtab)[G_];
+                    if(blue[i][j]>0.f && blue[i][j] < 65535.f)
+                        blue[i][j] = (*retinexgamtab)[B_];
+                }
             }
+            //    printf("MaxRGB=%f MinRGB=%f\n",maxRGB,minRGB);
+        }
+
+        if(retinexParams.gammaretinex == "fre2") {
+            printf("FREE\n");
+            Imagefloat *oprevi;
+
+            oprevi = new Imagefloat (W, H);
+            #pragma omp parallel for
+            for (int i = border; i < H - border; i++ ) {
+                for (int j = border; j < W - border; j++ ) {
+                    oprevi->r(i, j) = red[i][j];
+                    oprevi->g(i, j) = green[i][j];
+                    oprevi->b(i, j) = blue[i][j];
+                }
+            }
+            Image16* readyImg = NULL;
+
+            double ga0, ga1, ga2, ga3, ga4, ga5, ga6;
+            int mul=5;
+
+            readyImg = ipf.rgbgrgb (oprevi,1, W, H, mul, cmp.output, cmp.working, retinexParams.gam, retinexParams.slope, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+            #pragma omp parallel for
+            for(int row = border; row < H - border; row++) {
+                for(int col = border; col < W - border; col++) {
+                    red[row][col] = (float)readyImg->r(row, col);
+                    green[row][col] = (float)readyImg->g(row, col);
+                    blue[row][col] = (float)readyImg->b(row, col);
+                }
+            }
+            // printf("OK 2\n");
+
+            delete readyImg;
+            delete oprevi;
         }
     }
-
     if(useHsl) {
 #ifdef _OPENMP
         #pragma omp parallel
@@ -2423,25 +2469,60 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
     if (chcurve) {
         delete chcurve;
     }
-
-    if(deh.gammaretinex != "none"  && deh.str != 0) { //inverse gamma
+    if(deh.gammaretinex != "none") {
+        if((deh.gammaretinex == "low" ||  deh.gammaretinex == "mid" || deh.gammaretinex == "hig" || deh.gammaretinex == "fre")&& deh.str != 0) { //inverse gamma
 #ifdef _OPENMP
-        #pragma omp parallel for
+            #pragma omp parallel for
 #endif
 
-        for (int i = border; i < H - border; i++ ) {
-            for (int j = border; j < W - border; j++ ) {
-                float R_, G_, B_;
-                R_ = red[i][j];
-                G_ = green[i][j];
-                B_ = blue[i][j];
-                red[i][j] = (*retinexigamtab)[R_];
-                green[i][j] = (*retinexigamtab)[G_];
-                blue[i][j] = (*retinexigamtab)[B_];
+            for (int i = border; i < H - border; i++ ) {
+                for (int j = border; j < W - border; j++ ) {
+                    float R_, G_, B_;
+                    R_ = red[i][j];
+                    G_ = green[i][j];
+                    B_ = blue[i][j];
+                    if(R_>0.f && R_ < 65535.f)
+                        red[i][j] = (*retinexigamtab)[R_];
+                    if(G_>0.f && G_ < 65535.f)
+
+                        green[i][j] = (*retinexigamtab)[G_];
+                    if(B_>0.f && B_ < 65535.f)
+                        blue[i][j] = (*retinexigamtab)[B_];
+                }
             }
         }
-    }
+        if(deh.gammaretinex == "fre2") {
+            printf("free\n");
 
+            Imagefloat *oprevi;
+
+            oprevi = new Imagefloat (W, H);
+            #pragma omp parallel for
+            for (int i = border; i < H - border; i++ ) {
+                for (int j = border; j < W - border; j++ ) {
+                    oprevi->r(i, j) = red[i][j];
+                    oprevi->g(i, j) = green[i][j];
+                    oprevi->b(i, j) = blue[i][j];
+                }
+            }
+            Image16* readyImg = NULL;
+
+            double ga0, ga1, ga2, ga3, ga4, ga5, ga6;
+            int mul=-5;
+            readyImg = ipf.rgbgrgb (oprevi,1, W, H, mul, cmp.output, cmp.working, deh.gam, deh.slope, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+            #pragma omp parallel for
+            for(int row = border; row < H - border; row++) {
+                for(int col = border; col < W - border; col++) {
+                    red[row][col] = (float)readyImg->r(row, col);
+                    green[row][col] = (float)readyImg->g(row, col);
+                    blue[row][col] = (float)readyImg->b(row, col);
+                }
+            }
+
+            delete readyImg;
+            delete oprevi;
+        }
+    }
     t5.set();
 
     if( settings->verbose ) {

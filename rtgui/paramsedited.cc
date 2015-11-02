@@ -49,6 +49,10 @@ void ParamsEdited::set (bool v)
     toneCurve.expcomp    = v;
     toneCurve.hrenabled   = v;
     toneCurve.method    = v;
+    gamma.gamm = v;
+    gamma.slop = v;
+    gamma.outp = v;
+    gamma.gammaMethod = v;
     retinex.cdcurve    = v;
     retinex.cdHcurve    = v;
     retinex.lhcurve    = v;
@@ -341,6 +345,8 @@ void ParamsEdited::set (bool v)
     icm.output       = v;
     icm.gamma       = v;
     icm.freegamma       = v;
+    icm.rgbicm       = v;
+    icm.previewMethod       = v;
     icm.gampos      = v;
     icm.slpos       = v;
     raw.bayersensor.method = v;
@@ -526,6 +532,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         toneCurve.expcomp = toneCurve.expcomp && p.toneCurve.expcomp == other.toneCurve.expcomp;
         toneCurve.hrenabled = toneCurve.hrenabled && p.toneCurve.hrenabled == other.toneCurve.hrenabled;
         toneCurve.method = toneCurve.method && p.toneCurve.method == other.toneCurve.method;
+        gamma.gamm = gamma.gamm && p.gamma.gamm == other.gamma.gamm;
+        gamma.slop = gamma.slop && p.gamma.slop == other.gamma.slop;
+        gamma.outp = gamma.outp && p.gamma.outp == other.gamma.outp;
         retinex.cdcurve = retinex.cdcurve && p.retinex.cdcurve == other.retinex.cdcurve;
         retinex.cdHcurve = retinex.cdHcurve && p.retinex.cdHcurve == other.retinex.cdHcurve;
         retinex.lhcurve = retinex.lhcurve && p.retinex.lhcurve == other.retinex.lhcurve;
@@ -818,6 +827,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         icm.output = icm.output && p.icm.output == other.icm.output;
         icm.gamma = icm.gamma && p.icm.gamma == other.icm.gamma;
         icm.freegamma = icm.freegamma && p.icm.freegamma == other.icm.freegamma;
+        icm.rgbicm = icm.rgbicm && p.icm.rgbicm == other.icm.rgbicm;
+        icm.previewMethod = icm.previewMethod && p.icm.previewMethod == other.icm.previewMethod;
         icm.gampos = icm.gampos && p.icm.gampos == other.icm.gampos;
         icm.slpos = icm.slpos && p.icm.slpos == other.icm.slpos;
         raw.bayersensor.method = raw.bayersensor.method && p.raw.bayersensor.method == other.raw.bayersensor.method;
@@ -1037,6 +1048,30 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (toneCurve.method) {
         toEdit.toneCurve.method   = mods.toneCurve.method;
     }
+
+    if (gamma.gammaMethod) {
+        toEdit.gamma.gammaMethod   = mods.gamma.gammaMethod;
+    }
+
+    if (gamma.gamm) {
+        //   toEdit.gamma.gamm   = mods.gamma.gamm;
+        toEdit.gamma.gamm  = dontforceSet && options.baBehav[ADDSET_GAMDIF_GAMM] ? toEdit.gamma.gamm + mods.gamma.gamm : mods.gamma.gamm;
+
+    }
+
+    if (gamma.slop) {
+        // toEdit.gamma.slop   = mods.gamma.slop;
+        toEdit.gamma.slop  = dontforceSet && options.baBehav[ADDSET_GAMDIF_SLOP] ? toEdit.gamma.slop + mods.gamma.slop : mods.gamma.slop;
+    }
+
+    if (gamma.enabled) {
+        toEdit.gamma.enabled   = mods.gamma.enabled;
+    }
+
+    if (gamma.outp) {
+        toEdit.gamma.outp    = mods.gamma.outp;
+    }
+    
 
     if (retinex.enabled) {
         toEdit.retinex.enabled        = mods.retinex.enabled;
@@ -2136,6 +2171,15 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (icm.freegamma) {
         toEdit.icm.freegamma    = mods.icm.freegamma;
     }
+
+    if (icm.rgbicm) {
+        toEdit.icm.rgbicm    = mods.icm.rgbicm;
+    }
+
+    if (icm.previewMethod) {
+        toEdit.icm.previewMethod    = mods.icm.previewMethod;
+    }
+
 
     if (raw.bayersensor.method) {
         toEdit.raw.bayersensor.method           = mods.raw.bayersensor.method;

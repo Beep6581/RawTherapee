@@ -116,6 +116,22 @@ void CropParams::mapToResized(int resizedWidth, int resizedHeight, int scale, in
     }
 }
 
+GammaParams::GammaParams ()
+{
+    setDefaults ();
+}
+
+void GammaParams::setDefaults()
+{
+    enabled = false;
+    gamm        = 1.;
+    slop   = 2.;
+    outp = false;
+    gammaMethod = "one";
+}
+
+
+
 RetinexParams::RetinexParams ()
 {
     setDefaults ();
@@ -898,6 +914,8 @@ void ColorManagementParams::setDefaults()
     gampos = 2.22;
     slpos = 4.5;
     freegamma = false;
+    rgbicm = false;
+    previewMethod="none";
 }
 
 ProcParams::ProcParams ()
@@ -1540,6 +1558,27 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->chmixer.blue[0] || pedited->chmixer.blue[1] || pedited->chmixer.blue[2]) {
         Glib::ArrayHandle<int> bmix (chmixer.blue, 3, Glib::OWNERSHIP_NONE);
         keyFile.set_integer_list("Channel Mixer", "Blue",  bmix);
+    }
+
+    //save gamma
+    if (!pedited || pedited->gamma.gamm) {
+        keyFile.set_double ("Gamma", "Gamm",               gamma.gamm);
+    }
+
+    if (!pedited || pedited->gamma.slop) {
+        keyFile.set_double ("Gamma", "Slop",               gamma.slop);
+    }
+
+    if (!pedited || pedited->gamma.enabled) {
+        keyFile.set_boolean ("Gamma", "Enabled", gamma.enabled);
+    }
+
+    if (!pedited || pedited->gamma.gammaMethod) {
+        keyFile.set_string  ("Gamma", "GammaMethod", gamma.gammaMethod);
+    }
+
+    if (!pedited || pedited->gamma.outp) {
+        keyFile.set_boolean ("Gamma", "Outp",  gamma.outp);
     }
 
     //save Black & White
@@ -2554,6 +2593,14 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
 
     if (!pedited || pedited->icm.freegamma) {
         keyFile.set_boolean ("Color Management", "Freegamma",  icm.freegamma);
+    }
+
+    if (!pedited || pedited->icm.rgbicm) {
+        keyFile.set_boolean ("Color Management", "rgbicm",  icm.rgbicm);
+    }
+
+    if (!pedited || pedited->icm.previewMethod) {
+        keyFile.set_string ("Color Management", "PreviewMethod",  icm.previewMethod);
     }
 
     if (!pedited || pedited->icm.gampos) {
@@ -3795,8 +3842,8 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
-            if (keyFile.has_key ("Retinex", "RetinexMethod"))     {
-                retinex.retinexMethod  = keyFile.get_string  ("Retinex", "RetinexMethod");
+            if (keyFile.has_key ("Retinex", "Retinexmet"))     {
+                retinex.retinexMethod  = keyFile.get_string  ("Retinex", "Retinexmet");
 
                 if (pedited) {
                     pedited->retinex.retinexMethod = true;
@@ -4115,6 +4162,53 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
             }
 
         }
+
+        // load gamma
+        if (keyFile.has_group ("Gamma")) {
+
+            if (keyFile.has_key ("Gamma", "Gamm"))       {
+                gamma.gamm = keyFile.get_double ("Gamma", "Gamm");
+
+                if (pedited) {
+                    pedited->gamma.gamm = true;
+                }
+            }
+
+            if (keyFile.has_key ("Gamma", "Slop"))       {
+                gamma.slop = keyFile.get_double ("Gamma", "Slop");
+
+                if (pedited) {
+                    pedited->gamma.slop = true;
+                }
+            }
+
+            if (keyFile.has_key ("Gamma", "Enabled"))       {
+                gamma.enabled = keyFile.get_boolean ("Gamma", "Enabled");
+
+                if (pedited) {
+                    pedited->gamma.enabled = true;
+                }
+            }
+
+            if (keyFile.has_key ("Gamma", "GammaMethod"))     {
+                gamma.gammaMethod  = keyFile.get_string  ("Gamma", "GammaMethod");
+
+                if (pedited) {
+                    pedited->gamma.gammaMethod = true;
+                }
+            }
+
+            if (keyFile.has_key ("Gamma", "Outp"))       {
+                gamma.outp = keyFile.get_boolean ("Gamma", "Outp");
+
+                if (pedited) {
+                    pedited->gamma.outp = true;
+                }
+            }
+            
+
+        }
+
 
         // load sharpening
         if (keyFile.has_group ("Sharpening")) {
@@ -5685,6 +5779,22 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->icm.freegamma = true;
+                }
+            }
+
+            if (keyFile.has_key ("Color Management", "PreviewMethod"))      {
+                icm.previewMethod      = keyFile.get_string ("Color Management", "PreviewMethod");
+
+                if (pedited) {
+                    pedited->icm.previewMethod = true;
+                }
+            }
+
+            if (keyFile.has_key ("Color Management", "rgbicm"))      {
+                icm.rgbicm      = keyFile.get_boolean ("Color Management", "rgbicm");
+
+                if (pedited) {
+                    pedited->icm.rgbicm = true;
                 }
             }
 
@@ -7352,6 +7462,11 @@ bool ProcParams::operator== (const ProcParams& other)
         && labCurve.avoidcolorshift == other.labCurve.avoidcolorshift
         && labCurve.rstprotection == other.labCurve.rstprotection
         && labCurve.lcredsk == other.labCurve.lcredsk
+        && gamma.gamm == other.gamma.gamm
+        && gamma.slop == other.gamma.slop
+        && gamma.enabled == other.gamma.enabled
+        && gamma.gammaMethod == other.gamma.gammaMethod
+        && gamma.outp == other.gamma.outp
         && sharpenEdge.enabled == other.sharpenEdge.enabled
         && sharpenEdge.passes == other.sharpenEdge.passes
         && sharpenEdge.amount == other.sharpenEdge.amount
@@ -7588,6 +7703,8 @@ bool ProcParams::operator== (const ProcParams& other)
         && icm.output == other.icm.output
         && icm.gamma == other.icm.gamma
         && icm.freegamma == other.icm.freegamma
+        && icm.rgbicm == other.icm.rgbicm
+        && icm.previewMethod == other.icm.previewMethod
         && icm.gampos == other.icm.gampos
         && icm.slpos == other.icm.slpos
         && wavelet == other.wavelet

@@ -170,6 +170,12 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M("TP_EXPOSURE_CONTRAST"), ADDSET_TC_CONTRAST, false);
     appendBehavList (mi, M("TP_EXPOSURE_SATURATION"), ADDSET_TC_SATURATION, false);
 
+     mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_GAMMADIF_LABEL"));
+    appendBehavList (mi, M("TP_GAMMADIF_GAMMA"), ADDSET_GAMDIF_GAMM, false);
+    appendBehavList (mi, M("TP_GAMMADIF_SLOPE"), ADDSET_GAMDIF_SLOP, false);
+    
+    
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_RETINEX_LABEL"));
     appendBehavList (mi, M("TP_RETINEX_STRENGTH"), ADDSET_RETI_STR, false);

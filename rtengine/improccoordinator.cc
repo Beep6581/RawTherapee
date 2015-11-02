@@ -423,6 +423,113 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     progress ("Exposure curve & CIELAB conversion...", 100 * readyphase / numofphases);
 
+    if ( todo &  M_LINDENOISE) {
+
+        if((params.gamma.gammaMethod!="two") && params.gamma.enabled) {
+
+            int  cw=oprevi->width, ch=oprevi->height;
+            if(params.gamma.gammaMethod=="oneabs") {
+
+                #pragma omp parallel for
+                for(int row = 0; row < ch; row++) {
+                    for(int col = 0; col < cw; col++) {
+                        double mul = 1.055011;
+                        double add = 0.055011;
+                        double start = 0.003041;
+                        double ts = 12.92;
+                        double gamm = 2.4;
+                        float R_, G_, B_;
+                        R_ =  oprevi->r(row, col);
+                        G_ =  oprevi->g(row, col);
+                        B_ =  oprevi->b(row, col);
+                        double x;
+                        double val;
+                        val = R_/65535.f;
+                        if(val > 0.f)
+                            x=(val <= start ? val/ts : xexpf(xlogf((val+add) / mul) * gamm));
+                        else
+                            x = val;
+                        oprevi->r(row, col)=x*65535.f;
+                        val = G_/65535.f;
+                        if(val > 0.f)
+                            x=(val <= start ? val/ts : xexpf(xlogf((val+add) / mul) * gamm));
+                        else
+                            x = val;
+                        oprevi->g(row, col)=x*65535.f;
+                        val = B_/65535.f;
+                        if(val > 0.f)
+                            x=(val <= start ? val/ts : xexpf(xlogf((val+add) / mul) * gamm));
+                        else
+                            x = val;
+                        oprevi->b(row, col)=x*65535.f;
+
+                        //     else {
+                        //         oprevi->r(row, col) = Color::igamma_srgb( oprevi->r(row, col) );
+                        //         oprevi->g(row, col) = Color::igamma_srgb( oprevi->g(row, col) );
+                        //         oprevi->b(row, col) = Color::igamma_srgb( oprevi->b(row, col) );
+                        //     }
+
+                    }
+                }
+            }
+            else  if(params.gamma.gammaMethod=="oneabs2") {
+
+                Image16* readyImg0 = NULL;
+
+                double ga0, ga1, ga2, ga3, ga4, ga5, ga6;
+                int mul=-5;
+                readyImg0 = ipf.rgbgrgb (oprevi, 0, cw, ch, mul, params.icm.output, params.icm.working, 2.4, 12.92, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+                #pragma omp parallel for
+                for(int row = 0; row < ch; row++) {
+                    for(int col = 0; col < cw; col++) {
+                        oprevi->r(row, col) = (float)readyImg0->r(row, col);
+                        oprevi->g(row, col) = (float)readyImg0->g(row, col);
+                        oprevi->b(row, col) = (float)readyImg0->b(row, col);
+                    }
+                }
+                delete readyImg0;
+            }
+            // }
+            Image16* readyImg = NULL;
+            //printf("gam improc one thr\n");
+            cmsHPROFILE jprof = NULL;
+            bool customGamma = false;
+            bool useLCMS = false;
+            Glib::ustring chpro;
+            cmsMLU *DescriptionMLU, *CopyrightMLU, *DmndMLU, *DmddMLU;// for modification TAG
+
+            cmsToneCurve* GammaTRC[3] = { NULL, NULL, NULL };
+            cmsFloat64Number Parameters[7];
+
+            double ga0, ga1, ga2, ga3, ga4, ga5, ga6;
+            int mul=5;
+            readyImg = ipf.rgbgrgb (oprevi, 0, cw, ch, mul, params.icm.output, params.icm.working, params.gamma.gamm, params.gamma.slop, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+            /*
+            customGamma = true;
+            bool pro=false;
+            if (!params.icm.rgbicm) {  printf("RGBICM improc\n");
+                ipf.tagtrc (params.icm.output, jprof, useLCMS, pro, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+                    if (!useLCMS) {printf("Oui lcms improc\n");
+                        ProfileContent pc(jprof);
+                        readyImg->setOutputProfile (pc.data, pc.length);
+                    }
+                    else {printf("Non lcms\n");readyImg->setOutputProfile (NULL, 0);}
+            }
+            */
+            #pragma omp parallel for
+            for(int row = 0; row < ch; row++) {
+                for(int col = 0; col < cw; col++) {
+                    oprevi->r(row, col) = (float)readyImg->r(row, col);
+                    oprevi->g(row, col) = (float)readyImg->g(row, col);
+                    oprevi->b(row, col) = (float)readyImg->b(row, col);
+                }
+            }
+            delete readyImg;
+        }
+    }
+
+
+
     if ((todo & M_RGBCURVE) || (todo & M_CROP)) {
 //        if (hListener) oprevi->calcCroppedHistogram(params, scale, histCropped);
 
@@ -516,6 +623,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             }
         }
 
+
+
+
         // if it's just crop we just need the histogram, no image updates
         if ( todo & M_RGBCURVE ) {
             //initialize rrm bbm ggm different from zero to avoid black screen in some cases
@@ -524,7 +634,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             double bbm = 33.;
 
             DCPProfile *dcpProf = imgsrc->getDCP(params.icm, currWB);
-            ipf.rgbProc (oprevi, oprevl, NULL, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
+            ipf.rgbProc (1, oprevi, oprevl, NULL, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
                          rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, dcpProf);
 
             if(params.blackwhite.enabled && params.blackwhite.autoc && abwListener) {
@@ -778,6 +888,66 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             if (CAMBrightCurveQ) {
                 CAMBrightCurveQ.reset();
             }
+        }
+    }
+
+    //here Differential gamma
+    if ( todo & (M_LUMINANCE)) {
+
+        if(params.gamma.gammaMethod=="thr" && params.gamma.enabled) {
+
+            Image16* readyImg = NULL;
+            TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
+
+            double toxyz[3][3] = {
+                {
+                    ( wprof[0][0] ),//I have suppressed / Color::D50x
+                    ( wprof[0][1] ),
+                    ( wprof[0][2] )
+                }, {
+                    ( wprof[1][0]),
+                    ( wprof[1][1]),
+                    ( wprof[1][2])
+                }, {
+                    ( wprof[2][0] ),//I have suppressed / Color::D50z
+                    ( wprof[2][1] ),
+                    ( wprof[2][2] )
+                }
+            };
+
+
+            double ga0, ga1, ga2, ga3, ga4, ga5, ga6;
+            int cx=0, cy=0, cw=nprevl->W, ch=nprevl->H;
+            readyImg = ipf.labrgbpro (nprevl, cw, ch, params.icm.output, params.icm.working, params.gamma.gamm, params.gamma.slop, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+            #pragma omp parallel for
+            for(int row = 0; row < ch; row++) {
+                for(int col = 0; col < cw; col++) {
+                    float r1, g1, b1, L1, a_1, b_1;
+                    float x, y, z;
+
+                    r1 = (float)readyImg->r(row, col);
+                    g1 = (float)readyImg->g(row, col);
+                    b1 = (float)readyImg->b(row, col);
+
+                    x = toxyz[0][0] * r1 + toxyz[0][1] * g1 + toxyz[0][2] * b1;
+                    y = toxyz[1][0] * r1 + toxyz[1][1] * g1 + toxyz[1][2] * b1;
+                    z = toxyz[2][0] * r1 + toxyz[2][1] * g1 + toxyz[2][2] * b1;
+
+                    Color::XYZ2Lab(x, y, z, L1, a_1, b_1);
+
+                    nprevl->L[row][col] = L1;
+                    nprevl->a[row][col] = a_1;
+                    nprevl->b[row][col] = b_1;
+
+                }
+            }
+            delete readyImg;
+        }
+    }
+
+    if ( todo & (M_LUMINANCE)) {
+        if(params.icm.previewMethod=="uuu") {
+
         }
     }
 

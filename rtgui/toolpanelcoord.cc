@@ -50,6 +50,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)
     sharpenMicro        = Gtk::manage (new SharpenMicro ());
     lcurve              = Gtk::manage (new LCurve ());
     rgbcurves           = Gtk::manage (new RGBCurves ());
+    gamma              = Gtk::manage (new Gamma ());
     colortoning         = Gtk::manage (new ColorToning ());
     lensgeom            = Gtk::manage (new LensGeometry ());
     lensProf            = Gtk::manage (new LensProfilePanel ());
@@ -102,6 +103,8 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)
     toolPanels.push_back (whitebalance);
     addPanel (exposurePanel, toneCurve);
     toolPanels.push_back (toneCurve);
+    addPanel (exposurePanel, gamma);
+    toolPanels.push_back (gamma);
     addPanel (colorPanel, vibrance);
     toolPanels.push_back (vibrance);
     addPanel (colorPanel, chmixer);

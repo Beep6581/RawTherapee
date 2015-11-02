@@ -242,10 +242,34 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     fgVBox->pack_start( *gampos, Gtk::PACK_SHRINK);//gamma
     fgVBox->pack_start( *slpos, Gtk::PACK_SHRINK);//slope
 
+    Gtk::HBox* pvHBox = Gtk::manage (new Gtk::HBox ());
+    Gtk::VBox* pvMetVBox = Gtk::manage (new Gtk::VBox ());
+
+    Gtk::HBox* pbox = Gtk::manage (new Gtk::HBox ());
+    labpv = Gtk::manage (new Gtk::Label (M("TP_PREVIEW_METHOD") + ":"));
+    pbox->pack_start (*labpv, Gtk::PACK_SHRINK, 1);
+
+    previewMethod = Gtk::manage (new MyComboBoxText ());
+    previewMethod->append_text (M("TP_PREVIEW_NONE"));
+    previewMethod->append_text (M("TP_PREVIEW_RGB"));
+    previewMethod->append_text (M("TP_PREVIEW_CMS"));
+    previewMethod->set_active(0);
+    previewMethodConn = previewMethod->signal_changed().connect ( sigc::mem_fun(*this, &ICMPanel::previewMethodChanged) );
+    previewMethod->set_tooltip_markup (M("TP_PREVIEW_METHOD_TOOLTIP"));
+
+    rgbicm = Gtk::manage(new Gtk::CheckButton((M("TP_GAMMA_RGBICM"))));
+    rgbicm->set_active (false);
+    pvHBox->pack_start(*rgbicm, Gtk::PACK_SHRINK, 0);
+    //pbox->pack_start(*previewMethod);
+    //pvMetVBox->pack_start (*pbox);
     fgFrame->add(*fgVBox);
+
     oVBox->pack_start(*fgFrame, Gtk::PACK_EXPAND_WIDGET, 2);
+    oVBox->pack_start(*pvHBox);
+    oVBox->pack_start(*pvMetVBox);
 
     oFrame->add(*oVBox);
+
     pack_start (*oFrame, Gtk::PACK_EXPAND_WIDGET, 4);
 
 
@@ -291,6 +315,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     beoconn = ckbApplyBaselineExposureOffset->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::applyBaselineExposureOffsetChanged));
     hsmconn = ckbApplyHueSatMap->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::applyHueSatMapChanged));
     blendcmsconn = ckbBlendCMSMatrix->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::blendCMSMatrixChanged));
+    rgbicmconn = rgbicm->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::rgbicmChanged));
 
     icamera->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     icameraICC->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
@@ -455,6 +480,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
     beoconn.block(true);
     hsmconn.block(true);
     blendcmsconn.block(true);
+    previewMethodConn.block(true);
 
     if(pp->icm.input.substr(0, 5) != "file:" && !ipDialog->get_filename().empty()) {
         ipDialog->set_filename(pp->icm.input);
@@ -526,6 +552,9 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
     freegamma->set_active (pp->icm.freegamma);
     lastgamfree = pp->icm.freegamma;
 
+    rgbicm->set_active (pp->icm.rgbicm);
+    lastrgbicm = pp->icm.rgbicm;
+
     gampos->setValue (pp->icm.gampos);
     slpos->setValue (pp->icm.slpos);
 
@@ -545,6 +574,10 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
             onames->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
+        if (!pedited->icm.previewMethod) {
+            previewMethod->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+
         if (!pedited->icm.dcpIlluminant) {
             dcpIll->set_active_text(M("GENERAL_UNCHANGED"));
         }
@@ -558,6 +591,17 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
         slpos->setEditedState  (pedited->icm.slpos  ? Edited : UnEdited);
 
     }
+    if (pp->icm.previewMethod == "none") {
+        previewMethod->set_active (0);
+    } else if (pp->icm.previewMethod == "rgb") {
+        previewMethod->set_active (1);
+    } else if (pp->icm.previewMethod == "cms") {
+        previewMethod->set_active (2);
+    }
+    previewMethodChanged ();
+
+
+    previewMethodConn.block(false);
 
     blendcmsconn.block(false);
     tcurveconn.block(false);
@@ -606,6 +650,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
     pp->icm.freegamma = freegamma->get_active();
+    pp->icm.rgbicm = rgbicm->get_active();
 
     DCPProfile* dcp = NULL;
 
@@ -651,8 +696,28 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.freegamma = !freegamma->get_inconsistent();
         pedited->icm.gampos = gampos->getEditedState ();
         pedited->icm.slpos = slpos->getEditedState ();
+        pedited->icm.rgbicm = !rgbicm->get_inconsistent();
+        pedited->icm.previewMethod    = previewMethod->get_active_text() != M("GENERAL_UNCHANGED");
+    }
+    if (previewMethod->get_active_row_number() == 0) {
+        pp->icm.previewMethod = "none";
+    } else if (previewMethod->get_active_row_number() == 1) {
+        pp->icm.previewMethod = "rgb";
+    } else if (previewMethod->get_active_row_number() == 2) {
+        pp->icm.previewMethod = "cms";
+    }
+
+}
+
+void ICMPanel::previewMethodChanged()
+{
+
+    if (listener) {
+        listener->panelChanged (EvpreviewMethod, previewMethod->get_active_text ());
     }
 }
+
+
 
 void ICMPanel::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
 {
@@ -868,6 +933,34 @@ void ICMPanel::GamChanged()
             listener->panelChanged (EvGAMFREE, M("GENERAL_DISABLED"));
             onames->set_sensitive(!freegamma->get_active() && wgamma->get_active_row_number() == 0);
             wgamma->set_sensitive(!freegamma->get_active());
+        }
+    }
+}
+
+void ICMPanel::rgbicmChanged()
+{
+    if (batchMode) {
+        if (rgbicm->get_inconsistent()) {
+            rgbicm->set_inconsistent (false);
+            rgbicmconn.block (true);
+            rgbicm->set_active (false);
+            rgbicmconn.block (false);
+        } else if (lastrgbicm) {
+            rgbicm->set_inconsistent (true);
+        }
+
+        lastrgbicm = rgbicm->get_active ();
+    }
+
+    if (listener) {
+        if (rgbicm->get_active()) {
+            listener->panelChanged (Evrgbicm, M("GENERAL_ENABLED"));
+            //onames->set_sensitive(!freegamma->get_active());//disabled choice
+            //wgamma->set_sensitive(!freegamma->get_active());
+        } else {
+            listener->panelChanged (Evrgbicm, M("GENERAL_DISABLED"));
+            //onames->set_sensitive(!freegamma->get_active() && wgamma->get_active_row_number() == 0);
+            //wgamma->set_sensitive(!freegamma->get_active());
         }
     }
 }

@@ -454,6 +454,14 @@ enum ProcEvent {
     EvLbaselog = 424,
 //    EvLgrbl = 425,
     EvRetinexlhcurve = 425,
+    EvGgamm = 426,
+    EvGslop = 427,
+    EvGammaEnabled = 428,
+    EvgammaMethod = 429,
+    Evrgbicm = 430,
+    EvpreviewMethod = 431,
+    Evoutp = 432,
+
     NUMOFEVENTS
 };
 }

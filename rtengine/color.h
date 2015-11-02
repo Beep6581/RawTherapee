@@ -989,7 +989,7 @@ public:
     }
     static inline double igammareti     (double x, double gamma, double start, double slope, double mul, double add)
     {
-        return (x <= start * slope ? x / slope : exp(log((x + add) / mul) * gamma) );
+        return (x <= start  ? x / slope : exp(log((x + add) / mul) * gamma) );
     }
 
 
@@ -1003,7 +1003,7 @@ public:
     }
     static inline double igamma     (double x, double gamma, double start, double slope, double mul, double add)
     {
-        return (x <= start * slope ? x / slope : exp(log((x + add) / mul) * gamma) );
+        return (x <= start ? x / slope : exp(log((x + add) / mul) * gamma) );
     }
 
 

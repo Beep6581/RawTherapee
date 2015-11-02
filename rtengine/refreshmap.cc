@@ -96,7 +96,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     ALLNORAW,         // EvHRAmount,
     ALLNORAW,         // EvHRMethod,
     ALLNORAW,         // EvWProfile,
-    OUTPUTPROFILE,    // EvOProfile,
+    WHITEBALANCE,    // EvOProfile,
     INPUTPROFILE,     // EvIProfile,
     TRANSFORM,        // EvVignettingAmount,
     RGBCURVE,         // EvChMixer,
@@ -433,7 +433,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DIRPYREQUALIZER,  // EvWavedgeampli
     DIRPYREQUALIZER,  // EvWavlev3nois
     DIRPYREQUALIZER,  // EvWavNPmet
-    DEMOSAIC,         // EvretinexMethod
+    ALLNORAW,         // EvretinexMethod
     ALLNORAW,         // EvLneigh
     ALLNORAW,         // EvLgain
     ALLNORAW,         // EvLoffs
@@ -453,6 +453,14 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     ALLNORAW,          // EvLhighl
     DEMOSAIC,          // EvLbaselog
 //    DEMOSAIC,          // EvLgrbl
-    DEMOSAIC          // EvRetinexlhcurve
+    DEMOSAIC,          // EvRetinexlhcurve
+    WHITEBALANCE,         // EvGgamm
+    WHITEBALANCE,         // EvGslop
+    WHITEBALANCE,         // EvGammaEnabled
+    WHITEBALANCE,        // EvgammaMethod
+    WHITEBALANCE,            // Evrgbicm
+    GAMMA,            // EvpreviewMethod
+    WHITEBALANCE        // Evoutp
+
 };
 

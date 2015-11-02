@@ -55,13 +55,19 @@ protected:
     sigc::connection hsmconn;
     bool lastBlendCMSMatrix;
     bool isBatchMode;
+    bool lastrgbicm;
     sigc::connection blendcmsconn;
+    sigc::connection rgbicmconn;
+    MyComboBoxText*   previewMethod;
+    sigc::connection previewMethodConn;
+    Gtk::Label* labpv;
 
 private:
     Gtk::VBox       *  iVBox;
 
     Gtk::CheckButton*  freegamma;
     Gtk::RadioButton*  inone;
+    Gtk::CheckButton*  rgbicm;
 
     Gtk::RadioButton*  iembedded;
     Gtk::RadioButton*  icamera;
@@ -97,6 +103,7 @@ private:
     void updateDCP(int dcpIlluminant, Glib::ustring dcp_name);
 public:
     ICMPanel ();
+//    ~ICMPanel ();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
@@ -110,6 +117,7 @@ public:
     void ipChanged ();
     void gpChanged ();
     void GamChanged ();
+    void rgbicmChanged ();
     void ipSelectionChanged ();
     void blendCMSMatrixChanged();
     void dcpIlluminantChanged();
@@ -117,6 +125,7 @@ public:
     void applyLookTableChanged();
     void applyBaselineExposureOffsetChanged();
     void applyHueSatMapChanged();
+    void previewMethodChanged();
 
     void setRawMeta (bool raw, const rtengine::ImageData* pMeta);
     void saveReferencePressed ();

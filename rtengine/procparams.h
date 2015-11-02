@@ -261,6 +261,25 @@ public:
     void setDefaults();
     static bool HLReconstructionNecessary(LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw);
 };
+
+/**
+  * Parameters of Gamma
+  */
+class GammaParams
+{
+
+public:
+    bool enabled;
+    double  gamm;
+    double  slop;
+    bool outp;
+    
+    Glib::ustring gammaMethod;
+    GammaParams ();
+    void setDefaults();
+};
+
+
 /**
   * Parameters of Retinex
   */
@@ -942,11 +961,13 @@ public:
     Glib::ustring working;
     Glib::ustring output;
     static const Glib::ustring NoICMString;
+    Glib::ustring previewMethod;
 
     Glib::ustring gamma;
     double gampos;
     double slpos;
     bool freegamma;
+    bool rgbicm;
 
     ColorManagementParams()
     {
@@ -1225,6 +1246,7 @@ public:
     LCurveParams            labCurve;        ///< CIELAB luminance curve parameters
     RetinexParams             retinex;           ///< Retinex parameters
     RGBCurvesParams         rgbCurves;       ///< RGB curves parameters
+    GammaParams                gamma;       ///< Gamma parameters
     ColorToningParams       colorToning;     ///< Color Toning parameters
     SharpeningParams        sharpening;      ///< Sharpening parameters
     SharpeningParams        prsharpening;    ///< Sharpening parameters for post resize sharpening

@@ -732,6 +732,109 @@ void Crop::update (int todo)
         }
     }
 
+
+    if (todo & M_LINDENOISE) {
+
+        if((params.gamma.gammaMethod!="two") && params.gamma.enabled) {
+            int  cw=baseCrop->width, ch=baseCrop->height;
+            if(params.gamma.gammaMethod=="oneabs") {
+
+                #pragma omp parallel for
+                for(int row = 0; row < ch; row++) {
+                    for(int col = 0; col < cw; col++) {
+                        double mul = 1.055011;
+                        double add = 0.055011;
+                        double start = 0.003041;
+                        double ts = 12.92;
+                        double gamm = 2.4;
+                        float R_, G_, B_;
+                        R_ =  baseCrop->r(row, col);
+                        G_ =  baseCrop->g(row, col);
+                        B_ =  baseCrop->b(row, col);
+                        double x;
+                        double val;
+                        val = R_/65535.f;
+                        if(val > 0.f)
+                            x=(val <= start ? val/ts : xexpf(xlogf((val+add) / mul) * gamm));
+                        else
+                            x = val;
+                        baseCrop->r(row, col)=x*65535.f;
+                        val = G_/65535.f;
+                        if(val > 0.f)
+                            x=(val <= start ? val/ts : xexpf(xlogf((val+add) / mul) * gamm));
+                        else
+                            x = val;
+                        baseCrop->g(row, col)=x*65535.f;
+                        val = B_/65535.f;
+                        if(val > 0.f)
+                            x=(val <= start ? val/ts : xexpf(xlogf((val+add) / mul) * gamm));
+                        else
+                            x = val;
+                        baseCrop->b(row, col)=x*65535.f;
+
+
+                        // baseCrop->r(row, col) = Color::igamma_srgb( baseCrop->r(row, col) );
+                        // baseCrop->g(row, col) = Color::igamma_srgb( baseCrop->g(row, col) );
+                        // baseCrop->b(row, col) = Color::igamma_srgb( baseCrop->b(row, col) );
+                    }
+                }
+            }
+            else  if(params.gamma.gammaMethod=="oneabs2") {
+
+                Image16* readyImg0 = NULL;
+                double ga0, ga1, ga2, ga3, ga4, ga5, ga6;
+                int mul=-5;
+                readyImg0 = parent->ipf.rgbgrgb (baseCrop, 0, cw, ch, mul, params.icm.output, params.icm.working, 2.4, 12.92, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+                #pragma omp parallel for
+                for(int row = 0; row < ch; row++) {
+                    for(int col = 0; col < cw; col++) {
+                        baseCrop->r(row, col) = (float)readyImg0->r(row, col);
+                        baseCrop->g(row, col) = (float)readyImg0->g(row, col);
+                        baseCrop->b(row, col) = (float)readyImg0->b(row, col);
+                    }
+                }
+                delete readyImg0;
+
+            }
+            Image16* readyImg = NULL;
+            // printf("gam dcrop one thr\n");
+            cmsHPROFILE jprof = NULL;
+            bool customGamma = false;
+            bool useLCMS = false;
+            Glib::ustring chpro;
+            cmsMLU *DescriptionMLU, *CopyrightMLU, *DmndMLU, *DmddMLU;// for modification TAG
+
+            cmsToneCurve* GammaTRC[3] = { NULL, NULL, NULL };
+            cmsFloat64Number Parameters[7];
+
+            double ga0, ga1, ga2, ga3, ga4, ga5, ga6;
+            int mul=5;
+            readyImg = parent->ipf.rgbgrgb (baseCrop, 0, cw, ch, mul, params.icm.output, params.icm.working, params.gamma.gamm, params.gamma.slop, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+            /*
+            customGamma = true;
+                bool pro=false;
+                if (!params.icm.rgbicm) {  printf("RGBICM dcrop\n");
+                    parent->ipf.tagtrc (params.icm.output, jprof, useLCMS, pro, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+                        if (!useLCMS) {printf("Oui lcms dcrop\n");
+                            ProfileContent pc(jprof);
+                            readyImg->setOutputProfile (pc.data, pc.length);
+                        }
+                        else {printf("Non lcms\n");readyImg->setOutputProfile (NULL, 0);}
+                }
+            */
+
+            #pragma omp parallel for
+            for(int row = 0; row < ch; row++) {
+                for(int col = 0; col < cw; col++) {
+                    baseCrop->r(row, col) = (float)readyImg->r(row, col);
+                    baseCrop->g(row, col) = (float)readyImg->g(row, col);
+                    baseCrop->b(row, col) = (float)readyImg->b(row, col);
+                }
+            }
+            delete readyImg;
+        }
+    }
+
     // shadows & highlights & tone curve & convert to cielab
     /*int xref,yref;
     xref=000;yref=000;
@@ -766,13 +869,19 @@ void Crop::update (int todo)
         satLimitOpacity = 100.f * (moyS - 0.85f * eqty); //-0.85 sigma==>20% pixels with low saturation
     }
 
+
+
+
+
+
     if (todo & M_RGBCURVE) {
         double rrm, ggm, bbm;
         DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, parent->currWB);
-        parent->ipf.rgbProc (baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
+        parent->ipf.rgbProc (1, baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
                              params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, satLimit , satLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve, parent->cl2Toningcurve,
                              parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW, rrm, ggm, bbm,
                              parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf);
+
     }
 
     /*xref=000;yref=000;
@@ -980,6 +1089,57 @@ void Crop::update (int todo)
             }
 
             cieCrop = NULL;
+        }
+    }
+    //here Differential gamma
+    if ( todo &  (M_LUMINANCE)) {// + M_LUMINANCE M_LINDENOISE
+
+        if(params.gamma.gammaMethod=="thr" && params.gamma.enabled) {
+            Image16* readyImg = NULL;
+            TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
+
+            double toxyz[3][3] = {
+                {
+                    ( wprof[0][0] ),//I have suppressed / Color::D50x
+                    ( wprof[0][1] ),
+                    ( wprof[0][2] )
+                }, {
+                    ( wprof[1][0]),
+                    ( wprof[1][1]),
+                    ( wprof[1][2])
+                }, {
+                    ( wprof[2][0] ),//I have suppressed / Color::D50z
+                    ( wprof[2][1] ),
+                    ( wprof[2][2] )
+                }
+            };
+
+
+            double ga0, ga1, ga2, ga3, ga4, ga5, ga6;
+            int cx=0, cy=0, cw=labnCrop->W, ch=labnCrop->H;
+            readyImg = parent->ipf.labrgbpro (labnCrop, cw, ch, params.icm.output, params.icm.working, params.gamma.gamm, params.gamma.slop, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+            #pragma omp parallel for
+            for(int row = 0; row < ch; row++) {
+                for(int col = 0; col < cw; col++) {
+                    float r1, g1, b1, L1, a_1, b_1;
+                    float x, y, z;
+
+                    r1 = (float)readyImg->r(row, col);
+                    g1 = (float)readyImg->g(row, col);
+                    b1 = (float)readyImg->b(row, col);
+
+                    x = toxyz[0][0] * r1 + toxyz[0][1] * g1 + toxyz[0][2] * b1;
+                    y = toxyz[1][0] * r1 + toxyz[1][1] * g1 + toxyz[1][2] * b1;
+                    z = toxyz[2][0] * r1 + toxyz[2][1] * g1 + toxyz[2][2] * b1;
+
+                    Color::XYZ2Lab(x, y, z, L1, a_1, b_1);
+
+                    labnCrop->L[row][col] = L1;
+                    labnCrop->a[row][col] = a_1;
+                    labnCrop->b[row][col] = b_1;
+                }
+            }
+            delete readyImg;
         }
     }
 

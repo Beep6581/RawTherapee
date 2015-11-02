@@ -3159,20 +3159,21 @@ filmlike_clip(float *r, float *g, float *b)
     }
 }
 
-void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *editBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
+void ImProcFunctions::rgbProc (int pw, Imagefloat* working, LabImage* lab, EditBuffer *editBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                                SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit , float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili,  LUTf & clToningcurve, LUTf & cl2Toningcurve,
                                const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2, const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf )
 {
-    rgbProc (working, lab, editBuffer, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh, dcpProf);
+    rgbProc (pw, working, lab, editBuffer, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh, dcpProf);
 }
 
 // Process RGB image and convert to LAB space
-void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *editBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
+void ImProcFunctions::rgbProc (int pw, Imagefloat* working, LabImage* lab, EditBuffer *editBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                                SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit , float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clToningcurve, LUTf & cl2Toningcurve,
                                const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,  const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh, DCPProfile *dcpProf)
 {
     LUTf fGammaLUTf;
     Imagefloat *tmpImage = NULL;
+    Imagefloat *tmpImage2 = NULL;
 
     // NOTE: We're getting all 3 pointers here, but this function may not need them all, so one could optimize this
     Imagefloat* editImgFloat = NULL;
@@ -3478,6 +3479,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
         tmpImage = new Imagefloat(working->width, working->height);
     }
 
+
 #define TS 112
 
 #ifdef _OPENMP
@@ -3519,6 +3521,81 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
             editWhateverTmp = (float(*))data;
         }
 
+        LUTf *diffgamtab;//gamma before and after
+        LUTf lutTonediff;
+        lutTonediff(65536);
+        LUTf lutToneidiff;
+        lutToneidiff(65536);
+        LUTf *diffigamtab;//gamma before and after
+        int metgam =1;
+        bool negat;
+        bool more65;
+        if(params->gamma.gammaMethod=="one") metgam = 1;
+        if(params->gamma.gammaMethod=="two") metgam = 2;
+        if(params->gamma.gammaMethod=="thr") metgam = 3;
+        bool gamena = params->gamma.enabled;
+        //gamena = false;
+        double gamm2 = params->gamma.gamm;
+        double g_a0, g_a1, g_a2, g_a3, g_a4, g_a5;
+        double val, start, add, mul;
+        double val2, start2, add2, mul2;
+        double pwr = 1.0 / params->gamma.gamm;
+        double gamm = params->gamma.gamm;
+        double ts = params->gamma.slop;
+        double x;
+
+        if(gamena) {
+            if(gamm2 < 1.) {
+                pwr = 1./pwr;
+                gamm = 1. / gamm;
+            }
+            int mode = 0, imax = 0;
+            Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope
+            //printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
+            if(metgam==2) {//LUT only for RGB mode
+                for (int i = 0; i < 65536; i++) {
+                    val = (i) / 65535.;
+                    start = g_a3;
+                    add = g_a4;
+                    mul = 1. + g_a4;
+                    if(gamm2 < 1.) {
+                        start = g_a2;
+                        add = g_a4;
+                    }
+                    if(gamm2 > 1.)// && ts >= 1.01)
+                        x = Color::gamma (val, gamm, start, ts, mul , add);
+                    else if(gamm2 < 1.)// && ts >= 1.01)
+                        x = Color::igamma (val, gamm, start, ts, mul , add);
+
+
+                    lutTonediff[i] = CLIP(x * 65535.);// CLIP avoid in some case extra values
+                    //    lutTonediff[i] = (x * 65535.);// CLIP avoid in some case extra values
+                }
+                diffgamtab = &lutTonediff;
+
+                for (int i = 0; i < 65536; i++) {
+                    val = (i) / 65535.;
+                    mul = 1. + g_a4;
+                    add = g_a4;
+                    start = g_a2;
+                    if(gamm2 < 1.) {
+                        start2 = g_a3;
+                        add2 = g_a3;
+                    }
+                    if(gamm2 > 1.)
+                        x = Color::igamma (val, gamm, start, ts, mul , add);
+                    else if(gamm2 < 1.)
+                        x = Color::gamma (val, gamm, start, ts, mul , add);
+
+
+                    lutToneidiff[i] = CLIP(x * 65535.);
+                    //   lutToneidiff[i] = (x * 65535.);
+                }
+                diffigamtab = &lutToneidiff;
+            }
+        }
+
+
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic) collapse(2)
@@ -3534,12 +3611,78 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
 
                 for (int i = istart, ti = 0; i < tH; i++, ti++) {
                     for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                        rtemp[ti * TS + tj] = working->r(i, j);
-                        gtemp[ti * TS + tj] = working->g(i, j);
-                        btemp[ti * TS + tj] = working->b(i, j);
+                        float R_,G_,B_;
+                        negat = false;
+                        more65 = false;
+                        R_=working->r(i, j);
+                        G_=working->g(i, j);
+                        B_=working->b(i, j);
+                        if(R_ < 0.f || G_ < 0.f || B_ < 0.f) negat = true;
+                        if(R_ > 65535.f || G_ > 65535.f || B_ > 65535.f) more65 = true;
+
+                        if(gamena && gamm2 !=1. && metgam==2 &&(negat || more65)) {
+                            start = g_a3;
+                            add = g_a4;
+                            mul = 1. + g_a4;
+                            if(gamm2 > 1.) {
+                                val = R_/65535.f;
+                                if(val > 0.f)
+                                    x=(val <= start ? val*ts : xexpf(xlogf(val) / gamm) * mul - add);
+                                else
+                                    x=val;
+                                rtemp[ti * TS + tj]=x*65535.f;
+                                val = G_/65535.f;
+                                if(val > 0.f)
+                                    x=(val <= start ? val*ts : xexpf(xlogf(val) / gamm) * mul - add);
+                                else
+                                    x=val;
+                                gtemp[ti * TS + tj]=x*65535.f;
+                                val = B_/65535.f;
+                                if(val > 0.f)
+                                    x=(val <= start ? val*ts : xexpf(xlogf(val) / gamm) * mul - add);
+                                else
+                                    x=val;
+                                btemp[ti * TS + tj]=x*65535.f;
+                            }
+                            if(gamm2 < 1.) {
+                                start = g_a2;
+                                add = g_a4;
+                                val = R_/65535.f;
+                                if(val > 0.f)
+                                    x=(val <= start*ts ? val/ts : xexpf(xlogf((val+add) / mul) * gamm));
+                                else
+                                    x=val;
+                                rtemp[ti * TS + tj]=x*65535.f;
+                                val = G_/65535.f;
+                                if(val > 0.f)
+                                    x=(val <= start*ts ? val/ts : xexpf(xlogf((val+add) / mul) * gamm));
+                                else
+                                    x=val;
+                                gtemp[ti * TS + tj]=x*65535.f;
+                                val = B_/65535.f;
+                                if(val > 0.f)
+                                    x=(val <= start*ts ? val/ts : xexpf(xlogf((val+add) / mul) * gamm));
+                                else
+                                    x=val;
+                                btemp[ti * TS + tj]=x*65535.f;
+                            }
+
+                        }
+                        else if(gamena && gamm2 !=1. && metgam==2 && (!negat || !more65) ) {
+                            rtemp[ti * TS + tj] = (*diffgamtab)[R_];
+                            gtemp[ti * TS + tj] = (*diffgamtab)[G_];
+                            btemp[ti * TS + tj] = (*diffgamtab)[B_];
+                        }
+
+                        else {
+                            rtemp[ti * TS + tj] = working->r(i, j);
+                            gtemp[ti * TS + tj] = working->g(i, j);
+                            btemp[ti * TS + tj] = working->b(i, j);
+                        }
+
+
                     }
                 }
-
                 if (mixchannels) {
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
@@ -4472,9 +4615,73 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
                                 editWhatever->v(i, j) = editWhateverTmp[ti * TS + tj];
                             }
 
-                            float r = rtemp[ti * TS + tj];
-                            float g = gtemp[ti * TS + tj];
-                            float b = btemp[ti * TS + tj];
+//                            float r = rtemp[ti * TS + tj];
+//                            float g = gtemp[ti * TS + tj];
+//                            float b = btemp[ti * TS + tj];
+                            float R_,G_,B_, r, g, b;
+                            R_=rtemp[ti * TS + tj];
+                            G_=gtemp[ti * TS + tj];
+                            B_=btemp[ti * TS + tj];
+
+                            if(gamena && gamm2 !=1. && metgam==2 && (negat || more65)) {
+
+                                mul = 1. + g_a4;
+                                add = g_a4;
+                                start = g_a2;
+
+                                if(gamm2 > 1.) {
+                                    val = R_/65535.f;
+                                    if(val > 0.f)
+                                        x=(val <= start*ts ? val/ts : xexpf(xlogf((val+add) / mul) * gamm));
+                                    else
+                                        x=val;
+                                    r=x*65535.f;
+                                    val = G_/65535.f;
+                                    if(val > 0.f)
+                                        x=(val <= start*ts ? val/ts : xexpf(xlogf((val+add) / mul) * gamm));
+                                    else
+                                        x=val;
+                                    g=x*65535.f;
+                                    val = B_/65535.f;
+                                    if(val > 0.f)
+                                        x=(val <= start*ts ? val/ts : xexpf(xlogf((val+add) / mul) * gamm));
+                                    else
+                                        x=val;
+                                    b=x*65535.f;
+                                }
+                                if(gamm2 < 1.) {
+                                    start = g_a3;
+                                    add = g_a3;
+                                    val = R_/65535.f;
+                                    if(val > 0.f)
+                                        x=(val <= start ? val*ts : xexpf(xlogf(val) / gamm) * mul - add);
+                                    else
+                                        x=val;
+                                    r=x*65535.f;
+                                    val = G_/65535.f;
+                                    if(val > 0.f)
+                                        x=(val <= start ? val*ts : xexpf(xlogf(val) / gamm) * mul - add);
+                                    else
+                                        x=val;
+                                    g=x*65535.f;
+                                    val = B_/65535.f;
+                                    if(val > 0.f)
+                                        x=(val <= start ? val*ts : xexpf(xlogf(val) / gamm) * mul - add);
+                                    else
+                                        x=val;
+                                    b=x*65535.f;
+                                }
+
+                            }
+                            else if(gamena && gamm2 !=1. && metgam==2 && (!negat || !more65 )) {
+                                r =  (*diffigamtab)[R_];
+                                g =  (*diffigamtab)[G_];
+                                b =  (*diffigamtab)[B_];
+                            } else {
+                                r = rtemp[ti * TS + tj];
+                                g = gtemp[ti * TS + tj];
+                                b = btemp[ti * TS + tj];
+                            }
 
                             float x = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
                             float y = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;

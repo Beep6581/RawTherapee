@@ -168,6 +168,7 @@ void BatchToolPanelCoordinator::initSession ()
             colortoning->setAdjusterBehavior (false, false, false, false, false);
             filmSimulation->setAdjusterBehavior(false);
             retinex->setAdjusterBehavior (false, false, false, false, false, false, false, false);
+            gamma->setAdjusterBehavior (false, false);
 
             shadowshighlights->setAdjusterBehavior (false, false, false);
             dirpyrequalizer->setAdjusterBehavior (false, false, false);
@@ -205,6 +206,7 @@ void BatchToolPanelCoordinator::initSession ()
             colortoning->setAdjusterBehavior (options.baBehav[ADDSET_COLORTONING_SPLIT], options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD], options.baBehav[ADDSET_COLORTONING_SATOPACITY], options.baBehav[ADDSET_COLORTONING_STRENGTH], options.baBehav[ADDSET_COLORTONING_BALANCE]);
             filmSimulation->setAdjusterBehavior(options.baBehav[ADDSET_FILMSIMULATION_STRENGTH]);
             retinex->setAdjusterBehavior (options.baBehav[ADDSET_RETI_STR], options.baBehav[ADDSET_RETI_NEIGH], options.baBehav[ADDSET_RETI_LIMD], options.baBehav[ADDSET_RETI_GAIN], options.baBehav[ADDSET_RETI_OFFS], options.baBehav[ADDSET_RETI_VART], options.baBehav[ADDSET_RETI_GAM], options.baBehav[ADDSET_RETI_SLO]);
+            gamma->setAdjusterBehavior (options.baBehav[ADDSET_GAMDIF_GAMM], options.baBehav[ADDSET_GAMDIF_SLOP]);
 
             chmixer->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER] );
             blackwhite->setAdjusterBehavior (options.baBehav[ADDSET_BLACKWHITE_HUES], options.baBehav[ADDSET_BLACKWHITE_GAMMA]);
@@ -609,6 +611,13 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_RETI_SLO]) {
                 pparams.retinex.slope = 0;
             }
+            
+            if (options.baBehav[ADDSET_GAMDIF_GAMM]) {
+                pparams.gamma.gamm = 0;
+            }
+            if (options.baBehav[ADDSET_GAMDIF_SLOP]) {
+                pparams.gamma.slop = 0;
+             }
 
             if (options.baBehav[ADDSET_DIRPYRDN_LUMA]) {
                 pparams.dirpyrDenoise.luma = 0;

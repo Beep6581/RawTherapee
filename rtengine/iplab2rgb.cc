@@ -631,6 +631,407 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
     return image;
 }
 
-//#include "sRGBgamutbdy.cc"
+Image16* ImProcFunctions::rgbgrgb (Imagefloat* working, int typ, int cw, int ch, int mul, Glib::ustring profile, Glib::ustring profi, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6)
+{
+    TMatrix wprof;
+    if(typ==0)
+        wprof = iccStore->workingSpaceMatrix (params->icm.working);
+    else {
+        wprof = iccStore->workingSpaceMatrix ("ProPhoto");
+        profi = "ProPhoto";
+    }
+
+    double toxyz[3][3] = {
+        {
+            ( wprof[0][0] ),//I have suppressed / Color::D50x
+            ( wprof[0][1] ),
+            ( wprof[0][2] )
+        }, {
+            ( wprof[1][0]),
+            ( wprof[1][1]),
+            ( wprof[1][2])
+        }, {
+            ( wprof[2][0] ),//I have suppressed / Color::D50z
+            ( wprof[2][1] ),
+            ( wprof[2][2] )
+        }
+    };
+
+//printf("wpo=%f\n",wprof[0][0] );
+
+    // Imagefloat* image = new Imagefloat (cw, ch);//does not work with float values...big artifacts
+    Image16* image = new Image16 (cw, ch);
+
+    float p1, p2, p3, p4, p5, p6; //primaries
+    //double ga0,ga1,ga2,ga3,ga4,ga5=0.0,ga6=0.0;//gamma parameters
+    double g_a0, g_a1, g_a2, g_a3, g_a4, g_a5; //gamma parameters
+    double pwr;
+    double ts;
+    ts = slpos;
+
+    int five=mul;
+    //  if(ts < 2.) five = 4;
+
+    ga6 = 0.0;
+    pwr = 1.0 / gampos;
+    if(gampos<1.0) {
+        pwr=gampos;
+        gampos=1./gampos;
+        five=-mul;
+        //    if(ts < 2.) five=-4;
+    }
+    int mode = 0, imax = 0;
+    int t50;
+    int select_temp = 1; //5003K
+    const double eps = 0.000000001; // not divide by zero
+    cmsHPROFILE oprofdef;
+    if (!params->gamma.outp) {
+        //primaries for 7 working profiles
+        // eventually to adapt primaries  if RT used special profiles !
+        if(profi == "ProPhoto")     {
+            p1 = 0.7347;    //Prophoto primaries
+            p2 = 0.2653;
+            p3 = 0.1596;
+            p4 = 0.8404;
+            p5 = 0.0366;
+            p6 = 0.0001;
+            select_temp = 1;
+        } else if (profi == "WideGamut") {
+            p1 = 0.7350;    //Widegamut primaries
+            p2 = 0.2650;
+            p3 = 0.1150;
+            p4 = 0.8260;
+            p5 = 0.1570;
+            p6 = 0.0180;
+            select_temp = 1;
+        } else if (profi == "Adobe RGB") {
+            p1 = 0.6400;    //Adobe primaries
+            p2 = 0.3300;
+            p3 = 0.2100;
+            p4 = 0.7100;
+            p5 = 0.1500;
+            p6 = 0.0600;
+            select_temp = 2;
+        } else if (profi == "sRGB") {
+            p1 = 0.6400;    // sRGB primaries
+            p2 = 0.3300;
+            p3 = 0.3000;
+            p4 = 0.6000;
+            p5 = 0.1500;
+            p6 = 0.0600;
+            select_temp = 2;
+        } else if (profi == "BruceRGB") {
+            p1 = 0.6400;    // Bruce primaries
+            p2 = 0.3300;
+            p3 = 0.2800;
+            p4 = 0.6500;
+            p5 = 0.1500;
+            p6 = 0.0600;
+            select_temp = 2;
+        } else if (profi == "Beta RGB") {
+            p1 = 0.6888;    // Beta primaries
+            p2 = 0.3112;
+            p3 = 0.1986;
+            p4 = 0.7551;
+            p5 = 0.1265;
+            p6 = 0.0352;
+            select_temp = 1;
+        } else if (profi == "BestRGB") {
+            p1 = 0.7347;    // Best primaries
+            p2 = 0.2653;
+            p3 = 0.2150;
+            p4 = 0.7750;
+            p5 = 0.1300;
+            p6 = 0.0350;
+            select_temp = 1;
+        }
+        if(slpos == 0) {
+            slpos = eps;
+        }
+
+        Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
+        ga4 = g_a3 * ts;
+        //printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
+        ga0 = gampos;
+        ga1 = 1. / (1.0 + g_a4);
+        ga2 = g_a4 / (1.0 + g_a4);
+        ga3 = 1. / slpos;
+        ga5 = 0.0;
+        printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", ga0,ga1,ga2,ga3,ga4);
+
+
+        if(select_temp == 1) {
+            t50 = 5003;    // for Widegamut, Prophoto Best, Beta   D50
+        } else if (select_temp == 2) {
+            t50 = 6504;    // for sRGB, AdobeRGB, Bruce  D65
+        }
+
+        cmsCIExyY       xyD;
+        cmsCIExyYTRIPLE Primaries = {{p1, p2, 1.0},//red primaries
+            {p3, p4, 1.0}, // green
+            {p5, p6, 1.0} //blue
+        };
+        cmsToneCurve* GammaTRC[3];
+        cmsFloat64Number Parameters[7];
+        Parameters[0] = ga0;
+        Parameters[1] = ga1;
+        Parameters[2] = ga2;
+        Parameters[3] = ga3;
+        Parameters[4] = ga4;
+        Parameters[5] = ga5;
+        Parameters[6] = ga6;
+// 7 parameters for smoother curves
+        cmsWhitePointFromTemp(&xyD, t50);
+        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] =   cmsBuildParametricToneCurve(NULL, five, Parameters);//5 = more smoother than 4
+        oprofdef =  cmsCreateRGBProfileTHR(NULL, &xyD, &Primaries, GammaTRC); //oprofdef  become Outputprofile
+        // oprofdef = iccStore->getProfile (profile);//in case of we want add output
+        cmsFreeToneCurve(GammaTRC[0]);
+    }
+    if (params->gamma.outp)  oprofdef = iccStore->getProfile (profile);
+
+
+    if (oprofdef) {
+        #pragma omp parallel for if (multiThread)
+
+        for (int i = 0; i < ch; i++) {
+            float R, G, B;
+            float* rr = working->r(i);
+            float* rg = working->g(i);
+            float* rb = working->b(i);
+
+            short* xa = (short*)image->r(i);
+            short* ya = (short*)image->g(i);
+            short* za = (short*)image->b(i);
+
+            for (int j = 0; j < cw; j++) {
+                float r1 = rr[j];
+                float g1 = rg[j];
+                float b1 = rb[j];
+
+
+                float x_ = toxyz[0][0] * r1 + toxyz[0][1] * g1 + toxyz[0][2] * b1;
+                float y_ = toxyz[1][0] * r1 + toxyz[1][1] * g1 + toxyz[1][2] * b1;
+                float z_ = toxyz[2][0] * r1 + toxyz[2][1] * g1 + toxyz[2][2] * b1;
+
+                xa[j] = CLIP((int) round(x_)) ;
+                ya[j] = CLIP((int) round(y_));
+                za[j] = CLIP((int) round(z_));
+
+            }
+        }
+
+        cmsHPROFILE iprof = iccStore->getXYZProfile ();
+        lcmsMutex->lock ();
+        // 0=perceptual 1=relative 2=sat 3=absol  no differences with 0 1 2 3 ???
+        // does not work with TYPE_RGB_FLT  big artifacts
+        cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprofdef, TYPE_RGB_16, 1,  cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
+        lcmsMutex->unlock ();
+
+        image->ExecCMSTransform(hTransform);
+        cmsDeleteTransform(hTransform);
+
+    }
+
+
+    return image;
+
+}
+
+Image16* ImProcFunctions::labrgbpro (LabImage* lab, int cw, int ch, Glib::ustring profile, Glib::ustring profi, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6)
+{
+
+    TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
+
+    double toxyz[3][3] = {
+        {
+            ( wprof[0][0] ),//I have suppressed / Color::D50x
+            ( wprof[0][1] ),
+            ( wprof[0][2] )
+        }, {
+            ( wprof[1][0]),
+            ( wprof[1][1]),
+            ( wprof[1][2])
+        }, {
+            ( wprof[2][0] ),//I have suppressed / Color::D50z
+            ( wprof[2][1] ),
+            ( wprof[2][2] )
+        }
+    };
+
+
+    // Imagefloat* image = new Imagefloat (cw, ch);//does not work with float values...big artifacts
+    Image16* image = new Image16 (cw, ch);
+
+    float p1, p2, p3, p4, p5, p6; //primaries
+    double g_a0, g_a1, g_a2, g_a3, g_a4, g_a5; //gamma parameters
+    double pwr;
+    double ts;
+    ts = slpos;
+
+    int five=-5;
+    //  if(ts < 2.) five = 4;
+
+    ga6 = 0.0;
+    pwr = 1.0 / gampos;
+    if(gampos<1.0) {
+        pwr=gampos;
+        gampos=1./gampos;
+        five=5;
+        //    if(ts < 2.) five=-4;
+    }
+    int mode = 0, imax = 0;
+    int t50;
+    int select_temp = 1; //5003K
+    const double eps = 0.000000001; // not divide by zero
+
+    //primaries for 7 working profiles
+    // eventually to adapt primaries  if RT used special profiles !
+    if(profi == "ProPhoto")     {
+        p1 = 0.7347;    //Prophoto primaries
+        p2 = 0.2653;
+        p3 = 0.1596;
+        p4 = 0.8404;
+        p5 = 0.0366;
+        p6 = 0.0001;
+        select_temp = 1;
+    } else if (profi == "WideGamut") {
+        p1 = 0.7350;    //Widegamut primaries
+        p2 = 0.2650;
+        p3 = 0.1150;
+        p4 = 0.8260;
+        p5 = 0.1570;
+        p6 = 0.0180;
+        select_temp = 1;
+    } else if (profi == "Adobe RGB") {
+        p1 = 0.6400;    //Adobe primaries
+        p2 = 0.3300;
+        p3 = 0.2100;
+        p4 = 0.7100;
+        p5 = 0.1500;
+        p6 = 0.0600;
+        select_temp = 2;
+    } else if (profi == "sRGB") {
+        p1 = 0.6400;    // sRGB primaries
+        p2 = 0.3300;
+        p3 = 0.3000;
+        p4 = 0.6000;
+        p5 = 0.1500;
+        p6 = 0.0600;
+        select_temp = 2;
+    } else if (profi == "BruceRGB") {
+        p1 = 0.6400;    // Bruce primaries
+        p2 = 0.3300;
+        p3 = 0.2800;
+        p4 = 0.6500;
+        p5 = 0.1500;
+        p6 = 0.0600;
+        select_temp = 2;
+    } else if (profi == "Beta RGB") {
+        p1 = 0.6888;    // Beta primaries
+        p2 = 0.3112;
+        p3 = 0.1986;
+        p4 = 0.7551;
+        p5 = 0.1265;
+        p6 = 0.0352;
+        select_temp = 1;
+    } else if (profi == "BestRGB") {
+        p1 = 0.7347;    // Best primaries
+        p2 = 0.2653;
+        p3 = 0.2150;
+        p4 = 0.7750;
+        p5 = 0.1300;
+        p6 = 0.0350;
+        select_temp = 1;
+    }
+    if(slpos == 0) {
+        slpos = eps;
+    }
+
+    Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
+    ga4 = g_a3 * ts;
+    //printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
+    ga0 = gampos;
+    ga1 = 1. / (1.0 + g_a4);
+    ga2 = g_a4 / (1.0 + g_a4);
+    ga3 = 1. / slpos;
+    ga5 = 0.0;
+    //printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", ga0,ga1,ga2,ga3,ga4);
+
+
+    if(select_temp == 1) {
+        t50 = 5003;    // for Widegamut, Prophoto Best, Beta   D50
+    } else if (select_temp == 2) {
+        t50 = 6504;    // for sRGB, AdobeRGB, Bruce  D65
+    }
+
+    cmsCIExyY       xyD;
+    cmsCIExyYTRIPLE Primaries = {{p1, p2, 1.0},//red primaries
+        {p3, p4, 1.0}, // green
+        {p5, p6, 1.0} //blue
+    };
+    cmsToneCurve* GammaTRC[3];
+    cmsFloat64Number Parameters[7];
+    Parameters[0] = ga0;
+    Parameters[1] = ga1;
+    Parameters[2] = ga2;
+    Parameters[3] = ga3;
+    Parameters[4] = ga4;
+    Parameters[5] = ga5;
+    Parameters[6] = ga6;
+// 7 parameters for smoother curves
+    cmsWhitePointFromTemp(&xyD, t50);
+    GammaTRC[0] = GammaTRC[1] = GammaTRC[2] =   cmsBuildParametricToneCurve(NULL, five, Parameters);//5 = more smoother than 4
+    cmsHPROFILE oprofdef =  cmsCreateRGBProfileTHR(NULL, &xyD, &Primaries, GammaTRC); //oprofdef  become Outputprofile
+    // oprofdef = iccStore->getProfile (profile);//in case of we want add output
+    cmsFreeToneCurve(GammaTRC[0]);
+
+
+    if (oprofdef) {
+        #pragma omp parallel for if (multiThread)
+
+        for (int i = 0; i < ch; i++) {
+            float* rL = lab->L[i];
+            float* ra = lab->a[i];
+            float* rb = lab->b[i];
+            short* xa = (short*)image->r(i);
+            short* ya = (short*)image->g(i);
+            short* za = (short*)image->b(i);
+
+            for (int j = 0; j < cw; j++) {
+                float fy = (0.0086206897f * rL[j]) / 327.68f + 0.1379310345f; // (L+16)/116
+                float fx = (0.002f * ra[j]) / 327.68f + fy;
+                float fz = fy - (0.005f * rb[j]) / 327.68f;
+                float LL = rL[j] / 327.68f;
+
+                float x_ = 65535.0f * (float)Color::f2xyz(fx) * Color::D50x;
+                //  float y_ = 65535.0 * Color::f2xyz(fy);
+                float z_ = 65535.0f * (float)Color::f2xyz(fz) * Color::D50z;
+                float y_ = (LL > Color::epskap) ? (float) 65535.0 * fy * fy * fy : 65535.0f * LL / Color::kappa;
+
+                xa[j] = CLIP((int) round(x_)) ;
+                ya[j] = CLIP((int) round(y_));
+                za[j] = CLIP((int) round(z_));
+
+            }
+        }
+
+        cmsHPROFILE iprof = iccStore->getXYZProfile ();
+        lcmsMutex->lock ();
+        // 0=perceptual 1=relative 2=sat 3=absol  no differences with 0 1 2 3 ???
+        // does not work with TYPE_RGB_FLT  big artifacts
+        cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprofdef, TYPE_RGB_16, 1,  cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
+        lcmsMutex->unlock ();
+
+        image->ExecCMSTransform(hTransform);
+        cmsDeleteTransform(hTransform);
+
+    }
+
+
+    return image;
+
+}
+
+
 
 }

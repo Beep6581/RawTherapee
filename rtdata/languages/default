@@ -656,6 +656,12 @@ HISTORY_MSG_423;Retinex - Gamma slope
 HISTORY_MSG_424;Retinex - HL threshold
 HISTORY_MSG_425;Retinex - Log base
 HISTORY_MSG_426;Retinex - Hue equalizer
+HISTORY_MSG_427;Gamma - gamma
+HISTORY_MSG_428;Gamma - slope
+HISTORY_MSG_429;Gamma - Differential
+HISTORY_MSG_430;Gamma - Method
+HISTORY_MSG_431;RGB instead ICM
+HISTORY_MSG_433;Output profile
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1459,6 +1465,21 @@ TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Free gamma
 TP_GAMMA_OUTPUT;Output gamma
 TP_GAMMA_SLOP;Slope (linear)
+TP_GAMMA_RGBICM;RGB instead of ICM
+TP_PREVIEW_METHOD;Preview Method
+TP_GAMMADIF_LABEL;Gamma - Differential
+TP_GAMMADIF_METHOD;Gamma Method
+TP_GAMMADIF_OUTP;Use output profile instead of working
+TP_PREVIEW_NONE;None
+TP_PREVIEW_RGB;RGB
+TP_PREVIEW_CMS;ICM
+TP_GAMMADIF_METHOD_TOOLTIP;Standard Gamma relative ICC - apply an ICC profile over gammaSrgb at the beginning of non-raw process\nStandard Gamma absolute ICC - apply an ICC profile at the beginning of non-raw process\nRGB differential (watch for artifacts) apply gamma over gammasRGB at the beginning of non-raw process and inverse gamma at the end of RGB process\nRGB + L*a*b* differential - apply an ICC profile over gammaSrgb at the beginning of non-raw process and inverse at the end of L*a*b* process
+TP_GAMMADIF_ONE;Standard gamma (Relative ICC)
+TP_GAMMADIF_ONEABS;Standard gamma (Absolute ICC)
+TP_GAMMADIF_TWO;RGB differential (Only gamma)
+TP_GAMMADIF_THR;RGB + L*a*b* differential (ICC)
+TP_GAMMADIF_GAMMA;Gamma
+TP_GAMMADIF_SLOPE;Slope
 TP_GENERAL_11SCALE_TOOLTIP;The effects of this tool are only visible or only accurate at a preview scale of 1:1.
 TP_GRADIENT_CENTER;Center
 TP_GRADIENT_CENTER_X;Center X

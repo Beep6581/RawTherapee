@@ -606,6 +606,8 @@ void Options::setDefaults ()
         0, //ADDSET_RETI_VART
         0, //ADDSET_RETI_GAM
         0, //ADDSET_RETI_SLO
+        0, //ADDSET_GAMDIF_GAMM
+        0, //ADDSET_GAMDIF_SLOP
 
     };
     baBehav = std::vector<int> (babehav, babehav + ADDSET_PARAM_NUM);

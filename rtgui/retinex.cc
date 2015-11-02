@@ -108,6 +108,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     gammaretinex->append_text (M("TP_RETINEX_GAMMA_MID"));
     gammaretinex->append_text (M("TP_RETINEX_GAMMA_HIGH"));
     gammaretinex->append_text (M("TP_RETINEX_GAMMA_FREE"));
+//    gammaretinex->append_text (M("TP_RETINEX_GAMMA_FREE2"));
     gammaretinex->set_active(0);
     gammaretinexConn = gammaretinex->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::gammaretinexChanged) );
     gammaretinex->set_tooltip_markup (M("TP_RETINEX_GAMMA_TOOLTIP"));
@@ -560,6 +561,8 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
         gammaretinex->set_active (3);
     } else if (pp->retinex.gammaretinex == "fre") {
         gammaretinex->set_active (4);
+//    } else if (pp->retinex.gammaretinex == "fre2") {
+//        gammaretinex->set_active (5);
     }
 
     retinexMethodChanged ();
@@ -664,6 +667,8 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
         pp->retinex.gammaretinex = "hig";
     } else if (gammaretinex->get_active_row_number() == 4) {
         pp->retinex.gammaretinex = "fre";
+//    } else if (gammaretinex->get_active_row_number() == 5) {
+//        pp->retinex.gammaretinex = "fre2";
     }
 
 }
@@ -716,10 +721,10 @@ void Retinex::retinexColorSpaceChanged()
 void Retinex::gammaretinexChanged()
 {
     if (!batchMode) {
-        if(gammaretinex->get_active_row_number() == 4) {
+        if(gammaretinex->get_active_row_number() >= 4 ) {
             gam->show();
             slope->show();
-        } else if(gammaretinex->get_active_row_number() != 4) {
+        } else if(gammaretinex->get_active_row_number() < 4) {
             gam->hide();
             slope->hide();
         }

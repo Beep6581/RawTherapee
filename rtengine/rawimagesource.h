@@ -25,6 +25,7 @@
 #include "curves.h"
 #include "color.h"
 #include "iimage.h"
+#include "improcfun.h"
 
 #define HR_SCALE 2
 
@@ -108,6 +109,7 @@ protected:
     bool rgbSourceModified;
 
     RawImage* ri;  // Copy of raw pixels, NOT corrected for initial gain, blackpoint etc.
+    ImProcFunctions ipf;
 
     // to accelerate CIELAB conversion:
     double lc00, lc01, lc02, lc10, lc11, lc12, lc20, lc21, lc22;

@@ -115,8 +115,10 @@
 #define ADDSET_RETI_VART                107
 #define ADDSET_RETI_GAM                 108
 #define ADDSET_RETI_SLO                 109
+#define ADDSET_GAMDIF_GAMM              110
+#define ADDSET_GAMDIF_SLOP              111
 
 // When adding items, make sure to update ADDSET_PARAM_NUM
-#define ADDSET_PARAM_NUM                110 // THIS IS USED AS A DELIMITER!!
+#define ADDSET_PARAM_NUM                112 // THIS IS USED AS A DELIMITER!!
 
 #endif
