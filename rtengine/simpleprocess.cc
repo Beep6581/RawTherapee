@@ -116,8 +116,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         pl->setProgress (0.30);
     }
 
-    imgsrc->HLRecovery_Global( params.toneCurve );
-
     if(params.retinex.enabled) { //enabled Retinex
         LUTf cdcurve (65536, 0);
         LUTu dummy;
@@ -135,6 +133,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     if (pl) {
         pl->setProgress (0.40);
     }
+
+    imgsrc->HLRecovery_Global( params.toneCurve );
+
 
     if (pl) {
         pl->setProgress (0.45);
