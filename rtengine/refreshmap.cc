@@ -434,24 +434,24 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DIRPYREQUALIZER,  // EvWavlev3nois
     DIRPYREQUALIZER,  // EvWavNPmet
     DEMOSAIC,         // EvretinexMethod
-    ALLNORAW,         // EvLneigh
-    ALLNORAW,         // EvLgain
-    ALLNORAW,         // EvLoffs
-    ALLNORAW,         // EvLstr
-    ALLNORAW,         // EvLscal
-    ALLNORAW,         // EvLvart
-    ALLNORAW,         // EvLCDCurve
-    ALLNORAW,         // EvRetinextransmission
+    RETINEX,          // EvLneigh
+    RETINEX,          // EvLgain
+    RETINEX,          // EvLoffs
+    RETINEX,          // EvLstr
+    RETINEX,          // EvLscal
+    RETINEX,          // EvLvart
+    RETINEX,          // EvLCDCurve
+    RETINEX,          // EvRetinextransmission
     DEMOSAIC,         // EvRetinexEnabled
-    ALLNORAW,         // EvRetinexmedianmap
-    ALLNORAW,         // EvLlimd
+    RETINEX,          // EvRetinexmedianmap
+    RETINEX,          // EvLlimd
     DEMOSAIC,         // Evretinexcolorspace
-    ALLNORAW,         // EvLCDHCurve
-    DEMOSAIC,          // Evretinexgamma
-    DEMOSAIC,          // EvLgam
-    DEMOSAIC,          // EvLslope
-    ALLNORAW,          // EvLhighl
-    DEMOSAIC,          // EvLbaselog
+    RETINEX,          // EvLCDHCurve
+    DEMOSAIC,         // Evretinexgamma
+    DEMOSAIC,         // EvLgam
+    DEMOSAIC,         // EvLslope
+    RETINEX,          // EvLhighl
+    DEMOSAIC,         // EvLbaselog
 //    DEMOSAIC,          // EvLgrbl
     DEMOSAIC          // EvRetinexlhcurve
 };

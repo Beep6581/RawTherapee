@@ -242,7 +242,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
     }
 
-    if (params.retinex.enabled) {
+    if ((todo & (M_RETINEX|M_INIT)) && params.retinex.enabled) {
         bool dehacontlutili = false;
         bool useHsl = false;
         LUTf cdcurve (65536, 0);
