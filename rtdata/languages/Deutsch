@@ -20,6 +20,8 @@
 #20 2013-02-27 Erweiterung (cytrinox)
 #21 2013-12-31 Erweiterung (Ingo)
 #22 2015-09-04 komplette Überarbeitung (TooWaBoo)
+#23 2015-10-24 Retinexübersetzung und Korrekturen (TooWaBoo)
+#24 2015-11-01 Korrekturen (TooWaBoo) RT4.2.450
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -271,16 +273,16 @@ HISTORY_MSG_18;-
 HISTORY_MSG_19;L*a*b* - L-Kurve
 HISTORY_MSG_20;Schärfung
 HISTORY_MSG_21;Schärfung\nUnschärfemaskierung\nRadius
-HISTORY_MSG_22;Schärfung\nUnschärfemaskierung\nStärke
+HISTORY_MSG_22;Schärfung\nUnschärfemaskierung\nIntensität
 HISTORY_MSG_23;Schärfung\nUnschärfemaskierung\nSchwellenwert
 HISTORY_MSG_24;Schärfung\nUnschärfemaskierung\nNur Kanten schärfen
 HISTORY_MSG_25;Schärfung\nUnschärfemaskierung\nKantenradius
 HISTORY_MSG_26;Schärfung\nUnschärfemaskierung\nKantentoleranz
 HISTORY_MSG_27;Schärfung\nUnschärfemaskierung\nHalokontrolle
-HISTORY_MSG_28;Schärfung\nUnschärfemaskierung\nHalokontrolle - Stärke
+HISTORY_MSG_28;Schärfung\nUnschärfemaskierung\nHalokontrolle - Intensität
 HISTORY_MSG_29;Schärfung - Methode
 HISTORY_MSG_30;Schärfung\nDekonvolution\nRadius
-HISTORY_MSG_31;Schärfung\nDekonvolution\nStärke
+HISTORY_MSG_31;Schärfung\nDekonvolution\nIntensität
 HISTORY_MSG_32;Schärfung\nDekonvolution\nDämpfung
 HISTORY_MSG_33;Schärfung\nDekonvolution\nIterationen
 HISTORY_MSG_34;Objektivkorrektur\nProfil\nVerzeichnung
@@ -321,7 +323,7 @@ HISTORY_MSG_68;Belichtung\nLichterkompression\nMethode
 HISTORY_MSG_69;Farbmanagement\nArbeitsfarbraum
 HISTORY_MSG_70;Farbmanagement\nAusgabeprofil
 HISTORY_MSG_71;Eingangsfarbprofil
-HISTORY_MSG_72;Objektivkorrektur\nVignettierung\nStärke
+HISTORY_MSG_72;Objektivkorrektur\nVignettierung\nIntensität
 HISTORY_MSG_73;RGB-Kanalmixer
 HISTORY_MSG_74;Größe ändern\nMaßstab
 HISTORY_MSG_75;Größe ändern\nMethode
@@ -392,8 +394,8 @@ HISTORY_MSG_139;Schwarzpunkt Blau
 HISTORY_MSG_140;Schwarzpunkt Grün 2
 HISTORY_MSG_141;Schwarzpunkt\nGrün-Werte angleichen
 HISTORY_MSG_142;Kantenschärfung\nIterationen
-HISTORY_MSG_143;Kantenschärfung\nStärke
-HISTORY_MSG_144;Mikrokontrast\nStärke
+HISTORY_MSG_143;Kantenschärfung\nIntensität
+HISTORY_MSG_144;Mikrokontrast\nIntensität
 HISTORY_MSG_145;Mikrokontrast\nGleichmäßigkeit
 HISTORY_MSG_146;Kantenschärfung
 HISTORY_MSG_147;Kantenschärfung\nNur Luminanz
@@ -407,7 +409,7 @@ HISTORY_MSG_154;Dynamik\nHautfarbtöne schützen
 HISTORY_MSG_155;Dynamik\nFarbverschiebungen\nvermeiden
 HISTORY_MSG_156;Dynamik\nPastell und gesättigte\nTöne koppeln
 HISTORY_MSG_157;Dynamik\nPastell/gesättigte Töne\nSchwellenwert
-HISTORY_MSG_158;Dynamikkompression\nStärke
+HISTORY_MSG_158;Dynamikkompression\nIntensität
 HISTORY_MSG_159;Dynamikkompression\nKantenschutz
 HISTORY_MSG_160;Dynamikkompression\nFaktor
 HISTORY_MSG_161;Dynamikkompression\nIterationen
@@ -415,8 +417,8 @@ HISTORY_MSG_162;Dynamikkompression
 HISTORY_MSG_163;RGB-Kurven - Rot
 HISTORY_MSG_164;RGB-Kurven - Grün
 HISTORY_MSG_165;RGB-Kurven - Blau
-HISTORY_MSG_166;Belichtung - Neutral
-HISTORY_MSG_167;Demosaikmethode
+HISTORY_MSG_166;Belichtung - Zurücksetzen
+HISTORY_MSG_167;--unused--
 HISTORY_MSG_168;L*a*b* - CC-Kurve
 HISTORY_MSG_169;L*a*b* - CH-Kurve
 HISTORY_MSG_170;Dynamik - HH-Kurve
@@ -460,7 +462,7 @@ HISTORY_MSG_207;Farbsaum entfernen\nFarbtonkurve
 HISTORY_MSG_208;Weißabgleich\nBau/Rot-Korrektur
 HISTORY_MSG_210;Grauverlaufsfilter\nRotationswinkel
 HISTORY_MSG_211;Grauverlaufsfilter
-HISTORY_MSG_212;Vignettierungsfilter\nStärke
+HISTORY_MSG_212;Vignettierungsfilter\nIntensität
 HISTORY_MSG_213;Vignettierungsfilter
 HISTORY_MSG_214;Schwarz/Weiß
 HISTORY_MSG_215;Schwarz/Weiß - Rot
@@ -487,7 +489,7 @@ HISTORY_MSG_235;Schwarz/Weiß\nAuto-Kanalmixer
 HISTORY_MSG_236;--unused--
 HISTORY_MSG_237;Schwarz/Weiß - Mixer
 HISTORY_MSG_238;Grauverlaufsfilter\nBereich
-HISTORY_MSG_239;Grauverlaufsfilter\nStärke
+HISTORY_MSG_239;Grauverlaufsfilter\nIntensität
 HISTORY_MSG_240;Grauverlaufsfilter\nRotationsachsen
 HISTORY_MSG_241;Vignettierungsfilter\nBereich
 HISTORY_MSG_242;Vignettierungsfilter\nRundung
@@ -529,9 +531,9 @@ HISTORY_MSG_277;--unused--
 HISTORY_MSG_278;Farbanpassungen\nLuminanz schützen
 HISTORY_MSG_279;Farbanpassungen\nSchatten
 HISTORY_MSG_280;Farbanpassungen\nLichter
-HISTORY_MSG_281;Farbanpassungen\nSättigung schützen\nStärke
+HISTORY_MSG_281;Farbanpassungen\nSättigung schützen\nIntensität
 HISTORY_MSG_282;Farbanpassungen\nSättigung schützen\nSchwellenwert
-HISTORY_MSG_283;Farbanpassungen\nStärke
+HISTORY_MSG_283;Farbanpassungen\nIntensität
 HISTORY_MSG_284;Farbanpassungen\nSättigung schützen\nAutomatisch
 HISTORY_MSG_285;Rauschreduzierung\nMedianmethode
 HISTORY_MSG_286;Rauschreduzierung\nMediantyp
@@ -542,7 +544,7 @@ HISTORY_MSG_290;Schwarzpunkt - Rot
 HISTORY_MSG_291;Schwarzpunkt - Grün
 HISTORY_MSG_292;Schwarzpunkt - Blau
 HISTORY_MSG_293;Filmsimulation
-HISTORY_MSG_294;Filmsimulation - Stärke
+HISTORY_MSG_294;Filmsimulation - Intensität
 HISTORY_MSG_295;Filmsimulation - Film
 HISTORY_MSG_296;Rauschreduzierung\nLuminanzkurve
 HISTORY_MSG_297;Rauschreduzierung\nQualität
@@ -554,12 +556,12 @@ HISTORY_MSG_302;Rauschreduzierung\nChrominanz\nMethode
 HISTORY_MSG_303;Rauschreduzierung\nChrominanz\nMethode
 HISTORY_MSG_304;Wavelet\nKontrastebenen
 HISTORY_MSG_305;Wavelet
-HISTORY_MSG_306;Wavelet\nEinstellungen\nVerarbeitungsebene
-HISTORY_MSG_307;Wavelet\nEinstellungen\nVerarbeitung
-HISTORY_MSG_308;Wavelet\nEinstellungen\nVerarbeitungsrichtung
+HISTORY_MSG_306;Wavelet - Einstellungen\nVerarbeitungsebene
+HISTORY_MSG_307;Wavelet - Einstellungen\nVerarbeitung
+HISTORY_MSG_308;Wavelet - Einstellungen\nVerarbeitungsrichtung
 HISTORY_MSG_309;Wavelet\nKantenschärfung\nDetails
 HISTORY_MSG_310;Wavelet - Nachbild\nHimmelsfarbtöne\nändern/schützen
-HISTORY_MSG_311;Wavelet\nEinstellungen\nWaveletebenen
+HISTORY_MSG_311;Wavelet - Einstellungen\nWaveletebenen
 HISTORY_MSG_312;Wavelet - Nachbild\nSchatten Schwellenwert
 HISTORY_MSG_313;Wavelet\nFarbe\nSättigung
 HISTORY_MSG_314;Wavelet\nGamut\nArtefakte reduzieren
@@ -580,16 +582,16 @@ HISTORY_MSG_328;Wavelet - Farbe\nVerlinkungsstärke
 HISTORY_MSG_329;Wavelet - Tönung\nDeckkraft Rot/Grün
 HISTORY_MSG_330;Wavelet - Tönung\nDeckkraft Blau/Gelb
 HISTORY_MSG_331;Wavelet\nKontrastebenen\nExtra
-HISTORY_MSG_332;Wavelet\nEinstellungen\nKachelgröße
+HISTORY_MSG_332;Wavelet- -Einstellungen\nKachelgröße
 HISTORY_MSG_333;Wavelet - Nachbild\nSchatten
 HISTORY_MSG_334;Wavelet - Nachbild\nBuntheit
 HISTORY_MSG_335;Wavelet - Nachbild\nLichter
 HISTORY_MSG_336;Wavelet - Nachbild\nLichter Schwellenwert
 HISTORY_MSG_337;Wavelet - Nachbild\nHimmelsfarbton
 HISTORY_MSG_338;Wavelet\nKantenschärfung\nRadius
-HISTORY_MSG_339;Wavelet\nKantenschärfung\nStärke
-HISTORY_MSG_340;Wavelet\nEinstellungen\nStärke
-HISTORY_MSG_341;Wavelet\nEinstellungen\nKantenperformance
+HISTORY_MSG_339;Wavelet\nKantenschärfung\nIntensität
+HISTORY_MSG_340;Wavelet - Einstellungen\nIntensität
+HISTORY_MSG_341;Wavelet - Einstellungen\nKantenperformance
 HISTORY_MSG_342;Wavelet\nKantenschärfung\nErste Ebene
 HISTORY_MSG_343;Wavelet - Farbe\nFarbebenen
 HISTORY_MSG_344;Wavelet\nFarbemethode\nRegler/Kurve
@@ -600,7 +602,7 @@ HISTORY_MSG_348;Wavelet\nRauschreduzierung\nEbene 2
 HISTORY_MSG_349;Wavelet\nRauschreduzierung\nEbene 3
 HISTORY_MSG_350;Wavelet\nKantenschärfung\nKantenerkennung
 HISTORY_MSG_351;Wavelet - Nachbild\nHH-Kurve
-HISTORY_MSG_352;Wavelet\nEinstellungen\nHintergrund
+HISTORY_MSG_352;Wavelet - Einstellungen\nHintergrund
 HISTORY_MSG_353;Wavelet\nKantenschärfung\nGradienten-\nempfindlichkeit
 HISTORY_MSG_354;Wavelet\nKantenschärfung\nErweitert
 HISTORY_MSG_355;Wavelet\nKantenschärfung\nSchwellenwert niedrig
@@ -609,7 +611,7 @@ HISTORY_MSG_357;Wavelet\nRauschreduzierung\nSchärfung
 HISTORY_MSG_358;Wavelet - Gamut\nKontrastkurve
 HISTORY_MSG_359;Vorverarbeitung\nHot/Dead-Pixel\nSchwellenwert
 HISTORY_MSG_360;Dynamikkompression\nGamma
-HISTORY_MSG_361;Wavelet - Endretusche\nFarbeausgleich
+HISTORY_MSG_361;Wavelet - Endretusche\nFarbausgleich
 HISTORY_MSG_362;Wavelet - Nachbild\nKompression
 HISTORY_MSG_363;Wavelet - Nachbild\nKompressionsstärke
 HISTORY_MSG_364;Wavelet - Endretusche\nKontrastausgleich
@@ -621,16 +623,16 @@ HISTORY_MSG_369;Wavelet - Endretusche\nKontrastmethode
 HISTORY_MSG_370;Wavelet - Endretusche\nLokale Kontrastkurve
 HISTORY_MSG_371;Nach Größenänderung\nschärfen
 HISTORY_MSG_372;Größe ändern\nSchärfen - USM\nRadius
-HISTORY_MSG_373;Größe ändern\nSchärfen - USM\nStärke
+HISTORY_MSG_373;Größe ändern\nSchärfen - USM\nIntensität
 HISTORY_MSG_374;Größe ändern\nSchärfen - USM\nSchwellenwert
 HISTORY_MSG_375;Größe ändern\nSchärfen - USM\nNur Kanten schärfen
 HISTORY_MSG_376;Größe ändern\nSchärfen - USM\nKantenerkennung Radius
 HISTORY_MSG_377;Größe ändern\nSchärfen - USM\nKantentoleranz
 HISTORY_MSG_378;Größe ändern\nSchärfen - USM\nHalokontrolle
-HISTORY_MSG_379;Größe ändern\nSchärfen - USM\nHalokontrolle Stärke
+HISTORY_MSG_379;Größe ändern\nSchärfen - USM\nHalokontrolle Intensität
 HISTORY_MSG_380;Größe ändern\nSchärfen - Methode
 HISTORY_MSG_381;Größe ändern\nSchärfen - RLD\nRadius
-HISTORY_MSG_382;Größe ändern\nSchärfen - RLD\nStärke
+HISTORY_MSG_382;Größe ändern\nSchärfen - RLD\nIntensität
 HISTORY_MSG_383;Größe ändern\nSchärfen - RLD\nDämpfung
 HISTORY_MSG_384;Größe ändern\nSchärfen - RLD\nIterationen
 HISTORY_MSG_385;Wavelet - Nachbild\nFarbausgleich
@@ -655,6 +657,26 @@ HISTORY_MSG_403;Wavelet\nKantenschärfung\nKantenempfindlichkeit
 HISTORY_MSG_404;Wavelet\nKantenschärfung\nGrundverstärkung
 HISTORY_MSG_405;Wavelet\nRauschreduzierung\nEbene 4
 HISTORY_MSG_406;Wavelet\nKantenschärfung\nNachbarpixel
+HISTORY_MSG_407;Retinex - Methode
+HISTORY_MSG_408;Retinex\nBenachbarte Pixel
+HISTORY_MSG_409;Retinex - Verstärkung
+HISTORY_MSG_410;Retinex - Versatz
+HISTORY_MSG_411;Retinex - Intensität
+HISTORY_MSG_412;Retinex - Skalierung
+HISTORY_MSG_413;Retinex - Abweichung
+HISTORY_MSG_414;Retinex\nLuminanz(L)\nL*a*b*
+HISTORY_MSG_415;Retinex\nTransmissionskurve
+HISTORY_MSG_416;Retinex
+HISTORY_MSG_417;Retinex\nTransmission median
+HISTORY_MSG_418;Retinex - Transmission\nSchwellenwert
+HISTORY_MSG_419;Retinex - Farbraum
+HISTORY_MSG_420;Retinex\nHSL-Kurve
+HISTORY_MSG_421;Retinex\nGammakorrektur
+HISTORY_MSG_422;Retinex - Gamma
+HISTORY_MSG_423;Retinex\nGammasteigung
+HISTORY_MSG_424;Retinex\nHL-Schwellenwert
+HISTORY_MSG_425;Retinex\nBasis-Logarithmus
+HISTORY_MSG_426;Retinex - Farbton (H)
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOTS;Schnappschüsse
@@ -844,6 +866,7 @@ PARTIALPASTE_RAW_DMETHOD;Demosaikmethode
 PARTIALPASTE_RAW_FALSECOLOR;Farbinterpolation: Falschfarbenunterdrückung
 PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE-Verbesserungsstufen
 PARTIALPASTE_RESIZE;Größe ändern
+PARTIALPASTE_RETINEX;Retinex (Bildschleier entfernen)
 PARTIALPASTE_RGBCURVES;RGB-Kurven
 PARTIALPASTE_ROTATION;Drehen
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Schatten/Lichter
@@ -1106,6 +1129,7 @@ SAVEDLG_SUBSAMP;Komprimierung
 SAVEDLG_SUBSAMP_1;Beste Kompression
 SAVEDLG_SUBSAMP_2;Ausgeglichen
 SAVEDLG_SUBSAMP_3;Beste Qualität
+SAVEDLG_SUBSAMP_TOOLTIP;Beste Kompression: 4:2:0\nAusgeglichen: 4:2:2\nBeste Qualität: 4:4:4
 SAVEDLG_TIFFUNCOMPRESSED;Unkomprimiertes TIFF
 SAVEDLG_WARNFILENAME;Die Datei wird gespeichert als
 SHCSELECTOR_TOOLTIP;Um die 3 Regler zurückzusetzen, rechte Maustaste klicken.
@@ -1286,15 +1310,15 @@ TP_COLORTONING_NEUTRAL_TIP;Alle Werte auf Standard zurücksetzen\n(Schatten, Mit
 TP_COLORTONING_OPACITY;Deckkraft
 TP_COLORTONING_RGBCURVES;RGB-Kurven
 TP_COLORTONING_RGBSLIDERS;RGB-Regler
-TP_COLORTONING_SATURATEDOPACITY;Stärke
+TP_COLORTONING_SATURATEDOPACITY;Intensität
 TP_COLORTONING_SATURATIONTHRESHOLD;Schwellenwert
 TP_COLORTONING_SA;Sättigung schützen
 TP_COLORTONING_SHADOWS;Schatten
 TP_COLORTONING_SPLITCOCO;Farbausgleich (Schatten/Mitten/Lichter)
 TP_COLORTONING_SPLITCO;Schatten/Mitten/Lichter
 TP_COLORTONING_SPLITLR;Sättigung (2 Farben)
-TP_COLORTONING_STRENGTH;Stärke
-TP_COLORTONING_STR;Stärke
+TP_COLORTONING_STRENGTH;Intensität
+TP_COLORTONING_STR;Intensität
 TP_COLORTONING_TWO2;Spezial-Farbe (2 Farben)
 TP_COLORTONING_TWOALL;Spezial-Farbe
 TP_COLORTONING_TWOBY;Spezial a* und b*
@@ -1333,12 +1357,12 @@ TP_DIRPYRDENOISE_AUTO;Automatisch Global
 TP_DIRPYRDENOISE_AUTO_TOOLTIP;Bewertung des Farbrauschens.\nDie Bewertung ist ungenau und sehr subjektiv!
 TP_DIRPYRDENOISE_AUT;Automatisch Global
 TP_DIRPYRDENOISE_BLUE;Delta-Chrominanz Blau/Gelb
-TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;Manuell:\nPassen Sie die Chrominanz-Rauschreduzierung manuell an.\n\nAutomatisch Global:\nEs werden 9 Zonen für die Berechnung der Chrominanz-Rauschreduzierung verwendet.\n\nVorschau:\nNur der sichbare Teil des Bildes wird für die Berechnung der Chrominanz-Rauschreduzierung verwendet.
+TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;Benutzerdefiniert:\nManuelle Anpassung der Chrominanz-Rauschreduzierung.\n\nAutomatisch Global:\nEs werden 9 Zonen für die Berechnung der Chrominanz-Rauschreduzierung verwendet.\n\nVorschau:\nNur der sichbare Teil des Bildes wird für die Berechnung der Chrominanz-Rauschreduzierung verwendet.
 TP_DIRPYRDENOISE_CCCURVE;Chrominanzkurve
 TP_DIRPYRDENOISE_CHROMAFR;Chrominanz
 TP_DIRPYRDENOISE_CHROMA;Chrominanz (Master)
 TP_DIRPYRDENOISE_CTYPE;Methode
-TP_DIRPYRDENOISE_CTYPE_TOOLTIP;Manuell:\nPassen Sie die Chrominanz-Rauschreduzierung manuell an.\n\nAutomatisch Global:\nEs werden 9 Zonen für die Berechnung der Chrominanz-Rauschreduzierung verwendet.\n\nAuto-Multizonen:\nKeine Voransicht - wird erst beim Speichern angewendet.\nAbhängig von der Bildgröße, wird das Bild in ca. 10 bis 70 Kacheln aufgeteilt. Für jede Kachel wird die Chrominanz-Rauschreduzierung individuell berechnet.\n\nVorschau:\nNur der sichbare Teil des Bildes wird für die Berechnung der Chrominanz-Rauschreduzierung verwendet.
+TP_DIRPYRDENOISE_CTYPE_TOOLTIP;Benutzerdefiniert:\nManuelle Anpassung der Chrominanz-Rauschreduzierung.\n\nAutomatisch Global:\nEs werden 9 Zonen für die Berechnung der Chrominanz-Rauschreduzierung verwendet.\n\nAuto-Multizonen:\nKeine Voransicht - wird erst beim Speichern angewendet.\nAbhängig von der Bildgröße, wird das Bild in ca. 10 bis 70 Kacheln aufgeteilt. Für jede Kachel wird die Chrominanz-Rauschreduzierung individuell berechnet.\n\nVorschau:\nNur der sichbare Teil des Bildes wird für die Berechnung der Chrominanz-Rauschreduzierung verwendet.
 TP_DIRPYRDENOISE_CURVEEDITOR_CC;Farbe
 TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Erhöht den Wert aller Chrominanz-Regler und regelt die Chrominanz-Rauschreduzierung als Funktion der Chromatizität. Die Intensität kann über Kontrollpunkte für schwach bis intensiv gesättigte Farben unterschiedlich eingestellt werden.
 TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Moduliert die Wirkung der Luminanz-Rauschreduzierung
@@ -1347,7 +1371,7 @@ TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Kann für RAW und Nicht-RAW-Bilder verwendet we
 TP_DIRPYRDENOISE_ENH;Erweiterter Modus
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Erhöht die Qualität der Rauschreduzierung auf Kosten einer um 20% erhöhten Verarbeitungszeit.
 TP_DIRPYRDENOISE_GAMMA;Gamma
-TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Mit Gamma kann die Stärke der Rauschreduzierung über den Farbbereich variiert werden. Bei kleinen Werten sind nur dunkle Farbtöne betroffen, bei größeren Werten wird der Effekt auf hellere Töne ausgeweitet.
+TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Mit Gamma kann die Intensität der Rauschreduzierung über den Farbbereich variiert werden. Bei kleinen Werten sind nur dunkle Farbtöne betroffen, bei größeren Werten wird der Effekt auf hellere Töne ausgeweitet.
 TP_DIRPYRDENOISE_LABEL;Rauschreduzierung
 TP_DIRPYRDENOISE_LABM;L*a*b*
 TP_DIRPYRDENOISE_LAB;L*a*b*
@@ -1359,8 +1383,8 @@ TP_DIRPYRDENOISE_LTYPE;Luminanzkontrolle
 TP_DIRPYRDENOISE_LUMAFR;Luminanz
 TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet mit Luminanz- und Fourierumwandlung für Luminanzdetails.
 TP_DIRPYRDENOISE_LUMA;Luminanz
-TP_DIRPYRDENOISE_MANU;Manuell
-TP_DIRPYRDENOISE_MAN;Manuell
+TP_DIRPYRDENOISE_MANU;Benutzerdefiniert
+TP_DIRPYRDENOISE_MAN;Benutzerdefiniert
 TP_DIRPYRDENOISE_MEDMETHOD;Medianmethode
 TP_DIRPYRDENOISE_MEDTYPE;Mediantyp
 TP_DIRPYRDENOISE_MED;Medianfilter
@@ -1403,7 +1427,7 @@ TP_DIRPYREQUALIZER_SKIN;Hautfarbtöne ändern/schützen
 TP_DIRPYREQUALIZER_SKIN_TOOLTIP;-100: Nur Farben innerhalb des Bereichs werden verändert.\n0: Alle Farben werden gleich behandelt.\n+100: Nur Farben außerhalb des Bereichs werden verändert.
 TP_DIRPYREQUALIZER_THRESHOLD;Schwellenwert
 TP_DIRPYREQUALIZER_TOOLTIP;Verringert Artefakte an den Übergängen zwischen Hautfarbtöne und dem Rest des Bildes.
-TP_DISTORTION_AMOUNT;Stärke
+TP_DISTORTION_AMOUNT;Intensität
 TP_DISTORTION_AUTO;Autom. Verzeichnungskorrektur
 TP_DISTORTION_AUTO_TIP;Objektivverzeichnungen automatisch korrigieren (nur für bestimmte Kameras, z.B. Micro 4/3, einige Kompaktkameras, usw.)
 TP_DISTORTION_LABEL;Verzeichnungskorrektur
@@ -1412,7 +1436,7 @@ TP_EPD_GAMMA;Gamma
 TP_EPD_LABEL;Dynamikkompression
 TP_EPD_REWEIGHTINGITERATES;Iterationen
 TP_EPD_SCALE;Faktor
-TP_EPD_STRENGTH;Stärke
+TP_EPD_STRENGTH;Intensität
 TP_EPD_TOOLTIP;Dynamikkompression ist mit dem L*a*b*- und CIECAM02-Modus möglich.\n\nFür den CIECAM02-Modus müssen folgende Optionen aktiviert sein:\n1. CIECAM02\n2. Algorithmus = Helligkeit + Farbigkeit (QM)\n3. Dynamikkompression mittels CIECAM02-Helligkeit (Q)
 TP_EXPOSURE_AUTOLEVELS;Auto
 TP_EXPOSURE_AUTOLEVELS_TIP;Automatische Belichtungseinstellung basierend auf Bildanalyse
@@ -1441,7 +1465,7 @@ TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Gewichteter Standard
 TP_EXPOS_BLACKPOINT_LABEL;Schwarzpunkt
 TP_EXPOS_WHITEPOINT_LABEL;Weißpunkt
 TP_FILMSIMULATION_LABEL;Filmsimulation
-TP_FILMSIMULATION_STRENGTH;Stärke
+TP_FILMSIMULATION_STRENGTH;Intensität
 TP_FILMSIMULATION_ZEROCLUTSFOUND;HaldCLUT-Verzeichnis in den Einstellungen festlegen
 TP_FLATFIELD_AUTOSELECT;Automatische Auswahl
 TP_FLATFIELD_BLURRADIUS;Unschärferadius
@@ -1468,7 +1492,7 @@ TP_GRADIENT_DEGREE_TOOLTIP;Rotationswinkel in Grad
 TP_GRADIENT_FEATHER;Bereich
 TP_GRADIENT_FEATHER_TOOLTIP;Bereich des Verlaufs in Prozent der Bilddiagonalen
 TP_GRADIENT_LABEL;Grauverlaufsfilter
-TP_GRADIENT_STRENGTH;Stärke
+TP_GRADIENT_STRENGTH;Intensität
 TP_GRADIENT_STRENGTH_TOOLTIP;Filterstärke in Blendenstufen
 TP_HLREC_BLEND;Überlagerung
 TP_HLREC_CIELAB;CIELab-Überlagerung
@@ -1561,14 +1585,14 @@ TP_LENSPROFILE_LABEL;Objektivkorrekturprofil
 TP_LENSPROFILE_USECA;CA korrigieren
 TP_LENSPROFILE_USEDIST;Verzeichnung korrigieren
 TP_LENSPROFILE_USEVIGN;Vignettierung korrigieren
-TP_NEUTRAL;Neutral
+TP_NEUTRAL;Zurücksetzen
 TP_NEUTRAL_TIP;Belichtungseinstellungen auf neutrale Werte zurücksetzen
 TP_PCVIGNETTE_FEATHER;Bereich
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Bereich:\n0 = nur Bildecken\n50 = halbe Strecke zum Mittelpunkt\n100 = bis zum Mittelpunkt
 TP_PCVIGNETTE_LABEL;Vignettierungsfilter
 TP_PCVIGNETTE_ROUNDNESS;Rundung
 TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Rundung:\n0 = Rechteck\n50 = Ellipse\n100 = Kreis
-TP_PCVIGNETTE_STRENGTH;Stärke
+TP_PCVIGNETTE_STRENGTH;Intensität
 TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filterstärke in Blendenstufen (bezogen auf die Bildecken)
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspektive
@@ -1629,6 +1653,54 @@ TP_RESIZE_SCALE;Maßstab
 TP_RESIZE_SPECIFY;Vorgabe:
 TP_RESIZE_WIDTH;Breite
 TP_RESIZE_W;Breite:
+TP_RETINEX_CONTEDIT_HSL;HSL-Kurve
+TP_RETINEX_CONTEDIT_LAB;Luminanz (L) L*a*b*
+TP_RETINEX_CONTEDIT_LH;Farbton (H)
+TP_RETINEX_CURVEEDITOR_CD;L=f(L)
+TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminanz in Abhängigkeit der Luminanz.\nKorrigiert direkt die RAW-Daten, um Halos und Artefakte zu verringern.
+TP_RETINEX_CURVEEDITOR_LH;Intensität=f(H)
+TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Intensität in Abhängikeit des Farbtons (H)\nBei der Retinex-Methode "Spitzlichter" wirken sich die Änderungen auch auf die Chromakorrektur aus.
+TP_RETINEX_FREEGAMMA;Gamma
+TP_RETINEX_GAIN;Verstärkung
+TP_RETINEX_GAIN_TOOLTIP;In Kombination mit dem Versatz beeinflusst die Einstellung die Transmission. Wird für schwarze oder weiße Pixel verwendet und hilft das Histogram auszugleichen.
+TP_RETINEX_GAMMA;Gammakorrektur
+TP_RETINEX_GAMMA_FREE;Benutzerdefiniert
+TP_RETINEX_GAMMA_HIGH;Hoch
+TP_RETINEX_GAMMA_LOW;Niedrig
+TP_RETINEX_GAMMA_MID;Mittel
+TP_RETINEX_GAMMA_NONE;Keine
+TP_RETINEX_GAMMA_TOOLTIP;Stellt Farbtöne vor und nach der Retinexverarbeitung durch eine Gammakorrektur wieder her.
+TP_RETINEX_HIGHLIGHT;Spitzlichter Schwellenwert
+TP_RETINEX_HIGHLIGHT_TOOLTIP;Benötigt unter Umständen Korrekturen der Einstellungen "Benachbarte Pixel" und "Weißpunkt" unter dem Reiter "RAW".
+TP_RETINEX_HIGHLIG;Spitzlichter
+TP_RETINEX_HIGH;Lichter
+TP_RETINEX_HSLSPACE_LIN;HSL-Linear
+TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmisch
+TP_RETINEX_LABEL;Retinex (Bildschleier entfernen)
+TP_RETINEX_LABSPACE;L*a*b*
+TP_RETINEX_LOW;Schatten
+TP_RETINEX_MEDIAN;Transmission Medianfilter
+TP_RETINEX_METHOD;Methode
+TP_RETINEX_METHOD_TOOLTIP;"Schatten" wirkt sich auf dunkle Bereiche aus.\n"Schatten &amp; Lichter" wirkt sich auf dunkle und helle Bereiche aus.\n"Lichter" wirkt sich auf helle Bereiche aus.\n"Spitzlichter" wirkt sich auf sehr helle Bereiche aus und reduziert Magenta-Falschfarben.
+TP_RETINEX_MLABEL;Schleierreduzierung: Min=%1 Max=%2
+TP_RETINEX_MLABEL_TOOLTIP;Sollte nahe bei Min=0 und Max=32768 sein
+TP_RETINEX_NEIGHBOR;Benachbarte Pixel
+TP_RETINEX_NEUTRAL;Zurücksetzen
+TP_RETINEX_NEUTRAL_TIP;Setzt alle Regler und Kurven auf ihre Standardwerte zurück.
+TP_RETINEX_OFFSET;Versatz
+TP_RETINEX_SETTINGS;Einstellungen
+TP_RETINEX_SLOPE;Gammasteigung
+TP_RETINEX_STRENGTH;Intensität
+TP_RETINEX_THRESHOLD;Transmission Schwellenwert
+TP_RETINEX_THRESHOLD_TOOLTIP;Limitiert den Bereich der Transmissionskurve.
+TP_RETINEX_TLABEL2;T: Tmin=%1 Tmax=%2
+TP_RETINEX_TLABEL;T: Min=%1 Max=%2 Mittel=%3 Sigma=%4
+TP_RETINEX_TLABEL_TOOLTIP;Ergebis der Transmissionskurve: Min, Max, Mittel und Sigma\nMin und Max hat Einfluss auf die Abweichung.\n\nTmin = Kleinster Wert der Transmissionskurve\nTmax = Größter Wert der Transmissionskurve
+TP_RETINEX_TRANSMISSION;Transmissionskurve
+TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission in Abhängigkeit der Transmission.\nx-Achse: Transmission negativer Werte (Min), Mittel und positiver Werte (Max).\ny-Achse: Verstärkung oder Reduzierung.
+TP_RETINEX_UNIFORM;Schatten & Lichter
+TP_RETINEX_VARIANCE;Abweichung
+TP_RETINEX_VARIANCE_TOOLTIP;Niedrige Werte erhöhen den lokalen Kontrast und die Sättigung, können aber zu Artefakten führen.
 TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;Kanal
 TP_RGBCURVES_GREEN;G
@@ -1648,27 +1720,27 @@ TP_SHADOWSHLIGHTS_RADIUS;Radius
 TP_SHADOWSHLIGHTS_SHADOWS;Schatten
 TP_SHADOWSHLIGHTS_SHARPMASK;Schärfemaske
 TP_SHADOWSHLIGHTS_SHTONALW;Tonwertbreite Schatten
-TP_SHARPENEDGE_AMOUNT;Stärke
+TP_SHARPENEDGE_AMOUNT;Intensität
 TP_SHARPENEDGE_LABEL;Kantenschärfung
 TP_SHARPENEDGE_PASSES;Iterationen
 TP_SHARPENEDGE_THREE;Nur Luminanz
-TP_SHARPENING_AMOUNT;Stärke
+TP_SHARPENING_AMOUNT;Intensität
 TP_SHARPENING_EDRADIUS;Radius
 TP_SHARPENING_EDTOLERANCE;Kantentoleranz
 TP_SHARPENING_HALOCONTROL;Halokontrolle
-TP_SHARPENING_HCAMOUNT;Stärke
+TP_SHARPENING_HCAMOUNT;Intensität
 TP_SHARPENING_LABEL;Schärfung
 TP_SHARPENING_METHOD;Methode
 TP_SHARPENING_ONLYEDGES;Nur Kanten schärfen
 TP_SHARPENING_RADIUS;Radius
 TP_SHARPENING_RLD;RL-Dekonvolution
-TP_SHARPENING_RLD_AMOUNT;Stärke
+TP_SHARPENING_RLD_AMOUNT;Intensität
 TP_SHARPENING_RLD_DAMPING;Dämpfung
 TP_SHARPENING_RLD_ITERATIONS;Iterationen
 TP_SHARPENING_THRESHOLD;Schwellenwert
 TP_SHARPENING_TOOLTIP;Ergibt einen leicht geänderten Effekt, wenn CIECAM02 verwendet wird.
 TP_SHARPENING_USM;Unschärfemaskierung
-TP_SHARPENMICRO_AMOUNT;Stärke
+TP_SHARPENMICRO_AMOUNT;Intensität
 TP_SHARPENMICRO_LABEL;Mikrokontrast
 TP_SHARPENMICRO_MATRIX;3×3-Matrix statt 5×5-Matrix
 TP_SHARPENMICRO_UNIFORMITY;Gleichmäßigkeit
@@ -1689,7 +1761,7 @@ TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Sättigung Schwellenwert
 TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;Die vertikale Achse steht für die Pastell (unten) und gesättigte Töne (oben).\nDie horizontale Achse entspricht dem Sättigungsbereich.
 TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Gewichtung des Übergangs pastell/gesättigt
 TP_VIBRANCE_SATURATED;Gesättigte Töne
-TP_VIGNETTING_AMOUNT;Stärke
+TP_VIGNETTING_AMOUNT;Intensität
 TP_VIGNETTING_CENTER;Zentrum
 TP_VIGNETTING_CENTER_X;Zentrum X
 TP_VIGNETTING_CENTER_Y;Zentrum Y
@@ -1720,6 +1792,7 @@ TP_WAVELET_BANONE;Keine
 TP_WAVELET_BASLI;Regler
 TP_WAVELET_BATYPE;Kontrastmethode
 TP_WAVELET_CBENAB;Farbausgleich
+TP_WAVELET_CB_TOOLTIP;Farbausgleich mit getrennten Reglern für Schatten, Mitten und Lichter aktivieren.
 TP_WAVELET_CCURVE;Lokaler Kontrast
 TP_WAVELET_CH1;Gesamter Farbbereich
 TP_WAVELET_CH2;Sättigung/Pastell
@@ -1779,7 +1852,7 @@ TP_WAVELET_EDRAD;Radius
 TP_WAVELET_EDRAD_TOOLTIP;Der Radius unterscheidet sich von dem in den üblichen Schärfungswerkzeugen. Der Wert wird mit jeder Ebene über eine komplexe Funktion verglichen. Ein Wert von “0“ zeigt deshalb immer noch eine Auswirkung.
 TP_WAVELET_EDSL;Regler
 TP_WAVELET_EDTYPE;Lokale Kontrastmethode
-TP_WAVELET_EDVAL;Stärke
+TP_WAVELET_EDVAL;Intensität
 TP_WAVELET_FINAL;Endretusche
 TP_WAVELET_FINEST;Fein
 TP_WAVELET_HIGHLIGHT;Lichter-Luminanzbereich
@@ -1811,7 +1884,7 @@ TP_WAVELET_LIPST;Erweiterter Algorithmus
 TP_WAVELET_LOWLIGHT;Schatten-Luminanzbereich
 TP_WAVELET_MEDGREINF;Erste Ebene
 TP_WAVELET_MEDILEV;Kantenerkennung
-TP_WAVELET_MEDILEV_TOOLTIP;Wenn Sie die Kantenerkennung aktivieren, sollten Sie folgende Einstellungen anpassen:\n\n1. Niedrige Kontrastebenen deaktivieren um Artefakte zu vermeiden.\n2. Hohe Werte bei der Gradientenempfindlichkeit einstellen.\n\nSie können die Stärke mit der Wavelet-Rauschreduzierung anpassen.
+TP_WAVELET_MEDILEV_TOOLTIP;Wenn Sie die Kantenerkennung aktivieren, sollten Sie folgende Einstellungen anpassen:\n\n1. Niedrige Kontrastebenen deaktivieren um Artefakte zu vermeiden.\n2. Hohe Werte bei der Gradientenempfindlichkeit einstellen.\n\nSie können die Intensität mit der Wavelet-Rauschreduzierung anpassen.
 TP_WAVELET_MEDI;Artefakte in blauem Himmel reduzieren
 TP_WAVELET_NEUTRAL;Neutral
 TP_WAVELET_NOISE;Rauschreduzierung
@@ -1840,8 +1913,8 @@ TP_WAVELET_SKIN;Hautfarbtöne ändern/schützen
 TP_WAVELET_SKIN_TOOLTIP;-100: Nur Farben innerhalb des Bereichs werden verändert.\n0: Alle Farben werden gleich behandelt.\n+100: Nur Farben außerhalb des Bereichs werden verändert.
 TP_WAVELET_SKY;Himmelsfarbtöne ändern/schützen
 TP_WAVELET_SKY_TOOLTIP;-100: Nur Farben innerhalb des Bereichs werden verändert.\n0: Alle Farben werden gleich behandelt.\n+100: Nur Farben außerhalb des Bereichs werden verändert.
-TP_WAVELET_STRENGTH;Stärke
-TP_WAVELET_STREN;Stärke
+TP_WAVELET_STRENGTH;Intensität
+TP_WAVELET_STREN;Intensität
 TP_WAVELET_SUPE;Extra
 TP_WAVELET_THRESHOLD2;Schattenebenen
 TP_WAVELET_THRESHOLD2_TOOLTIP;Legt die Ebene der Untergrenze (9 minus Wert) für den Schatten-Luminanzbereich fest. Der maximal mögliche Wert wird vom Wert der Lichterebenen begrenzt.\n\nBeeinflussbare Ebenen: Untergrenze bis Ebene 9
@@ -1854,8 +1927,8 @@ TP_WAVELET_TILESFULL;Ganzes Bild
 TP_WAVELET_TILESIZE;Kachelgröße
 TP_WAVELET_TILESLIT;Kleine Kacheln
 TP_WAVELET_TILES_TOOLTIP;“Ganzes Bild“ (empfohlen) liefert eine bessere Qualität.\n“Kacheln“ benötigen weniger Speicher und sind nur für Computer mit wenig RAM zu empfehlen.
-TP_WAVELET_TMSTRENGTH;Stärke
-TP_WAVELET_TMSTRENGTH_TOOLTIP;Kontrolliert die Stärke der Dynamik- oder Kontrastkompression des Nachbildes. Ist der Wert ungleich 0, werden die Stärke- und Gammaregler des Dynamikkompressions-Werkzeugs im Belichtungsreiter deaktiviert.
+TP_WAVELET_TMSTRENGTH;Intensität
+TP_WAVELET_TMSTRENGTH_TOOLTIP;Kontrolliert die Intensität der Dynamik- oder Kontrastkompression des Nachbildes. Ist der Wert ungleich 0, werden die Intensitäts- und Gammaregler des Dynamikkompressions-Werkzeugs im Belichtungsreiter deaktiviert.
 TP_WAVELET_TMTYPE;Kompression
 TP_WAVELET_TON;Tönung
 TP_WBALANCE_AUTO;Automatisch
@@ -1869,15 +1942,15 @@ TP_WBALANCE_FLASH55;Leica
 TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
 TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
 TP_WBALANCE_FLASH_HEADER;Blitz
-TP_WBALANCE_FLUO1;F1 - Daylight
-TP_WBALANCE_FLUO2;F2 - Cool White
-TP_WBALANCE_FLUO3;F3 - White
-TP_WBALANCE_FLUO4;F4 - Warm White
-TP_WBALANCE_FLUO5;F5 - Daylight
-TP_WBALANCE_FLUO6;F6 - Lite White
-TP_WBALANCE_FLUO7;F7 - D65 Daylight Simulator
+TP_WBALANCE_FLUO1;F1 - Tageslicht
+TP_WBALANCE_FLUO2;F2 - Kaltweiß
+TP_WBALANCE_FLUO3;F3 - Weiß
+TP_WBALANCE_FLUO4;F4 - Warmweiß
+TP_WBALANCE_FLUO5;F5 - Tageslicht
+TP_WBALANCE_FLUO6;F6 - Weiß reduziert
+TP_WBALANCE_FLUO7;F7 - D65 Tageslichtsimulation
 TP_WBALANCE_FLUO8;F8 - D50 / Sylvania F40 Design
-TP_WBALANCE_FLUO9;F9 - Cool White Deluxe
+TP_WBALANCE_FLUO9;F9 - Kaltweiß Deluxe
 TP_WBALANCE_FLUO10;F10 - Philips TL85
 TP_WBALANCE_FLUO11;F11 - Philips TL84
 TP_WBALANCE_FLUO12;F12 - Philips TL83
@@ -1912,78 +1985,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_407;Retinex - Method
-!HISTORY_MSG_408;Retinex - Neighboring
-!HISTORY_MSG_409;Retinex - Gain
-!HISTORY_MSG_410;Retinex - Offset
-!HISTORY_MSG_411;Retinex - Strength
-!HISTORY_MSG_412;Retinex - Scales
-!HISTORY_MSG_413;Retinex - Variance
-!HISTORY_MSG_414;Retinex - Histogram - Lab
-!HISTORY_MSG_415;Retinex - Transmission
-!HISTORY_MSG_416;Retinex
-!HISTORY_MSG_417;Retinex - Transmission median
-!HISTORY_MSG_418;Retinex - Threshold
-!HISTORY_MSG_419;Retinex - Color space
-!HISTORY_MSG_420;Retinex - Histogram - HSL
-!HISTORY_MSG_421;Retinex - Gamma
-!HISTORY_MSG_422;Retinex - Gamma
-!HISTORY_MSG_423;Retinex - Gamma slope
-!HISTORY_MSG_424;Retinex - HL threshold
-!HISTORY_MSG_425;Retinex - Log base
-!HISTORY_MSG_426;Retinex - Hue equalizer
-!PARTIALPASTE_RETINEX;Retinex
-!SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
-!TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
-!TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
-!TP_RETINEX_CONTEDIT_LH;Hue equalizer
-!TP_RETINEX_CURVEEDITOR_CD;L=f(L)
-!TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
-!TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
-!TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Strength according to hue Strength=f(H)\nThis curve also acts on chroma when using the "Highlight" retinex method.
-!TP_RETINEX_FREEGAMMA;Free gamma
-!TP_RETINEX_GAIN;Gain
-!TP_RETINEX_GAIN_TOOLTIP;Acts on the transmission in combination with the offset. This is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
-!TP_RETINEX_GAMMA;Gamma
-!TP_RETINEX_GAMMA_FREE;Free
-!TP_RETINEX_GAMMA_HIGH;High
-!TP_RETINEX_GAMMA_LOW;Low
-!TP_RETINEX_GAMMA_MID;Middle
-!TP_RETINEX_GAMMA_NONE;None
-!TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
-!TP_RETINEX_HIGHLIGHT;Highlight threshold
-!TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.
-!TP_RETINEX_HIGHLIG;Highlight
-!TP_RETINEX_HIGH;High
-!TP_RETINEX_HSLSPACE_LIN;HSL-Linear
-!TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
-!TP_RETINEX_LABEL;Retinex
-!TP_RETINEX_LABSPACE;L*a*b*
-!TP_RETINEX_LOW;Low
-!TP_RETINEX_MEDIAN;Transmission median filter
-!TP_RETINEX_METHOD;Method
-!TP_RETINEX_METHOD_TOOLTIP;Low = Reinforce low light,\nUniform = Equalize action,\nHigh = Reinforce high light,\nHighlight = Remove magenta in highlights.
-!TP_RETINEX_MLABEL;Restored haze-free Min=%1 Max=%2
-!TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
-!TP_RETINEX_NEIGHBOR;Neighboring pixels
-!TP_RETINEX_NEUTRAL;Reset
-!TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
-!TP_RETINEX_OFFSET;Offset
-!TP_RETINEX_SETTINGS;Settings
-!TP_RETINEX_SLOPE;Free gamma slope
-!TP_RETINEX_STRENGTH;Strength
-!TP_RETINEX_THRESHOLD;Threshold
-!TP_RETINEX_THRESHOLD_TOOLTIP;Limits in/out.\nIn = image source,\nOut = image gauss.
-!TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
-!TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
-!TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nMean and Sigma\nTm=Min TM=Max of transmission map.
-!TP_RETINEX_TRANSMISSION;Transmission map
-!TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
-!TP_RETINEX_UNIFORM;Uniform
-!TP_RETINEX_VARIANCE;Variance
-!TP_RETINEX_VARIANCE_TOOLTIP;Low variance increase local contrast and saturation, but can lead to artifacts.
-!TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
