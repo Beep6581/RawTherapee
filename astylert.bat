@@ -1,0 +1,1 @@
+astyle --options=rawtherapee.astylerc -n %1

@@ -149,7 +149,7 @@ void RetinexParams::setDefaults()
     offs    = 0;
     vart    = 200;
     limd = 8;
-    highl = 10;
+    highl = 4;
     baselog = 2.71828;
 //    grbl = 50;
     retinexMethod = "high";

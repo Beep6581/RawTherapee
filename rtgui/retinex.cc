@@ -117,7 +117,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     str = Gtk::manage (new Adjuster (M("TP_RETINEX_STRENGTH"), 0, 100., 1., 20.));
     neigh = Gtk::manage (new Adjuster (M("TP_RETINEX_NEIGHBOR"), 6, 100., 1., 80.));
-    highl   = Gtk::manage (new Adjuster (M("TP_RETINEX_HIGHLIGHT"), 1, 100, 1, 10));
+    highl   = Gtk::manage (new Adjuster (M("TP_RETINEX_HIGHLIGHT"), 1, 20, 1, 4));
     highl->set_tooltip_markup (M("TP_RETINEX_HIGHLIGHT_TOOLTIP"));
     vart   = Gtk::manage (new Adjuster (M("TP_RETINEX_VARIANCE"), 50, 500, 1, 200));
     vart->set_tooltip_markup (M("TP_RETINEX_VARIANCE_TOOLTIP"));
