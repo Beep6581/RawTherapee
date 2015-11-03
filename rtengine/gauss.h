@@ -768,32 +768,41 @@ template<class T> void gaussianBlur(T** src, T** dst, const int W, const int H, 
     if(buffer) { // use iterated boxblur to approximate gaussian blur
         // Compute ideal averaging filter width and number of iterations
         int n = 1;
-        double wIdeal = sqrt((12*sigma*sigma)+1);
+        double wIdeal = sqrt((12 * sigma * sigma) + 1);
+
         while(wIdeal > W || wIdeal > H) {
             n++;
-            wIdeal = sqrt((12*sigma*sigma/n)+1);
+            wIdeal = sqrt((12 * sigma * sigma / n) + 1);
         }
 
-        if(n<3) {
+        if(n < 3) {
             n = 3;
-            wIdeal = sqrt((12*sigma*sigma/n)+1);
-        } else if(n>6)
-            n=6;
+            wIdeal = sqrt((12 * sigma * sigma / n) + 1);
+        } else if(n > 6) {
+            n = 6;
+        }
 
         int wl = wIdeal;
-        if(wl%2==0) wl--;
-        int wu = wl+2;
 
-        double mIdeal = (12*sigma*sigma - n*wl*wl - 4*n*wl - 3*n)/(-4*wl - 4);
+        if(wl % 2 == 0) {
+            wl--;
+        }
+
+        int wu = wl + 2;
+
+        double mIdeal = (12 * sigma * sigma - n * wl * wl - 4 * n * wl - 3 * n) / (-4 * wl - 4);
         int m = round(mIdeal);
 
         int sizes[n];
-        for(int i=0; i<n; i++) {
-            sizes[i] = ((i<m?wl:wu)-1)/2;
+
+        for(int i = 0; i < n; i++) {
+            sizes[i] = ((i < m ? wl : wu) - 1) / 2;
         }
-        rtengine::boxblur(src,dst,buffer,sizes[0],sizes[0],W,H);
-        for(int i=1; i<n; i++) {
-            rtengine::boxblur(dst,dst,buffer, sizes[i],sizes[i],W,H);
+
+        rtengine::boxblur(src, dst, buffer, sizes[0], sizes[0], W, H);
+
+        for(int i = 1; i < n; i++) {
+            rtengine::boxblur(dst, dst, buffer, sizes[i], sizes[i], W, H);
         }
 
     } else {
