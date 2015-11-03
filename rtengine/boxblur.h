@@ -123,7 +123,7 @@ template<class T, class A> void boxblur (T** src, A** dst, int radx, int rady, i
 
 }
 
-template<class T, class A> void boxblur (T** src, A** dst, T* buffer, int radx, int rady, int W, int H)
+template<class T, class A> SSEFUNCTION void boxblur (T** src, A** dst, T* buffer, int radx, int rady, int W, int H)
 {
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
