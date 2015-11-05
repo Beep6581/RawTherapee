@@ -59,7 +59,18 @@ void RawImageSource::khc_yhc_demosaic(int winx, int winy, int winw, int winh){
     output_buf.dev_dirty = false;
     output_buf.dev = 0;
 
-    halide_debayer(&input_buf, &output_buf);
+    uint8_t layout = 0;
+    if (FC(0, 0) == 0) {
+        layout = 0;
+    } else if (FC(0, 1) == 0) {
+        layout = 1;
+    } else if (FC(1, 0) == 0) {
+        layout = 2;
+    } else {
+        layout = 3;
+    }
+
+    halide_debayer(&input_buf, layout, &output_buf);
     Halide::Image<float> output_image = Halide::Image<float>(&output_buf, "output_image");
 
     uint64_t plane_size = output_buf.extent[0] * output_buf.extent[1];
