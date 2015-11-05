@@ -227,34 +227,34 @@ Func make_demosaic_func(ImageParam param, Type out_type) {
     //cfapattern = meta['Exif.SubImage1.CFAPattern'].value
     //#import ipdb; ipdb.set_trace()
 
-    Expr redpos, bluepos;
+    Expr redpos, bluepos, red_even, blue_even;
     redpos = 0;
     bluepos = 2;
-    bool blue_even = false;
+    red_even = 0;
+    blue_even = 1;
 
     /*if int(cfapattern(0)) == 0:
         redpos = 0
         bluepos = 2
-        blue_even = False
+        red_even = 0
+        blue_even = 1
     else:
         redpos = 2
         bluepos = 0
         blue_even = True*/
 
-    std::cout << (redpos, bluepos, blue_even) << std::endl;
-
     Func red_debayer = Func("red_debayer");
     red_debayer(x,y) = select(
             x%2+y%2 == redpos, input(x,y),
             x%2+y%2 == bluepos, green_debayer(x,y) - d_hat_top_diagonal(x,y),
-            green_debayer(x,y) - d_hat_top_g(x,y, blue_even ? 1 : 0)
+            green_debayer(x,y) - d_hat_top_g(x,y, red_even)
     );
 
     Func blue_debayer = Func("blue_debayer");
     blue_debayer(x,y) = select(
             x%2+y%2 == bluepos, input(x,y),
             x%2+y%2 == redpos, green_debayer(x,y) - d_hat_top_diagonal(x,y),
-            green_debayer(x,y) - d_hat_top_g(x,y, blue_even ? 0 : 1)
+            green_debayer(x,y) - d_hat_top_g(x,y, blue_even)
     );
 
     Func debayer = Func("debayer");
@@ -328,10 +328,10 @@ Func make_demosaic_func(ImageParam param, Type out_type) {
     //d_line_top.compute_at(d_hat_top_known, Var::outermost());
 
     //green.compute_at(output, x_inner);
-    output.print_loop_nest();
+    //output.print_loop_nest();
 
-    Target target = get_host_target();
-    target.set_feature(Target::Profile);
-    output.compile_jit(target);
+    //Target target = get_host_target();
+    //target.set_feature(Target::Profile);
+    //output.compile_jit(target);
     return output;
 }

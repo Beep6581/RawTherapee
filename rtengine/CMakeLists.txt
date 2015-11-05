@@ -34,7 +34,12 @@ set (RTENGINESOURCEFILES safegtk.cc colortemp.cc curves.cc flatcurves.cc diagona
     ciecam02.cc)
 
 IF (HALIDE_PATH)
-    set(RTENGINESOURCEFILES ${RTENGINESOURCEFILES} KHC_YHC_demosaic.cpp KHC_YHC_demosaic_halide.cpp)
+    # KHC_YHC_demosaic_halide.cpp
+    set(RTENGINESOURCEFILES ${RTENGINESOURCEFILES} KHC_YHC_demosaic.cpp )
+    add_library(halide_debayer STATIC halide_debayer.o)
+    SET_SOURCE_FILES_PROPERTIES(halide_debayer.o PROPERTIES EXTERNAL_OBJECT true GENERATED true)
+    SET_TARGET_PROPERTIES(halide_debayer PROPERTIES LINKER_LANGUAGE C)
+    set(HALIDE_LIBRARIES ${HALIDE_LIBRARIES} halide_debayer)
 ENDIF (HALIDE_PATH)
 
 include_directories (BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
