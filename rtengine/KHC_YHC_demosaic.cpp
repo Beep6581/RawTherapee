@@ -10,9 +10,7 @@
 #include "../rtgui/multilangmgr.h"
 #include "procparams.h"
 #include "opthelper.h"
-//#include "KHC_YHC_demosaic_halide.h"
 #include "halide_debayer.h"
-#include <Halide.h>
 
 using namespace std;
 using namespace rtengine;
@@ -71,7 +69,6 @@ void RawImageSource::khc_yhc_demosaic(int winx, int winy, int winw, int winh){
     }
 
     halide_debayer(&input_buf, layout, &output_buf);
-    Halide::Image<float> output_image = Halide::Image<float>(&output_buf, "output_image");
 
     uint64_t plane_size = output_buf.extent[0] * output_buf.extent[1];
     float *output_start = (float *) output_buf.host;
@@ -80,23 +77,22 @@ void RawImageSource::khc_yhc_demosaic(int winx, int winy, int winw, int winh){
     float *greenaddr[H];
     float *blueaddr[H];
 
+    float *redstart = output_start + (0 * output_buf.stride[2]);
+    float *greenstart = output_start + (1 * output_buf.stride[2]);
+    float *bluestart = output_start + (2 * output_buf.stride[2]);
+
+    int rowstride = output_buf.stride[1];
+
     for(int i=0;i<H;i++) {
-        redaddr[i] = (float *)output_image.address_of(0, i, 0);
-        greenaddr[i] = (float *)output_image.address_of(0, i, 1);
-        blueaddr[i] = (float *)output_image.address_of(0, i, 2);
+
+        redaddr[i] = redstart + rowstride * i;
+        greenaddr[i] = greenstart + rowstride * i;
+        blueaddr[i] = bluestart + rowstride * i;
     }
 
     red = *(new array2D<float>(W, H, redaddr, 0));
     green = *(new array2D<float>(W, H, greenaddr, 0));
     blue = *(new array2D<float>(W, H, blueaddr, 0));
-
-    /*float *redaddr = output_start + plane_size * 0;
-    float *greenaddr = output_start + plane_size * 1;
-    float *blueaddr = output_start + plane_size * 2;
-
-    red = *new array2D<float>(W, H, (float **) &redaddr, 0);
-    green = *new array2D<float>(W, H, (float **) &greenaddr, 0);
-    blue = *new array2D<float>(W, H, (float **) &blueaddr, 0);*/
 
     if(plistenerActive) {
         plistener->setProgress(1.00);

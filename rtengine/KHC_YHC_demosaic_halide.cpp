@@ -6,7 +6,30 @@
 
 using namespace Halide;
 
-Func make_demosaic_func(ImageParam param, Type out_type) {
+/*
+param: Image parameters (mainly type) to compile for.
+layout: see below
+out_type: the type to cast to at the end
+
+layouts:
+
+0:
+RG
+GB
+
+1:
+GR
+BG
+
+2:
+GB
+RG
+
+3:
+BG
+GR
+*/
+Func make_demosaic_func(ImageParam param, Param<uint8_t> layout, Type out_type) {
     Var x, y, c;
     x = Var("x");
     y = Var("y");
@@ -151,10 +174,31 @@ Func make_demosaic_func(ImageParam param, Type out_type) {
             green_neither(x,y)
     );
 
+    // Layout definition
+    Func is_green = Func("is_green");
+    Expr xggb = (layout == 0) || (layout == 3);
+    is_green(x,y) = (
+        ((x%2+y%2 == 1) && xggb) ||
+        ((x%2+y%2 != 1) && !xggb)
+    );
+
+    Func is_red = Func("is_red");
+    is_red(x,y) = (
+        x%2 + 2 * (y%2) == layout
+    );
+
+    Func is_blue = Func("is_blue");
+    is_blue(x,y) = (
+        3 - (x%2 + 2 * (y%2)) == layout
+    );
+
+    Expr red_even = layout%2 == 0;
+    Expr blue_even = !red_even;
+
 
     Func green_unenhanced = Func("green_unenhanced");
     green_unenhanced(x,y) = select(
-            x%2+y%2 == 1, input(x,y),
+            is_green(x,y), input(x,y),
             pass2(x,y));
 
     Func w_e = Func("w_e");
@@ -200,60 +244,43 @@ Func make_demosaic_func(ImageParam param, Type out_type) {
                                       w_sw(x,y) * d_hat_top_known(x-1,y+1))/(
                                       w_nw(x,y) + w_ne(x,y) + w_se(x,y) + w_sw(x,y)
                               );
+    
 
     Func d_hat_top_g = Func("d_hat_top_g");
     d_hat_top_g(x,y,c) = select(
-            x%2 == c, (
-                    w_e(x,y) * d_hat_top_diagonal(x+1,y) +
-                    w_w(x,y) * d_hat_top_diagonal(x-1,y) +
-                    w_s(x,y) * d_hat_top_known(x,y+1) +
-                    w_n(x,y) * d_hat_top_known(x,y-1)
-            ),
-            (
-                    w_e(x,y) * d_hat_top_known(x+1,y) +
-                    w_w(x,y) * d_hat_top_known(x-1,y) +
-                    w_s(x,y) * d_hat_top_diagonal(x,y+1) +
-                    w_n(x,y) * d_hat_top_diagonal(x,y-1)
-            )
+        // Determine whether known pixels for this colour are above or to the side
+        (x%2 != c), (
+                w_e(x,y) * d_hat_top_diagonal(x+1,y) +
+                w_w(x,y) * d_hat_top_diagonal(x-1,y) +
+                w_s(x,y) * d_hat_top_known(x,y+1) +
+                w_n(x,y) * d_hat_top_known(x,y-1)
+        ),
+        (
+                w_e(x,y) * d_hat_top_known(x+1,y) +
+                w_w(x,y) * d_hat_top_known(x-1,y) +
+                w_s(x,y) * d_hat_top_diagonal(x,y+1) +
+                w_n(x,y) * d_hat_top_diagonal(x,y-1)
+        )
     )/(
-                                 w_e(x,y) + w_w(x,y) + w_s(x,y) + w_n(x,y)
-                         );
+         w_e(x,y) + w_w(x,y) + w_s(x,y) + w_n(x,y)
+    );
 
     Func green_debayer = Func("green_debayer");
     green_debayer(x,y) = select(
-            x%2+y%2 == 1, input(x,y),
+            is_green(x,y), input(x,y),
             d_hat_top_known(x,y) + input(x,y));
-
-    //cfapattern = meta['Exif.SubImage1.CFAPattern'].value
-    //#import ipdb; ipdb.set_trace()
-
-    Expr redpos, bluepos, red_even, blue_even;
-    redpos = 0;
-    bluepos = 2;
-    red_even = 0;
-    blue_even = 1;
-
-    /*if int(cfapattern(0)) == 0:
-        redpos = 0
-        bluepos = 2
-        red_even = 0
-        blue_even = 1
-    else:
-        redpos = 2
-        bluepos = 0
-        blue_even = True*/
 
     Func red_debayer = Func("red_debayer");
     red_debayer(x,y) = select(
-            x%2+y%2 == redpos, input(x,y),
-            x%2+y%2 == bluepos, green_debayer(x,y) - d_hat_top_diagonal(x,y),
+            is_red(x,y), input(x,y),
+            is_blue(x,y), green_debayer(x,y) - d_hat_top_diagonal(x,y),
             green_debayer(x,y) - d_hat_top_g(x,y, red_even)
     );
 
     Func blue_debayer = Func("blue_debayer");
     blue_debayer(x,y) = select(
-            x%2+y%2 == bluepos, input(x,y),
-            x%2+y%2 == redpos, green_debayer(x,y) - d_hat_top_diagonal(x,y),
+            is_blue(x,y), input(x,y),
+            is_red(x,y), green_debayer(x,y) - d_hat_top_diagonal(x,y),
             green_debayer(x,y) - d_hat_top_g(x,y, blue_even)
     );
 
