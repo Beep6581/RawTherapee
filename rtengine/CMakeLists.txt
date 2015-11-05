@@ -1,3 +1,7 @@
+IF (HALIDE_PATH)
+    add_definitions( -DHALIDE_ENABLED=1 )
+ENDIF (HALIDE_PATH)
+
 include_directories (${EXTRA_INCDIR} ${GTHREAD_INCLUDE_DIRS} ${GOBJECT_INCLUDE_DIRS} ${GLIB2_INCLUDE_DIRS}
     ${GLIBMM_INCLUDE_DIRS} ${IPTCDATA_INCLUDE_DIRS} ${LCMS_INCLUDE_DIRS} ${EXPAT_INCLUDE_DIRS} ${FFTW3F_INCLUDE_DIRS}
     ${GTKMM_INCLUDE_DIRS} ${GTK_INCLUDE_DIRS})
@@ -23,8 +27,16 @@ set (RTENGINESOURCEFILES safegtk.cc colortemp.cc curves.cc flatcurves.cc diagona
     klt/convolve.cc klt/error.cc klt/klt.cc klt/klt_util.cc klt/pnmio.cc klt/pyramid.cc klt/selectGoodFeatures.cc
     klt/storeFeatures.cc klt/trackFeatures.cc klt/writeFeatures.cc
     clutstore.cc
-    ciecam02.cc
-    )
+    ciecam02.cc)
+
+IF (HALIDE_PATH)
+    # Add the Halide code.
+    set(RTENGINESOURCEFILES ${RTENGINESOURCEFILES} KHC_YHC_demosaic.cpp )
+    add_library(halide_debayer STATIC halide_debayer.o)
+    SET_SOURCE_FILES_PROPERTIES(halide_debayer.o PROPERTIES EXTERNAL_OBJECT true GENERATED true)
+    SET_TARGET_PROPERTIES(halide_debayer PROPERTIES LINKER_LANGUAGE C)
+    set(HALIDE_LIBRARIES halide_debayer)
+ENDIF (HALIDE_PATH)
 
 include_directories (BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 
@@ -39,7 +51,7 @@ ENDIF (BUILD_SHARED_LIBS)
 set_target_properties (rtengine PROPERTIES COMPILE_FLAGS "${RTENGINE_CXX_FLAGS}")
 
 target_link_libraries (rtengine rtexif ${EXTRA_LIB} ${GOBJECT_LIBRARIES} ${GTHREAD_LIBRARIES}
-    ${GLIB2_LIBRARIES} ${GLIBMM_LIBRARIES} ${LCMS_LIBRARIES} ${EXPAT_LIBRARIES} ${FFTW3F_LIBRARIES} ${IPTCDATA_LIBRARIES}
-    ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${TIFF_LIBRARIES} ${ZLIB_LIBRARIES})
+        ${GLIB2_LIBRARIES} ${GLIBMM_LIBRARIES} ${LCMS_LIBRARIES} ${EXPAT_LIBRARIES} ${FFTW3F_LIBRARIES} ${IPTCDATA_LIBRARIES}
+        ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${TIFF_LIBRARIES} ${ZLIB_LIBRARIES} ${HALIDE_LIBRARIES})
 
 install (FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
