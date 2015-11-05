@@ -1683,7 +1683,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Strength according to hue Strength=f(H)\nThis curve also acts on chroma when using the "Highlight" retinex method.
 !TP_RETINEX_FREEGAMMA;Free gamma
 !TP_RETINEX_GAIN;Gain
-!TP_RETINEX_GAIN_TOOLTIP;Acts on the transmission in combination with the offset. This is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
+!TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA;Gamma
 !TP_RETINEX_GAMMA_FREE;Free
 !TP_RETINEX_GAMMA_HIGH;High
@@ -1702,7 +1702,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !TP_RETINEX_LOW;Low
 !TP_RETINEX_MEDIAN;Transmission median filter
 !TP_RETINEX_METHOD;Method
-!TP_RETINEX_METHOD_TOOLTIP;Low = Reinforce low light,\nUniform = Equalize action,\nHigh = Reinforce high light,\nHighlight = Remove magenta in highlights.
+!TP_RETINEX_METHOD_TOOLTIP;Low = Reinforce low light,\nUniform = Equalize action,\nHigh = Reinforce high light,\nHighlights = Remove magenta in highlights.
 !TP_RETINEX_MLABEL;Restored haze-free Min=%1 Max=%2
 !TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
 !TP_RETINEX_NEIGHBOR;Neighboring pixels
