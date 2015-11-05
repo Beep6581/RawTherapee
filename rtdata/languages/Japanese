@@ -1117,7 +1117,6 @@ SAVEDLG_SUBSAMP;サブ・サンプリング
 SAVEDLG_SUBSAMP_1;高圧縮
 SAVEDLG_SUBSAMP_2;バランス
 SAVEDLG_SUBSAMP_3;高画質
-SAVEDLG_SUBSAMP_TOOLTIP;高圧縮: 4:1:1\nバランス: 4:2:2\n高画質: 4:4:4
 SAVEDLG_TIFFUNCOMPRESSED;非圧縮 TIFF
 SAVEDLG_WARNFILENAME;ファイルに名前が付けられます
 SHCSELECTOR_TOOLTIP;この3つのスライダーの位置をリセットするには\nマウスの右ボタンをクリック
@@ -1950,6 +1949,7 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !HISTORY_MSG_425;Retinex - Log base
 !HISTORY_MSG_426;Retinex - Hue equalizer
 !PARTIALPASTE_RETINEX;Retinex
+!SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
 !TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
 !TP_RETINEX_CONTEDIT_LH;Hue equalizer
@@ -1957,9 +1957,9 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
 !TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
 !TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Strength according to hue Strength=f(H)\nThis curve also acts on chroma when using the "Highlight" retinex method.
+!TP_RETINEX_FREEGAMMA;Free gamma
 !TP_RETINEX_GAIN;Gain
-!TP_RETINEX_GAIN_TOOLTIP;Acts on the transmission in combination with the offset. This is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
-!TP_RETINEX_GAMMA;Free gamma
+!TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA;Gamma
 !TP_RETINEX_GAMMA_FREE;Free
 !TP_RETINEX_GAMMA_HIGH;High
@@ -1978,7 +1978,7 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !TP_RETINEX_LOW;Low
 !TP_RETINEX_MEDIAN;Transmission median filter
 !TP_RETINEX_METHOD;Method
-!TP_RETINEX_METHOD_TOOLTIP;Low = Reinforce low light,\nUniform = Equalize action,\nHigh = Reinforce high light,\nHighlight = Remove magenta in highlights.
+!TP_RETINEX_METHOD_TOOLTIP;Low = Reinforce low light,\nUniform = Equalize action,\nHigh = Reinforce high light,\nHighlights = Remove magenta in highlights.
 !TP_RETINEX_MLABEL;Restored haze-free Min=%1 Max=%2
 !TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
 !TP_RETINEX_NEIGHBOR;Neighboring pixels

@@ -615,10 +615,13 @@ int processLineParams( int argc, char **argv )
                 std::cout << "                   Preferences > Image Processing > Default Processing Profile" << std::endl;
                 std::cout << "  -j[1-100]        Specify output to be JPEG (on by default). Optionally add" << std::endl;
                 std::cout << "                   compression 1-100 (default value: 92)." << std::endl;
-                std::cout << "  -js<1-3>         Specify the JPEG subsampling parameter, where:" << std::endl;
-                std::cout << "                   1 = Best compression:         2x2, 1x1, 1x1 (4:1:1) - default of the JPEG library" << std::endl;
-                std::cout << "                   2 = Widely used normal ratio: 2x1, 1x1, 1x1 (4:2:2)" << std::endl;
-                std::cout << "                   3 = Best quality:             1x1, 1x1, 1x1 (4:4:4)" << std::endl;
+                std::cout << "  -js<1-3>         Specify the JPEG chroma subsampling parameter, where:" << std::endl;
+                std::cout << "                   1 = Best compression: 2x2, 1x1, 1x1 (4:2:0)" << std::endl;
+                std::cout << "                       Chroma halved vertically and horizontally." << std::endl;
+                std::cout << "                   2 = Balanced:         2x1, 1x1, 1x1 (4:2:2)" << std::endl;
+                std::cout << "                       Chroma halved horizontally." << std::endl;
+                std::cout << "                   3 = Best quality:     1x1, 1x1, 1x1 (4:4:4)" << std::endl;
+                std::cout << "                       No chroma subsampling." << std::endl;
                 std::cout << "  -b<8|16>         Specify bit depth per channel (only applies to TIFF and PNG output)." << std::endl;
                 std::cout << "  -t[z]            Specify output to be TIFF (16-bit if -b8 is not set)." << std::endl;
                 std::cout << "                   Uncompressed by default, or ZIP compression with 'z'" << std::endl;

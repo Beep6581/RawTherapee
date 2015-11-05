@@ -599,7 +599,6 @@ void Options::setDefaults ()
         0, //ADDSET_WA_TMRS
         0, //ADDSET_WA_GAMMA
         0, //ADDSET_RETI_STR
-        0, //ADDSET_RETI_SCAL
         0, //ADDSET_RETI_NEIGH
         0, //ADDSET_RETI_LIMD
         0, //ADDSET_RETI_GAIN

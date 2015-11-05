@@ -172,13 +172,12 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     mi->set_value (behavColumns.label, M("TP_RETINEX_LABEL"));
     appendBehavList (mi, M("TP_RETINEX_STRENGTH"), ADDSET_RETI_STR, false);
     appendBehavList (mi, M("TP_RETINEX_NEIGHBOR"), ADDSET_RETI_NEIGH, false);
+    appendBehavList (mi, M("TP_RETINEX_VARIANCE"), ADDSET_RETI_VART, false);
     appendBehavList (mi, M("TP_RETINEX_GAMMA"), ADDSET_RETI_GAM, false);
     appendBehavList (mi, M("TP_RETINEX_SLOPE"), ADDSET_RETI_SLO, false);
-    appendBehavList (mi, M("TP_RETINEX_SCALES"), ADDSET_RETI_SCAL, false);
     appendBehavList (mi, M("TP_RETINEX_GAIN"), ADDSET_RETI_GAIN, false);
     appendBehavList (mi, M("TP_RETINEX_OFFSET"), ADDSET_RETI_OFFS, false);
     appendBehavList (mi, M("TP_RETINEX_THRESHOLD"), ADDSET_RETI_LIMD, false);
-    appendBehavList (mi, M("TP_RETINEX_VARIANCE"), ADDSET_RETI_VART, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_SHADOWSHLIGHTS_LABEL"));

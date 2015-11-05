@@ -112,12 +112,12 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     gammaretinexConn = gammaretinex->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::gammaretinexChanged) );
     gammaretinex->set_tooltip_markup (M("TP_RETINEX_GAMMA_TOOLTIP"));
 
-    gam = Gtk::manage (new Adjuster (M("TP_RETINEX_GAMMA"), 0.6, 3.0, 0.01, 1.30));
+    gam = Gtk::manage (new Adjuster (M("TP_RETINEX_FREEGAMMA"), 0.6, 3.0, 0.01, 1.30));
     slope = Gtk::manage (new Adjuster (M("TP_RETINEX_SLOPE"), 1., 20., 0.1, 3.));
 
     str = Gtk::manage (new Adjuster (M("TP_RETINEX_STRENGTH"), 0, 100., 1., 20.));
     neigh = Gtk::manage (new Adjuster (M("TP_RETINEX_NEIGHBOR"), 6, 100., 1., 80.));
-    highl   = Gtk::manage (new Adjuster (M("TP_RETINEX_HIGHLIGHT"), 1, 100, 1, 10));
+    highl   = Gtk::manage (new Adjuster (M("TP_RETINEX_HIGHLIGHT"), 1, 20, 1, 4));
     highl->set_tooltip_markup (M("TP_RETINEX_HIGHLIGHT_TOOLTIP"));
     vart   = Gtk::manage (new Adjuster (M("TP_RETINEX_VARIANCE"), 50, 500, 1, 200));
     vart->set_tooltip_markup (M("TP_RETINEX_VARIANCE_TOOLTIP"));
@@ -808,11 +808,10 @@ void Retinex::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
     }
 }
 
-void Retinex::setAdjusterBehavior (bool strAdd, bool neighAdd, bool scalAdd, bool limdAdd, bool gainAdd, bool offsAdd, bool vartAdd, bool gamAdd, bool slopeAdd)
+void Retinex::setAdjusterBehavior (bool strAdd, bool neighAdd, bool limdAdd, bool gainAdd, bool offsAdd, bool vartAdd, bool gamAdd, bool slopeAdd)
 {
     str->setAddMode(strAdd);
     neigh->setAddMode(neighAdd);
-    scal->setAddMode(scalAdd);
     limd->setAddMode(limdAdd);
     gain->setAddMode(gainAdd);
     offs->setAddMode(offsAdd);

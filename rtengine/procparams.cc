@@ -149,7 +149,7 @@ void RetinexParams::setDefaults()
     offs    = 0;
     vart    = 200;
     limd = 8;
-    highl = 10;
+    highl = 4;
     baselog = 2.71828;
 //    grbl = 50;
     retinexMethod = "high";
@@ -3795,8 +3795,8 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
-            if (keyFile.has_key ("Retinex", "Retinexmet"))     {
-                retinex.retinexMethod  = keyFile.get_string  ("Retinex", "Retinexmet");
+            if (keyFile.has_key ("Retinex", "RetinexMethod"))     {
+                retinex.retinexMethod  = keyFile.get_string  ("Retinex", "RetinexMethod");
 
                 if (pedited) {
                     pedited->retinex.retinexMethod = true;
