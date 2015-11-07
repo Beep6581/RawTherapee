@@ -61,6 +61,8 @@ public:
     bool enabled;
     bool str;
     bool scal;
+    bool iter;
+    bool grad;
     bool gam;
     bool slope;
     bool neigh;

@@ -142,6 +142,8 @@ void RetinexParams::setDefaults()
     enabled = false;
     str      = 20;
     scal        = 3;
+    iter = 1;
+    grad = 1;
     gam        = 1.30;
     slope   = 3.;
     neigh      = 80;
@@ -1442,6 +1444,14 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
 
     if (!pedited || pedited->retinex.scal) {
         keyFile.set_integer ("Retinex", "Scal",               retinex.scal);
+    }
+
+    if (!pedited || pedited->retinex.iter) {
+        keyFile.set_integer ("Retinex", "Iter",               retinex.iter);
+    }
+
+    if (!pedited || pedited->retinex.grad) {
+        keyFile.set_integer ("Retinex", "Grad",               retinex.iter);
     }
 
     if (!pedited || pedited->retinex.gam) {
@@ -3848,6 +3858,22 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->retinex.scal = true;
+                }
+            }
+
+            if (keyFile.has_key ("Retinex", "Iter"))     {
+                retinex.iter   = keyFile.get_integer ("Retinex", "Iter");
+
+                if (pedited) {
+                    pedited->retinex.iter = true;
+                }
+            }
+
+            if (keyFile.has_key ("Retinex", "Grad"))     {
+                retinex.grad   = keyFile.get_integer ("Retinex", "Grad");
+
+                if (pedited) {
+                    pedited->retinex.grad = true;
                 }
             }
 
@@ -7322,6 +7348,8 @@ bool ProcParams::operator== (const ProcParams& other)
         && retinex.transmissionCurve == other.retinex.transmissionCurve
         && retinex.str == other.retinex.str
         && retinex.scal == other.retinex.scal
+        && retinex.iter == other.retinex.iter
+        && retinex.grad == other.retinex.grad
         && retinex.gam == other.retinex.gam
         && retinex.slope == other.retinex.slope
         && retinex.neigh == other.retinex.neigh

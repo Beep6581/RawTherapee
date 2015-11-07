@@ -144,7 +144,9 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     transLabels->set_tooltip_markup (M("TP_RETINEX_TLABEL_TOOLTIP"));
     transLabels2 = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
 
-    scal   = Gtk::manage (new Adjuster (M("TP_RETINEX_SCALES"), 1, 8., 1., 3.));
+    scal   = Gtk::manage (new Adjuster (M("TP_RETINEX_SCALES"), -1, 5., 1., 3.));
+    iter   = Gtk::manage (new Adjuster (M("TP_RETINEX_ITER"), 1, 5., 1., 1.));
+    grad   = Gtk::manage (new Adjuster (M("TP_RETINEX_GRAD"), -2., 2., 1., 1.));
     gain   = Gtk::manage (new Adjuster (M("TP_RETINEX_GAIN"), 20, 200, 1, 50));
     offs   = Gtk::manage (new Adjuster (M("TP_RETINEX_OFFSET"), -10000, 10000, 1, 0));
 //    vart   = Gtk::manage (new Adjuster (M("TP_RETINEX_VARIANCE"), 50, 500, 1, 125));
@@ -153,6 +155,8 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 //    grbl   = Gtk::manage (new Adjuster (M("TP_RETINEX_HIGHLIGHT3"), 1, 100, 1, 50));
     gain->set_tooltip_markup (M("TP_RETINEX_GAIN_TOOLTIP"));
     scal->set_tooltip_markup (M("TP_RETINEX_SCALES_TOOLTIP"));
+    iter->set_tooltip_markup (M("TP_RETINEX_ITER_TOOLTIP"));
+    grad->set_tooltip_markup (M("TP_RETINEX_GRAD_TOOLTIP"));
 //    vart->set_tooltip_markup (M("TP_RETINEX_VARIANCE_TOOLTIP"));
     limd->set_tooltip_markup (M("TP_RETINEX_THRESHOLD_TOOLTIP"));
     baselog->set_tooltip_markup (M("TP_RETINEX_BASELOG_TOOLTIP"));
@@ -211,8 +215,14 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     slope->show ();
 
 
-//    settingsVBox->pack_start (*scal);
-//    scal->show ();
+    settingsVBox->pack_start (*iter);
+    iter->show ();
+
+    settingsVBox->pack_start (*scal);
+    scal->show ();
+
+    settingsVBox->pack_start (*grad);
+    grad->show ();
 
     settingsVBox->pack_start (*gain);
     gain->show ();
@@ -265,6 +275,18 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     if (scal->delay < 200) {
         scal->delay = 200;
+    }
+
+    iter->setAdjusterListener (this);
+
+    if (iter->delay < 200) {
+        iter->delay = 200;
+    }
+
+    grad->setAdjusterListener (this);
+
+    if (grad->delay < 200) {
+        grad->delay = 200;
     }
 
     gam->setAdjusterListener (this);
@@ -354,6 +376,8 @@ void Retinex::neutral_pressed ()
     offs->resetValue(false);
     str->resetValue(false);
     scal->resetValue(false);
+    iter->resetValue(false);
+    grad->resetValue(false);
     vart->resetValue(false);
     limd->resetValue(false);
     highl->resetValue(false);
@@ -477,6 +501,8 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     if (pedited) {
         scal->setEditedState (pedited->retinex.scal ? Edited : UnEdited);
+        iter->setEditedState (pedited->retinex.iter ? Edited : UnEdited);
+        grad->setEditedState (pedited->retinex.grad ? Edited : UnEdited);
         neigh->setEditedState (pedited->retinex.neigh ? Edited : UnEdited);
         gam->setEditedState (pedited->retinex.gam ? Edited : UnEdited);
         slope->setEditedState (pedited->retinex.slope ? Edited : UnEdited);
@@ -515,6 +541,8 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
     offs->setValue  (pp->retinex.offs);
     str->setValue    (pp->retinex.str);
     scal->setValue      (pp->retinex.scal);
+    iter->setValue      (pp->retinex.iter);
+    grad->setValue      (pp->retinex.grad);
     vart->setValue  (pp->retinex.vart);
     limd->setValue  (pp->retinex.limd);
     gam->setValue      (pp->retinex.gam);
@@ -522,10 +550,17 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
     highl->setValue  (pp->retinex.highl);
     baselog->setValue  (pp->retinex.baselog);
 //    grbl->setValue  (pp->retinex.grbl);
+    if(pp->retinex.iter == 1)   {
+        grad->set_sensitive(false);
+        scal->set_sensitive(false);
+    }
+    else {
+        grad->set_sensitive(true);
+        scal->set_sensitive(true);
+    }
 
     setEnabled (pp->retinex.enabled);
 
-    medianmapConn.block (true);
     medianmap->set_active (pp->retinex.medianmap);
     medianmapConn.block (false);
     lastmedianmap = pp->retinex.medianmap;
@@ -590,6 +625,8 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
 
     pp->retinex.str    = str->getValue ();
     pp->retinex.scal      = (int)scal->getValue ();
+    pp->retinex.iter      = (int) iter->getValue ();
+    pp->retinex.grad      = (int) grad->getValue ();
     pp->retinex.gam      = gam->getValue ();
     pp->retinex.slope      = slope->getValue ();
     pp->retinex.neigh    = neigh->getValue ();
@@ -615,6 +652,8 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
         //%%%%%%%%%%%%%%%%%%%%%%
         pedited->retinex.str   = str->getEditedState ();
         pedited->retinex.scal     = scal->getEditedState ();
+        pedited->retinex.iter     = iter->getEditedState ();
+        pedited->retinex.grad     = grad->getEditedState ();
         pedited->retinex.gam     = gam->getEditedState ();
         pedited->retinex.slope     = slope->getEditedState ();
         pedited->retinex.neigh   = neigh->getEditedState ();
@@ -770,6 +809,8 @@ void Retinex::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
     offs->setDefault (defParams->retinex.offs);
     str->setDefault (defParams->retinex.str);
     scal->setDefault (defParams->retinex.scal);
+    iter->setDefault (defParams->retinex.iter);
+    grad->setDefault (defParams->retinex.grad);
     vart->setDefault (defParams->retinex.vart);
     limd->setDefault (defParams->retinex.limd);
     highl->setDefault (defParams->retinex.highl);
@@ -784,6 +825,8 @@ void Retinex::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
         offs->setDefaultEditedState (pedited->retinex.offs ? Edited : UnEdited);
         str->setDefaultEditedState (pedited->retinex.str ? Edited : UnEdited);
         scal->setDefaultEditedState (pedited->retinex.scal ? Edited : UnEdited);
+        iter->setDefaultEditedState (pedited->retinex.iter ? Edited : UnEdited);
+        grad->setDefaultEditedState (pedited->retinex.grad ? Edited : UnEdited);
         vart->setDefaultEditedState (pedited->retinex.vart ? Edited : UnEdited);
         limd->setDefaultEditedState (pedited->retinex.limd ? Edited : UnEdited);
         highl->setDefaultEditedState (pedited->retinex.highl ? Edited : UnEdited);
@@ -803,6 +846,8 @@ void Retinex::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
 //        grbl->setDefaultEditedState (Irrelevant);
         str->setDefaultEditedState (Irrelevant);
         scal->setDefaultEditedState (Irrelevant);
+        iter->setDefaultEditedState (Irrelevant);
+        grad->setDefaultEditedState (Irrelevant);
         gam->setDefaultEditedState (Irrelevant);
         slope->setDefaultEditedState (Irrelevant);
     }
@@ -827,6 +872,15 @@ void Retinex::adjusterChanged (Adjuster* a, double newval)
     if (!listener || !getEnabled()) {
         return;
     }
+    if(iter->getTextValue() > "1") {
+        scal->set_sensitive(true);
+        grad->set_sensitive(true);
+    }
+    else {
+        scal->set_sensitive(false);
+        grad->set_sensitive(false);
+    }
+
 
     if (a == neigh) {
         listener->panelChanged (EvLneigh, neigh->getTextValue());
@@ -834,6 +888,10 @@ void Retinex::adjusterChanged (Adjuster* a, double newval)
         listener->panelChanged (EvLstr, str->getTextValue());
     } else if (a == scal) {
         listener->panelChanged (EvLscal, scal->getTextValue());
+    } else if (a == iter) {
+        listener->panelChanged (EvLiter, iter->getTextValue());
+    } else if (a == grad) {
+        listener->panelChanged (EvLgrad, grad->getTextValue());
     } else if (a == gain) {
         listener->panelChanged (EvLgain, gain->getTextValue());
     } else if (a == offs) {
@@ -902,6 +960,8 @@ void Retinex::trimValues (rtengine::procparams::ProcParams* pp)
 {
     str->trimValue(pp->retinex.str);
     scal->trimValue(pp->retinex.scal);
+    iter->trimValue(pp->retinex.iter);
+    grad->trimValue(pp->retinex.grad);
     neigh->trimValue(pp->retinex.neigh);
     gain->trimValue(pp->retinex.gain);
     offs->trimValue(pp->retinex.offs);
@@ -975,6 +1035,8 @@ void Retinex::setBatchMode (bool batchMode)
     offs->showEditedCB ();
     str->showEditedCB ();
     scal->showEditedCB ();
+    iter->showEditedCB ();
+    grad->showEditedCB ();
     gam->showEditedCB ();
     slope->showEditedCB ();
     vart->showEditedCB ();

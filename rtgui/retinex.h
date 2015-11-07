@@ -24,6 +24,8 @@ protected:
     CurveEditorGroup* curveEditorGH;
     Adjuster* str;
     Adjuster* scal;
+    Adjuster* grad;
+    Adjuster* iter;
     Adjuster* neigh;
     Adjuster* gain;
     Adjuster* offs;
