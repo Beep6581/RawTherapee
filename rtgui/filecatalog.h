@@ -108,9 +108,10 @@ private:
     Gtk::ToggleButton* bRecentlySaved[2];
     Gtk::ToggleButton* bTrash;
     Gtk::ToggleButton* bNotTrash;
-    Gtk::ToggleButton* categoryButtons[19];
+    Gtk::ToggleButton* bOriginal;
+    Gtk::ToggleButton* categoryButtons[20];
     Gtk::ToggleButton* exifInfo;
-    sigc::connection bCateg[19];
+    sigc::connection bCateg[20];
     Gtk::Image* iFilterClear, *igFilterClear;
     Gtk::Image* iranked[5], *igranked[5], *iUnRanked, *igUnRanked;
     Gtk::Image* iCLabeled[5], *igCLabeled[5], *iUnCLabeled, *igUnCLabeled;

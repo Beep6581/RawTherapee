@@ -1461,7 +1461,7 @@ void FileBrowser::applyFilter (const BrowserFilter& filter)
         MYWRITERLOCK(l, entryRW);  // Don't make this a writer lock!  HOMBRE: Why? 'selected' is modified here
 #endif
 
-        if (true/* TODO: filterOriginal */) {
+        if (filter.showOriginal) {
             findOriginalEntries(fd);
         }
 
@@ -1495,7 +1495,7 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb)   // true -> entry
 
     FileBrowserEntry* entry = static_cast<FileBrowserEntry*>(entryb);
 
-    if (true/* TODO: filterOriginal */ && entry->getOriginal() != NULL) {
+    if (filter.showOriginal && entry->getOriginal() != NULL) {
         return false;
     }
 
