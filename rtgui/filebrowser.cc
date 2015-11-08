@@ -19,6 +19,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "filebrowser.h"
+#include <map>
 #include <glibmm.h>
 #include "options.h"
 #include "multilangmgr.h"
@@ -31,6 +32,96 @@
 #include "threadutils.h"
 
 extern Options options;
+
+namespace
+{
+
+const Glib::ustring* getOriginalExtension (const ThumbBrowserEntryBase* entry)
+{
+    // We use the parsed extensions as a priority list,
+    // i.e. what comes earlier in the list is considered an original of what comes later.
+    typedef std::vector<Glib::ustring> ExtensionVector;
+    typedef ExtensionVector::const_iterator ExtensionIterator;
+
+    const ExtensionVector& originalExtensions = options.parsedExtensions;
+
+    // Extract extension from basename
+    const Glib::ustring basename = Glib::path_get_basename (entry->filename.lowercase());
+
+    const Glib::ustring::size_type pos = basename.find_last_of ('.');
+    if (pos >= basename.length () - 1) {
+        return NULL;
+    }
+
+    const Glib::ustring extension = basename.substr (pos + 1);
+
+    // Try to find a matching original extension
+    for (ExtensionIterator originalExtension = originalExtensions.begin(); originalExtension != originalExtensions.end(); ++originalExtension) {
+        if (*originalExtension == extension) {
+            return &*originalExtension;
+        }
+    }
+
+    return NULL;
+}
+
+ThumbBrowserEntryBase* selectOriginalEntry (ThumbBrowserEntryBase* original, ThumbBrowserEntryBase* candidate)
+{
+    // The candidate will become the new original, if it has an original extension
+    // and if its extension is higher in the list than the old original.
+    if (const Glib::ustring* candidateExtension = getOriginalExtension (candidate)) {
+        if (original == NULL) {
+            return candidate;
+        } else if (const Glib::ustring* originalExtension = getOriginalExtension (original)) {
+            return candidateExtension < originalExtension ? candidate : original;
+        }
+    } else {
+        return original;
+    }
+}
+
+void findOriginalEntries (const std::vector<ThumbBrowserEntryBase*>& entries)
+{
+    typedef std::vector<ThumbBrowserEntryBase*> EntryVector;
+    typedef EntryVector::const_iterator EntryIterator;
+    typedef std::map<Glib::ustring, EntryVector> BasenameMap;
+    typedef BasenameMap::const_iterator BasenameIterator;
+
+    // Sort all entries into buckets by basename without extension
+    BasenameMap byBasename;
+
+    for (EntryIterator entry = entries.begin (); entry != entries.end (); ++entry) {
+        const Glib::ustring basename = Glib::path_get_basename ((*entry)->filename.lowercase());
+
+        const Glib::ustring::size_type pos = basename.find_last_of ('.');
+        if (pos >= basename.length () - 1) {
+            (*entry)->setOriginal (NULL);
+            continue;
+        }
+
+        const Glib::ustring withoutExtension = basename.substr (0, pos);
+
+        byBasename[withoutExtension].push_back (*entry);
+    }
+
+    // Find the original image for each bucket
+    for (BasenameIterator bucket = byBasename.begin (); bucket != byBasename.end (); ++bucket) {
+        const EntryVector& entries = bucket->second;
+        ThumbBrowserEntryBase* original = NULL;
+
+        // Select the most likely original in a first pass...
+        for (EntryIterator entry = entries.begin (); entry != entries.end (); ++entry) {
+            original = selectOriginalEntry (original, *entry);
+        }
+
+        // ...and link all other images to it in a second pass.
+        for (EntryIterator entry = entries.begin (); entry != entries.end (); ++entry) {
+            (*entry)->setOriginal (*entry != original ? original : NULL);
+        }
+    }
+}
+
+}
 
 FileBrowser::FileBrowser ()
     : tbl(NULL), numFiltered(0), partialPasteDlg(M("PARTIALPASTE_DIALOGLABEL"))
@@ -1370,6 +1461,10 @@ void FileBrowser::applyFilter (const BrowserFilter& filter)
         MYWRITERLOCK(l, entryRW);  // Don't make this a writer lock!  HOMBRE: Why? 'selected' is modified here
 #endif
 
+        if (true/* TODO: filterOriginal */) {
+            findOriginalEntries(fd);
+        }
+
         for (size_t i = 0; i < fd.size(); i++) {
             if (checkFilter (fd[i])) {
                 numFiltered++;
@@ -1399,6 +1494,10 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb)   // true -> entry
 {
 
     FileBrowserEntry* entry = static_cast<FileBrowserEntry*>(entryb);
+
+    if (true/* TODO: filterOriginal */ && entry->getOriginal() != NULL) {
+        return false;
+    }
 
     // return false if basic filter settings are not satisfied
     if ((filter.showRanked[entry->thumbnail->getRank()] == false ) ||
