@@ -63,6 +63,7 @@ public:
     bool scal;
     bool iter;
     bool grad;
+    bool grads;
     bool gam;
     bool slope;
     bool neigh;

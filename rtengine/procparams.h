@@ -277,6 +277,7 @@ public:
     int     scal;
     int     iter;
     int     grad;
+    int     grads;
     double  gam;
     double  slope;
     int     neigh;

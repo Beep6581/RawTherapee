@@ -25,6 +25,7 @@ protected:
     Adjuster* str;
     Adjuster* scal;
     Adjuster* grad;
+    Adjuster* grads;
     Adjuster* iter;
     Adjuster* neigh;
     Adjuster* gain;

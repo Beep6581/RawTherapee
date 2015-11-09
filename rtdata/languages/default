@@ -658,6 +658,7 @@ HISTORY_MSG_425;Retinex - Log base
 HISTORY_MSG_426;Retinex - Hue equalizer
 HISTORY_MSG_427;Retinex - Iterations
 HISTORY_MSG_428;Retinex - T. Gradient
+HISTORY_MSG_429;Retinex - S. Gradient
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1660,6 +1661,8 @@ TP_RETINEX_ITER;Iterations (Tone-mapping)
 TP_RETINEX_ITER_TOOLTIP;Simulate a tone-mapping operator\nHigh values increase the processing time
 TP_RETINEX_GRAD;Transmission gradient
 TP_RETINEX_GRAD_TOOLTIP;If slider at 0, all iterations are identical\nIf > 0 Variance and Threshold are reduce when iteration increases and conversely
+TP_RETINEX_GRADS;Strength gradient
+TP_RETINEX_GRAD_TOOLTIP;If slider at 0, all iterations are identical\nIf > 0 Strength is reduce when iteration increases and conversely
 TP_RETINEX_LABEL;Retinex
 TP_RETINEX_LABSPACE;L*a*b*
 TP_RETINEX_LOW;Low

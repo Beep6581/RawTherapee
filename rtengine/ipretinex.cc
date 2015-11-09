@@ -223,6 +223,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         int nei = (int) 2.8f * deh.neigh; //def = 220
         float vart = (float)deh.vart / 100.f;//variance
         float gradvart = (float)deh.grad;
+        float gradstr = (float)deh.grads;
         float strength = (float) deh.str / 100.f; // Blend with original L channel data
         float limD = (float) deh.limd;
         limD = pow(limD, 1.7f);//about 2500 enough
@@ -274,6 +275,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             moderetinex = 3;
         }
         for(int it=1; it<iter+1; it++) {//iter nb max of iterations
+            float grads;
             float grad=1.f;
             float sc = 3.f;
             if(gradient==0) {
@@ -334,6 +336,29 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 ilimdx=ilimD;
             }
             scal=round(sc);
+            float strengthx;
+            float ks=1.f;
+
+            if(gradstr!=0) {
+                if(gradstr==1) {
+                    if(it <= 3) ks=-0.3f*it+1.6f;
+                    else ks = 0.5f;
+                }
+                else if(gradstr==2) {
+                    if(it <= 3) ks=-0.6f*it+2.2f;
+                    else ks = 0.3f;
+                }
+                else if(gradstr==-1) {
+                    if(it <= 3) ks=0.2f*it+0.6f;
+                    else ks = 1.2f;
+                }
+                else if(gradstr==-2) {
+                    if(it <= 3) ks=0.4f*it+0.2f;
+                    else ks = 1.5f;
+                }
+            }
+            strengthx=ks*strength;
+
             float aahi = 49.f / 99.f; ////reduce sensibility 50%
             float bbhi = 1.f - aahi;
             float high;
@@ -569,9 +594,9 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                             cdmin = cd;
                         }
 
-                        float str = strength;
+                        float str = strengthx;
 
-                        if(lhutili) {  // S=f(H)
+                        if(lhutili  && it==1) {  // S=f(H)
                             {
                                 float HH = exLuminance[i][j];
                                 float valparam;
@@ -605,7 +630,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             Tmin = mintr;
             Tmax = maxtr;
 
-            if (shcurve) {
+            if (shcurve && it==1) {
                 delete shcurve;
             }
         }
