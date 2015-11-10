@@ -144,7 +144,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     transLabels->set_tooltip_markup (M("TP_RETINEX_TLABEL_TOOLTIP"));
     transLabels2 = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
 
-    scal   = Gtk::manage (new Adjuster (M("TP_RETINEX_SCALES"), -1, 5., 1., 3.));
+    scal   = Gtk::manage (new Adjuster (M("TP_RETINEX_SCALES"), -1, 6., 1., 3.));
     iter   = Gtk::manage (new Adjuster (M("TP_RETINEX_ITER"), 1, 5., 1., 1.));
     grad   = Gtk::manage (new Adjuster (M("TP_RETINEX_GRAD"), -2., 2., 1., 1.));
     grads   = Gtk::manage (new Adjuster (M("TP_RETINEX_GRADS"), -2., 2., 1., 1.));

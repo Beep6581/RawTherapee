@@ -275,6 +275,11 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             moderetinex = 3;
         }
         for(int it=1; it<iter+1; it++) {//iter nb max of iterations
+            float aahi = 49.f / 99.f; ////reduce sensibility 50%
+            float bbhi = 1.f - aahi;
+            float high;
+            high =  bbhi + aahi * (float) deh.highl;
+
             float grads;
             float grad=1.f;
             float sc = 3.f;
@@ -299,9 +304,28 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 sc=-0.75f*it+5.75f;
             }
             else if(gradient==5) {
-                grad=0.9f*it+0.1f;
+                if(moderetinex!=3) {
+                    grad=2.5f*it-1.5f;
+                }
+                else {
+                    float aa=(11.f*high-1.f)/4.f;
+                    float bb=1.f-aa;
+                    grad=aa*it+bb;
+                }
                 sc=-0.75f*it+5.75f;
             }
+            else if(gradient==6) {
+                if(moderetinex!=3) {
+                    grad=5.f*it-4.f;
+                }
+                else {
+                    float aa=(21.f*high-1.f)/4.f;
+                    float bb=1.f-aa;
+                    grad=aa*it+bb;
+                }
+                sc=-0.75f*it+5.75f;
+            }
+
             else if(gradient==-1) {
                 grad=-0.125f*it+1.125f;
                 sc=3.f;
@@ -358,11 +382,13 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 }
             }
             strengthx=ks*strength;
-
+            /*
             float aahi = 49.f / 99.f; ////reduce sensibility 50%
             float bbhi = 1.f - aahi;
             float high;
             high =  bbhi + aahi * (float) deh.highl;
+            */
+            printf("high=%f moderetinex=%d\n",high,moderetinex);
             retinex_scales( RetinexScales, scal, moderetinex, nei/grad, high );
 
             int H_L = height;
@@ -407,7 +433,8 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 for ( int scale = scal - 1; scale >= 0; scale-- ) {
                     if(scale == scal - 1) {
                         gaussianBlur<float> (src, out, W_L, H_L, RetinexScales[scale], buffer);
-                    } else { // reuse result of last iteration
+                    } else {
+                        printf("reti=%f\n",RetinexScales[scale]);// reuse result of last iteration
                         gaussianBlur<float> (out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
                     }
 
