@@ -288,19 +288,19 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             }
             else if(gradient==2) {
                 grad=0.5f*it+0.5f;
-                sc=-it+6.f;
+                sc=-0.75f*it+5.75f;
             }
             else if(gradient==3) {
                 grad=0.666f*it+0.333f;
-                sc=-it+6.f;
+                sc=-0.75f*it+5.75f;
             }
             else if(gradient==4) {
                 grad=0.8f*it+0.2f;
-                sc=-it+6.f;
+                sc=-0.75f*it+5.75f;
             }
             else if(gradient==5) {
                 grad=0.9f*it+0.1f;
-                sc=-it+6.f;
+                sc=-0.75f*it+5.75f;
             }
             else if(gradient==-1) {
                 grad=-0.125f*it+1.125f;

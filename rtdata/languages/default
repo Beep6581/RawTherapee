@@ -637,9 +637,9 @@ HISTORY_MSG_404;W - ES - Base amplification
 HISTORY_MSG_405;W - Denoise - Level 4
 HISTORY_MSG_406;W - ES - Neighboring pixels
 HISTORY_MSG_407;Retinex - Method
-HISTORY_MSG_408;Retinex - Neighboring
-HISTORY_MSG_409;Retinex - Gain
-HISTORY_MSG_410;Retinex - Offset
+HISTORY_MSG_408;Retinex - Radius
+HISTORY_MSG_409;Retinex - Contrast
+HISTORY_MSG_410;Retinex - Brightness
 HISTORY_MSG_411;Retinex - Strength
 HISTORY_MSG_412;Retinex - G. Gradient
 HISTORY_MSG_413;Retinex - Variance
@@ -1642,7 +1642,7 @@ TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorre
 TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
 TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Strength according to hue Strength=f(H)\nThis curve also acts on chroma when using the "Highlight" retinex method.
 TP_RETINEX_FREEGAMMA;Free gamma
-TP_RETINEX_GAIN;Gain
+TP_RETINEX_GAIN;Contrast
 TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 TP_RETINEX_GAMMA;Gamma
 TP_RETINEX_GAMMA_FREE;Free
@@ -1671,10 +1671,10 @@ TP_RETINEX_METHOD;Method
 TP_RETINEX_METHOD_TOOLTIP;Low = Reinforce low light,\nUniform = Equalize action,\nHigh = Reinforce high light,\nHighlights = Remove magenta in highlights.
 TP_RETINEX_MLABEL;Restored haze-free Min=%1 Max=%2
 TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
-TP_RETINEX_NEIGHBOR;Neighboring pixels
+TP_RETINEX_NEIGHBOR;Radius
 TP_RETINEX_NEUTRAL;Reset
 TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
-TP_RETINEX_OFFSET;Offset
+TP_RETINEX_OFFSET;Brightness
 TP_RETINEX_SETTINGS;Settings
 TP_RETINEX_SCALES;Gaussian gradient
 TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical\nIf > 0 Scale and Neighboring pixels are reduce when iteration increases and conversely
