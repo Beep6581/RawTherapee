@@ -272,7 +272,15 @@ void ImageData::extractInfo ()
             if(exif->getTag ("LensModel")) {
                 lens = exif->getTag ("LensModel")->valueToString ();
             }
-        } else if (root->findTag("MakerNote")) {
+        } else if(!make.compare (0, 4, "SONY")) {
+            if (iso_speed == 65535 || iso_speed == 0) {
+                rtexif::Tag* isoTag = exif->getTag ("RecommendedExposureIndex");
+                if(isoTag)
+                    iso_speed = isoTag->toDouble();
+            }
+
+        }
+         else if (root->findTag("MakerNote")) {
             rtexif::TagDirectory* mnote = root->findTag("MakerNote")->getDirectory();
 
             if (mnote && !make.compare (0, 5, "NIKON")) {

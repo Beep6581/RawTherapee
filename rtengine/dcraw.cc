@@ -5415,6 +5415,7 @@ void CLASS parse_exif (int base)
       case 33434:  shutter = getreal(type);		break;
       case 33437:  aperture = getreal(type);		break;
       case 34855:  iso_speed = get2();			break;
+      case 34866:  if((!iso_speed) || iso_speed == 65535) iso_speed = get4();break;
       case 36867:
       case 36868:  get_timestamp(0);			break;
       case 37377:  if ((expo = -getreal(type)) < 128)
@@ -9253,6 +9254,10 @@ dng_skip:
 	adobe_coeff (make, model);
   if(!strncmp(make, "Pentax", 6) && !strncmp(model, "K10D",4))
 	adobe_coeff (make, model);
+  if(!strncmp(make, "Leica", 5) && !strncmp(model, "Q",1))
+    adobe_coeff (make, model);
+  if(!strncmp(make, "Leica", 5) && !strncmp(model, "SL",2))
+    adobe_coeff (make, model);
   if (raw_color) adobe_coeff (make, model);
   if (load_raw == &CLASS kodak_radc_load_raw)
     if (raw_color) adobe_coeff ("Apple","Quicktake");
