@@ -1,5 +1,5 @@
---- dcraw.c	2015-11-09 18:41:53 +0000
-+++ dcraw.cc	2015-11-10 17:09:14 +0000
+--- dcraw.c	2015-08-14 17:00:16.510826333 +0200
++++ dcraw.cc	2015-11-11 19:33:55.576308113 +0100
 @@ -1,3 +1,15 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -587,6 +587,15 @@
    int byte;
  
    if (!nbits) return vbits=0;
+@@ -2140,7 +2434,7 @@
+ 
+ void CLASS kodak_radc_load_raw()
+ {
+-  static const char src[] = {
++  static const signed char src[] = {
+     1,1, 2,3, 3,4, 4,2, 5,7, 6,5, 7,6, 7,8,
+     1,0, 2,1, 3,3, 4,4, 5,2, 6,7, 7,6, 8,5, 8,8,
+     2,1, 2,3, 3,0, 3,2, 3,4, 4,6, 5,5, 6,7, 6,8,
 @@ -2246,11 +2540,11 @@
  METHODDEF(boolean)
  fill_input_buffer (j_decompress_ptr cinfo)
