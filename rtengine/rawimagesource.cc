@@ -2107,7 +2107,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 
 }
 
-void RawImageSource::retinexPrepareCurves(RetinexParams retinexParams, LUTf &cdcurve, RetinextransmissionCurve &retinextransmissionCurve, bool &retinexcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI)
+void RawImageSource::retinexPrepareCurves(RetinexParams retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI)
 {
     useHsl = (retinexParams.retinexcolorspace == "HSLLOG" || retinexParams.retinexcolorspace == "HSLLIN");
 
@@ -2116,12 +2116,13 @@ void RawImageSource::retinexPrepareCurves(RetinexParams retinexParams, LUTf &cdc
     } else {
         CurveFactory::curveDehaContL (retinexcontlutili, retinexParams.cdcurve, cdcurve, 1, lhist16RETI, histLRETI);
     }
+    CurveFactory::mapcurve (mapcontlutili, retinexParams.mapcurve, mapcurve, 1, lhist16RETI, histLRETI);
 
     retinexParams.getCurves(retinextransmissionCurve);
 }
 
 //void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneCurveParams Tc, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 3> &conversionBuffer, bool dehacontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI)
-void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneCurveParams Tc, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI)
+void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneCurveParams Tc, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI)
 {
 
     MyTime t4, t5;
@@ -2273,7 +2274,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         }
     }
 
-    MSR(LBuffer, conversionBuffer[2], conversionBuffer[3], WNew, HNew, deh, dehatransmissionCurve, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+    MSR(LBuffer, conversionBuffer[2], conversionBuffer[3], cdcurve, mapcontlutili, WNew, HNew, deh, dehatransmissionCurve, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
     if(useHsl) {
         if(chutili) {

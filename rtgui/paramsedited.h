@@ -70,6 +70,7 @@ public:
     bool gain;
     bool offs;
     bool retinexMethod;
+    bool mapMethod;
     bool retinexcolorspace;
     bool gammaretinex;
     bool vart;
@@ -80,11 +81,18 @@ public:
     bool method;
     bool transmissionCurve;
     bool cdcurve;
+    bool mapcurve;
     bool cdHcurve;
     bool lhcurve;
     bool retinex;
     bool medianmap;
     bool isUnchanged() const;
+    bool highlights;
+    bool htonalwidth;
+    bool shadows;
+    bool stonalwidth;
+    bool radius;
+
 };
 
 

@@ -32,6 +32,7 @@
     * College of Physics and Information Engineering, Fuzhou University, Fuzhou, China
 
     * inspired from 2003 Fabien Pelisson <Fabien.Pelisson@inrialpes.fr>
+    * some ideas taken (use of mask) Russell Cottrell - The Retinex .8bf Plugin
 
 */
 
@@ -205,7 +206,7 @@ void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L, const
     stddv = (float)sqrt(stddv);
 }
 
-void RawImageSource::MSR(float** luminance, float** originalLuminance, float **exLuminance,  int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
+void RawImageSource::MSR(float** luminance, float** originalLuminance, float **exLuminance,  LUTf & mapcurve, bool &mapcontlutili, int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
     if (deh.enabled) {//enabled
         float         mean, stddv, maxtr, mintr;
@@ -234,7 +235,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         bool higplus = false ;
         float elogt;
         float hl = deh.baselog;
-
+        SHMap* shmap;
         if(hl >= 2.71828f) {
             elogt = 2.71828f + SQR(SQR(hl - 2.71828f));
         } else {
@@ -382,13 +383,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 }
             }
             strengthx=ks*strength;
-            /*
-            float aahi = 49.f / 99.f; ////reduce sensibility 50%
-            float bbhi = 1.f - aahi;
-            float high;
-            high =  bbhi + aahi * (float) deh.highl;
-            */
-            printf("high=%f moderetinex=%d\n",high,moderetinex);
+
             retinex_scales( RetinexScales, scal, moderetinex, nei/grad, high );
 
             int H_L = height;
@@ -400,6 +395,17 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             for (int i = 0; i < H_L; i++) {
                 src[i] = &srcBuffer[i * W_L];
             }
+
+            int h_th, s_th;
+
+            int shHighlights = deh.highlights;
+            int shShadows = deh.shadows;
+            int mapmet=0;
+            if(deh.mapMethod=="map") mapmet=2;
+            if(deh.mapMethod=="mapT") mapmet=3;
+            if(deh.mapMethod=="curv") mapmet=1;
+            if(deh.mapMethod=="gaus") mapmet=4;
+
 
 #ifdef _OPENMP
             #pragma omp parallel for
@@ -425,6 +431,10 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 pond /= log(elogt);
             }
 
+            if(mapmet > 1) shmap = new SHMap (W_L, H_L, true);
+
+
+
             float *buffer = new float[W_L * H_L];;
 #ifdef _OPENMP
             #pragma omp parallel
@@ -434,9 +444,26 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                     if(scale == scal - 1) {
                         gaussianBlur<float> (src, out, W_L, H_L, RetinexScales[scale], buffer);
                     } else {
-                        printf("reti=%f\n",RetinexScales[scale]);// reuse result of last iteration
+                        // reuse result of last iteration
                         gaussianBlur<float> (out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
                     }
+                    //printf("scal=%d RetinexScales=%f\n",scale, RetinexScales[scale]);
+                    printf("..");
+
+
+                    double shradius = deh.radius;
+                    if(mapmet==4) shradius /= 10.;
+
+                    //    if(shHighlights > 0 || shShadows > 0) {
+                    if(mapmet==3) if(it==1) shmap->updateL (out, shradius, true, 1);//wav Total
+                    if(mapmet==2 && scale >2) if(it==1) shmap->updateL (out, shradius, true, 1);//wav partial
+                    if(mapmet==4) if(it==1) shmap->updateL (out, shradius, false, 1);//gauss
+                    //    }
+                    if (shmap) {
+                        h_th = shmap->max_f - deh.htonalwidth * (shmap->max_f - shmap->avg) / 100;
+                        s_th = deh.stonalwidth * (shmap->avg - shmap->min_f) / 100;
+                    }
+
 
 #ifdef __SSE2__
                     vfloat pondv = F2V(pond);
@@ -444,6 +471,47 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                     vfloat limMaxv = F2V(limdx);
 
 #endif
+
+                    if(mapmet > 0) {
+#ifdef _OPENMP
+                        #pragma omp for
+#endif
+                        for (int i = 0; i < H_L; i++) {
+                            if(mapcontlutili) {
+                                int j = 0;
+                                for (; j < W_L; j++) {
+                                    if(it==1) out[i][j] = mapcurve[2.f * out[i][j]] / 2.f;
+                                }
+                            }
+                        }
+
+                    }
+
+                    //    if(shHighlights > 0 || shShadows > 0) {
+                    if((mapmet == 2 && scale >2) || mapmet==3 || mapmet==4) {
+
+
+#ifdef _OPENMP
+                        #pragma omp for
+#endif
+                        for (int i = 0; i < H_L; i++) {
+                            int j = 0;
+                            for (; j < W_L; j++) {
+                                double mapval = 1.0 + shmap->map[i][j];
+                                double factor = 1.0;
+
+                                if (mapval > h_th) {
+                                    factor = (h_th + (100.0 - shHighlights) * (mapval - h_th) / 100.0) / mapval;
+                                } else if (mapval < s_th) {
+                                    factor = (s_th - (100.0 - shShadows) * (s_th - mapval) / 100.0) / mapval;
+                                }
+                                out[i][j] *= factor;
+
+                            }
+                        }
+                    }
+                    //    }
+
 #ifdef _OPENMP
                     #pragma omp for
 #endif
@@ -477,6 +545,13 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                     }
                 }
             }
+            if(mapmet > 1) {
+                if(shmap) {
+                    delete shmap;
+                }
+            }
+            shmap = NULL;
+
             delete [] buffer;
             delete [] outBuffer;
             delete [] srcBuffer;

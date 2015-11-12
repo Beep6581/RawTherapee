@@ -457,6 +457,13 @@ enum ProcEvent {
     EvLiter = 426,
     EvLgrad = 427,
     EvLgrads = 428,
+    EvLhighlights = 429,
+    EvLh_tonalwidth = 430,
+    EvLshadows = 431,
+    EvLs_tonalwidth = 432,
+    EvLradius = 433,
+    EvmapMethod = 434,
+    EvRetinexmapcurve = 435,
     NUMOFEVENTS
 };
 }
