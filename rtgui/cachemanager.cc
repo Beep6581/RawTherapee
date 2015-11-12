@@ -30,18 +30,8 @@
 CacheManager*
 CacheManager::getInstance(void)
 {
-    static CacheManager* instance_ = 0;
-
-    if ( instance_ == 0 ) {
-        static MyMutex smutex_;
-        MyMutex::MyLock lock(smutex_);
-
-        if ( instance_ == 0 ) {
-            instance_ = new CacheManager();
-        }
-    }
-
-    return instance_;
+    static CacheManager instance_;
+    return &instance_;
 }
 
 void CacheManager::init ()
