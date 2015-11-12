@@ -2745,6 +2745,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
  */
 void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile )
 {
+    // TODO: Change type of black[] to float to avoid conversions
     unsigned short black[4] = {
             (unsigned short)ri->get_cblack(0), (unsigned short)ri->get_cblack(1),
             (unsigned short)ri->get_cblack(2), (unsigned short)ri->get_cblack(3)};
