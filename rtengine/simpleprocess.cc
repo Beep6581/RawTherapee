@@ -129,7 +129,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         imgsrc->retinexPrepareBuffers(params.icm, params.retinex, conversionBuffer, dummy);
         imgsrc->retinexPrepareCurves(params.retinex, cdcurve, mapcurve, dehatransmissionCurve, dehacontlutili, mapcontlutili, useHsl, dummy, dummy );
         float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-        imgsrc->retinex( params.icm, params.retinex, params.toneCurve, mapcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, mapcontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, dummy);
+        imgsrc->retinex( params.icm, params.retinex, params.toneCurve, cdcurve, mapcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, mapcontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, dummy);
     }
 
     if (pl) {

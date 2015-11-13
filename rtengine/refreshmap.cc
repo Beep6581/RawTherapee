@@ -440,13 +440,13 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RETINEX,          // EvLstr
     RETINEX,          // EvLscal
     RETINEX,          // EvLvart
-    RETINEX,          // EvLCDCurve
+    DEMOSAIC,          // EvLCDCurve
     RETINEX,          // EvRetinextransmission
     DEMOSAIC,         // EvRetinexEnabled
     RETINEX,          // EvRetinexmedianmap
     RETINEX,          // EvLlimd
     DEMOSAIC,         // Evretinexcolorspace
-    RETINEX,          // EvLCDHCurve
+    DEMOSAIC,          // EvLCDHCurve
     DEMOSAIC,         // Evretinexgamma
     DEMOSAIC,         // EvLgam
     DEMOSAIC,         // EvLslope
@@ -463,7 +463,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RETINEX,            //EvLs_tonalwidth
     RETINEX,            //EvLradius
     RETINEX,            //EvmapMethod
-    RETINEX              //EvRetinexmapcurve
+    DEMOSAIC,              //EvRetinexmapcurve
+    DEMOSAIC              //EvviewMethod
 
 };
 

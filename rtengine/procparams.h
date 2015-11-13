@@ -294,6 +294,7 @@ public:
     Glib::ustring retinexcolorspace;
     Glib::ustring gammaretinex;
     Glib::ustring mapMethod;
+    Glib::ustring viewMethod;
     int     vart;
     int     limd;
     int     highl;

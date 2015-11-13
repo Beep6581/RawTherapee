@@ -69,7 +69,7 @@ public:
     virtual int         load        (Glib::ustring fname, bool batch = false) = 0;
     virtual void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse) {};
     virtual void        demosaic    (const RAWParams &raw) {};
-    virtual void        retinex       (ColorManagementParams cmp, RetinexParams  deh, ToneCurveParams Tc, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) {};
+    virtual void        retinex       (ColorManagementParams cmp, RetinexParams  deh, ToneCurveParams Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) {};
     virtual void        retinexPrepareCurves       (RetinexParams retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI) {};
     virtual void        retinexPrepareBuffers      (ColorManagementParams cmp, RetinexParams retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI) {};
     virtual void        flushRawData       () {};

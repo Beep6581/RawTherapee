@@ -242,23 +242,23 @@ void SHMap::updateL (float** L, double radius, bool hq, int skip)
     {
         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         //experimental dirpyr shmap
-
         float thresh = (100.f * radius); //1000;
-
+        int levrad = 16;
+        levrad=2;//for retinex - otherwise levrad = 16
         // set up range function
         // calculate size of Lookup table. That's possible because from a value k for all i>=k rangefn[i] will be exp(-10)
         // So we use this fact and the automatic clip of lut to reduce the size of lut and the number of calculations to fill the lut
         // In past this lut had only integer precision with rangefn[i] = 0 for all i>=k
         // We set the last element to a small epsilon 1e-15 instead of zero to avoid divisions by zero
-        const int lutSize = thresh * sqrtf(10.f) + 1;
+        const int lutSize = (int) thresh * sqrtf(10.f) + 1;
         thresh *= thresh;
         LUTf rangefn(lutSize);
-
         for (int i = 0; i < lutSize - 1; i++) {
             rangefn[i] = xexpf(-min(10.f, (static_cast<float>(i) * i) / thresh )); //*intfactor;
         }
 
         rangefn[lutSize - 1] = 1e-15f;
+        //printf("lut=%d rf5=%f rfm=%f\n thre=%f",lutSize, rangefn[5],rangefn[lutSize-10],thresh );
 
         // We need one temporary buffer
         float ** buffer = allocArray<float> (W, H);
@@ -271,7 +271,7 @@ void SHMap::updateL (float** L, double radius, bool hq, int skip)
         int numLevels = 2;
         int scale = 2;
 
-        while (skip * scale < 16) {
+        while (skip * scale < levrad) {
             scale *= 2;
             numLevels++;
         }
@@ -296,7 +296,7 @@ void SHMap::updateL (float** L, double radius, bool hq, int skip)
         level ++;
         indx = 1 - indx;
 
-        while (skip * scale < 16) {
+        while (skip * scale < levrad) {
             dirpyr_shmap(dirpyrlo[indx], dirpyrlo[1 - indx], W, H, rangefn, level, scale );
             scale *= 2;
             level ++;
@@ -398,7 +398,7 @@ SSEFUNCTION void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, i
 #endif
         {
 #if defined( __SSE2__ ) && defined( __x86_64__ )
-            __m128 dirwtv, valv, normv, dftemp1v, dftemp2v;
+            __m128 dirwtv, valv, normv, dftemp1v, dftemp2v, fg;
 #endif // __SSE2__
             int j;
 #ifdef _OPENMP
@@ -414,6 +414,7 @@ SSEFUNCTION void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, i
 
                     for(int inbr = max(i - scalewin, i % scale); inbr <= min(i + scalewin, height - 1); inbr += scale) {
                         for (int jnbr = j % scale; jnbr <= j + scalewin; jnbr += scale) {
+                            //printf("dat=%f ",abs(data_fine[inbr][jnbr] - data_fine[i][j]));
                             dirwt = ( rangefn[abs(data_fine[inbr][jnbr] - data_fine[i][j])] );
                             val += dirwt * data_fine[inbr][jnbr];
                             norm += dirwt;
@@ -504,7 +505,7 @@ SSEFUNCTION void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, i
 #endif
         {
 #if defined( __SSE2__ ) && defined( __x86_64__ )
-            __m128 dirwtv, valv, normv, dftemp1v, dftemp2v;
+            __m128 dirwtv, valv, normv, dftemp1v, dftemp2v, fgg;
             float domkerv[5][5][4] __attribute__ ((aligned (16))) = {{{1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}}};
 
 #endif // __SSE2__

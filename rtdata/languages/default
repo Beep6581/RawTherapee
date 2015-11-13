@@ -666,6 +666,7 @@ HISTORY_MSG_433;Retinex - Mask TW shadows
 HISTORY_MSG_434;Retinex - Mask radius
 HISTORY_MSG_435;Retinex - Mask method
 HISTORY_MSG_436;Retinex - Mask curve
+HISTORY_MSG_437;Retinex - Preview
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -1707,6 +1708,11 @@ TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbsciss
 TP_RETINEX_UNIFORM;Uniform
 TP_RETINEX_VARIANCE;Variance
 TP_RETINEX_VARIANCE_TOOLTIP;Low variance increase local contrast and saturation, but can lead to artifacts.
+TP_RETINEX_VIEW;Preview
+TP_RETINEX_VIEW_NONE;Standard
+TP_RETINEX_VIEW_MASK;Mask
+TP_RETINEX_VIEW_TRAN;Transmission
+TP_RETINEX_VIEW_METHOD_TOOLTIP;Standard - normal display\nMask -  display mask\nTransmission - displays the file transmission-map , before any action on contrast and brightness\nAttention, this does not correspond to reality, but a shift to make it visible
 TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;Channel
 TP_RGBCURVES_GREEN;G

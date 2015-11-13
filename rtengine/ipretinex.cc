@@ -405,7 +405,12 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             if(deh.mapMethod=="mapT") mapmet=3;
             if(deh.mapMethod=="curv") mapmet=1;
             if(deh.mapMethod=="gaus") mapmet=4;
+            double shradius = (double) deh.radius;
+            // printf("shrad=%f\n",shradius);
 
+            int viewmet=0;
+            if(deh.viewMethod=="mask") viewmet=1;
+            if(deh.viewMethod=="tran") viewmet=2;
 
 #ifdef _OPENMP
             #pragma omp parallel for
@@ -422,6 +427,13 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
             for (int i = 0; i < H_L; i++) {
                 out[i] = &outBuffer[i * W_L];
+            }
+
+            float *tran[H_L] ALIGNED16;
+            float *tranBuffer = new float[H_L * W_L];
+
+            for (int i = 0; i < H_L; i++) {
+                tran[i] = &tranBuffer[i * W_L];
             }
 
             const float logBetaGain = xlogf(16384.f);
@@ -451,8 +463,8 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                     printf("..");
 
 
-                    double shradius = deh.radius;
-                    if(mapmet==4) shradius /= 10.;
+                    if(mapmet==4) shradius /= 1.;
+                    else shradius = 40.;
 
                     //    if(shHighlights > 0 || shShadows > 0) {
                     if(mapmet==3) if(it==1) shmap->updateL (out, shradius, true, 1);//wav Total
@@ -488,7 +500,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                     }
 
                     //    if(shHighlights > 0 || shShadows > 0) {
-                    if((mapmet == 2 && scale >2) || mapmet==3 || mapmet==4) {
+                    if(((mapmet == 2 && scale >2) || mapmet==3 || mapmet==4) && it==1) {
 
 
 #ifdef _OPENMP
@@ -545,6 +557,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                     }
                 }
             }
+            printf(".\n");
             if(mapmet > 1) {
                 if(shmap) {
                     delete shmap;
@@ -553,7 +566,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             shmap = NULL;
 
             delete [] buffer;
-            delete [] outBuffer;
+//            delete [] outBuffer;
             delete [] srcBuffer;
 
             mean = 0.f;
@@ -598,6 +611,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                             }
 
                             luminance[i][j] *= (-1.f + 4.f * dehatransmissionCurve[absciss]); //new transmission
+                            tran[i][j]=luminance[i][j];
                         }
                 }
 
@@ -713,8 +727,10 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                             }
                         }
 
-                        //    if(exLuminance[i][j] > 65535.f*hig && higplus) str *= hig;
-                        luminance[i][j] = clipretinex( cd, 0.f, 32768.f ) * str + (1.f - str) * originalLuminance[i][j];
+                        if(exLuminance[i][j] > 65535.f*hig && higplus) str *= hig;
+                        if(viewmet==0) luminance[i][j]=clipretinex( cd, 0.f, 32768.f ) * str + (1.f - str) * originalLuminance[i][j];
+                        if(viewmet==1) luminance[i][j] = out[i][j];
+                        if(viewmet==2) luminance[i][j] = 1000.f+ tran[i][j]*700.f;//arbitrary values to help display log values which are between -20 to + 30 - usage values -4 + 5
                     }
 
 #ifdef _OPENMP
@@ -726,6 +742,11 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 }
 
             }
+            delete [] outBuffer;
+            outBuffer = NULL;
+            delete [] tranBuffer;
+            tranBuffer = NULL;
+
             //    printf("cdmin=%f cdmax=%f\n",minCD, maxCD);
             Tmean = mean;
             Tsigma = stddv;

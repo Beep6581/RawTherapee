@@ -251,7 +251,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         imgsrc->retinexPrepareCurves(params.retinex, cdcurve, mapcurve, dehatransmissionCurve, dehacontlutili, mapcontlutili, useHsl, lhist16RETI, histLRETI);
         float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-        imgsrc->retinex( params.icm, params.retinex,  params.toneCurve, mapcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, mapcontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, histLRETI);//enabled Retinex
+        imgsrc->retinex( params.icm, params.retinex,  params.toneCurve, cdcurve, mapcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, mapcontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, histLRETI);//enabled Retinex
 
         if(dehaListener) {
             dehaListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);

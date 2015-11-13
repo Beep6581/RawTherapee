@@ -71,6 +71,7 @@ public:
     bool offs;
     bool retinexMethod;
     bool mapMethod;
+    bool viewMethod;
     bool retinexcolorspace;
     bool gammaretinex;
     bool vart;

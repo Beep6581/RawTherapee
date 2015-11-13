@@ -163,6 +163,7 @@ void RetinexParams::setDefaults()
 //    grbl = 50;
     retinexMethod = "high";
     mapMethod = "none";
+    viewMethod = "none";
     retinexcolorspace = "Lab";
     gammaretinex = "none";
     medianmap = false;
@@ -1524,6 +1525,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
 
     if (!pedited || pedited->retinex.mapMethod) {
         keyFile.set_string  ("Retinex", "mapMethod", retinex.mapMethod);
+    }
+
+    if (!pedited || pedited->retinex.viewMethod) {
+        keyFile.set_string  ("Retinex", "viewMethod", retinex.viewMethod);
     }
 
     if (!pedited || pedited->retinex.retinexcolorspace) {
@@ -3863,6 +3868,15 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                     pedited->retinex.mapMethod = true;
                 }
             }
+
+            if (keyFile.has_key ("Retinex", "viewMethod"))     {
+                retinex.viewMethod  = keyFile.get_string  ("Retinex", "viewMethod");
+
+                if (pedited) {
+                    pedited->retinex.viewMethod = true;
+                }
+            }
+
 
             if (keyFile.has_key ("Retinex", "Retinexcolorspace"))     {
                 retinex.retinexcolorspace  = keyFile.get_string  ("Retinex", "Retinexcolorspace");
@@ -7478,6 +7492,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && retinex.offs == other.retinex.offs
         && retinex.retinexMethod == other.retinex.retinexMethod
         && retinex.mapMethod == other.retinex.mapMethod
+        && retinex.viewMethod == other.retinex.viewMethod
         && retinex.retinexcolorspace == other.retinex.retinexcolorspace
         && retinex.gammaretinex == other.retinex.gammaretinex
         && retinex.vart == other.retinex.vart

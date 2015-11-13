@@ -55,6 +55,7 @@ void ParamsEdited::set (bool v)
     retinex.lhcurve    = v;
     retinex.retinexMethod    = v;
     retinex.mapMethod    = v;
+    retinex.viewMethod    = v;
     retinex.retinexcolorspace    = v;
     retinex.gammaretinex    = v;
     retinex.enabled    = v;
@@ -544,6 +545,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         retinex.transmissionCurve = retinex.transmissionCurve && p.retinex.transmissionCurve == other.retinex.transmissionCurve;
         retinex.retinexMethod = retinex.retinexMethod && p.retinex.retinexMethod == other.retinex.retinexMethod;
         retinex.mapMethod = retinex.mapMethod && p.retinex.mapMethod == other.retinex.mapMethod;
+        retinex.viewMethod = retinex.viewMethod && p.retinex.viewMethod == other.retinex.viewMethod;
         retinex.retinexcolorspace = retinex.retinexcolorspace && p.retinex.retinexcolorspace == other.retinex.retinexcolorspace;
         retinex.gammaretinex = retinex.gammaretinex && p.retinex.gammaretinex == other.retinex.gammaretinex;
         retinex.str = retinex.str && p.retinex.str == other.retinex.str;
@@ -1090,6 +1092,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (retinex.mapMethod) {
         toEdit.retinex.mapMethod    = mods.retinex.mapMethod;
+    }
+
+    if (retinex.viewMethod) {
+        toEdit.retinex.viewMethod    = mods.retinex.viewMethod;
     }
 
     if (retinex.retinexcolorspace) {

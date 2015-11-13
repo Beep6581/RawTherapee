@@ -50,6 +50,8 @@ protected:
     Gtk::HBox* dhbox;
     Gtk::HBox* mapbox;
     Gtk::Label* labmap;
+    Gtk::HBox* viewbox;
+    Gtk::Label* labview;
 
     Gtk::Label* labgam;
     Gtk::HBox* gambox;
@@ -60,6 +62,7 @@ protected:
     MyComboBoxText*   retinexcolorspace;
     MyComboBoxText*   gammaretinex;
     MyComboBoxText*   mapMethod;
+    MyComboBoxText*   viewMethod;
     Gtk::CheckButton* medianmap;
     double nextmin;
     double nextmax;
@@ -78,7 +81,7 @@ protected:
     DiagonalCurveEditor* cdshapeH;
     DiagonalCurveEditor* mapshape;
     CurveEditorGroup* transmissionCurveEditorG;
-    sigc::connection retinexMethodConn, neutralconn, mapMethodConn;
+    sigc::connection retinexMethodConn, neutralconn, mapMethodConn, viewMethodConn;
     sigc::connection retinexColorSpaceConn;
     sigc::connection gammaretinexConn;
     FlatCurveEditor* transmissionShape;
@@ -108,6 +111,7 @@ public:
     void curveChanged          (CurveEditor* ce);
     void retinexMethodChanged();
     void mapMethodChanged();
+    void viewMethodChanged();
     void retinexColorSpaceChanged();
     void gammaretinexChanged();
     void ColorSpaceUpdateUI();
