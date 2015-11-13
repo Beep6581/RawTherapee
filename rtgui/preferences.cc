@@ -1188,12 +1188,20 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     hb0->pack_start (*extension);
     addExt = Gtk::manage( new Gtk::Button () );
     delExt = Gtk::manage( new Gtk::Button () );
+    moveExtUp = Gtk::manage( new Gtk::Button () );
+    moveExtDown = Gtk::manage( new Gtk::Button () );
     addExt->set_tooltip_text (M("PREFERENCES_PARSEDEXTADDHINT"));
     delExt->set_tooltip_text (M("PREFERENCES_PARSEDEXTDELHINT"));
+    moveExtUp->set_tooltip_text (M("PREFERENCES_PARSEDEXTUPHINT"));
+    moveExtDown->set_tooltip_text (M("PREFERENCES_PARSEDEXTDOWNHINT"));
     Gtk::Image* addExtImg = Gtk::manage( new RTImage ("list-add-small.png") );
     Gtk::Image* delExtImg = Gtk::manage( new RTImage ("list-remove-red-small.png") );
     addExt->add (*addExtImg);
     delExt->add (*delExtImg);
+    moveExtUp->set_label ("↑"); // TODO: Add arrow up image...
+    moveExtDown->set_label ("↓"); // TODO: Add arrow down image...
+    hb0->pack_end (*moveExtDown, Gtk::PACK_SHRINK, 4);
+    hb0->pack_end (*moveExtUp, Gtk::PACK_SHRINK, 4);
     hb0->pack_end (*delExt, Gtk::PACK_SHRINK, 4);
     hb0->pack_end (*addExt, Gtk::PACK_SHRINK, 4);
     extensions = Gtk::manage( new Gtk::TreeView () );
@@ -1264,6 +1272,8 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
 
     addExt->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::addExtPressed) );
     delExt->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::delExtPressed) );
+    moveExtUp->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::moveExtUpPressed) );
+    moveExtDown->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::moveExtDownPressed) );
     extension->signal_activate().connect( sigc::mem_fun(*this, &Preferences::addExtPressed) );
     clearThumbnails->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::clearThumbImagesPressed) );
     clearProfiles->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::clearProfilesPressed) );
@@ -2080,6 +2090,36 @@ void Preferences::delExtPressed ()
 {
 
     extensionModel->erase (extensions->get_selection()->get_selected ());
+}
+
+void Preferences::moveExtUpPressed ()
+{
+    const Glib::RefPtr<Gtk::TreeSelection> selection = extensions->get_selection ();
+    if (!selection)
+        return;
+
+    const Gtk::TreeModel::iterator selected = selection->get_selected ();
+    if (!selected || selected == extensionModel->children ().begin ())
+        return;
+
+    Gtk::TreeModel::iterator previous = selected;
+    --previous;
+    extensionModel->iter_swap (selected, previous);
+}
+
+void Preferences::moveExtDownPressed ()
+{
+    const Glib::RefPtr<Gtk::TreeSelection> selection = extensions->get_selection ();
+    if (!selection)
+        return;
+
+    const Gtk::TreeModel::iterator selected = selection->get_selected ();
+    if (!selected)
+        return;
+
+    Gtk::TreeModel::iterator next = selected;
+    if (++next)
+        extensionModel->iter_swap (selected, next);
 }
 
 void Preferences::clearProfilesPressed ()

@@ -1001,6 +1001,8 @@ PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PARSEDEXTADD;Add extension
 PREFERENCES_PARSEDEXTADDHINT;Add entered extension to the list.
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list.
+PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
+PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 PREFERENCES_PREVDEMO;Preview Demosaic Method
 PREFERENCES_PREVDEMO_FAST;Fast
 PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
