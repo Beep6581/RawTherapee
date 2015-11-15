@@ -241,6 +241,12 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         } else {
             elogt = hl;
         }
+        int H_L = height;
+        int W_L = width;
+
+        float *tran[H_L] ALIGNED16;
+        float *tranBuffer;
+        int viewmet=0;
 
         elogt = 2.71828f;//disabled baselog
         FlatCurve* shcurve = NULL;//curve L=f(H)
@@ -386,8 +392,8 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
             retinex_scales( RetinexScales, scal, moderetinex, nei/grad, high );
 
-            int H_L = height;
-            int W_L = width;
+            //   int H_L = height;
+            //  int W_L = width;
 
             float *src[H_L] ALIGNED16;
             float *srcBuffer = new float[H_L * W_L];
@@ -408,9 +414,11 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             double shradius = (double) deh.radius;
             // printf("shrad=%f\n",shradius);
 
-            int viewmet=0;
+            //   int viewmet=0;
             if(deh.viewMethod=="mask") viewmet=1;
             if(deh.viewMethod=="tran") viewmet=2;
+            if(deh.viewMethod=="tran2") viewmet=3;
+            if(deh.viewMethod=="unsharp") viewmet=4;
 
 #ifdef _OPENMP
             #pragma omp parallel for
@@ -429,13 +437,13 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 out[i] = &outBuffer[i * W_L];
             }
 
-            float *tran[H_L] ALIGNED16;
-            float *tranBuffer = new float[H_L * W_L];
+            if(viewmet==3  || viewmet==2) {
+                tranBuffer = new float[H_L * W_L];
 
-            for (int i = 0; i < H_L; i++) {
-                tran[i] = &tranBuffer[i * W_L];
+                for (int i = 0; i < H_L; i++) {
+                    tran[i] = &tranBuffer[i * W_L];
+                }
             }
-
             const float logBetaGain = xlogf(16384.f);
             float pond = logBetaGain / (float) scal;
 
@@ -611,7 +619,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                             }
 
                             luminance[i][j] *= (-1.f + 4.f * dehatransmissionCurve[absciss]); //new transmission
-                            tran[i][j]=luminance[i][j];
+                            if(viewmet==3 || viewmet==2) tran[i][j]=luminance[i][j];
                         }
                 }
 
@@ -683,7 +691,11 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             float cdfactor = gain2 * 32768.f / delta;
             maxCD = -9999999.f;
             minCD = 9999999.f;
-
+            // coeff for auto    "transmission" with 2 sigma #95% datas
+            float aza=16300.f/(2.f*stddv);
+            float azb=-aza*(mean-2.f*stddv);
+            float bza=16300.f/(2.f*stddv);
+            float bzb=16300.f-bza*(mean);
 
 
 
@@ -730,7 +742,13 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                         if(exLuminance[i][j] > 65535.f*hig && higplus) str *= hig;
                         if(viewmet==0) luminance[i][j]=clipretinex( cd, 0.f, 32768.f ) * str + (1.f - str) * originalLuminance[i][j];
                         if(viewmet==1) luminance[i][j] = out[i][j];
-                        if(viewmet==2) luminance[i][j] = 1000.f+ tran[i][j]*700.f;//arbitrary values to help display log values which are between -20 to + 30 - usage values -4 + 5
+                        if(viewmet==4) luminance[i][j] = (1.f + str) * originalLuminance[i][j] -  str* out[i][j];//unsharp
+                        if(viewmet==2) {
+                            if(tran[i][j]<= mean)  luminance[i][j] = azb + aza*tran[i][j];//auto values
+                            else luminance[i][j] = bzb + bza*tran[i][j];
+                        }
+                        if(viewmet==3) luminance[i][j] = 1000.f + tran[i][j]*700.f;//arbitrary values to help display log values which are between -20 to + 30 - usage values -4 + 5
+
                     }
 
 #ifdef _OPENMP
@@ -744,19 +762,22 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             }
             delete [] outBuffer;
             outBuffer = NULL;
-            delete [] tranBuffer;
-            tranBuffer = NULL;
-
             //    printf("cdmin=%f cdmax=%f\n",minCD, maxCD);
             Tmean = mean;
             Tsigma = stddv;
             Tmin = mintr;
             Tmax = maxtr;
 
+
             if (shcurve && it==1) {
                 delete shcurve;
             }
         }
+        if(viewmet==3 || viewmet==2) {
+            delete [] tranBuffer;
+            tranBuffer = NULL;
+        }
+
     }
 }
 

@@ -202,7 +202,9 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     viewMethod = Gtk::manage (new MyComboBoxText ());
     viewMethod->append_text (M("TP_RETINEX_VIEW_NONE"));
     viewMethod->append_text (M("TP_RETINEX_VIEW_MASK"));
+    viewMethod->append_text (M("TP_RETINEX_VIEW_UNSHARP"));
     viewMethod->append_text (M("TP_RETINEX_VIEW_TRAN"));
+    viewMethod->append_text (M("TP_RETINEX_VIEW_TRAN2"));
     viewMethod->set_active(0);
     viewMethodConn = viewMethod->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::viewMethodChanged) );
     viewMethod->set_tooltip_markup (M("TP_RETINEX_VIEW_METHOD_TOOLTIP"));
@@ -739,8 +741,12 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
         viewMethod->set_active (0);
     } else if (pp->retinex.viewMethod == "mask") {
         viewMethod->set_active (1);
-    } else if (pp->retinex.viewMethod == "tran") {
+    } else if (pp->retinex.viewMethod == "unsharp") {
         viewMethod->set_active (2);
+    } else if (pp->retinex.viewMethod == "tran") {
+        viewMethod->set_active (3);
+    } else if (pp->retinex.viewMethod == "tran2") {
+        viewMethod->set_active (4);
     }
 
     if (pp->retinex.retinexcolorspace == "Lab") {
@@ -891,7 +897,11 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
     } else if (viewMethod->get_active_row_number() == 1) {
         pp->retinex.viewMethod = "mask";
     } else if (viewMethod->get_active_row_number() == 2) {
+        pp->retinex.viewMethod = "unsharp";
+    } else if (viewMethod->get_active_row_number() == 3) {
         pp->retinex.viewMethod = "tran";
+    } else if (viewMethod->get_active_row_number() == 4) {
+        pp->retinex.viewMethod = "tran2";
     }
 
     if (retinexcolorspace->get_active_row_number() == 0) {
@@ -966,31 +976,40 @@ void Retinex::mapMethodChanged()
 
 void Retinex::viewMethodChanged()
 {
-    /*
-        if(mapMethod->get_active_row_number() == 1  || mapMethod->get_active_row_number() == 2) {
-            curveEditormap->show();
-            highlights->show();
-            h_tonalwidth->show();
-            shadows->show();
-            s_tonalwidth->show();
-            radius->show();
-        } else if(mapMethod->get_active_row_number() == 3  || mapMethod->get_active_row_number() == 4) {
-            curveEditormap->show();
-            highlights->show();
-            h_tonalwidth->show();
-            shadows->show();
-            s_tonalwidth->show();
-            radius->hide();
-        } else {
-            curveEditormap->hide();
-            highlights->hide();
-            h_tonalwidth->hide();
-            shadows->hide();
-            s_tonalwidth->hide();
-            radius->hide();
+    if(viewMethod->get_active_row_number() == 1 || viewMethod->get_active_row_number() == 2) {
+        vart->hide();
+        gain->hide();
+        offs->hide();
+        limd->hide();
+        transmissionCurveEditorG->hide();
+        medianmap->hide();
+        iter->hide();
+        scal->hide();
+        grad->hide();
+        grads->hide();
+        curveEditorGH->hide();
+    }
+    else if(viewMethod->get_active_row_number() == 3 || viewMethod->get_active_row_number() == 4) {
+        gain->hide();
+        offs->hide();
+        vart->hide();
+        curveEditorGH->hide();
+    }
+    else {
+        vart->show();
+        neigh->show();
+        gain->show();
+        offs->show();
+        limd->show();
+        transmissionCurveEditorG->show();
+        medianmap->show();
+        iter->show();
+        scal->show();
+        grad->show();
+        grads->show();
+        curveEditorGH->show();
+    }
 
-        }
-    */
     if (listener) {
         listener->panelChanged (EvviewMethod, viewMethod->get_active_text ());
     }

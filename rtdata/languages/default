@@ -1653,7 +1653,7 @@ TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorre
 TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
 TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Strength according to hue Strength=f(H)\nThis curve also acts on chroma when using the "Highlight" retinex method.
 TP_RETINEX_FREEGAMMA;Free gamma
-TP_RETINEX_GAIN;Contrast
+TP_RETINEX_GAIN;Gain
 TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 TP_RETINEX_GAMMA;Gamma
 TP_RETINEX_GAMMA_FREE;Free
@@ -1706,13 +1706,15 @@ TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Vari
 TP_RETINEX_TRANSMISSION;Transmission map
 TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
 TP_RETINEX_UNIFORM;Uniform
-TP_RETINEX_VARIANCE;Variance
+TP_RETINEX_VARIANCE;Contrast
 TP_RETINEX_VARIANCE_TOOLTIP;Low variance increase local contrast and saturation, but can lead to artifacts.
-TP_RETINEX_VIEW;Preview
+TP_RETINEX_VIEW;Process (Preview)
 TP_RETINEX_VIEW_NONE;Standard
 TP_RETINEX_VIEW_MASK;Mask
-TP_RETINEX_VIEW_TRAN;Transmission
-TP_RETINEX_VIEW_METHOD_TOOLTIP;Standard - normal display\nMask -  display mask\nTransmission - displays the file transmission-map , before any action on contrast and brightness\nAttention, this does not correspond to reality, but a shift to make it visible
+TP_RETINEX_VIEW_UNSHARP;Unsharp mask
+TP_RETINEX_VIEW_TRAN;Transmission (auto)
+TP_RETINEX_VIEW_TRAN2;Transmission (fixed)
+TP_RETINEX_VIEW_METHOD_TOOLTIP;Standard - normal display\nMask -  display mask\nUnsharp mask - display image with high radius unsharp mask\nTransmission (auto - fixed) - displays the file transmission-map , before any action on contrast and brightness\nAttention, this does not correspond to reality, but a shift (or auto) to make it visible
 TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;Channel
 TP_RGBCURVES_GREEN;G
