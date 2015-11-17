@@ -74,15 +74,15 @@ int MyCurve::calcDimensions ()
     newRequestedW = newRequestedH = get_allocation().get_width();
 
     if (leftBar && !bottomBar) {
-        newRequestedH -= getBarWidth() + CBAR_MARGIN - RADIUS;
+        newRequestedH -= CBAR_WIDTH + CBAR_MARGIN - RADIUS;
     }
 
     if (!leftBar && bottomBar) {
-        newRequestedH += getBarWidth() + CBAR_MARGIN - RADIUS;
+        newRequestedH += CBAR_WIDTH + CBAR_MARGIN - RADIUS;
     }
 
-    graphW = newRequestedW - RADIUS - (leftBar   ? (getBarWidth() + CBAR_MARGIN) : RADIUS);
-    graphH = newRequestedH - RADIUS - (bottomBar ? (getBarWidth() + CBAR_MARGIN) : RADIUS);
+    graphW = newRequestedW - RADIUS - (leftBar   ? (CBAR_WIDTH + CBAR_MARGIN) : RADIUS);
+    graphH = newRequestedH - RADIUS - (bottomBar ? (CBAR_WIDTH + CBAR_MARGIN) : RADIUS);
     graphX = newRequestedW - RADIUS - graphW;
     graphY = RADIUS + graphH;
 
@@ -112,16 +112,16 @@ void MyCurve::get_preferred_height_for_width_vfunc (int width, int &minimum_heig
     minimum_height = width;
 
     if (leftBar && !bottomBar) {
-        minimum_height -= getBarWidth() + CBAR_MARGIN - RADIUS;
+        minimum_height -= CBAR_WIDTH + CBAR_MARGIN - RADIUS;
     }
 
     if (!leftBar && bottomBar) {
-        minimum_height += getBarWidth() + CBAR_MARGIN - RADIUS;
+        minimum_height += CBAR_WIDTH + CBAR_MARGIN - RADIUS;
     }
 
     /*
-    graphW = width          - RADIUS - (leftBar   ? (getBarWidth()+CBAR_MARGIN) : RADIUS);
-    graphH = minimum_height - RADIUS - (bottomBar ? (getBarWidth()+CBAR_MARGIN) : RADIUS);
+    graphW = width          - RADIUS - (leftBar   ? (CBAR_WIDTH+CBAR_MARGIN) : RADIUS);
+    graphH = minimum_height - RADIUS - (bottomBar ? (CBAR_WIDTH+CBAR_MARGIN) : RADIUS);
     graphX = width          - RADIUS - graphW;
     graphY = RADIUS + graphH;
     */

@@ -123,6 +123,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
     // setup button bar
     buttonBar = Gtk::manage( new Gtk::HBox () );
+    buttonBar->get_style_context()->add_class ("toolBarPanelFileBrowser");
     pack_start (*buttonBar, Gtk::PACK_SHRINK);
 
     buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);

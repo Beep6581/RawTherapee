@@ -48,8 +48,8 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     // custom curve
     customCurveGrid = new Gtk::Grid ();
     customCurveGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
-    customCurveGrid->set_row_spacing(options.slimUI ? 2 : 4);
-    customCurveGrid->set_column_spacing(options.slimUI ? 2 : 4);
+    customCurveGrid->set_row_spacing(2);
+    customCurveGrid->set_column_spacing(2);
 
     customCurve = Gtk::manage (new MyDiagonalCurve ());
     customCurve->setType (DCT_Spline);
@@ -329,8 +329,8 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     // paramCurveSliderBox needed to set vspacing(4) between curve+shc and sliders without vspacing between each slider
     Gtk::Grid* paramCurveSliderBox = Gtk::manage (new Gtk::Grid());
     paramCurveSliderBox->set_orientation(Gtk::ORIENTATION_VERTICAL);
-    paramCurveSliderBox->set_column_spacing(options.slimUI ? 2 : 4);
-    paramCurveSliderBox->set_row_spacing(options.slimUI ? 2 : 4);
+    paramCurveSliderBox->set_column_spacing(2);
+    paramCurveSliderBox->set_row_spacing(2);
 
     paramCurveSliderBox->attach_next_to(*evhighlights, Gtk::POS_TOP, 1, 1);
     paramCurveSliderBox->attach_next_to(*evlights, Gtk::POS_TOP, 1, 1);
@@ -747,7 +747,7 @@ void DiagonalCurveEditorSubGroup::switchGUI()
             shadows->setLabel(label[0]);
             shcSelector->setColorProvider(barColorProvider, dCurve->getBottomBarCallerId());
             shcSelector->setBgGradient(bgGradient);
-            shcSelector->setMargins( (leftBar ? MyCurve::getBarWidth() + CBAR_MARGIN : RADIUS), RADIUS );
+            shcSelector->setMargins( (leftBar ? CBAR_WIDTH + CBAR_MARGIN : RADIUS), RADIUS );
             paramCurve->setColoredBar(leftBar, NULL);
             paramCurve->queue_resize_no_redraw();
             updateEditButton(dCurve, editParam, editParamConn);

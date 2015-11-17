@@ -533,7 +533,7 @@ void ExpanderBox::setLevel(int level)
 
 void ExpanderBox::updateStyle()
 {
-    set_border_width(options.slimUI ? 2 : 7);
+    set_border_width(2);
 }
 
 void ExpanderBox::show_all()
@@ -566,7 +566,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     child(NULL), headerWidget(NULL), statusImage(NULL),
     label(NULL), useEnabled(useEnabled)
 {
-    set_spacing(options.slimUI ? 0 : 2);
+    set_spacing(0);
     set_name("MyExpander");
     set_can_focus(false);
 
@@ -613,7 +613,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     child(NULL), headerWidget(NULL), statusImage(NULL),
     label(NULL), useEnabled(useEnabled)
 {
-    set_spacing(options.slimUI ? 0 : 2);
+    set_spacing(0);
     set_name("MyExpander");
     set_can_focus(false);
 
@@ -694,10 +694,10 @@ bool MyExpander::on_enter_leave_enable (GdkEventCrossing* event)
 
 void MyExpander::updateStyle()
 {
-    headerHBox->set_spacing(options.slimUI ? 2 : 5);
-    headerHBox->set_border_width(options.slimUI ? 1 : 2);
+    headerHBox->set_spacing(2);
+    headerHBox->set_border_width(1);
     set_spacing(0);
-    set_border_width(options.slimUI ? 0 : 1);
+    set_border_width(0);
 
     if (expBox) {
         expBox->updateStyle();

@@ -48,6 +48,7 @@ FilePanel::FilePanel () : parent(NULL)
     placespaned->set_position (options.dirBrowserHeight);
 
     Gtk::VBox* obox = Gtk::manage (new Gtk::VBox ());
+    obox->get_style_context()->add_class ("plainback");
     obox->pack_start (*recentBrowser, Gtk::PACK_SHRINK, 4);
     obox->pack_start (*dirBrowser);
 
@@ -108,14 +109,18 @@ FilePanel::FilePanel () : parent(NULL)
     rightNotebook->set_tab_pos (Gtk::POS_LEFT);
 
     Gtk::Label* devLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_DEVELOP")) );
+    devLab->get_style_context()->add_class ("labelRightNotebook");
     devLab->set_angle (90);
     Gtk::Label* inspectLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_INSPECT")) );
+    inspectLab->get_style_context()->add_class ("labelRightNotebook");
     inspectLab->set_angle (90);
     Gtk::Label* filtLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_FILTER")) );
+    filtLab->get_style_context()->add_class ("labelRightNotebook");
     filtLab->set_angle (90);
     //Gtk::Label* tagLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_TAGGING")) );
     //tagLab->set_angle (90);
     Gtk::Label* exportLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_EXPORT")) );
+    exportLab->get_style_context()->add_class ("labelRightNotebook");
     exportLab->set_angle (90);
 
     tpcPaned = Gtk::manage ( new Gtk::VPaned () );
@@ -127,6 +132,7 @@ FilePanel::FilePanel () : parent(NULL)
     rightNotebook->append_page (*sFilterPanel, *filtLab);
     //rightNotebook->append_page (*taggingBox, *tagLab); commented out: currently the tab is empty ...
     rightNotebook->append_page (*sExportPanel, *exportLab);
+    rightNotebook->get_style_context()->add_class ("rightNotebook");
 
     rightBox->pack_start (*rightNotebook);
 

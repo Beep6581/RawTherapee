@@ -137,6 +137,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     tpc->setEditProvider(iareapanel->imageArea);
 
     Gtk::HBox* toolBarPanel = Gtk::manage (new Gtk::HBox ());
+    toolBarPanel->get_style_context()->add_class ("toolBarPanelEditor");
     toolBarPanel->pack_start (*hidehp, Gtk::PACK_SHRINK, 1);
     toolBarPanel->pack_start (*vseph, Gtk::PACK_SHRINK, 2);
     toolBarPanel->pack_start (*info, Gtk::PACK_SHRINK, 1);
@@ -164,7 +165,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     beforeAfterBox = Gtk::manage (new Gtk::HBox());
     beforeAfterBox->pack_start (*afterBox);
 
-    editbox->pack_start (*toolBarPanel, Gtk::PACK_SHRINK, 0);
+    editbox->pack_start (*toolBarPanel, Gtk::PACK_SHRINK, 2);
     editbox->pack_start (*beforeAfterBox);
 
     // build right side panel

@@ -170,7 +170,7 @@ void MyFlatCurve::draw ()
     // draw the left colored bar
     if (leftBar) {
         // first the background
-        int bWidth = getBarWidth();
+        int bWidth = CBAR_WIDTH;
         BackBuffer *bb = this;
         leftBar->setDrawRectangle(win, 1, graphY - graphH + 1, bWidth - 2, graphH - 2);
         leftBar->expose(bb);
@@ -185,7 +185,7 @@ void MyFlatCurve::draw ()
     // draw the bottom colored bar
     if (bottomBar) {
         // first the background
-        int bWidth = getBarWidth();
+        int bWidth = CBAR_WIDTH;
         BackBuffer *bb = this;
         bottomBar->setDrawRectangle(win, graphX + 1, graphY + CBAR_MARGIN + 1, graphW - 2, bWidth - 2);
         bottomBar->expose(bb);

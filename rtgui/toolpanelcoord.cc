@@ -198,7 +198,9 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)
     toolPanels.push_back (iptcpanel);
 
     metadataPanel = Gtk::manage (new Gtk::Notebook ());
+    metadataPanel->get_style_context()->add_class ("metaPanelNotebook");
     toolPanelNotebook = new Gtk::Notebook ();
+    toolPanelNotebook->get_style_context()->add_class ("toolPanelNotebook");
 
     metadataPanel->append_page (*exifpanel, M("MAIN_TAB_EXIF"));
     metadataPanel->append_page (*iptcpanel, M("MAIN_TAB_IPTC"));

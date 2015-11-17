@@ -30,8 +30,7 @@
 #include "options.h"
 
 #define RADIUS          3   /** radius of the control points */
-#define CBAR_WIDTH_STD  13  /** width of the colored bar (border included) for standard themes */
-#define CBAR_WIDTH_SLIM 10  /** width of the colored bar (border included) for slim themes */
+#define CBAR_WIDTH      10  /** width of the colored bar (border included) */
 #define CBAR_MARGIN     2   /** spacing between the colored bar and the graph */
 #define SQUARE          2   /** half length of the square shape of the tangent handles */
 #define MIN_DISTANCE    5   /** min distance between control points */
@@ -139,11 +138,6 @@ public:
     virtual void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) = 0;
     virtual void pipetteButton1Released(EditDataProvider *provider) = 0;
     virtual void pipetteDrag(EditDataProvider *provider, int modifierKey) = 0;
-
-    static int getBarWidth()
-    {
-        return options.slimUI ? CBAR_WIDTH_SLIM : CBAR_WIDTH_STD;
-    }
 
     Gtk::SizeRequestMode get_request_mode_vfunc () const;
     void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;

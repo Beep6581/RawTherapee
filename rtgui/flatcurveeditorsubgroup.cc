@@ -43,8 +43,8 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 
     // ControlPoints curve
     CPointsCurveGrid = new Gtk::Grid ();
-    CPointsCurveGrid->set_row_spacing(options.slimUI ? 2 : 4);
-    CPointsCurveGrid->set_column_spacing(options.slimUI ? 2 : 4);
+    CPointsCurveGrid->set_row_spacing(2);
+    CPointsCurveGrid->set_column_spacing(2);
     CPointsCurveGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     CPointsCurve = Gtk::manage (new MyFlatCurve ());

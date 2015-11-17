@@ -36,6 +36,7 @@ IPTCPanel::IPTCPanel ()
     captionText = Gtk::TextBuffer::create ();
     captionView = Gtk::manage( new Gtk::TextView (captionText) );
     Gtk::ScrolledWindow* scrolledWindowc = Gtk::manage( new Gtk::ScrolledWindow() );
+    scrolledWindowc->set_min_content_height (100);
     scrolledWindowc->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     scrolledWindowc->add(*captionView);
     capl->set_tooltip_text (M("IPTCPANEL_CAPTIONHINT"));
@@ -83,6 +84,7 @@ IPTCPanel::IPTCPanel ()
     keywords->set_headers_visible (false);
     keywords->set_size_request (50, 80);
     Gtk::ScrolledWindow* scrolledWindowkw = Gtk::manage( new Gtk::ScrolledWindow() );
+    scrolledWindowkw->set_min_content_height (100);
     scrolledWindowkw->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     scrolledWindowkw->add(*keywords);
     keyword  = Gtk::manage( new Gtk::ComboBoxText (true) );
@@ -120,6 +122,7 @@ IPTCPanel::IPTCPanel ()
     suppCategories->set_headers_visible (false);
     suppCategories->set_size_request(50, 80);
     Gtk::ScrolledWindow* scrolledWindowsc = Gtk::manage( new Gtk::ScrolledWindow() );
+    scrolledWindowsc->set_min_content_height (100);
     scrolledWindowsc->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     scrolledWindowsc->add(*suppCategories);
     suppCategory  = Gtk::manage( new Gtk::ComboBoxText (true) );

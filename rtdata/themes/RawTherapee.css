@@ -1,0 +1,255 @@
+/*
+  This file is part of RawTherapee.
+
+  Copyright (c) 2015 DrSlony
+
+  RawTherapee is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  RawTherapee is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+* {
+    color: #AAAAAA;
+}
+
+.view {
+    background-color: #262626;
+}
+
+.view .button {
+    background-color: #363636;
+    padding: 2px;
+}
+
+.plainback {
+    background-color: #404040;
+}
+
+.notebook {
+    background-color: #404040;
+}
+
+/* Tool (sub)frame */
+.frame {
+    border-color: #303030;
+    border-radius: 4px;
+    padding: 4px 4px 0px 4px;
+}
+
+/* Non-tool frames */
+GtkEventBox .frame {
+    border-color: #565656;
+}
+
+/* Slider label */
+.text-button {
+    padding: 0px;
+}
+
+/* Any text-button which is a real button, unlike Slider label */
+.text-button.button {
+    padding: 4px;
+}
+
+/* Tab button */
+GtkNotebook tab {
+    outline-offset: -2px;
+    border-color: #303030;
+}
+
+.separator {
+    color: #363636;
+}
+
+GtkProgressBar {
+    -GtkProgressBar-min-vertical-bar-width: 10;
+    -GtkProgressBar-min-horizontal-bar-height: 10;
+}
+
+GtkNotebook GtkViewport {
+    padding-right: 2px;
+}
+
+GtkDrawingArea {
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+    background-color: #363636;
+}
+
+GtkDrawingArea:selected {
+    background-color: #565656;
+    border-radius: 10px;
+}
+
+GtkImage {
+    padding: 1px;
+}
+
+/* Horizontal group of buttons in 1 column */
+GtkButton.Top {
+    border-radius: 10px 4px 0 0;
+    border-style: solid solid none solid;
+    margin-bottom: 0;
+}
+GtkButton.MiddleV {
+    border-radius: 0;
+    border-style: none solid none solid;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+GtkButton.Bottom {
+    border-radius: 0 0 4px 4px;
+    border-style: none solid solid solid;
+    margin-top: 0;
+}
+/* end */
+
+/* Horizontal group of buttons in 1 row */
+GtkButton.Left {
+    border-radius: 4px 0 0 4px;
+    border-style: solid none solid solid;
+    margin-right: 0;
+}
+GtkButton.MiddleH {
+    border-radius: 0;
+    border-style: solid none solid none;
+    margin-left: 0;
+    margin-right: 0;
+}
+GtkButton.Right {
+    border-radius: 0 4px 4px 0;
+    border-style: solid solid solid none;
+    margin-left: 0;
+}
+/* end */
+
+GtkEntry, GtkSpinButton {
+    padding: 1px 4px 0 1px;
+    margin: 1px;
+    background-color: #262626;
+}
+
+/* Context menus */
+GtkMenu {
+    background-color: #262626;
+    color: #909090;
+}
+
+/* Context menu item */
+.menuitem {
+    padding: 2px;
+}
+
+#ExpanderBox {
+    background-color: #363636;
+    border-color: #252525;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 4px;
+}
+
+#ExpanderBox2 {
+    background-color: #3B3B3B;
+    border-color: #505050;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 4px;
+}
+
+#MyExpanderTitle {
+    font-size: 120%;
+}
+#MyExpanderTitle GtkLabel {
+    color: #CCCCCC;
+}
+#MyExpanderTitle:hover {
+    background-color: #202020;
+}
+#MyExpanderTitle:hover GtkLabel {
+    color: #D8D8D8;
+}
+
+#ExpanderBox2 GtkSeparator, #ExpanderBox3 GtkSeparator {
+    color: #292929;
+}
+
+.toolBarPanelEditor .button, .toolBarPanelFileBrowser .button {
+     padding: 1px;
+     margin: 1px;
+}
+
+/* Editor tab button */
+.mainNotebook > GtkGrid GtkLabel, .mainNotebook > GtkGrid GtkImage  {
+    padding: 3px;
+}
+
+/* File Browser right side tabs - Toolbox, Inspector, Fast Export, Filter */
+.rightNotebook tab, .mainNotebook tab, .prefNotebook tab, .toolPanelNotebook tab, .metaPanelNotebook tab {
+    background-color: #404040;
+    border: 1px solid #505050;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.rightNotebook tab:hover, .mainNotebook tab:hover, .prefNotebook tab:hover, .toolPanelNotebook tab:hover, .metaPanelNotebook tab:hover {
+    background-color: #505050;
+}
+
+.rightNotebook tab:active, .mainNotebook tab:active, .prefNotebook tab:active, .toolPanelNotebook tab:active, .metaPanelNotebook tab:active {
+    background-color: #262626;
+}
+
+/* Get rid of shitty notebook header shadow */
+.rightNotebook.header.top, .mainNotebook.header.top, .prefNotebook.header.top, .toolPanelNotebook.header.top, .metaPanelNotebook.header.top,
+.rightNotebook.header.right, .mainNotebook.header.right, .prefNotebook.header.right, .toolPanelNotebook.header.right, .metaPanelNotebook.header.right,
+.rightNotebook.header.bottom, .mainNotebook.header.bottom, .prefNotebook.header.bottom, .toolPanelNotebook.header.bottom, .metaPanelNotebook.header.bottom,
+.rightNotebook.header.left, .mainNotebook.header.left, .prefNotebook.header.left, .toolPanelNotebook.header.left, .metaPanelNotebook.header.left {
+    box-shadow: none;
+}
+
+/* Get rid of notebook header border - too many borders */
+.rightNotebook.header, .mainNotebook.header, .prefNotebook.header, .toolPanelNotebook.header, .metaPanelNotebook.header {
+    border: 0px;
+}
+
+/* Get rid of notebook frame border - too many borders */
+.rightNotebook.frame, .mainNotebook.frame, .prefNotebook.frame, .toolPanelNotebook.frame, .metaPanelNotebook.frame {
+    border: 0px;
+}
+
+/* Pad notebooks, makes the other borders look nicer */
+.rightNotebook, .mainNotebook, .prefNotebook, .toolPanelNotebook, .metaPanelNotebook {
+    padding: 2px;
+}
+
+/* All tool panels have a frame except for Meta which unlike the rest is a notebook itself.
+ * So we use CSS to make it look like a frame. */
+.metaPanelNotebook.frame {
+    border: 1px solid #262626;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    border-top: 0px;
+}
+
+.metaPanelNotebook.header {
+    border: 1px solid #262626;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom: 0px;
+    padding: 5px;
+    margin: 5px;
+}

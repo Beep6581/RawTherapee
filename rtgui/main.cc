@@ -65,8 +65,9 @@ Glib::ustring licensePath;
 Glib::ustring argv1;
 bool simpleEditor;
 Glib::RefPtr<Gtk::CssProvider> css;
-Glib::RefPtr<Gtk::CssProvider> cssSlim;
+Glib::RefPtr<Gtk::CssProvider> cssBase;
 Glib::RefPtr<Gtk::CssProvider> cssForced;
+Glib::RefPtr<Gtk::CssProvider> cssRT;
 //Glib::Threads::Thread* mainThread;
 
 
@@ -303,35 +304,28 @@ int main(int argc, char **argv)
     Gtk::Settings::get_for_screen(screen)->set_property("gtk-application-prefer-dark-theme", true);
 
     if (!options.useSystemTheme && screen) {
-
-
-        css = Gtk::CssProvider::create();
-
-        //Glib::ustring filename(argv0+"/themes/"+options.theme+".css");
-        // Forcing the default dark theme
-        Glib::ustring filename(argv0 + "/themes/rtcommon.css");
+        cssBase = Gtk::CssProvider::create();
+        Glib::ustring filename(argv0 + "/themes/gtk-contained-dark.css");
 
         try {
-            css->load_from_path (filename);
-            Gtk::StyleContext::add_provider_for_screen(screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+            cssBase->load_from_path (filename);
+            Gtk::StyleContext::add_provider_for_screen(screen, cssBase, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
         } catch (Glib::Error &err) {
             printf("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
         } catch (...) {
             printf("Error: Can't load css file \"%s\"\n", filename.c_str());
         }
 
-        if (options.slimUI) {
-            filename = argv0 + "/themes/cookiedough.css";
-            cssSlim = Gtk::CssProvider::create();
+        filename = argv0 + "/themes/RawTherapee.css";
+        cssRT = Gtk::CssProvider::create();
 
-            try {
-                cssSlim->load_from_path (filename);
-                Gtk::StyleContext::add_provider_for_screen(screen, cssSlim, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-            } catch (Glib::Error &err) {
-                printf("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
-            } catch (...) {
-                printf("Error: Can't load css file \"%s\"\n", filename.c_str());
-            }
+        try {
+            cssRT->load_from_path (filename);
+            Gtk::StyleContext::add_provider_for_screen(screen, cssRT, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+        } catch (Glib::Error &err) {
+            printf("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
+        } catch (...) {
+            printf("Error: Can't load css file \"%s\"\n", filename.c_str());
         }
 
         // Set the font face and size

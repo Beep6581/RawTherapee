@@ -183,6 +183,7 @@ private:
     bool on_enter_leave_title (GdkEventCrossing* event);
     /// Used to handle the colored background for the Enable button
     bool on_enter_leave_enable (GdkEventCrossing* event);
+    // The part below can probably be removed from here and the CSS file.
     /// Update the style of this widget, depending in the "slim" option
     void updateStyle();
 

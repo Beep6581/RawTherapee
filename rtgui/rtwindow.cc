@@ -92,7 +92,7 @@ RTWindow::RTWindow ()
     WhiteBalance::init();
     ProfilePanel::init();
 
-    Glib::ustring fName = "rt-logo.png";
+    Glib::ustring fName = "rt-logo-small.png";
     Glib::ustring fullPath = RTImage::findIconAbsolutePath(fName);
 
 #ifdef GLIBMM_EXCEPTIONS_ENABLED
@@ -168,9 +168,12 @@ RTWindow::RTWindow ()
         }
     } else {
         mainNB = Gtk::manage (new Gtk::Notebook ());
+        mainNB->get_style_context()->add_class ("mainNotebook");
         mainNB->set_scrollable (true);
         mainNB->signal_switch_page().connect_notify( sigc::mem_fun(*this, &RTWindow::on_mainNB_switch_page) );
 
+
+        // Editor panel
         fpanel =  new FilePanel () ;
         fpanel->setParent (this);
 
@@ -194,6 +197,7 @@ RTWindow::RTWindow ()
         mainNB->append_page (*fpanel, *fpanelLabelGrid);
 
 
+        // Batch Queue panel
         bpanel = Gtk::manage ( new BatchQueuePanel (fpanel->fileCatalog) );
         bpanel->setParent (this);
 
@@ -206,7 +210,8 @@ RTWindow::RTWindow ()
 
         mainNB->append_page (*bpanel, *lbq);
 
-        // epanel is only for single tab mode
+
+        // Editor panel, single-tab mode only
         epanel = Gtk::manage ( new EditorPanel (fpanel) );
         epanel->setParent (this);
 
@@ -218,10 +223,10 @@ RTWindow::RTWindow ()
         if (options.mainNBVertical) {
             el->set_angle (90);
             editorLabelGrid->attach_next_to(*el, Gtk::POS_BOTTOM, 1, 1);
-            editorLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("rt-logo.png")), *el, Gtk::POS_TOP, 1, 1);
+            editorLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("rt-logo-small.png")), *el, Gtk::POS_TOP, 1, 1);
         } else {
             editorLabelGrid->attach_next_to(*el, Gtk::POS_LEFT, 1, 1);
-            editorLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("rt-logo.png")), *el, Gtk::POS_RIGHT, 1, 1);
+            editorLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("rt-logo-small.png")), *el, Gtk::POS_RIGHT, 1, 1);
         }
 
         editorLabelGrid->set_tooltip_markup (M("MAIN_FRAME_EDITOR_TOOLTIP"));

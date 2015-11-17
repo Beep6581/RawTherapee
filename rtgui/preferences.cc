@@ -34,8 +34,9 @@
 extern Options options;
 extern Glib::ustring argv0;
 extern Glib::RefPtr<Gtk::CssProvider> css;
-extern Glib::RefPtr<Gtk::CssProvider> cssSlim;
+extern Glib::RefPtr<Gtk::CssProvider> cssBase;
 extern Glib::RefPtr<Gtk::CssProvider> cssForced;
+extern Glib::RefPtr<Gtk::CssProvider> cssRT;
 
 Preferences::Preferences  (RTWindow *rtwindow) : rprofiles(NULL), iprofiles(NULL), parent(rtwindow)
 {
@@ -45,13 +46,13 @@ Preferences::Preferences  (RTWindow *rtwindow) : rprofiles(NULL), iprofiles(NULL
     set_title (M("MAIN_BUTTON_PREFERENCES"));
 
     moptions.copyFrom (&options);
-    oldSlimUI = options.slimUI;
 
     /*
-     * Do not increase height, since it's not visible on e.g. smaller netbook screens
-     * Default height is about 620 pixels actually, that's why we do not set the height anymore
-     * Netbook users will most certainly set a smaller font and use the "slimUI" mode,
-     * so they'll be able to shrink the pref window and close it.
+     * Do not increase height, since it's not visible on e.g. smaller netbook
+     * screens. The default height is about 620 pixels currently, that's why
+     * we do not set the height anymore. Netbook users will most certainly set
+     * a smaller font, so they'll be able to shrink the Preferences window and
+     * close it.
      */
     set_size_request (650, -1);
     set_default_size (options.preferencesWidth, options.preferencesHeight);
@@ -62,6 +63,7 @@ Preferences::Preferences  (RTWindow *rtwindow) : rprofiles(NULL), iprofiles(NULL
     //set_has_separator (false);
 
     Gtk::Notebook* nb = Gtk::manage (new Gtk::Notebook ());
+    nb->get_style_context()->add_class ("prefNotebook");
     mainBox->pack_start (*nb);
 
     Gtk::HBox* buttonpanel = Gtk::manage (new Gtk::HBox ());
@@ -911,10 +913,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     chUseSystemTheme = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_USESYSTEMTHEME")+" ("+ M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
     setExpandAlignProperties(chUseSystemTheme, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    slimUI = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SLIMUI")) );
-    setExpandAlignProperties(slimUI, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     themeGrid->attach_next_to(*chUseSystemTheme, Gtk::POS_LEFT, 2, 1);
-    themeGrid->attach_next_to(*slimUI, *chUseSystemTheme, Gtk::POS_RIGHT, 2, 1);
 
     Gtk::Label* themelab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTTHEME") + ":") );
     setExpandAlignProperties(themelab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
@@ -1098,7 +1097,6 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     langAutoDetectConn = ckbLangAutoDetect->signal_toggled().connect (sigc::mem_fun(*this, &Preferences::langAutoDetectToggled));
     tconn = theme->signal_changed().connect( sigc::mem_fun(*this, &Preferences::themeChanged) );
-    sconn = slimUI->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::themeChanged) );
     fconn = fontbutton->signal_font_set().connect( sigc::mem_fun(*this, &Preferences::fontChanged) );
     usethcon = chUseSystemTheme->signal_clicked ().connect( sigc::mem_fun(*this, &Preferences::useThemeChanged) );
 
@@ -1376,10 +1374,6 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
         Glib::ustring fname = Glib::build_filename(dirname, *i);
         Glib::ustring sname = *i;
 
-        if (sname == "slim.css") {
-            continue;
-        }
-
         // ignore directories
         if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR) && sname.size() >= ext.size() && sname.substr (sname.size() - ext.size(), ext.size()).casefold() == ext) {
             items.push_back (sname.substr(0, sname.size() - ext.size()));
@@ -1423,7 +1417,6 @@ void Preferences::storePreferences ()
     moptions.language        = languages->get_active_text ();
     moptions.languageAutoDetect = ckbLangAutoDetect->get_active ();
     moptions.theme           = theme->get_active_text ();
-    moptions.slimUI          = slimUI->get_active ();
     moptions.useSystemTheme  = chUseSystemTheme->get_active ();
 
     Gdk::RGBA cropCol = butCropCol->get_rgba();
@@ -1622,7 +1615,6 @@ void Preferences::fillPreferences ()
     languages->set_active_text (moptions.language);
     ckbLangAutoDetect->set_active (moptions.languageAutoDetect);
     theme->set_active_text (moptions.theme);
-    slimUI->set_active(moptions.slimUI);
     chUseSystemTheme->set_active(moptions.useSystemTheme);
 
     Gdk::RGBA cropCol;
@@ -1821,15 +1813,11 @@ void Preferences::okPressed ()
 
 void Preferences::cancelPressed ()
 {
-
-    bool currentSlimState = options.slimUI;
-    options.slimUI = oldSlimUI;
-
     // set the initial theme back
-    if (theme->get_active_text() != options.theme || options.slimUI != currentSlimState) {
+    if (theme->get_active_text() != options.theme) {
         RTImage::setPaths(options);
         RTImage::updateImages();
-        switchThemeTo(options.theme, options.slimUI);
+        switchThemeTo(options.theme);
     }
 
     // set the initial font back
@@ -1882,7 +1870,7 @@ void Preferences::themeChanged ()
     moptions.useSystemTheme = chUseSystemTheme->get_active ();
     RTImage::setPaths(moptions);
     RTImage::updateImages();
-    switchThemeTo(theme->get_active_text (), slimUI->get_active());
+    switchThemeTo(theme->get_active_text ());
 }
 
 void Preferences::forRAWComboChanged ()
@@ -1998,7 +1986,7 @@ void Preferences::fontChanged ()
     switchFontTo(fontbutton->get_font_name());
 }
 
-void Preferences::switchThemeTo(Glib::ustring newTheme, bool slimInterface)
+void Preferences::switchThemeTo(Glib::ustring newTheme)
 {
 
     Glib::ustring filename(argv0 + "/themes/" + newTheme + ".css");
@@ -2006,8 +1994,8 @@ void Preferences::switchThemeTo(Glib::ustring newTheme, bool slimInterface)
     if (!css) {
         css = Gtk::CssProvider::create();
     }
-
     bool loaded = true;
+
     try {
         css->load_from_path (filename);
     } catch (Glib::Error &err) {
@@ -2018,6 +2006,7 @@ void Preferences::switchThemeTo(Glib::ustring newTheme, bool slimInterface)
         loaded = false;
     }
 
+    // TODO remove rtcommon
     if (!loaded && options.theme != "rtcommon") {
         try {
             printf("Trying with \"rtcommon.css\"\n");
@@ -2027,37 +2016,6 @@ void Preferences::switchThemeTo(Glib::ustring newTheme, bool slimInterface)
             printf("Error: Can't load css file \"rtcommon.css\"\nMessage: %s\n", err.what().c_str());
         } catch (...) {
             printf("Error: Can't load css file \"%s\"\n", filename.c_str());
-        }
-    }
-
-    options.slimUI = slimInterface;
-
-    if (slimInterface) {
-        bool slimCreated = false;
-        if (!cssSlim) {
-            cssSlim = Gtk::CssProvider::create();
-            slimCreated = true;
-        }
-
-        filename = argv0 + "/themes/slim.css";
-
-        try {
-            cssSlim->load_from_path (filename);
-            if (slimCreated) {
-                Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
-                Gtk::StyleContext::add_provider_for_screen(screen, cssSlim, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-            }
-        } catch (Glib::Error &err) {
-            printf("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
-        } catch (...) {
-            printf("Error: Can't load css file \"%s\"\n", filename.c_str());
-        }
-    } else {
-        if (cssSlim) {
-            // remove the slim CSS provider
-            Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
-            Gtk::StyleContext::remove_provider_for_screen(screen, cssSlim);
-            cssSlim.reset();
         }
     }
 }
@@ -2120,13 +2078,6 @@ void Preferences::switchFontTo(Glib::ustring newFont)
             printf("Error: \"%s\"\n", err.what().c_str());
         } catch (...) {
             printf("Error: Can't find the font named \"%s\"\n", newFont.c_str());
-        }
-    } else {
-        if (cssForced) {
-            // remove the slim CSS provider
-            Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
-            Gtk::StyleContext::remove_provider_for_screen(screen, cssForced);
-            cssForced.reset();
         }
     }
 }

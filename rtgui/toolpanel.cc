@@ -30,13 +30,8 @@ ToolVBox::ToolVBox()
 
 void ToolVBox::updateStyle()
 {
-    if (options.slimUI) {
-        set_spacing(1);       // Vertical space between tools
-        set_border_width(1);  // Space separating the tab's frame and the tools
-    } else {
-        set_spacing(2);       // Vertical space between tools
-        set_border_width(1);  // Space separating the tab's frame and the tools  3
-    }
+    set_spacing(1);       // Vertical space between tools
+    set_border_width(1);  // Space separating the tab's frame and the tools
 }
 
 void ToolVBox::on_style_updated ()
@@ -51,13 +46,8 @@ ToolParamBlock::ToolParamBlock()
 
 void ToolParamBlock::updateStyle()
 {
-    if (options.slimUI) {
-        set_spacing(2);       // Vertical space between parameters in a single tool
-        set_border_width(6);  // Space separating the parameters of a tool and its surrounding frame  6
-    } else {
-        set_spacing(2);       // Vertical space between parameters in a single tool
-        set_border_width(7);  // Space separating the parameters of a tool and its surrounding frame  8
-    }
+    set_spacing(2);       // Vertical space between parameters in a single tool
+    set_border_width(6);  // Space separating the parameters of a tool and its surrounding frame
 }
 
 void ToolParamBlock::on_style_updated ()
