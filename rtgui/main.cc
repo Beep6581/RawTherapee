@@ -64,7 +64,6 @@ Glib::ustring creditsPath;
 Glib::ustring licensePath;
 Glib::ustring argv1;
 bool simpleEditor;
-Glib::RefPtr<Gtk::CssProvider> css;
 Glib::RefPtr<Gtk::CssProvider> cssBase;
 Glib::RefPtr<Gtk::CssProvider> cssForced;
 Glib::RefPtr<Gtk::CssProvider> cssRT;
@@ -295,29 +294,20 @@ int main(int argc, char **argv)
 
     // ------- loading theme files
 
-    Glib::RefPtr<Gtk::CssProvider> cssDefault;
     Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
 
-    cssDefault = Gtk::CssProvider::get_default();
-    Gtk::StyleContext::add_provider_for_screen(screen, cssDefault, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
-    Gtk::Settings::get_for_screen(screen)->set_property("gtk-application-prefer-dark-theme", true);
-
     if (!options.useSystemTheme && screen) {
-        cssBase = Gtk::CssProvider::create();
-        Glib::ustring filename(argv0 + "/themes/gtk-contained-dark.css");
+        Gtk::Settings::get_for_screen(screen)->property_gtk_theme_name() = "Adwaita";
+        Gtk::Settings::get_for_screen(screen)->property_gtk_application_prefer_dark_theme() = true;
 
-        try {
-            cssBase->load_from_path (filename);
-            Gtk::StyleContext::add_provider_for_screen(screen, cssBase, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-        } catch (Glib::Error &err) {
-            printf("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
-        } catch (...) {
-            printf("Error: Can't load css file \"%s\"\n", filename.c_str());
-        }
-
-        filename = argv0 + "/themes/RawTherapee.css";
+        Glib::ustring filename = argv0 + "/themes/RawTherapee.css";
         cssRT = Gtk::CssProvider::create();
+
+        /* TODO
+         * Make theme selection work again. All themes should be applied below here,
+         * in other words after the base Adwaita Dark theme has been applied. This
+         * makes for smaller custom theme files.
+         */
 
         try {
             cssRT->load_from_path (filename);

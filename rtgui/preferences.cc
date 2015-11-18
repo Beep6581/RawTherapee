@@ -33,10 +33,8 @@
 
 extern Options options;
 extern Glib::ustring argv0;
-extern Glib::RefPtr<Gtk::CssProvider> css;
-extern Glib::RefPtr<Gtk::CssProvider> cssBase;
 extern Glib::RefPtr<Gtk::CssProvider> cssForced;
-extern Glib::RefPtr<Gtk::CssProvider> cssRT;
+Glib::RefPtr<Gtk::CssProvider> css;
 
 Preferences::Preferences  (RTWindow *rtwindow) : rprofiles(NULL), iprofiles(NULL), parent(rtwindow)
 {
