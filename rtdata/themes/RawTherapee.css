@@ -21,10 +21,11 @@
     color: #AAAAAA;
 }
 
+/* The Places and Dir browser panels */
 .view {
     background-color: #262626;
 }
-
+/* The headers of these panels */
 .view .button {
     background-color: #363636;
     padding: 2px;
@@ -34,23 +35,29 @@
     background-color: #404040;
 }
 
-.notebook {
+GtkNotebook {
     background-color: #404040;
 }
 
-/* Tool (sub)frame */
+/* Affects all frames except in the toolbox */
 .frame {
     border-color: #303030;
     border-radius: 4px;
-    padding: 4px 4px 0px 4px;
+    padding: 4px 4px 4px 4px;
 }
 
-/* Non-tool frames */
+/* Frames in the toolbox. Not MyExpander frames. */
 GtkEventBox .frame {
     border-color: #565656;
 }
 
-/* Slider label */
+/*.editorTopPanel .button, .toolBarPanelFileBrowser .button, .editorZoomPanel .button {*/
+.button {
+     padding: 1px;
+     margin: 1px;
+}
+
+/* Adjusters */
 .text-button {
     padding: 0px;
 }
@@ -60,11 +67,7 @@ GtkEventBox .frame {
     padding: 4px;
 }
 
-/* Tab button */
-GtkNotebook tab {
-    outline-offset: -2px;
-    border-color: #303030;
-}
+
 
 .separator {
     color: #363636;
@@ -73,10 +76,6 @@ GtkNotebook tab {
 GtkProgressBar {
     -GtkProgressBar-min-vertical-bar-width: 10;
     -GtkProgressBar-min-horizontal-bar-height: 10;
-}
-
-GtkNotebook GtkViewport {
-    padding-right: 2px;
 }
 
 GtkDrawingArea {
@@ -135,7 +134,6 @@ GtkButton.Right {
 
 GtkEntry, GtkSpinButton {
     padding: 1px 4px 0 1px;
-    margin: 1px;
     background-color: #262626;
 }
 
@@ -150,19 +148,17 @@ GtkMenu {
     padding: 2px;
 }
 
+/* Tool background */
 #ExpanderBox {
     background-color: #363636;
-    border-color: #252525;
-    border-style: solid;
-    border-width: 1px;
+    border: 1px solid #252525;
     border-radius: 4px;
 }
 
+/* Sub-tool (MyExpander) background */
 #ExpanderBox2 {
     background-color: #3B3B3B;
-    border-color: #505050;
-    border-style: solid;
-    border-width: 1px;
+    border: 1px solid #505050;
     border-radius: 4px;
 }
 
@@ -183,52 +179,44 @@ GtkMenu {
     color: #292929;
 }
 
-.toolBarPanelEditor .button, .toolBarPanelFileBrowser .button {
-     padding: 1px;
-     margin: 1px;
-}
-
 /* Editor tab button */
 .mainNotebook > GtkGrid GtkLabel, .mainNotebook > GtkGrid GtkImage  {
-    padding: 3px;
+    padding: 1px;
 }
 
 /* File Browser right side tabs - Toolbox, Inspector, Fast Export, Filter */
-.rightNotebook tab, .mainNotebook tab, .prefNotebook tab, .toolPanelNotebook tab, .metaPanelNotebook tab {
+GtkNotebook tab {
     background-color: #404040;
     border: 1px solid #505050;
     border-radius: 4px;
     padding: 5px;
 }
 
-.rightNotebook tab:hover, .mainNotebook tab:hover, .prefNotebook tab:hover, .toolPanelNotebook tab:hover, .metaPanelNotebook tab:hover {
+GtkNotebook tab:hover {
     background-color: #505050;
 }
 
-.rightNotebook tab:active, .mainNotebook tab:active, .prefNotebook tab:active, .toolPanelNotebook tab:active, .metaPanelNotebook tab:active {
+GtkNotebook tab:active {
     background-color: #262626;
 }
 
 /* Get rid of shitty notebook header shadow */
-.rightNotebook.header.top, .mainNotebook.header.top, .prefNotebook.header.top, .toolPanelNotebook.header.top, .metaPanelNotebook.header.top,
-.rightNotebook.header.right, .mainNotebook.header.right, .prefNotebook.header.right, .toolPanelNotebook.header.right, .metaPanelNotebook.header.right,
-.rightNotebook.header.bottom, .mainNotebook.header.bottom, .prefNotebook.header.bottom, .toolPanelNotebook.header.bottom, .metaPanelNotebook.header.bottom,
-.rightNotebook.header.left, .mainNotebook.header.left, .prefNotebook.header.left, .toolPanelNotebook.header.left, .metaPanelNotebook.header.left {
+GtkNotebook.header.top, GtkNotebook.header.right, GtkNotebook.header.bottom, GtkNotebook.header.left {
     box-shadow: none;
 }
 
 /* Get rid of notebook header border - too many borders */
-.rightNotebook.header, .mainNotebook.header, .prefNotebook.header, .toolPanelNotebook.header, .metaPanelNotebook.header {
+GtkNotebook.header {
     border: 0px;
 }
 
 /* Get rid of notebook frame border - too many borders */
-.rightNotebook.frame, .mainNotebook.frame, .prefNotebook.frame, .toolPanelNotebook.frame, .metaPanelNotebook.frame {
+GtkNotebook.frame {
     border: 0px;
 }
 
 /* Pad notebooks, makes the other borders look nicer */
-.rightNotebook, .mainNotebook, .prefNotebook, .toolPanelNotebook, .metaPanelNotebook {
+GtkNotebook {
     padding: 2px;
 }
 
@@ -253,3 +241,4 @@ GtkMenu {
     padding: 5px;
     margin: 5px;
 }
+

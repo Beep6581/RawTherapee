@@ -137,7 +137,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     tpc->setEditProvider(iareapanel->imageArea);
 
     Gtk::HBox* toolBarPanel = Gtk::manage (new Gtk::HBox ());
-    toolBarPanel->get_style_context()->add_class ("toolBarPanelEditor");
+    toolBarPanel->get_style_context()->add_class ("editorTopPanel");
     toolBarPanel->pack_start (*hidehp, Gtk::PACK_SHRINK, 1);
     toolBarPanel->pack_start (*vseph, Gtk::PACK_SHRINK, 2);
     toolBarPanel->pack_start (*info, Gtk::PACK_SHRINK, 1);
@@ -181,6 +181,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     // Save buttons
     Gtk::HBox* iops = Gtk::manage (new Gtk::HBox ());
 
+    Gtk::HBox *exportButtonsHBox = Gtk::manage (new Gtk::HBox ());
+
     Gtk::Image *saveButtonImage =  Gtk::manage (new RTImage ("gtk-save-large.png"));
     saveimgas = Gtk::manage (new Gtk::Button ());
     saveimgas->add(*saveButtonImage);
@@ -196,13 +198,16 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     sendtogimp->add(*sendToEditorButtonImage);
     sendtogimp->set_tooltip_markup(M("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
 
-    iops->pack_start (*saveimgas, Gtk::PACK_SHRINK);
+    exportButtonsHBox->pack_start (*saveimgas, Gtk::PACK_SHRINK);
 
     if(!simpleEditor) {
-        iops->pack_start (*queueimg, Gtk::PACK_SHRINK);
+        exportButtonsHBox->pack_start (*queueimg, Gtk::PACK_SHRINK);
     }
 
-    iops->pack_start (*sendtogimp, Gtk::PACK_SHRINK);
+    exportButtonsHBox->pack_start (*sendtogimp, Gtk::PACK_SHRINK);
+
+    iops->pack_start (*exportButtonsHBox, Gtk::PACK_SHRINK);
+    iops->pack_start (*Gtk::manage(new Gtk::VSeparator()), Gtk::PACK_SHRINK, 1);
 
     // Status box
     statusBox = Gtk::manage (new Gtk::HBox ());
@@ -212,12 +217,14 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     setExpandAlignProperties(progressLabel, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     progressLabel->set_fraction(0.0);
 
+    // TODO is this needed? What for?
     if (cssProvider) {
         progressLabel->get_style_context()->add_provider (cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);    // Can't find the gtkmm version of the enum!
     }
 
     statusBox->pack_start (*progressLabel);
-    iops->pack_start(*statusBox, Gtk::PACK_SHRINK, 2);
+    iops->pack_start (*statusBox, Gtk::PACK_EXPAND_PADDING, 2);
+    iops->pack_start (*Gtk::manage(new Gtk::VSeparator()), Gtk::PACK_SHRINK, 1);
 
     // tbRightPanel_1
     iops->pack_end (*tbRightPanel_1, Gtk::PACK_SHRINK, 0);
@@ -262,7 +269,6 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         navSync->set_relief(Gtk::RELIEF_NONE);
         navSync->set_tooltip_markup(M("MAIN_BUTTON_NAVSYNC_TOOLTIP"));
 
-        iops->pack_end (*Gtk::manage(new Gtk::VSeparator()), Gtk::PACK_SHRINK, 0);
         iops->pack_end (*navNext, Gtk::PACK_SHRINK, 0);
         iops->pack_end (*navSync, Gtk::PACK_SHRINK, 0);
         iops->pack_end (*navPrev, Gtk::PACK_SHRINK, 0);

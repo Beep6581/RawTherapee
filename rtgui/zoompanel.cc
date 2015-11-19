@@ -23,6 +23,7 @@
 
 ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea)
 {
+    get_style_context()->add_class ("editorZoomPanel");
 
     set_border_width (0);
 
