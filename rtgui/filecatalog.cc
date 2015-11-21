@@ -56,6 +56,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
     //  construct and initialize thumbnail browsers
     fileBrowser = Gtk::manage( new FileBrowser() );
+    fileBrowser->get_style_context()->add_class ("filebrowser");
     fileBrowser->setFileBrowserListener (this);
     fileBrowser->setArrangement (ThumbBrowserBase::TB_Vertical);
     fileBrowser->show ();
@@ -399,6 +400,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     hBox = Gtk::manage( new Gtk::HBox () );
     hBox->show ();
     hBox->pack_end (*fileBrowser);
+    hBox->get_style_context()->add_class ("filmstripPanel");
     fileBrowser->applyFilter (getFilter()); // warning: can call this only after all objects used in getFilter (e.g. Query) are instantiated
     //printf("FileCatalog::FileCatalog  fileBrowser->applyFilter (getFilter())\n");
     pack_start (*hBox);

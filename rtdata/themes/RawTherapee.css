@@ -46,6 +46,10 @@ GtkNotebook {
     padding: 4px 4px 4px 4px;
 }
 
+.filebrowser  GtkFrame {
+     padding: 0px;
+}
+
 /* Frames in the toolbox. Not MyExpander frames. */
 GtkEventBox .frame {
     border-color: #565656;
@@ -66,8 +70,6 @@ GtkEventBox .frame {
 .text-button.button {
     padding: 4px;
 }
-
-
 
 .separator {
     color: #363636;
@@ -94,7 +96,7 @@ GtkImage {
     padding: 1px;
 }
 
-/* Horizontal group of buttons in 1 column */
+/* Vertical group of buttons in 1 column */
 GtkButton.Top {
     border-radius: 10px 4px 0 0;
     border-style: solid solid none solid;
@@ -132,9 +134,23 @@ GtkButton.Right {
 }
 /* end */
 
+/* [1.23[-][+]] */
 GtkEntry, GtkSpinButton {
-    padding: 1px 4px 0 1px;
+    padding: 1px 10px 0 1px;
     background-color: #262626;
+}
+
+GtkEntry:insensitive, GtkSpinButton:insensitive {
+    background-color: #363636;
+}
+
+GtkEntry:hover, GtkSpinButton:hover {
+    background-color: #565656;
+}
+
+GtkEntry:selected {
+    color: #262626;
+    background-color: #AAAAAA;
 }
 
 /* Context menus */
@@ -189,7 +205,7 @@ GtkNotebook tab {
     background-color: #404040;
     border: 1px solid #505050;
     border-radius: 4px;
-    padding: 5px;
+    padding: 3px;
 }
 
 GtkNotebook tab:hover {
