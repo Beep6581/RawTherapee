@@ -1060,7 +1060,6 @@ PREFERENCES_TISTD;標準
 PREFERENCES_TP_LABEL;ツール パネル:
 PREFERENCES_TP_USEICONORTEXT;テキストの代わりにタブアイコンを使用
 PREFERENCES_TP_VSCROLLBAR;ツールパネルの垂直スクロールバーを隠す
-PREFERENCES_TUNNELMETADATA;変更のないIPTC/XMPを出力ファイルにコピー（他のプログラムにタグ付する場合）
 PREFERENCES_USEBUNDLEDPROFILES;付属のプロファイルを使用
 PREFERENCES_USESYSTEMTHEME;システムのテーマを使う
 PREFERENCES_VIEW;出力デバイスのホワイトバランス設定 (モニター, TV, プロジェクター,観視...)
@@ -1949,6 +1948,7 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !HISTORY_MSG_425;Retinex - Log base
 !HISTORY_MSG_426;Retinex - Hue equalizer
 !PARTIALPASTE_RETINEX;Retinex
+!PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
 !TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*

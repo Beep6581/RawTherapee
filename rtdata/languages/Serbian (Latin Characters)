@@ -560,7 +560,6 @@ PREFERENCES_TAB_GENERAL;Opšte
 PREFERENCES_TAB_IMPROC;Obrada slike
 PREFERENCES_TAB_SOUND;Zvuci
 PREFERENCES_TP_VSCROLLBAR;Sakrij klizače u oblasti sa alatkama
-PREFERENCES_TUNNELMETADATA;Kopiraj neizmenjene IPTC/XMP (kada je slika označena drugim programom)
 PREFERENCES_USESYSTEMTHEME; Koristi sistemsku temu
 PREFERENCES_WORKFLOW;Tok obrade
 PROFILEPANEL_LABEL;Profili obrade
@@ -1286,6 +1285,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !PREFERENCES_TISTD;Standard
 !PREFERENCES_TP_LABEL;Tool panel:
 !PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
+!PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 !PREFERENCES_VIEW;Output device's white balance (monitor, TV, projector, viewing, etc.)
 !PREFERENCES_WAVLEV;Increase wavelet level in quality 'high'

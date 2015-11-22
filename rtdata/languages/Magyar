@@ -615,7 +615,6 @@ PREFERENCES_TAB_SOUND;Hangok
 PREFERENCES_TP_LABEL;Eszközök panel:
 PREFERENCES_TP_USEICONORTEXT;Ikonok használata szöveg helyett a füleken
 PREFERENCES_TP_VSCROLLBAR;Függőleges görgetősáv elrejtése
-PREFERENCES_TUNNELMETADATA;IPTC/XMP adatok változatlan átmentése a kimeneti állományba (pl. más programmal való címkézéskor)
 PREFERENCES_USESYSTEMTHEME;Rendszer megjelenésének használata
 PREFERENCES_WORKFLOW;Munkamenet
 PROFILEPANEL_COPYPPASTE;Másolandó paraméterek
@@ -1350,6 +1349,7 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !PREFERENCES_TIMAX;High
 !PREFERENCES_TINB;Number of tiles
 !PREFERENCES_TISTD;Standard
+!PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 !PREFERENCES_VIEW;Output device's white balance (monitor, TV, projector, viewing, etc.)
 !PREFERENCES_WAVLEV;Increase wavelet level in quality 'high'

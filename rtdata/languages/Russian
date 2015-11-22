@@ -782,7 +782,6 @@ PREFERENCES_TAB_SOUND;Звуки
 PREFERENCES_TP_LABEL;Панель инструментов:
 PREFERENCES_TP_USEICONORTEXT;Использовать иконки вместо текста
 PREFERENCES_TP_VSCROLLBAR;Спрятать вертикальную полосу прокрутки
-PREFERENCES_TUNNELMETADATA;Копировать IPTC/XMP в неизменном виде при сохранении (при каталогизации внешними программами)
 PREFERENCES_USEBUNDLEDPROFILES;Использовать предустановленный профиль
 PREFERENCES_USESYSTEMTHEME;Использовать системную тему оформления
 PREFERENCES_VIEW;ББ устройства вывода (монитор, проектор и т.д.)
@@ -1582,6 +1581,7 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !PREFERENCES_TIMAX;High
 !PREFERENCES_TINB;Number of tiles
 !PREFERENCES_TISTD;Standard
+!PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !PREFERENCES_WAVLEV;Increase wavelet level in quality 'high'
 !PREFERENCES_WLONE;One level
 !PREFERENCES_WLTWO;Two levels

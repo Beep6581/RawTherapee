@@ -635,7 +635,6 @@ PREFERENCES_TAB_SOUND;Sons
 PREFERENCES_TP_LABEL;Panell d'eines:
 PREFERENCES_TP_USEICONORTEXT;Usa les icones tab en comptes de text
 PREFERENCES_TP_VSCROLLBAR;Amaga la barra d'eines vertical
-PREFERENCES_TUNNELMETADATA;Copia IPTC/XMP sense canvis al fitxer de sortida (en treball amb altres progs.)
 PREFERENCES_USESYSTEMTHEME; Usa tema del sistema
 PREFERENCES_WORKFLOW;Flux de treball
 PROFILEPANEL_COPYPPASTE;Paràmetres a copiar
@@ -1412,6 +1411,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_TIMAX;High
 !PREFERENCES_TINB;Number of tiles
 !PREFERENCES_TISTD;Standard
+!PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 !PREFERENCES_VIEW;Output device's white balance (monitor, TV, projector, viewing, etc.)
 !PREFERENCES_WAVLEV;Increase wavelet level in quality 'high'
