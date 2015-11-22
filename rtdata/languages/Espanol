@@ -900,7 +900,6 @@ PREFERENCES_TAB_SOUND;Sonidos
 PREFERENCES_TP_LABEL;Panel de herramientas:
 PREFERENCES_TP_USEICONORTEXT;Usar iconos de pestaña en lugar de texto
 PREFERENCES_TP_VSCROLLBAR;Ocultar barra de desplazamiento vertical del panel de herramientas
-PREFERENCES_TUNNELMETADATA;Copiar IPTC/XMP sin cambios al fichero de salida (cuando etiquete con otro programa)
 PREFERENCES_USEBUNDLEDPROFILES;Usar perfiles empaquetados
 PREFERENCES_USESYSTEMTHEME;Usar tema del sistema
 PREFERENCES_VIEW;Balance de blancos en el dispositivo de salida (monitor, TV, proyector...)
@@ -1764,6 +1763,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !PREFERENCES_TIMAX;High
 !PREFERENCES_TINB;Number of tiles
 !PREFERENCES_TISTD;Standard
+!PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !PREFERENCES_WAVLEV;Increase wavelet level in quality 'high'
 !PREFERENCES_WLONE;One level
 !PREFERENCES_WLTWO;Two levels

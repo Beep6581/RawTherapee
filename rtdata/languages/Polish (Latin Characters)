@@ -855,7 +855,6 @@ PREFERENCES_TAB_SOUND;Dzwieki
 PREFERENCES_TP_LABEL;Panel narzedzi:
 PREFERENCES_TP_USEICONORTEXT;Uzyj ikon w zakladkach zamiast tekstowych etykiet
 PREFERENCES_TP_VSCROLLBAR;Ukry pionowy pasek przesuwania
-PREFERENCES_TUNNELMETADATA;Skopiuj niezmienione IPTC/XMP do pliku wynikowego (gdy tagowane za pomoca innego programu)
 PREFERENCES_USEBUNDLEDPROFILES;Uzyj zalaczone profile przetwarzania
 PREFERENCES_USESYSTEMTHEME; Uzyj tematu systemowego
 PREFERENCES_VIEW;Balans bieli urzadzenia wyjsciowego (monitora, TV, projektora, widowni, etc.)
@@ -1710,6 +1709,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !PREFERENCES_TIMAX;High
 !PREFERENCES_TINB;Number of tiles
 !PREFERENCES_TISTD;Standard
+!PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !PREFERENCES_WAVLEV;Increase wavelet level in quality 'high'
 !PREFERENCES_WLONE;One level
 !PREFERENCES_WLTWO;Two levels

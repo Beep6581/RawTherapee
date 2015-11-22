@@ -983,7 +983,6 @@ PREFERENCES_TISTD;Standard
 PREFERENCES_TP_LABEL;Verktygspanel:
 PREFERENCES_TP_USEICONORTEXT;Använd ikoner istället för text
 PREFERENCES_TP_VSCROLLBAR;Göm verktygpanelens vertikala skrollist
-PREFERENCES_TUNNELMETADATA;Tunnla oförändrad IPTC/XMP till utfilen
 PREFERENCES_USEBUNDLEDPROFILES;Visa förinstallerade profiler
 PREFERENCES_USESYSTEMTHEME;Använd systemtema
 PREFERENCES_VIEW;Utenhetens vitbalansvärde (datorskärm, TV, bildkanon, etc.)
@@ -1789,6 +1788,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PREFERENCES_MIN;Mini (100x115)
 !PREFERENCES_SIMPLAUT;Tool mode
 !PREFERENCES_TINB;Number of tiles
+!PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Chroma opacity as a function of luminance oC=f(L)
 !TP_COLORTONING_LABEL;Color Toning

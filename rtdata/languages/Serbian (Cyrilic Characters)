@@ -560,7 +560,6 @@ PREFERENCES_TAB_GENERAL;Опште
 PREFERENCES_TAB_IMPROC;Обрада сликe
 PREFERENCES_TAB_SOUND;Звуци
 PREFERENCES_TP_VSCROLLBAR;Сакриј клизаче у области са алаткама
-PREFERENCES_TUNNELMETADATA;Копирај неизмењене IPTC/XMP (када је слика означена другим програмом)
 PREFERENCES_USESYSTEMTHEME; Користи системску тему
 PREFERENCES_WORKFLOW;Ток обраде
 PROFILEPANEL_LABEL;Профили обраде
@@ -1286,6 +1285,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_TISTD;Standard
 !PREFERENCES_TP_LABEL;Tool panel:
 !PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
+!PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 !PREFERENCES_VIEW;Output device's white balance (monitor, TV, projector, viewing, etc.)
 !PREFERENCES_WAVLEV;Increase wavelet level in quality 'high'
