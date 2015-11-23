@@ -1061,7 +1061,7 @@ PREFERENCES_TISTD;Standaard
 PREFERENCES_TP_LABEL;Gereedschapspaneel:
 PREFERENCES_TP_USEICONORTEXT;Gebruik iconen ipv. tekst voor de tabbladen
 PREFERENCES_TP_VSCROLLBAR;Verberg de schuifbalk van het gereedschapspaneel
-PREFERENCES_TUNNELMETADATA;Kopieer IPTC/XMP-data onveranderd naar uitvoerbestand \n(praktisch indien extern programma voor tagging wordt gebruikt)
+PREFERENCES_TUNNELMETADATA;Kopieer Exif/IPTC/XMP-data onveranderd naar uitvoerbestand
 PREFERENCES_USEBUNDLEDPROFILES;Gebruik gebundelde profielen
 PREFERENCES_USESYSTEMTHEME; Gebruik systeemthema
 PREFERENCES_VIEW;Witbalans instelling van het uitvoerapparaat (monitor, TV, projector...)
