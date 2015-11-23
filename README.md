@@ -21,11 +21,10 @@ Git handbook:
 http://git-scm.com/book/en/
 
 ## Compilation, branches and Git
-Before compiling RawTherapee you need to have the dependencies installed.
-Refer to RawPedia for dependency requirements:
+Refer to RawPedia for a detailed explanation of how to get the necessary dependencies and how to compile RawTherapee:
 http://rawpedia.rawtherapee.com/Linux
 
-The instructions below will be merged into that article on RawPedia soon.
+The information below is a brief summary of that.
 
 ### Clone the source code
 Clone the source code either using HTTPS:
@@ -53,13 +52,13 @@ To find out how many threads your CPU supports, run:
 `grep -c processor /proc/cpuinfo`
 Then replace the number in `-j8` below with this number. This will make compilation faster but it will have no effect on the speed of running RawTherapee.
 
-Now you will make an out-of-source compilation of RawTherapee, it will be built into the ~/repo-rt/build/release folder, and then you will move this folder to your home directory and rename it to "rawtherapee", so make sure there is no ~/rawtherapee folder already!
+Now you will make an out-of-source compilation of RawTherapee, it will be built into the ~/repo-rt/build/release folder, and then you will move this folder to your home directory and rename it to "rt", so make sure there is no ~/rt folder already!
 ```
 mkdir build && cd build && \
 cmake -DCMAKE_CXX_FLAGS="-std=c++11" -DCMAKE_BUILD_TYPE="release" -DPROC_TARGET_NUMBER="2" -DBUILD_BUNDLE="ON" -DBINDIR="." -DDATADIR="." -DCACHE_NAME_SUFFIX=4 .. && \
 make -j8 install && \
-mv release ~/rawtherapee
+mv release ~/rt
 ```
 
 Run RawTherapee:
-`~/rawtherapee/rawtherapee`
+`~/rt/rawtherapee`
