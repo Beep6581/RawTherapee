@@ -21,6 +21,11 @@
     color: #AAAAAA;
 }
 
+.view:selected {
+    color: #262626;
+    background-color: #AAAAAA
+}
+
 /* The Places and Dir browser panels */
 .view {
     background-color: #262626;
