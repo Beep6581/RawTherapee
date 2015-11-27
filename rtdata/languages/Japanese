@@ -46,8 +46,8 @@ CURVEEDITOR_AXIS_IN;I:
 CURVEEDITOR_AXIS_LEFT_TAN;LT:
 CURVEEDITOR_AXIS_OUT;O:
 CURVEEDITOR_AXIS_RIGHT_TAN;RT:
-CURVEEDITOR_CURVES;カーブ
 CURVEEDITOR_CURVE;カーブ
+CURVEEDITOR_CURVES;カーブ
 CURVEEDITOR_CUSTOM;カスタム
 CURVEEDITOR_DARKS;ダーク
 CURVEEDITOR_EDITPOINT_HINT;ボタンを押すと数値で入出力を編集出来ます\n\n編集したいカーブ上のポイントを右クリックします\n編集を無効にする場合はポイント以外の部分んで右クリックします
@@ -79,19 +79,19 @@ EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;レンズ
 EXIFFILTER_METADATAFILTER;メタデータ絞り込みの適用
 EXIFFILTER_SHUTTER;シャッター
-EXIFPANEL_ADDEDITHINT;新しいタグを追加、またはタグの編集
 EXIFPANEL_ADDEDIT;追加/編集
+EXIFPANEL_ADDEDITHINT;新しいタグを追加、またはタグの編集
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;値の入力
 EXIFPANEL_ADDTAGDLG_SELECTTAG;タグ選択
 EXIFPANEL_ADDTAGDLG_TITLE;タグの追加/編集
-EXIFPANEL_KEEPHINT;出力ファイルに書き込む際、選択タグをそのままにする
 EXIFPANEL_KEEP;そのまま
-EXIFPANEL_REMOVEHINT;出力ファイルに書き込む際、選択タグは外す
+EXIFPANEL_KEEPHINT;出力ファイルに書き込む際、選択タグをそのままにする
 EXIFPANEL_REMOVE;削除
-EXIFPANEL_RESETALLHINT;すべて元の値にリセット
-EXIFPANEL_RESETALL;すべてリセット
-EXIFPANEL_RESETHINT;選択タグを元の値にリセット
+EXIFPANEL_REMOVEHINT;出力ファイルに書き込む際、選択タグは外す
 EXIFPANEL_RESET;リセット
+EXIFPANEL_RESETALL;すべてリセット
+EXIFPANEL_RESETALLHINT;すべて元の値にリセット
+EXIFPANEL_RESETHINT;選択タグを元の値にリセット
 EXIFPANEL_SUBDIRECTORY;サブディレクトリ
 EXPORT_BYPASS_ALL;全て選択 / 全て解除
 EXPORT_BYPASS_DEFRINGE;フリンジ低減を迂回
@@ -126,19 +126,19 @@ FILEBROWSER_AUTODARKFRAME;オート・ダークフレーム
 FILEBROWSER_AUTOFLATFIELD;オート・フラットフィールド
 FILEBROWSER_BROWSEPATHBUTTONHINT;クリックで選択したパスをブラウズ
 FILEBROWSER_BROWSEPATHHINT;参照するパスを入力します\n<b>Ctrl-O</b> パスのテキストボックスにフォーカス\n<b>Enter</b> / <b>Ctrl-Enter</b>その場所をブラウズします\n<b>Esc</b> 変更をクリア\n<b>Shift-Esc</b>フォーカスを削除\nパスのショートカット:\n  <b>~</b> - ユーザーのホームディレクトリ\n  <b>!</b> - ユーザーの画像ディレクトリ
+FILEBROWSER_CACHE;cache
 FILEBROWSER_CACHECLEARFROMFULL;cacheをクリア - すべて
 FILEBROWSER_CACHECLEARFROMPARTIAL;cacheをクリア - 一部
-FILEBROWSER_CACHE;cache
 FILEBROWSER_CLEARPROFILE;プロファイルのクリア
 FILEBROWSER_COLORLABEL_TOOLTIP;カラー・ラベル\n\nドロップダウン・メニューからか、ショートカット:\nShift-Ctrl-1 レッド\nShift-Ctrl-2 イエロー\nShift-Ctrl-3 グリーン\nShift-Ctrl-4 ブルー\nShift-Ctrl-5 パープル
 FILEBROWSER_COPYPROFILE;プロファイルをコピー
 FILEBROWSER_CURRENT_NAME;現在の名前:
 FILEBROWSER_DARKFRAME;ダークフレーム
 FILEBROWSER_DELETEDLGLABEL;ファイル削除確認
-FILEBROWSER_DELETEDLGMSGINCLPROC;バッチ処理に<b>組み込まれている</b>選択済みのファイル <b>%1</b> を削除してもいいですか?
 FILEBROWSER_DELETEDLGMSG;選択済みのファイル <b>%1</b> を削除してもいいですか?
-FILEBROWSER_EMPTYTRASHHINT;ゴミ箱のファイルを完全に削除する
+FILEBROWSER_DELETEDLGMSGINCLPROC;バッチ処理に<b>組み込まれている</b>選択済みのファイル <b>%1</b> を削除してもいいですか?
 FILEBROWSER_EMPTYTRASH;ゴミ箱を空にする
+FILEBROWSER_EMPTYTRASHHINT;ゴミ箱のファイルを完全に削除する
 FILEBROWSER_EXEC_CPB;カスタム・プロファイルビルダーを実行
 FILEBROWSER_EXTPROGMENU;..で開く
 FILEBROWSER_FLATFIELD;フラットフィールド
@@ -149,32 +149,32 @@ FILEBROWSER_OPENDEFAULTVIEWER;Windowsのデフォルト・ビューア（キュ�
 FILEBROWSER_PARTIALPASTEPROFILE;プロファイルの貼り付け　-　一部
 FILEBROWSER_PASTEPROFILE;プロファイルの貼り付け
 FILEBROWSER_POPUPCANCELJOB;ジョブ キャンセル
+FILEBROWSER_POPUPCOLORLABEL;カラー・ラベル
 FILEBROWSER_POPUPCOLORLABEL0;ラベル：　なし
 FILEBROWSER_POPUPCOLORLABEL1;ラベル：　レッド
 FILEBROWSER_POPUPCOLORLABEL2;ラベル：　イエロー
 FILEBROWSER_POPUPCOLORLABEL3;ラベル：　グリーン
 FILEBROWSER_POPUPCOLORLABEL4;ラベル：　ブルー
 FILEBROWSER_POPUPCOLORLABEL5;ラベル：　パープル
-FILEBROWSER_POPUPCOLORLABEL;カラー・ラベル
 FILEBROWSER_POPUPCOPYTO;コピーします...
 FILEBROWSER_POPUPFILEOPERATIONS;ファイルの操作
 FILEBROWSER_POPUPMOVEEND;キュー処理の最後に移動
 FILEBROWSER_POPUPMOVEHEAD;キュー処理の最初に移動
 FILEBROWSER_POPUPMOVETO;移動します...
-FILEBROWSER_POPUPOPENINEDITOR;編集画面を開く
 FILEBROWSER_POPUPOPEN;開く
-FILEBROWSER_POPUPPROCESSFAST;キューに追加 (高速書き出し)
+FILEBROWSER_POPUPOPENINEDITOR;編集画面を開く
 FILEBROWSER_POPUPPROCESS;キューに追加
+FILEBROWSER_POPUPPROCESSFAST;キューに追加 (高速書き出し)
 FILEBROWSER_POPUPPROFILEOPERATIONS;プロファイルの操作
+FILEBROWSER_POPUPRANK;ランク
 FILEBROWSER_POPUPRANK0;ランクなし
 FILEBROWSER_POPUPRANK1;ランク　1　*
 FILEBROWSER_POPUPRANK2;ランク　2 **
 FILEBROWSER_POPUPRANK3;ランク　3　***
 FILEBROWSER_POPUPRANK4;ランク　4　****
 FILEBROWSER_POPUPRANK5;ランク　5　*****
-FILEBROWSER_POPUPRANK;ランク
-FILEBROWSER_POPUPREMOVEINCLPROC;ファイルシステムとバッチの結果から削除
 FILEBROWSER_POPUPREMOVE;ファイルシステムから削除
+FILEBROWSER_POPUPREMOVEINCLPROC;ファイルシステムとバッチの結果から削除
 FILEBROWSER_POPUPRENAME;名前変更
 FILEBROWSER_POPUPSELECTALL;全選択
 FILEBROWSER_POPUPTRASH;ゴミ箱へ移動
@@ -212,10 +212,10 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;最近保存されていない画像を表�
 FILEBROWSER_SHOWTRASHHINT;ゴミ箱の内容を表示\nショートカット: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;カラー・ラベルのない画像を表示\nショートカット: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;ランクなし画像を表示\nショートカット:  <b>0</b>
-FILEBROWSER_STARTPROCESSINGHINT;キューにある画像の処理を開始\n\nショートカット:<b>Ctrl</b>+<b>s</b>
 FILEBROWSER_STARTPROCESSING;処理開始
-FILEBROWSER_STOPPROCESSINGHINT;キューにある画像の処理を中止\n\nショートカット:<b>Ctrl</b>+<b>s</b>
+FILEBROWSER_STARTPROCESSINGHINT;キューにある画像の処理を開始\n\nショートカット:<b>Ctrl</b>+<b>s</b>
 FILEBROWSER_STOPPROCESSING;処理中止
+FILEBROWSER_STOPPROCESSINGHINT;キューにある画像の処理を中止\n\nショートカット:<b>Ctrl</b>+<b>s</b>
 FILEBROWSER_THUMBSIZE;サムネイルのサイズ
 FILEBROWSER_TOOLTIP_STOPPROCESSING;新しいrawファイルが送られて来たら自動的に現像処理を開始します
 FILEBROWSER_UNRANK_TOOLTIP;ランクなし\nショートカット: <b>Shift-0</b>
@@ -235,28 +235,28 @@ GENERAL_AUTO;自動
 GENERAL_BEFORE;補正前
 GENERAL_CANCEL;キャンセル
 GENERAL_CLOSE;閉じる
-GENERAL_DISABLED;無効
 GENERAL_DISABLE;無効
-GENERAL_ENABLED;有効
+GENERAL_DISABLED;無効
 GENERAL_ENABLE;有効
+GENERAL_ENABLED;有効
 GENERAL_FILE;ファイル
 GENERAL_LANDSCAPE;横
 GENERAL_NA;n/a
-GENERAL_NONE;なし
 GENERAL_NO;No
+GENERAL_NONE;なし
 GENERAL_OK;OK
 GENERAL_PORTRAIT;縦
 GENERAL_SAVE;保存
 GENERAL_UNCHANGED;(変更なし)
 GENERAL_WARNING;警告
-HISTOGRAM_TOOLTIP_BAR;RGBインジケーター・バーの表示/非表示\nプレビュー画像上でマウスの右ボタンクリックで 固定/開放
 HISTOGRAM_TOOLTIP_B;ブルー・ヒストグラム 表示/非表示
+HISTOGRAM_TOOLTIP_BAR;RGBインジケーター・バーの表示/非表示\nプレビュー画像上でマウスの右ボタンクリックで 固定/開放
 HISTOGRAM_TOOLTIP_CHRO;色度・ヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_FULL;完全/縮尺調整の表示切り替え
 HISTOGRAM_TOOLTIP_G;グリーン・ヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_L;CIEL*a*b* 輝度・ヒストグラム 表示/非表示
-HISTOGRAM_TOOLTIP_RAW;rawヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_R;レッド・ヒストグラム 表示/非表示
+HISTOGRAM_TOOLTIP_RAW;rawヒストグラム 表示/非表示
 HISTORY_CHANGED;変更されました
 HISTORY_CUSTOMCURVE;カスタムカーブ
 HISTORY_DELSNAPSHOT;削除
@@ -427,7 +427,6 @@ HISTORY_MSG_162;トーンマッピング
 HISTORY_MSG_163;RGB カーブ - レッド
 HISTORY_MSG_164;RGB カーブ - グリーン
 HISTORY_MSG_165;RGB カーブ - ブルー
-HISTORY_MSG_166;ニュートラル・レベル
 HISTORY_MSG_167;デモザイク 方式
 HISTORY_MSG_168;L*a*b* CC カーブ
 HISTORY_MSG_169;L*a*b* CH カーブ
@@ -669,49 +668,49 @@ HISTORY_MSG_405;W - ノイズ低減とリファイン　レベル4
 HISTORY_MSG_406;W - ES - 隣接するピクセルに対する効果
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
-HISTORY_SNAPSHOTS;スナップショット
 HISTORY_SNAPSHOT;スナップショット
-IPTCPANEL_AUTHORSPOSITIONHINT;作成者の肩書または作品の作成者(署名 タイトル).
-IPTCPANEL_AUTHORSPOSITION;作成者の肩書
+HISTORY_SNAPSHOTS;スナップショット
 IPTCPANEL_AUTHOR;作成者
-IPTCPANEL_CAPTIONHINT;データのテキストによる説明 (説明--要約)
-IPTCPANEL_CAPTIONWRITERHINT;画像を編集修正する人、または説明/要約の執筆に係わる人の名前 (作家--編集者).
-IPTCPANEL_CAPTIONWRITER;説明記入者
+IPTCPANEL_AUTHORSPOSITION;作成者の肩書
+IPTCPANEL_AUTHORSPOSITIONHINT;作成者の肩書または作品の作成者(署名 タイトル).
 IPTCPANEL_CAPTION;キャプション、説明文
-IPTCPANEL_CATEGORYHINT;提供者の見解で画像の主題を決めます (カテゴリ).
+IPTCPANEL_CAPTIONHINT;データのテキストによる説明 (説明--要約)
+IPTCPANEL_CAPTIONWRITER;説明記入者
+IPTCPANEL_CAPTIONWRITERHINT;画像を編集修正する人、または説明/要約の執筆に係わる人の名前 (作家--編集者).
 IPTCPANEL_CATEGORY;カテゴリ
-IPTCPANEL_CITYHINT;撮影された都市 (市町村).
+IPTCPANEL_CATEGORYHINT;提供者の見解で画像の主題を決めます (カテゴリ).
 IPTCPANEL_CITY;都市
+IPTCPANEL_CITYHINT;撮影された都市 (市町村).
 IPTCPANEL_COPYHINT;IPTC設定をクリップボードにコピー
-IPTCPANEL_COPYRIGHTHINT;著作権表示 (著作権情報).
 IPTCPANEL_COPYRIGHT;著作権
-IPTCPANEL_COUNTRYHINT;国名、/画像が撮影・作成された国 (国--撮影国).
+IPTCPANEL_COPYRIGHTHINT;著作権表示 (著作権情報).
 IPTCPANEL_COUNTRY;撮影国
-IPTCPANEL_CREDITHINT;所有者/作成者に限らず、画像の提供元の識別 (クレジット).
+IPTCPANEL_COUNTRYHINT;国名、/画像が撮影・作成された国 (国--撮影国).
 IPTCPANEL_CREDIT;クレジット
-IPTCPANEL_DATECREATEDHINT;画像の知的内容が作成された日付; フォーマット: JJJJMMTT (作成日).
+IPTCPANEL_CREDITHINT;所有者/作成者に限らず、画像の提供元の識別 (クレジット).
 IPTCPANEL_DATECREATED;作成日
-IPTCPANEL_EMBEDDEDHINT;画像に埋め込まれたIPTCデータにリセット
+IPTCPANEL_DATECREATEDHINT;画像の知的内容が作成された日付; フォーマット: JJJJMMTT (作成日).
 IPTCPANEL_EMBEDDED;埋め込み
-IPTCPANEL_HEADLINEHINT;画像の内容の概要を示す記入項目 (タイトル).
+IPTCPANEL_EMBEDDEDHINT;画像に埋め込まれたIPTCデータにリセット
 IPTCPANEL_HEADLINE;見出し
-IPTCPANEL_INSTRUCTIONSHINT;画像の使用に関するその他の特記事項 (編集注記).
+IPTCPANEL_HEADLINEHINT;画像の内容の概要を示す記入項目 (タイトル).
 IPTCPANEL_INSTRUCTIONS;編集注記
-IPTCPANEL_KEYWORDSHINT;情報検索に使用する単語 (キーワード).
+IPTCPANEL_INSTRUCTIONSHINT;画像の使用に関するその他の特記事項 (編集注記).
 IPTCPANEL_KEYWORDS;キーワード
+IPTCPANEL_KEYWORDSHINT;情報検索に使用する単語 (キーワード).
 IPTCPANEL_PASTEHINT;IPTC設定をクリップボードから貼り付け
-IPTCPANEL_PROVINCEHINT;撮影された地域/州・都道府県(地域--州・都道府県).
 IPTCPANEL_PROVINCE;州・都道府県
-IPTCPANEL_RESETHINT;デフォルトのプロファイルにリセット
+IPTCPANEL_PROVINCEHINT;撮影された地域/州・都道府県(地域--州・都道府県).
 IPTCPANEL_RESET;リセット
-IPTCPANEL_SOURCEHINT;画像の著作権保有者 (ソース).
+IPTCPANEL_RESETHINT;デフォルトのプロファイルにリセット
 IPTCPANEL_SOURCE;ソース
-IPTCPANEL_SUPPCATEGORIESHINT;さらに細かく画像の主題 (カテゴリ補助).
+IPTCPANEL_SOURCEHINT;画像の著作権保有者 (ソース).
 IPTCPANEL_SUPPCATEGORIES;カテゴリ補助
-IPTCPANEL_TITLEHINT;画像のタイトルを簡略に (タイトル).
+IPTCPANEL_SUPPCATEGORIESHINT;さらに細かく画像の主題 (カテゴリ補助).
 IPTCPANEL_TITLE;タイトル
-IPTCPANEL_TRANSREFERENCEHINT;オリジナルの送信証明の位置を表すコード (オリジナル 送信証明).
+IPTCPANEL_TITLEHINT;画像のタイトルを簡略に (タイトル).
 IPTCPANEL_TRANSREFERENCE;送信証明
+IPTCPANEL_TRANSREFERENCEHINT;オリジナルの送信証明の位置を表すコード (オリジナル 送信証明).
 MAIN_BUTTON_FULLSCREEN;フルスクリーン
 MAIN_BUTTON_NAVNEXT_TOOLTIP;エディタで開いている画像に対応する次の画像に移動します\nショートカット: <b>Shift-F4</b>\n\nファイルブラウザで選択したサムネイルに対応する次の画像に移動するには\nショートカット: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;エディタで開いている画像に対応する前の画像に移動します\nショートカット: <b>Shift-F3</b>\n\nファイルブラウザで選択したサムネイルに対応する前の画像に移動するには\nショートカット: <b>F3</b>
@@ -799,8 +798,8 @@ OPTIONS_DEFIMG_MISSING;<b>rawではない画像</b>のデフォルプロファ�
 OPTIONS_DEFRAW_MISSING;<b>raw画像</b>のデフォル・プロファイルが見つからないか、設定されていません\n\nプロファイル・ディレクトリを確認してください、存在しないか破損しているかもしれません\n\nデフォルト設定値が使用されます
 PARTIALPASTE_BASICGROUP;基本設定
 PARTIALPASTE_CACORRECTION;色収差補正
-PARTIALPASTE_CHANNELMIXERBW;白黒
 PARTIALPASTE_CHANNELMIXER;チャンネル・ミキサー
+PARTIALPASTE_CHANNELMIXERBW;白黒
 PARTIALPASTE_COARSETRANS;90° 回転 / 反転
 PARTIALPASTE_COLORAPP;CIE色の見えモデル2002
 PARTIALPASTE_COLORGROUP;カラー 設定
@@ -875,11 +874,11 @@ PREFERENCES_AUTLOW;低
 PREFERENCES_AUTOMONPROFILE;OSのメインモニター・プロファイルを使用
 PREFERENCES_AUTSTD;標準
 PREFERENCES_BATCH_PROCESSING;バッチ処理
-PREFERENCES_BEHADDALLHINT;すべてのパラメータを <b>追加</b>モードにします\nバッチツールパネルで設定される調整値が、各画像の既定値に<b>加算</b>されます
 PREFERENCES_BEHADDALL;すべて '追加'
+PREFERENCES_BEHADDALLHINT;すべてのパラメータを <b>追加</b>モードにします\nバッチツールパネルで設定される調整値が、各画像の既定値に<b>加算</b>されます
 PREFERENCES_BEHAVIOR;ビヘイビア
-PREFERENCES_BEHSETALLHINT;すべてのパラメータを <b>設定</b>モードにします\nバッチツールパネルで設定される調整値が、各画像の既定値に取って代わり<b>同一</b>になります
 PREFERENCES_BEHSETALL;すべて '設定'
+PREFERENCES_BEHSETALLHINT;すべてのパラメータを <b>設定</b>モードにします\nバッチツールパネルで設定される調整値が、各画像の既定値に取って代わり<b>同一</b>になります
 PREFERENCES_BLACKBODY;タングステン
 PREFERENCES_CACHECLEARALL;すべてクリア
 PREFERENCES_CACHECLEARPROFILES;プロファイルのクリア
@@ -901,23 +900,23 @@ PREFERENCES_CURVEBBOXPOS_ABOVE;上
 PREFERENCES_CURVEBBOXPOS_BELOW;下
 PREFERENCES_CURVEBBOXPOS_LEFT;左
 PREFERENCES_CURVEBBOXPOS_RIGHT;右
+PREFERENCES_CUSTPROFBUILD;カスタム・イメージ・プロファイル・ビルダー
 PREFERENCES_CUSTPROFBUILDHINT;画像から新規のプロファイルを作成する際に呼び出される実行ファイル (またはスクリプト)\n.PP3生成のルールに基づいたコマンドライン・パラメータを受け取ります\n[raw/JPG・パス] [デフォルトのプロファイルのパス] [f-数値] [露出時間 秒] [焦点距離 mm] [ISO] [レンズ] [カメラ]
 PREFERENCES_CUSTPROFBUILDKEYFORMAT;キーフォーマット
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;名前
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;タグID
 PREFERENCES_CUSTPROFBUILDPATH;実行ファイルのパス
-PREFERENCES_CUSTPROFBUILD;カスタム・イメージ・プロファイル・ビルダー
 PREFERENCES_CUTOVERLAYBRUSH;切り抜きマスクカラー 不透明度
 PREFERENCES_D50;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
 PREFERENCES_D65;6500K
+PREFERENCES_DARKFRAME;ダークフレーム
 PREFERENCES_DARKFRAMEFOUND;検出
 PREFERENCES_DARKFRAMESHOTS;ショット
 PREFERENCES_DARKFRAMETEMPLATES;テンプレート
-PREFERENCES_DARKFRAME;ダークフレーム
-PREFERENCES_DATEFORMATHINT;<i>次の書式を使用することができます:</i>\n<b>%y</b><i> : 年</i>\n<b>%m</b><i> : 月</i>\n<b>%d</b><i> : 日</i>\n<i>\n例として, ハンガリアン記法の日付:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DATEFORMAT;日付の形式
+PREFERENCES_DATEFORMATHINT;<i>次の書式を使用することができます:</i>\n<b>%y</b><i> : 年</i>\n<b>%m</b><i> : 月</i>\n<b>%d</b><i> : 日</i>\n<i>\n例として, ハンガリアン記法の日付:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DAUB_LABEL;ドビッシー関数のタイプ　D4の代わりにD6を使う
 PREFERENCES_DAUB_TOOLTIP;ノイズ低減とウェーブレットのレベルツールはマザーウェーブレットにドビッシーを使っています。このタイプでD4の代わりにD6を選択すると、直交系であるドビッシーの係数が増えるので、恐らくスケールの小さいレベルは質が向上するでしょう。タイプを変えても処理時間やメモリー使用量に影響はありません。
 PREFERENCES_DEFAULTLANG;デフォルトの言語
@@ -936,11 +935,11 @@ PREFERENCES_FBROWSEROPTS;ファイルブラウザ/サムネイルのオプショ
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;ファイルブラウザでの一行のツールバー (低解像度表示用に選択解除)
 PREFERENCES_FILEFORMAT;ファイル形式
 PREFERENCES_FILMSIMULATION;フィルムシミュレーション
+PREFERENCES_FLATFIELD;フラットフィールド
 PREFERENCES_FLATFIELDFOUND;検出
 PREFERENCES_FLATFIELDSDIR;フラットフィールド・ディレクトリ
 PREFERENCES_FLATFIELDSHOTS;ショット
 PREFERENCES_FLATFIELDTEMPLATES;テンプレート
-PREFERENCES_FLATFIELD;フラットフィールド
 PREFERENCES_FLUOF2;蛍光灯 F2
 PREFERENCES_FLUOF7;蛍光灯 F7
 PREFERENCES_FLUOF11;蛍光灯 F11
@@ -949,6 +948,7 @@ PREFERENCES_FORRAW;raw画像
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;ファイルブラウザと編集パネルのサムネイルのサイズを同じにする
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;サムネイルのサイズが異なると、編集パネルとファイルブラウザ間の切り替えで、余分な処理時間がかかります
 PREFERENCES_GIMPPATH;GIMP インストール ディレクトリ
+PREFERENCES_GREY;出力デバイスのYb輝度 (%)
 PREFERENCES_GREY05;Yb=05 CIE L#30
 PREFERENCES_GREY10;Yb=10 CIE L#40
 PREFERENCES_GREY15;Yb=15 CIE L#45
@@ -956,10 +956,9 @@ PREFERENCES_GREY18;Yb=18 CIE L#50
 PREFERENCES_GREY23;Yb=23 CIE L#55
 PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
+PREFERENCES_GREYSC;撮影時のYb輝度 (%)
 PREFERENCES_GREYSC18;Yb=18 CIE L#50
 PREFERENCES_GREYSCA;Ybを自動で計算
-PREFERENCES_GREYSC;撮影時のYb輝度 (%)
-PREFERENCES_GREY;出力デバイスのYb輝度 (%)
 PREFERENCES_HISTOGRAMPOSITIONLEFT;左パネルにヒストグラム
 PREFERENCES_HISTOGRAMWORKING;ヒストグラムとナビゲーターの表示に作業プロファイルを使う
 PREFERENCES_HISTOGRAM_TOOLTIP;これを有効にすると、ヒストグラムとナビゲーターの表示に、出力プロファイル（ガンマ適用）の代わりに作業プロファイルを使います
@@ -979,8 +978,8 @@ PREFERENCES_LANGAUTODETECT;OSの言語設定を使用
 PREFERENCES_LEVAUTDN;ノイズ低減のレベル
 PREFERENCES_LEVDN;セルのサイズ
 PREFERENCES_LISS;自動（多分割スムージング）
-PREFERENCES_MAXRECENTFOLDERS;直近のフォルダーの最大数
 PREFERENCES_MAX;最大（タイル）
+PREFERENCES_MAXRECENTFOLDERS;直近のフォルダーの最大数
 PREFERENCES_MED;中 (タイルの半分)
 PREFERENCES_MENUGROUPEXTPROGS;"..で開く"のグループ
 PREFERENCES_MENUGROUPFILEOPERATIONS;"ファイル操作"のグループ
@@ -991,24 +990,24 @@ PREFERENCES_MENUOPTIONS;メニューオプションの状況
 PREFERENCES_METADATA;メタデータ
 PREFERENCES_MIN;最小 (100x115)
 PREFERENCES_MONITORICC;モニター・カラープロファイル
-PREFERENCES_MULTITABDUALMON;独自のウィンドウモードによるマルチ編集タブ
 PREFERENCES_MULTITAB;マルチ編集タブモード
+PREFERENCES_MULTITABDUALMON;独自のウィンドウモードによるマルチ編集タブ
 PREFERENCES_NAVGUIDEBRUSH;ナビゲーターのガイドカラー
 PREFERENCES_NAVIGATIONFRAME;ナビゲーション
 PREFERENCES_NOISE;ノイズ低減
-PREFERENCES_OUTDIRFOLDERHINT;選択したフォルダに画像を保存します
-PREFERENCES_OUTDIRFOLDER;フォルダに保存
-PREFERENCES_OUTDIRTEMPLATEHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;テンプレートを使う
 PREFERENCES_OUTDIR;出力ディレクトリ
+PREFERENCES_OUTDIRFOLDER;フォルダに保存
+PREFERENCES_OUTDIRFOLDERHINT;選択したフォルダに画像を保存します
+PREFERENCES_OUTDIRTEMPLATE;テンプレートを使う
+PREFERENCES_OUTDIRTEMPLATEHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;ファイル名をサムネイル上に透過表示する
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;ファイル名を編集パネルのサムネイル上に透過表示する
 PREFERENCES_OVERWRITEOUTPUTFILE;既存ファイルを上書き
 PREFERENCES_PANFACTORLABEL;パン速度の増幅
-PREFERENCES_PARSEDEXTADDHINT;拡張子を記入し このボタンでリストに追加します
-PREFERENCES_PARSEDEXTADD;拡張子の追加
-PREFERENCES_PARSEDEXTDELHINT;選択した拡張子をリストから削除します
 PREFERENCES_PARSEDEXT;拡張子
+PREFERENCES_PARSEDEXTADD;拡張子の追加
+PREFERENCES_PARSEDEXTADDHINT;拡張子を記入し このボタンでリストに追加します
+PREFERENCES_PARSEDEXTDELHINT;選択した拡張子をリストから削除します
 PREFERENCES_PREVDEMO;プレビューのデモザイク方式
 PREFERENCES_PREVDEMO_FAST;Fast
 PREFERENCES_PREVDEMO_LABEL;プレビューのズームレベルが100％以下の場合に使うデモザイクアルゴリズム：
@@ -1038,8 +1037,8 @@ PREFERENCES_SHOWEXPOSURECOMPENSATION;露光補正追加
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;画像スライドのツールバーを表示する
 PREFERENCES_SHTHRESHOLD;シャドウ・クリッピング領域のしきい値
 PREFERENCES_SIMPLAUT;ツールのモード
-PREFERENCES_SINGLETABVERTAB;シングル編集タブモード, 垂直タブ
 PREFERENCES_SINGLETAB;シングルタブモードモード
+PREFERENCES_SINGLETABVERTAB;シングル編集タブモード, 垂直タブ
 PREFERENCES_SLIMUI;スリムインタフェース
 PREFERENCES_SMA;小 (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;キュー処理 終了
@@ -1086,8 +1085,8 @@ PROFILEPANEL_TOOLTIPCOPY;クリップボードに現在のプロファイルを�
 PROFILEPANEL_TOOLTIPLOAD;ファイルからプロファイルを読み込みます\nCtrl-クリックで読み込むパラメータを選択します
 PROFILEPANEL_TOOLTIPPASTE; クリップボードからプロファイルを貼り付けます\nCtrl-クリックで貼り付けるパラメータを選択します
 PROFILEPANEL_TOOLTIPSAVE;現在のプロファイルを保存\nCtrl-クリックで保存するパラメータを選択します
-PROGRESSBAR_LOADINGTHUMBS;サムネイルの読み込み...
 PROGRESSBAR_LOADING;画像読み込み中...
+PROGRESSBAR_LOADINGTHUMBS;サムネイルの読み込み...
 PROGRESSBAR_LOADJPEG;JPEGファイル読み込み中...
 PROGRESSBAR_LOADPNG;;PNGファイル読み込み中...
 PROGRESSBAR_LOADTIFF;TIFFファイル読み込み中...
@@ -1107,9 +1106,9 @@ SAVEDLG_FILEFORMAT;ファイル形式
 SAVEDLG_FORCEFORMATOPTS;強制保存オプション
 SAVEDLG_JPEGQUAL;JPEG 品質
 SAVEDLG_PNGCOMPR;PNG 圧縮
+SAVEDLG_PUTTOQUEUE;キュー処理に追加
 SAVEDLG_PUTTOQUEUEHEAD;キュー処理の最初に追加
 SAVEDLG_PUTTOQUEUETAIL;キュー処理の最後に追加
-SAVEDLG_PUTTOQUEUE;キュー処理に追加
 SAVEDLG_SAVEIMMEDIATELY;すぐに保存
 SAVEDLG_SAVESPP;設定値も保存する
 SAVEDLG_SUBSAMP;サブ・サンプリング
@@ -1119,13 +1118,13 @@ SAVEDLG_SUBSAMP_3;高画質
 SAVEDLG_TIFFUNCOMPRESSED;非圧縮 TIFF
 SAVEDLG_WARNFILENAME;ファイルに名前が付けられます
 SHCSELECTOR_TOOLTIP;この3つのスライダーの位置をリセットするには\nマウスの右ボタンをクリック
+THRESHOLDSELECTOR_B;下
 THRESHOLDSELECTOR_BL;下-左
 THRESHOLDSELECTOR_BR;下-右
-THRESHOLDSELECTOR_B;下
 THRESHOLDSELECTOR_HINT;個々のコントロールポイントを移動するには、<b>Shiftキー</b>を押し続けます
+THRESHOLDSELECTOR_T;上
 THRESHOLDSELECTOR_TL;上-左
 THRESHOLDSELECTOR_TR;上-右
-THRESHOLDSELECTOR_T;上
 TOOLBAR_TOOLTIP_CROP;切り抜き範囲選択\nショートカット:  <b>c</b>
 TOOLBAR_TOOLTIP_HAND;手の平ツール\nショートカット:  <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>直線選択</b> / <b>角度補正</b>\nショートカット: <b>s</b>\nプレビュー画像上にガイド線を描画し、垂直または水平方向を指示します。回転角度は、ガイド線の隣に表示されます。回転の中心は、プレビュー画像の中心です
@@ -1145,14 +1144,14 @@ TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;処理最終段階で白黒変換を施した
 TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;色の構成を変えるかもしれない\n白黒変換を施す前のトーンカーブ
 TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;色相における明度を補正\n極端な補正はアーティファクトの発生に注意します
 TP_BWMIX_FILTER;カラーフィルター
-TP_BWMIX_FILTER_BLUEGREEN;ブルー/グリーン
 TP_BWMIX_FILTER_BLUE;ブルー
-TP_BWMIX_FILTER_GREENYELLOW;グリーン/イエロー
+TP_BWMIX_FILTER_BLUEGREEN;ブルー/グリーン
 TP_BWMIX_FILTER_GREEN;グリーン
+TP_BWMIX_FILTER_GREENYELLOW;グリーン/イエロー
 TP_BWMIX_FILTER_NONE;なし
 TP_BWMIX_FILTER_PURPLE;パープル
-TP_BWMIX_FILTER_REDYELLOW;レッド/イエロー
 TP_BWMIX_FILTER_RED;レッド
+TP_BWMIX_FILTER_REDYELLOW;レッド/イエロー
 TP_BWMIX_FILTER_TOOLTIP;カラーフィルターはレンズにカラーフィルターを装着して撮影したような効果をもたらします。カラーフィルターは特定の入光色を減らし、特定の明るさを変えます。例、レッドフィルターは青空の色を暗くします。
 TP_BWMIX_FILTER_YELLOW;イエロー
 TP_BWMIX_GAMMA;ガンマ補正
@@ -1283,11 +1282,11 @@ TP_COLORTONING_COLOR;カラー
 TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;C=f(L)の明度に応じたクロマの不透明度
 TP_COLORTONING_HIGHLIGHT;ハイライト
 TP_COLORTONING_HUE;色相
-TP_COLORTONING_LABEL;カラートーン調整
 TP_COLORTONING_LAB;L*a*b*モデルでブレンド
+TP_COLORTONING_LABEL;カラートーン調整
+TP_COLORTONING_LUMA;明度
 TP_COLORTONING_LUMAMODE;明度を維持
 TP_COLORTONING_LUMAMODE_TOOLTIP;カラー（レッド、グリーン、シアン、ブルーなど）を変える際に、これを有効にすると、各ピクセルの明度は維持されます。
-TP_COLORTONING_LUMA;明度
 TP_COLORTONING_METHOD;方法
 TP_COLORTONING_METHOD_TOOLTIP;L*a*b*モデルのブレンドはカラー補間を使います\nカラーバランスは、シャドウ、ミッドトーン、ハイライトでバランスをとります\nSH＋バランスは、ダイレクトカラーを使ってシャドウとハイライトでカラートン調整とバランスを調整します\n全ての方法で白黒変換を有効に出来ます
 TP_COLORTONING_MIDTONES;中間トーン
@@ -1296,15 +1295,15 @@ TP_COLORTONING_NEUTRAL_TIP;スライダーの全ての値（SMH：シャドウ�
 TP_COLORTONING_OPACITY;不透明度
 TP_COLORTONING_RGBCURVES;RGB　－　カーブ
 TP_COLORTONING_RGBSLIDERS;RGB　－　スライダー
+TP_COLORTONING_SA;彩度の保護
 TP_COLORTONING_SATURATEDOPACITY;強さ
 TP_COLORTONING_SATURATIONTHRESHOLD;しきい値
-TP_COLORTONING_SA;彩度の保護
 TP_COLORTONING_SHADOWS;シャドウ
-TP_COLORTONING_SPLITCOCO;S/M/Hでカラーバランス
 TP_COLORTONING_SPLITCO;S/M/Hでカラートーン調整
+TP_COLORTONING_SPLITCOCO;S/M/Hでカラーバランス
 TP_COLORTONING_SPLITLR;2色の彩度でカラートーン調整
-TP_COLORTONING_STRENGTH;強さ
 TP_COLORTONING_STR;強さ
+TP_COLORTONING_STRENGTH;強さ
 TP_COLORTONING_TWO2;特定のクロマ‘2色’
 TP_COLORTONING_TWOALL;特定のクロマ
 TP_COLORTONING_TWOBY;特定の'a*'と'b*'
@@ -1334,67 +1333,67 @@ TP_DEFRINGE_LABEL;フリンジ低減
 TP_DEFRINGE_RADIUS;半径
 TP_DEFRINGE_THRESHOLD;しきい値
 TP_DIRPYRDENOISE_33;強い3x3
-TP_DIRPYRDENOISE_55SOFT;5x5
 TP_DIRPYRDENOISE_55;強い5x5
+TP_DIRPYRDENOISE_55SOFT;5x5
 TP_DIRPYRDENOISE_77;7x7（遅い）
 TP_DIRPYRDENOISE_99;9x9 (非常に遅い)
 TP_DIRPYRDENOISE_ABM;色ノイズだけ
+TP_DIRPYRDENOISE_AUT;自動（分割方式）
 TP_DIRPYRDENOISE_AUTO;自動（分割方式）
 TP_DIRPYRDENOISE_AUTO_TOOLTIP;色ノイズ低減の効果を確認して下さい\n注意：設定値の計算はあくまで平均的なもので、かなり主観的でです
-TP_DIRPYRDENOISE_AUT;自動（分割方式）
 TP_DIRPYRDENOISE_BLUE;色差 ブルー/イエロー
 TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;手動\n画像全体に作用します\nノイズ低減の設定を手動で行います\n\n自動（分割方式）\n画像全体に作用します\n画像を9つに分割して、そこから全体の色ノイズ低減に適した設定を自動的に行います\n\n自動（プレビュー方式）\n画像全体に作用します\nプレビューで見えている画像の一部を使って全体の色ノイズ低減に適した設定を自動で行います
 TP_DIRPYRDENOISE_CCCURVE;色ノイズ低減のカーブ
-TP_DIRPYRDENOISE_CHROMAFR;色ノイズ
 TP_DIRPYRDENOISE_CHROMA;色(マスター)
+TP_DIRPYRDENOISE_CHROMAFR;色ノイズ
 TP_DIRPYRDENOISE_CTYPE;色ノイズの調整法
 TP_DIRPYRDENOISE_CTYPE_TOOLTIP;手動\n画像全体に作用します\nノイズ低減の設定を手動で行います\n\n自動（分割方式）\n画像全体に作用します\n画像を9つに分割して、そこから全体の色ノイズ低減に適した設定を自動的に行います\n\n自動（多分割方式）\nプレビュー画像には反映されません-保存画像だけに反映されます。但し、タイルサイズとその中心をプレビューサイズとその中心にマッチさせる〝プレビュー”方式を使えば、効果がどれ位か予測がつきます。\n画像をタイル状に分割し（タイル数は画像サイズ次第で、10～70枚になります）、各タイルにあった色ノイズ低減の設定を自動で行います\n\n自動（プレビュー方式）\n画像全体に作用します\nプレビューで見えている画像の一部を使って全体の色ノイズ低減に適した設定を自動で行います
+TP_DIRPYRDENOISE_CUR;カーブ
 TP_DIRPYRDENOISE_CURVEEDITOR_CC;色度
 TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;色度のスライダーの値を全て増やします（乗数）\nこれは色度に応じて色ノイズの低減効果の強弱を調節するカーブです。例えば、色度の低い部分で低減効果を高めるとか、色度の高い部分で低減効果を緩める、という具合です。
 TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;‘輝度’の位置でノイズ低減の強さを加減します
-TP_DIRPYRDENOISE_CUR;カーブ
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;rawと非raw画像に使用することができます\n\n非raw画像の場合、輝度ノイズ低減は、入力カラープロファイルのガンマを使って行います。その際sRGBのガンマが想定されていますので、入力画像が異なるガンマのカラープロファイルであれば、輝度ノイズ低減の結果も異なります。
 TP_DIRPYRDENOISE_ENH;強化モード
 TP_DIRPYRDENOISE_ENH_TOOLTIP;ノイズ低減の効果を髙めますが、代わりに演算時間が約20%増えます。
 TP_DIRPYRDENOISE_GAMMA;ガンマ
 TP_DIRPYRDENOISE_GAMMA_TOOLTIP;ガンマは、トーンの範囲全体でノイズ低減の量を変化させます。値が大きいほど明るいトーンに効果を及ぼし、値が小さいほどシャドウをターゲットにします
+TP_DIRPYRDENOISE_LAB;L*a*b*
 TP_DIRPYRDENOISE_LABEL;ノイズ低減
 TP_DIRPYRDENOISE_LABM;L*a*b*
-TP_DIRPYRDENOISE_LAB;L*a*b*
 TP_DIRPYRDENOISE_LCURVE;輝度カーブ
 TP_DIRPYRDENOISE_LDETAIL;輝度　細部の復元
 TP_DIRPYRDENOISE_LM;輝度のみ
 TP_DIRPYRDENOISE_LPLABM;加重平均 L* (少なめ) + a*b* (普通)
 TP_DIRPYRDENOISE_LTYPE;輝度ノイズの調整法
+TP_DIRPYRDENOISE_LUMA;輝度
 TP_DIRPYRDENOISE_LUMAFR;輝度ノイズ
 TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;輝度の低減で、全体的にはウェーブレット変換、ディテールにはフーリエ変換を使います
-TP_DIRPYRDENOISE_LUMA;輝度
-TP_DIRPYRDENOISE_MANU;手動
 TP_DIRPYRDENOISE_MAN;手動
+TP_DIRPYRDENOISE_MANU;手動
+TP_DIRPYRDENOISE_MED;メディアンフィルター
 TP_DIRPYRDENOISE_MEDMETHOD;方式
 TP_DIRPYRDENOISE_MEDTYPE;フィルターの種類
-TP_DIRPYRDENOISE_MED;メディアンフィルター
 TP_DIRPYRDENOISE_MED_TOOLTIP;メディアンフィルターによるノイズ低減を有効にします
+TP_DIRPYRDENOISE_METHOD;方式
 TP_DIRPYRDENOISE_METHOD11;ノイズ低減の質
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;ノイズの状態に応じて低減効果の質を選べます：1-標準　2－高い\n2の方がノイズ低減効果は高くなりますが、その分処理時間が増えます。
-TP_DIRPYRDENOISE_METHOD;方式
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;raw画像は、RGBまたはL*a*b*方式のいずれかを使用することができます。\n\nraw以外の画像は、選択にかかわらずL*a*b*方式が採用されます
 TP_DIRPYRDENOISE_METM_TOOLTIP;フィルタリングの方式で、"輝度のみ"と"L*a*b*"を選択した場合、メディアンフィルタリングはノイズ低減行程でウェーブレット変換が行われた直後に適用されます\n"RGB"モードの場合は、ノイズ低減行程の最後で適用されます
 TP_DIRPYRDENOISE_MET_TOOLTIP;適用するメディアンフィルターのサイズを決めます。大きくするとその分処理時間が増えます。\n\nソフトな3x3：1ピクセル範囲で5ピクセルの処理を行います\n強い3x3：1ピクセル範囲で9ピクセルの処理を行います\nソフトな5x5：2ピクセル範囲で13ピクセルの処理を行います\n強い5x5：2ピクセル範囲で25ピクセルの処理を行います\n7x7：3ピクセル範囲で49ピクセルの処理を行います\n9x9:4ピクセル範囲で81ピクセルの処理を行います\n\n小さいフィルターを使って、繰り返し処理をした方が、大きいフィルターを1回使うより結果が良いこともあります。
-TP_DIRPYRDENOISE_NOISELABELEMPTY;プレビューのノイズ: 中間色度= -   高色度= -
 TP_DIRPYRDENOISE_NOISELABEL;プレビューのノイズ: 中間色度=%1  高色度=%2
+TP_DIRPYRDENOISE_NOISELABELEMPTY;プレビューのノイズ: 中間色度= -   高色度= -
 TP_DIRPYRDENOISE_NRESID_TOOLTIP;ウェーブレット変換後、プレビューで見える部分画像で残ったノイズのレベルを表示します\n\n>300以上　非常にノイズが多い\n100～300 ノイズが多い\n50～100　ノイズが少ない\n50以下 ノイズが非常に少ない\n\n算出値はRGBとL*a*b*モードでは異なります。RGBモードは輝度と色を完全に切り離すことが出来ないので、算出値の精度は劣ります。
 TP_DIRPYRDENOISE_PASSES;フィルタリングの繰り返し回数
 TP_DIRPYRDENOISE_PASSES_TOOLTIP;3x3のメディアンフィルターを3回繰り返して適用する方が、7x7のフィルターを1回適用するより、良い結果を生むことが多いです
 TP_DIRPYRDENOISE_PON;自動（多分割方式）
-TP_DIRPYRDENOISE_PREVLABEL;プレビューのサイズ=%1, 中心: Px=%2  Py=%3
-TP_DIRPYRDENOISE_PREV;プレビュー方式
 TP_DIRPYRDENOISE_PRE;自動（プレビュー方式）
+TP_DIRPYRDENOISE_PREV;プレビュー方式
+TP_DIRPYRDENOISE_PREVLABEL;プレビューのサイズ=%1, 中心: Px=%2  Py=%3
 TP_DIRPYRDENOISE_RED;色差 レッド/グリーン
-TP_DIRPYRDENOISE_RGBM;RGB
 TP_DIRPYRDENOISE_RGB;RGB
-TP_DIRPYRDENOISE_SHALBI;高い
+TP_DIRPYRDENOISE_RGBM;RGB
 TP_DIRPYRDENOISE_SHAL;標準
+TP_DIRPYRDENOISE_SHALBI;高い
 TP_DIRPYRDENOISE_SLI;スライダー
 TP_DIRPYRDENOISE_SOFT;3x3
 TP_DIRPYRDENOISE_TILELABEL;タイルのサイズ=%1, 中心位置: X座標=%2  Y座標=%3
@@ -1430,8 +1429,8 @@ TP_EXPOSURE_BLACKLEVEL;黒レベル
 TP_EXPOSURE_BRIGHTNESS;明度
 TP_EXPOSURE_CLIP;クリップ　％
 TP_EXPOSURE_CLIP_TIP;自動露光補正によるハイライトとシャドウ部分での飽和ピクセルの割合制限
-TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;ハイライト圧縮 しきい値
 TP_EXPOSURE_COMPRHIGHLIGHTS;ハイライト圧縮
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;ハイライト圧縮 しきい値
 TP_EXPOSURE_COMPRSHADOWS;シャドウ圧縮
 TP_EXPOSURE_CONTRAST;コントラスト
 TP_EXPOSURE_CURVEEDITOR1;トーンカーブ1
@@ -1503,9 +1502,9 @@ TP_ICM_BLENDCMSMATRIX_TOOLTIP;LUTベースのICCプロファイルを使用す�
 TP_ICM_DCPILLUMINANT;光源
 TP_ICM_DCPILLUMINANT_INTERPOLATED;補間
 TP_ICM_DCPILLUMINANT_TOOLTIP;埋め込まれているDCPの光源のどちらを使うか選択。デフォルトではホワイトバランスに基づいて二つの光源の中間に補間する。この設定は二つのDCPの光源が補間サポートされる、を選択している場合に有効。
+TP_ICM_INPUTCAMERA;カメラの標準的プロファイル
 TP_ICM_INPUTCAMERAICC;カメラ固有のプロファイル
 TP_ICM_INPUTCAMERAICC_TOOLTIP;RawTherapeeが持っているカメラ固有のDCP或いはICCプロファイルを使用 シンプルなマトリクスより正確だが一部のカメラだけに利用可能
-TP_ICM_INPUTCAMERA;カメラの標準的プロファイル
 TP_ICM_INPUTCAMERA_TOOLTIP;dcrawのシンプルなカラー・マトリクス、RawTherapeeの拡張バージョン（カメラの機種によりどちらでも可能）またはDNGの埋め込みを使用
 TP_ICM_INPUTCUSTOM;カスタム
 TP_ICM_INPUTCUSTOM_TOOLTIP;独自の DCP/ICCプロファイルファイルを選択
@@ -1571,7 +1570,6 @@ TP_LENSPROFILE_LABEL;レンズ補正 プロファイル
 TP_LENSPROFILE_USECA;色収差補正
 TP_LENSPROFILE_USEDIST;歪曲収差補正
 TP_LENSPROFILE_USEVIGN;周辺光量補正
-TP_NEUTRAL;ニュートラル
 TP_NEUTRAL_TIP;露光量補正のスライダー値をニュートラルにリセットします。\n自動露光補正の調整値ついても同様にリセットされます
 TP_PCVIGNETTE_FEATHER;フェザー処理
 TP_PCVIGNETTE_FEATHER_TOOLTIP;フェザー処理：　0=四隅だけ、50=中央までの半分、100=中央まで
@@ -1629,16 +1627,16 @@ TP_RESIZE_APPLIESTO;適用領域:
 TP_RESIZE_CROPPEDAREA;切り抜き画像
 TP_RESIZE_FITBOX;バウンディング・ボックス
 TP_RESIZE_FULLIMAGE;全画像
-TP_RESIZE_HEIGHT;高さ
 TP_RESIZE_H;高さ:
+TP_RESIZE_HEIGHT;高さ
 TP_RESIZE_LABEL;リサイズ
 TP_RESIZE_LANCZOS;ランチョス
 TP_RESIZE_METHOD;方式:
 TP_RESIZE_NEAREST;ニアリスト
 TP_RESIZE_SCALE;スケール
 TP_RESIZE_SPECIFY;条件指定:
-TP_RESIZE_WIDTH;幅
 TP_RESIZE_W;幅:
+TP_RESIZE_WIDTH;幅
 TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;チャンネル
 TP_RGBCURVES_GREEN;G
@@ -1736,9 +1734,9 @@ TP_WAVELET_CH1;全ての色
 TP_WAVELET_CH2;明清色 - 純色
 TP_WAVELET_CH3;コントラストのレベルとリンク
 TP_WAVELET_CHCU;カーブ
+TP_WAVELET_CHR;色度とコントラストのリンクの強さ
 TP_WAVELET_CHRO;純色 - 明清色のしきい値
 TP_WAVELET_CHRO_TOOLTIP;どのレベルで明清色と純色を調整するか決めます\n1-x：純色を調整するレベルの範囲\nx-9：明清色を調整するレベルの範囲\n\n但し、値がレベルの総数より多い場合は機能が無効となります
-TP_WAVELET_CHR;色度とコントラストのリンクの強さ
 TP_WAVELET_CHR_TOOLTIP;色度を”コントラストレベル”と”色度とコントラストのリンクの強さ”の相関関係で調整します
 TP_WAVELET_CHSL;スライダー
 TP_WAVELET_CHTYPE;調整の方法
@@ -1748,11 +1746,11 @@ TP_WAVELET_COMPGAMMA;ガンマの圧縮
 TP_WAVELET_COMPGAMMA_TOOLTIP;残差画像のガンマを調整することで、画像データとヒストグラムの均衡を図ります。
 TP_WAVELET_COMPTM;トーンマッピング
 TP_WAVELET_CONTEDIT;'後の' コントラストカーブ
+TP_WAVELET_CONTR;色域
+TP_WAVELET_CONTRA;コントラスト
 TP_WAVELET_CONTRAST_MINUS;コントラスト -
 TP_WAVELET_CONTRAST_PLUS;コントラスト +
-TP_WAVELET_CONTRA;コントラスト
 TP_WAVELET_CONTRA_TOOLTIP;残差画像のコントラストを変えます
-TP_WAVELET_CONTR;色域
 TP_WAVELET_CTYPE;色の制御
 TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;元画像のローカルコントラストに応じてローカルコントラストを調節します\n横軸の低い部分は細かいローカルコントラストを表しています（実質値10~20）\n50%はローカルコントラストの平均（実質値100~300）を表しています\n66%はローカルコントラストの標準偏差（実質値300~800）を表しています\n100%はローカルコントラストの最大値を表しています（実質値3000~8000）
 TP_WAVELET_CURVEEDITOR_CH;コントラストレベル=f(色相)
@@ -1762,12 +1760,12 @@ TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;ウェーブレットの処理工程の最後�
 TP_WAVELET_CURVEEDITOR_HH;HH
 TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;色相に応じて、残差画像の色相を調整します
 TP_WAVELET_DALL;全ての方向
+TP_WAVELET_DAUB;エッジ検出の効果
 TP_WAVELET_DAUB2;D2 - 低い
 TP_WAVELET_DAUB4;D4 - 標準
 TP_WAVELET_DAUB6;D6 - 標準プラス
 TP_WAVELET_DAUB10;D10 - やや高い
 TP_WAVELET_DAUB14;D14 - 高い
-TP_WAVELET_DAUB;エッジ検出の効果
 TP_WAVELET_DAUB_TOOLTIP;ドブシー関数の係数を変更します\nD4=標準的なエッジ検出の効果\nD14=通常はエッジ検出の効果が高いが、処理時間が約10%増加\n\n初めのレベルの質だけでなくエッジ検出にも影響します。但し、レベル質は厳格に係数の種類に比例している訳ではありません。画像や使い方にも影響されます。
 TP_WAVELET_DONE;垂直
 TP_WAVELET_DTHR;対角線
@@ -1775,14 +1773,14 @@ TP_WAVELET_DTWO;水平
 TP_WAVELET_EDCU;カーブ
 TP_WAVELET_EDGCONT;ローカルコントラスト
 TP_WAVELET_EDGCONT_TOOLTIP;スライダーを左に動かすとコントラストが減り、右に動かすと増えます\n底部の左、天井部の左、底部の右、天井部の右は、それぞれ低いコントラスト、平均的コントラスト、平均+1標準偏差のコントラスト、最も高いコントラストを示しています
+TP_WAVELET_EDGE;エッジのシャープネス
 TP_WAVELET_EDGEAMPLI;基底値の増幅
-TP_WAVELET_EDGEDETECTTHR2;しきい値　高（エッジ検出）
-TP_WAVELET_EDGEDETECTTHR;しきい値　低（ノイズ）
-TP_WAVELET_EDGEDETECTTHR_TOOLTIP;しきい値を変えることで、エッジ検出の目標を調整します。例えば、青空の中のノイズが先鋭化しないようにします。
 TP_WAVELET_EDGEDETECT;グラデーション感度
+TP_WAVELET_EDGEDETECTTHR;しきい値　低（ノイズ）
+TP_WAVELET_EDGEDETECTTHR2;しきい値　高（エッジ検出）
+TP_WAVELET_EDGEDETECTTHR_TOOLTIP;しきい値を変えることで、エッジ検出の目標を調整します。例えば、青空の中のノイズが先鋭化しないようにします。
 TP_WAVELET_EDGEDETECT_TOOLTIP;スライダーを右に動かすと、エッジ検出の感度が上がります。これはローカルコントラスト、しきい値　高、しきい値　低にも影響します
 TP_WAVELET_EDGESENSI;エッジ検出の感度
-TP_WAVELET_EDGE;エッジのシャープネス
 TP_WAVELET_EDGREINF_TOOLTIP;最初のレベルに対する作用を強めたり、弱めたりし、次のレベルに対してはその逆を行います、他のレベルは変わりません
 TP_WAVELET_EDGTHRESH;ディテール
 TP_WAVELET_EDGTHRESH_TOOLTIP;低いレベルと他のレベルの区分を変更します。しきい値を高くするほど、低いレベルに作用の重点が置かれます。注意：マイナス値の設定は高いレベルに重点が置かれ、アーティファクトが発生することがあります。
@@ -1821,29 +1819,29 @@ TP_WAVELET_LINKEDG;エッジのシャープネスの強さとリンク
 TP_WAVELET_LIPST;高度なアルゴリズム
 TP_WAVELET_LOWLIGHT;シャドウの輝度範囲
 TP_WAVELET_MEDGREINF;最初のレベル
+TP_WAVELET_MEDI;青空のアーティファクトを軽減
 TP_WAVELET_MEDILEV;エッジ検出
 TP_WAVELET_MEDILEV_TOOLTIP;エッジの検出を有効にした際には、次の操作が奨められます：\n- アーティファクト発生を避けるため低いレベルのコントラストを使わない\n- グラデーション感度では高い値を使う\n\n効果を和らげるには、ノイズ低減とリファインの’リファイン’を下げる
-TP_WAVELET_MEDI;青空のアーティファクトを軽減
 TP_WAVELET_NEUTRAL;ニュートラル
-TP_WAVELET_NOISE;ノイズ低減とリファイン
 TP_WAVELET_NOIS;ノイズ低減
+TP_WAVELET_NOISE;ノイズ低減とリファイン
 TP_WAVELET_NPHIGH;高い
 TP_WAVELET_NPLOW;低い
 TP_WAVELET_NPNONE;なし
 TP_WAVELET_NPTYPE;隣接するピクセルに対する効果
 TP_WAVELET_NPTYPE_TOOLTIP;このアルゴリズムは近傍する8つのピクセルを使って比較します。違いが少ない場合に、エッジを強化します。
+TP_WAVELET_OPACITY;ブルー/イエローの不透明度
+TP_WAVELET_OPACITYW;コントラストバランス　d/v-hカーブ
 TP_WAVELET_OPACITYWL;最終的なローカルコントラスト
 TP_WAVELET_OPACITYWL_TOOLTIP;ウェーブレット処理の最後で最終的なローカルコントラストを調整します\n\nイコライザは左から右に向かって、最も細かいローカルコントラストから大きいローカルコントラストを表しています
-TP_WAVELET_OPACITYW;コントラストバランス　d/v-hカーブ
-TP_WAVELET_OPACITY;ブルー/イエローの不透明度
 TP_WAVELET_PASTEL;明清色の色度
 TP_WAVELET_PROC;プロセス
 TP_WAVELET_RE1;強める
 TP_WAVELET_RE2;変えない
 TP_WAVELET_RE3;弱める
 TP_WAVELET_RESCHRO;色度
-TP_WAVELET_RESCONH;ハイライト
 TP_WAVELET_RESCON;シャドウ
+TP_WAVELET_RESCONH;ハイライト
 TP_WAVELET_RESID;残差画像
 TP_WAVELET_SAT;純色の色度
 TP_WAVELET_SETTINGS;ウェーブレットの設定
@@ -1851,15 +1849,15 @@ TP_WAVELET_SKIN;色相-トーン (肌色) の目標/保護
 TP_WAVELET_SKIN_TOOLTIP;－100にすると肌色のトーンだけが調整の対象になります\n0にすると全てのカラートーンが調整されます\n＋100にすると肌色のトーンは保護され、他のカラートーンが調整されます
 TP_WAVELET_SKY;色相-トーン（青空）の目標/保護
 TP_WAVELET_SKY_TOOLTIP;－100にすると青空のトーンだけが調整の対象になります\n0にすると全てのカラートーンが調整されます\n＋100にすると青空のトーンは保護され、他のカラートーンが調整されます
-TP_WAVELET_STRENGTH;強さ
 TP_WAVELET_STREN;強さ
+TP_WAVELET_STRENGTH;強さ
 TP_WAVELET_SUPE;エキストラ
+TP_WAVELET_THR;シャドウのしきい値
+TP_WAVELET_THRESHOLD;ハイライトを調整するレベル
 TP_WAVELET_THRESHOLD2;シャドウを調整するレベル
 TP_WAVELET_THRESHOLD2_TOOLTIP;レベル9と（9-設定値）のレベルの間でシャドウの輝度が調整されます。他のレベルは輝度範囲全体で調整されます。
-TP_WAVELET_THRESHOLD;ハイライトを調整するレベル
 TP_WAVELET_THRESHOLD_TOOLTIP;設定値以上のレベルだけが、ハイライトの輝度で調整されます。他のレベルは輝度範囲全体で調整されます。選べる設定値の最大数はシャドウレベルの設定に左右されます。
 TP_WAVELET_THRH;ハイライトのしきい値
-TP_WAVELET_THR;シャドウのしきい値
 TP_WAVELET_TILESBIG;大きいタイル
 TP_WAVELET_TILESFULL;画像全体
 TP_WAVELET_TILESIZE;タイルのサイズ
@@ -1927,6 +1925,7 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_407;Retinex - Method
 !HISTORY_MSG_408;Retinex - Neighboring
 !HISTORY_MSG_409;Retinex - Gain
@@ -1950,6 +1949,7 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !PARTIALPASTE_RETINEX;Retinex
 !PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
+!TP_NEUTRAL;Reset
 !TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
 !TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
 !TP_RETINEX_CONTEDIT_LH;Hue equalizer
@@ -1967,10 +1967,10 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !TP_RETINEX_GAMMA_MID;Middle
 !TP_RETINEX_GAMMA_NONE;None
 !TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
+!TP_RETINEX_HIGH;High
+!TP_RETINEX_HIGHLIG;Highlight
 !TP_RETINEX_HIGHLIGHT;Highlight threshold
 !TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.
-!TP_RETINEX_HIGHLIG;Highlight
-!TP_RETINEX_HIGH;High
 !TP_RETINEX_HSLSPACE_LIN;HSL-Linear
 !TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
 !TP_RETINEX_LABEL;Retinex
@@ -1990,8 +1990,8 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !TP_RETINEX_STRENGTH;Strength
 !TP_RETINEX_THRESHOLD;Threshold
 !TP_RETINEX_THRESHOLD_TOOLTIP;Limits in/out.\nIn = image source,\nOut = image gauss.
-!TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
 !TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
+!TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
 !TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nMean and Sigma\nTm=Min TM=Max of transmission map.
 !TP_RETINEX_TRANSMISSION;Transmission map
 !TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.

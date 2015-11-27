@@ -8,8 +8,8 @@ ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Restaura predeterminats
 BATCHQUEUE_AUTOSTART;Auto engega
 BATCH_PROCESSING;Processament per lots
-CURVEEDITOR_CURVES;Corbes
 CURVEEDITOR_CURVE;Corba
+CURVEEDITOR_CURVES;Corbes
 CURVEEDITOR_CUSTOM;A mida
 CURVEEDITOR_DARKS;Foscos
 CURVEEDITOR_HIGHLIGHTS;Clars intensos
@@ -38,19 +38,19 @@ EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objectiu
 EXIFFILTER_METADATAFILTER;Empra filtres Metadata
 EXIFFILTER_SHUTTER;Temps d'exposició
-EXIFPANEL_ADDEDITHINT;Afegir nou atribut o editar-lo
 EXIFPANEL_ADDEDIT;Afegir/Editar
+EXIFPANEL_ADDEDITHINT;Afegir nou atribut o editar-lo
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Entrar valor
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Selecciona atribut
 EXIFPANEL_ADDTAGDLG_TITLE;Afegir/Editar atribut
-EXIFPANEL_KEEPHINT;Conserva atributs seleccionats en escriure un nou fitxer
 EXIFPANEL_KEEP;Guarda
-EXIFPANEL_REMOVEHINT;Esborra atributs seleccionats en escriure un nou fitxer
+EXIFPANEL_KEEPHINT;Conserva atributs seleccionats en escriure un nou fitxer
 EXIFPANEL_REMOVE;Esborra
-EXIFPANEL_RESETALLHINT;Reinicialitza atributs als valors originals
-EXIFPANEL_RESETALL;Reinic. tot
-EXIFPANEL_RESETHINT;Reinic. atributs seleccionats als valors originals
+EXIFPANEL_REMOVEHINT;Esborra atributs seleccionats en escriure un nou fitxer
 EXIFPANEL_RESET;Reinicialitza
+EXIFPANEL_RESETALL;Reinic. tot
+EXIFPANEL_RESETALLHINT;Reinicialitza atributs als valors originals
+EXIFPANEL_RESETHINT;Reinic. atributs seleccionats als valors originals
 EXIFPANEL_SUBDIRECTORY;Subdirectori
 EXPORT_BYPASS_ALL;Selecciona / Deselecciona tot
 EXPORT_BYPASS_DEFRINGE;Salta desserrellar
@@ -83,18 +83,18 @@ FILEBROWSER_AUTODARKFRAME;Auto marc fosc
 FILEBROWSER_AUTOFLATFIELD;Auto camp pla
 FILEBROWSER_BROWSEPATHBUTTONHINT;Clic per navegar al path escollit
 FILEBROWSER_BROWSEPATHHINT;Escriviu path on buscar.\n<b>Ctrl-O</b> dirigir-se al path de la finestra de text.\n<b>Enter</b> / <b>Ctrl-Enter</b> (en el gestor de fitxers) per a navegar allí;\n\nPath dreceres:\n  <b>~</b> - directori home de l'usuari\n  <b>!</b> - directori de fotografies de l'usuari
+FILEBROWSER_CACHE;Cau
 FILEBROWSER_CACHECLEARFROMFULL;Esborra el cau - tot
 FILEBROWSER_CACHECLEARFROMPARTIAL;Esborra el cau - part
-FILEBROWSER_CACHE;Cau
 FILEBROWSER_CLEARPROFILE;Neteja
 FILEBROWSER_COPYPROFILE;Copia
 FILEBROWSER_CURRENT_NAME;Nom actual:
 FILEBROWSER_DARKFRAME;Marc fosc
 FILEBROWSER_DELETEDLGLABEL;Confirmació d'esborrar fitxer
-FILEBROWSER_DELETEDLGMSGINCLPROC;Segur que voleu suprimir els fitxers <b>%1</b> seleccionats <b>incloent</b> la versió processada a la cua?
 FILEBROWSER_DELETEDLGMSG;Segur que voleu esborrar els <b>%1</b> fitxers?
-FILEBROWSER_EMPTYTRASHHINT;Buida permanentment la paperera
+FILEBROWSER_DELETEDLGMSGINCLPROC;Segur que voleu suprimir els fitxers <b>%1</b> seleccionats <b>incloent</b> la versió processada a la cua?
 FILEBROWSER_EMPTYTRASH;Buida paperera
+FILEBROWSER_EMPTYTRASHHINT;Buida permanentment la paperera
 FILEBROWSER_EXEC_CPB;Constructor de perfils propis
 FILEBROWSER_EXTPROGMENU;Obre amb
 FILEBROWSER_FLATFIELD;Camp pla
@@ -111,14 +111,14 @@ FILEBROWSER_POPUPFILEOPERATIONS;Operacions amb fitxers
 FILEBROWSER_POPUPMOVEEND;Mou a la fi de la cua
 FILEBROWSER_POPUPMOVEHEAD;Mou a l'inici de la cua
 FILEBROWSER_POPUPMOVETO;Mou cap a...
-FILEBROWSER_POPUPOPENINEDITOR;Obrir en Editor
 FILEBROWSER_POPUPOPEN;Obre
-FILEBROWSER_POPUPPROCESSFAST;Posa a la cua (export. ràpida)
+FILEBROWSER_POPUPOPENINEDITOR;Obrir en Editor
 FILEBROWSER_POPUPPROCESS;Posa a la cua
+FILEBROWSER_POPUPPROCESSFAST;Posa a la cua (export. ràpida)
 FILEBROWSER_POPUPPROFILEOPERATIONS;Processant operacions de perfil
 FILEBROWSER_POPUPRANK;Rang
-FILEBROWSER_POPUPREMOVEINCLPROC;Esborra amb sortida de la cua
 FILEBROWSER_POPUPREMOVE;Esborra el fitxer
+FILEBROWSER_POPUPREMOVEINCLPROC;Esborra amb sortida de la cua
 FILEBROWSER_POPUPRENAME;Reanomena
 FILEBROWSER_POPUPSELECTALL;Selec. tot
 FILEBROWSER_POPUPTRASH;Llença a la paperera
@@ -150,10 +150,10 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Mostra imatges no recentment desades.\nDrec
 FILEBROWSER_SHOWTRASHHINT;Veure què hi ha a la paperera.\nDrecera: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Mostra imatges sense etiqueta de color.\nDrecera: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Mostra imatges sense rang.\nDrecera: <b>0</b>
-FILEBROWSER_STARTPROCESSINGHINT;Inicia el processament de les imatges de la cua
 FILEBROWSER_STARTPROCESSING;Inicia procés
-FILEBROWSER_STOPPROCESSINGHINT;Atura processament d'imatges de la cua
+FILEBROWSER_STARTPROCESSINGHINT;Inicia el processament de les imatges de la cua
 FILEBROWSER_STOPPROCESSING;Atura processament
+FILEBROWSER_STOPPROCESSINGHINT;Atura processament d'imatges de la cua
 FILEBROWSER_THUMBSIZE;Tamany minifoto
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Inicia processat automàticament en rebre un nou treball
 FILEBROWSER_ZOOMINHINT;Engrandir minifoto.\nDrecera: <b>+</b>
@@ -162,27 +162,27 @@ GENERAL_ABOUT;Respecte a
 GENERAL_AFTER;Després
 GENERAL_BEFORE;Abans
 GENERAL_CANCEL;Cancel·la
-GENERAL_DISABLED;Inactivat
 GENERAL_DISABLE;Inactiva
-GENERAL_ENABLED;Activat
+GENERAL_DISABLED;Inactivat
 GENERAL_ENABLE;Activa
+GENERAL_ENABLED;Activat
 GENERAL_FILE;Fitxer
 GENERAL_LANDSCAPE;Horitzontal
 GENERAL_NA;n/a
-GENERAL_NONE;No cap
 GENERAL_NO;No
+GENERAL_NONE;No cap
 GENERAL_OK;OK
 GENERAL_PORTRAIT;Vertical
 GENERAL_SAVE;Desa
 GENERAL_UNCHANGED;(No canviat)
 GENERAL_WARNING;Avís
-HISTOGRAM_TOOLTIP_BAR;Mostra/amaga la barra indicadora RGB\nClic botó dret a la previsualització per a congelar/descongelar
 HISTOGRAM_TOOLTIP_B;Mostra/amaga l'histograma BLAU
+HISTOGRAM_TOOLTIP_BAR;Mostra/amaga la barra indicadora RGB\nClic botó dret a la previsualització per a congelar/descongelar
 HISTOGRAM_TOOLTIP_FULL;Canvia entre histograma complet o escalat
 HISTOGRAM_TOOLTIP_G;Mostra/amaga l'histograma VERD
 HISTOGRAM_TOOLTIP_L;Mostra/amaga l'histograma de luminància CIELAB
-HISTOGRAM_TOOLTIP_RAW;Mostra/Amaga l'histograma RAW
 HISTOGRAM_TOOLTIP_R;Mostra/amaga l'histograma VERMELL
+HISTOGRAM_TOOLTIP_RAW;Mostra/Amaga l'histograma RAW
 HISTORY_CHANGED;Canviat
 HISTORY_CUSTOMCURVE;Corba particular
 HISTORY_DELSNAPSHOT;Esborra
@@ -353,7 +353,6 @@ HISTORY_MSG_162;Mapejant tons
 HISTORY_MSG_163;RGB corbes - R
 HISTORY_MSG_164;RGB corbes - G
 HISTORY_MSG_165;RGB corbes - B
-HISTORY_MSG_166;Nivells neutrals
 HISTORY_MSG_167;Mètode demosaicat
 HISTORY_MSG_168;Corba 'CC'
 HISTORY_MSG_169;Corba 'CH'
@@ -362,49 +361,49 @@ HISTORY_MSG_171;Corba 'LC'
 HISTORY_MSG_172;Restriccció LC als tons vermell i pell
 HISTORY_MSG_173;RS - Detall de la luminància
 HISTORY_NEWSNAPSHOT;Afegeix
-HISTORY_SNAPSHOTS;Instantànies
 HISTORY_SNAPSHOT;Instantània
-IPTCPANEL_AUTHORSPOSITIONHINT;Títol del(s) creador(s) de l'objecte (By-line Title).
-IPTCPANEL_AUTHORSPOSITION;Tractament o títol de l'autor
+HISTORY_SNAPSHOTS;Instantànies
 IPTCPANEL_AUTHOR;Autor
-IPTCPANEL_CAPTIONHINT;Un text de descripció de les dades (Caption - Abstract).
-IPTCPANEL_CAPTIONWRITERHINT;Nom de qui ha escrit, editat o corregit la imatge o la descripció (Writer - Editor).
-IPTCPANEL_CAPTIONWRITER;Autor de la descripció
+IPTCPANEL_AUTHORSPOSITION;Tractament o títol de l'autor
+IPTCPANEL_AUTHORSPOSITIONHINT;Títol del(s) creador(s) de l'objecte (By-line Title).
 IPTCPANEL_CAPTION;Text descriptiu
-IPTCPANEL_CATEGORYHINT;Classificació de la imatge, segons el proveïdor (Category).
+IPTCPANEL_CAPTIONHINT;Un text de descripció de les dades (Caption - Abstract).
+IPTCPANEL_CAPTIONWRITER;Autor de la descripció
+IPTCPANEL_CAPTIONWRITERHINT;Nom de qui ha escrit, editat o corregit la imatge o la descripció (Writer - Editor).
 IPTCPANEL_CATEGORY;Classificació
-IPTCPANEL_CITYHINT;Ciutat d'origen de la imatge (City).
+IPTCPANEL_CATEGORYHINT;Classificació de la imatge, segons el proveïdor (Category).
 IPTCPANEL_CITY;Ciutat
+IPTCPANEL_CITYHINT;Ciutat d'origen de la imatge (City).
 IPTCPANEL_COPYHINT;Copiar dades actuals IPTC al portapapers
-IPTCPANEL_COPYRIGHTHINT;Qualsevol notificació necessària sobre copyright (Copyright Notice).
 IPTCPANEL_COPYRIGHT;Copyright
-IPTCPANEL_COUNTRYHINT;Nom del país o lloc on va ser creada la imatge (Country - Primary Location Name).
+IPTCPANEL_COPYRIGHTHINT;Qualsevol notificació necessària sobre copyright (Copyright Notice).
 IPTCPANEL_COUNTRY;País
-IPTCPANEL_CREDITHINT;Identitat del proveïdor de la imatge, no necessàriament el propietari/creador (Credit).
+IPTCPANEL_COUNTRYHINT;Nom del país o lloc on va ser creada la imatge (Country - Primary Location Name).
 IPTCPANEL_CREDIT;Crèdit
-IPTCPANEL_DATECREATEDHINT;Data en què va ser creat el contingut intel·lectual de la imatge; Format: AAAAMMDD (Date Created).
+IPTCPANEL_CREDITHINT;Identitat del proveïdor de la imatge, no necessàriament el propietari/creador (Credit).
 IPTCPANEL_DATECREATED;Data de creació
-IPTCPANEL_EMBEDDEDHINT;Restaurar les dades IPTC encastades al fitxer d'imatge
+IPTCPANEL_DATECREATEDHINT;Data en què va ser creat el contingut intel·lectual de la imatge; Format: AAAAMMDD (Date Created).
 IPTCPANEL_EMBEDDED;Encastat
-IPTCPANEL_HEADLINEHINT;Una nota publicable que és una sinopsi dels continguts de la imatge (Headline).
+IPTCPANEL_EMBEDDEDHINT;Restaurar les dades IPTC encastades al fitxer d'imatge
 IPTCPANEL_HEADLINE;Capçalera
-IPTCPANEL_INSTRUCTIONSHINT;Altres instruccions editorials sobre l'ús de la imatge (Special Instructions).
+IPTCPANEL_HEADLINEHINT;Una nota publicable que és una sinopsi dels continguts de la imatge (Headline).
 IPTCPANEL_INSTRUCTIONS;Instruccions
-IPTCPANEL_KEYWORDSHINT;Paraules clau que faciliten la recerca de la imatge (Keywords).
+IPTCPANEL_INSTRUCTIONSHINT;Altres instruccions editorials sobre l'ús de la imatge (Special Instructions).
 IPTCPANEL_KEYWORDS;Paraules clau
+IPTCPANEL_KEYWORDSHINT;Paraules clau que faciliten la recerca de la imatge (Keywords).
 IPTCPANEL_PASTEHINT;Enganxa les dades IPTC del portapapers
-IPTCPANEL_PROVINCEHINT;Regió/Estat d'origen de la imatge (Province-State).
 IPTCPANEL_PROVINCE;Regió
-IPTCPANEL_RESETHINT;Reinici perfil per omissió
+IPTCPANEL_PROVINCEHINT;Regió/Estat d'origen de la imatge (Province-State).
 IPTCPANEL_RESET;Reinici
-IPTCPANEL_SOURCEHINT;Propietari original del contingut intel·lectual de la imatge (Source).
+IPTCPANEL_RESETHINT;Reinici perfil per omissió
 IPTCPANEL_SOURCE;Font
-IPTCPANEL_SUPPCATEGORIESHINT;Precisió sobre el tema de la imatge (Supplemental Categories).
+IPTCPANEL_SOURCEHINT;Propietari original del contingut intel·lectual de la imatge (Source).
 IPTCPANEL_SUPPCATEGORIES;Classif. detallada
-IPTCPANEL_TITLEHINT;Referència breu de la imatge (Object Name).
+IPTCPANEL_SUPPCATEGORIESHINT;Precisió sobre el tema de la imatge (Supplemental Categories).
 IPTCPANEL_TITLE;Títol
-IPTCPANEL_TRANSREFERENCEHINT;Codi que indica el lloc de la transmissió original (Original Transmission Reference).
+IPTCPANEL_TITLEHINT;Referència breu de la imatge (Object Name).
 IPTCPANEL_TRANSREFERENCE;Refer. transmissió
+IPTCPANEL_TRANSREFERENCEHINT;Codi que indica el lloc de la transmissió original (Original Transmission Reference).
 MAIN_BUTTON_FULLSCREEN;Pantalla sencera
 MAIN_BUTTON_PREFERENCES;Preferències
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Afeg. imatge actual a la cua de procés.\nDrecera: <b>Ctrl+B</b>
@@ -539,16 +538,16 @@ PREFERENCES_CACHEOPTS;Opcions memòria cau
 PREFERENCES_CACHETHUMBHEIGHT;Màxima alçada de minifoto
 PREFERENCES_CLIPPINGIND;Indicador de pèrdues
 PREFERENCES_CMETRICINTENT;Intent colorimètric
+PREFERENCES_CUSTPROFBUILD;Constructor de perfils de procés particulars
 PREFERENCES_CUSTPROFBUILDHINT;Nom del fitxer executable (o script) per a usar un nou perfil de procés en una imatge.\nRep paràmetres en línia d'ordres per a la generació de perfils basats en regles:\n[raw/JPG path] [path per omissió del perfil de procés] [número f] [expos. en segons] [long. focal en mm] [ISO] [objectiu] [càmera]
 PREFERENCES_CUSTPROFBUILDPATH;Executable path
-PREFERENCES_CUSTPROFBUILD;Constructor de perfils de procés particulars
 PREFERENCES_CUTOVERLAYBRUSH;Cropa màscara color/transparència
+PREFERENCES_DARKFRAME;Marc fosc
 PREFERENCES_DARKFRAMEFOUND;Trobat
 PREFERENCES_DARKFRAMESHOTS;trets
 PREFERENCES_DARKFRAMETEMPLATES;plantilles
-PREFERENCES_DARKFRAME;Marc fosc
-PREFERENCES_DATEFORMATHINT;<i>Podeu fer servir les següents cadenes formatades:</i>\n<b>%y</b><i> : any</i>\n<b>%m</b><i> : mes</i>\n<b>%d</b><i> : dia</i>\n<i>\nPer exemple, el format de data hongarès és:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DATEFORMAT;Format de data
+PREFERENCES_DATEFORMATHINT;<i>Podeu fer servir les següents cadenes formatades:</i>\n<b>%y</b><i> : any</i>\n<b>%m</b><i> : mes</i>\n<b>%d</b><i> : dia</i>\n<i>\nPer exemple, el format de data hongarès és:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DEFAULTLANG;Idioma per omissió
 PREFERENCES_DEFAULTTHEME;Tema per omissió
 PREFERENCES_DIRDARKFRAMES;Carpeta de marcs foscos
@@ -563,11 +562,11 @@ PREFERENCES_EXTERNALEDITOR;Editor extern
 PREFERENCES_FBROWSEROPTS;Opcions de navegador i minifotos
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barra de gestor de fitxers d'una línia (inapropiat en monitors de baixa resolució)
 PREFERENCES_FILEFORMAT;Format de fitxer
+PREFERENCES_FLATFIELD;Camp pla
 PREFERENCES_FLATFIELDFOUND;Trobat
 PREFERENCES_FLATFIELDSDIR;Carpeta de camps plans
 PREFERENCES_FLATFIELDSHOTS;trets
 PREFERENCES_FLATFIELDTEMPLATES;plantilles
-PREFERENCES_FLATFIELD;Camp pla
 PREFERENCES_FORIMAGE;Per a imatge no raw
 PREFERENCES_FORRAW;Per fitxers RAW
 PREFERENCES_GIMPPATH;Directori d'instal. del GIMP
@@ -589,20 +588,20 @@ PREFERENCES_MENUGROUPRANK;Grup "Rang"
 PREFERENCES_MENUOPTIONS;Opcions del menú
 PREFERENCES_METADATA;Metadata
 PREFERENCES_MONITORICC;Perfil de color del monitor
-PREFERENCES_MULTITABDUALMON;Mode multitreball en segon monitor, si se'n té un
 PREFERENCES_MULTITAB;Mode multitreball
-PREFERENCES_OUTDIRFOLDERHINT;Posa les imatges desades al directori seleccionat
-PREFERENCES_OUTDIRFOLDER;Desa al directori
-PREFERENCES_OUTDIRTEMPLATEHINT;Podeu fer servir les següents cadenes de format:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nAquest format es basa en les diferents parts del path d'una fotografia o bé alguns dels seus atributs.\n\nPer exemple, si la foto en curs està localitzada a:\n<b><i>/home/tom/fotos/2010-10-31/dsc0042.nef</i></b>\nel significat de les cadenes de format és:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>fotos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/fotos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/fotos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> es canviarà pel rang de la foto.  Si la foto no té rang, %r es convertirà en un '0'.  Si la foto és a la paperera bin, %r es convertirà en 'x'.\n\nSi desitgeu desar la imatge actual on hi ha l'original, escriviu:\n<b>%p1/%f</b>\n\nSi desitgeu desar la imatge actual en un directori de nom "<i>refetes</i>" sota el directori de la imatge oberta, escriviu:\n<b>%p1/refetes/%f</b>\n\nSi desitgeu desar la imatge actual en un directori de nom "<i>/home/tom/photos/refetes/2010-10-31</i>", escriviu:\n<b>%p2/refetes/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Usar plantilla
+PREFERENCES_MULTITABDUALMON;Mode multitreball en segon monitor, si se'n té un
 PREFERENCES_OUTDIR;Directori de sortida
+PREFERENCES_OUTDIRFOLDER;Desa al directori
+PREFERENCES_OUTDIRFOLDERHINT;Posa les imatges desades al directori seleccionat
+PREFERENCES_OUTDIRTEMPLATE;Usar plantilla
+PREFERENCES_OUTDIRTEMPLATEHINT;Podeu fer servir les següents cadenes de format:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nAquest format es basa en les diferents parts del path d'una fotografia o bé alguns dels seus atributs.\n\nPer exemple, si la foto en curs està localitzada a:\n<b><i>/home/tom/fotos/2010-10-31/dsc0042.nef</i></b>\nel significat de les cadenes de format és:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>fotos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/fotos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/fotos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> es canviarà pel rang de la foto.  Si la foto no té rang, %r es convertirà en un '0'.  Si la foto és a la paperera bin, %r es convertirà en 'x'.\n\nSi desitgeu desar la imatge actual on hi ha l'original, escriviu:\n<b>%p1/%f</b>\n\nSi desitgeu desar la imatge actual en un directori de nom "<i>refetes</i>" sota el directori de la imatge oberta, escriviu:\n<b>%p1/refetes/%f</b>\n\nSi desitgeu desar la imatge actual en un directori de nom "<i>/home/tom/photos/refetes/2010-10-31</i>", escriviu:\n<b>%p2/refetes/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Sobreposar noms de fitxer a les minifotos
 PREFERENCES_OVERWRITEOUTPUTFILE;Sobrescriu fitxers en desar-los
 PREFERENCES_PANFACTORLABEL;Factor
-PREFERENCES_PARSEDEXTADDHINT;Escriu una extensió i prem aquí per veure la llista
-PREFERENCES_PARSEDEXTADD;Afegir extensió
-PREFERENCES_PARSEDEXTDELHINT;Esborrar l'extensió seleccionada de la llista
 PREFERENCES_PARSEDEXT;Extensions analitzades
+PREFERENCES_PARSEDEXTADD;Afegir extensió
+PREFERENCES_PARSEDEXTADDHINT;Escriu una extensió i prem aquí per veure la llista
+PREFERENCES_PARSEDEXTDELHINT;Esborrar l'extensió seleccionada de la llista
 PREFERENCES_PROFILEHANDLING;Ficant mà als perfils de procés
 PREFERENCES_PROFILELOADPR;Prioritat de càrrega de perfils
 PREFERENCES_PROFILEPRCACHE;Perfil a la mem. cau
@@ -619,8 +618,8 @@ PREFERENCES_SHOWBASICEXIF;Mostra principals dades Exif
 PREFERENCES_SHOWDATETIME;Indica data i hora
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Mostra compensació d'exposició
 PREFERENCES_SHTHRESHOLD;Llindar pèrdues en foscos
-PREFERENCES_SINGLETABVERTAB;Mode simple treball, vistes verticals
 PREFERENCES_SINGLETAB;Mode simple treball
+PREFERENCES_SINGLETABVERTAB;Mode simple treball, vistes verticals
 PREFERENCES_SLIMUI;Interfície senzilla
 PREFERENCES_SND_BATCHQUEUEDONE;Procs. de la cua fets
 PREFERENCES_SND_HELP;Poseu el path o bé no res (res=silenci). A Windows useu "SystemDefault", "SystemAsterisk" etc. pels sons del sistema.
@@ -651,8 +650,8 @@ PROFILEPANEL_TOOLTIPCOPY;Copia perfil actual al portapapers.\n<b>Ctrl-click</b> 
 PROFILEPANEL_TOOLTIPLOAD;Carrega perfil d'un fitxer.\n<b>Ctrl-click</b> per seleccionar els paràmetres a carregar
 PROFILEPANEL_TOOLTIPPASTE; Enganxa perfil del portapapers.\n<b>Ctrl-click</b> per seleccionar els paràmetres a enganxar
 PROFILEPANEL_TOOLTIPSAVE;Desa l'actual com a perfil.\n<b>Ctrl-click</b> per seleccionar els paràmetres a desar
-PROGRESSBAR_LOADINGTHUMBS;Carregant minifotos...
 PROGRESSBAR_LOADING;Carregant imatge...
+PROGRESSBAR_LOADINGTHUMBS;Carregant minifotos...
 PROGRESSBAR_LOADJPEG;Carregant fitxer JPEG...
 PROGRESSBAR_LOADPNG;Carregant fitxer PNG...
 PROGRESSBAR_LOADTIFF;Carregant fitxer TIFF...
@@ -669,9 +668,9 @@ SAVEDLG_AUTOSUFFIX;Afegeix automàticament un sufix si el fitxer ja hi és
 SAVEDLG_FILEFORMAT;Format del fitxer
 SAVEDLG_JPEGQUAL;Qualitat JPEG
 SAVEDLG_PNGCOMPR;Compressió PNG
+SAVEDLG_PUTTOQUEUE;Posa a la cua de procés
 SAVEDLG_PUTTOQUEUEHEAD;Posa al principi de la cua de procés
 SAVEDLG_PUTTOQUEUETAIL;Posa a la fi de la cua de procés
-SAVEDLG_PUTTOQUEUE;Posa a la cua de procés
 SAVEDLG_SAVEIMMEDIATELY;Desa ara mateix
 SAVEDLG_SAVESPP;Desa els paràmetres de procés amb la imatge
 SAVEDLG_SUBSAMP;Submostreig
@@ -681,13 +680,13 @@ SAVEDLG_SUBSAMP_3;Millor qualitat
 SAVEDLG_TIFFUNCOMPRESSED;TIFF no comprimit
 SAVEDLG_WARNFILENAME;El fitxer es dirà
 SHCSELECTOR_TOOLTIP;Clic al botó dret per a restaurar\nla posició dels 3 nivells.
+THRESHOLDSELECTOR_B;Baix
 THRESHOLDSELECTOR_BL;Baix-esquerra
 THRESHOLDSELECTOR_BR;Baix-dreta
-THRESHOLDSELECTOR_B;Baix
 THRESHOLDSELECTOR_HINT;Prement la tecla <b>Majús</b> per a moure punts individuals de control.
+THRESHOLDSELECTOR_T;Dalt
 THRESHOLDSELECTOR_TL;Dalt-esquerra
 THRESHOLDSELECTOR_TR;Dalt-dreta
-THRESHOLDSELECTOR_T;Dalt
 TOOLBAR_TOOLTIP_CROP;<b>Cropar</b> selecció.\nDrecera: <b>c</b>
 TOOLBAR_TOOLTIP_HAND;Eina mà.\nDrecera: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Dreçar</b> / <b>rotació fina</b>.\nDrecera: <b>s</b>\n\nIndica la vertical o horitzontal dibuixant una línia de guia sobre la previsualització de la imatge. L'angle de rotació es mostrarà junt a la guia. El centre de rotació és el centre geomètric de la imatge.
@@ -751,8 +750,8 @@ TP_EXPOSURE_BLACKLEVEL;Negre
 TP_EXPOSURE_BRIGHTNESS;Brillantor
 TP_EXPOSURE_CLIP;Retall
 TP_EXPOSURE_CLIP_TIP;Conjunt de píxels que es retallaran en l'anivellament automàtic
-TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Llindar recup. clars intensos
 TP_EXPOSURE_COMPRHIGHLIGHTS;Quantitat recuperació de clars
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Llindar recup. clars intensos
 TP_EXPOSURE_COMPRSHADOWS;Recuperació de foscos
 TP_EXPOSURE_CONTRAST;Contrast
 TP_EXPOSURE_CURVEEDITOR1;Corba de to 1
@@ -792,9 +791,9 @@ TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;Barreja clars intensos del perfil de color amb la matriu
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Habilita la recuperació de clars intensos quan s'usen els perfils ICC basats en LUT
+TP_ICM_INPUTCAMERA;Propi de la càmera
 TP_ICM_INPUTCAMERAICC;Perfil de color del model de càmera detectada.
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Usa d'entrada el perfil de color DCP o ICC específic de càmera de RawTherapee. Aquests perfils són més precisos que els de simple matriu. Disponible per a algunes càmeres. Aquests perfils són als directoris /iccprofiles/input i /dcpprofiles i es carreguen automàticament segons un nom de fitxer que coincideix exactament amb el nom de model de la càmera.
-TP_ICM_INPUTCAMERA;Propi de la càmera
 TP_ICM_INPUTCAMERA_TOOLTIP;Usa matriu de simple color per dcraw, versió RawTherapee ampliada (qualsevol sigui disponible segons model de càmera) o inclòs dins DNG.
 TP_ICM_INPUTCUSTOM;Especial
 TP_ICM_INPUTCUSTOM_TOOLTIP;Selecccionar un propi fitxer de perfil de color per a la càmera
@@ -849,7 +848,6 @@ TP_LENSPROFILE_LABEL;Perfil de correcció de lent
 TP_LENSPROFILE_USECA;Usa correcció AC
 TP_LENSPROFILE_USEDIST;Correcció de distorsió
 TP_LENSPROFILE_USEVIGN;Correcció de vores fosques
-TP_NEUTRAL;Neutral
 TP_NEUTRAL_TIP;Torna els controls d'exposició a valors neutrals
 TP_PERSPECTIVE_HORIZONTAL;Horitzontal
 TP_PERSPECTIVE_LABEL;Perspectiva
@@ -874,16 +872,16 @@ TP_RESIZE_APPLIESTO;S'aplica a:
 TP_RESIZE_CROPPEDAREA;Àrea cropada
 TP_RESIZE_FITBOX;Capsa d'inclusió
 TP_RESIZE_FULLIMAGE;Imatge sencera
-TP_RESIZE_HEIGHT;Alt
 TP_RESIZE_H;A:
+TP_RESIZE_HEIGHT;Alt
 TP_RESIZE_LABEL;Canviar tamany
 TP_RESIZE_LANCZOS;Lanczos
 TP_RESIZE_METHOD;Mètode:
 TP_RESIZE_NEAREST;Més proper
 TP_RESIZE_SCALE;Escala
 TP_RESIZE_SPECIFY;Especifica:
-TP_RESIZE_WIDTH;Ample
 TP_RESIZE_W;L:
+TP_RESIZE_WIDTH;Ample
 TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;Canal
 TP_RGBCURVES_GREEN;V
@@ -1039,6 +1037,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !GENERAL_AUTO;Automatic
 !GENERAL_CLOSE;Close
 !HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
+!HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_174;CIECAM02
 !HISTORY_MSG_175;CAM02 - CAT02 adaptation
 !HISTORY_MSG_176;CAM02 - Viewing surround
@@ -1331,10 +1330,10 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_AUTLISVLOW;None
 !PREFERENCES_AUTLOW;Low
 !PREFERENCES_AUTSTD;Standard
-!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
 !PREFERENCES_BEHADDALL;All to 'Add'
-!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
+!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
 !PREFERENCES_BEHSETALL;All to 'Set'
+!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
 !PREFERENCES_BLACKBODY;Tungsten
 !PREFERENCES_CIEART;CIECAM02 optimization
 !PREFERENCES_CIEART_FRAME;CIECAM02-Specific Settings
@@ -1364,6 +1363,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_FLUOF11;Fluorescent F11
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Editor's panel and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
+!PREFERENCES_GREY;Output device's Yb luminance (%)
 !PREFERENCES_GREY05;Yb=05 CIE L#30
 !PREFERENCES_GREY10;Yb=10 CIE L#40
 !PREFERENCES_GREY15;Yb=15 CIE L#45
@@ -1371,10 +1371,9 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_GREY23;Yb=23 CIE L#55
 !PREFERENCES_GREY30;Yb=30 CIE L#60
 !PREFERENCES_GREY40;Yb=40 CIE L#70
+!PREFERENCES_GREYSC;Scene Yb luminance (%)
 !PREFERENCES_GREYSC18;Yb=18 CIE L#50
 !PREFERENCES_GREYSCA;Automatic
-!PREFERENCES_GREYSC;Scene Yb luminance (%)
-!PREFERENCES_GREY;Output device's Yb luminance (%)
 !PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
 !PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
 !PREFERENCES_IMG_RELOAD_NEEDED;These changes require the image to be reloaded (or a new image to be opened) to take effect.
@@ -1384,8 +1383,8 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_LEVAUTDN;Denoising level
 !PREFERENCES_LEVDN;Cell size
 !PREFERENCES_LISS;Auto multi-zone smoothing
-!PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 !PREFERENCES_MAX;Maxi (Tile)
+!PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 !PREFERENCES_MED;Medium (Tile/2)
 !PREFERENCES_MIN;Mini (100x115)
 !PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
@@ -1441,14 +1440,14 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before B&amp;W conversion.\nMay take into account the color components.
 !TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H).\nPay attention to extreme values as they may cause artifacts.
 !TP_BWMIX_FILTER;Color Filter
-!TP_BWMIX_FILTER_BLUEGREEN;Blue-Green
 !TP_BWMIX_FILTER_BLUE;Blue
-!TP_BWMIX_FILTER_GREENYELLOW;Green-Yellow
+!TP_BWMIX_FILTER_BLUEGREEN;Blue-Green
 !TP_BWMIX_FILTER_GREEN;Green
+!TP_BWMIX_FILTER_GREENYELLOW;Green-Yellow
 !TP_BWMIX_FILTER_NONE;None
 !TP_BWMIX_FILTER_PURPLE;Purple
-!TP_BWMIX_FILTER_REDYELLOW;Red-Yellow
 !TP_BWMIX_FILTER_RED;Red
+!TP_BWMIX_FILTER_REDYELLOW;Red-Yellow
 !TP_BWMIX_FILTER_TOOLTIP;The color filter simulates shots taken with a colored filter placed in front of the lens. Colored filters reduce the transmission of specific color ranges and therefore affect their lightness. E.g. a red filter darkens blue skies.
 !TP_BWMIX_FILTER_YELLOW;Yellow
 !TP_BWMIX_GAMMA;Gamma Correction
@@ -1567,11 +1566,11 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Chroma opacity as a function of luminance oC=f(L)
 !TP_COLORTONING_HIGHLIGHT;Highlights
 !TP_COLORTONING_HUE;Hue
-!TP_COLORTONING_LABEL;Color Toning
 !TP_COLORTONING_LAB;L*a*b* blending
+!TP_COLORTONING_LABEL;Color Toning
+!TP_COLORTONING_LUMA;Luminance
 !TP_COLORTONING_LUMAMODE;Preserve luminance
 !TP_COLORTONING_LUMAMODE_TOOLTIP;If enabled, when you change color (red, green, cyan, blue, etc.) the luminance of each pixel is preserved.
-!TP_COLORTONING_LUMA;Luminance
 !TP_COLORTONING_METHOD;Method
 !TP_COLORTONING_METHOD_TOOLTIP;"L*a*b* blending", "RGB sliders" and "RGB curves" use interpolated color blending.\n"Color balance (Shadows/Midtones/Highlights)" and "Saturation 2 colors" use direct colors.\n\nThe Black-and-White tool can be enabled when using any color toning method, which allows for color toning.
 !TP_COLORTONING_MIDTONES;Midtones
@@ -1580,15 +1579,15 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_COLORTONING_OPACITY;Opacity
 !TP_COLORTONING_RGBCURVES;RGB - Curves
 !TP_COLORTONING_RGBSLIDERS;RGB - Sliders
+!TP_COLORTONING_SA;Saturation Protection
 !TP_COLORTONING_SATURATEDOPACITY;Strength
 !TP_COLORTONING_SATURATIONTHRESHOLD;Threshold
-!TP_COLORTONING_SA;Saturation Protection
 !TP_COLORTONING_SHADOWS;Shadows
-!TP_COLORTONING_SPLITCOCO;Color Balance Shadows/Midtones/Highlights
 !TP_COLORTONING_SPLITCO;Shadows/Midtones/Highlights
+!TP_COLORTONING_SPLITCOCO;Color Balance Shadows/Midtones/Highlights
 !TP_COLORTONING_SPLITLR;Saturation 2 colors
-!TP_COLORTONING_STRENGTH;Strength
 !TP_COLORTONING_STR;Strength
+!TP_COLORTONING_STRENGTH;Strength
 !TP_COLORTONING_TWO2;Special chroma '2 colors'
 !TP_COLORTONING_TWOALL;Special chroma
 !TP_COLORTONING_TWOBY;Special a* and b*
@@ -1598,28 +1597,29 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_DIRPYRDENOISE_33;3×3 strong
-!TP_DIRPYRDENOISE_55SOFT;5×5
 !TP_DIRPYRDENOISE_55;5×5 strong
+!TP_DIRPYRDENOISE_55SOFT;5×5
 !TP_DIRPYRDENOISE_77;7×7 (slow)
 !TP_DIRPYRDENOISE_99;9x9 (very slow)
 !TP_DIRPYRDENOISE_ABM;Chroma only
+!TP_DIRPYRDENOISE_AUT;Automatic global
 !TP_DIRPYRDENOISE_AUTO;Automatic global
 !TP_DIRPYRDENOISE_AUTO_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !
-!TP_DIRPYRDENOISE_AUT;Automatic global
 !TP_DIRPYRDENOISE_BLUE;Chrominance - Blue-Yellow
 !TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
 !TP_DIRPYRDENOISE_CCCURVE;Chrominance curve
 !TP_DIRPYRDENOISE_CHROMAFR;Chrominance
 !TP_DIRPYRDENOISE_CTYPE;Method
 !TP_DIRPYRDENOISE_CTYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nAutomatic multi-zones\nNo preview - works only during saving, but using the "Preview" method by matching the tile size and center to the preview size and center you can get an idea of the expected results.\nThe image is divided into tiles (about 10 to 70 depending on image size) and each tile receives its own chrominance noise reduction settings.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
+!TP_DIRPYRDENOISE_CUR;Curve
 !TP_DIRPYRDENOISE_CURVEEDITOR_CC;Chroma
 !TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
 !TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modulates action of 'Luminance' denoise
-!TP_DIRPYRDENOISE_CUR;Curve
 !TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on the gamma of the input color profile. An sRGB gamma is assumed, thus if the image uses an input color profile of a different gamma, the effects of luminance noise reduction will differ.
 !TP_DIRPYRDENOISE_ENH;Enhanced mode
 !TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase.
 !TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
+!TP_DIRPYRDENOISE_LAB;L*a*b*
 !TP_DIRPYRDENOISE_LABM;L*a*b*
 !TP_DIRPYRDENOISE_LCURVE;Luminance curve
 !TP_DIRPYRDENOISE_LM;Luminance only
@@ -1627,32 +1627,32 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_DIRPYRDENOISE_LTYPE;Luminance control
 !TP_DIRPYRDENOISE_LUMAFR;Luminance
 !TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet on luminance and Fourier transform for luminance detail
-!TP_DIRPYRDENOISE_MANU;Manual
 !TP_DIRPYRDENOISE_MAN;Manual
+!TP_DIRPYRDENOISE_MANU;Manual
+!TP_DIRPYRDENOISE_MED;Median Filter
 !TP_DIRPYRDENOISE_MEDMETHOD;Median method
 !TP_DIRPYRDENOISE_MEDTYPE;Median type
-!TP_DIRPYRDENOISE_MED;Median Filter
 !TP_DIRPYRDENOISE_MED_TOOLTIP;Enabled median denoising
+!TP_DIRPYRDENOISE_METHOD;Method
 !TP_DIRPYRDENOISE_METHOD11;Quality
 !TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
-!TP_DIRPYRDENOISE_METHOD;Method
 !TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or L*a*b* methods can be used.\n\nFor non-raw images the L*a*b* method will be used, regardless of the selection.
 !TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "L*a*b*" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
 !TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired size. The larger the size, the longer it takes.\n\n3x3 soft: treats 5 pixels in a 1-pixel range.\n3x3: treats 9 pixels in a 1-pixel range.\n5x5 soft: treats 13 pixels in a 2-pixel range.\n5x5: treats 25 pixels in a 2-pixel range.\n7x7: treats 49 pixels in a 3-pixel range.\n9x9: treats 81 pixels in a 4-pixel range.\n\nSometimes it is possible to achieve higher quality running several iterations with a small range than one iteration with a large range.
-!TP_DIRPYRDENOISE_NOISELABELEMPTY;Preview noise: Mean= -   High= -
 !TP_DIRPYRDENOISE_NOISELABEL;Preview noise: Mean=%1  High=%2
+!TP_DIRPYRDENOISE_NOISELABELEMPTY;Preview noise: Mean= -   High= -
 !TP_DIRPYRDENOISE_NRESID_TOOLTIP;Displays the remaining noise levels of the part of the image visible in the <b>preview</b> after wavelet.\n\n>300 Very noisy\n100-300 Noisy\n50-100 A little noisy\n<50 Very low noise\n\nBeware, the values will differ between RGB and L*a*b* mode. The RGB values are less accurate because the RGB mode does not completely separate luminance and chrominance.
 !TP_DIRPYRDENOISE_PASSES;Median iterations
 !TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying a 3x3 median filter with three iterations often leads to better results than applying 7x7 once.
 !TP_DIRPYRDENOISE_PON;Auto multi-zones
-!TP_DIRPYRDENOISE_PREVLABEL;Preview size=%1, Center: Px=%2  Py=%3
-!TP_DIRPYRDENOISE_PREV;Preview
 !TP_DIRPYRDENOISE_PRE;Preview multi-zones
+!TP_DIRPYRDENOISE_PREV;Preview
+!TP_DIRPYRDENOISE_PREVLABEL;Preview size=%1, Center: Px=%2  Py=%3
 !TP_DIRPYRDENOISE_RED;Chrominance - Red-Green
-!TP_DIRPYRDENOISE_RGBM;RGB
 !TP_DIRPYRDENOISE_RGB;RGB
-!TP_DIRPYRDENOISE_SHALBI;High
+!TP_DIRPYRDENOISE_RGBM;RGB
 !TP_DIRPYRDENOISE_SHAL;Standard
+!TP_DIRPYRDENOISE_SHALBI;High
 !TP_DIRPYRDENOISE_SLI;Slider
 !TP_DIRPYRDENOISE_SOFT;3x3
 !TP_DIRPYRDENOISE_TILELABEL;Tile size=%1, Center: Tx=%2  Ty=%3
@@ -1709,6 +1709,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_LABCURVE_CURVEEDITOR_LH;LH
 !TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
 !TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance according to luminance L=f(L)
+!TP_NEUTRAL;Reset
 !TP_PCVIGNETTE_FEATHER;Feather
 !TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering:\n0 = corners only,\n50 = halfway to center,\n100 = to center.
 !TP_PCVIGNETTE_LABEL;Vignette Filter
@@ -1759,10 +1760,10 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RETINEX_GAMMA_MID;Middle
 !TP_RETINEX_GAMMA_NONE;None
 !TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
+!TP_RETINEX_HIGH;High
+!TP_RETINEX_HIGHLIG;Highlight
 !TP_RETINEX_HIGHLIGHT;Highlight threshold
 !TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.
-!TP_RETINEX_HIGHLIG;Highlight
-!TP_RETINEX_HIGH;High
 !TP_RETINEX_HSLSPACE_LIN;HSL-Linear
 !TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
 !TP_RETINEX_LABEL;Retinex
@@ -1782,8 +1783,8 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RETINEX_STRENGTH;Strength
 !TP_RETINEX_THRESHOLD;Threshold
 !TP_RETINEX_THRESHOLD_TOOLTIP;Limits in/out.\nIn = image source,\nOut = image gauss.
-!TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
 !TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
+!TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
 !TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nMean and Sigma\nTm=Min TM=Max of transmission map.
 !TP_RETINEX_TRANSMISSION;Transmission map
 !TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
@@ -1825,9 +1826,9 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_WAVELET_CH2;Saturated/pastel
 !TP_WAVELET_CH3;Link contrast levels
 !TP_WAVELET_CHCU;Curve
+!TP_WAVELET_CHR;Chroma-contrast link strength
 !TP_WAVELET_CHRO;Saturated/pastel threshold
 !TP_WAVELET_CHRO_TOOLTIP;Sets the wavelet level which will be the threshold between saturated and pastel colors.\n1-x: saturated\nx-9: pastel\n\nIf the value exceeds the amount of wavelet levels you are using then it will be ignored.
-!TP_WAVELET_CHR;Chroma-contrast link strength
 !TP_WAVELET_CHR_TOOLTIP;Adjusts chroma as a function of "contrast levels" and "chroma-contrast link strength"
 !TP_WAVELET_CHSL;Sliders
 !TP_WAVELET_CHTYPE;Chrominance method
@@ -1837,11 +1838,11 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_WAVELET_COMPGAMMA_TOOLTIP;Adjusting the gamma of the residual image allows you to equilibrate the data and histogram.
 !TP_WAVELET_COMPTM;Tone mapping
 !TP_WAVELET_CONTEDIT;'After' contrast curve
+!TP_WAVELET_CONTR;Gamut
+!TP_WAVELET_CONTRA;Contrast
 !TP_WAVELET_CONTRAST_MINUS;Contrast -
 !TP_WAVELET_CONTRAST_PLUS;Contrast +
-!TP_WAVELET_CONTRA;Contrast
 !TP_WAVELET_CONTRA_TOOLTIP;Changes contrast of the residual image.
-!TP_WAVELET_CONTR;Gamut
 !TP_WAVELET_CTYPE;Chrominance control
 !TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Modifies local contrast as a function of the original local contrast (abscissa).\nLow abscissa values represent small local contrast (real values about 10..20).\n50% abscissa represents average local contrast (real value about 100..300).\n66% abscissa represents standard deviation of local contrast (real value about 300..800).\n100% abscissa represents maximum local contrast (real value about 3000..8000).
 !TP_WAVELET_CURVEEDITOR_CH;Contrast levels=f(Hue)
@@ -1851,12 +1852,12 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_WAVELET_CURVEEDITOR_HH;HH
 !TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Modifies the residual image's hue as a function of hue.
 !TP_WAVELET_DALL;All directions
+!TP_WAVELET_DAUB;Edge performance
 !TP_WAVELET_DAUB2;D2 - low
 !TP_WAVELET_DAUB4;D4 - standard
 !TP_WAVELET_DAUB6;D6 - standard plus
 !TP_WAVELET_DAUB10;D10 - medium
 !TP_WAVELET_DAUB14;D14 - high
-!TP_WAVELET_DAUB;Edge performance
 !TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the firsts levels. However the quality is not strictly related to this coefficient and can vary with images and uses.
 !TP_WAVELET_DONE;Vertical
 !TP_WAVELET_DTHR;Diagonal
@@ -1864,14 +1865,14 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_WAVELET_EDCU;Curve
 !TP_WAVELET_EDGCONT;Local contrast
 !TP_WAVELET_EDGCONT_TOOLTIP;Adjusting the points to the left decreases contrast, and to the right increases it.\nBottom-left, Top-Left, Top-Right, Bottom-right represent respectively local contast for low values, mean, mean+stdev, maxima
+!TP_WAVELET_EDGE;Edge Sharpness
 !TP_WAVELET_EDGEAMPLI;Base amplification
-!TP_WAVELET_EDGEDETECTTHR2;Threshold high (detection)
-!TP_WAVELET_EDGEDETECTTHR;Threshold low (noise)
-!TP_WAVELET_EDGEDETECTTHR_TOOLTIP;This adjuster lets you target edge detection for example to avoid applying edge sharpness to fine details, such as noise in the sky.
 !TP_WAVELET_EDGEDETECT;Gradient sensitivity
+!TP_WAVELET_EDGEDETECTTHR;Threshold low (noise)
+!TP_WAVELET_EDGEDETECTTHR2;Threshold high (detection)
+!TP_WAVELET_EDGEDETECTTHR_TOOLTIP;This adjuster lets you target edge detection for example to avoid applying edge sharpness to fine details, such as noise in the sky.
 !TP_WAVELET_EDGEDETECT_TOOLTIP;Moving the slider to the right increases edge sensitivity. This affects local contrast, edge settings and noise.
 !TP_WAVELET_EDGESENSI;Edge sensitivity
-!TP_WAVELET_EDGE;Edge Sharpness
 !TP_WAVELET_EDGREINF_TOOLTIP;Reinforce or reduce the action of the first level, do the opposite to the second level, and leave the rest unchanged.
 !TP_WAVELET_EDGTHRESH;Detail
 !TP_WAVELET_EDGTHRESH_TOOLTIP;Change the repartition between the first levels and the others. The higher the threshold the more the action is centred on the first levels. Be careful with negative values, they increase the action of high levels and can introduce artifacts.
@@ -1910,29 +1911,29 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_WAVELET_LIPST;Enhanced algoritm
 !TP_WAVELET_LOWLIGHT;Shadow luminance range
 !TP_WAVELET_MEDGREINF;First level
+!TP_WAVELET_MEDI;Reduce artifacts in blue sky
 !TP_WAVELET_MEDILEV;Edge detection
 !TP_WAVELET_MEDILEV_TOOLTIP;When you enable Edge Detection, it is recommanded:\n- to disabled low contrast levels to avoid artifacts,\n- to use high values of gradient sensitivity.\n\nYou can modulate the strength with 'refine' from Denoise and Refine.
-!TP_WAVELET_MEDI;Reduce artifacts in blue sky
 !TP_WAVELET_NEUTRAL;Neutral
-!TP_WAVELET_NOISE;Denoise and Refine
 !TP_WAVELET_NOIS;Denoise
+!TP_WAVELET_NOISE;Denoise and Refine
 !TP_WAVELET_NPHIGH;High
 !TP_WAVELET_NPLOW;Low
 !TP_WAVELET_NPNONE;None
 !TP_WAVELET_NPTYPE;Neighboring pixels
 !TP_WAVELET_NPTYPE_TOOLTIP;This algorithm uses the proximity of a pixel and eight of its neighbors. If less difference, edges are reinforced.
+!TP_WAVELET_OPACITY;Opacity Blue-Yellow
+!TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
 !TP_WAVELET_OPACITYWL;Final local contrast
 !TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the wavelet treatment.\n\nThe left side represents the smallest local contrast, progressing to the largest local contrast on the right.
-!TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
-!TP_WAVELET_OPACITY;Opacity Blue-Yellow
 !TP_WAVELET_PASTEL;Pastel chroma
 !TP_WAVELET_PROC;Process
 !TP_WAVELET_RE1;Reinforced
 !TP_WAVELET_RE2;Unchanged
 !TP_WAVELET_RE3;Reduced
 !TP_WAVELET_RESCHRO;Chroma
-!TP_WAVELET_RESCONH;Highlights
 !TP_WAVELET_RESCON;Shadows
+!TP_WAVELET_RESCONH;Highlights
 !TP_WAVELET_RESID;Residual Image
 !TP_WAVELET_SAT;Saturated chroma
 !TP_WAVELET_SETTINGS;Wavelet Settings
@@ -1940,15 +1941,15 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_WAVELET_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 !TP_WAVELET_SKY;Sky targetting/protection
 !TP_WAVELET_SKY_TOOLTIP;At -100 sky-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 sky-tones are protected while all other tones are affected.
-!TP_WAVELET_STRENGTH;Strength
 !TP_WAVELET_STREN;Strength
+!TP_WAVELET_STRENGTH;Strength
 !TP_WAVELET_SUPE;Extra
+!TP_WAVELET_THR;Shadows threshold
+!TP_WAVELET_THRESHOLD;Highlight levels
 !TP_WAVELET_THRESHOLD2;Shadow levels
 !TP_WAVELET_THRESHOLD2_TOOLTIP;Only levels between 9 and 9 minus the value will be affected by the shadow luminance range. Other levels will be fully treated. The highest level possible is limited by the highlight level value (9 minus highlight level value).
-!TP_WAVELET_THRESHOLD;Highlight levels
 !TP_WAVELET_THRESHOLD_TOOLTIP;Only levels beyond the chosen value will be affected by the highlight luminance range. Other levels will be fully treated. The chosen value here limits the highest possible value of the shadow levels.
 !TP_WAVELET_THRH;Highlights threshold
-!TP_WAVELET_THR;Shadows threshold
 !TP_WAVELET_TILESBIG;Big tiles
 !TP_WAVELET_TILESFULL;Full image
 !TP_WAVELET_TILESIZE;Tiling method

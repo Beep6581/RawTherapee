@@ -7,8 +7,8 @@ ABOUT_TAB_SPLASH;Увод
 ADJUSTER_RESET_TO_DEFAULT;Врати на подразумевано
 BATCHQUEUE_AUTOSTART;Сам започни
 BATCH_PROCESSING;обрада
-CURVEEDITOR_CURVES;Кривуље
 CURVEEDITOR_CURVE;Кривуља
+CURVEEDITOR_CURVES;Кривуље
 CURVEEDITOR_CUSTOM;Произвољно
 CURVEEDITOR_DARKS;Тамно
 CURVEEDITOR_HIGHLIGHTS;Пресветло
@@ -36,19 +36,19 @@ EXIFFILTER_ISO;ИСО
 EXIFFILTER_LENS;Објектив
 EXIFFILTER_METADATAFILTER;Филтрирај метаподатке
 EXIFFILTER_SHUTTER;Експозиција
-EXIFPANEL_ADDEDITHINT;Додаје нову ознаку или уређује постојећу
 EXIFPANEL_ADDEDIT;Додај/Измени
+EXIFPANEL_ADDEDITHINT;Додаје нову ознаку или уређује постојећу
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Унесите вредност
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Изаберите ознаку
 EXIFPANEL_ADDTAGDLG_TITLE;Додај/Измени ознаку
-EXIFPANEL_KEEPHINT;Задржава изабране ознаке при упису излазне датотеке
 EXIFPANEL_KEEP;Задржи
-EXIFPANEL_REMOVEHINT;Уклања изабране ознаке при упису излазне датотеке
+EXIFPANEL_KEEPHINT;Задржава изабране ознаке при упису излазне датотеке
 EXIFPANEL_REMOVE;Уклони
-EXIFPANEL_RESETALLHINT;Враћа све ознаке на почетне вредности
-EXIFPANEL_RESETALL;Врати све
-EXIFPANEL_RESETHINT;Враћа изабрану ознаку на почетну вредности
+EXIFPANEL_REMOVEHINT;Уклања изабране ознаке при упису излазне датотеке
 EXIFPANEL_RESET;Врати
+EXIFPANEL_RESETALL;Врати све
+EXIFPANEL_RESETALLHINT;Враћа све ознаке на почетне вредности
+EXIFPANEL_RESETHINT;Враћа изабрану ознаку на почетну вредности
 EXIFPANEL_SUBDIRECTORY;Поддиректоријум
 FILEBROWSER_ADDDELTEMPLATE;Додај/уклони шаблоне...
 FILEBROWSER_APPLYPROFILE;Примени профил
@@ -57,18 +57,18 @@ FILEBROWSER_AUTODARKFRAME;Сам одреди тамни кадар
 FILEBROWSER_AUTOFLATFIELD;Аутоматски одреди равно поље
 FILEBROWSER_BROWSEPATHBUTTONHINT;Кликните за одлазак на узабрану путању
 FILEBROWSER_BROWSEPATHHINT;Укуцајте путању за разгледање (<b>Ctrl-o</b> поставља фокус, <b>Ctrl-Enter</b> приказује у разгледачу датотека);nПречице путања: <b>~</b> — лични директоријум, <b>!</b> — директоријум са сликама
+FILEBROWSER_CACHE;Остава
 FILEBROWSER_CACHECLEARFROMFULL;Очисти из оставе — све
 FILEBROWSER_CACHECLEARFROMPARTIAL;Очисти из оставе — половично
-FILEBROWSER_CACHE;Остава
 FILEBROWSER_CLEARPROFILE;Обриши профил
 FILEBROWSER_COPYPROFILE;Умножи профил
 FILEBROWSER_CURRENT_NAME;Тренутно име:
 FILEBROWSER_DARKFRAME;Тамни кадар
 FILEBROWSER_DELETEDLGLABEL;Брисање датотеке
-FILEBROWSER_DELETEDLGMSGINCLPROC;Да ли желите да обришете %1 изабраних датотека, укључујући и оне које су заказане?
 FILEBROWSER_DELETEDLGMSG;Да ли сигурно желите да обришете %1 датотека?
-FILEBROWSER_EMPTYTRASHHINT;Трајно брише датотеке из смећа
+FILEBROWSER_DELETEDLGMSGINCLPROC;Да ли желите да обришете %1 изабраних датотека, укључујући и оне које су заказане?
 FILEBROWSER_EMPTYTRASH;Избаци смеће
+FILEBROWSER_EMPTYTRASHHINT;Трајно брише датотеке из смећа
 FILEBROWSER_EXEC_CPB;Изгради почетни профил
 FILEBROWSER_FLATFIELD;Равно поље
 FILEBROWSER_MOVETODARKFDIR;Пребаци у фасциклу са тамним кадровима
@@ -83,12 +83,12 @@ FILEBROWSER_POPUPFILEOPERATIONS;Датотека
 FILEBROWSER_POPUPMOVEEND;Премести на крај заказаних
 FILEBROWSER_POPUPMOVEHEAD;Премести на почетак заказаних
 FILEBROWSER_POPUPMOVETO;Премести у...
-FILEBROWSER_POPUPOPENINEDITOR;Отвори у уреднику
 FILEBROWSER_POPUPOPEN;Отвори
+FILEBROWSER_POPUPOPENINEDITOR;Отвори у уреднику
 FILEBROWSER_POPUPPROCESS;Закажи за обраду
 FILEBROWSER_POPUPPROFILEOPERATIONS;Профил
-FILEBROWSER_POPUPREMOVEINCLPROC;Уклони из система датотека и заказаног
 FILEBROWSER_POPUPREMOVE;Уклони из система датотека
+FILEBROWSER_POPUPREMOVEINCLPROC;Уклони из система датотека и заказаног
 FILEBROWSER_POPUPRENAME;Преименуј
 FILEBROWSER_POPUPSELECTALL;Изабери све
 FILEBROWSER_POPUPTRASH;Премести у смеће
@@ -120,10 +120,10 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Приказује слике које ни
 FILEBROWSER_SHOWTRASHHINT;Приказује слике у смећу
 FILEBROWSER_SHOWUNCOLORHINT;Приказује слике које нису означене бојом <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Прикажи неоцењене слике
-FILEBROWSER_STARTPROCESSINGHINT;Почиње обраду и чување заказаних слика
 FILEBROWSER_STARTPROCESSING;Започни обраду
-FILEBROWSER_STOPPROCESSINGHINT;Зауставља обраду слика
+FILEBROWSER_STARTPROCESSINGHINT;Почиње обраду и чување заказаних слика
 FILEBROWSER_STOPPROCESSING;Заустави обраду
+FILEBROWSER_STOPPROCESSINGHINT;Зауставља обраду слика
 FILEBROWSER_THUMBSIZE;Преглед
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Покреће обраду фотографија када их закажете
 FILEBROWSER_ZOOMINHINT;Увећава преглед
@@ -132,25 +132,25 @@ GENERAL_ABOUT;О програму
 GENERAL_AFTER;После
 GENERAL_BEFORE;Пре
 GENERAL_CANCEL;Откажи
-GENERAL_DISABLED;Искључено
 GENERAL_DISABLE;Искључи
-GENERAL_ENABLED;Укључи
+GENERAL_DISABLED;Искључено
 GENERAL_ENABLE;Укључи
+GENERAL_ENABLED;Укључи
 GENERAL_FILE;Датотека
 GENERAL_LANDSCAPE;Положено
 GENERAL_NA;нема
-GENERAL_NONE;Ништа
 GENERAL_NO;Не
+GENERAL_NONE;Ништа
 GENERAL_OK;У реду
 GENERAL_PORTRAIT;Усправно
 GENERAL_SAVE;Сачувај
 GENERAL_UNCHANGED;(неизмењено)
-HISTOGRAM_TOOLTIP_BAR;Приказује/сакрива РГБ индикатор. Кликните десни тастер миша на умањени приказ да замрзнете
 HISTOGRAM_TOOLTIP_B;Приказује плави хистограм
+HISTOGRAM_TOOLTIP_BAR;Приказује/сакрива РГБ индикатор. Кликните десни тастер миша на умањени приказ да замрзнете
 HISTOGRAM_TOOLTIP_G;Приказује зелени хистограм
 HISTOGRAM_TOOLTIP_L;Приказује ЦиеЛаб хитограм
-HISTOGRAM_TOOLTIP_RAW;Приказује/скрива RAW хистограм
 HISTOGRAM_TOOLTIP_R;Приказује црвени хистограм
+HISTOGRAM_TOOLTIP_RAW;Приказује/скрива RAW хистограм
 HISTORY_CHANGED;Измењено
 HISTORY_CUSTOMCURVE;Произвољна крива
 HISTORY_DELSNAPSHOT;Уклони
@@ -307,49 +307,49 @@ HISTORY_MSG_148;Микроконтраст
 HISTORY_MSG_149;Микроконтраст - 3x3 матрица
 HISTORY_MSG_150;Уклањање артефакта/шума након расклапања мозаика
 HISTORY_NEWSNAPSHOT;Додај
-HISTORY_SNAPSHOTS;Снимак
 HISTORY_SNAPSHOT;Снимак
-IPTCPANEL_AUTHORSPOSITIONHINT;Звање једног или више аутора (једно по реди).
-IPTCPANEL_AUTHORSPOSITION;Звање аутора
+HISTORY_SNAPSHOTS;Снимак
 IPTCPANEL_AUTHOR;Аутор
-IPTCPANEL_CAPTIONHINT;Кратак опис дела (наслов — абстракт).
-IPTCPANEL_CAPTIONWRITERHINT;Име особе које је укључена у писање, уређивање или исправљање слике/назица/апстракта (писац — уредник).
-IPTCPANEL_CAPTIONWRITER;Писац наслова
+IPTCPANEL_AUTHORSPOSITION;Звање аутора
+IPTCPANEL_AUTHORSPOSITIONHINT;Звање једног или више аутора (једно по реди).
 IPTCPANEL_CAPTION;Назив
-IPTCPANEL_CATEGORYHINT;Одређује шта се налази на слици (категорија).
+IPTCPANEL_CAPTIONHINT;Кратак опис дела (наслов — абстракт).
+IPTCPANEL_CAPTIONWRITER;Писац наслова
+IPTCPANEL_CAPTIONWRITERHINT;Име особе које је укључена у писање, уређивање или исправљање слике/назица/апстракта (писац — уредник).
 IPTCPANEL_CATEGORY;Категорија
-IPTCPANEL_CITYHINT;Град у коме је слика настало (град).
+IPTCPANEL_CATEGORYHINT;Одређује шта се налази на слици (категорија).
 IPTCPANEL_CITY;Град
+IPTCPANEL_CITYHINT;Град у коме је слика настало (град).
 IPTCPANEL_COPYHINT;Коппирај ИПТЦ пшодешавања у оставу
-IPTCPANEL_COPYRIGHTHINT;Белешка о ауторским правима над делом (белешка о ауторским правима).
 IPTCPANEL_COPYRIGHT;Ауторска права
-IPTCPANEL_COUNTRYHINT;Име државе/основног места где је настала слика (држава — назив места).
+IPTCPANEL_COPYRIGHTHINT;Белешка о ауторским правима над делом (белешка о ауторским правима).
 IPTCPANEL_COUNTRY;Држава
-IPTCPANEL_CREDITHINT;Указује да онај ко издаје слику не мора бити аутор/власник (Заслуге).
+IPTCPANEL_COUNTRYHINT;Име државе/основног места где је настала слика (држава — назив места).
 IPTCPANEL_CREDIT;Заслуге
-IPTCPANEL_DATECREATEDHINT;Датум када је стављено власништво над интелектуални садржај слике; Формат: ГГГГММДД (датум настанка).
+IPTCPANEL_CREDITHINT;Указује да онај ко издаје слику не мора бити аутор/власник (Заслуге).
 IPTCPANEL_DATECREATED;Датум настанка
-IPTCPANEL_EMBEDDEDHINT;Врати поља на ИПТЦ податке угњежђене у слику
+IPTCPANEL_DATECREATEDHINT;Датум када је стављено власништво над интелектуални садржај слике; Формат: ГГГГММДД (датум настанка).
 IPTCPANEL_EMBEDDED;Угњежђено
-IPTCPANEL_HEADLINEHINT;Назив који указује на везу са садржајем слике и под којим се она издаје (наслов).
+IPTCPANEL_EMBEDDEDHINT;Врати поља на ИПТЦ податке угњежђене у слику
 IPTCPANEL_HEADLINE;Наслов
-IPTCPANEL_INSTRUCTIONSHINT;Остала упутства уредника везана за употребу слике (специјална упутства).
+IPTCPANEL_HEADLINEHINT;Назив који указује на везу са садржајем слике и под којим се она издаје (наслов).
 IPTCPANEL_INSTRUCTIONS;Упутства
-IPTCPANEL_KEYWORDSHINT;Речи које указују на разне податке о слици (кључне речи).
+IPTCPANEL_INSTRUCTIONSHINT;Остала упутства уредника везана за употребу слике (специјална упутства).
 IPTCPANEL_KEYWORDS;Кључне речи
+IPTCPANEL_KEYWORDSHINT;Речи које указују на разне податке о слици (кључне речи).
 IPTCPANEL_PASTEHINT;Убаци ИПТЦ подешавања из оставе
-IPTCPANEL_PROVINCEHINT;Покрајина/држава где је настала слика (провинција — држава).
 IPTCPANEL_PROVINCE;Покрајина
-IPTCPANEL_RESETHINT;Поставља подразумеване вредности профила
+IPTCPANEL_PROVINCEHINT;Покрајина/држава где је настала слика (провинција — држава).
 IPTCPANEL_RESET;Врати
-IPTCPANEL_SOURCEHINT;Првобитни власник иннтелектуалног садржаја на слици (извор).
+IPTCPANEL_RESETHINT;Поставља подразумеване вредности профила
 IPTCPANEL_SOURCE;Извор
-IPTCPANEL_SUPPCATEGORIESHINT;Додатно одређује мотив на слици (додатне категорије).
+IPTCPANEL_SOURCEHINT;Првобитни власник иннтелектуалног садржаја на слици (извор).
 IPTCPANEL_SUPPCATEGORIES;Доп. категорије
-IPTCPANEL_TITLEHINT;Кратни назив слике (име објекта).
+IPTCPANEL_SUPPCATEGORIESHINT;Додатно одређује мотив на слици (додатне категорије).
 IPTCPANEL_TITLE;Натпис
-IPTCPANEL_TRANSREFERENCEHINT;Код којји представља место првобитног преноса (референца првог преноса).
+IPTCPANEL_TITLEHINT;Кратни назив слике (име објекта).
 IPTCPANEL_TRANSREFERENCE;Реф. преноса
+IPTCPANEL_TRANSREFERENCEHINT;Код којји представља место првобитног преноса (референца првог преноса).
 MAIN_BUTTON_FULLSCREEN;Цео екран
 MAIN_BUTTON_PREFERENCES;Поставке
 MAIN_BUTTON_PUTTOQUEUE;Закажи
@@ -468,16 +468,16 @@ PREFERENCES_CACHEOPTS;Подешавање оставе
 PREFERENCES_CACHETHUMBHEIGHT;Највећа висина приказа
 PREFERENCES_CLIPPINGIND;Показивачи одсечених делова
 PREFERENCES_CMETRICINTENT;Колориметријска намера
+PREFERENCES_CUSTPROFBUILD;Изградња произвољног почетног профила слике
 PREFERENCES_CUSTPROFBUILDHINT;Извршна датотека (или скрипта) која се позива када изграђујете нови почетни профил за слику.nПрихвата параметре из командне линије ради прављења .pp3 датотеке на основу неких правила:n[Путања до RAW/JPG] [Путања подразумеваног профила] [Бленда] [Експозиција у s] [Жижна дужина mm] [ИСО] [Објектив] [Фото-апарат]
 PREFERENCES_CUSTPROFBUILDPATH;Извршна путања
-PREFERENCES_CUSTPROFBUILD;Изградња произвољног почетног профила слике
 PREFERENCES_CUTOVERLAYBRUSH;Маска исецања боје/провидног
+PREFERENCES_DARKFRAME;Тамни кадар
 PREFERENCES_DARKFRAMEFOUND;Нађен
 PREFERENCES_DARKFRAMESHOTS;снимака
 PREFERENCES_DARKFRAMETEMPLATES;шаблони
-PREFERENCES_DARKFRAME;Тамни кадар
-PREFERENCES_DATEFORMATHINT;<i>Можете задати следеће формате:</i>\n<b>%y</b><i> :година</i>\n<b>%m</b><i> : месец</i>\n<b>%d</b><i> : дан</i>\n<i>\nУ Србији се највише користи:</i>\n<b>%d.%m.%y</b>
 PREFERENCES_DATEFORMAT;Формат датума
+PREFERENCES_DATEFORMATHINT;<i>Можете задати следеће формате:</i>\n<b>%y</b><i> :година</i>\n<b>%m</b><i> : месец</i>\n<b>%d</b><i> : дан</i>\n<i>\nУ Србији се највише користи:</i>\n<b>%d.%m.%y</b>
 PREFERENCES_DEFAULTLANG;Језик програма
 PREFERENCES_DEFAULTTHEME;Тема програма
 PREFERENCES_DIRDARKFRAMES;Директоријум тамног кадра
@@ -492,11 +492,11 @@ PREFERENCES_EXTERNALEDITOR;Спољни уређивач
 PREFERENCES_FBROWSEROPTS;Опције разгледача датотеке
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Прикажи алатке у једном реду
 PREFERENCES_FILEFORMAT;Формат датотеке
+PREFERENCES_FLATFIELD;Равно поље
 PREFERENCES_FLATFIELDFOUND;Нађено
 PREFERENCES_FLATFIELDSDIR;Директоријум за равна поља
 PREFERENCES_FLATFIELDSHOTS;снимака
 PREFERENCES_FLATFIELDTEMPLATES;шаблони
-PREFERENCES_FLATFIELD;Равно поље
 PREFERENCES_FORIMAGE;За датотеке са сликама
 PREFERENCES_FORRAW;За RAW датотеке
 PREFERENCES_GIMPPATH;Директоријум са инсталираним Гимпом
@@ -517,20 +517,20 @@ PREFERENCES_MENUGROUPRANK;Групиши оцењивање
 PREFERENCES_MENUOPTIONS;Опције менија
 PREFERENCES_METADATA;Метаподаци
 PREFERENCES_MONITORICC;Профил монитора
-PREFERENCES_MULTITABDUALMON;Режим у више листова, на другом монитору
 PREFERENCES_MULTITAB;Режим у више листова
-PREFERENCES_OUTDIRFOLDERHINT;Ставља сачуване слике у 
-PREFERENCES_OUTDIRFOLDER;Сачувај у фасциклу
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Можете да задате следеће скраћенице за форматирање:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nОви знакови за форматирање се односе на директоријуме, подпутање путања до raw датотеке.\n\nНа пример, уколико је отворена слика </i> <b>/home/ivan/слике/02.09.2010/dsc0012.nef</b><i>, скраћенице означавају:\n</i><b>%f=dsc0012, %d1=02.09.2010, %d2=слике, ...\n%p1=/home/ivan/слике/02.09.2010, %p2=/home/ivan/слике, %p3=/home/ivan, ...\n</b><i>\nУколико желите да сачувате развијену слику поред оригинала, унесите:\n</i><b>%p1/%f\n</b><i>\nУколико желите да сачувате излазну слику у директоријум „развијене“ који се налази где и оригинална слика, унесите:\n</i><b>%p1/развијене/%f\n</b><i>\nУколико желите да сачувате развијену слику у директоријум „/home/ivan/развијене“, а да структура поддиректоријума остане очувана, унесите:\n</i><b>%p2/развијене/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Употреби шаблон
+PREFERENCES_MULTITABDUALMON;Режим у више листова, на другом монитору
 PREFERENCES_OUTDIR;Излазни директоријум
+PREFERENCES_OUTDIRFOLDER;Сачувај у фасциклу
+PREFERENCES_OUTDIRFOLDERHINT;Ставља сачуване слике у 
+PREFERENCES_OUTDIRTEMPLATE;Употреби шаблон
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>Можете да задате следеће скраћенице за форматирање:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nОви знакови за форматирање се односе на директоријуме, подпутање путања до raw датотеке.\n\nНа пример, уколико је отворена слика </i> <b>/home/ivan/слике/02.09.2010/dsc0012.nef</b><i>, скраћенице означавају:\n</i><b>%f=dsc0012, %d1=02.09.2010, %d2=слике, ...\n%p1=/home/ivan/слике/02.09.2010, %p2=/home/ivan/слике, %p3=/home/ivan, ...\n</b><i>\nУколико желите да сачувате развијену слику поред оригинала, унесите:\n</i><b>%p1/%f\n</b><i>\nУколико желите да сачувате излазну слику у директоријум „развијене“ који се налази где и оригинална слика, унесите:\n</i><b>%p1/развијене/%f\n</b><i>\nУколико желите да сачувате развијену слику у директоријум „/home/ivan/развијене“, а да структура поддиректоријума остане очувана, унесите:\n</i><b>%p2/развијене/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Постави преко умањеног приказа
 PREFERENCES_OVERWRITEOUTPUTFILE;Препиши постојеће излазне датотеке
 PREFERENCES_PANFACTORLABEL;Фактор
-PREFERENCES_PARSEDEXTADDHINT;Додаје уписану екстензију на списак
-PREFERENCES_PARSEDEXTADD;Додај екстензију
-PREFERENCES_PARSEDEXTDELHINT;Брише изабрану екстензију из списка
 PREFERENCES_PARSEDEXT;Екстензије за приказ
+PREFERENCES_PARSEDEXTADD;Додај екстензију
+PREFERENCES_PARSEDEXTADDHINT;Додаје уписану екстензију на списак
+PREFERENCES_PARSEDEXTDELHINT;Брише изабрану екстензију из списка
 PREFERENCES_PROFILEHANDLING;Рад са профилима обраде
 PREFERENCES_PROFILELOADPR;Приоритет учитавања профила
 PREFERENCES_PROFILEPRCACHE;Профил у оставу
@@ -546,8 +546,8 @@ PREFERENCES_SET;Постави
 PREFERENCES_SHOWBASICEXIF;Прикажи основне Exif податке
 PREFERENCES_SHOWDATETIME;Прикажи датум и време
 PREFERENCES_SHTHRESHOLD;Праг за одсечене тамне делове
-PREFERENCES_SINGLETABVERTAB;Режим у једном листу, вертикални листови
 PREFERENCES_SINGLETAB;Режим у једном листу
+PREFERENCES_SINGLETABVERTAB;Режим у једном листу, вертикални листови
 PREFERENCES_SLIMUI;Танки изглед
 PREFERENCES_SND_BATCHQUEUEDONE;Обрађене су заказане датотеке
 PREFERENCES_SND_HELP;Унесите путању до датотеке или оставите празно уколико не желите звук. На Windows-у можете да користите „SystemDefault“, „SystemAsterisk“ за системске звуке.
@@ -572,8 +572,8 @@ PROFILEPANEL_TOOLTIPCOPY;Копира тренутни профил у оста�
 PROFILEPANEL_TOOLTIPLOAD;Учитава профил из датотеке
 PROFILEPANEL_TOOLTIPPASTE; Учитава профил из 
 PROFILEPANEL_TOOLTIPSAVE;Чува тренутни профил
-PROGRESSBAR_LOADINGTHUMBS;Учитавам приказе...
 PROGRESSBAR_LOADING;Учитавам слику...
+PROGRESSBAR_LOADINGTHUMBS;Учитавам приказе...
 PROGRESSBAR_LOADJPEG;Учитавам JPEG датотеку...
 PROGRESSBAR_LOADPNG;Учитавам PNG датотеку...
 PROGRESSBAR_LOADTIFF;Учитавам TIFF датотеку...
@@ -590,9 +590,9 @@ SAVEDLG_AUTOSUFFIX;Сам додај суфикс уколико датотек�
 SAVEDLG_FILEFORMAT;Формат датотеке
 SAVEDLG_JPEGQUAL;JPEG квалитет
 SAVEDLG_PNGCOMPR;PNG паковање
+SAVEDLG_PUTTOQUEUE;Заказује слику за обраду
 SAVEDLG_PUTTOQUEUEHEAD;Премешта слику на почетак заказаних
 SAVEDLG_PUTTOQUEUETAIL;Премешта слику на крај заказаних
-SAVEDLG_PUTTOQUEUE;Заказује слику за обраду
 SAVEDLG_SAVEIMMEDIATELY;Одмах сачувај
 SAVEDLG_SAVESPP;Сачувај параметре обраде уз слику
 SAVEDLG_TIFFUNCOMPRESSED;Незапаковани TIFF
@@ -649,8 +649,8 @@ TP_EXPOSURE_AUTOLEVELS;Ауто-нивои
 TP_EXPOSURE_BLACKLEVEL;Црна
 TP_EXPOSURE_BRIGHTNESS;Осветљеност
 TP_EXPOSURE_CLIP;Одсеци
-TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Праг за чупање светлих делова
 TP_EXPOSURE_COMPRHIGHLIGHTS;Сабијање светлог
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Праг за чупање светлих делова
 TP_EXPOSURE_COMPRSHADOWS;Сабијање сенки
 TP_EXPOSURE_CONTRAST;Контраст
 TP_EXPOSURE_CURVEEDITOR;Крива нијанси
@@ -680,8 +680,8 @@ TP_HSVEQUALIZER_LABEL;Уједначење ХСВ канала
 TP_HSVEQUALIZER_SAT;Засићеност
 TP_HSVEQUALIZER_VAL;Вредност
 TP_ICM_BLENDCMSMATRIX;Утопи светле делове у матрицу
-TP_ICM_INPUTCAMERAICC;Фото-апарат или стандардни ИЦЦ
 TP_ICM_INPUTCAMERA;Подразумевано из апарата
+TP_ICM_INPUTCAMERAICC;Фото-апарат или стандардни ИЦЦ
 TP_ICM_INPUTCUSTOM;Произвољно
 TP_ICM_INPUTDLGLABEL;Изаберите улазни ИЦЦ профил...
 TP_ICM_INPUTEMBEDDED;Угњежђено, уколико је могуће
@@ -724,16 +724,16 @@ TP_RESIZE_APPLIESTO;Примени на:
 TP_RESIZE_CROPPEDAREA;Исечену област
 TP_RESIZE_FITBOX;Ширину и висину
 TP_RESIZE_FULLIMAGE;Целу слику
-TP_RESIZE_HEIGHT;Висину
 TP_RESIZE_H;В:
+TP_RESIZE_HEIGHT;Висину
 TP_RESIZE_LABEL;Величина слике
 TP_RESIZE_LANCZOS;Ланхоз
 TP_RESIZE_METHOD;Начин: 
 TP_RESIZE_NEAREST;Најближе
 TP_RESIZE_SCALE;Умањење
 TP_RESIZE_SPECIFY;Изабери:
-TP_RESIZE_WIDTH;Ширину
 TP_RESIZE_W;Ш:
+TP_RESIZE_WIDTH;Ширину
 TP_ROTATE_DEGREE;Степени:
 TP_ROTATE_LABEL;Ротација
 TP_ROTATE_SELECTLINE;    Постави праву линију
@@ -840,13 +840,13 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
 !FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
 !FILEBROWSER_POPUPPROCESSFAST;Put to queue (Fast export)
+!FILEBROWSER_POPUPRANK;Rank
 !FILEBROWSER_POPUPRANK0;Unrank
 !FILEBROWSER_POPUPRANK1;Rank 1 *
 !FILEBROWSER_POPUPRANK2;Rank 2 **
 !FILEBROWSER_POPUPRANK3;Rank 3 ***
 !FILEBROWSER_POPUPRANK4;Rank 4 ****
 !FILEBROWSER_POPUPRANK5;Rank 5 *****
-!FILEBROWSER_POPUPRANK;Rank
 !FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: <b>Shift-1</b>
 !FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: <b>Shift-2</b>
 !FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
@@ -882,7 +882,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !HISTORY_MSG_163;RGB Curves - Red
 !HISTORY_MSG_164;RGB Curves - Green
 !HISTORY_MSG_165;RGB Curves - Blue
-!HISTORY_MSG_166;Exposure - Neutral
+!HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_167;Demosaicing method
 !HISTORY_MSG_168;L*a*b* - CC curve
 !HISTORY_MSG_169;L*a*b* - CH curve
@@ -1201,10 +1201,10 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_AUTLISVLOW;None
 !PREFERENCES_AUTLOW;Low
 !PREFERENCES_AUTSTD;Standard
-!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
 !PREFERENCES_BEHADDALL;All to 'Add'
-!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
+!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
 !PREFERENCES_BEHSETALL;All to 'Set'
+!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
 !PREFERENCES_BLACKBODY;Tungsten
 !PREFERENCES_CIEART;CIECAM02 optimization
 !PREFERENCES_CIEART_FRAME;CIECAM02-Specific Settings
@@ -1234,6 +1234,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_FLUOF11;Fluorescent F11
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Editor's panel and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
+!PREFERENCES_GREY;Output device's Yb luminance (%)
 !PREFERENCES_GREY05;Yb=05 CIE L#30
 !PREFERENCES_GREY10;Yb=10 CIE L#40
 !PREFERENCES_GREY15;Yb=15 CIE L#45
@@ -1241,10 +1242,9 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_GREY23;Yb=23 CIE L#55
 !PREFERENCES_GREY30;Yb=30 CIE L#60
 !PREFERENCES_GREY40;Yb=40 CIE L#70
+!PREFERENCES_GREYSC;Scene Yb luminance (%)
 !PREFERENCES_GREYSC18;Yb=18 CIE L#50
 !PREFERENCES_GREYSCA;Automatic
-!PREFERENCES_GREYSC;Scene Yb luminance (%)
-!PREFERENCES_GREY;Output device's Yb luminance (%)
 !PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
 !PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
 !PREFERENCES_IMG_RELOAD_NEEDED;These changes require the image to be reloaded (or a new image to be opened) to take effect.
@@ -1254,8 +1254,8 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_LEVAUTDN;Denoising level
 !PREFERENCES_LEVDN;Cell size
 !PREFERENCES_LISS;Auto multi-zone smoothing
-!PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 !PREFERENCES_MAX;Maxi (Tile)
+!PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 !PREFERENCES_MED;Medium (Tile/2)
 !PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
 !PREFERENCES_MIN;Mini (100x115)
@@ -1311,13 +1311,13 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !SAVEDLG_WARNFILENAME;File will be named
 !SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
+!THRESHOLDSELECTOR_B;Bottom
 !THRESHOLDSELECTOR_BL;Bottom-left
 !THRESHOLDSELECTOR_BR;Bottom-right
-!THRESHOLDSELECTOR_B;Bottom
 !THRESHOLDSELECTOR_HINT;Hold the <b>Shift</b> key to move individual control points.
+!THRESHOLDSELECTOR_T;Top
 !THRESHOLDSELECTOR_TL;Top-left
 !THRESHOLDSELECTOR_TR;Top-right
-!THRESHOLDSELECTOR_T;Top
 !TP_BWMIX_ALGO;Algorithm OYCPM
 !TP_BWMIX_ALGO_LI;Linear
 !TP_BWMIX_ALGO_SP;Special effects
@@ -1333,14 +1333,14 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before B&amp;W conversion.\nMay take into account the color components.
 !TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H).\nPay attention to extreme values as they may cause artifacts.
 !TP_BWMIX_FILTER;Color Filter
-!TP_BWMIX_FILTER_BLUEGREEN;Blue-Green
 !TP_BWMIX_FILTER_BLUE;Blue
-!TP_BWMIX_FILTER_GREENYELLOW;Green-Yellow
+!TP_BWMIX_FILTER_BLUEGREEN;Blue-Green
 !TP_BWMIX_FILTER_GREEN;Green
+!TP_BWMIX_FILTER_GREENYELLOW;Green-Yellow
 !TP_BWMIX_FILTER_NONE;None
 !TP_BWMIX_FILTER_PURPLE;Purple
-!TP_BWMIX_FILTER_REDYELLOW;Red-Yellow
 !TP_BWMIX_FILTER_RED;Red
+!TP_BWMIX_FILTER_REDYELLOW;Red-Yellow
 !TP_BWMIX_FILTER_TOOLTIP;The color filter simulates shots taken with a colored filter placed in front of the lens. Colored filters reduce the transmission of specific color ranges and therefore affect their lightness. E.g. a red filter darkens blue skies.
 !TP_BWMIX_FILTER_YELLOW;Yellow
 !TP_BWMIX_GAMMA;Gamma Correction
@@ -1459,11 +1459,11 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Chroma opacity as a function of luminance oC=f(L)
 !TP_COLORTONING_HIGHLIGHT;Highlights
 !TP_COLORTONING_HUE;Hue
-!TP_COLORTONING_LABEL;Color Toning
 !TP_COLORTONING_LAB;L*a*b* blending
+!TP_COLORTONING_LABEL;Color Toning
+!TP_COLORTONING_LUMA;Luminance
 !TP_COLORTONING_LUMAMODE;Preserve luminance
 !TP_COLORTONING_LUMAMODE_TOOLTIP;If enabled, when you change color (red, green, cyan, blue, etc.) the luminance of each pixel is preserved.
-!TP_COLORTONING_LUMA;Luminance
 !TP_COLORTONING_METHOD;Method
 !TP_COLORTONING_METHOD_TOOLTIP;"L*a*b* blending", "RGB sliders" and "RGB curves" use interpolated color blending.\n"Color balance (Shadows/Midtones/Highlights)" and "Saturation 2 colors" use direct colors.\n\nThe Black-and-White tool can be enabled when using any color toning method, which allows for color toning.
 !TP_COLORTONING_MIDTONES;Midtones
@@ -1472,15 +1472,15 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_COLORTONING_OPACITY;Opacity
 !TP_COLORTONING_RGBCURVES;RGB - Curves
 !TP_COLORTONING_RGBSLIDERS;RGB - Sliders
+!TP_COLORTONING_SA;Saturation Protection
 !TP_COLORTONING_SATURATEDOPACITY;Strength
 !TP_COLORTONING_SATURATIONTHRESHOLD;Threshold
-!TP_COLORTONING_SA;Saturation Protection
 !TP_COLORTONING_SHADOWS;Shadows
-!TP_COLORTONING_SPLITCOCO;Color Balance Shadows/Midtones/Highlights
 !TP_COLORTONING_SPLITCO;Shadows/Midtones/Highlights
+!TP_COLORTONING_SPLITCOCO;Color Balance Shadows/Midtones/Highlights
 !TP_COLORTONING_SPLITLR;Saturation 2 colors
-!TP_COLORTONING_STRENGTH;Strength
 !TP_COLORTONING_STR;Strength
+!TP_COLORTONING_STRENGTH;Strength
 !TP_COLORTONING_TWO2;Special chroma '2 colors'
 !TP_COLORTONING_TWOALL;Special chroma
 !TP_COLORTONING_TWOBY;Special a* and b*
@@ -1492,28 +1492,29 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_DIRPYRDENOISE_33;3×3 strong
-!TP_DIRPYRDENOISE_55SOFT;5×5
 !TP_DIRPYRDENOISE_55;5×5 strong
+!TP_DIRPYRDENOISE_55SOFT;5×5
 !TP_DIRPYRDENOISE_77;7×7 (slow)
 !TP_DIRPYRDENOISE_99;9x9 (very slow)
 !TP_DIRPYRDENOISE_ABM;Chroma only
+!TP_DIRPYRDENOISE_AUT;Automatic global
 !TP_DIRPYRDENOISE_AUTO;Automatic global
 !TP_DIRPYRDENOISE_AUTO_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !
-!TP_DIRPYRDENOISE_AUT;Automatic global
 !TP_DIRPYRDENOISE_BLUE;Chrominance - Blue-Yellow
 !TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
 !TP_DIRPYRDENOISE_CCCURVE;Chrominance curve
 !TP_DIRPYRDENOISE_CHROMAFR;Chrominance
 !TP_DIRPYRDENOISE_CTYPE;Method
 !TP_DIRPYRDENOISE_CTYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nAutomatic multi-zones\nNo preview - works only during saving, but using the "Preview" method by matching the tile size and center to the preview size and center you can get an idea of the expected results.\nThe image is divided into tiles (about 10 to 70 depending on image size) and each tile receives its own chrominance noise reduction settings.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
+!TP_DIRPYRDENOISE_CUR;Curve
 !TP_DIRPYRDENOISE_CURVEEDITOR_CC;Chroma
 !TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
 !TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modulates action of 'Luminance' denoise
-!TP_DIRPYRDENOISE_CUR;Curve
 !TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on the gamma of the input color profile. An sRGB gamma is assumed, thus if the image uses an input color profile of a different gamma, the effects of luminance noise reduction will differ.
 !TP_DIRPYRDENOISE_ENH;Enhanced mode
 !TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase.
 !TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
+!TP_DIRPYRDENOISE_LAB;L*a*b*
 !TP_DIRPYRDENOISE_LABM;L*a*b*
 !TP_DIRPYRDENOISE_LCURVE;Luminance curve
 !TP_DIRPYRDENOISE_LDETAIL;Luminance - Detail
@@ -1522,32 +1523,32 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_DIRPYRDENOISE_LTYPE;Luminance control
 !TP_DIRPYRDENOISE_LUMAFR;Luminance
 !TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet on luminance and Fourier transform for luminance detail
-!TP_DIRPYRDENOISE_MANU;Manual
 !TP_DIRPYRDENOISE_MAN;Manual
+!TP_DIRPYRDENOISE_MANU;Manual
+!TP_DIRPYRDENOISE_MED;Median Filter
 !TP_DIRPYRDENOISE_MEDMETHOD;Median method
 !TP_DIRPYRDENOISE_MEDTYPE;Median type
-!TP_DIRPYRDENOISE_MED;Median Filter
 !TP_DIRPYRDENOISE_MED_TOOLTIP;Enabled median denoising
+!TP_DIRPYRDENOISE_METHOD;Method
 !TP_DIRPYRDENOISE_METHOD11;Quality
 !TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
-!TP_DIRPYRDENOISE_METHOD;Method
 !TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or L*a*b* methods can be used.\n\nFor non-raw images the L*a*b* method will be used, regardless of the selection.
 !TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "L*a*b*" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
 !TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired size. The larger the size, the longer it takes.\n\n3x3 soft: treats 5 pixels in a 1-pixel range.\n3x3: treats 9 pixels in a 1-pixel range.\n5x5 soft: treats 13 pixels in a 2-pixel range.\n5x5: treats 25 pixels in a 2-pixel range.\n7x7: treats 49 pixels in a 3-pixel range.\n9x9: treats 81 pixels in a 4-pixel range.\n\nSometimes it is possible to achieve higher quality running several iterations with a small range than one iteration with a large range.
-!TP_DIRPYRDENOISE_NOISELABELEMPTY;Preview noise: Mean= -   High= -
 !TP_DIRPYRDENOISE_NOISELABEL;Preview noise: Mean=%1  High=%2
+!TP_DIRPYRDENOISE_NOISELABELEMPTY;Preview noise: Mean= -   High= -
 !TP_DIRPYRDENOISE_NRESID_TOOLTIP;Displays the remaining noise levels of the part of the image visible in the <b>preview</b> after wavelet.\n\n>300 Very noisy\n100-300 Noisy\n50-100 A little noisy\n<50 Very low noise\n\nBeware, the values will differ between RGB and L*a*b* mode. The RGB values are less accurate because the RGB mode does not completely separate luminance and chrominance.
 !TP_DIRPYRDENOISE_PASSES;Median iterations
 !TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying a 3x3 median filter with three iterations often leads to better results than applying 7x7 once.
 !TP_DIRPYRDENOISE_PON;Auto multi-zones
-!TP_DIRPYRDENOISE_PREVLABEL;Preview size=%1, Center: Px=%2  Py=%3
-!TP_DIRPYRDENOISE_PREV;Preview
 !TP_DIRPYRDENOISE_PRE;Preview multi-zones
+!TP_DIRPYRDENOISE_PREV;Preview
+!TP_DIRPYRDENOISE_PREVLABEL;Preview size=%1, Center: Px=%2  Py=%3
 !TP_DIRPYRDENOISE_RED;Chrominance - Red-Green
-!TP_DIRPYRDENOISE_RGBM;RGB
 !TP_DIRPYRDENOISE_RGB;RGB
-!TP_DIRPYRDENOISE_SHALBI;High
+!TP_DIRPYRDENOISE_RGBM;RGB
 !TP_DIRPYRDENOISE_SHAL;Standard
+!TP_DIRPYRDENOISE_SHALBI;High
 !TP_DIRPYRDENOISE_SLI;Slider
 !TP_DIRPYRDENOISE_SOFT;3x3
 !TP_DIRPYRDENOISE_TILELABEL;Tile size=%1, Center: Tx=%2  Ty=%3
@@ -1658,7 +1659,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_LENSPROFILE_USECA;Chromatic aberration correction
 !TP_LENSPROFILE_USEDIST;Distortion correction
 !TP_LENSPROFILE_USEVIGN;Vignetting correction
-!TP_NEUTRAL;Neutral
+!TP_NEUTRAL;Reset
 !TP_NEUTRAL_TIP;Resets exposure sliders to neutral values.\nApplies to the same controls that Auto Levels applies to, regardless of whether you used Auto Levels or not.
 !TP_PCVIGNETTE_FEATHER;Feather
 !TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering:\n0 = corners only,\n50 = halfway to center,\n100 = to center.
@@ -1710,10 +1711,10 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_RETINEX_GAMMA_MID;Middle
 !TP_RETINEX_GAMMA_NONE;None
 !TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
+!TP_RETINEX_HIGH;High
+!TP_RETINEX_HIGHLIG;Highlight
 !TP_RETINEX_HIGHLIGHT;Highlight threshold
 !TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.
-!TP_RETINEX_HIGHLIG;Highlight
-!TP_RETINEX_HIGH;High
 !TP_RETINEX_HSLSPACE_LIN;HSL-Linear
 !TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
 !TP_RETINEX_LABEL;Retinex
@@ -1733,8 +1734,8 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_RETINEX_STRENGTH;Strength
 !TP_RETINEX_THRESHOLD;Threshold
 !TP_RETINEX_THRESHOLD_TOOLTIP;Limits in/out.\nIn = image source,\nOut = image gauss.
-!TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
 !TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
+!TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
 !TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nMean and Sigma\nTm=Min TM=Max of transmission map.
 !TP_RETINEX_TRANSMISSION;Transmission map
 !TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
@@ -1798,9 +1799,9 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_WAVELET_CH2;Saturated/pastel
 !TP_WAVELET_CH3;Link contrast levels
 !TP_WAVELET_CHCU;Curve
+!TP_WAVELET_CHR;Chroma-contrast link strength
 !TP_WAVELET_CHRO;Saturated/pastel threshold
 !TP_WAVELET_CHRO_TOOLTIP;Sets the wavelet level which will be the threshold between saturated and pastel colors.\n1-x: saturated\nx-9: pastel\n\nIf the value exceeds the amount of wavelet levels you are using then it will be ignored.
-!TP_WAVELET_CHR;Chroma-contrast link strength
 !TP_WAVELET_CHR_TOOLTIP;Adjusts chroma as a function of "contrast levels" and "chroma-contrast link strength"
 !TP_WAVELET_CHSL;Sliders
 !TP_WAVELET_CHTYPE;Chrominance method
@@ -1810,11 +1811,11 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_WAVELET_COMPGAMMA_TOOLTIP;Adjusting the gamma of the residual image allows you to equilibrate the data and histogram.
 !TP_WAVELET_COMPTM;Tone mapping
 !TP_WAVELET_CONTEDIT;'After' contrast curve
+!TP_WAVELET_CONTR;Gamut
+!TP_WAVELET_CONTRA;Contrast
 !TP_WAVELET_CONTRAST_MINUS;Contrast -
 !TP_WAVELET_CONTRAST_PLUS;Contrast +
-!TP_WAVELET_CONTRA;Contrast
 !TP_WAVELET_CONTRA_TOOLTIP;Changes contrast of the residual image.
-!TP_WAVELET_CONTR;Gamut
 !TP_WAVELET_CTYPE;Chrominance control
 !TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Modifies local contrast as a function of the original local contrast (abscissa).\nLow abscissa values represent small local contrast (real values about 10..20).\n50% abscissa represents average local contrast (real value about 100..300).\n66% abscissa represents standard deviation of local contrast (real value about 300..800).\n100% abscissa represents maximum local contrast (real value about 3000..8000).
 !TP_WAVELET_CURVEEDITOR_CH;Contrast levels=f(Hue)
@@ -1824,12 +1825,12 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_WAVELET_CURVEEDITOR_HH;HH
 !TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Modifies the residual image's hue as a function of hue.
 !TP_WAVELET_DALL;All directions
+!TP_WAVELET_DAUB;Edge performance
 !TP_WAVELET_DAUB2;D2 - low
 !TP_WAVELET_DAUB4;D4 - standard
 !TP_WAVELET_DAUB6;D6 - standard plus
 !TP_WAVELET_DAUB10;D10 - medium
 !TP_WAVELET_DAUB14;D14 - high
-!TP_WAVELET_DAUB;Edge performance
 !TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the firsts levels. However the quality is not strictly related to this coefficient and can vary with images and uses.
 !TP_WAVELET_DONE;Vertical
 !TP_WAVELET_DTHR;Diagonal
@@ -1837,14 +1838,14 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_WAVELET_EDCU;Curve
 !TP_WAVELET_EDGCONT;Local contrast
 !TP_WAVELET_EDGCONT_TOOLTIP;Adjusting the points to the left decreases contrast, and to the right increases it.\nBottom-left, Top-Left, Top-Right, Bottom-right represent respectively local contast for low values, mean, mean+stdev, maxima
+!TP_WAVELET_EDGE;Edge Sharpness
 !TP_WAVELET_EDGEAMPLI;Base amplification
-!TP_WAVELET_EDGEDETECTTHR2;Threshold high (detection)
-!TP_WAVELET_EDGEDETECTTHR;Threshold low (noise)
-!TP_WAVELET_EDGEDETECTTHR_TOOLTIP;This adjuster lets you target edge detection for example to avoid applying edge sharpness to fine details, such as noise in the sky.
 !TP_WAVELET_EDGEDETECT;Gradient sensitivity
+!TP_WAVELET_EDGEDETECTTHR;Threshold low (noise)
+!TP_WAVELET_EDGEDETECTTHR2;Threshold high (detection)
+!TP_WAVELET_EDGEDETECTTHR_TOOLTIP;This adjuster lets you target edge detection for example to avoid applying edge sharpness to fine details, such as noise in the sky.
 !TP_WAVELET_EDGEDETECT_TOOLTIP;Moving the slider to the right increases edge sensitivity. This affects local contrast, edge settings and noise.
 !TP_WAVELET_EDGESENSI;Edge sensitivity
-!TP_WAVELET_EDGE;Edge Sharpness
 !TP_WAVELET_EDGREINF_TOOLTIP;Reinforce or reduce the action of the first level, do the opposite to the second level, and leave the rest unchanged.
 !TP_WAVELET_EDGTHRESH;Detail
 !TP_WAVELET_EDGTHRESH_TOOLTIP;Change the repartition between the first levels and the others. The higher the threshold the more the action is centred on the first levels. Be careful with negative values, they increase the action of high levels and can introduce artifacts.
@@ -1883,29 +1884,29 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_WAVELET_LIPST;Enhanced algoritm
 !TP_WAVELET_LOWLIGHT;Shadow luminance range
 !TP_WAVELET_MEDGREINF;First level
+!TP_WAVELET_MEDI;Reduce artifacts in blue sky
 !TP_WAVELET_MEDILEV;Edge detection
 !TP_WAVELET_MEDILEV_TOOLTIP;When you enable Edge Detection, it is recommanded:\n- to disabled low contrast levels to avoid artifacts,\n- to use high values of gradient sensitivity.\n\nYou can modulate the strength with 'refine' from Denoise and Refine.
-!TP_WAVELET_MEDI;Reduce artifacts in blue sky
 !TP_WAVELET_NEUTRAL;Neutral
-!TP_WAVELET_NOISE;Denoise and Refine
 !TP_WAVELET_NOIS;Denoise
+!TP_WAVELET_NOISE;Denoise and Refine
 !TP_WAVELET_NPHIGH;High
 !TP_WAVELET_NPLOW;Low
 !TP_WAVELET_NPNONE;None
 !TP_WAVELET_NPTYPE;Neighboring pixels
 !TP_WAVELET_NPTYPE_TOOLTIP;This algorithm uses the proximity of a pixel and eight of its neighbors. If less difference, edges are reinforced.
+!TP_WAVELET_OPACITY;Opacity Blue-Yellow
+!TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
 !TP_WAVELET_OPACITYWL;Final local contrast
 !TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the wavelet treatment.\n\nThe left side represents the smallest local contrast, progressing to the largest local contrast on the right.
-!TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
-!TP_WAVELET_OPACITY;Opacity Blue-Yellow
 !TP_WAVELET_PASTEL;Pastel chroma
 !TP_WAVELET_PROC;Process
 !TP_WAVELET_RE1;Reinforced
 !TP_WAVELET_RE2;Unchanged
 !TP_WAVELET_RE3;Reduced
 !TP_WAVELET_RESCHRO;Chroma
-!TP_WAVELET_RESCONH;Highlights
 !TP_WAVELET_RESCON;Shadows
+!TP_WAVELET_RESCONH;Highlights
 !TP_WAVELET_RESID;Residual Image
 !TP_WAVELET_SAT;Saturated chroma
 !TP_WAVELET_SETTINGS;Wavelet Settings
@@ -1913,15 +1914,15 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_WAVELET_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 !TP_WAVELET_SKY;Sky targetting/protection
 !TP_WAVELET_SKY_TOOLTIP;At -100 sky-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 sky-tones are protected while all other tones are affected.
-!TP_WAVELET_STRENGTH;Strength
 !TP_WAVELET_STREN;Strength
+!TP_WAVELET_STRENGTH;Strength
 !TP_WAVELET_SUPE;Extra
+!TP_WAVELET_THR;Shadows threshold
+!TP_WAVELET_THRESHOLD;Highlight levels
 !TP_WAVELET_THRESHOLD2;Shadow levels
 !TP_WAVELET_THRESHOLD2_TOOLTIP;Only levels between 9 and 9 minus the value will be affected by the shadow luminance range. Other levels will be fully treated. The highest level possible is limited by the highlight level value (9 minus highlight level value).
-!TP_WAVELET_THRESHOLD;Highlight levels
 !TP_WAVELET_THRESHOLD_TOOLTIP;Only levels beyond the chosen value will be affected by the highlight luminance range. Other levels will be fully treated. The chosen value here limits the highest possible value of the shadow levels.
 !TP_WAVELET_THRH;Highlights threshold
-!TP_WAVELET_THR;Shadows threshold
 !TP_WAVELET_TILESBIG;Big tiles
 !TP_WAVELET_TILESFULL;Full image
 !TP_WAVELET_TILESIZE;Tiling method
