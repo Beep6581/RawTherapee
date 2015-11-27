@@ -13,8 +13,8 @@ ADJUSTER_RESET_TO_DEFAULT;重置缺省参数
 BATCHQUEUE_AUTOSTART;自动开始
 BATCHQUEUE_DESTFILENAME;路径和文件名
 BATCH_PROCESSING;批量处理
-CURVEEDITOR_CURVES;曲线
 CURVEEDITOR_CURVE;曲线
+CURVEEDITOR_CURVES;曲线
 CURVEEDITOR_CUSTOM;自定义
 CURVEEDITOR_DARKS;暗
 CURVEEDITOR_HIGHLIGHTS;高亮
@@ -36,19 +36,19 @@ EXIFFILTER_FOCALLEN;焦距
 EXIFFILTER_ISO;感光度
 EXIFFILTER_LENS;镜头
 EXIFFILTER_SHUTTER;快门
-EXIFPANEL_ADDEDITHINT;添加/编辑标签
 EXIFPANEL_ADDEDIT;添加/编辑
+EXIFPANEL_ADDEDITHINT;添加/编辑标签
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;输入内容
 EXIFPANEL_ADDTAGDLG_SELECTTAG;选择标签
 EXIFPANEL_ADDTAGDLG_TITLE;添加/编辑标签
-EXIFPANEL_KEEPHINT;输出文件时保留“已选”标签
 EXIFPANEL_KEEP;保留
-EXIFPANEL_REMOVEHINT;输出文件时移除“已选”标签
+EXIFPANEL_KEEPHINT;输出文件时保留“已选”标签
 EXIFPANEL_REMOVE;移除
-EXIFPANEL_RESETALLHINT;重置所有标签内容
-EXIFPANEL_RESETALL;全部重置
-EXIFPANEL_RESETHINT;重置所选标签内容
+EXIFPANEL_REMOVEHINT;输出文件时移除“已选”标签
 EXIFPANEL_RESET;重置
+EXIFPANEL_RESETALL;全部重置
+EXIFPANEL_RESETALLHINT;重置所有标签内容
+EXIFPANEL_RESETHINT;重置所选标签内容
 EXIFPANEL_SUBDIRECTORY;子文件夹
 EXPORT_BYPASS_ALL;(取消)选择全部
 EXPORT_BYPASS_RAW_FF;Bypass [raw] 平场
@@ -59,16 +59,16 @@ EXPORT_MAXWIDTH;最大宽度
 EXPORT_PUTTOQUEUEFAST;  放入快速导出序列
 EXTPROGTARGET_1;raw
 FILEBROWSER_APPLYPROFILE;应用配置
+FILEBROWSER_CACHE;缓存
 FILEBROWSER_CACHECLEARFROMFULL;清空缓存
 FILEBROWSER_CACHECLEARFROMPARTIAL;清理缓存
-FILEBROWSER_CACHE;缓存
 FILEBROWSER_CLEARPROFILE;清空配置
 FILEBROWSER_COPYPROFILE;复制配置
 FILEBROWSER_CURRENT_NAME;当前名称：
 FILEBROWSER_DELETEDLGLABEL;确认删除
 FILEBROWSER_DELETEDLGMSG;确定删除所选的%1个文件？
-FILEBROWSER_EMPTYTRASHHINT;永久清空垃圾箱
 FILEBROWSER_EMPTYTRASH;清空垃圾箱
+FILEBROWSER_EMPTYTRASHHINT;永久清空垃圾箱
 FILEBROWSER_EXEC_CPB;自定义档案制作工具
 FILEBROWSER_EXTPROGMENU;调用程序...
 FILEBROWSER_NEW_NAME;新名称：
@@ -82,18 +82,18 @@ FILEBROWSER_POPUPFILEOPERATIONS;文件操作
 FILEBROWSER_POPUPMOVEEND;移动到队列尾部
 FILEBROWSER_POPUPMOVEHEAD;移动到队列头部
 FILEBROWSER_POPUPMOVETO;移动至...
-FILEBROWSER_POPUPOPENINEDITOR;打开在编辑器
 FILEBROWSER_POPUPOPEN;打开
-FILEBROWSER_POPUPPROCESSFAST;放入序列（快速导出）
+FILEBROWSER_POPUPOPENINEDITOR;打开在编辑器
 FILEBROWSER_POPUPPROCESS;放入队列
+FILEBROWSER_POPUPPROCESSFAST;放入序列（快速导出）
 FILEBROWSER_POPUPPROFILEOPERATIONS;处理色彩档案
 FILEBROWSER_POPUPRANK1;评 1 星
 FILEBROWSER_POPUPRANK2;评 2 星
 FILEBROWSER_POPUPRANK3;评 3 星
 FILEBROWSER_POPUPRANK4;评 4 星
 FILEBROWSER_POPUPRANK5;评 5 星
-FILEBROWSER_POPUPREMOVEINCLPROC;删除序列输出
 FILEBROWSER_POPUPREMOVE;从文件系统中移除
+FILEBROWSER_POPUPREMOVEINCLPROC;删除序列输出
 FILEBROWSER_POPUPRENAME;重命名
 FILEBROWSER_POPUPSELECTALL;全部选中
 FILEBROWSER_POPUPTRASH;移动到垃圾箱
@@ -120,10 +120,10 @@ FILEBROWSER_SHOWRANK5HINT;显示5星图片
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;显示保存的图片\n快捷: <b>Alt-7</b>
 FILEBROWSER_SHOWTRASHHINT;显示垃圾箱内容
 FILEBROWSER_SHOWUNRANKHINT;显示未评星图片
-FILEBROWSER_STARTPROCESSINGHINT;开始处理或保存队列中的图片
 FILEBROWSER_STARTPROCESSING;开始处理
-FILEBROWSER_STOPPROCESSINGHINT;停止处理图片
+FILEBROWSER_STARTPROCESSINGHINT;开始处理或保存队列中的图片
 FILEBROWSER_STOPPROCESSING;停止处理
+FILEBROWSER_STOPPROCESSINGHINT;停止处理图片
 FILEBROWSER_THUMBSIZE;缩略图大小
 FILEBROWSER_ZOOMINHINT;增大缩略图
 FILEBROWSER_ZOOMOUTHINT;减小缩略图
@@ -133,15 +133,15 @@ GENERAL_AUTO;自动
 GENERAL_BEFORE;之前
 GENERAL_CANCEL;取消
 GENERAL_CLOSE;关闭
-GENERAL_DISABLED;禁用
 GENERAL_DISABLE;禁用
-GENERAL_ENABLED;开启
+GENERAL_DISABLED;禁用
 GENERAL_ENABLE;启用
+GENERAL_ENABLED;开启
 GENERAL_FILE;文件
 GENERAL_LANDSCAPE;横向
 GENERAL_NA;不适用
-GENERAL_NONE;无
 GENERAL_NO;否
+GENERAL_NONE;无
 GENERAL_OK;确定
 GENERAL_PORTRAIT;纵向
 GENERAL_SAVE;保存
@@ -275,49 +275,49 @@ HISTORY_MSG_244;VC - 力度
 HISTORY_MSG_245;VC - 中心
 HISTORY_NEWSNAPSHOT;新建快照
 HISTORY_NEWSNAPSHOT_TOOLTIP;快捷键：<b>Alt-s</b>
-HISTORY_SNAPSHOTS;系列快照
 HISTORY_SNAPSHOT;快照
-IPTCPANEL_AUTHORSPOSITIONHINT;作者头衔
-IPTCPANEL_AUTHORSPOSITION;作者职位
+HISTORY_SNAPSHOTS;系列快照
 IPTCPANEL_AUTHOR;作者
-IPTCPANEL_CAPTIONHINT;文字说明
-IPTCPANEL_CAPTIONWRITERHINT;参与创作人员
-IPTCPANEL_CAPTIONWRITER;说明作者
+IPTCPANEL_AUTHORSPOSITION;作者职位
+IPTCPANEL_AUTHORSPOSITIONHINT;作者头衔
 IPTCPANEL_CAPTION;标题
-IPTCPANEL_CATEGORYHINT;提供者所认为的作品类别
+IPTCPANEL_CAPTIONHINT;文字说明
+IPTCPANEL_CAPTIONWRITER;说明作者
+IPTCPANEL_CAPTIONWRITERHINT;参与创作人员
 IPTCPANEL_CATEGORY;类别
-IPTCPANEL_CITYHINT;图片来自城市
+IPTCPANEL_CATEGORYHINT;提供者所认为的作品类别
 IPTCPANEL_CITY;城市
+IPTCPANEL_CITYHINT;图片来自城市
 IPTCPANEL_COPYHINT;将IPTC设置复制到剪贴板
-IPTCPANEL_COPYRIGHTHINT;版权信息
 IPTCPANEL_COPYRIGHT;版权
-IPTCPANEL_COUNTRYHINT;图片来自国家
+IPTCPANEL_COPYRIGHTHINT;版权信息
 IPTCPANEL_COUNTRY;国家
-IPTCPANEL_CREDITHINT;图片提供者，未必是作者
+IPTCPANEL_COUNTRYHINT;图片来自国家
 IPTCPANEL_CREDIT;提供者
-IPTCPANEL_DATECREATEDHINT;图片创作日期，格式：年月日补零(YYYYMMDD)
+IPTCPANEL_CREDITHINT;图片提供者，未必是作者
 IPTCPANEL_DATECREATED;创作日期
-IPTCPANEL_EMBEDDEDHINT;将IPTC数据重置为图片内嵌数据
+IPTCPANEL_DATECREATEDHINT;图片创作日期，格式：年月日补零(YYYYMMDD)
 IPTCPANEL_EMBEDDED;内嵌
-IPTCPANEL_HEADLINEHINT;可发布的内容简介
+IPTCPANEL_EMBEDDEDHINT;将IPTC数据重置为图片内嵌数据
 IPTCPANEL_HEADLINE;摘要
-IPTCPANEL_INSTRUCTIONSHINT;写给编辑的特殊要求
+IPTCPANEL_HEADLINEHINT;可发布的内容简介
 IPTCPANEL_INSTRUCTIONS;指令
-IPTCPANEL_KEYWORDSHINT;用于信息索引
+IPTCPANEL_INSTRUCTIONSHINT;写给编辑的特殊要求
 IPTCPANEL_KEYWORDS;关键词
+IPTCPANEL_KEYWORDSHINT;用于信息索引
 IPTCPANEL_PASTEHINT;粘贴剪贴板内的IPTC设置
-IPTCPANEL_PROVINCEHINT;图片来自省份
 IPTCPANEL_PROVINCE;省份
-IPTCPANEL_RESETHINT;重置为默认配置
+IPTCPANEL_PROVINCEHINT;图片来自省份
 IPTCPANEL_RESET;重置
-IPTCPANEL_SOURCEHINT;图片内容知识产权所有人
+IPTCPANEL_RESETHINT;重置为默认配置
 IPTCPANEL_SOURCE;来源
-IPTCPANEL_SUPPCATEGORIESHINT;进一步细分类别
+IPTCPANEL_SOURCEHINT;图片内容知识产权所有人
 IPTCPANEL_SUPPCATEGORIES;附加类别
-IPTCPANEL_TITLEHINT;作品的名称
+IPTCPANEL_SUPPCATEGORIESHINT;进一步细分类别
 IPTCPANEL_TITLE;标题
-IPTCPANEL_TRANSREFERENCEHINT;原始发送地点代码
+IPTCPANEL_TITLEHINT;作品的名称
 IPTCPANEL_TRANSREFERENCE;传输基准
+IPTCPANEL_TRANSREFERENCEHINT;原始发送地点代码
 MAIN_BUTTON_FULLSCREEN;全屏幕
 MAIN_BUTTON_PREFERENCES;参数设置
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;将当前图片放入处理序列中\n快捷键: <b>Ctrl+b</b>
@@ -382,8 +382,8 @@ NAVIGATOR_XY_FULL;宽 = %1, 高 = %2
 NAVIGATOR_XY_NA;x = n/a, y = n/a
 PARTIALPASTE_BASICGROUP;基本设置
 PARTIALPASTE_CACORRECTION;色彩校正
-PARTIALPASTE_CHANNELMIXERBW;黑白
 PARTIALPASTE_CHANNELMIXER;通道混合器
+PARTIALPASTE_CHANNELMIXERBW;黑白
 PARTIALPASTE_COARSETRANS;90度旋转/翻转
 PARTIALPASTE_COLORAPP;CIECAM02 国际照明协会色彩显示框架2002
 PARTIALPASTE_COLORGROUP;色彩相关设定
@@ -445,8 +445,8 @@ PREFERENCES_D50;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
 PREFERENCES_D65;6500K
-PREFERENCES_DATEFORMATHINT;<i>可以使用下列控制符:</i>\n<b>%y</b><i> : 年</i>\n<b>%m</b><i> : 月h</i>\n<b>%d</b><i> : 日</i>\n<i>\n例如，中文日期格式:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DATEFORMAT;日期格式
+PREFERENCES_DATEFORMATHINT;<i>可以使用下列控制符:</i>\n<b>%y</b><i> : 年</i>\n<b>%m</b><i> : 月h</i>\n<b>%d</b><i> : 日</i>\n<i>\n例如，中文日期格式:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DEFAULTLANG;缺省语言
 PREFERENCES_DEFAULTTHEME;默认主题
 PREFERENCES_DIRHOME;用户文件路径
@@ -458,8 +458,8 @@ PREFERENCES_EDITORCMDLINE;其他命令行
 PREFERENCES_EXTERNALEDITOR;外部编辑器
 PREFERENCES_FBROWSEROPTS;文件浏览选项
 PREFERENCES_FILEFORMAT;文件格式
-PREFERENCES_FLATFIELDFOUND;找到
 PREFERENCES_FLATFIELD;平场
+PREFERENCES_FLATFIELDFOUND;找到
 PREFERENCES_FORIMAGE;用于图片文件
 PREFERENCES_FORRAW;用于Raw文件
 PREFERENCES_GIMPPATH;GIMP安装文件夹
@@ -472,15 +472,15 @@ PREFERENCES_INTENT_RELATIVE;相对色彩模式
 PREFERENCES_INTENT_SATURATION;饱和度
 PREFERENCES_MENUGROUPRANK;组 "评价"
 PREFERENCES_MONITORICC;显示器配置
-PREFERENCES_OUTDIRFOLDERHINT;将已寸图片放至所选文件夹
-PREFERENCES_OUTDIRFOLDER;保存至文件夹
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>可以使用下列控制符:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\n这些控制符指向RAW文件所在文件夹及子文件夹。\n\n例如 假如</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>已经打开，控制符的意义如下：\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n如果想将输出文件保存到输入文件所在位置：\n</i><b>%p1/%f\n</b><i>\n如果想将输出文件保存至输入文件夹内的'converted'子文件夹：\n</i><b>%p1/converted/%f\n</b><i>\n如果想将输出文件保存至 '/home/tom/converted' 并保留按日期所分的子文件夹：\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;使用模板
 PREFERENCES_OUTDIR;输出路径
-PREFERENCES_PARSEDEXTADDHINT;输入扩展名并按此按钮将其添加至列表
-PREFERENCES_PARSEDEXTADD;添加扩展名
-PREFERENCES_PARSEDEXTDELHINT;从列表中删除选中的扩展名
+PREFERENCES_OUTDIRFOLDER;保存至文件夹
+PREFERENCES_OUTDIRFOLDERHINT;将已寸图片放至所选文件夹
+PREFERENCES_OUTDIRTEMPLATE;使用模板
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>可以使用下列控制符:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\n这些控制符指向RAW文件所在文件夹及子文件夹。\n\n例如 假如</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>已经打开，控制符的意义如下：\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n如果想将输出文件保存到输入文件所在位置：\n</i><b>%p1/%f\n</b><i>\n如果想将输出文件保存至输入文件夹内的'converted'子文件夹：\n</i><b>%p1/converted/%f\n</b><i>\n如果想将输出文件保存至 '/home/tom/converted' 并保留按日期所分的子文件夹：\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_PARSEDEXT;已知扩展名
+PREFERENCES_PARSEDEXTADD;添加扩展名
+PREFERENCES_PARSEDEXTADDHINT;输入扩展名并按此按钮将其添加至列表
+PREFERENCES_PARSEDEXTDELHINT;从列表中删除选中的扩展名
 PREFERENCES_PROFILEHANDLING;图片处理配置管理
 PREFERENCES_PROFILELOADPR;配置文件读取优先级
 PREFERENCES_PROFILEPRCACHE;缓存中的配置文件
@@ -514,8 +514,8 @@ PROFILEPANEL_TOOLTIPCOPY;将当前配置复制到剪贴板
 PROFILEPANEL_TOOLTIPLOAD;由文件加载配置
 PROFILEPANEL_TOOLTIPPASTE;从剪贴板粘贴配置
 PROFILEPANEL_TOOLTIPSAVE;保存当前配置
-PROGRESSBAR_LOADINGTHUMBS;正在读取缩略图……
 PROGRESSBAR_LOADING;图片加载中...
+PROGRESSBAR_LOADINGTHUMBS;正在读取缩略图……
 PROGRESSBAR_LOADJPEG;JPEG文件加载中...
 PROGRESSBAR_LOADPNG;PNG文件加载中...
 PROGRESSBAR_LOADTIFF;TIFF文件加载中...
@@ -532,9 +532,9 @@ SAVEDLG_FILEFORMAT;文件格式
 SAVEDLG_FORCEFORMATOPTS;强制保存选项
 SAVEDLG_JPEGQUAL;JPEG质量
 SAVEDLG_PNGCOMPR;PNG压缩
+SAVEDLG_PUTTOQUEUE;放入队列
 SAVEDLG_PUTTOQUEUEHEAD;放在处理序列首位
 SAVEDLG_PUTTOQUEUETAIL;放在处理序列末位
-SAVEDLG_PUTTOQUEUE;放入队列
 SAVEDLG_SAVEIMMEDIATELY;立即保存
 SAVEDLG_SAVESPP;随图片保存处理参数
 SAVEDLG_SUBSAMP;二次抽样
@@ -551,14 +551,14 @@ TP_BWMIX_ALGO_LI;线性
 TP_BWMIX_ALGO_SP;特定效果
 TP_BWMIX_AUTOCH;自动
 TP_BWMIX_FILTER;色彩过滤
-TP_BWMIX_FILTER_BLUEGREEN;蓝-绿
 TP_BWMIX_FILTER_BLUE;蓝
-TP_BWMIX_FILTER_GREENYELLOW;绿-黄
+TP_BWMIX_FILTER_BLUEGREEN;蓝-绿
 TP_BWMIX_FILTER_GREEN;绿
+TP_BWMIX_FILTER_GREENYELLOW;绿-黄
 TP_BWMIX_FILTER_NONE;无
 TP_BWMIX_FILTER_PURPLE;紫
-TP_BWMIX_FILTER_REDYELLOW;红-黄
 TP_BWMIX_FILTER_RED;红
+TP_BWMIX_FILTER_REDYELLOW;红-黄
 TP_BWMIX_FILTER_YELLOW;黄
 TP_BWMIX_GAMMA;伽马矫正 
 TP_BWMIX_GAM_TOOLTIP;矫正红绿蓝三色通道(RGB)伽马
@@ -638,14 +638,14 @@ TP_EXPOSURE_AUTOLEVELS;自动色阶
 TP_EXPOSURE_BLACKLEVEL;黑
 TP_EXPOSURE_BRIGHTNESS;亮度
 TP_EXPOSURE_CLIP;高光溢出
-TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;高光压缩阀值
 TP_EXPOSURE_COMPRHIGHLIGHTS;高光压缩
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;高光压缩阀值
 TP_EXPOSURE_COMPRSHADOWS;阴影压缩
 TP_EXPOSURE_CONTRAST;对比度
+TP_EXPOSURE_CURVEEDITOR;影调曲线
 TP_EXPOSURE_CURVEEDITOR1;色调曲线 1
 TP_EXPOSURE_CURVEEDITOR2;色调曲线 2
 TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;请从 “曝光 > 色调曲线” (Exposure > Tone Curve) RawPedia 文章中学到使用2条色调曲线获得好效果
-TP_EXPOSURE_CURVEEDITOR;影调曲线
 TP_EXPOSURE_EXPCOMP;曝光补偿
 TP_EXPOSURE_LABEL;曝光
 TP_EXPOSURE_SATURATION;色彩饱和度
@@ -717,7 +717,6 @@ TP_LENSPROFILE_LABEL;镜头矫正档案
 TP_LENSPROFILE_USECA;CA 矫正
 TP_LENSPROFILE_USEDIST;畸变矫正
 TP_LENSPROFILE_USEVIGN;暗角矫正
-TP_NEUTRAL;自然
 TP_PCVIGNETTE_FEATHER;羽化
 TP_PCVIGNETTE_LABEL;暗角滤镜
 TP_PCVIGNETTE_ROUNDNESS;圆度
@@ -735,16 +734,16 @@ TP_RAWCACORR_CARED;红
 TP_RESIZE_CROPPEDAREA;切出的部分
 TP_RESIZE_FITBOX;Bounding Box 包围盒
 TP_RESIZE_FULLIMAGE;全图
-TP_RESIZE_HEIGHT;高度
 TP_RESIZE_H;高:
+TP_RESIZE_HEIGHT;高度
 TP_RESIZE_LABEL;调整大小
 TP_RESIZE_LANCZOS;Lanczos算法
 TP_RESIZE_METHOD;方式: 
 TP_RESIZE_NEAREST;最近点
 TP_RESIZE_SCALE;比例
 TP_RESIZE_SPECIFY;指定：
-TP_RESIZE_WIDTH;宽度
 TP_RESIZE_W;宽:
+TP_RESIZE_WIDTH;宽度
 TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;频道
 TP_RGBCURVES_GREEN;G
@@ -873,6 +872,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !FILEBROWSER_POPUPCOLORLABEL3;Label: Green
 !FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
 !FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
+!FILEBROWSER_POPUPRANK;Rank
 !FILEBROWSER_POPUPRANK0;Unrank
 !FILEBROWSER_QUERYHINT;Type filenames to search for. Supports partial filenames. Separate the search terms using commas, e.g.\n<i>1001,1004,1199</i>\n\nExclude search terms by prefixing them with <i>!=</i>\ne.g.\n<i>!=1001,1004,1199</i>\n\nShortcuts:\n<b>Ctrl-f</b> - focus the Find box,\n<b>Enter</b> - search,\n<b>Esc</b> - clear the Find box,\n<b>Shift-Esc</b> - defocus the Find box.
 !FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red.\nShortcut: <b>Alt-1</b>
@@ -957,7 +957,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !HISTORY_MSG_163;RGB Curves - Red
 !HISTORY_MSG_164;RGB Curves - Green
 !HISTORY_MSG_165;RGB Curves - Blue
-!HISTORY_MSG_166;Exposure - Neutral
+!HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_167;Demosaicing method
 !HISTORY_MSG_168;L*a*b* - CC curve
 !HISTORY_MSG_169;L*a*b* - CH curve
@@ -1276,17 +1276,17 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
 !PREFERENCES_CURVEBBOXPOS_LEFT;Left
 !PREFERENCES_CURVEBBOXPOS_RIGHT;Right
+!PREFERENCES_CUSTPROFBUILD;Custom Processing Profile Builder
 !PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\n\nThe path of the communication file (*.ini style, a.k.a. "Keyfile") is added as a command line parameter. It contains various parameters required for the scripts and image Exif to allow a rules-based processing profile generation.\n\n<b>WARNING:</b> You are responsible for using double quotes where necessary if you're using paths containing spaces.
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
-!PREFERENCES_CUSTPROFBUILD;Custom Processing Profile Builder
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
+!PREFERENCES_DARKFRAME;Dark-Frame
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_DARKFRAME;Dark-Frame
 !PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
 !PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
 !PREFERENCES_DIRDARKFRAMES;Dark-frames directory
@@ -1302,6 +1302,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_FLUOF11;Fluorescent F11
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Editor's panel and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
+!PREFERENCES_GREY;Output device's Yb luminance (%)
 !PREFERENCES_GREY05;Yb=05 CIE L#30
 !PREFERENCES_GREY10;Yb=10 CIE L#40
 !PREFERENCES_GREY15;Yb=15 CIE L#45
@@ -1309,10 +1310,9 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_GREY23;Yb=23 CIE L#55
 !PREFERENCES_GREY30;Yb=30 CIE L#60
 !PREFERENCES_GREY40;Yb=40 CIE L#70
+!PREFERENCES_GREYSC;Scene Yb luminance (%)
 !PREFERENCES_GREYSC18;Yb=18 CIE L#50
 !PREFERENCES_GREYSCA;Automatic
-!PREFERENCES_GREYSC;Scene Yb luminance (%)
-!PREFERENCES_GREY;Output device's Yb luminance (%)
 !PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
 !PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
 !PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
@@ -1325,8 +1325,8 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_LEVAUTDN;Denoising level
 !PREFERENCES_LEVDN;Cell size
 !PREFERENCES_LISS;Auto multi-zone smoothing
-!PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 !PREFERENCES_MAX;Maxi (Tile)
+!PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 !PREFERENCES_MED;Medium (Tile/2)
 !PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
 !PREFERENCES_MENUGROUPFILEOPERATIONS;Group "File operations"
@@ -1335,8 +1335,8 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_MENUOPTIONS;Context Menu Options
 !PREFERENCES_METADATA;Metadata
 !PREFERENCES_MIN;Mini (100x115)
-!PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs In Own Window Mode
 !PREFERENCES_MULTITAB;Multiple Editor Tabs Mode
+!PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs In Own Window Mode
 !PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !PREFERENCES_NAVIGATIONFRAME;Navigation
 !PREFERENCES_NOISE;Noise Reduction
@@ -1360,8 +1360,8 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
 !PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
 !PREFERENCES_SIMPLAUT;Tool mode
-!PREFERENCES_SINGLETABVERTAB;Single Editor Tab Mode, Vertical Tabs
 !PREFERENCES_SINGLETAB;Single Editor Tab Mode
+!PREFERENCES_SINGLETABVERTAB;Single Editor Tab Mode, Vertical Tabs
 !PREFERENCES_SLIMUI;Slim interface
 !PREFERENCES_SMA;Small (250x287)
 !PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
@@ -1394,13 +1394,14 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PROGRESSDLG_PROFILECHANGEDINBROWSER;Processing profile changed in browser
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
+!THRESHOLDSELECTOR_B;Bottom
 !THRESHOLDSELECTOR_BL;Bottom-left
 !THRESHOLDSELECTOR_BR;Bottom-right
-!THRESHOLDSELECTOR_B;Bottom
 !THRESHOLDSELECTOR_HINT;Hold the <b>Shift</b> key to move individual control points.
+!THRESHOLDSELECTOR_T;Top
 !THRESHOLDSELECTOR_TL;Top-left
 !THRESHOLDSELECTOR_TR;Top-right
-!THRESHOLDSELECTOR_T;Top
+!TP_BWMIX_ALGO;Algorithm OYCPM
 !TP_BWMIX_ALGO_TOOLTIP;Linear: will produce a normal <b>linear</b> response.\nSpecial effects: will produce special effects by mixing channels <b>non-linearly</b>.
 !TP_BWMIX_AUTOCH_TIP;Calculate values optimizing Channel Mixer.
 !TP_BWMIX_CC_ENABLED;Adjust complementary color
@@ -1466,6 +1467,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
 !TP_COLORAPP_HUE;Hue (h)
 !TP_COLORAPP_HUE_TOOLTIP;Hue (h) - angle between 0° and 360°.
+!TP_COLORAPP_LABEL;CIE Color Appearance Model 2002
 !TP_COLORAPP_LABEL_SCENE;Scene Conditions
 !TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
 !TP_COLORAPP_MODEL;WP Model
@@ -1474,6 +1476,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_COLORAPP_RSTPRO_TOOLTIP;Red and skin-tones protection affects both sliders and curves.
 !TP_COLORAPP_SHARPCIE;--unused--
 !TP_COLORAPP_SHARPCIE_TOOLTIP;--unused--
+!TP_COLORAPP_SURROUND;Surround
 !TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
 !TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slighty dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
 !TP_COLORAPP_SURSOURCE;Dark surround
@@ -1496,11 +1499,11 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Chroma opacity as a function of luminance oC=f(L)
 !TP_COLORTONING_HIGHLIGHT;Highlights
 !TP_COLORTONING_HUE;Hue
-!TP_COLORTONING_LABEL;Color Toning
 !TP_COLORTONING_LAB;L*a*b* blending
+!TP_COLORTONING_LABEL;Color Toning
+!TP_COLORTONING_LUMA;Luminance
 !TP_COLORTONING_LUMAMODE;Preserve luminance
 !TP_COLORTONING_LUMAMODE_TOOLTIP;If enabled, when you change color (red, green, cyan, blue, etc.) the luminance of each pixel is preserved.
-!TP_COLORTONING_LUMA;Luminance
 !TP_COLORTONING_METHOD;Method
 !TP_COLORTONING_METHOD_TOOLTIP;"L*a*b* blending", "RGB sliders" and "RGB curves" use interpolated color blending.\n"Color balance (Shadows/Midtones/Highlights)" and "Saturation 2 colors" use direct colors.\n\nThe Black-and-White tool can be enabled when using any color toning method, which allows for color toning.
 !TP_COLORTONING_MIDTONES;Midtones
@@ -1509,15 +1512,15 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_COLORTONING_OPACITY;Opacity
 !TP_COLORTONING_RGBCURVES;RGB - Curves
 !TP_COLORTONING_RGBSLIDERS;RGB - Sliders
+!TP_COLORTONING_SA;Saturation Protection
 !TP_COLORTONING_SATURATEDOPACITY;Strength
 !TP_COLORTONING_SATURATIONTHRESHOLD;Threshold
-!TP_COLORTONING_SA;Saturation Protection
 !TP_COLORTONING_SHADOWS;Shadows
-!TP_COLORTONING_SPLITCOCO;Color Balance Shadows/Midtones/Highlights
 !TP_COLORTONING_SPLITCO;Shadows/Midtones/Highlights
+!TP_COLORTONING_SPLITCOCO;Color Balance Shadows/Midtones/Highlights
 !TP_COLORTONING_SPLITLR;Saturation 2 colors
-!TP_COLORTONING_STRENGTH;Strength
 !TP_COLORTONING_STR;Strength
+!TP_COLORTONING_STRENGTH;Strength
 !TP_COLORTONING_TWO2;Special chroma '2 colors'
 !TP_COLORTONING_TWOALL;Special chroma
 !TP_COLORTONING_TWOBY;Special a* and b*
@@ -1529,30 +1532,31 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
 !TP_DEFRINGE_THRESHOLD;Threshold
 !TP_DIRPYRDENOISE_33;3×3 strong
-!TP_DIRPYRDENOISE_55SOFT;5×5
 !TP_DIRPYRDENOISE_55;5×5 strong
+!TP_DIRPYRDENOISE_55SOFT;5×5
 !TP_DIRPYRDENOISE_77;7×7 (slow)
 !TP_DIRPYRDENOISE_99;9x9 (very slow)
 !TP_DIRPYRDENOISE_ABM;Chroma only
+!TP_DIRPYRDENOISE_AUT;Automatic global
 !TP_DIRPYRDENOISE_AUTO;Automatic global
 !TP_DIRPYRDENOISE_AUTO_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !
-!TP_DIRPYRDENOISE_AUT;Automatic global
 !TP_DIRPYRDENOISE_BLUE;Chrominance - Blue-Yellow
 !TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
 !TP_DIRPYRDENOISE_CCCURVE;Chrominance curve
-!TP_DIRPYRDENOISE_CHROMAFR;Chrominance
 !TP_DIRPYRDENOISE_CHROMA;Chrominance - Master
+!TP_DIRPYRDENOISE_CHROMAFR;Chrominance
 !TP_DIRPYRDENOISE_CTYPE;Method
 !TP_DIRPYRDENOISE_CTYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nAutomatic multi-zones\nNo preview - works only during saving, but using the "Preview" method by matching the tile size and center to the preview size and center you can get an idea of the expected results.\nThe image is divided into tiles (about 10 to 70 depending on image size) and each tile receives its own chrominance noise reduction settings.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
+!TP_DIRPYRDENOISE_CUR;Curve
 !TP_DIRPYRDENOISE_CURVEEDITOR_CC;Chroma
 !TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
 !TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modulates action of 'Luminance' denoise
-!TP_DIRPYRDENOISE_CUR;Curve
 !TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on the gamma of the input color profile. An sRGB gamma is assumed, thus if the image uses an input color profile of a different gamma, the effects of luminance noise reduction will differ.
 !TP_DIRPYRDENOISE_ENH;Enhanced mode
 !TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase.
 !TP_DIRPYRDENOISE_GAMMA;Gamma
 !TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
+!TP_DIRPYRDENOISE_LAB;L*a*b*
 !TP_DIRPYRDENOISE_LABM;L*a*b*
 !TP_DIRPYRDENOISE_LCURVE;Luminance curve
 !TP_DIRPYRDENOISE_LM;Luminance only
@@ -1560,31 +1564,31 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_DIRPYRDENOISE_LTYPE;Luminance control
 !TP_DIRPYRDENOISE_LUMAFR;Luminance
 !TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet on luminance and Fourier transform for luminance detail
-!TP_DIRPYRDENOISE_MANU;Manual
 !TP_DIRPYRDENOISE_MAN;Manual
+!TP_DIRPYRDENOISE_MANU;Manual
+!TP_DIRPYRDENOISE_MED;Median Filter
 !TP_DIRPYRDENOISE_MEDMETHOD;Median method
 !TP_DIRPYRDENOISE_MEDTYPE;Median type
-!TP_DIRPYRDENOISE_MED;Median Filter
 !TP_DIRPYRDENOISE_MED_TOOLTIP;Enabled median denoising
+!TP_DIRPYRDENOISE_METHOD;Method
 !TP_DIRPYRDENOISE_METHOD11;Quality
 !TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
-!TP_DIRPYRDENOISE_METHOD;Method
 !TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or L*a*b* methods can be used.\n\nFor non-raw images the L*a*b* method will be used, regardless of the selection.
 !TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "L*a*b*" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
 !TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired size. The larger the size, the longer it takes.\n\n3x3 soft: treats 5 pixels in a 1-pixel range.\n3x3: treats 9 pixels in a 1-pixel range.\n5x5 soft: treats 13 pixels in a 2-pixel range.\n5x5: treats 25 pixels in a 2-pixel range.\n7x7: treats 49 pixels in a 3-pixel range.\n9x9: treats 81 pixels in a 4-pixel range.\n\nSometimes it is possible to achieve higher quality running several iterations with a small range than one iteration with a large range.
-!TP_DIRPYRDENOISE_NOISELABELEMPTY;Preview noise: Mean= -   High= -
 !TP_DIRPYRDENOISE_NOISELABEL;Preview noise: Mean=%1  High=%2
+!TP_DIRPYRDENOISE_NOISELABELEMPTY;Preview noise: Mean= -   High= -
 !TP_DIRPYRDENOISE_NRESID_TOOLTIP;Displays the remaining noise levels of the part of the image visible in the <b>preview</b> after wavelet.\n\n>300 Very noisy\n100-300 Noisy\n50-100 A little noisy\n<50 Very low noise\n\nBeware, the values will differ between RGB and L*a*b* mode. The RGB values are less accurate because the RGB mode does not completely separate luminance and chrominance.
 !TP_DIRPYRDENOISE_PASSES;Median iterations
 !TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying a 3x3 median filter with three iterations often leads to better results than applying 7x7 once.
 !TP_DIRPYRDENOISE_PON;Auto multi-zones
-!TP_DIRPYRDENOISE_PREVLABEL;Preview size=%1, Center: Px=%2  Py=%3
-!TP_DIRPYRDENOISE_PREV;Preview
 !TP_DIRPYRDENOISE_PRE;Preview multi-zones
+!TP_DIRPYRDENOISE_PREV;Preview
+!TP_DIRPYRDENOISE_PREVLABEL;Preview size=%1, Center: Px=%2  Py=%3
 !TP_DIRPYRDENOISE_RED;Chrominance - Red-Green
 !TP_DIRPYRDENOISE_RGBM;RGB
-!TP_DIRPYRDENOISE_SHALBI;High
 !TP_DIRPYRDENOISE_SHAL;Standard
+!TP_DIRPYRDENOISE_SHALBI;High
 !TP_DIRPYRDENOISE_SLI;Slider
 !TP_DIRPYRDENOISE_SOFT;3x3
 !TP_DIRPYRDENOISE_TILELABEL;Tile size=%1, Center: Tx=%2  Ty=%3
@@ -1669,6 +1673,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_LABCURVE_LCREDSK_TIP;If enabled, the LC Curve affects only red and skin-tones.\nIf disabled, it applies to all tones.
 !TP_LABCURVE_RSTPROTECTION;Red and skin-tones protection
 !TP_LABCURVE_RSTPRO_TOOLTIP;Works on the Chromaticity slider and the CC curve.
+!TP_NEUTRAL;Reset
 !TP_NEUTRAL_TIP;Resets exposure sliders to neutral values.\nApplies to the same controls that Auto Levels applies to, regardless of whether you used Auto Levels or not.
 !TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering:\n0 = corners only,\n50 = halfway to center,\n100 = to center.
 !TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Roundness:\n0 = rectangle,\n50 = fitted ellipse,\n100 = circle.
@@ -1726,10 +1731,10 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_RETINEX_GAMMA_MID;Middle
 !TP_RETINEX_GAMMA_NONE;None
 !TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
+!TP_RETINEX_HIGH;High
+!TP_RETINEX_HIGHLIG;Highlight
 !TP_RETINEX_HIGHLIGHT;Highlight threshold
 !TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.
-!TP_RETINEX_HIGHLIG;Highlight
-!TP_RETINEX_HIGH;High
 !TP_RETINEX_HSLSPACE_LIN;HSL-Linear
 !TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
 !TP_RETINEX_LABEL;Retinex
@@ -1749,8 +1754,8 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_RETINEX_STRENGTH;Strength
 !TP_RETINEX_THRESHOLD;Threshold
 !TP_RETINEX_THRESHOLD_TOOLTIP;Limits in/out.\nIn = image source,\nOut = image gauss.
-!TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
 !TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
+!TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
 !TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nMean and Sigma\nTm=Min TM=Max of transmission map.
 !TP_RETINEX_TRANSMISSION;Transmission map
 !TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
@@ -1808,9 +1813,9 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_WAVELET_CH2;Saturated/pastel
 !TP_WAVELET_CH3;Link contrast levels
 !TP_WAVELET_CHCU;Curve
+!TP_WAVELET_CHR;Chroma-contrast link strength
 !TP_WAVELET_CHRO;Saturated/pastel threshold
 !TP_WAVELET_CHRO_TOOLTIP;Sets the wavelet level which will be the threshold between saturated and pastel colors.\n1-x: saturated\nx-9: pastel\n\nIf the value exceeds the amount of wavelet levels you are using then it will be ignored.
-!TP_WAVELET_CHR;Chroma-contrast link strength
 !TP_WAVELET_CHR_TOOLTIP;Adjusts chroma as a function of "contrast levels" and "chroma-contrast link strength"
 !TP_WAVELET_CHSL;Sliders
 !TP_WAVELET_CHTYPE;Chrominance method
@@ -1820,11 +1825,11 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_WAVELET_COMPGAMMA_TOOLTIP;Adjusting the gamma of the residual image allows you to equilibrate the data and histogram.
 !TP_WAVELET_COMPTM;Tone mapping
 !TP_WAVELET_CONTEDIT;'After' contrast curve
+!TP_WAVELET_CONTR;Gamut
+!TP_WAVELET_CONTRA;Contrast
 !TP_WAVELET_CONTRAST_MINUS;Contrast -
 !TP_WAVELET_CONTRAST_PLUS;Contrast +
-!TP_WAVELET_CONTRA;Contrast
 !TP_WAVELET_CONTRA_TOOLTIP;Changes contrast of the residual image.
-!TP_WAVELET_CONTR;Gamut
 !TP_WAVELET_CTYPE;Chrominance control
 !TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Modifies local contrast as a function of the original local contrast (abscissa).\nLow abscissa values represent small local contrast (real values about 10..20).\n50% abscissa represents average local contrast (real value about 100..300).\n66% abscissa represents standard deviation of local contrast (real value about 300..800).\n100% abscissa represents maximum local contrast (real value about 3000..8000).
 !TP_WAVELET_CURVEEDITOR_CH;Contrast levels=f(Hue)
@@ -1834,12 +1839,12 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_WAVELET_CURVEEDITOR_HH;HH
 !TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Modifies the residual image's hue as a function of hue.
 !TP_WAVELET_DALL;All directions
+!TP_WAVELET_DAUB;Edge performance
 !TP_WAVELET_DAUB2;D2 - low
 !TP_WAVELET_DAUB4;D4 - standard
 !TP_WAVELET_DAUB6;D6 - standard plus
 !TP_WAVELET_DAUB10;D10 - medium
 !TP_WAVELET_DAUB14;D14 - high
-!TP_WAVELET_DAUB;Edge performance
 !TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the firsts levels. However the quality is not strictly related to this coefficient and can vary with images and uses.
 !TP_WAVELET_DONE;Vertical
 !TP_WAVELET_DTHR;Diagonal
@@ -1847,14 +1852,14 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_WAVELET_EDCU;Curve
 !TP_WAVELET_EDGCONT;Local contrast
 !TP_WAVELET_EDGCONT_TOOLTIP;Adjusting the points to the left decreases contrast, and to the right increases it.\nBottom-left, Top-Left, Top-Right, Bottom-right represent respectively local contast for low values, mean, mean+stdev, maxima
+!TP_WAVELET_EDGE;Edge Sharpness
 !TP_WAVELET_EDGEAMPLI;Base amplification
-!TP_WAVELET_EDGEDETECTTHR2;Threshold high (detection)
-!TP_WAVELET_EDGEDETECTTHR;Threshold low (noise)
-!TP_WAVELET_EDGEDETECTTHR_TOOLTIP;This adjuster lets you target edge detection for example to avoid applying edge sharpness to fine details, such as noise in the sky.
 !TP_WAVELET_EDGEDETECT;Gradient sensitivity
+!TP_WAVELET_EDGEDETECTTHR;Threshold low (noise)
+!TP_WAVELET_EDGEDETECTTHR2;Threshold high (detection)
+!TP_WAVELET_EDGEDETECTTHR_TOOLTIP;This adjuster lets you target edge detection for example to avoid applying edge sharpness to fine details, such as noise in the sky.
 !TP_WAVELET_EDGEDETECT_TOOLTIP;Moving the slider to the right increases edge sensitivity. This affects local contrast, edge settings and noise.
 !TP_WAVELET_EDGESENSI;Edge sensitivity
-!TP_WAVELET_EDGE;Edge Sharpness
 !TP_WAVELET_EDGREINF_TOOLTIP;Reinforce or reduce the action of the first level, do the opposite to the second level, and leave the rest unchanged.
 !TP_WAVELET_EDGTHRESH;Detail
 !TP_WAVELET_EDGTHRESH_TOOLTIP;Change the repartition between the first levels and the others. The higher the threshold the more the action is centred on the first levels. Be careful with negative values, they increase the action of high levels and can introduce artifacts.
@@ -1893,29 +1898,29 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_WAVELET_LIPST;Enhanced algoritm
 !TP_WAVELET_LOWLIGHT;Shadow luminance range
 !TP_WAVELET_MEDGREINF;First level
+!TP_WAVELET_MEDI;Reduce artifacts in blue sky
 !TP_WAVELET_MEDILEV;Edge detection
 !TP_WAVELET_MEDILEV_TOOLTIP;When you enable Edge Detection, it is recommanded:\n- to disabled low contrast levels to avoid artifacts,\n- to use high values of gradient sensitivity.\n\nYou can modulate the strength with 'refine' from Denoise and Refine.
-!TP_WAVELET_MEDI;Reduce artifacts in blue sky
 !TP_WAVELET_NEUTRAL;Neutral
-!TP_WAVELET_NOISE;Denoise and Refine
 !TP_WAVELET_NOIS;Denoise
+!TP_WAVELET_NOISE;Denoise and Refine
 !TP_WAVELET_NPHIGH;High
 !TP_WAVELET_NPLOW;Low
 !TP_WAVELET_NPNONE;None
 !TP_WAVELET_NPTYPE;Neighboring pixels
 !TP_WAVELET_NPTYPE_TOOLTIP;This algorithm uses the proximity of a pixel and eight of its neighbors. If less difference, edges are reinforced.
+!TP_WAVELET_OPACITY;Opacity Blue-Yellow
+!TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
 !TP_WAVELET_OPACITYWL;Final local contrast
 !TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the wavelet treatment.\n\nThe left side represents the smallest local contrast, progressing to the largest local contrast on the right.
-!TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
-!TP_WAVELET_OPACITY;Opacity Blue-Yellow
 !TP_WAVELET_PASTEL;Pastel chroma
 !TP_WAVELET_PROC;Process
 !TP_WAVELET_RE1;Reinforced
 !TP_WAVELET_RE2;Unchanged
 !TP_WAVELET_RE3;Reduced
 !TP_WAVELET_RESCHRO;Chroma
-!TP_WAVELET_RESCONH;Highlights
 !TP_WAVELET_RESCON;Shadows
+!TP_WAVELET_RESCONH;Highlights
 !TP_WAVELET_RESID;Residual Image
 !TP_WAVELET_SAT;Saturated chroma
 !TP_WAVELET_SETTINGS;Wavelet Settings
@@ -1923,15 +1928,15 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_WAVELET_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 !TP_WAVELET_SKY;Sky targetting/protection
 !TP_WAVELET_SKY_TOOLTIP;At -100 sky-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 sky-tones are protected while all other tones are affected.
-!TP_WAVELET_STRENGTH;Strength
 !TP_WAVELET_STREN;Strength
+!TP_WAVELET_STRENGTH;Strength
 !TP_WAVELET_SUPE;Extra
+!TP_WAVELET_THR;Shadows threshold
+!TP_WAVELET_THRESHOLD;Highlight levels
 !TP_WAVELET_THRESHOLD2;Shadow levels
 !TP_WAVELET_THRESHOLD2_TOOLTIP;Only levels between 9 and 9 minus the value will be affected by the shadow luminance range. Other levels will be fully treated. The highest level possible is limited by the highlight level value (9 minus highlight level value).
-!TP_WAVELET_THRESHOLD;Highlight levels
 !TP_WAVELET_THRESHOLD_TOOLTIP;Only levels beyond the chosen value will be affected by the highlight luminance range. Other levels will be fully treated. The chosen value here limits the highest possible value of the shadow levels.
 !TP_WAVELET_THRH;Highlights threshold
-!TP_WAVELET_THR;Shadows threshold
 !TP_WAVELET_TILESBIG;Big tiles
 !TP_WAVELET_TILESFULL;Full image
 !TP_WAVELET_TILESIZE;Tiling method
