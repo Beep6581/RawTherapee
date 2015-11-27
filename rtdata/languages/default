@@ -396,7 +396,7 @@ HISTORY_MSG_162;Tone Mapping
 HISTORY_MSG_163;RGB Curves - Red
 HISTORY_MSG_164;RGB Curves - Green
 HISTORY_MSG_165;RGB Curves - Blue
-HISTORY_MSG_166;Exposure - Neutral
+HISTORY_MSG_166;Exposure - Reset
 HISTORY_MSG_167;Demosaicing method
 HISTORY_MSG_168;L*a*b* - CC curve
 HISTORY_MSG_169;L*a*b* - CH curve
@@ -1563,7 +1563,7 @@ TP_LENSPROFILE_LABEL;Lens Correction Profile
 TP_LENSPROFILE_USECA;Chromatic aberration correction
 TP_LENSPROFILE_USEDIST;Distortion correction
 TP_LENSPROFILE_USEVIGN;Vignetting correction
-TP_NEUTRAL;Neutral
+TP_NEUTRAL;Reset
 TP_NEUTRAL_TIP;Resets exposure sliders to neutral values.\nApplies to the same controls that Auto Levels applies to, regardless of whether you used Auto Levels or not.
 TP_PCVIGNETTE_FEATHER;Feather
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering:\n0 = corners only,\n50 = halfway to center,\n100 = to center.
