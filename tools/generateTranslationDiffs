@@ -53,11 +53,11 @@ getComments () {
 }
 
 getChanged () {
-  grep -Ev '^(!|#|$)' "$1" | sort -Vu
+  grep -Ev '^(!|#|$)' "$1" | sort -Vu -t ';' --key=1,1
 }
 
 getUnchanged () {
-  grep -E "^\!.+" "$1" | sort -Vu
+  grep -E "^\!.+" "$1" | sort -Vu -t ';' --key=1,1
 }
 
 # First thing, fix default, so move comments to front, then strip the rest of any "!" and duplicates.
@@ -74,13 +74,14 @@ for file in "${langFiles[@]}"; do
   printf "%02d - ${file#.*/}" "$i"
   dos2unix "$file" 2>/dev/null
   unset trLines newLines
-  # Fill trLines with translated text
+  # Fill trLines with previously translated text
   trLines+=("$(getChanged "$file")")
 
   # KEY;String
   # Match "default" keys with those in current translation file. If no match, add !KEY;String
   while read -r 'defLine'; do
-    if [[ ! "${trLines[@]}" =~ "${defLine%%;*}" ]]; then
+    defKey="${defLine%%;*}"
+    if [[ ! "${trLines[@]}" =~ ${defKey}\; ]]; then
       newLines+=("!${defLine}")
     fi
   done < <(getChanged default)
