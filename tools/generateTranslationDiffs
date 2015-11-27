@@ -73,26 +73,26 @@ for file in "${langFiles[@]}"; do
   t1="$(date +%s)"
   printf "%02d - ${file#.*/}" "$i"
   dos2unix "$file" 2>/dev/null
-  unset trLines newLines
-  # Fill trLines with previously translated text
-  trLines+=("$(getChanged "$file")")
+  unset newLines
 
   # KEY;String
   # Match "default" keys with those in current translation file. If no match, add !KEY;String
   while read -r 'defLine'; do
     defKey="${defLine%%;*}"
-    if [[ ! "${trLines[@]}" =~ ${defKey}\; ]]; then
+    if ! grep -q "^${defKey}\;" "$file"; then
       newLines+=("!${defLine}")
     fi
   done < <(getChanged default)
 
   # Form final translation file
+  # Start with comments
   if [[ -n "$(getComments "$file")" ]]; then
     printf "%s\n" "$(getComments "$file")" "" >> "$tmp"
   fi
-  if [[ -n "${trLines[@]}" ]]; then
-    printf "%s\n" "${trLines[@]}" "" >> "$tmp"
-  fi
+  # Add already-translated lines
+  getChanged "$file" >> "$tmp"
+  printf '%s\n' "" >> "$tmp"
+  # End with new, untranslated lines
   if [[ -n "${newLines[@]}" ]]; then
     printf "%s\n" "!!!!!!!!!!!!!!!!!!!!!!!!!" "! Untranslated keys follow; remove the ! prefix after an entry is translated." "!!!!!!!!!!!!!!!!!!!!!!!!!" "" "${newLines[@]}" >> "$tmp"
   fi
