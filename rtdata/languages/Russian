@@ -1501,6 +1501,7 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !HISTORY_MSG_424;Retinex - HL threshold
 !HISTORY_MSG_425;Retinex - Log base
 !HISTORY_MSG_426;Retinex - Hue equalizer
+!MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
 !MAIN_TAB_INSPECT; Inspect
 !MAIN_TAB_WAVELET;Wavelet
 !MAIN_TAB_WAVELET_TOOLTIP;Shortcut: <b>Alt-w</b>

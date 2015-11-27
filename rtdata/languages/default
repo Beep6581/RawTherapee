@@ -708,6 +708,7 @@ MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser or Filmstrip with the E
 MAIN_BUTTON_PREFERENCES;Preferences
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+b</b>
 MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+s</b>
+MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
