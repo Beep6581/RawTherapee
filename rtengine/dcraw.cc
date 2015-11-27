@@ -6206,12 +6206,12 @@ void CLASS apply_tiff()
 	  case  8: load_raw = &CLASS eight_bit_load_raw;	break;
 	  case 12: if (tiff_ifd[raw].phint == 2)
 		     load_flags = 6;
-           if(tiff_ifd[raw].comp != 1) {
-		     load_raw = &CLASS packed_load_raw;
-		     break;
-           } else {
-               tiff_bps = 14;
-           }
+             if(!strncmp(make,"SONY",4) && tiff_ifd[raw].comp == 1) { // hack for some sony cameras which report as 12 bit uncompressed but in fact are 14 bit uncompressed
+                 tiff_bps = 14;
+             } else {
+               load_raw = &CLASS packed_load_raw;
+               break;
+             }
 	  case 14: load_flags = 0;
 	  case 16: load_raw = &CLASS unpacked_load_raw;
 		   if (!strncmp(make,"OLYMPUS",7) &&
