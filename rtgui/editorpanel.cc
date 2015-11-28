@@ -516,7 +516,6 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
     lastSaveAsFileName = removeExtension (Glib::path_get_basename (fname));
 
     previewHandler = new PreviewHandler ();
-    previewHandler2 = new PreviewHandler ();
 
     this->isrc = isrc;
     ipc = rtengine::StagedImageProcessor::create (isrc);
