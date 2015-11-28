@@ -136,7 +136,7 @@ public:
     /// For more complex adjuster
     CoordinateAdjuster(CoordinateProvider *provider, CurveEditorSubGroup *parent, const std::vector<Axis> &axis);
 
-    virtual ~CoordinateAdjuster() {}
+    virtual ~CoordinateAdjuster();
 
     // Update the Axis list, e.g. on Curve change, but MUST have the same axis count
     void setAxis(const std::vector<Axis> &axis);
