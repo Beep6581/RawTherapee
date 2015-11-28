@@ -110,6 +110,12 @@ public:
     void scroll (int direction);
     void scrollPage (int direction);
 
+private:
+    void selectSingle (ThumbBrowserEntryBase* fileDescr);
+    void selectRange (ThumbBrowserEntryBase* fileDescr);
+    void selectSet (ThumbBrowserEntryBase* fileDescr);
+
+public:
     void selectPrev (int distance, bool enlarge);
     void selectNext (int distance, bool enlarge);
     void selectFirst (bool enlarge);
