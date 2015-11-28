@@ -192,14 +192,8 @@ public:
 ThumbImageUpdater*
 ThumbImageUpdater::getInstance(void)
 {
-    // this will not be deleted...
-    static ThumbImageUpdater* instance_ = 0;
-
-    if ( instance_ == 0 ) {
-        instance_ = new ThumbImageUpdater();
-    }
-
-    return instance_;
+    static ThumbImageUpdater instance_;
+    return &instance_;
 }
 
 ThumbImageUpdater::ThumbImageUpdater():

@@ -1691,18 +1691,8 @@ void DCPProfile::step2ApplyTile(float *rc, float *gc, float *bc, int width, int 
 // Generates as singleton
 DCPStore* DCPStore::getInstance()
 {
-    static DCPStore* instance_ = 0;
-
-    if ( instance_ == 0 ) {
-        static MyMutex smutex_;
-        MyMutex::MyLock lock(smutex_);
-
-        if ( instance_ == 0 ) {
-            instance_ = new DCPStore();
-        }
-    }
-
-    return instance_;
+    static DCPStore instance_;
+    return &instance_;
 }
 
 // Reads all profiles from the given profiles dir
