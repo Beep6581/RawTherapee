@@ -54,7 +54,7 @@ private:
     bool parse_camera_constants_file(Glib::ustring filename);
 
 public:
-    static void initCameraConstants(Glib::ustring baseDir, Glib::ustring userSettingsDir);
+    void init(Glib::ustring baseDir, Glib::ustring userSettingsDir);
     static CameraConstantsStore *getInstance(void);
     CameraConst *get(const char make[], const char model[]);
 };

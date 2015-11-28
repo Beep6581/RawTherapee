@@ -683,29 +683,22 @@ CameraConstantsStore::CameraConstantsStore()
 {
 }
 
-static CameraConstantsStore *global_instance;
-
-void CameraConstantsStore::initCameraConstants(Glib::ustring baseDir, Glib::ustring userSettingsDir)
+void CameraConstantsStore::init(Glib::ustring baseDir, Glib::ustring userSettingsDir)
 {
-    if (global_instance) {
-        // should only be called once during init.
-        abort();
-    }
-
-    global_instance = new CameraConstantsStore();
-    global_instance->parse_camera_constants_file(Glib::build_filename(baseDir, "camconst.json"));
+    parse_camera_constants_file(Glib::build_filename(baseDir, "camconst.json"));
 
     Glib::ustring userFile(Glib::build_filename(userSettingsDir, "camconst.json"));
 
     if (safe_file_test(userFile, Glib::FILE_TEST_EXISTS)) {
-        global_instance->parse_camera_constants_file(userFile);
+        parse_camera_constants_file(userFile);
     }
 }
 
 CameraConstantsStore *
 CameraConstantsStore::getInstance(void)
 {
-    return global_instance;
+    static CameraConstantsStore instance_;
+    return &instance_;
 }
 
 CameraConst *
