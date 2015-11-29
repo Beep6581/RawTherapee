@@ -285,6 +285,8 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
             }
         }
     }
+
+    backBuffer->setDirty(false);
 }
 
 void ThumbBrowserEntryBase::getTextSizes (int& infow, int& infoh)
