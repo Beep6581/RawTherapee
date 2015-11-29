@@ -64,7 +64,13 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
         return;
     }
 
-    backBuffer = Glib::RefPtr<BackBuffer> ( new BackBuffer (exp_width, exp_height, win) );
+    if (backBuffer && (backBuffer->getWidth() != exp_width || backBuffer->getHeight() != exp_height )) {
+        // deleting the existing BackBuffer
+        backBuffer.reset();
+    }
+    if (!backBuffer) {
+        backBuffer = Glib::RefPtr<BackBuffer> ( new BackBuffer (exp_width, exp_height, win) );
+    }
 
     // If thumbnail is hidden by a filter, drawing to it will crash
     // if either with or height is zero then return early
