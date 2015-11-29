@@ -278,10 +278,10 @@ if (OPTION_OMP)
     endif (OPENMP_FOUND)
 endif (OPTION_OMP)
 
-if(USE_EXPERIMENTAL_LANG_VERSIONS)
+if(USE_EXPERIMENTAL_LANG_VERSIONS OR NOT (SIGC_VERSION VERSION_LESS 2.5.1))
 	SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu1x")
 	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
-endif (USE_EXPERIMENTAL_LANG_VERSIONS)
+endif ()
 
 # find out whether we are building out of source
 get_filename_component(ABS_SOURCE_DIR "${PROJECT_SOURCE_DIR}" ABSOLUTE)
