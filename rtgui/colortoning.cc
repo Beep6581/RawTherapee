@@ -36,14 +36,6 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     colorSep = Gtk::manage (new  Gtk::HSeparator());
     pack_start (*colorSep);
 
-    colLabel = Gtk::manage (new Gtk::Label (M("TP_COLORTONING_LABCOL")));
-    colLabel->set_tooltip_text (M("TP_COLORTONING_LABCOL_TOOLTIP"));
-
-    interLabel = Gtk::manage (new Gtk::Label (M("TP_COLORTONING_LABINT")));
-    interLabel->set_tooltip_text (M("TP_COLORTONING_LABINT_TOOLTIP"));
-    pack_start (*colLabel, Gtk::PACK_SHRINK, 4);
-    pack_start (*interLabel, Gtk::PACK_SHRINK, 4);
-
     colorCurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M("TP_COLORTONING_COLOR"));
     colorCurveEditorG->setCurveListener (this);
 
@@ -799,8 +791,6 @@ void ColorToning::methodChanged ()
     if (!batchMode) {
         if (method->get_active_row_number() == 0) { // Lab
             colorSep->show();
-            colLabel->hide();
-            interLabel->hide();
             colorCurveEditorG->show();
             twocolor->show();
             opacityCurveEditorG->hide();
@@ -838,8 +828,6 @@ void ColorToning::methodChanged ()
             twocolorChanged(true);
         } else if (method->get_active_row_number() == 1) { // RGB Sliders
             colorSep->hide();
-            colLabel->hide();
-            interLabel->hide();
             colorCurveEditorG->hide();
             twocolor->hide();
             twocolor->set_active (false);
@@ -873,8 +861,6 @@ void ColorToning::methodChanged ()
 
         } else if (method->get_active_row_number() == 2) { // RGB Curves
             colorSep->hide();
-            colLabel->hide();
-            interLabel->hide();
             colorCurveEditorG->show();
             twocolor->hide();
             twocolor->set_active (false);
@@ -908,8 +894,6 @@ void ColorToning::methodChanged ()
             lumamode->hide();
         } else if (method->get_active_row_number() == 3) { // Split LR
             colorSep->hide();
-            colLabel->hide();
-            interLabel->hide();
             colorCurveEditorG->hide();
             twocolor->hide();
             twocolor->set_active (false);
@@ -932,8 +916,6 @@ void ColorToning::methodChanged ()
             lumamode->show();
         } else if (method->get_active_row_number() == 4) { // Split Color
             colorSep->show();
-            colLabel->hide();
-            interLabel->hide();
             colorCurveEditorG->hide();
             twocolor->hide();
             opacityCurveEditorG->hide();
