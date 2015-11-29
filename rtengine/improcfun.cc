@@ -223,7 +223,7 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
     if (monitor) {
         lcmsMutex->lock ();
         cmsHPROFILE iprof  = cmsCreateLab4Profile(NULL);
-        monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, INTENT_RELATIVE_COLORIMETRIC,
+        monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, settings->colorimetricIntent,
                                                cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is for thread safety, NOOPTIMIZE for precision
 
         Glib::ustring outputProfile;
@@ -236,7 +236,7 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
                 lab2outputTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, jprof, TYPE_RGB_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
 
                 if (monitor) {
-                    output2monitorTransform = cmsCreateTransform (jprof, TYPE_RGB_FLT, monitor, TYPE_RGB_8, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
+                    output2monitorTransform = cmsCreateTransform (jprof, TYPE_RGB_FLT, monitor, TYPE_RGB_8, settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
                 }
             }
         }
