@@ -1159,7 +1159,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         bool pro = false;
         Glib::ustring chpro, outProfile;
         bool present_space[9] = {false, false, false, false, false, false, false, false, false};
-        std::vector<Glib::ustring> opnames = iccStore->getOutputProfiles ();
+        std::vector<Glib::ustring> opnames = iccStore->getProfiles ();
 
         //test if files are in system
         for (int j = 0; j < 9; j++) {

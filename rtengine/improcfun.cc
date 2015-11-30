@@ -213,7 +213,7 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 #if defined(WIN32)
 
     if (settings->autoMonitorProfile) {
-        monitorProfile = iccStore->defaultMonitorProfile;
+        monitorProfile = iccStore->getDefaultMonitorProfile ();
     }
 
 #endif
