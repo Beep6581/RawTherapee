@@ -92,7 +92,9 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
     Gdk::RGBA textn = style->get_color(Gtk::STATE_FLAG_NORMAL);
     Gdk::RGBA texts = style->get_color(Gtk::STATE_FLAG_SELECTED);
     Gdk::RGBA bgn = style->get_background_color(Gtk::STATE_FLAG_NORMAL);
-    Gdk::RGBA bgs = style->get_background_color(Gtk::STATE_FLAG_SELECTED);
+    //Gdk::RGBA bgs = style->get_background_color(Gtk::STATE_FLAG_SELECTED);
+    Gdk::RGBA bgs;
+    bgs.set_rgba(0.3372549, 0.3372549, 0.3372549);
 
     // clear area, draw frames and background
     style->render_background(cc, 0., 0., exp_width, exp_height);

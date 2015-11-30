@@ -39,40 +39,11 @@ void setExpandAlignProperties(Gtk::Widget *widget, bool hExpand, bool vExpand, e
 
 guint add_idle (GSourceFunc function, gpointer data);
 
-/**
- * @brief Lock GTK for critical section.
- *
- * Will unlock on destruction. To use:
- *
- *   <code>
- *     {
- *       GThreadLock lock;
- *       // critical code
- *     }
- *   </code>
- *
- *   This is a replacement for the former gdk_threads_enter / gdk_threads_leave pair that has been deprecated.
- *   It does the same, but there may be a speed penalty, hopefully negligible.
- */
-
-/*
- *
- *    This, doesn't work. But we have to find a replacement for gdk_threads_enter and gdk_threads_leave that are deprecated and will be removed.
- *
- *
-class GThreadLock
-{
-public:
-    Glib::Threads::Mutex operation;
-    Glib::Threads::Cond operationCond;
-    Glib::Threads::Mutex GUI;
-    Glib::Threads::Cond GUICond;
-    bool sameThread;
-
-    GThreadLock();
-    ~GThreadLock();
-};
-*/
+// TODO: The documentation says gdk_threads_enter and gdk_threads_leave should be replaced
+// by g_main_context_invoke(), g_idle_add() and related functions, but this will require more extensive changes.
+// We silence those warnings until then so that we notice the others.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 /**
  * @brief Lock GTK for critical section.
@@ -117,6 +88,7 @@ public:
     }
 };
 
+#pragma GCC diagnostic pop
 
 /**
  * @brief Glue box to control visibility of the MyExpender's content ; also handle the frame around it
@@ -496,6 +468,7 @@ private:
     int refCount;
 public:
     RefCount() : refCount(1) {}
+    virtual ~RefCount() {}
 
     void reference()
     {
