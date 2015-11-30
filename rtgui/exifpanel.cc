@@ -499,6 +499,9 @@ void ExifPanel::editTag (Gtk::TreeModel::Children root, Glib::ustring name, Glib
         }
     }
 
+    if (iter == root.end())
+        return;
+
     if (dp == Glib::ustring::npos) {
         if (value == "#keep" && iter->get_value (exifColumns.action) != AC_SYSTEM) {
             iter->set_value (exifColumns.icon, iter->get_value (exifColumns.edited) ? editicon : keepicon);
