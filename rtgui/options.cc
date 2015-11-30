@@ -626,7 +626,6 @@ void Options::setDefaults ()
 #else
     rtSettings.iccDirectory = "/usr/share/color/icc";
 #endif
-    rtSettings.colorimetricIntent = 1;
     rtSettings.viewingdevice = 0;
     rtSettings.viewingdevicegrey = 3;
     rtSettings.viewinggreySc = 1;
@@ -636,7 +635,8 @@ void Options::setDefaults ()
     rtSettings.leveldnliss = 0;
     rtSettings.leveldnautsimpl = 0;
 
-    rtSettings.monitorProfile = "";
+    rtSettings.monitorProfile = Glib::ustring();
+    rtSettings.monitorIntent = 1;
     rtSettings.autoMonitorProfile = false;
     rtSettings.adobe = "RT_Medium_gsRGB"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RT_Large_gBT709"; // these names appear in the menu "output profile"
@@ -1461,7 +1461,7 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("Color Management", "Intent")) {
-                    rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");
+                    rtSettings.monitorIntent   = keyFile.get_integer("Color Management", "Intent");
                 }
 
                 if (keyFile.has_key ("Color Management", "CRI")) {
@@ -2008,7 +2008,7 @@ int Options::saveToFile (Glib::ustring fname)
     keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
     keyFile.set_boolean ("Color Management", "Autocielab", rtSettings.autocielab);
     keyFile.set_boolean ("Color Management", "RGBcurvesLumamode_Gamut", rtSettings.rgbcurveslumamode_gamut);
-    keyFile.set_integer ("Color Management", "Intent", rtSettings.colorimetricIntent);
+    keyFile.set_integer ("Color Management", "Intent", rtSettings.monitorIntent);
     keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);
     keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);
     keyFile.set_integer ("Color Management", "greySc", rtSettings.viewinggreySc);

@@ -941,6 +941,8 @@ public:
     int dcpIlluminant;
     Glib::ustring working;
     Glib::ustring output;
+    Glib::ustring monitorProfile; // Not stored persistently as it is just an optional settings override.
+    int monitorIntent; // Not store persistently as it is just an optional settings override.
     static const Glib::ustring NoICMString;
 
     Glib::ustring gamma;

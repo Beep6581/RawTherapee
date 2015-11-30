@@ -894,6 +894,8 @@ void ColorManagementParams::setDefaults()
     dcpIlluminant = 0;
     working = "ProPhoto";
     output  = "RT_sRGB";
+    monitorProfile = Glib::ustring ();
+    monitorIntent = 1;
     gamma  = "default";
     gampos = 2.22;
     slpos = 4.5;

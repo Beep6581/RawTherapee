@@ -25,11 +25,101 @@
 #include "procparamchangers.h"
 #include "../rtengine/safegtk.h"
 #include "../rtengine/imagesource.h"
+#include "../rtengine/iccstore.h"
 #include "soundman.h"
 #include "rtimage.h"
 #include <iostream>
 
 using namespace rtengine::procparams;
+
+class MonitorProfileSelector
+{
+private:
+    Gtk::ComboBoxText profileBox;
+    Gtk::ComboBoxText intentBox;
+
+    rtengine::StagedImageProcessor* const& processor;
+
+private:
+    MonitorProfileSelector(const MonitorProfileSelector&);
+    MonitorProfileSelector& operator=(const MonitorProfileSelector&);
+
+    void prepareProfileBox ()
+    {
+        profileBox.append_text (M("PREFERENCES_PROFILE_NONE"));
+        profileBox.set_active (0);
+
+        const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfiles ();
+        for (std::vector<Glib::ustring>::const_iterator iterator = profiles.begin (); iterator != profiles.end (); ++iterator)
+            profileBox.append_text (*iterator);
+    }
+
+    void prepareIntentBox ()
+    {
+        intentBox.append_text (M("PREFERENCES_INTENT_RELATIVE"));
+        intentBox.append_text (M("PREFERENCES_INTENT_PERCEPTUAL"));
+        intentBox.set_active (0);
+    }
+
+    void updateParameters ()
+    {
+        const Glib::ustring profile = profileBox.get_active_row_number () > 0 ? profileBox.get_active_text () : Glib::ustring();
+
+        std::uint8_t supportedIntents = rtengine::ICCStore::getInstance ()->getProofIntents (profile);
+        const bool supportsPerceptual = supportedIntents & 1 << INTENT_PERCEPTUAL;
+        const bool supportsRelativeColorimetric = supportedIntents & 1 << INTENT_RELATIVE_COLORIMETRIC;
+
+        if (supportsPerceptual && supportsRelativeColorimetric) {
+            intentBox.set_sensitive (true);
+        }
+        else {
+            intentBox.set_sensitive (false);
+            intentBox.set_active (supportsPerceptual ? 1 : 0);
+        }
+
+        const int intent = intentBox.get_active_row_number () > 0 ? INTENT_PERCEPTUAL : INTENT_RELATIVE_COLORIMETRIC;
+
+        if (!processor)
+            return;
+
+        rtengine::ProcParams* parameters = processor->beginUpdateParams ();
+
+        parameters->icm.monitorProfile = profile;
+        parameters->icm.monitorIntent = intent;
+
+        processor->endUpdateParams (rtengine::EvOProfile);
+    }
+
+public:
+    MonitorProfileSelector (rtengine::StagedImageProcessor* const& ipc) :
+        profileBox (),
+        intentBox (),
+        processor (ipc)
+    {
+        prepareProfileBox ();
+        prepareIntentBox ();
+
+        reset ();
+
+        profileBox.signal_changed ().connect (sigc::mem_fun (this, &MonitorProfileSelector::updateParameters));
+        intentBox.signal_changed ().connect (sigc::mem_fun (this, &MonitorProfileSelector::updateParameters));
+    }
+
+    void pack_end (Gtk::Box* box)
+    {
+        box->pack_end (intentBox, Gtk::PACK_SHRINK, 0);
+        box->pack_end (profileBox, Gtk::PACK_SHRINK, 0);
+    }
+
+    void reset ()
+    {
+        setActiveTextOrIndex (profileBox, options.rtSettings.monitorProfile, 0);
+        intentBox.set_active (options.rtSettings.monitorIntent == INTENT_PERCEPTUAL ? 1 : 0);
+
+        updateParameters ();
+    }
+
+};
 
 EditorPanel::EditorPanel (FilePanel* filePanel)
     : realized(false), iHistoryShow(NULL), iHistoryHide(NULL), iTopPanel_1_Show(NULL), iTopPanel_1_Hide(NULL), iRightPanel_1_Show(NULL), iRightPanel_1_Hide(NULL), iBeforeLockON(NULL), iBeforeLockOFF(NULL), beforePreviewHandler(NULL), beforeIarea(NULL), beforeBox(NULL), afterBox(NULL), afterHeaderBox(NULL), parent(NULL), openThm(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL)
@@ -256,11 +346,14 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         navSync->set_relief(Gtk::RELIEF_NONE);
         navSync->set_tooltip_markup(M("MAIN_BUTTON_NAVSYNC_TOOLTIP"));
 
-        iops->pack_end (*Gtk::manage(new Gtk::VSeparator()), Gtk::PACK_SHRINK, 0);
         iops->pack_end (*navNext, Gtk::PACK_SHRINK, 0);
         iops->pack_end (*navSync, Gtk::PACK_SHRINK, 0);
         iops->pack_end (*navPrev, Gtk::PACK_SHRINK, 0);
+        iops->pack_end (*Gtk::manage(new Gtk::VSeparator()), Gtk::PACK_SHRINK, 0);
     }
+
+    monitorProfile.reset(new MonitorProfileSelector (ipc));
+    monitorProfile->pack_end (iops);
 
     editbox->pack_start (*Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0);
     editbox->pack_start (*iops, Gtk::PACK_SHRINK, 0);
@@ -568,6 +661,8 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
     }
 
     history->resetSnapShotNumber();
+
+    monitorProfile->reset ();
 }
 
 void EditorPanel::close ()

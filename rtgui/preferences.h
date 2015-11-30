@@ -95,7 +95,8 @@ protected:
     Gtk::CheckButton* showExpComp;
 
     Gtk::FileChooserButton* iccDir;
-    Gtk::FileChooserButton* monProfile;
+    Gtk::ComboBoxText* monProfile;
+    Gtk::ComboBoxText* monIntent;
     Gtk::CheckButton* cbAutoMonProfile;
     //Gtk::CheckButton* cbAutocielab;
     Gtk::CheckButton* cbciecamfloat;
@@ -106,7 +107,6 @@ protected:
     Gtk::SpinButton*  panFactor;
     Gtk::CheckButton* rememberZoomPanCheckbutton;
 
-    Gtk::ComboBoxText* intent;
     Gtk::ComboBoxText* view;
     Gtk::ComboBoxText* grey;
     Gtk::ComboBoxText* greySc;
@@ -210,7 +210,8 @@ protected:
     void forRAWComboChanged ();
     void forImageComboChanged ();
     void layoutComboChanged ();
-    void bundledProfilesChanged();
+    void bundledProfilesChanged ();
+    void iccDirChanged ();
     void switchThemeTo (Glib::ustring newTheme, bool slimInterface);
     void switchFontTo  (Glib::ustring newFont);
     bool splashClosed(GdkEventAny* event);

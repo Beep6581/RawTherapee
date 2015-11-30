@@ -209,21 +209,23 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
     lab2outputTransform = NULL;
 
 #if !defined(__APPLE__) // No support for monitor profiles on OS X, all data is sRGB
-    Glib::ustring monitorProfile = settings->monitorProfile;
+
 #if defined(WIN32)
 
-    if (settings->autoMonitorProfile) {
-        monitorProfile = iccStore->getDefaultMonitorProfile ();
-    }
+    cmsHPROFILE monitor = iccStore->getProfile (settings->autoMonitorProfile
+                                                ? iccStore->getDefaultMonitorProfile ()
+                                                : params->icm.monitorProfile);
+
+#else
+
+    cmsHPROFILE monitor = iccStore->getProfile (params->icm.monitorProfile);
 
 #endif
 
-    cmsHPROFILE monitor = iccStore->getProfile ("file:" + monitorProfile);
-
     if (monitor) {
-        lcmsMutex->lock ();
+        MyMutex::MyLock lcmsLock (*lcmsMutex);
         cmsHPROFILE iprof  = cmsCreateLab4Profile(NULL);
-        monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, settings->colorimetricIntent,
+        monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, params->icm.monitorIntent,
                                                cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is for thread safety, NOOPTIMIZE for precision
 
         Glib::ustring outputProfile;
@@ -236,13 +238,12 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
                 lab2outputTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, jprof, TYPE_RGB_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
 
                 if (monitor) {
-                    output2monitorTransform = cmsCreateTransform (jprof, TYPE_RGB_FLT, monitor, TYPE_RGB_8, settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
+                    output2monitorTransform = cmsCreateTransform (jprof, TYPE_RGB_FLT, monitor, TYPE_RGB_8, params->icm.monitorIntent, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
                 }
             }
         }
 
         cmsCloseProfile(iprof);
-        lcmsMutex->unlock ();
     }
 
 #endif
