@@ -24,6 +24,12 @@
 #include <iostream>
 #include "mytime.h"
 
+#ifdef BENCHMARK
+    #define BENCHFUN StopWatch StopFun(__func__);
+#else
+    #define BENCHFUN
+#endif
+
 class StopWatch
 {
 public:

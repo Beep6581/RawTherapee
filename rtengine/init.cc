@@ -46,7 +46,7 @@ int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDi
 
     dcpStore->init (baseDir + "/dcpprofiles");
 
-    CameraConstantsStore::initCameraConstants (baseDir, userSettingsDir);
+    CameraConstantsStore::getInstance ()->init (baseDir, userSettingsDir);
     profileStore.init ();
     ProcParams::init ();
     Color::init ();

@@ -74,18 +74,8 @@ bool ExtProgAction::Execute(std::vector<Glib::ustring> fileNames)
 // Generates as singleton
 ExtProgStore* ExtProgStore::getInstance()
 {
-    static ExtProgStore* instance_ = 0;
-
-    if ( instance_ == 0 ) {
-        static MyMutex smutex_;
-        MyMutex::MyLock lock(smutex_);
-
-        if ( instance_ == 0 ) {
-            instance_ = new ExtProgStore();
-        }
-    }
-
-    return instance_;
+    static ExtProgStore instance_;
+    return &instance_;
 }
 
 ExtProgStore::~ExtProgStore()

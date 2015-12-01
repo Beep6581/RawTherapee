@@ -192,18 +192,8 @@ ICCStore::makeStdGammaProfile(cmsHPROFILE iprof)
 ICCStore*
 ICCStore::getInstance(void)
 {
-    static ICCStore* instance_ = 0;
-
-    if ( instance_ == 0 ) {
-        static MyMutex smutex_;
-        MyMutex::MyLock lock(smutex_);
-
-        if ( instance_ == 0 ) {
-            instance_ = new ICCStore();
-        }
-    }
-
-    return instance_;
+    static ICCStore instance_;
+    return &instance_;
 }
 
 ICCStore::ICCStore ()

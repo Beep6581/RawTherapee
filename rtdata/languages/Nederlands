@@ -1968,6 +1968,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_412;Retinex - Scales
 !HISTORY_MSG_416;Retinex
+!MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
 !TP_COLORTONING_STR;Strength
 !TP_DIRPYRDENOISE_CUR;Curve
 !TP_DIRPYRDENOISE_LAB;L*a*b*

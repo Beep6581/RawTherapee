@@ -169,19 +169,8 @@ PreviewLoader::PreviewLoader():
 
 PreviewLoader* PreviewLoader::getInstance(void)
 {
-    // this will not be deleted...
-    static PreviewLoader* instance_ = NULL;
-
-    if ( instance_ == NULL ) {
-        static MyMutex smutex_;
-        MyMutex::MyLock lock(smutex_);
-
-        if ( instance_ == NULL ) {
-            instance_ = new PreviewLoader();
-        }
-    }
-
-    return instance_;
+    static PreviewLoader instance_;
+    return &instance_;
 }
 
 void PreviewLoader::add(int dir_id, const Glib::ustring& dir_entry, PreviewLoaderListener* l)
