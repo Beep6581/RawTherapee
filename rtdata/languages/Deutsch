@@ -22,6 +22,7 @@
 #22 2015-09-04 komplette Überarbeitung (TooWaBoo)
 #23 2015-10-24 Retinexübersetzung und Korrekturen (TooWaBoo)
 #24 2015-11-01 Korrekturen (TooWaBoo) RT4.2.450
+#25 2015-11-30 Korrekturen (TooWaBoo) RT4.2.507
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -86,7 +87,7 @@ EXIFPANEL_SUBDIRECTORY;Unterverzeichnis
 EXPORT_BYPASS_ALL;Alle/Keine auswählen
 EXPORT_BYPASS_DEFRINGE;Farbsaum entfernen überspringen
 EXPORT_BYPASS_DIRPYRDENOISE;Rauschreduzierung überspringen
-EXPORT_BYPASS_DIRPYREQUALIZER;Kontrast nach Detailebenen überspringen
+EXPORT_BYPASS_DIRPYREQUALIZER;Detailebenenkontrast überspringen
 EXPORT_BYPASS_EQUALIZER;Waveletebenen überspringen
 EXPORT_BYPASS_RAW_CA;CA-Korrektur überspringen [RAW]
 EXPORT_BYPASS_RAW_CCSTEPS;Falschfarbenunterdrückung überspringen\n[RAW]
@@ -252,430 +253,431 @@ HISTORY_CUSTOMCURVE;Benutzerdefiniert
 HISTORY_DELSNAPSHOT;Entfernen
 HISTORY_FROMCLIPBOARD;Aus der Zwischenablage
 HISTORY_LABEL;Historie
-HISTORY_MSG_1;Bild geladen
-HISTORY_MSG_2;Profil geladen
-HISTORY_MSG_3;Profil geändert
-HISTORY_MSG_4;Historie durchsuchen
-HISTORY_MSG_5;Belichtung\nHelligkeit
-HISTORY_MSG_6;Belichtung\nKontrast
-HISTORY_MSG_7;Belichtung\nSchwarzwert
-HISTORY_MSG_8;Belichtung\nBelichtungskorrektur
-HISTORY_MSG_9;Belichtung\nLichterkompression
-HISTORY_MSG_10;Belichtung\nSchattenkompression
-HISTORY_MSG_11;Belichtung\nTonwertkurve 1
-HISTORY_MSG_12;Belichtung - Auto
-HISTORY_MSG_13;Belichtung\nAuto-Grenzwert
-HISTORY_MSG_14;L*a*b* - Helligkeit
-HISTORY_MSG_15;L*a*b* - Kontrast
+HISTORY_MSG_1;<b>Bild geladen</b>
+HISTORY_MSG_2;<b>Profil geladen</b>
+HISTORY_MSG_3;<b>Profil geändert</b>
+HISTORY_MSG_4;<b>Historie durchsuchen</b>
+HISTORY_MSG_5;<b>Belichtung</b> - Helligkeit
+HISTORY_MSG_6;<b>Belichtung</b> - Kontrast
+HISTORY_MSG_7;<b>Belichtung</b> - Schwarzwert
+HISTORY_MSG_8;<b>Belichtung</b>\nBelichtungskorrektur
+HISTORY_MSG_9;<b>Belichtung</b>\nLichterkompression
+HISTORY_MSG_10;<b>Belichtung</b>\nSchattenkompression
+HISTORY_MSG_11;<b>Belichtung</b>\nTonwertkurve 1
+HISTORY_MSG_12;<b>Belichtung</b> - Auto
+HISTORY_MSG_13;<b>Belichtung</b>\nAuto-Grenzwert
+HISTORY_MSG_14;<b>L*a*b*</b> - Helligkeit
+HISTORY_MSG_15;<b>L*a*b*</b> - Kontrast
 HISTORY_MSG_16;-
 HISTORY_MSG_17;-
 HISTORY_MSG_18;-
-HISTORY_MSG_19;L*a*b* - L-Kurve
-HISTORY_MSG_20;Schärfung
-HISTORY_MSG_21;Schärfung\nUnschärfemaskierung\nRadius
-HISTORY_MSG_22;Schärfung\nUnschärfemaskierung\nIntensität
-HISTORY_MSG_23;Schärfung\nUnschärfemaskierung\nSchwellenwert
-HISTORY_MSG_24;Schärfung\nUnschärfemaskierung\nNur Kanten schärfen
-HISTORY_MSG_25;Schärfung\nUnschärfemaskierung\nKantenradius
-HISTORY_MSG_26;Schärfung\nUnschärfemaskierung\nKantentoleranz
-HISTORY_MSG_27;Schärfung\nUnschärfemaskierung\nHalokontrolle
-HISTORY_MSG_28;Schärfung\nUnschärfemaskierung\nHalokontrolle - Intensität
-HISTORY_MSG_29;Schärfung - Methode
-HISTORY_MSG_30;Schärfung\nDekonvolution\nRadius
-HISTORY_MSG_31;Schärfung\nDekonvolution\nIntensität
-HISTORY_MSG_32;Schärfung\nDekonvolution\nDämpfung
-HISTORY_MSG_33;Schärfung\nDekonvolution\nIterationen
-HISTORY_MSG_34;Objektivkorrektur\nProfil\nVerzeichnung
-HISTORY_MSG_35;Objektivkorrektur\nProfil\nVignettierung
-HISTORY_MSG_36;Objektivkorrektur\nProfil\nCA-Korrektur
-HISTORY_MSG_37;Belichtung - Auto
-HISTORY_MSG_38;Weißabgleich Methode
-HISTORY_MSG_39;Weißabgleich\nFarbtemperatur
-HISTORY_MSG_40;Weißabgleich\nTönung
-HISTORY_MSG_41;Belichtung\nTonwertkurve 1\nModus
-HISTORY_MSG_42;Belichtung\nTonwertkurve 2
-HISTORY_MSG_43;Belichtung\nTonwertkurve 2\nModus
-HISTORY_MSG_44;Luminanz-Rauschfilter\nRadius
-HISTORY_MSG_45;Luminanz-Rauschfilter\nKantentoleranz
-HISTORY_MSG_46;Farb-Rauschfilter
-HISTORY_MSG_47;ICC Lichter aus Matrix\nüberlagern
-HISTORY_MSG_48;Eingangsfarbprofil\nDCP\nTonwertkurve
-HISTORY_MSG_49;Eingangsfarbprofil\n DCP\nIllumination
-HISTORY_MSG_50;Schatten/Lichter
-HISTORY_MSG_51;Schatten/Lichter\nLichter
-HISTORY_MSG_52;Schatten/Lichter\nSchatten
-HISTORY_MSG_53;Schatten/Lichter\nTonwertbreite\nLichter
-HISTORY_MSG_54;Schatten/Lichter\nTonwertbreite\nSchatten
-HISTORY_MSG_55;Schatten/Lichter\nLokaler Kontrast
-HISTORY_MSG_56;Schatten/Lichter\nRadius
-HISTORY_MSG_57;Grobe Drehung
-HISTORY_MSG_58;Horizontal spiegeln
-HISTORY_MSG_59;Vertikal spiegeln
-HISTORY_MSG_60;Objektivkorrektur\nDrehen - Grad
-HISTORY_MSG_61;Objektivkorrektur\nAuto-Füllen
-HISTORY_MSG_62;Objektivkorrektur\nVerzeichnung
-HISTORY_MSG_63;Schnappschuss\nausgewählt
-HISTORY_MSG_64;Ausschnitt
-HISTORY_MSG_65;Objektivkorrektur\nFarbsaum entfernen
-HISTORY_MSG_66;Belichtung\nLichter rekonstruieren
-HISTORY_MSG_67;Belichtung\nLichterkompression\nUmfang
-HISTORY_MSG_68;Belichtung\nLichterkompression\nMethode
-HISTORY_MSG_69;Farbmanagement\nArbeitsfarbraum
-HISTORY_MSG_70;Farbmanagement\nAusgabeprofil
-HISTORY_MSG_71;Eingangsfarbprofil
-HISTORY_MSG_72;Objektivkorrektur\nVignettierung\nIntensität
-HISTORY_MSG_73;RGB-Kanalmixer
-HISTORY_MSG_74;Größe ändern\nMaßstab
-HISTORY_MSG_75;Größe ändern\nMethode
-HISTORY_MSG_76;Exif Metadaten
-HISTORY_MSG_77;IPTC Metadaten
+HISTORY_MSG_19;<b>L*a*b*</b> - L-Kurve
+HISTORY_MSG_20;<b>Schärfung</b>
+HISTORY_MSG_21;<b>Schärfung</b> - USM\nRadius
+HISTORY_MSG_22;<b>Schärfung</b> - USM\nIntensität
+HISTORY_MSG_23;<b>Schärfung</b> - USM\nSchwellenwert
+HISTORY_MSG_24;<b>Schärfung</b> - USM\nNur Kanten schärfen
+HISTORY_MSG_25;<b>Schärfung</b> - USM\nKantenschärfung\nRadius
+HISTORY_MSG_26;<b>Schärfung</b> - USM\nKantenschärfung\nKantentoleranz
+HISTORY_MSG_27;<b>Schärfung</b> - USM\nHalokontrolle
+HISTORY_MSG_28;<b>Schärfung</b> - USM\nHalokontrolle - Intensität
+HISTORY_MSG_29;<b>Schärfung</b> - Methode
+HISTORY_MSG_30;<b>Schärfung</b> - RLD\nRadius
+HISTORY_MSG_31;<b>Schärfung</b> - RLD\nIntensität
+HISTORY_MSG_32;<b>Schärfung</b> - RLD\nDämpfung
+HISTORY_MSG_33;<b>Schärfung</b> - RLD\nIterationen
+HISTORY_MSG_34;<b>Objektivkorrektur</b>\nProfil - Verzeichnung
+HISTORY_MSG_35;<b>Objektivkorrektur</b>\nProfil - Vignettierung
+HISTORY_MSG_36;<b>Objektivkorrektur</b>\nProfil - CA-Korrektur
+HISTORY_MSG_37;<b>Belichtung</b> - Auto
+HISTORY_MSG_38;<b>Weißabgleich</b>\nMethode
+HISTORY_MSG_39;<b>Weißabgleich</b>\nFarbtemperatur
+HISTORY_MSG_40;<b>Weißabgleich</b>\nTönung
+HISTORY_MSG_41;<b>Belichtung</b>\nTonwertkurve 1 - Modus
+HISTORY_MSG_42;<b>Belichtung</b>\nTonwertkurve 2
+HISTORY_MSG_43;<b>Belichtung</b>\nTonwertkurve 2 - Modus
+HISTORY_MSG_44;<b>Luminanz-Rauschfilter</b>\nRadius
+HISTORY_MSG_45;<b>Luminanz-Rauschfilter</b>\nKantentoleranz
+HISTORY_MSG_46;<b>Farb-Rauschfilter</b>
+HISTORY_MSG_47;<b>ICC Lichter aus Matrix\nüberlagern</b>
+HISTORY_MSG_48;<b>Farbmanagement</b>\nEingangsfarbprofil\nDCP - Tonwertkurve
+HISTORY_MSG_49;<b>Farbmanagement</b>\nEingangsfarbprofil\nDCP - Illumination
+HISTORY_MSG_50;<b>Schatten/Lichter</b>
+HISTORY_MSG_51;<b>Schatten/Lichter</b>\nLichter
+HISTORY_MSG_52;<b>Schatten/Lichter</b>\nSchatten
+HISTORY_MSG_53;<b>Schatten/Lichter</b>\nTonwertbreite Lichter
+HISTORY_MSG_54;<b>Schatten/Lichter</b>\nTonwertbreite Schatten
+HISTORY_MSG_55;<b>Schatten/Lichter</b>\nLokaler Kontrast
+HISTORY_MSG_56;<b>Schatten/Lichter</b>\nRadius
+HISTORY_MSG_57;<b>Grobe Drehung</b>
+HISTORY_MSG_58;<b>Horizontal spiegeln</b>
+HISTORY_MSG_59;<b>Vertikal spiegeln</b>
+HISTORY_MSG_60;<b>Objektivkorrektur</b>\nDrehen - Winkel
+HISTORY_MSG_61;<b>Objektivkorrektur</b>\nAuto-Füllen
+HISTORY_MSG_62;<b>Objektivkorrektur</b>\nVerzeichnung
+HISTORY_MSG_63;<b>Schnappschuss\nausgewählt</b>
+HISTORY_MSG_64;<b>Ausschnitt</b>
+HISTORY_MSG_65;<b>Objektivkorrektur</b>\nFarbsaum entfernen
+HISTORY_MSG_66;<b>Belichtung</b>\nLichter rekonstruieren
+HISTORY_MSG_67;<b>Belichtung</b>\nLichterkompression\nUmfang
+HISTORY_MSG_68;<b>Belichtung</b>\nLichterkompression\nMethode
+HISTORY_MSG_69;<b>Farbmanagement</b>\nArbeitsfarbraum
+HISTORY_MSG_70;<b>Farbmanagement</b>\nAusgabeprofil
+HISTORY_MSG_71;<b>Farbmanagement</b>\nEingangsfarbprofil
+HISTORY_MSG_72;<b>Objektivkorrektur</b>\nVignettierung - Intensität
+HISTORY_MSG_73;<b>RGB-Kanalmixer</b>
+HISTORY_MSG_74;<b>Skalieren</b> - Maßstab
+HISTORY_MSG_75;<b>Skalieren</b> - Methode
+HISTORY_MSG_76;<b>Exif Metadaten</b>
+HISTORY_MSG_77;<b>IPTC Metadaten</b>
 HISTORY_MSG_78;-
-HISTORY_MSG_79;Größe ändern - Breite
-HISTORY_MSG_80;Größe ändern - Höhe
-HISTORY_MSG_81;Größe ändern
-HISTORY_MSG_82;Profil geändert
-HISTORY_MSG_83;Schatten/Lichter\nSchärfemaske
-HISTORY_MSG_84;Objektivkorrektur\nPerspektive
-HISTORY_MSG_85;Objektivkorrektur\nProfil
-HISTORY_MSG_86;RGB-Kurven\nHelligkeitsmodus
-HISTORY_MSG_87;Impulsrauschred.
-HISTORY_MSG_88;Impulsrauschred.\nSchwellenwert
-HISTORY_MSG_89;Rauschreduzierung
-HISTORY_MSG_90;Rauschreduzierung\nLuminanz
-HISTORY_MSG_91;Rauschreduzierung\nChrominanz (Master)
-HISTORY_MSG_92;Rauschreduzierung\nGamma
-HISTORY_MSG_93;Kontrast nach\nDetailebenen - Wert
-HISTORY_MSG_94;Kontrast nach\nDetailebenen
-HISTORY_MSG_95;L*a*b* - Chromatizität
-HISTORY_MSG_96;L*a*b* - a-Kurve
-HISTORY_MSG_97;L*a*b* - b-Kurve
-HISTORY_MSG_98;Demosaikmethode
-HISTORY_MSG_99;Vorverarbeitung\nHot-Pixel-Filter
-HISTORY_MSG_100;Belichtung\nSättigung
-HISTORY_MSG_101;HSV - Farbton (H)
-HISTORY_MSG_102;HSV - Sättigung (S)
-HISTORY_MSG_103;HSV - Dynamik (V)
-HISTORY_MSG_104;HSV
-HISTORY_MSG_105;Farbsaum entfernen
-HISTORY_MSG_106;Farbsaum entfernen\nRadius
-HISTORY_MSG_107;Farbsaum entfernen\nSchwellenwert
-HISTORY_MSG_108;Belichtung\nLichterkompression\nSchwellenwert
-HISTORY_MSG_109;Größe ändern\nBegrenzungsrahmen
-HISTORY_MSG_110;Größe ändern\nGilt für
-HISTORY_MSG_111;L*a*b*\nFarbverschiebung\nvermeiden
+HISTORY_MSG_79;<b>Skalieren</b> - Breite
+HISTORY_MSG_80;<b>Skalieren</b> - Höhe
+HISTORY_MSG_81;<b>Skalieren</b>
+HISTORY_MSG_82;<b>Profil geändert</b>
+HISTORY_MSG_83;<b>Schatten/Lichter</b>\nSchärfemaske
+HISTORY_MSG_84;<b>Objektivkorrektur</b>\nPerspektive
+HISTORY_MSG_85;<b>Objektivkorrektur</b>\nProfil
+HISTORY_MSG_86;<b>RGB-Kurven</b>\nHelligkeitsmodus
+HISTORY_MSG_87;<b>Impulsrauschred.</b>
+HISTORY_MSG_88;<b>Impulsrauschred.</b>\nSchwellenwert
+HISTORY_MSG_89;<b>Rauschreduzierung</b>
+HISTORY_MSG_90;<b>Rauschreduzierung</b>\nLuminanz
+HISTORY_MSG_91;<b>Rauschreduzierung</b>\nChrominanz (Master)
+HISTORY_MSG_92;<b>Rauschreduzierung</b>\nChrominanz - Gamma
+HISTORY_MSG_93;<b>Detailebenenkontrast</b>\nWert
+HISTORY_MSG_94;<b>Detailebenenkontrast</b>
+HISTORY_MSG_95;<b>L*a*b*</b> - Chromatizität
+HISTORY_MSG_96;<b>L*a*b*</b> - a-Kurve
+HISTORY_MSG_97;<b>L*a*b*</b> - b-Kurve
+HISTORY_MSG_98;<b>Sensor-Matrix</b>\nFarbinterpolation\nMethode
+HISTORY_MSG_99;<b>Vorverarbeitung</b>\nHot-Pixel-Filter
+HISTORY_MSG_100;<b>Belichtung</b> - Sättigung
+HISTORY_MSG_101;<b>HSV</b> - Farbton (H)
+HISTORY_MSG_102;<b>HSV</b> - Sättigung (S)
+HISTORY_MSG_103;<b>HSV</b> - Dynamik (V)
+HISTORY_MSG_104;<b>HSV</b>
+HISTORY_MSG_105;<b>Farbsaum entfernen</b>
+HISTORY_MSG_106;<b>Farbsaum entfernen</b>\nRadius
+HISTORY_MSG_107;<b>Farbsaum entfernen</b>\nSchwellenwert
+HISTORY_MSG_108;<b>Belichtung</b>\nLichterkompression\nSchwellenwert
+HISTORY_MSG_109;<b>Skalieren</b> - Breite &amp; Höhe
+HISTORY_MSG_110;<b>Skalieren</b> - Anwenden auf:
+HISTORY_MSG_111;<b>L*a*b*</b> - Farbverschiebung\nvermeiden
 HISTORY_MSG_112;--unused--
-HISTORY_MSG_113;L*a*b* - Hautfarbtöne\nschützen
-HISTORY_MSG_114;DCB-Iterationen
-HISTORY_MSG_115;Falschfarben-\nunterdrückung
-HISTORY_MSG_116;DCB-Verbesserung
-HISTORY_MSG_117;CA-Korrektur Rot
-HISTORY_MSG_118;CA-Korrektur Blau
-HISTORY_MSG_119;Zeilenrauschfilter
-HISTORY_MSG_120;Grün-Ausgleich
-HISTORY_MSG_121;Autom. CA-Korrektur
-HISTORY_MSG_122;Dunkelbild\nAutom. Auswahl
-HISTORY_MSG_123;Dunkelbild - Datei
-HISTORY_MSG_124;Weißpunktkorrektur
-HISTORY_MSG_125;Belichtungskorrektur\nLichter schützen
-HISTORY_MSG_126;Weißbild - Datei
-HISTORY_MSG_127;Weißbild\nAutom. Auswahl
-HISTORY_MSG_128;Weißbild\nUnschärferadius
-HISTORY_MSG_129;Weißbild\nUnschärfetyp
-HISTORY_MSG_130;Autom. Verzeichnung
-HISTORY_MSG_131;Rauschreduzierung\nLuminanz
-HISTORY_MSG_132;Rauschreduzierung\nChrominanz
-HISTORY_MSG_133;Farbmanagement\nAusgabeprofil\nAusgabe-Gamma
-HISTORY_MSG_134;Farbmanagement\nAusgabeprofil\nGamma
-HISTORY_MSG_135;Farbmanagement\nAusgabeprofil\nFreies Gamma
-HISTORY_MSG_136;Farbmanagement\nAusgabeprofil\nGradient (linear)
-HISTORY_MSG_137;Schwarzpunkt Grün 1
-HISTORY_MSG_138;Schwarzpunkt Rot
-HISTORY_MSG_139;Schwarzpunkt Blau
-HISTORY_MSG_140;Schwarzpunkt Grün 2
-HISTORY_MSG_141;Schwarzpunkt\nGrün-Werte angleichen
-HISTORY_MSG_142;Kantenschärfung\nIterationen
-HISTORY_MSG_143;Kantenschärfung\nIntensität
-HISTORY_MSG_144;Mikrokontrast\nIntensität
-HISTORY_MSG_145;Mikrokontrast\nGleichmäßigkeit
-HISTORY_MSG_146;Kantenschärfung
-HISTORY_MSG_147;Kantenschärfung\nNur Luminanz
-HISTORY_MSG_148;Mikrokontrast
-HISTORY_MSG_149;Mikrokontrast\n3×3-Matrix
-HISTORY_MSG_150;Artefakt-/Rauschred.\nnach Farbinterpolation
-HISTORY_MSG_151;Dynamik
-HISTORY_MSG_152;Dynamik\nPastelltöne
-HISTORY_MSG_153;Dynamik\nGesättigte Töne
-HISTORY_MSG_154;Dynamik\nHautfarbtöne schützen
-HISTORY_MSG_155;Dynamik\nFarbverschiebungen\nvermeiden
-HISTORY_MSG_156;Dynamik\nPastell und gesättigte\nTöne koppeln
-HISTORY_MSG_157;Dynamik\nPastell/gesättigte Töne\nSchwellenwert
-HISTORY_MSG_158;Dynamikkompression\nIntensität
-HISTORY_MSG_159;Dynamikkompression\nKantenschutz
-HISTORY_MSG_160;Dynamikkompression\nFaktor
-HISTORY_MSG_161;Dynamikkompression\nIterationen
-HISTORY_MSG_162;Dynamikkompression
-HISTORY_MSG_163;RGB-Kurven - Rot
-HISTORY_MSG_164;RGB-Kurven - Grün
-HISTORY_MSG_165;RGB-Kurven - Blau
-HISTORY_MSG_167;--unused--
-HISTORY_MSG_168;L*a*b* - CC-Kurve
-HISTORY_MSG_169;L*a*b* - CH-Kurve
-HISTORY_MSG_170;Dynamik - HH-Kurve
-HISTORY_MSG_171;L*a*b* - LC-Kurve
-HISTORY_MSG_172;L*a*b* - LC-Kurve\nbeschränken
-HISTORY_MSG_173;Rauschreduzierung\nLuminanz-Details
-HISTORY_MSG_174;CIECAM02
-HISTORY_MSG_175;CAM02 - CAT02\nAdaptation
-HISTORY_MSG_176;CAM02 - Umgebung
-HISTORY_MSG_177;CAM02 - Szene\nLeuchtstärke
-HISTORY_MSG_178;CAM02\nBetrachtungsbed.\nLeuchtstärke
-HISTORY_MSG_179;CAM02 - Weißpunkt-\nmodell
-HISTORY_MSG_180;CAM02 - Helligkeit (J)
-HISTORY_MSG_181;CAM02 - Buntheit (H)
-HISTORY_MSG_182;CAM02 - CAT02\nAutomatisch
-HISTORY_MSG_183;CAM02 - Kontrast (J)
-HISTORY_MSG_184;CAM02 - Dunkle\nUmgebung
-HISTORY_MSG_185;CAM02\nGamutkontrolle
-HISTORY_MSG_186;CAM02 - Algorithmus
-HISTORY_MSG_187;CAM02 - Hautfarbtöne\nschützen
-HISTORY_MSG_188;CAM02 - Helligkeit (Q)
-HISTORY_MSG_189;CAM02 - Kontrast (Q)
-HISTORY_MSG_190;CAM02 - Sättigung (S)
-HISTORY_MSG_191;CAM02 - Farbigkeit (M)
-HISTORY_MSG_192;CAM02 - Farbton (H)
-HISTORY_MSG_193;CAM02\nTonwertkurve 1
-HISTORY_MSG_194;CAM02\nTonwertkurve 2
-HISTORY_MSG_195;CAM02\nTonwertkurve 1\nModus
-HISTORY_MSG_196;CAM02\nTonwertkurve 2\nModus
-HISTORY_MSG_197;CAM02 - Farbkurve
-HISTORY_MSG_198;CAM02 - Farbkurve\nModus
-HISTORY_MSG_199;CAM02 - Ausgabe-\nHistogramm
-HISTORY_MSG_200;CAM02\nDynamikkompression
-HISTORY_MSG_201;Rauschreduzierung\nDelta-Chrominanz\nRot/Grün
-HISTORY_MSG_202;Rauschreduzierung\nDelta-Chrominanz\nBlau/Gelb
-HISTORY_MSG_203;Rauschreduzierung\nMethode
-HISTORY_MSG_204;LMMSE-\nVerbesserung
-HISTORY_MSG_205;CAM02 - Hot/Bad-\nPixelfilter
-HISTORY_MSG_206;CAT02 - Auto-Szenen-\nLuminanz
-HISTORY_MSG_207;Farbsaum entfernen\nFarbtonkurve
-HISTORY_MSG_208;Weißabgleich\nBau/Rot-Korrektur
-HISTORY_MSG_210;Grauverlaufsfilter\nRotationswinkel
-HISTORY_MSG_211;Grauverlaufsfilter
-HISTORY_MSG_212;Vignettierungsfilter\nIntensität
-HISTORY_MSG_213;Vignettierungsfilter
-HISTORY_MSG_214;Schwarz/Weiß
-HISTORY_MSG_215;Schwarz/Weiß - Rot
-HISTORY_MSG_216;Schwarz/Weiß - Grün
-HISTORY_MSG_217;Schwarz/Weiß - Blau
-HISTORY_MSG_218;Schwarz/Weiß\nGamma - Rot
-HISTORY_MSG_219;Schwarz/Weiß\nGamma - Grün
-HISTORY_MSG_220;Schwarz/Weiß\nGamma - Blau
-HISTORY_MSG_221;Schwarz/Weiß\nFarbfilter
-HISTORY_MSG_222;Schwarz/Weiß\nVorgaben
-HISTORY_MSG_223;Schwarz/Weiß - Orange
-HISTORY_MSG_224;Schwarz/Weiß - Gelb
-HISTORY_MSG_225;Schwarz/Weiß - Cyan
-HISTORY_MSG_226;Schwarz/Weiß - Magenta
-HISTORY_MSG_227;Schwarz/Weiß - Violett
-HISTORY_MSG_228;Schwarz/Weiß\nLuminanzequalizer
-HISTORY_MSG_229;Schwarz/Weiß\nLuminanzequalizer
-HISTORY_MSG_230;Schwarz/Weiß - Modus
-HISTORY_MSG_231;Schwarz/Weiß\n“Bevor“-Kurve
-HISTORY_MSG_232;Schwarz/Weiß\n“Bevor“-Kurventyp
-HISTORY_MSG_233;Schwarz/Weiß\n“Danach“-Kurve
-HISTORY_MSG_234;Schwarz/Weiß\n“Danach“-Kurventyp
-HISTORY_MSG_235;Schwarz/Weiß\nAuto-Kanalmixer
+HISTORY_MSG_113;<b>L*a*b*</b> - Hautfarbtöne\nschützen
+HISTORY_MSG_114;<b>Sensor Bayer-Matrix</b>\nFarbinterpolation\nDCB-Iterationen
+HISTORY_MSG_115;<b>Sensor-Matrix</b>\nFarbinterpolation\nFalschfarbenunterdrückung
+HISTORY_MSG_116;<b>Sensor Bayer-Matrix</b>\nFarbinterpolation\nDCB-Verbesserung
+HISTORY_MSG_117;<b>Sensor Bayer-Matrix</b>\nChromatische Aberration\nRot
+HISTORY_MSG_118;<b>Sensor Bayer-Matrix</b>\nChromatische Aberration\nBlau
+HISTORY_MSG_119;<b>Sensor Bayer-Matrix</b>\nVorverarbeitung\nZeilenrauschfilter
+HISTORY_MSG_120;<b>Sensor Bayer-Matrix</b>\nVorverarbeitung\nGrün-Ausgleich
+HISTORY_MSG_121;<b>Sensor Bayer-Matrix</b>\nChromatische Aberration\nAutomatische Korrektur
+HISTORY_MSG_122;<b>Dunkelbild</b>\nAutomatische Auswahl
+HISTORY_MSG_123;<b>Dunkelbild</b> - Datei
+HISTORY_MSG_124;<b>Weißpunkt</b>\nKorrekturfaktor
+HISTORY_MSG_125;<b>Belichtung</b>skorrektur\nLichter schützen
+HISTORY_MSG_126;<b>Weißbild</b> - Datei
+HISTORY_MSG_127;<b>Weißbild</b>\nAutomatische Auswahl
+HISTORY_MSG_128;<b>Weißbild</b>\nUnschärferadius
+HISTORY_MSG_129;<b>Weißbild</b> - Unschärfetyp
+HISTORY_MSG_130;<b>Autom. Verzeichnung</b>
+HISTORY_MSG_131;<b>Rauschreduzierung</b>\nLuminanz
+HISTORY_MSG_132;<b>Rauschreduzierung</b>\nChrominanz
+HISTORY_MSG_133;<b>Farbmanagement</b>\nAusgabeprofil\nAusgabe-Gamma
+HISTORY_MSG_134;<b>Farbmanagement</b>\nAusgabeprofil\nGamma
+HISTORY_MSG_135;<b>Farbmanagement</b>\nAusgabeprofil\nFreies Gamma
+HISTORY_MSG_136;<b>Farbmanagement</b>\nAusgabeprofil\nGradient (linear)
+HISTORY_MSG_137;<b>Sensor Bayer-Matrix</b>\nSchwarzpunkt - Grün 1
+HISTORY_MSG_138;<b>Sensor Bayer-Matrix</b>\nSchwarzpunkt - Rot
+HISTORY_MSG_139;<b>Sensor Bayer-Matrix</b>\nSchwarzpunkt - Blau
+HISTORY_MSG_140;<b>Sensor Bayer-Matrix</b>\nSchwarzpunkt - Grün 2
+HISTORY_MSG_141;<b>Sensor Bayer-Matrix</b>\nSchwarzpunkt\nGrün-Werte angleichen
+HISTORY_MSG_142;<b>Kantenschärfung</b>\nIterationen
+HISTORY_MSG_143;<b>Kantenschärfung</b>\nIntensität
+HISTORY_MSG_144;<b>Mikrokontrast</b>\nIntensität
+HISTORY_MSG_145;<b>Mikrokontrast</b>\nGleichmäßigkeit
+HISTORY_MSG_146;<b>Kantenschärfung</b>
+HISTORY_MSG_147;<b>Kantenschärfung</b>\nNur Luminanz
+HISTORY_MSG_148;<b>Mikrokontrast</b>
+HISTORY_MSG_149;<b>Mikrokontrast</b>\n3×3-Matrix
+HISTORY_MSG_150;<b>Artefakt-/Rauschred.\nnach Farbinterpolation</b>
+HISTORY_MSG_151;<b>Dynamik</b>
+HISTORY_MSG_152;<b>Dynamik</b> - Pastelltöne
+HISTORY_MSG_153;<b>Dynamik</b>\nGesättigte Töne
+HISTORY_MSG_154;<b>Dynamik</b>\nHautfarbtöne schützen
+HISTORY_MSG_155;<b>Dynamik</b>\nFarbverschiebungen\nvermeiden
+HISTORY_MSG_156;<b>Dynamik</b>\nPastell und gesättigte\nTöne koppeln
+HISTORY_MSG_157;<b>Dynamik</b>\nPastell/gesättigte Töne\nSchwellenwert
+HISTORY_MSG_158;<b>Dynamikkompression</b>\nIntensität
+HISTORY_MSG_159;<b>Dynamikkompression</b>\nKantenschutz
+HISTORY_MSG_160;<b>Dynamikkompression</b>\nFaktor
+HISTORY_MSG_161;<b>Dynamikkompression</b>\nIterationen
+HISTORY_MSG_162;<b>Dynamikkompression</b>
+HISTORY_MSG_163;<b>RGB-Kurven</b> - Rot
+HISTORY_MSG_164;<b>RGB-Kurven</b> - Grün
+HISTORY_MSG_165;<b>RGB-Kurven</b> - Blau
+HISTORY_MSG_166;<b>Belichtung</b> - Zurücksetzen
+HISTORY_MSG_167;<b>Sensor-Matrix</b>\nFarbinterpolation\nMethode
+HISTORY_MSG_168;<b>L*a*b*</b> - CC-Kurve
+HISTORY_MSG_169;<b>L*a*b*</b> - CH-Kurve
+HISTORY_MSG_170;<b>Dynamik</b> - HH-Kurve
+HISTORY_MSG_171;<b>L*a*b*</b> - LC-Kurve
+HISTORY_MSG_172;<b>L*a*b*</b> - LC-Kurve\nbeschränken
+HISTORY_MSG_173;<b>Rauschreduzierung</b>\nLuminanzdetails
+HISTORY_MSG_174;<b>CIECAM02</b>
+HISTORY_MSG_175;<b>CIECAM02</b> - Szene\nCAT02-Adaptation
+HISTORY_MSG_176;<b>CIECAM02</b>\nBetrachtungsbed.\nUmgebung
+HISTORY_MSG_177;<b>CIECAM02</b> - Szene\nLeuchtstärke
+HISTORY_MSG_178;<b>CIECAM02</b>\nBetrachtungsbed.\nLeuchtstärke
+HISTORY_MSG_179;<b>CIECAM02</b> - Szene\nWeißpunktmodell
+HISTORY_MSG_180;<b>CIECAM02</b> - Helligkeit (J)
+HISTORY_MSG_181;<b>CIECAM02</b> - Buntheit (H)
+HISTORY_MSG_182;<b>CIECAM02</b> - Szene\nCAT02-Automatisch
+HISTORY_MSG_183;<b>CIECAM02</b> - Kontrast (J)
+HISTORY_MSG_184;<b>CIECAM02</b> - Szene\nDunkle Umgebung
+HISTORY_MSG_185;<b>CIECAM02</b>\nBetrachtungsbed.\nGamutkontrolle
+HISTORY_MSG_186;<b>CIECAM02</b> - Algorithmus
+HISTORY_MSG_187;<b>CIECAM02</b> - Hautfarbtöne\nschützen
+HISTORY_MSG_188;<b>CIECAM02</b> - Helligkeit (Q)
+HISTORY_MSG_189;<b>CIECAM02</b> - Kontrast (Q)
+HISTORY_MSG_190;<b>CIECAM02</b> - Sättigung (S)
+HISTORY_MSG_191;<b>CIECAM02</b> - Farbigkeit (M)
+HISTORY_MSG_192;<b>CIECAM02</b> - Farbton (H)
+HISTORY_MSG_193;<b>CIECAM02</b>\nTonwertkurve 1
+HISTORY_MSG_194;<b>CIECAM02</b>\nTonwertkurve 2
+HISTORY_MSG_195;<b>CIECAM02</b>\nTonwertkurve 1 - Modus
+HISTORY_MSG_196;<b>CIECAM02</b>\nTonwertkurve 2 - Modus
+HISTORY_MSG_197;<b>CIECAM02</b> - Farbkurve
+HISTORY_MSG_198;<b>CIECAM02</b> - Farbkurve\nModus
+HISTORY_MSG_199;<b>CIECAM02</b> - Ausgabe-\nHistogramm anzeigen
+HISTORY_MSG_200;<b>CIECAM02</b>\nDynamikkompression
+HISTORY_MSG_201;<b>Rauschreduzierung</b>\nDelta-Chrominanz\nRot/Grün
+HISTORY_MSG_202;<b>Rauschreduzierung</b>\nDelta-Chrominanz\nBlau/Gelb
+HISTORY_MSG_203;<b>Rauschreduzierung</b>\nMethode
+HISTORY_MSG_204;<b>Sensor Bayer-Matrix</b>\nFarbinterpolation\nLMMSE-Verbesserung
+HISTORY_MSG_205;<b>CIECAM02</b>\nBetrachtungsbed.\nHot/Bad-Pixelfilter
+HISTORY_MSG_206;<b>CIECAM02</b> - Szene\nAuto-Leuchtstärke
+HISTORY_MSG_207;<b>Farbsaum entfernen</b>\nFarbtonkurve
+HISTORY_MSG_208;<b>Weißabgleich</b>\nBau/Rot-Korrektur
+HISTORY_MSG_210;<b>Grauverlaufsfilter</b>\nRotationswinkel
+HISTORY_MSG_211;<b>Grauverlaufsfilter</b>
+HISTORY_MSG_212;<b>Vignettierungsfilter</b>\nIntensität
+HISTORY_MSG_213;<b>Vignettierungsfilter</b>
+HISTORY_MSG_214;<b>Schwarz/Weiß</b>
+HISTORY_MSG_215;<b>Schwarz/Weiß</b> - Rot
+HISTORY_MSG_216;<b>Schwarz/Weiß</b> - Grün
+HISTORY_MSG_217;<b>Schwarz/Weiß</b> - Blau
+HISTORY_MSG_218;<b>Schwarz/Weiß</b>\nGamma - Rot
+HISTORY_MSG_219;<b>Schwarz/Weiß</b>\nGamma - Grün
+HISTORY_MSG_220;<b>Schwarz/Weiß</b>\nGamma - Blau
+HISTORY_MSG_221;<b>Schwarz/Weiß</b>\nFarbfilter
+HISTORY_MSG_222;<b>Schwarz/Weiß</b>\nVorgaben
+HISTORY_MSG_223;<b>Schwarz/Weiß</b> - Orange
+HISTORY_MSG_224;<b>Schwarz/Weiß</b> - Gelb
+HISTORY_MSG_225;<b>Schwarz/Weiß</b> - Cyan
+HISTORY_MSG_226;<b>Schwarz/Weiß</b> - Magenta
+HISTORY_MSG_227;<b>Schwarz/Weiß</b> - Violett
+HISTORY_MSG_228;<b>Schwarz/Weiß</b>\nLuminanzequalizer
+HISTORY_MSG_229;<b>Schwarz/Weiß</b>\nLuminanzequalizer
+HISTORY_MSG_230;<b>Schwarz/Weiß</b> - Modus
+HISTORY_MSG_231;<b>Schwarz/Weiß</b>\n“Bevor“-Kurve
+HISTORY_MSG_232;<b>Schwarz/Weiß</b>\n“Bevor“-Kurventyp
+HISTORY_MSG_233;<b>Schwarz/Weiß</b>\n“Danach“-Kurve
+HISTORY_MSG_234;<b>Schwarz/Weiß</b>\n“Danach“-Kurventyp
+HISTORY_MSG_235;<b>Schwarz/Weiß</b>\nAuto-Kanalmixer
 HISTORY_MSG_236;--unused--
-HISTORY_MSG_237;Schwarz/Weiß - Mixer
-HISTORY_MSG_238;Grauverlaufsfilter\nBereich
-HISTORY_MSG_239;Grauverlaufsfilter\nIntensität
-HISTORY_MSG_240;Grauverlaufsfilter\nRotationsachsen
-HISTORY_MSG_241;Vignettierungsfilter\nBereich
-HISTORY_MSG_242;Vignettierungsfilter\nRundung
-HISTORY_MSG_243;Objektivkorrektur\nVignettierung\nRadius
-HISTORY_MSG_244;Objektivkorrektur\nVignettierung\nFaktor
-HISTORY_MSG_245;Objektivkorrektur\nVignettierung\nZentrum
-HISTORY_MSG_246;L*a*b* - CL-Kurve
-HISTORY_MSG_247;L*a*b* - LH-Kurve
-HISTORY_MSG_248;L*a*b* - BB-Kurve
-HISTORY_MSG_249;Kontrast nach\nDetailebenen\nSchwellenwert
-HISTORY_MSG_250;Rauschreduzierung\nVerbesserung
-HISTORY_MSG_251;Schwarz/Weiß\nAlgorithmus
-HISTORY_MSG_252;Kontrast nach\nDetailebenen\nHautfarbtöne\nändern/schützen
-HISTORY_MSG_253;Kontrast nach\nDetailebenen\nArtefakte reduzieren
-HISTORY_MSG_254;Kontrast nach\nDetailebenen\nHautfarbton
-HISTORY_MSG_255;Rauschreduzierung\nMedianfilter
-HISTORY_MSG_256;Rauschreduzierung\nMediantyp
-HISTORY_MSG_257;Farbanpassungen
-HISTORY_MSG_258;Farbanpassungen\nFarbkurve
-HISTORY_MSG_259;Farbanpassungen\nDeckkraftkurve
-HISTORY_MSG_260;Farbanpassungen\na*[b*]-Transparenz
-HISTORY_MSG_261;Farbanpassungen\nMethode
-HISTORY_MSG_262;Farbanpassungen\nb*-Transparenz
-HISTORY_MSG_263;Farbanpassungen\nSchatten - Blau/Rot
-HISTORY_MSG_264;Farbanpassungen\nSchatten - Cyan/Grün
-HISTORY_MSG_265;Farbanpassungen\nSchatten - Gelb/Blau
-HISTORY_MSG_266;Farbanpassungen\nMitten - Blau/Rot
-HISTORY_MSG_267;Farbanpassungen\nMitten - Cyan/Grün
-HISTORY_MSG_268;Farbanpassungen\nMitten - Gelb/Blau
-HISTORY_MSG_269;Farbanpassungen\nLichter - Bau/Rot
-HISTORY_MSG_270;Farbanpassungen\nLichter - Cyan/Grün
-HISTORY_MSG_271;Farbanpassungen\nLichter - GelbBlau
-HISTORY_MSG_272;Farbanpassungen\nFarbausgleich
-HISTORY_MSG_273;Farbanpassungen\nZurücksetzen
-HISTORY_MSG_274;Farbanpassungen\nSättigung Schatten
-HISTORY_MSG_275;Farbanpassungen\nSättigung Lichter
-HISTORY_MSG_276;Farbanpassungen\nDeckkraft
+HISTORY_MSG_237;<b>Schwarz/Weiß</b> - Mixer
+HISTORY_MSG_238;<b>Grauverlaufsfilter</b>\nBereich
+HISTORY_MSG_239;<b>Grauverlaufsfilter</b>\nIntensität
+HISTORY_MSG_240;<b>Grauverlaufsfilter</b>\nRotationsachsen
+HISTORY_MSG_241;<b>Vignettierungsfilter</b>\nBereich
+HISTORY_MSG_242;<b>Vignettierungsfilter</b>\nForm
+HISTORY_MSG_243;<b>Objektivkorrektur</b>\nVignettierung - Radius
+HISTORY_MSG_244;<b>Objektivkorrektur</b>\nVignettierung - Faktor
+HISTORY_MSG_245;<b>Objektivkorrektur</b>\nVignettierung - Zentrum
+HISTORY_MSG_246;<b>L*a*b*</b> - CL-Kurve
+HISTORY_MSG_247;<b>L*a*b*</b> - LH-Kurve
+HISTORY_MSG_248;<b>L*a*b*</b> - HH-Kurve
+HISTORY_MSG_249;<b>Detailebenenkontrast</b>\nSchwellenwert
+HISTORY_MSG_250;<b>Rauschreduzierung</b>\nVerbesserung
+HISTORY_MSG_251;<b>Schwarz/Weiß</b>\nAlgorithmus
+HISTORY_MSG_252;<b>Detailebenenkontrast</b>\nHautfarbtöne schützen
+HISTORY_MSG_253;<b>Detailebenenkontrast</b>\nArtefakte reduzieren
+HISTORY_MSG_254;<b>Detailebenenkontrast</b>\nHautfarbton
+HISTORY_MSG_255;<b>Rauschreduzierung</b>\nMedianfilter
+HISTORY_MSG_256;<b>Rauschreduzierung</b>\nMediantyp
+HISTORY_MSG_257;<b>Farbanpassungen</b>
+HISTORY_MSG_258;<b>Farbanpassungen</b>\nFarbkurve
+HISTORY_MSG_259;<b>Farbanpassungen</b>\nDeckkraftkurve
+HISTORY_MSG_260;<b>Farbanpassungen</b>\na*[b*]-Transparenz
+HISTORY_MSG_261;<b>Farbanpassungen</b>\nMethode
+HISTORY_MSG_262;<b>Farbanpassungen</b>\nb*-Transparenz
+HISTORY_MSG_263;<b>Farbanpassungen</b>\nSchatten - Blau/Rot
+HISTORY_MSG_264;<b>Farbanpassungen</b>\nSchatten - Cyan/Grün
+HISTORY_MSG_265;<b>Farbanpassungen</b>\nSchatten - Gelb/Blau
+HISTORY_MSG_266;<b>Farbanpassungen</b>\nMitten - Blau/Rot
+HISTORY_MSG_267;<b>Farbanpassungen</b>\nMitten - Cyan/Grün
+HISTORY_MSG_268;<b>Farbanpassungen</b>\nMitten - Gelb/Blau
+HISTORY_MSG_269;<b>Farbanpassungen</b>\nLichter - Bau/Rot
+HISTORY_MSG_270;<b>Farbanpassungen</b>\nLichter - Cyan/Grün
+HISTORY_MSG_271;<b>Farbanpassungen</b>\nLichter - GelbBlau
+HISTORY_MSG_272;<b>Farbanpassungen</b>\nFarbausgleich
+HISTORY_MSG_273;<b>Farbanpassungen</b>\nZurücksetzen
+HISTORY_MSG_274;<b>Farbanpassungen</b>\nSättigung Schatten
+HISTORY_MSG_275;<b>Farbanpassungen</b>\nSättigung Lichter
+HISTORY_MSG_276;<b>Farbanpassungen</b>\nDeckkraft
 HISTORY_MSG_277;--unused--
-HISTORY_MSG_278;Farbanpassungen\nLuminanz schützen
-HISTORY_MSG_279;Farbanpassungen\nSchatten
-HISTORY_MSG_280;Farbanpassungen\nLichter
-HISTORY_MSG_281;Farbanpassungen\nSättigung schützen\nIntensität
-HISTORY_MSG_282;Farbanpassungen\nSättigung schützen\nSchwellenwert
-HISTORY_MSG_283;Farbanpassungen\nIntensität
-HISTORY_MSG_284;Farbanpassungen\nSättigung schützen\nAutomatisch
-HISTORY_MSG_285;Rauschreduzierung\nMedianmethode
-HISTORY_MSG_286;Rauschreduzierung\nMediantyp
-HISTORY_MSG_287;Rauschreduzierung\nMedianiterationen
-HISTORY_MSG_288;Weißbild\nKontrolle zu heller\nBereiche
-HISTORY_MSG_289;Weißbild\nAuto-Kontrolle zu\nheller Bereiche
-HISTORY_MSG_290;Schwarzpunkt - Rot
-HISTORY_MSG_291;Schwarzpunkt - Grün
-HISTORY_MSG_292;Schwarzpunkt - Blau
-HISTORY_MSG_293;Filmsimulation
-HISTORY_MSG_294;Filmsimulation - Intensität
-HISTORY_MSG_295;Filmsimulation - Film
-HISTORY_MSG_296;Rauschreduzierung\nLuminanzkurve
-HISTORY_MSG_297;Rauschreduzierung\nQualität
-HISTORY_MSG_298;Vorverarbeitung\nDead-Pixel-Filter
-HISTORY_MSG_299;Rauschreduzierung\nChrominanzkurve
+HISTORY_MSG_278;<b>Farbanpassungen</b>\nLuminanz schützen
+HISTORY_MSG_279;<b>Farbanpassungen</b>\nSchatten
+HISTORY_MSG_280;<b>Farbanpassungen</b>\nLichter
+HISTORY_MSG_281;<b>Farbanpassungen</b>\nSättigung schützen\nIntensität
+HISTORY_MSG_282;<b>Farbanpassungen</b>\nSättigung schützen\nSchwellenwert
+HISTORY_MSG_283;<b>Farbanpassungen</b>\nIntensität
+HISTORY_MSG_284;<b>Farbanpassungen</b>\nSättigung schützen\nAutomatisch
+HISTORY_MSG_285;<b>Rauschreduzierung</b>\nMedianmethode
+HISTORY_MSG_286;<b>Rauschreduzierung</b>\nMediantyp
+HISTORY_MSG_287;<b>Rauschreduzierung</b>\nMedianiterationen
+HISTORY_MSG_288;<b>Weißbild</b>\nKontrolle zu heller Bereiche
+HISTORY_MSG_289;<b>Weißbild</b>\nAuto-Kontrolle zu\nheller Bereiche
+HISTORY_MSG_290;<b>Sensor X-Trans-Matrix</b>\nSchwarzpunkt - Rot
+HISTORY_MSG_291;<b>Sensor X-Trans-Matrix</b>\nSchwarzpunkt - Grün
+HISTORY_MSG_292;<b>Sensor X-Trans-Matrix</b>\nSchwarzpunkt - Blau
+HISTORY_MSG_293;<b>Filmsimulation</b>
+HISTORY_MSG_294;<b>Filmsimulation</b>\nIntensität
+HISTORY_MSG_295;<b>Filmsimulation</b> - Film
+HISTORY_MSG_296;<b>Rauschreduzierung</b>\nLuminanzkurve
+HISTORY_MSG_297;<b>Rauschreduzierung</b>\nQualität
+HISTORY_MSG_298;<b>Vorverarbeitung</b>\nDead-Pixel-Filter
+HISTORY_MSG_299;<b>Rauschreduzierung</b>\nChrominanzkurve
 HISTORY_MSG_300;-
-HISTORY_MSG_301;Rauschreduzierung\nLumakontrolle
-HISTORY_MSG_302;Rauschreduzierung\nChrominanz\nMethode
-HISTORY_MSG_303;Rauschreduzierung\nChrominanz\nMethode
-HISTORY_MSG_304;Wavelet\nKontrastebenen
-HISTORY_MSG_305;Wavelet
-HISTORY_MSG_306;Wavelet - Einstellungen\nVerarbeitungsebene
-HISTORY_MSG_307;Wavelet - Einstellungen\nVerarbeitung
-HISTORY_MSG_308;Wavelet - Einstellungen\nVerarbeitungsrichtung
-HISTORY_MSG_309;Wavelet\nKantenschärfung\nDetails
-HISTORY_MSG_310;Wavelet - Nachbild\nHimmelsfarbtöne\nändern/schützen
-HISTORY_MSG_311;Wavelet - Einstellungen\nWaveletebenen
-HISTORY_MSG_312;Wavelet - Nachbild\nSchatten Schwellenwert
-HISTORY_MSG_313;Wavelet\nFarbe\nSättigung
-HISTORY_MSG_314;Wavelet\nGamut\nArtefakte reduzieren
-HISTORY_MSG_315;Wavelet - Nachbild\nKontrast
-HISTORY_MSG_316;Wavelet - Gamut\nHautfarbtöne\nändern/schützen
-HISTORY_MSG_317;Wavelet - Gamut\nHautfarbton
-HISTORY_MSG_318;Wavelet - Kontrast\nLichterebenen
-HISTORY_MSG_319;Wavelet - Kontrast\nLichterbereich
-HISTORY_MSG_320;Wavelet - Kontrast\nSchattenbereich
-HISTORY_MSG_321;Wavelet - Kontrast\nSchattenebenen
-HISTORY_MSG_322;Wavelet - Gamut\nFarbverschiebungen\nvermeiden
-HISTORY_MSG_323;Wavelet\nKantenschärfung\nLokaler Kontrast
-HISTORY_MSG_324;Wavelet - Farbe\nPastellfarben
-HISTORY_MSG_325;Wavelet - Farbe\nGesättigt Farben
-HISTORY_MSG_326;Wavelet - Farbe\nMethode
-HISTORY_MSG_327;Wavelet - Kontrast\nAnwenden auf
-HISTORY_MSG_328;Wavelet - Farbe\nVerlinkungsstärke
-HISTORY_MSG_329;Wavelet - Tönung\nDeckkraft Rot/Grün
-HISTORY_MSG_330;Wavelet - Tönung\nDeckkraft Blau/Gelb
-HISTORY_MSG_331;Wavelet\nKontrastebenen\nExtra
-HISTORY_MSG_332;Wavelet- -Einstellungen\nKachelgröße
-HISTORY_MSG_333;Wavelet - Nachbild\nSchatten
-HISTORY_MSG_334;Wavelet - Nachbild\nBuntheit
-HISTORY_MSG_335;Wavelet - Nachbild\nLichter
-HISTORY_MSG_336;Wavelet - Nachbild\nLichter Schwellenwert
-HISTORY_MSG_337;Wavelet - Nachbild\nHimmelsfarbton
-HISTORY_MSG_338;Wavelet\nKantenschärfung\nRadius
-HISTORY_MSG_339;Wavelet\nKantenschärfung\nIntensität
-HISTORY_MSG_340;Wavelet - Einstellungen\nIntensität
-HISTORY_MSG_341;Wavelet - Einstellungen\nKantenperformance
-HISTORY_MSG_342;Wavelet\nKantenschärfung\nErste Ebene
-HISTORY_MSG_343;Wavelet - Farbe\nFarbebenen
-HISTORY_MSG_344;Wavelet\nFarbemethode\nRegler/Kurve
-HISTORY_MSG_345;Wavelet\nKantenschärfung\nLokaler Kontrast
-HISTORY_MSG_346;Wavelet\nKantenschärfung\nLokale Kontrastmethode
-HISTORY_MSG_347;Wavelet\nRauschreduzierung\nEbene 1
-HISTORY_MSG_348;Wavelet\nRauschreduzierung\nEbene 2
-HISTORY_MSG_349;Wavelet\nRauschreduzierung\nEbene 3
-HISTORY_MSG_350;Wavelet\nKantenschärfung\nKantenerkennung
-HISTORY_MSG_351;Wavelet - Nachbild\nHH-Kurve
-HISTORY_MSG_352;Wavelet - Einstellungen\nHintergrund
-HISTORY_MSG_353;Wavelet\nKantenschärfung\nGradienten-\nempfindlichkeit
-HISTORY_MSG_354;Wavelet\nKantenschärfung\nErweitert
-HISTORY_MSG_355;Wavelet\nKantenschärfung\nSchwellenwert niedrig
-HISTORY_MSG_356;Wavelet\nKantenschärfung\nSchwellenwert hoch
-HISTORY_MSG_357;Wavelet\nRauschreduzierung\nSchärfung
-HISTORY_MSG_358;Wavelet - Gamut\nKontrastkurve
-HISTORY_MSG_359;Vorverarbeitung\nHot/Dead-Pixel\nSchwellenwert
-HISTORY_MSG_360;Dynamikkompression\nGamma
-HISTORY_MSG_361;Wavelet - Endretusche\nFarbausgleich
-HISTORY_MSG_362;Wavelet - Nachbild\nKompression
-HISTORY_MSG_363;Wavelet - Nachbild\nKompressionsstärke
-HISTORY_MSG_364;Wavelet - Endretusche\nKontrastausgleich
-HISTORY_MSG_365;Wavelet - Endretusche\nDelta-Ausgleich
-HISTORY_MSG_366;Wavelet - Nachbild\nGammakompression
-HISTORY_MSG_367;Wavelet\nKantenschärfung\nLokale Kontrastkurve
-HISTORY_MSG_368;Wavelet - Endretusche\nKontrastausgleich
-HISTORY_MSG_369;Wavelet - Endretusche\nKontrastmethode
-HISTORY_MSG_370;Wavelet - Endretusche\nLokale Kontrastkurve
-HISTORY_MSG_371;Nach Größenänderung\nschärfen
-HISTORY_MSG_372;Größe ändern\nSchärfen - USM\nRadius
-HISTORY_MSG_373;Größe ändern\nSchärfen - USM\nIntensität
-HISTORY_MSG_374;Größe ändern\nSchärfen - USM\nSchwellenwert
-HISTORY_MSG_375;Größe ändern\nSchärfen - USM\nNur Kanten schärfen
-HISTORY_MSG_376;Größe ändern\nSchärfen - USM\nKantenerkennung Radius
-HISTORY_MSG_377;Größe ändern\nSchärfen - USM\nKantentoleranz
-HISTORY_MSG_378;Größe ändern\nSchärfen - USM\nHalokontrolle
-HISTORY_MSG_379;Größe ändern\nSchärfen - USM\nHalokontrolle Intensität
-HISTORY_MSG_380;Größe ändern\nSchärfen - Methode
-HISTORY_MSG_381;Größe ändern\nSchärfen - RLD\nRadius
-HISTORY_MSG_382;Größe ändern\nSchärfen - RLD\nIntensität
-HISTORY_MSG_383;Größe ändern\nSchärfen - RLD\nDämpfung
-HISTORY_MSG_384;Größe ändern\nSchärfen - RLD\nIterationen
-HISTORY_MSG_385;Wavelet - Nachbild\nFarbausgleich
-HISTORY_MSG_386;Wavelet - Nachbild\nFarbausgleich\nLichter Grün/Cyan
-HISTORY_MSG_387;Wavelet - Nachbild\nFarbausgleich\nLichter Blau/Gelb
-HISTORY_MSG_388;Wavelet - Nachbild\nFarbausgleich\nMitten Grün/Cyan
-HISTORY_MSG_389;Wavelet - Nachbild\nFarbausgleich\nMitten Blau/Gelb
-HISTORY_MSG_390;Wavelet - Nachbild\nFarbausgleich\nSchatten Grün/Cyan
-HISTORY_MSG_391;Wavelet - Nachbild\nFarbausgleich\nSchatten Blau/Gelb
-HISTORY_MSG_392;Wavelet - Nachbild\nFarbausgleich
-HISTORY_MSG_393;Eingangsfarbprofil\nDCP\nLook-Tabelle
-HISTORY_MSG_394;Eingangsfarbprofil\nDCP\nAusgangsbelichtung
-HISTORY_MSG_395;Eingangsfarbprofil\nDCP\nBasistabelle
-HISTORY_MSG_396;Wavelet - Kontrast
-HISTORY_MSG_397;Wavelet - Farbe
-HISTORY_MSG_398;Wavelet\nKantenschärfung
-HISTORY_MSG_399;Wavelet - Nachbild
-HISTORY_MSG_400;Wavelet - Endretusche
-HISTORY_MSG_401;Wavelet - Tönung
-HISTORY_MSG_402;Wavelet\nRauschreduzierung
-HISTORY_MSG_403;Wavelet\nKantenschärfung\nKantenempfindlichkeit
-HISTORY_MSG_404;Wavelet\nKantenschärfung\nGrundverstärkung
-HISTORY_MSG_405;Wavelet\nRauschreduzierung\nEbene 4
-HISTORY_MSG_406;Wavelet\nKantenschärfung\nNachbarpixel
-HISTORY_MSG_407;Retinex - Methode
-HISTORY_MSG_408;Retinex\nBenachbarte Pixel
-HISTORY_MSG_409;Retinex - Verstärkung
-HISTORY_MSG_410;Retinex - Versatz
-HISTORY_MSG_411;Retinex - Intensität
-HISTORY_MSG_412;Retinex - Skalierung
-HISTORY_MSG_413;Retinex - Abweichung
-HISTORY_MSG_414;Retinex\nLuminanz(L)\nL*a*b*
-HISTORY_MSG_415;Retinex\nTransmissionskurve
-HISTORY_MSG_416;Retinex
-HISTORY_MSG_417;Retinex\nTransmission median
-HISTORY_MSG_418;Retinex - Transmission\nSchwellenwert
-HISTORY_MSG_419;Retinex - Farbraum
-HISTORY_MSG_420;Retinex\nHSL-Kurve
-HISTORY_MSG_421;Retinex\nGammakorrektur
-HISTORY_MSG_422;Retinex - Gamma
-HISTORY_MSG_423;Retinex\nGammasteigung
-HISTORY_MSG_424;Retinex\nHL-Schwellenwert
-HISTORY_MSG_425;Retinex\nBasis-Logarithmus
-HISTORY_MSG_426;Retinex - Farbton (H)
+HISTORY_MSG_301;<b>Rauschreduzierung</b>\nLuminanzkontrolle
+HISTORY_MSG_302;<b>Rauschreduzierung</b>\nChrominanz - Methode
+HISTORY_MSG_303;<b>Rauschreduzierung</b>\nChrominanz - Methode
+HISTORY_MSG_304;<b>Wavelet</b>\nKontrastebenen
+HISTORY_MSG_305;<b>Wavelet</b>
+HISTORY_MSG_306;<b>Wavelet</b> - Einstellungen\nVerarbeitungsebene
+HISTORY_MSG_307;<b>Wavelet</b> - Einstellungen\nVerarbeitung
+HISTORY_MSG_308;<b>Wavelet</b> - Einstellungen\nVerarbeitungsrichtung
+HISTORY_MSG_309;<b>Wavelet</b>\nKantenschärfung\nDetails
+HISTORY_MSG_310;<b>Wavelet</b> - Restbild\nHimmelsfarbtöne\nschützen
+HISTORY_MSG_311;<b>Wavelet</b> - Einstellungen\nAnzahl der Ebenen
+HISTORY_MSG_312;<b>Wavelet</b> - Restbild\nSchatten Schwellenwert
+HISTORY_MSG_313;<b>Wavelet</b> - Farbe\nEbenengrenze
+HISTORY_MSG_314;<b>Wavelet</b> - Gamut\nArtefakte reduzieren
+HISTORY_MSG_315;<b>Wavelet</b> - Restbild\nKontrast
+HISTORY_MSG_316;<b>Wavelet</b> - Gamut\nHautfarbtöne schützen
+HISTORY_MSG_317;<b>Wavelet</b> - Gamut\nHautfarbton
+HISTORY_MSG_318;<b>Wavelet</b> - Kontrast\nLichterebenen
+HISTORY_MSG_319;<b>Wavelet</b> - Kontrast\nLichter-Luminanzbereich
+HISTORY_MSG_320;<b>Wavelet</b> - Kontrast\nSchatten-Luminanzbereich
+HISTORY_MSG_321;<b>Wavelet</b> - Kontrast\nSchattenebenen
+HISTORY_MSG_322;<b>Wavelet</b> - Gamut\nFarbverschiebungen\nvermeiden
+HISTORY_MSG_323;<b>Wavelet</b>\nKantenschärfung\nLokale Kontrastkurve
+HISTORY_MSG_324;<b>Wavelet</b> - Farbe\nPastellfarben
+HISTORY_MSG_325;<b>Wavelet</b> - Farbe\nGesättigte Farben
+HISTORY_MSG_326;<b>Wavelet</b> - Farbe\nChrominanzethode
+HISTORY_MSG_327;<b>Wavelet</b> - Kontrast\nAnwenden auf
+HISTORY_MSG_328;<b>Wavelet</b> - Farbe\nFarb-Kontrast-\nVerknüpfung
+HISTORY_MSG_329;<b>Wavelet</b> - Tönung\nDeckkraft Rot/Grün
+HISTORY_MSG_330;<b>Wavelet</b> - Tönung\nDeckkraft Blau/Gelb
+HISTORY_MSG_331;<b>Wavelet</b>\nKontrastebenen\nExtra
+HISTORY_MSG_332;<b>Wavelet</b>- -Einstellungen\nKachelgröße
+HISTORY_MSG_333;<b>Wavelet</b> - Restbild\nSchatten
+HISTORY_MSG_334;<b>Wavelet</b> - Restbild\nBuntheit
+HISTORY_MSG_335;<b>Wavelet</b> - Restbild\nLichter
+HISTORY_MSG_336;<b>Wavelet</b> - Restbild\nLichter Schwellenwert
+HISTORY_MSG_337;<b>Wavelet</b> - Restbild\nHimmelsfarbton
+HISTORY_MSG_338;<b>Wavelet</b>\nKantenschärfung\nRadius
+HISTORY_MSG_339;<b>Wavelet</b>\nKantenschärfung\nIntensität
+HISTORY_MSG_340;<b>Wavelet</b> - Einstellungen\nIntensität
+HISTORY_MSG_341;<b>Wavelet</b> - Einstellungen\nKantenperformance
+HISTORY_MSG_342;<b>Wavelet</b>\nKantenschärfung\nErste Ebene
+HISTORY_MSG_343;<b>Wavelet</b> - Farbe\nFarbebenen
+HISTORY_MSG_344;<b>Wavelet</b>\nFarbmethode\nRegler/Kurve
+HISTORY_MSG_345;<b>Wavelet</b>\nKantenschärfung\nLokaler Kontrast
+HISTORY_MSG_346;<b>Wavelet</b>\nKantenschärfung\nLokale Kontrastmethode
+HISTORY_MSG_347;<b>Wavelet</b>\nRauschreduzierung\nEbene 1
+HISTORY_MSG_348;<b>Wavelet</b>\nRauschreduzierung\nEbene 2
+HISTORY_MSG_349;<b>Wavelet</b>\nRauschreduzierung\nEbene 3
+HISTORY_MSG_350;<b>Wavelet</b>\nKantenschärfung\nKantenerkennung
+HISTORY_MSG_351;<b>Wavelet</b> - Restbild\nHH-Kurve
+HISTORY_MSG_352;<b>Wavelet</b> - Einstellungen\nHintergrund
+HISTORY_MSG_353;<b>Wavelet</b>\nKantenschärfung\nGradientenempfindlichkeit
+HISTORY_MSG_354;<b>Wavelet</b>\nKantenschärfung\nErweiterter Algorithmus
+HISTORY_MSG_355;<b>Wavelet</b>\nKantenschärfung\nSchwellenwert niedrig
+HISTORY_MSG_356;<b>Wavelet</b>\nKantenschärfung\nSchwellenwert hoch
+HISTORY_MSG_357;<b>Wavelet</b>\nRauschreduzierung\nSchärfung verknüpfen
+HISTORY_MSG_358;<b>Wavelet</b> - Gamut\nKontrastkurve
+HISTORY_MSG_359;<b>Vorverarbeitung</b>\nHot/Dead-Pixel-Filter\nSchwellenwert
+HISTORY_MSG_360;<b>Dynamikkompression</b>\nGamma
+HISTORY_MSG_361;<b>Wavelet</b> - Endretusche\nFarbausgleich
+HISTORY_MSG_362;<b>Wavelet</b> - Restbild\nKompression
+HISTORY_MSG_363;<b>Wavelet</b> - Restbild\nKompression - Intensität
+HISTORY_MSG_364;<b>Wavelet</b> - Endretusche\nKontrastausgleich
+HISTORY_MSG_365;<b>Wavelet</b> - Endretusche\nDelta-Kontrastausgleich
+HISTORY_MSG_366;<b>Wavelet</b> - Restbild\nGammakompression
+HISTORY_MSG_367;<b>Wavelet</b> - Endretusche\n"Danach"-Kontrastkurve
+HISTORY_MSG_368;<b>Wavelet</b> - Endretusche\nKontrastausgleichskurve
+HISTORY_MSG_369;<b>Wavelet</b> - Endretusche\nKontrastmethode
+HISTORY_MSG_370;<b>Wavelet</b> - Endretusche\nLokale Kontrastkurve
+HISTORY_MSG_371;<b>Skalieren</b> - Schärfen
+HISTORY_MSG_372;<b>Skalieren</b> - Schärfen\nUSM - Radius
+HISTORY_MSG_373;<b>Skalieren</b> - Schärfen\nUSM - Intensität
+HISTORY_MSG_374;<b>Skalieren</b> - Schärfen\nUSM - Schwellenwert
+HISTORY_MSG_375;<b>Skalieren</b> - Schärfen\nUSM - Nur Kanten\nschärfen
+HISTORY_MSG_376;<b>Skalieren</b> - Schärfen\nUSM - Kantenschärfung\nRadius
+HISTORY_MSG_377;<b>Skalieren</b> - Schärfen\nUSM - Kantentoleranz
+HISTORY_MSG_378;<b>Skalieren</b> - Schärfen\nUSM - Halokontrolle
+HISTORY_MSG_379;<b>Skalieren</b> - Schärfen\nUSM - Halokontrolle\nIntensität
+HISTORY_MSG_380;<b>Skalieren</b> - Schärfen\nMethode
+HISTORY_MSG_381;<b>Skalieren</b> - Schärfen\nRLD - Radius
+HISTORY_MSG_382;<b>Skalieren</b> - Schärfen\nRLD - Intensität
+HISTORY_MSG_383;<b>Skalieren</b> - Schärfen\nRLD - Dämpfung
+HISTORY_MSG_384;<b>Skalieren</b> - Schärfen\nRLD - Iterationen
+HISTORY_MSG_385;<b>Wavelet</b> - Restbild\nFarbausgleich
+HISTORY_MSG_386;<b>Wavelet</b> - Restbild\nFarbausgleich\nLichter Grün/Cyan
+HISTORY_MSG_387;<b>Wavelet</b> - Restbild\nFarbausgleich\nLichter Blau/Gelb
+HISTORY_MSG_388;<b>Wavelet</b> - Restbild\nFarbausgleich\nMitten Grün/Cyan
+HISTORY_MSG_389;<b>Wavelet</b> - Restbild\nFarbausgleich\nMitten Blau/Gelb
+HISTORY_MSG_390;<b>Wavelet</b> - Restbild\nFarbausgleich\nSchatten Grün/Cyan
+HISTORY_MSG_391;<b>Wavelet</b> - Restbild\nFarbausgleich\nSchatten Blau/Gelb
+HISTORY_MSG_392;<b>Wavelet</b> - Restbild\nFarbausgleich
+HISTORY_MSG_393;<b>Farbmanagement</b>\nEingangsfarbprofil\nDCP - Look-Tabelle
+HISTORY_MSG_394;<b>Farbmanagement</b>\nEingangsfarbprofil\nDCP - Ausgangsbelichtung
+HISTORY_MSG_395;<b>Farbmanagement</b>\nEingangsfarbprofil\nDCP - Basistabelle
+HISTORY_MSG_396;<b>Wavelet</b> - Kontrast
+HISTORY_MSG_397;<b>Wavelet</b> - Farbe
+HISTORY_MSG_398;<b>Wavelet</b>\nKantenschärfung
+HISTORY_MSG_399;<b>Wavelet</b> - Restbild
+HISTORY_MSG_400;<b>Wavelet</b> - Endretusche
+HISTORY_MSG_401;<b>Wavelet</b> - Tönung
+HISTORY_MSG_402;<b>Wavelet</b>\nRauschreduzierung
+HISTORY_MSG_403;<b>Wavelet</b>\nKantenschärfung\nKantenempfindlichkeit
+HISTORY_MSG_404;<b>Wavelet</b>\nKantenschärfung\nGrundverstärkung
+HISTORY_MSG_405;<b>Wavelet</b>\nRauschreduzierung\nEbene 4
+HISTORY_MSG_406;<b>Wavelet</b>\nKantenschärfung\nBenachbarte Pixel
+HISTORY_MSG_407;<b>Retinex</b> - Methode
+HISTORY_MSG_408;<b>Retinex</b>\nBenachbarte Pixel
+HISTORY_MSG_409;<b>Retinex</b> - Einstellungen\nVerstärkung
+HISTORY_MSG_410;<b>Retinex</b> - Einstellungen\nVersatz
+HISTORY_MSG_411;<b>Retinex</b> - Intensität
+HISTORY_MSG_412;<b>Retinex</b> - Skalierung
+HISTORY_MSG_413;<b>Retinex</b> - Abweichung
+HISTORY_MSG_414;<b>Retinex</b> - Einstellungen\nLuminanz(L) - L*a*b*
+HISTORY_MSG_415;<b>Retinex</b> - Einstellungen\nTransmissionskurve
+HISTORY_MSG_416;<b>Retinex</b>
+HISTORY_MSG_417;<b>Retinex</b> - Einstellungen\nTransmission Median-\nfilter
+HISTORY_MSG_418;<b>Retinex</b> - Einstellungen\nTransmission\nSchwellenwert
+HISTORY_MSG_419;<b>Retinex</b> - Farbraum
+HISTORY_MSG_420;<b>Retinex</b> - Einstellungen\nHSL-Kurve
+HISTORY_MSG_421;<b>Retinex</b> - Einstellungen\nGammakorrektur
+HISTORY_MSG_422;<b>Retinex</b> - Einstellungen\nGamma
+HISTORY_MSG_423;<b>Retinex</b> - Einstellungen\nGammasteigung
+HISTORY_MSG_424;<b>Retinex</b> - Einstellungen\nHL-Schwellenwert
+HISTORY_MSG_425;<b>Retinex</b> - Einstellungen\nBasis-Logarithmus
+HISTORY_MSG_426;<b>Retinex</b> - Einstellungen\nFarbton (H)
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -824,10 +826,10 @@ PARTIALPASTE_DEFRINGE;Farbsaum entfernen (Defringe)
 PARTIALPASTE_DETAILGROUP;Gruppe Detaileinstellungen
 PARTIALPASTE_DIALOGLABEL;Selektives Einfügen des Bearbeitungsprofils
 PARTIALPASTE_DIRPYRDENOISE;Rauschreduzierung
-PARTIALPASTE_DIRPYREQUALIZER;Kontrast nach Detailebenen
+PARTIALPASTE_DIRPYREQUALIZER;Detailebenenkontrast
 PARTIALPASTE_DISTORTION;Verzeichnungskorrektur
 PARTIALPASTE_EPD;Dynamikkompression
-PARTIALPASTE_EQUALIZER;Waveletebenen
+PARTIALPASTE_EQUALIZER;Anzahl der Ebenen
 PARTIALPASTE_EVERYTHING;Alles
 PARTIALPASTE_EXIFCHANGES;Änderungen an Exif-Daten
 PARTIALPASTE_EXPOSURE;Belichtung
@@ -855,16 +857,16 @@ PARTIALPASTE_PREPROCESS_LINEDENOISE;Vorverarbeitung: Zeilenrauschfilter
 PARTIALPASTE_RAWCACORR_AUTO;Chromatische Aberration: Automatische Korrektur
 PARTIALPASTE_RAWCACORR_CABLUE;Chromatische Aberration: Blau
 PARTIALPASTE_RAWCACORR_CARED;Chromatische Aberration: Rot
-PARTIALPASTE_RAWEXPOS_BLACK;RAW-Weiß/Schwarz-Punkt: Schwarzpegel
-PARTIALPASTE_RAWEXPOS_LINEAR;RAW-Weiß/Schwarz-Punkt: Linearer Korrekturfaktor
-PARTIALPASTE_RAWEXPOS_PRESER;RAW-Weiß/Schwarz-Punkt: Lichter schützen (EV)
+PARTIALPASTE_RAWEXPOS_BLACK;Weißpunkt: Schwarzpegel
+PARTIALPASTE_RAWEXPOS_LINEAR;Weißpunkt: Korrekturfaktor
+PARTIALPASTE_RAWEXPOS_PRESER;Weißpunkt: Lichter schützen (EV)
 PARTIALPASTE_RAWGROUP;Gruppe RAW
 PARTIALPASTE_RAW_DCBENHANCE;Farbinterpolation: DCB-Verbesserung
 PARTIALPASTE_RAW_DCBITERATIONS;Farbinterpolation: Anzahl der DCB-Iterationen
-PARTIALPASTE_RAW_DMETHOD;Demosaikmethode
+PARTIALPASTE_RAW_DMETHOD;Farbinterpolation: Methode
 PARTIALPASTE_RAW_FALSECOLOR;Farbinterpolation: Falschfarbenunterdrückung
-PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE-Verbesserungsstufen
-PARTIALPASTE_RESIZE;Größe ändern
+PARTIALPASTE_RAW_LMMSEITERATIONS;Farbinterpolation: LMMSE-Verbesserungsstufen
+PARTIALPASTE_RESIZE;Skalieren
 PARTIALPASTE_RETINEX;Retinex (Bildschleier entfernen)
 PARTIALPASTE_RGBCURVES;RGB-Kurven
 PARTIALPASTE_ROTATION;Drehen
@@ -1071,6 +1073,7 @@ PREFERENCES_TISTD;Standard
 PREFERENCES_TP_LABEL;Werkzeugbereich:
 PREFERENCES_TP_USEICONORTEXT;Symbole statt Text in Karteireitern
 PREFERENCES_TP_VSCROLLBAR;Keine vertikale Laufleiste
+PREFERENCES_TUNNELMETADATA;Exif/XMP unverändert in die Ausgabedatei übernehmen.
 PREFERENCES_USEBUNDLEDPROFILES;Standardprofile verwenden
 PREFERENCES_USESYSTEMTHEME;Systemoberfläche verwenden
 PREFERENCES_VIEW;Weißabgleich-Einstellung des Ausgabegerätes (Monitor, TV, Projektor, usw.)
@@ -1222,7 +1225,7 @@ TP_COLORAPP_ADAP_AUTO_TOOLTIP;Wenn aktiviert (empfohlen), werden die optimalen W
 TP_COLORAPP_ALGO;Algorithmus
 TP_COLORAPP_ALGO_ALL;Alle
 TP_COLORAPP_ALGO_JC;Helligkeit + Buntheit (JH)
-TP_COLORAPP_ALGO_JS;Helligkeit+ Sättigung (JS)
+TP_COLORAPP_ALGO_JS;Helligkeit + Sättigung (JS)
 TP_COLORAPP_ALGO_QM;Helligkeit + Farbigkeit (QM)
 TP_COLORAPP_ALGO_TOOLTIP;Auswahl zwischen Parameter-Teilmengen und allen Parametern
 TP_COLORAPP_BADPIXSL;Hot/Bad-Pixelfilter
@@ -1415,13 +1418,13 @@ TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fein: Ist näher an den Hautfarbtönen und minim
 TP_DIRPYREQUALIZER_ARTIF;Artefakte reduzieren
 TP_DIRPYREQUALIZER_HUESKIN;Hautfarbton
 TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;Wenn Sie den Bereich signifikant nach Links oder Rechts verschieben müssen, ist der Weißabgleich nicht richtig gewählt.\n\nWählen Sie den eingeschlossenen Bereich so eng wie möglich, um den Einfluss auf benachbarte Farben zu verhindern.
-TP_DIRPYREQUALIZER_LABEL;Kontrast nach Detailebenen
+TP_DIRPYREQUALIZER_LABEL;Detailebenenkontrast
 TP_DIRPYREQUALIZER_LUMACOARSEST;Grob
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Kontrast -
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Kontrast +
 TP_DIRPYREQUALIZER_LUMAFINEST;Fein
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
-TP_DIRPYREQUALIZER_SKIN;Hautfarbtöne ändern/schützen
+TP_DIRPYREQUALIZER_SKIN;Hautfarbtöne schützen
 TP_DIRPYREQUALIZER_SKIN_TOOLTIP;-100: Nur Farben innerhalb des Bereichs werden verändert.\n0: Alle Farben werden gleich behandelt.\n+100: Nur Farben außerhalb des Bereichs werden verändert.
 TP_DIRPYREQUALIZER_THRESHOLD;Schwellenwert
 TP_DIRPYREQUALIZER_TOOLTIP;Verringert Artefakte an den Übergängen zwischen Hautfarbtöne und dem Rest des Bildes.
@@ -1583,12 +1586,13 @@ TP_LENSPROFILE_LABEL;Objektivkorrekturprofil
 TP_LENSPROFILE_USECA;CA korrigieren
 TP_LENSPROFILE_USEDIST;Verzeichnung korrigieren
 TP_LENSPROFILE_USEVIGN;Vignettierung korrigieren
+TP_NEUTRAL;Zurücksetzen
 TP_NEUTRAL_TIP;Belichtungseinstellungen auf neutrale Werte zurücksetzen
 TP_PCVIGNETTE_FEATHER;Bereich
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Bereich:\n0 = nur Bildecken\n50 = halbe Strecke zum Mittelpunkt\n100 = bis zum Mittelpunkt
 TP_PCVIGNETTE_LABEL;Vignettierungsfilter
-TP_PCVIGNETTE_ROUNDNESS;Rundung
-TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Rundung:\n0 = Rechteck\n50 = Ellipse\n100 = Kreis
+TP_PCVIGNETTE_ROUNDNESS;Form
+TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Form:\n0 = Rechteck\n50 = Ellipse\n100 = Kreis
 TP_PCVIGNETTE_STRENGTH;Intensität
 TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filterstärke in Blendenstufen (bezogen auf die Bildecken)
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
@@ -1604,7 +1608,7 @@ TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Entfernt Hot-Pixel
 TP_PREPROCESS_LABEL;Vorverarbeitung
 TP_PREPROCESS_LINEDENOISE;Zeilenrauschfilter
 TP_PREPROCESS_NO_FOUND;Nichts gefunden
-TP_PRSHARPENING_LABEL;Nach Größenänderung schärfen
+TP_PRSHARPENING_LABEL;Nach Skalierung schärfen
 TP_PRSHARPENING_TOOLTIP;Schärft das Bild nach der Größenänderung. Funktioniert nur mit der Methode „Lanczos“. Das Ergebnis wird nicht in RawTherapee angezeigt.\nWeitere Informationen finden Sie in „RawPedia“.
 TP_RAWCACORR_AUTO;Automatische Korrektur
 TP_RAWCACORR_CABLUE;Blau
@@ -1617,7 +1621,7 @@ TP_RAWEXPOS_BLACK_3;Grün 2
 TP_RAWEXPOS_BLACK_BLUE;Blau
 TP_RAWEXPOS_BLACK_GREEN;Grün
 TP_RAWEXPOS_BLACK_RED;Rot
-TP_RAWEXPOS_LINEAR;Weißpunktkorrektur
+TP_RAWEXPOS_LINEAR;Korrekturfaktor
 TP_RAWEXPOS_PRESER;Weißpunkt: Lichter schützen
 TP_RAWEXPOS_RGB;Rot, Grün, Blau
 TP_RAWEXPOS_TWOGREEN;Grün-Werte automatisch angleichen
@@ -1636,18 +1640,18 @@ TP_RAW_LMMSE_TOOLTIP;Fügt Gamma (Stufe 1), Median (Stufe 2-4) und Optimierung (
 TP_RAW_SENSOR_BAYER_LABEL;Sensor mit Bayer-Matrix
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;Mit “3-pass“ erzielt man die besten Ergebnisse (empfohlen bei Bildern mit niedrigen ISO-Werten).\n\nBei hohen ISO-Werten unterscheidet sich “1-pass“ kaum gegenüber “3-pass“, ist aber deutlich schneller.
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor mit X-Trans-Matrix
-TP_RESIZE_APPLIESTO;Gilt für:
+TP_RESIZE_APPLIESTO;Anwenden auf:
 TP_RESIZE_CROPPEDAREA;Ausschnitt
-TP_RESIZE_FITBOX;Begrenzungsrahmen
+TP_RESIZE_FITBOX;Breite & Höhe
 TP_RESIZE_FULLIMAGE;Ganzes Bild
-TP_RESIZE_H;H:
+TP_RESIZE_H;Höhe:
 TP_RESIZE_HEIGHT;Höhe
-TP_RESIZE_LABEL;Größe ändern
+TP_RESIZE_LABEL;Skalieren
 TP_RESIZE_LANCZOS;Lanczos
 TP_RESIZE_METHOD;Methode:
 TP_RESIZE_NEAREST;Nächster Nachbar
 TP_RESIZE_SCALE;Maßstab
-TP_RESIZE_SPECIFY;Vorgabe:
+TP_RESIZE_SPECIFY;Basierend auf:
 TP_RESIZE_W;Breite:
 TP_RESIZE_WIDTH;Breite
 TP_RETINEX_CONTEDIT_HSL;HSL-Kurve
@@ -1659,7 +1663,7 @@ TP_RETINEX_CURVEEDITOR_LH;Intensität=f(H)
 TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Intensität in Abhängikeit des Farbtons (H)\nBei der Retinex-Methode "Spitzlichter" wirken sich die Änderungen auch auf die Chromakorrektur aus.
 TP_RETINEX_FREEGAMMA;Gamma
 TP_RETINEX_GAIN;Verstärkung
-TP_RETINEX_GAIN_TOOLTIP;In Kombination mit dem Versatz beeinflusst die Einstellung die Transmission. Wird für schwarze oder weiße Pixel verwendet und hilft das Histogram auszugleichen.
+TP_RETINEX_GAIN_TOOLTIP;Wirkt sich auf das verarbeitete Bild aus. Wird für schwarze oder weiße Pixel verwendet und hilft das Histogram auszugleichen.
 TP_RETINEX_GAMMA;Gammakorrektur
 TP_RETINEX_GAMMA_FREE;Benutzerdefiniert
 TP_RETINEX_GAMMA_HIGH;Hoch
@@ -1705,7 +1709,7 @@ TP_RGBCURVES_LABEL;RGB-Kurven
 TP_RGBCURVES_LUMAMODE;Helligkeitsmodus
 TP_RGBCURVES_LUMAMODE_TOOLTIP;Der <b>Helligkeitsmodus</b> ändert die Helligkeit der R-, G- und B-Kanäle ohne die Farben des Bildes zu verändern.
 TP_RGBCURVES_RED;R
-TP_ROTATE_DEGREE;Grad
+TP_ROTATE_DEGREE;Winkel
 TP_ROTATE_LABEL;Drehen
 TP_ROTATE_SELECTLINE;Leitlinie wählen
 TP_SAVEDIALOG_OK_TIP;Taste: <b>Strg</b> + <b>Enter</b>
@@ -1778,11 +1782,11 @@ TP_WAVELET_APPLYTO;Anwenden auf:
 TP_WAVELET_AVOID;Farbverschiebungen vermeiden
 TP_WAVELET_B0;Schwarz
 TP_WAVELET_B1;Grau
-TP_WAVELET_B2;Rest
+TP_WAVELET_B2;Restbild
 TP_WAVELET_BACKGROUND;Hintergrund
 TP_WAVELET_BACUR;Kurve
 TP_WAVELET_BALANCE;Kontrastausgleich d/v-h
-TP_WAVELET_BALANCE_TOOLTIP;Verändert die Gewichtung zwischen den Wavelet-Richtungen vertikal,  horizontal und diagonal.\n\nSind Kontrast-, Farb- oder Nachbild-Dynamikkompression aktiviert, wird die Wirkung aufgrund des Ausgleichs verstärkt.
+TP_WAVELET_BALANCE_TOOLTIP;Verändert die Gewichtung zwischen den Wavelet-Richtungen vertikal,  horizontal und diagonal.\n\nSind Kontrast-, Farb- oder Restbild-Dynamikkompression aktiviert, wird die Wirkung aufgrund des Ausgleichs verstärkt.
 TP_WAVELET_BALCHRO;Farbausgleich
 TP_WAVELET_BALCHRO_TOOLTIP;Wenn aktiviert, beeinflusst der Kontrastausgleich auch den Farbausgleich.
 TP_WAVELET_BANONE;Keine
@@ -1790,28 +1794,28 @@ TP_WAVELET_BASLI;Regler
 TP_WAVELET_BATYPE;Kontrastmethode
 TP_WAVELET_CBENAB;Farbausgleich
 TP_WAVELET_CB_TOOLTIP;Farbausgleich mit getrennten Reglern für Schatten, Mitten und Lichter aktivieren.
-TP_WAVELET_CCURVE;Lokaler Kontrast
+TP_WAVELET_CCURVE;Lokale Kontrastkurve
 TP_WAVELET_CH1;Gesamter Farbbereich
-TP_WAVELET_CH2;Sättigung/Pastell
-TP_WAVELET_CH3;Kontrastebenen verlinken
+TP_WAVELET_CH2;Gesättigte/Pastellfarben
+TP_WAVELET_CH3;Kontrastebenen verknüpfen
 TP_WAVELET_CHCU;Kurve
-TP_WAVELET_CHR;Farb-Kontrast-Verlinkungsstärke
-TP_WAVELET_CHRO;Sättigung/Pastell Schwellenwert
-TP_WAVELET_CHRO_TOOLTIP;Anzahl der Waveletebenen, deren Schwellenwert für die gesättigten und Pastellfarben angewendet werden soll.\n1-n: Gesättigte Farben\nn-9: Pastellfarben\n\nIst der Wert größer als die vorgegebene Anzahl an Waveletebenen werden diese ignoriert.
-TP_WAVELET_CHR_TOOLTIP;Farbton als Funktion des Kontrasts und der Farbton-Kontrast-Verlinkungsstärke
+TP_WAVELET_CHR;Farb-Kontrast-Verknüpfung
+TP_WAVELET_CHRO;Ebenengrenze Gesättigte/Pastellfarben
+TP_WAVELET_CHRO_TOOLTIP;Waveletebene (n) die, die Grenze zwischen gesättigten und Pastellfarben bestimmt.\n1-n: Gesättigte Farben\nn-9: Pastellfarben\n\nIst der Wert größer als die vorgegebene Anzahl an Waveletebenen werden diese ignoriert.
+TP_WAVELET_CHR_TOOLTIP;Farbton als Funktion des Kontrasts und der Farb-Kontrast-Verknüpfung
 TP_WAVELET_CHSL;Regler
 TP_WAVELET_CHTYPE;Chrominanzmethode
 TP_WAVELET_COLORT;Deckkraft Rot/Grün
 TP_WAVELET_COMPCONT;Kontrast
 TP_WAVELET_COMPGAMMA;Gammakompression
-TP_WAVELET_COMPGAMMA_TOOLTIP;Das Anpassen des Gammawerts des Nachbildes ermöglicht das Angleichen der Daten und des Histogramms
+TP_WAVELET_COMPGAMMA_TOOLTIP;Das Anpassen des Gammawerts des Restbildes ermöglicht das Angleichen der Daten und des Histogramms
 TP_WAVELET_COMPTM;Dynamik
 TP_WAVELET_CONTEDIT;“Danach“-Kontrastkurve
 TP_WAVELET_CONTR;Gamut
 TP_WAVELET_CONTRA;Kontrast
 TP_WAVELET_CONTRAST_MINUS;Kontrast -
 TP_WAVELET_CONTRAST_PLUS;Kontrast +
-TP_WAVELET_CONTRA_TOOLTIP;Ändert den Kontrast des Nachbildes
+TP_WAVELET_CONTRA_TOOLTIP;Ändert den Kontrast des Restbildes
 TP_WAVELET_CTYPE;Chrominanzkontrolle
 TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Lokaler Kontrast als Funktion des ursprünglichen Kontrasts.\n\nNiedrige Werte: Wenig lokaler Kontrast (Werte zwischen 10 - 20)\n\n50%: Durchschnittlicher lokaler Kontrast (Werte zwischen 100 - 300)\n\n66%: Standardabweichung des Lokalen Kontrasts (Werte zwischen 300 - 800)\n\n100%: Maximaler lokaler Kontrast (Werte zwischen 3000 - 8000)
 TP_WAVELET_CURVEEDITOR_CH;Kontrast = f(H)
@@ -1868,7 +1872,7 @@ TP_WAVELET_LEVDIR_ALL;Alle Ebenen und Richtungen
 TP_WAVELET_LEVDIR_INF;Kleiner oder gleich der Ebene
 TP_WAVELET_LEVDIR_ONE;Diese Ebene
 TP_WAVELET_LEVDIR_SUP;Über der Ebene
-TP_WAVELET_LEVELS;Waveletebenen
+TP_WAVELET_LEVELS;Anzahl der Ebenen
 TP_WAVELET_LEVELS_TOOLTIP;Wählen Sie die Anzahl der Ebenen in die das Bild zerlegt werden soll. Mehr Ebenen benötigen mehr RAM und eine längere Verarbeitungszeit.
 TP_WAVELET_LEVF;Kontrast
 TP_WAVELET_LEVLABEL;Vorschau max. möglicher Ebenen
@@ -1876,7 +1880,7 @@ TP_WAVELET_LEVONE;Ebene 2
 TP_WAVELET_LEVTHRE;Ebene 4
 TP_WAVELET_LEVTWO;Ebene 3
 TP_WAVELET_LEVZERO;Ebene 1
-TP_WAVELET_LINKEDG;Mit der Kantenschärfungsstärke verlinken
+TP_WAVELET_LINKEDG;Mit der Kantenschärfungsintensität verknüpfen
 TP_WAVELET_LIPST;Erweiterter Algorithmus
 TP_WAVELET_LOWLIGHT;Schatten-Luminanzbereich
 TP_WAVELET_MEDGREINF;Erste Ebene
@@ -1893,7 +1897,7 @@ TP_WAVELET_NPTYPE;Benachbarte Pixel
 TP_WAVELET_NPTYPE_TOOLTIP;Dieser Algorithmus verwendet einen Pixel und acht seiner Nachbarn. Sind die Unterschiede gering, werden die Kanten geschärft.
 TP_WAVELET_OPACITY;Deckkraft Blau/Gelb
 TP_WAVELET_OPACITYW;Kontrastausgleichskurve
-TP_WAVELET_OPACITYWL;Lokaler Kontrast
+TP_WAVELET_OPACITYWL;Lokale Kontrastkurve
 TP_WAVELET_OPACITYWL_TOOLTIP;Wendet eine lokale Kontrastkurve am Ende der Wavelet-Verarbeitung an.\n\nLinks stellt den niedrigsten, rechts den höchsten Kontrast dar.
 TP_WAVELET_PASTEL;Pastellfarben
 TP_WAVELET_PROC;Verarbeitung
@@ -1903,12 +1907,12 @@ TP_WAVELET_RE3;Schärfung reduzieren
 TP_WAVELET_RESCHRO;Buntheit
 TP_WAVELET_RESCON;Schatten
 TP_WAVELET_RESCONH;Lichter
-TP_WAVELET_RESID;Nachbild
+TP_WAVELET_RESID;Restbild
 TP_WAVELET_SAT;Gesättigte Farben
-TP_WAVELET_SETTINGS;Wavelet-Einstellungen
-TP_WAVELET_SKIN;Hautfarbtöne ändern/schützen
+TP_WAVELET_SETTINGS;Einstellungen
+TP_WAVELET_SKIN;Hautfarbtöne schützen
 TP_WAVELET_SKIN_TOOLTIP;-100: Nur Farben innerhalb des Bereichs werden verändert.\n0: Alle Farben werden gleich behandelt.\n+100: Nur Farben außerhalb des Bereichs werden verändert.
-TP_WAVELET_SKY;Himmelsfarbtöne ändern/schützen
+TP_WAVELET_SKY;Himmelsfarbtöne schützen
 TP_WAVELET_SKY_TOOLTIP;-100: Nur Farben innerhalb des Bereichs werden verändert.\n0: Alle Farben werden gleich behandelt.\n+100: Nur Farben außerhalb des Bereichs werden verändert.
 TP_WAVELET_STREN;Intensität
 TP_WAVELET_STRENGTH;Intensität
@@ -1925,7 +1929,7 @@ TP_WAVELET_TILESIZE;Kachelgröße
 TP_WAVELET_TILESLIT;Kleine Kacheln
 TP_WAVELET_TILES_TOOLTIP;“Ganzes Bild“ (empfohlen) liefert eine bessere Qualität.\n“Kacheln“ benötigen weniger Speicher und sind nur für Computer mit wenig RAM zu empfehlen.
 TP_WAVELET_TMSTRENGTH;Intensität
-TP_WAVELET_TMSTRENGTH_TOOLTIP;Kontrolliert die Intensität der Dynamik- oder Kontrastkompression des Nachbildes. Ist der Wert ungleich 0, werden die Intensitäts- und Gammaregler des Dynamikkompressions-Werkzeugs im Belichtungsreiter deaktiviert.
+TP_WAVELET_TMSTRENGTH_TOOLTIP;Kontrolliert die Intensität der Dynamik- oder Kontrastkompression des Restbildes. Ist der Wert ungleich 0, werden die Intensitäts- und Gammaregler des Dynamikkompressions-Werkzeugs im Belichtungsreiter deaktiviert.
 TP_WAVELET_TMTYPE;Kompression
 TP_WAVELET_TON;Tönung
 TP_WBALANCE_AUTO;Automatisch
@@ -1982,10 +1986,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_166;Exposure - Reset
-!PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
-!TP_NEUTRAL;Reset
