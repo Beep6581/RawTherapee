@@ -55,6 +55,13 @@ GtkNotebook {
      padding: 0px;
 }
 
+/* Frames in Preferences */
+.prefNotebook GtkFrame {
+    background-color: #3B3B3B;
+    border: 1px solid #505050;
+    border-radius: 4px;
+}
+
 /* Frames in the toolbox. Not MyExpander frames. */
 GtkEventBox .frame {
     border-color: #565656;
