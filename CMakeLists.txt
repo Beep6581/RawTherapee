@@ -228,7 +228,7 @@ pkg_check_modules (GIO     REQUIRED gio-2.0>=2.44)
 pkg_check_modules (GIOMM   REQUIRED giomm-2.4>=2.44)
 pkg_check_modules (GTHREAD REQUIRED gthread-2.0>=2.44)
 pkg_check_modules (GOBJECT REQUIRED gobject-2.0>=2.44)
-pkg_check_modules (SIGC    REQUIRED sigc++-2.0>=2.4)
+pkg_check_modules (SIGC    REQUIRED sigc++-2.0>=2.3.1)
 # NOTE: The new mechanism has been tested with BUILD_SHARED = OFF
 if (WIN32)
     add_definitions (-DWIN32)
