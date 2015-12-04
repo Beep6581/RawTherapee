@@ -60,8 +60,6 @@ protected:
     //Gtk::Button* neutralCurves;
     Gtk::HBox* neutrHBox;
     Gtk::HBox* chromaHbox;
-    Gtk::Label* colLabel;
-    Gtk::Label* interLabel;
     Gtk::Label* chroLabel;
     int nextbw;
     int nextsatth;
