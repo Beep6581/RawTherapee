@@ -85,9 +85,9 @@ static void myGdkLockLeave()
 {
     // Automatic gdk_flush for non main tread
 #if AUTO_GDK_FLUSH
-    if (Glib::Thread::self() != mainThread) {
-        gdk_flush();
-    }
+    //if (Glib::Thread::self() != mainThread) {
+    //    gdk_flush();
+    //}
 
 #endif
     myGdkRecMutex.unlock();

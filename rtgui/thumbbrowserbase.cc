@@ -626,6 +626,15 @@ void ThumbBrowserBase::enableInspector()
     }
 }
 
+void ThumbBrowserBase::Internal::on_style_updated()
+{
+    style = get_style_context ();
+    textn = style->get_color(Gtk::STATE_FLAG_NORMAL);
+    texts = style->get_color(Gtk::STATE_FLAG_SELECTED);
+    bgn = style->get_background_color(Gtk::STATE_FLAG_NORMAL);
+    bgs = style->get_background_color(Gtk::STATE_FLAG_SELECTED);
+}
+
 void ThumbBrowserBase::Internal::on_realize()
 {
     // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
@@ -634,6 +643,13 @@ void ThumbBrowserBase::Internal::on_realize()
     get_pango_context()->set_cairo_font_options (cfo);
 
     Gtk::DrawingArea::on_realize();
+
+    style = get_style_context ();
+    textn = style->get_color(Gtk::STATE_FLAG_NORMAL);
+    texts = style->get_color(Gtk::STATE_FLAG_SELECTED);
+    bgn = style->get_background_color(Gtk::STATE_FLAG_NORMAL);
+    bgs = style->get_background_color(Gtk::STATE_FLAG_SELECTED);
+
     Glib::RefPtr<Gdk::Window> window = get_window();
     set_can_focus(true);
     add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK | Gdk::KEY_PRESS_MASK);
@@ -884,7 +900,7 @@ bool ThumbBrowserBase::Internal::on_draw(const ::Cairo::RefPtr< Cairo::Context> 
     int h = get_height();
 
     // draw thumbnails
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context ();
+
     cr->set_antialias(Cairo::ANTIALIAS_NONE);
     cr->set_line_join(Cairo::LINE_JOIN_MITER);
     style->render_background(cr, 0., 0., w, h);

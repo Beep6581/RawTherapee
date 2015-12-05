@@ -29,7 +29,7 @@
 
 #define CROPRESIZEBORDER 4
 
-extern Glib::Threads::Thread* mainThread;
+//extern Glib::Threads::Thread* mainThread;
 
 bool FileBrowserEntry::iconsLoaded(false);
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::editedIcon;

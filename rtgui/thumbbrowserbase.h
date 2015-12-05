@@ -38,10 +38,19 @@ class ThumbBrowserBase  :  public Gtk::VBox
         int ofsX, ofsY;
         ThumbBrowserBase* parent;
         bool dirty;
+
+        // caching some very often used values
+        Glib::RefPtr<Gtk::StyleContext> style;
+        Gdk::RGBA textn;
+        Gdk::RGBA texts;
+        Gdk::RGBA bgn;
+        Gdk::RGBA bgs;
+
     public:
         Internal ();
         void setParent (ThumbBrowserBase* p);
         void on_realize();
+        void on_style_updated();
         bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
         bool on_button_press_event (GdkEventButton* event);
         bool on_button_release_event (GdkEventButton* event);
@@ -50,6 +59,22 @@ class ThumbBrowserBase  :  public Gtk::VBox
         bool on_key_press_event (GdkEventKey* event);
         bool on_query_tooltip (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
         void setPosition (int x, int y);
+
+        Glib::RefPtr<Gtk::StyleContext> getStyle() {
+            return style;
+        }
+        Gdk::RGBA getNormalTextColor() {
+            return textn;
+        }
+        Gdk::RGBA getSelectedTextColor() {
+            return texts;
+        }
+        Gdk::RGBA getNormalBgColor() {
+            return bgn;
+        }
+        Gdk::RGBA getSelectedBgColor() {
+            return bgs;
+        }
 
         void setDirty ()
         {
@@ -194,6 +219,23 @@ public:
     {
         return &internal;
     }
+
+    Glib::RefPtr<Gtk::StyleContext> getStyle() {
+        return internal.getStyle();
+    }
+    Gdk::RGBA getNormalTextColor() {
+        return internal.getNormalTextColor();
+    }
+    Gdk::RGBA getSelectedTextColor() {
+        return internal.getSelectedTextColor();
+    }
+    Gdk::RGBA getNormalBgColor() {
+        return internal.getNormalBgColor();
+    }
+    Gdk::RGBA getSelectedBgColor() {
+        return internal.getSelectedBgColor();
+    }
+
 };
 
 #endif

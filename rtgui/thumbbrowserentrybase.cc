@@ -86,15 +86,11 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
 
     Cairo::RefPtr<Cairo::Context> cc = Cairo::Context::create(surface);
 
-    Glib::RefPtr<Gtk::StyleContext> style = w->get_style_context();
-    Gdk::RGBA txtn;
-    style->lookup_color("text", txtn);
-    Gdk::RGBA textn = style->get_color(Gtk::STATE_FLAG_NORMAL);
-    Gdk::RGBA texts = style->get_color(Gtk::STATE_FLAG_SELECTED);
-    Gdk::RGBA bgn = style->get_background_color(Gtk::STATE_FLAG_NORMAL);
-    //Gdk::RGBA bgs = style->get_background_color(Gtk::STATE_FLAG_SELECTED);
-    Gdk::RGBA bgs;
-    bgs.set_rgba(0.3372549, 0.3372549, 0.3372549);
+    Glib::RefPtr<Gtk::StyleContext> style = parent->getStyle();
+    Gdk::RGBA textn = parent->getNormalTextColor();
+    Gdk::RGBA texts = parent->getSelectedTextColor();
+    Gdk::RGBA bgn = parent->getNormalBgColor();
+    Gdk::RGBA bgs = parent->getSelectedBgColor();
 
     // clear area, draw frames and background
     style->render_background(cc, 0., 0., exp_width, exp_height);
@@ -498,12 +494,7 @@ void ThumbBrowserEntryBase::draw ()
 
     Glib::RefPtr<Gdk::Window> win = w->get_window();
     Cairo::RefPtr<Cairo::Context> cc = win->create_cairo_context();
-    Glib::RefPtr<Gtk::StyleContext> sc = w->get_style_context();
 
-//  Gdk::RGBA textn = sc->get_color(Gtk::STATE_FLAG_NORMAL);
-//  Gdk::RGBA texts = sc->get_color(Gtk::STATE_FLAG_SELECTED);
-    Gdk::RGBA bgn = sc->get_background_color(Gtk::STATE_FLAG_NORMAL);
-    Gdk::RGBA bgs = sc->get_background_color(Gtk::STATE_FLAG_SELECTED);
     int w_ = startx + ofsX;
     int h_ = starty + ofsY;
     cc->set_source(backBuffer->getSurface(), w_, h_);
@@ -516,7 +507,7 @@ void ThumbBrowserEntryBase::draw ()
 
     // redraw button set above the thumbnail
     if (buttonSet) {
-        buttonSet->setColors (selected ? bgs : bgn, selected ? bgn : bgs);
+        buttonSet->setColors (selected ? parent->getSelectedBgColor() : parent->getNormalBgColor(), selected ? parent->getNormalBgColor() : parent->getSelectedBgColor());
         buttonSet->redraw (cc);
     }
 }
