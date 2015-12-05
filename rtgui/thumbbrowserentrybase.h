@@ -119,7 +119,7 @@ public:
 
     void updateBackBuffer   ();
     void resize             (int h);
-    virtual void draw       ();
+    virtual void draw       (Cairo::RefPtr<Cairo::Context> cc);
 
     void addButtonSet       (LWButtonSet* bs);
     int getMinimalHeight    ()

@@ -467,7 +467,7 @@ void ThumbBrowserEntryBase::drawFrame (Cairo::RefPtr<Cairo::Context> cc, const G
     }
 }
 
-void ThumbBrowserEntryBase::draw ()
+void ThumbBrowserEntryBase::draw (Cairo::RefPtr<Cairo::Context> cc)
 {
 
     if (!drawable || !parent) {
@@ -489,11 +489,6 @@ void ThumbBrowserEntryBase::draw ()
             || exp_width != bbWidth || exp_height != bbHeight || getIconsOnImageArea () != bbIcons || backBuffer->isDirty()) {
         updateBackBuffer ();
     }
-
-    Gtk::Widget* w = parent->getDrawingArea ();
-
-    Glib::RefPtr<Gdk::Window> win = w->get_window();
-    Cairo::RefPtr<Cairo::Context> cc = win->create_cairo_context();
 
     int w_ = startx + ofsX;
     int h_ = starty + ofsY;

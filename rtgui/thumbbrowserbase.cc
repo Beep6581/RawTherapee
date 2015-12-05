@@ -917,7 +917,7 @@ bool ThumbBrowserBase::Internal::on_draw(const ::Cairo::RefPtr< Cairo::Context> 
                 parent->fd[i]->updatepriority = false;
             } else {
                 parent->fd[i]->updatepriority = true;
-                parent->fd[i]->draw ();
+                parent->fd[i]->draw (cr);
             }
         }
     }

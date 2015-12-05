@@ -705,14 +705,13 @@ void FileBrowserEntry::updateCursor (int x, int y)
     }
 }
 
-void FileBrowserEntry::draw ()
+void FileBrowserEntry::draw (Cairo::RefPtr<Cairo::Context> cc)
 {
 
-    ThumbBrowserEntryBase::draw ();
+    ThumbBrowserEntryBase::draw (cc);
 
     if (state == SRotateSelecting) {
-        Cairo::RefPtr<Cairo::Context> cr = parent->getDrawingArea ()->get_window()->create_cairo_context();
-        drawStraightenGuide (cr);
+        drawStraightenGuide (cc);
     }
 }
 

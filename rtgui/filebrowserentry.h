@@ -70,7 +70,7 @@ public:
 
     FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname);
     ~FileBrowserEntry ();
-    void draw ();
+    void draw (Cairo::RefPtr<Cairo::Context> cc);
 
     void setImageAreaToolListener (ImageAreaToolListener* l)
     {
