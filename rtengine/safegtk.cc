@@ -83,7 +83,7 @@ Glib::RefPtr<Gio::FileInfo> safe_query_file_info (Glib::RefPtr<Gio::File> &file)
     } catch (...) {  }
 
 #else
-    std::auto_ptr<Glib::Error> error;
+    std::unique_ptr<Glib::Error> error;
     info = file->query_info("*", Gio::FILE_QUERY_INFO_NONE, error);
 #endif
     return info;
@@ -119,7 +119,7 @@ Glib::RefPtr<Gio::FileInfo> safe_next_file (Glib::RefPtr<Gio::FileEnumerator> &d
 
     do {
         retry = false;
-        std::auto_ptr<Glib::Error> error;
+        std::unique_ptr<Glib::Error> error;
         Glib::RefPtr<Gio::Cancellable> cancellable;
         info = dirList->next_file(cancellable, error);
 
@@ -143,7 +143,7 @@ Glib::RefPtr<Gio::FileInfo> safe_next_file (Glib::RefPtr<Gio::FileEnumerator> &d
                 }}  catch (Glib::Exception& ex) {   printf ("%s\n", ex.what().c_str()); }}while(0)
 #else
 # define SAFE_ENUMERATOR_CODE_START \
-                do{std::auto_ptr<Glib::Error> error;    Glib::RefPtr<Gio::Cancellable> cancellable; \
+                do{std::unique_ptr<Glib::Error> error;    Glib::RefPtr<Gio::Cancellable> cancellable; \
                     if ((dirList = dir->enumerate_children (cancellable, "*", Gio::FILE_QUERY_INFO_NONE, error))) \
                         for (Glib::RefPtr<Gio::FileInfo> info = safe_next_file(dirList); info; info = safe_next_file(dirList)) {
 
@@ -287,7 +287,7 @@ Glib::ustring safe_filename_to_utf8 (const std::string& src)
 
 #else
     {
-        std::auto_ptr<Glib::Error> error;
+        std::unique_ptr<Glib::Error> error;
         utf8_str = locale_to_utf8(src, error);
 
         if (error.get()) {
@@ -314,7 +314,7 @@ Glib::ustring safe_locale_to_utf8 (const std::string& src)
 
 #else
     {
-        std::auto_ptr<Glib::Error> error;
+        std::unique_ptr<Glib::Error> error;
         utf8_str = locale_to_utf8(src, error);
 
         if (error.get()) {
@@ -338,7 +338,7 @@ std::string safe_locale_from_utf8 (const Glib::ustring& utf8_str)
 
 #else
     {
-        std::auto_ptr<Glib::Error> error;
+        std::unique_ptr<Glib::Error> error;
         str = Glib::locale_from_utf8(utf8_str, error);
         /*if (error.get())
             {str = Glib::convert_with_fallback(utf8_str, "ISO-8859-1", "UTF-8", "?", error);}*/
@@ -363,7 +363,7 @@ bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
     }
 
 #else
-    std::auto_ptr<Glib::Error> error;
+    std::unique_ptr<Glib::Error> error;
     cmd = Glib::filename_from_utf8(cmd_utf8, error);
 
     if (!error.get())   {

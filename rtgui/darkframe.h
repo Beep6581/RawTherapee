@@ -39,7 +39,7 @@ class DarkFrame : public ToolParamBlock, public FoldableToolPanel
 protected:
 
     MyFileChooserButton *darkFrameFile;
-    std::auto_ptr<FileChooserLastFolderPersister> darkFrameFilePersister;
+    std::unique_ptr<FileChooserLastFolderPersister> darkFrameFilePersister;
     Gtk::HBox *hbdf;
     Gtk::Button *btnReset;
     Gtk::Label *dfLabel;

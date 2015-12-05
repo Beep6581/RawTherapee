@@ -105,7 +105,7 @@ RTWindow::RTWindow ()
 
 #else
     {
-        std::auto_ptr<Glib::Error> error;
+        std::unique_ptr<Glib::Error> error;
         set_default_icon_from_file (fullPath, error);
     }
 #endif //GLIBMM_EXCEPTIONS_ENABLED

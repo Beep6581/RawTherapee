@@ -41,7 +41,7 @@ class FlatField : public ToolParamBlock, public AdjusterListener, public Foldabl
 protected:
 
     MyFileChooserButton *flatFieldFile;
-    std::auto_ptr<FileChooserLastFolderPersister> flatFieldFilePersister;
+    std::unique_ptr<FileChooserLastFolderPersister> flatFieldFilePersister;
     Gtk::Label *ffLabel;
     Gtk::Label *ffInfo;
     Gtk::Button *flatFieldFileReset;
