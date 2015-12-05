@@ -43,7 +43,6 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     selectedDirectoryId(1),
     listener(NULL),
     fslistener(NULL),
-    dirlistener(NULL),
     hasValidCurrentEFS(false),
     filterPanel(NULL),
     previewsToLoad(0),
@@ -2023,8 +2022,8 @@ void FileCatalog::buttonBrowsePathPressed ()
     // handle shortcuts in the BrowsePath -- END
 
     // validate the path
-    if (safe_file_test(BrowsePathValue, Glib::FILE_TEST_IS_DIR) && dirlistener) {
-        dirlistener->selectDir (BrowsePathValue);
+    if (safe_file_test(BrowsePathValue, Glib::FILE_TEST_IS_DIR) && selectDir) {
+        selectDir (BrowsePathValue);
     } else
         // error, likely path not found: show red arrow
     {

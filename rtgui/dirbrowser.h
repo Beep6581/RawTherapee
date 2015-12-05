@@ -24,9 +24,8 @@
 #ifdef WIN32
 #include "windirmonitor.h"
 #endif
-#include "dirbrowserremoteinterface.h"
 
-class DirBrowser : public Gtk::VBox, public DirBrowserRemoteInterface
+class DirBrowser : public Gtk::VBox
 #ifdef WIN32
     , public WinDirChangeListener
 #endif

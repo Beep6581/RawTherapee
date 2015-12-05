@@ -22,7 +22,6 @@
 #ifdef WIN32
 #include "windirmonitor.h"
 #endif
-#include "dirbrowserremoteinterface.h"
 #include "filebrowser.h"
 #include "exiffiltersettings.h"
 #include <giomm.h>
@@ -67,6 +66,8 @@ class FileCatalog : public Gtk::VBox,
     , public WinDirChangeListener
 #endif
 {
+public:
+    typedef sigc::slot<void, const Glib::ustring&> DirSelectionSlot;
 
 private:
     FilePanel* filepanel;
@@ -82,7 +83,7 @@ private:
     FileSelectionListener* listener;
     FileSelectionChangeListener* fslistener;
     ImageAreaToolListener* iatlistener;
-    DirBrowserRemoteInterface*   dirlistener;
+    DirSelectionSlot selectDir;
 
     Gtk::HBox* buttonBar;
     Gtk::HBox* hbToolBar1;
@@ -241,10 +242,7 @@ public:
     {
         iatlistener = l;
     }
-    void setDirBrowserRemoteInterface (DirBrowserRemoteInterface* l)
-    {
-        dirlistener = l;
-    }
+    void setDirSelector (const DirSelectionSlot& selectDir);
 
     void setFilterPanel (FilterPanel* fpanel);
     void setExportPanel (ExportPanel* expanel);
@@ -308,5 +306,10 @@ public:
 #endif
 
 };
+
+inline void FileCatalog::setDirSelector (const FileCatalog::DirSelectionSlot& selectDir)
+{
+    this->selectDir = selectDir;
+}
 
 #endif
