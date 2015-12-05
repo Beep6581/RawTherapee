@@ -20,7 +20,7 @@
 #define _PREVIEWIMAGE_
 
 #include <gtkmm.h>
-#include "cairomm/cairomm.h"
+#include <cairomm/cairomm.h>
 
 namespace rtengine
 {

@@ -107,8 +107,8 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
 //  algoHBox->pack_start (*alLabel, Gtk::PACK_SHRINK);
     /*
         algo = Gtk::manage (new MyComboBoxText ());
-        algo->append_text (M("TP_DIRPYREQUALIZER_ALGO_FI"));
-        algo->append_text (M("TP_DIRPYREQUALIZER_ALGO_LA"));
+        algo->append (M("TP_DIRPYREQUALIZER_ALGO_FI"));
+        algo->append (M("TP_DIRPYREQUALIZER_ALGO_LA"));
         algo->set_active (1);
     //  algoHBox->pack_start (*algo);
     //  pack_start(*algoHBox);
@@ -279,7 +279,7 @@ void DirPyrEqualizer::setBatchMode (bool batchMode)
     threshold->showEditedCB();
     skinprotect->showEditedCB();
     hueskin->showEditedCB ();
-//   algo->append_text (M("GENERAL_UNCHANGED"));
+//   algo->append (M("GENERAL_UNCHANGED"));
 }
 
 void DirPyrEqualizer::adjusterChanged (Adjuster* a, double newval)

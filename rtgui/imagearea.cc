@@ -131,7 +131,7 @@ void ImageArea::setPreviewHandler (PreviewHandler* ph)
     previewHandler = ph;
 }
 
-void ImageArea::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
+void ImageArea::on_style_updated ()
 {
 
     // TODO: notify all crop windows that the style has been changed
@@ -146,7 +146,7 @@ void ImageArea::setInfoText (Glib::ustring text)
     Glib::RefPtr<Pango::Context> context = get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    fontd.set_size (9 * Pango::SCALE);
+    fontd.set_size (10 * Pango::SCALE);
     context->set_font_description (fontd);
     ilayout = create_pango_layout("");
     ilayout->set_markup(text);
@@ -188,16 +188,16 @@ void ImageArea::redraw ()
     }
 }
 
-bool ImageArea::on_expose_event(GdkEventExpose* event)
+bool ImageArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
     dirty = false;
 
-    if (event->count) {
-        return true;
-    }
+    /* HOMBRE: How do we replace that??
 
-    Glib::RefPtr<Gdk::Window> window = get_window();
-    Cairo::RefPtr<Cairo::Context> cr = get_window()->create_cairo_context();
+    if (event->count)
+        return true;
+
+     */
 
     if (mainCropWindow) {
         //printf("MainCropWindow (%d x %d)\n", window->get_width(), window->get_height());
@@ -207,7 +207,9 @@ bool ImageArea::on_expose_event(GdkEventExpose* event)
     if (options.showInfo == true && infotext != "") {
         int fnw, fnh;
         ilayout->get_pixel_size (fnw, fnh);
-        window->draw_pixbuf (get_style()->get_base_gc (Gtk::STATE_NORMAL), ipixbuf, 0, 0, 4, 4, fnw + 8, fnh + 8, Gdk::RGB_DITHER_NONE, 0, 0);
+        Gdk::Cairo::set_source_pixbuf(cr, ipixbuf, 4, 4);
+        cr->rectangle(4, 4, fnw + 8, fnh + 8);
+        cr->fill();
         cr->set_source_rgb (1.0, 1.0, 1.0);
         cr->move_to (8, 8);
         ilayout->add_to_cairo_context (cr);

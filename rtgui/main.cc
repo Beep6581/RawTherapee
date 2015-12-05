@@ -64,7 +64,10 @@ Glib::ustring creditsPath;
 Glib::ustring licensePath;
 Glib::ustring argv1;
 bool simpleEditor;
-Glib::Thread* mainThread;
+Glib::RefPtr<Gtk::CssProvider> cssBase;
+Glib::RefPtr<Gtk::CssProvider> cssForced;
+Glib::RefPtr<Gtk::CssProvider> cssRT;
+//Glib::Threads::Thread* mainThread;
 
 
 // This recursive mutex will be used by gdk_threads_enter/leave instead of a simple mutex
@@ -82,9 +85,9 @@ static void myGdkLockLeave()
 {
     // Automatic gdk_flush for non main tread
 #if AUTO_GDK_FLUSH
-    if (Glib::Thread::self() != mainThread) {
-        gdk_flush();
-    }
+    //if (Glib::Thread::self() != mainThread) {
+    //    gdk_flush();
+    //}
 
 #endif
     myGdkRecMutex.unlock();
@@ -100,17 +103,23 @@ static void myGdkLockLeave()
  *  -3 if at least one required procparam file was not found */
 int processLineParams( int argc, char **argv );
 
+/*
+ *
+ *      M A I N
+ *
+ */
 int main(int argc, char **argv)
 {
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
-    // Uncomment the following line if you want to use the "--g-fatal-warnings" command line flag
-    //gtk_init (&argc, &argv);
+    gtk_init (&argc, &argv);  // use the "--g-fatal-warnings" command line flag to make warnings fatal
 
-    Glib::thread_init();
+    Glib::init();  // called by Gtk::Main, but this may be important for thread handling, so we call it ourselves now
     gdk_threads_set_lock_functions(G_CALLBACK(myGdkLockEnter), (G_CALLBACK(myGdkLockLeave)));
     gdk_threads_init();
     Gio::init ();
+
+    //mainThread = Glib::Threads::Thread::self();
 
 #ifdef BUILD_BUNDLE
     char exname[512] = {0};
@@ -153,8 +162,6 @@ int main(int argc, char **argv)
     creditsPath = CREDITS_SEARCH_PATH;
     licensePath = LICENCE_SEARCH_PATH;
 #endif
-
-    mainThread = Glib::Thread::self();
 
     if (!Options::load ()) {
         Gtk::Main m(&argc, &argv);
@@ -276,24 +283,6 @@ int main(int argc, char **argv)
             simpleEditor = true;
         }
 
-    if (options.theme.empty()) {
-        options.theme = "21-Gray-Gray";
-    }
-
-    if (!options.useSystemTheme) {
-        std::vector<Glib::ustring> rcfiles;
-        rcfiles.push_back (argv0 + "/themes/" + options.theme + ".gtkrc");
-
-        if (options.slimUI) {
-            rcfiles.push_back (argv0 + "/themes/slim");
-        }
-
-        // Set the font face and size
-        Gtk::RC::parse_string (Glib::ustring::compose(
-                                   "style \"clearlooks-default\" { font_name = \"%1\" }", options.font));
-        Gtk::RC::set_default_files (rcfiles);
-    }
-
     Gtk::Main m(&argc, &argv);
 
     Glib::ustring icon_path = Glib::build_filename(argv0, "images");
@@ -303,18 +292,61 @@ int main(int argc, char **argv)
     RTImage::setPaths(options);
     MyExpander::init();  // has to stay AFTER RTImage::setPaths
 
-#ifndef WIN32
-    // For an unknown reason, gtkmm 2.22 don't know the gtk-button-images property, while it exists in the documentation...
-    // Anyway, the problem was Linux only
-    static Glib::RefPtr<Gtk::Settings> settings = Gtk::Settings::get_default();
+    // ------- loading theme files
 
-    if (settings) {
-        settings->property_gtk_button_images().set_value(true);
-    } else {
-        printf("Error: no default settings to update!\n");
+    Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
+
+    if (!options.useSystemTheme && screen) {
+        Gtk::Settings::get_for_screen(screen)->property_gtk_theme_name() = "Adwaita";
+        Gtk::Settings::get_for_screen(screen)->property_gtk_application_prefer_dark_theme() = true;
+
+        Glib::ustring filename = argv0 + "/themes/RawTherapee.css";
+        cssRT = Gtk::CssProvider::create();
+
+        /* TODO
+         * Make theme selection work again. All themes should be applied below here,
+         * in other words after the base Adwaita Dark theme has been applied. This
+         * makes for smaller custom theme files.
+         */
+
+        try {
+            cssRT->load_from_path (filename);
+            Gtk::StyleContext::add_provider_for_screen(screen, cssRT, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+        } catch (Glib::Error &err) {
+            printf("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
+        } catch (...) {
+            printf("Error: Can't load css file \"%s\"\n", filename.c_str());
+        }
+
+        // Set the font face and size
+        if (options.font != "default") {
+            try {
+                cssForced = Gtk::CssProvider::create();
+                Glib::ustring font(options.font);
+                size_t pos = font.find(',');
+
+                if (pos != Glib::ustring::npos) {
+                    font = font.replace(pos, 1, " ");
+                }
+
+                cssForced->load_from_data (Glib::ustring::compose("* { font: %1; }", font));
+                Gtk::StyleContext::add_provider_for_screen(screen, cssForced, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+            } catch (Glib::Error &err) {
+                printf("Error: \"%s\"\n", err.what().c_str());
+            } catch (...) {
+                printf("Error: Can't find the font named \"%s\"\n", options.font.c_str());
+            }
+        }
+    }
+
+#ifndef NDEBUG
+    else if (!screen) {
+        printf("ERROR: Can't get default screen!\n");
     }
 
 #endif
+
+    // ------- end loading theme files
 
     gdk_threads_enter ();
     RTWindow *rtWindow = new class RTWindow();
@@ -817,4 +849,3 @@ int processLineParams( int argc, char **argv )
 
     return errors > 0 ? -2 : 0;
 }
-

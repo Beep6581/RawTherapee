@@ -21,7 +21,6 @@
 #include <glib/gstdio.h>
 #include "../rtengine/safegtk.h"
 
-extern Glib::ustring argv0;
 extern Glib::ustring creditsPath;
 extern Glib::ustring licensePath;
 extern Glib::ustring versionString;
@@ -34,25 +33,13 @@ SplashImage::SplashImage ()
     set_size_request (pixbuf->get_width(), pixbuf->get_height());
 }
 
-void SplashImage::on_realize ()
-{
-
-    Gtk::DrawingArea::on_realize();
-    add_events(Gdk::EXPOSURE_MASK);
-
-    gc_ = Gdk::GC::create (get_window());
-    Glib::RefPtr<Gdk::Colormap> colormap = get_default_colormap();
-    Gdk::Color fontc = Gdk::Color ("white");
-    colormap->alloc_color (fontc);
-    gc_->set_foreground (fontc);
-
-}
-
-bool SplashImage::on_expose_event (GdkEventExpose* event)
+bool SplashImage::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
 
     Glib::RefPtr<Gdk::Window> window = get_window();
-    pixbuf->render_to_drawable (window, gc_, 0, 0, 0, 0, pixbuf->get_width(), pixbuf->get_height(), Gdk::RGB_DITHER_NONE, 0, 0);
+    Gdk::Cairo::set_source_pixbuf(cr, pixbuf);
+    cr->rectangle(0, 0, pixbuf->get_width(), pixbuf->get_height());
+    cr->fill();
 
     Cairo::FontOptions cfo;
     cfo.set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
@@ -62,9 +49,6 @@ bool SplashImage::on_expose_event (GdkEventExpose* event)
     fontd.set_weight (Pango::WEIGHT_LIGHT);
     fontd.set_absolute_size (12 * Pango::SCALE);
     context->set_font_description (fontd);
-    Gdk::Color *textColor = new Gdk::Color();
-    textColor->set_rgb(0, 0, 0);
-    gc_->set_foreground(*textColor);
 
     int w, h;
     Glib::ustring versionStr(versionString);
@@ -74,9 +58,18 @@ bool SplashImage::on_expose_event (GdkEventExpose* event)
     }
 
     version = create_pango_layout (versionStr);
-    version->set_markup("<span foreground=\"white\">" + versionStr + "</span>");
+    version->set_text(versionStr);
     version->get_pixel_size (w, h);
-    window->draw_layout(gc_, pixbuf->get_width() - w - 32, pixbuf->get_height() - h - 20, version);
+    cr->set_source_rgb (0., 0., 0.);
+    cr->set_line_width(3.);
+    cr->set_line_join(Cairo::LINE_JOIN_ROUND);
+    cr->move_to (pixbuf->get_width() - w - 32, pixbuf->get_height() - h - 20);
+    version->add_to_cairo_context (cr);
+    cr->stroke_preserve();
+    cr->set_source_rgb (1., 1., 1.);
+    cr->set_line_width(0.5);
+    cr->stroke_preserve();
+    cr->fill();
 
     return true;
 }
@@ -89,14 +82,17 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
     releaseNotesSW = NULL;
 
     nb = Gtk::manage (new Gtk::Notebook ());
-    get_vbox()->pack_start (*nb);
+    get_content_area()->pack_start (*nb);
 
     // Add close button to bottom of the notebook
     Gtk::Button* closeButton = Gtk::manage (new Gtk::Button (M("GENERAL_CLOSE")));
     closeButton->signal_clicked().connect( sigc::mem_fun(*this, &Splash::closePressed) );
     Gtk::HBox* bottomHBox = Gtk::manage (new Gtk::HBox ());
     bottomHBox->pack_end (*closeButton, Gtk::PACK_SHRINK, 0);
-    get_vbox()->pack_start (*bottomHBox, Gtk::PACK_SHRINK, 0);
+    get_content_area()->pack_start (*bottomHBox, Gtk::PACK_SHRINK, 0);
+
+    Glib::RefPtr<Gtk::CssProvider> localCSS = Gtk::CssProvider::create();
+    localCSS->load_from_data ("GtkTextView { font: monospace 8; }");
 
     // Tab 1: the image
     splashImage = Gtk::manage(new SplashImage ());
@@ -125,6 +121,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
 
             Gtk::ScrolledWindow *buildSW = Gtk::manage (new Gtk::ScrolledWindow());
             Gtk::TextView *buildTV = Gtk::manage (new Gtk::TextView (textBuffer));
+            buildTV->get_style_context()->add_provider(localCSS, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
             buildTV->set_editable(false);
             buildTV->set_left_margin (10);
             buildTV->set_right_margin (5);
@@ -155,6 +152,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
 
             Gtk::ScrolledWindow *creditsSW = Gtk::manage (new Gtk::ScrolledWindow());
             Gtk::TextView *creditsTV = Gtk::manage (new Gtk::TextView (textBuffer));
+            //creditsTV->get_style_context()->add_provider(localCSS, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
             creditsTV->set_left_margin (10);
             creditsTV->set_right_margin (5);
             creditsTV->set_wrap_mode(Gtk::WRAP_WORD);
@@ -186,13 +184,9 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
 
             Gtk::ScrolledWindow *licenseSW = Gtk::manage (new Gtk::ScrolledWindow());
             Gtk::TextView *licenseTV = Gtk::manage (new Gtk::TextView (textBuffer));
+            //licenseTV->get_style_context()->add_provider(localCSS, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
             // set monospace font to enhance readability of formatted text
-            Pango::FontDescription fdescLicense;
-            fdescLicense.set_family("monospace");
-            fdescLicense.set_absolute_size (11 * Pango::SCALE);
-            licenseTV->modify_font(fdescLicense);
-
             licenseTV->set_left_margin (10);
             licenseTV->set_right_margin (5);
             licenseTV->set_editable(false);
@@ -223,14 +217,9 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
 
             releaseNotesSW = Gtk::manage (new Gtk::ScrolledWindow());
             Gtk::TextView *releaseNotesTV = Gtk::manage (new Gtk::TextView (textBuffer));
+            releaseNotesTV->get_style_context()->add_provider(localCSS, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
             // set monospace font to enhance readability of formatted text
-            Pango::FontDescription fdescReleaseNotes;
-            fdescReleaseNotes.set_family("monospace");
-            fdescReleaseNotes.set_absolute_size (11 * Pango::SCALE);
-            releaseNotesTV->modify_font(fdescReleaseNotes);
-
-
             releaseNotesTV->set_left_margin (10);
             releaseNotesTV->set_right_margin (3);
             releaseNotesTV->set_editable(false);
@@ -255,8 +244,7 @@ Splash::Splash (Gtk::Window& parent, int maxtime) : Gtk::Dialog(M("GENERAL_ABOUT
 {
 
     splashImage = Gtk::manage(new SplashImage ());
-//    add (*splashImage);
-    get_vbox()->pack_start (*splashImage);
+    get_content_area()->pack_start (*splashImage);
     splashImage->show ();
 
     if (maxtime > 0) {

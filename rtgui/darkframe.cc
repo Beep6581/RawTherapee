@@ -52,19 +52,19 @@ DarkFrame::DarkFrame () : FoldableToolPanel(this, "darkframe", M("TP_DARKFRAME_L
 
     // Set filename filters
     b_filter_asCurrent = false;
-    Gtk::FileFilter *filter_any = Gtk::manage(new Gtk::FileFilter);
+    Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
     filter_any->add_pattern("*");
     filter_any->set_name(M("FILECHOOSER_FILTER_ANY"));
-    darkFrameFile->add_filter (*filter_any);
+    darkFrameFile->add_filter (filter_any);
 
     // filters for all supported non-raw extensions
     for (size_t i = 0; i < options.parseExtensions.size(); i++) {
         if (options.parseExtensionsEnabled[i] && options.parseExtensions[i].uppercase() != "JPG" && options.parseExtensions[i].uppercase() != "JPEG" && options.parseExtensions[i].uppercase() != "PNG" && options.parseExtensions[i].uppercase() != "TIF" && options.parseExtensions[i].uppercase() != "TIFF"  ) {
-            Gtk::FileFilter *filter_df = Gtk::manage(new Gtk::FileFilter);
+            Glib::RefPtr<Gtk::FileFilter> filter_df = Gtk::FileFilter::create();
             filter_df->add_pattern("*." + options.parseExtensions[i]);
             filter_df->add_pattern("*." + options.parseExtensions[i].uppercase());
             filter_df->set_name(options.parseExtensions[i].uppercase());
-            darkFrameFile->add_filter (*filter_df);
+            darkFrameFile->add_filter (filter_df);
             //printf("adding filter %s \n",options.parseExtensions[i].uppercase().c_str());
         }
     }
@@ -114,8 +114,8 @@ void DarkFrame::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 
         if (b_filter_asCurrent) {
             //First, remove last filter_asCurrent if it was set for a raw file
-            std::vector<const Gtk::FileFilter*> filters = darkFrameFile->list_filters();
-            darkFrameFile->remove_filter(**(filters.end() - 1));
+            std::vector< Glib::RefPtr<Gtk::FileFilter> > filters = darkFrameFile->list_filters();
+            darkFrameFile->remove_filter(*(filters.end() - 1));
             b_filter_asCurrent = false;
         }
 
@@ -134,11 +134,11 @@ void DarkFrame::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
                 //exclude non-raw
                 if (israw) {
                     b_filter_asCurrent = true;
-                    Gtk::FileFilter *filter_asCurrent = Gtk::manage(new Gtk::FileFilter);
+                    Glib::RefPtr<Gtk::FileFilter> filter_asCurrent = Gtk::FileFilter::create();
                     filter_asCurrent->add_pattern("*." + filetype);
                     filter_asCurrent->set_name(M("FILECHOOSER_FILTER_SAME") + " (" + filetype + ")");
-                    darkFrameFile->add_filter (*filter_asCurrent);
-                    darkFrameFile->set_filter (*filter_asCurrent);
+                    darkFrameFile->add_filter (filter_asCurrent);
+                    darkFrameFile->set_filter (filter_asCurrent);
                 }
             }
         }

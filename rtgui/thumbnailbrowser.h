@@ -62,11 +62,10 @@ class ThumbBrowser  : public Gtk::DrawingArea
 protected:
     int dx, dy, w, h;
 
-    Glib::RefPtr<Gdk::GC> gc_;
-    Gdk::Color black;
-    Gdk::Color white;
-    Gdk::Color blue;
-    Gdk::Color bluew;
+    Gdk::RGBA black;
+    Gdk::RGBA white;
+    Gdk::RGBA blue;
+    Gdk::RGBA bluew;
 
     std::vector<ThumbBrowserEntry*> fd;
     std::vector<ThumbBrowserEntry*> selected;
@@ -89,7 +88,7 @@ public:
     }
 
     virtual void on_realize();
-    virtual bool on_expose_event(GdkEventExpose* event);
+    virtual bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     virtual bool on_button_press_event (GdkEventButton* event);
     virtual bool on_button_release_event (GdkEventButton* event);
     virtual void previewReady (FileDescr* fdn);

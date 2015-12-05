@@ -150,39 +150,39 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)
     toolPanels.push_back (crop);
     addPanel (transformPanel, resize);
     toolPanels.push_back (resize);
-    addPanel (resize->getPackBox(), prsharpening);
+    addPanel (resize->getPackBox(), prsharpening, 2);
     toolPanels.push_back (prsharpening);
     addPanel (transformPanel, lensgeom);
     toolPanels.push_back (lensgeom);
-    addPanel (lensgeom->getPackBox(), rotate);
+    addPanel (lensgeom->getPackBox(), rotate, 2);
     toolPanels.push_back (rotate);
-    addPanel (lensgeom->getPackBox(), perspective);
+    addPanel (lensgeom->getPackBox(), perspective, 2);
     toolPanels.push_back (perspective);
-    addPanel (lensgeom->getPackBox(), lensProf);
+    addPanel (lensgeom->getPackBox(), lensProf, 2);
     toolPanels.push_back (lensProf);
-    addPanel (lensgeom->getPackBox(), distortion);
+    addPanel (lensgeom->getPackBox(), distortion, 2);
     toolPanels.push_back (distortion);
-    addPanel (lensgeom->getPackBox(), cacorrection);
+    addPanel (lensgeom->getPackBox(), cacorrection, 2);
     toolPanels.push_back (cacorrection);
-    addPanel (lensgeom->getPackBox(), vignetting);
+    addPanel (lensgeom->getPackBox(), vignetting, 2);
     toolPanels.push_back (vignetting);
     addPanel (colorPanel, icm);
     toolPanels.push_back (icm);
     addPanel (rawPanel, sensorbayer);
     toolPanels.push_back (sensorbayer);
-    addPanel (sensorbayer->getPackBox(), bayerprocess);
+    addPanel (sensorbayer->getPackBox(), bayerprocess, 2);
     toolPanels.push_back (bayerprocess);
-    addPanel (sensorbayer->getPackBox(), bayerrawexposure);
+    addPanel (sensorbayer->getPackBox(), bayerrawexposure, 2);
     toolPanels.push_back (bayerrawexposure);
-    addPanel (sensorbayer->getPackBox(), bayerpreprocess);
+    addPanel (sensorbayer->getPackBox(), bayerpreprocess, 2);
     toolPanels.push_back (bayerpreprocess);
-    addPanel (sensorbayer->getPackBox(), rawcacorrection);
+    addPanel (sensorbayer->getPackBox(), rawcacorrection, 2);
     toolPanels.push_back (rawcacorrection);
     addPanel (rawPanel, sensorxtrans);
     toolPanels.push_back (sensorxtrans);
-    addPanel (sensorxtrans->getPackBox(), xtransprocess);
+    addPanel (sensorxtrans->getPackBox(), xtransprocess, 2);
     toolPanels.push_back (xtransprocess);
-    addPanel (sensorxtrans->getPackBox(), xtransrawexposure);
+    addPanel (sensorxtrans->getPackBox(), xtransrawexposure, 2);
     toolPanels.push_back (xtransrawexposure);
     addPanel (rawPanel, rawexposure);
     toolPanels.push_back (rawexposure);
@@ -198,7 +198,9 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)
     toolPanels.push_back (iptcpanel);
 
     metadataPanel = Gtk::manage (new Gtk::Notebook ());
+    metadataPanel->get_style_context()->add_class ("metaPanelNotebook");
     toolPanelNotebook = new Gtk::Notebook ();
+    toolPanelNotebook->get_style_context()->add_class ("toolPanelNotebook");
 
     metadataPanel->append_page (*exifpanel, M("MAIN_TAB_EXIF"));
     metadataPanel->append_page (*iptcpanel, M("MAIN_TAB_IPTC"));
@@ -287,17 +289,11 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)
     toolBar->setToolBarListener(this);
 }
 
-void ToolPanelCoordinator::addPanel (Gtk::Box* where, FoldableToolPanel* panel)
+void ToolPanelCoordinator::addPanel (Gtk::Box* where, FoldableToolPanel* panel, int level)
 {
 
-    // no more separator!
-    /*if (where->children().size()) {
-        Gtk::HSeparator *hsep = Gtk::manage (new  Gtk::HSeparator());
-        where->pack_start(*hsep, Gtk::PACK_SHRINK, 0);
-        hsep->show();
-    }*/
-
     panel->setParent(where);
+    panel->setLevel(level);
 
     expList.push_back (panel->getExpander());
     where->pack_start(*panel->getExpander(), false, false);
@@ -773,31 +769,31 @@ bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event)
 
     if (alt) {
         switch(event->keyval) {
-        case GDK_e:
+        case GDK_KEY_e:
             toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*exposurePanelSW));
             return true;
 
-        case GDK_d:
+        case GDK_KEY_d:
             toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*detailsPanelSW));
             return true;
 
-        case GDK_c:
+        case GDK_KEY_c:
             toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*colorPanelSW));
             return true;
 
-        case GDK_t:
+        case GDK_KEY_t:
             toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*transformPanelSW));
             return true;
 
-        case GDK_r:
+        case GDK_KEY_r:
             toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*rawPanelSW));
             return true;
 
-        case GDK_w:
+        case GDK_KEY_w:
             toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*waveletPanelSW));
             return true;
 
-        case GDK_m:
+        case GDK_KEY_m:
             if (metadataPanel) {
                 toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*metadataPanel));
                 return true;

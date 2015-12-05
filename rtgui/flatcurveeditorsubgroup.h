@@ -30,7 +30,7 @@ class FlatCurveEditorSubGroup: public CurveEditorSubGroup
     friend class FlatCurveEditor;
 
 protected:
-    Gtk::VBox* CPointsCurveBox;
+    Gtk::Grid* CPointsCurveGrid;
 
     MyFlatCurve* CPointsCurve;
 

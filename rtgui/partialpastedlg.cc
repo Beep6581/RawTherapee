@@ -257,7 +257,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title)
     vbtop->pack_start (*everything, Gtk::PACK_SHRINK, 2);
     vbtop->set_border_width (8);
 
-    Gtk::Dialog::get_vbox()->pack_start (*vbtop, Gtk::PACK_SHRINK, 2); // TODO replace with get_content_area() with GTK upgrade
+    Gtk::Dialog::get_content_area()->pack_start (*vbtop, Gtk::PACK_SHRINK, 2); // TODO replace with get_content_area() with GTK upgrade
 
     Gtk::HBox* hbmain = Gtk::manage (new Gtk::HBox ());
     hbmain->pack_start (*vbCol1);
@@ -267,7 +267,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title)
     hbmain->pack_start (*vbCol3);
 
     scrolledwindow = Gtk::manage ( new Gtk::ScrolledWindow() );
-    scrolledwindow->set_flags(Gtk::CAN_FOCUS);
+    scrolledwindow->set_can_focus(true);
     scrolledwindow->set_border_width(2);
     scrolledwindow->set_shadow_type(Gtk::SHADOW_NONE);
     scrolledwindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
@@ -275,7 +275,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title)
 
     scrolledwindow->add(*hbmain);
 
-    Gtk::Dialog::get_vbox()->pack_start (*scrolledwindow, Gtk::PACK_EXPAND_WIDGET, 2);// TODO replace with get_content_area() with GTK upgrade
+    Gtk::Dialog::get_content_area()->pack_start (*scrolledwindow, Gtk::PACK_EXPAND_WIDGET, 2);// TODO replace with get_content_area() with GTK upgrade
 
     hbmain->show();
     scrolledwindow->show ();
@@ -362,8 +362,8 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title)
     ff_BlurTypeConn         = ff_BlurType->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     ff_ClipControlConn      = ff_ClipControl->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
 
-    add_button (Gtk::StockID("gtk-ok"), Gtk::RESPONSE_OK);
-    add_button (Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
+    add_button (M("GENERAL_OK"), Gtk::RESPONSE_OK);
+    add_button (M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
     set_response_sensitive (Gtk::RESPONSE_OK);
     set_default_response (Gtk::RESPONSE_OK);
     show_all_children ();

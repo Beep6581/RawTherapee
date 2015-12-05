@@ -84,6 +84,7 @@ public:
     std::vector<double> getPoints ();
     void setPoints (const std::vector<double>& p);
     void setType (DiagonalCurveType t);
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool handleEvents (GdkEvent* event);
     void setActiveParam (int ac);
     void reset (const std::vector<double> &resetCurve, double identityValue = 0.5);

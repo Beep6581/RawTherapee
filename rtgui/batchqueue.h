@@ -52,9 +52,9 @@ protected:
 
     Glib::ustring nameTemplate;
 
-    Gtk::ImageMenuItem* cancel;
-    Gtk::ImageMenuItem* head;
-    Gtk::ImageMenuItem* tail;
+    MyImageMenuItem* cancel;
+    MyImageMenuItem* head;
+    MyImageMenuItem* tail;
     Gtk::MenuItem* selall;
     Gtk::MenuItem* open;
     Gtk::Menu* pmenu;

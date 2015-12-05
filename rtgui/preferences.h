@@ -127,8 +127,6 @@ protected:
     Gtk::ComboBoxText* curveBBoxPosC;
 
     Gtk::ComboBoxText* theme;
-    Gtk::CheckButton* slimUI;
-    Gtk::HBox* hbtheme;
     Gtk::CheckButton* chUseSystemTheme;
     Gtk::FontButton* fontbutton;
     Gtk::ColorButton* butCropCol;
@@ -196,8 +194,6 @@ protected:
     Glib::ustring initialTheme;
     Glib::ustring initialFont;
 
-    bool oldSlimUI;
-
     void fillPreferences ();
     void storePreferences ();
     void parseDir       (Glib::ustring dirname, std::vector<Glib::ustring>& items, Glib::ustring ext);
@@ -211,7 +207,7 @@ protected:
     void forImageComboChanged ();
     void layoutComboChanged ();
     void bundledProfilesChanged();
-    void switchThemeTo (Glib::ustring newTheme, bool slimInterface);
+    void switchThemeTo (Glib::ustring newTheme);
     void switchFontTo  (Glib::ustring newFont);
     bool splashClosed(GdkEventAny* event);
 

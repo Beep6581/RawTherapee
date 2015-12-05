@@ -29,6 +29,8 @@
 
 #define CROPRESIZEBORDER 4
 
+//extern Glib::Threads::Thread* mainThread;
+
 bool FileBrowserEntry::iconsLoaded(false);
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::editedIcon;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::recentlySavedIcon;
@@ -644,69 +646,72 @@ void FileBrowserEntry::updateCursor (int x, int y)
         return;
     }
 
+    CursorShape newCursor = CSUndefined;
+
     ToolMode tm = iatlistener->getToolBar()->getTool ();
     Glib::RefPtr<Gdk::Window> w = parent->getDrawingArea ()->get_window();
 
     if (!selected) {
-        cursorManager.setCursor (w, CSArrow);
-        return;
-    }
-
-    if (state == SNormal) {
+        newCursor = CSArrow;
+    } else if (state == SNormal) {
         if (tm == TMHand && (onArea (CropTop, x, y) || onArea (CropBottom, x, y))) {
-            cursorManager.setCursor (w, CSResizeHeight);
+            newCursor = CSResizeHeight;
         } else if (tm == TMHand && (onArea (CropLeft, x, y) || onArea (CropRight, x, y))) {
-            cursorManager.setCursor (w, CSResizeWidth);
+            newCursor = CSResizeWidth;
         } else if (tm == TMHand && (onArea (CropTopLeft, x, y))) {
-            cursorManager.setCursor (w, CSResizeTopLeft);
+            newCursor = CSResizeTopLeft;
         } else if (tm == TMHand && (onArea (CropTopRight, x, y))) {
-            cursorManager.setCursor (w, CSResizeTopRight);
+            newCursor = CSResizeTopRight;
         } else if (tm == TMHand && (onArea (CropBottomLeft, x, y))) {
-            cursorManager.setCursor (w, CSResizeBottomLeft);
+            newCursor = CSResizeBottomLeft;
         } else if (tm == TMHand && (onArea (CropBottomRight, x, y))) {
-            cursorManager.setCursor (w, CSResizeBottomRight);
+            newCursor = CSResizeBottomRight;
         } else if (onArea (CropImage, x, y)) {
             if (tm == TMHand) {
-                cursorManager.setCursor (w, CSArrow);
+                newCursor = CSArrow;
             } else if (tm == TMSpotWB) {
-                cursorManager.setCursor (w, CSSpotWB);
+                newCursor = CSSpotWB;
             } else if (tm == TMCropSelect) {
-                cursorManager.setCursor (w, CSCropSelect);
+                newCursor = CSCropSelect;
             } else if (tm == TMStraighten) {
-                cursorManager.setCursor (w, CSStraighten);
+                newCursor = CSStraighten;
             }
         } else {
-            cursorManager.setCursor (w, CSArrow);
+            newCursor = CSArrow;
         }
     } else if (state == SCropSelecting) {
-        cursorManager.setCursor (w, CSCropSelect);
+        newCursor = CSCropSelect;
     } else if (state == SRotateSelecting) {
-        cursorManager.setCursor (w, CSStraighten);
+        newCursor = CSStraighten;
     } else if (state == SCropMove) {
-        cursorManager.setCursor (w, CSMove);
+        newCursor = CSMove;
     } else if (state == SResizeW1 || state == SResizeW2) {
-        cursorManager.setCursor (w, CSResizeWidth);
+        newCursor = CSResizeWidth;
     } else if (state == SResizeH1 || state == SResizeH2) {
-        cursorManager.setCursor (w, CSResizeHeight);
+        newCursor = CSResizeHeight;
     } else if (state == SResizeTL) {
-        cursorManager.setCursor (w, CSResizeTopLeft);
+        newCursor = CSResizeTopLeft;
     } else if (state == SResizeTR) {
-        cursorManager.setCursor (w, CSResizeTopRight);
+        newCursor = CSResizeTopRight;
     } else if (state == SResizeBL) {
-        cursorManager.setCursor (w, CSResizeBottomLeft);
+        newCursor = CSResizeBottomLeft;
     } else if (state == SResizeBR) {
-        cursorManager.setCursor (w, CSResizeBottomRight);
+        newCursor = CSResizeBottomRight;
+    }
+
+    if (newCursor != cursor_type) {
+        cursor_type = newCursor;
+        CursorManager::setCursorOfMainWindow (w, cursor_type);
     }
 }
 
-void FileBrowserEntry::draw ()
+void FileBrowserEntry::draw (Cairo::RefPtr<Cairo::Context> cc)
 {
 
-    ThumbBrowserEntryBase::draw ();
+    ThumbBrowserEntryBase::draw (cc);
 
     if (state == SRotateSelecting) {
-        Cairo::RefPtr<Cairo::Context> cr = parent->getDrawingArea ()->get_window()->create_cairo_context();
-        drawStraightenGuide (cr);
+        drawStraightenGuide (cc);
     }
 }
 

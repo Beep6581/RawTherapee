@@ -25,6 +25,7 @@
 #include <gtkmm.h>
 #include <sigc++/sigc++.h>
 #include "rtimage.h"
+#include "guiutils.h"
 
 
 class PopUpCommon
@@ -33,7 +34,7 @@ class PopUpCommon
 public:
     typedef sigc::signal<void, int> type_signal_changed;
     type_signal_changed signal_changed();
-    Gtk::HBox* buttonGroup;     // this is the widget to be packed
+    Gtk::Grid* buttonGroup;    // this is the widget to be packed
 
     PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "");
     virtual ~PopUpCommon ();
@@ -56,11 +57,11 @@ private:
     */
     std::vector<Glib::ustring> sItems;
     std::vector<Glib::ustring> imageFilenames;
-    std::vector<RTImage*> images;
-    std::vector<Gtk::ImageMenuItem*> items;
+    std::vector<const RTImage*> images;
+    std::vector<MyImageMenuItem*> items;
     Glib::ustring buttonHint;
     RTImage* buttonImage;
-    Gtk::HBox* imageContainer;
+    Gtk::Grid* imageContainer;
     Gtk::Menu* menu;
     Gtk::Button* button;
     int selected;

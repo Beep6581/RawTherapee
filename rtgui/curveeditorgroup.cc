@@ -32,7 +32,7 @@ CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring group
 {
 
     // We set the label to the one provided as parameter, even if it's an empty string
-    curveGroupLabel = Gtk::manage (new Gtk::Label (groupLabel + ":", Gtk::ALIGN_LEFT));
+    curveGroupLabel = Gtk::manage (new Gtk::Label (groupLabel + ":", Gtk::ALIGN_START));
 }
 
 CurveEditorGroup::~CurveEditorGroup()
@@ -133,20 +133,20 @@ void CurveEditorGroup::newLine()
         }
 
         int j = numberOfPackedCurve;
+
+        /*
         bool hasRelatedWidget = false;
-
-        for (int i = (int)(curveEditors.size()) - 1; i >= j; i--) {
-            if (curveEditors[i]->relatedWidget != NULL) {
+        for (int i = (int)(curveEditors.size())-1; i >= j; i--) {
+            if (curveEditors[i]->relatedWidget != NULL)
                 hasRelatedWidget = true;
-            }
         }
-
-        for (int i = (int)(curveEditors.size()) - 1; i >= j; i--) {
+        */
+        for (int i = (int)(curveEditors.size()) - 1; i >= j; --i) {
             if (curveEditors[i]->relatedWidget != NULL) {
                 headerBox->pack_end (*curveEditors[i]->relatedWidget, Gtk::PACK_EXPAND_WIDGET, 2);
             }
 
-            headerBox->pack_end (*curveEditors[i]->curveType->buttonGroup, hasRelatedWidget ? Gtk::PACK_SHRINK : Gtk::PACK_EXPAND_WIDGET, 2);
+            headerBox->pack_end (*curveEditors[i]->curveType->buttonGroup, /*hasRelatedWidget ? Gtk::PACK_SHRINK :*/ Gtk::PACK_EXPAND_WIDGET, 2);
             numberOfPackedCurve++;
         }
 
@@ -426,17 +426,17 @@ Glib::ustring CurveEditorSubGroup::outputFile ()
     FileChooserLastFolderPersister persister(&dialog, curveDir);
     dialog.set_current_name (lastFilename);
 
-    dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
-    dialog.add_button(Gtk::StockID("gtk-save"), Gtk::RESPONSE_APPLY);
+    dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
+    dialog.add_button(M("GENERAL_SAVE"), Gtk::RESPONSE_APPLY);
 
-    Gtk::FileFilter filter_pp;
-    filter_pp.set_name(M("FILECHOOSER_FILTER_CURVE"));
-    filter_pp.add_pattern("*.rtc");
+    Glib::RefPtr<Gtk::FileFilter> filter_pp = Gtk::FileFilter::create();
+    filter_pp->set_name(M("FILECHOOSER_FILTER_CURVE"));
+    filter_pp->add_pattern("*.rtc");
     dialog.add_filter(filter_pp);
 
-    Gtk::FileFilter filter_any;
-    filter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
-    filter_any.add_pattern("*");
+    Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
+    filter_any->set_name(M("FILECHOOSER_FILTER_ANY"));
+    filter_any->add_pattern("*");
     dialog.add_filter(filter_any);
 
     //dialog.set_do_overwrite_confirmation (true);
@@ -470,17 +470,17 @@ Glib::ustring CurveEditorSubGroup::inputFile ()
     Gtk::FileChooserDialog dialog(M("CURVEEDITOR_LOADDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN);
     FileChooserLastFolderPersister persister(&dialog, curveDir);
 
-    dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
-    dialog.add_button(Gtk::StockID("gtk-apply"), Gtk::RESPONSE_APPLY);
+    dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
+    dialog.add_button(M("GENERAL_APPLY"), Gtk::RESPONSE_APPLY);
 
-    Gtk::FileFilter filter_pp;
-    filter_pp.set_name(M("FILECHOOSER_FILTER_CURVE"));
-    filter_pp.add_pattern("*.rtc");
+    Glib::RefPtr<Gtk::FileFilter> filter_pp = Gtk::FileFilter::create();
+    filter_pp->set_name(M("FILECHOOSER_FILTER_CURVE"));
+    filter_pp->add_pattern("*.rtc");
     dialog.add_filter(filter_pp);
 
-    Gtk::FileFilter filter_any;
-    filter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
-    filter_any.add_pattern("*");
+    Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
+    filter_any->set_name(M("FILECHOOSER_FILTER_ANY"));
+    filter_any->add_pattern("*");
     dialog.add_filter(filter_any);
 
     int result = dialog.run();

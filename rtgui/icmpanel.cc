@@ -44,28 +44,28 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 
 
     Gtk::Frame *iFrame = Gtk::manage (new Gtk::Frame(M("TP_ICM_INPUTPROFILE")) );
-    iFrame->set_border_width(0);
+    //iFrame->set_border_width(0);
     iFrame->set_label_align(0.025, 0.5);
 
     iVBox = Gtk::manage ( new Gtk::VBox());
-    iVBox->set_border_width(4);
+    //iVBox->set_border_width(4);
     iVBox->set_spacing(2);
 
     inone = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTNONE")));
     inone->set_tooltip_text (M("TP_ICM_INPUTNONE_TOOLTIP"));
-    iVBox->pack_start (*inone, Gtk::PACK_SHRINK, 2);
+    iVBox->pack_start (*inone, Gtk::PACK_SHRINK);
 
     iembedded = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTEMBEDDED")));
     iembedded->set_tooltip_text (M("TP_ICM_INPUTEMBEDDED_TOOLTIP"));
-    iVBox->pack_start (*iembedded, Gtk::PACK_SHRINK, 2);
+    iVBox->pack_start (*iembedded, Gtk::PACK_SHRINK);
 
     icamera = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTCAMERA")));
     icamera->set_tooltip_text (M("TP_ICM_INPUTCAMERA_TOOLTIP"));
-    iVBox->pack_start (*icamera, Gtk::PACK_SHRINK, 2);
+    iVBox->pack_start (*icamera, Gtk::PACK_SHRINK);
 
     icameraICC = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTCAMERAICC")));
     icameraICC->set_tooltip_text (M("TP_ICM_INPUTCAMERAICC_TOOLTIP"));
-    iVBox->pack_start (*icameraICC, Gtk::PACK_SHRINK, 2);
+    iVBox->pack_start (*icameraICC, Gtk::PACK_SHRINK);
 
     ifromfile = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTCUSTOM") + ":"));
     Gtk::HBox* ffbox = Gtk::manage (new Gtk::HBox ());
@@ -73,7 +73,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     ffbox->pack_start (*ifromfile, Gtk::PACK_SHRINK);
     ffbox->pack_start (*ipDialog);
 
-    iVBox->pack_start (*ffbox, Gtk::PACK_SHRINK, 2);
+    iVBox->pack_start (*ffbox, Gtk::PACK_SHRINK);
 
     opts = icamera->get_group();
     icameraICC->set_group (opts);
@@ -82,49 +82,63 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     inone->set_group (opts);
 
     dcpFrame = Gtk::manage (new Gtk::Frame ("DCP"));
-    Gtk::VBox* dcpFrameVBox = Gtk::manage (new Gtk::VBox ());
-    dcpFrameVBox->set_border_width(4);
 
-    Gtk::HBox* dcpIllHBox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Grid* dcpGrid = Gtk::manage ( new Gtk::Grid());
+    dcpGrid->set_column_homogeneous(false);
+    dcpGrid->set_row_homogeneous(false);
+    dcpGrid->set_column_spacing(2);
+    dcpGrid->set_row_spacing(2);
+
+    Gtk::Grid* dcpIllGrid = Gtk::manage ( new Gtk::Grid());
+    dcpIllGrid->set_column_homogeneous(false);
+    dcpIllGrid->set_row_homogeneous(false);
+    dcpIllGrid->set_column_spacing(2);
+    dcpIllGrid->set_row_spacing(2);
+
     dcpIllLabel = Gtk::manage (new Gtk::Label (M("TP_ICM_DCPILLUMINANT") + ":"));
+    setExpandAlignProperties(dcpIllLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     dcpIllLabel->set_tooltip_text (M("TP_ICM_DCPILLUMINANT_TOOLTIP"));
     dcpIllLabel->show ();
     dcpIll = Gtk::manage (new MyComboBoxText ());
+    setExpandAlignProperties(dcpIll, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     dcpIll->set_tooltip_text (M("TP_ICM_DCPILLUMINANT_TOOLTIP"));
-    dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
-    dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 1");
-    dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 2");
+    dcpIll->append (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
+    dcpIll->append (M("TP_ICM_DCPILLUMINANT") + " 1");
+    dcpIll->append (M("TP_ICM_DCPILLUMINANT") + " 2");
     dcpIll->show ();
     dcpTemperatures[0] = 0;
     dcpTemperatures[1] = 0;
     ignoreDcpSignal = true;
-    dcpIllHBox->pack_start(*dcpIllLabel, Gtk::PACK_SHRINK, 4);
-    dcpIllHBox->pack_start(*dcpIll);
+    dcpIllGrid->attach_next_to(*dcpIllLabel, Gtk::POS_LEFT, 1, 1);
+    dcpIllGrid->attach_next_to(*dcpIll, *dcpIllLabel, Gtk::POS_RIGHT, 1, 1);
 
-    Gtk::HBox* c1HBox = Gtk::manage ( new Gtk::HBox(true, 4));
     ckbToneCurve = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_TONECURVE")));
     ckbToneCurve->set_sensitive (false);
     ckbToneCurve->set_tooltip_text (M("TP_ICM_TONECURVE_TOOLTIP"));
-    ckbApplyHueSatMap = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYHUESATMAP")));
-    ckbApplyHueSatMap->set_sensitive (false);
-    ckbApplyHueSatMap->set_tooltip_text (M("TP_ICM_APPLYHUESATMAP_TOOLTIP"));
-    c1HBox->pack_start (*ckbToneCurve);
-    c1HBox->pack_start (*ckbApplyHueSatMap);
+    setExpandAlignProperties(ckbToneCurve, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
-    Gtk::HBox* c2HBox = Gtk::manage ( new Gtk::HBox(true, 4));
     ckbApplyLookTable = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYLOOKTABLE")));
     ckbApplyLookTable->set_sensitive (false);
     ckbApplyLookTable->set_tooltip_text (M("TP_ICM_APPLYLOOKTABLE_TOOLTIP"));
+    setExpandAlignProperties(ckbApplyLookTable, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+    ckbApplyHueSatMap = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYHUESATMAP")));
+    ckbApplyHueSatMap->set_sensitive (false);
+    ckbApplyHueSatMap->set_tooltip_text (M("TP_ICM_APPLYHUESATMAP_TOOLTIP"));
+    setExpandAlignProperties(ckbApplyHueSatMap, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
     ckbApplyBaselineExposureOffset = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYBASELINEEXPOSUREOFFSET")));
     ckbApplyBaselineExposureOffset->set_sensitive (false);
     ckbApplyBaselineExposureOffset->set_tooltip_text (M("TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP"));
-    c2HBox->pack_start (*ckbApplyLookTable);
-    c2HBox->pack_start (*ckbApplyBaselineExposureOffset);
+    setExpandAlignProperties(ckbApplyBaselineExposureOffset, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
-    dcpFrameVBox->pack_start(*dcpIllHBox);
-    dcpFrameVBox->pack_start(*c1HBox);
-    dcpFrameVBox->pack_start(*c2HBox);
-    dcpFrame->add(*dcpFrameVBox);
+    dcpGrid->attach_next_to(*ckbToneCurve, Gtk::POS_LEFT, 1, 1);
+    dcpGrid->attach_next_to(*ckbApplyLookTable, *ckbToneCurve, Gtk::POS_RIGHT, 1, 1);
+    dcpGrid->attach_next_to(*ckbApplyHueSatMap, *ckbToneCurve, Gtk::POS_BOTTOM, 1, 1);
+    dcpGrid->attach_next_to(*ckbApplyBaselineExposureOffset, *ckbApplyHueSatMap, Gtk::POS_RIGHT, 1, 1);
+    dcpGrid->attach_next_to(*dcpIllGrid, *ckbToneCurve, Gtk::POS_TOP, 2, 1);
+
+    dcpFrame->add(*dcpGrid);
     dcpFrame->set_sensitive(false);
     iVBox->pack_start (*dcpFrame);
 
@@ -134,24 +148,25 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     // blend cms matrix no longer used
     //iVBox->pack_start (*ckbBlendCMSMatrix, Gtk::PACK_SHRINK, 2);
 
-    saveRef = Gtk::manage (new Gtk::Button (M("TP_ICM_SAVEREFERENCE")));
+    saveRef = Gtk::manage (new Gtk::Button ());  // M("TP_ICM_SAVEREFERENCE")
     saveRef->set_image (*Gtk::manage (new RTImage ("gtk-save-large.png")));
     saveRef->set_tooltip_markup (M("TP_ICM_SAVEREFERENCE_TOOLTIP"));
-    iVBox->pack_start (*saveRef, Gtk::PACK_SHRINK, 2);
+    iVBox->pack_start (*saveRef, Gtk::PACK_SHRINK);
 
     iFrame->add(*iVBox);
-    pack_start (*iFrame, Gtk::PACK_EXPAND_WIDGET, 4);
+    pack_start (*iFrame, Gtk::PACK_EXPAND_WIDGET);
 
 
     // ---------------------------- Working profile
 
 
     Gtk::Frame *wFrame = Gtk::manage (new Gtk::Frame(M("TP_ICM_WORKINGPROFILE")) );
-    wFrame->set_border_width(0);
+    //wFrame->set_border_width(0);
     wFrame->set_label_align(0.025, 0.5);
 
     Gtk::VBox *wVBox = Gtk::manage ( new Gtk::VBox());
-    wVBox->set_border_width(4);
+    //wVBox->set_border_width(4);
+    wVBox->set_spacing(2);
 
     wnames = Gtk::manage (new MyComboBoxText ());
     wVBox->pack_start (*wnames, Gtk::PACK_SHRINK);
@@ -159,36 +174,36 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     std::vector<Glib::ustring> wpnames = rtengine::getWorkingProfiles ();
 
     for (size_t i = 0; i < wpnames.size(); i++) {
-        wnames->append_text (wpnames[i]);
+        wnames->append (wpnames[i]);
     }
 
     wnames->set_active (0);
 
     wFrame->add(*wVBox);
-    pack_start (*wFrame, Gtk::PACK_EXPAND_WIDGET, 4);
+    pack_start (*wFrame, Gtk::PACK_EXPAND_WIDGET);
 
 
     // ---------------------------- Output profile
 
 
     Gtk::Frame *oFrame = Gtk::manage (new Gtk::Frame(M("TP_ICM_OUTPUTPROFILE")) );
-    oFrame->set_border_width(0);
+    //oFrame->set_border_width(0);
     oFrame->set_label_align(0.025, 0.5);
 
     Gtk::VBox *oVBox = Gtk::manage ( new Gtk::VBox());
-    oVBox->set_border_width(4);
+    //oVBox->set_border_width(4);
     oVBox->set_spacing(2);
 
     onames = Gtk::manage (new MyComboBoxText ());
     oVBox->pack_start (*onames, Gtk::PACK_SHRINK);
 
-    onames->append_text (M("TP_ICM_NOICM"));
+    onames->append (M("TP_ICM_NOICM"));
     onames->set_active (0);
 
     std::vector<Glib::ustring> opnames = iccStore->getOutputProfiles ();
 
     for (size_t i = 0; i < opnames.size(); i++) {
-        onames->append_text (opnames[i]);
+        onames->append (opnames[i]);
     }
 
     onames->set_active (0);
@@ -199,16 +214,16 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     Gtk::Label* galab = Gtk::manage (new Gtk::Label (M("TP_GAMMA_OUTPUT") + ":"));
     //galab->set_alignment (0.0, 0.5);
 
-    gaHBox->pack_start (*galab, Gtk::PACK_SHRINK, 4);
+    gaHBox->pack_start (*galab, Gtk::PACK_SHRINK);
     wgamma = Gtk::manage (new MyComboBoxText ());
     gaHBox->pack_start (*wgamma, Gtk::PACK_EXPAND_WIDGET);
 
-    oVBox->pack_start(*gaHBox, Gtk::PACK_EXPAND_WIDGET, 2);
+    oVBox->pack_start(*gaHBox, Gtk::PACK_EXPAND_WIDGET);
 
     std::vector<Glib::ustring> wpgamma = rtengine::getGamma ();
 
     for (size_t i = 0; i < wpgamma.size(); i++) {
-        wgamma->append_text (wpgamma[i]);
+        wgamma->append (wpgamma[i]);
     }
 
     wgamma->set_active (0);
@@ -216,8 +231,8 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     Gtk::Frame* fgFrame = Gtk::manage (new Gtk::Frame ());
 
     Gtk::VBox *fgVBox = Gtk::manage ( new Gtk::VBox());
-    fgVBox->set_spacing(0);
-    fgVBox->set_border_width(4);
+    fgVBox->set_spacing(2);
+    //fgVBox->set_border_width(4);
 
     freegamma = Gtk::manage(new Gtk::CheckButton((M("TP_GAMMA_FREE"))));
     freegamma->set_active (false);
@@ -243,36 +258,36 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     fgVBox->pack_start( *slpos, Gtk::PACK_SHRINK);//slope
 
     fgFrame->add(*fgVBox);
-    oVBox->pack_start(*fgFrame, Gtk::PACK_EXPAND_WIDGET, 2);
+    oVBox->pack_start(*fgFrame, Gtk::PACK_EXPAND_WIDGET);
 
     oFrame->add(*oVBox);
-    pack_start (*oFrame, Gtk::PACK_EXPAND_WIDGET, 4);
+    pack_start (*oFrame, Gtk::PACK_EXPAND_WIDGET);
 
 
     // ---------------------------- Output gamma list entries
 
 
-    Gtk::FileFilter filter_icc;
-    filter_icc.set_name(M("FILECHOOSER_FILTER_COLPROF"));
-    filter_icc.add_pattern("*.dcp");
-    filter_icc.add_pattern("*.DCP");
-    filter_icc.add_pattern("*.icc");
-    filter_icc.add_pattern("*.icm");
-    filter_icc.add_pattern("*.ICC");
-    filter_icc.add_pattern("*.ICM");
-    Gtk::FileFilter filter_iccdng;
-    filter_iccdng.set_name(M("FILECHOOSER_FILTER_COLPROF") + " + DNG");
-    filter_iccdng.add_pattern("*.dcp");
-    filter_iccdng.add_pattern("*.DCP");
-    filter_iccdng.add_pattern("*.dng");
-    filter_iccdng.add_pattern("*.DNG");
-    filter_iccdng.add_pattern("*.icc");
-    filter_iccdng.add_pattern("*.icm");
-    filter_iccdng.add_pattern("*.ICC");
-    filter_iccdng.add_pattern("*.ICM");
-    Gtk::FileFilter filter_any;
-    filter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
-    filter_any.add_pattern("*");
+    Glib::RefPtr<Gtk::FileFilter> filter_icc = Gtk::FileFilter::create();
+    filter_icc->set_name(M("FILECHOOSER_FILTER_COLPROF"));
+    filter_icc->add_pattern("*.dcp");
+    filter_icc->add_pattern("*.DCP");
+    filter_icc->add_pattern("*.icc");
+    filter_icc->add_pattern("*.icm");
+    filter_icc->add_pattern("*.ICC");
+    filter_icc->add_pattern("*.ICM");
+    Glib::RefPtr<Gtk::FileFilter> filter_iccdng = Gtk::FileFilter::create();
+    filter_iccdng->set_name(M("FILECHOOSER_FILTER_COLPROF") + " + DNG");
+    filter_iccdng->add_pattern("*.dcp");
+    filter_iccdng->add_pattern("*.DCP");
+    filter_iccdng->add_pattern("*.dng");
+    filter_iccdng->add_pattern("*.DNG");
+    filter_iccdng->add_pattern("*.icc");
+    filter_iccdng->add_pattern("*.icm");
+    filter_iccdng->add_pattern("*.ICC");
+    filter_iccdng->add_pattern("*.ICM");
+    Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
+    filter_any->set_name(M("FILECHOOSER_FILTER_ANY"));
+    filter_any->add_pattern("*");
 
     ipDialog->add_filter (filter_icc);
     ipDialog->add_filter (filter_iccdng);
@@ -318,11 +333,11 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
         if (dcpTemperatures[0] != 0 || dcpTemperatures[1] != 0) {
             int curr_active = dcpIll->get_active_row_number();
             ignoreDcpSignal = true;
-            dcpIll->clear_items ();
-            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
-            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 1");
-            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 2");
-            dcpIll->append_text (M("GENERAL_UNCHANGED"));
+            dcpIll->remove_all ();
+            dcpIll->append (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
+            dcpIll->append (M("TP_ICM_DCPILLUMINANT") + " 1");
+            dcpIll->append (M("TP_ICM_DCPILLUMINANT") + " 2");
+            dcpIll->append (M("GENERAL_UNCHANGED"));
             dcpTemperatures[0] = 0;
             dcpTemperatures[1] = 0;
             dcpIll->set_active (curr_active);
@@ -387,10 +402,10 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
                 sprintf(tempstr2, "%.0fK", temp2);
                 int curr_active = dcpIll->get_active_row_number();
                 ignoreDcpSignal = true;
-                dcpIll->clear_items ();
-                dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
-                dcpIll->append_text (tempstr1);
-                dcpIll->append_text (tempstr2);
+                dcpIll->remove_all ();
+                dcpIll->append (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
+                dcpIll->append (tempstr1);
+                dcpIll->append (tempstr2);
                 dcpTemperatures[0] = temp1;
                 dcpTemperatures[1] = temp2;
                 dcpIll->set_active (curr_active);
@@ -426,13 +441,13 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
         if (dcpTemperatures[0] != 0 || dcpTemperatures[1] != 0) {
             int curr_active = dcpIll->get_active_row_number();
             ignoreDcpSignal = true;
-            dcpIll->clear_items ();
-            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
-            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 1");
-            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 2");
+            dcpIll->remove_all ();
+            dcpIll->append (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
+            dcpIll->append (M("TP_ICM_DCPILLUMINANT") + " 1");
+            dcpIll->append (M("TP_ICM_DCPILLUMINANT") + " 2");
 
             if (isBatchMode) {
-                dcpIll->append_text (M("GENERAL_UNCHANGED"));
+                dcpIll->append (M("GENERAL_UNCHANGED"));
             }
 
             dcpTemperatures[0] = 0;
@@ -916,26 +931,26 @@ void ICMPanel::saveReferencePressed ()
     FileChooserLastFolderPersister persister(&dialog, options.lastProfilingReferenceDir);
     dialog.set_current_name (lastRefFilename);
 
-    dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
-    dialog.add_button(Gtk::StockID("gtk-save"), Gtk::RESPONSE_OK);
+    dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
+    dialog.add_button(M("GENERAL_SAVE"), Gtk::RESPONSE_OK);
 
     Gtk::CheckButton applyWB(M("TP_ICM_SAVEREFERENCE_APPLYWB"));
     applyWB.set_tooltip_text (M("TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP"));
     applyWB.set_active(true);
     Gtk::HBox* hbox = Gtk::manage( new Gtk::HBox() );
     hbox->pack_end(applyWB, Gtk::PACK_SHRINK, 2);
-    Gtk::VBox *vbox = dialog.get_vbox();
-    vbox->pack_end(*hbox, Gtk::PACK_SHRINK, 2);
+    Gtk::Box *box = dialog.get_content_area();
+    box->pack_end(*hbox, Gtk::PACK_SHRINK, 2);
 
-    Gtk::FileFilter filter_tif;
-    filter_tif.set_name(M("FILECHOOSER_FILTER_TIFF"));
-    filter_tif.add_pattern("*.tif");
-    filter_tif.add_pattern("*.tiff");
+    Glib::RefPtr<Gtk::FileFilter> filter_tif = Gtk::FileFilter::create();
+    filter_tif->set_name(M("FILECHOOSER_FILTER_TIFF"));
+    filter_tif->add_pattern("*.tif");
+    filter_tif->add_pattern("*.tiff");
     dialog.add_filter(filter_tif);
 
-    Gtk::FileFilter filter_any;
-    filter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
-    filter_any.add_pattern("*");
+    Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
+    filter_any->set_name(M("FILECHOOSER_FILTER_ANY"));
+    filter_any->add_pattern("*");
     dialog.add_filter(filter_any);
 
     dialog.show_all_children();
@@ -978,10 +993,10 @@ void ICMPanel::setBatchMode (bool batchMode)
     iVBox->pack_start (*iunchanged, Gtk::PACK_SHRINK, 4);
     iVBox->reorder_child (*iunchanged, 5);
     removeIfThere (this, saveRef);
-    onames->append_text (M("GENERAL_UNCHANGED"));
-    wnames->append_text (M("GENERAL_UNCHANGED"));
-    wgamma->append_text (M("GENERAL_UNCHANGED"));
-    dcpIll->append_text (M("GENERAL_UNCHANGED"));
+    onames->append (M("GENERAL_UNCHANGED"));
+    wnames->append (M("GENERAL_UNCHANGED"));
+    wgamma->append (M("GENERAL_UNCHANGED"));
+    dcpIll->append (M("GENERAL_UNCHANGED"));
     gampos->showEditedCB ();
     slpos->showEditedCB ();
 }

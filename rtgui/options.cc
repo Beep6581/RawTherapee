@@ -377,8 +377,7 @@ void Options::setDefaults ()
     languageAutoDetect = langMgr.isOSLanguageDetectSupported();
     lastSaveAsPath = "";
     overwriteOutputFile = false;        // if TRUE, existing output JPGs/PNGs are overwritten, instead of adding ..-1.jpg, -2.jpg etc.
-    theme = "25-Gray-Gray";
-    slimUI = false;
+    theme = "RawTherapee";
     useSystemTheme = false;
     maxThumbnailHeight = 250;
     maxCacheEntries = 20000;
@@ -794,10 +793,6 @@ int Options::readFromFile (Glib::ustring fname)
 
                 if (keyFile.has_key ("General", "Theme")) {
                     theme           = keyFile.get_string ("General", "Theme");
-                }
-
-                if (keyFile.has_key ("General", "SlimUI")) {
-                    slimUI          = keyFile.get_boolean ("General", "SlimUI");
                 }
 
                 if (keyFile.has_key ("General", "UseSystemTheme")) {
@@ -1821,7 +1816,6 @@ int Options::saveToFile (Glib::ustring fname)
     keyFile.set_string  ("General", "Language", language);
     keyFile.set_boolean ("General", "LanguageAutoDetect", languageAutoDetect);
     keyFile.set_string  ("General", "Theme", theme);
-    keyFile.set_boolean ("General", "SlimUI", slimUI);
     keyFile.set_boolean ("General", "UseSystemTheme", useSystemTheme);
     keyFile.set_string  ("General", "Version", VERSION);
     keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);

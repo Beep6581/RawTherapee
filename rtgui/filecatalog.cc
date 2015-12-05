@@ -56,6 +56,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
     //  construct and initialize thumbnail browsers
     fileBrowser = Gtk::manage( new FileBrowser() );
+    fileBrowser->get_style_context()->add_class ("filebrowser");
     fileBrowser->setFileBrowserListener (this);
     fileBrowser->setArrangement (ThumbBrowserBase::TB_Vertical);
     fileBrowser->show ();
@@ -63,7 +64,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     set_size_request(0, 250);
     // construct trash panel with the extra "empty trash" button
     trashButtonBox = Gtk::manage( new Gtk::VBox );
-    Gtk::Button* emptyT = Gtk::manage( new Gtk::Button (M("FILEBROWSER_EMPTYTRASH")));
+    Gtk::Button* emptyT = Gtk::manage( new Gtk::Button ());
     emptyT->set_tooltip_markup (M("FILEBROWSER_EMPTYTRASHHINT"));
     emptyT->set_image (*Gtk::manage(new RTImage ("trash.png")));
     emptyT->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::emptyTrash));
@@ -100,6 +101,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     Query = Gtk::manage(new Gtk::Entry ()); // cannot use Gtk::manage here as FileCatalog::getFilter will fail on Query->get_text()
     Query->set_text("");
     Query->set_width_chars (20); // TODO !!! add this value to options?
+    Query->set_max_width_chars (20);
     Query->set_tooltip_markup (M("FILEBROWSER_QUERYHINT"));
     Gtk::HBox* hbQuery = Gtk::manage(new Gtk::HBox ());
     buttonQueryClear = Gtk::manage(new Gtk::Button ());
@@ -122,6 +124,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
     // setup button bar
     buttonBar = Gtk::manage( new Gtk::HBox () );
+    buttonBar->get_style_context()->add_class ("toolBarPanelFileBrowser");
     pack_start (*buttonBar, Gtk::PACK_SHRINK);
 
     buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
@@ -397,6 +400,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     hBox = Gtk::manage( new Gtk::HBox () );
     hBox->show ();
     hBox->pack_end (*fileBrowser);
+    hBox->get_style_context()->add_class ("filmstripPanel");
     fileBrowser->applyFilter (getFilter()); // warning: can call this only after all objects used in getFilter (e.g. Query) are instantiated
     //printf("FileCatalog::FileCatalog  fileBrowser->applyFilter (getFilter())\n");
     pack_start (*hBox);
@@ -629,7 +633,7 @@ void FileCatalog::_refreshProgressBar ()
         }
 
         if (!previewsToLoad ) {
-            hbb->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
+            hbb->pack_start (*Gtk::manage (new RTImage ("gtk-directory.png")));
             int filteredCount = min(fileBrowser->getNumFiltered(), previewsLoaded);
 
             label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER") +
@@ -637,7 +641,7 @@ void FileCatalog::_refreshProgressBar ()
                                                  + Glib::ustring::format(previewsLoaded) +
                                                  (filteredCount != previewsLoaded ? "]" : ")")));
         } else {
-            hbb->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::FIND, Gtk::ICON_SIZE_MENU)));
+            hbb->pack_start (*Gtk::manage (new RTImage ("gtk-find.png")));
             label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER") + " [" + Glib::ustring::format(std::fixed, std::setprecision(0), std::setw(3), (double)previewsLoaded / previewsToLoad * 100 ) + "%]" ));
             filepanel->loadingThumbs("", (double)previewsLoaded / previewsToLoad);
         }
@@ -650,7 +654,10 @@ void FileCatalog::_refreshProgressBar ()
         hbb->set_spacing (2);
         hbb->set_tooltip_markup (M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
         hbb->show_all ();
-        nb->set_tab_label(*filepanel, *hbb);
+
+        if (nb) {
+            nb->set_tab_label(*filepanel, *hbb);
+        }
     }
 }
 
@@ -944,8 +951,8 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
     }
 
     Gtk::FileChooserDialog fc(fc_title, Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
-    fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
-    fc.add_button( Gtk::StockID("gtk-ok"), Gtk::RESPONSE_OK);
+    fc.add_button( M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
+    fc.add_button( M("GENERAL_OK"), Gtk::RESPONSE_OK);
     // open dialog at the 1-st file's path
     fc.set_filename(tbe[0]->filename);
     //!!! TODO prevent dialog closing on "enter" key press
@@ -1245,12 +1252,12 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe)
         dialog.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
 
         Gtk::Label l;
-        dialog.get_vbox()->pack_start (l, Gtk::PACK_SHRINK);
+        dialog.get_content_area()->pack_start (l, Gtk::PACK_SHRINK);
 
         Gtk::Entry nfentry;
 
-        dialog.get_vbox()->pack_start (nfentry, Gtk::PACK_SHRINK);
-        dialog.get_vbox()->show_all ();
+        dialog.get_content_area()->pack_start (nfentry, Gtk::PACK_SHRINK);
+        dialog.get_content_area()->show_all ();
 
         nfentry.set_activates_default (true);
         dialog.set_default_response (Gtk::RESPONSE_OK);
@@ -1941,7 +1948,7 @@ bool FileCatalog::Query_key_pressed (GdkEventKey *event)
     bool shift = event->state & GDK_SHIFT_MASK;
 
     switch (event->keyval) {
-    case GDK_Escape:
+    case GDK_KEY_Escape:
 
         // Clear Query if the Escape character is pressed within it
         if (!shift) {
@@ -2031,7 +2038,7 @@ bool FileCatalog::BrowsePath_key_pressed (GdkEventKey *event)
     bool shift = event->state & GDK_SHIFT_MASK;
 
     switch (event->keyval) {
-    case GDK_Escape:
+    case GDK_KEY_Escape:
 
         // On Escape character Reset BrowsePath to selectedDirectory
         if (!shift) {
@@ -2205,7 +2212,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
     // GUI Layout
     switch(event->keyval) {
-    case GDK_l:
+    case GDK_KEY_l:
         if (!alt) {
             tbLeftPanel_1->set_active (!tbLeftPanel_1->get_active());    // toggle left panel
         }
@@ -2221,7 +2228,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
         return true;
 
-    case GDK_m:
+    case GDK_KEY_m:
         if (!ctrl && !alt) {
             toggleSidePanels();
         }
@@ -2231,7 +2238,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
     if (shift) {
         switch(event->keyval) {
-        case GDK_Escape:
+        case GDK_KEY_Escape:
             BrowsePath->set_text(selectedDirectory);
             // set focus on something neutral, this is useful to remove focus from BrowsePath and Query
             // when need to execute a shortcut, which otherwise will be typed into those fields
@@ -2281,8 +2288,8 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
     if (!alt && !shift) {
         switch(event->keyval) {
 
-        case GDK_Return:
-        case GDK_KP_Enter:
+        case GDK_KEY_Return:
+        case GDK_KEY_KP_Enter:
             if (BrowsePath->is_focus()) {
                 FileCatalog::buttonBrowsePathPressed ();
                 return true;
@@ -2369,8 +2376,8 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
     if (!alt && !shift) {
         switch(event->keyval) {
 
-        case GDK_Return:
-        case GDK_KP_Enter:
+        case GDK_KEY_Return:
+        case GDK_KEY_KP_Enter:
             if (BrowsePath->is_focus()) {
                 FileCatalog::buttonBrowsePathPressed ();
                 return true;
@@ -2420,8 +2427,8 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
     if (!ctrl && !alt) {
         switch(event->keyval) {
-        case GDK_d:
-        case GDK_D:
+        case GDK_KEY_d:
+        case GDK_KEY_D:
             categoryButtonToggled(bFilterClear, false);
             return true;
         }
@@ -2430,26 +2437,26 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
     if (!ctrl || (alt && !options.tabbedUI)) {
         switch(event->keyval) {
 
-        case GDK_bracketright:
+        case GDK_KEY_bracketright:
             coarsePanel->rotateRight();
             return true;
 
-        case GDK_bracketleft:
+        case GDK_KEY_bracketleft:
             coarsePanel->rotateLeft();
             return true;
 
-        case GDK_i:
-        case GDK_I:
+        case GDK_KEY_i:
+        case GDK_KEY_I:
             exifInfo->set_active (!exifInfo->get_active());
             return true;
 
-        case GDK_plus:
-        case GDK_equal:
+        case GDK_KEY_plus:
+        case GDK_KEY_equal:
             zoomIn();
             return true;
 
-        case GDK_minus:
-        case GDK_underscore:
+        case GDK_KEY_minus:
+        case GDK_KEY_underscore:
             zoomOut();
             return true;
         }
@@ -2457,18 +2464,18 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
     if (ctrl && !alt) {
         switch (event->keyval) {
-        case GDK_o:
+        case GDK_KEY_o:
             BrowsePath->select_region(0, BrowsePath->get_text_length());
             BrowsePath->grab_focus();
             return true;
 
-        case GDK_f:
+        case GDK_KEY_f:
             Query->select_region(0, Query->get_text_length());
             Query->grab_focus();
             return true;
 
-        case GDK_t:
-        case GDK_T:
+        case GDK_KEY_t:
+        case GDK_KEY_T:
             modifierKey = 0; // HOMBRE: yet another hack.... otherwise the shortcut won't work
             categoryButtonToggled(bTrash, false);
             return true;
@@ -2477,8 +2484,8 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
     if (!ctrl && !alt && shift) {
         switch (event->keyval) {
-        case GDK_t:
-        case GDK_T:
+        case GDK_KEY_t:
+        case GDK_KEY_T:
             if (inTabMode) {
                 if (options.showFilmStripToolBar) {
                     hideToolBar();
@@ -2495,8 +2502,8 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
     if (!ctrl && !alt && !shift) {
         switch (event->keyval) {
-        case GDK_t:
-        case GDK_T:
+        case GDK_KEY_t:
+        case GDK_KEY_T:
             if (inTabMode) {
                 if (options.showFilmStripToolBar) {
                     hideToolBar();

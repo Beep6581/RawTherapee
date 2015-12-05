@@ -33,19 +33,19 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     dhbox->pack_start (*labmdh, Gtk::PACK_SHRINK, 1);
 
     retinexMethod = Gtk::manage (new MyComboBoxText ());
-    retinexMethod->append_text (M("TP_RETINEX_LOW"));
-    retinexMethod->append_text (M("TP_RETINEX_UNIFORM"));
-    retinexMethod->append_text (M("TP_RETINEX_HIGH"));
-    retinexMethod->append_text (M("TP_RETINEX_HIGHLIG"));
-//    retinexMethod->append_text (M("TP_RETINEX_HIGHLIGPLUS"));
+    retinexMethod->append (M("TP_RETINEX_LOW"));
+    retinexMethod->append (M("TP_RETINEX_UNIFORM"));
+    retinexMethod->append (M("TP_RETINEX_HIGH"));
+    retinexMethod->append (M("TP_RETINEX_HIGHLIG"));
+//    retinexMethod->append (M("TP_RETINEX_HIGHLIGPLUS"));
     retinexMethod->set_active(0);
     retinexMethodConn = retinexMethod->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::retinexMethodChanged) );
     retinexMethod->set_tooltip_markup (M("TP_RETINEX_METHOD_TOOLTIP"));
 
     retinexcolorspace = Gtk::manage (new MyComboBoxText ());
-    retinexcolorspace->append_text (M("TP_RETINEX_LABSPACE"));
-    retinexcolorspace->append_text (M("TP_RETINEX_HSLSPACE_LOG"));
-    retinexcolorspace->append_text (M("TP_RETINEX_HSLSPACE_LIN"));
+    retinexcolorspace->append (M("TP_RETINEX_LABSPACE"));
+    retinexcolorspace->append (M("TP_RETINEX_HSLSPACE_LOG"));
+    retinexcolorspace->append (M("TP_RETINEX_HSLSPACE_LIN"));
     retinexcolorspace->set_active(0);
     retinexColorSpaceConn = retinexcolorspace->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::retinexColorSpaceChanged) );
 
@@ -103,11 +103,11 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     gambox->pack_start (*labgam, Gtk::PACK_SHRINK, 1);
 
     gammaretinex = Gtk::manage (new MyComboBoxText ());
-    gammaretinex->append_text (M("TP_RETINEX_GAMMA_NONE"));
-    gammaretinex->append_text (M("TP_RETINEX_GAMMA_LOW"));
-    gammaretinex->append_text (M("TP_RETINEX_GAMMA_MID"));
-    gammaretinex->append_text (M("TP_RETINEX_GAMMA_HIGH"));
-    gammaretinex->append_text (M("TP_RETINEX_GAMMA_FREE"));
+    gammaretinex->append (M("TP_RETINEX_GAMMA_NONE"));
+    gammaretinex->append (M("TP_RETINEX_GAMMA_LOW"));
+    gammaretinex->append (M("TP_RETINEX_GAMMA_MID"));
+    gammaretinex->append (M("TP_RETINEX_GAMMA_HIGH"));
+    gammaretinex->append (M("TP_RETINEX_GAMMA_FREE"));
     gammaretinex->set_active(0);
     gammaretinexConn = gammaretinex->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::gammaretinexChanged) );
     gammaretinex->set_tooltip_markup (M("TP_RETINEX_GAMMA_TOOLTIP"));

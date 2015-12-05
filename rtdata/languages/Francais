@@ -899,7 +899,7 @@ PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
 PREFERENCES_EXPAUT;Expert
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
 PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers et de vignettes
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barre de menu de l'explorateur de fichiers uni-ligne (à désactiver pour les écrans de faible résolution)
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barre de menu de l'explorateur de fichiers uni-ligne\n(à désactiver pour les écrans de faible résolution)
 PREFERENCES_FILEFORMAT;Format du fichier
 PREFERENCES_FILMSIMULATION;Simulation de Film
 PREFERENCES_FLATFIELD;Champ Uniforme

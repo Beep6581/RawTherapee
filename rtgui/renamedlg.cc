@@ -22,7 +22,7 @@
 #include "rtimage.h"
 
 RenameDialog::RenameDialog (Gtk::Window* parent)
-    : Gtk::Dialog (M("FILEBROWSER_RENAMEDLGLABEL"), *parent, true, true), p(parent), imageData(NULL)
+    : Gtk::Dialog (M("FILEBROWSER_RENAMEDLGLABEL"), *parent, true), p(parent), imageData(NULL)
 {
 
     Gtk::Table* names = Gtk::manage (new Gtk::Table (2, 2));
@@ -36,7 +36,7 @@ RenameDialog::RenameDialog (Gtk::Window* parent)
     names->attach (*nnlab, 0, 1, 1, 2, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     names->attach (*newName, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
-    get_vbox()->pack_start (*names, Gtk::PACK_SHRINK, 4);
+    get_content_area()->pack_start (*names, Gtk::PACK_SHRINK, 4);
 
 // Issue 316
 //    Gtk::HBox* tbox = Gtk::manage (new Gtk::HBox());
@@ -49,7 +49,7 @@ RenameDialog::RenameDialog (Gtk::Window* parent)
 //    tbox->pack_start (*useTmpl, Gtk::PACK_SHRINK, 4);
 //    tbox->pack_start (*templates);
 
-//    get_vbox()->pack_start (*tbox, Gtk::PACK_SHRINK, 4);
+//    get_content_area()->pack_start (*tbox, Gtk::PACK_SHRINK, 4);
 
     add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK);
     add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
@@ -168,12 +168,12 @@ void RenameDialog::tmplSelectionChanged ()
 }
 
 RenameTemplateEditor::RenameTemplateEditor (Gtk::Window* parent)
-    : Gtk::Dialog ("Edit rename templates", *parent, true, true)
+    : Gtk::Dialog ("Edit rename templates", *parent, true)
 {
 
     list = Gtk::manage (new Gtk::ListViewText (1, false, Gtk::SELECTION_MULTIPLE));
     list->set_headers_visible (false);
-    get_vbox ()->pack_start (*list);
+    get_content_area ()->pack_start (*list);
 
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
     templ = Gtk::manage (new Gtk::Entry ());
@@ -185,7 +185,7 @@ RenameTemplateEditor::RenameTemplateEditor (Gtk::Window* parent)
     hb->pack_start (*add, Gtk::PACK_SHRINK, 2);
     hb->pack_start (*del, Gtk::PACK_SHRINK, 2);
 
-    get_vbox ()->pack_start (*hb, Gtk::PACK_SHRINK, 4);
+    get_content_area ()->pack_start (*hb, Gtk::PACK_SHRINK, 4);
 
     add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK);
 
@@ -202,10 +202,10 @@ RenameTemplateEditor::RenameTemplateEditor (Gtk::Window* parent)
 void RenameTemplateEditor::refreshTemplateList ()
 {
 
-    list->clear_items ();
+    list->remove_all_columns();
 
     for (size_t i = 0; i < options.renameTemplates.size(); i++) {
-        list->append_text (options.renameTemplates[i]);
+        list->append (options.renameTemplates[i]);
     }
 }
 

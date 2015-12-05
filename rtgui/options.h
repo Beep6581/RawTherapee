@@ -157,7 +157,6 @@ public:
     Glib::ustring language;
     bool languageAutoDetect;
     Glib::ustring theme;
-    bool slimUI;
     bool useSystemTheme;
     static Glib::ustring cacheBaseDir;
     bool autoSuffix;

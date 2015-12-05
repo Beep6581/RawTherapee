@@ -248,7 +248,8 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     Gtk::HBox* spotbox = Gtk::manage (new Gtk::HBox ());
     spotbox->show ();
 
-    spotbutton = Gtk::manage (new Gtk::Button (M("TP_WBALANCE_SPOTWB")));
+    spotbutton = Gtk::manage (new Gtk::Button ());
+    spotbutton->set_tooltip_text(M("TP_WBALANCE_SPOTWB"));
     Gtk::Image* spotimg = Gtk::manage (new RTImage ("gtk-color-picker-small.png"));
     spotimg->show ();
     spotbutton->set_image (*spotimg);
@@ -261,31 +262,31 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
 
     spotsize = Gtk::manage (new MyComboBoxText ());
     spotsize->show ();
-    spotsize->append_text ("2");
+    spotsize->append ("2");
 
     if (options.whiteBalanceSpotSize == 2) {
         spotsize->set_active(0);
     }
 
-    spotsize->append_text ("4");
+    spotsize->append ("4");
 
     if (options.whiteBalanceSpotSize == 4) {
         spotsize->set_active(1);
     }
 
-    spotsize->append_text ("8");
+    spotsize->append ("8");
 
     if (options.whiteBalanceSpotSize == 8) {
         spotsize->set_active(2);
     }
 
-    spotsize->append_text ("16");
+    spotsize->append ("16");
 
     if (options.whiteBalanceSpotSize == 16) {
         spotsize->set_active(3);
     }
 
-    spotsize->append_text ("32");
+    spotsize->append ("32");
 
     if (options.whiteBalanceSpotSize == 32) {
         spotsize->set_active(4);

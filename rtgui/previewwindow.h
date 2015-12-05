@@ -22,12 +22,14 @@
 #include <gtkmm.h>
 #include "previewhandler.h"
 #include "cropwindow.h"
+#include "guiutils.h"
+#include "cursormanager.h"
 
 class PreviewWindow : public Gtk::DrawingArea, public PreviewListener, public CropWindowListener
 {
 
 private:
-    Glib::RefPtr<Gdk::Pixmap> backBuffer;
+    Cairo::RefPtr<BackBuffer> backBuffer;
     PreviewHandler* previewHandler;
     sigc::connection rconn;
     CropWindow* mainCropWin;
@@ -37,6 +39,7 @@ private:
     int press_x, press_y;
     bool isMoving;
     bool needsUpdate;
+    CursorShape cursor_type;
 
     void updatePreviewImage     ();
     void getObservedFrameArea   (int& x, int& y, int& w, int& h);
@@ -49,7 +52,7 @@ public:
 
     void on_realize             ();
     void on_resized             (Gtk::Allocation& req);
-    bool on_expose_event        (GdkEventExpose* event);
+    bool on_draw                (const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool on_motion_notify_event (GdkEventMotion* event);
     bool on_button_press_event  (GdkEventButton* event);
     bool on_button_release_event(GdkEventButton* event);

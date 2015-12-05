@@ -187,7 +187,7 @@ void LWButtonSet::getAllocatedDimensions (int& w, int& h)
     h = ah;
 }
 
-void LWButtonSet::setColors (const Gdk::Color& bg, const Gdk::Color& fg)
+void LWButtonSet::setColors (const Gdk::RGBA& bg, const Gdk::RGBA& fg)
 {
 
     for (size_t i = 0; i < buttons.size(); i++) {

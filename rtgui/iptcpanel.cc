@@ -20,8 +20,6 @@
 #include "clipboard.h"
 #include "rtimage.h"
 
-extern Glib::ustring argv0;
-
 using namespace rtengine;
 using namespace rtengine::procparams;
 
@@ -38,6 +36,7 @@ IPTCPanel::IPTCPanel ()
     captionText = Gtk::TextBuffer::create ();
     captionView = Gtk::manage( new Gtk::TextView (captionText) );
     Gtk::ScrolledWindow* scrolledWindowc = Gtk::manage( new Gtk::ScrolledWindow() );
+    scrolledWindowc->set_min_content_height (100);
     scrolledWindowc->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     scrolledWindowc->add(*captionView);
     capl->set_tooltip_text (M("IPTCPANEL_CAPTIONHINT"));
@@ -85,9 +84,10 @@ IPTCPanel::IPTCPanel ()
     keywords->set_headers_visible (false);
     keywords->set_size_request (50, 80);
     Gtk::ScrolledWindow* scrolledWindowkw = Gtk::manage( new Gtk::ScrolledWindow() );
+    scrolledWindowkw->set_min_content_height (100);
     scrolledWindowkw->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     scrolledWindowkw->add(*keywords);
-    keyword  = Gtk::manage( new Gtk::ComboBoxEntryText () );
+    keyword  = Gtk::manage( new Gtk::ComboBoxText (true) );
     keyword->set_size_request (32, -1);
     keyl->set_tooltip_text (M("IPTCPANEL_KEYWORDSHINT"));
     keywords->set_tooltip_text (M("IPTCPANEL_KEYWORDSHINT"));
@@ -113,7 +113,7 @@ IPTCPanel::IPTCPanel ()
     row++;
 
     Gtk::Label* catl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_CATEGORY") + ":") );
-    category = Gtk::manage( new Gtk::ComboBoxEntryText () );
+    category = Gtk::manage( new Gtk::ComboBoxText (true) );
     category->set_size_request (32, -1);
     catl->set_tooltip_text (M("IPTCPANEL_CATEGORYHINT"));
     category->set_tooltip_text (M("IPTCPANEL_CATEGORYHINT"));
@@ -122,9 +122,10 @@ IPTCPanel::IPTCPanel ()
     suppCategories->set_headers_visible (false);
     suppCategories->set_size_request(50, 80);
     Gtk::ScrolledWindow* scrolledWindowsc = Gtk::manage( new Gtk::ScrolledWindow() );
+    scrolledWindowsc->set_min_content_height (100);
     scrolledWindowsc->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     scrolledWindowsc->add(*suppCategories);
-    suppCategory  = Gtk::manage( new Gtk::ComboBoxEntryText () );
+    suppCategory  = Gtk::manage( new Gtk::ComboBoxText (true) );
     suppCategory->set_size_request (32, -1);
     scl->set_tooltip_text (M("IPTCPANEL_SUPPCATEGORIESHINT"));
     suppCategories->set_tooltip_text (M("IPTCPANEL_SUPPCATEGORIESHINT"));
@@ -265,31 +266,39 @@ IPTCPanel::IPTCPanel ()
 
     pack_start (*scrolledWindow);
 
-    Gtk::HBox* bbox = Gtk::manage( new Gtk::HBox () );
+    Gtk::Grid* bbox = Gtk::manage( new Gtk::Grid () );
+    setExpandAlignProperties(bbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-    reset = Gtk::manage( new Gtk::Button (M("IPTCPANEL_RESET")) );
+    reset = Gtk::manage( new Gtk::Button () );  // M("IPTCPANEL_RESET")
+    reset->get_style_context()->add_class("Left");
     reset->set_image (*Gtk::manage(new RTImage ("gtk-undo-ltr.png", "gtk-undo-rtl.png")));
-    bbox->pack_start (*reset);
+    setExpandAlignProperties(reset, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    bbox->attach_next_to (*reset, Gtk::POS_LEFT, 1, 1);
 
-    file = Gtk::manage( new Gtk::Button (M("IPTCPANEL_EMBEDDED")) );
+    file = Gtk::manage( new Gtk::Button () );  // M("IPTCPANEL_EMBEDDED")
+    file->get_style_context()->add_class("MiddleH");
     file->set_image (*Gtk::manage(new RTImage ("gtk-open.png")));
-    bbox->pack_start (*file);
+    setExpandAlignProperties(file, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    bbox->attach_next_to (*file, Gtk::POS_RIGHT, 1, 1);
 
     copy = Gtk::manage( new Gtk::Button () );
+    copy->get_style_context()->add_class("MiddleH");
     copy->set_image (*Gtk::manage(new RTImage ("edit-copy.png")));
-    bbox->pack_start (*copy, Gtk::PACK_SHRINK, 0);
+    setExpandAlignProperties(copy, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    bbox->attach_next_to (*copy, Gtk::POS_RIGHT, 1, 1);
 
     paste = Gtk::manage( new Gtk::Button () );
+    paste->get_style_context()->add_class("Right");
     paste->set_image (*Gtk::manage(new RTImage ("edit-paste.png")));
-    bbox->pack_start (*paste, Gtk::PACK_SHRINK, 0);
+    setExpandAlignProperties(paste, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    bbox->attach_next_to (*paste, Gtk::POS_RIGHT, 1, 1);
 
     pack_end (*bbox, Gtk::PACK_SHRINK, 2);
 
-    Gtk::Tooltips* toolTip = Gtk::manage( new Gtk::Tooltips () );
-    toolTip->set_tip (*reset, M("IPTCPANEL_RESETHINT"));
-    toolTip->set_tip (*file, M("IPTCPANEL_EMBEDDEDHINT"));
-    toolTip->set_tip (*copy, M("IPTCPANEL_COPYHINT"));
-    toolTip->set_tip (*paste, M("IPTCPANEL_PASTEHINT"));
+    reset->set_tooltip_text(M("IPTCPANEL_RESETHINT"));
+    file->set_tooltip_text(M("IPTCPANEL_EMBEDDEDHINT"));
+    copy->set_tooltip_text(M("IPTCPANEL_COPYHINT"));
+    paste->set_tooltip_text(M("IPTCPANEL_PASTEHINT"));
 
     reset->signal_clicked().connect( sigc::mem_fun(*this, &IPTCPanel::resetClicked) );
     file->signal_clicked().connect( sigc::mem_fun(*this, &IPTCPanel::fileClicked) );
@@ -398,8 +407,8 @@ void IPTCPanel::addKeyWord ()
             return;
         }
 
-    keywords->append_text (keyword->get_entry()->get_text());
-    keyword->prepend_text (keyword->get_entry()->get_text());
+    keywords->append (keyword->get_entry()->get_text());
+    keyword->prepend (keyword->get_entry()->get_text());
     std::vector<Glib::ustring> items;
 
     for (Gtk::TreeModel::iterator i = keyword->get_model()->children().begin(); i != keyword->get_model()->children().end(); i++) {
@@ -408,10 +417,10 @@ void IPTCPanel::addKeyWord ()
         items.push_back (s);
     }
 
-    keyword->clear_items ();
+    keyword->remove_all ();
 
     for (unsigned int i = 0; i < 10 && i < items.size(); i++) {
-        keyword->append_text (items[i]);
+        keyword->append (items[i]);
     }
 
     keywords->scroll_to_row (keywords->get_model()->get_path(--keywords->get_model()->children().end()));
@@ -432,10 +441,10 @@ void IPTCPanel::delKeyWord ()
                 keep.push_back (keywords->get_text (i));
             }
 
-        keywords->clear_items ();
+        keywords->remove_all_columns ();
 
         for (unsigned int i = 0; i < keep.size(); i++) {
-            keywords->append_text (keep[i]);
+            keywords->append (keep[i]);
         }
     }
 
@@ -450,8 +459,8 @@ void IPTCPanel::addSuppCategory ()
             return;
         }
 
-    suppCategories->append_text (suppCategory->get_entry()->get_text());
-    suppCategory->prepend_text (suppCategory->get_entry()->get_text());
+    suppCategories->append (suppCategory->get_entry()->get_text());
+    suppCategory->prepend (suppCategory->get_entry()->get_text());
     std::vector<Glib::ustring> items;
 
     for (Gtk::TreeModel::iterator i = suppCategory->get_model()->children().begin(); i != suppCategory->get_model()->children().end(); i++) {
@@ -460,10 +469,10 @@ void IPTCPanel::addSuppCategory ()
         items.push_back (s);
     }
 
-    suppCategory->clear_items ();
+    suppCategory->remove_all ();
 
     for (unsigned int i = 0; i < 10 && i < items.size(); i++) {
-        suppCategory->append_text (items[i]);
+        suppCategory->append (items[i]);
     }
 
     suppCategories->scroll_to_row (suppCategories->get_model()->get_path(--suppCategories->get_model()->children().end()));
@@ -485,10 +494,10 @@ void IPTCPanel::delSuppCategory ()
                 keep.push_back (suppCategories->get_text (i));
             }
 
-        suppCategories->clear_items ();
+        suppCategories->remove_all_columns ();
 
         for (unsigned int i = 0; i < keep.size(); i++) {
-            suppCategories->append_text (keep[i]);
+            suppCategories->append (keep[i]);
         }
     }
 
@@ -540,9 +549,9 @@ void IPTCPanel::applyChangeList ()
     captionWriter->set_text ("");
     headline->set_text ("");
     instructions->set_text ("");
-    keywords->clear_items ();
+    keywords->remove_all_columns ();
     category->get_entry()->set_text ("");
-    suppCategories->clear_items ();
+    suppCategories->remove_all_columns ();
     author->set_text ("");
     authorPos->set_text ("");
     credit->set_text ("");
@@ -568,13 +577,13 @@ void IPTCPanel::applyChangeList ()
             instructions->set_text (i->second.at(0));
         } else if (i->first == "Keywords")
             for (unsigned int j = 0; j < i->second.size(); j++) {
-                keywords->append_text (i->second.at(j));
+                keywords->append (i->second.at(j));
             }
         else if (i->first == "Category" && !i->second.empty()) {
             category->get_entry()->set_text (i->second.at(0));
         } else if (i->first == "SupplementalCategories")
             for (unsigned int j = 0; j < i->second.size(); j++) {
-                suppCategories->append_text (i->second.at(j));
+                suppCategories->append (i->second.at(j));
             }
         else if (i->first == "Author" && !i->second.empty()) {
             author->set_text (i->second.at(0));

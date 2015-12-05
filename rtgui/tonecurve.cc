@@ -52,6 +52,8 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
     sclip->set_increments (0.01, 0.10);
     sclip->set_value (0.02);
     sclip->set_digits (2);
+    sclip->set_width_chars(4);
+    sclip->set_max_width_chars(4);
     sclip->signal_value_changed().connect( sigc::mem_fun(*this, &ToneCurve::clip_changed) );
 
     neutral = Gtk::manage (new Gtk::Button (M("TP_NEUTRAL")));
@@ -75,10 +77,10 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
     pack_start (*hrenabled);
 
     method = Gtk::manage (new MyComboBoxText ());
-    method->append_text (M("TP_HLREC_LUMINANCE"));
-    method->append_text (M("TP_HLREC_CIELAB"));
-    method->append_text (M("TP_HLREC_COLOR"));
-    method->append_text (M("TP_HLREC_BLEND"));
+    method->append (M("TP_HLREC_LUMINANCE"));
+    method->append (M("TP_HLREC_CIELAB"));
+    method->append (M("TP_HLREC_COLOR"));
+    method->append (M("TP_HLREC_BLEND"));
 
     method->set_active (0);
     hlrbox = Gtk::manage (new Gtk::HBox ());
@@ -122,12 +124,12 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
     pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
     toneCurveMode = Gtk::manage (new MyComboBoxText ());
-    toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_STANDARD"));
-    toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_WEIGHTEDSTD"));
-    toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_FILMLIKE"));
-    toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_SATANDVALBLENDING"));
-    toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_LUMINANCE"));
-    toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_PERCEPTUAL"));
+    toneCurveMode->append (M("TP_EXPOSURE_TCMODE_STANDARD"));
+    toneCurveMode->append (M("TP_EXPOSURE_TCMODE_WEIGHTEDSTD"));
+    toneCurveMode->append (M("TP_EXPOSURE_TCMODE_FILMLIKE"));
+    toneCurveMode->append (M("TP_EXPOSURE_TCMODE_SATANDVALBLENDING"));
+    toneCurveMode->append (M("TP_EXPOSURE_TCMODE_LUMINANCE"));
+    toneCurveMode->append (M("TP_EXPOSURE_TCMODE_PERCEPTUAL"));
     toneCurveMode->set_active (0);
     toneCurveMode->set_tooltip_text(M("TP_EXPOSURE_TCMODE_LABEL1"));
 
@@ -149,12 +151,12 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
 //----------- Curve 2 ------------------------------
 
     toneCurveMode2 = Gtk::manage (new MyComboBoxText ());
-    toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_STANDARD"));
-    toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_WEIGHTEDSTD"));
-    toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_FILMLIKE"));
-    toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_SATANDVALBLENDING"));
-    toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_LUMINANCE"));
-    toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_PERCEPTUAL"));
+    toneCurveMode2->append (M("TP_EXPOSURE_TCMODE_STANDARD"));
+    toneCurveMode2->append (M("TP_EXPOSURE_TCMODE_WEIGHTEDSTD"));
+    toneCurveMode2->append (M("TP_EXPOSURE_TCMODE_FILMLIKE"));
+    toneCurveMode2->append (M("TP_EXPOSURE_TCMODE_SATANDVALBLENDING"));
+    toneCurveMode2->append (M("TP_EXPOSURE_TCMODE_LUMINANCE"));
+    toneCurveMode2->append (M("TP_EXPOSURE_TCMODE_PERCEPTUAL"));
     toneCurveMode2->set_active (0);
     toneCurveMode2->set_tooltip_text(M("TP_EXPOSURE_TCMODE_LABEL2"));
 
@@ -236,6 +238,7 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
         clipDirty = pedited->toneCurve.clip;
         shape->setUnChanged (!pedited->toneCurve.curve);
         shape2->setUnChanged (!pedited->toneCurve.curve2);
+        hrenabled->set_inconsistent (!pedited->toneCurve.hrenabled);
 
         if (!pedited->toneCurve.curveMode) {
             toneCurveMode->set_active(6);
@@ -244,10 +247,6 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
         if (!pedited->toneCurve.curveMode2) {
             toneCurveMode2->set_active(6);
         }
-    }
-
-    if (pedited) {
-        hrenabled->set_inconsistent (!pedited->toneCurve.hrenabled);
     }
 
     enaconn.block (true);
@@ -358,9 +357,6 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->toneCurve.curve2     = !shape2->isUnChanged ();
         pedited->toneCurve.curveMode  = toneCurveMode->get_active_row_number() != 6;
         pedited->toneCurve.curveMode2 = toneCurveMode2->get_active_row_number() != 6;
-    }
-
-    if (pedited) {
         pedited->toneCurve.method     = method->get_active_row_number() != 4;
         pedited->toneCurve.hrenabled  = !hrenabled->get_inconsistent();
     }
@@ -805,7 +801,7 @@ bool ToneCurve::autoExpComputed_ ()
 void ToneCurve::setBatchMode (bool batchMode)
 {
     ToolPanel::setBatchMode (batchMode);
-    method->append_text (M("GENERAL_UNCHANGED"));
+    method->append (M("GENERAL_UNCHANGED"));
 
     removeIfThere (abox, autolevels, false);
     autolevels = Gtk::manage (new Gtk::CheckButton (M("TP_EXPOSURE_AUTOLEVELS")));
@@ -823,8 +819,8 @@ void ToneCurve::setBatchMode (bool batchMode)
     contrast->showEditedCB ();
     saturation->showEditedCB ();
 
-    toneCurveMode->append_text (M("GENERAL_UNCHANGED"));
-    toneCurveMode2->append_text (M("GENERAL_UNCHANGED"));
+    toneCurveMode->append (M("GENERAL_UNCHANGED"));
+    toneCurveMode2->append (M("GENERAL_UNCHANGED"));
 
     curveEditorG->setBatchMode (batchMode);
     curveEditorG2->setBatchMode (batchMode);

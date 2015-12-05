@@ -22,8 +22,10 @@
 
 #include <gtkmm.h>
 #include <glibmm.h>
+#include <cairomm/cairomm.h>
 #include "../rtengine/LUT.h"
 #include "../rtengine/improccoordinator.h"
+#include "guiutils.h"
 
 #include "pointermotionlistener.h"
 
@@ -41,24 +43,21 @@ struct HistogramRGBAreaIdleHelper {
     int pending;
 };
 
-class HistogramRGBArea : public Gtk::DrawingArea
+class HistogramRGBArea : public Gtk::DrawingArea, public BackBuffer
 {
 
     typedef const double (*TMatrix)[3];
 
 protected:
 
-    Glib::RefPtr<Gdk::GC> rgbgc_;
-    Glib::RefPtr<Gdk::Pixmap> overlay;
-
-    Gdk::Color black;
-    Gdk::Color white;
-    Gdk::Color red;
-    Gdk::Color green;
-    Gdk::Color blue;
-    Gdk::Color lgray;
-    Gdk::Color mgray;
-    Gdk::Color dgray;
+    Gdk::RGBA black;
+    Gdk::RGBA white;
+    Gdk::RGBA red;
+    Gdk::RGBA green;
+    Gdk::RGBA blue;
+    Gdk::RGBA lgray;
+    Gdk::RGBA mgray;
+    Gdk::RGBA dgray;
 
     int val;
     int r;
@@ -77,7 +76,7 @@ protected:
     bool barDisplayed;
     bool needChroma;
 
-    Gtk::VBox* parent;
+    Gtk::Grid* parent;
 
     HistogramRGBAreaIdleHelper* harih;
 
@@ -86,11 +85,11 @@ public:
     HistogramRGBArea();
     ~HistogramRGBArea();
 
-    void renderRGBMarks (int r, int g, int b, Glib::ustring profile = "", Glib::ustring profileW = "");
+    void updateBackBuffer (int r, int g, int b, Glib::ustring profile = "", Glib::ustring profileW = "");
     void updateFreeze (bool f);
     bool getFreeze ();
     bool getShow ();
-    void setParent (Gtk::VBox* p)
+    void setParent (Gtk::Grid* p)
     {
         parent = p;
     };
@@ -99,11 +98,16 @@ public:
     void updateOptions (bool r, bool g, bool b, bool l, bool raw, bool show, bool c);
 
     void on_realize();
-    bool on_expose_event(GdkEventExpose* event);
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool on_button_press_event (GdkEventButton* event);
-    void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
+    void on_style_updated ();
 private:
     void rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b);
+    Gtk::SizeRequestMode get_request_mode_vfunc () const;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
+    void get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const;
     // Some ...
 };
 
@@ -111,25 +115,23 @@ private:
 class FullModeListener
 {
 public:
+    virtual ~FullModeListener() {}
     virtual void toggle_button_full () {}
 };
 
-class HistogramArea : public Gtk::DrawingArea
+class HistogramArea : public Gtk::DrawingArea, public BackBuffer
 {
 
 protected:
 
-    Glib::RefPtr<Gdk::GC> gc_;
-    Glib::RefPtr<Gdk::Pixmap> backBuffer;
-
-    Gdk::Color black;
-    Gdk::Color white;
-    Gdk::Color red;
-    Gdk::Color green;
-    Gdk::Color blue;
-    Gdk::Color lgray;
-    Gdk::Color mgray;
-    Gdk::Color dgray;
+    Gdk::RGBA black;
+    Gdk::RGBA white;
+    Gdk::RGBA red;
+    Gdk::RGBA green;
+    Gdk::RGBA blue;
+    Gdk::RGBA lgray;
+    Gdk::RGBA mgray;
+    Gdk::RGBA dgray;
     LUTu lhist, rhist, ghist, bhist, chist;
     LUTu lhistRaw, rhistRaw, ghistRaw, bhistRaw;
 
@@ -147,27 +149,31 @@ public:
     HistogramArea(FullModeListener *fml = NULL);
     ~HistogramArea();
 
-    void renderHistogram ();
+    void updateBackBuffer ();
     void update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw, LUTu &histChroma);
     void updateOptions (bool r, bool g, bool b, bool l, bool raw, bool full , bool c);
     void on_realize();
-    bool on_expose_event(GdkEventExpose* event);
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool on_button_press_event (GdkEventButton* event);
-    void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
+    void on_style_updated ();
+
 private:
-    void drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
-                   LUTu & data, double scale, int hsize, int vsize);
-    void drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
-                   LUTu & data, double scale, int hsize, int & ui, int & oi);
+    void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, LUTu & data, double scale, int hsize, int vsize);
+    void drawMarks(Cairo::RefPtr<Cairo::Context> &cr, LUTu & data, double scale, int hsize, int & ui, int & oi);
+    Gtk::SizeRequestMode get_request_mode_vfunc () const;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
+    void get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const;
 };
 
-class HistogramPanel : public Gtk::HBox, public PointerMotionListener, public FullModeListener
+class HistogramPanel : public Gtk::Grid, public PointerMotionListener, public FullModeListener
 {
 
 protected:
 
-    Gtk::VBox* gfxVBox;
-    Gtk::VBox* buttonVBox;
+    Gtk::Grid* gfxGrid;
+    Gtk::Grid* buttonGrid;
     HistogramArea* histogramArea;
     HistogramRGBArea* histogramRGBArea;
     Gtk::ToggleButton* showRed;
@@ -217,7 +223,7 @@ public:
     // TODO should be protected
     void setHistRGBInvalid ();
 
-    void reorder (Gtk::AlignmentEnum align);
+    void reorder (Gtk::PositionType position);
     void red_toggled ();
     void green_toggled ();
     void blue_toggled ();

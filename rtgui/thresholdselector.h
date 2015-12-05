@@ -56,8 +56,8 @@ public:
  * on the graph. E.g. the "bottomLeft" value is related to the bottom left cursor.
  *
  * It is also possible to have a threshold with 2 totally independent cursors, each one having his own range,
- * man/max/default values and precision. This let developers create their own threshold curve, that they will
- * have to provide through the
+ * min/max/default values and precision. This let developers create their own threshold curve, that they will
+ * have to provide through the ThresholdCurveProvider interface
  *
  */
 class ThresholdSelector : public Gtk::DrawingArea, public ColoredBar
@@ -98,11 +98,10 @@ protected:
     double minValBottom, maxValBottom;
     double defPos[4];
     double positions[4];
-    unsigned short wslider;
     eUpdatePolicy updatePolicy;
 
     const static int hb = 3;  // horizontal border
-    const static int vb = 2;  // vertical border
+    const static int vb = 0;  // vertical border
 
     void initValues ();
     void findLitCursor(int posX, int posY);
@@ -110,6 +109,18 @@ protected:
     void findBoundaries(double &min, double &max);
     double to01(ThreshCursorId cursorId);
     void updateTooltip();
+
+    Gtk::SizeRequestMode get_request_mode_vfunc () const;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
+    void get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const;
+    void on_realize ();
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
+    bool on_button_press_event (GdkEventButton* event);
+    bool on_button_release_event (GdkEventButton* event);
+    bool on_motion_notify_event (GdkEventMotion* event);
+    bool on_leave_notify_event (GdkEventCrossing* event);
 
 public:
 
@@ -201,12 +212,6 @@ public:
     {
         return doubleThresh;
     }
-    void on_realize ();
-    bool on_expose_event(GdkEventExpose* event);
-    bool on_button_press_event (GdkEventButton* event);
-    bool on_button_release_event (GdkEventButton* event);
-    bool on_motion_notify_event (GdkEventMotion* event);
-    bool on_leave_notify_event (GdkEventCrossing* event);
     void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
     unsigned int getPrecision ()
     {

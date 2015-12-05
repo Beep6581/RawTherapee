@@ -28,36 +28,39 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir)
 
     set_title(M("GENERAL_SAVE"));
 
-    Gtk::VBox* vbox = get_vbox ();
+    Gtk::Box* box = get_content_area ();
 
     fchooser = Gtk::manage( new Gtk::FileChooserWidget (Gtk::FILE_CHOOSER_ACTION_SAVE) );
     fchooser->set_current_folder (initialDir);
     fchooser->signal_file_activated().connect(sigc::mem_fun(*this, &SaveAsDialog::okPressed));
 
-    filter_jpg.set_name(M("SAVEDLG_JPGFILTER"));
-    filter_jpg.add_pattern("*.jpg");
-    filter_jpg.add_pattern("*.JPG");
-    filter_jpg.add_pattern("*.jpeg");
-    filter_jpg.add_pattern("*.JPEG");
-    filter_jpg.add_pattern("*.jpe");
-    filter_jpg.add_pattern("*.JPE");
+    filter_jpg = Gtk::FileFilter::create();
+    filter_jpg->set_name(M("SAVEDLG_JPGFILTER"));
+    filter_jpg->add_pattern("*.jpg");
+    filter_jpg->add_pattern("*.JPG");
+    filter_jpg->add_pattern("*.jpeg");
+    filter_jpg->add_pattern("*.JPEG");
+    filter_jpg->add_pattern("*.jpe");
+    filter_jpg->add_pattern("*.JPE");
 
-    filter_tif.set_name(M("SAVEDLG_JPGFILTER"));
-    filter_tif.add_pattern("*.tif");
-    filter_tif.add_pattern("*.TIF");
-    filter_tif.add_pattern("*.tiff");
-    filter_tif.add_pattern("*.TIFF");
+    filter_tif = Gtk::FileFilter::create();
+    filter_tif->set_name(M("SAVEDLG_JPGFILTER"));
+    filter_tif->add_pattern("*.tif");
+    filter_tif->add_pattern("*.TIF");
+    filter_tif->add_pattern("*.tiff");
+    filter_tif->add_pattern("*.TIFF");
 
-    filter_png.set_name(M("SAVEDLG_JPGFILTER"));
-    filter_png.add_pattern("*.png");
-    filter_png.add_pattern("*.PNG");
+    filter_png = Gtk::FileFilter::create();
+    filter_png->set_name(M("SAVEDLG_JPGFILTER"));
+    filter_png->add_pattern("*.png");
+    filter_png->add_pattern("*.PNG");
 
     formatChanged (options.saveFormat.format);
 
 // Output Options
 // ~~~~~~~~~~~~~~
     formatOpts = Gtk::manage( new SaveFormatPanel () );
-    formatOpts->init (options.saveFormat);
+    setExpandAlignProperties(formatOpts, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     formatOpts->setListener (this);
 
 // queue/immediate
@@ -97,9 +100,6 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir)
     Gtk::Button* ok     = Gtk::manage( new Gtk::Button (M("GENERAL_OK")) );
     Gtk::Button* cancel = Gtk::manage( new Gtk::Button (M("GENERAL_CANCEL")) );
 
-    ok->set_image (*Gtk::manage(new RTImage ("gtk-apply.png")));
-    cancel->set_image (*Gtk::manage(new RTImage ("gtk-cancel.png")));
-
     ok->set_tooltip_markup (M("TP_SAVEDIALOG_OK_TIP"));
 
     ok->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::okPressed) );
@@ -121,18 +121,20 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir)
     vbox_bottomRight->pack_start (*autoSuffix, Gtk::PACK_SHRINK, 4);
 
     Gtk::HBox* hbox_bottom = Gtk::manage( new Gtk::HBox() );
-    hbox_bottom->pack_start (*formatOpts, Gtk::PACK_SHRINK, 2);
+    hbox_bottom->pack_start (*formatOpts, Gtk::PACK_EXPAND_WIDGET, 2);
     hbox_bottom->pack_start (*Gtk::manage(new Gtk::VSeparator ()), Gtk::PACK_SHRINK, 2);
-    hbox_bottom->pack_start (*vbox_bottomRight, Gtk::PACK_SHRINK, 2);
+    hbox_bottom->pack_start (*vbox_bottomRight, Gtk::PACK_EXPAND_WIDGET, 2);
 
-    vbox->pack_start (*fchooser);
-    vbox->pack_start (*hbox_bottom, Gtk::PACK_SHRINK, 2);
+    box->pack_start (*fchooser);
+    box->pack_start (*hbox_bottom, Gtk::PACK_SHRINK, 2);
 
     get_action_area()->pack_end (*ok, Gtk::PACK_SHRINK, 4);
     get_action_area()->pack_end (*cancel, Gtk::PACK_SHRINK, 4);
 
     set_border_width (4);
     show_all_children ();
+
+    formatOpts->init (options.saveFormat);
 
     signal_key_press_event().connect( sigc::mem_fun(*this, &SaveAsDialog::keyPressed) );
 }
@@ -310,8 +312,8 @@ bool SaveAsDialog::keyPressed (GdkEventKey* event)
 
     if (ctrl) {
         switch(event->keyval) {
-        case GDK_Return:  // Ctrl-Enter equivalent to pressing OK button
-        case GDK_KP_Enter:
+        case GDK_KEY_Return:  // Ctrl-Enter equivalent to pressing OK button
+        case GDK_KEY_KP_Enter:
             SaveAsDialog::okPressed();
             return true;
         }

@@ -37,6 +37,11 @@ MyDiagonalCurve::MyDiagonalCurve () : activeParam(-1), bghistvalid(false)
     editedPos.resize(2);
     editedPos.at(0) = editedPos.at(1) = 0.0;
 
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    style->add_class(GTK_STYLE_CLASS_FRAME);
+    //style->add_class(GTK_STYLE_CLASS_NOTEBOOK);
+    //style->add_class(GTK_STYLE_CLASS_FLAT);
+
     signal_event().connect( sigc::mem_fun(*this, &MyDiagonalCurve::handleEvents) );
 
     curve.type = DCT_Spline;
@@ -219,23 +224,22 @@ void MyDiagonalCurve::draw (int handle)
     // re-calculate curve if dimensions changed
     int currPointSize = point.getUpperBound();
 
-    if (curveIsDirty || /*prevGraphW != graphW || prevGraphH != graphH ||*/ (currPointSize == 200 && (graphW - 3 > 200)) || (currPointSize > 200 && (graphW - 2 <= 200 || graphW - 3 != currPointSize))) {
+    if (curveIsDirty || /*prevGraphW != graphW || prevGraphH != graphH ||*/ (currPointSize == GRAPH_SIZE && (graphW - 3 > GRAPH_SIZE)) || (currPointSize > GRAPH_SIZE && (graphW - 2 <= GRAPH_SIZE || graphW - 3 != currPointSize))) {
         interpolate ();
     }
 
     currPointSize = point.getUpperBound();
 
-    Gtk::StateType state = !is_sensitive() ? Gtk::STATE_INSENSITIVE : Gtk::STATE_NORMAL;
+    Gtk::StateFlags state = !is_sensitive() ? Gtk::STATE_FLAG_INSENSITIVE : Gtk::STATE_FLAG_NORMAL;
 
-    Glib::RefPtr<Gtk::Style> style = get_style ();
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     Cairo::RefPtr<Cairo::Context> cr = getContext();
     cr->set_line_cap(Cairo::LINE_CAP_SQUARE);
 
     // clear background
-    Gdk::Color c = style->get_bg (Gtk::STATE_NORMAL);
-    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-    cr->rectangle (0., 0., double(getWidth()), double(getHeight()));
-    cr->fill ();
+    style->render_background(cr, 0., 0., double(getWidth()), double(getHeight()));
+
+    Gdk::RGBA c;
 
     // histogram in the background
     if (bghistvalid) {
@@ -251,8 +255,8 @@ void MyDiagonalCurve::draw (int handle)
         cr->set_line_width (1.0);
         double stepSize = (graphW - 3) / 255.0;
         cr->move_to ( double(graphX + 1), double(graphY - 1) );
-        c = style->get_fg (Gtk::STATE_INSENSITIVE);
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        c = style->get_color(state);
+        cr->set_source_rgba (c.get_red(), c.get_green(), c.get_blue(), 0.2);
 
         for (int i = 0; i < 256; i++) {
             double val = double(bghist[i]) * double(graphH - 2) / double(valMax);
@@ -271,8 +275,8 @@ void MyDiagonalCurve::draw (int handle)
 
     // draw the grid lines:
     cr->set_line_width (1.0);
-    c = style->get_dark (state);
-    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+    c = style->get_border_color(state);
+    cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
     cr->set_antialias (Cairo::ANTIALIAS_NONE);
 
     for (int i = 0; i <= 10; i++) {
@@ -290,7 +294,7 @@ void MyDiagonalCurve::draw (int handle)
     if (snapToElmt == -2) {
         cr->set_source_rgb (1.0, 0.0, 0.0);
     } else {
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
     }
 
     std::valarray<double> ds (1);
@@ -310,7 +314,7 @@ void MyDiagonalCurve::draw (int handle)
     float graphY_ = float(graphY) - 1.5;
 
     if (curve.type == DCT_Parametric && activeParam > 0 && lpoint.getUpperBound() > 1 && upoint.getUpperBound() > 1) {
-        cr->set_source_rgba (0.0, 0.0, 0.0, 0.15);
+        cr->set_source_rgba (1.0, 1.0, 1.0, 0.1);
         cr->move_to (graphX_, getVal(upoint, 0) * -graphH_ + graphY_);
 
         for (int i = 1; i < graphW - 2; ++i) {
@@ -365,8 +369,8 @@ void MyDiagonalCurve::draw (int handle)
 
         if (pipetteVal > -1.f) {
             cr->set_line_width (2.);
-            c = style->get_fg (state);
-            cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+            c = style->get_color (state);
+            cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
             cr->move_to (double(graphX) + 1.5 + double(graphW - 3)*pipetteVal, double(graphY) - 1.5);
             cr->rel_line_to (0, double(-graphH + 3));
             cr->stroke ();
@@ -374,7 +378,7 @@ void MyDiagonalCurve::draw (int handle)
         }
     }
 
-    c = style->get_fg (state);
+    c = style->get_color (state);
 
     // draw the cage of the NURBS curve
     if (curve.type == DCT_NURBS) {
@@ -383,7 +387,7 @@ void MyDiagonalCurve::draw (int handle)
         ch_ds[0] = 2;
         cr->set_dash (ch_ds, 0);
         cr->set_line_width (0.75);
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
         std::vector<double> points = getPoints();
         nbPoints = ((int)points.size() - 1) / 2;
 
@@ -399,7 +403,7 @@ void MyDiagonalCurve::draw (int handle)
             if (curve.x.size() == nbPoints && snapToElmt >= 1000 && ((i == (snapToElmt - 1000)) || (i == (snapToElmt - 999)))) {
                 cr->set_source_rgb (1.0, 0.0, 0.0);
             } else {
-                cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+                cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
             }
 
             cr->move_to (x1, y1);
@@ -412,7 +416,7 @@ void MyDiagonalCurve::draw (int handle)
     }
 
     // draw curve
-    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+    cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
     cr->move_to (graphX_, getVal(point, 0) * -graphH_ + graphY_);
 
     for (int i = 1; i < graphW - 2; ++i) {
@@ -424,14 +428,14 @@ void MyDiagonalCurve::draw (int handle)
     // draw the left colored bar
     if (leftBar) {
         // first the background
-        int bWidth = getBarWidth();
+        int bWidth = CBAR_WIDTH;
         BackBuffer *bb = this;
         leftBar->setDrawRectangle(win, 1, graphY - graphH + 1, bWidth - 2, graphH - 2);
         leftBar->expose(bb);
 
         // now the border
-        c = style->get_dark (state);
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        c = style->get_border_color(state);
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
         cr->rectangle(0.5, graphY - graphH + 0.5, bWidth - 1, graphH - 1);
         cr->stroke();
     }
@@ -439,21 +443,21 @@ void MyDiagonalCurve::draw (int handle)
     // draw the bottom colored bar
     if (bottomBar) {
         // first the background
-        int bWidth = getBarWidth();
+        int bWidth = CBAR_WIDTH;
         BackBuffer *bb = this;
         bottomBar->setDrawRectangle(win, graphX + 1, graphY + CBAR_MARGIN + 1, graphW - 2, bWidth - 2);
         bottomBar->expose(bb);
 
         // now the border
-        c = style->get_dark (state);
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        c = style->get_border_color (state);
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
         cr->rectangle(graphX + 0.5, graphY + CBAR_MARGIN + 0.5, graphW - 1, bWidth - 1 );
         cr->stroke();
     }
 
     // draw bullets
     if (curve.type != DCT_Parametric) {
-        c = style->get_fg (state);
+        c = style->get_color (state);
 
         for (int i = 0; i < (int)curve.x.size(); ++i) {
             if (curve.x.at(i) == -1) {
@@ -466,13 +470,13 @@ void MyDiagonalCurve::draw (int handle)
                 if (i >= (pt - 1) && i <= (pt + 1)) {
                     cr->set_source_rgb(1.0, 0.0, 0.0);
                 } else {
-                    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+                    cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
                 }
             } else {
                 if (i == handle || i == snapToElmt || i == edited_point) {
                     cr->set_source_rgb (1.0, 0.0, 0.0);
                 } else {
-                    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+                    cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
                 }
             }
 
@@ -494,6 +498,27 @@ void MyDiagonalCurve::draw (int handle)
 
     setDirty(false);
     queue_draw();
+}
+
+bool MyDiagonalCurve::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
+{
+    Glib::RefPtr<Gdk::Window> win = get_window();
+    Gtk::Allocation allocation = get_allocation();
+    allocation.set_x(0);
+    allocation.set_y(0);
+
+    // setDrawRectangle will allocate the backbuffer Surface
+    if (setDrawRectangle(win, allocation)) {
+        setDirty(true);
+
+        if (prevGraphW > GRAPH_SIZE || graphW > GRAPH_SIZE) {
+            curveIsDirty = true;
+        }
+    }
+
+    draw (lit_point);
+    copySurface(cr);
+    return false;
 }
 
 /*void MyDiagonalCurve::graphSizeRequest (Gtk::Requisition* req) {
@@ -522,43 +547,6 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
     double minDistanceY = double(MIN_DISTANCE) / double(graphH - 1);
 
     switch (event->type) {
-    case Gdk::CONFIGURE: {
-        // Happen when the the window is resized
-        if (sized & (RS_Pending | RS_Force)) {
-            set_size_request(-1, calcDimensions());
-            sized = RS_Done;
-        }
-
-        retval = true;
-        break;
-    }
-
-    case Gdk::EXPOSE: {
-        Glib::RefPtr<Gdk::Window> win = get_window();
-
-        if (sized & (RS_Pending | RS_Force)) {
-            set_size_request(-1, calcDimensions());
-        }
-
-        sized = RS_Pending;
-
-        // setDrawRectangle will allocate the backbuffer Surface
-        if (setDrawRectangle(win, 0, 0, get_allocation().get_width(),  get_allocation().get_height())) {
-            setDirty(true);
-
-            if (prevGraphW > 200 || graphW > 200) {
-                curveIsDirty = true;
-            }
-        }
-
-        draw (lit_point);
-        GdkRectangle *rectangle = &(event->expose.area);
-        copySurface(win, rectangle);
-
-        retval = true;
-        break;
-    }
-
     case Gdk::BUTTON_PRESS:
         snapToElmt = -100;
 
@@ -972,7 +960,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
 
     if (new_type != cursor_type) {
         cursor_type = new_type;
-        cursorManager.setCursor(cursor_type);
+        CursorManager::setCursorOfMainWindow(get_window(), cursor_type);
     }
 
     return retval;
@@ -1544,7 +1532,7 @@ void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist)
     }
 
     mcih->pending++;
-    // Can be done outside of the GUI thread
+    // Can be done outside of the GUI thread, so we're using g_idle_add instead of add_idle
     g_idle_add (diagonalmchistupdateUI, mcih);
 
 }

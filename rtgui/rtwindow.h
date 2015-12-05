@@ -82,7 +82,7 @@ public:
     bool keyPressed (GdkEventKey* event);
     bool on_delete_event(GdkEventAny* event);
     bool on_window_state_event(GdkEventWindowState* event);
-    void on_mainNB_switch_page(GtkNotebookPage* page, guint page_num);
+    void on_mainNB_switch_page(Gtk::Widget* widget, guint page_num);
 
     void showPreferences ();
     void on_realize ();

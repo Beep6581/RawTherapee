@@ -23,24 +23,27 @@
 #include "popupcommon.h"
 #include "../rtengine/safegtk.h"
 #include "rtimage.h"
+#include "guiutils.h"
 
 PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label)
 {
     button = thisButton;
     hasMenu = false;
-    imageContainer = Gtk::manage( new Gtk::HBox(false, 0));
+    imageContainer = Gtk::manage( new Gtk::Grid());
+    setExpandAlignProperties(imageContainer, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     button->set_relief (Gtk::RELIEF_NORMAL);
-    button->set_border_width (0);
     button->add(*imageContainer);
 
-    if (label.size()) {
+    if (!label.empty()) {
         Gtk::Label* buttonLabel = Gtk::manage ( new Gtk::Label(label + " ") );
-        imageContainer->pack_start(*buttonLabel, Gtk::PACK_SHRINK, 0);
+        setExpandAlignProperties(buttonLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+        imageContainer->attach(*buttonLabel, 0, 0, 1, 1);
     }
 
     // Create the global container and put the button in it
-    buttonGroup = Gtk::manage( new Gtk::HBox(false, 0));
-    buttonGroup->pack_start(*button, Gtk::PACK_EXPAND_WIDGET, 0);
+    buttonGroup = Gtk::manage( new Gtk::Grid());
+    setExpandAlignProperties(buttonGroup, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    buttonGroup->attach(*button, 0, 0, 1, 1);
     // Create the list entry
     imageFilenames.clear();
     images.clear();
@@ -54,11 +57,7 @@ PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label)
 
 PopUpCommon::~PopUpCommon ()
 {
-    for (std::vector<RTImage*>::iterator i = images.begin(); i != images.end(); ++i) {
-        delete *i;
-    }
-
-    for (std::vector<Gtk::ImageMenuItem*>::iterator i = items.begin(); i != items.end(); ++i) {
+    for (std::vector<MyImageMenuItem*>::iterator i = items.begin(); i != items.end(); ++i) {
         delete *i;
     }
 
@@ -85,12 +84,10 @@ bool PopUpCommon::addEntry (Glib::ustring fileName, Glib::ustring label)
     if ( label.size() ) {
         imageFilenames.push_back(fileName);
         sItems.push_back(label);
-        // Create the image
-        RTImage* newImage = new RTImage(fileName);
-        images.push_back(newImage);
-        int currPos = (int)images.size();
         // Create the menu item
-        Gtk::ImageMenuItem* newItem = new Gtk::ImageMenuItem (*newImage, label);
+        MyImageMenuItem* newItem = new MyImageMenuItem (label, fileName);
+        images.push_back(newItem->getImage());
+        int currPos = (int)images.size();
         items.push_back(newItem);
 
         if (selected == -1) {
@@ -98,8 +95,9 @@ bool PopUpCommon::addEntry (Glib::ustring fileName, Glib::ustring label)
             menu = new Gtk::Menu ();
             // Create the image for the button
             buttonImage = new RTImage(fileName);
+            setExpandAlignProperties(buttonImage, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
             // Use the first image by default
-            imageContainer->pack_start(*buttonImage, Gtk::PACK_EXPAND_WIDGET);
+            imageContainer->attach_next_to(*buttonImage, Gtk::POS_RIGHT, 1, 1);
             selected = 0;
         }
 
@@ -107,11 +105,12 @@ bool PopUpCommon::addEntry (Glib::ustring fileName, Glib::ustring label)
         if (images.size() == 1) {
             Gtk::Button* arrowButton = Gtk::manage( new Gtk::Button() );
             RTImage* arrowImage = Gtk::manage( new RTImage("popuparrow.png") );
+            setExpandAlignProperties(arrowButton, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
             arrowButton->add(*arrowImage); //menuSymbol);
-            arrowButton->set_relief (Gtk::RELIEF_NONE);
-            arrowButton->set_border_width (0);
-            buttonGroup->pack_start(*arrowButton, Gtk::PACK_SHRINK, 0);
+            buttonGroup->attach_next_to(*arrowButton, *button, Gtk::POS_RIGHT, 1, 1);
             arrowButton->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &PopUpCommon::showMenu) );
+            button->get_style_context()->add_class("Left");
+            arrowButton->get_style_context()->add_class("Right");
             hasMenu = true;
         }
 

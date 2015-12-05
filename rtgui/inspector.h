@@ -48,7 +48,7 @@ private:
     double zoom;
     bool active;
 
-    bool on_expose_event (GdkEventExpose* event);
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     void deleteBuffers();
 
 public:

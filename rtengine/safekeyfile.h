@@ -15,7 +15,7 @@ public :
                      return res; }while(0)
 #else
 #define SAFE_KEY_FILE_METHOD_CODE(method,method_err) \
-            do { std::auto_ptr<Glib::Error> error; \
+            do { std::unique_ptr<Glib::Error> error; \
                 res = Glib::KeyFile::method_err; \
                 if (error.get()){/* TODO */}; \
                 return res;} while(0)

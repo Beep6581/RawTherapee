@@ -32,8 +32,8 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     Gtk::Label *label = NULL;
 
     appliesTo = Gtk::manage (new MyComboBoxText ());
-    appliesTo->append_text (M("TP_RESIZE_CROPPEDAREA"));
-    appliesTo->append_text (M("TP_RESIZE_FULLIMAGE"));
+    appliesTo->append (M("TP_RESIZE_CROPPEDAREA"));
+    appliesTo->append (M("TP_RESIZE_FULLIMAGE"));
     appliesTo->set_active (0);
 
     label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_APPLIESTO")));
@@ -43,8 +43,8 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
 
     // See Resize::methodChanged() when adding a new method.
     method = Gtk::manage (new MyComboBoxText ());
-    method->append_text (M("TP_RESIZE_LANCZOS"));
-    method->append_text (M("TP_RESIZE_NEAREST"));
+    method->append (M("TP_RESIZE_LANCZOS"));
+    method->append (M("TP_RESIZE_NEAREST"));
     method->set_active (0);
 
     label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_METHOD")));
@@ -53,10 +53,10 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     combos->attach (*method, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
     spec = Gtk::manage (new MyComboBoxText ());
-    spec->append_text (M("TP_RESIZE_SCALE"));
-    spec->append_text (M("TP_RESIZE_WIDTH"));
-    spec->append_text (M("TP_RESIZE_HEIGHT"));
-    spec->append_text (M("TP_RESIZE_FITBOX"));
+    spec->append (M("TP_RESIZE_SCALE"));
+    spec->append (M("TP_RESIZE_WIDTH"));
+    spec->append (M("TP_RESIZE_HEIGHT"));
+    spec->append (M("TP_RESIZE_FITBOX"));
     spec->set_active (0);
 
     label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_SPECIFY")));
@@ -593,8 +593,8 @@ void Resize::notifyBBox()
 void Resize::setBatchMode (bool batchMode)
 {
 
-    method->append_text (M("GENERAL_UNCHANGED"));
-    spec->append_text (M("GENERAL_UNCHANGED"));
+    method->append (M("GENERAL_UNCHANGED"));
+    spec->append (M("GENERAL_UNCHANGED"));
     ToolPanel::setBatchMode (batchMode);
     scale->showEditedCB ();
 }

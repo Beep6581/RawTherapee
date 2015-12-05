@@ -82,7 +82,7 @@ private:
     Gtk::RadioButton*  ofromfile;
     Gtk::RadioButton*  iunchanged;
     MyFileChooserButton* ipDialog;
-    std::auto_ptr<FileChooserLastFolderPersister> ipDialogPersister;
+    std::unique_ptr<FileChooserLastFolderPersister> ipDialogPersister;
     Gtk::RadioButton::Group opts;
     Gtk::Button*        saveRef;
     sigc::connection   ipc;

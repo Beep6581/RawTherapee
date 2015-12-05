@@ -30,16 +30,11 @@ ToolVBox::ToolVBox()
 
 void ToolVBox::updateStyle()
 {
-    if (options.slimUI) {
-        set_spacing(1);       // Vertical space between tools
-        set_border_width(1);  // Space separating the tab's frame and the tools
-    } else {
-        set_spacing(2);       // Vertical space between tools
-        set_border_width(1);  // Space separating the tab's frame and the tools  3
-    }
+    set_spacing(1);       // Vertical space between tools
+    set_border_width(1);  // Space separating the tab's frame and the tools
 }
 
-void ToolVBox::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
+void ToolVBox::on_style_updated ()
 {
     updateStyle();
 }
@@ -51,16 +46,11 @@ ToolParamBlock::ToolParamBlock()
 
 void ToolParamBlock::updateStyle()
 {
-    if (options.slimUI) {
-        set_spacing(2);       // Vertical space between parameters in a single tool
-        set_border_width(6);  // Space separating the parameters of a tool and its surrounding frame  6
-    } else {
-        set_spacing(4);       // Vertical space between parameters in a single tool
-        set_border_width(8);  // Space separating the parameters of a tool and its surrounding frame  8
-    }
+    set_spacing(2);       // Vertical space between parameters in a single tool
+    set_border_width(6);  // Space separating the parameters of a tool and its surrounding frame
 }
 
-void ToolParamBlock::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
+void ToolParamBlock::on_style_updated ()
 {
     updateStyle();
 }
@@ -78,7 +68,7 @@ FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, 
 
         Gtk::Label *label = Gtk::manage(new Gtk::Label());
         label->set_markup(Glib::ustring("<b>") + escapeHtmlChars(UILabel) + Glib::ustring("</b>"));
-        label->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER);
+        label->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
         titleHBox->pack_start(*label, Gtk::PACK_EXPAND_WIDGET, 0);
 
         RTImage *image = Gtk::manage (new RTImage("zoom-100-identifier.png"));
@@ -134,6 +124,13 @@ bool FoldableToolPanel::get_inconsistent()
 void FoldableToolPanel::set_inconsistent(bool isInconsistent)
 {
     exp->set_inconsistent(isInconsistent);
+}
+
+void FoldableToolPanel::setLevel (int level)
+{
+    if (exp) {
+        exp->setLevel(level);
+    }
 }
 
 bool FoldableToolPanel::getEnabled()

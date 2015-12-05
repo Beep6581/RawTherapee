@@ -40,7 +40,7 @@ void ProfilePanel::cleanup ()
     delete partialProfileDlg;
 }
 
-ProfilePanel::ProfilePanel (bool readOnly) : storedPProfile(NULL), lastFilename(""), imagePath("")
+ProfilePanel::ProfilePanel () : storedPProfile(NULL), lastFilename(""), imagePath("")
 {
 
     tpc = NULL;
@@ -52,62 +52,45 @@ ProfilePanel::ProfilePanel (bool readOnly) : storedPProfile(NULL), lastFilename(
     fillMode->add( options.filledProfile ? *profileFillModeOnImage : *profileFillModeOffImage );
     fillMode->signal_toggled().connect ( sigc::mem_fun(*this, &ProfilePanel::profileFillModeToggled) );
     fillMode->set_tooltip_text(M("PROFILEPANEL_MODE_TIP"));
+    setExpandAlignProperties(fillMode, false, true, Gtk::ALIGN_START, Gtk::ALIGN_FILL);
 
     // Create the Combobox
     profiles = Gtk::manage (new ProfileStoreComboBox ());
+    setExpandAlignProperties(profiles, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
-    Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
-    hbox->show ();
-//    pack_start (*profiles, Gtk::PACK_SHRINK, 4);
+    Gtk::Grid* hgrid = Gtk::manage (new Gtk::Grid ());
+    hgrid->show ();
+    setExpandAlignProperties(hgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
-    pack_start (*hbox, Gtk::PACK_SHRINK, 4);
+    pack_start (*hgrid, Gtk::PACK_SHRINK, 4);
 
     load = Gtk::manage (new Gtk::Button ());
     load->add (*Gtk::manage (new RTImage ("gtk-open.png")));
-
-    if (!readOnly) {
-        save = Gtk::manage (new Gtk::Button ());
-    }
-
-    if (!readOnly) {
-        save->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
-    }
-
-    if (!readOnly) {
-        copy = Gtk::manage (new Gtk::Button ());
-    }
-
-    if (!readOnly) {
-        copy->add (*Gtk::manage (new RTImage ("edit-copy.png")));
-    }
-
+    load->get_style_context()->add_class("Left");
+    setExpandAlignProperties(load, false, true, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
+    save = Gtk::manage (new Gtk::Button ());
+    save->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
+    save->get_style_context()->add_class("MiddleH");
+    setExpandAlignProperties(save, false, true, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
+    copy = Gtk::manage (new Gtk::Button ());
+    copy->add (*Gtk::manage (new RTImage ("edit-copy.png")));
+    copy->get_style_context()->add_class("MiddleH");
+    setExpandAlignProperties(copy, false, true, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
     paste = Gtk::manage (new Gtk::Button ());
     paste->add (*Gtk::manage (new RTImage ("edit-paste.png")));
+    paste->get_style_context()->add_class("Right");
+    setExpandAlignProperties(paste, false, true, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
 
-    hbox->pack_start (*fillMode, Gtk::PACK_SHRINK, 1);
-    hbox->pack_start (*profiles);
-    hbox->pack_start (*load, Gtk::PACK_SHRINK, 1);
-
-    if (!readOnly) {
-        hbox->pack_start (*save, Gtk::PACK_SHRINK, 1);
-    }
-
-    hbox->pack_start (*copy, Gtk::PACK_SHRINK, 1);
-
-    if (!readOnly) {
-        hbox->pack_start (*paste, Gtk::PACK_SHRINK, 1);
-    }
+    hgrid->attach (*fillMode, 0, 0, 1, 1);
+    hgrid->attach (*profiles, 1, 0, 1, 1);
+    hgrid->attach (*load,     2, 0, 1, 1);
+    hgrid->attach (*save,     3, 0, 1, 1);
+    hgrid->attach (*copy,     4, 0, 1, 1);
+    hgrid->attach (*paste,    5, 0, 1, 1);
 
     load->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &ProfilePanel::load_clicked) );
-
-    if (!readOnly) {
-        save->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &ProfilePanel::save_clicked) );
-    }
-
-    if (!readOnly) {
-        copy->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &ProfilePanel::copy_clicked) );
-    }
-
+    save->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &ProfilePanel::save_clicked) );
+    copy->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &ProfilePanel::copy_clicked) );
     paste->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &ProfilePanel::paste_clicked) );
 
     custom = NULL;
@@ -119,15 +102,8 @@ ProfilePanel::ProfilePanel (bool readOnly) : storedPProfile(NULL), lastFilename(
     changeconn = profiles->signal_changed().connect( sigc::mem_fun(*this, &ProfilePanel::selection_changed) );
 
     load->set_tooltip_markup (M("PROFILEPANEL_TOOLTIPLOAD"));
-
-    if (!readOnly) {
-        save->set_tooltip_markup (M("PROFILEPANEL_TOOLTIPSAVE"));
-    }
-
-    if (!readOnly) {
-        copy->set_tooltip_markup (M("PROFILEPANEL_TOOLTIPCOPY"));
-    }
-
+    save->set_tooltip_markup (M("PROFILEPANEL_TOOLTIPSAVE"));
+    copy->set_tooltip_markup (M("PROFILEPANEL_TOOLTIPCOPY"));
     paste->set_tooltip_markup (M("PROFILEPANEL_TOOLTIPPASTE"));
 
     show_all_children ();
@@ -313,19 +289,19 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
         } catch (Glib::Error &err) {}
 
     //Add response buttons the the dialog:
-    dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
-    dialog.add_button(Gtk::StockID("gtk-save"), Gtk::RESPONSE_OK);
+    dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
+    dialog.add_button(M("GENERAL_SAVE"), Gtk::RESPONSE_OK);
 
     //Add filters, so that only certain file types can be selected:
 
-    Gtk::FileFilter filter_pp;
-    filter_pp.set_name(M("FILECHOOSER_FILTER_PP"));
-    filter_pp.add_pattern("*" + paramFileExtension);
+    Glib::RefPtr<Gtk::FileFilter> filter_pp = Gtk::FileFilter::create();
+    filter_pp->set_name(M("FILECHOOSER_FILTER_PP"));
+    filter_pp->add_pattern("*" + paramFileExtension);
     dialog.add_filter(filter_pp);
 
-    Gtk::FileFilter filter_any;
-    filter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
-    filter_any.add_pattern("*");
+    Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
+    filter_any->set_name(M("FILECHOOSER_FILTER_ANY"));
+    filter_any->add_pattern("*");
     dialog.add_filter(filter_any);
 
 //    dialog.set_do_overwrite_confirmation (true);
@@ -488,19 +464,19 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
         } catch (Glib::Error &err) {}
 
     //Add response buttons the the dialog:
-    dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
-    dialog.add_button(Gtk::StockID("gtk-open"), Gtk::RESPONSE_OK);
+    dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
+    dialog.add_button(M("GENERAL_OPEN"), Gtk::RESPONSE_OK);
 
     //Add filters, so that only certain file types can be selected:
 
-    Gtk::FileFilter filter_pp;
-    filter_pp.set_name(M("FILECHOOSER_FILTER_PP"));
-    filter_pp.add_pattern("*" + paramFileExtension);
+    Glib::RefPtr<Gtk::FileFilter> filter_pp = Gtk::FileFilter::create();
+    filter_pp->set_name(M("FILECHOOSER_FILTER_PP"));
+    filter_pp->add_pattern("*" + paramFileExtension);
     dialog.add_filter(filter_pp);
 
-    Gtk::FileFilter filter_any;
-    filter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
-    filter_any.add_pattern("*");
+    Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
+    filter_any->set_name(M("FILECHOOSER_FILTER_ANY"));
+    filter_any->add_pattern("*");
     dialog.add_filter(filter_any);
 
     int result = dialog.run();
