@@ -76,23 +76,17 @@ Cairo::RefPtr<Cairo::ImageSurface> safe_create_from_png(const Glib::ustring& fil
 Glib::RefPtr<Gio::FileInfo> safe_query_file_info (Glib::RefPtr<Gio::File> &file)
 {
     Glib::RefPtr<Gio::FileInfo> info;
-#ifdef GLIBMM_EXCEPTIONS_ENABLED
 
     try {
         info = file->query_info();
     } catch (...) {  }
 
-#else
-    std::unique_ptr<Glib::Error> error;
-    info = file->query_info("*", Gio::FILE_QUERY_INFO_NONE, error);
-#endif
     return info;
 }
 
 Glib::RefPtr<Gio::FileInfo> safe_next_file (Glib::RefPtr<Gio::FileEnumerator> &dirList)
 {
     Glib::RefPtr<Gio::FileInfo> info;
-#ifdef GLIBMM_EXCEPTIONS_ENABLED
     bool retry;
     Glib::ustring last_error = "";
 
@@ -113,42 +107,15 @@ Glib::RefPtr<Gio::FileInfo> safe_next_file (Glib::RefPtr<Gio::FileEnumerator> &d
         }
     } while (retry);
 
-#else
-    bool retry;
-    Glib::ustring last_error = "";
-
-    do {
-        retry = false;
-        std::unique_ptr<Glib::Error> error;
-        Glib::RefPtr<Gio::Cancellable> cancellable;
-        info = dirList->next_file(cancellable, error);
-
-        if (!info && error.get()) {
-            printf ("%s\n", error.what().c_str());
-            retry = (error.what() != last_error);
-            last_error = error.what();
-        }
-    } while (retry);
-
-#endif
     return info;
 }
 
-#ifdef GLIBMM_EXCEPTIONS_ENABLED
 # define SAFE_ENUMERATOR_CODE_START \
                 do{try {    if ((dirList = dir->enumerate_children ())) \
                         for (Glib::RefPtr<Gio::FileInfo> info = safe_next_file(dirList); info; info = safe_next_file(dirList)) {
 
 # define SAFE_ENUMERATOR_CODE_END \
                 }}  catch (Glib::Exception& ex) {   printf ("%s\n", ex.what().c_str()); }}while(0)
-#else
-# define SAFE_ENUMERATOR_CODE_START \
-                do{std::unique_ptr<Glib::Error> error;    Glib::RefPtr<Gio::Cancellable> cancellable; \
-                    if ((dirList = dir->enumerate_children (cancellable, "*", Gio::FILE_QUERY_INFO_NONE, error))) \
-                        for (Glib::RefPtr<Gio::FileInfo> info = safe_next_file(dirList); info; info = safe_next_file(dirList)) {
-
-# define SAFE_ENUMERATOR_CODE_END   } if (error.get())  printf ("%s\n", error->what().c_str());}while (0)
-#endif
 
 #ifdef WIN32
 
@@ -277,7 +244,6 @@ Glib::ustring safe_filename_to_utf8 (const std::string& src)
 {
     Glib::ustring utf8_str;
 #ifdef WIN32
-#ifdef GLIBMM_EXCEPTIONS_ENABLED
 
     try {
         utf8_str = Glib::locale_to_utf8(src);
@@ -285,16 +251,6 @@ Glib::ustring safe_filename_to_utf8 (const std::string& src)
         utf8_str = Glib::convert_with_fallback(src, "UTF-8", "ISO-8859-1", "?");
     }
 
-#else
-    {
-        std::unique_ptr<Glib::Error> error;
-        utf8_str = locale_to_utf8(src, error);
-
-        if (error.get()) {
-            utf8_str = Glib::convert_with_fallback(src, "UTF-8", "ISO-8859-1", "?", error);
-        }
-    }
-#endif //GLIBMM_EXCEPTIONS_ENABLED
 #else
     utf8_str = Glib::filename_to_utf8(src);
 #endif
@@ -304,7 +260,6 @@ Glib::ustring safe_filename_to_utf8 (const std::string& src)
 Glib::ustring safe_locale_to_utf8 (const std::string& src)
 {
     Glib::ustring utf8_str;
-#ifdef GLIBMM_EXCEPTIONS_ENABLED
 
     try {
         utf8_str = Glib::locale_to_utf8(src);
@@ -312,23 +267,12 @@ Glib::ustring safe_locale_to_utf8 (const std::string& src)
         utf8_str = Glib::convert_with_fallback(src, "UTF-8", "ISO-8859-1", "?");
     }
 
-#else
-    {
-        std::unique_ptr<Glib::Error> error;
-        utf8_str = locale_to_utf8(src, error);
-
-        if (error.get()) {
-            utf8_str = Glib::convert_with_fallback(src, "UTF-8", "ISO-8859-1", "?", error);
-        }
-    }
-#endif //GLIBMM_EXCEPTIONS_ENABLED
     return utf8_str;
 }
 
 std::string safe_locale_from_utf8 (const Glib::ustring& utf8_str)
 {
     std::string str;
-#ifdef GLIBMM_EXCEPTIONS_ENABLED
 
     try {
         str = Glib::locale_from_utf8(utf8_str);
@@ -336,14 +280,6 @@ std::string safe_locale_from_utf8 (const Glib::ustring& utf8_str)
         //str = Glib::convert_with_fallback(utf8_str, "ISO-8859-1", "UTF-8", "?");
     }
 
-#else
-    {
-        std::unique_ptr<Glib::Error> error;
-        str = Glib::locale_from_utf8(utf8_str, error);
-        /*if (error.get())
-            {str = Glib::convert_with_fallback(utf8_str, "ISO-8859-1", "UTF-8", "?", error);}*/
-    }
-#endif //GLIBMM_EXCEPTIONS_ENABLED
     return str;
 }
 
@@ -351,7 +287,6 @@ bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
 {
     std::string cmd;
     bool success = false;
-#ifdef GLIBMM_EXCEPTIONS_ENABLED
 
     try {
         cmd = Glib::filename_from_utf8(cmd_utf8);
@@ -362,22 +297,6 @@ bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
         printf ("%s\n", ex.what().c_str());
     }
 
-#else
-    std::unique_ptr<Glib::Error> error;
-    cmd = Glib::filename_from_utf8(cmd_utf8, error);
-
-    if (!error.get())   {
-        printf ("command line: %s\n", cmd.c_str());
-        Glib::spawn_command_line_async (cmd, error);
-    }
-
-    if (error.get()) {
-        printf ("%s\n", error->what().c_str());
-    } else {
-        success = true;
-    }
-
-#endif
     return success;
 }
 
