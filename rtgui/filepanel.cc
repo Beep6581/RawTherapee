@@ -61,10 +61,11 @@ FilePanel::FilePanel () : parent(NULL)
 
     placesBrowser->setDirBrowserRemoteInterface (dirBrowser);
     recentBrowser->setDirBrowserRemoteInterface (dirBrowser);
-    dirBrowser->addDirSelectionListener (fileCatalog);
-    dirBrowser->addDirSelectionListener (recentBrowser);
-    dirBrowser->addDirSelectionListener (placesBrowser);
-    dirBrowser->addDirSelectionListener (tpc);
+    DirBrowser::DirSelectionSignal dirSelected = dirBrowser->dirSelected ();
+    dirSelected.connect (sigc::mem_fun (fileCatalog, &FileCatalog::dirSelected));
+    dirSelected.connect (sigc::mem_fun (recentBrowser, &RecentBrowser::dirSelected));
+    dirSelected.connect (sigc::mem_fun (placesBrowser, &PlacesBrowser::dirSelected));
+    dirSelected.connect (sigc::mem_fun (tpc, &BatchToolPanelCoordinator::dirSelected));
     fileCatalog->setFileSelectionListener (this);
     fileCatalog->setDirBrowserRemoteInterface (dirBrowser);
 

@@ -23,7 +23,6 @@
 #include "windirmonitor.h"
 #endif
 #include "dirbrowserremoteinterface.h"
-#include "dirselectionlistener.h"
 #include "filebrowser.h"
 #include "exiffiltersettings.h"
 #include <giomm.h>
@@ -60,7 +59,6 @@ class FilePanel;
  *   - monitoring the directory (for any change)
  */
 class FileCatalog : public Gtk::VBox,
-    public DirSelectionListener,
     public PreviewLoaderListener,
     public FilterPanelListener,
     public FileBrowserListener,
@@ -175,7 +173,7 @@ public:
 
     FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel);
     ~FileCatalog();
-    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile = "");
+    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile);
     void closeDir    ();
     void refreshEditedState (const std::set<Glib::ustring>& efiles);
 

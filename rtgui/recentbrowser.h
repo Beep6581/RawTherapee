@@ -21,11 +21,10 @@
 
 #include <gtkmm.h>
 #include "dirbrowserremoteinterface.h"
-#include "dirselectionlistener.h"
 #include "multilangmgr.h"
 #include "guiutils.h"
 
-class RecentBrowser : public Gtk::VBox, public DirSelectionListener
+class RecentBrowser : public Gtk::VBox
 {
 
     Gtk::ComboBoxText*              recentDirs;
@@ -42,7 +41,7 @@ public:
     }
 
     void selectionChanged ();
-    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile = "");
+    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile);
 };
 
 #endif
