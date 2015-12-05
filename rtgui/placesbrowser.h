@@ -22,10 +22,9 @@
 #include <gtkmm.h>
 #include <giomm.h>
 #include "dirbrowserremoteinterface.h"
-#include "dirselectionlistener.h"
 #include "multilangmgr.h"
 
-class PlacesBrowser : public Gtk::VBox, public DirSelectionListener
+class PlacesBrowser : public Gtk::VBox
 {
 
     class PlacesColumns : public Gtk::TreeModel::ColumnRecord
@@ -63,7 +62,7 @@ public:
     {
         listener = l;
     }
-    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile = "");
+    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile);
 
     void refreshPlacesList ();
     void mountChanged (const Glib::RefPtr<Gio::Mount>& m);
