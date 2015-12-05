@@ -21,11 +21,14 @@
 
 #include <gtkmm.h>
 #include <giomm.h>
-#include "dirbrowserremoteinterface.h"
 #include "multilangmgr.h"
 
 class PlacesBrowser : public Gtk::VBox
 {
+public:
+    typedef sigc::slot<void, const Glib::ustring&> DirSelectionSlot;
+
+private:
 
     class PlacesColumns : public Gtk::TreeModel::ColumnRecord
     {
@@ -49,7 +52,7 @@ class PlacesBrowser : public Gtk::VBox
     Gtk::TreeView*          treeView;
     Glib::RefPtr<Gtk::ListStore> placesModel;
     Glib::RefPtr<Gio::VolumeMonitor> vm;
-    DirBrowserRemoteInterface* listener;
+    DirSelectionSlot             selectDir;
     Glib::ustring                lastSelectedDir;
     Gtk::Button*                 add;
     Gtk::Button*                 del;
@@ -58,10 +61,7 @@ public:
 
     PlacesBrowser ();
 
-    void setDirBrowserRemoteInterface (DirBrowserRemoteInterface* l)
-    {
-        listener = l;
-    }
+    void setDirSelector (const DirSelectionSlot& selectDir);
     void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile);
 
     void refreshPlacesList ();
@@ -73,6 +73,11 @@ public:
     void addPressed ();
     void delPressed ();
 };
+
+inline void PlacesBrowser::setDirSelector (const PlacesBrowser::DirSelectionSlot& selectDir)
+{
+    this->selectDir = selectDir;
+}
 
 #endif
 
