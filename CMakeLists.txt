@@ -1,10 +1,16 @@
-if (WIN32)
-  cmake_minimum_required(VERSION 2.8.4)
-else (WIN32)
-  cmake_minimum_required(VERSION 2.6)
-endif (WIN32)
+cmake_minimum_required(VERSION 3.1)
 
 PROJECT(RawTherapee)
+
+# set required C and C++ standards and check GCC version
+SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11")
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9")
+    message(WARNING "RawTherapee should be built using GCC version 4.9 or higher!")
+  endif()
+endif()
 
 # the default target is 'Debug'
 if (CMAKE_BUILD_TYPE STREQUAL "")
@@ -12,16 +18,6 @@ if (CMAKE_BUILD_TYPE STREQUAL "")
 endif ()
 
 string (TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
-
-# assuming that Linux and Apple users will have gtk2 built by their installed gcc
-if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
-  if (GCC_VERSION VERSION_GREATER 5.0 OR GCC_VERSION VERSION_EQUAL 5.0)
-    #message(STATUS "Gcc Version >= 5.0 ; adding -D_GLIBCXX_USE_CXX11_ABI=0 to build with Gtk2")
-    #add_definitions (-D_GLIBCXX_USE_CXX11_ABI=0)
-	# see here : https://gcc.gnu.org/gcc-5/changes.html#libstdcxx
-  endif()
-endif()
 
 if (UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
   add_definitions (-D_DEBUG)
@@ -90,15 +86,14 @@ if (APPLE)
     endif ()
 endif (APPLE)
 
-option(USE_EXPERIMENTAL_LANG_VERSIONS "Build RT with -std=c++0x" OFF)
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
 option (WITH_BZIP "Build with Bzip2 support" ON)
 option (WITH_MYFILE_MMAP "Build using memory mapped file" ON)
+option (WITH_LTO "Build with link-time optimizations" OFF)
 option (OPTION_OMP "Build with OpenMP support" ON)
 option (PROTECT_VECTORS "Protect critical vectors by custom R/W Mutex, recommanded even if your std::vector is thread safe" ON)
 option (STRICT_MUTEX "True (recommended): MyMutex will behave like POSIX Mutex; False: MyMutex will behave like POSIX RecMutex; Note: forced to ON for Debug builds" ON)
 option (TRACE_MYRWMUTEX "Trace RT's custom R/W Mutex (Debug builds only); redirecting std::out to a file is strongly recommended!" OFF)
-option (AUTO_GDK_FLUSH "Use gdk_flush on all gdk_thread_leave other than the GUI thread; set it ON if you experience X Server warning/errors" OFF)
 
 # set install directories
 if (WIN32 OR APPLE)
@@ -212,12 +207,6 @@ else (TRACE_MYRWMUTEX)
     add_definitions (-DTRACE_MYRWMUTEX=0)
 endif (TRACE_MYRWMUTEX)
 
-if (AUTO_GDK_FLUSH)
-    add_definitions (-DAUTO_GDK_FLUSH=1)
-else (AUTO_GDK_FLUSH)
-    add_definitions (-DAUTO_GDK_FLUSH=0)
-endif (AUTO_GDK_FLUSH)
-
 # check for libraries
 find_package(PkgConfig)
 pkg_check_modules (GTK     REQUIRED gtk+-3.0>=3.16)
@@ -271,17 +260,18 @@ if (WITH_MYFILE_MMAP)
 	add_definitions (-DMYFILE_MMAP)
 endif (WITH_MYFILE_MMAP)
 
+if (WITH_LTO)
+    SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -flto")
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto")
+    SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
+endif (WITH_LTO)
+
 if (OPTION_OMP)
     find_package(OpenMP)
     if (OPENMP_FOUND)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -Werror=unknown-pragmas")
     endif (OPENMP_FOUND)
 endif (OPTION_OMP)
-
-if(USE_EXPERIMENTAL_LANG_VERSIONS OR NOT (SIGC_VERSION VERSION_LESS 2.5.1))
-	SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu1x")
-	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
-endif ()
 
 # find out whether we are building out of source
 get_filename_component(ABS_SOURCE_DIR "${PROJECT_SOURCE_DIR}" ABSOLUTE)

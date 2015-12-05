@@ -67,7 +67,6 @@ bool simpleEditor;
 Glib::RefPtr<Gtk::CssProvider> cssBase;
 Glib::RefPtr<Gtk::CssProvider> cssForced;
 Glib::RefPtr<Gtk::CssProvider> cssRT;
-//Glib::Threads::Thread* mainThread;
 
 
 // This recursive mutex will be used by gdk_threads_enter/leave instead of a simple mutex
@@ -83,13 +82,6 @@ static void myGdkLockEnter()
 }
 static void myGdkLockLeave()
 {
-    // Automatic gdk_flush for non main tread
-#if AUTO_GDK_FLUSH
-    //if (Glib::Thread::self() != mainThread) {
-    //    gdk_flush();
-    //}
-
-#endif
     myGdkRecMutex.unlock();
 }
 
