@@ -542,7 +542,7 @@ const ProfileStoreEntry* ProfileStoreComboBox::getSelectedEntry()
 }
 
 /** @brief Recursive method to update the combobox entries */
-void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, int parentFolderId, bool initial, const std::vector<const ProfileStoreEntry*> *entryList)
+void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, int parentFolderId, const std::vector<const ProfileStoreEntry*> *entryList)
 {
     for (std::vector<const ProfileStoreEntry*>::const_iterator i = entryList->begin(); i != entryList->end(); i++) {
         if ((*i)->parentFolderId == parentFolderId) {  // filtering the entry of the same folder
@@ -553,28 +553,28 @@ void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, 
                     // creating the new submenu
                     Gtk::TreeModel::Row newSubMenu;
 
-                    if (initial) {
-                        newSubMenu = *(refTreeModel->append());
-                    } else {
+                    if (parentRow) {
                         newSubMenu = *(refTreeModel->append(parentRow->children()));
+                    } else {
+                        newSubMenu = *(refTreeModel->append());
                     }
 
                     // creating and assigning the custom Label object
                     newSubMenu[methodColumns.label] = (*i)->label;
                     newSubMenu[methodColumns.profileStoreEntry] = *i;
 
-                    refreshProfileList_ (&newSubMenu, (*i)->folderId, false, entryList);
+                    refreshProfileList_ (&newSubMenu, (*i)->folderId, entryList);
                 } else {
-                    refreshProfileList_ (parentRow, (*i)->folderId, true, entryList);
+                    refreshProfileList_ (parentRow, (*i)->folderId, entryList);
                 }
             } else {
                 Gtk::TreeModel::Row newItem;
 
                 // creating a menu entry
-                if (initial) {
-                    newItem = *(refTreeModel->append());
-                } else {
+                if (parentRow) {
                     newItem = *(refTreeModel->append(parentRow->children()));
+                } else {
+                    newItem = *(refTreeModel->append());
                 }
 
                 newItem[methodColumns.label] = (*i)->label;
@@ -604,9 +604,8 @@ void ProfileStoreComboBox::updateProfileList ()
     // this will lock the profilestore's entry list too
     const std::vector<const ProfileStoreEntry*> *entryList = profileStore.getFileList();
 
-    Gtk::TreeModel::Row root;
     //profileStore.dumpFolderList();
-    refreshProfileList_ (&root, entryList->at(0)->parentFolderId, true, entryList);
+    refreshProfileList_ (NULL, entryList->at(0)->parentFolderId, entryList);
 
     if (entryList->at(0)->parentFolderId != 0) {
         // special case for the Internal default entry
