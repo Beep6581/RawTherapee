@@ -65,7 +65,7 @@ protected:
 
     Glib::ustring autoCompleteFileName (const Glib::ustring& fileName, const Glib::ustring& format);
     Glib::ustring getTempFilenameForParams( const Glib::ustring filename );
-    bool saveBatchQueue( );
+    bool saveBatchQueue ();
     void notifyListener (bool queueEmptied);
 
 public:

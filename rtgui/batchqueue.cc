@@ -220,259 +220,160 @@ void BatchQueue::addEntries (const std::vector<BatchQueueEntry*>& entries, bool 
     notifyListener (false);
 }
 
-bool BatchQueue::saveBatchQueue( )
+bool BatchQueue::saveBatchQueue ()
 {
-    Glib::ustring savedQueueFile;
-    savedQueueFile = options.rtdir + "/batch/queue.csv";
-    FILE *f = safe_g_fopen (savedQueueFile, "wt");
+    const auto fileName = Glib::build_filename (options.rtdir, "batch", "queue.csv");
 
-    if (f == NULL) {
+    std::ofstream file (fileName, std::ios::trunc);
+
+    if (!file.is_open ())
         return false;
-    }
 
     {
-        // TODO: Check for Linux
 #if PROTECT_VECTORS
         MYREADERLOCK(l, entryRW);
 #endif
+        if (fd.empty ())
+            return true;
 
-        if (fd.size())
-            // The column's header is mandatory (the first line will be skipped when loaded)
-            fprintf(f, "input image full path|param file full path|output image full path|file format|jpeg quality|jpeg subsampling|"
-                    "png bit depth|png compression|tiff bit depth|uncompressed tiff|save output params|force format options|<end of line>\n");
+        // The column's header is mandatory (the first line will be skipped when loaded)
+        file << "input image full path|param file full path|output image full path|file format|jpeg quality|jpeg subsampling|"
+             << "png bit depth|png compression|tiff bit depth|uncompressed tiff|save output params|force format options|<end of line>"
+             << std::endl;
 
         // method is already running with entryLock, so no need to lock again
-        for (std::vector<ThumbBrowserEntryBase*>::iterator pos = fd.begin(); pos != fd.end(); pos++) {
-            BatchQueueEntry* bqe = reinterpret_cast<BatchQueueEntry*>(*pos);
+        for (const auto fdEntry : fd) {
+
+            const auto entry = static_cast<BatchQueueEntry*> (fdEntry);
+            const auto& saveFormat = entry->saveFormat;
+
             // Warning: for code's simplicity in loadBatchQueue, each field must end by the '|' character, safer than ';' or ',' since it can't be used in paths
-            fprintf(f, "%s|%s|%s|%s|%d|%d|%d|%d|%d|%d|%d|%d|\n",
-                    bqe->filename.c_str(), bqe->savedParamsFile.c_str(), bqe->outFileName.c_str(), bqe->saveFormat.format.c_str(),
-                    bqe->saveFormat.jpegQuality, bqe->saveFormat.jpegSubSamp,
-                    bqe->saveFormat.pngBits, bqe->saveFormat.pngCompression,
-                    bqe->saveFormat.tiffBits, bqe->saveFormat.tiffUncompressed,
-                    bqe->saveFormat.saveParams, bqe->forceFormatOpts
-                   );
+            file << entry->filename << '|' << entry->savedParamsFile << '|' << entry->outFileName << '|' << saveFormat.format << '|'
+                 << saveFormat.jpegQuality << '|' << saveFormat.jpegSubSamp << '|'
+                 << saveFormat.pngBits << '|' << saveFormat.pngCompression << '|'
+                 << saveFormat.tiffBits << '|'  << saveFormat.tiffUncompressed << '|'
+                 << saveFormat.saveParams << '|' << entry->forceFormatOpts << '|'
+                 << std::endl;
         }
     }
 
-    fclose (f);
     return true;
 }
 
-bool BatchQueue::loadBatchQueue( )
+bool BatchQueue::loadBatchQueue ()
 {
-    Glib::ustring savedQueueFile;
-    savedQueueFile = options.rtdir + "/batch/queue.csv";
-    FILE *f = safe_g_fopen (savedQueueFile, "rt");
+    const auto fileName = Glib::build_filename (options.rtdir, "batch", "queue.csv");
 
-    if (f != NULL) {
-        char *buffer = new char[1024];
-        unsigned numLoaded = 0;
-        // skipping the first line
-        bool firstLine = true;
+    std::ifstream file (fileName);
 
+    if (file.is_open ()) {
         // Yes, it's better to get the lock for the whole file reading,
         // to update the list in one shot without any other concurrent access!
-
-        // TODO: Check for Linux
 #if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);
 #endif
 
-        while (fgets (buffer, 1024, f)) {
+        std::string row, column;
+        std::vector<std::string> values;
 
-            if (firstLine) {
-                // skipping the column's title line
-                firstLine = false;
+        // skipping the first row
+        std::getline (file, row);
+
+        while (std::getline (file, row)) {
+
+            std::istringstream line (row);
+
+            values.clear ();
+
+            while (std::getline(line, column, '|')) {
+                values.push_back (column);
+            }
+
+            auto value = values.begin ();
+
+            const auto nextStringOr = [&] (const Glib::ustring& defaultValue) -> Glib::ustring
+            {
+                return value != values.end () ? Glib::ustring(*value++) : defaultValue;
+            };
+            const auto nextIntOr = [&] (int defaultValue) -> int
+            {
+                try {
+                    return value != values.end () ? std::stoi(*value++) : defaultValue;
+                }
+                catch (std::exception&) {
+                    return defaultValue;
+                }
+            };
+
+            const auto source = nextStringOr (Glib::ustring ());
+            const auto paramsFile = nextStringOr (Glib::ustring ());
+
+            if (source.empty () || paramsFile.empty ())
                 continue;
+
+            const auto outputFile = nextStringOr (Glib::ustring ());
+            const auto saveFmt = nextStringOr (options.saveFormat.format);
+            const auto jpegQuality = nextIntOr (options.saveFormat.jpegQuality);
+            const auto jpegSubSamp = nextIntOr (options.saveFormat.jpegSubSamp);
+            const auto pngBits = nextIntOr (options.saveFormat.pngBits);
+            const auto pngCompression = nextIntOr (options.saveFormat.pngCompression);
+            const auto tiffBits = nextIntOr (options.saveFormat.tiffBits);
+            const auto tiffUncompressed = nextIntOr (options.saveFormat.tiffUncompressed);
+            const auto saveParams = nextIntOr (options.saveFormat.saveParams);
+            const auto forceFormatOpts = nextIntOr (options.forceFormatOpts);
+
+            rtengine::procparams::ProcParams pparams;
+
+            if (pparams.load (paramsFile))
+                continue;
+
+            auto thumb = CacheManager::getInstance ()->getEntry (source);
+
+            if (!thumb)
+                continue;
+
+            auto job = rtengine::ProcessingJob::create (source, thumb->getType () == FT_Raw, pparams);
+
+            auto prevh = getMaxThumbnailHeight ();
+            auto prevw = prevh;
+            thumb->getThumbnailSize (prevw, prevh, &pparams);
+
+            auto entry = new BatchQueueEntry (job, pparams, source, prevw, prevh, thumb);
+            thumb->decreaseRef ();  // Removing the refCount acquired by cacheMgr->getEntry
+            entry->setParent (this);
+
+            // BatchQueueButtonSet have to be added before resizing to take them into account
+            auto bqbs = new BatchQueueButtonSet (entry);
+            bqbs->setButtonListener (this);
+            entry->addButtonSet (bqbs);
+
+            entry->savedParamsFile = paramsFile;
+            entry->selected = false;
+            entry->outFileName = outputFile;
+
+            if (!outputFile.empty ()) {
+                auto& saveFormat = entry->saveFormat;
+                saveFormat.format = saveFmt;
+                saveFormat.jpegQuality = jpegQuality;
+                saveFormat.jpegSubSamp = jpegSubSamp;
+                saveFormat.pngBits = pngBits;
+                saveFormat.pngCompression = pngCompression;
+                saveFormat.tiffBits = tiffBits;
+                saveFormat.tiffUncompressed = tiffUncompressed != 0;
+                saveFormat.saveParams = saveParams != 0;
+                entry->forceFormatOpts = forceFormatOpts != 0;
+            } else {
+                entry->forceFormatOpts = false;
             }
 
-            size_t pos;
-            Glib::ustring source;
-            Glib::ustring paramsFile;
-            Glib::ustring outputFile;
-            Glib::ustring saveFmt(options.saveFormat.format);
-            int jpegQuality = options.saveFormat.jpegQuality, jpegSubSamp     = options.saveFormat.jpegSubSamp;
-            int pngBits    = options.saveFormat.pngBits,     pngCompression  = options.saveFormat.pngCompression;
-            int tiffBits   = options.saveFormat.tiffBits,    tiffUncompressed = options.saveFormat.tiffUncompressed;
-            int saveParams = options.saveFormat.saveParams;
-            int forceFormatOpts = options.forceFormatOpts;
-
-            Glib::ustring currLine(buffer);
-            int a = 0;
-
-            if (currLine.rfind('\n') != Glib::ustring::npos) {
-                a++;
-            }
-
-            if (currLine.rfind('\r') != Glib::ustring::npos) {
-                a++;
-            }
-
-            if (a) {
-                currLine = currLine.substr(0, currLine.length() - a);
-            }
-
-            // Looking for the image's full path
-            pos = currLine.find('|');
-
-            if (pos != Glib::ustring::npos) {
-                source = currLine.substr(0, pos);
-                currLine = currLine.substr(pos + 1);
-
-                // Looking for the procparams' full path
-                pos = currLine.find('|');
-
-                if (pos != Glib::ustring::npos) {
-                    paramsFile = currLine.substr(0, pos);
-                    currLine = currLine.substr(pos + 1);
-
-                    // Looking for the full output path; if empty, it'll use the template string
-                    pos = currLine.find('|');
-
-                    if (pos != Glib::ustring::npos) {
-                        outputFile = currLine.substr(0, pos);
-                        currLine = currLine.substr(pos + 1);
-
-                        // No need to bother reading the last options, they will be ignored if outputFile is empty!
-                        if (!outputFile.empty()) {
-
-                            // Looking for the saving format
-                            pos = currLine.find('|');
-
-                            if (pos != Glib::ustring::npos) {
-                                saveFmt = currLine.substr(0, pos);
-                                currLine = currLine.substr(pos + 1);
-
-                                // Looking for the jpeg quality
-                                pos = currLine.find('|');
-
-                                if (pos != Glib::ustring::npos) {
-                                    jpegQuality = atoi(currLine.substr(0, pos).c_str());
-                                    currLine = currLine.substr(pos + 1);
-
-                                    // Looking for the jpeg subsampling
-                                    pos = currLine.find('|');
-
-                                    if (pos != Glib::ustring::npos) {
-                                        jpegSubSamp = atoi(currLine.substr(0, pos).c_str());
-                                        currLine = currLine.substr(pos + 1);
-
-                                        // Looking for the png bit depth
-                                        pos = currLine.find('|');
-
-                                        if (pos != Glib::ustring::npos) {
-                                            pngBits = atoi(currLine.substr(0, pos).c_str());
-                                            currLine = currLine.substr(pos + 1);
-
-                                            // Looking for the png compression
-                                            pos = currLine.find('|');
-
-                                            if (pos != Glib::ustring::npos) {
-                                                pngCompression = atoi(currLine.substr(0, pos).c_str());
-                                                currLine = currLine.substr(pos + 1);
-
-                                                // Looking for the tiff bit depth
-                                                pos = currLine.find('|');
-
-                                                if (pos != Glib::ustring::npos) {
-                                                    tiffBits = atoi(currLine.substr(0, pos).c_str());
-                                                    currLine = currLine.substr(pos + 1);
-
-                                                    // Looking for the tiff uncompression
-                                                    pos = currLine.find('|');
-
-                                                    if (pos != Glib::ustring::npos) {
-                                                        tiffUncompressed = atoi(currLine.substr(0, pos).c_str());
-                                                        currLine = currLine.substr(pos + 1);
-
-                                                        // Looking out if we have to save the procparams
-                                                        pos = currLine.find('|');
-
-                                                        if (pos != Glib::ustring::npos) {
-                                                            saveParams = atoi(currLine.substr(0, pos).c_str());
-                                                            currLine = currLine.substr(pos + 1);
-
-                                                            // Looking out if we have to to use the format options
-                                                            pos = currLine.find('|');
-
-                                                            if (pos != Glib::ustring::npos) {
-                                                                forceFormatOpts = atoi(currLine.substr(0, pos).c_str());
-                                                                // currLine = currLine.substr(pos+1);
-
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            if( !source.empty() && !paramsFile.empty() ) {
-                rtengine::procparams::ProcParams pparams;
-
-                if( pparams.load( paramsFile ) ) {
-                    continue;
-                }
-
-                ::Thumbnail *thumb = cacheMgr->getEntry( source );
-
-                if( thumb ) {
-                    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create(source, thumb->getType() == FT_Raw, pparams);
-
-                    int prevh = getMaxThumbnailHeight();
-                    int prevw = prevh;
-                    thumb->getThumbnailSize (prevw, prevh, &pparams);
-
-                    BatchQueueEntry *entry = new BatchQueueEntry(job, pparams, source, prevw, prevh, thumb);
-                    thumb->decreaseRef();  // Removing the refCount acquired by cacheMgr->getEntry
-                    entry->setParent(this);
-
-                    // BatchQueueButtonSet HAVE TO be added before resizing to take them into account
-                    BatchQueueButtonSet* bqbs = new BatchQueueButtonSet(entry);
-                    bqbs->setButtonListener(this);
-                    entry->addButtonSet(bqbs);
-
-                    //entry->resize(getThumbnailHeight());
-                    entry->savedParamsFile = paramsFile;
-                    entry->selected = false;
-                    entry->outFileName = outputFile;
-
-                    if (!outputFile.empty()) {
-                        entry->saveFormat.format = saveFmt;
-                        entry->saveFormat.jpegQuality = jpegQuality;
-                        entry->saveFormat.jpegSubSamp = jpegSubSamp;
-                        entry->saveFormat.pngBits = pngBits;
-                        entry->saveFormat.pngCompression = pngCompression;
-                        entry->saveFormat.tiffBits = tiffBits;
-                        entry->saveFormat.tiffUncompressed = tiffUncompressed != 0;
-                        entry->saveFormat.saveParams = saveParams != 0;
-                        entry->forceFormatOpts = forceFormatOpts != 0;
-                    } else {
-                        entry->forceFormatOpts = false;
-                    }
-
-                    fd.push_back(entry);
-
-                    numLoaded++;
-                }
-            }
+            fd.push_back (entry);
         }
-
-        delete [] buffer;
-        fclose(f);
     }
 
-    redraw();
-    notifyListener(false);
+    redraw ();
+    notifyListener (false);
 
-    return !fd.empty();
+    return !fd.empty ();
 }
 
 Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring filename )
