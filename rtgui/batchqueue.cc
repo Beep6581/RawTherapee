@@ -21,6 +21,7 @@
 #include <cstring>
 #include "../rtengine/rt_math.h"
 
+#include <functional>
 #include <iomanip>
 #include <sstream>
 #include <string>
@@ -37,13 +38,13 @@
 using namespace std;
 using namespace rtengine;
 
-BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(NULL), fileCatalog(aFileCatalog), sequence(0), listener(NULL)
+BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(NULL), fileCatalog(aFileCatalog), sequence(0), listener(NULL),
+    pmenu (new Gtk::Menu ())
 {
 
     location = THLOC_BATCHQUEUE;
 
     int p = 0;
-    pmenu = new Gtk::Menu ();
 
     pmenu->attach (*Gtk::manage(open = new Gtk::MenuItem (M("FILEBROWSER_POPUPOPENINEDITOR"))), 0, 1, p, p + 1);
     p++;
@@ -79,9 +80,9 @@ BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(NULL), fileCatal
     cancel->add_accelerator ("activate", pmenu->get_accel_group(), GDK_Delete, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
 
     open->signal_activate().connect(sigc::mem_fun(*this, &BatchQueue::openLastSelectedItemInEditor));
-    cancel->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &BatchQueue::cancelItems), &selected));
-    head->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &BatchQueue::headItems), &selected));
-    tail->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &BatchQueue::tailItems), &selected));
+    cancel->signal_activate().connect (std::bind (&BatchQueue::cancelItems, this, selected));
+    head->signal_activate().connect (std::bind (&BatchQueue::headItems, this, selected));
+    tail->signal_activate().connect (std::bind (&BatchQueue::tailItems, this, selected));
     selall->signal_activate().connect (sigc::mem_fun(*this, &BatchQueue::selectAll));
 
     setArrangement (ThumbBrowserBase::TB_Vertical);
@@ -99,20 +100,18 @@ BatchQueue::~BatchQueue ()
     }
 
     fd.clear ();
-
-    delete pmenu;
 }
 
 void BatchQueue::resizeLoadedQueue()
 {
-    // TODO: Check for Linux
 #if PROTECT_VECTORS
     MYWRITERLOCK(l, entryRW);
 #endif
 
-    for (size_t i = 0; i < fd.size(); i++) {
-        fd.at(i)->resize(getThumbnailHeight());
-    }
+    const auto height = getThumbnailHeight ();
+
+    for (const auto entry : fd)
+        entry->resize(height);
 }
 
 // Reduce the max size of a thumb, since thumb is processed synchronously on adding to queue
@@ -161,72 +160,63 @@ bool BatchQueue::keyPressed (GdkEventKey* event)
         openLastSelectedItemInEditor();
         return true;
     } else if (event->keyval == GDK_Home) {
-        headItems (&selected);
+        headItems (selected);
         return true;
     } else if (event->keyval == GDK_End) {
-        tailItems (&selected);
+        tailItems (selected);
         return true;
     } else if (event->keyval == GDK_Delete) {
-        cancelItems (&selected);
+        cancelItems (selected);
         return true;
     }
 
     return false;
 }
 
-void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head, bool save)
+void BatchQueue::addEntries (const std::vector<BatchQueueEntry*>& entries, bool head, bool save)
 {
     {
-        // TODO: Check for Linux
 #if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);
 #endif
 
-        for( std::vector<BatchQueueEntry*>::iterator entry = entries.begin(); entry != entries.end(); entry++ ) {
-            (*entry)->setParent (this);
+        for (const auto entry : entries) {
 
-            // BatchQueueButtonSet HAVE TO be added before resizing to take them into account
-            BatchQueueButtonSet* bqbs = new BatchQueueButtonSet (*entry);
+            entry->setParent (this);
+
+            // BatchQueueButtonSet have to be added before resizing to take them into account
+            const auto bqbs = new BatchQueueButtonSet (entry);
             bqbs->setButtonListener (this);
-            (*entry)->addButtonSet (bqbs);
+            entry->addButtonSet (bqbs);
 
-            (*entry)->resize (getThumbnailHeight());  // batch queue might have smaller, restricted size
-            Glib::ustring tempFile = getTempFilenameForParams( (*entry)->filename );
+            // batch queue might have smaller, restricted size
+            entry->resize (getThumbnailHeight());
 
             // recovery save
-            if( !(*entry)->params.save( tempFile ) ) {
-                (*entry)->savedParamsFile = tempFile;
-            }
+            const auto tempFile = getTempFilenameForParams (entry->filename);
 
-            (*entry)->selected = false;
+            if (!entry->params.save (tempFile))
+                entry->savedParamsFile = tempFile;
 
-            if (!head) {
-                fd.push_back (*entry);
-            } else {
-                std::vector<ThumbBrowserEntryBase*>::iterator pos;
+            entry->selected = false;
 
-                for (pos = fd.begin(); pos != fd.end(); pos++)
-                    if (!(*pos)->processing) {
-                        fd.insert (pos, *entry);
-                        break;
-                    }
+            // insert either at the end, or before the first non-processing entry
+            auto pos = fd.end ();
 
-                if (pos == fd.end()) {
-                    fd.push_back (*entry);
-                }
-            }
+            if (head)
+                pos = std::find_if (fd.begin (), fd.end (), [] (const ThumbBrowserEntryBase* fdEntry) { return !fdEntry->processing; });
 
-            if ((*entry)->thumbnail) {
-                (*entry)->thumbnail->imageEnqueued ();
-            }
+            fd.insert (pos, entry);
+
+            if (entry->thumbnail)
+                entry->thumbnail->imageEnqueued ();
         }
     }
 
-    if (save) {
-        saveBatchQueue( );
-    }
+    if (save)
+        saveBatchQueue ();
 
-    redraw();
+    redraw ();
     notifyListener (false);
 }
 
@@ -509,107 +499,106 @@ int cancelItemUI (void* data)
     return 0;
 }
 
-void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items)
+void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
 {
     {
-        // TODO: Check for Linux
 #if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);
 #endif
 
-        for (size_t i = 0; i < items->size(); i++) {
-            BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
+        for (const auto item : items) {
 
-            if (entry->processing) {
+            const auto entry = static_cast<BatchQueueEntry*> (item);
+
+            if (entry->processing)
                 continue;
-            }
 
-            std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (fd.begin(), fd.end(), entry);
+            const auto pos = std::find (fd.begin (), fd.end (), entry);
 
-            if (pos != fd.end()) {
-                fd.erase (pos);
-                rtengine::ProcessingJob::destroy (entry->job);
+            if (pos == fd.end ())
+                continue;
 
-                if (entry->thumbnail) {
-                    entry->thumbnail->imageRemovedFromQueue ();
-                }
+            fd.erase (pos);
 
-                g_idle_add (cancelItemUI, entry);
-            }
+            rtengine::ProcessingJob::destroy (entry->job);
+
+            if (entry->thumbnail)
+                entry->thumbnail->imageRemovedFromQueue ();
+
+            g_idle_add (cancelItemUI, entry);
         }
 
-        for (size_t i = 0; i < fd.size(); i++) {
-            fd[i]->selected = false;
-        }
+        for (const auto entry : fd)
+            entry->selected = false;
 
-        lastClicked = NULL;
+        lastClicked = nullptr;
         selected.clear ();
     }
 
-    saveBatchQueue( );
+    saveBatchQueue ();
 
     redraw ();
     notifyListener (false);
 }
 
-void BatchQueue::headItems (std::vector<ThumbBrowserEntryBase*>* items)
+void BatchQueue::headItems (const std::vector<ThumbBrowserEntryBase*>& items)
 {
     {
-        // TODO: Check for Linux
 #if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);
 #endif
+        for (auto item = items.rbegin(); item != items.rend(); ++item) {
 
-        for (int i = items->size() - 1; i >= 0; i--) {
-            BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
+            const auto entry = static_cast<BatchQueueEntry*> (*item);
 
-            if (entry->processing) {
+            if (entry->processing)
                 continue;
-            }
 
-            std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (fd.begin(), fd.end(), entry);
+            const auto pos = std::find (fd.begin (), fd.end (), entry);
 
-            if (pos != fd.end() && pos != fd.begin()) {
-                fd.erase (pos);
+            if (pos == fd.end () || pos == fd.begin ())
+                continue;
 
-                // find the first item that is not under processing
-                for (pos = fd.begin(); pos != fd.end(); pos++)
-                    if (!(*pos)->processing) {
-                        fd.insert (pos, entry);
-                        break;
-                    }
-            }
+            fd.erase (pos);
+
+            // find the first item that is not under processing
+            const auto newPos = std::find_if (fd.begin (), fd.end (), [] (const ThumbBrowserEntryBase* fdEntry) { return !fdEntry->processing; });
+
+            fd.insert (newPos, entry);
         }
     }
-    saveBatchQueue( );
+
+    saveBatchQueue ();
 
     redraw ();
 }
 
-void BatchQueue::tailItems (std::vector<ThumbBrowserEntryBase*>* items)
+void BatchQueue::tailItems (const std::vector<ThumbBrowserEntryBase*>& items)
 {
     {
-        // TODO: Check for Linux
 #if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);
 #endif
 
-        for (size_t i = 0; i < items->size(); i++) {
-            BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
+        for (const auto item : items) {
 
-            if (entry->processing) {
+            const auto entry = static_cast<BatchQueueEntry*> (item);
+
+            if (entry->processing)
                 continue;
-            }
 
-            std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (fd.begin(), fd.end(), entry);
+            const auto pos = std::find (fd.begin (), fd.end (), entry);
 
-            if (pos != fd.end()) {
-                fd.erase (pos);
-                fd.push_back (entry);
-            }
+            if (pos == fd.end ())
+                continue;
+
+            fd.erase (pos);
+
+            fd.push_back (entry);
         }
     }
-    saveBatchQueue( );
+
+    saveBatchQueue ();
 
     redraw ();
 }
@@ -1034,11 +1023,11 @@ void BatchQueue::buttonPressed (LWButton* button, int actionCode, void* actionDa
     bqe.push_back (static_cast<BatchQueueEntry*>(actionData));
 
     if (actionCode == 10) { // cancel
-        cancelItems (&bqe);
+        cancelItems (bqe);
     } else if (actionCode == 8) { // to head
-        headItems (&bqe);
+        headItems (bqe);
     } else if (actionCode == 9) { // to tail
-        tailItems (&bqe);
+        tailItems (bqe);
     }
 }
 
