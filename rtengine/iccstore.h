@@ -89,8 +89,8 @@ public:
     static cmsHPROFILE createFromMatrix (const double matrix[3][3], bool gamma = false, const Glib::ustring& name = Glib::ustring());
 
     // Main monitors standard profile name, from OS
-    const Glib::ustring& getDefaultMonitorProfile () const;
     void findDefaultMonitorProfile ();
+    cmsHPROFILE getDefaultMonitorProfile () const;
 
     cmsHPROFILE      workingSpace (const Glib::ustring& name) const;
     cmsHPROFILE      workingSpaceGamma (const Glib::ustring& name) const;
@@ -129,9 +129,9 @@ inline ProfileContent::~ProfileContent ()
     delete [] data;
 }
 
-inline const Glib::ustring& ICCStore::getDefaultMonitorProfile () const
+inline cmsHPROFILE ICCStore::getDefaultMonitorProfile () const
 {
-    return defaultMonitorProfile;
+    return getProfile (defaultMonitorProfile);
 }
 
 inline std::uint8_t ICCStore::getInputIntents (const Glib::ustring &name) const

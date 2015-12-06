@@ -212,9 +212,9 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 
 #if defined(WIN32)
 
-    cmsHPROFILE monitor = iccStore->getProfile (settings->autoMonitorProfile
-                                                ? iccStore->getDefaultMonitorProfile ()
-                                                : params->icm.monitorProfile);
+    cmsHPROFILE monitor = settings->autoMonitorProfile
+            ? iccStore->getDefaultMonitorProfile ()
+            : iccStore->getProfile (params->icm.monitorProfile);
 
 #else
 
