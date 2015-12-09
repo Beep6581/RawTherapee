@@ -37,74 +37,129 @@ public:
     char* data;
     int   length;
 
-    ProfileContent (): data(NULL), length(0) {}
-    ProfileContent (Glib::ustring fileName);
-    ProfileContent (const ProfileContent& other);
-    ProfileContent (cmsHPROFILE hProfile);
+    ProfileContent ();
     ~ProfileContent ();
+
+    ProfileContent (const ProfileContent& other);
     ProfileContent& operator= (const rtengine::ProfileContent& other);
-    cmsHPROFILE toProfile ();
+
+    ProfileContent (const Glib::ustring& fileName);
+    ProfileContent (cmsHPROFILE hProfile);
+    cmsHPROFILE toProfile () const;
 };
 
 class ICCStore
 {
+    typedef std::map<Glib::ustring, cmsHPROFILE> ProfileMap;
+    typedef std::map<Glib::ustring, TMatrix> MatrixMap;
+    typedef std::map<Glib::ustring, ProfileContent> ContentMap;
+    typedef std::map<Glib::ustring, Glib::ustring> NameMap;
 
-    std::map<Glib::ustring, cmsHPROFILE> wProfiles;
-    std::map<Glib::ustring, cmsHPROFILE> wProfilesGamma;
-    std::map<Glib::ustring, TMatrix> wMatrices;
-    std::map<Glib::ustring, TMatrix> iwMatrices;
+    ProfileMap wProfiles;
+    ProfileMap wProfilesGamma;
+    MatrixMap wMatrices;
+    MatrixMap iwMatrices;
 
     // these contain profiles from user/system directory (supplied on init)
-    std::map<Glib::ustring, cmsHPROFILE>    fileProfiles;
-    std::map<Glib::ustring, ProfileContent> fileProfileContents;
+    Glib::ustring profilesDir;
+    ProfileMap fileProfiles;
+    ContentMap fileProfileContents;
 
     // these contain standard profiles from RT. keys are all in uppercase
-    std::map<Glib::ustring, Glib::ustring>  fileStdProfilesFileNames;
-    std::map<Glib::ustring, cmsHPROFILE>    fileStdProfiles;
+    Glib::ustring stdProfilesDir;
+    NameMap fileStdProfilesFileNames;
+    ProfileMap fileStdProfiles;
 
-    cmsHPROFILE xyz;
-    cmsHPROFILE srgb;
+    Glib::ustring defaultMonitorProfile;
 
-    MyMutex mutex_;
+    const cmsHPROFILE xyz;
+    const cmsHPROFILE srgb;
+
+    mutable MyMutex mutex_;
 
     ICCStore ();
-    void             loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<Glib::ustring, cmsHPROFILE>& resultProfiles, std::map<Glib::ustring, ProfileContent> *resultProfileContents, bool prefetch = false, bool onlyRgb = false);
 
 public:
 
-    static ICCStore* getInstance(void);
-    static cmsHPROFILE makeStdGammaProfile(cmsHPROFILE iprof);
+    static ICCStore* getInstance ();
 
-    Glib::ustring    defaultMonitorProfile;  // Main monitors standard profile name, from OS
-    void             findDefaultMonitorProfile();
+    void init (const Glib::ustring& usrICCDir, const Glib::ustring& stdICCDir);
 
-    int              numOfWProfiles ();
-    cmsHPROFILE      createFromMatrix (const double matrix[3][3], bool gamma = false, Glib::ustring name = "");
-    cmsHPROFILE      workingSpace (Glib::ustring name);
-    cmsHPROFILE      workingSpaceGamma (Glib::ustring name);
-    TMatrix          workingSpaceMatrix (Glib::ustring name);
-    TMatrix          workingSpaceInverseMatrix (Glib::ustring name);
+    static cmsHPROFILE makeStdGammaProfile (cmsHPROFILE iprof);
+    static cmsHPROFILE createFromMatrix (const double matrix[3][3], bool gamma = false, const Glib::ustring& name = Glib::ustring());
 
-    cmsHPROFILE      getProfile   (Glib::ustring name);
-    cmsHPROFILE      getStdProfile(Glib::ustring name);
+    // Main monitors standard profile name, from OS
+    void findDefaultMonitorProfile ();
+    cmsHPROFILE getDefaultMonitorProfile () const;
 
-    void             init         (Glib::ustring usrICCDir, Glib::ustring stdICCDir);
-    ProfileContent   getContent   (Glib::ustring name);
+    cmsHPROFILE      workingSpace (const Glib::ustring& name) const;
+    cmsHPROFILE      workingSpaceGamma (const Glib::ustring& name) const;
+    TMatrix          workingSpaceMatrix (const Glib::ustring& name) const;
+    TMatrix          workingSpaceInverseMatrix (const Glib::ustring& name) const;
 
-    cmsHPROFILE      getXYZProfile ()
-    {
-        return xyz;
-    }
-    cmsHPROFILE      getsRGBProfile ()
-    {
-        return srgb;
-    }
-    std::vector<Glib::ustring> getOutputProfiles ();
+    cmsHPROFILE      getProfile    (const Glib::ustring& name) const;
+    cmsHPROFILE      getStdProfile (const Glib::ustring& name) const;
+    ProfileContent   getContent    (const Glib::ustring& name) const;
+
+    cmsHPROFILE      getXYZProfile  () const;
+    cmsHPROFILE      getsRGBProfile () const;
+
+    std::vector<Glib::ustring> getProfiles () const;
+    std::vector<Glib::ustring> getProfilesFromDir (const Glib::ustring& dirName) const;
+
+    std::uint8_t     getInputIntents  (cmsHPROFILE profile) const;
+    std::uint8_t     getOutputIntents (cmsHPROFILE profile) const;
+    std::uint8_t     getProofIntents  (cmsHPROFILE profile) const;
+
+    std::uint8_t     getInputIntents  (const Glib::ustring& name) const;
+    std::uint8_t     getOutputIntents (const Glib::ustring& name) const;
+    std::uint8_t     getProofIntents  (const Glib::ustring& name) const;
 };
 
 #define iccStore ICCStore::getInstance()
 
-//extern const char* wpnames[];
+inline ProfileContent::ProfileContent () :
+    data(NULL),
+    length(0)
+{
 }
+
+inline ProfileContent::~ProfileContent ()
+{
+    delete [] data;
+}
+
+inline cmsHPROFILE ICCStore::getDefaultMonitorProfile () const
+{
+    return getProfile (defaultMonitorProfile);
+}
+
+inline std::uint8_t ICCStore::getInputIntents (const Glib::ustring &name) const
+{
+    return getInputIntents (getProfile (name));
+}
+
+inline std::uint8_t ICCStore::getOutputIntents (const Glib::ustring &name) const
+{
+    return getOutputIntents (getProfile (name));
+}
+
+inline std::uint8_t ICCStore::getProofIntents (const Glib::ustring &name) const
+{
+    return getProofIntents (getProfile (name));
+}
+
+inline cmsHPROFILE ICCStore::getXYZProfile () const
+{
+    return xyz;
+}
+
+inline cmsHPROFILE ICCStore::getsRGBProfile () const
+{
+    return srgb;
+}
+
+}
+
 #endif
 

@@ -68,6 +68,7 @@ private:
 
     void showMenu(GdkEventButton* event);
     void entrySelected (int i);
+    void setItemSensitivity (int i, bool isSensitive);
 
 };
 

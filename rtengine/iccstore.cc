@@ -29,8 +29,89 @@
 
 #include <cstring>
 
-namespace rtengine
+namespace
 {
+
+void loadProfiles (const Glib::ustring& dirName,
+                   std::map<Glib::ustring, cmsHPROFILE>* profiles,
+                   std::map<Glib::ustring, rtengine::ProfileContent>* profileContents,
+                   std::map<Glib::ustring, Glib::ustring>* profileNames,
+                   bool nameUpper, bool onlyRgb)
+{
+    if (dirName.empty ())
+        return;
+
+    try {
+
+        Glib::Dir dir (dirName);
+
+        for (Glib::DirIterator entry = dir.begin (); entry != dir.end (); ++entry) {
+
+            const Glib::ustring fileName = *entry;
+
+            if (fileName.size () < 4)
+                continue;
+
+            const Glib::ustring extension = fileName.substr (fileName.size () - 4).casefold ();
+
+            if (extension.compare(".icc") == 0 && extension.compare(".icm") == 0)
+                continue;
+
+            const Glib::ustring filePath = Glib::build_filename (dirName, fileName);
+
+            if (!safe_file_test (filePath, Glib::FILE_TEST_IS_REGULAR))
+                continue;
+
+            Glib::ustring name = fileName.substr (0, fileName.size() - 4);
+
+            if (nameUpper)
+                name = name.uppercase ();
+
+            if (profiles) {
+                const rtengine::ProfileContent content (filePath);
+                const cmsHPROFILE profile = content.toProfile ();
+
+                if (profile && (!onlyRgb || cmsGetColorSpace (profile) == cmsSigRgbData)) {
+                    profiles->insert (std::make_pair (name, profile));
+
+                    if (profileContents)
+                        profileContents->insert (std::make_pair (name, content));
+                }
+            }
+
+            if (profileNames)
+                profileNames->insert (std::make_pair (name, filePath));
+        }
+    }
+    catch (Glib::Exception&) {}
+}
+
+inline void getSupportedIntent (cmsHPROFILE profile, cmsUInt32Number intent, cmsUInt32Number direction, std::uint8_t& result)
+{
+    if (cmsIsIntentSupported (profile, intent, direction))
+        result |= 1 << intent;
+}
+
+inline std::uint8_t getSupportedIntents (cmsHPROFILE profile, cmsUInt32Number direction)
+{
+    if (!profile)
+        return 0;
+
+    std::uint8_t result = 0;
+
+    getSupportedIntent (profile, INTENT_PERCEPTUAL, direction, result);
+    getSupportedIntent (profile, INTENT_RELATIVE_COLORIMETRIC, direction, result);
+    getSupportedIntent (profile, INTENT_SATURATION, direction, result);
+    getSupportedIntent (profile, INTENT_ABSOLUTE_COLORIMETRIC, direction, result);
+
+    return result;
+}
+
+inline cmsHPROFILE createXYZProfile ()
+{
+    double mat[3][3] = { {1.0, 0, 0}, {0, 1.0, 0}, {0, 0, 1.0} };
+    return rtengine::ICCStore::createFromMatrix (mat, false, "XYZ");
+}
 
 const double (*wprofiles[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best};
 const double (*iwprofiles[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz};
@@ -43,8 +124,12 @@ const char* wpgamma[] = {"default", "BT709_g2.2_s4.5", "sRGB_g2.4_s12.92", "line
 // high  g=1.3 s=3.35  for high dynamic images
 //low  g=2.6 s=6.9  for low contrast images
 
+}
 
-std::vector<Glib::ustring> getGamma ()  //return gamma
+namespace rtengine
+{
+
+std::vector<Glib::ustring> getGamma ()
 {
 
     std::vector<Glib::ustring> res;
@@ -55,7 +140,6 @@ std::vector<Glib::ustring> getGamma ()  //return gamma
 
     return res;
 }
-
 
 std::vector<Glib::ustring> getWorkingProfiles ()
 {
@@ -69,32 +153,38 @@ std::vector<Glib::ustring> getWorkingProfiles ()
     return res;
 }
 
-std::vector<Glib::ustring> ICCStore::getOutputProfiles ()
+std::vector<Glib::ustring> ICCStore::getProfiles () const
 {
 
     MyMutex::MyLock lock(mutex_);
 
     std::vector<Glib::ustring> res;
 
-    for (std::map<Glib::ustring, cmsHPROFILE>::iterator i = fileProfiles.begin(); i != fileProfiles.end(); i++) {
-        Glib::ustring name(i->first);
-        std::string::size_type  i2 = name.find_last_of('/');
-
-        if( i2 == std::string::npos ) {
-            i2 = name.find_last_of('\\');
-        }
-
-        if( i2 == std::string::npos ) {
-            res.push_back ( name );    // list only profiles inside selected profiles directory
-        }
-    }
+    for (ProfileMap::const_iterator profile = fileProfiles.begin (); profile != fileProfiles.end (); ++profile)
+        res.push_back (profile->first);
 
     return res;
 }
 
+std::vector<Glib::ustring> ICCStore::getProfilesFromDir (const Glib::ustring& dirName) const
+{
 
-cmsHPROFILE
-ICCStore::makeStdGammaProfile(cmsHPROFILE iprof)
+    MyMutex::MyLock lock(mutex_);
+
+    std::vector<Glib::ustring> res;
+
+    ProfileMap profiles;
+
+    loadProfiles (profilesDir, &profiles, NULL, NULL, false, true);
+    loadProfiles (dirName, &profiles, NULL, NULL, false, true);
+
+    for (ProfileMap::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile)
+        res.push_back (profile->first);
+
+    return res;
+}
+
+cmsHPROFILE ICCStore::makeStdGammaProfile (cmsHPROFILE iprof)
 {
     // forgive me for the messy code, quick hack to change gamma of an ICC profile to the RT standard gamma
     if (!iprof) {
@@ -189,14 +279,15 @@ ICCStore::makeStdGammaProfile(cmsHPROFILE iprof)
     return oprof;
 }
 
-ICCStore*
-ICCStore::getInstance(void)
+ICCStore* ICCStore::getInstance ()
 {
     static ICCStore instance_;
     return &instance_;
 }
 
-ICCStore::ICCStore ()
+ICCStore::ICCStore () :
+    xyz (createXYZProfile ()),
+    srgb (cmsCreate_sRGBProfile ())
 {
     //cmsErrorAction (LCMS_ERROR_SHOW);
 
@@ -208,234 +299,172 @@ ICCStore::ICCStore ()
         wMatrices[wpnames[i]] = wprofiles[i];
         iwMatrices[wpnames[i]] = iwprofiles[i];
     }
-
-    double mat[3][3] = { {1.0, 0, 0}, {0, 1.0, 0}, {0, 0, 1.0}};
-    xyz  = createFromMatrix (mat, false, "XYZ");
-    srgb = cmsCreate_sRGBProfile ();
 }
 
-int ICCStore::numOfWProfiles ()
+TMatrix ICCStore::workingSpaceMatrix (const Glib::ustring& name) const
 {
 
-    return sizeof(wpnames) / sizeof(wpnames[0]);
-}
-
-TMatrix ICCStore::workingSpaceMatrix (Glib::ustring name)
-{
-
-    std::map<Glib::ustring, TMatrix>::iterator r = wMatrices.find (name);
+    const MatrixMap::const_iterator r = wMatrices.find (name);
 
     if (r != wMatrices.end()) {
         return r->second;
     } else {
-        return wMatrices["sRGB"];
+        return wMatrices.find ("sRGB")->second;
     }
 }
 
-TMatrix ICCStore::workingSpaceInverseMatrix (Glib::ustring name)
+TMatrix ICCStore::workingSpaceInverseMatrix (const Glib::ustring& name) const
 {
 
-    std::map<Glib::ustring, TMatrix>::iterator r = iwMatrices.find (name);
+    const MatrixMap::const_iterator r = iwMatrices.find (name);
 
     if (r != iwMatrices.end()) {
         return r->second;
     } else {
-        return iwMatrices["sRGB"];
+        return iwMatrices.find ("sRGB")->second;
     }
 }
 
-cmsHPROFILE ICCStore::workingSpace (Glib::ustring name)
+cmsHPROFILE ICCStore::workingSpace (const Glib::ustring& name) const
 {
 
-    std::map<Glib::ustring, cmsHPROFILE>::iterator r = wProfiles.find (name);
+    const ProfileMap::const_iterator r = wProfiles.find (name);
 
     if (r != wProfiles.end()) {
         return r->second;
     } else {
-        return wProfiles["sRGB"];
+        return wProfiles.find ("sRGB")->second;
     }
 }
 
-cmsHPROFILE ICCStore::workingSpaceGamma (Glib::ustring name)
+cmsHPROFILE ICCStore::workingSpaceGamma (const Glib::ustring& name) const
 {
 
-    std::map<Glib::ustring, cmsHPROFILE>::iterator r = wProfilesGamma.find (name);
+    const ProfileMap::const_iterator r = wProfilesGamma.find (name);
 
     if (r != wProfilesGamma.end()) {
         return r->second;
     } else {
-        return wProfilesGamma["sRGB"];
+        return wProfilesGamma.find ("sRGB")->second;
     }
 }
 
-cmsHPROFILE ICCStore::getProfile (Glib::ustring name)
+cmsHPROFILE ICCStore::getProfile (const Glib::ustring& name) const
 {
 
     MyMutex::MyLock lock(mutex_);
 
-    std::map<Glib::ustring, cmsHPROFILE>::iterator r = fileProfiles.find (name);
+    const ProfileMap::const_iterator r = fileProfiles.find (name);
 
-    if (r != fileProfiles.end()) {
+    if (r != fileProfiles.end ())
         return r->second;
-    } else {
-        if (!name.compare (0, 5, "file:") && safe_file_test (name.substr(5), Glib::FILE_TEST_EXISTS) && !safe_file_test (name.substr(5), Glib::FILE_TEST_IS_DIR)) {
-            ProfileContent pc (name.substr(5));
 
-            if (pc.data) {
-                cmsHPROFILE profile = pc.toProfile ();
+    if (name.compare (0, 5, "file:") == 0) {
+        const ProfileContent content (name.substr (5));
+        const cmsHPROFILE profile = content.toProfile ();
 
-                if (profile) {
-                    fileProfiles[name] = profile;
-                    fileProfileContents[name] = pc;
-                    return profile;
-                }
-            }
+        if (profile) {
+            const_cast<ProfileMap&>(fileProfiles).insert(std::make_pair(name, profile));
+            const_cast<ContentMap&>(fileProfileContents).insert(std::make_pair(name, content));
+
+            return profile;
         }
     }
 
     return NULL;
 }
 
-cmsHPROFILE ICCStore::getStdProfile (Glib::ustring name)
+cmsHPROFILE ICCStore::getStdProfile (const Glib::ustring& name) const
 {
+
+    const Glib::ustring nameUpper = name.uppercase ();
 
     MyMutex::MyLock lock(mutex_);
 
-    std::map<Glib::ustring, cmsHPROFILE>::iterator r = fileStdProfiles.find (name.uppercase());
+    const ProfileMap::const_iterator r = fileStdProfiles.find (nameUpper);
 
-    if (r == fileStdProfiles.end()) {
-        // profile is not yet in store
-        std::map<Glib::ustring, Glib::ustring>::iterator f = fileStdProfilesFileNames.find (name.uppercase());
-
-        if(f != fileStdProfilesFileNames.end()) {
-            // but there exists one => load it
-            ProfileContent pc (f->second);
-
-            if (pc.data) {
-                cmsHPROFILE profile = pc.toProfile ();
-
-                if (profile) {
-                    fileStdProfiles[name.uppercase()] = profile;
-                }
-
-                // profile is not valid or it is now stored => remove entry from fileStdProfilesFileNames
-                fileStdProfilesFileNames.erase(f);
-                return profile;
-            } else {
-                // profile not valid => remove entry from fileStdProfilesFileNames
-                fileStdProfilesFileNames.erase(f);
-                return NULL;
-            }
-        } else {
-            // profile does not exist
-            return NULL;
-        }
-    } else {
-        // return profile from store
+    // return profile from store
+    if (r != fileStdProfiles.end ())
         return r->second;
-    }
+
+    // profile is not yet in store
+    const NameMap::const_iterator f = fileStdProfilesFileNames.find (nameUpper);
+
+    // profile does not exist
+    if (f == fileStdProfilesFileNames.end ())
+        return NULL;
+
+    // but there exists one => load it
+    const ProfileContent content (f->second);
+    const cmsHPROFILE profile = content.toProfile ();
+
+    if (profile)
+        const_cast<ProfileMap&>(fileStdProfiles).insert (std::make_pair (f->first, profile));
+
+    // profile is not valid or it is now stored => remove entry from fileStdProfilesFileNames
+    const_cast<NameMap&>(fileStdProfilesFileNames).erase (f);
+    return profile;
 }
 
-ProfileContent ICCStore::getContent (Glib::ustring name)
+ProfileContent ICCStore::getContent (const Glib::ustring& name) const
 {
 
     MyMutex::MyLock lock(mutex_);
 
-    return fileProfileContents[name];
+    const ContentMap::const_iterator r = fileProfileContents.find (name);
+
+    return r != fileProfileContents.end () ? r->second : ProfileContent();
+}
+
+std::uint8_t ICCStore::getInputIntents (cmsHPROFILE profile) const
+{
+
+    MyMutex::MyLock lock (mutex_);
+
+    return getSupportedIntents (profile, LCMS_USED_AS_INPUT);
+}
+
+std::uint8_t ICCStore::getOutputIntents (cmsHPROFILE profile) const
+{
+
+    MyMutex::MyLock lock (mutex_);
+
+    return getSupportedIntents (profile, LCMS_USED_AS_OUTPUT);
+}
+
+std::uint8_t ICCStore::getProofIntents (cmsHPROFILE profile) const
+{
+
+    MyMutex::MyLock lock (mutex_);
+
+    return getSupportedIntents (profile, LCMS_USED_AS_PROOF);
 }
 
 // Reads all profiles from the given profiles dir
-void ICCStore::init (Glib::ustring usrICCDir, Glib::ustring rtICCDir)
+void ICCStore::init (const Glib::ustring& usrICCDir, const Glib::ustring& rtICCDir)
 {
 
     MyMutex::MyLock lock(mutex_);
 
-    //
+    // RawTherapee's profiles take precedence if a user's profile of the same name exists
+    profilesDir = Glib::build_filename (rtICCDir, "output");
     fileProfiles.clear();
     fileProfileContents.clear();
-    // RawTherapee's profiles take precedence if a user's profile of the same name exists
-    loadICCs(Glib::build_filename(rtICCDir, "output"), false, fileProfiles, &fileProfileContents, true, true);
-    loadICCs(usrICCDir, false, fileProfiles, &fileProfileContents, true, true);
+    loadProfiles (profilesDir, &fileProfiles, &fileProfileContents, NULL, false, true);
+    loadProfiles (usrICCDir, &fileProfiles, &fileProfileContents, NULL, false, true);
 
     // Input profiles
     // Load these to different areas, since the short name (e.g. "NIKON D700" may overlap between system/user and RT dir)
+    stdProfilesDir = Glib::build_filename (rtICCDir, "input");
     fileStdProfiles.clear();
     fileStdProfilesFileNames.clear();
-    loadICCs(Glib::build_filename(rtICCDir, "input"), true, fileStdProfiles, NULL);
-}
-
-void ICCStore::loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<Glib::ustring, cmsHPROFILE>& resultProfiles, std::map<Glib::ustring, ProfileContent> *resultProfileContents, bool prefetch, bool onlyRgb)
-{
-    if (rootDirName != "") {
-        std::deque<Glib::ustring> qDirs;
-
-        qDirs.push_front(rootDirName);
-
-        while (!qDirs.empty()) {
-            // process directory
-            Glib::ustring dirname = qDirs.back();
-            qDirs.pop_back();
-
-            Glib::Dir* dir = NULL;
-
-            try {
-                if (!safe_file_test (dirname, Glib::FILE_TEST_IS_DIR)) {
-                    return;
-                }
-
-                dir = new Glib::Dir (dirname);
-            } catch (Glib::Exception& fe) {
-                return;
-            }
-
-            dirname = dirname + "/";
-
-            for (Glib::DirIterator i = dir->begin(); i != dir->end(); ++i) {
-                Glib::ustring fname = dirname + *i;
-                Glib::ustring sname = *i;
-
-                // ignore directories
-                if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
-                    size_t lastdot = sname.find_last_of ('.');
-
-                    if (lastdot != Glib::ustring::npos && lastdot <= sname.size() - 4 && (!sname.casefold().compare (lastdot, 4, ".icm") || !sname.casefold().compare (lastdot, 4, ".icc"))) {
-                        Glib::ustring name = nameUpper ? sname.substr(0, lastdot).uppercase() : sname.substr(0, lastdot);
-
-                        if(!prefetch) {
-                            fileStdProfilesFileNames[name] = fname;
-                        } else {
-                            ProfileContent pc (fname);
-
-                            if (pc.data) {
-                                cmsHPROFILE profile = pc.toProfile ();
-
-                                if (profile && (!onlyRgb || cmsGetColorSpace(profile) == cmsSigRgbData)) {
-                                    resultProfiles[name] = profile;
-
-                                    if(resultProfileContents) {
-                                        (*resultProfileContents)[name] = pc;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Removed recursive scanning, see issue #1730.
-                // To revert to the recursive method, just uncomment the next line.
-
-                //else qDirs.push_front(fname);  // for later scanning
-            }
-
-            delete dir;
-        }
-    }
+    loadProfiles (stdProfilesDir, NULL, NULL, &fileStdProfilesFileNames, true, false);
 }
 
 // Determine the first monitor default profile of operating system, if selected
-void ICCStore::findDefaultMonitorProfile()
+void ICCStore::findDefaultMonitorProfile ()
 {
-    defaultMonitorProfile = "";
+    defaultMonitorProfile.clear ();
 
 #ifdef WIN32
     // Get current main monitor. Could be fine tuned to get the current windows monitor (multi monitor setup),
@@ -466,7 +495,7 @@ void ICCStore::findDefaultMonitorProfile()
     }
 }
 
-ProfileContent::ProfileContent (Glib::ustring fileName) : data(NULL), length(0)
+ProfileContent::ProfileContent (const Glib::ustring& fileName) : data(NULL), length(0)
 {
 
     FILE* f = safe_g_fopen (fileName, "rb");
@@ -518,9 +547,7 @@ ProfileContent& ProfileContent::operator= (const ProfileContent& other)
 
     length = other.length;
 
-    if (data) {
-        delete [] data;
-    }
+    delete [] data;
 
     if (other.data) {
         data = new char[length + 1];
@@ -532,15 +559,7 @@ ProfileContent& ProfileContent::operator= (const ProfileContent& other)
     return *this;
 }
 
-ProfileContent::~ProfileContent ()
-{
-
-    if (data) {
-        delete [] data;
-    }
-}
-
-cmsHPROFILE ProfileContent::toProfile ()
+cmsHPROFILE ProfileContent::toProfile () const
 {
 
     if (data) {
@@ -550,7 +569,7 @@ cmsHPROFILE ProfileContent::toProfile ()
     }
 }
 
-cmsHPROFILE ICCStore::createFromMatrix (const double matrix[3][3], bool gamma, Glib::ustring name)
+cmsHPROFILE ICCStore::createFromMatrix (const double matrix[3][3], bool gamma, const Glib::ustring& name)
 {
 
     static const unsigned phead[] = {
@@ -644,4 +663,5 @@ cmsHPROFILE ICCStore::createFromMatrix (const double matrix[3][3], bool gamma, G
     delete [] oprof;
     return p;
 }
+
 }

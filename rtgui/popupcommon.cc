@@ -19,6 +19,7 @@
  *  Class created by Jean-Christophe FRISCH, aka 'Hombre'
  */
 
+#include <gtkmm.h>
 #include "multilangmgr.h"
 #include "popupcommon.h"
 #include "../rtengine/safegtk.h"
@@ -134,6 +135,14 @@ void PopUpCommon::entrySelected (int i)
         message.emit(selected);
     }
 }
+
+void PopUpCommon::setItemSensitivity (int i, bool isSensitive) {
+    Gtk::Menu_Helpers::MenuList items = menu->items();
+    if (i < items.size()) {
+        items[i].set_sensitive(isSensitive);
+    }
+}
+
 
 /*
  * Set the button image with the selected item
