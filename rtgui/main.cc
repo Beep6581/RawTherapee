@@ -280,7 +280,7 @@ int main(int argc, char **argv)
         options.theme = "21-Gray-Gray";
     } else {
         std::string themeFile = argv0 + "/themes/" + options.theme + ".gtkrc";
-        if (!std::ifstream(themeFile)) {
+        if (!std::ifstream(themeFile.c_str())) {
             printf ("Current theme in options file is invalid:  %s\nChanging to 21-Gray-Gray\n", options.theme.c_str());
             options.theme = "21-Gray-Gray";
         }
