@@ -278,6 +278,12 @@ int main(int argc, char **argv)
 
     if (options.theme.empty()) {
         options.theme = "21-Gray-Gray";
+    } else {
+        std::string themeFile = argv0 + "/themes/" + options.theme + ".gtkrc";
+        if (!std::ifstream(themeFile)) {
+            printf ("Current theme in options file is invalid:  %s\nChanging to 21-Gray-Gray\n", options.theme.c_str());
+            options.theme = "21-Gray-Gray";
+        }
     }
 
     if (!options.useSystemTheme) {
