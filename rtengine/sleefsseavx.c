@@ -901,7 +901,9 @@ static INLINE vdouble xlog1p(vdouble a) {
 typedef struct {
   vfloat x, y;
 } vfloat2;
-#if defined( __FMA__ ) && defined( __x86_64__ )
+#if defined( __FMA4__ ) && defined( __x86_64__ )
+	static INLINE vfloat vmlaf(vfloat x, vfloat y, vfloat z) { return _mm_macc_ps(x,y,z); }
+#elif defined( __FMA__ ) && defined( __x86_64__ )
 	static INLINE vfloat vmlaf(vfloat x, vfloat y, vfloat z) { return _mm_fmadd_ps(x,y,z); }
 #else
 	static INLINE vfloat vmlaf(vfloat x, vfloat y, vfloat z) { return vaddf(vmulf(x, y), z); }
@@ -1203,7 +1205,8 @@ static INLINE vfloat xlogf(vfloat d) {
   vint2 e;
 
   e = vilogbp1f(vmulf(d, vcast_vf_f(0.7071f)));
-  m = vldexpf(d, vsubi2(vcast_vi2_i(0), e));
+  m = vldexpf(d, -e);
+  //m = vldexpf(d, vsubi2(vcast_vi2_i(0), e));
 
   x = vdivf(vaddf(vcast_vf_f(-1.0f), m), vaddf(vcast_vf_f(1.0f), m));
   x2 = vmulf(x, x);
