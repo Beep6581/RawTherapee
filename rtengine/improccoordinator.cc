@@ -31,9 +31,9 @@ extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
     : orig_prev(NULL), oprevi(NULL), oprevl(NULL), nprevl(NULL), previmg(NULL), workimg(NULL),
-      ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true), scale(10),
-      highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false),
-      bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(0.),
+      ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true), monitorIntent(RI_PERCEPTUAL), scale(10),
+      highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false), isColorProfileDirty(true),
+      softProofing(false), bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(0.),
 
       hltonecurve(65536),
       shtonecurve(65536),
@@ -781,9 +781,16 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
     }
 
+    // Update the output color transform if necessary
+    if (isColorProfileDirty || (todo & M_MONITOR)) {
+        ipf.updateColorProfiles(params.icm, monitorProfile, monitorIntent, softProofing);
+        isColorProfileDirty = false;
+    }
+
     // process crop, if needed
     for (size_t i = 0; i < crops.size(); i++)
         if (crops[i]->hasListener () && cropCall != crops[i] ) {
+            crops[i]->setSoftProofing(softProofing);
             crops[i]->update (todo);    // may call ourselves
         }
 
@@ -794,23 +801,23 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     progress ("Conversion to RGB...", 100 * readyphase / numofphases);
 
-    if (todo != CROP && todo != MINUPDATE) {
+    if ((todo != CROP && todo != MINUPDATE) || (todo & M_MONITOR)) {
         MyMutex::MyLock prevImgLock(previmg->getMutex());
 
         try {
-            ipf.lab2monitorRgb (nprevl, previmg);
+            ipf.lab2monitorRgb (nprevl, previmg, softProofing);
             delete workimg;
             Glib::ustring outProfile = params.icm.output;
 
             if(settings->HistogramWorking) {
                 Glib::ustring workProfile = params.icm.working;
-                workimg = ipf.lab2rgb (nprevl, 0, 0, pW, pH, workProfile, true);
+                workimg = ipf.lab2rgb (nprevl, 0, 0, pW, pH, workProfile, RI_RELATIVE, true);  // HOMBRE: was RELATIVE by default in lab2rgb, is it safe to assume we have to use it again ?
             } else {
-                if (params.icm.output == "" || params.icm.output == ColorManagementParams::NoICMString) {
+                if (params.icm.output.empty() || params.icm.output == ColorManagementParams::NoICMString) {
                     outProfile = "sRGB";
                 }
 
-                workimg = ipf.lab2rgb (nprevl, 0, 0, pW, pH, outProfile, false);
+                workimg = ipf.lab2rgb (nprevl, 0, 0, pW, pH, outProfile, params.icm.outputIntent, false);
             }
         } catch(char * str) {
             progress ("Error converting file...", 0);
@@ -1126,6 +1133,28 @@ void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &
     y = (fullh - h) / 2;
 }
 
+void ImProcCoordinator::setSoftProofing (bool softProof)
+{
+    softProofing = softProof;
+}
+
+void ImProcCoordinator::setMonitorProfile (Glib::ustring profile, eRenderingIntent intent)
+{
+    if (profile != monitorProfile) {
+        monitorProfile = profile;
+        isColorProfileDirty = true;
+    }
+    if (intent != monitorIntent) {
+        monitorIntent = intent;
+        isColorProfileDirty = true;
+    }
+}
+
+void ImProcCoordinator::getMonitorProfile (Glib::ustring &profile, eRenderingIntent &intent)
+{
+    profile = monitorProfile;
+    intent = monitorIntent;
+}
 
 void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname, bool apply_wb)
 {

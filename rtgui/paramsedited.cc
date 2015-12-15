@@ -816,6 +816,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         icm.dcpIlluminant = icm.dcpIlluminant && p.icm.dcpIlluminant == other.icm.dcpIlluminant;
         icm.working = icm.working && p.icm.working == other.icm.working;
         icm.output = icm.output && p.icm.output == other.icm.output;
+        icm.outputIntent = icm.outputIntent && p.icm.outputIntent == other.icm.outputIntent;
         icm.gamma = icm.gamma && p.icm.gamma == other.icm.gamma;
         icm.freegamma = icm.freegamma && p.icm.freegamma == other.icm.freegamma;
         icm.gampos = icm.gampos && p.icm.gampos == other.icm.gampos;
@@ -2117,6 +2118,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (icm.output) {
         toEdit.icm.output       = mods.icm.output;
+    }
+
+    if (icm.outputIntent) {
+        toEdit.icm.outputIntent = mods.icm.outputIntent;
     }
 
     //if (icm.gampos)           toEdit.icm.gampos       = mods.icm.gampos;

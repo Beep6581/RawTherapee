@@ -1139,6 +1139,7 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
                 params.icm.input               = options.fastexport_icm_input        ;
                 params.icm.working             = options.fastexport_icm_working      ;
                 params.icm.output              = options.fastexport_icm_output       ;
+                params.icm.outputIntent        = options.fastexport_icm_outputIntent ;
                 params.icm.gamma               = options.fastexport_icm_gamma        ;
                 params.resize.enabled          = options.fastexport_resize_enabled   ;
                 params.resize.scale            = options.fastexport_resize_scale     ;

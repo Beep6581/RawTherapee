@@ -1434,7 +1434,7 @@ void Preferences::storePreferences ()
 
 #if !defined(__APPLE__) // monitor profile not supported on apple
     moptions.rtSettings.monitorProfile      = monProfile->get_active_text ();
-    moptions.rtSettings.monitorIntent       = monIntent->get_active_row_number () > 0 ? INTENT_PERCEPTUAL : INTENT_RELATIVE_COLORIMETRIC;
+    moptions.rtSettings.monitorIntent       = monIntent->get_active_row_number () > 0 ? rtengine::RI_PERCEPTUAL : rtengine::RI_RELATIVE;
 #if defined(WIN32)
     moptions.rtSettings.autoMonitorProfile  = cbAutoMonProfile->get_active ();
 #endif

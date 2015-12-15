@@ -78,6 +78,7 @@ private:
     MyComboBoxText*    wgamma;
 
     MyComboBoxText*    onames;
+    MyComboBoxText*    ointent;
     Gtk::RadioButton*  ofromdir;
     Gtk::RadioButton*  ofromfile;
     Gtk::RadioButton*  iunchanged;

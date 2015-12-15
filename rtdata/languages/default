@@ -773,6 +773,7 @@ MAIN_TOOLTIP_SHOWHIDERP1;Show/Hide the right panel.\nShortcut: <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Show/Hide the top panel.\nShortcut: <b>Shift-l</b>
 MAIN_TOOLTIP_THRESHOLD;Threshold
 MAIN_TOOLTIP_TOGGLE;Toggle the <b>Before</b>/<b>After</b> view.\nShortcut: <b>Shift-b</b>
+MONITOR_PROFILE_SYSTEM;System default
 NAVIGATOR_B;B:
 NAVIGATOR_G;G:
 NAVIGATOR_H;H:
@@ -1512,6 +1513,7 @@ TP_ICM_INPUTPROFILE;Input Profile
 TP_ICM_LABEL;Color Management
 TP_ICM_NOICM;No ICM: sRGB Output
 TP_ICM_OUTPUTPROFILE;Output Profile
+TP_ICM_OUTPUTPROFILEINTENT;Output Rendering Intent
 TP_ICM_SAVEREFERENCE;Save Reference Image for Profiling
 TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.

@@ -186,12 +186,11 @@ void ImProcFunctions::CAT02 (Imagefloat* baseImg, const ProcParams* params)
     }
 }
 */
-void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* params, LUTu & histogram)
+
+
+void ImProcFunctions::updateColorProfiles (const ColorManagementParams &icm, Glib::ustring monitorProfile, eRenderingIntent monitorIntent, bool softProofing)
 {
-
     // set up monitor transform
-    Glib::ustring wprofile = params->icm.working;
-
     if (monitorTransform != NULL) {
         cmsDeleteTransform (monitorTransform);
     }
@@ -210,36 +209,30 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 
 #if !defined(__APPLE__) // No support for monitor profiles on OS X, all data is sRGB
 
-#if defined(WIN32)
+    cmsHPROFILE monitor = iccStore->getProfile (monitorProfile);
 
-    cmsHPROFILE monitor = settings->autoMonitorProfile
-            ? iccStore->getDefaultMonitorProfile ()
-            : iccStore->getProfile (params->icm.monitorProfile);
-
-#else
-
-    cmsHPROFILE monitor = iccStore->getProfile (params->icm.monitorProfile);
-
-#endif
-
+    printf("ImProcFunctions::updateColorProfiles / monitor profile = %s / intent = %d\n", monitorProfile.c_str(), monitorIntent);
     if (monitor) {
         MyMutex::MyLock lcmsLock (*lcmsMutex);
         cmsHPROFILE iprof  = cmsCreateLab4Profile(NULL);
-        monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, params->icm.monitorIntent,
+        printf(" - monitorTransform = cmsCreateTransform / intent=%d\n", monitorIntent);
+        monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, monitorIntent,
                                                cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is for thread safety, NOOPTIMIZE for precision
 
         Glib::ustring outputProfile;
 
-        if (params->icm.output != "" && params->icm.output != ColorManagementParams::NoICMString) {
-            outputProfile = params->icm.output;
+        if (!icm.output.empty() && icm.output != ColorManagementParams::NoICMString) {
+            outputProfile = icm.output;
             cmsHPROFILE jprof = iccStore->getProfile(outputProfile);
 
             if (jprof) {
-                lab2outputTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, jprof, TYPE_RGB_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
+                //TODO: Create a dedicated softproof transformation (line below to be finished)
+                //lab2outputTransform = cmsCreateProofingTransform(iprof, TYPE_Lab_FLT, jprof, TYPE_RGB_FLT, monitor, icm.outputIntent, monitorIntent, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE | cmsFLAGS_SOFTPROOFING );
 
-                if (monitor) {
-                    output2monitorTransform = cmsCreateTransform (jprof, TYPE_RGB_FLT, monitor, TYPE_RGB_8, params->icm.monitorIntent, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
-                }
+                printf(" - lab2outputTransform = cmsCreateTransform / intent=%d\n", icm.outputIntent);
+                lab2outputTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, jprof, TYPE_RGB_FLT, icm.outputIntent, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
+                printf(" - output2monitorTransform = cmsCreateTransform / intent=%d\n", monitorIntent);
+                output2monitorTransform = cmsCreateTransform (jprof, TYPE_RGB_FLT, monitor, TYPE_RGB_8, monitorIntent, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
             }
         }
 
@@ -247,6 +240,13 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
     }
 
 #endif
+}
+
+void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* params, LUTu & histogram)
+{
+
+    Glib::ustring wprofile = params->icm.working;
+
     // calculate histogram of the y channel needed for contrast curve calculation in exposure adjustments
 
     int T = 1;

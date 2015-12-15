@@ -233,6 +233,7 @@ public:
     bool needsPCVignetting ();
 
     void firstAnalysis    (Imagefloat* working, const ProcParams* params, LUTu & vhist16);
+    void updateColorProfiles (const ColorManagementParams &icm, Glib::ustring monitorProfile, eRenderingIntent monitorIntent, bool softProofing);
     void rgbProc          (Imagefloat* working, LabImage* lab, EditBuffer *editBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                            SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit , float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clcurve, LUTf & cl2curve, const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,
                            const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf);
@@ -265,7 +266,7 @@ public:
     void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH,
                            double focalLen, double focalLen35mm, float focusDist, int rawRotationDeg, bool fullImage);
     float resizeScale     (const ProcParams* params, int fw, int fh, int &imw, int &imh);
-    void lab2monitorRgb   (LabImage* lab, Image8* image);
+    void lab2monitorRgb   (LabImage* lab, Image8* image, bool softProofing=false);
     void resize           (Image16* src, Image16* dst, float dScale);
     void Lanczos (const LabImage* src, LabImage* dst, float scale);
     void Lanczos (const Image16* src, Image16* dst, float scale);
@@ -379,9 +380,9 @@ public:
     void Badpixelscam(CieImage * src, CieImage * dst, double radius, int thresh, int mode,  float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom, int hotbad);
     void BadpixelsLab(LabImage * src, LabImage * dst, double radius, int thresh, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom);
 
-    Image8*     lab2rgb   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, bool standard_gamma);
-    Image16*    lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, Glib::ustring profi, Glib::ustring gam, bool freegamma, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6, bool bw);// for gamma output
-    Image16*    lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, bool bw);//without gamma ==>default
+    Image8*     lab2rgb   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, eRenderingIntent intent, bool standard_gamma);
+    Image16*    lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, eRenderingIntent intent, Glib::ustring profi, Glib::ustring gam, bool freegamma, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6, bool bw);// for gamma output
+    Image16*    lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, eRenderingIntent intent, bool bw);//without gamma ==>default
     // CieImage *ciec;
 
     bool transCoord       (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1, const LCPMapper *pLCPMap = NULL);

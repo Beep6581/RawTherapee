@@ -470,6 +470,7 @@ void Options::setDefaults ()
     fastexport_icm_input                 = "(camera)";
     fastexport_icm_working               = "ProPhoto";
     fastexport_icm_output                = "RT_sRGB";
+    fastexport_icm_outputIntent          = rtengine::RI_PERCEPTUAL;
     fastexport_icm_gamma                 = "default";
     fastexport_resize_enabled            = true;
     fastexport_resize_scale              = 1;
@@ -636,7 +637,7 @@ void Options::setDefaults ()
     rtSettings.leveldnautsimpl = 0;
 
     rtSettings.monitorProfile = Glib::ustring();
-    rtSettings.monitorIntent = 1;
+    rtSettings.monitorIntent = rtengine::RI_PERCEPTUAL;
     rtSettings.autoMonitorProfile = false;
     rtSettings.adobe = "RT_Medium_gsRGB"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RT_Large_gBT709"; // these names appear in the menu "output profile"
@@ -1461,7 +1462,7 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("Color Management", "Intent")) {
-                    rtSettings.monitorIntent   = keyFile.get_integer("Color Management", "Intent");
+                    rtSettings.monitorIntent   = static_cast<rtengine::eRenderingIntent>(keyFile.get_integer("Color Management", "Intent"));
                 }
 
                 if (keyFile.has_key ("Color Management", "CRI")) {
@@ -1710,6 +1711,10 @@ int Options::readFromFile (Glib::ustring fname)
 
                 if (keyFile.has_key ("Fast Export", "fastexport_icm_output"               )) {
                     fastexport_icm_output                 = keyFile.get_string  ("Fast Export", "fastexport_icm_output"               );
+                }
+
+                if (keyFile.has_key ("Fast Export", "fastexport_icm_output_intent"        )) {
+                    fastexport_icm_outputIntent           = static_cast<rtengine::eRenderingIntent>(keyFile.get_integer  ("Fast Export", "fastexport_icm_output_intent"        ));
                 }
 
                 if (keyFile.has_key ("Fast Export", "fastexport_icm_gamma"                )) {
@@ -2075,6 +2080,7 @@ int Options::saveToFile (Glib::ustring fname)
     keyFile.set_string  ("Fast Export", "fastexport_icm_input"                 , fastexport_icm_input                );
     keyFile.set_string  ("Fast Export", "fastexport_icm_working"               , fastexport_icm_working              );
     keyFile.set_string  ("Fast Export", "fastexport_icm_output"                , fastexport_icm_output               );
+    keyFile.set_integer ("Fast Export", "fastexport_icm_output_intent"         , fastexport_icm_outputIntent         );
     keyFile.set_string  ("Fast Export", "fastexport_icm_gamma"                 , fastexport_icm_gamma                );
     keyFile.set_boolean ("Fast Export", "fastexport_resize_enabled"            , fastexport_resize_enabled           );
     keyFile.set_double  ("Fast Export", "fastexport_resize_scale"              , fastexport_resize_scale             );

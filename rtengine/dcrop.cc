@@ -33,7 +33,7 @@ extern const Settings* settings;
 Crop::Crop (ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
     : EditBuffer(editDataProvider), origCrop(NULL), laboCrop(NULL), labnCrop(NULL),
       cropImg(NULL), cbuf_real(NULL), cshmap(NULL), transCrop(NULL), cieCrop(NULL), cbuffer(NULL),
-      updating(false), newUpdatePending(false), skip(10),
+      softProofing(false), updating(false), newUpdatePending(false), skip(10),
       cropx(0), cropy(0), cropw(-1), croph(-1),
       trafx(0), trafy(0), trafw(-1), trafh(-1),
       rqcropx(0), rqcropy(0), rqcropw(-1), rqcroph(-1),
@@ -987,7 +987,7 @@ void Crop::update (int todo)
     EditBuffer::setReady();
 
     // switch back to rgb
-    parent->ipf.lab2monitorRgb (labnCrop, cropImg);
+    parent->ipf.lab2monitorRgb (labnCrop, cropImg, softProofing);
 
     //parent->ipf.lab2monitorRgb (laboCrop, cropImg);
 
@@ -1030,13 +1030,13 @@ void Crop::update (int todo)
         Image8 *cropImgtrue;
 
         if(settings->HistogramWorking) {
-            cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0, 0, cropw, croph, workProfile, false);
+            cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0, 0, cropw, croph, workProfile, RI_RELATIVE, false);  // HOMBRE: was RELATIVE by default in lab2rgb, is it safe to assume we have to use it again ?
         } else {
             if (params.icm.output == "" || params.icm.output == ColorManagementParams::NoICMString) {
                 outProfile = "sRGB";
             }
 
-            cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0, 0, cropw, croph, outProfile, false);
+            cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0, 0, cropw, croph, outProfile, params.icm.outputIntent, false);
         }
 
         int finalW = rqcropw;

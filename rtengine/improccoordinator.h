@@ -72,10 +72,17 @@ protected:
 
     ImProcFunctions ipf;
 
+    Glib::ustring monitorProfile;
+
+    eRenderingIntent monitorIntent;
+
     int scale;
     bool highDetailPreprocessComputed;
     bool highDetailRawComputed;
     bool allocated;
+
+    bool isColorProfileDirty;
+    bool softProofing;
 
     void freeAll ();
 
@@ -248,6 +255,10 @@ public:
     void getCamWB    (double& temp, double& green);
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green);
     void getAutoCrop (double ratio, int &x, int &y, int &w, int &h);
+
+    void setMonitorProfile (Glib::ustring profile, eRenderingIntent intent);
+    void getMonitorProfile (Glib::ustring &profile, eRenderingIntent &intent);
+    void setSoftProofing   (bool softProof);
 
     bool updateTryLock ()
     {

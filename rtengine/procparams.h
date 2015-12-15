@@ -23,6 +23,7 @@
 #include <vector>
 #include <cstdio>
 #include <cmath>
+#include <lcms2.h>
 #include "LUT.h"
 #include "coord.h"
 
@@ -40,6 +41,14 @@ class WavOpacityCurveBY;
 class WavOpacityCurveW;
 class WavOpacityCurveWL;
 class RetinextransmissionCurve;
+
+typedef enum RenderingIntent {
+    RI_PERCEPTUAL = INTENT_PERCEPTUAL,
+    RI_RELATIVE = INTENT_RELATIVE_COLORIMETRIC,
+    RI_SATURATION = INTENT_SATURATION,
+    RI_ABSOLUTE = INTENT_ABSOLUTE_COLORIMETRIC,
+    RI__COUNT
+} eRenderingIntent;
 
 namespace procparams
 {
@@ -941,8 +950,7 @@ public:
     int dcpIlluminant;
     Glib::ustring working;
     Glib::ustring output;
-    Glib::ustring monitorProfile; // Not stored persistently as it is just an optional settings override.
-    int monitorIntent; // Not store persistently as it is just an optional settings override.
+    eRenderingIntent outputIntent;
     static const Glib::ustring NoICMString;
 
     Glib::ustring gamma;
