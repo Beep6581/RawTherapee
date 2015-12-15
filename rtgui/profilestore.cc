@@ -563,6 +563,11 @@ void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, 
                     newSubMenu[methodColumns.label] = (*i)->label;
                     newSubMenu[methodColumns.profileStoreEntry] = *i;
 
+                    // HACK: Workaround for bug in Gtk+ 3.18...
+                    Gtk::TreeModel::Row menuHeader = *(refTreeModel->append(newSubMenu->children()));
+                    menuHeader[methodColumns.label] = (*i)->label;
+                    menuHeader[methodColumns.profileStoreEntry] = *i;
+
                     refreshProfileList_ (&newSubMenu, (*i)->folderId, entryList);
                 } else {
                     refreshProfileList_ (parentRow, (*i)->folderId, entryList);
