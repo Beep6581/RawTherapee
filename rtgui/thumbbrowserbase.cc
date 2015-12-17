@@ -34,6 +34,7 @@ ThumbBrowserBase::ThumbBrowserBase ()
     Gtk::HBox* hb1 = Gtk::manage( new Gtk::HBox () );
     Gtk::HBox* hb2 = Gtk::manage( new Gtk::HBox () );
     Gtk::Frame* frame = Gtk::manage( new Gtk::Frame () );
+    frame->get_style_context()->add_class ("filebrowserFrame");
     frame->add (internal);
     frame->set_shadow_type (Gtk::SHADOW_IN );
     hb1->pack_start (*frame);

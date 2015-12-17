@@ -51,7 +51,7 @@ GtkNotebook {
     padding: 4px 4px 4px 4px;
 }
 
-.filebrowser  GtkFrame {
+.filebrowserFrame {
      padding: 0px;
 }
 
