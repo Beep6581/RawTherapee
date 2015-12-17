@@ -118,7 +118,7 @@ private:
     Gtk::Image* iEdited[2], *igEdited[2];
     Gtk::Image* iRecentlySaved[2], *igRecentlySaved[2];
     Gtk::Image *iTrashEmpty, *iTrashFull;
-    Gtk::Image *iNotTrash;
+    Gtk::Image *iNotTrash, *iOriginal;
     Gtk::Image *iRefreshWhite, *iRefreshRed;
     Gtk::Image *iLeftPanel_1_Show, *iLeftPanel_1_Hide, *iRightPanel_1_Show, *iRightPanel_1_Hide;
     Gtk::Image *iQueryClear;

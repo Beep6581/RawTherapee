@@ -286,6 +286,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     bTrash->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event), false);
 
     iNotTrash = new RTImage("trash-hide-deleted.png") ;
+    iOriginal = new RTImage("filter-original-2.png");
 
     bNotTrash = Gtk::manage( new Gtk::ToggleButton () );
     bNotTrash->set_image (*iNotTrash);
@@ -295,7 +296,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     bNotTrash->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event), false);
 
     bOriginal = Gtk::manage( new Gtk::ToggleButton () );
-    bOriginal->set_label ("O"); // TODO: Add icon...
+    bOriginal->set_image (*iOriginal);
     bOriginal->set_tooltip_markup (M("FILEBROWSER_SHOWORIGINALHINT"));
     bOriginal->set_relief (Gtk::RELIEF_NONE);
     bCateg[19] = bOriginal->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bOriginal, true));
@@ -450,6 +451,8 @@ FileCatalog::~FileCatalog()
     delete igUnCLabeled;
     delete iTrashEmpty;
     delete iTrashFull;
+    delete iNotTrash;
+    delete iOriginal;
     delete iRefreshWhite;
     delete iRefreshRed;
     delete iQueryClear;

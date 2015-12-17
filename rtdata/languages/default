@@ -171,7 +171,7 @@ FILEBROWSER_SHOWEDITEDHINT;Show edited images.\nShortcut: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images.\nShortcut: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Show Exif info.\n\nShortcuts:\n<b>i</b> - Multiple Editor Tabs Mode,\n<b>Alt-i</b> - Single Editor Tab Mode.
 FILEBROWSER_SHOWNOTTRASHHINT;Show only non-deleted images.
-FILEBROWSER_SHOWORIGINALHINT;Show only the original images.
+FILEBROWSER_SHOWORIGINALHINT;Show only the original images.\n\nThe orignal images are determined by the position of their file extensions in the parsed extensions list in the preferences. Extensions higher up in that list are considered the originals of those below.
 FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1-star.\nShortcut: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Show images ranked as 2-star.\nShortcut: <b>2</b>
 FILEBROWSER_SHOWRANK3HINT;Show images ranked as 3-star.\nShortcut: <b>3</b>

@@ -1196,10 +1196,12 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     moveExtDown->set_tooltip_text (M("PREFERENCES_PARSEDEXTDOWNHINT"));
     Gtk::Image* addExtImg = Gtk::manage( new RTImage ("list-add-small.png") );
     Gtk::Image* delExtImg = Gtk::manage( new RTImage ("list-remove-red-small.png") );
+    Gtk::Image* moveExtUpImg = Gtk::manage( new RTImage ("arrow-up-small.png") );
+    Gtk::Image* moveExtDownImg = Gtk::manage( new RTImage ("arrow-down-small.png") );
     addExt->add (*addExtImg);
     delExt->add (*delExtImg);
-    moveExtUp->set_label ("↑"); // TODO: Add arrow up image...
-    moveExtDown->set_label ("↓"); // TODO: Add arrow down image...
+    moveExtUp->set_image (*moveExtUpImg);
+    moveExtDown->set_image (*moveExtDownImg);
     hb0->pack_end (*moveExtDown, Gtk::PACK_SHRINK, 4);
     hb0->pack_end (*moveExtUp, Gtk::PACK_SHRINK, 4);
     hb0->pack_end (*delExt, Gtk::PACK_SHRINK, 4);
