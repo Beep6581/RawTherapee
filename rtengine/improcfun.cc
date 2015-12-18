@@ -211,11 +211,9 @@ void ImProcFunctions::updateColorProfiles (const ColorManagementParams &icm, Gli
 
     cmsHPROFILE monitor = iccStore->getProfile (monitorProfile);
 
-    printf("ImProcFunctions::updateColorProfiles / monitor profile = %s / intent = %d\n", monitorProfile.c_str(), monitorIntent);
     if (monitor) {
         MyMutex::MyLock lcmsLock (*lcmsMutex);
         cmsHPROFILE iprof  = cmsCreateLab4Profile(NULL);
-        printf(" - monitorTransform = cmsCreateTransform / intent=%d\n", monitorIntent);
         monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, monitorIntent,
                                                cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is for thread safety, NOOPTIMIZE for precision
 
@@ -229,9 +227,7 @@ void ImProcFunctions::updateColorProfiles (const ColorManagementParams &icm, Gli
                 //TODO: Create a dedicated softproof transformation (line below to be finished)
                 //lab2outputTransform = cmsCreateProofingTransform(iprof, TYPE_Lab_FLT, jprof, TYPE_RGB_FLT, monitor, icm.outputIntent, monitorIntent, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE | cmsFLAGS_SOFTPROOFING );
 
-                printf(" - lab2outputTransform = cmsCreateTransform / intent=%d\n", icm.outputIntent);
                 lab2outputTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, jprof, TYPE_RGB_FLT, icm.outputIntent, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
-                printf(" - output2monitorTransform = cmsCreateTransform / intent=%d\n", monitorIntent);
                 output2monitorTransform = cmsCreateTransform (jprof, TYPE_RGB_FLT, monitor, TYPE_RGB_8, monitorIntent, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
             }
         }

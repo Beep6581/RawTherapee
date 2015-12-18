@@ -478,6 +478,11 @@ void ICCStore::findDefaultMonitorProfile ()
 
             if (GetICMProfileA(hDC, &profileLength, profileName)) {
                 defaultMonitorProfile = Glib::ustring(profileName);
+                defaultMonitorProfile = Glib::path_get_basename(defaultMonitorProfile);
+                size_t pos = defaultMonitorProfile.rfind(".");
+                if (pos != Glib::ustring::npos) {
+                    defaultMonitorProfile = defaultMonitorProfile.substr(0, pos);
+                }
             }
 
             // might fail if e.g. the monitor has no profile

@@ -83,7 +83,8 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 
     dcpFrame = Gtk::manage (new Gtk::Frame ("DCP"));
     Gtk::VBox* dcpFrameVBox = Gtk::manage (new Gtk::VBox ());
-    dcpFrameVBox->set_border_width(4);
+    dcpFrameVBox->set_border_width(0);
+    dcpFrameVBox->set_spacing(2);
 
     Gtk::HBox* dcpIllHBox = Gtk::manage (new Gtk::HBox ());
     dcpIllLabel = Gtk::manage (new Gtk::Label (M("TP_ICM_DCPILLUMINANT") + ":"));
@@ -101,29 +102,25 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     dcpIllHBox->pack_start(*dcpIllLabel, Gtk::PACK_SHRINK, 4);
     dcpIllHBox->pack_start(*dcpIll);
 
-    Gtk::HBox* c1HBox = Gtk::manage ( new Gtk::HBox(true, 4));
     ckbToneCurve = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_TONECURVE")));
     ckbToneCurve->set_sensitive (false);
     ckbToneCurve->set_tooltip_text (M("TP_ICM_TONECURVE_TOOLTIP"));
     ckbApplyHueSatMap = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYHUESATMAP")));
     ckbApplyHueSatMap->set_sensitive (false);
     ckbApplyHueSatMap->set_tooltip_text (M("TP_ICM_APPLYHUESATMAP_TOOLTIP"));
-    c1HBox->pack_start (*ckbToneCurve);
-    c1HBox->pack_start (*ckbApplyHueSatMap);
 
-    Gtk::HBox* c2HBox = Gtk::manage ( new Gtk::HBox(true, 4));
     ckbApplyLookTable = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYLOOKTABLE")));
     ckbApplyLookTable->set_sensitive (false);
     ckbApplyLookTable->set_tooltip_text (M("TP_ICM_APPLYLOOKTABLE_TOOLTIP"));
     ckbApplyBaselineExposureOffset = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYBASELINEEXPOSUREOFFSET")));
     ckbApplyBaselineExposureOffset->set_sensitive (false);
     ckbApplyBaselineExposureOffset->set_tooltip_text (M("TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP"));
-    c2HBox->pack_start (*ckbApplyLookTable);
-    c2HBox->pack_start (*ckbApplyBaselineExposureOffset);
 
-    dcpFrameVBox->pack_start(*dcpIllHBox);
-    dcpFrameVBox->pack_start(*c1HBox);
-    dcpFrameVBox->pack_start(*c2HBox);
+    dcpFrameVBox->pack_start(*dcpIllHBox, Gtk::PACK_SHRINK, 0);
+    dcpFrameVBox->pack_start(*ckbToneCurve, Gtk::PACK_SHRINK,0);
+    dcpFrameVBox->pack_start(*ckbApplyHueSatMap, Gtk::PACK_SHRINK,0);
+    dcpFrameVBox->pack_start(*ckbApplyLookTable, Gtk::PACK_SHRINK,0);
+    dcpFrameVBox->pack_start(*ckbApplyBaselineExposureOffset, Gtk::PACK_SHRINK,0);
     dcpFrame->add(*dcpFrameVBox);
     dcpFrame->set_sensitive(false);
     iVBox->pack_start (*dcpFrame);
@@ -194,16 +191,17 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     onames->set_active (0);
 
     // Rendering intent
-
-    Gtk::Label* outputIntentLbl = Gtk::manage (new Gtk::Label(M("TP_ICM_OUTPUTPROFILEINTENT")));
-    oVBox->pack_start (*outputIntentLbl, Gtk::PACK_SHRINK);
+    Gtk::HBox *riHBox = Gtk::manage ( new Gtk::HBox());
+    Gtk::Label* outputIntentLbl = Gtk::manage (new Gtk::Label(M("TP_ICM_PROFILEINTENT")+":"));
+    riHBox->pack_start (*outputIntentLbl, Gtk::PACK_SHRINK);
     ointent = Gtk::manage (new MyComboBoxText ());
-    oVBox->pack_start (*ointent, Gtk::PACK_EXPAND_WIDGET);
+    riHBox->pack_start (*ointent, Gtk::PACK_EXPAND_WIDGET);
     ointent->append_text (M("PREFERENCES_INTENT_PERCEPTUAL"));
     ointent->append_text (M("PREFERENCES_INTENT_RELATIVE"));
     ointent->append_text (M("PREFERENCES_INTENT_SATURATION"));
     ointent->append_text (M("PREFERENCES_INTENT_ABSOLUTE"));
     ointent->set_active(0);
+    oVBox->pack_start(*riHBox, Gtk::PACK_SHRINK);
 
     // Output gamma
 

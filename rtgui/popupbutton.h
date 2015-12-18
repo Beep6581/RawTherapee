@@ -31,6 +31,7 @@ public:
     PopUpButton (const Glib::ustring& label = "");
     void show ();
     void set_tooltip_text (const Glib::ustring &text);
+    void set_sensitive (bool isSensitive=true);
 };
 
 #endif

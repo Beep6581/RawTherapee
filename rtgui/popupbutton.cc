@@ -39,3 +39,8 @@ void PopUpButton::set_tooltip_text (const Glib::ustring &text)
 {
     PopUpCommon::set_tooltip_text (text);
 }
+
+void PopUpButton::set_sensitive (bool isSensitive)
+{
+    buttonGroup->set_sensitive(isSensitive);
+}

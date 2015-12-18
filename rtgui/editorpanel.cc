@@ -37,9 +37,8 @@ class MonitorProfileSelector
 private:
     Gtk::ToggleButton* softProof;
     MyComboBoxText* profileBox;
-    //PopUpButton* intentBox;
-    MyComboBoxText* intentBox;
-    sigc::connection profileConn, intentConn;
+    PopUpButton* intentBox;
+    sigc::connection profileConn, intentConn, softProofConn;
 
     rtengine::StagedImageProcessor* processor;
 
@@ -51,7 +50,8 @@ private:
         softProof = Gtk::manage(new Gtk::ToggleButton());
         softProof->add(*softProofImg);
         softProof->set_relief(Gtk::RELIEF_NONE);
-        softProof->signal_toggled().connect (sigc::mem_fun (this, &MonitorProfileSelector::softProofToggled));
+        softProof->set_tooltip_text(M("MONITOR_SOFTPROOF"));
+        softProofConn = softProof->signal_toggled().connect (sigc::mem_fun (this, &MonitorProfileSelector::softProofToggled));
     }
 
     void prepareProfileBox ()
@@ -76,17 +76,13 @@ private:
 
     void prepareIntentBox ()
     {
-        intentBox = Gtk::manage(new MyComboBoxText());
-        intentBox->set_size_request(-1,-1);
-        //intentBox = Gtk::manage(new PopUpButton());
-
-        intentBox->append_text (M("PREFERENCES_INTENT_PERCEPTUAL"));
-        intentBox->append_text (M("PREFERENCES_INTENT_RELATIVE"));
-        //intentBox->addEntry("intent-relative.png", M("PREFERENCES_INTENT_RELATIVE"));
-        //intentBox->addEntry("intent-perceptual.png", M("PREFERENCES_INTENT_PERCEPTUAL"));
-        //intentBox->setSelected(0);
-        intentConn = intentBox->signal_changed().connect (sigc::mem_fun (this, &MonitorProfileSelector::updateParameters));
-        //intentConn = intentBox->signal_changed().connect (sigc::mem_fun (this, &MonitorProfileSelector::updateIntent));
+        PopUpButton *bt = new PopUpButton();
+        intentBox = Gtk::manage(bt);
+        intentBox->addEntry("intent-relative.png", M("PREFERENCES_INTENT_RELATIVE"));
+        intentBox->addEntry("intent-perceptual.png", M("PREFERENCES_INTENT_PERCEPTUAL"));
+        intentBox->setSelected(0);
+        intentConn = intentBox->signal_changed().connect (sigc::mem_fun (this, &MonitorProfileSelector::updateIntent));
+        intentBox->show();
     }
 
     void softProofToggled ()
@@ -105,6 +101,7 @@ private:
     void updateParameters ()
     {
         Glib::ustring profile;
+        profileBox->set_tooltip_text(profileBox->get_active_text ());
 #ifdef WIN32
         if (profileBox->get_active_row_number () == 1) {
             profile = rtengine::iccStore->getDefaultMonitorProfileStr ();
@@ -121,23 +118,36 @@ private:
         profile = profileBox->get_active_row_number () > 0 ? profileBox->get_active_text () : Glib::ustring();
 #endif
 
-        std::uint8_t supportedIntents = rtengine::iccStore->getProofIntents (profile);
-        const bool supportsPerceptual = supportedIntents & 1 << INTENT_PERCEPTUAL;
-        const bool supportsRelativeColorimetric = supportedIntents & 1 << INTENT_RELATIVE_COLORIMETRIC;
-
-        if (supportsPerceptual && supportsRelativeColorimetric) {
-            intentBox->set_sensitive (true);
-        }
-        else {
+        // MonitorProfile = None , disabling everything
+        if (profileBox->get_active_row_number () == 0) {
+            profile.clear();
             bool wasBlocked = intentConn.block(true);
-            intentBox->set_active(supportsPerceptual ? 0 : 1);
-            //intentBox->setSelected(supportsPerceptual ? 0 : 1);
+            intentBox->setSelected(1);
             intentBox->set_sensitive (false);
             intentConn.block(wasBlocked);
+            softProof->set_active(false);
+            softProof->set_sensitive(false);
+            wasBlocked = softProofConn.block(true);
+            softProofConn.block(wasBlocked);
+
+        } else {
+            std::uint8_t supportedIntents = rtengine::iccStore->getProofIntents (profile);
+            const bool supportsPerceptual = supportedIntents & 1 << INTENT_PERCEPTUAL;
+            const bool supportsRelativeColorimetric = supportedIntents & 1 << INTENT_RELATIVE_COLORIMETRIC;
+
+            if (supportsPerceptual && supportsRelativeColorimetric) {
+                intentBox->set_sensitive (true);
+            }
+            else {
+                bool wasBlocked = intentConn.block(true);
+                intentBox->setSelected(supportsPerceptual ? 0 : 1);
+                intentBox->set_sensitive (false);
+                intentConn.block(wasBlocked);
+            }
+            softProof->set_sensitive(true);
         }
 
-        //rtengine::eRenderingIntent intent = intentBox->getSelected() > 0 ? rtengine::RI_PERCEPTUAL : rtengine::RI_RELATIVE;
-        rtengine::eRenderingIntent intent = intentBox->get_active_row_number() > 0 ? rtengine::RI_RELATIVE : rtengine::RI_PERCEPTUAL;
+        rtengine::eRenderingIntent intent = intentBox->getSelected() > 0 ? rtengine::RI_PERCEPTUAL : rtengine::RI_RELATIVE;
 
         if (!processor) {
             return;
@@ -148,9 +158,14 @@ private:
         //options.rtSettings.monitorIntent = intent;
 
         // ...or store them locally
-        printf("Appel de processor->setMonitorProfile(%s, %d)\n", profile.c_str(), intent);
+        processor->beginUpdateParams ();
+        if (options.rtSettings.verbose) {
+            printf("Monitor profile: %s, Intent: %s)\n",
+                    profile.empty() ? "None" : profile.c_str(),
+                    intent > 0 ? M("PREFERENCES_INTENT_PERCEPTUAL").c_str() : M("PREFERENCES_INTENT_RELATIVE").c_str()
+                  );
+        }
         processor->setMonitorProfile(profile, intent);
-        printf("Appel de processor->endUpdateParams(%d)\n", rtengine::EvMonitorTransform);
         processor->endUpdateParams (rtengine::EvMonitorTransform);
     }
 
@@ -169,8 +184,8 @@ public:
     void pack_end_in (Gtk::Box* box)
     {
         box->pack_end (*softProof, Gtk::PACK_SHRINK, 0);
-        box->pack_end (*intentBox, Gtk::PACK_SHRINK, 0);
-        box->pack_end (*profileBox, Gtk::PACK_EXPAND_WIDGET, 0);
+        box->pack_end (*intentBox->buttonGroup, Gtk::PACK_SHRINK, 0);
+        box->pack_end (*profileBox, Gtk::PACK_SHRINK, 0);
     }
 
     void reset ()
@@ -190,12 +205,10 @@ public:
         profileConn.block(wasBlocked);
 #endif
         wasBlocked = intentConn.block(true);
-        intentBox->set_active (options.rtSettings.monitorIntent == rtengine::RI_PERCEPTUAL ? 0 : 1);
-        //intentBox->setSelected(options.rtSettings.monitorIntent == rtengine::RI_PERCEPTUAL ? 0 : 1);
+        intentBox->setSelected(options.rtSettings.monitorIntent == rtengine::RI_PERCEPTUAL ? 0 : 1);
         intentConn.block(wasBlocked);
 
-        // useless, set_active will trigger the signal_changed event
-        //updateParameters ();
+        updateParameters();
     }
 
     void setImageProcessor (rtengine::StagedImageProcessor* imageProc) {
@@ -205,7 +218,7 @@ public:
 };
 
 EditorPanel::EditorPanel (FilePanel* filePanel)
-    : realized(false), iHistoryShow(NULL), iHistoryHide(NULL), iTopPanel_1_Show(NULL), iTopPanel_1_Hide(NULL), iRightPanel_1_Show(NULL), iRightPanel_1_Hide(NULL), iBeforeLockON(NULL), iBeforeLockOFF(NULL), beforePreviewHandler(NULL), beforeIarea(NULL), beforeBox(NULL), afterBox(NULL), afterHeaderBox(NULL), parent(NULL), openThm(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL)
+    : realized(false), iHistoryShow(NULL), iHistoryHide(NULL), iTopPanel_1_Show(NULL), iTopPanel_1_Hide(NULL), iRightPanel_1_Show(NULL), iRightPanel_1_Hide(NULL), iBeforeLockON(NULL), iBeforeLockOFF(NULL), beforePreviewHandler(NULL), monitorProfile(new MonitorProfileSelector ()), beforeIarea(NULL), beforeBox(NULL), afterBox(NULL), afterHeaderBox(NULL), parent(NULL), openThm(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL)
 {
 
     epih = new EditorPanelIdleHelper;
@@ -438,7 +451,6 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // Monitor profile buttons
     iops->pack_end (*Gtk::manage(new Gtk::VSeparator()), Gtk::PACK_SHRINK, 0);
-    monitorProfile = new MonitorProfileSelector ();
     monitorProfile->pack_end_in (iops);
 
     editbox->pack_start (*Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0);
@@ -577,7 +589,6 @@ EditorPanel::~EditorPanel ()
     delete ppframe;
     delete leftbox;
     delete vboxright;
-    delete monitorProfile;
 
     //delete saveAsDialog;
     if(catalogPane) {
