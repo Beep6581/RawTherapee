@@ -67,17 +67,19 @@ const Glib::ustring* getOriginalExtension (const ThumbBrowserEntryBase* entry)
 
 ThumbBrowserEntryBase* selectOriginalEntry (ThumbBrowserEntryBase* original, ThumbBrowserEntryBase* candidate)
 {
+    if (original == NULL) {
+        return candidate;
+    }
+
     // The candidate will become the new original, if it has an original extension
     // and if its extension is higher in the list than the old original.
     if (const Glib::ustring* candidateExtension = getOriginalExtension (candidate)) {
-        if (original == NULL) {
-            return candidate;
-        } else if (const Glib::ustring* originalExtension = getOriginalExtension (original)) {
+        if (const Glib::ustring* originalExtension = getOriginalExtension (original)) {
             return candidateExtension < originalExtension ? candidate : original;
         }
-    } else {
-        return original;
     }
+
+    return original;
 }
 
 void findOriginalEntries (const std::vector<ThumbBrowserEntryBase*>& entries)
