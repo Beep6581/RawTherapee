@@ -21,7 +21,13 @@ Git handbook:
 http://git-scm.com/book/en/
 
 ## Compilation, branches and Git
-Refer to RawPedia for a detailed explanation of how to get the necessary dependencies and how to compile RawTherapee:
+Refer to RawPedia for a detailed explanation of how to get the necessary dependencies and how to compile RawTherapee.
+
+Linux:
 http://rawpedia.rawtherapee.com/Linux
+
+Windows:
 http://rawpedia.rawtherapee.com/Windows
+
+OS X:
 http://rawpedia.rawtherapee.com/OS_X
