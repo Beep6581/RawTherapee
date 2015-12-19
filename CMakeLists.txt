@@ -86,6 +86,7 @@ if (APPLE)
 endif (APPLE)
 
 option(USE_EXPERIMENTAL_LANG_VERSIONS "Build RT with -std=c++0x" OFF)
+option(USE_EXPERIMENTAL_OPTIMIZATIONS "Build RT with -flto" OFF)
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
 option (WITH_BZIP "Build with Bzip2 support" ON)
 option (WITH_MYFILE_MMAP "Build using memory mapped file" ON)
@@ -276,6 +277,12 @@ endif (OPTION_OMP)
 if(USE_EXPERIMENTAL_LANG_VERSIONS OR NOT (SIGC_VERSION VERSION_LESS 2.5.1))
 	SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu1x")
 	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
+endif ()
+
+if(USE_EXPERIMENTAL_OPTIMIZATIONS)
+        SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -flto")
+        SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto")
+        SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
 endif ()
 
 # find out whether we are building out of source
