@@ -41,6 +41,18 @@ if test ! -n "${MINIMUM_SYSTEM_VERSION}"; then
   MINIMUM_SYSTEM_VERSION=$(sw_vers -productVersion | cut -d. -f-2)
 fi
 
+# check for pango-querymodules. Pango 1.38.0 and above do not include it.
+# https://github.com/Homebrew/homebrew/issues/44764#issuecomment-146795820
+PangoVer="$(brew list --versions pango)"
+PangoVer="${PangoVer//./}"
+# Only check the first 4 digits, so that "1.36.99" (13699) doesn't test greater than "1.38.0" (1380)
+PangoVer="${PangoVer:0:4}"
+if [[ "$PangoVer" -ge "1380" ]]; then
+    ExistPangoQuerymodules="false"
+else
+    ExistPangoQuerymodules="true"
+fi
+
 case ${PROC_BIT_DEPTH} in
   64) arch=x86_64;;
   32) arch=i386;;
@@ -93,13 +105,13 @@ install -d "${ETC}"/{gtk-2.0,pango}
 cp "${GTK_PREFIX}"/etc/gtk-2.0/im-multipress.conf "${ETC}"/gtk-2.0
 "${GTK_PREFIX}"/bin/gdk-pixbuf-query-loaders "${LIB}"/gdk-pixbuf-2.0/*/loaders/*.so > "${ETC}"/gtk-2.0/gdk-pixbuf.loaders
 "${GTK_PREFIX}"/bin/gtk-query-immodules-2.0  "${LIB}"/gtk-2.0/*/immodules/*.so      > "${ETC}"/gtk-2.0/gtk.immodules
-"${GTK_PREFIX}"/bin/pango-querymodules       "${LIB}"/pango/*/modules/*.so          > "${ETC}"/pango/pango.modules
 sed -i "" -e "s|${PWD}|/tmp|" "${ETC}"/gtk-2.0/gdk-pixbuf.loaders \
-                              "${ETC}"/gtk-2.0/gtk.immodules \
-                              "${ETC}"/pango/pango.modules
-printf "[Pango]\nModuleFiles = /tmp/${ETC}/pango/pango.modules" > "${ETC}"/pango/pangorc
-
-
+                              "${ETC}"/gtk-2.0/gtk.immodules
+if [[ "$ExistPangoQuerymodules" = "true" ]]; then
+    "${GTK_PREFIX}"/bin/pango-querymodules       "${LIB}"/pango/*/modules/*.so          > "${ETC}"/pango/pango.modules
+    sed -i "" -e "s|${PWD}|/tmp|" "${ETC}"/pango/pango.modules
+    printf "[Pango]\nModuleFiles = /tmp/${ETC}/pango/pango.modules" > "${ETC}"/pango/pangorc
+fi
 
 message "Copying shared files from ${GTK_PREFIX}"
 cp -R "${GTK_PREFIX}"/share/mime "${MACOS}"/share
