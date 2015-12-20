@@ -441,7 +441,7 @@ void IPTCPanel::delKeyWord ()
                 keep.push_back (keywords->get_text (i));
             }
 
-        keywords->remove_all_columns ();
+        keywords->clear_items ();
 
         for (unsigned int i = 0; i < keep.size(); i++) {
             keywords->append (keep[i]);
@@ -494,7 +494,7 @@ void IPTCPanel::delSuppCategory ()
                 keep.push_back (suppCategories->get_text (i));
             }
 
-        suppCategories->remove_all_columns ();
+        suppCategories->clear_items ();
 
         for (unsigned int i = 0; i < keep.size(); i++) {
             suppCategories->append (keep[i]);
@@ -549,9 +549,9 @@ void IPTCPanel::applyChangeList ()
     captionWriter->set_text ("");
     headline->set_text ("");
     instructions->set_text ("");
-    keywords->remove_all_columns ();
+    keywords->clear_items ();
     category->get_entry()->set_text ("");
-    suppCategories->remove_all_columns ();
+    suppCategories->clear_items ();
     author->set_text ("");
     authorPos->set_text ("");
     credit->set_text ("");
