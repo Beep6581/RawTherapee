@@ -77,6 +77,14 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         params.crop.w = fw;
         params.crop.h = fh;
     } else {
+        if (params.crop.x < 0) {
+            params.crop.x = 0;
+        }
+
+        if (params.crop.y < 0) {
+            params.crop.y = 0;
+        }
+
         if ((params.crop.x + params.crop.w) > fw) {
             // crop overflow in the width dimension ; we trim it
             params.crop.w = fw - params.crop.x;
