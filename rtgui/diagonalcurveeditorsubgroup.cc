@@ -30,6 +30,7 @@
 #include "mydiagonalcurve.h"
 #include "curveeditor.h"
 #include "diagonalcurveeditorsubgroup.h"
+#include "rtimage.h"
 
 DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir) : CurveEditorSubGroup(curveDir)
 {

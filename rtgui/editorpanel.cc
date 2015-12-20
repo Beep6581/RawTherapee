@@ -29,6 +29,7 @@
 #include "soundman.h"
 #include "rtimage.h"
 #include <iostream>
+#include "popupbutton.h"
 
 using namespace rtengine::procparams;
 
@@ -76,7 +77,7 @@ private:
 
     void prepareIntentBox ()
     {
-        PopUpButton *bt = new PopUpButton();
+        PopUpButton *bt = new PopUpButton(Glib::ustring(), true);
         intentBox = Gtk::manage(bt);
         intentBox->addEntry("intent-relative.png", M("PREFERENCES_INTENT_RELATIVE"));
         intentBox->addEntry("intent-perceptual.png", M("PREFERENCES_INTENT_PERCEPTUAL"));
