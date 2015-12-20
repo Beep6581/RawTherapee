@@ -1741,6 +1741,11 @@ void FileCatalog::reparseDirectory ()
     for (size_t i = 0; i < fileNamesToDel.size(); i++) {
         delete fileBrowser->delEntry (fileNamesToDel[i]);
         cacheMgr->deleteEntry (fileNamesToDel[i]);
+        previewsLoaded--;
+    }
+
+    if (!fileNamesToDel.empty ()) {
+        _refreshProgressBar();
     }
 
     // check if a new file has been added
