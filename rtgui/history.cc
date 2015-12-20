@@ -230,6 +230,7 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
     }
 
     selchangehist.block (true);
+    selchangebm.block (true);
 
     if (ev == EvPhotoLoaded) {
         initHistory ();
@@ -303,6 +304,7 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
     }
 
     selchangehist.block (false);
+    selchangebm.block (false);
 }
 
 void History::addBookmarkWithText (Glib::ustring text)
