@@ -72,6 +72,7 @@ protected:
     int redrawRequests;
 
     ThumbBrowserBase* parent;
+    ThumbBrowserEntryBase* original;
 
     Glib::RefPtr<Gdk::Pixmap> backBuffer;
     bool bbSelected, bbFramed;
@@ -168,27 +169,32 @@ public:
         return shortname.casefold() > other.shortname.casefold();
     }
 
+    ThumbBrowserEntryBase* getOriginal () const;
+    void setOriginal (ThumbBrowserEntryBase* original);
+
     virtual void refreshThumbnailImage () {}
     virtual void refreshQuickThumbnailImage () {}
     virtual void calcThumbnailSize () {}
 
     virtual void drawProgressBar (Glib::RefPtr<Gdk::Window> win, Glib::RefPtr<Gdk::GC> gc, const Gdk::Color& foregr, const Gdk::Color& backgr, int x, int w, int y, int h) {}
 
-    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea ()
-    {
-        std::vector<Glib::RefPtr<Gdk::Pixbuf> >  r;
-        return r;
-    }
-    virtual void getIconSize (int& w, int& h)
-    {
-        w = 0;
-        h = 0;
-    }
+    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea ();
+    virtual void getIconSize (int& w, int& h);
 
     virtual bool    motionNotify  (int x, int y);
     virtual bool    pressNotify   (int button, int type, int bstate, int x, int y);
     virtual bool    releaseNotify (int button, int type, int bstate, int x, int y);
     virtual Glib::ustring getToolTip (int x, int y);
 };
+
+inline ThumbBrowserEntryBase* ThumbBrowserEntryBase::getOriginal() const
+{
+    return original;
+}
+
+inline void ThumbBrowserEntryBase::setOriginal(ThumbBrowserEntryBase* original)
+{
+    this->original = original;
+}
 
 #endif

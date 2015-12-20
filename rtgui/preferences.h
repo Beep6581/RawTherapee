@@ -144,6 +144,8 @@ protected:
     Gtk::TreeView*  extensions;
     Gtk::Button*    addExt;
     Gtk::Button*    delExt;
+    Gtk::Button*    moveExtUp;
+    Gtk::Button*    moveExtDown;
     Gtk::CheckButton* overlayedFileNames;
     Gtk::CheckButton* filmStripOverlayedFileNames;
     Gtk::CheckButton* sameThumbSize;
@@ -243,6 +245,8 @@ public:
     void selectStartupDir ();
     void addExtPressed ();
     void delExtPressed ();
+    void moveExtUpPressed ();
+    void moveExtDownPressed ();
     void darkFrameChanged ();
     void flatFieldChanged ();
     void clearProfilesPressed ();

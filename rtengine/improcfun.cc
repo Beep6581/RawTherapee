@@ -5821,7 +5821,7 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, 
     };
 
 #ifdef _DEBUG
-    #pragma omp parallel default(shared) firstprivate(highlight, ccut, clut, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew, MunsDebugInfo, pW) if (multiThread)
+    #pragma omp parallel default(shared) firstprivate(lold, lnew, MunsDebugInfo, pW) if (multiThread)
 #else
     #pragma omp parallel if (multiThread)
 #endif
