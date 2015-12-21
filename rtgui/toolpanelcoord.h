@@ -57,7 +57,6 @@
 #include "toolbar.h"
 #include "lensgeom.h"
 #include "lensgeomlistener.h"
-#include "dirselectionlistener.h"
 #include "wavelet.h"
 #include "dirpyrequalizer.h"
 #include "hsvequalizer.h"
@@ -93,7 +92,6 @@ class ToolPanelCoordinator :    public ToolPanelListener,
     public SpotWBListener,
     public CropPanelListener,
     public ICMPanelListener,
-    public DirSelectionListener,
     public ImageAreaToolListener
 {
 
@@ -236,7 +234,7 @@ public:
     void setDefaults    (rtengine::procparams::ProcParams* defparams);
 
     // DirSelectionListener interface
-    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile = "");
+    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile);
 
     // to support the GUI:
     CropGUIListener* getCropGUIListener (); // through the CropGUIListener the editor area can notify the "crop" ToolPanel when the crop selection changes

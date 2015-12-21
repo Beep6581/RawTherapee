@@ -22,7 +22,7 @@
 
 using namespace rtengine;
 
-RecentBrowser::RecentBrowser () : listener (NULL)
+RecentBrowser::RecentBrowser ()
 {
 
     recentDirs = Gtk::manage (new MyComboBoxText ());
@@ -46,8 +46,8 @@ void RecentBrowser::selectionChanged ()
 
     Glib::ustring sel = recentDirs->get_active_text ();
 
-    if (sel != "" && listener) {
-        listener->selectDir (sel);
+    if (!sel.empty() && selectDir) {
+        selectDir (sel);
     }
 }
 

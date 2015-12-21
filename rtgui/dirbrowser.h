@@ -24,14 +24,14 @@
 #ifdef WIN32
 #include "windirmonitor.h"
 #endif
-#include "dirselectionlistener.h"
-#include "dirbrowserremoteinterface.h"
 
-class DirBrowser : public Gtk::VBox, public DirBrowserRemoteInterface
+class DirBrowser : public Gtk::VBox
 #ifdef WIN32
     , public WinDirChangeListener
 #endif
 {
+public:
+    typedef sigc::signal<void, const Glib::ustring&, const Glib::ustring&> DirSelectionSignal;
 
 private:
 
@@ -67,7 +67,7 @@ private:
 
     Gtk::TreeView *dirtree;
     Gtk::ScrolledWindow *scrolledwindow4;
-    std::vector<DirSelectionListener*> dllisteners;
+    DirSelectionSignal dirSelectionSignal;
 
     void fillRoot ();
 
@@ -94,7 +94,6 @@ private:
     void addDir (const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirname);
     Gtk::TreePath expandToDir (const Glib::ustring& dirName);
     void updateDir (const Gtk::TreeModel::iterator& iter);
-    void notifyListeners ();
 
 public:
     DirBrowser ();
@@ -105,11 +104,14 @@ public:
     void row_activated  (const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column);
     void file_changed   (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirName);
     void open           (const Glib::ustring& dirName, const Glib::ustring& fileName = ""); // goes to dir "dirName" and selects file "fileName"
-    void addDirSelectionListener (DirSelectionListener* l)
-    {
-        dllisteners.push_back (l);
-    }
     void selectDir      (Glib::ustring dir);
+
+    DirSelectionSignal dirSelected () const;
 };
+
+inline DirBrowser::DirSelectionSignal DirBrowser::dirSelected () const
+{
+    return dirSelectionSignal;
+}
 
 #endif
