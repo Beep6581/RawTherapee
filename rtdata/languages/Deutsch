@@ -23,6 +23,7 @@
 #23 2015-10-24 Retinexübersetzung und Korrekturen (TooWaBoo)
 #24 2015-11-01 Korrekturen (TooWaBoo) RT4.2.450
 #25 2015-11-30 Korrekturen (TooWaBoo) RT4.2.507
+#26 2015-12-13 Korrekturen (TooWaBoo) RT4.2.514
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -290,9 +291,9 @@ HISTORY_MSG_34;<b>Objektivkorrektur</b>\nProfil - Verzeichnung
 HISTORY_MSG_35;<b>Objektivkorrektur</b>\nProfil - Vignettierung
 HISTORY_MSG_36;<b>Objektivkorrektur</b>\nProfil - CA-Korrektur
 HISTORY_MSG_37;<b>Belichtung</b> - Auto
-HISTORY_MSG_38;<b>Weißabgleich</b>\nMethode
+HISTORY_MSG_38;<b>Weißabgleich</b> - Methode
 HISTORY_MSG_39;<b>Weißabgleich</b>\nFarbtemperatur
-HISTORY_MSG_40;<b>Weißabgleich</b>\nTönung
+HISTORY_MSG_40;<b>Weißabgleich</b> - Tönung
 HISTORY_MSG_41;<b>Belichtung</b>\nTonwertkurve 1 - Modus
 HISTORY_MSG_42;<b>Belichtung</b>\nTonwertkurve 2
 HISTORY_MSG_43;<b>Belichtung</b>\nTonwertkurve 2 - Modus
@@ -377,7 +378,7 @@ HISTORY_MSG_121;<b>Sensor Bayer-Matrix</b>\nChromatische Aberration\nAutomatisch
 HISTORY_MSG_122;<b>Dunkelbild</b>\nAutomatische Auswahl
 HISTORY_MSG_123;<b>Dunkelbild</b> - Datei
 HISTORY_MSG_124;<b>Weißpunkt</b>\nKorrekturfaktor
-HISTORY_MSG_125;<b>Belichtung</b>skorrektur\nLichter schützen
+HISTORY_MSG_125;<b>Belichtungskorrektur</b>\nLichter schützen
 HISTORY_MSG_126;<b>Weißbild</b> - Datei
 HISTORY_MSG_127;<b>Weißbild</b>\nAutomatische Auswahl
 HISTORY_MSG_128;<b>Weißbild</b>\nUnschärferadius
@@ -460,7 +461,7 @@ HISTORY_MSG_204;<b>Sensor Bayer-Matrix</b>\nFarbinterpolation\nLMMSE-Verbesserun
 HISTORY_MSG_205;<b>CIECAM02</b>\nBetrachtungsbed.\nHot/Bad-Pixelfilter
 HISTORY_MSG_206;<b>CIECAM02</b> - Szene\nAuto-Leuchtstärke
 HISTORY_MSG_207;<b>Farbsaum entfernen</b>\nFarbtonkurve
-HISTORY_MSG_208;<b>Weißabgleich</b>\nBau/Rot-Korrektur
+HISTORY_MSG_208;<b>Weißabgleich</b>\nBlau/Rot-Korrektur
 HISTORY_MSG_210;<b>Grauverlaufsfilter</b>\nRotationswinkel
 HISTORY_MSG_211;<b>Grauverlaufsfilter</b>
 HISTORY_MSG_212;<b>Vignettierungsfilter</b>\nIntensität
@@ -520,9 +521,9 @@ HISTORY_MSG_265;<b>Farbanpassungen</b>\nSchatten - Gelb/Blau
 HISTORY_MSG_266;<b>Farbanpassungen</b>\nMitten - Blau/Rot
 HISTORY_MSG_267;<b>Farbanpassungen</b>\nMitten - Cyan/Grün
 HISTORY_MSG_268;<b>Farbanpassungen</b>\nMitten - Gelb/Blau
-HISTORY_MSG_269;<b>Farbanpassungen</b>\nLichter - Bau/Rot
+HISTORY_MSG_269;<b>Farbanpassungen</b>\nLichter - Blau/Rot
 HISTORY_MSG_270;<b>Farbanpassungen</b>\nLichter - Cyan/Grün
-HISTORY_MSG_271;<b>Farbanpassungen</b>\nLichter - GelbBlau
+HISTORY_MSG_271;<b>Farbanpassungen</b>\nLichter - Gelb/Blau
 HISTORY_MSG_272;<b>Farbanpassungen</b>\nFarbausgleich
 HISTORY_MSG_273;<b>Farbanpassungen</b>\nZurücksetzen
 HISTORY_MSG_274;<b>Farbanpassungen</b>\nSättigung Schatten
@@ -807,7 +808,7 @@ NAVIGATOR_S;S:
 NAVIGATOR_V;V:
 NAVIGATOR_XY_FULL;Breite = %1, Höhe = %2
 NAVIGATOR_XY_NA;x: --, y: --
-OPTIONS_DEFIMG_MISSING;Die Standard-Profile für <b>nicht-RAW-Bilder</b> wurden nicht gefunden oder nicht festgelegt.\n\nBitte prüfen Sie das Profil-Verzeichnis, es fehlt möglicherweise oder ist beschädigt.\n\nEs werden stattdessen interne Standardwerte verwendet.
+OPTIONS_DEFIMG_MISSING;Die Standard-Profile für <b>Nicht-RAW-Bilder</b> wurden nicht gefunden oder nicht festgelegt.\n\nBitte prüfen Sie das Profil-Verzeichnis, es fehlt möglicherweise oder ist beschädigt.\n\nEs werden stattdessen interne Standardwerte verwendet.
 OPTIONS_DEFRAW_MISSING;Die Standard-Profile für <b>RAW-Bilder</b> wurden nicht gefunden oder nicht festgelegt.\n\nBitte prüfen Sie das Profil-Verzeichnis, es fehlt möglicherweise oder ist beschädigt.\n\nEs werden stattdessen interne Standardwerte verwendet.
 PARTIALPASTE_BASICGROUP;Gruppe Basiseinstellungen
 PARTIALPASTE_CACORRECTION;Farbsaum entfernen
@@ -1295,7 +1296,7 @@ TP_COLORTONING_BALANCE;Farbausgleich
 TP_COLORTONING_BY;o C/L
 TP_COLORTONING_CHROMAC;Deckkraft
 TP_COLORTONING_COLOR;Farbe
-TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Buntheitdeckkraft als Funktion der Luminanz oB=f(L)
+TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Buntheitsdeckkraft als Funktion der Luminanz oB=f(L)
 TP_COLORTONING_HIGHLIGHT;Lichter
 TP_COLORTONING_HUE;Farbton
 TP_COLORTONING_LAB;L*a*b*-Überlagerung
@@ -1323,7 +1324,7 @@ TP_COLORTONING_STRENGTH;Intensität
 TP_COLORTONING_TWO2;Spezial-Farbe (2 Farben)
 TP_COLORTONING_TWOALL;Spezial-Farbe
 TP_COLORTONING_TWOBY;Spezial a* und b*
-TP_COLORTONING_TWOCOLOR_TOOLTIP;Standardfarbe:\nLinearer Verlauf, a* = b*.\n\nSpezial-Farbe:\nLinearer Verlauf, a* = b*, aber nicht verbunden\n\nSpezial a* and b*:\nLinearer Verlauf, nicht verbunden, mit unterschiedlichen Kurven für a* and b*. Bevorzugt für spezielle Effekte.\n\nSpezial-Farbe (2 Farben):\nBesser vorhersehbar
+TP_COLORTONING_TWOCOLOR_TOOLTIP;Standardfarbe:\nLinearer Verlauf, a* = b*.\n\nSpezial-Farbe:\nLinearer Verlauf, a* = b*, aber nicht verbunden\n\nSpezial a* und b*:\nLinearer Verlauf, nicht verbunden, mit unterschiedlichen Kurven für a* und b*. Bevorzugt für spezielle Effekte.\n\nSpezial-Farbe (2 Farben):\nBesser vorhersehbar
 TP_COLORTONING_TWOSTD;Standardfarbe
 TP_CROP_FIXRATIO;Festes\nVerhältnis:
 TP_CROP_GTDIAGONALS;Diagonalregel
@@ -1660,10 +1661,10 @@ TP_RETINEX_CONTEDIT_LH;Farbton (H)
 TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminanz in Abhängigkeit der Luminanz.\nKorrigiert direkt die RAW-Daten, um Halos und Artefakte zu verringern.
 TP_RETINEX_CURVEEDITOR_LH;Intensität=f(H)
-TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Intensität in Abhängikeit des Farbtons (H)\nBei der Retinex-Methode "Spitzlichter" wirken sich die Änderungen auch auf die Chromakorrektur aus.
+TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Intensität in Abhängigkeit des Farbtons (H)\nBei der Retinex-Methode "Spitzlichter" wirken sich die Änderungen auch auf die Chromakorrektur aus.
 TP_RETINEX_FREEGAMMA;Gamma
 TP_RETINEX_GAIN;Verstärkung
-TP_RETINEX_GAIN_TOOLTIP;Wirkt sich auf das verarbeitete Bild aus. Wird für schwarze oder weiße Pixel verwendet und hilft das Histogram auszugleichen.
+TP_RETINEX_GAIN_TOOLTIP;Wirkt sich auf das verarbeitete Bild aus. Wird für schwarze oder weiße Pixel verwendet und hilft das Histogramm auszugleichen.
 TP_RETINEX_GAMMA;Gammakorrektur
 TP_RETINEX_GAMMA_FREE;Benutzerdefiniert
 TP_RETINEX_GAMMA_HIGH;Hoch
@@ -1986,3 +1987,10 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
+!PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
+!PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
