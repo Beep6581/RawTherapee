@@ -286,20 +286,13 @@ void SaveAsDialog::setInitialFileName (Glib::ustring fname)
     fchooser->set_current_name(fname);
 }
 
-void SaveAsDialog::setImagePath (Glib::ustring ipath)
+void SaveAsDialog::setImagePath (const Glib::ustring& imagePath)
 {
+    const auto dirName = Glib::path_get_dirname (imagePath);
 
-    Glib::ustring path = Glib::path_get_dirname(ipath);
-
-    //Add the image's path to the Shortcut list
-#ifdef WIN32
-
-    // Dirty workaround, waiting for a clean solution by using exceptions!
-    if (!safe_is_shortcut_dir(path))
-#endif
-        try {
-            fchooser->add_shortcut_folder(path);
-        } catch (Glib::Error &err) {}
+    try {
+        fchooser->add_shortcut_folder (dirName);
+    } catch (Glib::Error&) {}
 }
 
 

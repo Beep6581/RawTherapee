@@ -20,23 +20,14 @@
  */
 
 #include "safegtk.h"
-#include "../rtgui/guiutils.h"
-#include <glib/gstdio.h>
+
 #include <fcntl.h>
-#ifdef WIN32
-#include <windows.h>
-// for GCC32
-#ifndef _WIN32_IE
-#define _WIN32_IE 0x0600
-#endif
-#include <shlobj.h>
-#include <Shlwapi.h>
-#else
 #include <cstdio>
-#endif
-#include "../rtgui/rtimage.h"
 #include <memory>
 
+#include <glib/gstdio.h>
+
+#include "../rtgui/guiutils.h"
 
 Glib::RefPtr<Gio::FileInfo> safe_query_file_info (Glib::RefPtr<Gio::File> &file)
 {
@@ -285,97 +276,3 @@ int safe_g_mkdir_with_parents(const Glib::ustring& dirName, int mode)
 {
     return ::g_mkdir_with_parents(dirName.c_str(), mode);
 }
-
-Glib::ustring safe_get_user_picture_dir()
-{
-#ifdef WIN32
-    // get_user_special_dir/pictures crashes on some Windows configurations.
-    // so we use the safe native functions here
-    WCHAR pathW[MAX_PATH] = {0};
-
-    if (SHGetSpecialFolderPathW(NULL, pathW, CSIDL_MYPICTURES, false)) {
-        char pathA[MAX_PATH];
-        WideCharToMultiByte(CP_UTF8, 0, pathW, -1, pathA, MAX_PATH, 0, 0);
-        return Glib::ustring(pathA);
-    } else {
-        return Glib::ustring("C:\\");
-    }
-
-#else
-
-    return Glib::get_user_special_dir (G_USER_DIRECTORY_PICTURES);
-
-#endif
-}
-
-Glib::ustring safe_get_user_home_dir()
-{
-#ifdef WIN32
-    // get_user_special_dir/pictures crashes on some Windows configurations.
-    // so we use the safe native functions here
-    WCHAR pathW[MAX_PATH] = {0};
-
-    if (SHGetSpecialFolderPathW(NULL, pathW, CSIDL_PERSONAL, false)) {
-        char pathA[MAX_PATH];
-        WideCharToMultiByte(CP_UTF8, 0, pathW, -1, pathA, MAX_PATH, 0, 0);
-        return Glib::ustring(pathA);
-    } else {
-        return Glib::ustring("C:\\");
-    }
-
-#else
-
-    return Glib::get_home_dir();
-
-#endif
-}
-
-#ifdef WIN32
-Glib::ustring safe_get_user_profile_dir()
-{
-    WCHAR pathW[MAX_PATH] = {0};
-
-    if (SHGetSpecialFolderPathW(NULL, pathW, CSIDL_PROFILE, false)) {
-        char pathA[MAX_PATH];
-        WideCharToMultiByte(CP_UTF8, 0, pathW, -1, pathA, MAX_PATH, 0, 0);
-        return Glib::ustring(pathA);
-    } else {
-        return Glib::ustring("C:\\");
-    }
-}
-#endif
-
-
-Glib::ustring safe_get_user_desktop_dir()
-{
-#ifdef WIN32
-    // get_user_special_dir/pictures crashes on some Windows configurations.
-    // so we use the safe native functions here
-    WCHAR pathW[MAX_PATH] = {0};
-
-    if (SHGetSpecialFolderPathW(NULL, pathW, CSIDL_DESKTOP, false)) {
-        char pathA[MAX_PATH];
-        WideCharToMultiByte(CP_UTF8, 0, pathW, -1, pathA, MAX_PATH, 0, 0);
-        return Glib::ustring(pathA);
-    } else {
-        return Glib::ustring("C:\\");
-    }
-
-#else
-
-    return Glib::get_user_special_dir (G_USER_DIRECTORY_DESKTOP);
-
-#endif
-}
-
-#ifdef WIN32
-/*
- * Test if the path is a root path based on the content of the string
- *
- * Warning: this function is a workaround for Windows platform, and not necessarily bullet proof
- */
-bool safe_is_shortcut_dir (const Glib::ustring& path)
-{
-    return PathIsRootA(path.c_str()) || safe_get_user_home_dir() == path || safe_get_user_desktop_dir() == path || safe_get_user_profile_dir() == path; // || safe_get_user_picture_dir() == path;
-}
-#endif

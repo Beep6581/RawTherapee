@@ -17,22 +17,26 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <glib/gstdio.h>
+#include "filecatalog.h"
+
 #include <iostream>
 #include <iomanip>
-#include "../rtengine/rt_math.h"
 
-#include "filecatalog.h"
-#include "filepanel.h"
+#include <glib/gstdio.h>
+
+#include "../rtengine/rt_math.h"
+#include "../rtengine/safegtk.h"
+
+#include "guiutils.h"
 #include "options.h"
+#include "rtimage.h"
 #include "cachemanager.h"
 #include "multilangmgr.h"
-#include "guiutils.h"
+#include "filepanel.h"
 #include "renamedlg.h"
 #include "thumbimageupdater.h"
-#include "../rtengine/safegtk.h"
 #include "batchqueue.h"
-#include "rtimage.h"
+#include "placesbrowser.h"
 
 using namespace std;
 
@@ -2027,10 +2031,9 @@ void FileCatalog::buttonBrowsePathPressed ()
     FirstChar = BrowsePathValue.substr (0, 1);
 
     if (FirstChar == "~") { // home directory
-        DecodedPathPrefix = Glib::get_home_dir();
+        DecodedPathPrefix = PlacesBrowser::userHomeDir ();
     } else if (FirstChar == "!") { // user's pictures directory
-        //DecodedPathPrefix = g_get_user_special_dir(G_USER_DIRECTORY_PICTURES);
-        DecodedPathPrefix = safe_get_user_picture_dir();
+        DecodedPathPrefix = PlacesBrowser::userPicturesDir ();
     }
 
     if (!DecodedPathPrefix.empty()) {

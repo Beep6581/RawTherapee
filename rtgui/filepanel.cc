@@ -1,4 +1,3 @@
-
 /*
  *  This file is part of RawTherapee.
  *
@@ -18,9 +17,12 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "filepanel.h"
-#include "rtwindow.h"
+
 #include "../rtengine/safegtk.h"
+
+#include "rtwindow.h"
 #include "inspector.h"
+#include "placesbrowser.h"
 
 int FilePanelInitUI (void* data)
 {
@@ -181,7 +183,7 @@ void FilePanel::init ()
         dirBrowser->open (argv1);
     } else {
         if (options.startupDir == STARTUPDIR_HOME) {
-            dirBrowser->open (safe_get_user_picture_dir());
+            dirBrowser->open (PlacesBrowser::userPicturesDir ());
         } else if (options.startupDir == STARTUPDIR_CURRENT) {
             dirBrowser->open (argv0);
         } else if (options.startupDir == STARTUPDIR_CUSTOM || options.startupDir == STARTUPDIR_LAST) {
@@ -189,7 +191,7 @@ void FilePanel::init ()
                 dirBrowser->open (options.startupPath);
             } else {
                 // Fallback option if the path is empty or the folder doesn't exist
-                dirBrowser->open (safe_get_user_picture_dir());
+                dirBrowser->open (PlacesBrowser::userPicturesDir ());
             }
         }
     }

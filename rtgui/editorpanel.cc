@@ -18,18 +18,21 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "editorpanel.h"
-#include "options.h"
-#include "progressconnector.h"
-#include "rtwindow.h"
-#include "guiutils.h"
-#include "procparamchangers.h"
+
+#include <iostream>
+
 #include "../rtengine/safegtk.h"
 #include "../rtengine/imagesource.h"
 #include "../rtengine/iccstore.h"
 #include "soundman.h"
 #include "rtimage.h"
-#include <iostream>
+#include "rtwindow.h"
+#include "guiutils.h"
 #include "popupbutton.h"
+#include "options.h"
+#include "progressconnector.h"
+#include "procparamchangers.h"
+#include "placesbrowser.h"
 
 using namespace rtengine::procparams;
 
@@ -1543,7 +1546,7 @@ void EditorPanel::saveAsPressed ()
     if (safe_file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR)) {
         saveAsDialog = new SaveAsDialog (options.lastSaveAsPath);
     } else {
-        saveAsDialog = new SaveAsDialog (safe_get_user_picture_dir());
+        saveAsDialog = new SaveAsDialog (PlacesBrowser::userPicturesDir ());
     }
 
     saveAsDialog->set_default_size (options.saveAsDialogWidth, options.saveAsDialogHeight);
