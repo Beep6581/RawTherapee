@@ -1013,34 +1013,18 @@ bool MyFileChooserButton::on_scroll_event (GdkEventScroll* event)
     return false;
 }
 
-FileChooserLastFolderPersister::FileChooserLastFolderPersister(
-    Gtk::FileChooser* chooser, Glib::ustring& folderVariable) :
-    chooser(chooser), folderVariable(folderVariable)
+void bindCurrentFolder (Gtk::FileChooser& chooser, Glib::ustring& variable)
 {
-    assert(chooser != NULL);
+    chooser.signal_selection_changed ().connect ([&]()
+    {
+        const auto current_folder = chooser.get_current_folder ();
 
-    selectionChangedConnetion = chooser->signal_selection_changed().connect(
-                                    sigc::mem_fun(*this,
-                                            &FileChooserLastFolderPersister::selectionChanged));
+        if (!current_folder.empty ())
+            variable = current_folder;
+    });
 
-    if (!folderVariable.empty()) {
-        chooser->set_current_folder(folderVariable);
-    }
-
-}
-
-FileChooserLastFolderPersister::~FileChooserLastFolderPersister()
-{
-
-}
-
-void FileChooserLastFolderPersister::selectionChanged()
-{
-
-    if (!chooser->get_current_folder().empty()) {
-        folderVariable = chooser->get_current_folder();
-    }
-
+    if (!variable.empty ())
+        chooser.set_current_folder (variable);
 }
 
 TextOrIcon::TextOrIcon (Glib::ustring fname, Glib::ustring labelTx, Glib::ustring tooltipTx, TOITypes type)

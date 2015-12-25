@@ -31,7 +31,7 @@ DarkFrame::DarkFrame () : FoldableToolPanel(this, "darkframe", M("TP_DARKFRAME_L
     hbdf = Gtk::manage(new Gtk::HBox());
     hbdf->set_spacing(4);
     darkFrameFile = Gtk::manage(new MyFileChooserButton(M("TP_DARKFRAME_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
-    darkFrameFilePersister.reset(new FileChooserLastFolderPersister(darkFrameFile, options.lastDarkframeDir));
+    bindCurrentFolder (*darkFrameFile, options.lastDarkframeDir);
     dfLabel = Gtk::manage(new Gtk::Label(M("GENERAL_FILE")));
     btnReset = Gtk::manage(new Gtk::Button());
     btnReset->set_image (*Gtk::manage(new RTImage ("gtk-cancel.png")));
