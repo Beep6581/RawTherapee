@@ -72,13 +72,13 @@ DirBrowser::DirBrowser () : dirTreeModel(),
 void DirBrowser::fillDirTree ()
 {
 
-    openfolder = safe_create_from_file ("gtk-open.png");
-    closedfolder = safe_create_from_file ("folder.png");
-    icdrom = safe_create_from_file ("drive-optical.png");
-    ifloppy = safe_create_from_file ("drive-removable-media.png");
-    ihdd = safe_create_from_file ("drive-harddisk.png");
-    iremovable = safe_create_from_file ("media-usb.png");
-    inetwork = safe_create_from_file ("network.png");
+    openfolder = RTImage::createFromFile ("gtk-open.png");
+    closedfolder = RTImage::createFromFile ("folder.png");
+    icdrom = RTImage::createFromFile ("drive-optical.png");
+    ifloppy = RTImage::createFromFile ("drive-removable-media.png");
+    ihdd = RTImage::createFromFile ("drive-harddisk.png");
+    iremovable = RTImage::createFromFile ("media-usb.png");
+    inetwork = RTImage::createFromFile ("network.png");
 
     //Create the Tree model:
     dirTreeModel = Gtk::TreeStore::create(dtColumns);

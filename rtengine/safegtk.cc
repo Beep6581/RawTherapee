@@ -38,41 +38,6 @@
 #include <memory>
 
 
-Glib::RefPtr<Gdk::Pixbuf> safe_create_from_file(const Glib::ustring& filename)
-{
-    Glib::RefPtr<Gdk::Pixbuf> res;
-    Glib::ustring path = RTImage::findIconAbsolutePath(filename);
-
-    if (path.length()) {
-        try {
-            res = Gdk::Pixbuf::create_from_file (path);
-        } catch (Glib::Exception& ex) {
-            printf ("ERROR: (ustring) File \"%s\" not found.\n", ex.what().c_str());
-        }
-    }
-
-    return res;
-}
-
-Cairo::RefPtr<Cairo::ImageSurface> safe_create_from_png(const Glib::ustring& filename)
-{
-    Cairo::RefPtr<Cairo::ImageSurface> res;
-    Glib::ustring path = RTImage::findIconAbsolutePath(filename);
-
-    if (path.length()) {
-        // files_test need a std::string which (as stated in its proto) but will only work if
-        // we use the Glib::ustring filename !?
-        try {
-            // create_from_png need a std::string converted from UTF8 with safe_locale_from_utf8
-            res = Cairo::ImageSurface::create_from_png (safe_locale_from_utf8(path));
-        } catch (...) {
-            printf("ERROR: (ustring) File \"%s\" not found.\n", path.c_str());
-        }
-    }
-
-    return res;
-}
-
 Glib::RefPtr<Gio::FileInfo> safe_query_file_info (Glib::RefPtr<Gio::File> &file)
 {
     Glib::RefPtr<Gio::FileInfo> info;

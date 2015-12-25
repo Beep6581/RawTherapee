@@ -5,9 +5,6 @@
 #include <glibmm.h>
 #include <giomm.h>
 
-Glib::RefPtr<Gdk::Pixbuf> safe_create_from_file(const Glib::ustring& filename);
-Cairo::RefPtr<Cairo::ImageSurface> safe_create_from_png(const Glib::ustring& filename);
-
 Glib::RefPtr<Gio::FileInfo> safe_query_file_info (Glib::RefPtr<Gio::File> &file);
 void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ustring> &names, const Glib::ustring &directory = "", const std::vector<Glib::ustring> *extensions = NULL);
 void safe_build_subdir_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ustring> &subDirs, bool add_hidden);

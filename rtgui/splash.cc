@@ -17,9 +17,13 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "splash.h"
-#include "multilangmgr.h"
+
 #include <glib/gstdio.h>
+
 #include "../rtengine/safegtk.h"
+
+#include "multilangmgr.h"
+#include "rtimage.h"
 
 extern Glib::ustring argv0;
 extern Glib::ustring creditsPath;
@@ -29,8 +33,7 @@ extern Glib::ustring versionSuffixString;
 
 SplashImage::SplashImage ()
 {
-
-    pixbuf = safe_create_from_file ("splash.png");
+    pixbuf = RTImage::createFromFile ("splash.png");
     set_size_request (pixbuf->get_width(), pixbuf->get_height());
 }
 
