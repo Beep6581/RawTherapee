@@ -17,27 +17,59 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dirbrowser.h"
+
+#include <cstring>
+
 #ifdef WIN32
 #define _WIN32_WINNT 0x0600
 #include <windows.h>
 #endif
-#include "options.h"
-#include "multilangmgr.h"
+
 #include "../rtengine/safegtk.h"
 
-#include <cstring>
 #include "guiutils.h"
 #include "rtimage.h"
+#include "multilangmgr.h"
+#include "options.h"
 
-#define CHECKTIME 5000
+namespace
+{
 
-struct DirNameComparator {
-    template<class T>
-    bool operator()(T const &firstDir, T const &secondDir) const
-    {
-        return options.dirBrowserSortType == Gtk::SORT_ASCENDING ? firstDir < secondDir : firstDir > secondDir;
+std::vector<Glib::ustring> listSubDirs (const Glib::RefPtr<Gio::File>& dir, bool addHidden)
+{
+    std::vector<Glib::ustring> subDirs;
+
+    try {
+
+        // CD-ROM with no disc inserted are reported, but do not exist.
+        if (!Glib::file_test (dir->get_path (), Glib::FILE_TEST_EXISTS)) {
+            return subDirs;
+        }
+
+        auto enumerator = dir->enumerate_children ("standard::name,standard::type,standard::is-hidden");
+
+        while (auto file = enumerator->next_file ()) {
+            if (file->get_file_type () != Gio::FILE_TYPE_DIRECTORY) {
+                continue;
+            }
+            if (!addHidden && file->is_hidden ()) {
+                continue;
+            }
+            subDirs.push_back (file->get_name ());
+        }
+
+    } catch (const Glib::Exception& exception) {
+
+        if (options.rtSettings.verbose) {
+            std::cerr << "Failed to list subdirectories of \"" << dir << "\": " << exception.what () << std::endl;
+        }
+
     }
-};
+
+    return subDirs;
+}
+
+}
 
 DirBrowser::DirBrowser () : dirTreeModel(),
     dtColumns(),
@@ -221,7 +253,7 @@ void DirBrowser::fillRoot ()
         }
 
     // since sigc++ is not thread safe, we have to use the glib function
-    g_timeout_add (CHECKTIME, updateVolumesUI, this);
+    g_timeout_add (5000, updateVolumesUI, this);
 #else
     Gtk::TreeModel::Row rootRow = *(dirTreeModel->append());
     rootRow[dtColumns.filename] = "/";
@@ -244,19 +276,15 @@ void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::
     // We will disable model's sorting because it decreases speed of inserting new items
     // in list tree dramatically. Therefore will do:
     // 1) Disable sorting in model
-    // 2) Manually sort data by DirNameComparator
+    // 2) Manually sort data in the order determined by the options
     // 3) Enable sorting in model again for UI (sorting by click on header)
     int prevSortColumn;
     Gtk::SortType prevSortType;
     dirTreeModel->get_sort_column_id(prevSortColumn, prevSortType);
     dirTreeModel->set_sort_column(Gtk::TreeSortable::DEFAULT_UNSORTED_COLUMN_ID, Gtk::SORT_ASCENDING);
 
-    typedef std::vector<Glib::ustring> DirPathType;
-
-    DirPathType subDirs;
-    Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (iter->get_value (dtColumns.dirname));
-
-    safe_build_subdir_list (dir, subDirs, options.fbShowHidden);
+    auto dir = Gio::File::create_for_path (iter->get_value (dtColumns.dirname));
+    auto subDirs = listSubDirs (dir, options.fbShowHidden);
 
     if (subDirs.empty()) {
         dirtree->collapse_row(path);
@@ -264,14 +292,22 @@ void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::
         Gtk::TreeNodeChildren children = iter->children();
         std::list<Gtk::TreeIter> forErase(children.begin(), children.end());
 
-        DirNameComparator comparator;
-        sort(subDirs.begin(), subDirs.end(), comparator);
+        std::sort (subDirs.begin (), subDirs.end (), [] (const Glib::ustring& firstDir, const Glib::ustring& secondDir)
+        {
+            switch (options.dirBrowserSortType) {
+            default:
+            case Gtk::SORT_ASCENDING:
+                return firstDir < secondDir;
+            case Gtk::SORT_DESCENDING:
+                return firstDir > secondDir;
+            }
+        });
 
-        for (DirPathType::const_iterator it = subDirs.begin(), end = subDirs.end(); it != end; ++it) {
+        for (auto it = subDirs.begin(), end = subDirs.end(); it != end; ++it) {
             addDir(iter, *it);
         }
 
-        for (std::list<Gtk::TreeIter>::const_iterator it = forErase.begin(), end = forErase.end(); it != end; ++it) {
+        for (auto it = forErase.begin(), end = forErase.end(); it != end; ++it) {
             dirTreeModel->erase(*it);
         }
 
@@ -310,9 +346,8 @@ void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter)
     }
 
     // test if new files are created
-    std::vector<Glib::ustring> subDirs;
-    Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (iter->get_value (dtColumns.dirname));
-    safe_build_subdir_list (dir, subDirs, options.fbShowHidden);
+    auto dir = Gio::File::create_for_path (iter->get_value (dtColumns.dirname));
+    auto subDirs = listSubDirs (dir, options.fbShowHidden);
 
     for (int i = 0; i < subDirs.size(); i++) {
         bool found = false;

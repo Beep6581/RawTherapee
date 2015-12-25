@@ -128,27 +128,6 @@ void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ustri
     }
 }
 
-
-void safe_build_subdir_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ustring> &subDirs, bool add_hidden)
-{
-    Glib::RefPtr<Gio::FileEnumerator> dirList;
-
-    if (dir) {
-        // CD-ROMs with no drive inserted are reported, but do not exist, causing RT to crash
-        if (!safe_file_test(dir->get_path(), Glib::FILE_TEST_EXISTS)) {
-            return;
-        }
-
-        SAFE_ENUMERATOR_CODE_START("standard::name,standard::type,standard::is-hidden")
-
-        if (info->get_file_type() == Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || add_hidden)) {
-            subDirs.push_back (info->get_name());
-        }
-
-        SAFE_ENUMERATOR_CODE_END;
-    }
-}
-
 /*
  * For an unknown reason, Glib::filename_to_utf8 doesn't work on Windows, so we're using
  * Glib::filename_to_utf8 for Linux/Apple and Glib::locale_to_utf8 for Windows

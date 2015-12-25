@@ -20,6 +20,8 @@
 
 #include "rtimage.h"
 
+#include <iostream>
+
 #include "options.h"
 
 namespace
