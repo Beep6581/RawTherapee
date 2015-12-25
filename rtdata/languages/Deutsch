@@ -24,6 +24,7 @@
 #24 2015-11-01 Korrekturen (TooWaBoo) RT4.2.450
 #25 2015-11-30 Korrekturen (TooWaBoo) RT4.2.507
 #26 2015-12-13 Korrekturen (TooWaBoo) RT4.2.514
+#26 2015-12-22 Korrekturen (TooWaBoo) RT4.2.536
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -194,6 +195,7 @@ FILEBROWSER_SHOWEDITEDHINT;Nur bearbeitete Bilder anzeigen\nTaste: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Nur unbearbeitete Bilder anzeigen\nTaste: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Bildinformationen ein-/ausblenden\n\nIm Multi-Reitermodus:\nTaste: <b>i</b>\nIm Ein-Reitermodus:\nTaste:  <b>Alt</b> + <b>i</b>
 FILEBROWSER_SHOWNOTTRASHHINT;Nur nicht gelöschte Bilder anzeigen
+FILEBROWSER_SHOWORIGINALHINT;Zeige nur das Originalbild.\n\nWenn mehrere Bilder mit dem gleichen Dateinamen und unterschiedlichen Dateitypen existieren, ist das Originalbild das Bild, welches in der Liste "Dateitypen anzeigen" unter Einstellungen > Dateiverwaltung als erstes gefunden wird.
 FILEBROWSER_SHOWRANK1HINT;Nur mit 1 Stern bewertete Bilder anzeigen\nTaste: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Nur mit 2 Sternen bewertete Bilder anzeigen\nTaste: <b>2</b>
 FILEBROWSER_SHOWRANK3HINT;Nur mit 3 Sternen bewertete Bilder anzeigen\nTaste: <b>3</b>
@@ -1019,10 +1021,12 @@ PREFERENCES_OVERLAY_FILENAMES;Bildinformationen überlagern die Miniaturbilder i
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Bildinformationen der Miniaturbilder im Filmstreifen anzeigen
 PREFERENCES_OVERWRITEOUTPUTFILE;Bestehende Ausgabedateien überschreiben
 PREFERENCES_PANFACTORLABEL;Mausgeschwindigkeit beim Bewegen von Bildern
-PREFERENCES_PARSEDEXT;Angezeigte Dateitypen
+PREFERENCES_PARSEDEXT;Dateitypen anzeigen
 PREFERENCES_PARSEDEXTADD;Dateityp\nhinzufügen
-PREFERENCES_PARSEDEXTADDHINT;Dateityp (Extension) zur Liste hinzufügen
-PREFERENCES_PARSEDEXTDELHINT;Selektierten Dateityp aus Liste entfernen
+PREFERENCES_PARSEDEXTADDHINT;Dateityp zur Liste hinzufügen
+PREFERENCES_PARSEDEXTDELHINT;Ausgewählten Dateityp aus Liste entfernen
+PREFERENCES_PARSEDEXTDOWNHINT;Ausgewählten Dateityp nach unten verschieben.
+PREFERENCES_PARSEDEXTUPHINT;Ausgewählten Dateityp nach oben verschieben.
 PREFERENCES_PREVDEMO;Farbinterpolation
 PREFERENCES_PREVDEMO_FAST;Schnell
 PREFERENCES_PREVDEMO_LABEL;Demosaikmethode für 100%-Ansicht
@@ -1987,10 +1991,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
-!PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
-!PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
