@@ -497,39 +497,54 @@ int processLineParams( int argc, char **argv )
                 break;
 
             case 'c': // MUST be last option
-                while( iArg + 1 < argc ) {
+                while (iArg + 1 < argc) {
                     iArg++;
 
-                    if( !safe_file_test( safe_filename_to_utf8(argv[iArg]), Glib::FILE_TEST_EXISTS )) {
-                        std::cerr << argv[iArg] << " doesn't exist." << std::endl;
+                    const auto argument = safe_filename_to_utf8 (argv[iArg]);
+
+                    if (Glib::file_test (argument, Glib::FILE_TEST_IS_REGULAR)) {
+                        inputFiles.emplace_back (argument);
                         continue;
                     }
 
-                    if( safe_file_test( safe_filename_to_utf8(argv[iArg]), Glib::FILE_TEST_IS_DIR )) {
-                        std::vector<Glib::ustring> names;
-                        Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path ( argv[iArg] );
-                        safe_build_file_list (dir, names, argv[iArg] );
+                    if (Glib::file_test (argument, Glib::FILE_TEST_IS_DIR)) {
 
-                        for(size_t iFile = 0; iFile < names.size(); iFile++ ) {
-                            if( !safe_file_test( names[iFile] , Glib::FILE_TEST_IS_DIR)) {
-                                // skip files without extension and without sidecar files
-                                Glib::ustring s(names[iFile]);
-                                Glib::ustring::size_type ext = s.find_last_of('.');
-
-                                if( Glib::ustring::npos == ext ) {
-                                    continue;
-                                }
-
-                                if( ! s.substr(ext).compare( paramFileExtension )) {
-                                    continue;
-                                }
-
-                                inputFiles.push_back( names[iFile] );
-                            }
+                        auto dir = Gio::File::create_for_path (argument);
+                        if (!dir || !dir->query_exists()) {
+                            continue;
                         }
-                    } else {
-                        inputFiles.push_back( safe_filename_to_utf8 (argv[iArg]) );
+
+                        try {
+
+                            auto enumerator = dir->enumerate_children ();
+
+                            while (auto file = enumerator->next_file ()) {
+
+                                const auto fileName = Glib::build_filename (argument, file->get_name ());
+
+                                if (Glib::file_test (fileName, Glib::FILE_TEST_IS_DIR)) {
+                                    continue;
+                                }
+
+                                // skip files without extension and sidecar files
+                                auto lastdot = fileName.find_last_of('.');
+                                if (lastdot == Glib::ustring::npos) {
+                                    continue;
+                                }
+
+                                if (fileName.substr (lastdot).compare (paramFileExtension) == 0) {
+                                    continue;
+                                }
+
+                                inputFiles.emplace_back (fileName);
+                            }
+
+                        } catch (Glib::Exception&) {}
+
+                        continue;
                     }
+
+                    std::cerr << "\"" << argument << "\" is neither a regular file nor a directory." << std::endl;
                 }
 
                 break;

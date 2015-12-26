@@ -542,11 +542,44 @@ void FileCatalog::closeDir ()
 
 std::vector<Glib::ustring> FileCatalog::getFileList ()
 {
-
     std::vector<Glib::ustring> names;
-    Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (selectedDirectory);
-    safe_build_file_list (dir, names, selectedDirectory, &(options.parsedExtensions));
-// Issue 2406    std::sort (names.begin(), names.end());
+
+    std::set<Glib::ustring> extensions;
+    for (const auto& parsedExt : options.parsedExtensions) {
+        extensions.emplace (parsedExt.lowercase ());
+    }
+
+    try {
+
+        auto dir = Gio::File::create_for_path (selectedDirectory);
+
+        auto enumerator = dir->enumerate_children ();
+
+        while (auto file = enumerator->next_file ()) {
+
+            const Glib::ustring fname = file->get_name ();
+
+            auto lastdot = fname.find_last_of ('.');
+            if (lastdot >= fname.length () - 1) {
+                continue;
+            }
+
+            const auto fext = fname.substr (lastdot + 1).lowercase ();
+            if (extensions.count (fext) == 0) {
+                continue;
+            }
+
+            names.emplace_back (Glib::build_filename (selectedDirectory, fname));
+        }
+
+    } catch (Glib::Exception& exception) {
+
+        if (options.rtSettings.verbose) {
+            std::cerr << "Failed to list directory \"" << selectedDirectory << "\": " << exception.what() << std::endl;
+        }
+
+    }
+
     return names;
 }
 

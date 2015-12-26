@@ -5,8 +5,6 @@
 #include <glibmm.h>
 #include <giomm.h>
 
-void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ustring> &names, const Glib::ustring &directory = "", const std::vector<Glib::ustring> *extensions = NULL);
-
 bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8);
 bool safe_spawn_command_line_sync (const Glib::ustring& cmd_utf8);
 

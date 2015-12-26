@@ -209,13 +209,21 @@ void ffInfo::updateRawImage()
 void FFManager::init( Glib::ustring pathname )
 {
     std::vector<Glib::ustring> names;
-    Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (pathname);
 
-    if( dir && !dir->query_exists()) {
+    auto dir = Gio::File::create_for_path (pathname);
+    if (!dir || !dir->query_exists()) {
         return;
     }
 
-    safe_build_file_list (dir, names, pathname);
+    try {
+
+        auto enumerator = dir->enumerate_children ();
+
+        while (auto file = enumerator->next_file ()) {
+            names.emplace_back (Glib::build_filename (pathname, file->get_name ()));
+        }
+
+    } catch (Glib::Exception&) {}
 
     ffList.clear();
 

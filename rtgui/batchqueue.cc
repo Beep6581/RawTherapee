@@ -676,22 +676,31 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img)
 
     if (saveBatchQueue ()) {
         ::g_remove (processedParams.c_str ());
-        // Delete all files in directory \batch when finished, just to be sure to remove zombies
 
-        // Not sure that locking is necessary, but it should be safer
-        MYREADERLOCK(l, entryRW);
+        // Delete all files in directory batch when finished, just to be sure to remove zombies
+        auto isEmpty = false;
 
-        if( fd.empty() ) {
-            MYREADERLOCK_RELEASE(l);
+        {
+#if PROTECT_VECTORS
+            MYREADERLOCK(l, entryRW);
+#endif
+            isEmpty = fd.empty();
+        }
 
-            std::vector<Glib::ustring> names;
-            Glib::ustring batchdir = Glib::build_filename(options.rtdir, "batch");
-            Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (batchdir);
-            safe_build_file_list (dir, names, batchdir);
+        if (isEmpty) {
 
-            for (auto iter = names.begin (); iter != names.end (); ++iter) {
-                ::g_remove (iter->c_str ());
-            }
+            const auto batchdir = Glib::build_filename (options.rtdir, "batch");
+
+            try {
+
+                auto dir = Gio::File::create_for_path (batchdir);
+                auto enumerator = dir->enumerate_children ("standard::name");
+
+                while (auto file = enumerator->next_file ()) {
+                    ::g_remove (Glib::build_filename (batchdir, file->get_name ()).c_str ());
+                }
+
+            } catch (Glib::Exception&) {}
         }
     }
 
