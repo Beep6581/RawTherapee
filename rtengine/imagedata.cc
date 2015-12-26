@@ -25,6 +25,20 @@ using namespace rtengine;
 
 extern "C" IptcData *iptc_data_new_from_jpeg_file (FILE* infile);
 
+namespace
+{
+
+Glib::ustring to_utf8 (const std::string& str)
+{
+    try {
+        return Glib::locale_to_utf8 (str);
+    } catch (Glib::Error&) {
+        return Glib::convert_with_fallback (str, "UTF-8", "ISO-8859-1", "?");
+    }
+}
+
+}
+
 ImageMetaData* ImageMetaData::fromFile (const Glib::ustring& fname, RawMetaDataLocation* rml)
 {
 
@@ -472,7 +486,7 @@ const procparams::IPTCPairs ImageData::getIPTCData () const
         if (ds) {
             iptc_dataset_get_data (ds, buffer, 2100);
             std::vector<Glib::ustring> icValues;
-            icValues.push_back (safe_locale_to_utf8((char*)buffer));
+            icValues.push_back (to_utf8((char*)buffer));
 
             iptcc[strTags[i].field] = icValues;
             iptc_dataset_unref (ds);
@@ -484,7 +498,7 @@ const procparams::IPTCPairs ImageData::getIPTCData () const
 
     while ((ds = iptc_data_get_next_dataset (iptc, ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS))) {
         iptc_dataset_get_data (ds, buffer, 2100);
-        keywords.push_back (safe_locale_to_utf8((char*)buffer));
+        keywords.push_back (to_utf8((char*)buffer));
     }
 
     iptcc["Keywords"] = keywords;
@@ -493,7 +507,7 @@ const procparams::IPTCPairs ImageData::getIPTCData () const
 
     while ((ds = iptc_data_get_next_dataset (iptc, ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY))) {
         iptc_dataset_get_data (ds, buffer, 2100);
-        suppCategories.push_back (safe_locale_to_utf8((char*)buffer));
+        suppCategories.push_back (to_utf8((char*)buffer));
         iptc_dataset_unref (ds);
     }
 

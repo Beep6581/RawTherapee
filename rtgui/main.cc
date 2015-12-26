@@ -66,6 +66,29 @@ Glib::ustring argv1;
 bool simpleEditor;
 Glib::Thread* mainThread;
 
+namespace
+{
+
+// For an unknown reason, Glib::filename_to_utf8 doesn't work on reliably Windows,
+// so we're using Glib::filename_to_utf8 for Linux/Apple and Glib::locale_to_utf8 for Windows.
+Glib::ustring fname_to_utf8 (const char* fname)
+{
+#ifdef WIN32
+
+    try {
+        return Glib::locale_to_utf8 (fname);
+    } catch (Glib::Error&) {
+        return Glib::convert_with_fallback (fname, "UTF-8", "ISO-8859-1", "?");
+    }
+
+#else
+
+    return Glib::filename_to_utf8 (fname);
+
+#endif
+}
+
+}
 
 // This recursive mutex will be used by gdk_threads_enter/leave instead of a simple mutex
 #ifdef WIN32
@@ -170,7 +193,7 @@ int main(int argc, char **argv)
     bool consoleOpened = false;
 
     if (argc > 1 || options.rtSettings.verbose) {
-        if(options.rtSettings.verbose || ( !safe_file_test( safe_filename_to_utf8(argv[1]), Glib::FILE_TEST_EXISTS ) && !safe_file_test( safe_filename_to_utf8(argv[1]), Glib::FILE_TEST_IS_DIR ))) {
+        if (options.rtSettings.verbose || ( !Glib::file_test (fname_to_utf8 (argv[1]), Glib::FILE_TEST_EXISTS ) && !Glib::file_test (fname_to_utf8 (argv[1]), Glib::FILE_TEST_IS_DIR))) {
             bool stdoutRedirectedtoFile = (GetFileType(GetStdHandle(STD_OUTPUT_HANDLE)) == 0x0001);
             bool stderrRedirectedtoFile = (GetFileType(GetStdHandle(STD_ERROR_HANDLE)) == 0x0001);
 
@@ -395,7 +418,7 @@ int processLineParams( int argc, char **argv )
             case 'o': // outputfile or dir
                 if( iArg + 1 < argc ) {
                     iArg++;
-                    outputPath = safe_filename_to_utf8 (argv[iArg]);
+                    outputPath = fname_to_utf8 (argv[iArg]);
 
                     if( safe_file_test (outputPath, Glib::FILE_TEST_IS_DIR)) {
                         outputDirectory = true;
@@ -409,7 +432,7 @@ int processLineParams( int argc, char **argv )
                 // RT stop if any of them can't be loaded for any reason.
                 if( iArg + 1 < argc ) {
                     iArg++;
-                    Glib::ustring fname = safe_filename_to_utf8 ( argv[iArg] );
+                    Glib::ustring fname = fname_to_utf8 (argv[iArg]);
 
                     if (fname.at(0) == '-') {
                         std::cerr << "Error: filename missing next to the -p switch" << std::endl;
@@ -500,7 +523,7 @@ int processLineParams( int argc, char **argv )
                 while (iArg + 1 < argc) {
                     iArg++;
 
-                    const auto argument = safe_filename_to_utf8 (argv[iArg]);
+                    const auto argument = fname_to_utf8 (argv[iArg]);
 
                     if (Glib::file_test (argument, Glib::FILE_TEST_IS_REGULAR)) {
                         inputFiles.emplace_back (argument);
@@ -615,7 +638,7 @@ int processLineParams( int argc, char **argv )
             }
             }
         } else {
-            argv1 = safe_filename_to_utf8 ( argv[iArg] );
+            argv1 = fname_to_utf8 (argv[iArg]);
 
             if( outputDirectory ) {
                 options.savePathFolder = outputPath;

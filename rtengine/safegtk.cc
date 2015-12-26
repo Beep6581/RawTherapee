@@ -31,55 +31,6 @@
 #include <windows.h>
 #endif
 
-/*
- * For an unknown reason, Glib::filename_to_utf8 doesn't work on Windows, so we're using
- * Glib::filename_to_utf8 for Linux/Apple and Glib::locale_to_utf8 for Windows
- */
-Glib::ustring safe_filename_to_utf8 (const std::string& src)
-{
-    Glib::ustring utf8_str;
-
-#ifdef WIN32
-
-    try {
-        utf8_str = Glib::locale_to_utf8(src);
-    } catch (const Glib::Error& e) {
-        utf8_str = Glib::convert_with_fallback(src, "UTF-8", "ISO-8859-1", "?");
-    }
-
-#else
-
-    utf8_str = Glib::filename_to_utf8(src);
-
-#endif
-
-    return utf8_str;
-}
-
-Glib::ustring safe_locale_to_utf8 (const std::string& src)
-{
-    Glib::ustring utf8_str;
-
-    try {
-        utf8_str = Glib::locale_to_utf8(src);
-    } catch (const Glib::Error& e) {
-        utf8_str = Glib::convert_with_fallback(src, "UTF-8", "ISO-8859-1", "?");
-    }
-
-    return utf8_str;
-}
-
-std::string safe_locale_from_utf8 (const Glib::ustring& utf8_str)
-{
-    std::string str;
-
-    try {
-        str = Glib::locale_from_utf8(utf8_str);
-    } catch (Glib::Error&) {}
-
-    return str;
-}
-
 FILE * safe_g_fopen(const Glib::ustring& src, const gchar *mode)
 {
     return g_fopen(src.c_str(), mode);

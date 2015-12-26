@@ -19,6 +19,7 @@
 #include "extprog.h"
 
 #include <cstring>
+#include <iostream>
 
 #ifdef WIN32
 #include <windows.h>

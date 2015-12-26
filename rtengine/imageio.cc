@@ -75,6 +75,15 @@ FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
     return f;
 }
 
+Glib::ustring to_utf8 (const std::string& str)
+{
+    try {
+        return Glib::locale_to_utf8 (str);
+    } catch (Glib::Error&) {
+        return Glib::convert_with_fallback (str, "UTF-8", "ISO-8859-1", "?");
+    }
+}
+
 }
 
 Glib::ustring ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.", "Error while reading header.", "File reading error", "Image format not supported."};
@@ -105,12 +114,6 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
     // store exif info
     exifChange.clear();
     exifChange = exif;
-    /*unsigned int j=0;
-    for (rtengine::procparams::ExifPairs::const_iterator i=exif.begin(); i!=exif.end(); i++) {
-        exifChange.at(j).first  = i->first;
-        exifChange.at(j).second = i->second;
-        j++;
-    }*/
 
     if (exifRoot != NULL) {
         delete exifRoot;
@@ -138,7 +141,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
             for (unsigned int j = 0; j < i->second.size(); j++) {
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS);
-                std::string loc = safe_locale_to_utf8(i->second.at(j));
+                std::string loc = to_utf8(i->second.at(j));
                 iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), min(static_cast<size_t>(64), loc.size()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
@@ -149,7 +152,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
             for (unsigned int j = 0; j < i->second.size(); j++) {
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY);
-                std::string loc = safe_locale_to_utf8(i->second.at(j));
+                std::string loc = to_utf8(i->second.at(j));
                 iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), min(static_cast<size_t>(32), loc.size()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
@@ -162,7 +165,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
             if (i->first == strTags[j].field && !(i->second.empty())) {
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, strTags[j].tag);
-                std::string loc = safe_locale_to_utf8(i->second.at(0));
+                std::string loc = to_utf8(i->second.at(0));
                 iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), min(strTags[j].size, loc.size()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
