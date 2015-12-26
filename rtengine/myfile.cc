@@ -19,7 +19,6 @@
 #include "myfile.h"
 #include <cstdarg>
 #include <glibmm.h>
-#include "safegtk.h"
 #ifdef BZIP_SUPPORT
 #include <bzlib.h>
 #endif
@@ -58,6 +57,7 @@ int munmap(void *start, size_t length)
 
 #else // WIN32
 
+#include <unistd.h>
 #include <fcntl.h>
 #include <sys/mman.h>
 
@@ -96,7 +96,7 @@ IMFILE* fopen (const char* fname)
 
     if ( fstat(fd, &stat_buffer) < 0 ) {
         printf("no stat\n");
-        close(fd);
+        close (fd);
         return 0;
     }
 

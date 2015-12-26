@@ -25,9 +25,11 @@
 #include <sstream>
 #include <stdint.h>
 
-#include "../rtgui/cacheimagedata.h"
+#include <glib/gstdio.h>
+
 #include "rtexif.h"
-#include "../rtengine/safegtk.h"
+
+#include "../rtgui/cacheimagedata.h"
 #include "../rtgui/version.h"
 #include "../rtgui/ppversion.h"
 
@@ -274,7 +276,7 @@ bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring 
 
     if (!keyFile) {
         // open the file in write mode
-        f = safe_g_fopen (commFName, "wt");
+        f = g_fopen (commFName.c_str (), "wt");
 
         if (f == NULL) {
             printf("TagDirectory::keyFileDump(\"%s\") >>> Error: unable to open file with write access!\n", commFName.c_str());

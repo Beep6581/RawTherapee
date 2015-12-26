@@ -19,7 +19,6 @@
 #include "imagedata.h"
 #include "iptcpairs.h"
 #include <glib/gstdio.h>
-#include "safegtk.h"
 
 using namespace rtengine;
 
@@ -53,7 +52,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri)
     iptc = NULL;
 
     if (ri && (ri->exifBase >= 0 || ri->ciffBase >= 0)) {
-        FILE* f = safe_g_fopen (fname, "rb");
+        FILE* f = g_fopen (fname.c_str (), "rb");
 
         if (f) {
             if (ri->exifBase >= 0) {
@@ -74,18 +73,18 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri)
             extractInfo ();
         }
     } else if ((dotpos < fname.size() - 3 && !fname.casefold().compare (dotpos, 4, ".jpg")) || (dotpos < fname.size() - 4 && !fname.casefold().compare (dotpos, 5, ".jpeg"))) {
-        FILE* f = safe_g_fopen (fname, "rb");
+        FILE* f = g_fopen (fname.c_str (), "rb");
 
         if (f) {
             root = rtexif::ExifManager::parseJPEG (f);
             extractInfo ();
             fclose (f);
-            FILE* ff = safe_g_fopen (fname, "rb");
+            FILE* ff = g_fopen (fname.c_str (), "rb");
             iptc = iptc_data_new_from_jpeg_file (ff);
             fclose (ff);
         }
     } else if ((dotpos < fname.size() - 3 && !fname.casefold().compare (dotpos, 4, ".tif")) || (dotpos < fname.size() - 4 && !fname.casefold().compare (dotpos, 5, ".tiff"))) {
-        FILE* f = safe_g_fopen (fname, "rb");
+        FILE* f = g_fopen (fname.c_str (), "rb");
 
         if (f) {
             root = rtexif::ExifManager::parseTIFF (f);

@@ -20,7 +20,6 @@
 #include "../rtgui/options.h"
 #include <giomm.h>
 #include "../rtgui/guiutils.h"
-#include "safegtk.h"
 #include "rawimage.h"
 #include <sstream>
 #include <iostream>

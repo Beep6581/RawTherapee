@@ -24,7 +24,6 @@
 #include "../rtengine/safekeyfile.h"
 #include "addsetids.h"
 #include "guiutils.h"
-#include "../rtengine/safegtk.h"
 #include "version.h"
 
 #ifdef _OPENMP
@@ -70,13 +69,13 @@ inline bool Options::checkProfilePath(Glib::ustring &path)
 
     Glib::ustring p = getUserProfilePath();
 
-    if (!p.empty() && safe_file_test (path + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
+    if (!p.empty() && Glib::file_test (path + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
         return true;
     }
 
     p = getGlobalProfilePath();
 
-    if (!p.empty() && safe_file_test (path + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
+    if (!p.empty() && Glib::file_test (path + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
         return true;
     } else {
         return false;
@@ -85,7 +84,7 @@ inline bool Options::checkProfilePath(Glib::ustring &path)
 
 bool Options::checkDirPath(Glib::ustring &path, Glib::ustring errString)
 {
-    if (safe_file_test (path, Glib::FILE_TEST_EXISTS) && safe_file_test (path, Glib::FILE_TEST_IS_DIR)) {
+    if (Glib::file_test (path, Glib::FILE_TEST_EXISTS) && Glib::file_test (path, Glib::FILE_TEST_IS_DIR)) {
         return true;
     } else {
         if (!errString.empty()) {
@@ -170,51 +169,51 @@ void Options::updatePaths()
     Glib::ustring preferredPath = getPreferredProfilePath();
 
     // Paths are updated only if the user or global profile path is set
-    if (lastRgbCurvesDir.empty() || !safe_file_test (lastRgbCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastRgbCurvesDir, Glib::FILE_TEST_IS_DIR)) {
+    if (lastRgbCurvesDir.empty() || !Glib::file_test (lastRgbCurvesDir, Glib::FILE_TEST_EXISTS) || !Glib::file_test (lastRgbCurvesDir, Glib::FILE_TEST_IS_DIR)) {
         lastRgbCurvesDir = preferredPath;
     }
 
-    if (lastLabCurvesDir.empty() || !safe_file_test (lastLabCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastLabCurvesDir, Glib::FILE_TEST_IS_DIR)) {
+    if (lastLabCurvesDir.empty() || !Glib::file_test (lastLabCurvesDir, Glib::FILE_TEST_EXISTS) || !Glib::file_test (lastLabCurvesDir, Glib::FILE_TEST_IS_DIR)) {
         lastLabCurvesDir = preferredPath;
     }
 
-    if (lastRetinexDir.empty() || !safe_file_test (lastRetinexDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastLabCurvesDir, Glib::FILE_TEST_IS_DIR)) {
+    if (lastRetinexDir.empty() || !Glib::file_test (lastRetinexDir, Glib::FILE_TEST_EXISTS) || !Glib::file_test (lastLabCurvesDir, Glib::FILE_TEST_IS_DIR)) {
         lastRetinexDir = preferredPath;
     }
 
-    if (lastDenoiseCurvesDir.empty() || !safe_file_test (lastDenoiseCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastDenoiseCurvesDir, Glib::FILE_TEST_IS_DIR)) {
+    if (lastDenoiseCurvesDir.empty() || !Glib::file_test (lastDenoiseCurvesDir, Glib::FILE_TEST_EXISTS) || !Glib::file_test (lastDenoiseCurvesDir, Glib::FILE_TEST_IS_DIR)) {
         lastDenoiseCurvesDir = preferredPath;
     }
 
-    if (lastWaveletCurvesDir.empty() || !safe_file_test (lastWaveletCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastWaveletCurvesDir, Glib::FILE_TEST_IS_DIR)) {
+    if (lastWaveletCurvesDir.empty() || !Glib::file_test (lastWaveletCurvesDir, Glib::FILE_TEST_EXISTS) || !Glib::file_test (lastWaveletCurvesDir, Glib::FILE_TEST_IS_DIR)) {
         lastWaveletCurvesDir = preferredPath;
     }
 
-    if (lastPFCurvesDir.empty() || !safe_file_test (lastPFCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastPFCurvesDir, Glib::FILE_TEST_IS_DIR)) {
+    if (lastPFCurvesDir.empty() || !Glib::file_test (lastPFCurvesDir, Glib::FILE_TEST_EXISTS) || !Glib::file_test (lastPFCurvesDir, Glib::FILE_TEST_IS_DIR)) {
         lastPFCurvesDir = preferredPath;
     }
 
-    if (lastHsvCurvesDir.empty() || !safe_file_test (lastHsvCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastHsvCurvesDir, Glib::FILE_TEST_IS_DIR)) {
+    if (lastHsvCurvesDir.empty() || !Glib::file_test (lastHsvCurvesDir, Glib::FILE_TEST_EXISTS) || !Glib::file_test (lastHsvCurvesDir, Glib::FILE_TEST_IS_DIR)) {
         lastHsvCurvesDir = preferredPath;
     }
 
-    if (lastToneCurvesDir.empty() || !safe_file_test (lastToneCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastToneCurvesDir, Glib::FILE_TEST_IS_DIR)) {
+    if (lastToneCurvesDir.empty() || !Glib::file_test (lastToneCurvesDir, Glib::FILE_TEST_EXISTS) || !Glib::file_test (lastToneCurvesDir, Glib::FILE_TEST_IS_DIR)) {
         lastToneCurvesDir = preferredPath;
     }
 
-    if (lastProfilingReferenceDir.empty() || !safe_file_test (lastProfilingReferenceDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastProfilingReferenceDir, Glib::FILE_TEST_IS_DIR)) {
+    if (lastProfilingReferenceDir.empty() || !Glib::file_test (lastProfilingReferenceDir, Glib::FILE_TEST_EXISTS) || !Glib::file_test (lastProfilingReferenceDir, Glib::FILE_TEST_IS_DIR)) {
         lastProfilingReferenceDir = preferredPath;
     }
 
-    if (lastVibranceCurvesDir.empty() || !safe_file_test (lastVibranceCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastVibranceCurvesDir, Glib::FILE_TEST_IS_DIR)) {
+    if (lastVibranceCurvesDir.empty() || !Glib::file_test (lastVibranceCurvesDir, Glib::FILE_TEST_EXISTS) || !Glib::file_test (lastVibranceCurvesDir, Glib::FILE_TEST_IS_DIR)) {
         lastVibranceCurvesDir = preferredPath;
     }
 
-    if (loadSaveProfilePath.empty() || !safe_file_test (loadSaveProfilePath, Glib::FILE_TEST_EXISTS) || !safe_file_test (loadSaveProfilePath, Glib::FILE_TEST_IS_DIR)) {
+    if (loadSaveProfilePath.empty() || !Glib::file_test (loadSaveProfilePath, Glib::FILE_TEST_EXISTS) || !Glib::file_test (loadSaveProfilePath, Glib::FILE_TEST_IS_DIR)) {
         loadSaveProfilePath = preferredPath;
     }
 
-    if (lastBWCurvesDir.empty() || !safe_file_test (lastBWCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastBWCurvesDir, Glib::FILE_TEST_IS_DIR)) {
+    if (lastBWCurvesDir.empty() || !Glib::file_test (lastBWCurvesDir, Glib::FILE_TEST_EXISTS) || !Glib::file_test (lastBWCurvesDir, Glib::FILE_TEST_IS_DIR)) {
         lastBWCurvesDir = preferredPath;
     }
 
@@ -255,7 +254,7 @@ Glib::ustring Options::findProfilePath(Glib::ustring &profName)
         p = getUserProfilePath();
         Glib::ustring fullPath = Glib::build_filename(p, profName.substr(5) + paramFileExtension);
 
-        if (!p.empty() && safe_file_test (fullPath, Glib::FILE_TEST_EXISTS)) {
+        if (!p.empty() && Glib::file_test (fullPath, Glib::FILE_TEST_EXISTS)) {
             return Glib::path_get_dirname(fullPath);
         }
     } else if (p == "${G}") {
@@ -263,7 +262,7 @@ Glib::ustring Options::findProfilePath(Glib::ustring &profName)
         p = getGlobalProfilePath();
         Glib::ustring fullPath = Glib::build_filename(p, profName.substr(5) + paramFileExtension);
 
-        if (!p.empty() && safe_file_test (fullPath, Glib::FILE_TEST_EXISTS)) {
+        if (!p.empty() && Glib::file_test (fullPath, Glib::FILE_TEST_EXISTS)) {
             return Glib::path_get_dirname(fullPath);
         }
     } else {
@@ -271,7 +270,7 @@ Glib::ustring Options::findProfilePath(Glib::ustring &profName)
         p = getUserProfilePath();
         Glib::ustring fullPath = Glib::build_filename(p, profName + paramFileExtension);
 
-        if (!p.empty() && safe_file_test (fullPath, Glib::FILE_TEST_EXISTS)) {
+        if (!p.empty() && Glib::file_test (fullPath, Glib::FILE_TEST_EXISTS)) {
             // update the profile path
             profName = Glib::build_filename("${U}", profName);
             return Glib::path_get_dirname(fullPath);
@@ -280,7 +279,7 @@ Glib::ustring Options::findProfilePath(Glib::ustring &profName)
         p = getGlobalProfilePath();
         fullPath = Glib::build_filename(p, profName + paramFileExtension);
 
-        if (!p.empty() && safe_file_test (fullPath, Glib::FILE_TEST_EXISTS)) {
+        if (!p.empty() && Glib::file_test (fullPath, Glib::FILE_TEST_EXISTS)) {
             profName = Glib::build_filename("${G}", profName);
             return Glib::path_get_dirname(fullPath);
         }
@@ -729,7 +728,7 @@ int Options::readFromFile (Glib::ustring fname)
     setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
     rtengine::SafeKeyFile keyFile;
 
-    if( !safe_file_test(fname, Glib::FILE_TEST_EXISTS)) {
+    if( !Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
         return 1;
     }
 
@@ -2105,7 +2104,7 @@ int Options::saveToFile (Glib::ustring fname)
     keyFile.set_string ("Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
     keyFile.set_string ("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
 
-    FILE *f = safe_g_fopen (fname, "wt");
+    FILE *f = g_fopen (fname.c_str (), "wt");
 
     if (f == NULL) {
         if (options.rtSettings.verbose) {

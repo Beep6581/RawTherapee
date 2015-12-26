@@ -22,7 +22,6 @@
 #include <gtkmm.h>
 #include "multilangmgr.h"
 #include "popupcommon.h"
-#include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
 PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label)

@@ -13,7 +13,6 @@
 #else
 #include <netinet/in.h>
 #endif
-#include "safegtk.h"
 
 namespace rtengine
 {

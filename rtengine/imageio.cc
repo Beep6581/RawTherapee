@@ -36,7 +36,6 @@
 #endif
 
 #include "imageio.h"
-#include "safegtk.h"
 #include "iptcpairs.h"
 #include "iccjpeg.h"
 #include "color.h"
@@ -208,7 +207,7 @@ void png_flush(png_struct_def *png_ptr);
 
 int ImageIO::getPNGSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement)
 {
-    FILE *file = safe_g_fopen (fname, "rb");
+    FILE *file = g_fopen (fname.c_str (), "rb");
 
     if (!file) {
         return IMIO_CANNOTREADFILE;
@@ -282,7 +281,7 @@ int ImageIO::getPNGSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat, 
 int ImageIO::loadPNG  (Glib::ustring fname)
 {
 
-    FILE *file = safe_g_fopen (fname, "rb");
+    FILE *file = g_fopen (fname.c_str (), "rb");
 
     if (!file) {
         return IMIO_CANNOTREADFILE;
@@ -531,7 +530,7 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
 
 int ImageIO::loadJPEG (Glib::ustring fname)
 {
-    FILE *file = safe_g_fopen(fname, "rb");
+    FILE *file = g_fopen(fname.c_str (), "rb");
 
     if (!file) {
         return IMIO_CANNOTREADFILE;

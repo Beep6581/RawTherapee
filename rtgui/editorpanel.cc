@@ -21,7 +21,6 @@
 
 #include <iostream>
 
-#include "../rtengine/safegtk.h"
 #include "../rtengine/imagesource.h"
 #include "../rtengine/iccstore.h"
 #include "soundman.h"
@@ -492,7 +491,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     show_all ();
     /*
         // save as dialog
-        if (safe_file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR))
+        if (Glib::file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR))
             saveAsDialog = new SaveAsDialog (options.lastSaveAsPath);
         else
             saveAsDialog = new SaveAsDialog (safe_get_user_picture_dir());
@@ -789,7 +788,7 @@ void EditorPanel::close ()
         navigator->previewWindow->setPreviewHandler (NULL);
 
         // If the file was deleted somewhere, the openThm.descreaseRef delete the object, but we don't know here
-        if (safe_file_test(fname, Glib::FILE_TEST_EXISTS)) {
+        if (Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
             openThm->removeThumbnailListener (this);
             openThm->decreaseRef ();
         }
@@ -803,7 +802,7 @@ void EditorPanel::saveProfile ()
     }
 
     // If the file was deleted, do not generate ghost entries
-    if (safe_file_test(fname, Glib::FILE_TEST_EXISTS)) {
+    if (Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
         ProcParams params;
         ipc->getParams (&params);
 
@@ -1543,7 +1542,7 @@ void EditorPanel::saveAsPressed ()
 
     SaveAsDialog* saveAsDialog;
 
-    if (safe_file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR)) {
+    if (Glib::file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR)) {
         saveAsDialog = new SaveAsDialog (options.lastSaveAsPath);
     } else {
         saveAsDialog = new SaveAsDialog (PlacesBrowser::userPicturesDir ());
@@ -1590,7 +1589,7 @@ void EditorPanel::saveAsPressed ()
                         fnameTemp = Glib::ustring::compose ("%1-%2.%3", Glib::build_filename (dstdir,  dstfname), tries, dstext);
                     }
 
-                    if (!safe_file_test (fnameTemp, Glib::FILE_TEST_EXISTS)) {
+                    if (!Glib::file_test (fnameTemp, Glib::FILE_TEST_EXISTS)) {
                         fnameOut = fnameTemp;
                         fnameOK = true;
                         break;
@@ -1703,7 +1702,7 @@ bool EditorPanel::idle_sendToGimp( ProgressConnector<rtengine::IImage16*> *pc, G
 
         int tries = 1;
 
-        while (safe_file_test (fileName, Glib::FILE_TEST_EXISTS) && tries < 1000) {
+        while (Glib::file_test (fileName, Glib::FILE_TEST_EXISTS) && tries < 1000) {
             fileName = Glib::ustring::compose("%1-%2.%3", fname, tries, sf.format);
             tries++;
         }

@@ -19,7 +19,6 @@
 #include <cstring>
 
 #include "dcp.h"
-#include "safegtk.h"
 #include "iccmatrices.h"
 #include "iccstore.h"
 #include "rawimagesource.h"
@@ -828,7 +827,7 @@ DCPProfile::DCPProfile(Glib::ustring fname)
 
     aDeltas1 = aDeltas2 = aLookTable = NULL;
 
-    FILE *pFile = safe_g_fopen(fname, "rb");
+    FILE *pFile = g_fopen(fname.c_str (), "rb");
 
     TagDirectory *tagDir = ExifManager::parseTIFF(pFile, false);
 
@@ -1717,7 +1716,7 @@ void DCPStore::init (Glib::ustring rtProfileDir)
             Glib::Dir* dir = NULL;
 
             try {
-                if (!safe_file_test (dirname, Glib::FILE_TEST_IS_DIR)) {
+                if (!Glib::file_test (dirname, Glib::FILE_TEST_IS_DIR)) {
                     return;
                 }
 
@@ -1733,7 +1732,7 @@ void DCPStore::init (Glib::ustring rtProfileDir)
                 Glib::ustring sname = *i;
 
                 // ignore directories
-                if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
+                if (!Glib::file_test (fname, Glib::FILE_TEST_IS_DIR)) {
                     size_t lastdot = sname.find_last_of ('.');
 
                     if (lastdot != Glib::ustring::npos && lastdot <= sname.size() - 4 && (!sname.casefold().compare (lastdot, 4, ".dcp"))) {
@@ -1781,7 +1780,7 @@ DCPProfile* DCPStore::getStdProfile(Glib::ustring camShortName)
 
 bool DCPStore::isValidDCPFileName(Glib::ustring filename) const
 {
-    if (!safe_file_test (filename, Glib::FILE_TEST_EXISTS) || safe_file_test (filename, Glib::FILE_TEST_IS_DIR)) {
+    if (!Glib::file_test (filename, Glib::FILE_TEST_EXISTS) || Glib::file_test (filename, Glib::FILE_TEST_IS_DIR)) {
         return false;
     }
 

@@ -21,7 +21,6 @@
 #include "profilestore.h"
 #include "clipboard.h"
 #include "multilangmgr.h"
-#include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
 using namespace rtengine;

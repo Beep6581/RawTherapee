@@ -33,7 +33,6 @@
 #include "filecatalog.h"
 #include "batchqueuebuttonset.h"
 #include "guiutils.h"
-#include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
 using namespace std;
@@ -861,7 +860,7 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
             fname = Glib::ustring::compose ("%1-%2.%3", Glib::build_filename (dstdir,  dstfname), tries, format);
         }
 
-        int fileExists = safe_file_test (fname, Glib::FILE_TEST_EXISTS);
+        int fileExists = Glib::file_test (fname, Glib::FILE_TEST_EXISTS);
 
         if (inOverwriteMode && fileExists) {
             if (::g_remove (fname.c_str ()) != 0) {

@@ -54,8 +54,6 @@
 #include "conio.h"
 #endif
 
-#include "../rtengine/safegtk.h"
-
 extern Options options;
 
 // stores path to data files
@@ -286,7 +284,7 @@ int main(int argc, char **argv)
 #ifndef WIN32
 
     // Move the old path to the new one if the new does not exist
-    if (safe_file_test(Glib::build_filename(options.rtdir, "cache"), Glib::FILE_TEST_IS_DIR) && !safe_file_test(options.cacheBaseDir, Glib::FILE_TEST_IS_DIR)) {
+    if (Glib::file_test(Glib::build_filename(options.rtdir, "cache"), Glib::FILE_TEST_IS_DIR) && !Glib::file_test(options.cacheBaseDir, Glib::FILE_TEST_IS_DIR)) {
         g_rename(Glib::build_filename (options.rtdir, "cache").c_str (), options.cacheBaseDir.c_str ());
     }
 
@@ -295,7 +293,7 @@ int main(int argc, char **argv)
     simpleEditor = false;
 
     if( !argv1.empty() )
-        if( safe_file_test(argv1, Glib::FILE_TEST_EXISTS) && !safe_file_test(argv1, Glib::FILE_TEST_IS_DIR)) {
+        if( Glib::file_test(argv1, Glib::FILE_TEST_EXISTS) && !Glib::file_test(argv1, Glib::FILE_TEST_IS_DIR)) {
             simpleEditor = true;
         }
 
@@ -420,7 +418,7 @@ int processLineParams( int argc, char **argv )
                     iArg++;
                     outputPath = fname_to_utf8 (argv[iArg]);
 
-                    if( safe_file_test (outputPath, Glib::FILE_TEST_IS_DIR)) {
+                    if( Glib::file_test (outputPath, Glib::FILE_TEST_IS_DIR)) {
                         outputDirectory = true;
                     }
                 }
@@ -739,7 +737,7 @@ int processLineParams( int argc, char **argv )
             continue;
         }
 
-        if( !overwriteFiles && safe_file_test( outputFile , Glib::FILE_TEST_EXISTS ) ) {
+        if( !overwriteFiles && Glib::file_test( outputFile , Glib::FILE_TEST_EXISTS ) ) {
             std::cerr << outputFile  << " already exists: use -Y option to overwrite. This image has been skipped." << std::endl;
             continue;
         }
@@ -780,7 +778,7 @@ int processLineParams( int argc, char **argv )
                 Glib::ustring sideProcessingParams = inputFile + paramFileExtension;
 
                 // the "load" method don't reset the procparams values anymore, so values found in the procparam file override the one of currentParams
-                if( !safe_file_test( sideProcessingParams, Glib::FILE_TEST_EXISTS ) || currentParams.load ( sideProcessingParams )) {
+                if( !Glib::file_test( sideProcessingParams, Glib::FILE_TEST_EXISTS ) || currentParams.load ( sideProcessingParams )) {
                     std::cerr << "Warning: sidecar file requested but not found for: " << sideProcessingParams << std::endl;
                 } else {
                     sideCarFound = true;

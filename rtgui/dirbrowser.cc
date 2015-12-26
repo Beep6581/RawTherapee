@@ -25,8 +25,6 @@
 #include <windows.h>
 #endif
 
-#include "../rtengine/safegtk.h"
-
 #include "guiutils.h"
 #include "rtimage.h"
 #include "multilangmgr.h"
@@ -336,8 +334,8 @@ void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter)
         change = false;
 
         for (Gtk::TreeModel::iterator it = iter->children().begin(); it != iter->children().end(); it++)
-            if (!safe_file_test (it->get_value (dtColumns.dirname), Glib::FILE_TEST_EXISTS)
-                    || !safe_file_test (it->get_value (dtColumns.dirname), Glib::FILE_TEST_IS_DIR)) {
+            if (!Glib::file_test (it->get_value (dtColumns.dirname), Glib::FILE_TEST_EXISTS)
+                    || !Glib::file_test (it->get_value (dtColumns.dirname), Glib::FILE_TEST_IS_DIR)) {
                 GThreadLock lock;
                 dirTreeModel->erase (it);
                 change = true;
@@ -381,7 +379,7 @@ void DirBrowser::row_activated (const Gtk::TreeModel::Path& path, Gtk::TreeViewC
 
     Glib::ustring dname = dirTreeModel->get_iter (path)->get_value (dtColumns.dirname);
 
-    if (safe_file_test (dname, Glib::FILE_TEST_IS_DIR))
+    if (Glib::file_test (dname, Glib::FILE_TEST_IS_DIR))
         dirSelectionSignal (dname, Glib::ustring());
 }
 
@@ -478,7 +476,7 @@ void DirBrowser::open (const Glib::ustring& dirname, const Glib::ustring& fileNa
 void DirBrowser::file_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirName)
 {
 
-    if (!file || !safe_file_test (dirName, Glib::FILE_TEST_IS_DIR) || event_type == Gio::FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED) {
+    if (!file || !Glib::file_test (dirName, Glib::FILE_TEST_IS_DIR) || event_type == Gio::FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED) {
         return;
     }
 

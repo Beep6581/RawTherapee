@@ -21,7 +21,10 @@
 #ifndef _SOUNDMAN_
 #define _SOUNDMAN_
 
-#include "../rtengine/safegtk.h"
+namespace Glib
+{
+class ustring;
+}
 
 class SoundManager
 {

@@ -20,8 +20,6 @@
 
 #include <glib/gstdio.h>
 
-#include "../rtengine/safegtk.h"
-
 #include "multilangmgr.h"
 #include "rtimage.h"
 
@@ -109,8 +107,8 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
     // Tab 2: the informations about the current version
     std::string buildFileName = Glib::build_filename (creditsPath, "AboutThisBuild.txt");
 
-    if ( safe_file_test(buildFileName, (Glib::FILE_TEST_EXISTS)) ) {
-        FILE *f = safe_g_fopen (buildFileName, "rt");
+    if ( Glib::file_test(buildFileName, (Glib::FILE_TEST_EXISTS)) ) {
+        FILE *f = g_fopen (buildFileName.c_str (), "rt");
 
         if (f != NULL) {
             char* buffer = new char[1024];
@@ -139,8 +137,8 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
     // Tab 3: the credits
     std::string creditsFileName = Glib::build_filename (creditsPath, "AUTHORS.txt");
 
-    if ( safe_file_test(creditsFileName, (Glib::FILE_TEST_EXISTS)) ) {
-        FILE *f = safe_g_fopen (creditsFileName, "rt");
+    if ( Glib::file_test(creditsFileName, (Glib::FILE_TEST_EXISTS)) ) {
+        FILE *f = g_fopen (creditsFileName.c_str (), "rt");
 
         if (f != NULL) {
             char* buffer = new char[1024];
@@ -170,8 +168,8 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
     // Tab 4: the license
     std::string licenseFileName = Glib::build_filename (licensePath, "LICENSE.txt");
 
-    if ( safe_file_test(licenseFileName, (Glib::FILE_TEST_EXISTS)) ) {
-        FILE *f = safe_g_fopen (licenseFileName, "rt");
+    if ( Glib::file_test(licenseFileName, (Glib::FILE_TEST_EXISTS)) ) {
+        FILE *f = g_fopen (licenseFileName.c_str (), "rt");
 
         if (f != NULL) {
             char* buffer = new char[1024];
@@ -207,8 +205,8 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
     // Tab 5: the Release Notes
     std::string releaseNotesFileName = Glib::build_filename (creditsPath, "RELEASE_NOTES.txt");
 
-    if ( safe_file_test(releaseNotesFileName, (Glib::FILE_TEST_EXISTS)) ) {
-        FILE *f = safe_g_fopen (releaseNotesFileName, "rt");
+    if ( Glib::file_test(releaseNotesFileName, (Glib::FILE_TEST_EXISTS)) ) {
+        FILE *f = g_fopen (releaseNotesFileName.c_str (), "rt");
 
         if (f != NULL) {
             char* buffer = new char[1024];

@@ -20,7 +20,6 @@
 #include <vector>
 #include <glib/gstdio.h>
 #include "../rtengine/safekeyfile.h"
-#include "../rtengine/safegtk.h"
 #include "version.h"
 #include <locale.h>
 
@@ -197,7 +196,7 @@ int CacheImageData::save (const Glib::ustring& fname)
 
     rtengine::SafeKeyFile keyFile;
 
-    if (safe_file_test(fname, Glib::FILE_TEST_EXISTS)) {
+    if (Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
         try {
             keyFile.load_from_file (fname);
         } catch (Glib::Error &err) {
@@ -257,7 +256,7 @@ int CacheImageData::save (const Glib::ustring& fname)
         keyFile.set_integer ("ExtraRawInfo", "ThumbImageOffset", thumbOffset);
     }
 
-    FILE *f = safe_g_fopen (fname, "wt");
+    FILE *f = g_fopen (fname.c_str (), "wt");
 
     if (!f) {
         if (options.rtSettings.verbose) {

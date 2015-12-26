@@ -19,7 +19,6 @@
 #include "ffmanager.h"
 #include "../rtgui/options.h"
 #include <giomm.h>
-#include "safegtk.h"
 #include "rawimage.h"
 #include <sstream>
 #include <cstdio>

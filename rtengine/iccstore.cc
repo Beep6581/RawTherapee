@@ -16,18 +16,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "iccstore.h"
+
+#include <cstring>
+
 #ifdef WIN32
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
 #endif
-#include "iccstore.h"
-#include "iccmatrices.h"
-#include <glib/gstdio.h>
-#include "safegtk.h"
-#include "../rtgui/options.h"
 
-#include <cstring>
+#include <glib/gstdio.h>
+
+#include "iccmatrices.h"
+
+#include "../rtgui/options.h"
 
 namespace
 {
@@ -59,7 +62,7 @@ void loadProfiles (const Glib::ustring& dirName,
 
             const Glib::ustring filePath = Glib::build_filename (dirName, fileName);
 
-            if (!safe_file_test (filePath, Glib::FILE_TEST_IS_REGULAR))
+            if (!Glib::file_test (filePath, Glib::FILE_TEST_IS_REGULAR))
                 continue;
 
             Glib::ustring name = fileName.substr (0, fileName.size() - 4);
@@ -356,8 +359,9 @@ cmsHPROFILE ICCStore::getProfile (const Glib::ustring& name) const
 
     const ProfileMap::const_iterator r = fileProfiles.find (name);
 
-    if (r != fileProfiles.end ())
+    if (r != fileProfiles.end ()) {
         return r->second;
+    }
 
     if (name.compare (0, 5, "file:") == 0) {
         const ProfileContent content (name.substr (5));
@@ -371,7 +375,7 @@ cmsHPROFILE ICCStore::getProfile (const Glib::ustring& name) const
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 cmsHPROFILE ICCStore::getStdProfile (const Glib::ustring& name) const
@@ -418,7 +422,6 @@ ProfileContent ICCStore::getContent (const Glib::ustring& name) const
 
 std::uint8_t ICCStore::getInputIntents (cmsHPROFILE profile) const
 {
-
     MyMutex::MyLock lock (mutex_);
 
     return getSupportedIntents (profile, LCMS_USED_AS_INPUT);
@@ -426,7 +429,6 @@ std::uint8_t ICCStore::getInputIntents (cmsHPROFILE profile) const
 
 std::uint8_t ICCStore::getOutputIntents (cmsHPROFILE profile) const
 {
-
     MyMutex::MyLock lock (mutex_);
 
     return getSupportedIntents (profile, LCMS_USED_AS_OUTPUT);
@@ -434,7 +436,6 @@ std::uint8_t ICCStore::getOutputIntents (cmsHPROFILE profile) const
 
 std::uint8_t ICCStore::getProofIntents (cmsHPROFILE profile) const
 {
-
     MyMutex::MyLock lock (mutex_);
 
     return getSupportedIntents (profile, LCMS_USED_AS_PROOF);
@@ -503,7 +504,7 @@ void ICCStore::findDefaultMonitorProfile ()
 ProfileContent::ProfileContent (const Glib::ustring& fileName) : data(NULL), length(0)
 {
 
-    FILE* f = safe_g_fopen (fileName, "rb");
+    FILE* f = g_fopen (fileName.c_str (), "rb");
 
     if (!f) {
         return;

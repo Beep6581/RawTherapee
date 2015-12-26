@@ -3,7 +3,6 @@
  */
 #include "camconst.h"
 #include "settings.h"
-#include "safegtk.h"
 #include "rt_math.h"
 #include <cstdio>
 #include <cstring>
@@ -689,7 +688,7 @@ void CameraConstantsStore::init(Glib::ustring baseDir, Glib::ustring userSetting
 
     Glib::ustring userFile(Glib::build_filename(userSettingsDir, "camconst.json"));
 
-    if (safe_file_test(userFile, Glib::FILE_TEST_EXISTS)) {
+    if (Glib::file_test(userFile, Glib::FILE_TEST_EXISTS)) {
         parse_camera_constants_file(userFile);
     }
 }

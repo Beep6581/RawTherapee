@@ -16,10 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-//#include <glib/gstdio.h>
+#include <glib/gstdio.h>
 #include "procparams.h"
 #include "rt_math.h"
-#include "safegtk.h"
 #include "safekeyfile.h"
 #include "dcp.h"
 #include "../rtgui/multilangmgr.h"
@@ -3385,7 +3384,7 @@ int ProcParams::write (Glib::ustring &fname, Glib::ustring &content) const
 
     if (fname.length()) {
         FILE *f;
-        f = safe_g_fopen (fname, "wt");
+        f = g_fopen (fname.c_str (), "wt");
 
         if (f == NULL) {
             error = 1;
@@ -3414,7 +3413,7 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
             pedited->set(false);
         }
 
-        FILE* f = safe_g_fopen (fname, "rt");
+        FILE* f = g_fopen (fname.c_str (), "rt");
 
         if (!f) {
             return 1;

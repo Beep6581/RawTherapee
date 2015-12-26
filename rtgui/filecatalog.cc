@@ -25,7 +25,6 @@
 #include <glib/gstdio.h>
 
 #include "../rtengine/rt_math.h"
-#include "../rtengine/safegtk.h"
 
 #include "guiutils.h"
 #include "options.h"
@@ -1026,7 +1025,7 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
 
             while(!filecopymovecomplete) {
                 // check for filename conflicts at destination - prevent overwriting (actually RT will crash on overwriting attempt)
-                if (!safe_file_test(dest_fPath, Glib::FILE_TEST_EXISTS) && !safe_file_test(dest_fPath_param, Glib::FILE_TEST_EXISTS)) {
+                if (!Glib::file_test(dest_fPath, Glib::FILE_TEST_EXISTS) && !Glib::file_test(dest_fPath_param, Glib::FILE_TEST_EXISTS)) {
                     // copy/move file to destination
                     Glib::RefPtr<Gio::File> dest_file = Gio::File::create_for_path ( dest_fPath );
 
@@ -1047,12 +1046,12 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
                     // attempt to copy/move paramFile only if it exist next to the src
                     Glib::RefPtr<Gio::File> scr_param = Gio::File::create_for_path (  src_fPath + paramFileExtension );
 
-                    if (safe_file_test( src_fPath + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
+                    if (Glib::file_test( src_fPath + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
                         Glib::RefPtr<Gio::File> dest_param = Gio::File::create_for_path ( dest_fPath_param);
 
                         // copy/move paramFile to destination
                         if (moveRequested) {
-                            if (safe_file_test( dest_fPath + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
+                            if (Glib::file_test( dest_fPath + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
                                 // profile already got copied to destination from cache after cacheMgr->renameEntry
                                 // delete source profile as cleanup
                                 ::g_remove ((src_fPath + paramFileExtension).c_str ());
@@ -1257,7 +1256,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe)
                 Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
 
                 /* check if filename already exists*/
-                if (safe_file_test (nfname, Glib::FILE_TEST_EXISTS)) {
+                if (Glib::file_test (nfname, Glib::FILE_TEST_EXISTS)) {
                     Glib::ustring msg_ = Glib::ustring("<b>") + nfname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "</b>";
                     Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
                     msgd.run ();
@@ -1703,7 +1702,7 @@ void FileCatalog::reparseDirectory ()
         return;
     }
 
-    if (!safe_file_test (selectedDirectory, Glib::FILE_TEST_IS_DIR)) {
+    if (!Glib::file_test (selectedDirectory, Glib::FILE_TEST_IS_DIR)) {
         closeDir ();
         return;
     }
@@ -1715,7 +1714,7 @@ void FileCatalog::reparseDirectory ()
     std::vector<Glib::ustring> fileNamesToDel;
 
     for (size_t i = 0; i < t.size(); i++)
-        if (!safe_file_test (t[i]->filename, Glib::FILE_TEST_EXISTS)) {
+        if (!Glib::file_test (t[i]->filename, Glib::FILE_TEST_EXISTS)) {
             fileNamesToDel.push_back (t[i]->filename);
         }
 
@@ -2049,7 +2048,7 @@ void FileCatalog::buttonBrowsePathPressed ()
     // handle shortcuts in the BrowsePath -- END
 
     // validate the path
-    if (safe_file_test(BrowsePathValue, Glib::FILE_TEST_IS_DIR) && selectDir) {
+    if (Glib::file_test(BrowsePathValue, Glib::FILE_TEST_IS_DIR) && selectDir) {
         selectDir (BrowsePathValue);
     } else
         // error, likely path not found: show red arrow
