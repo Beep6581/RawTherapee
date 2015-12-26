@@ -47,9 +47,37 @@ using namespace std;
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Glib::ustring safe_locale_to_utf8 (const std::string& src);
-Glib::ustring ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.", "Error while reading header.", "File reading error", "Image format not supported."};
+namespace
+{
 
+// Opens a file for binary writing and request exclusive lock (cases were you need "wb" mode plus locking)
+FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
+{
+    FILE* f = NULL;
+
+#ifdef WIN32
+
+    // Use native function to disallow sharing, i.e. lock the file for exclusive access.
+    // This is important to e.g. prevent Windows Explorer from crashing RT due to concurrently scanning an image file.
+    std::unique_ptr<wchar_t, GFreeFunc> wfname (reinterpret_cast<wchar_t*>(g_utf8_to_utf16 (fname.c_str (), -1, NULL, NULL, NULL)), g_free);
+
+    HANDLE hFile = CreateFileW ( wfname.get (), GENERIC_READ | GENERIC_WRITE, 0 /* no sharing allowed */, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile != INVALID_HANDLE_VALUE) {
+        f = _fdopen (_open_osfhandle ((intptr_t)hFile, 0), "wb");
+    }
+
+#else
+
+    f = ::g_fopen (fname.c_str (), "wb");
+
+#endif
+
+    return f;
+}
+
+}
+
+Glib::ustring ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.", "Error while reading header.", "File reading error", "Image format not supported."};
 
 // For only copying the raw input data
 void ImageIO::setMetadata (const rtexif::TagDirectory* eroot)
@@ -888,7 +916,7 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
 int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
 {
 
-    FILE *file = safe_g_fopen_WriteBinLock (fname);
+    FILE *file = g_fopen_withBinaryAndLock (fname);
 
     if (!file) {
         return IMIO_CANNOTWRITEFILE;
@@ -982,7 +1010,7 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
 int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
 {
 
-    FILE *file = safe_g_fopen_WriteBinLock (fname);
+    FILE *file = g_fopen_withBinaryAndLock (fname);
 
     if (!file) {
         return IMIO_CANNOTWRITEFILE;
@@ -1183,7 +1211,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 
 // TODO the following needs to be looked into - do we really need two ways to write a Tiff file ?
     if (exifRoot && uncompressed) {
-        FILE *file = safe_g_fopen_WriteBinLock (fname);
+        FILE *file = g_fopen_withBinaryAndLock (fname);
 
         if (!file) {
             delete [] linebuffer;

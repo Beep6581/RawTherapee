@@ -80,56 +80,6 @@ std::string safe_locale_from_utf8 (const Glib::ustring& utf8_str)
     return str;
 }
 
-// Opens a file for binary writing and request exclusive lock (cases were you need "wb" mode plus locking)
-// (Important on Windows to prevent Explorer to crash RT when parallel scanning e.g. a currently written image file)
-FILE * safe_g_fopen_WriteBinLock(const Glib::ustring& fname)
-{
-    FILE* f = NULL;
-
-#ifdef WIN32
-    // g_fopen just uses _wfopen internally on Windows, does not lock access and has no options to set this
-    // so use a native function to work around this problem
-    wchar_t *wFname = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
-    HANDLE hFile = CreateFileW(wFname, GENERIC_READ | GENERIC_WRITE, 0 /* no sharing allowed */, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-    g_free(wFname);
-
-    if (hFile == INVALID_HANDLE_VALUE) {
-        f = NULL;
-    } else {
-        f = _fdopen( _open_osfhandle((intptr_t)hFile, 0) , "wb");
-    }
-
-#else
-    f = safe_g_fopen(fname, "wb");
-#endif
-
-    return f;
-}
-
-// Covers old UNIX ::open, which expects ANSI instead of UTF8 on Windows
-int safe_open_ReadOnly(const char *fname)
-{
-    int fd = -1;
-
-#ifdef WIN32
-    // First convert UTF8 to UTF16, then use Windows function to open
-    wchar_t *wFname = (wchar_t*)g_utf8_to_utf16 (fname, -1, NULL, NULL, NULL);
-    HANDLE hFile = CreateFileW(wFname, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-    g_free(wFname);
-
-    // convert back to old file descriptor format
-    if (hFile != INVALID_HANDLE_VALUE) {
-        fd = _open_osfhandle((intptr_t)hFile, 0);
-    }
-
-#else
-    fd = ::open(fname, O_RDONLY);
-#endif
-
-    return fd;
-}
-
-
 FILE * safe_g_fopen(const Glib::ustring& src, const gchar *mode)
 {
     return g_fopen(src.c_str(), mode);
