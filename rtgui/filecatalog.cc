@@ -903,35 +903,26 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inc
 
     if (msd.run() == Gtk::RESPONSE_YES) {
         for (unsigned int i = 0; i < tbe.size(); i++) {
-            Glib::ustring fname = tbe[i]->filename;
+            const auto& fname = tbe[i]->filename;
             // remove from browser
-            FileBrowserEntry* t = fileBrowser->delEntry (fname);
-//            t->thumbnail->decreaseRef ();
-            delete t;
+            delete fileBrowser->delEntry (fname);
             // remove from cache
             cacheMgr->deleteEntry (fname);
             // delete from file system
-            safe_g_remove (fname);
+            ::g_remove (fname.c_str ());
             // delete paramfile if found
-            safe_g_remove (Glib::ustring(fname + paramFileExtension));
-            safe_g_remove (Glib::ustring(removeExtension(fname) + paramFileExtension));
+            ::g_remove ((fname + paramFileExtension).c_str ());
+            ::g_remove ((removeExtension(fname) + paramFileExtension).c_str ());
             // delete .thm file
-            safe_g_remove (Glib::ustring(removeExtension(fname) + ".thm"));
-            safe_g_remove (Glib::ustring(removeExtension(fname) + ".THM"));
+            ::g_remove ((removeExtension(fname) + ".thm").c_str ());
+            ::g_remove ((removeExtension(fname) + ".THM").c_str ());
 
             if (inclBatchProcessed) {
                 Glib::ustring procfName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format);
+                ::g_remove (procfName.c_str ());
 
-                if (safe_file_test (procfName, Glib::FILE_TEST_EXISTS)) {
-                    safe_g_remove (procfName);
-                }
-
-                // delete paramfile if found
                 Glib::ustring procfNameParamFile = Glib::ustring::compose ("%1.%2.out%3", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format, paramFileExtension);
-
-                if (safe_file_test (procfNameParamFile, Glib::FILE_TEST_EXISTS)) {
-                    safe_g_remove (procfNameParamFile);
-                }
+                ::g_remove (procfNameParamFile.c_str ());
             }
 
             previewsLoaded--;
@@ -1031,7 +1022,7 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
                             if (safe_file_test( dest_fPath + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
                                 // profile already got copied to destination from cache after cacheMgr->renameEntry
                                 // delete source profile as cleanup
-                                safe_g_remove (src_fPath + paramFileExtension);
+                                ::g_remove ((src_fPath + paramFileExtension).c_str ());
                             } else {
                                 scr_param->move(dest_param);
                             }
@@ -1240,9 +1231,9 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe)
                 } else {
                     success = true;
 
-                    if (!safe_g_rename (ofname, nfname)) {
+                    if (::g_rename (ofname.c_str (), nfname.c_str ()) == 0) {
                         cacheMgr->renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
-                        safe_g_remove(ofname + paramFileExtension);
+                        ::g_remove((ofname + paramFileExtension).c_str ());
                         reparseDirectory ();
                     }
                 }
@@ -1255,53 +1246,6 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe)
     }
 
     delete renameDlg;
-    /*    // ask for new file name
-        Gtk::Dialog dialog (M("FILEBROWSER_RENAMEDLGLABEL"), *((Gtk::Window*)get_toplevel()), true, true);
-
-        dialog.add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK);
-        dialog.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-
-        Gtk::Label l;
-        dialog.get_vbox()->pack_start (l, Gtk::PACK_SHRINK);
-
-        Gtk::Entry nfentry;
-
-        dialog.get_vbox()->pack_start (nfentry, Gtk::PACK_SHRINK);
-        dialog.get_vbox()->show_all ();
-
-        nfentry.set_activates_default (true);
-        dialog.set_default_response (Gtk::RESPONSE_OK);
-
-        for (int i=0; i<tbe.size(); i++) {
-
-            Glib::ustring ofname = tbe[i]->filename;
-            Glib::ustring dirName = Glib::path_get_dirname (tbe[i]->filename);
-            Glib::ustring baseName = Glib::path_get_basename (tbe[i]->filename);
-
-            l.set_markup (Glib::ustring("<big><b>") + Glib::ustring::compose (M("FILEBROWSER_RENAMEDLGMSG"), baseName) + Glib::ustring("</b></big>"));
-            nfentry.set_text (baseName);
-            nfentry.select_region (0, baseName.size());
-
-            if (dialog.run ()== Gtk::RESPONSE_OK) {
-                Glib::ustring nBaseName = nfentry.get_text ();
-                // if path has directory components, exit
-                if (Glib::path_get_dirname (nBaseName) != ".")
-                    continue;
-                // if no extension is given, concatenate the extension of the original file
-                if (nBaseName.find ('.')==nBaseName.npos) {
-            size_t lastdot = baseName.find_last_of ('.');
-                    nBaseName += "." + (lastdot!=Glib::ustring::npos ? baseName.substr (lastdot+1) : "");
-                }
-                Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
-                if (!safe_g_rename (ofname, nfname)) {
-                    cacheMgr->renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
-                    // the remaining part (removing old and adding new entry) is done by the directory monitor
-                    reparseDirectory ();
-    //                on_dir_changed (Gio::File::create_for_path (nfname), Gio::File::create_for_path (nfname), Gio::FILE_MONITOR_EVENT_CHANGED, true);
-                }
-            }
-        }
-        */
 }
 
 void FileCatalog::clearFromCacheRequested  (std::vector<FileBrowserEntry*> tbe, bool leavenotrace)
@@ -1803,63 +1747,91 @@ void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Gli
 
 void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file)
 {
-
-    if (!file ) {
+    if (!file) {
         return;
     }
 
-    if( !file->query_exists()) {
+    if (!file->query_exists()) {
         return;
     }
 
-    Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
+    try {
 
-    if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
-        size_t lastdot = info->get_name().find_last_of ('.');
+        auto info = file->query_info ();
 
-        if (options.is_extention_enabled(lastdot != Glib::ustring::npos ? info->get_name().substr (lastdot + 1) : "")) {
-            previewLoader->add (selectedDirectoryId, file->get_parse_name(), this);
-            previewsToLoad++;
+        if (!info || info->get_file_type () == Gio::FILE_TYPE_DIRECTORY) {
+            return;
         }
-    }
+
+        if (!options.fbShowHidden && info->is_hidden ()) {
+            return;
+        }
+
+        Glib::ustring ext;
+
+        const auto lastdot = info->get_name ().find_last_of ('.');
+        if (lastdot != Glib::ustring::npos) {
+            ext = info->get_name ().substr (lastdot + 1);
+        }
+
+        if (!options.is_extention_enabled (ext)) {
+            return;
+        }
+
+        previewLoader->add (selectedDirectoryId, file->get_parse_name (), this);
+        previewsToLoad++;
+
+    } catch(Gio::Error&) {}
 }
 
 void FileCatalog::addAndOpenFile (const Glib::ustring& fname)
 {
-
-    Glib::RefPtr<Gio::File> file = Gio::File::create_for_path (fname);
+    auto file = Gio::File::create_for_path (fname);
 
     if (!file ) {
         return;
     }
 
-    if( !file->query_exists()) {
+    if (!file->query_exists ()) {
         return;
     }
 
-    Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
+    try {
 
-    if( !info ) {
-        return;
-    }
+        auto info = file->query_info ();
 
-    size_t lastdot = info->get_name().find_last_of ('.');
-
-    if (options.is_extention_enabled(lastdot != Glib::ustring::npos ? info->get_name().substr (lastdot + 1) : "")) {
-        // if supported, load thumbnail first
-        Thumbnail* tmb = cacheMgr->getEntry (file->get_parse_name());
-
-        if (tmb) {
-            FileBrowserEntry* entry = new FileBrowserEntry (tmb, file->get_parse_name());
-            previewReady (selectedDirectoryId, entry);
-            // open the file
-            FCOIParams* params = new FCOIParams;
-            params->catalog = this;
-            params->tmb.push_back (tmb);
-            tmb->increaseRef ();
-            g_idle_add (openRequestedUI, params);
+        if (!info) {
+            return;
         }
-    }
+
+        Glib::ustring ext;
+
+        auto lastdot = info->get_name().find_last_of ('.');
+        if (lastdot != Glib::ustring::npos) {
+            ext = info->get_name ().substr (lastdot + 1);
+        }
+
+        if (!options.is_extention_enabled(ext)) {
+            return;
+        }
+
+        // if supported, load thumbnail first
+        const auto tmb = cacheMgr->getEntry (file->get_parse_name ());
+
+        if (!tmb) {
+            return;
+        }
+
+        FileBrowserEntry* entry = new FileBrowserEntry (tmb, file->get_parse_name ());
+        previewReady (selectedDirectoryId, entry);
+        // open the file
+        FCOIParams* params = new FCOIParams;
+        params->catalog = this;
+        params->tmb.push_back (tmb);
+        tmb->increaseRef ();
+        g_idle_add (openRequestedUI, params);
+
+    } catch(Gio::Error&) {}
 }
 
 void FileCatalog::emptyTrash ()

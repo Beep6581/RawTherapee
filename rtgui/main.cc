@@ -264,7 +264,7 @@ int main(int argc, char **argv)
 
     // Move the old path to the new one if the new does not exist
     if (safe_file_test(Glib::build_filename(options.rtdir, "cache"), Glib::FILE_TEST_IS_DIR) && !safe_file_test(options.cacheBaseDir, Glib::FILE_TEST_IS_DIR)) {
-        safe_g_rename(Glib::build_filename(options.rtdir, "cache"), options.cacheBaseDir);
+        g_rename(Glib::build_filename (options.rtdir, "cache").c_str (), options.cacheBaseDir.c_str ());
     }
 
 #endif

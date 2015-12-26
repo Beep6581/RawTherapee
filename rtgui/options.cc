@@ -107,7 +107,7 @@ void Options::updatePaths()
     if (Glib::path_is_absolute(profilePath)) {
         // absolute path
         if (!checkDirPath (profilePath, "")) {
-            safe_g_mkdir_with_parents (profilePath, 511);
+            g_mkdir_with_parents (profilePath.c_str (), 511);
 
             if (!checkDirPath (profilePath, "")) { // had problems with mkdir_with_parents return value on OS X, just check dir again
                 printf("Error: user's profiles' directory \"%s\" creation failed\n", profilePath.c_str());
@@ -140,7 +140,7 @@ void Options::updatePaths()
             tmpPath = Glib::build_filename(rtdir, profilePath);
 
             if (!checkDirPath (tmpPath, "")) {
-                safe_g_mkdir_with_parents (tmpPath, 511);
+                g_mkdir_with_parents (tmpPath.c_str (), 511);
 
                 if (!checkDirPath (tmpPath, "")) {
                     printf("Error: user's profiles' directory \"%s\" creation failed\n", tmpPath.c_str());
@@ -2187,14 +2187,14 @@ bool Options::load ()
         int r = options.readFromFile (Glib::build_filename(rtdir, "options"));
 
         // If the local option file does not exist or is broken, and the local cache folder does not exist, recreate it
-        if (r && !safe_g_mkdir_with_parents (rtdir, 511)) {
+        if (r && !g_mkdir_with_parents (rtdir.c_str (), 511)) {
             // Save the option file
             options.saveToFile (Glib::build_filename(rtdir, "options"));
         }
 
 #ifdef __APPLE__
         // make sure .local/share exists on OS X so we don't get problems with recently-used.xbel
-        safe_g_mkdir_with_parents (g_get_user_data_dir(), 511);
+        g_mkdir_with_parents (g_get_user_data_dir(), 511);
 #endif
     }
 

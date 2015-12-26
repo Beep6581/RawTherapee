@@ -1011,7 +1011,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
         */
         jpeg_destroy_compress(&cinfo);
         fclose(file);
-        safe_g_remove(fname);
+        g_remove (fname.c_str());
         return IMIO_CANNOTWRITEFILE;
     }
 
@@ -1130,7 +1130,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
         delete [] row;
         jpeg_destroy_compress(&cinfo);
         fclose(file);
-        safe_g_remove(fname);
+        g_remove (fname.c_str());
         return IMIO_CANNOTWRITEFILE;
     }
 
@@ -1142,7 +1142,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
             jpeg_destroy_compress (&cinfo);
             delete [] row;
             fclose (file);
-            safe_g_remove(fname);
+            g_remove (fname.c_str());
             return IMIO_CANNOTWRITEFILE;
         }
 
@@ -1370,7 +1370,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
     if(writeOk) {
         return IMIO_SUCCESS;
     } else {
-        safe_g_remove(fname);
+        g_remove (fname.c_str());
         return IMIO_CANNOTWRITEFILE;
     }
 }

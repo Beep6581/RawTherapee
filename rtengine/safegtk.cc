@@ -27,18 +27,9 @@
 
 #include <glib/gstdio.h>
 
-#include "../rtgui/guiutils.h"
-
-Glib::RefPtr<Gio::FileInfo> safe_query_file_info (Glib::RefPtr<Gio::File> &file)
-{
-    Glib::RefPtr<Gio::FileInfo> info;
-
-    try {
-        info = file->query_info();
-    } catch (...) {  }
-
-    return info;
-}
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 Glib::RefPtr<Gio::FileInfo> safe_next_file (Glib::RefPtr<Gio::FileEnumerator> &dirList)
 {
@@ -260,19 +251,4 @@ FILE * safe_g_fopen(const Glib::ustring& src, const gchar *mode)
 bool safe_file_test (const Glib::ustring& filename, Glib::FileTest test)
 {
     return Glib::file_test (filename, test);
-}
-
-int safe_g_remove(const Glib::ustring& filename)
-{
-    return ::g_remove(filename.c_str());
-}
-
-int safe_g_rename(const Glib::ustring& oldFilename, const Glib::ustring& newFilename)
-{
-    return ::g_rename(oldFilename.c_str(), newFilename.c_str());
-}
-
-int safe_g_mkdir_with_parents(const Glib::ustring& dirName, int mode)
-{
-    return ::g_mkdir_with_parents(dirName.c_str(), mode);
 }

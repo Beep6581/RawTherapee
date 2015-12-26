@@ -153,7 +153,7 @@ void Thumbnail::_generateThumbnailImage ()
         cfs.supported = true;
         needsReProcessing = true;
 
-        cfs.save (getCacheFileName ("data") + ".txt");
+        cfs.save (getCacheFileName ("data", ".txt"));
 
         generateExifDateTimeStrings ();
     }
@@ -238,7 +238,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
             if (options.paramsLoadLocation == PLL_Input) {
                 outFName = fname + paramFileExtension;
             } else {
-                outFName = getCacheFileName("profiles") + paramFileExtension;
+                outFName = getCacheFileName("profiles", paramFileExtension);
             }
 
             exifDir->CPBDump(tmpFileName, fname, outFName,
@@ -261,13 +261,9 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
             loadProcParams();
         }
 
-        if (safe_file_test(tmpFileName, Glib::FILE_TEST_EXISTS )) {
-            safe_g_remove (tmpFileName);
-        }
+        g_remove (tmpFileName.c_str ());
 
-        if (imageMetaData) {
-            delete imageMetaData;
-        }
+        delete imageMetaData;
     }
 
     if (returnParams && hasProcParams()) {
@@ -309,11 +305,11 @@ void Thumbnail::loadProcParams ()
 
         // if no success, try to load the cached version of the procparams
         if (!pparamsValid) {
-            pparamsValid = !pparams.load (getCacheFileName ("profiles") + paramFileExtension);
+            pparamsValid = !pparams.load (getCacheFileName ("profiles", paramFileExtension));
         }
     } else {
         // try to load it from cache
-        pparamsValid = !pparams.load (getCacheFileName ("profiles") + paramFileExtension);
+        pparamsValid = !pparams.load (getCacheFileName ("profiles", paramFileExtension));
 
         // if no success, try to load it from params file next to the image file
         if (!pparamsValid) {
@@ -364,25 +360,15 @@ void Thumbnail::clearProcParams (int whoClearedIt)
             updateCache();
         } else {
             // remove param file from cache
-            Glib::ustring fname_ = getCacheFileName ("profiles") + paramFileExtension;
-
-            if (safe_file_test (fname_, Glib::FILE_TEST_EXISTS)) {
-                safe_g_remove (fname_);
-            }
+            Glib::ustring fname_ = getCacheFileName ("profiles", paramFileExtension);
+            g_remove (fname_.c_str ());
 
             // remove param file located next to the file
-//        fname_ = removeExtension(fname) + paramFileExtension;
             fname_ = fname + paramFileExtension;
-
-            if (safe_file_test(fname_, Glib::FILE_TEST_EXISTS)) {
-                safe_g_remove (fname_);
-            }
+            g_remove (fname_.c_str ());
 
             fname_ = removeExtension(fname) + paramFileExtension;
-
-            if (safe_file_test (fname_, Glib::FILE_TEST_EXISTS)) {
-                safe_g_remove (fname_);
-            }
+            g_remove (fname_.c_str ());
 
             if (cfs.format == FT_Raw && options.internalThumbIfUntouched && cfs.thumbImgType != CacheImageData::QUICK_THUMBNAIL) {
                 // regenerate thumbnail, ie load the quick thumb again. For the rare formats not supporting quick thumbs this will
@@ -464,10 +450,10 @@ void Thumbnail::imageDeveloped ()
 {
 
     cfs.recentlySaved = true;
-    cfs.save (getCacheFileName ("data") + ".txt");
+    cfs.save (getCacheFileName ("data", ".txt"));
 
     if (options.saveParamsCache) {
-        pparams.save (getCacheFileName ("profiles") + paramFileExtension);
+        pparams.save (getCacheFileName ("profiles", paramFileExtension));
     }
 }
 
@@ -778,14 +764,14 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
     tpp->isRaw = (cfs.format == (int) FT_Raw);
 
     // load supplementary data
-    bool succ = tpp->readData (getCacheFileName ("data") + ".txt");
+    bool succ = tpp->readData (getCacheFileName ("data", ".txt"));
 
     if (succ) {
         tpp->getAutoWBMultipliers(cfs.redAWBMul, cfs.greenAWBMul, cfs.blueAWBMul);
     }
 
     // thumbnail image
-    succ = succ && tpp->readImage (getCacheFileName ("images"));
+    succ = succ && tpp->readImage (getCacheFileName ("images", ""));
 
     if (!succ && firstTrial) {
         _generateThumbnailImage ();
@@ -805,10 +791,10 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
 
     if ( cfs.thumbImgType == CacheImageData::FULL_THUMBNAIL ) {
         // load aehistogram
-        tpp->readAEHistogram (getCacheFileName ("aehistograms"));
+        tpp->readAEHistogram (getCacheFileName ("aehistograms", ""));
 
         // load embedded profile
-        tpp->readEmbProfile (getCacheFileName ("embprofiles") + ".icc");
+        tpp->readEmbProfile (getCacheFileName ("embprofiles", ".icc"));
 
         tpp->init ();
     }
@@ -847,24 +833,24 @@ void Thumbnail::_saveThumbnail ()
         return;
     }
 
-    if (safe_g_remove (getCacheFileName ("images") + ".rtti") == -1) {
+    if (g_remove (getCacheFileName ("images", ".rtti").c_str ()) != 0) {
         // No file deleted, so we try to deleted obsolete files, if any
-        safe_g_remove (getCacheFileName ("images") + ".cust");
-        safe_g_remove (getCacheFileName ("images") + ".cust16");
-        safe_g_remove (getCacheFileName ("images") + ".jpg");
+        g_remove (getCacheFileName ("images", ".cust").c_str ());
+        g_remove (getCacheFileName ("images", ".cust16").c_str ());
+        g_remove (getCacheFileName ("images", ".jpg").c_str ());
     }
 
     // save thumbnail image
-    tpp->writeImage (getCacheFileName ("images"), 1);
+    tpp->writeImage (getCacheFileName ("images", ""), 1);
 
     // save aehistogram
-    tpp->writeAEHistogram (getCacheFileName ("aehistograms"));
+    tpp->writeAEHistogram (getCacheFileName ("aehistograms", ""));
 
     // save embedded profile
-    tpp->writeEmbProfile (getCacheFileName ("embprofiles") + ".icc");
+    tpp->writeEmbProfile (getCacheFileName ("embprofiles", ".icc"));
 
     // save supplementary data
-    tpp->writeData (getCacheFileName ("data") + ".txt");
+    tpp->writeData (getCacheFileName ("data", ".txt"));
 }
 
 /*
@@ -893,13 +879,13 @@ void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData)
     if (updatePParams && pparamsValid) {
         pparams.save (
             options.saveParamsFile  ? fname + paramFileExtension : "",
-            options.saveParamsCache ? getCacheFileName ("profiles") + paramFileExtension : "",
+            options.saveParamsCache ? getCacheFileName ("profiles", paramFileExtension) : "",
             true
         );
     }
 
     if (updateCacheImageData) {
-        cfs.save (getCacheFileName ("data") + ".txt");
+        cfs.save (getCacheFileName ("data", ".txt"));
     }
 }
 
@@ -912,10 +898,9 @@ Thumbnail::~Thumbnail ()
     mutex.unlock();
 }
 
-Glib::ustring Thumbnail::getCacheFileName (Glib::ustring subdir)
+Glib::ustring Thumbnail::getCacheFileName (const Glib::ustring& subdir, const Glib::ustring& fext) const
 {
-
-    return cachemgr->getCacheFileName (subdir, fname, Glib::ustring(), cfs.md5);
+    return cachemgr->getCacheFileName (subdir, fname, fext, cfs.md5);
 }
 
 void Thumbnail::setFileName (const Glib::ustring fn)
