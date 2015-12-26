@@ -29,6 +29,7 @@
 #include "guiutils.h"
 #include "profilestore.h"
 #include "batchqueue.h"
+#include "extprog.h"
 #include "../rtengine/safegtk.h"
 
 using namespace rtengine::procparams;
@@ -254,7 +255,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
             printf("Custom profile builder's command line: %s\n", Glib::ustring(cmdLine).c_str());
         }
 
-        bool success = safe_spawn_command_line_sync (cmdLine);
+        bool success = ExtProgStore::spawnCommandSync (cmdLine);
 
         // Now they SHOULD be there (and potentially "partial"), so try to load them and store it as a full procparam
         if (success) {

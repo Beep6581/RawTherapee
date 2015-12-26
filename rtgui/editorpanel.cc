@@ -1740,99 +1740,21 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc, rtengine::IImage16
         parent->setProgressStr("");
         parent->setProgress(0.);
         bool success = false;
-        Glib::ustring cmdLine;
-        Glib::ustring executable;
 
-        // start gimp
         if (options.editorToSendTo == 1) {
-#ifdef WIN32
-            executable = Glib::build_filename (Glib::build_filename(options.gimpDir, "bin"), "gimp-win-remote");
-            cmdLine = Glib::ustring("\"") + executable + Glib::ustring("\" gimp-2.4.exe ") + Glib::ustring("\"") + filename + Glib::ustring("\"");
-
-            if ( safe_file_test(executable, (Glib::FILE_TEST_EXISTS | Glib::FILE_TEST_IS_EXECUTABLE)) ) {
-                success = safe_spawn_command_line_async (cmdLine);
-            }
-
-#elif defined __APPLE__
-            cmdLine = Glib::ustring("open -a /Applications/GIMP.app \'") + filename + Glib::ustring("\'");
-            success = safe_spawn_command_line_async (cmdLine);
-            std::cout << cmdLine << std::endl;
-#else
-            cmdLine = Glib::ustring("gimp \"") + filename + Glib::ustring("\"");
-            success = safe_spawn_command_line_async (cmdLine);
-            std::cout << cmdLine << std::endl;
-#endif
-
-            if (!success) {
-#ifdef WIN32
-                int ver = 12;
-
-                while (!success && ver) {
-                    executable = Glib::build_filename (Glib::build_filename(options.gimpDir, "bin"), Glib::ustring::compose(Glib::ustring("gimp-2.%1.exe"), ver));
-
-                    if ( safe_file_test(executable, (Glib::FILE_TEST_EXISTS | Glib::FILE_TEST_IS_EXECUTABLE)) ) {
-                        cmdLine = Glib::ustring("\"") + executable + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
-                        success = safe_spawn_command_line_async (cmdLine);
-                    }
-
-                    ver--;
-                }
-
-#elif defined __APPLE__
-                cmdLine = Glib::ustring("open -a /Applications/Gimp.app/Contents/Resources/start \'") + filename + Glib::ustring("\'");
-                success = safe_spawn_command_line_async (cmdLine);
-                std::cout << cmdLine << std::endl;
-#else
-                cmdLine = Glib::ustring("gimp-remote \"") + filename + Glib::ustring("\"");
-                success = safe_spawn_command_line_async (cmdLine);
-                std::cout << cmdLine << std::endl;
-#endif
-            }
+            success = ExtProgStore::openInGimp (filename);
         } else if (options.editorToSendTo == 2) {
-#ifdef WIN32
-            executable = Glib::build_filename(options.psDir, "Photoshop.exe");
-
-            if ( safe_file_test(executable, (Glib::FILE_TEST_EXISTS | Glib::FILE_TEST_IS_EXECUTABLE)) ) {
-                cmdLine = Glib::ustring("\"") + executable + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
-                success = safe_spawn_command_line_async (cmdLine);
-            }
-
-#else
-#ifdef __APPLE__
-            cmdLine = Glib::ustring("open -a \'") + Glib::build_filename(options.psDir, "Photoshop.app\' ")  + Glib::ustring("\'") + filename + Glib::ustring("\'");
-#else
-            cmdLine = Glib::ustring("\"") + Glib::build_filename(options.psDir, "Photoshop.exe") + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
-#endif
-            success = safe_spawn_command_line_async (cmdLine);
-            std::cout << cmdLine << std::endl;
-#endif
+            success = ExtProgStore::openInPhotoshop (filename);
         } else if (options.editorToSendTo == 3) {
-#ifdef WIN32
-
-            if ( safe_file_test(options.customEditorProg, (Glib::FILE_TEST_EXISTS | Glib::FILE_TEST_IS_EXECUTABLE)) ) {
-                cmdLine = Glib::ustring("\"") + options.customEditorProg + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
-                success = safe_spawn_command_line_async (cmdLine);
-            }
-
-#else
-#ifdef __APPLE__
-            cmdLine = options.customEditorProg + Glib::ustring(" \"") + filename + Glib::ustring("\"");
-#else
-            cmdLine = Glib::ustring("\"") + options.customEditorProg + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
-#endif
-            success = safe_spawn_command_line_async (cmdLine);
-            std::cout << cmdLine << std::endl;
-#endif
+            success = ExtProgStore::openInCustomEditor (filename);
         }
 
         if (!success) {
-            Gtk::MessageDialog* msgd = new Gtk::MessageDialog (*parent, M("MAIN_MSG_CANNOTSTARTEDITOR"), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-            msgd->set_secondary_text (M("MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY"));
-            msgd->set_title (M("MAIN_BUTTON_SENDTOEDITOR"));
-            msgd->run ();
-            delete msgd;
+            Gtk::MessageDialog msgd (*parent, M("MAIN_MSG_CANNOTSTARTEDITOR"), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+            msgd.set_secondary_text (M("MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY"));
+            msgd.set_title (M("MAIN_BUTTON_SENDTOEDITOR"));
+            msgd.run ();
         }
-
     }
 
     return false;

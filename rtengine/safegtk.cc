@@ -80,40 +80,6 @@ std::string safe_locale_from_utf8 (const Glib::ustring& utf8_str)
     return str;
 }
 
-bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
-{
-    std::string cmd;
-    bool success = false;
-
-    try {
-        cmd = Glib::filename_from_utf8(cmd_utf8);
-        printf ("command line: %s\n", cmd.c_str());
-        Glib::spawn_command_line_async (cmd.c_str());
-        success = true;
-    } catch (Glib::Exception& ex) {
-        printf ("%s\n", ex.what().c_str());
-    }
-
-    return success;
-}
-
-bool safe_spawn_command_line_sync (const Glib::ustring& cmd_utf8)
-{
-    int exitStatus = -1;
-
-    try {
-        //cmd = Glib::filename_from_utf8(cmd_utf8);
-        printf ("command line: %s\n", cmd_utf8.c_str());
-
-        // if it crashes here on windows, make sure you have the GTK runtime files gspawn-win32-helper*.exe files in RT directory
-        Glib::spawn_command_line_sync (cmd_utf8, NULL, NULL, &exitStatus);
-    } catch (Glib::Exception& ex) {
-        printf ("%s\n", ex.what().c_str());
-    }
-
-    return (exitStatus == 0);
-}
-
 // Opens a file for binary writing and request exclusive lock (cases were you need "wb" mode plus locking)
 // (Important on Windows to prevent Explorer to crash RT when parallel scanning e.g. a currently written image file)
 FILE * safe_g_fopen_WriteBinLock(const Glib::ustring& fname)
