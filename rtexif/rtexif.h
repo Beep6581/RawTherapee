@@ -29,7 +29,6 @@
 #include <cmath>
 #include <glibmm.h>
 #include "../rtengine/procparams.h"
-#include "../rtengine/safekeyfile.h"
 
 class CacheImageData;
 
@@ -156,7 +155,7 @@ public:
 
     virtual void     printAll      (unsigned  int level = 0) const; // reentrant debug function, keep level=0 on first call !
     virtual bool     CPBDump       (const Glib::ustring &commFName, const Glib::ustring &imageFName, const Glib::ustring &profileFName, const Glib::ustring &defaultPParams,
-                                    const CacheImageData* cfs, const bool flagMode, rtengine::SafeKeyFile *keyFile = NULL, Glib::ustring tagDirName = "") const;
+                                    const CacheImageData* cfs, const bool flagMode, Glib::KeyFile *keyFile = NULL, Glib::ustring tagDirName = "") const;
     virtual void     sort     ();
 };
 

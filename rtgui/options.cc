@@ -21,7 +21,6 @@
 #include <glib/gstdio.h>
 #include <sstream>
 #include "multilangmgr.h"
-#include "../rtengine/safekeyfile.h"
 #include "addsetids.h"
 #include "guiutils.h"
 #include "version.h"
@@ -726,7 +725,8 @@ void Options::filterOutParsedExtensions ()
 int Options::readFromFile (Glib::ustring fname)
 {
     setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
-    rtengine::SafeKeyFile keyFile;
+
+    Glib::KeyFile keyFile;
 
     if( !Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
         return 1;
@@ -1778,23 +1778,29 @@ int Options::readFromFile (Glib::ustring fname)
         if (options.rtSettings.verbose) {
             printf("Options::readFromFile / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
+        setDefaults ();
     } catch (...) {
         if (options.rtSettings.verbose) {
             printf("Options::readFromFile / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
         }
+        setDefaults ();
     }
 
     return 1;
 
 }
 
-bool Options::safeDirGet(const rtengine::SafeKeyFile& keyFile, const Glib::ustring& section,
+bool Options::safeDirGet(const Glib::KeyFile& keyFile, const Glib::ustring& section,
                          const Glib::ustring& entryName, Glib::ustring& destination)
 {
-    if (keyFile.has_key(section, entryName) && !keyFile.get_string(section, entryName).empty()) {
-        destination = keyFile.get_string(section, entryName);
-        return true;
-    }
+    try {
+
+        if (keyFile.has_key (section, entryName) && !keyFile.get_string (section, entryName).empty ()) {
+            destination = keyFile.get_string (section, entryName);
+            return true;
+        }
+
+    } catch(Glib::KeyFileError&) {}
 
     return false;
 }
@@ -1802,9 +1808,13 @@ bool Options::safeDirGet(const rtengine::SafeKeyFile& keyFile, const Glib::ustri
 int Options::saveToFile (Glib::ustring fname)
 {
 
-    rtengine::SafeKeyFile keyFile;
-    keyFile.set_boolean ("General", "TabbedEditor", tabbedUI);
+    Glib::ustring keyData;
 
+    try {
+
+    Glib::KeyFile keyFile;
+
+    keyFile.set_boolean ("General", "TabbedEditor", tabbedUI);
     keyFile.set_boolean ("General", "StoreLastProfile", savesParamsAtExit);
 
     if (startupDir == STARTUPDIR_HOME) {
@@ -2104,6 +2114,14 @@ int Options::saveToFile (Glib::ustring fname)
     keyFile.set_string ("Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
     keyFile.set_string ("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
 
+    keyData = keyFile.to_data ();
+
+    } catch (Glib::KeyFileError&) {}
+
+    if (keyData.empty ()) {
+        return 1;
+    }
+
     FILE *f = g_fopen (fname.c_str (), "wt");
 
     if (f == NULL) {
@@ -2113,7 +2131,7 @@ int Options::saveToFile (Glib::ustring fname)
 
         return 1;
     } else {
-        fprintf (f, "%s", keyFile.to_data().c_str());
+        fprintf (f, "%s", keyData.c_str ());
         fclose (f);
         return 0;
     }

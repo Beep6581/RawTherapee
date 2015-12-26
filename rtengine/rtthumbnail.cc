@@ -33,7 +33,6 @@
 #include "stdimagesource.h"
 #include <glib/gstdio.h>
 #include <csetjmp>
-#include "safekeyfile.h"
 #include "rawimage.h"
 #include "jpeg.h"
 #include "../rtgui/ppversion.h"
@@ -1737,7 +1736,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname)
 bool Thumbnail::readData  (const Glib::ustring& fname)
 {
     setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
-    SafeKeyFile keyFile;
+    Glib::KeyFile keyFile;
 
     try {
         MyMutex::MyLock thmbLock(thumbMutex);
@@ -1830,15 +1829,34 @@ bool Thumbnail::readData  (const Glib::ustring& fname)
 
 bool Thumbnail::writeData  (const Glib::ustring& fname)
 {
-
-    SafeKeyFile keyFile;
-
     MyMutex::MyLock thmbLock(thumbMutex);
 
+    Glib::ustring keyData;
+
     try {
-        if( Glib::file_test(fname, Glib::FILE_TEST_EXISTS) ) {
-            keyFile.load_from_file (fname);
-        }
+
+        Glib::KeyFile keyFile;
+        keyFile.load_from_file (fname);
+
+        keyFile.set_double  ("LiveThumbData", "CamWBRed", camwbRed);
+        keyFile.set_double  ("LiveThumbData", "CamWBGreen", camwbGreen);
+        keyFile.set_double  ("LiveThumbData", "CamWBBlue", camwbBlue);
+        keyFile.set_double  ("LiveThumbData", "RedAWBMul", redAWBMul);
+        keyFile.set_double  ("LiveThumbData", "GreenAWBMul", greenAWBMul);
+        keyFile.set_double  ("LiveThumbData", "BlueAWBMul", blueAWBMul);
+        keyFile.set_integer ("LiveThumbData", "AEHistCompression", aeHistCompression);
+        keyFile.set_double  ("LiveThumbData", "RedMultiplier", redMultiplier);
+        keyFile.set_double  ("LiveThumbData", "GreenMultiplier", greenMultiplier);
+        keyFile.set_double  ("LiveThumbData", "BlueMultiplier", blueMultiplier);
+        keyFile.set_double  ("LiveThumbData", "Scale", scale);
+        keyFile.set_double  ("LiveThumbData", "DefaultGain", defGain);
+        keyFile.set_integer ("LiveThumbData", "ScaleForSave", scaleForSave);
+        keyFile.set_boolean ("LiveThumbData", "GammaCorrected", gammaCorrected);
+        Glib::ArrayHandle<double> cm ((double*)colorMatrix, 9, Glib::OWNERSHIP_NONE);
+        keyFile.set_double_list ("LiveThumbData", "ColorMatrix", cm);
+
+        keyData = keyFile.to_data ();
+
     } catch (Glib::Error &err) {
         if (options.rtSettings.verbose) {
             printf("Thumbnail::writeData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
@@ -1849,22 +1867,9 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
         }
     }
 
-    keyFile.set_double  ("LiveThumbData", "CamWBRed", camwbRed);
-    keyFile.set_double  ("LiveThumbData", "CamWBGreen", camwbGreen);
-    keyFile.set_double  ("LiveThumbData", "CamWBBlue", camwbBlue);
-    keyFile.set_double  ("LiveThumbData", "RedAWBMul", redAWBMul);
-    keyFile.set_double  ("LiveThumbData", "GreenAWBMul", greenAWBMul);
-    keyFile.set_double  ("LiveThumbData", "BlueAWBMul", blueAWBMul);
-    keyFile.set_integer ("LiveThumbData", "AEHistCompression", aeHistCompression);
-    keyFile.set_double  ("LiveThumbData", "RedMultiplier", redMultiplier);
-    keyFile.set_double  ("LiveThumbData", "GreenMultiplier", greenMultiplier);
-    keyFile.set_double  ("LiveThumbData", "BlueMultiplier", blueMultiplier);
-    keyFile.set_double  ("LiveThumbData", "Scale", scale);
-    keyFile.set_double  ("LiveThumbData", "DefaultGain", defGain);
-    keyFile.set_integer ("LiveThumbData", "ScaleForSave", scaleForSave);
-    keyFile.set_boolean ("LiveThumbData", "GammaCorrected", gammaCorrected);
-    Glib::ArrayHandle<double> cm ((double*)colorMatrix, 9, Glib::OWNERSHIP_NONE);
-    keyFile.set_double_list ("LiveThumbData", "ColorMatrix", cm);
+    if (keyData.empty ()) {
+        return false;
+    }
 
     FILE *f = g_fopen (fname.c_str (), "wt");
 
@@ -1875,7 +1880,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
 
         return false;
     } else {
-        fprintf (f, "%s", keyFile.to_data().c_str());
+        fprintf (f, "%s", keyData.c_str ());
         fclose (f);
     }
 
