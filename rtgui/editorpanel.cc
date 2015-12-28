@@ -81,6 +81,7 @@ private:
         intentBox = Gtk::manage(bt);
         intentBox->addEntry("intent-relative.png", M("PREFERENCES_INTENT_RELATIVE"));
         intentBox->addEntry("intent-perceptual.png", M("PREFERENCES_INTENT_PERCEPTUAL"));
+        intentBox->addEntry("intent-absolute.png", M("PREFERENCES_INTENT_ABSOLUTE"));
         intentBox->setSelected(0);
         intentConn = intentBox->signal_changed().connect (sigc::mem_fun (this, &MonitorProfileSelector::updateIntent));
         intentBox->show();
@@ -135,9 +136,12 @@ private:
             std::uint8_t supportedIntents = rtengine::iccStore->getProofIntents (profile);
             const bool supportsPerceptual = supportedIntents & 1 << INTENT_PERCEPTUAL;
             const bool supportsRelativeColorimetric = supportedIntents & 1 << INTENT_RELATIVE_COLORIMETRIC;
+            const bool supportsAbsoluteColorimetric = supportedIntents & 1 << INTENT_ABSOLUTE_COLORIMETRIC;
 
-            if (supportsPerceptual && supportsRelativeColorimetric) {
+            if (supportsPerceptual && (supportsRelativeColorimetric || supportsAbsoluteColorimetric)) {
                 intentBox->set_sensitive (true);
+                intentBox->setItemSensitivity(0, supportsRelativeColorimetric);
+                intentBox->setItemSensitivity(2, supportsAbsoluteColorimetric);
             }
             else {
                 bool wasBlocked = intentConn.block(true);
@@ -148,7 +152,7 @@ private:
             softProof->set_sensitive(true);
         }
 
-        rtengine::eRenderingIntent intent = intentBox->getSelected() > 0 ? rtengine::RI_PERCEPTUAL : rtengine::RI_RELATIVE;
+        rtengine::eRenderingIntent intent = intentBox->getSelected() > 0 ? (intentBox->getSelected() == 1 ? rtengine::RI_PERCEPTUAL : rtengine::RI_ABSOLUTE) : rtengine::RI_RELATIVE;
 
         if (!processor) {
             return;
@@ -206,7 +210,7 @@ public:
         profileConn.block(wasBlocked);
 #endif
         wasBlocked = intentConn.block(true);
-        intentBox->setSelected(options.rtSettings.monitorIntent == rtengine::RI_PERCEPTUAL ? 0 : 1);
+        intentBox->setSelected(options.rtSettings.monitorIntent == rtengine::RI_RELATIVE ? 0 : options.rtSettings.monitorIntent == rtengine::RI_PERCEPTUAL ? 1 : 2);
         intentConn.block(wasBlocked);
 
         updateParameters();

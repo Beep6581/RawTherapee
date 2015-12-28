@@ -54,6 +54,7 @@ public:
     void setButtonHint();
     void show ();
     void set_tooltip_text (const Glib::ustring &text);
+    void setItemSensitivity (int i, bool isSensitive);
 
 private:
     type_signal_changed message;
@@ -69,7 +70,6 @@ private:
     bool hasMenu;
 
     void showMenu(GdkEventButton* event);
-    void setItemSensitivity (int i, bool isSensitive);
 
 protected:
     void entrySelected (int i);
