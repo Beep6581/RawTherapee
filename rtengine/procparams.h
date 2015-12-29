@@ -42,13 +42,13 @@ class WavOpacityCurveW;
 class WavOpacityCurveWL;
 class RetinextransmissionCurve;
 
-typedef enum RenderingIntent {
+enum RenderingIntent {
     RI_PERCEPTUAL = INTENT_PERCEPTUAL,
     RI_RELATIVE = INTENT_RELATIVE_COLORIMETRIC,
     RI_SATURATION = INTENT_SATURATION,
     RI_ABSOLUTE = INTENT_ABSOLUTE_COLORIMETRIC,
     RI__COUNT
-} eRenderingIntent;
+};
 
 namespace procparams
 {
@@ -950,7 +950,7 @@ public:
     int dcpIlluminant;
     Glib::ustring working;
     Glib::ustring output;
-    eRenderingIntent outputIntent;
+    RenderingIntent outputIntent;
     static const Glib::ustring NoICMString;
 
     Glib::ustring gamma;

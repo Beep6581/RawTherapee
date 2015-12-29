@@ -74,7 +74,7 @@ protected:
 
     Glib::ustring monitorProfile;
 
-    eRenderingIntent monitorIntent;
+    RenderingIntent monitorIntent;
 
     int scale;
     bool highDetailPreprocessComputed;
@@ -256,8 +256,8 @@ public:
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green);
     void getAutoCrop (double ratio, int &x, int &y, int &w, int &h);
 
-    void setMonitorProfile (Glib::ustring profile, eRenderingIntent intent);
-    void getMonitorProfile (Glib::ustring &profile, eRenderingIntent &intent);
+    void setMonitorProfile (Glib::ustring profile, RenderingIntent intent);
+    void getMonitorProfile (Glib::ustring &profile, RenderingIntent &intent);
     void setSoftProofing   (bool softProof);
 
     bool updateTryLock ()

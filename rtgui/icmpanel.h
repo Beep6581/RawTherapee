@@ -108,6 +108,7 @@ public:
 
     void wpChanged ();
     void opChanged ();
+    void oiChanged ();
     void ipChanged ();
     void gpChanged ();
     void GamChanged ();

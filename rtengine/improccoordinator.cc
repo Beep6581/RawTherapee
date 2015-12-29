@@ -1138,7 +1138,7 @@ void ImProcCoordinator::setSoftProofing (bool softProof)
     softProofing = softProof;
 }
 
-void ImProcCoordinator::setMonitorProfile (Glib::ustring profile, eRenderingIntent intent)
+void ImProcCoordinator::setMonitorProfile (Glib::ustring profile, RenderingIntent intent)
 {
     if (profile != monitorProfile) {
         monitorProfile = profile;
@@ -1150,7 +1150,7 @@ void ImProcCoordinator::setMonitorProfile (Glib::ustring profile, eRenderingInte
     }
 }
 
-void ImProcCoordinator::getMonitorProfile (Glib::ustring &profile, eRenderingIntent &intent)
+void ImProcCoordinator::getMonitorProfile (Glib::ustring &profile, RenderingIntent &intent)
 {
     profile = monitorProfile;
     intent = monitorIntent;

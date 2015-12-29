@@ -292,7 +292,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 
     wnames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::wpChanged) );
     onames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::opChanged) );
-    ointent->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::opChanged) );
+    ointent->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::oiChanged) );
     wgamma->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::gpChanged) );
     dcpIll->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::dcpIlluminantChanged) );
 
@@ -623,7 +623,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
 
     int ointentVal = ointent->get_active_row_number();
     if (ointentVal >= 0 && ointentVal < RI__COUNT) {
-        pp->icm.outputIntent  = static_cast<eRenderingIntent>(ointentVal);
+        pp->icm.outputIntent  = static_cast<RenderingIntent>(ointentVal);
     } else {
         pp->icm.outputIntent  = rtengine::RI_PERCEPTUAL;
     }
@@ -900,7 +900,15 @@ void ICMPanel::opChanged ()
 {
 
     if (listener) {
-        listener->panelChanged (EvOProfile, Glib::ustring(onames->get_active_text())+Glib::ustring("\n")+ointent->get_active_text());
+        listener->panelChanged (EvOProfile, onames->get_active_text());
+    }
+}
+
+void ICMPanel::oiChanged ()
+{
+
+    if (listener) {
+        listener->panelChanged (EvOIntent, ointent->get_active_text());
     }
 }
 

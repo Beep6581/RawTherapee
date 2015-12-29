@@ -62,7 +62,7 @@ private:
 
         profileBox->append_text (M("PREFERENCES_PROFILE_NONE"));
         #if defined(WIN32)
-        profileBox->append_text (M("MONITOR_PROFILE_SYSTEM") + " (" + rtengine::iccStore->getDefaultMonitorProfileStr() + ")");
+        profileBox->append_text (M("MONITOR_PROFILE_SYSTEM") + " (" + rtengine::iccStore->getDefaultMonitorProfileName() + ")");
         profileBox->set_active (options.rtSettings.autoMonitorProfile ? 1 : 0);
         #else
         profileBox->set_active (0);
@@ -77,8 +77,7 @@ private:
 
     void prepareIntentBox ()
     {
-        PopUpButton *bt = new PopUpButton(Glib::ustring(), true);
-        intentBox = Gtk::manage(bt);
+        intentBox = Gtk::manage(new PopUpButton(Glib::ustring(), true));
         intentBox->addEntry("intent-relative.png", M("PREFERENCES_INTENT_RELATIVE"));
         intentBox->addEntry("intent-perceptual.png", M("PREFERENCES_INTENT_PERCEPTUAL"));
         intentBox->addEntry("intent-absolute.png", M("PREFERENCES_INTENT_ABSOLUTE"));
@@ -90,6 +89,7 @@ private:
     void softProofToggled ()
     {
         if (processor) {
+            processor->beginUpdateParams ();
             processor->setSoftProofing( softProof->get_active() );
             processor->endUpdateParams ( rtengine::EvMonitorTransform );
         }
@@ -106,7 +106,7 @@ private:
         profileBox->set_tooltip_text(profileBox->get_active_text ());
 #ifdef WIN32
         if (profileBox->get_active_row_number () == 1) {
-            profile = rtengine::iccStore->getDefaultMonitorProfileStr ();
+            profile = rtengine::iccStore->getDefaultMonitorProfileName ();
             if (profile.empty()) {
                 profile = options.rtSettings.monitorProfile;
             }
@@ -152,7 +152,15 @@ private:
             softProof->set_sensitive(true);
         }
 
-        rtengine::eRenderingIntent intent = intentBox->getSelected() > 0 ? (intentBox->getSelected() == 1 ? rtengine::RI_PERCEPTUAL : rtengine::RI_ABSOLUTE) : rtengine::RI_RELATIVE;
+        rtengine::RenderingIntent intent = rtengine::RI_PERCEPTUAL;
+        switch (intentBox->getSelected()) {
+        case (0):
+            intent = rtengine::RI_RELATIVE;
+            break;
+        case (2):
+            intent = rtengine::RI_ABSOLUTE;
+            break;
+        }
 
         if (!processor) {
             return;
@@ -165,10 +173,20 @@ private:
         // ...or store them locally
         processor->beginUpdateParams ();
         if (options.rtSettings.verbose) {
-            printf("Monitor profile: %s, Intent: %s)\n",
-                    profile.empty() ? "None" : profile.c_str(),
-                    intent > 0 ? M("PREFERENCES_INTENT_PERCEPTUAL").c_str() : M("PREFERENCES_INTENT_RELATIVE").c_str()
-                  );
+            Glib::ustring intentName;
+            switch (intent) {
+            case (0):
+                intentName = M("PREFERENCES_INTENT_RELATIVE");
+                break;
+            case (1):
+                intentName = M("PREFERENCES_INTENT_PERCEPTUAL");
+                break;
+            case (2):
+            default: // to avoid complains from gcc
+                intentName = M("PREFERENCES_INTENT_ABSOLUTE");
+                break;
+            }
+            printf("Monitor profile: %s, Intent: %s)\n", profile.empty() ? "None" : profile.c_str(), intentName.c_str());
         }
         processor->setMonitorProfile(profile, intent);
         processor->endUpdateParams (rtengine::EvMonitorTransform);
@@ -185,7 +203,6 @@ public:
         reset ();
     }
 
-    // HOMBRE: renamed to 'pack_end_in', because 'pack_end' already widely used by Gtk::Widget in a different way
     void pack_end_in (Gtk::Box* box)
     {
         box->pack_end (*softProof, Gtk::PACK_SHRINK, 0);

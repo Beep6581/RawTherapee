@@ -705,7 +705,8 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
 
     monIntent->append_text (M("PREFERENCES_INTENT_RELATIVE"));
     monIntent->append_text (M("PREFERENCES_INTENT_PERCEPTUAL"));
-    monIntent->set_active (0);
+    monIntent->append_text (M("PREFERENCES_INTENT_ABSOLUTE"));
+    monIntent->set_active (1);
 
     iccDir->signal_selection_changed ().connect (sigc::mem_fun (this, &Preferences::iccDirChanged));
 
@@ -1446,7 +1447,18 @@ void Preferences::storePreferences ()
 
 #if !defined(__APPLE__) // monitor profile not supported on apple
     moptions.rtSettings.monitorProfile      = monProfile->get_active_text ();
-    moptions.rtSettings.monitorIntent       = monIntent->get_active_row_number () > 0 ? rtengine::RI_PERCEPTUAL : rtengine::RI_RELATIVE;
+    switch (monIntent->get_active_row_number ()) {
+    case (0):
+        moptions.rtSettings.monitorIntent = rtengine::RI_RELATIVE;
+        break;
+    case (2):
+        moptions.rtSettings.monitorIntent = rtengine::RI_ABSOLUTE;
+        break;
+    case (1):
+    default:
+        moptions.rtSettings.monitorIntent = rtengine::RI_PERCEPTUAL;
+        break;
+    }
 #if defined(WIN32)
     moptions.rtSettings.autoMonitorProfile  = cbAutoMonProfile->get_active ();
 #endif
@@ -1565,7 +1577,18 @@ void Preferences::fillPreferences ()
 
 #if !defined(__APPLE__) // monitor profile not supported on apple
     setActiveTextOrIndex (*monProfile, moptions.rtSettings.monitorProfile, 0);
-    monIntent->set_active (moptions.rtSettings.monitorIntent == INTENT_PERCEPTUAL ? 1 : 0);
+    switch (moptions.rtSettings.monitorIntent) {
+    case(0) :
+        monIntent->set_active (0);
+        break;
+    case(2) :
+        monIntent->set_active (2);
+        break;
+    case(1) :
+    default:
+        monIntent->set_active (1);
+        break;
+    }
 #if defined(WIN32)
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif

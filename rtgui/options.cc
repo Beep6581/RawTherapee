@@ -1462,7 +1462,7 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("Color Management", "Intent")) {
-                    rtSettings.monitorIntent   = static_cast<rtengine::eRenderingIntent>(keyFile.get_integer("Color Management", "Intent"));
+                    rtSettings.monitorIntent   = static_cast<rtengine::RenderingIntent>(keyFile.get_integer("Color Management", "Intent"));
                 }
 
                 if (keyFile.has_key ("Color Management", "CRI")) {
@@ -1714,7 +1714,7 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("Fast Export", "fastexport_icm_output_intent"        )) {
-                    fastexport_icm_outputIntent           = static_cast<rtengine::eRenderingIntent>(keyFile.get_integer  ("Fast Export", "fastexport_icm_output_intent"        ));
+                    fastexport_icm_outputIntent           = static_cast<rtengine::RenderingIntent>(keyFile.get_integer  ("Fast Export", "fastexport_icm_output_intent"        ));
                 }
 
                 if (keyFile.has_key ("Fast Export", "fastexport_icm_gamma"                )) {

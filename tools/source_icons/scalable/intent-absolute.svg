@@ -15,7 +15,7 @@
    id="svg2"
    sodipodi:version="0.32"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="intent-absolute.svg"
+   sodipodi:docname="intent-absolute-3.svg"
    inkscape:export-filename="/home/philippe/devel/rawtherapee/icons/NewIcons/distorsion.png"
    inkscape:export-xdpi="1.98"
    inkscape:export-ydpi="1.98"
@@ -27,9 +27,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.28397906"
-     inkscape:cx="497.94487"
-     inkscape:cy="-71.539587"
+     inkscape:zoom="0.5"
+     inkscape:cx="400"
+     inkscape:cy="350"
      inkscape:document-units="px"
      inkscape:current-layer="svg2"
      showguides="true"
@@ -47,7 +47,13 @@
      inkscape:bbox-nodes="true"
      inkscape:snap-bbox-edge-midpoints="true"
      inkscape:snap-bbox-midpoints="true"
-     inkscape:snap-global="false" />
+     inkscape:snap-global="true"
+     inkscape:object-paths="false"
+     inkscape:snap-intersection-paths="false"
+     inkscape:object-nodes="true"
+     inkscape:snap-smooth-nodes="false"
+     inkscape:snap-midpoints="false"
+     inkscape:snap-nodes="true" />
   <defs
      id="defs4">
     <marker
@@ -1356,47 +1362,15 @@
   <path
      sodipodi:nodetypes="cc"
      inkscape:connector-curvature="0"
-     id="path5941"
-     d="M 39.826701,252 760.1733,252"
-     style="opacity:0.7;fill:none;fill-rule:evenodd;stroke:#2a7fff;stroke-width:50;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:" />
-  <path
-     sodipodi:nodetypes="cc"
-     inkscape:connector-curvature="0"
      id="path5943"
      d="M 39.826701,450 760.1733,450"
      style="opacity:0.7;fill:none;fill-rule:evenodd;stroke:#2a7fff;stroke-width:50;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:" />
   <path
-     style="opacity:0.7;fill:none;fill-rule:evenodd;stroke:#2a7fff;stroke-width:50;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:"
-     d="M 39.826701,550 760.1733,550"
-     id="path5945"
-     inkscape:connector-curvature="0"
-     sodipodi:nodetypes="cc" />
+     id="path5187"
+     style="opacity:0.7;fill:none;fill-rule:evenodd;stroke:#2a7fff;stroke-width:50;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="m 39.8267,50 c 372.08564,0 376.87989,202 720.3466,202 M 39.8267,150 c 372.08564,0 376.87989,102 720.3466,102 m -720.346599,0 720.346599,0" />
   <path
-     sodipodi:nodetypes="cc"
-     inkscape:connector-curvature="0"
-     id="path5947"
-     d="m 39.8267,850 410.46459,0"
-     style="opacity:0.7;fill:none;fill-rule:evenodd;stroke:#2a7fff;stroke-width:49.99999619;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-  <path
-     style="opacity:0.7;fill:none;fill-rule:evenodd;stroke:#2a7fff;stroke-width:49.99999619;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     d="m 39.8267,150 105.23229,0 c 130.8764,0 259.04498,91.55605 259.04498,91.55605"
-     id="path5949"
-     inkscape:connector-curvature="0"
-     sodipodi:nodetypes="ccc"
-     clip-path="url(#clipPath7774)" />
-  <path
-     sodipodi:nodetypes="ccc"
-     inkscape:connector-curvature="0"
-     id="path5951"
-     d="m 39.8267,50 85.23229,0 c 246.53532,0 441.16519,190.15487 441.16519,190.15487"
-     style="opacity:0.7;fill:none;fill-rule:evenodd;stroke:#2a7fff;stroke-width:49.99999619;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     clip-path="url(#clipPath7778)" />
-  <path
-     clip-path="url(#clipPath7774)"
-     sodipodi:nodetypes="ccc"
-     inkscape:connector-curvature="0"
-     id="path7782"
-     d="m 39.8267,150 105.23229,0 c 130.8764,0 259.04498,91.55605 259.04498,91.55605"
-     style="opacity:0.7;fill:none;fill-rule:evenodd;stroke:#2a7fff;stroke-width:49.99999619;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     transform="matrix(1,0,0,-1,3.8344425e-6,799.33407)" />
+     id="path5189"
+     style="opacity:0.7;fill:none;fill-rule:evenodd;stroke:#2a7fff;stroke-width:50;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 39.826704,649.33407 C 408.29238,649.33407 404.24771,550 760.1733,550 m -720.346599,0 720.346599,0" />
 </svg>

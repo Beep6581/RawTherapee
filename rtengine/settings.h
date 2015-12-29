@@ -39,7 +39,7 @@ public:
     int             leveldnautsimpl;            // STD or EXPERT
 
     Glib::ustring   monitorProfile;         ///< ICC profile name used for the monitor
-    eRenderingIntent monitorIntent;          ///< Colorimetric intent used with the above profile
+    RenderingIntent monitorIntent;          ///< Colorimetric intent used with the above profile
     bool            autoMonitorProfile;     ///< Try to auto-determine the correct monitor color profile
     bool            autocielab;
     bool            rgbcurveslumamode_gamut;// controls gamut enforcement for RGB curves in lumamode

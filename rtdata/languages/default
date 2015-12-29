@@ -657,6 +657,7 @@ HISTORY_MSG_423;Retinex - Gamma slope
 HISTORY_MSG_424;Retinex - HL threshold
 HISTORY_MSG_425;Retinex - Log base
 HISTORY_MSG_426;Retinex - Hue equalizer
+HISTORY_MSG_427;Output rendering intent
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot

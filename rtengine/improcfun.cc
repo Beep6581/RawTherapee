@@ -188,7 +188,7 @@ void ImProcFunctions::CAT02 (Imagefloat* baseImg, const ProcParams* params)
 */
 
 
-void ImProcFunctions::updateColorProfiles (const ColorManagementParams &icm, Glib::ustring monitorProfile, eRenderingIntent monitorIntent, bool softProofing)
+void ImProcFunctions::updateColorProfiles (const ColorManagementParams &icm, Glib::ustring monitorProfile, RenderingIntent monitorIntent, bool softProofing)
 {
     // set up monitor transform
     if (monitorTransform != NULL) {

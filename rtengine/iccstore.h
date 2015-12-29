@@ -91,7 +91,7 @@ public:
     // Main monitors standard profile name, from OS
     void findDefaultMonitorProfile ();
     cmsHPROFILE getDefaultMonitorProfile () const;
-    Glib::ustring getDefaultMonitorProfileStr () const;
+    Glib::ustring getDefaultMonitorProfileName () const;
 
     cmsHPROFILE      workingSpace (const Glib::ustring& name) const;
     cmsHPROFILE      workingSpaceGamma (const Glib::ustring& name) const;
@@ -135,7 +135,7 @@ inline cmsHPROFILE ICCStore::getDefaultMonitorProfile () const
     return getProfile (defaultMonitorProfile);
 }
 
-inline Glib::ustring ICCStore::getDefaultMonitorProfileStr () const
+inline Glib::ustring ICCStore::getDefaultMonitorProfileName () const
 {
     return defaultMonitorProfile;
 }
