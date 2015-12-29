@@ -345,7 +345,7 @@ void BatchQueuePanel::pathFolderButtonPressed ()
 void BatchQueuePanel::pathFolderChanged ()
 {
 
-    options.savePathFolder      = outdirFolder->get_current_folder();
+    options.savePathFolder = outdirFolder->get_filename();
 }
 
 void BatchQueuePanel::formatChanged (Glib::ustring f)
