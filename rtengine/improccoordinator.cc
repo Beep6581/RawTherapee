@@ -32,7 +32,7 @@ extern const Settings* settings;
 ImProcCoordinator::ImProcCoordinator ()
     : orig_prev(NULL), oprevi(NULL), oprevl(NULL), nprevl(NULL), previmg(NULL), workimg(NULL),
       ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true), monitorIntent(RI_PERCEPTUAL), scale(10),
-      highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false), isColorProfileDirty(true),
+      highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false),
       bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(0.),
 
       hltonecurve(65536),
@@ -781,10 +781,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
     }
 
-    // Update the output color transform if necessary
-    if (isColorProfileDirty || (todo & M_MONITOR)) {
+    // Update the monitor color transform if necessary
+    if (todo & M_MONITOR) {
         ipf.updateColorProfiles(params.icm, monitorProfile, monitorIntent);
-        isColorProfileDirty = false;
     }
 
     // process crop, if needed
@@ -1132,19 +1131,13 @@ void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &
     y = (fullh - h) / 2;
 }
 
-void ImProcCoordinator::setMonitorProfile (Glib::ustring profile, RenderingIntent intent)
+void ImProcCoordinator::setMonitorProfile (const Glib::ustring& profile, RenderingIntent intent)
 {
-    if (profile != monitorProfile) {
-        monitorProfile = profile;
-        isColorProfileDirty = true;
-    }
-    if (intent != monitorIntent) {
-        monitorIntent = intent;
-        isColorProfileDirty = true;
-    }
+    monitorProfile = profile;
+    monitorIntent = intent;
 }
 
-void ImProcCoordinator::getMonitorProfile (Glib::ustring &profile, RenderingIntent &intent)
+void ImProcCoordinator::getMonitorProfile (Glib::ustring& profile, RenderingIntent& intent) const
 {
     profile = monitorProfile;
     intent = monitorIntent;

@@ -81,8 +81,6 @@ protected:
     bool highDetailRawComputed;
     bool allocated;
 
-    bool isColorProfileDirty;
-
     void freeAll ();
 
     // Precomputed values used by DetailedCrop ----------------------------------------------
@@ -255,8 +253,8 @@ public:
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green);
     void getAutoCrop (double ratio, int &x, int &y, int &w, int &h);
 
-    void setMonitorProfile (Glib::ustring profile, RenderingIntent intent);
-    void getMonitorProfile (Glib::ustring &profile, RenderingIntent &intent);
+    void setMonitorProfile (const Glib::ustring& profile, RenderingIntent intent);
+    void getMonitorProfile (Glib::ustring& profile, RenderingIntent& intent) const;
 
     bool updateTryLock ()
     {

@@ -416,8 +416,8 @@ public:
     virtual void        setRetinexListener      (RetinexListener* l) = 0;
     virtual void        setWaveletListener      (WaveletListener* l) = 0;
 
-    virtual void        setMonitorProfile       (Glib::ustring monitorProfile, RenderingIntent intent) = 0;
-    virtual void        getMonitorProfile       (Glib::ustring &monitorProfile, RenderingIntent &intent) = 0;
+    virtual void        setMonitorProfile       (const Glib::ustring& monitorProfile, RenderingIntent intent) = 0;
+    virtual void        getMonitorProfile       (Glib::ustring& monitorProfile, RenderingIntent& intent) const = 0;
 
     virtual ~StagedImageProcessor () {}
 
