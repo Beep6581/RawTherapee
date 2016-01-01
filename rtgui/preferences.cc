@@ -1448,15 +1448,15 @@ void Preferences::storePreferences ()
 #if !defined(__APPLE__) // monitor profile not supported on apple
     moptions.rtSettings.monitorProfile      = monProfile->get_active_text ();
     switch (monIntent->get_active_row_number ()) {
-    case (0):
+    default:
+    case 0:
         moptions.rtSettings.monitorIntent = rtengine::RI_RELATIVE;
         break;
-    case (2):
-        moptions.rtSettings.monitorIntent = rtengine::RI_ABSOLUTE;
-        break;
-    case (1):
-    default:
+    case 1:
         moptions.rtSettings.monitorIntent = rtengine::RI_PERCEPTUAL;
+        break;
+    case 2:
+        moptions.rtSettings.monitorIntent = rtengine::RI_ABSOLUTE;
         break;
     }
 #if defined(WIN32)
@@ -1578,15 +1578,15 @@ void Preferences::fillPreferences ()
 #if !defined(__APPLE__) // monitor profile not supported on apple
     setActiveTextOrIndex (*monProfile, moptions.rtSettings.monitorProfile, 0);
     switch (moptions.rtSettings.monitorIntent) {
-    case(0) :
+    default:
+    case rtengine::RI_RELATIVE:
         monIntent->set_active (0);
         break;
-    case(2) :
-        monIntent->set_active (2);
-        break;
-    case(1) :
-    default:
+    case rtengine::RI_PERCEPTUAL:
         monIntent->set_active (1);
+        break;
+    case rtengine::RI_ABSOLUTE:
+        monIntent->set_active (2);
         break;
     }
 #if defined(WIN32)
