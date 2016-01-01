@@ -781,18 +781,8 @@ void XMLCALL LCPProfile::XmlEndHandler(void *pLCPProfile, const char *el)
 // Generates as singleton
 LCPStore* LCPStore::getInstance()
 {
-    static LCPStore* instance_ = 0;
-
-    if ( instance_ == 0 ) {
-        static MyMutex smutex_;
-        MyMutex::MyLock lock(smutex_);
-
-        if ( instance_ == 0 ) {
-            instance_ = new LCPStore();
-        }
-    }
-
-    return instance_;
+    static LCPStore instance_;
+    return &instance_;
 }
 
 LCPProfile* LCPStore::getProfile (Glib::ustring filename)

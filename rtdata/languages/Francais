@@ -13,8 +13,8 @@ CURVEEDITOR_AXIS_IN;E:
 CURVEEDITOR_AXIS_LEFT_TAN;TG:
 CURVEEDITOR_AXIS_OUT;S:
 CURVEEDITOR_AXIS_RIGHT_TAN;TD:
-CURVEEDITOR_CURVES;Courbes
 CURVEEDITOR_CURVE;Courbe
+CURVEEDITOR_CURVES;Courbes
 CURVEEDITOR_CUSTOM;Personnalisé
 CURVEEDITOR_DARKS;Zones sombres
 CURVEEDITOR_EDITPOINT_HINT;Active l'édition des valeurs d'entrée/sortie.\n\nUn clic droit sur un point le sélectionne.\nUn clic droit dans un espace vide desélectionne le point.
@@ -46,19 +46,19 @@ EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objectif
 EXIFFILTER_METADATAFILTER;Activer les filtres sur les Métadonnées
 EXIFFILTER_SHUTTER;Obturateur
-EXIFPANEL_ADDEDITHINT;Ajoute ou édite une donnée
 EXIFPANEL_ADDEDIT;Ajouter/Éditer
+EXIFPANEL_ADDEDITHINT;Ajoute ou édite une donnée
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Saisissez une valeur
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Choisissez une donnée
 EXIFPANEL_ADDTAGDLG_TITLE;Ajouter/Éditer une donnée
-EXIFPANEL_KEEPHINT;Conserve les données sélectionnées lors de l'écriture du fichier de sortie
 EXIFPANEL_KEEP;Conserver
-EXIFPANEL_REMOVEHINT;Retire les données sélectionnées lors de l'écriture du fichier de sortie
+EXIFPANEL_KEEPHINT;Conserve les données sélectionnées lors de l'écriture du fichier de sortie
 EXIFPANEL_REMOVE;Retirer
-EXIFPANEL_RESETALLHINT;Réinitialise tous les tags à leur valeur initiale
-EXIFPANEL_RESETALL;Réinitialiser tout
-EXIFPANEL_RESETHINT;Réinitialise les données sélectionnées à la valeur initiale
+EXIFPANEL_REMOVEHINT;Retire les données sélectionnées lors de l'écriture du fichier de sortie
 EXIFPANEL_RESET;Réinitialiser
+EXIFPANEL_RESETALL;Réinitialiser tout
+EXIFPANEL_RESETALLHINT;Réinitialise tous les tags à leur valeur initiale
+EXIFPANEL_RESETHINT;Réinitialise les données sélectionnées à la valeur initiale
 EXIFPANEL_SUBDIRECTORY;Sous-répertoire
 EXPORT_BYPASS_ALL;Sélectionner / Désélectionner tout
 EXPORT_BYPASS_DEFRINGE;Ignorer la corr. d'aberration chromatique
@@ -93,19 +93,19 @@ FILEBROWSER_AUTODARKFRAME;Soustraction automatique de Trame Noire
 FILEBROWSER_AUTOFLATFIELD;Champ Uniforme auto
 FILEBROWSER_BROWSEPATHBUTTONHINT;Cliquez pour parcourir le chemin saisi
 FILEBROWSER_BROWSEPATHHINT;Saisissez le chemin à parcourir\n<b>Ctrl-O</b> pour placer le focus sur le champ de saisie.\n<b>Entrée</b> / <b>Ctrl-Entrée</b> pour y naviguer;\n<b>Esc</b> pour effacer les modifications.\n<b>Shift-Esc</b> pour enlever le focus.\n\n\nRaccourcis pour les chemins:\n  <b>~</b> - le dossier utilisateur\n  <b>!</b> - le dossier Images de l'utilisateur
+FILEBROWSER_CACHE;Cache
 FILEBROWSER_CACHECLEARFROMFULL;Supprimer du cache (complet)
 FILEBROWSER_CACHECLEARFROMPARTIAL;Supprimer du cache (partiel)
-FILEBROWSER_CACHE;Cache
 FILEBROWSER_CLEARPROFILE;Remettre le profil à zéro
 FILEBROWSER_COLORLABEL_TOOLTIP;Label couleur\n\nUtilisez le menu déroulant ou le raccourci clavier:\n<b>Shift-Ctrl-0</b> Pas de couleur\n<b>Shift-Ctrl-1</b> Rouge\n<b>Shift-Ctrl-2</b> Jaune\n<b>Shift-Ctrl-3</b> Vert\n<b>Shift-Ctrl-4</b> Bleu\n<b>Shift-Ctrl-5</b> Pourpre
 FILEBROWSER_COPYPROFILE;Copier le profil
 FILEBROWSER_CURRENT_NAME;Nom courant:
 FILEBROWSER_DARKFRAME;Trame Noire
 FILEBROWSER_DELETEDLGLABEL;Confirmation de la suppression de fichier
-FILEBROWSER_DELETEDLGMSGINCLPROC;Êtes-vous sûr de vouloir supprimer les %1 fichiers sélectionnés, INCLUANT une version déjà traitée?
 FILEBROWSER_DELETEDLGMSG;Êtes-vous sûr de vouloir supprimer les %1 fichiers selectionnés?
-FILEBROWSER_EMPTYTRASHHINT;Supprime définitivement les fichiers de la corbeille
+FILEBROWSER_DELETEDLGMSGINCLPROC;Êtes-vous sûr de vouloir supprimer les %1 fichiers sélectionnés, INCLUANT une version déjà traitée?
 FILEBROWSER_EMPTYTRASH;Vider la corbeille
+FILEBROWSER_EMPTYTRASHHINT;Supprime définitivement les fichiers de la corbeille
 FILEBROWSER_EXEC_CPB;Lancer un constructeur de profil personnalisé
 FILEBROWSER_EXTPROGMENU;Ouvrir avec
 FILEBROWSER_FLATFIELD;Champ Uniforme
@@ -116,32 +116,32 @@ FILEBROWSER_OPENDEFAULTVIEWER;Visualiseur par défaut de Windows (image déjà t
 FILEBROWSER_PARTIALPASTEPROFILE;Coller partiellement
 FILEBROWSER_PASTEPROFILE;Coller le profil
 FILEBROWSER_POPUPCANCELJOB;Retirer de la file de traitement
+FILEBROWSER_POPUPCOLORLABEL;Label couleur
 FILEBROWSER_POPUPCOLORLABEL0;Label: Aucun
 FILEBROWSER_POPUPCOLORLABEL1;Label: Rouge
 FILEBROWSER_POPUPCOLORLABEL2;Label: Jaune
 FILEBROWSER_POPUPCOLORLABEL3;Label: Vert
 FILEBROWSER_POPUPCOLORLABEL4;Label: Bleu
 FILEBROWSER_POPUPCOLORLABEL5;Label: Pourpre
-FILEBROWSER_POPUPCOLORLABEL;Label couleur
 FILEBROWSER_POPUPCOPYTO;Copier vers...
 FILEBROWSER_POPUPFILEOPERATIONS;Opérations sur les fichiers
 FILEBROWSER_POPUPMOVEEND;Déplacer à la fin de la file
 FILEBROWSER_POPUPMOVEHEAD;Déplacer en tête de file
 FILEBROWSER_POPUPMOVETO;Déplacer vers...
-FILEBROWSER_POPUPOPENINEDITOR;Ouvrir dans l'éditeur
 FILEBROWSER_POPUPOPEN;Ouvrir
-FILEBROWSER_POPUPPROCESSFAST;Mettre dans la file de traitement (Export Rapide)
+FILEBROWSER_POPUPOPENINEDITOR;Ouvrir dans l'éditeur
 FILEBROWSER_POPUPPROCESS;Mettre dans la file de traitement
+FILEBROWSER_POPUPPROCESSFAST;Mettre dans la file de traitement (Export Rapide)
 FILEBROWSER_POPUPPROFILEOPERATIONS;Opérations sur les profils
+FILEBROWSER_POPUPRANK;Rang
 FILEBROWSER_POPUPRANK0;Aucun
 FILEBROWSER_POPUPRANK1;Rang 1 * 
 FILEBROWSER_POPUPRANK2;Rang 2 **
 FILEBROWSER_POPUPRANK3;Rang 3 ***
 FILEBROWSER_POPUPRANK4;Rang 4 ****
 FILEBROWSER_POPUPRANK5;Rang 5 *****
-FILEBROWSER_POPUPRANK;Rang
-FILEBROWSER_POPUPREMOVEINCLPROC;Supprimer (y compris les sorties de la file de traitement)
 FILEBROWSER_POPUPREMOVE;Retirer du système de fichier
+FILEBROWSER_POPUPREMOVEINCLPROC;Supprimer (y compris les sorties de la file de traitement)
 FILEBROWSER_POPUPRENAME;Renommer
 FILEBROWSER_POPUPSELECTALL;Sélectionner tout
 FILEBROWSER_POPUPTRASH;Déplacer dans la corbeille
@@ -179,10 +179,10 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT; Afficher les images non sauvegardées réc
 FILEBROWSER_SHOWTRASHHINT;Voir le contenu de la corbeille\nRaccourci: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Afficher les images sans label de couleur\nRaccourci: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Voir les images sans étoile\nRaccourci: <b>0</b>
-FILEBROWSER_STARTPROCESSINGHINT;Démarre le traitement/sauvegarde des images dans la file
 FILEBROWSER_STARTPROCESSING;Démarrer le traitement
-FILEBROWSER_STOPPROCESSINGHINT;Arrête le traitement des images
+FILEBROWSER_STARTPROCESSINGHINT;Démarre le traitement/sauvegarde des images dans la file
 FILEBROWSER_STOPPROCESSING;Arrêter le traitement
+FILEBROWSER_STOPPROCESSINGHINT;Arrête le traitement des images
 FILEBROWSER_THUMBSIZE;Taille vign.
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Démarrer automatiquement le traitement à l'arrivée d'une nouvelle tâche
 FILEBROWSER_UNRANK_TOOLTIP;Effacer le rang\nRaccourci: <b>Shift-0</b>
@@ -202,28 +202,28 @@ GENERAL_AUTO;Automatique
 GENERAL_BEFORE;Avant
 GENERAL_CANCEL;Annuler
 GENERAL_CLOSE;Fermer
-GENERAL_DISABLED;Désactivé
 GENERAL_DISABLE;Désactiver
-GENERAL_ENABLED;Activé
+GENERAL_DISABLED;Désactivé
 GENERAL_ENABLE;Activer
+GENERAL_ENABLED;Activé
 GENERAL_FILE;Fichier
 GENERAL_LANDSCAPE;Paysage
 GENERAL_NA;indisponible
-GENERAL_NONE;Aucun
 GENERAL_NO;Non
+GENERAL_NONE;Aucun
 GENERAL_OK;OK
 GENERAL_PORTRAIT;Portrait
 GENERAL_SAVE;Enregistrer
 GENERAL_UNCHANGED;(Inchangé)
 GENERAL_WARNING;Attention
-HISTOGRAM_TOOLTIP_BAR;Montrer/Cacher l'indicateur RVB du pixel pointé\nCliquer le bouton droit de la souris sur l'image de prévisualisation pour geler/dégeler
 HISTOGRAM_TOOLTIP_B;Montrer/cacher l'histogramme BLEU
+HISTOGRAM_TOOLTIP_BAR;Montrer/Cacher l'indicateur RVB du pixel pointé\nCliquer le bouton droit de la souris sur l'image de prévisualisation pour geler/dégeler
 HISTOGRAM_TOOLTIP_CHRO;Montrer/Cacher l'histogramme de Chromaticité
 HISTOGRAM_TOOLTIP_FULL;Basculer la vue de l'histogramme : complet (activé) / zoomé (désactivé)
 HISTOGRAM_TOOLTIP_G;Montrer/cacher l'histogramme VERT
 HISTOGRAM_TOOLTIP_L;Montrer/cacher l'histogramme Luminance CIELAB
-HISTOGRAM_TOOLTIP_RAW;Montrer/Cacher l'histogramme des données RAW
 HISTOGRAM_TOOLTIP_R;Montrer/cacher l'histogramme ROUGE
+HISTOGRAM_TOOLTIP_RAW;Montrer/Cacher l'histogramme des données RAW
 HISTORY_CHANGED;Changé
 HISTORY_CUSTOMCURVE;Courbe personnelle
 HISTORY_DELSNAPSHOT;Supprimer
@@ -394,7 +394,6 @@ HISTORY_MSG_162;Compression Tonale
 HISTORY_MSG_163;Courbes RVB - Rouge
 HISTORY_MSG_164;Courbes RVB - Vert
 HISTORY_MSG_165;Courbes RVB - Bleu
-HISTORY_MSG_166;Niveaux Neutre
 HISTORY_MSG_167;Algorithme de dématriçage
 HISTORY_MSG_168;Courbe 'CC'
 HISTORY_MSG_169;Courbe 'CT'
@@ -636,49 +635,49 @@ HISTORY_MSG_405;O - Débruitage - Niveau 4
 HISTORY_MSG_406;O - NB - Pixels voisins
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
-HISTORY_SNAPSHOTS;Captures
 HISTORY_SNAPSHOT;Capture
-IPTCPANEL_AUTHORSPOSITIONHINT;Statut du ou des créateurs de l'objet (By-line Title).
-IPTCPANEL_AUTHORSPOSITION;Statut de l'auteur
+HISTORY_SNAPSHOTS;Captures
 IPTCPANEL_AUTHOR;Auteur
-IPTCPANEL_CAPTIONHINT;Une description explicite de la donnée (Légende - Résumé)
-IPTCPANEL_CAPTIONWRITERHINT;Le nom de la personne ayant rédigé, édité ou corrigé l'image ou la légende/résumé (Auteur - Editeur).
-IPTCPANEL_CAPTIONWRITER;Auteur de la légende
+IPTCPANEL_AUTHORSPOSITION;Statut de l'auteur
+IPTCPANEL_AUTHORSPOSITIONHINT;Statut du ou des créateurs de l'objet (By-line Title).
 IPTCPANEL_CAPTION;Légende
-IPTCPANEL_CATEGORYHINT;Identifie le sujet de l'image selon l'avis du fournisseur (Catégorie).
+IPTCPANEL_CAPTIONHINT;Une description explicite de la donnée (Légende - Résumé)
+IPTCPANEL_CAPTIONWRITER;Auteur de la légende
+IPTCPANEL_CAPTIONWRITERHINT;Le nom de la personne ayant rédigé, édité ou corrigé l'image ou la légende/résumé (Auteur - Editeur).
 IPTCPANEL_CATEGORY;Catégorie
-IPTCPANEL_CITYHINT;Ville d'origine de l'image (Ville).
+IPTCPANEL_CATEGORYHINT;Identifie le sujet de l'image selon l'avis du fournisseur (Catégorie).
 IPTCPANEL_CITY;Ville
+IPTCPANEL_CITYHINT;Ville d'origine de l'image (Ville).
 IPTCPANEL_COPYHINT;Copie les réglages IPTC dans le presse-papier
-IPTCPANEL_COPYRIGHTHINT;Toute remarque nécessaire de droit de copie (Remarque droit de copie).
 IPTCPANEL_COPYRIGHT;Droit de copie
-IPTCPANEL_COUNTRYHINT;Le nom du pays de la ville principale où l'image a été créée (Pays - Nom de la ville principale).
+IPTCPANEL_COPYRIGHTHINT;Toute remarque nécessaire de droit de copie (Remarque droit de copie).
 IPTCPANEL_COUNTRY;Pays
-IPTCPANEL_CREDITHINT;Identifie le fournisseur de l'image, pas nécessairement le propriétaire/créateur (Crédit).
+IPTCPANEL_COUNTRYHINT;Le nom du pays de la ville principale où l'image a été créée (Pays - Nom de la ville principale).
 IPTCPANEL_CREDIT;Crédit
-IPTCPANEL_DATECREATEDHINT;La date de création du contenu intellectuel de l'image; Format: AAAAMMJJ (Date de création).
+IPTCPANEL_CREDITHINT;Identifie le fournisseur de l'image, pas nécessairement le propriétaire/créateur (Crédit).
 IPTCPANEL_DATECREATED;Date de création
-IPTCPANEL_EMBEDDEDHINT;Réinitialise selon les données IPTC incorporées dans le fichier image
+IPTCPANEL_DATECREATEDHINT;La date de création du contenu intellectuel de l'image; Format: AAAAMMJJ (Date de création).
 IPTCPANEL_EMBEDDED;Incorporés
-IPTCPANEL_HEADLINEHINT;Une entrée publiable fournissant un synopsis du contenu de l'image (Titre).
+IPTCPANEL_EMBEDDEDHINT;Réinitialise selon les données IPTC incorporées dans le fichier image
 IPTCPANEL_HEADLINE;Titre
-IPTCPANEL_INSTRUCTIONSHINT;Autres instructions éditoriales concernant l'utilisation de l'image (Instructions spéciales).
+IPTCPANEL_HEADLINEHINT;Une entrée publiable fournissant un synopsis du contenu de l'image (Titre).
 IPTCPANEL_INSTRUCTIONS;Instructions
-IPTCPANEL_KEYWORDSHINT;Utilisé pour spécifier des mots clés de recherches (Mots clés).
+IPTCPANEL_INSTRUCTIONSHINT;Autres instructions éditoriales concernant l'utilisation de l'image (Instructions spéciales).
 IPTCPANEL_KEYWORDS;Mots clés
+IPTCPANEL_KEYWORDSHINT;Utilisé pour spécifier des mots clés de recherches (Mots clés).
 IPTCPANEL_PASTEHINT;Colle les réglages IPTC du presse-papier
-IPTCPANEL_PROVINCEHINT;La province/état d'où est issue l'image (Province-Etat).
 IPTCPANEL_PROVINCE;Province
-IPTCPANEL_RESETHINT;Réinitialise selon le profil par défaut
+IPTCPANEL_PROVINCEHINT;La province/état d'où est issue l'image (Province-Etat).
 IPTCPANEL_RESET;Réinitialisation
-IPTCPANEL_SOURCEHINT;Le propriétaire intellectuel du contenu de l'image (Source).
+IPTCPANEL_RESETHINT;Réinitialise selon le profil par défaut
 IPTCPANEL_SOURCE;Source
-IPTCPANEL_SUPPCATEGORIESHINT;Précise un peu plus le sujet de l'image (Catégories supplémentaires).
+IPTCPANEL_SOURCEHINT;Le propriétaire intellectuel du contenu de l'image (Source).
 IPTCPANEL_SUPPCATEGORIES;Catégories suppl.
-IPTCPANEL_TITLEHINT;Raccourcis de référence de l'image (Nom de l'objet).
+IPTCPANEL_SUPPCATEGORIESHINT;Précise un peu plus le sujet de l'image (Catégories supplémentaires).
 IPTCPANEL_TITLE;Titre
-IPTCPANEL_TRANSREFERENCEHINT;Un code représentant le lieux de la transmission initiale (Référence de transmission initiale).
+IPTCPANEL_TITLEHINT;Raccourcis de référence de l'image (Nom de l'objet).
 IPTCPANEL_TRANSREFERENCE;Réf. transmission
+IPTCPANEL_TRANSREFERENCEHINT;Un code représentant le lieux de la transmission initiale (Référence de transmission initiale).
 MAIN_BUTTON_FULLSCREEN;Plein écran
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigue à l'image Suivante relativement à l'image ouverte dans l'Éditeur\nRaccourci: <b>Shift-F4</b>\n\nPour naviguer à l'image Suivante relativement à la vignette sélectionnée dans le Navigateur de fichiers\nRaccourci: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Navigue à l'image Précédente relativement à l'image ouverte dans l'Éditeur\nRaccourci: <b>Shift-F3</b>\n\nPour naviguer à l'image Précédente relativement à la vignette sélectionnée dans le Navigateur de fichiers\nRaccourci: <b>F3</b>
@@ -766,8 +765,8 @@ OPTIONS_DEFIMG_MISSING;Le profil par défaut pour les <b>images standards</b> n'
 OPTIONS_DEFRAW_MISSING;Le profil par défaut pour les <b>images Raw</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez également le dossier de vos profils, il peut être manquant ou endommagé\n\nLes valeurs internes pas défaut seront utilisées.
 PARTIALPASTE_BASICGROUP;Réglages de base
 PARTIALPASTE_CACORRECTION;Aberration chromatique
-PARTIALPASTE_CHANNELMIXERBW;Noir et Blanc
 PARTIALPASTE_CHANNELMIXER;Mixage des canaux
+PARTIALPASTE_CHANNELMIXERBW;Noir et Blanc
 PARTIALPASTE_COARSETRANS;Rotation de 90° / symétrisation
 PARTIALPASTE_COLORAPP;CIE Modèle apparence de la couleur 2002
 PARTIALPASTE_COLORGROUP;Réglages couleurs
@@ -842,11 +841,11 @@ PREFERENCES_AUTLOW;Bas
 PREFERENCES_AUTOMONPROFILE;Utiliser automatiquement le profil de l'écran principal
 PREFERENCES_AUTSTD;Standard
 PREFERENCES_BATCH_PROCESSING;Traitement par lot
-PREFERENCES_BEHADDALLHINT;Règle tous les paramètres sur le mode <b>Ajoute</b>.\nLa modification des paramètres dans le panneau d'édition en par lot sera des <b>deltas</b> par-rapport aux valeurs existantes
 PREFERENCES_BEHADDALL;Tout à 'Ajoute'
+PREFERENCES_BEHADDALLHINT;Règle tous les paramètres sur le mode <b>Ajoute</b>.\nLa modification des paramètres dans le panneau d'édition en par lot sera des <b>deltas</b> par-rapport aux valeurs existantes
 PREFERENCES_BEHAVIOR;Comportement
-PREFERENCES_BEHSETALLHINT;Règle tous les paramètres sur le mode <b>Remplace</b>.\nLa modification des paramètres dans le panneau d'édition en par lot sera <b>absolue</b>, les valeurs réelles seront affichées
 PREFERENCES_BEHSETALL;Tout à 'Remplace'
+PREFERENCES_BEHSETALLHINT;Règle tous les paramètres sur le mode <b>Remplace</b>.\nLa modification des paramètres dans le panneau d'édition en par lot sera <b>absolue</b>, les valeurs réelles seront affichées
 PREFERENCES_BLACKBODY;Tungstène
 PREFERENCES_CACHECLEARALL;Tout nettoyer
 PREFERENCES_CACHECLEARPROFILES;Nettoyer les profils
@@ -868,23 +867,23 @@ PREFERENCES_CURVEBBOXPOS_ABOVE;Au-dessus
 PREFERENCES_CURVEBBOXPOS_BELOW;En-dessous
 PREFERENCES_CURVEBBOXPOS_LEFT;Gauche
 PREFERENCES_CURVEBBOXPOS_RIGHT;Droite
+PREFERENCES_CUSTPROFBUILD;Constructeur de profil d'image personnalisé
 PREFERENCES_CUSTPROFBUILDHINT;Fichier éxecutable (ou script) appelé lorsqu'un nouveau profil initial doit être généré pour une image.\n\nLe chemin du fichier de communication (style *.ini, aussi appelé "KeyFile") est ajouté en paramètre de la ligne de commande. Il contient divers paramètres nécessaire au script et les métadonnées Exif de l'image pour permettre la génération d'un .pp3 basé sur des règles.\n\n<b>ATTENTION:</b> Il vous appartient d'utiliser ou non des guillemets double pour spécifier des chemins si ceux-ci contiennent des espaces.
 PREFERENCES_CUSTPROFBUILDKEYFORMAT;Format des clés
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Nom
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;Chemin de l'exécutable
-PREFERENCES_CUSTPROFBUILD;Constructeur de profil d'image personnalisé
 PREFERENCES_CUTOVERLAYBRUSH;Masque de recadrage
 PREFERENCES_D50;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
 PREFERENCES_D65;6500K
+PREFERENCES_DARKFRAME;Soustraction de Trame Noire
 PREFERENCES_DARKFRAMEFOUND;Trouvé
 PREFERENCES_DARKFRAMESHOTS;image(s)
 PREFERENCES_DARKFRAMETEMPLATES;modèle(s)
-PREFERENCES_DARKFRAME;Soustraction de Trame Noire
-PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes formatées suivants:</i>\n<b>%y</b><i> : année</i>\n<b>%m</b><i> : mois</i>\n<b>%d</b><i> : jour</i>\n<i>\nPar exemple, le format de date française est:</i>\n<b>%d/%m/%y</b>
 PREFERENCES_DATEFORMAT;Format
+PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes formatées suivants:</i>\n<b>%y</b><i> : année</i>\n<b>%m</b><i> : mois</i>\n<b>%d</b><i> : jour</i>\n<i>\nPar exemple, le format de date française est:</i>\n<b>%d/%m/%y</b>
 PREFERENCES_DAUB_LABEL;Utiliser les ondelettes de Daubechies D6 au lieu de D4
 PREFERENCES_DAUB_TOOLTIP;Les outils de Réduction de Bruit et de Niveaux d'Ondelettes utilisent une ondelette de Debauchie mère. Si vous choisissez D6 au lieu de D4 vous augmentez le nombre de coéf. orthogonaux de Daubechies et augmentez probablement la qualité des niveaux de taille moyenne. Il n'y a pas de différence de consommation mémoire ou de temps de traitement entre les deux.
 PREFERENCES_DEFAULTLANG;Langue par défaut
@@ -903,11 +902,11 @@ PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers et de vignettes
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barre de menu de l'explorateur de fichiers uni-ligne (à désactiver pour les écrans de faible résolution)
 PREFERENCES_FILEFORMAT;Format du fichier
 PREFERENCES_FILMSIMULATION;Simulation de Film
+PREFERENCES_FLATFIELD;Champ Uniforme
 PREFERENCES_FLATFIELDFOUND;Trouvé
 PREFERENCES_FLATFIELDSDIR;Dossier des images de Champ Uniforme
 PREFERENCES_FLATFIELDSHOTS;image(s)
 PREFERENCES_FLATFIELDTEMPLATES;modèle(s)
-PREFERENCES_FLATFIELD;Champ Uniforme
 PREFERENCES_FLUOF2;Fluorescent F2
 PREFERENCES_FLUOF7;Fluorescent F7
 PREFERENCES_FLUOF11;Fluorescent F11
@@ -916,6 +915,7 @@ PREFERENCES_FORRAW;Pour les fichiers RAW
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Taille de vignette identique entre l'Éditeur et le Navigateur de Fichier
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Avoir une hauteur différente demandera plus de temp de traitement à chaque fois que vous baculerez entre l'Éditeur unique et le Navigateur de Fichier.
 PREFERENCES_GIMPPATH;Dossier d'intallation de GIMP
+PREFERENCES_GREY;Luminance Yb du périphérique de sortie (%)
 PREFERENCES_GREY05;Yb=05 CIE L#30
 PREFERENCES_GREY10;Yb=10 CIE L#40
 PREFERENCES_GREY15;Yb=15 CIE L#45
@@ -923,10 +923,9 @@ PREFERENCES_GREY18;Yb=18 CIE L#50
 PREFERENCES_GREY23;Yb=23 CIE L#55
 PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
+PREFERENCES_GREYSC;Luminance Yb de la scène (%)
 PREFERENCES_GREYSC18;Yb=18 CIE L#50
 PREFERENCES_GREYSCA;Automatique
-PREFERENCES_GREYSC;Luminance Yb de la scène (%)
-PREFERENCES_GREY;Luminance Yb du périphérique de sortie (%)
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogramme dans le panneau de gauche
 PREFERENCES_HISTOGRAMWORKING;Utiliser le profile de travail pour l'histograme principal et le Navigateur
 PREFERENCES_HISTOGRAM_TOOLTIP;Si activé, le profile couleur de travail est utilisé pour les données d'histograme et le panneau Navigateur, sinon le profil de travail de sortie "gamma-corrigé" est utilisé.
@@ -946,8 +945,8 @@ PREFERENCES_LANGAUTODETECT;Utiliser les paramètres linguistiques de l'OS
 PREFERENCES_LEVAUTDN;Niveau de débruitage
 PREFERENCES_LEVDN;Taille de la cellule
 PREFERENCES_LISS;Adoucissement auto multi-zone
-PREFERENCES_MAXRECENTFOLDERS;Nombre maximum de dossiers récents
 PREFERENCES_MAX;Maxi (Tuile)
+PREFERENCES_MAXRECENTFOLDERS;Nombre maximum de dossiers récents
 PREFERENCES_MED;Moyen (Tuile/2)
 PREFERENCES_MENUGROUPEXTPROGS;Groupe "Ouvrir avec"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Opérations sur les fichiers
@@ -958,24 +957,24 @@ PREFERENCES_MENUOPTIONS;Options du menu
 PREFERENCES_METADATA;Metadonnées
 PREFERENCES_MIN;Mini (100x115)
 PREFERENCES_MONITORICC;Profil du moniteur
-PREFERENCES_MULTITABDUALMON;Éditeurs multiple, si possible sur un second moniteur
 PREFERENCES_MULTITAB;Éditeurs multiple
+PREFERENCES_MULTITABDUALMON;Éditeurs multiple, si possible sur un second moniteur
 PREFERENCES_NAVGUIDEBRUSH;Couleur du cadre dans le Navigateur
 PREFERENCES_NAVIGATIONFRAME;Navigation
 PREFERENCES_NOISE;Réduction de Bruit
-PREFERENCES_OUTDIRFOLDERHINT;Place les images traitées dans le dossier selectionné
-PREFERENCES_OUTDIRFOLDER;Dossier de sauvegarde
-PREFERENCES_OUTDIRTEMPLATEHINT;Vous pouvez utiliser les paramètres de chaîne formatées suivants:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nCes chaînes de formattage se réfèrent aux différentes parties du chemin de la photo, certains de ses attributs ou un numéro de séquence arbitraire dans le traitement par lot.\n\nPar exemple, si la photo en cours de traitement a le chemin suivant:\n<b><i>/home/tom/image/02-09-2006/dsc0012.nef</i></b>\nla signification des chaînes de formattage est:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> sera remplacé par le rang de la photo. Si la photo n'a pas de rang, %r sera remplacé par '0'. Si la photo est dans la corbeille de RawTherapee, %r sera remplacé par 'x'.\n\n<b>%s1</b>, <b>%s2</b>, etc. sera remplacé par un index de séquence constitué de 1 à 9 chiffre. L'index de la séquence commencera à 1 à chaque fois que le file de traitement est démarrée, et est incrémenté de 1 pour chaque image traitée.\n\nSi vous voulez enregistrer l'image de sortie là où se trouve l'originale, écrivez:\n<b>%p1/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>convertis</i>" situé dans le dossier de l'originale, écrivez:\n<b>%p1/convertis/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>/home/tom/photos/convertis/2010-10-31</i>", écrivez:\n<b>%p2/convertis/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Utiliser le modèle
 PREFERENCES_OUTDIR;Dossier de sortie
+PREFERENCES_OUTDIRFOLDER;Dossier de sauvegarde
+PREFERENCES_OUTDIRFOLDERHINT;Place les images traitées dans le dossier selectionné
+PREFERENCES_OUTDIRTEMPLATE;Utiliser le modèle
+PREFERENCES_OUTDIRTEMPLATEHINT;Vous pouvez utiliser les paramètres de chaîne formatées suivants:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nCes chaînes de formattage se réfèrent aux différentes parties du chemin de la photo, certains de ses attributs ou un numéro de séquence arbitraire dans le traitement par lot.\n\nPar exemple, si la photo en cours de traitement a le chemin suivant:\n<b><i>/home/tom/image/02-09-2006/dsc0012.nef</i></b>\nla signification des chaînes de formattage est:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> sera remplacé par le rang de la photo. Si la photo n'a pas de rang, %r sera remplacé par '0'. Si la photo est dans la corbeille de RawTherapee, %r sera remplacé par 'x'.\n\n<b>%s1</b>, <b>%s2</b>, etc. sera remplacé par un index de séquence constitué de 1 à 9 chiffre. L'index de la séquence commencera à 1 à chaque fois que le file de traitement est démarrée, et est incrémenté de 1 pour chaque image traitée.\n\nSi vous voulez enregistrer l'image de sortie là où se trouve l'originale, écrivez:\n<b>%p1/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>convertis</i>" situé dans le dossier de l'originale, écrivez:\n<b>%p1/convertis/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>/home/tom/photos/convertis/2010-10-31</i>", écrivez:\n<b>%p2/convertis/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Superposer les noms de fichier sur les vignettes dans le navigateur de fichier
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Superposer les noms de fichier sur les vignettes dans le panneau d'édition
 PREFERENCES_OVERWRITEOUTPUTFILE;Écraser le fichier s'il existe déjà
 PREFERENCES_PANFACTORLABEL;Facteur
-PREFERENCES_PARSEDEXTADDHINT;Tapez une extension et cliquez ce bouton pour l'ajouter à la liste
-PREFERENCES_PARSEDEXTADD;Ajout de l'extension
-PREFERENCES_PARSEDEXTDELHINT;Supprime de la liste les extensions sélectionnées
 PREFERENCES_PARSEDEXT;Extensions considérées
+PREFERENCES_PARSEDEXTADD;Ajout de l'extension
+PREFERENCES_PARSEDEXTADDHINT;Tapez une extension et cliquez ce bouton pour l'ajouter à la liste
+PREFERENCES_PARSEDEXTDELHINT;Supprime de la liste les extensions sélectionnées
 PREFERENCES_PREVDEMO;Méthode de Dématriçage de l'Aperçu
 PREFERENCES_PREVDEMO_FAST;Rapide
 PREFERENCES_PREVDEMO_LABEL;Méthode de dématriçage utilisé pour l'aperçu à un zoom <100%:
@@ -1005,8 +1004,8 @@ PREFERENCES_SHOWEXPOSURECOMPENSATION;Ajoute la compensation d'exposition
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;Montrer la barre d'outil de la pellicule d'image ("filmstrip")
 PREFERENCES_SHTHRESHOLD;Seuil pour le dépassement de domaine inférieur
 PREFERENCES_SIMPLAUT;Mode de l'outil
-PREFERENCES_SINGLETABVERTAB;Éditeur unique, onglets verticaux
 PREFERENCES_SINGLETAB;Éditeur unique
+PREFERENCES_SINGLETABVERTAB;Éditeur unique, onglets verticaux
 PREFERENCES_SLIMUI;Interface compacte
 PREFERENCES_SMA;Petit (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;File de traitement terminée
@@ -1027,7 +1026,6 @@ PREFERENCES_TISTD;Standard
 PREFERENCES_TP_LABEL;Panneau des outils:
 PREFERENCES_TP_USEICONORTEXT;Utiliser des icônes au lieu de textes
 PREFERENCES_TP_VSCROLLBAR;Cacher la barre de défilement verticale
-PREFERENCES_TUNNELMETADATA;Copier les données IPTC/XMP sans les\nchanger dans fichier de sortie
 PREFERENCES_USEBUNDLEDPROFILES;Utiliser les profils fournis
 PREFERENCES_USESYSTEMTHEME;Utiliser le thème système
 PREFERENCES_VIEW;Point blanc du périphérique sortie (moniteur, TV, projecteur,...)
@@ -1054,8 +1052,8 @@ PROFILEPANEL_TOOLTIPCOPY;Copie le profil courant dans le presse-papier\n<b>CTRL-
 PROFILEPANEL_TOOLTIPLOAD;Charger un profil depuis un fichier\n<b>CTRL-clic</b> pour sélectionner les paramètres à charger
 PROFILEPANEL_TOOLTIPPASTE;Colle le profil depuis le presse-papier\n<b>CTRL-clic</b> pour sélectionner les paramètres à coller
 PROFILEPANEL_TOOLTIPSAVE;Enregistrer le profil actuel\n<b>CTRL-clic</b> pour sélectionner les paramètres à enregistrer
-PROGRESSBAR_LOADINGTHUMBS;Chargement des vignettes...
 PROGRESSBAR_LOADING;Chargement de l'Image...
+PROGRESSBAR_LOADINGTHUMBS;Chargement des vignettes...
 PROGRESSBAR_LOADJPEG;Chargement du fichier JPEG...
 PROGRESSBAR_LOADPNG;Chargement du fichier PNG...
 PROGRESSBAR_LOADTIFF;Chargement du fichier TIFF...
@@ -1075,9 +1073,9 @@ SAVEDLG_FILEFORMAT;Format de fichier
 SAVEDLG_FORCEFORMATOPTS;Forcer les options d'enregistrement
 SAVEDLG_JPEGQUAL;Qualité JPEG
 SAVEDLG_PNGCOMPR;Compression PNG
+SAVEDLG_PUTTOQUEUE;Placer dans la file de traitement
 SAVEDLG_PUTTOQUEUEHEAD;Placer au début de la file de traitement
 SAVEDLG_PUTTOQUEUETAIL;Placer au fin de la file de traitement
-SAVEDLG_PUTTOQUEUE;Placer dans la file de traitement
 SAVEDLG_SAVEIMMEDIATELY;Enregistrer immédiatement
 SAVEDLG_SAVESPP;Enregistrer les paramètres de développement avec l'image
 SAVEDLG_SUBSAMP;Sous-échantillonnage
@@ -1087,13 +1085,13 @@ SAVEDLG_SUBSAMP_3;Meilleure qualité
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
 SAVEDLG_WARNFILENAME;Le fichier sera nommé
 SHCSELECTOR_TOOLTIP;Cliquez le bouton droit de la souris\npour réinitialiser la position de ces 3 curseurs
+THRESHOLDSELECTOR_B;Bas
 THRESHOLDSELECTOR_BL;Bas-gauche
 THRESHOLDSELECTOR_BR;Bas-droite
-THRESHOLDSELECTOR_B;Bas
 THRESHOLDSELECTOR_HINT;Maintenez la touche <b>Shift</b> appuyée pour déplacer les curseurs individuellement.
+THRESHOLDSELECTOR_T;Haut
 THRESHOLDSELECTOR_TL;Haut-Gauche
 THRESHOLDSELECTOR_TR;Haut-droite
-THRESHOLDSELECTOR_T;Haut
 TOOLBAR_TOOLTIP_CROP;Sélection du recadrage\nRaccourci: <b>c</b>\nDéplacez le recadrage en utilisant Shift + Glisser
 TOOLBAR_TOOLTIP_HAND;Outil de navigation\nRaccourci: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Sélection de la ligne d'horizon\nRaccourci: <b>s</b>\n\nIndiquez la verticale ou l'horizontale en dessinant une ligne à travers l'image de prévisualisation. L'angle de rotation sera affiché près de la ligne guide. Le centre de rotation est le centre géométrique de l'image.
@@ -1113,14 +1111,14 @@ TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Courbe tonale, après la conversion en N&amp;
 TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Courbe tonale, juste avant la conversion en N&amp;B\nPeut prendre en compte les composantes couleur
 TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Modifie la luminance en fonction de la teinte\nFaites attention aux valeurs extrêmes qui peuvent causer des artefacts
 TP_BWMIX_FILTER;Filtre de couleur
-TP_BWMIX_FILTER_BLUEGREEN;Bleu-Vert
 TP_BWMIX_FILTER_BLUE;Bleu
-TP_BWMIX_FILTER_GREENYELLOW;Vert-Jaune
+TP_BWMIX_FILTER_BLUEGREEN;Bleu-Vert
 TP_BWMIX_FILTER_GREEN;Vert
+TP_BWMIX_FILTER_GREENYELLOW;Vert-Jaune
 TP_BWMIX_FILTER_NONE;Aucun
 TP_BWMIX_FILTER_PURPLE;Pourpre
-TP_BWMIX_FILTER_REDYELLOW;Rouge-Jaune
 TP_BWMIX_FILTER_RED;Rouge
+TP_BWMIX_FILTER_REDYELLOW;Rouge-Jaune
 TP_BWMIX_FILTER_TOOLTIP;Le filtre de couleur simule les prises de vue avec un filtre coloré placé devant l'objectif. Les filtres colorés réduisent la transmission d'une plage de couleur spécifique et en affectent donc leur luminosité. Ex: un filtre rouge assombri les ciels bleus.
 TP_BWMIX_FILTER_YELLOW;Jaune
 TP_BWMIX_GAMMA;Correction Gamma
@@ -1251,11 +1249,11 @@ TP_COLORTONING_COLOR;Couleur
 TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Opacité chroma en fonction de la luminance oC=f(L)
 TP_COLORTONING_HIGHLIGHT;Hautes lumières
 TP_COLORTONING_HUE;Teinte
-TP_COLORTONING_LABEL;Virage Partiel
 TP_COLORTONING_LAB;Mixage Lab
+TP_COLORTONING_LABEL;Virage Partiel
+TP_COLORTONING_LUMA;Luminance
 TP_COLORTONING_LUMAMODE;Préserver la luminance
 TP_COLORTONING_LUMAMODE_TOOLTIP;Si activé, lorsque vous changez la couleur (rouge, vert, cyan, bleu, etc.), la luminance de chaque pixel est préservé
-TP_COLORTONING_LUMA;Luminance
 TP_COLORTONING_METHOD;Méthode
 TP_COLORTONING_METHOD_TOOLTIP;Mixage Lab - RVB courbes - RVB curseurs utilise une interpolation\nBalance couleur(ombres / tons moyens / hautes lumières)\nSaturation 2 couleurs utilise couleurs directes\nDans tous les méthodes vous pouvez activer Noir et Blanc
 TP_COLORTONING_MIDTONES;Tons Moyens
@@ -1263,15 +1261,15 @@ TP_COLORTONING_NEUTRAL_TIP;Réinitialise toutes les valeurs (Ombres, Tons moyens
 TP_COLORTONING_OPACITY;Opacité
 TP_COLORTONING_RGBCURVES;RVB - Courbes
 TP_COLORTONING_RGBSLIDERS;RVB - Curseurs
+TP_COLORTONING_SA;Saturation protection
 TP_COLORTONING_SATURATEDOPACITY;Force
 TP_COLORTONING_SATURATIONTHRESHOLD;Seuil
-TP_COLORTONING_SA;Saturation protection
 TP_COLORTONING_SHADOWS;Ombres
-TP_COLORTONING_SPLITCOCO;Balance Couleur Ombres / Tons moyens / Hautes lumières
 TP_COLORTONING_SPLITCO;Ombres / Tons moyens / Hautes lumières
+TP_COLORTONING_SPLITCOCO;Balance Couleur Ombres / Tons moyens / Hautes lumières
 TP_COLORTONING_SPLITLR;Saturation 2 couleurs
-TP_COLORTONING_STRENGTH;Force
 TP_COLORTONING_STR;Force
+TP_COLORTONING_STRENGTH;Force
 TP_COLORTONING_TWO2;Chroma spécial '2 couleurs'
 TP_COLORTONING_TWOALL;Chroma spécial
 TP_COLORTONING_TWOBY;Chroma spécial 'a' and 'b'
@@ -1301,68 +1299,67 @@ TP_DEFRINGE_LABEL;Aberration chromatique
 TP_DEFRINGE_RADIUS;Rayon
 TP_DEFRINGE_THRESHOLD;Seuil
 TP_DIRPYRDENOISE_33;3×3 fort
-TP_DIRPYRDENOISE_55SOFT;5×5
 TP_DIRPYRDENOISE_55;5×5 fort
+TP_DIRPYRDENOISE_55SOFT;5×5
 TP_DIRPYRDENOISE_77;7×7 (lent)
 TP_DIRPYRDENOISE_99;9x9 (très lent)
 TP_DIRPYRDENOISE_ABM;Chroma uniquement
+TP_DIRPYRDENOISE_AUT;Global automatique
 TP_DIRPYRDENOISE_AUTO;Global automatique
 TP_DIRPYRDENOISE_AUTO_TOOLTIP;Essaie d'évaluer le bruit chroma\nFaites attention, cela calcul une moyenne, et est très subjectif !
-TP_DIRPYRDENOISE_AUT;Global automatique
 TP_DIRPYRDENOISE_BLUE;Chrominance - Bleu-Jaune
 TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;Manuel\nAgit sur l'image entière.\nVous controlez les paramètres de réduction de bruit manuellement.\n\nGlobal automatique\nAgit sur l'image entière.\n9 zones sont utilisées pour calculer un réglage de réduction de bruit de chroma.\n\nAperçu\nAgit sur l'image entière.\nLa partie visible de l'image dans l'aperçu est utilisé pour calculer un réglage de réduction de bruit de chroma.
 TP_DIRPYRDENOISE_CCCURVE;Courbe de chrominance
-TP_DIRPYRDENOISE_CHROMAFR;Chrominance
 TP_DIRPYRDENOISE_CHROMA;Chrominance - Maître
+TP_DIRPYRDENOISE_CHROMAFR;Chrominance
 TP_DIRPYRDENOISE_CTYPE;Méthode
 TP_DIRPYRDENOISE_CTYPE_TOOLTIP;Manuel\nAgit sur l'image entière.\nVous controlez les paramètres de réduction de bruit manuellement.\n\nGlobal automatique\nAgit sur l'image entière.\n9 zones sont utilisées pour calculer un réglage de réduction de bruit de chroma.\n\nAutomatique multi-zones\nPas d'aperçu - ne fonctionne que lors de l'enregistrement, mais utiliser la méthode "Aperçu" en faisant correspondre la taille et le centre de la tuile à la taille et au centre de l'aperçu, vous permet d'avoir une idée des résultats attendus.\nL'image est divisé en tuiles (entre 10 et 70 en fonction de la taille de l'image) et chaque tuile reçoit son propre réglage de réduction de bruit de chrominance.\n\nAperçu\nAgit sur l'image entière.\nLa partie de l'image visible dans l'aperçu est utilisé pour calculer un réglage de réduction de bruit de chroma.
+TP_DIRPYRDENOISE_CUR;Courbe
 TP_DIRPYRDENOISE_CURVEEDITOR_CC;Chroma
 TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Augmente (multiplie) la valeur de tousles curseurs de chrominance.\nCette courbe vous permet d'ajuster la force de la réduction de bruit chromatique en fonction de la chromaticité, par exemple pour augmenter l'action dans les zones peu saturées et pour la réduire dans ceux celles très saturées.
 TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Module l'action du débruitage de 'Luminance'
-TP_DIRPYRDENOISE_CUR;Courbe
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Peut être utilisé sur les images raw et non-raw.\n\nPour les images non-raw, la réduction de bruit de luminance dépend du gamma du profil couleur d'entée. Un gamma sRGB est supposé, c'est pourquoi si l'image a un profil couleur d'un gamma différent, la réduction de bruit de luminance variera.
 TP_DIRPYRDENOISE_ENH;Mode amélioré
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Augmente la qualité du débruitage, mais augmente le temps de traitement d'environ 20%
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma fait varier la quantité de réduction de bruit sur l'échelle des tons. Les plus petites valeurs cibleront les ombres, les plus hautes valeurs cibleront les tons les plus clairs.
+TP_DIRPYRDENOISE_LAB;Lab
 TP_DIRPYRDENOISE_LABEL;Réduction du bruit
 TP_DIRPYRDENOISE_LABM;L*a*b*
-TP_DIRPYRDENOISE_LAB;Lab
 TP_DIRPYRDENOISE_LCURVE;Courbe de luminance
 TP_DIRPYRDENOISE_LDETAIL;Niveau de détails de Luminance
 TP_DIRPYRDENOISE_LM;Luminance seulement
 TP_DIRPYRDENOISE_LPLABM;L* pondéré (faiblement) + a*b* (normal)
 TP_DIRPYRDENOISE_LTYPE;Contrôle de luminance
+TP_DIRPYRDENOISE_LUMA;Luminance
 TP_DIRPYRDENOISE_LUMAFR;Luminance
 TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Ondelettes pour la luminance et transformé de Fourier pour les détails de luminance
-TP_DIRPYRDENOISE_LUMA;Luminance
-TP_DIRPYRDENOISE_MANU;Manuel
 TP_DIRPYRDENOISE_MAN;Manuel
+TP_DIRPYRDENOISE_MANU;Manuel
+TP_DIRPYRDENOISE_MED;Filtre Médian
 TP_DIRPYRDENOISE_MEDMETHOD;Méthode
 TP_DIRPYRDENOISE_MEDTYPE;Type de médiane
-TP_DIRPYRDENOISE_MED;Filtre Médian
 TP_DIRPYRDENOISE_MED_TOOLTIP;Active le débruitage médian
+TP_DIRPYRDENOISE_METHOD;Méthode
 TP_DIRPYRDENOISE_METHOD11;Qualité
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;La qualité peut être adapté à la trame du bruit. Régler sur "haut" augmentera l'effet de la réduction de bruit au prix d'un temps de traitement plus long.
-TP_DIRPYRDENOISE_METHOD;Méthode
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;Pour les images raw, les méthodes RVB ou Lab peuvent être utilisées.\n\nPour les images non-raw la méthode Lab sera utilisée, indépendamment de ce qu'indique ce bouton.
 TP_DIRPYRDENOISE_METM_TOOLTIP;Lorsque vous utilisez les méthodes "Luminance seulement" et "Lab", un filtrage médian sera effectué juste après l'étape des ondelettes dans le pipeline de la réduction de bruit.\nEm mode "RVB", il sera effectué à la toute fin du pipeline de la réduction de bruit.
 TP_DIRPYRDENOISE_MET_TOOLTIP;Applique un filtre médian de la taille souhaité. Plus il est large, plus cela prendra de temps.\n\n3x3 soft: treats 5 pixels in a 1-pixel range.\n3x3: treats 9 pixels in a 1-pixel range.\n5x5 soft: treats 13 pixels in a 2-pixel range.\n5x5: treats 25 pixels in a 2-pixel range.\n7x7: treats 49 pixels in a 3-pixel range.\n\nSometimes it is possible to achieve higher quality running several iterations with a small range than one iteration with a large range.
-TP_DIRPYRDENOISE_MET_TOOLTIP;Type de filtrage médian:\n3x3, 3x3 fort et 5x5 (RVB) ou 3x3, 3x3 fort, 5x5, 5x5 fort ou 7x7 (L seulement + Lab)\n\nSupprime encore plus de bruit.
-TP_DIRPYRDENOISE_NOISELABELEMPTY;Bruit de l'aperçu: Moyen= -   Haut= -
 TP_DIRPYRDENOISE_NOISELABEL;Bruit de l'aperçu: Moyen=%1  Haut=%2
+TP_DIRPYRDENOISE_NOISELABELEMPTY;Bruit de l'aperçu: Moyen= -   Haut= -
 TP_DIRPYRDENOISE_NRESID_TOOLTIP;Affiche les niveaux de bruit résiduel de la partie de l'image visible dans l'<b>aperçu</b> après les ondelettes.\n\n>300 Très bruité\n100-300 Bruité\n50-100 Peu bruité\n<50 Très peu bruité\n\nAttention, les valeurs diffèreront entre le mode RVB et L*a*b*. Les valeurs RVB sont moins précises car le mode RVB ne séparent pas complètement la luminance et la chrominance.
-TP_DIRPYRDENOISE_PASSES_TOOLTIP;Appliquer 3 itération du filtre médian 3x3 donne de meilleurs résultats qu'appliquer une seule fois le filtre 7x7.
 TP_DIRPYRDENOISE_PASSE;Itérations
+TP_DIRPYRDENOISE_PASSES_TOOLTIP;Appliquer 3 itération du filtre médian 3x3 donne de meilleurs résultats qu'appliquer une seule fois le filtre 7x7.
 TP_DIRPYRDENOISE_PON;Multi-zones auto
-TP_DIRPYRDENOISE_PREVLABEL;Taille de l'aperçu=%1, Centre: Px=%2  Py=%3
-TP_DIRPYRDENOISE_PREV;Aperçu
 TP_DIRPYRDENOISE_PRE;Aperçu multi-zones
+TP_DIRPYRDENOISE_PREV;Aperçu
+TP_DIRPYRDENOISE_PREVLABEL;Taille de l'aperçu=%1, Centre: Px=%2  Py=%3
 TP_DIRPYRDENOISE_RED;Chrominance - Rouge-Vert
-TP_DIRPYRDENOISE_RGBM;RVB
 TP_DIRPYRDENOISE_RGB;RVB
-TP_DIRPYRDENOISE_SHALBI;Haut
+TP_DIRPYRDENOISE_RGBM;RVB
 TP_DIRPYRDENOISE_SHAL;Standard
+TP_DIRPYRDENOISE_SHALBI;Haut
 TP_DIRPYRDENOISE_SLI;Curseur
 TP_DIRPYRDENOISE_SOFT;3x3
 TP_DIRPYRDENOISE_TILELABEL;Taille des tuiles =%1, Centre: Tx=%2  Ty=%3
@@ -1398,8 +1395,8 @@ TP_EXPOSURE_BLACKLEVEL;Noir
 TP_EXPOSURE_BRIGHTNESS;Luminosité
 TP_EXPOSURE_CLIP;Rognage %
 TP_EXPOSURE_CLIP_TIP;La fraction de pixels que l'outil <b>Niveaux Auto</b> passera en dehors du domaine
-TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Seuil de compression\ndes hautes lumières
 TP_EXPOSURE_COMPRHIGHLIGHTS;Compression hautes lumières
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Seuil de compression\ndes hautes lumières
 TP_EXPOSURE_COMPRSHADOWS;Compression des ombres
 TP_EXPOSURE_CONTRAST;Contraste
 TP_EXPOSURE_CURVEEDITOR1;Courbe Tonale 1
@@ -1471,9 +1468,9 @@ TP_ICM_BLENDCMSMATRIX_TOOLTIP;Activer la récupération des zones brûlées lors
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolé
 TP_ICM_DCPILLUMINANT_TOOLTIP;Sélectionne quel illuminant DCP inclus utiliser. La valeur par défaut est "Interpolé", qui est un mix entre les 2 profils inclus basé sur la Balance des Blancs choisie. Ce paramètre n'est actif que si un fichier DCP Bi-Illuminant avec support de l'interpolation est choisi.
+TP_ICM_INPUTCAMERA;Celui de l'appareil photo
 TP_ICM_INPUTCAMERAICC;Sél. auto du profile de l'APN
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Utilise les profils d'entrée DCP ou ICC spécifiques à RawTherapee, qui sont plus précis qu'une simple matrice.\nDisponible pour certains appareils photo, ces profils sont stoqués dans le dossier /iccprofiles/input.\nCelui dont le nom de fichier correspond au champ EXIF "Modèle" (de l'appareil) est automatiquement sélectionné.
-TP_ICM_INPUTCAMERA;Celui de l'appareil photo
 TP_ICM_INPUTCAMERA_TOOLTIP;Par ordre de préférence, utilise les matrices de couleur incluses dans le fichier RAW, les matrices de couleur simple fournies par RawTherapee ou celles de DCRaw
 TP_ICM_INPUTCUSTOM;Personnel
 TP_ICM_INPUTCUSTOM_TOOLTIP;Sélectionez votre propre profil DCP/ICC pour votre appareil photo
@@ -1539,7 +1536,6 @@ TP_LENSPROFILE_LABEL;Profil de correction d'objectif
 TP_LENSPROFILE_USECA;Corr. de l'aber. chromatique
 TP_LENSPROFILE_USEDIST;Corr. de la distortion
 TP_LENSPROFILE_USEVIGN;Corr. du vignettage
-TP_NEUTRAL;Neutre
 TP_NEUTRAL_TIP;Réinitialise les valeurs de l'exposition à des valeurs neutres
 TP_PCVIGNETTE_FEATHER;Étendue
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Étendue: 0=bords uniquement, 50=mi-chemin du centre, 100=jusqu'au centre
@@ -1597,16 +1593,16 @@ TP_RESIZE_APPLIESTO;S'applique à:
 TP_RESIZE_CROPPEDAREA;La zone recadrée
 TP_RESIZE_FITBOX;Boîte englobante
 TP_RESIZE_FULLIMAGE;L'image entière
-TP_RESIZE_HEIGHT;Hauteur
 TP_RESIZE_H;H:
+TP_RESIZE_HEIGHT;Hauteur
 TP_RESIZE_LABEL;Redimensionnement
 TP_RESIZE_LANCZOS;Lanczos
 TP_RESIZE_METHOD;Méthode: 
 TP_RESIZE_NEAREST;Au plus proche
 TP_RESIZE_SCALE;Échelle
 TP_RESIZE_SPECIFY;Préciser:
-TP_RESIZE_WIDTH;Largeur
 TP_RESIZE_W;L:
+TP_RESIZE_WIDTH;Largeur
 TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;Canal
 TP_RGBCURVES_GREEN;V
@@ -1704,9 +1700,9 @@ TP_WAVELET_CH1;Plage chromatique complète
 TP_WAVELET_CH2;Saturé/pastel
 TP_WAVELET_CH3;Lier avec les niveaux de contraste
 TP_WAVELET_CHCU;Courbe
+TP_WAVELET_CHR;Force du lien chroma/contrast
 TP_WAVELET_CHRO;Seuil saturé/pastel
 TP_WAVELET_CHRO_TOOLTIP;Règle le niveau d'ondelettes qui sera le seuil entre les couleurs saturées et pastels.\n1-x: saturé\nx-9: pastel\n\nSi la valeur excède le nombre de niveaux d'ondelettes en cours d'utilisation, alors ce paramètre sera ignoré.
-TP_WAVELET_CHR;Force du lien chroma/contrast
 TP_WAVELET_CHR_TOOLTIP;Ajuste le chroma en fonction des "niveaux de contraste" et de la "force du lien chroma/contrast"
 TP_WAVELET_CHSL;Curseurs
 TP_WAVELET_CHTYPE;Méthode de chrominance
@@ -1716,11 +1712,11 @@ TP_WAVELET_COMPGAMMA;Compression gamma
 TP_WAVELET_COMPGAMMA_TOOLTIP;Ajuster le gamma de l'image résiduelle vous permet d'équiilibrer les données de l'histograme.
 TP_WAVELET_COMPTM;Compression tonale
 TP_WAVELET_CONTEDIT;Courbe de contraste 'Après'
+TP_WAVELET_CONTR;Gamut
+TP_WAVELET_CONTRA;Contraste
 TP_WAVELET_CONTRAST_MINUS;Contraste -
 TP_WAVELET_CONTRAST_PLUS;Contraste +
-TP_WAVELET_CONTRA;Contraste
 TP_WAVELET_CONTRA_TOOLTIP;Change le contraste de l'image résiduelle.
-TP_WAVELET_CONTR;Gamut
 TP_WAVELET_CTYPE;Contrôle de la chrominance
 TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Modifie le contraste local en fonction du contraste original (abscisse)\nLa partie basse des abscisses représente les faibles contrastes locaux (valeurs réelles entre 10 et 20)\nUne abscisse de 50% représente un contraste local moyen (valeurs réelles entre 100 et 300)\nUne abscisse de 66% représente la déviation standard du contraste local (valeurs réeles entre 300 et 800)\n100% représente le contraste maximum (valeurs réelles entre 3000 et 8000)
 TP_WAVELET_CURVEEDITOR_CH;Contraste=f(Teinte)
@@ -1730,12 +1726,12 @@ TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Applique une courbe de contraste de la luminan
 TP_WAVELET_CURVEEDITOR_HH;TT
 TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Modifie la teintes de l'image résiduelle en fonction de la teinte.
 TP_WAVELET_DALL;Toutes les directions
+TP_WAVELET_DAUB;Performance des bords
 TP_WAVELET_DAUB2;D2 - bas
 TP_WAVELET_DAUB4;D4 - standard
 TP_WAVELET_DAUB6;D6 - standard plus
 TP_WAVELET_DAUB10;D10 - moyen
 TP_WAVELET_DAUB14;D14 - haut
-TP_WAVELET_DAUB;Performance des bords
 TP_WAVELET_DAUB_TOOLTIP;Change les coéf. de Daubechies:\nD4 = Standard,\nD14 = Souvent les meilleurs performances, demande 10% de temps de traitement supplémentaire.\n\nAffecte la détection des bords ainsi que la qualité générale des premiers niveaux. Cependant la qualité n'est pas strcitement à ces coéficients et peut varier en fonction des images et des usages.
 TP_WAVELET_DONE;Vertical
 TP_WAVELET_DTHR;Diagonal
@@ -1743,14 +1739,14 @@ TP_WAVELET_DTWO;Horizontal
 TP_WAVELET_EDCU;Courbe
 TP_WAVELET_EDGCONT;Contraste local
 TP_WAVELET_EDGCONT_TOOLTIP;Ajuster les points vers la gauche diminue le contraste, et vers la droite l'augmente.\nBas-gauche, Haut-gauche, Haut-droit, Bas-droit représente respectivement le contraste local pour les petites valeurs, moyennes, moyennes+stdev, maximum
+TP_WAVELET_EDGE;Netteté des bords
 TP_WAVELET_EDGEAMPLI;Amplification de base
-TP_WAVELET_EDGEDETECTTHR2;Seuil haut (détection)
-TP_WAVELET_EDGEDETECTTHR;Seuil bas (bruit)
-TP_WAVELET_EDGEDETECTTHR_TOOLTIP;Ce curseur vous permet de cibler la détection des bords, par ex. pour éviter d'augmenter la netteté de fins détails tels que le bruit dans le ciel.
 TP_WAVELET_EDGEDETECT;Sensibilité du gradient
+TP_WAVELET_EDGEDETECTTHR;Seuil bas (bruit)
+TP_WAVELET_EDGEDETECTTHR2;Seuil haut (détection)
+TP_WAVELET_EDGEDETECTTHR_TOOLTIP;Ce curseur vous permet de cibler la détection des bords, par ex. pour éviter d'augmenter la netteté de fins détails tels que le bruit dans le ciel.
 TP_WAVELET_EDGEDETECT_TOOLTIP;Déplacer ce curseur vers la droite augmente la sensibilité des bords. Cela affecte le contraste local, les paramètres de 'bord' et le bruit.
 TP_WAVELET_EDGESENSI;Sensibilité des bords
-TP_WAVELET_EDGE;Netteté des bords
 TP_WAVELET_EDGREINF_TOOLTIP;Renforce ou réduit l'action du premier niveau, réalise l'opposé sur le second niveau, et laisse le reste inchangé.
 TP_WAVELET_EDGTHRESH;Détail
 TP_WAVELET_EDGTHRESH_TOOLTIP;Change la répartition entre les premiers niveaux et les autres. Plus le seuil est haut plus l'action est centré sur les premiers niveaux. Faites attention aux valeurs négatives, elles augmentent l'action sur les niveaux élevés et peut introduire des artéfacts.
@@ -1789,29 +1785,29 @@ TP_WAVELET_LINKEDG;Lier à la 'Force' de la 'Netteté des bords'
 TP_WAVELET_LIPST;Algorithme amélioré
 TP_WAVELET_LOWLIGHT;Plage de luminance des ombres
 TP_WAVELET_MEDGREINF;Premier niveau
+TP_WAVELET_MEDI;Réduire les artéfacts dans les ciels bleus
 TP_WAVELET_MEDILEV;Détection des bords
 TP_WAVELET_MEDILEV_TOOLTIP;Lorsque vous activez la Détection des Bords, il est recommandé:\n- d'éviter les faibles niveaux de contraste pour éviter les artéfacts,\n- d'utiliser de hautes valeurs de Sensibilité du Gradient.\n\nVous pouvez moduler la force avec 'Affinage' de Débruitage et affinage.
-TP_WAVELET_MEDI;Réduire les artéfacts dans les ciels bleus
 TP_WAVELET_NEUTRAL;Neutre
-TP_WAVELET_NOISE;Débruitage et affinage
 TP_WAVELET_NOIS;Débruitage
+TP_WAVELET_NOISE;Débruitage et affinage
 TP_WAVELET_NPHIGH;Haut
 TP_WAVELET_NPLOW;Bas
 TP_WAVELET_NPNONE;Aucun
 TP_WAVELET_NPTYPE;Pixels voisins
 TP_WAVELET_NPTYPE_TOOLTIP;Cet algorithme utilise la proximité d'un pixel et huit de ses voisins. Si moins de différence, les bords sont renforcés.
+TP_WAVELET_OPACITY;Opacité Bleu-Jaune
+TP_WAVELET_OPACITYW;Courbe de contraste d/v-h
 TP_WAVELET_OPACITYWL;Contraste local final
 TP_WAVELET_OPACITYWL_TOOLTIP;Modifie le contraste local final à la fin du traitement par ondelettes.\n\nLe côté gauche représente les plus faibles contrastes locaaux, progressant jusqu'aux plus grands contrastes locaux vers la droite.
-TP_WAVELET_OPACITYW;Courbe de contraste d/v-h
-TP_WAVELET_OPACITY;Opacité Bleu-Jaune
 TP_WAVELET_PASTEL;Chroma des Pastels
 TP_WAVELET_PROC;Procédé
 TP_WAVELET_RE1;Renforcé
 TP_WAVELET_RE2;Inchangé
 TP_WAVELET_RE3;Réduit
 TP_WAVELET_RESCHRO;Chroma
-TP_WAVELET_RESCONH;Hautes lumières
 TP_WAVELET_RESCON;Ombres
+TP_WAVELET_RESCONH;Hautes lumières
 TP_WAVELET_RESID;Image résiduelle
 TP_WAVELET_SAT;Chroma saturé
 TP_WAVELET_SETTINGS;Réglage des ondelettes
@@ -1819,15 +1815,15 @@ TP_WAVELET_SKIN;Ciblage/protection des tons chair
 TP_WAVELET_SKIN_TOOLTIP;À -100 les tons 'chair' seront ciblés.\nÀ 0 tous les tons seront traité de manière égale.\nÀ +100 les tons 'chair' seront protégé alors que tous les autres tons seront affecté.
 TP_WAVELET_SKY;Ciblage/protection du ciel
 TP_WAVELET_SKY_TOOLTIP;À -100 les tons 'ciel' seront ciblés.\nÀ 0 tous les tons seront traité de manière égale.\nÀ +100 les tons 'ciel' seront protégé alors que tous les autres tons seront affecté.
-TP_WAVELET_STRENGTH;Force
 TP_WAVELET_STREN;Force
+TP_WAVELET_STRENGTH;Force
 TP_WAVELET_SUPE;Extra
+TP_WAVELET_THR;Seuil des ombres
+TP_WAVELET_THRESHOLD;Niveaux des hautes lumières
 TP_WAVELET_THRESHOLD2;Niveaux des ombres
 TP_WAVELET_THRESHOLD2_TOOLTIP;Seuls les niveaux entre 9 et 9 moins la valeur seront affecté par la plage de luminance des ombres. Les autres niveaux seront entièrement traité. La plus haute valeur possible est limité par la valeur du niveau des hautes lumières (9 moins la valeur du niveau des hautes lumières).
-TP_WAVELET_THRESHOLD;Niveaux des hautes lumières
 TP_WAVELET_THRESHOLD_TOOLTIP;Seuls les niveaux au-delà de la valeur choisie seront affecté par la plage de luminance des hautes lumières. Les autres niveaux seront traité entièrement. La valeur choisie ici limite la plus haute valeur possible de niveau d'ombre.
 TP_WAVELET_THRH;Seuil des hautes lumières
-TP_WAVELET_THR;Seuil des ombres
 TP_WAVELET_TILESBIG;Grandes tuiles
 TP_WAVELET_TILESFULL;Image entière
 TP_WAVELET_TILESIZE;Méthode de découpage
@@ -1888,7 +1884,6 @@ ZOOMPANEL_NEWCROPWINDOW;Ouvrir une (nouvelle) vue détaillée
 ZOOMPANEL_ZOOM100;Zoom à 100%\nRaccourci: <b>z</b>
 ZOOMPANEL_ZOOMFITCROPSCREEN;Zoom/affiche la zone recadrée\nRaccourci: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;Affiche l'image entière\nRaccourci: <b>f</b>
-ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre\nRaccourci: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom Avant\nRaccourci: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 
@@ -1896,6 +1891,8 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
+!HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_407;Retinex - Method
 !HISTORY_MSG_408;Retinex - Neighboring
 !HISTORY_MSG_409;Retinex - Gain
@@ -1916,8 +1913,15 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_424;Retinex - HL threshold
 !HISTORY_MSG_425;Retinex - Log base
 !HISTORY_MSG_426;Retinex - Hue equalizer
+!MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
 !PARTIALPASTE_RETINEX;Retinex
+!PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
+!PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
+!PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
+!TP_COLORTONING_NEUTRAL;Reset sliders
+!TP_DIRPYRDENOISE_PASSES;Median iterations
+!TP_NEUTRAL;Reset
 !TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
 !TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
 !TP_RETINEX_CONTEDIT_LH;Hue equalizer
@@ -1935,10 +1939,10 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_RETINEX_GAMMA_MID;Middle
 !TP_RETINEX_GAMMA_NONE;None
 !TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
+!TP_RETINEX_HIGH;High
+!TP_RETINEX_HIGHLIG;Highlight
 !TP_RETINEX_HIGHLIGHT;Highlight threshold
 !TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.
-!TP_RETINEX_HIGHLIG;Highlight
-!TP_RETINEX_HIGH;High
 !TP_RETINEX_HSLSPACE_LIN;HSL-Linear
 !TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
 !TP_RETINEX_LABEL;Retinex
@@ -1958,8 +1962,8 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_RETINEX_STRENGTH;Strength
 !TP_RETINEX_THRESHOLD;Threshold
 !TP_RETINEX_THRESHOLD_TOOLTIP;Limits in/out.\nIn = image source,\nOut = image gauss.
-!TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
 !TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
+!TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
 !TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nMean and Sigma\nTm=Min TM=Max of transmission map.
 !TP_RETINEX_TRANSMISSION;Transmission map
 !TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.

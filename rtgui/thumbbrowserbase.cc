@@ -98,6 +98,88 @@ void ThumbBrowserBase::scrollPage (int direction)
     }
 }
 
+namespace
+{
+
+typedef std::vector<ThumbBrowserEntryBase*> ThumbVector;
+typedef ThumbVector::iterator ThumbIterator;
+
+inline void clearSelection (ThumbVector& selected)
+{
+    for (ThumbIterator thumb = selected.begin (); thumb != selected.end (); ++thumb)
+        (*thumb)->selected = false;
+
+    selected.clear ();
+}
+
+inline void addToSelection (ThumbBrowserEntryBase* entry, ThumbVector& selected)
+{
+    if (entry->selected || entry->filtered)
+        return;
+
+    entry->selected = true;
+    selected.push_back (entry);
+}
+
+inline void removeFromSelection (const ThumbIterator& iterator, ThumbVector& selected)
+{
+    (*iterator)->selected = false;
+    selected.erase (iterator);
+}
+
+}
+
+void ThumbBrowserBase::selectSingle (ThumbBrowserEntryBase* clicked)
+{
+    clearSelection (selected);
+
+    if (clicked)
+        addToSelection (clicked, selected);
+}
+
+void ThumbBrowserBase::selectRange (ThumbBrowserEntryBase* clicked, bool additional)
+{
+    if (selected.empty ()) {
+        addToSelection (clicked, selected);
+        return;
+    }
+
+    if (!additional || !lastClicked) {
+        // Extend the current range w.r.t to first selected entry.
+        ThumbIterator front = std::find (fd.begin (), fd.end (), selected.front ());
+        ThumbIterator current = std::find (fd.begin (), fd.end (), clicked);
+
+        if (front > current)
+            std::swap (front, current);
+
+        clearSelection (selected);
+
+        for (; front <= current; ++front)
+            addToSelection (*front, selected);
+    } else {
+        // Add an additional range w.r.t. the last clicked entry.
+        ThumbIterator last = std::find (fd.begin (), fd.end (), lastClicked);
+        ThumbIterator current = std::find (fd.begin (), fd.end (), clicked);
+
+        if (last > current)
+            std::swap (last, current);
+
+        for (; last <= current; ++last)
+            addToSelection (*last, selected);
+    }
+}
+
+void ThumbBrowserBase::selectSet (ThumbBrowserEntryBase* clicked)
+{
+    const ThumbIterator iterator = std::find (selected.begin (), selected.end (), clicked);
+
+    if (iterator != selected.end ()) {
+        removeFromSelection (iterator, selected);
+    } else {
+        addToSelection (clicked, selected);
+    }
+}
+
 static void scrollToEntry (double& h, double& v, int iw, int ih, ThumbBrowserEntryBase* entry)
 {
     const int hmin = entry->getX ();
@@ -726,9 +808,7 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
     bool handled = false;
 
     {
-#if PROTECT_VECTORS
-        MYREADERLOCK(l, entryRW);
-#endif
+        IFPV_MYREADERLOCK(l, entryRW);
 
         for (size_t i = 0; i < fd.size(); i++)
             if (fd[i]->drawable) {
@@ -746,125 +826,31 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
     }
 
     {
-#if PROTECT_VECTORS
-        MYWRITERLOCK(l, entryRW);
-#endif
+        IFPV_MYWRITERLOCK(l, entryRW);
 
         if (selected.size() == 1 && type == GDK_2BUTTON_PRESS && button == 1) {
             doubleClicked (selected[0]);
         } else if (button == 1 && type == GDK_BUTTON_PRESS) {
-            if (fileDescr && (state & GDK_SHIFT_MASK)) {
-                if (selected.empty()) {
-                    selected.push_back (fileDescr);
-                    fileDescr->selected = true;
-                    lastClicked = fileDescr;
-#if PROTECT_VECTORS
-                    MYWRITERLOCK_RELEASE(l);
-#endif
-                    selectionChanged ();
-                } else {
-                    // find the start and the end of the selection interval
-                    size_t startx = fd.size() - 1;
+            if (fileDescr && (state & GDK_SHIFT_MASK))
+                selectRange (fileDescr, state & GDK_CONTROL_MASK);
+            else if (fileDescr && (state & GDK_CONTROL_MASK))
+                selectSet (fileDescr);
+            else
+                selectSingle (fileDescr);
 
-                    if (lastClicked) {
-                        for (; startx > 0; startx--)
-                            if (fd[startx] == lastClicked) {
-                                break;
-                            }
-                    } else {
-                        for (; startx > 0; startx--)
-                            if (fd[startx] == selected[0]) {
-                                break;
-                            }
-                    }
-
-                    size_t endx = 0;
-
-                    for (; endx < fd.size(); endx++)
-                        if (fd[endx] == fileDescr) {
-                            break;
-                        }
-
-                    if (endx < startx) {
-                        int tmp = endx;
-                        endx = startx;
-                        startx = tmp;
-                    }
-
-                    // clear current selection
-                    for (size_t i = 0; i < selected.size(); i++) {
-                        selected[i]->selected = false;
-                    }
-
-                    selected.clear ();
-
-                    // select thumbnails in the interval
-                    for (size_t i = startx; i <= endx; i++) {
-                        if (!fd[i]->filtered) {
-                            fd[i]->selected = true;
-                            selected.push_back (fd[i]);
-                        }
-                    }
-
-                    lastClicked = fileDescr;
-#if PROTECT_VECTORS
-                    MYWRITERLOCK_RELEASE(l);
-#endif
-                    selectionChanged ();
-                }
-            } else if (fileDescr && (state & GDK_CONTROL_MASK)) {
-                std::vector<ThumbBrowserEntryBase*>::iterator i = std::find (selected.begin(), selected.end(), fileDescr);
-
-                if (i != selected.end()) {
-                    (*i)->selected = false;
-                    selected.erase (i);
-                } else {
-                    selected.push_back (fileDescr);
-                    fileDescr->selected = true;
-                }
-
-                lastClicked = fileDescr;
-#if PROTECT_VECTORS
-                MYWRITERLOCK_RELEASE(l);
-#endif
-                selectionChanged ();
-            } else {
-                for (size_t i = 0; i < selected.size(); i++) {
-                    selected[i]->selected = false;
-                }
-
-                selected.clear ();
-
-                if (fileDescr) {
-                    selected.push_back (fileDescr);
-                    fileDescr->selected = true;
-                }
-
-                lastClicked = fileDescr;
-#if PROTECT_VECTORS
-                MYWRITERLOCK_RELEASE(l);
-#endif
-                selectionChanged ();
-            }
+            lastClicked = fileDescr;
+            IFPV_MYWRITERLOCK_RELEASE(l);
+            selectionChanged ();
         } else if (fileDescr && button == 3 && type == GDK_BUTTON_PRESS) {
             if (!fileDescr->selected) {
-                for (size_t i = 0; i < selected.size(); i++) {
-                    selected[i]->selected = false;
-                }
+                selectSingle (fileDescr);
 
-                selected.clear ();
-                fileDescr->selected = true;
-                selected.push_back (fileDescr);
                 lastClicked = fileDescr;
-#if PROTECT_VECTORS
-                MYWRITERLOCK_RELEASE(l);
-#endif
+                IFPV_MYWRITERLOCK_RELEASE(l);
                 selectionChanged ();
             }
 
-#if PROTECT_VECTORS
-            MYWRITERLOCK_RELEASE(l);
-#endif
+            IFPV_MYWRITERLOCK_RELEASE(l);
             rightClicked (fileDescr);
         }
     } // end of MYWRITERLOCK(l, entryRW);

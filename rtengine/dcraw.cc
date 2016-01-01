@@ -1937,9 +1937,11 @@ void CLASS hasselblad_correct()
         const ushort corners_shift[9] = { 2, 1, 2, 1, 0, 1, 2, 1, 2 };
         for (row = 0; row < bh; row++) {
             const ushort maxdist = bw < bh ? bw/2-1 : bh/2-1;
-            const unsigned corners[9][2] = {{0,0},   {0,bw/2},   {0,bw-1},
-                                            {bh/2,0},{bh/2,bw/2},{bh/2,bw-1},
-                                            {bh-1,0},{bh-1,bw/2},{bh-1,bw-1}};
+            const unsigned bwu = (unsigned)bw;
+            const unsigned bhu = (unsigned)bh;
+            const unsigned corners[9][2] = {{0,0},    {0,bwu/2},    {0,bwu-1},
+                                            {bhu/2,0},{bhu/2,bwu/2},{bhu/2,bwu-1},
+                                            {bhu-1,0},{bhu-1,bwu/2},{bhu-1,bwu-1}};
             for (col = 0; col < bw; col++) {
                 for (i = 0; i < 9; i++) {
                     ushort dist = (ushort)sqrt(abs(corners[i][0] - row) * abs(corners[i][0] - row) + abs(corners[i][1] - col) * abs(corners[i][1] - col));
@@ -2434,7 +2436,7 @@ void CLASS quicktake_100_load_raw()
 
 void CLASS kodak_radc_load_raw()
 {
-  static const char src[] = {
+  static const signed char src[] = {
     1,1, 2,3, 3,4, 4,2, 5,7, 6,5, 7,6, 7,8,
     1,0, 2,1, 3,3, 4,4, 5,2, 6,7, 7,6, 8,5, 8,8,
     2,1, 2,3, 3,0, 3,2, 3,4, 4,6, 5,5, 6,7, 6,8,
@@ -5158,6 +5160,11 @@ nf: order = 0x4949;
     tag |= uptag << 16;
     if (tag == 2 && strstr(make,"NIKON") && !iso_speed)
       iso_speed = (get2(),get2());
+    if ((tag == 0x25 || tag == 0x28) && strstr(make,"NIKON") && !iso_speed) { // Nikon ISOInfo Tags/ISO & ISO2
+      uchar iso[1];
+      fread (iso, 1, 1, ifp);
+      iso_speed = 100 * pow(2,(float)iso[0]/12.0-5);
+    }
     if (tag == 4 && len > 26 && len < 35) {
       if ((i=(get4(),get2())) != 0x7fff && !iso_speed)
 	iso_speed = 50 * pow (2, i/32.0 - 4);
@@ -5410,6 +5417,7 @@ void CLASS parse_exif (int base)
       case 33434:  shutter = getreal(type);		break;
       case 33437:  aperture = getreal(type);		break;
       case 34855:  iso_speed = get2();			break;
+      case 34866:  if((!iso_speed) || iso_speed == 65535) iso_speed = get4();break;
       case 36867:
       case 36868:  get_timestamp(0);			break;
       case 37377:  if ((expo = -getreal(type)) < 128)
@@ -6198,7 +6206,12 @@ void CLASS apply_tiff()
 	  case  8: load_raw = &CLASS eight_bit_load_raw;	break;
 	  case 12: if (tiff_ifd[raw].phint == 2)
 		     load_flags = 6;
-		   load_raw = &CLASS packed_load_raw;			break;
+             if(!strncmp(make,"SONY",4) && tiff_ifd[raw].comp == 1) { // hack for some sony cameras which report as 12 bit uncompressed but in fact are 14 bit uncompressed
+                 tiff_bps = 14;
+             } else {
+               load_raw = &CLASS packed_load_raw;
+               break;
+             }
 	  case 14: load_flags = 0;
 	  case 16: load_raw = &CLASS unpacked_load_raw;
 		   if (!strncmp(make,"OLYMPUS",7) &&
@@ -9248,6 +9261,10 @@ dng_skip:
 	adobe_coeff (make, model);
   if(!strncmp(make, "Pentax", 6) && !strncmp(model, "K10D",4))
 	adobe_coeff (make, model);
+  if(!strncmp(make, "Leica", 5) && !strncmp(model, "Q",1))
+    adobe_coeff (make, model);
+  if(!strncmp(make, "Leica", 5) && !strncmp(model, "SL",2))
+    adobe_coeff (make, model);
   if (raw_color) adobe_coeff (make, model);
   if (load_raw == &CLASS kodak_radc_load_raw)
     if (raw_color) adobe_coeff ("Apple","Quicktake");

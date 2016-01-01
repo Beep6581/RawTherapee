@@ -2004,9 +2004,9 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         //matrix for current working space
         TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
         const float wip[3][3] = {
-            {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
-            {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
-            {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+            {(float)wiprof[0][0], (float)wiprof[0][1], (float)wiprof[0][2]},
+            {(float)wiprof[1][0], (float)wiprof[1][1], (float)wiprof[1][2]},
+            {(float)wiprof[2][0], (float)wiprof[2][1], (float)wiprof[2][2]}
         };
 
 #ifdef __SSE2__
@@ -5824,7 +5824,7 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, 
     };
 
 #ifdef _DEBUG
-    #pragma omp parallel default(shared) firstprivate(highlight, ccut, clut, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew, MunsDebugInfo, pW) if (multiThread)
+    #pragma omp parallel default(shared) firstprivate(lold, lnew, MunsDebugInfo, pW) if (multiThread)
 #else
     #pragma omp parallel if (multiThread)
 #endif

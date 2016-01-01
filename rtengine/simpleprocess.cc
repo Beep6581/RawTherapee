@@ -77,6 +77,14 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         params.crop.w = fw;
         params.crop.h = fh;
     } else {
+        if (params.crop.x < 0) {
+            params.crop.x = 0;
+        }
+
+        if (params.crop.y < 0) {
+            params.crop.y = 0;
+        }
+
         if ((params.crop.x + params.crop.w) > fw) {
             // crop overflow in the width dimension ; we trim it
             params.crop.w = fw - params.crop.x;
@@ -193,8 +201,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     float *ry = new float [nbtl];
     float *sk = new float [nbtl];
     float *pcsk = new float [nbtl];
-    float *Max_R_ = new float [nbtl];
-    float *Max_B_ = new float [nbtl];
 
     //  printf("expert=%d\n",settings->leveldnautsimpl);
     if(settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "PON") {
@@ -373,11 +379,11 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                     MaxRMoy += max_r[k];
 
                     if(max_r[k] > MaxR) {
-                        MaxR = Max_R_[k];
+                        MaxR = max_r[k];
                     }
 
                     if(max_b[k] > MaxB) {
-                        MaxB = Max_B_[k];
+                        MaxB = max_b[k];
                     }
 
                 }
@@ -715,8 +721,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     delete [] ry;
     delete [] sk;
     delete [] pcsk;
-    delete [] Max_R_;
-    delete [] Max_B_;
 
     imgsrc->convertColorSpace(baseImg, params.icm, currWB);
 

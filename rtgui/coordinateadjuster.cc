@@ -103,6 +103,12 @@ CoordinateAdjuster::CoordinateAdjuster(CoordinateProvider *provider, CurveEditor
     createWidgets(defaultAxis);
 }
 
+CoordinateAdjuster::~CoordinateAdjuster()
+{
+    for (std::vector<AxisAdjuster*>::iterator iterator = axisAdjusters.begin(); iterator != axisAdjusters.end(); ++iterator)
+        delete *iterator;
+}
+
 void CoordinateAdjuster::createWidgets(const std::vector<Axis> &axis)
 {
     unsigned int count = axis.size();

@@ -1377,8 +1377,17 @@ void ImProcFunctions::Aver( float *  RESTRICT DataList, int datalen, float &aver
         }
     }
 
-    averagePlus = averaP / countP;
-    averageNeg = averaN / countN;
+    if(countP > 0) {
+        averagePlus = averaP / countP;
+    } else {
+        averagePlus = 0;
+    }
+
+    if(countN > 0) {
+        averageNeg = averaN / countN;
+    } else {
+        averageNeg = 0;
+    }
 
 }
 
@@ -1403,8 +1412,17 @@ void ImProcFunctions::Sigma( float *  RESTRICT DataList, int datalen, float aver
         }
     }
 
-    sigmaPlus = sqrt(variP / countP);
-    sigmaNeg = sqrt(variN / countN);
+    if(countP > 0) {
+        sigmaPlus = sqrt(variP / countP);
+    } else {
+        sigmaPlus = 0;
+    }
+
+    if(countN > 0) {
+        sigmaNeg = sqrt(variN / countN);
+    } else {
+        sigmaNeg = 0;
+    }
 
 }
 
@@ -1744,7 +1762,7 @@ void ImProcFunctions::EPDToneMapResid(float * WavCoeffs_L0,  unsigned int Iterat
     }
 }
 
-void ImProcFunctions::WaveletcontAllLfinal(wavelet_decomposition &WaveletCoeffs_L, struct cont_params &cp, float *mean,float *sigma, float *MaxP, const WavOpacityCurveWL & waOpacityCurveWL)
+void ImProcFunctions::WaveletcontAllLfinal(wavelet_decomposition &WaveletCoeffs_L, struct cont_params &cp, float *mean, float *sigma, float *MaxP, const WavOpacityCurveWL & waOpacityCurveWL)
 {
     int maxlvl = WaveletCoeffs_L.maxlevel();
     float * WavCoeffs_L0 = WaveletCoeffs_L.coeff0;
@@ -2516,7 +2534,7 @@ void ImProcFunctions::calckoe(float ** WavCoeffs_LL, struct cont_params cp, floa
 void ImProcFunctions::finalContAllL (float ** WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, struct cont_params &cp,
                                      int W_L, int H_L, float *mean, float *sigma, float *MaxP, const WavOpacityCurveWL & waOpacityCurveWL)
 {
-    if(cp.diagcurv  && cp.finena) {//curve
+    if(cp.diagcurv  && cp.finena && MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f ) { //curve
         float insigma = 0.666f; //SD
         float logmax = log(MaxP[level]); //log Max
         float rapX = (mean[level] + sigma[level]) / MaxP[level]; //rapport between sD / max
@@ -2530,6 +2548,7 @@ void ImProcFunctions::finalContAllL (float ** WavCoeffs_L, float * WavCoeffs_L0,
 #ifdef _RT_NESTED_OPENMP
         #pragma omp parallel for schedule(dynamic, W_L * 16) num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
+
         for (int i = 0; i < W_L * H_L; i++) {
             float absciss;
 

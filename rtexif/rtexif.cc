@@ -2783,17 +2783,11 @@ TagDirectory* ExifManager::parseTIFF (FILE* f, bool skipIgnored)
     return parse (f, 0, skipIgnored);
 }
 
-std::vector<Tag*> ExifManager::defTags;
-
-// forthis: the byte order will be taken from directory "forthis"
-const std::vector<Tag*>& ExifManager::getDefaultTIFFTags (TagDirectory* forthis)
+std::vector<Tag*> ExifManager::getDefaultTIFFTags (TagDirectory* forthis)
 {
+    std::vector<Tag*> defTags;
 
-    for (size_t i = 0; i < defTags.size(); i++) {
-        delete defTags[i];
-    }
-
-    defTags.clear ();
+    defTags.reserve (12);
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "ImageWidth"), 0, LONG));
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "ImageHeight"), 0, LONG));
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "XResolution"), 300, RATIONAL));
@@ -2843,14 +2837,16 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::pro
         cl->applyChange (i->first, i->second);
     }
 
-    getDefaultTIFFTags (cl);
+    const std::vector<Tag*> defTags = getDefaultTIFFTags (cl);
 
     defTags[0]->setInt (W, 0, LONG);
     defTags[1]->setInt (H, 0, LONG);
     defTags[8]->setInt (8, 0, SHORT);
 
     for (int i = defTags.size() - 1; i >= 0; i--) {
-        cl->replaceTag (defTags[i]->clone (cl));
+        Tag* defTag = defTags[i];
+        cl->replaceTag (defTag->clone (cl));
+        delete defTag;
     }
 
     cl->sort ();
@@ -2928,7 +2924,7 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
     }
 
     // append default properties
-    getDefaultTIFFTags (cl);
+    const std::vector<Tag*> defTags = getDefaultTIFFTags (cl);
 
     defTags[0]->setInt (W, 0, LONG);
     defTags[1]->setInt (H, 0, LONG);
@@ -2939,7 +2935,9 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
     }
 
     for (int i = defTags.size() - 1; i >= 0; i--) {
-        cl->replaceTag (defTags[i]->clone (cl));
+        Tag* defTag = defTags[i];
+        cl->replaceTag (defTag->clone (cl));
+        delete defTag;
     }
 
 // calculate strip offsets

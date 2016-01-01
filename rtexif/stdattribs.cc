@@ -540,6 +540,7 @@ const TagAttrib exifAttribs[] = {
     {0, AC_WRITE,     0, 0, 0x8824, AUTO, "SpectralSensitivity", &stdInterpreter},
     {0, AC_WRITE,     0, 0, 0x8827, AUTO, "ISOSpeedRatings", &stdInterpreter},
     {0, AC_WRITE,     0, 0, 0x8828, AUTO, "OECF", &stdInterpreter},
+    {0, AC_WRITE,     0, 0, 0x8832, AUTO, "RecommendedExposureIndex", &stdInterpreter},
     {0, AC_WRITE,     0, 0, 0x9000, AUTO, "ExifVersion", &stdInterpreter},
     {0, AC_WRITE,     0, 0, 0x9003, AUTO, "DateTimeOriginal", &stdInterpreter},
     {0, AC_WRITE,     0, 0, 0x9004, AUTO, "DateTimeDigitized", &stdInterpreter},

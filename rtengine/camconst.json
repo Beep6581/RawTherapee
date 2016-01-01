@@ -447,23 +447,23 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "masked_areas": [ 100, 40, 5892, 158 ], // left out 40 first columns from calculations because possibly the BL is still imbalanced there
         "ranges": {
                "white": [
-                  { "iso": 100, "levels": 14650 }, // typical 14733
+                  { "iso": [ 50, 100 ], "levels": 14650 }, // typical 14733
                   { "iso": [ 160, 320, 640, 1250, 2500, 5000 ], "levels": 15280 }, // typical 15383
-                  { "iso": [ 125, 200, 250, 400, 500, 800, 1000, 1600, 2000, 3200 ], "levels": 15280 }, // typical 15383
-                  { "iso": [ 4000, 6400, 8000, 10000, 12800, 16000, 20000, 25600 ], "levels": 15100 } // clippings at R 15200-15280, G1,G2,B 15360-15390
+                  { "iso": [ 125, 200, 250, 400, 500, 800, 1000, 1600, 2000 ], "levels": 15280 }, // typical R15330-GB15383
+                  { "iso": [ 3200, 4000, 6400, 8000, 10000, 12800, 16000, 20000, 25600 ], "levels": 15100 } // clippings at R 15200-15300, G1,G2,B 15360-15390
                         ],
                "white_max": 16383,
             "aperture_scaling": [
-		/* note:  scale factors measured for f/2.8 only,  */
-		{ "aperture": 1.4, "scale_factor": 1.055 }, // guessed
-		{ "aperture": 1.6, "scale_factor": 1.034 }, // guessed
-		{ "aperture": 1.8, "scale_factor": 1.021 }, // guessed
-		{ "aperture": 2.0, "scale_factor": 1.013 }, // guessed
-		{ "aperture": 2.2, "scale_factor": 1.008 }, // guessed
-		{ "aperture": 2.5, "scale_factor": 1.005 }, // guessed
-		{ "aperture": 2.8, "scale_factor": 1.003 }, // 14783/14733
-		{ "aperture": 3.2, "scale_factor": 1.000 }, // guessed
-		{ "aperture": 3.5, "scale_factor": 1.000 }
+		/* note:    */
+		{ "aperture": 1.4, "scale_factor": 1.150 }, // 37/32 6-0-6-0-7-0-6-0-7-0
+		{ "aperture": 1.6, "scale_factor": 1.070 }, // guessed
+		{ "aperture": 1.8, "scale_factor": 1.040 }, // 15501/14733=1.0521, 15352/14733=1.042 16030/15390
+		{ "aperture": 2.0, "scale_factor": 1.025 }, // 15129/14733=1.0268 - 15800/15383=1.027
+		{ "aperture": 2.2, "scale_factor": 1.013 }, // 15591/15383, 14931/14733
+		{ "aperture": 2.5, "scale_factor": 1.008 }, // 14857/14733guessed
+		{ "aperture": 2.8, "scale_factor": 1.003 }, // 14783/14733 15435/15383
+		{ "aperture": 3.2, "scale_factor": 1.001 }, // 15409/15383
+		{ "aperture": 3.5, "scale_factor": 1.000 } // 14733/14733
                                 ]
                   }
     },
@@ -850,7 +850,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "ranges": { "white": 16300 }
     },
 
-    { //   Quality B, 
+    { //   Quality B,
         "make_model": "Canon PowerShot G7 X",
         "dcraw_matrix": [ 9602,-3823,-937,-2984,11495,1675,-407,1415,5049 ], // DNG_V8.7 D65
      //   "raw_crop": [ 116, 24, 5504, 3680 ], // Sensor size 5632x3710. Largest useful frame 120-5616X28-3702 = 5504x3682, 4pix RTborders, Left Border 120-4, Top border 28-4
@@ -859,7 +859,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "ranges": { "white": 4080 }
     },
 
-    { //   Quality B, 
+    { //   Quality B,
         "make_model": "Canon PowerShot G3 X",
         "dcraw_matrix": [ 9701,-3857,-921,-3149,11537,1817,-786,1817,5147 ], // DNG_V9.1.1 D65
         "raw_crop": [ 128, 36, 5480, 3656 ], // Default official 3/2 frame 5472X3648, 4pix borders, Left Border 132-4, Top border 40-4
@@ -881,7 +881,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
       // "raw_crop": [ 62, 18, 3666, 2748 ],// max usable
         "raw_crop": [ 68, 20, 3656, 2744 ],// equal to official Canon frame, 72,24,3719,2759 = 3648x2736
         "masked_areas": [ 24, 40, 2770, 44 ],// as declared in maker data
-        "ranges": { "white": 4080 } // 
+        "ranges": { "white": 4080 } //
     },
 
     { // Quality B
@@ -926,6 +926,20 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "dcraw_matrix": [ 9252,-2704,-1064,-5893,14265,1717,-1101,2341,4349 ], // DNG_v8.8 D65
         "ranges": { "white": 4040 }
     },
+
+    { // Quality B, Matrix from Adobe's dcp D65 instead of the internal in Leica's DNG
+        "make_model": [ "LEICA SL (Typ 601)", "LEICA Q (Typ 116)" ],
+        "dcraw_matrix": [ 10068,-4043,-1068,-5319,14268,1044,-765,1701,6522 ], // DCP D65
+        "raw_crop": [ 4, 4, -4, -4 ] // full raw 6016x4016, Official 6000x4000
+    },
+
+    { // Quality B, frame corrections
+        "make_model": "LG mobile LG-H815",
+        "dcraw_matrix": [ 5859,547,-1250,-6484,15547,547,-2422,5625,3906 ], // DNG D65
+        "raw_crop": [ 0, 0, -8, 0 ], // full frame 5312x2988, 8 black columns at the left
+        "ranges": { "white_max": 1023 }
+    },
+
     { // Quality A
         "make_model": [ "Nikon 1 V3", "Nikon 1 J4" ], // Same format
         "dcraw_matrix": [ 5958,-1559,-571,-4021,11453,2939,-634,1548,5087 ], // matrix from DNG_v8.5 d65
@@ -933,7 +947,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "ranges": { "white": 4080 } // Black is auto extracted from exif, lower WL to 4080 from 4095 due to some non linearity detected at raw highlights
     },
 
-    { // Quality B, 
+    { // Quality B,
         "make_model": "Nikon 1 J5", //
         "dcraw_matrix": [ 7520,-2518,-645,-3844,12102,1945,-913,2249,6835 ], // DNG_v9.1 D65
       //  "dcraw_matrix": [ 7651,-2102,-751,-3299,11101,1651,-1011,2242,5770 ], // matrix from ICC converted to Dcraw format XYZ on ImagingResource stillife sample
@@ -950,6 +964,25 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "make_model": "Nikon 1 S2", //
         "dcraw_matrix": [ 6612,-1342,-618,-3338,11055,2623,-174,1792,5075 ], // matrix from DNG_v8.5 d65
         "ranges": { "white": 4080 } // BL autodetected from exif
+    },
+
+    { // quality B, samples by Johan Thor at RT.Issues, measures at long exposures with LENR are missing
+      //            but a safety margin is included - aperture scaling makes no significant difference
+         "make_model": "Nikon D3S",
+         "dcraw_matrix": [ 8828,-2406,-694,-4874,12603,2541,-660,1509,7587 ], // dcp d65
+         "ranges": {
+             "white": [
+               { "iso": [ 100, 125, 160, 200, 250, 320, 400, 500 ], "levels": 15520 }, // typical G1,G2 15520-15800 R,B 16383
+               { "iso": [ 640, 800, 1000, 1250 ], "levels": 15400 }, // typical G1,G2 15520-15800, R,B 16383
+               { "iso": [ 1600, 2000, 2500 ], "levels": 15300 }, // typical G1,G2 15520-15800, R,B 16383
+               { "iso": [ 3200, 4000, 5000, 6400 ], "levels": 15300 }, // typical G1/G2 15400-15800, R,B 16383
+               { "iso": [ 8000, 10000 ], "levels": 15000 }, // typical G1/G2 15400-15800, R,B 16383
+               { "iso": [ 12800, 16000 ], "levels": 14500 }, // typical G1/G2 15400-15800, R,B 16383
+               { "iso": [ 20000, 25600 ], "levels": 13300 }, // typical G1/G2 15400-15800, R,B 16383
+               { "iso": [ 51200, 102400 ], "levels": 12000 } // typical G1,G1 16270-16350, R,B 16383
+                     ],
+         "white_max": 16383
+                  }
     },
 
     { // quality B, lacks aperture and ISO scaling, known to exist, but little to gain as the levels are so close to white_max
@@ -1104,7 +1137,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "ranges": { "black": 15, "white": 4050 } // 15 is BL offstet. Dcraw/RT read the base offset from exif and calculates total BL = BLbase+BLoffset
     },
 
-	{ // Quality Β, 
+	{ // Quality Β,
         "make_model": [ "Panasonic DMC-FZ300", "Panasonic DMC-FZ330" ],
         "dcraw_matrix": [ 8378,-2798,-769,-3068,11410,1877,-538,1792,4623 ], // DNG-V9.1.1
         "ranges": { "black": 15, "white": 4050 } // 15 is BL offstet. Dcraw/RT read the base offset from exif and calculates total BL = BLbase+BLoffset
@@ -1291,7 +1324,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
                   }
     },
 
-    { // Quality A,  
+    { // Quality A,
         "make_model": [ "Panasonic DMC-G7", "Panasonic DMC-G70" ],
         "dcraw_matrix": [ 7610,-2780,-576,-4614,12195,2733,-1375,2393,6490 ],// DNG_v9.1 D65
       //  "dcraw_matrix": [ 8844,-3538,-768,-3709,11762,2200,-698,1792,5220 ], // LX100, DNG_V8.7 d65
@@ -1304,7 +1337,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
                     ]
                   }
     },
-    { // Quality B,  
+    { // Quality B,
         "make_model": "Panasonic DMC-GX8",
         "dcraw_matrix": [ 7564,-2263,-606,-3148,11239,2177,-540,1435,4853 ], // DNG_v9.1.1 D65
         "ranges": {
@@ -1486,13 +1519,13 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
     { // Quality B, correction for frame width, crop modes not covered
         "make_model": "Sony ILCE-7RM2",
         "dcraw_matrix": [ 6629,-1900,-483,-4618,12349,2550,-622,1381,6514 ], // DNG_v9.1.1 D65
-        "raw_crop": [ 0, 0, 7964, 5320 ], // full raw frame 8000x5320 - 36 rightmost columns are garbage 
+        "raw_crop": [ 0, 0, 7964, 5320 ], // full raw frame 8000x5320 - 36 rightmost columns are garbage
         "ranges": { "black": 512, "white": 16300 }
     },
 
     { // Quality B, correction for frame width
-        "make_model": "Sony ILCE-7S",
-        "dcraw_matrix": [ 5838,-1430,-246,-3497,11477,2297,-748,1885,5778 ], // DNG D65
+        "make_model": [ "Sony ILCE-7S", "Sony ILCE-7SM2" ],
+        "dcraw_matrix": [ 5838,-1430,-246,-3497,11477,2297,-748,1885,5778 ], // DNG_v9.2 D65
         "raw_crop": [ 0, 0, 4254, 2848 ],
         "ranges": { "black": 512, "white": 16300 }
     },

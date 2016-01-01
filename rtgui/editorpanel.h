@@ -87,7 +87,6 @@ protected:
     ImageAreaPanel* iareapanel;
     PreviewHandler* previewHandler;
     PreviewHandler* beforePreviewHandler;   // for the before-after view
-    PreviewHandler* previewHandler2;
     Navigator* navigator;
     ImageAreaPanel* beforeIarea;    // for the before-after view
     Gtk::VBox* beforeBox;

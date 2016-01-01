@@ -13,14 +13,9 @@ endif ()
 
 string (TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
 
-# assuming that Linux and Apple users will have gtk2 built by their installed gcc
-if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
-  if (GCC_VERSION VERSION_GREATER 5.0 OR GCC_VERSION VERSION_EQUAL 5.0)
-    message(STATUS "Gcc Version >= 5.0 ; adding -D_GLIBCXX_USE_CXX11_ABI=0 to build with Gtk2")
-    add_definitions (-D_GLIBCXX_USE_CXX11_ABI=0)
-	# see here : https://gcc.gnu.org/gcc-5/changes.html#libstdcxx
-  endif()
+# We might want to build using the old C++ ABI, even when using a new GCC version
+if (USE_OLD_CXX_ABI)
+  add_definitions (-D_GLIBCXX_USE_CXX11_ABI=0)
 endif()
 
 if (UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
@@ -278,10 +273,10 @@ if (OPTION_OMP)
     endif (OPENMP_FOUND)
 endif (OPTION_OMP)
 
-if(USE_EXPERIMENTAL_LANG_VERSIONS)
+if(USE_EXPERIMENTAL_LANG_VERSIONS OR NOT (SIGC_VERSION VERSION_LESS 2.5.1))
 	SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu1x")
 	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
-endif (USE_EXPERIMENTAL_LANG_VERSIONS)
+endif ()
 
 # find out whether we are building out of source
 get_filename_component(ABS_SOURCE_DIR "${PROJECT_SOURCE_DIR}" ABSOLUTE)
