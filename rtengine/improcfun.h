@@ -233,7 +233,7 @@ public:
     bool needsPCVignetting ();
 
     void firstAnalysis    (Imagefloat* working, const ProcParams* params, LUTu & vhist16);
-    void updateColorProfiles (const ColorManagementParams &icm, Glib::ustring monitorProfile, RenderingIntent monitorIntent, bool softProofing);
+    void updateColorProfiles (const ColorManagementParams& icm, const Glib::ustring& monitorProfile, RenderingIntent monitorIntent);
     void rgbProc          (Imagefloat* working, LabImage* lab, EditBuffer *editBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                            SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit , float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clcurve, LUTf & cl2curve, const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,
                            const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf);
@@ -266,7 +266,7 @@ public:
     void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH,
                            double focalLen, double focalLen35mm, float focusDist, int rawRotationDeg, bool fullImage);
     float resizeScale     (const ProcParams* params, int fw, int fh, int &imw, int &imh);
-    void lab2monitorRgb   (LabImage* lab, Image8* image, bool softProofing=false);
+    void lab2monitorRgb   (LabImage* lab, Image8* image);
     void resize           (Image16* src, Image16* dst, float dScale);
     void Lanczos (const LabImage* src, LabImage* dst, float scale);
     void Lanczos (const Image16* src, Image16* dst, float scale);

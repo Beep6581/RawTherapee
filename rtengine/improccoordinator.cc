@@ -33,7 +33,7 @@ ImProcCoordinator::ImProcCoordinator ()
     : orig_prev(NULL), oprevi(NULL), oprevl(NULL), nprevl(NULL), previmg(NULL), workimg(NULL),
       ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true), monitorIntent(RI_PERCEPTUAL), scale(10),
       highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false), isColorProfileDirty(true),
-      softProofing(false), bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(0.),
+      bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(0.),
 
       hltonecurve(65536),
       shtonecurve(65536),
@@ -783,14 +783,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     // Update the output color transform if necessary
     if (isColorProfileDirty || (todo & M_MONITOR)) {
-        ipf.updateColorProfiles(params.icm, monitorProfile, monitorIntent, softProofing);
+        ipf.updateColorProfiles(params.icm, monitorProfile, monitorIntent);
         isColorProfileDirty = false;
     }
 
     // process crop, if needed
     for (size_t i = 0; i < crops.size(); i++)
         if (crops[i]->hasListener () && cropCall != crops[i] ) {
-            crops[i]->setSoftProofing(softProofing);
             crops[i]->update (todo);    // may call ourselves
         }
 
@@ -805,7 +804,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         MyMutex::MyLock prevImgLock(previmg->getMutex());
 
         try {
-            ipf.lab2monitorRgb (nprevl, previmg, softProofing);
+            ipf.lab2monitorRgb (nprevl, previmg);
             delete workimg;
             Glib::ustring outProfile = params.icm.output;
 
@@ -1131,11 +1130,6 @@ void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &
 
     x = (fullw - w) / 2;
     y = (fullh - h) / 2;
-}
-
-void ImProcCoordinator::setSoftProofing (bool softProof)
-{
-    softProofing = softProof;
 }
 
 void ImProcCoordinator::setMonitorProfile (Glib::ustring profile, RenderingIntent intent)

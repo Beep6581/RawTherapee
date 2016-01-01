@@ -42,8 +42,6 @@ struct EditorPanelIdleHelper {
     int pending;
 };
 
-class MonitorProfileSelector;
-
 class RTWindow;
 class EditorPanel : public Gtk::VBox,
     public PParamsChangeListener,
@@ -86,6 +84,7 @@ protected:
     Gtk::Button* navNext;
     Gtk::Button* navPrev;
 
+    class MonitorProfileSelector;
     std::auto_ptr<MonitorProfileSelector> monitorProfile;
 
     ImageAreaPanel* iareapanel;

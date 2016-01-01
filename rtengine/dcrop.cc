@@ -33,7 +33,7 @@ extern const Settings* settings;
 Crop::Crop (ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
     : EditBuffer(editDataProvider), origCrop(NULL), laboCrop(NULL), labnCrop(NULL),
       cropImg(NULL), cbuf_real(NULL), cshmap(NULL), transCrop(NULL), cieCrop(NULL), cbuffer(NULL),
-      softProofing(false), updating(false), newUpdatePending(false), skip(10),
+      updating(false), newUpdatePending(false), skip(10),
       cropx(0), cropy(0), cropw(-1), croph(-1),
       trafx(0), trafy(0), trafw(-1), trafh(-1),
       rqcropx(0), rqcropy(0), rqcropw(-1), rqcroph(-1),
@@ -987,42 +987,8 @@ void Crop::update (int todo)
     EditBuffer::setReady();
 
     // switch back to rgb
-    parent->ipf.lab2monitorRgb (labnCrop, cropImg, softProofing);
+    parent->ipf.lab2monitorRgb (labnCrop, cropImg);
 
-    //parent->ipf.lab2monitorRgb (laboCrop, cropImg);
-
-    //cropImg = baseCrop->to8();
-    /*
-    //     int xref,yref;
-    xref=000;yref=000;
-    if (colortest && cropw>115 && croph>115)
-    for(int j=1;j<5;j++){
-        xref+=j*30;yref+=j*30;
-        int rlin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))]/255.0) * 255.0);
-        int glin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1]/255.0) * 255.0);
-        int blin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+2]/255.0) * 255.0);
-
-        printf("after lab2rgb RGB lab2 Xr%i Yr%i Skip=%d  R=%d  G=%d  B=%d  \n",xref,yref,skip,
-               rlin,glin,blin);
-               //cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))],
-               //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1)],
-               //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+2)]);
-        //printf("after lab2rgb Lab lab2 Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
-        printf("after lab2rgb Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip,
-               labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,
-               labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,
-               labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327)q;
-    }
-    */
-    /*
-    if (colortest && cropImg->height>115 && cropImg->width>115) {//for testing
-        xref=000;yref=000;
-        printf("dcrop final R= %d  G= %d  B= %d  \n",
-               cropImg->data[3*xref/(skip)*(cropImg->width+1)],
-               cropImg->data[3*xref/(skip)*(cropImg->width+1)+1],
-               cropImg->data[3*xref/(skip)*(cropImg->width+1)+2]);
-    }
-    */
     if (cropImageListener) {
         // this in output space held in parallel to allow analysis like shadow/highlight
         Glib::ustring outProfile = params.icm.output;

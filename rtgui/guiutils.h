@@ -76,6 +76,22 @@ public:
     }
 };
 
+class ConnectionBlocker
+{
+public:
+    ConnectionBlocker (sigc::connection& connection) : connection (connection)
+    {
+        wasBlocked = connection.block();
+    }
+    ~ConnectionBlocker ()
+    {
+        connection.block(wasBlocked);
+    }
+private:
+    sigc::connection& connection;
+    bool wasBlocked;
+};
+
 /**
  * @brief Glue box to control visibility of the MyExpender's content ; also handle the frame around it
  */

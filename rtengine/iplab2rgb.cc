@@ -39,7 +39,7 @@ const double (*iwprof[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz,
 const char* wprofnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB"};
 const int numprof = 7;
 
-void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image, bool softProofing)
+void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
 {
     //gamutmap(lab);
 
@@ -78,7 +78,7 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image, bool softPro
                     buffer[iy++] = rb[j] / 327.68f;
                 }
 
-                if (softProofing && !settings->HistogramWorking && output2monitorTransform && lab2outputTransform) {
+                if (!settings->HistogramWorking && output2monitorTransform && lab2outputTransform) {
                     AlignedBuffer<float> buf(3 * W);
                     cmsDoTransform (lab2outputTransform, buffer, buf.data, W);
                     cmsDoTransform (output2monitorTransform, buf.data, data + ix, W);

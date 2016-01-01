@@ -55,7 +55,6 @@ PopUpCommon::~PopUpCommon ()
 
     delete menu;
     delete buttonImage;
-    delete buttonGroup;
 }
 
 bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& label)

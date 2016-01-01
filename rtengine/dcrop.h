@@ -54,7 +54,6 @@ protected:
     // -----------------------------------------------------------------
     float**      cbuffer;
 
-    bool softProofing;     /// True if the Crop has to display a soft proof of the output with its profile
     bool updating;         /// Flag telling if an updater thread is currently processing
     bool newUpdatePending; /// Flag telling the updater thread that a new update is pending
     int skip;
@@ -103,10 +102,6 @@ public:
     bool tryUpdate   ();
     /** @brief Asynchronously reprocess the detailed crop */
     void fullUpdate  ();  // called via thread
-
-    void setSoftProofing(bool doSoftProof) {
-        softProofing = doSoftProof;
-    }
 
     void setListener    (DetailedCropListener* il);
     void destroy        ();

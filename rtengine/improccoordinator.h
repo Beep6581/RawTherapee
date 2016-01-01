@@ -82,7 +82,6 @@ protected:
     bool allocated;
 
     bool isColorProfileDirty;
-    bool softProofing;
 
     void freeAll ();
 
@@ -258,7 +257,6 @@ public:
 
     void setMonitorProfile (Glib::ustring profile, RenderingIntent intent);
     void getMonitorProfile (Glib::ustring &profile, RenderingIntent &intent);
-    void setSoftProofing   (bool softProof);
 
     bool updateTryLock ()
     {

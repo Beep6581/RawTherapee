@@ -455,7 +455,6 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
 //  DEMOSAIC,         // EvLgrbl
     DEMOSAIC,         // EvRetinexlhcurve
     ALLNORAW,         // EvOIntent
-    ALLNORAW,         // EvSoftProof
     MONITORTRANSFORM  // EvMonitorTransform
 
 };
