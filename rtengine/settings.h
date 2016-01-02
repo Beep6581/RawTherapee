@@ -19,6 +19,8 @@
 #ifndef _RTSETTINGS_
 #define _RTSETTINGS_
 
+#include "procparams.h"
+
 namespace rtengine
 {
 
@@ -27,7 +29,6 @@ class Settings
 {
 public:
     Glib::ustring   iccDirectory;           ///< The directory containing the possible output icc profiles
-    int             colorimetricIntent;     ///< Colorimetric intent used at color space conversions
     int             viewingdevice;          // white of output device (D50...D65..)
     int             viewingdevicegrey;          // level of grey output device
     int             viewinggreySc;          // level of grey Scene
@@ -37,7 +38,8 @@ public:
     int             leveldnliss;            // level of auto multi zone
     int             leveldnautsimpl;            // STD or EXPERT
 
-    Glib::ustring   monitorProfile;         ///< ICC profile of the monitor (full path recommended)
+    Glib::ustring   monitorProfile;         ///< ICC profile name used for the monitor
+    RenderingIntent monitorIntent;          ///< Colorimetric intent used with the above profile
     bool            autoMonitorProfile;     ///< Try to auto-determine the correct monitor color profile
     bool            autocielab;
     bool            rgbcurveslumamode_gamut;// controls gamut enforcement for RGB curves in lumamode

@@ -657,6 +657,7 @@ HISTORY_MSG_423;Retinex - Gamma slope
 HISTORY_MSG_424;Retinex - HL threshold
 HISTORY_MSG_425;Retinex - Log base
 HISTORY_MSG_426;Retinex - Hue equalizer
+HISTORY_MSG_427;Output rendering intent
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -774,6 +775,8 @@ MAIN_TOOLTIP_SHOWHIDERP1;Show/Hide the right panel.\nShortcut: <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Show/Hide the top panel.\nShortcut: <b>Shift-l</b>
 MAIN_TOOLTIP_THRESHOLD;Threshold
 MAIN_TOOLTIP_TOGGLE;Toggle the <b>Before</b>/<b>After</b> view.\nShortcut: <b>Shift-b</b>
+MONITOR_SOFTPROOF;Soft-proof
+MONITOR_PROFILE_SYSTEM;System default
 NAVIGATOR_B;B:
 NAVIGATOR_G;G:
 NAVIGATOR_H;H:
@@ -887,7 +890,7 @@ PREFERENCES_CLIPPINGIND;Clipping Indication
 PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 PREFERENCES_CLUTSDIR;HaldCLUT directory
-PREFERENCES_CMETRICINTENT;Colorimetric intent
+PREFERENCES_MONINTENT;Default monitor intent
 PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
 PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 PREFERENCES_CURVEBBOXPOS_BELOW;Below
@@ -982,7 +985,7 @@ PREFERENCES_MENUGROUPRANK;Group "Rank"
 PREFERENCES_MENUOPTIONS;Context Menu Options
 PREFERENCES_METADATA;Metadata
 PREFERENCES_MIN;Mini (100x115)
-PREFERENCES_MONITORICC;Monitor color profile
+PREFERENCES_MONPROFILE;Default monitor profile
 PREFERENCES_MULTITAB;Multiple Editor Tabs Mode
 PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs In Own Window Mode
 PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
@@ -1013,6 +1016,7 @@ PREFERENCES_PROFILEPRCACHE;Profile in cache
 PREFERENCES_PROFILEPRFILE;Profile next to the input file
 PREFERENCES_PROFILESAVECACHE;Save processing profile to the cache
 PREFERENCES_PROFILESAVEINPUT;Save processing profile next to the input file
+PREFERENCES_PROFILE_NONE;None
 PREFERENCES_PROPERTY;Property
 PREFERENCES_PSPATH;Adobe Photoshop installation directory
 PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
@@ -1514,6 +1518,7 @@ TP_ICM_INPUTPROFILE;Input Profile
 TP_ICM_LABEL;Color Management
 TP_ICM_NOICM;No ICM: sRGB Output
 TP_ICM_OUTPUTPROFILE;Output Profile
+TP_ICM_PROFILEINTENT;Rendering Intent
 TP_ICM_SAVEREFERENCE;Save Reference Image for Profiling
 TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.

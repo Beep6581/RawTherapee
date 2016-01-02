@@ -35,7 +35,7 @@
 #include "LUT.h"
 /**
  * @file
- * This file contains the main functionality of the raw therapee engine.
+ * This file contains the main functionality of the RawTherapee engine.
  *
  */
 
@@ -413,8 +413,11 @@ public:
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
     virtual void        setAutoChromaListener   (AutoChromaListener* l) = 0;
-    virtual void        setRetinexListener        (RetinexListener* l) = 0;
+    virtual void        setRetinexListener      (RetinexListener* l) = 0;
     virtual void        setWaveletListener      (WaveletListener* l) = 0;
+
+    virtual void        setMonitorProfile       (const Glib::ustring& monitorProfile, RenderingIntent intent) = 0;
+    virtual void        getMonitorProfile       (Glib::ustring& monitorProfile, RenderingIntent& intent) const = 0;
 
     virtual ~StagedImageProcessor () {}
 

@@ -24,7 +24,6 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 
 Glib::ustring eventDescrArray[NUMOFEVENTS];
-extern Glib::ustring argv0;
 
 History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1)
 {
@@ -204,8 +203,8 @@ void History::bookmarkSelectionChanged ()
 void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited)
 {
 
-    // to prevent recursion, we filter out the events triggered by the history
-    if (ev == EvHistoryBrowsed) {
+    // to prevent recursion, we filter out the events triggered by the history and events that should not be registered
+    if (ev == EvHistoryBrowsed || ev == EvMonitorTransform) {
         return;
     }
 

@@ -470,6 +470,7 @@ void Options::setDefaults ()
     fastexport_icm_input                 = "(camera)";
     fastexport_icm_working               = "ProPhoto";
     fastexport_icm_output                = "RT_sRGB";
+    fastexport_icm_outputIntent          = rtengine::RI_RELATIVE;
     fastexport_icm_gamma                 = "default";
     fastexport_resize_enabled            = true;
     fastexport_resize_scale              = 1;
@@ -626,7 +627,6 @@ void Options::setDefaults ()
 #else
     rtSettings.iccDirectory = "/usr/share/color/icc";
 #endif
-    rtSettings.colorimetricIntent = 1;
     rtSettings.viewingdevice = 0;
     rtSettings.viewingdevicegrey = 3;
     rtSettings.viewinggreySc = 1;
@@ -636,7 +636,8 @@ void Options::setDefaults ()
     rtSettings.leveldnliss = 0;
     rtSettings.leveldnautsimpl = 0;
 
-    rtSettings.monitorProfile = "";
+    rtSettings.monitorProfile = Glib::ustring();
+    rtSettings.monitorIntent = rtengine::RI_RELATIVE;
     rtSettings.autoMonitorProfile = false;
     rtSettings.adobe = "RT_Medium_gsRGB"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RT_Large_gBT709"; // these names appear in the menu "output profile"
@@ -1461,7 +1462,7 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("Color Management", "Intent")) {
-                    rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");
+                    rtSettings.monitorIntent   = static_cast<rtengine::RenderingIntent>(keyFile.get_integer("Color Management", "Intent"));
                 }
 
                 if (keyFile.has_key ("Color Management", "CRI")) {
@@ -1710,6 +1711,10 @@ int Options::readFromFile (Glib::ustring fname)
 
                 if (keyFile.has_key ("Fast Export", "fastexport_icm_output"               )) {
                     fastexport_icm_output                 = keyFile.get_string  ("Fast Export", "fastexport_icm_output"               );
+                }
+
+                if (keyFile.has_key ("Fast Export", "fastexport_icm_output_intent"        )) {
+                    fastexport_icm_outputIntent           = static_cast<rtengine::RenderingIntent>(keyFile.get_integer  ("Fast Export", "fastexport_icm_output_intent"        ));
                 }
 
                 if (keyFile.has_key ("Fast Export", "fastexport_icm_gamma"                )) {
@@ -2008,7 +2013,7 @@ int Options::saveToFile (Glib::ustring fname)
     keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
     keyFile.set_boolean ("Color Management", "Autocielab", rtSettings.autocielab);
     keyFile.set_boolean ("Color Management", "RGBcurvesLumamode_Gamut", rtSettings.rgbcurveslumamode_gamut);
-    keyFile.set_integer ("Color Management", "Intent", rtSettings.colorimetricIntent);
+    keyFile.set_integer ("Color Management", "Intent", rtSettings.monitorIntent);
     keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);
     keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);
     keyFile.set_integer ("Color Management", "greySc", rtSettings.viewinggreySc);
@@ -2075,6 +2080,7 @@ int Options::saveToFile (Glib::ustring fname)
     keyFile.set_string  ("Fast Export", "fastexport_icm_input"                 , fastexport_icm_input                );
     keyFile.set_string  ("Fast Export", "fastexport_icm_working"               , fastexport_icm_working              );
     keyFile.set_string  ("Fast Export", "fastexport_icm_output"                , fastexport_icm_output               );
+    keyFile.set_integer ("Fast Export", "fastexport_icm_output_intent"         , fastexport_icm_outputIntent         );
     keyFile.set_string  ("Fast Export", "fastexport_icm_gamma"                 , fastexport_icm_gamma                );
     keyFile.set_boolean ("Fast Export", "fastexport_resize_enabled"            , fastexport_resize_enabled           );
     keyFile.set_double  ("Fast Export", "fastexport_resize_scale"              , fastexport_resize_scale             );
