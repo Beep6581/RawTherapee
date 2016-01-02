@@ -76,6 +76,22 @@ public:
     }
 };
 
+class ConnectionBlocker
+{
+public:
+    ConnectionBlocker (sigc::connection& connection) : connection (connection)
+    {
+        wasBlocked = connection.block();
+    }
+    ~ConnectionBlocker ()
+    {
+        connection.block(wasBlocked);
+    }
+private:
+    sigc::connection& connection;
+    bool wasBlocked;
+};
+
 /**
  * @brief Glue box to control visibility of the MyExpender's content ; also handle the frame around it
  */
@@ -496,5 +512,12 @@ public:
     }
 };
 
+inline void setActiveTextOrIndex (Gtk::ComboBoxText& comboBox, const Glib::ustring& text, int index)
+{
+    comboBox.set_active_text (text);
+
+    if (comboBox.get_active_row_number () < 0)
+        comboBox.set_active (index);
+}
 
 #endif

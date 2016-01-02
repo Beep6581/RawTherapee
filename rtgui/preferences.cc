@@ -687,32 +687,28 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     Gtk::VBox* mvbcm = Gtk::manage (new Gtk::VBox ());
     mvbcm->set_border_width (4);
 
-    /*
-    Gtk::Label* intlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_CMETRICINTENT")+":", Gtk::ALIGN_LEFT));
-    intent = Gtk::manage (new Gtk::ComboBoxText ());
-    intent->append_text (M("PREFERENCES_INTENT_PERCEPTUAL"));
-    intent->append_text (M("PREFERENCES_INTENT_RELATIVE"));
-    intent->append_text (M("PREFERENCES_INTENT_SATURATION"));
-    intent->append_text (M("PREFERENCES_INTENT_ABSOLUTE"));
-    */
-
     iccDir = Gtk::manage (new Gtk::FileChooserButton (M("PREFERENCES_ICCDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     Gtk::Label* pdlabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_ICCDIR") + ":", Gtk::ALIGN_LEFT));
 
-    Gtk::FileFilter monProfileFilter_colprof;
-    monProfileFilter_colprof.set_name(M("FILECHOOSER_FILTER_COLPROF"));
-    monProfileFilter_colprof.add_pattern("*.icc");
-    monProfileFilter_colprof.add_pattern("*.ICC");
-    monProfileFilter_colprof.add_pattern("*.icm");
-    monProfileFilter_colprof.add_pattern("*.ICM");
-    Gtk::FileFilter monProfileFilter_any;
-    monProfileFilter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
-    monProfileFilter_any.add_pattern("*");
+    monProfile = Gtk::manage (new Gtk::ComboBoxText ());
+    Gtk::Label* mplabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_MONPROFILE") + ":", Gtk::ALIGN_LEFT));
 
-    monProfile = Gtk::manage (new Gtk::FileChooserButton (M("PREFERENCES_MONITORICC"), Gtk::FILE_CHOOSER_ACTION_OPEN));
-    monProfile->add_filter (monProfileFilter_colprof);
-    monProfile->add_filter (monProfileFilter_any);
-    Gtk::Label* mplabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_MONITORICC") + ":", Gtk::ALIGN_LEFT));
+    monIntent = Gtk::manage (new Gtk::ComboBoxText ());
+    Gtk::Label* milabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_MONINTENT")+":", Gtk::ALIGN_LEFT));
+
+    monProfile->append_text (M("PREFERENCES_PROFILE_NONE"));
+    monProfile->set_active (0);
+
+    const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfiles ();
+    for (std::vector<Glib::ustring>::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile)
+        monProfile->append_text (*profile);
+
+    monIntent->append_text (M("PREFERENCES_INTENT_RELATIVE"));
+    monIntent->append_text (M("PREFERENCES_INTENT_PERCEPTUAL"));
+    monIntent->append_text (M("PREFERENCES_INTENT_ABSOLUTE"));
+    monIntent->set_active (1);
+
+    iccDir->signal_selection_changed ().connect (sigc::mem_fun (this, &Preferences::iccDirChanged));
 
 #if defined(WIN32) // Auto-detection not implemented for Linux, see issue 851
     cbAutoMonProfile = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_AUTOMONPROFILE")));
@@ -720,17 +716,21 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
 #endif
 
     Gtk::Table* colt = Gtk::manage (new Gtk::Table (3, 2));
-    //colt->attach (*intlab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    //colt->attach (*intent, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colt->attach (*pdlabel, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colt->attach (*iccDir, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    int row = 0;
+    colt->attach (*pdlabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colt->attach (*iccDir, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
 #if !defined(__APPLE__) // monitor profile not supported on apple
-    colt->attach (*mplabel, 0, 1, 2, 3, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colt->attach (*monProfile, 1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    ++row;
+    colt->attach (*mplabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colt->attach (*monProfile, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
 #if defined(WIN32)
-    colt->attach (*cbAutoMonProfile, 1, 2, 3, 4, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    ++row;
+    colt->attach (*cbAutoMonProfile, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
 #endif
 #endif
+    ++row;
+    colt->attach (*milabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colt->attach (*monIntent, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     mvbcm->pack_start (*colt, Gtk::PACK_SHRINK, 4);
 
 #if defined(WIN32)
@@ -1445,12 +1445,26 @@ void Preferences::storePreferences ()
     moptions.CPBPath = txtCustProfBuilderPath->get_text();
     moptions.CPBKeys = CPBKeyType(custProfBuilderLabelType->get_active_row_number());
 
-    moptions.rtSettings.monitorProfile      = monProfile->get_filename ();
+#if !defined(__APPLE__) // monitor profile not supported on apple
+    moptions.rtSettings.monitorProfile      = monProfile->get_active_text ();
+    switch (monIntent->get_active_row_number ()) {
+    default:
+    case 0:
+        moptions.rtSettings.monitorIntent = rtengine::RI_RELATIVE;
+        break;
+    case 1:
+        moptions.rtSettings.monitorIntent = rtengine::RI_PERCEPTUAL;
+        break;
+    case 2:
+        moptions.rtSettings.monitorIntent = rtengine::RI_ABSOLUTE;
+        break;
+    }
 #if defined(WIN32)
     moptions.rtSettings.autoMonitorProfile  = cbAutoMonProfile->get_active ();
 #endif
+#endif
+
     moptions.rtSettings.iccDirectory        = iccDir->get_filename ();
-    //moptions.rtSettings.colorimetricIntent  = intent->get_active_row_number ();
     moptions.rtSettings.viewingdevice       = view->get_active_row_number ();
     moptions.rtSettings.viewingdevicegrey   = grey->get_active_row_number ();
     moptions.rtSettings.viewinggreySc   = greySc->get_active_row_number ();
@@ -1560,16 +1574,21 @@ void Preferences::fillPreferences ()
     panFactor->set_value (moptions.panAccelFactor);
     rememberZoomPanCheckbutton->set_active (moptions.rememberZoomAndPan);
     ctiffserialize->set_active(moptions.serializeTiffRead);
+
 #if !defined(__APPLE__) // monitor profile not supported on apple
-
-    if (safe_file_test (moptions.rtSettings.monitorProfile, Glib::FILE_TEST_EXISTS)) {
-        monProfile->set_filename (moptions.rtSettings.monitorProfile);
+    setActiveTextOrIndex (*monProfile, moptions.rtSettings.monitorProfile, 0);
+    switch (moptions.rtSettings.monitorIntent) {
+    default:
+    case rtengine::RI_RELATIVE:
+        monIntent->set_active (0);
+        break;
+    case rtengine::RI_PERCEPTUAL:
+        monIntent->set_active (1);
+        break;
+    case rtengine::RI_ABSOLUTE:
+        monIntent->set_active (2);
+        break;
     }
-
-    if (moptions.rtSettings.monitorProfile.empty()) {
-        monProfile->set_current_folder (moptions.rtSettings.iccDirectory);
-    }
-
 #if defined(WIN32)
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif
@@ -1579,7 +1598,6 @@ void Preferences::fillPreferences ()
         iccDir->set_current_folder (moptions.rtSettings.iccDirectory);
     }
 
-    //intent->set_active (moptions.rtSettings.colorimetricIntent);
     view->set_active (moptions.rtSettings.viewingdevice);
     grey->set_active (moptions.rtSettings.viewingdevicegrey);
     greySc->set_active (moptions.rtSettings.viewinggreySc);
@@ -1929,6 +1947,22 @@ void Preferences::bundledProfilesChanged ()
 
     ipconn.block (false);
     rpconn.block (false);
+}
+
+void Preferences::iccDirChanged ()
+{
+    const Glib::ustring currentSelection = monProfile->get_active_text ();
+
+    monProfile->clear();
+
+    monProfile->append_text (M("PREFERENCES_PROFILE_NONE"));
+    monProfile->set_active (0);
+
+    const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfilesFromDir (iccDir->get_filename ());
+    for (std::vector<Glib::ustring>::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile)
+        monProfile->append_text (*profile);
+
+    monProfile->set_active_text (currentSelection);
 }
 
 void Preferences::storeCurrentValue()
