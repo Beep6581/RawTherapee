@@ -953,7 +953,6 @@ void ICMPanel::saveReferencePressed ()
 
     Gtk::CheckButton applyWB(M("TP_ICM_SAVEREFERENCE_APPLYWB"));
     applyWB.set_tooltip_text (M("TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP"));
-    applyWB.set_active(true);
     Gtk::HBox* hbox = Gtk::manage( new Gtk::HBox() );
     hbox->pack_end(applyWB, Gtk::PACK_SHRINK, 2);
     Gtk::VBox *vbox = dialog.get_vbox();
