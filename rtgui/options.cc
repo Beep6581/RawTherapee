@@ -470,7 +470,7 @@ void Options::setDefaults ()
     fastexport_icm_input                 = "(camera)";
     fastexport_icm_working               = "ProPhoto";
     fastexport_icm_output                = "RT_sRGB";
-    fastexport_icm_outputIntent          = rtengine::RI_PERCEPTUAL;
+    fastexport_icm_outputIntent          = rtengine::RI_RELATIVE;
     fastexport_icm_gamma                 = "default";
     fastexport_resize_enabled            = true;
     fastexport_resize_scale              = 1;
@@ -637,7 +637,7 @@ void Options::setDefaults ()
     rtSettings.leveldnautsimpl = 0;
 
     rtSettings.monitorProfile = Glib::ustring();
-    rtSettings.monitorIntent = rtengine::RI_PERCEPTUAL;
+    rtSettings.monitorIntent = rtengine::RI_RELATIVE;
     rtSettings.autoMonitorProfile = false;
     rtSettings.adobe = "RT_Medium_gsRGB"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RT_Large_gBT709"; // these names appear in the menu "output profile"

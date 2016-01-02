@@ -894,7 +894,7 @@ void ColorManagementParams::setDefaults()
     dcpIlluminant = 0;
     working = "ProPhoto";
     output  = "RT_sRGB";
-    outputIntent  = RI_PERCEPTUAL;
+    outputIntent  = RI_RELATIVE;
     gamma  = "default";
     gampos = 2.22;
     slpos = 4.5;
@@ -2551,15 +2551,22 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
 
     if (!pedited || pedited->icm.outputIntent) {
         Glib::ustring intent;
-        if (icm.outputIntent == RI_PERCEPTUAL) {
+        switch (icm.outputIntent) {
+        default:
+        case RI_PERCEPTUAL:
             intent = "Perceptual";
-        } else if (icm.outputIntent == RI_RELATIVE) {
+            break;
+        case RI_RELATIVE:
             intent = "Relative";
-        } else if (icm.outputIntent == RI_SATURATION) {
+            break;
+        case RI_SATURATION:
             intent = "Saturation";
-        } else if (icm.outputIntent == RI_ABSOLUTE) {
+            break;
+        case RI_ABSOLUTE:
             intent = "Absolute";
+            break;
         }
+
         keyFile.set_string  ("Color Management", "OutputProfileIntent", intent);
     }
 

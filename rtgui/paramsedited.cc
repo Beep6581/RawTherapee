@@ -339,6 +339,7 @@ void ParamsEdited::set (bool v)
     icm.dcpIlluminant = v;
     icm.working      = v;
     icm.output       = v;
+    icm.outputIntent = v;
     icm.gamma       = v;
     icm.freegamma       = v;
     icm.gampos      = v;

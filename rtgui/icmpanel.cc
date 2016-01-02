@@ -200,7 +200,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     ointent->append_text (M("PREFERENCES_INTENT_RELATIVE"));
     ointent->append_text (M("PREFERENCES_INTENT_SATURATION"));
     ointent->append_text (M("PREFERENCES_INTENT_ABSOLUTE"));
-    ointent->set_active(0);
+    ointent->set_active (1);
     oVBox->pack_start(*riHBox, Gtk::PACK_SHRINK);
 
     // Output gamma
@@ -625,7 +625,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
     if (ointentVal >= 0 && ointentVal < RI__COUNT) {
         pp->icm.outputIntent  = static_cast<RenderingIntent>(ointentVal);
     } else {
-        pp->icm.outputIntent  = rtengine::RI_PERCEPTUAL;
+        pp->icm.outputIntent  = rtengine::RI_RELATIVE;
     }
 
     pp->icm.freegamma = freegamma->get_active();
