@@ -32,6 +32,7 @@
     * College of Physics and Information Engineering, Fuzhou University, Fuzhou, China
 
     * inspired from 2003 Fabien Pelisson <Fabien.Pelisson@inrialpes.fr>
+    * some ideas taken (use of mask) Russell Cottrell - The Retinex .8bf Plugin
 
 */
 
@@ -205,7 +206,7 @@ void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L, const
     stddv = (float)sqrt(stddv);
 }
 
-void RawImageSource::MSR(float** luminance, float** originalLuminance, float **exLuminance,  int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
+void RawImageSource::MSR(float** luminance, float** originalLuminance, float **exLuminance,  LUTf & mapcurve, bool &mapcontlutili, int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
     if (deh.enabled) {//enabled
         float         mean, stddv, maxtr, mintr;
@@ -217,10 +218,13 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         float gain2 = (float) deh.gain / 100.f; //def =1  not use
         gain2 = useHslLin ? gain2 * 0.5f : gain2;
         float offse = (float) deh.offs; //def = 0  not use
-        int scal =  deh.scal; //def=3
-        scal = 3;//disabled scal
+        int iter = deh.iter;
+        int gradient  =  deh.scal;
+        int scal = 3;//disabled scal
         int nei = (int) 2.8f * deh.neigh; //def = 220
         float vart = (float)deh.vart / 100.f;//variance
+        float gradvart = (float)deh.grad;
+        float gradstr = (float)deh.grads;
         float strength = (float) deh.str / 100.f; // Blend with original L channel data
         float limD = (float) deh.limd;
         limD = pow(limD, 1.7f);//about 2500 enough
@@ -231,12 +235,18 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         bool higplus = false ;
         float elogt;
         float hl = deh.baselog;
-
+        SHMap* shmap;
         if(hl >= 2.71828f) {
             elogt = 2.71828f + SQR(SQR(hl - 2.71828f));
         } else {
             elogt = hl;
         }
+        int H_L = height;
+        int W_L = width;
+
+        float *tran[H_L] ALIGNED16;
+        float *tranBuffer;
+        int viewmet=0;
 
         elogt = 2.71828f;//disabled baselog
         FlatCurve* shcurve = NULL;//curve L=f(H)
@@ -271,281 +281,501 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         if (deh.retinexMethod == "highli" || deh.retinexMethod == "highliplus") {
             moderetinex = 3;
         }
+        for(int it=1; it<iter+1; it++) {//iter nb max of iterations
+            float aahi = 49.f / 99.f; ////reduce sensibility 50%
+            float bbhi = 1.f - aahi;
+            float high;
+            high =  bbhi + aahi * (float) deh.highl;
 
-        float aahi = 49.f / 99.f; ////reduce sensibility 50%
-        float bbhi = 1.f - aahi;
-        float high;
-        high =  bbhi + aahi * (float) deh.highl;
-        retinex_scales( RetinexScales, scal, moderetinex, nei, high );
-
-        int H_L = height;
-        int W_L = width;
-
-        float *src[H_L] ALIGNED16;
-        float *srcBuffer = new float[H_L * W_L];
-
-        for (int i = 0; i < H_L; i++) {
-            src[i] = &srcBuffer[i * W_L];
-        }
-
-#ifdef _OPENMP
-        #pragma omp parallel for
-#endif
-
-        for (int i = 0; i < H_L; i++)
-            for (int j = 0; j < W_L; j++) {
-                src[i][j] = luminance[i][j] + eps;
-                luminance[i][j] = 0.f;
+            float grads;
+            float grad=1.f;
+            float sc = 3.f;
+            if(gradient==0) {
+                grad=1.f;
+                sc=3.f;
+            }
+            else if(gradient==1) {
+                grad=0.25f*it+0.75f;
+                sc=-0.5f*it+4.5f;
+            }
+            else if(gradient==2) {
+                grad=0.5f*it+0.5f;
+                sc=-0.75f*it+5.75f;
+            }
+            else if(gradient==3) {
+                grad=0.666f*it+0.333f;
+                sc=-0.75f*it+5.75f;
+            }
+            else if(gradient==4) {
+                grad=0.8f*it+0.2f;
+                sc=-0.75f*it+5.75f;
+            }
+            else if(gradient==5) {
+                if(moderetinex!=3) {
+                    grad=2.5f*it-1.5f;
+                }
+                else {
+                    float aa=(11.f*high-1.f)/4.f;
+                    float bb=1.f-aa;
+                    grad=aa*it+bb;
+                }
+                sc=-0.75f*it+5.75f;
+            }
+            else if(gradient==6) {
+                if(moderetinex!=3) {
+                    grad=5.f*it-4.f;
+                }
+                else {
+                    float aa=(21.f*high-1.f)/4.f;
+                    float bb=1.f-aa;
+                    grad=aa*it+bb;
+                }
+                sc=-0.75f*it+5.75f;
             }
 
-        float *out[H_L] ALIGNED16;
-        float *outBuffer = new float[H_L * W_L];
+            else if(gradient==-1) {
+                grad=-0.125f*it+1.125f;
+                sc=3.f;
+            }
+            float varx;
+            float limdx, ilimdx;
+            if(gradvart!=0) {
+                if(gradvart==1) {
+                    varx=vart*(-0.125f*it+1.125f);
+                    limdx=limD*(-0.125f*it+1.125f);
+                    ilimdx=1.f/limdx;
+                }
+                else if(gradvart==2) {
+                    varx=vart*(-0.2f*it+1.2f);
+                    limdx=limD*(-0.2f*it+1.2f);
+                    ilimdx=1.f/limdx;
+                }
+                else if(gradvart==-1) {
+                    varx=vart*(0.125f*it+0.875f);
+                    limdx=limD*(0.125f*it+0.875f);
+                    ilimdx=1.f/limdx;
+                }
+                else if(gradvart==-2) {
+                    varx=vart*(0.4f*it+0.6f);
+                    limdx=limD*(0.4f*it+0.6f);
+                    ilimdx=1.f/limdx;
+                }
+            }
+            else {
+                varx=vart;
+                limdx=limD;
+                ilimdx=ilimD;
+            }
+            scal=round(sc);
+            float strengthx;
+            float ks=1.f;
 
-        for (int i = 0; i < H_L; i++) {
-            out[i] = &outBuffer[i * W_L];
-        }
+            if(gradstr!=0) {
+                if(gradstr==1) {
+                    if(it <= 3) ks=-0.3f*it+1.6f;
+                    else ks = 0.5f;
+                }
+                else if(gradstr==2) {
+                    if(it <= 3) ks=-0.6f*it+2.2f;
+                    else ks = 0.3f;
+                }
+                else if(gradstr==-1) {
+                    if(it <= 3) ks=0.2f*it+0.6f;
+                    else ks = 1.2f;
+                }
+                else if(gradstr==-2) {
+                    if(it <= 3) ks=0.4f*it+0.2f;
+                    else ks = 1.5f;
+                }
+            }
+            strengthx=ks*strength;
 
-        const float logBetaGain = xlogf(16384.f);
-        float pond = logBetaGain / (float) scal;
+            retinex_scales( RetinexScales, scal, moderetinex, nei/grad, high );
 
-        if(!useHslLin) {
-            pond /= log(elogt);
-        }
+            //   int H_L = height;
+            //  int W_L = width;
 
-        float *buffer = new float[W_L * H_L];;
+            float *src[H_L] ALIGNED16;
+            float *srcBuffer = new float[H_L * W_L];
+
+            for (int i = 0; i < H_L; i++) {
+                src[i] = &srcBuffer[i * W_L];
+            }
+
+            int h_th, s_th;
+
+            int shHighlights = deh.highlights;
+            int shShadows = deh.shadows;
+            int mapmet=0;
+            if(deh.mapMethod=="map") mapmet=2;
+            if(deh.mapMethod=="mapT") mapmet=3;
+            if(deh.mapMethod=="curv") mapmet=1;
+            if(deh.mapMethod=="gaus") mapmet=4;
+            double shradius = (double) deh.radius;
+            // printf("shrad=%f\n",shradius);
+
+            //   int viewmet=0;
+            if(deh.viewMethod=="mask") viewmet=1;
+            if(deh.viewMethod=="tran") viewmet=2;
+            if(deh.viewMethod=="tran2") viewmet=3;
+            if(deh.viewMethod=="unsharp") viewmet=4;
 
 #ifdef _OPENMP
-        #pragma omp parallel
+            #pragma omp parallel for
 #endif
-        {
-            for ( int scale = scal - 1; scale >= 0; scale-- ) {
-                if(scale == scal - 1) {
-                    gaussianBlur<float> (src, out, W_L, H_L, RetinexScales[scale], buffer);
-                } else { // reuse result of last iteration
-                    gaussianBlur<float> (out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
+
+            for (int i = 0; i < H_L; i++)
+                for (int j = 0; j < W_L; j++) {
+                    src[i][j] = luminance[i][j] + eps;
+                    luminance[i][j] = 0.f;
                 }
 
-#ifdef __SSE2__
-                vfloat pondv = F2V(pond);
-                vfloat limMinv = F2V(ilimD);
-                vfloat limMaxv = F2V(limD);
+            float *out[H_L] ALIGNED16;
+            float *outBuffer = new float[H_L * W_L];
 
-#endif
-#ifdef _OPENMP
-                #pragma omp for
-#endif
+            for (int i = 0; i < H_L; i++) {
+                out[i] = &outBuffer[i * W_L];
+            }
+
+            if(viewmet==3  || viewmet==2) {
+                tranBuffer = new float[H_L * W_L];
 
                 for (int i = 0; i < H_L; i++) {
-                    int j = 0;
-
-#ifdef __SSE2__
-
-                    if(useHslLin) {
-                        for (; j < W_L - 3; j += 4) {
-                            _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  (LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
-                        }
-                    } else {
-                        for (; j < W_L - 3; j += 4) {
-                            _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  xlogf(LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
-                        }
-                    }
-
-#endif
-
-                    if(useHslLin) {
-                        for (; j < W_L; j++) {
-                            luminance[i][j] +=  pond * (LIM(src[i][j] / out[i][j], ilimD, limD));
-                        }
-                    } else {
-                        for (; j < W_L; j++) {
-                            luminance[i][j] +=  pond * xlogf(LIM(src[i][j] / out[i][j], ilimD, limD)); //  /logt ?
-                        }
-                    }
+                    tran[i] = &tranBuffer[i * W_L];
                 }
             }
-        }
-        delete [] buffer;
-        delete [] outBuffer;
-        delete [] srcBuffer;
+            const float logBetaGain = xlogf(16384.f);
+            float pond = logBetaGain / (float) scal;
 
-        mean = 0.f;
-        stddv = 0.f;
-        // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
+            if(!useHslLin) {
+                pond /= log(elogt);
+            }
 
-        mean_stddv2( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
-//        printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
+            if(mapmet > 1) shmap = new SHMap (W_L, H_L, true);
 
-        //  mean_stddv( luminance, mean, stddv, W_L, H_L, logBetaGain, maxtr, mintr);
-        if (dehatransmissionCurve && mean != 0.f && stddv != 0.f) { //if curve
-            float asig = 0.166666f / stddv;
-            float bsig = 0.5f - asig * mean;
-            float amax = 0.333333f / (maxtr - mean - stddv);
-            float bmax = 1.f - amax * maxtr;
-            float amin = 0.333333f / (mean - stddv - mintr);
-            float bmin = -amin * mintr;
 
-            asig *= 500.f;
-            bsig *= 500.f;
-            amax *= 500.f;
-            bmax *= 500.f;
-            amin *= 500.f;
-            bmin *= 500.f;
+
+            float *buffer = new float[W_L * H_L];;
 #ifdef _OPENMP
             #pragma omp parallel
 #endif
             {
-                float absciss;
-#ifdef _OPENMP
-                #pragma omp for schedule(dynamic,16)
+                for ( int scale = scal - 1; scale >= 0; scale-- ) {
+                    if(scale == scal - 1) {
+                        gaussianBlur<float> (src, out, W_L, H_L, RetinexScales[scale], buffer);
+                    } else {
+                        // reuse result of last iteration
+                        gaussianBlur<float> (out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
+                    }
+                    //printf("scal=%d RetinexScales=%f\n",scale, RetinexScales[scale]);
+                    printf("..");
+
+
+                    if(mapmet==4) shradius /= 1.;
+                    else shradius = 40.;
+
+                    //    if(shHighlights > 0 || shShadows > 0) {
+                    if(mapmet==3) if(it==1) shmap->updateL (out, shradius, true, 1);//wav Total
+                    if(mapmet==2 && scale >2) if(it==1) shmap->updateL (out, shradius, true, 1);//wav partial
+                    if(mapmet==4) if(it==1) shmap->updateL (out, shradius, false, 1);//gauss
+                    //    }
+                    if (shmap) {
+                        h_th = shmap->max_f - deh.htonalwidth * (shmap->max_f - shmap->avg) / 100;
+                        s_th = deh.stonalwidth * (shmap->avg - shmap->min_f) / 100;
+                    }
+
+
+#ifdef __SSE2__
+                    vfloat pondv = F2V(pond);
+                    vfloat limMinv = F2V(ilimdx);
+                    vfloat limMaxv = F2V(limdx);
+
 #endif
 
-                for (int i = 0; i < H_L; i++ )
-                    for (int j = 0; j < W_L; j++) { //for mintr to maxtr evalate absciss in function of original transmission
-                        if (LIKELY(fabsf(luminance[i][j] - mean) < stddv)) {
-                            absciss = asig * luminance[i][j] + bsig;
-                        } else if (luminance[i][j] >= mean) {
-                            absciss = amax * luminance[i][j] + bmax;
-                        } else { /*if(luminance[i][j] <= mean - stddv)*/
-                            absciss = amin * luminance[i][j] + bmin;
+                    if(mapmet > 0) {
+#ifdef _OPENMP
+                        #pragma omp for
+#endif
+                        for (int i = 0; i < H_L; i++) {
+                            if(mapcontlutili) {
+                                int j = 0;
+                                for (; j < W_L; j++) {
+                                    if(it==1) out[i][j] = mapcurve[2.f * out[i][j]] / 2.f;
+                                }
+                            }
                         }
 
-                        luminance[i][j] *= (-1.f + 4.f * dehatransmissionCurve[absciss]); //new transmission
                     }
-            }
 
-            // median filter on transmission  ==> reduce artifacts
-            if (deh.medianmap) {
-                int wid = W_L;
-                int hei = H_L;
-                float *tmL[hei] ALIGNED16;
-                float *tmLBuffer = new float[wid * hei];
-                int borderL = 1;
+                    //    if(shHighlights > 0 || shShadows > 0) {
+                    if(((mapmet == 2 && scale >2) || mapmet==3 || mapmet==4) && it==1) {
 
-                for (int i = 0; i < hei; i++) {
-                    tmL[i] = &tmLBuffer[i * wid];
-                }
 
 #ifdef _OPENMP
-                #pragma omp parallel for
+                        #pragma omp for
 #endif
+                        for (int i = 0; i < H_L; i++) {
+                            int j = 0;
+                            for (; j < W_L; j++) {
+                                double mapval = 1.0 + shmap->map[i][j];
+                                double factor = 1.0;
 
-                for (int i = borderL; i < hei - borderL; i++) {
-                    float pp[9], temp;
+                                if (mapval > h_th) {
+                                    factor = (h_th + (100.0 - shHighlights) * (mapval - h_th) / 100.0) / mapval;
+                                } else if (mapval < s_th) {
+                                    factor = (s_th - (100.0 - shShadows) * (s_th - mapval) / 100.0) / mapval;
+                                }
+                                out[i][j] *= factor;
 
-                    for (int j = borderL; j < wid - borderL; j++) {
-                        med3(luminance[i][j], luminance[i - 1][j], luminance[i + 1][j], luminance[i][j + 1], luminance[i][j - 1], luminance[i - 1][j - 1], luminance[i - 1][j + 1], luminance[i + 1][j - 1], luminance[i + 1][j + 1], tmL[i][j]); //3x3
+                            }
+                        }
                     }
-                }
+                    //    }
 
 #ifdef _OPENMP
-                #pragma omp parallel for
+                    #pragma omp for
 #endif
 
-                for (int i = borderL; i < hei - borderL; i++ ) {
-                    for (int j = borderL; j < wid - borderL; j++) {
-                        luminance[i][j] = tmL[i][j];
+                    for (int i = 0; i < H_L; i++) {
+                        int j = 0;
+
+#ifdef __SSE2__
+
+                        if(useHslLin) {
+                            for (; j < W_L - 3; j += 4) {
+                                _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  (LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
+                            }
+                        } else {
+                            for (; j < W_L - 3; j += 4) {
+                                _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  xlogf(LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
+                            }
+                        }
+
+#endif
+
+                        if(useHslLin) {
+                            for (; j < W_L; j++) {
+                                luminance[i][j] +=  pond * (LIM(src[i][j] / out[i][j], ilimdx, limdx));
+                            }
+                        } else {
+                            for (; j < W_L; j++) {
+                                luminance[i][j] +=  pond * xlogf(LIM(src[i][j] / out[i][j], ilimdx, limdx)); //  /logt ?
+                            }
+                        }
                     }
                 }
-
-                delete [] tmLBuffer;
-
             }
+            printf(".\n");
+            if(mapmet > 1) {
+                if(shmap) {
+                    delete shmap;
+                }
+            }
+            shmap = NULL;
 
+            delete [] buffer;
+//            delete [] outBuffer;
+            delete [] srcBuffer;
+
+            mean = 0.f;
+            stddv = 0.f;
             // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
-            //  mean_stddv( luminance, mean, stddv, W_L, H_L, 1.f, maxtr, mintr);
+
             mean_stddv2( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
+//        printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
 
-        }
+            //  mean_stddv( luminance, mean, stddv, W_L, H_L, logBetaGain, maxtr, mintr);
+            if (dehatransmissionCurve && mean != 0.f && stddv != 0.f) { //if curve
+                float asig = 0.166666f / stddv;
+                float bsig = 0.5f - asig * mean;
+                float amax = 0.333333f / (maxtr - mean - stddv);
+                float bmax = 1.f - amax * maxtr;
+                float amin = 0.333333f / (mean - stddv - mintr);
+                float bmin = -amin * mintr;
 
-        float epsil = 0.1f;
-
-        mini = mean - vart * stddv;
-
-        if (mini < mintr) {
-            mini = mintr + epsil;
-        }
-
-        maxi = mean + vart * stddv;
-
-        if (maxi > maxtr) {
-            maxi = maxtr - epsil;
-        }
-
-        delta = maxi - mini;
-        //    printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
-
-        if ( !delta ) {
-            delta = 1.0f;
-        }
-
-        float cdfactor = gain2 * 32768.f / delta;
-        maxCD = -9999999.f;
-        minCD = 9999999.f;
-
-
-
-
+                asig *= 500.f;
+                bsig *= 500.f;
+                amax *= 500.f;
+                bmax *= 500.f;
+                amin *= 500.f;
+                bmin *= 500.f;
 #ifdef _OPENMP
-        #pragma omp parallel
+                #pragma omp parallel
 #endif
-        {
-            float cdmax = -999999.f, cdmin = 999999.f;
-
+                {
+                    float absciss;
 #ifdef _OPENMP
-            #pragma omp for
+                    #pragma omp for schedule(dynamic,16)
 #endif
 
-            for ( int i = 0; i < H_L; i ++ )
-                for (int j = 0; j < W_L; j++) {
-                    //   float cd = cdfactor * ( luminance[i][j] * logBetaGain - mini ) + offse;
-                    float cd = cdfactor * ( luminance[i][j]  - mini ) + offse;
-
-                    if(cd > cdmax) {
-                        cdmax = cd;
-                    }
-
-                    if(cd < cdmin) {
-                        cdmin = cd;
-                    }
-
-                    float str = strength;
-
-                    if(lhutili) {  // S=f(H)
-                        {
-                            float HH = exLuminance[i][j];
-                            float valparam;
-
-                            if(useHsl || useHslLin) {
-                                valparam = float((shcurve->getVal(HH) - 0.5f));
-                            } else {
-                                valparam = float((shcurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5f));
+                    for (int i = 0; i < H_L; i++ )
+                        for (int j = 0; j < W_L; j++) { //for mintr to maxtr evalate absciss in function of original transmission
+                            if (LIKELY(fabsf(luminance[i][j] - mean) < stddv)) {
+                                absciss = asig * luminance[i][j] + bsig;
+                            } else if (luminance[i][j] >= mean) {
+                                absciss = amax * luminance[i][j] + bmax;
+                            } else { /*if(luminance[i][j] <= mean - stddv)*/
+                                absciss = amin * luminance[i][j] + bmin;
                             }
 
-                            str *= (1.f + 2.f * valparam);
+                            luminance[i][j] *= (-1.f + 4.f * dehatransmissionCurve[absciss]); //new transmission
+                            if(viewmet==3 || viewmet==2) tran[i][j]=luminance[i][j];
+                        }
+                }
+
+                // median filter on transmission  ==> reduce artifacts
+                if (deh.medianmap && it==1) {//only one time
+                    int wid = W_L;
+                    int hei = H_L;
+                    float *tmL[hei] ALIGNED16;
+                    float *tmLBuffer = new float[wid * hei];
+                    int borderL = 1;
+
+                    for (int i = 0; i < hei; i++) {
+                        tmL[i] = &tmLBuffer[i * wid];
+                    }
+
+#ifdef _OPENMP
+                    #pragma omp parallel for
+#endif
+
+                    for (int i = borderL; i < hei - borderL; i++) {
+                        float pp[9], temp;
+
+                        for (int j = borderL; j < wid - borderL; j++) {
+                            med3(luminance[i][j], luminance[i - 1][j], luminance[i + 1][j], luminance[i][j + 1], luminance[i][j - 1], luminance[i - 1][j - 1], luminance[i - 1][j + 1], luminance[i + 1][j - 1], luminance[i + 1][j + 1], tmL[i][j]); //3x3
                         }
                     }
 
-                    //    if(exLuminance[i][j] > 65535.f*hig && higplus) str *= hig;
-                    luminance[i][j] = clipretinex( cd, 0.f, 32768.f ) * str + (1.f - str) * originalLuminance[i][j];
+#ifdef _OPENMP
+                    #pragma omp parallel for
+#endif
+
+                    for (int i = borderL; i < hei - borderL; i++ ) {
+                        for (int j = borderL; j < wid - borderL; j++) {
+                            luminance[i][j] = tmL[i][j];
+                        }
+                    }
+
+                    delete [] tmLBuffer;
+
                 }
 
-#ifdef _OPENMP
-            #pragma omp critical
-#endif
-            {
-                maxCD = maxCD > cdmax ? maxCD : cdmax;
-                minCD = minCD < cdmin ? minCD : cdmin;
+                // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
+                //  mean_stddv( luminance, mean, stddv, W_L, H_L, 1.f, maxtr, mintr);
+                mean_stddv2( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
+
             }
 
-        }
-        //    printf("cdmin=%f cdmax=%f\n",minCD, maxCD);
-        Tmean = mean;
-        Tsigma = stddv;
-        Tmin = mintr;
-        Tmax = maxtr;
+            float epsil = 0.1f;
 
-        if (shcurve) {
-            delete shcurve;
+            mini = mean - varx * stddv;
+
+            if (mini < mintr) {
+                mini = mintr + epsil;
+            }
+
+            maxi = mean + varx * stddv;
+
+            if (maxi > maxtr) {
+                maxi = maxtr - epsil;
+            }
+
+            delta = maxi - mini;
+            //    printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
+
+            if ( !delta ) {
+                delta = 1.0f;
+            }
+
+            float cdfactor = gain2 * 32768.f / delta;
+            maxCD = -9999999.f;
+            minCD = 9999999.f;
+            // coeff for auto    "transmission" with 2 sigma #95% datas
+            float aza=16300.f/(2.f*stddv);
+            float azb=-aza*(mean-2.f*stddv);
+            float bza=16300.f/(2.f*stddv);
+            float bzb=16300.f-bza*(mean);
+
+
+
+#ifdef _OPENMP
+            #pragma omp parallel
+#endif
+            {
+                float cdmax = -999999.f, cdmin = 999999.f;
+
+#ifdef _OPENMP
+                #pragma omp for
+#endif
+
+                for ( int i = 0; i < H_L; i ++ )
+                    for (int j = 0; j < W_L; j++) {
+                        //   float cd = cdfactor * ( luminance[i][j] * logBetaGain - mini ) + offse;
+                        float cd = cdfactor * ( luminance[i][j]  - mini ) + offse;
+
+                        if(cd > cdmax) {
+                            cdmax = cd;
+                        }
+
+                        if(cd < cdmin) {
+                            cdmin = cd;
+                        }
+
+                        float str = strengthx;
+
+                        if(lhutili  && it==1) {  // S=f(H)
+                            {
+                                float HH = exLuminance[i][j];
+                                float valparam;
+
+                                if(useHsl || useHslLin) {
+                                    valparam = float((shcurve->getVal(HH) - 0.5f));
+                                } else {
+                                    valparam = float((shcurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5f));
+                                }
+
+                                str *= (1.f + 2.f * valparam);
+                            }
+                        }
+
+                        if(exLuminance[i][j] > 65535.f*hig && higplus) str *= hig;
+                        if(viewmet==0) luminance[i][j]=clipretinex( cd, 0.f, 32768.f ) * str + (1.f - str) * originalLuminance[i][j];
+                        if(viewmet==1) luminance[i][j] = out[i][j];
+                        if(viewmet==4) luminance[i][j] = (1.f + str) * originalLuminance[i][j] -  str* out[i][j];//unsharp
+                        if(viewmet==2) {
+                            if(tran[i][j]<= mean)  luminance[i][j] = azb + aza*tran[i][j];//auto values
+                            else luminance[i][j] = bzb + bza*tran[i][j];
+                        }
+                        if(viewmet==3) luminance[i][j] = 1000.f + tran[i][j]*700.f;//arbitrary values to help display log values which are between -20 to + 30 - usage values -4 + 5
+
+                    }
+
+#ifdef _OPENMP
+                #pragma omp critical
+#endif
+                {
+                    maxCD = maxCD > cdmax ? maxCD : cdmax;
+                    minCD = minCD < cdmin ? minCD : cdmin;
+                }
+
+            }
+            delete [] outBuffer;
+            outBuffer = NULL;
+            //    printf("cdmin=%f cdmax=%f\n",minCD, maxCD);
+            Tmean = mean;
+            Tsigma = stddv;
+            Tmin = mintr;
+            Tmax = maxtr;
+
+
+            if (shcurve && it==1) {
+                delete shcurve;
+            }
+        }
+        if(viewmet==3 || viewmet==2) {
+            delete [] tranBuffer;
+            tranBuffer = NULL;
         }
 
     }

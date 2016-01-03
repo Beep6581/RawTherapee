@@ -142,6 +142,9 @@ void RetinexParams::setDefaults()
     enabled = false;
     str      = 20;
     scal        = 3;
+    iter = 1;
+    grad = 1;
+    grads = 1;
     gam        = 1.30;
     slope   = 3.;
     neigh      = 80;
@@ -150,9 +153,17 @@ void RetinexParams::setDefaults()
     vart    = 200;
     limd = 8;
     highl = 4;
+    highlights    = 0;
+    htonalwidth   = 80;
+    shadows       = 0;
+    stonalwidth   = 80;
+    radius        = 40;
+
     baselog = 2.71828;
 //    grbl = 50;
     retinexMethod = "high";
+    mapMethod = "none";
+    viewMethod = "none";
     retinexcolorspace = "Lab";
     gammaretinex = "none";
     medianmap = false;
@@ -162,6 +173,8 @@ void RetinexParams::setDefaults()
     cdHcurve.push_back(DCT_Linear);
     lhcurve.clear();
     lhcurve.push_back(DCT_Linear);
+    mapcurve.clear();
+    mapcurve.push_back(DCT_Linear);
 
     getDefaulttransmissionCurve(transmissionCurve);
 }
@@ -1445,6 +1458,18 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         keyFile.set_integer ("Retinex", "Scal",               retinex.scal);
     }
 
+    if (!pedited || pedited->retinex.iter) {
+        keyFile.set_integer ("Retinex", "Iter",               retinex.iter);
+    }
+
+    if (!pedited || pedited->retinex.grad) {
+        keyFile.set_integer ("Retinex", "Grad",               retinex.grad);
+    }
+
+    if (!pedited || pedited->retinex.grads) {
+        keyFile.set_integer ("Retinex", "Grads",               retinex.grads);
+    }
+
     if (!pedited || pedited->retinex.gam) {
         keyFile.set_double ("Retinex", "Gam",               retinex.gam);
     }
@@ -1499,6 +1524,14 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         keyFile.set_string  ("Retinex", "RetinexMethod", retinex.retinexMethod);
     }
 
+    if (!pedited || pedited->retinex.mapMethod) {
+        keyFile.set_string  ("Retinex", "mapMethod", retinex.mapMethod);
+    }
+
+    if (!pedited || pedited->retinex.viewMethod) {
+        keyFile.set_string  ("Retinex", "viewMethod", retinex.viewMethod);
+    }
+
     if (!pedited || pedited->retinex.retinexcolorspace) {
         keyFile.set_string  ("Retinex", "Retinexcolorspace", retinex.retinexcolorspace);
     }
@@ -1512,6 +1545,11 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         keyFile.set_double_list("Retinex", "CDCurve", cdcurve);
     }
 
+    if (!pedited || pedited->retinex.mapcurve)  {
+        Glib::ArrayHandle<double> mapcurve = retinex.mapcurve;
+        keyFile.set_double_list("Retinex", "MAPCurve", mapcurve);
+    }
+
     if (!pedited || pedited->retinex.cdHcurve)  {
         Glib::ArrayHandle<double> cdHcurve = retinex.cdHcurve;
         keyFile.set_double_list("Retinex", "CDHCurve", cdHcurve);
@@ -1520,6 +1558,26 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->retinex.lhcurve)  {
         Glib::ArrayHandle<double> lhcurve = retinex.lhcurve;
         keyFile.set_double_list("Retinex", "LHCurve", lhcurve);
+    }
+
+    if (!pedited || pedited->retinex.highlights) {
+        keyFile.set_integer ("Retinex", "Highlights",          retinex.highlights);
+    }
+
+    if (!pedited || pedited->retinex.htonalwidth) {
+        keyFile.set_integer ("Retinex", "HighlightTonalWidth", retinex.htonalwidth);
+    }
+
+    if (!pedited || pedited->retinex.shadows) {
+        keyFile.set_integer ("Retinex", "Shadows",             retinex.shadows);
+    }
+
+    if (!pedited || pedited->retinex.stonalwidth) {
+        keyFile.set_integer ("Retinex", "ShadowTonalWidth",    retinex.stonalwidth);
+    }
+
+    if (!pedited || pedited->retinex.radius) {
+        keyFile.set_integer ("Retinex", "Radius",    retinex.radius);
     }
 
     if (!pedited || pedited->retinex.transmissionCurve)  {
@@ -3825,6 +3883,23 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Retinex", "mapMethod"))     {
+                retinex.mapMethod  = keyFile.get_string  ("Retinex", "mapMethod");
+
+                if (pedited) {
+                    pedited->retinex.mapMethod = true;
+                }
+            }
+
+            if (keyFile.has_key ("Retinex", "viewMethod"))     {
+                retinex.viewMethod  = keyFile.get_string  ("Retinex", "viewMethod");
+
+                if (pedited) {
+                    pedited->retinex.viewMethod = true;
+                }
+            }
+
+
             if (keyFile.has_key ("Retinex", "Retinexcolorspace"))     {
                 retinex.retinexcolorspace  = keyFile.get_string  ("Retinex", "Retinexcolorspace");
 
@@ -3870,6 +3945,30 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->retinex.scal = true;
+                }
+            }
+
+            if (keyFile.has_key ("Retinex", "Iter"))     {
+                retinex.iter   = keyFile.get_integer ("Retinex", "Iter");
+
+                if (pedited) {
+                    pedited->retinex.iter = true;
+                }
+            }
+
+            if (keyFile.has_key ("Retinex", "Grad"))     {
+                retinex.grad   = keyFile.get_integer ("Retinex", "Grad");
+
+                if (pedited) {
+                    pedited->retinex.grad = true;
+                }
+            }
+
+            if (keyFile.has_key ("Retinex", "Grads"))     {
+                retinex.grads   = keyFile.get_integer ("Retinex", "Grads");
+
+                if (pedited) {
+                    pedited->retinex.grads = true;
                 }
             }
 
@@ -3953,6 +4052,14 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Retinex", "MAPCurve"))         {
+                retinex.mapcurve            = keyFile.get_double_list ("Retinex", "MAPCurve");
+
+                if (pedited) {
+                    pedited->retinex.mapcurve = true;
+                }
+            }
+
             if (keyFile.has_key ("Retinex", "CDHCurve"))         {
                 retinex.cdHcurve            = keyFile.get_double_list ("Retinex", "CDHCurve");
 
@@ -3968,6 +4075,48 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                     pedited->retinex.lhcurve = true;
                 }
             }
+
+            if (keyFile.has_key ("Retinex", "Highlights"))            {
+                retinex.highlights    = keyFile.get_integer ("Retinex", "Highlights");
+
+                if (pedited) {
+                    pedited->retinex.highlights = true;
+                }
+            }
+
+            if (keyFile.has_key ("Retinex", "HighlightTonalWidth"))   {
+                retinex.htonalwidth   = keyFile.get_integer ("Retinex", "HighlightTonalWidth");
+
+                if (pedited) {
+                    pedited->retinex.htonalwidth = true;
+                }
+            }
+
+            if (keyFile.has_key ("Retinex", "Shadows"))               {
+                retinex.shadows       = keyFile.get_integer ("Retinex", "Shadows");
+
+                if (pedited) {
+                    pedited->retinex.shadows = true;
+                }
+            }
+
+            if (keyFile.has_key ("Retinex", "ShadowTonalWidth"))      {
+                retinex.stonalwidth   = keyFile.get_integer ("Retinex", "ShadowTonalWidth");
+
+                if (pedited) {
+                    pedited->retinex.stonalwidth = true;
+                }
+            }
+
+
+            if (keyFile.has_key ("Retinex", "Radius"))                {
+                sh.radius        = keyFile.get_integer ("Retinex", "Radius");
+
+                if (pedited) {
+                    pedited->retinex.radius = true;
+                }
+            }
+
 
             if (keyFile.has_key ("Retinex", "TransmissionCurve"))         {
                 retinex.transmissionCurve            = keyFile.get_double_list ("Retinex", "TransmissionCurve");
@@ -7356,21 +7505,33 @@ bool ProcParams::operator== (const ProcParams& other)
         && toneCurve.hrenabled == other.toneCurve.hrenabled
         && toneCurve.method == other.toneCurve.method
         && retinex.cdcurve == other.retinex.cdcurve
+        && retinex.mapcurve == other.retinex.mapcurve
         && retinex.cdHcurve == other.retinex.cdHcurve
         && retinex.lhcurve == other.retinex.lhcurve
         && retinex.transmissionCurve == other.retinex.transmissionCurve
         && retinex.str == other.retinex.str
         && retinex.scal == other.retinex.scal
+        && retinex.iter == other.retinex.iter
+        && retinex.grad == other.retinex.grad
+        && retinex.grads == other.retinex.grads
         && retinex.gam == other.retinex.gam
         && retinex.slope == other.retinex.slope
         && retinex.neigh == other.retinex.neigh
         && retinex.gain == other.retinex.gain
         && retinex.limd == other.retinex.limd
         && retinex.highl == other.retinex.highl
+        && retinex.highlights == other.retinex.highlights
+        && retinex.htonalwidth == other.retinex.htonalwidth
+        && retinex.shadows == other.retinex.shadows
+        && retinex.stonalwidth == other.retinex.stonalwidth
+        && retinex.radius == other.retinex.radius
+
         && retinex.baselog == other.retinex.baselog
 //        && retinex.grbl == other.retinex.grbl
         && retinex.offs == other.retinex.offs
         && retinex.retinexMethod == other.retinex.retinexMethod
+        && retinex.mapMethod == other.retinex.mapMethod
+        && retinex.viewMethod == other.retinex.viewMethod
         && retinex.retinexcolorspace == other.retinex.retinexcolorspace
         && retinex.gammaretinex == other.retinex.gammaretinex
         && retinex.vart == other.retinex.vart

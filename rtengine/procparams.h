@@ -282,16 +282,28 @@ public:
     std::vector<double>   cdHcurve;
     std::vector<double>   lhcurve;
     std::vector<double> transmissionCurve;
+    std::vector<double>   mapcurve;
     int     str;
     int     scal;
+    int     iter;
+    int     grad;
+    int     grads;
     double  gam;
     double  slope;
     int     neigh;
     int     gain;
     int     offs;
+    int     highlights;
+    int     htonalwidth;
+    int     shadows;
+    int     stonalwidth;
+    int     radius;
+
     Glib::ustring retinexMethod;
     Glib::ustring retinexcolorspace;
     Glib::ustring gammaretinex;
+    Glib::ustring mapMethod;
+    Glib::ustring viewMethod;
     int     vart;
     int     limd;
     int     highl;

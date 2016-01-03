@@ -50,14 +50,20 @@ void ParamsEdited::set (bool v)
     toneCurve.hrenabled   = v;
     toneCurve.method    = v;
     retinex.cdcurve    = v;
+    retinex.mapcurve    = v;
     retinex.cdHcurve    = v;
     retinex.lhcurve    = v;
     retinex.retinexMethod    = v;
+    retinex.mapMethod    = v;
+    retinex.viewMethod    = v;
     retinex.retinexcolorspace    = v;
     retinex.gammaretinex    = v;
     retinex.enabled    = v;
     retinex.str    = v;
     retinex.scal    = v;
+    retinex.iter    = v;
+    retinex.grad    = v;
+    retinex.grads    = v;
     retinex.gam    = v;
     retinex.slope    = v;
     retinex.neigh    = v;
@@ -70,6 +76,12 @@ void ParamsEdited::set (bool v)
 //    retinex.grbl    = v;
     retinex.medianmap = v;
     retinex.transmissionCurve   = v;
+    retinex.highlights    = v;
+    retinex.htonalwidth   = v;
+    retinex.shadows       = v;
+    retinex.stonalwidth   = v;
+    retinex.radius        = v;
+
     retinex.retinex = v;
     labCurve.lcurve      = v;
     labCurve.acurve      = v;
@@ -528,14 +540,20 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         toneCurve.hrenabled = toneCurve.hrenabled && p.toneCurve.hrenabled == other.toneCurve.hrenabled;
         toneCurve.method = toneCurve.method && p.toneCurve.method == other.toneCurve.method;
         retinex.cdcurve = retinex.cdcurve && p.retinex.cdcurve == other.retinex.cdcurve;
+        retinex.mapcurve = retinex.mapcurve && p.retinex.mapcurve == other.retinex.mapcurve;
         retinex.cdHcurve = retinex.cdHcurve && p.retinex.cdHcurve == other.retinex.cdHcurve;
         retinex.lhcurve = retinex.lhcurve && p.retinex.lhcurve == other.retinex.lhcurve;
         retinex.transmissionCurve = retinex.transmissionCurve && p.retinex.transmissionCurve == other.retinex.transmissionCurve;
         retinex.retinexMethod = retinex.retinexMethod && p.retinex.retinexMethod == other.retinex.retinexMethod;
+        retinex.mapMethod = retinex.mapMethod && p.retinex.mapMethod == other.retinex.mapMethod;
+        retinex.viewMethod = retinex.viewMethod && p.retinex.viewMethod == other.retinex.viewMethod;
         retinex.retinexcolorspace = retinex.retinexcolorspace && p.retinex.retinexcolorspace == other.retinex.retinexcolorspace;
         retinex.gammaretinex = retinex.gammaretinex && p.retinex.gammaretinex == other.retinex.gammaretinex;
         retinex.str = retinex.str && p.retinex.str == other.retinex.str;
         retinex.scal = retinex.scal && p.retinex.scal == other.retinex.scal;
+        retinex.iter = retinex.iter && p.retinex.iter == other.retinex.iter;
+        retinex.grad = retinex.grad && p.retinex.grad == other.retinex.grad;
+        retinex.grads = retinex.grads && p.retinex.grads == other.retinex.grads;
         retinex.gam = retinex.gam && p.retinex.gam == other.retinex.gam;
         retinex.slope = retinex.slope && p.retinex.slope == other.retinex.slope;
         retinex.neigh = retinex.neigh && p.retinex.neigh == other.retinex.neigh;
@@ -547,6 +565,12 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         retinex.baselog = retinex.baselog && p.retinex.baselog == other.retinex.baselog;
 //        retinex.grbl = retinex.grbl && p.retinex.grbl == other.retinex.grbl;
         retinex.medianmap = retinex.medianmap && p.retinex.medianmap == other.retinex.medianmap;
+        retinex.highlights = retinex.highlights && p.retinex.highlights == other.retinex.highlights;
+        retinex.htonalwidth = retinex.htonalwidth && p.retinex.htonalwidth == other.retinex.htonalwidth;
+        retinex.shadows = retinex.shadows && p.retinex.shadows == other.retinex.shadows;
+        retinex.stonalwidth = retinex.stonalwidth && p.retinex.stonalwidth == other.retinex.stonalwidth;
+        retinex.radius = retinex.radius && p.retinex.radius == other.retinex.radius;
+
         retinex.enabled = retinex.enabled && p.retinex.enabled == other.retinex.enabled;
         labCurve.lcurve = labCurve.lcurve && p.labCurve.lcurve == other.labCurve.lcurve;
         labCurve.acurve = labCurve.acurve && p.labCurve.acurve == other.labCurve.acurve;
@@ -1048,6 +1072,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.retinex.cdcurve    = mods.retinex.cdcurve;
     }
 
+    if (retinex.mapcurve) {
+        toEdit.retinex.mapcurve    = mods.retinex.mapcurve;
+    }
+
     if (retinex.cdHcurve) {
         toEdit.retinex.cdHcurve    = mods.retinex.cdHcurve;
     }
@@ -1062,6 +1090,14 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (retinex.retinexMethod) {
         toEdit.retinex.retinexMethod    = mods.retinex.retinexMethod;
+    }
+
+    if (retinex.mapMethod) {
+        toEdit.retinex.mapMethod    = mods.retinex.mapMethod;
+    }
+
+    if (retinex.viewMethod) {
+        toEdit.retinex.viewMethod    = mods.retinex.viewMethod;
     }
 
     if (retinex.retinexcolorspace) {
@@ -1082,6 +1118,22 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (retinex.str) {
         toEdit.retinex.str   = dontforceSet && options.baBehav[ADDSET_RETI_STR] ? toEdit.retinex.str + mods.retinex.str : mods.retinex.str;
+    }
+
+    if (retinex.scal) {
+        toEdit.retinex.scal    = mods.retinex.scal;
+    }
+
+    if (retinex.iter) {
+        toEdit.retinex.iter    = mods.retinex.iter;
+    }
+
+    if (retinex.grad) {
+        toEdit.retinex.grad    = mods.retinex.grad;
+    }
+
+    if (retinex.grads) {
+        toEdit.retinex.grads    = mods.retinex.grads;
     }
 
 //    if (retinex.scal) {
@@ -1123,6 +1175,28 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (retinex.vart) {
         toEdit.retinex.vart   = dontforceSet && options.baBehav[ADDSET_RETI_VART] ? toEdit.retinex.vart + mods.retinex.vart : mods.retinex.vart;
     }
+
+    if (retinex.highlights) {
+        toEdit.retinex.highlights     = mods.retinex.highlights;
+    }
+
+    if (retinex.htonalwidth) {
+        toEdit.retinex.htonalwidth     = mods.retinex.htonalwidth;
+    }
+
+    if (retinex.shadows) {
+        toEdit.retinex.shadows     = mods.retinex.shadows;
+
+    }
+
+    if (retinex.stonalwidth) {
+        toEdit.retinex.stonalwidth     = mods.retinex.stonalwidth;
+    }
+
+    if (retinex.radius) {
+        toEdit.retinex.radius      = mods.retinex.radius;
+    }
+
 
     if (labCurve.lcurve) {
         toEdit.labCurve.lcurve        = mods.labCurve.lcurve;
