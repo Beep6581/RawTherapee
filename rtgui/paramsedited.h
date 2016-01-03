@@ -542,6 +542,7 @@ public:
     bool dcpIlluminant;
     bool working;
     bool output;
+    bool outputIntent;
     bool gamma;
     bool gampos;
     bool slpos;

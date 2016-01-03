@@ -21,16 +21,24 @@
 #ifndef _POPUPBUTTON_
 #define _POPUPBUTTON_
 
-#include <gtkmm.h>
+#include <gtkmm/button.h>
 #include "popupcommon.h"
 
 class PopUpButton : public Gtk::Button, public PopUpCommon
 {
 
 public:
-    PopUpButton (const Glib::ustring& label = "");
+    PopUpButton (const Glib::ustring& label = Glib::ustring (), bool nextOnClicked = false);
     void show ();
     void set_tooltip_text (const Glib::ustring &text);
+    void set_sensitive (bool isSensitive=true);
+
+protected:
+    bool on_button_release_event (GdkEventButton* event);
+
+private:
+    bool nextOnClicked;
+
 };
 
 #endif

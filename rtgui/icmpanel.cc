@@ -83,7 +83,8 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 
     dcpFrame = Gtk::manage (new Gtk::Frame ("DCP"));
     Gtk::VBox* dcpFrameVBox = Gtk::manage (new Gtk::VBox ());
-    dcpFrameVBox->set_border_width(4);
+    dcpFrameVBox->set_border_width(0);
+    dcpFrameVBox->set_spacing(2);
 
     Gtk::HBox* dcpIllHBox = Gtk::manage (new Gtk::HBox ());
     dcpIllLabel = Gtk::manage (new Gtk::Label (M("TP_ICM_DCPILLUMINANT") + ":"));
@@ -101,29 +102,25 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     dcpIllHBox->pack_start(*dcpIllLabel, Gtk::PACK_SHRINK, 4);
     dcpIllHBox->pack_start(*dcpIll);
 
-    Gtk::HBox* c1HBox = Gtk::manage ( new Gtk::HBox(true, 4));
     ckbToneCurve = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_TONECURVE")));
     ckbToneCurve->set_sensitive (false);
     ckbToneCurve->set_tooltip_text (M("TP_ICM_TONECURVE_TOOLTIP"));
     ckbApplyHueSatMap = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYHUESATMAP")));
     ckbApplyHueSatMap->set_sensitive (false);
     ckbApplyHueSatMap->set_tooltip_text (M("TP_ICM_APPLYHUESATMAP_TOOLTIP"));
-    c1HBox->pack_start (*ckbToneCurve);
-    c1HBox->pack_start (*ckbApplyHueSatMap);
 
-    Gtk::HBox* c2HBox = Gtk::manage ( new Gtk::HBox(true, 4));
     ckbApplyLookTable = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYLOOKTABLE")));
     ckbApplyLookTable->set_sensitive (false);
     ckbApplyLookTable->set_tooltip_text (M("TP_ICM_APPLYLOOKTABLE_TOOLTIP"));
     ckbApplyBaselineExposureOffset = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_APPLYBASELINEEXPOSUREOFFSET")));
     ckbApplyBaselineExposureOffset->set_sensitive (false);
     ckbApplyBaselineExposureOffset->set_tooltip_text (M("TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP"));
-    c2HBox->pack_start (*ckbApplyLookTable);
-    c2HBox->pack_start (*ckbApplyBaselineExposureOffset);
 
-    dcpFrameVBox->pack_start(*dcpIllHBox);
-    dcpFrameVBox->pack_start(*c1HBox);
-    dcpFrameVBox->pack_start(*c2HBox);
+    dcpFrameVBox->pack_start(*dcpIllHBox, Gtk::PACK_SHRINK, 0);
+    dcpFrameVBox->pack_start(*ckbToneCurve, Gtk::PACK_SHRINK,0);
+    dcpFrameVBox->pack_start(*ckbApplyHueSatMap, Gtk::PACK_SHRINK,0);
+    dcpFrameVBox->pack_start(*ckbApplyLookTable, Gtk::PACK_SHRINK,0);
+    dcpFrameVBox->pack_start(*ckbApplyBaselineExposureOffset, Gtk::PACK_SHRINK,0);
     dcpFrame->add(*dcpFrameVBox);
     dcpFrame->set_sensitive(false);
     iVBox->pack_start (*dcpFrame);
@@ -185,13 +182,26 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     onames->append_text (M("TP_ICM_NOICM"));
     onames->set_active (0);
 
-    std::vector<Glib::ustring> opnames = iccStore->getOutputProfiles ();
+    std::vector<Glib::ustring> opnames = iccStore->getProfiles ();
 
     for (size_t i = 0; i < opnames.size(); i++) {
         onames->append_text (opnames[i]);
     }
 
     onames->set_active (0);
+
+    // Rendering intent
+    Gtk::HBox *riHBox = Gtk::manage ( new Gtk::HBox());
+    Gtk::Label* outputIntentLbl = Gtk::manage (new Gtk::Label(M("TP_ICM_PROFILEINTENT")+":"));
+    riHBox->pack_start (*outputIntentLbl, Gtk::PACK_SHRINK);
+    ointent = Gtk::manage (new MyComboBoxText ());
+    riHBox->pack_start (*ointent, Gtk::PACK_EXPAND_WIDGET);
+    ointent->append_text (M("PREFERENCES_INTENT_PERCEPTUAL"));
+    ointent->append_text (M("PREFERENCES_INTENT_RELATIVE"));
+    ointent->append_text (M("PREFERENCES_INTENT_SATURATION"));
+    ointent->append_text (M("PREFERENCES_INTENT_ABSOLUTE"));
+    ointent->set_active (1);
+    oVBox->pack_start(*riHBox, Gtk::PACK_SHRINK);
 
     // Output gamma
 
@@ -282,6 +292,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 
     wnames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::wpChanged) );
     onames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::opChanged) );
+    ointent->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::oiChanged) );
     wgamma->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::gpChanged) );
     dcpIll->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::dcpIlluminantChanged) );
 
@@ -507,6 +518,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
     if (onames->get_active_row_number() == -1) {
         onames->set_active_text (M("TP_ICM_NOICM"));
     }
+    ointent->set_active(pp->icm.outputIntent);
 
     ckbToneCurve->set_active (pp->icm.toneCurve);
     lastToneCurve = pp->icm.toneCurve;
@@ -543,6 +555,10 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
 
         if (!pedited->icm.output) {
             onames->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+
+        if (!pedited->icm.outputIntent) {
+            ointent->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
         if (!pedited->icm.dcpIlluminant) {
@@ -605,6 +621,13 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
         pp->icm.output  = onames->get_active_text();
     }
 
+    int ointentVal = ointent->get_active_row_number();
+    if (ointentVal >= 0 && ointentVal < RI__COUNT) {
+        pp->icm.outputIntent  = static_cast<RenderingIntent>(ointentVal);
+    } else {
+        pp->icm.outputIntent  = rtengine::RI_RELATIVE;
+    }
+
     pp->icm.freegamma = freegamma->get_active();
 
     DCPProfile* dcp = NULL;
@@ -641,6 +664,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.input = !iunchanged->get_active ();
         pedited->icm.working = wnames->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.output = onames->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->icm.outputIntent = ointent->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.dcpIlluminant = dcpIll->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.toneCurve = !ckbToneCurve->get_inconsistent ();
         pedited->icm.applyLookTable = !ckbApplyLookTable->get_inconsistent ();
@@ -880,6 +904,14 @@ void ICMPanel::opChanged ()
     }
 }
 
+void ICMPanel::oiChanged ()
+{
+
+    if (listener) {
+        listener->panelChanged (EvOIntent, ointent->get_active_text());
+    }
+}
+
 void ICMPanel::setRawMeta (bool raw, const rtengine::ImageData* pMeta)
 {
 
@@ -979,6 +1011,7 @@ void ICMPanel::setBatchMode (bool batchMode)
     iVBox->reorder_child (*iunchanged, 5);
     removeIfThere (this, saveRef);
     onames->append_text (M("GENERAL_UNCHANGED"));
+    ointent->append_text (M("GENERAL_UNCHANGED"));
     wnames->append_text (M("GENERAL_UNCHANGED"));
     wgamma->append_text (M("GENERAL_UNCHANGED"));
     dcpIll->append_text (M("GENERAL_UNCHANGED"));
