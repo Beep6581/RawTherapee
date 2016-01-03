@@ -1159,7 +1159,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         //  if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
         readyImg = ipf.lab2rgb16b (labView, cx, cy, cw, ch, params.icm.output, params.icm.outputIntent, params.icm.working, params.icm.gamma, params.icm.freegamma, params.icm.gampos, params.icm.slpos, ga0, ga1, ga2, ga3, ga4, ga5, ga6, params.blackwhite.enabled );
         customGamma = true;
-        customGamma = true;
 
         //or selected Free gamma
         useLCMS = false;
@@ -1167,6 +1166,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         Glib::ustring chpro, outProfile;
         bool present_space[9] = {false, false, false, false, false, false, false, false, false};
         std::vector<Glib::ustring> opnames = iccStore->getProfiles ();
+
         //test if files are in system
         for (int j = 0; j < 9; j++) {
             // one can modify "option" [Color Management] to adapt the profile's name if they are different for windows, MacOS, Linux ??

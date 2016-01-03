@@ -1713,6 +1713,10 @@ int Options::readFromFile (Glib::ustring fname)
                     fastexport_icm_output                 = keyFile.get_string  ("Fast Export", "fastexport_icm_output"               );
                 }
 
+                if (keyFile.has_key ("Fast Export", "fastexport_icm_output_intent"        )) {
+                    fastexport_icm_outputIntent           = static_cast<rtengine::RenderingIntent>(keyFile.get_integer  ("Fast Export", "fastexport_icm_output_intent"        ));
+                }
+
                 if (keyFile.has_key ("Fast Export", "fastexport_icm_gamma"                )) {
                     fastexport_icm_gamma                  = keyFile.get_string  ("Fast Export", "fastexport_icm_gamma"                );
                 }

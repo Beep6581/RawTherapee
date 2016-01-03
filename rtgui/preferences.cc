@@ -687,7 +687,6 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     Gtk::VBox* mvbcm = Gtk::manage (new Gtk::VBox ());
     mvbcm->set_border_width (4);
 
-
     iccDir = Gtk::manage (new Gtk::FileChooserButton (M("PREFERENCES_ICCDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     Gtk::Label* pdlabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_ICCDIR") + ":", Gtk::ALIGN_LEFT));
 
@@ -1466,7 +1465,6 @@ void Preferences::storePreferences ()
 #endif
 
     moptions.rtSettings.iccDirectory        = iccDir->get_filename ();
-    //moptions.rtSettings.colorimetricIntent  = intent->get_active_row_number ();
     moptions.rtSettings.viewingdevice       = view->get_active_row_number ();
     moptions.rtSettings.viewingdevicegrey   = grey->get_active_row_number ();
     moptions.rtSettings.viewinggreySc   = greySc->get_active_row_number ();
@@ -1576,6 +1574,7 @@ void Preferences::fillPreferences ()
     panFactor->set_value (moptions.panAccelFactor);
     rememberZoomPanCheckbutton->set_active (moptions.rememberZoomAndPan);
     ctiffserialize->set_active(moptions.serializeTiffRead);
+
 #if !defined(__APPLE__) // monitor profile not supported on apple
     setActiveTextOrIndex (*monProfile, moptions.rtSettings.monitorProfile, 0);
     switch (moptions.rtSettings.monitorIntent) {
@@ -1590,7 +1589,6 @@ void Preferences::fillPreferences ()
         monIntent->set_active (2);
         break;
     }
-
 #if defined(WIN32)
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif
@@ -1959,6 +1957,7 @@ void Preferences::iccDirChanged ()
 
     monProfile->append_text (M("PREFERENCES_PROFILE_NONE"));
     monProfile->set_active (0);
+
     const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfilesFromDir (iccDir->get_filename ());
     for (std::vector<Glib::ustring>::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile)
         monProfile->append_text (*profile);

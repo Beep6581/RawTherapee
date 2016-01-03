@@ -13,6 +13,14 @@ endif ()
 
 string (TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
 
+# Set required C and C++ standards and check GCC version
+SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11")
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9")
+  message(WARNING "RawTherapee should be built using GCC version 4.9 or higher!")
+endif()
+
 # We might want to build using the old C++ ABI, even when using a new GCC version
 if (USE_OLD_CXX_ABI)
   add_definitions (-D_GLIBCXX_USE_CXX11_ABI=0)
@@ -89,6 +97,7 @@ option(USE_EXPERIMENTAL_LANG_VERSIONS "Build RT with -std=c++0x" OFF)
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
 option (WITH_BZIP "Build with Bzip2 support" ON)
 option (WITH_MYFILE_MMAP "Build using memory mapped file" ON)
+option (WITH_LTO "Build with link-time optimizations" OFF)
 option (OPTION_OMP "Build with OpenMP support" ON)
 option (PROTECT_VECTORS "Protect critical vectors by custom R/W Mutex, recommanded even if your std::vector is thread safe" ON)
 option (STRICT_MUTEX "True (recommended): MyMutex will behave like POSIX Mutex; False: MyMutex will behave like POSIX RecMutex; Note: forced to ON for Debug builds" ON)
@@ -266,17 +275,18 @@ if (WITH_MYFILE_MMAP)
 	add_definitions (-DMYFILE_MMAP)
 endif (WITH_MYFILE_MMAP)
 
+if (WITH_LTO)
+    SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -flto")
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto")
+    SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
+endif (WITH_LTO)
+
 if (OPTION_OMP)
     find_package(OpenMP)
     if (OPENMP_FOUND)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -Werror=unknown-pragmas")
     endif (OPENMP_FOUND)
 endif (OPTION_OMP)
-
-if(USE_EXPERIMENTAL_LANG_VERSIONS OR NOT (SIGC_VERSION VERSION_LESS 2.5.1))
-	SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu1x")
-	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
-endif ()
 
 # find out whether we are building out of source
 get_filename_component(ABS_SOURCE_DIR "${PROJECT_SOURCE_DIR}" ABSOLUTE)

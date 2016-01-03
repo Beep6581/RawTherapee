@@ -1925,7 +1925,7 @@ void CLASS hasselblad_correct()
            blur than this, but this does not need any buffer and makes nice-looking
            radial gradients */
         ushort *corners_weight = (ushort *)malloc(bw*bh*9*sizeof(*corners_weight));
-        const char corners_mix[9][4][2] = { { {0,0}, {0,1}, {1,0}, {1,1} },
+        const int corners_mix[9][4][2] = { { {0,0}, {0,1}, {1,0}, {1,1} },
                                             { {0,1}, {1,1}, {-1,-1}, {-1,-1} },
                                             { {0,1}, {0,2}, {1,1}, {1,2} },
                                             { {1,0}, {1,1}, {-1,-1}, {-1,-1} },

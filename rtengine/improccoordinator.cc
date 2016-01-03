@@ -31,7 +31,7 @@ extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
     : orig_prev(NULL), oprevi(NULL), oprevl(NULL), nprevl(NULL), previmg(NULL), workimg(NULL),
-      ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true),  monitorIntent(RI_RELATIVE), scale(10),
+      ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true), monitorIntent(RI_RELATIVE), scale(10),
       highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false),
       bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(0.),
 
@@ -787,6 +787,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         ipf.updateColorProfiles(params.icm, monitorProfile, monitorIntent);
     }
 
+    // Update the monitor color transform if necessary
+    if (todo & M_MONITOR) {
+        ipf.updateColorProfiles(params.icm, monitorProfile, monitorIntent);
+    }
+
     // process crop, if needed
     for (size_t i = 0; i < crops.size(); i++)
         if (crops[i]->hasListener () && cropCall != crops[i] ) {
@@ -800,7 +805,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     progress ("Conversion to RGB...", 100 * readyphase / numofphases);
 
-//   if (todo != CROP && todo != MINUPDATE) {
     if ((todo != CROP && todo != MINUPDATE) || (todo & M_MONITOR)) {
         MyMutex::MyLock prevImgLock(previmg->getMutex());
 

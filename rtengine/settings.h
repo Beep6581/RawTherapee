@@ -38,7 +38,7 @@ public:
     int             leveldnliss;            // level of auto multi zone
     int             leveldnautsimpl;            // STD or EXPERT
 
-    Glib::ustring   monitorProfile;         ///< ICC profile of the monitor (full path recommended)
+    Glib::ustring   monitorProfile;         ///< ICC profile name used for the monitor
     RenderingIntent monitorIntent;          ///< Colorimetric intent used with the above profile
     bool            autoMonitorProfile;     ///< Try to auto-determine the correct monitor color profile
     bool            autocielab;

@@ -144,7 +144,6 @@ void ImProcFunctions::firstAnalysisThread (Imagefloat* original, Glib::ustring w
 void ImProcFunctions::updateColorProfiles (const ColorManagementParams& icm, const Glib::ustring& monitorProfile, RenderingIntent monitorIntent)
 {
     // set up monitor transform
-
     if (monitorTransform != NULL) {
         cmsDeleteTransform (monitorTransform);
     }
