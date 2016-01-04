@@ -25,7 +25,7 @@
 
 
 
-// Aligned so the first entry starts on line 30
+// Aligned so the first entry starts on line 30.
 int refreshmap[rtengine::NUMOFEVENTS] = {
     ALL,              // EvPhotoLoaded,
     ALL,              // EvProfileLoaded,
@@ -440,32 +440,31 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RETINEX,          // EvLstr
     RETINEX,          // EvLscal
     RETINEX,          // EvLvart
-    DEMOSAIC,          // EvLCDCurve
+    DEMOSAIC,         // EvLCDCurve
     RETINEX,          // EvRetinextransmission
     DEMOSAIC,         // EvRetinexEnabled
     RETINEX,          // EvRetinexmedianmap
     RETINEX,          // EvLlimd
     DEMOSAIC,         // Evretinexcolorspace
-    DEMOSAIC,          // EvLCDHCurve
+    DEMOSAIC,         // EvLCDHCurve
     DEMOSAIC,         // Evretinexgamma
     DEMOSAIC,         // EvLgam
     DEMOSAIC,         // EvLslope
     RETINEX,          // EvLhighl
     DEMOSAIC,         // EvLbaselog
-//    DEMOSAIC,          // EvLgrbl
-    DEMOSAIC,            // EvRetinexlhcurve
+    DEMOSAIC,         // EvRetinexlhcurve
     ALLNORAW,         // EvOIntent
-    MONITORTRANSFORM,  // EvMonitorTransform
-    RETINEX,             // EvLiter
-    RETINEX,             // EvLgrad
-    RETINEX,             // EvLgrads
-    RETINEX,            //EvLhighlights
-    RETINEX,            //EvLh_tonalwidth
-    RETINEX,            //EvLshadows
-    RETINEX,            //EvLs_tonalwidth
-    RETINEX,            //EvLradius
-    RETINEX,            //EvmapMethod
-    DEMOSAIC,              //EvRetinexmapcurve
-    DEMOSAIC              //EvviewMethod
+    MONITORTRANSFORM, // EvMonitorTransform: no history message
+    RETINEX,          // EvLiter
+    RETINEX,          // EvLgrad
+    RETINEX,          // EvLgrads
+    RETINEX,          // EvLhighlights
+    RETINEX,          // EvLh_tonalwidth
+    RETINEX,          // EvLshadows
+    RETINEX,          // EvLs_tonalwidth
+    RETINEX,          // EvLradius
+    RETINEX,          // EvmapMethod
+    DEMOSAIC,         // EvRetinexmapcurve
+    DEMOSAIC          // EvviewMethod
 };
 

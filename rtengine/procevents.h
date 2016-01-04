@@ -452,7 +452,6 @@ enum ProcEvent {
     EvLslope = 422,
     EvLhighl = 423,
     EvLbaselog = 424,
-//    EvLgrbl = 425,
     EvRetinexlhcurve = 425,
     EvOIntent = 426,
     EvMonitorTransform = 427,
