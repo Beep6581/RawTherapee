@@ -915,7 +915,7 @@ Thumbnail::~Thumbnail ()
 Glib::ustring Thumbnail::getCacheFileName (Glib::ustring subdir)
 {
 
-    return cachemgr->getCacheFileName (subdir, fname, cfs.md5);
+    return cachemgr->getCacheFileName (subdir, fname, Glib::ustring(), cfs.md5);
 }
 
 void Thumbnail::setFileName (const Glib::ustring fn)
