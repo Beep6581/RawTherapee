@@ -184,7 +184,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     p1VBox = Gtk::manage ( new Gtk::VBox());
     p1VBox->set_border_width(4);
     p1VBox->set_spacing(2);
-    
+
     mapbox = Gtk::manage (new Gtk::HBox ());
     labmap = Gtk::manage (new Gtk::Label (M("TP_RETINEX_MAP") + ":"));
     mapbox->pack_start (*labmap, Gtk::PACK_SHRINK, 1);
@@ -297,15 +297,15 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     settingsVBox->pack_start (*limd);
     limd->show ();
 
-   // settingsVBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+    // settingsVBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
     viewbox->pack_start(*viewMethod);
- //   settingsVBox->pack_start(*viewbox);
+//   settingsVBox->pack_start(*viewbox);
     retinexVBox->pack_start(*viewbox);
     //settingsVBox->pack_start (*viewMethod);
-    
+
     mapbox->pack_start(*mapMethod);
-   // settingsVBox->pack_start(*mapbox);
+    // settingsVBox->pack_start(*mapbox);
     p1VBox->pack_start(*mapbox);
 
     p1VBox->pack_start (*curveEditormap, Gtk::PACK_SHRINK, 4);
@@ -322,7 +322,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     p1VBox->pack_start (*radius);
     radius->show();
 
-    
+
 
 //    settingsVBox->pack_start (*highl);
 //    highl->show ();
@@ -332,7 +332,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
 //    settingsVBox->pack_start (*grbl);
 //    grbl->show ();
-  //  settingsVBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+    //  settingsVBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
     settingsVBox->pack_start( *transmissionCurveEditorG, Gtk::PACK_SHRINK, 2);
     transmissionCurveEditorG->show();
@@ -473,7 +473,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     pack_start (*retinexVBox);
     p1Frame->add(*p1VBox);
     pack_start (*p1Frame, Gtk::PACK_EXPAND_WIDGET, 4);
-    
+
     pack_start (*expsettings);
     pack_start (*neutrHBox);
 

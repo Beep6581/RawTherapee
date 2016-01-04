@@ -1707,7 +1707,7 @@ TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
 TP_RETINEX_OFFSET;Brightness
 TP_RETINEX_SETTINGS;Settings
 TP_RETINEX_SCALES;Gaussian gradient
-TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Scale and Neighboring pixels are reduced when iterations increase, and conversely.
+TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Scale and radius are reduced when iterations increase, and conversely.
 TP_RETINEX_SLOPE;Free gamma slope
 TP_RETINEX_STRENGTH;Strength
 TP_RETINEX_THRESHOLD;Threshold
