@@ -597,7 +597,7 @@ HISTORY_MSG_363;W - Residual - Compression strength
 HISTORY_MSG_364;W - Final - Contrast balance
 HISTORY_MSG_365;W - Final - Delta balance
 HISTORY_MSG_366;W - Residual - Compression gamma
-HISTORY_MSG_367;W - ES - Local contrast curve
+HISTORY_MSG_367;W - Final - 'After' contrast curve
 HISTORY_MSG_368;W - Final - Contrast balance
 HISTORY_MSG_369;W - Final - Balance method
 HISTORY_MSG_370;W - Final - Local contrast curve
