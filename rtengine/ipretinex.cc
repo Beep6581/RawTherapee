@@ -468,7 +468,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                         gaussianBlur<float> (out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
                     }
                     //printf("scal=%d RetinexScales=%f\n",scale, RetinexScales[scale]);
-                    printf("..");
+                   // printf("..");
 
 
                     if(mapmet==4) shradius /= 1.;
@@ -565,7 +565,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                     }
                 }
             }
-            printf(".\n");
+          //  printf(".\n");
             if(mapmet > 1) {
                 if(shmap) {
                     delete shmap;
