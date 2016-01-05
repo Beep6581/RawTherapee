@@ -90,9 +90,7 @@ BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(NULL), fileCatal
 
 BatchQueue::~BatchQueue ()
 {
-#if PROTECT_VECTORS
     MYWRITERLOCK(l, entryRW);
-#endif
 
     // The listener merges parameters with old values, so delete afterwards
     for (size_t i = 0; i < fd.size(); i++) {
@@ -104,9 +102,7 @@ BatchQueue::~BatchQueue ()
 
 void BatchQueue::resizeLoadedQueue()
 {
-#if PROTECT_VECTORS
     MYWRITERLOCK(l, entryRW);
-#endif
 
     const auto height = getThumbnailHeight ();
 
@@ -175,9 +171,7 @@ bool BatchQueue::keyPressed (GdkEventKey* event)
 void BatchQueue::addEntries (const std::vector<BatchQueueEntry*>& entries, bool head, bool save)
 {
     {
-#if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);
-#endif
 
         for (const auto entry : entries) {
 
@@ -229,9 +223,8 @@ bool BatchQueue::saveBatchQueue ()
         return false;
 
     {
-#if PROTECT_VECTORS
         MYREADERLOCK(l, entryRW);
-#endif
+
         if (fd.empty ())
             return true;
 
@@ -268,9 +261,7 @@ bool BatchQueue::loadBatchQueue ()
     if (file.is_open ()) {
         // Yes, it's better to get the lock for the whole file reading,
         // to update the list in one shot without any other concurrent access!
-#if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);
-#endif
 
         std::string row, column;
         std::vector<std::string> values;
@@ -402,9 +393,7 @@ int cancelItemUI (void* data)
 void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
 {
     {
-#if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);
-#endif
 
         for (const auto item : items) {
 
@@ -444,9 +433,8 @@ void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
 void BatchQueue::headItems (const std::vector<ThumbBrowserEntryBase*>& items)
 {
     {
-#if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);
-#endif
+
         for (auto item = items.rbegin(); item != items.rend(); ++item) {
 
             const auto entry = static_cast<BatchQueueEntry*> (*item);
@@ -476,9 +464,7 @@ void BatchQueue::headItems (const std::vector<ThumbBrowserEntryBase*>& items)
 void BatchQueue::tailItems (const std::vector<ThumbBrowserEntryBase*>& items)
 {
     {
-#if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);
-#endif
 
         for (const auto item : items) {
 
@@ -506,10 +492,7 @@ void BatchQueue::tailItems (const std::vector<ThumbBrowserEntryBase*>& items)
 void BatchQueue::selectAll ()
 {
     {
-        // TODO: Check for Linux
-#if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);
-#endif
 
         lastClicked = NULL;
         selected.clear ();
@@ -529,10 +512,7 @@ void BatchQueue::selectAll ()
 void BatchQueue::openLastSelectedItemInEditor()
 {
     {
-        // TODO: Check for Linux
-#if PROTECT_VECTORS
         MYREADERLOCK(l, entryRW);
-#endif
 
         if (selected.size() > 0) {
             openItemInEditor(selected.back());
@@ -554,10 +534,7 @@ void BatchQueue::startProcessing ()
 {
 
     if (!processing) {
-        // TODO: Check for Linux
-#if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);
-#endif
 
         if (!fd.empty()) {
             BatchQueueEntry* next;
@@ -579,9 +556,7 @@ void BatchQueue::startProcessing ()
                 processing->selected = false;
             }
 
-#if PROTECT_VECTORS
             MYWRITERLOCK_RELEASE(l);
-#endif
 
             // remove button set
             next->removeButtonSet ();
@@ -657,10 +632,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img)
     bool remove_button_set = false;
 
     {
-        // TODO: Check for Linux
-#if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);
-#endif
 
         delete processing;
         processing = NULL;
@@ -704,15 +676,11 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img)
         // Delete all files in directory \batch when finished, just to be sure to remove zombies
 
         // Not sure that locking is necessary, but it should be safer
-        // TODO: Check for Linux
-#if PROTECT_VECTORS
         MYREADERLOCK(l, entryRW);
-#endif
 
         if( fd.empty() ) {
-#if PROTECT_VECTORS
             MYREADERLOCK_RELEASE(l);
-#endif
+
             std::vector<Glib::ustring> names;
             Glib::ustring batchdir = Glib::build_filename(options.rtdir, "batch");
             Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (batchdir);
@@ -955,10 +923,7 @@ void BatchQueue::notifyListener (bool queueEmptied)
         NLParams* params = new NLParams;
         params->listener = listener;
         {
-            // TODO: Check for Linux
-#if PROTECT_VECTORS
             MYREADERLOCK(l, entryRW);
-#endif
             params->qsize = fd.size();
         }
         params->queueEmptied = queueEmptied;

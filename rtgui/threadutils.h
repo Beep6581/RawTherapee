@@ -20,8 +20,6 @@
 #define _THREADUTILS_
 
 // Uncomment this if you want to bypass the CMakeList options and force the values, but do not commit!
-//#undef PROTECT_VECTORS
-//#define PROTECT_VECTORS 1
 //#undef TRACE_MYRWMUTEX
 //#define TRACE_MYRWMUTEX 1
 //#undef STRICT_MUTEX
@@ -317,22 +315,6 @@ inline MyWriterLock::~MyWriterLock ()
 #define MYWRITERLOCK_ACQUIRE(ln) ln.acquire();
 #define MYREADERLOCK_RELEASE(ln) ln.release();
 #define MYWRITERLOCK_RELEASE(ln) ln.release();
-#endif
-
-#ifdef PROTECT_VECTORS
-#define IFPV_MYREADERLOCK(l, e) MYREADERLOCK(l, e)
-#define IFPV_MYWRITERLOCK(l, e) MYWRITERLOCK(l, e)
-#define IFPV_MYREADERLOCK_ACQUIRE(l) MYREADERLOCK_ACQUIRE(l)
-#define IFPV_MYWRITERLOCK_ACQUIRE(l) MYWRITERLOCK_ACQUIRE(l)
-#define IFPV_MYREADERLOCK_RELEASE(l) MYREADERLOCK_RELEASE(l)
-#define IFPV_MYWRITERLOCK_RELEASE(l) MYWRITERLOCK_RELEASE(l)
-#else
-#define IFPV_MYREADERLOCK(l, e)
-#define IFPV_MYWRITERLOCK(l, e)
-#define IFPV_MYREADERLOCK_ACQUIRE(l)
-#define IFPV_MYWRITERLOCK_ACQUIRE(l)
-#define IFPV_MYREADERLOCK_RELEASE(l)
-#define IFPV_MYWRITERLOCK_RELEASE(l)
 #endif
 
 #endif /* _THREADUTILS_ */
