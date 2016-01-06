@@ -150,59 +150,6 @@ Glib::RefPtr<Gio::FileInfo> safe_next_file (Glib::RefPtr<Gio::FileEnumerator> &d
 # define SAFE_ENUMERATOR_CODE_END   } if (error.get())  printf ("%s\n", error->what().c_str());}while (0)
 #endif
 
-#ifdef WIN32
-
-// High speed Windows version
-void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<FileMTimeInfo> &flist)
-{
-    Glib::ustring fullPath = dir->get_path() + Glib::ustring("\\*");
-
-    DWORD dwVersion = GetVersion();
-    bool win7Plus = (LOBYTE(LOWORD(dwVersion)) > 6) || ((LOBYTE(LOWORD(dwVersion)) == 6) && HIBYTE(LOWORD(dwVersion)) >= 1); // 6.1 or better
-
-    wchar_t *wDirName = (wchar_t*)g_utf8_to_utf16 (fullPath.c_str(), -1, NULL, NULL, NULL);
-    WIN32_FIND_DATAW fi;
-
-    HANDLE hFF = FindFirstFileExW(wDirName,
-                                  //win7Plus ? FindExInfoBasic :    // TODO: Add if MinGW is updated, makes it even faster
-                                  FindExInfoStandard, &fi,
-                                  FindExSearchNameMatch, NULL,
-                                  win7Plus ? 2 : 0);  // Win7 large fetch
-
-    if (hFF != INVALID_HANDLE_VALUE) {
-        do {
-            SYSTEMTIME stUTC;
-            FileTimeToSystemTime(&fi.ftLastWriteTime, &stUTC);
-            char time[64];
-            sprintf(time, "%d-%02d-%02dT%02d:%02d:%02dZ", stUTC.wYear, stUTC.wMonth, stUTC.wDay, stUTC.wHour, stUTC.wMinute, stUTC.wSecond);
-            Glib::TimeVal timeVal;
-            timeVal.assign_from_iso8601(Glib::ustring(time));
-
-            char pathA[MAX_PATH];
-            WideCharToMultiByte(CP_UTF8, 0, (WCHAR*)fi.cFileName, -1, pathA, MAX_PATH, 0, 0);
-            flist.push_back (FileMTimeInfo (removeExtension(Glib::ustring(pathA)), timeVal));
-
-        } while (FindNextFileW(hFF, &fi));
-
-        FindClose(hFF);
-    }
-
-    g_free(wDirName);
-}
-#else
-
-// Generic file list build
-void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<FileMTimeInfo> &flist)
-{
-    Glib::RefPtr<Gio::FileEnumerator> dirList;
-
-    if (dir) {
-        SAFE_ENUMERATOR_CODE_START
-        flist.push_back (FileMTimeInfo (removeExtension(info->get_name()), info->modification_time()));
-        SAFE_ENUMERATOR_CODE_END;
-    }
-}
-#endif
 /*
  * safe_build_file_list can now filter out at the source all files that doesn't have the extensions specified (if provided)
  */
