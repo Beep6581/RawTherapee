@@ -19,6 +19,7 @@
  *  Class created by Jean-Christophe FRISCH, aka 'Hombre'
  */
 
+#include <gtkmm.h>
 #include "multilangmgr.h"
 #include "popupcommon.h"
 #include "../rtengine/safegtk.h"
@@ -26,6 +27,9 @@
 #include "guiutils.h"
 
 PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label)
+    : selected (-1) // -1 means that the button is invalid
+    , menu (0)
+    , buttonImage (0)
 {
     button = thisButton;
     hasMenu = false;
@@ -44,95 +48,70 @@ PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label)
     buttonGroup = Gtk::manage( new Gtk::Grid());
     setExpandAlignProperties(buttonGroup, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     buttonGroup->attach(*button, 0, 0, 1, 1);
-    // Create the list entry
-    imageFilenames.clear();
-    images.clear();
-    sItems.clear();
-    items.clear();
-    selected = -1;      // -1 : means that the button is invalid
-    menu = 0;
-    buttonImage = 0;
-    buttonHint = "";
 }
 
 PopUpCommon::~PopUpCommon ()
 {
-    for (std::vector<MyImageMenuItem*>::iterator i = items.begin(); i != items.end(); ++i) {
-        delete *i;
-    }
-
-    if (menu) {
-        delete menu;
-    }
-
-    if (buttonImage) {
-        delete buttonImage;
-    }
-
-    delete buttonGroup;
+    delete menu;
+    delete buttonImage;
 }
 
-PopUpCommon::type_signal_changed PopUpCommon::signal_changed()
+bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& label)
 {
-    return message;
-}
+    if (label.empty ())
+         return false;
 
-bool PopUpCommon::addEntry (Glib::ustring fileName, Glib::ustring label)
-{
-    bool added = false;
+    // Create the menu item and image
+    MyImageMenuItem* newItem = Gtk::manage (new MyImageMenuItem (label, fileName));
+    imageFilenames.push_back (fileName);
+    images.push_back (newItem->getImage ());
 
-    if ( label.size() ) {
-        imageFilenames.push_back(fileName);
-        sItems.push_back(label);
-        // Create the menu item
-        MyImageMenuItem* newItem = new MyImageMenuItem (label, fileName);
-        images.push_back(newItem->getImage());
-        int currPos = (int)images.size();
-        items.push_back(newItem);
-
-        if (selected == -1) {
-            // Create the menu on the first item
-            menu = new Gtk::Menu ();
-            // Create the image for the button
-            buttonImage = new RTImage(fileName);
-            setExpandAlignProperties(buttonImage, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-            // Use the first image by default
-            imageContainer->attach_next_to(*buttonImage, Gtk::POS_RIGHT, 1, 1);
-            selected = 0;
-        }
-
-        // When there is at least 1 choice, we add the arrow button
-        if (images.size() == 1) {
-            Gtk::Button* arrowButton = Gtk::manage( new Gtk::Button() );
-            RTImage* arrowImage = Gtk::manage( new RTImage("popuparrow.png") );
-            setExpandAlignProperties(arrowButton, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
-            arrowButton->add(*arrowImage); //menuSymbol);
-            buttonGroup->attach_next_to(*arrowButton, *button, Gtk::POS_RIGHT, 1, 1);
-            arrowButton->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &PopUpCommon::showMenu) );
-            button->get_style_context()->add_class("Left");
-            arrowButton->get_style_context()->add_class("Right");
-            hasMenu = true;
-        }
-
-        newItem->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &PopUpCommon::entrySelected), currPos - 1));
-        menu->attach (*newItem, 0, 1, currPos - 1, currPos);
-        // The item has been created
-        added = true;
+    if (selected == -1) {
+        // Create the menu on the first item
+        menu = new Gtk::Menu ();
+        // Create the image for the button
+        buttonImage = new RTImage(fileName);
+        setExpandAlignProperties(buttonImage, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+        // Use the first image by default
+        imageContainer->attach_next_to(*buttonImage, Gtk::POS_RIGHT, 1, 1);
+        selected = 0;
     }
 
-    return added;
+    // When there is at least 1 choice, we add the arrow button
+    if (images.size() == 1) {
+        Gtk::Button* arrowButton = Gtk::manage( new Gtk::Button() );
+        RTImage* arrowImage = Gtk::manage( new RTImage("popuparrow.png") );
+        setExpandAlignProperties(arrowButton, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+        arrowButton->add(*arrowImage); //menuSymbol);
+        buttonGroup->attach_next_to(*arrowButton, *button, Gtk::POS_RIGHT, 1, 1);
+        arrowButton->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &PopUpCommon::showMenu) );
+        button->get_style_context()->add_class("Left");
+        arrowButton->get_style_context()->add_class("Right");
+        hasMenu = true;
+    }
+
+    newItem->signal_activate ().connect (sigc::bind (sigc::mem_fun (*this, &PopUpCommon::entrySelected), images.size () - 1));
+    menu->append (*newItem);
+
+    return true;
 }
 
 // TODO: 'PopUpCommon::removeEntry' method to be created...
 
 void PopUpCommon::entrySelected (int i)
 {
-    if (setSelected((unsigned int)i))
-        // Emit a a signal if the selected item has changed
-    {
-        message.emit(selected);
+    // Emit a a signal if the selected item has changed
+    if (setSelected (i))
+        message (selected);
+}
+
+void PopUpCommon::setItemSensitivity (int index, bool isSensitive) {
+    const auto items = menu->get_children ();
+    if (index < items.size ()) {
+        items[index]->set_sensitive (isSensitive);
     }
 }
+
 
 /*
  * Set the button image with the selected item
@@ -171,7 +150,12 @@ void PopUpCommon::setButtonHint()
     }
 
     if (selected > -1) {
-        hint += sItems.at(selected);
+        auto widget = menu->get_children ()[selected];
+        auto item = dynamic_cast<MyImageMenuItem*>(widget);
+
+        if (item) {
+            hint += item->getLabel ()->get_text ();
+        }
     }
 
     button->set_tooltip_markup(hint);

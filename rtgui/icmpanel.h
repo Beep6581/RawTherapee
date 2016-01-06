@@ -78,6 +78,7 @@ private:
     MyComboBoxText*    wgamma;
 
     MyComboBoxText*    onames;
+    MyComboBoxText*    ointent;
     Gtk::RadioButton*  ofromdir;
     Gtk::RadioButton*  ofromfile;
     Gtk::RadioButton*  iunchanged;
@@ -107,6 +108,7 @@ public:
 
     void wpChanged ();
     void opChanged ();
+    void oiChanged ();
     void ipChanged ();
     void gpChanged ();
     void GamChanged ();

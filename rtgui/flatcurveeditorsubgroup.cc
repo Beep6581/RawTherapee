@@ -31,6 +31,7 @@
 #include "myflatcurve.h"
 #include "curveeditor.h"
 #include "flatcurveeditorsubgroup.h"
+#include "rtimage.h"
 
 FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir) : CurveEditorSubGroup(curveDir)
 {

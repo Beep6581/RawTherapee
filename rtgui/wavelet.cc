@@ -21,6 +21,7 @@
 #include <cmath>
 #include "edit.h"
 #include "guiutils.h"
+#include "rtimage.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

@@ -95,7 +95,8 @@ protected:
     Gtk::CheckButton* showExpComp;
 
     Gtk::FileChooserButton* iccDir;
-    Gtk::FileChooserButton* monProfile;
+    Gtk::ComboBoxText* monProfile;
+    Gtk::ComboBoxText* monIntent;
     Gtk::CheckButton* cbAutoMonProfile;
     //Gtk::CheckButton* cbAutocielab;
     Gtk::CheckButton* cbciecamfloat;
@@ -106,7 +107,6 @@ protected:
     Gtk::SpinButton*  panFactor;
     Gtk::CheckButton* rememberZoomPanCheckbutton;
 
-    Gtk::ComboBoxText* intent;
     Gtk::ComboBoxText* view;
     Gtk::ComboBoxText* grey;
     Gtk::ComboBoxText* greySc;
@@ -142,6 +142,8 @@ protected:
     Gtk::TreeView*  extensions;
     Gtk::Button*    addExt;
     Gtk::Button*    delExt;
+    Gtk::Button*    moveExtUp;
+    Gtk::Button*    moveExtDown;
     Gtk::CheckButton* overlayedFileNames;
     Gtk::CheckButton* filmStripOverlayedFileNames;
     Gtk::CheckButton* sameThumbSize;
@@ -206,7 +208,8 @@ protected:
     void forRAWComboChanged ();
     void forImageComboChanged ();
     void layoutComboChanged ();
-    void bundledProfilesChanged();
+    void bundledProfilesChanged ();
+    void iccDirChanged ();
     void switchThemeTo (Glib::ustring newTheme);
     void switchFontTo  (Glib::ustring newFont);
     bool splashClosed(GdkEventAny* event);
@@ -238,6 +241,8 @@ public:
     void selectStartupDir ();
     void addExtPressed ();
     void delExtPressed ();
+    void moveExtUpPressed ();
+    void moveExtDownPressed ();
     void darkFrameChanged ();
     void flatFieldChanged ();
     void clearProfilesPressed ();

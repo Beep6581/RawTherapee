@@ -31,7 +31,7 @@ extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
     : orig_prev(NULL), oprevi(NULL), oprevl(NULL), nprevl(NULL), previmg(NULL), workimg(NULL),
-      ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true), scale(10),
+      ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true), monitorIntent(RI_RELATIVE), scale(10),
       highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false),
       bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(0.),
 
@@ -244,12 +244,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     if ((todo & (M_RETINEX|M_INIT)) && params.retinex.enabled) {
         bool dehacontlutili = false;
+        bool mapcontlutili = false;
         bool useHsl = false;
         LUTf cdcurve (65536, 0);
+        LUTf mapcurve (65536, 0);
 
-        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, dehatransmissionCurve, dehacontlutili, useHsl, lhist16RETI, histLRETI);
+        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, mapcurve, dehatransmissionCurve, dehacontlutili, mapcontlutili, useHsl, lhist16RETI, histLRETI);
         float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-        imgsrc->retinex( params.icm, params.retinex,  params.toneCurve, cdcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, histLRETI);//enabled Retinex
+        imgsrc->retinex( params.icm, params.retinex,  params.toneCurve, cdcurve, mapcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, mapcontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, histLRETI);//enabled Retinex
 
         if(dehaListener) {
             dehaListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
@@ -780,6 +782,15 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             }
         }
     }
+    // Update the monitor color transform if necessary
+    if (todo & M_MONITOR) {
+        ipf.updateColorProfiles(params.icm, monitorProfile, monitorIntent);
+    }
+
+    // Update the monitor color transform if necessary
+    if (todo & M_MONITOR) {
+        ipf.updateColorProfiles(params.icm, monitorProfile, monitorIntent);
+    }
 
     // process crop, if needed
     for (size_t i = 0; i < crops.size(); i++)
@@ -794,7 +805,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     progress ("Conversion to RGB...", 100 * readyphase / numofphases);
 
-    if (todo != CROP && todo != MINUPDATE) {
+    if ((todo != CROP && todo != MINUPDATE) || (todo & M_MONITOR)) {
         MyMutex::MyLock prevImgLock(previmg->getMutex());
 
         try {
@@ -804,13 +815,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             if(settings->HistogramWorking) {
                 Glib::ustring workProfile = params.icm.working;
-                workimg = ipf.lab2rgb (nprevl, 0, 0, pW, pH, workProfile, true);
+                workimg = ipf.lab2rgb (nprevl, 0, 0, pW, pH, workProfile, RI_RELATIVE, true);  // HOMBRE: was RELATIVE by default in lab2rgb, is it safe to assume we have to use it again ?
             } else {
-                if (params.icm.output == "" || params.icm.output == ColorManagementParams::NoICMString) {
+                if (params.icm.output.empty() || params.icm.output == ColorManagementParams::NoICMString) {
                     outProfile = "sRGB";
                 }
 
-                workimg = ipf.lab2rgb (nprevl, 0, 0, pW, pH, outProfile, false);
+                workimg = ipf.lab2rgb (nprevl, 0, 0, pW, pH, outProfile, params.icm.outputIntent, false);
             }
         } catch(char * str) {
             progress ("Error converting file...", 0);
@@ -1126,6 +1137,17 @@ void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &
     y = (fullh - h) / 2;
 }
 
+void ImProcCoordinator::setMonitorProfile (const Glib::ustring& profile, RenderingIntent intent)
+{
+    monitorProfile = profile;
+    monitorIntent = intent;
+}
+
+void ImProcCoordinator::getMonitorProfile (Glib::ustring& profile, RenderingIntent& intent) const
+{
+    profile = monitorProfile;
+    intent = monitorIntent;
+}
 
 void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname, bool apply_wb)
 {

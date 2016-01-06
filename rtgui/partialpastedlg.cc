@@ -92,6 +92,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title)
     finerot     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ROTATION")));
     crop        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CROP")));
     resize      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RESIZE")));
+    prsharpening     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PRSHARPENING")));
     perspective = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PERSPECTIVE")));
     commonTrans = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COMMONTRANSFORMPARAMS")));
 
@@ -187,6 +188,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title)
     vboxes[4]->pack_start (*finerot, Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*crop, Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*resize, Gtk::PACK_SHRINK, 2);
+    vboxes[4]->pack_start (*prsharpening, Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*perspective, Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*commonTrans, Gtk::PACK_SHRINK, 2);
 
@@ -331,6 +333,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title)
     finerotConn     = finerot->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     cropConn        = crop->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     resizeConn      = resize->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
+    prsharpeningConn      = prsharpening->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     perspectiveConn = perspective->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     commonTransConn = commonTrans->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
 
@@ -628,6 +631,7 @@ void PartialPasteDlg::compositionToggled ()
     finerotConn.block (true);
     cropConn.block (true);
     resizeConn.block (true);
+    prsharpeningConn.block (true);
     perspectiveConn.block (true);
     commonTransConn.block (true);
 
@@ -637,6 +641,7 @@ void PartialPasteDlg::compositionToggled ()
     finerot->set_active (composition->get_active ());
     crop->set_active (composition->get_active ());
     resize->set_active (composition->get_active ());
+    prsharpening->set_active (composition->get_active ());
     perspective->set_active (composition->get_active ());
     commonTrans->set_active (composition->get_active ());
 
@@ -644,6 +649,7 @@ void PartialPasteDlg::compositionToggled ()
     finerotConn.block (false);
     cropConn.block (false);
     resizeConn.block (false);
+    prsharpeningConn.block (false);
     perspectiveConn.block (false);
     commonTransConn.block (false);
 }
@@ -812,6 +818,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!resize->get_active ()) {
         filterPE.resize      = falsePE.resize;
+    }
+
+    if (!prsharpening->get_active ()) {
+        filterPE.prsharpening      = falsePE.prsharpening;
     }
 
     if (!perspective->get_active ()) {

@@ -344,8 +344,8 @@ void BatchQueuePanel::pathFolderButtonPressed ()
     int result = fc.run();
 
     if (result == Gtk::RESPONSE_OK) {
-        if (safe_file_test(fc.get_current_folder(), Glib::FILE_TEST_IS_DIR)) {
-            options.savePathFolder = fc.get_current_folder();
+        if (safe_file_test(fc.get_filename(), Glib::FILE_TEST_IS_DIR)) {
+            options.savePathFolder = fc.get_filename();
             outdirFolderButton->set_label(makeFolderLabel(options.savePathFolder));
         }
     }
@@ -356,7 +356,7 @@ void BatchQueuePanel::pathFolderButtonPressed ()
 void BatchQueuePanel::pathFolderChanged ()
 {
 
-    options.savePathFolder      = outdirFolder->get_current_folder();
+    options.savePathFolder = outdirFolder->get_filename();
 }
 
 void BatchQueuePanel::formatChanged (Glib::ustring f)

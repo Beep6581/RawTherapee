@@ -77,6 +77,14 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         params.crop.w = fw;
         params.crop.h = fh;
     } else {
+        if (params.crop.x < 0) {
+            params.crop.x = 0;
+        }
+
+        if (params.crop.y < 0) {
+            params.crop.y = 0;
+        }
+
         if ((params.crop.x + params.crop.w) > fw) {
             // crop overflow in the width dimension ; we trim it
             params.crop.w = fw - params.crop.x;
@@ -118,16 +126,18 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     if(params.retinex.enabled) { //enabled Retinex
         LUTf cdcurve (65536, 0);
+        LUTf mapcurve (65536, 0);
         LUTu dummy;
         RetinextransmissionCurve dehatransmissionCurve;
         bool dehacontlutili = false;
+        bool mapcontlutili = false;
         bool useHsl = false;
 //        multi_array2D<float, 3> conversionBuffer(1, 1);
         multi_array2D<float, 4> conversionBuffer(1, 1);
         imgsrc->retinexPrepareBuffers(params.icm, params.retinex, conversionBuffer, dummy);
-        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, dehatransmissionCurve, dehacontlutili, useHsl, dummy, dummy );
+        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, mapcurve, dehatransmissionCurve, dehacontlutili, mapcontlutili, useHsl, dummy, dummy );
         float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-        imgsrc->retinex( params.icm, params.retinex, params.toneCurve, cdcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, dummy);
+        imgsrc->retinex( params.icm, params.retinex, params.toneCurve, cdcurve, mapcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, mapcontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, dummy);
     }
 
     if (pl) {
@@ -191,8 +201,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     float *ry = new float [nbtl];
     float *sk = new float [nbtl];
     float *pcsk = new float [nbtl];
-    float *Max_R_ = new float [nbtl];
-    float *Max_B_ = new float [nbtl];
 
     //  printf("expert=%d\n",settings->leveldnautsimpl);
     if(settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "PON") {
@@ -371,11 +379,11 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                     MaxRMoy += max_r[k];
 
                     if(max_r[k] > MaxR) {
-                        MaxR = Max_R_[k];
+                        MaxR = max_r[k];
                     }
 
                     if(max_b[k] > MaxB) {
-                        MaxB = Max_B_[k];
+                        MaxB = max_b[k];
                     }
 
                 }
@@ -713,8 +721,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     delete [] ry;
     delete [] sk;
     delete [] pcsk;
-    delete [] Max_R_;
-    delete [] Max_B_;
 
     imgsrc->convertColorSpace(baseImg, params.icm, currWB);
 
@@ -1151,7 +1157,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         cmsFloat64Number Parameters[7];
         double ga0, ga1, ga2, ga3, ga4, ga5, ga6;
         //  if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
-        readyImg = ipf.lab2rgb16b (labView, cx, cy, cw, ch, params.icm.output, params.icm.working, params.icm.gamma, params.icm.freegamma, params.icm.gampos, params.icm.slpos, ga0, ga1, ga2, ga3, ga4, ga5, ga6, params.blackwhite.enabled );
+        readyImg = ipf.lab2rgb16b (labView, cx, cy, cw, ch, params.icm.output, params.icm.outputIntent, params.icm.working, params.icm.gamma, params.icm.freegamma, params.icm.gampos, params.icm.slpos, ga0, ga1, ga2, ga3, ga4, ga5, ga6, params.blackwhite.enabled );
         customGamma = true;
 
         //or selected Free gamma
@@ -1159,7 +1165,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         bool pro = false;
         Glib::ustring chpro, outProfile;
         bool present_space[9] = {false, false, false, false, false, false, false, false, false};
-        std::vector<Glib::ustring> opnames = iccStore->getOutputProfiles ();
+        std::vector<Glib::ustring> opnames = iccStore->getProfiles ();
 
         //test if files are in system
         for (int j = 0; j < 9; j++) {
@@ -1343,7 +1349,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             bwonly = false;
         }
 
-        readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output, bwonly);
+        readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output, params.icm.outputIntent, bwonly);
 
         if (settings->verbose) {
             printf("Output profile_: \"%s\"\n", params.icm.output.c_str());

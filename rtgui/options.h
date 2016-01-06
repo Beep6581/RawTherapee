@@ -263,6 +263,7 @@ public:
     Glib::ustring fastexport_icm_input;
     Glib::ustring fastexport_icm_working;
     Glib::ustring fastexport_icm_output;
+    rtengine::RenderingIntent fastexport_icm_outputIntent;
     Glib::ustring fastexport_icm_gamma;
     bool          fastexport_resize_enabled;
     double        fastexport_resize_scale;

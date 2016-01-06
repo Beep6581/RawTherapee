@@ -504,6 +504,45 @@ void CurveFactory::curveCL ( bool & clcutili, const std::vector<double>& clcurve
     }
 }
 
+void CurveFactory::mapcurve ( bool & mapcontlutili, const std::vector<double>& mapcurvePoints, LUTf & mapcurve, int skip, LUTu & histogram, LUTu & outBeforeCurveHistogram)
+{
+    bool needed = false;
+    DiagonalCurve* dCurve = NULL;
+    outBeforeCurveHistogram.clear();
+    bool histNeeded = false;
+
+    if (!mapcurvePoints.empty() && mapcurvePoints[0] != 0) {
+        dCurve = new DiagonalCurve (mapcurvePoints, CURVES_MIN_POLY_POINTS / skip);
+
+        if (outBeforeCurveHistogram) {
+            histNeeded = true;
+        }
+
+        if (dCurve && !dCurve->isIdentity()) {
+            needed = true;
+            mapcontlutili = true;
+        }
+    }
+
+    if (histNeeded) {
+        for (int i = 0; i < 32768; i++) {
+            double hval = CLIPD((double)i / 32767.0);
+            int hi = (int)(255.0 * hval);
+            outBeforeCurveHistogram[hi] += histogram[i] ;
+        }
+    }
+
+    fillCurveArray(dCurve, mapcurve, skip, needed);
+
+    if (dCurve) {
+        delete dCurve;
+        dCurve = NULL;
+    }
+}
+
+
+
+
 void CurveFactory::curveDehaContL ( bool & dehacontlutili, const std::vector<double>& dehaclcurvePoints, LUTf & dehaclCurve, int skip, LUTu & histogram, LUTu & outBeforeCurveHistogram)
 {
     bool needed = false;

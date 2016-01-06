@@ -21,56 +21,55 @@
 
 #include <string>
 #include <map>
-#include <glibmm.h>
-#include "thumbnail.h"
-#include <cstdio>
-#include "../rtengine/procparams.h"
+
+#include <glibmm/ustring.h>
+
 #include "threadutils.h"
 
 class Thumbnail;
 
 class CacheManager
 {
-
-    typedef std::pair<std::string, Thumbnail*> string_thumb_pair;
-    typedef std::map<std::string, Thumbnail*> string_thumb_map;
-
-    string_thumb_map openEntries;
+private:
+    using Entries = std::map<std::string, Thumbnail*>;
+    Entries openEntries;
     Glib::ustring    baseDir;
-    MyMutex          mutex_;
+    mutable MyMutex  mutex;
 
-    void deleteDir (const Glib::ustring& dirName);
+    void deleteDir   (const Glib::ustring& dirName) const;
+    void deleteFiles (const Glib::ustring& fname, const std::string& md5, bool purgeData, bool purgeProfile) const;
 
-    CacheManager () {}
+    void applyCacheSizeLimitation () const;
+
+    CacheManager () = default;
+    CacheManager (const CacheManager&) = delete;
+    CacheManager& operator= (const CacheManager&) = delete;
 
 public:
 
-    static CacheManager* getInstance(void);
+    static CacheManager* getInstance ();
 
     void        init        ();
+
     Thumbnail*  getEntry    (const Glib::ustring& fname);
     void        deleteEntry (const Glib::ustring& fname);
     void        renameEntry (const std::string& oldfilename, const std::string& oldmd5, const std::string& newfilename);
 
-    void        closeThumbnail (Thumbnail* t);
+    void closeThumbnail (Thumbnail* thumbnail);
+    void closeCache () const;
 
-    const Glib::ustring& getBaseDir     ()
-    {
-        MyMutex::MyLock lock(mutex_);
-        return baseDir;
-    }
-    void  closeCache ();
+    void clearAll () const;
+    void clearImages () const;
+    void clearProfiles () const;
+    void clearFromCache (const Glib::ustring& fname, bool purge) const;
 
     static std::string getMD5 (const Glib::ustring& fname);
 
-    void clearAll ();
-    void clearThumbImages ();
-    void clearProfiles ();
-    void clearFromCache(const Glib::ustring& fname, bool leavenotrace);
+    Glib::ustring    getCacheFileName (const Glib::ustring& subDir,
+                                       const Glib::ustring& fname,
+                                       const Glib::ustring& fext,
+                                       const Glib::ustring& md5) const;
 
-    void applyCacheSizeLimitation ();
-
-    Glib::ustring    getCacheFileName (const Glib::ustring& subdir, const Glib::ustring& fname, const Glib::ustring& md5);
 };
 
 #define cacheMgr CacheManager::getInstance()
