@@ -18,12 +18,14 @@
  */
 #include "cachemanager.h"
 
-#ifdef WIN32
-#include <windows.h>
-#endif
+#include <memory>
 
 #include <glib/gstdio.h>
 #include <giomm.h>
+
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 #include "guiutils.h"
 #include "options.h"
