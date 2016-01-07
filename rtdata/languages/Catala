@@ -1025,6 +1025,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>Shift-4</b>
 !FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>Shift-5</b>
 !FILEBROWSER_SHOWNOTTRASHHINT;Show only non-deleted images.
+!FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !FILEBROWSER_UNRANK_TOOLTIP;Unrank.\nShortcut: <b>Shift-0</b>
 !FILECHOOSER_FILTER_ANY;All files
 !FILECHOOSER_FILTER_COLPROF;Color profiles
@@ -1392,6 +1393,8 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_NAVIGATIONFRAME;Navigation
 !PREFERENCES_NOISE;Noise Reduction
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
+!PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
+!PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
 !PREFERENCES_PREVDEMO;Preview Demosaic Method
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:

@@ -61,12 +61,17 @@ public:
     bool enabled;
     bool str;
     bool scal;
+    bool iter;
+    bool grad;
+    bool grads;
     bool gam;
     bool slope;
     bool neigh;
     bool gain;
     bool offs;
     bool retinexMethod;
+    bool mapMethod;
+    bool viewMethod;
     bool retinexcolorspace;
     bool gammaretinex;
     bool vart;
@@ -77,11 +82,18 @@ public:
     bool method;
     bool transmissionCurve;
     bool cdcurve;
+    bool mapcurve;
     bool cdHcurve;
     bool lhcurve;
     bool retinex;
     bool medianmap;
     bool isUnchanged() const;
+    bool highlights;
+    bool htonalwidth;
+    bool shadows;
+    bool stonalwidth;
+    bool radius;
+
 };
 
 
@@ -530,6 +542,7 @@ public:
     bool dcpIlluminant;
     bool working;
     bool output;
+    bool outputIntent;
     bool gamma;
     bool gampos;
     bool slpos;

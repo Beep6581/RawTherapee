@@ -1891,6 +1891,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_407;Retinex - Method
 !HISTORY_MSG_408;Retinex - Neighboring
@@ -1914,6 +1915,8 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_426;Retinex - Hue equalizer
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
 !PARTIALPASTE_RETINEX;Retinex
+!PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
+!PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
 !PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !TP_COLORTONING_NEUTRAL;Reset sliders

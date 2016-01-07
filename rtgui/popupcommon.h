@@ -21,12 +21,21 @@
 #ifndef _POPUPCOMMON_
 #define _POPUPCOMMON_
 
+#include <vector>
+#include <glibmm/ustring.h>
+#include <sigc++/signal.h>
 
-#include <gtkmm.h>
-#include <sigc++/sigc++.h>
-#include "rtimage.h"
-#include "guiutils.h"
+namespace Gtk
+{
+class Grid;
+class Menu;
+class Button;
+class ImageMenuItem;
+}
 
+typedef struct _GdkEventButton GdkEventButton;
+
+class RTImage;
 
 class PopUpCommon
 {
@@ -38,27 +47,20 @@ public:
 
     PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "");
     virtual ~PopUpCommon ();
-    bool addEntry (Glib::ustring fileName, Glib::ustring label);
+    bool addEntry (const Glib::ustring& fileName, const Glib::ustring& label);
+    int getEntryCount () const;
     bool setSelected (int entryNum);
-    int  getSelected ()
-    {
-        return selected;
-    }
+    int  getSelected () const;
     void setButtonHint();
     void show ();
     void set_tooltip_text (const Glib::ustring &text);
+    void setItemSensitivity (int i, bool isSensitive);
 
 private:
     type_signal_changed message;
 
-    /*
-       TODO: MenuItem::get_label() doesn't return any string, or an empty string !?
-       That's why we store entries strings in sItems, but it would be nice to get ride of it...
-    */
-    std::vector<Glib::ustring> sItems;
     std::vector<Glib::ustring> imageFilenames;
     std::vector<const RTImage*> images;
-    std::vector<MyImageMenuItem*> items;
     Glib::ustring buttonHint;
     RTImage* buttonImage;
     Gtk::Grid* imageContainer;
@@ -68,8 +70,25 @@ private:
     bool hasMenu;
 
     void showMenu(GdkEventButton* event);
+
+protected:
     void entrySelected (int i);
 
 };
+
+inline PopUpCommon::type_signal_changed PopUpCommon::signal_changed ()
+{
+    return message;
+}
+
+inline int PopUpCommon::getEntryCount () const
+{
+    return images.size();
+}
+
+inline int PopUpCommon::getSelected () const
+{
+    return selected;
+}
 
 #endif

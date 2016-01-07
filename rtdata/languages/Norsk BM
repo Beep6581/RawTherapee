@@ -568,6 +568,7 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images.\nShortcut: <b>6</b>
 !FILEBROWSER_SHOWEXIFINFO;Show Exif info.\n\nShortcuts:\n<b>i</b> - Multiple Editor Tabs Mode,\n<b>Alt-i</b> - Single Editor Tab Mode.
 !FILEBROWSER_SHOWNOTTRASHHINT;Show only non-deleted images.
+!FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show saved images.\nShortcut: <b>Alt-7</b>
 !FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show unsaved images.\nShortcut: <b>Alt-6</b>
 !FILEBROWSER_SHOWUNCOLORHINT;Show images without a color label.\nShortcut: <b>Alt-0</b>
@@ -1148,6 +1149,8 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 !PREFERENCES_PANFACTORLABEL;Pan rate amplification
+!PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
+!PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
 !PREFERENCES_PREVDEMO;Preview Demosaic Method
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:

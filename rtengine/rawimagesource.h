@@ -152,8 +152,8 @@ public:
     void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse);
     void        demosaic    (const RAWParams &raw);
 //    void        retinex       (RAWParams raw, ColorManagementParams cmp, RetinexParams  lcur, LUTf & cdcurve, bool dehacontlutili);
-    void        retinex       (ColorManagementParams cmp, RetinexParams  deh, ToneCurveParams Tc, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI);
-    void        retinexPrepareCurves       (RetinexParams retinexParams, LUTf &cdcurve, RetinextransmissionCurve &retinextransmissionCurve, bool &retinexcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI);
+    void        retinex       (ColorManagementParams cmp, RetinexParams  deh, ToneCurveParams Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI);
+    void        retinexPrepareCurves       (RetinexParams retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI);
     void        retinexPrepareBuffers      (ColorManagementParams cmp, RetinexParams retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI);
     void        flushRawData      ();
     void        flushRGB          ();
@@ -230,7 +230,7 @@ public:
 
     void boxblur2(float** src, float** dst, float** temp, int H, int W, int box );
     void boxblur_resamp(float **src, float **dst, float** temp, int H, int W, int box, int samp );
-    void MSR(float** luminance, float **originalLuminance, float **exLuminance,  int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
+    void MSR(float** luminance, float **originalLuminance, float **exLuminance,  LUTf & mapcurve, bool &mapcontlutili, int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
 //   void MSR(LabImage* lab, int width, int height, int skip, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve);
 
     //void boxblur_resamp(float **red, float **green, float **blue, int H, int W, float thresh[3], float max[3],

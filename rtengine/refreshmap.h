@@ -20,15 +20,16 @@
 #define __REFRESHMAP__
 
 // Use M_VOID if you wish to update the proc params without updating the preview at all !
-#define M_VOID       (1<<15)
+#define M_VOID       (1<<16)
 // Use M_MINUPDATE if you wish to update the preview without modifying the image (think about it like a "refreshPreview")
 // Must NOT be used with other event (i.e. will be used for MINUPDATE only)
-#define M_MINUPDATE  (1<<14)
+#define M_MINUPDATE  (1<<15)
 // Force high quality
-#define M_HIGHQUAL   (1<<13)
+#define M_HIGHQUAL   (1<<14)
 
 // Elementary functions that can be done to
 // the preview image when an event occurs
+#define M_MONITOR     (1<<13)
 #define M_RETINEX     (1<<12)
 #define M_CROP        (1<<11)
 #define M_PREPROC     (1<<10)
@@ -45,31 +46,30 @@
 
 // Bitfield of functions to do to the preview image when an event occurs
 // Use those or create new ones for your new events
-#define FIRST           (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)  // without HIGHQUAL
-#define ALL             (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)  // without HIGHQUAL
-#define TRANSFORM       (M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define AUTOEXP         (M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define RGBCURVE        (M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define LUMINANCECURVE  (M_LUMACURVE|M_LUMINANCE)
-#define SHARPENING       M_LUMINANCE
-#define IMPULSEDENOISE   M_LUMINANCE
-#define DEFRINGE         M_LUMINANCE
-#define WHITEBALANCE    (M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define DEMOSAIC        (M_RAW|M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define DARKFRAME       (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define FLATFIELD       (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define DIRPYRDENOISE   (M_COLOR|M_LUMINANCE)
-#define CROP             M_CROP
-#define RESIZE           M_VOID
-#define EXIF             M_VOID
-#define IPTC             M_VOID
-#define DIRPYREQUALIZER (M_COLOR|M_LUMINANCE)
-#define OUTPUTPROFILE   (M_INIT|M_COLOR|M_LUMINANCE)
-#define INPUTPROFILE     WHITEBALANCE
-#define GAMMA           (M_COLOR|M_LUMINANCE)
-#define MINUPDATE        M_MINUPDATE
-#define ALLNORAW        (M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define RETINEX         (M_RETINEX|ALLNORAW)
+#define FIRST            (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)  // without HIGHQUAL
+#define ALL              (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)  // without HIGHQUAL
+#define DARKFRAME        (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define FLATFIELD        (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define DEMOSAIC                   (M_RAW|M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define ALLNORAW                         (M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define TRANSFORM                                            (M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define AUTOEXP                                                                    (M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define RGBCURVE                                                                             (M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define LUMINANCECURVE                                                                                  (M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define SHARPENING                                                                                                  (M_LUMINANCE|M_COLOR)
+#define IMPULSEDENOISE                                                                                              (M_LUMINANCE|M_COLOR)
+#define DEFRINGE                                                                                                    (M_LUMINANCE|M_COLOR)
+#define DIRPYRDENOISE                                                                                               (M_LUMINANCE|M_COLOR)
+#define DIRPYREQUALIZER                                                                                             (M_LUMINANCE|M_COLOR)
+#define GAMMA                                                                                                       (M_LUMINANCE|M_COLOR)
+#define CROP              M_CROP
+#define RESIZE            M_VOID
+#define EXIF              M_VOID
+#define IPTC              M_VOID
+#define MINUPDATE         M_MINUPDATE
+#define RETINEX          (M_RETINEX|ALLNORAW)
+#define MONITORTRANSFORM  M_MONITOR
+#define OUTPUTPROFILE    (ALLNORAW|MONITORTRANSFORM)
 
 extern int refreshmap[];
 #endif

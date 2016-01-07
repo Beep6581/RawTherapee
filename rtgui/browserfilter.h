@@ -30,6 +30,7 @@ public:
     bool showCLabeled[6];
     bool showTrash;
     bool showNotTrash;
+    bool showOriginal;
     bool showEdited[2];
     bool showRecentlySaved[2];
     bool multiselect;

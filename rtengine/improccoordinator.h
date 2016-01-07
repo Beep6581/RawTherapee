@@ -72,6 +72,10 @@ protected:
 
     ImProcFunctions ipf;
 
+    Glib::ustring monitorProfile;
+
+    RenderingIntent monitorIntent;
+
     int scale;
     bool highDetailPreprocessComputed;
     bool highDetailRawComputed;
@@ -248,6 +252,9 @@ public:
     void getCamWB    (double& temp, double& green);
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green);
     void getAutoCrop (double ratio, int &x, int &y, int &w, int &h);
+
+    void setMonitorProfile (const Glib::ustring& profile, RenderingIntent intent);
+    void getMonitorProfile (Glib::ustring& profile, RenderingIntent& intent) const;
 
     bool updateTryLock ()
     {

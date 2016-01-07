@@ -1998,6 +1998,9 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !HISTORY_MSG_166;Exposure - Reset
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
+!PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
+!PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
 !TP_NEUTRAL;Reset

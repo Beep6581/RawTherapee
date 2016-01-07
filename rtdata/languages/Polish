@@ -1513,6 +1513,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
 !EXPORT_BYPASS_EQUALIZER;Bypass Wavelet Levels
 !FILEBROWSER_SHOWNOTTRASHHINT;Show only non-deleted images.
+!FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !FILECHOOSER_FILTER_ANY;All files
 !FILECHOOSER_FILTER_COLPROF;Color profiles
 !FILECHOOSER_FILTER_CURVE;Curve files
@@ -1693,6 +1694,8 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !PREFERENCES_NAVIGATIONFRAME;Navigation
 !PREFERENCES_NOISE;Noise Reduction
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
+!PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
+!PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
 !PREFERENCES_PREVDEMO;Preview Demosaic Method
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:

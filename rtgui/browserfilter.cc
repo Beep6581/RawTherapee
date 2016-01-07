@@ -18,11 +18,11 @@
  */
 #include "browserfilter.h"
 
-BrowserFilter::BrowserFilter () : exifFilterEnabled (false)
+BrowserFilter::BrowserFilter () : exifFilterEnabled (false),
+    showTrash (true),
+    showNotTrash (true),
+    showOriginal (false)
 {
-
-    showTrash = true;
-
     for (int i = 0; i < 6; i++) {
         showRanked[i] = true;
         showCLabeled[i] = true;

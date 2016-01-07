@@ -123,14 +123,7 @@ bool MultiLangMgr::save (Glib::ustring fname)
 
 bool MultiLangMgr::isOSLanguageDetectSupported()
 {
-#ifdef WIN32
-#ifdef __MINGW64_VERSION_MAJOR
-    // Only on Vista or above
-    return LOBYTE(LOWORD(GetVersion())) >= 6;
-#else
-    return false;
-#endif
-#elif defined(__linux__) || defined(__APPLE__)
+#if defined(WIN32) || defined(__linux__) || defined(__APPLE__)
     return true;
 #else
     return false;
@@ -141,36 +134,37 @@ bool MultiLangMgr::isOSLanguageDetectSupported()
 // returns Language name mapped from the currently selected OS language
 Glib::ustring MultiLangMgr::getOSUserLanguage()
 {
-    Glib::ustring langName = Glib::ustring("default");
+    Glib::ustring langName ("default");
 
-    if (isOSLanguageDetectSupported()) {
+#if defined(WIN32)
 
-#ifdef WIN32
-// When using old versions of MINGW this is not defined
-#ifdef __MINGW64_VERSION_MAJOR
-        WCHAR langRFCU[64] = {0};
+    const LCID localeID = GetUserDefaultLCID ();
+    TCHAR localeName[18];
 
-        if (GetUserDefaultLocaleName(langRFCU, 64) != 0 && lstrlenW(langRFCU) >= 2) {
-            // convert UNICODE16 to GTK
-            char langRFC[64];
-            WideCharToMultiByte(CP_UTF8, 0, langRFCU, -1, langRFC, 64, 0, 0);
-            Glib::ustring localRFC = Glib::ustring(langRFC);
-
-            langName = TranslateRFC2Language(localRFC);
-        }
-
-#endif
-#elif defined(__linux__) || defined(__APPLE__)
-        char *tmplocale;
-        tmplocale = setlocale(LC_CTYPE, "");
-        setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
-
-        if(tmplocale) {
-            langName = TranslateRFC2Language(tmplocale);
-        }
-
-#endif
+    const int langLen = GetLocaleInfo (localeID, LOCALE_SISO639LANGNAME, localeName, 9);
+    if (langLen <= 0) {
+        return langName;
     }
+
+    localeName[langLen - 1] = '-';
+
+    const int countryLen = GetLocaleInfo (localeID, LOCALE_SISO3166CTRYNAME, localeName + langLen, 9);
+    if (countryLen <= 0) {
+        return langName;
+    }
+
+    langName = TranslateRFC2Language (localeName);
+
+#elif defined(__linux__) || defined(__APPLE__)
+
+    const char* locale = setlocale(LC_CTYPE, "");
+    setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
+
+    if (locale) {
+        langName = TranslateRFC2Language (locale);
+    }
+
+#endif
 
     return langName;
 }

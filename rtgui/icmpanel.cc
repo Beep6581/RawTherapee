@@ -200,13 +200,26 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     onames->append (M("TP_ICM_NOICM"));
     onames->set_active (0);
 
-    std::vector<Glib::ustring> opnames = iccStore->getOutputProfiles ();
+    std::vector<Glib::ustring> opnames = iccStore->getProfiles ();
 
     for (size_t i = 0; i < opnames.size(); i++) {
         onames->append (opnames[i]);
     }
 
     onames->set_active (0);
+
+    // Rendering intent
+    Gtk::HBox *riHBox = Gtk::manage ( new Gtk::HBox());
+    Gtk::Label* outputIntentLbl = Gtk::manage (new Gtk::Label(M("TP_ICM_PROFILEINTENT")+":"));
+    riHBox->pack_start (*outputIntentLbl, Gtk::PACK_SHRINK);
+    ointent = Gtk::manage (new MyComboBoxText ());
+    riHBox->pack_start (*ointent, Gtk::PACK_EXPAND_WIDGET);
+    ointent->append (M("PREFERENCES_INTENT_PERCEPTUAL"));
+    ointent->append (M("PREFERENCES_INTENT_RELATIVE"));
+    ointent->append (M("PREFERENCES_INTENT_SATURATION"));
+    ointent->append (M("PREFERENCES_INTENT_ABSOLUTE"));
+    ointent->set_active (1);
+    oVBox->pack_start(*riHBox, Gtk::PACK_SHRINK);
 
     // Output gamma
 
@@ -297,6 +310,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 
     wnames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::wpChanged) );
     onames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::opChanged) );
+    ointent->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::oiChanged) );
     wgamma->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::gpChanged) );
     dcpIll->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::dcpIlluminantChanged) );
 
@@ -522,6 +536,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
     if (onames->get_active_row_number() == -1) {
         onames->set_active_text (M("TP_ICM_NOICM"));
     }
+    ointent->set_active(pp->icm.outputIntent);
 
     ckbToneCurve->set_active (pp->icm.toneCurve);
     lastToneCurve = pp->icm.toneCurve;
@@ -558,6 +573,10 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
 
         if (!pedited->icm.output) {
             onames->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+
+        if (!pedited->icm.outputIntent) {
+            ointent->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
         if (!pedited->icm.dcpIlluminant) {
@@ -620,6 +639,13 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
         pp->icm.output  = onames->get_active_text();
     }
 
+    int ointentVal = ointent->get_active_row_number();
+    if (ointentVal >= 0 && ointentVal < RI__COUNT) {
+        pp->icm.outputIntent  = static_cast<RenderingIntent>(ointentVal);
+    } else {
+        pp->icm.outputIntent  = rtengine::RI_RELATIVE;
+    }
+
     pp->icm.freegamma = freegamma->get_active();
 
     DCPProfile* dcp = NULL;
@@ -656,6 +682,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.input = !iunchanged->get_active ();
         pedited->icm.working = wnames->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.output = onames->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->icm.outputIntent = ointent->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.dcpIlluminant = dcpIll->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.toneCurve = !ckbToneCurve->get_inconsistent ();
         pedited->icm.applyLookTable = !ckbApplyLookTable->get_inconsistent ();
@@ -895,6 +922,14 @@ void ICMPanel::opChanged ()
     }
 }
 
+void ICMPanel::oiChanged ()
+{
+
+    if (listener) {
+        listener->panelChanged (EvOIntent, ointent->get_active_text());
+    }
+}
+
 void ICMPanel::setRawMeta (bool raw, const rtengine::ImageData* pMeta)
 {
 
@@ -936,7 +971,6 @@ void ICMPanel::saveReferencePressed ()
 
     Gtk::CheckButton applyWB(M("TP_ICM_SAVEREFERENCE_APPLYWB"));
     applyWB.set_tooltip_text (M("TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP"));
-    applyWB.set_active(true);
     Gtk::HBox* hbox = Gtk::manage( new Gtk::HBox() );
     hbox->pack_end(applyWB, Gtk::PACK_SHRINK, 2);
     Gtk::Box *box = dialog.get_content_area();

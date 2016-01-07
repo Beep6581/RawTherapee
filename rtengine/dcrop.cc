@@ -989,40 +989,6 @@ void Crop::update (int todo)
     // switch back to rgb
     parent->ipf.lab2monitorRgb (labnCrop, cropImg);
 
-    //parent->ipf.lab2monitorRgb (laboCrop, cropImg);
-
-    //cropImg = baseCrop->to8();
-    /*
-    //     int xref,yref;
-    xref=000;yref=000;
-    if (colortest && cropw>115 && croph>115)
-    for(int j=1;j<5;j++){
-        xref+=j*30;yref+=j*30;
-        int rlin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))]/255.0) * 255.0);
-        int glin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1]/255.0) * 255.0);
-        int blin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+2]/255.0) * 255.0);
-
-        printf("after lab2rgb RGB lab2 Xr%i Yr%i Skip=%d  R=%d  G=%d  B=%d  \n",xref,yref,skip,
-               rlin,glin,blin);
-               //cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))],
-               //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1)],
-               //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+2)]);
-        //printf("after lab2rgb Lab lab2 Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
-        printf("after lab2rgb Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip,
-               labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,
-               labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,
-               labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327)q;
-    }
-    */
-    /*
-    if (colortest && cropImg->height>115 && cropImg->width>115) {//for testing
-        xref=000;yref=000;
-        printf("dcrop final R= %d  G= %d  B= %d  \n",
-               cropImg->data[3*xref/(skip)*(cropImg->width+1)],
-               cropImg->data[3*xref/(skip)*(cropImg->width+1)+1],
-               cropImg->data[3*xref/(skip)*(cropImg->width+1)+2]);
-    }
-    */
     if (cropImageListener) {
         // this in output space held in parallel to allow analysis like shadow/highlight
         Glib::ustring outProfile = params.icm.output;
@@ -1030,13 +996,13 @@ void Crop::update (int todo)
         Image8 *cropImgtrue;
 
         if(settings->HistogramWorking) {
-            cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0, 0, cropw, croph, workProfile, false);
+            cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0, 0, cropw, croph, workProfile, RI_RELATIVE, false);  // HOMBRE: was RELATIVE by default in lab2rgb, is it safe to assume we have to use it again ?
         } else {
             if (params.icm.output == "" || params.icm.output == ColorManagementParams::NoICMString) {
                 outProfile = "sRGB";
             }
 
-            cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0, 0, cropw, croph, outProfile, false);
+            cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0, 0, cropw, croph, outProfile, params.icm.outputIntent, false);
         }
 
         int finalW = rqcropw;

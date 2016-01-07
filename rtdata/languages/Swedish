@@ -1724,6 +1724,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !CURVEEDITOR_AXIS_RIGHT_TAN;RT:
 !CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
 !EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
+!FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_256;NR - Median type
 !HISTORY_MSG_257;Color Toning
@@ -1788,6 +1789,8 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PREFERENCES_MAX;Maxi (Tile)
 !PREFERENCES_MED;Medium (Tile/2)
 !PREFERENCES_MIN;Mini (100x115)
+!PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
+!PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
 !PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
 !PREFERENCES_SIMPLAUT;Tool mode
 !PREFERENCES_TINB;Number of tiles

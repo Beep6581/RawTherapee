@@ -1246,9 +1246,14 @@ MyImageMenuItem::MyImageMenuItem(Glib::ustring label, Glib::ustring imageFileNam
     add(*box);
 }
 
-const RTImage *MyImageMenuItem::getImage()
+const RTImage *MyImageMenuItem::getImage () const
 {
     return image;
+}
+
+const Gtk::Label* MyImageMenuItem::getLabel () const
+{
+    return label;
 }
 
 
