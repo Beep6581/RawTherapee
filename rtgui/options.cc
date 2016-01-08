@@ -326,7 +326,7 @@ void Options::setDefaults ()
     defProfRaw = DEFPROFILE_RAW;
     defProfImg = DEFPROFILE_IMG;
     dateFormat = "%y-%m-%d";
-    adjusterMinDelay = 200;
+    adjusterMinDelay = 100;
     adjusterMaxDelay = 200;
     startupDir = STARTUPDIR_LAST;
     startupPath = "";
