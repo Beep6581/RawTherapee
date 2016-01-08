@@ -57,7 +57,7 @@ protected:
     Gtk::ImageMenuItem* tail;
     Gtk::MenuItem* selall;
     Gtk::MenuItem* open;
-    Gtk::Menu* pmenu;
+    std::unique_ptr<Gtk::Menu> pmenu;
 
     Glib::RefPtr<Gtk::AccelGroup> pmaccelgroup;
 
@@ -65,17 +65,17 @@ protected:
 
     Glib::ustring autoCompleteFileName (const Glib::ustring& fileName, const Glib::ustring& format);
     Glib::ustring getTempFilenameForParams( const Glib::ustring filename );
-    bool saveBatchQueue( );
+    bool saveBatchQueue ();
     void notifyListener (bool queueEmptied);
 
 public:
     BatchQueue (FileCatalog* aFileCatalog);
     ~BatchQueue ();
 
-    void addEntries (std::vector<BatchQueueEntry*> &entries, bool head = false, bool save = true);
-    void cancelItems (std::vector<ThumbBrowserEntryBase*>* items);
-    void headItems (std::vector<ThumbBrowserEntryBase*>* items);
-    void tailItems (std::vector<ThumbBrowserEntryBase*>* items);
+    void addEntries (const std::vector<BatchQueueEntry*>& entries, bool head = false, bool save = true);
+    void cancelItems (const std::vector<ThumbBrowserEntryBase*>& items);
+    void headItems (const std::vector<ThumbBrowserEntryBase *>& items);
+    void tailItems (const std::vector<ThumbBrowserEntryBase *>& items);
     void selectAll ();
     void openItemInEditor(ThumbBrowserEntryBase* item);
     void openLastSelectedItemInEditor();
