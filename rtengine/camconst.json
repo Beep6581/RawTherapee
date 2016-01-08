@@ -1580,6 +1580,11 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
 	"dcraw_matrix": [ 4932, -835, 141, -4878, 11868, 3437, -1138, 1961, 7067 ],
         "ranges": { "black": 0, "white": 64400 } // CMOS sensor, we dare to set white level a bit higher than for the more varying Phase One CCDs
     },
+    { // quality C, matrix made from crappy cc24 photo
+        "make_model": [ "Phase One IQ3 100MP" ],
+        "dcraw_matrix": [ 4479,-895,-536,-5818,13569,2742,-1186,2190,7909],
+        "ranges": { "black": 0, "white": 64400 }
+    },
 
     { // Quality A for tested CFV, the other models have the same sensor (16 megapixel square sensor)
         "make_model": [ "Hasselblad V96C", "Hasselblad CFV", "Hasselblad CFV-II" ],
