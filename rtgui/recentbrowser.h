@@ -20,30 +20,33 @@
 #define _RECENTBROWSER_
 
 #include <gtkmm.h>
-#include "dirbrowserremoteinterface.h"
-#include "dirselectionlistener.h"
 #include "multilangmgr.h"
 #include "guiutils.h"
 
-class RecentBrowser : public Gtk::VBox, public DirSelectionListener
+class RecentBrowser : public Gtk::VBox
 {
+public:
+    typedef sigc::slot<void, const Glib::ustring&> DirSelectionSlot;
 
+private:
     Gtk::ComboBoxText*              recentDirs;
     sigc::connection             conn;
-    DirBrowserRemoteInterface*   listener;
+    DirSelectionSlot             selectDir;
 
 public:
 
     RecentBrowser ();
 
-    void setDirBrowserRemoteInterface (DirBrowserRemoteInterface* l)
-    {
-        listener = l;
-    }
+    void setDirSelector (const DirSelectionSlot& selectDir);
 
     void selectionChanged ();
-    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile = "");
+    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile);
 };
+
+inline void RecentBrowser::setDirSelector (const RecentBrowser::DirSelectionSlot& selectDir)
+{
+    this->selectDir = selectDir;
+}
 
 #endif
 
