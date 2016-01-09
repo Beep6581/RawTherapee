@@ -787,11 +787,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         ipf.updateColorProfiles(params.icm, monitorProfile, monitorIntent);
     }
 
-    // Update the monitor color transform if necessary
-    if (todo & M_MONITOR) {
-        ipf.updateColorProfiles(params.icm, monitorProfile, monitorIntent);
-    }
-
     // process crop, if needed
     for (size_t i = 0; i < crops.size(); i++)
         if (crops[i]->hasListener () && cropCall != crops[i] ) {
