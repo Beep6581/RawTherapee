@@ -21,6 +21,7 @@
 #include <cstring>
 #include "../rtengine/rt_math.h"
 
+#include <fstream>
 #include <functional>
 #include <iomanip>
 #include <sstream>
