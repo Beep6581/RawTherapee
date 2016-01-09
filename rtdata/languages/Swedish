@@ -827,7 +827,6 @@ PREFERENCES_CLIPPINGIND;Klippindikering
 PREFERENCES_CLUTSCACHE;HaldCLUT cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximalt antal cachade CLUTs
 PREFERENCES_CLUTSDIR;HaldCLUT-katalog
-PREFERENCES_CMETRICINTENT;Kolorimetrisk återgivning
 PREFERENCES_CURVEBBOXPOS;Positionen för kopiera/klistra in-knapparna
 PREFERENCES_CURVEBBOXPOS_ABOVE;Ovan
 PREFERENCES_CURVEBBOXPOS_BELOW;Under
@@ -915,7 +914,6 @@ PREFERENCES_MENUGROUPPROFILEOPERATIONS;Visa "Profilaktiviteter"
 PREFERENCES_MENUGROUPRANK;Visa "Betygsättning"
 PREFERENCES_MENUOPTIONS;Menyval för högerklick
 PREFERENCES_METADATA;Metadata
-PREFERENCES_MONITORICC;Skärmprofil
 PREFERENCES_MULTITAB;Öppna bilderna i olika flikar
 PREFERENCES_MULTITABDUALMON;Visa bild på andra skärmen, om möjligt, i flerfliksläge
 PREFERENCES_NAVGUIDEBRUSH;Översiktsvyns guidefärg
@@ -1759,11 +1757,11 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_402;W - Denoise sub-tool
 !HISTORY_MSG_406;W - ES - Neighboring pixels
 !HISTORY_MSG_407;Retinex - Method
-!HISTORY_MSG_408;Retinex - Neighboring
-!HISTORY_MSG_409;Retinex - Gain
-!HISTORY_MSG_410;Retinex - Offset
+!HISTORY_MSG_408;Retinex - Radius
+!HISTORY_MSG_409;Retinex - Contrast
+!HISTORY_MSG_410;Retinex - Brightness
 !HISTORY_MSG_411;Retinex - Strength
-!HISTORY_MSG_412;Retinex - Scales
+!HISTORY_MSG_412;Retinex - Gaussian Gradient
 !HISTORY_MSG_413;Retinex - Variance
 !HISTORY_MSG_414;Retinex - Histogram - Lab
 !HISTORY_MSG_415;Retinex - Transmission
@@ -1778,9 +1776,25 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_424;Retinex - HL threshold
 !HISTORY_MSG_425;Retinex - Log base
 !HISTORY_MSG_426;Retinex - Hue equalizer
+!HISTORY_MSG_427;Output rendering intent
+!HISTORY_MSG_428;Monitor rendering intent
+!HISTORY_MSG_429;Retinex - Iterations
+!HISTORY_MSG_430;Retinex - Transmission Gradient
+!HISTORY_MSG_431;Retinex - Strength Gradient
+!HISTORY_MSG_432;Retinex - M - Highlights
+!HISTORY_MSG_433;Retinex - M - Highlights TW
+!HISTORY_MSG_434;Retinex - M - Shadows
+!HISTORY_MSG_435;Retinex - M - Shadows TW
+!HISTORY_MSG_436;Retinex - M - Radius
+!HISTORY_MSG_437;Retinex - M - Method
+!HISTORY_MSG_438;Retinex - M - Equalizer
+!HISTORY_MSG_439;Retinex - Preview
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
+!MONITOR_PROFILE_SYSTEM;System default
+!MONITOR_SOFTPROOF;Soft-proof
 !PARTIALPASTE_COLORTONING;Color toning
 !PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
+!PARTIALPASTE_PRSHARPENING;Post-resize sharpening
 !PARTIALPASTE_RETINEX;Retinex
 !PREFERENCES_GREY;Output device's Yb luminance (%)
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
@@ -1789,8 +1803,11 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PREFERENCES_MAX;Maxi (Tile)
 !PREFERENCES_MED;Medium (Tile/2)
 !PREFERENCES_MIN;Mini (100x115)
+!PREFERENCES_MONINTENT;Default monitor intent
+!PREFERENCES_MONPROFILE;Default monitor profile
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 !PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
+!PREFERENCES_PROFILE_NONE;None
 !PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
 !PREFERENCES_SIMPLAUT;Tool mode
 !PREFERENCES_TINB;Number of tiles
@@ -1843,6 +1860,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only enabled if the selected DCP has one.
 !TP_ICM_APPLYLOOKTABLE;Look table
 !TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only enabled if the selected DCP has one.
+!TP_ICM_PROFILEINTENT;Rendering Intent
 !TP_NEUTRAL;Reset
 !TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 !TP_RAW_HD_TOOLTIP;Lower values make hot/dead pixel detection more aggressive, but false positives may lead to artifacts. If you notice any artifacts appearing when enabling the Hot/Dead Pixel Filters, gradually increase the threshold value until they disappear.
@@ -1851,12 +1869,15 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
 !TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
 !TP_RETINEX_CONTEDIT_LH;Hue equalizer
+!TP_RETINEX_CONTEDIT_MAP;Mask equalizer
 !TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 !TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
 !TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
 !TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Strength according to hue Strength=f(H)\nThis curve also acts on chroma when using the "Highlight" retinex method.
+!TP_RETINEX_CURVEEDITOR_MAP;L=f(L)
+!TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gaussian mask or wavelet mask.\nBeware of artifacts!
 !TP_RETINEX_FREEGAMMA;Free gamma
-!TP_RETINEX_GAIN;Gain
+!TP_RETINEX_GAIN;Contrast
 !TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA;Gamma
 !TP_RETINEX_GAMMA_FREE;Free
@@ -1865,24 +1886,39 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RETINEX_GAMMA_MID;Middle
 !TP_RETINEX_GAMMA_NONE;None
 !TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
+!TP_RETINEX_GRAD;Transmission gradient
+!TP_RETINEX_GRADS;Strength gradient
+!TP_RETINEX_GRADS_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Strength is reduced when iterations increase, and conversely.
+!TP_RETINEX_GRAD_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Variance and Threshold are reduced when iterations increase, and conversely.
 !TP_RETINEX_HIGH;High
 !TP_RETINEX_HIGHLIG;Highlight
 !TP_RETINEX_HIGHLIGHT;Highlight threshold
 !TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.
 !TP_RETINEX_HSLSPACE_LIN;HSL-Linear
 !TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
+!TP_RETINEX_ITER;Iterations (Tone-mapping)
+!TP_RETINEX_ITER_TOOLTIP;Simulate a tone-mapping operator.\nHigh values increase the processing time.
 !TP_RETINEX_LABEL;Retinex
 !TP_RETINEX_LABSPACE;L*a*b*
 !TP_RETINEX_LOW;Low
+!TP_RETINEX_MAP;Mask method
+!TP_RETINEX_MAP_CURV;Curve only
+!TP_RETINEX_MAP_GAUS;Gaussian mask
+!TP_RETINEX_MAP_MAPP;Sharp mask (wavelet partial)
+!TP_RETINEX_MAP_MAPT;Sharp mask (wavelet total)
+!TP_RETINEX_MAP_METHOD_TOOLTIP;Use the mask generated by the Gaussian function above to reduce halos and artifacts.\n\nCurve only: apply a diagonal contrast curve on the mask.\nBeware of artifacts!\n\nGaussian mask: generate and use a Gaussian blur of the original mask.\nQuick.\n\nSharp mask: generate and use a wavelet on the original mask.\nSlow.
+!TP_RETINEX_MAP_NONE;None
 !TP_RETINEX_MEDIAN;Transmission median filter
 !TP_RETINEX_METHOD;Method
 !TP_RETINEX_METHOD_TOOLTIP;Low = Reinforce low light,\nUniform = Equalize action,\nHigh = Reinforce high light,\nHighlights = Remove magenta in highlights.
 !TP_RETINEX_MLABEL;Restored haze-free Min=%1 Max=%2
 !TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
-!TP_RETINEX_NEIGHBOR;Neighboring pixels
+!TP_RETINEX_NEIGHBOR;Radius
 !TP_RETINEX_NEUTRAL;Reset
 !TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
-!TP_RETINEX_OFFSET;Offset
+!TP_RETINEX_OFFSET;Brightness
+!TP_RETINEX_SCALES;Gaussian gradient
+!TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Scale and Neighboring pixels are reduced when iterations increase, and conversely.
 !TP_RETINEX_SETTINGS;Settings
 !TP_RETINEX_SLOPE;Free gamma slope
 !TP_RETINEX_STRENGTH;Strength
@@ -1894,8 +1930,15 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RETINEX_TRANSMISSION;Transmission map
 !TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
 !TP_RETINEX_UNIFORM;Uniform
-!TP_RETINEX_VARIANCE;Variance
+!TP_RETINEX_VARIANCE;Contrast
 !TP_RETINEX_VARIANCE_TOOLTIP;Low variance increase local contrast and saturation, but can lead to artifacts.
+!TP_RETINEX_VIEW;Process (Preview)
+!TP_RETINEX_VIEW_MASK;Mask
+!TP_RETINEX_VIEW_METHOD_TOOLTIP;Standard - Normal display.\nMask -  Displays the mask.\nUnsharp mask - Displays the image with a high radius unsharp mask.\nTransmission - Auto/Fixed - Displays the file transmission-map, before any action on contrast and brightness.\n\nAttention: the mask does not correspond to reality, but is amplified to make it more visible.
+!TP_RETINEX_VIEW_NONE;Standard
+!TP_RETINEX_VIEW_TRAN;Transmission - Auto
+!TP_RETINEX_VIEW_TRAN2;Transmission - Fixed
+!TP_RETINEX_VIEW_UNSHARP;Unsharp mask
 !TP_WAVELET_CBENAB;Toning and Color Balance
 !TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
 !TP_WAVELET_CH2;Saturated/pastel

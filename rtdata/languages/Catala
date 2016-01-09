@@ -537,7 +537,6 @@ PREFERENCES_CACHEMAXENTRIES;Màxim nombre d'entrades a la mem. cau
 PREFERENCES_CACHEOPTS;Opcions memòria cau
 PREFERENCES_CACHETHUMBHEIGHT;Màxima alçada de minifoto
 PREFERENCES_CLIPPINGIND;Indicador de pèrdues
-PREFERENCES_CMETRICINTENT;Intent colorimètric
 PREFERENCES_CUSTPROFBUILD;Constructor de perfils de procés particulars
 PREFERENCES_CUSTPROFBUILDHINT;Nom del fitxer executable (o script) per a usar un nou perfil de procés en una imatge.\nRep paràmetres en línia d'ordres per a la generació de perfils basats en regles:\n[raw/JPG path] [path per omissió del perfil de procés] [número f] [expos. en segons] [long. focal en mm] [ISO] [objectiu] [càmera]
 PREFERENCES_CUSTPROFBUILDPATH;Executable path
@@ -587,7 +586,6 @@ PREFERENCES_MENUGROUPPROFILEOPERATIONS;Grup "Operacions de procés de perfils"
 PREFERENCES_MENUGROUPRANK;Grup "Rang"
 PREFERENCES_MENUOPTIONS;Opcions del menú
 PREFERENCES_METADATA;Metadata
-PREFERENCES_MONITORICC;Perfil de color del monitor
 PREFERENCES_MULTITAB;Mode multitreball
 PREFERENCES_MULTITABDUALMON;Mode multitreball en segon monitor, si se'n té un
 PREFERENCES_OUTDIR;Directori de sortida
@@ -1231,7 +1229,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_364;W - Final - Contrast balance
 !HISTORY_MSG_365;W - Final - Delta balance
 !HISTORY_MSG_366;W - Residual - Compression gamma
-!HISTORY_MSG_367;W - ES - Local contrast curve
+!HISTORY_MSG_367;W - Final - 'After' contrast curve
 !HISTORY_MSG_368;W - Final - Contrast balance
 !HISTORY_MSG_369;W - Final - Balance method
 !HISTORY_MSG_370;W - Final - Local contrast curve
@@ -1272,11 +1270,11 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_405;W - Denoise - Level 4
 !HISTORY_MSG_406;W - ES - Neighboring pixels
 !HISTORY_MSG_407;Retinex - Method
-!HISTORY_MSG_408;Retinex - Neighboring
-!HISTORY_MSG_409;Retinex - Gain
-!HISTORY_MSG_410;Retinex - Offset
+!HISTORY_MSG_408;Retinex - Radius
+!HISTORY_MSG_409;Retinex - Contrast
+!HISTORY_MSG_410;Retinex - Brightness
 !HISTORY_MSG_411;Retinex - Strength
-!HISTORY_MSG_412;Retinex - Scales
+!HISTORY_MSG_412;Retinex - Gaussian Gradient
 !HISTORY_MSG_413;Retinex - Variance
 !HISTORY_MSG_414;Retinex - Histogram - Lab
 !HISTORY_MSG_415;Retinex - Transmission
@@ -1291,6 +1289,19 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_424;Retinex - HL threshold
 !HISTORY_MSG_425;Retinex - Log base
 !HISTORY_MSG_426;Retinex - Hue equalizer
+!HISTORY_MSG_427;Output rendering intent
+!HISTORY_MSG_428;Monitor rendering intent
+!HISTORY_MSG_429;Retinex - Iterations
+!HISTORY_MSG_430;Retinex - Transmission Gradient
+!HISTORY_MSG_431;Retinex - Strength Gradient
+!HISTORY_MSG_432;Retinex - M - Highlights
+!HISTORY_MSG_433;Retinex - M - Highlights TW
+!HISTORY_MSG_434;Retinex - M - Shadows
+!HISTORY_MSG_435;Retinex - M - Shadows TW
+!HISTORY_MSG_436;Retinex - M - Radius
+!HISTORY_MSG_437;Retinex - M - Method
+!HISTORY_MSG_438;Retinex - M - Equalizer
+!HISTORY_MSG_439;Retinex - Preview
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
@@ -1303,6 +1314,8 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !MAIN_TAB_INSPECT; Inspect
 !MAIN_TAB_WAVELET;Wavelet
 !MAIN_TAB_WAVELET_TOOLTIP;Shortcut: <b>Alt-w</b>
+!MONITOR_PROFILE_SYSTEM;System default
+!MONITOR_SOFTPROOF;Soft-proof
 !NAVIGATOR_B;B:
 !NAVIGATOR_G;G:
 !NAVIGATOR_H;H:
@@ -1323,6 +1336,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PARTIALPASTE_PCVIGNETTE;Vignette filter
 !PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
 !PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
+!PARTIALPASTE_PRSHARPENING;Post-resize sharpening
 !PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !PARTIALPASTE_RETINEX;Retinex
 !PARTIALPASTE_WAVELETGROUP;Wavelet Levels
@@ -1389,6 +1403,8 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 !PREFERENCES_MED;Medium (Tile/2)
 !PREFERENCES_MIN;Mini (100x115)
+!PREFERENCES_MONINTENT;Default monitor intent
+!PREFERENCES_MONPROFILE;Default monitor profile
 !PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !PREFERENCES_NAVIGATIONFRAME;Navigation
 !PREFERENCES_NOISE;Noise Reduction
@@ -1399,6 +1415,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
 !PREFERENCES_PREVDEMO_SIDECAR;As in PP3
+!PREFERENCES_PROFILE_NONE;None
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
@@ -1702,6 +1719,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
+!TP_ICM_PROFILEINTENT;Rendering Intent
 !TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 !TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 !TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
@@ -1750,12 +1768,15 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
 !TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
 !TP_RETINEX_CONTEDIT_LH;Hue equalizer
+!TP_RETINEX_CONTEDIT_MAP;Mask equalizer
 !TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 !TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
 !TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
 !TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Strength according to hue Strength=f(H)\nThis curve also acts on chroma when using the "Highlight" retinex method.
+!TP_RETINEX_CURVEEDITOR_MAP;L=f(L)
+!TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gaussian mask or wavelet mask.\nBeware of artifacts!
 !TP_RETINEX_FREEGAMMA;Free gamma
-!TP_RETINEX_GAIN;Gain
+!TP_RETINEX_GAIN;Contrast
 !TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA;Gamma
 !TP_RETINEX_GAMMA_FREE;Free
@@ -1764,24 +1785,39 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RETINEX_GAMMA_MID;Middle
 !TP_RETINEX_GAMMA_NONE;None
 !TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
+!TP_RETINEX_GRAD;Transmission gradient
+!TP_RETINEX_GRADS;Strength gradient
+!TP_RETINEX_GRADS_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Strength is reduced when iterations increase, and conversely.
+!TP_RETINEX_GRAD_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Variance and Threshold are reduced when iterations increase, and conversely.
 !TP_RETINEX_HIGH;High
 !TP_RETINEX_HIGHLIG;Highlight
 !TP_RETINEX_HIGHLIGHT;Highlight threshold
 !TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.
 !TP_RETINEX_HSLSPACE_LIN;HSL-Linear
 !TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
+!TP_RETINEX_ITER;Iterations (Tone-mapping)
+!TP_RETINEX_ITER_TOOLTIP;Simulate a tone-mapping operator.\nHigh values increase the processing time.
 !TP_RETINEX_LABEL;Retinex
 !TP_RETINEX_LABSPACE;L*a*b*
 !TP_RETINEX_LOW;Low
+!TP_RETINEX_MAP;Mask method
+!TP_RETINEX_MAP_CURV;Curve only
+!TP_RETINEX_MAP_GAUS;Gaussian mask
+!TP_RETINEX_MAP_MAPP;Sharp mask (wavelet partial)
+!TP_RETINEX_MAP_MAPT;Sharp mask (wavelet total)
+!TP_RETINEX_MAP_METHOD_TOOLTIP;Use the mask generated by the Gaussian function above to reduce halos and artifacts.\n\nCurve only: apply a diagonal contrast curve on the mask.\nBeware of artifacts!\n\nGaussian mask: generate and use a Gaussian blur of the original mask.\nQuick.\n\nSharp mask: generate and use a wavelet on the original mask.\nSlow.
+!TP_RETINEX_MAP_NONE;None
 !TP_RETINEX_MEDIAN;Transmission median filter
 !TP_RETINEX_METHOD;Method
 !TP_RETINEX_METHOD_TOOLTIP;Low = Reinforce low light,\nUniform = Equalize action,\nHigh = Reinforce high light,\nHighlights = Remove magenta in highlights.
 !TP_RETINEX_MLABEL;Restored haze-free Min=%1 Max=%2
 !TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
-!TP_RETINEX_NEIGHBOR;Neighboring pixels
+!TP_RETINEX_NEIGHBOR;Radius
 !TP_RETINEX_NEUTRAL;Reset
 !TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
-!TP_RETINEX_OFFSET;Offset
+!TP_RETINEX_OFFSET;Brightness
+!TP_RETINEX_SCALES;Gaussian gradient
+!TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Scale and Neighboring pixels are reduced when iterations increase, and conversely.
 !TP_RETINEX_SETTINGS;Settings
 !TP_RETINEX_SLOPE;Free gamma slope
 !TP_RETINEX_STRENGTH;Strength
@@ -1793,8 +1829,15 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RETINEX_TRANSMISSION;Transmission map
 !TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
 !TP_RETINEX_UNIFORM;Uniform
-!TP_RETINEX_VARIANCE;Variance
+!TP_RETINEX_VARIANCE;Contrast
 !TP_RETINEX_VARIANCE_TOOLTIP;Low variance increase local contrast and saturation, but can lead to artifacts.
+!TP_RETINEX_VIEW;Process (Preview)
+!TP_RETINEX_VIEW_MASK;Mask
+!TP_RETINEX_VIEW_METHOD_TOOLTIP;Standard - Normal display.\nMask -  Displays the mask.\nUnsharp mask - Displays the image with a high radius unsharp mask.\nTransmission - Auto/Fixed - Displays the file transmission-map, before any action on contrast and brightness.\n\nAttention: the mask does not correspond to reality, but is amplified to make it more visible.
+!TP_RETINEX_VIEW_NONE;Standard
+!TP_RETINEX_VIEW_TRAN;Transmission - Auto
+!TP_RETINEX_VIEW_TRAN2;Transmission - Fixed
+!TP_RETINEX_VIEW_UNSHARP;Unsharp mask
 !TP_RGBCURVES_LUMAMODE;Luminosity mode
 !TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity mode</b> allows to vary the contribution of R, G and B channels to the luminosity of the image, without altering image color.
 !TP_SAVEDIALOG_OK_TIP;Shortcut: <b>Ctrl-Enter</b>
