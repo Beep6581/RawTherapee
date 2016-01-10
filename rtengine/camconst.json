@@ -1546,12 +1546,12 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
        and white level is typically at or close to 65535. However sensors vary a bit and can be noisy around clip
        so we cut away 0.05 stop from top down to 63300 to be a bit conservative. */
     { // quality A
-        "make_model": [ "Phase One P40+", "Phase One IQ140", "Leaf Credo 40", "Phase One P65+", "Phase One IQ160", "Leaf Credo 60", "Phase One IQ260" ],
+        "make_model": [ "Phase One P40+", "Phase One IQ140", "Leaf Credo 40", "Phase One P65+", "Phase One IQ160", "Leaf Credo 60", "Phase One IQ260", "Phase One IQ3 60MP" ],
         "dcraw_matrix": [ 8035,435,-962,-6001,13872,2320,-1159,3065,5434 ],
         "ranges": { "black": 0, "white": 63300 }
     },
     { // quality A
-        "make_model": [ "Phase One IQ180", "Leaf Credo 80", "Phase One IQ280" ],
+        "make_model": [ "Phase One IQ180", "Leaf Credo 80", "Phase One IQ280", "Phase One IQ3 80MP" ],
         "dcraw_matrix": [ 6294,686,-712,-5435,13417,2211,-1006,2435,5042 ],
         "ranges": { "black": 0, "white": 63300 }
     },
@@ -1576,7 +1576,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "ranges": { "black": 0, "white": 63300 }
     },
     { // quality X, matrix taken from H5D-50c which has the same sensor, probably with the same CFA. Color looks good to the eye with files tested.
-        "make_model": [ "Phase One IQ250", "Leaf Credo 50" ],
+        "make_model": [ "Phase One IQ250", "Leaf Credo 50", "Phase One IQ3 50MP" ],
 	"dcraw_matrix": [ 4932, -835, 141, -4878, 11868, 3437, -1138, 1961, 7067 ],
         "ranges": { "black": 0, "white": 64400 } // CMOS sensor, we dare to set white level a bit higher than for the more varying Phase One CCDs
     },
