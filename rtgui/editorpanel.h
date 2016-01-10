@@ -56,7 +56,6 @@ private:
 
     Glib::ustring lastSaveAsFileName;
     bool realized;
-    Glib::RefPtr<Gtk::CssProvider> cssProvider;  // to be able to set the ProgressBar's background
 
 protected:
     MyProgressBar  *progressLabel;

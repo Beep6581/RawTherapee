@@ -58,6 +58,7 @@ private:
 #endif
 
         const std::vector<Glib::ustring> profiles = rtengine::iccStore->getProfiles ();
+
         for (std::vector<Glib::ustring>::const_iterator iterator = profiles.begin (); iterator != profiles.end (); ++iterator) {
             profileBox.append (*iterator);
         }
@@ -94,17 +95,21 @@ private:
         Glib::ustring profile;
 
 #ifdef WIN32
+
         if (profileBox.get_active_row_number () == 1) {
             profile = rtengine::iccStore->getDefaultMonitorProfileName ();
+
             if (profile.empty ()) {
                 profile = options.rtSettings.monitorProfile;
             }
+
             if (profile.empty ()) {
                 profile = "sRGB IEC61966-2.1";
             }
         } else if (profileBox.get_active_row_number () > 1) {
             profile = profileBox.get_active_text ();
         }
+
 #else
         profile = profileBox.get_active_row_number () > 0 ? profileBox.get_active_text () : Glib::ustring ();
 #endif
@@ -134,14 +139,17 @@ private:
         }
 
         rtengine::RenderingIntent intent;
+
         switch (intentBox.getSelected ()) {
         default:
         case 0:
             intent = rtengine::RI_RELATIVE;
             break;
+
         case 1:
             intent = rtengine::RI_PERCEPTUAL;
             break;
+
         case 2:
             intent = rtengine::RI_ABSOLUTE;
             break;
@@ -182,24 +190,27 @@ public:
         ConnectionBlocker intentBlocker (intentConn);
 
 #ifdef WIN32
+
         if (options.rtSettings.autoMonitorProfile) {
             setActiveTextOrIndex (profileBox, options.rtSettings.monitorProfile, 1);
         } else {
             setActiveTextOrIndex (profileBox, options.rtSettings.monitorProfile, 0);
         }
+
 #else
         setActiveTextOrIndex (profileBox, options.rtSettings.monitorProfile, 0);
 #endif
 
-        switch (options.rtSettings.monitorIntent)
-        {
+        switch (options.rtSettings.monitorIntent) {
         default:
         case rtengine::RI_RELATIVE:
             intentBox.setSelected (0);
             break;
+
         case rtengine::RI_PERCEPTUAL:
             intentBox.setSelected (1);
             break;
+
         case rtengine::RI_ABSOLUTE:
             intentBox.setSelected (2);
             break;
@@ -378,17 +389,10 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     setExpandAlignProperties(sendtogimp, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
 
     // Status box
-    cssProvider = Gtk::CssProvider::create();
     progressLabel = Gtk::manage (new MyProgressBar(300));
     progressLabel->set_show_text(true);
     setExpandAlignProperties(progressLabel, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     progressLabel->set_fraction(0.0);
-
-    // TODO is this needed? What for?
-    /*if (cssProvider) {
-        progressLabel->get_style_context()->add_provider (cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);    // Can't find the gtkmm version of the enum!
-    }*/
-
 
     // tbRightPanel_1
     tbRightPanel_1 = new Gtk::ToggleButton ();
@@ -444,24 +448,27 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     // ==================  PACKING THE BOTTOM WIDGETS =================
 
     // Adding widgets from center to the left, on the left side (using Gtk::POS_LEFT)
-    //iops->attach_next_to(*vsep2, Gtk::POS_LEFT, 1, 1);
     iops->attach_next_to(*progressLabel, Gtk::POS_LEFT, 1, 1);
     iops->attach_next_to(*vsep1, Gtk::POS_LEFT, 1, 1);
     iops->attach_next_to(*sendtogimp, Gtk::POS_LEFT, 1, 1);
+
     if(!simpleEditor) {
         iops->attach_next_to(*queueimg, Gtk::POS_LEFT, 1, 1);
     }
+
     iops->attach_next_to(*saveimgas, Gtk::POS_LEFT, 1, 1);
 
     // Adding widgets from center to the right, on the right side (using Gtk::POS_RIGHT)
     iops->attach_next_to(*vsep2, Gtk::POS_RIGHT, 1, 1);
     monitorProfile->pack_right_in (iops);
+
     if (!simpleEditor && !options.tabbedUI) {
         iops->attach_next_to(*vsep3, Gtk::POS_RIGHT, 1, 1);
         iops->attach_next_to(*navPrev, Gtk::POS_RIGHT, 1, 1);
         iops->attach_next_to(*navSync, Gtk::POS_RIGHT, 1, 1);
         iops->attach_next_to(*navNext, Gtk::POS_RIGHT, 1, 1);
     }
+
     iops->attach_next_to(*vsepz2, Gtk::POS_RIGHT, 1, 1);
     iops->attach_next_to(*iareapanel->imageArea->zoomPanel, Gtk::POS_RIGHT, 1, 1);
     iops->attach_next_to(*vsepz3, Gtk::POS_RIGHT, 1, 1);

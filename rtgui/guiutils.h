@@ -606,8 +606,9 @@ inline void setActiveTextOrIndex (Gtk::ComboBoxText& comboBox, const Glib::ustri
 {
     comboBox.set_active_text (text);
 
-    if (comboBox.get_active_row_number () < 0)
+    if (comboBox.get_active_row_number () < 0) {
         comboBox.set_active (index);
+    }
 }
 
 #endif

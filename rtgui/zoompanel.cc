@@ -65,18 +65,9 @@ ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea)
     attach_next_to (*zoomFitCrop, Gtk::POS_RIGHT, 1, 1);
     attach_next_to (*zoom11, Gtk::POS_RIGHT, 1, 1);
 
-    /*
-    attach_next_to (*zoomOut, Gtk::POS_LEFT, 1, 1);
-    attach_next_to (*zoomIn, *zoomOut, Gtk::POS_RIGHT, 1, 1);
-    attach_next_to (*zoomFit, *zoomIn, Gtk::POS_RIGHT, 1, 1);
-    attach_next_to (*zoomFitCrop, *zoomFit, Gtk::POS_RIGHT, 1, 1);
-    attach_next_to (*zoom11, *zoomFitCrop, Gtk::POS_RIGHT, 1, 1);
-    */
-
     zoomLabel = Gtk::manage (new Gtk::Label ());
     setExpandAlignProperties(zoomLabel, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     attach_next_to (*zoomLabel, Gtk::POS_RIGHT, 1, 1);
-    //attach_next_to (*zoomLabel, *zoom11, Gtk::POS_RIGHT, 1, 1);
 
     Gtk::Image* imageCrop = Gtk::manage (new RTImage ("new-detail-window.png"));
     imageCrop->set_padding(0, 0);
@@ -85,7 +76,6 @@ ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea)
     newCrop->set_relief(Gtk::RELIEF_NONE);
     setExpandAlignProperties(newCrop, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     attach_next_to (*newCrop, Gtk::POS_RIGHT, 1, 1);
-    //attach_next_to (*newCrop, *zoomLabel, Gtk::POS_RIGHT, 1, 1);
 
     show_all_children ();
 

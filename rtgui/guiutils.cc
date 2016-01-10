@@ -984,13 +984,13 @@ bool MyComboBoxText::on_scroll_event (GdkEventScroll* event)
 
 void MyComboBoxText::setPreferredWidth (int minimum_width, int natural_width)
 {
-    if (natural_width==-1 && minimum_width==-1) {
+    if (natural_width == -1 && minimum_width == -1) {
         naturalWidth = minimumWidth = 70;
-    } else if (natural_width==-1) {
+    } else if (natural_width == -1) {
         naturalWidth =  minimumWidth = minimum_width;
-    } else if (minimum_width==-1) {
+    } else if (minimum_width == -1) {
         naturalWidth = natural_width;
-        minimumWidth = rtengine::max(naturalWidth/2, 20);
+        minimumWidth = rtengine::max(naturalWidth / 2, 20);
         minimumWidth = rtengine::min(naturalWidth, minimumWidth);
     } else {
         naturalWidth = natural_width;
@@ -1030,13 +1030,13 @@ bool MyComboBox::on_scroll_event (GdkEventScroll* event)
 
 void MyComboBox::setPreferredWidth (int minimum_width, int natural_width)
 {
-    if (natural_width==-1 && minimum_width==-1) {
+    if (natural_width == -1 && minimum_width == -1) {
         naturalWidth = minimumWidth = 70;
-    } else if (natural_width==-1) {
+    } else if (natural_width == -1) {
         naturalWidth =  minimumWidth = minimum_width;
-    } else if (minimum_width==-1) {
+    } else if (minimum_width == -1) {
         naturalWidth = natural_width;
-        minimumWidth = rtengine::max(naturalWidth/2, 20);
+        minimumWidth = rtengine::max(naturalWidth / 2, 20);
         minimumWidth = rtengine::min(naturalWidth, minimumWidth);
     } else {
         naturalWidth = natural_width;
@@ -1302,7 +1302,7 @@ void MyProgressBar::setPreferredWidth(int width)
 
 void MyProgressBar::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = rtengine::max(w/2, 50);
+    minimum_width = rtengine::max(w / 2, 50);
     natural_width = rtengine::max(w, 50);
 }
 
