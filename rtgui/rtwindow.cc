@@ -90,7 +90,7 @@ RTWindow::RTWindow ()
 
     cacheMgr->init ();
     WhiteBalance::init();
-    ProfilePanel::init();
+    ProfilePanel::init (this);
 
     Glib::ustring fName = "rt-logo-small.png";
     Glib::ustring fullPath = RTImage::findIconAbsolutePath(fName);

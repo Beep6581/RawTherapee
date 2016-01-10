@@ -1259,53 +1259,6 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe)
     }
 
     delete renameDlg;
-    /*    // ask for new file name
-        Gtk::Dialog dialog (M("FILEBROWSER_RENAMEDLGLABEL"), *((Gtk::Window*)get_toplevel()), true, true);
-
-        dialog.add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK);
-        dialog.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-
-        Gtk::Label l;
-        dialog.get_content_area()->pack_start (l, Gtk::PACK_SHRINK);
-
-        Gtk::Entry nfentry;
-
-        dialog.get_content_area()->pack_start (nfentry, Gtk::PACK_SHRINK);
-        dialog.get_content_area()->show_all ();
-
-        nfentry.set_activates_default (true);
-        dialog.set_default_response (Gtk::RESPONSE_OK);
-
-        for (int i=0; i<tbe.size(); i++) {
-
-            Glib::ustring ofname = tbe[i]->filename;
-            Glib::ustring dirName = Glib::path_get_dirname (tbe[i]->filename);
-            Glib::ustring baseName = Glib::path_get_basename (tbe[i]->filename);
-
-            l.set_markup (Glib::ustring("<big><b>") + Glib::ustring::compose (M("FILEBROWSER_RENAMEDLGMSG"), baseName) + Glib::ustring("</b></big>"));
-            nfentry.set_text (baseName);
-            nfentry.select_region (0, baseName.size());
-
-            if (dialog.run ()== Gtk::RESPONSE_OK) {
-                Glib::ustring nBaseName = nfentry.get_text ();
-                // if path has directory components, exit
-                if (Glib::path_get_dirname (nBaseName) != ".")
-                    continue;
-                // if no extension is given, concatenate the extension of the original file
-                if (nBaseName.find ('.')==nBaseName.npos) {
-            size_t lastdot = baseName.find_last_of ('.');
-                    nBaseName += "." + (lastdot!=Glib::ustring::npos ? baseName.substr (lastdot+1) : "");
-                }
-                Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
-                if (!safe_g_rename (ofname, nfname)) {
-                    cacheMgr->renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
-                    // the remaining part (removing old and adding new entry) is done by the directory monitor
-                    reparseDirectory ();
-    //                on_dir_changed (Gio::File::create_for_path (nfname), Gio::File::create_for_path (nfname), Gio::FILE_MONITOR_EVENT_CHANGED, true);
-                }
-            }
-        }
-        */
 }
 
 void FileCatalog::clearFromCacheRequested  (std::vector<FileBrowserEntry*> tbe, bool leavenotrace)

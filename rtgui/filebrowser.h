@@ -128,7 +128,6 @@ protected:
     FileBrowserListener* tbl;
     BrowserFilter filter;
     int numFiltered;
-    PartialPasteDlg partialPasteDlg;
     FileBrowserIdleHelper* fbih;
 
     void toTrashRequested   (std::vector<FileBrowserEntry*> tbe);

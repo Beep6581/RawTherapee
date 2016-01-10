@@ -1556,11 +1556,12 @@ void EditorPanel::saveAsPressed ()
     Glib::ustring fnameOut;
 
     SaveAsDialog* saveAsDialog;
+    auto toplevel = static_cast<Gtk::Window*> (get_toplevel ());
 
     if (safe_file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR)) {
-        saveAsDialog = new SaveAsDialog (options.lastSaveAsPath);
+        saveAsDialog = new SaveAsDialog (options.lastSaveAsPath, toplevel);
     } else {
-        saveAsDialog = new SaveAsDialog (safe_get_user_picture_dir());
+        saveAsDialog = new SaveAsDialog (safe_get_user_picture_dir(), toplevel);
     }
 
     saveAsDialog->set_default_size (options.saveAsDialogWidth, options.saveAsDialogHeight);

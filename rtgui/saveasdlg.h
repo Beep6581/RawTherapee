@@ -45,7 +45,7 @@ protected:
     void  putToQueueClicked ();
 
 public:
-    SaveAsDialog (Glib::ustring initialDir);
+    SaveAsDialog (const Glib::ustring& initialDir, Gtk::Window* parent);
 
     Glib::ustring   getFileName        ();
     Glib::ustring   getDirectory       ();
