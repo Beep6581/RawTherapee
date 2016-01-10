@@ -125,10 +125,10 @@ protected:
     void close ();
 
     BatchQueueEntry*    createBatchQueueEntry ();
-    bool                idle_imageSaved(ProgressConnector<int> *pc, rtengine::IImage16* img, Glib::ustring fname, SaveFormat sf);
-    bool                idle_saveImage(ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname, SaveFormat sf);
-    bool                idle_sendToGimp( ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname);
-    bool                idle_sentToGimp(ProgressConnector<int> *pc, rtengine::IImage16* img, Glib::ustring filename);
+    bool                idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImage16* img, Glib::ustring fname, SaveFormat sf);
+    bool                idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname, SaveFormat sf);
+    bool                idle_sendToGimp ( ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname);
+    bool                idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImage16* img, Glib::ustring filename);
     int err;
 
     time_t processingStartedTime;
@@ -145,8 +145,8 @@ public:
     void open (Thumbnail* tmb, rtengine::InitialImage* isrc);
     void setAspect ();
     void on_realize ();
-    void leftPaneButtonReleased(GdkEventButton *event);
-    void rightPaneButtonReleased(GdkEventButton *event);
+    void leftPaneButtonReleased (GdkEventButton *event);
+    void rightPaneButtonReleased (GdkEventButton *event);
 
     void setParent (RTWindow* p)
     {
@@ -154,7 +154,7 @@ public:
     }
     void writeOptions();
 
-    void showTopPanel(bool show);
+    void showTopPanel (bool show);
     bool isRealized()
     {
         return realized;
