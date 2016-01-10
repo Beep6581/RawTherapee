@@ -847,7 +847,7 @@ void CLASS ljpeg_end (struct jhead *jh)
   free (jh->row);
 }
 
-int CLASS ljpeg_diff (ushort *huff)
+inline int CLASS ljpeg_diff (ushort *huff)
 {
   int len, diff;
 
