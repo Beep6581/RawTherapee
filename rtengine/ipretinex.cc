@@ -235,7 +235,6 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         bool higplus = false ;
         float elogt;
         float hl = deh.baselog;
-        SHMap* shmap;
         if(hl >= 2.71828f) {
             elogt = 2.71828f + SQR(SQR(hl - 2.71828f));
         } else {
@@ -392,9 +391,6 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
             retinex_scales( RetinexScales, scal, moderetinex, nei/grad, high );
 
-            //   int H_L = height;
-            //  int W_L = width;
-
             float *src[H_L] ALIGNED16;
             float *srcBuffer = new float[H_L * W_L];
 
@@ -412,9 +408,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             if(deh.mapMethod=="curv") mapmet=1;
             if(deh.mapMethod=="gaus") mapmet=4;
             double shradius = (double) deh.radius;
-            // printf("shrad=%f\n",shradius);
 
-            //   int viewmet=0;
             if(deh.viewMethod=="mask") viewmet=1;
             if(deh.viewMethod=="tran") viewmet=2;
             if(deh.viewMethod=="tran2") viewmet=3;
@@ -451,7 +445,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 pond /= log(elogt);
             }
 
-            if(mapmet > 1) shmap = new SHMap (W_L, H_L, true);
+            auto shmap = mapmet > 1 ? new SHMap (W_L, H_L, true) : nullptr;
 
 
 
