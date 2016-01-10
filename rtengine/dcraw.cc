@@ -9,7 +9,9 @@
 /*RT*/#define NO_JASPER
 /*RT*/#define LOCALTIME
 /*RT*/#define DJGPP
-
+/*RT*/#define BENCHMARK
+/*RT*/#include "StopWatch.h"
+/*RT*/#include "opthelper.h"
 /*
    dcraw.c -- Dave Coffin's raw photo decoder
    Copyright 1997-2015 by Dave Coffin, dcoffin a cybercom o net
@@ -560,7 +562,7 @@ int CLASS canon_s2is()
   return 0;
 }
 
-unsigned CLASS getbithuff_t::operator() (int nbits, ushort *huff)
+inline unsigned CLASS getbithuff_t::operator() (int nbits, ushort *huff)
 {
 /*RT static unsigned bitbuf=0; */
 /*RT static int vbits=0, reset=0; */
@@ -723,6 +725,7 @@ int CLASS canon_has_lowbits()
 
 void CLASS canon_load_raw()
 {
+BENCHFUN
   ushort *pixel, *prow, *huff[2];
   int nblocks, lowbits, i, c, row, r, save, val;
   int block, diffbuf[64], leaf, len, diff, carry=0, pnum=0, base[2];
@@ -898,6 +901,7 @@ ushort * CLASS ljpeg_row (int jrow, struct jhead *jh)
 
 void CLASS lossless_jpeg_load_raw()
 {
+BENCHFUN
   int jwide, jrow, jcol, val, jidx, i, j, row=0, col=0;
   struct jhead jh;
   ushort *rp;
@@ -1072,6 +1076,7 @@ void CLASS packed_dng_load_raw()
 
 void CLASS pentax_load_raw()
 {
+BENCHFUN
   ushort bit[2][15], huff[4097];
   int dep, row, col, diff, c, i;
   ushort vpred[2][2] = {{0,0},{0,0}}, hpred[2];
@@ -1099,6 +1104,7 @@ void CLASS pentax_load_raw()
 
 void CLASS nikon_load_raw()
 {
+BENCHFUN
   static const uchar nikon_tree[][32] = {
     { 0,1,5,1,1,1,1,1,1,2,0,0,0,0,0,0,	/* 12-bit lossy */
       5,4,3,6,2,7,1,0,8,9,11,10,12 },
@@ -2290,6 +2296,7 @@ void CLASS panasonic_load_raw()
 
 void CLASS olympus_load_raw()
 {
+BENCHFUN
   ushort huff[4096];
   int row, col, nbits, sign, low, high, i, c, w, n, nw;
   int acarry[2][3], *carry, pred, diff;
@@ -2960,6 +2967,7 @@ void CLASS sony_arw_load_raw()
 
 void CLASS sony_arw2_load_raw()
 {
+BENCHFUN
   uchar *data, *dp;
   ushort pix[16];
   int row, col, val, max, min, imax, imin, sh, bit, i;
