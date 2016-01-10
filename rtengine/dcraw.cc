@@ -568,6 +568,30 @@ inline unsigned CLASS getbithuff_t::operator() (int nbits, ushort *huff)
 /*RT static int vbits=0, reset=0; */
   unsigned c;
 
+  if (nbits > 25 || vbits < 0) return 0;
+  if (UNLIKELY(nbits < 0))
+    return bitbuf = vbits = 0;
+  if (nbits == 0) return 0;
+  while (vbits < nbits && LIKELY((c = fgetc(ifp)) != EOF)) {
+    bitbuf = (bitbuf << 8) + (uchar) c;
+    vbits += 8;
+  }
+  c = bitbuf << (32-vbits) >> (32-nbits);
+  if (huff) {
+    vbits -= huff[c] >> 8;
+    c = (uchar) huff[c];
+  } else
+    vbits -= nbits;
+  if (UNLIKELY(vbits < 0)) derror();
+  return c;
+}
+
+inline unsigned CLASS getbithuff_t::getbitshuff (int nbits, ushort *huff)
+{
+/*RT static unsigned bitbuf=0; */
+/*RT static int vbits=0, reset=0; */
+  unsigned c;
+
   if (nbits > 25) return 0;
   if (nbits < 0)
     return bitbuf = vbits = reset = 0;
@@ -589,6 +613,8 @@ inline unsigned CLASS getbithuff_t::operator() (int nbits, ushort *huff)
 
 #define getbits(n) getbithuff(n,0)
 #define gethuff(h) getbithuff(*h,h+1)
+#define getbits2(n) getbithuff.getbitshuff(n,0)
+#define gethuff2(h) getbithuff.getbitshuff(*h,h+1)
 
 /*
    Construct a decode tree according the specification in *source.
@@ -735,20 +761,20 @@ BENCHFUN
   if (!lowbits) maximum = 0x3ff;
   fseek (ifp, 540 + lowbits*raw_height*raw_width/4, SEEK_SET);
   zero_after_ff = 1;
-  getbits(-1);
+  getbits2(-1);
   for (row=0; row < raw_height; row+=8) {
     pixel = raw_image + row*raw_width;
     nblocks = MIN (8, raw_height-row) * raw_width >> 6;
     for (block=0; block < nblocks; block++) {
       memset (diffbuf, 0, sizeof diffbuf);
       for (i=0; i < 64; i++ ) {
-	leaf = gethuff(huff[i > 0]);
+	leaf = gethuff2(huff[i > 0]);
 	if (leaf == 0 && i) break;
 	if (leaf == 0xff) continue;
 	i  += leaf >> 4;
 	len = leaf & 15;
 	if (len == 0) continue;
-	diff = getbits(len);
+	diff = getbits2(len);
 	if ((diff & (1 << (len-1))) == 0)
 	  diff -= (1 << len) - 1;
 	if (i < 64) diffbuf[i] = diff;
@@ -851,10 +877,10 @@ inline int CLASS ljpeg_diff (ushort *huff)
 {
   int len, diff;
 
-  len = gethuff(huff);
+  len = gethuff2(huff);
   if (len == 16 && (!dng_version || dng_version >= 0x1010000))
     return -32768;
-  diff = getbits(len);
+  diff = getbits2(len);
   if ((diff & (1 << (len-1))) == 0)
     diff -= (1 << len) - 1;
   return diff;
@@ -872,7 +898,7 @@ ushort * CLASS ljpeg_row (int jrow, struct jhead *jh)
       do mark = (mark << 8) + (c = fgetc(ifp));
       while (c != EOF && mark >> 4 != 0xffd);
     }
-    getbits(-1);
+    getbits2(-1);
   }
   FORC3 row[c] = jh->row + jh->wide*jh->clrs*((jrow+c) & 1);
   for (col=0; col < jh->wide; col++)
