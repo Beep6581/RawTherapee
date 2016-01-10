@@ -1162,7 +1162,7 @@ BENCHFUN
       if (col < 2) hpred[col] = vpred[row & 1][col] += diff;
       else	   hpred[col & 1] += diff;
       if ((ushort)(hpred[col & 1] + min) >= max) derror();
-      RAW(row,col) = curve[LIM((short)hpred[col & 1],0,0x3fff)];
+      RAW(row,col) = curve[hpred[col & 1] & 0x3fff];
     }
   }
   free (huff);
