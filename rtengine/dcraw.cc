@@ -886,6 +886,19 @@ inline int CLASS ljpeg_diff (ushort *huff)
   return diff;
 }
 
+inline int CLASS ljpeg_difffast (ushort *huff)
+{
+  int len, diff;
+
+  len = gethuff(huff);
+  if (len == 16 && (!dng_version || dng_version >= 0x1010000))
+    return -32768;
+  diff = getbits(len);
+  if ((diff & (1 << (len-1))) == 0)
+    diff -= (1 << len) - 1;
+  return diff;
+}
+
 ushort * CLASS ljpeg_row (int jrow, struct jhead *jh)
 {
   int col, c, diff, pred, spred=0;
@@ -1120,7 +1133,7 @@ BENCHFUN
   getbits(-1);
   for (row=0; row < raw_height; row++)
     for (col=0; col < raw_width; col++) {
-      diff = ljpeg_diff (huff);
+      diff = ljpeg_difffast (huff);
       if (col < 2) hpred[col] = vpred[row & 1][col] += diff;
       else	   hpred[col & 1] += diff;
       RAW(row,col) = hpred[col & 1];
@@ -2973,6 +2986,7 @@ void CLASS sony_load_raw()
 
 void CLASS sony_arw_load_raw()
 {
+BENCHFUN
   ushort huff[32770];
   static const ushort tab[18] =
   { 0xf11,0xf10,0xe0f,0xd0e,0xc0d,0xb0c,0xa0b,0x90a,0x809,
@@ -2986,7 +3000,7 @@ void CLASS sony_arw_load_raw()
   for (col = raw_width; col--; )
     for (row=0; row < raw_height+1; row+=2) {
       if (row == raw_height) row = 1;
-      if ((sum += ljpeg_diff(huff)) >> 12) derror();
+      if ((sum += ljpeg_difffast(huff)) >> 12) derror();
       if (row < height) RAW(row,col) = sum;
     }
 }

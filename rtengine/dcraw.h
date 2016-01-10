@@ -216,6 +216,7 @@ void canon_load_raw();
 int ljpeg_start (struct jhead *jh, int info_only);
 void ljpeg_end (struct jhead *jh);
 int ljpeg_diff (ushort *huff);
+int ljpeg_difffast (ushort *huff);
 ushort * ljpeg_row (int jrow, struct jhead *jh);
 void lossless_jpeg_load_raw();
 
