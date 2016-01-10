@@ -21,10 +21,6 @@
 #include <glib/gstdio.h>
 #include "safegtk.h"
 
-#ifndef GLIBMM_EXCEPTIONS_ENABLED
-#include <memory>
-#endif
-
 using namespace rtengine;
 
 extern "C" IptcData *iptc_data_new_from_jpeg_file (FILE* infile);

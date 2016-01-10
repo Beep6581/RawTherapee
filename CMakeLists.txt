@@ -18,7 +18,7 @@ SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11")
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9")
-  message(WARNING "RawTherapee should be built using GCC version 4.9 or higher!")
+  message(FATAL_ERROR "Building RawTherapee requires using GCC version 4.9 or higher!")
 endif()
 
 # We might want to build using the old C++ ABI, even when using a new GCC version

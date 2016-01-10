@@ -61,20 +61,12 @@ EditWindow::EditWindow (RTWindow* p) : parent(p) , isFullscreen(false)
     Glib::ustring fName = "rt-logo-tiny.png";
     Glib::ustring fullPath = RTImage::findIconAbsolutePath(fName);
 
-#ifdef GLIBMM_EXCEPTIONS_ENABLED
-
     try {
         set_default_icon_from_file (fullPath);
     } catch(Glib::Exception& ex) {
         printf ("%s\n", ex.what().c_str());
     }
 
-#else
-    {
-        std::auto_ptr<Glib::Error> error;
-        set_default_icon_from_file (fullPath, error);
-    }
-#endif //GLIBMM_EXCEPTIONS_ENABLED
     set_title_decorated("");
     set_modal(false);
     set_resizable(true);

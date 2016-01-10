@@ -23,7 +23,7 @@
 #include "guiutils.h"
 #include "rtimage.h"
 
-PlacesBrowser::PlacesBrowser () : listener (NULL)
+PlacesBrowser::PlacesBrowser ()
 {
 
     scrollw = Gtk::manage (new Gtk::ScrolledWindow ());
@@ -296,8 +296,8 @@ void PlacesBrowser::selectionChanged ()
                     drives[i]->poll_for_media ();
                     break;
                 }
-        } else if (listener) {
-            listener->selectDir (iter->get_value (placesColumns.root));
+        } else if (selectDir) {
+            selectDir (iter->get_value (placesColumns.root));
         }
     }
 }

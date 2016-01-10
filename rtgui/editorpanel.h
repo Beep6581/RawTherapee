@@ -86,7 +86,7 @@ protected:
     Gtk::Button* navPrev;
 
     class MonitorProfileSelector;
-    std::auto_ptr<MonitorProfileSelector> monitorProfile;
+    std::unique_ptr<MonitorProfileSelector> monitorProfile;
 
     ImageAreaPanel* iareapanel;
     PreviewHandler* previewHandler;

@@ -423,7 +423,7 @@ Glib::ustring CurveEditorSubGroup::outputFile ()
 {
 
     Gtk::FileChooserDialog dialog(M("CURVEEDITOR_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
-    FileChooserLastFolderPersister persister(&dialog, curveDir);
+    bindCurrentFolder (dialog, curveDir);
     dialog.set_current_name (lastFilename);
 
     dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
@@ -468,7 +468,7 @@ Glib::ustring CurveEditorSubGroup::inputFile ()
 {
 
     Gtk::FileChooserDialog dialog(M("CURVEEDITOR_LOADDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN);
-    FileChooserLastFolderPersister persister(&dialog, curveDir);
+    bindCurrentFolder (dialog, curveDir);
 
     dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
     dialog.add_button(M("GENERAL_APPLY"), Gtk::RESPONSE_APPLY);

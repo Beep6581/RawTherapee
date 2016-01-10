@@ -37,7 +37,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 
     ipDialog = Gtk::manage (new MyFileChooserButton (M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
     ipDialog->set_tooltip_text (M("TP_ICM_INPUTCUSTOM_TOOLTIP"));
-    ipDialogPersister.reset(new FileChooserLastFolderPersister(ipDialog, options.lastIccDir));
+    bindCurrentFolder (*ipDialog, options.lastIccDir);
 
 
     // ------------------------------- Input profile
@@ -963,7 +963,7 @@ void ICMPanel::saveReferencePressed ()
     }
 
     Gtk::FileChooserDialog dialog(M("TP_ICM_SAVEREFERENCE"), Gtk::FILE_CHOOSER_ACTION_SAVE);
-    FileChooserLastFolderPersister persister(&dialog, options.lastProfilingReferenceDir);
+    bindCurrentFolder (dialog, options.lastProfilingReferenceDir);
     dialog.set_current_name (lastRefFilename);
 
     dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
