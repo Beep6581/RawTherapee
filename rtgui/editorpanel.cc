@@ -46,6 +46,8 @@ private:
     void prepareProfileBox ()
     {
         profileBox.set_size_request (100, -1);
+        profileBox.setPreferredWidth(90, 150);
+        setExpandAlignProperties(&profileBox, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
 
         profileBox.append (M("PREFERENCES_PROFILE_NONE"));
 #ifdef WIN32
@@ -66,6 +68,7 @@ private:
         intentBox.addEntry("intent-relative.png", M("PREFERENCES_INTENT_RELATIVE"));
         intentBox.addEntry("intent-perceptual.png", M("PREFERENCES_INTENT_PERCEPTUAL"));
         intentBox.addEntry("intent-absolute.png", M("PREFERENCES_INTENT_ABSOLUTE"));
+        setExpandAlignProperties(intentBox.buttonGroup, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
 
         intentBox.setSelected(0);
         intentBox.show ();
@@ -167,10 +170,10 @@ public:
         intentConn = intentBox.signal_changed ().connect (sigc::mem_fun (this, &MonitorProfileSelector::intentBoxChanged));
     }
 
-    void pack_end_in (Gtk::Box* box)
+    void pack_right_in (Gtk::Grid* grid)
     {
-        box->pack_end (*intentBox.buttonGroup, Gtk::PACK_SHRINK, 0);
-        box->pack_end (profileBox, Gtk::PACK_SHRINK, 0);
+        grid->attach_next_to(profileBox, Gtk::POS_RIGHT, 1, 1);
+        grid->attach_next_to(*intentBox.buttonGroup, Gtk::POS_RIGHT, 1, 1);
     }
 
     void reset ()
@@ -296,18 +299,14 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         tbTopPanel_1->set_image (*iTopPanel_1_Hide);
     }
 
-    tbRightPanel_1 = new Gtk::ToggleButton ();
-    iRightPanel_1_Show = new RTImage ("panel-to-left.png");
-    iRightPanel_1_Hide = new RTImage ("panel-to-right.png");
-    tbRightPanel_1->set_relief(Gtk::RELIEF_NONE);
-    tbRightPanel_1->set_active (true);
-    tbRightPanel_1->set_tooltip_markup (M("MAIN_TOOLTIP_SHOWHIDERP1"));
-    tbRightPanel_1->set_image (*iRightPanel_1_Hide);
-
     Gtk::VSeparator* vsepcl = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepz2 = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepz3 = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepz4 = Gtk::manage (new Gtk::VSeparator ());
+
+    Gtk::VSeparator* vsep1 = Gtk::manage (new Gtk::VSeparator ());
+    Gtk::VSeparator* vsep2 = Gtk::manage (new Gtk::VSeparator ());
+    Gtk::VSeparator* vsep3 = Gtk::manage (new Gtk::VSeparator ());
 
     iareapanel = new ImageAreaPanel ();
     tpc->setEditProvider(iareapanel->imageArea);
@@ -323,9 +322,9 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     toolBarPanel->pack_start (*vsept, Gtk::PACK_SHRINK, 2);
 
     if (tbTopPanel_1) {
+        Gtk::VSeparator* vsep = Gtk::manage (new Gtk::VSeparator ());
         toolBarPanel->pack_end   (*tbTopPanel_1, Gtk::PACK_SHRINK, 1);
-        Gtk::VSeparator* vsep1 = Gtk::manage (new Gtk::VSeparator ());
-        toolBarPanel->pack_end   (*vsep1, Gtk::PACK_SHRINK, 2);
+        toolBarPanel->pack_end   (*vsep, Gtk::PACK_SHRINK, 2);
     }
 
     toolBarPanel->pack_end   (*tpc->coarse, Gtk::PACK_SHRINK, 2);
@@ -355,56 +354,51 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     vboxright->pack_start (*tpc->toolPanelNotebook);
 
     // Save buttons
-    Gtk::HBox* iops = Gtk::manage (new Gtk::HBox ());
-    iops->set_spacing(2);
-
-    Gtk::HBox *exportButtonsHBox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Grid *iops = new Gtk::Grid ();
+    iops->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+    iops->set_row_spacing(2);
+    iops->set_column_spacing(2);
 
     Gtk::Image *saveButtonImage =  Gtk::manage (new RTImage ("gtk-save-large.png"));
     saveimgas = Gtk::manage (new Gtk::Button ());
     saveimgas->add(*saveButtonImage);
     saveimgas->set_tooltip_markup(M("MAIN_BUTTON_SAVE_TOOLTIP"));
+    setExpandAlignProperties(saveimgas, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
 
     Gtk::Image *queueButtonImage = Gtk::manage (new RTImage ("processing.png"));
     queueimg = Gtk::manage (new Gtk::Button ());
     queueimg->add(*queueButtonImage);
     queueimg->set_tooltip_markup(M("MAIN_BUTTON_PUTTOQUEUE_TOOLTIP"));
+    setExpandAlignProperties(queueimg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
 
     Gtk::Image *sendToEditorButtonImage = Gtk::manage (new RTImage ("image-editor.png"));
     sendtogimp = Gtk::manage (new Gtk::Button ());
     sendtogimp->add(*sendToEditorButtonImage);
     sendtogimp->set_tooltip_markup(M("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
-
-    exportButtonsHBox->pack_start (*saveimgas, Gtk::PACK_SHRINK);
-
-    if(!simpleEditor) {
-        exportButtonsHBox->pack_start (*queueimg, Gtk::PACK_SHRINK);
-    }
-
-    exportButtonsHBox->pack_start (*sendtogimp, Gtk::PACK_SHRINK);
-
-    iops->pack_start (*exportButtonsHBox, Gtk::PACK_SHRINK);
-    iops->pack_start (*Gtk::manage(new Gtk::VSeparator()), Gtk::PACK_SHRINK, 1);
+    setExpandAlignProperties(sendtogimp, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
 
     // Status box
-    statusBox = Gtk::manage (new Gtk::HBox ());
     cssProvider = Gtk::CssProvider::create();
-    progressLabel = Gtk::manage (new Gtk::ProgressBar());
+    progressLabel = Gtk::manage (new MyProgressBar(300));
     progressLabel->set_show_text(true);
-    setExpandAlignProperties(progressLabel, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(progressLabel, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     progressLabel->set_fraction(0.0);
 
     // TODO is this needed? What for?
-    if (cssProvider) {
+    /*if (cssProvider) {
         progressLabel->get_style_context()->add_provider (cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);    // Can't find the gtkmm version of the enum!
-    }
+    }*/
 
-    statusBox->pack_start (*progressLabel);
-    iops->pack_start (*statusBox, Gtk::PACK_EXPAND_PADDING, 2);
-    iops->pack_start (*Gtk::manage(new Gtk::VSeparator()), Gtk::PACK_SHRINK, 1);
 
     // tbRightPanel_1
-    iops->pack_end (*tbRightPanel_1, Gtk::PACK_SHRINK, 0);
+    tbRightPanel_1 = new Gtk::ToggleButton ();
+    iRightPanel_1_Show = new RTImage ("panel-to-left.png");
+    iRightPanel_1_Hide = new RTImage ("panel-to-right.png");
+    tbRightPanel_1->set_relief(Gtk::RELIEF_NONE);
+    tbRightPanel_1->set_active (true);
+    tbRightPanel_1->set_tooltip_markup (M("MAIN_TOOLTIP_SHOWHIDERP1"));
+    tbRightPanel_1->set_image (*iRightPanel_1_Hide);
+    setExpandAlignProperties(tbRightPanel_1, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
 
     // ShowHideSidePanels
     tbShowHideSidePanels = new Gtk::ToggleButton ();
@@ -414,12 +408,9 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     tbShowHideSidePanels->set_active (false);
     tbShowHideSidePanels->set_tooltip_markup (M("MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP"));
     tbShowHideSidePanels->set_image (*iShowHideSidePanels);
-    iops->pack_end (*tbShowHideSidePanels, Gtk::PACK_SHRINK, 0);
-    iops->pack_end (*vsepz2, Gtk::PACK_SHRINK, 1);
+    setExpandAlignProperties(tbShowHideSidePanels, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
 
-    // Zoom panel
-    iops->pack_end (*iareapanel->imageArea->zoomPanel, Gtk::PACK_SHRINK, 1);
-    iops->pack_end (*vsepz3, Gtk::PACK_SHRINK, 2);
+    monitorProfile.reset (new MonitorProfileSelector (ipc));
 
     navPrev = navNext = navSync = NULL;
 
@@ -431,6 +422,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         navPrev->add(*navPrevImage);
         navPrev->set_relief(Gtk::RELIEF_NONE);
         navPrev->set_tooltip_markup(M("MAIN_BUTTON_NAVPREV_TOOLTIP"));
+        setExpandAlignProperties(navPrev, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
 
         Gtk::Image *navNextImage = Gtk::manage (new RTImage ("nav-next.png"));
         navNextImage->set_padding(0, 0);
@@ -438,6 +430,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         navNext->add(*navNextImage);
         navNext->set_relief(Gtk::RELIEF_NONE);
         navNext->set_tooltip_markup(M("MAIN_BUTTON_NAVNEXT_TOOLTIP"));
+        setExpandAlignProperties(navNext, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
 
         Gtk::Image *navSyncImage = Gtk::manage (new RTImage ("nav-sync.png"));
         navSyncImage->set_padding(0, 0);
@@ -445,19 +438,36 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         navSync->add(*navSyncImage);
         navSync->set_relief(Gtk::RELIEF_NONE);
         navSync->set_tooltip_markup(M("MAIN_BUTTON_NAVSYNC_TOOLTIP"));
-
-        iops->pack_end (*navNext, Gtk::PACK_SHRINK, 0);
-        iops->pack_end (*navSync, Gtk::PACK_SHRINK, 0);
-        iops->pack_end (*navPrev, Gtk::PACK_SHRINK, 0);
+        setExpandAlignProperties(navSync, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     }
 
-    iops->pack_end (*Gtk::manage(new Gtk::VSeparator()), Gtk::PACK_SHRINK, 0);
+    // ==================  PACKING THE BOTTOM WIDGETS =================
 
-    // Monitor profile buttons
-    monitorProfile.reset (new MonitorProfileSelector (ipc));
-    monitorProfile->pack_end_in (iops);
+    // Adding widgets from center to the left, on the left side (using Gtk::POS_LEFT)
+    //iops->attach_next_to(*vsep2, Gtk::POS_LEFT, 1, 1);
+    iops->attach_next_to(*progressLabel, Gtk::POS_LEFT, 1, 1);
+    iops->attach_next_to(*vsep1, Gtk::POS_LEFT, 1, 1);
+    iops->attach_next_to(*sendtogimp, Gtk::POS_LEFT, 1, 1);
+    if(!simpleEditor) {
+        iops->attach_next_to(*queueimg, Gtk::POS_LEFT, 1, 1);
+    }
+    iops->attach_next_to(*saveimgas, Gtk::POS_LEFT, 1, 1);
 
-    editbox->pack_start (*Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0);
+    // Adding widgets from center to the right, on the right side (using Gtk::POS_RIGHT)
+    iops->attach_next_to(*vsep2, Gtk::POS_RIGHT, 1, 1);
+    monitorProfile->pack_right_in (iops);
+    if (!simpleEditor && !options.tabbedUI) {
+        iops->attach_next_to(*vsep3, Gtk::POS_RIGHT, 1, 1);
+        iops->attach_next_to(*navPrev, Gtk::POS_RIGHT, 1, 1);
+        iops->attach_next_to(*navSync, Gtk::POS_RIGHT, 1, 1);
+        iops->attach_next_to(*navNext, Gtk::POS_RIGHT, 1, 1);
+    }
+    iops->attach_next_to(*vsepz2, Gtk::POS_RIGHT, 1, 1);
+    iops->attach_next_to(*iareapanel->imageArea->zoomPanel, Gtk::POS_RIGHT, 1, 1);
+    iops->attach_next_to(*vsepz3, Gtk::POS_RIGHT, 1, 1);
+    iops->attach_next_to(*tbShowHideSidePanels, Gtk::POS_RIGHT, 1, 1);
+    iops->attach_next_to(*tbRightPanel_1, Gtk::POS_RIGHT, 1, 1);
+
     editbox->pack_start (*iops, Gtk::PACK_SHRINK, 0);
     editbox->show_all ();
 
@@ -890,7 +900,7 @@ void EditorPanel::setProgressState (bool inProcessing)
 struct spparams {
     double val;
     Glib::ustring str;
-    Gtk::ProgressBar *pProgress;
+    MyProgressBar *pProgress;
     Glib::RefPtr<Gtk::CssProvider> cssProvider;
 
 };

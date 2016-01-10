@@ -36,6 +36,8 @@
 #include "filepanel.h"
 
 class EditorPanel;
+class MyProgressBar;
+
 struct EditorPanelIdleHelper {
     EditorPanel* epanel;
     bool destroyed;
@@ -57,7 +59,7 @@ private:
     Glib::RefPtr<Gtk::CssProvider> cssProvider;  // to be able to set the ProgressBar's background
 
 protected:
-    Gtk::ProgressBar  *progressLabel;
+    MyProgressBar  *progressLabel;
     Gtk::ToggleButton* info;
     Gtk::ToggleButton* hidehp;
     Gtk::ToggleButton* tbShowHideSidePanels;
@@ -68,7 +70,6 @@ protected:
     Gtk::ToggleButton* beforeAfter;
     Gtk::HPaned* hpanedl;
     Gtk::HPaned* hpanedr;
-    Gtk::HBox* statusBox;
     Gtk::Image *iHistoryShow, *iHistoryHide;
     Gtk::Image *iTopPanel_1_Show, *iTopPanel_1_Hide;
     Gtk::Image *iRightPanel_1_Show, *iRightPanel_1_Hide;

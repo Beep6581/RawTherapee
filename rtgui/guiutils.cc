@@ -966,7 +966,7 @@ void MyScrolledWindow::get_preferred_height_for_width_vfunc (int width, int &min
 
 MyComboBoxText::MyComboBoxText ()
 {
-    set_size_request(40, -1);
+    minimumWidth = naturalWidth = 70;
 }
 
 bool MyComboBoxText::on_scroll_event (GdkEventScroll* event)
@@ -982,19 +982,37 @@ bool MyComboBoxText::on_scroll_event (GdkEventScroll* event)
     return false;
 }
 
+void MyComboBoxText::setPreferredWidth (int minimum_width, int natural_width)
+{
+    if (natural_width==-1 && minimum_width==-1) {
+        naturalWidth = minimumWidth = 70;
+    } else if (natural_width==-1) {
+        naturalWidth =  minimumWidth = minimum_width;
+    } else if (minimum_width==-1) {
+        naturalWidth = natural_width;
+        minimumWidth = rtengine::max(naturalWidth/2, 20);
+        minimumWidth = rtengine::min(naturalWidth, minimumWidth);
+    } else {
+        naturalWidth = natural_width;
+        minimumWidth = minimum_width;
+    }
+}
+
 void MyComboBoxText::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = natural_width = 70;
+    natural_width = rtengine::max(naturalWidth, 10);
+    minimum_width = rtengine::max(minimumWidth, 10);
 }
 void MyComboBoxText::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
 {
-    minimum_width = natural_width = 70;
+    natural_width = rtengine::max(naturalWidth, 10);
+    minimum_width = rtengine::max(minimumWidth, 10);
 }
 
 
 MyComboBox::MyComboBox ()
 {
-    set_size_request(40, -1);
+    minimumWidth = naturalWidth = 70;
 }
 
 bool MyComboBox::on_scroll_event (GdkEventScroll* event)
@@ -1010,13 +1028,31 @@ bool MyComboBox::on_scroll_event (GdkEventScroll* event)
     return false;
 }
 
+void MyComboBox::setPreferredWidth (int minimum_width, int natural_width)
+{
+    if (natural_width==-1 && minimum_width==-1) {
+        naturalWidth = minimumWidth = 70;
+    } else if (natural_width==-1) {
+        naturalWidth =  minimumWidth = minimum_width;
+    } else if (minimum_width==-1) {
+        naturalWidth = natural_width;
+        minimumWidth = rtengine::max(naturalWidth/2, 20);
+        minimumWidth = rtengine::min(naturalWidth, minimumWidth);
+    } else {
+        naturalWidth = natural_width;
+        minimumWidth = minimum_width;
+    }
+}
+
 void MyComboBox::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = natural_width = 70;
+    natural_width = rtengine::max(naturalWidth, 10);
+    minimum_width = rtengine::max(minimumWidth, 10);
 }
 void MyComboBox::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
 {
-    minimum_width = natural_width = 70;
+    natural_width = rtengine::max(naturalWidth, 10);
+    minimum_width = rtengine::max(minimumWidth, 10);
 }
 
 MySpinButton::MySpinButton ()
@@ -1256,6 +1292,24 @@ const Gtk::Label* MyImageMenuItem::getLabel () const
     return label;
 }
 
+MyProgressBar::MyProgressBar(int width) : w(rtengine::max(width, 10)) {}
+MyProgressBar::MyProgressBar() : w(200) {}
+
+void MyProgressBar::setPreferredWidth(int width)
+{
+    w = rtengine::max(width, 10);
+}
+
+void MyProgressBar::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    minimum_width = rtengine::max(w/2, 50);
+    natural_width = rtengine::max(w, 50);
+}
+
+void MyProgressBar::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+{
+    get_preferred_width_vfunc (minimum_width, natural_width);
+}
 
 BackBuffer::BackBuffer() : x(0), y(0), w(0), h(0), offset(0, 0), dirty(true) {}
 BackBuffer::BackBuffer(int width, int height, Cairo::Format format) : x(0), y(0), w(width), h(height), offset(0, 0), dirty(true)

@@ -40,7 +40,7 @@ private:
     std::map<Glib::ustring, EditorPanel*> epanels;
 
     Splash* splash;
-    Gtk::ProgressBar prProgBar;
+    MyProgressBar prProgBar;
     PLDBridge* pldBridge;
     bool is_fullscreen;
     bool on_delete_has_run;

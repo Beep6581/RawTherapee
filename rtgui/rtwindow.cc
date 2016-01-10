@@ -83,6 +83,7 @@ RTWindow::RTWindow ()
     : mainNB(NULL)
     , bpanel(NULL)
     , splash(NULL)
+    , prProgBar(300)
     , btn_fullscreen(NULL)
     , epanel(NULL)
     , fpanel(NULL)
@@ -267,21 +268,24 @@ RTWindow::RTWindow ()
         prProgBar.set_show_text(true);
 
         Gtk::Grid* actionGrid = Gtk::manage (new Gtk::Grid ());
+        actionGrid->set_row_spacing(2);
+        actionGrid->set_column_spacing(2);
+
         setExpandAlignProperties(actionGrid, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
 
         if (options.mainNBVertical) {
-            actionGrid->attach_next_to(*btn_fullscreen, Gtk::POS_BOTTOM, 1, 1);
-            actionGrid->attach_next_to(*preferences, *btn_fullscreen, Gtk::POS_TOP, 1, 1);
-            actionGrid->attach_next_to(prProgBar, *preferences, Gtk::POS_TOP, 1, 1);
             prProgBar.set_orientation(Gtk::ORIENTATION_VERTICAL);
-            //prProgBar.set_halign(Gtk::ALIGN_FILL); prProgBar.set_valign(Gtk::ALIGN_FILL);
+            actionGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
+            actionGrid->attach_next_to(prProgBar, Gtk::POS_BOTTOM, 1, 1);
+            actionGrid->attach_next_to(*preferences, Gtk::POS_BOTTOM, 1, 1);
+            actionGrid->attach_next_to(*btn_fullscreen, Gtk::POS_BOTTOM, 1, 1);
             mainNB->set_action_widget(actionGrid, Gtk::PACK_END);
         } else {
-            actionGrid->attach_next_to(*btn_fullscreen, Gtk::POS_RIGHT, 1, 1);
-            actionGrid->attach_next_to(*preferences, *btn_fullscreen, Gtk::POS_LEFT, 1, 1);
-            actionGrid->attach_next_to(prProgBar, *preferences, Gtk::POS_LEFT, 1, 1);
             prProgBar.set_orientation(Gtk::ORIENTATION_HORIZONTAL);
-            //prProgBar.set_halign(Gtk::ALIGN_FILL); prProgBar.set_valign(Gtk::ALIGN_FILL);
+            actionGrid->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+            actionGrid->attach_next_to(prProgBar, Gtk::POS_RIGHT, 1, 1);
+            actionGrid->attach_next_to(*preferences, Gtk::POS_RIGHT, 1, 1);
+            actionGrid->attach_next_to(*btn_fullscreen, Gtk::POS_RIGHT, 1, 1);
             mainNB->set_action_widget(actionGrid, Gtk::PACK_END);
         }
 

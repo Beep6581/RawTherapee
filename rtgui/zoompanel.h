@@ -22,7 +22,7 @@
 #include <gtkmm.h>
 
 class ImageArea;
-class ZoomPanel : public Gtk::HBox
+class ZoomPanel : public Gtk::Grid
 {
 
 protected:
