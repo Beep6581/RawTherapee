@@ -143,16 +143,15 @@ ClutComboBox::ClutColumns::ClutColumns()
     add( clutFilename );
 }
 
-int ClutComboBox::fillFromDir( Glib::ustring path )
+int ClutComboBox::fillFromDir (const Glib::ustring& path)
 {
-    int result = 0;
+    m_model = Gtk::TreeStore::create (m_columns);
+    set_model (m_model);
 
-    if ( !path.empty() ) {
-        m_model.clear();
-        m_model = Gtk::TreeStore::create( m_columns );
-        set_model( m_model );
-        result = parseDir( path, 0 );
-        pack_start( m_columns.label, false );
+    const auto result = parseDir (path, nullptr);
+
+    if (result > 0) {
+        pack_start (m_columns.label, false);
     }
 
     return result;

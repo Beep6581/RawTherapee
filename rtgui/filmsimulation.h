@@ -11,7 +11,7 @@
 class ClutComboBox : public MyComboBox
 {
 public:
-    int fillFromDir( Glib::ustring path );
+    int fillFromDir (const Glib::ustring& path);
     Glib::ustring getSelectedClut();
     void setSelectedClut( Glib::ustring filename );
     void addUnchangedEntry();
