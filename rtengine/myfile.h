@@ -23,6 +23,8 @@
 #include <cstdio>
 #include <cstring>
 #include "rtengine.h"
+#include "opthelper.h"
+
 struct IMFILE {
     int fd;
     ssize_t pos;
@@ -79,8 +81,8 @@ inline void fseek (IMFILE* f, int p, int how)
 inline int fgetc (IMFILE* f)
 {
 
-    if (f->pos < f->size) {
-        if (f->plistener && ++f->progress_current >= f->progress_next) {
+    if (LIKELY(f->pos < f->size)) {
+        if (UNLIKELY(f->plistener && ++f->progress_current >= f->progress_next)) {
             imfile_update_progress(f);
         }
 

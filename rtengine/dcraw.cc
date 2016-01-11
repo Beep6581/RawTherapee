@@ -947,16 +947,7 @@ void CLASS lossless_jpeg_load_raw()
     if (!ljpeg_start (&jh, 0)) { return; }
     int jwide = jh.wide * jh.clrs;
     int row = 0, col = 0;
-/*
-    printf("jh->sraw : %d\n",jh.sraw);
-    printf("jh->psv : %d\n",jh.psv);
-    printf("cr2_slice[0] : %d\n",cr2_slice[0]);
-    printf("cr2_slice[1] : %d\n",cr2_slice[1]);
-    printf("cr2_slice[2] : %d\n",cr2_slice[2]);
-    printf("jwide : %d\n",jwide);
-    printf("loadflags : %d\n",load_flags);
-    printf("zeroff : %d\n",zero_after_ff);
-*/
+
     for (int jrow=0; jrow < jh.high; jrow++) {
         ushort *rp = ljpeg_row (jrow, &jh);
         if (cr2_slice[0]) {
@@ -967,7 +958,7 @@ void CLASS lossless_jpeg_load_raw()
             // this reduces whole decoding time for a CR2 file which fits to this case by about 33%
             int jidxbase = jrow * jwide;
             int count = cr2_slice[1] * raw_height;
-            if(jidxbase + jwide < count) {
+            if(jidxbase + jwide - 1 < count) {
                 int row = jidxbase / cr2_slice[1];
                 int col = jidxbase - row * cr2_slice[1];
                 for (int jcol=0; jcol < jwide; jcol++,col++) {
@@ -978,7 +969,7 @@ void CLASS lossless_jpeg_load_raw()
                     }
                     if ((unsigned) row < raw_height) { RAW(row,col) = curve[rp[jcol]]; }
                 }
-            } else if(jidxbase < count) {
+            } else if(UNLIKELY(jidxbase < count)) {
                 int div = jidxbase / count;
                 int mod = jidxbase - div * count;
                 for (int jcol=0; jcol < jwide; jcol++,mod++) {
