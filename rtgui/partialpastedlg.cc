@@ -20,11 +20,9 @@
 #include "multilangmgr.h"
 #include "paramsedited.h"
 
-PartialPasteDlg::PartialPasteDlg (Glib::ustring title)
+PartialPasteDlg::PartialPasteDlg (const Glib::ustring& title, Gtk::Window* parent)
+    : Gtk::Dialog (title, *parent, true)
 {
-
-    set_modal (true);
-    set_title (title);
     set_default_size(700, 600);
 
     everything  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EVERYTHING")));

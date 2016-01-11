@@ -77,7 +77,7 @@ public:
         tpc = ppl;
     }
 
-    static void init ();
+    static void init (Gtk::Window* parent);
     static void cleanup ();
     void storeCurrentValue();
     void updateProfileList ();

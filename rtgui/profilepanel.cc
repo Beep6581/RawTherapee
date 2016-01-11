@@ -30,9 +30,9 @@ using namespace rtengine::procparams;
 PartialPasteDlg* ProfilePanel::partialProfileDlg;
 
 
-void ProfilePanel::init ()
+void ProfilePanel::init (Gtk::Window* parent)
 {
-    partialProfileDlg = new PartialPasteDlg("Foo");
+    partialProfileDlg = new PartialPasteDlg (Glib::ustring (), parent);
 }
 
 void ProfilePanel::cleanup ()

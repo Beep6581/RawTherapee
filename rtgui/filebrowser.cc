@@ -126,7 +126,7 @@ void findOriginalEntries (const std::vector<ThumbBrowserEntryBase*>& entries)
 }
 
 FileBrowser::FileBrowser ()
-    : tbl(NULL), numFiltered(0), partialPasteDlg(M("PARTIALPASTE_DIALOGLABEL"))
+    : tbl(NULL), numFiltered(0)
 {
 
     fbih = new FileBrowserIdleHelper;
@@ -1088,6 +1088,9 @@ void FileBrowser::partPasteProfile ()
             return;
         }
 
+        auto toplevel = static_cast<Gtk::Window*> (get_toplevel ());
+        PartialPasteDlg partialPasteDlg (M("PARTIALPASTE_DIALOGLABEL"), toplevel);
+
         int i = partialPasteDlg.run ();
 
         if (i == Gtk::RESPONSE_OK) {
@@ -1402,6 +1405,10 @@ void FileBrowser::applyPartialMenuItemActivated (ProfileStoreLabel *label)
     const rtengine::procparams::PartialProfile* srcProfiles = profileStore.getProfile (label->entry);
 
     if (srcProfiles->pparams) {
+
+        auto toplevel = static_cast<Gtk::Window*> (get_toplevel ());
+        PartialPasteDlg partialPasteDlg (M("PARTIALPASTE_DIALOGLABEL"), toplevel);
+
         if (partialPasteDlg.run() == Gtk::RESPONSE_OK) {
 
 #if PROTECT_VECTORS

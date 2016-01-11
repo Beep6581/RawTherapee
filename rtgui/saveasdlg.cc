@@ -23,11 +23,10 @@
 #include "rtimage.h"
 
 extern Options options;
-SaveAsDialog::SaveAsDialog (Glib::ustring initialDir)
+
+SaveAsDialog::SaveAsDialog (const Glib::ustring& initialDir, Gtk::Window* parent)
+    : Gtk::Dialog (M("GENERAL_SAVE"), *parent)
 {
-
-    set_title(M("GENERAL_SAVE"));
-
     Gtk::Box* box = get_content_area ();
 
     fchooser = Gtk::manage( new Gtk::FileChooserWidget (Gtk::FILE_CHOOSER_ACTION_SAVE) );

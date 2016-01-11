@@ -36,13 +36,13 @@ extern Glib::ustring argv0;
 extern Glib::RefPtr<Gtk::CssProvider> cssForced;
 Glib::RefPtr<Gtk::CssProvider> css;
 
-Preferences::Preferences  (RTWindow *rtwindow) : rprofiles(NULL), iprofiles(NULL), parent(rtwindow)
+Preferences::Preferences  (RTWindow *rtwindow)
+    : Gtk::Dialog (M("MAIN_BUTTON_PREFERENCES"), *rtwindow, true)
+    , rprofiles (nullptr)
+    , iprofiles (nullptr)
+    , parent (rtwindow)
+    , splash (nullptr)
 {
-
-    splash = NULL;
-
-    set_title (M("MAIN_BUTTON_PREFERENCES"));
-
     moptions.copyFrom (&options);
 
     /*
@@ -96,7 +96,6 @@ Preferences::Preferences  (RTWindow *rtwindow) : rprofiles(NULL), iprofiles(NULL
     fillPreferences ();
 
     show_all_children ();
-    set_modal (true);
 }
 
 
