@@ -19,6 +19,7 @@
 #include "multilangmgr.h"
 
 #include <fstream>
+#include <regex>
 
 #ifdef WIN32
 #include <windows.h>
@@ -134,6 +135,9 @@ bool MultiLangMgr::load (const Glib::ustring& fname, MultiLangMgr* fallbackMgr)
         if (!std::getline (line, key, ';') || !std::getline (line, value)) {
             continue;
         }
+
+        static const std::regex newline ("\\\\n");
+        value = std::regex_replace (value, newline, "\n");
 
         translations.emplace (key, value);
     }
