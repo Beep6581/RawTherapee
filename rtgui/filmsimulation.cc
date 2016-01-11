@@ -230,19 +230,20 @@ int ClutComboBox::parseDir (const Glib::ustring& path)
 
         try {
             for (const auto& entry : Glib::Dir (path)) {
-                entries.push_back (entry);
+
+                const auto entryPath = Glib::build_filename (path, entry);
+
+                if (!Glib::file_test (entryPath, Glib::FILE_TEST_IS_REGULAR)) {
+                    continue;
+                }
+
+                entries.push_back (entryPath);
             }
         } catch (Glib::Exception&) {}
 
         std::sort (entries.begin (), entries.end ());
 
         for (const auto& entry : entries) {
-
-            const auto entryPath = Glib::build_filename (path, entry);
-
-            if (!Glib::file_test (entryPath, Glib::FILE_TEST_IS_REGULAR)) {
-                continue;
-            }
 
             Glib::ustring name, extension, profileName;
             splitClutFilename (entry, name, extension, profileName);
@@ -254,7 +255,7 @@ int ClutComboBox::parseDir (const Glib::ustring& path)
 
             auto newRow = row ? *m_model->append (row.children ()) : *m_model->append ();
             newRow[m_columns.label] = name;
-            newRow[m_columns.clutFilename] = entryPath;
+            newRow[m_columns.clutFilename] = entry;
 
             if (++fileCount > maxFileCount) {
                 m_model->clear ();
