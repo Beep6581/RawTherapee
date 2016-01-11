@@ -1,10 +1,38 @@
 #include "filmsimulation.h"
+
+#include <chrono>
+
 #include "options.h"
 #include "../rtengine/clutstore.h"
 #include "../rtengine/safegtk.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
+
+namespace
+{
+
+bool confirmToContinue (const std::chrono::system_clock::time_point& startedAt,
+                        std::chrono::system_clock::time_point& continuedAt)
+{
+    const auto now = std::chrono::system_clock::now ();
+    const auto searchingFor = std::chrono::duration_cast<std::chrono::seconds> (now-continuedAt);
+
+    if (searchingFor >= std::chrono::seconds (5)) {
+
+        const auto message = Glib::ustring::compose ("Searching CLUT files for %1 seconds now...\nDo you wish to continue?", searchingFor.count ());
+
+        Gtk::MessageDialog dialog (message, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
+        if (dialog.run () != Gtk::RESPONSE_YES) {
+            return false;
+        }
+    }
+
+    continuedAt = now;
+    return true;
+}
+
+}
 
 typedef std::vector<Glib::ustring> Strings;
 
@@ -163,6 +191,9 @@ int ClutComboBox::parseDir (const Glib::ustring& path)
         return 0;
     }
 
+    const auto startedAt = std::chrono::system_clock::now ();
+    auto continuedAt = startedAt;
+
     // Build menu of limited directory structure using breadth-first search
     using Dirs = std::vector<std::pair<Glib::ustring, Gtk::TreeModel::Row>>;
     Dirs dirs;
@@ -170,9 +201,6 @@ int ClutComboBox::parseDir (const Glib::ustring& path)
     {
         Dirs currDirs;
         Dirs nextDirs;
-
-        constexpr auto maxDirCount = 128, maxDirDepth = 4;
-        auto dirCount = 0, dirDepth = 0;
 
         currDirs.emplace_back (path, Gtk::TreeModel::Row ());
 
@@ -200,7 +228,8 @@ int ClutComboBox::parseDir (const Glib::ustring& path)
                 } catch (Glib::Exception&) {}
 
                 dirs.push_back (std::move (dir));
-                if (++dirCount > maxDirCount) {
+
+                if (!confirmToContinue (startedAt, continuedAt)) {
                     m_model->clear ();
                     return 0;
                 }
@@ -208,17 +237,12 @@ int ClutComboBox::parseDir (const Glib::ustring& path)
 
             currDirs.clear ();
             currDirs.swap (nextDirs);
-            if (++dirDepth > maxDirDepth) {
-                m_model->clear ();
-                return 0;
-            }
         }
     }
 
     // Fill menu structure with CLUT files
     Strings entries;
 
-    constexpr auto maxFileCount = 4096;
     auto fileCount = 0;
 
     for (const auto& dir : dirs) {
@@ -257,7 +281,9 @@ int ClutComboBox::parseDir (const Glib::ustring& path)
             newRow[m_columns.label] = name;
             newRow[m_columns.clutFilename] = entry;
 
-            if (++fileCount > maxFileCount) {
+            ++fileCount;
+
+            if (!confirmToContinue (startedAt, continuedAt)) {
                 m_model->clear ();
                 return 0;
             }
