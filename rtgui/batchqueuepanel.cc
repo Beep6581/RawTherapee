@@ -187,11 +187,16 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
 
     show_all ();
 
-    saveFormatPanel->init (options.saveFormatBatch);
-
     if (batchQueue->loadBatchQueue ()) {
         g_idle_add_full (G_PRIORITY_LOW, processLoadedBatchQueueUIThread, batchQueue, NULL);
     }
+}
+
+void BatchQueuePanel::init (RTWindow *parent)
+{
+    this->parent = parent;
+
+    saveFormatPanel->init (options.saveFormatBatch);
 }
 
 // it is expected to have a non null forceOrientation value on Preferences update only. In this case, qsize is ingored and computed automatically
