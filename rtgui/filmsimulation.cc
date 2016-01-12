@@ -12,24 +12,23 @@ using namespace rtengine::procparams;
 namespace
 {
 
-bool confirmToContinue (const std::chrono::system_clock::time_point& startedAt,
-                        std::chrono::system_clock::time_point& continuedAt)
+void notifySlowParseDir (const std::chrono::system_clock::time_point& startedAt)
 {
-    const auto now = std::chrono::system_clock::now ();
-    const auto searchingFor = std::chrono::duration_cast<std::chrono::seconds> (now-continuedAt);
+    static bool alreadyNotified = false;
 
-    if (searchingFor >= std::chrono::seconds (5)) {
-
-        const auto message = Glib::ustring::compose ("Searching CLUT files for %1 seconds now...\nDo you wish to continue?", searchingFor.count ());
-
-        Gtk::MessageDialog dialog (message, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
-        if (dialog.run () != Gtk::RESPONSE_YES) {
-            return false;
-        }
+    if (alreadyNotified) {
+        return;
     }
 
-    continuedAt = now;
-    return true;
+    const auto now = std::chrono::system_clock::now ();
+    if (now - startedAt < std::chrono::seconds (10)) {
+        return;
+    }
+
+    Gtk::MessageDialog dialog (M ("TP_FILMSIMULATION_SLOWPARSEDIR"), false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
+    dialog.run ();
+
+    alreadyNotified = true;
 }
 
 }
@@ -192,7 +191,6 @@ int ClutComboBox::parseDir (const Glib::ustring& path)
     }
 
     const auto startedAt = std::chrono::system_clock::now ();
-    auto continuedAt = startedAt;
 
     // Build menu of limited directory structure using breadth-first search
     using Dirs = std::vector<std::pair<Glib::ustring, Gtk::TreeModel::Row>>;
@@ -229,10 +227,7 @@ int ClutComboBox::parseDir (const Glib::ustring& path)
 
                 dirs.push_back (std::move (dir));
 
-                if (!confirmToContinue (startedAt, continuedAt)) {
-                    m_model->clear ();
-                    return 0;
-                }
+                notifySlowParseDir (startedAt);
             }
 
             currDirs.clear ();
@@ -283,10 +278,7 @@ int ClutComboBox::parseDir (const Glib::ustring& path)
 
             ++fileCount;
 
-            if (!confirmToContinue (startedAt, continuedAt)) {
-                m_model->clear ();
-                return 0;
-            }
+            notifySlowParseDir (startedAt);
         }
     }
 
