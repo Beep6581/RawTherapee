@@ -155,10 +155,9 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1)
 void History::initHistory ()
 {
 
-    selchangehist.block(true);
+    ConnectionBlocker selBlocker(selchangehist);
     historyModel->clear ();
     bookmarkModel->clear ();
-    selchangehist.block(false);
 }
 
 void History::clearParamChanges ()
