@@ -74,7 +74,7 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
         #pragma omp parallel
 #endif
         {
-            gaussianBlur<float> (map, map, W, H, radius);
+            gaussianBlur(map, map, W, H, radius);
         }
     }
 

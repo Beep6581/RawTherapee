@@ -65,8 +65,8 @@ SSEFUNCTION void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, 
     #pragma omp parallel
 #endif
     {
-        gaussianBlur<float> (src->a, tmp1->a, src->W, src->H, radius);
-        gaussianBlur<float> (src->b, tmp1->b, src->W, src->H, radius);
+        gaussianBlur (src->a, tmp1->a, src->W, src->H, radius);
+        gaussianBlur (src->b, tmp1->b, src->W, src->H, radius);
     }
 
     float chromave = 0.0f;
@@ -87,7 +87,7 @@ SSEFUNCTION void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, 
             for(int i = 0; i < height; i++ )
             {
                 for(j = 0; j < width - 3; j += 4) {
-                    _mm_storeu_ps(&fringe[i * width + j], xatan2f(LVFU(src->b[i][j]), LVFU(src->a[i][j])));
+                    STVFU(fringe[i * width + j], xatan2f(LVFU(src->b[i][j]), LVFU(src->a[i][j])));
                 }
 
                 for(; j < width; j++) {
@@ -144,14 +144,14 @@ SSEFUNCTION void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, 
     #pragma omp parallel
 #endif
     {
-        __m128 sumv = _mm_set1_ps( chromave );
-        __m128 onev = _mm_set1_ps( 1.0f );
+        __m128 sumv = F2V( chromave );
+        __m128 onev = F2V( 1.0f );
 #ifdef _OPENMP
         #pragma omp for
 #endif
 
         for(int j = 0; j < width * height - 3; j += 4) {
-            _mm_storeu_ps( &fringe[j], onev / (LVFU(fringe[j]) + sumv));
+            STVFU(fringe[j], onev / (LVFU(fringe[j]) + sumv));
         }
     }
 
@@ -355,7 +355,7 @@ SSEFUNCTION void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * ds
 #ifdef __SSE2__
         int j;
         vfloat2 sincosvalv;
-        __m128 piidv = _mm_set1_ps(piid);
+        __m128 piidv = F2V(piid);
 #endif // __SSE2__
 #ifdef _OPENMP
         #pragma omp for
@@ -366,8 +366,8 @@ SSEFUNCTION void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * ds
 
             for (j = 0; j < width - 3; j += 4) {
                 sincosvalv = xsincosf(piidv * LVFU(src->h_p[i][j]));
-                _mm_storeu_ps(&sraa[i][j], LVFU(src->C_p[i][j])*sincosvalv.y);
-                _mm_storeu_ps(&srbb[i][j], LVFU(src->C_p[i][j])*sincosvalv.x);
+                STVFU(sraa[i][j], LVFU(src->C_p[i][j])*sincosvalv.y);
+                STVFU(srbb[i][j], LVFU(src->C_p[i][j])*sincosvalv.x);
             }
 
             for (; j < width; j++) {
@@ -392,8 +392,8 @@ SSEFUNCTION void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * ds
     #pragma omp parallel
 #endif
     {
-        gaussianBlur<float> (sraa, tmaa, src->W, src->H, radius);
-        gaussianBlur<float> (srbb, tmbb, src->W, src->H, radius);
+        gaussianBlur (sraa, tmaa, src->W, src->H, radius);
+        gaussianBlur (srbb, tmbb, src->W, src->H, radius);
     }
 
     float chromave = 0.0f;
@@ -414,7 +414,7 @@ SSEFUNCTION void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * ds
             for(int i = 0; i < height; i++ )
             {
                 for(j = 0; j < width - 3; j += 4) {
-                    _mm_storeu_ps(&fringe[i * width + j], xatan2f(LVFU(srbb[i][j]), LVFU(sraa[i][j])));
+                    STVFU(fringe[i * width + j], xatan2f(LVFU(srbb[i][j]), LVFU(sraa[i][j])));
                 }
 
                 for(; j < width; j++) {
@@ -470,14 +470,14 @@ SSEFUNCTION void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * ds
     #pragma omp parallel
 #endif
     {
-        __m128 sumv = _mm_set1_ps( chromave + eps2 );
-        __m128 onev = _mm_set1_ps( 1.0f );
+        __m128 sumv = F2V( chromave + eps2 );
+        __m128 onev = F2V( 1.0f );
 #ifdef _OPENMP
         #pragma omp for
 #endif
 
         for(int j = 0; j < width * height - 3; j += 4) {
-            _mm_storeu_ps( &fringe[j], onev / (LVFU(fringe[j]) + sumv));
+            STVFU(fringe[j], onev / (LVFU(fringe[j]) + sumv));
         }
     }
 
@@ -599,7 +599,7 @@ SSEFUNCTION void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * ds
 #ifdef __SSE2__
         int j;
         __m128 interav, interbv;
-        __m128 piidv = _mm_set1_ps(piid);
+        __m128 piidv = F2V(piid);
 #endif
 #ifdef _OPENMP
         #pragma omp for
@@ -609,11 +609,11 @@ SSEFUNCTION void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * ds
 #ifdef __SSE2__
 
             for(j = 0; j < width - 3; j += 4) {
-                _mm_storeu_ps( &dst->sh_p[i][j], LVFU(src->sh_p[i][j]));
+                STVFU(dst->sh_p[i][j], LVFU(src->sh_p[i][j]));
                 interav = LVFU(tmaa[i][j]);
                 interbv = LVFU(tmbb[i][j]);
-                _mm_storeu_ps(&dst->h_p[i][j], (xatan2f(interbv, interav)) / piidv);
-                _mm_storeu_ps(&dst->C_p[i][j], _mm_sqrt_ps(SQRV(interbv) + SQRV(interav)));
+                STVFU(dst->h_p[i][j], (xatan2f(interbv, interav)) / piidv);
+                STVFU(dst->C_p[i][j], vsqrtf(SQRV(interbv) + SQRV(interav)));
             }
 
             for(; j < width; j++) {
@@ -730,7 +730,7 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
 #ifdef __SSE2__
         int j;
         vfloat2 sincosvalv;
-        __m128 piidv = _mm_set1_ps(piid);
+        __m128 piidv = F2V(piid);
 #endif // __SSE2__
 #ifdef _OPENMP
         #pragma omp for
@@ -741,8 +741,8 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
 
             for (j = 0; j < width - 3; j += 4) {
                 sincosvalv = xsincosf(piidv * LVFU(src->h_p[i][j]));
-                _mm_storeu_ps(&sraa[i][j], LVFU(src->C_p[i][j])*sincosvalv.y);
-                _mm_storeu_ps(&srbb[i][j], LVFU(src->C_p[i][j])*sincosvalv.x);
+                STVFU(sraa[i][j], LVFU(src->C_p[i][j])*sincosvalv.y);
+                STVFU(srbb[i][j], LVFU(src->C_p[i][j])*sincosvalv.x);
             }
 
             for (; j < width; j++) {
@@ -769,12 +769,12 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
     {
         //chroma a and b
         if(mode == 2) { //choice of gaussian blur
-            gaussianBlur<float> (sraa, tmaa, src->W, src->H, radius);
-            gaussianBlur<float> (srbb, tmbb, src->W, src->H, radius);
+            gaussianBlur (sraa, tmaa, src->W, src->H, radius);
+            gaussianBlur (srbb, tmbb, src->W, src->H, radius);
         }
 
         //luma sh_p
-        gaussianBlur<float> (src->sh_p, tmL, src->W, src->H, 2.0);//low value to avoid artifacts
+        gaussianBlur (src->sh_p, tmL, src->W, src->H, 2.0);//low value to avoid artifacts
     }
 
     if(mode == 1) { //choice of median
@@ -859,8 +859,8 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
         int j;
 #ifdef __SSE2__
         __m128 shfabsv, shmedv;
-        __m128 shthrv = _mm_set1_ps(shthr);
-        __m128 onev = _mm_set1_ps(1.0f);
+        __m128 shthrv = F2V(shthr);
+        __m128 onev = F2V(1.0f);
 #endif // __SSE2__
 #ifdef _OPENMP
         #pragma omp for private(shfabs, shmed,i1,j1)
@@ -883,14 +883,14 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
 
             for (; j < width - 5; j += 4) {
                 shfabsv = vabsf(LVFU(src->sh_p[i][j]) - LVFU(tmL[i][j]));
-                shmedv = _mm_setzero_ps();
+                shmedv = ZEROV;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = j - 2; j1 <= j + 2; j1++ ) {
                         shmedv += vabsf(LVFU(src->sh_p[i1][j1]) - LVFU(tmL[i1][j1]));
                     }
 
-                _mm_storeu_ps( &badpix[i * width + j], vself(vmaskf_gt(shfabsv, (shmedv - shfabsv)*shthrv), onev, _mm_setzero_ps()));
+                STVFU(badpix[i * width + j], vself(vmaskf_gt(shfabsv, (shmedv - shfabsv)*shthrv), onev, ZEROV));
             }
 
             for (; j < width - 2; j++) {
@@ -1082,15 +1082,15 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
 #endif
     {
         int j;
-        __m128 sumv = _mm_set1_ps( chrommed + eps2 );
-        __m128 onev = _mm_set1_ps( 1.0f );
+        __m128 sumv = F2V( chrommed + eps2 );
+        __m128 onev = F2V( 1.0f );
 #ifdef _OPENMP
         #pragma omp for
 #endif
 
         for(int i = 0; i < height; i++) {
             for(j = 0; j < width - 3; j += 4) {
-                _mm_storeu_ps( &badpix[i * width + j], onev / (LVFU(badpix[i * width + j]) + sumv));
+                STVFU(badpix[i * width + j], onev / (LVFU(badpix[i * width + j]) + sumv));
             }
 
             for(; j < width; j++) {
@@ -1341,7 +1341,7 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
 #ifdef __SSE2__
         int j;
 //  vfloat2 sincosvalv;
-//  __m128 piidv = _mm_set1_ps(piid);
+//  __m128 piidv = F2V(piid);
 #endif // __SSE2__
 #ifdef _OPENMP
         #pragma omp for
@@ -1351,8 +1351,8 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
 #ifdef __SSE2__
 
             for (j = 0; j < width - 3; j += 4) {
-                _mm_storeu_ps(&sraa[i][j], LVFU(src->a[i][j]));
-                _mm_storeu_ps(&srbb[i][j], LVFU(src->b[i][j]));
+                STVFU(sraa[i][j], LVFU(src->a[i][j]));
+                STVFU(srbb[i][j], LVFU(src->b[i][j]));
             }
 
             for (; j < width; j++) {
@@ -1377,12 +1377,12 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
     {
         //chroma a and b
         if(mode >= 2) { //choice of gaussian blur
-            gaussianBlur<float> (sraa, tmaa, src->W, src->H, radius);
-            gaussianBlur<float> (srbb, tmbb, src->W, src->H, radius);
+            gaussianBlur (sraa, tmaa, src->W, src->H, radius);
+            gaussianBlur (srbb, tmbb, src->W, src->H, radius);
         }
 
         //luma sh_p
-        gaussianBlur<float> (src->L, tmL, src->W, src->H, 2.0);//low value to avoid artifacts
+        gaussianBlur (src->L, tmL, src->W, src->H, 2.0);//low value to avoid artifacts
     }
 
     if(mode == 1) { //choice of median
@@ -1467,8 +1467,8 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
         int j;
 #ifdef __SSE2__
         __m128 shfabsv, shmedv;
-        __m128 shthrv = _mm_set1_ps(shthr);
-        __m128 onev = _mm_set1_ps(1.0f);
+        __m128 shthrv = F2V(shthr);
+        __m128 onev = F2V(1.0f);
 #endif // __SSE2__
 #ifdef _OPENMP
         #pragma omp for private(shfabs, shmed,i1,j1)
@@ -1491,14 +1491,14 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
 
             for (; j < width - 5; j += 4) {
                 shfabsv = vabsf(LVFU(src->L[i][j]) - LVFU(tmL[i][j]));
-                shmedv = _mm_setzero_ps();
+                shmedv = ZEROV;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = j - 2; j1 <= j + 2; j1++ ) {
                         shmedv += vabsf(LVFU(src->L[i1][j1]) - LVFU(tmL[i1][j1]));
                     }
 
-                _mm_storeu_ps( &badpix[i * width + j], vself(vmaskf_gt(shfabsv, (shmedv - shfabsv)*shthrv), onev, _mm_setzero_ps()));
+                STVFU(badpix[i * width + j], vself(vmaskf_gt(shfabsv, (shmedv - shfabsv)*shthrv), onev, ZEROV));
             }
 
             for (; j < width - 2; j++) {
@@ -1690,15 +1690,15 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
 #endif
         {
             int j;
-            __m128 sumv = _mm_set1_ps( chrommed + eps2 );
-            __m128 onev = _mm_set1_ps( 1.0f );
+            __m128 sumv = F2V( chrommed + eps2 );
+            __m128 onev = F2V( 1.0f );
 #ifdef _OPENMP
             #pragma omp for
 #endif
 
             for(int i = 0; i < height; i++) {
                 for(j = 0; j < width - 3; j += 4) {
-                    _mm_storeu_ps( &badpix[i * width + j], onev / (LVFU(badpix[i * width + j]) + sumv));
+                    STVFU(badpix[i * width + j], onev / (LVFU(badpix[i * width + j]) + sumv));
                 }
 
                 for(; j < width; j++) {

@@ -117,19 +117,22 @@ static INLINE vfloat vcast_vf_f(float f)
 
 static INLINE vfloat vaddf(vfloat x, vfloat y)
 {
-    return _mm_add_ps(x, y);
+    return x + y;
 }
 static INLINE vfloat vsubf(vfloat x, vfloat y)
 {
-    return _mm_sub_ps(x, y);
+    return x - y;
 }
 static INLINE vfloat vmulf(vfloat x, vfloat y)
 {
-    return _mm_mul_ps(x, y);
+    return x * y;
 }
 static INLINE vfloat vdivf(vfloat x, vfloat y)
 {
-    return _mm_div_ps(x, y);
+    return x / y;
+}
+static INLINE vfloat vmlaf(vfloat x, vfloat y, vfloat z) {
+    return x * y + z;
 }
 static INLINE vfloat vrecf(vfloat x)
 {

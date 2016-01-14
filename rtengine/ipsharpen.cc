@@ -69,8 +69,8 @@ SSEFUNCTION void ImProcFunctions::dcdamping (float** aI, float** aO, float dampi
             Tv = Tv * Tv;
             Uv = Tv * (fivev - Uv * fourv);
             Uv = (Wv / Iv) * Uv + onev;
-            Uv = _mm_and_ps((vfloat)vmaskf_gt(Iv, zerov), Uv);
-            Uv = _mm_and_ps((vfloat)vmaskf_gt(Ov, zerov), Uv);
+            Uv = vselfzero(vmaskf_gt(Iv, zerov), Uv);
+            Uv = vselfzero(vmaskf_gt(Ov, zerov), Uv);
             STVFU( aI[i][j], Uv );
         }
 
@@ -102,11 +102,11 @@ void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, i
 
     BENCHFUN
 
-    float *tmpIBuffer = new float[W * H];
     float *tmpI[H] ALIGNED16;
 
-    for (int i = 0; i < H; i++) {
-        tmpI[i] = &tmpIBuffer[i * W];
+    tmpI[0] = new float[W * H];
+    for (int i = 1; i < H; i++) {
+        tmpI[i] = tmpI[i-1] + W;
 
         for(int j = 0; j < W; j++) {
             tmpI[i][j] = luminance[i][j];
@@ -124,14 +124,14 @@ void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, i
         for (int k = 0; k < sharpenParam.deconviter; k++) {
             if (!needdamp) {
                 // apply gaussian blur and divide luminance by result of gaussian blur
-                gaussianBlur<float> (tmpI, tmp, W, H, sigma, NULL, GAUSS_DIV, luminance);
+                gaussianBlur (tmpI, tmp, W, H, sigma, NULL, GAUSS_DIV, luminance);
             } else {
                 // apply gaussian blur + damping
-                gaussianBlur<float> (tmpI, tmp, W, H, sigma);
+                gaussianBlur (tmpI, tmp, W, H, sigma);
                 dcdamping (tmp, luminance, damping, W, H);
             }
 
-            gaussianBlur<float> (tmp, tmpI, W, H, sigma, NULL, GAUSS_MULT);
+            gaussianBlur (tmp, tmpI, W, H, sigma, NULL, GAUSS_MULT);
 
         } // end for
 
@@ -148,7 +148,7 @@ void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, i
             }
     } // end parallel
 
-    delete [] tmpIBuffer;
+    delete [] tmpI[0];
 
 }
 
@@ -183,7 +183,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
     }
 
     if (sharpenParam.halocontrol && !sharpenParam.edgesonly) {
-        // We only need the lab parameter copy in this special case
+        // We only need the lab channel copy in this special case
         labCopy = new float*[H];
 
         for( int i = 0; i < H; i++ ) {
@@ -197,10 +197,10 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
     {
 
         if (sharpenParam.edgesonly == false) {
-            gaussianBlur<float> (lab->L, b2, W, H, sharpenParam.radius / scale);
+            gaussianBlur (lab->L, b2, W, H, sharpenParam.radius / scale);
         } else {
             bilateral<float, float> (lab->L, (float**)b3, b2, W, H, sharpenParam.edges_radius / scale, sharpenParam.edges_tolerance, multiThread);
-            gaussianBlur<float> (b3, b2, W, H, sharpenParam.radius / scale);
+            gaussianBlur (b3, b2, W, H, sharpenParam.radius / scale);
         }
 
         float** base = lab->L;
@@ -967,10 +967,10 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
     {
 
         if (params->sharpening.edgesonly == false) {
-            gaussianBlur<float> (ncie->sh_p, b2, W, H, params->sharpening.radius / scale);
+            gaussianBlur (ncie->sh_p, b2, W, H, params->sharpening.radius / scale);
         } else {
             bilateral<float, float> (ncie->sh_p, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, multiThread);
-            gaussianBlur<float> (b3, b2, W, H, params->sharpening.radius / scale);
+            gaussianBlur (b3, b2, W, H, params->sharpening.radius / scale);
         }
 
         float** base = ncie->sh_p;

@@ -18,7 +18,7 @@
 
     *   adaptation to RawTherapee
     *   2015 Jacques Desmis <jdesmis@gmail.com>
-    *   2015 Ingo Weyrich <heckflosse@i-weyrich.de>
+    *   2015 Ingo Weyrich <heckflosse67@gmx.de>
 
     * D. J. Jobson, Z. Rahman, and G. A. Woodell. A multi-scale
     * Retinex for bridging the gap between color images and the
@@ -320,9 +320,9 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         {
             for ( int scale = scal - 1; scale >= 0; scale-- ) {
                 if(scale == scal - 1) {
-                    gaussianBlur<float> (src, out, W_L, H_L, RetinexScales[scale], buffer);
+                    gaussianBlur (src, out, W_L, H_L, RetinexScales[scale], buffer);
                 } else { // reuse result of last iteration
-                    gaussianBlur<float> (out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
+                    gaussianBlur (out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
                 }
 
 #ifdef __SSE2__
