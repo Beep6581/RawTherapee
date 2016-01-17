@@ -268,7 +268,7 @@ int ClutComboBox::parseDir (const Glib::ustring& path)
             splitClutFilename (entry, name, extension, profileName);
 
             extension = extension.casefold ();
-            if (extension.compare ("tif") == 0 && extension.compare ("png") == 0) {
+            if (extension.compare ("tif") != 0 && extension.compare ("png") != 0) {
                 continue;
             }
 
