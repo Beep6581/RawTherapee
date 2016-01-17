@@ -1664,7 +1664,7 @@ TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorre
 TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
 TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Strength according to hue Strength=f(H)\nThis curve also acts on chroma when using the "Highlight" retinex method.
 TP_RETINEX_FREEGAMMA;Free gamma
-TP_RETINEX_GAIN;Contrast
+TP_RETINEX_GAIN;Gain
 TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 TP_RETINEX_GAMMA;Gamma
 TP_RETINEX_GAMMA_FREE;Free
@@ -1720,7 +1720,7 @@ TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbsciss
 TP_RETINEX_UNIFORM;Uniform
 TP_RETINEX_VARIANCE;Contrast
 TP_RETINEX_VARIANCE_TOOLTIP;Low variance increase local contrast and saturation, but can lead to artifacts.
-TP_RETINEX_VIEW;Process (Preview)
+TP_RETINEX_VIEW;Process
 TP_RETINEX_VIEW_NONE;Standard
 TP_RETINEX_VIEW_MASK;Mask
 TP_RETINEX_VIEW_UNSHARP;Unsharp mask

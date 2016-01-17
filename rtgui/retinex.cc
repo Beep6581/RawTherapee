@@ -993,7 +993,7 @@ void Retinex::mapMethodChanged()
 void Retinex::viewMethodChanged()
 {
     if(viewMethod->get_active_row_number() == 1 || viewMethod->get_active_row_number() == 2) {
-        vart->hide();
+    //    vart->hide();
         gain->hide();
         offs->hide();
         limd->hide();
@@ -1008,7 +1008,7 @@ void Retinex::viewMethodChanged()
     else if(viewMethod->get_active_row_number() == 3 || viewMethod->get_active_row_number() == 4) {
         gain->hide();
         offs->hide();
-        vart->hide();
+    //    vart->hide();
         curveEditorGH->hide();
     }
     else {
