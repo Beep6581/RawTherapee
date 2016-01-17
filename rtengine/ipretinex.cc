@@ -409,7 +409,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             int mapmet=0;
             if(deh.mapMethod=="map") mapmet=2;
             if(deh.mapMethod=="mapT") mapmet=3;
-            if(deh.mapMethod=="curv") mapmet=1;
+        //    if(deh.mapMethod=="curv") mapmet=1;
             if(deh.mapMethod=="gaus") mapmet=4;
             double shradius = (double) deh.radius;
             // printf("shrad=%f\n",shradius);

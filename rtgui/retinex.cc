@@ -191,7 +191,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     mapMethod = Gtk::manage (new MyComboBoxText ());
     mapMethod->append_text (M("TP_RETINEX_MAP_NONE"));
-    mapMethod->append_text (M("TP_RETINEX_MAP_CURV"));
+//    mapMethod->append_text (M("TP_RETINEX_MAP_CURV"));
     mapMethod->append_text (M("TP_RETINEX_MAP_GAUS"));
     mapMethod->append_text (M("TP_RETINEX_MAP_MAPP"));
     mapMethod->append_text (M("TP_RETINEX_MAP_MAPT"));
@@ -211,8 +211,8 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     viewMethod = Gtk::manage (new MyComboBoxText ());
     viewMethod->append_text (M("TP_RETINEX_VIEW_NONE"));
-    viewMethod->append_text (M("TP_RETINEX_VIEW_MASK"));
     viewMethod->append_text (M("TP_RETINEX_VIEW_UNSHARP"));
+    viewMethod->append_text (M("TP_RETINEX_VIEW_MASK"));
     viewMethod->append_text (M("TP_RETINEX_VIEW_TRAN"));
     viewMethod->append_text (M("TP_RETINEX_VIEW_TRAN2"));
     viewMethod->set_active(0);
@@ -743,21 +743,21 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     if (pp->retinex.mapMethod == "none") {
         mapMethod->set_active (0);
-    } else if (pp->retinex.mapMethod == "curv") {
-        mapMethod->set_active (1);
+//    } else if (pp->retinex.mapMethod == "curv") {
+//        mapMethod->set_active (1);
     } else if (pp->retinex.mapMethod == "gaus") {
-        mapMethod->set_active (2);
+        mapMethod->set_active (1);
     } else if (pp->retinex.mapMethod == "map") {
-        mapMethod->set_active (3);
+        mapMethod->set_active (2);
     } else if (pp->retinex.mapMethod == "mapT") {
-        mapMethod->set_active (4);
+        mapMethod->set_active (3);
     }
 
     if (pp->retinex.viewMethod == "none") {
         viewMethod->set_active (0);
-    } else if (pp->retinex.viewMethod == "mask") {
-        viewMethod->set_active (1);
     } else if (pp->retinex.viewMethod == "unsharp") {
+        viewMethod->set_active (1);
+    } else if (pp->retinex.viewMethod == "mask") {
         viewMethod->set_active (2);
     } else if (pp->retinex.viewMethod == "tran") {
         viewMethod->set_active (3);
@@ -898,22 +898,22 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
 
     if (mapMethod->get_active_row_number() == 0) {
         pp->retinex.mapMethod = "none";
+ //   } else if (mapMethod->get_active_row_number() == 1) {
+ //       pp->retinex.mapMethod = "curv";
     } else if (mapMethod->get_active_row_number() == 1) {
-        pp->retinex.mapMethod = "curv";
-    } else if (mapMethod->get_active_row_number() == 2) {
         pp->retinex.mapMethod = "gaus";
-    } else if (mapMethod->get_active_row_number() == 3) {
+    } else if (mapMethod->get_active_row_number() == 2) {
         pp->retinex.mapMethod = "map";
-    } else if (mapMethod->get_active_row_number() == 4) {
+    } else if (mapMethod->get_active_row_number() == 3) {
         pp->retinex.mapMethod = "mapT";
     }
 
     if (viewMethod->get_active_row_number() == 0) {
         pp->retinex.viewMethod = "none";
     } else if (viewMethod->get_active_row_number() == 1) {
-        pp->retinex.viewMethod = "mask";
-    } else if (viewMethod->get_active_row_number() == 2) {
         pp->retinex.viewMethod = "unsharp";
+    } else if (viewMethod->get_active_row_number() == 2) {
+        pp->retinex.viewMethod = "mask";
     } else if (viewMethod->get_active_row_number() == 3) {
         pp->retinex.viewMethod = "tran";
     } else if (viewMethod->get_active_row_number() == 4) {
@@ -961,14 +961,14 @@ void Retinex::retinexMethodChanged()
 void Retinex::mapMethodChanged()
 {
 
-    if(mapMethod->get_active_row_number() == 1  || mapMethod->get_active_row_number() == 2) {
+    if(mapMethod->get_active_row_number() == 1  /*|| mapMethod->get_active_row_number() == 2*/) {
         curveEditormap->show();
         highlights->show();
         h_tonalwidth->show();
         shadows->show();
         s_tonalwidth->show();
         radius->show();
-    } else if(mapMethod->get_active_row_number() == 3  || mapMethod->get_active_row_number() == 4) {
+    } else if(mapMethod->get_active_row_number() == 2  || mapMethod->get_active_row_number() == 3) {
         curveEditormap->show();
         highlights->show();
         h_tonalwidth->show();
