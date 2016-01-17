@@ -41,11 +41,6 @@ MyFlatCurve::MyFlatCurve ()
     editedPos.resize(4);
     editedPos.at(0) = editedPos.at(1) = editedPos.at(2) = editedPos.at(3) = 0.0;
 
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-    style->add_class(GTK_STYLE_CLASS_FRAME);
-    //style->add_class(GTK_STYLE_CLASS_NOTEBOOK);
-    //style->add_class(GTK_STYLE_CLASS_FLAT);
-
     signal_event().connect( sigc::mem_fun(*this, &MyFlatCurve::handleEvents) );
 
     // By default, we create a curve with 8 control points

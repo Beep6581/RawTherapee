@@ -55,6 +55,8 @@ HistogramPanel::HistogramPanel ()
 
     gfxGrid = Gtk::manage (new Gtk::Grid ());
     gfxGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
+    gfxGrid->set_row_spacing(1);
+    gfxGrid->set_column_spacing(1);
     histogramRGBArea->setParent(gfxGrid);
     gfxGrid->add(*histogramArea);
 
@@ -490,14 +492,10 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, Glib::ustring prof
     if (surface)  {
         Cairo::RefPtr<Cairo::Context> cc = Cairo::Context::create(surface);
         Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-        Gdk::RGBA c;
+
+        style->render_background (cc, 0, 0, surface->get_width(), surface->get_height());
 
         cc->set_antialias(Cairo::ANTIALIAS_NONE);
-        cc->set_line_join(Cairo::LINE_JOIN_MITER);
-        cc->set_source_rgb (mgray.get_red(), mgray.get_green(), mgray.get_blue());
-        cc->rectangle(0, 0, winw, winh);
-        cc->fill();
-
         cc->set_line_width (1.0);
 
         if ( r != -1 && g != -1 && b != -1 ) {
@@ -548,6 +546,8 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, Glib::ustring prof
                 }
             }
         }
+
+        style->render_frame (cc, 0, 0, surface->get_width(), surface->get_height());
     }
 
     setDirty(false);
@@ -780,14 +780,6 @@ void HistogramRGBArea::on_realize ()
     Gtk::DrawingArea::on_realize();
     Glib::RefPtr<Gdk::Window> window = get_window();
     add_events(Gdk::BUTTON_PRESS_MASK);
-
-    black = Gdk::RGBA ("black");
-    red = Gdk::RGBA ("red");
-    green = Gdk::RGBA ("green");
-    blue = Gdk::RGBA ("blue");
-    lgray = Gdk::RGBA ("gray75");
-    mgray = Gdk::RGBA ("gray50");
-    dgray = Gdk::RGBA ("gray25");
 }
 
 bool HistogramRGBArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
@@ -815,13 +807,6 @@ bool HistogramRGBArea::on_button_press_event (GdkEventButton* event)
     return true;
 }
 
-void HistogramRGBArea::on_style_updated ()
-{
-
-    white = get_style_context()->get_color(Gtk::STATE_FLAG_NORMAL);
-    queue_draw ();
-}
-
 //
 //
 //
@@ -836,7 +821,7 @@ HistogramArea::HistogramArea (FullModeListener *fml) : //needChroma unactive by 
     bhist(256);
     chist(256);
 
-    //set_size_request(100, -1);
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
 
     haih = new HistogramAreaIdleHelper;
     haih->harea = this;
@@ -968,11 +953,9 @@ void HistogramArea::updateBackBuffer ()
     setDrawRectangle(window, 0, 0, winw, winh, true);
 
     Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
+    const Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
 
-    cr->set_antialias(Cairo::ANTIALIAS_NONE);
-    cr->set_source_rgb (white.get_red(), white.get_green(), white.get_blue());
-    cr->rectangle(0, 0, w, h);
-    cr->fill();
+    style->render_background(cr, 0, 0, surface->get_width(), surface->get_height());
 
     if (valid) {
         // For RAW mode use the other hists
@@ -1122,12 +1105,12 @@ void HistogramArea::updateBackBuffer ()
         }
     }
 
+    Gdk::RGBA c = style->get_border_color(Gtk::STATE_FLAG_NORMAL);
+    cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+    cr->set_line_width (1.0);
     cr->set_antialias(Cairo::ANTIALIAS_NONE);
-    cr->set_line_join(Cairo::LINE_JOIN_BEVEL);
-    cr->set_source_rgb (mgray.get_red(), mgray.get_green(), mgray.get_blue());
-    cr->rectangle(0.5, 0.5, w - 1, h - 1);
-    cr->stroke();
 
+    // Draw the content
     cr->set_line_join(Cairo::LINE_JOIN_MITER);
     std::valarray<double> ch_ds (1);
     ch_ds[0] = 4;
@@ -1142,17 +1125,20 @@ void HistogramArea::updateBackBuffer ()
     cr->move_to(3 * w / 4 + 0.5, 1.5);
     cr->line_to(3 * w / 4 + 0.5, h - 2);
     cr->stroke();
-    cr->move_to(1.5, w / 4 + 0.5);
-    cr->line_to(w - 2, w / 4 + 0.5);
+    cr->move_to(1.5, h / 4 + 0.5);
+    cr->line_to(w - 2, h / 4 + 0.5);
     cr->stroke();
-    cr->move_to(1.5, 2 * w / 4 + 0.5);
-    cr->line_to(w - 2, 2 * w / 4 + 0.5);
+    cr->move_to(1.5, 2 * h / 4 + 0.5);
+    cr->line_to(w - 2, 2 * h / 4 + 0.5);
     cr->stroke();
-    cr->move_to(1.5, 3 * w / 4 + 0.5);
-    cr->line_to(w - 2, 3 * w / 4 + 0.5);
+    cr->move_to(1.5, 3 * h / 4 + 0.5);
+    cr->line_to(w - 2, 3 * h / 4 + 0.5);
     cr->stroke();
 
     cr->unset_dash();
+
+    // Draw the frame's border
+    style->render_frame(cr, 0, 0, surface->get_width(), surface->get_height());
 
     oldwidth = w;
     oldheight = h;
@@ -1166,14 +1152,6 @@ void HistogramArea::on_realize ()
     Gtk::DrawingArea::on_realize();
     Glib::RefPtr<Gdk::Window> window = get_window();
     add_events(Gdk::BUTTON_PRESS_MASK);
-
-    black = Gdk::RGBA ("black");
-    red = Gdk::RGBA ("red");
-    green = Gdk::RGBA ("green");
-    blue = Gdk::RGBA ("blue");
-    lgray = Gdk::RGBA ("gray75");
-    mgray = Gdk::RGBA ("gray50");
-    dgray = Gdk::RGBA ("gray25");
 }
 
 void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
@@ -1212,13 +1190,6 @@ void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
     cr->fill();
 }
 
-void HistogramArea::on_style_updated ()
-{
-
-    white = get_style_context()->get_color(Gtk::STATE_FLAG_NORMAL);
-    queue_draw ();
-}
-
 bool HistogramArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
 
@@ -1227,7 +1198,7 @@ bool HistogramArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
     int winx, winy, winw, winh;
     window->get_geometry(winx, winy, winw, winh);
 
-    if (winw != oldwidth && winh != oldheight) {
+    if (winw != oldwidth || winh != oldheight || isDirty ()) {
         updateBackBuffer ();
     }
 

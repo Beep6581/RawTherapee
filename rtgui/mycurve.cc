@@ -38,23 +38,12 @@ MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal
     curveIsDirty = true;
     edited_point = -1;
 
-//#if defined (__APPLE__)
-    // Workaround: disabling POINTER_MOTION_HINT_MASK as for gtk 2.24.22 the get_pointer() function is buggy for quartz and modifier mask is not updated correctly.
-    // This workaround should be removed when bug is fixed in GTK2 or when migrating to GTK3
-    //add_events(Gdk::POINTER_MOTION_MASK | Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);
-//#else
-    add_events(Gdk::POINTER_MOTION_MASK |   Gdk::POINTER_MOTION_HINT_MASK | Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);
-//#endif
+    add_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);
 
     mcih = new MyCurveIdleHelper;
     mcih->myCurve = this;
     mcih->destroyed = false;
     mcih->pending = 0;
-
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-    style->add_class(GTK_STYLE_CLASS_BACKGROUND);
-    style->add_class(GTK_STYLE_CLASS_FLAT);
-    style->add_class(GTK_STYLE_CLASS_NOTEBOOK);
 }
 
 MyCurve::~MyCurve ()

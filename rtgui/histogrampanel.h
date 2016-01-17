@@ -50,15 +50,6 @@ class HistogramRGBArea : public Gtk::DrawingArea, public BackBuffer
 
 protected:
 
-    Gdk::RGBA black;
-    Gdk::RGBA white;
-    Gdk::RGBA red;
-    Gdk::RGBA green;
-    Gdk::RGBA blue;
-    Gdk::RGBA lgray;
-    Gdk::RGBA mgray;
-    Gdk::RGBA dgray;
-
     int val;
     int r;
     int g;
@@ -100,7 +91,6 @@ public:
     void on_realize();
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool on_button_press_event (GdkEventButton* event);
-    void on_style_updated ();
 private:
     void rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b);
     Gtk::SizeRequestMode get_request_mode_vfunc () const;
@@ -124,14 +114,6 @@ class HistogramArea : public Gtk::DrawingArea, public BackBuffer
 
 protected:
 
-    Gdk::RGBA black;
-    Gdk::RGBA white;
-    Gdk::RGBA red;
-    Gdk::RGBA green;
-    Gdk::RGBA blue;
-    Gdk::RGBA lgray;
-    Gdk::RGBA mgray;
-    Gdk::RGBA dgray;
     LUTu lhist, rhist, ghist, bhist, chist;
     LUTu lhistRaw, rhistRaw, ghistRaw, bhistRaw;
 
@@ -155,7 +137,6 @@ public:
     void on_realize();
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool on_button_press_event (GdkEventButton* event);
-    void on_style_updated ();
 
 private:
     void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, LUTu & data, double scale, int hsize, int vsize);
