@@ -1062,19 +1062,15 @@ void HistogramArea::updateBackBuffer ()
 
         if (needLuma && !rawMode) {
             drawCurve(cr, lhist, realhistheight, w, h);
-            cr->set_source_rgb (0.75, 0.75, 0.75);
-            cr->fill_preserve ();
-            cr->set_source_rgb (0.5, 0.5, 0.5);
-            cr->stroke ();
+            cr->set_source_rgb (0.65, 0.65, 0.65);
+            cr->fill ();
 
             drawMarks(cr, lhist, realhistheight, w, ui, oi);
         }
 
         if (needChroma && !rawMode) {
             drawCurve(cr, chist, realhistheight, w, h);
-            cr->set_source_rgb (0.6, 0.6, 0.6);
-            //  cr->fill_preserve ();
-            //   cr->set_source_rgb (0.2, 0.2, 0.1);
+            cr->set_source_rgb (0., 0., 0.);
             cr->stroke ();
 
             drawMarks(cr, chist, realhistheight, w, ui, oi);
@@ -1105,8 +1101,7 @@ void HistogramArea::updateBackBuffer ()
         }
     }
 
-    Gdk::RGBA c = style->get_border_color(Gtk::STATE_FLAG_NORMAL);
-    cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+    cr->set_source_rgba (1., 1., 1., 0.35);
     cr->set_line_width (1.0);
     cr->set_antialias(Cairo::ANTIALIAS_NONE);
 
