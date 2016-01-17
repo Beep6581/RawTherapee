@@ -81,9 +81,9 @@ BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(NULL), fileCatal
     cancel->add_accelerator ("activate", pmenu->get_accel_group(), GDK_Delete, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
 
     open->signal_activate().connect(sigc::mem_fun(*this, &BatchQueue::openLastSelectedItemInEditor));
-    cancel->signal_activate().connect (std::bind (&BatchQueue::cancelItems, this, selected));
-    head->signal_activate().connect (std::bind (&BatchQueue::headItems, this, selected));
-    tail->signal_activate().connect (std::bind (&BatchQueue::tailItems, this, selected));
+    cancel->signal_activate().connect (std::bind (&BatchQueue::cancelItems, this, std::ref (selected)));
+    head->signal_activate().connect (std::bind (&BatchQueue::headItems, this, std::ref (selected)));
+    tail->signal_activate().connect (std::bind (&BatchQueue::tailItems, this, std::ref (selected)));
     selall->signal_activate().connect (sigc::mem_fun(*this, &BatchQueue::selectAll));
 
     setArrangement (ThumbBrowserBase::TB_Vertical);
