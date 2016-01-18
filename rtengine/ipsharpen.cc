@@ -23,7 +23,6 @@
 #include "rt_math.h"
 #include "sleef.c"
 #include "opthelper.h"
-
 using namespace std;
 
 namespace rtengine
@@ -42,136 +41,96 @@ SSEFUNCTION void ImProcFunctions::dcdamping (float** aI, float** aO, float dampi
     const float dampingFac = -2.0 / (damping * damping);
 
 #ifdef __SSE2__
-    __m128 Iv, Ov, Uv, zerov, onev, fourv, fivev, dampingFacv, Tv;
+    __m128 Iv, Ov, Uv, zerov, onev, fourv, fivev, dampingFacv, Tv, Wv, Lv;
     zerov = _mm_setzero_ps( );
-    onev = _mm_set1_ps( 1.0f );
-    fourv = _mm_set1_ps( 4.0f );
-    fivev = _mm_set1_ps( 5.0f );
-    dampingFacv = _mm_set1_ps( dampingFac );
+    onev = F2V( 1.0f );
+    fourv = F2V( 4.0f );
+    fivev = F2V( 5.0f );
+    dampingFacv = F2V( dampingFac );
+#endif
 #ifdef _OPENMP
     #pragma omp for
 #endif
 
-    for (int i = 0; i < H; i++)
-        for (int j = 0; j < W - 3; j += 4) {
-            Iv = _mm_loadu_ps( &aI[i][j] );
-            Ov = _mm_loadu_ps( &aO[i][j] );
+    for (int i = 0; i < H; i++) {
+        int j = 0;
+#ifdef __SSE2__
 
-            Uv = (Ov * xlogf(Iv / Ov) - Iv + Ov) * dampingFacv;
-            Uv = _mm_min_ps(Uv, onev);
+        for (; j < W - 3; j += 4) {
+            Iv = LVFU( aI[i][j] );
+            Ov = LVFU( aO[i][j] );
+            Lv = xlogf(Iv / Ov);
+            Wv = Ov - Iv;
+            Uv = (Ov * Lv + Wv) * dampingFacv;
+            Uv = vminf(Uv, onev);
             Tv = Uv * Uv;
             Tv = Tv * Tv;
             Uv = Tv * (fivev - Uv * fourv);
-            Uv = (Ov - Iv) / Iv * Uv + onev;
-            Uv = vself(vmaskf_ge(zerov, Iv), zerov, Uv);
-            Uv = vself(vmaskf_ge(zerov, Ov), zerov, Uv);
-
-            _mm_storeu_ps( &aI[i][j], Uv );
+            Uv = (Wv / Iv) * Uv + onev;
+            Uv = vselfzero(vmaskf_gt(Iv, zerov), Uv);
+            Uv = vselfzero(vmaskf_gt(Ov, zerov), Uv);
+            STVFU( aI[i][j], Uv );
         }
 
-// border pixels are done without SSE2
-    float I, O, U;
-#ifdef _OPENMP
-    #pragma omp for
 #endif
 
-    for (int i = 0; i < H; i++)
-        for(int j = W - (W % 4); j < W; j++) {
-            I = aI[i][j];
-            O = aO[i][j];
+        for(; j < W; j++) {
+            float I = aI[i][j];
+            float O = aO[i][j];
 
-            if (O <= 0.0 || I <= 0.0) {
-                aI[i][j] = 0.0;
+            if (O <= 0.f || I <= 0.f) {
+                aI[i][j] = 0.f;
                 continue;
             }
 
-            U = (O * xlogf(I / O) - I + O) * dampingFac;
+            float U = (O * xlogf(I / O) - I + O) * dampingFac;
             U = min(U, 1.0f);
-            U = U * U * U * U * (5.0 - U * 4.0);
-            aI[i][j] = (O - I) / I * U + 1.0;
+            U = U * U * U * U * (5.f - U * 4.f);
+            aI[i][j] = (O - I) / I * U + 1.f;
         }
-
-#else // without __SSE2__
-    float I, O, U;
-#ifdef _OPENMP
-    #pragma omp for
-#endif
-
-    for (int i = 0; i < H; i++)
-        for (int j = 0; j < W; j++) {
-            I = aI[i][j];
-            O = aO[i][j];
-
-            if (O <= 0.0 || I <= 0.0) {
-                aI[i][j] = 0.0;
-                continue;
-            }
-
-            U = (O * xlogf(I / O) - I + O) * dampingFac;
-            U = min(U, 1.0f);
-            U = U * U * U * U * (5.0 - U * 4.0);
-            aI[i][j] = (O - I) / I * U + 1.0;
-        }
-
-#endif
+    }
 }
 
-void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2, SharpeningParams &sharpenParam)
+void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, int H, const SharpeningParams &sharpenParam)
 {
-    if (sharpenParam.enabled == false || sharpenParam.deconvamount < 1) {
+    if (sharpenParam.deconvamount < 1) {
         return;
     }
 
-    int W = lab->W, H = lab->H;
+    float *tmpI[H] ALIGNED16;
 
-    float** tmpI = new float*[H];
+    tmpI[0] = new float[W * H];
+
+    for (int i = 1; i < H; i++) {
+        tmpI[i] = tmpI[i - 1] + W;
+    }
 
     for (int i = 0; i < H; i++) {
-        tmpI[i] = new float[W];
-
-        for (int j = 0; j < W; j++) {
-            tmpI[i][j] = (float)lab->L[i][j];
+        for(int j = 0; j < W; j++) {
+            tmpI[i][j] = luminance[i][j];
         }
     }
 
-    float** tmp = (float**)b2;
+    float damping = sharpenParam.deconvdamping / 5.0;
+    bool needdamp = sharpenParam.deconvdamping > 0;
+    double sigma = sharpenParam.deconvradius / scale;
 
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
     {
-        float damping = sharpenParam.deconvdamping / 5.0;
-        bool needdamp = sharpenParam.deconvdamping > 0;
-
         for (int k = 0; k < sharpenParam.deconviter; k++) {
-
-            // apply blur function (gaussian blur)
-            gaussianBlur<float> (tmpI, tmp, W, H, sharpenParam.deconvradius / scale);
-
             if (!needdamp) {
-#ifdef _OPENMP
-                #pragma omp for
-#endif
-
-                for (int i = 0; i < H; i++)
-                    for (int j = 0; j < W; j++)
-                        if (tmp[i][j] > 0) {
-                            tmp[i][j] = (float)lab->L[i][j] / tmp[i][j];
-                        }
+                // apply gaussian blur and divide luminance by result of gaussian blur
+                gaussianBlur (tmpI, tmp, W, H, sigma, nullptr, GAUSS_DIV, luminance);
             } else {
-                dcdamping (tmp, lab->L, damping, W, H);
+                // apply gaussian blur + damping
+                gaussianBlur (tmpI, tmp, W, H, sigma);
+                dcdamping (tmp, luminance, damping, W, H);
             }
 
-            gaussianBlur<float> (tmp, tmp, W, H, sharpenParam.deconvradius / scale);
+            gaussianBlur (tmp, tmpI, W, H, sigma, nullptr, GAUSS_MULT);
 
-#ifdef _OPENMP
-            #pragma omp for
-#endif
-
-            for (int i = 0; i < H; i++)
-                for (int j = 0; j < W; j++) {
-                    tmpI[i][j] = tmpI[i][j] * tmp[i][j];
-                }
         } // end for
 
         float p2 = sharpenParam.deconvamount / 100.0;
@@ -183,34 +142,35 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2, SharpeningPar
 
         for (int i = 0; i < H; i++)
             for (int j = 0; j < W; j++) {
-                lab->L[i][j] = lab->L[i][j] * p1 + max(tmpI[i][j], 0.0f) * p2;
+                luminance[i][j] = luminance[i][j] * p1 + max(tmpI[i][j], 0.0f) * p2;
             }
-
     } // end parallel
 
-    for (int i = 0; i < H; i++) {
-        delete [] tmpI[i];
-    }
+    delete [] tmpI[0];
 
-    delete [] tmpI;
 }
 
 void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &sharpenParam)
 {
 
-    if (sharpenParam.method == "rld") {
-        deconvsharpening (lab, b2, sharpenParam);
+    if (!sharpenParam.enabled) {
         return;
     }
+
+    if (sharpenParam.method == "rld") {
+        deconvsharpening (lab->L, b2, lab->W, lab->H, sharpenParam);
+        return;
+    }
+
+    if ((!sharpenParam.enabled) || sharpenParam.amount < 1 || lab->W < 8 || lab->H < 8) {
+        return;
+    }
+
 
     // Rest is UNSHARP MASK
-    if (sharpenParam.enabled == false || sharpenParam.amount < 1 || lab->W < 8 || lab->H < 8) {
-        return;
-    }
-
     int W = lab->W, H = lab->H;
-    float** b3 = NULL;
-    float** labCopy = NULL;
+    float** b3 = nullptr;
+    float** labCopy = nullptr;
 
     if (sharpenParam.edgesonly) {
         b3 = new float*[H];
@@ -221,7 +181,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
     }
 
     if (sharpenParam.halocontrol && !sharpenParam.edgesonly) {
-        // We only need the lab parameter copy in this special case
+        // We only need the lab channel copy in this special case
         labCopy = new float*[H];
 
         for( int i = 0; i < H; i++ ) {
@@ -235,10 +195,10 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
     {
 
         if (sharpenParam.edgesonly == false) {
-            gaussianBlur<float> (lab->L, b2, W, H, sharpenParam.radius / scale);
+            gaussianBlur (lab->L, b2, W, H, sharpenParam.radius / scale);
         } else {
             bilateral<float, float> (lab->L, (float**)b3, b2, W, H, sharpenParam.edges_radius / scale, sharpenParam.edges_tolerance, multiThread);
-            gaussianBlur<float> (b3, b2, W, H, sharpenParam.radius / scale);
+            gaussianBlur (b3, b2, W, H, sharpenParam.radius / scale);
         }
 
         float** base = lab->L;
@@ -277,7 +237,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
                 base = labCopy;
             }
 
-            sharpenHaloCtrl (lab, b2, base, W, H, sharpenParam);
+            sharpenHaloCtrl (lab->L, b2, base, W, H, sharpenParam);
         }
 
     } // end parallel
@@ -300,7 +260,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
     }
 }
 
-void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** base, int W, int H, SharpeningParams &sharpenParam)
+void ImProcFunctions::sharpenHaloCtrl (float** luminance, float** blurmap, float** base, int W, int H, const SharpeningParams &sharpenParam)
 {
 
     float scale = (100.f - sharpenParam.halocontrol_amount) * 0.01f;
@@ -331,7 +291,7 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
             max2 = maxn;
             min1 = min2;
             min2 = minn;
-            labL = lab->L[i][j];
+            labL = luminance[i][j];
 
             if (max_ < labL) {
                 max_ = labL;
@@ -358,7 +318,7 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
                 newL = min_ - (min_ - newL) * scale;
             }
 
-            lab->L[i][j] = newL;
+            luminance[i][j] = newL;
         }
     }
 }
@@ -606,851 +566,377 @@ void ImProcFunctions::MLsharpen (LabImage* lab)
 //! MicroContrast is a sharpening method developed by Manuel Llorens and documented here: http://www.rawness.es/sharpening/?lang=en
 //! <BR>The purpose is maximize clarity of the image without creating halo's.
 //! <BR>Addition from JD : pyramid  + pondered contrast with matrix 5x5
-//! \param lab LabImage Image in the CIELab colour space
+//! \param luminance : Luminance channel of image
+void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
+{
+    if (params->sharpenMicro.enabled == false) {
+        return;
+    }
+
+    MyTime t1e, t2e;
+    t1e.set();
+
+    int k = params->sharpenMicro.matrix ? 1 : 2;
+
+    // k=2 matrix 5x5  k=1 matrix 3x3
+    int offset, offset2, i, j, col, row, n;
+    float temp, temp2, temp3, temp4, tempL;
+    float *LM, v, s, contrast;
+    int signs[25];
+    int width = W, height = H;
+    float uniform = params->sharpenMicro.uniformity;//between 0 to 100
+    int unif;
+    unif = (int)(uniform / 10.0f); //put unif between 0 to 10
+    float amount = params->sharpenMicro.amount / 1500.0f; //amount 2000.0 quasi no artefacts ==> 1500 = maximum, after artefacts
+
+    if (amount < 0.000001f) {
+        return;
+    }
+
+    if (k == 1) {
+        amount *= 2.7f;    //25/9 if 3x3
+    }
+
+    if (settings->verbose) {
+        printf ("Micro-contrast amount %f\n", amount);
+    }
+
+    if (settings->verbose) {
+        printf ("Micro-contrast uniformity %i\n", unif);
+    }
+
+    //modulation uniformity in function of luminance
+    float L98[11] = {0.001f, 0.0015f, 0.002f, 0.004f, 0.006f, 0.008f, 0.01f, 0.03f, 0.05f, 0.1f, 0.1f};
+    float L95[11] = {0.0012f, 0.002f, 0.005f, 0.01f, 0.02f, 0.05f, 0.1f, 0.12f, 0.15f, 0.2f, 0.25f};
+    float L92[11] = {0.01f, 0.015f, 0.02f, 0.06f, 0.10f, 0.13f, 0.17f, 0.25f, 0.3f, 0.32f, 0.35f};
+    float L90[11] = {0.015f, 0.02f, 0.04f, 0.08f, 0.12f, 0.15f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f};
+    float L87[11] = {0.025f, 0.03f, 0.05f, 0.1f, 0.15f, 0.25f, 0.3f, 0.4f, 0.5f, 0.63f, 0.75f};
+    float L83[11] = {0.055f, 0.08f, 0.1f, 0.15f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.75f, 0.85f};
+    float L80[11] = {0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f};
+    float L75[11] = {0.22f, 0.25f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.85f, 0.9f, 0.95f};
+    float L70[11] = {0.35f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.97f, 1.0f, 1.0f, 1.0f, 1.0f};
+    float L63[11] = {0.55f, 0.6f, 0.7f, 0.8f, 0.85f, 0.9f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+    float L58[11] = {0.75f, 0.77f, 0.8f, 0.9f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+    //default 5
+    //modulation contrast
+    float Cont0[11] = {0.05f, 0.1f, 0.2f, 0.25f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f};
+    float Cont1[11] = {0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 0.95f, 1.0f};
+    float Cont2[11] = {0.2f, 0.40f, 0.6f, 0.7f, 0.8f, 0.85f, 0.90f, 0.95f, 1.0f, 1.05f, 1.10f};
+    float Cont3[11] = {0.5f, 0.6f, 0.7f, 0.8f, 0.85f, 0.9f, 1.0f, 1.0f, 1.05f, 1.10f, 1.20f};
+    float Cont4[11] = {0.8f, 0.85f, 0.9f, 0.95f, 1.0f, 1.05f, 1.10f, 1.150f, 1.2f, 1.25f, 1.40f};
+    float Cont5[11] = {1.0f, 1.1f, 1.2f, 1.25f, 1.3f, 1.4f, 1.45f, 1.50f, 1.6f, 1.65f, 1.80f};
+
+    float chmax = 8.0f;
+    LM = new float[width * height]; //allocation for Luminance
+#ifdef _OPENMP
+    #pragma omp parallel for private(offset, i,j) shared(LM)
+#endif
+
+    for(j = 0; j < height; j++)
+        for(i = 0, offset = j * width + i; i < width; i++, offset++) {
+            LM[offset] = luminance[j][i] / 327.68f; // adjust to 0.100 and to RT variables
+        }
+
+#ifdef _OPENMP
+    #pragma omp parallel for private(j,i,offset,s,signs,v,n,row,col,offset2,contrast,temp,temp2,tempL,temp4) shared(luminance,LM,amount,chmax,unif,k,L98,L95,L92,L90,L87,L83,L80,L75,L70,L63,L58,Cont0,Cont1,Cont2,Cont3,Cont4,Cont5)
+#endif
+
+    for(j = k; j < height - k; j++)
+        for(i = k, offset = j * width + i; i < width - k; i++, offset++) {
+            s = amount;
+            v = LM[offset];
+            n = 0;
+
+            for(row = j - k; row <= j + k; row++)
+                for(col = i - k, offset2 = row * width + col; col <= i + k; col++, offset2++) {
+                    signs[n] = 0;
+
+                    if (v < LM[offset2]) {
+                        signs[n] = -1;
+                    }
+
+                    if (v > LM[offset2]) {
+                        signs[n] = 1;
+                    }
+
+                    n++;
+                }
+
+            if      (k == 1) {
+                contrast = sqrt(fabs(LM[offset + 1] - LM[offset - 1]) * fabs(LM[offset + 1] - LM[offset - 1]) + fabs(LM[offset + width] - LM[offset - width]) * fabs(LM[offset + width] - LM[offset - width])) / chmax;    //for 3x3
+            } else /* if (k==2) */ contrast = sqrt(fabs(LM[offset + 1] - LM[offset - 1]) * fabs(LM[offset + 1] - LM[offset - 1]) + fabs(LM[offset + width] - LM[offset - width]) * fabs(LM[offset + width] - LM[offset - width])
+                                                       + fabs(LM[offset + 2] - LM[offset - 2]) * fabs(LM[offset + 2] - LM[offset - 2]) + fabs(LM[offset + 2 * width] - LM[offset - 2 * width]) * fabs(LM[offset + 2 * width] - LM[offset - 2 * width])) / (2 * chmax); //for 5x5
+
+            if (contrast > 1.0f) {
+                contrast = 1.0f;
+            }
+
+            //matrix 5x5
+            temp = luminance[j][i] / 327.68f; //begin 3x3
+            temp += CLIREF(v - LM[offset - width - 1]) * sqrtf(2.0f) * s;
+            temp += CLIREF(v - LM[offset - width]) * s;
+            temp += CLIREF(v - LM[offset - width + 1]) * sqrtf(2.0f) * s;
+            temp += CLIREF(v - LM[offset - 1]) * s;
+            temp += CLIREF(v - LM[offset + 1]) * s;
+            temp += CLIREF(v - LM[offset + width - 1]) * sqrtf(2.0f) * s;
+            temp += CLIREF(v - LM[offset + width]) * s;
+            temp += CLIREF(v - LM[offset + width + 1]) * sqrtf(2.0f) * s; //end 3x3
+
+            // add JD continue 5x5
+            if (k == 2) {
+                temp += 2.0f * CLIREF(v - LM[offset + 2 * width]) * s;
+                temp += 2.0f * CLIREF(v - LM[offset - 2 * width]) * s;
+                temp += 2.0f * CLIREF(v - LM[offset - 2      ]) * s;
+                temp += 2.0f * CLIREF(v - LM[offset + 2      ]) * s;
+
+                temp += 2.0f * CLIREF(v - LM[offset + 2 * width - 1]) * s * sqrtf(1.25f); // 1.25  = 1*1 + 0.5*0.5
+                temp += 2.0f * CLIREF(v - LM[offset + 2 * width - 2]) * s * sqrtf(2.00f);
+                temp += 2.0f * CLIREF(v - LM[offset + 2 * width + 1]) * s * sqrtf(1.25f);
+                temp += 2.0f * CLIREF(v - LM[offset + 2 * width + 2]) * s * sqrtf(2.00f);
+                temp += 2.0f * CLIREF(v - LM[offset +  width + 2]) * s * sqrtf(1.25f);
+                temp += 2.0f * CLIREF(v - LM[offset +  width - 2]) * s * sqrtf(1.25f);
+                temp += 2.0f * CLIREF(v - LM[offset - 2 * width - 1]) * s * sqrtf(1.25f);
+                temp += 2.0f * CLIREF(v - LM[offset - 2 * width - 2]) * s * sqrtf(2.00f);
+                temp += 2.0f * CLIREF(v - LM[offset - 2 * width + 1]) * s * sqrtf(1.25f);
+                temp += 2.0f * CLIREF(v - LM[offset - 2 * width + 2]) * s * sqrtf(2.00f);
+                temp += 2.0f * CLIREF(v - LM[offset -  width + 2]) * s * sqrtf(1.25f);
+                temp += 2.0f * CLIREF(v - LM[offset -  width - 2]) * s * sqrtf(1.25f);
+            }
+
+            if (temp < 0.0f) {
+                temp = 0.0f;
+            }
+
+            v = temp;
+
+            n = 0;
+
+            for(row = j - k; row <= j + k; row++) {
+                for(col = i - k, offset2 = row * width + col; col <= i + k; col++, offset2++) {
+                    if (((v < LM[offset2]) && (signs[n] > 0)) || ((v > LM[offset2]) && (signs[n] < 0))) {
+                        temp = v * 0.75f + LM[offset2] * 0.25f; // 0.75 0.25
+                    }
+
+                    n++;
+                }
+            }
+
+            if (LM[offset] > 95.0f || LM[offset] < 5.0f) {
+                contrast *= Cont0[unif];    //+ JD : luminance  pyramid to adjust contrast by evaluation of LM[offset]
+            } else if (LM[offset] > 90.0f || LM[offset] < 10.0f) {
+                contrast *= Cont1[unif];
+            } else if (LM[offset] > 80.0f || LM[offset] < 20.0f) {
+                contrast *= Cont2[unif];
+            } else if (LM[offset] > 70.0f || LM[offset] < 30.0f) {
+                contrast *= Cont3[unif];
+            } else if (LM[offset] > 60.0f || LM[offset] < 40.0f) {
+                contrast *= Cont4[unif];
+            } else {
+                contrast *= Cont5[unif];    //(2.0f/k)*Cont5[unif];
+            }
+
+            if (contrast > 1.0f) {
+                contrast = 1.0f;
+            }
+
+            tempL = 327.68f * (temp * (1.0f - contrast) + LM[offset] * contrast);
+            // JD: modulation of microcontrast in function of original Luminance and modulation of luminance
+            temp2 = tempL / (327.68f * LM[offset]); //for highlights
+
+            if (temp2 > 1.0f) {
+                if (temp2 > 1.70f) {
+                    temp2 = 1.70f;    //limit action
+                }
+
+                if      (LM[offset] > 98.0f) {
+                    luminance[j][i] = LM[offset] * 327.68f;
+                } else if (LM[offset] > 95.0f) {
+                    temp = (L95[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 92.0f) {
+                    temp = (L92[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 90.0f) {
+                    temp = (L90[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 87.0f) {
+                    temp = (L87[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 83.0f) {
+                    temp = (L83[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 80.0f) {
+                    temp = (L80[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 75.0f) {
+                    temp = (L75[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 70.0f) {
+                    temp = (L70[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 63.0f) {
+                    temp = (L63[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 58.0f) {
+                    temp = (L58[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 42.0f) {
+                    temp = (L58[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 37.0f) {
+                    temp = (L63[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 30.0f) {
+                    temp = (L70[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 25.0f) {
+                    temp = (L75[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 20.0f) {
+                    temp = (L80[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 17.0f) {
+                    temp = (L83[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 13.0f) {
+                    temp = (L87[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 10.0f) {
+                    temp = (L90[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 5.0f) {
+                    temp = (L95[unif] * (temp2 - 1.f)) + 1.0f;
+                    luminance[j][i] = temp * LM[offset] * 327.68f;
+                } else if (LM[offset] > 0.0f) {
+                    luminance[j][i] = LM[offset] * 327.68f;
+                }
+            }
+
+            temp4 = (327.68f * LM[offset]) / tempL; //
+
+            if (temp4 > 1.0f) {
+                if (temp4 > 1.7f) {
+                    temp4 = 1.7f;    //limit action
+                }
+
+                if      (LM[offset] < 2.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L98[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 5.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L95[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 8.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L92[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 10.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L90[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 13.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L87[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 17.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L83[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 20.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L80[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 25.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L75[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 30.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L70[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 37.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L63[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 42.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L58[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 58.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L58[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 63.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L63[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 70.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L70[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 75.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L75[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 80.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L80[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 83.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L83[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 87.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L87[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 90.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L90[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 95.0f) {
+                    temp3 = temp4 - 1.0f;
+                    temp = (L95[unif] * temp3) + 1.0f;
+                    luminance[j][i] = (LM[offset] * 327.68f) / temp;
+                } else if (LM[offset] < 100.0f) {
+                    luminance[j][i] = LM[offset] * 327.68f;
+                }
+            }
+
+        }
+
+    delete [] LM;
+    t2e.set();
+
+    if (settings->verbose) {
+        printf("Micro-contrast  %d usec\n", t2e.etime(t1e));
+    }
+
+}
+
 void ImProcFunctions::MLmicrocontrast(LabImage* lab)
 {
-    if (params->sharpenMicro.enabled == false) {
-        return;
-    }
-
-    MyTime t1e, t2e;
-    t1e.set();
-    int k;
-
-    if (params->sharpenMicro.matrix == false) {
-        k = 2;
-    } else {
-        k = 1;
-    }
-
-    // k=2 matrix 5x5  k=1 matrix 3x3
-    int offset, offset2, i, j, col, row, n;
-    float temp, temp2, temp3, temp4, tempL;
-    float *LM, v, s, contrast;
-    int signs[25];
-    int width = lab->W, height = lab->H;
-    float uniform = params->sharpenMicro.uniformity;//between 0 to 100
-    int unif;
-    unif = (int)(uniform / 10.0f); //put unif between 0 to 10
-    float amount = params->sharpenMicro.amount / 1500.0f; //amount 2000.0 quasi no artefacts ==> 1500 = maximum, after artefacts
-
-    if (amount < 0.000001f) {
-        return;
-    }
-
-    if (k == 1) {
-        amount *= 2.7f;    //25/9 if 3x3
-    }
-
-    if (settings->verbose) {
-        printf ("Micro-contrast amount %f\n", amount);
-    }
-
-    if (settings->verbose) {
-        printf ("Micro-contrast uniformity %i\n", unif);
-    }
-
-    //modulation uniformity in function of luminance
-    float L98[11] = {0.001f, 0.0015f, 0.002f, 0.004f, 0.006f, 0.008f, 0.01f, 0.03f, 0.05f, 0.1f, 0.1f};
-    float L95[11] = {0.0012f, 0.002f, 0.005f, 0.01f, 0.02f, 0.05f, 0.1f, 0.12f, 0.15f, 0.2f, 0.25f};
-    float L92[11] = {0.01f, 0.015f, 0.02f, 0.06f, 0.10f, 0.13f, 0.17f, 0.25f, 0.3f, 0.32f, 0.35f};
-    float L90[11] = {0.015f, 0.02f, 0.04f, 0.08f, 0.12f, 0.15f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f};
-    float L87[11] = {0.025f, 0.03f, 0.05f, 0.1f, 0.15f, 0.25f, 0.3f, 0.4f, 0.5f, 0.63f, 0.75f};
-    float L83[11] = {0.055f, 0.08f, 0.1f, 0.15f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.75f, 0.85f};
-    float L80[11] = {0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f};
-    float L75[11] = {0.22f, 0.25f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.85f, 0.9f, 0.95f};
-    float L70[11] = {0.35f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.97f, 1.0f, 1.0f, 1.0f, 1.0f};
-    float L63[11] = {0.55f, 0.6f, 0.7f, 0.8f, 0.85f, 0.9f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
-    float L58[11] = {0.75f, 0.77f, 0.8f, 0.9f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
-    //default 5
-    //modulation contrast
-    float Cont0[11] = {0.05f, 0.1f, 0.2f, 0.25f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f};
-    float Cont1[11] = {0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 0.95f, 1.0f};
-    float Cont2[11] = {0.2f, 0.40f, 0.6f, 0.7f, 0.8f, 0.85f, 0.90f, 0.95f, 1.0f, 1.05f, 1.10f};
-    float Cont3[11] = {0.5f, 0.6f, 0.7f, 0.8f, 0.85f, 0.9f, 1.0f, 1.0f, 1.05f, 1.10f, 1.20f};
-    float Cont4[11] = {0.8f, 0.85f, 0.9f, 0.95f, 1.0f, 1.05f, 1.10f, 1.150f, 1.2f, 1.25f, 1.40f};
-    float Cont5[11] = {1.0f, 1.1f, 1.2f, 1.25f, 1.3f, 1.4f, 1.45f, 1.50f, 1.6f, 1.65f, 1.80f};
-
-    float chmax = 8.0f;
-    LM = new float[width * height]; //allocation for Luminance
-#ifdef _OPENMP
-    #pragma omp parallel for private(offset, i,j) shared(LM)
-#endif
-
-    for(j = 0; j < height; j++)
-        for(i = 0, offset = j * width + i; i < width; i++, offset++) {
-            LM[offset] = lab->L[j][i] / 327.68f; // adjust to 0.100 and to RT variables
-        }
-
-#ifdef _OPENMP
-    #pragma omp parallel for private(j,i,offset,s,signs,v,n,row,col,offset2,contrast,temp,temp2,temp3,tempL,temp4) shared(lab,LM,amount,chmax,unif,k,L98,L95,L92,L90,L87,L83,L80,L75,L70,L63,L58,Cont0,Cont1,Cont2,Cont3,Cont4,Cont5)
-#endif
-
-    for(j = k; j < height - k; j++)
-        for(i = k, offset = j * width + i; i < width - k; i++, offset++) {
-            s = amount;
-            v = LM[offset];
-            n = 0;
-
-            for(row = j - k; row <= j + k; row++)
-                for(col = i - k, offset2 = row * width + col; col <= i + k; col++, offset2++) {
-                    signs[n] = 0;
-
-                    if (v < LM[offset2]) {
-                        signs[n] = -1;
-                    }
-
-                    if (v > LM[offset2]) {
-                        signs[n] = 1;
-                    }
-
-                    n++;
-                }
-
-            if      (k == 1) {
-                contrast = sqrt(fabs(LM[offset + 1] - LM[offset - 1]) * fabs(LM[offset + 1] - LM[offset - 1]) + fabs(LM[offset + width] - LM[offset - width]) * fabs(LM[offset + width] - LM[offset - width])) / chmax;    //for 3x3
-            } else /* if (k==2) */ contrast = sqrt(fabs(LM[offset + 1] - LM[offset - 1]) * fabs(LM[offset + 1] - LM[offset - 1]) + fabs(LM[offset + width] - LM[offset - width]) * fabs(LM[offset + width] - LM[offset - width])
-                                                       + fabs(LM[offset + 2] - LM[offset - 2]) * fabs(LM[offset + 2] - LM[offset - 2]) + fabs(LM[offset + 2 * width] - LM[offset - 2 * width]) * fabs(LM[offset + 2 * width] - LM[offset - 2 * width])) / (2 * chmax); //for 5x5
-
-            if (contrast > 1.0f) {
-                contrast = 1.0f;
-            }
-
-            //matrix 5x5
-            temp = lab->L[j][i] / 327.68f; //begin 3x3
-            temp += CLIREF(v - LM[offset - width - 1]) * sqrtf(2.0f) * s;
-            temp += CLIREF(v - LM[offset - width]) * s;
-            temp += CLIREF(v - LM[offset - width + 1]) * sqrtf(2.0f) * s;
-            temp += CLIREF(v - LM[offset - 1]) * s;
-            temp += CLIREF(v - LM[offset + 1]) * s;
-            temp += CLIREF(v - LM[offset + width - 1]) * sqrtf(2.0f) * s;
-            temp += CLIREF(v - LM[offset + width]) * s;
-            temp += CLIREF(v - LM[offset + width + 1]) * sqrtf(2.0f) * s; //end 3x3
-
-            // add JD continue 5x5
-            if (k == 2) {
-                temp += 2.0f * CLIREF(v - LM[offset + 2 * width]) * s;
-                temp += 2.0f * CLIREF(v - LM[offset - 2 * width]) * s;
-                temp += 2.0f * CLIREF(v - LM[offset - 2      ]) * s;
-                temp += 2.0f * CLIREF(v - LM[offset + 2      ]) * s;
-
-                temp += 2.0f * CLIREF(v - LM[offset + 2 * width - 1]) * s * sqrtf(1.25f); // 1.25  = 1*1 + 0.5*0.5
-                temp += 2.0f * CLIREF(v - LM[offset + 2 * width - 2]) * s * sqrtf(2.00f);
-                temp += 2.0f * CLIREF(v - LM[offset + 2 * width + 1]) * s * sqrtf(1.25f);
-                temp += 2.0f * CLIREF(v - LM[offset + 2 * width + 2]) * s * sqrtf(2.00f);
-                temp += 2.0f * CLIREF(v - LM[offset +  width + 2]) * s * sqrtf(1.25f);
-                temp += 2.0f * CLIREF(v - LM[offset +  width - 2]) * s * sqrtf(1.25f);
-                temp += 2.0f * CLIREF(v - LM[offset - 2 * width - 1]) * s * sqrtf(1.25f);
-                temp += 2.0f * CLIREF(v - LM[offset - 2 * width - 2]) * s * sqrtf(2.00f);
-                temp += 2.0f * CLIREF(v - LM[offset - 2 * width + 1]) * s * sqrtf(1.25f);
-                temp += 2.0f * CLIREF(v - LM[offset - 2 * width + 2]) * s * sqrtf(2.00f);
-                temp += 2.0f * CLIREF(v - LM[offset -  width + 2]) * s * sqrtf(1.25f);
-                temp += 2.0f * CLIREF(v - LM[offset -  width - 2]) * s * sqrtf(1.25f);
-            }
-
-            if (temp < 0.0f) {
-                temp = 0.0f;
-            }
-
-            v = temp;
-
-            n = 0;
-
-            for(row = j - k; row <= j + k; row++) {
-                for(col = i - k, offset2 = row * width + col; col <= i + k; col++, offset2++) {
-                    if (((v < LM[offset2]) && (signs[n] > 0)) || ((v > LM[offset2]) && (signs[n] < 0))) {
-                        temp = v * 0.75f + LM[offset2] * 0.25f; // 0.75 0.25
-                    }
-
-                    n++;
-                }
-            }
-
-            if (LM[offset] > 95.0f || LM[offset] < 5.0f) {
-                contrast *= Cont0[unif];    //+ JD : luminance  pyramid to adjust contrast by evaluation of LM[offset]
-            } else if (LM[offset] > 90.0f || LM[offset] < 10.0f) {
-                contrast *= Cont1[unif];
-            } else if (LM[offset] > 80.0f || LM[offset] < 20.0f) {
-                contrast *= Cont2[unif];
-            } else if (LM[offset] > 70.0f || LM[offset] < 30.0f) {
-                contrast *= Cont3[unif];
-            } else if (LM[offset] > 60.0f || LM[offset] < 40.0f) {
-                contrast *= Cont4[unif];
-            } else {
-                contrast *= Cont5[unif];    //(2.0f/k)*Cont5[unif];
-            }
-
-            if (contrast > 1.0f) {
-                contrast = 1.0f;
-            }
-
-            tempL = 327.68f * (temp * (1.0f - contrast) + LM[offset] * contrast);
-            // JD: modulation of microcontrast in function of original Luminance and modulation of luminance
-            temp2 = tempL / (327.68f * LM[offset]); //for highlights
-
-            if (temp2 > 1.0f) {
-                if (temp2 > 1.70f) {
-                    temp2 = 1.70f;    //limit action
-                }
-
-                if      (LM[offset] > 98.0f) {
-                    lab->L[j][i] = LM[offset] * 327.68f;
-                } else if (LM[offset] > 95.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L95[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 92.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L92[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 90.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L90[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 87.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L87[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 83.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L83[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 80.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L80[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 75.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L75[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 70.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L70[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 63.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L63[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 58.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L58[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 42.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L58[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 37.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L63[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 30.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L70[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 25.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L75[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 20.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L80[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 17.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L83[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 13.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L87[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 10.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L90[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 5.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L95[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 0.0f) {
-                    lab->L[j][i] = LM[offset] * 327.68f;
-                }
-            }
-
-            temp4 = (327.68f * LM[offset]) / tempL; //
-
-            if (temp4 > 1.0f) {
-                if (temp4 > 1.7f) {
-                    temp4 = 1.7f;    //limit action
-                }
-
-                if      (LM[offset] < 2.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L98[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 5.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L95[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 8.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L92[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 10.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L90[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 13.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L87[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 17.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L83[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 20.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L80[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 25.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L75[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 30.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L70[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 37.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L63[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 42.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L58[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 58.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L58[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 63.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L63[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 70.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L70[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 75.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L75[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 80.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L80[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 83.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L83[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 87.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L87[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 90.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L90[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 95.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L95[unif] * temp3) + 1.0f;
-                    lab->L[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 100.0f) {
-                    lab->L[j][i] = LM[offset] * 327.68f;
-                }
-            }
-
-        }
-
-    delete [] LM;
-    t2e.set();
-
-    if (settings->verbose) {
-        printf("Micro-contrast  %d usec\n", t2e.etime(t1e));
-    }
-
+    MLmicrocontrast(lab->L, lab->W, lab->H);
 }
 
-//! MicroContrast is a sharpening method developed by Manuel Llorens and documented here: http://www.rawness.es/sharpening/?lang=en
-//! <BR>The purpose is maximize clarity of the image without creating halo's.
-//! <BR>Addition from JD : pyramid  + pondered contrast with matrix 5x5
-//! \param ncie CieImage Image in the CIECAM02 colour space
 void ImProcFunctions::MLmicrocontrastcam(CieImage* ncie)
 {
-    if (params->sharpenMicro.enabled == false) {
-        return;
-    }
-
-    MyTime t1e, t2e;
-    t1e.set();
-    int k;
-
-    if (params->sharpenMicro.matrix == false) {
-        k = 2;
-    } else {
-        k = 1;
-    }
-
-    // k=2 matrix 5x5  k=1 matrix 3x3
-    int offset, offset2, i, j, col, row, n;
-    float temp, temp2, temp3, temp4, tempL;
-    float *LM, v, s, contrast;
-    int signs[25];
-    int width = ncie->W, height = ncie->H;
-    float uniform = params->sharpenMicro.uniformity;//between 0 to 100
-    int unif;
-    unif = (int)(uniform / 10.0f); //put unif between 0 to 10
-    float amount = params->sharpenMicro.amount / 1500.0f; //amount 2000.0 quasi no artefacts ==> 1500 = maximum, after artefacts
-
-    if (amount < 0.000001f) {
-        return;
-    }
-
-    if (k == 1) {
-        amount *= 2.7f;    //25/9 if 3x3
-    }
-
-    if (settings->verbose) {
-        printf ("Micro-contrast amount %f\n", amount);
-    }
-
-    if (settings->verbose) {
-        printf ("Micro-contrast uniformity %i\n", unif);
-    }
-
-    //modulation uniformity in function of luminance
-    float L98[11] = {0.001f, 0.0015f, 0.002f, 0.004f, 0.006f, 0.008f, 0.01f, 0.03f, 0.05f, 0.1f, 0.1f};
-    float L95[11] = {0.0012f, 0.002f, 0.005f, 0.01f, 0.02f, 0.05f, 0.1f, 0.12f, 0.15f, 0.2f, 0.25f};
-    float L92[11] = {0.01f, 0.015f, 0.02f, 0.06f, 0.10f, 0.13f, 0.17f, 0.25f, 0.3f, 0.32f, 0.35f};
-    float L90[11] = {0.015f, 0.02f, 0.04f, 0.08f, 0.12f, 0.15f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f};
-    float L87[11] = {0.025f, 0.03f, 0.05f, 0.1f, 0.15f, 0.25f, 0.3f, 0.4f, 0.5f, 0.63f, 0.75f};
-    float L83[11] = {0.055f, 0.08f, 0.1f, 0.15f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.75f, 0.85f};
-    float L80[11] = {0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f};
-    float L75[11] = {0.22f, 0.25f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.85f, 0.9f, 0.95f};
-    float L70[11] = {0.35f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.97f, 1.0f, 1.0f, 1.0f, 1.0f};
-    float L63[11] = {0.55f, 0.6f, 0.7f, 0.8f, 0.85f, 0.9f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
-    float L58[11] = {0.75f, 0.77f, 0.8f, 0.9f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
-    //default 5
-    //modulation contrast
-    float Cont0[11] = {0.05f, 0.1f, 0.2f, 0.25f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f};
-    float Cont1[11] = {0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 0.95f, 1.0f};
-    float Cont2[11] = {0.2f, 0.40f, 0.6f, 0.7f, 0.8f, 0.85f, 0.90f, 0.95f, 1.0f, 1.05f, 1.10f};
-    float Cont3[11] = {0.5f, 0.6f, 0.7f, 0.8f, 0.85f, 0.9f, 1.0f, 1.0f, 1.05f, 1.10f, 1.20f};
-    float Cont4[11] = {0.8f, 0.85f, 0.9f, 0.95f, 1.0f, 1.05f, 1.10f, 1.150f, 1.2f, 1.25f, 1.40f};
-    float Cont5[11] = {1.0f, 1.1f, 1.2f, 1.25f, 1.3f, 1.4f, 1.45f, 1.50f, 1.6f, 1.65f, 1.80f};
-
-    float chmax = 8.0f;
-    LM = new float[width * height]; //allocation for Luminance
-#ifdef _OPENMP
-    #pragma omp parallel for private(offset, i,j) shared(LM)
-#endif
-
-    for(j = 0; j < height; j++)
-        for(i = 0, offset = j * width + i; i < width; i++, offset++) {
-            LM[offset] = ncie->sh_p[j][i] / 327.68f; // adjust to 0.100 and to RT variables
-        }
-
-#ifdef _OPENMP
-    #pragma omp parallel for private(j,i,offset,s,signs,v,n,row,col,offset2,contrast,temp,temp2,temp3,tempL,temp4) shared(ncie,LM,amount,chmax,unif,k,L98,L95,L92,L90,L87,L83,L80,L75,L70,L63,L58,Cont0,Cont1,Cont2,Cont3,Cont4,Cont5)
-#endif
-
-    for(j = k; j < height - k; j++)
-        for(i = k, offset = j * width + i; i < width - k; i++, offset++) {
-            s = amount;
-            v = LM[offset];
-            n = 0;
-
-            for(row = j - k; row <= j + k; row++)
-                for(col = i - k, offset2 = row * width + col; col <= i + k; col++, offset2++) {
-                    signs[n] = 0;
-
-                    if (v < LM[offset2]) {
-                        signs[n] = -1;
-                    }
-
-                    if (v > LM[offset2]) {
-                        signs[n] = 1;
-                    }
-
-                    n++;
-                }
-
-            if      (k == 1) {
-                contrast = sqrt(fabs(LM[offset + 1] - LM[offset - 1]) * fabs(LM[offset + 1] - LM[offset - 1]) + fabs(LM[offset + width] - LM[offset - width]) * fabs(LM[offset + width] - LM[offset - width])) / chmax;    //for 3x3
-            } else /* if (k==2) */ contrast = sqrt(fabs(LM[offset + 1] - LM[offset - 1]) * fabs(LM[offset + 1] - LM[offset - 1]) + fabs(LM[offset + width] - LM[offset - width]) * fabs(LM[offset + width] - LM[offset - width])
-                                                       + fabs(LM[offset + 2] - LM[offset - 2]) * fabs(LM[offset + 2] - LM[offset - 2]) + fabs(LM[offset + 2 * width] - LM[offset - 2 * width]) * fabs(LM[offset + 2 * width] - LM[offset - 2 * width])) / (2 * chmax); //for 5x5
-
-            if (contrast > 1.0f) {
-                contrast = 1.0f;
-            }
-
-            //matrix 5x5
-            temp = ncie->sh_p[j][i] / 327.68f; //begin 3x3
-            temp += CLIREF(v - LM[offset - width - 1]) * sqrtf(2.0f) * s;
-            temp += CLIREF(v - LM[offset - width]) * s;
-            temp += CLIREF(v - LM[offset - width + 1]) * sqrtf(2.0f) * s;
-            temp += CLIREF(v - LM[offset - 1]) * s;
-            temp += CLIREF(v - LM[offset + 1]) * s;
-            temp += CLIREF(v - LM[offset + width - 1]) * sqrtf(2.0f) * s;
-            temp += CLIREF(v - LM[offset + width]) * s;
-            temp += CLIREF(v - LM[offset + width + 1]) * sqrtf(2.0f) * s; //end 3x3
-
-            // add JD continue 5x5
-            if (k == 2) {
-                temp += 2.0f * CLIREF(v - LM[offset + 2 * width]) * s;
-                temp += 2.0f * CLIREF(v - LM[offset - 2 * width]) * s;
-                temp += 2.0f * CLIREF(v - LM[offset - 2      ]) * s;
-                temp += 2.0f * CLIREF(v - LM[offset + 2      ]) * s;
-
-                temp += 2.0f * CLIREF(v - LM[offset + 2 * width - 1]) * s * sqrtf(1.25f); // 1.25  = 1*1 + 0.5*0.5
-                temp += 2.0f * CLIREF(v - LM[offset + 2 * width - 2]) * s * sqrtf(2.00f);
-                temp += 2.0f * CLIREF(v - LM[offset + 2 * width + 1]) * s * sqrtf(1.25f);
-                temp += 2.0f * CLIREF(v - LM[offset + 2 * width + 2]) * s * sqrtf(2.00f);
-                temp += 2.0f * CLIREF(v - LM[offset +  width + 2]) * s * sqrtf(1.25f);
-                temp += 2.0f * CLIREF(v - LM[offset +  width - 2]) * s * sqrtf(1.25f);
-                temp += 2.0f * CLIREF(v - LM[offset - 2 * width - 1]) * s * sqrtf(1.25f);
-                temp += 2.0f * CLIREF(v - LM[offset - 2 * width - 2]) * s * sqrtf(2.00f);
-                temp += 2.0f * CLIREF(v - LM[offset - 2 * width + 1]) * s * sqrtf(1.25f);
-                temp += 2.0f * CLIREF(v - LM[offset - 2 * width + 2]) * s * sqrtf(2.00f);
-                temp += 2.0f * CLIREF(v - LM[offset -  width + 2]) * s * sqrtf(1.25f);
-                temp += 2.0f * CLIREF(v - LM[offset -  width - 2]) * s * sqrtf(1.25f);
-            }
-
-            if (temp < 0.0f) {
-                temp = 0.0f;
-            }
-
-            v = temp;
-
-            n = 0;
-
-            for(row = j - k; row <= j + k; row++) {
-                for(col = i - k, offset2 = row * width + col; col <= i + k; col++, offset2++) {
-                    if (((v < LM[offset2]) && (signs[n] > 0)) || ((v > LM[offset2]) && (signs[n] < 0))) {
-                        temp = v * 0.75f + LM[offset2] * 0.25f; // 0.75 0.25
-                    }
-
-                    n++;
-                }
-            }
-
-            if (LM[offset] > 95.0f || LM[offset] < 5.0f) {
-                contrast *= Cont0[unif];    //+ JD : luminance  pyramid to adjust contrast by evaluation of LM[offset]
-            } else if (LM[offset] > 90.0f || LM[offset] < 10.0f) {
-                contrast *= Cont1[unif];
-            } else if (LM[offset] > 80.0f || LM[offset] < 20.0f) {
-                contrast *= Cont2[unif];
-            } else if (LM[offset] > 70.0f || LM[offset] < 30.0f) {
-                contrast *= Cont3[unif];
-            } else if (LM[offset] > 60.0f || LM[offset] < 40.0f) {
-                contrast *= Cont4[unif];
-            } else {
-                contrast *= Cont5[unif];    //(2.0f/k)*Cont5[unif];
-            }
-
-            if (contrast > 1.0f) {
-                contrast = 1.0f;
-            }
-
-            tempL = 327.68f * (temp * (1.0f - contrast) + LM[offset] * contrast);
-            // JD: modulation of microcontrast in function of original Luminance and modulation of luminance
-            temp2 = tempL / (327.68f * LM[offset]); //for highlights
-
-            if (temp2 > 1.0f) {
-                if (temp2 > 1.70f) {
-                    temp2 = 1.70f;    //limit action
-                }
-
-                if      (LM[offset] > 98.0f) {
-                    ncie->sh_p[j][i] = LM[offset] * 327.68f;
-                } else if (LM[offset] > 95.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L95[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 92.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L92[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 90.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L90[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 87.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L87[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 83.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L83[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 80.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L80[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 75.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L75[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 70.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L70[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 63.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L63[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 58.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L58[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 42.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L58[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 37.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L63[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 30.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L70[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 25.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L75[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 20.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L80[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 17.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L83[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 13.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L87[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 10.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L90[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 5.0f) {
-                    temp3 = temp2 - 1.0f;
-                    temp = (L95[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = temp * LM[offset] * 327.68f;
-                } else if (LM[offset] > 0.0f) {
-                    ncie->sh_p[j][i] = LM[offset] * 327.68f;
-                }
-            }
-
-            temp4 = (327.68f * LM[offset]) / tempL; //
-
-            if (temp4 > 1.0f) {
-                if (temp4 > 1.7f) {
-                    temp4 = 1.7f;    //limit action
-                }
-
-                if      (LM[offset] < 2.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L98[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 5.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L95[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 8.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L92[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 10.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L90[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 13.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L87[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 17.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L83[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 20.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L80[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 25.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L75[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 30.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L70[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 37.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L63[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 42.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L58[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 58.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L58[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 63.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L63[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 70.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L70[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 75.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L75[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 80.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L80[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 83.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L83[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 87.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L87[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 90.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L90[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 95.0f) {
-                    temp3 = temp4 - 1.0f;
-                    temp = (L95[unif] * temp3) + 1.0f;
-                    ncie->sh_p[j][i] = (LM[offset] * 327.68f) / temp;
-                } else if (LM[offset] < 100.0f) {
-                    ncie->sh_p[j][i] = LM[offset] * 327.68f;
-                }
-            }
-
-        }
-
-    delete [] LM;
-    t2e.set();
-
-    if (settings->verbose) {
-        printf("Micro-contrast  %d usec\n", t2e.etime(t1e));
-    }
-
-}
-
-void ImProcFunctions::deconvsharpeningcam (CieImage* ncie, float** b2)
-{
-
-    if (params->sharpening.enabled == false || params->sharpening.deconvamount < 1) {
-        return;
-    }
-
-    int W = ncie->W, H = ncie->H;
-
-    float** tmpI = new float*[H];
-
-    for (int i = 0; i < H; i++) {
-        tmpI[i] = new float[W];
-
-        for (int j = 0; j < W; j++) {
-            tmpI[i][j] = (float)ncie->sh_p[i][j];
-        }
-    }
-
-    float** tmp = (float**)b2;
-
-#ifdef _OPENMP
-    #pragma omp parallel
-#endif
-    {
-        float damping = params->sharpening.deconvdamping / 5.0;
-        bool needdamp = params->sharpening.deconvdamping > 0;
-
-        for (int k = 0; k < params->sharpening.deconviter; k++) {
-
-            // apply blur function (gaussian blur)
-            gaussianBlur<float> (tmpI, tmp, W, H, params->sharpening.deconvradius / scale);
-
-            if (!needdamp) {
-#ifdef _OPENMP
-                #pragma omp for
-#endif
-
-                for (int i = 0; i < H; i++)
-                    for (int j = 0; j < W; j++)
-                        if (tmp[i][j] > 0) {
-                            tmp[i][j] = (float)ncie->sh_p[i][j] / tmp[i][j];
-                        }
-            } else {
-                dcdamping (tmp, ncie->sh_p, damping, W, H);
-            }
-
-            gaussianBlur<float> (tmp, tmp, W, H, params->sharpening.deconvradius / scale);
-
-
-#ifdef _OPENMP
-            #pragma omp for
-#endif
-
-            for (int i = 0; i < H; i++)
-                for (int j = 0; j < W; j++) {
-                    tmpI[i][j] = tmpI[i][j] * tmp[i][j];
-                }
-        } // end for
-
-//  float p2 = params->sharpening.deconvamount / 100.0;
-        float p2 = params->sharpening.deconvamount / 100.0;
-        float p1 = 1.0 - p2;
-
-#ifdef _OPENMP
-        #pragma omp for
-#endif
-
-        for (int i = 0; i < H; i++)
-            for (int j = 0; j < W; j++)
-                if(ncie->J_p[i][j] > 8.0f && ncie->J_p[i][j] < 92.0f) {
-                    ncie->sh_p[i][j] = ncie->sh_p[i][j] * p1 + max(tmpI[i][j], 0.0f) * p2;
-                }
-
-    } // end parallel
-
-    for (int i = 0; i < H; i++) {
-        delete [] tmpI[i];
-    }
-
-    delete [] tmpI;
-
+    MLmicrocontrast(ncie->sh_p, ncie->W, ncie->H);
 }
 
 void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
 {
+    if ((!params->sharpening.enabled) || params->sharpening.amount < 1 || ncie->W < 8 || ncie->H < 8) {
+        return;
+    }
 
     if (params->sharpening.method == "rld") {
-        deconvsharpeningcam (ncie, b2);
+        deconvsharpening (ncie->sh_p, b2, ncie->W, ncie->H, params->sharpening);
         return;
     }
 
     // Rest is UNSHARP MASK
-    if (params->sharpening.enabled == false || params->sharpening.amount < 1 || ncie->W < 8 || ncie->H < 8) {
-        return;
-    }
 
     int W = ncie->W, H = ncie->H;
     float** b3;
@@ -1479,10 +965,10 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
     {
 
         if (params->sharpening.edgesonly == false) {
-            gaussianBlur<float> (ncie->sh_p, b2, W, H, params->sharpening.radius / scale);
+            gaussianBlur (ncie->sh_p, b2, W, H, params->sharpening.radius / scale);
         } else {
             bilateral<float, float> (ncie->sh_p, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, multiThread);
-            gaussianBlur<float> (b3, b2, W, H, params->sharpening.radius / scale);
+            gaussianBlur (b3, b2, W, H, params->sharpening.radius / scale);
         }
 
         float** base = ncie->sh_p;
@@ -1524,7 +1010,7 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
                 base = ncieCopy;
             }
 
-            sharpenHaloCtrlcam (ncie, b2, base, W, H);
+            sharpenHaloCtrl (ncie->sh_p, b2, base, W, H, params->sharpening);
         }
 
     } // end parallel
@@ -1544,69 +1030,6 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
         }
 
         delete [] b3;
-    }
-}
-
-void ImProcFunctions::sharpenHaloCtrlcam (CieImage* ncie, float** blurmap, float** base, int W, int H)
-{
-
-    float scale = (100.f - params->sharpening.halocontrol_amount) * 0.01f;
-    float sharpFac = params->sharpening.amount * 0.01f;
-    float** nL = base;
-
-#ifdef _OPENMP
-    #pragma omp for
-#endif
-
-    for (int i = 2; i < H - 2; i++) {
-        float max1 = 0, max2 = 0, min1 = 0, min2 = 0, maxn, minn, np1, np2, np3, min_, max_, labL;
-
-        for (int j = 2; j < W - 2; j++) {
-            // compute 3 iterations, only forward
-            np1 = 2.f * (nL[i - 2][j] + nL[i - 2][j + 1] + nL[i - 2][j + 2] + nL[i - 1][j] + nL[i - 1][j + 1] + nL[i - 1][j + 2] + nL[i]  [j] + nL[i]  [j + 1] + nL[i]  [j + 2]) / 27.f + nL[i - 1][j + 1] / 3.f;
-            np2 = 2.f * (nL[i - 1][j] + nL[i - 1][j + 1] + nL[i - 1][j + 2] + nL[i]  [j] + nL[i]  [j + 1] + nL[i]  [j + 2] + nL[i + 1][j] + nL[i + 1][j + 1] + nL[i + 1][j + 2]) / 27.f + nL[i]  [j + 1] / 3.f;
-            np3 = 2.f * (nL[i]  [j] + nL[i]  [j + 1] + nL[i]  [j + 2] + nL[i + 1][j] + nL[i + 1][j + 1] + nL[i + 1][j + 2] + nL[i + 2][j] + nL[i + 2][j + 1] + nL[i + 2][j + 2]) / 27.f + nL[i + 1][j + 1] / 3.f;
-
-            // Max/Min of all these deltas and the last two max/min
-            maxn = max(np1, np2, np3);
-            minn = min(np1, np2, np3);
-            max_ = max(max1, max2, maxn);
-            min_ = min(min1, min2, minn);
-
-            // Shift the queue
-            max1 = max2;
-            max2 = maxn;
-            min1 = min2;
-            min2 = minn;
-            labL = ncie->sh_p[i][j];
-
-            if (max_ < labL) {
-                max_ = labL;
-            }
-
-            if (min_ > labL) {
-                min_ = labL;
-            }
-
-            // deviation from the environment as measurement
-            float diff = nL[i][j] - blurmap[i][j];
-
-            const float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
-            float delta = params->sharpening.threshold.multiply<float, float, float>(
-                              min(ABS(diff), upperBound),   // X axis value = absolute value of the difference
-                              sharpFac * diff               // Y axis max value = sharpening.amount * signed difference
-                          );
-            float newL = labL + delta;
-
-            // applying halo control
-            if (newL > max_) {
-                newL = max_ + (newL - max_) * scale;
-            } else if (newL < min_) {
-                newL = min_ - (min_ - newL) * scale;
-            }
-
-            ncie->sh_p[i][j] = newL;
-        }
     }
 }
 
