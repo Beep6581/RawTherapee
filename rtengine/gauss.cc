@@ -18,10 +18,11 @@
  */
 #include "gauss.h"
 #include <cmath>
-#include <stdlib.h>
+#include <cstdlib>
 #include "opthelper.h"
 #include "boxblur.h"
 
+namespace {
 
 template<class T> void calculateYvVFactors( const T sigma, T &b1, T &b2, T &b3, T &B, T M[3][3])
 {
@@ -1137,8 +1138,11 @@ template<class T> void gaussVerticalmult (T** src, T** dst, const int W, const i
 }
 #endif
 
-template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int H, const double sigma, T *buffer = NULL, eGaussType gausstype = GAUSS_STANDARD, T** buffer2 = NULL)
+template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int H, const double sigma, T *buffer = nullptr, eGaussType gausstype = GAUSS_STANDARD, T** buffer2 = nullptr)
 {
+    static constexpr auto GAUSS_SKIP = 0.25;
+    static constexpr auto GAUSS_3X3_LIMIT = 0.6;
+    static constexpr auto GAUSS_DOUBLE = 70.0;
 
     if(buffer) {
         // special variant for very large sigma, currently only used by retinex algorithm
@@ -1284,6 +1288,7 @@ template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int
 #endif
         }
     }
+}
 }
 
 void gaussianBlur(float** src, float** dst, const int W, const int H, const double sigma, float *buffer, eGaussType gausstype, float** buffer2)

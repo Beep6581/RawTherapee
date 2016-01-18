@@ -24,8 +24,6 @@
 #include "cieimage.h"
 #include "sleef.c"
 #include "opthelper.h"
-#define BENCHMARK
-#include "StopWatch.h"
 
 using namespace std;
 
@@ -34,7 +32,6 @@ namespace rtengine
 
 SSEFUNCTION void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
 {
-    BENCHFUN
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // impulse noise removal
     // local variables
@@ -43,10 +40,10 @@ SSEFUNCTION void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
     int height = lab->H;
 
     // buffer for the lowpass image
-    float ** lpf = new float *[height];
+    float * lpf[height] ALIGNED16;
     lpf[0] = new float [width * height];
     // buffer for the highpass image
-    char ** impish = new char *[height];
+    char * impish[height] ALIGNED16;
     impish[0] = new char [width * height];
 
     for (int i = 1; i < height; i++) {
@@ -265,7 +262,6 @@ SSEFUNCTION void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
 
 SSEFUNCTION void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, float **buffers[3])
 {
-    BENCHFUN
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // impulse noise removal
     // local variables

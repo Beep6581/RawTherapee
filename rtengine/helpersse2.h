@@ -115,6 +115,8 @@ static INLINE vfloat vcast_vf_f(float f)
     return _mm_set_ps(f, f, f, f);
 }
 
+// Don't use intrinsics here. Newer gcc versions (>= 4.9, maybe also before 4.9) generate better code when not using intrinsics
+// example: vaddf(vmulf(a,b),c) will generate an FMA instruction when build for chips with that feature only when vaddf and vmulf don't use intrinsics
 static INLINE vfloat vaddf(vfloat x, vfloat y)
 {
     return x + y;
@@ -131,6 +133,10 @@ static INLINE vfloat vdivf(vfloat x, vfloat y)
 {
     return x / y;
 }
+// Also don't use intrinsic here: Some chips support FMA instructions with 3 and 4 operands
+// 3 operands: a = a*b+c, b = a*b+c, c = a*b+c // destination has to be one of a,b,c
+// 4 operands: d = a*b+c // destination does not have to be one of a,b,c
+// gcc will use the one which fits best when not using intrinsics. With using intrinsics that's not possible
 static INLINE vfloat vmlaf(vfloat x, vfloat y, vfloat z) {
     return x * y + z;
 }

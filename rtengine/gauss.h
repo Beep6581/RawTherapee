@@ -19,12 +19,8 @@
 #ifndef _GAUSS_H_
 #define _GAUSS_H_
 
-#include <string.h>
 enum eGaussType {GAUSS_STANDARD, GAUSS_MULT, GAUSS_DIV};
-#define GAUSS_SKIP 0.25
-#define GAUSS_3X3_LIMIT 0.6
-#define GAUSS_DOUBLE 70.0
 
-void gaussianBlur(float** src, float** dst, const int W, const int H, const double sigma, float *buffer = NULL, eGaussType gausstype = GAUSS_STANDARD, float** buffer2 = NULL);
+void gaussianBlur(float** src, float** dst, const int W, const int H, const double sigma, float *buffer = nullptr, eGaussType gausstype = GAUSS_STANDARD, float** buffer2 = nullptr);
 
 #endif

@@ -23,8 +23,6 @@
 #include "rt_math.h"
 #include "sleef.c"
 #include "opthelper.h"
-#define BENCHMARK
-#include "StopWatch.h"
 using namespace std;
 
 namespace rtengine
@@ -75,18 +73,16 @@ SSEFUNCTION void ImProcFunctions::dcdamping (float** aI, float** aO, float dampi
         }
 
 #endif
-        float I, O, U;
-
         for(; j < W; j++) {
-            I = aI[i][j];
-            O = aO[i][j];
+            float I = aI[i][j];
+            float O = aO[i][j];
 
             if (O <= 0.f || I <= 0.f) {
                 aI[i][j] = 0.f;
                 continue;
             }
 
-            U = (O * xlogf(I / O) - I + O) * dampingFac;
+            float U = (O * xlogf(I / O) - I + O) * dampingFac;
             U = min(U, 1.0f);
             U = U * U * U * U * (5.f - U * 4.f);
             aI[i][j] = (O - I) / I * U + 1.f;
@@ -99,8 +95,6 @@ void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, i
     if (sharpenParam.deconvamount < 1) {
         return;
     }
-
-    BENCHFUN
 
     float *tmpI[H] ALIGNED16;
 

@@ -75,6 +75,7 @@ SSEFUNCTION void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, 
 
     if( chCurve ) {
 // vectorized precalculation of the atan2 values
+// TODO: precalculate per line instead of whole image for better usage of CPU cache
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
