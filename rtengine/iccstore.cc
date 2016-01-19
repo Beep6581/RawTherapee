@@ -54,7 +54,7 @@ void loadProfiles (const Glib::ustring& dirName,
 
             const Glib::ustring extension = fileName.substr (fileName.size () - 4).casefold ();
 
-            if (extension.compare(".icc") == 0 && extension.compare(".icm") == 0)
+            if (extension.compare (".icc") != 0 && extension.compare (".icm") != 0)
                 continue;
 
             const Glib::ustring filePath = Glib::build_filename (dirName, fileName);

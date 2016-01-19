@@ -11,7 +11,7 @@
 class ClutComboBox : public MyComboBox
 {
 public:
-    int fillFromDir( Glib::ustring path );
+    int fillFromDir (const Glib::ustring& path);
     Glib::ustring getSelectedClut();
     void setSelectedClut( Glib::ustring filename );
     void addUnchangedEntry();
@@ -25,7 +25,7 @@ private:
         ClutColumns();
     };
 
-    int parseDir( Glib::ustring path, Gtk::TreeModel::Row *parentRow );
+    int parseDir (const Glib::ustring& path);
     Gtk::TreeIter findRowByClutFilename(  Gtk::TreeModel::Children childs, Glib::ustring filename );
 
     Glib::RefPtr<Gtk::TreeStore> m_model;
