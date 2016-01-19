@@ -73,6 +73,7 @@ class ImProcFunctions
     void transformLuminanceOnly (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH, int fW, int fH);
     void transformHighQuality   (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LCPMapper *pLCPMap, bool fullImage);
 
+    void sharpenHaloCtrl    (float** luminance, float** blurmap, float** base, int W, int H, const SharpeningParams &sharpenParam);
     void sharpenHaloCtrl    (LabImage* lab, float** blurmap, float** base, int W, int H, SharpeningParams &sharpenParam);
     void sharpenHaloCtrlcam (CieImage* ncie, float** blurmap, float** base, int W, int H);
     void firstAnalysisThread(Imagefloat* original, Glib::ustring wprofile, unsigned int* histogram, int row_from, int row_to);
@@ -271,9 +272,9 @@ public:
     void Lanczos (const LabImage* src, LabImage* dst, float scale);
     void Lanczos (const Image16* src, Image16* dst, float scale);
 
-    void deconvsharpening (LabImage* lab, float** buffer, SharpeningParams &sharpenParam);
-    void deconvsharpeningcam (CieImage* ncie, float** buffer);
+    void deconvsharpening (float** luminance, float** buffer, int W, int H, const SharpeningParams &sharpenParam);
     void MLsharpen (LabImage* lab);// Manuel's clarity / sharpening
+    void MLmicrocontrast(float** luminance, int W, int H ); //Manuel's microcontrast
     void MLmicrocontrast(LabImage* lab ); //Manuel's microcontrast
     void MLmicrocontrastcam(CieImage* ncie ); //Manuel's microcontrast
 
