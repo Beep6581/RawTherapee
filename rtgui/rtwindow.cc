@@ -190,7 +190,6 @@ RTWindow::RTWindow ()
 
         // Batch Queue panel
         bpanel = Gtk::manage ( new BatchQueuePanel (fpanel->fileCatalog) );
-        bpanel->setParent (this);
 
         // decorate tab, the label is unimportant since its updated in batchqueuepanel anyway
         Gtk::Label* lbq = Gtk::manage ( new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE")) );
@@ -283,9 +282,10 @@ RTWindow::RTWindow ()
 
         pldBridge = new PLDBridge(static_cast<rtengine::ProgressListener*>(this));
 
-        //add (*mainBox);
         add (*mainNB);
         show_all ();
+
+        bpanel->init (this);
     }
 
     if (!isSingleTabMode() && !simpleEditor) {

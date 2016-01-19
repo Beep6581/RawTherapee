@@ -57,10 +57,7 @@ public:
 
     BatchQueuePanel (FileCatalog* aFileCatalog);
 
-    void setParent (RTWindow* p)
-    {
-        parent = p;
-    }
+    void init (RTWindow* parent);
 
     void addBatchQueueJobs (std::vector<BatchQueueEntry*> &entries , bool head = false);
 
