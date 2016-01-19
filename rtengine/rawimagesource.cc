@@ -4887,28 +4887,6 @@ void RawImageSource::cleanup ()
     delete phaseOneIccCurveInv;
 }
 
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//#include "demosaic_algos.cc"
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//Emil's code
-/*
- * Now compiled separately
- *
-#include "fast_demo.cc"//fast demosaic
-#include "amaze_demosaic_RT.cc"//AMaZE demosaic
-#include "CA_correct_RT.cc"//Emil's CA auto correction
-#include "cfa_linedn_RT.cc"//Emil's line denoise
-#include "green_equil_RT.cc"//Emil's green channel equilibration
-#include "hilite_recon.cc"//Emil's highlight reconstruction
-
-#include "expo_before_b.cc"//Jacques's exposure before interpolation
-*/
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 #undef PIX_SORT
 #undef med3x3
 
