@@ -190,7 +190,7 @@ GtkMenu {
 
 #ExpanderBox GtkFrame {
     background-color: #3B3B3B;
-    border: 1px solid #2B2B2B;
+    border: 1px solid #313131;
     border-radius: 4px;
 }
 
@@ -200,7 +200,7 @@ GtkMenu {
 
 #ExpanderBox GtkFrame  GtkFrame {
     background-color: #414141;
-    border: 1px solid #313131;
+    border: 1px solid #373737;
     border-radius: 4px;
 }
 
@@ -211,7 +211,7 @@ GtkMenu {
 /* Sub-tool (MyExpander) background */
 #ExpanderBox2 {
     background-color: #3B3B3B;
-    border: 1px solid #484848;
+    border: 1px solid #2A2A2A;
     border-radius: 4px;
 }
 
@@ -221,7 +221,7 @@ GtkMenu {
 
 #ExpanderBox2 GtkFrame {
     background-color: #414141;
-    border: 1px solid #565656;
+    border: 1px solid #373737;
     border-radius: 4px;
 }
 
@@ -231,7 +231,7 @@ GtkMenu {
 
 #ExpanderBox2 GtkFrame GtkFrame {
     background-color: #474747;
-    border: 1px solid #5C5C5C;
+    border: 1px solid #3D3D3D;
     border-radius: 4px;
 }
 
