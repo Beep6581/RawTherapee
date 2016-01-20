@@ -35,17 +35,23 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL)
     setExpandAlignProperties(flab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     format = Gtk::manage (new MyComboBoxText ());
     setExpandAlignProperties(format, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    format->signal_changed ().connect (sigc::mem_fun (*this, &SaveFormatPanel::formatChanged));
+
     format->append ("JPEG (8 bit)");
     format->append ("TIFF (8 bit)");
     format->append ("TIFF (16 bit)");
     format->append ("PNG (8 bit)");
     format->append ("PNG (16 bit)");
-    format->set_active (0);
-    format->signal_changed().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged) );
+
+    fstr[0] = "jpg";
+    fstr[1] = "tif";
+    fstr[2] = "tif";
+    fstr[3] = "png";
+    fstr[4] = "png";
 
     hb1->attach (*flab, 0, 0, 1, 1);
     hb1->attach (*format, 1, 0, 1, 1);
-
+    hb1->show_all();
 
     // ---------------------  JPEG OPTIONS
 
@@ -58,11 +64,9 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL)
     jpegQual = new Adjuster (M("SAVEDLG_JPEGQUAL"), 0, 100, 1, 100);
     setExpandAlignProperties(jpegQual, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     jpegQual->setAdjusterListener (this);
-    jpegQual->show ();
 
     jpegSubSampLabel = Gtk::manage (new Gtk::Label (M("SAVEDLG_SUBSAMP") + Glib::ustring(":")) );
     setExpandAlignProperties(jpegSubSampLabel, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    jpegSubSampLabel->show ();
 
     jpegSubSamp = Gtk::manage (new MyComboBoxText ());
     setExpandAlignProperties(jpegSubSamp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -72,14 +76,11 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL)
     jpegSubSamp->set_tooltip_text (M("SAVEDLG_SUBSAMP_TOOLTIP"));
     jpegSubSamp->set_active (2);
     jpegSubSamp->signal_changed().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged) );
-    jpegSubSamp->show ();
 
     jpegOpts->attach(*jpegQual, 0, 0, 1, 2);
     jpegOpts->attach(*jpegSubSampLabel, 1, 0, 1, 1);
     jpegOpts->attach(*jpegSubSamp, 1, 1, 1, 1);
-
-    jpegOpts->show ();
-
+    jpegOpts->show_all ();
 
     // ---------------------  PNG OPTIONS
 
@@ -87,7 +88,7 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL)
     pngCompr = new Adjuster (M("SAVEDLG_PNGCOMPR"), 0, 6, 1, 6);
     setExpandAlignProperties(pngCompr, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     pngCompr->setAdjusterListener (this);
-    pngCompr->show ();
+    pngCompr->show_all ();
 
 
     // ---------------------  TIFF OPTIONS
@@ -96,7 +97,7 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL)
     tiffUncompressed = new Gtk::CheckButton (M("SAVEDLG_TIFFUNCOMPRESSED"));
     setExpandAlignProperties(tiffUncompressed, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     tiffUncompressed->signal_toggled().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
-    tiffUncompressed->show();
+    tiffUncompressed->show_all();
 
 
     // ---------------------  MAIN BOX
@@ -104,6 +105,7 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL)
 
     savesPP = Gtk::manage (new Gtk::CheckButton (M("SAVEDLG_SAVESPP")));
     savesPP->signal_toggled().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
+    savesPP->show_all();
 
     set_column_spacing(5);
     set_row_spacing(5);
@@ -113,18 +115,6 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL)
     attach (*tiffUncompressed, 0, 2, 1, 1);
     attach (*pngCompr, 0, 3, 1, 1);
     attach (*savesPP, 0, 4, 1, 2);
-
-    hb1->show_all();
-    savesPP->show_all();
-    jpegOpts->show_all();
-    tiffUncompressed->hide();
-    pngCompr->hide();
-
-    fstr[0] = "jpg";
-    fstr[1] = "tif";
-    fstr[2] = "tif";
-    fstr[3] = "png";
-    fstr[4] = "png";
 }
 SaveFormatPanel::~SaveFormatPanel ()
 {
