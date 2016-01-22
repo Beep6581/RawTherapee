@@ -88,7 +88,7 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
         #pragma omp parallel
 #endif
         {
-            gaussianBlur<float> (map, map, W, H, radius);
+            gaussianBlur (map, map, W, H, radius);
         }
     }
 
@@ -233,7 +233,7 @@ void SHMap::updateL (float** L, double radius, bool hq, int skip)
         #pragma omp parallel
 #endif
         {
-            gaussianBlur<float> (map, map, W, H, radius);
+            gaussianBlur (map, map, W, H, radius);
         }
     }
 
@@ -244,7 +244,7 @@ void SHMap::updateL (float** L, double radius, bool hq, int skip)
         //experimental dirpyr shmap
         float thresh = (100.f * radius); //1000;
         int levrad = 16;
-        levrad=2;//for retinex - otherwise levrad = 16
+        levrad = 2; //for retinex - otherwise levrad = 16
         // set up range function
         // calculate size of Lookup table. That's possible because from a value k for all i>=k rangefn[i] will be exp(-10)
         // So we use this fact and the automatic clip of lut to reduce the size of lut and the number of calculations to fill the lut
@@ -253,6 +253,7 @@ void SHMap::updateL (float** L, double radius, bool hq, int skip)
         const int lutSize = (int) thresh * sqrtf(10.f) + 1;
         thresh *= thresh;
         LUTf rangefn(lutSize);
+
         for (int i = 0; i < lutSize - 1; i++) {
             rangefn[i] = xexpf(-min(10.f, (static_cast<float>(i) * i) / thresh )); //*intfactor;
         }
@@ -275,6 +276,7 @@ void SHMap::updateL (float** L, double radius, bool hq, int skip)
             scale *= 2;
             numLevels++;
         }
+
         //printf("numlev=%d\n",numLevels);
         float ** dirpyrlo[2];
 

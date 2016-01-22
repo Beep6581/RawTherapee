@@ -440,26 +440,31 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
 
     radius->setAdjusterListener (this);
+
     if (radius->delay < 200) {
         radius->delay = 200;
     }
 
     highlights->setAdjusterListener (this);
+
     if (highlights->delay < 200) {
         highlights->delay = 200;
     }
 
     h_tonalwidth->setAdjusterListener (this);
+
     if (h_tonalwidth->delay < 200) {
         h_tonalwidth->delay = 200;
     }
 
     shadows->setAdjusterListener (this);
+
     if (shadows->delay < 200) {
         shadows->delay = 200;
     }
 
     s_tonalwidth->setAdjusterListener (this);
+
     if (s_tonalwidth->delay < 200) {
         s_tonalwidth->delay = 200;
     }
@@ -716,8 +721,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
         grad->set_sensitive(false);
         scal->set_sensitive(false);
         grads->set_sensitive(false);
-    }
-    else {
+    } else {
         grad->set_sensitive(true);
         scal->set_sensitive(true);
         grads->set_sensitive(true);
@@ -898,8 +902,8 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
 
     if (mapMethod->get_active_row_number() == 0) {
         pp->retinex.mapMethod = "none";
- //   } else if (mapMethod->get_active_row_number() == 1) {
- //       pp->retinex.mapMethod = "curv";
+//   } else if (mapMethod->get_active_row_number() == 1) {
+//       pp->retinex.mapMethod = "curv";
     } else if (mapMethod->get_active_row_number() == 1) {
         pp->retinex.mapMethod = "gaus";
     } else if (mapMethod->get_active_row_number() == 2) {
@@ -993,7 +997,7 @@ void Retinex::mapMethodChanged()
 void Retinex::viewMethodChanged()
 {
     if(viewMethod->get_active_row_number() == 1 || viewMethod->get_active_row_number() == 2) {
-    //    vart->hide();
+        //    vart->hide();
         gain->hide();
         offs->hide();
         limd->hide();
@@ -1004,14 +1008,12 @@ void Retinex::viewMethodChanged()
         grad->hide();
         grads->hide();
         curveEditorGH->hide();
-    }
-    else if(viewMethod->get_active_row_number() == 3 || viewMethod->get_active_row_number() == 4) {
+    } else if(viewMethod->get_active_row_number() == 3 || viewMethod->get_active_row_number() == 4) {
         gain->hide();
         offs->hide();
-    //    vart->hide();
+        //    vart->hide();
         curveEditorGH->hide();
-    }
-    else {
+    } else {
         vart->show();
         neigh->show();
         gain->show();
@@ -1206,12 +1208,12 @@ void Retinex::adjusterChanged (Adjuster* a, double newval)
     if (!listener || !getEnabled()) {
         return;
     }
+
     if(iter->getTextValue() > "1") {
         scal->set_sensitive(true);
         grad->set_sensitive(true);
         grads->set_sensitive(true);
-    }
-    else {
+    } else {
         scal->set_sensitive(false);
         grad->set_sensitive(false);
         grads->set_sensitive(false);

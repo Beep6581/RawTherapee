@@ -87,8 +87,8 @@ void ProfileStore::parseProfiles ()
         return;
     }
 
-    for (std::list<ProfileStoreListener*>::iterator i = listeners.begin(); i != listeners.end(); ++i) {
-        (*i)->storeCurrentValue();
+    for (auto listener : listeners) {
+        listener->storeCurrentValue();
     }
 
     {
@@ -97,9 +97,9 @@ void ProfileStore::parseProfiles ()
         _parseProfiles ();
     }
 
-    for (std::list<ProfileStoreListener*>::iterator i = listeners.begin(); i != listeners.end(); ++i) {
-        (*i)->updateProfileList();
-        (*i)->restoreValue();
+    for (auto listener : listeners) {
+        listener->updateProfileList();
+        listener->restoreValue();
     }
 }
 
@@ -206,7 +206,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
             } else {
                 size_t lastdot = currDir.find_last_of ('.');
 
-                if (lastdot != Glib::ustring::npos && lastdot <= currDir.size() - 4 && !currDir.casefold().compare (lastdot, 4, paramFileExtension)) {
+                if (lastdot != Glib::ustring::npos && lastdot == currDir.length() - 4 && currDir.substr(lastdot).casefold() == paramFileExtension) {
                     // file found
                     if( options.rtSettings.verbose ) {
                         printf ("Processing file %s...", fname.c_str());
@@ -312,9 +312,9 @@ const ProfileStoreEntry* ProfileStore::findEntryFromFullPathU(Glib::ustring path
     }
 
     // 2. find the entry that match the given filename and parentFolderId
-    for (std::vector<const ProfileStoreEntry*>::iterator i = entries.begin(); i != entries.end(); i++) {
-        if (((*i)->parentFolderId) == parentFolderId  &&  (*i)->label == fName) {
-            return *i;
+    for (auto entry : entries) {
+        if (entry->parentFolderId == parentFolderId  &&  entry->label == fName) {
+            return entry;
         }
     }
 
@@ -454,20 +454,22 @@ const Glib::ustring ProfileStore::getPathFromId(int folderId)
 
 void ProfileStore::clearFileList()
 {
-    for (std::vector<const ProfileStoreEntry*>::iterator i = entries.begin(); i != entries.end(); ++i)
-        if (*i != internalDefaultEntry) {
-            delete *i;
+    for (auto entry : entries) {
+        if (entry != internalDefaultEntry) {
+            delete entry;
         }
+    }
 
     entries.clear();
 }
 
 void ProfileStore::clearProfileList()
 {
-    for (std::map<const ProfileStoreEntry*, rtengine::procparams::AutoPartialProfile*>::iterator i = partProfiles.begin(); i != partProfiles.end(); ++i)
-        if (i->second != internalDefaultProfile) {
-            delete i->second;
+    for (auto partProfile : partProfiles) {
+        if (partProfile.second != internalDefaultProfile) {
+            delete partProfile.second;
         }
+    }
 
     partProfiles.clear();
 }
@@ -544,10 +546,10 @@ const ProfileStoreEntry* ProfileStoreComboBox::getSelectedEntry()
 /** @brief Recursive method to update the combobox entries */
 void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, int parentFolderId, bool initial, const std::vector<const ProfileStoreEntry*> *entryList)
 {
-    for (std::vector<const ProfileStoreEntry*>::const_iterator i = entryList->begin(); i != entryList->end(); i++) {
-        if ((*i)->parentFolderId == parentFolderId) {  // filtering the entry of the same folder
-            if ((*i)->type == PSET_FOLDER) {
-                Glib::ustring folderPath( profileStore.getPathFromId((*i)->folderId) );
+    for (auto entry : *entryList) {
+        if (entry->parentFolderId == parentFolderId) {  // filtering the entry of the same folder
+            if (entry->type == PSET_FOLDER) {
+                Glib::ustring folderPath( profileStore.getPathFromId(entry->folderId) );
 
                 if (options.useBundledProfiles || ((folderPath != "${G}" ) && (folderPath != "${U}" ))) {
                     // creating the new submenu
@@ -560,12 +562,12 @@ void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, 
                     }
 
                     // creating and assigning the custom Label object
-                    newSubMenu[methodColumns.label] = (*i)->label;
-                    newSubMenu[methodColumns.profileStoreEntry] = *i;
+                    newSubMenu[methodColumns.label] = entry->label;
+                    newSubMenu[methodColumns.profileStoreEntry] = entry;
 
-                    refreshProfileList_ (&newSubMenu, (*i)->folderId, false, entryList);
+                    refreshProfileList_ (&newSubMenu, entry->folderId, false, entryList);
                 } else {
-                    refreshProfileList_ (parentRow, (*i)->folderId, true, entryList);
+                    refreshProfileList_ (parentRow, entry->folderId, true, entryList);
                 }
             } else {
                 Gtk::TreeModel::Row newItem;
@@ -577,8 +579,8 @@ void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, 
                     newItem = *(refTreeModel->append(parentRow->children()));
                 }
 
-                newItem[methodColumns.label] = (*i)->label;
-                newItem[methodColumns.profileStoreEntry] = *i;
+                newItem[methodColumns.label] = entry->label;
+                newItem[methodColumns.profileStoreEntry] = entry;
             }
         }
     }

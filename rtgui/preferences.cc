@@ -2167,7 +2167,7 @@ void Preferences::clearProfilesPressed ()
 void Preferences::clearThumbImagesPressed ()
 {
 
-    cacheMgr->clearThumbImages ();
+    cacheMgr->clearImages ();
 }
 
 void Preferences::clearAllPressed ()

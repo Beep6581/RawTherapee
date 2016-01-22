@@ -17,372 +17,364 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "cachemanager.h"
-#include "options.h"
+
+#include <memory>
+
 #include <glib/gstdio.h>
 #include <giomm.h>
-#include "guiutils.h"
-#include "procparamchangers.h"
-#include "../rtengine/safegtk.h"
+
 #ifdef WIN32
 #include <windows.h>
 #endif
 
-CacheManager*
-CacheManager::getInstance(void)
+#include "guiutils.h"
+#include "options.h"
+#include "procparamchangers.h"
+#include "thumbnail.h"
+
+namespace
 {
-    static CacheManager instance_;
-    return &instance_;
+
+constexpr auto cacheDirMode = 511;
+constexpr auto cacheDirs = { "profiles", "images", "aehistograms", "embprofiles", "data" };
+
+}
+
+CacheManager* CacheManager::getInstance ()
+{
+    static CacheManager instance;
+    return &instance;
 }
 
 void CacheManager::init ()
 {
-
-    MyMutex::MyLock lock(mutex_);
+    MyMutex::MyLock lock (mutex);
 
     openEntries.clear ();
     baseDir = options.cacheBaseDir;
 
-    if (!safe_file_test (baseDir, Glib::FILE_TEST_IS_DIR)) {
-        safe_g_mkdir_with_parents (baseDir, 511);
+    auto error = g_mkdir_with_parents (baseDir.c_str(), cacheDirMode);
+
+    for (const auto& cacheDir : cacheDirs) {
+        error |= g_mkdir_with_parents (Glib::build_filename (baseDir, cacheDir).c_str(), cacheDirMode);
     }
 
-    if (!safe_file_test (Glib::build_filename (baseDir, "profiles"), Glib::FILE_TEST_IS_DIR)) {
-        safe_g_mkdir_with_parents (Glib::ustring(Glib::build_filename (baseDir, "profiles")), 511);
-    }
-
-    if (!safe_file_test (Glib::build_filename (baseDir, "images"), Glib::FILE_TEST_IS_DIR)) {
-        safe_g_mkdir_with_parents (Glib::ustring(Glib::build_filename (baseDir, "images")), 511);
-    }
-
-    if (!safe_file_test (Glib::build_filename (baseDir, "aehistograms"), Glib::FILE_TEST_IS_DIR)) {
-        safe_g_mkdir_with_parents (Glib::ustring(Glib::build_filename (baseDir, "aehistograms")), 511);
-    }
-
-    if (!safe_file_test (Glib::build_filename (baseDir, "embprofiles"), Glib::FILE_TEST_IS_DIR)) {
-        safe_g_mkdir_with_parents (Glib::ustring(Glib::build_filename (baseDir, "embprofiles")), 511);
-    }
-
-    if (!safe_file_test (Glib::build_filename (baseDir, "data"), Glib::FILE_TEST_IS_DIR)) {
-        safe_g_mkdir_with_parents (Glib::ustring(Glib::build_filename (baseDir, "data")), 511);
+    if (error != 0 && options.rtSettings.verbose) {
+        std::cerr << "Failed to create all cache directories: " << g_strerror(errno) << std::endl;
     }
 }
 
 Thumbnail* CacheManager::getEntry (const Glib::ustring& fname)
 {
+    std::unique_ptr<Thumbnail> thumbnail;
 
-    Thumbnail* res = NULL;
-
-    // take manager lock and search for entry, if found return it else release
-    // lock and create it
+    // take manager lock and search for entry,
+    // if found return it,
+    // else release lock and create it
     {
-        MyMutex::MyLock lock(mutex_);
-
-        string_thumb_map::iterator r = openEntries.find (fname);
+        MyMutex::MyLock lock (mutex);
 
         // if it is open, return it
-        if (r != openEntries.end()) {
-            r->second->increaseRef ();
-            return r->second;
+        const auto iterator = openEntries.find (fname);
+        if (iterator != openEntries.end ()) {
+
+            auto cachedThumbnail = iterator->second;
+
+            cachedThumbnail->increaseRef ();
+            return cachedThumbnail;
         }
-    }
-
-    // compute the md5
-    std::string md5 = getMD5 (fname);
-
-    if (md5 == "") {
-        return NULL;
     }
 
     // build path name
-    Glib::ustring cfname = getCacheFileName ("data", fname, md5) + ".txt";
+    const auto md5 = getMD5 (fname);
+
+    if (md5.empty ()) {
+        return nullptr;
+    }
+
+    const auto cacheName = getCacheFileName ("data", fname, ".txt", md5);
 
     // let's see if we have it in the cache
-    if (safe_file_test (cfname, Glib::FILE_TEST_EXISTS)) {
-        CacheImageData* cfs = new CacheImageData ();
-        int e = cfs->load (cfname);
+    {
+        CacheImageData imageData;
 
-        if (!e && cfs->supported == true) {
-            res = new Thumbnail (this, fname, cfs);
+        const auto error = imageData.load (cacheName);
+        if (error == 0 && imageData.supported) {
+
+            thumbnail.reset (new Thumbnail (this, fname, &imageData));
+            if (!thumbnail->isSupported ()) {
+                thumbnail.reset ();
+            }
         }
-
-        if (res && !res->isSupported ()) {
-            delete res;
-            res = NULL;
-        }
-
-        delete cfs;
     }
 
     // if not, create a new one
-    if (!res) {
-        res = new Thumbnail (this, fname, md5);
+    if (!thumbnail) {
 
-        if (!res->isSupported ()) {
-            delete res;
-            res = NULL;
+        thumbnail.reset (new Thumbnail (this, fname, md5));
+        if (!thumbnail->isSupported ()) {
+            thumbnail.reset ();
         }
     }
 
     // retake the lock and see if it was added while we we're unlocked, if it
     // was use it over our version. if not added we create the cache entry
-    if (res) {
-        MyMutex::MyLock lock(mutex_);
+    if (thumbnail) {
+        MyMutex::MyLock lock (mutex);
 
-        string_thumb_map::iterator r = openEntries.find (fname);
+        const auto iterator = openEntries.find (fname);
+        if (iterator != openEntries.end ()) {
 
-        if (r != openEntries.end()) {
-            delete res;
-            r->second->increaseRef ();
-            return r->second;
+            auto cachedThumbnail = iterator->second;
+
+            cachedThumbnail->increaseRef ();
+            return cachedThumbnail;
         }
 
         // it wasn't, create a new entry
-        openEntries[fname] = res;
+        openEntries.emplace (fname, thumbnail.get ());
     }
 
-    return res;
+    return thumbnail.release ();
 }
 
 
 void CacheManager::deleteEntry (const Glib::ustring& fname)
 {
-
-    MyMutex::MyLock lock(mutex_);
+    MyMutex::MyLock lock (mutex);
 
     // check if it is opened
-    string_thumb_map::iterator r = openEntries.find (fname);
+    auto iterator = openEntries.find (fname);
+    if (iterator == openEntries.end ()) {
+        deleteFiles (fname, getMD5 (fname), true, true);
+        return;
+    }
 
-    // if it is open, dont delete it
-    if (r != openEntries.end()) {
-        std::string md5 = r->second->getMD5 ();
+    auto thumbnail = iterator->second;
 
-        // decrease reference count; this will call back into CacheManager so
-        // we release the lock for it.
-        {
-            lock.release();
-            r->second->decreaseRef ();
-            lock.acquire();
-        }
+    // decrease reference count;
+    // this will call back into CacheManager,
+    // so we release the lock for it
+    {
+        lock.release ();
+        thumbnail->decreaseRef ();
+        lock.acquire ();
+    }
 
-        // if in the editor, the thumbnail still exists. If not, delete it:
-        r = openEntries.find (fname);
-
-        if (r == openEntries.end() && md5 != "") {
-            safe_g_remove (getCacheFileName ("data", fname, md5) + ".txt");
-            safe_g_remove (getCacheFileName ("profiles", fname, md5) + paramFileExtension);
-            safe_g_remove (getCacheFileName ("images", fname, md5) + ".rtti");
-            safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust16");
-            safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust");
-            safe_g_remove (getCacheFileName ("images", fname, md5) + ".jpg");
-            safe_g_remove (getCacheFileName ("aehistograms", fname, md5));
-            safe_g_remove (getCacheFileName ("embprofiles", fname, md5) + ".icc");
-        }
-    } else {
-        std::string md5 = getMD5 (fname);
-
-        if (md5 != "") {
-            safe_g_remove (getCacheFileName ("data", fname, md5) + ".txt");
-            safe_g_remove (getCacheFileName ("profiles", fname, md5) + paramFileExtension);
-            safe_g_remove (getCacheFileName ("images", fname, md5) + ".rtti");
-            safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust16");
-            safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust");
-            safe_g_remove (getCacheFileName ("images", fname, md5) + ".jpg");
-            safe_g_remove (getCacheFileName ("aehistograms", fname, md5));
-            safe_g_remove (getCacheFileName ("embprofiles", fname, md5) + ".icc");
-        }
+    // check again if in the editor,
+    // the thumbnail still exists,
+    // if not, delete it
+    if (openEntries.count (fname) == 0) {
+        deleteFiles (fname, thumbnail->getMD5 (), true, true);
     }
 }
 
-void CacheManager::clearFromCache (const Glib::ustring& fname, bool leavenotrace)
+void CacheManager::clearFromCache (const Glib::ustring& fname, bool purge) const
 {
-    std::string md5 = getMD5 (fname);
-
-    if (md5 != "") {
-        if (leavenotrace) {
-            safe_g_remove (getCacheFileName ("data", fname, md5) + ".txt");
-            safe_g_remove (getCacheFileName ("profiles", fname, md5) + paramFileExtension);
-        }
-
-        safe_g_remove (getCacheFileName ("images", fname, md5) + ".rtti");
-        safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust16");
-        safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust");
-        safe_g_remove (getCacheFileName ("images", fname, md5) + ".jpg");
-        safe_g_remove (getCacheFileName ("aehistograms", fname, md5));
-        safe_g_remove (getCacheFileName ("embprofiles", fname, md5) + ".icc");
-    }
+    deleteFiles (fname, getMD5 (fname), purge, purge);
 }
 
 void CacheManager::renameEntry (const std::string& oldfilename, const std::string& oldmd5, const std::string& newfilename)
 {
+    MyMutex::MyLock lock (mutex);
 
-    MyMutex::MyLock lock(mutex_);
+    const auto newmd5 = getMD5 (newfilename);
 
-    std::string newmd5 = getMD5 (newfilename);
+    auto error = g_rename (getCacheFileName ("profiles", oldfilename, paramFileExtension, oldmd5).c_str (), getCacheFileName ("profiles", newfilename, paramFileExtension, newmd5).c_str ());
+    error |= g_rename (getCacheFileName ("images", oldfilename, ".rtti", oldmd5).c_str (), getCacheFileName ("images", newfilename, ".rtti", newmd5).c_str ());
+    error |= g_rename (getCacheFileName ("images", oldfilename, ".cust16", oldmd5).c_str (), getCacheFileName ("images", newfilename, ".cust16", newmd5).c_str ());
+    error |= g_rename (getCacheFileName ("images", oldfilename, ".cust", oldmd5).c_str (), getCacheFileName ("images", newfilename, ".cust", newmd5).c_str ());
+    error |= g_rename (getCacheFileName ("images", oldfilename, ".jpg", oldmd5).c_str (), getCacheFileName ("images", newfilename, ".jpg", newmd5).c_str ());
+    error |= g_rename (getCacheFileName ("aehistograms", oldfilename, "", oldmd5).c_str (), getCacheFileName ("aehistograms", newfilename, "", newmd5).c_str ());
+    error |= g_rename (getCacheFileName ("embprofiles", oldfilename, ".icc", oldmd5).c_str (), getCacheFileName ("embprofiles", newfilename, ".icc", newmd5).c_str ());
+    error |= g_rename (getCacheFileName ("data", oldfilename, ".txt", oldmd5).c_str (), getCacheFileName ("data", newfilename, ".txt", newmd5).c_str ());
 
-    safe_g_rename (getCacheFileName ("profiles", oldfilename, oldmd5) + paramFileExtension, (getCacheFileName ("profiles", newfilename, newmd5) + paramFileExtension).c_str());
-    safe_g_rename (getCacheFileName ("images", oldfilename, oldmd5) + ".rtti", getCacheFileName ("images", newfilename, newmd5) + ".rtti");
-    safe_g_rename (getCacheFileName ("images", oldfilename, oldmd5) + ".cust16", getCacheFileName ("images", newfilename, newmd5) + ".cust16");
-    safe_g_rename (getCacheFileName ("images", oldfilename, oldmd5) + ".cust", getCacheFileName ("images", newfilename, newmd5) + ".cust");
-    safe_g_rename (getCacheFileName ("images", oldfilename, oldmd5) + ".jpg", getCacheFileName ("images", newfilename, newmd5) + ".jpg");
-    safe_g_rename (getCacheFileName ("aehistograms", oldfilename, oldmd5), getCacheFileName ("aehistograms", newfilename, newmd5));
-    safe_g_rename (getCacheFileName ("embprofiles", oldfilename, oldmd5) + ".icc", getCacheFileName ("embprofiles", newfilename, newmd5) + ".icc");
-    safe_g_rename (getCacheFileName ("data", oldfilename, oldmd5) + ".txt", getCacheFileName ("data", newfilename, newmd5) + ".txt");
+    if (error != 0 && options.rtSettings.verbose) {
+        std::cerr << "Failed to rename all files for cache entry '" << oldfilename << "': " << g_strerror(errno) << std::endl;
+    }
 
     // check if it is opened
-    string_thumb_map::iterator r = openEntries.find (oldfilename);
-
     // if it is open, update md5
-    if (r != openEntries.end()) {
-        Thumbnail* t = r->second;
-        openEntries.erase (r);
-        t->setFileName (newfilename);
-        openEntries[newfilename] = t;
-        t->updateCache ();
-        t->saveThumbnail ();
-    }
-}
-
-void CacheManager::closeThumbnail (Thumbnail* t)
-{
-
-    MyMutex::MyLock lock(mutex_);
-
-//    t->updateCache ();
-    string_thumb_map::iterator r = openEntries.find (t->getFileName());
-
-    if (r != openEntries.end()) {
-        openEntries.erase (r);
+    const auto iterator = openEntries.find (oldfilename);
+    if (iterator == openEntries.end ()) {
+        return;
     }
 
-    delete t;
+    auto thumbnail = iterator->second;
+    openEntries.erase (iterator);
+    openEntries.emplace (newfilename, thumbnail);
+
+    thumbnail->setFileName (newfilename);
+    thumbnail->updateCache ();
+    thumbnail->saveThumbnail ();
 }
 
-void CacheManager::closeCache ()
+void CacheManager::closeThumbnail (Thumbnail* thumbnail)
 {
+    MyMutex::MyLock lock (mutex);
 
-    MyMutex::MyLock lock(mutex_);
+    openEntries.erase (thumbnail->getFileName ());
+    delete thumbnail;
+}
+
+void CacheManager::closeCache () const
+{
+    MyMutex::MyLock lock (mutex);
 
     applyCacheSizeLimitation ();
 }
 
-void CacheManager::clearAll ()
+void CacheManager::clearAll () const
 {
+    MyMutex::MyLock lock (mutex);
 
-    MyMutex::MyLock lock(mutex_);
-
-    deleteDir ("images");
-    deleteDir ("aehistograms");
-    deleteDir ("embprofiles");
-    deleteDir ("profiles");
-    deleteDir ("data");
-
-    // re-generate thumbnail images and clear profiles of open thumbnails
-    //string_thumb_map::iterator i;
-    //for (i=openEntries.begin(); i!=openEntries.end(); i++) {
-    //    i->second->clearProcParams (CACHEMGR);
-    //    i->second->generateThumbnailImage ();
-    //    i->second->updateCache ();
-    //}
+    for (const auto& cacheDir : cacheDirs) {
+        deleteDir (cacheDir);
+    }
 }
-void CacheManager::clearThumbImages ()
-{
 
-    MyMutex::MyLock lock(mutex_);
+void CacheManager::clearImages () const
+{
+    MyMutex::MyLock lock (mutex);
 
     deleteDir ("images");
     deleteDir ("aehistograms");
     deleteDir ("embprofiles");
 }
 
-void CacheManager::clearProfiles ()
+void CacheManager::clearProfiles () const
 {
-    MyMutex::MyLock lock(mutex_);
+    MyMutex::MyLock lock (mutex);
 
     deleteDir ("profiles");
 }
 
-void CacheManager::deleteDir (const Glib::ustring& dirName)
+void CacheManager::deleteDir (const Glib::ustring& dirName) const
 {
-
     try {
-        Glib::Dir* dir = new Glib::Dir (Glib::build_filename (baseDir, dirName));
 
-        for (Glib::DirIterator i = dir->begin(); i != dir->end(); ++i) {
-            safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, dirName), *i));
+        Glib::Dir dir (Glib::build_filename (baseDir, dirName));
+
+        auto error = 0;
+        for (auto entry = dir.begin (); entry != dir.end (); ++entry) {
+            error |= g_remove (Glib::build_filename (baseDir, dirName, *entry).c_str ());
         }
 
-        delete dir;
-    } catch (const Glib::Error& e) {
+        if (error != 0 && options.rtSettings.verbose) {
+            std::cerr << "Failed to delete all entries in cache directory '" << dirName << "': " << g_strerror(errno) << std::endl;
+        }
+
+    } catch (Glib::Error&) {}
+}
+
+void CacheManager::deleteFiles (const Glib::ustring& fname, const std::string& md5, bool purgeData, bool purgeProfile) const
+{
+    if (md5.empty ()) {
+        return;
+    }
+
+    auto error = g_remove (getCacheFileName ("images", fname, ".rtti", md5).c_str ());
+    error |= g_remove (getCacheFileName ("images", fname, ".cust16", md5).c_str ());
+    error |= g_remove (getCacheFileName ("images", fname, ".cust", md5).c_str ());
+    error |= g_remove (getCacheFileName ("images", fname, ".jpg", md5).c_str ());
+    error |= g_remove (getCacheFileName ("aehistograms", fname, "", md5).c_str ());
+    error |= g_remove (getCacheFileName ("embprofiles", fname, ".icc", md5).c_str ());
+
+    if (purgeData) {
+        error |= g_remove (getCacheFileName ("data", fname, ".txt", md5).c_str ());
+    }
+
+    if (purgeProfile) {
+        error |= g_remove (getCacheFileName ("profiles", fname, paramFileExtension, md5).c_str ());
+    }
+
+    if (error != 0 && options.rtSettings.verbose) {
+        std::cerr << "Failed to delete all files for cache entry '" << fname << "': " << g_strerror(errno) << std::endl;
     }
 }
 
 std::string CacheManager::getMD5 (const Glib::ustring& fname)
 {
 
-    Glib::RefPtr<Gio::File> file = Gio::File::create_for_path (fname);
+    auto file = Gio::File::create_for_path (fname);
 
-    if (file && file->query_exists())   {
+    if (file && file->query_exists ())   {
 
 #ifdef WIN32
-        // Windows: file name + size + creation time
-        // Safer because e.g. your camera image counter turns over. Do NOT use modified date, since tagging programs will change that
-        wchar_t *wFname = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
-        WIN32_FILE_ATTRIBUTE_DATA fileAttr;
-        bool success = GetFileAttributesExW(wFname, GetFileExInfoStandard, &fileAttr);
-        g_free(wFname);
 
-        if (success) {
-            // Just need the low file size, since RAWs are never that large
-            Glib::ustring fileID = Glib::ustring::compose ("%1-%2-%3-%4", fileAttr.nFileSizeLow, fileAttr.ftCreationTime.dwHighDateTime, fileAttr.ftCreationTime.dwLowDateTime, fname );
-            return Glib::Checksum::compute_checksum (Glib::Checksum::CHECKSUM_MD5, fileID);
+        std::unique_ptr<wchar_t, GFreeFunc> wfname (reinterpret_cast<wchar_t*>(g_utf8_to_utf16 (fname.c_str (), -1, NULL, NULL, NULL)), g_free);
+
+        WIN32_FILE_ATTRIBUTE_DATA fileAttr;
+        if (GetFileAttributesExW (wfname.get (), GetFileExInfoStandard, &fileAttr)) {
+            // We use name, size and creation time to identify a file.
+            const auto identifier = Glib::ustring::compose ("%1-%2-%3-%4", fileAttr.nFileSizeLow, fileAttr.ftCreationTime.dwHighDateTime, fileAttr.ftCreationTime.dwLowDateTime, fname);
+            return Glib::Checksum::compute_checksum (Glib::Checksum::CHECKSUM_MD5, identifier);
         }
 
 #else
-        // Least common denominator: file name + size to identify a file
-        Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info (file);
 
-        if (info) {
-            return Glib::Checksum::compute_checksum (Glib::Checksum::CHECKSUM_MD5, Glib::ustring::compose ("%1%2", fname, info->get_size()));
-        }
+        try
+        {
+
+            if (auto info = file->query_info ()) {
+                // We only use name and size to identify a file.
+                const auto identifier = Glib::ustring::compose ("%1%2", fname, info->get_size ());
+                return Glib::Checksum::compute_checksum (Glib::Checksum::CHECKSUM_MD5, identifier);
+            }
+
+        } catch(Gio::Error&) {}
 
 #endif
+
     }
 
-    return "";
+    return {};
 }
 
-Glib::ustring CacheManager::getCacheFileName (const Glib::ustring& subdir, const Glib::ustring& fname, const Glib::ustring& md5)
+Glib::ustring CacheManager::getCacheFileName (const Glib::ustring& subDir,
+                                              const Glib::ustring& fname,
+                                              const Glib::ustring& fext,
+                                              const Glib::ustring& md5) const
 {
-
-    Glib::ustring cfn = Glib::build_filename (baseDir, subdir);
-    Glib::ustring cname = Glib::path_get_basename (fname) + "." + md5;
-    return Glib::build_filename (cfn, cname);
+    const auto dirName = Glib::build_filename (baseDir, subDir);
+    const auto baseName = Glib::path_get_basename (fname) + "." + md5;
+    return Glib::build_filename (dirName, baseName + fext);
 }
 
-void CacheManager::applyCacheSizeLimitation ()
+void CacheManager::applyCacheSizeLimitation () const
 {
+    using FNameMTime = std::pair<Glib::ustring, Glib::TimeVal>;
+    std::vector<FNameMTime> files;
 
-    // TODO: Improve this, it just blindly deletes image without looking at create time or something to keep the current ones
-    std::vector<FileMTimeInfo> flist;
-    Glib::ustring dataDir = Glib::build_filename (baseDir, "data");
-    Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (dataDir);
+    try {
 
-    safe_build_file_list (dir, flist);
+        const auto dirName = Glib::build_filename (baseDir, "data");
+        const auto dir = Gio::File::create_for_path (dirName);
 
-    if (flist.size() > options.maxCacheEntries) {
-        std::sort (flist.begin(), flist.end());
+        auto enumerator = dir->enumerate_children ();
 
-        while (flist.size() > options.maxCacheEntries) {
-            safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "data"), flist.front().fname) + ".txt");
-            safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "images"), flist.front().fname) + ".rtti");
-            safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "images"), flist.front().fname) + ".cust16");
-            safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "images"), flist.front().fname) + ".cust");
-            safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "images"), flist.front().fname) + ".jpg");
-            safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "aehistograms"), flist.front().fname));
-            safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "embprofiles"), flist.front().fname) + ".icc");
-            //                safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "profiles"), flist.front().fname) + paramFileExtension);
-            flist.erase (flist.begin());
+        while (auto file = enumerator->next_file ()) {
+            files.emplace_back (file->get_name (), file->modification_time ());
         }
+
+    } catch (Glib::Exception&) {}
+
+    if (files.size () <= options.maxCacheEntries) {
+        return;
+    }
+
+    std::sort (files.begin (), files.end (), [] (const FNameMTime& lhs, const FNameMTime& rhs)
+    {
+        return lhs.second < rhs.second;
+    });
+
+    auto cacheEntries = files.size ();
+
+    for (auto entry = files.begin(); cacheEntries-- > options.maxCacheEntries; ++entry) {
+
+        const auto& fname = entry->first;
+
+        deleteFiles (fname, getMD5 (fname), true, false);
     }
 }
 

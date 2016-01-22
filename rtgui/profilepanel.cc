@@ -289,7 +289,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
     }
 
     Gtk::FileChooserDialog dialog(M("PROFILEPANEL_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
-    FileChooserLastFolderPersister persister( &dialog, options.loadSaveProfilePath );
+    bindCurrentFolder (dialog, options.loadSaveProfilePath);
     dialog.set_current_name (lastFilename);
 
     //Add the user's default (or global if multiuser=false) profile path to the Shortcut list
@@ -465,7 +465,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
     }
 
     Gtk::FileChooserDialog dialog(M("PROFILEPANEL_LOADDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN);
-    FileChooserLastFolderPersister persister( &dialog, options.loadSaveProfilePath );
+    bindCurrentFolder (dialog, options.loadSaveProfilePath);
 
     //Add the user's default (or global if multiuser=false) profile path to the Shortcut list
 #ifdef WIN32

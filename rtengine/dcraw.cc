@@ -1685,7 +1685,8 @@ void CLASS phase_one_load_raw_c()
 	pixel[col] = curve[pixel[col]];
     }
     for (col=0; col < raw_width; col++) {
-      i = (pixel[col] << 2) - ph1.black
+      if (ph1.format != 8) pixel[col] <<= 2;
+      i = pixel[col] - ph1.black
 	+ cblack[row][col >= ph1.split_col]
 	+ rblack[col][row >= ph1.split_row];
       if (i > 0) RAW(row,col) = i;

@@ -59,14 +59,15 @@ FilePanel::FilePanel () : parent(NULL)
     ribbonPane->set_size_request(50, 150);
     dirpaned->pack2 (*ribbonPane, true, true);
 
-    placesBrowser->setDirBrowserRemoteInterface (dirBrowser);
-    recentBrowser->setDirBrowserRemoteInterface (dirBrowser);
-    dirBrowser->addDirSelectionListener (fileCatalog);
-    dirBrowser->addDirSelectionListener (recentBrowser);
-    dirBrowser->addDirSelectionListener (placesBrowser);
-    dirBrowser->addDirSelectionListener (tpc);
+    DirBrowser::DirSelectionSignal dirSelected = dirBrowser->dirSelected ();
+    dirSelected.connect (sigc::mem_fun (fileCatalog, &FileCatalog::dirSelected));
+    dirSelected.connect (sigc::mem_fun (recentBrowser, &RecentBrowser::dirSelected));
+    dirSelected.connect (sigc::mem_fun (placesBrowser, &PlacesBrowser::dirSelected));
+    dirSelected.connect (sigc::mem_fun (tpc, &BatchToolPanelCoordinator::dirSelected));
+    fileCatalog->setDirSelector (sigc::mem_fun (dirBrowser, &DirBrowser::selectDir));
+    placesBrowser->setDirSelector (sigc::mem_fun (dirBrowser, &DirBrowser::selectDir));
+    recentBrowser->setDirSelector (sigc::mem_fun (dirBrowser, &DirBrowser::selectDir));
     fileCatalog->setFileSelectionListener (this);
-    fileCatalog->setDirBrowserRemoteInterface (dirBrowser);
 
     rightBox = Gtk::manage ( new Gtk::HBox () );
     rightBox->set_size_request(50, 100);

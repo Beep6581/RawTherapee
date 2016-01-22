@@ -347,9 +347,7 @@ void DirBrowser::row_activated (const Gtk::TreeModel::Path& path, Gtk::TreeViewC
     Glib::ustring dname = dirTreeModel->get_iter (path)->get_value (dtColumns.dirname);
 
     if (safe_file_test (dname, Glib::FILE_TEST_IS_DIR))
-        for (size_t i = 0; i < dllisteners.size(); i++) {
-            dllisteners[i]->dirSelected (dname);
-        }
+        dirSelectionSignal (dname, Glib::ustring());
 }
 
 Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath)
@@ -439,9 +437,7 @@ void DirBrowser::open (const Glib::ustring& dirname, const Glib::ustring& fileNa
         absFilePath = Glib::build_filename (absDirPath, fileName);
     }
 
-    for (size_t i = 0; i < dllisteners.size(); i++) {
-        dllisteners[i]->dirSelected (absDirPath, absFilePath);
-    }
+    dirSelectionSignal (absDirPath, absFilePath);
 }
 
 void DirBrowser::file_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirName)

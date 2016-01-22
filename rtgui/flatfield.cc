@@ -31,7 +31,7 @@ FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_L
     hbff = Gtk::manage(new Gtk::HBox());
     hbff->set_spacing(2);
     flatFieldFile = Gtk::manage(new MyFileChooserButton(M("TP_FLATFIELD_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
-    flatFieldFilePersister.reset(new FileChooserLastFolderPersister(flatFieldFile, options.lastFlatfieldDir));
+    bindCurrentFolder (*flatFieldFile, options.lastFlatfieldDir);
     ffLabel = Gtk::manage(new Gtk::Label(M("GENERAL_FILE")));
     flatFieldFileReset = Gtk::manage(new Gtk::Button());
     flatFieldFileReset->set_image (*Gtk::manage(new RTImage ("gtk-cancel.png")));
