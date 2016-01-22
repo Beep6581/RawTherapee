@@ -175,6 +175,15 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     limd->set_tooltip_markup (M("TP_RETINEX_THRESHOLD_TOOLTIP"));
     baselog->set_tooltip_markup (M("TP_RETINEX_BASELOG_TOOLTIP"));
 
+    Gtk::Frame *p1Frame;
+    p1Frame = Gtk::manage (new Gtk::Frame(M("TP_RETINEX_LABEL_MASK")) );
+    p1Frame->set_border_width(0);
+    p1Frame->set_label_align(0.025, 0.5);
+
+    Gtk::VBox *p1VBox;
+    p1VBox = Gtk::manage ( new Gtk::VBox());
+    p1VBox->set_border_width(4);
+    p1VBox->set_spacing(2);
 
     mapbox = Gtk::manage (new Gtk::HBox ());
     labmap = Gtk::manage (new Gtk::Label (M("TP_RETINEX_MAP") + ":"));
@@ -182,7 +191,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     mapMethod = Gtk::manage (new MyComboBoxText ());
     mapMethod->append_text (M("TP_RETINEX_MAP_NONE"));
-    mapMethod->append_text (M("TP_RETINEX_MAP_CURV"));
+//    mapMethod->append_text (M("TP_RETINEX_MAP_CURV"));
     mapMethod->append_text (M("TP_RETINEX_MAP_GAUS"));
     mapMethod->append_text (M("TP_RETINEX_MAP_MAPP"));
     mapMethod->append_text (M("TP_RETINEX_MAP_MAPT"));
@@ -202,8 +211,8 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     viewMethod = Gtk::manage (new MyComboBoxText ());
     viewMethod->append_text (M("TP_RETINEX_VIEW_NONE"));
-    viewMethod->append_text (M("TP_RETINEX_VIEW_MASK"));
     viewMethod->append_text (M("TP_RETINEX_VIEW_UNSHARP"));
+    viewMethod->append_text (M("TP_RETINEX_VIEW_MASK"));
     viewMethod->append_text (M("TP_RETINEX_VIEW_TRAN"));
     viewMethod->append_text (M("TP_RETINEX_VIEW_TRAN2"));
     viewMethod->set_active(0);
@@ -288,29 +297,32 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     settingsVBox->pack_start (*limd);
     limd->show ();
 
-    settingsVBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
-
-    mapbox->pack_start(*mapMethod);
-    settingsVBox->pack_start(*mapbox);
-
-    settingsVBox->pack_start (*curveEditormap, Gtk::PACK_SHRINK, 4);
-    curveEditormap->show();
-
-    settingsVBox->pack_start (*highlights);
-    highlights->show();
-    settingsVBox->pack_start (*h_tonalwidth);
-    h_tonalwidth->show();
-    settingsVBox->pack_start (*shadows);
-    shadows->show();
-    settingsVBox->pack_start (*s_tonalwidth);
-    s_tonalwidth->show();
-    settingsVBox->pack_start (*radius);
-    radius->show();
+    // settingsVBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
     viewbox->pack_start(*viewMethod);
-    settingsVBox->pack_start(*viewbox);
-
+//   settingsVBox->pack_start(*viewbox);
+    retinexVBox->pack_start(*viewbox);
     //settingsVBox->pack_start (*viewMethod);
+
+    mapbox->pack_start(*mapMethod);
+    // settingsVBox->pack_start(*mapbox);
+    p1VBox->pack_start(*mapbox);
+
+    p1VBox->pack_start (*curveEditormap, Gtk::PACK_SHRINK, 4);
+    curveEditormap->show();
+
+    p1VBox->pack_start (*highlights);
+    highlights->show();
+    p1VBox->pack_start (*h_tonalwidth);
+    h_tonalwidth->show();
+    p1VBox->pack_start (*shadows);
+    shadows->show();
+    p1VBox->pack_start (*s_tonalwidth);
+    s_tonalwidth->show();
+    p1VBox->pack_start (*radius);
+    radius->show();
+
+
 
 //    settingsVBox->pack_start (*highl);
 //    highl->show ();
@@ -320,7 +332,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
 //    settingsVBox->pack_start (*grbl);
 //    grbl->show ();
-    settingsVBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+    //  settingsVBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
     settingsVBox->pack_start( *transmissionCurveEditorG, Gtk::PACK_SHRINK, 2);
     transmissionCurveEditorG->show();
@@ -428,26 +440,31 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
 
     radius->setAdjusterListener (this);
+
     if (radius->delay < 200) {
         radius->delay = 200;
     }
 
     highlights->setAdjusterListener (this);
+
     if (highlights->delay < 200) {
         highlights->delay = 200;
     }
 
     h_tonalwidth->setAdjusterListener (this);
+
     if (h_tonalwidth->delay < 200) {
         h_tonalwidth->delay = 200;
     }
 
     shadows->setAdjusterListener (this);
+
     if (shadows->delay < 200) {
         shadows->delay = 200;
     }
 
     s_tonalwidth->setAdjusterListener (this);
+
     if (s_tonalwidth->delay < 200) {
         s_tonalwidth->delay = 200;
     }
@@ -459,6 +476,9 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
         }
     */
     pack_start (*retinexVBox);
+    p1Frame->add(*p1VBox);
+    pack_start (*p1Frame, Gtk::PACK_EXPAND_WIDGET, 4);
+
     pack_start (*expsettings);
     pack_start (*neutrHBox);
 
@@ -701,8 +721,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
         grad->set_sensitive(false);
         scal->set_sensitive(false);
         grads->set_sensitive(false);
-    }
-    else {
+    } else {
         grad->set_sensitive(true);
         scal->set_sensitive(true);
         grads->set_sensitive(true);
@@ -728,21 +747,21 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     if (pp->retinex.mapMethod == "none") {
         mapMethod->set_active (0);
-    } else if (pp->retinex.mapMethod == "curv") {
-        mapMethod->set_active (1);
+//    } else if (pp->retinex.mapMethod == "curv") {
+//        mapMethod->set_active (1);
     } else if (pp->retinex.mapMethod == "gaus") {
-        mapMethod->set_active (2);
+        mapMethod->set_active (1);
     } else if (pp->retinex.mapMethod == "map") {
-        mapMethod->set_active (3);
+        mapMethod->set_active (2);
     } else if (pp->retinex.mapMethod == "mapT") {
-        mapMethod->set_active (4);
+        mapMethod->set_active (3);
     }
 
     if (pp->retinex.viewMethod == "none") {
         viewMethod->set_active (0);
-    } else if (pp->retinex.viewMethod == "mask") {
-        viewMethod->set_active (1);
     } else if (pp->retinex.viewMethod == "unsharp") {
+        viewMethod->set_active (1);
+    } else if (pp->retinex.viewMethod == "mask") {
         viewMethod->set_active (2);
     } else if (pp->retinex.viewMethod == "tran") {
         viewMethod->set_active (3);
@@ -883,22 +902,22 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
 
     if (mapMethod->get_active_row_number() == 0) {
         pp->retinex.mapMethod = "none";
+//   } else if (mapMethod->get_active_row_number() == 1) {
+//       pp->retinex.mapMethod = "curv";
     } else if (mapMethod->get_active_row_number() == 1) {
-        pp->retinex.mapMethod = "curv";
-    } else if (mapMethod->get_active_row_number() == 2) {
         pp->retinex.mapMethod = "gaus";
-    } else if (mapMethod->get_active_row_number() == 3) {
+    } else if (mapMethod->get_active_row_number() == 2) {
         pp->retinex.mapMethod = "map";
-    } else if (mapMethod->get_active_row_number() == 4) {
+    } else if (mapMethod->get_active_row_number() == 3) {
         pp->retinex.mapMethod = "mapT";
     }
 
     if (viewMethod->get_active_row_number() == 0) {
         pp->retinex.viewMethod = "none";
     } else if (viewMethod->get_active_row_number() == 1) {
-        pp->retinex.viewMethod = "mask";
-    } else if (viewMethod->get_active_row_number() == 2) {
         pp->retinex.viewMethod = "unsharp";
+    } else if (viewMethod->get_active_row_number() == 2) {
+        pp->retinex.viewMethod = "mask";
     } else if (viewMethod->get_active_row_number() == 3) {
         pp->retinex.viewMethod = "tran";
     } else if (viewMethod->get_active_row_number() == 4) {
@@ -946,14 +965,14 @@ void Retinex::retinexMethodChanged()
 void Retinex::mapMethodChanged()
 {
 
-    if(mapMethod->get_active_row_number() == 1  || mapMethod->get_active_row_number() == 2) {
+    if(mapMethod->get_active_row_number() == 1  /*|| mapMethod->get_active_row_number() == 2*/) {
         curveEditormap->show();
         highlights->show();
         h_tonalwidth->show();
         shadows->show();
         s_tonalwidth->show();
         radius->show();
-    } else if(mapMethod->get_active_row_number() == 3  || mapMethod->get_active_row_number() == 4) {
+    } else if(mapMethod->get_active_row_number() == 2  || mapMethod->get_active_row_number() == 3) {
         curveEditormap->show();
         highlights->show();
         h_tonalwidth->show();
@@ -978,7 +997,7 @@ void Retinex::mapMethodChanged()
 void Retinex::viewMethodChanged()
 {
     if(viewMethod->get_active_row_number() == 1 || viewMethod->get_active_row_number() == 2) {
-        vart->hide();
+        //    vart->hide();
         gain->hide();
         offs->hide();
         limd->hide();
@@ -989,14 +1008,12 @@ void Retinex::viewMethodChanged()
         grad->hide();
         grads->hide();
         curveEditorGH->hide();
-    }
-    else if(viewMethod->get_active_row_number() == 3 || viewMethod->get_active_row_number() == 4) {
+    } else if(viewMethod->get_active_row_number() == 3 || viewMethod->get_active_row_number() == 4) {
         gain->hide();
         offs->hide();
-        vart->hide();
+        //    vart->hide();
         curveEditorGH->hide();
-    }
-    else {
+    } else {
         vart->show();
         neigh->show();
         gain->show();
@@ -1191,12 +1208,12 @@ void Retinex::adjusterChanged (Adjuster* a, double newval)
     if (!listener || !getEnabled()) {
         return;
     }
+
     if(iter->getTextValue() > "1") {
         scal->set_sensitive(true);
         grad->set_sensitive(true);
         grads->set_sensitive(true);
-    }
-    else {
+    } else {
         scal->set_sensitive(false);
         grad->set_sensitive(false);
         grads->set_sensitive(false);

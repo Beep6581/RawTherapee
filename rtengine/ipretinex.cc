@@ -210,7 +210,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 {
     if (deh.enabled) {//enabled
         float         mean, stddv, maxtr, mintr;
-        //  float         mini, delta, maxi;
+        //float         mini, delta, maxi;
         float         delta;
         float eps = 2.f;
         bool useHsl = deh.retinexcolorspace == "HSLLOG";
@@ -419,9 +419,9 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 mapmet = 3;
             }
 
-            if(deh.mapMethod == "curv") {
+            /*if(deh.mapMethod == "curv") {
                 mapmet = 1;
-            }
+            }*/
 
             if(deh.mapMethod == "gaus") {
                 mapmet = 4;
@@ -499,7 +499,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                         shradius = 40.;
                     }
 
-                    //    if(shHighlights > 0 || shShadows > 0) {
+                    //if(shHighlights > 0 || shShadows > 0) {
                     if(mapmet == 3) if(it == 1) {
                             shmap->updateL (out, shradius, true, 1);    //wav Total
                         }
@@ -512,7 +512,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                             shmap->updateL (out, shradius, false, 1);    //gauss
                         }
 
-                    //    }
+                    //}
                     if (shmap) {
                         h_th = shmap->max_f - deh.htonalwidth * (shmap->max_f - shmap->avg) / 100;
                         s_th = deh.stonalwidth * (shmap->avg - shmap->min_f) / 100;
@@ -544,7 +544,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
                     }
 
-                    //    if(shHighlights > 0 || shShadows > 0) {
+                    //if(shHighlights > 0 || shShadows > 0) {
                     if(((mapmet == 2 && scale > 2) || mapmet == 3 || mapmet == 4) && it == 1) {
 
 
@@ -571,7 +571,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                         }
                     }
 
-                    //    }
+                    //}
 
 #ifdef _OPENMP
                     #pragma omp for
@@ -616,7 +616,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             shmap = NULL;
 
             delete [] buffer;
-//            delete [] outBuffer;
+            //delete [] outBuffer;
             delete [] srcBuffer;
 
             mean = 0.f;
@@ -624,9 +624,9 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
 
             mean_stddv2( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
-//        printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
+            //printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
 
-            //  mean_stddv( luminance, mean, stddv, W_L, H_L, logBetaGain, maxtr, mintr);
+            //mean_stddv( luminance, mean, stddv, W_L, H_L, logBetaGain, maxtr, mintr);
             if (dehatransmissionCurve && mean != 0.f && stddv != 0.f) { //if curve
                 float asig = 0.166666f / stddv;
                 float bsig = 0.5f - asig * mean;
@@ -707,7 +707,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 }
 
                 // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
-                //  mean_stddv( luminance, mean, stddv, W_L, H_L, 1.f, maxtr, mintr);
+                //mean_stddv( luminance, mean, stddv, W_L, H_L, 1.f, maxtr, mintr);
                 mean_stddv2( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
 
             }
@@ -727,7 +727,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             }
 
             delta = maxi - mini;
-            //    printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
+            //printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
 
             if ( !delta ) {
                 delta = 1.0f;
@@ -756,7 +756,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
                 for ( int i = 0; i < H_L; i ++ )
                     for (int j = 0; j < W_L; j++) {
-                        //   float cd = cdfactor * ( luminance[i][j] * logBetaGain - mini ) + offse;
+                        //float cd = cdfactor * ( luminance[i][j] * logBetaGain - mini ) + offse;
                         float cd = cdfactor * ( luminance[i][j]  - mini ) + offse;
 
                         if(cd > cdmax) {
@@ -825,7 +825,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             }
             delete [] outBuffer;
             outBuffer = NULL;
-            //    printf("cdmin=%f cdmax=%f\n",minCD, maxCD);
+            //printf("cdmin=%f cdmax=%f\n",minCD, maxCD);
             Tmean = mean;
             Tsigma = stddv;
             Tmin = mintr;
