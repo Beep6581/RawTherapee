@@ -901,11 +901,7 @@ static INLINE vdouble xlog1p(vdouble a) {
 typedef struct {
   vfloat x, y;
 } vfloat2;
-#if defined( __FMA__ ) && defined( __x86_64__ )
-	static INLINE vfloat vmlaf(vfloat x, vfloat y, vfloat z) { return _mm_fmadd_ps(x,y,z); }
-#else
-	static INLINE vfloat vmlaf(vfloat x, vfloat y, vfloat z) { return vaddf(vmulf(x, y), z); }
-#endif
+
 static INLINE vfloat vabsf(vfloat f) { return (vfloat)vandnotm((vmask)vcast_vf_f(-0.0f), (vmask)f); }
 static INLINE vfloat vnegf(vfloat f) { return (vfloat)vxorm((vmask)f, (vmask)vcast_vf_f(-0.0f)); }
 
@@ -920,6 +916,18 @@ static INLINE vfloat vnegf(vfloat f) { return (vfloat)vxorm((vmask)f, (vmask)vca
 		return (vfloat)vorm(vandm(mask, (vmask)x), vandnotm(mask, (vmask)y));
 	}
 #endif
+
+static INLINE vfloat vselfzero(vmask mask, vfloat x) {
+     // returns value of x if corresponding mask bits are 1, else returns 0
+     // faster than vself(mask, x, ZEROV)
+    return _mm_and_ps((vfloat)mask, x);
+}
+static INLINE vfloat vselfnotzero(vmask mask, vfloat x) {
+    // returns value of x if corresponding mask bits are 0, else returns 0
+    // faster than vself(mask, ZEROV, x)
+    return _mm_andnot_ps((vfloat)mask, x);
+}
+
 
 static INLINE vint2 vseli2_lt(vfloat f0, vfloat f1, vint2 x, vint2 y) {
   vint2 m2 = vcast_vi2_vm(vmaskf_lt(f0, f1));
@@ -1171,7 +1179,7 @@ static INLINE vfloat xatan2f(vfloat y, vfloat x) {
   r = vmulsignf(r, x);
   r = vself(vorm(vmaskf_isinf(x), vmaskf_eq(x, vcast_vf_f(0.0f))), vsubf(vcast_vf_f((float)(M_PI/2)), visinf2f(x, vmulsignf(vcast_vf_f((float)(M_PI/2)), x))), r);
   r = vself(vmaskf_isinf(y), vsubf(vcast_vf_f((float)(M_PI/2)), visinf2f(x, vmulsignf(vcast_vf_f((float)(M_PI/4)), x))), r);
-  r = vself(vmaskf_eq(y, vcast_vf_f(0.0f)), vself(vmaskf_eq(vsignf(x), vcast_vf_f(-1.0f)), vcast_vf_f((float)M_PI), vcast_vf_f(0.0f)), r);
+  r = vself(vmaskf_eq(y, vcast_vf_f(0.0f)), vselfzero(vmaskf_eq(vsignf(x), vcast_vf_f(-1.0f)), vcast_vf_f((float)M_PI)), r);
 
   return vself(vorm(vmaskf_isnan(x), vmaskf_isnan(y)), vcast_vf_f(NANf), vmulsignf(r, y));
 }
@@ -1304,7 +1312,7 @@ static INLINE vfloat xcbrtf(vfloat d) {
 }
 
 static INLINE vfloat LIMV( vfloat a, vfloat b, vfloat c ) {
-return _mm_max_ps( b, _mm_min_ps(a,c));
+return vmaxf( b, vminf(a,c));
 }
 
 static INLINE vfloat ULIMV( vfloat a, vfloat b, vfloat c  ){
@@ -1312,13 +1320,13 @@ static INLINE vfloat ULIMV( vfloat a, vfloat b, vfloat c  ){
 }
 
 static INLINE vfloat SQRV(vfloat a){
-	return _mm_mul_ps( a,a );
+	return a * a;
 }
 
 static inline void vswap( vmask condition, vfloat &a, vfloat &b) {
-    vfloat temp = vself(condition, a, b); // the larger of the two
-    condition = vnotm(condition); // invert the mask
-    a = vself(condition, a, b); // the smaller of the two
+    vfloat temp = vself(condition, a, b); // the values which fit to condition
+    condition = vnotm(condition); // invert the condition
+    a = vself(condition, a, b); // the values which fit to inverted condition
     b = temp;
 }
 

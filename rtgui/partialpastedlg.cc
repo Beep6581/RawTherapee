@@ -503,6 +503,7 @@ void PartialPasteDlg::basicToggled ()
     gradientConn.block (true);
     labcurveConn.block (true);
     colorappearanceConn.block (true);
+    retinexConn.block (true);
 
     basic->set_inconsistent (false);
 
@@ -512,6 +513,7 @@ void PartialPasteDlg::basicToggled ()
     epd->set_active (basic->get_active ());
     pcvignette->set_active (basic->get_active ());
     gradient->set_active (basic->get_active ());
+    retinex->set_active (basic->get_active ());
     labcurve->set_active (basic->get_active ());
     colorappearance->set_active (basic->get_active ());
 
@@ -521,6 +523,8 @@ void PartialPasteDlg::basicToggled ()
     epdConn.block (false);
     pcvignetteConn.block (false);
     gradientConn.block (false);
+    retinexConn.block (false);
+    
     labcurveConn.block (false);
     colorappearanceConn.block (false);
 }

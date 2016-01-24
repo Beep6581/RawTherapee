@@ -32,7 +32,6 @@ namespace rtengine
 
 SSEFUNCTION void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
 {
-
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // impulse noise removal
     // local variables
@@ -41,15 +40,15 @@ SSEFUNCTION void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
     int height = lab->H;
 
     // buffer for the lowpass image
-    float ** lpf = new float *[height];
+    float * lpf[height] ALIGNED16;
+    lpf[0] = new float [width * height];
     // buffer for the highpass image
-    float ** impish = new float *[height];
+    char * impish[height] ALIGNED16;
+    impish[0] = new char [width * height];
 
-    for (int i = 0; i < height; i++) {
-        lpf[i] = new float [width];
-        //memset (lpf[i], 0, width*sizeof(float));
-        impish[i] = new float [width];
-        //memset (impish[i], 0, width*sizeof(unsigned short));
+    for (int i = 1; i < height; i++) {
+        lpf[i] = lpf[i - 1] + width;
+        impish[i] = impish[i - 1] + width;
     }
 
 
@@ -60,12 +59,11 @@ SSEFUNCTION void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
 
     const float eps = 1.0;
 
-    //rangeblur<unsigned short, unsigned int> (lab->L, lpf, impish /*used as buffer here*/, width, height, thresh, false);
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
     {
-        gaussianBlur<float> (lab->L, lpf, width, height, max(2.0, thresh - 1.0));
+        gaussianBlur (lab->L, lpf, width, height, max(2.0, thresh - 1.0));
     }
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,9 +79,9 @@ SSEFUNCTION void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
         int i1, j1, j;
         float hpfabs, hfnbrave;
 #ifdef __SSE2__
-        __m128 hfnbravev, hpfabsv;
-        __m128 impthrDiv24v = _mm_set1_ps( impthrDiv24 );
-        __m128 onev = _mm_set1_ps( 1.0f );
+        vfloat hfnbravev, hpfabsv;
+        vfloat impthrDiv24v = F2V( impthrDiv24 );
+        vfloat onev = F2V( 1.0f );
 #endif
 #ifdef _OPENMP
         #pragma omp for
@@ -105,45 +103,36 @@ SSEFUNCTION void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
 #ifdef __SSE2__
 
             for (; j < width - 5; j += 4) {
-                hfnbravev = _mm_setzero_ps( );
+                hfnbravev = ZEROV;
                 hpfabsv = vabsf(LVFU(lab->L[i][j]) - LVFU(lpf[i][j]));
 
                 //block average of high pass data
-                for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
+                for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ ) {
                     for (j1 = j - 2; j1 <= j + 2; j1++) {
                         hfnbravev += vabsf(LVFU(lab->L[i1][j1]) - LVFU(lpf[i1][j1]));
                     }
+                }
 
-                _mm_storeu_ps(&impish[i][j], vself(vmaskf_gt(hpfabsv, (hfnbravev - hpfabsv)*impthrDiv24v), onev, _mm_setzero_ps()));
-            }
-
-            for (; j < width - 2; j++) {
-                hpfabs = fabs(lab->L[i][j] - lpf[i][j]);
-
-                //block average of high pass data
-                for (i1 = max(0, i - 2), hfnbrave = 0; i1 <= min(i + 2, height - 1); i1++ )
-                    for (j1 = j - 2; j1 <= j + 2; j1++) {
-                        hfnbrave += fabs(lab->L[i1][j1] - lpf[i1][j1]);
-                    }
-
-                impish[i][j] = (hpfabs > ((hfnbrave - hpfabs) * impthrDiv24));
-            }
-
-#else
-
-            for (; j < width - 2; j++) {
-                hpfabs = fabs(lab->L[i][j] - lpf[i][j]);
-
-                //block average of high pass data
-                for (i1 = max(0, i - 2), hfnbrave = 0; i1 <= min(i + 2, height - 1); i1++ )
-                    for (j1 = j - 2; j1 <= j + 2; j1++) {
-                        hfnbrave += fabs(lab->L[i1][j1] - lpf[i1][j1]);
-                    }
-
-                impish[i][j] = (hpfabs > ((hfnbrave - hpfabs) * impthrDiv24));
+                int mask = _mm_movemask_ps((hfnbravev - hpfabsv) * impthrDiv24v - hpfabsv);
+                impish[i][j] = (mask & 1);
+                impish[i][j + 1] = ((mask & 2) >> 1);
+                impish[i][j + 2] = ((mask & 4) >> 2);
+                impish[i][j + 3] = ((mask & 8) >> 3);
             }
 
 #endif
+
+            for (; j < width - 2; j++) {
+                hpfabs = fabs(lab->L[i][j] - lpf[i][j]);
+
+                //block average of high pass data
+                for (i1 = max(0, i - 2), hfnbrave = 0; i1 <= min(i + 2, height - 1); i1++ )
+                    for (j1 = j - 2; j1 <= j + 2; j1++) {
+                        hfnbrave += fabs(lab->L[i1][j1] - lpf[i1][j1]);
+                    }
+
+                impish[i][j] = (hpfabs > ((hfnbrave - hpfabs) * impthrDiv24));
+            }
 
             for (; j < width; j++) {
                 hpfabs = fabs(lab->L[i][j] - lpf[i][j]);
@@ -188,10 +177,6 @@ SSEFUNCTION void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = 0; j1 <= j + 2; j1++ ) {
-                        if (i1 == i && j1 == j) {
-                            continue;
-                        }
-
                         if (impish[i1][j1]) {
                             continue;
                         }
@@ -220,10 +205,6 @@ SSEFUNCTION void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = j - 2; j1 <= j + 2; j1++ ) {
-                        if (i1 == i && j1 == j) {
-                            continue;
-                        }
-
                         if (impish[i1][j1]) {
                             continue;
                         }
@@ -252,10 +233,6 @@ SSEFUNCTION void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = j - 2; j1 < width; j1++ ) {
-                        if (i1 == i && j1 == j) {
-                            continue;
-                        }
-
                         if (impish[i1][j1]) {
                             continue;
                         }
@@ -277,13 +254,8 @@ SSEFUNCTION void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
     }
 //now impulsive values have been corrected
 
-    for (int i = 0; i < height; i++) {
-        delete [] lpf[i];
-        delete [] impish[i];
-    }
-
-    delete [] lpf;
-    delete [] impish;
+    delete [] lpf[0];
+    delete [] impish[0];
 
 }
 
@@ -317,7 +289,7 @@ SSEFUNCTION void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, 
     #pragma omp parallel
 #endif
     {
-        gaussianBlur<float> (ncie->sh_p, lpf, width, height, max(2.0, thresh - 1.0));
+        gaussianBlur (ncie->sh_p, lpf, width, height, max(2.0, thresh - 1.0));
     }
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -332,9 +304,9 @@ SSEFUNCTION void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, 
         int i1, j1, j;
         float hpfabs, hfnbrave;
 #ifdef __SSE2__
-        __m128 hfnbravev, hpfabsv;
-        __m128 impthrDiv24v = _mm_set1_ps( impthrDiv24 );
-        __m128 onev = _mm_set1_ps( 1.0f );
+        vfloat hfnbravev, hpfabsv;
+        vfloat impthrDiv24v = F2V( impthrDiv24 );
+        vfloat onev = F2V( 1.0f );
 #endif
 #ifdef _OPENMP
         #pragma omp for
@@ -357,7 +329,7 @@ SSEFUNCTION void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, 
 
             for (; j < width - 5; j += 4) {
                 hpfabsv = vabsf(LVFU(ncie->sh_p[i][j]) - LVFU(lpf[i][j]));
-                hfnbravev = _mm_setzero_ps();
+                hfnbravev = ZEROV;
 
                 //block average of high pass data
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ ) {
@@ -365,37 +337,24 @@ SSEFUNCTION void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, 
                         hfnbravev += vabsf(LVFU(ncie->sh_p[i1][j1]) - LVFU(lpf[i1][j1]));
                     }
 
-                    _mm_storeu_ps(&impish[i][j], vself(vmaskf_gt(hpfabsv, (hfnbravev - hpfabsv)*impthrDiv24v), onev, _mm_setzero_ps()));
                 }
-            }
 
-            for (; j < width - 2; j++) {
-                hpfabs = fabs(ncie->sh_p[i][j] - lpf[i][j]);
-
-                //block average of high pass data
-                for (i1 = max(0, i - 2), hfnbrave = 0; i1 <= min(i + 2, height - 1); i1++ )
-                    for (j1 = j - 2; j1 <= j + 2; j1++ ) {
-                        hfnbrave += fabs(ncie->sh_p[i1][j1] - lpf[i1][j1]);
-                    }
-
-                impish[i][j] = (hpfabs > ((hfnbrave - hpfabs) * impthrDiv24));
-            }
-
-#else
-
-            for (; j < width - 2; j++) {
-                hpfabs = fabs(ncie->sh_p[i][j] - lpf[i][j]);
-
-                //block average of high pass data
-                for (i1 = max(0, i - 2), hfnbrave = 0; i1 <= min(i + 2, height - 1); i1++ )
-                    for (j1 = j - 2; j1 <= j + 2; j1++ ) {
-                        hfnbrave += fabs(ncie->sh_p[i1][j1] - lpf[i1][j1]);
-                    }
-
-                impish[i][j] = (hpfabs > ((hfnbrave - hpfabs) * impthrDiv24));
+                STVFU(impish[i][j], vselfzero(vmaskf_gt(hpfabsv, (hfnbravev - hpfabsv)*impthrDiv24v), onev));
             }
 
 #endif
+
+            for (; j < width - 2; j++) {
+                hpfabs = fabs(ncie->sh_p[i][j] - lpf[i][j]);
+
+                //block average of high pass data
+                for (i1 = max(0, i - 2), hfnbrave = 0; i1 <= min(i + 2, height - 1); i1++ )
+                    for (j1 = j - 2; j1 <= j + 2; j1++ ) {
+                        hfnbrave += fabs(ncie->sh_p[i1][j1] - lpf[i1][j1]);
+                    }
+
+                impish[i][j] = (hpfabs > ((hfnbrave - hpfabs) * impthrDiv24));
+            }
 
             for (; j < width; j++) {
                 hpfabs = fabs(ncie->sh_p[i][j] - lpf[i][j]);
@@ -422,42 +381,34 @@ SSEFUNCTION void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, 
     #pragma omp parallel
 #endif
     {
-        int j;
-        float2 sincosval;
+
 #ifdef __SSE2__
         vfloat2 sincosvalv;
-        __m128 piidv = _mm_set1_ps( piid );
-        __m128 tempv;
+        vfloat piidv = F2V( piid );
+        vfloat tempv;
 #endif
 #ifdef _OPENMP
         #pragma omp for
 #endif
 
         for (int i = 0; i < height; i++) {
+            int j = 0;
 #ifdef __SSE2__
 
-            for (j = 0; j < width - 3; j += 4) {
+            for (; j < width - 3; j += 4) {
                 sincosvalv = xsincosf(piidv * LVFU(ncie->h_p[i][j]));
                 tempv = LVFU(ncie->C_p[i][j]);
-                _mm_storeu_ps(&sraa[i][j], tempv * sincosvalv.y);
-                _mm_storeu_ps(&srbb[i][j], tempv * sincosvalv.x);
-            }
-
-            for (; j < width; j++) {
-                sincosval = xsincosf(piid * ncie->h_p[i][j]);
-                sraa[i][j] = ncie->C_p[i][j] * sincosval.y;
-                srbb[i][j] = ncie->C_p[i][j] * sincosval.x;
-            }
-
-#else
-
-            for (j = 0; j < width; j++) {
-                sincosval = xsincosf(piid * ncie->h_p[i][j]);
-                sraa[i][j] = ncie->C_p[i][j] * sincosval.y;
-                srbb[i][j] = ncie->C_p[i][j] * sincosval.x;
+                STVFU(sraa[i][j], tempv * sincosvalv.y);
+                STVFU(srbb[i][j], tempv * sincosvalv.x);
             }
 
 #endif
+
+            for (; j < width; j++) {
+                float2 sincosval = xsincosf(piid * ncie->h_p[i][j]);
+                sraa[i][j] = ncie->C_p[i][j] * sincosval.y;
+                srbb[i][j] = ncie->C_p[i][j] * sincosval.x;
+            }
         }
     }
 
@@ -488,10 +439,6 @@ SSEFUNCTION void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, 
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = 0; j1 <= j + 2; j1++ ) {
-                        if (i1 == i && j1 == j) {
-                            continue;
-                        }
-
                         if (impish[i1][j1]) {
                             continue;
                         }
@@ -520,10 +467,6 @@ SSEFUNCTION void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, 
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = j - 2; j1 <= j + 2; j1++ ) {
-                        if (i1 == i && j1 == j) {
-                            continue;
-                        }
-
                         if (impish[i1][j1]) {
                             continue;
                         }
@@ -552,10 +495,6 @@ SSEFUNCTION void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, 
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = j - 2; j1 < width; j1++ ) {
-                        if (i1 == i && j1 == j) {
-                            continue;
-                        }
-
                         if (impish[i1][j1]) {
                             continue;
                         }
@@ -583,23 +522,25 @@ SSEFUNCTION void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, 
 #endif
     {
 #ifdef __SSE2__
-        __m128  interav, interbv;
-        __m128 piidv = _mm_set1_ps(piid);
+        vfloat interav, interbv;
+        vfloat piidv = F2V(piid);
 #endif // __SSE2__
-        int j;
 #ifdef _OPENMP
         #pragma omp for
 #endif
 
         for(int i = 0; i < height; i++ ) {
+            int j = 0;
 #ifdef __SSE2__
 
-            for(j = 0; j < width - 3; j += 4) {
+            for(; j < width - 3; j += 4) {
                 interav = LVFU(sraa[i][j]);
                 interbv = LVFU(srbb[i][j]);
-                _mm_storeu_ps(&ncie->h_p[i][j], (xatan2f(interbv, interav)) / piidv);
-                _mm_storeu_ps(&ncie->C_p[i][j], _mm_sqrt_ps(SQRV(interbv) + SQRV(interav)));
+                STVFU(ncie->h_p[i][j], (xatan2f(interbv, interav)) / piidv);
+                STVFU(ncie->C_p[i][j], vsqrtf(SQRV(interbv) + SQRV(interav)));
             }
+
+#endif
 
             for(; j < width; j++) {
                 float intera = sraa[i][j];
@@ -607,17 +548,6 @@ SSEFUNCTION void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, 
                 ncie->h_p[i][j] = (xatan2f(interb, intera)) / piid;
                 ncie->C_p[i][j] = sqrt(SQR(interb) + SQR(intera));
             }
-
-#else
-
-            for(j = 0; j < width; j++) {
-                float intera = sraa[i][j];
-                float interb = srbb[i][j];
-                ncie->h_p[i][j] = (xatan2f(interb, intera)) / piid;
-                ncie->C_p[i][j] = sqrt(SQR(interb) + SQR(intera));
-            }
-
-#endif
         }
     }
 
