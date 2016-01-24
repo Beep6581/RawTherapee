@@ -544,7 +544,7 @@ const ProfileStoreEntry* ProfileStoreComboBox::getSelectedEntry()
 }
 
 /** @brief Recursive method to update the combobox entries */
-void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, int parentFolderId, const std::vector<const ProfileStoreEntry*> *entryList)
+void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, int parentFolderId, bool initial, const std::vector<const ProfileStoreEntry*> *entryList)
 {
     for (auto entry : *entryList) {
         if (entry->parentFolderId == parentFolderId) {  // filtering the entry of the same folder
@@ -555,23 +555,22 @@ void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, 
                     // creating the new submenu
                     Gtk::TreeModel::Row newSubMenu;
 
-                    if (parentRow) {
-                        newSubMenu = *(refTreeModel->append(parentRow->children()));
-                    } else {
+                    if (initial) {
                         newSubMenu = *(refTreeModel->append());
+                    } else {
+                        newSubMenu = *(refTreeModel->append(parentRow->children()));
                     }
 
                     // creating and assigning the custom Label object
                     newSubMenu[methodColumns.label] = entry->label;
                     newSubMenu[methodColumns.profileStoreEntry] = entry;
 
-//refreshProfileList_ (&newSubMenu, entry->folderId, false, entryList);
                     // HACK: Workaround for bug in Gtk+ 3.18...
                     Gtk::TreeModel::Row menuHeader = *(refTreeModel->append(newSubMenu->children()));
-                    menuHeader[methodColumns.label] = (*i)->label;
-                    menuHeader[methodColumns.profileStoreEntry] = *i;
+                    menuHeader[methodColumns.label] = entry->label;
+                    menuHeader[methodColumns.profileStoreEntry] = entry;
 
-                    refreshProfileList_ (&newSubMenu, (*i)->folderId, entryList);
+                    refreshProfileList_ (&newSubMenu, entry->folderId, false, entryList);
                 } else {
                     refreshProfileList_ (parentRow, entry->folderId, true, entryList);
                 }
@@ -579,10 +578,10 @@ void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, 
                 Gtk::TreeModel::Row newItem;
 
                 // creating a menu entry
-                if (parentRow) {
-                    newItem = *(refTreeModel->append(parentRow->children()));
-                } else {
+                if (initial) {
                     newItem = *(refTreeModel->append());
+                } else {
+                    newItem = *(refTreeModel->append(parentRow->children()));
                 }
 
                 newItem[methodColumns.label] = entry->label;
@@ -591,7 +590,6 @@ void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, 
         }
     }
 }
-
 /** @brief Get the ProfileStore's entry list and recreate the combobox entries.
   * If you want to update the ProfileStore list itself (rescan the dir tree), use the "ProfileStore::parseProfiles" method instead
   *
@@ -613,7 +611,7 @@ void ProfileStoreComboBox::updateProfileList ()
     const std::vector<const ProfileStoreEntry*> *entryList = profileStore.getFileList();
 
     //profileStore.dumpFolderList();
-    refreshProfileList_ (NULL, entryList->at(0)->parentFolderId, entryList);
+    refreshProfileList_ (NULL, entryList->at(0)->parentFolderId, true, entryList);
 
     if (entryList->at(0)->parentFolderId != 0) {
         // special case for the Internal default entry

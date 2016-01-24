@@ -218,7 +218,7 @@ protected:
 
     Glib::RefPtr<Gtk::TreeStore> refTreeModel;
     MethodColumns methodColumns;
-    void refreshProfileList_ (Gtk::TreeModel::Row *parentRow, int parentFolderId, const std::vector<const ProfileStoreEntry*> *entryList);
+    void refreshProfileList_ (Gtk::TreeModel::Row *parentRow, int parentFolderId, bool initial, const std::vector<const ProfileStoreEntry*> *entryList);
     Gtk::TreeIter findRowFromEntry_ (Gtk::TreeModel::Children childs, const ProfileStoreEntry *pse);
     Gtk::TreeIter findRowFromFullPath_(Gtk::TreeModel::Children childs, int parentFolderId, Glib::ustring &name);
 
