@@ -4,7 +4,6 @@
 
 #ifdef __GNUC__
 #define INLINE __inline
-//#define INLINE __attribute__((always_inline))
 #else
 #define INLINE inline
 #endif
@@ -48,20 +47,20 @@ typedef __m128i vint2;
 // SSE4.1 => use _mm_blend_ps instead of _mm_set_epi32 and vself
 #define STC2VFU(a,v) {\
                          __m128 TST1V = _mm_loadu_ps(&a);\
-                         __m128 TST2V = _mm_shuffle_ps(v,v,_MM_SHUFFLE( 1,1,0,0 ));\
+                         __m128 TST2V = _mm_unpacklo_ps(v,v);\
                          _mm_storeu_ps(&a, _mm_blend_ps(TST1V,TST2V,5));\
                          TST1V = _mm_loadu_ps((&a)+4);\
-                         TST2V = _mm_shuffle_ps(v,v,_MM_SHUFFLE( 3,3,2,2 ));\
+                         TST2V = _mm_unpackhi_ps(v,v);\
                          _mm_storeu_ps((&a)+4, _mm_blend_ps(TST1V,TST2V,5));\
                      }
 #else
 #define STC2VFU(a,v) {\
                          __m128 TST1V = _mm_loadu_ps(&a);\
-                         __m128 TST2V = _mm_shuffle_ps(v,v,_MM_SHUFFLE( 1,1,0,0 ));\
+                         __m128 TST2V = _mm_unpacklo_ps(v,v);\
                          vmask cmask = _mm_set_epi32(0xffffffff,0,0xffffffff,0);\
                          _mm_storeu_ps(&a, vself(cmask,TST1V,TST2V));\
                          TST1V = _mm_loadu_ps((&a)+4);\
-                         TST2V = _mm_shuffle_ps(v,v,_MM_SHUFFLE( 3,3,2,2 ));\
+                         TST2V = _mm_unpackhi_ps(v,v);\
                          _mm_storeu_ps((&a)+4, vself(cmask,TST1V,TST2V));\
                      }
 #endif
