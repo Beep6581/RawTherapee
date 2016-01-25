@@ -67,7 +67,7 @@ extern const Settings* settings;
 
 static float RetinexScales[MAX_RETINEX_SCALES];
 
-void retinex_scales( float* scales, int nscales, int mode, int s, float high)
+void retinex_scales ( float* scales, int nscales, int mode, int s, float high)
 {
     if ( nscales == 1 ) {
         scales[0] =  (float)s / 2.f;
@@ -82,19 +82,19 @@ void retinex_scales( float* scales, int nscales, int mode, int s, float high)
                 scales[nscales - i - 1] = 2.0f + (float)i * size_step;
             }
         } else if (mode == 1) {
-            size_step = (float)log(s - 2.0f) / (float) nscales;
+            size_step = (float)log (s - 2.0f) / (float) nscales;
 
             for (int i = 0; i < nscales; ++i ) {
                 scales[nscales - i - 1] = 2.0f + (float)pow (10.f, (i * size_step) / log (10.f));
             }
         } else if (mode == 2) {
-            size_step = (float) log(s - 2.0f) / (float) nscales;
+            size_step = (float) log (s - 2.0f) / (float) nscales;
 
             for ( int i = 0; i < nscales; ++i ) {
                 scales[i] = s - (float)pow (10.f, (i * size_step) / log (10.f));
             }
         } else if (mode == 3) {
-            size_step = (float) log(s - 2.0f) / (float) nscales;
+            size_step = (float) log (s - 2.0f) / (float) nscales;
 
             for ( int i = 0; i < nscales; ++i ) {
                 scales[i] = high * s - (float)pow (10.f, (i * size_step) / log (10.f));
@@ -102,7 +102,7 @@ void retinex_scales( float* scales, int nscales, int mode, int s, float high)
         }
     }
 }
-void mean_stddv2( float **dst, float &mean, float &stddv, int W_L, int H_L, float &maxtr, float &mintr)
+void mean_stddv2 ( float **dst, float &mean, float &stddv, int W_L, int H_L, float &maxtr, float &mintr)
 {
     // summation using double precision to avoid too large summation error for large pictures
     double vsquared = 0.f;
@@ -145,7 +145,7 @@ void mean_stddv2( float **dst, float &mean, float &stddv, int W_L, int H_L, floa
     mean = sum / (double) (W_L * H_L);
     vsquared /= (double) W_L * H_L;
     stddv = ( vsquared - (mean * mean) );
-    stddv = (float)sqrt(stddv);
+    stddv = (float)sqrt (stddv);
 }
 
 
@@ -153,7 +153,7 @@ void mean_stddv2( float **dst, float &mean, float &stddv, int W_L, int H_L, floa
 
 
 
-void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L, const float factor, float &maxtr, float &mintr)
+void mean_stddv ( float **dst, float &mean, float &stddv, int W_L, int H_L, const float factor, float &maxtr, float &mintr)
 
 {
     // summation using double precision to avoid too large summation error for large pictures
@@ -203,10 +203,10 @@ void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L, const
     mean = sum / (float) (W_L * H_L);
     vsquared /= (float) W_L * H_L;
     stddv = ( vsquared - (mean * mean) );
-    stddv = (float)sqrt(stddv);
+    stddv = (float)sqrt (stddv);
 }
 
-void RawImageSource::MSR(float** luminance, float** originalLuminance, float **exLuminance,  LUTf & mapcurve, bool &mapcontlutili, int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
+void RawImageSource::MSR (float** luminance, float** originalLuminance, float **exLuminance,  LUTf & mapcurve, bool &mapcontlutili, int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
     if (deh.enabled) {//enabled
         float         mean, stddv, maxtr, mintr;
@@ -227,7 +227,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         float gradstr = (float)deh.grads;
         float strength = (float) deh.str / 100.f; // Blend with original L channel data
         float limD = (float) deh.limd;
-        limD = pow(limD, 1.7f);//about 2500 enough
+        limD = pow (limD, 1.7f); //about 2500 enough
         limD *= useHslLin ? 10.f : 1.f;
         float ilimD = 1.f / limD;
         int moderetinex = 2; // default to 2 ( deh.retinexMethod == "high" )
@@ -236,8 +236,8 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         float elogt;
         float hl = deh.baselog;
 
-        if(hl >= 2.71828f) {
-            elogt = 2.71828f + SQR(SQR(hl - 2.71828f));
+        if (hl >= 2.71828f) {
+            elogt = 2.71828f + SQR (SQR (hl - 2.71828f));
         } else {
             elogt = hl;
         }
@@ -254,7 +254,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         bool lhutili = false;
 
         if (deh.enabled) {
-            shcurve = new FlatCurve(deh.lhcurve);
+            shcurve = new FlatCurve (deh.lhcurve);
 
             if (!shcurve || shcurve->isIdentity()) {
                 if (shcurve) {
@@ -267,7 +267,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         }
 
 
-        if(deh.retinexMethod == "highliplus") {
+        if (deh.retinexMethod == "highliplus") {
             higplus = true;
         }
 
@@ -283,7 +283,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             moderetinex = 3;
         }
 
-        for(int it = 1; it < iter + 1; it++) { //iter nb max of iterations
+        for (int it = 1; it < iter + 1; it++) { //iter nb max of iterations
             float aahi = 49.f / 99.f; ////reduce sensibility 50%
             float bbhi = 1.f - aahi;
             float high;
@@ -293,23 +293,23 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             float grad = 1.f;
             float sc = 3.f;
 
-            if(gradient == 0) {
+            if (gradient == 0) {
                 grad = 1.f;
                 sc = 3.f;
-            } else if(gradient == 1) {
+            } else if (gradient == 1) {
                 grad = 0.25f * it + 0.75f;
                 sc = -0.5f * it + 4.5f;
-            } else if(gradient == 2) {
+            } else if (gradient == 2) {
                 grad = 0.5f * it + 0.5f;
                 sc = -0.75f * it + 5.75f;
-            } else if(gradient == 3) {
+            } else if (gradient == 3) {
                 grad = 0.666f * it + 0.333f;
                 sc = -0.75f * it + 5.75f;
-            } else if(gradient == 4) {
+            } else if (gradient == 4) {
                 grad = 0.8f * it + 0.2f;
                 sc = -0.75f * it + 5.75f;
-            } else if(gradient == 5) {
-                if(moderetinex != 3) {
+            } else if (gradient == 5) {
+                if (moderetinex != 3) {
                     grad = 2.5f * it - 1.5f;
                 } else {
                     float aa = (11.f * high - 1.f) / 4.f;
@@ -318,8 +318,8 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 }
 
                 sc = -0.75f * it + 5.75f;
-            } else if(gradient == 6) {
-                if(moderetinex != 3) {
+            } else if (gradient == 6) {
+                if (moderetinex != 3) {
                     grad = 5.f * it - 4.f;
                 } else {
                     float aa = (21.f * high - 1.f) / 4.f;
@@ -330,7 +330,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 sc = -0.75f * it + 5.75f;
             }
 
-            else if(gradient == -1) {
+            else if (gradient == -1) {
                 grad = -0.125f * it + 1.125f;
                 sc = 3.f;
             }
@@ -338,20 +338,20 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             float varx;
             float limdx, ilimdx;
 
-            if(gradvart != 0) {
-                if(gradvart == 1) {
+            if (gradvart != 0) {
+                if (gradvart == 1) {
                     varx = vart * (-0.125f * it + 1.125f);
                     limdx = limD * (-0.125f * it + 1.125f);
                     ilimdx = 1.f / limdx;
-                } else if(gradvart == 2) {
+                } else if (gradvart == 2) {
                     varx = vart * (-0.2f * it + 1.2f);
                     limdx = limD * (-0.2f * it + 1.2f);
                     ilimdx = 1.f / limdx;
-                } else if(gradvart == -1) {
+                } else if (gradvart == -1) {
                     varx = vart * (0.125f * it + 0.875f);
                     limdx = limD * (0.125f * it + 0.875f);
                     ilimdx = 1.f / limdx;
-                } else if(gradvart == -2) {
+                } else if (gradvart == -2) {
                     varx = vart * (0.4f * it + 0.6f);
                     limdx = limD * (0.4f * it + 0.6f);
                     ilimdx = 1.f / limdx;
@@ -362,31 +362,31 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 ilimdx = ilimD;
             }
 
-            scal = round(sc);
+            scal = round (sc);
             float strengthx;
             float ks = 1.f;
 
-            if(gradstr != 0) {
-                if(gradstr == 1) {
-                    if(it <= 3) {
+            if (gradstr != 0) {
+                if (gradstr == 1) {
+                    if (it <= 3) {
                         ks = -0.3f * it + 1.6f;
                     } else {
                         ks = 0.5f;
                     }
-                } else if(gradstr == 2) {
-                    if(it <= 3) {
+                } else if (gradstr == 2) {
+                    if (it <= 3) {
                         ks = -0.6f * it + 2.2f;
                     } else {
                         ks = 0.3f;
                     }
-                } else if(gradstr == -1) {
-                    if(it <= 3) {
+                } else if (gradstr == -1) {
+                    if (it <= 3) {
                         ks = 0.2f * it + 0.6f;
                     } else {
                         ks = 1.2f;
                     }
-                } else if(gradstr == -2) {
-                    if(it <= 3) {
+                } else if (gradstr == -2) {
+                    if (it <= 3) {
                         ks = 0.4f * it + 0.2f;
                     } else {
                         ks = 1.5f;
@@ -396,7 +396,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
             strengthx = ks * strength;
 
-            retinex_scales( RetinexScales, scal, moderetinex, nei / grad, high );
+            retinex_scales ( RetinexScales, scal, moderetinex, nei / grad, high );
 
             float *src[H_L] ALIGNED16;
             float *srcBuffer = new float[H_L * W_L];
@@ -411,11 +411,11 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             int shShadows = deh.shadows;
             int mapmet = 0;
 
-            if(deh.mapMethod == "map") {
+            if (deh.mapMethod == "map") {
                 mapmet = 2;
             }
 
-            if(deh.mapMethod == "mapT") {
+            if (deh.mapMethod == "mapT") {
                 mapmet = 3;
             }
 
@@ -423,25 +423,25 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 mapmet = 1;
             }*/
 
-            if(deh.mapMethod == "gaus") {
+            if (deh.mapMethod == "gaus") {
                 mapmet = 4;
             }
 
             double shradius = (double) deh.radius;
 
-            if(deh.viewMethod == "mask") {
+            if (deh.viewMethod == "mask") {
                 viewmet = 1;
             }
 
-            if(deh.viewMethod == "tran") {
+            if (deh.viewMethod == "tran") {
                 viewmet = 2;
             }
 
-            if(deh.viewMethod == "tran2") {
+            if (deh.viewMethod == "tran2") {
                 viewmet = 3;
             }
 
-            if(deh.viewMethod == "unsharp") {
+            if (deh.viewMethod == "unsharp") {
                 viewmet = 4;
             }
 
@@ -462,7 +462,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 out[i] = &outBuffer[i * W_L];
             }
 
-            if(viewmet == 3  || viewmet == 2) {
+            if (viewmet == 3  || viewmet == 2) {
                 tranBuffer = new float[H_L * W_L];
 
                 for (int i = 0; i < H_L; i++) {
@@ -470,11 +470,11 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 }
             }
 
-            const float logBetaGain = xlogf(16384.f);
+            const float logBetaGain = xlogf (16384.f);
             float pond = logBetaGain / (float) scal;
 
-            if(!useHslLin) {
-                pond /= log(elogt);
+            if (!useHslLin) {
+                pond /= log (elogt);
             }
 
             auto shmap = mapmet > 1 ? new SHMap (W_L, H_L, true) : nullptr;
@@ -487,28 +487,28 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 #endif
             {
                 for ( int scale = scal - 1; scale >= 0; scale-- ) {
-                    if(scale == scal - 1) {
+                    if (scale == scal - 1) {
                         gaussianBlur (src, out, W_L, H_L, RetinexScales[scale], buffer);
                     } else { // reuse result of last iteration
-                        gaussianBlur (out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
+                        gaussianBlur (out, out, W_L, H_L, sqrtf (SQR (RetinexScales[scale]) - SQR (RetinexScales[scale + 1])), buffer);
                     }
 
-                    if(mapmet == 4) {
+                    if (mapmet == 4) {
                         shradius /= 1.;
                     } else {
                         shradius = 40.;
                     }
 
                     //if(shHighlights > 0 || shShadows > 0) {
-                    if(mapmet == 3) if(it == 1) {
+                    if (mapmet == 3) if (it == 1) {
                             shmap->updateL (out, shradius, true, 1);    //wav Total
                         }
 
-                    if(mapmet == 2 && scale > 2) if(it == 1) {
+                    if (mapmet == 2 && scale > 2) if (it == 1) {
                             shmap->updateL (out, shradius, true, 1);    //wav partial
                         }
 
-                    if(mapmet == 4) if(it == 1) {
+                    if (mapmet == 4) if (it == 1) {
                             shmap->updateL (out, shradius, false, 1);    //gauss
                         }
 
@@ -519,23 +519,23 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                     }
 
 #ifdef __SSE2__
-                    vfloat pondv = F2V(pond);
-                    vfloat limMinv = F2V(ilimdx);
-                    vfloat limMaxv = F2V(limdx);
+                    vfloat pondv = F2V (pond);
+                    vfloat limMinv = F2V (ilimdx);
+                    vfloat limMaxv = F2V (limdx);
 
 #endif
 
-                    if(mapmet > 0) {
+                    if (mapmet > 0) {
 #ifdef _OPENMP
                         #pragma omp for
 #endif
 
                         for (int i = 0; i < H_L; i++) {
-                            if(mapcontlutili) {
+                            if (mapcontlutili) {
                                 int j = 0;
 
                                 for (; j < W_L; j++) {
-                                    if(it == 1) {
+                                    if (it == 1) {
                                         out[i][j] = mapcurve[2.f * out[i][j]] / 2.f;
                                     }
                                 }
@@ -545,7 +545,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                     }
 
                     //if(shHighlights > 0 || shShadows > 0) {
-                    if(((mapmet == 2 && scale > 2) || mapmet == 3 || mapmet == 4) && it == 1) {
+                    if (((mapmet == 2 && scale > 2) || mapmet == 3 || mapmet == 4) && it == 1) {
 
 
 #ifdef _OPENMP
@@ -582,33 +582,33 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
 #ifdef __SSE2__
 
-                        if(useHslLin) {
+                        if (useHslLin) {
                             for (; j < W_L - 3; j += 4) {
-                                _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  (LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
+                                _mm_storeu_ps (&luminance[i][j], LVFU (luminance[i][j]) + pondv *  (LIMV (LVFU (src[i][j]) / LVFU (out[i][j]), limMinv, limMaxv) ));
                             }
                         } else {
                             for (; j < W_L - 3; j += 4) {
-                                _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  xlogf(LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
+                                _mm_storeu_ps (&luminance[i][j], LVFU (luminance[i][j]) + pondv *  xlogf (LIMV (LVFU (src[i][j]) / LVFU (out[i][j]), limMinv, limMaxv) ));
                             }
                         }
 
 #endif
 
-                        if(useHslLin) {
+                        if (useHslLin) {
                             for (; j < W_L; j++) {
-                                luminance[i][j] +=  pond * (LIM(src[i][j] / out[i][j], ilimdx, limdx));
+                                luminance[i][j] +=  pond * (LIM (src[i][j] / out[i][j], ilimdx, limdx));
                             }
                         } else {
                             for (; j < W_L; j++) {
-                                luminance[i][j] +=  pond * xlogf(LIM(src[i][j] / out[i][j], ilimdx, limdx)); //  /logt ?
+                                luminance[i][j] +=  pond * xlogf (LIM (src[i][j] / out[i][j], ilimdx, limdx)); //  /logt ?
                             }
                         }
                     }
                 }
             }
 
-            if(mapmet > 1) {
-                if(shmap) {
+            if (mapmet > 1) {
+                if (shmap) {
                     delete shmap;
                 }
             }
@@ -623,7 +623,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             stddv = 0.f;
             // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
 
-            mean_stddv2( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
+            mean_stddv2 ( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
             //printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
 
             //mean_stddv( luminance, mean, stddv, W_L, H_L, logBetaGain, maxtr, mintr);
@@ -652,7 +652,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
                     for (int i = 0; i < H_L; i++ )
                         for (int j = 0; j < W_L; j++) { //for mintr to maxtr evalate absciss in function of original transmission
-                            if (LIKELY(fabsf(luminance[i][j] - mean) < stddv)) {
+                            if (LIKELY (fabsf (luminance[i][j] - mean) < stddv)) {
                                 absciss = asig * luminance[i][j] + bsig;
                             } else if (luminance[i][j] >= mean) {
                                 absciss = amax * luminance[i][j] + bmax;
@@ -662,7 +662,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
                             luminance[i][j] *= (-1.f + 4.f * dehatransmissionCurve[absciss]); //new transmission
 
-                            if(viewmet == 3 || viewmet == 2) {
+                            if (viewmet == 3 || viewmet == 2) {
                                 tran[i][j] = luminance[i][j];
                             }
                         }
@@ -688,7 +688,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                         float pp[9], temp;
 
                         for (int j = borderL; j < wid - borderL; j++) {
-                            med3(luminance[i][j], luminance[i - 1][j], luminance[i + 1][j], luminance[i][j + 1], luminance[i][j - 1], luminance[i - 1][j - 1], luminance[i - 1][j + 1], luminance[i + 1][j - 1], luminance[i + 1][j + 1], tmL[i][j]); //3x3
+                            med3 (luminance[i][j], luminance[i - 1][j], luminance[i + 1][j], luminance[i][j + 1], luminance[i][j - 1], luminance[i - 1][j - 1], luminance[i - 1][j + 1], luminance[i + 1][j - 1], luminance[i + 1][j + 1], tmL[i][j]); //3x3
                         }
                     }
 
@@ -708,7 +708,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
                 // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
                 //mean_stddv( luminance, mean, stddv, W_L, H_L, 1.f, maxtr, mintr);
-                mean_stddv2( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
+                mean_stddv2 ( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
 
             }
 
@@ -759,56 +759,56 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                         //float cd = cdfactor * ( luminance[i][j] * logBetaGain - mini ) + offse;
                         float cd = cdfactor * ( luminance[i][j]  - mini ) + offse;
 
-                        if(cd > cdmax) {
+                        if (cd > cdmax) {
                             cdmax = cd;
                         }
 
-                        if(cd < cdmin) {
+                        if (cd < cdmin) {
                             cdmin = cd;
                         }
 
                         float str = strengthx;
 
-                        if(lhutili  && it == 1) { // S=f(H)
+                        if (lhutili  && it == 1) { // S=f(H)
                             {
                                 float HH = exLuminance[i][j];
                                 float valparam;
 
-                                if(useHsl || useHslLin) {
-                                    valparam = float((shcurve->getVal(HH) - 0.5f));
+                                if (useHsl || useHslLin) {
+                                    valparam = float ((shcurve->getVal (HH) - 0.5f));
                                 } else {
-                                    valparam = float((shcurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5f));
+                                    valparam = float ((shcurve->getVal (Color::huelab_to_huehsv2 (HH)) - 0.5f));
                                 }
 
                                 str *= (1.f + 2.f * valparam);
                             }
                         }
 
-                        if(exLuminance[i][j] > 65535.f * hig && higplus) {
+                        if (exLuminance[i][j] > 65535.f * hig && higplus) {
                             str *= hig;
                         }
 
-                        if(viewmet == 0) {
-                            luminance[i][j] = clipretinex( cd, 0.f, 32768.f ) * str + (1.f - str) * originalLuminance[i][j];
+                        if (viewmet == 0) {
+                            luminance[i][j] = clipretinex ( cd, 0.f, 32768.f ) * str + (1.f - str) * originalLuminance[i][j];
                         }
 
-                        if(viewmet == 1) {
+                        if (viewmet == 1) {
                             luminance[i][j] = out[i][j];
                         }
 
-                        if(viewmet == 4) {
+                        if (viewmet == 4) {
                             luminance[i][j] = (1.f + str) * originalLuminance[i][j] -  str * out[i][j];    //unsharp
                         }
 
-                        if(viewmet == 2) {
-                            if(tran[i][j] <= mean) {
+                        if (viewmet == 2) {
+                            if (tran[i][j] <= mean) {
                                 luminance[i][j] = azb + aza * tran[i][j];    //auto values
                             } else {
                                 luminance[i][j] = bzb + bza * tran[i][j];
                             }
                         }
 
-                        if(viewmet == 3) {
+                        if (viewmet == 3) {
                             luminance[i][j] = 1000.f + tran[i][j] * 700.f;    //arbitrary values to help display log values which are between -20 to + 30 - usage values -4 + 5
                         }
 
@@ -837,7 +837,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             }
         }
 
-        if(viewmet == 3 || viewmet == 2) {
+        if (viewmet == 3 || viewmet == 2) {
             delete [] tranBuffer;
             tranBuffer = NULL;
         }
