@@ -1011,6 +1011,8 @@ void Retinex::viewMethodChanged()
     } else if(viewMethod->get_active_row_number() == 3 || viewMethod->get_active_row_number() == 4) {
         gain->hide();
         offs->hide();
+        transmissionCurveEditorG->show();
+
         //    vart->hide();
         curveEditorGH->hide();
     } else {
