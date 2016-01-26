@@ -1466,7 +1466,7 @@ TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
 TP_FILMSIMULATION_LABEL;Film Simulation
 TP_FILMSIMULATION_STRENGTH;Strength
 TP_FILMSIMULATION_ZEROCLUTSFOUND;Set HaldCLUT directory in Preferences
-TP_FILMSIMULATION_SLOWPARSEDIR;The Film Simulation HaldCLUT folder you pointed RawTherapee to is taking too long to load. Reduce the number of files in that folder or point RawTherapee to an empty one instead.\n\nSee Preferences > Image Processing > Film Simulation
+TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.
 TP_FLATFIELD_AUTOSELECT;Auto-selection
 TP_FLATFIELD_BLURRADIUS;Blur radius
 TP_FLATFIELD_BLURTYPE;Blur type
