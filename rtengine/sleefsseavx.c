@@ -910,10 +910,19 @@ static INLINE vfloat vnegf(vfloat f) { return (vfloat)vxorm((vmask)f, (vmask)vca
 	static INLINE vfloat vself(vmask mask, vfloat x, vfloat y) {
 		return _mm_blendv_ps(y,x,(vfloat)mask);
 	}
+
+	static INLINE vint vselc(vmask mask, vint x, vint y) {
+		return _mm_blendv_epi8(y,x,mask);
+	}
+
 #else
 	// three instructions when using SSE2
 	static INLINE vfloat vself(vmask mask, vfloat x, vfloat y) {
 		return (vfloat)vorm(vandm(mask, (vmask)x), vandnotm(mask, (vmask)y));
+	}
+
+	static INLINE vint vselc(vmask mask, vint x, vint y) {
+	    return vorm(vandm(mask, (vmask)x), vandnotm(mask, (vmask)y));
 	}
 #endif
 
@@ -928,6 +937,16 @@ static INLINE vfloat vselfnotzero(vmask mask, vfloat x) {
     return _mm_andnot_ps((vfloat)mask, x);
 }
 
+static INLINE vint vselizero(vmask mask, vint x) {
+     // returns value of x if corresponding mask bits are 1, else returns 0
+     // faster than vselc(mask, x, ZEROV)
+    return _mm_and_si128(mask, x);
+}
+static INLINE vint vselinotzero(vmask mask, vint x) {
+    // returns value of x if corresponding mask bits are 0, else returns 0
+    // faster than vselc(mask, ZEROV, x)
+    return _mm_andnot_si128(mask, x);
+}
 
 static INLINE vint2 vseli2_lt(vfloat f0, vfloat f1, vint2 x, vint2 y) {
   vint2 m2 = vcast_vi2_vm(vmaskf_lt(f0, f1));
@@ -1316,7 +1335,9 @@ return vmaxf( b, vminf(a,c));
 }
 
 static INLINE vfloat ULIMV( vfloat a, vfloat b, vfloat c  ){
-	return vself( vmaskf_lt(b,c), LIMV(a,b,c), LIMV(a,c,b));
+    // made to clamp a in range [b,c] but in fact it's also the median of a,b,c, which means that the result is independent on order of arguments
+    // ULIMV(a,b,c) = ULIMV(a,c,b) = ULIMV(b,a,c) = ULIMV(b,c,a) = ULIMV(c,a,b) = ULIMV(c,b,a)
+	return vmaxf(vminf(a,b), vminf(vmaxf(a,b),c));
 }
 
 static INLINE vfloat SQRV(vfloat a){
@@ -1324,16 +1345,47 @@ static INLINE vfloat SQRV(vfloat a){
 }
 
 static inline void vswap( vmask condition, vfloat &a, vfloat &b) {
+    // conditional swap the elements of two vfloats
     vfloat temp = vself(condition, a, b); // the values which fit to condition
     condition = vnotm(condition); // invert the condition
     a = vself(condition, a, b); // the values which fit to inverted condition
     b = temp;
 }
 
-static inline float vhadd( vfloat a )
-{
+static inline float vhadd( vfloat a ) {
+    // returns a[0] + a[1] + a[2] + a[3]
     a += _mm_movehl_ps(a, a);
     return _mm_cvtss_f32(_mm_add_ss(a, _mm_shuffle_ps(a, a, 1)));
+}
+
+static INLINE vfloat vmul2f(vfloat a){
+    // fastest way to multiply by 2
+	return a + a;
+}
+
+static INLINE vfloat vintpf(vfloat a, vfloat b, vfloat c) {
+    // calculate a * b + (1 - a) * c (interpolate two values)
+    // following is valid:
+    // vintpf(a, b+x, c+x) = vintpf(a, b, c) + x
+    // vintpf(a, b*x, c*x) = vintpf(a, b, c) * x
+    return a * (b-c) + c;
+}
+
+static INLINE vfloat vdup(vfloat a){
+    // returns { a[0],a[0],a[1],a[1] }
+    return _mm_unpacklo_ps( a, a );
+}
+
+static INLINE vfloat vaddc2vfu(float &a)
+{
+    // loads a[0]..a[7] and returns { a[0]+a[1], a[2]+a[3], a[4]+a[5], a[6]+a[7] }
+    vfloat a1 = _mm_loadu_ps( &a );
+    vfloat a2 = _mm_loadu_ps( (&a) + 4 );
+    return _mm_shuffle_ps(a1,a2,_MM_SHUFFLE( 2,0,2,0 )) + _mm_shuffle_ps(a1,a2,_MM_SHUFFLE( 3,1,3,1 ));
+}
+
+static INLINE vfloat vadivapb (vfloat a, vfloat b) {
+    return a / (a+b);
 }
 
 #endif // __SSE2__

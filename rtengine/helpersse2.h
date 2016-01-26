@@ -4,7 +4,6 @@
 
 #ifdef __GNUC__
 #define INLINE __inline
-//#define INLINE __attribute__((always_inline))
 #else
 #define INLINE inline
 #endif
@@ -40,28 +39,35 @@ typedef __m128i vint2;
 #define STVFU(x,y) _mm_storeu_ps(&x,y)
 #endif
 
-// Load 8 floats from a and combine a[0],a[2],a[4] and a[6] into a vector of 4 floats
-#define LC2VFU(a) _mm_shuffle_ps( LVFU(a),  _mm_loadu_ps(  (&a) + 4 ), _MM_SHUFFLE( 2,0,2,0 ) )
+
+static INLINE vfloat LC2VFU(float &a)
+{
+    // Load 8 floats from a and combine a[0],a[2],a[4] and a[6] into a vector of 4 floats
+    vfloat a1 = _mm_loadu_ps( &a );
+    vfloat a2 = _mm_loadu_ps( (&a) + 4 );
+    return _mm_shuffle_ps(a1,a2,_MM_SHUFFLE( 2,0,2,0 ));
+}
+
 
 // Store a vector of 4 floats in a[0],a[2],a[4] and a[6]
 #if defined(__x86_64__) && defined(__SSE4_1__)
 // SSE4.1 => use _mm_blend_ps instead of _mm_set_epi32 and vself
 #define STC2VFU(a,v) {\
                          __m128 TST1V = _mm_loadu_ps(&a);\
-                         __m128 TST2V = _mm_shuffle_ps(v,v,_MM_SHUFFLE( 1,1,0,0 ));\
+                         __m128 TST2V = _mm_unpacklo_ps(v,v);\
                          _mm_storeu_ps(&a, _mm_blend_ps(TST1V,TST2V,5));\
                          TST1V = _mm_loadu_ps((&a)+4);\
-                         TST2V = _mm_shuffle_ps(v,v,_MM_SHUFFLE( 3,3,2,2 ));\
+                         TST2V = _mm_unpackhi_ps(v,v);\
                          _mm_storeu_ps((&a)+4, _mm_blend_ps(TST1V,TST2V,5));\
                      }
 #else
 #define STC2VFU(a,v) {\
                          __m128 TST1V = _mm_loadu_ps(&a);\
-                         __m128 TST2V = _mm_shuffle_ps(v,v,_MM_SHUFFLE( 1,1,0,0 ));\
+                         __m128 TST2V = _mm_unpacklo_ps(v,v);\
                          vmask cmask = _mm_set_epi32(0xffffffff,0,0xffffffff,0);\
                          _mm_storeu_ps(&a, vself(cmask,TST1V,TST2V));\
                          TST1V = _mm_loadu_ps((&a)+4);\
-                         TST2V = _mm_shuffle_ps(v,v,_MM_SHUFFLE( 3,3,2,2 ));\
+                         TST2V = _mm_unpackhi_ps(v,v);\
                          _mm_storeu_ps((&a)+4, vself(cmask,TST1V,TST2V));\
                      }
 #endif
