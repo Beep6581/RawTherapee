@@ -83,8 +83,8 @@ template<typename _Tp>
 inline const _Tp intp(const _Tp a, const _Tp b, const _Tp c) {
     // calculate a * b + (1 - a) * c
     // following is valid:
-    // intp(a, b+x, c+x) = vintpf(a, b, c) + x
-    // intp(a, b*x, c*x) = vintpf(a, b, c) * x
+    // intp(a, b+x, c+x) = intp(a, b, c) + x
+    // intp(a, b*x, c*x) = intp(a, b, c) * x
     return a * (b-c) + c;
 }
 

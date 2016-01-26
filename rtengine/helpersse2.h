@@ -39,8 +39,15 @@ typedef __m128i vint2;
 #define STVFU(x,y) _mm_storeu_ps(&x,y)
 #endif
 
-// Load 8 floats from a and combine a[0],a[2],a[4] and a[6] into a vector of 4 floats
-#define LC2VFU(a) _mm_shuffle_ps( LVFU(a),  _mm_loadu_ps(  (&a) + 4 ), _MM_SHUFFLE( 2,0,2,0 ) )
+
+static INLINE vfloat LC2VFU(float &a)
+{
+    // Load 8 floats from a and combine a[0],a[2],a[4] and a[6] into a vector of 4 floats
+    vfloat a1 = _mm_loadu_ps( &a );
+    vfloat a2 = _mm_loadu_ps( (&a) + 4 );
+    return _mm_shuffle_ps(a1,a2,_MM_SHUFFLE( 2,0,2,0 ));
+}
+
 
 // Store a vector of 4 floats in a[0],a[2],a[4] and a[6]
 #if defined(__x86_64__) && defined(__SSE4_1__)

@@ -910,10 +910,19 @@ static INLINE vfloat vnegf(vfloat f) { return (vfloat)vxorm((vmask)f, (vmask)vca
 	static INLINE vfloat vself(vmask mask, vfloat x, vfloat y) {
 		return _mm_blendv_ps(y,x,(vfloat)mask);
 	}
+
+	static INLINE vint vselc(vmask mask, vint x, vint y) {
+		return _mm_blendv_epi8(y,x,mask);
+	}
+
 #else
 	// three instructions when using SSE2
 	static INLINE vfloat vself(vmask mask, vfloat x, vfloat y) {
 		return (vfloat)vorm(vandm(mask, (vmask)x), vandnotm(mask, (vmask)y));
+	}
+
+	static INLINE vint vselc(vmask mask, vint x, vint y) {
+	    return vorm(vandm(mask, (vmask)x), vandnotm(mask, (vmask)y));
 	}
 #endif
 
@@ -928,6 +937,16 @@ static INLINE vfloat vselfnotzero(vmask mask, vfloat x) {
     return _mm_andnot_ps((vfloat)mask, x);
 }
 
+static INLINE vint vselizero(vmask mask, vint x) {
+     // returns value of x if corresponding mask bits are 1, else returns 0
+     // faster than vselc(mask, x, ZEROV)
+    return _mm_and_si128(mask, x);
+}
+static INLINE vint vselinotzero(vmask mask, vint x) {
+    // returns value of x if corresponding mask bits are 0, else returns 0
+    // faster than vselc(mask, ZEROV, x)
+    return _mm_andnot_si128(mask, x);
+}
 
 static INLINE vint2 vseli2_lt(vfloat f0, vfloat f1, vint2 x, vint2 y) {
   vint2 m2 = vcast_vi2_vm(vmaskf_lt(f0, f1));
@@ -1362,9 +1381,12 @@ static INLINE vfloat vaddc2vfu(float &a)
     // loads a[0]..a[7] and returns { a[0]+a[1], a[2]+a[3], a[4]+a[5], a[6]+a[7] }
     vfloat a1 = _mm_loadu_ps( &a );
     vfloat a2 = _mm_loadu_ps( (&a) + 4 );
-    return  _mm_shuffle_ps(a1,a2,_MM_SHUFFLE( 2,0,2,0 )) + _mm_shuffle_ps(a1,a2,_MM_SHUFFLE( 3,1,3,1 ));
+    return _mm_shuffle_ps(a1,a2,_MM_SHUFFLE( 2,0,2,0 )) + _mm_shuffle_ps(a1,a2,_MM_SHUFFLE( 3,1,3,1 ));
 }
 
+static INLINE vfloat vadivapb (vfloat a, vfloat b) {
+    return a / (a+b);
+}
 
 #endif // __SSE2__
 #endif // SLEEFSSEAVX
