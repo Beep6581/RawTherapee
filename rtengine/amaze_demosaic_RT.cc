@@ -32,7 +32,6 @@
 #include "../rtgui/multilangmgr.h"
 #include "sleef.c"
 #include "opthelper.h"
-#define BENCHMARK
 #include "StopWatch.h"
 
 namespace rtengine
