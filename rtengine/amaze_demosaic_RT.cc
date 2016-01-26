@@ -181,17 +181,7 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
 
         for (int top = winy - 16; top < winy + height; top += ts - 32) {
             for (int left = winx - 16; left < winx + width; left += ts - 32) {
-#ifdef __SSE2__
-                // Using SSE2 we can zero the memory without cache pollution
-                vfloat zerov = ZEROV;
-
-                for(int i = 3 * tsh; i < (ts - 6)*tsh; i += 16) {
-                    _mm_stream_ps((float*)&nyquist[i], zerov);
-                }
-
-#else
                 memset(&nyquist[3 * tsh], 0, sizeof(unsigned char) * (ts - 6) * tsh);
-#endif
                 //location of tile bottom edge
                 int bottom = min(top + ts, winy + height + 16);
                 //location of tile right edge
@@ -983,8 +973,6 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
                 // refine Nyquist areas using G curvatures
                 if(doNyquist) {
                     for (int rr = nystartrow; rr < nyendrow; rr++)
-
-                        // TODO_INGO: maybe this part is also worth vectorizing using _mm_movemask_ps
                         for (int indx = rr * ts + nystartcol + (FC(rr, 2) & 1); indx < rr * ts + nyendcol; indx += 2) {
 
                             if (nyquist2[indx >> 1]) {
