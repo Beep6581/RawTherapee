@@ -351,7 +351,7 @@ void CacheManager::applyCacheSizeLimitation () const
         const auto dirName = Glib::build_filename (baseDir, "data");
         const auto dir = Gio::File::create_for_path (dirName);
 
-        auto enumerator = dir->enumerate_children ();
+        auto enumerator = dir->enumerate_children ("standard::*,time::*");
 
         while (auto file = enumerator->next_file ()) {
             files.emplace_back (file->get_name (), file->modification_time ());
@@ -370,11 +370,21 @@ void CacheManager::applyCacheSizeLimitation () const
 
     auto cacheEntries = files.size ();
 
-    for (auto entry = files.begin(); cacheEntries-- > options.maxCacheEntries; ++entry) {
+    for (auto entry = files.begin (); cacheEntries-- > options.maxCacheEntries; ++entry) {
 
-        const auto& fname = entry->first;
+        const auto& name = entry->first;
 
-        deleteFiles (fname, getMD5 (fname), true, false);
+        constexpr auto md5_size = 32;
+        const auto name_size = name.size();
+
+        if (name_size < md5_size + 5) {
+            continue;
+        }
+
+        const auto fname = name.substr (0, name_size - md5_size - 5);
+        const auto md5 = name.substr (name_size - md5_size - 4, md5_size);
+
+        deleteFiles (fname, md5, true, false);
     }
 }
 
