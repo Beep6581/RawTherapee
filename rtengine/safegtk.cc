@@ -111,15 +111,15 @@ Glib::RefPtr<Gio::FileInfo> safe_next_file (Glib::RefPtr<Gio::FileEnumerator> &d
     return info;
 }
 
-# define SAFE_ENUMERATOR_CODE_START \
-                do{try {    if ((dirList = dir->enumerate_children ())) \
+# define SAFE_ENUMERATOR_CODE_START(attributes) \
+                do{try {    if ((dirList = dir->enumerate_children ((attributes)))) \
                         for (Glib::RefPtr<Gio::FileInfo> info = safe_next_file(dirList); info; info = safe_next_file(dirList)) {
 
 # define SAFE_ENUMERATOR_CODE_END \
                 }}  catch (Glib::Exception& ex) {   printf ("%s\n", ex.what().c_str()); }}while(0)
 
 /*
- * safe_build_file_list can now filter out at the source all files that doesn't have the extensions specified (if provided)
+ * safe_build_file_list can now filter out at the source all files that don't have the extensions specified (if provided)
  */
 void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ustring> &names, const Glib::ustring &directory, const std::vector<Glib::ustring> *extensions)
 {
@@ -127,7 +127,7 @@ void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ustri
 
     if (dir) {
         if (!extensions) {
-            SAFE_ENUMERATOR_CODE_START
+            SAFE_ENUMERATOR_CODE_START("standard::name")
             names.push_back (Glib::build_filename (directory, info->get_name()));
             SAFE_ENUMERATOR_CODE_END;
         } else {
@@ -138,7 +138,7 @@ void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ustri
                 lcExtensions.push_back ((*extensions)[i].lowercase());
             }
 
-            SAFE_ENUMERATOR_CODE_START
+            SAFE_ENUMERATOR_CODE_START("standard::name")
             // convert the current filename to lowercase in a new ustring
             Glib::ustring fname = Glib::ustring(info->get_name()).lowercase();
 
@@ -174,7 +174,7 @@ void safe_build_subdir_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ust
             return;
         }
 
-        SAFE_ENUMERATOR_CODE_START
+        SAFE_ENUMERATOR_CODE_START("standard::name,standard::type,standard::is_hidden")
 
         if (info->get_file_type() == Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || add_hidden)) {
             subDirs.push_back (info->get_name());
