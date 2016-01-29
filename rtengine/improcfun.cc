@@ -3106,15 +3106,15 @@ filmlike_clip(float *r, float *g, float *b)
     }
 }
 
-void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *editBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
+void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                                SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit , float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili,  LUTf & clToningcurve, LUTf & cl2Toningcurve,
                                const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2, const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf )
 {
-    rgbProc (working, lab, editBuffer, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh, dcpProf);
+    rgbProc (working, lab, pipetteBuffer, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh, dcpProf);
 }
 
 // Process RGB image and convert to LAB space
-void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *editBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
+void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                                SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit , float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clToningcurve, LUTf & cl2Toningcurve,
                                const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,  const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh, DCPProfile *dcpProf)
 {
@@ -3125,20 +3125,20 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
     Imagefloat* editImgFloat = NULL;
     LabImage* editLab = NULL;
     PlanarWhateverData<float>* editWhatever = NULL;
-    EditUniqueID editID = editBuffer ? editBuffer->getEditID() : EUID_None;
+    EditUniqueID editID = pipetteBuffer ? pipetteBuffer->getEditID() : EUID_None;
 
     if (editID != EUID_None) {
-        switch  (editBuffer->getDataProvider()->getCurrSubscriber()->getEditBufferType()) {
+        switch  (pipetteBuffer->getDataProvider()->getCurrSubscriber()->getPipetteBufferType()) {
         case (BT_IMAGEFLOAT):
-            editImgFloat = editBuffer->getImgFloatBuffer();
+            editImgFloat = pipetteBuffer->getImgFloatBuffer();
             break;
 
         case (BT_LABIMAGE):
-            editLab = editBuffer->getLabBuffer();
+            editLab = pipetteBuffer->getLabBuffer();
             break;
 
         case (BT_SINGLEPLANE_FLOAT):
-            editWhatever = editBuffer->getSinglePlaneBuffer();
+            editWhatever = pipetteBuffer->getSinglePlaneBuffer();
             break;
         }
     }
@@ -3447,7 +3447,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
         int tW;
         int tH;
 
-        // Allocating buffer for the EditBuffer
+        // Allocating buffer for the PipetteBuffer
         float *editIFloatTmpR, *editIFloatTmpG, *editIFloatTmpB, *editWhateverTmp;
 
         if (editImgFloat) {
@@ -5552,7 +5552,7 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & cur
 
 
 
-SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve, LUTf & lhskcurve, LUTf & clcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histCLurve, LUTu &histLLCurve, LUTu &histLCurve)
+SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve, LUTf & lhskcurve, LUTf & clcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histCLurve, LUTu &histLLCurve, LUTu &histLCurve)
 {
     int W = lold->W;
     int H = lold->H;
@@ -5566,23 +5566,23 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, 
     EditUniqueID editID = EUID_None;
     bool editPipette = false;
 
-    if (editBuffer) {
-        editID = editBuffer->getEditID();
+    if (pipetteBuffer) {
+        editID = pipetteBuffer->getEditID();
 
         if (editID != EUID_None) {
             editPipette = true;
 
-            switch  (editBuffer->getDataProvider()->getCurrSubscriber()->getEditBufferType()) {
+            switch  (pipetteBuffer->getDataProvider()->getCurrSubscriber()->getPipetteBufferType()) {
             case (BT_IMAGEFLOAT):
-                editImgFloat = editBuffer->getImgFloatBuffer();
+                editImgFloat = pipetteBuffer->getImgFloatBuffer();
                 break;
 
             case (BT_LABIMAGE):
-                editLab = editBuffer->getLabBuffer();
+                editLab = pipetteBuffer->getLabBuffer();
                 break;
 
             case (BT_SINGLEPLANE_FLOAT):
-                editWhatever = editBuffer->getSinglePlaneBuffer();
+                editWhatever = pipetteBuffer->getSinglePlaneBuffer();
                 break;
             }
         }

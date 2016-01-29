@@ -29,18 +29,11 @@
 #include "options.h"
 
 class EditDataProvider;
-
-namespace rtengine
-{
-class EditBuffer;
-}
+class EditSubscriber;
 
 /** @file
  *
  * The Edit mechanism is designed to let tools (subscribers) communicate with the preview area (provider).
- * Subscribers will be tools that need to create some graphics in the preview area, to let the user interact
- * with it in a more user friendly way.
- *
  * Subscribers will be tools that need to create some graphics in the preview area, to let the user interact
  * with it in a more user friendly way.
  *
@@ -84,7 +77,7 @@ class EditBuffer;
  *
  * ## Object edition
  *
- * By using this class, object can be drawn and manipulated on the preview.
+ * By using this class, objects can be drawn and manipulated on the preview.
  *
  * The developer has to handle the buttonPress, buttonRelease, drag and mouseOver method that he needs. There
  * are buttonPress, buttonRelease and drag methods dedicated to each mouse button, for better flexibility
@@ -92,7 +85,7 @@ class EditBuffer;
  * does not handle multiple mouse button event (e.g. button1 + button2), only one at a time. The first button pressed
  * set the mechanism, all other combined button press are ignored.
  *
- * The developer also have to fill 2 display list with object of the Geometry subclass. Each geometrical shape
+ * The developer also have to fill 2 display list with object of the Geometry subclass. Each geometric shape
  * _can_ be used in one or the other, or both list at a time.
  *
  * The first list (visibleGeometry) is used to be displayed on the preview. The developer will have to set their state
@@ -152,6 +145,59 @@ class EditBuffer;
  *
  */
 
+
+
+class ObjectMOBuffer
+{
+private:
+
+    // Used to draw the objects where the color correspond to the object's ID, in order to find the correct object when hovering
+    Cairo::RefPtr<Cairo::ImageSurface> objectMap;
+    // If more than 254 objects has to be handled, objectMap2 contains the "upper part" of the 16 bit int value. objectMap2 will be NULL otherwise.
+    Cairo::RefPtr<Cairo::ImageSurface> objectMap2;
+    ObjectMode objectMode;
+
+protected:
+
+    // To avoid duplicated information, we points to a EditDataProvider that contains the current EditSubscriber
+    // instead of pointing to the EditSubscriber directly
+    EditDataProvider* dataProvider;
+
+    void createBuffer(int width, int height);
+    void resize(int newWidth, int newHeight, EditSubscriber* newSubscriber);
+    void flush();
+    EditSubscriber *getEditSubscriber ();
+
+public:
+    ObjectMOBuffer(EditDataProvider *dataProvider);
+    ~ObjectMOBuffer();
+
+    EditDataProvider* getDataProvider()
+    {
+        return dataProvider;
+    }
+    void setObjectMode(ObjectMode newType);
+    ObjectMode getObjectMode()
+    {
+        return objectMode;
+    }
+
+    Cairo::RefPtr<Cairo::ImageSurface> &getObjectMap ()
+    {
+        return objectMap;
+    }
+    Cairo::RefPtr<Cairo::ImageSurface> &getObjectMap2()
+    {
+        return objectMap2;
+    }
+
+    // return true if the buffer has been allocated
+    bool bufferCreated();
+
+    int getObjectID(const rtengine::Coord& location);
+};
+
+
 /** @brief Coordinate system where the widgets will be drawn
  *
  * The EditCoordSystem is used to define a screen and an image coordinate system.
@@ -167,6 +213,8 @@ public:
     virtual void screenCoordToImage (int phyx, int phyy, int& imgx, int& imgy) = 0;
     /// Convert the image coords to the widget's DrawingArea (i.e. preview area) coords
     virtual void imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy) = 0;
+    /// Convert the image coords to the crop's canvas coords
+    virtual void imageCoordToCropCanvas (int imgx, int imgy, int& phyx, int& phyy) = 0;
     /// Convert the image coords to the edit buffer coords
     virtual void imageCoordToCropBuffer (int imgx, int imgy, int& phyx, int& phyy) = 0;
     /// Convert a size value from the preview's scale to the image's scale
@@ -176,11 +224,11 @@ public:
     /// Convert a size value from the preview's scale to the image's scale
     virtual double scaleValueToImage (double value) = 0;
     /// Convert a size value from the image's scale to the preview's scale
-    virtual int scaleValueToScreen (int value) = 0;
+    virtual int scaleValueToCanvas (int value) = 0;
     /// Convert a size value from the image's scale to the preview's scale
-    virtual float scaleValueToScreen (float value) = 0;
+    virtual float scaleValueToCanvas (float value) = 0;
     /// Convert a size value from the image's scale to the preview's scale
-    virtual double scaleValueToScreen (double value) = 0;
+    virtual double scaleValueToCanvas (double value) = 0;
 };
 
 class RGBColor
@@ -373,9 +421,9 @@ public:
         }
     }
 
-    virtual void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *parent, EditCoordSystem &coordSystem) = 0;
-    virtual void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *parent, EditCoordSystem &coordSystem) = 0;
-    virtual void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem) = 0;
+    virtual void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *parent, EditCoordSystem &coordSystem) = 0;
+    virtual void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *parent, EditCoordSystem &coordSystem) = 0;
+    virtual void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem) = 0;
 };
 
 class Circle : public Geometry
@@ -390,9 +438,9 @@ public:
     Circle (rtengine::Coord &center, int radius, bool filled = false, bool radiusInImageSpace = false) : center(center), radius(radius), filled(filled), radiusInImageSpace(radiusInImageSpace) {}
     Circle (int centerX, int centerY, int radius, bool filled = false, bool radiusInImageSpace = false) : center(centerX, centerY), radius(radius), filled(filled), radiusInImageSpace(radiusInImageSpace) {}
 
-    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-    void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
+    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
+    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
+    void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
 };
 
 class Line : public Geometry
@@ -405,9 +453,9 @@ public:
     Line (rtengine::Coord &begin, rtengine::Coord &end) : begin(begin), end(end) {}
     Line (int beginX, int beginY, int endX, int endY) : begin(beginX, beginY), end(endX, endY) {}
 
-    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-    void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
+    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
+    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
+    void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
 };
 
 class Polyline : public Geometry
@@ -418,9 +466,9 @@ public:
 
     Polyline() : filled(false) {}
 
-    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-    void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
+    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
+    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
+    void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
 };
 
 class Rectangle : public Geometry
@@ -436,9 +484,9 @@ public:
     void setXYXY(int left, int top, int right, int bottom);
     void setXYWH(rtengine::Coord topLeft, rtengine::Coord widthHeight);
     void setXYXY(rtengine::Coord topLeft, rtengine::Coord bottomRight);
-    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-    void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
+    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
+    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
+    void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
 };
 
 /// @brief Method for client tools needing Edit information
@@ -474,7 +522,7 @@ public:
     virtual void      switchOffEditMode ();    /// Occurs when the user want to stop the editing mode
     EditUniqueID      getEditID();
     EditType          getEditingType();
-    BufferType        getEditBufferType();
+    BufferType        getPipetteBufferType();
     bool              isDragging();            /// Returns true if something is being dragged and drag events has to be sent (object mode only)
 
     /** @brief Get the cursor to be displayed when above handles
@@ -487,7 +535,6 @@ public:
     /** @brief Triggered when the mouse is moving over an object
     This method is also triggered when the cursor is moving over the image in ET_PIPETTE mode
     @param modifierKey Gtk's event modifier key (GDK_CONTROL_MASK | GDK_SHIFT_MASK | ...)
-    @param editBuffer buffer to get the pipette values and the from
     @return true if the preview has to be redrawn, false otherwise */
     virtual bool mouseOver(int modifierKey)
     {

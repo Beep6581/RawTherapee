@@ -64,10 +64,10 @@ ZoomStep zoomSteps[] = {
 #define ZOOM11INDEX  13
 
 CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_, bool isLowUpdatePriority_, bool isDetailWindow)
-    : onResizeArea(false), deleted(false), fitZoomEnabled(true), fitZoom(false), isLowUpdatePriority(isLowUpdatePriority_),
+    : ObjectMOBuffer(parent), onResizeArea(false), deleted(false), fitZoomEnabled(true), fitZoom(false), isLowUpdatePriority(isLowUpdatePriority_),
       backColor(options.bgcolor), decorated(true), titleHeight(30),
       sideBorderWidth(3), lowerBorderWidth(3), upperBorderWidth(1), sepWidth(2),
-      xpos(30), ypos(30), imgX(0), imgY(0), imgW(1), imgH(1), iarea(parent),
+      xpos(30), ypos(30), imgX(-1), imgY(-1), imgW(1), imgH(1), iarea(parent),
       cropZoom(0), cropgl(NULL), pmlistener(NULL), observedCropWin(NULL), ipc(ipc_), isFlawnOver(false)
 {
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
@@ -107,7 +107,7 @@ CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_,
 
     minWidth = bsw + iw + 2 * sideBorderWidth;
 
-    cropHandler.setCropHandlerListener (this);
+    cropHandler.setDisplayHandler(this);
     cropHandler.newImage (ipc_, isDetailWindow);
 
     state = SNormal;
@@ -158,36 +158,27 @@ void CropWindow::getCropPosition (int& x, int& y)
 void CropWindow::getCropRectangle (int& x, int& y, int& w, int& h)
 {
 
-    int cropX, cropY, cropW, cropH;
-    cropHandler.getPosition (cropX, cropY);
-    cropHandler.getSize (cropW, cropH);
-
-    if (state != SCropImgMove) {
-        x = cropX;
-        y = cropY;
-    } else {
-        x = cropX + action_x;
-        y = cropY + action_y;
-    }
-
-    if (state != SCropWinResize) {
-        w = cropW;
-        h = cropH;
-    } else {
-        w = imgAreaW;
-        h = imgAreaH;
-    }
-
-    cropHandler.cutRectToImgBounds (x, y, w, h);
+    cropHandler.getPosition (x, y);
+    cropHandler.getSize (w, h);
 }
 
 void CropWindow::setCropPosition (int x, int y, bool update)
 {
 
-    cropHandler.setPosition (x, y, update);
+    cropHandler.setAnchorPosition (x, y, update);
 
-    for (std::list<CropWindowListener*>::iterator i = listeners.begin(); i != listeners.end(); i++) {
-        (*i)->cropPositionChanged (this);
+    for (auto listener : listeners) {
+        listener->cropPositionChanged (this);
+    }
+}
+
+void CropWindow::centerCrop (bool update)
+{
+
+    cropHandler.centerAnchor (update);
+
+    for (auto listener : listeners) {
+        listener->cropPositionChanged (this);
     }
 }
 
@@ -240,6 +231,16 @@ void CropWindow::getCropSize (int& w, int& h)
     h = imgAreaH;
 }
 
+void CropWindow::getCropAnchorPosition (int& x, int& y)
+{
+    cropHandler.getAnchorPosition(x, y);
+}
+
+void CropWindow::setCropAnchorPosition (int& x, int& y)
+{
+    cropHandler.setAnchorPosition(x, y);
+}
+
 bool CropWindow::isInside (int x, int y)
 {
 
@@ -288,11 +289,6 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
 
         state = SNormal;
     }
-    //below code is no longer working/needed after adding buttons for each of the backColor values
-    /*else if (button==1 && type==GDK_2BUTTON_PRESS && onArea (CropBorder, x, y)) {
-          backColor = (backColor+1) % 3;
-          options.bgcolor = backColor;
-      }*/
     else if (button == 1 && type == GDK_BUTTON_PRESS && state == SNormal && onArea (CropToolBar, x, y)) {
         if (!decorated || !buttonSet.pressNotify (x, y)) {
             state = SCropWinMove;
@@ -307,48 +303,48 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
         action_y = y;
         press_x = width;
         press_y = height;
-    } else if (button == 1 && type == GDK_BUTTON_PRESS && state == SNormal && onArea (CropImage, x, y)) {
-        if (onArea (CropTopLeft, x, y)) {
+    } else if (type == GDK_BUTTON_PRESS && state == SNormal && onArea (CropImage, x, y)) {
+        if (button == 1 && onArea (CropTopLeft, x, y)) {
             state = SResizeTL;
             press_x = x;
             action_x = cropHandler.cropParams.x;
             press_y = y;
             action_y = cropHandler.cropParams.y;
-        } else if (onArea (CropTopRight, x, y)) {
+        } else if (button == 1 && onArea (CropTopRight, x, y)) {
             state = SResizeTR;
             press_x = x;
             action_x = cropHandler.cropParams.w;
             press_y = y;
             action_y = cropHandler.cropParams.y;
-        } else if (onArea (CropBottomLeft, x, y)) {
+        } else if (button == 1 && onArea (CropBottomLeft, x, y)) {
             state = SResizeBL;
             press_x = x;
             action_x = cropHandler.cropParams.x;
             press_y = y;
             action_y = cropHandler.cropParams.h;
-        } else if (onArea (CropBottomRight, x, y)) {
+        } else if (button == 1 && onArea (CropBottomRight, x, y)) {
             state = SResizeBR;
             press_x = x;
             action_x = cropHandler.cropParams.w;
             press_y = y;
             action_y = cropHandler.cropParams.h;
-        } else if (onArea (CropTop, x, y)) {
+        } else if (button == 1 && onArea (CropTop, x, y)) {
             state = SResizeH1;
             press_y = y;
             action_y = cropHandler.cropParams.y;
-        } else if (onArea (CropBottom, x, y)) {
+        } else if (button == 1 && onArea (CropBottom, x, y)) {
             state = SResizeH2;
             press_y = y;
             action_y = cropHandler.cropParams.h;
-        } else if (onArea (CropLeft, x, y)) {
+        } else if (button == 1 && onArea (CropLeft, x, y)) {
             state = SResizeW1;
             press_x = x;
             action_x = cropHandler.cropParams.x;
-        } else if (onArea (CropRight, x, y)) {
+        } else if (button == 1 && onArea (CropRight, x, y)) {
             state = SResizeW2;
             press_x = x;
             action_x = cropHandler.cropParams.w;
-        } else if ((bstate & GDK_SHIFT_MASK) && onArea (CropInside, x, y)) {
+        } else if (button == 1 && (bstate & GDK_SHIFT_MASK) && onArea (CropInside, x, y)) {
             state = SCropMove;
             press_x = x;
             press_y = y;
@@ -357,7 +353,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
         } else if (iarea->getToolMode () == TMHand) {
             EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
 
-            if      (editSubscriber && cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) && (editSubscriber->getEditingType() == ET_OBJECTS)) {
+            if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS) {
                 if (button == 1) {
                     needRedraw = editSubscriber->button1Pressed(bstate);
 
@@ -385,7 +381,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
             }
 
             if (state != SEditDrag1 && state != SEditDrag2 && state != SEditDrag3) {
-                if (onArea (CropObserved, x, y)) {
+                if (button == 1 && onArea (CropObserved, x, y)) {
                     state = SObservedMove;
                     press_x = x;
                     press_y = y;
@@ -398,7 +394,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                     press_y = y;
                     action_x = 0;
                     action_y = 0;
-                } else if(zoomSteps[cropZoom].zoom > cropHandler.getFitZoom()) { // only allow move when image is only partial visible
+                } else if (button == 1) { // if(zoomSteps[cropZoom].zoom > cropHandler.getFitZoom()) { // only allow move when image is only partial visible
                     state = SCropImgMove;
                     press_x = x;
                     press_y = y;
@@ -406,22 +402,24 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                     action_y = 0;
                 }
             }
-        } else if (onArea (CropObserved, x, y)) {
+        } else if (button == 1 && onArea (CropObserved, x, y)) {
             state = SObservedMove;
             press_x = x;
             press_y = y;
-        } else if (iarea->getToolMode () == TMStraighten) {
+            action_x = 0;
+            action_y = 0;
+        } else if (button == 1 && iarea->getToolMode () == TMStraighten) {
             state = SRotateSelecting;
             press_x = x;
             press_y = y;
             action_x = x;
             action_y = y;
             rot_deg = 0;
-        } else if (iarea->getToolMode () == TMSpotWB) {
+        } else if (button == 1 && iarea->getToolMode () == TMSpotWB) {
             int spotx, spoty;
             screenCoordToImage (x, y, spotx, spoty);
             iarea->spotWBSelected (spotx, spoty);
-        } else if (iarea->getToolMode () == TMCropSelect && cropgl) {
+        } else if (button == 1 && iarea->getToolMode () == TMCropSelect && cropgl) {
             state = SCropSelecting;
             screenCoordToImage (x, y, press_x, press_y);
             cropHandler.cropParams.enabled = true;
@@ -429,6 +427,36 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
             cropHandler.cropParams.y = press_y;
             cropHandler.cropParams.w = cropHandler.cropParams.h = 1;
             cropgl->cropInit (cropHandler.cropParams.x, cropHandler.cropParams.y, cropHandler.cropParams.w, cropHandler.cropParams.h);
+        }
+    } else if (type == GDK_BUTTON_PRESS && state == SNormal && iarea->getToolMode () == TMHand) {
+        // Any other case... i.e. we're assuming to be on the canvas, looking for editing objects
+        EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
+
+        if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS) {
+            if (button == 1) {
+                needRedraw = editSubscriber->button1Pressed(bstate);
+
+                if (editSubscriber->isDragging()) {
+                    state = SEditDrag1;
+                }
+            } else if (button == 2) {
+                needRedraw = editSubscriber->button2Pressed(bstate);
+
+                if (editSubscriber->isDragging()) {
+                    state = SEditDrag2;
+                }
+            } else if (button == 3) {
+                needRedraw = editSubscriber->button3Pressed(bstate);
+
+                if (editSubscriber->isDragging()) {
+                    state = SEditDrag3;
+                }
+            }
+
+            press_x = x;
+            press_y = y;
+            action_x = 0;
+            action_y = 0;
         }
     }
 
@@ -474,16 +502,14 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
 
         state = SNormal;
 
-        for (std::list<CropWindowListener*>::iterator i = listeners.begin(); i != listeners.end(); i++) {
-            (*i)->cropWindowSizeChanged (this);
+        for (auto listener : listeners) {
+            listener->cropWindowSizeChanged (this);
         }
 
         needRedraw = true;
     } else if (state == SCropImgMove) {
-        int cropX, cropY;
-        cropHandler.getPosition (cropX, cropY);
-        cropHandler.setPosition (cropX + action_x, cropY + action_y);
-        cropHandler.getPosition (cropX, cropY);
+        cropHandler.update ();
+
         state = SNormal;
 
         for (std::list<CropWindowListener*>::iterator i = listeners.begin(); i != listeners.end(); i++) {
@@ -519,9 +545,9 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
             iarea->posScreen.set(x, y);
 
             Coord cropPos;
-            screenCoordToCropBuffer(x, y, cropPos.x, cropPos.y);
-
             if (state == SEditDrag1 && editSubscriber->getEditingType() == ET_PIPETTE) {
+                screenCoordToCropBuffer (x, y, cropPos.x, cropPos.y);
+
                 iarea->object = onArea (CropImage, x, y) && !onArea (CropObserved, x, y) ? 1 : 0;
 
                 //iarea->object = cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) ? 1 : 0;
@@ -532,8 +558,10 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
                     iarea->pipetteVal[0] = iarea->pipetteVal[1] = iarea->pipetteVal[2] = -1.f;
                 }
             } else if (editSubscriber->getEditingType() == ET_OBJECTS) {
+                screenCoordToCropCanvas (x, y, cropPos.x, cropPos.y);
+
                 if (onArea (CropImage, x, y)) {
-                    iarea->object = crop->getObjectID(cropPos);
+                    iarea->object = ObjectMOBuffer::getObjectID(cropPos);
                 } else {
                     iarea->object = -1;
                 }
@@ -588,8 +616,8 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
     } else if (state == SCropWinResize) {
         setSize (press_x + x - action_x, press_y + y - action_y, true);
 
-        for (std::list<CropWindowListener*>::iterator i = listeners.begin(); i != listeners.end(); i++) {
-            (*i)->cropWindowSizeChanged (this);
+        for (auto listener : listeners) {
+            listener->cropWindowSizeChanged (this);
         }
 
         iarea->redraw ();
@@ -602,11 +630,19 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
             factor = 1.0;
         }
 
-        action_x =  (press_x - x) / zoomSteps[cropZoom].zoom * factor;
-        action_y =  (press_y - y) / zoomSteps[cropZoom].zoom * factor;
+        int newAction_x = (press_x - x) / zoomSteps[cropZoom].zoom * factor;
+        int newAction_y = (press_y - y) / zoomSteps[cropZoom].zoom * factor;
 
-        for (std::list<CropWindowListener*>::iterator i = listeners.begin(); i != listeners.end(); i++) {
-            (*i)->cropPositionChanged (this);
+        int deltaX = newAction_x - action_x;
+        int deltaY = newAction_y - action_y;
+
+        action_x =  newAction_x;
+        action_y =  newAction_y;
+
+        cropHandler.moveAnchor(deltaX, deltaY, false);
+
+        for (auto listener : listeners) {
+            listener->cropPositionChanged (this);
         }
 
         iarea->redraw ();
@@ -695,7 +731,11 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
 
         iarea->redraw ();
     } else if (state == SObservedMove) {
-        observedCropWin->remoteMove ((x - press_x) / zoomSteps[cropZoom].zoom, (y - press_y) / zoomSteps[cropZoom].zoom);
+        int new_action_x = x - press_x;
+        int new_action_y = y - press_y;
+        observedCropWin->remoteMove ((new_action_x - action_x) / zoomSteps[cropZoom].zoom, (new_action_y - action_y) / zoomSteps[cropZoom].zoom);
+        action_x = new_action_x;
+        action_y = new_action_y;
         iarea->redraw ();
     } else if (editSubscriber) {
         rtengine::Crop* crop = static_cast<rtengine::Crop*>(cropHandler.getCrop());
@@ -710,9 +750,10 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
             iarea->posScreen.set(x, y);
 
             Coord cropPos;
-            screenCoordToCropBuffer(x, y, cropPos.x, cropPos.y);
 
             if (editSubscriber->getEditingType() == ET_PIPETTE) {
+                screenCoordToCropBuffer (x, y, cropPos.x, cropPos.y);
+
                 iarea->object = onArea (CropImage, x, y) && !onArea (CropObserved, x, y) ? 1 : 0;
 
                 //iarea->object = cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) ? 1 : 0;
@@ -723,11 +764,8 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
                     iarea->pipetteVal[0] = iarea->pipetteVal[1] = iarea->pipetteVal[2] = -1.f;
                 }
             } else if (editSubscriber->getEditingType() == ET_OBJECTS) {
-                if (onArea (CropImage, x, y)) {
-                    iarea->object = crop->getObjectID(cropPos);
-                } else {
-                    iarea->object = -1;
-                }
+                screenCoordToCropCanvas (x, y, cropPos.x, cropPos.y);
+                iarea->object = ObjectMOBuffer::getObjectID(cropPos);
             }
 
             if (editSubscriber->mouseOver(bstate)) {
@@ -850,7 +888,7 @@ bool CropWindow::onArea (CursorArea a, int x, int y)
         return x > xpos && y > ypos && x < xpos + width - 1 && y < ypos + imgAreaY;
 
     case CropImage:
-        return x >= xpos + imgX && y >= ypos + imgY && x < xpos + imgX + imgW && y < ypos + imgY + imgH;
+        return x >= xpos + imgX + imgAreaX && y >= ypos + imgY + imgAreaY && x < xpos + imgX + imgAreaX + imgW && y < ypos + imgY + imgAreaY + imgH;
 
     case CropBorder:
         return
@@ -985,10 +1023,10 @@ void CropWindow::updateCursor (int x, int y)
         } else if (onArea (CropImage, x, y)) {
             int objectID = -1;
 
-            if (editSubscriber) {
+            if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS) {
                 Coord cropPos;
-                screenCoordToCropBuffer(iarea->posScreen.x, iarea->posScreen.y, cropPos.x, cropPos.y);
-                objectID = static_cast<rtengine::Crop*>(cropHandler.getCrop())->getObjectID(cropPos);
+                screenCoordToCropCanvas (iarea->posScreen.x, iarea->posScreen.y, cropPos.x, cropPos.y);
+                objectID = ObjectMOBuffer::getObjectID(cropPos);
             }
 
             if (objectID > -1) {
@@ -1007,7 +1045,19 @@ void CropWindow::updateCursor (int x, int y)
                 cursorManager.setCursor (iarea->get_window(), CSStraighten);
             }
         } else {
-            cursorManager.setCursor (iarea->get_window(), CSArrow);
+            int objectID = -1;
+
+            if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS) {
+                Coord cropPos;
+                screenCoordToCropCanvas (iarea->posScreen.x, iarea->posScreen.y, cropPos.x, cropPos.y);
+                objectID = ObjectMOBuffer::getObjectID(cropPos);
+            }
+
+            if (objectID > -1) {
+                cursorManager.setCursor (iarea->get_window(), editSubscriber->getCursor(objectID));
+            } else {
+                cursorManager.setCursor (iarea->get_window(), CSArrow);
+            }
         }
     } else if (state == SCropSelecting) {
         cursorManager.setCursor (iarea->get_window(), CSCropSelect);
@@ -1042,7 +1092,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
         drawDecoration (cr);
     }
 
-    int x = xpos, y = ypos, h = height, w = width;
+    int x = xpos, y = ypos;
 
     // draw the background
     backColor = iarea->previewModePanel->GetbackColor();
@@ -1069,15 +1119,10 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
         int cropX, cropY;
         cropHandler.getPosition (cropX, cropY);
 
-        if (state == SCropImgMove) {
-            cropX += action_x;
-            cropY += action_y;
-        }
-
         Glib::RefPtr<Gdk::Pixbuf> rough = iarea->getPreviewHandler()->getRoughImage (cropX, cropY, imgAreaW, imgAreaH, zoomSteps[cropZoom].zoom);
 
         if (rough) {
-            iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), rough, 0, 0, x + imgAreaX + (imgAreaW - rough->get_width()) / 2, y + imgAreaY + (imgAreaH - rough->get_height()) / 2, -1, -1, Gdk::RGB_DITHER_NORMAL, 0, 0);
+            iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), rough, 0, 0, x + imgAreaX + imgX, y + imgAreaY + imgY, rtengine::min (rough->get_width (), imgAreaW-imgX), rtengine::min (rough->get_height (), imgAreaH-imgY), Gdk::RGB_DITHER_NORMAL, 0, 0);
 //            if (cropHandler.cropParams.enabled)
 //                drawCrop (cr, x+imgX, y+imgY, imgW, imgH, cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams);
         }
@@ -1089,8 +1134,6 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
         if (cropHandler.cropPixbuf) {
             imgW = cropHandler.cropPixbuf->get_width ();
             imgH = cropHandler.cropPixbuf->get_height ();
-            imgX = imgAreaX + (imgAreaW - imgW) / 2;
-            imgY = imgAreaY + (imgAreaH - imgH) / 2;
             exposeVersion++;
 
             bool showcs = iarea->indClippedPanel->showClippedShadows();
@@ -1240,8 +1283,8 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                                 }
                             }
 
-                            float sum_L2 = tmpLsum[i * bWidth + j];
-                            float sumsq_L2 = tmpLsumSq[i * bWidth + j];
+                            //float sum_L2 = tmpLsum[i * bWidth + j];
+                            //float sumsq_L2 = tmpLsumSq[i * bWidth + j];
                             //*************
                             // averages
                             // Optimized formulas to avoid divisions
@@ -1484,16 +1527,15 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                     }
                 }
 
-//printf("zoomSteps[cropZoom].zoom=%d\n",zoomSteps[cropZoom].zoom);
-                iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), tmp, 0, 0, x + imgX, y + imgY, -1, -1, Gdk::RGB_DITHER_NONE, 0, 0);
+                iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), tmp, 0, 0, x + imgAreaX + imgX, y + imgAreaY + imgY, rtengine::min (tmp->get_width (), imgAreaW-imgX), rtengine::min (tmp->get_height (), imgAreaH-imgY), Gdk::RGB_DITHER_NORMAL, 0, 0);
             } else {
-                iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), cropHandler.cropPixbuf, 0, 0, x + imgX, y + imgY, -1, -1, Gdk::RGB_DITHER_NONE, 0, 0);
+                iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), cropHandler.cropPixbuf, 0, 0, x + imgAreaX + imgX, y + imgAreaY + imgY, rtengine::min (cropHandler.cropPixbuf->get_width (), imgAreaW-imgX), rtengine::min (cropHandler.cropPixbuf->get_height (), imgAreaH-imgY), Gdk::RGB_DITHER_NORMAL, 0, 0);
             }
 
             if (cropHandler.cropParams.enabled) {
                 int cropX, cropY;
                 cropHandler.getPosition (cropX, cropY);
-                drawCrop (cr, x + imgX, y + imgY, imgW, imgH, cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams, (this == iarea->mainCropWindow), true, zoomSteps[cropZoom].zoom <= cropHandler.getFitZoom() );
+                drawCrop (cr, x + imgAreaX + imgX, y + imgAreaY + imgY, imgW, imgH, cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams, (this == iarea->mainCropWindow), true, zoomSteps[cropZoom].zoom <= cropHandler.getFitZoom() );
             }
 
             if (observedCropWin) {
@@ -1501,13 +1543,12 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             }
 
             EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
-            rtengine::Crop* crop = static_cast<rtengine::Crop*>(cropHandler.getCrop());
 
-            if (editSubscriber && crop->bufferCreated()) {
+            if (editSubscriber && bufferCreated()) {
 
                 if (this != iarea->mainCropWindow) {
                     cr->set_line_width (0.);
-                    cr->rectangle (x + imgX, y + imgY, imgW, imgH);
+                    cr->rectangle (x + imgAreaX, y + imgAreaY, imgAreaW, imgAreaH);
                     cr->clip();
                 }
 
@@ -1518,17 +1559,13 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                 cr->set_line_join(Cairo::LINE_JOIN_ROUND);
 
                 // drawing outer lines
-                for (std::vector<Geometry*>::const_iterator i = visibleGeom.begin(); i != visibleGeom.end(); ++i) {
-                    (*i)->drawOuterGeometry(cr, crop, *this);
+                for (auto geom : visibleGeom) {
+                    geom->drawOuterGeometry(cr, this, *this);
                 }
 
                 // drawing inner lines
-                for (std::vector<Geometry*>::const_iterator i = visibleGeom.begin(); i != visibleGeom.end(); ++i) {
-                    (*i)->drawInnerGeometry(cr, crop, *this);
-                }
-
-                if (this != iarea->mainCropWindow) {
-                    cr->reset_clip();
+                for (auto geom : visibleGeom) {
+                    geom->drawInnerGeometry(cr, this, *this);
                 }
 
                 // drawing to the "mouse over" channel
@@ -1536,8 +1573,8 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                     const std::vector<Geometry*> mouseOverGeom = editSubscriber->getMouseOverGeometry();
 
                     if (mouseOverGeom.size()) {
-                        //printf("ObjectMap (%d x %d)\n", crop->getObjectMap()->get_width(), crop->getObjectMap()->get_height());
-                        Cairo::RefPtr<Cairo::Context> crMO = Cairo::Context::create(crop->getObjectMap());
+                        //printf("ObjectMap (%d x %d)\n", ObjectMOBuffer::getObjectMap()->get_width(), ObjectMOBuffer::getObjectMap()->get_height());
+                        Cairo::RefPtr<Cairo::Context> crMO = Cairo::Context::create(ObjectMOBuffer::getObjectMap());
                         crMO->set_antialias(Cairo::ANTIALIAS_NONE);
                         crMO->set_line_cap(Cairo::LINE_CAP_SQUARE);
                         crMO->set_line_join(Cairo::LINE_JOIN_ROUND);
@@ -1545,14 +1582,14 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
 
                         // clear the bitmap
                         crMO->set_source_rgba(0., 0., 0., 0.);
-                        crMO->rectangle(0., 0., crop->getObjectMap()->get_width(), crop->getObjectMap()->get_height());
+                        crMO->rectangle(0., 0., ObjectMOBuffer::getObjectMap()->get_width(), ObjectMOBuffer::getObjectMap()->get_height());
                         crMO->set_line_width(0.);
                         crMO->fill();
 
                         Cairo::RefPtr<Cairo::Context> crMO2;
 
-                        if (crop->getObjectMode() > OM_255) {
-                            crMO2 = Cairo::Context::create(crop->getObjectMap2());
+                        if (ObjectMOBuffer::getObjectMode() > OM_255) {
+                            crMO2 = Cairo::Context::create(ObjectMOBuffer::getObjectMap2());
                             crMO2->set_antialias(Cairo::ANTIALIAS_NONE);
                             crMO2->set_line_cap(Cairo::LINE_CAP_SQUARE);
                             crMO2->set_line_join(Cairo::LINE_JOIN_ROUND);
@@ -1560,28 +1597,29 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
 
                             // clear the bitmap
                             crMO2->set_source_rgba(0., 0., 0., 0.);
-                            crMO2->rectangle(0., 0., crop->getObjectMap2()->get_width(), crop->getObjectMap2()->get_height());
+                            crMO2->rectangle(0., 0., ObjectMOBuffer::getObjectMap2()->get_width(), ObjectMOBuffer::getObjectMap2()->get_height());
                             crMO2->set_line_width(0.);
                             crMO2->fill();
                         }
 
                         std::vector<Geometry*>::const_iterator i;
-                        int a;
+                        int a=0;
 
-                        for (a = 0, i = mouseOverGeom.begin(); i != mouseOverGeom.end(); ++i, ++a) {
-                            (*i)->drawToMOChannel(crMO, crMO2, a, crop, *this);
+                        for (auto moGeom : mouseOverGeom) {
+                            moGeom->drawToMOChannel(crMO, crMO2, a, this, *this);
+                            ++a;
                         }
 
                         // Debug code: save the "mouse over" image to a new file at each occurrence
 #if 0
                         {
                             static unsigned int count = 0;
-                            int w = crop->getObjectMap()->get_width();
-                            int h = crop->getObjectMap()->get_height();
+                            int w = ObjectMOBuffer::getObjectMap()->get_width();
+                            int h = ObjectMOBuffer::getObjectMap()->get_height();
                             Glib::RefPtr<Gdk::Pixbuf> img = Gdk::Pixbuf::create(Gdk::COLORSPACE_RGB, false, 8, w, h);
                             guint8 *dst = img->get_pixels();
-                            unsigned char *src1 = crop->getObjectMap()->get_data();
-                            unsigned char *src2 = crop->getObjectMode() > OM_255 ? crop->getObjectMap()->get_data() : NULL;
+                            unsigned char *src1 = ObjectMOBuffer::getObjectMap()->get_data();
+                            unsigned char *src2 = ObjectMOBuffer::getObjectMode() > OM_255 ? ObjectMOBuffer::getObjectMap()->get_data() : NULL;
                             memcpy(dst, src1, w * h);
 
                             for (int n = 0, n3 = 0; n < w * h;) {
@@ -1602,6 +1640,10 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
 #endif
                     }
                 }
+                if (this != iarea->mainCropWindow) {
+                    cr->reset_clip();
+                }
+
             }
         } else {
             // cropHandler.cropPixbuf is null
@@ -1610,14 +1652,14 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             Glib::RefPtr<Gdk::Pixbuf> rough = iarea->getPreviewHandler()->getRoughImage (cropX, cropY, imgAreaW, imgAreaH, zoomSteps[cropZoom].zoom);
 
             if (rough) {
-                iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), rough, 0, 0, x + imgAreaX + (imgAreaW - rough->get_width()) / 2, y + imgAreaY + (imgAreaH - rough->get_height()) / 2, -1, -1, Gdk::RGB_DITHER_NORMAL, 0, 0);
+                iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), rough, 0, 0, x + imgAreaX + imgX, y + imgAreaY + imgY, rtengine::min (rough->get_width (), imgAreaW-imgX), rtengine::min (rough->get_height (), imgAreaH-imgY), Gdk::RGB_DITHER_NORMAL, 0, 0);
 
                 if (cropHandler.cropParams.enabled) {
-                    drawCrop (cr, x + imgAreaX + (imgAreaW - rough->get_width()) / 2, y + imgAreaY + (imgAreaH - rough->get_height()) / 2, rough->get_width(), rough->get_height(), cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams, (this == iarea->mainCropWindow), true, zoomSteps[cropZoom].zoom <= cropHandler.getFitZoom());
+                    drawCrop (cr, x + imgAreaX + imgX, y + imgAreaY + imgY, rough->get_width(), rough->get_height(), cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams, (this == iarea->mainCropWindow), true, zoomSteps[cropZoom].zoom <= cropHandler.getFitZoom());
                 }
 
                 if (observedCropWin) {
-                    drawObservedFrame (cr, rough->get_width(), rough->get_height());
+                    drawObservedFrame (cr);
                 }
             }
         }
@@ -1641,24 +1683,10 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
 //    printf ("etime --> %d, %d\n", t2.etime (t1), t4.etime (t3));
 }
 
-// calculate the center of the zoomed in/out preview given a cursor position
-void CropWindow::findCenter  (int deltaZoom, int& x, int& y)
-{
-    int cursorX, cursorY;
-    screenCoordToImage(x, y, cursorX, cursorY);
-
-    int cropX, cropY, cropW, cropH, skip;
-    cropHandler.getWindow (cropX, cropY, cropW, cropH, skip);
-
-    int currCenterX = cropX + cropW / 2;
-    int currCenterY = cropY + cropH / 2;
-
-    int deltaX = currCenterX - cursorX;
-    int deltaY = currCenterY - cursorY;
-
-    double factor = zoomSteps[cropZoom].zoom / zoomSteps[cropZoom + deltaZoom].zoom;
-    x = cursorX + (int)((double)(deltaX) * factor);
-    y = cursorY + (int)((double)(deltaY) * factor);
+void CropWindow::setEditSubscriber (EditSubscriber* newSubscriber) {
+    // Delete, create, update all buffers based upon newSubscriber's type
+    ObjectMOBuffer::resize(imgAreaW, imgAreaH, newSubscriber);
+    cropHandler.setEditSubscriber(newSubscriber);
 }
 
 // zoom* is called from the zoomPanel or the scroll wheel in the preview area
@@ -1806,7 +1834,7 @@ double CropWindow::getZoomFitVal ()
 }
 
 
-void CropWindow::zoomFit (bool skipZoomIfUnchanged)
+void CropWindow::zoomFit ()
 {
 
     double z = cropHandler.getFitZoom ();
@@ -1822,7 +1850,7 @@ void CropWindow::zoomFit (bool skipZoomIfUnchanged)
             }
 
     zoomVersion = exposeVersion;
-    changeZoom (cz, true, -1, -1, skipZoomIfUnchanged);
+    changeZoom (cz, true, -1, -1);
     fitZoom = true;
 }
 
@@ -1845,7 +1873,7 @@ void CropWindow::zoomFitCrop ()
         int centerX, centerY;
         centerX = cropHandler.cropParams.x + cropHandler.cropParams.w / 2;
         centerY = cropHandler.cropParams.y + cropHandler.cropParams.h / 2;
-        changeZoom (cz, true, centerX, centerY, false);
+        changeZoom (cz, true, centerX, centerY);
         fitZoom = false;
     }
 }
@@ -1874,7 +1902,7 @@ void CropWindow::redrawNeeded (LWButton* button)
     iarea->redraw ();
 }
 
-void CropWindow::changeZoom  (int zoom, bool notify, int centerx, int centery, bool skipZoomIfUnchanged)
+void CropWindow::changeZoom  (int zoom, bool notify, int centerx, int centery)
 {
 
     if (zoom < 0) {
@@ -1883,19 +1911,14 @@ void CropWindow::changeZoom  (int zoom, bool notify, int centerx, int centery, b
         zoom = MAXZOOMSTEPS;
     }
 
-    if (cropZoom == zoom && skipZoomIfUnchanged) {
-        // We are already at the start/end of the zoom range, so we do nothing
-        return;
-    }
-
     cropZoom = zoom;
 
     cropLabel = zoomSteps[cropZoom].label;
     cropHandler.setZoom (zoomSteps[cropZoom].czoom, centerx, centery);
 
     if (notify)
-        for (std::list<CropWindowListener*>::iterator i = listeners.begin(); i != listeners.end(); i++) {
-            (*i)->cropZoomChanged (this);
+        for (auto listener : listeners) {
+            listener->cropZoomChanged (this);
         }
 
     iarea->redraw ();
@@ -1905,8 +1928,8 @@ void CropWindow::screenCoordToCropBuffer (int phyx, int phyy, int& cropx, int& c
 {
 
     rtengine::Crop* crop = static_cast<rtengine::Crop*>(cropHandler.getCrop());
-    cropx = phyx - xpos - imgX;
-    cropy = phyy - ypos - imgY;
+    cropx = phyx - xpos - imgX - imgAreaX;
+    cropy = phyy - ypos - imgY - imgAreaY;
 
     if (zoomSteps[cropZoom].zoom > 1.) {
         cropx = int(double(cropx) / zoomSteps[cropZoom].zoom);
@@ -1926,11 +1949,11 @@ void CropWindow::screenCoordToImage (int phyx, int phyy, int& imgx, int& imgy)
     imgy = cropY + (phyy - ypos - imgY) / zoomSteps[cropZoom].zoom;
 }
 
-void CropWindow::screenCoordToPreview (int phyx, int phyy, int& prevx, int& prevy)
+void CropWindow::screenCoordToCropCanvas (int phyx, int phyy, int& prevx, int& prevy)
 {
 
-    prevx = phyx - xpos - imgX;
-    prevy = phyy - ypos - imgY;
+    prevx = phyx - xpos - imgAreaX;
+    prevy = phyy - ypos - imgAreaY;
 }
 
 void CropWindow::imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy)
@@ -1938,9 +1961,17 @@ void CropWindow::imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy)
 
     int cropX, cropY;
     cropHandler.getPosition (cropX, cropY);
-    phyx = (imgx - cropX) * zoomSteps[cropZoom].zoom + xpos + imgX;
-    phyy = (imgy - cropY) * zoomSteps[cropZoom].zoom + ypos + imgY;
-    //  printf("imgx:%d  /  imgy:%d  /  cropX:%d  /  cropY:%d  /  xpos:%d  /  ypos:%d  /  imgX:%d  /  imgY:%d  /  leftBorder: %d  /  upperBorder:%d  /  phyx:%d  /  phyy:%d\n", imgx, imgy, cropX, cropY, xpos, ypos, imgX, imgY, crop->getLeftBorder(), crop->getUpperBorder(), phyx, phyy);
+    phyx = (imgx - cropX) * zoomSteps[cropZoom].zoom + xpos + imgX + imgAreaX;
+    phyy = (imgy - cropY) * zoomSteps[cropZoom].zoom + ypos + imgY + imgAreaY;
+}
+
+void CropWindow::imageCoordToCropCanvas (int imgx, int imgy, int& phyx, int& phyy)
+{
+
+    int cropX, cropY;
+    cropHandler.getPosition (cropX, cropY);
+    phyx = (imgx - cropX) * zoomSteps[cropZoom].zoom + imgX;
+    phyy = (imgy - cropY) * zoomSteps[cropZoom].zoom + imgY;
 }
 
 void CropWindow::imageCoordToCropBuffer (int imgx, int imgy, int& phyx, int& phyy)
@@ -1950,7 +1981,6 @@ void CropWindow::imageCoordToCropBuffer (int imgx, int imgy, int& phyx, int& phy
     cropHandler.getPosition (cropX, cropY);
     phyx = (imgx - cropX) * zoomSteps[cropZoom].zoom + /*xpos + imgX +*/ crop->getLeftBorder();
     phyy = (imgy - cropY) * zoomSteps[cropZoom].zoom + /*ypos + imgY +*/ crop->getUpperBorder();
-    //printf("imgx:%d  /  imgy:%d  /  cropX:%d  /  cropY:%d  /  xpos:%d  /  ypos:%d  /  imgX:%d  /  imgY:%d  /  leftBorder: %d  /  upperBorder:%d  /  phyx:%d  /  phyy:%d\n", imgx, imgy, cropX, cropY, xpos, ypos, imgX, imgY, crop->getLeftBorder(), crop->getUpperBorder(), phyx, phyy);
 }
 
 int CropWindow::scaleValueToImage (int value)
@@ -1968,17 +1998,17 @@ double CropWindow::scaleValueToImage (double value)
     return value / zoomSteps[cropZoom].zoom;
 }
 
-int CropWindow::scaleValueToScreen (int value)
+int CropWindow::scaleValueToCanvas (int value)
 {
     return int(double(value) * zoomSteps[cropZoom].zoom);
 }
 
-float CropWindow::scaleValueToScreen (float value)
+float CropWindow::scaleValueToCanvas (float value)
 {
     return float(double(value) * zoomSteps[cropZoom].zoom);
 }
 
-double CropWindow::scaleValueToScreen (double value)
+double CropWindow::scaleValueToCanvas (double value)
 {
     return value * zoomSteps[cropZoom].zoom;
 }
@@ -2113,7 +2143,7 @@ void CropWindow::drawScaledSpotRectangle (Cairo::RefPtr<Cairo::Context> cr, int 
     int x2 = action_x / zoomSteps[cropZoom].zoom + rectSize;
 
     cr->set_line_width (1.0);
-    cr->rectangle (xpos + imgX - 0.5, ypos + imgY - 0.5, imgW, imgH);
+    cr->rectangle (xpos + imgX + imgAreaX - 0.5, ypos + imgY + imgAreaY - 0.5, imgAreaW, imgAreaH);
     cr->clip ();
 
     cr->set_source_rgb (1.0, 1.0, 1.0);
@@ -2135,7 +2165,7 @@ void CropWindow::drawUnscaledSpotRectangle (Cairo::RefPtr<Cairo::Context> cr, in
     int x2 = action_x + rectSize;
 
     cr->set_line_width (1.0);
-    cr->rectangle (xpos + imgX - 0.5, ypos + imgY - 0.5, imgW, imgH);
+    cr->rectangle (xpos + imgX + imgAreaX - 0.5, ypos + imgY + imgAreaY - 0.5, imgAreaW, imgAreaH);
     cr->clip ();
 
     cr->set_source_rgb (1.0, 1.0, 1.0);
@@ -2151,22 +2181,22 @@ void CropWindow::drawUnscaledSpotRectangle (Cairo::RefPtr<Cairo::Context> cr, in
 void CropWindow::getObservedFrameArea (int& x, int& y, int& w, int& h, int rw, int rh)
 {
 
-    int cropX, cropY, cropW, cropH;
-    observedCropWin->getCropRectangle (cropX, cropY, cropW, cropH);
-    int myCropX, myCropY, myCropW, myCropH;
-    getCropRectangle (myCropX, myCropY, myCropW, myCropH);
+    int observedCropX, observedCropY, observedCropW, observedCropH;
+    observedCropWin->getCropRectangle (observedCropX, observedCropY, observedCropW, observedCropH);
+    int mainCropX, mainCropY, mainCropW, mainCropH;
+    getCropRectangle (mainCropX, mainCropY, mainCropW, mainCropH);
 
     // translate it to screen coordinates
-    if (rw) {
-        x = xpos + imgAreaX + (imgAreaW - rw) / 2 + (cropX - myCropX) * zoomSteps[cropZoom].zoom;
-        y = ypos + imgAreaY + (imgAreaH - rh) / 2 + (cropY - myCropY) * zoomSteps[cropZoom].zoom;
+    if (rw) {  // rw and rh are the rough image's dimension
+        x = xpos + imgAreaX + (imgAreaW - rw) / 2 + (observedCropX - mainCropX) * zoomSteps[cropZoom].zoom;
+        y = ypos + imgAreaY + (imgAreaH - rh) / 2 + (observedCropY - mainCropY) * zoomSteps[cropZoom].zoom;
     } else {
-        x = xpos + imgX + (cropX - myCropX) * zoomSteps[cropZoom].zoom;
-        y = ypos + imgY + (cropY - myCropY) * zoomSteps[cropZoom].zoom;
+        x = xpos + imgX + (observedCropX - mainCropX) * zoomSteps[cropZoom].zoom;
+        y = ypos + imgY + (observedCropY - mainCropY) * zoomSteps[cropZoom].zoom;
     }
 
-    w = cropW * zoomSteps[cropZoom].zoom;
-    h = cropH * zoomSteps[cropZoom].zoom;
+    w = observedCropW * zoomSteps[cropZoom].zoom;
+    h = observedCropH * zoomSteps[cropZoom].zoom;
 }
 
 void CropWindow::drawObservedFrame (Cairo::RefPtr<Cairo::Context> cr, int rw, int rh)
@@ -2206,35 +2236,35 @@ void CropWindow::cropWindowChanged ()
 void CropWindow::initialImageArrived ()
 {
 
-    for (std::list<CropWindowListener*>::iterator i = listeners.begin(); i != listeners.end(); i++) {
-        (*i)->initialImageArrived (this);
+    for (auto listener : listeners) {
+        listener->initialImageArrived (this);
     }
 }
 
+void CropWindow::setDisplayPosition (int x, int y) {
+    imgX = x;
+    imgY = y;
+}
 
 void CropWindow::remoteMove (int deltaX, int deltaY)
 {
 
     state = SCropImgMove;
-    action_x =  deltaX;
-    action_y =  deltaY;
+    cropHandler.moveAnchor(deltaX, deltaY, false);
 
-    for (std::list<CropWindowListener*>::iterator i = listeners.begin(); i != listeners.end(); i++) {
-        (*i)->cropPositionChanged (this);
+    for (auto listener : listeners) {
+        listener->cropPositionChanged (this);
     }
 }
 
 void CropWindow::remoteMoveReady ()
 {
 
-    int cropX, cropY;
-    cropHandler.getPosition (cropX, cropY);
-    cropHandler.setPosition (cropX + action_x, cropY + action_y);
-    cropHandler.getPosition (cropX, cropY);
+    cropHandler.update ();
     state = SNormal;
 
-    for (std::list<CropWindowListener*>::iterator i = listeners.begin(); i != listeners.end(); i++) {
-        (*i)->cropPositionChanged (this);
+    for (auto listener : listeners) {
+        listener->cropPositionChanged (this);
     }
 }
 

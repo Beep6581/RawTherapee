@@ -16,8 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EDITBUFFER_H_
-#define _EDITBUFFER_H_
+#ifndef _PIPETTEBUFFER_H_
+#define _PIPETTEBUFFER_H_
 
 #include "../rtgui/edit.h"
 #include "array2D.h"
@@ -28,16 +28,8 @@ namespace rtengine
 {
 
 /// @brief Structure that contains information about and pointers to the Edit buffer
-class EditBuffer
+class PipetteBuffer
 {
-private:
-
-    // Used to draw the objects where the color correspond to the object's ID, in order to find the correct object when hovering
-    Cairo::RefPtr<Cairo::ImageSurface> objectMap;
-    // If more than 254 objects has to be handled, objectMap2 contains the "upper part" of the 16 bit int value. objectMap2 will be NULL otherwise.
-    Cairo::RefPtr<Cairo::ImageSurface> objectMap2;
-    ObjectMode objectMode;
-
 protected:
 
     // To avoid duplicated information, we points to a EditDataProvider that contains the current EditSubscriber
@@ -52,39 +44,38 @@ protected:
 
     bool ready;  // flag that indicates if the _pipette_ buffer is ready
 
-    void                       createBuffer(int width, int height);
-    void                       resize(int newWidth, int newHeight, EditSubscriber* newSubscriber);
-    void                       resize(int newWidth, int newHeight);
-    void                       flush();
+    void createBuffer(int width, int height);
+    void resize(int newWidth, int newHeight, EditSubscriber* newSubscriber);
+    void resize(int newWidth, int newHeight);
+    void flush();
 
 public:
-    EditBuffer(::EditDataProvider *dataProvider);
-    ~EditBuffer();
+    PipetteBuffer(::EditDataProvider *dataProvider);
+    ~PipetteBuffer();
 
     /** @brief Getter to know if the pipette buffer is correctly filled */
-    bool                       isReady()
+    bool isReady()
     {
         return ready;
     }
 
     /** @brief Setter to tell that the pipette buffer is correctly filled
      *  You have to use this method once the pipette is filled, so it can be read. */
-    void                       setReady()
+    void setReady()
     {
         ready = true;
     }
 
-    void                       setObjectMode(ObjectMode newType);
-    ::EditDataProvider*        getDataProvider()
+    ::EditDataProvider* getDataProvider()
     {
         return dataProvider;
     }
-    EditUniqueID               getEditID();
-    Imagefloat*                getImgFloatBuffer()
+    EditUniqueID getEditID();
+    Imagefloat* getImgFloatBuffer()
     {
         return imgFloatBuffer;
     }
-    LabImage*                  getLabBuffer()
+    LabImage* getLabBuffer()
     {
         return LabBuffer;
     }
@@ -92,26 +83,12 @@ public:
     {
         return &singlePlaneBuffer;
     }
-    ObjectMode                 getObjectMode()
-    {
-        return objectMode;
-    }
-
-    Cairo::RefPtr<Cairo::ImageSurface> &getObjectMap ()
-    {
-        return objectMap;
-    }
-    Cairo::RefPtr<Cairo::ImageSurface> &getObjectMap2()
-    {
-        return objectMap2;
-    }
 
     // return true if the buffer has been allocated
-    bool                       bufferCreated();
+    bool bufferCreated();
 
-    int                        getObjectID(const Coord& location);
     // get the pipette values
-    void                       getPipetteData(float* v, int x, int y, int squareSize);
+    void getPipetteData(float* v, int x, int y, int squareSize);
 };
 
 }

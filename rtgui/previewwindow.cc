@@ -199,6 +199,8 @@ bool PreviewWindow::on_motion_notify_event (GdkEventMotion* event)
 
         if (isMoving) {
             mainCropWin->remoteMove ((event->x - press_x) / zoom, (event->y - press_y) / zoom);
+            press_x = event->x;
+            press_y = event->y;
         } else if (inside && !moreInside) {
             cursorManager.setCursor (get_window(), CSClosedHand);
         } else {

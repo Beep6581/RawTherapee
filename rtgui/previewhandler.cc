@@ -204,27 +204,19 @@ Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int x, int y, int w, in
             h = image->getHeight() * totalZoom;
         }
 
-        int ix = x * zoom;
-        int iy = y * zoom;
+        x *= zoom;
+        y *= zoom;
 
-        if (ix < 0) {
-            ix = 0;
+        if ((x + w) / totalZoom > previewImg->get_width()) {
+            w = previewImg->get_width() * totalZoom - x;
         }
 
-        if (iy < 0) {
-            iy = 0;
-        }
-
-        if ((ix + w) / totalZoom > previewImg->get_width()) {
-            ix = previewImg->get_width() * totalZoom - w;
-        }
-
-        if ((iy + h) / totalZoom > previewImg->get_height()) {
-            iy = previewImg->get_height() * totalZoom - h;
+        if ((y + h) / totalZoom > previewImg->get_height()) {
+            h = previewImg->get_height() * totalZoom - y;
         }
 
         resPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, w, h);
-        previewImg->scale (resPixbuf, 0, 0, w, h, -ix, -iy, totalZoom, totalZoom, Gdk::INTERP_NEAREST);
+        previewImg->scale (resPixbuf, 0, 0, w, h, -x, -y, totalZoom, totalZoom, Gdk::INTERP_NEAREST);
     }
 
     return resPixbuf;
