@@ -879,11 +879,11 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
 #ifdef __SSE2__
 
                         for (int indx = rr * ts; indx < rr * ts + cc1; indx += 32) {
-                            vint nyquisttemp1v = _mm_adds_epi8(_mm_load_si128((vint*)&nyquist[(indx - v2) >> 1]), _mm_load_si128((vint*)&nyquist[(indx - m1) >> 1]));
-                            vint nyquisttemp2v = _mm_adds_epi8(_mm_load_si128((vint*)&nyquist[(indx + p1) >> 1]), _mm_load_si128((vint*)&nyquist[(indx - 2) >> 1]));
-                            vint nyquisttemp3v = _mm_adds_epi8(_mm_load_si128((vint*)&nyquist[(indx +  2) >> 1]), _mm_load_si128((vint*)&nyquist[(indx - p1) >> 1]));
+                            vint nyquisttemp1v = _mm_adds_epi8(_mm_load_si128((vint*)&nyquist[(indx - v2) >> 1]), _mm_loadu_si128((vint*)&nyquist[(indx - m1) >> 1]));
+                            vint nyquisttemp2v = _mm_adds_epi8(_mm_loadu_si128((vint*)&nyquist[(indx + p1) >> 1]), _mm_loadu_si128((vint*)&nyquist[(indx - 2) >> 1]));
+                            vint nyquisttemp3v = _mm_adds_epi8(_mm_loadu_si128((vint*)&nyquist[(indx +  2) >> 1]), _mm_loadu_si128((vint*)&nyquist[(indx - p1) >> 1]));
                             vint valv = _mm_load_si128((vint*)&nyquist[indx >> 1]);
-                            vint nyquisttemp4v = _mm_adds_epi8(_mm_load_si128((vint*)&nyquist[(indx + m1) >> 1]), _mm_load_si128((vint*)&nyquist[(indx + v2) >> 1]));
+                            vint nyquisttemp4v = _mm_adds_epi8(_mm_loadu_si128((vint*)&nyquist[(indx + m1) >> 1]), _mm_load_si128((vint*)&nyquist[(indx + v2) >> 1]));
                             nyquisttemp1v = _mm_adds_epi8(nyquisttemp1v, nyquisttemp3v);
                             nyquisttemp2v = _mm_adds_epi8(nyquisttemp2v, nyquisttemp4v);
                             nyquisttemp1v = _mm_adds_epi8(nyquisttemp1v, nyquisttemp2v);
@@ -1441,14 +1441,14 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
 
                     for (; indx < rr * ts + cc1 - 18 - (cc1 & 1); indx += 4, col += 4) {
                         vfloat greenv = LVF(rgbgreen[indx]);
-                        vfloat temp00v = vdup(LVF(hvwt[(indx - v1) >> 1]));
-                        vfloat temp01v = vdup(LVF(hvwt[(indx + v1) >> 1]));
+                        vfloat temp00v = vdup(LVFU(hvwt[(indx - v1) >> 1]));
+                        vfloat temp01v = vdup(LVFU(hvwt[(indx + v1) >> 1]));
                         vfloat tempv =  onev / (temp00v + twov - vdup(LVFU(hvwt[(indx + 1 + offset) >> 1])) - vdup(LVFU(hvwt[(indx - 1 + offset) >> 1])) + temp01v);
 
-                        vfloat redv1  = greenv - (temp00v * vdup(LVF(Dgrb[0][(indx - v1) >> 1])) + (onev - vdup(LVFU(hvwt[(indx + 1 + offset) >> 1]))) * vdup(LVFU(Dgrb[0][(indx + 1 + offset) >> 1])) + (onev - vdup(LVFU(hvwt[(indx - 1 + offset) >> 1]))) * vdup(LVFU(Dgrb[0][(indx - 1 + offset) >> 1])) + temp01v * vdup(LVF(Dgrb[0][(indx + v1) >> 1]))) * tempv;
-                        vfloat bluev1 = greenv - (temp00v * vdup(LVF(Dgrb[1][(indx - v1) >> 1])) + (onev - vdup(LVFU(hvwt[(indx + 1 + offset) >> 1]))) * vdup(LVFU(Dgrb[1][(indx + 1 + offset) >> 1])) + (onev - vdup(LVFU(hvwt[(indx - 1 + offset) >> 1]))) * vdup(LVFU(Dgrb[1][(indx - 1 + offset) >> 1])) + temp01v * vdup(LVF(Dgrb[1][(indx + v1) >> 1]))) * tempv;
-                        vfloat redv2  = greenv - vdup(LVF(Dgrb[0][indx >> 1]));
-                        vfloat bluev2 = greenv - vdup(LVF(Dgrb[1][indx >> 1]));
+                        vfloat redv1  = greenv - (temp00v * vdup(LVFU(Dgrb[0][(indx - v1) >> 1])) + (onev - vdup(LVFU(hvwt[(indx + 1 + offset) >> 1]))) * vdup(LVFU(Dgrb[0][(indx + 1 + offset) >> 1])) + (onev - vdup(LVFU(hvwt[(indx - 1 + offset) >> 1]))) * vdup(LVFU(Dgrb[0][(indx - 1 + offset) >> 1])) + temp01v * vdup(LVFU(Dgrb[0][(indx + v1) >> 1]))) * tempv;
+                        vfloat bluev1 = greenv - (temp00v * vdup(LVFU(Dgrb[1][(indx - v1) >> 1])) + (onev - vdup(LVFU(hvwt[(indx + 1 + offset) >> 1]))) * vdup(LVFU(Dgrb[1][(indx + 1 + offset) >> 1])) + (onev - vdup(LVFU(hvwt[(indx - 1 + offset) >> 1]))) * vdup(LVFU(Dgrb[1][(indx - 1 + offset) >> 1])) + temp01v * vdup(LVFU(Dgrb[1][(indx + v1) >> 1]))) * tempv;
+                        vfloat redv2  = greenv - vdup(LVFU(Dgrb[0][indx >> 1]));
+                        vfloat bluev2 = greenv - vdup(LVFU(Dgrb[1][indx >> 1]));
                         STVFU(red[row][col], c65535v * vself(selmask, redv1, redv2));
                         STVFU(blue[row][col], c65535v * vself(selmask, bluev1, bluev2));
                     }
