@@ -29,11 +29,6 @@
 
 using namespace std;
 
-#if TRACE_MYRWMUTEX==1 && !defined NDEBUG
-unsigned int MyReaderLock::readerLockCounter = 0;
-unsigned int MyWriterLock::writerLockCounter = 0;
-#endif
-
 Glib::RefPtr<Gdk::Pixbuf> MyExpander::inconsistentPBuf;
 Glib::RefPtr<Gdk::Pixbuf> MyExpander::enabledPBuf;
 Glib::RefPtr<Gdk::Pixbuf> MyExpander::disabledPBuf;

@@ -21,7 +21,7 @@ set (BASESOURCEFILES
     preferences.cc profilepanel.cc saveasdlg.cc
     saveformatpanel.cc soundman.cc splash.cc
     thumbnail.cc tonecurve.cc toolbar.cc
-    guiutils.cc zoompanel.cc toolpanelcoord.cc
+    guiutils.cc threadutils.cc zoompanel.cc toolpanelcoord.cc
     thumbbrowserentrybase.cc batchqueueentry.cc
     batchqueue.cc lwbutton.cc lwbuttonset.cc
     batchqueuebuttonset.cc browserfilter.cc exiffiltersettings.cc
