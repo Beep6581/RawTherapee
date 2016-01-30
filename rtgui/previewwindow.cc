@@ -88,6 +88,7 @@ void PreviewWindow::updatePreviewImage ()
             }
         }
     }
+    style->render_frame (cc, 0, 0, W, H);
 }
 
 void PreviewWindow::setPreviewHandler (PreviewHandler* ph)

@@ -132,11 +132,11 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     ckbApplyBaselineExposureOffset->set_tooltip_text (M("TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP"));
     setExpandAlignProperties(ckbApplyBaselineExposureOffset, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
-    dcpGrid->attach_next_to(*ckbToneCurve, Gtk::POS_LEFT, 1, 1);
-    dcpGrid->attach_next_to(*ckbApplyLookTable, *ckbToneCurve, Gtk::POS_RIGHT, 1, 1);
-    dcpGrid->attach_next_to(*ckbApplyHueSatMap, *ckbToneCurve, Gtk::POS_BOTTOM, 1, 1);
-    dcpGrid->attach_next_to(*ckbApplyBaselineExposureOffset, *ckbApplyHueSatMap, Gtk::POS_RIGHT, 1, 1);
-    dcpGrid->attach_next_to(*dcpIllGrid, *ckbToneCurve, Gtk::POS_TOP, 2, 1);
+    dcpGrid->attach_next_to(*dcpIllGrid, Gtk::POS_BOTTOM, 1, 1);
+    dcpGrid->attach_next_to(*ckbToneCurve, Gtk::POS_BOTTOM, 1, 1);
+    dcpGrid->attach_next_to(*ckbApplyHueSatMap, Gtk::POS_BOTTOM, 1, 1);
+    dcpGrid->attach_next_to(*ckbApplyLookTable, Gtk::POS_BOTTOM, 1, 1);
+    dcpGrid->attach_next_to(*ckbApplyBaselineExposureOffset, Gtk::POS_BOTTOM, 1, 1);
 
     dcpFrame->add(*dcpGrid);
     dcpFrame->set_sensitive(false);

@@ -97,6 +97,7 @@ GtkDrawingArea {
     padding: 0;
     margin: 0;
     background-color: #363636;
+    border: 1px solid #252525;
 }
 
 GtkDrawingArea:selected {
@@ -183,11 +184,59 @@ GtkMenu {
     border-radius: 4px;
 }
 
+#ExpanderBox GtkDrawingArea {
+    background-color: #363636;
+}
+
+#ExpanderBox GtkFrame {
+    background-color: #3B3B3B;
+    border: 1px solid #313131;
+    border-radius: 4px;
+}
+
+#ExpanderBox GtkFrame GtkDrawingArea {
+    background-color: #3B3B3B;
+}
+
+#ExpanderBox GtkFrame  GtkFrame {
+    background-color: #414141;
+    border: 1px solid #373737;
+    border-radius: 4px;
+}
+
+#ExpanderBox GtkFrame  GtkFrame GtkDrawingArea {
+    background-color: #414141;
+}
+
 /* Sub-tool (MyExpander) background */
 #ExpanderBox2 {
     background-color: #3B3B3B;
-    border: 1px solid #505050;
+    border: 1px solid #2A2A2A;
     border-radius: 4px;
+}
+
+#ExpanderBox2 GtkDrawingArea {
+    background-color: #3B3B3B;
+}
+
+#ExpanderBox2 GtkFrame {
+    background-color: #414141;
+    border: 1px solid #373737;
+    border-radius: 4px;
+}
+
+#ExpanderBox2 GtkFrame GtkDrawingArea {
+    background-color: #414141;
+}
+
+#ExpanderBox2 GtkFrame GtkFrame {
+    background-color: #474747;
+    border: 1px solid #3D3D3D;
+    border-radius: 4px;
+}
+
+#ExpanderBox2 GtkFrame GtkFrame GtkDrawingArea {
+    background-color: #474747;
 }
 
 #MyExpanderTitle {

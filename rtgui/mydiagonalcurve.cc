@@ -37,11 +37,6 @@ MyDiagonalCurve::MyDiagonalCurve () : activeParam(-1), bghistvalid(false)
     editedPos.resize(2);
     editedPos.at(0) = editedPos.at(1) = 0.0;
 
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-    style->add_class(GTK_STYLE_CLASS_FRAME);
-    //style->add_class(GTK_STYLE_CLASS_NOTEBOOK);
-    //style->add_class(GTK_STYLE_CLASS_FLAT);
-
     signal_event().connect( sigc::mem_fun(*this, &MyDiagonalCurve::handleEvents) );
 
     curve.type = DCT_Spline;

@@ -1057,7 +1057,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
     options.bgcolor = backColor;
 
     if (backColor == 0) {
-        iarea->get_style_context()->render_background(cr, x + imgAreaX, y + imgAreaY, imgAreaW, imgAreaH);
+        style->render_background(cr, x + imgAreaX, y + imgAreaY, imgAreaW, imgAreaH);
     } else {
         if (backColor == 1) {
             cr->set_source_rgb (0, 0, 0);
@@ -1660,6 +1660,8 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             drawScaledSpotRectangle (cr, iarea->getSpotWBRectSize ());
         }
     }
+
+    style->render_frame (cr, x + imgAreaX, y + imgAreaY, imgAreaW, imgAreaH);
 
     //t2.set ();
 //    printf ("etime --> %d, %d\n", t2.etime (t1), t4.etime (t3));
