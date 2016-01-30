@@ -20,38 +20,38 @@
 #define _MULTILANGMGR_
 
 #include <map>
+#include <memory>
 #include <string>
-#include <glibmm.h>
+
+#include <glibmm/ustring.h>
 
 class MultiLangMgr
 {
-
-    std::map<std::string, Glib::ustring> transTable;
-    MultiLangMgr* fallBack;
-
-    Glib::ustring TranslateRFC2Language(Glib::ustring rfcName);
+public:
+    MultiLangMgr ();
+    MultiLangMgr (const Glib::ustring& fname, MultiLangMgr* fallbackMgr = nullptr);
 
 public:
-    MultiLangMgr () : fallBack (NULL) {}
-    MultiLangMgr (Glib::ustring fname) : fallBack (NULL)
-    {
-        load (fname);
-    }
-    MultiLangMgr (Glib::ustring fname, MultiLangMgr* fb) : fallBack (NULL)
-    {
-        load (fname, fb);
-    }
+    bool load (const Glib::ustring& fname, MultiLangMgr* fallbackMgr = nullptr);
 
-    bool load (Glib::ustring fname, MultiLangMgr* fb = NULL);
-    bool save (Glib::ustring fname);
+public:
+    Glib::ustring getStr (const std::string& key) const;
 
-    bool isOSLanguageDetectSupported();
-    Glib::ustring getOSUserLanguage();
-    Glib::ustring getStr (std::string key);
+public:
+    static bool isOSLanguageDetectSupported ();
+    static Glib::ustring getOSUserLanguage ();
+
+private:
+    std::map<std::string, Glib::ustring> translations;
+    std::unique_ptr<MultiLangMgr> fallbackMgr;
+
 };
 
 extern MultiLangMgr langMgr;
 
-Glib::ustring M (std::string key);
+inline Glib::ustring M (const std::string& key)
+{
+    return langMgr.getStr (key);
+}
 
 #endif

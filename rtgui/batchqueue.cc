@@ -38,43 +38,42 @@
 using namespace std;
 using namespace rtengine;
 
-BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(NULL), fileCatalog(aFileCatalog), sequence(0), listener(NULL),
-    pmenu (new Gtk::Menu ())
+BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(NULL), fileCatalog(aFileCatalog), sequence(0), listener(NULL)
 {
 
     location = THLOC_BATCHQUEUE;
 
     int p = 0;
 
-    pmenu->attach (*Gtk::manage(open = new Gtk::MenuItem (M("FILEBROWSER_POPUPOPENINEDITOR"))), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(open = new Gtk::MenuItem (M("FILEBROWSER_POPUPOPENINEDITOR"))), 0, 1, p, p + 1);
     p++;
-    pmenu->attach (*Gtk::manage(selall = new Gtk::MenuItem (M("FILEBROWSER_POPUPSELECTALL"))), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(selall = new Gtk::MenuItem (M("FILEBROWSER_POPUPSELECTALL"))), 0, 1, p, p + 1);
     p++;
-    pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
-    p++;
-
-    pmenu->attach (*Gtk::manage(head = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEHEAD"), "toleftend.png")), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
     p++;
 
-    pmenu->attach (*Gtk::manage(tail = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEEND"), "torightend.png")), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(head = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEHEAD"), "toleftend.png")), 0, 1, p, p + 1);
     p++;
 
-    pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(tail = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEEND"), "torightend.png")), 0, 1, p, p + 1);
     p++;
 
-    pmenu->attach (*Gtk::manage(cancel = new MyImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"), "gtk-close.png")), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
     p++;
 
-    pmenu->show_all ();
+    pmenu.attach (*Gtk::manage(cancel = new MyImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"), "gtk-close.png")), 0, 1, p, p + 1);
+    p++;
+
+    pmenu.show_all ();
 
     // Accelerators
     pmaccelgroup = Gtk::AccelGroup::create ();
-    pmenu->set_accel_group (pmaccelgroup);
-    open->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_e, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
-    selall->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_a, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
-    head->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_Home, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
-    tail->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_End, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
-    cancel->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_Delete, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
+    pmenu.set_accel_group (pmaccelgroup);
+    open->add_accelerator ("activate", pmaccelgroup, GDK_KEY_e, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
+    selall->add_accelerator ("activate", pmaccelgroup, GDK_KEY_a, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
+    head->add_accelerator ("activate", pmaccelgroup, GDK_KEY_Home, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
+    tail->add_accelerator ("activate", pmaccelgroup, GDK_KEY_End, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
+    cancel->add_accelerator ("activate", pmaccelgroup, GDK_KEY_Delete, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
 
     open->signal_activate().connect(sigc::mem_fun(*this, &BatchQueue::openLastSelectedItemInEditor));
     cancel->signal_activate().connect (std::bind (&BatchQueue::cancelItems, this, std::ref (selected)));
@@ -137,8 +136,7 @@ int BatchQueue::getThumbnailHeight ()
 
 void BatchQueue::rightClicked (ThumbBrowserEntryBase* entry)
 {
-
-    pmenu->popup (3, this->eventTime);
+    pmenu.popup (3, this->eventTime);
 }
 
 void BatchQueue::doubleClicked(ThumbBrowserEntryBase* entry)
