@@ -12,23 +12,35 @@ using namespace rtengine::procparams;
 namespace
 {
 
-void notifySlowParseDir (const std::chrono::system_clock::time_point& startedAt)
+bool notifySlowParseDir (const std::chrono::system_clock::time_point& startedAt)
 {
-    static bool alreadyNotified = false;
+    static enum
+    {
+        Undecided,
+        Cancel,
+        Continue
+    }
+    decision = Undecided;
 
-    if (alreadyNotified) {
-        return;
+    if (decision == Cancel) {
+        return false;
+    } else if (decision == Continue) {
+        return true;
     }
 
     const auto now = std::chrono::system_clock::now ();
     if (now - startedAt < std::chrono::seconds (10)) {
-        return;
+        return true;
     }
 
-    Gtk::MessageDialog dialog (M ("TP_FILMSIMULATION_SLOWPARSEDIR"), false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
-    dialog.run ();
-
-    alreadyNotified = true;
+    Gtk::MessageDialog dialog (M ("TP_FILMSIMULATION_SLOWPARSEDIR"), false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
+    if (dialog.run () == Gtk::RESPONSE_YES) {
+        decision = Cancel;
+        return false;
+    } else {
+        decision = Continue;
+        return true;
+    }
 }
 
 }
@@ -227,7 +239,10 @@ int ClutComboBox::parseDir (const Glib::ustring& path)
 
                 dirs.push_back (std::move (dir));
 
-                notifySlowParseDir (startedAt);
+                if (!notifySlowParseDir (startedAt)) {
+                    m_model->clear ();
+                    return 0;
+                }
             }
 
             currDirs.clear ();
@@ -278,7 +293,10 @@ int ClutComboBox::parseDir (const Glib::ustring& path)
 
             ++fileCount;
 
-            notifySlowParseDir (startedAt);
+            if (!notifySlowParseDir (startedAt)) {
+                m_model->clear ();
+                return 0;
+            }
         }
     }
 
