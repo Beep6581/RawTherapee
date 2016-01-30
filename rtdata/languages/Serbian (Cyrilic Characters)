@@ -860,9 +860,11 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !FILECHOOSER_FILTER_PP;Processing profiles
 !FILECHOOSER_FILTER_SAME;Same format as current photo
 !FILECHOOSER_FILTER_TIFF;TIFF files
+!GENERAL_APPLY;Apply
 !GENERAL_ASIMAGE;As Image
 !GENERAL_AUTO;Automatic
 !GENERAL_CLOSE;Close
+!GENERAL_OPEN;Open
 !GENERAL_WARNING;Warning
 !HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
 !HISTOGRAM_TOOLTIP_FULL;Toggle full (off) or scaled (on) histogram.

@@ -296,6 +296,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !FILECHOOSER_FILTER_TIFF;TIFF files
 !GENERAL_ABOUT;About
 !GENERAL_AFTER;After
+!GENERAL_APPLY;Apply
 !GENERAL_ASIMAGE;As Image
 !GENERAL_AUTO;Automatic
 !GENERAL_BEFORE;Before
@@ -311,6 +312,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !GENERAL_NO;No
 !GENERAL_NONE;None
 !GENERAL_OK;OK
+!GENERAL_OPEN;Open
 !GENERAL_PORTRAIT;Portrait
 !GENERAL_SAVE;Save
 !GENERAL_UNCHANGED;(Unchanged)
