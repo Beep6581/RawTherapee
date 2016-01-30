@@ -16,127 +16,165 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "multilangmgr.h"
+
+#include <fstream>
+#include <regex>
+
 #ifdef WIN32
-// Desired auto detect function is Vista+
-#if (__GNUC__ == 4 && __GNUC_MINOR__ >= 8) || __GNUC__ > 4
-#define WINVER 0x0600 // switching to WINVER for gcc 4.8.1 support on Winx64
-#else
-#define _WIN32_WINNT 0x0600
-#endif
 #include <windows.h>
 #include <winnls.h>
-#if (__GNUC__ == 4 && __GNUC_MINOR__ >= 8) || __GNUC__ > 4
-#undef WINVER
-#else
-#undef _WIN32_WINNT
 #endif
-#endif
-#include <glib/gstdio.h>
-#include "multilangmgr.h"
-#include <cstring>
-#include "../rtengine/safegtk.h"
+
+namespace
+{
+
+// Maps standard locales to languages, e.g. "de-DE" to "Deutsch".
+struct LocaleToLang : private std::map<std::pair<Glib::ustring, Glib::ustring>, Glib::ustring>
+{
+    static const std::pair<Glib::ustring, Glib::ustring> key (const Glib::ustring& major, const Glib::ustring& minor = Glib::ustring ())
+    {
+        return std::make_pair (major, minor);
+    }
+
+    LocaleToLang ()
+    {
+        emplace (key ("ca"), "Catala");
+        emplace (key ("cs"), "Czech");
+        emplace (key ("da"), "Dansk");
+        emplace (key ("de"), "Deutsch");
+        emplace (key ("es"), "Espanol");
+        emplace (key ("eu"), "Euskara");
+        emplace (key ("fr"), "Francais");
+        emplace (key ("el"), "Greek");
+        emplace (key ("he"), "Hebrew");
+        emplace (key ("it"), "Italiano");
+        emplace (key ("ja"), "Japanese");
+        emplace (key ("lv"), "Latvian");
+        emplace (key ("hu"), "Magyar");
+        emplace (key ("nl"), "Nederlands");
+        emplace (key ("nn"), "Norsk BM");
+        emplace (key ("nb"), "Norsk BM");
+        emplace (key ("pl"), "Polish");
+        emplace (key ("pt"), "Portugues (Brasil)");
+        emplace (key ("ru"), "Russian");
+        emplace (key ("sr"), "Serbian (Cyrilic Characters)");
+        emplace (key ("sk"), "Slovak");
+        emplace (key ("fi"), "Suomi");
+        emplace (key ("sv"), "Swedish");
+        emplace (key ("tr"), "Turkish");
+        emplace (key ("zh", "CN"), "Chinese (Simplified)");
+        emplace (key ("zh", "SG"), "Chinese (Traditional)");
+    }
+
+    Glib::ustring operator() (const Glib::ustring& locale) const
+    {
+        Glib::ustring major, minor;
+
+        if (locale.length () >= 2) {
+            major = locale.substr (0, 2).lowercase ();
+        }
+
+        if (locale.length () >= 5) {
+            minor = locale.substr (3, 2).uppercase ();
+        }
+
+        // Look for matching language and country.
+        auto iterator = find (key (major, minor));
+
+        if (iterator != end ()) {
+            return iterator->second;
+        }
+
+        // Look for matching language only.
+        iterator = find (key (major));
+
+        if (iterator != end ()) {
+            return iterator->second;
+        }
+
+        return "default";
+    }
+};
+
+const LocaleToLang localeToLang;
+
+}
 
 MultiLangMgr langMgr;
 
-Glib::ustring M (std::string key)
+MultiLangMgr::MultiLangMgr ()
 {
-    return langMgr.getStr (key);
 }
 
-// fb is fallback manager if the first could not be loaded
-bool MultiLangMgr::load (Glib::ustring fname, MultiLangMgr* fb)
+MultiLangMgr::MultiLangMgr (const Glib::ustring& fname, MultiLangMgr* fallbackMgr)
 {
-    FILE *f = safe_g_fopen (fname, "rt");
+    load (fname, fallbackMgr);
+}
 
-    fallBack = fb;
+bool MultiLangMgr::load (const Glib::ustring& fname, MultiLangMgr* fallbackMgr)
+{
+    this->fallbackMgr.reset (fallbackMgr);
 
-    if (f == NULL) {
+    std::ifstream file (fname.c_str ());
+    if (!file.is_open ()) {
         return false;
     }
 
-    transTable.clear ();
+    std::map<std::string, Glib::ustring> translations;
+    std::string entry, key, value;
 
-    char* buffer = new char[2048];
+    while (std::getline (file, entry)) {
 
-    while (fgets (buffer, 2048, f) != 0) {
-        // find separator
-        int seppos = 0;
-
-        while (buffer[seppos] != 0 && buffer[seppos] != ';') {
-            seppos++;
-        }
-
-        // no separator found
-        if (buffer[seppos] == 0) {
+        if (entry.empty () || entry.front () == '#') {
             continue;
         }
 
-        // cut the last \n and \r characters
-        int endpos = strlen(buffer) - 1;
+        std::istringstream line (entry);
 
-        while (buffer[endpos] == '\n' || buffer[endpos] == '\r') {
-            endpos--;
+        if (!std::getline (line, key, ';') || !std::getline (line, value)) {
+            continue;
         }
 
-        buffer[endpos + 1] = 0;
-        // replace "\n" to '\n'
-        int j = 0;
+        static const std::regex newline ("\\\\n");
+        value = std::regex_replace (value, newline, "\n");
 
-        for (int i = 0; i < endpos + 1; i++)
-            if (i < endpos && buffer[i] == '\\' && buffer[i + 1] == 'n') {
-                buffer[j++] = '\n';
-                i++;
-            } else {
-                buffer[j++] = buffer[i];
-            }
-
-        buffer[j] = 0;
-        // cut to two parts
-        buffer[seppos] = 0;
-        transTable[buffer] = buffer + seppos + 1;
+        translations.emplace (key, value);
     }
 
-    fclose (f);
-    delete [] buffer;
+    this->translations.swap (translations);
     return true;
 }
 
-bool MultiLangMgr::save (Glib::ustring fname)
+Glib::ustring MultiLangMgr::getStr (const std::string& key) const
 {
+    const auto iterator = translations.find (key);
 
-    FILE *f = safe_g_fopen (fname, "wt");
-
-    if (f == NULL) {
-        return false;
+    if (iterator != translations.end ()) {
+        return iterator->second;
     }
 
-    std::map<std::string, Glib::ustring>::iterator r;
-
-    for (r = transTable.begin (); r != transTable.end(); r++) {
-        fprintf (f, "%s;%s\n", r->first.c_str(), safe_locale_from_utf8(r->second).c_str());
+    if (fallbackMgr) {
+        return fallbackMgr->getStr (key);
     }
 
-    fclose (f);
-    return true;
+    return key;
 }
 
-
-bool MultiLangMgr::isOSLanguageDetectSupported()
+bool MultiLangMgr::isOSLanguageDetectSupported ()
 {
-#if defined(WIN32) || defined(__linux__) || defined(__APPLE__)
+#if defined (WIN32) || defined (__linux__) || defined (__APPLE__)
     return true;
 #else
     return false;
 #endif
 }
 
-
-// returns Language name mapped from the currently selected OS language
-Glib::ustring MultiLangMgr::getOSUserLanguage()
+Glib::ustring MultiLangMgr::getOSUserLanguage ()
 {
     Glib::ustring langName ("default");
 
-#if defined(WIN32)
+#if defined (WIN32)
 
     const LCID localeID = GetUserDefaultLCID ();
     TCHAR localeName[18];
@@ -148,153 +186,23 @@ Glib::ustring MultiLangMgr::getOSUserLanguage()
 
     localeName[langLen - 1] = '-';
 
-    const int countryLen = GetLocaleInfo (localeID, LOCALE_SISO3166CTRYNAME, localeName + langLen, 9);
+    const int countryLen = GetLocaleInfo (localeID, LOCALE_SISO3166CTRYNAME, &localeName[langLen], 9);
     if (countryLen <= 0) {
         return langName;
     }
 
-    langName = TranslateRFC2Language (localeName);
+    langName = localeToLang (localeName);
 
-#elif defined(__linux__) || defined(__APPLE__)
+#elif defined (__linux__) || defined (__APPLE__)
 
-    const char* locale = setlocale(LC_CTYPE, "");
-    setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
-
-    if (locale) {
-        langName = TranslateRFC2Language (locale);
+    // Query the current locale and force decimal point to dot.
+    if (const char* locale = setlocale (LC_CTYPE, "")) {
+        langName = localeToLang (locale);
     }
+
+    setlocale (LC_NUMERIC, "C");
 
 #endif
 
     return langName;
-}
-
-// Translates RFC standard language code to file name, e.g. "de-DE" to "Deutsch"
-Glib::ustring MultiLangMgr::TranslateRFC2Language(Glib::ustring rfcName)
-{
-    if (rfcName.length() < 2) {
-        return Glib::ustring("default");
-    }
-
-    Glib::ustring major = rfcName.substr(0, 2).lowercase();
-    Glib::ustring minor;
-
-    if (rfcName.length() >= 5) {
-        minor = rfcName.substr(3, 2).uppercase();
-    }
-
-    //printf("Lang: %s - %s\n",major.c_str(),minor.c_str());
-
-    if (major == "ca") {
-        return "Catala";
-    }
-
-    if (major == "zh") {
-        return (minor == "CN" || minor == "SG") ? "Chinese (Simplified)" : "Chinese (Traditional)";
-    }
-
-    if (major == "cs") {
-        return "Czech";
-    }
-
-    if (major == "da") {
-        return "Dansk";
-    }
-
-    if (major == "de") {
-        return "Deutsch";
-    }
-
-    if (major == "es") {
-        return "Espanol";
-    }
-
-    if (major == "eu") {
-        return "Euskara";
-    }
-
-    if (major == "fr") {
-        return "Francais";
-    }
-
-    if (major == "el") {
-        return "Greek";
-    }
-
-    if (major == "he") {
-        return "Hebrew";
-    }
-
-    if (major == "it") {
-        return "Italiano";
-    }
-
-    if (major == "ja") {
-        return "Japanese";
-    }
-
-    if (major == "lv") {
-        return "Latvian";
-    }
-
-    if (major == "hu") {
-        return "Magyar";
-    }
-
-    if (major == "nl") {
-        return "Nederlands";
-    }
-
-    if (major == "nn" || major == "nb") {
-        return "Norsk BM";
-    }
-
-    if (major == "pl") {
-        return "Polish";
-    }
-
-    if (major == "pt") {
-        return "Portugues (Brasil)";
-    }
-
-    if (major == "ru") {
-        return "Russian";
-    }
-
-    if (major == "sr") {
-        return "Serbian (Cyrilic Characters)";
-    }
-
-    if (major == "sk") {
-        return "Slovak";
-    }
-
-    if (major == "fi") {
-        return "Suomi";
-    }
-
-    if (major == "sv") {
-        return "Swedish";
-    }
-
-    if (major == "tr") {
-        return "Turkish";
-    }
-
-    // Don't split en-US, en-GB, etc. since only default english is constantly updated
-    return "default";
-}
-
-Glib::ustring MultiLangMgr::getStr (std::string key)
-{
-
-    std::map<std::string, Glib::ustring>::iterator r = transTable.find (key);
-
-    if (r != transTable.end()) {
-        return r->second;
-    } else if (fallBack) {
-        return fallBack->getStr (key);
-    } else {
-        return key;
-    }
 }
