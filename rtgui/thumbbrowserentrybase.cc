@@ -352,10 +352,7 @@ void ThumbBrowserEntryBase::getTextSizes (int& infow, int& infoh)
 
 void ThumbBrowserEntryBase::resize (int h)
 {
-
-#if PROTECT_VECTORS
     MYWRITERLOCK(l, lockRW);
-#endif
 
     height = h;
     int old_preh = preh, old_width = width;
@@ -474,9 +471,7 @@ void ThumbBrowserEntryBase::draw (Cairo::RefPtr<Cairo::Context> cc)
         return;
     }
 
-#if PROTECT_VECTORS
     MYREADERLOCK(l, lockRW);  // No resizes, position moves etc. inbetween
-#endif
 
     int bbWidth, bbHeight;
 
@@ -509,10 +504,7 @@ void ThumbBrowserEntryBase::draw (Cairo::RefPtr<Cairo::Context> cc)
 
 void ThumbBrowserEntryBase::setPosition (int x, int y, int w, int h)
 {
-
-#if PROTECT_VECTORS
     MYWRITERLOCK(l, lockRW);
-#endif
 
     exp_width = w;
     exp_height = h;
@@ -526,10 +518,7 @@ void ThumbBrowserEntryBase::setPosition (int x, int y, int w, int h)
 
 void ThumbBrowserEntryBase::setOffset (int x, int y)
 {
-
-#if PROTECT_VECTORS
     MYWRITERLOCK(l, lockRW);
-#endif
 
     ofsX = -x;
     ofsY = -y;

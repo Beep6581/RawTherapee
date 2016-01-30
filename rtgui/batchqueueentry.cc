@@ -244,10 +244,7 @@ void BatchQueueEntry::_updateImage (guint8* img, int w, int h)
 {
 
     if (preh == h) {
-
-#if PROTECT_VECTORS
         MYWRITERLOCK(l, lockRW);
-#endif
 
         prew = w;
         assert (preview == NULL);

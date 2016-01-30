@@ -83,11 +83,7 @@ public:
 
     bool hasJobs ()
     {
-        // not sure that this lock is necessary, but it's safer to keep it...
-        // TODO: Check for Linux
-#if PROTECT_VECTORS
         MYREADERLOCK(l, entryRW);
-#endif
         return (!fd.empty());
     }
 

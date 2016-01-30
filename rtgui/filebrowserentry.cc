@@ -238,10 +238,7 @@ void FileBrowserEntry::updateImage (rtengine::IImage8* img, double scale, rtengi
 
 void FileBrowserEntry::_updateImage (rtengine::IImage8* img, double s, rtengine::procparams::CropParams cropParams)
 {
-
-#if PROTECT_VECTORS
     MYWRITERLOCK(l, lockRW);
-#endif
 
     redrawRequests--;
     scale = s;
