@@ -80,6 +80,7 @@ private:
     Glib::RefPtr<Gdk::Pixbuf> iremovable;
 
     bool expandSuccess;
+    bool ignoreExpandAction;
 
 #ifdef WIN32
     int volumes;

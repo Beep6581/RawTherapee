@@ -42,7 +42,8 @@ struct DirNameComparator {
 DirBrowser::DirBrowser () : dirTreeModel(),
     dtColumns(),
     tvc(M("DIRBROWSER_FOLDERS")),
-    expandSuccess(false)
+    expandSuccess(false),
+    ignoreExpandAction(false)
 #ifdef WIN32
     , volumes(0)
 #endif
@@ -238,6 +239,8 @@ void DirBrowser::on_sort_column_changed() const
 
 void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::TreeModel::Path& path)
 {
+    if(ignoreExpandAction)
+        return;
 
     expandSuccess = false;
 
@@ -409,7 +412,9 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath)
     free(dcpy);
 
     path.up ();
+    ignoreExpandAction = true;
     dirtree->expand_to_path (path);
+    ignoreExpandAction = false;
 
     return path;
 }
