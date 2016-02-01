@@ -2032,7 +2032,8 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 
                         if(cp.lip3 && cp.lipp) {
                             // comparaison betwwen pixel and neighbours
-                            float kneigh, somm;
+                            float kneigh = 38.f;
+                            float somm = 50.f;
 
                             if(cp.neigh == 0) {
                                 kneigh = 38.f;
@@ -3191,7 +3192,9 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
             float scale = 1.f;
             float scale2 = 1.f;
 
-            float LL100, LL100res, LL100init, kH[maxlvl];
+            float LL100, LL100res, LL100init;// kH[maxlvl];
+            float *kH = new float [maxlvl];//allocate memory
+
             int ii = i / W_L;
             int jj = i - ii * W_L;
             float LL = labco->L[ii * 2][jj * 2];
@@ -3307,6 +3310,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
                 kLlev = alpha;
             }
 
+            delete [] kH;
             WavCoeffs_L[dir][i] *= (kLlev);
         }
     }

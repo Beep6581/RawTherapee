@@ -67,7 +67,7 @@ public:
 
     // options in color:
     Gtk::CheckButton* icm;
-    Gtk::CheckButton* gam;
+   // Gtk::CheckButton* gam;
     Gtk::CheckButton* vibrance;
     Gtk::CheckButton* chmixer;
     Gtk::CheckButton* blackwhite;
