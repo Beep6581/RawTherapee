@@ -743,6 +743,22 @@ RawImage::is_supportedThumb() const
              !thumb_load_raw );
 }
 
+bool
+RawImage::is_jpegThumb() const
+{
+    return ( (thumb_width * thumb_height) > 0 &&
+              write_thumb == &rtengine::RawImage::jpeg_thumb &&
+             !thumb_load_raw );
+}
+
+bool
+RawImage::is_ppmThumb() const
+{
+    return ( (thumb_width * thumb_height) > 0 &&
+             write_thumb == &rtengine::RawImage::ppm_thumb &&
+             !thumb_load_raw );
+}
+
 void RawImage::getXtransMatrix( char XtransMatrix[6][6])
 {
     for(int row = 0; row < 6; row++)

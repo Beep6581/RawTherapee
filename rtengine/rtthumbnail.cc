@@ -182,7 +182,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
         if ( (unsigned char)data[1] == 0xd8 ) {
             err = img->loadJPEGFromMemory(data, ri->get_thumbLength());
-        } else {
+        } else if (ri->is_ppmThumb()) {
             err = img->loadPPMFromMemory(data, ri->get_thumbWidth(), ri->get_thumbHeight(), ri->get_thumbSwap(), ri->get_thumbBPS());
         }
     }
