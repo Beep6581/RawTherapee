@@ -217,7 +217,7 @@ bool BatchQueue::saveBatchQueue ()
 {
     const auto fileName = Glib::build_filename (options.rtdir, "batch", "queue.csv");
 
-    std::ofstream file (fileName, std::ios::trunc);
+    std::ofstream file (fileName, std::ios::binary | std::ios::trunc);
 
     if (!file.is_open ())
         return false;
@@ -256,7 +256,7 @@ bool BatchQueue::loadBatchQueue ()
 {
     const auto fileName = Glib::build_filename (options.rtdir, "batch", "queue.csv");
 
-    std::ifstream file (fileName);
+    std::ifstream file (fileName, std::ios::binary);
 
     if (file.is_open ()) {
         // Yes, it's better to get the lock for the whole file reading,
