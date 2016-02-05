@@ -130,7 +130,7 @@ protected:
     void processFalseColorCorrectionThread (Imagefloat* im, int row_from, int row_to);
     void hlRecovery          (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip, const RAWParams &raw, float* hlmax);
     int  defTransform        (int tran);
-    void rotateLine          (float* line, PlanarPtr<float> &channel, int tran, int i, int w, int h);
+    void rotateLine          (const float* const line, PlanarPtr<float> &channel, const int tran, const int i, const int w, const int h);
     void transformRect       (PreviewProps pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
     void transformPosition   (int x, int y, int tran, int& tx, int& ty);
 
@@ -303,7 +303,7 @@ protected:
     void xtransborder_interpolate (int border);
     void xtrans_interpolate (int passes, bool useCieLab);
     void fast_xtrans_interpolate ();
-    void    transLine   (float* red, float* green, float* blue, int i, Imagefloat* image, int tran, int imw, int imh, int fw);
+    void    transLine   (float* red, float* green, float* blue, int i, Imagefloat* image, int tran, int imw, int imh, int fw, bool d1xHeightOdd = false, bool d1xClip = false);
     void    hflip       (Imagefloat* im);
     void    vflip       (Imagefloat* im);
 

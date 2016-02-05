@@ -308,7 +308,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 
     defGain = 0.0;
     // compute image area to render in order to provide the requested part of the image
-    int sx1, sy1, imwidth, imheight, fw;
+    int sx1, sy1, imwidth, imheight, fw, d1xHeightOdd;
     transformRect (pp, tran, sx1, sy1, imwidth, imheight, fw);
 
     // check possible overflows
@@ -323,6 +323,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     }
 
     if (d1x) {
+        d1xHeightOdd = maximheight & 1;
         maximheight /= 2;
     }
 
@@ -364,7 +365,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
         #pragma omp for
 #endif
 
-        for (int ix = 0; ix < imheight; ix++) {
+        for (int ix = 0; ix < (d1x ? maximheight : imheight); ix++) {
             int i = sy1 + skip * ix;
 
             if (i >= maxy - skip) {
@@ -396,7 +397,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
                         // exposure this means that we can clip away local highlights which actually
                         // are not clipped. We have to do that though as we only check pixel by pixel
                         // and don't know if this will transition into a clipped area, if so we need
-                        // to clip also surrounding to make a good color transition
+                        // to clip also surrounding to make a good colour transition
                         rtot = CLIP(rtot);
                         gtot = CLIP(gtot);
                         btot = CLIP(btot);
@@ -444,7 +445,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
                 hlRecovery (hrp.method, line_red, line_grn, line_blue, i, sx1, imwidth, skip, raw, hlmax);
             }
 
-            transLine (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight, fw);
+            transLine (line_red, line_grn, line_blue, ix, image, tran, imwidth, d1x ? maximheight : imheight, fw, d1xHeightOdd, !hrp.hrenabled && has_clipping);
 
         }
 
@@ -1077,7 +1078,7 @@ SSEFUNCTION int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thres
     return counter;
 }
 
-void RawImageSource::rotateLine (float* line, PlanarPtr<float> &channel, int tran, int i, int w, int h)
+void RawImageSource::rotateLine (const float* const line, PlanarPtr<float> &channel, const int tran, const int i, const int w, const int h)
 {
 
     if ((tran & TR_ROT) == TR_R180)
@@ -1091,8 +1092,8 @@ void RawImageSource::rotateLine (float* line, PlanarPtr<float> &channel, int tra
         }
 
     else if ((tran & TR_ROT) == TR_R270)
-        for (int j = 0; j < w; j++) {
-            channel(w - 1 - j, i) = line[j];
+        for (int j = 0, cj = w - 1; j < w; j++, cj--) {
+            channel(cj, i) = line[j];
         }
     else
         for (int j = 0; j < w; j++) {
@@ -1102,7 +1103,7 @@ void RawImageSource::rotateLine (float* line, PlanarPtr<float> &channel, int tra
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::transLine (float* red, float* green, float* blue, int i, Imagefloat* image, int tran, int imwidth, int imheight, int fw)
+void RawImageSource::transLine (float* red, float* green, float* blue, int i, Imagefloat* image, int tran, int imwidth, int imheight, int fw, bool d1xHeightOdd, bool d1xClip)
 {
 
     // Fuji SuperCCD rotation + coarse rotation
@@ -1168,13 +1169,19 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
     // Nikon D1X vertical interpolation + coarse rotation
     else if (d1x) {
         // copy new pixels
-        if ((tran & TR_ROT) == TR_R180) {
+        if ((tran & TR_ROT) == TR_R180) { // rotate 2 times left or two times right
             for (int j = 0; j < imwidth; j++) {
                 image->r(2 * imheight - 2 - 2 * i, imwidth - 1 - j) = red[j];
                 image->g(2 * imheight - 2 - 2 * i, imwidth - 1 - j) = green[j];
                 image->b(2 * imheight - 2 - 2 * i, imwidth - 1 - j) = blue[j];
             }
-
+            if (i == 0) {
+                for (int j = 0; j < imwidth; j++) {
+                    image->r(2 * imheight - 1, imwidth - 1 - j) = red[j];
+                    image->g(2 * imheight - 1, imwidth - 1 - j) = green[j];
+                    image->b(2 * imheight - 1, imwidth - 1 - j) = blue[j];
+                }
+            }
             if (i == 1 || i == 2) { // linear interpolation
                 int row = 2 * imheight - 1 - 2 * i;
 
@@ -1184,7 +1191,16 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
                     image->g(row, col) = (green[j] + image->g(row + 1, col)) / 2;
                     image->b(row, col) = (blue[j] + image->b(row + 1, col)) / 2;
                 }
-            } else if (i == imheight - 1) {
+                if(i == 2 && d1xHeightOdd) {
+                    int row = 2 * imheight;
+                    for (int j = 0; j < imwidth; j++) {
+                        int col = imwidth - 1 - j;
+                        image->r(row, col) = (red[j] + image->r(row - 2, col)) / 2;
+                        image->g(row, col) = (green[j] + image->g(row - 2, col)) / 2;
+                        image->b(row, col) = (blue[j] + image->b(row - 2, col)) / 2;
+                    }
+                }
+            } else if (i == imheight - 1 || i == imheight - 2) {
                 int row = 2 * imheight - 1 - 2 * i;
 
                 for (int j = 0; j < imwidth; j++) {
@@ -1207,12 +1223,24 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
 
                 for (int j = 0; j < imwidth; j++) {
                     int col = imwidth - 1 - j;
-                    image->r(row, col) = CLIP((int)(-0.0625 * red[j] + 0.5625 * image->r(row - 1, col) + 0.5625 * image->r(row + 1, col) - 0.0625 * image->r(row + 3, col)));
-                    image->g(row, col) = CLIP((int)(-0.0625 * green[j] + 0.5625 * image->g(row - 1, col) + 0.5625 * image->g(row + 1, col) - 0.0625 * image->g(row + 3, col)));
-                    image->b(row, col) = CLIP((int)(-0.0625 * blue[j] + 0.5625 * image->b(row - 1, col) + 0.5625 * image->b(row + 1, col) - 0.0625 * image->b(row + 3, col)));
+                    image->r(row, col) = MAX(0.f, -0.0625f * (red[j] + image->r(row + 3, col)) + 0.5625f * (image->r(row - 1, col) + image->r(row + 1, col)));
+                    image->g(row, col) = MAX(0.f, -0.0625f * (green[j] + image->g(row + 3, col)) + 0.5625f * (image->g(row - 1, col) + image->g(row + 1, col)));
+                    image->b(row, col) = MAX(0.f, -0.0625f * (blue[j] + image->b(row + 3, col)) + 0.5625f * (image->b(row - 1, col) + image->b(row + 1, col)));
+                    if(d1xClip) {
+                        image->r(row, col) = MIN(image->r(row, col), MAXVALF);
+                        image->g(row, col) = MIN(image->g(row, col), MAXVALF);
+                        image->b(row, col) = MIN(image->b(row, col), MAXVALF);
+                    }
                 }
             }
-        } else if ((tran & TR_ROT) == TR_R90) {
+        } else if ((tran & TR_ROT) == TR_R90) { // rotate right
+            if( i == 0) {
+                for (int j = 0; j < imwidth; j++) {
+                    image->r(j, 2 * imheight - 1) = red[j];
+                    image->g(j, 2 * imheight - 1) = green[j];
+                    image->b(j, 2 * imheight - 1) = blue[j];
+                }
+            }
             for (int j = 0; j < imwidth; j++) {
                 image->r(j, 2 * imheight - 2 - 2 * i) = red[j];
                 image->g(j, 2 * imheight - 2 - 2 * i) = green[j];
@@ -1226,6 +1254,11 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
                     image->r(j, col) = (red[j] + image->r(j, col + 1)) / 2;
                     image->g(j, col) = (green[j] + image->g(j, col + 1)) / 2;
                     image->b(j, col) = (blue[j] + image->b(j, col + 1)) / 2;
+                    if(d1xHeightOdd && i == 2) {
+                        image->r(j, 2 * imheight) = (red[j] + image->r(j, 2 * imheight - 2)) / 2;
+                        image->g(j, 2 * imheight) = (green[j] + image->g(j, 2 * imheight - 2)) / 2;
+                        image->b(j, 2 * imheight) = (blue[j] + image->b(j, 2 * imheight - 2)) / 2;
+                    }
                 }
             } else if (i == imheight - 1) {
                 int col = 2 * imheight - 1 - 2 * i;
@@ -1235,9 +1268,7 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
                     image->g(j, col) = (green[j] + image->g(j, col + 1)) / 2;
                     image->b(j, col) = (blue[j] + image->b(j, col + 1)) / 2;
                 }
-
                 col = 2 * imheight - 1 - 2 * i + 2;
-
                 for (int j = 0; j < imwidth; j++) {
                     image->r(j, col) = (red[j] + image->r(j, col + 1)) / 2;
                     image->g(j, col) = (green[j] + image->g(j, col + 1)) / 2;
@@ -1247,68 +1278,106 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
                 int col = 2 * imheight - 1 - 2 * i + 2;
 
                 for (int j = 0; j < imwidth; j++) {
-                    image->r(j, col) = CLIP((int)(-0.0625 * red[j] + 0.5625 * image->r(j, col - 1) + 0.5625 * image->r(j, col + 1) - 0.0625 * image->r(j, col + 3)));
-                    image->g(j, col) = CLIP((int)(-0.0625 * green[j] + 0.5625 * image->g(j, col - 1) + 0.5625 * image->g(j, col + 1) - 0.0625 * image->g(j, col + 3)));
-                    image->b(j, col) = CLIP((int)(-0.0625 * blue[j] + 0.5625 * image->b(j, col - 1) + 0.5625 * image->b(j, col + 1) - 0.0625 * image->b(j, col + 3)));
+                    image->r(j, col) = MAX(0.f, -0.0625f * (red[j] + image->r(j, col + 3)) + 0.5625f * (image->r(j, col - 1) + image->r(j, col + 1)));
+                    image->g(j, col) = MAX(0.f, -0.0625f * (green[j] + image->g(j, col + 3)) + 0.5625f * (image->g(j, col - 1) + image->g(j, col + 1)));
+                    image->b(j, col) = MAX(0.f, -0.0625f * (blue[j] + image->b(j, col + 3)) + 0.5625f * (image->b(j, col - 1) + image->b(j, col + 1)));
+                    if(d1xClip) {
+                        image->r(j, col) = MIN(image->r(j, col), MAXVALF);
+                        image->g(j, col) = MIN(image->g(j, col), MAXVALF);
+                        image->b(j, col) = MIN(image->b(j, col), MAXVALF);
+                    }
                 }
             }
-        } else if ((tran & TR_ROT) == TR_R270) {
-            for (int j = 0; j < imwidth; j++) {
-                image->r(imwidth - 1 - j, 2 * i) = red[j];
-                image->g(imwidth - 1 - j, 2 * i) = green[j];
-                image->b(imwidth - 1 - j, 2 * i) = blue[j];
-            }
-
-            if (i == 1 || i == 2) { // linear interpolation
-                for (int j = 0; j < imwidth; j++) {
-                    int row = imwidth - 1 - j;
+        } else if ((tran & TR_ROT) == TR_R270) { // rotate left
+            if (i == 0) {
+                for (int j = imwidth - 1, row = 0; j >= 0; j--, row++) {
+                    image->r(row, 2 * i) = red[j];
+                    image->g(row, 2 * i) = green[j];
+                    image->b(row, 2 * i) = blue[j];
+                }
+            } else if (i == 1 || i == 2) { // linear interpolation
+                for (int j = imwidth - 1, row = 0; j >= 0; j--, row++) {
+                    image->r(row, 2 * i) = red[j];
+                    image->g(row, 2 * i) = green[j];
+                    image->b(row, 2 * i) = blue[j];
                     image->r(row, 2 * i - 1) = (red[j] + image->r(row, 2 * i - 2)) * 0.5f;
                     image->g(row, 2 * i - 1) = (green[j] + image->g(row, 2 * i - 2)) * 0.5f;
                     image->b(row, 2 * i - 1) = (blue[j] + image->b(row, 2 * i - 2)) * 0.5f;
                 }
-            } else if (i == imheight - 1) {
-                for (int j = 0; j < imwidth; j++) {
-                    int row = imwidth - 1 - j;
-                    image->r(row, 2 * i - 1) = (red[j] + image->r(row, 2 * i - 2)) * 0.5f;
-                    image->g(row, 2 * i - 1) = (green[j] + image->g(row, 2 * i - 2)) * 0.5f;
-                    image->b(row, 2 * i - 1) = (blue[j] + image->b(row, 2 * i - 2)) * 0.5f;
-                    image->r(row, 2 * i - 3) = (image->r(row, 2 * i - 2) + image->r(row, 2 * i - 4)) * 0.5f;
-                    image->g(row, 2 * i - 3) = (image->g(row, 2 * i - 2) + image->g(row, 2 * i - 4)) * 0.5f;
-                    image->b(row, 2 * i - 3) = (image->b(row, 2 * i - 2) + image->b(row, 2 * i - 4)) * 0.5f;
-                }
-            } else if (i > 0 && i < imheight - 1) { // vertical bicubic interpolationi
-                for (int j = 0; j < imwidth; j++) {
-                    int row = imwidth - 1 - j;
-                    image->r(row, 2 * i - 3) = CLIP((int)(-0.0625 * red[j] + 0.5625 * image->r(row, 2 * i - 2) + 0.5625 * image->r(row, 2 * i - 4) - 0.0625 * image->r(row, 2 * i - 6)));
-                    image->g(row, 2 * i - 3) = CLIP((int)(-0.0625 * green[j] + 0.5625 * image->g(row, 2 * i - 2) + 0.5625 * image->g(row, 2 * i - 4) - 0.0625 * image->g(row, 2 * i - 6)));
-                    image->b(row, 2 * i - 3) = CLIP((int)(-0.0625 * blue[j] + 0.5625 * image->b(row, 2 * i - 2) + 0.5625 * image->b(row, 2 * i - 4) - 0.0625 * image->b(row, 2 * i - 6)));
+            } else if (i > 0 && i < imheight) { // vertical bicubic interpolation
+                for (int j = imwidth - 1, row = 0; j >= 0; j--, row++) {
+                    image->r(row, 2 * i - 3) = MAX(0.f, -0.0625f * (red[j] + image->r(row, 2 * i - 6)) + 0.5625f * (image->r(row, 2 * i - 2) + image->r(row, 2 * i - 4)));
+                    image->g(row, 2 * i - 3) = MAX(0.f, -0.0625f * (green[j] + image->g(row, 2 * i - 6)) + 0.5625f * (image->g(row, 2 * i - 2) + image->g(row, 2 * i - 4)));
+                    image->b(row, 2 * i - 3) = MAX(0.f, -0.0625f * (blue[j] + image->b(row, 2 * i - 6)) + 0.5625f * (image->b(row, 2 * i - 2) + image->b(row, 2 * i - 4)));
+                    if(d1xClip) {
+                        image->r(row, 2 * i - 3) = MIN(image->r(row, 2 * i - 3), MAXVALF);
+                        image->g(row, 2 * i - 3) = MIN(image->g(row, 2 * i - 3), MAXVALF);
+                        image->b(row, 2 * i - 3) = MIN(image->b(row, 2 * i - 3), MAXVALF);
+                    }
+                    image->r(row, 2 * i) = red[j];
+                    image->g(row, 2 * i) = green[j];
+                    image->b(row, 2 * i) = blue[j];
                 }
             }
-        } else {
+            if (i == imheight - 1) {
+                for (int j = imwidth - 1, row = 0; j >= 0; j--, row++) {
+                    image->r(row, 2 * i - 1) = MAX(0.f, -0.0625f * (red[j] + image->r(row, 2 * i - 4)) + 0.5625f * (image->r(row, 2 * i) + image->r(row, 2 * i - 2)));
+                    image->g(row, 2 * i - 1) = MAX(0.f, -0.0625f * (green[j] + image->g(row, 2 * i - 4)) + 0.5625f * (image->g(row, 2 * i) + image->g(row, 2 * i - 2)));
+                    image->b(row, 2 * i - 1) = MAX(0.f, -0.0625f * (blue[j] + image->b(row, 2 * i - 4)) + 0.5625f * (image->b(row, 2 * i) + image->b(row, 2 * i - 2)));
+                    if(d1xClip) {
+                        image->r(j, 2 * i - 1) = MIN(image->r(j, 2 * i - 1), MAXVALF);
+                        image->g(j, 2 * i - 1) = MIN(image->g(j, 2 * i - 1), MAXVALF);
+                        image->b(j, 2 * i - 1) = MIN(image->b(j, 2 * i - 1), MAXVALF);
+                    }
+                    image->r(row, 2 * i + 1) = (red[j] + image->r(row, 2 * i - 1)) / 2;
+                    image->g(row, 2 * i + 1) = (green[j] + image->g(row, 2 * i - 1)) / 2;
+                    image->b(row, 2 * i + 1) = (blue[j] + image->b(row, 2 * i - 1)) / 2;
+                    if (d1xHeightOdd) {
+                        image->r(row, 2 * i + 2) = (red[j] + image->r(row, 2 * i - 2)) / 2;
+                        image->g(row, 2 * i + 2) = (green[j] + image->g(row, 2 * i - 2)) / 2;
+                        image->b(row, 2 * i + 2) = (blue[j] + image->b(row, 2 * i - 2)) / 2;
+                    }
+                }
+            }
+        } else { // no coarse rotation
             rotateLine (red, image->r, tran, 2 * i, imwidth, imheight);
             rotateLine (green, image->g, tran, 2 * i, imwidth, imheight);
             rotateLine (blue, image->b, tran, 2 * i, imwidth, imheight);
-
             if (i == 1 || i == 2) { // linear interpolation
                 for (int j = 0; j < imwidth; j++) {
                     image->r(2 * i - 1, j) = (red[j] + image->r(2 * i - 2, j)) / 2;
                     image->g(2 * i - 1, j) = (green[j] + image->g(2 * i - 2, j)) / 2;
                     image->b(2 * i - 1, j) = (blue[j] + image->b(2 * i - 2, j)) / 2;
                 }
-            } else if (i == imheight - 1) {
+            } else if (i > 2 && i < imheight) { // vertical bicubic interpolation
                 for (int j = 0; j < imwidth; j++) {
-                    image->r(2 * i - 3, j) = (image->r(2 * i - 4, j) + image->r(2 * i - 2, j)) / 2;
-                    image->g(2 * i - 3, j) = (image->g(2 * i - 4, j) + image->g(2 * i - 2, j)) / 2;
-                    image->b(2 * i - 3, j) = (image->b(2 * i - 4, j) + image->b(2 * i - 2, j)) / 2;
-                    image->r(2 * i - 1, j) = (red[j] + image->r(2 * i - 2, j)) / 2;
-                    image->g(2 * i - 1, j) = (green[j] + image->g(2 * i - 2, j)) / 2;
-                    image->b(2 * i - 1, j) = (blue[j] + image->b(2 * i - 2, j)) / 2;
+                    image->r(2 * i - 3, j) = MAX(0.f, -0.0625f * (red[j] + image->r(2 * i - 6, j)) + 0.5625f * (image->r(2 * i - 2, j) + image->r(2 * i - 4, j)));
+                    image->g(2 * i - 3, j) = MAX(0.f, -0.0625f * (green[j] + image->g(2 * i - 6, j)) + 0.5625f * (image->g(2 * i - 2, j) + image->g(2 * i - 4, j)));
+                    image->b(2 * i - 3, j) = MAX(0.f, -0.0625f * (blue[j] + image->b(2 * i - 6, j)) + 0.5625f * (image->b(2 * i - 2, j) + image->b(2 * i - 4, j)));
+                    if(d1xClip) {
+                        image->r(2 * i - 3, j) = MIN(image->r(2 * i - 3, j), MAXVALF);
+                        image->g(2 * i - 3, j) = MIN(image->g(2 * i - 3, j), MAXVALF);
+                        image->b(2 * i - 3, j) = MIN(image->b(2 * i - 3, j), MAXVALF);
+                    }
                 }
-            } else if (i > 2 && i < imheight - 1) { // vertical bicubic interpolationi
+            } if (i == imheight - 1) {
                 for (int j = 0; j < imwidth; j++) {
-                    image->r(2 * i - 3, j) = CLIP((int)(-0.0625 * red[j] + 0.5625 * image->r(2 * i - 2, j) + 0.5625 * image->r(2 * i - 4, j) - 0.0625 * image->r(2 * i - 6, j)));
-                    image->g(2 * i - 3, j) = CLIP((int)(-0.0625 * green[j] + 0.5625 * image->g(2 * i - 2, j) + 0.5625 * image->g(2 * i - 4, j) - 0.0625 * image->g(2 * i - 6, j)));
-                    image->b(2 * i - 3, j) = CLIP((int)(-0.0625 * blue[j] + 0.5625 * image->b(2 * i - 2, j) + 0.5625 * image->b(2 * i - 4, j) - 0.0625 * image->b(2 * i - 6, j)));
+                    image->r(2 * i - 1, j) = MAX(0.f, -0.0625f * (red[j] + image->r(2 * i - 4, j)) + 0.5625f * (image->r(2 * i, j) + image->r(2 * i - 2, j)));
+                    image->g(2 * i - 1, j) = MAX(0.f, -0.0625f * (green[j] + image->g(2 * i - 4, j)) + 0.5625f * (image->g(2 * i, j) + image->g(2 * i - 2, j)));
+                    image->b(2 * i - 1, j) = MAX(0.f, -0.0625f * (blue[j] + image->b(2 * i - 4, j)) + 0.5625f * (image->b(2 * i, j) + image->b(2 * i - 2, j)));
+                    if(d1xClip) {
+                        image->r(2 * i - 1, j) = MIN(image->r(2 * i - 1, j), MAXVALF);
+                        image->g(2 * i - 1, j) = MIN(image->g(2 * i - 1, j), MAXVALF);
+                        image->b(2 * i - 1, j) = MIN(image->b(2 * i - 1, j), MAXVALF);
+                    }
+                    image->r(2 * i + 1, j) = (red[j] + image->r(2 * i - 1, j)) / 2;
+                    image->g(2 * i + 1, j) = (green[j] + image->g(2 * i - 1, j)) / 2;
+                    image->b(2 * i + 1, j) = (blue[j] + image->b(2 * i - 1, j)) / 2;
+                    if (d1xHeightOdd) {
+                        image->r(2 * i + 2, j) = (red[j] + image->r(2 * i - 2, j)) / 2;
+                        image->g(2 * i + 2, j) = (green[j] + image->g(2 * i - 2, j)) / 2;
+                        image->b(2 * i + 2, j) = (blue[j] + image->b(2 * i - 2, j)) / 2;
+                    }
                 }
             }
         }
@@ -1333,7 +1402,7 @@ void RawImageSource::getFullSize (int& w, int& h, int tr)
         h = (H - ri->get_FujiWidth()) * 2 + 1;
     } else if (d1x) {
         w = W;
-        h = 2 * H - 1;
+        h = 2 * H;
     } else {
         w = W;
         h = H;
@@ -1355,17 +1424,8 @@ void RawImageSource::getSize (int tran, PreviewProps pp, int& w, int& h)
 {
 
     tran = defTransform (tran);
-
-//    if (fuji) {
-//        return;
-//    }
-//    else if (d1x) {
-//        return;
-//    }
-//    else {
     w = pp.w / pp.skip + (pp.w % pp.skip > 0);
     h = pp.h / pp.skip + (pp.h % pp.skip > 0);
-//    }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1425,10 +1485,6 @@ int RawImageSource::load (Glib::ustring fname, bool batch)
     inverse33 (imatrices.rgb_cam, imatrices.cam_rgb);
 
     d1x  = ! ri->get_model().compare("D1X");
-
-    if (d1x) {
-        border = 8;
-    }
 
     if(ri->getSensorType() == ST_FUJI_XTRANS) {
         border = 7;
