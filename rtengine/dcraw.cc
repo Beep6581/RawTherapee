@@ -9,7 +9,9 @@
 /*RT*/#define NO_JASPER
 /*RT*/#define LOCALTIME
 /*RT*/#define DJGPP
-
+/*RT*/#define BENCHMARK
+/*RT*/#include "StopWatch.h"
+/*RT*/#include "opthelper.h"
 /*
    dcraw.c -- Dave Coffin's raw photo decoder
    Copyright 1997-2015 by Dave Coffin, dcoffin a cybercom o net
@@ -560,7 +562,31 @@ int CLASS canon_s2is()
   return 0;
 }
 
-unsigned CLASS getbithuff_t::operator() (int nbits, ushort *huff)
+inline unsigned CLASS getbithuff_t::operator() (int nbits, ushort *huff)
+{
+/*RT static unsigned bitbuf=0; */
+/*RT static int vbits=0, reset=0; */
+  unsigned c;
+
+  if (nbits > 25 || vbits < 0) return 0;
+  if (UNLIKELY(nbits < 0))
+    return bitbuf = vbits = 0;
+  if (nbits == 0) return 0;
+  while (vbits < nbits && LIKELY((c = fgetc(ifp)) != EOF)) {
+    bitbuf = (bitbuf << 8) + (uchar) c;
+    vbits += 8;
+  }
+  c = bitbuf << (32-vbits) >> (32-nbits);
+  if (huff) {
+    vbits -= huff[c] >> 8;
+    c = (uchar) huff[c];
+  } else
+    vbits -= nbits;
+  if (UNLIKELY(vbits < 0)) derror();
+  return c;
+}
+
+inline unsigned CLASS getbithuff_t::getbitshuff (int nbits, ushort *huff)
 {
 /*RT static unsigned bitbuf=0; */
 /*RT static int vbits=0, reset=0; */
@@ -570,7 +596,7 @@ unsigned CLASS getbithuff_t::operator() (int nbits, ushort *huff)
   if (nbits < 0)
     return bitbuf = vbits = reset = 0;
   if (nbits == 0 || vbits < 0) return 0;
-  while (!reset && vbits < nbits && (c = fgetc(ifp)) != EOF &&
+  while (!reset && vbits < nbits && LIKELY((c = fgetc(ifp)) != EOF) &&
     !(reset = zero_after_ff && c == 0xff && fgetc(ifp))) {
     bitbuf = (bitbuf << 8) + (uchar) c;
     vbits += 8;
@@ -581,12 +607,14 @@ unsigned CLASS getbithuff_t::operator() (int nbits, ushort *huff)
     c = (uchar) huff[c];
   } else
     vbits -= nbits;
-  if (vbits < 0) derror();
+  if (UNLIKELY(vbits < 0)) derror();
   return c;
 }
 
 #define getbits(n) getbithuff(n,0)
 #define gethuff(h) getbithuff(*h,h+1)
+#define getbits2(n) getbithuff.getbitshuff(n,0)
+#define gethuff2(h) getbithuff.getbitshuff(*h,h+1)
 
 /*
    Construct a decode tree according the specification in *source.
@@ -723,6 +751,7 @@ int CLASS canon_has_lowbits()
 
 void CLASS canon_load_raw()
 {
+BENCHFUN
   ushort *pixel, *prow, *huff[2];
   int nblocks, lowbits, i, c, row, r, save, val;
   int block, diffbuf[64], leaf, len, diff, carry=0, pnum=0, base[2];
@@ -732,20 +761,20 @@ void CLASS canon_load_raw()
   if (!lowbits) maximum = 0x3ff;
   fseek (ifp, 540 + lowbits*raw_height*raw_width/4, SEEK_SET);
   zero_after_ff = 1;
-  getbits(-1);
+  getbits2(-1);
   for (row=0; row < raw_height; row+=8) {
     pixel = raw_image + row*raw_width;
     nblocks = MIN (8, raw_height-row) * raw_width >> 6;
     for (block=0; block < nblocks; block++) {
       memset (diffbuf, 0, sizeof diffbuf);
       for (i=0; i < 64; i++ ) {
-	leaf = gethuff(huff[i > 0]);
+	leaf = gethuff2(huff[i > 0]);
 	if (leaf == 0 && i) break;
 	if (leaf == 0xff) continue;
 	i  += leaf >> 4;
 	len = leaf & 15;
 	if (len == 0) continue;
-	diff = getbits(len);
+	diff = getbits2(len);
 	if ((diff & (1 << (len-1))) == 0)
 	  diff -= (1 << len) - 1;
 	if (i < 64) diffbuf[i] = diff;
@@ -755,7 +784,7 @@ void CLASS canon_load_raw()
       for (i=0; i < 64; i++ ) {
 	if (pnum++ % raw_width == 0)
 	  base[0] = base[1] = 512;
-	if ((pixel[(block << 6) + i] = base[i & 1] += diffbuf[i]) >> 10)
+	if (UNLIKELY((pixel[(block << 6) + i] = base[i & 1] += diffbuf[i]) >> 10))
 	  derror();
       }
     }
@@ -844,7 +873,20 @@ void CLASS ljpeg_end (struct jhead *jh)
   free (jh->row);
 }
 
-int CLASS ljpeg_diff (ushort *huff)
+inline int CLASS ljpeg_diff (ushort *huff)
+{
+  int len, diff;
+
+  len = gethuff2(huff);
+  if (len == 16 && (!dng_version || dng_version >= 0x1010000))
+    return -32768;
+  diff = getbits2(len);
+  if ((diff & (1 << (len-1))) == 0)
+    diff -= (1 << len) - 1;
+  return diff;
+}
+
+inline int CLASS ljpeg_difffast (ushort *huff)
 {
   int len, diff;
 
@@ -869,7 +911,7 @@ ushort * CLASS ljpeg_row (int jrow, struct jhead *jh)
       do mark = (mark << 8) + (c = fgetc(ifp));
       while (c != EOF && mark >> 4 != 0xffd);
     }
-    getbits(-1);
+    getbits2(-1);
   }
   FORC3 row[c] = jh->row + jh->wide*jh->clrs*((jrow+c) & 1);
   for (col=0; col < jh->wide; col++)
@@ -889,7 +931,7 @@ ushort * CLASS ljpeg_row (int jrow, struct jhead *jh)
 	case 7: pred = (pred + row[1][0]) >> 1;				break;
 	default: pred = 0;
       }
-      if ((**row = pred + diff) >> jh->bits) derror();
+      if (UNLIKELY((**row = pred + diff) >> jh->bits)) derror();
       if (c <= jh->sraw) spred = **row;
       row[0]++; row[1]++;
     }
@@ -898,36 +940,79 @@ ushort * CLASS ljpeg_row (int jrow, struct jhead *jh)
 
 void CLASS lossless_jpeg_load_raw()
 {
-  int jwide, jrow, jcol, val, jidx, i, j, row=0, col=0;
-  struct jhead jh;
-  ushort *rp;
+    BENCHFUN
 
-  if (!ljpeg_start (&jh, 0)) return;
-  jwide = jh.wide * jh.clrs;
+    struct jhead jh;
 
-  for (jrow=0; jrow < jh.high; jrow++) {
-    rp = ljpeg_row (jrow, &jh);
-    if (load_flags & 1)
-      row = jrow & 1 ? height-1-jrow/2 : jrow/2;
-    for (jcol=0; jcol < jwide; jcol++) {
-      val = curve[*rp++];
-      if (cr2_slice[0]) {
-	jidx = jrow*jwide + jcol;
-	i = jidx / (cr2_slice[1]*raw_height);
-	if ((j = i >= cr2_slice[0]))
-		 i  = cr2_slice[0];
-	jidx -= i * (cr2_slice[1]*raw_height);
-	row = jidx / cr2_slice[1+j];
-	col = jidx % cr2_slice[1+j] + i*cr2_slice[1];
-      }
-      if (raw_width == 3984 && (col -= 2) < 0)
-	col += (row--,raw_width);
-      if ((unsigned) row < raw_height) RAW(row,col) = val;
-      if (++col >= raw_width)
-	col = (row++,0);
+    if (!ljpeg_start (&jh, 0)) { return; }
+    int jwide = jh.wide * jh.clrs;
+    int row = 0, col = 0;
+
+    for (int jrow=0; jrow < jh.high; jrow++) {
+        ushort *rp = ljpeg_row (jrow, &jh);
+        if (cr2_slice[0]) {
+            // we split the processing in three parts
+            // This avoids most of the div and mod operations inside the loops
+            // First and last loop will do most of the work
+            // Middle loop will be called only once (if at all)
+            // this reduces whole decoding time for a CR2 file which fits to this case by about 33%
+            int jidxbase = jrow * jwide;
+            int count = cr2_slice[1] * raw_height;
+            if(jidxbase + jwide - 1 < count) {
+                int row = jidxbase / cr2_slice[1];
+                int col = jidxbase - row * cr2_slice[1];
+                for (int jcol=0; jcol < jwide; jcol++,col++) {
+                    row = col < cr2_slice[1] ? row : row + 1;
+                    col = col < cr2_slice[1] ? col : 0;
+                    if (raw_width == 3984 && (col -= 2) < 0) {
+                        col += (row--,raw_width);
+                    }
+                    if ((unsigned) row < raw_height) { RAW(row,col) = curve[rp[jcol]]; }
+                }
+            } else if(UNLIKELY(jidxbase < count)) {
+                int div = jidxbase / count;
+                int mod = jidxbase - div * count;
+                for (int jcol=0; jcol < jwide; jcol++,mod++) {
+                    int i = div = mod <  count ? div : div + 1;
+                    mod = mod < count ? mod : 0;
+                    int j = i >= cr2_slice[0];
+                    i = j ? cr2_slice[0] : i;
+                    int jidx = jidxbase + jcol - i * count;
+                    int row = jidx / cr2_slice[1+j];
+                    int col = jidx - (row * cr2_slice[1+j]) + i * cr2_slice[1];
+                    if (raw_width == 3984 && (col -= 2) < 0) {
+                        col += (row--,raw_width);
+                    }
+                    if ((unsigned) row < raw_height) { RAW(row,col) = curve[rp[jcol]]; }
+                }
+            } else {
+                int row = (jidxbase-count) / cr2_slice[2];
+                int col = (jidxbase-count) - row * cr2_slice[2] + cr2_slice[1];
+                for (int jcol=0; jcol < jwide; jcol++,col++) {
+                    row = col < (cr2_slice[1]+cr2_slice[2]) ? row : row + 1;
+                    col = col < (cr2_slice[1]+cr2_slice[2]) ? col : cr2_slice[1];
+                    if (raw_width == 3984 && (col -= 2) < 0) {
+                        col += (row--,raw_width);
+                    }
+                    if ((unsigned) row < raw_height) { RAW(row,col) = curve[rp[jcol]]; }
+                }
+            }
+        } else {
+            if (load_flags & 1) {
+                row = jrow & 1 ? height-1-jrow/2 : jrow/2;
+            }
+            for (int jcol=0; jcol < jwide; jcol++) {
+                if (raw_width == 3984 && (col -= 2) < 0) {
+                    col += (row--,raw_width);
+                }
+                if ((unsigned) row < raw_height) { RAW(row,col) = curve[rp[jcol]]; }
+                if (++col >= raw_width) {
+                    col = (row++,0);
+                }
+            }
+        }
     }
-  }
-  ljpeg_end (&jh);
+    ljpeg_end (&jh);
 }
 
 void CLASS canon_sraw_load_raw()
@@ -1072,6 +1157,7 @@ void CLASS packed_dng_load_raw()
 
 void CLASS pentax_load_raw()
 {
+BENCHFUN
   ushort bit[2][15], huff[4097];
   int dep, row, col, diff, c, i;
   ushort vpred[2][2] = {{0,0},{0,0}}, hpred[2];
@@ -1089,16 +1175,17 @@ void CLASS pentax_load_raw()
   getbits(-1);
   for (row=0; row < raw_height; row++)
     for (col=0; col < raw_width; col++) {
-      diff = ljpeg_diff (huff);
+      diff = ljpeg_difffast (huff);
       if (col < 2) hpred[col] = vpred[row & 1][col] += diff;
       else	   hpred[col & 1] += diff;
       RAW(row,col) = hpred[col & 1];
-      if (hpred[col & 1] >> tiff_bps) derror();
+      if (UNLIKELY(hpred[col & 1] >> tiff_bps)) derror();
     }
 }
 
 void CLASS nikon_load_raw()
 {
+BENCHFUN
   static const uchar nikon_tree[][32] = {
     { 0,1,5,1,1,1,1,1,1,2,0,0,0,0,0,0,	/* 12-bit lossy */
       5,4,3,6,2,7,1,0,8,9,11,10,12 },
@@ -1155,8 +1242,8 @@ void CLASS nikon_load_raw()
 	diff -= (1 << len) - !shl;
       if (col < 2) hpred[col] = vpred[row & 1][col] += diff;
       else	   hpred[col & 1] += diff;
-      if ((ushort)(hpred[col & 1] + min) >= max) derror();
-      RAW(row,col) = curve[LIM((short)hpred[col & 1],0,0x3fff)];
+      if (UNLIKELY((ushort)(hpred[col & 1] + min) >= max)) derror();
+      RAW(row,col) = curve[hpred[col & 1] & 0x3fff];
     }
   }
   free (huff);
@@ -2291,6 +2378,7 @@ void CLASS panasonic_load_raw()
 
 void CLASS olympus_load_raw()
 {
+BENCHFUN
   ushort huff[4096];
   int row, col, nbits, sign, low, high, i, c, w, n, nw;
   int acarry[2][3], *carry, pred, diff;
@@ -2328,7 +2416,7 @@ void CLASS olympus_load_raw()
 	  else pred = (w + n) >> 1;
 	} else pred = ABS(w-nw) > ABS(n-nw) ? w : n;
       }
-      if ((RAW(row,col) = pred + ((diff << 2) | low)) >> 12) derror();
+      if (UNLIKELY((RAW(row,col) = pred + ((diff << 2) | low)) >> 12)) derror();
     }
   }
 }
@@ -2934,13 +3022,14 @@ void CLASS sony_load_raw()
     if (fread (pixel, 2, raw_width, ifp) < raw_width) derror();
     sony_decrypt ((unsigned *) pixel, raw_width/2, !row, key);
     for (col=0; col < raw_width; col++)
-      if ((pixel[col] = ntohs(pixel[col])) >> 14) derror();
+      if (UNLIKELY((pixel[col] = ntohs(pixel[col])) >> 14)) derror();
   }
   maximum = 0x3ff0;
 }
 
 void CLASS sony_arw_load_raw()
 {
+BENCHFUN
   ushort huff[32770];
   static const ushort tab[18] =
   { 0xf11,0xf10,0xe0f,0xd0e,0xc0d,0xb0c,0xa0b,0x90a,0x809,
@@ -2954,13 +3043,14 @@ void CLASS sony_arw_load_raw()
   for (col = raw_width; col--; )
     for (row=0; row < raw_height+1; row+=2) {
       if (row == raw_height) row = 1;
-      if ((sum += ljpeg_diff(huff)) >> 12) derror();
+      if (UNLIKELY((sum += ljpeg_difffast(huff)) >> 12)) derror();
       if (row < height) RAW(row,col) = sum;
     }
 }
 
 void CLASS sony_arw2_load_raw()
 {
+BENCHFUN
   uchar *data, *dp;
   ushort pix[16];
   int row, col, val, max, min, imax, imin, sh, bit, i;
