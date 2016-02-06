@@ -943,7 +943,7 @@ void ICMPanel::saveReferencePressed ()
         return;
     }
 
-    Gtk::FileChooserDialog dialog(M("TP_ICM_SAVEREFERENCE"), Gtk::FILE_CHOOSER_ACTION_SAVE);
+    Gtk::FileChooserDialog dialog (getToplevelWindow (this), M("TP_ICM_SAVEREFERENCE"), Gtk::FILE_CHOOSER_ACTION_SAVE);
     bindCurrentFolder (dialog, options.lastProfilingReferenceDir);
     dialog.set_current_name (lastRefFilename);
 

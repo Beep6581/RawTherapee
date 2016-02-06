@@ -324,7 +324,7 @@ void BatchQueuePanel::saveOptions ()
 void BatchQueuePanel::pathFolderButtonPressed ()
 {
 
-    Gtk::FileChooserDialog fc(M("PREFERENCES_OUTDIRFOLDER"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
+    Gtk::FileChooserDialog fc (getToplevelWindow (this), M("PREFERENCES_OUTDIRFOLDER"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
     fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
     fc.add_button( Gtk::StockID("gtk-ok"), Gtk::RESPONSE_OK);
     fc.set_filename(options.savePathFolder);

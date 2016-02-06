@@ -1845,7 +1845,7 @@ void Preferences::cancelPressed ()
 void Preferences::selectStartupDir ()
 {
 
-    Gtk::FileChooserDialog dialog(M("PREFERENCES_DIRSELECTDLG"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
+    Gtk::FileChooserDialog dialog (getToplevelWindow (this), M("PREFERENCES_DIRSELECTDLG"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
 //    dialog.set_transient_for(*this);
 
     //Add response buttons the the dialog:
