@@ -1408,6 +1408,7 @@ SSEFUNCTION int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thres
 
 #ifdef __SSE2__
                 // sum up 5*4 = 20 values using SSE
+                // 10 fabs function calls and float 10 additions with SSE
                 vfloat sum = vabsf(LVFU(cfablur[(rr - 2) * W + cc - 2])) + vabsf(LVFU(cfablur[(rr - 1) * W + cc - 2]));
                 sum += vabsf(LVFU(cfablur[(rr) * W + cc - 2]));
                 sum += vabsf(LVFU(cfablur[(rr + 1) * W + cc - 2]));
@@ -1421,7 +1422,7 @@ SSEFUNCTION int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thres
                 }
 
 #else
-
+                //  25 fabs function calls and 25 float additions without SSE
                 for (int mm = rr - 2; mm <= rr + 2; mm++) {
                     for (int nn = cc - 2; nn <= cc + 2; nn++) {
                         hfnbrave += fabsf(cfablur[mm * W + nn]);
@@ -2099,11 +2100,11 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
                     vfloat H, S, L;
                     int pos;
                     Color::rgb2hsl(LVFU(red[i][j]), LVFU(green[i][j]), LVFU(blue[i][j]), H, S, L);
-                    _mm_storeu_ps(&conversionBuffer[0][i - border][j - border], H);
-                    _mm_storeu_ps(&conversionBuffer[1][i - border][j - border], S);
+                    STVFU(conversionBuffer[0][i - border][j - border], H);
+                    STVFU(conversionBuffer[1][i - border][j - border], S);
                     L *= c32768;
-                    _mm_storeu_ps(&conversionBuffer[2][i - border][j - border], L);
-                    _mm_storeu_ps(&conversionBuffer[3][i - border][j - border], H);
+                    STVFU(conversionBuffer[2][i - border][j - border], L);
+                    STVFU(conversionBuffer[3][i - border][j - border], H);
 
                     if(lhist16RETI) {
                         for(int p = 0; p < 4; p++) {
@@ -2423,9 +2424,9 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
                 vfloat R, G, B;
                 Color::hsl2rgb(LVFU(conversionBuffer[0][i - border][j - border]), LVFU(conversionBuffer[1][i - border][j - border]), LVFU(LBuffer[i - border][j - border]) / c32768, R, G, B);
 
-                _mm_storeu_ps(&red[i][j], R);
-                _mm_storeu_ps(&green[i][j], G);
-                _mm_storeu_ps(&blue[i][j], B);
+                STVFU(red[i][j], R);
+                STVFU(green[i][j], G);
+                STVFU(blue[i][j], B);
             }
 
 #endif
@@ -2510,9 +2511,9 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
                 Color::Lab2XYZ(LVFU(LBuffer[i - border][j - border]), LVFU(conversionBuffer[0][i - border][j - border]), LVFU(conversionBuffer[1][i - border][j - border]), x_, y_, z_) ;
                 Color::xyz2rgb(x_, y_, z_, R, G, B, wipv);
 
-                _mm_storeu_ps(&red[i][j], R);
-                _mm_storeu_ps(&green[i][j], G);
-                _mm_storeu_ps(&blue[i][j], B);
+                STVFU(red[i][j], R);
+                STVFU(green[i][j], G);
+                STVFU(blue[i][j], B);
 
             }
 
@@ -3034,9 +3035,9 @@ SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur
 
         //vertical blur
 #ifdef __SSE2__
-        __m128  leninitv = _mm_set1_ps( (float)((int)(boxH / 2 + 1)));
-        __m128  onev = _mm_set1_ps( 1.0f );
-        __m128  temp1v, temp2v, lenv, lenp1v, lenm1v;
+        vfloat  leninitv = F2V( (float)((int)(boxH / 2 + 1)));
+        vfloat  onev = F2V( 1.0f );
+        vfloat  temp1v, temp2v, lenv, lenp1v, lenm1v;
         int row;
 #ifdef _OPENMP
         #pragma omp for
@@ -3052,29 +3053,29 @@ SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur
                 temp2v += LVFU(cfatmp[(i + 1) * W + col]) / lenv;
             }
 
-            _mm_storeu_ps(&cfablur[0 * W + col], temp1v);
-            _mm_storeu_ps(&cfablur[1 * W + col], temp2v);
+            STVFU(cfablur[0 * W + col], temp1v);
+            STVFU(cfablur[1 * W + col], temp2v);
 
             for (row = 2; row < boxH + 2; row += 2) {
                 lenp1v = lenv + onev;
                 temp1v = (temp1v * lenv + LVFU(cfatmp[(row + boxH) * W + col])) / lenp1v;
                 temp2v = (temp2v * lenv + LVFU(cfatmp[(row + boxH + 1) * W + col])) / lenp1v;
-                _mm_storeu_ps( &cfablur[row * W + col], temp1v);
-                _mm_storeu_ps( &cfablur[(row + 1)*W + col], temp2v);
+                STVFU(cfablur[row * W + col], temp1v);
+                STVFU(cfablur[(row + 1)*W + col], temp2v);
                 lenv = lenp1v;
             }
 
             for (; row < H - boxH - 1; row += 2) {
                 temp1v = temp1v + (LVFU(cfatmp[(row + boxH) * W + col]) - LVFU(cfatmp[(row - boxH - 2) * W + col])) / lenv;
                 temp2v = temp2v + (LVFU(cfatmp[(row + 1 + boxH) * W + col]) - LVFU(cfatmp[(row + 1 - boxH - 2) * W + col])) / lenv;
-                _mm_storeu_ps(&cfablur[row * W + col], temp1v);
-                _mm_storeu_ps(&cfablur[(row + 1)*W + col], temp2v);
+                STVFU(cfablur[row * W + col], temp1v);
+                STVFU(cfablur[(row + 1)*W + col], temp2v);
             }
 
             for(; row < H - boxH; row++) {
                 temp1v = temp1v + (LVFU(cfatmp[(row + boxH) * W + col]) - LVFU(cfatmp[(row - boxH - 2) * W + col])) / lenv;
-                _mm_storeu_ps(&cfablur[row * W + col], temp1v);
-                __m128 swapv = temp1v;
+                STVFU(cfablur[row * W + col], temp1v);
+                vfloat swapv = temp1v;
                 temp1v = temp2v;
                 temp2v = swapv;
 
@@ -3084,15 +3085,15 @@ SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur
                 lenm1v = lenv - onev;
                 temp1v = (temp1v * lenv - LVFU(cfatmp[(row - boxH - 2) * W + col])) / lenm1v;
                 temp2v = (temp2v * lenv - LVFU(cfatmp[(row - boxH - 1) * W + col])) / lenm1v;
-                _mm_storeu_ps(&cfablur[row * W + col], temp1v);
-                _mm_storeu_ps(&cfablur[(row + 1)*W + col], temp2v);
+                STVFU(cfablur[row * W + col], temp1v);
+                STVFU(cfablur[(row + 1)*W + col], temp2v);
                 lenv = lenm1v;
             }
 
             for(; row < H; row++) {
                 lenm1v = lenv - onev;
                 temp1v = (temp1v * lenv - LVFU(cfatmp[(row - boxH - 2) * W + col])) / lenm1v;
-                _mm_storeu_ps(&cfablur[(row)*W + col], temp1v);
+                STVFU(cfablur[(row)*W + col], temp1v);
             }
 
         }
