@@ -68,6 +68,7 @@ void rotateLine (const float* const line, rtengine::PlanarPtr<float> &channel, c
         break;
 
     case TR_NONE:
+    default:
         for (int j = 0; j < w; j++) {
             channel(i, j) = line[j];
         }
@@ -135,6 +136,7 @@ void transLineFuji (const float* const red, const float* const green, const floa
         break;
 
     case TR_NONE:
+    default:
         for (int j = start; j < end; j++) {
             int y = i + j - fw;
             int x = fw - i + j;
@@ -352,6 +354,7 @@ void transLineD1x (const float* const red, const float* const green, const float
         break;
 
     case TR_NONE: // no coarse rotation
+    default:
         rotateLine (red, image->r, tran, 2 * i, imwidth, imheight);
         rotateLine (green, image->g, tran, 2 * i, imwidth, imheight);
         rotateLine (blue, image->b, tran, 2 * i, imwidth, imheight);
@@ -3035,7 +3038,7 @@ SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur
 
         //vertical blur
 #ifdef __SSE2__
-        vfloat  leninitv = F2V( (float)((int)(boxH / 2 + 1)));
+        vfloat  leninitv = F2V(boxH / 2 + 1);
         vfloat  onev = F2V( 1.0f );
         vfloat  temp1v, temp2v, lenv, lenp1v, lenm1v;
         int row;
