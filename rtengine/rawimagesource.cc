@@ -22,6 +22,7 @@
 #include "rtengine.h"
 #include "rawimagesource.h"
 #include "rawimagesource_i.h"
+#include "jaggedarray.h"
 #include "median.h"
 #include "rawimage.h"
 #include "mytime.h"
@@ -480,15 +481,11 @@ RawImageSource::~RawImageSource ()
 
     if (hrmap[0] != NULL) {
         int dh = H / HR_SCALE;
-        freeArray<float>(hrmap[0], dh);
-        freeArray<float>(hrmap[1], dh);
-        freeArray<float>(hrmap[2], dh);
+        freeJaggedArray<float>(hrmap[0]);
+        freeJaggedArray<float>(hrmap[1]);
+        freeJaggedArray<float>(hrmap[2]);
     }
 
-    //if (needhr)
-    //    freeArray<char>(needhr, H);
-    //if (hpmap)
-    //    freeArray<char>(hpmap, H);
     if (camProfile) {
         cmsCloseProfile (camProfile);
     }

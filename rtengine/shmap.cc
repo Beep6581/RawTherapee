@@ -21,6 +21,7 @@
 #include "rtengine.h"
 #include "rt_math.h"
 #include "rawimagesource.h"
+#include "jaggedarray.h"
 #undef THREAD_PRIORITY_NORMAL
 #include "opthelper.h"
 
@@ -114,7 +115,7 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
         rangefn[lutSize - 1] = 1e-15f;
 
         // We need one temporary buffer
-        float ** buffer = allocArray<float> (W, H);
+        const JaggedArray<float> buffer (W, H);
 
         // the final result has to be in map
         // for an even number of levels that means: map => buffer, buffer => map
@@ -157,23 +158,6 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
         }
 
         dirpyr_shmap(dirpyrlo[indx], dirpyrlo[1 - indx], W, H, rangefn, level, scale );
-
-        freeArray<float>(buffer, H);
-
-        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        /*
-                // anti-alias filtering the result
-        #ifdef _OPENMP
-        #pragma omp for
-        #endif
-                for (int i=0; i<H; i++)
-                    for (int j=0; j<W; j++)
-                        if (i>0 && j>0 && i<H-1 && j<W-1)
-                            map[i][j] = (buffer[i-1][j-1]+buffer[i-1][j]+buffer[i-1][j+1]+buffer[i][j-1]+buffer[i][j]+buffer[i][j+1]+buffer[i+1][j-1]+buffer[i+1][j]+buffer[i+1][j+1])/9;
-                        else
-                            map[i][j] = buffer[i][j];
-        */
-
     }
 
     // update average, minimum, maximum
@@ -262,7 +246,7 @@ void SHMap::updateL (float** L, double radius, bool hq, int skip)
         //printf("lut=%d rf5=%f rfm=%f\n thre=%f",lutSize, rangefn[5],rangefn[lutSize-10],thresh );
 
         // We need one temporary buffer
-        float ** buffer = allocArray<float> (W, H);
+        const JaggedArray<float> buffer (W, H);
 
         // the final result has to be in map
         // for an even number of levels that means: map => buffer, buffer => map
@@ -306,23 +290,6 @@ void SHMap::updateL (float** L, double radius, bool hq, int skip)
         }
 
         dirpyr_shmap(dirpyrlo[indx], dirpyrlo[1 - indx], W, H, rangefn, level, scale );
-
-        freeArray<float>(buffer, H);
-
-        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        /*
-                // anti-alias filtering the result
-        #ifdef _OPENMP
-        #pragma omp for
-        #endif
-                for (int i=0; i<H; i++)
-                    for (int j=0; j<W; j++)
-                        if (i>0 && j>0 && i<H-1 && j<W-1)
-                            map[i][j] = (buffer[i-1][j-1]+buffer[i-1][j]+buffer[i-1][j+1]+buffer[i][j-1]+buffer[i][j]+buffer[i][j+1]+buffer[i+1][j-1]+buffer[i+1][j]+buffer[i+1][j+1])/9;
-                        else
-                            map[i][j] = buffer[i][j];
-        */
-
     }
 
     // update average, minimum, maximum
