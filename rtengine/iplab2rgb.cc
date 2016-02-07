@@ -30,14 +30,7 @@
 namespace rtengine
 {
 
-#define CLIP01(a) ((a)>0?((a)<1?(a):1):0)
-
 extern const Settings* settings;
-
-const double (*wprof[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best};
-const double (*iwprof[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz};
-const char* wprofnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB"};
-const int numprof = 7;
 
 void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
 {
@@ -209,18 +202,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         }
     } else {
 
-        double rgb_xyz[3][3];
-
-        for (int i = 0; i < numprof; i++) {
-            if (profile == wprofnames[i]) {
-                for (int m = 0; m < 3; m++)
-                    for (int n = 0; n < 3; n++) {
-                        rgb_xyz[m][n] = iwprof[i][m][n];
-                    }
-
-                break;
-            }
-        }
+        const auto rgb_xyz = iccStore->workingSpaceMatrix (profile);
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
