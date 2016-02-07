@@ -31,37 +31,6 @@
 namespace rtengine
 {
 
-// these two functions "simulate" and jagged array, but just use two allocs
-template<class T> T** allocArray (int W, int H, bool initZero = false)
-{
-
-    T** t = new T*[H];
-    t[0] = new T[H * W];
-
-    if (initZero) {
-        memset(t[0], 0, sizeof(T)*W * H);
-    }
-
-    for (int i = 1; i < H; i++) {
-        t[i] = t[i - 1] + W;
-    }
-
-    return t;
-}
-
-template<class T> void freeArray (T** a, int H)
-{
-
-    delete [] a[0];
-    delete [] a;
-}
-
-
-template<class T> void freeArray2 (T** a, int H)
-{
-    delete [] a[0];
-}
-
 class RawImageSource : public ImageSource
 {
 

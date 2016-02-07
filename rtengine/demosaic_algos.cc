@@ -21,6 +21,7 @@
 
 #include "rawimagesource.h"
 #include "rawimagesource_i.h"
+#include "jaggedarray.h"
 #include "median.h"
 #include "rawimage.h"
 #include "mytime.h"
@@ -94,40 +95,12 @@ void RawImageSource::eahd_demosaic ()
 
     // end of cielab preparation
 
-    float* rh[3];
-    float* gh[4];
-    float* bh[3];
-    float* rv[3];
-    float* gv[4];
-    float* bv[3];
-    float* lLh[3];
-    float* lah[3];
-    float* lbh[3];
-    float* lLv[3];
-    float* lav[3];
-    float* lbv[3];
-    float* homh[3];
-    float* homv[3];
-
-    for (int i = 0; i < 4; i++) {
-        gh[i] = new float[W];
-        gv[i] = new float[W];
-    }
-
-    for (int i = 0; i < 3; i++) {
-        rh[i] = new float[W];
-        bh[i] = new float[W];
-        rv[i] = new float[W];
-        bv[i] = new float[W];
-        lLh[i] = new float[W];
-        lah[i] = new float[W];
-        lbh[i] = new float[W];
-        lLv[i] = new float[W];
-        lav[i] = new float[W];
-        lbv[i] = new float[W];
-        homh[i] = new float[W];
-        homv[i] = new float[W];
-    }
+    const JaggedArray<float>
+            rh (W, 3), gh (W, 4), bh (W, 3),
+            rv (W, 3), gv (W, 4), bv (W, 3),
+            lLh (W, 3), lah (W, 3), lbh (W, 3),
+            lLv (W, 3), lav (W, 3), lbv (W, 3),
+            homh (W, 3), homv (W, 3);
 
     // interpolate first two lines
     interpolate_row_g (gh[0], gv[0], 0);
@@ -311,27 +284,9 @@ void RawImageSource::eahd_demosaic ()
             }
         }
 
-    freeArray2<float>(rh, 3);
-    freeArray2<float>(gh, 4);
-    freeArray2<float>(bh, 3);
-    freeArray2<float>(rv, 3);
-    freeArray2<float>(gv, 4);
-    freeArray2<float>(bv, 3);
-    freeArray2<float>(lLh, 3);
-    freeArray2<float>(lah, 3);
-    freeArray2<float>(lbh, 3);
-    freeArray2<float>(homh, 3);
-    freeArray2<float>(lLv, 3);
-    freeArray2<float>(lav, 3);
-    freeArray2<float>(lbv, 3);
-    freeArray2<float>(homv, 3);
-
     // Interpolate R and B
     for (int i = 0; i < H; i++) {
-        if (i == 0)
-            // rm, gm, bm must be recovered
-            //interpolate_row_rb_mul_pp (red, blue, NULL, green[i], green[i+1], i, rm, gm, bm, 0, W, 1);
-        {
+        if (i == 0) {
             interpolate_row_rb_mul_pp (red[i], blue[i], NULL, green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
         } else if (i == H - 1) {
             interpolate_row_rb_mul_pp (red[i], blue[i], green[i - 1], green[i], NULL, i, 1.0, 1.0, 1.0, 0, W, 1);
@@ -545,7 +500,7 @@ void RawImageSource::hphd_demosaic ()
         plistener->setProgress (0.0);
     }
 
-    float** hpmap = allocArray< float >(W, H, true);
+    const JaggedArray<float> hpmap (W, H, true);
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -590,17 +545,13 @@ void RawImageSource::hphd_demosaic ()
 #endif
 
     hphd_green (hpmap);
-    freeArray<float>(hpmap, H);//TODO: seems to cause sigabrt ???  why???
 
     if (plistener) {
         plistener->setProgress (0.66);
     }
 
     for (int i = 0; i < H; i++) {
-        if (i == 0)
-            // rm, gm, bm must be recovered
-            //interpolate_row_rb_mul_pp (red, blue, NULL, green[i], green[i+1], i, rm, gm, bm, 0, W, 1);
-        {
+        if (i == 0) {
             interpolate_row_rb_mul_pp (red[i], blue[i], NULL, green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
         } else if (i == H - 1) {
             interpolate_row_rb_mul_pp (red[i], blue[i], green[i - 1], green[i], NULL, i, 1.0, 1.0, 1.0, 0, W, 1);
