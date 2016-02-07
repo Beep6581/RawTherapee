@@ -2031,17 +2031,10 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                         float interm = 0.f;
 
                         if(cp.lip3 && cp.lipp) {
-                            // comparaison betwwen pixel and neighbours
-                            float kneigh = 38.f;
-                            float somm = 50.f;
-
-                            if(cp.neigh == 0) {
-                                kneigh = 38.f;
-                                somm = 50.f;
-                            } else if(cp.neigh == 1) {
-                                kneigh = 28.f;
-                                somm = 40.f;
-                            }
+                            // comparaison between pixel and neighbours
+                            const auto neigh = cp.neigh == 1;
+                            const auto kneigh = neigh ? 28.f : 38.f;
+                            const auto somm = neigh ? 40.f : 50.f;
 
                             for (int dir = 1; dir < 4; dir++) { //neighbours proxi
                                 koeLi[lvl * 3 + dir - 1][i * W_L + j] = (kneigh * koeLi[lvl * 3 + dir - 1][i * W_L + j] + 2.f * koeLi[lvl * 3 + dir - 1][(i - 1) * W_L + j] + 2.f * koeLi[lvl * 3 + dir - 1][(i + 1) * W_L + j]
