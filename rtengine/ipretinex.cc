@@ -45,7 +45,7 @@
 #include "rawimagesource.h"
 #include "improcfun.h"
 #include "opthelper.h"
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 
 #define MAX_RETINEX_SCALES   8
@@ -430,7 +430,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 mapmet = 4;
             }
 
-            double shradius = (double) deh.radius;
+            const double shradius = mapmet == 4 ? (double) deh.radius : 40.;
 
             if(deh.viewMethod == "mask") {
                 viewmet = 1;
@@ -480,9 +480,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 pond /= log(elogt);
             }
 
-            auto shmap = mapmet > 1 ? new SHMap (W_L, H_L, true) : nullptr;
-
-
+            auto shmap = ((mapmet == 2 || mapmet == 3 || mapmet == 4) && it == 1) ? new SHMap (W_L, H_L, true) : nullptr;
 
             float *buffer = new float[W_L * H_L];;
 
@@ -495,31 +493,39 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                     {
                         gaussianBlur (src, out, W_L, H_L, RetinexScales[scale], buffer);
                     } else { // reuse result of last iteration
+                        // out was modified in last iteration => restore it
+                        if((((mapmet == 2 && scale > 1) || mapmet == 3 || mapmet == 4) || (mapmet > 0 && mapcontlutili)) && it == 1)
+                        {
+#ifdef _OPENMP
+                            #pragma omp for
+#endif
+
+                            for (int i = 0; i < H_L; i++) {
+                                for (int j = 0; j < W_L; j++) {
+                                    out[i][j] = buffer[i * W_L + j];
+                                }
+                            }
+                        }
+
                         gaussianBlur (out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
                     }
+                    if((((mapmet == 2 && scale > 2) || mapmet == 3 || mapmet == 4) || (mapmet > 0 && mapcontlutili)) && it == 1 && scale > 0)
+                    {
+                        // out will be modified => store it for use in next iteration. We even don't need a new buffer because 'buffer' is free after gaussianBlur :)
+#ifdef _OPENMP
+                        #pragma omp for
+#endif
+
+                        for (int i = 0; i < H_L; i++) {
+                            for (int j = 0; j < W_L; j++) {
+                                buffer[i * W_L + j] = out[i][j];
+                            }
+                        }
+                    }
                 }
 
-                if(mapmet == 4) {
-                    shradius /= 1.;
-                } else {
-                    shradius = 40.;
-                }
-
-                //if(shHighlights > 0 || shShadows > 0) {
-                if(mapmet == 3) if(it == 1) {
-                        shmap->updateL (out, shradius, true, 1);    //wav Total
-                    }
-
-                if(mapmet == 2 && scale > 2) if(it == 1) {
-                        shmap->updateL (out, shradius, true, 1);    //wav partial
-                    }
-
-                if(mapmet == 4) if(it == 1) {
-                        shmap->updateL (out, shradius, false, 1);    //gauss
-                    }
-
-                //}
-                if (shmap) {
+                if(((mapmet == 2 && scale > 2) || mapmet == 3 || mapmet == 4) && it == 1) {
+                    shmap->updateL (out, shradius, true, 1);
                     h_th = shmap->max_f - deh.htonalwidth * (shmap->max_f - shmap->avg) / 100;
                     s_th = deh.stonalwidth * (shmap->avg - shmap->min_f) / 100;
                 }
@@ -531,26 +537,19 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
 #endif
 
-                if(mapmet > 0) {
+                if(mapmet > 0 && mapcontlutili && it == 1) {
 #ifdef _OPENMP
                     #pragma omp parallel for
 #endif
 
                     for (int i = 0; i < H_L; i++) {
-                        if(mapcontlutili) {
-                            int j = 0;
-
-                            for (; j < W_L; j++) {
-                                if(it == 1) {
-                                    out[i][j] = mapcurve[2.f * out[i][j]] / 2.f;
-                                }
-                            }
+                        for (int j = 0; j < W_L; j++) {
+                            out[i][j] = mapcurve[2.f * out[i][j]] / 2.f;
                         }
                     }
 
                 }
 
-                //if(shHighlights > 0 || shShadows > 0) {
                 if(((mapmet == 2 && scale > 2) || mapmet == 3 || mapmet == 4) && it == 1) {
 
 
@@ -559,9 +558,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 #endif
 
                     for (int i = 0; i < H_L; i++) {
-                        int j = 0;
-
-                        for (; j < W_L; j++) {
+                        for (int j = 0; j < W_L; j++) {
                             double mapval = 1.0 + shmap->map[i][j];
                             double factor = 1.0;
 
@@ -576,8 +573,6 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                         }
                     }
                 }
-
-                //}
 
 #ifdef _OPENMP
                 #pragma omp parallel for
