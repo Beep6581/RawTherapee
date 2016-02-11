@@ -6682,7 +6682,7 @@ void CLASS parse_fuji (int offset)
     } else if (tag == 0xc000) {
       c = order;
       order = 0x4949;
-      if ((tag = get4()) > 10000) tag = get4();
+      while ((tag = get4()) > 10000);
       width = tag;
       height = get4();
       order = c;
