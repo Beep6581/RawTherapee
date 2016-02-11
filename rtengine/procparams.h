@@ -41,6 +41,7 @@ class WavOpacityCurveBY;
 class WavOpacityCurveW;
 class WavOpacityCurveWL;
 class RetinextransmissionCurve;
+class RetinexgaintransmissionCurve;
 
 enum RenderingIntent {
     RI_PERCEPTUAL = INTENT_PERCEPTUAL,
@@ -282,6 +283,7 @@ public:
     std::vector<double>   cdHcurve;
     std::vector<double>   lhcurve;
     std::vector<double> transmissionCurve;
+    std::vector<double> gaintransmissionCurve;
     std::vector<double>   mapcurve;
     int     str;
     int     scal;
@@ -312,7 +314,9 @@ public:
     bool    medianmap;
     RetinexParams ();
     void setDefaults();
-    void getCurves(RetinextransmissionCurve &transmissionCurveLUT) const;
+    void getCurves(RetinextransmissionCurve &transmissionCurveLUT, RetinexgaintransmissionCurve &gaintransmissionCurveLUT) const;
+
+    static void getDefaultgaintransmissionCurve(std::vector<double> &curve);
 
     static void getDefaulttransmissionCurve(std::vector<double> &curve);
 };

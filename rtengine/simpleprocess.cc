@@ -129,15 +129,16 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         LUTf mapcurve (65536, 0);
         LUTu dummy;
         RetinextransmissionCurve dehatransmissionCurve;
+        RetinexgaintransmissionCurve dehagaintransmissionCurve;
         bool dehacontlutili = false;
         bool mapcontlutili = false;
         bool useHsl = false;
 //        multi_array2D<float, 3> conversionBuffer(1, 1);
         multi_array2D<float, 4> conversionBuffer(1, 1);
         imgsrc->retinexPrepareBuffers(params.icm, params.retinex, conversionBuffer, dummy);
-        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, mapcurve, dehatransmissionCurve, dehacontlutili, mapcontlutili, useHsl, dummy, dummy );
+        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, mapcurve, dehatransmissionCurve, dehagaintransmissionCurve, dehacontlutili, mapcontlutili, useHsl, dummy, dummy );
         float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-        imgsrc->retinex( params.icm, params.retinex, params.toneCurve, cdcurve, mapcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, mapcontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, dummy);
+        imgsrc->retinex( params.icm, params.retinex, params.toneCurve, cdcurve, mapcurve, dehatransmissionCurve, dehagaintransmissionCurve, conversionBuffer, dehacontlutili, mapcontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, dummy);
     }
 
     if (pl) {

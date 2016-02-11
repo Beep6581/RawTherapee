@@ -670,6 +670,7 @@ HISTORY_MSG_436;Retinex - M - Radius
 HISTORY_MSG_437;Retinex - M - Method
 HISTORY_MSG_438;Retinex - M - Equalizer
 HISTORY_MSG_439;Retinex - Preview
+HISTORY_MSG_440;Retinex - Gain transmission
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1667,6 +1668,7 @@ TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gau
 TP_RETINEX_FREEGAMMA;Free gamma
 TP_RETINEX_GAIN;Gain
 TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
+TP_RETINEX_GAINOFFS;Gain and Brightness (offset)
 TP_RETINEX_GAMMA;Gamma
 TP_RETINEX_GAMMA_FREE;Free
 TP_RETINEX_GAMMA_HIGH;High
@@ -1705,7 +1707,7 @@ TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no
 TP_RETINEX_NEIGHBOR;Radius
 TP_RETINEX_NEUTRAL;Reset
 TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
-TP_RETINEX_OFFSET;Brightness
+TP_RETINEX_OFFSET;Brightness (offset)
 TP_RETINEX_SCALES;Gaussian gradient
 TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Scale and radius are reduced when iterations increase, and conversely.
 TP_RETINEX_SETTINGS;Settings
@@ -1717,6 +1719,8 @@ TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
 TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
 TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nMean and Sigma.\nTm=Min TM=Max of transmission map.
 TP_RETINEX_TRANSMISSION;Transmission map
+TP_RETINEX_GAINTRANSMISSION;Gain transmission
+TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplfy or reduce transmission-map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate : gain
 TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
 TP_RETINEX_UNIFORM;Uniform
 TP_RETINEX_VARIANCE;Contrast

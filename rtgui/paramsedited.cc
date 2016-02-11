@@ -76,6 +76,7 @@ void ParamsEdited::set (bool v)
 //    retinex.grbl    = v;
     retinex.medianmap = v;
     retinex.transmissionCurve   = v;
+    retinex.gaintransmissionCurve   = v;
     retinex.highlights    = v;
     retinex.htonalwidth   = v;
     retinex.shadows       = v;
@@ -544,6 +545,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         retinex.cdHcurve = retinex.cdHcurve && p.retinex.cdHcurve == other.retinex.cdHcurve;
         retinex.lhcurve = retinex.lhcurve && p.retinex.lhcurve == other.retinex.lhcurve;
         retinex.transmissionCurve = retinex.transmissionCurve && p.retinex.transmissionCurve == other.retinex.transmissionCurve;
+        retinex.gaintransmissionCurve = retinex.gaintransmissionCurve && p.retinex.gaintransmissionCurve == other.retinex.gaintransmissionCurve;
         retinex.retinexMethod = retinex.retinexMethod && p.retinex.retinexMethod == other.retinex.retinexMethod;
         retinex.mapMethod = retinex.mapMethod && p.retinex.mapMethod == other.retinex.mapMethod;
         retinex.viewMethod = retinex.viewMethod && p.retinex.viewMethod == other.retinex.viewMethod;
@@ -1086,6 +1088,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (retinex.transmissionCurve) {
         toEdit.retinex.transmissionCurve    = mods.retinex.transmissionCurve;
+    }
+
+    if (retinex.gaintransmissionCurve) {
+        toEdit.retinex.gaintransmissionCurve    = mods.retinex.gaintransmissionCurve;
     }
 
     if (retinex.retinexMethod) {

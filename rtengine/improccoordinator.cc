@@ -242,16 +242,16 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
     }
 
-    if ((todo & (M_RETINEX|M_INIT)) && params.retinex.enabled) {
+    if ((todo & (M_RETINEX | M_INIT)) && params.retinex.enabled) {
         bool dehacontlutili = false;
         bool mapcontlutili = false;
         bool useHsl = false;
         LUTf cdcurve (65536, 0);
         LUTf mapcurve (65536, 0);
 
-        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, mapcurve, dehatransmissionCurve, dehacontlutili, mapcontlutili, useHsl, lhist16RETI, histLRETI);
+        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, mapcurve, dehatransmissionCurve, dehagaintransmissionCurve, dehacontlutili, mapcontlutili, useHsl, lhist16RETI, histLRETI);
         float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-        imgsrc->retinex( params.icm, params.retinex,  params.toneCurve, cdcurve, mapcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, mapcontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, histLRETI);//enabled Retinex
+        imgsrc->retinex( params.icm, params.retinex,  params.toneCurve, cdcurve, mapcurve, dehatransmissionCurve, dehagaintransmissionCurve, conversionBuffer, dehacontlutili, mapcontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, histLRETI);//enabled Retinex
 
         if(dehaListener) {
             dehaListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
@@ -782,6 +782,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             }
         }
     }
+
     // Update the monitor color transform if necessary
     if (todo & M_MONITOR) {
         ipf.updateColorProfiles(params.icm, monitorProfile, monitorIntent);

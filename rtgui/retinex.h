@@ -76,15 +76,18 @@ protected:
     Gtk::Label* mMLabels;
     Gtk::Label* transLabels;
     Gtk::Label* transLabels2;
+    Gtk::Frame *gainFrame;
 
     DiagonalCurveEditor* cdshape;
     DiagonalCurveEditor* cdshapeH;
     DiagonalCurveEditor* mapshape;
     CurveEditorGroup* transmissionCurveEditorG;
+    CurveEditorGroup* gaintransmissionCurve;
     sigc::connection retinexMethodConn, neutralconn, mapMethodConn, viewMethodConn;
     sigc::connection retinexColorSpaceConn;
     sigc::connection gammaretinexConn;
     FlatCurveEditor* transmissionShape;
+    FlatCurveEditor* gaintransmissionShape;
     FlatCurveEditor* lhshape;
     bool lastmedianmap;
     sigc::connection medianmapConn;

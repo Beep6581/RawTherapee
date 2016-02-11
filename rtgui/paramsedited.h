@@ -81,6 +81,7 @@ public:
 //    bool grbl;
     bool method;
     bool transmissionCurve;
+    bool gaintransmissionCurve;
     bool cdcurve;
     bool mapcurve;
     bool cdHcurve;

@@ -45,7 +45,6 @@
 #include "rawimagesource.h"
 #include "improcfun.h"
 #include "opthelper.h"
-#define BENCHMARK
 #include "StopWatch.h"
 
 #define MAX_RETINEX_SCALES   8
@@ -207,9 +206,8 @@ void mean_stddv( float **dst, float &mean, float &stddv, int W_L, int H_L, const
     stddv = (float)sqrt(stddv);
 }
 
-void RawImageSource::MSR(float** luminance, float** originalLuminance, float **exLuminance,  LUTf & mapcurve, bool &mapcontlutili, int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
+void RawImageSource::MSR(float** luminance, float** originalLuminance, float **exLuminance,  LUTf & mapcurve, bool &mapcontlutili, int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
-    BENCHFUN
 
     if (deh.enabled) {//enabled
         float         mean, stddv, maxtr, mintr;
@@ -733,7 +731,8 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 delta = 1.0f;
             }
 
-            float cdfactor = gain2 * 32768.f / delta;
+            //  float cdfactor = gain2 * 32768.f / delta;
+            float cdfactor = 32768.f / delta;
             maxCD = -9999999.f;
             minCD = 9999999.f;
             // coeff for auto    "transmission" with 2 sigma #95% datas
@@ -742,22 +741,72 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             float bza = 16300.f / (2.f * stddv);
             float bzb = 16300.f - bza * (mean);
 
+//prepare work for curve gain
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
 
+            for (int i = 0; i < H_L; i++) {
+                for (int j = 0; j < W_L; j++) {
+                    luminance[i][j] = luminance[i][j] - mini;
+                }
+            }
+
+            mean = 0.f;
+            stddv = 0.f;
+            // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
+
+            mean_stddv2( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
+            float asig, bsig, amax, bmax, amin, bmin;
+
+            if (dehagaintransmissionCurve && mean != 0.f && stddv != 0.f) { //if curve
+                asig = 0.166666f / stddv;
+                bsig = 0.5f - asig * mean;
+                amax = 0.333333f / (maxtr - mean - stddv);
+                bmax = 1.f - amax * maxtr;
+                amin = 0.333333f / (mean - stddv - mintr);
+                bmin = -amin * mintr;
+
+                asig *= 500.f;
+                bsig *= 500.f;
+                amax *= 500.f;
+                bmax *= 500.f;
+                amin *= 500.f;
+                bmin *= 500.f;
+            }
 
 #ifdef _OPENMP
             #pragma omp parallel
 #endif
             {
+                float absciss;
                 float cdmax = -999999.f, cdmin = 999999.f;
-
 #ifdef _OPENMP
                 #pragma omp for
 #endif
 
                 for ( int i = 0; i < H_L; i ++ )
                     for (int j = 0; j < W_L; j++) {
-                        //float cd = cdfactor * ( luminance[i][j] * logBetaGain - mini ) + offse;
-                        float cd = cdfactor * ( luminance[i][j]  - mini ) + offse;
+                        float gan;
+
+                        if (dehagaintransmissionCurve && mean != 0.f && stddv != 0.f) {
+
+                            if (LIKELY(fabsf(luminance[i][j] - mean) < stddv)) {
+                                absciss = asig * luminance[i][j] + bsig;
+                            } else if (luminance[i][j] >= mean) {
+                                absciss = amax * luminance[i][j] + bmax;
+                            } else { /*if(luminance[i][j] <= mean - stddv)*/
+                                absciss = amin * luminance[i][j] + bmin;
+                            }
+
+
+                            //    float cd = cdfactor * ( luminance[i][j]  - mini ) + offse;
+                            gan = 2.f * (dehagaintransmissionCurve[absciss]); //new gain function transmission
+                        } else {
+                            gan = 0.5f;
+                        }
+
+                        float cd = gan * cdfactor * ( luminance[i][j] ) + offse;
 
                         if(cd > cdmax) {
                             cdmax = cd;
