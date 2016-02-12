@@ -123,7 +123,7 @@ RetinexParams::RetinexParams ()
 
 void RetinexParams::getDefaulttransmissionCurve(std::vector<double> &curve)
 {
-    double v[12] =   {   0.00, 0.34, 0.35, 0.35,
+    double v[12] =   {   0.00, 0.50, 0.35, 0.35,
                          0.60, 0.75, 0.35, 0.35,
                          1.00, 0.50, 0.35, 0.35,
                      };
