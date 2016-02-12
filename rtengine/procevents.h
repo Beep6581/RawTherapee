@@ -467,6 +467,7 @@ enum ProcEvent {
     EvRetinexmapcurve = 437,
     EvviewMethod = 438,
     EvRetinexgaintransmission = 439,
+    EvLskal = 440,
     NUMOFEVENTS
 };
 }

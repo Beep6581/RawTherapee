@@ -671,6 +671,7 @@ HISTORY_MSG_437;Retinex - M - Method
 HISTORY_MSG_438;Retinex - M - Equalizer
 HISTORY_MSG_439;Retinex - Preview
 HISTORY_MSG_440;Retinex - Gain transmission
+HISTORY_MSG_441;Retinex - Scale
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1665,10 +1666,11 @@ TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
 TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Strength according to hue Strength=f(H)\nThis curve also acts on chroma when using the "Highlight" retinex method.
 TP_RETINEX_CURVEEDITOR_MAP;L=f(L)
 TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gaussian mask or wavelet mask.\nBeware of artifacts!
+TP_RETINEX_EQUAL;Equalizer
 TP_RETINEX_FREEGAMMA;Free gamma
 TP_RETINEX_GAIN;Gain
 TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
-TP_RETINEX_GAINOFFS;Gain and Brightness (offset)
+TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 TP_RETINEX_GAMMA;Gamma
 TP_RETINEX_GAMMA_FREE;Free
 TP_RETINEX_GAMMA_HIGH;High
@@ -1686,6 +1688,7 @@ TP_RETINEX_HIGHLIGHT;Highlight threshold
 TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.
 TP_RETINEX_HSLSPACE_LIN;HSL-Linear
 TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
+TP_RETINEX_ITERF;Tone mapping
 TP_RETINEX_ITER;Iterations (Tone-mapping)
 TP_RETINEX_ITER_TOOLTIP;Simulate a tone-mapping operator.\nHigh values increase the processing time.
 TP_RETINEX_LABEL;Retinex
@@ -1707,17 +1710,19 @@ TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no
 TP_RETINEX_NEIGHBOR;Radius
 TP_RETINEX_NEUTRAL;Reset
 TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
-TP_RETINEX_OFFSET;Brightness (offset)
+TP_RETINEX_OFFSET;Offset (brightness)
 TP_RETINEX_SCALES;Gaussian gradient
 TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Scale and radius are reduced when iterations increase, and conversely.
 TP_RETINEX_SETTINGS;Settings
 TP_RETINEX_SLOPE;Free gamma slope
+TP_RETINEX_SKAL;Scale
 TP_RETINEX_STRENGTH;Strength
 TP_RETINEX_THRESHOLD;Threshold
 TP_RETINEX_THRESHOLD_TOOLTIP;Limits in/out.\nIn = image source,\nOut = image gauss.
 TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
 TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
 TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nMean and Sigma.\nTm=Min TM=Max of transmission map.
+TP_RETINEX_TRANF;Transmission
 TP_RETINEX_TRANSMISSION;Transmission map
 TP_RETINEX_GAINTRANSMISSION;Gain transmission
 TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplfy or reduce transmission-map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate : gain

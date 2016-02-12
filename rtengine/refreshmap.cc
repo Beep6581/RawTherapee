@@ -466,7 +466,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RETINEX,          // EvmapMethod
     DEMOSAIC,         // EvRetinexmapcurve
     DEMOSAIC,          // EvviewMethod
-    RETINEX          // EvRetinexgaintransmission
+    RETINEX,          // EvRetinexgaintransmission
+    RETINEX         //EvLskal
 
 };
 

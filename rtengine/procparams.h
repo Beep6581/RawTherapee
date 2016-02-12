@@ -310,7 +310,7 @@ public:
     int     limd;
     int     highl;
     double     baselog;
-//    int     grbl;
+    int     skal;
     bool    medianmap;
     RetinexParams ();
     void setDefaults();

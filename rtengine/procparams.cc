@@ -158,7 +158,7 @@ void RetinexParams::setDefaults()
 {
     enabled = false;
     str      = 20;
-    scal        = 3;
+    scal        = 0;
     iter = 1;
     grad = 1;
     grads = 1;
@@ -177,7 +177,7 @@ void RetinexParams::setDefaults()
     radius        = 40;
 
     baselog = 2.71828;
-//    grbl = 50;
+    skal = 3;
     retinexMethod = "high";
     mapMethod = "none";
     viewMethod = "none";
@@ -1536,9 +1536,9 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         keyFile.set_double ("Retinex", "baselog",               retinex.baselog);
     }
 
-//    if (!pedited || pedited->retinex.grbl) {
-//        keyFile.set_integer ("Retinex", "grbl",               retinex.grbl);
-//    }
+    if (!pedited || pedited->retinex.skal) {
+        keyFile.set_integer ("Retinex", "skal",               retinex.skal);
+    }
 
     if (!pedited || pedited->retinex.retinexMethod) {
         keyFile.set_string  ("Retinex", "RetinexMethod", retinex.retinexMethod);
@@ -4065,14 +4065,14 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
-            /*            if (keyFile.has_key ("Retinex", "grbl"))     {
-                            retinex.grbl   = keyFile.get_integer ("Retinex", "grbl");
+            if (keyFile.has_key ("Retinex", "skal"))     {
+                retinex.skal   = keyFile.get_integer ("Retinex", "skal");
 
-                            if (pedited) {
-                                pedited->retinex.grbl = true;
-                            }
-                        }
-            */
+                if (pedited) {
+                    pedited->retinex.skal = true;
+                }
+            }
+
             if (keyFile.has_key ("Retinex", "CDCurve"))         {
                 retinex.cdcurve            = keyFile.get_double_list ("Retinex", "CDCurve");
 
@@ -7568,7 +7568,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && retinex.radius == other.retinex.radius
 
         && retinex.baselog == other.retinex.baselog
-//        && retinex.grbl == other.retinex.grbl
+        && retinex.skal == other.retinex.skal
         && retinex.offs == other.retinex.offs
         && retinex.retinexMethod == other.retinex.retinexMethod
         && retinex.mapMethod == other.retinex.mapMethod

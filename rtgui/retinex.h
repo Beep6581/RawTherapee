@@ -35,7 +35,7 @@ protected:
     Adjuster* limd;
     Adjuster* highl;
     Adjuster* baselog;
-    Adjuster* grbl;
+    Adjuster* skal;
     Adjuster* gam;
     Adjuster* slope;
     Adjuster* highlights;
@@ -77,6 +77,9 @@ protected:
     Gtk::Label* transLabels;
     Gtk::Label* transLabels2;
     Gtk::Frame *gainFrame;
+    Gtk::Frame *tranFrame;
+    Gtk::Frame *iterFrame;
+    Gtk::Frame *equalFrame;
 
     DiagonalCurveEditor* cdshape;
     DiagonalCurveEditor* cdshapeH;

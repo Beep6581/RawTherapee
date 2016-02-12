@@ -236,6 +236,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         bool higplus = false ;
         float elogt;
         float hl = deh.baselog;
+        scal = deh.skal;
 
         if(hl >= 2.71828f) {
             elogt = 2.71828f + SQR(SQR(hl - 2.71828f));
@@ -292,11 +293,11 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
             float grads;
             float grad = 1.f;
-            float sc = 3.f;
+            float sc = scal;
 
             if(gradient == 0) {
                 grad = 1.f;
-                sc = 3.f;
+                sc = scal;//3.f
             } else if(gradient == 1) {
                 grad = 0.25f * it + 0.75f;
                 sc = -0.5f * it + 4.5f;
@@ -334,6 +335,10 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             else if(gradient == -1) {
                 grad = -0.125f * it + 1.125f;
                 sc = 3.f;
+            }
+
+            if(iter == 1) {
+                sc = scal;
             }
 
             float varx;
@@ -396,7 +401,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             }
 
             strengthx = ks * strength;
-
+            //printf("scale=%d\n", scal);
             retinex_scales( RetinexScales, scal, moderetinex, nei / grad, high );
 
             float *src[H_L] ALIGNED16;
