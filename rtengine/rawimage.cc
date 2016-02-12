@@ -495,11 +495,13 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
             if (cc && cc->has_rawCrop()) {
                 int lm, tm, w, h;
                 cc->get_rawCrop(lm, tm, w, h);
-
-                if(((int)top_margin - tm) & 1) { // we have an odd border difference
-                    filters = (filters << 4) | (filters >> 28);    // left rotate filters by 4 bits
+                if(isXtrans()) {
+                    shiftXtransMatrix(6 - ((top_margin - tm)%6), 6 - ((left_margin - lm)%6));
+                } else {
+                    if(((int)top_margin - tm) & 1) { // we have an odd border difference
+                        filters = (filters << 4) | (filters >> 28);    // left rotate filters by 4 bits
+                    }
                 }
-
                 left_margin = lm;
                 top_margin = tm;
 
