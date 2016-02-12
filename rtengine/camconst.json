@@ -927,6 +927,13 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "ranges": { "white": 4040 }
     },
 
+    { // Quality B
+     "make_model": "FUJIFILM X-PRO2",
+     "dcraw_matrix": [ 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 ], // DNG_v9.4 D65
+     "raw_crop": [ 0, 0, 6032, 4032 ], // full raw 6160,4032, Usable 6032,4032 - experimental crop
+     "ranges": { "white": 16100 }
+     },
+
     { // Quality B, Matrix from Adobe's dcp D65 instead of the internal in Leica's DNG
         "make_model": [ "LEICA SL (Typ 601)", "LEICA Q (Typ 116)" ],
         "dcraw_matrix": [ 10068,-4043,-1068,-5319,14268,1044,-765,1701,6522 ], // DCP D65

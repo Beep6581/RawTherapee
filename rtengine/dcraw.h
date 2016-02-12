@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -59,7 +59,7 @@ public:
     ,RT_blacklevel_from_constant(0)
     ,RT_matrix_from_constant(0)
 	,getbithuff(this,ifp,zero_after_ff)
-	,ph1_bithuff(this,ifp,order)	
+	,ph1_bithuff(this,ifp,order)
 	,pana_bits(ifp,load_flags)
     {
         memset(&hbd, 0, sizeof(hbd));
@@ -100,7 +100,7 @@ protected:
     double gamm[6];
     dcrawImage_t image;
     float bright, threshold, user_mul[4];
-    
+
     int half_size, four_color_rgb, document_mode, highlight;
     int verbose, use_auto_wb, use_camera_wb, use_camera_matrix;
     int output_color, output_bps, output_tiff, med_passes;
@@ -111,7 +111,7 @@ protected:
     int RT_matrix_from_constant;
 
     float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
-    
+
     int histogram[4][0x2000];
     void (DCraw::*write_thumb)(), (DCraw::*write_fun)();
     void (DCraw::*load_raw)(), (DCraw::*thumb_load_raw)();
@@ -163,7 +163,7 @@ protected:
       int rat[10];
       unsigned gps[26];
       char desc[512], make[64], model[64], soft[32], date[20], artist[64];
-    };    
+    };
 protected:
 
 int fcol (int row, int col);
@@ -362,7 +362,7 @@ void crop_masked_pixels();
 
 void tiff_get (unsigned base,	unsigned *tag, unsigned *type, unsigned *len, unsigned *save);
 void parse_thumb_note (int base, unsigned toff, unsigned tlen);
-int  parse_tiff_ifd (int base);	
+int  parse_tiff_ifd (int base);
 void parse_makernote (int base, int uptag);
 void get_timestamp (int reversed);
 void parse_exif (int base);
@@ -397,6 +397,19 @@ void identify();
 void apply_profile (const char *input, const char *output);
 void jpeg_thumb() {}  // not needed
 bool dcraw_coeff_overrides(const char make[], const char model[], int iso_speed, short trans[12], int *black_level, int *white_level);
+void shiftXtransMatrix( const int offsy, const int offsx) {
+    char xtransTemp[6][6];
+    for(int row = 0;row < 6; row++) {
+        for(int col = 0;col < 6; col++) {
+            xtransTemp[row][col] = xtrans[(row+offsy)%6][(col+offsx)%6];
+        }
+    }
+    for(int row = 0;row < 6; row++) {
+        for(int col = 0;col < 6; col++) {
+            xtrans[row][col] = xtransTemp[row][col];
+        }
+    }
+}
 
 };
 
