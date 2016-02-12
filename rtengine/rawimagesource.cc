@@ -2447,46 +2447,113 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         // gamut control only in Lab mode
         const bool highlight = Tc.hrenabled;
 #ifdef _OPENMP
-        #pragma omp parallel for
+        #pragma omp parallel
+#endif
+        {
+#ifdef __SSE2__
+            // we need some line buffers to precalculate some expensive stuff using SSE
+            float atan2Buffer[W] ALIGNED16;
+            float sqrtBuffer[W] ALIGNED16;
+            float sincosxBuffer[W] ALIGNED16;
+            float sincosyBuffer[W] ALIGNED16;
+            const vfloat c327d68v = F2V(327.68);
+            const vfloat onev = F2V(1.f);
+#endif // __SSE2__
+#ifdef _OPENMP
+            #pragma omp for
 #endif
 
-        for (int i = border; i < H - border; i++ ) {
-            for (int j = border; j < W - border; j++) {
+            for (int i = border; i < H - border; i++ ) {
+#ifdef __SSE2__
+                // vectorized precalculation
+                {
+                    int j = border;
 
-                float Lprov1 = (LBuffer[i - border][j - border]) / 327.68f;
-                float Chprov1 = sqrt(SQR(conversionBuffer[0][i - border][j - border]) + SQR(conversionBuffer[1][i - border][j - border])) / 327.68f;
-                float  HH = xatan2f(conversionBuffer[1][i - border][j - border], conversionBuffer[0][i - border][j - border]);
-                float2 sincosval;
-                float valp;
-                float chr;
-
-                if(chutili) {  // c=f(H)
+                    for (; j < W - border - 3; j += 4)
                     {
-                        valp = float((chcurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5f));
-                        Chprov1 *= (1.f + 2.f * valp);
+                        vfloat av = LVFU(conversionBuffer[0][i - border][j - border]);
+                        vfloat bv = LVFU(conversionBuffer[1][i - border][j - border]);
+                        vfloat chprovv = vsqrtf(SQRV(av) + SQRV(bv));
+                        STVF(sqrtBuffer[j - border], chprovv / c327d68v);
+                        vfloat HHv = xatan2f(bv, av);
+                        STVF(atan2Buffer[j - border], HHv);
+                        av /= chprovv;
+                        bv /= chprovv;
+                        vmask selMask = vmaskf_eq(chprovv, ZEROV);
+                        STVF(sincosyBuffer[j - border], vself(selMask, onev, av));
+                        STVF(sincosxBuffer[j - border], vselfnotzero(selMask, bv));
+                    }
+
+                    for (; j < W - border; j++)
+                    {
+                        float aa = conversionBuffer[0][i - border][j - border];
+                        float bb = conversionBuffer[1][i - border][j - border];
+                        float Chprov1 = sqrt(SQR(aa) + SQR(bb)) / 327.68f;
+                        sqrtBuffer[j - border] = Chprov1;
+                        float HH = xatan2f(bb, aa);
+                        atan2Buffer[j - border] = HH;
+
+                        if(Chprov1 == 0.0f) {
+                            sincosyBuffer[j - border] = 1.f;
+                            sincosxBuffer[j - border] = 0.0f;
+                        } else {
+                            sincosyBuffer[j - border] = aa / (Chprov1 * 327.68f);
+                            sincosxBuffer[j - border] = bb / (Chprov1 * 327.68f);
+                        }
                     }
                 }
+#endif // __SSE2__
 
-                sincosval = xsincosf(HH);
-                float R, G, B;
-#ifdef _DEBUG
-                bool neg = false;
-                bool more_rgb = false;
-                //gamut control : Lab values are in gamut
-                Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
+                for (int j = border; j < W - border; j++) {
+                    float Lprov1 = (LBuffer[i - border][j - border]) / 327.68f;
+#ifdef __SSE2__
+                    float Chprov1 = sqrtBuffer[j - border];
+                    float  HH = atan2Buffer[j - border];
+                    float2 sincosval;
+                    sincosval.x = sincosxBuffer[j - border];
+                    sincosval.y = sincosyBuffer[j - border];
+
 #else
-                //gamut control : Lab values are in gamut
-                Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
+                    float aa = conversionBuffer[0][i - border][j - border];
+                    float bb = conversionBuffer[1][i - border][j - border];
+                    float Chprov1 = sqrt(SQR(aa) + SQR(bb)) / 327.68f;
+                    float  HH = xatan2f(bb, aa);
+                    float2 sincosval;// = xsincosf(HH);
+
+                    if(Chprov1 == 0.0f) {
+                        sincosval.y = 1.f;
+                        sincosval.x = 0.0f;
+                    } else {
+                        sincosval.y = aa / (Chprov1 * 327.68f);
+                        sincosval.x = bb / (Chprov1 * 327.68f);
+                    }
+
+#endif
+
+                    if(chutili) {  // c=f(H)
+                        float valp = float((chcurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5f));
+                        Chprov1 *= (1.f + 2.f * valp);
+                    }
+
+                    float R, G, B;
+#ifdef _DEBUG
+                    bool neg = false;
+                    bool more_rgb = false;
+                    //gamut control : Lab values are in gamut
+                    Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
+#else
+                    //gamut control : Lab values are in gamut
+                    Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
 #endif
 
 
 
-                conversionBuffer[0][i - border][j - border] = 327.68f * Chprov1 * sincosval.y;
-                conversionBuffer[1][i - border][j - border] = 327.68f * Chprov1 * sincosval.x;
-                LBuffer[i - border][j - border] = Lprov1 * 327.68f;
+                    conversionBuffer[0][i - border][j - border] = 327.68f * Chprov1 * sincosval.y;
+                    conversionBuffer[1][i - border][j - border] = 327.68f * Chprov1 * sincosval.x;
+                    LBuffer[i - border][j - border] = Lprov1 * 327.68f;
+                }
             }
         }
-
         //end gamut control
 #ifdef __SSE2__
         vfloat wipv[3][3];
