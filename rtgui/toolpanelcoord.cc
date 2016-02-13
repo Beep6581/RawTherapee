@@ -349,8 +349,7 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
     if (event == rtengine::EvPhotoLoaded || event == rtengine::EvProfileChanged || event == rtengine::EvHistoryBrowsed || event == rtengine::EvCTRotate) {
         // updating the "on preview" geometry
         int fw, fh;
-        rtengine::ImageSource *ii = (rtengine::ImageSource*)ipc->getInitialImage();
-        ii->getFullSize (fw, fh, tr);
+        ipc->getInitialImage()->getImageSource()->getFullSize (fw, fh, tr);
         gradient->updateGeometry (params->gradient.centerX, params->gradient.centerY, params->gradient.feather, params->gradient.degree, fw, fh);
     }
 
@@ -430,8 +429,7 @@ void ToolPanelCoordinator::profileChange  (const PartialProfile *nparams, rtengi
     }
 
     // trimming overflowing cropped area
-    rtengine::ImageSource *ii = (rtengine::ImageSource*)ipc->getInitialImage();
-    ii->getFullSize (fw, fh, tr);
+    ipc->getInitialImage()->getImageSource()->getFullSize (fw, fh, tr);
     crop->trim(params, fw, fh);
 
     // updating the GUI with updated values

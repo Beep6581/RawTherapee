@@ -211,6 +211,7 @@ void CropWindow::setSize (int w, int h, bool norefresh)
     }
 
     if (!norefresh) {
+        ObjectMOBuffer::resize(imgAreaW, imgAreaH);
         cropHandler.setWSize (imgAreaW, imgAreaH);
     }
 
@@ -1543,8 +1544,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             }
 
             EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
-
-            if (editSubscriber && bufferCreated()) {
+            if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS && bufferCreated()) {
 
                 if (this != iarea->mainCropWindow) {
                     cr->set_line_width (0.);
@@ -1569,75 +1569,31 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                 }
 
                 // drawing to the "mouse over" channel
-                if (editSubscriber->getEditingType() == ET_OBJECTS) {
-                    const std::vector<Geometry*> mouseOverGeom = editSubscriber->getMouseOverGeometry();
+                const auto mouseOverGeom = editSubscriber->getMouseOverGeometry();
+                if (mouseOverGeom.size()) {
+                    if (mouseOverGeom.size() > 65534) {
+                        // once it has been switched to OM_65535, it won't return back to OM_255
+                        // to avoid constant memory allocations in some particular situation.
+                        // It will return to OM_255 on a new editing session
+                        setObjectMode(OM_65535);
+                    }
 
-                    if (mouseOverGeom.size()) {
-                        //printf("ObjectMap (%d x %d)\n", ObjectMOBuffer::getObjectMap()->get_width(), ObjectMOBuffer::getObjectMap()->get_height());
-                        Cairo::RefPtr<Cairo::Context> crMO = Cairo::Context::create(ObjectMOBuffer::getObjectMap());
-                        crMO->set_antialias(Cairo::ANTIALIAS_NONE);
-                        crMO->set_line_cap(Cairo::LINE_CAP_SQUARE);
-                        crMO->set_line_join(Cairo::LINE_JOIN_ROUND);
-                        crMO->set_operator(Cairo::OPERATOR_SOURCE);
+                    Cairo::RefPtr<Cairo::Context> crMO = Cairo::Context::create(ObjectMOBuffer::getObjectMap());
+                    crMO->set_antialias(Cairo::ANTIALIAS_NONE);
+                    crMO->set_line_cap(Cairo::LINE_CAP_SQUARE);
+                    crMO->set_line_join(Cairo::LINE_JOIN_ROUND);
+                    crMO->set_operator(Cairo::OPERATOR_SOURCE);
 
-                        // clear the bitmap
-                        crMO->set_source_rgba(0., 0., 0., 0.);
-                        crMO->rectangle(0., 0., ObjectMOBuffer::getObjectMap()->get_width(), ObjectMOBuffer::getObjectMap()->get_height());
-                        crMO->set_line_width(0.);
-                        crMO->fill();
+                    // clear the bitmap
+                    crMO->set_source_rgba(0., 0., 0., 0.);
+                    crMO->rectangle(0., 0., ObjectMOBuffer::getObjectMap()->get_width(), ObjectMOBuffer::getObjectMap()->get_height());
+                    crMO->set_line_width(0.);
+                    crMO->fill();
 
-                        Cairo::RefPtr<Cairo::Context> crMO2;
-
-                        if (ObjectMOBuffer::getObjectMode() > OM_255) {
-                            crMO2 = Cairo::Context::create(ObjectMOBuffer::getObjectMap2());
-                            crMO2->set_antialias(Cairo::ANTIALIAS_NONE);
-                            crMO2->set_line_cap(Cairo::LINE_CAP_SQUARE);
-                            crMO2->set_line_join(Cairo::LINE_JOIN_ROUND);
-                            crMO2->set_operator(Cairo::OPERATOR_SOURCE);
-
-                            // clear the bitmap
-                            crMO2->set_source_rgba(0., 0., 0., 0.);
-                            crMO2->rectangle(0., 0., ObjectMOBuffer::getObjectMap2()->get_width(), ObjectMOBuffer::getObjectMap2()->get_height());
-                            crMO2->set_line_width(0.);
-                            crMO2->fill();
-                        }
-
-                        std::vector<Geometry*>::const_iterator i;
-                        int a=0;
-
-                        for (auto moGeom : mouseOverGeom) {
-                            moGeom->drawToMOChannel(crMO, crMO2, a, this, *this);
-                            ++a;
-                        }
-
-                        // Debug code: save the "mouse over" image to a new file at each occurrence
-#if 0
-                        {
-                            static unsigned int count = 0;
-                            int w = ObjectMOBuffer::getObjectMap()->get_width();
-                            int h = ObjectMOBuffer::getObjectMap()->get_height();
-                            Glib::RefPtr<Gdk::Pixbuf> img = Gdk::Pixbuf::create(Gdk::COLORSPACE_RGB, false, 8, w, h);
-                            guint8 *dst = img->get_pixels();
-                            unsigned char *src1 = ObjectMOBuffer::getObjectMap()->get_data();
-                            unsigned char *src2 = ObjectMOBuffer::getObjectMode() > OM_255 ? ObjectMOBuffer::getObjectMap()->get_data() : NULL;
-                            memcpy(dst, src1, w * h);
-
-                            for (int n = 0, n3 = 0; n < w * h;) {
-                                dst[n3++] = src1[n];
-
-                                if (src2) {
-                                    dst[n3++] = src2[n];
-                                } else {
-                                    dst[n3++] = 0;
-                                }
-
-                                dst[n3++] = 0;
-                                ++n;
-                            }
-
-                            img->save(Glib::ustring::compose("mouseOverImage-%1.png", count++), "png");
-                        }
-#endif
+                    int a=0;
+                    for (auto moGeom : mouseOverGeom) {
+                        moGeom->drawToMOChannel(crMO, a, this, *this);
+                        ++a;
                     }
                 }
                 if (this != iarea->mainCropWindow) {
@@ -1685,7 +1641,11 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
 
 void CropWindow::setEditSubscriber (EditSubscriber* newSubscriber) {
     // Delete, create, update all buffers based upon newSubscriber's type
-    ObjectMOBuffer::resize(imgAreaW, imgAreaH, newSubscriber);
+    if (newSubscriber) {
+        ObjectMOBuffer::resize (imgAreaW, imgAreaH);
+    } else {
+        ObjectMOBuffer::flush ();
+    }
     cropHandler.setEditSubscriber(newSubscriber);
 }
 

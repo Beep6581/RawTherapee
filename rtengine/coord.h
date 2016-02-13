@@ -187,23 +187,23 @@ public:
     {
         radius *= scale;
     }
-    PolarCoord operator+(PolarCoord & rhs)
+    PolarCoord operator+ (const PolarCoord& rhs) const
     {
+        PolarCoord result;
         Coord thisCoord, rhsCoord;
         thisCoord.setFromPolar(*this);
         rhsCoord.setFromPolar(rhs);
         thisCoord += rhsCoord;
-        PolarCoord result;
         result.setFromCartesian(thisCoord);
         return result;
     }
-    PolarCoord operator-(PolarCoord & rhs)
+    PolarCoord operator- (const PolarCoord& rhs) const
     {
+        PolarCoord result;
         Coord thisCoord, rhsCoord;
         thisCoord.setFromPolar(*this);
         rhsCoord.setFromPolar(rhs);
         thisCoord -= rhsCoord;
-        PolarCoord result;
         result.setFromCartesian(thisCoord);
         return result;
     }

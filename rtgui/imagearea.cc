@@ -96,10 +96,10 @@ void ImageArea::on_resized (Gtk::Allocation& req)
             mainCropWindow->setPointerMotionListener (pmlistener);
             mainCropWindow->setPointerMotionHListener (pmhlistener);
             mainCropWindow->setPosition (0, 0);
-            mainCropWindow->setSize (get_width(), get_height(), false);  // this execute the refresh itself
+            mainCropWindow->setSize (get_width(), get_height());  // this execute the refresh itself
             mainCropWindow->enable();  // start processing !
         } else {
-            mainCropWindow->setSize (get_width(), get_height());
+            mainCropWindow->setSize (get_width(), get_height());  // this execute the refresh itself
         }
 
         parent->syncBeforeAfterViews();
@@ -326,13 +326,12 @@ bool ImageArea::on_leave_notify_event  (GdkEventCrossing* event)
 
 void ImageArea::subscribe(EditSubscriber *subscriber)
 {
-    mainCropWindow->setEditSubscriber(subscriber);
+    EditDataProvider::subscribe(subscriber);
 
+    mainCropWindow->setEditSubscriber(subscriber);
     for (auto cropWin : cropWins) {
         cropWin->setEditSubscriber(subscriber);
     }
-
-    EditDataProvider::subscribe(subscriber);
 
     if (listener && listener->getToolBar()) {
         listener->getToolBar()->startEditMode ();
@@ -354,11 +353,11 @@ void ImageArea::unsubscribe()
     }
 
     EditDataProvider::unsubscribe();
-    // Ask the Crops to free-up edit mode buffers
-    mainCropWindow->cropHandler.setEditSubscriber(NULL);
 
+    // Ask the Crops to free-up edit mode buffers
+    mainCropWindow->setEditSubscriber(NULL);
     for (auto cropWin : cropWins) {
-        cropWin->cropHandler.setEditSubscriber(NULL);
+        cropWin->setEditSubscriber(NULL);
     }
 
     setToolHand();
@@ -619,10 +618,7 @@ void ImageArea::initialImageArrived (CropWindow* cw)
             mainCropWindow->cropHandler.getFullImageSize(w, h);
 
             if(w != fullImageWidth || h != fullImageHeight) {
-                printf("zoomFit !\n");
                 mainCropWindow->zoomFit ();
-            } else {
-                printf("no-zoomFit\n");
             }
 
             fullImageWidth = w;

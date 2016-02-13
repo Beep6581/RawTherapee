@@ -92,7 +92,7 @@ public:
         return cropImageListener;
     }
     void update      (int todo);
-    void setWindow   (int cropX, int cropY, int cropW, int cropH, int canvasX, int canvasY, int canvasW, int canvasH, int skip)
+    void setWindow   (int cropX, int cropY, int cropW, int cropH, int skip)
     {
         setCropSizes (cropX, cropY, cropW, cropH, skip, false);
     }

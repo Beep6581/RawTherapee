@@ -1151,11 +1151,9 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
     }
 
     EditType editType = ET_PIPETTE;
-    EditDataProvider *editProvider = PipetteBuffer::getDataProvider();
-    if (editProvider) {
-        EditSubscriber *editSubscriber = editProvider->getCurrSubscriber();
-        if (editSubscriber) {
-            editType = editSubscriber->getEditingType();
+    if (const auto editProvider = PipetteBuffer::getDataProvider ()) {
+        if (const auto editSubscriber = editProvider->getCurrSubscriber ()) {
+            editType = editSubscriber->getEditingType ();
         }
     }
 
@@ -1241,12 +1239,7 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
     trafx = orx;
     trafy = ory;
 
-
     if (settings->verbose) {
-        if (changed) {
-            printf("new crop size:  cropx=%d, cropy=%d, cropw=%d, croph=%d   /   rqcropx=%d, rqcropy=%d, rqcropw=%d, rqcroph=%d   /   leftBorder=%d, upperBorder=%d\n",
-                    cropx, cropy, cropw, croph, rqcropx, rqcropy, rqcropw, rqcroph, leftBorder, upperBorder);
-        }
         printf ("setsizes ends\n");
     }
 

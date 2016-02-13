@@ -207,13 +207,8 @@ Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int x, int y, int w, in
         x *= zoom;
         y *= zoom;
 
-        if ((x + w) / totalZoom > previewImg->get_width()) {
-            w = previewImg->get_width() * totalZoom - x;
-        }
-
-        if ((y + h) / totalZoom > previewImg->get_height()) {
-            h = previewImg->get_height() * totalZoom - y;
-        }
+        w = rtengine::LIM<int>(w, 0, int(previewImg->get_width() * totalZoom) - x);
+        h = rtengine::LIM<int>(h, 0, int(previewImg->get_height() * totalZoom) - y);
 
         resPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, w, h);
         previewImg->scale (resPixbuf, 0, 0, w, h, -x, -y, totalZoom, totalZoom, Gdk::INTERP_NEAREST);

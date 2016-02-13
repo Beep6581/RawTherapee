@@ -136,7 +136,7 @@ void Gradient::read (const ProcParams* pp, const ParamsEdited* pedited)
     enableListener ();
 }
 
-void Gradient::updateGeometry(const int centerX_, const int centerY_, const double feather_, const double degree_, const int fullWidth, const int fullHeight)
+void Gradient::updateGeometry(const int centerX, const int centerY, const double feather, const double degree, const int fullWidth, const int fullHeight)
 {
     EditDataProvider* dataProvider = getEditProvider();
 
@@ -144,7 +144,8 @@ void Gradient::updateGeometry(const int centerX_, const int centerY_, const doub
         return;
     }
 
-    int imW, imH;
+    int imW=0;
+    int imH=0;
     if (fullWidth != -1 && fullHeight != -1) {
         imW = fullWidth;
         imH = fullHeight;
@@ -156,79 +157,56 @@ void Gradient::updateGeometry(const int centerX_, const int centerY_, const doub
     }
 
     PolarCoord polCoord1, polCoord2;
-    double decay = feather_ * sqrt(double(imW) * double(imW) + double(imH) * double(imH)) / 200.;
+    double decay = feather * rtengine::norm2<double>(imW, imH) / 200.;
 
-    rtengine::Coord origin(imW / 2 + centerX_ * imW / 200.f, imH / 2 + centerY_ * imH / 200.f);
+    rtengine::Coord origin(imW / 2 + centerX * imW / 200, imH / 2 + centerY * imH / 200);
 
     Line *currLine;
     Circle *currCircle;
+
+    const auto updateLine = [&](Geometry* geometry, const float radius, const float begin, const float end)
+    {
+        const auto line = static_cast<Line*>(geometry);
+        line->begin.setFromPolar(PolarCoord(radius, -degree + begin));
+        line->begin += origin;
+        line->end.setFromPolar(PolarCoord(radius, -degree + end));
+        line->end += origin;
+    };
+
+    const auto updateLineWithDecay = [&](Geometry* geometry, const float radius, const float offSetAngle)
+    {
+        const auto line = static_cast<Line*>(geometry);
+        line->begin.setFromPolar(PolarCoord(radius, -degree + 180.) + PolarCoord(decay, -degree + offSetAngle));
+        line->begin += origin;
+        line->end.setFromPolar(PolarCoord(radius, -degree) + PolarCoord(decay, -degree + offSetAngle));
+        line->end += origin;
+    };
+
+    const auto updateCircle = [&](Geometry* geometry)
+    {
+        const auto circle = static_cast<Circle*>(geometry);
+        circle->center = origin;
+    };
+
     // update horizontal line
-    currLine = static_cast<Line*>(visibleGeometry.at(0));
-    polCoord1.set(1500.f, float(-degree_ + 180));
-    currLine->begin.setFromPolar(polCoord1);
-    currLine->begin += origin;
-    polCoord1.set(1500.f, float(-degree_    ));
-    currLine->end.setFromPolar  (polCoord1);
-    currLine->end   += origin;
-    currLine = static_cast<Line*>(mouseOverGeometry.at(0));
-    polCoord1.set(1500.f, float(-degree_ + 180));
-    currLine->begin.setFromPolar(polCoord1);
-    currLine->begin += origin;
-    polCoord1.set(1500.f, float(-degree_    ));
-    currLine->end.setFromPolar  (polCoord1);
-    currLine->end   += origin;
+    updateLine (visibleGeometry.at(0), 1500., 0., 180.);
+    updateLine (mouseOverGeometry.at(0), 1500., 0., 180.);
+
     // update vertical line
-    currLine = static_cast<Line*>(visibleGeometry.at(1));
-    polCoord1.set( 700.f, float(-degree_ + 90 ));
-    currLine->begin.setFromPolar(polCoord1);
-    currLine->begin += origin;
-    polCoord1.set( 700.f, float(-degree_ + 270));
-    currLine->end.setFromPolar  (polCoord1);
-    currLine->end   += origin;
-    currLine = static_cast<Line*>(mouseOverGeometry.at(1));
-    polCoord1.set( 700.f, float(-degree_ + 90 ));
-    currLine->begin.setFromPolar(polCoord1);
-    currLine->begin += origin;
-    polCoord1.set( 700.f, float(-degree_ + 270));
-    currLine->end.setFromPolar  (polCoord1);
-    currLine->end   += origin;
+    updateLine (visibleGeometry.at(1), 700., 90., 270.);
+    updateLine (mouseOverGeometry.at(1), 700., 90., 270.);
+
     // update upper feather line
-    currLine = static_cast<Line*>(visibleGeometry.at(2));
-    polCoord2.set(decay, float(-degree_ + 270));
-    polCoord1.set(350.f, float(-degree_ + 180));
-    currLine->begin.setFromPolar(polCoord1 + polCoord2);
-    currLine->begin += origin;
-    polCoord1.set(350.f, float(-degree_    ));
-    currLine->end.setFromPolar  (polCoord1 + polCoord2);
-    currLine->end   += origin;
-    currLine = static_cast<Line*>(mouseOverGeometry.at(2));
-    polCoord1.set(350.f, float(-degree_ + 180));
-    currLine->begin.setFromPolar(polCoord1 + polCoord2);
-    currLine->begin += origin;
-    polCoord1.set(350.f, float(-degree_    ));
-    currLine->end.setFromPolar  (polCoord1 + polCoord2);
-    currLine->end   += origin;
+    updateLineWithDecay (visibleGeometry.at(2), 350., 270.);
+    updateLineWithDecay (mouseOverGeometry.at(2), 350., 270.);
+
     // update lower feather line
-    currLine = static_cast<Line*>(visibleGeometry.at(3));
-    polCoord2.set(decay, float(-degree_ + 90));
-    polCoord1.set(350.f, float(-degree_ + 180));
-    currLine->begin.setFromPolar(polCoord1 + polCoord2);
-    currLine->begin += origin;
-    polCoord1.set(350.f, float(-degree_    ));
-    currLine->end.setFromPolar  (polCoord1 + polCoord2);
-    currLine->end   += origin;
-    currLine = static_cast<Line*>(mouseOverGeometry.at(3));
-    polCoord1.set(350.f, float(-degree_ + 180));
-    currLine->begin.setFromPolar(polCoord1 + polCoord2);
-    currLine->begin += origin;
-    polCoord1.set(350.f, float(-degree_    ));
-    currLine->end.setFromPolar  (polCoord1 + polCoord2);
-    currLine->end   += origin;
+    updateLineWithDecay (visibleGeometry.at(3), 350., 90.);
+    updateLineWithDecay (mouseOverGeometry.at(3), 350., 90.);
+
     // update circle's position
-    currCircle = static_cast<Circle*>(visibleGeometry.at(4));
-    currCircle->center = origin;
-    currCircle = static_cast<Circle*>(mouseOverGeometry.at(4));
-    currCircle->center = origin;
+    updateCircle (visibleGeometry.at(4));
+    updateCircle (mouseOverGeometry.at(4));
 }
 
 void Gradient::write (ProcParams* pp, ParamsEdited* pedited)
@@ -408,9 +386,13 @@ bool Gradient::mouseOver(int modifierKey)
 
 bool Gradient::button1Pressed(int modifierKey)
 {
+    if (lastObject < 0) {
+        return false;
+    }
+
     EditDataProvider *provider = getEditProvider();
 
-    if (!(modifierKey & GDK_CONTROL_MASK) && lastObject > -1) {
+    if (!(modifierKey & GDK_CONTROL_MASK)) {
         // button press is valid (no modifier key)
         PolarCoord pCoord;
         int imW, imH;
@@ -458,7 +440,7 @@ bool Gradient::button1Pressed(int modifierKey)
 
         EditSubscriber::dragging = true;
         return false;
-    } else if (lastObject > -1) { // should theoretically always be true
+    } else { // should theoretically always be true
         // this will let this class ignore further drag events
         if (lastObject == 2 || lastObject == 3) {
             EditSubscriber::visibleGeometry.at(2)->state = Geometry::NORMAL;

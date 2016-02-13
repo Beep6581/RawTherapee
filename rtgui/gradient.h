@@ -46,7 +46,7 @@ public:
     void enabledChanged  ();
     void setAdjusterBehavior (bool degreeadd, bool featheradd, bool strengthadd, bool centeradd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
-    void updateGeometry  (const int centerX_, const int centerY_, const double feather_, const double degree_, const int fullWidth=-1, const int fullHeight=-1);
+    void updateGeometry  (const int centerX, const int centerY, const double feather, const double degree, const int fullWidth=-1, const int fullHeight=-1);
 
     void setEditProvider (EditDataProvider* provider);
 

@@ -20,7 +20,7 @@
 #include "edit.h"
 #include "rtimage.h"
 
-ObjectMOBuffer::ObjectMOBuffer(EditDataProvider *dataProvider) : objectMap(NULL), objectMap2(NULL), objectMode(OM_255), dataProvider(dataProvider) {}
+ObjectMOBuffer::ObjectMOBuffer(EditDataProvider *dataProvider) : objectMap(NULL), objectMode(OM_255), dataProvider(dataProvider) {}
 
 ObjectMOBuffer::~ObjectMOBuffer()
 {
@@ -28,36 +28,40 @@ ObjectMOBuffer::~ObjectMOBuffer()
 }
 
 
-/* Upgrade or downgrade the objectModeType; we're assuming that objectMap has been allocated */
+/* Upgrade or downgrade the objectModeType */
 void ObjectMOBuffer::setObjectMode(ObjectMode newType)
 {
-    switch (newType) {
-    case (OM_255):
-        if (objectMap2) {
-            objectMap2->unreference();
-        }
-
-        objectMode = OM_255;
-        break;
-
-    case (OM_65535):
-        if (!objectMap2) {
-            objectMap2 = Cairo::ImageSurface::create(Cairo::FORMAT_A8, objectMap->get_width(), objectMap->get_height());
-        }
-
-        objectMode = OM_65535;
-        break;
+    if (!objectMap) {
+        objectMode = newType;
+        return;
     }
+
+    int w = objectMap->get_width ();
+    int h = objectMap->get_height ();
+    if (w && h) {
+        switch (newType) {
+        case (OM_255):
+            if (objectMode==OM_65535) {
+                objectMap->unreference();
+                objectMap = Cairo::ImageSurface::create(Cairo::FORMAT_A8, w, h);
+            }
+            break;
+
+        case (OM_65535):
+            if (objectMode==OM_255) {
+                objectMap->unreference();
+                objectMap = Cairo::ImageSurface::create(Cairo::FORMAT_RGB16_565, w, h);
+            }
+            break;
+        }
+    }
+    objectMode = newType;
 }
 
 void ObjectMOBuffer::flush()
 {
     if (objectMap ) {
         objectMap.clear();
-    }
-
-    if (objectMap2) {
-        objectMap2.clear();
     }
 }
 
@@ -71,32 +75,22 @@ EditSubscriber *ObjectMOBuffer::getEditSubscriber () {
 
 
 // Resize buffers if they already exist
-void ObjectMOBuffer::resize(int newWidth, int newHeight, EditSubscriber* newSubscriber)
+void ObjectMOBuffer::resize(int newWidth, int newHeight)
 {
-    if (newSubscriber) {
-        if (newSubscriber->getEditingType() == ET_OBJECTS) {
+    if (!dataProvider) {
+        return;
+    }
+
+    if (const auto currSubscriber = dataProvider->getCurrSubscriber ()) {
+        if (currSubscriber->getEditingType() == ET_OBJECTS) {
             if (objectMap && (objectMap->get_width() != newWidth || objectMap->get_height() != newHeight)) {
                 objectMap.clear();
             }
 
             if (!objectMap && newWidth>0 && newHeight>0) {
-                objectMap = Cairo::ImageSurface::create(Cairo::FORMAT_A8, newWidth, newHeight);
+                objectMap = Cairo::ImageSurface::create(objectMode==OM_255?Cairo::FORMAT_A8:Cairo::FORMAT_RGB16_565, newWidth, newHeight);
             }
 
-            if (objectMode == OM_65535) {
-                if (objectMap2) {
-                    if (objectMap2->get_width() != newWidth || objectMap2->get_height() != newHeight) {
-                        objectMap2.clear();
-                    }
-                }
-
-                if (!objectMap2 && newWidth>0 && newHeight>0) {
-                    objectMap2 = Cairo::ImageSurface::create(Cairo::FORMAT_A8, newWidth, newHeight);
-                }
-            } else if (objectMap2) {
-                // OM_255 -> deleting objectMap2, if any
-                objectMap2.clear();
-            }
         } else {
             flush();
         }
@@ -109,12 +103,14 @@ int ObjectMOBuffer::getObjectID(const rtengine::Coord& location)
 {
     int id = 0;
 
-    if (objectMap && location.x > 0 && location.y > 0 && location.x < objectMap->get_width() && location.y < objectMap->get_height()) {
-        id = (unsigned short)(*( objectMap->get_data() + location.y * objectMap->get_stride() + location.x ));
+    if (!objectMap || location.x < 0 || location.y < 0 || location.x >= objectMap->get_width() || location.y >= objectMap->get_height()) {
+        return -1;
+    }
 
-        if (objectMap2) {
-            id |= (unsigned short)(*( objectMap->get_data() + location.y * objectMap->get_stride() + location.x )) << 8;
-        }
+    if (objectMode == OM_255) {
+        id = (unsigned char)(*( objectMap->get_data() + location.y * objectMap->get_stride() + location.x ));
+    } else {
+        id = (unsigned short)(*( objectMap->get_data() + location.y * objectMap->get_stride() + location.x ));
     }
 
     return id - 1;
@@ -257,7 +253,7 @@ void Circle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer
     }
 }
 
-void Circle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+void Circle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     if (flags & F_HOVERABLE) {
         cr->set_line_width( getMouseOverLineWidth() );
@@ -272,9 +268,12 @@ void Circle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<C
             center_ += objectBuffer->getDataProvider()->posScreen + objectBuffer->getDataProvider()->deltaScreen;
         }
 
-        // drawing the lower byte's value
-        unsigned short a = (id + 1) & 0xFF;
-        cr->set_source_rgba (0., 0., 0., double(a) / 255.);
+        // setting the color to the objet's ID
+        if (objectBuffer->getObjectMode() == OM_255) {
+            cr->set_source_rgba (0., 0., 0., ((id + 1) & 0xFF) / 255.);
+        } else {
+            cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
+        }
         cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0, 2.*M_PI);
 
         if (filled) {
@@ -286,24 +285,6 @@ void Circle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<C
             }
         } else {
             cr->stroke();
-        }
-
-        // drawing the higher byte's value
-        if (objectBuffer->getObjectMode() == OM_65535) {
-            a = (id + 1) >> 8;
-            cr2->set_source_rgba (0., 0., 0., double(a) / 255.);
-            cr2->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0, 2.*M_PI);
-
-            if (filled) {
-                if (innerLineWidth > 0.) {
-                    cr2->fill_preserve();
-                    cr2->stroke();
-                } else {
-                    cr2->fill();
-                }
-            } else {
-                cr2->stroke();
-            }
         }
     }
 }
@@ -392,9 +373,7 @@ void Line::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *
     }
 }
 
-void Line::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr,
-                           Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id,
-                           ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+void Line::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     if (flags & F_HOVERABLE) {
         cr->set_line_width( getMouseOverLineWidth() );
@@ -412,21 +391,15 @@ void Line::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr,
             end_ += objectBuffer->getDataProvider()->posScreen + objectBuffer->getDataProvider()->deltaScreen;
         }
 
-        // drawing the lower byte's value
-        unsigned short a = (id + 1) & 0xFF;
-        cr->set_source_rgba (0., 0., 0., double(a) / 255.);
+        // setting the color to the objet's ID
+        if (objectBuffer->getObjectMode() == OM_255) {
+            cr->set_source_rgba (0., 0., 0., ((id + 1) & 0xFF) / 255.);
+        } else {
+            cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
+        }
         cr->move_to(begin_.x + 0.5, begin_.y + 0.5);
         cr->line_to(end_.x + 0.5, end_.y + 0.5);
         cr->stroke();
-
-        // drawing the higher byte's value
-        if (objectBuffer->getObjectMode() == OM_65535) {
-            a = (id + 1) >> 8;
-            cr2->set_source_rgba (0., 0., 0., double(a) / 255.);
-            cr2->move_to(begin_.x + 0.5, begin_.y + 0.5);
-            cr2->line_to(end_.x + 0.5, end_.y + 0.5);
-            cr2->stroke();
-        }
     }
 }
 
@@ -555,14 +528,17 @@ void Polyline::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuff
     }
 }
 
-void Polyline::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+void Polyline::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     if ((flags & F_HOVERABLE) && points.size() > 1) {
         rtengine::Coord currPos;
 
-        // drawing the lower byte's value
-        unsigned short a = (id + 1) & 0xFF;
-        cr->set_source_rgba (0., 0., 0., double(a) / 255.);
+        // setting the color to the objet's ID
+        if (objectBuffer->getObjectMode() == OM_255) {
+            cr->set_source_rgba (0., 0., 0., ((id + 1) & 0xFF) / 255.);
+        } else {
+            cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
+        }
 
         for (unsigned int i = 0; i < points.size(); ++i) {
             cr->set_line_width( getMouseOverLineWidth() );
@@ -592,42 +568,6 @@ void Polyline::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr
             }
         } else {
             cr->stroke();
-        }
-
-        // drawing the higher byte's value
-        if (objectBuffer->getObjectMode() == OM_65535) {
-            a = (id + 1) >> 8;
-            cr2->set_source_rgba (0., 0., 0., double(a) / 255.);
-
-            for (unsigned int i = 0; i < points.size(); ++i) {
-                cr2->set_line_width( getMouseOverLineWidth() );
-                currPos  = points.at(i);
-
-                if      (datum == IMAGE) {
-                    coordSystem.imageCoordToCropCanvas (points.at(i).x, points.at(i).y, currPos.x, currPos.y);
-                } else if (datum == CLICKED_POINT) {
-                    currPos += objectBuffer->getDataProvider()->posScreen;
-                } else if (datum == CURSOR) {
-                    currPos += objectBuffer->getDataProvider()->posScreen + objectBuffer->getDataProvider()->deltaScreen;
-                }
-
-                if (!i) {
-                    cr2->move_to(currPos.x + 0.5, currPos.y + 0.5);
-                } else {
-                    cr2->line_to(currPos.x + 0.5, currPos.y + 0.5);
-                }
-            }
-
-            if (filled) {
-                if (innerLineWidth > 0.) {
-                    cr2->fill_preserve();
-                    cr2->stroke();
-                } else {
-                    cr2->fill();
-                }
-            } else {
-                cr2->stroke();
-            }
         }
     }
 }
@@ -763,7 +703,7 @@ void Rectangle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuf
     }
 }
 
-void Rectangle::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+void Rectangle::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     if (flags & F_HOVERABLE) {
         cr->set_line_width( getMouseOverLineWidth() );
@@ -786,9 +726,12 @@ void Rectangle::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr
             br = bottomRight + objectBuffer->getDataProvider()->posScreen + objectBuffer->getDataProvider()->deltaScreen;
         }
 
-        // drawing the lower byte's value
-        unsigned short a = (id + 1) & 0xFF;
-        cr->set_source_rgba (0., 0., 0., double(a) / 255.);
+        // setting the color to the objet's ID
+        if (objectBuffer->getObjectMode() == OM_255) {
+            cr->set_source_rgba (0., 0., 0., ((id + 1) & 0xFF) / 255.);
+        } else {
+            cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
+        }
         cr->rectangle(tl.x + 0.5, tl.y + 0.5, br.x - tl.x, br.y - tl.y);
 
         if (filled) {
@@ -800,24 +743,6 @@ void Rectangle::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr
             }
         } else {
             cr->stroke();
-        }
-
-        // drawing the higher byte's value
-        if (objectBuffer->getObjectMode() == OM_65535) {
-            a = (id + 1) >> 8;
-            cr2->set_source_rgba (0., 0., 0., double(a) / 255.);
-            cr->rectangle(tl.x + 0.5, tl.y + 0.5, br.x - tl.x, br.y - tl.y);
-
-            if (filled) {
-                if (innerLineWidth > 0.) {
-                    cr2->fill_preserve();
-                    cr2->stroke();
-                } else {
-                    cr2->fill();
-                }
-            } else {
-                cr2->stroke();
-            }
         }
     }
 }
