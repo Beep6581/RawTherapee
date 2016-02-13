@@ -158,7 +158,7 @@ void RetinexParams::setDefaults()
 {
     enabled = false;
     str      = 20;
-    scal        = 0;
+    scal        = 3;
     iter = 1;
     grad = 1;
     grads = 1;

@@ -297,7 +297,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
             if(gradient == 0) {
                 grad = 1.f;
-                sc = scal;//3.f
+                sc = 3.f;
             } else if(gradient == 1) {
                 grad = 0.25f * it + 0.75f;
                 sc = -0.5f * it + 4.5f;
@@ -339,6 +339,19 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
             if(iter == 1) {
                 sc = scal;
+            } else {
+                //adjust sc in function of choice of scale by user if iterations
+                if(scal < 3) {
+                    sc -= 1;
+
+                    if(sc < 1.f) {//avoid 0
+                        sc = 1.f;
+                    }
+                }
+
+                if(scal > 4) {
+                    sc += 1;
+                }
             }
 
             float varx;
