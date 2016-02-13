@@ -286,14 +286,13 @@ public:
     void dirpyrdenoise    (LabImage* src);//Emil's pyramid denoise
     void dirpyrequalizer  (LabImage* lab, int scale);//Emil's wavelet
 
-    void EPDToneMapResid(float * WavCoeffs_L0, unsigned int Iterates,  int skip, struct cont_params cp, int W_L, int H_L, float max0, float min0);
+    void EPDToneMapResid(float * WavCoeffs_L0, unsigned int Iterates,  int skip, struct cont_params& cp, int W_L, int H_L, float max0, float min0);
     float *CompressDR(float *Source, int skip, struct cont_params &cp, int W_L, int H_L, float Compression, float DetailBoost, float max0, float min0, float ave, float ah, float bh, float al, float bl, float factorx, float *Compressed);
     void ContrastResid(float * WavCoeffs_L0, unsigned int Iterates,  int skip, struct cont_params &cp, int W_L, int H_L, float max0, float min0, float ave, float ah, float bh, float al, float bl, float factorx);
     float *ContrastDR(float *Source, int skip, struct cont_params &cp, int W_L, int H_L, float Compression, float DetailBoost, float max0, float min0, float ave, float ah, float bh, float al, float bl, float factorx, float *Contrast = NULL);
 
     void EPDToneMap(LabImage *lab, unsigned int Iterates = 0, int skip = 1);
     void EPDToneMapCIE(CieImage *ncie, float a_w, float c_, float w_h, int Wid, int Hei, int begh, int endh, float minQ, float maxQ, unsigned int Iterates = 0, int skip = 1);
-    //  void CAT02 (Imagefloat* baseImg, const ProcParams* params);
 
     // pyramid denoise
     procparams::DirPyrDenoiseParams dnparams;
@@ -302,13 +301,6 @@ public:
                            int pitch, int scale, const int luma, int chroma );
     void idirpyr          (LabImage* data_coarse, LabImage* data_fine, int level, LUTf &rangefn_L, LUTf & nrwt_l, LUTf & nrwt_ab,
                            int pitch, int scale, const int luma, const int chroma/*, LUTf & Lcurve, LUTf & abcurve*/ );
-
-    // FT denoise
-    //void RGB_InputTransf(Imagefloat * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe);
-    //void RGB_OutputTransf(LabImage * src, Imagefloat * dst, const procparams::DirPyrDenoiseParams & dnparams);
-    //void output_tile_row (float *Lbloxrow, float ** Lhipassdn, float ** tilemask, int height, int width, int top, int blkrad );
-
-//    void MSR(LabImage* lab, int width, int height, int skip);
 
     void Tile_calc (int tilesize, int overlap, int kall, int imwidth, int imheight, int &numtiles_W, int &numtiles_H, int &tilewidth, int &tileheight, int &tileWskip, int &tileHskip);
     void ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveBY & waOpacityCurveBY,  const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, LUTf &wavclCurve, bool wavcontlutili, int skip);
@@ -327,13 +319,13 @@ public:
     void ContAllAB (LabImage * lab, int maxlvl, float **varhue, float **varchrom, float ** WavCoeffs_a, float * WavCoeffs_a0, int level, int dir, const WavOpacityCurveW & waOpacityCurveW, struct cont_params &cp,
                     int W_ab, int H_ab, const bool useChannelA);
     void Evaluate2(wavelet_decomposition &WaveletCoeffs_L,
-                   struct cont_params cp, int ind, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, float madL[8][3]);
-    void Eval2 (float ** WavCoeffs_L, int level, struct cont_params cp,
+                   const struct cont_params& cp, int ind, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, float madL[8][3]);
+    void Eval2 (float ** WavCoeffs_L, int level, const struct cont_params& cp,
                 int W_L, int H_L, int skip_L, int ind, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, float *madL);
 
     void Aver(float * HH_Coeffs, int datalen, float &averagePlus, float &averageNeg, float &max, float &min);
     void Sigma(float * HH_Coeffs, int datalen, float averagePlus, float averageNeg, float &sigmaPlus, float &sigmaNeg);
-    void calckoe(float ** WavCoeffs_LL, struct cont_params cp, float ** koeLi, int level, int dir, int W_L, int H_L, float edd, float *maxkoeLi, float **tmC = NULL);
+    void calckoe(float ** WavCoeffs_LL, const struct cont_params& cp, float ** koeLi, int level, int dir, int W_L, int H_L, float edd, float *maxkoeLi, float **tmC = NULL);
 
 
 

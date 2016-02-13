@@ -1327,11 +1327,11 @@ void Retinex::trimValues (rtengine::procparams::ProcParams* pp)
     limd->trimValue(pp->retinex.limd);
     highl->trimValue(pp->retinex.highl);
     baselog->trimValue(pp->retinex.baselog);
-//    grbl->trimValue(pp->retinex.grbl);
     gam->trimValue(pp->retinex.gam);
     slope->trimValue(pp->retinex.slope);
     highlights->trimValue(pp->retinex.highlights);
     shadows->trimValue(pp->retinex.shadows);
+
 
 }
 void Retinex::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI)

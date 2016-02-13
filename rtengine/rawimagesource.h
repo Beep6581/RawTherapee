@@ -31,38 +31,6 @@
 namespace rtengine
 {
 
-// these two functions "simulate" and jagged array, but just use two allocs
-template<class T> T** allocArray (int W, int H, bool initZero = false)
-{
-
-    T** t = new T*[H];
-    t[0] = new T[H * W];
-
-    if (initZero) {
-        memset(t[0], 0, sizeof(T)*W * H);
-    }
-
-    for (int i = 1; i < H; i++) {
-        t[i] = t[i - 1] + W;
-    }
-
-    return t;
-}
-
-template<class T> void freeArray (T** a, int H)
-{
-
-    delete [] a[0];
-    delete [] a;
-}
-
-
-template<class T> void freeArray2 (T** a, int H)
-{
-    //for (int i=0; i<H; i++)
-    delete [] a[0];
-}
-
 class RawImageSource : public ImageSource
 {
 
@@ -130,7 +98,6 @@ protected:
     void processFalseColorCorrectionThread (Imagefloat* im, int row_from, int row_to);
     void hlRecovery          (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip, const RAWParams &raw, float* hlmax);
     int  defTransform        (int tran);
-    void rotateLine          (float* line, PlanarPtr<float> &channel, int tran, int i, int w, int h);
     void transformRect       (PreviewProps pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
     void transformPosition   (int x, int y, int tran, int& tx, int& ty);
 
@@ -151,7 +118,6 @@ public:
     int         load        (Glib::ustring fname, bool batch = false);
     void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse);
     void        demosaic    (const RAWParams &raw);
-//    void        retinex       (RAWParams raw, ColorManagementParams cmp, RetinexParams  lcur, LUTf & cdcurve, bool dehacontlutili);
     void        retinex       (ColorManagementParams cmp, RetinexParams  deh, ToneCurveParams Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI);
     void        retinexPrepareCurves       (RetinexParams retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI);
     void        retinexPrepareBuffers      (ColorManagementParams cmp, RetinexParams retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI);
@@ -231,13 +197,7 @@ public:
     void boxblur2(float** src, float** dst, float** temp, int H, int W, int box );
     void boxblur_resamp(float **src, float **dst, float** temp, int H, int W, int box, int samp );
     void MSR(float** luminance, float **originalLuminance, float **exLuminance,  LUTf & mapcurve, bool &mapcontlutili, int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
-//   void MSR(LabImage* lab, int width, int height, int skip, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve);
-
-    //void boxblur_resamp(float **red, float **green, float **blue, int H, int W, float thresh[3], float max[3],
-    //                multi_array2D<float,3> & hfsize, multi_array2D<float,3> & hilite, int box );
     void HLRecovery_inpaint (float** red, float** green, float** blue);
-    //void HLRecovery_inpaint ();
-
     static void HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval);
     static void HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval, double cam[3][3], double icam[3][3]);
     static void HLRecovery_blend (float* rin, float* gin, float* bin, int width, float maxval, float* hlmax);
@@ -277,8 +237,6 @@ protected:
     void jdl_interpolate_omp();
     void igv_interpolate(int winw, int winh);
     void lmmse_interpolate_omp(int winw, int winh, int iterations);
-//   void        MSR(LabImage* lab, int width, int height, int skip, const LCurveParams  &lcur);
-
     void amaze_demosaic_RT(int winx, int winy, int winw, int winh);//Emil's code for AMaZE
     void fast_demosaic(int winx, int winy, int winw, int winh );//Emil's code for fast demosaicing
     void dcb_demosaic(int iterations, bool dcb_enhance);
@@ -303,7 +261,6 @@ protected:
     void xtransborder_interpolate (int border);
     void xtrans_interpolate (int passes, bool useCieLab);
     void fast_xtrans_interpolate ();
-    void    transLine   (float* red, float* green, float* blue, int i, Imagefloat* image, int tran, int imw, int imh, int fw);
     void    hflip       (Imagefloat* im);
     void    vflip       (Imagefloat* im);
 
