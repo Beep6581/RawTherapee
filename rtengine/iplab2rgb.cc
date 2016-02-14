@@ -30,19 +30,10 @@
 namespace rtengine
 {
 
-#define CLIP01(a) ((a)>0?((a)<1?(a):1):0)
-
 extern const Settings* settings;
-
-const double (*wprof[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best};
-const double (*iwprof[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz};
-const char* wprofnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB"};
-const int numprof = 7;
 
 void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
 {
-    //gamutmap(lab);
-
     if (monitorTransform) {
 
         int W = lab->W;
@@ -211,18 +202,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         }
     } else {
 
-        double rgb_xyz[3][3];
-
-        for (int i = 0; i < numprof; i++) {
-            if (profile == wprofnames[i]) {
-                for (int m = 0; m < 3; m++)
-                    for (int n = 0; n < 3; n++) {
-                        rgb_xyz[m][n] = iwprof[i][m][n];
-                    }
-
-                break;
-            }
-        }
+        const auto rgb_xyz = iccStore->workingSpaceMatrix (profile);
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -386,7 +366,7 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 
     Image16* image = new Image16 (cw, ch);
     float p1, p2, p3, p4, p5, p6; //primaries
-    //double ga0,ga1,ga2,ga3,ga4,ga5=0.0,ga6=0.0;//gamma parameters
+
     double g_a0, g_a1, g_a2, g_a3, g_a4, g_a5; //gamma parameters
     double pwr;
     double ts;
@@ -401,15 +381,7 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 
     //primaries for 7 working profiles ==> output profiles
     // eventually to adapt primaries  if RT used special profiles !
-    if(profi == "ProPhoto")     {
-        p1 = 0.7347;    //Prophoto primaries
-        p2 = 0.2653;
-        p3 = 0.1596;
-        p4 = 0.8404;
-        p5 = 0.0366;
-        p6 = 0.0001;
-        select_temp = 1;
-    } else if (profi == "WideGamut") {
+    if (profi == "WideGamut") {
         p1 = 0.7350;    //Widegamut primaries
         p2 = 0.2650;
         p3 = 0.1150;
@@ -456,6 +428,14 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
         p4 = 0.7750;
         p5 = 0.1300;
         p6 = 0.0350;
+        select_temp = 1;
+    } else {
+        p1 = 0.7347;    //ProPhoto and default primaries
+        p2 = 0.2653;
+        p3 = 0.1596;
+        p4 = 0.8404;
+        p5 = 0.0366;
+        p6 = 0.0001;
         select_temp = 1;
     }
 

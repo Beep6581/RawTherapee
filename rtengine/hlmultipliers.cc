@@ -20,6 +20,7 @@
 #include <cstdio>
 #include "rawimagesource.h"
 #include "rawimagesource_i.h"
+#include "jaggedarray.h"
 #include "../rtgui/options.h"
 
 namespace rtengine
@@ -321,7 +322,7 @@ void RawImageSource::updateHLRecoveryMap_ColorPropagation ()
     int** rec[3];
 
     for (int i = 0; i < 3; i++) {
-        rec[i] = allocArray<int> (dw, dh);
+        rec[i] = allocJaggedArray<int> (dw, dh);
     }
 
     float* reds[HR_SCALE];
@@ -333,10 +334,10 @@ void RawImageSource::updateHLRecoveryMap_ColorPropagation ()
     }
 
     if (needhr) {
-        freeArray<char>(needhr, H);
+        freeJaggedArray<char>(needhr);
     }
 
-    needhr = allocArray<char> (W, H);
+    needhr = allocJaggedArray<char> (W, H);
 
     for (int i = 0; i < dh; i++) {
         for (int j = 0; j < HR_SCALE; j++) {
@@ -413,14 +414,14 @@ void RawImageSource::updateHLRecoveryMap_ColorPropagation ()
     hlmultipliers (rec, max_3, dh, dw);
 
     if (hrmap[0] != NULL) {
-        freeArray<float> (hrmap[0], dh);
-        freeArray<float> (hrmap[1], dh);
-        freeArray<float> (hrmap[2], dh);
+        freeJaggedArray<float> (hrmap[0]);
+        freeJaggedArray<float> (hrmap[1]);
+        freeJaggedArray<float> (hrmap[2]);
     }
 
-    hrmap[0] = allocArray<float> (dw, dh);
-    hrmap[1] = allocArray<float> (dw, dh);
-    hrmap[2] = allocArray<float> (dw, dh);
+    hrmap[0] = allocJaggedArray<float> (dw, dh);
+    hrmap[1] = allocJaggedArray<float> (dw, dh);
+    hrmap[2] = allocJaggedArray<float> (dw, dh);
 
     for (int i = 0; i < dh; i++)
         for (int j = 0; j < dw; j++) {
@@ -431,9 +432,9 @@ void RawImageSource::updateHLRecoveryMap_ColorPropagation ()
 
     delete ds;
 
-    freeArray<int> (rec[0], dh);
-    freeArray<int> (rec[1], dh);
-    freeArray<int> (rec[2], dh);
+    freeJaggedArray<int> (rec[0]);
+    freeJaggedArray<int> (rec[1]);
+    freeJaggedArray<int> (rec[2]);
 }
 
 }

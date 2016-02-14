@@ -200,7 +200,7 @@ template<class T> void gauss3x3div (T** RESTRICT src, T** RESTRICT dst, T** REST
 
         for (int j = 1; j < W - 1; j++) {
             float tmp = (b1 * (src[H - 1][j - 1] + src[H - 1][j + 1]) + b0 * src[H - 1][j]);
-            dst[H - 1][j] = divBuffer[H - 1][W] / (tmp > 0.f ? tmp : 1.f);
+            dst[H - 1][j] = divBuffer[H - 1][j] / (tmp > 0.f ? tmp : 1.f);
         }
 
         dst[H - 1][W - 1] = divBuffer[H - 1][W - 1] / (src[H - 1][W - 1] > 0.f ? src[H - 1][W - 1] : 1.f);

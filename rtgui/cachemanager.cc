@@ -351,7 +351,7 @@ void CacheManager::applyCacheSizeLimitation () const
         const auto dirName = Glib::build_filename (baseDir, "data");
         const auto dir = Gio::File::create_for_path (dirName);
 
-        auto enumerator = dir->enumerate_children ("standard::*,time::*");
+        auto enumerator = dir->enumerate_children ("standard::name,time::modified");
 
         while (auto file = enumerator->next_file ()) {
             files.emplace_back (file->get_name (), file->modification_time ());

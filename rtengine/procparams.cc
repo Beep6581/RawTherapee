@@ -2609,17 +2609,21 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
 
     if (!pedited || pedited->icm.outputIntent) {
         Glib::ustring intent;
+
         switch (icm.outputIntent) {
         default:
         case RI_PERCEPTUAL:
             intent = "Perceptual";
             break;
+
         case RI_RELATIVE:
             intent = "Relative";
             break;
+
         case RI_SATURATION:
             intent = "Saturation";
             break;
+
         case RI_ABSOLUTE:
             intent = "Absolute";
             break;
@@ -4110,7 +4114,7 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
 
 
             if (keyFile.has_key ("Retinex", "Radius"))                {
-                sh.radius        = keyFile.get_integer ("Retinex", "Radius");
+                retinex.radius        = keyFile.get_integer ("Retinex", "Radius");
 
                 if (pedited) {
                     pedited->retinex.radius = true;
@@ -5845,6 +5849,7 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Color Management", "OutputProfileIntent"))  {
                 Glib::ustring intent = keyFile.get_string ("Color Management", "OutputProfileIntent");
+
                 if (intent == "Perceptual") {
                     icm.outputIntent = RI_PERCEPTUAL;
                 } else if (intent == "Relative") {

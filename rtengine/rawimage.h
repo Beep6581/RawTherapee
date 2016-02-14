@@ -275,6 +275,8 @@ public:
         return ifp;
     }
     bool is_supportedThumb() const ;
+    bool is_jpegThumb() const ;
+    bool is_ppmThumb() const ;
     int get_thumbOffset()
     {
         return int(thumb_offset);

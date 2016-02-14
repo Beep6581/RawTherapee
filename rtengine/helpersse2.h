@@ -39,6 +39,11 @@ typedef __m128i vint2;
 #define STVFU(x,y) _mm_storeu_ps(&x,y)
 #endif
 
+#if defined(__x86_64__) && defined(__AVX__)
+#define PERMUTEPS(a,mask) _mm_permute_ps(a,mask)
+#else
+#define PERMUTEPS(a,mask) _mm_shuffle_ps(a,a,mask)
+#endif
 
 static INLINE vfloat LC2VFU(float &a)
 {

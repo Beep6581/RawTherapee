@@ -21,6 +21,13 @@
         <screenshot>http://rawtherapee.com/images/screenshots/rt-42_08-fb-metadata.jpg</screenshot>
         <screenshot>http://rawtherapee.com/images/screenshots/rt-42_09-queue.jpg</screenshot>
     </screenshots>
+    <keywords>
+        <keyword>raw</keyword>
+        <keyword>photography</keyword>
+        <keyword>develop</keyword>
+        <keyword>pp3</keyword>
+        <keyword>graphics</keyword>
+    </keywords>
     <url type="homepage">http://rawtherapee.com/</url>
     <updatecontact>contactus_at_rawtherapee.com</updatecontact>
 </application>
