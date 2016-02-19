@@ -712,7 +712,7 @@ void Crop::update (int todo)
         transCrop = NULL;
     }
 
-    if ((todo && (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled) {
+    if ((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled) {
 
         if( (!params.colorappearance.enabled )) {
             TMatrix wprof, wiprof;
