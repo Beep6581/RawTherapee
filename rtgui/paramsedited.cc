@@ -487,6 +487,8 @@ void ParamsEdited::set (bool v)
 
     dirpyrequalizer.enabled = v;
     dirpyrequalizer.gamutlab = v;
+    dirpyrequalizer.cbdlMethod = v;
+
 
     for(int i = 0; i < 6; i++) {
         dirpyrequalizer.mult[i] = v;
@@ -973,6 +975,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
 
         dirpyrequalizer.enabled = dirpyrequalizer.enabled && p.dirpyrequalizer.enabled == other.dirpyrequalizer.enabled;
         dirpyrequalizer.gamutlab = dirpyrequalizer.gamutlab && p.dirpyrequalizer.gamutlab == other.dirpyrequalizer.gamutlab;
+        dirpyrequalizer.cbdlMethod = dirpyrequalizer.cbdlMethod && p.dirpyrequalizer.cbdlMethod == other.dirpyrequalizer.cbdlMethod;
 
         for(int i = 0; i < 6; i++) {
             dirpyrequalizer.mult[i] = dirpyrequalizer.mult[i] && p.dirpyrequalizer.mult[i] == other.dirpyrequalizer.mult[i];
@@ -2698,6 +2701,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (dirpyrequalizer.gamutlab) {
         toEdit.dirpyrequalizer.gamutlab   = mods.dirpyrequalizer.gamutlab;
+    }
+
+    if (dirpyrequalizer.cbdlMethod) {
+        toEdit.dirpyrequalizer.cbdlMethod   = mods.dirpyrequalizer.cbdlMethod;
     }
 
     for(int i = 0; i < 6; i++) {

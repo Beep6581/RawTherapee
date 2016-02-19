@@ -739,6 +739,74 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         baseImg = trImg;
     }
 
+
+    if (params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled) {
+        if(((!params.colorappearance.enabled))) {
+            TMatrix wprof, wiprof;
+            wprof = iccStore->workingSpaceMatrix( params.icm.working );
+            wiprof = iccStore->workingSpaceInverseMatrix( params.icm.working );
+            double wip[3][3] = {
+                {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+                {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+                {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+            };
+
+            double wp[3][3] = {
+                {wprof[0][0], wprof[0][1], wprof[0][2]},
+                {wprof[1][0], wprof[1][1], wprof[1][2]},
+                {wprof[2][0], wprof[2][1], wprof[2][2]}
+            };
+
+            int W = baseImg->getWidth();
+            int H = baseImg->getHeight();
+            LabImage * labcbdl;
+            labcbdl = new LabImage(W, H);
+#ifndef _DEBUG
+            #pragma omp parallel for schedule(dynamic, 10)
+#endif
+
+            for(int i = 0; i < H; i++) {
+                for(int j = 0; j < W; j++) {
+                    float r = baseImg->r(i, j);
+                    float g = baseImg->g(i, j);
+                    float b = baseImg->b(i, j);
+                    float X, Y, Z;
+                    float L, aa, bb;
+                    Color::rgbxyz(r, g, b, X, Y, Z, wp);
+                    //convert Lab
+                    Color::XYZ2Lab(X, Y, Z, L, aa, bb);
+                    labcbdl->L[i][j] = L;
+                    labcbdl->a[i][j] = aa;
+                    labcbdl->b[i][j] = bb;
+                }
+            }
+
+            ipf.dirpyrequalizer (labcbdl, 1, 0);
+
+#ifndef _DEBUG
+            #pragma omp parallel for schedule(dynamic, 10)
+#endif
+
+            for(int i = 0; i < H; i++) {
+                for(int j = 0; j < W; j++) {
+                    float L = labcbdl->L[i][j];
+                    float a = labcbdl->a[i][j];
+                    float b = labcbdl->b[i][j];
+                    float x1, y1, z1;
+                    float R, G, B;
+                    Color::Lab2XYZ(L, a, b, x1, y1, z1);
+                    Color::xyz2rgb(x1, y1, z1, R, G, B, wip);
+                    baseImg->r(i, j) = R;
+                    baseImg->g(i, j) = G;
+                    baseImg->b(i, j) = B;
+                }
+            }
+
+            delete labcbdl;
+
+        }
+    }
+
     // update blurmap
     SHMap* shmap = NULL;
 
@@ -982,9 +1050,12 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     params.wavelet.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL );
 
+
     // directional pyramid wavelet
-    if((params.colorappearance.enabled && !settings->autocielab)  || !params.colorappearance.enabled) {
-        ipf.dirpyrequalizer (labView, 1);    //TODO: this is the luminance tonecurve, not the RGB one
+    if(params.dirpyrequalizer.cbdlMethod == "aft") {
+        if((params.colorappearance.enabled && !settings->autocielab)  || !params.colorappearance.enabled) {
+            ipf.dirpyrequalizer (labView, 1, 2);    //TODO: this is the luminance tonecurve, not the RGB one
+        }
     }
 
     int kall = 2;

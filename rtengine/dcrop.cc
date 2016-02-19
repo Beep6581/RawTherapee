@@ -712,6 +712,75 @@ void Crop::update (int todo)
         transCrop = NULL;
     }
 
+    if ((todo && (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled) {
+
+        if( (!params.colorappearance.enabled )) {
+            TMatrix wprof, wiprof;
+            wprof = iccStore->workingSpaceMatrix( params.icm.working );
+            wiprof = iccStore->workingSpaceInverseMatrix( params.icm.working );
+            double wip[3][3] = {
+                {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+                {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+                {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+            };
+
+            double wp[3][3] = {
+                {wprof[0][0], wprof[0][1], wprof[0][2]},
+                {wprof[1][0], wprof[1][1], wprof[1][2]},
+                {wprof[2][0], wprof[2][1], wprof[2][2]}
+            };
+
+            int W = baseCrop->getWidth();
+            int H = baseCrop->getHeight();
+            LabImage * labcbdl;
+            labcbdl = new LabImage(W, H);
+#ifndef _DEBUG
+            #pragma omp parallel for schedule(dynamic, 10)
+#endif
+
+            for(int i = 0; i < H; i++) {
+                for(int j = 0; j < W; j++) {
+                    float r = baseCrop->r(i, j);
+                    float g = baseCrop->g(i, j);
+                    float b = baseCrop->b(i, j);
+                    float X, Y, Z;
+                    float L, aa, bb;
+                    Color::rgbxyz(r, g, b, X, Y, Z, wp);
+                    //convert Lab
+                    Color::XYZ2Lab(X, Y, Z, L, aa, bb);
+                    labcbdl->L[i][j] = L;
+                    labcbdl->a[i][j] = aa;
+                    labcbdl->b[i][j] = bb;
+                }
+            }
+
+            parent->ipf.dirpyrequalizer (labcbdl, skip, 0);
+
+
+#ifndef _DEBUG
+            #pragma omp parallel for schedule(dynamic, 10)
+#endif
+
+            for(int i = 0; i < H; i++) {
+                for(int j = 0; j < W; j++) {
+                    float L = labcbdl->L[i][j];
+                    float a = labcbdl->a[i][j];
+                    float b = labcbdl->b[i][j];
+                    float x1, y1, z1;
+                    float R, G, B;
+                    Color::Lab2XYZ(L, a, b, x1, y1, z1);
+                    Color::xyz2rgb(x1, y1, z1, R, G, B, wip);
+                    baseCrop->r(i, j) = R;
+                    baseCrop->g(i, j) = G;
+                    baseCrop->b(i, j) = B;
+                }
+            }
+
+            delete labcbdl;
+
+        }
+    }
+
     // blurmap for shadow & highlights
     if ((todo & M_BLURMAP) && params.sh.enabled) {
         double radius = sqrt (double(SKIPS(parent->fw, skip) * SKIPS(parent->fw, skip) + SKIPS(parent->fh, skip) * SKIPS(parent->fh, skip))) / 2.0;
@@ -731,6 +800,7 @@ void Crop::update (int todo)
             cshmap->forceStat (parent->shmap->max_f, parent->shmap->min_f, parent->shmap->avg);
         }
     }
+
 
     // shadows & highlights & tone curve & convert to cielab
     /*int xref,yref;
@@ -838,11 +908,12 @@ void Crop::update (int todo)
         //   if (skip==1) {
         WaveletParams WaveParams = params.wavelet;
 
-        if((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {
-            parent->ipf.dirpyrequalizer (labnCrop, skip);
-            //  parent->ipf.Lanczoslab (labnCrop,labnCrop , 1.f/skip);
+        if(params.dirpyrequalizer.cbdlMethod == "aft") {
+            if(((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled))) {
+                parent->ipf.dirpyrequalizer (labnCrop, skip, 1);
+                //  parent->ipf.Lanczoslab (labnCrop,labnCrop , 1.f/skip);
+            }
         }
-
 
         int kall = 0;
         int minwin = min(labnCrop->W, labnCrop->H);

@@ -1219,7 +1219,9 @@ void ProcParams::setDefaults ()
 
     dirpyrequalizer.enabled = false;
     dirpyrequalizer.gamutlab = false;
+    dirpyrequalizer.cbdlMethod = "aft";
 
+	
     for(int i = 0; i < 6; i ++) {
         dirpyrequalizer.mult[i] = 1.0;
     }
@@ -3026,6 +3028,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
 
     if (!pedited || pedited->dirpyrequalizer.gamutlab) {
         keyFile.set_boolean ("Directional Pyramid Equalizer", "Gamutlab", dirpyrequalizer.gamutlab);
+    }
+
+    if (!pedited || pedited->dirpyrequalizer.cbdlMethod) {
+        keyFile.set_string  ("Directional Pyramid Equalizer", "cbdlMethod",  dirpyrequalizer.cbdlMethod);
     }
 
     for(int i = 0; i < 6; i++) {
@@ -6610,6 +6616,16 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
+
+            if (keyFile.has_key ("Directional Pyramid Equalizer", "cbdlMethod"))     {
+                dirpyrequalizer.cbdlMethod  = keyFile.get_string  ("Directional Pyramid Equalizer", "cbdlMethod");
+
+                if (pedited) {
+                    pedited->dirpyrequalizer.cbdlMethod = true;
+                }
+            }
+
+
 //   if (keyFile.has_key ("Directional Pyramid Equalizer", "Algorithm")) { dirpyrequalizer.algo = keyFile.get_string ("Directional Pyramid Equalizer", "Algorithm"); if (pedited) pedited->dirpyrequalizer.algo = true; }
             if (keyFile.has_key ("Directional Pyramid Equalizer", "Hueskin"))   {
                 Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Directional Pyramid Equalizer", "Hueskin");
@@ -7880,6 +7896,7 @@ bool ProcParams::operator== (const ProcParams& other)
         //  && dirpyrequalizer.algo == other.dirpyrequalizer.algo
         && dirpyrequalizer.hueskin == other.dirpyrequalizer.hueskin
         && dirpyrequalizer.threshold == other.dirpyrequalizer.threshold
+        && dirpyrequalizer.cbdlMethod == other.dirpyrequalizer.cbdlMethod
         && dirpyrequalizer.skinprotect == other.dirpyrequalizer.skinprotect
         && hsvequalizer.hcurve == other.hsvequalizer.hcurve
         && hsvequalizer.scurve == other.hsvequalizer.scurve

@@ -3421,9 +3421,21 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
         fGammaLUTf[i] = CurveFactory::gamma2 (float(i) / 65535.f) * 65535.f;
     }
 
-    if (hasColorToning || blackwhite) {
+    if (hasColorToning || blackwhite || (params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled)) {
         tmpImage = new Imagefloat(working->width, working->height);
     }
+
+    int W = working->width;
+    int H = working->height;
+
+
+
+
+
+
+
+
+
 
 #define TS 112
 
@@ -4217,48 +4229,48 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
                     }
                 }
 
-                //Film Simulations
-                if ( colorLUT ) {
-                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            float &sourceR = rtemp[ti * TS + tj];
-                            float &sourceG = gtemp[ti * TS + tj];
-                            float &sourceB = btemp[ti * TS + tj];
+                /*               //Film Simulations
+                               if ( colorLUT ) {
+                                   for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                                       for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                                           float &sourceR = rtemp[ti * TS + tj];
+                                           float &sourceG = gtemp[ti * TS + tj];
+                                           float &sourceB = btemp[ti * TS + tj];
 
-                            if (!clutAndWorkingProfilesAreSame) {
-                                //convert from working to clut profile
-                                float x, y, z;
-                                Color::rgbxyz( sourceR, sourceG, sourceB, x, y, z, work2xyz );
-                                Color::xyz2rgb( x, y, z, sourceR, sourceG, sourceB, xyz2clut );
-                            }
+                                           if (!clutAndWorkingProfilesAreSame) {
+                                               //convert from working to clut profile
+                                               float x, y, z;
+                                               Color::rgbxyz( sourceR, sourceG, sourceB, x, y, z, work2xyz );
+                                               Color::xyz2rgb( x, y, z, sourceR, sourceG, sourceB, xyz2clut );
+                                           }
 
-                            //appply gamma sRGB (default RT)
-                            sourceR = CLIP<float>( Color::gamma_srgb( sourceR ) );
-                            sourceG = CLIP<float>( Color::gamma_srgb( sourceG ) );
-                            sourceB = CLIP<float>( Color::gamma_srgb( sourceB ) );
+                                           //appply gamma sRGB (default RT)
+                                           sourceR = CLIP<float>( Color::gamma_srgb( sourceR ) );
+                                           sourceG = CLIP<float>( Color::gamma_srgb( sourceG ) );
+                                           sourceB = CLIP<float>( Color::gamma_srgb( sourceB ) );
 
-                            float r, g, b;
-                            colorLUT->getRGB( sourceR, sourceG, sourceB, r, g, b );
-                            // apply strength
-                            sourceR = r * filmSimCorrectedStrength + sourceR * filmSimSourceStrength;
-                            sourceG = g * filmSimCorrectedStrength + sourceG * filmSimSourceStrength;
-                            sourceB = b * filmSimCorrectedStrength + sourceB * filmSimSourceStrength;
-                            // apply inverse gamma sRGB
-                            sourceR = Color::igamma_srgb( sourceR );
-                            sourceG = Color::igamma_srgb( sourceG );
-                            sourceB = Color::igamma_srgb( sourceB );
+                                           float r, g, b;
+                                           colorLUT->getRGB( sourceR, sourceG, sourceB, r, g, b );
+                                           // apply strength
+                                           sourceR = r * filmSimCorrectedStrength + sourceR * filmSimSourceStrength;
+                                           sourceG = g * filmSimCorrectedStrength + sourceG * filmSimSourceStrength;
+                                           sourceB = b * filmSimCorrectedStrength + sourceB * filmSimSourceStrength;
+                                           // apply inverse gamma sRGB
+                                           sourceR = Color::igamma_srgb( sourceR );
+                                           sourceG = Color::igamma_srgb( sourceG );
+                                           sourceB = Color::igamma_srgb( sourceB );
 
-                            if (!clutAndWorkingProfilesAreSame) {
-                                //convert from clut to working profile
-                                float x, y, z;
-                                Color::rgbxyz( sourceR, sourceG, sourceB, x, y, z, clut2xyz );
-                                Color::xyz2rgb( x, y, z, sourceR, sourceG, sourceB, xyz2work );
-                            }
+                                           if (!clutAndWorkingProfilesAreSame) {
+                                               //convert from clut to working profile
+                                               float x, y, z;
+                                               Color::rgbxyz( sourceR, sourceG, sourceB, x, y, z, clut2xyz );
+                                               Color::xyz2rgb( x, y, z, sourceR, sourceG, sourceB, xyz2work );
+                                           }
 
-                        }
-                    }
-                }
-
+                                       }
+                                   }
+                               }
+                */
                 //black and white
                 if(blackwhite) {
                     if (hasToneCurvebw1) {
@@ -4404,6 +4416,50 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, EditBuffer *e
                         }
                     }
                 }
+
+
+                //Film Simulations
+                if ( colorLUT ) {
+                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                            float &sourceR = rtemp[ti * TS + tj];
+                            float &sourceG = gtemp[ti * TS + tj];
+                            float &sourceB = btemp[ti * TS + tj];
+
+                            if (!clutAndWorkingProfilesAreSame) {
+                                //convert from working to clut profile
+                                float x, y, z;
+                                Color::rgbxyz( sourceR, sourceG, sourceB, x, y, z, work2xyz );
+                                Color::xyz2rgb( x, y, z, sourceR, sourceG, sourceB, xyz2clut );
+                            }
+
+                            //appply gamma sRGB (default RT)
+                            sourceR = CLIP<float>( Color::gamma_srgb( sourceR ) );
+                            sourceG = CLIP<float>( Color::gamma_srgb( sourceG ) );
+                            sourceB = CLIP<float>( Color::gamma_srgb( sourceB ) );
+
+                            float r, g, b;
+                            colorLUT->getRGB( sourceR, sourceG, sourceB, r, g, b );
+                            // apply strength
+                            sourceR = r * filmSimCorrectedStrength + sourceR * filmSimSourceStrength;
+                            sourceG = g * filmSimCorrectedStrength + sourceG * filmSimSourceStrength;
+                            sourceB = b * filmSimCorrectedStrength + sourceB * filmSimSourceStrength;
+                            // apply inverse gamma sRGB
+                            sourceR = Color::igamma_srgb( sourceR );
+                            sourceG = Color::igamma_srgb( sourceG );
+                            sourceB = Color::igamma_srgb( sourceB );
+
+                            if (!clutAndWorkingProfilesAreSame) {
+                                //convert from clut to working profile
+                                float x, y, z;
+                                Color::rgbxyz( sourceR, sourceG, sourceB, x, y, z, clut2xyz );
+                                Color::xyz2rgb( x, y, z, sourceR, sourceG, sourceB, xyz2work );
+                            }
+
+                        }
+                    }
+                }
+
 
                 if(!blackwhite) {
                     // ready, fill lab
@@ -6481,8 +6537,9 @@ void ImProcFunctions::badpixlab(LabImage* lab, double rad, int thr, int mode, fl
     }
 }
 
-void ImProcFunctions::dirpyrequalizer (LabImage* lab, int scale)
+void ImProcFunctions::dirpyrequalizer (LabImage* lab, int scale, int mode)
 {
+    printf("mode=%d\n", mode);
 
     if (params->dirpyrequalizer.enabled && lab->W >= 8 && lab->H >= 8) {
         float b_l = static_cast<float>(params->dirpyrequalizer.hueskin.value[0]) / 100.0f;

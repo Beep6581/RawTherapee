@@ -45,6 +45,10 @@ protected:
     sigc::connection lumaneutralPressedConn;
     sigc::connection lumacontrastPlusPressedConn;
     sigc::connection lumacontrastMinusPressedConn;
+    sigc::connection  cbdlMethodConn;
+    Gtk::Label* labmcd;
+    Gtk::HBox* cdbox;
+    MyComboBoxText*   cbdlMethod;
 
     bool lastgamutlab;
 
@@ -61,7 +65,7 @@ public:
     void trimValues          (rtengine::procparams::ProcParams* pp);
     void adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
 //    void algoChanged         ();
-
+    void cbdlMethodChanged();
     void adjusterChanged (Adjuster* a, double newval);
     void enabledChanged();
     void gamutlabToggled ();

@@ -242,7 +242,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
     }
 
-    if ((todo & (M_RETINEX|M_INIT)) && params.retinex.enabled) {
+    if ((todo & (M_RETINEX | M_INIT)) && params.retinex.enabled) {
         bool dehacontlutili = false;
         bool mapcontlutili = false;
         bool useHsl = false;
@@ -392,6 +392,73 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     progress ("Preparing shadow/highlight map...", 100 * readyphase / numofphases);
 
+    if ((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled) {
+        if(((!params.colorappearance.enabled))) {
+            TMatrix wprof, wiprof;
+            wprof = iccStore->workingSpaceMatrix( params.icm.working );
+            wiprof = iccStore->workingSpaceInverseMatrix( params.icm.working );
+            double wip[3][3] = {
+                {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+                {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+                {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+            };
+
+            double wp[3][3] = {
+                {wprof[0][0], wprof[0][1], wprof[0][2]},
+                {wprof[1][0], wprof[1][1], wprof[1][2]},
+                {wprof[2][0], wprof[2][1], wprof[2][2]}
+            };
+
+            int W = oprevi->getWidth();
+            int H = oprevi->getHeight();
+            LabImage * labcbdl;
+            labcbdl = new LabImage(W, H);
+#ifndef _DEBUG
+            #pragma omp parallel for schedule(dynamic, 10)
+#endif
+
+            for(int i = 0; i < H; i++) {
+                for(int j = 0; j < W; j++) {
+                    float r = oprevi->r(i, j);
+                    float g = oprevi->g(i, j);
+                    float b = oprevi->b(i, j);
+                    float X, Y, Z;
+                    float L, aa, bb;
+                    Color::rgbxyz(r, g, b, X, Y, Z, wp);
+                    //convert Lab
+                    Color::XYZ2Lab(X, Y, Z, L, aa, bb);
+                    labcbdl->L[i][j] = L;
+                    labcbdl->a[i][j] = aa;
+                    labcbdl->b[i][j] = bb;
+                }
+            }
+
+            ipf.dirpyrequalizer (labcbdl, scale, 0);
+
+#ifndef _DEBUG
+            #pragma omp parallel for schedule(dynamic, 10)
+#endif
+
+            for(int i = 0; i < H; i++) {
+                for(int j = 0; j < W; j++) {
+                    float L = labcbdl->L[i][j];
+                    float a = labcbdl->a[i][j];
+                    float b = labcbdl->b[i][j];
+                    float x1, y1, z1;
+                    float R, G, B;
+                    Color::Lab2XYZ(L, a, b, x1, y1, z1);
+                    Color::xyz2rgb(x1, y1, z1, R, G, B, wip);
+                    oprevi->r(i, j) = R;
+                    oprevi->g(i, j) = G;
+                    oprevi->b(i, j) = B;
+                }
+            }
+
+            delete labcbdl;
+
+        }
+    }
+
     if ((todo & M_BLURMAP) && params.sh.enabled) {
         double radius = sqrt (double(pW * pW + pH * pH)) / 2.0;
         double shradius = params.sh.radius;
@@ -406,6 +473,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         shmap->update (oprevi, shradius, ipf.lumimul, params.sh.hq, scale);
     }
+
+
 
     readyphase++;
 
@@ -438,6 +507,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, scale == 1 ? 1 : 1);
         CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, scale == 1 ? 1 : 1);
         CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, scale == 1 ? 1 : 1);
+
 
         TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
         double wp[3][3] = {
@@ -656,15 +726,15 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     }
                 }
         */
-        //if (scale==1) {
-        if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
-            progress ("Pyramid wavelet...", 100 * readyphase / numofphases);
-            ipf.dirpyrequalizer (nprevl, scale);
-            //ipf.Lanczoslab (ip_wavelet(LabImage * lab, LabImage * dst, const procparams::EqualizerParams & eqparams), nprevl, 1.f/scale);
-            readyphase++;
+        if(params.dirpyrequalizer.cbdlMethod == "aft") {
+            if(((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) ) {
+                progress ("Pyramid wavelet...", 100 * readyphase / numofphases);
+                ipf.dirpyrequalizer (nprevl, scale, 1);
+                //ipf.Lanczoslab (ip_wavelet(LabImage * lab, LabImage * dst, const procparams::EqualizerParams & eqparams), nprevl, 1.f/scale);
+                readyphase++;
+            }
         }
 
-        //}
 
         wavcontlutili = false;
         //CurveFactory::curveWavContL ( wavcontlutili,params.wavelet.lcurve, wavclCurve, LUTu & histogramwavcl, LUTu & outBeforeWavCLurveHistogram,int skip);
@@ -782,6 +852,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             }
         }
     }
+
     // Update the monitor color transform if necessary
     if (todo & M_MONITOR) {
         ipf.updateColorProfiles(params.icm, monitorProfile, monitorIntent);

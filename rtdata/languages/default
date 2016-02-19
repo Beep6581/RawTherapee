@@ -670,6 +670,7 @@ HISTORY_MSG_436;Retinex - M - Radius
 HISTORY_MSG_437;Retinex - M - Method
 HISTORY_MSG_438;Retinex - M - Equalizer
 HISTORY_MSG_439;Retinex - Preview
+HISTORY_MSG_440;CbDL - method
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1206,6 +1207,10 @@ TP_BWMIX_VAL;L
 TP_CACORRECTION_BLUE;Blue
 TP_CACORRECTION_LABEL;Chromatic Aberration Correction
 TP_CACORRECTION_RED;Red
+TP_CBDL_METHOD;Process located
+TP_CBDL_METHOD_TOOLTIP;"After Black and White" located the tool in L*a*b process.\n"Before Black and White" located the tool at the beginning of rgb process.\nObviously this can lead to differences. 
+TP_CBDL_AFT;After Black and White
+TP_CBDL_BEF;Before Black and White
 TP_CHMIXER_BLUE;Blue channel
 TP_CHMIXER_GREEN;Green channel
 TP_CHMIXER_LABEL;Channel Mixer

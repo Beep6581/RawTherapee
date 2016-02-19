@@ -284,7 +284,8 @@ public:
     void impulse_nrcam (CieImage* ncie, double thresh, float **buffers[3]);
 
     void dirpyrdenoise    (LabImage* src);//Emil's pyramid denoise
-    void dirpyrequalizer  (LabImage* lab, int scale);//Emil's wavelet
+    void dirpyrequalizer  (LabImage* lab, int scale, int mode);//Emil's wavelet
+
 
     void EPDToneMapResid(float * WavCoeffs_L0, unsigned int Iterates,  int skip, struct cont_params& cp, int W_L, int H_L, float max0, float min0);
     float *CompressDR(float *Source, int skip, struct cont_params &cp, int W_L, int H_L, float Compression, float DetailBoost, float max0, float min0, float ave, float ah, float bh, float al, float bl, float factorx, float *Compressed);
