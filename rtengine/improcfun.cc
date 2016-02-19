@@ -6539,8 +6539,6 @@ void ImProcFunctions::badpixlab(LabImage* lab, double rad, int thr, int mode, fl
 
 void ImProcFunctions::dirpyrequalizer (LabImage* lab, int scale, int mode)
 {
-    printf("mode=%d\n", mode);
-
     if (params->dirpyrequalizer.enabled && lab->W >= 8 && lab->H >= 8) {
         float b_l = static_cast<float>(params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
         float t_l = static_cast<float>(params->dirpyrequalizer.hueskin.value[1]) / 100.0f;

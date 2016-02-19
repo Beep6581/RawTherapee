@@ -714,70 +714,49 @@ void Crop::update (int todo)
 
     if ((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled) {
 
-        if( (!params.colorappearance.enabled )) {
-            TMatrix wprof, wiprof;
-            wprof = iccStore->workingSpaceMatrix( params.icm.working );
-            wiprof = iccStore->workingSpaceInverseMatrix( params.icm.working );
-            double wip[3][3] = {
-                {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
-                {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
-                {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
-            };
+        TMatrix wprof = iccStore->workingSpaceMatrix( params.icm.working );
+        const float wp[3][3] = {
+            {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
+            {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
+            {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
+        };
 
-            double wp[3][3] = {
-                {wprof[0][0], wprof[0][1], wprof[0][2]},
-                {wprof[1][0], wprof[1][1], wprof[1][2]},
-                {wprof[2][0], wprof[2][1], wprof[2][2]}
-            };
-
-            int W = baseCrop->getWidth();
-            int H = baseCrop->getHeight();
-            LabImage * labcbdl;
-            labcbdl = new LabImage(W, H);
-#ifndef _DEBUG
-            #pragma omp parallel for schedule(dynamic, 10)
+        const int W = baseCrop->getWidth();
+        const int H = baseCrop->getHeight();
+        LabImage labcbdl(W, H);
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-            for(int i = 0; i < H; i++) {
-                for(int j = 0; j < W; j++) {
-                    float r = baseCrop->r(i, j);
-                    float g = baseCrop->g(i, j);
-                    float b = baseCrop->b(i, j);
-                    float X, Y, Z;
-                    float L, aa, bb;
-                    Color::rgbxyz(r, g, b, X, Y, Z, wp);
-                    //convert Lab
-                    Color::XYZ2Lab(X, Y, Z, L, aa, bb);
-                    labcbdl->L[i][j] = L;
-                    labcbdl->a[i][j] = aa;
-                    labcbdl->b[i][j] = bb;
-                }
+        //convert RGB => Lab
+        for(int i = 0; i < H; i++) {
+            for(int j = 0; j < W; j++) {
+                float X, Y, Z;
+                Color::rgbxyz(baseCrop->r(i, j), baseCrop->g(i, j), baseCrop->b(i, j), X, Y, Z, wp);
+                Color::XYZ2Lab(X, Y, Z, labcbdl.L[i][j], labcbdl.a[i][j], labcbdl.b[i][j]);
             }
+        }
 
-            parent->ipf.dirpyrequalizer (labcbdl, skip, 0);
+        parent->ipf.dirpyrequalizer (&labcbdl, skip, 0);
 
+        TMatrix wiprof = iccStore->workingSpaceInverseMatrix( params.icm.working );
+        const float wip[3][3] = {
+            {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
+            {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},
+            {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
+        };
 
-#ifndef _DEBUG
-            #pragma omp parallel for schedule(dynamic, 10)
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-            for(int i = 0; i < H; i++) {
-                for(int j = 0; j < W; j++) {
-                    float L = labcbdl->L[i][j];
-                    float a = labcbdl->a[i][j];
-                    float b = labcbdl->b[i][j];
-                    float x1, y1, z1;
-                    float R, G, B;
-                    Color::Lab2XYZ(L, a, b, x1, y1, z1);
-                    Color::xyz2rgb(x1, y1, z1, R, G, B, wip);
-                    baseCrop->r(i, j) = R;
-                    baseCrop->g(i, j) = G;
-                    baseCrop->b(i, j) = B;
-                }
+        //convert Lab => RGB
+        for(int i = 0; i < H; i++) {
+            for(int j = 0; j < W; j++) {
+                float X, Y, Z;
+                Color::Lab2XYZ(labcbdl.L[i][j], labcbdl.a[i][j], labcbdl.b[i][j], X, Y, Z);
+                Color::xyz2rgb(X, Y, Z, baseCrop->r(i, j), baseCrop->g(i, j), baseCrop->b(i, j), wip);
             }
-
-            delete labcbdl;
-
         }
     }
 
