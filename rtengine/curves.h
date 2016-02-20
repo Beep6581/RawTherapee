@@ -28,7 +28,7 @@
 #include "../rtgui/mydiagonalcurve.h"
 #include "color.h"
 #include "procparams.h"
-#include "editbuffer.h"
+#include "pipettebuffer.h"
 
 #include "LUT.h"
 

@@ -24,14 +24,15 @@
 #include "edit.h"
 #include <gtkmm.h>
 
-class CropHandlerListener
+class CropDisplayHandler
 {
 
 public:
-    virtual ~CropHandlerListener() {}
+    virtual ~CropDisplayHandler() {}
     virtual void cropImageUpdated    () {}
     virtual void cropWindowChanged   () {}
     virtual void initialImageArrived () {}
+    virtual void setDisplayPosition  (int x, int y) {}
 };
 
 class CropHandler;
@@ -41,16 +42,22 @@ struct CropHandlerIdleHelper {
     int pending;
 };
 
+/**
+ *  This class handle the displayed part of the image, ask for the initial data and process it so it can display it.
+ *  Its position on the preview is handled not set by this class but by the CropHandlerListener (i.e. CropWindow) with which it works closely.
+ */
 class CropHandler : public rtengine::DetailedCropListener, public rtengine::SizeListener
 {
 
     friend int createpixbufs (void* data);
 
 protected:
-    int zoom;
-    int ww, wh;             // size of the crop view on the screen
-    int cx, cy, cw, ch;     // position and size of the requested crop
-    int cropX, cropY, cropW, cropH; // position and size of the crop corresponding to cropPixbuf
+    int zoom;               // scale factor (e.g. 5 if 1:5 scale) ; if 1:1 scale and bigger, factor is multiplied by 1000  (i.e. 1000 for 1:1 scale, 2000 for 2:1, etc...)
+    int ww, wh;             // size of the crop's canvas on the screen ; might be bigger than the displayed image, but not smaller
+    int imx, imy, imw, imh; // this is a copy of the cropwindow's parameters
+    int cax, cay;           // clamped crop anchor's coordinate, i.e. point of the image that coincide to the center of the display area, expressed in image coordinates; cannot be outside the image's bounds; but if cax==cay==-1, designate the center of the image
+    int cx, cy, cw, ch;     // position and size of the requested crop ; position expressed in image coordinates, so cx and cy might be negative and cw and ch higher than the image's 1:1 size
+    int cropX, cropY, cropW, cropH; // cropPixbuf's displayed area (position and size), i.e. coordinates in 1:1 scale, i.e. cx, cy, cw & ch trimmed to the image's bounds
     bool enabled;
     unsigned char* cropimg;
     unsigned char* cropimgtrue;
@@ -61,7 +68,7 @@ protected:
     rtengine::StagedImageProcessor* ipc;
     rtengine::DetailedCrop* crop;
 
-    CropHandlerListener* listener;
+    CropDisplayHandler* displayHandler;
     CropHandlerIdleHelper* chi;
 
     void    compDim ();
@@ -81,9 +88,9 @@ public:
     CropHandler ();
     ~CropHandler ();
 
-    void    setCropHandlerListener (CropHandlerListener* l)
+    void    setDisplayHandler (CropDisplayHandler* l)
     {
-        listener = l;
+        displayHandler = l;
     }
     void    setEditSubscriber      (EditSubscriber* newSubscriber);
 
@@ -93,7 +100,10 @@ public:
     double  getFitCropZoom();
     void    setWSize    (int w, int h);
     void    getWSize    (int& w, int &h);
-    void    setPosition (int x, int y, bool update = true);
+    void    getAnchorPosition (int& x, int& y);
+    void    setAnchorPosition (int x, int y, bool update = true);
+    void    moveAnchor   (int deltaX, int deltaY, bool update = true);
+    void    centerAnchor (bool update = true);
     void    getPosition (int& x, int& y);
     void    getSize     (int& w, int& h);
     void    getFullImageSize (int& w, int& h);
@@ -112,8 +122,6 @@ public:
     bool    getWindow (int& cwx, int& cwy, int& cww, int& cwh, int& cskip);
     // SizeListener interface
     void    sizeChanged  (int w, int h, int ow, int oh);
-
-    void    cutRectToImgBounds (int& x, int& y, int& w, int& h);
 };
 
 #endif

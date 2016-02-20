@@ -84,9 +84,7 @@ void ImageAreaPanel::synchronize ()
         after->imageArea->getScrollPosition (x, y);
 
         if (imgw > 0 && imgh > 0) {
-            int bimgw, bimgh;
-            imageArea->getScrollImageSize (bimgw, bimgh);
-            imageArea->setScrollPosition (x * bimgw / imgw, y * bimgh / imgh);
+            imageArea->setScrollPosition (x, y);
             imageArea->queue_draw ();
         }
     } else if (before && this == after) {
@@ -95,9 +93,7 @@ void ImageAreaPanel::synchronize ()
         before->imageArea->getScrollPosition (x, y);
 
         if (imgw > 0 && imgh > 0) {
-            int bimgw, bimgh;
-            imageArea->getScrollImageSize (bimgw, bimgh);
-            imageArea->setScrollPosition (x * bimgw / imgw, y * bimgh / imgh);
+            imageArea->setScrollPosition (x, y);
             imageArea->queue_draw ();
         }
     }
