@@ -111,7 +111,7 @@
 	<key>CFBundleExecutable</key>
 	<string>rawtherapee</string>
 	<key>CFBundleGetInfoString</key>
-	<string>@version@, Copyright © 2004-2013 Gábor Horváth</string>
+	<string>@version@, Copyright © 2004-2010 Gábor Horváth, 2010-2016 RT dev team</string>
 	<key>CFBundleIconFile</key>
 	<string>rawtherapee.icns</string>
 	<key>CFBundleIdentifier</key>

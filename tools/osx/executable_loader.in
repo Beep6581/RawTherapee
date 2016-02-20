@@ -4,7 +4,8 @@ cwd="$(cd "$(dirname "$0")"; pwd)"
 app="${cwd%/Contents/*}"
 etc="${cwd}"/etc
 
-# for different os x version (issue 1795)
+# for different os x versions
+# see https://github.com/Beep6581/RawTherapee/issues/1779
 cups_dir=/tmp/RT4
 install -d ${cups_dir}
 cp -f /usr/lib/libcups.2.dylib ${cups_dir}

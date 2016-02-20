@@ -5,7 +5,7 @@
 # these are very important variables. Must be set into rtdata/CMakeLists.txt!
 # - PROJECT_NAME
 # - PROJECT_SOURCE_DIR
-# - PROJECT_VERSION (if without mercurial)
+# - PROJECT_VERSION (if without git)
 # - CMAKE_BUILD_TYPE
 # - PROC_BIT_DEPTH
 # - GTK_PREFIX
@@ -13,9 +13,11 @@
 function message {
   printf '\e[34m-- %s\e[m\n' "$*"
 }
+
 function GetDependencies {
   otool -L "$1" | awk 'NR >= 2 && $1 !~ /^(\/usr\/lib|\/System|@executable_path|@rpath)\// { print $1 }'
 }
+
 function CheckLink {
   GetDependencies "$1" | while read; do
     local dest="${LIB}/$(basename "${REPLY}")"
@@ -30,8 +32,13 @@ if test ! -d "${CMAKE_BUILD_TYPE}"; then
 fi
 
 # update project version
-if test -x $(which hg) -a -d "${PROJECT_SOURCE_DIR}/.hg"; then
-  PROJECT_VERSION=$(hg -R "${PROJECT_SOURCE_DIR}" parents --template "{latesttag}.{latesttagdistance}")
+if test -x $(which git) -a -d "${PROJECT_SOURCE_DIR}/.git"; then
+    # This is what the version ought to look like to be accurate in the git universe:
+    # PROJECT_VERSION="$(git describe --tags --always)_$(git symbolic-ref --short -q HEAD)"
+    # outputs: 4.2-677-g904467b_master
+    # but due to Apple requirements https://goo.gl/eWDQv6 we must use this:
+    PROJECT_VERSION="$(git describe --tags --always | sed -e 's/-g.*//' -e 's/-/./')"
+    # outputs: 4.2.677
 fi
 
 # if not specify CMAKE_OSX_DEPLOYMENT_TARGET when compiling,
@@ -157,7 +164,7 @@ cp "${PROJECT_SOURCE_DATA_DIR}"/{rawtherapee,profile}.icns "${RESOURCES}"
 cp "${PROJECT_SOURCE_DATA_DIR}"/PkgInfo "${CONTENTS}"
 install -m 0644 "${PROJECT_SOURCE_DATA_DIR}"/Info.plist.in "${CONTENTS}"/Info.plist
 sed -i "" -e "s|@version@|${PROJECT_VERSION}|
-              s|@shortVersion@|$(echo ${PROJECT_VERSION} | cut -d. -f-3)|
+              s|@shortVersion@|$(echo ${PROJECT_VERSION}|
               s|@arch@|${arch}|" \
               "${CONTENTS}"/Info.plist
 plutil -convert binary1 "${CONTENTS}"/Info.plist
