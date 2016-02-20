@@ -56,8 +56,8 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), firstOpen(true)
 ImageArea::~ImageArea ()
 {
 
-    for (std::list<CropWindow*>::iterator i = cropWins.begin(); i != cropWins.end(); i++) {
-        delete *i;
+    for (auto cropWin : cropWins) {
+        delete cropWin;
     }
 
     cropWins.clear ();
@@ -96,10 +96,10 @@ void ImageArea::on_resized (Gtk::Allocation& req)
             mainCropWindow->setPointerMotionListener (pmlistener);
             mainCropWindow->setPointerMotionHListener (pmhlistener);
             mainCropWindow->setPosition (0, 0);
-            mainCropWindow->setSize (get_width(), get_height(), false);  // this execute the refresh itself
+            mainCropWindow->setSize (get_width(), get_height());  // this execute the refresh itself
             mainCropWindow->enable();  // start processing !
         } else {
-            mainCropWindow->setSize (get_width(), get_height());
+            mainCropWindow->setSize (get_width(), get_height());  // this execute the refresh itself
         }
 
         parent->syncBeforeAfterViews();
@@ -110,10 +110,9 @@ void ImageArea::setImProcCoordinator (rtengine::StagedImageProcessor* ipc_)
 {
     if( !ipc_ ) {
         focusGrabber = NULL;
-        std::list<CropWindow*>::iterator i = cropWins.begin();
 
-        for( ; i != cropWins.end(); i++ ) {
-            delete *i;
+        for (auto cropWin : cropWins) {
+            delete cropWin;
         }
 
         cropWins.clear();
@@ -170,10 +169,11 @@ CropWindow* ImageArea::getCropWindow (int x, int y)
 
     CropWindow* cw = mainCropWindow;
 
-    for (std::list<CropWindow*>::iterator i = cropWins.begin(); i != cropWins.end(); i++)
-        if ((*i)->isInside (x, y)) {
-            return *i;
+    for (auto cropWin : cropWins) {
+        if (cropWin->isInside (x, y)) {
+            return cropWin;
         }
+    }
 
     return cw;
 }
@@ -200,7 +200,6 @@ bool ImageArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
      */
 
     if (mainCropWindow) {
-        //printf("MainCropWindow (%d x %d)\n", window->get_width(), window->get_height());
         mainCropWindow->expose (cr);
     }
 
@@ -277,11 +276,11 @@ bool ImageArea::on_scroll_event (GdkEventScroll* event)
         int newCenterX = (int)event->x;
         int newCenterY = (int)event->y;
 
+        cw->screenCoordToImage(newCenterX, newCenterY, newCenterX, newCenterY);
+
         if (event->direction == GDK_SCROLL_UP && !cw->isMaxZoom()) {
-            cw->findCenter (1, newCenterX, newCenterY);
             cw->zoomIn (true, newCenterX, newCenterY);
         } else if (!cw->isMinZoom()) {
-            cw->findCenter (-1, newCenterX, newCenterY);
             cw->zoomOut (true, newCenterX, newCenterY);
         }
     }
@@ -329,19 +328,18 @@ bool ImageArea::on_leave_notify_event  (GdkEventCrossing* event)
 
 void ImageArea::subscribe(EditSubscriber *subscriber)
 {
-    mainCropWindow->cropHandler.setEditSubscriber(subscriber);
-
-    for (std::list<CropWindow*>::iterator i = cropWins.begin(); i != cropWins.end(); i++) {
-        (*i)->cropHandler.setEditSubscriber(subscriber);
-    }
-
     EditDataProvider::subscribe(subscriber);
+
+    mainCropWindow->setEditSubscriber(subscriber);
+    for (auto cropWin : cropWins) {
+        cropWin->setEditSubscriber(subscriber);
+    }
 
     if (listener && listener->getToolBar()) {
         listener->getToolBar()->startEditMode ();
     }
 
-    if (subscriber->getEditingType() == ET_OBJECTS) {
+    if (subscriber && subscriber->getEditingType() == ET_OBJECTS) {
         // In this case, no need to reprocess the image, so we redraw the image to display the geometry
         queue_draw();
     }
@@ -357,11 +355,11 @@ void ImageArea::unsubscribe()
     }
 
     EditDataProvider::unsubscribe();
-    // Ask the Crops to free-up edit mode buffers
-    mainCropWindow->cropHandler.setEditSubscriber(NULL);
 
-    for (std::list<CropWindow*>::iterator i = cropWins.begin(); i != cropWins.end(); i++) {
-        (*i)->cropHandler.setEditSubscriber(NULL);
+    // Ask the Crops to free-up edit mode buffers
+    mainCropWindow->setEditSubscriber(NULL);
+    for (auto cropWin : cropWins) {
+        cropWin->setEditSubscriber(NULL);
     }
 
     setToolHand();
@@ -475,12 +473,10 @@ void ImageArea::addCropWindow ()
 
     y = cropheight * (N % maxRows);
     cw->setPosition (x, y);
+    cw->setEditSubscriber (getCurrSubscriber());
     cw->enable(); // start processing!
 
-    int x0, y0, w, h, wc, hc;
-    mainCropWindow->getCropRectangle(x0, y0, w, h );
-    cw->getCropSize(wc, hc);
-    cw->setCropPosition(x0 + w / 2 - wc / 2, y0 + h / 2 - hc / 2);
+    cw->centerCrop();
     mainCropWindow->setObservedCropWin (cropWins.front());
 
     if(cropWins.size() == 1) { // after first detail window we already have high quality
@@ -541,9 +537,8 @@ void ImageArea::getScrollImageSize (int& w, int& h)
 {
 
     if (mainCropWindow && ipc) {
-        double z = mainCropWindow->getZoom ();
-        w = ipc->getFullWidth() * z;
-        h = ipc->getFullHeight() * z;
+        w = ipc->getFullWidth();
+        h = ipc->getFullHeight();
     } else {
         w = h = 0;
     }
@@ -553,10 +548,7 @@ void ImageArea::getScrollPosition (int& x, int& y)
 {
 
     if (mainCropWindow) {
-        int cropX, cropY;
-        mainCropWindow->getCropPosition (cropX, cropY);
-        x = cropX * mainCropWindow->getZoom ();
-        y = cropY * mainCropWindow->getZoom ();
+        mainCropWindow->getCropAnchorPosition (x, y);
     } else {
         x = y = 0;
     }
@@ -567,7 +559,7 @@ void ImageArea::setScrollPosition (int x, int y)
 
     if (mainCropWindow) {
         mainCropWindow->delCropWindowListener (this);
-        mainCropWindow->setCropPosition (x / mainCropWindow->getZoom (), y / mainCropWindow->getZoom ());
+        mainCropWindow->setCropAnchorPosition (x, y);
         mainCropWindow->addCropWindowListener (this);
     }
 }
@@ -620,19 +612,15 @@ void ImageArea::initialImageArrived (CropWindow* cw)
 
     if (mainCropWindow) {
         if(firstOpen || options.prevdemo != PD_Sidecar || (!options.rememberZoomAndPan) ) {
-            mainCropWindow->zoomFit (false);
+            mainCropWindow->zoomFit ();
             firstOpen = false;
             mainCropWindow->cropHandler.getFullImageSize(fullImageWidth, fullImageHeight);
         } else {
             int w, h;
             mainCropWindow->cropHandler.getFullImageSize(w, h);
 
-            if(w == fullImageWidth && h == fullImageHeight) { // && mainCropWindow->getZoom() != mainCropWindow->getZoomFitVal()) {
-                int x, y;
-                mainCropWindow->getCropPosition(x, y);
-                mainCropWindow->setCropPosition(x, y, false);
-            } else {
-                mainCropWindow->zoomFit (false);
+            if(w != fullImageWidth || h != fullImageHeight) {
+                mainCropWindow->zoomFit ();
             }
 
             fullImageWidth = w;
@@ -651,8 +639,8 @@ void ImageArea::setCropGUIListener (CropGUIListener* l)
 
     cropgl = l;
 
-    for (std::list<CropWindow*>::iterator i = cropWins.begin(); i != cropWins.end(); i++) {
-        (*i)->setCropGUIListener (cropgl);
+    for (auto cropWin : cropWins) {
+        cropWin->setCropGUIListener (cropgl);
     }
 
     if (mainCropWindow) {
@@ -665,8 +653,8 @@ void ImageArea::setPointerMotionListener (PointerMotionListener* pml)
 
     pmlistener = pml;
 
-    for (std::list<CropWindow*>::iterator i = cropWins.begin(); i != cropWins.end(); i++) {
-        (*i)->setPointerMotionListener (pml);
+    for (auto cropWin : cropWins) {
+        cropWin->setPointerMotionListener (pml);
     }
 
     if (mainCropWindow) {
@@ -679,8 +667,8 @@ void ImageArea::setPointerMotionHListener (PointerMotionListener* pml)
 
     pmhlistener = pml;
 
-    for (std::list<CropWindow*>::iterator i = cropWins.begin(); i != cropWins.end(); i++) {
-        (*i)->setPointerMotionHListener (pml);
+    for (auto cropWin : cropWins) {
+        cropWin->setPointerMotionHListener (pml);
     }
 
     if (mainCropWindow) {

@@ -26,7 +26,7 @@
 #include "image16.h"
 #include "imagesource.h"
 #include "procevents.h"
-#include "editbuffer.h"
+#include "pipettebuffer.h"
 #include "../rtgui/threadutils.h"
 
 namespace rtengine
@@ -36,7 +36,7 @@ using namespace procparams;
 
 class ImProcCoordinator;
 
-class Crop : public DetailedCrop, public EditBuffer
+class Crop : public DetailedCrop, public PipetteBuffer
 {
 
 protected:
@@ -57,6 +57,7 @@ protected:
     bool updating;         /// Flag telling if an updater thread is currently processing
     bool newUpdatePending; /// Flag telling the updater thread that a new update is pending
     int skip;
+    int padding;           /// Minimum space allowed around image in the display area
     int cropx, cropy, cropw, croph;         /// size of the detail crop image ('skip' taken into account), with border
     int trafx, trafy, trafw, trafh;         /// the size and position to get from the imagesource that is transformed to the requested crop area
     int rqcropx, rqcropy, rqcropw, rqcroph; /// size of the requested detail crop image (the image might be smaller) (without border)
@@ -70,7 +71,7 @@ protected:
     ImProcCoordinator* parent;
     bool isDetailWindow;
     EditUniqueID getCurrEditID();
-    bool setCropSizes (int cx, int cy, int cw, int ch, int skip, bool internal);
+    bool setCropSizes (int cropX, int cropY, int cropW, int cropH, int skip, bool internal);
     void freeAll ();
 
 public:
@@ -91,9 +92,9 @@ public:
         return cropImageListener;
     }
     void update      (int todo);
-    void setWindow   (int cx, int cy, int cw, int ch, int skip)
+    void setWindow   (int cropX, int cropY, int cropW, int cropH, int skip)
     {
-        setCropSizes (cx, cy, cw, ch, skip, false);
+        setCropSizes (cropX, cropY, cropW, cropH, skip, false);
     }
 
     /** @brief Synchronously look out if a full update is necessary
@@ -108,6 +109,10 @@ public:
     int  get_skip       ()
     {
         return skip;
+    }
+    int getPadding      ()
+    {
+        return padding;
     }
     int  getLeftBorder  ()
     {

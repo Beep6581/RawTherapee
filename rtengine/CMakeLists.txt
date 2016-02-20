@@ -11,7 +11,7 @@ set (RTENGINESOURCEFILES safegtk.cc colortemp.cc curves.cc flatcurves.cc diagona
     dfmanager.cc ffmanager.cc gauss.cc rawimage.cc image8.cc image16.cc imagefloat.cc imagedata.cc imageio.cc improcfun.cc init.cc dcrop.cc
     loadinitial.cc procparams.cc rawimagesource.cc demosaic_algos.cc shmap.cc simpleprocess.cc refreshmap.cc
     fast_demo.cc amaze_demosaic_RT.cc CA_correct_RT.cc cfa_linedn_RT.cc green_equil_RT.cc hilite_recon.cc expo_before_b.cc
-    stdimagesource.cc myfile.cc iccjpeg.cc hlmultipliers.cc improccoordinator.cc editbuffer.cc coord.cc
+    stdimagesource.cc myfile.cc iccjpeg.cc hlmultipliers.cc improccoordinator.cc pipettebuffer.cc coord.cc
     processingjob.cc rtthumbnail.cc utils.cc labimage.cc slicer.cc cieimage.cc
     iplab2rgb.cc ipsharpen.cc iptransform.cc ipresize.cc ipvibrance.cc
     imagedimensions.cc jpeg_memsrc.cc jdatasrc.cc iimage.cc

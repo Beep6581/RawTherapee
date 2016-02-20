@@ -29,6 +29,7 @@
 #include "cropguilistener.h"
 #include "pointermotionlistener.h"
 #include "cursormanager.h"
+#include "edit.h"
 
 class CropWindow;
 class CropWindowListener
@@ -43,12 +44,13 @@ public:
 };
 
 class ImageArea;
-class CropWindow : public LWButtonListener, public CropHandlerListener, public EditCoordSystem
+class CropWindow : public LWButtonListener, public CropDisplayHandler, public EditCoordSystem, public ObjectMOBuffer
 {
 
     // state management
-    ImgEditState state;                  // current state of user (see enum State)
-    int action_x, action_y, press_x, press_y;
+    ImgEditState state;                 // current state of user (see enum State)
+    int press_x, press_y;               // position of the cursor in the GUI space on button press
+    int action_x, action_y;             // parameter that will evolve during a pan or drag action
     double rot_deg;
     bool onResizeArea;
     bool deleted;
@@ -87,7 +89,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener, public E
     PointerMotionListener* pmhlistener;
     std::list<CropWindowListener*> listeners;
 
-    CropWindow* observedCropWin;
+    CropWindow* observedCropWin;  // Pointer to the currently active detail CropWindow
     rtengine::StagedImageProcessor* ipc;
 
     bool onArea                    (CursorArea a, int x, int y);
@@ -97,7 +99,9 @@ class CropWindow : public LWButtonListener, public CropHandlerListener, public E
     void drawScaledSpotRectangle   (Cairo::RefPtr<Cairo::Context> cr, int rectSize);
     void drawUnscaledSpotRectangle (Cairo::RefPtr<Cairo::Context> cr, int rectSize);
     void drawObservedFrame         (Cairo::RefPtr<Cairo::Context> cr, int rw = 0, int rh = 0);
-    void changeZoom                (int zoom, bool notify = true, int centerx = -1, int centery = -1, bool skipZoomIfUnchanged = true);
+    void changeZoom                (int zoom, bool notify = true, int centerx = -1, int centery = -1);
+
+    // Used by the mainCropWindow only
     void getObservedFrameArea      (int& x, int& y, int& w, int& h, int rw = 0, int rh = 0);
 
 public:
@@ -119,15 +123,16 @@ public:
 
     void screenCoordToCropBuffer (int phyx, int phyy, int& cropx, int& cropy);
     void screenCoordToImage (int phyx, int phyy, int& imgx, int& imgy);
-    void screenCoordToPreview (int phyx, int phyy, int& prevx, int& prevy);
+    void screenCoordToCropCanvas (int phyx, int phyy, int& prevx, int& prevy);
+    void imageCoordToCropCanvas (int imgx, int imgy, int& phyx, int& phyy);
     void imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy);
     void imageCoordToCropBuffer (int imgx, int imgy, int& phyx, int& phyy);
     int scaleValueToImage (int value);
     float scaleValueToImage (float value);
     double scaleValueToImage (double value);
-    int scaleValueToScreen (int value);
-    float scaleValueToScreen (float value);
-    double scaleValueToScreen (double value);
+    int scaleValueToCanvas (int value);
+    float scaleValueToCanvas (float value);
+    double scaleValueToCanvas (double value);
     double getZoomFitVal ();
     void setPosition (int x, int y);
     void getPosition (int& x, int& y);
@@ -142,14 +147,13 @@ public:
     void zoomIn      (bool toCursor = false, int cursorX = -1, int cursorY = -1);
     void zoomOut     (bool toCursor = false, int cursorX = -1, int cursorY = -1);
     void zoom11      ();
-    void zoomFit     (bool skipZoomIfUnchanged = true);
+    void zoomFit     ();
     void zoomFitCrop ();
     double getZoom   ();
     bool isMinZoom   ();
     bool isMaxZoom   ();
     void setZoom     (double zoom);
 
-    void findCenter  (int deltaZoom, int& x, int& y);
     bool isInside    (int x, int y);
 
 
@@ -159,15 +163,20 @@ public:
 
     void expose        (Cairo::RefPtr<Cairo::Context> cr);
 
+    void setEditSubscriber (EditSubscriber* newSubscriber);
+
     // interface lwbuttonlistener
     void buttonPressed (LWButton* button, int actionCode, void* actionData);
     void redrawNeeded  (LWButton* button);
 
     // crop handling
-    void getCropRectangle (int& x, int& y, int& w, int& h);
-    void getCropPosition  (int& x, int& y);
-    void setCropPosition  (int x, int y, bool update = true);
-    void getCropSize      (int& w, int& h);
+    void getCropRectangle      (int& x, int& y, int& w, int& h);
+    void getCropPosition       (int& x, int& y);
+    void setCropPosition       (int x, int y, bool update = true);
+    void centerCrop            (bool update = true);
+    void getCropSize           (int& w, int& h);
+    void getCropAnchorPosition (int& w, int& h);
+    void setCropAnchorPosition (int& w, int& h);
 
     // listeners
     void setCropGUIListener       (CropGUIListener* cgl)
@@ -194,6 +203,7 @@ public:
     void cropImageUpdated ();
     void cropWindowChanged ();
     void initialImageArrived ();
+    void setDisplayPosition (int x, int y);
 
     void remoteMove      (int deltaX, int deltaY);
     void remoteMoveReady ();

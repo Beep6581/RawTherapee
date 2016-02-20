@@ -3910,7 +3910,7 @@ void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b
 
     for(int i = 0; i < height; i++) {
         for(int j = 0; j < labWidth; j++) {
-            float xyz[3] = {0.5f};
+            float xyz[3] = {0.5f, 0.5f, 0.5f};
             int c;
             FORC3 {
                 xyz[0] += xyz_cam[0][c] * rgb[i * width + j][c];
