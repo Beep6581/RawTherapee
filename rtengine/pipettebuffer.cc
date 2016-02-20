@@ -17,16 +17,15 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "editbuffer.h"
+#include "pipettebuffer.h"
 
 namespace rtengine
 {
 
-EditBuffer::EditBuffer(::EditDataProvider *dataProvider) :
-    objectMap(NULL), objectMap2(NULL), objectMode(OM_255), dataProvider(dataProvider),
-    imgFloatBuffer(NULL), LabBuffer(NULL), singlePlaneBuffer(), ready(false) {}
+PipetteBuffer::PipetteBuffer(::EditDataProvider *dataProvider) :
+    dataProvider(dataProvider), imgFloatBuffer(NULL), LabBuffer(NULL), singlePlaneBuffer(), ready(false) {}
 
-EditBuffer::~EditBuffer()
+PipetteBuffer::~PipetteBuffer()
 {
     flush();
 #ifndef NDEBUG
@@ -37,13 +36,13 @@ EditBuffer::~EditBuffer()
 #endif
 }
 
-void EditBuffer::createBuffer(int width, int height)
+void PipetteBuffer::createBuffer(int width, int height)
 {
     //printf("Appel de createBuffer %d x %d\n", width, height);
     resize (width, height);
 }
 
-void EditBuffer::flush()
+void PipetteBuffer::flush()
 {
     if (imgFloatBuffer) {
         delete imgFloatBuffer;
@@ -59,29 +58,7 @@ void EditBuffer::flush()
     ready = false;
 }
 
-/* Upgrade or downgrade the objectModeType; we're assuming that objectMap has been allocated */
-void EditBuffer::setObjectMode(ObjectMode newType)
-{
-    switch (newType) {
-    case (OM_255):
-        if (objectMap2) {
-            objectMap2->unreference();
-        }
-
-        objectMode = OM_255;
-        break;
-
-    case (OM_65535):
-        if (!objectMap2) {
-            objectMap2 = Cairo::ImageSurface::create(Cairo::FORMAT_A8, objectMap->get_width(), objectMap->get_height());
-        }
-
-        objectMode = OM_65535;
-        break;
-    }
-}
-
-EditUniqueID EditBuffer::getEditID()
+EditUniqueID PipetteBuffer::getEditID()
 {
     if (dataProvider && dataProvider->getCurrSubscriber()) {
         return dataProvider->getCurrSubscriber()->getEditID();
@@ -90,58 +67,17 @@ EditUniqueID EditBuffer::getEditID()
     }
 }
 
-void EditBuffer::resize(int newWidth, int newHeight)
+void PipetteBuffer::resize(int newWidth, int newHeight)
 {
     resize(newWidth, newHeight, dataProvider ? dataProvider->getCurrSubscriber() : NULL);
 }
 
 // Resize buffers if they already exist
-void EditBuffer::resize(int newWidth, int newHeight, EditSubscriber* newSubscriber)
+void PipetteBuffer::resize(int newWidth, int newHeight, EditSubscriber* newSubscriber)
 {
     if (newSubscriber) {
-        if (newSubscriber->getEditingType() == ET_OBJECTS) {
-            if (objectMap && (objectMap->get_width() != newWidth || objectMap->get_height() != newHeight)) {
-                objectMap.clear();
-            }
-
-            if (!objectMap && newWidth && newHeight) {
-                objectMap = Cairo::ImageSurface::create(Cairo::FORMAT_A8, newWidth, newHeight);
-            }
-
-            if (objectMode == OM_65535) {
-                if (objectMap2) {
-                    if (objectMap2->get_width() != newWidth || objectMap2->get_height() != newHeight) {
-                        objectMap2.clear();
-                    }
-                }
-
-                if (!objectMap2 && newWidth && newHeight) {
-                    objectMap2 = Cairo::ImageSurface::create(Cairo::FORMAT_A8, newWidth, newHeight);
-                }
-            }
-            // OM_255 -> deleting objectMap2, if any
-            else if (objectMap2) {
-                objectMap2.clear();
-            }
-
-            // Should never happen!
-            if (imgFloatBuffer) {
-                delete imgFloatBuffer;
-                imgFloatBuffer = NULL;
-            }
-
-            if (LabBuffer) {
-                delete LabBuffer;
-                LabBuffer = NULL;
-            }
-
-            if (singlePlaneBuffer.data) {
-                singlePlaneBuffer.allocate(0, 0);
-            }
-        }
-
         if (newSubscriber->getEditingType() == ET_PIPETTE) {
-            if (newSubscriber->getEditBufferType() == BT_IMAGEFLOAT) {
+            if (newSubscriber->getPipetteBufferType() == BT_IMAGEFLOAT) {
                 if (!imgFloatBuffer) {
                     imgFloatBuffer = new Imagefloat(newWidth, newHeight);
                 } else {
@@ -152,7 +88,7 @@ void EditBuffer::resize(int newWidth, int newHeight, EditSubscriber* newSubscrib
                 imgFloatBuffer = NULL;
             }
 
-            if (newSubscriber->getEditBufferType() == BT_LABIMAGE) {
+            if (newSubscriber->getPipetteBufferType() == BT_LABIMAGE) {
                 if (LabBuffer && (LabBuffer->W != newWidth && LabBuffer->H != newHeight)) {
                     delete LabBuffer;
                     LabBuffer = NULL;
@@ -166,73 +102,46 @@ void EditBuffer::resize(int newWidth, int newHeight, EditSubscriber* newSubscrib
                 LabBuffer = NULL;
             }
 
-            if (newSubscriber->getEditBufferType() == BT_SINGLEPLANE_FLOAT) {
+            if (newSubscriber->getPipetteBufferType() == BT_SINGLEPLANE_FLOAT) {
                 singlePlaneBuffer.allocate(newWidth, newHeight);
             } else if (singlePlaneBuffer.data) {
                 singlePlaneBuffer.allocate(0, 0);
             }
-
-            // Should never happen!
-            if (objectMap ) {
-                objectMap.clear();
-            }
-
-            if (objectMap2) {
-                objectMap2.clear();
-            }
+        } else {
+            // Should never happen
+            flush();
         }
     }
 
     ready = false;
 }
 
-bool EditBuffer::bufferCreated()
+bool PipetteBuffer::bufferCreated()
 {
     EditSubscriber* subscriber;
 
     if (dataProvider && (subscriber = dataProvider->getCurrSubscriber())) {
-        switch (subscriber->getEditingType()) {
-        case ET_PIPETTE:
-            switch (dataProvider->getCurrSubscriber()->getEditBufferType()) {
+        if (subscriber->getEditingType() == ET_PIPETTE) {
+            switch (dataProvider->getCurrSubscriber()->getPipetteBufferType()) {
             case (BT_IMAGEFLOAT):
                 return imgFloatBuffer != NULL;
-
             case (BT_LABIMAGE):
                 return LabBuffer != NULL;
-
             case (BT_SINGLEPLANE_FLOAT):
                 return singlePlaneBuffer.data != NULL;
             }
-
-            break;
-
-        case (ET_OBJECTS):
-            return bool(objectMap);
+        } else {
+            return false;
         }
     }
 
     return false;
 }
 
-int EditBuffer::getObjectID(const Coord& location)
-{
-    int id = 0;
-
-    if (objectMap && location.x > 0 && location.y > 0 && location.x < objectMap->get_width() && location.y < objectMap->get_height()) {
-        id = (unsigned short)(*( objectMap->get_data() + location.y * objectMap->get_stride() + location.x ));
-
-        if (objectMap2) {
-            id |= (unsigned short)(*( objectMap->get_data() + location.y * objectMap->get_stride() + location.x )) << 8;
-        }
-    }
-
-    return id - 1;
-}
-
-void EditBuffer::getPipetteData(float* v, int x, int y, int squareSize)
+void PipetteBuffer::getPipetteData(float* v, int x, int y, int squareSize)
 {
     if (ready && dataProvider && dataProvider->getCurrSubscriber()) {
-        switch (dataProvider->getCurrSubscriber()->getEditBufferType()) {
+        switch (dataProvider->getCurrSubscriber()->getPipetteBufferType()) {
         case (BT_IMAGEFLOAT):
             if (imgFloatBuffer) {
                 imgFloatBuffer->getPipetteData(v[0], v[1], v[2], x, y, squareSize, 0);

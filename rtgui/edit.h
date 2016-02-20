@@ -29,18 +29,11 @@
 #include "options.h"
 
 class EditDataProvider;
-
-namespace rtengine
-{
-class EditBuffer;
-}
+class EditSubscriber;
 
 /** @file
  *
  * The Edit mechanism is designed to let tools (subscribers) communicate with the preview area (provider).
- * Subscribers will be tools that need to create some graphics in the preview area, to let the user interact
- * with it in a more user friendly way.
- *
  * Subscribers will be tools that need to create some graphics in the preview area, to let the user interact
  * with it in a more user friendly way.
  *
@@ -84,7 +77,7 @@ class EditBuffer;
  *
  * ## Object edition
  *
- * By using this class, object can be drawn and manipulated on the preview.
+ * By using this class, objects can be drawn and manipulated on the preview.
  *
  * The developer has to handle the buttonPress, buttonRelease, drag and mouseOver method that he needs. There
  * are buttonPress, buttonRelease and drag methods dedicated to each mouse button, for better flexibility
@@ -92,7 +85,7 @@ class EditBuffer;
  * does not handle multiple mouse button event (e.g. button1 + button2), only one at a time. The first button pressed
  * set the mechanism, all other combined button press are ignored.
  *
- * The developer also have to fill 2 display list with object of the Geometry subclass. Each geometrical shape
+ * The developer also have to fill 2 display list with object of the Geometry subclass. Each geometric shape
  * _can_ be used in one or the other, or both list at a time.
  *
  * The first list (visibleGeometry) is used to be displayed on the preview. The developer will have to set their state
@@ -152,6 +145,44 @@ class EditBuffer;
  *
  */
 
+
+
+class ObjectMOBuffer
+{
+private:
+
+    // Used to draw the objects where the color correspond to the object's ID, in order to find the correct object when hovering
+    Cairo::RefPtr<Cairo::ImageSurface> objectMap;
+    ObjectMode objectMode;
+
+protected:
+
+    // To avoid duplicated information, we points to a EditDataProvider that contains the current EditSubscriber
+    // instead of pointing to the EditSubscriber directly
+    EditDataProvider* dataProvider;
+
+    void createBuffer(int width, int height);
+    void resize(int newWidth, int newHeight);
+    void flush();
+    EditSubscriber *getEditSubscriber ();
+
+public:
+    explicit ObjectMOBuffer (EditDataProvider *dataProvider);
+    ~ObjectMOBuffer();
+
+    EditDataProvider* getDataProvider ();
+    void setObjectMode (ObjectMode newType);
+    ObjectMode getObjectMode ();
+
+    Cairo::RefPtr<Cairo::ImageSurface>& getObjectMap ();
+
+    // return true if the buffer has been allocated
+    bool bufferCreated();
+
+    int getObjectID(const rtengine::Coord& location);
+};
+
+
 /** @brief Coordinate system where the widgets will be drawn
  *
  * The EditCoordSystem is used to define a screen and an image coordinate system.
@@ -167,6 +198,8 @@ public:
     virtual void screenCoordToImage (int phyx, int phyy, int& imgx, int& imgy) = 0;
     /// Convert the image coords to the widget's DrawingArea (i.e. preview area) coords
     virtual void imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy) = 0;
+    /// Convert the image coords to the crop's canvas coords
+    virtual void imageCoordToCropCanvas (int imgx, int imgy, int& phyx, int& phyy) = 0;
     /// Convert the image coords to the edit buffer coords
     virtual void imageCoordToCropBuffer (int imgx, int imgy, int& phyx, int& phyy) = 0;
     /// Convert a size value from the preview's scale to the image's scale
@@ -176,11 +209,11 @@ public:
     /// Convert a size value from the preview's scale to the image's scale
     virtual double scaleValueToImage (double value) = 0;
     /// Convert a size value from the image's scale to the preview's scale
-    virtual int scaleValueToScreen (int value) = 0;
+    virtual int scaleValueToCanvas (int value) = 0;
     /// Convert a size value from the image's scale to the preview's scale
-    virtual float scaleValueToScreen (float value) = 0;
+    virtual float scaleValueToCanvas (float value) = 0;
     /// Convert a size value from the image's scale to the preview's scale
-    virtual double scaleValueToScreen (double value) = 0;
+    virtual double scaleValueToCanvas (double value) = 0;
 };
 
 class RGBColor
@@ -190,36 +223,16 @@ class RGBColor
     double b;
 
 public:
-    RGBColor () : r(0.), g(0.), b(0.) {}
-    explicit RGBColor (double r, double g, double b) : r(r), g(g), b(b) {}
-    explicit RGBColor (char r, char g, char b) : r(double(r) / 255.), g(double(g) / 255.), b(double(b) / 255.) {}
+    RGBColor ();
+    explicit RGBColor (double r, double g, double b);
+    explicit RGBColor (char r, char g, char b);
 
-    void setColor(double r, double g, double b)
-    {
-        this->r = r;
-        this->g = g;
-        this->b = b;
-    }
+    void setColor (double r, double g, double b);
+    void setColor (char r, char g, char b);
 
-    void setColor(char r, char g, char b)
-    {
-        this->r = double(r) / 255.;
-        this->g = double(g) / 255.;
-        this->b = double(b) / 255.;
-    }
-
-    double getR()
-    {
-        return r;
-    }
-    double getG()
-    {
-        return g;
-    }
-    double getB()
-    {
-        return b;
-    }
+    double getR ();
+    double getG ();
+    double getB ();
 };
 
 class RGBAColor : public RGBColor
@@ -227,26 +240,14 @@ class RGBAColor : public RGBColor
     double a;
 
 public:
-    RGBAColor () : RGBColor(0., 0., 0.), a(0.) {}
-    explicit RGBAColor (double r, double g, double b, double a) : RGBColor(r, g, b), a(a) {}
-    explicit RGBAColor (char r, char g, char b, char a) : RGBColor(r, g, b), a(double(a) / 255.) {}
+    RGBAColor ();
+    explicit RGBAColor (double r, double g, double b, double a);
+    explicit RGBAColor (char r, char g, char b, char a);
 
-    void setColor(double r, double g, double b, double a)
-    {
-        RGBColor::setColor(r, g, b);
-        this->a = a;
-    }
+    void setColor (double r, double g, double b, double a);
+    void setColor (char r, char g, char b, char a);
 
-    void setColor(char r, char g, char b, char a)
-    {
-        RGBColor::setColor(r, g, b);
-        this->a = double(a) / 255.;
-    }
-
-    double getA()
-    {
-        return a;
-    }
+    double getA ();
 };
 
 /// @brief Displayable and MouseOver geometry base class
@@ -297,85 +298,29 @@ public:
     Datum datum;
     State state;  // set by the Subscriber
 
-    Geometry () : innerLineColor(char(255), char(255), char(255)), outerLineColor(char(0), char(0), char(0)), flags(F_VISIBLE | F_HOVERABLE | F_AUTO_COLOR), innerLineWidth(1.5f), datum(IMAGE), state(NORMAL) {}
+    Geometry ();
     virtual ~Geometry() {}
 
-    void     setInnerLineColor     (double r, double g, double b)
-    {
-        innerLineColor.setColor(r, g, b);
-        flags &= ~F_AUTO_COLOR;
-    }
-    void     setInnerLineColor     (char   r, char   g, char   b)
-    {
-        innerLineColor.setColor(r, g, b);
-        flags &= ~F_AUTO_COLOR;
-    }
-    RGBColor getInnerLineColor     ();
-    void     setOuterLineColor     (double r, double g, double b)
-    {
-        outerLineColor.setColor(r, g, b);
-        flags &= ~F_AUTO_COLOR;
-    }
-    void     setOuterLineColor     (char   r, char   g, char   b)
-    {
-        outerLineColor.setColor(r, g, b);
-        flags &= ~F_AUTO_COLOR;
-    }
-    RGBColor getOuterLineColor     ();
-    double   getOuterLineWidth     ()
-    {
-        return double(innerLineWidth) + 2.;
-    }
-    double   getMouseOverLineWidth ()
-    {
-        return getOuterLineWidth() + 2.;
-    }
-    void     setAutoColor          (bool aColor)
-    {
-        if (aColor) {
-            flags |= F_AUTO_COLOR;
-        } else {
-            flags &= ~F_AUTO_COLOR;
-        }
-    }
-    bool     isVisible             ()
-    {
-        return flags & F_VISIBLE;
-    }
-    void     setVisible            (bool visible)
-    {
-        if (visible) {
-            flags |= F_VISIBLE;
-        } else {
-            flags &= ~F_VISIBLE;
-        }
-    }
-    bool     isHoverable           ()
-    {
-        return flags & F_HOVERABLE;
-    }
-    void     setHoverable          (bool visible)
-    {
-        if (visible) {
-            flags |= F_HOVERABLE;
-        } else {
-            flags &= ~F_HOVERABLE;
-        }
-    }
+    void setInnerLineColor (double r, double g, double b);
+    void setInnerLineColor (char r, char g, char b);
+    RGBColor getInnerLineColor ();
+    void setOuterLineColor (double r, double g, double b);
+    void setOuterLineColor (char r, char g, char b);
+    RGBColor getOuterLineColor ();
+    double getOuterLineWidth ();
+    double getMouseOverLineWidth ();
+    void setAutoColor (bool aColor);
+    bool isVisible ();
+    void setVisible (bool visible);
+    bool isHoverable ();
+    void setHoverable (bool visible);
 
     // setActive will enable/disable the visible and hoverable flags in one shot!
-    void     setActive             (bool active)
-    {
-        if (active) {
-            flags |= (F_VISIBLE | F_HOVERABLE);
-        } else {
-            flags &= ~(F_VISIBLE | F_HOVERABLE);
-        }
-    }
+    void setActive (bool active);
 
-    virtual void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *parent, EditCoordSystem &coordSystem) = 0;
-    virtual void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *parent, EditCoordSystem &coordSystem) = 0;
-    virtual void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem) = 0;
+    virtual void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *parent, EditCoordSystem &coordSystem) = 0;
+    virtual void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *parent, EditCoordSystem &coordSystem) = 0;
+    virtual void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem) = 0;
 };
 
 class Circle : public Geometry
@@ -386,13 +331,13 @@ public:
     bool filled;
     bool radiusInImageSpace; /// If true, the radius depend on the image scale; if false, it is a fixed 'screen' size
 
-    Circle () : center(100, 100), radius(10), filled(false), radiusInImageSpace(false) {}
-    Circle (rtengine::Coord &center, int radius, bool filled = false, bool radiusInImageSpace = false) : center(center), radius(radius), filled(filled), radiusInImageSpace(radiusInImageSpace) {}
-    Circle (int centerX, int centerY, int radius, bool filled = false, bool radiusInImageSpace = false) : center(centerX, centerY), radius(radius), filled(filled), radiusInImageSpace(radiusInImageSpace) {}
+    Circle ();
+    Circle (rtengine::Coord& center, int radius, bool filled = false, bool radiusInImageSpace = false);
+    Circle (int centerX, int centerY, int radius, bool filled = false, bool radiusInImageSpace = false);
 
-    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-    void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
+    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
+    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
+    void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
 };
 
 class Line : public Geometry
@@ -401,13 +346,13 @@ public:
     rtengine::Coord begin;
     rtengine::Coord end;
 
-    Line () : begin(10, 10), end(100, 100) {}
-    Line (rtengine::Coord &begin, rtengine::Coord &end) : begin(begin), end(end) {}
-    Line (int beginX, int beginY, int endX, int endY) : begin(beginX, beginY), end(endX, endY) {}
+    Line ();
+    Line (rtengine::Coord& begin, rtengine::Coord& end);
+    Line (int beginX, int beginY, int endX, int endY);
 
-    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-    void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
+    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
+    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
+    void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
 };
 
 class Polyline : public Geometry
@@ -416,11 +361,11 @@ public:
     std::vector<rtengine::Coord> points;
     bool filled;
 
-    Polyline() : filled(false) {}
+    Polyline ();
 
-    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-    void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
+    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
+    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
+    void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
 };
 
 class Rectangle : public Geometry
@@ -430,15 +375,15 @@ public:
     rtengine::Coord bottomRight;
     bool filled;
 
-    Rectangle() : topLeft(0, 0), bottomRight(10, 10), filled(false) {}
+    Rectangle ();
 
     void setXYWH(int left, int top, int width, int height);
     void setXYXY(int left, int top, int right, int bottom);
     void setXYWH(rtengine::Coord topLeft, rtengine::Coord widthHeight);
     void setXYXY(rtengine::Coord topLeft, rtengine::Coord bottomRight);
-    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-    void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
+    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
+    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
+    void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *pipetteBuffer, EditCoordSystem &coordSystem);
 };
 
 /// @brief Method for client tools needing Edit information
@@ -463,10 +408,7 @@ public:
     virtual ~EditSubscriber () {}
 
     void              setEditProvider(EditDataProvider *provider);
-    EditDataProvider* getEditProvider()
-    {
-        return provider;
-    }
+    EditDataProvider* getEditProvider ();
     void              setEditID(EditUniqueID ID, BufferType buffType);
     bool              isCurrentSubscriber();
     virtual void      subscribe();
@@ -474,109 +416,69 @@ public:
     virtual void      switchOffEditMode ();    /// Occurs when the user want to stop the editing mode
     EditUniqueID      getEditID();
     EditType          getEditingType();
-    BufferType        getEditBufferType();
+    BufferType        getPipetteBufferType();
     bool              isDragging();            /// Returns true if something is being dragged and drag events has to be sent (object mode only)
 
     /** @brief Get the cursor to be displayed when above handles
     @param objectID object currently "hovered" */
-    virtual CursorShape getCursor(int objectID)
-    {
-        return CSOpenHand;
-    }
+    virtual CursorShape getCursor (int objectID);
 
     /** @brief Triggered when the mouse is moving over an object
     This method is also triggered when the cursor is moving over the image in ET_PIPETTE mode
     @param modifierKey Gtk's event modifier key (GDK_CONTROL_MASK | GDK_SHIFT_MASK | ...)
-    @param editBuffer buffer to get the pipette values and the from
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool mouseOver(int modifierKey)
-    {
-        return false;
-    }
+    virtual bool mouseOver (int modifierKey);
 
     /** @brief Triggered when mouse button 1 is pressed, together with the CTRL modifier key if the subscriber is of type ET_PIPETTE
     Once the key is pressed, RT will enter in drag1 mode on subsequent mouse movements
     @param modifierKey Gtk's event modifier key (GDK_CONTROL_MASK | GDK_SHIFT_MASK | ...)
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool button1Pressed(int modifierKey)
-    {
-        return false;
-    }
+    virtual bool button1Pressed (int modifierKey);
 
     /** @brief Triggered when mouse button 1 is released
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool button1Released()
-    {
-        return false;
-    }
+    virtual bool button1Released ();
 
     /** @brief Triggered when mouse button 2 is pressed (middle button)
     Once the key is pressed, RT will enter in drag2 mode on subsequent mouse movements
     @param modifierKey Gtk's event modifier key (GDK_CONTROL_MASK | GDK_SHIFT_MASK | ...)
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool button2Pressed(int modifierKey)
-    {
-        return false;
-    }
+    virtual bool button2Pressed (int modifierKey);
 
     /** @brief Triggered when mouse button 2 is released (middle button)
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool button2Released()
-    {
-        return false;
-    }
+    virtual bool button2Released ();
 
     /** @brief Triggered when mouse button 3 is pressed (right button)
     Once the key is pressed, RT will enter in drag3 mode on subsequent mouse movements
     @param modifierKey Gtk's event modifier key (GDK_CONTROL_MASK | GDK_SHIFT_MASK | ...)
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool button3Pressed(int modifierKey)
-    {
-        return false;
-    }
+    virtual bool button3Pressed (int modifierKey);
 
     /** @brief Triggered when mouse button 3 is released (right button)
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool button3Released()
-    {
-        return false;
-    }
+    virtual bool button3Released ();
 
     /** @brief Triggered when the user is moving while holding down mouse button 1
     @param modifierKey Gtk's event modifier key (GDK_CONTROL_MASK | GDK_SHIFT_MASK | ...)
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool drag1(int modifierKey)
-    {
-        return false;
-    }
+    virtual bool drag1 (int modifierKey);
 
     /** @brief Triggered when the user is moving while holding down mouse button 2
     @param modifierKey Gtk's event modifier key (GDK_CONTROL_MASK | GDK_SHIFT_MASK | ...)
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool drag2(int modifierKey)
-    {
-        return false;
-    }
+    virtual bool drag2 (int modifierKey);
 
     /** @brief Triggered when the user is moving while holding down mouse button 3
     @param modifierKey Gtk's event modifier key (GDK_CONTROL_MASK | GDK_SHIFT_MASK | ...)
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool drag3(int modifierKey)
-    {
-        return false;
-    }
+    virtual bool drag3 (int modifierKey);
 
     /** @brief Get the geometry to be shown to the user */
-    const std::vector<Geometry*> & getVisibleGeometry()
-    {
-        return visibleGeometry;
-    }
+    const std::vector<Geometry*>& getVisibleGeometry ();
 
     /** @brief Get the geometry to be drawn in the "mouse over" channel, hidden from the user */
-    const std::vector<Geometry*> & getMouseOverGeometry()
-    {
-        return mouseOverGeometry;
-    }
+    const std::vector<Geometry*>& getMouseOverGeometry ();
 };
 
 /** @brief Class to handle the furniture of data to the subscribers.
@@ -608,12 +510,255 @@ public:
     virtual void        unsubscribe();         /// Occurs when the subscriber has been switched off first
     virtual void        switchOffEditMode ();  /// Occurs when the user want to stop the editing mode
     virtual CursorShape getCursor(int objectID);
-    int                 getPipetteRectSize()
-    {
-        return 8;    // TODO: make a GUI
-    }
+    int                 getPipetteRectSize ();
     EditSubscriber*     getCurrSubscriber();
     virtual void        getImageSize (int &w, int&h) = 0;
 };
+
+inline EditDataProvider* ObjectMOBuffer::getDataProvider () {
+    return dataProvider;
+}
+
+inline ObjectMode ObjectMOBuffer::getObjectMode () {
+    return objectMode;
+}
+
+inline Cairo::RefPtr<Cairo::ImageSurface>& ObjectMOBuffer::getObjectMap () {
+    return objectMap;
+}
+
+inline void RGBColor::setColor (double r, double g, double b) {
+    this->r = r;
+    this->g = g;
+    this->b = b;
+}
+
+inline void RGBColor::setColor (char r, char g, char b) {
+    this->r = double (r) / 255.;
+    this->g = double (g) / 255.;
+    this->b = double (b) / 255.;
+}
+
+inline double RGBColor::getR () {
+    return r;
+}
+
+inline double RGBColor::getG () {
+    return g;
+}
+
+inline double RGBColor::getB () {
+    return b;
+}
+
+inline void RGBAColor::setColor (double r, double g, double b, double a) {
+    RGBColor::setColor (r, g, b);
+    this->a = a;
+}
+
+inline void RGBAColor::setColor (char r, char g, char b, char a) {
+    RGBColor::setColor (r, g, b);
+    this->a = double (a) / 255.;
+}
+
+inline double RGBAColor::getA () {
+    return a;
+}
+
+inline void Geometry::setInnerLineColor (double r, double g, double b) {
+    innerLineColor.setColor (r, g, b);
+    flags &= ~F_AUTO_COLOR;
+}
+
+inline void Geometry::setInnerLineColor (char r, char g, char b) {
+    innerLineColor.setColor (r, g, b);
+    flags &= ~F_AUTO_COLOR;
+}
+
+inline void Geometry::setOuterLineColor (double r, double g, double b) {
+    outerLineColor.setColor (r, g, b);
+    flags &= ~F_AUTO_COLOR;
+}
+
+inline double Geometry::getOuterLineWidth () {
+    return double (innerLineWidth) + 2.;
+}
+
+inline void Geometry::setOuterLineColor (char r, char g, char b) {
+    outerLineColor.setColor (r, g, b);
+    flags &= ~F_AUTO_COLOR;
+}
+
+inline double Geometry::getMouseOverLineWidth () {
+    return getOuterLineWidth () + 2.;
+}
+
+inline void Geometry::setAutoColor (bool aColor) {
+    if (aColor) {
+        flags |= F_AUTO_COLOR;
+    } else {
+        flags &= ~F_AUTO_COLOR;
+    }
+}
+
+inline bool Geometry::isVisible () {
+    return flags & F_VISIBLE;
+}
+
+inline void Geometry::setVisible (bool visible) {
+    if (visible) {
+        flags |= F_VISIBLE;
+    } else {
+        flags &= ~F_VISIBLE;
+    }
+}
+
+inline bool Geometry::isHoverable () {
+    return flags & F_HOVERABLE;
+}
+
+inline void Geometry::setHoverable (bool visible) {
+    if (visible) {
+        flags |= F_HOVERABLE;
+    } else {
+        flags &= ~F_HOVERABLE;
+    }
+}
+
+inline void Geometry::setActive (bool active) {
+    if (active) {
+        flags |= (F_VISIBLE | F_HOVERABLE);
+    } else {
+        flags &= ~(F_VISIBLE | F_HOVERABLE);
+    }
+}
+
+inline EditDataProvider* EditSubscriber::getEditProvider () {
+    return provider;
+}
+
+inline CursorShape EditSubscriber::getCursor (int objectID) {
+    return CSOpenHand;
+}
+
+inline bool EditSubscriber::mouseOver (int modifierKey) {
+    return false;
+}
+
+inline bool EditSubscriber::button1Pressed (int modifierKey) {
+    return false;
+}
+
+inline bool EditSubscriber::button1Released () {
+    return false;
+}
+
+inline bool EditSubscriber::button2Pressed (int modifierKey) {
+    return false;
+}
+
+inline bool EditSubscriber::button2Released () {
+    return false;
+}
+
+inline bool EditSubscriber::button3Pressed (int modifierKey) {
+    return false;
+}
+
+inline bool EditSubscriber::button3Released () {
+    return false;
+}
+
+inline bool EditSubscriber::drag1 (int modifierKey) {
+    return false;
+}
+
+inline bool EditSubscriber::drag2 (int modifierKey) {
+    return false;
+}
+
+inline bool EditSubscriber::drag3 (int modifierKey) {
+    return false;
+}
+
+inline const std::vector<Geometry*>& EditSubscriber::getVisibleGeometry () {
+    return visibleGeometry;
+}
+
+inline const std::vector<Geometry*>& EditSubscriber::getMouseOverGeometry () {
+    return mouseOverGeometry;
+}
+
+inline int EditDataProvider::getPipetteRectSize () {
+    return 8; // TODO: make a GUI
+}
+
+inline Geometry::Geometry () :
+        innerLineColor (char (255), char (255), char (255)), outerLineColor (
+                char (0), char (0), char (0)), flags (
+                F_VISIBLE | F_HOVERABLE | F_AUTO_COLOR), innerLineWidth (1.5f), datum (
+                IMAGE), state (NORMAL) {
+}
+
+inline Circle::Circle () :
+        center (100, 100), radius (10), filled (false), radiusInImageSpace (
+                false) {
+}
+
+inline Rectangle::Rectangle () :
+        topLeft (0, 0), bottomRight (10, 10), filled (false) {
+}
+
+inline Polyline::Polyline () :
+        filled (false) {
+}
+
+inline Line::Line () :
+        begin (10, 10), end (100, 100) {
+}
+
+inline RGBAColor::RGBAColor () :
+        RGBColor (0., 0., 0.), a (0.) {
+}
+
+inline RGBColor::RGBColor () :
+        r (0.), g (0.), b (0.) {
+}
+
+inline RGBColor::RGBColor (double r, double g, double b) :
+        r (r), g (g), b (b) {
+}
+
+inline RGBColor::RGBColor (char r, char g, char b) :
+        r (double (r) / 255.), g (double (g) / 255.), b (double (b) / 255.) {
+}
+
+inline RGBAColor::RGBAColor (double r, double g, double b, double a) :
+        RGBColor (r, g, b), a (a) {
+}
+
+inline RGBAColor::RGBAColor (char r, char g, char b, char a) :
+        RGBColor (r, g, b), a (double (a) / 255.) {
+}
+
+inline Circle::Circle (rtengine::Coord& center, int radius, bool filled,
+        bool radiusInImageSpace) :
+        center (center), radius (radius), filled (filled), radiusInImageSpace (
+                radiusInImageSpace) {
+}
+
+inline Circle::Circle (int centerX, int centerY, int radius, bool filled,
+        bool radiusInImageSpace) :
+        center (centerX, centerY), radius (radius), filled (filled), radiusInImageSpace (
+                radiusInImageSpace) {
+}
+
+inline Line::Line (rtengine::Coord& begin, rtengine::Coord& end) :
+        begin (begin), end (end) {
+}
+
+inline Line::Line (int beginX, int beginY, int endX, int endY) :
+        begin (beginX, beginY), end (endX, endY) {
+}
 
 #endif
