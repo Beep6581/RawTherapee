@@ -57,7 +57,7 @@ if (WIN32)
         include("${PROJECT_SOURCE_DIR}/ReleaseInfo.cmake")
     endif (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
 
-    configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/win/InnoSetup/WindowsInnoSetup.iss.in" "${CMAKE_CURRENT_BINARY_DIR}/WindowsInnoSetup.iss")
+    configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/../tools/win/InnoSetup/WindowsInnoSetup.iss.in" "${CMAKE_CURRENT_BINARY_DIR}/WindowsInnoSetup.iss")
     install (FILES "${CMAKE_CURRENT_BINARY_DIR}/WindowsInnoSetup.iss" DESTINATION ${BINDIR})
 endif (WIN32)
 
@@ -104,7 +104,7 @@ if (APPLE)
         list (APPEND MACOSX_BUNDLE_COMMAND PROC_BIT_DEPTH=64)
     endif (PROC_BIT_DEPTH MATCHES 32)
     list (APPEND MACOSX_BUNDLE_COMMAND sh "${PROJECT_SOURCE_DIR}/rtdata/osx/macosx_bundle.sh")
-    
+
     add_custom_target(macosx_bundle
         COMMAND ${MACOSX_BUNDLE_COMMAND}
         WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
