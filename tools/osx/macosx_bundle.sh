@@ -32,20 +32,20 @@ if test ! -d "${CMAKE_BUILD_TYPE}"; then
 fi
 
 # update project version
-if test -x $(which git) -a -d "${PROJECT_SOURCE_DIR}/.git"; then
+if test -x "$(which git)" -a -d "${PROJECT_SOURCE_DIR}/.git"; then
     # This is what the version ought to look like to be accurate in the git universe:
-    # PROJECT_VERSION="$(git describe --tags --always)_$(git symbolic-ref --short -q HEAD)"
+    PROJECT_FULL_VERSION="$(git describe --tags --always)_$(git symbolic-ref --short -q HEAD)"
     # outputs: 4.2-677-g904467b_master
-    # but due to Apple requirements https://goo.gl/eWDQv6 we must use this:
+    # but Apple requirements https://goo.gl/eWDQv6 state we should use this:
     PROJECT_VERSION="$(git describe --tags --always | sed -e 's/-g.*//' -e 's/-/./')"
     # outputs: 4.2.677
 fi
 
 # if not specify CMAKE_OSX_DEPLOYMENT_TARGET when compiling,
 # 'MINIMUM_VERSION' will be used host OS X version.
-MINIMUM_SYSTEM_VERSION=$(otool -l "${CMAKE_BUILD_TYPE}"/rawtherapee | grep -A2 'LC_VERSION_MIN_MACOSX' | awk '$1 ~ /version/ { printf $2 }')
+MINIMUM_SYSTEM_VERSION="$(otool -l "${CMAKE_BUILD_TYPE}"/rawtherapee | grep -A2 'LC_VERSION_MIN_MACOSX' | awk '$1 ~ /version/ { printf $2 }')"
 if test ! -n "${MINIMUM_SYSTEM_VERSION}"; then
-  MINIMUM_SYSTEM_VERSION=$(sw_vers -productVersion | cut -d. -f-2)
+  MINIMUM_SYSTEM_VERSION="$(sw_vers -productVersion | cut -d. -f-2)"
 fi
 
 # check for pango-querymodules. Pango 1.38.0 and above do not include it.
@@ -100,9 +100,9 @@ message "Copying dependencies from ${GTK_PREFIX}"
 CheckLink "${EXECUTABLE}"
 
 message "Copying library modules from ${GTK_PREFIX}"
-ditto --arch ${arch} {"${GTK_PREFIX}"/lib,"${LIB}"}/gdk-pixbuf-2.0
-ditto --arch ${arch} {"${GTK_PREFIX}"/lib,"${LIB}"}/gtk-2.0
-ditto --arch ${arch} {"${GTK_PREFIX}"/lib,"${LIB}"}/pango
+ditto --arch "${arch}" {"${GTK_PREFIX}"/lib,"${LIB}"}/gdk-pixbuf-2.0
+ditto --arch "${arch}" {"${GTK_PREFIX}"/lib,"${LIB}"}/gtk-2.0
+ditto --arch "${arch}" {"${GTK_PREFIX}"/lib,"${LIB}"}/pango
 
 message "Removing static libraries and cache files"
 find -E "${LIB}" -type f -regex '.*\.(a|la|cache)$' | while read; do rm "${REPLY}"; done
@@ -154,7 +154,7 @@ echo "   install_name_tool -add_rpath @loader_path/lib '${EXECUTABLE}'" | bash -
 
 
 message "Installing required application bundle files"
-PROJECT_SOURCE_DATA_DIR="${PROJECT_SOURCE_DIR}"/rtdata/osx
+PROJECT_SOURCE_DATA_DIR="${PROJECT_SOURCE_DIR}"/tools/osx
 # executable loader
 # note: executable is renamed to 'rawtherapee-bin'.
 mv "${MACOS}"/rawtherapee{,-bin}
@@ -164,7 +164,7 @@ cp "${PROJECT_SOURCE_DATA_DIR}"/{rawtherapee,profile}.icns "${RESOURCES}"
 cp "${PROJECT_SOURCE_DATA_DIR}"/PkgInfo "${CONTENTS}"
 install -m 0644 "${PROJECT_SOURCE_DATA_DIR}"/Info.plist.in "${CONTENTS}"/Info.plist
 sed -i "" -e "s|@version@|${PROJECT_VERSION}|
-              s|@shortVersion@|$(echo ${PROJECT_VERSION}|
+              s|@shortVersion@|${PROJECT_VERSION}|
               s|@arch@|${arch}|" \
               "${CONTENTS}"/Info.plist
 plutil -convert binary1 "${CONTENTS}"/Info.plist
@@ -172,31 +172,31 @@ plutil -convert binary1 "${CONTENTS}"/Info.plist
 
 
 function CreateDmg {
-  local srcdir=$(mktemp -dt $$)
+  local srcdir="$(mktemp -dt $$)"
   
   message "Preparing disk image sources at ${srcdir}"
-  mv "${APP}" ${srcdir}
-  cp AboutThisBuild.txt ${srcdir}
-  ln -s /Applications ${srcdir}
+  mv "${APP}" "${srcdir}"
+  cp AboutThisBuild.txt "${srcdir}"
+  ln -s /Applications "${srcdir}"
   
   # web bookmarks
   function CreateWebloc {
-    defaults write ${srcdir}/"$1" URL "$2"
-    mv ${srcdir}/"$1".{plist,webloc}
+    defaults write "${srcdir}/$1" URL "$2"
+    mv "${srcdir}/$1".{plist,webloc}
   }
   CreateWebloc 'RawTherapee Blog' 'http://www.rawtherapee.com'
-  CreateWebloc 'Online Manual'    'https://docs.google.com/document/d/1DHLb_6xNQsEInxiuU8pz1-sWNinnj09bpBUA4_Vl8w8/edit'
+  CreateWebloc 'Online Manual'    'http://rawpedia.rawtherapee.com/'
   
   # disk image name
-  dmg_name="${PROJECT_NAME// /_}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_VERSION}"
-  if ! echo ${CMAKE_BUILD_TYPE} | grep -sqi "release"; then
+  dmg_name="${PROJECT_NAME// /_}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}"
+  if ! echo "${CMAKE_BUILD_TYPE}" | grep -sqi "release"; then
     dmg_name="${dmg_name}_$(echo ${CMAKE_BUILD_TYPE} | tr '[:upper:]' '[:lower:]')"
   fi
   
   message "Creating disk image"
-  hdiutil create -format UDBZ -srcdir ${srcdir} -volname "${PROJECT_NAME}_${PROJECT_VERSION}" "${dmg_name}".dmg
+  hdiutil create -format UDBZ -srcdir "${srcdir}" -volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" "${dmg_name}".dmg
   
   message "Removing disk image caches"
-  rm -rf ${srcdir}
+  rm -rf "${srcdir}"
 }
 CreateDmg

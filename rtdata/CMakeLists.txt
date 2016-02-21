@@ -103,7 +103,7 @@ if (APPLE)
     elseif (PROC_BIT_DEPTH MATCHES 64)
         list (APPEND MACOSX_BUNDLE_COMMAND PROC_BIT_DEPTH=64)
     endif (PROC_BIT_DEPTH MATCHES 32)
-    list (APPEND MACOSX_BUNDLE_COMMAND sh "${PROJECT_SOURCE_DIR}/rtdata/osx/macosx_bundle.sh")
+    list (APPEND MACOSX_BUNDLE_COMMAND sh "${PROJECT_SOURCE_DIR}/tools/osx/macosx_bundle.sh")
 
     add_custom_target(macosx_bundle
         COMMAND ${MACOSX_BUNDLE_COMMAND}
