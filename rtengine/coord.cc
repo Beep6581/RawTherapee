@@ -19,21 +19,49 @@
 
 #include "coord.h"
 
+#include "rt_math.h"
+
 namespace rtengine
 {
 
-void Coord::setFromPolar(PolarCoord polar)
+Coord& Coord::operator= (const PolarCoord& other)
 {
-    while (polar.angle <   0.f) {
-        polar.angle += 360.f;
-    }
+    const auto radius = other.radius;
+    const auto angle = other.angle / 180.0 * M_PI;
 
-    while (polar.angle > 360.f) {
-        polar.angle -= 360.f;
-    }
+    x = radius * std::cos (angle);
+    y = radius * std::sin (angle);
 
-    x = polar.radius * cos(polar.angle / 180.f * M_PI);
-    y = polar.radius * sin(polar.angle / 180.f * M_PI);
+    return *this;
+}
+
+PolarCoord& PolarCoord::operator= (const Coord& other)
+{
+    const double x = other.x;
+    const double y = other.y;
+
+    radius = rtengine::norm2 (x, y);
+    angle = std::atan2 (x, y) * 180.0 / M_PI;
+
+    return *this;
+}
+
+/// @brief Clip the coord to stay in the width x height bounds
+/// @return true if the x or y coordinate has changed
+bool Coord::clip (const int width, const int height)
+{
+    const auto newX = rtengine::LIM<int> (x, 0, width);
+    const auto newY = rtengine::LIM<int> (y, 0, height);
+
+    if (x != newX || y != newY) {
+
+        x = newX;
+        y = newY;
+
+        return true;
+    } else {
+        return false;
+    }
 }
 
 }
