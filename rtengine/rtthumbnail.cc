@@ -1741,7 +1741,9 @@ bool Thumbnail::readData  (const Glib::ustring& fname)
     try {
         MyMutex::MyLock thmbLock(thumbMutex);
 
-        if (!keyFile.load_from_file (fname)) {
+        try {
+            keyFile.load_from_file (fname);
+        } catch (Glib::Error&) {
             return false;
         }
 
@@ -1836,7 +1838,10 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
     try {
 
         Glib::KeyFile keyFile;
-        keyFile.load_from_file (fname);
+
+        try {
+            keyFile.load_from_file (fname);
+        } catch (Glib::Error&) {}
 
         keyFile.set_double  ("LiveThumbData", "CamWBRed", camwbRed);
         keyFile.set_double  ("LiveThumbData", "CamWBGreen", camwbGreen);
@@ -1857,7 +1862,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
 
         keyData = keyFile.to_data ();
 
-    } catch (Glib::Error &err) {
+    } catch (Glib::Error& err) {
         if (options.rtSettings.verbose) {
             printf("Thumbnail::writeData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }

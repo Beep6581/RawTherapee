@@ -199,7 +199,10 @@ int CacheImageData::save (const Glib::ustring& fname)
     try {
 
     Glib::KeyFile keyFile;
-    keyFile.load_from_file (fname);
+
+    try {
+        keyFile.load_from_file (fname);
+    } catch (Glib::Error&) {}
 
     keyFile.set_string  ("General", "MD5", md5);
     keyFile.set_string  ("General", "Version", VERSION); // Application's version
