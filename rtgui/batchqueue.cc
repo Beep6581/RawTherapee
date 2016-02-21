@@ -680,9 +680,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img)
         auto isEmpty = false;
 
         {
-#if PROTECT_VECTORS
             MYREADERLOCK(l, entryRW);
-#endif
             isEmpty = fd.empty();
         }
 
