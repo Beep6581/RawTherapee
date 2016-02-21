@@ -270,7 +270,7 @@ void DFManager::init( Glib::ustring pathname )
 
     try {
 
-        auto enumerator = dir->enumerate_children ();
+        auto enumerator = dir->enumerate_children ("standard::name");
 
         while (auto file = enumerator->next_file ()) {
             names.emplace_back (Glib::build_filename (pathname, file->get_name ()));

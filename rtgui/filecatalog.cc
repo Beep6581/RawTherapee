@@ -552,7 +552,7 @@ std::vector<Glib::ustring> FileCatalog::getFileList ()
 
         auto dir = Gio::File::create_for_path (selectedDirectory);
 
-        auto enumerator = dir->enumerate_children ();
+        auto enumerator = dir->enumerate_children ("standard::name");
 
         while (auto file = enumerator->next_file ()) {
 
