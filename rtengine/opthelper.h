@@ -69,7 +69,7 @@
         #define ALIGNED64
         #define ALIGNED16
     #endif
-    #ifndef __clang__
-        #define _RT_NESTED_OPENMP _OPENMP
+    #if !defined(__clang__) && defined _OPENMP
+        #define _RT_NESTED_OPENMP
     #endif
 #endif
