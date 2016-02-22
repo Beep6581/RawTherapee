@@ -276,7 +276,7 @@ void ImageData::extractInfo ()
             }
 
         }
-         else if (root->findTag("MakerNote")) {
+        if (lens == "Unknown" && root->findTag("MakerNote")) {
             rtexif::TagDirectory* mnote = root->findTag("MakerNote")->getDirectory();
 
             if (mnote && !make.compare (0, 5, "NIKON")) {
