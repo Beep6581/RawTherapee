@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
 
 if [[ ! "$1" ]]; then
-  printf "%s\n" "Usage: $0 <hg tag>" "Example: $0 4.0.10"
+  printf "%s\n" "Usage: $0 <git tag>" "Example: $0 4.2"
   exit
 fi
 
-hg update "$1"
+git checkout "$1" || exit 0
 tools/generateReleaseInfo
 mkdir rawtherapee-"$1"
 mv ReleaseInfo.cmake rawtherapee-"$1"
-hg archive -X ".hg*" -X "rtgui/config.h" -X "rtgui/version.h" -X "rtdata/rawtherapee.desktop" rawtherapee-"$1".tar
-tar -rf rawtherapee-"$1".tar rawtherapee-"$1"/ReleaseInfo.cmake
+#hg archive -X ".hg*" -X "rtgui/config.h" -X "rtgui/version.h" -X "rtdata/rawtherapee.desktop" rawtherapee-"$1".tar
+git archive --format=tar "$1" > rawtherapee-"$1".tar
+tar --append --file=rawtherapee-"$1".tar rawtherapee-"$1"/ReleaseInfo.cmake
 xz -z -9e rawtherapee-"$1".tar
 rm -r rawtherapee-"$1"
-hg update
+git checkout

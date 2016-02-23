@@ -174,7 +174,7 @@ void safe_build_subdir_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ust
             return;
         }
 
-        SAFE_ENUMERATOR_CODE_START("standard::name,standard::type,standard::is_hidden")
+        SAFE_ENUMERATOR_CODE_START("standard::name,standard::type,standard::is-hidden")
 
         if (info->get_file_type() == Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || add_hidden)) {
             subDirs.push_back (info->get_name());

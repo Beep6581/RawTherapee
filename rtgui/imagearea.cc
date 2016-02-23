@@ -476,7 +476,13 @@ void ImageArea::addCropWindow ()
     cw->setEditSubscriber (getCurrSubscriber());
     cw->enable(); // start processing!
 
-    cw->centerCrop();
+    {
+    int anchorX = 0;
+    int anchorY = 0;
+    mainCropWindow->getCropAnchorPosition(anchorX, anchorY);
+    cw->setCropAnchorPosition(anchorX, anchorY);
+    }
+
     mainCropWindow->setObservedCropWin (cropWins.front());
 
     if(cropWins.size() == 1) { // after first detail window we already have high quality
