@@ -284,176 +284,183 @@ void ImageData::extractInfo ()
         } else if(!make.compare (0, 4, "SONY")) {
             if (iso_speed == 65535 || iso_speed == 0) {
                 rtexif::Tag* isoTag = exif->getTag ("RecommendedExposureIndex");
-                if(isoTag)
+
+                if(isoTag) {
                     iso_speed = isoTag->toDouble();
+                }
             }
 
         }
-         else if (root->findTag("MakerNote")) {
-            rtexif::TagDirectory* mnote = root->findTag("MakerNote")->getDirectory();
 
-            if (mnote && !make.compare (0, 5, "NIKON")) {
-                // ISO at max value supported, check manufacturer specific
-                if (iso_speed == 65535 || iso_speed == 0) {
-                    rtexif::Tag* isoTag = mnote->getTagP("ISOInfo/ISO");
+        if (lens == "Unknown") {
+            rtexif::Tag* mnoteTag = root->findTag("MakerNote");
 
-                    if (isoTag) {
-                        iso_speed = isoTag->toInt();
+            if (mnoteTag) {
+                rtexif::TagDirectory* mnote = mnoteTag->getDirectory();
+
+                if (mnote && !make.compare (0, 5, "NIKON")) {
+                    // ISO at max value supported, check manufacturer specific
+                    if (iso_speed == 65535 || iso_speed == 0) {
+                        rtexif::Tag* isoTag = mnote->getTagP("ISOInfo/ISO");
+
+                        if (isoTag) {
+                            iso_speed = isoTag->toInt();
+                        }
                     }
-                }
 
-                bool lensOk = false;
+                    bool lensOk = false;
 
-                if (mnote->getTag ("LensData")) {
-                    std::string ldata = mnote->getTag ("LensData")->valueToString ();
-                    int pos;
+                    if (mnote->getTag ("LensData")) {
+                        std::string ldata = mnote->getTag ("LensData")->valueToString ();
+                        int pos;
 
-                    if (ldata.size() > 10 && (pos = ldata.find ("Lens = ")) != Glib::ustring::npos) {
-                        lens = ldata.substr (pos + 7);
+                        if (ldata.size() > 10 && (pos = ldata.find ("Lens = ")) != Glib::ustring::npos) {
+                            lens = ldata.substr (pos + 7);
 
-                        if (lens.compare (0, 7, "Unknown")) {
-                            lensOk = true;
-                        } else {
-                            int pos = lens.find("$FL$");        // is there a placeholder for focallength?
+                            if (lens.compare (0, 7, "Unknown")) {
+                                lensOk = true;
+                            } else {
+                                int pos = lens.find("$FL$");        // is there a placeholder for focallength?
 
-                            if(pos != Glib::ustring::npos) {                // then fill in focallength
-                                lens = lens.replace(pos, 4, exif->getTag ("FocalLength")->valueToString ());
+                                if(pos != Glib::ustring::npos) {                // then fill in focallength
+                                    lens = lens.replace(pos, 4, exif->getTag ("FocalLength")->valueToString ());
 
-                                if(mnote->getTag ("LensType")) {
-                                    std::string ltype = mnote->getTag ("LensType")->valueToString ();
+                                    if(mnote->getTag ("LensType")) {
+                                        std::string ltype = mnote->getTag ("LensType")->valueToString ();
 
-                                    if(ltype.find("MF = Yes") != Glib::ustring::npos) { // check, whether it's a MF lens, should be always
-                                        lens = lens.replace(0, 7, "MF");
+                                        if(ltype.find("MF = Yes") != Glib::ustring::npos) { // check, whether it's a MF lens, should be always
+                                            lens = lens.replace(0, 7, "MF");
+                                        }
+
+                                        lensOk = true;
                                     }
-
-                                    lensOk = true;
                                 }
                             }
                         }
                     }
-                }
 
-                if (!lensOk && mnote->getTag ("Lens")) {
-                    std::string ldata = mnote->getTag ("Lens")->valueToString ();
-                    size_t i = 0, j = 0;
-                    double n[4];
+                    if (!lensOk && mnote->getTag ("Lens")) {
+                        std::string ldata = mnote->getTag ("Lens")->valueToString ();
+                        size_t i = 0, j = 0;
+                        double n[4];
 
-                    for (int m = 0; m < 4; m++) {
-                        while (i < ldata.size() && ldata[i] != '/') {
+                        for (int m = 0; m < 4; m++) {
+                            while (i < ldata.size() && ldata[i] != '/') {
+                                i++;
+                            }
+
+                            int nom = atoi(ldata.substr(j, i).c_str());
+                            j = i + 1;
                             i++;
+
+                            while (i < ldata.size() && ldata[i] != ',') {
+                                i++;
+                            }
+
+                            int den = atoi(ldata.substr(j, i).c_str());
+                            j = i + 2;
+                            i += 2;
+                            n[m] = (double) nom / den;
                         }
 
-                        int nom = atoi(ldata.substr(j, i).c_str());
-                        j = i + 1;
-                        i++;
+                        std::ostringstream str;
 
-                        while (i < ldata.size() && ldata[i] != ',') {
-                            i++;
-                        }
-
-                        int den = atoi(ldata.substr(j, i).c_str());
-                        j = i + 2;
-                        i += 2;
-                        n[m] = (double) nom / den;
-                    }
-
-                    std::ostringstream str;
-
-                    if (n[0] == n[1]) {
-                        str << "Unknown " << n[0] << "mm F/" << n[2];
-                    } else if (n[2] == n[3]) {
-                        str << "Unknown " << n[0] << "-" << n[1] << "mm F/" << n[2];
-                    } else {
-                        str << "Unknown " << n[0] << "-" << n[1] << "mm F/" << n[2] << "-" << n[3];
-                    }
-
-                    lens = str.str();
-
-                    // Look whether it's MF or AF
-                    if(mnote->getTag ("LensType")) {
-                        std::string ltype = mnote->getTag ("LensType")->valueToString ();
-
-                        if(ltype.find("MF = Yes") != Glib::ustring::npos) { // check, whether it's a MF lens
-                            lens = lens.replace(0, 7, "MF");    // replace 'Unknwon' with 'MF'
+                        if (n[0] == n[1]) {
+                            str << "Unknown " << n[0] << "mm F/" << n[2];
+                        } else if (n[2] == n[3]) {
+                            str << "Unknown " << n[0] << "-" << n[1] << "mm F/" << n[2];
                         } else {
-                            lens = lens.replace(0, 7, "AF");    // replace 'Unknwon' with 'AF'
+                            str << "Unknown " << n[0] << "-" << n[1] << "mm F/" << n[2] << "-" << n[3];
+                        }
+
+                        lens = str.str();
+
+                        // Look whether it's MF or AF
+                        if(mnote->getTag ("LensType")) {
+                            std::string ltype = mnote->getTag ("LensType")->valueToString ();
+
+                            if(ltype.find("MF = Yes") != Glib::ustring::npos) { // check, whether it's a MF lens
+                                lens = lens.replace(0, 7, "MF");    // replace 'Unknwon' with 'MF'
+                            } else {
+                                lens = lens.replace(0, 7, "AF");    // replace 'Unknwon' with 'AF'
+                            }
                         }
                     }
-                }
-            } else if (mnote && !make.compare (0, 5, "Canon")) {
-                // ISO at max value supported, check manufacturer specific
-                if (iso_speed == 65535 || iso_speed == 0) {
-                    rtexif::Tag* baseIsoTag = mnote->getTagP("CanonShotInfo/BaseISO");
+                } else if (mnote && !make.compare (0, 5, "Canon")) {
+                    // ISO at max value supported, check manufacturer specific
+                    if (iso_speed == 65535 || iso_speed == 0) {
+                        rtexif::Tag* baseIsoTag = mnote->getTagP("CanonShotInfo/BaseISO");
 
-                    if (baseIsoTag) {
-                        iso_speed = baseIsoTag->toInt();
+                        if (baseIsoTag) {
+                            iso_speed = baseIsoTag->toInt();
+                        }
                     }
-                }
 
-                int found = false;
-                // canon EXIF have a string for lens model
-                rtexif::Tag *lt = mnote->getTag("LensType");
-
-                if ( lt ) {
-                    std::string ldata = lt->valueToString ();
-
-                    if (ldata.size() > 1) {
-                        found = true;
-                        lens = "Canon " + ldata;
-                    }
-                }
-
-                if( !found || lens.substr(lens.find(' ')).length() < 7 ) {
-                    lt = mnote->findTag("LensID");
+                    int found = false;
+                    // canon EXIF have a string for lens model
+                    rtexif::Tag *lt = mnote->getTag("LensType");
 
                     if ( lt ) {
                         std::string ldata = lt->valueToString ();
 
                         if (ldata.size() > 1) {
-                            lens = ldata;
+                            found = true;
+                            lens = "Canon " + ldata;
+                        }
+                    }
+
+                    if( !found || lens.substr(lens.find(' ')).length() < 7 ) {
+                        lt = mnote->findTag("LensID");
+
+                        if ( lt ) {
+                            std::string ldata = lt->valueToString ();
+
+                            if (ldata.size() > 1) {
+                                lens = ldata;
+                            }
+                        }
+                    }
+                } else if (mnote && (!make.compare (0, 6, "PENTAX") || (!make.compare (0, 5, "RICOH") && !model.compare (0, 6, "PENTAX")))) {
+                    if (mnote->getTag ("LensType")) {
+                        lens = mnote->getTag ("LensType")->valueToString ();
+                    }
+
+                    // Try to get the FocalLength from the LensInfo structure, where length below 10mm will be correctly set
+                    rtexif::Tag* flt = mnote->getTagP ("LensInfo/FocalLength");
+
+                    if (flt) {
+                        // Don't replace Exif focal_len if Makernotes focal_len is 0
+                        if (flt->toDouble() > 0) {
+                            focal_len = flt->toDouble ();
+                        }
+                    } else if ((flt = mnote->getTagP ("FocalLength"))) {
+                        rtexif::Tag* flt = mnote->getTag ("FocalLength");
+                        focal_len = flt->toDouble ();
+                    }
+
+                    if (mnote->getTag ("FocalLengthIn35mmFilm")) {
+                        focal_len35mm = mnote->getTag ("FocalLengthIn35mmFilm")->toDouble ();
+                    }
+                } else if (mnote && (!make.compare (0, 4, "SONY") || !make.compare (0, 6, "KONICA"))) {
+                    if (mnote->getTag ("LensID")) {
+                        lens = mnote->getTag ("LensID")->valueToString ();
+                    }
+                } else if (mnote && !make.compare (0, 7, "OLYMPUS")) {
+                    if (mnote->getTag ("Equipment"))  {
+                        rtexif::TagDirectory* eq = mnote->getTag ("Equipment")->getDirectory ();
+
+                        if (eq->getTag ("LensType")) {
+                            lens = eq->getTag ("LensType")->valueToString ();
                         }
                     }
                 }
-            } else if (mnote && (!make.compare (0, 6, "PENTAX") || (!make.compare (0, 5, "RICOH") && !model.compare (0, 6, "PENTAX")))) {
-                if (mnote->getTag ("LensType")) {
-                    lens = mnote->getTag ("LensType")->valueToString ();
-                }
-
-                // Try to get the FocalLength from the LensInfo structure, where length below 10mm will be correctly set
-                rtexif::Tag* flt = mnote->getTagP ("LensInfo/FocalLength");
-
-                if (flt) {
-                    // Don't replace Exif focal_len if Makernotes focal_len is 0
-                    if (flt->toDouble() > 0) {
-                        focal_len = flt->toDouble ();
-                    }
-                } else if ((flt = mnote->getTagP ("FocalLength"))) {
-                    rtexif::Tag* flt = mnote->getTag ("FocalLength");
-                    focal_len = flt->toDouble ();
-                }
-
-                if (mnote->getTag ("FocalLengthIn35mmFilm")) {
-                    focal_len35mm = mnote->getTag ("FocalLengthIn35mmFilm")->toDouble ();
-                }
-            } else if (mnote && (!make.compare (0, 4, "SONY") || !make.compare (0, 6, "KONICA"))) {
-                if (mnote->getTag ("LensID")) {
-                    lens = mnote->getTag ("LensID")->valueToString ();
-                }
-            } else if (mnote && !make.compare (0, 7, "OLYMPUS")) {
-                if (mnote->getTag ("Equipment"))  {
-                    rtexif::TagDirectory* eq = mnote->getTag ("Equipment")->getDirectory ();
-
-                    if (eq->getTag ("LensType")) {
-                        lens = eq->getTag ("LensType")->valueToString ();
-                    }
-                }
+            } else if (exif->getTag ("DNGLensInfo")) {
+                lens = exif->getTag ("DNGLensInfo")->valueToString ();
+            } else if (exif->getTag ("LensModel")) {
+                lens = exif->getTag ("LensModel")->valueToString ();
+            } else if (exif->getTag ("LensInfo")) {
+                lens = exif->getTag ("LensInfo")->valueToString ();
             }
-        } else if (exif->getTag ("DNGLensInfo")) {
-            lens = exif->getTag ("DNGLensInfo")->valueToString ();
-        } else if (exif->getTag ("LensModel")) {
-            lens = exif->getTag ("LensModel")->valueToString ();
-        } else if (exif->getTag ("LensInfo")) {
-            lens = exif->getTag ("LensInfo")->valueToString ();
         }
     }
 }
