@@ -20,7 +20,6 @@
 #include "icmpanel.h"
 #include "options.h"
 #include "guiutils.h"
-#include "../rtengine/safegtk.h"
 #include "../rtengine/iccstore.h"
 #include "../rtengine/dcp.h"
 #include "rtimage.h"
@@ -598,7 +597,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
     } else if (icameraICC->get_active ()) {
         pp->icm.input = "(cameraICC)";
     } else {
-        if (safe_file_test (ipDialog->get_filename (), Glib::FILE_TEST_EXISTS) && !safe_file_test (ipDialog->get_filename (), Glib::FILE_TEST_IS_DIR)) {
+        if (Glib::file_test (ipDialog->get_filename (), Glib::FILE_TEST_EXISTS) && !Glib::file_test (ipDialog->get_filename (), Glib::FILE_TEST_IS_DIR)) {
             pp->icm.input = "file:" + ipDialog->get_filename ();
         } else {
             pp->icm.input = "";    // just a directory

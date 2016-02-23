@@ -17,8 +17,9 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "filethumbnailbuttonset.h"
+
+#include "rtimage.h"
 #include "multilangmgr.h"
-#include "../rtengine/safegtk.h"
 
 extern Glib::ustring argv0;
 
@@ -41,19 +42,19 @@ FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry)
 {
 
     if (!iconsLoaded) {
-        unRankIcon  = safe_create_from_png ("ratednotg.png");
-        rankIcon    = safe_create_from_png ("rated.png");
-        gRankIcon   = safe_create_from_png ("grayrated.png");
-        trashIcon   = safe_create_from_png ("trash-thumbnail.png");
-        unTrashIcon = safe_create_from_png ("undelete-thumbnail.png");
-        processIcon = safe_create_from_png ("processing-thumbnail.png");
+        unRankIcon  = RTImage::createFromPng ("ratednotg.png");
+        rankIcon    = RTImage::createFromPng ("rated.png");
+        gRankIcon   = RTImage::createFromPng ("grayrated.png");
+        trashIcon   = RTImage::createFromPng ("trash-thumbnail.png");
+        unTrashIcon = RTImage::createFromPng ("undelete-thumbnail.png");
+        processIcon = RTImage::createFromPng ("processing-thumbnail.png");
 
-        colorLabelIcon_0 = safe_create_from_png ("cglabel0.png"); //("nocolorlabel.png");
-        colorLabelIcon_1 = safe_create_from_png ("clabel1.png");
-        colorLabelIcon_2 = safe_create_from_png ("clabel2.png");
-        colorLabelIcon_3 = safe_create_from_png ("clabel3.png");
-        colorLabelIcon_4 = safe_create_from_png ("clabel4.png");
-        colorLabelIcon_5 = safe_create_from_png ("clabel5.png");
+        colorLabelIcon_0 = RTImage::createFromPng ("cglabel0.png"); //("nocolorlabel.png");
+        colorLabelIcon_1 = RTImage::createFromPng ("clabel1.png");
+        colorLabelIcon_2 = RTImage::createFromPng ("clabel2.png");
+        colorLabelIcon_3 = RTImage::createFromPng ("clabel3.png");
+        colorLabelIcon_4 = RTImage::createFromPng ("clabel4.png");
+        colorLabelIcon_5 = RTImage::createFromPng ("clabel5.png");
         iconsLoaded = true;
     }
 

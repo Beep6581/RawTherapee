@@ -16,11 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-//#include <glib/gstdio.h>
+#include <glib/gstdio.h>
 #include "procparams.h"
 #include "rt_math.h"
-#include "safegtk.h"
-#include "safekeyfile.h"
 #include "dcp.h"
 #include "../rtgui/multilangmgr.h"
 #include "../rtgui/version.h"
@@ -1303,11 +1301,15 @@ static Glib::ustring relativePathIfInside(Glib::ustring procparams_fname, bool f
 int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsolute, ParamsEdited* pedited)
 {
 
-    if (!fname.length() && !fname2.length()) {
+    if (fname.empty () && fname2.empty ()) {
         return 0;
     }
 
-    SafeKeyFile keyFile;
+    Glib::ustring sPParams;
+
+    try {
+
+    Glib::KeyFile keyFile;
 
     keyFile.set_string  ("Version", "AppVersion", APPVERSION);
     keyFile.set_integer ("Version", "Version",    PPVERSION);
@@ -3363,12 +3365,18 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         }
     }
 
-    Glib::ustring sPParams = keyFile.to_data();
+    sPParams = keyFile.to_data();
+
+    } catch(Glib::KeyFileError&) {}
+
+    if (sPParams.empty ()) {
+        return 1;
+    }
 
     int error1, error2;
-    error1 = write (fname , sPParams);
+    error1 = write (fname, sPParams);
 
-    if (fname2.length()) {
+    if (!fname2.empty ()) {
 
         error2 = write (fname2, sPParams);
         // If at least one file has been saved, it's a success
@@ -3385,7 +3393,7 @@ int ProcParams::write (Glib::ustring &fname, Glib::ustring &content) const
 
     if (fname.length()) {
         FILE *f;
-        f = safe_g_fopen (fname, "wt");
+        f = g_fopen (fname.c_str (), "wt");
 
         if (f == NULL) {
             error = 1;
@@ -3406,15 +3414,15 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
         return 1;
     }
 
-    SafeKeyFile keyFile;
+    Glib::KeyFile keyFile;
 
     try {
-        //setDefaults ();
+
         if (pedited) {
             pedited->set(false);
         }
 
-        FILE* f = safe_g_fopen (fname, "rt");
+        FILE* f = g_fopen (fname.c_str (), "rt");
 
         if (!f) {
             return 1;
@@ -3449,8 +3457,6 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 ppVersion  = keyFile.get_integer ("Version", "Version");
             }
         }
-
-//printf("ProcParams::load called ppVersion=%i\n",ppVersion);
 
         if (keyFile.has_group ("General")) {
             if (keyFile.has_key ("General", "Rank"))        {
@@ -7427,9 +7433,11 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
         return 0;
     } catch (const Glib::Error& e) {
         printf ("-->%s\n", e.what().c_str());
+        setDefaults ();
         return 1;
     } catch (...) {
         printf ("-->unknown exception!\n");
+        setDefaults ();
         return 1;
     }
 

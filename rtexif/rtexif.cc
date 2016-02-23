@@ -25,9 +25,11 @@
 #include <sstream>
 #include <stdint.h>
 
-#include "../rtgui/cacheimagedata.h"
+#include <glib/gstdio.h>
+
 #include "rtexif.h"
-#include "../rtengine/safegtk.h"
+
+#include "../rtgui/cacheimagedata.h"
 #include "../rtgui/version.h"
 #include "../rtgui/ppversion.h"
 
@@ -247,17 +249,10 @@ void TagDirectory::printAll (unsigned int level) const
  *
  * @return True if everything went fine, false otherwise
  */
-bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring &imageFName, const Glib::ustring &profileFName, const Glib::ustring &defaultPParams, const CacheImageData* cfs, const bool flagMode,
-                            rtengine::SafeKeyFile *keyFile, Glib::ustring tagDirName) const
+bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring &imageFName, const Glib::ustring &profileFName, const Glib::ustring &defaultPParams,
+                            const CacheImageData* cfs, const bool flagMode, Glib::KeyFile *keyFile, Glib::ustring tagDirName) const
 {
-
-    rtengine::SafeKeyFile *kf;
-
-    if (!keyFile) {
-        kf = new rtengine::SafeKeyFile();
-    } else {
-        kf = keyFile;
-    }
+    const auto kf = keyFile ? keyFile : new Glib::KeyFile;
 
     if (!kf) {
         return false;
@@ -274,7 +269,7 @@ bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring 
 
     if (!keyFile) {
         // open the file in write mode
-        f = safe_g_fopen (commFName, "wt");
+        f = g_fopen (commFName.c_str (), "wt");
 
         if (f == NULL) {
             printf("TagDirectory::keyFileDump(\"%s\") >>> Error: unable to open file with write access!\n", commFName.c_str());
@@ -282,21 +277,25 @@ bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring 
             return false;
         }
 
-        kf->set_string ("RT General", "CachePath", options.cacheBaseDir);
-        kf->set_string ("RT General", "AppVersion", VERSION);
-        kf->set_integer("RT General", "ProcParamsVersion", PPVERSION);
-        kf->set_string ("RT General", "ImageFileName", imageFName);
-        kf->set_string ("RT General", "OutputProfileFileName", profileFName);
-        kf->set_string ("RT General", "DefaultProcParams", defaultPParams);
-        kf->set_boolean("RT General", "FlaggingMode", flagMode);
+        try {
 
-        kf->set_double ("Common Data", "FNumber", cfs->fnumber);
-        kf->set_double ("Common Data", "Shutter", cfs->shutter);
-        kf->set_double ("Common Data", "FocalLength", cfs->focalLen);
-        kf->set_integer("Common Data", "ISO", cfs->iso);
-        kf->set_string ("Common Data", "Lens", cfs->lens);
-        kf->set_string ("Common Data", "Make", cfs->camMake);
-        kf->set_string ("Common Data", "Model", cfs->camModel);
+            kf->set_string ("RT General", "CachePath", options.cacheBaseDir);
+            kf->set_string ("RT General", "AppVersion", VERSION);
+            kf->set_integer("RT General", "ProcParamsVersion", PPVERSION);
+            kf->set_string ("RT General", "ImageFileName", imageFName);
+            kf->set_string ("RT General", "OutputProfileFileName", profileFName);
+            kf->set_string ("RT General", "DefaultProcParams", defaultPParams);
+            kf->set_boolean("RT General", "FlaggingMode", flagMode);
+
+            kf->set_double ("Common Data", "FNumber", cfs->fnumber);
+            kf->set_double ("Common Data", "Shutter", cfs->shutter);
+            kf->set_double ("Common Data", "FocalLength", cfs->focalLen);
+            kf->set_integer("Common Data", "ISO", cfs->iso);
+            kf->set_string ("Common Data", "Lens", cfs->lens);
+            kf->set_string ("Common Data", "Make", cfs->camMake);
+            kf->set_string ("Common Data", "Model", cfs->camModel);
+
+        } catch (Glib::KeyFileError&) {}
     }
 
     // recursively iterate over the tag list
@@ -308,10 +307,15 @@ bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring 
                 // Accumulating the TagDirectories to dump later
                 tagDirPaths.push_back( Glib::ustring( tagDirName + "/" + getDumpKey(tags[i]->getID(), tagName) ) );
                 tagDirList.push_back(tags[i]->getDirectory(j));
-                kf->set_string (tagDirName, getDumpKey(tags[i]->getID(), tagName), "$subdir");
+
+                try {
+                    kf->set_string (tagDirName, getDumpKey(tags[i]->getID(), tagName), "$subdir");
+                } catch (Glib::KeyFileError&) {}
             }
         else {
-            kf->set_string (tagDirName, getDumpKey(tags[i]->getID(), tagName), tags[i]->valueToString());
+            try {
+                kf->set_string (tagDirName, getDumpKey(tags[i]->getID(), tagName), tags[i]->valueToString());
+            } catch (Glib::KeyFileError&) {}
         }
     }
 
@@ -321,7 +325,10 @@ bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring 
     }
 
     if (!keyFile) {
-        fprintf (f, "%s", kf->to_data().c_str());
+        try {
+            fprintf (f, "%s", kf->to_data().c_str());
+        } catch (Glib::KeyFileError&) {}
+
         fclose (f);
         delete kf;
     }

@@ -16,73 +16,58 @@
 *  You should have received a copy of the GNU General Public License
 *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <cstring>
-
 #include "extprog.h"
-#include "multilangmgr.h"
-#include "../rtengine/safegtk.h"
+
+#include <cstring>
+#include <iostream>
+
 #ifdef WIN32
 #include <windows.h>
-// for GCC32
-#ifndef _WIN32_IE
-#define _WIN32_IE 0x0600
-#endif
 #include <shlobj.h>
 #endif
-using namespace std;
 
+#include "options.h"
+#include "multilangmgr.h"
 
-ExtProgAction::ExtProgAction() {}
-
-ExtProgAction::ExtProgAction(const ExtProgAction* other, int target)
-    : target(target), filePathEXE(other->filePathEXE), preparams(other->preparams), name(other->name) { }
-
-Glib::ustring ExtProgAction::GetFullName()
+Glib::ustring ExtProgAction::getFullName () const
 {
     return name + " [" + M(Glib::ustring::compose("EXTPROGTARGET_%1", target)) + "]";
 }
 
-bool ExtProgAction::Execute(std::vector<Glib::ustring> fileNames)
+bool ExtProgAction::execute (const std::vector<Glib::ustring>& fileNames) const
 {
-    if (fileNames.empty()) {
+    if (fileNames.empty ()) {
         return false;
     }
 
-    // Check if they all exists (maybe not precessed yet)
-    for (int i = 0; i < fileNames.size(); i++) {
-        if (!safe_file_test(fileNames[i], Glib::FILE_TEST_EXISTS)) {
-            Gtk::MessageDialog msgd (M("MAIN_MSG_IMAGEUNPROCESSED"), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-            msgd.run ();
-            return false;
+    // Check if they all exists as they may not be processed yet.
+    for (const auto& fileName : fileNames) {
+
+        if (Glib::file_test (fileName, Glib::FILE_TEST_EXISTS)) {
+            continue;
         }
+
+        Gtk::MessageDialog (M("MAIN_MSG_IMAGEUNPROCESSED"), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true).run ();
+        return false;
     }
 
     Glib::ustring cmdLine = "\"" + filePathEXE + "\"";
 
-    if (preparams.length() > 0) {
+    if (!preparams.empty()) {
         cmdLine += " " + preparams;
     }
 
-    for (int i = 0; i < fileNames.size(); i++) {
-        cmdLine += " \"" + fileNames[i] + "\"";
+    for (const auto& fileName : fileNames) {
+        cmdLine += " \"" + fileName + "\"";
     }
 
-    return safe_spawn_command_line_async (cmdLine);
+    return ExtProgStore::spawnCommandAsync (cmdLine);
 }
 
-
-// Generates as singleton
 ExtProgStore* ExtProgStore::getInstance()
 {
     static ExtProgStore instance_;
     return &instance_;
-}
-
-ExtProgStore::~ExtProgStore()
-{
-    for (list<ExtProgAction*>::iterator it = lActions.begin(); it != lActions.end(); it++) {
-        delete *it;
-    }
 }
 
 // Reads all profiles from the given profiles dir
@@ -90,109 +75,258 @@ void ExtProgStore::init ()
 {
     MyMutex::MyLock lock(mtx);
 
-    lActions.clear();
+    actions.clear ();
 
 #ifdef WIN32
 
-    SearchProg("Photoshop", "Adobe\\Adobe Photoshop CS%1 (64 Bit)\\Photoshop.exe", "Adobe\\Adobe Photoshop CS%1\\Photoshop.exe", 9, false, true);
-    SearchProg("Photomatix Pro", "PhotomatixPro%1\\PhotomatixPro.exe", "", 9, true, true);
-    SearchProg("Paint.NET", "Paint.NET\\PaintDotNet.exe", "", 0, false, true);
-    SearchProg("MS Image Composition Editor", "Microsoft Research\\Image Composite Editor\\ICE.exe", "", 0, false, true);
-    SearchProg("PTGui", "PTGui\\PTGui.exe", "", 0, false, true);
-    SearchProg("GeoSetter", "GeoSetter\\GeoSetter.exe", "", 0, true, true);
-    SearchProg("FastStone Image Viewer", "FastStone Image Viewer\\FSViewer.exe", "", 0, true, true);
-    SearchProg("FastPictureViewer", "FastPictureViewer\\FastPictureViewer.exe", "", 0, true, true);
+    // Please do not add obscure little tools here, only widely used programs.
+    // They should also have a proper setup program and therefore a standard path.
 
-    if (!SearchProg("Autopano Giga 3", "Kolor\\Autopano Giga 3.%1\\AutopanoGiga_x64.exe", "Kolor\\Autopano Giga 3.%1\\AutopanoGiga.exe", 15, true, true)) {
-        if ( !SearchProg("Autopano Pro 3", "Kolor\\Autopano Pro 3.%1\\AutopanoPro_x64.exe", "Kolor\\Autopano Pro 3.%1\\AutopanoPro.exe", 15, true, true))   {
-            if (!SearchProg("Autopano Giga 2", "Kolor\\Autopano Giga 2.%1\\AutopanoGiga_x64.exe", "Kolor\\Autopano Giga 2.%1\\AutopanoGiga.exe", 6, true, true)) {
-                SearchProg("Autopano Pro 2", "Kolor\\Autopano Pro 2.%1\\AutopanoPro_x64.exe", "Kolor\\Autopano Pro 2.%1\\AutopanoPro.exe", 6, true, true);
+    searchProgram ("Photoshop", "Adobe\\Adobe Photoshop CS%1 (64 Bit)\\Photoshop.exe", "Adobe\\Adobe Photoshop CS%1\\Photoshop.exe", 9, false, true);
+    searchProgram ("Photomatix Pro", "PhotomatixPro%1\\PhotomatixPro.exe", "", 9, true, true);
+    searchProgram ("Paint.NET", "Paint.NET\\PaintDotNet.exe", "", 0, false, true);
+    searchProgram ("MS Image Composition Editor", "Microsoft Research\\Image Composite Editor\\ICE.exe", "", 0, false, true);
+    searchProgram ("PTGui", "PTGui\\PTGui.exe", "", 0, false, true);
+    searchProgram ("GeoSetter", "GeoSetter\\GeoSetter.exe", "", 0, true, true);
+    searchProgram ("FastStone Image Viewer", "FastStone Image Viewer\\FSViewer.exe", "", 0, true, true);
+    searchProgram ("FastPictureViewer", "FastPictureViewer\\FastPictureViewer.exe", "", 0, true, true);
+
+    if (!searchProgram ("Autopano Giga 3", "Kolor\\Autopano Giga 3.%1\\AutopanoGiga_x64.exe", "Kolor\\Autopano Giga 3.%1\\AutopanoGiga.exe", 15, true, true)) {
+        if (!searchProgram ("Autopano Pro 3", "Kolor\\Autopano Pro 3.%1\\AutopanoPro_x64.exe", "Kolor\\Autopano Pro 3.%1\\AutopanoPro.exe", 15, true, true))   {
+            if (!searchProgram ("Autopano Giga 2", "Kolor\\Autopano Giga 2.%1\\AutopanoGiga_x64.exe", "Kolor\\Autopano Giga 2.%1\\AutopanoGiga.exe", 6, true, true)) {
+                searchProgram ("Autopano Pro 2", "Kolor\\Autopano Pro 2.%1\\AutopanoPro_x64.exe", "Kolor\\Autopano Pro 2.%1\\AutopanoPro.exe", 6, true, true);
             }
         }
     }
 
-    // DO NOT add obscure little tools here, only widely used programs with proper setup program to have a standard path
 #endif
 
 }
 
-bool ExtProgStore::SearchProg(Glib::ustring name, Glib::ustring exePath, Glib::ustring exePath86, int maxVer, bool allowRaw, bool allowQueueProcess)
+bool ExtProgStore::searchProgram (const Glib::ustring& name,
+                                  const Glib::ustring& exePath,
+                                  const Glib::ustring& exePath86,
+                                  int maxVer,
+                                  bool allowRaw,
+                                  bool allowQueueProcess)
 {
-    bool found = false;
 
 #ifdef WIN32
     // get_user_special_dir crashes on some Windows configurations.
-    // so we use the safe native functions here
     static Glib::ustring progFilesDir, progFilesDirx86;
 
-    if (progFilesDir.empty()) {
-        WCHAR pathW[MAX_PATH] = {0};
+    if (progFilesDir.empty ()) {
+        WCHAR pathW[MAX_PATH];
         char pathA[MAX_PATH];
 
-        // First prio folder (64bit, otherwise 32bit)
-        if (SHGetSpecialFolderPathW(NULL, pathW, CSIDL_PROGRAM_FILES, false)) {
-            char pathA[MAX_PATH];
-            WideCharToMultiByte(CP_UTF8, 0, pathW, -1, pathA, MAX_PATH, 0, 0);
-            progFilesDir = Glib::ustring(pathA);
+        if (SHGetSpecialFolderPathW (NULL, pathW, CSIDL_PROGRAM_FILES, false)) {
+            if (WideCharToMultiByte (CP_UTF8, 0, pathW, -1, pathA, MAX_PATH, 0, 0)) {
+                progFilesDir = pathA;
+            }
         }
 
-        if (SHGetSpecialFolderPathW(NULL, pathW, CSIDL_PROGRAM_FILESX86, false)) {
-            WideCharToMultiByte(CP_UTF8, 0, pathW, -1, pathA, MAX_PATH, 0, 0);
-            progFilesDirx86 = Glib::ustring(pathA);
+        if (SHGetSpecialFolderPathW (NULL, pathW, CSIDL_PROGRAM_FILESX86, false)) {
+            if (WideCharToMultiByte (CP_UTF8, 0, pathW, -1, pathA, MAX_PATH, 0, 0)) {
+                progFilesDirx86 = pathA;
+            }
         }
     }
 
-    if (exePath86.empty()) {
-        exePath86 = exePath;
-    }
+    ExtProgAction action;
+    action.name = name;
+    action.target = (allowRaw ? 1 : 2);
 
-    ExtProgAction *pAct = new ExtProgAction();
-    pAct->name = name;
-    pAct->target = (allowRaw ? 1 : 2);
+    auto& filePath = action.filePathEXE;
 
     if (maxVer > 0) {
-        for (int verNo = maxVer; verNo >= 0; verNo--) {
-            pAct->filePathEXE = progFilesDir + "\\" + Glib::ustring::compose(exePath, verNo);
 
-            if (safe_file_test(pAct->filePathEXE, Glib::FILE_TEST_EXISTS)) {
+        for (auto ver = maxVer; ver >= 0; ver--) {
+
+            filePath = progFilesDir + "\\" + Glib::ustring::compose(exePath, ver);
+
+            if (Glib::file_test (filePath, Glib::FILE_TEST_EXISTS)) {
                 break;
             }
 
-            pAct->filePathEXE = progFilesDirx86 + "\\" + Glib::ustring::compose(exePath86, verNo);
+            if (!exePath86.empty ()) {
 
-            if (safe_file_test(pAct->filePathEXE, Glib::FILE_TEST_EXISTS)) {
-                break;
+                filePath = progFilesDirx86 + "\\" + Glib::ustring::compose(exePath86, ver);
+
+                if (Glib::file_test (filePath, Glib::FILE_TEST_EXISTS)) {
+                    break;
+                }
             }
 
-            pAct->filePathEXE = "";
+            filePath.clear ();
         }
     } else {
-        pAct->filePathEXE = progFilesDir + "\\" + exePath;
 
-        if (!safe_file_test(pAct->filePathEXE, Glib::FILE_TEST_EXISTS)) {
+        do {
 
-            pAct->filePathEXE = progFilesDirx86 + "\\" + exePath86;
+            filePath = progFilesDir + "\\" + exePath;
 
-            if (!safe_file_test(pAct->filePathEXE, Glib::FILE_TEST_EXISTS)) {
-                pAct->filePathEXE = "";
+            if (Glib::file_test (filePath, Glib::FILE_TEST_EXISTS)) {
+                break;
             }
-        }
+
+            if (!exePath86.empty ()) {
+
+                filePath = progFilesDirx86 + "\\" + exePath86;
+
+                if (Glib::file_test (filePath, Glib::FILE_TEST_EXISTS)) {
+                    break;
+                }
+            }
+
+            filePath.clear ();
+
+        } while (false);
     }
 
-    if (pAct->filePathEXE.length() > 0) {
-        lActions.push_back(pAct);
+    if (!action.filePathEXE.empty ()) {
 
-        // Copy for second target
+        actions.push_back (action);
+
         if (allowRaw && allowQueueProcess) {
-            lActions.push_back(new ExtProgAction(pAct, 2));
+
+            action.target = 2;
+            actions.push_back (action);
         }
 
-        found = true;
-    } else {
-        delete pAct;
+        return true;
     }
 
 #endif
 
-    return found;
+    return false;
+}
+
+bool ExtProgStore::spawnCommandAsync (const Glib::ustring& cmd)
+{
+    try {
+
+        const auto encodedCmd = Glib::filename_from_utf8 (cmd);
+        Glib::spawn_command_line_async (encodedCmd.c_str ());
+
+        return true;
+
+    } catch (const Glib::Exception& exception) {
+
+        if (options.rtSettings.verbose) {
+            std::cerr << "Failed to execute \"" << cmd << "\": " << exception.what() << std::endl;
+        }
+
+        return false;
+
+    }
+}
+
+bool ExtProgStore::spawnCommandSync (const Glib::ustring& cmd)
+{
+    auto exitStatus = -1;
+
+    try {
+
+        Glib::spawn_command_line_sync (cmd, NULL, NULL, &exitStatus);
+
+    } catch (const Glib::Exception& exception) {
+
+        if (options.rtSettings.verbose) {
+            std::cerr << "Failed to execute \"" << cmd << "\": " << exception.what() << std::endl;
+        }
+
+    }
+
+    return exitStatus == 0;
+}
+
+bool ExtProgStore::openInGimp (const Glib::ustring& fileName)
+{
+#if defined WIN32
+
+    auto executable = Glib::build_filename (options.gimpDir, "bin", "gimp-win-remote");
+    auto cmdLine = Glib::ustring::compose ("\"%1\" gimp-2.4.exe \"%2\"", executable, fileName);
+    auto success = spawnCommandAsync (cmdLine);
+
+#elif defined __APPLE__
+
+    auto cmdLine = Glib::ustring("open -a /Applications/GIMP.app \'") + fileName + Glib::ustring("\'");
+    auto success = spawnCommandAsync (cmdLine);
+
+#else
+
+    auto cmdLine = Glib::ustring("gimp \"") + fileName + Glib::ustring("\"");
+    auto success = spawnCommandAsync (cmdLine);
+
+#endif
+
+    if (success) {
+        return true;
+    }
+
+#ifdef WIN32
+
+    for (auto ver = 12; ver >= 0; --ver) {
+
+        executable = Glib::build_filename (options.gimpDir, "bin", Glib::ustring::compose (Glib::ustring("gimp-2.%1.exe"), ver));
+        cmdLine = Glib::ustring::compose ("\"%1\" \"%2\"", executable, fileName);
+        success = spawnCommandAsync (cmdLine);
+
+        if (success) {
+            return true;
+        }
+    }
+
+#elif defined __APPLE__
+
+    cmdLine = Glib::ustring("open -a /Applications/Gimp.app/Contents/Resources/start \'") + fileName + Glib::ustring("\'");
+    success = ExtProgStore::spawnCommandAsync (cmdLine);
+
+#else
+
+    cmdLine = Glib::ustring("gimp-remote \"") + fileName + Glib::ustring("\"");
+    success = ExtProgStore::spawnCommandAsync (cmdLine);
+
+#endif
+
+    return success;
+}
+
+bool ExtProgStore::openInPhotoshop (const Glib::ustring& fileName)
+{
+#if defined WIN32
+
+    const auto executable = Glib::build_filename(options.psDir, "Photoshop.exe");
+    const auto cmdLine = Glib::ustring("\"") + executable + Glib::ustring("\" \"") + fileName + Glib::ustring("\"");
+
+#elif defined __APPLE__
+
+    const auto cmdLine = Glib::ustring("open -a \'") + Glib::build_filename(options.psDir, "Photoshop.app\' ")  + Glib::ustring("\'") + fileName + Glib::ustring("\'");
+
+#else
+
+    const auto cmdLine = Glib::ustring("\"") + Glib::build_filename(options.psDir, "Photoshop.exe") + Glib::ustring("\" \"") + fileName + Glib::ustring("\"");
+
+#endif
+
+    return spawnCommandAsync (cmdLine);
+}
+
+bool ExtProgStore::openInCustomEditor (const Glib::ustring& fileName)
+{
+#if defined WIN32
+
+    const auto cmdLine = Glib::ustring("\"") + options.customEditorProg + Glib::ustring("\" \"") + fileName + Glib::ustring("\"");
+
+#elif defined __APPLE__
+
+    const auto cmdLine = options.customEditorProg + Glib::ustring(" \"") + fileName + Glib::ustring("\"");
+
+#else
+
+    const auto cmdLine = Glib::ustring("\"") + options.customEditorProg + Glib::ustring("\" \"") + fileName + Glib::ustring("\"");
+
+#endif
+
+    return spawnCommandAsync (cmdLine);
 }

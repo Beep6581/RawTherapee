@@ -33,7 +33,6 @@
 #include "filecatalog.h"
 #include "batchqueuebuttonset.h"
 #include "guiutils.h"
-#include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
 using namespace std;
@@ -376,7 +375,7 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring filename
     strftime (stringTimestamp, sizeof(stringTimestamp), "_%Y%m%d%H%M%S_", timeinfo);
     Glib::ustring savedParamPath;
     savedParamPath = options.rtdir + "/batch/";
-    safe_g_mkdir_with_parents (savedParamPath, 0755);
+    g_mkdir_with_parents (savedParamPath.c_str (), 0755);
     savedParamPath += Glib::path_get_basename (filename);
     savedParamPath += stringTimestamp;
     savedParamPath += paramFileExtension;
@@ -385,8 +384,11 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring filename
 
 int cancelItemUI (void* data)
 {
-    safe_g_remove( (static_cast<BatchQueueEntry*>(data))->savedParamsFile );
-    delete static_cast<BatchQueueEntry*>(data);
+    const auto bqe = static_cast<BatchQueueEntry*>(data);
+
+    g_remove (bqe->savedParamsFile.c_str ());
+    delete bqe;
+
     return 0;
 }
 
@@ -671,24 +673,31 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img)
         processing->removeButtonSet ();
     }
 
-    if (saveBatchQueue( )) {
-        safe_g_remove( processedParams );
-        // Delete all files in directory \batch when finished, just to be sure to remove zombies
+    if (saveBatchQueue ()) {
+        ::g_remove (processedParams.c_str ());
 
-        // Not sure that locking is necessary, but it should be safer
-        MYREADERLOCK(l, entryRW);
+        // Delete all files in directory batch when finished, just to be sure to remove zombies
+        auto isEmpty = false;
 
-        if( fd.empty() ) {
-            MYREADERLOCK_RELEASE(l);
+        {
+            MYREADERLOCK(l, entryRW);
+            isEmpty = fd.empty();
+        }
 
-            std::vector<Glib::ustring> names;
-            Glib::ustring batchdir = Glib::build_filename(options.rtdir, "batch");
-            Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (batchdir);
-            safe_build_file_list (dir, names, batchdir);
+        if (isEmpty) {
 
-            for(std::vector<Glib::ustring>::iterator iter = names.begin(); iter != names.end(); iter++ ) {
-                safe_g_remove( *iter );
-            }
+            const auto batchdir = Glib::build_filename (options.rtdir, "batch");
+
+            try {
+
+                auto dir = Gio::File::create_for_path (batchdir);
+                auto enumerator = dir->enumerate_children ("standard::name");
+
+                while (auto file = enumerator->next_file ()) {
+                    ::g_remove (Glib::build_filename (batchdir, file->get_name ()).c_str ());
+                }
+
+            } catch (Glib::Exception&) {}
         }
     }
 
@@ -834,8 +843,8 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
     Glib::ustring fname;
 
     // create directory, if does not exist
-    if (safe_g_mkdir_with_parents (dstdir, 0755) ) {
-        return "";
+    if (g_mkdir_with_parents (dstdir.c_str (), 0755)) {
+        return Glib::ustring ();
     }
 
     // In overwrite mode we TRY to delete the old file first.
@@ -849,10 +858,10 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
             fname = Glib::ustring::compose ("%1-%2.%3", Glib::build_filename (dstdir,  dstfname), tries, format);
         }
 
-        int fileExists = safe_file_test (fname, Glib::FILE_TEST_EXISTS);
+        int fileExists = Glib::file_test (fname, Glib::FILE_TEST_EXISTS);
 
         if (inOverwriteMode && fileExists) {
-            if (safe_g_remove(fname) == -1) {
+            if (::g_remove (fname.c_str ()) != 0) {
                 inOverwriteMode = false;    // failed to delete- revert to old naming scheme
             } else {
                 fileExists = false;    // deleted now

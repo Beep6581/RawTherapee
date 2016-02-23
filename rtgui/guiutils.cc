@@ -21,7 +21,6 @@
 #include "options.h"
 #include "../rtengine/rt_math.h"
 #include "../rtengine/utils.h"
-#include "../rtengine/safegtk.h"
 #include "rtimage.h"
 #include "multilangmgr.h"
 
@@ -131,7 +130,7 @@ bool confirmOverwrite (Gtk::Window& parent, const std::string& filename)
 {
     bool safe = true;
 
-    if (safe_file_test (filename, Glib::FILE_TEST_EXISTS)) {
+    if (Glib::file_test (filename, Glib::FILE_TEST_EXISTS)) {
         Glib::ustring msg_ = Glib::ustring ("<b>\"") + Glib::path_get_basename (filename) + "\": "
                              + M("MAIN_MSG_ALREADYEXISTS") + "</b>\n" + M("MAIN_MSG_QOVERWRITE");
         Gtk::MessageDialog msgd (parent, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);

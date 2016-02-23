@@ -24,7 +24,6 @@
 #include "diagonalcurveeditorsubgroup.h"
 #include "flatcurveeditorsubgroup.h"
 #include "multilangmgr.h"
-#include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
 CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel) : curveDir(curveDir), curve_reset(NULL),

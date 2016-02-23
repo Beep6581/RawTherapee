@@ -1,4 +1,3 @@
-
 /*
  *  This file is part of RawTherapee.
  *
@@ -18,9 +17,10 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "filepanel.h"
+
 #include "rtwindow.h"
-#include "../rtengine/safegtk.h"
 #include "inspector.h"
+#include "placesbrowser.h"
 
 int FilePanelInitUI (void* data)
 {
@@ -177,19 +177,19 @@ void FilePanel::init ()
     dirBrowser->fillDirTree ();
     placesBrowser->refreshPlacesList ();
 
-    if (argv1 != "" && safe_file_test (argv1, Glib::FILE_TEST_IS_DIR)) {
+    if (argv1 != "" && Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR)) {
         dirBrowser->open (argv1);
     } else {
         if (options.startupDir == STARTUPDIR_HOME) {
-            dirBrowser->open (safe_get_user_picture_dir());
+            dirBrowser->open (PlacesBrowser::userPicturesDir ());
         } else if (options.startupDir == STARTUPDIR_CURRENT) {
             dirBrowser->open (argv0);
         } else if (options.startupDir == STARTUPDIR_CUSTOM || options.startupDir == STARTUPDIR_LAST) {
-            if (options.startupPath.length() && safe_file_test(options.startupPath, Glib::FILE_TEST_EXISTS) && safe_file_test(options.startupPath, Glib::FILE_TEST_IS_DIR)) {
+            if (options.startupPath.length() && Glib::file_test(options.startupPath, Glib::FILE_TEST_EXISTS) && Glib::file_test(options.startupPath, Glib::FILE_TEST_IS_DIR)) {
                 dirBrowser->open (options.startupPath);
             } else {
                 // Fallback option if the path is empty or the folder doesn't exist
-                dirBrowser->open (safe_get_user_picture_dir());
+                dirBrowser->open (PlacesBrowser::userPicturesDir ());
             }
         }
     }
@@ -322,9 +322,9 @@ void FilePanel::saveOptions ()
 void FilePanel::open (const Glib::ustring& d)
 {
 
-    if (safe_file_test (d, Glib::FILE_TEST_IS_DIR)) {
+    if (Glib::file_test (d, Glib::FILE_TEST_IS_DIR)) {
         dirBrowser->open (d.c_str());
-    } else if (safe_file_test (d, Glib::FILE_TEST_EXISTS)) {
+    } else if (Glib::file_test (d, Glib::FILE_TEST_EXISTS)) {
         dirBrowser->open (Glib::path_get_dirname(d), Glib::path_get_basename(d));
     }
 }
