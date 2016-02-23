@@ -44,11 +44,9 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 
 
     Gtk::Frame *iFrame = Gtk::manage (new Gtk::Frame(M("TP_ICM_INPUTPROFILE")) );
-    //iFrame->set_border_width(0);
     iFrame->set_label_align(0.025, 0.5);
 
     iVBox = Gtk::manage ( new Gtk::VBox());
-    //iVBox->set_border_width(4);
     iVBox->set_spacing(2);
 
     inone = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTNONE")));
@@ -161,11 +159,9 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 
 
     Gtk::Frame *wFrame = Gtk::manage (new Gtk::Frame(M("TP_ICM_WORKINGPROFILE")) );
-    //wFrame->set_border_width(0);
     wFrame->set_label_align(0.025, 0.5);
 
     Gtk::VBox *wVBox = Gtk::manage ( new Gtk::VBox());
-    //wVBox->set_border_width(4);
     wVBox->set_spacing(2);
 
     wnames = Gtk::manage (new MyComboBoxText ());
@@ -187,11 +183,9 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 
 
     Gtk::Frame *oFrame = Gtk::manage (new Gtk::Frame(M("TP_ICM_OUTPUTPROFILE")) );
-    //oFrame->set_border_width(0);
     oFrame->set_label_align(0.025, 0.5);
 
     Gtk::VBox *oVBox = Gtk::manage ( new Gtk::VBox());
-    //oVBox->set_border_width(4);
     oVBox->set_spacing(2);
 
     onames = Gtk::manage (new MyComboBoxText ());
@@ -245,7 +239,6 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 
     Gtk::VBox *fgVBox = Gtk::manage ( new Gtk::VBox());
     fgVBox->set_spacing(2);
-    //fgVBox->set_border_width(4);
 
     freegamma = Gtk::manage(new Gtk::CheckButton((M("TP_GAMMA_FREE"))));
     freegamma->set_active (false);

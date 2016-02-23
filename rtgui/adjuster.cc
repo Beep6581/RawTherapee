@@ -66,7 +66,6 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
 
     delay = options.adjusterMinDelay;
 
-    set_border_width (0);
     set_column_spacing(0);
     set_column_homogeneous(false);
     set_row_spacing(0);

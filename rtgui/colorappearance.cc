@@ -41,11 +41,9 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
     Gtk::VBox *p1VBox;
 
     p1Frame = Gtk::manage (new Gtk::Frame(M("TP_COLORAPP_LABEL_SCENE")) );
-    p1Frame->set_border_width(0);
     p1Frame->set_label_align(0.025, 0.5);
 
     p1VBox = Gtk::manage ( new Gtk::VBox());
-    p1VBox->set_border_width(4);
     p1VBox->set_spacing(2);
 
     degree  = Gtk::manage (new Adjuster (M("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   100.));
@@ -64,7 +62,6 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
     p1VBox->pack_start (*surrsource, Gtk::PACK_SHRINK);
 
     Gtk::HBox* wbmHBox = Gtk::manage (new Gtk::HBox ());
-    wbmHBox->set_border_width (0);
     wbmHBox->set_spacing (2);
     wbmHBox->set_tooltip_markup (M("TP_COLORAPP_MODEL_TOOLTIP"));
     Gtk::Label* wbmLab = Gtk::manage (new Gtk::Label (M("TP_COLORAPP_MODEL") + ":"));
@@ -100,15 +97,12 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
     Gtk::VBox *p2VBox;
 
     p2Frame = Gtk::manage (new Gtk::Frame(M("TP_COLORAPP_LABEL_CAM02")) );
-    p2Frame->set_border_width(0);
     p2Frame->set_label_align(0.025, 0.5);
 
     p2VBox = Gtk::manage ( new Gtk::VBox());
-    p2VBox->set_border_width(4);
     p2VBox->set_spacing(2);
 
     Gtk::HBox* alHBox = Gtk::manage (new Gtk::HBox ());
-    alHBox->set_border_width (0);
     alHBox->set_spacing (2);
     alHBox->set_tooltip_markup (M("TP_COLORAPP_ALGO_TOOLTIP"));
     Gtk::Label* alLabel = Gtk::manage (new Gtk::Label (M("TP_COLORAPP_ALGO") + ":"));
@@ -344,11 +338,9 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
     Gtk::VBox *p3VBox;
 
     p3Frame = Gtk::manage (new Gtk::Frame(M("TP_COLORAPP_LABEL_VIEWING")) ); // "Editing viewing conditions" ???
-    p3Frame->set_border_width(0);
     p3Frame->set_label_align(0.025, 0.5);
 
     p3VBox = Gtk::manage ( new Gtk::VBox());
-    p3VBox->set_border_width(4);
     p3VBox->set_spacing(2);
 
     adaplum = Gtk::manage (new Adjuster (M("TP_COLORAPP_ADAPTVIEWING"), 0.1,  1000., 0.1,   16.));
@@ -362,7 +354,6 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
     p3VBox->pack_start (*adaplum);
 
     Gtk::HBox* surrHBox = Gtk::manage (new Gtk::HBox ());
-    surrHBox->set_border_width (0);
     surrHBox->set_spacing (2);
     surrHBox->set_tooltip_markup(M("TP_COLORAPP_SURROUND_TOOLTIP"));
     Gtk::Label* surrLabel = Gtk::manage (new Gtk::Label (M("TP_COLORAPP_SURROUND") + ":"));

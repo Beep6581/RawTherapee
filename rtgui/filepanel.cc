@@ -110,18 +110,18 @@ FilePanel::FilePanel () : parent(NULL)
     rightNotebook->set_tab_pos (Gtk::POS_LEFT);
 
     Gtk::Label* devLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_DEVELOP")) );
-    devLab->get_style_context()->add_class ("labelRightNotebook");
+    devLab->set_name ("LabelRightNotebook");
     devLab->set_angle (90);
     Gtk::Label* inspectLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_INSPECT")) );
-    inspectLab->get_style_context()->add_class ("labelRightNotebook");
+    inspectLab->set_name ("LabelRightNotebook");
     inspectLab->set_angle (90);
     Gtk::Label* filtLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_FILTER")) );
-    filtLab->get_style_context()->add_class ("labelRightNotebook");
+    filtLab->set_name ("LabelRightNotebook");
     filtLab->set_angle (90);
     //Gtk::Label* tagLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_TAGGING")) );
     //tagLab->set_angle (90);
     Gtk::Label* exportLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_EXPORT")) );
-    exportLab->get_style_context()->add_class ("labelRightNotebook");
+    exportLab->set_name ("LabelRightNotebook");
     exportLab->set_angle (90);
 
     tpcPaned = Gtk::manage ( new Gtk::VPaned () );
@@ -133,7 +133,7 @@ FilePanel::FilePanel () : parent(NULL)
     rightNotebook->append_page (*sFilterPanel, *filtLab);
     //rightNotebook->append_page (*taggingBox, *tagLab); commented out: currently the tab is empty ...
     rightNotebook->append_page (*sExportPanel, *exportLab);
-    rightNotebook->get_style_context()->add_class ("rightNotebook");
+    rightNotebook->set_name ("RightNotebook");
 
     rightBox->pack_start (*rightNotebook);
 

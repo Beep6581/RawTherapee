@@ -107,7 +107,6 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 
 // Wavelet Settings
     settingsVBox = Gtk::manage (new Gtk::VBox());
-    settingsVBox->set_border_width(4);
     settingsVBox->set_spacing(2);
 
     strength  = Gtk::manage (new Adjuster (M("TP_WAVELET_STRENGTH"), 0, 100, 1, 100));
@@ -201,7 +200,6 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 
 // Contrast
     Gtk::VBox * levBox = Gtk::manage (new Gtk::VBox());
-    levBox->set_border_width(4);
     levBox->set_spacing(2);
 
 
@@ -252,7 +250,6 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 
     contrastSHFrame = Gtk::manage (new Gtk::Frame (M("TP_WAVELET_APPLYTO")));
     contrastSHVBox = Gtk::manage (new Gtk::VBox);
-    contrastSHVBox->set_border_width(4);
     contrastSHVBox->set_spacing(2);
 
     HSmethod = Gtk::manage (new MyComboBoxText ());
@@ -286,7 +283,6 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 
 // Chromaticity
     Gtk::VBox * chBox = Gtk::manage (new Gtk::VBox());
-    chBox->set_border_width(4);
     chBox->set_spacing(2);
 
     ctboxch = Gtk::manage (new Gtk::HBox ());
@@ -367,7 +363,6 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 
 // Toning
     Gtk::VBox * tonBox = Gtk::manage (new Gtk::VBox());
-    tonBox->set_border_width(4);
     tonBox->set_spacing(2);
 
     opaCurveEditorG = new CurveEditorGroup (options.lastWaveletCurvesDir, M("TP_WAVELET_COLORT"));
@@ -398,7 +393,6 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 
 // Denoise and Refine
     Gtk::VBox * noiseBox = Gtk::manage (new Gtk::VBox());
-    noiseBox->set_border_width(4);
     noiseBox->set_spacing(2);
 
     linkedg = Gtk::manage (new Gtk::CheckButton (M("TP_WAVELET_LINKEDG")));
@@ -429,7 +423,6 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 
 // Edge Sharpness
     Gtk::VBox * edgBox = Gtk::manage (new Gtk::VBox());
-    edgBox->set_border_width(4);
     edgBox->set_spacing(2);
 
     edgval = Gtk::manage ( new Adjuster (M("TP_WAVELET_EDVAL"), 0, 100, 1, 0) );
@@ -551,7 +544,6 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 
     Gtk::VBox * ctboxES = Gtk::manage (new Gtk::VBox());
 
-    ctboxES->set_border_width(4);
     ctboxES->set_spacing(2);
 
     ctboxNP = Gtk::manage (new Gtk::HBox());
@@ -573,7 +565,6 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 
 // Gamut
     Gtk::VBox * conBox = Gtk::manage (new Gtk::VBox());
-    conBox->set_border_width(4);
     conBox->set_spacing(2);
 
     median = Gtk::manage (new Gtk::CheckButton (M("TP_WAVELET_MEDI")));
@@ -611,7 +602,6 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 
 // Residual Image
     Gtk::VBox * resBox = Gtk::manage (new Gtk::VBox());
-    resBox->set_border_width(4);
     resBox->set_spacing(2);
 
     rescon  = Gtk::manage (new Adjuster (M("TP_WAVELET_RESCON"), -100, 100, 1, 0));
@@ -768,7 +758,6 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 
     // Reset sliders
     neutrHBox = Gtk::manage (new Gtk::HBox ());
-    neutrHBox->set_border_width (2);
 
     neutral = Gtk::manage (new Gtk::Button (M("TP_COLORTONING_NEUTRAL")));
     //RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
@@ -783,7 +772,6 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
 // Final Touchup
     Gtk::VBox * ctboxBA = Gtk::manage (new Gtk::VBox());
 
-    ctboxBA->set_border_width(4);
     ctboxBA->set_spacing(2);
 
     //Gtk::HSeparator *separatorfin = Gtk::manage (new  Gtk::HSeparator());
@@ -862,7 +850,6 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     tmrConn = tmr->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::tmrToggled) );
 
     Gtk::VBox * finalBox = Gtk::manage (new Gtk::VBox());
-    finalBox->set_border_width(4);
     finalBox->set_spacing(2);
 
     finalBox->pack_start (*ctboxBA);

@@ -42,11 +42,9 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
 
     Gtk::Frame* lumaFrame = Gtk::manage (new Gtk::Frame (M("TP_DIRPYRDENOISE_LUMAFR")) );
     lumaFrame->set_tooltip_text(M("TP_DIRPYRDENOISE_LUMAFR_TOOLTIP"));
-    lumaFrame->set_border_width(0);
     lumaFrame->set_label_align(0.025, 0.5);
 
     Gtk::VBox * lumaVBox = Gtk::manage ( new Gtk::VBox());
-    lumaVBox->set_border_width(4);
     lumaVBox->set_spacing(2);
 
 
@@ -83,12 +81,10 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     NoiscurveEditorG->show();
 
     Gtk::Frame* chromaFrame = Gtk::manage (new Gtk::Frame (M("TP_DIRPYRDENOISE_CHROMAFR")) );
-    chromaFrame->set_border_width(0);
     chromaFrame->set_label_align(0.025, 0.5);
 
     Gtk::VBox *chromaVBox = Gtk::manage ( new Gtk::VBox());
     chromaVBox->set_spacing(2);
-    chromaVBox->set_border_width(4);
 
     autochroma = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYRDENOISE_AUTO")));
     autochroma->set_active (true);
@@ -191,12 +187,10 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     // ---- Median FIltering ----
 
     Gtk::Frame* medianFrame = Gtk::manage (new Gtk::Frame ());
-    medianFrame->set_border_width(0);
     medianFrame->set_label_align(0.025, 0.5);
 
     Gtk::VBox *medianVBox = Gtk::manage ( new Gtk::VBox());
     medianVBox->set_spacing(2);
-    medianVBox->set_border_width(4);
 
     median = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYRDENOISE_MED") + ":"));
     median->set_active (true);

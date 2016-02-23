@@ -159,7 +159,7 @@ RTWindow::RTWindow ()
         }
     } else {
         mainNB = Gtk::manage (new Gtk::Notebook ());
-        mainNB->get_style_context()->add_class ("mainNotebook");
+        mainNB->set_name ("MainNotebook");
         mainNB->set_scrollable (true);
         mainNB->signal_switch_page().connect_notify( sigc::mem_fun(*this, &RTWindow::on_mainNB_switch_page) );
 

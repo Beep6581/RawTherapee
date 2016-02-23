@@ -26,8 +26,6 @@ using namespace rtengine::procparams;
 IPTCPanel::IPTCPanel ()
 {
 
-    set_border_width (2);
-
     Gtk::Table* iptc = Gtk::manage( new Gtk::Table (27, 2) );
 
     int row = 0;
@@ -258,7 +256,6 @@ IPTCPanel::IPTCPanel ()
     row++;
 
     Gtk::ScrolledWindow* scrolledWindow = Gtk::manage( new Gtk::ScrolledWindow() );
-    scrolledWindow->set_border_width(2);
     scrolledWindow->set_shadow_type(Gtk::SHADOW_NONE);
     scrolledWindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     scrolledWindow->property_window_placement().set_value(Gtk::CORNER_TOP_LEFT);

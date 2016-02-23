@@ -240,7 +240,6 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // build left side panel
     leftbox = new Gtk::VBox ();
-    leftbox->set_border_width (2);
     leftbox->set_size_request (230, 250);
 
     histogramPanel = NULL;
@@ -323,7 +322,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     tpc->setEditProvider (iareapanel->imageArea);
 
     Gtk::HBox* toolBarPanel = Gtk::manage (new Gtk::HBox ());
-    toolBarPanel->get_style_context ()->add_class ("editorTopPanel");
+    toolBarPanel->set_name ("EditorTopPanel");
     toolBarPanel->pack_start (*hidehp, Gtk::PACK_SHRINK, 1);
     toolBarPanel->pack_start (*vseph, Gtk::PACK_SHRINK, 2);
     toolBarPanel->pack_start (*info, Gtk::PACK_SHRINK, 1);
@@ -358,7 +357,6 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     vboxright = new Gtk::VBox (false, 0);
     vboxright->set_size_request (300, 250);
 
-    vboxright->set_border_width (2);
 
     vboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 2);
     // main notebook

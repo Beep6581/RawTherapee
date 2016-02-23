@@ -129,7 +129,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring& title, Gtk::Window* paren
 
     for (int i = 0; i < 8; i++) {
         vboxes[i] = Gtk::manage (new Gtk::VBox ());
-        vboxes[i]->set_border_width (6);
         hseps[i] = Gtk::manage (new Gtk::HSeparator ());
         hseps[i]->set_name("partialPasteHeaderSep");
     }
@@ -237,10 +236,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring& title, Gtk::Window* paren
     Gtk::VBox* vbCol2 = Gtk::manage (new Gtk::VBox ());
     Gtk::VBox* vbCol3 = Gtk::manage (new Gtk::VBox ());
 
-    vbCol1->set_border_width (8);
-    vbCol2->set_border_width (8);
-    vbCol3->set_border_width (8);
-
     for (int i = 0; i < 3; i++) {
         vbCol1->pack_start (*vboxes[i], Gtk::PACK_SHRINK, 2);
     }
@@ -255,7 +250,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring& title, Gtk::Window* paren
 
     Gtk::VBox* vbtop = Gtk::manage (new Gtk::VBox ());
     vbtop->pack_start (*everything, Gtk::PACK_SHRINK, 2);
-    vbtop->set_border_width (8);
 
     Gtk::Dialog::get_content_area()->pack_start (*vbtop, Gtk::PACK_SHRINK, 2); // TODO replace with get_content_area() with GTK upgrade
 
@@ -268,7 +262,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring& title, Gtk::Window* paren
 
     scrolledwindow = Gtk::manage ( new Gtk::ScrolledWindow() );
     scrolledwindow->set_can_focus(true);
-    scrolledwindow->set_border_width(2);
     scrolledwindow->set_shadow_type(Gtk::SHADOW_NONE);
     scrolledwindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     scrolledwindow->property_window_placement().set_value(Gtk::CORNER_TOP_LEFT);

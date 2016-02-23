@@ -130,7 +130,6 @@ SaveAsDialog::SaveAsDialog (const Glib::ustring& initialDir, Gtk::Window* parent
     get_action_area()->pack_end (*ok, Gtk::PACK_SHRINK, 4);
     get_action_area()->pack_end (*cancel, Gtk::PACK_SHRINK, 4);
 
-    set_border_width (4);
     show_all_children ();
 
     formatOpts->init (options.saveFormat);

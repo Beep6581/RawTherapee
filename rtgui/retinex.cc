@@ -22,11 +22,9 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
     nextmaxT = 0.;
 
     Gtk::VBox * retinexVBox = Gtk::manage ( new Gtk::VBox());
-    retinexVBox->set_border_width (4);
     retinexVBox->set_spacing (2);
 
     Gtk::VBox * settingsVBox = Gtk::manage ( new Gtk::VBox());
-    settingsVBox->set_border_width (4);
     settingsVBox->set_spacing (2);
 
     dhbox = Gtk::manage (new Gtk::HBox ());
@@ -177,12 +175,10 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
 
     Gtk::Frame *p1Frame;
     p1Frame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_LABEL_MASK")) );
-    p1Frame->set_border_width (0);
     p1Frame->set_label_align (0.025, 0.5);
 
     Gtk::VBox *p1VBox;
     p1VBox = Gtk::manage ( new Gtk::VBox());
-    p1VBox->set_border_width (4);
     p1VBox->set_spacing (2);
 
     mapbox = Gtk::manage (new Gtk::HBox ());
@@ -343,7 +339,6 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
     expsettings->setLevel (2);
 
     neutrHBox = Gtk::manage (new Gtk::HBox ());
-    neutrHBox->set_border_width (2);
 
     neutral = Gtk::manage (new Gtk::Button (M ("TP_RETINEX_NEUTRAL")));
     RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));

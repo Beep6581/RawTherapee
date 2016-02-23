@@ -53,9 +53,11 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
     inTabMode = false;
 
+    set_name ("FileBrowser");
+    set_spacing (2);
+
     //  construct and initialize thumbnail browsers
     fileBrowser = Gtk::manage( new FileBrowser() );
-    fileBrowser->get_style_context()->add_class ("filebrowser");
     fileBrowser->setFileBrowserListener (this);
     fileBrowser->setArrangement (ThumbBrowserBase::TB_Vertical);
     fileBrowser->show ();
@@ -123,7 +125,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
     // setup button bar
     buttonBar = Gtk::manage( new Gtk::HBox () );
-    buttonBar->get_style_context()->add_class ("toolBarPanelFileBrowser");
+    buttonBar->set_name ("ToolBarPanelFileBrowser");
     pack_start (*buttonBar, Gtk::PACK_SHRINK);
 
     buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
@@ -410,7 +412,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     hBox = Gtk::manage( new Gtk::HBox () );
     hBox->show ();
     hBox->pack_end (*fileBrowser);
-    hBox->get_style_context()->add_class ("filmstripPanel");
+    hBox->set_name ("FilmstripPanel");
     fileBrowser->applyFilter (getFilter()); // warning: can call this only after all objects used in getFilter (e.g. Query) are instantiated
     //printf("FileCatalog::FileCatalog  fileBrowser->applyFilter (getFilter())\n");
     pack_start (*hBox);

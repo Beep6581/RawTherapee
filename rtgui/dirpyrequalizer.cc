@@ -99,7 +99,6 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
     pack_start(*separator4, Gtk::PACK_SHRINK, 2);
     /*
         algoHBox = Gtk::manage (new Gtk::HBox ());
-        algoHBox->set_border_width (0);
         algoHBox->set_spacing (2);
         algoHBox->set_tooltip_markup (M("TP_DIRPYREQUALIZER_ALGO_TOOLTIP"));
     */

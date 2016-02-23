@@ -77,8 +77,6 @@ bool SplashImage::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, true)
 {
 
-    set_border_width (4);
-
     releaseNotesSW = NULL;
 
     nb = Gtk::manage (new Gtk::Notebook ());

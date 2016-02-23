@@ -28,8 +28,6 @@ using namespace rtengine::procparams;
 ExportPanel::ExportPanel () : listener (NULL)
 {
 
-    set_border_width (4);
-
     /*enabled = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_ENABLE")) );
     pack_start(*enabled, Gtk::PACK_SHRINK, 4);
     pack_start (*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 2);*/

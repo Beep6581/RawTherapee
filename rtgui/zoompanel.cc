@@ -23,9 +23,7 @@
 
 ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea)
 {
-    get_style_context()->add_class ("editorZoomPanel");
-
-    set_border_width (0);
+    set_name ("EditorZoomPanel");
 
     Gtk::Image* imageOut = Gtk::manage (new RTImage ("gtk-zoom-out.png"));
     imageOut->set_padding(0, 0);

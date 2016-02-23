@@ -187,11 +187,9 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     // Vertical box container for the content of the Process 1 frame
     Gtk::VBox *p1VBox;
     p1Frame = Gtk::manage (new Gtk::Frame(M("TP_COLORTONING_SA")) );
-    p1Frame->set_border_width(0);
     p1Frame->set_label_align(0.025, 0.5);
 
     p1VBox = Gtk::manage ( new Gtk::VBox());
-    p1VBox->set_border_width(4);
     p1VBox->set_spacing(2);
 
     autosat = Gtk::manage (new Gtk::CheckButton (M("TP_COLORTONING_AUTOSAT")));
@@ -287,7 +285,6 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
 
     //--------------------- Reset sliders  ---------------------------
     neutrHBox = Gtk::manage (new Gtk::HBox ());
-    neutrHBox->set_border_width (2);
 
     neutral = Gtk::manage (new Gtk::Button (M("TP_COLORTONING_NEUTRAL")));
     neutral->set_tooltip_text (M("TP_COLORTONING_NEUTRAL_TIP"));

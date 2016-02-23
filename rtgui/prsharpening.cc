@@ -33,7 +33,6 @@ PrSharpening::PrSharpening () : FoldableToolPanel(this, "prsharpening", M("TP_PR
     //setEnabledTooltipMarkup(M("TP_PRSHARPENING_TOOLTIP"));
 
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
-    hb->set_border_width (4);
     hb->show ();
     Gtk::Label* ml = Gtk::manage (new Gtk::Label (M("TP_SHARPENING_METHOD") + ":"));
     ml->show ();

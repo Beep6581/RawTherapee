@@ -84,7 +84,6 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
     // Output directory selection
     fdir = Gtk::manage (new Gtk::Frame (M("PREFERENCES_OUTDIR")));
     Gtk::VBox* odvb = Gtk::manage (new Gtk::VBox ());
-    odvb->set_border_width (4);
     Gtk::HBox* hb2 = Gtk::manage (new Gtk::HBox ());
     useTemplate = Gtk::manage (new Gtk::RadioButton (M("PREFERENCES_OUTDIRTEMPLATE") + ":"));
     hb2->pack_start (*useTemplate, Gtk::PACK_SHRINK, 4);
@@ -135,7 +134,6 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
     saveFormatPanel = Gtk::manage (new SaveFormatPanel ());
     setExpandAlignProperties(saveFormatPanel, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     fformat->add (*saveFormatPanel);
-    fformat->set_border_width(4);
 
     outdirTemplate->set_text (options.savePathTemplate);
     useTemplate->set_active (options.saveUsePathTemplate);
