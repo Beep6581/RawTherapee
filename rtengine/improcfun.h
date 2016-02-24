@@ -219,7 +219,6 @@ public:
 //      float maxblueresid;//used by noise_residual
 //      int comptlevel;
 
-    static void cleanupCache ();
 
     ImProcFunctions       (const ProcParams* iparams, bool imultiThread = true)
         : monitorTransform(NULL), lab2outputTransform(NULL), output2monitorTransform(NULL), params(iparams), scale(1), multiThread(imultiThread) {}

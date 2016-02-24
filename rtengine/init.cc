@@ -43,10 +43,8 @@ int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDi
 {
 BENCHFUN
     settings = s;
-StopWatch Stopi("iccstore");
     iccStore->init (s->iccDirectory, baseDir + "/iccprofiles");
     iccStore->findDefaultMonitorProfile();
-Stopi.stop();
     dcpStore->init (baseDir + "/dcpprofiles");
 
     CameraConstantsStore::getInstance ()->init (baseDir, userSettingsDir);
