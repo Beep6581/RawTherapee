@@ -133,11 +133,38 @@ void MunsellDebugInfo::reinitValues()
 void Color::init ()
 {
 
-    int maxindex = 65536;
+    /*******************************************/
+
+    constexpr auto maxindex = 65536;
+
     cachef(maxindex, LUT_CLIP_BELOW);
-
     gamma2curve(maxindex, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
+    gammatab(maxindex, 0);
+    igammatab_srgb(maxindex, 0);
+    gammatab_srgb(maxindex, 0);
+    igammatab_55(maxindex, 0);
+    gammatab_55(maxindex, 0);
+    igammatab_4(maxindex, 0);
+    gammatab_4(maxindex, 0);
 
+    igammatab_26_11(maxindex, 0);
+    gammatab_26_11(maxindex, 0);
+    igammatab_24_17(maxindex, 0);
+    gammatab_24_17a(maxindex, LUT_CLIP_ABOVE | LUT_CLIP_BELOW);
+    gammatab_13_2(maxindex, 0);
+    igammatab_13_2(maxindex, 0);
+    gammatab_115_2(maxindex, 0);
+    igammatab_115_2(maxindex, 0);
+    gammatab_145_3(maxindex, 0);
+    igammatab_145_3(maxindex, 0);
+
+#ifdef _OPENMP
+#pragma omp parallel sections
+#endif // _OPENMP
+{
+#ifdef _OPENMP
+#pragma omp section
+#endif
     for (int i = 0; i < maxindex; i++) {
         if (i > eps_max) {
             cachef[i] = 327.68 * ( exp(1.0 / 3.0 * log((double)i / MAXVALF) ));
@@ -146,116 +173,144 @@ void Color::init ()
         }
     }
 
+#ifdef _OPENMP
+#pragma omp section
+#endif
     for (int i = 0; i < maxindex; i++) {
         gamma2curve[i] = (gamma2(i / 65535.0) * 65535.0);
     }
 
-    /*******************************************/
-
-    gammatab(65536, 0);
-    igammatab_srgb(65536, 0);
-    gammatab_srgb(65536, 0);
-    //  igammatab_709(65536,0);
-    //  gammatab_709(65536,0);
-    igammatab_55(65536, 0);
-    gammatab_55(65536, 0);
-    igammatab_4(65536, 0);
-    gammatab_4(65536, 0);
-
-    igammatab_26_11(65536, 0);
-    gammatab_26_11(65536, 0);
-    igammatab_24_17(65536, 0);
-    gammatab_24_17a(65536, LUT_CLIP_ABOVE | LUT_CLIP_BELOW);
-    gammatab_13_2(65536, 0);
-    igammatab_13_2(65536, 0);
-    gammatab_115_2(65536, 0);
-    igammatab_115_2(65536, 0);
-    gammatab_145_3(65536, 0);
-    igammatab_145_3(65536, 0);
-
-    for (int i = 0; i < 65536; i++) {
+#ifdef _OPENMP
+#pragma omp section
+#endif
+    for (int i = 0; i < maxindex; i++) {
         gammatab_srgb[i] = (65535.0 * gamma2 (i / 65535.0));
     }
 
-    for (int i = 0; i < 65536; i++) {
+#ifdef _OPENMP
+#pragma omp section
+#endif
+    for (int i = 0; i < maxindex; i++) {
         igammatab_srgb[i] = (65535.0 * igamma2 (i / 65535.0));
     }
 
-    for (int i = 0; i < 65536; i++) {
+#ifdef _OPENMP
+#pragma omp section
+#endif
+    for (int i = 0; i < maxindex; i++) {
         gammatab[i] = (65535.0 * pow (i / 65535.0, 0.454545));
     }
 
-    /*       for (int i=0; i<65536; i++)
-               gammatab_709[i] = (65535.0 * gamma709 (i/65535.0));
-           for (int i=0; i<65536; i++)
-               igammatab_709[i] = (65535.0 * igamma709 (i/65535.0));
-    */
-    for (int i = 0; i < 65536; i++) {
+#ifdef _OPENMP
+#pragma omp section
+#endif
+    for (int i = 0; i < maxindex; i++) {
         gammatab_55[i] = (65535.0 * gamma55 (i / 65535.0));
     }
 
-    for (int i = 0; i < 65536; i++) {
+#ifdef _OPENMP
+#pragma omp section
+#endif
+    for (int i = 0; i < maxindex; i++) {
         igammatab_55[i] = (65535.0 * igamma55 (i / 65535.0));
     }
 
-    for (int i = 0; i < 65536; i++) {
+#ifdef _OPENMP
+#pragma omp section
+#endif
+    for (int i = 0; i < maxindex; i++) {
         gammatab_4[i] = (65535.0 * gamma4 (i / 65535.0));
     }
 
-    for (int i = 0; i < 65536; i++) {
+#ifdef _OPENMP
+#pragma omp section
+#endif
+    for (int i = 0; i < maxindex; i++) {
         igammatab_4[i] = (65535.0 * igamma4 (i / 65535.0));
     }
 
-    for (int i = 0; i < 65536; i++) {
+#ifdef _OPENMP
+#pragma omp section
+#endif
+    for (int i = 0; i < maxindex; i++) {
         gammatab_13_2[i] = (65535.0 * gamma13_2 (i / 65535.0));
     }
 
-    for (int i = 0; i < 65536; i++) {
+#ifdef _OPENMP
+#pragma omp section
+#endif
+    for (int i = 0; i < maxindex; i++) {
         igammatab_13_2[i] = (65535.0 * igamma13_2 (i / 65535.0));
     }
 
-    for (int i = 0; i < 65536; i++) {
+#ifdef _OPENMP
+#pragma omp section
+#endif
+    for (int i = 0; i < maxindex; i++) {
         gammatab_115_2[i] = (65535.0 * gamma115_2 (i / 65535.0));
     }
 
-    for (int i = 0; i < 65536; i++) {
+#ifdef _OPENMP
+#pragma omp section
+#endif
+    for (int i = 0; i < maxindex; i++) {
         igammatab_115_2[i] = (65535.0 * igamma115_2 (i / 65535.0));
     }
 
-    for (int i = 0; i < 65536; i++) {
+#ifdef _OPENMP
+#pragma omp section
+#endif
+    for (int i = 0; i < maxindex; i++) {
         gammatab_145_3[i] = (65535.0 * gamma145_3 (i / 65535.0));
     }
 
-    for (int i = 0; i < 65536; i++) {
+#ifdef _OPENMP
+#pragma omp section
+#endif
+    for (int i = 0; i < maxindex; i++) {
         igammatab_145_3[i] = (65535.0 * igamma145_3 (i / 65535.0));
     }
 
-    for (int i = 0; i < 65536; i++) {
+#ifdef _OPENMP
+#pragma omp section
+#endif
+    for (int i = 0; i < maxindex; i++) {
         gammatab_26_11[i] = (65535.0 * gamma26_11 (i / 65535.0));
     }
 
 //gammatab_145_3
-    for (int i = 0; i < 65536; i++) {
+#ifdef _OPENMP
+#pragma omp section
+#endif
+    for (int i = 0; i < maxindex; i++) {
         igammatab_26_11[i] = (65535.0 * igamma26_11 (i / 65535.0));
     }
 
-    for (int i = 0; i < 65536; i++) {
+#ifdef _OPENMP
+#pragma omp section
+#endif
+    for (int i = 0; i < maxindex; i++) {
         float j = (float)i / 65535.0f;
         gammatab_24_17a[i] = gamma24_17(j);
     }
 
-    for (int i = 0; i < 65536; i++) {
+#ifdef _OPENMP
+#pragma omp section
+#endif
+    for (int i = 0; i < maxindex; i++) {
         igammatab_24_17[i] = (65535.0 * igamma24_17 (i / 65535.0));
     }
 
-    /*FILE* f = fopen ("c.txt", "wt");
-    for (int i=0; i<256; i++)
-    fprintf (f, "%g %g\n", i/255.0, clower (i/255.0, 2.0, 1.0));
-    fclose (f);*/
-
+#ifdef _OPENMP
+#pragma omp section
+#endif
     initMunsell();
 
+#ifdef _OPENMP
+#pragma omp section
+#endif
     linearGammaTRC = cmsBuildGamma(NULL, 1.0);
+}
 }
 
 void Color::cleanup ()

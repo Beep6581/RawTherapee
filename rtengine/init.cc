@@ -29,6 +29,8 @@
 #include "rtthumbnail.h"
 #include "../rtgui/profilestore.h"
 #include "../rtgui/threadutils.h"
+#define BENCHMARK
+#include "StopWatch.h"
 
 namespace rtengine
 {
@@ -39,11 +41,12 @@ MyMutex* lcmsMutex = NULL;
 
 int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir)
 {
-
+BENCHFUN
     settings = s;
+StopWatch Stopi("iccstore");
     iccStore->init (s->iccDirectory, baseDir + "/iccprofiles");
     iccStore->findDefaultMonitorProfile();
-
+Stopi.stop();
     dcpStore->init (baseDir + "/dcpprofiles");
 
     CameraConstantsStore::getInstance ()->init (baseDir, userSettingsDir);
@@ -52,7 +55,6 @@ int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDi
     Color::init ();
     PerceptualToneCurve::init ();
     RawImageSource::init ();
-    ImProcFunctions::initCache ();
     Thumbnail::initGamma ();
     delete lcmsMutex;
     lcmsMutex = new MyMutex;
@@ -66,7 +68,6 @@ void cleanup ()
 
     ProcParams::cleanup ();
     Color::cleanup ();
-    ImProcFunctions::cleanupCache ();
     Thumbnail::cleanupGamma ();
     RawImageSource::cleanup ();
 }

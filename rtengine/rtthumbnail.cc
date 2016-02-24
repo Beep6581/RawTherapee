@@ -731,6 +731,9 @@ void Thumbnail::initGamma ()
         igammatab[i] = (unsigned short)(255.0 * pow((double)i / 255.0, Color::sRGBGamma));
     }
 
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
     for (int i = 0; i < 65536; i++) {
         gammatab[i] = (unsigned char)(255.0 * pow((double)i / 65535.0, 1.f / Color::sRGBGamma));
     }

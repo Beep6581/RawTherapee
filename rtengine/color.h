@@ -130,8 +130,6 @@ public:
     // look-up tables for the standard srgb gamma and its inverse (filled by init())
     static LUTf igammatab_srgb;
     static LUTf gammatab_srgb;
-//  static LUTf igammatab_709;
-//  static LUTf gammatab_709;
     static LUTf igammatab_55;
     static LUTf gammatab_55;
     static LUTf igammatab_4;

@@ -64,33 +64,6 @@ using namespace procparams;
 
 
 extern const Settings* settings;
-LUTf ImProcFunctions::cachef;
-LUTf ImProcFunctions::gamma2curve;
-void ImProcFunctions::initCache ()
-{
-
-    const int maxindex = 65536;
-    cachef(maxindex, 0/*LUT_CLIP_BELOW*/);
-
-    gamma2curve(maxindex, 0);
-
-    for (int i = 0; i < maxindex; i++) {
-        if (i > Color::eps_max) {
-            cachef[i] = 327.68 * ( exp(1.0 / 3.0 * log((double)i / MAXVALD) ));
-        } else {
-            cachef[i] = 327.68 * ((Color::kappa * i / MAXVALD + 16.0) / 116.0);
-        }
-    }
-
-    for (int i = 0; i < maxindex; i++) {
-        gamma2curve[i] = (CurveFactory::gamma2(i / 65535.0) * 65535.0);
-    }
-}
-
-void ImProcFunctions::cleanupCache ()
-{
-
-}
 
 ImProcFunctions::~ImProcFunctions ()
 {
@@ -3806,9 +3779,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 y = toxyz[1][0] * r1 + toxyz[1][1] * g1 + toxyz[1][2] * b1;
                                 z = toxyz[2][0] * r1 + toxyz[2][1] * g1 + toxyz[2][2] * b1;
 
-                                fx = (x < 65535.0f ? cachef[std::max(x, 0.f)] : (327.68f * float(exp(log(x / MAXVALF) / 3.0f ))));
-                                fy = (y < 65535.0f ? cachef[std::max(y, 0.f)] : (327.68f * float(exp(log(y / MAXVALF) / 3.0f ))));
-                                fz = (z < 65535.0f ? cachef[std::max(z, 0.f)] : (327.68f * float(exp(log(z / MAXVALF) / 3.0f ))));
+                                fx = (x < 65535.0f ? Color::cachef[std::max(x, 0.f)] : (327.68f * float(exp(log(x / MAXVALF) / 3.0f ))));
+                                fy = (y < 65535.0f ? Color::cachef[std::max(y, 0.f)] : (327.68f * float(exp(log(y / MAXVALF) / 3.0f ))));
+                                fz = (z < 65535.0f ? Color::cachef[std::max(z, 0.f)] : (327.68f * float(exp(log(z / MAXVALF) / 3.0f ))));
 
                                 L_1 = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
                                 a_1 = (500.0f * (fx - fy) );
@@ -3836,7 +3809,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 // Luminosity after
                                 // only Luminance in Lab
                                 yy = toxyz[1][0] * r2 + toxyz[1][1] * g2 + toxyz[1][2] * b2;
-                                fyy = (yy < 65535.0f ? cachef[std::max(yy, 0.f)] : (327.68f * float(exp(log(yy / MAXVALF) / 3.0f ))));
+                                fyy = (yy < 65535.0f ? Color::cachef[std::max(yy, 0.f)] : (327.68f * float(exp(log(yy / MAXVALF) / 3.0f ))));
                                 L_2 = (116.0f *  fyy - 5242.88f);
 
                                 //gamut control
@@ -4429,9 +4402,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                             float fx, fy, fz;
 
-                            fx = (x < 65535.0f ? cachef[std::max(x, 0.f)] : (327.68f * float(exp(log(x / MAXVALF) / 3.0f ))));
-                            fy = (y < 65535.0f ? cachef[std::max(y, 0.f)] : (327.68f * float(exp(log(y / MAXVALF) / 3.0f ))));
-                            fz = (z < 65535.0f ? cachef[std::max(z, 0.f)] : (327.68f * float(exp(log(z / MAXVALF) / 3.0f ))));
+                            fx = (x < 65535.0f ? Color::cachef[std::max(x, 0.f)] : (327.68f * float(exp(log(x / MAXVALF) / 3.0f ))));
+                            fy = (y < 65535.0f ? Color::cachef[std::max(y, 0.f)] : (327.68f * float(exp(log(y / MAXVALF) / 3.0f ))));
+                            fz = (z < 65535.0f ? Color::cachef[std::max(z, 0.f)] : (327.68f * float(exp(log(z / MAXVALF) / 3.0f ))));
 
                             lab->L[i][j] = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
                             lab->a[i][j] = (500.0f * (fx - fy) );
@@ -4879,9 +4852,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                 float fx, fy, fz;
 
-                fx = (x < 65535.0f ? cachef[std::max(x, 0.f)] : (327.68f * float(exp(log(x / MAXVALF) / 3.0f ))));
-                fy = (y < 65535.0f ? cachef[std::max(y, 0.f)] : (327.68f * float(exp(log(y / MAXVALF) / 3.0f ))));
-                fz = (z < 65535.0f ? cachef[std::max(z, 0.f)] : (327.68f * float(exp(log(z / MAXVALF) / 3.0f ))));
+                fx = (x < 65535.0f ? Color::cachef[std::max(x, 0.f)] : (327.68f * float(exp(log(x / MAXVALF) / 3.0f ))));
+                fy = (y < 65535.0f ? Color::cachef[std::max(y, 0.f)] : (327.68f * float(exp(log(y / MAXVALF) / 3.0f ))));
+                fz = (z < 65535.0f ? Color::cachef[std::max(z, 0.f)] : (327.68f * float(exp(log(z / MAXVALF) / 3.0f ))));
 
                 lab->L[i][j] = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
                 lab->a[i][j] = (500.0f * (fx - fy) );

@@ -4209,14 +4209,14 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
             float go = min(g, maxval);
             float bo = min(b, maxval);
             float yy = xyz_cam[1][0] * r + xyz_cam[1][1] * g + xyz_cam[1][2] * b;
-            float fy = (yy < 65535.0 ? ImProcFunctions::cachef[yy] / 327.68 : (exp(log(yy / MAXVALD) / 3.0 )));
+            float fy = (yy < 65535.0 ? Color::cachef[yy] / 327.68 : (exp(log(yy / MAXVALD) / 3.0 )));
             // compute LCH decompostion of the clipped pixel (only color information, thus C and H will be used)
             float x = xyz_cam[0][0] * ro + xyz_cam[0][1] * go + xyz_cam[0][2] * bo;
             float y = xyz_cam[1][0] * ro + xyz_cam[1][1] * go + xyz_cam[1][2] * bo;
             float z = xyz_cam[2][0] * ro + xyz_cam[2][1] * go + xyz_cam[2][2] * bo;
-            x = (x < 65535.0 ? ImProcFunctions::cachef[x] / 327.68 : (exp(log(x / MAXVALD) / 3.0 )));
-            y = (y < 65535.0 ? ImProcFunctions::cachef[y] / 327.68 : (exp(log(y / MAXVALD) / 3.0 )));
-            z = (z < 65535.0 ? ImProcFunctions::cachef[z] / 327.68 : (exp(log(z / MAXVALD) / 3.0 )));
+            x = (x < 65535.0 ? Color::cachef[x] / 327.68 : (exp(log(x / MAXVALD) / 3.0 )));
+            y = (y < 65535.0 ? Color::cachef[y] / 327.68 : (exp(log(y / MAXVALD) / 3.0 )));
+            z = (z < 65535.0 ? Color::cachef[z] / 327.68 : (exp(log(z / MAXVALD) / 3.0 )));
             // convert back to rgb
             double fz = fy - y + z;
             double fx = fy + x - y;
