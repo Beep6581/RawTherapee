@@ -156,29 +156,24 @@ void Gradient::updateGeometry(const int centerX, const int centerY, const double
         }
     }
 
-    PolarCoord polCoord1, polCoord2;
-    double decay = feather * rtengine::norm2<double>(imW, imH) / 200.;
-
-    rtengine::Coord origin(imW / 2 + centerX * imW / 200, imH / 2 + centerY * imH / 200);
-
-    Line *currLine;
-    Circle *currCircle;
+    const auto decay = feather * rtengine::norm2<double> (imW, imH) / 200.0;
+    rtengine::Coord origin (imW / 2 + centerX * imW / 200, imH / 2 + centerY * imH / 200);
 
     const auto updateLine = [&](Geometry* geometry, const float radius, const float begin, const float end)
     {
         const auto line = static_cast<Line*>(geometry);
-        line->begin.setFromPolar(PolarCoord(radius, -degree + begin));
+        line->begin = PolarCoord(radius, -degree + begin);
         line->begin += origin;
-        line->end.setFromPolar(PolarCoord(radius, -degree + end));
+        line->end = PolarCoord(radius, -degree + end);
         line->end += origin;
     };
 
     const auto updateLineWithDecay = [&](Geometry* geometry, const float radius, const float offSetAngle)
     {
         const auto line = static_cast<Line*>(geometry);
-        line->begin.setFromPolar(PolarCoord(radius, -degree + 180.) + PolarCoord(decay, -degree + offSetAngle));
+        line->begin = PolarCoord (radius, -degree + 180.) + PolarCoord (decay, -degree + offSetAngle);
         line->begin += origin;
-        line->end.setFromPolar(PolarCoord(radius, -degree) + PolarCoord(decay, -degree + offSetAngle));
+        line->end = PolarCoord (radius, -degree) + PolarCoord (decay, -degree + offSetAngle);
         line->end += origin;
     };
 
@@ -408,7 +403,7 @@ bool Gradient::button1Pressed(int modifierKey)
         p1.y = p2.y;
         p2.y = p;
 
-        pCoord.setFromCartesian(p1, p2);
+        pCoord = p2 - p1;
         draggedPointOldAngle = pCoord.angle;
         //printf("\ndraggedPointOldAngle=%.3f\n\n", draggedPointOldAngle);
         draggedPointAdjusterAngle = degree->getValue();
@@ -427,7 +422,7 @@ bool Gradient::button1Pressed(int modifierKey)
             centerPos.y = currPos.y;
             currPos.y = p;
 
-            draggedPoint.setFromCartesian(centerPos, currPos);
+            draggedPoint = currPos - centerPos;
             // compute the projected value of the dragged point
             draggedFeatherOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue()) / 180.*M_PI);
 
@@ -485,7 +480,7 @@ bool Gradient::drag1(int modifierKey)
         centerPos.y = currPos.y;
         currPos.y = p;
 
-        draggedPoint.setFromCartesian(centerPos, currPos);
+        draggedPoint = currPos - centerPos;
         double deltaAngle = draggedPoint.angle - draggedPointOldAngle;
 
         if (deltaAngle > 180.) { // crossing the boundary (0->360)
@@ -530,7 +525,7 @@ bool Gradient::drag1(int modifierKey)
         centerPos.y = currPos.y;
         currPos.y = p;
 
-        draggedPoint.setFromCartesian(centerPos, currPos);
+        draggedPoint = currPos - centerPos;
         double currDraggedFeatherOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue()) / 180.*M_PI);
 
         if (lastObject == 2)
