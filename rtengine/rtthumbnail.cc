@@ -718,33 +718,6 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 #undef FISGREEN
 #undef FISBLUE
 
-
-unsigned short *Thumbnail::igammatab = 0;
-unsigned char  *Thumbnail::gammatab  = 0;
-
-void Thumbnail::initGamma ()
-{
-    igammatab = new unsigned short[256];
-    gammatab = new unsigned char[65536];
-
-    for (int i = 0; i < 256; i++) {
-        igammatab[i] = (unsigned short)(255.0 * pow((double)i / 255.0, Color::sRGBGamma));
-    }
-
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-    for (int i = 0; i < 65536; i++) {
-        gammatab[i] = (unsigned char)(255.0 * pow((double)i / 65535.0, 1.f / Color::sRGBGamma));
-    }
-}
-
-void Thumbnail::cleanupGamma ()
-{
-    delete [] igammatab;
-    delete [] gammatab;
-}
-
 void Thumbnail::init ()
 {
 
@@ -1457,9 +1430,9 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
                     image->convertTo(image->r(i, j), r_);
                     image->convertTo(image->g(i, j), g_);
                     image->convertTo(image->b(i, j), b_);
-                    int r = gammatab[min(r_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int g = gammatab[min(g_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int b = gammatab[min(b_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int r = Color::gammatabThumb[min(r_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int g = Color::gammatabThumb[min(g_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int b = Color::gammatabThumb[min(b_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
                     tmpdata[ix++] = (r * 19595 + g * 38469 + b * 7472) >> 16;
                 }
         } else if (thumbImg->getType() == sImage16) {
@@ -1471,9 +1444,9 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
                     image->convertTo(image->r(i, j), r_);
                     image->convertTo(image->g(i, j), g_);
                     image->convertTo(image->b(i, j), b_);
-                    int r = gammatab[min(r_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int g = gammatab[min(g_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int b = gammatab[min(b_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int r = Color::gammatabThumb[min(r_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int g = Color::gammatabThumb[min(g_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int b = Color::gammatabThumb[min(b_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
                     tmpdata[ix++] = (r * 19595 + g * 38469 + b * 7472) >> 16;
                 }
         } else if (thumbImg->getType() == sImagefloat) {
@@ -1485,9 +1458,9 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
                     image->convertTo(image->r(i, j), r_);
                     image->convertTo(image->g(i, j), g_);
                     image->convertTo(image->b(i, j), b_);
-                    int r = gammatab[min(r_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int g = gammatab[min(g_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int b = gammatab[min(b_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int r = Color::gammatabThumb[min(r_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int g = Color::gammatabThumb[min(g_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int b = Color::gammatabThumb[min(b_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
                     tmpdata[ix++] = (r * 19595 + g * 38469 + b * 7472) >> 16;
                 }
         }

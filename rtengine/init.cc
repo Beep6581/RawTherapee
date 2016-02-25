@@ -41,7 +41,7 @@ MyMutex* lcmsMutex = NULL;
 
 int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir)
 {
-BENCHFUN
+    BENCHFUN
     settings = s;
     iccStore->init (s->iccDirectory, baseDir + "/iccprofiles");
     iccStore->findDefaultMonitorProfile();
@@ -53,7 +53,6 @@ BENCHFUN
     Color::init ();
     PerceptualToneCurve::init ();
     RawImageSource::init ();
-    Thumbnail::initGamma ();
     delete lcmsMutex;
     lcmsMutex = new MyMutex;
     dfm.init( s->darkFramesPath );
@@ -66,7 +65,6 @@ void cleanup ()
 
     ProcParams::cleanup ();
     Color::cleanup ();
-    Thumbnail::cleanupGamma ();
     RawImageSource::cleanup ();
 }
 
