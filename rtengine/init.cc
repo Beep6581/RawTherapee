@@ -29,8 +29,6 @@
 #include "rtthumbnail.h"
 #include "../rtgui/profilestore.h"
 #include "../rtgui/threadutils.h"
-#define BENCHMARK
-#include "StopWatch.h"
 
 namespace rtengine
 {
@@ -41,7 +39,6 @@ MyMutex* lcmsMutex = NULL;
 
 int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir)
 {
-    BENCHFUN
     settings = s;
     iccStore->init (s->iccDirectory, baseDir + "/iccprofiles");
     iccStore->findDefaultMonitorProfile();

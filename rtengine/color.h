@@ -148,7 +148,7 @@ public:
 
     // look-up tables for the simple exponential gamma
     static LUTf gammatab;
-    static unsigned char *gammatabThumb; // for thumbnails
+    static LUTuc gammatabThumb; // for thumbnails
 
 
     static void init ();

@@ -36,7 +36,7 @@ LUTf Color::cachef;
 LUTf Color::gamma2curve;
 
 LUTf Color::gammatab;
-unsigned char* Color::gammatabThumb = nullptr;
+LUTuc Color::gammatabThumb;
 LUTf Color::igammatab_srgb;
 LUTf Color::gammatab_srgb;
 //  LUTf Color::igammatab_709;
@@ -141,7 +141,7 @@ void Color::init ()
     cachef(maxindex, LUT_CLIP_BELOW);
     gamma2curve(maxindex, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
     gammatab(maxindex, 0);
-    gammatabThumb = new unsigned char[maxindex];
+    gammatabThumb(maxindex, 0);
 
     igammatab_srgb(maxindex, 0);
     gammatab_srgb(maxindex, 0);
@@ -163,20 +163,25 @@ void Color::init ()
 
 #ifdef _OPENMP
     #pragma omp parallel sections
-#endif // _OPENMP
+#endif
     {
 #ifdef _OPENMP
         #pragma omp section
 #endif
+        {
+            int i = 0;
+            int epsmaxint = eps_max;
 
-        for (int i = 0; i < maxindex; i++) {
-            if (i > eps_max) {
-                cachef[i] = 327.68 * std::cbrt((double)i / MAXVALF);
-            } else {
+            for (; i <= epsmaxint; i++)
+            {
                 cachef[i] = 327.68 * ((kappa * i / MAXVALF + 16.0) / 116.0);
             }
-        }
 
+            for(; i < maxindex; i++)
+            {
+                cachef[i] = 327.68 * std::cbrt((double)i / MAXVALF);
+            }
+        }
 #ifdef _OPENMP
         #pragma omp section
 #endif
@@ -293,7 +298,6 @@ void Color::init ()
             gammatab_26_11[i] = 65535.0 * gamma26_11 (i / 65535.0);
         }
 
-//gammatab_145_3
 #ifdef _OPENMP
         #pragma omp section
 #endif
@@ -334,10 +338,6 @@ void Color::cleanup ()
 {
     if (linearGammaTRC) {
         cmsFreeToneCurve(linearGammaTRC);
-    }
-
-    if(gammatabThumb) {
-        delete [] gammatabThumb;
     }
 }
 
