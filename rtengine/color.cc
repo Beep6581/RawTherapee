@@ -171,7 +171,7 @@ void Color::init ()
 
         for (int i = 0; i < maxindex; i++) {
             if (i > eps_max) {
-                cachef[i] = 327.68 * exp(1.0 / 3.0 * log((double)i / MAXVALF) );
+                cachef[i] = 327.68 * std::cbrt((double)i / MAXVALF);
             } else {
                 cachef[i] = 327.68 * ((kappa * i / MAXVALF + 16.0) / 116.0);
             }
@@ -1512,9 +1512,9 @@ void Color::Yuv2Lab(float Yin, float u, float v, float &L, float &a, float &b, d
 
     gamutmap(X, Y, Z, wp);
 
-    float fx = (X <= 65535.0 ? cachef[X] : (327.68 * exp(log(X / MAXVALF) / 3.0 )));
-    float fy = (Y <= 65535.0 ? cachef[Y] : (327.68 * exp(log(Y / MAXVALF) / 3.0 )));
-    float fz = (Z <= 65535.0 ? cachef[Z] : (327.68 * exp(log(Z / MAXVALF) / 3.0 )));
+    float fx = (X <= 65535.0 ? cachef[X] : (327.68 * std::cbrt(X / MAXVALF)));
+    float fy = (Y <= 65535.0 ? cachef[Y] : (327.68 * std::cbrt(Y / MAXVALF)));
+    float fz = (Z <= 65535.0 ? cachef[Z] : (327.68 * std::cbrt(Z / MAXVALF)));
 
     L = (116.0 * fy - 5242.88); //5242.88=16.0*327.68;
     a = (500.0 * (fx - fy) );
@@ -1560,7 +1560,7 @@ void Color::XYZ2Luv (float X, float Y, float Z, float &L, float &u, float &v)
     Z /= 65535.f;
 
     if (Y > float(eps)) {
-        L = 116.f * pow(Y, 1.f / 3.f) - 16.f;
+        L = 116.f * std::cbrt(Y) - 16.f;
     } else {
         L = float(kappa) * Y;
     }

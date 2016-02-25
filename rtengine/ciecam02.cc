@@ -328,7 +328,7 @@ double Ciecam02::calculate_fl_from_la_ciecam02( double la )
     k = k * k;
     k = k * k;
 
-    return (0.2 * k * la5) + (0.1 * (1.0 - k) * (1.0 - k) * pow(la5, 1.0 / 3.0));
+    return (0.2 * k * la5) + (0.1 * (1.0 - k) * (1.0 - k) * std::cbrt(la5));
 }
 
 float Ciecam02::calculate_fl_from_la_ciecam02float( float la )
@@ -340,7 +340,7 @@ float Ciecam02::calculate_fl_from_la_ciecam02float( float la )
     k = k * k;
     k = k * k;
 
-    return (0.2f * k * la5) + (0.1f * (1.0f - k) * (1.0f - k) * pow_F(la5, 1.0f / 3.0f));
+    return (0.2f * k * la5) + (0.1f * (1.0f - k) * (1.0f - k) * std::cbrt(la5));
 }
 
 double Ciecam02::achromatic_response_to_white( double x, double y, double z, double d, double fl, double nbb, int gamu )

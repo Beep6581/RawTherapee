@@ -90,17 +90,17 @@ void RawImageSource::eahd_demosaic ()
     threshold = (int)(0.008856 * MAXVALD);
 
     for (int i = 0; i < maxindex; i++) {
-        cache[i] = exp(1.0 / 3.0 * log(double(i) / MAXVALD));
+        cache[i] = std::cbrt(double(i) / MAXVALD);
     }
 
     // end of cielab preparation
 
     const JaggedArray<float>
-            rh (W, 3), gh (W, 4), bh (W, 3),
-            rv (W, 3), gv (W, 4), bv (W, 3),
-            lLh (W, 3), lah (W, 3), lbh (W, 3),
-            lLv (W, 3), lav (W, 3), lbv (W, 3),
-            homh (W, 3), homv (W, 3);
+    rh (W, 3), gh (W, 4), bh (W, 3),
+    rv (W, 3), gv (W, 4), bv (W, 3),
+    lLh (W, 3), lah (W, 3), lbh (W, 3),
+    lLv (W, 3), lav (W, 3), lbv (W, 3),
+    homh (W, 3), homv (W, 3);
 
     // interpolate first two lines
     interpolate_row_g (gh[0], gv[0], 0);
@@ -2703,7 +2703,7 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
 
     for (i = 0; i < 0x10000; i++) {
         r = (double)i / 65535.0;
-        cbrt[i] = r > 0.008856 ? pow(r, 0.333333333) : 7.787 * r + 16 / 116.0;
+        cbrt[i] = r > 0.008856 ? std::cbrt(r) : 7.787 * r + 16 / 116.0;
     }
 
     for (i = 0; i < 3; i++)
