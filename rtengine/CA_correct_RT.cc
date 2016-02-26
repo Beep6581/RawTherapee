@@ -26,6 +26,8 @@
 #include "rtengine.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
+#define BENCHMARK
+#include "StopWatch.h"
 
 using namespace std;
 using namespace rtengine;
@@ -110,6 +112,7 @@ int RawImageSource::LinEqSolve(int nDim, double* pfMatr, double* pfVect, double*
 
 void RawImageSource::CA_correct_RT(double cared, double cablue)
 {
+BENCHFUN
 // multithreaded by Ingo Weyrich
 #define TS 128      // Tile size
 #define TSH 64      // Half Tile size
@@ -706,7 +709,7 @@ void RawImageSource::CA_correct_RT(double cared, double cablue)
                     int numblox[3] = {0, 0, 0};
 
                     float bstemp[2];
-
+                    StopWatch Stop1("Median loop");
                     for (vblock = 1; vblock < vblsz - 1; vblock++)
                         for (hblock = 1; hblock < hblsz - 1; hblock++) {
                             // block 3x3 median of blockshifts for robustness
@@ -754,23 +757,30 @@ void RawImageSource::CA_correct_RT(double cared, double cablue)
                                 numblox[c]++;
 
                                 for (dir = 0; dir < 2; dir++) {
+                                    double powVblockInit = 1.0;
                                     for (i = 0; i < polyord; i++) {
+                                        double powHblockInit = 1.0;
                                         for (j = 0; j < polyord; j++) {
-                                            for (m = 0; m < polyord; m++)
+                                            double powVblock = powVblockInit;
+                                            for (m = 0; m < polyord; m++) {
+                                                double powHblock = powHblockInit;
                                                 for (n = 0; n < polyord; n++) {
-                                                    polymat[c][dir][numpar * (polyord * i + j) + (polyord * m + n)] += (float)pow((double)vblock, i + m) * pow((double)hblock, j + n) * blockwt[vblock * hblsz + hblock];
+                                                    polymat[c][dir][numpar * (polyord * i + j) + (polyord * m + n)] += powVblock * powHblock * blockwt[vblock * hblsz + hblock];
+                                                    powHblock *= hblock;
                                                 }
-
-                                            shiftmat[c][dir][(polyord * i + j)] += (float)pow((double)vblock, i) * pow((double)hblock, j) * bstemp[dir] * blockwt[vblock * hblsz + hblock];
+                                                powVblock *= vblock;
+                                            }
+                                            shiftmat[c][dir][(polyord * i + j)] += powVblockInit * powHblockInit * bstemp[dir] * blockwt[vblock * hblsz + hblock];
+                                            powHblockInit *= hblock;
                                         }
-
+                                        powVblockInit *= vblock;
                                         //if (c==0 && dir==0) {printf("i= %d j= %d shiftmat= %f \n",i,j,shiftmat[c][dir][(polyord*i+j)]);}
                                     }//monomials
                                 }//dir
 
                             }//c
                         }//blocks
-
+                    Stop1.stop();
                     numblox[1] = min(numblox[0], numblox[2]);
 
                     //if too few data points, restrict the order of the fit to linear
@@ -986,16 +996,19 @@ void RawImageSource::CA_correct_RT(double cared, double cablue)
                         //CA auto correction; use CA diagnostic pass to set shift parameters
                         blockshifts[(vblock)*hblsz + hblock][0][0] = blockshifts[(vblock) * hblsz + hblock][0][1] = 0;
                         blockshifts[(vblock)*hblsz + hblock][2][0] = blockshifts[(vblock) * hblsz + hblock][2][1] = 0;
-
-                        for (i = 0; i < polyord; i++)
+                        double powVblock = 1.0;
+                        for (i = 0; i < polyord; i++) {
+                            double powHblock = powVblock;
                             for (j = 0; j < polyord; j++) {
                                 //printf("i= %d j= %d polycoeff= %f \n",i,j,fitparams[0][0][polyord*i+j]);
-                                blockshifts[(vblock)*hblsz + hblock][0][0] += (float)pow((float)vblock, i) * pow((float)hblock, j) * fitparams[0][0][polyord * i + j];
-                                blockshifts[(vblock)*hblsz + hblock][0][1] += (float)pow((float)vblock, i) * pow((float)hblock, j) * fitparams[0][1][polyord * i + j];
-                                blockshifts[(vblock)*hblsz + hblock][2][0] += (float)pow((float)vblock, i) * pow((float)hblock, j) * fitparams[2][0][polyord * i + j];
-                                blockshifts[(vblock)*hblsz + hblock][2][1] += (float)pow((float)vblock, i) * pow((float)hblock, j) * fitparams[2][1][polyord * i + j];
+                                blockshifts[(vblock)*hblsz + hblock][0][0] += powHblock * fitparams[0][0][polyord * i + j];
+                                blockshifts[(vblock)*hblsz + hblock][0][1] += powHblock * fitparams[0][1][polyord * i + j];
+                                blockshifts[(vblock)*hblsz + hblock][2][0] += powHblock * fitparams[2][0][polyord * i + j];
+                                blockshifts[(vblock)*hblsz + hblock][2][1] += powHblock * fitparams[2][1][polyord * i + j];
+                                powHblock *= hblock;
                             }
-
+                            powVblock *= vblock;
+                        }
                         blockshifts[(vblock)*hblsz + hblock][0][0] = LIM(blockshifts[(vblock) * hblsz + hblock][0][0], -bslim, bslim);
                         blockshifts[(vblock)*hblsz + hblock][0][1] = LIM(blockshifts[(vblock) * hblsz + hblock][0][1], -bslim, bslim);
                         blockshifts[(vblock)*hblsz + hblock][2][0] = LIM(blockshifts[(vblock) * hblsz + hblock][2][0], -bslim, bslim);
