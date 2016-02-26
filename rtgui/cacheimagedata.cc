@@ -164,10 +164,6 @@ int CacheImageData::load (const Glib::ustring& fname)
                 if (keyFile.has_key ("ExtraRawInfo", "ThumbImageType")) {
                     thumbImgType    = keyFile.get_integer ("ExtraRawInfo", "ThumbImageType");
                 }
-
-                if (keyFile.has_key ("ExtraRawInfo", "ThumbImageOffset")) {
-                    thumbOffset     = keyFile.get_integer ("ExtraRawInfo", "ThumbImageOffset");
-                }
             } else {
                 rotate = 0;
                 thumbImgType = 0;
@@ -247,7 +243,6 @@ int CacheImageData::save (const Glib::ustring& fname)
 
     if (format == FT_Raw) {
         keyFile.set_integer ("ExtraRawInfo", "ThumbImageType", thumbImgType);
-        keyFile.set_integer ("ExtraRawInfo", "ThumbImageOffset", thumbOffset);
     }
 
     keyData = keyFile.to_data ();
