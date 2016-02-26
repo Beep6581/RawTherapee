@@ -824,6 +824,7 @@ BENCHFUN
                 for (left = -border; left < width; left += TS - border2) {
                     vblock = ((top + border) / (TS - border2)) + 1;
                     hblock = ((left + border) / (TS - border2)) + 1;
+                    float lblockshifts[2][2];
                     int bottom = min(top + TS, height + border);
                     int right  = min(left + TS, width + border);
                     int rr1 = bottom - top;
@@ -988,31 +989,31 @@ BENCHFUN
 
                         float hfrac = -((float)(hblock - 0.5) / (hblsz - 2) - 0.5);
                         float vfrac = -((float)(vblock - 0.5) / (vblsz - 2) - 0.5) * height / width;
-                        blockshifts[(vblock)*hblsz + hblock][0][0] = 2 * vfrac * cared;
-                        blockshifts[(vblock)*hblsz + hblock][0][1] = 2 * hfrac * cared;
-                        blockshifts[(vblock)*hblsz + hblock][2][0] = 2 * vfrac * cablue;
-                        blockshifts[(vblock)*hblsz + hblock][2][1] = 2 * hfrac * cablue;
+                        lblockshifts[0][0] = 2 * vfrac * cared;
+                        lblockshifts[0][1] = 2 * hfrac * cared;
+                        lblockshifts[1][0] = 2 * vfrac * cablue;
+                        lblockshifts[1][1] = 2 * hfrac * cablue;
                     } else {
                         //CA auto correction; use CA diagnostic pass to set shift parameters
-                        blockshifts[(vblock)*hblsz + hblock][0][0] = blockshifts[(vblock) * hblsz + hblock][0][1] = 0;
-                        blockshifts[(vblock)*hblsz + hblock][2][0] = blockshifts[(vblock) * hblsz + hblock][2][1] = 0;
+                        lblockshifts[0][0] = lblockshifts[0][1] = 0;
+                        lblockshifts[1][0] = lblockshifts[1][1] = 0;
                         double powVblock = 1.0;
                         for (i = 0; i < polyord; i++) {
                             double powHblock = powVblock;
                             for (j = 0; j < polyord; j++) {
                                 //printf("i= %d j= %d polycoeff= %f \n",i,j,fitparams[0][0][polyord*i+j]);
-                                blockshifts[(vblock)*hblsz + hblock][0][0] += powHblock * fitparams[0][0][polyord * i + j];
-                                blockshifts[(vblock)*hblsz + hblock][0][1] += powHblock * fitparams[0][1][polyord * i + j];
-                                blockshifts[(vblock)*hblsz + hblock][2][0] += powHblock * fitparams[2][0][polyord * i + j];
-                                blockshifts[(vblock)*hblsz + hblock][2][1] += powHblock * fitparams[2][1][polyord * i + j];
+                                lblockshifts[0][0] += powHblock * fitparams[0][0][polyord * i + j];
+                                lblockshifts[0][1] += powHblock * fitparams[0][1][polyord * i + j];
+                                lblockshifts[1][0] += powHblock * fitparams[2][0][polyord * i + j];
+                                lblockshifts[1][1] += powHblock * fitparams[2][1][polyord * i + j];
                                 powHblock *= hblock;
                             }
                             powVblock *= vblock;
                         }
-                        blockshifts[(vblock)*hblsz + hblock][0][0] = LIM(blockshifts[(vblock) * hblsz + hblock][0][0], -bslim, bslim);
-                        blockshifts[(vblock)*hblsz + hblock][0][1] = LIM(blockshifts[(vblock) * hblsz + hblock][0][1], -bslim, bslim);
-                        blockshifts[(vblock)*hblsz + hblock][2][0] = LIM(blockshifts[(vblock) * hblsz + hblock][2][0], -bslim, bslim);
-                        blockshifts[(vblock)*hblsz + hblock][2][1] = LIM(blockshifts[(vblock) * hblsz + hblock][2][1], -bslim, bslim);
+                        lblockshifts[0][0] = LIM(lblockshifts[0][0], -bslim, bslim);
+                        lblockshifts[0][1] = LIM(lblockshifts[0][1], -bslim, bslim);
+                        lblockshifts[1][0] = LIM(lblockshifts[1][0], -bslim, bslim);
+                        lblockshifts[1][1] = LIM(lblockshifts[1][1], -bslim, bslim);
                     }//end of setting CA shift parameters
 
                     //printf("vblock= %d hblock= %d vshift= %f hshift= %f \n",vblock,hblock,blockshifts[(vblock)*hblsz+hblock][0][0],blockshifts[(vblock)*hblsz+hblock][0][1]);
@@ -1020,22 +1021,22 @@ BENCHFUN
                     for (c = 0; c < 3; c += 2) {
 
                         //some parameters for the bilinear interpolation
-                        shiftvfloor[c] = floor((float)blockshifts[(vblock) * hblsz + hblock][c][0]);
-                        shiftvceil[c] = ceil((float)blockshifts[(vblock) * hblsz + hblock][c][0]);
-                        shiftvfrac[c] = blockshifts[(vblock) * hblsz + hblock][c][0] - shiftvfloor[c];
+                        shiftvfloor[c] = floor((float)lblockshifts[c>>1][0]);
+                        shiftvceil[c] = ceil((float)lblockshifts[c>>1][0]);
+                        shiftvfrac[c] = lblockshifts[c>>1][0] - shiftvfloor[c];
 
-                        shifthfloor[c] = floor((float)blockshifts[(vblock) * hblsz + hblock][c][1]);
-                        shifthceil[c] = ceil((float)blockshifts[(vblock) * hblsz + hblock][c][1]);
-                        shifthfrac[c] = blockshifts[(vblock) * hblsz + hblock][c][1] - shifthfloor[c];
+                        shifthfloor[c] = floor((float)lblockshifts[c>>1][1]);
+                        shifthceil[c] = ceil((float)lblockshifts[c>>1][1]);
+                        shifthfrac[c] = lblockshifts[c>>1][1] - shifthfloor[c];
 
 
-                        if (blockshifts[(vblock)*hblsz + hblock][c][0] > 0) {
+                        if (lblockshifts[c>>1][0] > 0) {
                             GRBdir[0][c] = 1;
                         } else {
                             GRBdir[0][c] = -1;
                         }
 
-                        if (blockshifts[(vblock)*hblsz + hblock][c][1] > 0) {
+                        if (lblockshifts[c>>1][1] > 0) {
                             GRBdir[1][c] = 1;
                         } else {
                             GRBdir[1][c] = -1;
