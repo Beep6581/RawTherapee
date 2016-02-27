@@ -36,6 +36,7 @@ LUTf Color::cachef;
 LUTf Color::gamma2curve;
 
 LUTf Color::gammatab;
+LUTuc Color::gammatabThumb;
 LUTf Color::igammatab_srgb;
 LUTf Color::gammatab_srgb;
 //  LUTf Color::igammatab_709;
@@ -133,129 +134,204 @@ void MunsellDebugInfo::reinitValues()
 void Color::init ()
 {
 
-    int maxindex = 65536;
-    cachef(maxindex, LUT_CLIP_BELOW);
-
-    gamma2curve(maxindex, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
-
-    for (int i = 0; i < maxindex; i++) {
-        if (i > eps_max) {
-            cachef[i] = 327.68 * ( exp(1.0 / 3.0 * log((double)i / MAXVALF) ));
-        } else {
-            cachef[i] = 327.68 * ((kappa * i / MAXVALF + 16.0) / 116.0);
-        }
-    }
-
-    for (int i = 0; i < maxindex; i++) {
-        gamma2curve[i] = (gamma2(i / 65535.0) * 65535.0);
-    }
-
     /*******************************************/
 
-    gammatab(65536, 0);
-    igammatab_srgb(65536, 0);
-    gammatab_srgb(65536, 0);
-    //  igammatab_709(65536,0);
-    //  gammatab_709(65536,0);
-    igammatab_55(65536, 0);
-    gammatab_55(65536, 0);
-    igammatab_4(65536, 0);
-    gammatab_4(65536, 0);
+    constexpr auto maxindex = 65536;
 
-    igammatab_26_11(65536, 0);
-    gammatab_26_11(65536, 0);
-    igammatab_24_17(65536, 0);
-    gammatab_24_17a(65536, LUT_CLIP_ABOVE | LUT_CLIP_BELOW);
-    gammatab_13_2(65536, 0);
-    igammatab_13_2(65536, 0);
-    gammatab_115_2(65536, 0);
-    igammatab_115_2(65536, 0);
-    gammatab_145_3(65536, 0);
-    igammatab_145_3(65536, 0);
+    cachef(maxindex, LUT_CLIP_BELOW);
+    gamma2curve(maxindex, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
+    gammatab(maxindex, 0);
+    gammatabThumb(maxindex, 0);
 
-    for (int i = 0; i < 65536; i++) {
-        gammatab_srgb[i] = (65535.0 * gamma2 (i / 65535.0));
+    igammatab_srgb(maxindex, 0);
+    gammatab_srgb(maxindex, 0);
+    igammatab_55(maxindex, 0);
+    gammatab_55(maxindex, 0);
+    igammatab_4(maxindex, 0);
+    gammatab_4(maxindex, 0);
+
+    igammatab_26_11(maxindex, 0);
+    gammatab_26_11(maxindex, 0);
+    igammatab_24_17(maxindex, 0);
+    gammatab_24_17a(maxindex, LUT_CLIP_ABOVE | LUT_CLIP_BELOW);
+    gammatab_13_2(maxindex, 0);
+    igammatab_13_2(maxindex, 0);
+    gammatab_115_2(maxindex, 0);
+    igammatab_115_2(maxindex, 0);
+    gammatab_145_3(maxindex, 0);
+    igammatab_145_3(maxindex, 0);
+
+#ifdef _OPENMP
+    #pragma omp parallel sections
+#endif
+    {
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+        {
+            int i = 0;
+            int epsmaxint = eps_max;
+
+            for (; i <= epsmaxint; i++)
+            {
+                cachef[i] = 327.68 * ((kappa * i / MAXVALF + 16.0) / 116.0);
+            }
+
+            for(; i < maxindex; i++)
+            {
+                cachef[i] = 327.68 * std::cbrt((double)i / MAXVALF);
+            }
+        }
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            gammatab_srgb[i] = gamma2curve[i] = 65535.0 * gamma2(i / 65535.0); // two lookup tables with same content but one clips and one does not clip
+        }
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            igammatab_srgb[i] = 65535.0 * igamma2 (i / 65535.0);
+        }
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+        {
+            double rsRGBGamma = 1.0 / sRGBGamma;
+
+            for (int i = 0; i < maxindex; i++) {
+                double val = pow (i / 65535.0, rsRGBGamma);
+                gammatab[i] = 65535.0 * val;
+                gammatabThumb[i] = (unsigned char)(255.0 * val);
+            }
+        }
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            gammatab_55[i] = 65535.0 * gamma55 (i / 65535.0);
+        }
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            igammatab_55[i] = 65535.0 * igamma55 (i / 65535.0);
+        }
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            gammatab_4[i] = 65535.0 * gamma4 (i / 65535.0);
+        }
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            igammatab_4[i] = 65535.0 * igamma4 (i / 65535.0);
+        }
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            gammatab_13_2[i] = 65535.0 * gamma13_2 (i / 65535.0);
+        }
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            igammatab_13_2[i] = 65535.0 * igamma13_2 (i / 65535.0);
+        }
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            gammatab_115_2[i] = 65535.0 * gamma115_2 (i / 65535.0);
+        }
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            igammatab_115_2[i] = 65535.0 * igamma115_2 (i / 65535.0);
+        }
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            gammatab_145_3[i] = 65535.0 * gamma145_3 (i / 65535.0);
+        }
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            igammatab_145_3[i] = 65535.0 * igamma145_3 (i / 65535.0);
+        }
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            gammatab_26_11[i] = 65535.0 * gamma26_11 (i / 65535.0);
+        }
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            igammatab_26_11[i] = 65535.0 * igamma26_11 (i / 65535.0);
+        }
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            gammatab_24_17a[i] = gamma24_17(i / 65535.0);
+        }
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            igammatab_24_17[i] = 65535.0 * igamma24_17 (i / 65535.0);
+        }
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+        initMunsell();
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+        linearGammaTRC = cmsBuildGamma(NULL, 1.0);
     }
-
-    for (int i = 0; i < 65536; i++) {
-        igammatab_srgb[i] = (65535.0 * igamma2 (i / 65535.0));
-    }
-
-    for (int i = 0; i < 65536; i++) {
-        gammatab[i] = (65535.0 * pow (i / 65535.0, 0.454545));
-    }
-
-    /*       for (int i=0; i<65536; i++)
-               gammatab_709[i] = (65535.0 * gamma709 (i/65535.0));
-           for (int i=0; i<65536; i++)
-               igammatab_709[i] = (65535.0 * igamma709 (i/65535.0));
-    */
-    for (int i = 0; i < 65536; i++) {
-        gammatab_55[i] = (65535.0 * gamma55 (i / 65535.0));
-    }
-
-    for (int i = 0; i < 65536; i++) {
-        igammatab_55[i] = (65535.0 * igamma55 (i / 65535.0));
-    }
-
-    for (int i = 0; i < 65536; i++) {
-        gammatab_4[i] = (65535.0 * gamma4 (i / 65535.0));
-    }
-
-    for (int i = 0; i < 65536; i++) {
-        igammatab_4[i] = (65535.0 * igamma4 (i / 65535.0));
-    }
-
-    for (int i = 0; i < 65536; i++) {
-        gammatab_13_2[i] = (65535.0 * gamma13_2 (i / 65535.0));
-    }
-
-    for (int i = 0; i < 65536; i++) {
-        igammatab_13_2[i] = (65535.0 * igamma13_2 (i / 65535.0));
-    }
-
-    for (int i = 0; i < 65536; i++) {
-        gammatab_115_2[i] = (65535.0 * gamma115_2 (i / 65535.0));
-    }
-
-    for (int i = 0; i < 65536; i++) {
-        igammatab_115_2[i] = (65535.0 * igamma115_2 (i / 65535.0));
-    }
-
-    for (int i = 0; i < 65536; i++) {
-        gammatab_145_3[i] = (65535.0 * gamma145_3 (i / 65535.0));
-    }
-
-    for (int i = 0; i < 65536; i++) {
-        igammatab_145_3[i] = (65535.0 * igamma145_3 (i / 65535.0));
-    }
-
-    for (int i = 0; i < 65536; i++) {
-        gammatab_26_11[i] = (65535.0 * gamma26_11 (i / 65535.0));
-    }
-
-//gammatab_145_3
-    for (int i = 0; i < 65536; i++) {
-        igammatab_26_11[i] = (65535.0 * igamma26_11 (i / 65535.0));
-    }
-
-    for (int i = 0; i < 65536; i++) {
-        float j = (float)i / 65535.0f;
-        gammatab_24_17a[i] = gamma24_17(j);
-    }
-
-    for (int i = 0; i < 65536; i++) {
-        igammatab_24_17[i] = (65535.0 * igamma24_17 (i / 65535.0));
-    }
-
-    /*FILE* f = fopen ("c.txt", "wt");
-    for (int i=0; i<256; i++)
-    fprintf (f, "%g %g\n", i/255.0, clower (i/255.0, 2.0, 1.0));
-    fclose (f);*/
-
-    initMunsell();
-
-    linearGammaTRC = cmsBuildGamma(NULL, 1.0);
 }
 
 void Color::cleanup ()
@@ -1436,9 +1512,9 @@ void Color::Yuv2Lab(float Yin, float u, float v, float &L, float &a, float &b, d
 
     gamutmap(X, Y, Z, wp);
 
-    float fx = (X <= 65535.0 ? cachef[X] : (327.68 * exp(log(X / MAXVALF) / 3.0 )));
-    float fy = (Y <= 65535.0 ? cachef[Y] : (327.68 * exp(log(Y / MAXVALF) / 3.0 )));
-    float fz = (Z <= 65535.0 ? cachef[Z] : (327.68 * exp(log(Z / MAXVALF) / 3.0 )));
+    float fx = (X <= 65535.0 ? cachef[X] : (327.68 * std::cbrt(X / MAXVALF)));
+    float fy = (Y <= 65535.0 ? cachef[Y] : (327.68 * std::cbrt(Y / MAXVALF)));
+    float fz = (Z <= 65535.0 ? cachef[Z] : (327.68 * std::cbrt(Z / MAXVALF)));
 
     L = (116.0 * fy - 5242.88); //5242.88=16.0*327.68;
     a = (500.0 * (fx - fy) );
@@ -1484,7 +1560,7 @@ void Color::XYZ2Luv (float X, float Y, float Z, float &L, float &u, float &v)
     Z /= 65535.f;
 
     if (Y > float(eps)) {
-        L = 116.f * pow(Y, 1.f / 3.f) - 16.f;
+        L = 116.f * std::cbrt(Y) - 16.f;
     } else {
         L = float(kappa) * Y;
     }
