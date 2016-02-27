@@ -1950,18 +1950,17 @@ void Preferences::bundledProfilesChanged ()
 
 void Preferences::iccDirChanged ()
 {
-    const Glib::ustring currentSelection = monProfile->get_active_text ();
+    const auto currentSelection = monProfile->get_active_text ();
+    const auto profiles = rtengine::ICCStore::getInstance ()->getProfilesFromDir (iccDir->get_filename ());
 
-    monProfile->clear();
+    monProfile->remove_all();
 
-    monProfile->append_text (M("PREFERENCES_PROFILE_NONE"));
-    monProfile->set_active (0);
+    monProfile->append (M("PREFERENCES_PROFILE_NONE"));
 
-    const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfilesFromDir (iccDir->get_filename ());
-    for (std::vector<Glib::ustring>::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile)
-        monProfile->append_text (*profile);
+    for (const auto& profile : profiles)
+        monProfile->append (profile);
 
-    monProfile->set_active_text (currentSelection);
+    setActiveTextOrIndex(*monProfile, currentSelection, 0);
 }
 
 void Preferences::storeCurrentValue()
