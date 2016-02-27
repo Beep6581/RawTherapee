@@ -935,7 +935,7 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inc
 
     if (msd.run() == Gtk::RESPONSE_YES) {
         for (unsigned int i = 0; i < tbe.size(); i++) {
-            const auto& fname = tbe[i]->filename;
+            const auto fname = tbe[i]->filename;
             // remove from browser
             delete fileBrowser->delEntry (fname);
             // remove from cache
