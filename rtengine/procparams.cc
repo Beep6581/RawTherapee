@@ -888,6 +888,7 @@ void RAWParams::setDefaults()
     ff_clipControl = 0;
     cared = 0;
     cablue = 0;
+    caautostrength = 4;
     ca_autocorrect = false;
     hotPixelFilter = false;
     deadPixelFilter = false;
@@ -3248,6 +3249,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
 
     if (!pedited || pedited->raw.caCorrection) {
         keyFile.set_boolean ("RAW", "CA", raw.ca_autocorrect );
+    }
+
+    if (!pedited || pedited->raw.caAutoStrength) {
+        keyFile.set_double  ("RAW", "CAAutoStrength", raw.caautostrength );
     }
 
     if (!pedited || pedited->raw.caRed) {
@@ -7064,6 +7069,14 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("RAW", "CAAutoStrength"))                    {
+                raw.caautostrength = keyFile.get_double ("RAW", "CAAutoStrength" );
+
+                if (pedited) {
+                    pedited->raw.caAutoStrength = true;
+                }
+            }
+
             if (keyFile.has_key ("RAW", "CARed"))                    {
                 raw.cared = keyFile.get_double ("RAW", "CARed" );
 
@@ -7785,6 +7798,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && raw.expos == other.raw.expos
         && raw.preser == other.raw.preser
         && raw.ca_autocorrect == other.raw.ca_autocorrect
+        && raw.caautostrength == other.raw.caautostrength
         && raw.cared == other.raw.cared
         && raw.cablue == other.raw.cablue
         && raw.hotPixelFilter == other.raw.hotPixelFilter

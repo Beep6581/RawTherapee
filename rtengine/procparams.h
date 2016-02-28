@@ -1218,6 +1218,7 @@ public:
     int ff_clipControl;
 
     bool ca_autocorrect;
+    double caautostrength;
     double cared;
     double cablue;
 

@@ -1865,7 +1865,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             plistener->setProgress (0.0);
         }
 
-        CA_correct_RT(raw.cared, raw.cablue);
+        CA_correct_RT(raw.cared, raw.cablue, 10.0 - raw.caautostrength);
     }
 
     if ( raw.expos != 1 ) {
