@@ -756,7 +756,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
 
         // Pointer can LEAVE even when dragging the point, so we don't modify the cursor in this case
         // The cursor will have to LEAVE another time after the drag...
-        if (!buttonPressed)
+        if (!buttonPressed) {
             if (grab_point == -1) {
                 new_type = CSArrow;
                 lit_point = -1;
@@ -764,6 +764,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                 setDirty(true);
                 draw (lit_point);
             }
+        }
 
         retval = true;
         break;
@@ -786,7 +787,10 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                     int previous_lit_point = lit_point;
                     findClosestPoint();
 
-                    if (cursorX < 0 || cursorX > graphW || cursorY < 0 || cursorY > graphH) {
+                    {
+                    int extendedGraphW = graphW + RADIUS + 1;
+                    int extendedGraphH = graphH + RADIUS + 1;
+                    if (cursorX < -RADIUS || cursorX > extendedGraphW || cursorY < -RADIUS || cursorY > extendedGraphH) {
                         // the cursor has left the graph area
                         new_type = CSArrow;
                         lit_point = -1;
@@ -798,6 +802,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                         // the cursor is inside the graph but away from existing points
                         new_type = CSPlus;
                         lit_point = -1;
+                    }
                     }
 
                     if (lit_point != previous_lit_point) {

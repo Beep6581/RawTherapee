@@ -24,8 +24,7 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
     Gtk::VBox * retinexVBox = Gtk::manage ( new Gtk::VBox());
     retinexVBox->set_spacing (2);
 
-    Gtk::VBox * settingsVBox = Gtk::manage ( new Gtk::VBox());
-    settingsVBox->set_spacing (2);
+    Gtk::VBox * settingsVBox = Gtk::manage ( new ToolParamBlock());
 
     dhbox = Gtk::manage (new Gtk::HBox ());
     labmdh = Gtk::manage (new Gtk::Label (M ("TP_RETINEX_METHOD") + ":"));

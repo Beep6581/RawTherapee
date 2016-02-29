@@ -106,8 +106,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     enableFinalConn = expfinal->signal_enabled_toggled().connect ( sigc::bind( sigc::mem_fun(this, &Wavelet::enableToggled), expfinal) );
 
 // Wavelet Settings
-    settingsVBox = Gtk::manage (new Gtk::VBox());
-    settingsVBox->set_spacing(2);
+    settingsVBox = Gtk::manage (new ToolParamBlock());
 
     strength  = Gtk::manage (new Adjuster (M("TP_WAVELET_STRENGTH"), 0, 100, 1, 100));
     strength->setAdjusterListener (this);
@@ -199,8 +198,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     settingsVBox->pack_start(*levdirSubHBox);
 
 // Contrast
-    Gtk::VBox * levBox = Gtk::manage (new Gtk::VBox());
-    levBox->set_spacing(2);
+    Gtk::VBox * levBox = Gtk::manage (new ToolParamBlock());
 
 
     Gtk::HBox * buttonBox = Gtk::manage (new Gtk::HBox(true, 10));
@@ -282,8 +280,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     levBox->pack_start(*contrastSHFrame);
 
 // Chromaticity
-    Gtk::VBox * chBox = Gtk::manage (new Gtk::VBox());
-    chBox->set_spacing(2);
+    Gtk::VBox * chBox = Gtk::manage (new ToolParamBlock());
 
     ctboxch = Gtk::manage (new Gtk::HBox ());
     labmch = Gtk::manage (new Gtk::Label (M("TP_WAVELET_CHTYPE") + ":"));
@@ -362,8 +359,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     }
 
 // Toning
-    Gtk::VBox * tonBox = Gtk::manage (new Gtk::VBox());
-    tonBox->set_spacing(2);
+    Gtk::VBox * tonBox = Gtk::manage (new ToolParamBlock());
 
     opaCurveEditorG = new CurveEditorGroup (options.lastWaveletCurvesDir, M("TP_WAVELET_COLORT"));
     opaCurveEditorG->setCurveListener (this);
@@ -392,8 +388,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     tonBox->pack_start( *opacityCurveEditorG, Gtk::PACK_SHRINK, 2);
 
 // Denoise and Refine
-    Gtk::VBox * noiseBox = Gtk::manage (new Gtk::VBox());
-    noiseBox->set_spacing(2);
+    Gtk::VBox * noiseBox = Gtk::manage (new ToolParamBlock());
 
     linkedg = Gtk::manage (new Gtk::CheckButton (M("TP_WAVELET_LINKEDG")));
     linkedg->set_active (true);
@@ -422,8 +417,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     noiseBox->pack_start( *level3noise, Gtk::PACK_SHRINK, 0);
 
 // Edge Sharpness
-    Gtk::VBox * edgBox = Gtk::manage (new Gtk::VBox());
-    edgBox->set_spacing(2);
+    Gtk::VBox * edgBox = Gtk::manage (new ToolParamBlock());
 
     edgval = Gtk::manage ( new Adjuster (M("TP_WAVELET_EDVAL"), 0, 100, 1, 0) );
     edgval->setAdjusterListener(this);
@@ -564,8 +558,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     edgBox->pack_start(*ctboxES);
 
 // Gamut
-    Gtk::VBox * conBox = Gtk::manage (new Gtk::VBox());
-    conBox->set_spacing(2);
+    Gtk::VBox * conBox = Gtk::manage (new ToolParamBlock());
 
     median = Gtk::manage (new Gtk::CheckButton (M("TP_WAVELET_MEDI")));
     median->set_active (true);
@@ -601,8 +594,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     conBox->pack_start(*avoid);
 
 // Residual Image
-    Gtk::VBox * resBox = Gtk::manage (new Gtk::VBox());
-    resBox->set_spacing(2);
+    Gtk::VBox * resBox = Gtk::manage (new ToolParamBlock());
 
     rescon  = Gtk::manage (new Adjuster (M("TP_WAVELET_RESCON"), -100, 100, 1, 0));
     rescon->setAdjusterListener (this);
@@ -849,8 +841,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     tmr->set_tooltip_text (M("TP_WAVELET_BALCHRO_TOOLTIP"));
     tmrConn = tmr->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::tmrToggled) );
 
-    Gtk::VBox * finalBox = Gtk::manage (new Gtk::VBox());
-    finalBox->set_spacing(2);
+    Gtk::VBox * finalBox = Gtk::manage (new ToolParamBlock());
 
     finalBox->pack_start (*ctboxBA);
     finalBox->pack_start(*balance);

@@ -528,6 +528,7 @@ void ExpanderBox::setLevel(int level)
 
 void ExpanderBox::updateStyle()
 {
+    set_border_width(2);
 }
 
 void ExpanderBox::show_all()
@@ -560,12 +561,12 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     child(NULL), headerWidget(NULL), statusImage(NULL),
     label(NULL), useEnabled(useEnabled)
 {
+    set_spacing(0);
     set_name("MyExpander");
     set_can_focus(false);
 
     headerHBox = Gtk::manage( new Gtk::HBox());
     headerHBox->set_can_focus(false);
-
 
     if (useEnabled) {
         statusImage = Gtk::manage(new Gtk::Image(disabledPBuf));
@@ -590,6 +591,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
 
     titleEvBox = Gtk::manage(new Gtk::EventBox());
     titleEvBox->set_name("MyExpanderTitle");
+    titleEvBox->set_border_width(2);
     titleEvBox->add(*headerHBox);
     titleEvBox->set_above_child(false);  // this is the key! By making it below the child, they will get the events first.
     titleEvBox->set_can_focus(false);
@@ -689,7 +691,9 @@ bool MyExpander::on_enter_leave_enable (GdkEventCrossing* event)
 void MyExpander::updateStyle()
 {
     headerHBox->set_spacing(2);
+    headerHBox->set_border_width(1);
     set_spacing(0);
+    set_border_width(0);
 
     if (expBox) {
         expBox->updateStyle();

@@ -31,6 +31,7 @@ ToolVBox::ToolVBox()
 void ToolVBox::updateStyle()
 {
     set_spacing(1);       // Vertical space between tools
+    set_border_width(3);  // Space separating the tab's frame and the tools
 }
 
 void ToolVBox::on_style_updated ()
@@ -46,6 +47,7 @@ ToolParamBlock::ToolParamBlock()
 void ToolParamBlock::updateStyle()
 {
     set_spacing(2);       // Vertical space between parameters in a single tool
+    set_border_width(5);  // Space separating the parameters of a tool and its surrounding frame
 }
 
 void ToolParamBlock::on_style_updated ()

@@ -115,8 +115,6 @@ GtkProgressBar {
 
 GtkDrawingArea {
     border-radius: 0;
-    padding: 0;
-    margin: 0;
     background-color: #363636;
     border: 1px solid #252525;
 }
@@ -208,8 +206,8 @@ GtkMenu {
     background-color: #363636;
     border-width: 1px;
     border-style: solid;
-    border-color: #252525;
     border-radius: 4px;
+    border-color: #252525;
     margin: 9px;
     padding: 4px;
 }
@@ -220,8 +218,10 @@ GtkMenu {
 
 #ExpanderBox GtkFrame {
     background-color: #3B3B3B;
-    border: 1px solid #313131;
+    border-style: solid;
+    border-width: 1px;
     border-radius: 4px;
+    border-color: #313131;
     margin: 3px;
     padding: 2px;
 }
@@ -230,7 +230,7 @@ GtkMenu {
     background-color: #3B3B3B;
 }
 
-#ExpanderBox GtkFrame  GtkFrame {
+#ExpanderBox GtkFrame GtkFrame {
     background-color: #414141;
     border: 1px solid #373737;
     border-radius: 4px;
@@ -238,7 +238,7 @@ GtkMenu {
     padding: 2px;
 }
 
-#ExpanderBox GtkFrame  GtkFrame GtkDrawingArea {
+#ExpanderBox GtkFrame GtkFrame GtkDrawingArea {
     background-color: #414141;
 }
 
@@ -259,6 +259,8 @@ GtkMenu {
     background-color: #414141;
     border: 1px solid #373737;
     border-radius: 4px;
+    margin: 3px;
+    padding: 2px;
 }
 
 #ExpanderBox2 GtkFrame GtkDrawingArea {
@@ -437,3 +439,6 @@ GtkNotebook {
     margin: 5px;
 }
 
+.tooltip {
+    padding: 0;
+}

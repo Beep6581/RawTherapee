@@ -52,6 +52,7 @@ ProfilePanel::ProfilePanel () : storedPProfile(NULL), lastFilename(""), imagePat
     fillMode->add( options.filledProfile ? *profileFillModeOnImage : *profileFillModeOffImage );
     fillMode->signal_toggled().connect ( sigc::mem_fun(*this, &ProfilePanel::profileFillModeToggled) );
     fillMode->set_tooltip_text(M("PROFILEPANEL_MODE_TIP"));
+    fillMode->set_margin_right(2);
     setExpandAlignProperties(fillMode, false, true, Gtk::ALIGN_START, Gtk::ALIGN_FILL);
 
     // Create the Combobox
@@ -64,9 +65,11 @@ ProfilePanel::ProfilePanel () : storedPProfile(NULL), lastFilename(""), imagePat
 
     pack_start (*hgrid, Gtk::PACK_SHRINK, 4);
 
+
     load = Gtk::manage (new Gtk::Button ());
     load->add (*Gtk::manage (new RTImage ("gtk-open.png")));
     load->get_style_context()->add_class("Left");
+    load->set_margin_left(2);
     setExpandAlignProperties(load, false, true, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
     save = Gtk::manage (new Gtk::Button ());
     save->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
