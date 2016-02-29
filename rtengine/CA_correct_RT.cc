@@ -108,6 +108,14 @@ bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
 //end of linear equation solver
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+inline void pixSort(float &a, float &b) {
+    if (a > b) {
+        float temp = a;
+        a = b;
+        b = temp;
+    }
+}
+
 }
 
 using namespace std;
@@ -121,8 +129,6 @@ BENCHFUN
     constexpr int tsh = ts / 2;
     //shifts to location of vertical and diagonal neighbors
     constexpr int v1 = ts, v2 = 2 * ts, v3 = 3 * ts, v4 = 4 * ts; //, p1=-ts+1, p2=-2*ts+2, p3=-3*ts+3, m1=ts+1, m2=2*ts+2, m3=3*ts+3;
-
-#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
 
     // Test for RGB cfa
     for(int i = 0; i < 2; i++)
@@ -152,10 +158,6 @@ BENCHFUN
     // Because we can't break parallel processing, we need a switch do handle the errors
     bool processpasstwo = true;
 
-    //block CA shift values and weight assigned to block
-    float       (*blockwt);             // vblsz*hblsz
-    float       (*blockshifts)[2][2];   // vblsz*hblsz*3*2
-
     constexpr int border = 8;
     constexpr int border2 = 16;
 
@@ -164,11 +166,11 @@ BENCHFUN
     const int vblsz = ceil((float)(height + border2) / (ts - border2) + 2 + vz1);
     const int hblsz = ceil((float)(width + border2) / (ts - border2) + 2 + hz1);
 
-    char *buffer1 = (char *) malloc(vblsz * hblsz * (2 * 2 + 1) * sizeof(float));
-    memset(buffer1, 0, vblsz * hblsz * (2 * 2 + 1)*sizeof(float));
-    // block CA shifts
-    blockwt     = (float (*))           (buffer1);
-    blockshifts = (float (*)[2][2])     (buffer1 + (vblsz * hblsz * sizeof(float)));
+    char *buffer1 = (char *) calloc(vblsz * hblsz * (2 * 2 + 1), sizeof(float));
+
+    //block CA shift values and weight assigned to block
+    float *blockwt = (float*)buffer1;
+    float (*blockshifts)[2][2] = (float (*)[2][2])(buffer1 + (vblsz * hblsz * sizeof(float)));
 
     double fitparams[2][2][16];
 
@@ -177,8 +179,7 @@ BENCHFUN
 
     constexpr float eps = 1e-5f, eps2 = 1e-10f; //tolerance to avoid dividing by zero
 
-
-    #pragma omp parallel shared(Gtmp,blockave,blocksqave,blockdenom,blockvar,blockwt,blockshifts,fitparams,polyord,numpar)
+    #pragma omp parallel
     {
         int progresscounter = 0;
 
@@ -197,12 +198,10 @@ BENCHFUN
         //per thread data for evaluation of block CA shift variance
         float   blockavethr[2][2] = {{0, 0}, {0, 0}}, blocksqavethr[2][2] = {{0, 0}, {0, 0}}, blockdenomthr[2][2] = {{0, 0}, {0, 0}};
 
-        /* assign working space; this would not be necessary
-         if the algorithm is part of the larger pre-interpolation processing */
-        char *buffer = (char *) malloc(3 * sizeof(float) * ts * ts + 6 * sizeof(float) * ts * tsh + 8 * 64 + 64);
-        memset(buffer, 0, 3 * sizeof(float)*ts * ts + 6 * sizeof(float)*ts * tsh + 8 * 64 + 64);
-
-        char *data = buffer;
+        // assign working space
+        constexpr int buffersize = 3 * sizeof(float) * ts * ts + 6 * sizeof(float) * ts * tsh + 8 * 64 + 63;
+        char *buffer = (char *) calloc(buffersize, 1);
+        char *data = (char*)( ( uintptr_t(buffer) + uintptr_t(63)) / 64 * 64);
 
         // shift the beginning of all arrays but the first by 64 bytes to avoid cache miss conflicts on CPUs which have <=4-way associative L1-Cache
 
@@ -231,7 +230,7 @@ BENCHFUN
 
 
         if (autoCA) {
-            // Main algorithm: Tile loop
+            // Main algorithm: Tile loop calculating correction parameters per tile
             #pragma omp for collapse(2) schedule(dynamic) nowait
             for (int top = -border ; top < height; top += ts - border2)
                 for (int left = -border; left < width; left += ts - border2) {
@@ -247,7 +246,7 @@ BENCHFUN
                     const int ccmax = right > width ? width - left : cc1;
 
                     // rgb from input CFA data
-                    // rgb values should be floating point number between 0 and 1
+                    // rgb values should be floating point numbers between 0 and 1
                     // after white balance multipliers are applied
 
                     for (int rr = rrmin; rr < rrmax; rr++)
@@ -328,41 +327,51 @@ BENCHFUN
 
                     //end of border fill
                     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-                    for (int dir = 0; dir < 2; dir++)
-                        for (int k = 0; k < 3; k++)
-                            for (int c = 0; c < 2; c++) {
-                                coeff[dir][k][c] = 0;
-                            }
-
                     //end of initialization
 
 
-                    for (int rr = 3; rr < rr1 - 3; rr++)
-                        for (int row = rr + top, cc = 3, indx = rr * ts + cc; cc < cc1 - 3; cc++, indx++) {
-                            int col = cc + left;
-                            int c = FC(rr, cc);
+#ifdef __SSE2__
+                    vfloat onev = F2V(1.f);
+                    vfloat epsv = F2V(eps);
+#endif
+                    for (int rr = 3; rr < rr1 - 3; rr++) {
+                        int row = rr + top;
+                        int cc = 3 + (FC(rr,3) & 1);
+                        int indx = rr * ts + cc;
+                        int c = FC(rr,cc);
+#ifdef __SSE2__
+                        for (; cc < cc1 - 9; cc+=8, indx+=8) {
+                            //compute directional weights using image gradients
+                            vfloat wtuv = onev / SQRV(epsv + vabsf(LC2VFU(rgb[1][indx + v1]) - LC2VFU(rgb[1][indx - v1])) + vabsf(LC2VFU(rgb[c][indx]) - LC2VFU(rgb[c][indx - v2])) + vabsf(LC2VFU(rgb[1][indx - v1]) - LC2VFU(rgb[1][indx - v3])));
+                            vfloat wtdv = onev / SQRV(epsv + vabsf(LC2VFU(rgb[1][indx - v1]) - LC2VFU(rgb[1][indx + v1])) + vabsf(LC2VFU(rgb[c][indx]) - LC2VFU(rgb[c][indx + v2])) + vabsf(LC2VFU(rgb[1][indx + v1]) - LC2VFU(rgb[1][indx + v3])));
+                            vfloat wtlv = onev / SQRV(epsv + vabsf(LC2VFU(rgb[1][indx + 1]) - LC2VFU(rgb[1][indx - 1])) + vabsf(LC2VFU(rgb[c][indx]) - LC2VFU(rgb[c][indx - 2])) + vabsf(LC2VFU(rgb[1][indx - 1]) - LC2VFU(rgb[1][indx - 3])));
+                            vfloat wtrv = onev / SQRV(epsv + vabsf(LC2VFU(rgb[1][indx - 1]) - LC2VFU(rgb[1][indx + 1])) + vabsf(LC2VFU(rgb[c][indx]) - LC2VFU(rgb[c][indx + 2])) + vabsf(LC2VFU(rgb[1][indx + 1]) - LC2VFU(rgb[1][indx + 3])));
 
-                            if (c != 1) {
-                                //compute directional weights using image gradients
-                                float wtu = 1.f / SQR(eps + fabsf(rgb[1][indx + v1] - rgb[1][indx - v1]) + fabsf(rgb[c][indx] - rgb[c][indx - v2]) + fabsf(rgb[1][indx - v1] - rgb[1][indx - v3]));
-                                float wtd = 1.f / SQR(eps + fabsf(rgb[1][indx - v1] - rgb[1][indx + v1]) + fabsf(rgb[c][indx] - rgb[c][indx + v2]) + fabsf(rgb[1][indx + v1] - rgb[1][indx + v3]));
-                                float wtl = 1.f / SQR(eps + fabsf(rgb[1][indx + 1] - rgb[1][indx - 1]) + fabsf(rgb[c][indx] - rgb[c][indx - 2]) + fabsf(rgb[1][indx - 1] - rgb[1][indx - 3]));
-                                float wtr = 1.f / SQR(eps + fabsf(rgb[1][indx - 1] - rgb[1][indx + 1]) + fabsf(rgb[c][indx] - rgb[c][indx + 2]) + fabsf(rgb[1][indx + 1] - rgb[1][indx + 3]));
+                            //store in rgb array the interpolated G value at R/B grid points using directional weighted average
+                            STC2VFU(rgb[1][indx], (wtuv * LC2VFU(rgb[1][indx - v1]) + wtdv * LC2VFU(rgb[1][indx + v1]) + wtlv * LC2VFU(rgb[1][indx - 1]) + wtrv * LC2VFU(rgb[1][indx + 1])) / (wtuv + wtdv + wtlv + wtrv));
+                        }
 
-                                //store in rgb array the interpolated G value at R/B grid points using directional weighted average
-                                rgb[1][indx] = (wtu * rgb[1][indx - v1] + wtd * rgb[1][indx + v1] + wtl * rgb[1][indx - 1] + wtr * rgb[1][indx + 1]) / (wtu + wtd + wtl + wtr);
-                            }
+#endif
+                        for (; cc < cc1 - 3; cc+=2, indx+=2) {
+                            //compute directional weights using image gradients
+                            float wtu = 1.f / SQR(eps + fabsf(rgb[1][indx + v1] - rgb[1][indx - v1]) + fabsf(rgb[c][indx] - rgb[c][indx - v2]) + fabsf(rgb[1][indx - v1] - rgb[1][indx - v3]));
+                            float wtd = 1.f / SQR(eps + fabsf(rgb[1][indx - v1] - rgb[1][indx + v1]) + fabsf(rgb[c][indx] - rgb[c][indx + v2]) + fabsf(rgb[1][indx + v1] - rgb[1][indx + v3]));
+                            float wtl = 1.f / SQR(eps + fabsf(rgb[1][indx + 1] - rgb[1][indx - 1]) + fabsf(rgb[c][indx] - rgb[c][indx - 2]) + fabsf(rgb[1][indx - 1] - rgb[1][indx - 3]));
+                            float wtr = 1.f / SQR(eps + fabsf(rgb[1][indx - 1] - rgb[1][indx + 1]) + fabsf(rgb[c][indx] - rgb[c][indx + 2]) + fabsf(rgb[1][indx + 1] - rgb[1][indx + 3]));
 
-                            if (row > -1 && row < height && col > -1 && col < width) {
+                            //store in rgb array the interpolated G value at R/B grid points using directional weighted average
+                            rgb[1][indx] = (wtu * rgb[1][indx - v1] + wtd * rgb[1][indx + v1] + wtl * rgb[1][indx - 1] + wtr * rgb[1][indx + 1]) / (wtu + wtd + wtl + wtr);
+                        }
+
+                        if (row > -1 && row < height) {
+                            for(int col = max(left + 3, 0), indx = rr * ts + 3 - (left < 0 ? (left+3) : 0); col < min(cc1 + left - 3, width); col++, indx++) {
                                 Gtmp[row * width + col] = rgb[1][indx];
                             }
                         }
 
+                    }
                     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #ifdef __SSE2__
-                    vfloat epsv = F2V(eps);
                     vfloat zd25v = F2V(0.25f);
 #endif
                     for (int rr = 4; rr < rr1 - 4; rr++) {
@@ -381,18 +390,18 @@ BENCHFUN
                             STVFU(rbhpfh[indx >> 1], temp2v);
 
                             //low and high pass 1D filters of G in vertical/horizontal directions
-                            vfloat glpfv = zd25v * (vmul2f(rgb1v) + LC2VFU(rgb[1][indx + v2]) + LC2VFU(rgb[1][indx - v2]));
-                            vfloat glpfh = zd25v * (vmul2f(rgb1v) + LC2VFU(rgb[1][indx + 2]) + LC2VFU(rgb[1][indx - 2]));
-                            STVFU(rblpfv[indx >> 1], epsv + vabsf(glpfv - zd25v * (vmul2f(rgbcv) + LC2VFU(rgb[c][indx + v2]) + LC2VFU(rgb[c][indx - v2]))));
-                            STVFU(rblpfh[indx >> 1], epsv + vabsf(glpfh - zd25v * (vmul2f(rgbcv) + LC2VFU(rgb[c][indx + 2]) + LC2VFU(rgb[c][indx - 2]))));
-                            STVFU(grblpfv[indx >> 1], glpfv + zd25v * (vmul2f(LC2VFU(rgb[c][indx])) + LC2VFU(rgb[c][indx + v2]) + LC2VFU(rgb[c][indx - v2])));
-                            STVFU(grblpfh[indx >> 1], glpfh + zd25v * (vmul2f(LC2VFU(rgb[c][indx])) + LC2VFU(rgb[c][indx + 2]) + LC2VFU(rgb[c][indx - 2])));
+                            rgb1v = vmul2f(rgb1v);
+                            vfloat glpfvv = zd25v * (rgb1v + LC2VFU(rgb[1][indx + v2]) + LC2VFU(rgb[1][indx - v2]));
+                            vfloat glpfhv = zd25v * (rgb1v + LC2VFU(rgb[1][indx + 2]) + LC2VFU(rgb[1][indx - 2]));
+                            rgbcv = vmul2f(rgbcv);
+                            STVFU(rblpfv[indx >> 1], epsv + vabsf(glpfvv - zd25v * (rgbcv + LC2VFU(rgb[c][indx + v2]) + LC2VFU(rgb[c][indx - v2]))));
+                            STVFU(rblpfh[indx >> 1], epsv + vabsf(glpfhv - zd25v * (rgbcv + LC2VFU(rgb[c][indx + 2]) + LC2VFU(rgb[c][indx - 2]))));
+                            STVFU(grblpfv[indx >> 1], glpfvv + zd25v * (rgbcv + LC2VFU(rgb[c][indx + v2]) + LC2VFU(rgb[c][indx - v2])));
+                            STVFU(grblpfh[indx >> 1], glpfhv + zd25v * (rgbcv + LC2VFU(rgb[c][indx + 2]) + LC2VFU(rgb[c][indx - 2])));
                         }
 
 #endif
                         for (; cc < cc1 - 4; cc += 2, indx += 2) {
-
-
                             rbhpfv[indx >> 1] = fabsf(fabsf((rgb[1][indx] - rgb[c][indx]) - (rgb[1][indx + v4] - rgb[c][indx + v4])) +
                                                       fabsf((rgb[1][indx - v4] - rgb[c][indx - v4]) - (rgb[1][indx] - rgb[c][indx])) -
                                                       fabsf((rgb[1][indx - v4] - rgb[c][indx - v4]) - (rgb[1][indx + v4] - rgb[c][indx + v4])));
@@ -410,10 +419,72 @@ BENCHFUN
                         }
                     }
 
+                    for (int dir = 0; dir < 2; dir++) {
+                        for (int k = 0; k < 3; k++) {
+                            for (int c = 0; c < 2; c++) {
+                                coeff[dir][k][c] = 0;
+                            }
+                        }
+                    }
+
+#ifdef __SSE2__
+                    vfloat zd3125v = F2V(0.3125f);
+                    vfloat zd09375v = F2V(0.09375f);
+                    vfloat zd1v = F2V(0.1f);
+                    vfloat zd125v = F2V(0.125f);
+#endif
+
                     // along line segments, find the point along each segment that minimizes the colour variance
                     // averaged over the tile; evaluate for up/down and left/right away from R/B grid point
-                    for (int rr = 8; rr < rr1 - 8; rr++)
-                        for (int cc = 8 + (FC(rr, 2) & 1), indx = rr * ts + cc, c = FC(rr, cc); cc < cc1 - 8; cc += 2, indx += 2) {
+                    for (int rr = 8; rr < rr1 - 8; rr++) {
+                        int cc = 8 + (FC(rr, 2) & 1);
+                        int indx = rr * ts + cc;
+                        int c = FC(rr, cc);
+#ifdef __SSE2__
+                        vfloat coeff00v = ZEROV;
+                        vfloat coeff01v = ZEROV;
+                        vfloat coeff02v = ZEROV;
+                        vfloat coeff10v = ZEROV;
+                        vfloat coeff11v = ZEROV;
+                        vfloat coeff12v = ZEROV;
+                        for (; cc < cc1 - 14; cc += 8, indx += 8) {
+
+                            //in linear interpolation, colour differences are a quadratic function of interpolation position;
+                            //solve for the interpolation position that minimizes colour difference variance over the tile
+
+                            //vertical
+                            vfloat gdiffv = zd3125v * (LC2VFU(rgb[1][indx + ts]) - LC2VFU(rgb[1][indx - ts])) + zd09375v * (LC2VFU(rgb[1][indx + ts + 1]) - LC2VFU(rgb[1][indx - ts + 1]) + LC2VFU(rgb[1][indx + ts - 1]) - LC2VFU(rgb[1][indx - ts - 1]));
+                            vfloat deltgrbv = LC2VFU(rgb[c][indx]) - LC2VFU(rgb[1][indx]);
+
+                            vfloat gradwtv = vabsf(zd25v * LVFU(rbhpfv[indx >> 1]) + zd125v * (LVFU(rbhpfv[(indx >> 1) + 1]) + LVFU(rbhpfv[(indx >> 1) - 1])) ) * (LVFU(grblpfv[(indx >> 1) - v1]) + LVFU(grblpfv[(indx >> 1) + v1])) / (epsv + zd1v * LVFU(grblpfv[(indx >> 1) - v1]) + LVFU(rblpfv[(indx >> 1) - v1]) + zd1v * LVFU(grblpfv[(indx >> 1) + v1]) + LVFU(rblpfv[(indx >> 1) + v1]));
+
+                            coeff00v += gradwtv * deltgrbv * deltgrbv;
+                            coeff01v += gradwtv * gdiffv * deltgrbv;
+                            coeff02v += gradwtv * gdiffv * gdiffv;
+
+                            //horizontal
+                            gdiffv = zd3125v * (LC2VFU(rgb[1][indx + 1]) - LC2VFU(rgb[1][indx - 1])) + zd09375v * (LC2VFU(rgb[1][indx + 1 + ts]) - LC2VFU(rgb[1][indx - 1 + ts]) + LC2VFU(rgb[1][indx + 1 - ts]) - LC2VFU(rgb[1][indx - 1 - ts]));
+
+                            gradwtv = vabsf(zd25v * LVFU(rbhpfh[indx >> 1]) + zd125v * (LVFU(rbhpfh[(indx >> 1) + v1]) + LVFU(rbhpfh[(indx >> 1) - v1])) ) * (LVFU(grblpfh[(indx >> 1) - 1]) + LVFU(grblpfh[(indx >> 1) + 1])) / (epsv + zd1v * LVFU(grblpfh[(indx >> 1) - 1]) + LVFU(rblpfh[(indx >> 1) - 1]) + zd1v * LVFU(grblpfh[(indx >> 1) + 1]) + LVFU(rblpfh[(indx >> 1) + 1]));
+
+                            coeff10v += gradwtv * deltgrbv * deltgrbv;
+                            coeff11v += gradwtv * gdiffv * deltgrbv;
+                            coeff12v += gradwtv * gdiffv * gdiffv;
+
+                            //  In Mathematica,
+                            //  f[x_]=Expand[Total[Flatten[
+                            //  ((1-x) RotateLeft[Gint,shift1]+x RotateLeft[Gint,shift2]-cfapad)^2[[dv;;-1;;2,dh;;-1;;2]]]]];
+                            //  extremum = -.5Coefficient[f[x],x]/Coefficient[f[x],x^2]
+                        }
+                        coeff[0][0][c>>1] += vhadd(coeff00v);
+                        coeff[0][1][c>>1] += vhadd(coeff01v);
+                        coeff[0][2][c>>1] += vhadd(coeff02v);
+                        coeff[1][0][c>>1] += vhadd(coeff10v);
+                        coeff[1][1][c>>1] += vhadd(coeff11v);
+                        coeff[1][2][c>>1] += vhadd(coeff12v);
+
+#endif
+                        for (; cc < cc1 - 8; cc += 2, indx += 2) {
 
                             //in linear interpolation, colour differences are a quadratic function of interpolation position;
                             //solve for the interpolation position that minimizes colour difference variance over the tile
@@ -442,7 +513,7 @@ BENCHFUN
                             //  ((1-x) RotateLeft[Gint,shift1]+x RotateLeft[Gint,shift2]-cfapad)^2[[dv;;-1;;2,dh;;-1;;2]]]]];
                             //  extremum = -.5Coefficient[f[x],x]/Coefficient[f[x],x^2]
                         }
-
+                    }
 
                     for (int c = 0; c < 2; c++) {
                         for (int dir = 0; dir < 2; dir++) { // vert/hor
@@ -462,7 +533,6 @@ BENCHFUN
                             //dir : 0=vert, 1=hor
 
                             //offset gives NW corner of square containing the min; dir : 0=vert, 1=hor
-
                             if (fabsf(CAshift[dir][c]) < 2.0f) {
                                 blockavethr[dir][c] += CAshift[dir][c];
                                 blocksqavethr[dir][c] += SQR(CAshift[dir][c]);
@@ -543,7 +613,7 @@ BENCHFUN
                     //end of filling border pixels of blockshift array
 
                     //initialize fit arrays
-                    double  polymat[2][2][256], shiftmat[2][2][16];
+                    double polymat[2][2][256], shiftmat[2][2][16];
 
                     for (int i = 0; i < 256; i++) {
                         polymat[0][0][i] = polymat[0][1][i] = polymat[1][0][i] = polymat[1][1][i] = 0;
@@ -562,7 +632,7 @@ BENCHFUN
                                 float bstemp[2];
                                 for (int dir = 0; dir < 2; dir++) {
                                     //temporary storage for median filter
-                                    float temp, p[9];
+                                    float p[9];
                                     p[0] = blockshifts[(vblock - 1) * hblsz + hblock - 1][c][dir];
                                     p[1] = blockshifts[(vblock - 1) * hblsz + hblock][c][dir];
                                     p[2] = blockshifts[(vblock - 1) * hblsz + hblock + 1][c][dir];
@@ -572,29 +642,29 @@ BENCHFUN
                                     p[6] = blockshifts[(vblock + 1) * hblsz + hblock - 1][c][dir];
                                     p[7] = blockshifts[(vblock + 1) * hblsz + hblock][c][dir];
                                     p[8] = blockshifts[(vblock + 1) * hblsz + hblock + 1][c][dir];
-                                    PIX_SORT(p[1], p[2]);
-                                    PIX_SORT(p[4], p[5]);
-                                    PIX_SORT(p[7], p[8]);
-                                    PIX_SORT(p[0], p[1]);
-                                    PIX_SORT(p[3], p[4]);
-                                    PIX_SORT(p[6], p[7]);
-                                    PIX_SORT(p[1], p[2]);
-                                    PIX_SORT(p[4], p[5]);
-                                    PIX_SORT(p[7], p[8]);
-                                    PIX_SORT(p[0], p[3]);
-                                    PIX_SORT(p[5], p[8]);
-                                    PIX_SORT(p[4], p[7]);
-                                    PIX_SORT(p[3], p[6]);
-                                    PIX_SORT(p[1], p[4]);
-                                    PIX_SORT(p[2], p[5]);
-                                    PIX_SORT(p[4], p[7]);
-                                    PIX_SORT(p[4], p[2]);
-                                    PIX_SORT(p[6], p[4]);
-                                    PIX_SORT(p[4], p[2]);
+                                    pixSort(p[1], p[2]);
+                                    pixSort(p[4], p[5]);
+                                    pixSort(p[7], p[8]);
+                                    pixSort(p[0], p[1]);
+                                    pixSort(p[3], p[4]);
+                                    pixSort(p[6], p[7]);
+                                    pixSort(p[1], p[2]);
+                                    pixSort(p[4], p[5]);
+                                    pixSort(p[7], p[8]);
+                                    pixSort(p[0], p[3]);
+                                    pixSort(p[5], p[8]);
+                                    pixSort(p[4], p[7]);
+                                    pixSort(p[3], p[6]);
+                                    pixSort(p[1], p[4]);
+                                    pixSort(p[2], p[5]);
+                                    pixSort(p[4], p[7]);
+                                    pixSort(p[4], p[2]);
+                                    pixSort(p[6], p[4]);
+                                    pixSort(p[4], p[2]);
                                     bstemp[dir] = p[4];
                                 }
 
-                                //now prepare coefficient matrix; use only data points within two std devs of zero
+                                //now prepare coefficient matrix; use only data points within caautostrength/2 std devs of zero
                                 if (SQR(bstemp[0]) > caautostrength * blockvar[0][c] || SQR(bstemp[1]) > caautostrength * blockvar[1][c]) {
                                     continue;
                                 }
@@ -623,6 +693,7 @@ BENCHFUN
                                 }//dir
                             }//c
                         }//blocks
+
                     numblox[1] = min(numblox[0], numblox[1]);
 
                     //if too few data points, restrict the order of the fit to linear
@@ -841,31 +912,56 @@ BENCHFUN
                     }
 
 
-                    for (int rr = 4; rr < rr1 - 4; rr++)
-                        for (int cc = 4 + (FC(rr, 2) & 1), c = FC(rr, cc); cc < cc1 - 4; cc += 2) {
+                    for (int rr = 4; rr < rr1 - 4; rr++) {
+                        int cc = 4 + (FC(rr, 2) & 1);
+                        int c = FC(rr, cc);
+#ifdef __SSE2__
+                        vfloat shifthfracv = F2V(shifthfrac[c]);
+                        vfloat shiftvfracv = F2V(shiftvfrac[c]);
+                        for (; cc < cc1 - 10; cc += 8) {
                             //perform CA correction using colour ratios or colour differences
-
-                            float Ginthfloor = (1 - shifthfrac[c]) * rgb[1][(rr + shiftvfloor[c]) * ts + cc + shifthfloor[c]] + (shifthfrac[c]) * rgb[1][(rr + shiftvfloor[c]) * ts + cc + shifthceil[c]];
-                            float Ginthceil = (1 - shifthfrac[c]) * rgb[1][(rr + shiftvceil[c]) * ts + cc + shifthfloor[c]] + (shifthfrac[c]) * rgb[1][(rr + shiftvceil[c]) * ts + cc + shifthceil[c]];
+                            vfloat Ginthfloorv = vintpf(shifthfracv, LC2VFU(rgb[1][(rr + shiftvfloor[c]) * ts + cc + shifthceil[c]]), LC2VFU(rgb[1][(rr + shiftvfloor[c]) * ts + cc + shifthfloor[c]]));
+                            vfloat Ginthceilv = vintpf(shifthfracv, LC2VFU(rgb[1][(rr + shiftvceil[c]) * ts + cc + shifthceil[c]]), LC2VFU(rgb[1][(rr + shiftvceil[c]) * ts + cc + shifthfloor[c]]));
                             //Gint is bilinear interpolation of G at CA shift point
-                            float Gint = (1 - shiftvfrac[c]) * Ginthfloor + (shiftvfrac[c]) * Ginthceil;
+                            vfloat Gintv = vintpf(shiftvfracv, Ginthceilv, Ginthfloorv);
+
+                            //determine R/B at grid points using colour differences at shift point plus interpolated G value at grid point
+                            //but first we need to interpolate G-R/G-B to grid points...
+                            STVFU(grbdiff[((rr)*ts + cc) >> 1], Gintv - LC2VFU(rgb[c][(rr) * ts + cc]));
+                            STVFU(gshift[((rr)*ts + cc) >> 1], Gintv);
+                        }
+
+#endif
+                        for (; cc < cc1 - 4; cc += 2) {
+                            //perform CA correction using colour ratios or colour differences
+                            float Ginthfloor = intp(shifthfrac[c], rgb[1][(rr + shiftvfloor[c]) * ts + cc + shifthceil[c]], rgb[1][(rr + shiftvfloor[c]) * ts + cc + shifthfloor[c]]);
+                            float Ginthceil = intp(shifthfrac[c], rgb[1][(rr + shiftvceil[c]) * ts + cc + shifthceil[c]], rgb[1][(rr + shiftvceil[c]) * ts + cc + shifthfloor[c]]);
+                            //Gint is bilinear interpolation of G at CA shift point
+                            float Gint = intp(shiftvfrac[c], Ginthceil, Ginthfloor);
 
                             //determine R/B at grid points using colour differences at shift point plus interpolated G value at grid point
                             //but first we need to interpolate G-R/G-B to grid points...
                             grbdiff[((rr)*ts + cc) >> 1] = Gint - rgb[c][(rr) * ts + cc];
                             gshift[((rr)*ts + cc) >> 1] = Gint;
                         }
+                    }
 
+                    shifthfrac[0] /= 2.f;
+                    shifthfrac[2] /= 2.f;
+                    shiftvfrac[0] /= 2.f;
+                    shiftvfrac[2] /= 2.f;
+
+                    // this loop does not deserve vectorization in mainly because the most expensive part with the divisions does not happen often (less than 1/10 in my tests)
                     for (int rr = 8; rr < rr1 - 8; rr++)
                         for (int cc = 8 + (FC(rr, 2) & 1), c = FC(rr, cc), indx = rr * ts + cc; cc < cc1 - 8; cc += 2, indx += 2) {
 
                             float grbdiffold = rgb[1][indx] - rgb[c][indx];
 
                             //interpolate colour difference from optical R/B locations to grid locations
-                            float grbdiffinthfloor = (1.0f - shifthfrac[c] / 2.0f) * grbdiff[indx >> 1] + (shifthfrac[c] / 2.0f) * grbdiff[(indx - GRBdir[1][c]) >> 1];
-                            float grbdiffinthceil = (1.0f - shifthfrac[c] / 2.0f) * grbdiff[((rr - GRBdir[0][c]) * ts + cc) >> 1] + (shifthfrac[c] / 2.0f) * grbdiff[((rr - GRBdir[0][c]) * ts + cc - GRBdir[1][c]) >> 1];
+                            float grbdiffinthfloor = intp(shifthfrac[c], grbdiff[(indx - GRBdir[1][c]) >> 1], grbdiff[indx >> 1]);
+                            float grbdiffinthceil = intp(shifthfrac[c], grbdiff[((rr - GRBdir[0][c]) * ts + cc - GRBdir[1][c]) >> 1], grbdiff[((rr - GRBdir[0][c]) * ts + cc) >> 1]);
                             //grbdiffint is bilinear interpolation of G-R/G-B at grid point
-                            float grbdiffint = (1.0f - shiftvfrac[c] / 2.0f) * grbdiffinthfloor + (shiftvfrac[c] / 2.0f) * grbdiffinthceil;
+                            float grbdiffint = intp(shiftvfrac[c], grbdiffinthceil, grbdiffinthfloor);
 
                             //now determine R/B at grid points using interpolated colour differences and interpolated G value at grid point
                             float RBint = rgb[1][indx] - grbdiffint;
@@ -949,6 +1045,4 @@ BENCHFUN
     if(plistener) {
         plistener->setProgress(1.0);
     }
-
-#undef PIX_SORT
 }
