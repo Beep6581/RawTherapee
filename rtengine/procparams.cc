@@ -1219,9 +1219,9 @@ void ProcParams::setDefaults ()
 
     dirpyrequalizer.enabled = false;
     dirpyrequalizer.gamutlab = false;
-    dirpyrequalizer.cbdlMethod = "aft";
+    dirpyrequalizer.cbdlMethod = "bef";
 
-	
+
     for(int i = 0; i < 6; i ++) {
         dirpyrequalizer.mult[i] = 1.0;
     }
