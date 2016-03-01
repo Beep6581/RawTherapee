@@ -245,7 +245,6 @@ pkg_check_modules (LCMS REQUIRED lcms2)
 find_package (EXPAT REQUIRED expat>=2.0)
 pkg_check_modules (FFTW3F REQUIRED fftw3f)
 pkg_check_modules (IPTCDATA REQUIRED libiptcdata)
-pkg_check_modules(FFTW3 fftw3)
 find_package (JPEG REQUIRED)
 find_package (PNG REQUIRED)
 find_package (TIFF REQUIRED)
@@ -311,7 +310,7 @@ set(OOSB_FILES "${PROJECT_SOURCE_DIR}/rtdata/rawtherapee.desktop" "${PROJECT_SOU
 if (OUT_OF_SOURCE_BUILD)
     foreach(f ${OOSB_FILES})
         file (REMOVE "${f}")
-    endforeach(f) 
+    endforeach(f)
 endif ()
 
 # check for generated files in the source tree which should not be there when
@@ -322,7 +321,7 @@ if (OUT_OF_SOURCE_BUILD)
         if (EXISTS "${f}")
             message (SEND_ERROR "Generated \"${f}\" found inside the source tree. Please remove it as it is a relic of the old build system and prevents valid compilation now.")
 	endif ()
-    endforeach(f) 
+    endforeach(f)
 endif ()
 
 ## BEGIN: Generating AboutThisBuild.txt

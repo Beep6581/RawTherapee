@@ -884,6 +884,15 @@ void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::u
     float somm;
     float som = mixerRed + mixerGreen + mixerBlue;
 
+    if(som >= 0.f && som < 1.f) {
+        som = 1.f;
+    }
+
+    if(som < 0.f && som > -1.f) {
+        som = -1.f;
+    }
+
+
     // rM = mixerRed, gM = mixerGreen, bM = mixerBlue !
     //presets
     if     (setting == "RGB-Abs" || setting == "ROYGCBPM-Abs") {
@@ -945,6 +954,15 @@ void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::u
     bbm = mixerBlue;
 
     somm = mixerRed + mixerGreen + mixerBlue;
+
+    if(somm >= 0.f && somm < 1.f) {
+        somm = 1.f;
+    }
+
+    if(somm < 0.f && somm > -1.f) {
+        somm = -1.f;
+    }
+
     mixerRed = mixerRed / somm;
     mixerGreen = mixerGreen / somm;
     mixerBlue = mixerBlue / somm;
@@ -1160,12 +1178,24 @@ void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::u
     mixerGreen = mixerGreen * filgreen;
     mixerBlue  = mixerBlue  * filblue;
 
+    if(mixerRed + mixerGreen + mixerBlue == 0) {
+        mixerRed += 1.f;
+    }
+
     mixerRed   = filcor * mixerRed   / (mixerRed + mixerGreen + mixerBlue);
     mixerGreen = filcor * mixerGreen / (mixerRed + mixerGreen + mixerBlue);
     mixerBlue  = filcor * mixerBlue  / (mixerRed + mixerGreen + mixerBlue);
 
     if(filter != "None") {
         som = mixerRed + mixerGreen + mixerBlue;
+
+        if(som >= 0.f && som < 1.f) {
+            som = 1.f;
+        }
+
+        if(som < 0.f && som > -1.f) {
+            som = -1.f;
+        }
 
         if(setting == "RGB-Abs" || setting == "ROYGCBPM-Abs") {
             kcorec = kcorec * som;
