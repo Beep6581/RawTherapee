@@ -1204,13 +1204,13 @@ TP_BWMIX_TCMODE_SATANDVALBLENDING;B&W Saturation and Value Blending
 TP_BWMIX_TCMODE_STANDARD;B&W Standard
 TP_BWMIX_TCMODE_WEIGHTEDSTD;B&W Weighted Standard
 TP_BWMIX_VAL;L
+TP_CACORRECTION_BLUE;Blue
+TP_CACORRECTION_LABEL;Chromatic Aberration Correction
+TP_CACORRECTION_RED;Red
 TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
 TP_CBDL_AFT;After Black-and-White
 TP_CBDL_BEF;Before Black-and-White
 TP_CBDL_METHOD;Process located
-TP_CBDL_METHOD_TOOLTIP;"After Black and White" located the tool in L*a*b process.\n"Before Black and White" located the tool at the beginning of rgb process.\nObviously this can lead to differences.
-TP_CBDL_AFT;After Black and White
-TP_CBDL_BEF;Before Black and White
 TP_CHMIXER_BLUE;Blue channel
 TP_CHMIXER_GREEN;Green channel
 TP_CHMIXER_LABEL;Channel Mixer
