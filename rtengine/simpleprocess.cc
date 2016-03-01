@@ -740,51 +740,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
 
 
-    if (params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled) {
-        TMatrix wprof = iccStore->workingSpaceMatrix( params.icm.working );
-        const float wp[3][3] = {
-            {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
-            {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
-            {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
-        };
-
+    if (params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
         const int W = baseImg->getWidth();
         const int H = baseImg->getHeight();
         LabImage labcbdl(W, H);
-
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-        for(int i = 0; i < H; i++) {
-            for(int j = 0; j < W; j++) {
-                float X, Y, Z;
-                Color::rgbxyz(baseImg->r(i, j), baseImg->g(i, j), baseImg->b(i, j), X, Y, Z, wp);
-                //convert Lab
-                Color::XYZ2Lab(X, Y, Z, labcbdl.L[i][j], labcbdl.a[i][j], labcbdl.b[i][j]);
-            }
-        }
-
-        ipf.dirpyrequalizer (&labcbdl, 1, 0);
-
-        TMatrix wiprof = iccStore->workingSpaceInverseMatrix( params.icm.working );
-        const float wip[3][3] = {
-            {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
-            {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},
-            {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
-        };
-
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-        for(int i = 0; i < H; i++) {
-            for(int j = 0; j < W; j++) {
-                float X, Y, Z;
-                Color::Lab2XYZ(labcbdl.L[i][j], labcbdl.a[i][j], labcbdl.b[i][j], X, Y, Z);
-                Color::xyz2rgb(X, Y, Z, baseImg->r(i, j), baseImg->g(i, j), baseImg->b(i, j), wip);
-            }
-        }
+        ipf.rgb2lab(*baseImg, labcbdl, params.icm.working);
+        ipf.dirpyrequalizer (&labcbdl, 1);
+        ipf.lab2rgb(labcbdl, *baseImg, params.icm.working);
     }
 
     // update blurmap
@@ -1034,7 +996,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // directional pyramid wavelet
     if(params.dirpyrequalizer.cbdlMethod == "aft") {
         if((params.colorappearance.enabled && !settings->autocielab)  || !params.colorappearance.enabled) {
-            ipf.dirpyrequalizer (labView, 1, 2);    //TODO: this is the luminance tonecurve, not the RGB one
+            ipf.dirpyrequalizer (labView, 1);    //TODO: this is the luminance tonecurve, not the RGB one
         }
     }
 

@@ -712,52 +712,15 @@ void Crop::update (int todo)
         transCrop = NULL;
     }
 
-    if ((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled) {
-
-        TMatrix wprof = iccStore->workingSpaceMatrix( params.icm.working );
-        const float wp[3][3] = {
-            {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
-            {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
-            {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
-        };
+    if ((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
 
         const int W = baseCrop->getWidth();
         const int H = baseCrop->getHeight();
         LabImage labcbdl(W, H);
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
-#endif
+        parent->ipf.rgb2lab(*baseCrop, labcbdl, params.icm.working);
+        parent->ipf.dirpyrequalizer (&labcbdl, skip);
+        parent->ipf.lab2rgb(labcbdl, *baseCrop, params.icm.working);
 
-        //convert RGB => Lab
-        for(int i = 0; i < H; i++) {
-            for(int j = 0; j < W; j++) {
-                float X, Y, Z;
-                Color::rgbxyz(baseCrop->r(i, j), baseCrop->g(i, j), baseCrop->b(i, j), X, Y, Z, wp);
-                Color::XYZ2Lab(X, Y, Z, labcbdl.L[i][j], labcbdl.a[i][j], labcbdl.b[i][j]);
-            }
-        }
-
-        parent->ipf.dirpyrequalizer (&labcbdl, skip, 0);
-
-        TMatrix wiprof = iccStore->workingSpaceInverseMatrix( params.icm.working );
-        const float wip[3][3] = {
-            {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
-            {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},
-            {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
-        };
-
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-        //convert Lab => RGB
-        for(int i = 0; i < H; i++) {
-            for(int j = 0; j < W; j++) {
-                float X, Y, Z;
-                Color::Lab2XYZ(labcbdl.L[i][j], labcbdl.a[i][j], labcbdl.b[i][j], X, Y, Z);
-                Color::xyz2rgb(X, Y, Z, baseCrop->r(i, j), baseCrop->g(i, j), baseCrop->b(i, j), wip);
-            }
-        }
     }
 
     // blurmap for shadow & highlights
@@ -889,7 +852,7 @@ void Crop::update (int todo)
 
         if(params.dirpyrequalizer.cbdlMethod == "aft") {
             if(((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled))) {
-                parent->ipf.dirpyrequalizer (labnCrop, skip, 1);
+                parent->ipf.dirpyrequalizer (labnCrop, skip);
                 //  parent->ipf.Lanczoslab (labnCrop,labnCrop , 1.f/skip);
             }
         }

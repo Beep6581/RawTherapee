@@ -388,54 +388,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, fw, fh, imgsrc->getMetaData()->getFocalLen(),
                        imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), false);
 
-
-    if ((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled) {
-        TMatrix wprof = iccStore->workingSpaceMatrix( params.icm.working );
-        const float wp[3][3] = {
-            {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
-            {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
-            {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
-        };
-
+    if ((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
         const int W = oprevi->getWidth();
         const int H = oprevi->getHeight();
         LabImage labcbdl(W, H);
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-        //convert RGB => Lab
-        for(int i = 0; i < H; i++) {
-            for(int j = 0; j < W; j++) {
-                float X, Y, Z;
-                Color::rgbxyz(oprevi->r(i, j), oprevi->g(i, j), oprevi->b(i, j), X, Y, Z, wp);
-                Color::XYZ2Lab(X, Y, Z, labcbdl.L[i][j], labcbdl.a[i][j], labcbdl.b[i][j]);
-            }
-        }
-
-        ipf.dirpyrequalizer (&labcbdl, scale, 0);
-
-        TMatrix wiprof = iccStore->workingSpaceInverseMatrix( params.icm.working );
-        const float wip[3][3] = {
-            {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
-            {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},
-            {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
-        };
-
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-        for(int i = 0; i < H; i++) {
-            for(int j = 0; j < W; j++) {
-                float X, Y, Z;
-                Color::Lab2XYZ(labcbdl.L[i][j], labcbdl.a[i][j], labcbdl.b[i][j], X, Y, Z);
-                Color::xyz2rgb(X, Y, Z, oprevi->r(i, j), oprevi->g(i, j), oprevi->b(i, j), wip);
-            }
-        }
+        ipf.rgb2lab(*oprevi, labcbdl, params.icm.working);
+        ipf.dirpyrequalizer (&labcbdl, scale);
+        ipf.lab2rgb(labcbdl, *oprevi, params.icm.working);
     }
-
-
 
     readyphase++;
     progress ("Preparing shadow/highlight map...", 100 * readyphase / numofphases);
@@ -710,7 +670,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         if(params.dirpyrequalizer.cbdlMethod == "aft") {
             if(((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) ) {
                 progress ("Pyramid wavelet...", 100 * readyphase / numofphases);
-                ipf.dirpyrequalizer (nprevl, scale, 1);
+                ipf.dirpyrequalizer (nprevl, scale);
                 //ipf.Lanczoslab (ip_wavelet(LabImage * lab, LabImage * dst, const procparams::EqualizerParams & eqparams), nprevl, 1.f/scale);
                 readyphase++;
             }

@@ -284,7 +284,7 @@ public:
     void impulse_nrcam (CieImage* ncie, double thresh, float **buffers[3]);
 
     void dirpyrdenoise    (LabImage* src);//Emil's pyramid denoise
-    void dirpyrequalizer  (LabImage* lab, int scale, int mode);//Emil's wavelet
+    void dirpyrequalizer  (LabImage* lab, int scale);//Emil's wavelet
 
 
     void EPDToneMapResid(float * WavCoeffs_L0, unsigned int Iterates,  int skip, struct cont_params& cp, int W_L, int H_L, float max0, float min0);
@@ -384,6 +384,8 @@ public:
     static void getAutoExp       (LUTu & histogram, int histcompr, double defgain, double clip, double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh);
     static double getAutoDistor  (const Glib::ustring& fname, int thumb_size);
     double getTransformAutoFill (int oW, int oH, const LCPMapper *pLCPMap = NULL);
+    void rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::ustring &workingSpace);
+    void lab2rgb(const LabImage &src, Imagefloat &dst, const Glib::ustring &workingSpace);
 };
 }
 #endif

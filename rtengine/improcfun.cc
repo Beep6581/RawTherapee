@@ -52,17 +52,6 @@ namespace rtengine
 
 using namespace procparams;
 
-#undef ABS
-#undef CLIPS
-#undef CLIPC
-
-#define ABS(a) ((a)<0?-(a):(a))
-#define CLIPS(a) ((a)>-32768?((a)<32767?(a):32767):-32768)
-#define CLIPC(a) ((a)>-32000?((a)<32000?(a):32000):-32000)
-#define CLIP2(a) ((a)<MAXVAL ? a : MAXVAL )
-#define FCLIP(a) ((a)>0.0?((a)<65535.5?(a):65535.5):0.0)
-
-
 extern const Settings* settings;
 LUTf ImProcFunctions::cachef;
 LUTf ImProcFunctions::gamma2curve;
@@ -6537,7 +6526,7 @@ void ImProcFunctions::badpixlab(LabImage* lab, double rad, int thr, int mode, fl
     }
 }
 
-void ImProcFunctions::dirpyrequalizer (LabImage* lab, int scale, int mode)
+void ImProcFunctions::dirpyrequalizer (LabImage* lab, int scale)
 {
     if (params->dirpyrequalizer.enabled && lab->W >= 8 && lab->H >= 8) {
         float b_l = static_cast<float>(params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
@@ -7146,8 +7135,79 @@ double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_si
     }
 }
 
+void ImProcFunctions::rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::ustring &workingSpace)
+{
+    TMatrix wprof = iccStore->workingSpaceMatrix( workingSpace );
+    const float wp[3][3] = {
+        {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
+        {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
+        {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
+    };
+
+    const int W = src.getWidth();
+    const int H = src.getHeight();
+
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+    for(int i = 0; i < H; i++) {
+        for(int j = 0; j < W; j++) {
+            float X, Y, Z;
+            Color::rgbxyz(src.r(i, j), src.g(i, j), src.b(i, j), X, Y, Z, wp);
+            //convert Lab
+            Color::XYZ2Lab(X, Y, Z, dst.L[i][j], dst.a[i][j], dst.b[i][j]);
+        }
+    }
+}
+
+SSEFUNCTION void ImProcFunctions::lab2rgb(const LabImage &src, Imagefloat &dst, const Glib::ustring &workingSpace)
+{
+    TMatrix wiprof = iccStore->workingSpaceInverseMatrix( workingSpace );
+    const float wip[3][3] = {
+        {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
+        {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},
+        {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
+    };
+
+    const int W = dst.getWidth();
+    const int H = dst.getHeight();
+#ifdef __SSE2__
+    vfloat wipv[3][3];
+
+    for(int i = 0; i < 3; i++) {
+        for(int j = 0; j < 3; j++) {
+            wipv[i][j] = F2V(wiprof[i][j]);
+        }
+    }
+#endif
+
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+    for(int i = 0; i < H; i++) {
+        int j = 0;
+#ifdef __SSE2__
+        for(; j < W - 3; j += 4) {
+            vfloat X, Y, Z;
+            vfloat R,G,B;
+            Color::Lab2XYZ(LVFU(src.L[i][j]), LVFU(src.a[i][j]), LVFU(src.b[i][j]), X, Y, Z);
+            Color::xyz2rgb(X, Y, Z, R, G, B, wipv);
+            STVFU(dst.r(i, j), R);
+            STVFU(dst.g(i, j), G);
+            STVFU(dst.b(i, j), B);
+        }
+
+#endif
+        for(; j < W; j++) {
+            float X, Y, Z;
+            Color::Lab2XYZ(src.L[i][j], src.a[i][j], src.b[i][j], X, Y, Z);
+            Color::xyz2rgb(X, Y, Z, dst.r(i, j), dst.g(i, j), dst.b(i, j), wip);
+        }
+    }
+}
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 }
-#undef PIX_SORT
-#undef med3x3

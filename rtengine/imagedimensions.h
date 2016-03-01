@@ -48,11 +48,11 @@ public:
     {
         return height;
     }
-    int getWidth   ()
+    int getWidth   () const
     {
         return width;
     }
-    int getHeight  ()
+    int getHeight  () const
     {
         return height;
     }
