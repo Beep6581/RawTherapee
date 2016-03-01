@@ -26,8 +26,6 @@
 #include "rtengine.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
-#define BENCHMARK
-#include "StopWatch.h"
 
 namespace {
 
@@ -123,8 +121,7 @@ using namespace rtengine;
 
 void RawImageSource::CA_correct_RT(const double cared, const double cablue, const double caautostrength)
 {
-BENCHFUN
-// multithreaded by Ingo Weyrich
+// multithreaded and partly vectorized by Ingo Weyrich
     constexpr int ts = 128;
     constexpr int tsh = ts / 2;
     //shifts to location of vertical and diagonal neighbors

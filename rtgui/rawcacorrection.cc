@@ -39,7 +39,7 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROM
         caStrength->delay = options.adjusterMaxDelay;
     }
 
-    caStrength->show();
+//    caStrength->show();
     caRed = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CARED"), -4.0, 4.0, 0.1, 0, icaredL, icaredR));
     caRed->setAdjusterListener (this);
 
@@ -58,7 +58,7 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROM
     caBlue->show();
 
     pack_start( *caAutocorrect, Gtk::PACK_SHRINK, 4);
-    pack_start( *caStrength, Gtk::PACK_SHRINK, 4);
+//    pack_start( *caStrength, Gtk::PACK_SHRINK, 4);
     pack_start( *caRed, Gtk::PACK_SHRINK, 4);
     pack_start( *caBlue, Gtk::PACK_SHRINK, 4);
 
