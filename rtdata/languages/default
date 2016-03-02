@@ -1616,6 +1616,7 @@ TP_PREPROCESS_NO_FOUND;None found
 TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 TP_RAWCACORR_AUTO;Auto-correction
+TP_RAWCACORR_CASTR;Strength
 TP_RAWCACORR_CABLUE;Blue
 TP_RAWCACORR_CARED;Red
 TP_RAWEXPOS_BLACKS;Black Levels

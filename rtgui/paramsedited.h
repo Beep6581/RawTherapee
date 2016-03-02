@@ -713,6 +713,7 @@ public:
     XTransSensor xtranssensor;
 
     bool caCorrection;
+    bool caAutoStrength;
     bool caRed;
     bool caBlue;
     bool hotPixelFilter;

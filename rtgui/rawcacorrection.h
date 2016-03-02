@@ -29,6 +29,7 @@ class RAWCACorr : public ToolParamBlock, public AdjusterListener, public Foldabl
 
 protected:
     Gtk::CheckButton* caAutocorrect;
+    Adjuster* caStrength;
     Adjuster* caRed;
     Adjuster* caBlue;
     bool lastCA;
