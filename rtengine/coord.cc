@@ -41,7 +41,7 @@ PolarCoord& PolarCoord::operator= (const Coord& other)
     const double y = other.y;
 
     radius = rtengine::norm2 (x, y);
-    angle = std::atan2 (x, y) * 180.0 / M_PI;
+    angle = std::atan2 (y, x) * 180.0 / M_PI;
 
     return *this;
 }
