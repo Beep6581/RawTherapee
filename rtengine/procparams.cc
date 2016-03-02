@@ -888,6 +888,7 @@ void RAWParams::setDefaults()
     ff_clipControl = 0;
     cared = 0;
     cablue = 0;
+    caautostrength = 6;
     ca_autocorrect = false;
     hotPixelFilter = false;
     deadPixelFilter = false;
@@ -1217,6 +1218,8 @@ void ProcParams::setDefaults ()
 
     dirpyrequalizer.enabled = false;
     dirpyrequalizer.gamutlab = false;
+    dirpyrequalizer.cbdlMethod = "bef";
+
 
     for(int i = 0; i < 6; i ++) {
         dirpyrequalizer.mult[i] = 1.0;
@@ -3030,6 +3033,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         keyFile.set_boolean ("Directional Pyramid Equalizer", "Gamutlab", dirpyrequalizer.gamutlab);
     }
 
+    if (!pedited || pedited->dirpyrequalizer.cbdlMethod) {
+        keyFile.set_string  ("Directional Pyramid Equalizer", "cbdlMethod",  dirpyrequalizer.cbdlMethod);
+    }
+
     for(int i = 0; i < 6; i++) {
         std::stringstream ss;
         ss << "Mult" << i;
@@ -3248,6 +3255,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
 
     if (!pedited || pedited->raw.caCorrection) {
         keyFile.set_boolean ("RAW", "CA", raw.ca_autocorrect );
+    }
+
+    if (!pedited || pedited->raw.caAutoStrength) {
+        keyFile.set_double  ("RAW", "CAAutoStrength", raw.caautostrength );
     }
 
     if (!pedited || pedited->raw.caRed) {
@@ -6616,6 +6627,16 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
+
+            if (keyFile.has_key ("Directional Pyramid Equalizer", "cbdlMethod"))     {
+                dirpyrequalizer.cbdlMethod  = keyFile.get_string  ("Directional Pyramid Equalizer", "cbdlMethod");
+
+                if (pedited) {
+                    pedited->dirpyrequalizer.cbdlMethod = true;
+                }
+            }
+
+
 //   if (keyFile.has_key ("Directional Pyramid Equalizer", "Algorithm")) { dirpyrequalizer.algo = keyFile.get_string ("Directional Pyramid Equalizer", "Algorithm"); if (pedited) pedited->dirpyrequalizer.algo = true; }
             if (keyFile.has_key ("Directional Pyramid Equalizer", "Hueskin"))   {
                 Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Directional Pyramid Equalizer", "Hueskin");
@@ -7061,6 +7082,14 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->raw.caCorrection = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW", "CAAutoStrength"))                    {
+                raw.caautostrength = keyFile.get_double ("RAW", "CAAutoStrength" );
+
+                if (pedited) {
+                    pedited->raw.caAutoStrength = true;
                 }
             }
 
@@ -7785,6 +7814,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && raw.expos == other.raw.expos
         && raw.preser == other.raw.preser
         && raw.ca_autocorrect == other.raw.ca_autocorrect
+        && raw.caautostrength == other.raw.caautostrength
         && raw.cared == other.raw.cared
         && raw.cablue == other.raw.cablue
         && raw.hotPixelFilter == other.raw.hotPixelFilter
@@ -7888,6 +7918,7 @@ bool ProcParams::operator== (const ProcParams& other)
         //  && dirpyrequalizer.algo == other.dirpyrequalizer.algo
         && dirpyrequalizer.hueskin == other.dirpyrequalizer.hueskin
         && dirpyrequalizer.threshold == other.dirpyrequalizer.threshold
+        && dirpyrequalizer.cbdlMethod == other.dirpyrequalizer.cbdlMethod
         && dirpyrequalizer.skinprotect == other.dirpyrequalizer.skinprotect
         && hsvequalizer.hcurve == other.hsvequalizer.hcurve
         && hsvequalizer.scurve == other.hsvequalizer.scurve

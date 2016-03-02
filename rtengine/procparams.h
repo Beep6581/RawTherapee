@@ -1106,7 +1106,7 @@ public:
     double skinprotect;
     Threshold<int> hueskin;
     //Glib::ustring algo;
-
+    Glib::ustring cbdlMethod;
     DirPyrEqualizerParams() : hueskin(20, 80, 2000, 1200, false) {};
 };
 
@@ -1218,6 +1218,7 @@ public:
     int ff_clipControl;
 
     bool ca_autocorrect;
+    double caautostrength;
     double cared;
     double cablue;
 

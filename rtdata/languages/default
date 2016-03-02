@@ -670,6 +670,7 @@ HISTORY_MSG_436;Retinex - M - Radius
 HISTORY_MSG_437;Retinex - M - Method
 HISTORY_MSG_438;Retinex - M - Equalizer
 HISTORY_MSG_439;Retinex - Preview
+HISTORY_MSG_440;CbDL - method
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1206,6 +1207,10 @@ TP_BWMIX_VAL;L
 TP_CACORRECTION_BLUE;Blue
 TP_CACORRECTION_LABEL;Chromatic Aberration Correction
 TP_CACORRECTION_RED;Red
+TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
+TP_CBDL_AFT;After Black-and-White
+TP_CBDL_BEF;Before Black-and-White
+TP_CBDL_METHOD;Process located
 TP_CHMIXER_BLUE;Blue channel
 TP_CHMIXER_GREEN;Green channel
 TP_CHMIXER_LABEL;Channel Mixer
@@ -1611,6 +1616,7 @@ TP_PREPROCESS_NO_FOUND;None found
 TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 TP_RAWCACORR_AUTO;Auto-correction
+TP_RAWCACORR_CASTR;Strength
 TP_RAWCACORR_CABLUE;Blue
 TP_RAWCACORR_CARED;Red
 TP_RAWEXPOS_BLACKS;Black Levels

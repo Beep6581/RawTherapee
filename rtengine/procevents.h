@@ -466,7 +466,9 @@ enum ProcEvent {
     EvmapMethod = 436,
     EvRetinexmapcurve = 437,
     EvviewMethod = 438,
+    EvcbdlMethod = 439,
     NUMOFEVENTS
+
 };
 }
 #endif
