@@ -119,8 +119,8 @@ void RAWCACorr::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvPreProcessCARed,  value );
         } else if (a == caBlue) {
             listener->panelChanged (EvPreProcessCABlue,  value );
-        } else if (a == caStrength) {
-            listener->panelChanged (EvPreProcessCAStrength,  value );
+//        } else if (a == caStrength) {
+//            listener->panelChanged (EvPreProcessCAStrength,  value );
         }
     }
 }

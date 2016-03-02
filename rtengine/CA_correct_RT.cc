@@ -453,7 +453,7 @@ void RawImageSource::CA_correct_RT(const double cared, const double cablue, cons
                             vfloat gdiffv = zd3125v * (LC2VFU(rgb[1][indx + ts]) - LC2VFU(rgb[1][indx - ts])) + zd09375v * (LC2VFU(rgb[1][indx + ts + 1]) - LC2VFU(rgb[1][indx - ts + 1]) + LC2VFU(rgb[1][indx + ts - 1]) - LC2VFU(rgb[1][indx - ts - 1]));
                             vfloat deltgrbv = LC2VFU(rgb[c][indx]) - LC2VFU(rgb[1][indx]);
 
-                            vfloat gradwtv = vabsf(zd25v * LVFU(rbhpfv[indx >> 1]) + zd125v * (LVFU(rbhpfv[(indx >> 1) + 1]) + LVFU(rbhpfv[(indx >> 1) - 1])) ) * (LVFU(grblpfv[(indx >> 1) - v1]) + LVFU(grblpfv[(indx >> 1) + v1])) / (epsv + zd1v * LVFU(grblpfv[(indx >> 1) - v1]) + LVFU(rblpfv[(indx >> 1) - v1]) + zd1v * LVFU(grblpfv[(indx >> 1) + v1]) + LVFU(rblpfv[(indx >> 1) + v1]));
+                            vfloat gradwtv = vabsf(zd25v * LVFU(rbhpfv[indx >> 1]) + zd125v * (LVFU(rbhpfv[(indx >> 1) + 1]) + LVFU(rbhpfv[(indx >> 1) - 1])) ) * (LVFU(grblpfv[(indx >> 1) - v1]) + LVFU(grblpfv[(indx >> 1) + v1])) / (epsv + zd1v * (LVFU(grblpfv[(indx >> 1) - v1]) + LVFU(grblpfv[(indx >> 1) + v1])) + LVFU(rblpfv[(indx >> 1) - v1]) + LVFU(rblpfv[(indx >> 1) + v1]));
 
                             coeff00v += gradwtv * deltgrbv * deltgrbv;
                             coeff01v += gradwtv * gdiffv * deltgrbv;
@@ -462,7 +462,7 @@ void RawImageSource::CA_correct_RT(const double cared, const double cablue, cons
                             //horizontal
                             gdiffv = zd3125v * (LC2VFU(rgb[1][indx + 1]) - LC2VFU(rgb[1][indx - 1])) + zd09375v * (LC2VFU(rgb[1][indx + 1 + ts]) - LC2VFU(rgb[1][indx - 1 + ts]) + LC2VFU(rgb[1][indx + 1 - ts]) - LC2VFU(rgb[1][indx - 1 - ts]));
 
-                            gradwtv = vabsf(zd25v * LVFU(rbhpfh[indx >> 1]) + zd125v * (LVFU(rbhpfh[(indx >> 1) + v1]) + LVFU(rbhpfh[(indx >> 1) - v1])) ) * (LVFU(grblpfh[(indx >> 1) - 1]) + LVFU(grblpfh[(indx >> 1) + 1])) / (epsv + zd1v * LVFU(grblpfh[(indx >> 1) - 1]) + LVFU(rblpfh[(indx >> 1) - 1]) + zd1v * LVFU(grblpfh[(indx >> 1) + 1]) + LVFU(rblpfh[(indx >> 1) + 1]));
+                            gradwtv = vabsf(zd25v * LVFU(rbhpfh[indx >> 1]) + zd125v * (LVFU(rbhpfh[(indx >> 1) + v1]) + LVFU(rbhpfh[(indx >> 1) - v1])) ) * (LVFU(grblpfh[(indx >> 1) - 1]) + LVFU(grblpfh[(indx >> 1) + 1])) / (epsv + zd1v * (LVFU(grblpfh[(indx >> 1) - 1]) + LVFU(grblpfh[(indx >> 1) + 1])) + LVFU(rblpfh[(indx >> 1) - 1]) + LVFU(rblpfh[(indx >> 1) + 1]));
 
                             coeff10v += gradwtv * deltgrbv * deltgrbv;
                             coeff11v += gradwtv * gdiffv * deltgrbv;
@@ -490,7 +490,7 @@ void RawImageSource::CA_correct_RT(const double cared, const double cablue, cons
                             float gdiff = 0.3125f * (rgb[1][indx + ts] - rgb[1][indx - ts]) + 0.09375f * (rgb[1][indx + ts + 1] - rgb[1][indx - ts + 1] + rgb[1][indx + ts - 1] - rgb[1][indx - ts - 1]);
                             float deltgrb = (rgb[c][indx] - rgb[1][indx]);
 
-                            float gradwt = fabsf(0.25f * rbhpfv[indx >> 1] + 0.125f * (rbhpfv[(indx >> 1) + 1] + rbhpfv[(indx >> 1) - 1]) ) * (grblpfv[(indx >> 1) - v1] + grblpfv[(indx >> 1) + v1]) / (eps + 0.1f * grblpfv[(indx >> 1) - v1] + rblpfv[(indx >> 1) - v1] + 0.1f * grblpfv[(indx >> 1) + v1] + rblpfv[(indx >> 1) + v1]);
+                            float gradwt = fabsf(0.25f * rbhpfv[indx >> 1] + 0.125f * (rbhpfv[(indx >> 1) + 1] + rbhpfv[(indx >> 1) - 1]) ) * (grblpfv[(indx >> 1) - v1] + grblpfv[(indx >> 1) + v1]) / (eps + 0.1f * (grblpfv[(indx >> 1) - v1] + grblpfv[(indx >> 1) + v1]) + rblpfv[(indx >> 1) - v1] + rblpfv[(indx >> 1) + v1]);
 
                             coeff[0][0][c>>1] += gradwt * deltgrb * deltgrb;
                             coeff[0][1][c>>1] += gradwt * gdiff * deltgrb;
@@ -499,7 +499,7 @@ void RawImageSource::CA_correct_RT(const double cared, const double cablue, cons
                             //horizontal
                             gdiff = 0.3125f * (rgb[1][indx + 1] - rgb[1][indx - 1]) + 0.09375f * (rgb[1][indx + 1 + ts] - rgb[1][indx - 1 + ts] + rgb[1][indx + 1 - ts] - rgb[1][indx - 1 - ts]);
 
-                            gradwt = fabsf(0.25f * rbhpfh[indx >> 1] + 0.125f * (rbhpfh[(indx >> 1) + v1] + rbhpfh[(indx >> 1) - v1]) ) * (grblpfh[(indx >> 1) - 1] + grblpfh[(indx >> 1) + 1]) / (eps + 0.1f * grblpfh[(indx >> 1) - 1] + rblpfh[(indx >> 1) - 1] + 0.1f * grblpfh[(indx >> 1) + 1] + rblpfh[(indx >> 1) + 1]);
+                            gradwt = fabsf(0.25f * rbhpfh[indx >> 1] + 0.125f * (rbhpfh[(indx >> 1) + v1] + rbhpfh[(indx >> 1) - v1]) ) * (grblpfh[(indx >> 1) - 1] + grblpfh[(indx >> 1) + 1]) / (eps + 0.1f * (grblpfh[(indx >> 1) - 1] + grblpfh[(indx >> 1) + 1]) + rblpfh[(indx >> 1) - 1] + rblpfh[(indx >> 1) + 1]);
 
                             coeff[1][0][c>>1] += gradwt * deltgrb * deltgrb;
                             coeff[1][1][c>>1] += gradwt * gdiff * deltgrb;
