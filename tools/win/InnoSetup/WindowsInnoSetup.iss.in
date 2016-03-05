@@ -55,7 +55,7 @@ LicenseFile={#MyBuildBasePath}\LICENSE.txt
 OutputDir={#MyBuildBasePath}\..\
 OutputBaseFilename={#MyAppName}_{#MySystemName}_{#MyBitDepth}_{#MyAppFullVersion}
 SetupIconFile={#MySourceBasePath}\rtgui\RT.ico
-WizardImageFile={#MySourceBasePath}\rtdata\win\InnoSetup\installerStrip.bmp
+WizardImageFile={#MySourceBasePath}\tools\win\InnoSetup\installerStrip.bmp
 WizardImageBackColor=$2A2A2A
 Compression=lzma
 SolidCompression=yes
@@ -117,7 +117,7 @@ Source: "{#MyBuildBasePath}\options"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\*.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\gspawn-win{#MyBitDepth}-helper.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\gspawn-win{#MyBitDepth}-helper-console.exe"; DestDir: "{app}"; Flags: ignoreversion
-
+;Source: "{#MyBuildBasePath}\gdb.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\fonts\DroidSansMonoSlashed.ttf"; DestDir: "{fonts}"; FontInstall: "Droid Sans Mono Slashed"; Flags: onlyifdoesntexist uninsneveruninstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

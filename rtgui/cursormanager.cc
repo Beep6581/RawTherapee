@@ -17,8 +17,8 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "cursormanager.h"
+
 #include "options.h"
-#include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
 CursorManager mainWindowCursorManager;
@@ -51,14 +51,14 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
     cAdd = Gdk::Cursor::create (display, Gdk::PLUS);
     cWait = Gdk::Cursor::create (display, Gdk::CLOCK);
 
-    Glib::RefPtr<Gdk::Pixbuf> hand = safe_create_from_file("cross.png");
-    Glib::RefPtr<Gdk::Pixbuf> close_hand = safe_create_from_file("closedhand.png");
-    Glib::RefPtr<Gdk::Pixbuf> wbpick = safe_create_from_file("gtk-color-picker-small.png");
-    Glib::RefPtr<Gdk::Pixbuf> empty = safe_create_from_file("empty.png");
-    Glib::RefPtr<Gdk::Pixbuf> move2D = safe_create_from_file("move-2D.png");
-    Glib::RefPtr<Gdk::Pixbuf> move1DH = safe_create_from_file("move-1D-h.png");
-    Glib::RefPtr<Gdk::Pixbuf> move1DV = safe_create_from_file("move-1D-v.png");
-    Glib::RefPtr<Gdk::Pixbuf> moveRotate = safe_create_from_file("move-rotate.png");
+    Glib::RefPtr<Gdk::Pixbuf> hand = RTImage::createFromFile ("cross.png");
+    Glib::RefPtr<Gdk::Pixbuf> close_hand = RTImage::createFromFile ("closedhand.png");
+    Glib::RefPtr<Gdk::Pixbuf> wbpick = RTImage::createFromFile ("gtk-color-picker-small.png");
+    Glib::RefPtr<Gdk::Pixbuf> empty = RTImage::createFromFile ("empty.png");
+    Glib::RefPtr<Gdk::Pixbuf> move2D = RTImage::createFromFile ("move-2D.png");
+    Glib::RefPtr<Gdk::Pixbuf> move1DH = RTImage::createFromFile ("move-1D-h.png");
+    Glib::RefPtr<Gdk::Pixbuf> move1DV = RTImage::createFromFile ("move-1D-v.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveRotate = RTImage::createFromFile ("move-rotate.png");
 
     cHand = hand ? Gdk::Cursor::create (cAdd->get_display(), hand, 10, 10) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
     cClosedHand = close_hand ? Gdk::Cursor::create (cAdd->get_display(), close_hand, 10, 10) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);

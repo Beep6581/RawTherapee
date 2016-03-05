@@ -18,18 +18,20 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "editorpanel.h"
-#include "options.h"
-#include "progressconnector.h"
-#include "rtwindow.h"
-#include "guiutils.h"
-#include "procparamchangers.h"
-#include "../rtengine/safegtk.h"
+
+#include <iostream>
+
 #include "../rtengine/imagesource.h"
 #include "../rtengine/iccstore.h"
 #include "soundman.h"
 #include "rtimage.h"
-#include <iostream>
+#include "rtwindow.h"
+#include "guiutils.h"
 #include "popupbutton.h"
+#include "options.h"
+#include "progressconnector.h"
+#include "procparamchangers.h"
+#include "placesbrowser.h"
 
 using namespace rtengine::procparams;
 
@@ -516,7 +518,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     show_all ();
     /*
         // save as dialog
-        if (safe_file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR))
+        if (Glib::file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR))
             saveAsDialog = new SaveAsDialog (options.lastSaveAsPath);
         else
             saveAsDialog = new SaveAsDialog (safe_get_user_picture_dir());
@@ -813,7 +815,7 @@ void EditorPanel::close ()
         navigator->previewWindow->setPreviewHandler (NULL);
 
         // If the file was deleted somewhere, the openThm.descreaseRef delete the object, but we don't know here
-        if (safe_file_test (fname, Glib::FILE_TEST_EXISTS)) {
+        if (Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
             openThm->removeThumbnailListener (this);
             openThm->decreaseRef ();
         }
@@ -827,7 +829,7 @@ void EditorPanel::saveProfile ()
     }
 
     // If the file was deleted, do not generate ghost entries
-    if (safe_file_test (fname, Glib::FILE_TEST_EXISTS)) {
+    if (Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
         ProcParams params;
         ipc->getParams (&params);
 
@@ -1573,10 +1575,10 @@ void EditorPanel::saveAsPressed ()
     SaveAsDialog* saveAsDialog;
     auto toplevel = static_cast<Gtk::Window*> (get_toplevel ());
 
-    if (safe_file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR)) {
+    if (Glib::file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR)) {
         saveAsDialog = new SaveAsDialog (options.lastSaveAsPath, toplevel);
     } else {
-        saveAsDialog = new SaveAsDialog (safe_get_user_picture_dir(), toplevel);
+        saveAsDialog = new SaveAsDialog (PlacesBrowser::userPicturesDir (), toplevel);
     }
 
     saveAsDialog->set_default_size (options.saveAsDialogWidth, options.saveAsDialogHeight);
@@ -1620,7 +1622,7 @@ void EditorPanel::saveAsPressed ()
                         fnameTemp = Glib::ustring::compose ("%1-%2.%3", Glib::build_filename (dstdir,  dstfname), tries, dstext);
                     }
 
-                    if (!safe_file_test (fnameTemp, Glib::FILE_TEST_EXISTS)) {
+                    if (!Glib::file_test (fnameTemp, Glib::FILE_TEST_EXISTS)) {
                         fnameOut = fnameTemp;
                         fnameOK = true;
                         break;
@@ -1731,10 +1733,11 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImage16*> *pc, 
 
         Glib::ustring fileName = Glib::ustring::compose ("%1.%2", fname, sf.format);
 
+        // TODO: Just list all file with a suitable name instead of brute force...
         int tries = 1;
 
-        while (safe_file_test (fileName, Glib::FILE_TEST_EXISTS) && tries < 1000) {
-            fileName = Glib::ustring::compose ("%1-%2.%3", fname, tries, sf.format);
+        while (Glib::file_test (fileName, Glib::FILE_TEST_EXISTS) && tries < 1000) {
+            fileName = Glib::ustring::compose("%1-%2.%3", fname, tries, sf.format);
             tries++;
         }
 
@@ -1770,99 +1773,21 @@ bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImage1
         parent->setProgressStr ("");
         parent->setProgress (0.);
         bool success = false;
-        Glib::ustring cmdLine;
-        Glib::ustring executable;
 
-        // start gimp
         if (options.editorToSendTo == 1) {
-#ifdef WIN32
-            executable = Glib::build_filename (Glib::build_filename (options.gimpDir, "bin"), "gimp-win-remote");
-            cmdLine = Glib::ustring ("\"") + executable + Glib::ustring ("\" gimp-2.4.exe ") + Glib::ustring ("\"") + filename + Glib::ustring ("\"");
-
-            if ( safe_file_test (executable, (Glib::FILE_TEST_EXISTS | Glib::FILE_TEST_IS_EXECUTABLE)) ) {
-                success = safe_spawn_command_line_async (cmdLine);
-            }
-
-#elif defined __APPLE__
-            cmdLine = Glib::ustring ("open -a /Applications/GIMP.app \'") + filename + Glib::ustring ("\'");
-            success = safe_spawn_command_line_async (cmdLine);
-            std::cout << cmdLine << std::endl;
-#else
-            cmdLine = Glib::ustring ("gimp \"") + filename + Glib::ustring ("\"");
-            success = safe_spawn_command_line_async (cmdLine);
-            std::cout << cmdLine << std::endl;
-#endif
-
-            if (!success) {
-#ifdef WIN32
-                int ver = 12;
-
-                while (!success && ver) {
-                    executable = Glib::build_filename (Glib::build_filename (options.gimpDir, "bin"), Glib::ustring::compose (Glib::ustring ("gimp-2.%1.exe"), ver));
-
-                    if ( safe_file_test (executable, (Glib::FILE_TEST_EXISTS | Glib::FILE_TEST_IS_EXECUTABLE)) ) {
-                        cmdLine = Glib::ustring ("\"") + executable + Glib::ustring ("\" \"") + filename + Glib::ustring ("\"");
-                        success = safe_spawn_command_line_async (cmdLine);
-                    }
-
-                    ver--;
-                }
-
-#elif defined __APPLE__
-                cmdLine = Glib::ustring ("open -a /Applications/Gimp.app/Contents/Resources/start \'") + filename + Glib::ustring ("\'");
-                success = safe_spawn_command_line_async (cmdLine);
-                std::cout << cmdLine << std::endl;
-#else
-                cmdLine = Glib::ustring ("gimp-remote \"") + filename + Glib::ustring ("\"");
-                success = safe_spawn_command_line_async (cmdLine);
-                std::cout << cmdLine << std::endl;
-#endif
-            }
+            success = ExtProgStore::openInGimp (filename);
         } else if (options.editorToSendTo == 2) {
-#ifdef WIN32
-            executable = Glib::build_filename (options.psDir, "Photoshop.exe");
-
-            if ( safe_file_test (executable, (Glib::FILE_TEST_EXISTS | Glib::FILE_TEST_IS_EXECUTABLE)) ) {
-                cmdLine = Glib::ustring ("\"") + executable + Glib::ustring ("\" \"") + filename + Glib::ustring ("\"");
-                success = safe_spawn_command_line_async (cmdLine);
-            }
-
-#else
-#ifdef __APPLE__
-            cmdLine = Glib::ustring ("open -a \'") + Glib::build_filename (options.psDir, "Photoshop.app\' ")  + Glib::ustring ("\'") + filename + Glib::ustring ("\'");
-#else
-            cmdLine = Glib::ustring ("\"") + Glib::build_filename (options.psDir, "Photoshop.exe") + Glib::ustring ("\" \"") + filename + Glib::ustring ("\"");
-#endif
-            success = safe_spawn_command_line_async (cmdLine);
-            std::cout << cmdLine << std::endl;
-#endif
+            success = ExtProgStore::openInPhotoshop (filename);
         } else if (options.editorToSendTo == 3) {
-#ifdef WIN32
-
-            if ( safe_file_test (options.customEditorProg, (Glib::FILE_TEST_EXISTS | Glib::FILE_TEST_IS_EXECUTABLE)) ) {
-                cmdLine = Glib::ustring ("\"") + options.customEditorProg + Glib::ustring ("\" \"") + filename + Glib::ustring ("\"");
-                success = safe_spawn_command_line_async (cmdLine);
-            }
-
-#else
-#ifdef __APPLE__
-            cmdLine = options.customEditorProg + Glib::ustring (" \"") + filename + Glib::ustring ("\"");
-#else
-            cmdLine = Glib::ustring ("\"") + options.customEditorProg + Glib::ustring ("\" \"") + filename + Glib::ustring ("\"");
-#endif
-            success = safe_spawn_command_line_async (cmdLine);
-            std::cout << cmdLine << std::endl;
-#endif
+            success = ExtProgStore::openInCustomEditor (filename);
         }
 
         if (!success) {
-            Gtk::MessageDialog* msgd = new Gtk::MessageDialog (*parent, M ("MAIN_MSG_CANNOTSTARTEDITOR"), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-            msgd->set_secondary_text (M ("MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY"));
-            msgd->set_title (M ("MAIN_BUTTON_SENDTOEDITOR"));
-            msgd->run ();
-            delete msgd;
+            Gtk::MessageDialog msgd (*parent, M("MAIN_MSG_CANNOTSTARTEDITOR"), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+            msgd.set_secondary_text (M("MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY"));
+            msgd.set_title (M("MAIN_BUTTON_SENDTOEDITOR"));
+            msgd.run ();
         }
-
     }
 
     return false;

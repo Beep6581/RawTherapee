@@ -72,6 +72,12 @@ public:
     void selectionChanged ();
     void addPressed ();
     void delPressed ();
+
+public:
+
+    static Glib::ustring userHomeDir ();
+    static Glib::ustring userPicturesDir ();
+
 };
 
 inline void PlacesBrowser::setDirSelector (const PlacesBrowser::DirSelectionSlot& selectDir)

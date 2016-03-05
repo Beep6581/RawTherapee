@@ -21,7 +21,6 @@
 #include "profilestore.h"
 #include "clipboard.h"
 #include "multilangmgr.h"
-#include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
 using namespace rtengine;
@@ -272,24 +271,14 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
     dialog.set_current_name (lastFilename);
 
     //Add the user's default (or global if multiuser=false) profile path to the Shortcut list
-#ifdef WIN32
-
-    // Dirty workaround, waiting for a clean solution by using exceptions!
-    if (!safe_is_shortcut_dir(options.getPreferredProfilePath()))
-#endif
-        try {
-            dialog.add_shortcut_folder(options.getPreferredProfilePath());
-        } catch (Glib::Error &err) {}
+    try {
+        dialog.add_shortcut_folder(options.getPreferredProfilePath());
+    } catch (Glib::Error&) {}
 
     //Add the image's path to the Shortcut list
-#ifdef WIN32
-
-    // Dirty workaround, waiting for a clean solution by using exceptions!
-    if (!safe_is_shortcut_dir(imagePath))
-#endif
-        try {
-            dialog.add_shortcut_folder(imagePath);
-        } catch (Glib::Error &err) {}
+    try {
+        dialog.add_shortcut_folder(imagePath);
+    } catch (Glib::Error&) {}
 
     //Add response buttons the the dialog:
     dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
@@ -447,24 +436,14 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
     bindCurrentFolder (dialog, options.loadSaveProfilePath);
 
     //Add the user's default (or global if multiuser=false) profile path to the Shortcut list
-#ifdef WIN32
-
-    // Dirty workaround, waiting for a clean solution by using exceptions!
-    if (!safe_is_shortcut_dir(options.getPreferredProfilePath()))
-#endif
-        try {
-            dialog.add_shortcut_folder(options.getPreferredProfilePath());
-        } catch (Glib::Error &err) {}
+    try {
+        dialog.add_shortcut_folder(options.getPreferredProfilePath());
+    } catch (Glib::Error&) {}
 
     //Add the image's path to the Shortcut list
-#ifdef WIN32
-
-    // Dirty workaround, waiting for a clean solution by using exceptions!
-    if (!safe_is_shortcut_dir(imagePath))
-#endif
-        try {
-            dialog.add_shortcut_folder(imagePath);
-        } catch (Glib::Error &err) {}
+    try {
+        dialog.add_shortcut_folder(imagePath);
+    } catch (Glib::Error&) {}
 
     //Add response buttons the the dialog:
     dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);

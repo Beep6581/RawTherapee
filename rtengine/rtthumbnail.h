@@ -42,9 +42,6 @@ class Thumbnail
 
     void transformPixel (int x, int y, int tran, int& tx, int& ty);
 
-    static unsigned short *igammatab;
-    static unsigned char *gammatab;
-
     ImageIO* thumbImg;
     double camwbRed;
     double camwbGreen;
@@ -72,8 +69,6 @@ public:
     ~Thumbnail ();
     Thumbnail ();
 
-    static void initGamma ();
-    static void cleanupGamma ();
     void init ();
 
     IImage8* processImage   (const procparams::ProcParams& pparams, int rheight, TypeInterpolation interp, std::string camName,

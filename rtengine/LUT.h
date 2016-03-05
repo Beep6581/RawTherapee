@@ -52,6 +52,8 @@
  *          LUTf stands for LUT<float>
  *          LUTi stands for LUT<int>
  *          LUTu stands for LUT<unsigned int>
+ *          LUTd stands for LUT<double>
+ *          LUTuc stands for LUT<unsigned char>
  */
 
 #ifndef LUT_H_
@@ -65,6 +67,7 @@
 #define LUTi LUT<int>
 #define LUTu LUT<unsigned int>
 #define LUTd LUT<double>
+#define LUTuc LUT<unsigned char>
 
 #include <cstring>
 #ifndef NDEBUG

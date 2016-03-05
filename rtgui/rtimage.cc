@@ -19,160 +19,189 @@
  */
 
 #include "rtimage.h"
-#include "../rtengine/safegtk.h"
 
-extern Glib::ustring argv0;
-extern Options options;
+#include <iostream>
 
-std::vector<Glib::ustring> imagesPaths;
-std::map<Glib::ustring, Glib::RefPtr<Gdk::Pixbuf> > pixBufMap; // List of image buffers in order to live update them on theme switch and to avoid a lot of file accesses
+#include "options.h"
 
-/*
- * RTImage is a derived class of Gtk::Image, in order to handle theme related iconsets
- */
-RTImage::RTImage(Glib::ustring fileName, Glib::ustring rtlFileName) : Gtk::Image()
+namespace
 {
-    Glib::ustring mapKey;
 
-    if (rtlFileName.length()) {
-        if (get_direction() == Gtk::TEXT_DIR_RTL) {
-            mapKey = rtlFileName;
-        } else {
-            mapKey = fileName;
+std::vector<Glib::ustring> imagePaths;
+std::map<Glib::ustring, Glib::RefPtr<Gdk::Pixbuf>> pixbufCache;
+
+bool loadIconSet(const Glib::ustring& iconSet)
+{
+    try {
+
+        Glib::KeyFile keyFile;
+        keyFile.load_from_file (iconSet);
+
+        auto iconSetDir = keyFile.get_string ("General", "Iconset");
+
+        if (!iconSetDir.empty ()) {
+            imagePaths.push_back (Glib::build_filename (argv0, "images", iconSetDir, "actions"));
+            imagePaths.push_back (Glib::build_filename (argv0, "images", iconSetDir));
+            imagePaths.push_back (Glib::build_filename (argv0, "images", iconSetDir, "devices"));
+            imagePaths.push_back (Glib::build_filename (argv0, "images", iconSetDir, "places"));
         }
+
+        iconSetDir = keyFile.get_string ("General", "FallbackIconset");
+
+        if (!iconSetDir.empty ()) {
+            imagePaths.push_back (Glib::build_filename (argv0, "images", iconSetDir, "actions"));
+            imagePaths.push_back (Glib::build_filename (argv0, "images", iconSetDir));
+            imagePaths.push_back (Glib::build_filename (argv0, "images", iconSetDir, "devices"));
+            imagePaths.push_back (Glib::build_filename (argv0, "images", iconSetDir, "places"));
+        }
+
+        return true;
+
+    } catch (const Glib::Exception& exception) {
+
+        if (options.rtSettings.verbose) {
+            std::cerr << "Failed to load icon set \"" << iconSet << "\": " << exception.what() << std::endl;
+        }
+
+        return false;
+
+    }
+}
+
+}
+
+RTImage::RTImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName) : Gtk::Image()
+{
+    Glib::ustring imageName;
+
+    if (!rtlFileName.empty () && get_direction () == Gtk::TEXT_DIR_RTL) {
+        imageName = rtlFileName;
     } else {
-        mapKey = fileName;
+        imageName = fileName;
     }
 
-    std::map<Glib::ustring, Glib::RefPtr<Gdk::Pixbuf> >::iterator it;
-    it = pixBufMap.find(mapKey);
+    changeImage (imageName);
+}
 
-    if (it != pixBufMap.end()) {
-        set(it->second);
-    } else {
-        Glib::RefPtr<Gdk::Pixbuf> tempPixPuf = Gdk::Pixbuf::create_from_file(findIconAbsolutePath(mapKey));
-        pixBufMap.insert(std::pair<Glib::ustring, Glib::RefPtr<Gdk::Pixbuf> >(mapKey, tempPixPuf));
-        set(tempPixPuf);
+void RTImage::changeImage (const Glib::ustring& imageName)
+{
+    clear ();
+
+    auto iterator = pixbufCache.find (imageName);
+
+    if (iterator == pixbufCache.end ()) {
+        const auto imagePath = findIconAbsolutePath (imageName);
+        const auto pixbuf = Gdk::Pixbuf::create_from_file (imagePath);
+
+        iterator = pixbufCache.emplace (imageName, pixbuf).first;
     }
+
+    set(iterator->second);
 }
 
 void RTImage::updateImages()
 {
-    std::map<Glib::ustring, Glib::RefPtr<Gdk::Pixbuf> >::iterator it;
-
-    for (it = pixBufMap.begin(); it != pixBufMap.end(); ++it) {
-        Glib::ustring fullPath = findIconAbsolutePath(it->first);
-        it->second = Gdk::Pixbuf::create_from_file(fullPath);
+    for (auto& entry : pixbufCache) {
+        const auto imagePath = findIconAbsolutePath (entry.first);
+        entry.second = Gdk::Pixbuf::create_from_file (imagePath);
     }
 }
 
-// DONE (was TODO: Maybe this could be optimized: in order to avoid looking up for an icon file in the filesystem on each popupmenu selection, maybe we could find a way to copy the image data from another RTImage)
-void RTImage::changeImage(Glib::ustring &newImage)
+Glib::ustring RTImage::findIconAbsolutePath (const Glib::ustring& iconName)
 {
-    clear();
-    std::map<Glib::ustring, Glib::RefPtr<Gdk::Pixbuf> >::iterator it;
-    it = pixBufMap.find(newImage);
-
-    if (it != pixBufMap.end()) {
-        set(it->second);
-    } else {
-        Glib::ustring fullPath = findIconAbsolutePath(newImage);
-        Glib::RefPtr<Gdk::Pixbuf> tempPixPuf = Gdk::Pixbuf::create_from_file(fullPath);
-        pixBufMap.insert(std::pair<Glib::ustring, Glib::RefPtr<Gdk::Pixbuf> >(newImage, tempPixPuf));
-        set(tempPixPuf);
-    }
-}
-
-Glib::ustring RTImage::findIconAbsolutePath(const Glib::ustring &iconFName)
-{
-    Glib::ustring path;
-
-    for (unsigned int i = 0; i < imagesPaths.size(); i++) {
-        path = Glib::build_filename(imagesPaths[i], iconFName);
-
-        if (safe_file_test(path, Glib::FILE_TEST_EXISTS)) {
-            return path;
-        }
-    }
-
-    printf("\"%s\" not found!\n", iconFName.c_str());
-    return "";
-}
-
-void RTImage::setPaths(Options &opt)
-{
-    imagesPaths.clear();
-
-    /*
-     * Forcing the Dark theme, so reading the .iconset file is useless for now
-     *
-     *
-    Glib::ustring configFilename;
-    rtengine::SafeKeyFile keyFile;
-    bool hasKeyFile = true;
-
-    // system theme will use the theme set in system.iconset
-    if (opt.useSystemTheme) {
-        configFilename = Glib::build_filename(argv0, Glib::build_filename("themes", "system.iconset"));
-    }
-    // Gtk theme will use the theme set in it's *.iconset fiel, if it exists
-    else {
-        configFilename = Glib::build_filename(argv0, Glib::build_filename("themes", Glib::ustring::format(opt.theme, ".iconset")));
-    }
-
     try {
-        if (!safe_file_test(configFilename, Glib::FILE_TEST_EXISTS) || !keyFile.load_from_file (configFilename)) {
-            // ...otherwise fallback to the iconset set in default.iconset
-            configFilename = Glib::build_filename(argv0, Glib::build_filename("themes", "default.iconset"));
 
-            if (!keyFile.load_from_file (configFilename)) {
-                hasKeyFile = false;
+        for (const auto& imagePath : imagePaths) {
+            const auto iconPath = Glib::build_filename(imagePath, iconName);
+
+            if (Glib::file_test(iconPath, Glib::FILE_TEST_IS_REGULAR)) {
+                return iconPath;
             }
         }
-    } catch (Glib::Error &err) {
-        if (options.rtSettings.verbose) {
-            printf("RTImage::setPaths / Error code %d while reading values from \"%s\":\n%s\n", err.code(), configFilename.c_str(), err.what().c_str());
+
+    } catch(const Glib::Exception&) {}
+
+    if (options.rtSettings.verbose) {
+        std::cerr << "Icon \"" << iconName << "\" could not be found!" << std::endl;
+    }
+
+    return Glib::ustring();
+}
+
+void RTImage::setPaths (const Options& options)
+{
+    // TODO: Forcing the Dark theme, so reading the icon set files is useless for now...
+
+    /*Glib::ustring iconSet;
+
+    // Either use the system icon set or the one specified in the options.
+    if (options.useSystemTheme) {
+        iconSet = Glib::build_filename (argv0, "themes", "system.iconset");
+    } else {
+        iconSet = Glib::build_filename (argv0, "themes", options.theme + ".iconset");
+    }
+
+    imagePaths.clear ();
+
+    if (!loadIconSet (iconSet)) {
+        // If the preferred icon set is unavailable, fall back to the default icon set.
+        loadIconSet (Glib::build_filename (argv0, "themes", "Default.iconset"));
+    }*/
+
+    imagePaths.clear ();
+
+    imagePaths.push_back (Glib::build_filename(argv0, "images", "Dark"));
+    imagePaths.push_back (Glib::build_filename(argv0, "images", "Dark", "actions"));
+    imagePaths.push_back (Glib::build_filename(argv0, "images", "Dark", "devices"));
+    imagePaths.push_back (Glib::build_filename(argv0, "images", "Dark", "places"));
+
+    // The images folder is the second fallback solution.
+    imagePaths.push_back (Glib::build_filename(argv0, "images"));
+}
+
+Glib::RefPtr<Gdk::Pixbuf> RTImage::createFromFile (const Glib::ustring& fileName)
+{
+    Glib::RefPtr<Gdk::Pixbuf> pixbuf;
+
+    try {
+
+        const auto filePath = findIconAbsolutePath (fileName);
+
+        if (!filePath.empty ()) {
+            pixbuf = Gdk::Pixbuf::create_from_file (filePath);
         }
-    } catch (...) {
+
+    } catch (const Glib::Exception& exception) {
+
         if (options.rtSettings.verbose) {
-            printf("RTImage::setPaths / Unknown exception while trying to load \"%s\"!\n", configFilename.c_str());
+            std::cerr << "Failed to load image \"" << fileName << "\": " << exception.what() << std::endl;
+        }
+
+    }
+
+    return pixbuf;
+}
+
+Cairo::RefPtr<Cairo::ImageSurface> RTImage::createFromPng (const Glib::ustring& fileName)
+{
+    Cairo::RefPtr<Cairo::ImageSurface> surface;
+
+    try {
+
+        const auto filePath = findIconAbsolutePath (fileName);
+
+        if (!filePath.empty()) {
+            surface = Cairo::ImageSurface::create_from_png (Glib::locale_from_utf8 (filePath));
+        }
+
+    } catch (const Glib::Exception& exception) {
+
+        if (options.rtSettings.verbose) {
+            std::cerr << "Failed to load PNG \"" << fileName << "\": " << exception.what() << std::endl;
         }
     }
 
-    if (hasKeyFile && keyFile.has_group ("General")) {
-        Glib::ustring iSet;
-
-        if (keyFile.has_key ("General", "Iconset")) {
-            iSet = keyFile.get_string ("General", "Iconset");
-        }
-
-        if (iSet.length()) {
-            imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "actions"))));
-            imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", iSet)));
-            imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "devices"))));
-            imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "places"))));
-        }
-
-        iSet.clear();
-
-        if (keyFile.has_key ("General", "FallbackIconset")) {
-            iSet = keyFile.get_string ("General", "FallbackIconset");
-        }
-
-        if (iSet.length()) {
-            imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "actions"))));
-            imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", iSet)));
-            imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "devices"))));
-            imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "places"))));
-        }
-    }*/
-
-    imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename("Dark", "actions"))));
-    imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", "Dark")));
-    imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename("Dark", "devices"))));
-    imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename("Dark", "places"))));
-
-    // The images/ folder is the second fallback solution
-    imagesPaths.push_back (Glib::build_filename(argv0, "images"));
+    return surface;
 }
+
 

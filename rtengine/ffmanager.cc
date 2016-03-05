@@ -19,7 +19,6 @@
 #include "ffmanager.h"
 #include "../rtgui/options.h"
 #include <giomm.h>
-#include "safegtk.h"
 #include "rawimage.h"
 #include <sstream>
 #include <cstdio>
@@ -209,13 +208,21 @@ void ffInfo::updateRawImage()
 void FFManager::init( Glib::ustring pathname )
 {
     std::vector<Glib::ustring> names;
-    Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (pathname);
 
-    if( dir && !dir->query_exists()) {
+    auto dir = Gio::File::create_for_path (pathname);
+    if (!dir || !dir->query_exists()) {
         return;
     }
 
-    safe_build_file_list (dir, names, pathname);
+    try {
+
+        auto enumerator = dir->enumerate_children ("standard::name");
+
+        while (auto file = enumerator->next_file ()) {
+            names.emplace_back (Glib::build_filename (pathname, file->get_name ()));
+        }
+
+    } catch (Glib::Exception&) {}
 
     ffList.clear();
 
@@ -253,65 +260,85 @@ void FFManager::init( Glib::ustring pathname )
     return;
 }
 
-ffInfo *FFManager::addFileInfo(const Glib::ustring &filename, bool pool )
+ffInfo* FFManager::addFileInfo (const Glib::ustring& filename, bool pool)
 {
-    Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(filename);
+    auto file = Gio::File::create_for_path (filename);
 
     if (!file ) {
         return 0;
     }
 
-    if( !file->query_exists()) {
+    if (!file->query_exists ()) {
         return 0;
     }
 
-    Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
+    try {
 
-    if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
-        size_t lastdot = info->get_name().find_last_of ('.');
+        auto info = file->query_info ();
 
-        if (options.is_extention_enabled(lastdot != Glib::ustring::npos ? info->get_name().substr (lastdot + 1) : "")) {
-            RawImage ri(filename);
-            int res = ri.loadRaw(false); // Read informations about shot
+        if (!info || info->get_file_type () == Gio::FILE_TYPE_DIRECTORY) {
+            return 0;
+        }
 
-            if( !res ) {
-                ffList_t::iterator iter;
+        if (!options.fbShowHidden && info->is_hidden ()) {
+            return 0;
+        }
 
-                if(!pool) {
-                    ffInfo n(filename, "", "", "", 0, 0, 0);
-                    iter = ffList.insert(std::pair< std::string, ffInfo>( "", n ) );
-                    return &(iter->second);
-                }
+        Glib::ustring ext;
 
-                RawMetaDataLocation rml;
-                rml.exifBase = ri.get_exifBase();
-                rml.ciffBase = ri.get_ciffBase();
-                rml.ciffLength = ri.get_ciffLen();
-                ImageData idata(filename, &rml);
-                /* Files are added in the map, divided by same maker/model,lens and aperture*/
-                std::string key( ffInfo::key(idata.getMake(), idata.getModel(), idata.getLens(), idata.getFocalLen(), idata.getFNumber()) );
-                iter = ffList.find( key );
+        auto lastdot = info->get_name ().find_last_of ('.');
+        if (lastdot != Glib::ustring::npos) {
+            ext = info->get_name ().substr (lastdot + 1);
+        }
 
-                if( iter == ffList.end() ) {
-                    ffInfo n(filename, idata.getMake(), idata.getModel(), idata.getLens(), idata.getFocalLen(), idata.getFNumber(), idata.getDateTimeAsTS());
-                    iter = ffList.insert(std::pair< std::string, ffInfo>( key, n ) );
-                } else {
-                    while( iter != ffList.end() && iter->second.key() == key && ABS(iter->second.timestamp - ri.get_timestamp()) > 60 * 60 * 6 ) { // 6 hour difference
-                        iter++;
-                    }
+        if (!options.is_extention_enabled (ext)) {
+            return 0;
+        }
 
-                    if( iter != ffList.end() ) {
-                        iter->second.pathNames.push_back( filename );
-                    } else {
-                        ffInfo n(filename, idata.getMake(), idata.getModel(), idata.getLens(), idata.getFocalLen(), idata.getFNumber(), idata.getDateTimeAsTS());
-                        iter = ffList.insert(std::pair< std::string, ffInfo>( key, n ) );
-                    }
-                }
 
-                return &(iter->second);
+        RawImage ri (filename);
+        int res = ri.loadRaw (false); // Read informations about shot
+
+        if (res != 0) {
+            return 0;
+        }
+
+        ffList_t::iterator iter;
+
+        if(!pool) {
+            ffInfo n(filename, "", "", "", 0, 0, 0);
+            iter = ffList.insert(std::pair< std::string, ffInfo>( "", n ) );
+            return &(iter->second);
+        }
+
+        RawMetaDataLocation rml;
+        rml.exifBase = ri.get_exifBase();
+        rml.ciffBase = ri.get_ciffBase();
+        rml.ciffLength = ri.get_ciffLen();
+        ImageData idata(filename, &rml);
+        /* Files are added in the map, divided by same maker/model,lens and aperture*/
+        std::string key( ffInfo::key(idata.getMake(), idata.getModel(), idata.getLens(), idata.getFocalLen(), idata.getFNumber()) );
+        iter = ffList.find( key );
+
+        if( iter == ffList.end() ) {
+            ffInfo n(filename, idata.getMake(), idata.getModel(), idata.getLens(), idata.getFocalLen(), idata.getFNumber(), idata.getDateTimeAsTS());
+            iter = ffList.insert(std::pair< std::string, ffInfo>( key, n ) );
+        } else {
+            while( iter != ffList.end() && iter->second.key() == key && ABS(iter->second.timestamp - ri.get_timestamp()) > 60 * 60 * 6 ) { // 6 hour difference
+                iter++;
+            }
+
+            if( iter != ffList.end() ) {
+                iter->second.pathNames.push_back( filename );
+            } else {
+                ffInfo n(filename, idata.getMake(), idata.getModel(), idata.getLens(), idata.getFocalLen(), idata.getFNumber(), idata.getDateTimeAsTS());
+                iter = ffList.insert(std::pair< std::string, ffInfo>( key, n ) );
             }
         }
-    }
+
+        return &(iter->second);
+
+    } catch (Gio::Error&) {}
 
     return 0;
 }

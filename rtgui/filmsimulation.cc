@@ -4,7 +4,6 @@
 
 #include "options.h"
 #include "../rtengine/clutstore.h"
-#include "../rtengine/safegtk.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

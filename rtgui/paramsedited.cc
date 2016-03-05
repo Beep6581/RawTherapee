@@ -375,6 +375,7 @@ void ParamsEdited::set (bool v)
     raw.xtranssensor.exBlackGreen = v;
     raw.xtranssensor.exBlackBlue = v;
     raw.caCorrection = v;
+    raw.caAutoStrength  = v;
     raw.caBlue  = v;
     raw.caRed   = v;
     raw.hotPixelFilter = v;
@@ -487,6 +488,8 @@ void ParamsEdited::set (bool v)
 
     dirpyrequalizer.enabled = v;
     dirpyrequalizer.gamutlab = v;
+    dirpyrequalizer.cbdlMethod = v;
+
 
     for(int i = 0; i < 6; i++) {
         dirpyrequalizer.mult[i] = v;
@@ -865,6 +868,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.xtranssensor.exBlackGreen = raw.xtranssensor.exBlackGreen && p.raw.xtranssensor.blackgreen == other.raw.xtranssensor.blackgreen;
         raw.xtranssensor.exBlackBlue = raw.xtranssensor.exBlackBlue && p.raw.xtranssensor.blackblue == other.raw.xtranssensor.blackblue;
         raw.caCorrection = raw.caCorrection && p.raw.ca_autocorrect == other.raw.ca_autocorrect;
+        raw.caAutoStrength = raw.caAutoStrength && p.raw.caautostrength == other.raw.caautostrength;
         raw.caRed = raw.caRed && p.raw.cared == other.raw.cared;
         raw.caBlue = raw.caBlue && p.raw.cablue == other.raw.cablue;
         raw.hotPixelFilter = raw.hotPixelFilter && p.raw.hotPixelFilter == other.raw.hotPixelFilter;
@@ -973,6 +977,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
 
         dirpyrequalizer.enabled = dirpyrequalizer.enabled && p.dirpyrequalizer.enabled == other.dirpyrequalizer.enabled;
         dirpyrequalizer.gamutlab = dirpyrequalizer.gamutlab && p.dirpyrequalizer.gamutlab == other.dirpyrequalizer.gamutlab;
+        dirpyrequalizer.cbdlMethod = dirpyrequalizer.cbdlMethod && p.dirpyrequalizer.cbdlMethod == other.dirpyrequalizer.cbdlMethod;
 
         for(int i = 0; i < 6; i++) {
             dirpyrequalizer.mult[i] = dirpyrequalizer.mult[i] && p.dirpyrequalizer.mult[i] == other.dirpyrequalizer.mult[i];
@@ -2290,6 +2295,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.ca_autocorrect  = mods.raw.ca_autocorrect;
     }
 
+    if (raw.caAutoStrength) {
+        toEdit.raw.caautostrength           = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.caautostrength + mods.raw.caautostrength : mods.raw.caautostrength;
+    }
+
     if (raw.caRed) {
         toEdit.raw.cared           = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.cared + mods.raw.cared : mods.raw.cared;
     }
@@ -2700,6 +2709,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.dirpyrequalizer.gamutlab   = mods.dirpyrequalizer.gamutlab;
     }
 
+    if (dirpyrequalizer.cbdlMethod) {
+        toEdit.dirpyrequalizer.cbdlMethod   = mods.dirpyrequalizer.cbdlMethod;
+    }
+
     for(int i = 0; i < 6; i++) {
         if(dirpyrequalizer.mult[i]) {
             toEdit.dirpyrequalizer.mult[i]    = dontforceSet && options.baBehav[ADDSET_DIRPYREQ] ? toEdit.dirpyrequalizer.mult[i] + mods.dirpyrequalizer.mult[i] : mods.dirpyrequalizer.mult[i];
@@ -2770,7 +2783,7 @@ bool RAWParamsEdited::XTransSensor::isUnchanged() const
 
 bool RAWParamsEdited::isUnchanged() const
 {
-    return  bayersensor.isUnchanged() && xtranssensor.isUnchanged() && caCorrection && caRed && caBlue && hotPixelFilter && deadPixelFilter && hotDeadPixelThresh && darkFrame
+    return  bayersensor.isUnchanged() && xtranssensor.isUnchanged() && caCorrection && caAutoStrength && caRed && caBlue && hotPixelFilter && deadPixelFilter && hotDeadPixelThresh && darkFrame
             && dfAuto && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType && exPos && exPreser && ff_AutoClipControl && ff_clipControl;
 }
 

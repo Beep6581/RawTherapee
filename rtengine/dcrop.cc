@@ -705,6 +705,17 @@ void Crop::update (int todo)
         transCrop = NULL;
     }
 
+    if ((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
+
+        const int W = baseCrop->getWidth();
+        const int H = baseCrop->getHeight();
+        LabImage labcbdl(W, H);
+        parent->ipf.rgb2lab(*baseCrop, labcbdl, params.icm.working);
+        parent->ipf.dirpyrequalizer (&labcbdl, skip);
+        parent->ipf.lab2rgb(labcbdl, *baseCrop, params.icm.working);
+
+    }
+
     // blurmap for shadow & highlights
     if ((todo & M_BLURMAP) && params.sh.enabled) {
         double radius = sqrt (double(SKIPS(parent->fw, skip) * SKIPS(parent->fw, skip) + SKIPS(parent->fh, skip) * SKIPS(parent->fh, skip))) / 2.0;
@@ -724,6 +735,7 @@ void Crop::update (int todo)
             cshmap->forceStat (parent->shmap->max_f, parent->shmap->min_f, parent->shmap->avg);
         }
     }
+
 
     // shadows & highlights & tone curve & convert to cielab
     /*int xref,yref;
@@ -831,11 +843,12 @@ void Crop::update (int todo)
         //   if (skip==1) {
         WaveletParams WaveParams = params.wavelet;
 
-        if((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {
-            parent->ipf.dirpyrequalizer (labnCrop, skip);
-            //  parent->ipf.Lanczoslab (labnCrop,labnCrop , 1.f/skip);
+        if(params.dirpyrequalizer.cbdlMethod == "aft") {
+            if(((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled))) {
+                parent->ipf.dirpyrequalizer (labnCrop, skip);
+                //  parent->ipf.Lanczoslab (labnCrop,labnCrop , 1.f/skip);
+            }
         }
-
 
         int kall = 0;
         int minwin = min(labnCrop->W, labnCrop->H);

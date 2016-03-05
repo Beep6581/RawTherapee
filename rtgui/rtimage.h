@@ -19,17 +19,26 @@
 #ifndef _RTIMAGE_
 #define _RTIMAGE_
 
-#include <gtkmm.h>
-#include "options.h"
+#include <gtkmm/image.h>
 
+class Options;
+
+/**
+ * @brief A derived class of Gtk::Image in order to handle theme-related icon sets.
+ */
 class RTImage : public Gtk::Image
 {
 public:
-    RTImage(Glib::ustring fileName, Glib::ustring rtlFileName = "");
-    static void setPaths(Options &opt);
-    static void updateImages();
-    void changeImage(Glib::ustring &newImage);
-    static Glib::ustring findIconAbsolutePath(const Glib::ustring &iconFName);
+    RTImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName = Glib::ustring());
+
+    void changeImage (const Glib::ustring& imageName);
+    static void updateImages ();
+
+    static Glib::ustring findIconAbsolutePath (const Glib::ustring& iconName);
+    static void setPaths (const Options& options);
+
+    static Glib::RefPtr<Gdk::Pixbuf> createFromFile (const Glib::ustring& fileName);
+    static Cairo::RefPtr<Cairo::ImageSurface> createFromPng (const Glib::ustring& fileName);
 };
 
 #endif

@@ -57,7 +57,6 @@ using namespace procparams;
 class ImProcFunctions
 {
 
-    static LUTf gamma2curve;
 
     cmsHTRANSFORM monitorTransform;
     cmsHTRANSFORM lab2outputTransform;
@@ -201,7 +200,6 @@ class ImProcFunctions
 
 public:
 
-    static LUTf cachef;
     double lumimul[3];
 //      float chau;
 //      float chred;
@@ -221,8 +219,6 @@ public:
 //      float maxblueresid;//used by noise_residual
 //      int comptlevel;
 
-    static void initCache ();
-    static void cleanupCache ();
 
     ImProcFunctions       (const ProcParams* iparams, bool imultiThread = true)
         : monitorTransform(NULL), lab2outputTransform(NULL), output2monitorTransform(NULL), params(iparams), scale(1), multiThread(imultiThread) {}
@@ -285,6 +281,7 @@ public:
 
     void dirpyrdenoise    (LabImage* src);//Emil's pyramid denoise
     void dirpyrequalizer  (LabImage* lab, int scale);//Emil's wavelet
+
 
     void EPDToneMapResid(float * WavCoeffs_L0, unsigned int Iterates,  int skip, struct cont_params& cp, int W_L, int H_L, float max0, float min0);
     float *CompressDR(float *Source, int skip, struct cont_params &cp, int W_L, int H_L, float Compression, float DetailBoost, float max0, float min0, float ave, float ah, float bh, float al, float bl, float factorx, float *Compressed);
@@ -383,6 +380,8 @@ public:
     static void getAutoExp       (LUTu & histogram, int histcompr, double defgain, double clip, double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh);
     static double getAutoDistor  (const Glib::ustring& fname, int thumb_size);
     double getTransformAutoFill (int oW, int oH, const LCPMapper *pLCPMap = NULL);
+    void rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::ustring &workingSpace);
+    void lab2rgb(const LabImage &src, Imagefloat &dst, const Glib::ustring &workingSpace);
 };
 }
 #endif

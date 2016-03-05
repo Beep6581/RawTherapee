@@ -58,7 +58,7 @@ public:
     int             getSaveMethodNum   ();
 
     void  setInitialFileName (Glib::ustring iname);
-    void  setImagePath (Glib::ustring ipath);
+    void  setImagePath (const Glib::ustring& imagePath);
 
     void okPressed ();
     void cancelPressed ();

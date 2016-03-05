@@ -117,9 +117,9 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
 
                 /* copy RGB */
                 //int R1=((int)gamma2curve[(R)])
-                data[ix++] = ((int)gamma2curve[CLIP(R)]) >> 8;
-                data[ix++] = ((int)gamma2curve[CLIP(G)]) >> 8;
-                data[ix++] = ((int)gamma2curve[CLIP(B)]) >> 8;
+                data[ix++] = ((int)Color::gamma2curve[CLIP(R)]) >> 8;
+                data[ix++] = ((int)Color::gamma2curve[CLIP(G)]) >> 8;
+                data[ix++] = ((int)Color::gamma2curve[CLIP(B)]) >> 8;
             }
         }
     }
@@ -229,9 +229,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 
                 Color::xyz2rgb(x_, y_, z_, R, G, B, rgb_xyz);
 
-                image->data[ix++] = (int)gamma2curve[CLIP(R)] >> 8;
-                image->data[ix++] = (int)gamma2curve[CLIP(G)] >> 8;
-                image->data[ix++] = (int)gamma2curve[CLIP(B)] >> 8;
+                image->data[ix++] = (int)Color::gamma2curve[CLIP(R)] >> 8;
+                image->data[ix++] = (int)Color::gamma2curve[CLIP(G)] >> 8;
+                image->data[ix++] = (int)Color::gamma2curve[CLIP(B)] >> 8;
             }
         }
     }
@@ -331,9 +331,9 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 
                 Color::xyz2srgb(x_, y_, z_, R, G, B);
 
-                image->r(i - cy, j - cx) = (int)gamma2curve[CLIP(R)];
-                image->g(i - cy, j - cx) = (int)gamma2curve[CLIP(G)];
-                image->b(i - cy, j - cx) = (int)gamma2curve[CLIP(B)];
+                image->r(i - cy, j - cx) = (int)Color::gamma2curve[CLIP(R)];
+                image->g(i - cy, j - cx) = (int)Color::gamma2curve[CLIP(G)];
+                image->b(i - cy, j - cx) = (int)Color::gamma2curve[CLIP(B)];
             }
         }
     }
@@ -601,9 +601,9 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 
                 Color::xyz2srgb(x_, y_, z_, R, G, B);
 
-                image->r(i - cy, j - cx) = (int)gamma2curve[CLIP(R)];
-                image->g(i - cy, j - cx) = (int)gamma2curve[CLIP(G)];
-                image->b(i - cy, j - cx) = (int)gamma2curve[CLIP(B)];
+                image->r(i - cy, j - cx) = (int)Color::gamma2curve[CLIP(R)];
+                image->g(i - cy, j - cx) = (int)Color::gamma2curve[CLIP(G)];
+                image->b(i - cy, j - cx) = (int)Color::gamma2curve[CLIP(B)];
             }
         }
     }

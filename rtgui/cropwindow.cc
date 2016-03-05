@@ -16,18 +16,20 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "cropwindow.h"
+
 #include <iomanip>
 
-#include "cropwindow.h"
-#include "options.h"
-#include "guiutils.h"
-#include "threadutils.h"
 #include "../rtengine/mytime.h"
-#include "imagearea.h"
-#include "cursormanager.h"
-#include "../rtengine/safegtk.h"
 #include "../rtengine/rt_math.h"
 #include "../rtengine/dcrop.h"
+
+#include "guiutils.h"
+#include "threadutils.h"
+#include "rtimage.h"
+#include "cursormanager.h"
+#include "options.h"
+#include "imagearea.h"
 
 using namespace rtengine;
 
@@ -84,11 +86,11 @@ CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_,
 
     titleHeight = ih;
 
-    bZoomOut = new LWButton (safe_create_from_png ("gtk-zoom-out-small.png"), 0, NULL, LWButton::Left, LWButton::Center, "Zoom Out");
-    bZoomIn  = new LWButton (safe_create_from_png ("gtk-zoom-in-small.png"),  1, NULL, LWButton::Left, LWButton::Center, "Zoom In");
-    bZoom100 = new LWButton (safe_create_from_png ("gtk-zoom-100-small.png"), 2, NULL, LWButton::Left, LWButton::Center, "Zoom 100/%");
-    //bZoomFit = new LWButton (safe_create_from_png ("gtk-zoom-fit.png"), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
-    bClose   = new LWButton (safe_create_from_png ("gtk-close-small.png"),    4, NULL, LWButton::Right, LWButton::Center, "Close");
+    bZoomOut = new LWButton (RTImage::createFromPng ("gtk-zoom-out-small.png"), 0, NULL, LWButton::Left, LWButton::Center, "Zoom Out");
+    bZoomIn  = new LWButton (RTImage::createFromPng ("gtk-zoom-in-small.png"),  1, NULL, LWButton::Left, LWButton::Center, "Zoom In");
+    bZoom100 = new LWButton (RTImage::createFromPng ("gtk-zoom-100-small.png"), 2, NULL, LWButton::Left, LWButton::Center, "Zoom 100/%");
+    //bZoomFit = new LWButton (RTImage::createFromPng ("gtk-zoom-fit.png"), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
+    bClose   = new LWButton (RTImage::createFromPng ("gtk-close-small.png"),    4, NULL, LWButton::Right, LWButton::Center, "Close");
 
     buttonSet.add (bZoomOut);
     buttonSet.add (bZoomIn);
