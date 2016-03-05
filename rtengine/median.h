@@ -16,30 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "rt_math.h"
+
 #define SORT3(a1,a2,a3,b1,b2,b3) \
   {  \
-   if ((a1)<(a2)) {   \
-     if ((a2)<(a3)) { \
-       (b1) = (a1); (b2) = (a2); (b3) = (a3); \
-     } \
-     else if ((a1)<(a3)) { \
-       (b1) = (a1); (b2) = (a3); (b3) = (a2); \
-     } \
-     else { \
-       (b1) = (a3); (b2) = (a1); (b3) = (a2); \
-     } \
-   } \
-   else { \
-     if ((a3)<(a2)) { \
-       (b1) = (a3); (b2) = (a2); (b3) = (a1); \
-     } \
-     else if ((a3)<(a1)) { \
-       (b1) = (a2); (b2) = (a3); (b3) = (a1); \
-     } \
-     else { \
-       (b1) = (a2); (b2) = (a1); (b3) = (a3); \
-     } \
-   } \
+  b2 = min(a1,a2);\
+  b1 = min(b2,a3);\
+  b3 = max(a1,a2);\
+  b2 = max(b2, min(b3,a3));\
+  b3 = max(b3,a3);\
  }
 
 #define MERGESORT(a1,a2,a3,b1,b2,b3,c1,c2,c3,c4,c5,c6) \
