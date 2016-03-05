@@ -33,8 +33,6 @@
 #include "stdimagesource.h"
 #include <glib/gstdio.h>
 #include <csetjmp>
-#include "safekeyfile.h"
-#include "safegtk.h"
 #include "rawimage.h"
 #include "jpeg.h"
 #include "../rtgui/ppversion.h"
@@ -719,30 +717,6 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 #undef FISRED
 #undef FISGREEN
 #undef FISBLUE
-
-
-unsigned short *Thumbnail::igammatab = 0;
-unsigned char  *Thumbnail::gammatab  = 0;
-
-void Thumbnail::initGamma ()
-{
-    igammatab = new unsigned short[256];
-    gammatab = new unsigned char[65536];
-
-    for (int i = 0; i < 256; i++) {
-        igammatab[i] = (unsigned short)(255.0 * pow((double)i / 255.0, Color::sRGBGamma));
-    }
-
-    for (int i = 0; i < 65536; i++) {
-        gammatab[i] = (unsigned char)(255.0 * pow((double)i / 65535.0, 1.f / Color::sRGBGamma));
-    }
-}
-
-void Thumbnail::cleanupGamma ()
-{
-    delete [] igammatab;
-    delete [] gammatab;
-}
 
 void Thumbnail::init ()
 {
@@ -1456,9 +1430,9 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
                     image->convertTo(image->r(i, j), r_);
                     image->convertTo(image->g(i, j), g_);
                     image->convertTo(image->b(i, j), b_);
-                    int r = gammatab[min(r_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int g = gammatab[min(g_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int b = gammatab[min(b_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int r = Color::gammatabThumb[min(r_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int g = Color::gammatabThumb[min(g_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int b = Color::gammatabThumb[min(b_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
                     tmpdata[ix++] = (r * 19595 + g * 38469 + b * 7472) >> 16;
                 }
         } else if (thumbImg->getType() == sImage16) {
@@ -1470,9 +1444,9 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
                     image->convertTo(image->r(i, j), r_);
                     image->convertTo(image->g(i, j), g_);
                     image->convertTo(image->b(i, j), b_);
-                    int r = gammatab[min(r_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int g = gammatab[min(g_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int b = gammatab[min(b_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int r = Color::gammatabThumb[min(r_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int g = Color::gammatabThumb[min(g_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int b = Color::gammatabThumb[min(b_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
                     tmpdata[ix++] = (r * 19595 + g * 38469 + b * 7472) >> 16;
                 }
         } else if (thumbImg->getType() == sImagefloat) {
@@ -1484,9 +1458,9 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
                     image->convertTo(image->r(i, j), r_);
                     image->convertTo(image->g(i, j), g_);
                     image->convertTo(image->b(i, j), b_);
-                    int r = gammatab[min(r_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int g = gammatab[min(g_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int b = gammatab[min(b_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int r = Color::gammatabThumb[min(r_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int g = Color::gammatabThumb[min(g_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int b = Color::gammatabThumb[min(b_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
                     tmpdata[ix++] = (r * 19595 + g * 38469 + b * 7472) >> 16;
                 }
         }
@@ -1653,7 +1627,7 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format)
 
     Glib::ustring fullFName = fname + ".rtti";
 
-    FILE* f = safe_g_fopen (fullFName, "wb");
+    FILE* f = g_fopen (fullFName.c_str (), "wb");
 
     if (!f) {
         return false;
@@ -1692,11 +1666,11 @@ bool Thumbnail::readImage (const Glib::ustring& fname)
 
     Glib::ustring fullFName = fname + ".rtti";
 
-    if (!safe_file_test (fullFName, Glib::FILE_TEST_EXISTS)) {
+    if (!Glib::file_test (fullFName, Glib::FILE_TEST_EXISTS)) {
         return false;
     }
 
-    FILE* f = safe_g_fopen (fullFName, "rb");
+    FILE* f = g_fopen (fullFName.c_str (), "rb");
 
     if (!f) {
         return false;
@@ -1738,12 +1712,14 @@ bool Thumbnail::readImage (const Glib::ustring& fname)
 bool Thumbnail::readData  (const Glib::ustring& fname)
 {
     setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
-    SafeKeyFile keyFile;
+    Glib::KeyFile keyFile;
 
     try {
         MyMutex::MyLock thmbLock(thumbMutex);
 
-        if (!keyFile.load_from_file (fname)) {
+        try {
+            keyFile.load_from_file (fname);
+        } catch (Glib::Error&) {
             return false;
         }
 
@@ -1831,16 +1807,38 @@ bool Thumbnail::readData  (const Glib::ustring& fname)
 
 bool Thumbnail::writeData  (const Glib::ustring& fname)
 {
-
-    SafeKeyFile keyFile;
-
     MyMutex::MyLock thmbLock(thumbMutex);
 
+    Glib::ustring keyData;
+
     try {
-        if( safe_file_test(fname, Glib::FILE_TEST_EXISTS) ) {
+
+        Glib::KeyFile keyFile;
+
+        try {
             keyFile.load_from_file (fname);
-        }
-    } catch (Glib::Error &err) {
+        } catch (Glib::Error&) {}
+
+        keyFile.set_double  ("LiveThumbData", "CamWBRed", camwbRed);
+        keyFile.set_double  ("LiveThumbData", "CamWBGreen", camwbGreen);
+        keyFile.set_double  ("LiveThumbData", "CamWBBlue", camwbBlue);
+        keyFile.set_double  ("LiveThumbData", "RedAWBMul", redAWBMul);
+        keyFile.set_double  ("LiveThumbData", "GreenAWBMul", greenAWBMul);
+        keyFile.set_double  ("LiveThumbData", "BlueAWBMul", blueAWBMul);
+        keyFile.set_integer ("LiveThumbData", "AEHistCompression", aeHistCompression);
+        keyFile.set_double  ("LiveThumbData", "RedMultiplier", redMultiplier);
+        keyFile.set_double  ("LiveThumbData", "GreenMultiplier", greenMultiplier);
+        keyFile.set_double  ("LiveThumbData", "BlueMultiplier", blueMultiplier);
+        keyFile.set_double  ("LiveThumbData", "Scale", scale);
+        keyFile.set_double  ("LiveThumbData", "DefaultGain", defGain);
+        keyFile.set_integer ("LiveThumbData", "ScaleForSave", scaleForSave);
+        keyFile.set_boolean ("LiveThumbData", "GammaCorrected", gammaCorrected);
+        Glib::ArrayHandle<double> cm ((double*)colorMatrix, 9, Glib::OWNERSHIP_NONE);
+        keyFile.set_double_list ("LiveThumbData", "ColorMatrix", cm);
+
+        keyData = keyFile.to_data ();
+
+    } catch (Glib::Error& err) {
         if (options.rtSettings.verbose) {
             printf("Thumbnail::writeData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
@@ -1850,24 +1848,11 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
         }
     }
 
-    keyFile.set_double  ("LiveThumbData", "CamWBRed", camwbRed);
-    keyFile.set_double  ("LiveThumbData", "CamWBGreen", camwbGreen);
-    keyFile.set_double  ("LiveThumbData", "CamWBBlue", camwbBlue);
-    keyFile.set_double  ("LiveThumbData", "RedAWBMul", redAWBMul);
-    keyFile.set_double  ("LiveThumbData", "GreenAWBMul", greenAWBMul);
-    keyFile.set_double  ("LiveThumbData", "BlueAWBMul", blueAWBMul);
-    keyFile.set_integer ("LiveThumbData", "AEHistCompression", aeHistCompression);
-    keyFile.set_double  ("LiveThumbData", "RedMultiplier", redMultiplier);
-    keyFile.set_double  ("LiveThumbData", "GreenMultiplier", greenMultiplier);
-    keyFile.set_double  ("LiveThumbData", "BlueMultiplier", blueMultiplier);
-    keyFile.set_double  ("LiveThumbData", "Scale", scale);
-    keyFile.set_double  ("LiveThumbData", "DefaultGain", defGain);
-    keyFile.set_integer ("LiveThumbData", "ScaleForSave", scaleForSave);
-    keyFile.set_boolean ("LiveThumbData", "GammaCorrected", gammaCorrected);
-    Glib::ArrayHandle<double> cm ((double*)colorMatrix, 9, Glib::OWNERSHIP_NONE);
-    keyFile.set_double_list ("LiveThumbData", "ColorMatrix", cm);
+    if (keyData.empty ()) {
+        return false;
+    }
 
-    FILE *f = safe_g_fopen (fname, "wt");
+    FILE *f = g_fopen (fname.c_str (), "wt");
 
     if (!f) {
         if (options.rtSettings.verbose) {
@@ -1876,7 +1861,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
 
         return false;
     } else {
-        fprintf (f, "%s", keyFile.to_data().c_str());
+        fprintf (f, "%s", keyData.c_str ());
         fclose (f);
     }
 
@@ -1886,7 +1871,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
 bool Thumbnail::readEmbProfile  (const Glib::ustring& fname)
 {
 
-    FILE* f = safe_g_fopen (fname, "rb");
+    FILE* f = g_fopen (fname.c_str (), "rb");
 
     if (!f) {
         embProfileData = NULL;
@@ -1910,7 +1895,7 @@ bool Thumbnail::writeEmbProfile (const Glib::ustring& fname)
 {
 
     if (embProfileData) {
-        FILE* f = safe_g_fopen(fname, "wb");
+        FILE* f = g_fopen(fname.c_str (), "wb");
 
         if (f) {
             fwrite (embProfileData, 1, embProfileLength, f);
@@ -1925,7 +1910,7 @@ bool Thumbnail::writeEmbProfile (const Glib::ustring& fname)
 bool Thumbnail::readAEHistogram  (const Glib::ustring& fname)
 {
 
-    FILE* f = safe_g_fopen (fname, "rb");
+    FILE* f = g_fopen (fname.c_str (), "rb");
 
     if (!f) {
         aeHistogram(0);
@@ -1943,7 +1928,7 @@ bool Thumbnail::writeAEHistogram (const Glib::ustring& fname)
 {
 
     if (aeHistogram) {
-        FILE* f = safe_g_fopen (fname, "wb");
+        FILE* f = g_fopen (fname.c_str (), "wb");
 
         if (f) {
             fwrite (&aeHistogram[0], 1, (65536 >> aeHistCompression)*sizeof(aeHistogram[0]), f);

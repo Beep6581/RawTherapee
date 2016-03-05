@@ -19,7 +19,6 @@
 #include "flatfield.h"
 #include "options.h"
 #include "guiutils.h"
-#include "../rtengine/safegtk.h"
 #include <sstream>
 #include "rtimage.h"
 
@@ -140,7 +139,7 @@ void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
         }
     }
 
-    if (safe_file_test (pp->raw.ff_file, Glib::FILE_TEST_EXISTS)) {
+    if (Glib::file_test (pp->raw.ff_file, Glib::FILE_TEST_EXISTS)) {
         flatFieldFile->set_filename (pp->raw.ff_file);
     } else {
         flatFieldFile_Reset();
@@ -392,28 +391,21 @@ void FlatField::flatFieldAutoSelectChanged()
 
 }
 
-void FlatField::setShortcutPath(Glib::ustring path)
+void FlatField::setShortcutPath(const Glib::ustring& path)
 {
-    if (path == "") {
+    if (path.empty ()) {
         return;
     }
 
-#ifdef WIN32
+    try {
 
-    // Dirty workaround, waiting for a clean solution by using exceptions!
-    if (!safe_is_shortcut_dir(path))
-#endif
-    {
-        if (lastShortcutPath != "") {
-            try {
-                flatFieldFile->remove_shortcut_folder(lastShortcutPath);
-            } catch (Glib::Error &err) {}
+        if (!lastShortcutPath.empty ()) {
+            flatFieldFile->remove_shortcut_folder (lastShortcutPath);
         }
+
+        flatFieldFile->add_shortcut_folder (path);
 
         lastShortcutPath = path;
 
-        try {
-            flatFieldFile->add_shortcut_folder(path);
-        } catch (Glib::Error &err) {}
-    }
+    } catch (Glib::Error&) {}
 }

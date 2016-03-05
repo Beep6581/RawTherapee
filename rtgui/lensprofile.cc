@@ -19,7 +19,6 @@
 #include <glibmm.h>
 #include "lensprofile.h"
 #include "guiutils.h"
-#include "../rtengine/safegtk.h"
 #include "../rtengine/lcp.h"
 #include <sstream>
 #include "rtimage.h"

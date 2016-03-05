@@ -22,7 +22,6 @@
 #include <gtkmm.h>
 #include "multilangmgr.h"
 #include "popupcommon.h"
-#include "../rtengine/safegtk.h"
 #include "rtimage.h"
 #include "guiutils.h"
 

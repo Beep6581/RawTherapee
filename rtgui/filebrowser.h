@@ -93,7 +93,7 @@ protected:
     Gtk::MenuItem* menuExtProg;
     Gtk::MenuItem** amiExtProg;
     Gtk::MenuItem* miOpenDefaultViewer;
-    std::map<Glib::ustring, ExtProgAction*> mMenuExtProgs;  // key is menuitem label
+    std::map<Glib::ustring, const ExtProgAction*> mMenuExtProgs;  // key is menuitem label
 
     Gtk::MenuItem* menuDF;
     Gtk::MenuItem* selectDF;

@@ -17,13 +17,14 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "batchqueueentry.h"
-#include "thumbbrowserbase.h"
 
 #include <cstring>
+
 #include "guiutils.h"
 #include "threadutils.h"
-#include "../rtengine/safegtk.h"
+#include "rtimage.h"
 #include "multilangmgr.h"
+#include "thumbbrowserbase.h"
 
 bool BatchQueueEntry::iconsLoaded(false);
 Glib::RefPtr<Gdk::Pixbuf> BatchQueueEntry::savedAsIcon;
@@ -46,7 +47,7 @@ BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine:
 #endif
 
     if (!iconsLoaded) {
-        savedAsIcon = safe_create_from_file ("gtk-save.png");
+        savedAsIcon = RTImage::createFromFile ("gtk-save.png");
         iconsLoaded = true;
     }
 

@@ -16,11 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-//#include <glib/gstdio.h>
+#include <glib/gstdio.h>
 #include "procparams.h"
 #include "rt_math.h"
-#include "safegtk.h"
-#include "safekeyfile.h"
 #include "dcp.h"
 #include "../rtgui/multilangmgr.h"
 #include "../rtgui/version.h"
@@ -890,6 +888,7 @@ void RAWParams::setDefaults()
     ff_clipControl = 0;
     cared = 0;
     cablue = 0;
+    caautostrength = 6;
     ca_autocorrect = false;
     hotPixelFilter = false;
     deadPixelFilter = false;
@@ -1219,6 +1218,8 @@ void ProcParams::setDefaults ()
 
     dirpyrequalizer.enabled = false;
     dirpyrequalizer.gamutlab = false;
+    dirpyrequalizer.cbdlMethod = "bef";
+
 
     for(int i = 0; i < 6; i ++) {
         dirpyrequalizer.mult[i] = 1.0;
@@ -1303,11 +1304,15 @@ static Glib::ustring relativePathIfInside(Glib::ustring procparams_fname, bool f
 int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsolute, ParamsEdited* pedited)
 {
 
-    if (!fname.length() && !fname2.length()) {
+    if (fname.empty () && fname2.empty ()) {
         return 0;
     }
 
-    SafeKeyFile keyFile;
+    Glib::ustring sPParams;
+
+    try {
+
+    Glib::KeyFile keyFile;
 
     keyFile.set_string  ("Version", "AppVersion", APPVERSION);
     keyFile.set_integer ("Version", "Version",    PPVERSION);
@@ -3028,6 +3033,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         keyFile.set_boolean ("Directional Pyramid Equalizer", "Gamutlab", dirpyrequalizer.gamutlab);
     }
 
+    if (!pedited || pedited->dirpyrequalizer.cbdlMethod) {
+        keyFile.set_string  ("Directional Pyramid Equalizer", "cbdlMethod",  dirpyrequalizer.cbdlMethod);
+    }
+
     for(int i = 0; i < 6; i++) {
         std::stringstream ss;
         ss << "Mult" << i;
@@ -3248,6 +3257,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         keyFile.set_boolean ("RAW", "CA", raw.ca_autocorrect );
     }
 
+    if (!pedited || pedited->raw.caAutoStrength) {
+        keyFile.set_double  ("RAW", "CAAutoStrength", raw.caautostrength );
+    }
+
     if (!pedited || pedited->raw.caRed) {
         keyFile.set_double  ("RAW", "CARed", raw.cared );
     }
@@ -3363,12 +3376,18 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         }
     }
 
-    Glib::ustring sPParams = keyFile.to_data();
+    sPParams = keyFile.to_data();
+
+    } catch(Glib::KeyFileError&) {}
+
+    if (sPParams.empty ()) {
+        return 1;
+    }
 
     int error1, error2;
-    error1 = write (fname , sPParams);
+    error1 = write (fname, sPParams);
 
-    if (fname2.length()) {
+    if (!fname2.empty ()) {
 
         error2 = write (fname2, sPParams);
         // If at least one file has been saved, it's a success
@@ -3385,7 +3404,7 @@ int ProcParams::write (Glib::ustring &fname, Glib::ustring &content) const
 
     if (fname.length()) {
         FILE *f;
-        f = safe_g_fopen (fname, "wt");
+        f = g_fopen (fname.c_str (), "wt");
 
         if (f == NULL) {
             error = 1;
@@ -3406,15 +3425,15 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
         return 1;
     }
 
-    SafeKeyFile keyFile;
+    Glib::KeyFile keyFile;
 
     try {
-        //setDefaults ();
+
         if (pedited) {
             pedited->set(false);
         }
 
-        FILE* f = safe_g_fopen (fname, "rt");
+        FILE* f = g_fopen (fname.c_str (), "rt");
 
         if (!f) {
             return 1;
@@ -3449,8 +3468,6 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 ppVersion  = keyFile.get_integer ("Version", "Version");
             }
         }
-
-//printf("ProcParams::load called ppVersion=%i\n",ppVersion);
 
         if (keyFile.has_group ("General")) {
             if (keyFile.has_key ("General", "Rank"))        {
@@ -6610,6 +6627,16 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
+
+            if (keyFile.has_key ("Directional Pyramid Equalizer", "cbdlMethod"))     {
+                dirpyrequalizer.cbdlMethod  = keyFile.get_string  ("Directional Pyramid Equalizer", "cbdlMethod");
+
+                if (pedited) {
+                    pedited->dirpyrequalizer.cbdlMethod = true;
+                }
+            }
+
+
 //   if (keyFile.has_key ("Directional Pyramid Equalizer", "Algorithm")) { dirpyrequalizer.algo = keyFile.get_string ("Directional Pyramid Equalizer", "Algorithm"); if (pedited) pedited->dirpyrequalizer.algo = true; }
             if (keyFile.has_key ("Directional Pyramid Equalizer", "Hueskin"))   {
                 Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Directional Pyramid Equalizer", "Hueskin");
@@ -7058,6 +7085,14 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("RAW", "CAAutoStrength"))                    {
+                raw.caautostrength = keyFile.get_double ("RAW", "CAAutoStrength" );
+
+                if (pedited) {
+                    pedited->raw.caAutoStrength = true;
+                }
+            }
+
             if (keyFile.has_key ("RAW", "CARed"))                    {
                 raw.cared = keyFile.get_double ("RAW", "CARed" );
 
@@ -7427,9 +7462,11 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
         return 0;
     } catch (const Glib::Error& e) {
         printf ("-->%s\n", e.what().c_str());
+        setDefaults ();
         return 1;
     } catch (...) {
         printf ("-->unknown exception!\n");
+        setDefaults ();
         return 1;
     }
 
@@ -7777,6 +7814,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && raw.expos == other.raw.expos
         && raw.preser == other.raw.preser
         && raw.ca_autocorrect == other.raw.ca_autocorrect
+        && raw.caautostrength == other.raw.caautostrength
         && raw.cared == other.raw.cared
         && raw.cablue == other.raw.cablue
         && raw.hotPixelFilter == other.raw.hotPixelFilter
@@ -7880,6 +7918,7 @@ bool ProcParams::operator== (const ProcParams& other)
         //  && dirpyrequalizer.algo == other.dirpyrequalizer.algo
         && dirpyrequalizer.hueskin == other.dirpyrequalizer.hueskin
         && dirpyrequalizer.threshold == other.dirpyrequalizer.threshold
+        && dirpyrequalizer.cbdlMethod == other.dirpyrequalizer.cbdlMethod
         && dirpyrequalizer.skinprotect == other.dirpyrequalizer.skinprotect
         && hsvequalizer.hcurve == other.hsvequalizer.hcurve
         && hsvequalizer.scurve == other.hsvequalizer.scurve

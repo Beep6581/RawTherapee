@@ -51,6 +51,24 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
     Color::hsv2rgb01(0.3240, 0.5, 0.5, r, g, b);
     milestones.push_back( GradientMilestone(1.    , r, g, b) ); // hsv: 0.324  rad:  2.5
 
+    Gtk::VBox * cbVBox = Gtk::manage ( new Gtk::VBox());
+    cbVBox->set_border_width(4);
+    cbVBox->set_spacing(2);
+
+    cdbox = Gtk::manage (new Gtk::HBox ());
+    labmcd = Gtk::manage (new Gtk::Label (M("TP_CBDL_METHOD") + ":"));
+    cdbox->pack_start (*labmcd, Gtk::PACK_SHRINK, 1);
+
+    cbdlMethod = Gtk::manage (new MyComboBoxText ());
+    cbdlMethod->append (M("TP_CBDL_BEF"));
+    cbdlMethod->append (M("TP_CBDL_AFT"));
+    cbdlMethod->set_active(0);
+    cbdlMethodConn = cbdlMethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrEqualizer::cbdlMethodChanged) );
+    cbdlMethod->set_tooltip_markup (M("TP_CBDL_METHOD_TOOLTIP"));
+    cdbox->pack_start(*cbdlMethod);
+    cbVBox->pack_start(*cdbox);
+    pack_start(*cbVBox);
+
     setEnabledTooltipMarkup(M("TP_SHARPENING_TOOLTIP"));
 
     Gtk::HBox * buttonBox1 = Gtk::manage (new Gtk::HBox(true, 10));
@@ -145,11 +163,16 @@ void DirPyrEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited)
 {
 
     disableListener ();
+    cbdlMethodConn.block(true);
 
     if (pedited) {
 
         set_inconsistent (multiImage && !pedited->dirpyrequalizer.enabled);
         gamutlab->set_inconsistent (!pedited->dirpyrequalizer.gamutlab);
+
+        if (!pedited->dirpyrequalizer.cbdlMethod) {
+            cbdlMethod->set_active_text(M("GENERAL_UNCHANGED"));
+        }
 
         for(int i = 0; i < 6; i++) {
             multiplier[i]->setEditedState (pedited->dirpyrequalizer.mult[i] ? Edited : UnEdited);
@@ -186,6 +209,15 @@ void DirPyrEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited)
     skinprotect->setValue(pp->dirpyrequalizer.skinprotect);
     hueskin->setValue<int>(pp->dirpyrequalizer.hueskin);
 
+    if (pp->dirpyrequalizer.cbdlMethod == "bef") {
+        cbdlMethod->set_active (0);
+    } else if (pp->dirpyrequalizer.cbdlMethod == "aft") {
+        cbdlMethod->set_active (1);
+    }
+
+    cbdlMethodChanged ();
+    cbdlMethodConn.block(false);
+
     enableListener ();
 }
 
@@ -207,6 +239,7 @@ void DirPyrEqualizer::write (ProcParams* pp, ParamsEdited* pedited)
 
         pedited->dirpyrequalizer.enabled =  !get_inconsistent();
         pedited->dirpyrequalizer.hueskin        = hueskin->getEditedState ();
+        pedited->dirpyrequalizer.cbdlMethod    = cbdlMethod->get_active_text() != M("GENERAL_UNCHANGED");
 
         for(int i = 0; i < 6; i++) {
             pedited->dirpyrequalizer.mult[i] = multiplier[i]->getEditedState();
@@ -215,6 +248,13 @@ void DirPyrEqualizer::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->dirpyrequalizer.threshold = threshold->getEditedState();
         pedited->dirpyrequalizer.skinprotect = skinprotect->getEditedState();
 //       pedited->dirpyrequalizer.algo          = algo->get_active_text()!=M("GENERAL_UNCHANGED");
+    }
+
+
+    if (cbdlMethod->get_active_row_number() == 0) {
+        pp->dirpyrequalizer.cbdlMethod = "bef";
+    } else if (cbdlMethod->get_active_row_number() == 1) {
+        pp->dirpyrequalizer.cbdlMethod = "aft";
     }
 
     /*    if (algo->get_active_row_number()==0)
@@ -280,6 +320,16 @@ void DirPyrEqualizer::setBatchMode (bool batchMode)
     hueskin->showEditedCB ();
 //   algo->append (M("GENERAL_UNCHANGED"));
 }
+
+void DirPyrEqualizer::cbdlMethodChanged()
+{
+
+    if (listener) {
+        listener->panelChanged (EvcbdlMethod, cbdlMethod->get_active_text ());
+    }
+}
+
+
 
 void DirPyrEqualizer::adjusterChanged (Adjuster* a, double newval)
 {

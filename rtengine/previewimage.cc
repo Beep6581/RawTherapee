@@ -23,8 +23,6 @@
 #include "iimage.h"
 #include "rtthumbnail.h"
 #include "rawimagesource.h"
-#include "StopWatch.h"
-#include "utils.h"
 
 using namespace rtengine;
 using namespace procparams;
@@ -135,9 +133,7 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
             rawImage.getImage (wb, TR_NONE, image, pp, params.toneCurve, params.icm, params.raw);
             output = new Image8(fw, fh);
             rawImage.convertColorSpace(image, params.icm, wb);
-            StopWatch Stop1("inspector loop");
             #pragma omp parallel for schedule(dynamic, 10)
-
             for (int i = 0; i < fh; ++i)
                 for (int j = 0; j < fw; ++j) {
                     image->r(i, j) = Color::gamma2curve[image->r(i, j)];
@@ -145,7 +141,6 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
                     image->b(i, j) = Color::gamma2curve[image->b(i, j)];
                 }
 
-            Stop1.stop();
 
             image->resizeImgTo<Image8>(fw, fh, TI_Nearest, output);
             data = output->getData();

@@ -17,8 +17,9 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "batchqueuebuttonset.h"
+
 #include "multilangmgr.h"
-#include "../rtengine/safegtk.h"
+#include "rtimage.h"
 
 bool BatchQueueButtonSet::iconsLoaded = false;
 
@@ -30,9 +31,9 @@ BatchQueueButtonSet::BatchQueueButtonSet (BatchQueueEntry* myEntry)
 {
 
     if (!iconsLoaded) {
-        cancelIcon = safe_create_from_png ("gtk-close.png");
-        headIcon   = safe_create_from_png ("toleftend.png");
-        tailIcon   = safe_create_from_png ("torightend.png");
+        cancelIcon = RTImage::createFromPng ("gtk-close.png");
+        headIcon   = RTImage::createFromPng ("toleftend.png");
+        tailIcon   = RTImage::createFromPng ("torightend.png");
         iconsLoaded = true;
     }
 

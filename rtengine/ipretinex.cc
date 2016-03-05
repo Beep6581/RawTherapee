@@ -45,7 +45,7 @@
 #include "rawimagesource.h"
 #include "improcfun.h"
 #include "opthelper.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 
 #define MAX_RETINEX_SCALES   8

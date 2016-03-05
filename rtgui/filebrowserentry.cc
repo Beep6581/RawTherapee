@@ -17,15 +17,16 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "filebrowserentry.h"
-#include "thumbbrowserbase.h"
-#include "cursormanager.h"
+
 #include <iomanip>
+#include <cstring>
+
 #include "guiutils.h"
 #include "threadutils.h"
-#include "../rtengine/safegtk.h"
+#include "rtimage.h"
+#include "cursormanager.h"
+#include "thumbbrowserbase.h"
 #include "inspector.h"
-
-#include <cstring>
 
 #define CROPRESIZEBORDER 4
 
@@ -53,9 +54,9 @@ FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
     scale = 1;
 
     if (!iconsLoaded) {
-        editedIcon = safe_create_from_file ("edited.png");
-        recentlySavedIcon = safe_create_from_file ("recent-save.png");
-        enqueuedIcon = safe_create_from_file ("processing.png");
+        editedIcon = RTImage::createFromFile ("edited.png");
+        recentlySavedIcon = RTImage::createFromFile ("recent-save.png");
+        enqueuedIcon = RTImage::createFromFile ("processing.png");
         iconsLoaded = true;
     }
 

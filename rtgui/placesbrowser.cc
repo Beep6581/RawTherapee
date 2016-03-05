@@ -17,11 +17,17 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "placesbrowser.h"
-#include "options.h"
-#include "toolpanel.h"
-#include "../rtengine/safegtk.h"
+
+#ifdef WIN32
+#include <windows.h>
+#include <shlobj.h>
+#include <Shlwapi.h>
+#endif
+
 #include "guiutils.h"
 #include "rtimage.h"
+#include "options.h"
+#include "toolpanel.h"
 
 PlacesBrowser::PlacesBrowser ()
 {
@@ -96,17 +102,14 @@ bool compareMountByRoot (Glib::RefPtr<Gio::Mount> a, Glib::RefPtr<Gio::Mount> b)
 
 void PlacesBrowser::refreshPlacesList ()
 {
-
     placesModel->clear ();
 
     // append home directory
-    Glib::RefPtr<Gio::File> hfile = Gio::File::create_for_path (safe_get_user_home_dir());  // Will send back "My documents" on Windows now, which has no restricted access
+    Glib::RefPtr<Gio::File> hfile = Gio::File::create_for_path (userHomeDir());  // Will send back "My documents" on Windows now, which has no restricted access
 
     if (hfile && hfile->query_exists()) {
         try {
-            Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info (hfile);
-
-            if (info) {
+            if (auto info = hfile->query_info ()) {
                 Gtk::TreeModel::Row newrow = *(placesModel->append());
                 newrow[placesColumns.label] = info->get_display_name ();
                 newrow[placesColumns.icon]  = info->get_icon ();
@@ -114,19 +117,15 @@ void PlacesBrowser::refreshPlacesList ()
                 newrow[placesColumns.type]  = 4;
                 newrow[placesColumns.rowSeparator] = false;
             }
-        } catch (Gio::Error&) {
-            /* This will be thrown if the path doesn't exist */
-        }
+        } catch (Gio::Error&) {}
     }
 
     // append pictures directory
-    hfile = Gio::File::create_for_path (safe_get_user_picture_dir());
+    hfile = Gio::File::create_for_path (userPicturesDir());
 
     if (hfile && hfile->query_exists()) {
         try {
-            Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info (hfile);
-
-            if (info) {
+            if (auto info = hfile->query_info ()) {
                 Gtk::TreeModel::Row newrow = *(placesModel->append());
                 newrow[placesColumns.label] = info->get_display_name ();
                 newrow[placesColumns.icon]  = info->get_icon ();
@@ -134,9 +133,7 @@ void PlacesBrowser::refreshPlacesList ()
                 newrow[placesColumns.type]  = 4;
                 newrow[placesColumns.rowSeparator] = false;
             }
-        } catch (Gio::Error&) {
-            /* This will be thrown if the path doesn't exist */
-        }
+        } catch (Gio::Error&) {}
     }
 
     if (!placesModel->children().empty()) {
@@ -235,16 +232,16 @@ void PlacesBrowser::refreshPlacesList ()
         Glib::RefPtr<Gio::File> hfile = Gio::File::create_for_path (options.favoriteDirs[i]);
 
         if (hfile && hfile->query_exists()) {
-            Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info (hfile);
-
-            if (info) {
-                Gtk::TreeModel::Row newrow = *(placesModel->append());
-                newrow[placesColumns.label] = info->get_display_name ();
-                newrow[placesColumns.icon]  = info->get_icon ();
-                newrow[placesColumns.root]  = hfile->get_parse_name ();
-                newrow[placesColumns.type]  = 5;
-                newrow[placesColumns.rowSeparator] = false;
-            }
+            try {
+                if (auto info = hfile->query_info ()) {
+                    Gtk::TreeModel::Row newrow = *(placesModel->append());
+                    newrow[placesColumns.label] = info->get_display_name ();
+                    newrow[placesColumns.icon]  = info->get_icon ();
+                    newrow[placesColumns.root]  = hfile->get_parse_name ();
+                    newrow[placesColumns.type]  = 5;
+                    newrow[placesColumns.rowSeparator] = false;
+                }
+            } catch(Gio::Error&) {}
         }
     }
 }
@@ -325,12 +322,12 @@ void PlacesBrowser::addPressed ()
     Glib::RefPtr<Gio::File> hfile = Gio::File::create_for_path (lastSelectedDir);
 
     if (hfile && hfile->query_exists()) {
-        Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info (hfile);
-
-        if (info) {
-            options.favoriteDirs.push_back (hfile->get_parse_name ());
-            refreshPlacesList ();
-        }
+        try {
+            if (auto info = hfile->query_info ()) {
+                options.favoriteDirs.push_back (hfile->get_parse_name ());
+                refreshPlacesList ();
+            }
+        } catch(Gio::Error&) {}
     }
 }
 
@@ -352,3 +349,52 @@ void PlacesBrowser::delPressed ()
     refreshPlacesList ();
 }
 
+Glib::ustring PlacesBrowser::userHomeDir ()
+{
+#ifdef WIN32
+
+    // get_home_dir crashes on some Windows configurations,
+    // so we rather use the safe native functions here.
+    WCHAR pathW[MAX_PATH];
+    if (SHGetSpecialFolderPathW (NULL, pathW, CSIDL_PERSONAL, false)) {
+
+        char pathA[MAX_PATH];
+        if (WideCharToMultiByte (CP_UTF8, 0, pathW, -1, pathA, MAX_PATH, 0, 0)) {
+
+            return Glib::ustring (pathA);
+        }
+    }
+
+    return Glib::ustring ("C:\\");
+
+#else
+
+    return Glib::get_home_dir ();
+
+#endif
+}
+
+Glib::ustring PlacesBrowser::userPicturesDir ()
+{
+#ifdef WIN32
+
+    // get_user_special_dir crashes on some Windows configurations,
+    // so we rather use the safe native functions here.
+    WCHAR pathW[MAX_PATH];
+    if (SHGetSpecialFolderPathW (NULL, pathW, CSIDL_MYPICTURES, false)) {
+
+        char pathA[MAX_PATH];
+        if (WideCharToMultiByte (CP_UTF8, 0, pathW, -1, pathA, MAX_PATH, 0, 0)) {
+
+            return Glib::ustring (pathA);
+        }
+    }
+
+    return Glib::ustring ("C:\\");
+
+#else
+
+    return Glib::get_user_special_dir (G_USER_DIRECTORY_PICTURES);
+
+#endif
+}

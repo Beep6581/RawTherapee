@@ -20,42 +20,58 @@
 #ifndef _EXTPROG_
 #define _EXTPROG_
 
-#include <glibmm.h>
-#include <list>
+#include <glibmm/ustring.h>
+
+#include <vector>
+
 #include "threadutils.h"
 
-class ExtProgAction
+struct ExtProgAction
 {
-public:
-    ExtProgAction();
-    ExtProgAction(const ExtProgAction* other, int target);
-
     Glib::ustring filePathEXE;
     Glib::ustring preparams;  // after EXE and before file names
     Glib::ustring name;  // already localized if necessary
     int target;  // 1=RAW files, 2=batch converted files
 
-    Glib::ustring GetFullName();  // e.g. "Photoshop (RAW)"
+    Glib::ustring getFullName () const;  // e.g. "Photoshop (RAW)"
 
-    virtual bool Execute(std::vector<Glib::ustring> fileNames);
+    bool execute (const std::vector<Glib::ustring>& fileNames) const;
 };
 
 // Stores all external programs that could be called by the user
 class ExtProgStore
 {
     MyMutex mtx;  // covers actions
+    std::vector<ExtProgAction> actions;
 
-    bool SearchProg(Glib::ustring name, Glib::ustring exePath, Glib::ustring exePath86, int maxVer, bool allowRaw, bool allowQueueProcess);
+    bool searchProgram (const Glib::ustring& name,
+                        const Glib::ustring& exePath,
+                        const Glib::ustring& exePath86,
+                        int maxVer,
+                        bool allowRaw,
+                        bool allowQueueProcess);
 
 public:
-    ~ExtProgStore();
-
-    void init();  // searches computer for installed standard programs
     static ExtProgStore* getInstance();
 
-    std::list<ExtProgAction*> lActions;
+    // searches computer for installed standard programs
+    void init();
+
+    const std::vector<ExtProgAction>& getActions () const;
+
+    static bool spawnCommandAsync (const Glib::ustring& cmd);
+    static bool spawnCommandSync (const Glib::ustring& cmd);
+
+    static bool openInGimp (const Glib::ustring& fileName);
+    static bool openInPhotoshop (const Glib::ustring& fileName);
+    static bool openInCustomEditor (const Glib::ustring& fileName);
 };
 
 #define extProgStore ExtProgStore::getInstance()
+
+inline const std::vector<ExtProgAction>& ExtProgStore::getActions () const
+{
+    return actions;
+}
 
 #endif

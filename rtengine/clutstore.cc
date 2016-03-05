@@ -1,7 +1,6 @@
 #include "clutstore.h"
 #include "rt_math.h"
 #include "stdimagesource.h"
-#include "safegtk.h"
 #include "../rtgui/options.h"
 
 rtengine::CLUTStore clutStore;
@@ -154,7 +153,7 @@ Imagefloat* HaldCLUT::loadFile( Glib::ustring filename, Glib::ustring workingCol
     Imagefloat *result = 0;
     StdImageSource imgSrc;
 
-    if ( !safe_file_test( filename, Glib::FILE_TEST_EXISTS ) || imgSrc.load(filename) ) {
+    if ( !Glib::file_test( filename, Glib::FILE_TEST_EXISTS ) || imgSrc.load(filename) ) {
         return result;
     }
 
