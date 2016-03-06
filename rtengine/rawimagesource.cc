@@ -3387,7 +3387,7 @@ int RawImageSource::defTransform (int tran)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Thread called part
-void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row_from, int row_to)
+void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, const int row_from, const int row_to)
 {
 
     int W = im->width;
@@ -3398,18 +3398,20 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row
     array2D<float> rbout_I (W, 3);
     array2D<float> rbout_Q (W, 3);
 
-    float* row_I = new float[W];
-    float* row_Q = new float[W];
+    float row_I[W];
+    float row_Q[W];
 
-    float* pre1_I = new float[3];
-    float* pre2_I = new float[3];
-    float* post1_I = new float[3];
-    float* post2_I = new float[3];
+    float buffer[3 * 8];
+    float* pre1_I = &buffer[0];
+    float* pre2_I = &buffer[3];
+    float* post1_I = &buffer[6];
+    float* post2_I = &buffer[9];
+    float* pre1_Q = &buffer[12];
+    float* pre2_Q = &buffer[15];
+    float* post1_Q = &buffer[18];
+    float* post2_Q = &buffer[21];
+
     float middle_I[6];
-    float* pre1_Q = new float[3];
-    float* pre2_Q = new float[3];
-    float* post1_Q = new float[3];
-    float* post2_Q = new float[3];
     float middle_Q[6];
     float* tmp;
 
@@ -3438,10 +3440,11 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row
 
         // median I channel
         float temp[7];
+
         for (int j = 1; j < W - 2; j += 2) {
             SORT3(rbconv_I[px][j + 1], rbconv_I[cx][j + 1], rbconv_I[nx][j + 1], post1_I[0], post1_I[1], post1_I[2]);
-            SORT3(rbconv_I[px][j + 2], rbconv_I[cx][j + 2], rbconv_I[nx][j + 2], post2_I[0], post2_I[1], post2_I[2]);
             NETWORKSORT4OF6(pre2_I[0], pre2_I[1], pre2_I[2], post1_I[0], post1_I[1], post1_I[2], middle_I[0], middle_I[1], middle_I[2], middle_I[3], middle_I[4], middle_I[5], temp[0]);
+            SORT3(rbconv_I[px][j + 2], rbconv_I[cx][j + 2], rbconv_I[nx][j + 2], post2_I[0], post2_I[1], post2_I[2]);
             MEDIAN7(pre1_I[0], pre1_I[1], pre1_I[2], middle_I[1], middle_I[2], middle_I[3], middle_I[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j]);
             MEDIAN7(post2_I[0], post2_I[1], post2_I[2], middle_I[1], middle_I[2], middle_I[3], middle_I[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j + 1]);
             tmp = pre1_I;
@@ -3456,8 +3459,8 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row
         // median Q channel
         for (int j = 1; j < W - 2; j += 2) {
             SORT3(rbconv_Q[px][j + 1], rbconv_Q[cx][j + 1], rbconv_Q[nx][j + 1], post1_Q[0], post1_Q[1], post1_Q[2]);
-            SORT3(rbconv_Q[px][j + 2], rbconv_Q[cx][j + 2], rbconv_Q[nx][j + 2], post2_Q[0], post2_Q[1], post2_Q[2]);
             NETWORKSORT4OF6(pre2_Q[0], pre2_Q[1], pre2_Q[2], post1_Q[0], post1_Q[1], post1_Q[2], middle_Q[0], middle_Q[1], middle_Q[2], middle_Q[3], middle_Q[4], middle_Q[5], temp[0]);
+            SORT3(rbconv_Q[px][j + 2], rbconv_Q[cx][j + 2], rbconv_Q[nx][j + 2], post2_Q[0], post2_Q[1], post2_Q[2]);
             MEDIAN7(pre1_Q[0], pre1_Q[1], pre1_Q[2], middle_Q[1], middle_Q[2], middle_Q[3], middle_Q[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j]);
             MEDIAN7(post2_Q[0], post2_Q[1], post2_Q[2], middle_Q[1], middle_Q[2], middle_Q[3], middle_Q[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j + 1]);
             tmp = pre1_Q;
@@ -3478,6 +3481,10 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row
 
         // blur i-1th row
         if (i > row_from) {
+#ifdef _OPENMP
+            #pragma omp simd
+#endif
+
             for (int j = 1; j < W - 1; j++) {
                 row_I[j] = (rbout_I[px][j - 1] + rbout_I[px][j] + rbout_I[px][j + 1] + rbout_I[cx][j - 1] + rbout_I[cx][j] + rbout_I[cx][j + 1] + rbout_I[nx][j - 1] + rbout_I[nx][j] + rbout_I[nx][j + 1]) / 9;
                 row_Q[j] = (rbout_Q[px][j - 1] + rbout_Q[px][j] + rbout_Q[px][j + 1] + rbout_Q[cx][j - 1] + rbout_Q[cx][j] + rbout_Q[cx][j + 1] + rbout_Q[nx][j - 1] + rbout_Q[nx][j] + rbout_Q[nx][j + 1]) / 9;
@@ -3502,26 +3509,15 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row
     row_I[W - 1] = rbout_I[cx][W - 1];
     row_Q[W - 1] = rbout_Q[cx][W - 1];
     convert_row_to_RGB (im->r(row_to - 1), im->g(row_to - 1), im->b(row_to - 1), rbconv_Y[cx], row_I, row_Q, W);
-
-    delete [] row_I;
-    delete [] row_Q;
-    delete [] pre1_I;
-    delete [] pre2_I;
-    delete [] post1_I;
-    delete [] post2_I;
-    delete [] pre1_Q;
-    delete [] pre2_Q;
-    delete [] post1_Q;
-    delete [] post2_Q;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // correction_YIQ_LQ
-void RawImageSource::processFalseColorCorrection  (Imagefloat* im, int steps)
+void RawImageSource::processFalseColorCorrection  (Imagefloat* im, const int steps)
 {
 
-    if (im->height < 4) {
+    if (im->height < 4 || steps < 1) {
         return;
     }
 
