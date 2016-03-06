@@ -22,13 +22,15 @@
 
 #include "rawimagesource.h"
 
-#include "curves.h"
-
 namespace rtengine
 {
 
 inline void RawImageSource::convert_row_to_YIQ (const float* const r, const float* const g, const float* const b, float* Y, float* I, float* Q, const int W)
 {
+#ifdef _OPENMP
+    #pragma omp simd
+#endif
+
     for (int j = 0; j < W; j++) {
         Y[j] = .299f * r[j] + .587f * g[j] + .114f * b[j];
         I[j] = .596f * r[j] - .275f * g[j] - .321f * b[j];
@@ -38,6 +40,10 @@ inline void RawImageSource::convert_row_to_YIQ (const float* const r, const floa
 
 inline void RawImageSource::convert_row_to_RGB (float* r, float* g, float* b, const float* const Y, const float* const I, const float* const Q, const int W)
 {
+#ifdef _OPENMP
+    #pragma omp simd
+#endif
+
     for (int j = 1; j < W - 1; j++) {
         r[j] = Y[j] + 0.956f * I[j] + 0.621f * Q[j];
         g[j] = Y[j] - 0.272f * I[j] - 0.647f * Q[j];

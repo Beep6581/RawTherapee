@@ -3437,12 +3437,13 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row
         SORT3(rbconv_Q[px][1], rbconv_Q[cx][1], rbconv_Q[nx][1], pre2_Q[0], pre2_Q[1], pre2_Q[2]);
 
         // median I channel
+        float temp[7];
         for (int j = 1; j < W - 2; j += 2) {
             SORT3(rbconv_I[px][j + 1], rbconv_I[cx][j + 1], rbconv_I[nx][j + 1], post1_I[0], post1_I[1], post1_I[2]);
             SORT3(rbconv_I[px][j + 2], rbconv_I[cx][j + 2], rbconv_I[nx][j + 2], post2_I[0], post2_I[1], post2_I[2]);
-            MERGESORT(pre2_I[0], pre2_I[1], pre2_I[2], post1_I[0], post1_I[1], post1_I[2], middle_I[0], middle_I[1], middle_I[2], middle_I[3], middle_I[4], middle_I[5]);
-            MEDIAN7(pre1_I[0], pre1_I[1], pre1_I[2], middle_I[1], middle_I[2], middle_I[3], middle_I[4], rbout_I[cx][j]);
-            MEDIAN7(post2_I[0], post2_I[1], post2_I[2], middle_I[1], middle_I[2], middle_I[3], middle_I[4], rbout_I[cx][j + 1]);
+            NETWORKSORT4OF6(pre2_I[0], pre2_I[1], pre2_I[2], post1_I[0], post1_I[1], post1_I[2], middle_I[0], middle_I[1], middle_I[2], middle_I[3], middle_I[4], middle_I[5], temp[0]);
+            MEDIAN7(pre1_I[0], pre1_I[1], pre1_I[2], middle_I[1], middle_I[2], middle_I[3], middle_I[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j]);
+            MEDIAN7(post2_I[0], post2_I[1], post2_I[2], middle_I[1], middle_I[2], middle_I[3], middle_I[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j + 1]);
             tmp = pre1_I;
             pre1_I = post1_I;
             post1_I = tmp;
@@ -3456,9 +3457,9 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row
         for (int j = 1; j < W - 2; j += 2) {
             SORT3(rbconv_Q[px][j + 1], rbconv_Q[cx][j + 1], rbconv_Q[nx][j + 1], post1_Q[0], post1_Q[1], post1_Q[2]);
             SORT3(rbconv_Q[px][j + 2], rbconv_Q[cx][j + 2], rbconv_Q[nx][j + 2], post2_Q[0], post2_Q[1], post2_Q[2]);
-            MERGESORT(pre2_Q[0], pre2_Q[1], pre2_Q[2], post1_Q[0], post1_Q[1], post1_Q[2], middle_Q[0], middle_Q[1], middle_Q[2], middle_Q[3], middle_Q[4], middle_Q[5]);
-            MEDIAN7(pre1_Q[0], pre1_Q[1], pre1_Q[2], middle_Q[1], middle_Q[2], middle_Q[3], middle_Q[4], rbout_Q[cx][j]);
-            MEDIAN7(post2_Q[0], post2_Q[1], post2_Q[2], middle_Q[1], middle_Q[2], middle_Q[3], middle_Q[4], rbout_Q[cx][j + 1]);
+            NETWORKSORT4OF6(pre2_Q[0], pre2_Q[1], pre2_Q[2], post1_Q[0], post1_Q[1], post1_Q[2], middle_Q[0], middle_Q[1], middle_Q[2], middle_Q[3], middle_Q[4], middle_Q[5], temp[0]);
+            MEDIAN7(pre1_Q[0], pre1_Q[1], pre1_Q[2], middle_Q[1], middle_Q[2], middle_Q[3], middle_Q[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j]);
+            MEDIAN7(post2_Q[0], post2_Q[1], post2_Q[2], middle_Q[1], middle_Q[2], middle_Q[3], middle_Q[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j + 1]);
             tmp = pre1_Q;
             pre1_Q = post1_Q;
             post1_Q = tmp;

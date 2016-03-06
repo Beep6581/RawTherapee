@@ -27,181 +27,63 @@
   b3 = max(b3,a3);\
  }
 
-#define MERGESORT(a1,a2,a3,b1,b2,b3,c1,c2,c3,c4,c5,c6) \
-  {\
-  if (a1<b1) { \
-    c1 = a1; \
-    if (a2<b1) {  \
-      c2 = a2; \
-      if (a3<b1) { \
-        c3 = a3; c4 = b1; c5 = b2; c6 = b3;\
-      }\
-      else {\
-        c3 = b1;\
-        if (a3<b2) {\
-          c4 = a3; c5 = b2; c6 = b3;\
-        }\
-        else {\
-          c4 = b2;\
-          if (a3<b3) {\
-            c5 = a3; c6 = b3;\
-          }\
-          else {\
-            c5 = b3; c6 = a3;\
-          }\
-        }\
-      }\
-    }\
-    else {\
-      c2 = b1;\
-      if (a2<b2) {\
-        c3 = a2;\
-        if (a3<b2) {\
-          c4 = a3; c5 = b2; c6 = b3;\
-        }\
-        else {\
-          c4 = b2;\
-          if (a3<b3) {\
-            c5 = a3; c6 = b3;\
-          }\
-          else {\
-            c5 = b3; c6 = a3;\
-          }\
-        }\
-      }\
-      else {\
-        c3 = b2;\
-        if (a2<b3) {\
-          c4 = a2;\
-          if (a3<b3) {\
-            c5 = a3; c6 = b3;\
-          }\
-          else {\
-            c5 = b3; c6 = a3;\
-          }\
-        }\
-        else {\
-          c4 = b3; c5 = a2; c6 = a3;\
-        }\
-      }\
-    }\
-  }\
-  else {\
-    c1 = b1;\
-    if (a1<b2) {\
-      c2 = a1;\
-      if (a2<b2) {\
-        c3 = a2;\
-        if (a3<b2) {\
-          c4 = a3; c5 = b2; c6 = b3;\
-        }\
-        else {\
-          c4 = b2;\
-          if (a3<b3) {\
-            c5 = a3; c6 = b3;\
-          }\
-          else {\
-            c5 = b3; c6 = a3;\
-          }\
-        }\
-      }\
-      else {\
-        c3 = b2;\
-        if (a2<b3) {\
-          c4 = a2;\
-          if (a3<b3) {\
-            c5 = a3; c6 = b3;\
-          }\
-          else {\
-            c5 = b3; c6 = a3;\
-          }\
-        }\
-        else {\
-          c4 = b3; c5 = a2; c6 = a3;\
-        }\
-      }\
-    }\
-    else {\
-      c2 = b2;\
-      if (a1<b3) {\
-        c3 = a1;\
-        if (a2<b3) {\
-          c4 = a2;\
-          if (a3<b3) {\
-            c5 = a3; c6 = b3;\
-          }\
-          else {\
-            c5 = b3; c6 = a3;\
-          }\
-        }\
-        else {\
-          c4 = b3; c5 = a2; c6 = a3;\
-        }\
-      }\
-      else {\
-        c3 = b3; c4 = a1; c5 = a2; c6 = a3;\
-      }\
-    }\
-  }\
+
+#define NETWORKSORT4OF6(s0,s1,s2,s3,s4,s5,d0,d1,d2,d3,d4,d5,temp) \
+{\
+d1 = min(s1,s2);\
+d2 = max(s1,s2);\
+d0 = min(s0,d2);\
+d2 = max(s0,d2);\
+temp = min(d0,d1);\
+d1 = max(d0,d1);\
+d0 = temp;\
+d4 = min(s4,s5);\
+d5 = max(s4,s5);\
+temp = min(s3,d5);\
+d5 = max(s3,d5);\
+d3 = temp;\
+temp = min(d3,d4);\
+d4 = max(d3,d4);\
+d3 = temp;\
+d3 = max(d0,d3);\
+temp = min(d1,d4);\
+d4 = max(d1,d4);\
+d1 = temp;\
+d2 = min(d2,d5);\
+temp = min(d2,d4);\
+d4 = max(d2,d4);\
+d2 = temp;\
+temp = min(d1,d3);\
+d3 = max(d1,d3);\
+d1 = temp;\
+temp = min(d2,d3);\
+d3 = max(d2,d3);\
+d2 = temp;\
 }
 
-#define MEDIAN7(a1,a2,a3,b1,b2,b3,b4,median) \
-  { \
-  if (a1<b1) {\
-    if (a2<b1) {\
-      if (a3<b1) \
-        median = b1; \
-      else {\
-        if (a3<b2) \
-          median = a3;\
-        else \
-          median = b2;\
-      }\
-    }\
-    else {\
-      if (a2<b2) {\
-        if (a3<b2) \
-          median = a3;\
-        else \
-          median = b2;\
-      }\
-      else {\
-        if (a2<b3) \
-          median = a2;\
-        else \
-          median = b3;\
-      }\
-    }\
-  }\
-  else {\
-    if (a1<b2) {\
-      if (a2<b2) {\
-        if (a3<b2) \
-          median = a3;\
-        else\
-          median = b2;\
-      }\
-      else {\
-        if (a2<b3)\
-          median = a2;\
-        else\
-          median = b3;\
-      }\
-    }\
-    else {\
-      if (a1<b3) {\
-        if (a2<b3)\
-          median = a2;\
-        else \
-          median = b3; \
-      }\
-      else {\
-        if (a1<b4) \
-          median = a1;\
-        else\
-          median = b4;\
-      } \
-    }\
-  }\
+#define MEDIAN7(s0,s1,s2,s3,s4,s5,s6,t0,t1,t2,t3,t4,t5,t6,median) \
+{\
+t0 = min(s0,s5);\
+t5 = max(s0,s5);\
+t3 = max(t0,s3);\
+t0 = min(t0,s3);\
+t1 = min(s1,s6);\
+t6 = max(s1,s6);\
+t2 = min(s2,s4);\
+t4 = max(s2,s4);\
+t1 = max(t0,t1);\
+median = min(t3,t5);\
+t5 = max(t3,t5);\
+t3 = median;\
+median = min(t2,t6);\
+t6 = max(t2,t6);\
+t2 = median;\
+t3 = max(t2,t3);\
+t3 = min(t3,t6);\
+t4 = min(t4,t5);\
+median = min(t1,t4);\
+t4 = max(t1,t4);\
+t1 = median;\
+t3 = max(t1,t3);\
+median = min(t3,t4);\
 }
-

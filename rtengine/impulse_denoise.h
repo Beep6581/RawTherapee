@@ -24,6 +24,7 @@
 #include "cieimage.h"
 #include "sleef.c"
 #include "opthelper.h"
+#include "gauss.h"
 
 using namespace std;
 
