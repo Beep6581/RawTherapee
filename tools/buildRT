@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# buildRT version 4.3, 2015-03-11
-# Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
+# buildRT version 4.4, 2016-03-03
+# Please report bugs or enhancements to https://github.com/Beep6581/RawTherapee/issues
 # www.rawtherapee.com
 # www.londonlight.org
 
@@ -34,7 +34,7 @@ while getopts "bc:fnp:s:t:uvh?-" opt; do
     case "${opt}" in
         b)  patched="yes"
             movetoPatched="_patched"
-            printf "%s\n" "Buildonly flag detected, will not hg pull or update" ;;
+            printf "%s\n" "Buildonly flag detected, will not git pull or checkout" ;;
         c)  dCacheNameSuffix="$OPTARG"
             dCacheNameSuffix=${dCacheNameSuffix//[^\.\-_a-zA-Z0-9]/};
             forceCmake="yes"
@@ -55,7 +55,7 @@ while getopts "bc:fnp:s:t:uvh?-" opt; do
         t)  titleSuffix="${OPTARG//[^\.\-\:\ \+_a-zA-Z0-9]/}"
             forceCmake="yes"
             printf "%s\n" "Titlebar version suffix: ${titleSuffix}" ;;
-        u)  gcVer="$(curl "http://rawtherapee.googlecode.com/hg/tools/buildRT" 2>/dev/null | grep "^#.*[vV]ersion.*")" || { echo "\"curl\" program not found, please install it first."; exit 1; }
+        u)  gcVer="$(curl "https://raw.githubusercontent.com/Beep6581/RawTherapee/master/tools/buildRT" 2>/dev/null | grep "^#.*[vV]ersion.*")" || { echo "\"curl\" program not found, please install it first."; exit 1; }
             gcVer="${gcVer##*[[:alpha:]] }"
             gcVer="${gcVer%%,*}"
             latestVer="$(printf "%s\n" "$version" "$gcVer" | sort -rV | head -n 1)"
@@ -63,7 +63,7 @@ while getopts "bc:fnp:s:t:uvh?-" opt; do
                 printf "%s\n" "You are using the latest version of buildRT, $version"
                 exit 0
             else
-                printf "%s\n" "You are using version $version but version $gcVer is available on Google Code." "You can download the Google Code version from this URL:" "  https://rawtherapee.googlecode.com/hg/tools/buildRT" "Replace it with this script, and remember to run \"chmod +x buildRT\""
+                printf "%s\n" "You are using version $version but version $gcVer is available on GitHub." "You can download the GitHub version from this URL:" "  https://raw.githubusercontent.com/Beep6581/RawTherapee/master/tools/buildRT" "Replace it with this script, and remember to run \"chmod +x buildRT\""
                 exit 0
             fi ;;
         v)  verbose=yes
@@ -71,7 +71,7 @@ while getopts "bc:fnp:s:t:uvh?-" opt; do
         h|\?|-) printf "%s\n" "Usage:" "" "  $0 [-b] [-c <string>] [-f] [-n] [-p <1-9>] [-s <string>] [-t \"<string>\"] [-v]" ""
             printf "%s\n" \
             "  -b" \
-            "Build-only mode. buildRT uses \"hg update -C default\" to update your source code repository to the newest revision, however doing so might destroy any uncommitted or unpushed changes you made or any patches you applied. With the -b flag the script will not update the source code, so that you can easily compile RawTherapee with whatever patches you manually applied. buildRT should automatically detect if you modified the source code, but you can use this flag to force build-only mode." "Generally when compiling patched RT versions you want to keep the cache and config folders separate, so consider using \"-b -c _testing\"" "" \
+            "Build-only mode. buildRT uses \"git checkout master\" to update your source code repository to the newest revision, however doing so might destroy any uncommitted or unpushed changes you made or any patches you applied. With the -b flag the script will not update the source code, so that you can easily compile RawTherapee with whatever patches you manually applied. buildRT should automatically detect if you modified the source code, but you can use this flag to force build-only mode." "Generally when compiling patched RT versions you want to keep the cache and config folders separate, so consider using \"-b -c _testing\"" "" \
             "  -c <string>" \
             "Specify a suffix to the cache and config directory names. Only alphanumerics, periods, dashes and underscores are valid. The default value is \"4\", which will result in your build of RawTherapee storing the cache in \"${HOME}/.cache/RawTherapee4\" and config in \"${HOME}/.config/RawTherapee4\". For example, use \"-c _testing\" if you want to test older or patched versions of RawTherapee without potentially damaging your \"real\" cache and config files." "" \
             "  -f" \
@@ -85,7 +85,7 @@ while getopts "bc:fnp:s:t:uvh?-" opt; do
             "  -t \"<string>\"" \
             "Suffix displayed next to the RawTherapee version in the window titlebar. It is recommended that you include the changeset of the newest public commit (the one you would see if you cloned the repository anew) so it is clear which commit you applied the patches to. E.g.:" "-t \": ee72ddbcfd4e + dustremoval-1.patch + mustafa ibrahim\"" "" \
             "  -u" \
-            "Check for an update of buildRT on Google Code." "" \
+            "Check for an update of buildRT on GitHub." "" \
             "  -v" \
             "Make compilation verbose, so you see all compiler warnings." | fold -s
         exit 0 ;;
@@ -181,14 +181,19 @@ fi
 printf "%s\n" "System: ${bits}-bit" ""
 
 #--- Check script dependencies
-hash hg 2>/dev/null || { echo >&2 "Mercurial not found, install Mercurial first and then re-run this script."; exit 1; }
+hash git 2>/dev/null || { echo >&2 "Git not found, install Git first and then re-run this script."; exit 1; }
 
 #--- Clone and/or pull
 if [[ ! -d "${repo}" ]]; then
-  printf "%s\n" "${repo} not found, cloning from GoogleCode..."
-  hg clone https://rawtherapee.googlecode.com/hg/ "${repo}"
+  printf "%s\n" "${repo} not found, cloning from GitHub..."
+  git clone https://github.com/Beep6581/RawTherapee.git "${repo}"
   cd "${repo}" || exit 1
-  hg parents --template '\nRepository state:\n  Branch: {branch}\n  RawTherapee-{latesttag}.{latesttagdistance}\n  Changeset: {rev}:{node|short}\n  Latest tag: {latesttag}\n\n'
+  verLatesttag="$(git describe --tags --abbrev=0)"
+  verLatesttagdistance="$(git describe --tags | sed -e 's/.*-\([0-9]\+\)-.*/\1/')"
+  currentBranch="$(git branch | grep "*" | sed -e 's/.* \+//')"
+  rev="$(git rev-list --all --count)"
+  node="$(git rev-parse --short HEAD)"
+  printf "\nRepository state:\n  Branch: ${currentBranch}\n  RawTherapee-${verLatesttag}.${verLatesttagdistance}\n  Changeset: ${rev}:${node}\n  Latest tag: ${verLatesttag}\n\n"
   alert "Repository cloned succesfully. What would you like to do next?"
   printf "%b" "Repository cloned succesfully.\n" "Press 'q' to quit or any other key to continue... "
   read -r -n 1
@@ -198,21 +203,20 @@ fi
 cd "${repo}" || exit 1
 
 #--- Update or decide what to do if user edited the source code (e.g. by applying a patch)
-# "hg outgoing" takes time, so skip if buildonly
 if [[ -z $patched ]]; then
-  uncommitted="$(hg status | sed "s/^/\t/")"
-  unpushed="$(hg outgoing -q | sed "s/^/\t/" || echo "Could not check for unpushed changes (check your internet connection), but continuing anyway.")"
+  uncommitted="$(git status -s | sed "s/^/\t/")"
+  unpushed="$(git log origin..HEAD | sed "s/^/\t/" || echo "Could not check for unpushed changes (check your internet connection), but continuing anyway.")"
 fi
 if [[ -z $uncommitted && -z $unpushed && -z $patched ]]; then
-  hg pull || echo "Could not \"hg pull\" (check your internet connection), but continuing anyway."
-  hg update -C default
+  git pull || echo "Could not \"git pull\" (check your internet connection), but continuing anyway."
+  git checkout master
   echo
 elif [[ -z $patched ]]; then
   printf "%s\n" "" "Warning! There are uncommitted or unpushed changes in the repository!" "Uncommitted:" "$uncommitted" "Unpushed:" "$unpushed" "" "This means that you edited the source code (e.g. applied a patch). If the script proceeds to update the repository, those changes you made to the source code might be lost. Your choices are to force the update and possibly lose the changes, not to update and to compile RT as-is, or to abort the script." | fold -s
   read -r -p "[f]orce update, [c]ompile as-is, or [a]bort? " fca
   case $fca in
-    f|F) hg pull || echo "Could not \"hg pull\" (check your internet connection), but continuing anyway."
-         hg update -C default
+    f|F) git pull || echo "Could not \"git pull\" (check your internet connection), but continuing anyway."
+         git checkout master
          echo ;;
     c|C) printf "%s\n" "Retaining edited source code and compiling RT as-is." ""
          patched="yes"
@@ -228,16 +232,23 @@ else
     movetoPatched="_patched"
   fi
 fi
-hg parents --template 'Repository state:\n  Branch: {branch}\n  RawTherapee-{latesttag}.{latesttagdistance}\n  Changeset: {rev}:{node|short}\n  Latest tag: {latesttag}\n\n'
+
+cd "${repo}" || exit 1
+verLatesttag="$(git describe --tags --abbrev=0)"
+verLatesttagdistance="$(git describe --tags | sed -e 's/.*-\([0-9]\+\)-.*/\1/')"
+currentBranch="$(git branch | grep "*" | sed -e 's/.* \+//')"
+rev="$(git rev-list --all --count)"
+node="$(git rev-parse --short HEAD)"
+printf "\nRepository state:\n  Branch: ${currentBranch}\n  RawTherapee-${verLatesttag}.${verLatesttagdistance}\n  Changeset: ${rev}:${node}\n  Latest tag: ${verLatesttag}\n\n"
 
 #--- Print the menu
 branches=()
 if [[ -z $patched ]]; then
   while read -r branch; do
     branches+=("$branch")
-  done < <(hg branches -aq | sort -f)
+  done < <(git branch -a | grep origin | sed -e 's/.*\///'| sort -uf)
 else
-  branches="$(hg branch)"
+  branches="$(git branch | grep "*" | sed -e 's/.* \+//')"
 fi
 
 # Make the menu list
@@ -302,11 +313,10 @@ for choiceNumber in "${choiceNumbers[@]}"; do
   # if [[ -z $patched && $branch != default ]]; then
   if [[ -z $patched ]]; then
     printf "%s\n" "Updating to branch $branch"
-    hg update -C "$branch" || exit 1
+    git checkout "$branch" || exit 1
   fi
   echo
   printf "%-15b %b\n" "\E[1mWill compile\E[0m:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget" ""
-  rev="$(hg parents --template {rev})"
 
   [[ -d "${HOME}/rt_${branch}_${buildType}${movetoPatched}" ]] && {
   printf "%s\n" "Found old build directory ${HOME}/rt_${branch}_${buildType}${movetoPatched}" "To proceed you must either delete it, or choose a suffix for the destination folder for this build."
@@ -327,8 +337,6 @@ for choiceNumber in "${choiceNumbers[@]}"; do
 
   cd "${repo}" || exit 1
 
-  verLatesttag="$(hg parents --template '{latesttag}')"
-  verLatesttagdistance="$(hg parents --template '{latesttagdistance}')"
   [[ -z $dCacheNameSuffix ]] && dCacheNameSuffix="${verLatesttag%%.*}"
 
   # need to rerun cmake if buildtype changed
