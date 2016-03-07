@@ -16,12 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-// generated 2004/6/3 19:15:32 CEST by gabor@darkstar.(none)
-// using glademm V2.5.0
-//
-// newer (non customized) versions of this file go to raw.cc_new
-
-// This file is for your program, I won't touch it again!
 
 #ifdef __GNUC__
 #if defined(__FAST_MATH__)
@@ -62,7 +56,6 @@ Glib::ustring creditsPath;
 Glib::ustring licensePath;
 Glib::ustring argv1;
 bool simpleEditor;
-Glib::RefPtr<Gtk::CssProvider> cssBase;
 Glib::RefPtr<Gtk::CssProvider> cssForced;
 Glib::RefPtr<Gtk::CssProvider> cssRT;
 //Glib::Threads::Thread* mainThread;
@@ -124,11 +117,6 @@ static void myGdkLockLeave()
  *  -3 if at least one required procparam file was not found */
 int processLineParams( int argc, char **argv );
 
-/*
- *
- *      M A I N
- *
- */
 int main(int argc, char **argv)
 {
     setlocale(LC_ALL, "");
@@ -321,14 +309,8 @@ int main(int argc, char **argv)
         Gtk::Settings::get_for_screen(screen)->property_gtk_theme_name() = "Adwaita";
         Gtk::Settings::get_for_screen(screen)->property_gtk_application_prefer_dark_theme() = true;
 
-        Glib::ustring filename = argv0 + "/themes/RawTherapee.css";
+        Glib::ustring filename = Glib::build_filename(argv0 + "/themes/", options.theme + ".css");
         cssRT = Gtk::CssProvider::create();
-
-        /* TODO
-         * Make theme selection work again. All themes should be applied below here,
-         * in other words after the base Adwaita Dark theme has been applied. This
-         * makes for smaller custom theme files.
-         */
 
         try {
             cssRT->load_from_path (filename);
