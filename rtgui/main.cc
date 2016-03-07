@@ -309,7 +309,7 @@ int main(int argc, char **argv)
         Gtk::Settings::get_for_screen(screen)->property_gtk_theme_name() = "Adwaita";
         Gtk::Settings::get_for_screen(screen)->property_gtk_application_prefer_dark_theme() = true;
 
-        Glib::ustring filename = Glib::build_filename(argv0 + "/themes/", options.theme + ".css");
+        Glib::ustring filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
         cssRT = Gtk::CssProvider::create();
 
         try {
