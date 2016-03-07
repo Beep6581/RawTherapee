@@ -269,7 +269,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
 {
 
     bool needRedraw = true;  // most common case ; not redrawing are exceptions
-    EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
+    const auto editSubscriber = iarea->getCurrSubscriber();
 
     iarea->grabFocus (this);
 

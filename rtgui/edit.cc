@@ -747,7 +747,7 @@ void Rectangle::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned shor
     }
 }
 
-void OPIcon::drivenPointToRectangle(rtengine::Coord &pos,
+void OPIcon::drivenPointToRectangle(const rtengine::Coord &pos,
                                     rtengine::Coord &topLeft, rtengine::Coord &bottomRight, int W, int H)
 {
     switch (drivenPoint) {
@@ -801,37 +801,37 @@ void OPIcon::drivenPointToRectangle(rtengine::Coord &pos,
     bottomRight.y = topLeft.y + H - 1;
 }
 
-OPIcon::OPIcon(Cairo::RefPtr<Cairo::ImageSurface> *normal,
-               Cairo::RefPtr<Cairo::ImageSurface> *active,
-               Cairo::RefPtr<Cairo::ImageSurface> *prelight,
-               Cairo::RefPtr<Cairo::ImageSurface> *dragged,
-               Cairo::RefPtr<Cairo::ImageSurface> *insensitive,
-               enum DrivenPoint drivenPoint) :
+OPIcon::OPIcon(const Cairo::RefPtr<Cairo::ImageSurface> &normal,
+               const Cairo::RefPtr<Cairo::ImageSurface> &active,
+               const Cairo::RefPtr<Cairo::ImageSurface> &prelight,
+               const Cairo::RefPtr<Cairo::ImageSurface> &dragged,
+               const Cairo::RefPtr<Cairo::ImageSurface> &insensitive,
+               DrivenPoint drivenPoint) :
     drivenPoint(drivenPoint)
 {
     if (normal) {
-        normalImg = *normal;
+        normalImg = normal;
     }
 
     if (prelight) {
-        prelightImg = *prelight;
+        prelightImg = prelight;
     }
 
     if (active) {
-        activeImg = *active;
+        activeImg = active;
     }
 
     if (dragged) {
-        draggedImg = *active;
+        draggedImg = active;
     }
 
     if (insensitive) {
-        insensitiveImg = *insensitive;
+        insensitiveImg = insensitive;
     }
 }
 
 OPIcon::OPIcon(Glib::ustring normalImage, Glib::ustring activeImage, Glib::ustring prelightImage,
-               Glib::ustring  draggedImage, Glib::ustring insensitiveImage, enum DrivenPoint drivenPoint) : drivenPoint(drivenPoint)
+               Glib::ustring  draggedImage, Glib::ustring insensitiveImage, DrivenPoint drivenPoint) : drivenPoint(drivenPoint)
 {
     if (!normalImage.empty()) {
         normalImg = Cairo::ImageSurface::create_from_png( RTImage::findIconAbsolutePath(normalImage) );
@@ -854,28 +854,28 @@ OPIcon::OPIcon(Glib::ustring normalImage, Glib::ustring activeImage, Glib::ustri
     }
 }
 
-Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getNormalImg()
+const Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getNormalImg()
 {
     return normalImg;
 }
-Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getPrelightImg()
+const Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getPrelightImg()
 {
     return prelightImg;
 }
-Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getActiveImg()
+const Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getActiveImg()
 {
     return activeImg;
 }
-Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getDraggedImg()
+const Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getDraggedImg()
 {
     return draggedImg;
 }
-Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getInsensitiveImg()
+const Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getInsensitiveImg()
 {
     return insensitiveImg;
 }
 
-void OPIcon::drawImage(Cairo::RefPtr<Cairo::ImageSurface> img,
+void OPIcon::drawImage(const Cairo::RefPtr<Cairo::ImageSurface> &img,
                        Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer,
                        EditCoordSystem &coordSystem)
 {
@@ -901,7 +901,7 @@ void OPIcon::drawImage(Cairo::RefPtr<Cairo::ImageSurface> img,
     cr->fill();
 }
 
-void OPIcon::drawMOImage(Cairo::RefPtr<Cairo::ImageSurface> img, Cairo::RefPtr<Cairo::Context> &cr,
+void OPIcon::drawMOImage(const Cairo::RefPtr<Cairo::ImageSurface> &img, Cairo::RefPtr<Cairo::Context> &cr,
                          unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     // test of F_HOVERABLE has already been done
@@ -1078,27 +1078,27 @@ void EditSubscriber::switchOffEditMode()
     unsubscribe();
 }
 
-const EditUniqueID EditSubscriber::getEditID()
+EditUniqueID EditSubscriber::getEditID()
 {
     return ID;
 }
 
-const EditType EditSubscriber::getEditingType()
+EditType EditSubscriber::getEditingType()
 {
     return editingType;
 }
 
-const BufferType EditSubscriber::getPipetteBufferType()
+BufferType EditSubscriber::getPipetteBufferType()
 {
     return bufferType;
 }
 
-const bool EditSubscriber::isDragging()
+bool EditSubscriber::isDragging()
 {
     return action == ES_ACTION_DRAGGING;
 }
 
-const bool EditSubscriber::isPicking()
+bool EditSubscriber::isPicking()
 {
     return action == ES_ACTION_PICKING;
 }

@@ -400,7 +400,7 @@ public:
 class OPIcon : public Geometry    // OP stands for "On Preview"
 {
 
-protected:
+private:
     Cairo::RefPtr<Cairo::ImageSurface> normalImg;
     Cairo::RefPtr<Cairo::ImageSurface> prelightImg;
     Cairo::RefPtr<Cairo::ImageSurface> activeImg;
@@ -411,22 +411,26 @@ protected:
     static void updateImages();
     void changeImage(Glib::ustring &newImage);
     static Glib::ustring findIconAbsolutePath(const Glib::ustring &iconFName);
-    void drawImage (Cairo::RefPtr<Cairo::ImageSurface> img, Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
-    void drawMOImage (Cairo::RefPtr<Cairo::ImageSurface> img, Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
-    void drivenPointToRectangle(rtengine::Coord &pos, rtengine::Coord &topLeft, rtengine::Coord &bottomRight, int W, int H);
+    void drawImage (const Cairo::RefPtr<Cairo::ImageSurface> &img, Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
+    void drawMOImage (const Cairo::RefPtr<Cairo::ImageSurface> &img, Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
+    void drivenPointToRectangle(const rtengine::Coord &pos, rtengine::Coord &topLeft, rtengine::Coord &bottomRight, int W, int H);
 
 public:
-    enum DrivenPoint drivenPoint;
+    DrivenPoint drivenPoint;
     rtengine::Coord position;
 
-    OPIcon (Cairo::RefPtr<Cairo::ImageSurface> *normal, Cairo::RefPtr<Cairo::ImageSurface> *active, Cairo::RefPtr<Cairo::ImageSurface> *prelight = NULL, Cairo::RefPtr<Cairo::ImageSurface> *dragged = NULL, Cairo::RefPtr<Cairo::ImageSurface> *insensitive = NULL,
-            enum DrivenPoint drivenPoint = DP_CENTERCENTER);
-    OPIcon (Glib::ustring normalImage, Glib::ustring activeImage, Glib::ustring  prelightImage = "", Glib::ustring  draggedImage = "", Glib::ustring insensitiveImage = "", enum DrivenPoint drivenPoint = DP_CENTERCENTER);
-    Cairo::RefPtr<Cairo::ImageSurface> getNormalImg();
-    Cairo::RefPtr<Cairo::ImageSurface> getPrelightImg();
-    Cairo::RefPtr<Cairo::ImageSurface> getActiveImg();
-    Cairo::RefPtr<Cairo::ImageSurface> getDraggedImg();
-    Cairo::RefPtr<Cairo::ImageSurface> getInsensitiveImg();
+    OPIcon (const Cairo::RefPtr<Cairo::ImageSurface> &normal,
+            const Cairo::RefPtr<Cairo::ImageSurface> &active,
+            const Cairo::RefPtr<Cairo::ImageSurface> &prelight = Cairo::RefPtr<Cairo::ImageSurface> (),
+            const Cairo::RefPtr<Cairo::ImageSurface> &dragged = Cairo::RefPtr<Cairo::ImageSurface> (),
+            const Cairo::RefPtr<Cairo::ImageSurface> &insensitive = Cairo::RefPtr<Cairo::ImageSurface> (),
+            DrivenPoint drivenPoint = DP_CENTERCENTER);
+    OPIcon (Glib::ustring normalImage, Glib::ustring activeImage, Glib::ustring  prelightImage = "", Glib::ustring  draggedImage = "", Glib::ustring insensitiveImage = "", DrivenPoint drivenPoint = DP_CENTERCENTER);
+    const Cairo::RefPtr<Cairo::ImageSurface> getNormalImg();
+    const Cairo::RefPtr<Cairo::ImageSurface> getPrelightImg();
+    const Cairo::RefPtr<Cairo::ImageSurface> getActiveImg();
+    const Cairo::RefPtr<Cairo::ImageSurface> getDraggedImg();
+    const Cairo::RefPtr<Cairo::ImageSurface> getInsensitiveImg();
     void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
     void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
     void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
@@ -469,11 +473,11 @@ public:
     virtual void       subscribe();
     virtual void       unsubscribe();
     virtual void       switchOffEditMode ();    /// Occurs when the user want to stop the editing mode
-    const EditUniqueID getEditID();
-    const EditType     getEditingType();
-    const BufferType   getPipetteBufferType();
-    const bool         isDragging();            /// Returns true if something is being dragged and drag events has to be sent (object mode only)
-    const bool         isPicking();             /// Returns true if something is being picked
+    EditUniqueID       getEditID();
+    EditType           getEditingType();
+    BufferType         getPipetteBufferType();
+    bool               isDragging();            /// Returns true if something is being dragged and drag events has to be sent (object mode only)
+    bool               isPicking();             /// Returns true if something is being picked
 
     /** @brief Get the cursor to be displayed when above handles
     @param objectID object currently "hovered" */
