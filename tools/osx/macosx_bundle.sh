@@ -34,7 +34,7 @@ fi
 # update project version
 if test -x "$(which git)" -a -d "${PROJECT_SOURCE_DIR}/.git"; then
     # This is what the version ought to look like to be accurate in the git universe:
-    PROJECT_FULL_VERSION="$(git describe --tags --always)_$(git symbolic-ref --short -q HEAD)"
+    PROJECT_FULL_VERSION="$(git describe --tags --always | sed 's/-g.*//')_$(git symbolic-ref --short -q HEAD)"
     # outputs: 4.2-677-g904467b_master
     # but Apple requirements https://goo.gl/eWDQv6 state we should use this:
     PROJECT_VERSION="$(git describe --tags --always | sed -e 's/-g.*//' -e 's/-/./')"
