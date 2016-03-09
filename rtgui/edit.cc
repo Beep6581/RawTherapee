@@ -940,8 +940,9 @@ void OPIcon::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr,
                                ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     if (flags & F_VISIBLE) {
-        // Here we will handle fallback solutions
-        State tmpState = state;
+        // Here we will handle fall-back solutions
+
+        State tmpState = state;  // can be updated through the successive test
 
         if (tmpState == INSENSITIVE) {
             if (!insensitiveImg) {

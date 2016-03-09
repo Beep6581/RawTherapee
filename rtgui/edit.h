@@ -421,9 +421,9 @@ public:
 
     OPIcon (const Cairo::RefPtr<Cairo::ImageSurface> &normal,
             const Cairo::RefPtr<Cairo::ImageSurface> &active,
-            const Cairo::RefPtr<Cairo::ImageSurface> &prelight = Cairo::RefPtr<Cairo::ImageSurface> (),
-            const Cairo::RefPtr<Cairo::ImageSurface> &dragged = Cairo::RefPtr<Cairo::ImageSurface> (),
-            const Cairo::RefPtr<Cairo::ImageSurface> &insensitive = Cairo::RefPtr<Cairo::ImageSurface> (),
+            const Cairo::RefPtr<Cairo::ImageSurface> &prelight = {},
+            const Cairo::RefPtr<Cairo::ImageSurface> &dragged = {},
+            const Cairo::RefPtr<Cairo::ImageSurface> &insensitive = {},
             DrivenPoint drivenPoint = DP_CENTERCENTER);
     OPIcon (Glib::ustring normalImage, Glib::ustring activeImage, Glib::ustring  prelightImage = "", Glib::ustring  draggedImage = "", Glib::ustring insensitiveImage = "", DrivenPoint drivenPoint = DP_CENTERCENTER);
     const Cairo::RefPtr<Cairo::ImageSurface> getNormalImg();
@@ -466,8 +466,8 @@ public:
     EditSubscriber (EditType editType);
     virtual ~EditSubscriber () {}
 
-    void              setEditProvider(EditDataProvider *provider);
-    EditDataProvider* getEditProvider ();
+    void               setEditProvider(EditDataProvider *provider);
+    EditDataProvider*  getEditProvider ();
     void               setEditID(EditUniqueID ID, BufferType buffType);
     bool               isCurrentSubscriber();
     virtual void       subscribe();
