@@ -323,7 +323,7 @@ void Gradient::editToggled ()
     }
 }
 
-CursorShape Gradient::getCursor(int objectID)
+CursorShape Gradient::getCursor(const int objectID)
 {
     switch (objectID) {
     case (0):
@@ -349,7 +349,7 @@ CursorShape Gradient::getCursor(int objectID)
     }
 }
 
-bool Gradient::mouseOver(int modifierKey)
+bool Gradient::mouseOver(const int modifierKey)
 {
     EditDataProvider* editProvider = getEditProvider();
 
@@ -379,7 +379,7 @@ bool Gradient::mouseOver(int modifierKey)
     return false;
 }
 
-bool Gradient::button1Pressed(int modifierKey)
+bool Gradient::button1Pressed(const int modifierKey)
 {
     if (lastObject < 0) {
         return false;
@@ -433,7 +433,7 @@ bool Gradient::button1Pressed(int modifierKey)
             draggedFeatherOffset -= (feather->getValue() / 200. * diagonal);
         }
 
-        EditSubscriber::dragging = true;
+        EditSubscriber::action = ES_ACTION_DRAGGING;
         return false;
     } else { // should theoretically always be true
         // this will let this class ignore further drag events
@@ -454,11 +454,11 @@ bool Gradient::button1Pressed(int modifierKey)
 bool Gradient::button1Released()
 {
     draggedPointOldAngle = -1000.;
-    EditSubscriber::dragging = false;
+    EditSubscriber::action = ES_ACTION_NONE;
     return true;
 }
 
-bool Gradient::drag1(int modifierKey)
+bool Gradient::drag1(const int modifierKey)
 {
     // compute the polar coordinate of the mouse position
     EditDataProvider *provider = getEditProvider();

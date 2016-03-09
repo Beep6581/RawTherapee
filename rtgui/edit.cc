@@ -747,7 +747,295 @@ void Rectangle::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned shor
     }
 }
 
-EditSubscriber::EditSubscriber (EditType editType) : ID(EUID_None), editingType(editType), bufferType(BT_SINGLEPLANE_FLOAT), provider(NULL), dragging(false) {}
+void OPIcon::drivenPointToRectangle(const rtengine::Coord &pos,
+                                    rtengine::Coord &topLeft, rtengine::Coord &bottomRight, int W, int H)
+{
+    switch (drivenPoint) {
+    case (DP_CENTERCENTER):
+        topLeft.x = pos.x - W / 2;
+        topLeft.y = pos.y - H / 2;
+        break;
+
+    case (DP_TOPLEFT):
+        topLeft.x = pos.x;
+        topLeft.y = pos.y;
+        break;
+
+    case (DP_TOPCENTER):
+        topLeft.x = pos.x - W / 2;
+        topLeft.y = pos.y;
+        break;
+
+    case (DP_TOPRIGHT):
+        topLeft.x = pos.x - W;
+        topLeft.y = pos.y;
+        break;
+
+    case (DP_CENTERRIGHT):
+        topLeft.x = pos.x - W;
+        topLeft.y = pos.y - H / 2;
+        break;
+
+    case (DP_BOTTOMRIGHT):
+        topLeft.x = pos.x - W;
+        topLeft.y = pos.y - H;
+        break;
+
+    case (DP_BOTTOMCENTER):
+        topLeft.x = pos.x - W / 2;
+        topLeft.y = pos.y - H;
+        break;
+
+    case (DP_BOTTOMLEFT):
+        topLeft.x = pos.x;
+        topLeft.y = pos.y - H;
+        break;
+
+    case (DP_CENTERLEFT):
+        topLeft.x = pos.x;
+        topLeft.y = pos.y - H / 2;
+        break;
+    }
+
+    bottomRight.x = topLeft.x + W - 1;
+    bottomRight.y = topLeft.y + H - 1;
+}
+
+OPIcon::OPIcon(const Cairo::RefPtr<Cairo::ImageSurface> &normal,
+               const Cairo::RefPtr<Cairo::ImageSurface> &active,
+               const Cairo::RefPtr<Cairo::ImageSurface> &prelight,
+               const Cairo::RefPtr<Cairo::ImageSurface> &dragged,
+               const Cairo::RefPtr<Cairo::ImageSurface> &insensitive,
+               DrivenPoint drivenPoint) :
+    drivenPoint(drivenPoint)
+{
+    if (normal) {
+        normalImg = normal;
+    }
+
+    if (prelight) {
+        prelightImg = prelight;
+    }
+
+    if (active) {
+        activeImg = active;
+    }
+
+    if (dragged) {
+        draggedImg = active;
+    }
+
+    if (insensitive) {
+        insensitiveImg = insensitive;
+    }
+}
+
+OPIcon::OPIcon(Glib::ustring normalImage, Glib::ustring activeImage, Glib::ustring prelightImage,
+               Glib::ustring  draggedImage, Glib::ustring insensitiveImage, DrivenPoint drivenPoint) : drivenPoint(drivenPoint)
+{
+    if (!normalImage.empty()) {
+        normalImg = Cairo::ImageSurface::create_from_png( RTImage::findIconAbsolutePath(normalImage) );
+    }
+
+    if (!prelightImage.empty()) {
+        prelightImg = Cairo::ImageSurface::create_from_png( RTImage::findIconAbsolutePath(prelightImage) );
+    }
+
+    if (!activeImage.empty()) {
+        activeImg = Cairo::ImageSurface::create_from_png( RTImage::findIconAbsolutePath(activeImage) );
+    }
+
+    if (!draggedImage.empty()) {
+        draggedImg = Cairo::ImageSurface::create_from_png( RTImage::findIconAbsolutePath(draggedImage) );
+    }
+
+    if (!insensitiveImage.empty()) {
+        insensitiveImg = Cairo::ImageSurface::create_from_png( RTImage::findIconAbsolutePath(insensitiveImage) );
+    }
+}
+
+const Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getNormalImg()
+{
+    return normalImg;
+}
+const Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getPrelightImg()
+{
+    return prelightImg;
+}
+const Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getActiveImg()
+{
+    return activeImg;
+}
+const Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getDraggedImg()
+{
+    return draggedImg;
+}
+const Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getInsensitiveImg()
+{
+    return insensitiveImg;
+}
+
+void OPIcon::drawImage(const Cairo::RefPtr<Cairo::ImageSurface> &img,
+                       Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer,
+                       EditCoordSystem &coordSystem)
+{
+    int imgW = img->get_width();
+    int imgH = img->get_height();
+
+    rtengine::Coord pos;
+
+    if (datum == IMAGE) {
+        coordSystem.imageCoordToScreen(position.x, position.y, pos.x, pos.y);
+    } else if (datum == CLICKED_POINT) {
+        pos = position + objectBuffer->getDataProvider()->posScreen;
+    } else if (datum == CURSOR)
+        pos = position + objectBuffer->getDataProvider()->posScreen
+              + objectBuffer->getDataProvider()->deltaScreen;
+
+    rtengine::Coord tl, br; // Coordinate of the rectangle in the CropBuffer coordinate system
+    drivenPointToRectangle(pos, tl, br, imgW, imgH);
+
+    cr->set_source(img, tl.x, tl.y);
+    cr->set_line_width(0.);
+    cr->rectangle(tl.x, tl.y, imgW, imgH);
+    cr->fill();
+}
+
+void OPIcon::drawMOImage(const Cairo::RefPtr<Cairo::ImageSurface> &img, Cairo::RefPtr<Cairo::Context> &cr,
+                         unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+{
+    // test of F_HOVERABLE has already been done
+
+    int imgW = img->get_width();
+    int imgH = img->get_height();
+
+    rtengine::Coord pos;
+
+    if (datum == IMAGE)
+        coordSystem.imageCoordToCropCanvas (position.x, position.y, pos.x, pos.y);
+    else if (datum == CLICKED_POINT) {
+        pos = position + objectBuffer->getDataProvider()->posScreen;
+    } else if (datum == CURSOR)
+        pos = position + objectBuffer->getDataProvider()->posScreen
+              + objectBuffer->getDataProvider()->deltaScreen;
+
+    rtengine::Coord tl, br; // Coordinate of the rectangle in the CropBuffer coordinate system
+    drivenPointToRectangle(pos, tl, br, imgW, imgH);
+
+    // drawing the lower byte's value
+    if (objectBuffer->getObjectMode() == OM_255) {
+        cr->set_source_rgba (0., 0., 0., ((id + 1) & 0xFF) / 255.);
+    } else {
+        cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
+    }
+    cr->set_line_width(0.);
+    cr->rectangle(tl.x, tl.y, imgW, imgH);
+    cr->fill();
+}
+
+void OPIcon::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr,
+                               ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) {}
+
+void OPIcon::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr,
+                               ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+{
+    if (flags & F_VISIBLE) {
+        // Here we will handle fall-back solutions
+
+        State tmpState = state;  // can be updated through the successive test
+
+        if (tmpState == INSENSITIVE) {
+            if (!insensitiveImg) {
+                tmpState = NORMAL;
+            } else {
+                OPIcon::drawImage(insensitiveImg, cr, objectBuffer, coordSystem);
+                return;
+            }
+        }
+
+        if (tmpState == DRAGGED) {
+            if (!draggedImg) {
+                tmpState = ACTIVE;
+            } else {
+                OPIcon::drawImage(draggedImg, cr, objectBuffer, coordSystem);
+                return;
+            }
+        }
+
+        if (tmpState == ACTIVE) {
+            if (!activeImg) {
+                tmpState = PRELIGHT;
+            } else {
+                OPIcon::drawImage(activeImg, cr, objectBuffer, coordSystem);
+                return;
+            }
+        }
+
+        if (tmpState == PRELIGHT) {
+            if (!prelightImg) {
+                tmpState = NORMAL;
+            } else {
+                OPIcon::drawImage(prelightImg, cr, objectBuffer, coordSystem);
+                return;
+            }
+        }
+
+        if (tmpState == NORMAL && normalImg) {
+            OPIcon::drawImage(normalImg, cr, objectBuffer, coordSystem);
+        }
+    }
+}
+
+void OPIcon::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned short id,
+                             ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+{
+    if (flags & F_HOVERABLE) {
+        // Here we will handle fallback solutions
+        State tmpState = state;
+
+        if (tmpState == INSENSITIVE) {
+            if (!insensitiveImg) {
+                tmpState = NORMAL;
+            } else {
+                OPIcon::drawMOImage(insensitiveImg, cr, id, objectBuffer, coordSystem);
+                return;
+            }
+        }
+
+        if (tmpState == DRAGGED) {
+            if (!draggedImg) {
+                tmpState = ACTIVE;
+            } else {
+                OPIcon::drawMOImage(draggedImg, cr, id, objectBuffer, coordSystem);
+                return;
+            }
+        }
+
+        if (tmpState == ACTIVE) {
+            if (!activeImg) {
+                tmpState = PRELIGHT;
+            } else {
+                OPIcon::drawMOImage(activeImg, cr, id, objectBuffer, coordSystem);
+                return;
+            }
+        }
+
+        if (tmpState == PRELIGHT) {
+            if (!prelightImg) {
+                tmpState = NORMAL;
+            } else {
+                OPIcon::drawMOImage(prelightImg, cr, id, objectBuffer, coordSystem);
+                return;
+            }
+        }
+
+        if (tmpState == NORMAL && normalImg) {
+            OPIcon::drawMOImage(normalImg, cr, id, objectBuffer, coordSystem);
+        }
+    }
+}
+
+EditSubscriber::EditSubscriber (EditType editType) : ID(EUID_None), editingType(editType), bufferType(BT_SINGLEPLANE_FLOAT), provider(NULL), action(ES_ACTION_NONE) {}
 
 void EditSubscriber::setEditProvider(EditDataProvider *provider)
 {
@@ -808,7 +1096,12 @@ BufferType EditSubscriber::getPipetteBufferType()
 
 bool EditSubscriber::isDragging()
 {
-    return dragging;
+    return action == ES_ACTION_DRAGGING;
+}
+
+bool EditSubscriber::isPicking()
+{
+    return action == ES_ACTION_PICKING;
 }
 
 //--------------------------------------------------------------------------------------------------

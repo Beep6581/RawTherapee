@@ -47,9 +47,11 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
 {
 
     // state management
-    ImgEditState state;                 // current state of user (see enum State)
+    ImgEditState state;                  // current state of user (see enum State)
     int press_x, press_y;               // position of the cursor in the GUI space on button press
     int action_x, action_y;             // parameter that will evolve during a pan or drag action
+    int pickedObject;
+    int pickModifierKey;
     double rot_deg;
     bool onResizeArea;
     bool deleted;
