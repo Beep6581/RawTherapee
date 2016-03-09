@@ -258,7 +258,7 @@ protected:
     void dcb_color_full(float (*image)[4], int x0, int y0, float (*chroma)[2]);
     void cielab (const float (*rgb)[3], float* l, float* a, float *b, const int width, const int height, const int labWidth, const float xyz_cam[3][3]);
     void xtransborder_interpolate (int border);
-    void xtrans_interpolate (int passes, bool useCieLab);
+    void xtrans_interpolate (const int passes, const bool useCieLab);
     void fast_xtrans_interpolate ();
     void    hflip       (Imagefloat* im);
     void    vflip       (Imagefloat* im);

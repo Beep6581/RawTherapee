@@ -22,7 +22,6 @@
 #include "rawimagesource.h"
 #include "rawimagesource_i.h"
 #include "jaggedarray.h"
-#include "median.h"
 #include "rawimage.h"
 #include "mytime.h"
 #include "iccmatrices.h"
@@ -37,6 +36,8 @@
 #include "procparams.h"
 #include "sleef.c"
 #include "opthelper.h"
+#define BENCHMARK
+#include "StopWatch.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -3887,17 +3888,14 @@ const float d65_white[3] = { 0.950456, 1, 1.088754 };
 
 void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b, const int width, const int height, const int labWidth, const float xyz_cam[3][3])
 {
-    static float cbrt[0x10000];
+    static LUTf cbrt(0x10000);
     static bool cbrtinit = false;
 
     if (!rgb) {
-        int i, j, k;
-        float r;
-
         if(!cbrtinit) {
-            for (i = 0; i < 0x10000; i++) {
-                r = i / 65535.f;
-                cbrt[i] = r > 0.008856f ? xcbrtf(r) : 7.787f * r + 16.f / 116.f;
+            for (int i = 0; i < 0x10000; i++) {
+                double r = i / 65535.0;
+                cbrt[i] = r > 0.008856f ? std::cbrt(r) : 7.787f * r + 16.f / 116.f;
             }
 
             cbrtinit = true;
@@ -3906,20 +3904,48 @@ void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b
         return;
     }
 
-    int rgbOffset = (width - labWidth);
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+    vfloat zd5v = F2V(0.5f);
+    vfloat c116v = F2V(116.f);
+    vfloat c16v = F2V(16.f);
+    vfloat c500v = F2V(500.f);
+    vfloat c200v = F2V(200.f);
+    vfloat xyz_camv[3][3];
+    for(int i = 0; i < 3; i++)
+        for(int j=0; j < 3; j++)
+            xyz_camv[i][j] = F2V(xyz_cam[i][j]);
 
+#endif // __SSE2__
     for(int i = 0; i < height; i++) {
-        for(int j = 0; j < labWidth; j++) {
+        int j = 0;
+#if defined( __SSE2__ ) && defined( __x86_64__ ) // vectorized LUT access is restricted to __x86_64__ => we have to use the same restriction
+        for(; j < labWidth-3; j+=4) {
+            vfloat redv, greenv, bluev;
+            vconvertrgbrgbrgbrgb2rrrrggggbbbb(rgb[i * width + j],redv,greenv,bluev);
+            vfloat xyz0v = zd5v + redv * xyz_camv[0][0] + greenv * xyz_camv[0][1] + bluev * xyz_camv[0][2];
+            vfloat xyz1v = zd5v + redv * xyz_camv[1][0] + greenv * xyz_camv[1][1] + bluev * xyz_camv[1][2];
+            vfloat xyz2v = zd5v + redv * xyz_camv[2][0] + greenv * xyz_camv[2][1] + bluev * xyz_camv[2][2];
+            xyz0v = cbrt[_mm_cvttps_epi32(xyz0v)];
+            xyz1v = cbrt[_mm_cvttps_epi32(xyz1v)];
+            xyz2v = cbrt[_mm_cvttps_epi32(xyz2v)];
+
+            STVFU(l[i * labWidth + j], c116v * xyz1v - c16v);
+            STVFU(a[i * labWidth + j], c500v * (xyz0v - xyz1v));
+            STVFU(b[i * labWidth + j], c200v * (xyz1v - xyz2v));
+        }
+
+#endif
+        for(; j < labWidth; j++) {
             float xyz[3] = {0.5f, 0.5f, 0.5f};
-            int c;
-            FORC3 {
-                xyz[0] += xyz_cam[0][c] * rgb[i * width + j][c];
-                xyz[1] += xyz_cam[1][c] * rgb[i * width + j][c];
-                xyz[2] += xyz_cam[2][c] * rgb[i * width + j][c];
+            for(int c = 0; c < 3; c++) {
+                float val = rgb[i * width + j][c];
+                xyz[0] += xyz_cam[0][c] * val;
+                xyz[1] += xyz_cam[1][c] * val;
+                xyz[2] += xyz_cam[2][c] * val;
             }
-            xyz[0] = cbrt[CLIP((int) xyz[0])];
-            xyz[1] = cbrt[CLIP((int) xyz[1])];
-            xyz[2] = cbrt[CLIP((int) xyz[2])];
+            xyz[0] = cbrt[(int) xyz[0]];
+            xyz[1] = cbrt[(int) xyz[1]];
+            xyz[2] = cbrt[(int) xyz[2]];
 
             l[i * labWidth + j] = 116 * xyz[1] - 16;
             a[i * labWidth + j] = 500 * (xyz[0] - xyz[1]);
@@ -3929,6 +3955,7 @@ void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b
 }
 
 #define fcol(row,col) xtrans[(row)%6][(col)%6]
+#define isgreen(row,col) (xtrans[(row)%3][(col)%3]&1)
 
 void RawImageSource::xtransborder_interpolate (int border)
 {
@@ -3983,10 +4010,13 @@ void RawImageSource::xtransborder_interpolate (int border)
    adapted to RT by Ingo Weyrich 2014
 */
 
-#define TS 122      /* Tile Size */
-
-void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
+void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
 {
+    BENCHFUN
+
+    constexpr int ts = 122;      /* Tile Size */
+    constexpr int tsh = ts / 2;  /* half of Tile Size */
+
     double progress = 0.0;
     const bool plistenerActive = plistener;
 
@@ -3998,13 +4028,11 @@ void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
     char xtrans[6][6];
     ri->getXtransMatrix(xtrans);
 
-    static const short  orth[12] = { 1, 0, 0, 1, -1, 0, 0, -1, 1, 0, 0, 1 },
+    constexpr short  orth[12] = { 1, 0, 0, 1, -1, 0, 0, -1, 1, 0, 0, 1 },
     patt[2][16] = { { 0, 1, 0, -1, 2, 0, -1, 0, 1, 1, 1, -1, 0, 0, 0, 0 },
         { 0, 1, 0, -2, 1, 0, -2, 0, 1, 1, -2, -2, 1, -1, -1, 1 }
     },
-    dir[4] = { 1, TS, TS + 1, TS - 1 };
-
-    short allhex[2][3][3][8];
+    dir[4] = { 1, ts, ts + 1, ts - 1 };
 
     // sgrow/sgcol is the offset in the sensor matrix of the solitary
     // green pixels
@@ -4032,15 +4060,16 @@ void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
     }
 
     /* Map a green hexagon around each non-green pixel and vice versa:  */
+    short allhex[2][3][3][8];
     {
         int gint, d, h, v, ng, row, col, c;
 
         for (row = 0; row < 3; row++)
             for (col = 0; col < 3; col++) {
-                gint = fcol(row, col) == 1;
+                gint = isgreen(row, col);
 
                 for (ng = d = 0; d < 10; d += 2) {
-                    if (fcol(row + orth[d] + 6, col + orth[d + 2] + 6) == 1) {
+                    if (isgreen(row + orth[d] + 6, col + orth[d + 2] + 6)) {
                         ng = 0;
                     } else {
                         ng++;
@@ -4058,7 +4087,7 @@ void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
                         v = orth[d] * patt[gint][c * 2] + orth[d + 1] * patt[gint][c * 2 + 1];
                         h = orth[d + 2] * patt[gint][c * 2] + orth[d + 3] * patt[gint][c * 2 + 1];
                         allhex[0][row][col][c ^ (gint * 2 & d)] = h + v * width;
-                        allhex[1][row][col][c ^ (gint * 2 & d)] = h + v * TS;
+                        allhex[1][row][col][c ^ (gint * 2 & d)] = h + v * ts;
                     }
                 }
             }
@@ -4071,7 +4100,7 @@ void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
     }
 
 
-    double progressInc = 36.0 * (1.0 - progress) / ((H * W) / ((TS - 16) * (TS - 16)));
+    double progressInc = 36.0 * (1.0 - progress) / ((H * W) / ((ts - 16) * (ts - 16)));
     const int ndir = 4 << (passes > 1);
     cielab (0, 0, 0, 0, 0, 0, 0, 0);
     struct s_minmaxgreen {
@@ -4079,110 +4108,128 @@ void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
         float max;
     };
 
-    int RightShift[6];
+    int RightShift[3];
 
-    for(int row = 0; row < 6; row++) {
+    for(int row = 0; row < 3; row++) {
         // count number of green pixels in three cols
         int greencount = 0;
 
         for(int col = 0; col < 3; col++) {
-            greencount += (fcol(row, col) == 1);
+            greencount += isgreen(row, col);
         }
 
         RightShift[row] = (greencount == 2);
     }
 
-
+#ifdef _OPENMP
     #pragma omp parallel
+#endif
     {
         int progressCounter = 0;
-        short *hex;
-        int c, d, f, h, i, v, mrow, mcol;
-        int pass;
-        float color[3][8], g, val;
-        float (*rgb)[TS][TS][3], (*rix)[3];
-        float (*lab)[TS - 8][TS - 8];
-        float (*drv)[TS - 10][TS - 10], diff[6], tr;
-        s_minmaxgreen  (*greenminmaxtile)[TS];
-        uint8_t (*homo)[TS][TS];
-        uint8_t (*homosum)[TS][TS];
-        float *buffer;
-        buffer = (float *) malloc ((TS * TS * (ndir * 3 + 11) + 128) * sizeof(float));
-        rgb  = (float(*)[TS][TS][3]) buffer;
-        lab  = (float (*)    [TS - 8][TS - 8])(buffer + TS * TS * (ndir * 3));
-        drv  = (float (*)[TS - 10][TS - 10])   (buffer + TS * TS * (ndir * 3 + 3));
-        homo = (uint8_t  (*)[TS][TS])   (lab); // we can reuse the lab-buffer because they are not used together
-        greenminmaxtile = (s_minmaxgreen(*)[TS]) (lab); // we can reuse the lab-buffer because they are not used together
-        homosum = (uint8_t (*)[TS][TS]) (drv); // we can reuse the drv-buffer because they are not used together
+        int c;
+        float color[3][6];
 
+        float *buffer = (float *) malloc ((ts * ts * (ndir * 4 + 3) + 128) * sizeof(float));
+        float (*rgb)[ts][ts][3] = (float(*)[ts][ts][3]) buffer;
+        float (*lab)[ts - 8][ts - 8] = (float (*)[ts - 8][ts - 8])(buffer + ts * ts * (ndir * 3));
+        float (*drv)[ts - 10][ts - 10] = (float (*)[ts - 10][ts - 10])   (buffer + ts * ts * (ndir * 3 + 3));
+        uint8_t (*homo)[ts][ts] = (uint8_t  (*)[ts][ts])   (lab); // we can reuse the lab-buffer because they are not used together
+        s_minmaxgreen  (*greenminmaxtile)[tsh] = (s_minmaxgreen(*)[tsh]) (lab); // we can reuse the lab-buffer because they are not used together
+        uint8_t (*homosum)[ts][ts] = (uint8_t (*)[ts][ts]) (drv); // we can reuse the drv-buffer because they are not used together
+
+#ifdef _OPENMP
         #pragma omp for collapse(2) schedule(dynamic) nowait
+#endif
+        for (int top = 3; top < height - 19; top += ts - 16)
+            for (int left = 3; left < width - 19; left += ts - 16) {
+                int mrow = MIN (top + ts, height - 3);
+                int mcol = MIN (left + ts, width - 3);
 
-        for (int top = 3; top < height - 19; top += TS - 16)
-            for (int left = 3; left < width - 19; left += TS - 16) {
-                int mrow = MIN (top + TS, height - 3);
-                int mcol = MIN (left + TS, width - 3);
-                memset(rgb, 0, TS * TS * 3 * sizeof(float));
+                /* Set greenmin and greenmax to the minimum and maximum allowed values: */
+                for (int row = top; row < mrow; row++) {
+                    // find first non-green pixel
+                    int leftstart = left;
+
+                    for(; leftstart < mcol; leftstart++)
+                        if(!isgreen(row, leftstart)) {
+                            break;
+                        }
+
+                    int coloffset = (RightShift[row % 3] == 1 ? 3 : 1 + (fcol(row,leftstart+1)&1));
+                    if(coloffset == 3) {
+                        short *hex = allhex[0][row % 3][leftstart % 3];
+                        for (int col = leftstart; col < mcol; col += coloffset) {
+                            float minval = FLT_MAX;
+                            float maxval = 0.f;
+                            float *pix = &rawData[row][col];
+                            for(int c = 0; c < 6; c++) {
+                                float val = pix[hex[c]];
+
+                                minval = minval < val ? minval : val;
+                                maxval = maxval > val ? maxval : val;
+                            }
+                            greenminmaxtile[row - top][(col - left) >> 1].min = minval;
+                            greenminmaxtile[row - top][(col - left) >> 1].max = maxval;
+                        }
+                    } else {
+                        float minval = FLT_MAX;
+                        float maxval = 0.f;
+                        int col = leftstart;
+                        if(coloffset == 2) {
+                            minval = FLT_MAX;
+                            maxval = 0.f;
+                            float *pix = &rawData[row][col];
+                            short *hex = allhex[0][row % 3][col % 3];
+                            for(int c = 0; c < 6; c++) {
+                                float val = pix[hex[c]];
+
+                                minval = minval < val ? minval : val;
+                                maxval = maxval > val ? maxval : val;
+                            }
+                            greenminmaxtile[row - top][(col - left)>>1].min = minval;
+                            greenminmaxtile[row - top][(col - left)>>1].max = maxval;
+                            col+=2;
+                        }
+                        short *hex = allhex[0][row % 3][col % 3];
+                        for (; col < mcol - 1; col += 3) {
+                            minval = FLT_MAX;
+                            maxval = 0.f;
+                            float *pix = &rawData[row][col];
+                            for(int c = 0; c < 6; c++) {
+                                float val = pix[hex[c]];
+
+                                minval = minval < val ? minval : val;
+                                maxval = maxval > val ? maxval : val;
+                            }
+                            greenminmaxtile[row - top][(col - left)>>1].min = minval;
+                            greenminmaxtile[row - top][(col - left)>>1].max = maxval;
+                            greenminmaxtile[row - top][(col + 1 - left)>>1].min = minval;
+                            greenminmaxtile[row - top][(col + 1 - left)>>1].max = maxval;
+                        }
+                        if(col < mcol) {
+                            minval = FLT_MAX;
+                            maxval = 0.f;
+                            float *pix = &rawData[row][col];
+                            for(int c = 0; c < 6; c++) {
+                                float val = pix[hex[c]];
+
+                                minval = minval < val ? minval : val;
+                                maxval = maxval > val ? maxval : val;
+                            }
+                            greenminmaxtile[row - top][(col - left)>>1].min = minval;
+                            greenminmaxtile[row - top][(col - left)>>1].max = maxval;
+                        }
+                    }
+                }
+
+                memset(rgb, 0, ts * ts * 3 * sizeof(float));
 
                 for (int row = top; row < mrow; row++)
                     for (int col = left; col < mcol; col++) {
                         rgb[0][row - top][col - left][fcol(row, col)] = rawData[row][col];
                     }
-
-                FORC3 memcpy (rgb[c + 1], rgb[0], sizeof * rgb);
-
-                /* Set green1 and green3 to the minimum and maximum allowed values: */
-                for (int row = top; row < mrow; row++) {
-                    float minval = FLT_MAX;
-                    float maxval = 0.f;
-                    int shiftindex = RightShift[(row) % 6];
-
-                    for (int col = left; col < mcol; col++) {
-                        if (fcol(row, col) == 1) {
-                            minval = FLT_MAX;
-                            maxval = 0.f;
-                            continue;
-                        }
-
-                        float *pix = &rawData[row][col];
-                        hex = allhex[0][row % 3][col % 3];
-
-                        if (maxval == 0.f)
-                            FORC(6) {
-                            val = pix[hex[c]];
-
-                            if (minval > val) {
-                                minval = val;
-                            }
-
-                            if (maxval < val) {
-                                maxval = val;
-                            }
-                        }
-
-                        greenminmaxtile[row - top][(col - left) >> shiftindex].min = minval;
-                        greenminmaxtile[row - top][(col - left) >> shiftindex].max = maxval;
-
-                        switch ((row - sgrow) % 3) {
-                        case 1:
-                            if (row < mrow - 1) {
-                                row++;
-                                shiftindex = RightShift[(row) % 6];
-                                col--;
-                            }
-
-                            break;
-
-                        case 2:
-                            minval = FLT_MAX;
-                            maxval = 0.f;
-
-                            if ((col += 2) < mcol - 1 && row > top + 1) {
-                                row--;
-                                shiftindex = RightShift[(row) % 6];
-                            }
-                        }
-                    }
-                }
+                for(int c = 0; c < 3; c++)
+                    memcpy (rgb[c + 1], rgb[0], sizeof * rgb);
 
                 /* Interpolate green horizontally, vertically, and along both diagonals: */
                 for (int row = top; row < mrow; row++) {
@@ -4190,33 +4237,45 @@ void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
                     int leftstart = left;
 
                     for(; leftstart < mcol; leftstart++)
-                        if(fcol(row, leftstart) != 1) {
+                        if(!isgreen(row, leftstart)) {
                             break;
                         }
 
-                    const int shiftindex = RightShift[(row) % 6];
-                    const int coloffset = (shiftindex == 1 ? 3 : 1);
-
-                    for (int col = leftstart; col < mcol; col += coloffset) {
-                        if (fcol(row, col) == 1) {
-                            continue;
+                    int coloffset = (RightShift[row % 3] == 1 ? 3 : 1 + (fcol(row,leftstart+1)&1));
+                    if(coloffset == 3) {
+                        short *hex = allhex[0][row % 3][leftstart % 3];
+                        for (int col = leftstart; col < mcol; col += coloffset) {
+                            float *pix = &rawData[row][col];
+                            float color[4];
+                            color[0] = 0.6796875f * (pix[hex[1]] + pix[hex[0]]) -
+                                          0.1796875f * (pix[2 * hex[1]] + pix[2 * hex[0]]);
+                            color[1] = 0.87109375f *  pix[hex[3]] + pix[hex[2]] * 0.12890625f +
+                                          0.359375f * (pix[0] - pix[-hex[2]]);
+                            for(int c = 0; c < 2; c++)
+                                color[2 + c] = 0.640625f * pix[hex[4 + c]] + 0.359375f * pix[-2 * hex[4 + c]] + 0.12890625f *
+                                              (2.f * pix[0] - pix[3 * hex[4 + c]] - pix[-3 * hex[4 + c]]);
+                            for(int c = 0; c < 4; c++)
+                                rgb[c][row - top][col - left][1] = LIM(color[c], greenminmaxtile[row - top][(col - left) >> 1].min, greenminmaxtile[row - top][(col - left) >> 1].max);
                         }
-
-                        float *pix = &rawData[row][col];
-                        hex = allhex[0][row % 3][col % 3];
-                        color[1][0] = 0.6796875f * (pix[hex[1]] + pix[hex[0]]) -
-                                      0.1796875f * (pix[2 * hex[1]] + pix[2 * hex[0]]);
-                        color[1][1] = 0.87109375f *  pix[hex[3]] + pix[hex[2]] * 0.12890625f +
-                                      0.359375f * (pix[0] - pix[-hex[2]]);
-                        FORC(2)
-                        color[1][2 + c] = 0.640625f * pix[hex[4 + c]] + 0.359375f * pix[-2 * hex[4 + c]] + 0.12890625f *
-                                          (2.f * pix[0] - pix[3 * hex[4 + c]] - pix[-3 * hex[4 + c]]);
-                        FORC(4)
-                        rgb[c ^ !((row - sgrow) % 3)][row - top][col - left][1] = LIM(color[1][c], greenminmaxtile[row - top][(col - left) >> shiftindex].min, greenminmaxtile[row - top][(col - left) >> shiftindex].max);
+                    } else {
+                        for (int col = leftstart; col < mcol; col += coloffset, coloffset ^= 3) {
+                            float *pix = &rawData[row][col];
+                            short *hex = allhex[0][row % 3][col % 3];
+                            float color[4];
+                            color[0] = 0.6796875f * (pix[hex[1]] + pix[hex[0]]) -
+                                          0.1796875f * (pix[2 * hex[1]] + pix[2 * hex[0]]);
+                            color[1] = 0.87109375f *  pix[hex[3]] + pix[hex[2]] * 0.12890625f +
+                                          0.359375f * (pix[0] - pix[-hex[2]]);
+                            for(int c = 0; c < 2; c++)
+                                color[2 + c] = 0.640625f * pix[hex[4 + c]] + 0.359375f * pix[-2 * hex[4 + c]] + 0.12890625f *
+                                              (2.f * pix[0] - pix[3 * hex[4 + c]] - pix[-3 * hex[4 + c]]);
+                            for(int c = 0; c < 4; c++)
+                                rgb[c ^ 1][row - top][col - left][1] = LIM(color[c], greenminmaxtile[row - top][(col - left)>>1].min, greenminmaxtile[row - top][(col - left)>>1].max);
+                        }
                     }
                 }
 
-                for (pass = 0; pass < passes; pass++) {
+                for (int pass = 0; pass < passes; pass++) {
                     if (pass == 1) {
                         memcpy (rgb += 4, buffer, 4 * sizeof * rgb);
                     }
@@ -4227,40 +4286,49 @@ void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
                             int leftstart = left + 2;
 
                             for(; leftstart < mcol - 2; leftstart++)
-                                if(fcol(row, leftstart) != 1) {
+                                if(!isgreen(row, leftstart)) {
                                     break;
                                 }
 
-                            const int shiftindex = RightShift[(row) % 6];
-                            const int coloffset = (shiftindex == 1 ? 3 : 1);
+                            int coloffset = (RightShift[row % 3] == 1 ? 3 : 1 + (fcol(row,leftstart+1)&1));
 
-                            for (int col = leftstart; col < mcol - 2; col += coloffset) {
-                                if ((f = fcol(row, col)) == 1) {
-                                    continue;
+                            if(coloffset == 3) {
+                                int f = fcol(row,leftstart);
+                                short *hex = allhex[1][row % 3][leftstart % 3];
+                                for (int col = leftstart; col < mcol - 2; col += coloffset, f ^= 2) {
+                                    for (int d = 3; d < 6; d++) {
+                                        float (*rix)[3] = &rgb[(d - 2)][row - top][col - left];
+                                        float val = 0.33333333f * (rix[-2 * hex[d]][1] + 2 * (rix[hex[d]][1] - rix[hex[d]][f])
+                                              - rix[-2 * hex[d]][f]) + rix[0][f];
+                                        rix[0][1] = LIM(val, greenminmaxtile[row - top][(col - left) >> 1].min, greenminmaxtile[row - top][(col - left) >> 1].max);
+                                    }
                                 }
+                            } else {
+                                int f = fcol(row, leftstart);
+                                for (int col = leftstart; col < mcol - 2; col += coloffset, coloffset ^= 3, f = f ^ (coloffset&2) ) {
+                                    short *hex = allhex[1][row % 3][col % 3];
 
-                                hex = allhex[1][row % 3][col % 3];
-
-                                for (d = 3; d < 6; d++) {
-                                    rix = &rgb[(d - 2) ^ !((row - sgrow) % 3)][row - top][col - left];
-                                    val = rix[-2 * hex[d]][1] + 2 * (rix[hex[d]][1] - rix[hex[d]][f])
-                                          - rix[-2 * hex[d]][f] + 3 * rix[0][f];
-                                    rix[0][1] = LIM((float)(val * .33333333f), greenminmaxtile[row - top][(col - left) >> shiftindex].min, greenminmaxtile[row - top][(col - left) >> shiftindex].max);
+                                    for (int d = 3; d < 6; d++) {
+                                        float (*rix)[3] = &rgb[(d - 2) ^ 1][row - top][col - left];
+                                        float val = 0.33333333f * (rix[-2 * hex[d]][1] + 2 * (rix[hex[d]][1] - rix[hex[d]][f])
+                                              - rix[-2 * hex[d]][f]) + rix[0][f];
+                                        rix[0][1] = LIM(val, greenminmaxtile[row - top][(col - left)>>1].min, greenminmaxtile[row - top][(col - left)>>1].max);
+                                    }
                                 }
                             }
                         }
                     }
 
                     /* Interpolate red and blue values for solitary green pixels:   */
-                    for (int row = (top - sgrow + 4) / 3 * 3 + sgrow; row < mrow - 2; row += 3)
-                        for (int col = (left - sgcol + 4) / 3 * 3 + sgcol; col < mcol - 2; col += 3) {
-                            rix = &rgb[0][row - top][col - left];
-                            h = fcol(row, col + 1);
-                            memset (diff, 0, sizeof diff);
+                    int sgstartcol = (left - sgcol + 4) / 3 * 3 + sgcol;
+                    for (int row = (top - sgrow + 4) / 3 * 3 + sgrow; row < mrow - 2; row += 3) {
+                        for (int col = sgstartcol, h = fcol(row, col + 1); col < mcol - 2; col += 3, h^=2) {
+                            float (*rix)[3] = &rgb[0][row - top][col - left];
+                            float diff[6] = {0.f};
 
-                            for (i = 1, d = 0; d < 6; d++, i ^= TS ^ 1, h ^= 2) {
-                                for (c = 0; c < 2; c++, h ^= 2) {
-                                    g = rix[0][1] + rix[0][1] - rix[i << c][1] - rix[-i << c][1];
+                            for (int i = 1, d = 0; d < 6; d++, i ^= ts ^ 1, h ^= 2) {
+                                for (int c = 0; c < 2; c++, h ^= 2) {
+                                    float g = rix[0][1] + rix[0][1] - rix[i << c][1] - rix[-i << c][1];
                                     color[h][d] = g + rix[i << c][h] + rix[-i << c][h];
 
                                     if (d > 1)
@@ -4270,75 +4338,103 @@ void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
 
                                 if (d > 2 && (d & 1))    // 3, 5
                                     if (diff[d - 1] < diff[d])
-                                        FORC(2)
-                                        color[c * 2][d] = color[c * 2][d - 1];
+                                        for(int c = 0; c < 2; c++)
+                                            color[c * 2][d] = color[c * 2][d - 1];
 
                                 if ((d & 1) || d < 2) { // d: 0, 1, 3, 5
-                                    FORC(2)
-                                    rix[0][c * 2] = CLIP(0.5f * color[c * 2][d]);
-                                    rix += TS * TS;
+                                    for(int c = 0; c < 2; c++)
+                                        rix[0][c * 2] = CLIP(0.5f * color[c * 2][d]);
+                                    rix += ts * ts;
                                 }
                             }
                         }
-
+                    }
                     /* Interpolate red for blue pixels and vice versa:      */
                     for (int row = top + 3; row < mrow - 3; row++) {
                         int leftstart = left + 3;
 
                         for(; leftstart < mcol - 1; leftstart++)
-                            if(fcol(row, leftstart) != 1) {
+                            if(!isgreen(row, leftstart)) {
                                 break;
                             }
 
-                        const int coloffset = (RightShift[(row) % 6] == 1 ? 3 : 1);
-                        c = (row - sgrow) % 3 ? TS : 1;
-                        h = 3 * (c ^ TS ^ 1);
+                        int coloffset = (RightShift[row % 3] == 1 ? 3 : 1);
+                        c = (row - sgrow) % 3 ? ts : 1;
+                        int h = 3 * (c ^ ts ^ 1);
 
-                        for (int col = leftstart; col < mcol - 3; col += coloffset) {
-                            if ((f = 2 - fcol(row, col)) == 1) {
-                                continue;
+                        if(coloffset == 3) {
+                            int f = 2 - fcol(row, leftstart);
+                            for (int col = leftstart; col < mcol - 3; col += coloffset, f ^= 2) {
+                                float (*rix)[3] = &rgb[0][row - top][col - left];
+
+                                for (int d = 0; d < 4; d++, rix += ts * ts) {
+                                    int i = d > 1 || ((d ^ c) & 1) ||
+                                        ((fabsf(rix[0][1] - rix[c][1]) + fabsf(rix[0][1] - rix[-c][1])) < 2.f * (fabsf(rix[0][1] - rix[h][1]) + fabsf(rix[0][1] - rix[-h][1]))) ? c : h;
+
+                                    rix[0][f] = CLIP(rix[0][1] + 0.5f * (rix[i][f] + rix[-i][f] - rix[i][1] - rix[-i][1]));
+                                }
                             }
+                        } else {
+                            coloffset = fcol(row, leftstart+1) == 1 ? 2 : 1;
+                            int f = 2 - fcol(row, leftstart);
+                            for (int col = leftstart; col < mcol - 3; col += coloffset, coloffset ^= 3, f = f ^ (coloffset&2) ) {
+                                float (*rix)[3] = &rgb[0][row - top][col - left];
 
-                            rix = &rgb[0][row - top][col - left];
+                                for (int d = 0; d < 4; d++, rix += ts * ts) {
+                                    int i = d > 1 || ((d ^ c) & 1) ||
+                                        ((fabsf(rix[0][1] - rix[c][1]) + fabsf(rix[0][1] - rix[-c][1])) < 2.f * (fabsf(rix[0][1] - rix[h][1]) + fabsf(rix[0][1] - rix[-h][1]))) ? c : h;
 
-                            for (d = 0; d < 4; d++, rix += TS * TS) {
-                                i = d > 1 || ((d ^ c) & 1) ||
-                                    ((fabsf(rix[0][1] - rix[c][1]) + fabsf(rix[0][1] - rix[-c][1])) < 2.f * (fabsf(rix[0][1] - rix[h][1]) + fabsf(rix[0][1] - rix[-h][1]))) ? c : h;
-
-                                rix[0][f] = CLIP(0.5f * (rix[i][f] + rix[-i][f] +
-                                                         rix[0][1] + rix[0][1] - rix[i][1] - rix[-i][1]));
+                                    rix[0][f] = CLIP(rix[0][1] + 0.5f * (rix[i][f] + rix[-i][f] - rix[i][1] - rix[-i][1]));
+                                }
                             }
                         }
                     }
 
                     /* Fill in red and blue for 2x2 blocks of green:        */
-                    for (int row = top + 2; row < mrow - 2; row++)
-                        if ((row - sgrow) % 3) {
-                            for (int col = left + 2; col < mcol - 2; col++)
-                                if ((col - sgcol) % 3) {
-                                    rix = &rgb[0][row - top][col - left];
-                                    hex = allhex[1][row % 3][col % 3];
-
-                                    for (d = 0; d < ndir; d += 2, rix += TS * TS)
-                                        if (hex[d] + hex[d + 1]) {
-                                            g = 3 * rix[0][1] - 2 * rix[hex[d]][1] - rix[hex[d + 1]][1];
-
-                                            for (c = 0; c < 4; c += 2) {
-                                                rix[0][c] =   CLIP((g + 2 * rix[hex[d]][c] + rix[hex[d + 1]][c]) * 0.33333333f);
-                                            }
-                                        } else {
-                                            g = 2 * rix[0][1] - rix[hex[d]][1] - rix[hex[d + 1]][1];
-
-                                            for (c = 0; c < 4; c += 2) {
-                                                rix[0][c] =   CLIP((g + rix[hex[d]][c] + rix[hex[d + 1]][c]) * 0.5f);
-                                            }
-                                        }
-                                }
+                    // Find first row of 2x2 green
+                    int topstart = top + 2;
+                    for(; topstart < mrow - 2; topstart++)
+                        if((topstart - sgrow) % 3) {
+                            break;
                         }
+
+                    int leftstart = left + 2;
+
+                    for(; leftstart < mcol - 2; leftstart++)
+                        if((leftstart - sgcol) % 3) {
+                            break;
+                        }
+
+                    int coloffsetstart = 2 - (fcol(topstart,leftstart+1)&1);
+
+                    for (int row = topstart; row < mrow - 2; row++) {
+                        if ((row - sgrow) % 3) {
+                            for (int col = leftstart, coloffset = coloffsetstart; col < mcol - 2; col += coloffset, coloffset ^= 3) {
+                                float (*rix)[3] = &rgb[0][row - top][col - left];
+                                short *hex = allhex[1][row % 3][col % 3];
+
+                                for (int d = 0; d < ndir; d += 2, rix += ts * ts) {
+                                    if (hex[d] + hex[d + 1]) {
+                                        float g = 3 * rix[0][1] - 2 * rix[hex[d]][1] - rix[hex[d + 1]][1];
+
+                                        for (c = 0; c < 4; c += 2) {
+                                            rix[0][c] = CLIP((g + 2 * rix[hex[d]][c] + rix[hex[d + 1]][c]) * 0.33333333f);
+                                        }
+                                    } else {
+                                        float g = 2 * rix[0][1] - rix[hex[d]][1] - rix[hex[d + 1]][1];
+
+                                        for (c = 0; c < 4; c += 2) {
+                                            rix[0][c] = CLIP((g + rix[hex[d]][c] + rix[hex[d + 1]][c]) * 0.5f);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
 // end of multipass part
-                rgb = (float(*)[TS][TS][3]) buffer;
+                rgb = (float(*)[ts][ts][3]) buffer;
                 mrow -= top;
                 mcol -= left;
 
@@ -4347,21 +4443,24 @@ void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
                     // Original dcraw algorithm uses CIELab as perceptual space
                     // (presumably coming from original AHD) and converts taking
                     // camera matrix into account.  We use this in RT.
-                    for (d = 0; d < ndir; d++) {
+                    for (int d = 0; d < ndir; d++) {
                         float *l = &lab[0][0][0];
                         float *a = &lab[1][0][0];
                         float *b = &lab[2][0][0];
-                        cielab(&rgb[d][4][4], l, a, b, TS, mrow - 8, TS - 8, xyz_cam);
+                        cielab(&rgb[d][4][4], l, a, b, ts, mrow - 8, ts - 8, xyz_cam);
                         int f = dir[d & 3];
                         f = f == 1 ? 1 : f - 8;
 
                         for (int row = 5; row < mrow - 5; row++)
+#ifdef _OPENMP
+                            #pragma omp simd
+#endif
                             for (int col = 5; col < mcol - 5; col++) {
                                 float *l = &lab[0][row - 4][col - 4];
                                 float *a = &lab[1][row - 4][col - 4];
                                 float *b = &lab[2][row - 4][col - 4];
 
-                                g = 2 * l[0] - l[f] - l[-f];
+                                float g = 2 * l[0] - l[f] - l[-f];
                                 drv[d][row - 5][col - 5] =  SQR(g)
                                                             + SQR((2 * a[0] - a[f] - a[-f] + g * 2.1551724f))
                                                             + SQR((2 * b[0] - b[f] - b[-f] - g * 0.86206896f));
@@ -4369,15 +4468,35 @@ void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
 
                     }
                 } else {
-                    // Now use YPbPr which requires much
+                    // For 1-pass demosaic we use YPbPr which requires much
                     // less code and is nearly indistinguishable. It assumes the
                     // camera RGB is roughly linear.
-                    //
-                    for (d = 0; d < ndir; d++) {
-                        float (*yuv)[TS - 8][TS - 8] = lab; // we use the lab buffer, which has the same dimensions
-
-                        for (int row = 4; row < mrow - 4; row++)
-                            for (int col = 4; col < mcol - 4; col++) {
+                    for (int d = 0; d < ndir; d++) {
+                        float (*yuv)[ts - 8][ts - 8] = lab; // we use the lab buffer, which has the same dimensions
+#ifdef __SSE2__
+                        vfloat zd2627v = F2V(0.2627f);
+                        vfloat zd6780v = F2V(0.6780f);
+                        vfloat zd0593v = F2V(0.0593f);
+                        vfloat zd56433v = F2V(0.56433f);
+                        vfloat zd67815v = F2V(0.67815f);
+#endif
+                        for (int row = 4; row < mrow - 4; row++) {
+                            int col = 4;
+#ifdef __SSE2__
+                            for (; col < mcol - 7; col+=4) {
+                                // use ITU-R BT.2020 YPbPr, which is great, but could use
+                                // a better/simpler choice? note that imageop.h provides
+                                // dt_iop_RGB_to_YCbCr which uses Rec. 601 conversion,
+                                // which appears less good with specular highlights
+                                vfloat redv, greenv, bluev;
+                                vconvertrgbrgbrgbrgb2rrrrggggbbbb(rgb[d][row][col], redv, greenv, bluev);
+                                vfloat yv = zd2627v * redv + zd6780v * bluev + zd0593v * greenv;
+                                STVFU(yuv[0][row - 4][col - 4], yv);
+                                STVFU(yuv[1][row - 4][col - 4], (bluev - yv) * zd56433v);
+                                STVFU(yuv[2][row - 4][col - 4], (redv - yv) * zd67815v);
+                            }
+#endif
+                            for (; col < mcol - 4; col++) {
                                 // use ITU-R BT.2020 YPbPr, which is great, but could use
                                 // a better/simpler choice? note that imageop.h provides
                                 // dt_iop_RGB_to_YCbCr which uses Rec. 601 conversion,
@@ -4387,7 +4506,7 @@ void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
                                 yuv[1][row - 4][col - 4] = (rgb[d][row][col][2] - y) * 0.56433f;
                                 yuv[2][row - 4][col - 4] = (rgb[d][row][col][0] - y) * 0.67815f;
                             }
-
+                        }
                         int f = dir[d & 3];
                         f = f == 1 ? 1 : f - 8;
 
@@ -4404,56 +4523,49 @@ void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
                 }
 
                 /* Build homogeneity maps from the derivatives:         */
-                memset(homo, 0, ndir * TS * TS * sizeof(uint8_t));
+                memset(homo, 0, ndir * ts * ts * sizeof(uint8_t));
 
                 for (int row = 6; row < mrow - 6; row++)
                     for (int col = 6; col < mcol - 6; col++) {
-                        for (tr = FLT_MAX, d = 0; d < ndir; d++) {
+                        float tr = drv[0][row - 5][col - 5] < drv[1][row - 5][col - 5] ? drv[0][row - 5][col - 5] : drv[1][row - 5][col - 5];
+                        for (int d = 2; d < ndir; d++) {
                             tr = (drv[d][row - 5][col - 5] < tr ? drv[d][row - 5][col - 5] : tr);
                         }
 
                         tr *= 8;
 
-                        for (d = 0; d < ndir; d++)
-                            for (v = -1; v <= 1; v++)
-                                for (h = -1; h <= 1; h++) {
+                        for (int d = 0; d < ndir; d++)
+                            for (int v = -1; v <= 1; v++)
+                                for (int h = -1; h <= 1; h++) {
                                     homo[d][row][col] += (drv[d][row + v - 5][col + h - 5] <= tr ? 1 : 0) ;
                                 }
                     }
 
-                if (height - top < TS + 4) {
+                if (height - top < ts + 4) {
                     mrow = height - top + 2;
                 }
 
-                if (width - left < TS + 4) {
+                if (width - left < ts + 4) {
                     mcol = width - left + 2;
                 }
 
 
                 /* Build 5x5 sum of homogeneity maps */
-                for(d = 0; d < ndir; d++) {
+                const int startcol = MIN(left, 8);
+                for(int d = 0; d < ndir; d++) {
                     for (int row = MIN(top, 8); row < mrow - 8; row++) {
                         int v5sum[5] = {0};
-                        const int startcol = MIN(left, 8);
 
-                        for(v = -2; v <= 2; v++)
-                            for(h = -2; h <= 2; h++) {
+                        for(int v = -2; v <= 2; v++)
+                            for(int h = -2; h <= 2; h++) {
                                 v5sum[2 + h] += homo[d][row + v][startcol + h];
                             }
 
                         int blocksum = v5sum[0] + v5sum[1] + v5sum[2] + v5sum[3] + v5sum[4];
                         homosum[d][row][startcol] = blocksum;
-                        int voffset = -1;
-
                         // now we can subtract a column of five from blocksum and get new colsum of 5
-                        for (int col = startcol + 1; col < mcol - 8; col++) {
-                            int colsum = homo[d][row - 2][col + 2];
-
-                            for(v = -1; v <= 2; v++) {
-                                colsum += homo[d][row + v][col + 2];
-                            }
-
-                            voffset ++;
+                        for (int col = startcol + 1, voffset = 0; col < mcol - 8; col++, voffset++) {
+                            int colsum = homo[d][row - 2][col + 2] + homo[d][row - 1][col + 2] + homo[d][row][col + 2] + homo[d][row + 1][col + 2] + homo[d][row + 2][col + 2];
                             voffset = voffset == 5 ? 0 : voffset;  // faster than voffset %= 5;
                             blocksum -= v5sum[voffset];
                             blocksum += colsum;
@@ -4468,8 +4580,8 @@ void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
                     for (int col = MIN(left, 8); col < mcol - 8; col++) {
                         uint8_t hm[8];
                         uint8_t maxval = 0;
-
-                        for (d = 0; d < 4; d++) {
+                        int d = 0;
+                        for (; d < 4; d++) {
                             hm[d] = homosum[d][row][col];
                             maxval = (maxval < hm[d] ? hm[d] : maxval);
                         }
@@ -4477,7 +4589,6 @@ void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
                         for (; d < ndir; d++) {
                             hm[d] = homosum[d][row][col];
                             maxval = (maxval < hm[d] ? hm[d] : maxval);
-
                             if (hm[d - 4] < hm[d]) {
                                 hm[d - 4] = 0;
                             } else if (hm[d - 4] > hm[d]) {
@@ -4494,9 +4605,9 @@ void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
                                 avg[3]++;
                             }
 
-                        red[row + top][col + left] = (avg[0] / avg[3]);
-                        green[row + top][col + left] = (avg[1] / avg[3]);
-                        blue[row + top][col + left] = (avg[2] / avg[3]);
+                        red[row + top][col + left] = avg[0] / avg[3];
+                        green[row + top][col + left] = avg[1] / avg[3];
+                        blue[row + top][col + left] = avg[2] / avg[3];
                     }
 
                 if(plistenerActive && ((++progressCounter) % 32 == 0)) {
@@ -4517,8 +4628,6 @@ void RawImageSource::xtrans_interpolate (int passes, bool useCieLab)
     }
 
 }
-
-#undef TS
 
 void RawImageSource::fast_xtrans_interpolate ()
 {
@@ -4579,7 +4688,7 @@ void RawImageSource::fast_xtrans_interpolate ()
     }
 }
 #undef fcol
-
+#undef isgreen
 
 
 #undef TILEBORDER
