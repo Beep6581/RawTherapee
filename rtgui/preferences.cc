@@ -2014,19 +2014,6 @@ void Preferences::switchThemeTo(Glib::ustring newTheme)
         printf("Error: Can't load css file \"%s\"\n", filename.c_str());
         loaded = false;
     }
-
-    // TODO remove rtcommon
-    if (!loaded && options.theme != "rtcommon") {
-        try {
-            printf("Trying with \"rtcommon.css\"\n");
-            filename = argv0 + "/themes/rtcommon.css";
-            css->load_from_path (filename);
-        } catch (Glib::Error &err) {
-            printf("Error: Can't load css file \"rtcommon.css\"\nMessage: %s\n", err.what().c_str());
-        } catch (...) {
-            printf("Error: Can't load css file \"%s\"\n", filename.c_str());
-        }
-    }
 }
 
 void Preferences::workflowUpdate ()
