@@ -3401,19 +3401,13 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, const i
     float row_I[W];
     float row_Q[W];
 
-    float buffer[3 * 8];
-    float* pre1_I = &buffer[0];
-    float* pre2_I = &buffer[3];
-    float* post1_I = &buffer[6];
-    float* post2_I = &buffer[9];
-    float* pre1_Q = &buffer[12];
-    float* pre2_Q = &buffer[15];
-    float* post1_Q = &buffer[18];
-    float* post2_Q = &buffer[21];
+    float buffer[12];
+    float* pre1 = &buffer[0];
+    float* pre2 = &buffer[3];
+    float* post1 = &buffer[6];
+    float* post2 = &buffer[9];
 
-    float middle_I[6];
-    float middle_Q[6];
-    float* tmp;
+    float middle[6];
 
     int px = (row_from - 1) % 3, cx = row_from % 3, nx = 0;
 
@@ -3433,49 +3427,43 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, const i
 
         convert_row_to_YIQ (im->r(i + 1), im->g(i + 1), im->b(i + 1), rbconv_Y[nx], rbconv_I[nx], rbconv_Q[nx], W);
 
-        SORT3(rbconv_I[px][0], rbconv_I[cx][0], rbconv_I[nx][0], pre1_I[0], pre1_I[1], pre1_I[2]);
-        SORT3(rbconv_I[px][1], rbconv_I[cx][1], rbconv_I[nx][1], pre2_I[0], pre2_I[1], pre2_I[2]);
-        SORT3(rbconv_Q[px][0], rbconv_Q[cx][0], rbconv_Q[nx][0], pre1_Q[0], pre1_Q[1], pre1_Q[2]);
-        SORT3(rbconv_Q[px][1], rbconv_Q[cx][1], rbconv_Q[nx][1], pre2_Q[0], pre2_Q[1], pre2_Q[2]);
+        pre1[0] = rbconv_I[px][0], pre1[1] = rbconv_I[cx][0], pre1[2] = rbconv_I[nx][0];
+        pre2[0] = rbconv_I[px][1], pre2[1] = rbconv_I[cx][1], pre2[2] = rbconv_I[nx][1];
 
-        // median I channel
         float temp[7];
 
-        for (int j = 1; j < W - 2; j += 2) {
-            SORT3(rbconv_I[px][j + 1], rbconv_I[cx][j + 1], rbconv_I[nx][j + 1], post1_I[0], post1_I[1], post1_I[2]);
-            NETWORKSORT4OF6(pre2_I[0], pre2_I[1], pre2_I[2], post1_I[0], post1_I[1], post1_I[2], middle_I[0], middle_I[1], middle_I[2], middle_I[3], middle_I[4], middle_I[5], temp[0]);
-            SORT3(rbconv_I[px][j + 2], rbconv_I[cx][j + 2], rbconv_I[nx][j + 2], post2_I[0], post2_I[1], post2_I[2]);
-            MEDIAN7(pre1_I[0], pre1_I[1], pre1_I[2], middle_I[1], middle_I[2], middle_I[3], middle_I[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j]);
-            MEDIAN7(post2_I[0], post2_I[1], post2_I[2], middle_I[1], middle_I[2], middle_I[3], middle_I[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j + 1]);
-            tmp = pre1_I;
-            pre1_I = post1_I;
-            post1_I = tmp;
-            tmp = pre2_I;
-            pre2_I = post2_I;
-            post2_I = tmp;
-
-        }
-
-        // median Q channel
-        for (int j = 1; j < W - 2; j += 2) {
-            SORT3(rbconv_Q[px][j + 1], rbconv_Q[cx][j + 1], rbconv_Q[nx][j + 1], post1_Q[0], post1_Q[1], post1_Q[2]);
-            NETWORKSORT4OF6(pre2_Q[0], pre2_Q[1], pre2_Q[2], post1_Q[0], post1_Q[1], post1_Q[2], middle_Q[0], middle_Q[1], middle_Q[2], middle_Q[3], middle_Q[4], middle_Q[5], temp[0]);
-            SORT3(rbconv_Q[px][j + 2], rbconv_Q[cx][j + 2], rbconv_Q[nx][j + 2], post2_Q[0], post2_Q[1], post2_Q[2]);
-            MEDIAN7(pre1_Q[0], pre1_Q[1], pre1_Q[2], middle_Q[1], middle_Q[2], middle_Q[3], middle_Q[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j]);
-            MEDIAN7(post2_Q[0], post2_Q[1], post2_Q[2], middle_Q[1], middle_Q[2], middle_Q[3], middle_Q[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j + 1]);
-            tmp = pre1_Q;
-            pre1_Q = post1_Q;
-            post1_Q = tmp;
-            tmp = pre2_Q;
-            pre2_Q = post2_Q;
-            post2_Q = tmp;
-        }
-
-        // fill first and last element in rbout
+        // fill first element in rbout_I
         rbout_I[cx][0] = rbconv_I[cx][0];
+        // median I channel
+        for (int j = 1; j < W - 2; j += 2) {
+            post1[0] = rbconv_I[px][j + 1], post1[1] = rbconv_I[cx][j + 1], post1[2] = rbconv_I[nx][j + 1];
+            NETWORKSORT4OF6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2], middle[0], middle[1], middle[2], middle[3], middle[4], middle[5], temp[0]);
+            MEDIAN7(pre1[0], pre1[1], pre1[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j]);
+            post2[0] = rbconv_I[px][j + 2], post2[1] = rbconv_I[cx][j + 2], post2[2] = rbconv_I[nx][j + 2];
+            MEDIAN7(post2[0], post2[1], post2[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j + 1]);
+            std::swap(pre1,post1);
+            std::swap(pre2,post2);
+        }
+        // fill last elements in rbout_I
         rbout_I[cx][W - 1] = rbconv_I[cx][W - 1];
         rbout_I[cx][W - 2] = rbconv_I[cx][W - 2];
+
+        pre1[0] = rbconv_Q[px][0], pre1[1] = rbconv_Q[cx][0], pre1[2] = rbconv_Q[nx][0];
+        pre2[0] = rbconv_Q[px][1], pre2[1] = rbconv_Q[cx][1], pre2[2] = rbconv_Q[nx][1];
+
+        // fill first element in rbout_Q
         rbout_Q[cx][0] = rbconv_Q[cx][0];
+        // median Q channel
+        for (int j = 1; j < W - 2; j += 2) {
+            post1[0] = rbconv_Q[px][j + 1], post1[1] = rbconv_Q[cx][j + 1], post1[2] = rbconv_Q[nx][j + 1];
+            NETWORKSORT4OF6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2], middle[0], middle[1], middle[2], middle[3], middle[4], middle[5], temp[0]);
+            MEDIAN7(pre1[0], pre1[1], pre1[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j]);
+            post2[0] = rbconv_Q[px][j + 2], post2[1] = rbconv_Q[cx][j + 2], post2[2] = rbconv_Q[nx][j + 2];
+            MEDIAN7(post2[0], post2[1], post2[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j + 1]);
+            std::swap(pre1,post1);
+            std::swap(pre2,post2);
+        }
+        // fill last elements in rbout_Q
         rbout_Q[cx][W - 1] = rbconv_Q[cx][W - 1];
         rbout_Q[cx][W - 2] = rbconv_Q[cx][W - 2];
 
