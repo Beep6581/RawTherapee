@@ -95,7 +95,7 @@ protected:
     void hphd_vertical       (float** hpmap, int col_from, int col_to);
     void hphd_horizontal     (float** hpmap, int row_from, int row_to);
     void hphd_green          (float** hpmap);
-    void processFalseColorCorrectionThread (Imagefloat* im, int row_from, int row_to);
+    void processFalseColorCorrectionThread (Imagefloat* im, const int row_from, const int row_to);
     void hlRecovery          (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip, const RAWParams &raw, float* hlmax);
     int  defTransform        (int tran);
     void transformRect       (PreviewProps pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
@@ -206,9 +206,9 @@ public:
 
 protected:
     typedef unsigned short ushort;
-    void processFalseColorCorrection (Imagefloat* i, int steps);
-    inline  void convert_row_to_YIQ (float* r, float* g, float* b, float* Y, float* I, float* Q, int W);
-    inline  void convert_row_to_RGB (float* r, float* g, float* b, float* Y, float* I, float* Q, int W);
+    void processFalseColorCorrection (Imagefloat* i, const int steps);
+    inline  void convert_row_to_YIQ (const float* const r, const float* const g, const float* const b, float* Y, float* I, float* Q, const int W);
+    inline  void convert_row_to_RGB (float* r, float* g, float* b, const float* const Y, const float* const I, const float* const Q, const int W);
 
     inline  void convert_to_cielab_row  (float* ar, float* ag, float* ab, float* oL, float* oa, float* ob);
     inline  void interpolate_row_g      (float* agh, float* agv, int i);

@@ -128,7 +128,6 @@ FILEBROWSER_QUERYBUTTONHINT;Neteja la recerca
 FILEBROWSER_QUERYHINT;Escriviu <i>part del nom d'un fitxer</i> a cercar o bé <i>llista amb comes com a separadort</i>.\nE.g. <i>1001,1004,1199</i> \n\n<b>Ctrl-F</b> entra a la finestra de text a cercar (en el gestor de fitxers).\n<b>Enter</b> comença a buscar.\n<b>Escape</b> neteja.
 FILEBROWSER_QUERYLABEL; Cerca: 
 FILEBROWSER_RENAMEDLGLABEL;Reanomena fitxer
-FILEBROWSER_RENAMEDLGMSG;Reanomena fitxer "%1" a:
 FILEBROWSER_SELECTDARKFRAME;Selecc. marc fosc...
 FILEBROWSER_SELECTFLATFIELD;Selecc. camp pla...
 FILEBROWSER_SHOWCOLORLABEL1HINT;Mostra imatges etiqueta vermella.\nDrecera: <b>Alt-1</b>
@@ -1304,6 +1303,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_437;Retinex - M - Method
 !HISTORY_MSG_438;Retinex - M - Equalizer
 !HISTORY_MSG_439;Retinex - Preview
+!HISTORY_MSG_440;CbDL - Method
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
@@ -1317,7 +1317,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !MAIN_TAB_WAVELET;Wavelet
 !MAIN_TAB_WAVELET_TOOLTIP;Shortcut: <b>Alt-w</b>
 !MONITOR_PROFILE_SYSTEM;System default
-!MONITOR_SOFTPROOF;Soft-proof
 !NAVIGATOR_B;B:
 !NAVIGATOR_G;G:
 !NAVIGATOR_H;H:
@@ -1508,6 +1507,10 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_BWMIX_TCMODE_STANDARD;B&W Standard
 !TP_BWMIX_TCMODE_WEIGHTEDSTD;B&W Weighted Standard
 !TP_BWMIX_VAL;L
+!TP_CBDL_AFT;After Black-and-White
+!TP_CBDL_BEF;Before Black-and-White
+!TP_CBDL_METHOD;Process located
+!TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
 !TP_COLORAPP_ADAPTSCENE;Scene luminosity
 !TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environement (cd/m²).\n1) Calculated from the Exif data:\nShutter speed - ISO speed - F number - camera exposure correction.\n2) Calculated from the raw white point and RT's Exposure Compensation slider.
 !TP_COLORAPP_ADAPTVIEWING;Viewing luminosity (cd/m²)
@@ -1750,6 +1753,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Tries to suppress hot pixels.
 !TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 !TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
+!TP_RAWCACORR_CASTR;Strength
 !TP_RAWEXPOS_BLACK_0;Green 1 (lead)
 !TP_RAWEXPOS_BLACK_1;Red
 !TP_RAWEXPOS_BLACK_2;Blue
@@ -1805,7 +1809,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RETINEX_LABSPACE;L*a*b*
 !TP_RETINEX_LOW;Low
 !TP_RETINEX_MAP;Mask method
-!TP_RETINEX_MAP_CURV;Curve only
 !TP_RETINEX_MAP_GAUS;Gaussian mask
 !TP_RETINEX_MAP_MAPP;Sharp mask (wavelet partial)
 !TP_RETINEX_MAP_MAPT;Sharp mask (wavelet total)
