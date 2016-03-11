@@ -619,6 +619,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     if (useEnabled) {
         statusImage = Gtk::manage(new Gtk::Image(disabledPBuf));
         imageEvBox = Gtk::manage(new Gtk::EventBox());
+        imageEvBox->set_name("MyExpanderStatus");
         imageEvBox->add(*statusImage);
         imageEvBox->set_above_child(true);
         imageEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_enabled_change) );
@@ -645,6 +646,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
 
     titleEvBox = Gtk::manage(new Gtk::EventBox());
     titleEvBox->set_name("MyExpanderTitle");
+    titleEvBox->set_border_width(2);
     titleEvBox->add(*headerHBox);
     titleEvBox->set_above_child(false);  // this is the key! By make it below the child, they will get the events first.
     titleEvBox->set_can_focus(false);

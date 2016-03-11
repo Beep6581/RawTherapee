@@ -290,6 +290,10 @@ GtkMenu {
 #MyExpanderTitle:hover {
     background-color: #202020;
 }
+#MyExpanderTitle GtkEventBox:hover GtkImage {
+    background-color: #202020;
+    border-radius: 3px;
+}
 #MyExpanderTitle:hover GtkLabel {
     color: #D8D8D8;
 }

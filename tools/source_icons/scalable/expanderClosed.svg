@@ -10,11 +10,11 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="1300"
+   width="1000"
    height="1000"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="expanderClosed.svg"
    inkscape:export-filename="/home/philippe/devel/rawtherapee/icons/NewIcons/crop22.png"
    inkscape:export-xdpi="2.1600001"
@@ -637,13 +637,13 @@
          id="stop4223-6" />
     </linearGradient>
     <filter
-       color-interpolation-filters="sRGB"
        inkscape:collect="always"
        id="filter4026"
        x="-0.20649599"
        width="1.412992"
        y="-0.1836427"
-       height="1.3672854">
+       height="1.3672854"
+       style="color-interpolation-filters:sRGB">
       <feGaussianBlur
          inkscape:collect="always"
          stdDeviation="26.799307"
@@ -677,9 +677,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.839"
-     inkscape:cx="650"
-     inkscape:cy="500"
+     inkscape:zoom="0.5"
+     inkscape:cx="390.64722"
+     inkscape:cy="384.55567"
      inkscape:document-units="px"
      inkscape:current-layer="g4060"
      showguides="true"
@@ -700,7 +700,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -717,12 +717,12 @@
          transform="matrix(1.5074827,0,0,1.5074827,-9.4212231,-17.89429)">
         <g
            id="g3165"
-           transform="matrix(0,-1.0901186,1.0901183,0,-142.93877,128.71258)">
+           transform="matrix(0,-1.0901186,1.0901183,0,-116.40447,102.17828)">
           <path
              sodipodi:nodetypes="cccc"
              inkscape:connector-curvature="0"
              id="rect3181"
-             d="M 243.00472,-87.371579 30.023187,291.44936 -182.95835,-87.371579 z"
+             d="M 243.00472,-87.371579 30.023187,291.44936 -182.95835,-87.371579 Z"
              style="opacity:0.4;fill:#2a7fff;fill-opacity:1;stroke:none" />
           <path
              transform="matrix(0,0.80956693,-0.80956693,0,58.115009,75.206602)"
