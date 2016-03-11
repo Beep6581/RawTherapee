@@ -183,7 +183,6 @@ FILEBROWSER_RANK3_TOOLTIP;Bewertung 3 ***\nTaste: <b>Umschalt</b> + <b>3</b>
 FILEBROWSER_RANK4_TOOLTIP;Bewertung 4 ****\nTaste: <b>Umschalt</b> + <b>4</b>
 FILEBROWSER_RANK5_TOOLTIP;Bewertung 5 *****\nTaste: <b>Umschalt</b> + <b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Datei umbenennen
-FILEBROWSER_RENAMEDLGMSG;Umbenennen der Datei "%1" in:
 FILEBROWSER_SELECTDARKFRAME;Dunkelbild wählen...
 FILEBROWSER_SELECTFLATFIELD;Weißbild wählen...
 FILEBROWSER_SHOWCOLORLABEL1HINT;Nur rot markierte Bilder anzeigen\nTaste: <b>Alt</b> + <b>1</b>
@@ -225,7 +224,6 @@ FILECHOOSER_FILTER_SAME;Gleiche Format wie aktuelles Bild
 FILECHOOSER_FILTER_TIFF;TIFF-Dateien
 GENERAL_ABOUT;Über
 GENERAL_AFTER;Nachher
-GENERAL_APPLY;Anwenden
 GENERAL_ASIMAGE;Als Bild
 GENERAL_AUTO;Automatisch
 GENERAL_BEFORE;Vorher
@@ -241,7 +239,6 @@ GENERAL_NA;n/a
 GENERAL_NO;Nein
 GENERAL_NONE;Keine
 GENERAL_OK;OK
-GENERAL_OPEN;Öffnen
 GENERAL_PORTRAIT;Portrait
 GENERAL_SAVE;Speichern
 GENERAL_UNCHANGED;(Unverändert)
@@ -815,7 +812,6 @@ MAIN_TOOLTIP_SHOWHIDETP1;Oberes Bedienfeld ein-/ausblenden\nTaste: <b>Umschalt</
 MAIN_TOOLTIP_THRESHOLD;Schwellenwert
 MAIN_TOOLTIP_TOGGLE;Vorher/Nachher-Ansicht ein-/ausschalten\nTaste: <b>Umschalt</b> + <b>b</b>
 MONITOR_PROFILE_SYSTEM;Systemvorgabe
-MONITOR_SOFTPROOF;Soft-Proof
 NAVIGATOR_B;B:
 NAVIGATOR_G;G:
 NAVIGATOR_H;H:
@@ -1718,7 +1714,6 @@ TP_RETINEX_LABEL_MASK;Maske
 TP_RETINEX_LABSPACE;L*a*b*
 TP_RETINEX_LOW;Schatten
 TP_RETINEX_MAP;Methode
-TP_RETINEX_MAP_CURV;Nur Kurve
 TP_RETINEX_MAP_GAUS;Gaußschenmaske
 TP_RETINEX_MAP_MAPP;Schärfemaske (Teil-Wavelet)
 TP_RETINEX_MAP_MAPT;Schärfemaske (Wavelet)
@@ -2039,3 +2034,13 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_440;CbDL - Method
+!TP_CBDL_AFT;After Black-and-White
+!TP_CBDL_BEF;Before Black-and-White
+!TP_CBDL_METHOD;Process located
+!TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
+!TP_RAWCACORR_CASTR;Strength
