@@ -186,7 +186,6 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
 
     mapMethod = Gtk::manage (new MyComboBoxText ());
     mapMethod->append (M ("TP_RETINEX_MAP_NONE"));
-//    mapMethod->append (M("TP_RETINEX_MAP_CURV"));
     mapMethod->append (M ("TP_RETINEX_MAP_GAUS"));
     mapMethod->append (M ("TP_RETINEX_MAP_MAPP"));
     mapMethod->append (M ("TP_RETINEX_MAP_MAPT"));

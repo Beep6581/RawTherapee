@@ -169,7 +169,6 @@ FILEBROWSER_RANK3_TOOLTIP;Waardering 3 *\nSneltoets: Shift-3
 FILEBROWSER_RANK4_TOOLTIP;Waardering 4 *\nSneltoets: Shift-4
 FILEBROWSER_RANK5_TOOLTIP;Waardering 5 *\nSneltoets: Shift-5
 FILEBROWSER_RENAMEDLGLABEL;Hernoem bestand
-FILEBROWSER_RENAMEDLGMSG;Hernoem bestand "%1" naar:
 FILEBROWSER_SELECTDARKFRAME;Selecteer donkerframe...
 FILEBROWSER_SELECTFLATFIELD;Kies vlakveldopname...
 FILEBROWSER_SHOWCOLORLABEL1HINT;Toon foto's met label Rood\nSneltoets: <b>Alt-1</b>
@@ -1981,15 +1980,19 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_437;Retinex - M - Method
 !HISTORY_MSG_438;Retinex - M - Equalizer
 !HISTORY_MSG_439;Retinex - Preview
+!HISTORY_MSG_440;CbDL - Method
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
 !MONITOR_PROFILE_SYSTEM;System default
-!MONITOR_SOFTPROOF;Soft-proof
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
 !PREFERENCES_MONINTENT;Default monitor intent
 !PREFERENCES_MONPROFILE;Default monitor profile
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 !PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
 !PREFERENCES_PROFILE_NONE;None
+!TP_CBDL_AFT;After Black-and-White
+!TP_CBDL_BEF;Before Black-and-White
+!TP_CBDL_METHOD;Process located
+!TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
 !TP_COLORTONING_STR;Strength
 !TP_DIRPYRDENOISE_CUR;Curve
 !TP_DIRPYRDENOISE_LAB;L*a*b*
@@ -1997,6 +2000,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 !TP_ICM_PROFILEINTENT;Rendering Intent
 !TP_NEUTRAL;Reset
+!TP_RAWCACORR_CASTR;Strength
 !TP_RETINEX_CONTEDIT_MAP;Mask equalizer
 !TP_RETINEX_CURVEEDITOR_MAP;L=f(L)
 !TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gaussian mask or wavelet mask.\nBeware of artifacts!
@@ -2010,7 +2014,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_RETINEX_ITER_TOOLTIP;Simulate a tone-mapping operator.\nHigh values increase the processing time.
 !TP_RETINEX_LABEL_MASK;Mask
 !TP_RETINEX_MAP;Mask method
-!TP_RETINEX_MAP_CURV;Curve only
 !TP_RETINEX_MAP_GAUS;Gaussian mask
 !TP_RETINEX_MAP_MAPP;Sharp mask (wavelet partial)
 !TP_RETINEX_MAP_MAPT;Sharp mask (wavelet total)

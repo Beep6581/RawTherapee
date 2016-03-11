@@ -66,7 +66,6 @@ FILEBROWSER_POPUPTRASH;Presunúť do koša
 FILEBROWSER_POPUPUNRANK;Zrušiť triedu
 FILEBROWSER_POPUPUNTRASH;Odstrániť z koša
 FILEBROWSER_RENAMEDLGLABEL;Premenovať súbor
-FILEBROWSER_RENAMEDLGMSG;Premenovať súbor "%1" na:
 FILEBROWSER_SHOWDIRHINT;Ukázať všetky obrázky v adresári
 FILEBROWSER_SHOWEXIFINFO;Ukázať EXIF info <b>i</b>
 FILEBROWSER_SHOWRANK1HINT;Ukázať obrázky triedy 1 hviezda
@@ -1015,6 +1014,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !HISTORY_MSG_437;Retinex - M - Method
 !HISTORY_MSG_438;Retinex - M - Equalizer
 !HISTORY_MSG_439;Retinex - Preview
+!HISTORY_MSG_440;CbDL - Method
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
@@ -1055,7 +1055,6 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !MAIN_TOOLTIP_SHOWHIDETP1;Show/Hide the top panel.\nShortcut: <b>Shift-l</b>
 !MAIN_TOOLTIP_THRESHOLD;Threshold
 !MONITOR_PROFILE_SYSTEM;System default
-!MONITOR_SOFTPROOF;Soft-proof
 !NAVIGATOR_B;B:
 !NAVIGATOR_G;G:
 !NAVIGATOR_H;H:
@@ -1343,6 +1342,10 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_BWMIX_TCMODE_STANDARD;B&W Standard
 !TP_BWMIX_TCMODE_WEIGHTEDSTD;B&W Weighted Standard
 !TP_BWMIX_VAL;L
+!TP_CBDL_AFT;After Black-and-White
+!TP_CBDL_BEF;Before Black-and-White
+!TP_CBDL_METHOD;Process located
+!TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
 !TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_COLORAPP_ADAPTSCENE;Scene luminosity
 !TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environement (cd/m²).\n1) Calculated from the Exif data:\nShutter speed - ISO speed - F number - camera exposure correction.\n2) Calculated from the raw white point and RT's Exposure Compensation slider.
@@ -1679,6 +1682,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 !TP_RAWCACORR_CABLUE;Blue
 !TP_RAWCACORR_CARED;Red
+!TP_RAWCACORR_CASTR;Strength
 !TP_RAWEXPOS_BLACKS;Black Levels
 !TP_RAWEXPOS_BLACK_0;Green 1 (lead)
 !TP_RAWEXPOS_BLACK_1;Red
@@ -1744,7 +1748,6 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_RETINEX_LABSPACE;L*a*b*
 !TP_RETINEX_LOW;Low
 !TP_RETINEX_MAP;Mask method
-!TP_RETINEX_MAP_CURV;Curve only
 !TP_RETINEX_MAP_GAUS;Gaussian mask
 !TP_RETINEX_MAP_MAPP;Sharp mask (wavelet partial)
 !TP_RETINEX_MAP_MAPT;Sharp mask (wavelet total)

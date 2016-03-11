@@ -127,11 +127,11 @@ public:
     sigc::signal<void> signal_curvepoint_release();
 
     void switchOffEditMode ();
-    bool mouseOver(int modifierKey);
-    bool button1Pressed(int modifierKey);
+    bool mouseOver(const int modifierKey);
+    bool button1Pressed(const int modifierKey);
     bool button1Released();
-    bool drag1(int modifierKey);
-    CursorShape getCursor(int objectID);
+    bool drag1(const int modifierKey);
+    CursorShape getCursor(const int objectID);
 
 
 };
