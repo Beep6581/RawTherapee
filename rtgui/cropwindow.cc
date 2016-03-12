@@ -916,7 +916,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
 bool CropWindow::onArea (CursorArea a, int x, int y)
 {
 
-    int CROPRESIZEBORDER = 6 / zoomSteps[cropZoom].zoom;
+    int CROPRESIZEBORDER = rtengine::max<int>(9 / zoomSteps[cropZoom].zoom, 3);
     int x1, y1, w, h;
 
     switch (a) {
