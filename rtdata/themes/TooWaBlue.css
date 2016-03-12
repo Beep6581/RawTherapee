@@ -1,7 +1,7 @@
 /*
   This file is part of RawTherapee.
 
-  Copyright (c) 2016 TooWaBoo (v1.09)
+  Copyright (c) 2016 TooWaBoo (v1.10)
   Many thanks to the RawTherapee Developer Team for this great piece of software
 
   RawTherapee is free software: you can redistribute it and/or modify
@@ -38,15 +38,13 @@
 @define-color bg-light-grey #595959;
 @define-color border-color rgba(255,255,255,.25);
 @define-color bg-list-hover rgba(255,255,255,.065);
-@define-color bg-button rgba(0,0,0,.14);
-@define-color bg-button-border rgba(0,0,0,.20);
+@define-color bg-button rgba(0,0,0,.16);
+@define-color bg-button-border rgba(0,0,0,.22);
 @define-color bg-button-hover rgba(0,0,0,.28);
 @define-color bg-button-checked @bg-dark-grey;
 
 * {
     color: @text-color;
-	-GtkDialog-action-area-border: 0;
-	-GtkDialog-content-area-border: 10;
 	transition: none;
 	text-shadow: none;
 	icon-shadow: none;
@@ -65,11 +63,26 @@ GtkWindow {
 }
 GtkDialog {
 	background-color: @bg-grey;
+	-GtkDialog-content-area-spacing: 4;
+	-GtkDialog-action-area-border: 0;
+	-GtkDialog-content-area-border: 6;
 }
-GtkFrame {
+GtkFontChooser,
+GtkColorChooser {
+	-GtkDialog-action-area-border: 4;
+	-GtkDialog-content-area-border: 0;
+}
+.frame {
     border: none;
-	border-top: 3px solid transparent;
+}
+
+GtkPaned .frame .frame {
+	border-top: 2px solid transparent;
 	border-bottom: 4px solid transparent;
+}
+GtkDialog GtkPaned .frame .frame {
+	border-top: none;
+	border-bottom: none;
 }
 
 /*** Menu bubble box ***/
@@ -104,6 +117,9 @@ GtkPaned {
 .pane-separator {
 	background-color: @bg-light-grey;
 }
+GtkDialog .pane-separator {
+	background-color: @bg-grey;
+}
 
 .separator {
 	color: @bg-light-grey;
@@ -135,13 +151,10 @@ GtkGrid GtkContainer GtkDrawingArea:nth-child(2) {
 GtkDialog .label,
 #ToolPanelNotebook .label,
 .notebook tab .label {
-	padding: 0;
+	padding: 0 1px;
 }
 #ToolPanelNotebook .button .label {
 	padding: 0 0 2px;
-}
-.notebook tab .label {
-	padding: 0 2px;
 }
 .frame > .label,
 #ToolPanelNotebook .frame > .label {
@@ -157,20 +170,10 @@ GtkDialog .label,
 }
 
 #partialPasteHeaderSep {color: @accent-color;}
-#partialPasteHeader * {color: @text-hl-color2;}
+#partialPasteHeader * {color: #E0E0E0;}
 
 #RightNotebook {
-	padding-top: 0;
-	padding-right: 0;
-	padding-bottom: 0;
-}
-#RightNotebook .frame {
-	padding-top: 0;
-	padding-right: 0;
-	padding-bottom: 0;
-	border-top: none;
-	border-right: none;
-	border-bottom: none;
+	padding: 0 0 0 4px;
 }
 
 /*** Scrollbar ***/
@@ -195,18 +198,33 @@ GtkDialog .label,
     background-color: @bg-button;
 	border-color: @bg-dark-grey;
 }
-.scale.slider, .scale.trough.highlight,
+.scale.slider,
+.scale.trough.highlight,
+#ToolPanelNotebook .scale.trough.highlight,
 #ToolPanelNotebook .scale.slider {
 	background-image: none;
 	background-color: @accent-color2;
-	border-color: @bg-dark-grey;
+	border: 1px solid @bg-dark-grey;
 	color: @text-hl-color2;
-}
-.scale.slider:active {
-	border-color:  shade (@accent-color2,.55);
 }
 .scale.fine-tune {
     -GtkRange-trough-border: 5;
+}
+GtkFontChooser .scale {
+    -GtkRange-trough-border: 6;
+	-GtkScale-slider-length: 6;
+    -GtkRange-slider-width: 19;
+}
+GtkFontChooser .scale.slider {
+	border-radius: 0 0 20px 20px;
+	border: 1px solid @bg-dark-grey;
+}
+GtkFontChooser .scale.fine-tune {
+    -GtkRange-trough-border: 5;
+}
+.scale.slider:active,
+#ToolPanelNotebook .scale.slider:active {
+	border-color:  shade (@accent-color2,.55);
 }
 
 GtkProgressBar {
@@ -262,29 +280,21 @@ GtkFileChooserWidget .list-row:selected * {
 }
 /*** end ***/
 
-/*** Metadata ***/
-#MetaPanelNotebook {
-	background-color: @bg-grey;
-
-}
-#MetaPanelNotebook .header {
-	background-color: @bg-dark-grey;
-}
-
-/*** end ***/
-
 /*** Tab Bars ***/
 .notebook tab, .notebook.header {
     background-color: @bg-dark-grey;
 	border-color: @bg-dark-grey;
+	padding: 5px;
 }
 .notebook tab.top {
-	border-width: 0 0 4px 0;
+	border-width: 0 0 5px 0;
 }
 .notebook tab.left {
-	border-width: 0 4px 0 0;
+	border-width: 0 5px 0 0;
 }
-#RightNotebook tab.left, GtkDialog tab {
+#RightNotebook tab.left,
+#PrefNotebook tab,
+GtkDialog tab {
 	padding: 8px;
 }
 #ToolPanelNotebook > tab{
@@ -292,11 +302,19 @@ GtkFileChooserWidget .list-row:selected * {
 }
 #MetaPanelNotebook tab {
 	padding: 6px 4px;
-	background-color: @bg-dark-grey;
 }
 
 .notebook tab:active {
 	border-color: @accent-color2;
+}
+/*** end ***/
+
+/*** Metadata ***/
+#MetaPanelNotebook.frame {
+	background-color: @bg-grey;
+}
+#MetaPanelNotebook.header {
+	background-color: @bg-dark-grey;
 }
 /*** end ***/
 
@@ -320,6 +338,9 @@ GtkImage {
 
 #ToolPanelNotebook GtkImage{
 	padding: 0 4px;
+}
+#MyExpanderTitle GtkImage{
+	padding: 0;
 }
 
 #ToolPanelNotebook tab GtkImage,
@@ -438,8 +459,6 @@ GtkFileChooserWidget .button GtkImage{
 	border-radius: 20px 0 0 20px;
 	background-color: rgba(255,255,255,.12);
 	border: 1px solid rgba(0,0,0,.40);
-}
-#ToolPanelNotebook .entry {
 	color: @text-tbEntry;
 }
 #ToolPanelNotebook .entry:focused:selected {
@@ -455,12 +474,27 @@ GtkFileChooserWidget .button GtkImage{
     background-color: rgba(255,255,255,.12);
 }
 
-#MetaPanelNotebook .entry:not(:selected):not(:insensitive),
-#MetaPanelNotebook GtkTextView {
+#MetaPanelNotebook .entry:not(:selected):not(:insensitive) {
     color: @text-color;
-    background-color: @bg-light-grey;
+    background-color: @bg-dark-grey;
 	border: 1px solid rgba(0,0,0,.40);
 	border-radius: 0;
+}
+#MetaPanelNotebook .entry:focused:selected {
+    color: @text-hl-color;
+    background-color: @accent-color;
+}
+#MetaPanelNotebook .entry:not(:focused):not(:insensitive) {/*Workaround*/
+    color: @text-color;
+    background-color: transparent;
+}
+#MetaPanelNotebook  .entry:not(:selected):not(:insensitive) {
+    color: @text-color;
+    background-color: @bg-dark-grey;
+}
+#MetaPanelNotebook GtkTextView {
+    color: @text-color;
+    background-color: @bg-dark-grey;
 }
 /*** end ***/
 
@@ -470,7 +504,7 @@ GtkFileChooserWidget .button GtkImage{
 	background-color: @bg-button;
 	border: 1px solid @bg-button-border;
 	border-radius: 0;
-	padding: 3px 4px;margin: 1px;
+	padding: 3px 4px;
 }
 GtkComboBox .button {
 	padding: 4px 3px;
@@ -485,11 +519,14 @@ GtkDialog .button {
 }
 
 .text-button {
-	padding: 0 5px 0 0;
+	padding: 1px 0;
 	-GtkButton-child-displacement-x: 0;
 	-GtkButton-child-displacement-y: 0;
 	-GtkCheckButton-indicator-size: 16;
 	-GtkCheckButton-indicator-spacing: 3;
+}
+#ToolPanelNotebook .text-button {
+	padding: 0 5px 0 0;
 }
 .button.text-button {
      padding: 4px 10px;
@@ -530,18 +567,18 @@ GtkFileChooserWidget .button.text-button {
 	background-color: transparent;
 }
 #MainNotebook tab .button {
-	padding: 2px;
+	padding: 1px 2px;
 	border-top: 4px solid @bg-dark-grey;
 	border-bottom: 4px solid @bg-dark-grey;
-	border-left: 2px solid @bg-dark-grey;
+	border-left: 1px solid @bg-dark-grey;
 	border-right: none;
 	background-color: transparent;
 }
 #MainNotebook > GtkGrid .button:hover, #MainNotebook tab .button:hover {
-	background-color: rgba(255,255,255,.1);
+	background-color: rgba(255,255,255,.17);
 }
 #MainNotebook > GtkGrid .button:active, #MainNotebook tab .button:active {
-	background-color: transparent;
+	background-color: rgba(255,255,255,.25);
 }
 /*** end ***/
 
