@@ -115,7 +115,6 @@ protected:
     int valLinear;
     int valUnchanged;
     CurveEditorGroup *parent;
-    int curveBBoxPos; // 0=above, 1=right, 2=below, 3=left
 
     ColoredBar* leftBar;
     ColoredBar* bottomBar;

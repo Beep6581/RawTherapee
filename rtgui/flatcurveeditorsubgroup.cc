@@ -40,7 +40,7 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
     valUnchanged = (int)FCT_Unchanged;
     parent = prt;
 
-    curveBBoxPos = options.curvebboxpos;
+    Gtk::PositionType side = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::POS_LEFT : Gtk::POS_TOP;
 
     // ControlPoints curve
     CPointsCurveGrid = new Gtk::Grid ();
@@ -56,8 +56,10 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 
     if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
         setExpandAlignProperties(CPointsbbox, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+        CPointsbbox->set_row_homogeneous(true);
     } else {
         setExpandAlignProperties(CPointsbbox, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+        CPointsbbox->set_column_homogeneous(true);
     }
 
     editCPoints = Gtk::manage (new Gtk::ToggleButton());
@@ -88,21 +90,12 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
     saveCPoints->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
     setExpandAlignProperties(saveCPoints, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
 
-    if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
-        CPointsbbox->attach(*editCPoints,      0, 0, 1, 1);
-        CPointsbbox->attach(*editPointCPoints, 1, 0, 1, 1);
-        CPointsbbox->attach(*copyCPoints,      2, 0, 1, 1);
-        CPointsbbox->attach(*pasteCPoints,     3, 0, 1, 1);
-        CPointsbbox->attach(*loadCPoints,      4, 0, 1, 1);
-        CPointsbbox->attach(*saveCPoints,      5, 0, 1, 1);
-    } else {
-        CPointsbbox->attach(*editCPoints,      0, 0, 1, 1);
-        CPointsbbox->attach(*editPointCPoints, 0, 1, 1, 1);
-        CPointsbbox->attach(*copyCPoints,      0, 2, 1, 1);
-        CPointsbbox->attach(*pasteCPoints,     0, 3, 1, 1);
-        CPointsbbox->attach(*loadCPoints,      0, 4, 1, 1);
-        CPointsbbox->attach(*saveCPoints,      0, 5, 1, 1);
-    }
+    CPointsbbox->attach_next_to(*saveCPoints,      side, 1, 1);
+    CPointsbbox->attach_next_to(*loadCPoints,      side, 1, 1);
+    CPointsbbox->attach_next_to(*pasteCPoints,     side, 1, 1);
+    CPointsbbox->attach_next_to(*copyCPoints,      side, 1, 1);
+    CPointsbbox->attach_next_to(*editPointCPoints, side, 1, 1);
+    CPointsbbox->attach_next_to(*editCPoints,      side, 1, 1);
 
     {
         std::vector<Axis> axis;

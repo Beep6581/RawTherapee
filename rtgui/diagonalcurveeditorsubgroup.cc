@@ -38,7 +38,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     editedAdjuster = NULL;
     editedAdjusterValue = 0;
 
-    curveBBoxPos = options.curvebboxpos;
+    Gtk::PositionType side = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::POS_LEFT : Gtk::POS_TOP;
 
     valLinear = (int)DCT_Linear;
     valUnchanged = (int)DCT_Unchanged;
@@ -60,8 +60,10 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
     if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
         setExpandAlignProperties(custombbox, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+        custombbox->set_row_homogeneous(true);
     } else {
         setExpandAlignProperties(custombbox, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+        custombbox->set_column_homogeneous(true);
     }
 
     editPointCustom = Gtk::manage (new Gtk::ToggleButton ());
@@ -80,6 +82,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     copyCustom->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
     setExpandAlignProperties(copyCustom, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
     pasteCustom = Gtk::manage (new Gtk::Button ());
+    pasteCustom->add (*Gtk::manage (new RTImage ("edit-paste.png")));
     pasteCustom->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
     setExpandAlignProperties(pasteCustom, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
     loadCustom = Gtk::manage (new Gtk::Button ());
@@ -91,21 +94,12 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     saveCustom->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
     setExpandAlignProperties(saveCustom, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
 
-    if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
-        custombbox->attach(*editCustom,      0, 0, 1, 1);
-        custombbox->attach(*editPointCustom, 1, 0, 1, 1);
-        custombbox->attach(*copyCustom,      2, 0, 1, 1);
-        custombbox->attach(*pasteCustom,     3, 0, 1, 1);
-        custombbox->attach(*loadCustom,      4, 0, 1, 1);
-        custombbox->attach(*saveCustom,      5, 0, 1, 1);
-    } else {
-        custombbox->attach(*editCustom,      0, 0, 1, 1);
-        custombbox->attach(*editPointCustom, 0, 1, 1, 1);
-        custombbox->attach(*copyCustom,      0, 2, 1, 1);
-        custombbox->attach(*pasteCustom,     0, 3, 1, 1);
-        custombbox->attach(*loadCustom,      0, 4, 1, 1);
-        custombbox->attach(*saveCustom,      0, 5, 1, 1);
-    }
+    custombbox->attach_next_to(*saveCustom,      side, 1, 1);
+    custombbox->attach_next_to(*loadCustom,      side, 1, 1);
+    custombbox->attach_next_to(*pasteCustom,     side, 1, 1);
+    custombbox->attach_next_to(*copyCustom,      side, 1, 1);
+    custombbox->attach_next_to(*editPointCustom, side, 1, 1);
+    custombbox->attach_next_to(*editCustom,      side, 1, 1);
 
     customCoordAdjuster = Gtk::manage (new CoordinateAdjuster(customCurve, this));
 
@@ -158,8 +152,10 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
     if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
         setExpandAlignProperties(NURBSbbox, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+        NURBSbbox->set_row_homogeneous(true);
     } else {
         setExpandAlignProperties(NURBSbbox, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+        NURBSbbox->set_column_homogeneous(true);
     }
 
     editPointNURBS = Gtk::manage (new Gtk::ToggleButton ());
@@ -190,21 +186,12 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     saveNURBS->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
     setExpandAlignProperties(saveNURBS, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
 
-    if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
-        NURBSbbox->attach(*editNURBS,      0, 0, 1, 1);
-        NURBSbbox->attach(*editPointNURBS, 1, 0, 1, 1);
-        NURBSbbox->attach(*copyNURBS,      2, 0, 1, 1);
-        NURBSbbox->attach(*pasteNURBS,     3, 0, 1, 1);
-        NURBSbbox->attach(*loadNURBS,      4, 0, 1, 1);
-        NURBSbbox->attach(*saveNURBS,      5, 0, 1, 1);
-    } else {
-        NURBSbbox->attach(*editNURBS,      0, 0, 1, 1);
-        NURBSbbox->attach(*editPointNURBS, 0, 1, 1, 1);
-        NURBSbbox->attach(*copyNURBS,      0, 2, 1, 1);
-        NURBSbbox->attach(*pasteNURBS,     0, 3, 1, 1);
-        NURBSbbox->attach(*loadNURBS,      0, 4, 1, 1);
-        NURBSbbox->attach(*saveNURBS,      0, 5, 1, 1);
-    }
+    NURBSbbox->attach_next_to(*saveNURBS,      side, 1, 1);
+    NURBSbbox->attach_next_to(*loadNURBS,      side, 1, 1);
+    NURBSbbox->attach_next_to(*pasteNURBS,     side, 1, 1);
+    NURBSbbox->attach_next_to(*copyNURBS,      side, 1, 1);
+    NURBSbbox->attach_next_to(*editPointNURBS, side, 1, 1);
+    NURBSbbox->attach_next_to(*editNURBS,      side, 1, 1);
 
     NURBSCoordAdjuster = Gtk::manage (new CoordinateAdjuster(NURBSCurve, this));
 
@@ -257,8 +244,10 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
     if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
         setExpandAlignProperties(parambbox, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+        parambbox->set_row_homogeneous(true);
     } else {
         setExpandAlignProperties(parambbox, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+        parambbox->set_column_homogeneous(true);
     }
 
     shcSelector = Gtk::manage (new SHCSelector ());
@@ -287,19 +276,11 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     saveParam->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
     setExpandAlignProperties(saveParam, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
 
-    if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
-        parambbox->attach(*editParam,  0, 0, 1, 1);
-        parambbox->attach(*copyParam,  1, 0, 1, 1);
-        parambbox->attach(*pasteParam, 2, 0, 1, 1);
-        parambbox->attach(*loadParam,  3, 0, 1, 1);
-        parambbox->attach(*saveParam,  4, 0, 1, 1);
-    } else {
-        parambbox->attach(*editParam,  0, 0, 1, 1);
-        parambbox->attach(*copyParam,  0, 1, 1, 1);
-        parambbox->attach(*pasteParam, 0, 2, 1, 1);
-        parambbox->attach(*loadParam,  0, 3, 1, 1);
-        parambbox->attach(*saveParam,  0, 4, 1, 1);
-    }
+    parambbox->attach_next_to(*saveParam,  side, 1, 1);
+    parambbox->attach_next_to(*loadParam,  side, 1, 1);
+    parambbox->attach_next_to(*pasteParam, side, 1, 1);
+    parambbox->attach_next_to(*copyParam,  side, 1, 1);
+    parambbox->attach_next_to(*editParam,  side, 1, 1);
 
     saveParam->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::savePressed) );
     loadParam->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::loadPressed) );
