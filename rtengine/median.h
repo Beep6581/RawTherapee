@@ -18,17 +18,8 @@
  */
 #include "rt_math.h"
 
-#define SORT3(a1,a2,a3,b1,b2,b3) \
-  {  \
-  b2 = min(a1,a2);\
-  b1 = min(b2,a3);\
-  b3 = max(a1,a2);\
-  b2 = max(b2, min(b3,a3));\
-  b3 = max(b3,a3);\
- }
-
-
-#define NETWORKSORT4OF6(s0,s1,s2,s3,s4,s5,d0,d1,d2,d3,d4,d5,temp) \
+// middle 4 of 6 elements,
+#define MIDDLE4OF6(s0,s1,s2,s3,s4,s5,d0,d1,d2,d3,d4,d5,temp) \
 {\
 d1 = min(s1,s2);\
 d2 = max(s1,s2);\
@@ -44,22 +35,31 @@ d5 = max(s3,d5);\
 d3 = temp;\
 temp = min(d3,d4);\
 d4 = max(d3,d4);\
-d3 = temp;\
-d3 = max(d0,d3);\
-temp = min(d1,d4);\
-d4 = max(d1,d4);\
-d1 = temp;\
+d3 = max(d0,temp);\
 d2 = min(d2,d5);\
-temp = min(d2,d4);\
-d4 = max(d2,d4);\
-d2 = temp;\
-temp = min(d1,d3);\
-d3 = max(d1,d3);\
-d1 = temp;\
-temp = min(d2,d3);\
-d3 = max(d2,d3);\
-d2 = temp;\
 }
+
+// middle 4 of 6 elements,
+#define VMIDDLE4OF6(s0,s1,s2,s3,s4,s5,d0,d1,d2,d3,d4,d5,temp) \
+{\
+d1 = vminf(s1,s2);\
+d2 = vmaxf(s1,s2);\
+d0 = vminf(s0,d2);\
+d2 = vmaxf(s0,d2);\
+temp = vminf(d0,d1);\
+d1 = vmaxf(d0,d1);\
+d0 = temp;\
+d4 = vminf(s4,s5);\
+d5 = vmaxf(s4,s5);\
+temp = vminf(s3,d5);\
+d5 = vmaxf(s3,d5);\
+d3 = temp;\
+temp = vminf(d3,d4);\
+d4 = vmaxf(d3,d4);\
+d3 = vmaxf(d0,temp);\
+d2 = vminf(d2,d5);\
+}
+
 
 #define MEDIAN7(s0,s1,s2,s3,s4,s5,s6,t0,t1,t2,t3,t4,t5,t6,median) \
 {\
@@ -77,13 +77,36 @@ t5 = max(t3,t5);\
 t3 = median;\
 median = min(t2,t6);\
 t6 = max(t2,t6);\
-t2 = median;\
-t3 = max(t2,t3);\
+t3 = max(median,t3);\
 t3 = min(t3,t6);\
 t4 = min(t4,t5);\
 median = min(t1,t4);\
 t4 = max(t1,t4);\
-t1 = median;\
-t3 = max(t1,t3);\
+t3 = max(median,t3);\
 median = min(t3,t4);\
+}
+
+#define VMEDIAN7(s0,s1,s2,s3,s4,s5,s6,t0,t1,t2,t3,t4,t5,t6,median) \
+{\
+t0 = vminf(s0,s5);\
+t5 = vmaxf(s0,s5);\
+t3 = vmaxf(t0,s3);\
+t0 = vminf(t0,s3);\
+t1 = vminf(s1,s6);\
+t6 = vmaxf(s1,s6);\
+t2 = vminf(s2,s4);\
+t4 = vmaxf(s2,s4);\
+t1 = vmaxf(t0,t1);\
+median = vminf(t3,t5);\
+t5 = vmaxf(t3,t5);\
+t3 = median;\
+median = vminf(t2,t6);\
+t6 = vmaxf(t2,t6);\
+t3 = vmaxf(median,t3);\
+t3 = vminf(t3,t6);\
+t4 = vminf(t4,t5);\
+median = vminf(t1,t4);\
+t4 = vmaxf(t1,t4);\
+t3 = vmaxf(median,t3);\
+median = vminf(t3,t4);\
 }

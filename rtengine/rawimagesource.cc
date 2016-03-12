@@ -33,6 +33,8 @@
 #include "dcp.h"
 #include "rt_math.h"
 #include "improcfun.h"
+#define BENCHMARK
+#include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -3387,20 +3389,24 @@ int RawImageSource::defTransform (int tran)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Thread called part
-void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, const int row_from, const int row_to)
+void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D<float> &rbconv_Y, array2D<float> &rbconv_I, array2D<float> &rbconv_Q, array2D<float> &rbout_I, array2D<float> &rbout_Q, const int row_from, const int row_to)
 {
 
     int W = im->width;
 
-    array2D<float> rbconv_Y (W, 3);
-    array2D<float> rbconv_I (W, 3);
-    array2D<float> rbconv_Q (W, 3);
-    array2D<float> rbout_I (W, 3);
-    array2D<float> rbout_Q (W, 3);
-
     float row_I[W];
     float row_Q[W];
 
+#ifdef __SSE2__
+    vfloat buffer[12];
+    vfloat* pre1 = &buffer[0];
+    vfloat* pre2 = &buffer[3];
+    vfloat* post1 = &buffer[6];
+    vfloat* post2 = &buffer[9];
+
+    vfloat middle[6];
+
+#else
     float buffer[12];
     float* pre1 = &buffer[0];
     float* pre2 = &buffer[3];
@@ -3408,6 +3414,7 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, const i
     float* post2 = &buffer[9];
 
     float middle[6];
+#endif
 
     int px = (row_from - 1) % 3, cx = row_from % 3, nx = 0;
 
@@ -3427,23 +3434,56 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, const i
 
         convert_row_to_YIQ (im->r(i + 1), im->g(i + 1), im->b(i + 1), rbconv_Y[nx], rbconv_I[nx], rbconv_Q[nx], W);
 
+#ifdef __SSE2__
+        pre1[0] = _mm_setr_ps(rbconv_I[px][0], rbconv_Q[px][0], 0, 0) , pre1[1] = _mm_setr_ps(rbconv_I[cx][0], rbconv_Q[cx][0], 0, 0), pre1[2] = _mm_setr_ps(rbconv_I[nx][0], rbconv_Q[nx][0], 0, 0);
+        pre2[0] = _mm_setr_ps(rbconv_I[px][1], rbconv_Q[px][1], 0, 0) , pre1[1] = _mm_setr_ps(rbconv_I[cx][1], rbconv_Q[cx][1], 0, 0), pre1[2] = _mm_setr_ps(rbconv_I[nx][1], rbconv_Q[nx][1], 0, 0);
+        vfloat temp[7];
+
+        // fill first element in rbout_I and rbout_Q
+        rbout_I[cx][0] = rbconv_I[cx][0];
+        rbout_Q[cx][0] = rbconv_Q[cx][0];
+
+        // median I channel
+        for (int j = 1; j < W - 2; j += 2) {
+            post1[0] = _mm_setr_ps(rbconv_I[px][j + 1], rbconv_Q[px][j + 1], 0, 0), post1[1] = _mm_setr_ps(rbconv_I[cx][j + 1], rbconv_Q[cx][j + 1], 0, 0), post1[2] = _mm_setr_ps(rbconv_I[nx][j + 1], rbconv_Q[nx][j + 1], 0, 0);
+            VMIDDLE4OF6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2], middle[0], middle[1], middle[2], middle[3], middle[4], middle[5], temp[0]);
+            vfloat medianval;
+            VMEDIAN7(pre1[0], pre1[1], pre1[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], medianval);
+            rbout_I[cx][j] = medianval[0];
+            rbout_Q[cx][j] = medianval[1];
+            post2[0] = _mm_setr_ps(rbconv_I[px][j + 2], rbconv_Q[px][j + 2], 0, 0), post2[1] = _mm_setr_ps(rbconv_I[cx][j + 2], rbconv_Q[cx][j + 2], 0, 0), post2[2] = _mm_setr_ps(rbconv_I[nx][j + 2], rbconv_Q[nx][j + 2], 0, 0);
+            VMEDIAN7(post2[0], post2[1], post2[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], medianval);
+            rbout_I[cx][j + 1] = medianval[0];
+            rbout_Q[cx][j + 1] = medianval[1];
+            std::swap(pre1, post1);
+            std::swap(pre2, post2);
+        }
+
+        // fill last elements in rbout_I and rbout_Q
+        rbout_I[cx][W - 1] = rbconv_I[cx][W - 1];
+        rbout_I[cx][W - 2] = rbconv_I[cx][W - 2];
+        rbout_Q[cx][W - 1] = rbconv_Q[cx][W - 1];
+        rbout_Q[cx][W - 2] = rbconv_Q[cx][W - 2];
+
+#else
         pre1[0] = rbconv_I[px][0], pre1[1] = rbconv_I[cx][0], pre1[2] = rbconv_I[nx][0];
         pre2[0] = rbconv_I[px][1], pre2[1] = rbconv_I[cx][1], pre2[2] = rbconv_I[nx][1];
-
         float temp[7];
 
         // fill first element in rbout_I
         rbout_I[cx][0] = rbconv_I[cx][0];
+
         // median I channel
         for (int j = 1; j < W - 2; j += 2) {
             post1[0] = rbconv_I[px][j + 1], post1[1] = rbconv_I[cx][j + 1], post1[2] = rbconv_I[nx][j + 1];
-            NETWORKSORT4OF6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2], middle[0], middle[1], middle[2], middle[3], middle[4], middle[5], temp[0]);
+            MIDDLE4OF6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2], middle[0], middle[1], middle[2], middle[3], middle[4], middle[5], temp[0]);
             MEDIAN7(pre1[0], pre1[1], pre1[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j]);
             post2[0] = rbconv_I[px][j + 2], post2[1] = rbconv_I[cx][j + 2], post2[2] = rbconv_I[nx][j + 2];
             MEDIAN7(post2[0], post2[1], post2[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j + 1]);
-            std::swap(pre1,post1);
-            std::swap(pre2,post2);
+            std::swap(pre1, post1);
+            std::swap(pre2, post2);
         }
+
         // fill last elements in rbout_I
         rbout_I[cx][W - 1] = rbconv_I[cx][W - 1];
         rbout_I[cx][W - 2] = rbconv_I[cx][W - 2];
@@ -3453,19 +3493,22 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, const i
 
         // fill first element in rbout_Q
         rbout_Q[cx][0] = rbconv_Q[cx][0];
+
         // median Q channel
         for (int j = 1; j < W - 2; j += 2) {
             post1[0] = rbconv_Q[px][j + 1], post1[1] = rbconv_Q[cx][j + 1], post1[2] = rbconv_Q[nx][j + 1];
-            NETWORKSORT4OF6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2], middle[0], middle[1], middle[2], middle[3], middle[4], middle[5], temp[0]);
+            MIDDLE4OF6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2], middle[0], middle[1], middle[2], middle[3], middle[4], middle[5], temp[0]);
             MEDIAN7(pre1[0], pre1[1], pre1[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j]);
             post2[0] = rbconv_Q[px][j + 2], post2[1] = rbconv_Q[cx][j + 2], post2[2] = rbconv_Q[nx][j + 2];
             MEDIAN7(post2[0], post2[1], post2[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j + 1]);
-            std::swap(pre1,post1);
-            std::swap(pre2,post2);
+            std::swap(pre1, post1);
+            std::swap(pre2, post2);
         }
+
         // fill last elements in rbout_Q
         rbout_Q[cx][W - 1] = rbconv_Q[cx][W - 1];
         rbout_Q[cx][W - 2] = rbconv_Q[cx][W - 2];
+#endif
 
         // blur i-1th row
         if (i > row_from) {
@@ -3504,29 +3547,39 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, const i
 // correction_YIQ_LQ
 void RawImageSource::processFalseColorCorrection  (Imagefloat* im, const int steps)
 {
+    BENCHFUN
 
     if (im->height < 4 || steps < 1) {
         return;
     }
 
-    for (int t = 0; t < steps; t++) {
 #ifdef _OPENMP
-        #pragma omp parallel
-        {
-            int tid = omp_get_thread_num();
-            int nthreads = omp_get_num_threads();
-            int blk = (im->height - 2) / nthreads;
+    #pragma omp parallel
+    {
+        multi_array2D<float, 5> buffer (W, 3);
+        int tid = omp_get_thread_num();
+        int nthreads = omp_get_num_threads();
+        int blk = (im->height - 2) / nthreads;
 
-            if (tid < nthreads - 1)
-            {
-                processFalseColorCorrectionThread (im, 1 + tid * blk, 1 + (tid + 1)*blk);
-            } else
-            { processFalseColorCorrectionThread (im, 1 + tid * blk, im->height - 1); }
+        for (int t = 0; t < steps; t++) {
+
+            if (tid < nthreads - 1) {
+                processFalseColorCorrectionThread (im, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], 1 + tid * blk, 1 + (tid + 1)*blk);
+            } else {
+                processFalseColorCorrectionThread (im, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], 1 + tid * blk, im->height - 1);
+            }
+
+            #pragma omp barrier
         }
-#else
-        processFalseColorCorrectionThread (im, 1 , im->height - 1);
-#endif
     }
+#else
+    multi_array2D<float, 5> buffer (W, 3);
+
+    for (int t = 0; t < steps; t++) {
+        processFalseColorCorrectionThread (im, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], 1 , im->height - 1);
+    }
+
+#endif
 }
 
 // Some camera input profiles need gamma preprocessing
