@@ -623,6 +623,8 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
     if (state != SEditDrag3 && state != SEditPick3 && button == 3 && !(bstate & (GDK_SHIFT_MASK|GDK_CONTROL_MASK))) {
         iarea->pipetteVal[0] = iarea->pipetteVal[1] = iarea->pipetteVal[2] = -1.f;
 
+        needRedraw = iarea->object == 1;
+
         if (editSubscriber && editSubscriber->getEditingType() == ET_PIPETTE) {
             editSubscriber->mouseOver(0);
         }
