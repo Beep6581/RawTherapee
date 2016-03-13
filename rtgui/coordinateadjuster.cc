@@ -122,8 +122,6 @@ void CoordinateAdjuster::createWidgets(const std::vector<Axis> &axis)
 
     axisAdjusters.resize(axis.size());
 
-    set_spacing(3);
-
     AxisAdjuster *currAdjuster = NULL;
 
     for (unsigned int i = 0; i < count; ++i) {
@@ -133,8 +131,17 @@ void CoordinateAdjuster::createWidgets(const std::vector<Axis> &axis)
         currAdjuster->rangeLowerBound = currAxis->rangeLowerBound;
         currAdjuster->rangeUpperBound = currAxis->rangeUpperBound;
 
-        pack_start(*(currAdjuster->label), Gtk::PACK_SHRINK, 0);
-        pack_start(*(currAdjuster->spinButton), Gtk::PACK_SHRINK, 0);
+        Gtk::Grid *box = Gtk::manage (new Gtk::Grid());
+        box->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+        box->set_column_spacing(3);
+
+        setExpandAlignProperties(currAdjuster->label, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+        setExpandAlignProperties(currAdjuster->spinButton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+        box->attach_next_to(*(currAdjuster->spinButton), Gtk::POS_LEFT, 1, 1);
+        box->attach_next_to(*(currAdjuster->label), Gtk::POS_LEFT, 1, 1);
+
+        add(*box);
     }
 }
 
