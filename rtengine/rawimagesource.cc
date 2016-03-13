@@ -3392,10 +3392,8 @@ int RawImageSource::defTransform (int tran)
 void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D<float> &rbconv_Y, array2D<float> &rbconv_I, array2D<float> &rbconv_Q, array2D<float> &rbout_I, array2D<float> &rbout_Q, const int row_from, const int row_to)
 {
 
-    int W = im->width;
-
-    float row_I[W];
-    float row_Q[W];
+    const int W = im->width;
+    constexpr float onebynine = 1.f / 9.f;
 
 #ifdef __SSE2__
     vfloat buffer[12];
@@ -3512,34 +3510,35 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D
 
         // blur i-1th row
         if (i > row_from) {
+            convert_to_RGB (im->r(i - 1, 0), im->g(i - 1, 0), im->b(i - 1, 0), rbconv_Y[px][0], rbout_I[px][0], rbout_Q[px][0]);
+
 #ifdef _OPENMP
             #pragma omp simd
 #endif
 
             for (int j = 1; j < W - 1; j++) {
-                row_I[j] = (rbout_I[px][j - 1] + rbout_I[px][j] + rbout_I[px][j + 1] + rbout_I[cx][j - 1] + rbout_I[cx][j] + rbout_I[cx][j + 1] + rbout_I[nx][j - 1] + rbout_I[nx][j] + rbout_I[nx][j + 1]) / 9;
-                row_Q[j] = (rbout_Q[px][j - 1] + rbout_Q[px][j] + rbout_Q[px][j + 1] + rbout_Q[cx][j - 1] + rbout_Q[cx][j] + rbout_Q[cx][j + 1] + rbout_Q[nx][j - 1] + rbout_Q[nx][j] + rbout_Q[nx][j + 1]) / 9;
+                float I = (rbout_I[px][j - 1] + rbout_I[px][j] + rbout_I[px][j + 1] + rbout_I[cx][j - 1] + rbout_I[cx][j] + rbout_I[cx][j + 1] + rbout_I[nx][j - 1] + rbout_I[nx][j] + rbout_I[nx][j + 1]) * onebynine;
+                float Q = (rbout_Q[px][j - 1] + rbout_Q[px][j] + rbout_Q[px][j + 1] + rbout_Q[cx][j - 1] + rbout_Q[cx][j] + rbout_Q[cx][j + 1] + rbout_Q[nx][j - 1] + rbout_Q[nx][j] + rbout_Q[nx][j + 1]) * onebynine;
+                convert_to_RGB (im->r(i - 1, j), im->g(i - 1, j), im->b(i - 1, j), rbconv_Y[px][j], I, Q);
             }
 
-            row_I[0] = rbout_I[px][0];
-            row_Q[0] = rbout_Q[px][0];
-            row_I[W - 1] = rbout_I[px][W - 1];
-            row_Q[W - 1] = rbout_Q[px][W - 1];
-            convert_row_to_RGB (im->r(i - 1), im->g(i - 1), im->b(i - 1), rbconv_Y[px], row_I, row_Q, W);
+            convert_to_RGB (im->r(i - 1, W - 1), im->g(i - 1, W - 1), im->b(i - 1, W - 1), rbconv_Y[px][W - 1], rbout_I[px][W - 1], rbout_Q[px][W - 1]);
         }
     }
 
     // blur last 3 row and finalize H-1th row
+    convert_to_RGB (im->r(row_to - 1, 0), im->g(row_to - 1, 0), im->b(row_to - 1, 0), rbconv_Y[cx][0], rbout_I[cx][0], rbout_Q[cx][0]);
+#ifdef _OPENMP
+    #pragma omp simd
+#endif
+
     for (int j = 1; j < W - 1; j++) {
-        row_I[j] = (rbout_I[px][j - 1] + rbout_I[px][j] + rbout_I[px][j + 1] + rbout_I[cx][j - 1] + rbout_I[cx][j] + rbout_I[cx][j + 1] + rbconv_I[nx][j - 1] + rbconv_I[nx][j] + rbconv_I[nx][j + 1]) / 9;
-        row_Q[j] = (rbout_Q[px][j - 1] + rbout_Q[px][j] + rbout_Q[px][j + 1] + rbout_Q[cx][j - 1] + rbout_Q[cx][j] + rbout_Q[cx][j + 1] + rbconv_Q[nx][j - 1] + rbconv_Q[nx][j] + rbconv_Q[nx][j + 1]) / 9;
+        float I = (rbout_I[px][j - 1] + rbout_I[px][j] + rbout_I[px][j + 1] + rbout_I[cx][j - 1] + rbout_I[cx][j] + rbout_I[cx][j + 1] + rbconv_I[nx][j - 1] + rbconv_I[nx][j] + rbconv_I[nx][j + 1]) * onebynine;
+        float Q = (rbout_Q[px][j - 1] + rbout_Q[px][j] + rbout_Q[px][j + 1] + rbout_Q[cx][j - 1] + rbout_Q[cx][j] + rbout_Q[cx][j + 1] + rbconv_Q[nx][j - 1] + rbconv_Q[nx][j] + rbconv_Q[nx][j + 1]) * onebynine;
+        convert_to_RGB (im->r(row_to - 1, j), im->g(row_to - 1, j), im->b(row_to - 1, j), rbconv_Y[cx][j], I, Q);
     }
 
-    row_I[0] = rbout_I[cx][0];
-    row_Q[0] = rbout_Q[cx][0];
-    row_I[W - 1] = rbout_I[cx][W - 1];
-    row_Q[W - 1] = rbout_Q[cx][W - 1];
-    convert_row_to_RGB (im->r(row_to - 1), im->g(row_to - 1), im->b(row_to - 1), rbconv_Y[cx], row_I, row_Q, W);
+    convert_to_RGB (im->r(row_to - 1, W - 1), im->g(row_to - 1, W - 1), im->b(row_to - 1, W - 1), rbconv_Y[cx][W - 1], rbout_I[cx][W - 1], rbout_Q[cx][W - 1]);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
