@@ -397,6 +397,32 @@ CurveEditorSubGroup::~CurveEditorSubGroup()
     }
 }
 
+void CurveEditorSubGroup::initButton (Gtk::Button &button, const Glib::ustring &iconName, Gtk::Align align, bool separatorButton, const Glib::ustring &tooltip)
+{
+    bool hExpand, vExpand;
+    if (separatorButton) {
+        hExpand = vExpand = true;
+    } else {
+        vExpand = options.curvebboxpos == 0 || options.curvebboxpos == 2;
+        hExpand = !vExpand;
+    }
+    Gtk::Align hAlign, vAlign;
+    if (align == Gtk::ALIGN_START) {
+        hAlign = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::ALIGN_START : Gtk::ALIGN_FILL;
+        vAlign = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::ALIGN_FILL : Gtk::ALIGN_START;
+    } else {
+        hAlign = options.curvebboxpos == 0 || options.curvebboxpos == 2 ?  Gtk::ALIGN_END : Gtk::ALIGN_FILL;
+        vAlign = options.curvebboxpos == 0 || options.curvebboxpos == 2 ?  Gtk::ALIGN_FILL : Gtk::ALIGN_END;
+    }
+
+    button.add (*Gtk::manage (new RTImage (iconName)));
+    button.get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
+    if (!tooltip.empty()) {
+        button.set_tooltip_text(M(tooltip));
+    }
+    setExpandAlignProperties(&button, hExpand, vExpand, hAlign, vAlign);
+}
+
 void CurveEditorSubGroup::updateEditButton(CurveEditor* curve, Gtk::ToggleButton *button, sigc::connection &connection)
 {
     if (!curve->getEditProvider() || curve->getEditID() == EUID_None) {

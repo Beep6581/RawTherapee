@@ -40,7 +40,8 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
     valUnchanged = (int)FCT_Unchanged;
     parent = prt;
 
-    Gtk::PositionType side = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::POS_LEFT : Gtk::POS_TOP;
+    Gtk::PositionType sideStart = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::POS_LEFT : Gtk::POS_TOP;
+    Gtk::PositionType sideEnd = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::POS_RIGHT : Gtk::POS_BOTTOM;
 
     // ControlPoints curve
     CPointsCurveGrid = new Gtk::Grid ();
@@ -52,50 +53,34 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
     CPointsCurve->setType (FCT_MinMaxCPoints);
 
     Gtk::Grid* CPointsbbox = Gtk::manage (new Gtk::Grid ()); // curvebboxpos 0=above, 1=right, 2=below, 3=left
-    CPointsbbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
-        setExpandAlignProperties(CPointsbbox, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-        CPointsbbox->set_row_homogeneous(true);
+        CPointsbbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+        setExpandAlignProperties(CPointsbbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     } else {
-        setExpandAlignProperties(CPointsbbox, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
-        CPointsbbox->set_column_homogeneous(true);
+        CPointsbbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
+        setExpandAlignProperties(CPointsbbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     }
 
     editCPoints = Gtk::manage (new Gtk::ToggleButton());
-    editCPoints->add (*Gtk::manage (new RTImage ("editmodehand.png")));
-    editCPoints->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(editCPoints, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    editCPoints->set_tooltip_text(M("EDIT_PIPETTE_TOOLTIP"));
-    editCPoints->hide();
+    initButton(*editCPoints, Glib::ustring("editmodehand.png"), Gtk::ALIGN_START, false, Glib::ustring(M("EDIT_PIPETTE_TOOLTIP")));
     editPointCPoints = Gtk::manage (new Gtk::ToggleButton ());
-    editPointCPoints->add (*Gtk::manage (new RTImage ("gtk-edit.png")));
-    editPointCPoints->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    editPointCPoints->set_tooltip_text(M("CURVEEDITOR_EDITPOINT_HINT"));
-    setExpandAlignProperties(editPointCPoints, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    initButton(*editPointCPoints,  Glib::ustring("gtk-edit.png"), Gtk::ALIGN_START, false, Glib::ustring(M("CURVEEDITOR_EDITPOINT_HINT")));
     copyCPoints = Gtk::manage (new Gtk::Button ());
-    copyCPoints->add (*Gtk::manage (new RTImage ("edit-copy.png")));
-    copyCPoints->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(copyCPoints, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    initButton(*copyCPoints, Glib::ustring("edit-copy.png"), Gtk::ALIGN_END, true);
     pasteCPoints = Gtk::manage (new Gtk::Button ());
-    pasteCPoints->add (*Gtk::manage (new RTImage ("edit-paste.png")));
-    pasteCPoints->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(pasteCPoints, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    initButton(*pasteCPoints,  Glib::ustring("edit-paste.png"), Gtk::ALIGN_END, false);
     loadCPoints = Gtk::manage (new Gtk::Button ());
-    loadCPoints->add (*Gtk::manage (new RTImage ("gtk-open.png")));
-    loadCPoints->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(loadCPoints, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    initButton(*loadCPoints,  Glib::ustring("gtk-open.png"), Gtk::ALIGN_END, false);
     saveCPoints = Gtk::manage (new Gtk::Button ());
-    saveCPoints->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
-    saveCPoints->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(saveCPoints, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    initButton(*saveCPoints,  Glib::ustring("gtk-save-large.png"), Gtk::ALIGN_END, false);
 
-    CPointsbbox->attach_next_to(*saveCPoints,      side, 1, 1);
-    CPointsbbox->attach_next_to(*loadCPoints,      side, 1, 1);
-    CPointsbbox->attach_next_to(*pasteCPoints,     side, 1, 1);
-    CPointsbbox->attach_next_to(*copyCPoints,      side, 1, 1);
-    CPointsbbox->attach_next_to(*editPointCPoints, side, 1, 1);
-    CPointsbbox->attach_next_to(*editCPoints,      side, 1, 1);
+    CPointsbbox->attach_next_to(*editPointCPoints, sideStart, 1, 1);
+    CPointsbbox->attach_next_to(*editCPoints,      sideStart, 1, 1);
+    CPointsbbox->attach_next_to(*copyCPoints,      sideEnd, 1, 1);
+    CPointsbbox->attach_next_to(*pasteCPoints,     sideEnd, 1, 1);
+    CPointsbbox->attach_next_to(*loadCPoints,      sideEnd, 1, 1);
+    CPointsbbox->attach_next_to(*saveCPoints,      sideEnd, 1, 1);
 
     {
         std::vector<Axis> axis;

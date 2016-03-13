@@ -38,7 +38,10 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     editedAdjuster = NULL;
     editedAdjusterValue = 0;
 
-    Gtk::PositionType side = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::POS_LEFT : Gtk::POS_TOP;
+    Gtk::PositionType sideStart = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::POS_LEFT : Gtk::POS_TOP;
+    Gtk::PositionType sideEnd = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::POS_RIGHT : Gtk::POS_BOTTOM;
+    bool vExpand = options.curvebboxpos == 0 || options.curvebboxpos == 2;
+    bool hExpand = !vExpand;
 
     valLinear = (int)DCT_Linear;
     valUnchanged = (int)DCT_Unchanged;
@@ -56,50 +59,35 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     customCurve->setType (DCT_Spline);
 
     Gtk::Grid* custombbox = Gtk::manage (new Gtk::Grid ()); // curvebboxpos 0=above, 1=right, 2=below, 3=left
-    custombbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
-        setExpandAlignProperties(custombbox, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-        custombbox->set_row_homogeneous(true);
+        custombbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+        setExpandAlignProperties(custombbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     } else {
-        setExpandAlignProperties(custombbox, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
-        custombbox->set_column_homogeneous(true);
+        custombbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
+        setExpandAlignProperties(custombbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     }
 
     editPointCustom = Gtk::manage (new Gtk::ToggleButton ());
-    editPointCustom->add (*Gtk::manage (new RTImage ("gtk-edit.png")));
-    editPointCustom->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    editPointCustom->set_tooltip_text(M("CURVEEDITOR_EDITPOINT_HINT"));
-    setExpandAlignProperties(editPointCustom, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    initButton(*editPointCustom, Glib::ustring("gtk-edit.png"), Gtk::ALIGN_START, false, Glib::ustring(M("CURVEEDITOR_EDITPOINT_HINT")));
     editCustom = Gtk::manage (new Gtk::ToggleButton());
-    editCustom->add (*Gtk::manage (new RTImage ("editmodehand.png")));
-    editCustom->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    editCustom->set_tooltip_text(M("EDIT_PIPETTE_TOOLTIP"));
-    setExpandAlignProperties(editCustom, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    initButton(*editCustom, Glib::ustring("editmodehand.png"), Gtk::ALIGN_START, false, Glib::ustring(M("EDIT_PIPETTE_TOOLTIP")));
     editCustom->hide();
     copyCustom = Gtk::manage (new Gtk::Button ());
-    copyCustom->add (*Gtk::manage (new RTImage ("edit-copy.png")));
-    copyCustom->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(copyCustom, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    initButton(*copyCustom, Glib::ustring("edit-copy.png"), Gtk::ALIGN_END, true);
     pasteCustom = Gtk::manage (new Gtk::Button ());
-    pasteCustom->add (*Gtk::manage (new RTImage ("edit-paste.png")));
-    pasteCustom->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(pasteCustom, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    initButton(*pasteCustom, Glib::ustring("edit-paste.png"), Gtk::ALIGN_END, false);
     loadCustom = Gtk::manage (new Gtk::Button ());
-    loadCustom->add (*Gtk::manage (new RTImage ("gtk-open.png")));
-    loadCustom->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(loadCustom, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    initButton(*loadCustom, Glib::ustring("gtk-open.png"), Gtk::ALIGN_END, false);
     saveCustom = Gtk::manage (new Gtk::Button ());
-    saveCustom->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
-    saveCustom->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(saveCustom, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    initButton(*saveCustom, Glib::ustring("gtk-save-large.png"), Gtk::ALIGN_END, false);
 
-    custombbox->attach_next_to(*saveCustom,      side, 1, 1);
-    custombbox->attach_next_to(*loadCustom,      side, 1, 1);
-    custombbox->attach_next_to(*pasteCustom,     side, 1, 1);
-    custombbox->attach_next_to(*copyCustom,      side, 1, 1);
-    custombbox->attach_next_to(*editPointCustom, side, 1, 1);
-    custombbox->attach_next_to(*editCustom,      side, 1, 1);
+    custombbox->attach_next_to(*editPointCustom, sideStart, 1, 1);
+    custombbox->attach_next_to(*editCustom,      sideStart, 1, 1);
+    custombbox->attach_next_to(*copyCustom,      sideEnd, 1, 1);
+    custombbox->attach_next_to(*pasteCustom,     sideEnd, 1, 1);
+    custombbox->attach_next_to(*loadCustom,      sideEnd, 1, 1);
+    custombbox->attach_next_to(*saveCustom,      sideEnd, 1, 1);
 
     customCoordAdjuster = Gtk::manage (new CoordinateAdjuster(customCurve, this));
 
@@ -148,50 +136,35 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     NURBSCurve->setType (DCT_NURBS);
 
     Gtk::Grid* NURBSbbox = Gtk::manage (new Gtk::Grid ());
-    NURBSbbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
-        setExpandAlignProperties(NURBSbbox, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-        NURBSbbox->set_row_homogeneous(true);
+        NURBSbbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+        setExpandAlignProperties(NURBSbbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     } else {
-        setExpandAlignProperties(NURBSbbox, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
-        NURBSbbox->set_column_homogeneous(true);
+        NURBSbbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
+        setExpandAlignProperties(NURBSbbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     }
 
     editPointNURBS = Gtk::manage (new Gtk::ToggleButton ());
-    editPointNURBS->add (*Gtk::manage (new RTImage ("gtk-edit.png")));
-    editPointNURBS->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    editPointNURBS->set_tooltip_text(M("CURVEEDITOR_EDITPOINT_HINT"));
-    setExpandAlignProperties(editPointNURBS, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    initButton(*editPointNURBS, Glib::ustring("gtk-edit.png"), Gtk::ALIGN_START, false, Glib::ustring(M("CURVEEDITOR_EDITPOINT_HINT")));
     editNURBS = Gtk::manage (new Gtk::ToggleButton());
-    editNURBS->add (*Gtk::manage (new RTImage ("editmodehand.png")));
-    editNURBS->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    editNURBS->set_tooltip_text(M("EDIT_PIPETTE_TOOLTIP"));
-    setExpandAlignProperties(editNURBS, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    initButton(*editNURBS, Glib::ustring("editmodehand.png"), Gtk::ALIGN_START, false, Glib::ustring(M("EDIT_PIPETTE_TOOLTIP")));
     editNURBS->hide();
     copyNURBS = Gtk::manage (new Gtk::Button ());
-    copyNURBS->add (*Gtk::manage (new RTImage ("edit-copy.png")));
-    copyNURBS->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(copyNURBS, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    initButton(*copyNURBS, Glib::ustring("edit-copy.png"), Gtk::ALIGN_END, true);
     pasteNURBS = Gtk::manage (new Gtk::Button ());
-    pasteNURBS->add (*Gtk::manage (new RTImage ("edit-paste.png")));
-    pasteNURBS->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(pasteNURBS, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    initButton(*pasteNURBS, Glib::ustring("edit-paste.png"), Gtk::ALIGN_END, false);
     loadNURBS = Gtk::manage (new Gtk::Button ());
-    loadNURBS->add (*Gtk::manage (new RTImage ("gtk-open.png")));
-    loadNURBS->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(loadNURBS, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    initButton(*loadNURBS, Glib::ustring("gtk-open.png"), Gtk::ALIGN_END, false);
     saveNURBS = Gtk::manage (new Gtk::Button ());
-    saveNURBS->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
-    saveNURBS->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(saveNURBS, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    initButton(*saveNURBS, Glib::ustring("gtk-save-large.png"), Gtk::ALIGN_END, false);
 
-    NURBSbbox->attach_next_to(*saveNURBS,      side, 1, 1);
-    NURBSbbox->attach_next_to(*loadNURBS,      side, 1, 1);
-    NURBSbbox->attach_next_to(*pasteNURBS,     side, 1, 1);
-    NURBSbbox->attach_next_to(*copyNURBS,      side, 1, 1);
-    NURBSbbox->attach_next_to(*editPointNURBS, side, 1, 1);
-    NURBSbbox->attach_next_to(*editNURBS,      side, 1, 1);
+    NURBSbbox->attach_next_to(*editPointNURBS, sideStart, 1, 1);
+    NURBSbbox->attach_next_to(*editNURBS,      sideStart, 1, 1);
+    NURBSbbox->attach_next_to(*copyNURBS,      sideEnd,   1, 1);
+    NURBSbbox->attach_next_to(*pasteNURBS,     sideEnd,   1, 1);
+    NURBSbbox->attach_next_to(*loadNURBS,      sideEnd,   1, 1);
+    NURBSbbox->attach_next_to(*saveNURBS,      sideEnd,   1, 1);
 
     NURBSCoordAdjuster = Gtk::manage (new CoordinateAdjuster(NURBSCurve, this));
 
@@ -240,47 +213,35 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     paramCurve->setType (DCT_Parametric);
 
     Gtk::Grid* parambbox = Gtk::manage (new Gtk::Grid ());
-    parambbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
-        setExpandAlignProperties(parambbox, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-        parambbox->set_row_homogeneous(true);
+        parambbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+        setExpandAlignProperties(parambbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     } else {
-        setExpandAlignProperties(parambbox, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
-        parambbox->set_column_homogeneous(true);
+        parambbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
+        setExpandAlignProperties(parambbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     }
 
     shcSelector = Gtk::manage (new SHCSelector ());
     shcSelector->set_name("CurveSHCSelector");  // To handle the 4px gap between the SHCSelector and the curve through CSS
 
     editParam = Gtk::manage (new Gtk::ToggleButton());
-    editParam->add (*Gtk::manage (new RTImage ("editmodehand.png")));
-    editParam->set_tooltip_text(M("EDIT_PIPETTE_TOOLTIP"));
-    editParam->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(editParam, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    initButton(*editParam, Glib::ustring("editmodehand.png"), Gtk::ALIGN_START, false, Glib::ustring(M("EDIT_PIPETTE_TOOLTIP")));
     editParam->hide();
     copyParam = Gtk::manage (new Gtk::Button ());
-    copyParam->add (*Gtk::manage (new RTImage ("edit-copy.png")));
-    copyParam->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(copyParam, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    initButton(*copyParam, Glib::ustring("edit-copy.png"), Gtk::ALIGN_END, true);
     pasteParam = Gtk::manage (new Gtk::Button ());
-    pasteParam->add (*Gtk::manage (new RTImage ("edit-paste.png")));
-    pasteParam->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(pasteParam, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    initButton(*pasteParam, Glib::ustring("edit-paste.png"), Gtk::ALIGN_END, false);
     loadParam = Gtk::manage (new Gtk::Button ());
-    loadParam->add (*Gtk::manage (new RTImage ("gtk-open.png")));
-    loadParam->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(loadParam, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    initButton(*loadParam, Glib::ustring("gtk-open.png"), Gtk::ALIGN_END, false);
     saveParam = Gtk::manage (new Gtk::Button ());
-    saveParam->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
-    saveParam->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    setExpandAlignProperties(saveParam, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    initButton(*saveParam, Glib::ustring("gtk-save-large.png"), Gtk::ALIGN_END, false);
 
-    parambbox->attach_next_to(*saveParam,  side, 1, 1);
-    parambbox->attach_next_to(*loadParam,  side, 1, 1);
-    parambbox->attach_next_to(*pasteParam, side, 1, 1);
-    parambbox->attach_next_to(*copyParam,  side, 1, 1);
-    parambbox->attach_next_to(*editParam,  side, 1, 1);
+    parambbox->attach_next_to(*editParam,  sideStart, 1, 1);
+    parambbox->attach_next_to(*copyParam,  sideEnd,   1, 1);
+    parambbox->attach_next_to(*pasteParam, sideEnd,   1, 1);
+    parambbox->attach_next_to(*loadParam,  sideEnd,   1, 1);
+    parambbox->attach_next_to(*saveParam,  sideEnd,   1, 1);
 
     saveParam->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::savePressed) );
     loadParam->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::loadPressed) );

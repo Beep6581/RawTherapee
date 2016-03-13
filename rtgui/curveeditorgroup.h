@@ -119,6 +119,8 @@ protected:
     ColoredBar* leftBar;
     ColoredBar* bottomBar;
 
+    void initButton (Gtk::Button &button, const Glib::ustring &iconName, Gtk::Align align, bool separatorButton, const Glib::ustring &tooltip = {});
+
 
 public:
     virtual ~CurveEditorSubGroup();
