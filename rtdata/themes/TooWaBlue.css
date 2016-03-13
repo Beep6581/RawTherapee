@@ -1,7 +1,7 @@
 /*
   This file is part of RawTherapee.
 
-  Copyright (c) 2016 TooWaBoo (v1.10)
+  Copyright (c) 2016 TooWaBoo (v1.11)
   Many thanks to the RawTherapee Developer Team for this great piece of software
 
   RawTherapee is free software: you can redistribute it and/or modify
@@ -42,6 +42,7 @@
 @define-color bg-button-border rgba(0,0,0,.22);
 @define-color bg-button-hover rgba(0,0,0,.28);
 @define-color bg-button-checked @bg-dark-grey;
+@define-color bg-entry-IPTC @bg-dark-grey;
 
 * {
     color: @text-color;
@@ -295,26 +296,17 @@ GtkFileChooserWidget .list-row:selected * {
 #RightNotebook tab.left,
 #PrefNotebook tab,
 GtkDialog tab {
-	padding: 8px;
+	padding: 9px;
 }
 #ToolPanelNotebook > tab{
 	padding: 10px 4px 7px;
 }
 #MetaPanelNotebook tab {
-	padding: 6px 4px;
+	padding: 8px 4px;
 }
 
 .notebook tab:active {
 	border-color: @accent-color2;
-}
-/*** end ***/
-
-/*** Metadata ***/
-#MetaPanelNotebook.frame {
-	background-color: @bg-grey;
-}
-#MetaPanelNotebook.header {
-	background-color: @bg-dark-grey;
 }
 /*** end ***/
 
@@ -433,6 +425,52 @@ GtkFileChooserWidget .button GtkImage{
 }
 /*** end ***/
 
+/*** Metadata ***/
+#MetaPanelNotebook {
+	padding: 8px 11px 0;
+}
+#MetaPanelNotebook GtkScrolledWindow GtkViewport.frame {
+	padding: 8px 10px;
+}
+#MetaPanelNotebook.frame {
+	background-color: @bg-grey;
+ 	border-bottom: none;
+	border-top: 4px solid @bg-dark-grey;
+	border-left: 9px solid @bg-dark-grey;
+	border-right: 9px solid @bg-dark-grey;
+}
+#MetaPanelNotebook .separator {
+	color: @border-color;
+}
+#MetaPanelNotebook.header {
+	background-color: @bg-dark-grey;
+
+}
+#MetaPanelNotebook GtkTreeView {
+	padding: 1px;
+	background-color: @bg-grey;
+}
+#MetaPanelNotebook .frame GtkTreeView {
+	padding: 0px;
+	background-color: @bg-entry-IPTC;
+}
+#MetaPanelNotebook GtkTreeView:hover,
+#MetaPanelNotebook .frame GtkTreeView:hover {
+    background-color: @bg-list-hover;
+	color: @text-hl-color;
+}
+#MetaPanelNotebook GtkTreeView:selected,
+#MetaPanelNotebook .frame GtkTreeView:selected {
+    color: @text-hl-color;
+    background-color: @accent-color;
+}
+#MetaPanelNotebook GtkTextView {
+    color: @text-color;
+    background-color: @bg-entry-IPTC;
+	padding: 2px 4px;
+}
+/*** end ***/
+
 /*** Entry ***/
 .entry {
 	background-image: none;
@@ -476,9 +514,10 @@ GtkFileChooserWidget .button GtkImage{
 
 #MetaPanelNotebook .entry:not(:selected):not(:insensitive) {
     color: @text-color;
-    background-color: @bg-dark-grey;
+    background-color: @bg-entry-IPTC;
 	border: 1px solid rgba(0,0,0,.40);
 	border-radius: 0;
+	padding: 2px 4px;
 }
 #MetaPanelNotebook .entry:focused:selected {
     color: @text-hl-color;
@@ -490,11 +529,7 @@ GtkFileChooserWidget .button GtkImage{
 }
 #MetaPanelNotebook  .entry:not(:selected):not(:insensitive) {
     color: @text-color;
-    background-color: @bg-dark-grey;
-}
-#MetaPanelNotebook GtkTextView {
-    color: @text-color;
-    background-color: @bg-dark-grey;
+    background-color: @bg-entry-IPTC;
 }
 /*** end ***/
 
@@ -515,7 +550,7 @@ GtkDialog .button {
 }
 
 #ToolPanelNotebook GtkComboBox {
-	padding-left: 4px;  /*** Distance between label and Dropbox ***/
+	padding-left: 4px;  /*** Space between label and Dropbox ***/
 }
 
 .text-button {
@@ -574,10 +609,12 @@ GtkFileChooserWidget .button.text-button {
 	border-right: none;
 	background-color: transparent;
 }
-#MainNotebook > GtkGrid .button:hover, #MainNotebook tab .button:hover {
+#MainNotebook > GtkGrid .button:hover,
+#MainNotebook tab .button:hover {
 	background-color: rgba(255,255,255,.17);
 }
-#MainNotebook > GtkGrid .button:active, #MainNotebook tab .button:active {
+#MainNotebook > GtkGrid .button:active,
+#MainNotebook tab .button:active {
 	background-color: rgba(255,255,255,.25);
 }
 /*** end ***/
@@ -664,14 +701,20 @@ GtkFileChooserWidget .button.text-button {
 
 /*** Disabled Items  ***/
 
-*:insensitive {
+*:insensitive,
+#ToolPanelNotebook *:insensitive {
 	color: #808080;
 }
 #ToolPanelNotebook .entry:insensitive {
-	color: #999999;
+	color: #909090;
 	background-color: rgba(255,255,255,.04);
 }
-.scale.slider:insensitive, .scale.trough.highlight:insensitive, .scale.trough:insensitive {
-	background-color: #393939;
+.scale.slider:insensitive,
+.scale.trough.highlight:insensitive,
+.scale.trough:insensitive,
+#ToolPanelNotebook .scale.slider:insensitive,
+#ToolPanelNotebook .scale.trough.highlight:insensitive,
+#ToolPanelNotebook .scale.trough:insensitive {
+	background-color: #3C3C3C;
 }
 /*** end ***/
