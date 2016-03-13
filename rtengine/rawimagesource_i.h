@@ -51,7 +51,7 @@ inline void RawImageSource::convert_row_to_RGB (float* r, float* g, float* b, co
     }
 }
 
-inline void RawImageSource::convert_to_RGB (float &r, float &g, float &b, const float &Y, const float &I, const float &Q)
+inline void RawImageSource::convert_to_RGB (float &r, float &g, float &b, const float Y, const float I, const float Q)
 {
     r = Y + 0.956f * I + 0.621f * Q;
     g = Y - 0.272f * I - 0.647f * Q;

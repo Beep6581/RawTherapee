@@ -33,8 +33,6 @@
 #include "dcp.h"
 #include "rt_math.h"
 #include "improcfun.h"
-#define BENCHMARK
-#include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -3546,7 +3544,6 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D
 // correction_YIQ_LQ
 void RawImageSource::processFalseColorCorrection  (Imagefloat* im, const int steps)
 {
-    BENCHFUN
 
     if (im->height < 4 || steps < 1) {
         return;

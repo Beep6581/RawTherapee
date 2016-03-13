@@ -209,7 +209,7 @@ protected:
     void processFalseColorCorrection (Imagefloat* i, const int steps);
     inline  void convert_row_to_YIQ (const float* const r, const float* const g, const float* const b, float* Y, float* I, float* Q, const int W);
     inline  void convert_row_to_RGB (float* r, float* g, float* b, const float* const Y, const float* const I, const float* const Q, const int W);
-    inline  void convert_to_RGB (float &r, float &g, float &b, const float &Y, const float &I, const float &Q);
+    inline  void convert_to_RGB (float &r, float &g, float &b, const float Y, const float I, const float Q);
 
     inline  void convert_to_cielab_row  (float* ar, float* ag, float* ab, float* oL, float* oa, float* ob);
     inline  void interpolate_row_g      (float* agh, float* agv, int i);
