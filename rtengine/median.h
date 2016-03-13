@@ -30,16 +30,15 @@ d1 = max(d0,d1);\
 d0 = temp;\
 d4 = min(s4,s5);\
 d5 = max(s4,s5);\
-temp = min(s3,d5);\
+d3 = min(s3,d5);\
 d5 = max(s3,d5);\
-d3 = temp;\
 temp = min(d3,d4);\
 d4 = max(d3,d4);\
 d3 = max(d0,temp);\
 d2 = min(d2,d5);\
 }
 
-// middle 4 of 6 elements,
+// middle 4 of 6 elements, vectorized
 #define VMIDDLE4OF6(s0,s1,s2,s3,s4,s5,d0,d1,d2,d3,d4,d5,temp) \
 {\
 d1 = vminf(s1,s2);\
@@ -51,9 +50,8 @@ d1 = vmaxf(d0,d1);\
 d0 = temp;\
 d4 = vminf(s4,s5);\
 d5 = vmaxf(s4,s5);\
-temp = vminf(s3,d5);\
+d3 = vminf(s3,d5);\
 d5 = vmaxf(s3,d5);\
-d3 = temp;\
 temp = vminf(d3,d4);\
 d4 = vmaxf(d3,d4);\
 d3 = vmaxf(d0,temp);\
