@@ -83,7 +83,7 @@ public:
     void refresh(CurveEditor *curveToRefresh);
     void editModeSwitchedOff ();
     void pipetteMouseOver(EditDataProvider *provider, int modifierKey);
-    void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
+    bool pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
     void pipetteButton1Released(EditDataProvider *provider);
     void pipetteDrag(EditDataProvider *provider, int modifierKey);
     void showCoordinateAdjuster(CoordinateProvider *provider);

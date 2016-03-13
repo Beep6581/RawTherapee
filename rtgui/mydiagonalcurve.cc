@@ -1059,11 +1059,11 @@ void MyDiagonalCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provi
     }
 }
 
-
-void MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifierKey)
+// returns true if a point is being dragged
+bool MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifierKey)
 {
     if (edited_point > 1) {
-        return;
+        return false;
     }
 
     int num = (int)curve.x.size();
@@ -1074,7 +1074,7 @@ void MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modi
     double minDistanceX = double(MIN_DISTANCE) / double(graphW - 1);
 
     if ((graphW < 0) || (graphH < 0)) {
-        return;
+        return false;
     }
 
     snapToElmt = -100;
@@ -1129,7 +1129,11 @@ void MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modi
         lit_point = closest_point;
         ugpX = curve.x.at(closest_point);
         ugpY = curve.y.at(closest_point);
+
+        return true;
     }
+
+    return false;
 }
 
 void MyDiagonalCurve::pipetteButton1Released(EditDataProvider *provider)

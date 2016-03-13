@@ -1273,10 +1273,11 @@ void MyFlatCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider,
     }
 }
 
-void MyFlatCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifierKey)
+// returns true if a point is being dragged
+bool MyFlatCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifierKey)
 {
     if (edited_point > -1) {
-        return;
+        return false;
     }
 
     buttonPressed = true;
@@ -1353,6 +1354,7 @@ void MyFlatCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifier
         break;
     }
 
+    return true;
 }
 
 void MyFlatCurve::pipetteButton1Released(EditDataProvider *provider)

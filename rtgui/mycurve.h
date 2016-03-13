@@ -135,7 +135,7 @@ public:
     virtual void reset (const std::vector<double> &resetCurve, double identityValue = 0.5) = 0;
 
     virtual void pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider, int modifierKey) = 0;
-    virtual void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) = 0;
+    virtual bool pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) = 0;
     virtual void pipetteButton1Released(EditDataProvider *provider) = 0;
     virtual void pipetteDrag(EditDataProvider *provider, int modifierKey) = 0;
 

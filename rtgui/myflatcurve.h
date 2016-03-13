@@ -131,7 +131,7 @@ public:
     //void updateBackgroundHistogram (unsigned int* hist);
 
     void pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider, int modifierKey);
-    void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
+    bool pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
     void pipetteButton1Released(EditDataProvider *provider);
     void pipetteDrag(EditDataProvider *provider, int modifierKey);
 

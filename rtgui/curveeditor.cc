@@ -405,8 +405,11 @@ bool CurveEditor::button1Pressed(const int modifierKey)
     EditDataProvider* provider = getEditProvider();
 
     if (provider->object) {
-        subGroup->pipetteButton1Pressed(provider, modifierKey);
-        remoteDrag = true;
+        remoteDrag = subGroup->pipetteButton1Pressed(provider, modifierKey);
+    }
+
+    if (remoteDrag) {
+        action = ES_ACTION_DRAGGING;
     }
 
     subGroup->refresh(this);
