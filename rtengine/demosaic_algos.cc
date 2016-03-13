@@ -22,7 +22,6 @@
 #include "rawimagesource.h"
 #include "rawimagesource_i.h"
 #include "jaggedarray.h"
-#include "median.h"
 #include "rawimage.h"
 #include "mytime.h"
 #include "iccmatrices.h"
