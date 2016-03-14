@@ -2772,13 +2772,13 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
 bool RAWParamsEdited::BayerSensor::isUnchanged() const
 {
-    return  method && ccSteps && dcbIterations && dcbEnhance && lmmseIterations/*&& allEnhance*/ &&  greenEq
+    return  method && dcbIterations && dcbEnhance && lmmseIterations/*&& allEnhance*/ &&  greenEq
             && linenoise && exBlack0 && exBlack1 && exBlack2 && exBlack3 && exTwoGreen;
 }
 
 bool RAWParamsEdited::XTransSensor::isUnchanged() const
 {
-    return method && ccSteps && exBlackRed && exBlackGreen && exBlackBlue;
+    return method && exBlackRed && exBlackGreen && exBlackBlue;
 }
 
 bool RAWParamsEdited::isUnchanged() const

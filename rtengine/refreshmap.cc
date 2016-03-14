@@ -141,7 +141,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // EvCBSatLimiter,
     LUMINANCECURVE,   // EvCBSatLimit,
     DEMOSAIC,         // EvDemosaicDCBIter
-    DEMOSAIC,         // EvDemosaicFalseColorIter
+    ALLNORAW,         // EvDemosaicFalseColorIter
     DEMOSAIC,         // EvDemosaicDCBEnhanced
     DARKFRAME,        // EvPreProcessCARed
     DARKFRAME,        // EvPreProcessCABlue
