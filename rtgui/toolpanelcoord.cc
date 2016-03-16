@@ -28,7 +28,7 @@
 
 using namespace rtengine::procparams;
 
-ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)
+ToolPanelCoordinator::ToolPanelCoordinator () : ipc(nullptr), editDataProvider(nullptr)
 {
 
     exposurePanel   = Gtk::manage (new ToolVBox ());
