@@ -3387,33 +3387,30 @@ int RawImageSource::defTransform (int tran)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Thread called part
-void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, const int row_from, const int row_to)
+void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D<float> &rbconv_Y, array2D<float> &rbconv_I, array2D<float> &rbconv_Q, array2D<float> &rbout_I, array2D<float> &rbout_Q, const int row_from, const int row_to)
 {
 
-    int W = im->width;
+    const int W = im->width;
+    constexpr float onebynine = 1.f / 9.f;
 
-    array2D<float> rbconv_Y (W, 3);
-    array2D<float> rbconv_I (W, 3);
-    array2D<float> rbconv_Q (W, 3);
-    array2D<float> rbout_I (W, 3);
-    array2D<float> rbout_Q (W, 3);
+#ifdef __SSE2__
+    vfloat buffer[12];
+    vfloat* pre1 = &buffer[0];
+    vfloat* pre2 = &buffer[3];
+    vfloat* post1 = &buffer[6];
+    vfloat* post2 = &buffer[9];
 
-    float row_I[W];
-    float row_Q[W];
+    vfloat middle[6];
 
-    float buffer[3 * 8];
-    float* pre1_I = &buffer[0];
-    float* pre2_I = &buffer[3];
-    float* post1_I = &buffer[6];
-    float* post2_I = &buffer[9];
-    float* pre1_Q = &buffer[12];
-    float* pre2_Q = &buffer[15];
-    float* post1_Q = &buffer[18];
-    float* post2_Q = &buffer[21];
+#else
+    float buffer[12];
+    float* pre1 = &buffer[0];
+    float* pre2 = &buffer[3];
+    float* post1 = &buffer[6];
+    float* post2 = &buffer[9];
 
-    float middle_I[6];
-    float middle_Q[6];
-    float* tmp;
+    float middle[6];
+#endif
 
     int px = (row_from - 1) % 3, cx = row_from % 3, nx = 0;
 
@@ -3433,82 +3430,113 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, const i
 
         convert_row_to_YIQ (im->r(i + 1), im->g(i + 1), im->b(i + 1), rbconv_Y[nx], rbconv_I[nx], rbconv_Q[nx], W);
 
-        SORT3(rbconv_I[px][0], rbconv_I[cx][0], rbconv_I[nx][0], pre1_I[0], pre1_I[1], pre1_I[2]);
-        SORT3(rbconv_I[px][1], rbconv_I[cx][1], rbconv_I[nx][1], pre2_I[0], pre2_I[1], pre2_I[2]);
-        SORT3(rbconv_Q[px][0], rbconv_Q[cx][0], rbconv_Q[nx][0], pre1_Q[0], pre1_Q[1], pre1_Q[2]);
-        SORT3(rbconv_Q[px][1], rbconv_Q[cx][1], rbconv_Q[nx][1], pre2_Q[0], pre2_Q[1], pre2_Q[2]);
+#ifdef __SSE2__
+        pre1[0] = _mm_setr_ps(rbconv_I[px][0], rbconv_Q[px][0], 0, 0) , pre1[1] = _mm_setr_ps(rbconv_I[cx][0], rbconv_Q[cx][0], 0, 0), pre1[2] = _mm_setr_ps(rbconv_I[nx][0], rbconv_Q[nx][0], 0, 0);
+        pre2[0] = _mm_setr_ps(rbconv_I[px][1], rbconv_Q[px][1], 0, 0) , pre2[1] = _mm_setr_ps(rbconv_I[cx][1], rbconv_Q[cx][1], 0, 0), pre2[2] = _mm_setr_ps(rbconv_I[nx][1], rbconv_Q[nx][1], 0, 0);
+        vfloat temp[7];
+
+        // fill first element in rbout_I and rbout_Q
+        rbout_I[cx][0] = rbconv_I[cx][0];
+        rbout_Q[cx][0] = rbconv_Q[cx][0];
 
         // median I channel
-        float temp[7];
-
         for (int j = 1; j < W - 2; j += 2) {
-            SORT3(rbconv_I[px][j + 1], rbconv_I[cx][j + 1], rbconv_I[nx][j + 1], post1_I[0], post1_I[1], post1_I[2]);
-            NETWORKSORT4OF6(pre2_I[0], pre2_I[1], pre2_I[2], post1_I[0], post1_I[1], post1_I[2], middle_I[0], middle_I[1], middle_I[2], middle_I[3], middle_I[4], middle_I[5], temp[0]);
-            SORT3(rbconv_I[px][j + 2], rbconv_I[cx][j + 2], rbconv_I[nx][j + 2], post2_I[0], post2_I[1], post2_I[2]);
-            MEDIAN7(pre1_I[0], pre1_I[1], pre1_I[2], middle_I[1], middle_I[2], middle_I[3], middle_I[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j]);
-            MEDIAN7(post2_I[0], post2_I[1], post2_I[2], middle_I[1], middle_I[2], middle_I[3], middle_I[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j + 1]);
-            tmp = pre1_I;
-            pre1_I = post1_I;
-            post1_I = tmp;
-            tmp = pre2_I;
-            pre2_I = post2_I;
-            post2_I = tmp;
-
+            post1[0] = _mm_setr_ps(rbconv_I[px][j + 1], rbconv_Q[px][j + 1], 0, 0), post1[1] = _mm_setr_ps(rbconv_I[cx][j + 1], rbconv_Q[cx][j + 1], 0, 0), post1[2] = _mm_setr_ps(rbconv_I[nx][j + 1], rbconv_Q[nx][j + 1], 0, 0);
+            VMIDDLE4OF6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2], middle[0], middle[1], middle[2], middle[3], middle[4], middle[5], temp[0]);
+            vfloat medianval;
+            VMEDIAN7(pre1[0], pre1[1], pre1[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], medianval);
+            rbout_I[cx][j] = medianval[0];
+            rbout_Q[cx][j] = medianval[1];
+            post2[0] = _mm_setr_ps(rbconv_I[px][j + 2], rbconv_Q[px][j + 2], 0, 0), post2[1] = _mm_setr_ps(rbconv_I[cx][j + 2], rbconv_Q[cx][j + 2], 0, 0), post2[2] = _mm_setr_ps(rbconv_I[nx][j + 2], rbconv_Q[nx][j + 2], 0, 0);
+            VMEDIAN7(post2[0], post2[1], post2[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], medianval);
+            rbout_I[cx][j + 1] = medianval[0];
+            rbout_Q[cx][j + 1] = medianval[1];
+            std::swap(pre1, post1);
+            std::swap(pre2, post2);
         }
 
-        // median Q channel
-        for (int j = 1; j < W - 2; j += 2) {
-            SORT3(rbconv_Q[px][j + 1], rbconv_Q[cx][j + 1], rbconv_Q[nx][j + 1], post1_Q[0], post1_Q[1], post1_Q[2]);
-            NETWORKSORT4OF6(pre2_Q[0], pre2_Q[1], pre2_Q[2], post1_Q[0], post1_Q[1], post1_Q[2], middle_Q[0], middle_Q[1], middle_Q[2], middle_Q[3], middle_Q[4], middle_Q[5], temp[0]);
-            SORT3(rbconv_Q[px][j + 2], rbconv_Q[cx][j + 2], rbconv_Q[nx][j + 2], post2_Q[0], post2_Q[1], post2_Q[2]);
-            MEDIAN7(pre1_Q[0], pre1_Q[1], pre1_Q[2], middle_Q[1], middle_Q[2], middle_Q[3], middle_Q[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j]);
-            MEDIAN7(post2_Q[0], post2_Q[1], post2_Q[2], middle_Q[1], middle_Q[2], middle_Q[3], middle_Q[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j + 1]);
-            tmp = pre1_Q;
-            pre1_Q = post1_Q;
-            post1_Q = tmp;
-            tmp = pre2_Q;
-            pre2_Q = post2_Q;
-            post2_Q = tmp;
-        }
-
-        // fill first and last element in rbout
-        rbout_I[cx][0] = rbconv_I[cx][0];
+        // fill last elements in rbout_I and rbout_Q
         rbout_I[cx][W - 1] = rbconv_I[cx][W - 1];
         rbout_I[cx][W - 2] = rbconv_I[cx][W - 2];
-        rbout_Q[cx][0] = rbconv_Q[cx][0];
         rbout_Q[cx][W - 1] = rbconv_Q[cx][W - 1];
         rbout_Q[cx][W - 2] = rbconv_Q[cx][W - 2];
 
+#else
+        pre1[0] = rbconv_I[px][0], pre1[1] = rbconv_I[cx][0], pre1[2] = rbconv_I[nx][0];
+        pre2[0] = rbconv_I[px][1], pre2[1] = rbconv_I[cx][1], pre2[2] = rbconv_I[nx][1];
+        float temp[7];
+
+        // fill first element in rbout_I
+        rbout_I[cx][0] = rbconv_I[cx][0];
+
+        // median I channel
+        for (int j = 1; j < W - 2; j += 2) {
+            post1[0] = rbconv_I[px][j + 1], post1[1] = rbconv_I[cx][j + 1], post1[2] = rbconv_I[nx][j + 1];
+            MIDDLE4OF6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2], middle[0], middle[1], middle[2], middle[3], middle[4], middle[5], temp[0]);
+            MEDIAN7(pre1[0], pre1[1], pre1[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j]);
+            post2[0] = rbconv_I[px][j + 2], post2[1] = rbconv_I[cx][j + 2], post2[2] = rbconv_I[nx][j + 2];
+            MEDIAN7(post2[0], post2[1], post2[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j + 1]);
+            std::swap(pre1, post1);
+            std::swap(pre2, post2);
+        }
+
+        // fill last elements in rbout_I
+        rbout_I[cx][W - 1] = rbconv_I[cx][W - 1];
+        rbout_I[cx][W - 2] = rbconv_I[cx][W - 2];
+
+        pre1[0] = rbconv_Q[px][0], pre1[1] = rbconv_Q[cx][0], pre1[2] = rbconv_Q[nx][0];
+        pre2[0] = rbconv_Q[px][1], pre2[1] = rbconv_Q[cx][1], pre2[2] = rbconv_Q[nx][1];
+
+        // fill first element in rbout_Q
+        rbout_Q[cx][0] = rbconv_Q[cx][0];
+
+        // median Q channel
+        for (int j = 1; j < W - 2; j += 2) {
+            post1[0] = rbconv_Q[px][j + 1], post1[1] = rbconv_Q[cx][j + 1], post1[2] = rbconv_Q[nx][j + 1];
+            MIDDLE4OF6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2], middle[0], middle[1], middle[2], middle[3], middle[4], middle[5], temp[0]);
+            MEDIAN7(pre1[0], pre1[1], pre1[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j]);
+            post2[0] = rbconv_Q[px][j + 2], post2[1] = rbconv_Q[cx][j + 2], post2[2] = rbconv_Q[nx][j + 2];
+            MEDIAN7(post2[0], post2[1], post2[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j + 1]);
+            std::swap(pre1, post1);
+            std::swap(pre2, post2);
+        }
+
+        // fill last elements in rbout_Q
+        rbout_Q[cx][W - 1] = rbconv_Q[cx][W - 1];
+        rbout_Q[cx][W - 2] = rbconv_Q[cx][W - 2];
+#endif
+
         // blur i-1th row
         if (i > row_from) {
+            convert_to_RGB (im->r(i - 1, 0), im->g(i - 1, 0), im->b(i - 1, 0), rbconv_Y[px][0], rbout_I[px][0], rbout_Q[px][0]);
+
 #ifdef _OPENMP
             #pragma omp simd
 #endif
 
             for (int j = 1; j < W - 1; j++) {
-                row_I[j] = (rbout_I[px][j - 1] + rbout_I[px][j] + rbout_I[px][j + 1] + rbout_I[cx][j - 1] + rbout_I[cx][j] + rbout_I[cx][j + 1] + rbout_I[nx][j - 1] + rbout_I[nx][j] + rbout_I[nx][j + 1]) / 9;
-                row_Q[j] = (rbout_Q[px][j - 1] + rbout_Q[px][j] + rbout_Q[px][j + 1] + rbout_Q[cx][j - 1] + rbout_Q[cx][j] + rbout_Q[cx][j + 1] + rbout_Q[nx][j - 1] + rbout_Q[nx][j] + rbout_Q[nx][j + 1]) / 9;
+                float I = (rbout_I[px][j - 1] + rbout_I[px][j] + rbout_I[px][j + 1] + rbout_I[cx][j - 1] + rbout_I[cx][j] + rbout_I[cx][j + 1] + rbout_I[nx][j - 1] + rbout_I[nx][j] + rbout_I[nx][j + 1]) * onebynine;
+                float Q = (rbout_Q[px][j - 1] + rbout_Q[px][j] + rbout_Q[px][j + 1] + rbout_Q[cx][j - 1] + rbout_Q[cx][j] + rbout_Q[cx][j + 1] + rbout_Q[nx][j - 1] + rbout_Q[nx][j] + rbout_Q[nx][j + 1]) * onebynine;
+                convert_to_RGB (im->r(i - 1, j), im->g(i - 1, j), im->b(i - 1, j), rbconv_Y[px][j], I, Q);
             }
 
-            row_I[0] = rbout_I[px][0];
-            row_Q[0] = rbout_Q[px][0];
-            row_I[W - 1] = rbout_I[px][W - 1];
-            row_Q[W - 1] = rbout_Q[px][W - 1];
-            convert_row_to_RGB (im->r(i - 1), im->g(i - 1), im->b(i - 1), rbconv_Y[px], row_I, row_Q, W);
+            convert_to_RGB (im->r(i - 1, W - 1), im->g(i - 1, W - 1), im->b(i - 1, W - 1), rbconv_Y[px][W - 1], rbout_I[px][W - 1], rbout_Q[px][W - 1]);
         }
     }
 
     // blur last 3 row and finalize H-1th row
+    convert_to_RGB (im->r(row_to - 1, 0), im->g(row_to - 1, 0), im->b(row_to - 1, 0), rbconv_Y[cx][0], rbout_I[cx][0], rbout_Q[cx][0]);
+#ifdef _OPENMP
+    #pragma omp simd
+#endif
+
     for (int j = 1; j < W - 1; j++) {
-        row_I[j] = (rbout_I[px][j - 1] + rbout_I[px][j] + rbout_I[px][j + 1] + rbout_I[cx][j - 1] + rbout_I[cx][j] + rbout_I[cx][j + 1] + rbconv_I[nx][j - 1] + rbconv_I[nx][j] + rbconv_I[nx][j + 1]) / 9;
-        row_Q[j] = (rbout_Q[px][j - 1] + rbout_Q[px][j] + rbout_Q[px][j + 1] + rbout_Q[cx][j - 1] + rbout_Q[cx][j] + rbout_Q[cx][j + 1] + rbconv_Q[nx][j - 1] + rbconv_Q[nx][j] + rbconv_Q[nx][j + 1]) / 9;
+        float I = (rbout_I[px][j - 1] + rbout_I[px][j] + rbout_I[px][j + 1] + rbout_I[cx][j - 1] + rbout_I[cx][j] + rbout_I[cx][j + 1] + rbconv_I[nx][j - 1] + rbconv_I[nx][j] + rbconv_I[nx][j + 1]) * onebynine;
+        float Q = (rbout_Q[px][j - 1] + rbout_Q[px][j] + rbout_Q[px][j + 1] + rbout_Q[cx][j - 1] + rbout_Q[cx][j] + rbout_Q[cx][j + 1] + rbconv_Q[nx][j - 1] + rbconv_Q[nx][j] + rbconv_Q[nx][j + 1]) * onebynine;
+        convert_to_RGB (im->r(row_to - 1, j), im->g(row_to - 1, j), im->b(row_to - 1, j), rbconv_Y[cx][j], I, Q);
     }
 
-    row_I[0] = rbout_I[cx][0];
-    row_Q[0] = rbout_Q[cx][0];
-    row_I[W - 1] = rbout_I[cx][W - 1];
-    row_Q[W - 1] = rbout_Q[cx][W - 1];
-    convert_row_to_RGB (im->r(row_to - 1), im->g(row_to - 1), im->b(row_to - 1), rbconv_Y[cx], row_I, row_Q, W);
+    convert_to_RGB (im->r(row_to - 1, W - 1), im->g(row_to - 1, W - 1), im->b(row_to - 1, W - 1), rbconv_Y[cx][W - 1], rbout_I[cx][W - 1], rbout_Q[cx][W - 1]);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3521,24 +3549,33 @@ void RawImageSource::processFalseColorCorrection  (Imagefloat* im, const int ste
         return;
     }
 
-    for (int t = 0; t < steps; t++) {
 #ifdef _OPENMP
-        #pragma omp parallel
-        {
-            int tid = omp_get_thread_num();
-            int nthreads = omp_get_num_threads();
-            int blk = (im->height - 2) / nthreads;
+    #pragma omp parallel
+    {
+        multi_array2D<float, 5> buffer (W, 3);
+        int tid = omp_get_thread_num();
+        int nthreads = omp_get_num_threads();
+        int blk = (im->height - 2) / nthreads;
 
-            if (tid < nthreads - 1)
-            {
-                processFalseColorCorrectionThread (im, 1 + tid * blk, 1 + (tid + 1)*blk);
-            } else
-            { processFalseColorCorrectionThread (im, 1 + tid * blk, im->height - 1); }
+        for (int t = 0; t < steps; t++) {
+
+            if (tid < nthreads - 1) {
+                processFalseColorCorrectionThread (im, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], 1 + tid * blk, 1 + (tid + 1)*blk);
+            } else {
+                processFalseColorCorrectionThread (im, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], 1 + tid * blk, im->height - 1);
+            }
+
+            #pragma omp barrier
         }
-#else
-        processFalseColorCorrectionThread (im, 1 , im->height - 1);
-#endif
     }
+#else
+    multi_array2D<float, 5> buffer (W, 3);
+
+    for (int t = 0; t < steps; t++) {
+        processFalseColorCorrectionThread (im, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], 1 , im->height - 1);
+    }
+
+#endif
 }
 
 // Some camera input profiles need gamma preprocessing

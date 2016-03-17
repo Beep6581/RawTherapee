@@ -51,6 +51,13 @@ inline void RawImageSource::convert_row_to_RGB (float* r, float* g, float* b, co
     }
 }
 
+inline void RawImageSource::convert_to_RGB (float &r, float &g, float &b, const float Y, const float I, const float Q)
+{
+    r = Y + 0.956f * I + 0.621f * Q;
+    g = Y - 0.272f * I - 0.647f * Q;
+    b = Y - 1.105f * I + 1.702f * Q;
+}
+
 inline void RawImageSource::convert_to_cielab_row (float* ar, float* ag, float* ab, float* oL, float* oa, float* ob)
 {
 
