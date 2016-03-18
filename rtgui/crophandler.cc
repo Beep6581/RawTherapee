@@ -131,6 +131,7 @@ void CropHandler::setZoom (int z, int centerx, int centery)
 {
     assert (ipc);
 
+    int oldZoom = zoom;
     float oldScale = zoom >= 1000 ? float(zoom / 1000) : 1.f / float(zoom);
     float newScale = z >= 1000 ? float(z / 1000) : 1.f / float(z);
 
@@ -177,8 +178,9 @@ void CropHandler::setZoom (int z, int centerx, int centery)
 
     compDim ();
 
-    if (enabled && (oldcax != cax || oldcay != cay || oldCropX != cropX || oldCropY != cropY || oldCropW != cropW || oldCropH != cropH)) {
+    if (enabled && (oldZoom != zoom || oldcax != cax || oldcay != cay || oldCropX != cropX || oldCropY != cropY || oldCropW != cropW || oldCropH != cropH)) {
         if (needsFullRefresh) {
+            cropPixbuf.clear ();
             ipc->startProcessing(M_HIGHQUAL);
         } else {
             update ();
