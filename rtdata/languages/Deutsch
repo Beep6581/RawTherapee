@@ -26,6 +26,7 @@
 #26 2015-12-13 Korrekturen (TooWaBoo) RT4.2.514
 #26 2015-12-22 Korrekturen (TooWaBoo) RT4.2.536
 #27 2016-02-12 Retinexübersetzung (TooWaBoo) RT4.2.730
+#28 2016-03-19 Erweiterung/Korrekturen (TooWaBoo) RT4.2.880
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -224,10 +225,11 @@ FILECHOOSER_FILTER_SAME;Gleiche Format wie aktuelles Bild
 FILECHOOSER_FILTER_TIFF;TIFF-Dateien
 GENERAL_ABOUT;Über
 GENERAL_AFTER;Nachher
+GENERAL_APPLY;Anwenden
 GENERAL_ASIMAGE;Als Bild
 GENERAL_AUTO;Automatisch
 GENERAL_BEFORE;Vorher
-GENERAL_CANCEL;Abbruch
+GENERAL_CANCEL;Abbrechen
 GENERAL_CLOSE;Schließen
 GENERAL_DISABLE;Deaktivieren
 GENERAL_DISABLED;Deaktiviert
@@ -239,6 +241,7 @@ GENERAL_NA;n/a
 GENERAL_NO;Nein
 GENERAL_NONE;Keine
 GENERAL_OK;OK
+GENERAL_OPEN;Öffnen
 GENERAL_PORTRAIT;Portrait
 GENERAL_SAVE;Speichern
 GENERAL_UNCHANGED;(Unverändert)
@@ -694,6 +697,7 @@ HISTORY_MSG_436;(Retinex) - Maske\nRadius
 HISTORY_MSG_437;(Retinex) - Maske\nMethode
 HISTORY_MSG_438;(Retinex) - Maske\nKurve
 HISTORY_MSG_439;(Retinex) - Vorschau
+HISTORY_MSG_440;(Detailebenenkontrast)\nProzessreihenfolge
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -963,7 +967,7 @@ PREFERENCES_EDITORLAYOUT;Editor-Layout
 PREFERENCES_EXPAUT;Experte
 PREFERENCES_EXTERNALEDITOR;Externer Editor
 PREFERENCES_FBROWSEROPTS;Bildinformationen und Miniaturbilder
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Einzeilige Werkzeugleiste (Bei geringer Bildschirmauflösung deaktivieren)
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Einzeilige Werkzeugleiste\n(Bei geringer Bildschirmauflösung deaktivieren)
 PREFERENCES_FILEFORMAT;Dateiformat
 PREFERENCES_FILMSIMULATION;Filmsimulation
 PREFERENCES_FLATFIELD;Weißbild
@@ -1037,7 +1041,7 @@ PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Bildinformationen der Miniaturbilder im 
 PREFERENCES_OVERWRITEOUTPUTFILE;Bestehende Ausgabedateien überschreiben
 PREFERENCES_PANFACTORLABEL;Mausgeschwindigkeit beim Bewegen von Bildern
 PREFERENCES_PARSEDEXT;Dateitypen anzeigen
-PREFERENCES_PARSEDEXTADD;Dateityp\nhinzufügen
+PREFERENCES_PARSEDEXTADD;Dateityp
 PREFERENCES_PARSEDEXTADDHINT;Dateityp zur Liste hinzufügen
 PREFERENCES_PARSEDEXTDELHINT;Ausgewählten Dateityp aus Liste entfernen
 PREFERENCES_PARSEDEXTDOWNHINT;Ausgewählten Dateityp nach unten verschieben.
@@ -1061,7 +1065,7 @@ PREFERENCES_RGBDTL_LABEL;Maximale Anzahl Threads für Rauschreduzierung
 PREFERENCES_RGBDTL_TOOLTIP;Die Rauschreduzierung benötigt mindestens 128MB RAM für ein 10 Megapixel-Bild oder 512MB für ein 40 Megapixel-Bild, und zusätzlich 128MB RAM pro Thread. Je mehr Threads parallel ablaufen, desto schneller ist die Berechnung. Bei Einstellung "0" werden so viele Threads wie möglich benutzt.
 PREFERENCES_SELECTFONT;Schriftart
 PREFERENCES_SELECTLANG;Sprache
-PREFERENCES_SELECTTHEME;Oberflächendesign
+PREFERENCES_SELECTTHEME;Oberflächendesign (erfordert Neustart)
 PREFERENCES_SERIALIZE_TIFF_READ;TIFF-Bilder
 PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialisiertes Lesen von TIFF-Bildern verwenden
 PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Beim Arbeiten mit Ordnern voll unkomprimierter TIFF-Bilder, kann diese Einstellung das Generieren von Miniaturbildern deutlich beschleunigen.
@@ -1093,7 +1097,7 @@ PREFERENCES_TINB;Anzahl Kacheln
 PREFERENCES_TISTD;Standard
 PREFERENCES_TP_LABEL;Werkzeugbereich:
 PREFERENCES_TP_USEICONORTEXT;Symbole statt Text in Karteireitern
-PREFERENCES_TP_VSCROLLBAR;Keine vertikale Laufleiste
+PREFERENCES_TP_VSCROLLBAR;Keine vertikale Scrollbar
 PREFERENCES_TUNNELMETADATA;Exif/XMP unverändert in die Ausgabedatei übernehmen.
 PREFERENCES_USEBUNDLEDPROFILES;Standardprofile verwenden
 PREFERENCES_USESYSTEMTHEME;Systemoberfläche verwenden
@@ -1229,6 +1233,10 @@ TP_BWMIX_VAL;L
 TP_CACORRECTION_BLUE;Blau
 TP_CACORRECTION_LABEL;Farbsaum entfernen
 TP_CACORRECTION_RED;Rot
+TP_CBDL_AFT;Nach Schwarz / Weiß
+TP_CBDL_BEF;Vor Schwarz / Weiß
+TP_CBDL_METHOD;Prozessreihenfolge
+TP_CBDL_METHOD_TOOLTIP;Wählen Sie, ob der Detailebenenkontrast nach dem Schwarz/Weiß-Werkzeug abgearbeitet wird (ermöglicht das Arbeiten im L*a*b*-Farbraum), oder vor ihm (ermöglicht das Arbeiten im RGB-Farbraum).
 TP_CHMIXER_BLUE;Blau-Kanal
 TP_CHMIXER_GREEN;Grün-Kanal
 TP_CHMIXER_LABEL;RGB-Kanalmixer
@@ -1636,6 +1644,7 @@ TP_PRSHARPENING_TOOLTIP;Schärft das Bild nach der Größenänderung. Funktionie
 TP_RAWCACORR_AUTO;Automatische Korrektur
 TP_RAWCACORR_CABLUE;Blau
 TP_RAWCACORR_CARED;Rot
+TP_RAWCACORR_CASTR;Intensität
 TP_RAWEXPOS_BLACKS;Schattenkompression
 TP_RAWEXPOS_BLACK_0;Grün 1 (Master)
 TP_RAWEXPOS_BLACK_1;Rot
@@ -1737,7 +1746,7 @@ TP_RETINEX_THRESHOLD;Transmission Schwellenwert
 TP_RETINEX_THRESHOLD_TOOLTIP;Limitiert den Bereich der Transmissionskurve.
 TP_RETINEX_TLABEL;T: Min=%1 Max=%2 Mittel=%3 Sigma=%4
 TP_RETINEX_TLABEL2;T: Tmin=%1 Tmax=%2
-TP_RETINEX_TLABEL_TOOLTIP;Ergebis der Transmissionskurve: Min, Max, Mittel und Sigma\nMin und Max hat Einfluss auf die Abweichung.\n\nTmin = Kleinster Wert der Transmissionskurve\nTmax = Größter Wert der Transmissionskurve
+TP_RETINEX_TLABEL_TOOLTIP;Ergebnis der Transmissionskurve: Min, Max, Mittel und Sigma\nMin und Max hat Einfluss auf die Abweichung.\n\nTmin = Kleinster Wert der Transmissionskurve\nTmax = Größter Wert der Transmissionskurve
 TP_RETINEX_TRANSMISSION;Transmissionskurve
 TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission in Abhängigkeit der Transmission.\nx-Achse: Transmission negativer Werte (Min), Mittel und positiver Werte (Max).\ny-Achse: Verstärkung oder Reduzierung.
 TP_RETINEX_UNIFORM;Schatten & Lichter
@@ -2034,13 +2043,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_440;CbDL - Method
-!TP_CBDL_AFT;After Black-and-White
-!TP_CBDL_BEF;Before Black-and-White
-!TP_CBDL_METHOD;Process located
-!TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
-!TP_RAWCACORR_CASTR;Strength
