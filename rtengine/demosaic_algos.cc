@@ -36,8 +36,6 @@
 #include "procparams.h"
 #include "sleef.c"
 #include "opthelper.h"
-#define BENCHMARK
-#include "StopWatch.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -4019,7 +4017,6 @@ void RawImageSource::xtransborder_interpolate (int border)
 
 void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
 {
-    BENCHFUN
 
     constexpr int ts = 114;      /* Tile Size */
     constexpr int tsh = ts / 2;  /* half of Tile Size */
