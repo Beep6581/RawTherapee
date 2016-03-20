@@ -596,6 +596,17 @@ void ProfilePanel::paste_clicked (GdkEventButton* event)
     } else {
         if (fillMode->get_active()) {
             custom->pparams->setDefaults();
+        } else if (!isCustomSelected ()) {
+            if (isLastSavedSelected()) {
+                *custom->pparams = *lastsaved->pparams;
+            } else {
+                const ProfileStoreEntry* entry = profiles->getSelectedEntry();
+
+                if (entry) {
+                    const PartialProfile* partProfile = profileStore.getProfile (entry);
+                    *custom->pparams = *partProfile->pparams;
+                }
+            }
         }
 
         profiles->set_active(getCustomRow());
