@@ -148,7 +148,7 @@ void RawImageSource::CA_correct_RT(const double cared, const double cablue, cons
     float *Gtmp = (float (*)) calloc ((height) * (width), sizeof * Gtmp);
 
     // temporary array to avoid race conflicts, only every second pixel needs to be saved here
-    float *RawDataTmp = (float*) malloc( height * width * sizeof(float) / 2);
+    float *RawDataTmp = (float*) malloc( (height * width + ((height * width) & 1)) * sizeof(float) / 2);
 
     float blockave[2][2] = {{0, 0}, {0, 0}}, blocksqave[2][2] = {{0, 0}, {0, 0}}, blockdenom[2][2] = {{0, 0}, {0, 0}}, blockvar[2][2];
 
