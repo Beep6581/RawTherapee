@@ -24,9 +24,7 @@
 PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL), imageArea(NULL), imgX(0), imgY(0), imgW(0), imgH(0),
     zoom(0.0), isMoving(false), needsUpdate(false), cursor_type(CSUndefined)
 {
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-    style->add_class(GTK_STYLE_CLASS_BACKGROUND);
-    style->add_class(GTK_STYLE_CLASS_FLAT);
+    set_name("PreviewWindow");
     rconn = signal_size_allocate().connect( sigc::mem_fun(*this, &PreviewWindow::on_resized) );
 }
 

@@ -26,31 +26,31 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring& title, Gtk::Window* paren
     set_default_size(700, 600);
 
     everything  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EVERYTHING")));
-    everything  ->set_name("partialPasteHeader");
+    everything  ->set_name("PartialPasteHeader");
 
     basic       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_BASICGROUP")));
-    basic       ->set_name("partialPasteHeader");
+    basic       ->set_name("PartialPasteHeader");
     detail      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DETAILGROUP")));
-    detail      ->set_name("partialPasteHeader");
+    detail      ->set_name("PartialPasteHeader");
     color       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COLORGROUP")));
-    color       ->set_name("partialPasteHeader");
+    color       ->set_name("PartialPasteHeader");
     lens        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LENSGROUP")));
-    lens        ->set_name("partialPasteHeader");
+    lens        ->set_name("PartialPasteHeader");
     composition = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COMPOSITIONGROUP")));
-    composition ->set_name("partialPasteHeader");
-    meta     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_METAGROUP")));
-    meta     ->set_name("partialPasteHeader");
+    composition ->set_name("PartialPasteHeader");
+    meta        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_METAGROUP")));
+    meta        ->set_name("PartialPasteHeader");
     raw         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWGROUP")));
-    raw         ->set_name("partialPasteHeader");
+    raw         ->set_name("PartialPasteHeader");
     wav         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_WAVELETGROUP")));
-    wav         ->set_name("partialPasteHeader");
+    wav         ->set_name("PartialPasteHeader");
 
     // options in basic:
     wb          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_WHITEBALANCE")));
     exposure    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EXPOSURE")));
     sh          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHADOWSHIGHLIGHTS")));
     epd         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EPD")));
-    retinex       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RETINEX")));
+    retinex     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RETINEX")));
     pcvignette  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PCVIGNETTE")));
     gradient    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_GRADIENT")));
     labcurve    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LABCURVE")));
@@ -65,14 +65,14 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring& title, Gtk::Window* paren
     defringe    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DEFRINGE")));
 
     // options in wavelet:
-    wavelet    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EQUALIZER"))); //TODO - rename to wavelet
+    wavelet     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EQUALIZER"))); //TODO - rename to wavelet
 
     // options in color:
     icm         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ICMSETTINGS")));
     //gam         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ICMGAMMA")));
     vibrance    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_VIBRANCE")));
     chmixer     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CHANNELMIXER")));
-    blackwhite   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CHANNELMIXERBW")));
+    blackwhite  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CHANNELMIXERBW")));
     dirpyrden   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYRDENOISE")));
     hsveq       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_HSVEQUALIZER")));
     filmSimulation = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FILMSIMULATION")) );
@@ -86,13 +86,13 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring& title, Gtk::Window* paren
     lcp         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LENSPROFILE")));
 
     // options in composition:
-    coarserot   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COARSETRANS")));
-    finerot     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ROTATION")));
-    crop        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CROP")));
-    resize      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RESIZE")));
-    prsharpening     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PRSHARPENING")));
-    perspective = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PERSPECTIVE")));
-    commonTrans = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COMMONTRANSFORMPARAMS")));
+    coarserot    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COARSETRANS")));
+    finerot      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ROTATION")));
+    crop         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CROP")));
+    resize       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RESIZE")));
+    prsharpening = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PRSHARPENING")));
+    perspective  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PERSPECTIVE")));
+    commonTrans  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COMMONTRANSFORMPARAMS")));
 
     // options in meta:
     exifch      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EXIFCHANGES")));
@@ -129,8 +129,9 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring& title, Gtk::Window* paren
 
     for (int i = 0; i < 8; i++) {
         vboxes[i] = Gtk::manage (new Gtk::VBox ());
+        vboxes[i]->set_name("PartialPasteGroupContainer");
         hseps[i] = Gtk::manage (new Gtk::HSeparator ());
-        hseps[i]->set_name("partialPasteHeaderSep");
+        hseps[i]->set_name("PartialPasteHeaderSep");
     }
 
     //BASIC
@@ -254,6 +255,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring& title, Gtk::Window* paren
     Gtk::Dialog::get_content_area()->pack_start (*vbtop, Gtk::PACK_SHRINK, 2); // TODO replace with get_content_area() with GTK upgrade
 
     Gtk::HBox* hbmain = Gtk::manage (new Gtk::HBox ());
+    hbmain->set_name("PartialPaste");
     hbmain->pack_start (*vbCol1);
     hbmain->pack_start (*(Gtk::manage (new Gtk::VSeparator ())));
     hbmain->pack_start (*vbCol2);
@@ -281,7 +283,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring& title, Gtk::Window* paren
     colorConn       = color->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::colorToggled));
     lensConn        = lens->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::lensToggled));
     compositionConn = composition->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::compositionToggled));
-    metaConn     = meta->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::metaToggled));
+    metaConn        = meta->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::metaToggled));
     rawConn         = raw->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::rawToggled));
     wavConn         = wav->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::wavToggled));
 
@@ -289,7 +291,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring& title, Gtk::Window* paren
     exposureConn    = exposure->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     shConn          = sh->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     epdConn         = epd->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
-    retinexConn       = retinex->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
+    retinexConn     = retinex->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     pcvignetteConn  = pcvignette->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     gradientConn    = gradient->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     labcurveConn    = labcurve->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
@@ -324,7 +326,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring& title, Gtk::Window* paren
     finerotConn     = finerot->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     cropConn        = crop->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     resizeConn      = resize->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
-    prsharpeningConn      = prsharpening->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
+    prsharpeningConn = prsharpening->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     perspectiveConn = perspective->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     commonTransConn = commonTrans->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
 

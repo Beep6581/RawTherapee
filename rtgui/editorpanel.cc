@@ -350,6 +350,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     afterBox->pack_start (*iareapanel);
 
     beforeAfterBox = Gtk::manage (new Gtk::HBox());
+    beforeAfterBox->set_name("BeforeAfterContainer");
     beforeAfterBox->pack_start (*afterBox);
 
     editbox->pack_start (*toolBarPanel, Gtk::PACK_SHRINK, 2);

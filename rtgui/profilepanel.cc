@@ -42,6 +42,8 @@ void ProfilePanel::cleanup ()
 ProfilePanel::ProfilePanel () : storedPProfile(NULL), lastFilename(""), imagePath("")
 {
 
+    set_name("ProfilePanel");
+
     tpc = NULL;
 
     profileFillModeOnImage  = new RTImage("profile-filled.png");
