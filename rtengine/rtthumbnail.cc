@@ -23,6 +23,7 @@
 #include <lcms2.h>
 #include "curves.h"
 #include <glibmm.h>
+#include <giomm/file.h>
 #include "improcfun.h"
 #include "colortemp.h"
 #include "mytime.h"
@@ -1618,95 +1619,77 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
     return tmpdata;
 }
 
-bool Thumbnail::writeImage (const Glib::ustring& fname, int format)
+bool Thumbnail::writeImage (const Glib::ustring& fname)
 {
-
     if (!thumbImg) {
         return false;
     }
 
-    Glib::ustring fullFName = fname + ".rtti";
+    try {
+        const auto file = Gio::File::create_for_path (fname + ".rtti");
+        const auto stream = Gio::DataOutputStream::create (file->replace ());
+        stream->set_byte_order (Gio::DATA_STREAM_BYTE_ORDER_HOST_ENDIAN);
 
-    FILE* f = g_fopen (fullFName.c_str (), "wb");
+        stream->put_string (thumbImg->getType ());
+        stream->put_byte ('\n');
 
-    if (!f) {
+        stream->put_uint32 (thumbImg->width);
+        stream->put_uint32 (thumbImg->height);
+
+        if (thumbImg->getType () == sImage8) {
+            static_cast< Image8* > (thumbImg)->writeData (stream);
+        } else if (thumbImg->getType () == sImage16) {
+            static_cast< Image16* > (thumbImg)->writeData (stream);
+        } else if (thumbImg->getType () == sImagefloat) {
+            static_cast< Imagefloat* > (thumbImg)->writeData (stream);
+        } else {
+            return false;
+        }
+
+        stream->close ();
+        return true;
+    } catch (Gio::Error&) {
         return false;
     }
-
-    fwrite (thumbImg->getType(), sizeof (char), strlen(thumbImg->getType()), f);
-    fputc ('\n', f);
-    guint32 w = guint32(thumbImg->width);
-    guint32 h = guint32(thumbImg->height);
-    fwrite (&w, sizeof (guint32), 1, f);
-    fwrite (&h, sizeof (guint32), 1, f);
-
-    if (thumbImg->getType() == sImage8) {
-        Image8 *image = static_cast<Image8*>(thumbImg);
-        image->writeData(f);
-    } else if (thumbImg->getType() == sImage16) {
-        Image16 *image = static_cast<Image16*>(thumbImg);
-        image->writeData(f);
-    } else if (thumbImg->getType() == sImagefloat) {
-        Imagefloat *image = static_cast<Imagefloat*>(thumbImg);
-        image->writeData(f);
-    }
-
-    //thumbImg->writeData(f);
-    fclose (f);
-    return true;
 }
 
 bool Thumbnail::readImage (const Glib::ustring& fname)
 {
+    try {
+        const auto file = Gio::File::create_for_path (fname + ".rtti");
+        const auto stream = Gio::DataInputStream::create (file->read ());
+        stream->set_byte_order (Gio::DATA_STREAM_BYTE_ORDER_HOST_ENDIAN);
 
-    if (thumbImg) {
+        std::string type;
+        stream->read_line (type);
+
+        const auto width = stream->read_uint32 ();
+        const auto height = stream->read_uint32 ();
+
         delete thumbImg;
-        thumbImg = NULL;
-    }
+        thumbImg = nullptr;
 
-    Glib::ustring fullFName = fname + ".rtti";
+        if (type == sImage8) {
+            const auto image = new Image8 (width, height);
+            image->readData (stream);
+            thumbImg = image;
+        } else if (type == sImage16) {
+            const auto image = new Image16 (width, height);
+            image->readData (stream);
+            thumbImg = image;
+        } else if (type == sImagefloat) {
+            const auto image = new Imagefloat (width, height);
+            image->readData (stream);
+            thumbImg = image;
+        } else {
+            return false;
+        }
 
-    if (!Glib::file_test (fullFName, Glib::FILE_TEST_EXISTS)) {
+        stream->close ();
+        return true;
+    } catch (Gio::Error&) {
         return false;
     }
-
-    FILE* f = g_fopen (fullFName.c_str (), "rb");
-
-    if (!f) {
-        return false;
-    }
-
-    char imgType[31];  // 30 -> arbitrary size, but should be enough for all image type's name
-    fgets(imgType, 30, f);
-    imgType[strlen(imgType) - 1] = '\0'; // imgType has a \n trailing character, so we overwrite it by the \0 char
-
-    guint32 width, height;
-    fread (&width, 1, sizeof (guint32), f);
-    fread (&height, 1, sizeof (guint32), f);
-
-    bool success = false;
-
-    if (!strcmp(imgType, sImage8)) {
-        Image8 *image = new Image8(width, height);
-        image->readData(f);
-        thumbImg = image;
-        success = true;
-    } else if (!strcmp(imgType, sImage16)) {
-        Image16 *image = new Image16(width, height);
-        image->readData(f);
-        thumbImg = image;
-        success = true;
-    } else if (!strcmp(imgType, sImagefloat)) {
-        Imagefloat *image = new Imagefloat(width, height);
-        image->readData(f);
-        thumbImg = image;
-        success = true;
-    } else {
-        printf("readImage: Unsupported image type \"%s\"!\n", imgType);
-    }
-
-    fclose(f);
-    return success;
 }
 
 bool Thumbnail::readData  (const Glib::ustring& fname)

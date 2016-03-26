@@ -841,7 +841,7 @@ void Thumbnail::_saveThumbnail ()
     }
 
     // save thumbnail image
-    tpp->writeImage (getCacheFileName ("images", ""), 1);
+    tpp->writeImage (getCacheFileName ("images", ""));
 
     // save aehistogram
     tpp->writeAEHistogram (getCacheFileName ("aehistograms", ""));

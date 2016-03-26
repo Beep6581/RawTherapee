@@ -19,6 +19,9 @@
 
 #include "rtengine.h"
 
+#include <giomm/inputstream.h>
+#include <giomm/outputstream.h>
+
 const char rtengine::sImage8[] =     "Image8";
 const char rtengine::sImage16[] =    "Image16";
 const char rtengine::sImagefloat[] = "Imagefloat";
@@ -43,4 +46,33 @@ int rtengine::getCoarseBitMask( const procparams::CoarseTransformParams &coarse)
     }
 
     return tr;
+}
+
+namespace rtengine
+{
+
+void readScanlines (const Glib::RefPtr< Gio::InputStream >& stream, guint8* data, const int count, const gsize rowSize, const gsize rowStride)
+{
+    for (int index = 0; index < count; ++index)
+    {
+        gsize bytesRead;
+        stream->read_all (data, rowSize, bytesRead);
+        assert (bytesRead == rowSize);
+
+        data += rowStride;
+    }
+}
+
+void writeScanlines (const Glib::RefPtr< Gio::OutputStream >& stream, const guint8* data, const int count, const gsize rowSize, const gsize rowStride)
+{
+    for (int index = 0; index < count; ++index)
+    {
+        gsize bytesWritten;
+        stream->write_all (data, rowSize, bytesWritten);
+        assert (bytesWritten == rowSize);
+
+        data += rowStride;
+    }
+}
+
 }

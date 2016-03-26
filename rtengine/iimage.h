@@ -29,6 +29,12 @@
 #include "procparams.h"
 #include "color.h"
 
+namespace Gio
+{
+class InputStream;
+class OutputStream;
+}
+
 #define TR_NONE     0
 #define TR_R90      1
 #define TR_R180     2
@@ -46,6 +52,8 @@ extern const char sImage8[];
 extern const char sImage16[];
 extern const char sImagefloat[];
 int getCoarseBitMask( const procparams::CoarseTransformParams &coarse);
+void readScanlines (const Glib::RefPtr< Gio::InputStream >& stream, guint8* data, const int count, const gsize rowSize, const gsize rowStride);
+void writeScanlines (const Glib::RefPtr< Gio::OutputStream >& stream, const guint8* data, const int count, const gsize rowSize, const gsize rowStride);
 class ProgressListener;
 class Color;
 
@@ -77,11 +85,6 @@ public:
 
     virtual void hflip () {}
     virtual void vflip () {}
-
-    // Read the raw dump of the data
-    void readData  (FILE *fh) {}
-    // Write a raw dump of the data
-    void writeData (FILE *fh) {}
 
     virtual void normalizeInt (int srcMinVal, int srcMaxVal) {};
     virtual void normalizeFloat (float srcMinVal, float srcMaxVal) {};
@@ -558,20 +561,6 @@ public:
         value = n ? T(accumulator / float(n)) : T(0);
     }
 
-    void readData   (FILE *f)
-    {
-        for (int i = 0; i < height; i++) {
-            fread (v(i), sizeof(T), width, f);
-        }
-    }
-
-    void writeData  (FILE *f)
-    {
-        for (int i = 0; i < height; i++) {
-            fwrite (v(i), sizeof(T), width, f);
-        }
-    }
-
 };
 
 
@@ -624,6 +613,8 @@ public:
         int tmpHeight = other.height;
         other.height = height;
         height = tmpHeight;
+        std::swap (rowstride, other.rowstride);
+        std::swap (planestride, other.planestride);
 #if CHECK_BOUNDS
         r.width_ = width;
         r.height_ = height;
@@ -1130,34 +1121,32 @@ public:
         valueB = n ? T(accumulatorB / float(n)) : T(0);
     }
 
-    void readData   (FILE *f)
+    void readData (const Glib::RefPtr< Gio::InputStream >& stream)
     {
-        for (int i = 0; i < height; i++) {
-            fread (r(i), sizeof(T), width, f);
-        }
+        const auto rowSize = sizeof (T) * width;
 
-        for (int i = 0; i < height; i++) {
-            fread (g(i), sizeof(T), width, f);
-        }
+        auto data = reinterpret_cast< guint8* > (this->data);
+        readScanlines (stream, data, height, rowSize, rowstride);
 
-        for (int i = 0; i < height; i++) {
-            fread (b(i), sizeof(T), width, f);
-        }
+        data += planestride;
+        readScanlines (stream, data, height, rowSize, rowstride);
+
+        data += planestride;
+        readScanlines (stream, data, height, rowSize, rowstride);
     }
 
-    void writeData  (FILE *f)
+    void writeData (const Glib::RefPtr< Gio::OutputStream >& stream)
     {
-        for (int i = 0; i < height; i++) {
-            fwrite (r(i), sizeof(T), width, f);
-        }
+        const auto rowSize = sizeof (T) * width;
 
-        for (int i = 0; i < height; i++) {
-            fwrite (g(i), sizeof(T), width, f);
-        }
+        auto data = reinterpret_cast< const guint8* > (this->data);
+        writeScanlines (stream, data, height, rowSize, rowstride);
 
-        for (int i = 0; i < height; i++) {
-            fwrite (b(i), sizeof(T), width, f);
-        }
+        data += planestride;
+        writeScanlines (stream, data, height, rowSize, rowstride);
+
+        data += planestride;
+        writeScanlines (stream, data, height, rowSize, rowstride);
     }
 
 };
@@ -1709,18 +1698,16 @@ public:
         }
     }
 
-    void readData   (FILE *f)
+    void readData (const Glib::RefPtr< Gio::InputStream >& stream)
     {
-        for (int i = 0; i < height; i++) {
-            fread (r(i), sizeof(T), 3 * width, f);
-        }
+        const auto rowSize = 3 * sizeof (T) * width;
+        readScanlines (stream, data, height, rowSize, rowSize);
     }
 
-    void writeData  (FILE *f)
+    void writeData (const Glib::RefPtr< Gio::OutputStream >& stream)
     {
-        for (int i = 0; i < height; i++) {
-            fwrite (r(i), sizeof(T), 3 * width, f);
-        }
+        const auto rowSize = 3 * sizeof (T) * width;
+        writeScanlines (stream, data, height, rowSize, rowSize);
     }
 
 };

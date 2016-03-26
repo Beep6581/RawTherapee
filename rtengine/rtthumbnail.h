@@ -89,7 +89,7 @@ public:
     void applyAutoExp (procparams::ProcParams& pparams);
 
     unsigned char* getGrayscaleHistEQ (int trim_width);
-    bool writeImage (const Glib::ustring& fname, int format);
+    bool writeImage (const Glib::ustring& fname);
     bool readImage (const Glib::ustring& fname);
 
     bool readData  (const Glib::ustring& fname);
