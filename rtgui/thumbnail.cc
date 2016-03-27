@@ -748,7 +748,7 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataL
 /*
  * Read all thumbnail's data from the cache; build and save them if doesn't exist - NON PROTECTED
  * This includes:
- *  - image's bitmap (*.rtti)
+ *  - image's bitmap (*.tif)
  *  - auto exposure's histogram (full thumbnail only)
  *  - embedded profile (full thumbnail only)
  *  - LiveThumbData section of the data file
@@ -771,7 +771,7 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
     }
 
     // thumbnail image
-    succ = succ && tpp->readImage (getCacheFileName ("images", ""));
+    succ = succ && tpp->readImage (getCacheFileName ("images", ".tif"));
 
     if (!succ && firstTrial) {
         _generateThumbnailImage ();
@@ -807,7 +807,7 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
 /*
  * Read all thumbnail's data from the cache; build and save them if doesn't exist - MUTEX PROTECTED
  * This includes:
- *  - image's bitmap (*.rtti)
+ *  - image's bitmap (*.tif)
  *  - auto exposure's histogram (full thumbnail only)
  *  - embedded profile (full thumbnail only)
  *  - LiveThumbData section of the data file
@@ -821,7 +821,7 @@ void Thumbnail::loadThumbnail (bool firstTrial)
 /*
  * Save thumbnail's data to the cache - NON PROTECTED
  * This includes:
- *  - image's bitmap (*.rtti)
+ *  - image's bitmap (*.tif)
  *  - auto exposure's histogram (full thumbnail only)
  *  - embedded profile (full thumbnail only)
  *  - LiveThumbData section of the data file
@@ -833,15 +833,16 @@ void Thumbnail::_saveThumbnail ()
         return;
     }
 
-    if (g_remove (getCacheFileName ("images", ".rtti").c_str ()) != 0) {
+    if (g_remove (getCacheFileName ("images", ".tif").c_str ()) != 0) {
         // No file deleted, so we try to deleted obsolete files, if any
+        g_remove (getCacheFileName ("images", ".rtti").c_str ());
         g_remove (getCacheFileName ("images", ".cust").c_str ());
         g_remove (getCacheFileName ("images", ".cust16").c_str ());
         g_remove (getCacheFileName ("images", ".jpg").c_str ());
     }
 
     // save thumbnail image
-    tpp->writeImage (getCacheFileName ("images", ""));
+    tpp->writeImage (getCacheFileName ("images", ".tif"));
 
     // save aehistogram
     tpp->writeAEHistogram (getCacheFileName ("aehistograms", ""));
@@ -856,7 +857,7 @@ void Thumbnail::_saveThumbnail ()
 /*
  * Save thumbnail's data to the cache - MUTEX PROTECTED
  * This includes:
- *  - image's bitmap (*.rtti)
+ *  - image's bitmap (*.tif)
  *  - auto exposure's histogram (full thumbnail only)
  *  - embedded profile (full thumbnail only)
  *  - LiveThumbData section of the data file

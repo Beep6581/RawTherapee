@@ -29,12 +29,6 @@
 #include "procparams.h"
 #include "color.h"
 
-namespace Gio
-{
-class InputStream;
-class OutputStream;
-}
-
 #define TR_NONE     0
 #define TR_R90      1
 #define TR_R180     2
@@ -52,10 +46,9 @@ extern const char sImage8[];
 extern const char sImage16[];
 extern const char sImagefloat[];
 int getCoarseBitMask( const procparams::CoarseTransformParams &coarse);
-void readScanlines (const Glib::RefPtr< Gio::InputStream >& stream, guint8* data, const int count, const gsize rowSize, const gsize rowStride);
-void writeScanlines (const Glib::RefPtr< Gio::OutputStream >& stream, const guint8* data, const int count, const gsize rowSize, const gsize rowStride);
 class ProgressListener;
 class Color;
+class ImageIO;
 
 enum TypeInterpolation { TI_Nearest, TI_Bilinear };
 
@@ -573,10 +566,8 @@ private:
 
     int rowstride;    // Plan size, in bytes (all padding bytes included)
     int planestride;  // Row length, in bytes (padding bytes included)
-protected:
-    T* data;
-
 public:
+    T* data;
     PlanarPtr<T> r;
     PlanarPtr<T> g;
     PlanarPtr<T> b;
@@ -588,12 +579,12 @@ public:
     }
 
     // Send back the row stride. WARNING: unit = byte, not element!
-    int getRowStride ()
+    int getRowStride () const
     {
         return rowstride;
     }
     // Send back the plane stride. WARNING: unit = byte, not element!
-    int getPlaneStride ()
+    int getPlaneStride () const
     {
         return planestride;
     }
@@ -1119,34 +1110,6 @@ public:
         valueR = n ? T(accumulatorR / float(n)) : T(0);
         valueG = n ? T(accumulatorG / float(n)) : T(0);
         valueB = n ? T(accumulatorB / float(n)) : T(0);
-    }
-
-    void readData (const Glib::RefPtr< Gio::InputStream >& stream)
-    {
-        const auto rowSize = sizeof (T) * width;
-
-        auto data = reinterpret_cast< guint8* > (this->data);
-        readScanlines (stream, data, height, rowSize, rowstride);
-
-        data += planestride;
-        readScanlines (stream, data, height, rowSize, rowstride);
-
-        data += planestride;
-        readScanlines (stream, data, height, rowSize, rowstride);
-    }
-
-    void writeData (const Glib::RefPtr< Gio::OutputStream >& stream)
-    {
-        const auto rowSize = sizeof (T) * width;
-
-        auto data = reinterpret_cast< const guint8* > (this->data);
-        writeScanlines (stream, data, height, rowSize, rowstride);
-
-        data += planestride;
-        writeScanlines (stream, data, height, rowSize, rowstride);
-
-        data += planestride;
-        writeScanlines (stream, data, height, rowSize, rowstride);
     }
 
 };
@@ -1698,18 +1661,6 @@ public:
         }
     }
 
-    void readData (const Glib::RefPtr< Gio::InputStream >& stream)
-    {
-        const auto rowSize = 3 * sizeof (T) * width;
-        readScanlines (stream, data, height, rowSize, rowSize);
-    }
-
-    void writeData (const Glib::RefPtr< Gio::OutputStream >& stream)
-    {
-        const auto rowSize = 3 * sizeof (T) * width;
-        writeScanlines (stream, data, height, rowSize, rowSize);
-    }
-
 };
 
 // --------------------------------------------------------------------
@@ -1753,6 +1704,8 @@ public:
     virtual void setSaveProgressListener (ProgressListener* pl) = 0;
     /** @brief Free the image */
     virtual void free () = 0;
+
+    static ImageIO* readData (const char* fname);
 };
 
 /** @brief This class represents an image having a float pixel planar representation.
@@ -1761,6 +1714,8 @@ class IImagefloat : public IImage, public PlanarRGBData<float>
 {
 public:
     virtual ~IImagefloat() {}
+
+    bool writeData (const char* fname);
 };
 
 /** @brief This class represents an image having a classical 8 bits/pixel representation */
@@ -1768,6 +1723,8 @@ class IImage8 : public IImage, public ChunkyRGBData<unsigned char>
 {
 public:
     virtual ~IImage8() {}
+
+    bool writeData (const char* fname);
 };
 
 /** @brief This class represents an image having a 16 bits/pixel planar representation.
@@ -1776,6 +1733,8 @@ class IImage16 : public IImage, public PlanarRGBData<unsigned short>
 {
 public:
     virtual ~IImage16() {}
+
+    bool writeData (const char* fname);
 };
 
 }
