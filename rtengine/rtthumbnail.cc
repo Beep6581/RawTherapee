@@ -24,6 +24,8 @@
 #include "curves.h"
 #include <glibmm.h>
 #include <giomm/file.h>
+#include <giomm/zlibdecompressor.h>
+#include <giomm/zlibcompressor.h>
 #include "improcfun.h"
 #include "colortemp.h"
 #include "mytime.h"
@@ -45,6 +47,22 @@ extern Options options;
 
 namespace rtengine
 {
+
+namespace
+{
+
+template< typename ImageType >
+void replaceImage (ImageIO*& image, const int width, const int height, const Glib::RefPtr< Gio::InputStream >& dataStream)
+{
+    std::unique_ptr< ImageType > newImage (new ImageType (width, height));
+    newImage->readData (dataStream);
+
+    delete image;
+    image = newImage.release();
+}
+
+}
+
 using namespace procparams;
 
 Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq, bool inspectorMode)
@@ -1630,25 +1648,32 @@ bool Thumbnail::writeImage (const Glib::ustring& fname)
         const auto stream = Gio::DataOutputStream::create (file->replace ());
         stream->set_byte_order (Gio::DATA_STREAM_BYTE_ORDER_HOST_ENDIAN);
 
-        stream->put_string (thumbImg->getType ());
-        stream->put_byte ('\n');
+        std::string type = "Zlib";
+        type += thumbImg->getType ();
+        type += '\n';
 
+        stream->put_string (type);
         stream->put_uint32 (thumbImg->width);
         stream->put_uint32 (thumbImg->height);
 
+        const auto dataStream = Gio::ConverterOutputStream::create (stream, Gio::ZlibCompressor::create (Gio::ZLIB_COMPRESSOR_FORMAT_GZIP, 9));
+
         if (thumbImg->getType () == sImage8) {
-            static_cast< Image8* > (thumbImg)->writeData (stream);
+            static_cast< Image8* > (thumbImg)->writeData (dataStream);
         } else if (thumbImg->getType () == sImage16) {
-            static_cast< Image16* > (thumbImg)->writeData (stream);
+            static_cast< Image16* > (thumbImg)->writeData (dataStream);
         } else if (thumbImg->getType () == sImagefloat) {
-            static_cast< Imagefloat* > (thumbImg)->writeData (stream);
+            static_cast< Imagefloat* > (thumbImg)->writeData (dataStream);
         } else {
-            return false;
+            throw Gio::Error (Gio::Error::FAILED, "Unknown image format");
         }
 
-        stream->close ();
+        dataStream->close ();
         return true;
-    } catch (Gio::Error&) {
+    } catch (const Gio::Error& error) {
+        if (options.rtSettings.verbose) {
+            std::cerr << "Failed to write thumbnail image: " << error.what() << std::endl;
+        }
         return false;
     }
 }
@@ -1666,28 +1691,29 @@ bool Thumbnail::readImage (const Glib::ustring& fname)
         const auto width = stream->read_uint32 ();
         const auto height = stream->read_uint32 ();
 
-        delete thumbImg;
-        thumbImg = nullptr;
+        Glib::RefPtr< Gio::InputStream > dataStream = stream;
 
-        if (type == sImage8) {
-            const auto image = new Image8 (width, height);
-            image->readData (stream);
-            thumbImg = image;
-        } else if (type == sImage16) {
-            const auto image = new Image16 (width, height);
-            image->readData (stream);
-            thumbImg = image;
-        } else if (type == sImagefloat) {
-            const auto image = new Imagefloat (width, height);
-            image->readData (stream);
-            thumbImg = image;
-        } else {
-            return false;
+        if (type.size () > 4 && type.substr (0, 4) == "Zlib") {
+            type.erase (0, 4);
+
+            dataStream = Gio::ConverterInputStream::create (dataStream, Gio::ZlibDecompressor::create (Gio::ZLIB_COMPRESSOR_FORMAT_GZIP));
         }
 
-        stream->close ();
+        if (type == sImage8) {
+            replaceImage< Image8 > (thumbImg, width, height, dataStream);
+        } else if (type == sImage16) {
+            replaceImage< Image16 > (thumbImg, width, height, dataStream);
+        } else if (type == sImagefloat) {
+            replaceImage< Imagefloat > (thumbImg, width, height, dataStream);
+        } else {
+            throw Gio::Error (Gio::Error::FAILED, "Unknown image format");
+        }
+
         return true;
-    } catch (Gio::Error&) {
+    } catch (const Gio::Error& error) {
+        if (options.rtSettings.verbose) {
+            std::cerr << "Failed to read thumbnail image: " << error.what() << std::endl;
+        }
         return false;
     }
 }
