@@ -19,6 +19,9 @@
 
 #include "rtengine.h"
 
+#include <sys/stat.h>
+#include <fcntl.h>
+
 #include <tiff.h>
 #include <tiffio.h>
 
@@ -130,7 +133,12 @@ Imagefloat* readImagefloat (TIFF* tiff, const uint32 length, const uint32 width)
 
 ImageIO* IImage::readData (const char* fname)
 {
-    TIFF* tiff = TIFFOpen (fname, "r");
+    const auto fd = open (fname, O_RDONLY);
+    if (fd < 0) {
+        return nullptr;
+    }
+
+    TIFF* tiff = TIFFFdOpen (fd, fname, "r");
     if (!tiff) {
         return nullptr;
     }
@@ -181,8 +189,9 @@ bool IImage8::writeData (const char* fname)
     auto data = reinterpret_cast< guint8* > (this->data);
     const auto rowStride = 3 * sizeof (unsigned char) * width;
 
-    const auto ok = writeScanlines (tiff, data, height, 0, rowStride);
+    auto ok = writeScanlines (tiff, data, height, 0, rowStride);
 
+    ok = ok && !TIFFFlush (tiff);
     TIFFClose (tiff);
     return ok;
 }
@@ -215,6 +224,7 @@ bool IImage16::writeData (const char* fname)
     data += planeStride;
     ok = ok && writeScanlines (tiff, data, height, 2, rowStride);
 
+    ok = ok && !TIFFFlush (tiff);
     TIFFClose (tiff);
     return ok;
 }
@@ -247,6 +257,7 @@ bool IImagefloat::writeData (const char* fname)
     data += planeStride;
     ok = ok && writeScanlines (tiff, data, height, 2, rowStride);
 
+    ok = ok && !TIFFFlush (tiff);
     TIFFClose (tiff);
     return ok;
 }
