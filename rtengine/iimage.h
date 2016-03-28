@@ -48,7 +48,6 @@ extern const char sImagefloat[];
 int getCoarseBitMask( const procparams::CoarseTransformParams &coarse);
 class ProgressListener;
 class Color;
-class ImageIO;
 
 enum TypeInterpolation { TI_Nearest, TI_Bilinear };
 
@@ -1704,8 +1703,6 @@ public:
     virtual void setSaveProgressListener (ProgressListener* pl) = 0;
     /** @brief Free the image */
     virtual void free () = 0;
-
-    static ImageIO* readData (const char* fname);
 };
 
 /** @brief This class represents an image having a float pixel planar representation.
@@ -1714,8 +1711,6 @@ class IImagefloat : public IImage, public PlanarRGBData<float>
 {
 public:
     virtual ~IImagefloat() {}
-
-    bool writeData (const char* fname);
 };
 
 /** @brief This class represents an image having a classical 8 bits/pixel representation */
@@ -1723,8 +1718,6 @@ class IImage8 : public IImage, public ChunkyRGBData<unsigned char>
 {
 public:
     virtual ~IImage8() {}
-
-    bool writeData (const char* fname);
 };
 
 /** @brief This class represents an image having a 16 bits/pixel planar representation.
@@ -1733,8 +1726,6 @@ class IImage16 : public IImage, public PlanarRGBData<unsigned short>
 {
 public:
     virtual ~IImage16() {}
-
-    bool writeData (const char* fname);
 };
 
 }

@@ -139,15 +139,6 @@ public:
     virtual void    getScanline (int row, unsigned char* buffer, int bps) {}
     virtual void    setScanline (int row, unsigned char* buffer, int bps, float minValue[3] = NULL, float  maxValue[3] = NULL) {}
 
-    virtual bool    readImage   (Glib::ustring &fname, FILE *fh)
-    {
-        return false;
-    };
-    virtual bool    writeImage  (Glib::ustring &fname, FILE *fh)
-    {
-        return false;
-    };
-
     int load (Glib::ustring fname);
     int save (Glib::ustring fname);
 
@@ -181,6 +172,9 @@ public:
     {
         return imutex;
     }
+
+    static ImageIO* readThumbnail (const Glib::ustring& fname);
+    virtual bool writeThumbnail (const Glib::ustring& fname);
 };
 
 }

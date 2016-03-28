@@ -1624,30 +1624,19 @@ bool Thumbnail::writeImage (const Glib::ustring& fname)
         return false;
     }
 
-    auto ok = false;
-
-    if (thumbImg->getType () == sImage8) {
-        ok = static_cast< Image8* > (thumbImg)->writeData (fname.c_str ());
-    } else if (thumbImg->getType () == sImage16) {
-        ok = static_cast< Image16* > (thumbImg)->writeData (fname.c_str ());
-    } else if (thumbImg->getType () == sImagefloat) {
-        ok = static_cast< Imagefloat* > (thumbImg)->writeData (fname.c_str ());
-    }
-
-    return ok;
+    return thumbImg->writeThumbnail (fname);
 }
 
 bool Thumbnail::readImage (const Glib::ustring& fname)
 {
-    auto ok = false;
-
-    if (const auto newImage = IImage::readData (fname.c_str())) {
+    if (const auto newImage = ImageIO::readThumbnail (fname)) {
         delete thumbImg;
         thumbImg = newImage;
-        ok = true;
-    }
 
-    return ok;
+        return true;
+    } else {
+        return false;
+    }
 }
 
 bool Thumbnail::readData  (const Glib::ustring& fname)
