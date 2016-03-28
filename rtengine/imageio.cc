@@ -52,6 +52,20 @@ using namespace rtengine::procparams;
 namespace
 {
 
+Glib::ustring to_utf8 (const std::string& str)
+{
+    try {
+        return Glib::locale_to_utf8 (str);
+    } catch (Glib::Error&) {
+        return Glib::convert_with_fallback (str, "UTF-8", "ISO-8859-1", "?");
+    }
+}
+
+std::unique_ptr< wchar_t, GFreeFunc > to_utf16 (const Glib::ustring& str)
+{
+    return { reinterpret_cast< wchar_t* > (g_utf8_to_utf16 (str.c_str (), -1, nullptr, nullptr, nullptr)), g_free };
+}
+
 // Opens a file for binary writing and request exclusive lock (cases were you need "wb" mode plus locking)
 FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
 {
@@ -61,9 +75,7 @@ FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
 
     // Use native function to disallow sharing, i.e. lock the file for exclusive access.
     // This is important to e.g. prevent Windows Explorer from crashing RT due to concurrently scanning an image file.
-    std::unique_ptr<wchar_t, GFreeFunc> wfname (reinterpret_cast<wchar_t*>(g_utf8_to_utf16 (fname.c_str (), -1, NULL, NULL, NULL)), g_free);
-
-    HANDLE hFile = CreateFileW ( wfname.get (), GENERIC_READ | GENERIC_WRITE, 0 /* no sharing allowed */, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    HANDLE hFile = CreateFileW (to_utf16 (fname).get (), GENERIC_READ | GENERIC_WRITE, 0 /* no sharing allowed */, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile != INVALID_HANDLE_VALUE) {
         f = _fdopen (_open_osfhandle ((intptr_t)hFile, 0), "wb");
     }
@@ -77,13 +89,13 @@ FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
     return f;
 }
 
-Glib::ustring to_utf8 (const std::string& str)
+TIFF* TIFFOpenU (const Glib::ustring& fname, const char* mode)
 {
-    try {
-        return Glib::locale_to_utf8 (str);
-    } catch (Glib::Error&) {
-        return Glib::convert_with_fallback (str, "UTF-8", "ISO-8859-1", "?");
-    }
+#ifdef WIN32
+    return TIFFOpenW (to_utf16 (fname).get (), mode);
+#else
+    return TIFFOpen (fname.c_str (), mode);
+#endif
 }
 
 }
@@ -618,9 +630,7 @@ int ImageIO::loadJPEG (Glib::ustring fname)
 int ImageIO::getTIFFSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement)
 {
 #ifdef WIN32
-    wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
-    TIFF* in = TIFFOpenW (wfilename, "r");
-    g_free (wfilename);
+    TIFF* in = TIFFOpenW (to_utf16 (fname).get (), "r");
 #else
     TIFF* in = TIFFOpen(fname.c_str(), "r");
 #endif
@@ -727,9 +737,7 @@ int ImageIO::loadTIFF (Glib::ustring fname)
     }
 
 #ifdef WIN32
-    wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
-    TIFF* in = TIFFOpenW (wfilename, "r");
-    g_free (wfilename);
+    TIFF* in = TIFFOpenW (to_utf16 (fname).get (), "r");
 #else
     TIFF* in = TIFFOpen(fname.c_str(), "r");
 #endif
@@ -1288,9 +1296,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
         // little hack to get libTiff to use proper byte order (see TIFFClienOpen()):
         const char *mode = !exifRoot ? "w" : (exifRoot->getOrder() == rtexif::INTEL ? "wl" : "wb");
 #ifdef WIN32
-        wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
-        TIFF* out = TIFFOpenW (wfilename, mode);
-        g_free (wfilename);
+        TIFF* out = TIFFOpenW (to_utf16 (fname).get (), mode);
 #else
         TIFF* out = TIFFOpen(fname.c_str(), mode);
 #endif
@@ -1567,12 +1573,7 @@ Imagefloat* readImagefloat (TIFF* tiff, const uint32 length, const uint32 width)
 
 ImageIO* ImageIO::readThumbnail (const Glib::ustring& fname)
 {
-    const auto fd = open (fname.c_str(), O_RDONLY);
-    if (fd < 0) {
-        return nullptr;
-    }
-
-    TIFF* tiff = TIFFFdOpen (fd, fname.c_str(), "r");
+    const auto tiff = TIFFOpenU (fname, "r");
     if (!tiff) {
         return nullptr;
     }
@@ -1609,7 +1610,7 @@ bool ImageIO::writeThumbnail (const Glib::ustring& /* fname */)
 
 bool Image8::writeThumbnail (const Glib::ustring& fname)
 {
-    TIFF* tiff = TIFFOpen (fname.c_str(), "w");
+    const auto tiff = TIFFOpenU (fname, "w");
     if (!tiff) {
         return false;
     }
@@ -1637,7 +1638,7 @@ bool Image8::writeThumbnail (const Glib::ustring& fname)
 
 bool Image16::writeThumbnail (const Glib::ustring& fname)
 {
-    TIFF* tiff = TIFFOpen (fname.c_str(), "w");
+    const auto tiff = TIFFOpenU (fname, "w");
     if (!tiff) {
         return false;
     }
@@ -1670,7 +1671,7 @@ bool Image16::writeThumbnail (const Glib::ustring& fname)
 
 bool Imagefloat::writeThumbnail (const Glib::ustring& fname)
 {
-    TIFF* tiff = TIFFOpen (fname.c_str(), "w");
+    const auto tiff = TIFFOpenU (fname, "w");
     if (!tiff) {
         return false;
     }
