@@ -89,8 +89,35 @@ FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
     return f;
 }
 
+class TIFFMessageHandler
+{
+    static void printIfVerbose (const char* module, const char* format, va_list ap)
+    {
+        if (!options.rtSettings.verbose) {
+            return;
+        }
+
+        if (module) {
+            fprintf (stderr, "%s: ", module);
+        }
+
+        vfprintf (stderr, format, ap);
+        fprintf (stderr, ".\n");
+    }
+
+public:
+    TIFFMessageHandler()
+    {
+        TIFFSetErrorHandler (&TIFFMessageHandler::printIfVerbose);
+        TIFFSetWarningHandler (&TIFFMessageHandler::printIfVerbose);
+    }
+
+};
+
 TIFF* TIFFOpenU (const Glib::ustring& fname, const char* mode)
 {
+    static TIFFMessageHandler messageHandler;
+
 #ifdef WIN32
     return TIFFOpenW (to_utf16 (fname).get (), mode);
 #else
