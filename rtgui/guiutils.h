@@ -581,4 +581,9 @@ inline void setActiveTextOrIndex (Gtk::ComboBoxText& comboBox, const Glib::ustri
     }
 }
 
+inline Gtk::Window& getToplevelWindow (Gtk::Widget* widget)
+{
+    return *static_cast<Gtk::Window*> (widget->get_toplevel ());
+}
+
 #endif
