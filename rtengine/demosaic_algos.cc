@@ -36,7 +36,8 @@
 #include "procparams.h"
 #include "sleef.c"
 #include "opthelper.h"
-
+//#define BENCHMARK
+#include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -3886,12 +3887,12 @@ const float d65_white[3] = { 0.950456, 1, 1.088754 };
 
 void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b, const int width, const int height, const int labWidth, const float xyz_cam[3][3])
 {
-    static LUTf cbrt(0x10000);
+    static LUTf cbrt(0x14000);
     static bool cbrtinit = false;
 
     if (!rgb) {
         if(!cbrtinit) {
-            for (int i = 0; i < 0x10000; i++) {
+            for (int i = 0; i < 0x14000; i++) {
                 double r = i / 65535.0;
                 cbrt[i] = r > 0.008856f ? std::cbrt(r) : 7.787f * r + 16.f / 116.f;
             }
@@ -4014,10 +4015,11 @@ void RawImageSource::xtransborder_interpolate (int border)
    Frank Markesteijn's algorithm for Fuji X-Trans sensors
    adapted to RT by Ingo Weyrich 2014
 */
-
+// override CLIP function to test unclipped output
+#define CLIP(x) (x)
 void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
 {
-
+    BENCHFUN
     constexpr int ts = 114;      /* Tile Size */
     constexpr int tsh = ts / 2;  /* half of Tile Size */
 
@@ -4140,6 +4142,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
         uint8_t (*homo)[ts][ts] = (uint8_t  (*)[ts][ts])   (lab); // we can reuse the lab-buffer because they are not used together
         s_minmaxgreen  (*greenminmaxtile)[tsh] = (s_minmaxgreen(*)[tsh]) (lab); // we can reuse the lab-buffer because they are not used together
         uint8_t (*homosum)[ts][ts] = (uint8_t (*)[ts][ts]) (drv); // we can reuse the drv-buffer because they are not used together
+        uint8_t (*homosummax)[ts] = (uint8_t (*)[ts]) homo[ndir - 1]; // we can reuse the homo-buffer because they are not used together
 
 #ifdef _OPENMP
         #pragma omp for collapse(2) schedule(dynamic) nowait
@@ -4284,9 +4287,13 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
                             }
                         }
                     } else {
-                        for (int col = leftstart; col < mcol; col += coloffset, coloffset ^= 3) {
+                        short *hexmod[2];
+                        hexmod[0] = allhex[0][row % 3][leftstart % 3];
+                        hexmod[1] = allhex[0][row % 3][(leftstart + coloffset) % 3];
+
+                        for (int col = leftstart, hexindex = 0; col < mcol; col += coloffset, coloffset ^= 3, hexindex ^= 1) {
                             float *pix = &rawData[row][col];
-                            short *hex = allhex[0][row % 3][col % 3];
+                            short *hex = hexmod[hexindex];
                             float color[4];
                             color[0] = 0.6796875f * (pix[hex[1]] + pix[hex[0]]) -
                                        0.1796875f * (pix[2 * hex[1]] + pix[2 * hex[0]]);
@@ -4335,9 +4342,12 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
                                 }
                             } else {
                                 int f = fcol(row, leftstart);
+                                short *hexmod[2];
+                                hexmod[0] = allhex[1][row % 3][leftstart % 3];
+                                hexmod[1] = allhex[1][row % 3][(leftstart + coloffset) % 3];
 
-                                for (int col = leftstart; col < mcol - 2; col += coloffset, coloffset ^= 3, f = f ^ (coloffset & 2) ) {
-                                    short *hex = allhex[1][row % 3][col % 3];
+                                for (int col = leftstart, hexindex = 0; col < mcol - 2; col += coloffset, coloffset ^= 3, f = f ^ (coloffset & 2), hexindex ^= 1 ) {
+                                    short *hex = hexmod[hexindex];
 
                                     for (int d = 3; d < 6; d++) {
                                         float (*rix)[3] = &rgb[(d - 2) ^ 1][row - top][col - left];
@@ -4448,9 +4458,13 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
 
                     for (int row = topstart; row < mrow - 2; row++) {
                         if ((row - sgrow) % 3) {
-                            for (int col = leftstart, coloffset = coloffsetstart; col < mcol - 2; col += coloffset, coloffset ^= 3) {
+                            short *hexmod[2];
+                            hexmod[0] = allhex[1][row % 3][leftstart % 3];
+                            hexmod[1] = allhex[1][row % 3][(leftstart + coloffsetstart) % 3];
+
+                            for (int col = leftstart, coloffset = coloffsetstart, hexindex = 0; col < mcol - 2; col += coloffset, coloffset ^= 3, hexindex ^= 1) {
                                 float (*rix)[3] = &rgb[0][row - top][col - left];
-                                short *hex = allhex[1][row % 3][col % 3];
+                                short *hex = hexmod[hexindex];
 
                                 for (int d = 0; d < ndir; d += 2, rix += ts * ts) {
                                     if (hex[d] + hex[d + 1]) {
@@ -4567,10 +4581,52 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
                 }
 
                 /* Build homogeneity maps from the derivatives:         */
-                memset(homo, 0, ndir * ts * ts * sizeof(uint8_t));
+#ifdef __SSE2__
+                vfloat eightv = F2V(8.f);
+                vfloat zerov = F2V(0.f);
+                vfloat onev = F2V(1.f);
+#endif
 
-                for (int row = 6; row < mrow - 6; row++)
-                    for (int col = 6; col < mcol - 6; col++) {
+                for (int row = 6; row < mrow - 6; row++) {
+                    int col = 6;
+#ifdef __SSE2__
+
+                    for (; col < mcol - 9; col += 4) {
+                        vfloat tr1v = vminf(LVFU(drv[0][row - 5][col - 5]), LVFU(drv[1][row - 5][col - 5]));
+                        vfloat tr2v = vminf(LVFU(drv[2][row - 5][col - 5]), LVFU(drv[3][row - 5][col - 5]));
+
+                        if(ndir > 4) {
+                            vfloat tr3v = vminf(LVFU(drv[4][row - 5][col - 5]), LVFU(drv[5][row - 5][col - 5]));
+                            vfloat tr4v = vminf(LVFU(drv[6][row - 5][col - 5]), LVFU(drv[7][row - 5][col - 5]));
+                            tr1v = vminf(tr1v, tr3v);
+                            tr1v = vminf(tr1v, tr4v);
+                        }
+
+                        tr1v = vminf(tr1v, tr2v);
+                        tr1v = tr1v * eightv;
+
+                        for (int d = 0; d < ndir; d++) {
+                            uint8_t tempstore[16];
+                            vfloat tempv = zerov;
+
+                            for (int v = -1; v <= 1; v++) {
+                                for (int h = -1; h <= 1; h++) {
+                                    tempv += vselfzero(vmaskf_le(LVFU(drv[d][row + v - 5][col + h - 5]), tr1v), onev);
+                                }
+                            }
+
+                            _mm_storeu_si128((__m128i*)&tempstore, _mm_cvtps_epi32(tempv));
+                            homo[d][row][col] = tempstore[0];
+                            homo[d][row][col + 1] = tempstore[4];
+                            homo[d][row][col + 2] = tempstore[8];
+                            homo[d][row][col + 3] = tempstore[12];
+
+                        }
+                    }
+
+#endif
+
+                    for (; col < mcol - 6; col++) {
                         float tr = drv[0][row - 5][col - 5] < drv[1][row - 5][col - 5] ? drv[0][row - 5][col - 5] : drv[1][row - 5][col - 5];
 
                         for (int d = 2; d < ndir; d++) {
@@ -4579,12 +4635,19 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
 
                         tr *= 8;
 
-                        for (int d = 0; d < ndir; d++)
-                            for (int v = -1; v <= 1; v++)
+                        for (int d = 0; d < ndir; d++) {
+                            uint8_t temp = 0;
+
+                            for (int v = -1; v <= 1; v++) {
                                 for (int h = -1; h <= 1; h++) {
-                                    homo[d][row][col] += (drv[d][row + v - 5][col + h - 5] <= tr ? 1 : 0) ;
+                                    temp += (drv[d][row + v - 5][col + h - 5] <= tr ? 1 : 0);
                                 }
+                            }
+
+                            homo[d][row][col] = temp;
+                        }
                     }
+                }
 
                 if (height - top < ts + 4) {
                     mrow = height - top + 2;
@@ -4643,21 +4706,63 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
                     }
                 }
 
-                /* Average the most homogenous pixels for the final result: */
+                // calculate maximum of homogeneity maps per pixel. Vectorized calculation is a tiny bit faster than on the fly calculation in next step
+#ifdef __SSE2__
+                vint maskv = _mm_set1_epi8(31);
+#endif
+
+                for (int row = MIN(top, 8); row < mrow - 8; row++) {
+                    int col = startcol;
+#ifdef __SSE2__
+                    int endcol = row < mrow - 9 ? mcol - 8 : mcol - 23;
+
+                    for (; col < endcol; col += 16) {
+                        vint maxval1 = _mm_max_epu8(_mm_loadu_si128((vint*)&homosum[0][row][col]), _mm_loadu_si128((vint*)&homosum[1][row][col]));
+                        vint maxval2 = _mm_max_epu8(_mm_loadu_si128((vint*)&homosum[2][row][col]), _mm_loadu_si128((vint*)&homosum[3][row][col]));
+
+                        if(ndir > 4) {
+                            vint maxval3 = _mm_max_epu8(_mm_loadu_si128((vint*)&homosum[4][row][col]), _mm_loadu_si128((vint*)&homosum[5][row][col]));
+                            vint maxval4 = _mm_max_epu8(_mm_loadu_si128((vint*)&homosum[6][row][col]), _mm_loadu_si128((vint*)&homosum[7][row][col]));
+                            maxval1 = _mm_max_epu8(maxval1, maxval3);
+                            maxval1 = _mm_max_epu8(maxval1, maxval4);
+                        }
+
+                        maxval1 = _mm_max_epu8(maxval1, maxval2);
+                        // there is no shift intrinsic for epu8. Shift using epi32 and mask the wrong bits out
+                        vint subv = _mm_srli_epi32( maxval1, 3 );
+                        subv = _mm_and_si128(subv, maskv);
+                        maxval1 = _mm_subs_epu8(maxval1, subv);
+                        _mm_storeu_si128((vint*)&homosummax[row][col], maxval1);
+                    }
+
+#endif
+
+                    for (; col < mcol - 8; col ++) {
+                        uint8_t maxval = homosum[0][row][col];
+
+                        for(int d = 1; d < ndir; d++) {
+                            maxval = maxval < homosum[d][row][col] ? homosum[d][row][col] : maxval;
+                        }
+
+                        maxval -= maxval >> 3;
+                        homosummax[row][col] = maxval;
+                    }
+                }
+
+
+                /* Average the most homogeneous pixels for the final result: */
+                uint8_t hm[8];
+
                 for (int row = MIN(top, 8); row < mrow - 8; row++)
                     for (int col = MIN(left, 8); col < mcol - 8; col++) {
-                        uint8_t hm[8];
-                        uint8_t maxval = 0;
                         int d = 0;
 
                         for (; d < 4; d++) {
                             hm[d] = homosum[d][row][col];
-                            maxval = (maxval < hm[d] ? hm[d] : maxval);
                         }
 
                         for (; d < ndir; d++) {
                             hm[d] = homosum[d][row][col];
-                            maxval = (maxval < hm[d] ? hm[d] : maxval);
 
                             if (hm[d - 4] < hm[d]) {
                                 hm[d - 4] = 0;
@@ -4666,8 +4771,9 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
                             }
                         }
 
-                        maxval -= maxval >> 3;
                         float avg[4] = {0.f};
+
+                        uint8_t maxval = homosummax[row][col];
 
                         for (d = 0; d < ndir; d++)
                             if (hm[d] >= maxval) {
@@ -4698,7 +4804,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
     }
 
 }
-
+#undef CLIP
 void RawImageSource::fast_xtrans_interpolate ()
 {
     if (settings->verbose) {
