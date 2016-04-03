@@ -255,7 +255,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring& title, Gtk::Window* paren
     Gtk::Dialog::get_content_area()->pack_start (*vbtop, Gtk::PACK_SHRINK, 2); // TODO replace with get_content_area() with GTK upgrade
 
     Gtk::HBox* hbmain = Gtk::manage (new Gtk::HBox ());
-    hbmain->set_name("PartialPaste");
     hbmain->pack_start (*vbCol1);
     hbmain->pack_start (*(Gtk::manage (new Gtk::VSeparator ())));
     hbmain->pack_start (*vbCol2);
@@ -263,6 +262,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring& title, Gtk::Window* paren
     hbmain->pack_start (*vbCol3);
 
     scrolledwindow = Gtk::manage ( new Gtk::ScrolledWindow() );
+    scrolledwindow->set_name("PartialPaste");
     scrolledwindow->set_can_focus(true);
     scrolledwindow->set_shadow_type(Gtk::SHADOW_NONE);
     scrolledwindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
