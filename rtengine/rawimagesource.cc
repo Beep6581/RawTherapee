@@ -37,6 +37,8 @@
 #include <omp.h>
 #endif
 #include "opthelper.h"
+#define BENCHMARK
+#include "StopWatch.h"
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
@@ -4298,11 +4300,12 @@ void RawImageSource::hlRecovery (std::string method, float* red, float* green, f
 
 void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
 {
-
+BENCHFUN
     histcompr = 3;
 
     histogram(65536 >> histcompr);
     histogram.clear();
+    const float refwb[3] = {static_cast<float>(refwb_red),static_cast<float>(refwb_green),static_cast<float>(refwb_blue)};
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -4320,27 +4323,15 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
 
             if (ri->getSensorType() == ST_BAYER) {
                 for (int j = start; j < end; j++) {
-                    if (ri->ISGREEN(i, j)) {
-                        tmphistogram[CLIP((int)(refwb_green * rawData[i][j])) >> histcompr] += 4;
-                    } else if (ri->ISRED(i, j)) {
-                        tmphistogram[CLIP((int)(refwb_red *  rawData[i][j])) >> histcompr] += 4;
-                    } else if (ri->ISBLUE(i, j)) {
-                        tmphistogram[CLIP((int)(refwb_blue * rawData[i][j])) >> histcompr] += 4;
-                    }
+                    tmphistogram[(int)(refwb[ri->FC(i,j)] * rawData[i][j]) >> histcompr] += 4;
                 }
             } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
                 for (int j = start; j < end; j++) {
-                    if (ri->ISXTRANSGREEN(i, j)) {
-                        tmphistogram[CLIP((int)(refwb_green * rawData[i][j])) >> histcompr] += 4;
-                    } else if (ri->ISXTRANSRED(i, j)) {
-                        tmphistogram[CLIP((int)(refwb_red *  rawData[i][j])) >> histcompr] += 4;
-                    } else if (ri->ISXTRANSBLUE(i, j)) {
-                        tmphistogram[CLIP((int)(refwb_blue * rawData[i][j])) >> histcompr] += 4;
-                    }
+                    tmphistogram[(int)(refwb[ri->XTRANSFC(i,j)] * rawData[i][j]) >> histcompr] += 4;
                 }
             } else if (ri->get_colors() == 1) {
                 for (int j = start; j < end; j++) {
-                    tmphistogram[CLIP((int)(refwb_red *  rawData[i][j])) >> histcompr]++;
+                    tmphistogram[(int)(refwb_red *  rawData[i][j]) >> histcompr]++;
                 }
             } else {
                 for (int j = start; j < end; j++) {
@@ -4486,7 +4477,8 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
 {
-
+    BENCHFUN
+    constexpr double clipHigh = 64000.0;
     if (ri->get_colors() == 1) {
         rm = gm = bm = 1;
         return;
@@ -4523,7 +4515,7 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
                     double dg = CLIP(initialGain * (rawData[i][3 * j + 1]));
                     double db = CLIP(initialGain * (rawData[i][3 * j + 2]));
 
-                    if (dr > 64000. || dg > 64000. || db > 64000.) {
+                    if (dr > clipHigh || dg > clipHigh || db > clipHigh) {
                         continue;
                     }
 
@@ -4535,7 +4527,7 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
                     int c = FC( i, j);
                     double d = CLIP(initialGain * (rawData[i][j]));
 
-                    if (d > 64000.) {
+                    if (d > clipHigh) {
                         continue;
                     }
 
@@ -4556,42 +4548,46 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
     } else {
         if (ri->getSensorType() != ST_BAYER) {
             if(ri->getSensorType() == ST_FUJI_XTRANS) {
-                for (int i = 32; i < H - 32; i++)
-                    for (int j = 32; j < W - 32; j++) {
-                        // each loop read 1 rgb triplet value
-                        if(ri->ISXTRANSRED(i, j)) {
-                            float dr = CLIP(initialGain * (rawData[i][j]));
+                const double compval = clipHigh / initialGain;
+#ifdef _OPENMP
+                #pragma omp parallel
+#endif
+                {
+                    double avg_c[3] = {0.0};
+                    int cn[3] = {0};
+#ifdef _OPENMP
+                    #pragma omp for schedule(dynamic,16) nowait
+#endif
+                    for (int i = 32; i < H - 32; i++) {
+                        for (int j = 32; j < W - 32; j++) {
+                            // each loop read 1 rgb triplet value
+                            double d = rawData[i][j];
 
-                            if (dr > 64000.f) {
+                            if (d > compval) {
                                 continue;
                             }
 
-                            avg_r += dr;
-                            rn ++;
-                        }
-
-                        if(ri->ISXTRANSGREEN(i, j)) {
-                            float dg = CLIP(initialGain * (rawData[i][j]));
-
-                            if (dg > 64000.f) {
-                                continue;
-                            }
-
-                            avg_g += dg;
-                            gn ++;
-                        }
-
-                        if(ri->ISXTRANSBLUE(i, j)) {
-                            float db = CLIP(initialGain * (rawData[i][j]));
-
-                            if (db > 64000.f) {
-                                continue;
-                            }
-
-                            avg_b += db;
-                            bn ++;
+                            int c = ri->XTRANSFC(i, j);
+                            avg_c[c] += d;
+                            cn[c]++;
                         }
                     }
+
+#ifdef _OPENMP
+                    #pragma omp critical
+#endif
+                    {
+                        avg_r += avg_c[0];
+                        avg_g += avg_c[1];
+                        avg_b += avg_c[2];
+                        rn += cn[0];
+                        gn += cn[1];
+                        bn += cn[2];
+                    }
+                }
+                avg_r *= initialGain;
+                avg_g *= initialGain;
+                avg_b *= initialGain;
             } else {
                 for (int i = 32; i < H - 32; i++)
                     for (int j = 32; j < W - 32; j++) {
@@ -4601,7 +4597,7 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
                         double dg = CLIP(initialGain * (rawData[i][3 * j + 1]));
                         double db = CLIP(initialGain * (rawData[i][3 * j + 2]));
 
-                        if (dr > 64000. || dg > 64000. || db > 64000.) {
+                        if (dr > clipHigh || dg > clipHigh || db > clipHigh) {
                             continue;
                         }
 
@@ -4636,36 +4632,45 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
                 }
             }
 
-            double d[2][2];
+            const double compval = clipHigh / initialGain;
+#ifdef _OPENMP
+            #pragma omp parallel for reduction(+:avg_r,avg_g,avg_b,rn,gn,bn) schedule(dynamic,8)
+#endif
 
             for (int i = 32; i < H - 32; i += 2)
                 for (int j = 32; j < W - 32; j += 2) {
                     //average each Bayer quartet component individually if non-clipped
-                    d[0][0] = CLIP(initialGain * (rawData[i][j]    ));
-                    d[0][1] = CLIP(initialGain * (rawData[i][j + 1]  ));
-                    d[1][0] = CLIP(initialGain * (rawData[i + 1][j]  ));
-                    d[1][1] = CLIP(initialGain * (rawData[i + 1][j + 1]));
+                    double d[2][2];
+                    d[0][0] = rawData[i][j];
+                    d[0][1] = rawData[i][j + 1];
+                    d[1][0] = rawData[i + 1][j];
+                    d[1][1] = rawData[i + 1][j + 1];
 
-                    if (d[ey][ex] <= 64000.) {
+                    if (d[ey][ex] <= compval) {
                         avg_r += d[ey][ex];
                         rn++;
                     }
 
-                    if (d[1 - ey][ex] <= 64000.) {
+                    if (d[1 - ey][ex] <= compval) {
                         avg_g += d[1 - ey][ex];
                         gn++;
                     }
 
-                    if (d[ey][1 - ex] <= 64000.) {
+                    if (d[ey][1 - ex] <= compval) {
                         avg_g += d[ey][1 - ex];
                         gn++;
                     }
 
-                    if (d[1 - ey][1 - ex] <= 64000.) {
+                    if (d[1 - ey][1 - ex] <= compval) {
                         avg_b += d[1 - ey][1 - ex];
                         bn++;
                     }
                 }
+
+            avg_r *= initialGain;
+            avg_g *= initialGain;
+            avg_b *= initialGain;
+
         }
     }
 
