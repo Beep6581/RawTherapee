@@ -36,7 +36,7 @@
 #include "procparams.h"
 #include "sleef.c"
 #include "opthelper.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -4586,9 +4586,11 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
                 vfloat zerov = F2V(0.f);
                 vfloat onev = F2V(1.f);
 #endif
+
                 for (int row = 6; row < mrow - 6; row++) {
                     int col = 6;
 #ifdef __SSE2__
+
                     for (; col < mcol - 9; col += 4) {
                         vfloat tr1v = vminf(LVFU(drv[0][row - 5][col - 5]), LVFU(drv[1][row - 5][col - 5]));
                         vfloat tr2v = vminf(LVFU(drv[2][row - 5][col - 5]), LVFU(drv[3][row - 5][col - 5]));
@@ -4596,15 +4598,17 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
                         if(ndir > 4) {
                             vfloat tr3v = vminf(LVFU(drv[4][row - 5][col - 5]), LVFU(drv[5][row - 5][col - 5]));
                             vfloat tr4v = vminf(LVFU(drv[6][row - 5][col - 5]), LVFU(drv[7][row - 5][col - 5]));
-                            tr1v = vminf(tr1v,tr3v);
-                            tr1v = vminf(tr1v,tr4v);
+                            tr1v = vminf(tr1v, tr3v);
+                            tr1v = vminf(tr1v, tr4v);
                         }
-                        tr1v = vminf(tr1v,tr2v);
+
+                        tr1v = vminf(tr1v, tr2v);
                         tr1v = tr1v * eightv;
 
                         for (int d = 0; d < ndir; d++) {
                             uint8_t tempstore[16];
                             vfloat tempv = zerov;
+
                             for (int v = -1; v <= 1; v++) {
                                 for (int h = -1; h <= 1; h++) {
                                     tempv += vselfzero(vmaskf_le(LVFU(drv[d][row + v - 5][col + h - 5]), tr1v), onev);
@@ -4613,14 +4617,15 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
 
                             _mm_storeu_si128((__m128i*)&tempstore, _mm_cvtps_epi32(tempv));
                             homo[d][row][col] = tempstore[0];
-                            homo[d][row][col+1] = tempstore[4];
-                            homo[d][row][col+2] = tempstore[8];
-                            homo[d][row][col+3] = tempstore[12];
+                            homo[d][row][col + 1] = tempstore[4];
+                            homo[d][row][col + 2] = tempstore[8];
+                            homo[d][row][col + 3] = tempstore[12];
 
                         }
                     }
 
 #endif
+
                     for (; col < mcol - 6; col++) {
                         float tr = drv[0][row - 5][col - 5] < drv[1][row - 5][col - 5] ? drv[0][row - 5][col - 5] : drv[1][row - 5][col - 5];
 
@@ -4632,11 +4637,13 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
 
                         for (int d = 0; d < ndir; d++) {
                             uint8_t temp = 0;
+
                             for (int v = -1; v <= 1; v++) {
                                 for (int h = -1; h <= 1; h++) {
                                     temp += (drv[d][row + v - 5][col + h - 5] <= tr ? 1 : 0);
                                 }
                             }
+
                             homo[d][row][col] = temp;
                         }
                     }
