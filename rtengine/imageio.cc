@@ -1658,7 +1658,7 @@ bool Image8::writeThumbnail (const Glib::ustring& fname)
 
     auto ok = writeScanlines (tiff, data, height, 0, rowStride);
 
-    ok = ok && !TIFFFlush (tiff);
+    ok = ok && TIFFFlush (tiff);
     TIFFClose (tiff);
     return ok;
 }
@@ -1691,7 +1691,7 @@ bool Image16::writeThumbnail (const Glib::ustring& fname)
     data += planeStride;
     ok = ok && writeScanlines (tiff, data, height, 2, rowStride);
 
-    ok = ok && !TIFFFlush (tiff);
+    ok = ok && TIFFFlush (tiff);
     TIFFClose (tiff);
     return ok;
 }
@@ -1724,7 +1724,7 @@ bool Imagefloat::writeThumbnail (const Glib::ustring& fname)
     data += planeStride;
     ok = ok && writeScanlines (tiff, data, height, 2, rowStride);
 
-    ok = ok && !TIFFFlush (tiff);
+    ok = ok && TIFFFlush (tiff);
     TIFFClose (tiff);
     return ok;
 }
