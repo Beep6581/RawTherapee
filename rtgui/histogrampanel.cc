@@ -42,6 +42,7 @@ HistogramPanel::HistogramPanel ()
     set_hexpand(true);
     set_valign(Gtk::ALIGN_START);
     set_halign(Gtk::ALIGN_FILL);
+    set_name("HistogramPanel");
 
     histogramArea = Gtk::manage (new HistogramArea (this));
     histogramArea->set_hexpand(true);
@@ -397,10 +398,10 @@ void HistogramPanel::toggle_button_full ()
 //
 // HistogramRGBArea
 HistogramRGBArea::HistogramRGBArea () ://needChroma unactive by default
-    frozen(false), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(true), rawMode(false), showMode(options.histogramBar), barDisplayed(options.histogramBar), needChroma(false)
+    val(0), r(0), g(0), b(0), frozen(false), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(true), rawMode(false), showMode(options.histogramBar), barDisplayed(options.histogramBar), needChroma(false), parent(NULL)
 {
 
-    //set_size_request(60, 12);
+    set_name("HistogramRGBArea");
 
     harih = new HistogramRGBAreaIdleHelper;
     harih->harea = this;
@@ -821,7 +822,7 @@ HistogramArea::HistogramArea (FullModeListener *fml) : //needChroma unactive by 
     bhist(256);
     chist(256);
 
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    set_name("HistogramArea");
 
     haih = new HistogramAreaIdleHelper;
     haih->harea = this;

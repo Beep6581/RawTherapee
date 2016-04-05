@@ -1198,6 +1198,8 @@ TextOrIcon::TextOrIcon (Glib::ustring fname, Glib::ustring labelTx, Glib::ustrin
     labelText = labelTx;
     tooltipText = tooltipTx;
 
+    set_name("TextOrIcon");
+
     switchTo(type);
 }
 

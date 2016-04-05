@@ -60,6 +60,8 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
 
     // construct batch queue panel with the extra "start" and "stop" button
     Gtk::VBox* batchQueueButtonBox = Gtk::manage (new Gtk::VBox);
+    batchQueueButtonBox->set_name("BatchQueueButtons");
+
     start = Gtk::manage (new Gtk::ToggleButton ());
     stop = Gtk::manage (new Gtk::ToggleButton ());
     autoStart = Gtk::manage (new Gtk::CheckButton (M("BATCHQUEUE_AUTOSTART")));
@@ -147,6 +149,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
     // setup button bar
     topBox = Gtk::manage (new Gtk::HBox ());
     pack_start (*topBox, Gtk::PACK_SHRINK);
+    topBox->set_name("BatchQueueButtonsMainContainer");
 
     topBox->pack_start (*batchQueueButtonBox, Gtk::PACK_SHRINK, 4);
     topBox->pack_start (*fdir, Gtk::PACK_EXPAND_WIDGET, 4);
