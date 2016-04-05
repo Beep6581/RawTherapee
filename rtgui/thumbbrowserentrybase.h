@@ -53,7 +53,7 @@ protected:
 
     MyRWMutex lockRW;  // Locks access to all image thumb changing actions
 
-    guint8* preview;  // holds the preview image. used in updateBackBuffer. TODO Olli: Make a cache to reduce mem significantly
+    rtengine::IImage8* preview;  // holds the preview image. used in updateBackBuffer. TODO Olli: Make a cache to reduce mem significantly
 
     Glib::ustring dispname;
 
@@ -76,7 +76,7 @@ protected:
 
     Glib::RefPtr<Gdk::Pixmap> backBuffer;
     bool bbSelected, bbFramed;
-    guint8* bbPreview;
+    rtengine::IImage8* bbPreview;
     std::vector<Glib::RefPtr<Gdk::Pixbuf> > bbIcons;
 
     void drawFrame (Cairo::RefPtr<Cairo::Context> cr, const Gdk::Color& bg, const Gdk::Color& fg);

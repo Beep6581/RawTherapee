@@ -35,7 +35,7 @@ struct BatchQueueEntryIdleHelper {
 class BatchQueueEntry : public ThumbBrowserEntryBase, public BQEntryUpdateListener
 {
 
-    guint8* opreview;
+    rtengine::IImage8* opreview;
     int origpw, origph;
     BatchQueueEntryIdleHelper* bqih;
     bool opreviewDone;
@@ -69,8 +69,8 @@ public:
     virtual Glib::ustring getToolTip (int x, int y);
 
     // bqentryupdatelistener interface
-    void updateImage (guint8* img, int w, int h, int origw, int origh, guint8* newOPreview);
-    void _updateImage (guint8* img, int w, int h); // inside gtk thread
+    void updateImage (rtengine::IImage8* img, int w, int h, int origw, int origh) override;
+    void _updateImage (rtengine::IImage8* img, int w, int h); // inside gtk thread
 };
 
 
