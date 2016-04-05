@@ -50,7 +50,6 @@ class Thumbnail
     rtengine::procparams::ProcParams      pparams;
     bool            pparamsValid;
     bool            pparamsSet;
-    bool            needsReProcessing;
     bool            imageLoading;
 
     // these are the data of the result image of the last getthumbnailimage  call (for caching purposes)
@@ -68,11 +67,11 @@ class Thumbnail
     // vector of listeners
     std::vector<ThumbnailListener*> listeners;
 
-    void            _loadThumbnail (bool firstTrial = true);
+    void            _loadThumbnail ();
     void            _saveThumbnail ();
     void            _generateThumbnailImage ();
     int             infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataLocation* rml = NULL);
-    void            loadThumbnail (bool firstTrial = true);
+    void            loadThumbnail ();
     void            generateExifDateTimeStrings ();
 
     Glib::ustring    getCacheFileName (const Glib::ustring& subdir, const Glib::ustring& fext) const;
@@ -148,7 +147,7 @@ public:
     }
     void            setFileName (const Glib::ustring fn);
 
-    bool            isSupported ();
+    bool            isSupported () const;
 
     const CacheImageData* getCacheImageData()
     {

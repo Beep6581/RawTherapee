@@ -35,7 +35,7 @@ using namespace rtengine::procparams;
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf)
     : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL),
-      pparamsValid(false), needsReProcessing(true), imageLoading(false), lastImg(NULL),
+      pparamsValid(false), imageLoading(false), lastImg(NULL),
       lastW(0), lastH(0), lastScale(0), initial_(false)
 {
 
@@ -63,7 +63,7 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
     : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL), pparamsValid(false),
-      needsReProcessing(true), imageLoading(false), lastImg(NULL),
+      imageLoading(false), lastImg(NULL),
       initial_(true)
 {
 
@@ -151,7 +151,6 @@ void Thumbnail::_generateThumbnailImage ()
         tpp->getAutoWBMultipliers(cfs.redAWBMul, cfs.greenAWBMul, cfs.blueAWBMul);
         _saveThumbnail ();
         cfs.supported = true;
-        needsReProcessing = true;
 
         cfs.save (getCacheFileName ("data", ".txt"));
 
@@ -159,7 +158,7 @@ void Thumbnail::_generateThumbnailImage ()
     }
 }
 
-bool Thumbnail::isSupported ()
+bool Thumbnail::isSupported () const
 {
     return cfs.supported;
 }
@@ -342,7 +341,6 @@ void Thumbnail::clearProcParams (int whoClearedIt)
 
         cfs.recentlySaved = false;
         pparamsValid = false;
-        needsReProcessing = true;
 
         //TODO: run though customprofilebuilder?
         // probably not as this is the only option to set param values to default
@@ -423,7 +421,6 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
         }
 
         pparamsValid = true;
-        needsReProcessing = true;
 
         setRank(rank);
         setColorLabel(colorlabel);
@@ -599,6 +596,10 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
 
     _generateThumbnailImage();
 
+    if (cfs.supported) {
+        _loadThumbnail ();
+    }
+
     if ( tpp == 0 ) {
         return 0;
     }
@@ -753,10 +754,8 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataL
  *  - embedded profile (full thumbnail only)
  *  - LiveThumbData section of the data file
  */
-void Thumbnail::_loadThumbnail(bool firstTrial)
+void Thumbnail::_loadThumbnail()
 {
-
-    needsReProcessing = true;
     tw = -1;
     th = options.maxThumbnailHeight;
     delete tpp;
@@ -773,17 +772,7 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
     // thumbnail image
     succ = succ && tpp->readImage (getCacheFileName ("images", ".tif"));
 
-    if (!succ && firstTrial) {
-        _generateThumbnailImage ();
-
-        if (cfs.supported && firstTrial) {
-            _loadThumbnail (false);
-        }
-
-        if (tpp == NULL) {
-            return;
-        }
-    } else if (!succ) {
+    if (!succ) {
         delete tpp;
         tpp = NULL;
         return;
@@ -812,10 +801,10 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
  *  - embedded profile (full thumbnail only)
  *  - LiveThumbData section of the data file
  */
-void Thumbnail::loadThumbnail (bool firstTrial)
+void Thumbnail::loadThumbnail ()
 {
     MyMutex::MyLock lock(mutex);
-    _loadThumbnail(firstTrial);
+    _loadThumbnail();
 }
 
 /*
@@ -828,7 +817,6 @@ void Thumbnail::loadThumbnail (bool firstTrial)
  */
 void Thumbnail::_saveThumbnail ()
 {
-
     if (!tpp) {
         return;
     }
