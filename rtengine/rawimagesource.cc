@@ -37,7 +37,7 @@
 #include <omp.h>
 #endif
 #include "opthelper.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 #undef CLIPD
@@ -4346,9 +4346,7 @@ BENCHFUN
         #pragma omp critical
 #endif
         {
-            for(int i = 0; i < (65536 >> histcompr); i++) {
-                histogram[i] += tmphistogram[i];
-            }
+            histogram += tmphistogram;
         }
     }
 }
@@ -4356,7 +4354,7 @@ BENCHFUN
 // Histogram MUST be 256 in size; gamma is applied, blackpoint and gain also
 void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw)
 {
-
+BENCHFUN
     histRedRaw.clear();
     histGreenRaw.clear();
     histBlueRaw.clear();
@@ -4365,6 +4363,22 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
                             65535.0f / ri->get_white(2),
                             65535.0f / ri->get_white(3)
                           };
+
+    const bool twoGreens = ri->getSensorType() == ST_BAYER && (mult[1] != mult[3] || cblacksom[1] != cblacksom[3]);
+
+    LUTu hist[4];
+    hist[0](65536);
+    hist[0].clear();
+    if (ri->get_colors() > 1) {
+        hist[1](65536);
+        hist[1].clear();
+        hist[2](65536);
+        hist[2].clear();
+    }
+    if (twoGreens) {
+        hist[3](65536);
+        hist[3].clear();
+    }
 
 #ifdef _OPENMP
     int numThreads;
@@ -4379,13 +4393,16 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
         LUTu tmphist[4];
         tmphist[0](65536);
         tmphist[0].clear();
-        tmphist[1](65536);
-        tmphist[1].clear();
-        tmphist[2](65536);
-        tmphist[2].clear();
-        tmphist[3](65536);
-        tmphist[3].clear();
-
+        if (ri->get_colors() > 1) {
+            tmphist[1](65536);
+            tmphist[1].clear();
+            tmphist[2](65536);
+            tmphist[2].clear();
+            if (twoGreens) {
+                tmphist[3](65536);
+                tmphist[3].clear();
+            }
+        }
 #ifdef _OPENMP
         #pragma omp for nowait
 #endif
@@ -4397,9 +4414,9 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
             if (ri->getSensorType() == ST_BAYER) {
                 int j;
                 int c1 = FC(i, start);
-                c1 = ( c1 == 1 && !(i & 1) ) ? 3 : c1;
+                c1 = ( twoGreens && c1 == 1 && !(i & 1) ) ? 3 : c1;
                 int c2 = FC(i, start + 1);
-                c2 = ( c2 == 1 && !(i & 1) ) ? 3 : c2;
+                c2 = ( twoGreens && c2 == 1 && !(i & 1) ) ? 3 : c2;
 
                 for (j = start; j < end - 1; j += 2) {
                     tmphist[c1][(int)ri->data[i][j]]++;
@@ -4411,9 +4428,7 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
                 }
             } else if (ri->get_colors() == 1) {
                 for (int j = start; j < end; j++) {
-                    for (int c = 0; c < 3; c++) {
-                        tmphist[c][(int)ri->data[i][j]]++;
-                    }
+                    tmphist[0][(int)ri->data[i][j]]++;
                 }
             } else if(ri->getSensorType() == ST_FUJI_XTRANS) {
                 for (int j = start; j < end - 1; j += 2) {
@@ -4433,20 +4448,32 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
         #pragma omp critical
 #endif
         {
-            for(int i = 0; i < 65536; i++) {
-                int idx;
-                idx = CLIP((int)Color::gamma(mult[0] * (i - (cblacksom[0]/*+black_lev[0]*/))));
-                histRedRaw[idx >> 8] += tmphist[0][i];
-                idx = CLIP((int)Color::gamma(mult[1] * (i - (cblacksom[1]/*+black_lev[1]*/))));
-                histGreenRaw[idx >> 8] += tmphist[1][i];
-                idx = CLIP((int)Color::gamma(mult[3] * (i - (cblacksom[3]/*+black_lev[3]*/))));
-                histGreenRaw[idx >> 8] += tmphist[3][i];
-                idx = CLIP((int)Color::gamma(mult[2] * (i - (cblacksom[2]/*+black_lev[2]*/))));
-                histBlueRaw[idx >> 8] += tmphist[2][i];
+            hist[0] += tmphist[0];
+            if (ri->get_colors() > 1) {
+                hist[1] += tmphist[1];
+                hist[2] += tmphist[2];
+                if (twoGreens) {
+                    hist[3] += tmphist[3];
+                }
             }
         } // end of critical region
     } // end of parallel region
 
+    for(int i = 0; i < 65536; i++) {
+        int idx;
+        idx = CLIP((int)Color::gamma(mult[0] * (i - (cblacksom[0]/*+black_lev[0]*/))));
+        histRedRaw[idx >> 8] += hist[0][i];
+        if (ri->get_colors() > 1) {
+            idx = CLIP((int)Color::gamma(mult[1] * (i - (cblacksom[1]/*+black_lev[1]*/))));
+            histGreenRaw[idx >> 8] += hist[1][i];
+            if (twoGreens) {
+                idx = CLIP((int)Color::gamma(mult[3] * (i - (cblacksom[3]/*+black_lev[3]*/))));
+                histGreenRaw[idx >> 8] += hist[3][i];
+            }
+            idx = CLIP((int)Color::gamma(mult[2] * (i - (cblacksom[2]/*+black_lev[2]*/))));
+            histBlueRaw[idx >> 8] += hist[2][i];
+        }
+    }
 
     if (ri->getSensorType() == ST_BAYER)    // since there are twice as many greens, correct for it
         for (int i = 0; i < 256; i++) {
@@ -4456,7 +4483,10 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
         for (int i = 0; i < 256; i++) {
             histGreenRaw[i] = (histGreenRaw[i] * 2) / 5;
         }
-
+    else if(ri->get_colors() == 1) { // monochrome sensor => set all histograms equal
+        histGreenRaw += histRedRaw;
+        histBlueRaw += histRedRaw;
+    }
 
 }
 
