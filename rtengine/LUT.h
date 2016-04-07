@@ -257,6 +257,17 @@ public:
 
         return *this;
     }
+
+    // handy to sum up per thread histograms
+    LUT<T> & operator+=(LUT<T> &rhs)
+    {
+        if (rhs.size == this->size) {
+            for(unsigned int i = 0; i < this->size; i++) {
+                data[i] += rhs.data[i];
+            }
+        }
+    }
+
     // use with integer indices
     T& operator[](int index) const
     {

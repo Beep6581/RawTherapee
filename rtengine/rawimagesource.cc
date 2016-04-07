@@ -37,6 +37,8 @@
 #include <omp.h>
 #endif
 #include "opthelper.h"
+//#define BENCHMARK
+#include "StopWatch.h"
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
@@ -4298,11 +4300,12 @@ void RawImageSource::hlRecovery (std::string method, float* red, float* green, f
 
 void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
 {
-
+BENCHFUN
     histcompr = 3;
 
     histogram(65536 >> histcompr);
     histogram.clear();
+    const float refwb[3] = {static_cast<float>(refwb_red),static_cast<float>(refwb_green),static_cast<float>(refwb_blue)};
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -4320,27 +4323,15 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
 
             if (ri->getSensorType() == ST_BAYER) {
                 for (int j = start; j < end; j++) {
-                    if (ri->ISGREEN(i, j)) {
-                        tmphistogram[CLIP((int)(refwb_green * rawData[i][j])) >> histcompr] += 4;
-                    } else if (ri->ISRED(i, j)) {
-                        tmphistogram[CLIP((int)(refwb_red *  rawData[i][j])) >> histcompr] += 4;
-                    } else if (ri->ISBLUE(i, j)) {
-                        tmphistogram[CLIP((int)(refwb_blue * rawData[i][j])) >> histcompr] += 4;
-                    }
+                    tmphistogram[(int)(refwb[ri->FC(i,j)] * rawData[i][j]) >> histcompr] += 4;
                 }
             } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
                 for (int j = start; j < end; j++) {
-                    if (ri->ISXTRANSGREEN(i, j)) {
-                        tmphistogram[CLIP((int)(refwb_green * rawData[i][j])) >> histcompr] += 4;
-                    } else if (ri->ISXTRANSRED(i, j)) {
-                        tmphistogram[CLIP((int)(refwb_red *  rawData[i][j])) >> histcompr] += 4;
-                    } else if (ri->ISXTRANSBLUE(i, j)) {
-                        tmphistogram[CLIP((int)(refwb_blue * rawData[i][j])) >> histcompr] += 4;
-                    }
+                    tmphistogram[(int)(refwb[ri->XTRANSFC(i,j)] * rawData[i][j]) >> histcompr] += 4;
                 }
             } else if (ri->get_colors() == 1) {
                 for (int j = start; j < end; j++) {
-                    tmphistogram[CLIP((int)(refwb_red *  rawData[i][j])) >> histcompr]++;
+                    tmphistogram[(int)(refwb_red *  rawData[i][j]) >> histcompr]++;
                 }
             } else {
                 for (int j = start; j < end; j++) {
@@ -4355,9 +4346,7 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
         #pragma omp critical
 #endif
         {
-            for(int i = 0; i < (65536 >> histcompr); i++) {
-                histogram[i] += tmphistogram[i];
-            }
+            histogram += tmphistogram;
         }
     }
 }
@@ -4365,7 +4354,7 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
 // Histogram MUST be 256 in size; gamma is applied, blackpoint and gain also
 void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw)
 {
-
+BENCHFUN
     histRedRaw.clear();
     histGreenRaw.clear();
     histBlueRaw.clear();
@@ -4374,6 +4363,22 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
                             65535.0f / ri->get_white(2),
                             65535.0f / ri->get_white(3)
                           };
+
+    const bool twoGreens = ri->getSensorType() == ST_BAYER && (mult[1] != mult[3] || cblacksom[1] != cblacksom[3]);
+
+    LUTu hist[4];
+    hist[0](65536);
+    hist[0].clear();
+    if (ri->get_colors() > 1) {
+        hist[1](65536);
+        hist[1].clear();
+        hist[2](65536);
+        hist[2].clear();
+    }
+    if (twoGreens) {
+        hist[3](65536);
+        hist[3].clear();
+    }
 
 #ifdef _OPENMP
     int numThreads;
@@ -4388,13 +4393,16 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
         LUTu tmphist[4];
         tmphist[0](65536);
         tmphist[0].clear();
-        tmphist[1](65536);
-        tmphist[1].clear();
-        tmphist[2](65536);
-        tmphist[2].clear();
-        tmphist[3](65536);
-        tmphist[3].clear();
-
+        if (ri->get_colors() > 1) {
+            tmphist[1](65536);
+            tmphist[1].clear();
+            tmphist[2](65536);
+            tmphist[2].clear();
+            if (twoGreens) {
+                tmphist[3](65536);
+                tmphist[3].clear();
+            }
+        }
 #ifdef _OPENMP
         #pragma omp for nowait
 #endif
@@ -4406,9 +4414,9 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
             if (ri->getSensorType() == ST_BAYER) {
                 int j;
                 int c1 = FC(i, start);
-                c1 = ( c1 == 1 && !(i & 1) ) ? 3 : c1;
+                c1 = ( twoGreens && c1 == 1 && !(i & 1) ) ? 3 : c1;
                 int c2 = FC(i, start + 1);
-                c2 = ( c2 == 1 && !(i & 1) ) ? 3 : c2;
+                c2 = ( twoGreens && c2 == 1 && !(i & 1) ) ? 3 : c2;
 
                 for (j = start; j < end - 1; j += 2) {
                     tmphist[c1][(int)ri->data[i][j]]++;
@@ -4420,9 +4428,7 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
                 }
             } else if (ri->get_colors() == 1) {
                 for (int j = start; j < end; j++) {
-                    for (int c = 0; c < 3; c++) {
-                        tmphist[c][(int)ri->data[i][j]]++;
-                    }
+                    tmphist[0][(int)ri->data[i][j]]++;
                 }
             } else if(ri->getSensorType() == ST_FUJI_XTRANS) {
                 for (int j = start; j < end - 1; j += 2) {
@@ -4442,20 +4448,32 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
         #pragma omp critical
 #endif
         {
-            for(int i = 0; i < 65536; i++) {
-                int idx;
-                idx = CLIP((int)Color::gamma(mult[0] * (i - (cblacksom[0]/*+black_lev[0]*/))));
-                histRedRaw[idx >> 8] += tmphist[0][i];
-                idx = CLIP((int)Color::gamma(mult[1] * (i - (cblacksom[1]/*+black_lev[1]*/))));
-                histGreenRaw[idx >> 8] += tmphist[1][i];
-                idx = CLIP((int)Color::gamma(mult[3] * (i - (cblacksom[3]/*+black_lev[3]*/))));
-                histGreenRaw[idx >> 8] += tmphist[3][i];
-                idx = CLIP((int)Color::gamma(mult[2] * (i - (cblacksom[2]/*+black_lev[2]*/))));
-                histBlueRaw[idx >> 8] += tmphist[2][i];
+            hist[0] += tmphist[0];
+            if (ri->get_colors() > 1) {
+                hist[1] += tmphist[1];
+                hist[2] += tmphist[2];
+                if (twoGreens) {
+                    hist[3] += tmphist[3];
+                }
             }
         } // end of critical region
     } // end of parallel region
 
+    for(int i = 0; i < 65536; i++) {
+        int idx;
+        idx = CLIP((int)Color::gamma(mult[0] * (i - (cblacksom[0]/*+black_lev[0]*/))));
+        histRedRaw[idx >> 8] += hist[0][i];
+        if (ri->get_colors() > 1) {
+            idx = CLIP((int)Color::gamma(mult[1] * (i - (cblacksom[1]/*+black_lev[1]*/))));
+            histGreenRaw[idx >> 8] += hist[1][i];
+            if (twoGreens) {
+                idx = CLIP((int)Color::gamma(mult[3] * (i - (cblacksom[3]/*+black_lev[3]*/))));
+                histGreenRaw[idx >> 8] += hist[3][i];
+            }
+            idx = CLIP((int)Color::gamma(mult[2] * (i - (cblacksom[2]/*+black_lev[2]*/))));
+            histBlueRaw[idx >> 8] += hist[2][i];
+        }
+    }
 
     if (ri->getSensorType() == ST_BAYER)    // since there are twice as many greens, correct for it
         for (int i = 0; i < 256; i++) {
@@ -4465,7 +4483,10 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
         for (int i = 0; i < 256; i++) {
             histGreenRaw[i] = (histGreenRaw[i] * 2) / 5;
         }
-
+    else if(ri->get_colors() == 1) { // monochrome sensor => set all histograms equal
+        histGreenRaw += histRedRaw;
+        histBlueRaw += histRedRaw;
+    }
 
 }
 
@@ -4486,7 +4507,8 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
 {
-
+    BENCHFUN
+    constexpr double clipHigh = 64000.0;
     if (ri->get_colors() == 1) {
         rm = gm = bm = 1;
         return;
@@ -4523,7 +4545,7 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
                     double dg = CLIP(initialGain * (rawData[i][3 * j + 1]));
                     double db = CLIP(initialGain * (rawData[i][3 * j + 2]));
 
-                    if (dr > 64000. || dg > 64000. || db > 64000.) {
+                    if (dr > clipHigh || dg > clipHigh || db > clipHigh) {
                         continue;
                     }
 
@@ -4535,7 +4557,7 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
                     int c = FC( i, j);
                     double d = CLIP(initialGain * (rawData[i][j]));
 
-                    if (d > 64000.) {
+                    if (d > clipHigh) {
                         continue;
                     }
 
@@ -4556,42 +4578,46 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
     } else {
         if (ri->getSensorType() != ST_BAYER) {
             if(ri->getSensorType() == ST_FUJI_XTRANS) {
-                for (int i = 32; i < H - 32; i++)
-                    for (int j = 32; j < W - 32; j++) {
-                        // each loop read 1 rgb triplet value
-                        if(ri->ISXTRANSRED(i, j)) {
-                            float dr = CLIP(initialGain * (rawData[i][j]));
+                const double compval = clipHigh / initialGain;
+#ifdef _OPENMP
+                #pragma omp parallel
+#endif
+                {
+                    double avg_c[3] = {0.0};
+                    int cn[3] = {0};
+#ifdef _OPENMP
+                    #pragma omp for schedule(dynamic,16) nowait
+#endif
+                    for (int i = 32; i < H - 32; i++) {
+                        for (int j = 32; j < W - 32; j++) {
+                            // each loop read 1 rgb triplet value
+                            double d = rawData[i][j];
 
-                            if (dr > 64000.f) {
+                            if (d > compval) {
                                 continue;
                             }
 
-                            avg_r += dr;
-                            rn ++;
-                        }
-
-                        if(ri->ISXTRANSGREEN(i, j)) {
-                            float dg = CLIP(initialGain * (rawData[i][j]));
-
-                            if (dg > 64000.f) {
-                                continue;
-                            }
-
-                            avg_g += dg;
-                            gn ++;
-                        }
-
-                        if(ri->ISXTRANSBLUE(i, j)) {
-                            float db = CLIP(initialGain * (rawData[i][j]));
-
-                            if (db > 64000.f) {
-                                continue;
-                            }
-
-                            avg_b += db;
-                            bn ++;
+                            int c = ri->XTRANSFC(i, j);
+                            avg_c[c] += d;
+                            cn[c]++;
                         }
                     }
+
+#ifdef _OPENMP
+                    #pragma omp critical
+#endif
+                    {
+                        avg_r += avg_c[0];
+                        avg_g += avg_c[1];
+                        avg_b += avg_c[2];
+                        rn += cn[0];
+                        gn += cn[1];
+                        bn += cn[2];
+                    }
+                }
+                avg_r *= initialGain;
+                avg_g *= initialGain;
+                avg_b *= initialGain;
             } else {
                 for (int i = 32; i < H - 32; i++)
                     for (int j = 32; j < W - 32; j++) {
@@ -4601,7 +4627,7 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
                         double dg = CLIP(initialGain * (rawData[i][3 * j + 1]));
                         double db = CLIP(initialGain * (rawData[i][3 * j + 2]));
 
-                        if (dr > 64000. || dg > 64000. || db > 64000.) {
+                        if (dr > clipHigh || dg > clipHigh || db > clipHigh) {
                             continue;
                         }
 
@@ -4636,36 +4662,45 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
                 }
             }
 
-            double d[2][2];
+            const double compval = clipHigh / initialGain;
+#ifdef _OPENMP
+            #pragma omp parallel for reduction(+:avg_r,avg_g,avg_b,rn,gn,bn) schedule(dynamic,8)
+#endif
 
             for (int i = 32; i < H - 32; i += 2)
                 for (int j = 32; j < W - 32; j += 2) {
                     //average each Bayer quartet component individually if non-clipped
-                    d[0][0] = CLIP(initialGain * (rawData[i][j]    ));
-                    d[0][1] = CLIP(initialGain * (rawData[i][j + 1]  ));
-                    d[1][0] = CLIP(initialGain * (rawData[i + 1][j]  ));
-                    d[1][1] = CLIP(initialGain * (rawData[i + 1][j + 1]));
+                    double d[2][2];
+                    d[0][0] = rawData[i][j];
+                    d[0][1] = rawData[i][j + 1];
+                    d[1][0] = rawData[i + 1][j];
+                    d[1][1] = rawData[i + 1][j + 1];
 
-                    if (d[ey][ex] <= 64000.) {
+                    if (d[ey][ex] <= compval) {
                         avg_r += d[ey][ex];
                         rn++;
                     }
 
-                    if (d[1 - ey][ex] <= 64000.) {
+                    if (d[1 - ey][ex] <= compval) {
                         avg_g += d[1 - ey][ex];
                         gn++;
                     }
 
-                    if (d[ey][1 - ex] <= 64000.) {
+                    if (d[ey][1 - ex] <= compval) {
                         avg_g += d[ey][1 - ex];
                         gn++;
                     }
 
-                    if (d[1 - ey][1 - ex] <= 64000.) {
+                    if (d[1 - ey][1 - ex] <= compval) {
                         avg_b += d[1 - ey][1 - ex];
                         bn++;
                     }
                 }
+
+            avg_r *= initialGain;
+            avg_g *= initialGain;
+            avg_b *= initialGain;
+
         }
     }
 
