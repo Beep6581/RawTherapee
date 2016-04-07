@@ -98,6 +98,10 @@ public:
         return "unknown";
     }
 
+    virtual bool isBW () const
+    {
+        return false;
+    }
 };
 
 template <>
