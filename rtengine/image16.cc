@@ -291,27 +291,19 @@ Image16::isBW() const
         return false;
     }
 
+    for (int w = 0, h = height / 2; w < width; ++w) {
+        if (r(h, w) != g(h, w) || r(h, w) != b(h, w)) {
+            return false;
+        }
+    }
+
     bool res = true;
-
-    for ( int w = 0, h = height / 2; res && w < width; ++w ) {
-        res =
-            res
-            && (
-                r(h, w) == g(h, w)
-                || r(h, w) == b(h, w)
-            );
-    }
-
-    if (!res) {
-        return false;
-    }
 
 #ifdef _OPENMP
     #pragma omp parallel for reduction(&&:res)
 #endif
-
-    for ( int h = 0; h < height; ++h ) {
-        for ( int w = 0; w < width; ++w ) {
+    for (int h = 0; h < height; ++h) {
+        for (int w = 0; w < width; ++w) {
             res =
                 res
                 && (

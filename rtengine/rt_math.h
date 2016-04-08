@@ -2,6 +2,7 @@
 #define _MYMATH_
 #include <cmath>
 #include <algorithm>
+#include <type_traits>
 
 
 namespace rtengine
@@ -101,10 +102,22 @@ T norm2(const T& x, const T& y)
     return std::sqrt(x * x + y * y);
 }
 
-template< typename T >
+template<typename T>
 T norminf(const T& x, const T& y)
 {
     return std::max(std::abs(x), std::abs(y));
+}
+
+template<
+    typename T,
+    typename = typename std::enable_if<std::is_integral<T>::value>::type,
+    typename = typename std::enable_if<std::is_unsigned<T>::value>::type
+>
+T adds(T a, T b)
+{
+    T res = a + b;
+    res |= -(res < a);
+    return res;
 }
 
 }

@@ -23,6 +23,7 @@
 #include <tiffio.h>
 #include <cstdio>
 #include <cstring>
+#include <cstdint>
 #include <memory>
 #include <fcntl.h>
 #include <libiptcdata/iptc-jpeg.h>
@@ -85,18 +86,11 @@ Glib::ustring to_utf8 (const std::string& str)
     }
 }
 
-unsigned short addSat (unsigned short a, unsigned short b)
-{
-    unsigned short res = a + b;
-    res |= -(res < a);
-    return res;
-}
-
-void scanlineToPseudoGrey (const unsigned short *in16, unsigned char *out8, unsigned long width)
+void scanlineToPseudoGrey (const std::uint16_t *in16, unsigned char *out8, unsigned long width)
 {
     // For details see http://r0k.us/graphics/PseudoGreyPlus.html
 
-    static const unsigned short plusses[16][3] = {
+    static const std::uint16_t plusses[16][3] = {
         {0 << 8, 0 << 8, 0 << 8},
         {0 << 8, 0 << 8, 1 << 8},
         {0 << 8, 0 << 8, 2 << 8},
@@ -116,9 +110,9 @@ void scanlineToPseudoGrey (const unsigned short *in16, unsigned char *out8, unsi
     };
 
     for (unsigned long x = 0; x < width * 3; x += 3) {
-        out8[x + 0] = addSat(in16[x + 0], plusses[in16[x + 0] >> 4 & 0x0F][0]) >> 8;
-        out8[x + 1] = addSat(in16[x + 1], plusses[in16[x + 1] >> 4 & 0x0F][1]) >> 8;
-        out8[x + 2] = addSat(in16[x + 2], plusses[in16[x + 2] >> 4 & 0x0F][2]) >> 8;
+        out8[x + 0] = adds(in16[x + 0], plusses[in16[x + 0] >> 4 & 0x0F][0]) >> 8;
+        out8[x + 1] = adds(in16[x + 1], plusses[in16[x + 1] >> 4 & 0x0F][1]) >> 8;
+        out8[x + 2] = adds(in16[x + 2], plusses[in16[x + 2] >> 4 & 0x0F][2]) >> 8;
     }
 }
 
@@ -954,7 +948,7 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
     return IMIO_SUCCESS;
 }
 
-int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
+int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps)
 {
 
     FILE *file = g_fopen_withBinaryAndLock (fname);
@@ -1008,9 +1002,9 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
 
     const bool do_pseudogrey = bps == 8 && isBW();
 
-    const std::unique_ptr<unsigned short[]> row16(
+    const std::unique_ptr<std::uint16_t[]> row16(
         do_pseudogrey
-            ? new unsigned short[width * 3]
+            ? new std::uint16_t[width * 3]
             : nullptr
     );
 
@@ -1199,9 +1193,9 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
 
     const bool do_pseudogrey = isBW();
 
-    const std::unique_ptr<unsigned short[]> row16(
+    const std::unique_ptr<std::uint16_t[]> row16(
         do_pseudogrey
-            ? new unsigned short[width * 3]
+            ? new std::uint16_t[width * 3]
             : nullptr
     );
 
@@ -1277,9 +1271,9 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 
     const bool do_pseudogrey = bps == 8 && isBW();
 
-    const std::unique_ptr<unsigned short[]> row16(
+    const std::unique_ptr<std::uint16_t[]> row16(
         do_pseudogrey
-            ? new unsigned short[width * 3]
+            ? new std::uint16_t[width * 3]
             : nullptr
     );
 
