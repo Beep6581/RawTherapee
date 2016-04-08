@@ -266,6 +266,7 @@ public:
                 data[i] += rhs.data[i];
             }
         }
+        return *this;
     }
 
     // use with integer indices
