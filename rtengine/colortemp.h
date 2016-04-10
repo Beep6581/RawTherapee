@@ -30,7 +30,7 @@ namespace rtengine
 #define MINTEMP 1500
 #define MAXTEMP 60000
 #define MINGREEN 0.02
-#define MAXGREEN 5.0
+#define MAXGREEN 10.0
 #define MINEQUAL 0.8
 #define MAXEQUAL 1.5
 
