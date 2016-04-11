@@ -4364,7 +4364,7 @@ BENCHFUN
                             65535.0f / ri->get_white(3)
                           };
 
-    const bool twoGreens = ri->getSensorType() == ST_BAYER && (mult[1] != mult[3] || cblacksom[1] != cblacksom[3]);
+    const bool fourColours = ri->getSensorType() == ST_BAYER && ((mult[1] != mult[3] || cblacksom[1] != cblacksom[3]) || FC(0,0) == 3 || FC(0,1) == 3 || FC(1,0) == 3 || FC(1,1) == 3);
 
     LUTu hist[4];
     hist[0](65536);
@@ -4375,7 +4375,7 @@ BENCHFUN
         hist[2](65536);
         hist[2].clear();
     }
-    if (twoGreens) {
+    if (fourColours) {
         hist[3](65536);
         hist[3].clear();
     }
@@ -4398,7 +4398,7 @@ BENCHFUN
             tmphist[1].clear();
             tmphist[2](65536);
             tmphist[2].clear();
-            if (twoGreens) {
+            if (fourColours) {
                 tmphist[3](65536);
                 tmphist[3].clear();
             }
@@ -4414,9 +4414,9 @@ BENCHFUN
             if (ri->getSensorType() == ST_BAYER) {
                 int j;
                 int c1 = FC(i, start);
-                c1 = ( twoGreens && c1 == 1 && !(i & 1) ) ? 3 : c1;
+                c1 = ( fourColours && c1 == 1 && !(i & 1) ) ? 3 : c1;
                 int c2 = FC(i, start + 1);
-                c2 = ( twoGreens && c2 == 1 && !(i & 1) ) ? 3 : c2;
+                c2 = ( fourColours && c2 == 1 && !(i & 1) ) ? 3 : c2;
 
                 for (j = start; j < end - 1; j += 2) {
                     tmphist[c1][(int)ri->data[i][j]]++;
@@ -4452,7 +4452,7 @@ BENCHFUN
             if (ri->get_colors() > 1) {
                 hist[1] += tmphist[1];
                 hist[2] += tmphist[2];
-                if (twoGreens) {
+                if (fourColours) {
                     hist[3] += tmphist[3];
                 }
             }
@@ -4466,7 +4466,7 @@ BENCHFUN
         if (ri->get_colors() > 1) {
             idx = CLIP((int)Color::gamma(mult[1] * (i - (cblacksom[1]/*+black_lev[1]*/))));
             histGreenRaw[idx >> 8] += hist[1][i];
-            if (twoGreens) {
+            if (fourColours) {
                 idx = CLIP((int)Color::gamma(mult[3] * (i - (cblacksom[3]/*+black_lev[3]*/))));
                 histGreenRaw[idx >> 8] += hist[3][i];
             }
