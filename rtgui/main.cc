@@ -310,6 +310,10 @@ int main(int argc, char **argv)
         Gtk::Settings::get_for_screen(screen)->property_gtk_application_prefer_dark_theme() = true;
 
         Glib::ustring filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
+        if (!Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
+            options.theme = "RawTherapee";
+            filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
+        }
         cssRT = Gtk::CssProvider::create();
 
         try {
