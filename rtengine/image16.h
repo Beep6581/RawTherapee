@@ -51,6 +51,9 @@ public:
     {
         return sImage16;
     }
+
+    virtual bool         isBW        () const;
+
     virtual int          getBPS      ()
     {
         return 8 * sizeof(unsigned short);

@@ -284,6 +284,38 @@ void Image16::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, Preview
 #undef GCLIP
 }
 
+bool
+Image16::isBW() const
+{
+    if (!height || !width) {
+        return false;
+    }
+
+    for (int w = 0, h = height / 2; w < width; ++w) {
+        if (r(h, w) != g(h, w) || r(h, w) != b(h, w)) {
+            return false;
+        }
+    }
+
+    bool res = true;
+
+#ifdef _OPENMP
+    #pragma omp parallel for reduction(&&:res)
+#endif
+    for (int h = 0; h < height; ++h) {
+        for (int w = 0; w < width; ++w) {
+            res =
+                res
+                && (
+                    r(h, w) == g(h, w)
+                    || r(h, w) == b(h, w)
+                );
+        }
+    }
+
+    return res;
+}
+
 Image8*
 Image16::to8()
 {

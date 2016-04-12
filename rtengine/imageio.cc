@@ -23,6 +23,8 @@
 #include <tiffio.h>
 #include <cstdio>
 #include <cstring>
+#include <cstdint>
+#include <memory>
 #include <fcntl.h>
 #include <libiptcdata/iptc-jpeg.h>
 #include "rt_math.h"
@@ -61,6 +63,7 @@ FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
     std::unique_ptr<wchar_t, GFreeFunc> wfname (reinterpret_cast<wchar_t*>(g_utf8_to_utf16 (fname.c_str (), -1, NULL, NULL, NULL)), g_free);
 
     HANDLE hFile = CreateFileW ( wfname.get (), GENERIC_READ | GENERIC_WRITE, 0 /* no sharing allowed */, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
     if (hFile != INVALID_HANDLE_VALUE) {
         f = _fdopen (_open_osfhandle ((intptr_t)hFile, 0), "wb");
     }
@@ -80,6 +83,36 @@ Glib::ustring to_utf8 (const std::string& str)
         return Glib::locale_to_utf8 (str);
     } catch (Glib::Error&) {
         return Glib::convert_with_fallback (str, "UTF-8", "ISO-8859-1", "?");
+    }
+}
+
+void scanlineToPseudoGrey (const std::uint16_t *in16, unsigned char *out8, unsigned long width)
+{
+    // For details see http://r0k.us/graphics/PseudoGreyPlus.html
+
+    static const std::uint16_t plusses[16][3] = {
+        {0 << 8, 0 << 8, 0 << 8},
+        {0 << 8, 0 << 8, 1 << 8},
+        {0 << 8, 0 << 8, 2 << 8},
+        {1 << 8, 0 << 8, 0 << 8},
+        {1 << 8, 0 << 8, 1 << 8},
+        {1 << 8, 0 << 8, 1 << 8},
+        {1 << 8, 0 << 8, 2 << 8},
+        {2 << 8, 0 << 8, 0 << 8},
+        {2 << 8, 0 << 8, 1 << 8},
+        {2 << 8, 0 << 8, 2 << 8},
+        {2 << 8, 0 << 8, 2 << 8},
+        {0 << 8, 1 << 8, 0 << 8},
+        {0 << 8, 1 << 8, 1 << 8},
+        {0 << 8, 1 << 8, 2 << 8},
+        {0 << 8, 1 << 8, 2 << 8},
+        {1 << 8, 1 << 8, 0 << 8}
+    };
+
+    for (unsigned long x = 0; x < width * 3; x += 3) {
+        out8[x + 0] = adds(in16[x + 0], plusses[in16[x + 0] >> 4 & 0x0F][0]) >> 8;
+        out8[x + 1] = adds(in16[x + 1], plusses[in16[x + 1] >> 4 & 0x0F][1]) >> 8;
+        out8[x + 2] = adds(in16[x + 2], plusses[in16[x + 2] >> 4 & 0x0F][2]) >> 8;
     }
 }
 
@@ -915,7 +948,7 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
     return IMIO_SUCCESS;
 }
 
-int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
+int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps)
 {
 
     FILE *file = g_fopen_withBinaryAndLock (fname);
@@ -964,14 +997,26 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
     png_set_IHDR(png, info, width, height, bps, PNG_COLOR_TYPE_RGB,
                  PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_BASE);
 
-
     int rowlen = width * 3 * bps / 8;
     unsigned char *row = new unsigned char [rowlen];
+
+    const bool do_pseudogrey = bps == 8 && isBW();
+
+    const std::unique_ptr<std::uint16_t[]> row16(
+        do_pseudogrey
+            ? new std::uint16_t[width * 3]
+            : nullptr
+    );
 
     png_write_info(png, info);
 
     for (int i = 0; i < height; i++) {
-        getScanline (i, row, bps);
+        if (do_pseudogrey) {
+            getScanline (i, reinterpret_cast<unsigned char*>(row16.get()), 16);
+            scanlineToPseudoGrey (row16.get(), row, width);
+        } else {
+            getScanline (i, row, bps);
+        }
 
         if (bps == 16) {
             // convert to network byte order
@@ -1146,6 +1191,14 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
     int rowlen = width * 3;
     unsigned char *row = new unsigned char [rowlen];
 
+    const bool do_pseudogrey = isBW();
+
+    const std::unique_ptr<std::uint16_t[]> row16(
+        do_pseudogrey
+            ? new std::uint16_t[width * 3]
+            : nullptr
+    );
+
     /* To avoid memory leaks we establish a new setjmp return context for my_error_exit to use. */
 #if defined( WIN32 ) && defined( __x86_64__ )
 
@@ -1166,7 +1219,12 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
 
     while (cinfo.next_scanline < cinfo.image_height) {
 
-        getScanline (cinfo.next_scanline, row, 8);
+        if (do_pseudogrey) {
+            getScanline (cinfo.next_scanline, reinterpret_cast<unsigned char*>(row16.get()), 16);
+            scanlineToPseudoGrey (row16.get(), row, width);
+        } else {
+            getScanline (cinfo.next_scanline, row, 8);
+        }
 
         if (jpeg_write_scanlines (&cinfo, &row, 1) < 1) {
             jpeg_destroy_compress (&cinfo);
@@ -1211,6 +1269,14 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
     int lineWidth = width * 3 * bps / 8;
     unsigned char* linebuffer = new unsigned char[lineWidth];
 
+    const bool do_pseudogrey = bps == 8 && isBW();
+
+    const std::unique_ptr<std::uint16_t[]> row16(
+        do_pseudogrey
+            ? new std::uint16_t[width * 3]
+            : nullptr
+    );
+
 // TODO the following needs to be looked into - do we really need two ways to write a Tiff file ?
     if (exifRoot && uncompressed) {
         FILE *file = g_fopen_withBinaryAndLock (fname);
@@ -1227,9 +1293,11 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 
         // buffer for the exif and iptc
         int bufferSize = 165535;   //TODO: Is it really 165535... or 65535 ?
-        if(profileData)
+
+        if(profileData) {
             bufferSize += profileLength;
-        
+        }
+
         unsigned char* buffer = new unsigned char[bufferSize];
         unsigned char* iptcdata = NULL;
         unsigned int iptclen = 0;
@@ -1258,7 +1326,12 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 #endif
 
         for (int i = 0; i < height; i++) {
-            getScanline (i, linebuffer, bps);
+            if (do_pseudogrey) {
+                getScanline (i, reinterpret_cast<unsigned char*>(row16.get()), 16);
+                scanlineToPseudoGrey (row16.get(), linebuffer, width);
+            } else {
+                getScanline (i, linebuffer, bps);
+            }
 
             if (needsReverse)
                 for (int i = 0; i < lineWidth; i += 2) {
@@ -1370,7 +1443,12 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
         }
 
         for (int row = 0; row < height; row++) {
-            getScanline (row, linebuffer, bps);
+            if (do_pseudogrey) {
+                getScanline (row, reinterpret_cast<unsigned char*>(row16.get()), 16);
+                scanlineToPseudoGrey (row16.get(), linebuffer, width);
+            } else {
+                getScanline (row, linebuffer, bps);
+            }
 
             if (TIFFWriteScanline (out, linebuffer, row, 0) < 0) {
                 TIFFClose (out);

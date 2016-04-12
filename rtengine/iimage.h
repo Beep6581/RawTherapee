@@ -67,37 +67,30 @@ public:
     // parameters that will never be used, replaced by the subclasses r, g and b parameters!
     // they are still necessary to implement operator() in this parent class
     virtual ~ImageDatas() {}
-    virtual void allocate (int W, int H) {}
-    virtual void rotate (int deg) {}
+    virtual void allocate (int W, int H);
+    virtual void rotate (int deg);
     // free the memory allocated for the image data without deleting the object.
-    virtual void flushData ()
-    {
-        allocate(0, 0);
-    }
+    virtual void flushData ();
 
-    virtual void hflip () {}
-    virtual void vflip () {}
+    virtual void hflip ();
+    virtual void vflip ();
 
     // Read the raw dump of the data
-    void readData  (FILE *fh) {}
+    void readData  (FILE *fh);
     // Write a raw dump of the data
-    void writeData (FILE *fh) {}
+    void writeData (FILE *fh);
 
-    virtual void normalizeInt (int srcMinVal, int srcMaxVal) {};
-    virtual void normalizeFloat (float srcMinVal, float srcMaxVal) {};
-    virtual void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, int compression) {}
+    virtual void normalizeInt (int srcMinVal, int srcMaxVal);
+    virtual void normalizeFloat (float srcMinVal, float srcMaxVal);
+    virtual void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, int compression);
     virtual void getSpotWBData (double &reds, double &greens, double &blues, int &rn, int &gn, int &bn,
                                 std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue,
-                                int tran) {}
-    virtual void getAutoWBMultipliers (double &rm, double &gm, double &bm)
-    {
-        rm = gm = bm = 1.0;
-    }
-    virtual const char* getType () const
-    {
-        return "unknown";
-    }
+                                int tran);
+    virtual void getAutoWBMultipliers (double &rm, double &gm, double &bm);
 
+    virtual const char* getType () const;
+
+    virtual bool isBW () const;
 };
 
 template <>
