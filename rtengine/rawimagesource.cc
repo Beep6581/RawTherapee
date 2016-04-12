@@ -1763,8 +1763,8 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     if (!hasFlatField && lensProf.useVign) {
         LCPProfile *pLCPProf = lcpStore->getProfile(lensProf.lcpFile);
 
-        if (pLCPProf && idata->getFocalLen() > 0.f) {
-            LCPMapper map(pLCPProf, idata->getFocalLen(), idata->getFocalLen35mm(), idata->getFocusDist(), idata->getFNumber(), true, false, W, H, coarse, -1);
+        if (pLCPProf) { // don't check focal length to allow distortion correction for lenses without chip, also pass dummy focal length 1 in case of 0
+            LCPMapper map(pLCPProf, max(idata->getFocalLen(),1.0), idata->getFocalLen35mm(), idata->getFocusDist(), idata->getFNumber(), true, false, W, H, coarse, -1);
 
 #ifdef _OPENMP
             #pragma omp parallel for
