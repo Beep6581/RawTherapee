@@ -3205,21 +3205,21 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         }
     }
 
-    ClutPtr colorLUT;
+    std::shared_ptr<CLUT> colorLUT;
     bool clutAndWorkingProfilesAreSame = false;
     TMatrix work2xyz, xyz2clut, clut2xyz, xyz2work;
 
     if ( params->filmSimulation.enabled && !params->filmSimulation.clutFilename.empty() ) {
-        colorLUT.set( clutStore.getClut( params->filmSimulation.clutFilename ) );
+        colorLUT = CLUTStore::getInstance().getClut( params->filmSimulation.clutFilename );
 
         if ( colorLUT ) {
-            clutAndWorkingProfilesAreSame = colorLUT->profile() == params->icm.working;
+            clutAndWorkingProfilesAreSame = colorLUT->getProfile() == params->icm.working;
 
             if ( !clutAndWorkingProfilesAreSame ) {
                 work2xyz = iccStore->workingSpaceMatrix( params->icm.working );
-                xyz2clut = iccStore->workingSpaceInverseMatrix( colorLUT->profile() );
+                xyz2clut = iccStore->workingSpaceInverseMatrix( colorLUT->getProfile() );
                 xyz2work = iccStore->workingSpaceInverseMatrix( params->icm.working );
-                clut2xyz = iccStore->workingSpaceMatrix( colorLUT->profile() );
+                clut2xyz = iccStore->workingSpaceMatrix( colorLUT->getProfile() );
             }
         }
     }
@@ -4337,6 +4337,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                 //Film Simulations
                 if ( colorLUT ) {
+                    MyTime start, stop;
+                    start.set();
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                             float &sourceR = rtemp[ti * TS + tj];
@@ -4375,6 +4377,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                         }
                     }
+                    stop.set();
+                    printf("Film simulation took %dus.\n", stop.etime(start));
                 }
 
 

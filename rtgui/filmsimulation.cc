@@ -72,7 +72,7 @@ void FilmSimulation::onClutSelected()
 
     if ( getEnabled() && !currentClutFilename.empty() && listener && currentClutFilename != m_oldClutFilename ) {
         Glib::ustring clutName, dummy;
-        splitClutFilename( currentClutFilename, clutName, dummy, dummy );
+        CLUT::splitClutFilename( currentClutFilename, clutName, dummy, dummy );
         listener->panelChanged( EvFilmSimulationFilename, clutName );
 
         m_oldClutFilename = currentClutFilename;
@@ -132,7 +132,7 @@ void FilmSimulation::read( const rtengine::procparams::ProcParams* pp, const Par
 
     if ( !get_inconsistent() && !pp->filmSimulation.enabled ) {
         if (options.clutCacheSize == 1) {
-            clutStore.clearCache();
+            CLUTStore::getInstance().clearCache();
         }
     }
 
@@ -279,7 +279,7 @@ int ClutComboBox::parseDir (const Glib::ustring& path)
         for (const auto& entry : entries) {
 
             Glib::ustring name, extension, profileName;
-            splitClutFilename (entry, name, extension, profileName);
+            CLUT::splitClutFilename (entry, name, extension, profileName);
 
             extension = extension.casefold ();
             if (extension.compare ("tif") != 0 && extension.compare ("png") != 0) {
