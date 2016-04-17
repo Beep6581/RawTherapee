@@ -236,7 +236,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
 
     LCPMapper *pLCPMap = NULL;
 
-    if (needsLCP() && focalLen > 0) {
+    if (needsLCP()) { // don't check focal length to allow distortion correction for lenses without chip
         LCPProfile *pLCPProf = lcpStore->getProfile(params->lensProf.lcpFile);
 
         if (pLCPProf) pLCPMap = new LCPMapper(pLCPProf, focalLen, focalLen35mm, focusDist, 0, false, params->lensProf.useDist,

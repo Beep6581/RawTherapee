@@ -325,7 +325,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
     // locate first green location in the first row
     if(ri->getSensorType() == ST_BAYER)
-        while (!FISGREEN(filter, 1, firstgreen)) {
+        while (!FISGREEN(filter, 1, firstgreen) && firstgreen < 3) {
             firstgreen++;
         }
 

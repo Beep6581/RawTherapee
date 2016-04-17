@@ -1899,6 +1899,7 @@ void CropWindow::zoomFitCrop ()
         int centerX, centerY;
         centerX = cropHandler.cropParams.x + cropHandler.cropParams.w / 2;
         centerY = cropHandler.cropParams.y + cropHandler.cropParams.h / 2;
+        setCropAnchorPosition(centerX, centerY);
         changeZoom (cz, true, centerX, centerY);
         fitZoom = false;
     }
