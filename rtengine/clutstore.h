@@ -4,11 +4,12 @@
 
 #include <gtkmm.h>
 
-#include "imagefloat.h"
 #include "cache.h"
 
 namespace rtengine
 {
+
+class Image16;
 
 class CLUT
 {
@@ -50,8 +51,10 @@ public:
     void getRGB(float r, float g, float b, float& out_r, float& out_g, float& out_b) const;
 
 private:
-    std::unique_ptr<Imagefloat> clut_image;
+    std::unique_ptr<Image16> clut_image;
     unsigned int clut_level;
+    float flevel_minus_one;
+    float flevel_minus_two;
     Glib::ustring clut_filename;
     Glib::ustring clut_profile;
 };

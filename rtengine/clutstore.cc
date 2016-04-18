@@ -1,18 +1,22 @@
+#include <algorithm>
+
 #include "clutstore.h"
-#include "rt_math.h"
+
+#include "image16.h"
+#include "imagefloat.h"
 #include "stdimagesource.h"
 #include "../rtgui/options.h"
 
 namespace
 {
 
-std::unique_ptr<rtengine::Imagefloat> loadFile(
+std::unique_ptr<rtengine::Image16> loadFile(
     const Glib::ustring& filename,
     const Glib::ustring& working_color_space,
     unsigned int& clut_level
 )
 {
-    std::unique_ptr<rtengine::Imagefloat> result;
+    std::unique_ptr<rtengine::Image16> result;
 
     rtengine::StdImageSource img_src;
 
@@ -38,17 +42,19 @@ std::unique_ptr<rtengine::Imagefloat> loadFile(
 
     if (valid) {
         rtengine::ColorTemp curr_wb = img_src.getWB();
-        result = std::unique_ptr<rtengine::Imagefloat>(new rtengine::Imagefloat(fw, fh));
+        std::unique_ptr<rtengine::Imagefloat> img_float = std::unique_ptr<rtengine::Imagefloat>(new rtengine::Imagefloat(fw, fh));
         const PreviewProps pp(0, 0, fw, fh, 1);
 
         rtengine::procparams::ColorManagementParams icm;
         icm.working = working_color_space;
 
-        img_src.getImage(curr_wb, TR_NONE, result.get(), pp, rtengine::procparams::ToneCurveParams(), icm, rtengine::procparams::RAWParams());
+        img_src.getImage(curr_wb, TR_NONE, img_float.get(), pp, rtengine::procparams::ToneCurveParams(), icm, rtengine::procparams::RAWParams());
 
         if (!working_color_space.empty()) {
-            img_src.convertColorSpace(result.get(), icm, curr_wb);
+            img_src.convertColorSpace(img_float.get(), icm, curr_wb);
         }
+
+        result = std::unique_ptr<rtengine::Image16>(img_float->to16());
     }
 
     return result;
@@ -100,6 +106,8 @@ void rtengine::CLUT::splitClutFilename(
 
 rtengine::HaldCLUT::HaldCLUT() :
     clut_level(0),
+    flevel_minus_one(0.0f),
+    flevel_minus_two(0.0f),
     clut_profile("sRGB")
 {
 }
@@ -116,6 +124,9 @@ bool rtengine::HaldCLUT::load(const Glib::ustring& filename)
 
     if (clut_image) {
         clut_filename = filename;
+        clut_level *= clut_level;
+        flevel_minus_one = static_cast<float>(clut_level - 1) / 65535.0f;
+        flevel_minus_two = static_cast<float>(clut_level - 2);
         return true;
     }
 
@@ -139,10 +150,7 @@ Glib::ustring rtengine::HaldCLUT::getProfile() const
 
 void rtengine::HaldCLUT::getRGB(float r, float g, float b, float& out_r, float& out_g, float& out_b) const
 {
-    const unsigned int level = clut_level * clut_level;
-
-    const float flevel_minus_one = static_cast<float>(level - 1) / 65535.0f;
-    const float flevel_minus_two = static_cast<float>(level - 2);
+    const unsigned int level = clut_level; // This is important
 
     const unsigned int red = std::min(flevel_minus_two, r * flevel_minus_one);
     const unsigned int green = std::min(flevel_minus_two, g * flevel_minus_one);

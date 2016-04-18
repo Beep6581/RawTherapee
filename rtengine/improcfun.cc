@@ -4337,8 +4337,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                 //Film Simulations
                 if ( colorLUT ) {
-                    MyTime start, stop;
-                    start.set();
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                             float &sourceR = rtemp[ti * TS + tj];
@@ -4377,8 +4375,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                         }
                     }
-                    stop.set();
-                    printf("Film simulation took %dus.\n", stop.etime(start));
                 }
 
 
