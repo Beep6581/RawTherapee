@@ -92,9 +92,9 @@ protected:
 private:
     unsigned int owner;
 #if defined( __SSE2__ ) && defined( __x86_64__ )
-    vfloat maxsv __attribute__ ((aligned (16)));
-    vfloat sizev __attribute__ ((aligned (16)));
-    vint sizeiv __attribute__ ((aligned (16)));
+    vfloat maxsv ALIGNED16;
+    vfloat sizev ALIGNED16;
+    vint sizeiv ALIGNED16;
 #endif
 public:
     /// convenience flag! If one doesn't want to delete the buffer but want to flag it to be recomputed...
