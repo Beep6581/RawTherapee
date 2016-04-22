@@ -213,7 +213,7 @@ int StdImageSource::load (Glib::ustring fname, bool batch)
     return 0;
 }
 
-void StdImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, ToneCurveParams  hrp, ColorManagementParams cmp, RAWParams raw)
+void StdImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps & pp, ToneCurveParams  hrp, ColorManagementParams cmp, RAWParams raw)
 {
 
     // the code will use OpenMP as of now.

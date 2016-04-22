@@ -53,6 +53,7 @@
 #include "vignetting.h"
 #include "retinex.h"
 #include "gradient.h"
+#include "spot.h"
 #include "pcvignette.h"
 #include "toolbar.h"
 #include "lensgeom.h"
@@ -118,6 +119,7 @@ protected:
     Crop* crop;
     ToneCurve* toneCurve;
     ShadowsHighlights* shadowshighlights;
+    Spot* spot;
     Defringe* defringe;
     ImpulseDenoise* impulsedenoise;
     DirPyrDenoise* dirpyrdenoise;

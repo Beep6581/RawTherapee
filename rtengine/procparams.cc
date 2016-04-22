@@ -46,6 +46,9 @@ const char *RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::numMe
 const char *RAWParams::ff_BlurTypestring[RAWParams::numFlatFileBlurTypes] = {/*"Parametric",*/ "Area Flatfield", "Vertical Flatfield", "Horizontal Flatfield", "V+H Flatfield"};
 std::vector<WBEntry*> WBParams::wbEntries;
 
+const short SpotParams::minRadius = 5;
+const short SpotParams::maxRadius = 35;
+
 bool ToneCurveParams::HLReconstructionNecessary(LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw)
 {
     if (options.rtSettings.verbose)
@@ -854,6 +857,12 @@ void CoarseTransformParams::setDefaults()
     rotate = 0;
     hflip = false;
     vflip = false;
+}
+
+void SpotParams::setDefaults()
+{
+    enabled = false;
+    entries.clear();
 }
 
 void RAWParams::setDefaults()
@@ -2488,7 +2497,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         keyFile.set_integer ("Vignetting Correction", "CenterY", vignetting.centerY);
     }
 
-
+    // save resizing settings
     if (!pedited || pedited->resize.enabled) {
         keyFile.set_boolean ("Resize", "Enabled", resize.enabled);
     }
@@ -2515,6 +2524,28 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
 
     if (!pedited || pedited->resize.height) {
         keyFile.set_integer ("Resize", "Height", resize.height);
+    }
+
+    // save spot removal settings
+    if (!pedited || pedited->spot.enabled) {
+        keyFile.set_boolean ("Spot removal", "Enabled", spot.enabled);
+    }
+
+    if (!pedited || pedited->spot.entries)  {
+        std::vector<double> vEntries;
+
+        for (size_t i = 0; i < spot.entries.size(); ++i) {
+            vEntries.push_back(double(spot.entries.at(i).sourcePos.x));
+            vEntries.push_back(double(spot.entries.at(i).sourcePos.y));
+            vEntries.push_back(double(spot.entries.at(i).targetPos.x));
+            vEntries.push_back(double(spot.entries.at(i).targetPos.y));
+            vEntries.push_back(double(spot.entries.at(i).radius));
+            vEntries.push_back(double(spot.entries.at(i).feather));
+            vEntries.push_back(double(spot.entries.at(i).opacity));
+        }
+
+        Glib::ArrayHandle<double> entries = vEntries;
+        keyFile.set_double_list("Spot removal", "Entries", entries);
     }
 
     if (!pedited || pedited->prsharpening.enabled) {
@@ -5669,6 +5700,36 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
             }
         }
 
+        // load spot removal settings
+        if (keyFile.has_group ("Spot removal")) {
+            if (keyFile.has_key ("Spot removal", "Enabled"))       {
+                spot.enabled   = keyFile.get_boolean ("Spot removal", "Enabled");
+
+                if (pedited) {
+                    pedited->spot.enabled = true;
+                }
+            }
+
+            if (keyFile.has_key ("Spot removal", "Entries"))       {
+                Glib::ArrayHandle<double> entries = keyFile.get_double_list ("Spot removal", "Entries");
+                const double epsilon = 0.001;
+                SpotEntry entry;
+
+                for (size_t i = 0; i < entries.size(); i += 7) {
+                    entry.sourcePos.set(int(entries.data()[i  ] + epsilon), int(entries.data()[i + 1] + epsilon));
+                    entry.targetPos.set(int(entries.data()[i + 2] + epsilon), int(entries.data()[i + 3] + epsilon));
+                    entry.radius  = LIM<int>(int  (entries.data()[i + 4] + epsilon), SpotParams::minRadius, SpotParams::maxRadius);
+                    entry.feather = float(entries.data()[i + 5]);
+                    entry.opacity = float(entries.data()[i + 6]);
+                    spot.entries.push_back(entry);
+                }
+
+                if (pedited) {
+                    pedited->spot.entries = true;
+                }
+            }
+        }
+
         // load post resize sharpening
         if (keyFile.has_group ("PostResizeSharpening")) {
             if (keyFile.has_key ("PostResizeSharpening", "Enabled"))              {
@@ -7787,6 +7848,8 @@ bool ProcParams::operator== (const ProcParams& other)
         && resize.dataspec == other.resize.dataspec
         && resize.width == other.resize.width
         && resize.height == other.resize.height
+        && spot.enabled == other.spot.enabled
+        && spot.entries == other.spot.entries
         && raw.bayersensor.method == other.raw.bayersensor.method
         && raw.bayersensor.ccSteps == other.raw.bayersensor.ccSteps
         && raw.bayersensor.black0 == other.raw.bayersensor.black0

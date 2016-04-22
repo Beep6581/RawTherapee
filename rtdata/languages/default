@@ -465,7 +465,7 @@ HISTORY_MSG_232;B&amp;W - 'Before' curve type
 HISTORY_MSG_233;B&amp;W - 'After' curve
 HISTORY_MSG_234;B&amp;W - 'After' curve type
 HISTORY_MSG_235;B&amp;W - Auto channel mixer
-HISTORY_MSG_236;--unused--
+HISTORY_MSG_236;Spot removal - Point modif.
 HISTORY_MSG_237;B&amp;W - Mixer
 HISTORY_MSG_238;GF - Feather
 HISTORY_MSG_239;GF - Strength
@@ -670,6 +670,7 @@ HISTORY_MSG_437;Retinex - M - Method
 HISTORY_MSG_438;Retinex - M - Equalizer
 HISTORY_MSG_439;Retinex - Preview
 HISTORY_MSG_440;CbDL - Method
+HISTORY_MSG_441;Spot removal
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1774,6 +1775,9 @@ TP_SHARPENMICRO_AMOUNT;Quantity
 TP_SHARPENMICRO_LABEL;Microcontrast
 TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 TP_SHARPENMICRO_UNIFORMITY;Uniformity
+TP_SPOT_COUNTLABEL;%1 point(s)
+TP_SPOT_ENTRYCHANGED;Point changed
+TP_SPOT_LABEL;Spot removal
 TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin-tones

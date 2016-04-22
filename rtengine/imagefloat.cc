@@ -170,8 +170,22 @@ Imagefloat* Imagefloat::copy ()
     return cp;
 }
 
+Imagefloat* Imagefloat::copySubRegion (int x, int y, int width, int height)
+{
+    Imagefloat* cp = NULL;
+    int realWidth  = LIM<int>(x + width,  0, this->width)  - x;
+    int realHeight = LIM<int>(y + height, 0, this->height) - y;
+
+    if (realWidth > 0 && realHeight > 0) {
+        cp = new Imagefloat (realWidth, realHeight);
+        copyData(cp, x, y, realWidth, realHeight);
+    }
+
+    return cp;
+}
+
 // This is called by the StdImageSource class. We assume that fp images from StdImageSource don't have to deal with gamma
-void Imagefloat::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp)
+void Imagefloat::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, const PreviewProps & pp, bool first, procparams::ToneCurveParams hrp)
 {
 
     // compute channel multipliers

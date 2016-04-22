@@ -764,6 +764,10 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         shmap->update (baseImg, shradius, ipf.lumimul, params.sh.hq, 1);
     }
 
+    if (params.spot.enabled && !params.spot.entries.empty()) {
+        ipf.removeSpots(baseImg, params.spot.entries, pp);
+    }
+
     // RGB processing
 
     LUTf curve1 (65536);

@@ -529,6 +529,13 @@ public:
     bool enabled;
 };
 
+class SpotParamsEdited
+{
+public:
+    bool enabled;
+    bool entries;
+};
+
 class ColorManagementParamsEdited
 {
 
@@ -773,6 +780,7 @@ public:
     ChannelMixerParamsEdited      chmixer;
     BlackWhiteParamsEdited        blackwhite;
     ResizeParamsEdited            resize;
+    SpotParamsEdited              spot;
     ColorManagementParamsEdited   icm;
     RAWParamsEdited               raw;
     DirPyrEqualizerParamsEdited   dirpyrequalizer;

@@ -24,8 +24,9 @@ class PreviewProps
 {
 public:
     int x, y, w, h, skip;
-    PreviewProps (int _x, int _y, int _w, int _h, int _skip)
-        : x(_x), y(_y), w(_w), h(_h), skip(_skip) {}
+    PreviewProps (int x, int y, int w, int h, int skip);
+
+    void set (int x, int y, int w, int h, int skip);
 };
 
 /*
@@ -39,25 +40,44 @@ public:
     int height;
 
 public:
-    ImageDimensions() : width(-1), height(-1) {}
-    int getW       ()
-    {
-        return width;
-    }
-    int getH       ()
-    {
-        return height;
-    }
-    int getWidth   () const
-    {
-        return width;
-    }
-    int getHeight  () const
-    {
-        return height;
-    }
-    void transform (PreviewProps pp, int tran, int &sx1, int &sy1, int &sx2, int &sy2);
+    ImageDimensions ();
+    int getW ();
+    int getH ();
+    int getWidth () const;
+    int getHeight () const;
+    void transform (const PreviewProps & pp, int tran, int &sx1, int &sy1, int &sx2, int &sy2);
 };
 
+inline PreviewProps::PreviewProps (int x, int y, int w, int h, int skip) :
+        x (x), y (y), w (w), h (h), skip (skip) {
+}
+
+inline void PreviewProps::set (int x, int y, int w, int h, int skip) {
+    this->x = x;
+    this->y = y;
+    this->w = w;
+    this->h = h;
+    this->skip = skip;
+}
+
+inline ImageDimensions::ImageDimensions () :
+        width (-1), height (-1) {
+}
+
+inline int ImageDimensions::getW () {
+    return width;
+}
+
+inline int ImageDimensions::getH () {
+    return height;
+}
+
+inline int ImageDimensions::getWidth () const {
+    return width;
+}
+
+inline int ImageDimensions::getHeight () const {
+    return height;
+}
 
 #endif

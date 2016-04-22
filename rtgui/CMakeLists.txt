@@ -6,7 +6,7 @@ set (BASESOURCEFILES
     cachemanager.cc cacheimagedata.cc shcselector.cc perspective.cc thresholdselector.cc thresholdadjuster.cc
     clipboard.cc thumbimageupdater.cc bqentryupdater.cc lensgeom.cc coloredbar.cc edit.cc coordinateadjuster.cc
     coarsepanel.cc cacorrection.cc  chmixer.cc blackwhite.cc
-    resize.cc icmpanel.cc crop.cc shadowshighlights.cc
+    resize.cc icmpanel.cc crop.cc shadowshighlights.cc spot.cc
     impulsedenoise.cc dirpyrdenoise.cc epd.cc
     exifpanel.cc toolpanel.cc lensprofile.cc
     sharpening.cc vibrance.cc rgbcurves.cc  colortoning.cc

@@ -55,6 +55,7 @@ class ImProcCoordinator : public StagedImageProcessor
 protected:
     Imagefloat *orig_prev;
     Imagefloat *oprevi;
+    Imagefloat *spotprevi;
     LabImage *oprevl;
     LabImage *nprevl;
     Image8 *previmg;
@@ -71,6 +72,7 @@ protected:
     double lastAwbEqual;
 
     ImProcFunctions ipf;
+    PreviewProps previewProps;
 
     Glib::ustring monitorProfile;
 

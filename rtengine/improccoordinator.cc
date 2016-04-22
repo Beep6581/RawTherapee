@@ -30,8 +30,8 @@ namespace rtengine
 extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : orig_prev(NULL), oprevi(NULL), oprevl(NULL), nprevl(NULL), previmg(NULL), workimg(NULL),
-      ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true), monitorIntent(RI_RELATIVE), scale(10),
+    : orig_prev(NULL), oprevi(NULL), spotprevi(NULL), oprevl(NULL), nprevl(NULL), previmg(NULL), workimg(NULL),
+      ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true), previewProps(-1, -1, -1, -1, 1), monitorIntent(RI_RELATIVE), scale(10),
       highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false),
       bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(0.),
 
@@ -136,7 +136,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 {
 
     MyMutex::MyLock processingLock(mProcessing);
-    int numofphases = 14;
+    int numofphases = 15;
     int readyphase = 0;
 
     bwAutoR = bwAutoG = bwAutoB = -9000.f;
@@ -316,11 +316,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         // Will (re)allocate the preview's buffers
         setScale (scale);
-        PreviewProps pp (0, 0, fw, fh, scale);
+        previewProps.set(0, 0, fw, fh, scale);
         // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
         ipf.setScale (scale);
 
-        imgsrc->getImage (currWB, tr, orig_prev, pp, params.toneCurve, params.icm, params.raw);
+        imgsrc->getImage (currWB, tr, orig_prev, previewProps, params.toneCurve, params.icm, params.raw);
         //ColorTemp::CAT02 (orig_prev, &params) ;
         //   printf("orig_prevW=%d\n  scale=%d",orig_prev->width, scale);
         /* Issue 2785, disabled some 1:1 tools
@@ -377,11 +377,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     if (!needstransform && orig_prev != oprevi) {
         delete oprevi;
-        oprevi = orig_prev;
+        spotprevi = oprevi = orig_prev;
     }
 
     if (needstransform && orig_prev == oprevi) {
-        oprevi = new Imagefloat (pW, pH);
+        spotprevi = oprevi = new Imagefloat (pW, pH);
     }
 
     if ((todo & M_TRANSFORM) && needstransform)
@@ -433,6 +433,24 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
     }
 
+    progress ("Spot Removal...", 100 * readyphase / numofphases);
+
+    if ((todo & M_SPOT) && params.spot.enabled && !params.spot.entries.empty()) {
+        if(spotprevi == oprevi) {
+            spotprevi = new Imagefloat (pW, pH);
+        }
+
+        oprevi->copyData(spotprevi);
+        ipf.removeSpots(spotprevi, params.spot.entries, previewProps);
+    } else {
+        if (spotprevi != oprevi) {
+            delete spotprevi;
+            spotprevi = oprevi;
+        }
+    }
+
+    readyphase++;
+
     progress ("Exposure curve & CIELAB conversion...", 100 * readyphase / numofphases);
 
     if ((todo & M_RGBCURVE) || (todo & M_CROP)) {
@@ -445,9 +463,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                     params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,
                                     vhist16, histCropped, hltonecurve, shtonecurve, tonecurve, histToneCurve, customToneCurve1, customToneCurve2, scale == 1 ? 1 : 1);
 
-        CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, scale == 1 ? 1 : 1);
-        CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, scale == 1 ? 1 : 1);
-        CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, scale == 1 ? 1 : 1);
+        CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, /*scale==1 ? 1 :*/ 1);
+        CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, /*scale==1 ? 1 :*/ 1);
+        CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, /*scale==1 ? 1 :*/ 1);
 
 
         TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
@@ -484,7 +502,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         if(params.colorToning.enabled  && params.colorToning.autosat) { //for colortoning evaluation of saturation settings
             float moyS = 0.f;
             float eqty = 0.f;
-            ipf.moyeqt (oprevi, moyS, eqty);//return image : mean saturation and standard dev of saturation
+            ipf.moyeqt (spotprevi, moyS, eqty);//return image : mean saturation and standard dev of saturation
             //printf("moy=%f ET=%f\n", moyS,eqty);
             float satp = ((moyS + 1.5f * eqty) - 0.3f) / 0.7f; //1.5 sigma ==> 93% pixels with high saturation -0.3 / 0.7 convert to Hombre scale
 
@@ -537,7 +555,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             double bbm = 33.;
 
             DCPProfile *dcpProf = imgsrc->getDCP(params.icm, currWB);
-            ipf.rgbProc (oprevi, oprevl, NULL, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
+            ipf.rgbProc (spotprevi, oprevl, NULL, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
                          rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, dcpProf);
 
             if(params.blackwhite.enabled && params.blackwhite.autoc && abwListener) {
@@ -867,11 +885,16 @@ void ImProcCoordinator::freeAll ()
     }
 
     if (allocated) {
-        if (orig_prev != oprevi) {
+        if (spotprevi && spotprevi != oprevi) {
+            delete spotprevi;
+        }
+        spotprevi = NULL;
+
+        if (oprevi && oprevi != orig_prev) {
             delete oprevi;
         }
-
         oprevi    = NULL;
+
         delete orig_prev;
         orig_prev = NULL;
         delete oprevl;
@@ -882,7 +905,6 @@ void ImProcCoordinator::freeAll ()
         if (ncie) {
             delete ncie;
         }
-
         ncie      = NULL;
 
         if (imageListener) {
@@ -928,7 +950,7 @@ void ImProcCoordinator::setScale (int prevscale)
         prevscale--;
         PreviewProps pp (0, 0, fw, fh, prevscale);
         imgsrc->getSize (tr, pp, nW, nH);
-    } while(nH < 400 && prevscale > 1 && (nW * nH < 1000000) ); // sctually hardcoded values, perhaps a better choice is possible
+    } while(nH < 400 && prevscale > 1 && (nW * nH < 1000000) ); // actually hardcoded values, perhaps a better choice is possible
 
     if (settings->verbose) {
         printf ("setscale starts (%d, %d)\n", nW, nH);
@@ -942,7 +964,7 @@ void ImProcCoordinator::setScale (int prevscale)
         pH = nH;
 
         orig_prev = new Imagefloat (pW, pH);
-        oprevi = orig_prev;
+        spotprevi = oprevi = orig_prev;
         oprevl = new LabImage (pW, pH);
         nprevl = new LabImage (pW, pH);
         //ncie is only used in ImProcCoordinator::updatePreviewImage, it will be allocated on first use and deleted if not used anymore

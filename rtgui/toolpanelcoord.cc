@@ -43,6 +43,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(nullptr), editDataProvider(n
     shadowshighlights   = Gtk::manage (new ShadowsHighlights ());
     impulsedenoise      = Gtk::manage (new ImpulseDenoise ());
     defringe            = Gtk::manage (new Defringe ());
+    spot                = Gtk::manage (new Spot ());
     dirpyrdenoise       = Gtk::manage (new DirPyrDenoise ());
     epd                 = Gtk::manage (new EdgePreservingDecompositionUI ());
     sharpening          = Gtk::manage (new Sharpening ());
@@ -110,6 +111,8 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(nullptr), editDataProvider(n
     toolPanels.push_back (blackwhite);
     addPanel (exposurePanel, shadowshighlights);
     toolPanels.push_back (shadowshighlights);
+    addPanel (detailsPanel, spot);
+    toolPanels.push_back (spot);
     addPanel (detailsPanel, sharpening);
     toolPanels.push_back (sharpening);
     addPanel (detailsPanel, sharpenEdge);

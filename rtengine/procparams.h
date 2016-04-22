@@ -946,6 +946,55 @@ public:
     int height;
 };
 
+class SpotEntry
+{
+public:
+    Coord sourcePos;
+    Coord targetPos;
+    int radius;
+    float feather;
+    float opacity;
+
+    SpotEntry() : radius(5), feather(1.f), opacity(1.f) {}
+
+    bool operator== (const SpotEntry& other) const
+    {
+        return other.sourcePos == sourcePos && other.targetPos == targetPos &&
+               other.radius == radius && other.feather == feather && other.opacity == opacity;
+    }
+
+    bool operator!= (const SpotEntry& other) const
+    {
+        return other.sourcePos != sourcePos || other.targetPos != targetPos ||
+               other.radius != radius || other.feather != feather || other.opacity != opacity;
+    }
+
+
+};
+
+/**
+  * Parameters of the dust removal tool
+  */
+class SpotParams
+{
+
+public:
+    // REWRITE TODO: all parameter should have getter and setter to maintain their validity
+    // the following constant can be used to adjust the tools correctly
+    static const short minRadius;
+    static const short maxRadius;
+
+    bool enabled;
+    std::vector<SpotEntry> entries;
+
+    SpotParams()
+    {
+        setDefaults();
+    }
+    void setDefaults();
+};
+
+
 /**
   * Parameters of the color spaces used during the processing
   */
@@ -1279,6 +1328,7 @@ public:
     ChannelMixerParams      chmixer;         ///< Channel mixer parameters
     BlackWhiteParams        blackwhite;      ///< Black & White parameters
     ResizeParams            resize;          ///< Resize parameters
+    SpotParams              spot;            ///< Spot removal tool
     ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing
     RAWParams               raw;             ///< RAW parameters before demosaicing
     WaveletParams           wavelet;         ///< Wavelet parameters

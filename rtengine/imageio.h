@@ -130,7 +130,7 @@ public:
         return sampleArrangement;
     }
 
-    virtual void    getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp)
+    virtual void    getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, const PreviewProps & pp, bool first, procparams::ToneCurveParams hrp)
     {
         printf("getStdImage NULL!\n");
     }

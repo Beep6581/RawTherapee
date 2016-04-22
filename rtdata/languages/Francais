@@ -461,7 +461,7 @@ HISTORY_MSG_232;N&amp;B - Type de courbe 'Avant'
 HISTORY_MSG_233;N&amp;B - Courbe 'Après'
 HISTORY_MSG_234;N&amp;B - Type de courbe 'Après'
 HISTORY_MSG_235;N&amp;B - Mixeur - Mode auto
-HISTORY_MSG_236;--inutilisé--
+HISTORY_MSG_236;Retrait de taches - Modif. de points
 HISTORY_MSG_237;N&amp;B - Mixeur
 HISTORY_MSG_238;FD - Étendu
 HISTORY_MSG_239;FD - Force
@@ -632,6 +632,7 @@ HISTORY_MSG_403;O - NB - Sensibilité des bords
 HISTORY_MSG_404;O - NB - Base amplification
 HISTORY_MSG_405;O - Débruitage - Niveau 4
 HISTORY_MSG_406;O - NB - Pixels voisins
+HISTORY_MSG_407;Retrait de taches
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Capture
@@ -1643,6 +1644,9 @@ TP_SHARPENMICRO_AMOUNT;Quantité
 TP_SHARPENMICRO_LABEL;Microcontraste
 TP_SHARPENMICRO_MATRIX;Matrice 3×3 au lieu de 5×5
 TP_SHARPENMICRO_UNIFORMITY;Uniformité
+TP_SPOT_COUNTLABEL;%1 point(s)
+TP_SPOT_ENTRYCHANGED;Modification d'un point
+TP_SPOT_LABEL;Retrait de taches
 TP_VIBRANCE_AVOIDCOLORSHIFT;Éviter les dérives de teinte
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;TT
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Tons chair

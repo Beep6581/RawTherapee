@@ -20,7 +20,7 @@
 #include "imagedimensions.h"
 #include "rtengine.h"
 
-void ImageDimensions::transform (PreviewProps pp, int tran, int &sx1, int &sy1, int &sx2, int &sy2)
+void ImageDimensions::transform (const PreviewProps & pp, int tran, int &sx1, int &sy1, int &sx2, int &sy2)
 {
 
     int sw = width, sh = height;

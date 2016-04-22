@@ -342,6 +342,10 @@ void ParamsEdited::set (bool v)
     resize.width     = v;
     resize.height    = v;
     resize.enabled   = v;
+
+    spot.enabled = v;
+    spot.entries = v;
+
     icm.input        = v;
     icm.toneCurve = v;
     icm.applyLookTable = v;
@@ -835,6 +839,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         resize.width = resize.width && p.resize.width == other.resize.width;
         resize.height = resize.height && p.resize.height == other.resize.height;
         resize.enabled = resize.enabled && p.resize.enabled == other.resize.enabled;
+        spot.enabled = spot.enabled && p.spot.enabled == other.spot.enabled;
+        spot.entries = spot.entries && p.spot.entries == other.spot.entries;
         icm.input = icm.input && p.icm.input == other.icm.input;
         icm.toneCurve = icm.toneCurve && p.icm.toneCurve == other.icm.toneCurve;
         icm.applyLookTable = icm.applyLookTable && p.icm.applyLookTable == other.icm.applyLookTable;
@@ -2162,6 +2168,14 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (resize.enabled) {
         toEdit.resize.enabled     = mods.resize.enabled;
+    }
+
+    if (spot.enabled) {
+        toEdit.spot.enabled   = mods.spot.enabled;
+    }
+
+    if (spot.entries) {
+        toEdit.spot.entries   = mods.spot.entries;
     }
 
     if (icm.input) {

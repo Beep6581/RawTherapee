@@ -124,7 +124,21 @@ Image16* Image16::copy ()
     return cp;
 }
 
-void Image16::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp)
+Image16* Image16::copySubRegion (int x, int y, int width, int height)
+{
+    Image16* cp = NULL;
+    int realWidth  = LIM<int>(x + width,  0, this->width)  - x;
+    int realHeight = LIM<int>(y + height, 0, this->height) - y;
+
+    if (realWidth > 0 && realHeight > 0) {
+        cp = new Image16 (realWidth, realHeight);
+        copyData(cp, x, y, realWidth, realHeight);
+    }
+
+    return cp;
+}
+
+void Image16::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, const PreviewProps & pp, bool first, procparams::ToneCurveParams hrp)
 {
 
     // compute channel multipliers

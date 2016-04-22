@@ -31,7 +31,7 @@ namespace rtengine
 extern const Settings* settings;
 
 Crop::Crop (ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
-    : PipetteBuffer(editDataProvider), origCrop(NULL), laboCrop(NULL), labnCrop(NULL),
+    : PipetteBuffer(editDataProvider), origCrop(NULL), spotCrop(NULL), laboCrop(NULL), labnCrop(NULL),
       cropImg(NULL), cbuf_real(NULL), cshmap(NULL), transCrop(NULL), cieCrop(NULL), cbuffer(NULL),
       updating(false), newUpdatePending(false), skip(10),
       cropx(0), cropy(0), cropw(-1), croph(-1),
@@ -215,18 +215,18 @@ void Crop::update (int todo)
         if(settings->leveldnautsimpl == 1) {
             if(params.dirpyrDenoise.Cmethod == "MAN" || params.dirpyrDenoise.Cmethod == "PON" )  {
                 PreviewProps pp (trafx, trafy, trafw * skip, trafh * skip, skip);
-                parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.icm, params.raw );
+                parent->imgsrc->getImage (parent->currWB, tr, baseCrop, pp, params.toneCurve, params.icm, params.raw );
             }
         } else {
             if(params.dirpyrDenoise.C2method == "MANU")  {
                 PreviewProps pp (trafx, trafy, trafw * skip, trafh * skip, skip);
-                parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.icm, params.raw );
+                parent->imgsrc->getImage (parent->currWB, tr, baseCrop, pp, params.toneCurve, params.icm, params.raw );
             }
         }
 
         if((settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "PRE") || (settings->leveldnautsimpl == 0 && params.dirpyrDenoise.C2method == "PREV")) {
             PreviewProps pp (trafx, trafy, trafw * skip, trafh * skip, skip);
-            parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.icm, params.raw );
+            parent->imgsrc->getImage (parent->currWB, tr, baseCrop, pp, params.toneCurve, params.icm, params.raw );
 
             if((!isDetailWindow) && parent->adnListener && skip == 1 && params.dirpyrDenoise.enabled) {
                 float lowdenoise = 1.f;
@@ -308,15 +308,15 @@ void Crop::update (int todo)
                 //setCropSizes (centerTile_X[poscenterX], centerTile_Y[poscenterY], trafw*skip,trafh*skip , skip, true);
 
                 // we only need image reduced to 1/4 here
-                int W = origCrop->getWidth();
-                int H = origCrop->getHeight();
+                int W = baseCrop->getWidth();
+                int H = baseCrop->getHeight();
                 Imagefloat *provicalc = new Imagefloat ((W + 1) / 2, (H + 1) / 2); //for denoise curves
 
                 for(int ii = 0; ii < H; ii += 2) {
                     for(int jj = 0; jj < W; jj += 2) {
-                        provicalc->r(ii >> 1, jj >> 1) = origCrop->r(ii, jj);
-                        provicalc->g(ii >> 1, jj >> 1) = origCrop->g(ii, jj);
-                        provicalc->b(ii >> 1, jj >> 1) = origCrop->b(ii, jj);
+                        provicalc->r(ii >> 1, jj >> 1) = baseCrop->r(ii, jj);
+                        provicalc->g(ii >> 1, jj >> 1) = baseCrop->g(ii, jj);
+                        provicalc->b(ii >> 1, jj >> 1) = baseCrop->b(ii, jj);
                     }
                 }
 
@@ -337,7 +337,7 @@ void Crop::update (int todo)
                 LUTf gamcurve(65536, 0);
                 float gam, gamthresh, gamslope;
                 parent->ipf.RGB_denoise_infoGamCurve(params.dirpyrDenoise, parent->imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope);
-                parent->ipf.RGB_denoise_info(origCrop, provicalc, parent->imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope, params.dirpyrDenoise, parent->imgsrc->getDirPyrDenoiseExpComp(), chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc, true);
+                parent->ipf.RGB_denoise_info(baseCrop, provicalc, parent->imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope, params.dirpyrDenoise, parent->imgsrc->getDirPyrDenoiseExpComp(), chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc, true);
 //                  printf("redy=%f skin=%f pcskin=%f\n",redyel, skinc,nsknc);
 //                  printf("DCROP skip=%d cha=%4.0f Nb=%d red=%4.0f bl=%4.0f redM=%4.0f bluM=%4.0f  L=%4.0f sigL=%4.0f Ch=%4.0f Si=%4.0f\n",skip, chaut,Nb, redaut,blueaut, maxredaut, maxblueaut, lumema, sigma_L, chromina, sigma);
                 float multip = 1.f;
@@ -600,10 +600,10 @@ void Crop::update (int todo)
             //end evaluate noise
         }
 
-        //  if(params.dirpyrDenoise.Cmethod=="AUT" || params.dirpyrDenoise.Cmethod=="PON") {//reinit origCrop after Auto
-        if((settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "AUT")  || (settings->leveldnautsimpl == 0 && params.dirpyrDenoise.C2method == "AUTO")) { //reinit origCrop after Auto
+        //  if(params.dirpyrDenoise.Cmethod=="AUT" || params.dirpyrDenoise.Cmethod=="PON") {//reinit baseCrop after Auto
+        if((settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "AUT")  || (settings->leveldnautsimpl == 0 && params.dirpyrDenoise.C2method == "AUTO")) { //reinit baseCrop after Auto
             PreviewProps pp (trafx, trafy, trafw * skip, trafh * skip, skip);
-            parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.icm, params.raw );
+            parent->imgsrc->getImage (parent->currWB, tr, baseCrop, pp, params.toneCurve, params.icm, params.raw );
         }
 
         DirPyrDenoiseParams denoiseParams = params.dirpyrDenoise;
@@ -620,15 +620,15 @@ void Crop::update (int todo)
 
         if((noiseLCurve || noiseCCurve ) && skip == 1 && denoiseParams.enabled)   { //only allocate memory if enabled and skip
             // we only need image reduced to 1/4 here
-            int W = origCrop->getWidth();
-            int H = origCrop->getHeight();
+            int W = baseCrop->getWidth();
+            int H = baseCrop->getHeight();
             calclum = new Imagefloat ((W + 1) / 2, (H + 1) / 2); //for denoise curves
 
             for(int ii = 0; ii < H; ii += 2) {
                 for(int jj = 0; jj < W; jj += 2) {
-                    calclum->r(ii >> 1, jj >> 1) = origCrop->r(ii, jj);
-                    calclum->g(ii >> 1, jj >> 1) = origCrop->g(ii, jj);
-                    calclum->b(ii >> 1, jj >> 1) = origCrop->b(ii, jj);
+                    calclum->r(ii >> 1, jj >> 1) = baseCrop->r(ii, jj);
+                    calclum->g(ii >> 1, jj >> 1) = baseCrop->g(ii, jj);
+                    calclum->b(ii >> 1, jj >> 1) = baseCrop->b(ii, jj);
                 }
             }
 
@@ -644,7 +644,7 @@ void Crop::update (int todo)
                 int kall = 0;
 
                 float chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi;
-                parent->ipf.RGB_denoise(kall, origCrop, origCrop, calclum, ch_M, max_r, max_b, parent->imgsrc->isRAW(), /*Roffset,*/ denoiseParams, parent->imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
+                parent->ipf.RGB_denoise(kall, baseCrop, baseCrop, calclum, ch_M, max_r, max_b, parent->imgsrc->isRAW(), /*Roffset,*/ denoiseParams, parent->imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
 
                 if (parent->adnListener) {
                     parent->adnListener->noiseChanged(nresi, highresi);
@@ -663,7 +663,7 @@ void Crop::update (int todo)
             }
         }
 
-        parent->imgsrc->convertColorSpace(origCrop, params.icm, parent->currWB);
+        parent->imgsrc->convertColorSpace(baseCrop, params.icm, parent->currWB);
 
         delete [] ch_M;
         delete [] max_r;
@@ -769,6 +769,27 @@ void Crop::update (int todo)
 
         satLimit = 100.f * satp;
         satLimitOpacity = 100.f * (moyS - 0.85f * eqty); //-0.85 sigma==>20% pixels with low saturation
+    }
+
+    if (params.spot.enabled) {
+        if (todo & M_SPOT) {
+            if(!spotCrop) {
+                spotCrop = new Imagefloat (cropw, croph);
+            }
+            baseCrop->copyData(spotCrop);
+
+            PreviewProps pp (cropx, cropy, cropw, croph, skip);
+            parent->ipf.removeSpots(spotCrop, params.spot.entries, pp);
+        }
+    } else {
+        if (spotCrop) {
+            delete spotCrop;
+            spotCrop = NULL;
+        }
+    }
+
+    if (spotCrop) {
+        baseCrop = spotCrop;
     }
 
     if (todo & M_RGBCURVE) {

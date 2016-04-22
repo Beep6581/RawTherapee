@@ -137,7 +137,7 @@ public:
     void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW );
     void        scaleColors (int winx, int winy, int winw, int winh, const RAWParams &raw); // raw for cblack
 
-    void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, ToneCurveParams hrp, ColorManagementParams cmp, RAWParams raw);
+    void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, const PreviewProps & pp, ToneCurveParams hrp, ColorManagementParams cmp, RAWParams raw);
     eSensorType getSensorType ()
     {
         return ri != NULL ? ri->getSensorType() : ST_NONE;

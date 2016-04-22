@@ -45,11 +45,12 @@ public:
     ~Imagefloat ();
 
     Imagefloat*          copy ();
+    Imagefloat*          copySubRegion (int x, int y, int width, int height);
 
     Image8*              to8();
     Image16*             to16();
 
-    virtual void         getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp);
+    virtual void         getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, const PreviewProps & pp, bool first, procparams::ToneCurveParams hrp);
 
     virtual const char*  getType     () const
     {

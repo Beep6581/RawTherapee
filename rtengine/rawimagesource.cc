@@ -617,7 +617,7 @@ calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const float c_w
     return gain;
 }
 
-void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, ToneCurveParams  hrp, ColorManagementParams cmp, RAWParams raw )
+void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, const PreviewProps & pp, ToneCurveParams  hrp, ColorManagementParams cmp, RAWParams raw )
 {
     MyMutex::MyLock lock(getImageMutex);
 

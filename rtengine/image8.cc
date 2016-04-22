@@ -94,7 +94,7 @@ Image8* Image8::copy ()
     return cp;
 }
 
-void Image8::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp)
+void Image8::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, const PreviewProps & pp, bool first, procparams::ToneCurveParams hrp)
 {
     // compute channel multipliers
     double drm, dgm, dbm;

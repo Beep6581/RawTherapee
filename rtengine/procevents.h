@@ -262,7 +262,7 @@ enum ProcEvent {
     EvBWAfterCurve = 232,
     EvBWAfterCurveMode = 233,
     EvAutoch = 234,
-//  EvFixedch=235,   -- can be reused --
+    EvSpotEntry = 235,
     EvNeutralBW = 236,
     EvGradientFeather = 237,
     EvGradientStrength = 238,
@@ -467,6 +467,7 @@ enum ProcEvent {
     EvRetinexmapcurve = 437,
     EvviewMethod = 438,
     EvcbdlMethod = 439,
+    EvSpotEnabled = 440,
     NUMOFEVENTS
 
 };

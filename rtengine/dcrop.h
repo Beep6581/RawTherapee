@@ -42,6 +42,7 @@ class Crop : public DetailedCrop, public PipetteBuffer
 protected:
     // --- permanently allocated in RAM and only renewed on size changes
     Imagefloat*  origCrop;   // "one chunk" allocation
+    Imagefloat*  spotCrop;   // "one chunk" allocation
     LabImage*    laboCrop;   // "one chunk" allocation
     LabImage*    labnCrop;   // "one chunk" allocation
     Image8*      cropImg;    // "one chunk" allocation

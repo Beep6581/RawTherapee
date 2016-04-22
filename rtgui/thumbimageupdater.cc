@@ -39,8 +39,8 @@ public:
         Job(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade,
             ThumbImageUpdateListener* listener):
             tbe_(tbe),
-    /*pparams_(pparams),
-    height_(height), */
+            /*pparams_(pparams),
+            height_(height), */
             priority_(priority),
             upgrade_(upgrade),
             listener_(listener)

@@ -45,7 +45,7 @@ public:
     ~StdImageSource ();
 
     int         load        (Glib::ustring fname, bool batch = false);
-    void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, ToneCurveParams hrp, ColorManagementParams cmp, RAWParams raw);
+    void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps & pp, ToneCurveParams hrp, ColorManagementParams cmp, RAWParams raw);
     ColorTemp   getWB       ()
     {
         return wb;

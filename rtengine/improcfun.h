@@ -354,6 +354,9 @@ public:
     float Mad(float * DataList, const int datalen);
     float MadRgb(float * DataList, const int datalen);
 
+    // spot removal tool
+    void removeSpots (Imagefloat* img, const std::vector<SpotEntry> &entries, const PreviewProps &pp);
+
     // pyramid wavelet
     void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, float ** l_a, float ** l_b, float ** dest_a, float ** dest_b, const double * mult, const double dirpyrThreshold, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice, int scale);//Emil's directional pyramid wavelet
     void dirpyr_equalizercam    (CieImage* ncie, float ** src, float ** dst, int srcwidth, int srcheight, float ** h_p, float ** C_p,  const double * mult, const double dirpyrThreshold, const double skinprot, bool execdir, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice, int scale);//Emil's directional pyramid wavelet
