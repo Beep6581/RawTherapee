@@ -888,7 +888,7 @@ void RAWParams::setDefaults()
     ff_clipControl = 0;
     cared = 0;
     cablue = 0;
-    caautostrength = 6;
+    caautostrength = 2;
     ca_autocorrect = false;
     hotPixelFilter = false;
     deadPixelFilter = false;
