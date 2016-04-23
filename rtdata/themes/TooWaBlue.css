@@ -1,7 +1,7 @@
 /*
   This file is part of RawTherapee.
 
-  Copyright (c) 2016 TooWaBoo (v1.19.3)
+  Copyright (c) 2016 TooWaBoo (v1.19.4)
   Many thanks to the RawTherapee Developer Team for this great piece of software
 
   RawTherapee is free software: you can redistribute it and/or modify
@@ -31,12 +31,12 @@
 
 /*** Change me end ************************************************************************/
 
-@define-color text-color #B4B4B4;
-@define-color text-hl-color2 #C0C0C0;
-@define-color text-tbEntry #C0C0C0;
-@define-color bg-dark-grey #242424;
-@define-color bg-grey #464646;
-@define-color bg-light-grey #585858;
+@define-color text-color rgb(180,180,180);
+@define-color text-hl-color2 rgb(192,192,192);
+@define-color text-tbEntry rgb(192,192,192);
+@define-color bg-dark-grey rgb(36,36,36);
+@define-color bg-grey rgb(70,70,70);
+@define-color bg-light-grey rgb(88,88,88);
 @define-color border-color rgba(255,255,255,.25);
 @define-color bg-list-hover rgba(255,255,255,.065);
 @define-color bg-scale-entry rgba(0,0,0,.14);
@@ -46,7 +46,7 @@
 @define-color bg-button-hover rgba(0,0,0,.22);
 @define-color bg-spin-button-hover rgba(0,0,0,.25);
 @define-color bg-entry-IPTC @bg-dark-grey;
-@define-color view-grid-border #404040;
+@define-color view-grid-border rgb(64,64,64);
 
 * {
     color: @text-color;
@@ -176,7 +176,7 @@ GtkDrawingArea {
 }
 /*** Histogram RGB-Bar***/
 #HistogramRGBArea {
-    background-color: #808080;
+    background-color: rgb(128,128,128);
     border: none;
 }
 /*** Navigator ***/
@@ -246,10 +246,10 @@ GtkDialog .label,
     padding: 8px 10px;
 }
 #PartialPasteHeaderSep {
-    color: #C0C0C0;
+    color: rgb(192,192,192);
 }
 #PartialPasteHeader .label {
-    color: #D5D5D5;
+    color: rgb(213,213,213);
 }
 /*** end ***/
 
@@ -460,7 +460,8 @@ GtkFileChooserWidget .button GtkImage{
 #ToolPanelNotebook .separator {
     color: transparent;
 }
-#ToolPanelNotebook GtkFrame, #PrefNotebook GtkFrame {
+#ToolPanelNotebook GtkFrame,
+#PrefNotebook GtkFrame {
     border: 1px solid @border-color;
     border-radius: 0;
     padding: 5px;
@@ -475,11 +476,15 @@ GtkFileChooserWidget .button GtkImage{
     border-radius: 1px; /* BUG: if 0, scale mini sliders look funny */
 }
 
-#ExpanderBox #ExpanderBox, #ExpanderBox2, #ExpanderBox3 {
+#ExpanderBox #ExpanderBox,
+#ExpanderBox2,
+#ExpanderBox3 {
     border: 1px solid @border-color;
 }
 
-#ExpanderBox, #ExpanderBox2, #ExpanderBox3 {
+#ExpanderBox,
+#ExpanderBox2,
+#ExpanderBox3 {
     background-color: @bg-grey;
     border-radius: 0;
 }
@@ -720,7 +725,7 @@ GtkPopover .button.text-button {
 
 .button:active,
 .button:checked {
-    background-image: linear-gradient(to bottom, #292929, #252525 40%, #191919);
+    background-image: linear-gradient(to bottom, rgb(41,41,41), rgb(37,37,37) 40%, rgb(25,25,25));
     background-color: transparent;
     border-color: black;
 }
@@ -755,7 +760,7 @@ GtkPopover .button.text-button {
     background-image: linear-gradient(to bottom, rgba(0,0,0,.05), rgba(0,0,0,.12) 40%, rgba(0,0,0,.24));
 }
 .view .button {
-    background-color: #141414;
+    background-color: rgb(20,20,20);
     padding: 1px 5px 2px;
     background-image: none;
     border-color: black;
@@ -763,7 +768,7 @@ GtkPopover .button.text-button {
 }
 .menu .button.bottom,
 .menu .button.bottom:insensitive {
-    background-color: #141414;
+    background-color: rgb(20,20,20);
     border-color: @accent-color;
     border-width: 0 1px 1px 1px;
     background-image: none;
@@ -771,7 +776,7 @@ GtkPopover .button.text-button {
 }
 .menu .button.top,
 .menu .button.top:insensitive {
-    background-color: #141414;
+    background-color: rgb(20,20,20);
     border-color: @accent-color;
     border-width: 1px 1px 0 1px;
     background-image: none;
@@ -843,11 +848,11 @@ GtkPopover .button.text-button {
 
 *:insensitive,
 #ToolPanelNotebook *:insensitive {
-    color: #808080;
+    color: rgb(128,128,128);
     box-shadow: none;
 }
 #ToolPanelNotebook .entry:insensitive {
-    color: #909090;
+    color: rgb(144,144,144);
     background-color: rgba(255,255,255,.06);
     box-shadow: none;
 }
@@ -869,7 +874,7 @@ GtkPopover .button.text-button {
 #ToolPanelNotebook .scale.slider:insensitive,
 #ToolPanelNotebook .scale.trough.highlight:insensitive,
 #ToolPanelNotebook .scale.trough:insensitive {
-    background-color: #414141;
+    background-color: rgb(65,65,65);
     box-shadow: none;
     background-image: none;
 }
