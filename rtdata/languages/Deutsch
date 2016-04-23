@@ -67,7 +67,7 @@ EDIT_OBJECT_TOOLTIP;Schaltet das Einstellungswerkzeug im Vorschaubild ein/aus
 EDIT_PIPETTE_TOOLTIP;Um einen Punkt der Kurve hinzuzufügen, halten Sie die Strg-Taste gedrückt und klicken mit der linke Maustaste auf die gewünschte Stelle in der Vorschau.\nUm den Punkt anzupassen, halten Sie die Strg-Taste gedrückt und klicken Sie mit der linken Maustaste auf den entsprechenden Bereich in der Vorschau. Dann lassen Sie die Strg-Taste los (es sei denn, Sie möchten eine Feineinstellung vornehmen) und bewegen die Maus bei gedrückter linker Maustaste nach oben oder unten, um den Punkt auf der Kurve zu bewegen.
 EXIFFILTER_APERTURE;Blende
 EXIFFILTER_CAMERA;Kamera
-EXIFFILTER_EXPOSURECOMPENSATION;Belichtung\nBelichtungskorrektur (EV)
+EXIFFILTER_EXPOSURECOMPENSATION;Belichtungskorrektur (EV)
 EXIFFILTER_FILETYPE;Dateityp
 EXIFFILTER_FOCALLEN;Brennweite
 EXIFFILTER_ISO;ISO
@@ -121,9 +121,9 @@ FILEBROWSER_AUTODARKFRAME;Automatisches Dunkelbild
 FILEBROWSER_AUTOFLATFIELD;Automatisches Weißbild
 FILEBROWSER_BROWSEPATHBUTTONHINT;Ausgewählter Pfad öffnen
 FILEBROWSER_BROWSEPATHHINT;Einen Pfad eingeben:\nTaste:\n<b>Strg</b> + <b>o</b> Setzt den Cursor in das Eingabefeld\n<b>Enter</b> Öffnet den Pfad\n<b>Esc</b> Änderungen verwerfen\n<b>Umschalt</b> + <b>Esc</b> Eingabefeld verlassen\n\nSchnellnavigation:\nTaste:\n<b>~</b> “Home“-Verzeichnis des Benutzers\n<b>!</b> Bilder-Verzeichnis des Benutzers
-FILEBROWSER_CACHE;Zwischenspeicher
-FILEBROWSER_CACHECLEARFROMFULL;Aus dem Zwischenspeicher entfernen (vollständig)
-FILEBROWSER_CACHECLEARFROMPARTIAL;Aus dem Zwischenspeicher entfernen (teilweise)
+FILEBROWSER_CACHE;Festplatten-Cache
+FILEBROWSER_CACHECLEARFROMFULL;Aus dem Festplatten-Cache entfernen (vollständig)
+FILEBROWSER_CACHECLEARFROMPARTIAL;Aus dem Festplatten-Cache entfernen (teilweise)
 FILEBROWSER_CLEARPROFILE;Profil löschen
 FILEBROWSER_COLORLABEL_TOOLTIP;<b>Farbmarkierung</b>\n\nTaste: <b>Strg</b> + <b>Umschalt</b> + <b>0</b> Ohne\nTaste: <b>Strg</b> + <b>Umschalt</b> + <b>1</b> Rot\nTaste: <b>Strg</b> + <b>Umschalt</b> + <b>2</b> Gelb\nTaste: <b>Strg</b> + <b>Umschalt</b> + <b>3</b> Grün\nTaste: <b>Strg</b> + <b>Umschalt</b> + <b>4</b> Blau\nTaste: <b>Strg</b> + <b>Umschalt</b> + <b>5</b> Violett
 FILEBROWSER_COPYPROFILE;Profil kopieren
@@ -830,28 +830,28 @@ NAVIGATOR_XY_FULL;Breite = %1, Höhe = %2
 NAVIGATOR_XY_NA;x: --, y: --
 OPTIONS_DEFIMG_MISSING;Die Standard-Profile für <b>Nicht-RAW-Bilder</b> wurden nicht gefunden oder nicht festgelegt.\n\nBitte prüfen Sie das Profil-Verzeichnis, es fehlt möglicherweise oder ist beschädigt.\n\nEs werden stattdessen interne Standardwerte verwendet.
 OPTIONS_DEFRAW_MISSING;Die Standard-Profile für <b>RAW-Bilder</b> wurden nicht gefunden oder nicht festgelegt.\n\nBitte prüfen Sie das Profil-Verzeichnis, es fehlt möglicherweise oder ist beschädigt.\n\nEs werden stattdessen interne Standardwerte verwendet.
-PARTIALPASTE_BASICGROUP;Gruppe Basiseinstellungen
+PARTIALPASTE_BASICGROUP;Grundeinstellungen
 PARTIALPASTE_CACORRECTION;Farbsaum entfernen
 PARTIALPASTE_CHANNELMIXER;RGB-Kanalmixer
 PARTIALPASTE_CHANNELMIXERBW;Schwarz/Weiß
 PARTIALPASTE_COARSETRANS;Drehen / Spiegeln
 PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
-PARTIALPASTE_COLORGROUP;Gruppe Farbeinstellungen
+PARTIALPASTE_COLORGROUP;Farbeinstellungen
 PARTIALPASTE_COLORTONING;Farbanpassungen
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto-Füllen
-PARTIALPASTE_COMPOSITIONGROUP;Gruppe Gestaltungseinstellungen
+PARTIALPASTE_COMPOSITIONGROUP;Gestaltungseinstellungen
 PARTIALPASTE_CROP;Ausschnitt
 PARTIALPASTE_DARKFRAMEAUTOSELECT;Dunkelbild: Automatische Auswahl
 PARTIALPASTE_DARKFRAMEFILE;Dunkelbild: Datei
 PARTIALPASTE_DEFRINGE;Farbsaum entfernen (Defringe)
-PARTIALPASTE_DETAILGROUP;Gruppe Detaileinstellungen
+PARTIALPASTE_DETAILGROUP;Detaileinstellungen
 PARTIALPASTE_DIALOGLABEL;Selektives Einfügen des Bearbeitungsprofils
 PARTIALPASTE_DIRPYRDENOISE;Rauschreduzierung
 PARTIALPASTE_DIRPYREQUALIZER;Detailebenenkontrast
 PARTIALPASTE_DISTORTION;Verzeichnungskorrektur
 PARTIALPASTE_EPD;Dynamikkompression
 PARTIALPASTE_EQUALIZER;Anzahl der Ebenen
-PARTIALPASTE_EVERYTHING;Alles
+PARTIALPASTE_EVERYTHING;Alle Einstellungen aktivieren / deaktivieren
 PARTIALPASTE_EXIFCHANGES;Änderungen an Exif-Daten
 PARTIALPASTE_EXPOSURE;Belichtung
 PARTIALPASTE_FILMSIMULATION;Filmsimulation
@@ -866,9 +866,9 @@ PARTIALPASTE_ICMSETTINGS;ICM-Einstellungen
 PARTIALPASTE_IMPULSEDENOISE;Impulsrauschreduzierung
 PARTIALPASTE_IPTCINFO;IPTC-Informationen
 PARTIALPASTE_LABCURVE;L*a*b* - Einstellungen
-PARTIALPASTE_LENSGROUP;Gruppe Objektivkorrekturen
+PARTIALPASTE_LENSGROUP;Objektivkorrekturen
 PARTIALPASTE_LENSPROFILE;Objektivkorrekturprofil
-PARTIALPASTE_METAGROUP;Gruppe Metadaten
+PARTIALPASTE_METAGROUP;Metadaten
 PARTIALPASTE_PCVIGNETTE;Vignettierungsfilter
 PARTIALPASTE_PERSPECTIVE;Perspektive
 PARTIALPASTE_PREPROCESS_DEADPIXFILT;Vorverarbeitung: Dead-Pixel-Filter
@@ -882,7 +882,7 @@ PARTIALPASTE_RAWCACORR_CARED;Chromatische Aberration: Rot
 PARTIALPASTE_RAWEXPOS_BLACK;Weißpunkt: Schwarzpegel
 PARTIALPASTE_RAWEXPOS_LINEAR;Weißpunkt: Korrekturfaktor
 PARTIALPASTE_RAWEXPOS_PRESER;Weißpunkt: Lichter schützen (EV)
-PARTIALPASTE_RAWGROUP;Gruppe RAW
+PARTIALPASTE_RAWGROUP;RAW
 PARTIALPASTE_RAW_DCBENHANCE;Farbinterpolation: DCB-Verbesserung
 PARTIALPASTE_RAW_DCBITERATIONS;Farbinterpolation: Anzahl der DCB-Iterationen
 PARTIALPASTE_RAW_DMETHOD;Farbinterpolation: Methode
@@ -919,8 +919,8 @@ PREFERENCES_BLACKBODY;Wolfram
 PREFERENCES_CACHECLEARALL;Alles löschen
 PREFERENCES_CACHECLEARPROFILES;Profile löschen
 PREFERENCES_CACHECLEARTHUMBS;Miniaturbilder löschen
-PREFERENCES_CACHEMAXENTRIES;Maximale Anzahl der Einträge im Zwischenspeicher
-PREFERENCES_CACHEOPTS;Einstellungen des Zwischenspeichers auf der Festplatte für Miniaturbilder
+PREFERENCES_CACHEMAXENTRIES;Maximale Anzahl der Miniaturbilder im Festplatten-Cache
+PREFERENCES_CACHEOPTS;Einstellungen des Festplatten-Cache für Miniaturbilder
 PREFERENCES_CACHETHUMBHEIGHT;Maximale Höhe der Miniaturbilder
 PREFERENCES_CIEART;CIECAM02-Optimierung
 PREFERENCES_CIEART_FRAME;CIECAM02-spezifische Einstellungen
@@ -967,7 +967,7 @@ PREFERENCES_EDITORLAYOUT;Editor-Layout
 PREFERENCES_EXPAUT;Experte
 PREFERENCES_EXTERNALEDITOR;Externer Editor
 PREFERENCES_FBROWSEROPTS;Bildinformationen und Miniaturbilder
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Einzeilige Werkzeugleiste\n(Bei geringer Bildschirmauflösung deaktivieren)
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Einzeilige Toolbar\n(Bei geringer Bildschirmauflösung deaktivieren)
 PREFERENCES_FILEFORMAT;Dateiformat
 PREFERENCES_FILMSIMULATION;Filmsimulation
 PREFERENCES_FLATFIELD;Weißbild
@@ -1032,9 +1032,9 @@ PREFERENCES_NAVGUIDEBRUSH;Farbe der Navigationshilfe
 PREFERENCES_NAVIGATIONFRAME;Navigation
 PREFERENCES_NOISE;Rauschreduzierung
 PREFERENCES_OUTDIR;Ausgabeverzeichnis
-PREFERENCES_OUTDIRFOLDER;Im Verzeichnis speichern
+PREFERENCES_OUTDIRFOLDER;In dieses Verzeichnis speichern
 PREFERENCES_OUTDIRFOLDERHINT;Alle Dateien ausgewähltem Verzeichnis speichern.
-PREFERENCES_OUTDIRTEMPLATE;Vorlage verwenden
+PREFERENCES_OUTDIRTEMPLATE;Dynamisches Verzeichnis verwenden
 PREFERENCES_OUTDIRTEMPLATEHINT;Die folgenden Variablen können verwendet werden:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nDiese Variablen beinhalten bestimmte Teile des Verzeichnispfades, in welchem sich das Bild befindet, oder Attribute des Bildes.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das Originalbild speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>\n\nDie Variable <b>%r</b> enthält die Bewertung des Bildes.
 PREFERENCES_OVERLAY_FILENAMES;Bildinformationen überlagern die Miniaturbilder in der Dateiverwaltung
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Bildinformationen der Miniaturbilder im Filmstreifen anzeigen
@@ -1073,7 +1073,7 @@ PREFERENCES_SET;SETZEN
 PREFERENCES_SHOWBASICEXIF;Exif-Daten anzeigen
 PREFERENCES_SHOWDATETIME;Datum und Uhrzeit anzeigen
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Belichtungskorrektur anfügen
-PREFERENCES_SHOWFILMSTRIPTOOLBAR;Zeige Filmstreifenleiste
+PREFERENCES_SHOWFILMSTRIPTOOLBAR;Toolbar oberhalb des Filmstreifens anzeigen
 PREFERENCES_SHTHRESHOLD;Schatten - Schwellenwert
 PREFERENCES_SIMPLAUT;Werkzeugmodus
 PREFERENCES_SINGLETAB;Ein-Reitermodus
@@ -1081,9 +1081,9 @@ PREFERENCES_SINGLETABVERTAB;Ein-Reitermodus (vertikale Reiter)
 PREFERENCES_SLIMUI;Kompakte Oberfläche
 PREFERENCES_SMA;Klein (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;Warteschlange abgearbeitet
-PREFERENCES_SND_HELP;Entweder einen Dateipfad zu einer Sounddatei oder einen Systemklang eingeben.\n\nBeispiele Systemklänge:\nWindows: SystemDefault, SystemAsterisk ...\nLinux: complete, window-attention ...\n
+PREFERENCES_SND_HELP;Geben Sie einen Pfad zu einer Sounddatei oder einen Systemklang ein.\n\nBeispiel Systemklänge:\nWindows: SystemDefault, SystemAsterisk ...\nLinux: complete, window-attention ...\n
 PREFERENCES_SND_LNGEDITPROCDONE;Bearbeitung abgeschlossen
-PREFERENCES_SND_TRESHOLDSECS;Nach Sekunden
+PREFERENCES_SND_TRESHOLDSECS;Verzögerung in Sekunden
 PREFERENCES_STARTUPIMDIR;Bildverzeichnis beim Programmstart
 PREFERENCES_STDAUT;Standard
 PREFERENCES_TAB_BROWSER;Dateiverwaltung
@@ -1278,7 +1278,7 @@ TP_COLORAPP_CURVEEDITOR2;Tonwertkurve 2
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Gleiche Verwendung wie bei der zweiten Belichtungstonwertkurve.
 TP_COLORAPP_CURVEEDITOR3;Farbkurve
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Korrigiert Buntheit, Sättigung oder Farbigkeit.\n\nZeigt das Histogramm der Chromatizität (L*a*b* ) VOR den CIECAM02-Änderungen an.\nWenn "CIECAM02-Ausgabe-Histogramm in Kurven anzeigen" aktiviert ist, wird das Histogramm von C, S oder M NACH den CIECAM02-Änderungen angezeigt.\n\nC, S und M werden nicht im Haupt-Histogramm angezeigt.\nFür die endgültige Ausgabe verwenden Sie das Haupt-Histogramm.
-TP_COLORAPP_DATACIE;CIECAM02-Ausgabe-Histogramm\nin Kurven anzeigen
+TP_COLORAPP_DATACIE;CIECAM02-Ausgabe-Histogramm in\nKurven anzeigen
 TP_COLORAPP_DATACIE_TOOLTIP;Wenn aktiviert, zeigen die Histogramme der CIECAM02-Kurven die angenäherten Werte/Bereiche für <b>J oder Q</b> und <b>C, S oder M</b> NACH den CIECAM02-Anpassungen an. Das betrifft nicht das Haupt-Histogramm.\n\nWenn deaktiviert, zeigen die Histogramme der CIECAM02-Kurven die L*a*b*-Werte VOR den CIECAM02-Anpassungen an.
 TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Wenn aktiviert (emfohlen), berechnet RT einen optimalen Wert der von CAT02 und CIECAM02 verwendet wird.\nUm den Wert manuell zu setzen, muss die Option deaktiviert sein (Werte über 64 sind empfohlen).
 TP_COLORAPP_DEGREE_TOOLTIP;Umfang der “CIE Chromatic Adaptation Transform 2002“
@@ -1472,7 +1472,7 @@ TP_EXPOSURE_AUTOLEVELS;Auto
 TP_EXPOSURE_AUTOLEVELS_TIP;Automatische Belichtungseinstellung basierend auf Bildanalyse
 TP_EXPOSURE_BLACKLEVEL;Schwarzwert
 TP_EXPOSURE_BRIGHTNESS;Helligkeit
-TP_EXPOSURE_CLIP;Clip:
+TP_EXPOSURE_CLIP;Clip %:
 TP_EXPOSURE_CLIP_TIP;Anteil der Pixel, die sich bei automatischer Belichtungseinstellung im Bereich der Spitzlichter und Schatten befinden sollen
 TP_EXPOSURE_COMPRHIGHLIGHTS;Lichterkompression
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Lichterkompression Schwellenwert

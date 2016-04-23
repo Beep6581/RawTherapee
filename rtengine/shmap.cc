@@ -475,7 +475,7 @@ SSEFUNCTION void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, i
         {
 #if defined( __SSE2__ ) && defined( __x86_64__ )
             __m128 dirwtv, valv, normv, dftemp1v, dftemp2v, fgg;
-            float domkerv[5][5][4] __attribute__ ((aligned (16))) = {{{1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}}};
+            float domkerv[5][5][4] ALIGNED16 = {{{1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}}};
 
 #endif // __SSE2__
             int j;
@@ -513,7 +513,7 @@ SSEFUNCTION void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, i
 
                         for (int jnbr = j - scalewin, indexjhlp = 0; jnbr <= j + scalewin; jnbr += scale, indexjhlp++) {
                             dftemp2v = LVFU(data_fine[inbr][jnbr]);
-                            dirwtv = ( _mm_load_ps((float*)&domkerv[indexihlp][indexjhlp]) * rangefn[_mm_cvttps_epi32(vabsf(dftemp2v - dftemp1v))] );
+                            dirwtv = ( LVF(domkerv[indexihlp][indexjhlp]) * rangefn[_mm_cvttps_epi32(vabsf(dftemp2v - dftemp1v))] );
                             valv += dirwtv * dftemp2v;
                             normv += dirwtv;
                         }
