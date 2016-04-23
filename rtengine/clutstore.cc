@@ -170,94 +170,94 @@ Glib::ustring rtengine::HaldCLUT::getProfile() const
 
 void rtengine::HaldCLUT::getRGB(float r, float g, float b, float out_rgbx[4]) const
 {
-	const unsigned int level = clut_level; // This is important
+    const unsigned int level = clut_level; // This is important
 
     const unsigned int red = std::min(flevel_minus_two, r * flevel_minus_one);
     const unsigned int green = std::min(flevel_minus_two, g * flevel_minus_one);
     const unsigned int blue = std::min(flevel_minus_two, b * flevel_minus_one);
 
-	const unsigned int level_square = level * level;
+    const unsigned int level_square = level * level;
 
-	const unsigned int color = red + green * level + blue * level_square;
+    const unsigned int color = red + green * level + blue * level_square;
 
 #ifndef __SSE2__
     r = r * flevel_minus_one - red;
     g = g * flevel_minus_one - green;
     b = b * flevel_minus_one - blue;
 
-	size_t index[2];
-	posToIndex(color, index);
+    size_t index[2];
+    posToIndex(color, index);
 
-	float tmp1[4] ALIGNED16;
-	tmp1[0] = clut_image.data[index[0]] * (1 - r) + clut_image.data[index[1]] * r;
-	tmp1[1] = clut_image.data[index[0] + 1] * (1 - r) + clut_image.data[index[1] + 1] * r;
-	tmp1[2] = clut_image.data[index[0] + 2] * (1 - r) + clut_image.data[index[1] + 2] * r;
+    float tmp1[4] ALIGNED16;
+    tmp1[0] = clut_image.data[index[0]] * (1 - r) + clut_image.data[index[1]] * r;
+    tmp1[1] = clut_image.data[index[0] + 1] * (1 - r) + clut_image.data[index[1] + 1] * r;
+    tmp1[2] = clut_image.data[index[0] + 2] * (1 - r) + clut_image.data[index[1] + 2] * r;
 
-	posToIndex(color + level, index);
+    posToIndex(color + level, index);
 
-	float tmp2[4] ALIGNED16;
-	tmp2[0] = clut_image.data[index[0]] * (1 - r) + clut_image.data[index[1]] * r;
-	tmp2[1] = clut_image.data[index[0] + 1] * (1 - r) + clut_image.data[index[1] + 1] * r;
-	tmp2[2] = clut_image.data[index[0] + 2] * (1 - r) + clut_image.data[index[1] + 2] * r;
+    float tmp2[4] ALIGNED16;
+    tmp2[0] = clut_image.data[index[0]] * (1 - r) + clut_image.data[index[1]] * r;
+    tmp2[1] = clut_image.data[index[0] + 1] * (1 - r) + clut_image.data[index[1] + 1] * r;
+    tmp2[2] = clut_image.data[index[0] + 2] * (1 - r) + clut_image.data[index[1] + 2] * r;
 
-	out_rgbx[0] = tmp1[0] * (1 - g) + tmp2[0] * g;
-	out_rgbx[1] = tmp1[1] * (1 - g) + tmp2[1] * g;
-	out_rgbx[2] = tmp1[2] * (1 - g) + tmp2[2] * g;
+    out_rgbx[0] = tmp1[0] * (1 - g) + tmp2[0] * g;
+    out_rgbx[1] = tmp1[1] * (1 - g) + tmp2[1] * g;
+    out_rgbx[2] = tmp1[2] * (1 - g) + tmp2[2] * g;
 
-	posToIndex(color + level_square, index);
+    posToIndex(color + level_square, index);
 
-	tmp1[0] = clut_image.data[index[0]] * (1 - r) + clut_image.data[index[1]] * r;
-	tmp1[1] = clut_image.data[index[0] + 1] * (1 - r) + clut_image.data[index[1] + 1] * r;
-	tmp1[2] = clut_image.data[index[0] + 2] * (1 - r) + clut_image.data[index[1] + 2] * r;
+    tmp1[0] = clut_image.data[index[0]] * (1 - r) + clut_image.data[index[1]] * r;
+    tmp1[1] = clut_image.data[index[0] + 1] * (1 - r) + clut_image.data[index[1] + 1] * r;
+    tmp1[2] = clut_image.data[index[0] + 2] * (1 - r) + clut_image.data[index[1] + 2] * r;
 
-	posToIndex(color + level + level_square, index);
+    posToIndex(color + level + level_square, index);
 
-	tmp2[0] = clut_image.data[index[0]] * (1 - r) + clut_image.data[index[1]] * r;
-	tmp2[1] = clut_image.data[index[0] + 1] * (1 - r) + clut_image.data[index[1] + 1] * r;
-	tmp2[2] = clut_image.data[index[0] + 2] * (1 - r) + clut_image.data[index[1] + 2] * r;
+    tmp2[0] = clut_image.data[index[0]] * (1 - r) + clut_image.data[index[1]] * r;
+    tmp2[1] = clut_image.data[index[0] + 1] * (1 - r) + clut_image.data[index[1] + 1] * r;
+    tmp2[2] = clut_image.data[index[0] + 2] * (1 - r) + clut_image.data[index[1] + 2] * r;
 
-	tmp1[0] = tmp1[0] * (1 - g) + tmp2[0] * g;
-	tmp1[1] = tmp1[1] * (1 - g) + tmp2[1] * g;
-	tmp1[2] = tmp1[2] * (1 - g) + tmp2[2] * g;
+    tmp1[0] = tmp1[0] * (1 - g) + tmp2[0] * g;
+    tmp1[1] = tmp1[1] * (1 - g) + tmp2[1] * g;
+    tmp1[2] = tmp1[2] * (1 - g) + tmp2[2] * g;
 
     out_rgbx[0] = out_rgbx[0] * (1 - b) + tmp1[0] * b;
     out_rgbx[1] = out_rgbx[1] * (1 - b) + tmp1[1] * b;
     out_rgbx[2] = out_rgbx[2] * (1 - b) + tmp1[2] * b;
 #else
-	const __m128 v_rgb = _mm_set_ps(0.0f, b, g, r) *_mm_load_ps1(&flevel_minus_one) - _mm_set_ps(0.0f, blue, green, red);
+    const __m128 v_rgb = _mm_set_ps(0.0f, b, g, r) *_mm_load_ps1(&flevel_minus_one) - _mm_set_ps(0.0f, blue, green, red);
 
-	size_t index[2];
-	posToIndex(color, index);
+    size_t index[2];
+    posToIndex(color, index);
 
-	const __m128 v_r = _mm_shuffle_ps(v_rgb, v_rgb, 0x00);
+    const __m128 v_r = _mm_shuffle_ps(v_rgb, v_rgb, 0x00);
 
     __m128 v_cv0 = getClutValue(clut_image, index[0]);
     __m128 v_tmp1 = v_r * (getClutValue(clut_image, index[1]) - v_cv0) + v_cv0;
 
-	posToIndex(color + level, index);
+    posToIndex(color + level, index);
 
     v_cv0 = getClutValue(clut_image, index[0]);
-	__m128 v_tmp2 = v_r * (getClutValue(clut_image, index[1]) - v_cv0) + v_cv0;
+    __m128 v_tmp2 = v_r * (getClutValue(clut_image, index[1]) - v_cv0) + v_cv0;
 
-	const __m128 v_g = _mm_shuffle_ps(v_rgb, v_rgb, 0x55);
+    const __m128 v_g = _mm_shuffle_ps(v_rgb, v_rgb, 0x55);
 
-	__m128 v_out = v_g * (v_tmp2 - v_tmp1) + v_tmp1;
+    __m128 v_out = v_g * (v_tmp2 - v_tmp1) + v_tmp1;
 
-	posToIndex(color + level_square, index);
-
-    v_cv0 = getClutValue(clut_image, index[0]);
-	v_tmp1 = v_r * (getClutValue(clut_image, index[1]) - v_cv0) + v_cv0;
-
-	posToIndex(color + level + level_square, index);
+    posToIndex(color + level_square, index);
 
     v_cv0 = getClutValue(clut_image, index[0]);
-	v_tmp2 = v_r * (getClutValue(clut_image, index[1]) - v_cv0) + v_cv0;
+    v_tmp1 = v_r * (getClutValue(clut_image, index[1]) - v_cv0) + v_cv0;
 
-	v_tmp1 = v_g * (v_tmp2 - v_tmp1) + v_tmp1;
+    posToIndex(color + level + level_square, index);
 
-	const __m128 v_b = _mm_shuffle_ps(v_rgb, v_rgb, 0xAA);
+    v_cv0 = getClutValue(clut_image, index[0]);
+    v_tmp2 = v_r * (getClutValue(clut_image, index[1]) - v_cv0) + v_cv0;
 
-	_mm_store_ps(out_rgbx, v_b * (v_tmp1 - v_out) + v_out);
+    v_tmp1 = v_g * (v_tmp2 - v_tmp1) + v_tmp1;
+
+    const __m128 v_b = _mm_shuffle_ps(v_rgb, v_rgb, 0xAA);
+
+    _mm_store_ps(out_rgbx, v_b * (v_tmp1 - v_out) + v_out);
 #endif
 }
 
