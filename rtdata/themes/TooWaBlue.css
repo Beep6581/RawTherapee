@@ -1,7 +1,7 @@
 /*
   This file is part of RawTherapee.
 
-  Copyright (c) 2016 TooWaBoo (v1.19.1)
+  Copyright (c) 2016 TooWaBoo (v1.19.3)
   Many thanks to the RawTherapee Developer Team for this great piece of software
 
   RawTherapee is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@
 @define-color text-hl-color rgb(210,210,210);   /*** Highlight/selected text color ***/
 
 @define-color accent-color2 rgb(35,99,166);     /*** Slider, Progressbar, Scrollbar ***/
+@define-color accent-color4 rgb(35,99,166);     /*** Slider knob ***/
 
 @define-color accent-color3 rgb(35,99,166);     /*** Selected thumbnail background color ***/
 @define-color text-hl-color3 rgb(210,210,210);  /*** Selected thumbnail text color ***/
@@ -101,7 +102,7 @@ GtkColorChooser {
 
 /*** Menu bubble box ***/
 GtkPopover {
-    background-color: @bg-dark-grey;
+    background-color: @bg-grey;
     border: 1px solid @accent-color;
     border-radius: 0;
 }
@@ -110,13 +111,14 @@ GtkPopover {
     background-color: @bg-dark-grey;
     border: 1px solid @accent-color;
 }
-.menu .menuitem {
+.menu > .menuitem {
     padding: 2px 4px;
 }
-.menu .menuitem:hover {
+.menu > .menuitem:hover {
     background-color: @accent-color;
 }
-.menu .menuitem:hover * {
+.menu > .menuitem:hover > * > *,
+.menu > .menuitem:hover > * {
     color: @text-hl-color;
 }
 
@@ -286,10 +288,9 @@ GtkDialog .label,
 }
 .scale.slider,
 #ToolPanelNotebook .scale.slider {
-    box-shadow: inset 0 2px rgba(255, 255, 255, 0.08), inset 0 -2px rgba(0, 0, 0, 0.09);
-    background-image: none;
-    background-color: @accent-color2;
-    border: 1px solid shade(@bg-dark-grey, 1.12);
+    background-image: linear-gradient(to bottom, shade (@accent-color4,1.15), shade (@accent-color4,.85));
+    border: 1px solid shade(@bg-dark-grey, 1.25);
+    box-shadow: none;
 }
 .scale.fine-tune {
     -GtkRange-trough-border: 5;
@@ -306,9 +307,14 @@ GtkDialog .label,
 .scale.fine-tune.scale-has-marks-below {
     -GtkRange-trough-border: 5;
 }
+.scale.slider:hover,
+#ToolPanelNotebook .scale.slider:hover {
+    background-image: linear-gradient(to bottom, shade (@accent-color4,1.25), shade (@accent-color4,.95));
+}
+
 .scale.slider:active,
 #ToolPanelNotebook .scale.slider:active {
-    border-color:  shade (@accent-color2,.55);
+    background-image: linear-gradient(to bottom, shade (@accent-color4,1.25), shade (@accent-color4,.95));
 }
 
 GtkProgressBar {
@@ -567,9 +573,12 @@ GtkFileChooserWidget .button GtkImage{
     background-color: @bg-scale-entry;
     border: 1px solid @bg-entry-border;
     border-radius: 0;
-    padding: 3px 4px;
+    padding: 2px 4px;
     color: @text-color;
     box-shadow: inset 1px 1px rgba(0, 0, 0, 0.08), 0 1px rgba(242 , 242, 242, 0.1);
+}
+#FileBrowser .entry {
+    padding: 3px 4px;
 }
 .entry:focused:selected {
     color: @text-hl-color;
@@ -685,6 +694,9 @@ GtkLabel + GtkComboBox + GtkComboBox {
 GtkFileChooserWidget .button.text-button,
 #RightNotebook .button.text-button {
     padding: 3px 4px;
+}
+GtkPopover .button.text-button {
+    padding: 2px 4px;
 }
 
 .spinbutton .button {
@@ -859,5 +871,6 @@ GtkFileChooserWidget .button.text-button,
 #ToolPanelNotebook .scale.trough:insensitive {
     background-color: #414141;
     box-shadow: none;
+    background-image: none;
 }
 /*** end ***/

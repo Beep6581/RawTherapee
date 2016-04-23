@@ -15,7 +15,7 @@
    id="svg6018"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="checkbox-checked.svg"
+   sodipodi:docname="radio-inconsistent-disabled.svg"
    inkscape:export-filename="/tmp/16.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
@@ -97,7 +97,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -106,19 +106,17 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1036.3622)">
-    <path
-       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#b4b4b4;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
-       d="m 13.5,1043.3622 0,6.5 -12,0 0,-12 0,0 7.5,0"
-       id="path6609"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc" />
-    <path
-       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#b4b4b4;stroke-width:2.19409847;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-mid:none;enable-background:accumulate"
-       d="m 3.960076,1041.2107 3.5956705,3.5958 6.6685155,-6.6686"
-       id="path5910-7"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="/tmp/16.png"
-       inkscape:export-xdpi="1.4400001"
-       inkscape:export-ydpi="1.4400001" />
+    <circle
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="path6734"
+       cx="7.5000086"
+       cy="1043.8622"
+       r="5.9999828" />
+    <circle
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="path6736"
+       r="2.4999826"
+       cy="1043.8622"
+       cx="7.5" />
   </g>
 </svg>
