@@ -4355,12 +4355,12 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                             sourceG = CLIP<float>( Color::gamma_srgb( sourceG ) );
                             sourceB = CLIP<float>( Color::gamma_srgb( sourceB ) );
 
-                            float r, g, b;
-                            colorLUT->getRGB( sourceR, sourceG, sourceB, r, g, b );
+                            float out_rgbx[4] ALIGNED16;
+                            colorLUT->getRGB( sourceR, sourceG, sourceB, out_rgbx );
                             // apply strength
-                            sourceR = r * filmSimCorrectedStrength + sourceR * filmSimSourceStrength;
-                            sourceG = g * filmSimCorrectedStrength + sourceG * filmSimSourceStrength;
-                            sourceB = b * filmSimCorrectedStrength + sourceB * filmSimSourceStrength;
+                            sourceR = out_rgbx[0] * filmSimCorrectedStrength + sourceR * filmSimSourceStrength;
+                            sourceG = out_rgbx[1] * filmSimCorrectedStrength + sourceG * filmSimSourceStrength;
+                            sourceB = out_rgbx[2] * filmSimCorrectedStrength + sourceB * filmSimSourceStrength;
                             // apply inverse gamma sRGB
                             sourceR = Color::igamma_srgb( sourceR );
                             sourceG = Color::igamma_srgb( sourceG );

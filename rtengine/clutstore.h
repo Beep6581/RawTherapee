@@ -1,15 +1,15 @@
 #pragma once
 
 #include <memory>
+#include <cstdint>
 
 #include <gtkmm.h>
 
 #include "cache.h"
+#include "alignedbuffer.h"
 
 namespace rtengine
 {
-
-class Image16;
 
 class CLUT
 {
@@ -24,7 +24,7 @@ public:
     virtual Glib::ustring getFilename() const = 0;
     virtual Glib::ustring getProfile() const = 0;
 
-    virtual void getRGB(float r, float g, float b, float& out_r, float& out_g, float& out_b) const = 0;
+    virtual void getRGB(float r, float g, float b, float out_rgbx[4]) const = 0;
 
     static void splitClutFilename(
         const Glib::ustring& filename,
@@ -43,15 +43,15 @@ public:
 
     bool load(const Glib::ustring& filename);
 
-    explicit operator bool() const;
+    explicit operator bool() const override;
 
-    Glib::ustring getFilename() const;
-    Glib::ustring getProfile() const;
+    Glib::ustring getFilename() const override;
+    Glib::ustring getProfile() const override;
 
-    void getRGB(float r, float g, float b, float& out_r, float& out_g, float& out_b) const;
+    void getRGB(float r, float g, float b, float out_rgbx[4]) const override;
 
 private:
-    std::unique_ptr<Image16> clut_image;
+    AlignedBuffer<std::uint16_t> clut_image;
     unsigned int clut_level;
     float flevel_minus_one;
     float flevel_minus_two;

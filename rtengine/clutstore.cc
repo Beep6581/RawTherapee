@@ -1,8 +1,11 @@
 #include <algorithm>
 
+#ifdef __SSE2__
+#include <xmmintrin.h>
+#endif
+
 #include "clutstore.h"
 
-#include "image16.h"
 #include "imagefloat.h"
 #include "stdimagesource.h"
 #include "../rtgui/options.h"
@@ -10,24 +13,23 @@
 namespace
 {
 
-std::unique_ptr<rtengine::Image16> loadFile(
+bool loadFile(
     const Glib::ustring& filename,
     const Glib::ustring& working_color_space,
+    AlignedBuffer<std::uint16_t>& clut_image,
     unsigned int& clut_level
 )
 {
-    std::unique_ptr<rtengine::Image16> result;
-
     rtengine::StdImageSource img_src;
 
     if (!Glib::file_test(filename, Glib::FILE_TEST_EXISTS) || img_src.load(filename)) {
-        return result;
+        return false;
     }
 
     int fw, fh;
     img_src.getFullSize(fw, fh, TR_NONE);
 
-    bool valid = false;
+    bool res = false;
 
     if (fw == fh) {
         unsigned int level = 1;
@@ -36,11 +38,11 @@ std::unique_ptr<rtengine::Image16> loadFile(
         }
         if (level * level * level == fw && level > 1) {
             clut_level = level;
-            valid = true;
+            res = true;
         }
     }
 
-    if (valid) {
+    if (res) {
         rtengine::ColorTemp curr_wb = img_src.getWB();
         std::unique_ptr<rtengine::Imagefloat> img_float = std::unique_ptr<rtengine::Imagefloat>(new rtengine::Imagefloat(fw, fh));
         const PreviewProps pp(0, 0, fw, fh, 1);
@@ -54,19 +56,38 @@ std::unique_ptr<rtengine::Image16> loadFile(
             img_src.convertColorSpace(img_float.get(), icm, curr_wb);
         }
 
-        result = std::unique_ptr<rtengine::Image16>(img_float->to16());
+        AlignedBuffer<std::uint16_t> image(fw * fh * 4 + 1);
+
+        std::size_t index = 0;
+        for (int y = 0; y < fh; ++y) {
+            for (int x = 0; x < fw; ++x) {
+                image.data[index] = img_float->r(y, x);
+                ++index;
+                image.data[index] = img_float->g(y, x);
+                ++index;
+                image.data[index] = img_float->b(y, x);
+                index += 2;
+            }
+        }
+
+        clut_image.swap(image);
     }
 
-    return result;
+    return res;
 }
 
-inline void posToXy(unsigned int pos, unsigned int width, unsigned int (&x)[2], unsigned int (&y)[2])
+inline void posToIndex(unsigned int pos, size_t (&index)[2])
 {
-    x[0] = pos % width;
-    y[0] = pos / width;
-    x[1] = (pos + 1) % width;
-    y[1] = (pos + 1) / width;
+    index[0] = static_cast<size_t>(pos) * 4;
+    index[1] = static_cast<size_t>(pos + 1) * 4;
 }
+
+#ifdef __SSE2__
+inline __m128 getClutValue(const AlignedBuffer<std::uint16_t>& clut_image, size_t index)
+{
+    return _mm_cvtpu16_ps(*reinterpret_cast<const __m64*>(clut_image.data + index));
+}
+#endif
 
 }
 
@@ -118,11 +139,10 @@ rtengine::HaldCLUT::~HaldCLUT()
 
 bool rtengine::HaldCLUT::load(const Glib::ustring& filename)
 {
-    clut_image = loadFile(filename, "", clut_level);
-    Glib::ustring name, ext;
-    splitClutFilename(filename, name, ext, clut_profile);
+    if (loadFile(filename, "", clut_image, clut_level)) {
+        Glib::ustring name, ext;
+        splitClutFilename(filename, name, ext, clut_profile);
 
-    if (clut_image) {
         clut_filename = filename;
         clut_level *= clut_level;
         flevel_minus_one = static_cast<float>(clut_level - 1) / 65535.0f;
@@ -135,7 +155,7 @@ bool rtengine::HaldCLUT::load(const Glib::ustring& filename)
 
 rtengine::HaldCLUT::operator bool() const
 {
-    return static_cast<bool>(clut_image);
+    return !clut_image.isEmpty();
 }
 
 Glib::ustring rtengine::HaldCLUT::getFilename() const
@@ -148,62 +168,97 @@ Glib::ustring rtengine::HaldCLUT::getProfile() const
     return clut_profile;
 }
 
-void rtengine::HaldCLUT::getRGB(float r, float g, float b, float& out_r, float& out_g, float& out_b) const
+void rtengine::HaldCLUT::getRGB(float r, float g, float b, float out_rgbx[4]) const
 {
-    const unsigned int level = clut_level; // This is important
+	const unsigned int level = clut_level; // This is important
 
     const unsigned int red = std::min(flevel_minus_two, r * flevel_minus_one);
     const unsigned int green = std::min(flevel_minus_two, g * flevel_minus_one);
     const unsigned int blue = std::min(flevel_minus_two, b * flevel_minus_one);
 
+	const unsigned int level_square = level * level;
+
+	const unsigned int color = red + green * level + blue * level_square;
+
+#ifndef __SSE2__
     r = r * flevel_minus_one - red;
     g = g * flevel_minus_one - green;
     b = b * flevel_minus_one - blue;
 
-    const unsigned int level_square = level * level;
+	size_t index[2];
+	posToIndex(color, index);
 
-    const unsigned int color = red + green * level + blue * level_square;
+	float tmp1[4] ALIGNED16;
+	tmp1[0] = clut_image.data[index[0]] * (1 - r) + clut_image.data[index[1]] * r;
+	tmp1[1] = clut_image.data[index[0] + 1] * (1 - r) + clut_image.data[index[1] + 1] * r;
+	tmp1[2] = clut_image.data[index[0] + 2] * (1 - r) + clut_image.data[index[1] + 2] * r;
 
-    unsigned int x[2];
-    unsigned int y[2];
-    posToXy(color, clut_image->getWidth(), x, y);
+	posToIndex(color + level, index);
 
-    float tmp1[4] __attribute__((aligned(16)));
-    tmp1[0] = clut_image->r(y[0], x[0]) * (1 - r) + clut_image->r(y[1], x[1]) * r;
-    tmp1[1] = clut_image->g(y[0], x[0]) * (1 - r) + clut_image->g(y[1], x[1]) * r;
-    tmp1[2] = clut_image->b(y[0], x[0]) * (1 - r) + clut_image->b(y[1], x[1]) * r;
+	float tmp2[4] ALIGNED16;
+	tmp2[0] = clut_image.data[index[0]] * (1 - r) + clut_image.data[index[1]] * r;
+	tmp2[1] = clut_image.data[index[0] + 1] * (1 - r) + clut_image.data[index[1] + 1] * r;
+	tmp2[2] = clut_image.data[index[0] + 2] * (1 - r) + clut_image.data[index[1] + 2] * r;
 
-    posToXy(color + level, clut_image->getWidth(), x, y);
+	out_rgbx[0] = tmp1[0] * (1 - g) + tmp2[0] * g;
+	out_rgbx[1] = tmp1[1] * (1 - g) + tmp2[1] * g;
+	out_rgbx[2] = tmp1[2] * (1 - g) + tmp2[2] * g;
 
-    float tmp2[4] __attribute__((aligned(16)));
-    tmp2[0] = clut_image->r(y[0], x[0]) * (1 - r) + clut_image->r(y[1], x[1]) * r;
-    tmp2[1] = clut_image->g(y[0], x[0]) * (1 - r) + clut_image->g(y[1], x[1]) * r;
-    tmp2[2] = clut_image->b(y[0], x[0]) * (1 - r) + clut_image->b(y[1], x[1]) * r;
+	posToIndex(color + level_square, index);
 
-    float out[4] __attribute__((aligned(16)));
-    out[0] = tmp1[0] * (1 - g) + tmp2[0] * g;
-    out[1] = tmp1[1] * (1 - g) + tmp2[1] * g;
-    out[2] = tmp1[2] * (1 - g) + tmp2[2] * g;
+	tmp1[0] = clut_image.data[index[0]] * (1 - r) + clut_image.data[index[1]] * r;
+	tmp1[1] = clut_image.data[index[0] + 1] * (1 - r) + clut_image.data[index[1] + 1] * r;
+	tmp1[2] = clut_image.data[index[0] + 2] * (1 - r) + clut_image.data[index[1] + 2] * r;
 
-    posToXy(color + level_square, clut_image->getWidth(), x, y);
+	posToIndex(color + level + level_square, index);
 
-    tmp1[0] = clut_image->r(y[0], x[0]) * (1 - r) + clut_image->r(y[1], x[1]) * r;
-    tmp1[1] = clut_image->g(y[0], x[0]) * (1 - r) + clut_image->g(y[1], x[1]) * r;
-    tmp1[2] = clut_image->b(y[0], x[0]) * (1 - r) + clut_image->b(y[1], x[1]) * r;
+	tmp2[0] = clut_image.data[index[0]] * (1 - r) + clut_image.data[index[1]] * r;
+	tmp2[1] = clut_image.data[index[0] + 1] * (1 - r) + clut_image.data[index[1] + 1] * r;
+	tmp2[2] = clut_image.data[index[0] + 2] * (1 - r) + clut_image.data[index[1] + 2] * r;
 
-    posToXy(color + level + level_square, clut_image->getWidth(), x, y);
+	tmp1[0] = tmp1[0] * (1 - g) + tmp2[0] * g;
+	tmp1[1] = tmp1[1] * (1 - g) + tmp2[1] * g;
+	tmp1[2] = tmp1[2] * (1 - g) + tmp2[2] * g;
 
-    tmp2[0] = clut_image->r(y[0], x[0]) * (1 - r) + clut_image->r(y[1], x[1]) * r;
-    tmp2[1] = clut_image->g(y[0], x[0]) * (1 - r) + clut_image->g(y[1], x[1]) * r;
-    tmp2[2] = clut_image->b(y[0], x[0]) * (1 - r) + clut_image->b(y[1], x[1]) * r;
+    out_rgbx[0] = out_rgbx[0] * (1 - b) + tmp1[0] * b;
+    out_rgbx[1] = out_rgbx[1] * (1 - b) + tmp1[1] * b;
+    out_rgbx[2] = out_rgbx[2] * (1 - b) + tmp1[2] * b;
+#else
+	const __m128 v_rgb = _mm_set_ps(0.0f, b, g, r) *_mm_load_ps1(&flevel_minus_one) - _mm_set_ps(0.0f, blue, green, red);
 
-    tmp1[0] = tmp1[0] * (1 - g) + tmp2[0] * g;
-    tmp1[1] = tmp1[1] * (1 - g) + tmp2[1] * g;
-    tmp1[2] = tmp1[2] * (1 - g) + tmp2[2] * g;
+	size_t index[2];
+	posToIndex(color, index);
 
-    out_r = out[0] * (1 - b) + tmp1[0] * b;
-    out_g = out[1] * (1 - b) + tmp1[1] * b;
-    out_b = out[2] * (1 - b) + tmp1[2] * b;
+	const __m128 v_r = _mm_shuffle_ps(v_rgb, v_rgb, 0x00);
+
+    __m128 v_cv0 = getClutValue(clut_image, index[0]);
+    __m128 v_tmp1 = v_r * (getClutValue(clut_image, index[1]) - v_cv0) + v_cv0;
+
+	posToIndex(color + level, index);
+
+    v_cv0 = getClutValue(clut_image, index[0]);
+	__m128 v_tmp2 = v_r * (getClutValue(clut_image, index[1]) - v_cv0) + v_cv0;
+
+	const __m128 v_g = _mm_shuffle_ps(v_rgb, v_rgb, 0x55);
+
+	__m128 v_out = v_g * (v_tmp2 - v_tmp1) + v_tmp1;
+
+	posToIndex(color + level_square, index);
+
+    v_cv0 = getClutValue(clut_image, index[0]);
+	v_tmp1 = v_r * (getClutValue(clut_image, index[1]) - v_cv0) + v_cv0;
+
+	posToIndex(color + level + level_square, index);
+
+    v_cv0 = getClutValue(clut_image, index[0]);
+	v_tmp2 = v_r * (getClutValue(clut_image, index[1]) - v_cv0) + v_cv0;
+
+	v_tmp1 = v_g * (v_tmp2 - v_tmp1) + v_tmp1;
+
+	const __m128 v_b = _mm_shuffle_ps(v_rgb, v_rgb, 0xAA);
+
+	_mm_store_ps(out_rgbx, v_b * (v_tmp1 - v_out) + v_out);
+#endif
 }
 
 rtengine::CLUTStore& rtengine::CLUTStore::getInstance()
