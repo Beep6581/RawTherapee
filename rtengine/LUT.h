@@ -258,14 +258,19 @@ public:
         return *this;
     }
 
-    // handy to sum up per thread histograms
+    // handy to sum up per thread histograms. #pragma omp simd speeds up the loop by about factor 3 for LUTu (unsigned int).
     LUT<T> & operator+=(LUT<T> &rhs)
     {
         if (rhs.size == this->size) {
+#ifdef _OPENMP
+            #pragma omp simd
+#endif
+
             for(unsigned int i = 0; i < this->size; i++) {
                 data[i] += rhs.data[i];
             }
         }
+
         return *this;
     }
 
