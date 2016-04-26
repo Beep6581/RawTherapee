@@ -1,11 +1,9 @@
 #include <algorithm>
 
-#ifdef __SSE2__
-#include <xmmintrin.h>
-#endif
-
 #include "clutstore.h"
 
+#include "opthelper.h"
+#include "rt_math.h"
 #include "imagefloat.h"
 #include "stdimagesource.h"
 #include "../rtgui/options.h"
@@ -76,16 +74,14 @@ bool loadFile(
     return res;
 }
 
-inline void posToIndex(unsigned int pos, size_t (&index)[2])
-{
-    index[0] = static_cast<size_t>(pos) * 4;
-    index[1] = static_cast<size_t>(pos + 1) * 4;
-}
-
 #ifdef __SSE2__
-inline __m128 getClutValue(const AlignedBuffer<std::uint16_t>& clut_image, size_t index)
+inline vfloat getClutValue(const AlignedBuffer<std::uint16_t>& clut_image, size_t index)
 {
+#ifdef __SSE4_1__
+    return _mm_cvtepi32_ps(_mm_cvtepu16_epi32(*reinterpret_cast<const __m128i*>(clut_image.data + index)));
+#else
     return _mm_cvtpu16_ps(*reinterpret_cast<const __m64*>(clut_image.data + index));
+#endif
 }
 #endif
 
@@ -185,79 +181,74 @@ void rtengine::HaldCLUT::getRGB(float r, float g, float b, float out_rgbx[4]) co
     g = g * flevel_minus_one - green;
     b = b * flevel_minus_one - blue;
 
-    size_t index[2];
-    posToIndex(color, index);
+    size_t index = color * 4;
 
     float tmp1[4] ALIGNED16;
-    tmp1[0] = clut_image.data[index[0]] * (1 - r) + clut_image.data[index[1]] * r;
-    tmp1[1] = clut_image.data[index[0] + 1] * (1 - r) + clut_image.data[index[1] + 1] * r;
-    tmp1[2] = clut_image.data[index[0] + 2] * (1 - r) + clut_image.data[index[1] + 2] * r;
+    tmp1[0] = intp<float>(r, clut_image.data[index + 4], clut_image.data[index]);
+    tmp1[1] = intp<float>(r, clut_image.data[index + 5], clut_image.data[index + 1]);
+    tmp1[2] = intp<float>(r, clut_image.data[index + 6], clut_image.data[index + 2]);
 
-    posToIndex(color + level, index);
+    index = (color + level) * 4;
 
     float tmp2[4] ALIGNED16;
-    tmp2[0] = clut_image.data[index[0]] * (1 - r) + clut_image.data[index[1]] * r;
-    tmp2[1] = clut_image.data[index[0] + 1] * (1 - r) + clut_image.data[index[1] + 1] * r;
-    tmp2[2] = clut_image.data[index[0] + 2] * (1 - r) + clut_image.data[index[1] + 2] * r;
+    tmp2[0] = intp<float>(r, clut_image.data[index + 4], clut_image.data[index]);
+    tmp2[1] = intp<float>(r, clut_image.data[index + 5], clut_image.data[index + 1]);
+    tmp2[2] = intp<float>(r, clut_image.data[index + 6], clut_image.data[index + 2]);
 
-    out_rgbx[0] = tmp1[0] * (1 - g) + tmp2[0] * g;
-    out_rgbx[1] = tmp1[1] * (1 - g) + tmp2[1] * g;
-    out_rgbx[2] = tmp1[2] * (1 - g) + tmp2[2] * g;
+    out_rgbx[0] = intp<float>(g, tmp2[0], tmp1[0]);
+    out_rgbx[1] = intp<float>(g, tmp2[1], tmp1[1]);
+    out_rgbx[2] = intp<float>(g, tmp2[2], tmp1[2]);
 
-    posToIndex(color + level_square, index);
+    index = (color + level_square) * 4;
 
-    tmp1[0] = clut_image.data[index[0]] * (1 - r) + clut_image.data[index[1]] * r;
-    tmp1[1] = clut_image.data[index[0] + 1] * (1 - r) + clut_image.data[index[1] + 1] * r;
-    tmp1[2] = clut_image.data[index[0] + 2] * (1 - r) + clut_image.data[index[1] + 2] * r;
+    tmp1[0] = intp<float>(r, clut_image.data[index + 4], clut_image.data[index]);
+    tmp1[1] = intp<float>(r, clut_image.data[index + 5], clut_image.data[index + 1]);
+    tmp1[2] = intp<float>(r, clut_image.data[index + 6], clut_image.data[index + 2]);
 
-    posToIndex(color + level + level_square, index);
+    index = (color + level + level_square) * 4;
 
-    tmp2[0] = clut_image.data[index[0]] * (1 - r) + clut_image.data[index[1]] * r;
-    tmp2[1] = clut_image.data[index[0] + 1] * (1 - r) + clut_image.data[index[1] + 1] * r;
-    tmp2[2] = clut_image.data[index[0] + 2] * (1 - r) + clut_image.data[index[1] + 2] * r;
+    tmp2[0] = intp<float>(r, clut_image.data[index + 4], clut_image.data[index]);
+    tmp2[1] = intp<float>(r, clut_image.data[index + 5], clut_image.data[index + 1]);
+    tmp2[2] = intp<float>(r, clut_image.data[index + 6], clut_image.data[index + 2]);
 
-    tmp1[0] = tmp1[0] * (1 - g) + tmp2[0] * g;
-    tmp1[1] = tmp1[1] * (1 - g) + tmp2[1] * g;
-    tmp1[2] = tmp1[2] * (1 - g) + tmp2[2] * g;
+    tmp1[0] = intp<float>(g, tmp2[0], tmp1[0]);
+    tmp1[1] = intp<float>(g, tmp2[1], tmp1[1]);
+    tmp1[2] = intp<float>(g, tmp2[2], tmp1[2]);
 
-    out_rgbx[0] = out_rgbx[0] * (1 - b) + tmp1[0] * b;
-    out_rgbx[1] = out_rgbx[1] * (1 - b) + tmp1[1] * b;
-    out_rgbx[2] = out_rgbx[2] * (1 - b) + tmp1[2] * b;
+    out_rgbx[0] = intp<float>(b, tmp1[0], out_rgbx[0]);
+    out_rgbx[1] = intp<float>(b, tmp1[1], out_rgbx[1]);
+    out_rgbx[2] = intp<float>(b, tmp1[2], out_rgbx[2]);
 #else
-    const __m128 v_rgb = _mm_set_ps(0.0f, b, g, r) *_mm_load_ps1(&flevel_minus_one) - _mm_set_ps(0.0f, blue, green, red);
+    const vfloat v_tmp = _mm_set_ps(0.0f, b, g, r) * _mm_load_ps1(&flevel_minus_one);
+    const vfloat v_rgb = v_tmp - _mm_cvtepi32_ps(_mm_cvttps_epi32(_mm_min_ps(_mm_load_ps1(&flevel_minus_two), v_tmp)));
 
-    size_t index[2];
-    posToIndex(color, index);
+    size_t index = color * 4;
 
-    const __m128 v_r = _mm_shuffle_ps(v_rgb, v_rgb, 0x00);
+    const vfloat v_r = PERMUTEPS(v_rgb, 0x00);
 
-    __m128 v_cv0 = getClutValue(clut_image, index[0]);
-    __m128 v_tmp1 = v_r * (getClutValue(clut_image, index[1]) - v_cv0) + v_cv0;
+    vfloat v_tmp1 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
 
-    posToIndex(color + level, index);
+    index = (color + level) * 4;
 
-    v_cv0 = getClutValue(clut_image, index[0]);
-    __m128 v_tmp2 = v_r * (getClutValue(clut_image, index[1]) - v_cv0) + v_cv0;
+    vfloat v_tmp2 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
 
-    const __m128 v_g = _mm_shuffle_ps(v_rgb, v_rgb, 0x55);
+    const vfloat v_g = PERMUTEPS(v_rgb, 0x55);
 
-    __m128 v_out = v_g * (v_tmp2 - v_tmp1) + v_tmp1;
+    vfloat v_out = vintpf(v_g, v_tmp2, v_tmp1);
 
-    posToIndex(color + level_square, index);
+    index = (color + level_square) * 4;
 
-    v_cv0 = getClutValue(clut_image, index[0]);
-    v_tmp1 = v_r * (getClutValue(clut_image, index[1]) - v_cv0) + v_cv0;
+    v_tmp1 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
 
-    posToIndex(color + level + level_square, index);
+    index = (color + level + level_square) * 4;
 
-    v_cv0 = getClutValue(clut_image, index[0]);
-    v_tmp2 = v_r * (getClutValue(clut_image, index[1]) - v_cv0) + v_cv0;
+    v_tmp2 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
 
-    v_tmp1 = v_g * (v_tmp2 - v_tmp1) + v_tmp1;
+    v_tmp1 = vintpf(v_g, v_tmp2, v_tmp1);
 
-    const __m128 v_b = _mm_shuffle_ps(v_rgb, v_rgb, 0xAA);
+    const vfloat v_b = PERMUTEPS(v_rgb, 0xAA);
 
-    _mm_store_ps(out_rgbx, v_b * (v_tmp1 - v_out) + v_out);
+    _mm_store_ps(out_rgbx, vintpf(v_b, v_tmp1, v_out));
 #endif
 }
 
