@@ -24,7 +24,7 @@ public:
     virtual Glib::ustring getFilename() const = 0;
     virtual Glib::ustring getProfile() const = 0;
 
-    virtual void getRGB(float r, float g, float b, float out_rgbx[4]) const = 0;
+    virtual void getRGB(std::size_t line_size, const float* r, const float* g, const float* b, float* out_rgbx) const = 0;
 
     static void splitClutFilename(
         const Glib::ustring& filename,
@@ -48,7 +48,7 @@ public:
     Glib::ustring getFilename() const override;
     Glib::ustring getProfile() const override;
 
-    void getRGB(float r, float g, float b, float out_rgbx[4]) const override;
+    void getRGB(std::size_t line_size, const float* r, const float* g, const float* b, float* out_rgbx) const override;
 
 private:
     AlignedBuffer<std::uint16_t> clut_image;

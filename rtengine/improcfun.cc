@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <memory>
 #include <cmath>
 #include <glib.h>
 #include <glibmm.h>
@@ -3224,8 +3225,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         }
     }
 
-    double filmSimCorrectedStrength = double(params->filmSimulation.strength) / 100.;
-    double filmSimSourceStrength = double(100 - params->filmSimulation.strength) / 100.;
+    float filmSimCorrectedStrength = static_cast<float>(params->filmSimulation.strength) / 100.0f;
+    float filmSimSourceStrength = 1.0f - filmSimCorrectedStrength;
 
     const float exp_scale = pow (2.0, expcomp);
     const float comp = (max(0.0, expcomp) + 1.0) * hlcompr / 100.0;
@@ -4354,13 +4355,24 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                             sourceR = CLIP<float>( Color::gamma_srgb( sourceR ) );
                             sourceG = CLIP<float>( Color::gamma_srgb( sourceG ) );
                             sourceB = CLIP<float>( Color::gamma_srgb( sourceB ) );
+                        }
 
-                            float out_rgbx[4] ALIGNED16;
-                            colorLUT->getRGB( sourceR, sourceG, sourceB, out_rgbx );
+                        const std::size_t line_size = std::min(TS, tW - jstart);
+                        std::size_t out_rgbx_size = 4 * (line_size + 16);
+                        std::unique_ptr<float> out_rgbx_buf(new float[out_rgbx_size]);
+                        void* out_rgbx_ptr = out_rgbx_buf.get();
+                        float* const out_rgbx = reinterpret_cast<float*>(std::align(16, 4 * line_size, out_rgbx_ptr, out_rgbx_size));
+                        colorLUT->getRGB(line_size, rtemp + ti * TS, gtemp + ti * TS, btemp + ti * TS, out_rgbx);
+
+                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                            float &sourceR = rtemp[ti * TS + tj];
+                            float &sourceG = gtemp[ti * TS + tj];
+                            float &sourceB = btemp[ti * TS + tj];
+
                             // apply strength
-                            sourceR = out_rgbx[0] * filmSimCorrectedStrength + sourceR * filmSimSourceStrength;
-                            sourceG = out_rgbx[1] * filmSimCorrectedStrength + sourceG * filmSimSourceStrength;
-                            sourceB = out_rgbx[2] * filmSimCorrectedStrength + sourceB * filmSimSourceStrength;
+                            sourceR = out_rgbx[tj * 4 + 0] * filmSimCorrectedStrength + sourceR * filmSimSourceStrength;
+                            sourceG = out_rgbx[tj * 4 + 1] * filmSimCorrectedStrength + sourceG * filmSimSourceStrength;
+                            sourceB = out_rgbx[tj * 4 + 2] * filmSimCorrectedStrength + sourceB * filmSimSourceStrength;
                             // apply inverse gamma sRGB
                             sourceR = Color::igamma_srgb( sourceR );
                             sourceG = Color::igamma_srgb( sourceG );

@@ -164,92 +164,94 @@ Glib::ustring rtengine::HaldCLUT::getProfile() const
     return clut_profile;
 }
 
-void rtengine::HaldCLUT::getRGB(float r, float g, float b, float out_rgbx[4]) const
+void rtengine::HaldCLUT::getRGB(std::size_t line_size, const float* r, const float* g, const float* b, float* out_rgbx) const
 {
     const unsigned int level = clut_level; // This is important
 
-    const unsigned int red = std::min(flevel_minus_two, r * flevel_minus_one);
-    const unsigned int green = std::min(flevel_minus_two, g * flevel_minus_one);
-    const unsigned int blue = std::min(flevel_minus_two, b * flevel_minus_one);
-
     const unsigned int level_square = level * level;
 
-    const unsigned int color = red + green * level + blue * level_square;
+    for (std::size_t column = 0; column < line_size; ++column, ++r, ++g, ++b, out_rgbx += 4) {
+        const unsigned int red = std::min(flevel_minus_two, *r * flevel_minus_one);
+        const unsigned int green = std::min(flevel_minus_two, *g * flevel_minus_one);
+        const unsigned int blue = std::min(flevel_minus_two, *b * flevel_minus_one);
+
+        const unsigned int color = red + green * level + blue * level_square;
 
 #ifndef __SSE2__
-    r = r * flevel_minus_one - red;
-    g = g * flevel_minus_one - green;
-    b = b * flevel_minus_one - blue;
+        const float re = *r * flevel_minus_one - red;
+        const float gr = *g * flevel_minus_one - green;
+        const float bl = *b * flevel_minus_one - blue;
 
-    size_t index = color * 4;
+        size_t index = color * 4;
 
-    float tmp1[4] ALIGNED16;
-    tmp1[0] = intp<float>(r, clut_image.data[index + 4], clut_image.data[index]);
-    tmp1[1] = intp<float>(r, clut_image.data[index + 5], clut_image.data[index + 1]);
-    tmp1[2] = intp<float>(r, clut_image.data[index + 6], clut_image.data[index + 2]);
+        float tmp1[4] ALIGNED16;
+        tmp1[0] = intp<float>(re, clut_image.data[index + 4], clut_image.data[index]);
+        tmp1[1] = intp<float>(re, clut_image.data[index + 5], clut_image.data[index + 1]);
+        tmp1[2] = intp<float>(re, clut_image.data[index + 6], clut_image.data[index + 2]);
 
-    index = (color + level) * 4;
+        index = (color + level) * 4;
 
-    float tmp2[4] ALIGNED16;
-    tmp2[0] = intp<float>(r, clut_image.data[index + 4], clut_image.data[index]);
-    tmp2[1] = intp<float>(r, clut_image.data[index + 5], clut_image.data[index + 1]);
-    tmp2[2] = intp<float>(r, clut_image.data[index + 6], clut_image.data[index + 2]);
+        float tmp2[4] ALIGNED16;
+        tmp2[0] = intp<float>(re, clut_image.data[index + 4], clut_image.data[index]);
+        tmp2[1] = intp<float>(re, clut_image.data[index + 5], clut_image.data[index + 1]);
+        tmp2[2] = intp<float>(re, clut_image.data[index + 6], clut_image.data[index + 2]);
 
-    out_rgbx[0] = intp<float>(g, tmp2[0], tmp1[0]);
-    out_rgbx[1] = intp<float>(g, tmp2[1], tmp1[1]);
-    out_rgbx[2] = intp<float>(g, tmp2[2], tmp1[2]);
+        out_rgbx[0] = intp<float>(gr, tmp2[0], tmp1[0]);
+        out_rgbx[1] = intp<float>(gr, tmp2[1], tmp1[1]);
+        out_rgbx[2] = intp<float>(gr, tmp2[2], tmp1[2]);
 
-    index = (color + level_square) * 4;
+        index = (color + level_square) * 4;
 
-    tmp1[0] = intp<float>(r, clut_image.data[index + 4], clut_image.data[index]);
-    tmp1[1] = intp<float>(r, clut_image.data[index + 5], clut_image.data[index + 1]);
-    tmp1[2] = intp<float>(r, clut_image.data[index + 6], clut_image.data[index + 2]);
+        tmp1[0] = intp<float>(re, clut_image.data[index + 4], clut_image.data[index]);
+        tmp1[1] = intp<float>(re, clut_image.data[index + 5], clut_image.data[index + 1]);
+        tmp1[2] = intp<float>(re, clut_image.data[index + 6], clut_image.data[index + 2]);
 
-    index = (color + level + level_square) * 4;
+        index = (color + level + level_square) * 4;
 
-    tmp2[0] = intp<float>(r, clut_image.data[index + 4], clut_image.data[index]);
-    tmp2[1] = intp<float>(r, clut_image.data[index + 5], clut_image.data[index + 1]);
-    tmp2[2] = intp<float>(r, clut_image.data[index + 6], clut_image.data[index + 2]);
+        tmp2[0] = intp<float>(re, clut_image.data[index + 4], clut_image.data[index]);
+        tmp2[1] = intp<float>(re, clut_image.data[index + 5], clut_image.data[index + 1]);
+        tmp2[2] = intp<float>(re, clut_image.data[index + 6], clut_image.data[index + 2]);
 
-    tmp1[0] = intp<float>(g, tmp2[0], tmp1[0]);
-    tmp1[1] = intp<float>(g, tmp2[1], tmp1[1]);
-    tmp1[2] = intp<float>(g, tmp2[2], tmp1[2]);
+        tmp1[0] = intp<float>(gr, tmp2[0], tmp1[0]);
+        tmp1[1] = intp<float>(gr, tmp2[1], tmp1[1]);
+        tmp1[2] = intp<float>(gr, tmp2[2], tmp1[2]);
 
-    out_rgbx[0] = intp<float>(b, tmp1[0], out_rgbx[0]);
-    out_rgbx[1] = intp<float>(b, tmp1[1], out_rgbx[1]);
-    out_rgbx[2] = intp<float>(b, tmp1[2], out_rgbx[2]);
+        out_rgbx[0] = intp<float>(bl, tmp1[0], out_rgbx[0]);
+        out_rgbx[1] = intp<float>(bl, tmp1[1], out_rgbx[1]);
+        out_rgbx[2] = intp<float>(bl, tmp1[2], out_rgbx[2]);
 #else
-    const vfloat v_tmp = _mm_set_ps(0.0f, b, g, r) * _mm_load_ps1(&flevel_minus_one);
-    const vfloat v_rgb = v_tmp - _mm_cvtepi32_ps(_mm_cvttps_epi32(_mm_min_ps(_mm_load_ps1(&flevel_minus_two), v_tmp)));
+        const vfloat v_tmp = _mm_set_ps(0.0f, *b, *g, *r) * _mm_load_ps1(&flevel_minus_one);
+        const vfloat v_rgb = v_tmp - _mm_cvtepi32_ps(_mm_cvttps_epi32(_mm_min_ps(_mm_load_ps1(&flevel_minus_two), v_tmp)));
 
-    size_t index = color * 4;
+        size_t index = color * 4;
 
-    const vfloat v_r = PERMUTEPS(v_rgb, 0x00);
+        const vfloat v_r = PERMUTEPS(v_rgb, 0x00);
 
-    vfloat v_tmp1 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
+        vfloat v_tmp1 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
 
-    index = (color + level) * 4;
+        index = (color + level) * 4;
 
-    vfloat v_tmp2 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
+        vfloat v_tmp2 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
 
-    const vfloat v_g = PERMUTEPS(v_rgb, 0x55);
+        const vfloat v_g = PERMUTEPS(v_rgb, 0x55);
 
-    vfloat v_out = vintpf(v_g, v_tmp2, v_tmp1);
+        vfloat v_out = vintpf(v_g, v_tmp2, v_tmp1);
 
-    index = (color + level_square) * 4;
+        index = (color + level_square) * 4;
 
-    v_tmp1 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
+        v_tmp1 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
 
-    index = (color + level + level_square) * 4;
+        index = (color + level + level_square) * 4;
 
-    v_tmp2 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
+        v_tmp2 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
 
-    v_tmp1 = vintpf(v_g, v_tmp2, v_tmp1);
+        v_tmp1 = vintpf(v_g, v_tmp2, v_tmp1);
 
-    const vfloat v_b = PERMUTEPS(v_rgb, 0xAA);
+        const vfloat v_b = PERMUTEPS(v_rgb, 0xAA);
 
-    _mm_store_ps(out_rgbx, vintpf(v_b, v_tmp1, v_out));
+        _mm_store_ps(out_rgbx, vintpf(v_b, v_tmp1, v_out));
 #endif
+    }
 }
 
 rtengine::CLUTStore& rtengine::CLUTStore::getInstance()
