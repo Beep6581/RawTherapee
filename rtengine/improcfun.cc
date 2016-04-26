@@ -4338,6 +4338,11 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                 //Film Simulations
                 if ( colorLUT ) {
+                    std::size_t out_rgbx_size = 4 * (TS + 16);
+                    std::unique_ptr<float> out_rgbx_buf(new float[out_rgbx_size]);
+                    void* out_rgbx_ptr = out_rgbx_buf.get();
+                    float* const out_rgbx = reinterpret_cast<float*>(std::align(16, 4 * TS, out_rgbx_ptr, out_rgbx_size));
+
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                             float &sourceR = rtemp[ti * TS + tj];
@@ -4357,12 +4362,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                             sourceB = CLIP<float>( Color::gamma_srgb( sourceB ) );
                         }
 
-                        const std::size_t line_size = std::min(TS, tW - jstart);
-                        std::size_t out_rgbx_size = 4 * (line_size + 16);
-                        std::unique_ptr<float> out_rgbx_buf(new float[out_rgbx_size]);
-                        void* out_rgbx_ptr = out_rgbx_buf.get();
-                        float* const out_rgbx = reinterpret_cast<float*>(std::align(16, 4 * line_size, out_rgbx_ptr, out_rgbx_size));
-                        colorLUT->getRGB(line_size, rtemp + ti * TS, gtemp + ti * TS, btemp + ti * TS, out_rgbx);
+                        colorLUT->getRGB(std::min(TS, tW - jstart), rtemp + ti * TS, gtemp + ti * TS, btemp + ti * TS, out_rgbx);
 
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                             float &sourceR = rtemp[ti * TS + tj];
