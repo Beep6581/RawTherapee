@@ -87,40 +87,6 @@ inline vfloat getClutValue(const AlignedBuffer<std::uint16_t>& clut_image, size_
 
 }
 
-void rtengine::CLUT::splitClutFilename(
-    const Glib::ustring& filename,
-    Glib::ustring& name,
-    Glib::ustring& extension,
-    Glib::ustring& profile_name
-)
-{
-    Glib::ustring basename = Glib::path_get_basename(filename);
-
-    Glib::ustring::size_type last_slash_pos = basename.rfind('/');
-    if (last_slash_pos == Glib::ustring::npos) {
-        last_slash_pos = basename.rfind('\\');
-    }
-
-    const Glib::ustring::size_type last_dot_pos = basename.rfind('.');
-
-    if (last_dot_pos != Glib::ustring::npos) {
-        name.assign(basename, 0, last_dot_pos);
-        extension.assign(basename, last_dot_pos + 1, Glib::ustring::npos);
-    } else {
-        name = basename;
-    }
-
-    profile_name = "sRGB";
-
-    for (const auto& working_profile : rtengine::getWorkingProfiles()) {
-        if ( std::search( name.rbegin(), name.rend(), working_profile.rbegin(), working_profile.rend() ) == name.rbegin() ) {
-            profile_name = working_profile;
-            name.erase(name.size() - working_profile.size());
-            break;
-        }
-    }
-}
-
 rtengine::HaldCLUT::HaldCLUT() :
     clut_level(0),
     flevel_minus_one(0.0f),
@@ -164,7 +130,14 @@ Glib::ustring rtengine::HaldCLUT::getProfile() const
     return clut_profile;
 }
 
-void rtengine::HaldCLUT::getRGB(std::size_t line_size, const float* r, const float* g, const float* b, float* out_rgbx) const
+void rtengine::HaldCLUT::getRGB(
+    float strength,
+    std::size_t line_size,
+    const float* r,
+    const float* g,
+    const float* b,
+    float* out_rgbx
+) const
 {
     const unsigned int level = clut_level; // This is important
 
@@ -219,13 +192,18 @@ void rtengine::HaldCLUT::getRGB(std::size_t line_size, const float* r, const flo
         out_rgbx[0] = intp<float>(bl, tmp1[0], out_rgbx[0]);
         out_rgbx[1] = intp<float>(bl, tmp1[1], out_rgbx[1]);
         out_rgbx[2] = intp<float>(bl, tmp1[2], out_rgbx[2]);
+
+        out_rgbx[0] = intp<float>(strength, out_rgbx[0], *r);
+        out_rgbx[1] = intp<float>(strength, out_rgbx[1], *g);
+        out_rgbx[2] = intp<float>(strength, out_rgbx[2], *b);
 #else
-        const vfloat v_tmp = _mm_set_ps(0.0f, *b, *g, *r) * _mm_load_ps1(&flevel_minus_one);
+        const vfloat v_in = _mm_set_ps(0.0f, *b, *g, *r);
+        const vfloat v_tmp = v_in * _mm_load_ps1(&flevel_minus_one);
         const vfloat v_rgb = v_tmp - _mm_cvtepi32_ps(_mm_cvttps_epi32(_mm_min_ps(_mm_load_ps1(&flevel_minus_two), v_tmp)));
 
         size_t index = color * 4;
 
-        const vfloat v_r = PERMUTEPS(v_rgb, 0x00);
+        const vfloat v_r = PERMUTEPS(v_rgb, _MM_SHUFFLE(0, 0, 0, 0));
 
         vfloat v_tmp1 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
 
@@ -233,7 +211,7 @@ void rtengine::HaldCLUT::getRGB(std::size_t line_size, const float* r, const flo
 
         vfloat v_tmp2 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
 
-        const vfloat v_g = PERMUTEPS(v_rgb, 0x55);
+        const vfloat v_g = PERMUTEPS(v_rgb, _MM_SHUFFLE(1, 1, 1, 1));
 
         vfloat v_out = vintpf(v_g, v_tmp2, v_tmp1);
 
@@ -247,10 +225,46 @@ void rtengine::HaldCLUT::getRGB(std::size_t line_size, const float* r, const flo
 
         v_tmp1 = vintpf(v_g, v_tmp2, v_tmp1);
 
-        const vfloat v_b = PERMUTEPS(v_rgb, 0xAA);
+        const vfloat v_b = PERMUTEPS(v_rgb, _MM_SHUFFLE(2, 2, 2, 2));
 
-        _mm_store_ps(out_rgbx, vintpf(v_b, v_tmp1, v_out));
+        v_out = vintpf(v_b, v_tmp1, v_out);
+
+        _mm_store_ps(out_rgbx, vintpf(_mm_load_ps1(&strength), v_out, v_in));
 #endif
+    }
+}
+
+void rtengine::HaldCLUT::splitClutFilename(
+    const Glib::ustring& filename,
+    Glib::ustring& name,
+    Glib::ustring& extension,
+    Glib::ustring& profile_name
+)
+{
+    Glib::ustring basename = Glib::path_get_basename(filename);
+
+    Glib::ustring::size_type last_slash_pos = basename.rfind('/');
+    if (last_slash_pos == Glib::ustring::npos) {
+        last_slash_pos = basename.rfind('\\');
+    }
+
+    const Glib::ustring::size_type last_dot_pos = basename.rfind('.');
+
+    if (last_dot_pos != Glib::ustring::npos) {
+        name.assign(basename, 0, last_dot_pos);
+        extension.assign(basename, last_dot_pos + 1, Glib::ustring::npos);
+    } else {
+        name = basename;
+    }
+
+    profile_name = "sRGB";
+
+    for (const auto& working_profile : rtengine::getWorkingProfiles()) {
+        if ( std::search( name.rbegin(), name.rend(), working_profile.rbegin(), working_profile.rend() ) == name.rbegin() ) {
+            profile_name = working_profile;
+            name.erase(name.size() - working_profile.size());
+            break;
+        }
     }
 }
 
@@ -260,9 +274,9 @@ rtengine::CLUTStore& rtengine::CLUTStore::getInstance()
     return instance;
 }
 
-std::shared_ptr<rtengine::CLUT> rtengine::CLUTStore::getClut(const Glib::ustring& filename)
+std::shared_ptr<rtengine::HaldCLUT> rtengine::CLUTStore::getClut(const Glib::ustring& filename)
 {
-    std::shared_ptr<rtengine::CLUT> result;
+    std::shared_ptr<rtengine::HaldCLUT> result;
 
     if (!cache.get(filename, result)) {
         std::unique_ptr<rtengine::HaldCLUT> clut(new rtengine::HaldCLUT);
@@ -273,11 +287,6 @@ std::shared_ptr<rtengine::CLUT> rtengine::CLUTStore::getClut(const Glib::ustring
     }
 
     return result;
-}
-
-void rtengine::CLUTStore::releaseClut(const std::shared_ptr<rtengine::CLUT>& clut)
-{
-    cache.remove(clut->getFilename());
 }
 
 void rtengine::CLUTStore::clearCache()

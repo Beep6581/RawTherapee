@@ -11,20 +11,29 @@
 namespace rtengine
 {
 
-class CLUT
+class HaldCLUT
 {
 public:
-    CLUT() = default;
-    CLUT(const CLUT& other) = delete;
-    CLUT& operator =(const CLUT& other) = delete;
-    virtual ~CLUT() = default;
+    HaldCLUT();
+    HaldCLUT(const HaldCLUT& other) = delete;
+    HaldCLUT& operator =(const HaldCLUT& other) = delete;
+    ~HaldCLUT();
 
-    virtual explicit operator bool() const = 0;
+    bool load(const Glib::ustring& filename);
 
-    virtual Glib::ustring getFilename() const = 0;
-    virtual Glib::ustring getProfile() const = 0;
+    explicit operator bool() const;
 
-    virtual void getRGB(std::size_t line_size, const float* r, const float* g, const float* b, float* out_rgbx) const = 0;
+    Glib::ustring getFilename() const;
+    Glib::ustring getProfile() const;
+
+    void getRGB(
+        float strength,
+        std::size_t line_size,
+        const float* r,
+        const float* g,
+        const float* b,
+        float* out_rgbx
+    ) const;
 
     static void splitClutFilename(
         const Glib::ustring& filename,
@@ -32,23 +41,6 @@ public:
         Glib::ustring& extension,
         Glib::ustring& profile_name
     );
-};
-
-class HaldCLUT
-    : public CLUT
-{
-public:
-    HaldCLUT();
-    ~HaldCLUT();
-
-    bool load(const Glib::ustring& filename);
-
-    explicit operator bool() const override;
-
-    Glib::ustring getFilename() const override;
-    Glib::ustring getProfile() const override;
-
-    void getRGB(std::size_t line_size, const float* r, const float* g, const float* b, float* out_rgbx) const override;
 
 private:
     AlignedBuffer<std::uint16_t> clut_image;
@@ -67,15 +59,14 @@ public:
     CLUTStore(const CLUTStore& other) = delete;
     CLUTStore& operator =(const CLUTStore& other) = delete;
 
-    std::shared_ptr<CLUT> getClut(const Glib::ustring& filename);
-    void releaseClut(const std::shared_ptr<CLUT>& clut);
+    std::shared_ptr<HaldCLUT> getClut(const Glib::ustring& filename);
 
     void clearCache();
 
 private:
     CLUTStore();
 
-    Cache<Glib::ustring, std::shared_ptr<CLUT>> cache;
+    Cache<Glib::ustring, std::shared_ptr<HaldCLUT>> cache;
 };
 
 }
