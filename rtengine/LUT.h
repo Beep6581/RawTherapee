@@ -215,7 +215,7 @@ public:
      *  For a LUT(500), it will return 500
      *  @return number of element in the array
      */
-    int getSize()
+    unsigned int getSize() const
     {
         return size;
     }
@@ -269,6 +269,20 @@ public:
             for(unsigned int i = 0; i < this->size; i++) {
                 data[i] += rhs.data[i];
             }
+        }
+
+        return *this;
+    }
+
+    // mutliply all elements of LUT with a constant float value
+    LUT<float> & operator*=(float factor)
+    {
+#ifdef _OPENMP
+        #pragma omp simd
+#endif
+
+        for(unsigned int i = 0; i < this->size; i++) {
+            data[i] *= factor;
         }
 
         return *this;
@@ -526,79 +540,59 @@ public:
         upperBound = 0;
         maxs = 0;
     }
-};
 
-
-
-// TODO: HOMBRE: HueLUT is actually unused, could we delete this class now that LUT::getVal01 has been created?
-
-
-/** @brief LUT subclass handling hue values specifically.
-    The array has a fixed size of float values and have to be in the [0.; 1.] range in both axis (no error checking implemented) */
-class HueLUT : public LUTf
-{
-public:
-    HueLUT() : LUTf() {}
-    explicit HueLUT(bool createArray) : LUTf()
+    // create an identity LUT (LUT(x) = x) or a scaled identity LUT (LUT(x) = x / divisor)
+    void makeIdentity(float divisor = 1.f)
     {
-        if (createArray) {
-            this->operator () (501, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
-        }
-    }
-
-    void create()
-    {
-        this->operator () (501, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
-    }
-
-    // use with integer indices
-    float& operator[](int index) const
-    {
-        return data[ rtengine::LIM<int>(index, 0, upperBound) ];
-    }
-
-    // use with float indices in the [0.;1.] range
-    float operator[](float index) const
-    {
-        int idx = int(index * 500.f); // don't use floor! The difference in negative space is no problems here
-
-        if (index < 0.f) {
-            return data[0];
-        } else if (index > 1.f) {
-            return data[upperBound];
-        }
-
-        float balance = index - float(idx / 500.f);
-        float h1 = data[idx];
-        float h2 = data[idx + 1];
-
-        if (h1 == h2) {
-            return h1;
-        }
-
-        if ((h1 > h2) && (h1 - h2 > 0.5f)) {
-            h1 -= 1.f;
-            float value = h1 + balance * (h2 - h1);
-
-            if (value < 0.f) {
-                value += 1.f;
+        if(divisor == 1.f) {
+            for(unsigned int i = 0; i < size; i++) {
+                data[i] = i;
             }
-
-            return value;
-        } else if (h2 - h1 > 0.5f) {
-            h2 -= 1.f;
-            float value = h1 + balance * (h2 - h1);
-
-            if (value < 0.f) {
-                value += 1.f;
-            }
-
-            return value;
         } else {
-            return h1 + balance * (h2 - h1);
+            for(unsigned int i = 0; i < size; i++) {
+                data[i] = i / divisor;
+            }
         }
     }
-};
 
+    // compress a LUT with size y into a LUT with size y (y<x)
+    void compressTo(LUT<T> &dest, unsigned int numVals) const
+    {
+        numVals = std::min(numVals, size);
+        float divisor = numVals - 1;
+        float mult = (dest.size - 1) / divisor;
+
+        for (unsigned int i = 0; i < numVals; i++) {
+            int hi = (int)(mult * i);
+            dest.data[hi] += this->data[i] ;
+        }
+    }
+
+    // compress a LUT with size y into a LUT with size y (y<x) by using the passTrough LUT to calculate indexes
+    void compressTo(LUT<T> &dest, unsigned int numVals, const LUT<float> &passThrough) const
+    {
+        if(passThrough) {
+            numVals = std::min(numVals, size);
+            numVals = std::min(numVals, passThrough.getSize());
+            float mult = dest.size - 1;
+
+            for (int i = 0; i < numVals; i++) {
+                int hi = (int)(mult * passThrough[i]);
+                dest[hi] += this->data[i] ;
+            }
+        }
+    }
+
+    void makeConstant(float value, unsigned int numVals = 0)
+    {
+        numVals = numVals == 0 ? size : numVals;
+        numVals = std::min(numVals, size);
+        for(unsigned int i = 0; i < numVals; i++) {
+            data[i] = value;
+        }
+    }
+
+
+};
 
 #endif /* LUT_H_ */

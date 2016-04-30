@@ -40,7 +40,7 @@ ImProcCoordinator::ImProcCoordinator ()
       tonecurve(65536, 0), //,1);
       chaut(0.f), redaut(0.f), blueaut(0.f), maxredaut(0.f), maxblueaut(0.f), minredaut(0.f), minblueaut(0.f), nresi(0.f),
       chromina(0.f), sigma(0.f), lumema(0.f),
-      lumacurve(65536, 0),
+      lumacurve(32770, 0), // lumacurve[32768] and lumacurve[32769] will be set to 32768 and 32769 later to allow linear interpolation
       chroma_acurve(65536, 0),
       chroma_bcurve(65536, 0),
       satcurve(65536, 0),
@@ -53,7 +53,7 @@ ImProcCoordinator::ImProcCoordinator ()
       NoiseCCcurve(65536, 0),
       vhist16(65536), vhist16bw(65536),
       lhist16(65536), lhist16Cropped(65536),
-      lhist16CAM(65536), lhist16CroppedCAM(65536),
+      lhist16CAM(65536),
       lhist16CCAM(65536),
       lhist16RETI(65536),
       histCropped(65536),
@@ -465,12 +465,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         opautili = false;
         params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip, opautili);
 
-        bool clctoningutili = false;
-        bool llctoningutili = false;
-        CurveFactory::curveToningCL(clctoningutili, params.colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
-        //  clToningcurve.dump("CLToning3");
-        CurveFactory::curveToningLL(llctoningutili, params.colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
-
+        if(params.colorToning.enabled) {
+            CurveFactory::curveToning(params.colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
+            //  clToningcurve.dump("CLToning3");
+            CurveFactory::curveToning(params.colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
+        }
         CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, vhist16bw, histToneCurveBW, beforeToneCurveBW, afterToneCurveBW, scale == 1 ? 1 : 1);
 
 
@@ -698,39 +697,24 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         if(params.colorappearance.enabled) {
             //L histo  and Chroma histo for ciecam
             // histogram well be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
-            int x1, y1, x2, y2, pos, posc;
+            int x1, y1, x2, y2;
             params.crop.mapToResized(pW, pH, scale, x1, x2,  y1, y2);
             lhist16CAM.clear();
-            lhist16CroppedCAM.clear();
             lhist16CCAM.clear();
 
-            for (int x = 0; x < pH; x++)
-                for (int y = 0; y < pW; y++) {
-                    pos = CLIP((int)(nprevl->L[x][y]));
-
-                    if(!params.colorappearance.datacie) {
-                        posc = CLIP((int)sqrt(nprevl->a[x][y] * nprevl->a[x][y] + nprevl->b[x][y] * nprevl->b[x][y]));
+            if(!params.colorappearance.datacie) {
+                for (int x = 0; x < pH; x++)
+                    for (int y = 0; y < pW; y++) {
+                        int pos = CLIP((int)(nprevl->L[x][y]));
+                        int posc = CLIP((int)sqrt(nprevl->a[x][y] * nprevl->a[x][y] + nprevl->b[x][y] * nprevl->b[x][y]));
                         lhist16CAM[pos]++;
                         lhist16CCAM[posc]++;
-                    }
-
-                    if (y >= y1 && y < y2 && x >= x1 && x < x2) {
-                        lhist16CroppedCAM[pos]++;
-                    }
                 }
+            }
 
-            LUTu dummy;
-            CurveFactory::curveLightBrightColor (
-                params.colorappearance.curveMode, params.colorappearance.curve,
-                params.colorappearance.curveMode2, params.colorappearance.curve2,
-                params.colorappearance.curveMode3, params.colorappearance.curve3,
-                lhist16CAM, lhist16CroppedCAM, histLCAM,
-                lhist16CCAM, histCCAM,
-                customColCurve1,
-                customColCurve2,
-                customColCurve3,
-                scale == 1 ? 1 : 1
-            );
+            CurveFactory::curveLightBrightColor (params.colorappearance.curve, params.colorappearance.curve2, params.colorappearance.curve3,
+                                                 lhist16CAM, histLCAM, lhist16CCAM, histCCAM,
+                                                 customColCurve1, customColCurve2, customColCurve3, 1);
             float fnum = imgsrc->getMetaData()->getFNumber  ();        // F number
             float fiso = imgsrc->getMetaData()->getISOSpeed () ;       // ISO
             float fspeed = imgsrc->getMetaData()->getShutterSpeed () ; // Speed

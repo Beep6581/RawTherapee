@@ -771,10 +771,10 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     LUTf curve (65536, 0);
     LUTf satcurve (65536, 0);
     LUTf lhskcurve (65536, 0);
-    LUTf lumacurve(65536, 0);
+    LUTf lumacurve(32770, 0); // lumacurve[32768] and lumacurve[32769] will be set to 32768 and 32769 later to allow linear interpolation
     LUTf clcurve (65536, 0);
-    LUTf clToningcurve (65536, 0);
-    LUTf cl2Toningcurve (65536, 0);
+    LUTf clToningcurve;
+    LUTf cl2Toningcurve;
     LUTf wavclCurve (65536, 0);
 
     LUTf rCurve (65536, 0);
@@ -814,11 +814,12 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     bool opautili = false;
     params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip, opautili);
 
-    bool clctoningutili = false;
-    CurveFactory::curveToningCL(clctoningutili, params.colorToning.clcurve, clToningcurve, 1);
-    bool llctoningutili = false;
-    CurveFactory::curveToningLL(llctoningutili, params.colorToning.cl2curve, cl2Toningcurve, 1);
-
+    if(params.colorToning.enabled) {
+        clToningcurve (65536, 0);
+        CurveFactory::curveToning(params.colorToning.clcurve, clToningcurve, 1);
+        cl2Toningcurve (65536, 0);
+        CurveFactory::curveToning(params.colorToning.cl2curve, cl2Toningcurve, 1);
+    }
     LabImage* labView = new LabImage (fw, fh);
 
 
@@ -894,10 +895,10 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     if(params.labCurve.contrast != 0) { //only use hist16 for contrast
 
 #ifdef _OPENMP
-        #pragma omp parallel shared(hist16,labView, fh, fw)
+        #pragma omp parallel
 #endif
         {
-            LUTu hist16thr (65536);  // one temporary lookup table per thread
+            LUTu hist16thr (hist16.getSize());  // one temporary lookup table per thread
             hist16thr.clear();
 #ifdef _OPENMP
             #pragma omp for schedule(static) nowait
@@ -906,19 +907,14 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             for (int i = 0; i < fh; i++)
                 for (int j = 0; j < fw; j++)
                 {
-                    hist16thr[CLIP((int)((labView->L[i][j])))]++;
+                    hist16thr[(int)((labView->L[i][j]))]++;
                 }
 
             #pragma omp critical
             {
-                for(int i = 0; i < 65536; i++)
-                {
-                    hist16[i] += hist16thr[i];
-                }
+                hist16 += hist16thr;
             }
         }
-
-
     }
 
     bool utili = false;
@@ -935,7 +931,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                                    params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve, params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve,
                                    hist16C, hist16C, dummy, dummy,
                                    1);
-//   ipf.MSR(labView, labView->W, labView->H, 1);
 
     ipf.chromiLuminanceCurve (NULL, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy, dummy, dummy);
 
@@ -1025,10 +1020,10 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     begh = 0;
     endh = fh;
     CurveFactory::curveLightBrightColor (
-        params.colorappearance.curveMode, params.colorappearance.curve,
-        params.colorappearance.curveMode2, params.colorappearance.curve2,
-        params.colorappearance.curveMode3, params.colorappearance.curve3,
-        hist16, hist16, dummy,
+        params.colorappearance.curve,
+        params.colorappearance.curve2,
+        params.colorappearance.curve3,
+        hist16, dummy,
         hist16C, dummy,
         customColCurve1,
         customColCurve2,

@@ -1011,7 +1011,7 @@ DCPProfile::DCPProfile(Glib::ustring fname)
             // Create the curve
             DiagonalCurve rawCurve(cPoints, CURVES_MIN_POLY_POINTS);
 
-            toneCurve.Set((Curve*)&rawCurve);
+            toneCurve.Set(rawCurve);
             hasToneCurve = true;
         }
     } else if (tag == NULL) {
@@ -1031,7 +1031,7 @@ DCPProfile::DCPProfile(Glib::ustring fname)
             }
 
             DiagonalCurve rawCurve(cPoints, CURVES_MIN_POLY_POINTS);
-            toneCurve.Set((Curve*)&rawCurve);
+            toneCurve.Set(rawCurve);
             hasToneCurve = true;
         }
     }

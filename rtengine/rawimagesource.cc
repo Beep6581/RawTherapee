@@ -4311,7 +4311,7 @@ BENCHFUN
     #pragma omp parallel
 #endif
     {
-        LUTu tmphistogram(65536 >> histcompr);
+        LUTu tmphistogram(histogram.getSize());
         tmphistogram.clear();
 #ifdef _OPENMP
         #pragma omp for nowait
@@ -4366,17 +4366,18 @@ BENCHFUN
 
     const bool fourColours = ri->getSensorType() == ST_BAYER && ((mult[1] != mult[3] || cblacksom[1] != cblacksom[3]) || FC(0,0) == 3 || FC(0,1) == 3 || FC(1,0) == 3 || FC(1,1) == 3);
 
+    constexpr int histoSize = 65536;
     LUTu hist[4];
-    hist[0](65536);
+    hist[0](histoSize);
     hist[0].clear();
     if (ri->get_colors() > 1) {
-        hist[1](65536);
+        hist[1](histoSize);
         hist[1].clear();
-        hist[2](65536);
+        hist[2](histoSize);
         hist[2].clear();
     }
     if (fourColours) {
-        hist[3](65536);
+        hist[3](histoSize);
         hist[3].clear();
     }
 
@@ -4391,15 +4392,15 @@ BENCHFUN
     {
         // we need one LUT per color and thread, which corresponds to 1 MB per thread
         LUTu tmphist[4];
-        tmphist[0](65536);
+        tmphist[0](histoSize);
         tmphist[0].clear();
         if (ri->get_colors() > 1) {
-            tmphist[1](65536);
+            tmphist[1](histoSize);
             tmphist[1].clear();
-            tmphist[2](65536);
+            tmphist[2](histoSize);
             tmphist[2].clear();
             if (fourColours) {
-                tmphist[3](65536);
+                tmphist[3](histoSize);
                 tmphist[3].clear();
             }
         }

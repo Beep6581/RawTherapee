@@ -38,6 +38,8 @@
 #include "../rtgui/ppversion.h"
 #include "improccoordinator.h"
 #include <locale.h>
+#define BENCHMARK
+#include "StopWatch.h"
 
 
 extern Options options;
@@ -798,6 +800,7 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, std::string camName,
                                   double focalLen, double focalLen35mm, float focusDist, float shutter, float fnumber, float iso, std::string expcomp_, double& myscale)
 {
+    BENCHFUN
     // check if the WB's equalizer value has changed
     if (wbEqual < (params.wb.equal - 5e-4) || wbEqual > (params.wb.equal + 5e-4)) {
         wbEqual = params.wb.equal;
@@ -923,7 +926,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     } else {
         StdImageSource::colorSpaceConversion (baseImg, params.icm, embProfile, thumbImg->getSampleFormat());
     }
-
     int fw = baseImg->width;
     int fh = baseImg->height;
     //ColorTemp::CAT02 (baseImg, &params)   ;//perhaps not good!
@@ -972,7 +974,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     int     black = params.toneCurve.black;
     int     hlcompr = params.toneCurve.hlcompr;
     int     hlcomprthresh = params.toneCurve.hlcomprthresh;
-
     if (params.toneCurve.autoexp && aeHistogram) {
         ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
         //ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr);
@@ -981,11 +982,13 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     LUTf curve1 (65536);
     LUTf curve2 (65536);
     LUTf curve (65536);
+
     LUTf satcurve (65536);
     LUTf lhskcurve (65536);
+    LUTf lumacurve(32770, 0); // lumacurve[32768] and lumacurve[32769] will be set to 32768 and 32769 later to allow linear interpolation
     LUTf clcurve (65536);
-    LUTf clToningcurve (65536);
-    LUTf cl2Toningcurve (65536);
+    LUTf clToningcurve;
+    LUTf cl2Toningcurve;
 
     LUTf rCurve (65536);
     LUTf gCurve (65536);
@@ -1003,7 +1006,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     ColorAppearance customColCurve3;
     ToneCurve customToneCurvebw1;
     ToneCurve customToneCurvebw2;
-
     CurveFactory::complexCurve (expcomp, black / 65535.0, hlcompr, hlcomprthresh,
                                 params.toneCurve.shcompr, bright, contr,
                                 params.toneCurve.curveMode, params.toneCurve.curve,
@@ -1013,7 +1015,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, 16);
     CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, 16);
     CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, 16);
-
     TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
     double wp[3][3] = {
         {wprof[0][0], wprof[0][1], wprof[0][2]},
@@ -1030,13 +1031,14 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip, opautili);
     //params.dirpyrDenoise.getCurves(dnNoisCurve, lldenoisutili);
 
-    bool clctoningutili = false;
-    bool llctoningutili = false;
-    CurveFactory::curveToningCL(clctoningutili, params.colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
-    CurveFactory::curveToningLL(llctoningutili, params.colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
+    if(params.colorToning.enabled) {
+        clToningcurve (65536);
+        cl2Toningcurve (65536);
 
+        CurveFactory::curveToning(params.colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
+        CurveFactory::curveToning(params.colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
+    }
     CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 16);
-
     double rrm, ggm, bbm;
     float autor, autog, autob;
     float satLimit = float(params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
@@ -1066,7 +1068,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     LabImage* labView = new LabImage (fw, fh);
     DCPProfile *dcpProf = NULL;
-
     if (isRaw) {
         cmsHPROFILE dummy;
         RawImageSource::findInputProfile(params.icm.input, NULL, camName, &dcpProf, dummy);
@@ -1075,7 +1076,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
             dcpProf->setStep2ApplyState(params.icm.working, params.icm.toneCurve, params.icm.applyLookTable, params.icm.applyBaselineExposureOffset);
         }
     }
-
     ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf);
 
     // freeing up some memory
@@ -1100,7 +1100,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
             hist16[CLIP((int)((labView->L[i][j])))]++;
             hist16C[CLIP((int)sqrt(labView->a[i][j]*labView->a[i][j] + labView->b[i][j]*labView->b[i][j]))]++;
         }
-
     // luminance processing
 //  ipf.EPDToneMap(labView,0,6);
 
@@ -1110,9 +1109,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     bool ccutili = false;
     bool cclutili = false;
     bool clcutili = false;
-
     CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve,
-                                 hist16, hist16, curve, dummy, 16, utili);
+                                 hist16, hist16, lumacurve, dummy, 16, utili);
 
     CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, hist16C, dummy, 16);
 
@@ -1123,7 +1121,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     //ipf.luminanceCurve (labView, labView, curve);
 
 
-    ipf.chromiLuminanceCurve (NULL, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, curve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy, dummy, dummy);
+    ipf.chromiLuminanceCurve (NULL, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy, dummy, dummy);
 
     ipf.vibrance(labView);
 
@@ -1133,18 +1131,18 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     //if(!params.colorappearance.enabled){ipf.EPDToneMap(labView,5,6);}
 
-    CurveFactory::curveLightBrightColor (
-        params.colorappearance.curveMode, params.colorappearance.curve,
-        params.colorappearance.curveMode2, params.colorappearance.curve2,
-        params.colorappearance.curveMode3, params.colorappearance.curve3,
-        hist16, hist16, dummy,
-        hist16C, dummy,
-        customColCurve1,
-        customColCurve2,
-        customColCurve3,
-        16);
 
     if(params.colorappearance.enabled) {
+        CurveFactory::curveLightBrightColor (
+            params.colorappearance.curve,
+            params.colorappearance.curve2,
+            params.colorappearance.curve3,
+            hist16, dummy,
+            hist16C, dummy,
+            customColCurve1,
+            customColCurve2,
+            customColCurve3,
+            16);
         int begh = 0, endh = labView->H;
         bool execsharp = false;
         float d;

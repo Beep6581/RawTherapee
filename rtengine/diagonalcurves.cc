@@ -301,10 +301,10 @@ double DiagonalCurve::getVal (double t) const
         }
 
         // do a binary search for the right interval:
-        int k_lo = 0, k_hi = N - 1;
+        unsigned int k_lo = 0, k_hi = N - 1;
 
         while (k_hi - k_lo > 1) {
-            int k = (k_hi + k_lo) / 2;
+            unsigned int k = (k_hi + k_lo) / 2;
 
             if (x[k] > t) {
                 k_hi = k;
@@ -323,7 +323,7 @@ double DiagonalCurve::getVal (double t) const
         else { // if (kind==Spline) {
             double a = (x[k_hi] - t) / h;
             double b = (t - x[k_lo]) / h;
-            double r = a * y[k_lo] + b * y[k_hi] + ((a * a * a - a) * ypp[k_lo] + (b * b * b - b) * ypp[k_hi]) * (h * h) / 6.0;
+            double r = a * y[k_lo] + b * y[k_hi] + ((a * a * a - a) * ypp[k_lo] + (b * b * b - b) * ypp[k_hi]) * (h * h) * 0.1666666666666666666666666666666;
             return CLIPD(r);
         }
 

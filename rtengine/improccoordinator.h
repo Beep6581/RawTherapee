@@ -108,7 +108,7 @@ protected:
 
     LUTu vhist16, vhist16bw;
     LUTu lhist16, lhist16Cropped;
-    LUTu lhist16CAM, lhist16CroppedCAM;
+    LUTu lhist16CAM;
     LUTu lhist16CCAM;
     LUTu lhist16RETI;
     LUTu histCropped;

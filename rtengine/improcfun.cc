@@ -37,7 +37,8 @@
 #include "improccoordinator.h"
 #include "clutstore.h"
 #include "ciecam02.h"
-
+#define BENCHMARK
+#include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -1722,27 +1723,28 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             LUTu hist16Q;
 
             if (needJ) {
-                hist16J (65536);
+                hist16J (32768);
                 hist16J.clear();
             }
 
             if (needQ) {
-                hist16Q (65536);
+                hist16Q (32768);
                 hist16Q.clear();
             }
 
-            #pragma omp parallel
+            const int numThreads = min(max(width*height / 65536,1),omp_get_max_threads());
+            #pragma omp parallel num_threads(numThreads) if(numThreads>1)
             {
                 LUTu hist16Jthr;
                 LUTu hist16Qthr;
 
                 if (needJ) {
-                    hist16Jthr (65536);
+                    hist16Jthr (32768);
                     hist16Jthr.clear();
                 }
 
                 if (needQ) {
-                    hist16Qthr(65536);
+                    hist16Qthr(32768);
                     hist16Qthr.clear();
                 }
 
@@ -1751,37 +1753,48 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                 for (int i = 0; i < height; i++)
                     for (int j = 0; j < width; j++) { //rough correspondence between L and J
                         float currL = lab->L[i][j] / 327.68f;
-                        float koef = 1.0f; //rough correspondence between L and J
+                        float koef; //rough correspondence between L and J
 
-//              if     (currL>95.f) koef=1.f;
-                        if(currL > 85.f) {
-                            koef = 0.97f;
-                        } else if(currL > 80.f) {
-                            koef = 0.93f;
-                        } else if(currL > 70.f) {
-                            koef = 0.87f;
-                        } else if(currL > 60.f) {
-                            koef = 0.85f;
-                        } else if(currL > 50.f) {
-                            koef = 0.8f;
-                        } else if(currL > 40.f) {
-                            koef = 0.75f;
+                        if(currL > 50.f) {
+                            if(currL > 70.f) {
+                                if(currL > 80.f) {
+                                    if(currL > 85.f) {
+                                        koef = 0.97f;
+                                    } else {
+                                        koef = 0.93f;
+                                    }
+                                } else {
+                                    koef = 0.87f;
+                                }
+                            } else {
+                                if (currL > 60.f) {
+                                    koef = 0.85f;
+                                } else {
+                                    koef = 0.8f;
+                                }
+                            }
+                        } else {
+                            if(currL > 10.f) {
+                                if(currL > 20.f) {
+                                    if(currL > 40.f) {
+                                        koef = 0.75f;
+                                    } else {
+                                        koef = 0.7f;
+                                    }
+                                } else {
+                                    koef = 0.9f;
+                                }
+                            } else {
+                                koef = 1.0;
+                            }
                         }
-//              else if(currL>30.f) koef=0.7f;
-                        else if(currL > 20.f) {
-                            koef = 0.7f;
-                        } else if(currL > 10.f) {
-                            koef = 0.9f;
-                        }
-
-//              else if(currL>0.f) koef=1.0f;
 
                         if (needJ) {
-                            hist16Jthr[CLIP((int)((koef * lab->L[i][j])))]++;    //evaluate histogram luminance L # J
+                            hist16Jthr[(int)((koef * lab->L[i][j]))]++;    //evaluate histogram luminance L # J
                         }
 
                         if (needQ) {
-                            hist16Qthr[CLIP((int) (sqrtf((koef * (lab->L[i][j])) * 32768.f)))]++;    //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
+                            hist16Qthr[(int) (sqrtf((koef * (lab->L[i][j])) * 32768.f))]++;    //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
                         }
 
                         sum += koef * lab->L[i][j]; //evaluate mean J to calculate Yb
@@ -1790,14 +1803,10 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                 #pragma omp critical
                 {
                     if(needJ)
-                        for(int i = 0; i < 65536; i++) {
-                            hist16J[i] += hist16Jthr[i];
-                        }
+                        hist16J += hist16Jthr;
 
                     if(needQ)
-                        for(int i = 0; i < 65536; i++) {
-                            hist16Q[i] += hist16Qthr[i];
-                        }
+                        hist16Q += hist16Qthr;
 
                 }
             }
@@ -3077,7 +3086,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit , float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clToningcurve, LUTf & cl2Toningcurve,
                                const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,  const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh, DCPProfile *dcpProf)
 {
-    LUTf fGammaLUTf;
     Imagefloat *tmpImage = NULL;
 
     // NOTE: We're getting all 3 pointers here, but this function may not need them all, so one could optimize this
@@ -3373,28 +3381,12 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     }
     bool hasgammabw = gammabwr != 1.f || gammabwg != 1.f || gammabwb != 1.f;
 
-    fGammaLUTf(65535);
-    #pragma omp parallel for
-
-    for (int i = 0; i < 65536; i++) {
-        fGammaLUTf[i] = CurveFactory::gamma2 (float(i) / 65535.f) * 65535.f;
-    }
-
     if (hasColorToning || blackwhite || (params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled)) {
         tmpImage = new Imagefloat(working->width, working->height);
     }
 
     int W = working->width;
     int H = working->height;
-
-
-
-
-
-
-
-
-
 
 #define TS 112
 
@@ -3592,9 +3584,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 if (editID == EUID_ToneCurve1) {  // filling the pipette buffer
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            editIFloatTmpR[ti * TS + tj] = CLIP(fGammaLUTf[rtemp[ti * TS + tj]] / 65535.f);
-                            editIFloatTmpG[ti * TS + tj] = CLIP(fGammaLUTf[gtemp[ti * TS + tj]] / 65535.f);
-                            editIFloatTmpB[ti * TS + tj] = CLIP(fGammaLUTf[btemp[ti * TS + tj]] / 65535.f);
+                            editIFloatTmpR[ti * TS + tj] = Color::gamma2curve[rtemp[ti * TS + tj]] / 65535.f;
+                            editIFloatTmpG[ti * TS + tj] = Color::gamma2curve[gtemp[ti * TS + tj]] / 65535.f;
+                            editIFloatTmpB[ti * TS + tj] = Color::gamma2curve[btemp[ti * TS + tj]] / 65535.f;
                         }
                     }
                 }
@@ -3663,9 +3655,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 if (editID == EUID_ToneCurve2) {  // filling the pipette buffer
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            editIFloatTmpR[ti * TS + tj] = CLIP(fGammaLUTf[rtemp[ti * TS + tj]] / 65535.f);
-                            editIFloatTmpG[ti * TS + tj] = CLIP(fGammaLUTf[gtemp[ti * TS + tj]] / 65535.f);
-                            editIFloatTmpB[ti * TS + tj] = CLIP(fGammaLUTf[btemp[ti * TS + tj]] / 65535.f);
+                            editIFloatTmpR[ti * TS + tj] = Color::gamma2curve[rtemp[ti * TS + tj]] / 65535.f;
+                            editIFloatTmpG[ti * TS + tj] = Color::gamma2curve[gtemp[ti * TS + tj]] / 65535.f;
+                            editIFloatTmpB[ti * TS + tj] = Color::gamma2curve[btemp[ti * TS + tj]] / 65535.f;
                         }
                     }
                 }
@@ -3722,19 +3714,19 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 if (editID == EUID_RGB_R) {
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            editWhateverTmp[ti * TS + tj] = fGammaLUTf[rtemp[ti * TS + tj]] / 65536.f;
+                            editWhateverTmp[ti * TS + tj] = Color::gamma2curve[rtemp[ti * TS + tj]] / 65536.f;
                         }
                     }
                 } else if (editID == EUID_RGB_G) {
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            editWhateverTmp[ti * TS + tj] = fGammaLUTf[gtemp[ti * TS + tj]] / 65536.f;
+                            editWhateverTmp[ti * TS + tj] = Color::gamma2curve[gtemp[ti * TS + tj]] / 65536.f;
                         }
                     }
                 } else if (editID == EUID_RGB_B) {
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            editWhateverTmp[ti * TS + tj] = fGammaLUTf[btemp[ti * TS + tj]] / 65536.f;
+                            editWhateverTmp[ti * TS + tj] = Color::gamma2curve[btemp[ti * TS + tj]] / 65536.f;
                         }
                     }
                 }
@@ -4167,9 +4159,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 if (editID == EUID_BlackWhiteBeforeCurve) {
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            editIFloatTmpR[ti * TS + tj] = CLIP(fGammaLUTf[rtemp[ti * TS + tj]] / 65535.f);
-                            editIFloatTmpG[ti * TS + tj] = CLIP(fGammaLUTf[gtemp[ti * TS + tj]] / 65535.f);
-                            editIFloatTmpB[ti * TS + tj] = CLIP(fGammaLUTf[btemp[ti * TS + tj]] / 65535.f);
+                            editIFloatTmpR[ti * TS + tj] = Color::gamma2curve[rtemp[ti * TS + tj]] / 65535.f;
+                            editIFloatTmpG[ti * TS + tj] = Color::gamma2curve[gtemp[ti * TS + tj]] / 65535.f;
+                            editIFloatTmpB[ti * TS + tj] = Color::gamma2curve[btemp[ti * TS + tj]] / 65535.f;
                         }
                     }
                 } else if (editID == EUID_BlackWhiteLuminance) {
@@ -4402,9 +4394,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                             float fx, fy, fz;
 
-                            fx = (x < 65535.0f ? Color::cachef[std::max(x, 0.f)] : 327.68f * std::cbrt(x / MAXVALF));
-                            fy = (y < 65535.0f ? Color::cachef[std::max(y, 0.f)] : 327.68f * std::cbrt(y / MAXVALF));
-                            fz = (z < 65535.0f ? Color::cachef[std::max(z, 0.f)] : 327.68f * std::cbrt(z / MAXVALF));
+                            fx = (x < 65535.0f ? Color::cachef[x] : 327.68f * std::cbrt(x / MAXVALF));
+                            fy = (y < 65535.0f ? Color::cachef[y] : 327.68f * std::cbrt(y / MAXVALF));
+                            fz = (z < 65535.0f ? Color::cachef[z] : 327.68f * std::cbrt(z / MAXVALF));
 
                             lab->L[i][j] = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
                             lab->a[i][j] = (500.0f * (fx - fy) );
@@ -4560,7 +4552,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
             for (int i = 0; i < tH; i++) {
                 for (int j = 0; j < tW; j++) {
-                    editWhatever->v(i, j) = CLIP(fGammaLUTf[tmpImage->r(i, j)] / 65535.f); // assuming that r=g=b
+                    editWhatever->v(i, j) = Color::gamma2curve[tmpImage->r(i, j)] / 65535.f; // assuming that r=g=b
                 }
             }
         }
@@ -5527,6 +5519,7 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & cur
 
 SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve, LUTf & lhskcurve, LUTf & clcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histCLurve, LUTu &histLLCurve, LUTu &histLCurve)
 {
+
     int W = lold->W;
     int H = lold->H;
     // lhskcurve.dump("lh_curve");
