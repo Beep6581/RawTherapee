@@ -429,6 +429,14 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
         p5 = 0.1300;
         p6 = 0.0350;
         select_temp = 1;
+    } else if (profi == "Rec2020") {
+        p1 = 0.7080;    // Rec2020 primaries
+        p2 = 0.2920;
+        p3 = 0.1700;
+        p4 = 0.7970;
+        p5 = 0.1310;
+        p6 = 0.0460;
+        select_temp = 2;
     } else {
         p1 = 0.7347;    //ProPhoto and default primaries
         p2 = 0.2653;
@@ -511,7 +519,7 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
     if(select_temp == 1) {
         t50 = 5003;    // for Widegamut, Prophoto Best, Beta   D50
     } else if (select_temp == 2) {
-        t50 = 6504;    // for sRGB, AdobeRGB, Bruce  D65
+        t50 = 6504;    // for sRGB, AdobeRGB, Bruce Rec2020 D65
     }
 
     cmsCIExyY       xyD;
