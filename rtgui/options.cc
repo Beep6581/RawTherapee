@@ -643,6 +643,7 @@ void Options::setDefaults ()
     rtSettings.bruce = "Bruce";
     rtSettings.beta = "BetaRGB";
     rtSettings.best = "BestRGB";
+    rtSettings.rec2020 = "Rec2020";
     rtSettings.verbose = false;
     rtSettings.gamutICC = true;
     rtSettings.gamutLch = true;
@@ -1537,6 +1538,10 @@ int Options::readFromFile (Glib::ustring fname)
                     rtSettings.best                 = keyFile.get_string ("Color Management", "Best");
                 }
 
+                if ( keyFile.has_key ("Color Management", "Rec2020")) {
+                    rtSettings.rec2020                 = keyFile.get_string ("Color Management", "Rec2020");
+                }
+
                 if ( keyFile.has_key ("Color Management", "Bruce")) {
                     rtSettings.bruce                = keyFile.get_string ("Color Management", "Bruce");
                 }
@@ -2029,6 +2034,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string  ("Color Management", "sRGB10", rtSettings.srgb10);
         keyFile.set_string  ("Color Management", "Beta", rtSettings.beta);
         keyFile.set_string  ("Color Management", "Best", rtSettings.best);
+        keyFile.set_string  ("Color Management", "Rec2020", rtSettings.rec2020);
         keyFile.set_string  ("Color Management", "Bruce", rtSettings.bruce);
         keyFile.set_integer ("Color Management", "WhiteBalanceSpotSize", whiteBalanceSpotSize);
         keyFile.set_boolean ("Color Management", "GamutICC", rtSettings.gamutICC);
