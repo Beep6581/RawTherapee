@@ -3208,7 +3208,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     std::shared_ptr<HaldCLUT> hald_clut;
     bool clutAndWorkingProfilesAreSame = false;
     TMatrix work2xyz, xyz2clut, clut2xyz, xyz2work;
-#ifdef VECTLENSP
+#ifdef __SSE2__
     vfloat v_work2xyz[3][3];
     vfloat v_xyz2clut[3][3];
     vfloat v_clut2xyz[3][3];
@@ -3226,7 +3226,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 xyz2clut = iccStore->workingSpaceInverseMatrix( hald_clut->getProfile() );
                 xyz2work = iccStore->workingSpaceInverseMatrix( params->icm.working );
                 clut2xyz = iccStore->workingSpaceMatrix( hald_clut->getProfile() );
-#ifdef VECTLENSP
+#ifdef __SSE2__
                 for (int i = 0; i < 3; ++i) {
                     for (int j = 0; j < 3; ++j) {
                         v_work2xyz[i][j] = F2V(work2xyz[i][j]);
@@ -4350,25 +4350,25 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 }
 
 
-                //Film Simulations
+                // Film Simulations
                 if (hald_clut) {
                     float out_rgbx[4 * TS] ALIGNED16;
 
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         if (!clutAndWorkingProfilesAreSame) {
-#ifdef VECTLENSP
-                            if (!(std::min(TS, tW - jstart) & ~(VECTLENSP - 1))) {
-                                for (int j = jstart, tj = 0; j < tW; j += VECTLENSP, tj += VECTLENSP) {
+                            // Convert from working to clut profile
+#ifdef __SSE2__
+                            if (!(std::min(TS, tW - jstart) & ~3)) {
+                                for (int j = jstart, tj = 0; j < tW; j += 4, tj += 4) {
                                     vfloat sourceR = LVF(rtemp[ti * TS + tj]);
                                     vfloat sourceG = LVF(gtemp[ti * TS + tj]);
                                     vfloat sourceB = LVF(btemp[ti * TS + tj]);
 
-                                    //convert from working to clut profile
                                     vfloat x;
                                     vfloat y;
                                     vfloat z;
-                                    Color::rgbxyz( sourceR, sourceG, sourceB, x, y, z, v_work2xyz );
-                                    Color::xyz2rgb( x, y, z, sourceR, sourceG, sourceB, v_xyz2clut );
+                                    Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, v_work2xyz);
+                                    Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, v_xyz2clut);
 
                                     STVF(rtemp[ti * TS + tj], sourceR);
                                     STVF(gtemp[ti * TS + tj], sourceG);
@@ -4383,10 +4383,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                     float &sourceG = gtemp[ti * TS + tj];
                                     float &sourceB = btemp[ti * TS + tj];
 
-                                    //convert from working to clut profile
                                     float x, y, z;
-                                    Color::rgbxyz( sourceR, sourceG, sourceB, x, y, z, work2xyz );
-                                    Color::xyz2rgb( x, y, z, sourceR, sourceG, sourceB, xyz2clut );
+                                    Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, work2xyz);
+                                    Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, xyz2clut);
                                 }
                             }
                         }
@@ -4396,10 +4395,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                             float &sourceG = gtemp[ti * TS + tj];
                             float &sourceB = btemp[ti * TS + tj];
 
-                            //apply gamma sRGB (default RT)
-                            sourceR = Color::gamma_srgbclipped( sourceR );
-                            sourceG = Color::gamma_srgbclipped( sourceG );
-                            sourceB = Color::gamma_srgbclipped( sourceB );
+                            // Apply gamma sRGB (default RT)
+                            sourceR = Color::gamma_srgbclipped(sourceR);
+                            sourceG = Color::gamma_srgbclipped(sourceG);
+                            sourceB = Color::gamma_srgbclipped(sourceB);
                         }
 
                         const std::size_t line_offset = ti * TS;
@@ -4417,26 +4416,26 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                             float &sourceG = gtemp[ti * TS + tj];
                             float &sourceB = btemp[ti * TS + tj];
 
-                            // apply inverse gamma sRGB
+                            // Apply inverse gamma sRGB
                             sourceR = Color::igamma_srgb(out_rgbx[tj * 4 + 0]);
                             sourceG = Color::igamma_srgb(out_rgbx[tj * 4 + 1]);
                             sourceB = Color::igamma_srgb(out_rgbx[tj * 4 + 2]);
                         }
 
                         if (!clutAndWorkingProfilesAreSame) {
-#ifdef VECTLENSP
-                            if (!(std::min(TS, tW - jstart) & ~(VECTLENSP - 1))) {
-                                for (int j = jstart, tj = 0; j < tW; j += VECTLENSP, tj += VECTLENSP) {
+                            // Convert from clut to working profile
+#ifdef __SSE2__
+                            if (!(std::min(TS, tW - jstart) & ~3)) {
+                                for (int j = jstart, tj = 0; j < tW; j += 4, tj += 4) {
                                     vfloat sourceR = LVF(rtemp[ti * TS + tj]);
                                     vfloat sourceG = LVF(gtemp[ti * TS + tj]);
                                     vfloat sourceB = LVF(btemp[ti * TS + tj]);
 
-                                    //convert from clut to working profile
                                     vfloat x;
                                     vfloat y;
                                     vfloat z;
-                                    Color::rgbxyz( sourceR, sourceG, sourceB, x, y, z, v_clut2xyz );
-                                    Color::xyz2rgb( x, y, z, sourceR, sourceG, sourceB, v_xyz2work );
+                                    Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, v_clut2xyz);
+                                    Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, v_xyz2work);
 
                                     STVF(rtemp[ti * TS + tj], sourceR);
                                     STVF(gtemp[ti * TS + tj], sourceG);
@@ -4451,10 +4450,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                     float &sourceG = gtemp[ti * TS + tj];
                                     float &sourceB = btemp[ti * TS + tj];
 
-                                    //convert from clut to working profile
                                     float x, y, z;
-                                    Color::rgbxyz( sourceR, sourceG, sourceB, x, y, z, clut2xyz );
-                                    Color::xyz2rgb( x, y, z, sourceR, sourceG, sourceB, xyz2work );
+                                    Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, clut2xyz);
+                                    Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, xyz2work);
                                 }
                             }
                         }
@@ -4462,7 +4460,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 }
 
 
-                if(!blackwhite) {
+                if (!blackwhite) {
                     // ready, fill lab
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {

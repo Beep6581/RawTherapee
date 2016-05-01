@@ -75,7 +75,7 @@ bool loadFile(
 }
 
 #ifdef __SSE2__
-inline vfloat getClutValue(const AlignedBuffer<std::uint16_t>& clut_image, size_t index)
+vfloat getClutValue(const AlignedBuffer<std::uint16_t>& clut_image, size_t index)
 {
 #ifdef __SSE4_1__
     return _mm_cvtepi32_ps(_mm_cvtepu16_epi32(*reinterpret_cast<const __m128i*>(clut_image.data + index)));
@@ -260,7 +260,7 @@ void rtengine::HaldCLUT::splitClutFilename(
     profile_name = "sRGB";
 
     for (const auto& working_profile : rtengine::getWorkingProfiles()) {
-        if ( std::search( name.rbegin(), name.rend(), working_profile.rbegin(), working_profile.rend() ) == name.rbegin() ) {
+        if (std::search(name.rbegin(), name.rend(), working_profile.rbegin(), working_profile.rend()) == name.rbegin()) {
             profile_name = working_profile;
             name.erase(name.size() - working_profile.size());
             break;
