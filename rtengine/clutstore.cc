@@ -229,7 +229,7 @@ void rtengine::HaldCLUT::getRGB(
 
         v_out = vintpf(v_b, v_tmp1, v_out);
 
-        _mm_store_ps(out_rgbx, vintpf(_mm_load_ps1(&strength), v_out, v_in));
+        STVF(*out_rgbx, vintpf(_mm_load_ps1(&strength), v_out, v_in));
 #endif
     }
 }
