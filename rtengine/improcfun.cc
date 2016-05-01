@@ -19,6 +19,9 @@
 #include <cmath>
 #include <glib.h>
 #include <glibmm.h>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #include "rtengine.h"
 #include "improcfun.h"
@@ -38,9 +41,6 @@
 #include "clutstore.h"
 #include "ciecam02.h"
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
 
@@ -4396,10 +4396,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                             float &sourceG = gtemp[ti * TS + tj];
                             float &sourceB = btemp[ti * TS + tj];
 
-                            //appply gamma sRGB (default RT)
-                            sourceR = CLIP<float>( Color::gamma_srgb( sourceR ) );
-                            sourceG = CLIP<float>( Color::gamma_srgb( sourceG ) );
-                            sourceB = CLIP<float>( Color::gamma_srgb( sourceB ) );
+                            //apply gamma sRGB (default RT)
+                            sourceR = Color::gamma_srgbclipped( sourceR );
+                            sourceG = Color::gamma_srgbclipped( sourceG );
+                            sourceB = Color::gamma_srgbclipped( sourceB );
                         }
 
                         const std::size_t line_offset = ti * TS;

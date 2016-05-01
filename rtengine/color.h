@@ -1079,6 +1079,10 @@ public:
     {
         return gammatab_srgb[x];
     }
+    static inline float  gamma_srgbclipped       (float x)
+    {
+        return gamma2curve[x];
+    }
     static inline float  gamma            (float x)
     {
         return gammatab[x];
