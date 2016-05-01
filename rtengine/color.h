@@ -325,7 +325,9 @@ public:
     */
     static void rgbxyz (float r, float g, float b, float &x, float &y, float &z, const double xyz_rgb[3][3]);
     static void rgbxyz (float r, float g, float b, float &x, float &y, float &z, const float xyz_rgb[3][3]);
-
+#ifdef __SSE2__
+    static void rgbxyz (vfloat r, vfloat g, vfloat b, vfloat &x, vfloat &y, vfloat &z, const vfloat xyz_rgb[3][3]);
+#endif
 
     /**
     * @brief Convert Lab in xyz
@@ -1076,6 +1078,10 @@ public:
     static inline float  gamma_srgb       (float x)
     {
         return gammatab_srgb[x];
+    }
+    static inline float  gamma_srgbclipped       (float x)
+    {
+        return gamma2curve[x];
     }
     static inline float  gamma            (float x)
     {
