@@ -1,442 +1,309 @@
+#include <algorithm>
+
 #include "clutstore.h"
+
+#include "opthelper.h"
 #include "rt_math.h"
+#include "imagefloat.h"
 #include "stdimagesource.h"
 #include "../rtgui/options.h"
 
-rtengine::CLUTStore clutStore;
-
-using namespace rtengine;
-
-const float MAXVAL8 = 255.;
-
-CLUTStore::CLUTStore()
+namespace
 {
-}
 
-CLUT* CLUTStore::getClut( const Glib::ustring& filename )
+bool loadFile(
+    const Glib::ustring& filename,
+    const Glib::ustring& working_color_space,
+    AlignedBuffer<std::uint16_t>& clut_image,
+    unsigned int& clut_level
+)
 {
-    CLUT *result = 0;
-    m_mutex.lock();
-    Cluts::iterator cluts_it = m_cluts.find(filename);
+    rtengine::StdImageSource img_src;
 
-    if (cluts_it == m_cluts.end()) {
-        if (m_cluts.size() >= options.clutCacheSize) {
-            // Evict a "random" entry from cache
-            Cluts::iterator victim_it = m_cluts.begin();
-
-            if (--victim_it->second.first == -1) {
-                delete victim_it->second.second;
-                m_cluts.erase(victim_it);
-            }
-        }
-
-        cluts_it = m_cluts.insert(std::make_pair(filename, std::make_pair(0, new HaldCLUT))).first;
-        cluts_it->second.second->load( filename );
-    }
-
-    if (cluts_it->second.second->isValid()) {
-        result = cluts_it->second.second;
-        ++cluts_it->second.first;
-    } else {
-        delete cluts_it->second.second;
-        m_cluts.erase(cluts_it);
-    }
-
-    m_mutex.unlock();
-
-    return result;
-}
-
-void CLUTStore::releaseClut( const CLUT* clut )
-{
-    m_mutex.lock();
-
-    for (Cluts::iterator cluts_it = m_cluts.begin(); cluts_it != m_cluts.end(); ++cluts_it) {
-        if (cluts_it->second.second == clut) {
-            if (--cluts_it->second.first == -1) {
-                delete cluts_it->second.second;
-                m_cluts.erase(cluts_it);
-            }
-
-            break;
-        }
-    }
-
-    m_mutex.unlock();
-}
-
-void CLUTStore::clearCache()
-{
-    m_mutex.lock();
-
-    for (Cluts::iterator cluts_it = m_cluts.begin(); cluts_it != m_cluts.end();) {
-        if (--cluts_it->second.first == -1) {
-            delete cluts_it->second.second;
-            Cluts::iterator tmp = cluts_it;
-            ++cluts_it;
-            m_cluts.erase(tmp);
-        } else {
-            ++cluts_it;
-        }
-    }
-
-    m_mutex.unlock();
-}
-
-void rtengine::splitClutFilename( Glib::ustring filename, Glib::ustring &name, Glib::ustring &extension, Glib::ustring &profileName )
-{
-    filename = Glib::path_get_basename( filename );
-    name = filename;
-    //remove dirs
-    size_t lastSlashPos = filename.find_last_of( "/" );
-
-    if ( lastSlashPos == Glib::ustring::npos ) {
-        lastSlashPos = filename.find_last_of( "\\" );
-    }
-
-    size_t lastDotPos = filename.find_last_of( '.' );
-
-    if ( lastDotPos != Glib::ustring::npos ) {
-        name = filename.substr( 0, lastDotPos );
-        extension = filename.substr( lastDotPos + 1, Glib::ustring::npos );
-    }
-
-    profileName = "sRGB"; // sRGB by default
-    static std::vector<Glib::ustring> workingProfiles = rtengine::getWorkingProfiles();
-
-    for ( std::vector<Glib::ustring>::iterator it = workingProfiles.begin(); it != workingProfiles.end(); ++it ) {
-        Glib::ustring &currentProfile = *it;
-
-        if ( std::search( name.rbegin(), name.rend(), currentProfile.rbegin(), currentProfile.rend() ) == name.rbegin() ) {
-            profileName = currentProfile;
-            name = name.substr( 0, name.size() - currentProfile.size() );
-            break;
-        }
-    }
-}
-
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-HaldCLUT::HaldCLUT()
-    :   m_clutImage( 0 ),
-        m_level (0),
-        m_profile( "sRGB" )
-{
-}
-
-HaldCLUT::~HaldCLUT()
-{
-    if ( m_clutImage ) {
-        m_clutImage->free();
-        m_clutImage = 0;
-    }
-}
-
-void HaldCLUT::load( Glib::ustring filename )
-{
-    m_clutImage = loadFile( filename, "", m_level );
-    Glib::ustring name, ext;
-    splitClutFilename( filename, name, ext, m_profile );
-
-    if ( m_clutImage ) {
-        m_filename = filename;
-    }
-}
-
-Glib::ustring HaldCLUT::profile() const
-{
-    return m_profile;
-}
-
-Imagefloat* HaldCLUT::loadFile( Glib::ustring filename, Glib::ustring workingColorSpace, int &outLevel )
-{
-    Imagefloat *result = 0;
-    StdImageSource imgSrc;
-
-    if ( !Glib::file_test( filename, Glib::FILE_TEST_EXISTS ) || imgSrc.load(filename) ) {
-        return result;
+    if (!Glib::file_test(filename, Glib::FILE_TEST_EXISTS) || img_src.load(filename)) {
+        return false;
     }
 
     int fw, fh;
-    imgSrc.getFullSize (fw, fh, TR_NONE);
+    img_src.getFullSize(fw, fh, TR_NONE);
 
-    bool valid = false;
+    bool res = false;
 
-    //test on Hald format, copypasted from http://www.quelsolaar.com/technology/clut.html
-    if ( fw == fh ) {
-        outLevel = 1;
+    if (fw == fh) {
+        unsigned int level = 1;
 
-        for(; outLevel * outLevel * outLevel < fw; outLevel++);
+        while (level * level * level < fw) {
+            ++level;
+        }
 
-        if( !( outLevel * outLevel * outLevel > fw ) ) {
-            valid = true;
+        if (level * level * level == fw && level > 1) {
+            clut_level = level;
+            res = true;
         }
     }
 
-    if ( valid ) {
-        ColorTemp currWB = imgSrc.getWB();
-        Imagefloat* baseImg = new Imagefloat (fw, fh);
-        PreviewProps pp (0, 0, fw, fh, 1);
+    if (res) {
+        rtengine::ColorTemp curr_wb = img_src.getWB();
+        std::unique_ptr<rtengine::Imagefloat> img_float = std::unique_ptr<rtengine::Imagefloat>(new rtengine::Imagefloat(fw, fh));
+        const PreviewProps pp(0, 0, fw, fh, 1);
 
-        procparams::ColorManagementParams icm;
-        icm.working = workingColorSpace;
+        rtengine::procparams::ColorManagementParams icm;
+        icm.working = working_color_space;
 
-        imgSrc.getImage (currWB, TR_NONE, baseImg, pp, procparams::ToneCurveParams(), icm, procparams::RAWParams());
+        img_src.getImage(curr_wb, TR_NONE, img_float.get(), pp, rtengine::procparams::ToneCurveParams(), icm, rtengine::procparams::RAWParams());
 
-        if ( !workingColorSpace.empty() ) {
-            imgSrc.convertColorSpace(baseImg, icm, currWB);
+        if (!working_color_space.empty()) {
+            img_src.convertColorSpace(img_float.get(), icm, curr_wb);
         }
 
-        result = baseImg;
+        AlignedBuffer<std::uint16_t> image(fw * fh * 4 + 1);
+
+        std::size_t index = 0;
+
+        for (int y = 0; y < fh; ++y) {
+            for (int x = 0; x < fw; ++x) {
+                image.data[index] = img_float->r(y, x);
+                ++index;
+                image.data[index] = img_float->g(y, x);
+                ++index;
+                image.data[index] = img_float->b(y, x);
+                index += 2;
+            }
+        }
+
+        clut_image.swap(image);
+    }
+
+    return res;
+}
+
+#ifdef __SSE2__
+vfloat getClutValue(const AlignedBuffer<std::uint16_t>& clut_image, size_t index)
+{
+#ifdef __SSE4_1__
+    return _mm_cvtepi32_ps(_mm_cvtepu16_epi32(*reinterpret_cast<const __m128i*>(clut_image.data + index)));
+#else
+    return _mm_cvtpu16_ps(*reinterpret_cast<const __m64*>(clut_image.data + index));
+#endif
+}
+#endif
+
+}
+
+rtengine::HaldCLUT::HaldCLUT() :
+    clut_level(0),
+    flevel_minus_one(0.0f),
+    flevel_minus_two(0.0f),
+    clut_profile("sRGB")
+{
+}
+
+rtengine::HaldCLUT::~HaldCLUT()
+{
+}
+
+bool rtengine::HaldCLUT::load(const Glib::ustring& filename)
+{
+    if (loadFile(filename, "", clut_image, clut_level)) {
+        Glib::ustring name, ext;
+        splitClutFilename(filename, name, ext, clut_profile);
+
+        clut_filename = filename;
+        clut_level *= clut_level;
+        flevel_minus_one = static_cast<float>(clut_level - 1) / 65535.0f;
+        flevel_minus_two = static_cast<float>(clut_level - 2);
+        return true;
+    }
+
+    return false;
+}
+
+rtengine::HaldCLUT::operator bool() const
+{
+    return !clut_image.isEmpty();
+}
+
+Glib::ustring rtengine::HaldCLUT::getFilename() const
+{
+    return clut_filename;
+}
+
+Glib::ustring rtengine::HaldCLUT::getProfile() const
+{
+    return clut_profile;
+}
+
+void rtengine::HaldCLUT::getRGB(
+    float strength,
+    std::size_t line_size,
+    const float* r,
+    const float* g,
+    const float* b,
+    float* out_rgbx
+) const
+{
+    const unsigned int level = clut_level; // This is important
+
+    const unsigned int level_square = level * level;
+
+#ifdef __SSE2__
+    const vfloat v_strength = F2V(strength);
+#endif
+
+    for (std::size_t column = 0; column < line_size; ++column, ++r, ++g, ++b, out_rgbx += 4) {
+        const unsigned int red = std::min(flevel_minus_two, *r * flevel_minus_one);
+        const unsigned int green = std::min(flevel_minus_two, *g * flevel_minus_one);
+        const unsigned int blue = std::min(flevel_minus_two, *b * flevel_minus_one);
+
+        const unsigned int color = red + green * level + blue * level_square;
+
+#ifndef __SSE2__
+        const float re = *r * flevel_minus_one - red;
+        const float gr = *g * flevel_minus_one - green;
+        const float bl = *b * flevel_minus_one - blue;
+
+        size_t index = color * 4;
+
+        float tmp1[4] ALIGNED16;
+        tmp1[0] = intp<float>(re, clut_image.data[index + 4], clut_image.data[index]);
+        tmp1[1] = intp<float>(re, clut_image.data[index + 5], clut_image.data[index + 1]);
+        tmp1[2] = intp<float>(re, clut_image.data[index + 6], clut_image.data[index + 2]);
+
+        index = (color + level) * 4;
+
+        float tmp2[4] ALIGNED16;
+        tmp2[0] = intp<float>(re, clut_image.data[index + 4], clut_image.data[index]);
+        tmp2[1] = intp<float>(re, clut_image.data[index + 5], clut_image.data[index + 1]);
+        tmp2[2] = intp<float>(re, clut_image.data[index + 6], clut_image.data[index + 2]);
+
+        out_rgbx[0] = intp<float>(gr, tmp2[0], tmp1[0]);
+        out_rgbx[1] = intp<float>(gr, tmp2[1], tmp1[1]);
+        out_rgbx[2] = intp<float>(gr, tmp2[2], tmp1[2]);
+
+        index = (color + level_square) * 4;
+
+        tmp1[0] = intp<float>(re, clut_image.data[index + 4], clut_image.data[index]);
+        tmp1[1] = intp<float>(re, clut_image.data[index + 5], clut_image.data[index + 1]);
+        tmp1[2] = intp<float>(re, clut_image.data[index + 6], clut_image.data[index + 2]);
+
+        index = (color + level + level_square) * 4;
+
+        tmp2[0] = intp<float>(re, clut_image.data[index + 4], clut_image.data[index]);
+        tmp2[1] = intp<float>(re, clut_image.data[index + 5], clut_image.data[index + 1]);
+        tmp2[2] = intp<float>(re, clut_image.data[index + 6], clut_image.data[index + 2]);
+
+        tmp1[0] = intp<float>(gr, tmp2[0], tmp1[0]);
+        tmp1[1] = intp<float>(gr, tmp2[1], tmp1[1]);
+        tmp1[2] = intp<float>(gr, tmp2[2], tmp1[2]);
+
+        out_rgbx[0] = intp<float>(bl, tmp1[0], out_rgbx[0]);
+        out_rgbx[1] = intp<float>(bl, tmp1[1], out_rgbx[1]);
+        out_rgbx[2] = intp<float>(bl, tmp1[2], out_rgbx[2]);
+
+        out_rgbx[0] = intp<float>(strength, out_rgbx[0], *r);
+        out_rgbx[1] = intp<float>(strength, out_rgbx[1], *g);
+        out_rgbx[2] = intp<float>(strength, out_rgbx[2], *b);
+#else
+        const vfloat v_in = _mm_set_ps(0.0f, *b, *g, *r);
+        const vfloat v_tmp = v_in * _mm_load_ps1(&flevel_minus_one);
+        const vfloat v_rgb = v_tmp - _mm_cvtepi32_ps(_mm_cvttps_epi32(_mm_min_ps(_mm_load_ps1(&flevel_minus_two), v_tmp)));
+
+        size_t index = color * 4;
+
+        const vfloat v_r = PERMUTEPS(v_rgb, _MM_SHUFFLE(0, 0, 0, 0));
+
+        vfloat v_tmp1 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
+
+        index = (color + level) * 4;
+
+        vfloat v_tmp2 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
+
+        const vfloat v_g = PERMUTEPS(v_rgb, _MM_SHUFFLE(1, 1, 1, 1));
+
+        vfloat v_out = vintpf(v_g, v_tmp2, v_tmp1);
+
+        index = (color + level_square) * 4;
+
+        v_tmp1 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
+
+        index = (color + level + level_square) * 4;
+
+        v_tmp2 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
+
+        v_tmp1 = vintpf(v_g, v_tmp2, v_tmp1);
+
+        const vfloat v_b = PERMUTEPS(v_rgb, _MM_SHUFFLE(2, 2, 2, 2));
+
+        v_out = vintpf(v_b, v_tmp1, v_out);
+
+        STVF(*out_rgbx, vintpf(v_strength, v_out, v_in));
+#endif
+    }
+}
+
+void rtengine::HaldCLUT::splitClutFilename(
+    const Glib::ustring& filename,
+    Glib::ustring& name,
+    Glib::ustring& extension,
+    Glib::ustring& profile_name
+)
+{
+    Glib::ustring basename = Glib::path_get_basename(filename);
+
+    Glib::ustring::size_type last_slash_pos = basename.rfind('/');
+
+    if (last_slash_pos == Glib::ustring::npos) {
+        last_slash_pos = basename.rfind('\\');
+    }
+
+    const Glib::ustring::size_type last_dot_pos = basename.rfind('.');
+
+    if (last_dot_pos != Glib::ustring::npos) {
+        name.assign(basename, 0, last_dot_pos);
+        extension.assign(basename, last_dot_pos + 1, Glib::ustring::npos);
+    } else {
+        name = basename;
+    }
+
+    profile_name = "sRGB";
+
+    for (const auto& working_profile : rtengine::getWorkingProfiles()) {
+        if (std::search(name.rbegin(), name.rend(), working_profile.rbegin(), working_profile.rend()) == name.rbegin()) {
+            profile_name = working_profile;
+            name.erase(name.size() - working_profile.size());
+            break;
+        }
+    }
+}
+
+rtengine::CLUTStore& rtengine::CLUTStore::getInstance()
+{
+    static CLUTStore instance;
+    return instance;
+}
+
+std::shared_ptr<rtengine::HaldCLUT> rtengine::CLUTStore::getClut(const Glib::ustring& filename)
+{
+    std::shared_ptr<rtengine::HaldCLUT> result;
+
+    if (!cache.get(filename, result)) {
+        std::unique_ptr<rtengine::HaldCLUT> clut(new rtengine::HaldCLUT);
+
+        if (clut->load(filename)) {
+            result = std::move(clut);
+            cache.insert(filename, result);
+        }
     }
 
     return result;
 }
 
-void HaldCLUT::loadClut( Imagefloat *img, RawClut &outClut )
+void rtengine::CLUTStore::clearCache()
 {
-    img->normalizeFloatTo1();
-    int y_size = img->getH();
-    int x_size = img->getW();
-    outClut.resize( x_size * y_size * 3 );
-    int clutIdx = 0;
-
-    //int level = m_level * m_level;  (unused)
-    for(int y = 0; y < y_size; y++) {
-        for(int x = 0; x < x_size; x++) {
-            outClut[ clutIdx * 3     ] = img->r( y, x ) * MAXVAL8;
-            outClut[ clutIdx * 3 + 1 ] = img->g( y, x ) * MAXVAL8;
-            outClut[ clutIdx * 3 + 2 ] = img->b( y, x ) * MAXVAL8;
-
-            ++clutIdx;
-        }
-    }
+    cache.clear();
 }
 
-Imagefloat* HaldCLUT::generateIdentImage( int level )
+rtengine::CLUTStore::CLUTStore() :
+    cache(options.clutCacheSize)
 {
-    int imageWidth = level * level * level;
-    Imagefloat *resultImg = new Imagefloat( imageWidth, imageWidth );
-
-    int cubeSideSize = level * level;
-    float step = MAXVALF / (cubeSideSize - 1);
-    int pos = 0;
-
-    for( int b = 0; b < cubeSideSize; ++b ) {
-        for ( int g = 0; g < cubeSideSize; ++g ) {
-            for ( int r = 0; r < cubeSideSize; ++r ) {
-                int x = pos / imageWidth;
-                int y = pos % imageWidth;
-                resultImg->r( x, y ) = step * r;
-                resultImg->g( x, y ) = step * g;
-                resultImg->b( x, y ) = step * b;
-                ++pos;
-            }
-        }
-    }
-
-    return resultImg;
-}
-
-
-bool HaldCLUT::isValid() const
-{
-    return m_clutImage != 0;
-}
-
-void HaldCLUT::getRGB( float rr, float gg, float bb, float &outR, float &outG, float &outB ) const
-{
-    rr /= MAXVALF;
-    gg /= MAXVALF;
-    bb /= MAXVALF;
-    correct( *m_clutImage, m_level, rr, gg, bb, outR, outG, outB );
-}
-
-inline float valF( unsigned char val )
-{
-    return float( val ) / MAXVAL8;
-}
-
-// copypasted from http://www.quelsolaar.com/technology/clut.html
-void HaldCLUT::correct( const HaldCLUT::RawClut& clut, int level, float rr, float gg, float bb, float &outR, float &outG, float &outB )
-{
-    int color, red, green, blue, i, j;
-    float tmp[6], r, g, b;
-    level =  level * level;
-
-    red = rr * (float)(level - 1);
-
-    if(red > level - 2) {
-        red = (float)level - 2;
-    }
-
-    if(red < 0) {
-        red = 0;
-    }
-
-    green = gg * (float)(level - 1);
-
-    if(green > level - 2) {
-        green = (float)level - 2;
-    }
-
-    if(green < 0) {
-        green = 0;
-    }
-
-    blue = bb * (float)(level - 1);
-
-    if(blue > level - 2) {
-        blue = (float)level - 2;
-    }
-
-    if(blue < 0) {
-        blue = 0;
-    }
-
-    r = rr * (float)(level - 1) - red;
-    g = gg * (float)(level - 1) - green;
-    b = bb * (float)(level - 1) - blue;
-
-    color = red + green * level + blue * level * level;
-
-    i = color * 3;
-    j = (color + 1) * 3;
-
-    tmp[0] = valF( clut[i++] ) * (1 - r) + valF( clut[j++] ) * r;
-    tmp[1] = valF( clut[i++] ) * (1 - r) + valF( clut[j++] ) * r;
-    tmp[2] = valF( clut[i] ) * (1 - r) + valF( clut[j] ) * r;
-
-    i = (color + level) * 3;
-    j = (color + level + 1) * 3;
-
-    tmp[3] = valF( clut[i++] ) * (1 - r) + valF( clut[j++] ) * r;
-    tmp[4] = valF( clut[i++] ) * (1 - r) + valF( clut[j++] ) * r;
-    tmp[5] = valF( clut[i] ) * (1 - r) + valF( clut[j] ) * r;
-
-    outR = tmp[0] * (1 - g) + tmp[3] * g;
-    outG = tmp[1] * (1 - g) + tmp[4] * g;
-    outB = tmp[2] * (1 - g) + tmp[5] * g;
-
-    i = (color + level * level) * 3;
-    j = (color + level * level + 1) * 3;
-
-    tmp[0] = valF( clut[i++] ) * (1 - r) + valF( clut[j++] ) * r;
-    tmp[1] = valF( clut[i++] ) * (1 - r) + valF( clut[j++] ) * r;
-    tmp[2] = valF( clut[i] ) * (1 - r) + valF( clut[j] ) * r;
-
-    i = (color + level + level * level) * 3;
-    j = (color + level + level * level + 1) * 3;
-
-    tmp[3] = valF( clut[i++] ) * (1 - r) + valF( clut[j++] ) * r;
-    tmp[4] = valF( clut[i++] ) * (1 - r) + valF( clut[j++] ) * r;
-    tmp[5] = valF( clut[i] ) * (1 - r) + valF( clut[j] ) * r;
-
-    tmp[0] = tmp[0] * (1 - g) + tmp[3] * g;
-    tmp[1] = tmp[1] * (1 - g) + tmp[4] * g;
-    tmp[2] = tmp[2] * (1 - g) + tmp[5] * g;
-
-    outR = outR * (1 - b) + tmp[0] * b;
-    outG = outG * (1 - b) + tmp[1] * b;
-    outB = outB * (1 - b) + tmp[2] * b;
-}
-
-inline void pos2xy( int pos, int imageSideSize, int &outX, int &outY )
-{
-    outX = pos / imageSideSize;
-    outY = pos % imageSideSize;
-}
-
-void HaldCLUT::correct( Imagefloat &clutImage, int level, float rr, float gg, float bb, float &outR, float &outG, float &outB )
-{
-    int color, red, green, blue, i, j;
-    float tmp[6], r, g, b;
-    level =  level * level;
-    int imageSideSize = clutImage.getW();
-
-    red = rr * (float)(level - 1);
-
-    if(red > level - 2) {
-        red = (float)level - 2;
-    }
-
-    if(red < 0) {
-        red = 0;
-    }
-
-    green = gg * (float)(level - 1);
-
-    if(green > level - 2) {
-        green = (float)level - 2;
-    }
-
-    if(green < 0) {
-        green = 0;
-    }
-
-    blue = bb * (float)(level - 1);
-
-    if(blue > level - 2) {
-        blue = (float)level - 2;
-    }
-
-    if(blue < 0) {
-        blue = 0;
-    }
-
-    r = rr * (float)(level - 1) - red;
-    g = gg * (float)(level - 1) - green;
-    b = bb * (float)(level - 1) - blue;
-
-    color = red + green * level + blue * level * level;
-
-
-    i = color;
-    j = color + 1;
-    int xi, yi, xj, yj;
-    pos2xy( i, imageSideSize, xi, yi );
-    pos2xy( j, imageSideSize, xj, yj );
-
-    tmp[0] = clutImage.r( xi, yi ) * (1 - r) + clutImage.r( xj, yj ) * r;
-    tmp[1] = clutImage.g( xi, yi ) * (1 - r) + clutImage.g( xj, yj ) * r;
-    tmp[2] = clutImage.b( xi, yi ) * (1 - r) + clutImage.b( xj, yj ) * r;
-
-    i = color + level;
-    j = color + level + 1;
-    pos2xy( i, imageSideSize, xi, yi );
-    pos2xy( j, imageSideSize, xj, yj );
-
-    tmp[3] = clutImage.r( xi, yi ) * (1 - r) + clutImage.r( xj, yj ) * r;
-    tmp[4] = clutImage.g( xi, yi ) * (1 - r) + clutImage.g( xj, yj ) * r;
-    tmp[5] = clutImage.b( xi, yi ) * (1 - r) + clutImage.b( xj, yj ) * r;
-
-    outR = tmp[0] * (1 - g) + tmp[3] * g;
-    outG = tmp[1] * (1 - g) + tmp[4] * g;
-    outB = tmp[2] * (1 - g) + tmp[5] * g;
-
-    i = color + level * level;
-    j = color + level * level + 1;
-    pos2xy( i, imageSideSize, xi, yi );
-    pos2xy( j, imageSideSize, xj, yj );
-
-    tmp[0] = clutImage.r( xi, yi ) * (1 - r) + clutImage.r( xj, yj ) * r;
-    tmp[1] = clutImage.g( xi, yi ) * (1 - r) + clutImage.g( xj, yj ) * r;
-    tmp[2] = clutImage.b( xi, yi ) * (1 - r) + clutImage.b( xj, yj ) * r;
-
-    i = color + level + level * level;
-    j = color + level + level * level + 1;
-    pos2xy( i, imageSideSize, xi, yi );
-    pos2xy( j, imageSideSize, xj, yj );
-
-    tmp[3] = clutImage.r( xi, yi ) * (1 - r) + clutImage.r( xj, yj ) * r;
-    tmp[4] = clutImage.g( xi, yi ) * (1 - r) + clutImage.g( xj, yj ) * r;
-    tmp[5] = clutImage.b( xi, yi ) * (1 - r) + clutImage.b( xj, yj ) * r;
-
-    tmp[0] = tmp[0] * (1 - g) + tmp[3] * g;
-    tmp[1] = tmp[1] * (1 - g) + tmp[4] * g;
-    tmp[2] = tmp[2] * (1 - g) + tmp[5] * g;
-
-    outR = outR * (1 - b) + tmp[0] * b;
-    outG = outG * (1 - b) + tmp[1] * b;
-    outB = outB * (1 - b) + tmp[2] * b;
 }

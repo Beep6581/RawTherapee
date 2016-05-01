@@ -556,9 +556,9 @@ Gtk::Widget* Preferences::getPerformancePanel ()
     clutCacheSizeSB->set_increments (1, 5);
     clutCacheSizeSB->set_max_length(2);  // Will this be sufficient? :)
 #ifdef _OPENMP
-    clutCacheSizeSB->set_range (1, 2 * omp_get_num_procs());
+    clutCacheSizeSB->set_range (1, 3 * omp_get_num_procs());
 #else
-    clutCacheSizeSB->set_range (1, 8);
+    clutCacheSizeSB->set_range (1, 12);
 #endif
     clutCacheSizeHB->pack_start (*CLUTLl, Gtk::PACK_SHRINK, 0);
     clutCacheSizeHB->pack_end (*clutCacheSizeSB, Gtk::PACK_SHRINK, 0);

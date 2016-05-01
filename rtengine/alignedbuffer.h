@@ -18,9 +18,10 @@
  */
 #ifndef _ALIGNEDBUFFER_
 #define _ALIGNEDBUFFER_
-#include <stdint.h>
+#include <cstdint>
 #include <cstdlib>
 #include <vector>
+#include <utility>
 #include <glibmm.h>
 #include "../rtgui/threadutils.h"
 
@@ -58,7 +59,7 @@ public:
 
     /** @brief Return true if there's no memory allocated
     */
-    bool isEmpty()
+    bool isEmpty() const
     {
         return allocatedSize == 0;
     }
@@ -120,28 +121,14 @@ public:
 
     void swap(AlignedBuffer<T> &other)
     {
-        void *tmpReal = other.real;
-        other.real = real;
-        real = tmpReal;
-
-        char tmpAlignt = other.alignment;
-        other.alignment = alignment;
-        alignment = tmpAlignt;
-
-        size_t tmpAllocSize = other.allocatedSize;
-        other.allocatedSize = allocatedSize;
-        allocatedSize = tmpAllocSize;
-
-        T* tmpData = other.data;
-        other.data = data;
-        data = tmpData;
-
-        bool tmpInUse = other.inUse;
-        other.inUse = inUse;
-        inUse = tmpInUse;
+        std::swap(real, other.real);
+        std::swap(alignment, other.alignment);
+        std::swap(allocatedSize, other.allocatedSize);
+        std::swap(data, other.data);
+        std::swap(inUse, other.inUse);
     }
 
-    unsigned int getSize()
+    unsigned int getSize() const
     {
         return unitSize ? allocatedSize / unitSize : 0;
     }

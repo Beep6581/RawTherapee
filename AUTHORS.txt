@@ -12,6 +12,7 @@ Developement contributors, in last name alphabetical order:
   Oliver Duis
   Maciek Dworak
   Michael Ezra
+  Flössie
   Jean-Christophe Frisch
   Ilias Giarimis
   Steve Herrell
