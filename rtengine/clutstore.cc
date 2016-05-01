@@ -31,9 +31,11 @@ bool loadFile(
 
     if (fw == fh) {
         unsigned int level = 1;
+
         while (level * level * level < fw) {
             ++level;
         }
+
         if (level * level * level == fw && level > 1) {
             clut_level = level;
             res = true;
@@ -57,6 +59,7 @@ bool loadFile(
         AlignedBuffer<std::uint16_t> image(fw * fh * 4 + 1);
 
         std::size_t index = 0;
+
         for (int y = 0; y < fh; ++y) {
             for (int x = 0; x < fw; ++x) {
                 image.data[index] = img_float->r(y, x);
@@ -248,6 +251,7 @@ void rtengine::HaldCLUT::splitClutFilename(
     Glib::ustring basename = Glib::path_get_basename(filename);
 
     Glib::ustring::size_type last_slash_pos = basename.rfind('/');
+
     if (last_slash_pos == Glib::ustring::npos) {
         last_slash_pos = basename.rfind('\\');
     }
@@ -284,6 +288,7 @@ std::shared_ptr<rtengine::HaldCLUT> rtengine::CLUTStore::getClut(const Glib::ust
 
     if (!cache.get(filename, result)) {
         std::unique_ptr<rtengine::HaldCLUT> clut(new rtengine::HaldCLUT);
+
         if (clut->load(filename)) {
             result = std::move(clut);
             cache.insert(filename, result);
