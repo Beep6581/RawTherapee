@@ -151,12 +151,12 @@ ExportPanel::ExportPanel () : listener (NULL)
     MaxWidth->set_digits (0);
     MaxWidth->set_increments (1, 100);
     MaxWidth->set_value (options.fastexport_resize_width);
-    MaxWidth->set_range (32, 3000);
+    MaxWidth->set_range (32, 10000);
 
     MaxHeight->set_digits (0);
     MaxHeight->set_increments (1, 100);
     MaxHeight->set_value (options.fastexport_resize_height);
-    MaxHeight->set_range (32, 3000);
+    MaxHeight->set_range (32, 10000);
 
     // Buttons
     btnFastExport =  Gtk::manage ( new Gtk::Button (M("EXPORT_PUTTOQUEUEFAST")) );

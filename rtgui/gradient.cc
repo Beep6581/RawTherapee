@@ -136,88 +136,72 @@ void Gradient::read (const ProcParams* pp, const ParamsEdited* pedited)
     enableListener ();
 }
 
-void Gradient::updateGeometry(int centerX_, int centerY_, double feather_, double degree_)
+void Gradient::updateGeometry(const int centerX, const int centerY, const double feather, const double degree, const int fullWidth, const int fullHeight)
 {
     EditDataProvider* dataProvider = getEditProvider();
 
-    if (dataProvider) {
-        int imW, imH;
-        PolarCoord polCoord1, polCoord2;
-        dataProvider->getImageSize(imW, imH);
-        double decay = feather_ * sqrt(double(imW) * double(imW) + double(imH) * double(imH)) / 200.;
-
-        rtengine::Coord origin(imW / 2 + centerX_ * imW / 200.f, imH / 2 + centerY_ * imH / 200.f);
-
-        Line *currLine;
-        Circle *currCircle;
-        // update horizontal line
-        currLine = static_cast<Line*>(visibleGeometry.at(0));
-        polCoord1.set(1500.f, float(-degree_ + 180));
-        currLine->begin.setFromPolar(polCoord1);
-        currLine->begin += origin;
-        polCoord1.set(1500.f, float(-degree_    ));
-        currLine->end.setFromPolar  (polCoord1);
-        currLine->end   += origin;
-        currLine = static_cast<Line*>(mouseOverGeometry.at(0));
-        polCoord1.set(1500.f, float(-degree_ + 180));
-        currLine->begin.setFromPolar(polCoord1);
-        currLine->begin += origin;
-        polCoord1.set(1500.f, float(-degree_    ));
-        currLine->end.setFromPolar  (polCoord1);
-        currLine->end   += origin;
-        // update vertical line
-        currLine = static_cast<Line*>(visibleGeometry.at(1));
-        polCoord1.set( 700.f, float(-degree_ + 90 ));
-        currLine->begin.setFromPolar(polCoord1);
-        currLine->begin += origin;
-        polCoord1.set( 700.f, float(-degree_ + 270));
-        currLine->end.setFromPolar  (polCoord1);
-        currLine->end   += origin;
-        currLine = static_cast<Line*>(mouseOverGeometry.at(1));
-        polCoord1.set( 700.f, float(-degree_ + 90 ));
-        currLine->begin.setFromPolar(polCoord1);
-        currLine->begin += origin;
-        polCoord1.set( 700.f, float(-degree_ + 270));
-        currLine->end.setFromPolar  (polCoord1);
-        currLine->end   += origin;
-        // update upper feather line
-        currLine = static_cast<Line*>(visibleGeometry.at(2));
-        polCoord2.set(decay, float(-degree_ + 270));
-        polCoord1.set(350.f, float(-degree_ + 180));
-        currLine->begin.setFromPolar(polCoord1 + polCoord2);
-        currLine->begin += origin;
-        polCoord1.set(350.f, float(-degree_    ));
-        currLine->end.setFromPolar  (polCoord1 + polCoord2);
-        currLine->end   += origin;
-        currLine = static_cast<Line*>(mouseOverGeometry.at(2));
-        polCoord1.set(350.f, float(-degree_ + 180));
-        currLine->begin.setFromPolar(polCoord1 + polCoord2);
-        currLine->begin += origin;
-        polCoord1.set(350.f, float(-degree_    ));
-        currLine->end.setFromPolar  (polCoord1 + polCoord2);
-        currLine->end   += origin;
-        // update lower feather line
-        currLine = static_cast<Line*>(visibleGeometry.at(3));
-        polCoord2.set(decay, float(-degree_ + 90));
-        polCoord1.set(350.f, float(-degree_ + 180));
-        currLine->begin.setFromPolar(polCoord1 + polCoord2);
-        currLine->begin += origin;
-        polCoord1.set(350.f, float(-degree_    ));
-        currLine->end.setFromPolar  (polCoord1 + polCoord2);
-        currLine->end   += origin;
-        currLine = static_cast<Line*>(mouseOverGeometry.at(3));
-        polCoord1.set(350.f, float(-degree_ + 180));
-        currLine->begin.setFromPolar(polCoord1 + polCoord2);
-        currLine->begin += origin;
-        polCoord1.set(350.f, float(-degree_    ));
-        currLine->end.setFromPolar  (polCoord1 + polCoord2);
-        currLine->end   += origin;
-        // update circle's position
-        currCircle = static_cast<Circle*>(visibleGeometry.at(4));
-        currCircle->center = origin;
-        currCircle = static_cast<Circle*>(mouseOverGeometry.at(4));
-        currCircle->center = origin;
+    if (!dataProvider) {
+        return;
     }
+
+    int imW=0;
+    int imH=0;
+    if (fullWidth != -1 && fullHeight != -1) {
+        imW = fullWidth;
+        imH = fullHeight;
+    } else {
+        dataProvider->getImageSize(imW, imH);
+        if (!imW || !imH) {
+            return;
+        }
+    }
+
+    const auto decay = feather * rtengine::norm2<double> (imW, imH) / 200.0;
+    rtengine::Coord origin (imW / 2 + centerX * imW / 200, imH / 2 + centerY * imH / 200);
+
+    const auto updateLine = [&](Geometry* geometry, const float radius, const float begin, const float end)
+    {
+        const auto line = static_cast<Line*>(geometry);
+        line->begin = PolarCoord(radius, -degree + begin);
+        line->begin += origin;
+        line->end = PolarCoord(radius, -degree + end);
+        line->end += origin;
+    };
+
+    const auto updateLineWithDecay = [&](Geometry* geometry, const float radius, const float offSetAngle)
+    {
+        const auto line = static_cast<Line*>(geometry);
+        line->begin = PolarCoord (radius, -degree + 180.) + PolarCoord (decay, -degree + offSetAngle);
+        line->begin += origin;
+        line->end = PolarCoord (radius, -degree) + PolarCoord (decay, -degree + offSetAngle);
+        line->end += origin;
+    };
+
+    const auto updateCircle = [&](Geometry* geometry)
+    {
+        const auto circle = static_cast<Circle*>(geometry);
+        circle->center = origin;
+    };
+
+    // update horizontal line
+    updateLine (visibleGeometry.at(0), 1500., 0., 180.);
+    updateLine (mouseOverGeometry.at(0), 1500., 0., 180.);
+
+    // update vertical line
+    updateLine (visibleGeometry.at(1), 700., 90., 270.);
+    updateLine (mouseOverGeometry.at(1), 700., 90., 270.);
+
+    // update upper feather line
+    updateLineWithDecay (visibleGeometry.at(2), 350., 270.);
+    updateLineWithDecay (mouseOverGeometry.at(2), 350., 270.);
+
+    // update lower feather line
+    updateLineWithDecay (visibleGeometry.at(3), 350., 90.);
+    updateLineWithDecay (mouseOverGeometry.at(3), 350., 90.);
+
+    // update circle's position
+    updateCircle (visibleGeometry.at(4));
+    updateCircle (mouseOverGeometry.at(4));
 }
 
 void Gradient::write (ProcParams* pp, ParamsEdited* pedited)
@@ -339,7 +323,7 @@ void Gradient::editToggled ()
     }
 }
 
-CursorShape Gradient::getCursor(int objectID)
+CursorShape Gradient::getCursor(const int objectID)
 {
     switch (objectID) {
     case (0):
@@ -365,7 +349,7 @@ CursorShape Gradient::getCursor(int objectID)
     }
 }
 
-bool Gradient::mouseOver(int modifierKey)
+bool Gradient::mouseOver(const int modifierKey)
 {
     EditDataProvider* editProvider = getEditProvider();
 
@@ -395,8 +379,12 @@ bool Gradient::mouseOver(int modifierKey)
     return false;
 }
 
-bool Gradient::button1Pressed(int modifierKey)
+bool Gradient::button1Pressed(const int modifierKey)
 {
+    if (lastObject < 0) {
+        return false;
+    }
+
     EditDataProvider *provider = getEditProvider();
 
     if (!(modifierKey & GDK_CONTROL_MASK)) {
@@ -415,7 +403,7 @@ bool Gradient::button1Pressed(int modifierKey)
         p1.y = p2.y;
         p2.y = p;
 
-        pCoord.setFromCartesian(p1, p2);
+        pCoord = p2 - p1;
         draggedPointOldAngle = pCoord.angle;
         //printf("\ndraggedPointOldAngle=%.3f\n\n", draggedPointOldAngle);
         draggedPointAdjusterAngle = degree->getValue();
@@ -434,7 +422,7 @@ bool Gradient::button1Pressed(int modifierKey)
             centerPos.y = currPos.y;
             currPos.y = p;
 
-            draggedPoint.setFromCartesian(centerPos, currPos);
+            draggedPoint = currPos - centerPos;
             // compute the projected value of the dragged point
             draggedFeatherOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue()) / 180.*M_PI);
 
@@ -445,32 +433,32 @@ bool Gradient::button1Pressed(int modifierKey)
             draggedFeatherOffset -= (feather->getValue() / 200. * diagonal);
         }
 
-        EditSubscriber::dragging = true;
+        EditSubscriber::action = ES_ACTION_DRAGGING;
         return false;
-    } else {
+    } else { // should theoretically always be true
         // this will let this class ignore further drag events
-        if (lastObject > -1) { // should theoretically always be true
-            if (lastObject == 2 || lastObject == 3) {
-                EditSubscriber::visibleGeometry.at(2)->state = Geometry::NORMAL;
-                EditSubscriber::visibleGeometry.at(3)->state = Geometry::NORMAL;
-            } else {
-                EditSubscriber::visibleGeometry.at(lastObject)->state = Geometry::NORMAL;
-            }
+        if (lastObject == 2 || lastObject == 3) {
+            EditSubscriber::visibleGeometry.at(2)->state = Geometry::NORMAL;
+            EditSubscriber::visibleGeometry.at(3)->state = Geometry::NORMAL;
+        } else {
+            EditSubscriber::visibleGeometry.at(lastObject)->state = Geometry::NORMAL;
         }
 
         lastObject = -1;
         return true;
     }
+
+    return false;
 }
 
 bool Gradient::button1Released()
 {
     draggedPointOldAngle = -1000.;
-    EditSubscriber::dragging = false;
+    EditSubscriber::action = ES_ACTION_NONE;
     return true;
 }
 
-bool Gradient::drag1(int modifierKey)
+bool Gradient::drag1(const int modifierKey)
 {
     // compute the polar coordinate of the mouse position
     EditDataProvider *provider = getEditProvider();
@@ -492,7 +480,7 @@ bool Gradient::drag1(int modifierKey)
         centerPos.y = currPos.y;
         currPos.y = p;
 
-        draggedPoint.setFromCartesian(centerPos, currPos);
+        draggedPoint = currPos - centerPos;
         double deltaAngle = draggedPoint.angle - draggedPointOldAngle;
 
         if (deltaAngle > 180.) { // crossing the boundary (0->360)
@@ -537,7 +525,7 @@ bool Gradient::drag1(int modifierKey)
         centerPos.y = currPos.y;
         currPos.y = p;
 
-        draggedPoint.setFromCartesian(centerPos, currPos);
+        draggedPoint = currPos - centerPos;
         double currDraggedFeatherOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue()) / 180.*M_PI);
 
         if (lastObject == 2)

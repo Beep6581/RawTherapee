@@ -18,7 +18,6 @@
  */
 #include "preprocess.h"
 #include "guiutils.h"
-#include "../rtengine/safegtk.h"
 #include <sstream>
 
 using namespace rtengine;

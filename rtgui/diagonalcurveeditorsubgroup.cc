@@ -468,13 +468,15 @@ void DiagonalCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, i
     }
 }
 
-void DiagonalCurveEditorSubGroup::pipetteButton1Pressed(EditDataProvider *provider, int modifierKey)
+bool DiagonalCurveEditorSubGroup::pipetteButton1Pressed(EditDataProvider *provider, int modifierKey)
 {
     CurveEditor *curveEditor = static_cast<DiagonalCurveEditor*>(parent->displayedCurve);
 
+    bool isDragging = false;
+
     switch((DiagonalCurveType)(curveEditor->curveType->getSelected())) {
     case (DCT_Spline):
-        customCurve->pipetteButton1Pressed(provider, modifierKey);
+        isDragging = customCurve->pipetteButton1Pressed(provider, modifierKey);
         break;
 
     case (DCT_Parametric):
@@ -485,13 +487,15 @@ void DiagonalCurveEditorSubGroup::pipetteButton1Pressed(EditDataProvider *provid
         break;
 
     case (DCT_NURBS):
-        NURBSCurve->pipetteButton1Pressed(provider, modifierKey);
+        isDragging = NURBSCurve->pipetteButton1Pressed(provider, modifierKey);
         break;
 
     default:    // (DCT_Linear, DCT_Unchanged)
         // ... do nothing
         break;
     }
+
+    return isDragging;
 }
 
 void DiagonalCurveEditorSubGroup::pipetteButton1Released(EditDataProvider *provider)

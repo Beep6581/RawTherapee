@@ -22,7 +22,6 @@
 #include "multilangmgr.h"
 #include "rtwindow.h"
 #include "soundman.h"
-#include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
 struct BQProcessLoaded {
@@ -39,7 +38,7 @@ int processLoadedBatchQueueUIThread (void* data)
 
 static Glib::ustring makeFolderLabel(Glib::ustring path)
 {
-    if (!safe_file_test (path, Glib::FILE_TEST_IS_DIR)) {
+    if (!Glib::file_test (path, Glib::FILE_TEST_IS_DIR)) {
         return "(" + M("GENERAL_NONE") + ")";
     }
 
@@ -115,7 +114,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
     outdirFolder->signal_current_folder_changed().connect (sigc::mem_fun(*this, &BatchQueuePanel::pathFolderChanged));
     outdirFolder->set_tooltip_markup (M("PREFERENCES_OUTDIRFOLDERHINT"));
 
-    if (safe_file_test (options.savePathFolder, Glib::FILE_TEST_IS_DIR)) {
+    if (Glib::file_test (options.savePathFolder, Glib::FILE_TEST_IS_DIR)) {
         outdirFolder->set_current_folder (options.savePathFolder);
     }
 
@@ -325,7 +324,7 @@ void BatchQueuePanel::saveOptions ()
 void BatchQueuePanel::pathFolderButtonPressed ()
 {
 
-    Gtk::FileChooserDialog fc(M("PREFERENCES_OUTDIRFOLDER"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
+    Gtk::FileChooserDialog fc (getToplevelWindow (this), M("PREFERENCES_OUTDIRFOLDER"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
     fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
     fc.add_button( Gtk::StockID("gtk-ok"), Gtk::RESPONSE_OK);
     fc.set_filename(options.savePathFolder);
@@ -333,8 +332,8 @@ void BatchQueuePanel::pathFolderButtonPressed ()
     int result = fc.run();
 
     if (result == Gtk::RESPONSE_OK) {
-        if (safe_file_test(fc.get_filename(), Glib::FILE_TEST_IS_DIR)) {
-            options.savePathFolder = fc.get_filename();
+        if (Glib::file_test(fc.get_current_folder(), Glib::FILE_TEST_IS_DIR)) {
+            options.savePathFolder = fc.get_filename ();
             outdirFolderButton->set_label(makeFolderLabel(options.savePathFolder));
         }
     }

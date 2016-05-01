@@ -31,7 +31,7 @@ namespace rtengine
 extern const Settings* settings;
 
 Crop::Crop (ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
-    : EditBuffer(editDataProvider), origCrop(NULL), laboCrop(NULL), labnCrop(NULL),
+    : PipetteBuffer(editDataProvider), origCrop(NULL), laboCrop(NULL), labnCrop(NULL),
       cropImg(NULL), cbuf_real(NULL), cshmap(NULL), transCrop(NULL), cieCrop(NULL), cbuffer(NULL),
       updating(false), newUpdatePending(false), skip(10),
       cropx(0), cropy(0), cropw(-1), croph(-1),
@@ -77,7 +77,7 @@ void Crop::setListener (DetailedCropListener* il)
 
 EditUniqueID Crop::getCurrEditID()
 {
-    EditSubscriber *subscriber = EditBuffer::dataProvider ? EditBuffer::dataProvider->getCurrSubscriber() : NULL;
+    EditSubscriber *subscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : NULL;
     return subscriber ? subscriber->getEditID() : EUID_None;
 }
 
@@ -90,32 +90,25 @@ void Crop::setEditSubscriber(EditSubscriber* newSubscriber)
     MyMutex::MyLock lock(cropMutex);
 
     // At this point, editCrop.dataProvider->currSubscriber is the old subscriber
-    EditSubscriber *oldSubscriber = EditBuffer::dataProvider ? EditBuffer::dataProvider->getCurrSubscriber() : NULL;
+    EditSubscriber *oldSubscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : NULL;
 
-    if (newSubscriber == NULL || (oldSubscriber != NULL && oldSubscriber->getEditBufferType() != newSubscriber->getEditBufferType())) {
-        if (EditBuffer::imgFloatBuffer != NULL) {
-            delete EditBuffer::imgFloatBuffer;
-            EditBuffer::imgFloatBuffer = NULL;
+    if (newSubscriber == NULL || (oldSubscriber != NULL && oldSubscriber->getPipetteBufferType() != newSubscriber->getPipetteBufferType())) {
+        if (PipetteBuffer::imgFloatBuffer != NULL) {
+            delete PipetteBuffer::imgFloatBuffer;
+            PipetteBuffer::imgFloatBuffer = NULL;
         }
 
-        if (EditBuffer::LabBuffer != NULL) {
-            delete EditBuffer::LabBuffer;
-            EditBuffer::LabBuffer = NULL;
+        if (PipetteBuffer::LabBuffer != NULL) {
+            delete PipetteBuffer::LabBuffer;
+            PipetteBuffer::LabBuffer = NULL;
         }
 
-        if (EditBuffer::singlePlaneBuffer.getW() != -1) {
-            EditBuffer::singlePlaneBuffer.flushData();
+        if (PipetteBuffer::singlePlaneBuffer.getW() != -1) {
+            PipetteBuffer::singlePlaneBuffer.flushData();
         }
     }
 
-    if (newSubscriber == NULL  && oldSubscriber != NULL && oldSubscriber->getEditingType() == ET_OBJECTS) {
-        printf("Free object buffers\n");
-        EditBuffer::resize(0, 0); // This will delete the objects buffer
-    } else if (newSubscriber && newSubscriber->getEditingType() == ET_OBJECTS) {
-        EditBuffer::resize(cropw, croph, newSubscriber);
-    }
-
-    // If oldSubscriber == NULL && newSubscriber != NULL -> the image will be allocated when necessary
+    // If oldSubscriber == NULL && newSubscriber != NULL && newSubscriber->getEditingType() == ET_PIPETTE-> the image will be allocated when necessary
 }
 
 void Crop::update (int todo)
@@ -712,6 +705,17 @@ void Crop::update (int todo)
         transCrop = NULL;
     }
 
+    if ((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
+
+        const int W = baseCrop->getWidth();
+        const int H = baseCrop->getHeight();
+        LabImage labcbdl(W, H);
+        parent->ipf.rgb2lab(*baseCrop, labcbdl, params.icm.working);
+        parent->ipf.dirpyrequalizer (&labcbdl, skip);
+        parent->ipf.lab2rgb(labcbdl, *baseCrop, params.icm.working);
+
+    }
+
     // blurmap for shadow & highlights
     if ((todo & M_BLURMAP) && params.sh.enabled) {
         double radius = sqrt (double(SKIPS(parent->fw, skip) * SKIPS(parent->fw, skip) + SKIPS(parent->fh, skip) * SKIPS(parent->fh, skip))) / 2.0;
@@ -731,6 +735,7 @@ void Crop::update (int todo)
             cshmap->forceStat (parent->shmap->max_f, parent->shmap->min_f, parent->shmap->avg);
         }
     }
+
 
     // shadows & highlights & tone curve & convert to cielab
     /*int xref,yref;
@@ -838,11 +843,12 @@ void Crop::update (int todo)
         //   if (skip==1) {
         WaveletParams WaveParams = params.wavelet;
 
-        if((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {
-            parent->ipf.dirpyrequalizer (labnCrop, skip);
-            //  parent->ipf.Lanczoslab (labnCrop,labnCrop , 1.f/skip);
+        if(params.dirpyrequalizer.cbdlMethod == "aft") {
+            if(((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled))) {
+                parent->ipf.dirpyrequalizer (labnCrop, skip);
+                //  parent->ipf.Lanczoslab (labnCrop,labnCrop , 1.f/skip);
+            }
         }
-
 
         int kall = 0;
         int minwin = min(labnCrop->W, labnCrop->H);
@@ -984,7 +990,7 @@ void Crop::update (int todo)
     }
 
     // all pipette buffer processing should be finished now
-    EditBuffer::setReady();
+    PipetteBuffer::setReady();
 
     // switch back to rgb
     parent->ipf.lab2monitorRgb (labnCrop, cropImg);
@@ -1085,7 +1091,7 @@ void Crop::freeAll ()
             cshmap = NULL;
         }
 
-        EditBuffer::flush();
+        PipetteBuffer::flush();
     }
 
     cropAllocated = false;
@@ -1157,6 +1163,13 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
         printf ("setsizes starts (%d, %d, %d, %d, %d, %d)\n", orW, orH, trafw, trafh, cw, ch);
     }
 
+    EditType editType = ET_PIPETTE;
+    if (const auto editProvider = PipetteBuffer::getDataProvider ()) {
+        if (const auto editSubscriber = editProvider->getCurrSubscriber ()) {
+            editType = editSubscriber->getEditingType ();
+        }
+    }
+
     if (cw != cropw || ch != croph || orW != trafw || orH != trafh) {
 
         cropw = cw;
@@ -1223,7 +1236,11 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
             cshmap = new SHMap (cropw, croph, true);
         }
 
-        EditBuffer::resize(cropw, croph);
+        if (editType == ET_PIPETTE) {
+            PipetteBuffer::resize(cropw, croph);
+        } else if (PipetteBuffer::bufferCreated()) {
+            PipetteBuffer::flush();
+        }
 
         cropAllocated = true;
 

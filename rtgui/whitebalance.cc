@@ -17,16 +17,17 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "whitebalance.h"
+
 #include <iomanip>
+
 #include "rtimage.h"
 #include "options.h"
-#include "../rtengine/safegtk.h"
 
 #define MINTEMP 1500   //1200
 #define MAXTEMP 60000  //12000
 #define CENTERTEMP 4750
 #define MINGREEN 0.02
-#define MAXGREEN 5.0
+#define MAXGREEN 10.0
 #define MINEQUAL 0.8
 #define MAXEQUAL 1.5
 
@@ -42,19 +43,19 @@ Glib::RefPtr<Gdk::Pixbuf> WhiteBalance::wbCameraPB, WhiteBalance::wbAutoPB, Whit
 
 void WhiteBalance::init ()
 {
-    wbPixbufs[WBT_CAMERA]      = safe_create_from_file("wb-camera.png");
-    wbPixbufs[WBT_AUTO]        = safe_create_from_file("wb-auto.png");
-    wbPixbufs[WBT_DAYLIGHT]    = safe_create_from_file("wb-sun.png");
-    wbPixbufs[WBT_CLOUDY]      = safe_create_from_file("wb-cloudy.png");
-    wbPixbufs[WBT_SHADE]       = safe_create_from_file("wb-shade.png");
-    wbPixbufs[WBT_WATER]       = safe_create_from_file("wb-water.png");
-//    wbPixbufs[WBT_WATER2]       = safe_create_from_file("wb-water.png");
-    wbPixbufs[WBT_TUNGSTEN]    = safe_create_from_file("wb-tungsten.png");
-    wbPixbufs[WBT_FLUORESCENT] = safe_create_from_file("wb-fluorescent.png");
-    wbPixbufs[WBT_LAMP]        = safe_create_from_file("wb-lamp.png");
-    wbPixbufs[WBT_FLASH]       = safe_create_from_file("wb-flash.png");
-    wbPixbufs[WBT_LED]         = safe_create_from_file("wb-led.png");
-    wbPixbufs[WBT_CUSTOM]      = safe_create_from_file("wb-custom.png");
+    wbPixbufs[WBT_CAMERA]      = RTImage::createFromFile ("wb-camera.png");
+    wbPixbufs[WBT_AUTO]        = RTImage::createFromFile ("wb-auto.png");
+    wbPixbufs[WBT_DAYLIGHT]    = RTImage::createFromFile ("wb-sun.png");
+    wbPixbufs[WBT_CLOUDY]      = RTImage::createFromFile ("wb-cloudy.png");
+    wbPixbufs[WBT_SHADE]       = RTImage::createFromFile ("wb-shade.png");
+    wbPixbufs[WBT_WATER]       = RTImage::createFromFile ("wb-water.png");
+//    wbPixbufs[WBT_WATER2]       = RTImage::createFromFile ("wb-water.png");
+    wbPixbufs[WBT_TUNGSTEN]    = RTImage::createFromFile ("wb-tungsten.png");
+    wbPixbufs[WBT_FLUORESCENT] = RTImage::createFromFile ("wb-fluorescent.png");
+    wbPixbufs[WBT_LAMP]        = RTImage::createFromFile ("wb-lamp.png");
+    wbPixbufs[WBT_FLASH]       = RTImage::createFromFile ("wb-flash.png");
+    wbPixbufs[WBT_LED]         = RTImage::createFromFile ("wb-led.png");
+    wbPixbufs[WBT_CUSTOM]      = RTImage::createFromFile ("wb-custom.png");
 }
 
 void WhiteBalance::cleanup ()

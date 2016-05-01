@@ -52,6 +52,8 @@
  *          LUTf stands for LUT<float>
  *          LUTi stands for LUT<int>
  *          LUTu stands for LUT<unsigned int>
+ *          LUTd stands for LUT<double>
+ *          LUTuc stands for LUT<unsigned char>
  */
 
 #ifndef LUT_H_
@@ -65,6 +67,7 @@
 #define LUTi LUT<int>
 #define LUTu LUT<unsigned int>
 #define LUTd LUT<double>
+#define LUTuc LUT<unsigned char>
 
 #include <cstring>
 #ifndef NDEBUG
@@ -89,9 +92,9 @@ protected:
 private:
     unsigned int owner;
 #if defined( __SSE2__ ) && defined( __x86_64__ )
-    vfloat maxsv __attribute__ ((aligned (16)));
-    vfloat sizev __attribute__ ((aligned (16)));
-    vint sizeiv __attribute__ ((aligned (16)));
+    vfloat maxsv ALIGNED16;
+    vfloat sizev ALIGNED16;
+    vint sizeiv ALIGNED16;
 #endif
 public:
     /// convenience flag! If one doesn't want to delete the buffer but want to flag it to be recomputed...
@@ -254,6 +257,23 @@ public:
 
         return *this;
     }
+
+    // handy to sum up per thread histograms. #pragma omp simd speeds up the loop by about factor 3 for LUTu (unsigned int).
+    LUT<T> & operator+=(LUT<T> &rhs)
+    {
+        if (rhs.size == this->size) {
+#ifdef _OPENMP
+            #pragma omp simd
+#endif
+
+            for(unsigned int i = 0; i < this->size; i++) {
+                data[i] += rhs.data[i];
+            }
+        }
+
+        return *this;
+    }
+
     // use with integer indices
     T& operator[](int index) const
     {

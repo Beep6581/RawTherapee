@@ -54,8 +54,6 @@
 #include "conio.h"
 #endif
 
-#include "../rtengine/safegtk.h"
-
 extern Options options;
 
 // stores path to data files
@@ -66,6 +64,29 @@ Glib::ustring argv1;
 bool simpleEditor;
 Glib::Thread* mainThread;
 
+namespace
+{
+
+// For an unknown reason, Glib::filename_to_utf8 doesn't work on reliably Windows,
+// so we're using Glib::filename_to_utf8 for Linux/Apple and Glib::locale_to_utf8 for Windows.
+Glib::ustring fname_to_utf8 (const char* fname)
+{
+#ifdef WIN32
+
+    try {
+        return Glib::locale_to_utf8 (fname);
+    } catch (Glib::Error&) {
+        return Glib::convert_with_fallback (fname, "UTF-8", "ISO-8859-1", "?");
+    }
+
+#else
+
+    return Glib::filename_to_utf8 (fname);
+
+#endif
+}
+
+}
 
 // This recursive mutex will be used by gdk_threads_enter/leave instead of a simple mutex
 #ifdef WIN32
@@ -170,7 +191,7 @@ int main(int argc, char **argv)
     bool consoleOpened = false;
 
     if (argc > 1 || options.rtSettings.verbose) {
-        if(options.rtSettings.verbose || ( !safe_file_test( safe_filename_to_utf8(argv[1]), Glib::FILE_TEST_EXISTS ) && !safe_file_test( safe_filename_to_utf8(argv[1]), Glib::FILE_TEST_IS_DIR ))) {
+        if (options.rtSettings.verbose || ( !Glib::file_test (fname_to_utf8 (argv[1]), Glib::FILE_TEST_EXISTS ) && !Glib::file_test (fname_to_utf8 (argv[1]), Glib::FILE_TEST_IS_DIR))) {
             bool stdoutRedirectedtoFile = (GetFileType(GetStdHandle(STD_OUTPUT_HANDLE)) == 0x0001);
             bool stderrRedirectedtoFile = (GetFileType(GetStdHandle(STD_ERROR_HANDLE)) == 0x0001);
 
@@ -263,8 +284,8 @@ int main(int argc, char **argv)
 #ifndef WIN32
 
     // Move the old path to the new one if the new does not exist
-    if (safe_file_test(Glib::build_filename(options.rtdir, "cache"), Glib::FILE_TEST_IS_DIR) && !safe_file_test(options.cacheBaseDir, Glib::FILE_TEST_IS_DIR)) {
-        safe_g_rename(Glib::build_filename(options.rtdir, "cache"), options.cacheBaseDir);
+    if (Glib::file_test(Glib::build_filename(options.rtdir, "cache"), Glib::FILE_TEST_IS_DIR) && !Glib::file_test(options.cacheBaseDir, Glib::FILE_TEST_IS_DIR)) {
+        g_rename(Glib::build_filename (options.rtdir, "cache").c_str (), options.cacheBaseDir.c_str ());
     }
 
 #endif
@@ -272,7 +293,7 @@ int main(int argc, char **argv)
     simpleEditor = false;
 
     if( !argv1.empty() )
-        if( safe_file_test(argv1, Glib::FILE_TEST_EXISTS) && !safe_file_test(argv1, Glib::FILE_TEST_IS_DIR)) {
+        if( Glib::file_test(argv1, Glib::FILE_TEST_EXISTS) && !Glib::file_test(argv1, Glib::FILE_TEST_IS_DIR)) {
             simpleEditor = true;
         }
 
@@ -395,9 +416,9 @@ int processLineParams( int argc, char **argv )
             case 'o': // outputfile or dir
                 if( iArg + 1 < argc ) {
                     iArg++;
-                    outputPath = safe_filename_to_utf8 (argv[iArg]);
+                    outputPath = fname_to_utf8 (argv[iArg]);
 
-                    if( safe_file_test (outputPath, Glib::FILE_TEST_IS_DIR)) {
+                    if( Glib::file_test (outputPath, Glib::FILE_TEST_IS_DIR)) {
                         outputDirectory = true;
                     }
                 }
@@ -409,7 +430,7 @@ int processLineParams( int argc, char **argv )
                 // RT stop if any of them can't be loaded for any reason.
                 if( iArg + 1 < argc ) {
                     iArg++;
-                    Glib::ustring fname = safe_filename_to_utf8 ( argv[iArg] );
+                    Glib::ustring fname = fname_to_utf8 (argv[iArg]);
 
                     if (fname.at(0) == '-') {
                         std::cerr << "Error: filename missing next to the -p switch" << std::endl;
@@ -497,39 +518,54 @@ int processLineParams( int argc, char **argv )
                 break;
 
             case 'c': // MUST be last option
-                while( iArg + 1 < argc ) {
+                while (iArg + 1 < argc) {
                     iArg++;
 
-                    if( !safe_file_test( safe_filename_to_utf8(argv[iArg]), Glib::FILE_TEST_EXISTS )) {
-                        std::cerr << argv[iArg] << " doesn't exist." << std::endl;
+                    const auto argument = fname_to_utf8 (argv[iArg]);
+
+                    if (Glib::file_test (argument, Glib::FILE_TEST_IS_REGULAR)) {
+                        inputFiles.emplace_back (argument);
                         continue;
                     }
 
-                    if( safe_file_test( safe_filename_to_utf8(argv[iArg]), Glib::FILE_TEST_IS_DIR )) {
-                        std::vector<Glib::ustring> names;
-                        Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path ( argv[iArg] );
-                        safe_build_file_list (dir, names, argv[iArg] );
+                    if (Glib::file_test (argument, Glib::FILE_TEST_IS_DIR)) {
 
-                        for(size_t iFile = 0; iFile < names.size(); iFile++ ) {
-                            if( !safe_file_test( names[iFile] , Glib::FILE_TEST_IS_DIR)) {
-                                // skip files without extension and without sidecar files
-                                Glib::ustring s(names[iFile]);
-                                Glib::ustring::size_type ext = s.find_last_of('.');
-
-                                if( Glib::ustring::npos == ext ) {
-                                    continue;
-                                }
-
-                                if( ! s.substr(ext).compare( paramFileExtension )) {
-                                    continue;
-                                }
-
-                                inputFiles.push_back( names[iFile] );
-                            }
+                        auto dir = Gio::File::create_for_path (argument);
+                        if (!dir || !dir->query_exists()) {
+                            continue;
                         }
-                    } else {
-                        inputFiles.push_back( safe_filename_to_utf8 (argv[iArg]) );
+
+                        try {
+
+                            auto enumerator = dir->enumerate_children ();
+
+                            while (auto file = enumerator->next_file ()) {
+
+                                const auto fileName = Glib::build_filename (argument, file->get_name ());
+
+                                if (Glib::file_test (fileName, Glib::FILE_TEST_IS_DIR)) {
+                                    continue;
+                                }
+
+                                // skip files without extension and sidecar files
+                                auto lastdot = fileName.find_last_of('.');
+                                if (lastdot == Glib::ustring::npos) {
+                                    continue;
+                                }
+
+                                if (fileName.substr (lastdot).compare (paramFileExtension) == 0) {
+                                    continue;
+                                }
+
+                                inputFiles.emplace_back (fileName);
+                            }
+
+                        } catch (Glib::Exception&) {}
+
+                        continue;
                     }
+
+                    std::cerr << "\"" << argument << "\" is neither a regular file nor a directory." << std::endl;
                 }
 
                 break;
@@ -600,7 +636,7 @@ int processLineParams( int argc, char **argv )
             }
             }
         } else {
-            argv1 = safe_filename_to_utf8 ( argv[iArg] );
+            argv1 = fname_to_utf8 (argv[iArg]);
 
             if( outputDirectory ) {
                 options.savePathFolder = outputPath;
@@ -701,7 +737,7 @@ int processLineParams( int argc, char **argv )
             continue;
         }
 
-        if( !overwriteFiles && safe_file_test( outputFile , Glib::FILE_TEST_EXISTS ) ) {
+        if( !overwriteFiles && Glib::file_test( outputFile , Glib::FILE_TEST_EXISTS ) ) {
             std::cerr << outputFile  << " already exists: use -Y option to overwrite. This image has been skipped." << std::endl;
             continue;
         }
@@ -742,7 +778,7 @@ int processLineParams( int argc, char **argv )
                 Glib::ustring sideProcessingParams = inputFile + paramFileExtension;
 
                 // the "load" method don't reset the procparams values anymore, so values found in the procparam file override the one of currentParams
-                if( !safe_file_test( sideProcessingParams, Glib::FILE_TEST_EXISTS ) || currentParams.load ( sideProcessingParams )) {
+                if( !Glib::file_test( sideProcessingParams, Glib::FILE_TEST_EXISTS ) || currentParams.load ( sideProcessingParams )) {
                     std::cerr << "Warning: sidecar file requested but not found for: " << sideProcessingParams << std::endl;
                 } else {
                     sideCarFound = true;

@@ -24,13 +24,16 @@
 #include "cropwindow.h"
 #include "../rtengine/dcrop.h"
 #include "../rtengine/refreshmap.h"
+#include "../rtengine/rt_math.h"
 
 using namespace rtengine;
 
 CropHandler::CropHandler ()
-    : zoom(10), ww(0), wh(0), cx(0), cy(0), cw(0), ch(0),
-      cropX(0), cropY(0), cropW(0), cropH(0), enabled(false),
-      cropimg(NULL), cropimgtrue(NULL), ipc(NULL), crop(NULL), listener(NULL), isLowUpdatePriority(false)
+    : zoom(10), ww(0), wh(0), imx(-1), imy(-1), imw(0), imh(0), cax(-1), cay(-1),
+      cx(0), cy(0), cw(0), ch(0), cropX(0), cropY(0), cropW(0), cropH(0), enabled(false),
+      cropimg(NULL), cropimgtrue(NULL), cropimg_width(0), cropimg_height(0),
+      initial(false), isLowUpdatePriority(false), ipc(NULL), crop(NULL),
+      displayHandler(NULL)
 {
 
     chi = new CropHandlerIdleHelper;
@@ -82,7 +85,7 @@ void CropHandler::newImage (StagedImageProcessor* ipc_, bool isDetailWindow)
     }
 
     EditDataProvider *editDataProvider = NULL;
-    CropWindow *cropWin = listener ? static_cast<CropWindow*>(listener) : NULL;
+    CropWindow *cropWin = displayHandler ? static_cast<CropWindow*>(displayHandler) : NULL;
 
     if (cropWin) {
         editDataProvider = cropWin->getImageArea();
@@ -126,16 +129,29 @@ double CropHandler::getFitZoom ()
 
 void CropHandler::setZoom (int z, int centerx, int centery)
 {
+    assert (ipc);
 
-    int x = cx + cw / 2;
-    int y = cy + ch / 2;
+    int oldZoom = zoom;
+    float oldScale = zoom >= 1000 ? float(zoom / 1000) : 1.f / float(zoom);
+    float newScale = z >= 1000 ? float(z / 1000) : 1.f / float(z);
 
-    if (centerx >= 0) {
-        x = centerx;
+    int oldcax = cax;
+    int oldcay = cay;
+
+    if (centerx == -1) {
+        cax = ipc->getFullWidth () / 2;
+    } else {
+        float distToAnchor = float(cax - centerx);
+        distToAnchor = distToAnchor / newScale * oldScale;
+        cax = centerx + int(distToAnchor);
     }
 
-    if (centery >= 0) {
-        y = centery;
+    if (centery == -1) {
+        cay = ipc->getFullHeight () / 2;
+    } else {
+        float distToAnchor = float(cay - centery);
+        distToAnchor = distToAnchor / newScale * oldScale;
+        cay = centery + int(distToAnchor);
     }
 
     // maybe demosaic etc. if we cross the border to >100%
@@ -151,13 +167,20 @@ void CropHandler::setZoom (int z, int centerx, int centery)
         ch = wh * zoom;
     }
 
-    cx = x - cw / 2;
-    cy = y - ch / 2;
+    cx = cax - cw / 2;
+    cy = cay - ch / 2;
+
+
+    int oldCropX = cropX;
+    int oldCropY = cropY;
+    int oldCropW = cropW;
+    int oldCropH = cropH;
 
     compDim ();
 
-    if (enabled) {
+    if (enabled && (oldZoom != zoom || oldcax != cax || oldcay != cay || oldCropX != cropX || oldCropY != cropY || oldCropW != cropW || oldCropH != cropH)) {
         if (needsFullRefresh) {
+            cropPixbuf.clear ();
             ipc->startProcessing(M_HIGHQUAL);
         } else {
             update ();
@@ -194,11 +217,44 @@ void CropHandler::getWSize (int& w, int &h)
     h = wh;
 }
 
-void CropHandler::setPosition (int x, int y, bool update_)
+void CropHandler::getAnchorPosition (int& x, int& y)
 {
+    x = cax;
+    y = cay;
+}
 
-    cx = x;
-    cy = y;
+void CropHandler::setAnchorPosition (int x, int y, bool update_)
+{
+    cax = x;
+    cay = y;
+
+    compDim ();
+
+    if (enabled && update_) {
+        update ();
+    }
+}
+
+void CropHandler::moveAnchor (int deltaX, int deltaY, bool update_)
+{
+    cax += deltaX;
+    cay += deltaY;
+
+    compDim ();
+
+    if (enabled && update_) {
+        update ();
+    }
+}
+
+void CropHandler::centerAnchor (bool update_)
+{
+    assert (ipc);
+
+    // Computes the crop's size and position given the anchor's position and display size
+
+    cax = ipc->getFullWidth() / 2;
+    cay = ipc->getFullHeight() / 2;
 
     compDim ();
 
@@ -280,11 +336,11 @@ int createpixbufs (void* data)
 
     ch->cimg.unlock ();
 
-    if (ch->listener) {
-        ch->listener->cropImageUpdated ();
+    if (ch->displayHandler) {
+        ch->displayHandler->cropImageUpdated ();
 
         if (ch->initial) {
-            ch->listener->initialImageArrived ();
+            ch->displayHandler->initialImageArrived ();
             ch->initial = false;
         }
     }
@@ -365,7 +421,7 @@ bool CropHandler::getWindow (int& cwx, int& cwy, int& cww, int& cwh, int& cskip)
 void CropHandler::update ()
 {
 
-    if (crop) {
+    if (crop && enabled) {
 //        crop->setWindow (cropX, cropY, cropW, cropH, zoom>=1000 ? 1 : zoom); --> we use the "getWindow" hook instead of setting the size before
         crop->setListener (this);
         cropPixbuf.clear ();
@@ -428,41 +484,78 @@ void CropHandler::getFullImageSize (int& w, int& h)
 
 void CropHandler::compDim ()
 {
+    assert (ipc && displayHandler);
 
-    cropX = cx;
-    cropY = cy;
-    cropW = cw;
-    cropH = ch;
+    // Computes the crop's size and position given the anchor's position and display size
 
-    cutRectToImgBounds (cropX, cropY, cropW, cropH);
-}
+    int fullW = ipc->getFullWidth();
+    int fullH = ipc->getFullHeight();
+    int imgX = -1, imgY = -1;
+    //int scaledFullW, scaledFullH;
+    int scaledCAX, scaledCAY;
+    int wwImgSpace;
+    int whImgSpace;
 
-void CropHandler::cutRectToImgBounds (int& x, int& y, int& w, int& h)
-{
+    cax = rtengine::LIM(cax, 0, fullW-1);
+    cay = rtengine::LIM(cay, 0, fullH-1);
 
-    if (ipc) {
-        if (w > ipc->getFullWidth()) {
-            w = ipc->getFullWidth();
-        }
-
-        if (h > ipc->getFullHeight()) {
-            h = ipc->getFullHeight();
-        }
-
-        if (x < 0) {
-            x = 0;
-        }
-
-        if (y < 0) {
-            y = 0;
-        }
-
-        if (x + w >= ipc->getFullWidth()) {
-            x = ipc->getFullWidth() - w;
-        }
-
-        if (y + h >= ipc->getFullHeight()) {
-            y = ipc->getFullHeight() - h;
-        }
+    if (zoom >= 1000) {
+        wwImgSpace = int(float(ww) / float(zoom/1000) + 0.5f);
+        whImgSpace = int(float(wh) / float(zoom/1000) + 0.5f);
+        //scaledFullW = fullW * (zoom/1000);
+        //scaledFullH = fullH * (zoom/1000);
+        scaledCAX = cax * (zoom/1000);
+        scaledCAY = cay * (zoom/1000);
+    } else {
+        wwImgSpace = int(float(ww) * float(zoom) + 0.5f);
+        whImgSpace = int(float(wh) * float(zoom) + 0.5f);
+        //scaledFullW = fullW / zoom;
+        //scaledFullH = fullH / zoom;
+        scaledCAX = cax / zoom;
+        scaledCAY = cay / zoom;
     }
+
+    imgX = ww / 2 - scaledCAX;
+    if (imgX < 0) {
+        imgX = 0;
+    }
+    imgY = wh / 2 - scaledCAY;
+    if (imgY < 0) {
+        imgY = 0;
+    }
+
+    cropX = cax - (wwImgSpace/2);
+    cropY = cay - (whImgSpace/2);
+    cropW = wwImgSpace;
+    cropH = whImgSpace;
+
+    if (cropX + cropW > fullW) {
+        cropW = fullW - cropX;
+    }
+
+    if (cropY + cropH > fullH) {
+        cropH = fullH - cropY;
+    }
+
+    if (cropX < 0) {
+        cropW += cropX;
+        cropX = 0;
+    }
+
+    if (cropY < 0) {
+        cropH += cropY;
+        cropY = 0;
+    }
+
+    // Should be good already, but this will correct eventual rounding error
+
+    if (cropW > fullW) {
+        cropW = fullW;
+    }
+
+    if (cropH > fullH) {
+        cropH = fullH;
+    }
+
+    displayHandler->setDisplayPosition(imgX, imgY);
 }

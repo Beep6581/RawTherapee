@@ -57,9 +57,9 @@ enum EditType {
 
 /// @brief Buffer type for ET_PIPETTE type editing
 enum BufferType {
-    BT_IMAGEFLOAT,
-    BT_LABIMAGE,
-    BT_SINGLEPLANE_FLOAT
+    BT_IMAGEFLOAT,          /// Imagefloat buffer type (3 channels of float values)
+    BT_LABIMAGE,            /// LabImage buffer type (3 channels of float values)
+    BT_SINGLEPLANE_FLOAT    /// All purpose, 1 channel buffer of float values
 };
 
 /// @brief Number of object to be handled (for optimization purpose)

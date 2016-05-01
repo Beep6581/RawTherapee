@@ -294,6 +294,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                             adjustr = 1.f / 1.3f;
                         } else if (params.icm.working == "WideGamut")  {
                             adjustr = 1.f / 1.1f;
+                        } else if (params.icm.working == "Rec2020")  {
+                            adjustr = 1.f / 1.1f;
                         } else if (params.icm.working == "Beta RGB")   {
                             adjustr = 1.f / 1.2f;
                         } else if (params.icm.working == "BestRGB")    {
@@ -533,6 +535,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                 adjustr = 1.f / 1.3f;
             } else if (params.icm.working == "WideGamut")  {
                 adjustr = 1.f / 1.1f;
+            } else if (params.icm.working == "Rec2020")  {
+                adjustr = 1.f / 1.1f;
             } else if (params.icm.working == "Beta RGB")   {
                 adjustr = 1.f / 1.2f;
             } else if (params.icm.working == "BestRGB")    {
@@ -738,6 +742,16 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                        imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), true);
         delete baseImg;
         baseImg = trImg;
+    }
+
+
+    if (params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
+        const int W = baseImg->getWidth();
+        const int H = baseImg->getHeight();
+        LabImage labcbdl(W, H);
+        ipf.rgb2lab(*baseImg, labcbdl, params.icm.working);
+        ipf.dirpyrequalizer (&labcbdl, 1);
+        ipf.lab2rgb(labcbdl, *baseImg, params.icm.working);
     }
 
     // update blurmap
@@ -983,9 +997,12 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     params.wavelet.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL );
 
+
     // directional pyramid wavelet
-    if((params.colorappearance.enabled && !settings->autocielab)  || !params.colorappearance.enabled) {
-        ipf.dirpyrequalizer (labView, 1);    //TODO: this is the luminance tonecurve, not the RGB one
+    if(params.dirpyrequalizer.cbdlMethod == "aft") {
+        if((params.colorappearance.enabled && !settings->autocielab)  || !params.colorappearance.enabled) {
+            ipf.dirpyrequalizer (labView, 1);    //TODO: this is the luminance tonecurve, not the RGB one
+        }
     }
 
     int kall = 2;
@@ -1165,11 +1182,11 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         useLCMS = false;
         bool pro = false;
         Glib::ustring chpro, outProfile;
-        bool present_space[9] = {false, false, false, false, false, false, false, false, false};
+        bool present_space[10] = {false, false, false, false, false, false, false, false, false, false};
         std::vector<Glib::ustring> opnames = iccStore->getProfiles ();
 
         //test if files are in system
-        for (int j = 0; j < 9; j++) {
+        for (int j = 0; j < 10; j++) {
             // one can modify "option" [Color Management] to adapt the profile's name if they are different for windows, MacOS, Linux ??
             // some of them are actually provided by RT, thanks to Jacques Desmis
             if     (j == 0) {
@@ -1190,6 +1207,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                 chpro = options.rtSettings.srgb10;    //gamma 1.0
             } else if(j == 8) {
                 chpro = options.rtSettings.prophoto10;    //gamma 1.0
+            } else if(j == 9) {
+                chpro = options.rtSettings.rec2020;
             }
 
             for (unsigned int i = 0; i < opnames.size(); i++) {
@@ -1229,6 +1248,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             outProfile = options.rtSettings.srgb10;
         } else if (params.icm.working == "ProPhoto"  && present_space[8] &&  pro) {
             outProfile = options.rtSettings.prophoto10;
+        } else if (params.icm.working == "Rec2020"  && present_space[9]) {
+            outProfile = options.rtSettings.rec2020;
         } else {
             // Should not occurs
             if (settings->verbose) {

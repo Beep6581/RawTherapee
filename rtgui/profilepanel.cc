@@ -21,7 +21,6 @@
 #include "profilestore.h"
 #include "clipboard.h"
 #include "multilangmgr.h"
-#include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
 using namespace rtengine;
@@ -288,29 +287,19 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
         return;
     }
 
-    Gtk::FileChooserDialog dialog(M("PROFILEPANEL_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
+    Gtk::FileChooserDialog dialog (getToplevelWindow (this), M("PROFILEPANEL_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
     bindCurrentFolder (dialog, options.loadSaveProfilePath);
     dialog.set_current_name (lastFilename);
 
     //Add the user's default (or global if multiuser=false) profile path to the Shortcut list
-#ifdef WIN32
-
-    // Dirty workaround, waiting for a clean solution by using exceptions!
-    if (!safe_is_shortcut_dir(options.getPreferredProfilePath()))
-#endif
-        try {
-            dialog.add_shortcut_folder(options.getPreferredProfilePath());
-        } catch (Glib::Error &err) {}
+    try {
+        dialog.add_shortcut_folder(options.getPreferredProfilePath());
+    } catch (Glib::Error&) {}
 
     //Add the image's path to the Shortcut list
-#ifdef WIN32
-
-    // Dirty workaround, waiting for a clean solution by using exceptions!
-    if (!safe_is_shortcut_dir(imagePath))
-#endif
-        try {
-            dialog.add_shortcut_folder(imagePath);
-        } catch (Glib::Error &err) {}
+    try {
+        dialog.add_shortcut_folder(imagePath);
+    } catch (Glib::Error&) {}
 
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
@@ -464,28 +453,18 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
         return;
     }
 
-    Gtk::FileChooserDialog dialog(M("PROFILEPANEL_LOADDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN);
+    Gtk::FileChooserDialog dialog (getToplevelWindow (this), M("PROFILEPANEL_LOADDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN);
     bindCurrentFolder (dialog, options.loadSaveProfilePath);
 
     //Add the user's default (or global if multiuser=false) profile path to the Shortcut list
-#ifdef WIN32
-
-    // Dirty workaround, waiting for a clean solution by using exceptions!
-    if (!safe_is_shortcut_dir(options.getPreferredProfilePath()))
-#endif
-        try {
-            dialog.add_shortcut_folder(options.getPreferredProfilePath());
-        } catch (Glib::Error &err) {}
+    try {
+        dialog.add_shortcut_folder(options.getPreferredProfilePath());
+    } catch (Glib::Error&) {}
 
     //Add the image's path to the Shortcut list
-#ifdef WIN32
-
-    // Dirty workaround, waiting for a clean solution by using exceptions!
-    if (!safe_is_shortcut_dir(imagePath))
-#endif
-        try {
-            dialog.add_shortcut_folder(imagePath);
-        } catch (Glib::Error &err) {}
+    try {
+        dialog.add_shortcut_folder(imagePath);
+    } catch (Glib::Error&) {}
 
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
@@ -617,6 +596,17 @@ void ProfilePanel::paste_clicked (GdkEventButton* event)
     } else {
         if (fillMode->get_active()) {
             custom->pparams->setDefaults();
+        } else if (!isCustomSelected ()) {
+            if (isLastSavedSelected()) {
+                *custom->pparams = *lastsaved->pparams;
+            } else {
+                const ProfileStoreEntry* entry = profiles->getSelectedEntry();
+
+                if (entry) {
+                    const PartialProfile* partProfile = profileStore.getProfile (entry);
+                    *custom->pparams = *partProfile->pparams;
+                }
+            }
         }
 
         profiles->set_active(getCustomRow());

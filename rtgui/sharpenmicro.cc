@@ -18,7 +18,6 @@
  */
 #include "sharpenmicro.h"
 #include "guiutils.h"
-#include "../rtengine/safegtk.h"
 #include <sstream>
 #include <cmath>
 

@@ -1388,5 +1388,12 @@ static INLINE vfloat vadivapb (vfloat a, vfloat b) {
     return a / (a+b);
 }
 
+static INLINE void vconvertrgbrgbrgbrgb2rrrrggggbbbb (const float * src, vfloat &rv, vfloat &gv, vfloat &bv) { // cool function name, isn't it ? :P
+    // converts a sequence of 4 float RGB triplets to 3 red, green and blue quadruples
+    rv = _mm_setr_ps(src[0],src[3],src[6],src[9]);
+    gv = _mm_setr_ps(src[1],src[4],src[7],src[10]);
+    bv = _mm_setr_ps(src[2],src[5],src[8],src[11]);
+}
+
 #endif // __SSE2__
 #endif // SLEEFSSEAVX

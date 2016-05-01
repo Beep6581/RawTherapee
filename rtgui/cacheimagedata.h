@@ -65,7 +65,6 @@ public:
     // additional info on raw images
     int   rotate;
     int   thumbImgType;
-    int   thumbOffset;
 
     enum {
         FULL_THUMBNAIL = 0,  // was the thumbnail generated from whole file

@@ -19,7 +19,6 @@
 #include "darkframe.h"
 #include "options.h"
 #include "guiutils.h"
-#include "../rtengine/safegtk.h"
 #include <sstream>
 #include "rtimage.h"
 
@@ -81,7 +80,7 @@ void DarkFrame::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
         dfAuto->set_inconsistent(!pedited->raw.dfAuto );
     }
 
-    if (safe_file_test (pp->raw.dark_frame, Glib::FILE_TEST_EXISTS)) {
+    if (Glib::file_test (pp->raw.dark_frame, Glib::FILE_TEST_EXISTS)) {
         darkFrameFile->set_filename (pp->raw.dark_frame);
     } else {
         darkFrameReset();

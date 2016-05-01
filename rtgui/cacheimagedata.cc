@@ -19,8 +19,6 @@
 #include "cacheimagedata.h"
 #include <vector>
 #include <glib/gstdio.h>
-#include "../rtengine/safekeyfile.h"
-#include "../rtengine/safegtk.h"
 #include "version.h"
 #include <locale.h>
 
@@ -36,7 +34,8 @@ CacheImageData::CacheImageData ()
 int CacheImageData::load (const Glib::ustring& fname)
 {
     setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
-    rtengine::SafeKeyFile keyFile;
+
+    Glib::KeyFile keyFile;
 
     try {
         if (keyFile.load_from_file (fname)) {
@@ -165,10 +164,6 @@ int CacheImageData::load (const Glib::ustring& fname)
                 if (keyFile.has_key ("ExtraRawInfo", "ThumbImageType")) {
                     thumbImgType    = keyFile.get_integer ("ExtraRawInfo", "ThumbImageType");
                 }
-
-                if (keyFile.has_key ("ExtraRawInfo", "ThumbImageOffset")) {
-                    thumbOffset     = keyFile.get_integer ("ExtraRawInfo", "ThumbImageOffset");
-                }
             } else {
                 rotate = 0;
                 thumbImgType = 0;
@@ -195,21 +190,15 @@ int CacheImageData::load (const Glib::ustring& fname)
 int CacheImageData::save (const Glib::ustring& fname)
 {
 
-    rtengine::SafeKeyFile keyFile;
+    Glib::ustring keyData;
 
-    if (safe_file_test(fname, Glib::FILE_TEST_EXISTS)) {
-        try {
-            keyFile.load_from_file (fname);
-        } catch (Glib::Error &err) {
-            if (options.rtSettings.verbose) {
-                printf("CacheImageData::save / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
-            }
-        } catch (...) {
-            if (options.rtSettings.verbose) {
-                printf("CacheImageData::save / Unknown exception while trying to save \"%s\"!\n", fname.c_str());
-            }
-        }
-    }
+    try {
+
+    Glib::KeyFile keyFile;
+
+    try {
+        keyFile.load_from_file (fname);
+    } catch (Glib::Error&) {}
 
     keyFile.set_string  ("General", "MD5", md5);
     keyFile.set_string  ("General", "Version", VERSION); // Application's version
@@ -254,10 +243,25 @@ int CacheImageData::save (const Glib::ustring& fname)
 
     if (format == FT_Raw) {
         keyFile.set_integer ("ExtraRawInfo", "ThumbImageType", thumbImgType);
-        keyFile.set_integer ("ExtraRawInfo", "ThumbImageOffset", thumbOffset);
     }
 
-    FILE *f = safe_g_fopen (fname, "wt");
+    keyData = keyFile.to_data ();
+
+    } catch (Glib::Error &err) {
+        if (options.rtSettings.verbose) {
+            printf("CacheImageData::save / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
+        }
+    } catch (...) {
+        if (options.rtSettings.verbose) {
+            printf("CacheImageData::save / Unknown exception while trying to save \"%s\"!\n", fname.c_str());
+        }
+    }
+
+    if (keyData.empty ()) {
+        return 1;
+    }
+
+    FILE *f = g_fopen (fname.c_str (), "wt");
 
     if (!f) {
         if (options.rtSettings.verbose) {
@@ -266,7 +270,7 @@ int CacheImageData::save (const Glib::ustring& fname)
 
         return 1;
     } else {
-        fprintf (f, "%s", keyFile.to_data().c_str());
+        fprintf (f, "%s", keyData.c_str ());
         fclose (f);
         return 0;
     }

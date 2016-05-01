@@ -388,8 +388,16 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, fw, fh, imgsrc->getMetaData()->getFocalLen(),
                        imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), false);
 
-    readyphase++;
+    if ((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
+        const int W = oprevi->getWidth();
+        const int H = oprevi->getHeight();
+        LabImage labcbdl(W, H);
+        ipf.rgb2lab(*oprevi, labcbdl, params.icm.working);
+        ipf.dirpyrequalizer (&labcbdl, scale);
+        ipf.lab2rgb(labcbdl, *oprevi, params.icm.working);
+    }
 
+    readyphase++;
     progress ("Preparing shadow/highlight map...", 100 * readyphase / numofphases);
 
     if ((todo & M_BLURMAP) && params.sh.enabled) {
@@ -406,6 +414,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         shmap->update (oprevi, shradius, ipf.lumimul, params.sh.hq, scale);
     }
+
+
 
     readyphase++;
 
@@ -438,6 +448,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, scale == 1 ? 1 : 1);
         CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, scale == 1 ? 1 : 1);
         CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, scale == 1 ? 1 : 1);
+
 
         TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
         double wp[3][3] = {
@@ -656,15 +667,15 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     }
                 }
         */
-        //if (scale==1) {
-        if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
-            progress ("Pyramid wavelet...", 100 * readyphase / numofphases);
-            ipf.dirpyrequalizer (nprevl, scale);
-            //ipf.Lanczoslab (ip_wavelet(LabImage * lab, LabImage * dst, const procparams::EqualizerParams & eqparams), nprevl, 1.f/scale);
-            readyphase++;
+        if(params.dirpyrequalizer.cbdlMethod == "aft") {
+            if(((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) ) {
+                progress ("Pyramid wavelet...", 100 * readyphase / numofphases);
+                ipf.dirpyrequalizer (nprevl, scale);
+                //ipf.Lanczoslab (ip_wavelet(LabImage * lab, LabImage * dst, const procparams::EqualizerParams & eqparams), nprevl, 1.f/scale);
+                readyphase++;
+            }
         }
 
-        //}
 
         wavcontlutili = false;
         //CurveFactory::curveWavContL ( wavcontlutili,params.wavelet.lcurve, wavclCurve, LUTu & histogramwavcl, LUTu & outBeforeWavCLurveHistogram,int skip);

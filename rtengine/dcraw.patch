@@ -1,5 +1,5 @@
---- dcraw.c	2015-09-08 08:08:11.000000000 +0200
-+++ dcraw.cc	2016-01-08 15:37:02.884467080 +0100
+--- dcraw.c	2016-02-11 22:56:58.043957200 +0100
++++ dcraw.cc	2016-02-11 23:13:28.708268000 +0100
 @@ -1,3 +1,15 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -1348,6 +1348,15 @@
    strcpy (make, "Phase One");
    if (model[0]) return;
    switch (raw_height) {
+@@ -6658,7 +6682,7 @@
+     } else if (tag == 0xc000) {
+       c = order;
+       order = 0x4949;
+-      if ((tag = get4()) > 10000) tag = get4();
++      while ((tag = get4()) > 10000);
+       width = tag;
+       height = get4();
+       order = c;
 @@ -6688,7 +6712,11 @@
      order = get2();
      hlen  = get4();

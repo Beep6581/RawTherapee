@@ -341,6 +341,10 @@ void RTWindow::on_realize ()
         fpanel->setAspect();
     }
 
+    if (simpleEditor) {
+        epanel->setAspect();
+    }
+
     cursorManager.init (get_window());
 
     // Check if first run of this version, then display the Release Notes text

@@ -170,22 +170,12 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
     // Rest is UNSHARP MASK
     int W = lab->W, H = lab->H;
     float** b3 = nullptr;
-    float** labCopy = nullptr;
 
     if (sharpenParam.edgesonly) {
         b3 = new float*[H];
 
         for (int i = 0; i < H; i++) {
             b3[i] = new float[W];
-        }
-    }
-
-    if (sharpenParam.halocontrol && !sharpenParam.edgesonly) {
-        // We only need the lab channel copy in this special case
-        labCopy = new float*[H];
-
-        for( int i = 0; i < H; i++ ) {
-            labCopy[i] = new float[W];
         }
     }
 
@@ -200,55 +190,60 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
             bilateral<float, float> (lab->L, (float**)b3, b2, W, H, sharpenParam.edges_radius / scale, sharpenParam.edges_tolerance, multiThread);
             gaussianBlur (b3, b2, W, H, sharpenParam.radius / scale);
         }
+    }
+    float** base = lab->L;
 
-        float** base = lab->L;
+    if (sharpenParam.edgesonly) {
+        base = b3;
+    }
 
-        if (sharpenParam.edgesonly) {
-            base = b3;
-        }
-
-        if (sharpenParam.halocontrol == false) {
+    if (!sharpenParam.halocontrol) {
 #ifdef _OPENMP
-            #pragma omp for
+        #pragma omp parallel for
 #endif
 
-            for (int i = 0; i < H; i++)
-                for (int j = 0; j < W; j++) {
-                    const float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
-                    float diff = base[i][j] - b2[i][j];
-                    float delta = sharpenParam.threshold.multiply<float, float, float>(
-                                      min(ABS(diff), upperBound),                   // X axis value = absolute value of the difference, truncated to the max value of this field
-                                      sharpenParam.amount * diff * 0.01f        // Y axis max value
-                                  );
-                    lab->L[i][j] = lab->L[i][j] + delta;
-                }
-        } else {
-            if (!sharpenParam.edgesonly) {
-                // make a deep copy of lab->L
-#ifdef _OPENMP
-                #pragma omp for
-#endif
+        for (int i = 0; i < H; i++)
+            for (int j = 0; j < W; j++) {
+                const float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
+                float diff = base[i][j] - b2[i][j];
+                float delta = sharpenParam.threshold.multiply<float, float, float>(
+                                  min(ABS(diff), upperBound),                   // X axis value = absolute value of the difference, truncated to the max value of this field
+                                  sharpenParam.amount * diff * 0.01f        // Y axis max value
+                              );
+                lab->L[i][j] = lab->L[i][j] + delta;
+            }
+    } else {
+        float** labCopy = nullptr;
 
-                for( int i = 0; i < H; i++ )
-                    for( int j = 0; j < W; j++ ) {
-                        labCopy[i][j] = lab->L[i][j];
-                    }
+        if (!sharpenParam.edgesonly) {
+            // make a deep copy of lab->L
+            labCopy = new float*[H];
 
-                base = labCopy;
+            for( int i = 0; i < H; i++ ) {
+                labCopy[i] = new float[W];
             }
 
-            sharpenHaloCtrl (lab->L, b2, base, W, H, sharpenParam);
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+
+            for( int i = 0; i < H; i++ )
+                for( int j = 0; j < W; j++ ) {
+                    labCopy[i][j] = lab->L[i][j];
+                }
+
+            base = labCopy;
         }
 
-    } // end parallel
+        sharpenHaloCtrl (lab->L, b2, base, W, H, sharpenParam);
 
-    if (sharpenParam.halocontrol && !sharpenParam.edgesonly) {
-        // delete the deep copy
-        for( int i = 0; i < H; i++ ) {
-            delete[] labCopy[i];
+        if (labCopy) {
+            for( int i = 0; i < H; i++ ) {
+                delete[] labCopy[i];
+            }
+
+            delete[] labCopy;
         }
-
-        delete[] labCopy;
     }
 
     if (sharpenParam.edgesonly) {
@@ -268,7 +263,7 @@ void ImProcFunctions::sharpenHaloCtrl (float** luminance, float** blurmap, float
     float** nL = base;
 
 #ifdef _OPENMP
-    #pragma omp for
+    #pragma omp parallel for
 #endif
 
     for (int i = 2; i < H - 2; i++) {
@@ -940,22 +935,12 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
 
     int W = ncie->W, H = ncie->H;
     float** b3;
-    float** ncieCopy;
 
     if (params->sharpening.edgesonly) {
         b3 = new float*[H];
 
         for (int i = 0; i < H; i++) {
             b3[i] = new float[W];
-        }
-    }
-
-    if (params->sharpening.halocontrol && !params->sharpening.edgesonly) {
-        // We only need the lab parameter copy in this special case
-        ncieCopy = new float*[H];
-
-        for( int i = 0; i < H; i++ ) {
-            ncieCopy[i] = new float[W];
         }
     }
 
@@ -970,58 +955,64 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
             bilateral<float, float> (ncie->sh_p, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, multiThread);
             gaussianBlur (b3, b2, W, H, params->sharpening.radius / scale);
         }
+    }
 
-        float** base = ncie->sh_p;
+    float** base = ncie->sh_p;
 
-        if (params->sharpening.edgesonly) {
-            base = b3;
-        }
+    if (params->sharpening.edgesonly) {
+        base = b3;
+    }
 
-        if (params->sharpening.halocontrol == false) {
+    if (!params->sharpening.halocontrol) {
 #ifdef _OPENMP
-            #pragma omp for
+        #pragma omp parallel for
 #endif
 
-            for (int i = 0; i < H; i++)
-                for (int j = 0; j < W; j++) {
-                    const float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
-                    float diff = base[i][j] - b2[i][j];
-                    float delta = params->sharpening.threshold.multiply<float, float, float>(
-                                      min(ABS(diff), upperBound),                   // X axis value = absolute value of the difference, truncated to the max value of this field
-                                      params->sharpening.amount * diff * 0.01f      // Y axis max value
-                                  );
+        for (int i = 0; i < H; i++)
+            for (int j = 0; j < W; j++) {
+                const float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
+                float diff = base[i][j] - b2[i][j];
+                float delta = params->sharpening.threshold.multiply<float, float, float>(
+                                  min(ABS(diff), upperBound),                   // X axis value = absolute value of the difference, truncated to the max value of this field
+                                  params->sharpening.amount * diff * 0.01f      // Y axis max value
+                              );
 
-                    if(ncie->J_p[i][j] > 8.0f && ncie->J_p[i][j] < 92.0f) {
-                        ncie->sh_p[i][j] = ncie->sh_p[i][j] + delta;
-                    }
+                if(ncie->J_p[i][j] > 8.0f && ncie->J_p[i][j] < 92.0f) {
+                    ncie->sh_p[i][j] = ncie->sh_p[i][j] + delta;
                 }
-        } else {
-            if (!params->sharpening.edgesonly) {
-                // make a deep copy of lab->L
-#ifdef _OPENMP
-                #pragma omp for
-#endif
+            }
+    } else {
+        float** ncieCopy = nullptr;
 
-                for( int i = 0; i < H; i++ )
-                    for( int j = 0; j < W; j++ ) {
-                        ncieCopy[i][j] = ncie->sh_p[i][j];
-                    }
+        if (!params->sharpening.edgesonly) {
+            // make deep copy of ncie->sh_p
+            ncieCopy = new float*[H];
 
-                base = ncieCopy;
+            for( int i = 0; i < H; i++ ) {
+                ncieCopy[i] = new float[W];
             }
 
-            sharpenHaloCtrl (ncie->sh_p, b2, base, W, H, params->sharpening);
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+
+            for( int i = 0; i < H; i++ )
+                for( int j = 0; j < W; j++ ) {
+                    ncieCopy[i][j] = ncie->sh_p[i][j];
+                }
+
+            base = ncieCopy;
         }
 
-    } // end parallel
+        sharpenHaloCtrl (ncie->sh_p, b2, base, W, H, params->sharpening);
 
-    if (params->sharpening.halocontrol && !params->sharpening.edgesonly) {
-        // delete the deep copy
-        for( int i = 0; i < H; i++ ) {
-            delete[] ncieCopy[i];
+        if(ncieCopy) {
+            for( int i = 0; i < H; i++ ) {
+                delete[] ncieCopy[i];
+            }
+
+            delete[] ncieCopy;
         }
-
-        delete[] ncieCopy;
     }
 
     if (params->sharpening.edgesonly) {

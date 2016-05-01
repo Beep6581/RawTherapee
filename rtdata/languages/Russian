@@ -153,7 +153,6 @@ FILEBROWSER_RANK3_TOOLTIP;Рейтинг 3 *\nГорячая клавиша: <b>
 FILEBROWSER_RANK4_TOOLTIP;Рейтинг 4 *\nГорячая клавиша: <b>Shift-4</b>
 FILEBROWSER_RANK5_TOOLTIP;Рейтинг 5 *\nГорячая клавиша: <b>Shift-5</b>
 FILEBROWSER_RENAMEDLGLABEL;Переименовать файл
-FILEBROWSER_RENAMEDLGMSG;Переименовать файл "%1" в:
 FILEBROWSER_SELECTDARKFRAME;Выбрать темновой кадр...
 FILEBROWSER_SELECTFLATFIELD;Выбрать плоское поле...
 FILEBROWSER_SHOWCOLORLABEL1HINT;Показать изображения, отмеченные Красным.\nГорячая клавиша: <b>Alt-1</b>
@@ -1513,13 +1512,13 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !HISTORY_MSG_437;Retinex - M - Method
 !HISTORY_MSG_438;Retinex - M - Equalizer
 !HISTORY_MSG_439;Retinex - Preview
+!HISTORY_MSG_440;CbDL - Method
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
 !MAIN_TAB_INSPECT; Inspect
 !MAIN_TAB_WAVELET;Wavelet
 !MAIN_TAB_WAVELET_TOOLTIP;Shortcut: <b>Alt-w</b>
 !MAIN_TOOLTIP_HIDEHP;Show/Hide the left panel (including the history).\nShortcut: <b>l</b>
 !MONITOR_PROFILE_SYSTEM;System default
-!MONITOR_SOFTPROOF;Soft-proof
 !NAVIGATOR_B;B:
 !NAVIGATOR_G;G:
 !NAVIGATOR_H;H:
@@ -1611,6 +1610,10 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !TP_BWMIX_SET_RGBREL;Relative RGB
 !TP_BWMIX_SET_ROYGCBPMABS;Absolute ROYGCBPM
 !TP_BWMIX_SET_ROYGCBPMREL;Relative ROYGCBPM
+!TP_CBDL_AFT;After Black-and-White
+!TP_CBDL_BEF;Before Black-and-White
+!TP_CBDL_METHOD;Process located
+!TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show L*a*b* values before CIECAM02 adjustments.
 !TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended).
 !TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002.
@@ -1769,6 +1772,7 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Tries to suppress hot pixels.
 !TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 !TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
+!TP_RAWCACORR_CASTR;Strength
 !TP_RAWEXPOS_BLACK_0;Green 1 (lead)
 !TP_RAWEXPOS_BLACK_1;Red
 !TP_RAWEXPOS_BLACK_2;Blue
@@ -1819,7 +1823,6 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !TP_RETINEX_LABSPACE;L*a*b*
 !TP_RETINEX_LOW;Low
 !TP_RETINEX_MAP;Mask method
-!TP_RETINEX_MAP_CURV;Curve only
 !TP_RETINEX_MAP_GAUS;Gaussian mask
 !TP_RETINEX_MAP_MAPP;Sharp mask (wavelet partial)
 !TP_RETINEX_MAP_MAPT;Sharp mask (wavelet total)

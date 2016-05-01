@@ -75,7 +75,7 @@ public:
     void flatFieldFile_Reset        ();
     void flatFieldAutoSelectChanged ();
     void flatFieldBlurTypeChanged   ();
-    void setShortcutPath(Glib::ustring path);
+    void setShortcutPath (const Glib::ustring& path);
     void setFFProvider              (FFProvider* p)
     {
         ffp = p;

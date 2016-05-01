@@ -22,27 +22,40 @@
 
 #include "rawimagesource.h"
 
-#include "curves.h"
-
 namespace rtengine
 {
 
-inline void RawImageSource::convert_row_to_YIQ (float* r, float* g, float* b, float* Y, float* I, float* Q, int W)
+inline void RawImageSource::convert_row_to_YIQ (const float* const r, const float* const g, const float* const b, float* Y, float* I, float* Q, const int W)
 {
+#ifdef _OPENMP
+    #pragma omp simd
+#endif
+
     for (int j = 0; j < W; j++) {
-        Y[j] = .299 * r[j] + .587 * g[j] + .114 * b[j];
-        I[j] = .596 * r[j] - .275 * g[j] - .321 * b[j];
-        Q[j] = .212 * r[j] - .523 * g[j] + .311 * b[j];
+        Y[j] = .299f * r[j] + .587f * g[j] + .114f * b[j];
+        I[j] = .596f * r[j] - .275f * g[j] - .321f * b[j];
+        Q[j] = .212f * r[j] - .523f * g[j] + .311f * b[j];
     }
 }
 
-inline void RawImageSource::convert_row_to_RGB (float* r, float* g, float* b, float* Y, float* I, float* Q, int W)
+inline void RawImageSource::convert_row_to_RGB (float* r, float* g, float* b, const float* const Y, const float* const I, const float* const Q, const int W)
 {
+#ifdef _OPENMP
+    #pragma omp simd
+#endif
+
     for (int j = 1; j < W - 1; j++) {
-        r[j] = Y[j] + 0.956 * I[j] + 0.621 * Q[j];
-        g[j] = Y[j] - 0.272 * I[j] - 0.647 * Q[j];
-        b[j] = Y[j] - 1.105 * I[j] + 1.702 * Q[j];
+        r[j] = Y[j] + 0.956f * I[j] + 0.621f * Q[j];
+        g[j] = Y[j] - 0.272f * I[j] - 0.647f * Q[j];
+        b[j] = Y[j] - 1.105f * I[j] + 1.702f * Q[j];
     }
+}
+
+inline void RawImageSource::convert_to_RGB (float &r, float &g, float &b, const float Y, const float I, const float Q)
+{
+    r = Y + 0.956f * I + 0.621f * Q;
+    g = Y - 0.272f * I - 0.647f * Q;
+    b = Y - 1.105f * I + 1.702f * Q;
 }
 
 inline void RawImageSource::convert_to_cielab_row (float* ar, float* ag, float* ab, float* oL, float* oa, float* ob)

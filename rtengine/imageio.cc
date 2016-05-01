@@ -36,7 +36,6 @@
 #endif
 
 #include "imageio.h"
-#include "safegtk.h"
 #include "iptcpairs.h"
 #include "iccjpeg.h"
 #include "color.h"
@@ -47,9 +46,46 @@ using namespace std;
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Glib::ustring safe_locale_to_utf8 (const std::string& src);
-Glib::ustring ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.", "Error while reading header.", "File reading error", "Image format not supported."};
+namespace
+{
 
+// Opens a file for binary writing and request exclusive lock (cases were you need "wb" mode plus locking)
+FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
+{
+    FILE* f = NULL;
+
+#ifdef WIN32
+
+    // Use native function to disallow sharing, i.e. lock the file for exclusive access.
+    // This is important to e.g. prevent Windows Explorer from crashing RT due to concurrently scanning an image file.
+    std::unique_ptr<wchar_t, GFreeFunc> wfname (reinterpret_cast<wchar_t*>(g_utf8_to_utf16 (fname.c_str (), -1, NULL, NULL, NULL)), g_free);
+
+    HANDLE hFile = CreateFileW ( wfname.get (), GENERIC_READ | GENERIC_WRITE, 0 /* no sharing allowed */, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile != INVALID_HANDLE_VALUE) {
+        f = _fdopen (_open_osfhandle ((intptr_t)hFile, 0), "wb");
+    }
+
+#else
+
+    f = ::g_fopen (fname.c_str (), "wb");
+
+#endif
+
+    return f;
+}
+
+Glib::ustring to_utf8 (const std::string& str)
+{
+    try {
+        return Glib::locale_to_utf8 (str);
+    } catch (Glib::Error&) {
+        return Glib::convert_with_fallback (str, "UTF-8", "ISO-8859-1", "?");
+    }
+}
+
+}
+
+Glib::ustring ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.", "Error while reading header.", "File reading error", "Image format not supported."};
 
 // For only copying the raw input data
 void ImageIO::setMetadata (const rtexif::TagDirectory* eroot)
@@ -77,12 +113,6 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
     // store exif info
     exifChange.clear();
     exifChange = exif;
-    /*unsigned int j=0;
-    for (rtengine::procparams::ExifPairs::const_iterator i=exif.begin(); i!=exif.end(); i++) {
-        exifChange.at(j).first  = i->first;
-        exifChange.at(j).second = i->second;
-        j++;
-    }*/
 
     if (exifRoot != NULL) {
         delete exifRoot;
@@ -110,7 +140,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
             for (unsigned int j = 0; j < i->second.size(); j++) {
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS);
-                std::string loc = safe_locale_to_utf8(i->second.at(j));
+                std::string loc = to_utf8(i->second.at(j));
                 iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), min(static_cast<size_t>(64), loc.size()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
@@ -121,7 +151,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
             for (unsigned int j = 0; j < i->second.size(); j++) {
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY);
-                std::string loc = safe_locale_to_utf8(i->second.at(j));
+                std::string loc = to_utf8(i->second.at(j));
                 iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), min(static_cast<size_t>(32), loc.size()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
@@ -134,7 +164,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
             if (i->first == strTags[j].field && !(i->second.empty())) {
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, strTags[j].tag);
-                std::string loc = safe_locale_to_utf8(i->second.at(0));
+                std::string loc = to_utf8(i->second.at(0));
                 iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), min(strTags[j].size, loc.size()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
@@ -177,7 +207,7 @@ void png_flush(png_struct_def *png_ptr);
 
 int ImageIO::getPNGSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement)
 {
-    FILE *file = safe_g_fopen (fname, "rb");
+    FILE *file = g_fopen (fname.c_str (), "rb");
 
     if (!file) {
         return IMIO_CANNOTREADFILE;
@@ -251,7 +281,7 @@ int ImageIO::getPNGSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat, 
 int ImageIO::loadPNG  (Glib::ustring fname)
 {
 
-    FILE *file = safe_g_fopen (fname, "rb");
+    FILE *file = g_fopen (fname.c_str (), "rb");
 
     if (!file) {
         return IMIO_CANNOTREADFILE;
@@ -500,7 +530,7 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
 
 int ImageIO::loadJPEG (Glib::ustring fname)
 {
-    FILE *file = safe_g_fopen(fname, "rb");
+    FILE *file = g_fopen(fname.c_str (), "rb");
 
     if (!file) {
         return IMIO_CANNOTREADFILE;
@@ -888,7 +918,7 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
 int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
 {
 
-    FILE *file = safe_g_fopen_WriteBinLock (fname);
+    FILE *file = g_fopen_withBinaryAndLock (fname);
 
     if (!file) {
         return IMIO_CANNOTWRITEFILE;
@@ -982,7 +1012,7 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
 int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
 {
 
-    FILE *file = safe_g_fopen_WriteBinLock (fname);
+    FILE *file = g_fopen_withBinaryAndLock (fname);
 
     if (!file) {
         return IMIO_CANNOTWRITEFILE;
@@ -1011,7 +1041,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
         */
         jpeg_destroy_compress(&cinfo);
         fclose(file);
-        safe_g_remove(fname);
+        g_remove (fname.c_str());
         return IMIO_CANNOTWRITEFILE;
     }
 
@@ -1130,7 +1160,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
         delete [] row;
         jpeg_destroy_compress(&cinfo);
         fclose(file);
-        safe_g_remove(fname);
+        g_remove (fname.c_str());
         return IMIO_CANNOTWRITEFILE;
     }
 
@@ -1142,7 +1172,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
             jpeg_destroy_compress (&cinfo);
             delete [] row;
             fclose (file);
-            safe_g_remove(fname);
+            g_remove (fname.c_str());
             return IMIO_CANNOTWRITEFILE;
         }
 
@@ -1183,7 +1213,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 
 // TODO the following needs to be looked into - do we really need two ways to write a Tiff file ?
     if (exifRoot && uncompressed) {
-        FILE *file = safe_g_fopen_WriteBinLock (fname);
+        FILE *file = g_fopen_withBinaryAndLock (fname);
 
         if (!file) {
             delete [] linebuffer;
@@ -1370,7 +1400,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
     if(writeOk) {
         return IMIO_SUCCESS;
     } else {
-        safe_g_remove(fname);
+        g_remove (fname.c_str());
         return IMIO_CANNOTWRITEFILE;
     }
 }

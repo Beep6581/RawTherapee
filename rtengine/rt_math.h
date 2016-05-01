@@ -80,12 +80,31 @@ inline const _Tp& max(const _Tp& a, const _Tp& b, const _Tp& c, const _Tp& d)
 }
 
 template<typename _Tp>
-inline const _Tp intp(const _Tp a, const _Tp b, const _Tp c) {
+inline const _Tp intp(const _Tp a, const _Tp b, const _Tp c)
+{
     // calculate a * b + (1 - a) * c
     // following is valid:
     // intp(a, b+x, c+x) = intp(a, b, c) + x
     // intp(a, b*x, c*x) = intp(a, b, c) * x
     return a * (b-c) + c;
+}
+
+template<typename T>
+T norm1(const T& x, const T& y)
+{
+    return std::abs(x) + std::abs(y);
+}
+
+template<typename T>
+T norm2(const T& x, const T& y)
+{
+    return std::sqrt(x * x + y * y);
+}
+
+template< typename T >
+T norminf(const T& x, const T& y)
+{
+    return std::max(std::abs(x), std::abs(y));
 }
 
 }

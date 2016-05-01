@@ -24,7 +24,6 @@
 #include "diagonalcurveeditorsubgroup.h"
 #include "flatcurveeditorsubgroup.h"
 #include "multilangmgr.h"
-#include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
 CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel) : curveDir(curveDir), curve_reset(NULL),
@@ -422,7 +421,7 @@ void CurveEditorSubGroup::updateEditButton(CurveEditor* curve, Gtk::ToggleButton
 Glib::ustring CurveEditorSubGroup::outputFile ()
 {
 
-    Gtk::FileChooserDialog dialog(M("CURVEEDITOR_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
+    Gtk::FileChooserDialog dialog (getToplevelWindow (parent), M("CURVEEDITOR_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
     bindCurrentFolder (dialog, curveDir);
     dialog.set_current_name (lastFilename);
 
@@ -467,7 +466,7 @@ Glib::ustring CurveEditorSubGroup::outputFile ()
 Glib::ustring CurveEditorSubGroup::inputFile ()
 {
 
-    Gtk::FileChooserDialog dialog(M("CURVEEDITOR_LOADDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN);
+    Gtk::FileChooserDialog dialog (getToplevelWindow (parent), M("CURVEEDITOR_LOADDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN);
     bindCurrentFolder (dialog, curveDir);
 
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);

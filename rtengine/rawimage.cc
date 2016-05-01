@@ -13,7 +13,6 @@
 #else
 #include <netinet/in.h>
 #endif
-#include "safegtk.h"
 
 namespace rtengine
 {
@@ -88,15 +87,15 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
     float val;
     double dsum[8], dmin, dmax;
 
-    if ((this->get_cblack(4) + 1) / 2 == 1 && (this->get_cblack(5) + 1) / 2 == 1) {
-        for (int c = 0; c < 4; c++) {
-            cblack_[FC(c / 2, c % 2)] = this->get_cblack(6 + c / 2 % this->get_cblack(4) * this->get_cblack(5) + c % 2 % this->get_cblack(5));
-            pre_mul_[c] = this->get_pre_mul(c);
-        }
-    } else if(isXtrans()) {
+    if(isXtrans()) {
         // for xtrans files dcraw stores black levels in cblack[6] .. cblack[41], but all are equal, so we just use cblack[6]
         for (int c = 0; c < 4; c++) {
             cblack_[c] = (float) this->get_cblack(6);
+            pre_mul_[c] = this->get_pre_mul(c);
+        }
+    } else if ((this->get_cblack(4) + 1) / 2 == 1 && (this->get_cblack(5) + 1) / 2 == 1) {
+        for (int c = 0; c < 4; c++) {
+            cblack_[FC(c / 2, c % 2)] = this->get_cblack(6 + c / 2 % this->get_cblack(4) * this->get_cblack(5) + c % 2 % this->get_cblack(5));
             pre_mul_[c] = this->get_pre_mul(c);
         }
     } else {
@@ -495,11 +494,13 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
             if (cc && cc->has_rawCrop()) {
                 int lm, tm, w, h;
                 cc->get_rawCrop(lm, tm, w, h);
-
-                if(((int)top_margin - tm) & 1) { // we have an odd border difference
-                    filters = (filters << 4) | (filters >> 28);    // left rotate filters by 4 bits
+                if(isXtrans()) {
+                    shiftXtransMatrix(6 - ((top_margin - tm)%6), 6 - ((left_margin - lm)%6));
+                } else {
+                    if(((int)top_margin - tm) & 1) { // we have an odd border difference
+                        filters = (filters << 4) | (filters >> 28);    // left rotate filters by 4 bits
+                    }
                 }
-
                 left_margin = lm;
                 top_margin = tm;
 

@@ -56,6 +56,7 @@ public:
     Glib::ustring   bruce;                  // default name of Bruce
     Glib::ustring   srgb;                   // default name of SRGB space profile
     Glib::ustring   srgb10;                 // default name of SRGB space profile
+    Glib::ustring   rec2020;                   // default name of rec2020
 
     bool            gamutICC; // no longer used
     bool            gamutLch;

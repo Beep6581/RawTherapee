@@ -28,7 +28,7 @@
 #include "../rtgui/mydiagonalcurve.h"
 #include "color.h"
 #include "procparams.h"
-#include "editbuffer.h"
+#include "pipettebuffer.h"
 
 #include "LUT.h"
 
@@ -867,7 +867,6 @@ class PerceptualToneCurve : public ToneCurve
 private:
     static float cf_range[2];
     static float cf[1000];
-    static LUTf gamma2curve;
     // for ciecam02
     static float f, c, nc, yb, la, xw, yw, zw, gamut;
     static float n, d, nbb, ncb, cz, aw, wh, pfl, fl, pow1;

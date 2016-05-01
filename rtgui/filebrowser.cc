@@ -232,11 +232,9 @@ FileBrowser::FileBrowser ()
     mMenuExtProgs.clear();
     amiExtProg = NULL;
 
-    for (std::list<ExtProgAction*>::iterator it = extProgStore->lActions.begin(); it != extProgStore->lActions.end(); it++) {
-        ExtProgAction* pAct = *it;
-
-        if (pAct->target == 1 || pAct->target == 2) {
-            mMenuExtProgs[pAct->GetFullName()] = pAct;
+    for (const auto& action : extProgStore->getActions ()) {
+        if (action.target == 1 || action.target == 2) {
+            mMenuExtProgs[action.getFullName ()] = &action;
         }
     }
 
@@ -255,7 +253,7 @@ FileBrowser::FileBrowser ()
                 p++;
             }
 
-            for (std::map<Glib::ustring, ExtProgAction*>::iterator it = mMenuExtProgs.begin(); it != mMenuExtProgs.end(); it++, itemNo++) {
+            for (auto it = mMenuExtProgs.begin(); it != mMenuExtProgs.end(); it++, itemNo++) {
                 submenuExtProg->attach (*Gtk::manage(amiExtProg[itemNo] = new Gtk::MenuItem ((*it).first)), 0, 1, p, p + 1);
                 p++;
             }
@@ -268,7 +266,7 @@ FileBrowser::FileBrowser ()
                 p++;
             }
 
-            for (std::map<Glib::ustring, ExtProgAction*>::iterator it = mMenuExtProgs.begin(); it != mMenuExtProgs.end(); it++, itemNo++) {
+            for (auto it = mMenuExtProgs.begin(); it != mMenuExtProgs.end(); it++, itemNo++) {
                 pmenu->attach (*Gtk::manage(amiExtProg[itemNo] = new Gtk::MenuItem ((*it).first)), 0, 1, p, p + 1);
                 p++;
             }
@@ -752,7 +750,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
 
     for (int j = 0; j < mMenuExtProgs.size(); j++) {
         if (m == amiExtProg[j]) {
-            ExtProgAction* pAct = mMenuExtProgs[m->get_label()];
+            const auto pAct = mMenuExtProgs[m->get_label()];
 
             // Build vector of all file names
             std::vector<Glib::ustring> selFileNames;
@@ -768,7 +766,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
                 selFileNames.push_back(fn);
             }
 
-            pAct->Execute(selFileNames);
+            pAct->execute (selFileNames);
             return;
         }
     }
@@ -835,7 +833,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
     } else if (m == selectDF) {
         if( !mselected.empty() ) {
             rtengine::procparams::ProcParams pp = mselected[0]->thumbnail->getProcParams();
-            Gtk::FileChooserDialog fc("Dark Frame", Gtk::FILE_CHOOSER_ACTION_OPEN );
+            Gtk::FileChooserDialog fc (getToplevelWindow (this), "Dark Frame", Gtk::FILE_CHOOSER_ACTION_OPEN );
             bindCurrentFolder (fc, options.lastDarkframeDir);
             fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
             fc.add_button( Gtk::StockID("gtk-apply"), Gtk::RESPONSE_APPLY);
@@ -911,7 +909,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
     } else if (m == selectFF) {
         if( !mselected.empty() ) {
             rtengine::procparams::ProcParams pp = mselected[0]->thumbnail->getProcParams();
-            Gtk::FileChooserDialog fc("Flat Field", Gtk::FILE_CHOOSER_ACTION_OPEN );
+            Gtk::FileChooserDialog fc (getToplevelWindow (this), "Flat Field", Gtk::FILE_CHOOSER_ACTION_OPEN );
             bindCurrentFolder (fc, options.lastFlatfieldDir);
             fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
             fc.add_button( Gtk::StockID("gtk-apply"), Gtk::RESPONSE_APPLY);

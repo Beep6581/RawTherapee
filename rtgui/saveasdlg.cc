@@ -19,7 +19,6 @@
 #include "saveasdlg.h"
 #include "multilangmgr.h"
 #include "guiutils.h"
-#include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
 extern Options options;
@@ -224,7 +223,7 @@ void SaveAsDialog::okPressed ()
     // checking if the filename field is empty. The user have to click Cancel if he don't want to specify a filename
     // NB: There seem to be a bug in Gtkmm2.22 / FileChooserWidget : if you suppress the filename entry and
     //     click on a folder in the list, the filename field is empty but get_filename will return the folder's path :/
-    if (!fname.length() || safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
+    if (!fname.length() || Glib::file_test (fname, Glib::FILE_TEST_IS_DIR)) {
         Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_EMPTYFILENAME") + "</b>";
         Gtk::MessageDialog msgd (*this, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
         msgd.run ();
@@ -286,20 +285,13 @@ void SaveAsDialog::setInitialFileName (Glib::ustring fname)
     fchooser->set_current_name(fname);
 }
 
-void SaveAsDialog::setImagePath (Glib::ustring ipath)
+void SaveAsDialog::setImagePath (const Glib::ustring& imagePath)
 {
+    const auto dirName = Glib::path_get_dirname (imagePath);
 
-    Glib::ustring path = Glib::path_get_dirname(ipath);
-
-    //Add the image's path to the Shortcut list
-#ifdef WIN32
-
-    // Dirty workaround, waiting for a clean solution by using exceptions!
-    if (!safe_is_shortcut_dir(path))
-#endif
-        try {
-            fchooser->add_shortcut_folder(path);
-        } catch (Glib::Error &err) {}
+    try {
+        fchooser->add_shortcut_folder (dirName);
+    } catch (Glib::Error&) {}
 }
 
 

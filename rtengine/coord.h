@@ -16,205 +16,218 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #ifndef __COORD__
 #define __COORD__
-
-#include "rt_math.h"
 
 namespace rtengine
 {
 
-class PolarCoord;
+struct Coord;
+struct PolarCoord;
 
-// Do not confuse with rtengine::Coord2D, this one is for the GUI
-class Coord
+// Do not confuse with Coord2D, this one is used by the UI.
+struct Coord
 {
-public:
-    int x;
-    int y;
+    int x = 0;
+    int y = 0;
 
-    Coord() : x(-1), y(-1) {}
-    Coord(int x, int y) : x(x), y(y) {}
+    Coord () = default;
+    Coord (const int x, const int y);
+    Coord (const Coord& other) = default;
+    Coord (const PolarCoord& other);
 
-    void set (int x, int y)
-    {
-        this->x = x;
-        this->y = y;
-    }
+    Coord& operator= (const Coord& other) = default;
+    Coord& operator= (const PolarCoord& other);
 
-    void setFromPolar(PolarCoord polar);
+    void get (int& x, int& y) const;
+    void set (const int x, const int y);
 
-    /// @brief Clip the coord to stay in the width x height bounds
-    /// @return true if the x or y coordinate has changed
-    bool clip(int width, int height)
-    {
-        int trimmedX = rtengine::LIM<int>(x, 0, width);
-        int trimmedY = rtengine::LIM<int>(y, 0, height);
-        bool retval = trimmedX != x || trimmedY != y;
-        x = trimmedX;
-        y = trimmedY;
-        return retval;
-    }
+    bool clip (const int width, const int height);
 
-    bool operator== (const Coord& other) const
-    {
-        return other.x == x && other.y == y;
-    }
-
-    bool operator!= (const Coord& other) const
-    {
-        return other.x != x || other.y != y;
-    }
-
-    void operator+=(const Coord & rhs)
-    {
-        x += rhs.x;
-        y += rhs.y;
-    }
-    void operator-=(const Coord & rhs)
-    {
-        x -= rhs.x;
-        y -= rhs.y;
-    }
-    void operator*=(double scale)
-    {
-        x *= scale;
-        y *= scale;
-    }
-    Coord operator+(Coord & rhs)
-    {
-        Coord result(x + rhs.x, y + rhs.y);
-        return result;
-    }
-    Coord operator-(Coord & rhs)
-    {
-        Coord result(x - rhs.x, y - rhs.y);
-        return result;
-    }
-    Coord operator*(double scale)
-    {
-        Coord result(x * scale, y * scale);
-        return result;
-    }
-};
-
-class PolarCoord
-{
-public:
-    double radius;
-    double angle; // degree
-
-    PolarCoord() : radius(1.), angle(0.) {}
-    PolarCoord(double radius, double angle) : radius(radius), angle(angle) {}
-    PolarCoord(Coord start, Coord end) : radius(1.), angle(0.)
-    {
-        setFromCartesian(start, end);
-    }
-    PolarCoord(Coord delta) : radius(1.), angle(0.)
-    {
-        setFromCartesian(delta);
-    }
-
-    void set (double radius, double angle)
-    {
-        this->radius = radius;
-        this->angle = angle;
-    }
-
-    void setFromCartesian(Coord start, Coord end)
-    {
-        Coord delta(end.x - start.x, end.y - start.y);
-        setFromCartesian(delta);
-    }
-
-    void setFromCartesian(Coord delta)
-    {
-        if (!delta.x && !delta.y) {
-            // null vector, we set to a default value
-            radius = 1.;
-            angle = 0.;
-            return;
-        }
-
-        double x_ = double(delta.x);
-        double y_ = double(delta.y);
-        radius = sqrt(x_ * x_ + y_ * y_);
-
-        if (delta.x > 0.) {
-            if (delta.y >= 0.) {
-                angle = atan(y_ / x_) / (2 * M_PI) * 360.;
-            } else if (delta.y < 0.) {
-                angle = (atan(y_ / x_) + 2 * M_PI) / (2 * M_PI) * 360.;
-            }
-        } else if (delta.x < 0.) {
-            angle = (atan(y_ / x_) + M_PI) / (2 * M_PI) * 360.;
-        } else if (delta.x == 0.) {
-            if (delta.y > 0.) {
-                angle = 90.;
-            } else {
-                angle = 270.;
-            }
-        }
-    }
-
-    bool operator== (const PolarCoord& other) const
-    {
-        return other.radius == radius && other.angle == angle;
-    }
-
-    bool operator!= (const PolarCoord& other) const
-    {
-        return other.radius != radius || other.angle != angle;
-    }
-
-    void operator+=(const PolarCoord & rhs)
-    {
-        Coord thisCoord, rhsCoord;
-        thisCoord.setFromPolar(*this);
-        rhsCoord.setFromPolar(rhs);
-        thisCoord += rhsCoord;
-        setFromCartesian(thisCoord);
-    }
-    void operator-=(const PolarCoord & rhs)
-    {
-        Coord thisCoord, rhsCoord;
-        thisCoord.setFromPolar(*this);
-        rhsCoord.setFromPolar(rhs);
-        thisCoord -= rhsCoord;
-        setFromCartesian(thisCoord);
-    }
-    void operator*=(double scale)
-    {
-        radius *= scale;
-    }
-    PolarCoord operator+(PolarCoord & rhs)
-    {
-        Coord thisCoord, rhsCoord;
-        thisCoord.setFromPolar(*this);
-        rhsCoord.setFromPolar(rhs);
-        thisCoord += rhsCoord;
-        PolarCoord result;
-        result.setFromCartesian(thisCoord);
-        return result;
-    }
-    PolarCoord operator-(PolarCoord & rhs)
-    {
-        Coord thisCoord, rhsCoord;
-        thisCoord.setFromPolar(*this);
-        rhsCoord.setFromPolar(rhs);
-        thisCoord -= rhsCoord;
-        PolarCoord result;
-        result.setFromCartesian(thisCoord);
-        return result;
-    }
-    Coord operator*(double scale)
-    {
-        Coord result(radius * scale, angle);
-        return result;
-    }
+    Coord& operator+= (const Coord& other);
+    Coord& operator-= (const Coord& other);
+    Coord& operator*= (const double scale);
 
 };
 
+bool operator== (const Coord& lhs, const Coord& rhs);
+bool operator!= (const Coord& lhs, const Coord& rhs);
+
+const Coord operator+ (const Coord& lhs, const Coord& rhs);
+const Coord operator- (const Coord& lhs, const Coord& rhs);
+const Coord operator* (const Coord& lhs, const Coord& rhs);
+
+struct PolarCoord
+{
+    double radius = 0.0;
+    double angle = 0.0;
+
+    PolarCoord () = default;
+    PolarCoord (const double radius, const double angle);
+    PolarCoord (const PolarCoord& other) = default;
+    PolarCoord (const Coord& other);
+
+    PolarCoord& operator= (const PolarCoord& other) = default;
+    PolarCoord& operator= (const Coord& other);
+
+    void get (double& radius, double& angle) const;
+    void set (const double radius, const double angle);
+
+    PolarCoord& operator+= (const PolarCoord& other);
+    PolarCoord& operator-= (const PolarCoord& other);
+    PolarCoord& operator*= (const double scale);
+
+};
+
+bool operator== (const PolarCoord& lhs, const PolarCoord& rhs);
+bool operator!= (const PolarCoord& lhs, const PolarCoord& rhs);
+
+const PolarCoord operator+ (const PolarCoord& lhs, const PolarCoord& rhs);
+const PolarCoord operator- (const PolarCoord& lhs, const PolarCoord& rhs);
+const PolarCoord operator* (const PolarCoord& lhs, const double rhs);
+const PolarCoord operator* (const double lhs, const PolarCoord& rhs);
+
+inline Coord::Coord (const int x, const int y) : x (x), y (y)
+{
+}
+
+inline Coord::Coord (const PolarCoord& other)
+{
+    *this = other;
+}
+
+inline void Coord::get (int& x, int& y) const
+{
+    x = this->x;
+    y = this->y;
+}
+
+inline void Coord::set (const int x, const int y)
+{
+    this->x = x;
+    this->y = y;
+}
+
+inline Coord& Coord::operator+= (const Coord& other)
+{
+    x += other.x;
+    y += other.y;
+    return *this;
+}
+
+inline Coord& Coord::operator-= (const Coord& other)
+{
+    x -= other.x;
+    y -= other.y;
+    return *this;
+}
+
+inline Coord& Coord::operator*= (const double scale)
+{
+    x *= scale;
+    y *= scale;
+    return *this;
+}
+
+inline bool operator== (const Coord& lhs, const Coord& rhs)
+{
+    return lhs.x == rhs.x && lhs.y == rhs.y;
+}
+
+inline bool operator!= (const Coord& lhs, const Coord& rhs)
+{
+    return !(lhs == rhs);
+}
+
+inline const Coord operator+ (const Coord& lhs, const Coord& rhs)
+{
+    return Coord (lhs) += rhs;
+}
+
+inline const Coord operator- (const Coord& lhs, const Coord& rhs)
+{
+    return Coord (lhs) -= rhs;
+}
+
+inline const Coord operator* (const Coord& lhs, const double rhs)
+{
+    return Coord (lhs) *= rhs;
+}
+
+inline const Coord operator* (const double lhs, const Coord& rhs)
+{
+    return Coord (rhs) *= lhs;
+}
+
+inline PolarCoord::PolarCoord (const double radius, const double angle) : radius (radius), angle (angle)
+{
+}
+
+inline PolarCoord::PolarCoord (const Coord& other)
+{
+    *this = other;
+}
+
+inline void PolarCoord::get (double& radius, double& angle) const
+{
+    radius = this->radius;
+    angle = this->angle;
+}
+
+inline void PolarCoord::set (const double radius, const double angle)
+{
+    this->radius = radius;
+    this->angle = angle;
+}
+
+inline PolarCoord& PolarCoord::operator+= (const PolarCoord& other)
+{
+    *this = Coord (*this) + Coord (other);
+    return *this;
+}
+
+inline PolarCoord &PolarCoord::operator-= (const PolarCoord &other)
+{
+    *this = Coord (*this) - Coord (other);
+    return *this;
+}
+
+inline PolarCoord &PolarCoord::operator*= (const double scale)
+{
+    radius *= scale;
+    return *this;
+}
+
+inline bool operator== (const PolarCoord& lhs, const PolarCoord& rhs)
+{
+    return lhs.radius == rhs.radius && lhs.angle == rhs.angle;
+}
+
+inline bool operator!= (const PolarCoord& lhs, const PolarCoord& rhs)
+{
+    return !(lhs == rhs);
+}
+
+inline const PolarCoord operator+ (const PolarCoord& lhs, const PolarCoord& rhs)
+{
+    return PolarCoord (lhs) += rhs;
+}
+
+inline const PolarCoord operator- (const PolarCoord& lhs, const PolarCoord& rhs)
+{
+    return PolarCoord (lhs) -= rhs;
+}
+
+inline const PolarCoord operator* (const PolarCoord& lhs, const double rhs)
+{
+    return PolarCoord (lhs) *= rhs;
+}
+
+inline const PolarCoord operator* (const double lhs, const PolarCoord& rhs)
+{
+    return PolarCoord (rhs) *= lhs;
+}
 
 }
 

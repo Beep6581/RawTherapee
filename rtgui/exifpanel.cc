@@ -17,7 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "exifpanel.h"
-#include "../rtengine/safegtk.h"
+
 #include "guiutils.h"
 #include "rtimage.h"
 
@@ -47,9 +47,9 @@ ExifPanel::ExifPanel () : idata(NULL)
     exifTreeModel = Gtk::TreeStore::create(exifColumns);
     exifTree->set_model (exifTreeModel);
 
-    delicon = safe_create_from_file ("gtk-close.png");
-    keepicon = safe_create_from_file ("gtk-apply.png");
-    editicon = safe_create_from_file ("gtk-add.png");
+    delicon = RTImage::createFromFile ("gtk-close.png");
+    keepicon = RTImage::createFromFile ("gtk-apply.png");
+    editicon = RTImage::createFromFile ("gtk-add.png");
 
     Gtk::TreeView::Column *viewcol = Gtk::manage(new Gtk::TreeView::Column ("Field Name"));
     Gtk::CellRendererPixbuf* render_pb = Gtk::manage(new Gtk::CellRendererPixbuf ());

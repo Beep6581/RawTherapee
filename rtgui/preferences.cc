@@ -25,7 +25,6 @@
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
 #include <sstream>
-#include "../rtengine/safegtk.h"
 #include "rtimage.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -1357,7 +1356,7 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
         Glib::ustring sname = *i;
 
         // ignore directories
-        if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR) && sname.size() >= ext.size() && sname.substr (sname.size() - ext.size(), ext.size()).casefold() == ext) {
+        if (!Glib::file_test (fname, Glib::FILE_TEST_IS_DIR) && sname.size() >= ext.size() && sname.substr (sname.size() - ext.size(), ext.size()).casefold() == ext) {
             items.push_back (sname.substr(0, sname.size() - ext.size()));
         }
     }
@@ -1647,18 +1646,18 @@ void Preferences::fillPreferences ()
 #ifdef WIN32
     edPS->set_active (moptions.editorToSendTo == 2);
 
-    if (safe_file_test (moptions.gimpDir, Glib::FILE_TEST_IS_DIR)) {
+    if (Glib::file_test (moptions.gimpDir, Glib::FILE_TEST_IS_DIR)) {
         gimpDir->set_current_folder (moptions.gimpDir);
     }
 
-    if (safe_file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) {
+    if (Glib::file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) {
         psDir->set_current_folder (moptions.psDir);
     }
 
 #elif defined __APPLE__
     edPS->set_active (moptions.editorToSendTo == 2);
 
-    if (safe_file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) {
+    if (Glib::file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) {
         psDir->set_current_folder (moptions.psDir);
     }
 
@@ -1846,7 +1845,7 @@ void Preferences::cancelPressed ()
 void Preferences::selectStartupDir ()
 {
 
-    Gtk::FileChooserDialog dialog(M("PREFERENCES_DIRSELECTDLG"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
+    Gtk::FileChooserDialog dialog (getToplevelWindow (this), M("PREFERENCES_DIRSELECTDLG"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
 //    dialog.set_transient_for(*this);
 
     //Add response buttons the the dialog:
@@ -1951,18 +1950,17 @@ void Preferences::bundledProfilesChanged ()
 
 void Preferences::iccDirChanged ()
 {
-    const Glib::ustring currentSelection = monProfile->get_active_text ();
+    const auto currentSelection = monProfile->get_active_text ();
+    const auto profiles = rtengine::ICCStore::getInstance ()->getProfilesFromDir (iccDir->get_filename ());
 
-    monProfile->clear();
+    monProfile->remove_all();
 
-    monProfile->append_text (M("PREFERENCES_PROFILE_NONE"));
-    monProfile->set_active (0);
+    monProfile->append (M("PREFERENCES_PROFILE_NONE"));
 
-    const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfilesFromDir (iccDir->get_filename ());
-    for (std::vector<Glib::ustring>::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile)
-        monProfile->append_text (*profile);
+    for (const auto& profile : profiles)
+        monProfile->append (profile);
 
-    monProfile->set_active_text (currentSelection);
+    setActiveTextOrIndex(*monProfile, currentSelection, 0);
 }
 
 void Preferences::storeCurrentValue()

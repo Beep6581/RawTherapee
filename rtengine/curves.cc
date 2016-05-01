@@ -34,6 +34,7 @@
 #include "curves.h"
 #include "opthelper.h"
 #include "ciecam02.h"
+#include "color.h"
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
 
@@ -2326,7 +2327,7 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
 
     {
         // increase chroma scaling slightly of shadows
-        float nL = gamma2curve[newLuminance]; // apply gamma so we make comparison and transition with a more perceptual lightness scale
+        float nL = Color::gamma2curve[newLuminance]; // apply gamma so we make comparison and transition with a more perceptual lightness scale
         float dark_scale_factor = 1.20f;
         //float dark_scale_factor = 1.0 + state.debug.p2 / 100.0f;
         const float lolim = 0.15f;
@@ -2460,7 +2461,6 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
 
 float PerceptualToneCurve::cf_range[2];
 float PerceptualToneCurve::cf[1000];
-LUTf PerceptualToneCurve::gamma2curve;
 float PerceptualToneCurve::f, PerceptualToneCurve::c, PerceptualToneCurve::nc, PerceptualToneCurve::yb, PerceptualToneCurve::la, PerceptualToneCurve::xw, PerceptualToneCurve::yw, PerceptualToneCurve::zw, PerceptualToneCurve::gamut;
 float PerceptualToneCurve::n, PerceptualToneCurve::d, PerceptualToneCurve::nbb, PerceptualToneCurve::ncb, PerceptualToneCurve::cz, PerceptualToneCurve::aw, PerceptualToneCurve::wh, PerceptualToneCurve::pfl, PerceptualToneCurve::fl, PerceptualToneCurve::pow1;
 
@@ -2523,12 +2523,6 @@ void PerceptualToneCurve::init()
         cf_range[0] = in_x[0];
         cf_range[1] = in_x[in_len - 1];
     }
-    gamma2curve(65536, 0);
-
-    for (int i = 0; i < 65536; i++) {
-        gamma2curve[i] = CurveFactory::gamma2(i / 65535.0);
-    }
-
 }
 
 void PerceptualToneCurve::initApplyState(PerceptualToneCurveState & state, Glib::ustring workingSpace) const
