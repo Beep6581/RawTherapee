@@ -143,6 +143,10 @@ void rtengine::HaldCLUT::getRGB(
 
     const unsigned int level_square = level * level;
 
+#ifdef __SSE2__
+    const vfloat v_strength = F2V(strength);
+#endif
+
     for (std::size_t column = 0; column < line_size; ++column, ++r, ++g, ++b, out_rgbx += 4) {
         const unsigned int red = std::min(flevel_minus_two, *r * flevel_minus_one);
         const unsigned int green = std::min(flevel_minus_two, *g * flevel_minus_one);
@@ -229,7 +233,7 @@ void rtengine::HaldCLUT::getRGB(
 
         v_out = vintpf(v_b, v_tmp1, v_out);
 
-        STVF(*out_rgbx, vintpf(_mm_load_ps1(&strength), v_out, v_in));
+        STVF(*out_rgbx, vintpf(v_strength, v_out, v_in));
 #endif
     }
 }
