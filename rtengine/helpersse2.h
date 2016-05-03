@@ -26,17 +26,20 @@ typedef __m128i vint2;
 #define LVFU(x) _mm_loadu_ps(&x)
 #define STVF(x,y) _mm_store_ps(&x,y)
 #define STVFU(x,y) _mm_storeu_ps(&x,y)
+#define LVI(x) _mm_load_si128((__m128i*)&x)
 #else // there is a bug in gcc 4.7.x when using openmp and aligned memory and -O3, also need to map the aligned functions to unaligned functions for WIN32 builds
 #define LVF(x) _mm_loadu_ps((float*)&x)
 #define LVFU(x) _mm_loadu_ps(&x)
 #define STVF(x,y) _mm_storeu_ps(&x,y)
 #define STVFU(x,y) _mm_storeu_ps(&x,y)
+#define LVI(x) _mm_loadu_si128((__m128i*)&x)
 #endif
 #else
 #define LVF(x) _mm_load_ps((float*)&x)
 #define LVFU(x) _mm_loadu_ps(&x)
 #define STVF(x,y) _mm_store_ps(&x,y)
 #define STVFU(x,y) _mm_storeu_ps(&x,y)
+#define LVI(x) _mm_load_si128((__m128i*)&x)
 #endif
 
 #if defined(__x86_64__) && defined(__AVX__)
