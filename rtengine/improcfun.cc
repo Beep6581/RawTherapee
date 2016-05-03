@@ -3388,7 +3388,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     }
     bool hasgammabw = gammabwr != 1.f || gammabwg != 1.f || gammabwb != 1.f;
 
-    fGammaLUTf(65535);
+    fGammaLUTf(65536);
     #pragma omp parallel for
 
     for (int i = 0; i < 65536; i++) {
