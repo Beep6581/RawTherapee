@@ -56,7 +56,7 @@ bool loadFile(
             img_src.convertColorSpace(img_float.get(), icm, curr_wb);
         }
 
-        AlignedBuffer<std::uint16_t> image(fw * fh * 4 + 1);
+        AlignedBuffer<std::uint16_t> image(fw * fh * 4 + 4);
 
         std::size_t index = 0;
 
