@@ -4354,39 +4354,37 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 if (hald_clut) {
                     float out_rgbx[4 * TS] ALIGNED16;
 
+
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         if (!clutAndWorkingProfilesAreSame) {
                             // Convert from working to clut profile
+                            int j = jstart;
+                            int tj = 0;
 #ifdef __SSE2__
-                            if (!(std::min(TS, tW - jstart) & ~3)) {
-                                for (int j = jstart, tj = 0; j < tW; j += 4, tj += 4) {
-                                    vfloat sourceR = LVF(rtemp[ti * TS + tj]);
-                                    vfloat sourceG = LVF(gtemp[ti * TS + tj]);
-                                    vfloat sourceB = LVF(btemp[ti * TS + tj]);
+                            for (; j < tW - 3; j += 4, tj += 4) {
+                                vfloat sourceR = LVF(rtemp[ti * TS + tj]);
+                                vfloat sourceG = LVF(gtemp[ti * TS + tj]);
+                                vfloat sourceB = LVF(btemp[ti * TS + tj]);
 
-                                    vfloat x;
-                                    vfloat y;
-                                    vfloat z;
-                                    Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, v_work2xyz);
-                                    Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, v_xyz2clut);
+                                vfloat x;
+                                vfloat y;
+                                vfloat z;
+                                Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, v_work2xyz);
+                                Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, v_xyz2clut);
 
-                                    STVF(rtemp[ti * TS + tj], sourceR);
-                                    STVF(gtemp[ti * TS + tj], sourceG);
-                                    STVF(btemp[ti * TS + tj], sourceB);
-                                }
+                                STVF(rtemp[ti * TS + tj], sourceR);
+                                STVF(gtemp[ti * TS + tj], sourceG);
+                                STVF(btemp[ti * TS + tj], sourceB);
                             }
-                            else
 #endif
-                            {
-                                for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                    float &sourceR = rtemp[ti * TS + tj];
-                                    float &sourceG = gtemp[ti * TS + tj];
-                                    float &sourceB = btemp[ti * TS + tj];
+                            for (; j < tW; j++, tj++) {
+                                float &sourceR = rtemp[ti * TS + tj];
+                                float &sourceG = gtemp[ti * TS + tj];
+                                float &sourceB = btemp[ti * TS + tj];
 
-                                    float x, y, z;
-                                    Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, work2xyz);
-                                    Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, xyz2clut);
-                                }
+                                float x, y, z;
+                                Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, work2xyz);
+                                Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, xyz2clut);
                             }
                         }
 
@@ -4424,36 +4422,33 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                         if (!clutAndWorkingProfilesAreSame) {
                             // Convert from clut to working profile
+                            int j = jstart;
+                            int tj = 0;
 #ifdef __SSE2__
-                            if (!(std::min(TS, tW - jstart) & ~3)) {
-                                for (int j = jstart, tj = 0; j < tW; j += 4, tj += 4) {
-                                    vfloat sourceR = LVF(rtemp[ti * TS + tj]);
-                                    vfloat sourceG = LVF(gtemp[ti * TS + tj]);
-                                    vfloat sourceB = LVF(btemp[ti * TS + tj]);
+                            for (; j < tW - 3; j += 4, tj += 4) {
+                                vfloat sourceR = LVF(rtemp[ti * TS + tj]);
+                                vfloat sourceG = LVF(gtemp[ti * TS + tj]);
+                                vfloat sourceB = LVF(btemp[ti * TS + tj]);
 
-                                    vfloat x;
-                                    vfloat y;
-                                    vfloat z;
-                                    Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, v_clut2xyz);
-                                    Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, v_xyz2work);
+                                vfloat x;
+                                vfloat y;
+                                vfloat z;
+                                Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, v_clut2xyz);
+                                Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, v_xyz2work);
 
-                                    STVF(rtemp[ti * TS + tj], sourceR);
-                                    STVF(gtemp[ti * TS + tj], sourceG);
-                                    STVF(btemp[ti * TS + tj], sourceB);
-                                }
+                                STVF(rtemp[ti * TS + tj], sourceR);
+                                STVF(gtemp[ti * TS + tj], sourceG);
+                                STVF(btemp[ti * TS + tj], sourceB);
                             }
-                            else
 #endif
-                            {
-                                for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                    float &sourceR = rtemp[ti * TS + tj];
-                                    float &sourceG = gtemp[ti * TS + tj];
-                                    float &sourceB = btemp[ti * TS + tj];
+                            for (; j < tW; j++, tj++) {
+                                float &sourceR = rtemp[ti * TS + tj];
+                                float &sourceG = gtemp[ti * TS + tj];
+                                float &sourceB = btemp[ti * TS + tj];
 
-                                    float x, y, z;
-                                    Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, clut2xyz);
-                                    Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, xyz2work);
-                                }
+                                float x, y, z;
+                                Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, clut2xyz);
+                                Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, xyz2work);
                             }
                         }
                     }
