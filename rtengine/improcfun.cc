@@ -3209,10 +3209,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     bool clutAndWorkingProfilesAreSame = false;
     TMatrix work2xyz, xyz2clut, clut2xyz, xyz2work;
 #ifdef __SSE2__
-    vfloat v_work2xyz[3][3];
-    vfloat v_xyz2clut[3][3];
-    vfloat v_clut2xyz[3][3];
-    vfloat v_xyz2work[3][3];
+    vfloat v_work2xyz[3][3] ALIGNED16;
+    vfloat v_xyz2clut[3][3] ALIGNED16;
+    vfloat v_clut2xyz[3][3] ALIGNED16;
+    vfloat v_xyz2work[3][3] ALIGNED16;
 #endif
 
     if ( params->filmSimulation.enabled && !params->filmSimulation.clutFilename.empty() ) {
@@ -3227,6 +3227,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 xyz2work = iccStore->workingSpaceInverseMatrix( params->icm.working );
                 clut2xyz = iccStore->workingSpaceMatrix( hald_clut->getProfile() );
 #ifdef __SSE2__
+
                 for (int i = 0; i < 3; ++i) {
                     for (int j = 0; j < 3; ++j) {
                         v_work2xyz[i][j] = F2V(work2xyz[i][j]);
@@ -3235,6 +3236,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         v_clut2xyz[i][j] = F2V(clut2xyz[i][j]);
                     }
                 }
+
 #endif
             }
         }
@@ -3452,6 +3454,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
             editWhateverTmp = (float(*))data;
         }
 
+        float out_rgbx[4 * TS] ALIGNED16; // Line buffer for CLUT
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic) collapse(2)
@@ -4352,8 +4355,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                 // Film Simulations
                 if (hald_clut) {
-                    float out_rgbx[4 * TS] ALIGNED16;
-
 
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         if (!clutAndWorkingProfilesAreSame) {
@@ -4361,10 +4362,11 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                             int j = jstart;
                             int tj = 0;
 #ifdef __SSE2__
+
                             for (; j < tW - 3; j += 4, tj += 4) {
-                                vfloat sourceR = LVF(rtemp[ti * TS + tj]);
-                                vfloat sourceG = LVF(gtemp[ti * TS + tj]);
-                                vfloat sourceB = LVF(btemp[ti * TS + tj]);
+                                vfloat sourceR = LVFU(rtemp[ti * TS + tj]);
+                                vfloat sourceG = LVFU(gtemp[ti * TS + tj]);
+                                vfloat sourceB = LVFU(btemp[ti * TS + tj]);
 
                                 vfloat x;
                                 vfloat y;
@@ -4372,11 +4374,13 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, v_work2xyz);
                                 Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, v_xyz2clut);
 
-                                STVF(rtemp[ti * TS + tj], sourceR);
-                                STVF(gtemp[ti * TS + tj], sourceG);
-                                STVF(btemp[ti * TS + tj], sourceB);
+                                STVFU(rtemp[ti * TS + tj], sourceR);
+                                STVFU(gtemp[ti * TS + tj], sourceG);
+                                STVFU(btemp[ti * TS + tj], sourceB);
                             }
+
 #endif
+
                             for (; j < tW; j++, tj++) {
                                 float &sourceR = rtemp[ti * TS + tj];
                                 float &sourceG = gtemp[ti * TS + tj];
@@ -4425,10 +4429,11 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                             int j = jstart;
                             int tj = 0;
 #ifdef __SSE2__
+
                             for (; j < tW - 3; j += 4, tj += 4) {
-                                vfloat sourceR = LVF(rtemp[ti * TS + tj]);
-                                vfloat sourceG = LVF(gtemp[ti * TS + tj]);
-                                vfloat sourceB = LVF(btemp[ti * TS + tj]);
+                                vfloat sourceR = LVFU(rtemp[ti * TS + tj]);
+                                vfloat sourceG = LVFU(gtemp[ti * TS + tj]);
+                                vfloat sourceB = LVFU(btemp[ti * TS + tj]);
 
                                 vfloat x;
                                 vfloat y;
@@ -4436,11 +4441,13 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, v_clut2xyz);
                                 Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, v_xyz2work);
 
-                                STVF(rtemp[ti * TS + tj], sourceR);
-                                STVF(gtemp[ti * TS + tj], sourceG);
-                                STVF(btemp[ti * TS + tj], sourceB);
+                                STVFU(rtemp[ti * TS + tj], sourceR);
+                                STVFU(gtemp[ti * TS + tj], sourceG);
+                                STVFU(btemp[ti * TS + tj], sourceB);
                             }
+
 #endif
+
                             for (; j < tW; j++, tj++) {
                                 float &sourceR = rtemp[ti * TS + tj];
                                 float &sourceG = gtemp[ti * TS + tj];
@@ -7185,6 +7192,7 @@ SSEFUNCTION void ImProcFunctions::lab2rgb(const LabImage &src, Imagefloat &dst, 
             wipv[i][j] = F2V(wiprof[i][j]);
         }
     }
+
 #endif
 
 #ifdef _OPENMP
@@ -7194,9 +7202,10 @@ SSEFUNCTION void ImProcFunctions::lab2rgb(const LabImage &src, Imagefloat &dst, 
     for(int i = 0; i < H; i++) {
         int j = 0;
 #ifdef __SSE2__
+
         for(; j < W - 3; j += 4) {
             vfloat X, Y, Z;
-            vfloat R,G,B;
+            vfloat R, G, B;
             Color::Lab2XYZ(LVFU(src.L[i][j]), LVFU(src.a[i][j]), LVFU(src.b[i][j]), X, Y, Z);
             Color::xyz2rgb(X, Y, Z, R, G, B, wipv);
             STVFU(dst.r(i, j), R);
@@ -7205,6 +7214,7 @@ SSEFUNCTION void ImProcFunctions::lab2rgb(const LabImage &src, Imagefloat &dst, 
         }
 
 #endif
+
         for(; j < W; j++) {
             float X, Y, Z;
             Color::Lab2XYZ(src.L[i][j], src.a[i][j], src.b[i][j], X, Y, Z);
