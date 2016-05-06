@@ -294,32 +294,18 @@ void CurveFactory::curveBW ( const std::vector<double>& curvePointsbw, const std
 }
 
 // add curve Lab : C=f(L)
-void CurveFactory::curveCL ( bool & clcutili, const std::vector<double>& clcurvePoints, LUTf & clCurve, const LUTu & histogramcl, LUTu & outBeforeCLurveHistogram, int skip)
+void CurveFactory::curveCL ( bool & clcutili, const std::vector<double>& clcurvePoints, LUTf & clCurve, int skip)
 {
     bool needed = false;
     DiagonalCurve* dCurve = nullptr;
 
-    if (outBeforeCLurveHistogram) {
-        outBeforeCLurveHistogram.clear();
-    }
-
-    bool histNeededCL = false;
-
     if (!clcurvePoints.empty() && clcurvePoints[0] != 0) {
         dCurve = new DiagonalCurve (clcurvePoints, CURVES_MIN_POLY_POINTS / skip);
-
-        if (outBeforeCLurveHistogram) {
-            histNeededCL = true;
-        }
 
         if (dCurve && !dCurve->isIdentity()) {
             needed = true;
             clcutili = true;
         }
-    }
-
-    if(histNeededCL) {
-        histogramcl.compressTo(outBeforeCLurveHistogram, 50000);
     }
 
     fillCurveArray(dCurve, clCurve, skip, needed);
@@ -543,15 +529,15 @@ void CurveFactory::complexsgnCurve (float adjustr, bool & autili,  bool & butili
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 SSEFUNCTION void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
-                                 double shcompr, double br, double contr,
-                                 procparams::ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints,
-                                 procparams::ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
-                                 LUTu & histogram, LUTu & histogramCropped,
-                                 LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
-                                 LUTu & outBeforeCCurveHistogram,
-                                 ToneCurve & customToneCurve1,
-                                 ToneCurve & customToneCurve2,
-                                 int skip)
+        double shcompr, double br, double contr,
+        procparams::ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints,
+        procparams::ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
+        LUTu & histogram, LUTu & histogramCropped,
+        LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
+        LUTu & outBeforeCCurveHistogram,
+        ToneCurve & customToneCurve1,
+        ToneCurve & customToneCurve2,
+        int skip)
 {
 
     // the curve shapes are defined in sRGB gamma, but the output curves will operate on linear floating point data,
@@ -621,34 +607,40 @@ SSEFUNCTION void CurveFactory::complexCurve (double ecomp, double black, double 
 
 #ifdef __SSE2__
         int i = shoulder + 1;
-        if(i&1) { // original formula, slower than optimized formulas below but only used once or none, so I let it as is for reference
+
+        if(i & 1) { // original formula, slower than optimized formulas below but only used once or none, so I let it as is for reference
             // change to [0,1] range
             float val = (float)i - shoulder;
             float R = val * comp / (scalemshoulder);
             hlCurve[i] = xlog(1.0 + R * exp_scale) / R; // don't use xlogf or 1.f here. Leads to errors caused by too low precision
             i++;
         }
+
         vdouble onev = _mm_set1_pd(1.0);
-        vdouble Rv = _mm_set_pd((i+1-shoulder) * (double)comp/ scalemshoulder,(i-shoulder) * (double)comp/ scalemshoulder);
+        vdouble Rv = _mm_set_pd((i + 1 - shoulder) * (double)comp / scalemshoulder, (i - shoulder) * (double)comp / scalemshoulder);
         vdouble incrementv = _mm_set1_pd(2.0 * comp / scalemshoulder);
         vdouble exp_scalev = _mm_set1_pd(exp_scale);
-        for (; i < 0x10000; i+=2) {
+
+        for (; i < 0x10000; i += 2) {
             // change to [0,1] range
             vdouble resultv = xlog(onev + Rv * exp_scalev) / Rv;
             vfloat resultfv = _mm_cvtpd_ps(resultv);
             _mm_store_ss(&hlCurve[i], resultfv);
-            resultfv = PERMUTEPS(resultfv, _MM_SHUFFLE(1,1,1,1));
-            _mm_store_ss(&hlCurve[i+1], resultfv);
+            resultfv = PERMUTEPS(resultfv, _MM_SHUFFLE(1, 1, 1, 1));
+            _mm_store_ss(&hlCurve[i + 1], resultfv);
             Rv += incrementv;
         }
+
 #else
         float R = comp / scalemshoulder;
         float increment = R;
+
         for (int i = shoulder + 1; i < 0x10000; i++) {
             // change to [0,1] range
             hlCurve[i] = xlog(1.0 + R * exp_scale) / R; // don't use xlogf or 1.f here. Leads to errors caused by too low precision
             R += increment;
         }
+
 #endif
 
     }
@@ -674,8 +666,9 @@ SSEFUNCTION void CurveFactory::complexCurve (double ecomp, double black, double 
     // store result in a temporary array
     dcurve[0] = CLIPD(val);
 
-
-   #pragma omp parallel for //schedule(dynamic,2048)
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
 
     for (int i = 1; i < 0x10000; i++) {
         float val = i / 65535.f;
@@ -792,17 +785,21 @@ SSEFUNCTION void CurveFactory::complexCurve (double ecomp, double black, double 
     vfloat mulv = F2V(mul);
     vfloat addv = F2V(add);
     vfloat c65535v = F2V(65535.f);
-    for (int i = 0; i <= 0xffff; i+=4) {
+
+    for (int i = 0; i <= 0xffff; i += 4) {
         vfloat valv = LVFU(dcurve[i]);
         valv = igamma (valv, gamma_v, startv, slopev, mulv, addv);
-        STVFU(outCurve[i],c65535v * valv);
+        STVFU(outCurve[i], c65535v * valv);
     }
+
 #else
+
     for (int i = 0; i <= 0xffff; i++) {
         float val = dcurve[i];
         val = igamma (val, gamma_, start, slope, mul, add);
         outCurve[i] = (65535.f * val);
     }
+
 #endif
 
     if (histNeeded) {
@@ -827,7 +824,7 @@ SSEFUNCTION void CurveFactory::complexCurve (double ecomp, double black, double 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void CurveFactory::complexLCurve (double br, double contr, const std::vector<double>& curvePoints,
-                                  const LUTu & histogram, LUTu & histogramCropped, LUTf & outCurve,
+                                  const LUTu & histogram, LUTf & outCurve,
                                   LUTu & outBeforeCCurveHistogram, int skip, bool & utili)
 {
     // curve without contrast
@@ -962,7 +959,7 @@ void CurveFactory::complexLCurve (double br, double contr, const std::vector<dou
     if (!curvePoints.empty() && curvePoints[0] != 0) {
         tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS / skip);
 
-        if (outBeforeCCurveHistogram /*&& histogramCropped*/) {
+        if (outBeforeCCurveHistogram) {
             histNeeded = true;
         }
     }

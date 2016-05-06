@@ -64,10 +64,10 @@
 #define LUT_CLIP_ABOVE 2
 
 #define LUTf LUT<float>
-#define LUTi LUT<int>
-#define LUTu LUT<unsigned int>
+#define LUTi LUT<int32_t>
+#define LUTu LUT<uint32_t>
 #define LUTd LUT<double>
-#define LUTuc LUT<unsigned char>
+#define LUTuc LUT<uint8_t>
 
 #include <cstring>
 #ifndef NDEBUG
@@ -155,41 +155,6 @@ public:
 #endif
     }
 
-    LUT(int s, T * source, int flags = 0xfffffff)
-    {
-#ifndef NDEBUG
-
-        if (s <= 0) {
-            printf("s<=0!\n");
-        }
-
-        assert (s > 0);
-
-        if (!source) {
-            printf("source is NULL!\n");
-        }
-
-        assert (source != nullptr);
-#endif
-        dirty = false;  // Assumption
-        clip = flags;
-        data = new T[s];
-        owner = 1;
-        size = s;
-        upperBound = size - 1;
-        maxs = size - 2;
-        maxsf = (float)maxs;
-#if defined( __SSE2__ ) && defined( __x86_64__ )
-        maxsv =  F2V( size - 2);
-        sizeiv =  _mm_set1_epi32( (int)(size - 1) );
-        sizev = F2V( size - 1 );
-#endif
-
-        for (int i = 0; i < s; i++) {
-            data[i] = source[i];
-        }
-    }
-
     LUT()
     {
         data = nullptr;
@@ -224,7 +189,7 @@ public:
      *  For a LUT(500), it will return 499, because 500 elements, starting from 0, goes up to 499
      *  @return number of element in the array
      */
-    int getUpperBound()
+    unsigned int getUpperBound() const
     {
         return size > 0 ? upperBound : 0;
     }
@@ -258,7 +223,8 @@ public:
         return *this;
     }
 
-    // handy to sum up per thread histograms. #pragma omp simd speeds up the loop by about factor 3 for LUTu (unsigned int).
+    // handy to sum up per thread histograms. #pragma omp simd speeds up the loop by about factor 3 for LUTu (uint32_t).
+    template<typename U = T, typename = typename std::enable_if<std::is_same<U, std::uint32_t>::value>::type>
     LUT<T> & operator+=(LUT<T> &rhs)
     {
         if (rhs.size == this->size) {
@@ -274,7 +240,8 @@ public:
         return *this;
     }
 
-    // mutliply all elements of LUT with a constant float value
+    // multiply all elements of LUT<float> with a constant float value
+    template<typename U = T, typename = typename std::enable_if<std::is_same<U, float>::value>::type>
     LUT<float> & operator*=(float factor)
     {
 #ifdef _OPENMP
@@ -362,6 +329,7 @@ public:
     }
 */
 #ifdef __SSE4_1__
+    template<typename U = T, typename = typename std::enable_if<std::is_same<U, float>::value>::type>
     vfloat operator[](vint idxv ) const
     {
         vfloat tempv, p1v;
@@ -401,6 +369,7 @@ public:
         return p1v;
     }
 #else
+    template<typename U = T, typename = typename std::enable_if<std::is_same<U, float>::value>::type>
     vfloat operator[](vint idxv ) const
     {
         vfloat tempv, p1v;
@@ -445,6 +414,7 @@ public:
 #endif
 
     // use with float indices
+    template<typename U = T, typename = typename std::enable_if<std::is_same<U, float>::value>::type>
     T operator[](float index) const
     {
         int idx = (int)index;  // don't use floor! The difference in negative space is no problems here
@@ -470,9 +440,10 @@ public:
     }
 
     // Return the value for "index" that is in the [0-1] range.
+    template<typename U = T, typename = typename std::enable_if<std::is_same<U, float>::value>::type>
     T getVal01 (float index) const
     {
-        index *= float(upperBound);
+        index *= (float)upperBound;
         int idx = (int)index;  // don't use floor! The difference in negative space is no problems here
 
         if (index < 0.f) {
@@ -542,6 +513,7 @@ public:
     }
 
     // create an identity LUT (LUT(x) = x) or a scaled identity LUT (LUT(x) = x / divisor)
+    template<typename U = T, typename = typename std::enable_if<std::is_same<U, float>::value>::type>
     void makeIdentity(float divisor = 1.f)
     {
         if(divisor == 1.f) {
@@ -555,9 +527,11 @@ public:
         }
     }
 
-    // compress a LUT with size y into a LUT with size y (y<x)
-    void compressTo(LUT<T> &dest, unsigned int numVals) const
+    // compress a LUT<uint32_t> with size y into a LUT<uint32_t> with size x (y>x)
+    template<typename U = T, typename = typename std::enable_if<std::is_same<U, std::uint32_t>::value>::type>
+    void compressTo(LUT<T> &dest, unsigned int numVals = 0) const
     {
+        numVals = numVals == 0 ? size : numVals;
         numVals = std::min(numVals, size);
         float divisor = numVals - 1;
         float mult = (dest.size - 1) / divisor;
@@ -568,7 +542,8 @@ public:
         }
     }
 
-    // compress a LUT with size y into a LUT with size y (y<x) by using the passTrough LUT to calculate indexes
+    // compress a LUT<uint32_t> with size y into a LUT<uint32_t> with size x (y>x) by using the passTrough LUT to calculate indexes
+    template<typename U = T, typename = typename std::enable_if<std::is_same<U, std::uint32_t>::value>::type>
     void compressTo(LUT<T> &dest, unsigned int numVals, const LUT<float> &passThrough) const
     {
         if(passThrough) {
@@ -583,13 +558,72 @@ public:
         }
     }
 
+    // compute sum and average of a LUT<uint32_t>
+    template<typename U = T, typename = typename std::enable_if<std::is_same<U, std::uint32_t>::value>::type>
+    void getSumAndAverage(float &sum, float &avg) const
+    {
+        sum = 0.f;
+        avg = 0.f;
+        int i = 0;
+#ifdef __SSE2__
+        vfloat iv = _mm_set_ps(3.f, 2.f, 1.f, 0.f);
+        vfloat fourv = F2V(4.f);
+        vint sumv = (vint)ZEROV;
+        vfloat avgv = ZEROV;
+
+        for(; i < size - 3; i += 4) {
+            vint datav = _mm_loadu_si128((__m128i*)&data[i]);
+            sumv += datav;
+            avgv += iv * _mm_cvtepi32_ps(datav);
+            iv += fourv;
+
+        }
+
+        sum = vhadd(_mm_cvtepi32_ps(sumv));
+        avg = vhadd(avgv);
+#endif
+
+        for (; i < size; i++) {
+            T val = data[i];
+            sum += val;
+            avg += i * val;
+        }
+
+        avg /= sum;
+    }
+
+
+    template<typename U = T, typename = typename std::enable_if<std::is_same<U, float>::value>::type>
     void makeConstant(float value, unsigned int numVals = 0)
     {
         numVals = numVals == 0 ? size : numVals;
         numVals = std::min(numVals, size);
+
         for(unsigned int i = 0; i < numVals; i++) {
             data[i] = value;
         }
+    }
+
+    // share the buffer with another LUT, handy for same data but different clip flags
+    void share(const LUT<T> &source, int flags = 0xfffffff)
+    {
+        if (owner && data) {
+            delete[] data;
+        }
+
+        dirty = false;  // Assumption
+        clip = flags;
+        data = source.data;
+        owner = 0;
+        size = source.getSize();
+        upperBound = size - 1;
+        maxs = size - 2;
+        maxsf = (float)maxs;
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+        maxsv =  F2V( size - 2);
+        sizeiv =  _mm_set1_epi32( (int)(size - 1) );
+        sizev = F2V( size - 1 );
+#endif
     }
 
 

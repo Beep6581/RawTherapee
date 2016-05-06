@@ -23,7 +23,9 @@
 #include "../rtgui/ppversion.h"
 #include "colortemp.h"
 #include "improcfun.h"
-
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 namespace rtengine
 {
 
@@ -52,12 +54,11 @@ ImProcCoordinator::ImProcCoordinator ()
       Noisecurve(65536, 0),
       NoiseCCcurve(65536, 0),
       vhist16(65536), vhist16bw(65536),
-      lhist16(65536), lhist16Cropped(65536),
       lhist16CAM(65536),
       lhist16CCAM(65536),
       lhist16RETI(65536),
       histCropped(65536),
-      lhist16Clad(65536), lhist16CLlad(65536),
+      lhist16Clad(65536),
       lhist16LClad(65536), lhist16LLClad(65536),
       histRed(256), histRedRaw(256),
       histGreen(256), histGreenRaw(256),
@@ -67,7 +68,6 @@ ImProcCoordinator::ImProcCoordinator ()
       histToneCurveBW(256),
       histLCurve(256),
       histCCurve(256),
-      histCLurve(256),
       histLLCurve(256),
 
       histLCAM(256),
@@ -366,7 +366,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         */
         imgsrc->convertColorSpace(orig_prev, params.icm, currWB);
 
-        ipf.firstAnalysis (orig_prev, &params, vhist16);
+        ipf.firstAnalysis (orig_prev, params, vhist16);
     }
 
     readyphase++;
@@ -450,28 +450,29 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, scale == 1 ? 1 : 1);
 
 
-        TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
-        double wp[3][3] = {
-            {wprof[0][0], wprof[0][1], wprof[0][2]},
-            {wprof[1][0], wprof[1][1], wprof[1][2]},
-            {wprof[2][0], wprof[2][1], wprof[2][2]}
-        };
-        TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params.icm.working);
-        double wip[3][3] = {
-            {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
-            {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
-            {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
-        };
         opautili = false;
-        params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip, opautili);
 
         if(params.colorToning.enabled) {
+            TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
+            double wp[3][3] = {
+                {wprof[0][0], wprof[0][1], wprof[0][2]},
+                {wprof[1][0], wprof[1][1], wprof[1][2]},
+                {wprof[2][0], wprof[2][1], wprof[2][2]}
+            };
+            TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params.icm.working);
+            double wip[3][3] = {
+                {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+                {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+                {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+            };
+            params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip, opautili);
             CurveFactory::curveToning(params.colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
-            //  clToningcurve.dump("CLToning3");
             CurveFactory::curveToning(params.colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
         }
-        CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, vhist16bw, histToneCurveBW, beforeToneCurveBW, afterToneCurveBW, scale == 1 ? 1 : 1);
 
+        if(params.blackwhite.enabled) {
+            CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, vhist16bw, histToneCurveBW, beforeToneCurveBW, afterToneCurveBW, scale == 1 ? 1 : 1);
+        }
 
         float satLimit = float(params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
         float satLimitOpacity = 1.f - (float(params.colorToning.saturatedOpacity) / 100.f);
@@ -559,31 +560,39 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
 
         // compute L channel histogram
-        int x1, y1, x2, y2, pos;
+        int x1, y1, x2, y2;
         params.crop.mapToResized(pW, pH, scale, x1, x2,  y1, y2);
-        lhist16.clear();
-        lhist16Cropped.clear();
-        lhist16Clad.clear();
-        lhist16CLlad.clear();
-        lhist16LLClad.clear();
-
-        for (int x = 0; x < pH; x++)
-            for (int y = 0; y < pW; y++) {
-                pos = CLIP((int)(oprevl->L[x][y]));
-                lhist16[pos]++;
-
-                if (y >= y1 && y < y2 && x >= x1 && x < x2) {
-                    lhist16Cropped[pos]++;
-                }
-            }
     }
 
     readyphase++;
 
-    if ((todo & M_LUMACURVE) || (todo & M_CROP)) {
+    if (todo & (M_LUMACURVE | M_CROP)) {
+        LUTu lhist16(32768);
+        lhist16.clear();
+#ifdef _OPENMP
+        const int numThreads = min(max(pW * pH / (int)lhist16.getSize(), 1), omp_get_max_threads());
+        #pragma omp parallel num_threads(numThreads) if(numThreads>1)
+#endif
+        {
+            LUTu lhist16thr(lhist16.getSize());
+            lhist16thr.clear();
+#ifdef _OPENMP
+            #pragma omp for nowait
+#endif
+
+            for (int x = 0; x < pH; x++)
+                for (int y = 0; y < pW; y++) {
+                    int pos = (int)(oprevl->L[x][y]);
+                    lhist16thr[pos]++;
+                }
+
+#ifdef _OPENMP
+            #pragma omp critical
+#endif
+            lhist16 += lhist16thr;
+        }
         utili = false;
-        CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lhist16Cropped,
-                                     lumacurve, histLCurve, scale == 1 ? 1 : 16, utili);
+        CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lumacurve, histLCurve, scale == 1 ? 1 : 16, utili);
     }
 
     if (todo & M_LUMACURVE) {
@@ -593,7 +602,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         cclutili = false;
         clcutili = false;
 
-        CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, lhist16CLlad, histCLurve, scale == 1 ? 1 : 16);
+        CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, scale == 1 ? 1 : 16);
         float adjustr = 1.0f;
 
 
@@ -605,6 +614,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 else if (params.icm.working=="BestRGB")    {adjustr =       adjustbg = 1.4f;}
                 else if (params.icm.working=="BruceRGB")   {adjustr = 1.8f; adjustbg = 1.5f;}
         */
+
+        lhist16LLClad.clear();
+        lhist16Clad.clear();
         CurveFactory::complexsgnCurve (adjustr, autili, butili, ccutili, cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
                                        params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve, params.labCurve.lccurve, chroma_acurve, chroma_bcurve, satcurve, lhskcurve,
                                        lhist16Clad, lhist16LLClad, histCCurve, histLLCurve, scale == 1 ? 1 : 16);
@@ -615,8 +627,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         progress ("Applying Color Boost...", 100 * readyphase / numofphases);
         //   ipf.MSR(nprevl, nprevl->W, nprevl->H, 1);
-
-        ipf.chromiLuminanceCurve (NULL, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histCLurve, histLLCurve, histLCurve);
+        ipf.chromiLuminanceCurve (NULL, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLLCurve, histLCurve);
         ipf.vibrance(nprevl);
 
         if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) {
@@ -678,7 +689,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         wavcontlutili = false;
         //CurveFactory::curveWavContL ( wavcontlutili,params.wavelet.lcurve, wavclCurve, LUTu & histogramwavcl, LUTu & outBeforeWavCLurveHistogram,int skip);
-        CurveFactory::curveWavContL(wavcontlutili, params.wavelet.wavclCurve, wavclCurve , /*lhist16CLlad, histCLurve,*/ scale == 1 ? 1 : 16);
+        CurveFactory::curveWavContL(wavcontlutili, params.wavelet.wavclCurve, wavclCurve, scale == 1 ? 1 : 16);
 
 
         if((params.wavelet.enabled)) {
@@ -709,7 +720,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                         int posc = CLIP((int)sqrt(nprevl->a[x][y] * nprevl->a[x][y] + nprevl->b[x][y] * nprevl->b[x][y]));
                         lhist16CAM[pos]++;
                         lhist16CCAM[posc]++;
-                }
+                    }
             }
 
             CurveFactory::curveLightBrightColor (params.colorappearance.curve, params.colorappearance.curve2, params.colorappearance.curve3,
@@ -1291,7 +1302,6 @@ void ImProcCoordinator::startProcessing(int changeCode)
 
 void ImProcCoordinator::process ()
 {
-
     if (plistener) {
         plistener->setProgressState (true);
     }

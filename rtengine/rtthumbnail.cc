@@ -32,7 +32,6 @@
 #include "rawimagesource.h"
 #include "stdimagesource.h"
 #include <glib/gstdio.h>
-#include <csetjmp>
 #include "rawimage.h"
 #include "jpeg.h"
 #include "../rtgui/ppversion.h"
@@ -54,7 +53,7 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     StdImageSource imgSrc;
 
     if (imgSrc.load(fname)) {
-        return NULL;
+        return nullptr;
     }
 
     ImageIO* img = imgSrc.getImageIO();
@@ -96,7 +95,7 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     // bilinear interpolation
     if (tpp->thumbImg) {
         delete tpp->thumbImg;
-        tpp->thumbImg = NULL;
+        tpp->thumbImg = nullptr;
     }
 
     if (inspectorMode) {
@@ -161,7 +160,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
     if( r ) {
         delete ri;
-        return NULL;
+        return nullptr;
     }
 
     rml.exifBase = ri->get_exifBase();
@@ -192,7 +191,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
         printf("Could not extract thumb from %s\n", fname.data());
         delete img;
         delete ri;
-        return NULL;
+        return nullptr;
     }
 
     Thumbnail* tpp = new Thumbnail ();
@@ -220,7 +219,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
     if (tpp->thumbImg) {
         delete tpp->thumbImg;
-        tpp->thumbImg = NULL;
+        tpp->thumbImg = nullptr;
     }
 
     if (inspectorMode) {
@@ -289,7 +288,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
     if( r ) {
         delete ri;
-        return NULL;
+        return nullptr;
     }
 
     int width = ri->get_width();
@@ -297,8 +296,8 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     rtengine::Thumbnail* tpp = new rtengine::Thumbnail;
 
     tpp->isRaw = true;
-    tpp->embProfile = NULL;
-    tpp->embProfileData = NULL;
+    tpp->embProfile = nullptr;
+    tpp->embProfileData = nullptr;
     tpp->embProfileLength = ri->get_profileLen();
 
     if (ri->get_profileLen())
@@ -502,7 +501,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
         delete tpp->thumbImg;
     }
 
-    tpp->thumbImg = NULL;
+    tpp->thumbImg = nullptr;
     tpp->thumbImg = resizeTo<Image16>(w, h, TI_Bilinear, tmpImg);
     delete tmpImg;
 
@@ -737,11 +736,11 @@ void Thumbnail::init ()
 }
 
 Thumbnail::Thumbnail () :
-    camProfile(NULL), thumbImg(NULL),
+    camProfile(nullptr), thumbImg(nullptr),
     camwbRed(1.0), camwbGreen(1.0), camwbBlue(1.0),
     redAWBMul(-1.0), greenAWBMul(-1.0), blueAWBMul(-1.0),
     autoWBTemp(2700), autoWBGreen(1.0), wbEqual(-1.0),
-    embProfileLength(0), embProfileData(NULL), embProfile(NULL),
+    embProfileLength(0), embProfileData(nullptr), embProfile(nullptr),
     redMultiplier(1.0), greenMultiplier(1.0), blueMultiplier(1.0),
     defGain(1.0),
     scaleForSave(8192),
@@ -935,10 +934,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     ipf.updateColorProfiles (params.icm, options.rtSettings.monitorProfile, options.rtSettings.monitorIntent);
 
     LUTu hist16 (65536);
-    LUTu hist16C (65536);
 
     double gamma = isRaw ? Color::sRGBGamma : 0;  // usually in ImageSource, but we don't have that here
-    ipf.firstAnalysis (baseImg, &params, hist16);
+    ipf.firstAnalysis (baseImg, params, hist16);
 
     // perform transform
     if (ipf.needsTransform()) {
@@ -953,7 +951,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     }
 
     // update blurmap
-    SHMap* shmap = NULL;
+    SHMap* shmap = nullptr;
 
     if (params.sh.enabled) {
         shmap = new SHMap (fw, fh, false);
@@ -976,7 +974,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     int     hlcomprthresh = params.toneCurve.hlcomprthresh;
     if (params.toneCurve.autoexp && aeHistogram) {
         ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
-        //ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr);
     }
 
     LUTf curve1 (65536);
@@ -989,17 +986,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     LUTf clcurve (65536);
     LUTf clToningcurve;
     LUTf cl2Toningcurve;
-
-    LUTf rCurve (65536);
-    LUTf gCurve (65536);
-    LUTf bCurve (65536);
-
     LUTu dummy;
 
     ToneCurve customToneCurve1, customToneCurve2;
     ColorGradientCurve ctColorCurve;
     OpacityCurve ctOpacityCurve;
-    //  NoisCurve dnNoisCurve;
 
     ColorAppearance customColCurve1;
     ColorAppearance customColCurve2;
@@ -1012,33 +1003,40 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
                                 params.toneCurve.curveMode2, params.toneCurve.curve2,
                                 hist16, dummy, curve1, curve2, curve, dummy, customToneCurve1, customToneCurve2, 16);
 
+    LUTf rCurve;
+    LUTf gCurve;
+    LUTf bCurve;
     CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, 16);
     CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, 16);
     CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, 16);
-    TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
-    double wp[3][3] = {
-        {wprof[0][0], wprof[0][1], wprof[0][2]},
-        {wprof[1][0], wprof[1][1], wprof[1][2]},
-        {wprof[2][0], wprof[2][1], wprof[2][2]}
-    };
-    TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params.icm.working);
-    double wip[3][3] = {
-        {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
-        {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
-        {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
-    };
+
     bool opautili = false;
-    params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip, opautili);
-    //params.dirpyrDenoise.getCurves(dnNoisCurve, lldenoisutili);
-
     if(params.colorToning.enabled) {
-        clToningcurve (65536);
-        cl2Toningcurve (65536);
+        TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
+        double wp[3][3] = {
+            {wprof[0][0], wprof[0][1], wprof[0][2]},
+            {wprof[1][0], wprof[1][1], wprof[1][2]},
+            {wprof[2][0], wprof[2][1], wprof[2][2]}
+        };
+        TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params.icm.working);
+        double wip[3][3] = {
+            {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+            {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+            {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+        };
+        params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip, opautili);
 
+        clToningcurve (65536);
         CurveFactory::curveToning(params.colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
+
+        cl2Toningcurve (65536);
         CurveFactory::curveToning(params.colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
     }
-    CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 16);
+
+    if(params.blackwhite.enabled) {
+        CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 16);
+    }
+
     double rrm, ggm, bbm;
     float autor, autog, autob;
     float satLimit = float(params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
@@ -1067,23 +1065,22 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     autor = autog = autob = -9000.f; // This will ask to compute the "auto" values for the B&W tool
 
     LabImage* labView = new LabImage (fw, fh);
-    DCPProfile *dcpProf = NULL;
+    DCPProfile *dcpProf = nullptr;
     if (isRaw) {
         cmsHPROFILE dummy;
-        RawImageSource::findInputProfile(params.icm.input, NULL, camName, &dcpProf, dummy);
+        RawImageSource::findInputProfile(params.icm.input, nullptr, camName, &dcpProf, dummy);
 
-        if (dcpProf != NULL) {
+        if (dcpProf) {
             dcpProf->setStep2ApplyState(params.icm.working, params.icm.toneCurve, params.icm.applyLookTable, params.icm.applyBaselineExposureOffset);
         }
     }
-    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf);
+    ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf);
 
     // freeing up some memory
     customToneCurve1.Reset();
     customToneCurve2.Reset();
     ctColorCurve.Reset();
     ctOpacityCurve.Reset();
-//   dnNoisCurve.Reset();
     customToneCurvebw1.Reset();
     customToneCurvebw2.Reset();
 
@@ -1092,36 +1089,34 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     }
 
     // luminance histogram update
-    hist16.clear();
-    hist16C.clear();
+    if(params.labCurve.contrast != 0) {
+        hist16.clear();
+        for (int i = 0; i < fh; i++)
+            for (int j = 0; j < fw; j++) {
+                hist16[(int)((labView->L[i][j]))]++;
+            }
+    }
 
-    for (int i = 0; i < fh; i++)
-        for (int j = 0; j < fw; j++) {
-            hist16[CLIP((int)((labView->L[i][j])))]++;
-            hist16C[CLIP((int)sqrt(labView->a[i][j]*labView->a[i][j] + labView->b[i][j]*labView->b[i][j]))]++;
-        }
     // luminance processing
 //  ipf.EPDToneMap(labView,0,6);
 
     bool utili = false;
+    CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve,
+                                 hist16, lumacurve, dummy, 16, utili);
+
+    bool clcutili = false;
+    CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, 16);
+
     bool autili = false;
     bool butili = false;
     bool ccutili = false;
     bool cclutili = false;
-    bool clcutili = false;
-    CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve,
-                                 hist16, hist16, lumacurve, dummy, 16, utili);
-
-    CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, hist16C, dummy, 16);
-
     CurveFactory::complexsgnCurve (1.f, autili, butili, ccutili, cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
                                    params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve, params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve,
-                                   hist16C, hist16C, dummy, dummy,
+                                   dummy, dummy, dummy, dummy,
                                    16);
-    //ipf.luminanceCurve (labView, labView, curve);
 
-
-    ipf.chromiLuminanceCurve (NULL, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy, dummy, dummy);
+    ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy, dummy);
 
     ipf.vibrance(labView);
 
@@ -1129,16 +1124,13 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         ipf.EPDToneMap(labView, 5, 6);
     }
 
-    //if(!params.colorappearance.enabled){ipf.EPDToneMap(labView,5,6);}
-
-
     if(params.colorappearance.enabled) {
         CurveFactory::curveLightBrightColor (
             params.colorappearance.curve,
             params.colorappearance.curve2,
             params.colorappearance.curve3,
             hist16, dummy,
-            hist16C, dummy,
+            dummy, dummy,
             customColCurve1,
             customColCurve2,
             customColCurve3,
@@ -1219,7 +1211,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
 int Thumbnail::getImageWidth (const procparams::ProcParams& params, int rheight, float &ratio)
 {
-    if (thumbImg == NULL) {
+    if (!thumbImg) {
         return 0;    // Can happen if thumb is just building and GUI comes in with resize wishes
     }
 
@@ -1371,11 +1363,11 @@ void Thumbnail::transformPixel (int x, int y, int tran, int& tx, int& ty)
 unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
 {
     if (!thumbImg) {
-        return NULL;
+        return nullptr;
     }
 
     if (thumbImg->width < trim_width) {
-        return NULL;
+        return nullptr;
     }
 
     // to utilize the 8 bit color range of the thumbnail we brighten it and apply gamma correction
@@ -1659,7 +1651,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname)
 
     if (thumbImg) {
         delete thumbImg;
-        thumbImg = NULL;
+        thumbImg = nullptr;
     }
 
     Glib::ustring fullFName = fname + ".rtti";
@@ -1872,8 +1864,8 @@ bool Thumbnail::readEmbProfile  (const Glib::ustring& fname)
     FILE* f = g_fopen (fname.c_str (), "rb");
 
     if (!f) {
-        embProfileData = NULL;
-        embProfile = NULL;
+        embProfileData = nullptr;
+        embProfile = nullptr;
         embProfileLength = 0;
     } else {
         fseek (f, 0, SEEK_END);
@@ -1945,7 +1937,7 @@ unsigned char* Thumbnail::getImage8Data()
         return img8->data;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 

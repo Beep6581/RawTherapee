@@ -286,7 +286,7 @@ public:
     static void curveBW (const std::vector<double>& curvePointsbw, const std::vector<double>& curvePointsbw2, const LUTu & histogrambw, LUTu & outBeforeCCurveHistogrambw,
                          ToneCurve & customToneCurvebw1, ToneCurve & customToneCurvebw2, int skip);
 
-    static void curveCL ( bool & clcutili, const std::vector<double>& clcurvePoints, LUTf & clCurve, const LUTu & histogramcl, LUTu & outBeforeCLurveHistogram, int skip);
+    static void curveCL ( bool & clcutili, const std::vector<double>& clcurvePoints, LUTf & clCurve, int skip);
 
     static void curveWavContL ( bool & wavcontlutili, const std::vector<double>& wavclcurvePoints, LUTf & wavclCurve,/* LUTu & histogramwavcl, LUTu & outBeforeWavCLurveHistogram,*/int skip);
     static void curveDehaContL ( bool & dehacontlutili, const std::vector<double>& dehaclcurvePoints, LUTf & dehaclCurve, int skip, const LUTu & histogram, LUTu & outBeforeCurveHistogram);
@@ -298,8 +298,7 @@ public:
                                   const std::vector<double>& bcurvePoints, const std::vector<double>& cccurvePoints, const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve,
                                   const LUTu & histogramC, const LUTu & histogramLC, LUTu & outBeforeCCurveHistogram, LUTu & outBeforeLCurveHistogram, ///for chroma
                                   int skip = 1);
-    static void complexLCurve (double br, double contr, const std::vector<double>& curvePoints, const LUTu & histogram, LUTu & histogramCropped,
-                               LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip, bool & utili);
+    static void complexLCurve (double br, double contr, const std::vector<double>& curvePoints, const LUTu & histogram, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip, bool & utili);
 
     static void curveLightBrightColor (
         const std::vector<double>& curvePoints,
