@@ -56,7 +56,7 @@ bool loadFile(
             img_src.convertColorSpace(img_float.get(), icm, curr_wb);
         }
 
-        AlignedBuffer<std::uint16_t> image(fw * fh * 4 + 4);
+        AlignedBuffer<std::uint16_t> image(fw * fh * 4 + 8); // + 8 because of SSE4_1 version of getClutValue
 
         std::size_t index = 0;
 
@@ -81,9 +81,9 @@ bool loadFile(
 vfloat getClutValue(const AlignedBuffer<std::uint16_t>& clut_image, size_t index)
 {
 #ifdef __SSE4_1__
-    return _mm_cvtepi32_ps(_mm_cvtepu16_epi32(*reinterpret_cast<const __m128i*>(clut_image.data + index)));
+    return _mm_cvtepi32_ps(_mm_cvtepu16_epi32(_mm_loadu_si128(reinterpret_cast<const __m128i*>(clut_image.data + index))));
 #else
-    return _mm_cvtpu16_ps(*reinterpret_cast<const __m64*>(clut_image.data + index));
+    return _mm_set_ps(clut_image.data[index + 3], clut_image.data[index + 2], clut_image.data[index + 1], clut_image.data[index]);
 #endif
 }
 #endif
@@ -205,8 +205,8 @@ void rtengine::HaldCLUT::getRGB(
         out_rgbx[2] = intp<float>(strength, out_rgbx[2], *b);
 #else
         const vfloat v_in = _mm_set_ps(0.0f, *b, *g, *r);
-        const vfloat v_tmp = v_in * _mm_load_ps1(&flevel_minus_one);
-        const vfloat v_rgb = v_tmp - _mm_cvtepi32_ps(_mm_cvttps_epi32(_mm_min_ps(_mm_load_ps1(&flevel_minus_two), v_tmp)));
+        const vfloat v_tmp = v_in * F2V(flevel_minus_one);
+        const vfloat v_rgb = v_tmp - _mm_cvtepi32_ps(_mm_cvttps_epi32(_mm_min_ps(F2V(flevel_minus_two), v_tmp)));
 
         size_t index = color * 4;
 
