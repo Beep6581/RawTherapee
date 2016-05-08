@@ -1010,9 +1010,6 @@ public:
                 avg_r += double(r_);
                 avg_g += double(g_);
                 avg_b += double(b_);
-                /*avg_r += intpow( (double)r(i, j), p);
-                avg_g += intpow( (double)g(i, j), p);
-                avg_b += intpow( (double)b(i, j), p);*/
                 n++;
             }
 
@@ -1616,9 +1613,6 @@ public:
                 avg_r += double(r_);
                 avg_g += double(g_);
                 avg_b += double(b_);
-                /*avg_r += intpow( (double)r(i, j), p);
-                avg_g += intpow( (double)g(i, j), p);
-                avg_b += intpow( (double)b(i, j), p);*/
                 n++;
             }
 

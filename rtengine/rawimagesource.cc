@@ -587,9 +587,7 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
     }
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-static float
-calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const float c_white[4], const float c_black[4], bool isMono, int colors)
+float calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const float c_white[4], const float c_black[4], bool isMono, int colors)
 {
     if (isMono || colors == 1) {
         for (int c = 0; c < 4; c++) {
@@ -617,7 +615,7 @@ calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const float c_w
     return gain;
 }
 
-void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, ToneCurveParams  hrp, ColorManagementParams cmp, RAWParams raw )
+void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw )
 {
     MyMutex::MyLock lock(getImageMutex);
 
@@ -727,7 +725,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
         float line_blue[imwidth] ALIGNED16;
 
 #ifdef _OPENMP
-        #pragma omp for
+        #pragma omp for schedule(dynamic,16)
 #endif
 
         for (int ix = 0; ix < imheight; ix++) {
@@ -891,7 +889,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     }
 }
 
-DCPProfile *RawImageSource::getDCP(ColorManagementParams cmp, ColorTemp &wb)
+DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &wb)
 {
     DCPProfile *dcpProf = NULL;
     cmsHPROFILE dummy;
@@ -905,7 +903,7 @@ DCPProfile *RawImageSource::getDCP(ColorManagementParams cmp, ColorTemp &wb)
     return dcpProf;
 }
 
-void RawImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb)
+void RawImageSource::convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb)
 {
     double pre_mul[3] = { ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2) };
     colorSpaceConversion (image, cmp, wb, pre_mul, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
@@ -1501,7 +1499,7 @@ void RawImageSource::vflip (Imagefloat* image)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int RawImageSource::load (Glib::ustring fname, bool batch)
+int RawImageSource::load (const Glib::ustring &fname, bool batch)
 {
 
     MyTime t1, t2;
@@ -3651,7 +3649,7 @@ lab2ProphotoRgbD50(float L, float A, float B, float& r, float& g, float& b)
 }
 
 // Converts raw image including ICC input profile to working space - floating point version
-void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParams &cmp, ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName)
+void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParams &cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName)
 {
 
 //    MyTime t1, t2, t3;

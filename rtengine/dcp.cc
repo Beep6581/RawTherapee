@@ -542,7 +542,7 @@ static double calibrationIlluminantToTemperature(int light)
         return 0.0;
     }
 }
-void DCPProfile::MakeXYZCAM(ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], int preferredIlluminant, double (*mXYZCAM)[3]) const
+void DCPProfile::MakeXYZCAM(const ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], int preferredIlluminant, double (*mXYZCAM)[3]) const
 {
     // code adapted from dng_color_spec::FindXYZtoCamera
     // note that we do not support monochrome or colorplanes > 3 (no reductionMatrix support)
@@ -742,7 +742,7 @@ void DCPProfile::MakeXYZCAM(ColorTemp &wb, double pre_mul[3], double camWbMatrix
     }
 }
 
-const DCPProfile::HSBModify* DCPProfile::MakeHueSatMap(ColorTemp &wb, int preferredIlluminant, HSBModify **deleteHandle) const
+const DCPProfile::HSBModify* DCPProfile::MakeHueSatMap(const ColorTemp &wb, int preferredIlluminant, HSBModify **deleteHandle) const
 {
 
     *deleteHandle = NULL;
@@ -813,7 +813,7 @@ const DCPProfile::HSBModify* DCPProfile::MakeHueSatMap(ColorTemp &wb, int prefer
     return aDeltas;
 }
 
-DCPProfile::DCPProfile(Glib::ustring fname)
+DCPProfile::DCPProfile(const Glib::ustring &fname)
 {
     const int TIFFFloatSize = 4;
     const int TagColorMatrix1 = 50721, TagColorMatrix2 = 50722, TagProfileHueSatMapDims = 50937;
@@ -1433,7 +1433,7 @@ void DCPProfile::dngref_NeutralToXY(double neutral[3], int preferredIlluminant, 
     XY[1] = lastXY[1];
 }
 
-void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], bool useToneCurve, bool applyHueSatMap, bool applyLookTable) const
+void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, const Glib::ustring &workingSpace, const ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], bool useToneCurve, bool applyHueSatMap, bool applyLookTable) const
 {
 
     TMatrix mWork = iccStore->workingSpaceInverseMatrix (workingSpace);
@@ -1551,7 +1551,7 @@ void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring 
     }
 }
 
-void DCPProfile::setStep2ApplyState(Glib::ustring workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure)
+void DCPProfile::setStep2ApplyState(const Glib::ustring &workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure)
 {
 
     applyState.useToneCurve = useToneCurve;
@@ -1695,18 +1695,16 @@ DCPStore* DCPStore::getInstance()
 }
 
 // Reads all profiles from the given profiles dir
-void DCPStore::init (Glib::ustring rtProfileDir)
+void DCPStore::init (const Glib::ustring &rtProfileDir)
 {
     MyMutex::MyLock lock(mtx);
 
     fileStdProfiles.clear();
 
-    Glib::ustring rootDirName = rtProfileDir;
-
-    if (rootDirName != "") {
+    if (rtProfileDir != "") {
         std::deque<Glib::ustring> qDirs;
 
-        qDirs.push_front(rootDirName);
+        qDirs.push_front(rtProfileDir);
 
         while (!qDirs.empty()) {
             // process directory
@@ -1749,7 +1747,7 @@ void DCPStore::init (Glib::ustring rtProfileDir)
     }
 }
 
-DCPProfile* DCPStore::getProfile (Glib::ustring filename)
+DCPProfile* DCPStore::getProfile (const Glib::ustring &filename)
 {
     MyMutex::MyLock lock(mtx);
 
@@ -1765,7 +1763,7 @@ DCPProfile* DCPStore::getProfile (Glib::ustring filename)
     return profileCache[filename];
 }
 
-DCPProfile* DCPStore::getStdProfile(Glib::ustring camShortName)
+DCPProfile* DCPStore::getStdProfile(const Glib::ustring &camShortName)
 {
     Glib::ustring name2 = camShortName.uppercase();
 
@@ -1778,7 +1776,7 @@ DCPProfile* DCPStore::getStdProfile(Glib::ustring camShortName)
     return NULL;
 }
 
-bool DCPStore::isValidDCPFileName(Glib::ustring filename) const
+bool DCPStore::isValidDCPFileName(const Glib::ustring &filename) const
 {
     if (!Glib::file_test (filename, Glib::FILE_TEST_EXISTS) || Glib::file_test (filename, Glib::FILE_TEST_IS_DIR)) {
         return false;
