@@ -44,7 +44,7 @@ ImageMetaData* ImageMetaData::fromFile (const Glib::ustring& fname, RawMetaDataL
     return new ImageData (fname, rml);
 }
 
-ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri)
+ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) : iso_speed(0), aperture(0.), shutter(0.)
 {
 
     size_t dotpos = fname.find_last_of ('.');
