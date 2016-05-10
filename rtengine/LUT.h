@@ -59,17 +59,8 @@
 #ifndef LUT_H_
 #define LUT_H_
 
-// bit representations of flags
-#define LUT_CLIP_BELOW 1
-#define LUT_CLIP_ABOVE 2
-
-#define LUTf LUT<float>
-#define LUTi LUT<int32_t>
-#define LUTu LUT<uint32_t>
-#define LUTd LUT<double>
-#define LUTuc LUT<uint8_t>
-
 #include <cstring>
+#include <cstdint>
 #ifndef NDEBUG
 #include <glibmm.h>
 #include <fstream>
@@ -77,6 +68,21 @@
 #include "opthelper.h"
 #include <assert.h>
 #include "rt_math.h"
+
+// Bit representations of flags
+enum {
+    LUT_CLIP_BELOW = 1 << 0,
+    LUT_CLIP_ABOVE = 1 << 1
+};
+
+template<typename T>
+class LUT;
+
+using LUTf = LUT<float>;
+using LUTi = LUT<int32_t>;
+using LUTu = LUT<uint32_t>;
+using LUTd = LUT<double>;
+using LUTuc = LUT<uint8_t>;
 
 template<typename T>
 class LUT
