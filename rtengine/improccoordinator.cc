@@ -55,7 +55,7 @@ ImProcCoordinator::ImProcCoordinator ()
       lhist16(65536), lhist16Cropped(65536),
       lhist16CAM(65536), lhist16CroppedCAM(65536),
       lhist16CCAM(65536),
-      lhist16RETI(65536),
+      lhist16RETI(),
       histCropped(65536),
       lhist16Clad(65536), lhist16CLlad(65536),
       lhist16LClad(65536), lhist16LLClad(65536),
@@ -236,6 +236,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
 
         if (params.retinex.enabled) {
+            lhist16RETI(32768);
             lhist16RETI.clear();
 
             imgsrc->retinexPrepareBuffers(params.icm, params.retinex, conversionBuffer, lhist16RETI);

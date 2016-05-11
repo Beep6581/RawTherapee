@@ -1764,7 +1764,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         LCPProfile *pLCPProf = lcpStore->getProfile(lensProf.lcpFile);
 
         if (pLCPProf) { // don't check focal length to allow distortion correction for lenses without chip, also pass dummy focal length 1 in case of 0
-            LCPMapper map(pLCPProf, max(idata->getFocalLen(),1.0), idata->getFocalLen35mm(), idata->getFocusDist(), idata->getFNumber(), true, false, W, H, coarse, -1);
+            LCPMapper map(pLCPProf, max(idata->getFocalLen(), 1.0), idata->getFocalLen35mm(), idata->getFocusDist(), idata->getFNumber(), true, false, W, H, coarse, -1);
 
 #ifdef _OPENMP
             #pragma omp parallel for
@@ -1970,7 +1970,6 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 
     LUTf *retinexgamtab;//gamma before and after Retinex to restore tones
     LUTf lutTonereti;
-    lutTonereti(65536);
 
     if(retinexParams.gammaretinex == "low") {
         retinexgamtab = &(Color::gammatab_115_2);
@@ -1986,24 +1985,33 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
         double gamm2 = retinexParams.gam;
 
         if(gamm2 < 1.) {
-            pwr = 1. / pwr;
-            gamm = 1. / gamm;
+            std::swap(pwr, gamm);
         }
 
         int mode = 0, imax = 0;
         Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope
 
         //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
+        double start;
+        double add;
+
+        if(gamm2 < 1.) {
+            start = g_a2;
+            add = g_a4;
+        } else {
+            start = g_a3;
+            add = g_a4;
+        }
+
+        double mul = 1. + g_a4;
+
+        lutTonereti(65536);
+
         for (int i = 0; i < 65536; i++) {
             double val = (i) / 65535.;
-            double start = g_a3;
-            double add = g_a4;
-            double mul = 1. + g_a4;
             double x;
 
             if(gamm2 < 1.) {
-                start = g_a2;
-                add = g_a4;
                 x = Color::igammareti (val, gamm, start, ts, mul , add);
             } else {
                 x = Color::gammareti (val, gamm, start, ts, mul , add);
@@ -2055,6 +2063,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
     }
     */
     if(retinexParams.gammaretinex != "none" && retinexParams.str != 0) {//gamma
+
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -2083,7 +2092,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 
             if(lhist16RETI)
             {
-                lhist16RETIThr(32769, 0);
+                lhist16RETIThr(lhist16RETI.getSize());
                 lhist16RETIThr.clear();
             }
 
@@ -2101,7 +2110,6 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 
                 for (; j < W - border - 3; j += 4) {
                     vfloat H, S, L;
-                    int pos;
                     Color::rgb2hsl(LVFU(red[i][j]), LVFU(green[i][j]), LVFU(blue[i][j]), H, S, L);
                     STVFU(conversionBuffer[0][i - border][j - border], H);
                     STVFU(conversionBuffer[1][i - border][j - border], S);
@@ -2111,7 +2119,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 
                     if(lhist16RETI) {
                         for(int p = 0; p < 4; p++) {
-                            pos =  (int) clipretinex( conversionBuffer[2][i - border][j - border + p], 0.f, 32768.f);//histogram in curve HSL
+                            int pos = ( conversionBuffer[2][i - border][j - border + p]);//histogram in curve HSL
                             lhist16RETIThr[pos]++;
                         }
                     }
@@ -2121,14 +2129,13 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 
                 for (; j < W - border; j++) {
                     float H, S, L;
-                    int pos;
                     //rgb=>lab
                     Color::rgb2hslfloat(red[i][j], green[i][j], blue[i][j], conversionBuffer[0][i - border][j - border], conversionBuffer[1][i - border][j - border], L);
                     L *= 32768.f;
                     conversionBuffer[2][i - border][j - border] = L;
 
                     if(lhist16RETI) {
-                        pos =  (int) clipretinex(L, 0, 32768);
+                        int pos = L;
                         lhist16RETIThr[pos]++;
                     }
                 }
@@ -2139,10 +2146,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
             {
                 if(lhist16RETI)
                 {
-                    // Add per Thread LUT to global LUT
-                    for(int i = 0; i < 32769; i++) {
-                        lhist16RETI[i] += lhist16RETIThr[i];
-                    }
+                    lhist16RETI += lhist16RETIThr; // Add per Thread LUT to global LUT
                 }
             }
 #endif
@@ -2150,10 +2154,10 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
         }
     } else {
         TMatrix wprof = iccStore->workingSpaceMatrix (cmp.working);
-        double wp[3][3] = {
-            {wprof[0][0], wprof[0][1], wprof[0][2]},
-            {wprof[1][0], wprof[1][1], wprof[1][2]},
-            {wprof[2][0], wprof[2][1], wprof[2][2]}
+        float wp[3][3] = {
+            {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
+            {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
+            {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
         };
 
         // Conversion rgb -> lab is hard to vectorize because it uses a lut (that's not the main problem)
@@ -2166,25 +2170,19 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
             LUTu lhist16RETIThr;
 
             if(lhist16RETI) {
-                lhist16RETIThr(32769, 0);
+                lhist16RETIThr(lhist16RETI.getSize());
                 lhist16RETIThr.clear();
             }
 
 #ifdef _OPENMP
-            #pragma omp for
+            #pragma omp for schedule(dynamic,16)
 #endif
 
             for (int i = border; i < H - border; i++ )
                 for (int j = border; j < W - border; j++) {
                     float X, Y, Z, L, aa, bb;
-                    int pos;
-                    float R_, G_, B_;
-                    R_ = red[i][j];
-                    G_ = green[i][j];
-                    B_ = blue[i][j];
-                    float k;
                     //rgb=>lab
-                    Color::rgbxyz(R_, G_, B_, X, Y, Z, wp);
+                    Color::rgbxyz(red[i][j], green[i][j], blue[i][j], X, Y, Z, wp);
                     //convert Lab
                     Color::XYZ2Lab(X, Y, Z, L, aa, bb);
                     conversionBuffer[0][i - border][j - border] = aa;
@@ -2195,7 +2193,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 //                   if(R_>40000.f  && G_ > 30000.f && B_ > 30000.f) conversionBuffer[3][i - border][j - border] = R_;
 //                   else conversionBuffer[3][i - border][j - border] = 0.f;
                     if(lhist16RETI) {
-                        pos =  (int) clipretinex(L, 0, 32768);
+                        int pos = L;
                         lhist16RETIThr[pos]++;//histogram in Curve Lab
                     }
                 }
@@ -2204,10 +2202,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
             #pragma omp critical
             {
                 if(lhist16RETI) {
-                    // Add per Thread LUT to global LUT
-                    for(int i = 0; i < 32769; i++) {
-                        lhist16RETI[i] += lhist16RETIThr[i];
-                    }
+                    lhist16RETI += lhist16RETIThr; // Add per Thread LUT to global LUT
                 }
             }
 #endif
@@ -2263,23 +2258,29 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         int mode = 0, imax = 0;
 
         if(gamm2 < 1.) {
-            pwr = 1. / pwr;
-            gamm = 1. / gamm;
+            std::swap(pwr, gamm);
         }
 
         Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope
+
+        double mul = 1. + g_a4;
+        double add;
+        double start;
+
+        if(gamm2 < 1.) {
+            start = g_a3;
+            add = g_a3;
+        } else {
+            add = g_a4;
+            start = g_a2;
+        }
 
         //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
         for (int i = 0; i < 65536; i++) {
             double val = (i) / 65535.;
             double x;
-            double mul = 1. + g_a4;
-            double add = g_a4;
-            double start = g_a2;
 
             if(gamm2 < 1.) {
-                start = g_a3;
-                add = g_a3;
                 x = Color::gammareti (val, gamm, start, ts, mul , add);
             } else {
                 x = Color::igammareti (val, gamm, start, ts, mul , add);
@@ -2303,11 +2304,10 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
     float val;
 
     if(dehacontlutili && histLRETI) {
-        hist16RET(32769, 0);
+        hist16RET(32768);
         hist16RET.clear();
         histLRETI.clear();
-        dLcurve(32769, 0);
-        dLcurve.clear();
+        dLcurve(32768);
     }
 
     FlatCurve* chcurve = NULL;//curve c=f(H)
@@ -2335,8 +2335,8 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         // one LUT per thread
         LUTu hist16RETThr;
 
-        if(dehacontlutili && histLRETI) {
-            hist16RETThr(32769, 0);
+        if(hist16RET) {
+            hist16RETThr(hist16RET.getSize());
             hist16RETThr.clear();
         }
 
@@ -2350,7 +2350,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
                     LBuffer[i][j] = cdcurve[2.f * temp[i][j]] / 2.f;
 
                     if(histLRETI) {
-                        int pos = (int) clipretinex(LBuffer[i][j], 0.f, 32768.f);
+                        int pos = LBuffer[i][j];
                         hist16RETThr[pos]++; //histogram in Curve
                     }
                 }
@@ -2363,24 +2363,24 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         #pragma omp critical
 #endif
         {
-            if(dehacontlutili && histLRETI) {
-                // Add per Thread LUT to global LUT
-                for(int i = 0; i < 32769; i++) {
-                    hist16RET[i] += hist16RETThr[i];
-                }
+            if(hist16RET) {
+                hist16RET += hist16RETThr; // Add per Thread LUT to global LUT
             }
         }
     }
 
-    if(dehacontlutili && histLRETI) {//update histogram
+    if(hist16RET) {//update histogram
+        // TODO : When rgbcurvesspeedup branch is merged into master, replace this by the following 1-liner
+        // hist16RET.compressTo(histLRETI);
+        // also remove declaration and init of dLcurve some lines above then and finally remove this comment :)
         for (int i = 0; i < 32768; i++) {
             val = (double)i / 32767.0;
-            dLcurve[i] = CLIPD(val);
+            dLcurve[i] = val;
         }
 
         for (int i = 0; i < 32768; i++) {
             float hval = dLcurve[i];
-            int hi = (int)(255.0f * CLIPD(hval));
+            int hi = (int)(255.0f * hval);
             histLRETI[hi] += hist16RET[i];
         }
     }
@@ -2399,7 +2399,6 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
                 for (; j < W - border; j++) {
 
                     float valp;
-                    float chr;
                     //   if(chutili) {  // c=f(H)
                     {
                         valp = float((chcurve->getVal(conversionBuffer[3][i - border][j - border]) - 0.5f));
@@ -4365,12 +4364,12 @@ void RawImageSource::hlRecovery (std::string method, float* red, float* green, f
 
 void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
 {
-BENCHFUN
+    BENCHFUN
     histcompr = 3;
 
     histogram(65536 >> histcompr);
     histogram.clear();
-    const float refwb[3] = {static_cast<float>(refwb_red),static_cast<float>(refwb_green),static_cast<float>(refwb_blue)};
+    const float refwb[3] = {static_cast<float>(refwb_red), static_cast<float>(refwb_green), static_cast<float>(refwb_blue)};
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -4388,11 +4387,11 @@ BENCHFUN
 
             if (ri->getSensorType() == ST_BAYER) {
                 for (int j = start; j < end; j++) {
-                    tmphistogram[(int)(refwb[ri->FC(i,j)] * rawData[i][j]) >> histcompr] += 4;
+                    tmphistogram[(int)(refwb[ri->FC(i, j)] * rawData[i][j]) >> histcompr] += 4;
                 }
             } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
                 for (int j = start; j < end; j++) {
-                    tmphistogram[(int)(refwb[ri->XTRANSFC(i,j)] * rawData[i][j]) >> histcompr] += 4;
+                    tmphistogram[(int)(refwb[ri->XTRANSFC(i, j)] * rawData[i][j]) >> histcompr] += 4;
                 }
             } else if (ri->get_colors() == 1) {
                 for (int j = start; j < end; j++) {
@@ -4419,7 +4418,7 @@ BENCHFUN
 // Histogram MUST be 256 in size; gamma is applied, blackpoint and gain also
 void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw)
 {
-BENCHFUN
+    BENCHFUN
     histRedRaw.clear();
     histGreenRaw.clear();
     histBlueRaw.clear();
@@ -4429,17 +4428,19 @@ BENCHFUN
                             65535.0f / ri->get_white(3)
                           };
 
-    const bool fourColours = ri->getSensorType() == ST_BAYER && ((mult[1] != mult[3] || cblacksom[1] != cblacksom[3]) || FC(0,0) == 3 || FC(0,1) == 3 || FC(1,0) == 3 || FC(1,1) == 3);
+    const bool fourColours = ri->getSensorType() == ST_BAYER && ((mult[1] != mult[3] || cblacksom[1] != cblacksom[3]) || FC(0, 0) == 3 || FC(0, 1) == 3 || FC(1, 0) == 3 || FC(1, 1) == 3);
 
     LUTu hist[4];
     hist[0](65536);
     hist[0].clear();
+
     if (ri->get_colors() > 1) {
         hist[1](65536);
         hist[1].clear();
         hist[2](65536);
         hist[2].clear();
     }
+
     if (fourColours) {
         hist[3](65536);
         hist[3].clear();
@@ -4458,16 +4459,19 @@ BENCHFUN
         LUTu tmphist[4];
         tmphist[0](65536);
         tmphist[0].clear();
+
         if (ri->get_colors() > 1) {
             tmphist[1](65536);
             tmphist[1].clear();
             tmphist[2](65536);
             tmphist[2].clear();
+
             if (fourColours) {
                 tmphist[3](65536);
                 tmphist[3].clear();
             }
         }
+
 #ifdef _OPENMP
         #pragma omp for nowait
 #endif
@@ -4514,9 +4518,11 @@ BENCHFUN
 #endif
         {
             hist[0] += tmphist[0];
+
             if (ri->get_colors() > 1) {
                 hist[1] += tmphist[1];
                 hist[2] += tmphist[2];
+
                 if (fourColours) {
                     hist[3] += tmphist[3];
                 }
@@ -4528,13 +4534,16 @@ BENCHFUN
         int idx;
         idx = CLIP((int)Color::gamma(mult[0] * (i - (cblacksom[0]/*+black_lev[0]*/))));
         histRedRaw[idx >> 8] += hist[0][i];
+
         if (ri->get_colors() > 1) {
             idx = CLIP((int)Color::gamma(mult[1] * (i - (cblacksom[1]/*+black_lev[1]*/))));
             histGreenRaw[idx >> 8] += hist[1][i];
+
             if (fourColours) {
                 idx = CLIP((int)Color::gamma(mult[3] * (i - (cblacksom[3]/*+black_lev[3]*/))));
                 histGreenRaw[idx >> 8] += hist[3][i];
             }
+
             idx = CLIP((int)Color::gamma(mult[2] * (i - (cblacksom[2]/*+black_lev[2]*/))));
             histBlueRaw[idx >> 8] += hist[2][i];
         }
@@ -4574,6 +4583,7 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
 {
     BENCHFUN
     constexpr double clipHigh = 64000.0;
+
     if (ri->get_colors() == 1) {
         rm = gm = bm = 1;
         return;
@@ -4653,6 +4663,7 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
 #ifdef _OPENMP
                     #pragma omp for schedule(dynamic,16) nowait
 #endif
+
                     for (int i = 32; i < H - 32; i++) {
                         for (int j = 32; j < W - 32; j++) {
                             // each loop read 1 rgb triplet value
