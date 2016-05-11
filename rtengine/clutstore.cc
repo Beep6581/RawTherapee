@@ -87,9 +87,18 @@ vfloat2 getClutValues(const AlignedBuffer<std::uint16_t>& clut_image, size_t ind
         _mm_cvtepi32_ps(_mm_cvtepu16_epi32(_mm_srli_si128(v_values, 8)))
     };
 #else
+    vint lowval = _mm_shuffle_epi32(v_values, _MM_SHUFFLE(1, 0, 1, 0));
+    vint highval = _mm_shuffle_epi32(v_values, _MM_SHUFFLE(3, 2, 3, 2));
+    lowval = _mm_shufflelo_epi16(lowval, _MM_SHUFFLE(1, 1, 0, 0));
+    highval = _mm_shufflelo_epi16(highval, _MM_SHUFFLE(1, 1, 0, 0));
+    lowval = _mm_shufflehi_epi16(lowval, _MM_SHUFFLE(3, 3, 2, 2));
+    highval = _mm_shufflehi_epi16(highval, _MM_SHUFFLE(3, 3, 2, 2));
+    lowval = vandm(lowval, _mm_set1_epi32(0x0000ffff));
+    highval = vandm(highval, _mm_set1_epi32(0x0000ffff));
+
     return {
-        _mm_cvtpu16_ps(_mm_movepi64_pi64(v_values)),
-        _mm_cvtpu16_ps(_mm_movepi64_pi64(_mm_srli_si128(v_values, 8)))
+        _mm_cvtepi32_ps(lowval),
+        _mm_cvtepi32_ps(highval)
     };
 #endif
 }
@@ -260,12 +269,6 @@ void rtengine::HaldCLUT::splitClutFilename(
 )
 {
     Glib::ustring basename = Glib::path_get_basename(filename);
-
-    Glib::ustring::size_type last_slash_pos = basename.rfind('/');
-
-    if (last_slash_pos == Glib::ustring::npos) {
-        last_slash_pos = basename.rfind('\\');
-    }
 
     const Glib::ustring::size_type last_dot_pos = basename.rfind('.');
 
