@@ -80,21 +80,23 @@ bool loadFile(
 #ifdef __SSE2__
 vfloat2 getClutValues(const AlignedBuffer<std::uint16_t>& clut_image, size_t index)
 {
-    const __m128i v_values = _mm_loadu_si128(reinterpret_cast<const __m128i*>(clut_image.data + index));
+    const vint v_values = _mm_loadu_si128(reinterpret_cast<const vint*>(clut_image.data + index));
 #ifdef __SSE4_1__
     return {
         _mm_cvtepi32_ps(_mm_cvtepu16_epi32(v_values)),
         _mm_cvtepi32_ps(_mm_cvtepu16_epi32(_mm_srli_si128(v_values, 8)))
     };
 #else
-    vint lowval = _mm_shuffle_epi32(v_values, _MM_SHUFFLE(1, 0, 1, 0));
-    vint highval = _mm_shuffle_epi32(v_values, _MM_SHUFFLE(3, 2, 3, 2));
-    lowval = _mm_shufflelo_epi16(lowval, _MM_SHUFFLE(1, 1, 0, 0));
-    highval = _mm_shufflelo_epi16(highval, _MM_SHUFFLE(1, 1, 0, 0));
-    lowval = _mm_shufflehi_epi16(lowval, _MM_SHUFFLE(3, 3, 2, 2));
-    highval = _mm_shufflehi_epi16(highval, _MM_SHUFFLE(3, 3, 2, 2));
-    lowval = vandm(lowval, _mm_set1_epi32(0x0000ffff));
-    highval = vandm(highval, _mm_set1_epi32(0x0000ffff));
+    const vint v_mask = _mm_set1_epi32(0x0000FFFF);
+
+    vint v_low = _mm_shuffle_epi32(v_values, _MM_SHUFFLE(1, 0, 1, 0));
+    vint v_high = _mm_shuffle_epi32(v_values, _MM_SHUFFLE(3, 2, 3, 2));
+    v_low = _mm_shufflelo_epi16(v_low, _MM_SHUFFLE(1, 1, 0, 0));
+    v_high = _mm_shufflelo_epi16(v_high, _MM_SHUFFLE(1, 1, 0, 0));
+    v_low = _mm_shufflehi_epi16(v_low, _MM_SHUFFLE(3, 3, 2, 2));
+    v_high = _mm_shufflehi_epi16(v_high, _MM_SHUFFLE(3, 3, 2, 2));
+    v_low = vandm(v_low, m_mask);
+    v_high = vandm(v_high, v_mask);
 
     return {
         _mm_cvtepi32_ps(lowval),
