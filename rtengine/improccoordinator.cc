@@ -55,7 +55,7 @@ ImProcCoordinator::ImProcCoordinator ()
       lhist16(65536), lhist16Cropped(65536),
       lhist16CAM(65536), lhist16CroppedCAM(65536),
       lhist16CCAM(65536),
-      lhist16RETI(65536),
+      lhist16RETI(),
       histCropped(65536),
       lhist16Clad(65536), lhist16CLlad(65536),
       lhist16LClad(65536), lhist16LLClad(65536),
@@ -236,6 +236,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
 
         if (params.retinex.enabled) {
+            lhist16RETI(32768);
             lhist16RETI.clear();
 
             imgsrc->retinexPrepareBuffers(params.icm, params.retinex, conversionBuffer, lhist16RETI);
@@ -249,9 +250,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         LUTf cdcurve (65536, 0);
         LUTf mapcurve (65536, 0);
 
-        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, mapcurve, dehatransmissionCurve, dehacontlutili, mapcontlutili, useHsl, lhist16RETI, histLRETI);
+        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, mapcurve, dehatransmissionCurve, dehagaintransmissionCurve, dehacontlutili, mapcontlutili, useHsl, lhist16RETI, histLRETI);
         float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-        imgsrc->retinex( params.icm, params.retinex,  params.toneCurve, cdcurve, mapcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, mapcontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, histLRETI);//enabled Retinex
+        imgsrc->retinex( params.icm, params.retinex,  params.toneCurve, cdcurve, mapcurve, dehatransmissionCurve, dehagaintransmissionCurve, conversionBuffer, dehacontlutili, mapcontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, histLRETI);//enabled Retinex
 
         if(dehaListener) {
             dehaListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);

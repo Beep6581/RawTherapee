@@ -78,9 +78,10 @@ public:
     bool limd;
     bool highl;
     bool baselog;
-//    bool grbl;
+    bool skal;
     bool method;
     bool transmissionCurve;
+    bool gaintransmissionCurve;
     bool cdcurve;
     bool mapcurve;
     bool cdHcurve;

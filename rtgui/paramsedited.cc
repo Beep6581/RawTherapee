@@ -73,9 +73,10 @@ void ParamsEdited::set (bool v)
     retinex.limd    = v;
     retinex.highl    = v;
     retinex.baselog    = v;
-//    retinex.grbl    = v;
+    retinex.skal    = v;
     retinex.medianmap = v;
     retinex.transmissionCurve   = v;
+    retinex.gaintransmissionCurve   = v;
     retinex.highlights    = v;
     retinex.htonalwidth   = v;
     retinex.shadows       = v;
@@ -547,6 +548,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         retinex.cdHcurve = retinex.cdHcurve && p.retinex.cdHcurve == other.retinex.cdHcurve;
         retinex.lhcurve = retinex.lhcurve && p.retinex.lhcurve == other.retinex.lhcurve;
         retinex.transmissionCurve = retinex.transmissionCurve && p.retinex.transmissionCurve == other.retinex.transmissionCurve;
+        retinex.gaintransmissionCurve = retinex.gaintransmissionCurve && p.retinex.gaintransmissionCurve == other.retinex.gaintransmissionCurve;
         retinex.retinexMethod = retinex.retinexMethod && p.retinex.retinexMethod == other.retinex.retinexMethod;
         retinex.mapMethod = retinex.mapMethod && p.retinex.mapMethod == other.retinex.mapMethod;
         retinex.viewMethod = retinex.viewMethod && p.retinex.viewMethod == other.retinex.viewMethod;
@@ -566,7 +568,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         retinex.limd = retinex.limd && p.retinex.limd == other.retinex.limd;
         retinex.highl = retinex.highl && p.retinex.highl == other.retinex.highl;
         retinex.baselog = retinex.baselog && p.retinex.baselog == other.retinex.baselog;
-//        retinex.grbl = retinex.grbl && p.retinex.grbl == other.retinex.grbl;
+        retinex.skal = retinex.skal && p.retinex.skal == other.retinex.skal;
         retinex.medianmap = retinex.medianmap && p.retinex.medianmap == other.retinex.medianmap;
         retinex.highlights = retinex.highlights && p.retinex.highlights == other.retinex.highlights;
         retinex.htonalwidth = retinex.htonalwidth && p.retinex.htonalwidth == other.retinex.htonalwidth;
@@ -1093,6 +1095,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.retinex.transmissionCurve    = mods.retinex.transmissionCurve;
     }
 
+    if (retinex.gaintransmissionCurve) {
+        toEdit.retinex.gaintransmissionCurve    = mods.retinex.gaintransmissionCurve;
+    }
+
     if (retinex.retinexMethod) {
         toEdit.retinex.retinexMethod    = mods.retinex.retinexMethod;
     }
@@ -1165,9 +1171,9 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.retinex.baselog   = mods.retinex.baselog;
     }
 
-//    if (retinex.grbl) {
-//        toEdit.retinex.grbl   = mods.retinex.grbl;
-//    }
+    if (retinex.skal) {
+        toEdit.retinex.skal   = mods.retinex.skal;
+    }
 
     if (retinex.gain) {
         toEdit.retinex.gain   = dontforceSet && options.baBehav[ADDSET_RETI_GAIN] ? toEdit.retinex.gain + mods.retinex.gain : mods.retinex.gain;

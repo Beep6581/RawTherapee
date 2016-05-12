@@ -121,7 +121,7 @@ RetinexParams::RetinexParams ()
 
 void RetinexParams::getDefaulttransmissionCurve(std::vector<double> &curve)
 {
-    double v[12] =   {   0.00, 0.34, 0.35, 0.35,
+    double v[12] =   {   0.00, 0.50, 0.35, 0.35,
                          0.60, 0.75, 0.35, 0.35,
                          1.00, 0.50, 0.35, 0.35,
                      };
@@ -134,6 +134,23 @@ void RetinexParams::getDefaulttransmissionCurve(std::vector<double> &curve)
         curve.at(i) = v[i - 1];
     }
 }
+void RetinexParams::getDefaultgaintransmissionCurve(std::vector<double> &curve)
+{
+    double v[16] = { 0.00, 0.1, 0.35, 0.00,
+                     0.25, 0.25, 0.35, 0.35,
+                     0.70, 0.25, 0.35, 0.35,
+                     1.00, 0.1, 0.00, 0.00
+                   };
+
+
+    curve.resize(17);
+    curve.at(0 ) = double(FCT_MinMaxCPoints);
+
+    for (size_t i = 1; i < curve.size(); ++i) {
+        curve.at(i) = v[i - 1];
+    }
+}
+
 
 void RetinexParams::setDefaults()
 {
@@ -158,7 +175,7 @@ void RetinexParams::setDefaults()
     radius        = 40;
 
     baselog = 2.71828;
-//    grbl = 50;
+    skal = 3;
     retinexMethod = "high";
     mapMethod = "none";
     viewMethod = "none";
@@ -173,13 +190,16 @@ void RetinexParams::setDefaults()
     lhcurve.push_back(DCT_Linear);
     mapcurve.clear();
     mapcurve.push_back(DCT_Linear);
+    getDefaultgaintransmissionCurve(gaintransmissionCurve);
 
     getDefaulttransmissionCurve(transmissionCurve);
 }
 
-void RetinexParams::getCurves(RetinextransmissionCurve &transmissionCurveLUT) const
+void RetinexParams::getCurves(RetinextransmissionCurve &transmissionCurveLUT, RetinexgaintransmissionCurve &gaintransmissionCurveLUT) const
 {
     transmissionCurveLUT.Set(this->transmissionCurve);
+    gaintransmissionCurveLUT.Set(this->gaintransmissionCurve);
+
 }
 
 
@@ -1521,9 +1541,9 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         keyFile.set_double ("Retinex", "baselog",               retinex.baselog);
     }
 
-//    if (!pedited || pedited->retinex.grbl) {
-//        keyFile.set_integer ("Retinex", "grbl",               retinex.grbl);
-//    }
+    if (!pedited || pedited->retinex.skal) {
+        keyFile.set_integer ("Retinex", "skal",               retinex.skal);
+    }
 
     if (!pedited || pedited->retinex.retinexMethod) {
         keyFile.set_string  ("Retinex", "RetinexMethod", retinex.retinexMethod);
@@ -1588,6 +1608,11 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->retinex.transmissionCurve)  {
         Glib::ArrayHandle<double> transmissionCurve = retinex.transmissionCurve;
         keyFile.set_double_list("Retinex", "TransmissionCurve", transmissionCurve);
+    }
+
+    if (!pedited || pedited->retinex.gaintransmissionCurve)  {
+        Glib::ArrayHandle<double> gaintransmissionCurve = retinex.gaintransmissionCurve;
+        keyFile.set_double_list("Retinex", "GainTransmissionCurve", gaintransmissionCurve);
     }
 
     // save channel mixer
@@ -4057,14 +4082,14 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                 }
             }
 
-            /*            if (keyFile.has_key ("Retinex", "grbl"))     {
-                            retinex.grbl   = keyFile.get_integer ("Retinex", "grbl");
+            if (keyFile.has_key ("Retinex", "skal"))     {
+                retinex.skal   = keyFile.get_integer ("Retinex", "skal");
 
-                            if (pedited) {
-                                pedited->retinex.grbl = true;
-                            }
-                        }
-            */
+                if (pedited) {
+                    pedited->retinex.skal = true;
+                }
+            }
+
             if (keyFile.has_key ("Retinex", "CDCurve"))         {
                 retinex.cdcurve            = keyFile.get_double_list ("Retinex", "CDCurve");
 
@@ -4146,6 +4171,16 @@ int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
                     pedited->retinex.transmissionCurve = true;
                 }
             }
+
+
+            if (keyFile.has_key ("Retinex", "GainTransmissionCurve"))         {
+                retinex.gaintransmissionCurve            = keyFile.get_double_list ("Retinex", "GainTransmissionCurve");
+
+                if (pedited) {
+                    pedited->retinex.gaintransmissionCurve = true;
+                }
+            }
+
         }
 
 
@@ -7551,6 +7586,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && retinex.cdHcurve == other.retinex.cdHcurve
         && retinex.lhcurve == other.retinex.lhcurve
         && retinex.transmissionCurve == other.retinex.transmissionCurve
+        && retinex.gaintransmissionCurve == other.retinex.gaintransmissionCurve
         && retinex.str == other.retinex.str
         && retinex.scal == other.retinex.scal
         && retinex.iter == other.retinex.iter
@@ -7569,7 +7605,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && retinex.radius == other.retinex.radius
 
         && retinex.baselog == other.retinex.baselog
-//        && retinex.grbl == other.retinex.grbl
+        && retinex.skal == other.retinex.skal
         && retinex.offs == other.retinex.offs
         && retinex.retinexMethod == other.retinex.retinexMethod
         && retinex.mapMethod == other.retinex.mapMethod
