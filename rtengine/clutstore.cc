@@ -56,7 +56,7 @@ bool loadFile(
             img_src.convertColorSpace(img_float.get(), icm, curr_wb);
         }
 
-        AlignedBuffer<std::uint16_t> image(fw * fh * 4 + 8); // + 8 because of SSE4_1 version of getClutValues
+        AlignedBuffer<std::uint16_t> image(fw * fh * 4 + 4); // getClutValues() loads one pixel in advance
 
         std::size_t index = 0;
 
