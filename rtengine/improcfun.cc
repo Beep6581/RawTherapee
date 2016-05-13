@@ -1790,7 +1790,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
                 float jli = params->colorappearance.jlight;
                 float contra = params->colorappearance.contrast;
-                Ciecam02::curveJfloat (jli, contra, 1, CAMBrightCurveJ, hist16J);//lightness and contrast J
+                Ciecam02::curveJfloat (jli, contra, CAMBrightCurveJ, hist16J);//lightness and contrast J
             }
 
             if (needQ) {
@@ -1802,7 +1802,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
                 float qbri = params->colorappearance.qbright;
                 float qcontra = params->colorappearance.qcontrast;
-                Ciecam02::curveJfloat (qbri, qcontra, 1, CAMBrightCurveQ, hist16Q);//brightness and contrast Q
+                Ciecam02::curveJfloat (qbri, qcontra, CAMBrightCurveQ, hist16Q);//brightness and contrast Q
             }
         }
 

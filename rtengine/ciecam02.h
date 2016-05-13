@@ -74,7 +74,7 @@ public:
     static void curvecolor(double satind, double satval, double &sres, double parsat);
     static void curvecolorfloat(float satind, float satval, float &sres, float parsat);
     static void curveJ (double br, double contr, int db, LUTf & outCurve , LUTu & histogram ) ;
-    static void curveJfloat (float br, float contr, int db, LUTf & outCurve , LUTu & histogram ) ;
+    static void curveJfloat (float br, float contr, LUTf & outCurve , const LUTu & histogram ) ;
 
     /**
      * Inverse transform from CIECAM02 JCh to XYZ.

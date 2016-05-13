@@ -180,39 +180,36 @@ void Ciecam02::curveJ (double br, double contr, int db, LUTf & outCurve, LUTu & 
     }
 }
 
-void Ciecam02::curveJfloat (float br, float contr, int db, LUTf & outCurve, LUTu & histogram )
+void Ciecam02::curveJfloat (float br, float contr, LUTf & outCurve, const LUTu & histogram )
 {
-    LUTf dcurve(65536, 0);
-    int skip = 1;
 
     // check if brightness curve is needed
     if (br > 0.00001f || br < -0.00001f) {
 
-        std::vector<double> brightcurvePoints;
-        brightcurvePoints.resize(9);
-        brightcurvePoints.at(0) = double(DCT_NURBS);
+        std::vector<double> brightcurvePoints(9);
+        brightcurvePoints[0] = double(DCT_NURBS);
 
-        brightcurvePoints.at(1) = 0.f; // black point.  Value in [0 ; 1] range
-        brightcurvePoints.at(2) = 0.f; // black point.  Value in [0 ; 1] range
+        brightcurvePoints[1] = 0.f; // black point.  Value in [0 ; 1] range
+        brightcurvePoints[2] = 0.f; // black point.  Value in [0 ; 1] range
 
         if (br > 0) {
-            brightcurvePoints.at(3) = 0.1f; // toe point
-            brightcurvePoints.at(4) = 0.1f + br / 150.0f; //value at toe point
+            brightcurvePoints[3] = 0.1f; // toe point
+            brightcurvePoints[4] = 0.1f + br / 150.0f; //value at toe point
 
-            brightcurvePoints.at(5) = 0.7f; // shoulder point
-            brightcurvePoints.at(6) = min(1.0f, 0.7f + br / 300.0f); //value at shoulder point
+            brightcurvePoints[5] = 0.7f; // shoulder point
+            brightcurvePoints[6] = min(1.0f, 0.7f + br / 300.0f); //value at shoulder point
         } else {
-            brightcurvePoints.at(3) = 0.1f - br / 150.0f; // toe point
-            brightcurvePoints.at(4) = 0.1f; // value at toe point
+            brightcurvePoints[3] = 0.1f - br / 150.0f; // toe point
+            brightcurvePoints[4] = 0.1f; // value at toe point
 
-            brightcurvePoints.at(5) = min(1.0f, 0.7f - br / 300.0f); // shoulder point
-            brightcurvePoints.at(6) = 0.7f; // value at shoulder point
+            brightcurvePoints[5] = min(1.0f, 0.7f - br / 300.0f); // shoulder point
+            brightcurvePoints[6] = 0.7f; // value at shoulder point
         }
 
-        brightcurvePoints.at(7) = 1.f; // white point
-        brightcurvePoints.at(8) = 1.f; // value at white point
+        brightcurvePoints[7] = 1.f; // white point
+        brightcurvePoints[8] = 1.f; // value at white point
 
-        DiagonalCurve* brightcurve = new DiagonalCurve (brightcurvePoints, CURVES_MIN_POLY_POINTS / skip);
+        DiagonalCurve brightcurve(brightcurvePoints, CURVES_MIN_POLY_POINTS);
 
         // Applying brightness curve
         for (int i = 0; i < 32768; i++) {
@@ -221,67 +218,51 @@ void Ciecam02::curveJfloat (float br, float contr, int db, LUTf & outCurve, LUTu
             float val = (float)i / 32767.0f;
 
             // apply brightness curve
-            val = brightcurve->getVal (val);
+            val = brightcurve.getVal (val);
 
-            // store result in a temporary array
-            dcurve[i] = CLIPD(val);
+            // store result
+            outCurve[i] = CLIPD(val);
         }
 
-        delete brightcurve;
     } else {
-        //  for (int i=0; i<32768; i++) { // L values range up to 32767, higher values are for highlight overflow
-        for (int i = 0; i < (32768 * db); i++) { // L values range up to 32767, higher values are for highlight overflow
-
-            // set the identity curve in the temporary array
-            dcurve[i] = (float)i / (db * 32768.0f);
-        }
+        // set the identity curve
+        outCurve.makeIdentity(32767.f);
     }
 
 
     if (contr > 0.00001f || contr < -0.00001f) {
 
         // compute mean luminance of the image with the curve applied
-        int sum = 0;
-        float avg = 0;
+        float sum, avg;
 
-        //float sqavg = 0;
-        for (int i = 0; i < 32768; i++) {
-            avg += dcurve[i] * histogram[i];//approximation for average : usage of L (lab) instead of J
-            sum += histogram[i];
-        }
+        histogram.getSumAndAverage(sum, avg);
 
-        avg /= sum;
-        //printf("avg=%f\n",avg);
-        std::vector<double> contrastcurvePoints;
-        contrastcurvePoints.resize(9);
-        contrastcurvePoints.at(0) = double(DCT_NURBS);
+        std::vector<double> contrastcurvePoints(9);
 
-        contrastcurvePoints.at(1) = 0.f; // black point.  Value in [0 ; 1] range
-        contrastcurvePoints.at(2) = 0.f; // black point.  Value in [0 ; 1] range
+        contrastcurvePoints[0] = double(DCT_NURBS);
 
-        contrastcurvePoints.at(3) = avg - avg * (0.6f - contr / 250.0f); // toe point
-        contrastcurvePoints.at(4) = avg - avg * (0.6f + contr / 250.0f); // value at toe point
+        contrastcurvePoints[1] = 0.f; // black point.  Value in [0 ; 1] range
+        contrastcurvePoints[2] = 0.f; // black point.  Value in [0 ; 1] range
 
-        contrastcurvePoints.at(5) = avg + (1 - avg) * (0.6f - contr / 250.0f); // shoulder point
-        contrastcurvePoints.at(6) = avg + (1 - avg) * (0.6f + contr / 250.0f); // value at shoulder point
+        contrastcurvePoints[3] = avg - avg * (0.6f - contr / 250.0f); // toe point
+        contrastcurvePoints[4] = avg - avg * (0.6f + contr / 250.0f); // value at toe point
 
-        contrastcurvePoints.at(7) = 1.f; // white point
-        contrastcurvePoints.at(8) = 1.f; // value at white point
+        contrastcurvePoints[5] = avg + (1 - avg) * (0.6f - contr / 250.0f); // shoulder point
+        contrastcurvePoints[6] = avg + (1 - avg) * (0.6f + contr / 250.0f); // value at shoulder point
 
-        DiagonalCurve* contrastcurve = new DiagonalCurve (contrastcurvePoints, CURVES_MIN_POLY_POINTS / skip);
+        contrastcurvePoints[7] = 1.f; // white point
+        contrastcurvePoints[8] = 1.f; // value at white point
+
+        DiagonalCurve contrastcurve(contrastcurvePoints, CURVES_MIN_POLY_POINTS);
 
         // apply contrast enhancement
-        for (int i = 0; i < (32768 * db); i++) {
-            dcurve[i]  = contrastcurve->getVal (dcurve[i]);
+        for (int i = 0; i < 32768; i++) {
+            outCurve[i] = contrastcurve.getVal(outCurve[i]);
         }
 
-        delete contrastcurve;
     }
 
-    //   for (int i=0; i<32768; i++) outCurve[i] = 32768.0*dcurve[i];
-    for (int i = 0; i < (db * 32768); i++) {
-        outCurve[i] = db * 32768.0f * dcurve[i];
-    }
+    outCurve *= 32767.f;
 }
 
 /**
