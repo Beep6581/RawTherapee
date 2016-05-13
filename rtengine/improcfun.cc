@@ -149,8 +149,7 @@ void ImProcFunctions::firstAnalysis (const Imagefloat* const original, const Pro
             #pragma omp for nowait
 #endif
 
-            for (int i = 0; i < H; i++)
-            {
+            for (int i = 0; i < H; i++) {
                 for (int j = 0; j < W; j++) {
 
                     float r = original->r(i, j);
@@ -1452,6 +1451,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         //preparate for histograms CIECAM
         LUTu hist16JCAM;
         LUTu hist16_CCAM;
+
         if(pW != 1 && params->colorappearance.datacie) { //only with improccoordinator
             hist16JCAM(32768);
             hist16JCAM.clear();
@@ -1459,7 +1459,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             hist16_CCAM.clear();
         }
 
-          //end preparate histogram
+        //end preparate histogram
         int width = lab->W, height = lab->H;
         float minQ = 10000.f;
         float maxQ = -1000.f;
@@ -1475,8 +1475,8 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
         const bool epdEnabled = params->epd.enabled;
         bool ciedata = (params->colorappearance.datacie && pW != 1) && !((params->colorappearance.tonecie && (epdEnabled)) || (params->sharpening.enabled && settings->autocielab && execsharp)
-                || (params->dirpyrequalizer.enabled && settings->autocielab) || (params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)
-                || (params->impulseDenoise.enabled && settings->autocielab) ||  (params->colorappearance.badpixsl > 0 && settings->autocielab));
+                       || (params->dirpyrequalizer.enabled && settings->autocielab) || (params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)
+                       || (params->impulseDenoise.enabled && settings->autocielab) ||  (params->colorappearance.badpixsl > 0 && settings->autocielab));
 
         ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
 
@@ -1694,8 +1694,10 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                 hist16Q.clear();
             }
 
+#ifdef _OPENMP
             const int numThreads = min(max(width * height / 65536, 1), omp_get_max_threads());
             #pragma omp parallel num_threads(numThreads) if(numThreads>1)
+#endif
             {
                 LUTu hist16Jthr;
                 LUTu hist16Qthr;
@@ -2364,10 +2366,11 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             if(curveMode == ColorAppearanceParams::TC_MODE_BRIGHT) {
                                 brli = 70.0f;
                                 libr = Q;     //40.0 to 100.0 approximative factor for Q  - 327 for J
-                            } else /*if(curveMode == ColorAppearanceParams::TC_MODE_LIGHT)*/ {
+                            } else { /*if(curveMode == ColorAppearanceParams::TC_MODE_LIGHT)*/
                                 brli = 327.f;
                                 libr = J;    //327 for J
                             }
+
                             posl = (int)(libr * brli);
                             hist16JCAM[posl]++;
 
@@ -2377,10 +2380,11 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             } else if(curveMode3 == ColorAppearanceParams::TC_MODE_SATUR) {
                                 chsacol = 450.0f;
                                 colch = s;
-                            } else /*if(curveMode3 == ColorAppearanceParams::TC_MODE_COLORF)*/ {
+                            } else { /*if(curveMode3 == ColorAppearanceParams::TC_MODE_COLORF)*/
                                 chsacol = 327.0f;
                                 colch = M;
                             }
+
                             posc = (int)(colch * chsacol);
                             hist16_CCAM[posc]++;
 
@@ -2663,6 +2667,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                 || (params->impulseDenoise.enabled && settings->autocielab) ||  (params->colorappearance.badpixsl > 0 && settings->autocielab)) {
 
             ciedata = (params->colorappearance.datacie && pW != 1);
+
             if(epdEnabled  && params->colorappearance.tonecie && algepd) {
                 lab->deleteLab();
                 ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
@@ -2723,10 +2728,11 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             if(curveMode == ColorAppearanceParams::TC_MODE_BRIGHT) {
                                 brli = 70.0f;
                                 libr = ncie->Q_p[i][j];    //40.0 to 100.0 approximative factor for Q  - 327 for J
-                            } else /*if(curveMode == ColorAppearanceParams::TC_MODE_LIGHT)*/ {
+                            } else { /*if(curveMode == ColorAppearanceParams::TC_MODE_LIGHT)*/
                                 brli = 327.f;
                                 libr = ncie->J_p[i][j];    //327 for J
                             }
+
                             posl = (int)(libr * brli);
                             hist16JCAM[posl]++;
 
@@ -2736,10 +2742,11 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             } else if(curveMode3 == ColorAppearanceParams::TC_MODE_SATUR) {
                                 chsacol = 450.0f;
                                 colch = 100.f * sqrtf(ncie_C_p / ncie->Q_p[i][j]);
-                            } else /*if(curveMode3 == ColorAppearanceParams::TC_MODE_COLORF)*/ {
+                            } else { /*if(curveMode3 == ColorAppearanceParams::TC_MODE_COLORF)*/
                                 chsacol = 327.0f;
                                 colch = ncie->M_p[i][j];
                             }
+
                             posc = (int)(colch * chsacol);
                             hist16_CCAM[posc]++;
                         }
@@ -6598,7 +6605,8 @@ void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double 
     count = 0;
 
     int i = 0;
-    for (; i < min((int)ave,imax); i++) {
+
+    for (; i < min((int)ave, imax); i++) {
         if (count < 8) {
             octile[count] += histogram[i];
 
@@ -6612,6 +6620,7 @@ void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double 
         lodev += (xlog(ave + 1.f) - xlog((float)i + 1.)) * histogram[i];
         losum += histogram[i];
     }
+
     for (; i < imax; i++) {
         if (count < 8) {
             octile[count] += histogram[i];
@@ -6784,10 +6793,12 @@ void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double 
 
     float val = 0.f;
     float increment = corr * (1 << histcompr);
+
     for (int i = 0; i < 65536 >> histcompr; i++) {
         gavg += histogram[i] * Color::gamma2curve[val];
         val += increment;
     }
+
     gavg /= sum;
 
     if (black < gavg) {
