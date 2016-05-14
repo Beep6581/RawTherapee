@@ -180,7 +180,7 @@ void Ciecam02::curveJ (double br, double contr, int db, LUTf & outCurve, LUTu & 
     }
 }
 
-void Ciecam02::curveJfloat (float br, float contr, LUTf & outCurve, const LUTu & histogram )
+void Ciecam02::curveJfloat (float br, float contr, const LUTu & histogram, LUTf & outCurve)
 {
 
     // check if brightness curve is needed
@@ -233,10 +233,15 @@ void Ciecam02::curveJfloat (float br, float contr, LUTf & outCurve, const LUTu &
     if (contr > 0.00001f || contr < -0.00001f) {
 
         // compute mean luminance of the image with the curve applied
-        float sum, avg;
+        float sum = 0.f;
+        float avg = 0.f;
 
-        histogram.getSumAndAverage(sum, avg);
+        for (int i = 0; i < 32768; i++) {
+            avg += outCurve[i] * histogram[i];//approximation for average : usage of L (lab) instead of J
+            sum += histogram[i];
+        }
 
+        avg /= sum;
         std::vector<double> contrastcurvePoints(9);
 
         contrastcurvePoints[0] = double(DCT_NURBS);
