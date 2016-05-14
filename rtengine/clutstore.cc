@@ -95,12 +95,12 @@ vfloat2 getClutValues(const AlignedBuffer<std::uint16_t>& clut_image, size_t ind
     v_high = _mm_shufflelo_epi16(v_high, _MM_SHUFFLE(1, 1, 0, 0));
     v_low = _mm_shufflehi_epi16(v_low, _MM_SHUFFLE(3, 3, 2, 2));
     v_high = _mm_shufflehi_epi16(v_high, _MM_SHUFFLE(3, 3, 2, 2));
-    v_low = vandm(v_low, m_mask);
+    v_low = vandm(v_low, v_mask);
     v_high = vandm(v_high, v_mask);
 
     return {
-        _mm_cvtepi32_ps(lowval),
-        _mm_cvtepi32_ps(highval)
+        _mm_cvtepi32_ps(v_low),
+        _mm_cvtepi32_ps(v_high)
     };
 #endif
 }
