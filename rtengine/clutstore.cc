@@ -56,7 +56,7 @@ bool loadFile(
             img_src.convertColorSpace(img_float.get(), icm, curr_wb);
         }
 
-        AlignedBuffer<std::uint16_t> image(fw * fh * 4 + 8); // + 8 because of SSE4_1 version of getClutValue
+        AlignedBuffer<std::uint16_t> image(fw * fh * 4 + 4); // getClutValues() loads one pixel in advance
 
         std::size_t index = 0;
 
@@ -78,12 +78,30 @@ bool loadFile(
 }
 
 #ifdef __SSE2__
-vfloat getClutValue(const AlignedBuffer<std::uint16_t>& clut_image, size_t index)
+vfloat2 getClutValues(const AlignedBuffer<std::uint16_t>& clut_image, size_t index)
 {
+    const vint v_values = _mm_loadu_si128(reinterpret_cast<const vint*>(clut_image.data + index));
 #ifdef __SSE4_1__
-    return _mm_cvtepi32_ps(_mm_cvtepu16_epi32(_mm_loadu_si128(reinterpret_cast<const __m128i*>(clut_image.data + index))));
+    return {
+        _mm_cvtepi32_ps(_mm_cvtepu16_epi32(v_values)),
+        _mm_cvtepi32_ps(_mm_cvtepu16_epi32(_mm_srli_si128(v_values, 8)))
+    };
 #else
-    return _mm_set_ps(clut_image.data[index + 3], clut_image.data[index + 2], clut_image.data[index + 1], clut_image.data[index]);
+    const vint v_mask = _mm_set1_epi32(0x0000FFFF);
+
+    vint v_low = _mm_shuffle_epi32(v_values, _MM_SHUFFLE(1, 0, 1, 0));
+    vint v_high = _mm_shuffle_epi32(v_values, _MM_SHUFFLE(3, 2, 3, 2));
+    v_low = _mm_shufflelo_epi16(v_low, _MM_SHUFFLE(1, 1, 0, 0));
+    v_high = _mm_shufflelo_epi16(v_high, _MM_SHUFFLE(1, 1, 0, 0));
+    v_low = _mm_shufflehi_epi16(v_low, _MM_SHUFFLE(3, 3, 2, 2));
+    v_high = _mm_shufflehi_epi16(v_high, _MM_SHUFFLE(3, 3, 2, 2));
+    v_low = vandm(v_low, m_mask);
+    v_high = vandm(v_high, v_mask);
+
+    return {
+        _mm_cvtepi32_ps(lowval),
+        _mm_cvtepi32_ps(highval)
+    };
 #endif
 }
 #endif
@@ -212,11 +230,13 @@ void rtengine::HaldCLUT::getRGB(
 
         const vfloat v_r = PERMUTEPS(v_rgb, _MM_SHUFFLE(0, 0, 0, 0));
 
-        vfloat v_tmp1 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
+        vfloat2 v_clut_values = getClutValues(clut_image, index);
+        vfloat v_tmp1 = vintpf(v_r, v_clut_values.y, v_clut_values.x);
 
         index = (color + level) * 4;
 
-        vfloat v_tmp2 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
+        v_clut_values = getClutValues(clut_image, index);
+        vfloat v_tmp2 = vintpf(v_r, v_clut_values.y, v_clut_values.x);
 
         const vfloat v_g = PERMUTEPS(v_rgb, _MM_SHUFFLE(1, 1, 1, 1));
 
@@ -224,11 +244,13 @@ void rtengine::HaldCLUT::getRGB(
 
         index = (color + level_square) * 4;
 
-        v_tmp1 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
+        v_clut_values = getClutValues(clut_image, index);
+        v_tmp1 = vintpf(v_r, v_clut_values.y, v_clut_values.x);
 
         index = (color + level + level_square) * 4;
 
-        v_tmp2 = vintpf(v_r, getClutValue(clut_image, index + 4), getClutValue(clut_image, index));
+        v_clut_values = getClutValues(clut_image, index);
+        v_tmp2 = vintpf(v_r, v_clut_values.y, v_clut_values.x);
 
         v_tmp1 = vintpf(v_g, v_tmp2, v_tmp1);
 
@@ -249,12 +271,6 @@ void rtengine::HaldCLUT::splitClutFilename(
 )
 {
     Glib::ustring basename = Glib::path_get_basename(filename);
-
-    Glib::ustring::size_type last_slash_pos = basename.rfind('/');
-
-    if (last_slash_pos == Glib::ustring::npos) {
-        last_slash_pos = basename.rfind('\\');
-    }
 
     const Glib::ustring::size_type last_dot_pos = basename.rfind('.');
 
