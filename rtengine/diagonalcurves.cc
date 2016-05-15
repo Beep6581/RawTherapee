@@ -72,11 +72,15 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
 
             if(x[0] == 0.f && x[1] == 0.f)
                 // Avoid crash when first two points are at x = 0 (git Issue 2888)
+            {
                 x[1] = 0.01f;
+            }
 
             if(x[0] == 1.f && x[1] == 1.f)
                 // Avoid crash when first two points are at x = 1 (100 in gui) (git Issue 2923)
+            {
                 x[0] = 0.99f;
+            }
 
             if (!identity) {
                 if (kind == DCT_Spline && N > 2) {
@@ -260,6 +264,8 @@ void DiagonalCurve::NURBS_set ()
     // adding the final horizontal segment, always (see under)
     poly_x.push_back(3.0);      // 3.0 is a hack for optimization purpose of the getVal method (the last value has to be beyond the normal range)
     poly_y.push_back(y[N - 1]);
+
+    fillDyByDx();
 }
 
 double DiagonalCurve::getVal (double t) const
@@ -303,7 +309,7 @@ double DiagonalCurve::getVal (double t) const
         // do a binary search for the right interval:
         unsigned int k_lo = 0, k_hi = N - 1;
 
-        while (k_hi - k_lo > 1) {
+        while (k_hi > 1 + k_lo) {
             unsigned int k = (k_hi + k_lo) / 2;
 
             if (x[k] > t) {
@@ -347,7 +353,7 @@ double DiagonalCurve::getVal (double t) const
         k_hi = hash.at(i).higherValue;
 
         // do a binary search for the right interval :
-        while (k_hi - k_lo > 1) {
+        while (k_hi > 1 + k_lo) {
             unsigned int k = (k_hi + k_lo) / 2;
 
             if (poly_x[k] > t) {
@@ -357,13 +363,7 @@ double DiagonalCurve::getVal (double t) const
             }
         }
 
-        if (k_lo == k_hi) {
-            k_hi = k_lo + 1;
-        }
-
-        double dx = poly_x[k_hi] - poly_x[k_lo];
-        double dy = poly_y[k_hi] - poly_y[k_lo];
-        return poly_y[k_lo] + (t - poly_x[k_lo]) * ( dy ) / dx;
+        return poly_y[k_lo] + (t - poly_x[k_lo]) * dyByDx[k_lo];
         break;
     }
 

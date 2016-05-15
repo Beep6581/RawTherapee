@@ -70,6 +70,18 @@ void Curve::AddPolygons ()
     poly_y.push_back(y3);
 }
 
+void Curve::fillDyByDx ()
+{
+    dyByDx.resize(poly_x.size() - 1);
+
+    for(unsigned int i = 0; i < poly_x.size() - 1; i++) {
+        double dx = poly_x[i + 1] - poly_x[i];
+        double dy = poly_y[i + 1] - poly_y[i];
+        dyByDx[i] = dy / dx;
+
+    }
+}
+
 void Curve::fillHash()
 {
     hash.resize(hashSize + 2);

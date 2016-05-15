@@ -336,6 +336,7 @@ protected:
     // end of variables used in Parametric curves only
     std::vector<double> poly_x;     // X points of the faceted curve
     std::vector<double> poly_y;     // Y points of the faceted curve
+    std::vector<double> dyByDx;
     std::vector<HashEntry> hash;
     unsigned short hashSize;        // hash table's size, between [10, 100, 1000]
 
@@ -369,6 +370,7 @@ protected:
     }
 
     void fillHash();
+    void fillDyByDx();
 
 public:
     Curve ();
@@ -406,7 +408,7 @@ public:
 class FlatCurve : public Curve
 {
 
-protected:
+private:
     FlatCurveType kind;
     double* leftTangent;
     double* rightTangent;
