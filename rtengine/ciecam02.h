@@ -125,7 +125,7 @@ public:
                                        float c, float nc, float n, float nbb, float ncb, float cz, float d  );
 
     static void xyz2jchqms_ciecam02float( float &J, float &C, float &h,
-                                          float &Q, float &M, float &s, float &aw, float &fl, float &wh,
+                                          float &Q, float &M, float &s, float aw, float fl, float wh,
                                           float x, float y, float z,
                                           float xw, float yw, float zw,
                                           float c, float nc, int gamu, float n, float nbb, float ncb, float pfl, float cz, float d  );

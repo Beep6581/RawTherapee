@@ -55,15 +55,15 @@ extern const Settings* settings;
 ImProcFunctions::~ImProcFunctions ()
 {
 
-    if (monitorTransform != NULL) {
+    if (monitorTransform) {
         cmsDeleteTransform (monitorTransform);
     }
 
-    if (output2monitorTransform != NULL) {
+    if (output2monitorTransform) {
         cmsDeleteTransform (output2monitorTransform);
     }
 
-    if (lab2outputTransform != NULL) {
+    if (lab2outputTransform) {
         cmsDeleteTransform (lab2outputTransform);
     }
 }
@@ -76,21 +76,21 @@ void ImProcFunctions::setScale (double iscale)
 void ImProcFunctions::updateColorProfiles (const ColorManagementParams& icm, const Glib::ustring& monitorProfile, RenderingIntent monitorIntent)
 {
     // set up monitor transform
-    if (monitorTransform != NULL) {
+    if (monitorTransform) {
         cmsDeleteTransform (monitorTransform);
     }
 
-    if (output2monitorTransform != NULL) {
+    if (output2monitorTransform) {
         cmsDeleteTransform (output2monitorTransform);
     }
 
-    if (lab2outputTransform != NULL) {
+    if (lab2outputTransform) {
         cmsDeleteTransform (lab2outputTransform);
     }
 
-    monitorTransform = NULL;
-    output2monitorTransform = NULL;
-    lab2outputTransform = NULL;
+    monitorTransform = nullptr;
+    output2monitorTransform = nullptr;
+    lab2outputTransform = nullptr;
 
 #if !defined(__APPLE__) // No support for monitor profiles on OS X, all data is sRGB
 
@@ -98,7 +98,7 @@ void ImProcFunctions::updateColorProfiles (const ColorManagementParams& icm, con
 
     if (monitor) {
         MyMutex::MyLock lcmsLock (*lcmsMutex);
-        cmsHPROFILE iprof  = cmsCreateLab4Profile(NULL);
+        cmsHPROFILE iprof  = cmsCreateLab4Profile(nullptr);
         monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, monitorIntent,
                                                cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is for thread safety, NOOPTIMIZE for precision
 
@@ -1440,8 +1440,6 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                                       LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, int scalecd, int rtt)
 {
     if(params->colorappearance.enabled) {
-//int lastskip;
-//if(rtt==1) {lastskip=scalecd;} //not for Rtthumbnail
 
 #ifdef _DEBUG
         MyTime t1e, t2e;
@@ -1466,12 +1464,11 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         float Yw;
         Yw = 1.0;
         double Xw, Zw;
-        float f, nc, yb, la, c, xw, yw, zw, f2, c2, nc2, yb2, la2;
+        float f, nc, yb, la, c, xw, yw, zw, f2, c2, nc2, yb2;
         float fl, n, nbb, ncb, aw; //d
         float xwd, ywd, zwd;
         int alg = 0;
         bool algepd = false;
-        float sum = 0.f;
 
         const bool epdEnabled = params->epd.enabled;
         bool ciedata = (params->colorappearance.datacie && pW != 1) && !((params->colorappearance.tonecie && (epdEnabled)) || (params->sharpening.enabled && settings->autocielab && execsharp)
@@ -1518,7 +1515,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         } else if(params->colorappearance.algo == "QM")  {
             alg = 2;
             algepd = true;
-        } else if(params->colorappearance.algo == "ALL") {
+        } else { /*if(params->colorappearance.algo == "ALL")*/
             alg = 3;
             algepd = true;
         }
@@ -1552,7 +1549,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             xwd = 95.04f;    //fluo F7
             ywd = 100.0f;
             zwd = 108.75f;
-        } else if(settings->viewingdevice == 7)  {
+        } else { /*if(settings->viewingdevice == 7) */
             xwd = 100.96f;    //fluo F11
             ywd = 100.0f;
             zwd = 64.35f;
@@ -1572,7 +1569,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             yb2 = 23.0f;
         } else if(settings->viewingdevicegrey == 5)  {
             yb2 = 30.0f;
-        } else if(settings->viewingdevicegrey == 6)  {
+        } else { /* if(settings->viewingdevicegrey == 6)*/
             yb2 = 40.0f;
         }
 
@@ -1585,7 +1582,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             }
         }
 
-        la2 = float(params->colorappearance.adaplum);
+        const float la2 = float(params->colorappearance.adaplum);
 
         // level of adaptation
         const float deg = (params->colorappearance.degree) / 100.0f;
@@ -1667,16 +1664,81 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
         const ColorAppearanceParams::eCTCModeId curveMode3 = params->colorappearance.curveMode3;
         const bool hasColCurve3 = bool(customColCurve3);
-        bool c1s = false;
-        bool c1co = false;
 
-        if( hasColCurve3 && curveMode3 == ColorAppearanceParams::TC_MODE_SATUR) {
-            c1s = true;
+        if(settings->viewinggreySc == 0) { //auto
+            if     (mean < 15.f) {
+                yb = 3.0f;
+            } else if(mean < 30.f) {
+                yb = 5.0f;
+            } else if(mean < 40.f) {
+                yb = 10.0f;
+            } else if(mean < 45.f) {
+                yb = 15.0f;
+            } else if(mean < 50.f) {
+                yb = 18.0f;
+            } else if(mean < 55.f) {
+                yb = 23.0f;
+            } else if(mean < 60.f) {
+                yb = 30.0f;
+            } else if(mean < 70.f) {
+                yb = 40.0f;
+            } else if(mean < 80.f) {
+                yb = 60.0f;
+            } else if(mean < 90.f) {
+                yb = 80.0f;
+            } else {
+                yb = 90.0f;
+            }
+        } else if(settings->viewinggreySc == 1) {
+            yb = 18.0f;    //fixed
         }
 
-        if(hasColCurve3 &&  curveMode3 == ColorAppearanceParams::TC_MODE_COLORF) {
-            c1co = true;
+
+        const bool highlight = params->toneCurve.hrenabled; //Get the value if "highlight reconstruction" is activated
+
+        const int gamu = (params->colorappearance.gamut == true) ? 1 : 0;
+        xw = 100.0f * Xw;
+        yw = 100.0f * Yw;
+        zw = 100.0f * Zw;
+        float xw1, yw1, zw1, xw2, yw2, zw2;
+
+        // settings of WB: scene and viewing
+        if(params->colorappearance.wbmodel == "RawT") {
+            xw1 = 96.46f;    //use RT WB; CAT 02 is used for output device (see prefreneces)
+            yw1 = 100.0f;
+            zw1 = 82.445f;
+            xw2 = xwd;
+            yw2 = ywd;
+            zw2 = zwd;
+        } else if(params->colorappearance.wbmodel == "RawTCAT02") {
+            xw1 = xw;    // Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
+            yw1 = yw;
+            zw1 = zw;
+            xw2 = xwd;
+            yw2 = ywd;
+            zw2 = zwd;
         }
+
+        float cz, wh, pfl;
+        Ciecam02::initcam1float(gamu, yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
+        const float pow1 = pow_F( 1.64f - pow_F( 0.29f, n ), 0.73f );
+        float nj, dj, nbbj, ncbj, czj, awj, flj;
+        Ciecam02::initcam2float(gamu, yb2, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
+        const float reccmcz = 1.f / (c2 * czj);
+        const float pow1n = pow_F( 1.64f - pow_F( 0.29f, nj ), 0.73f );
+
+        const float epsil = 0.0001f;
+        const float w_h = wh + epsil;
+        const float coefQ = 32767.f / wh;
+        const float a_w = aw;
+        const float c_ = c;
+        const float f_l = fl;
+        const float coe = pow_F(fl, 0.25f);
+        const float QproFactor = ( 0.4f / c ) * ( aw + 4.0f ) ;
+        const bool LabPassOne = !((params->colorappearance.tonecie && (epdEnabled)) || (params->sharpening.enabled && settings->autocielab && execsharp)
+                                  || (params->dirpyrequalizer.enabled && settings->autocielab) || (params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)
+                                  || (params->impulseDenoise.enabled && settings->autocielab) ||  (params->colorappearance.badpixsl > 0 && settings->autocielab));
+
 
         if(CAMBrightCurveJ.dirty || CAMBrightCurveQ.dirty) {
             bool needJ = (alg == 0 || alg == 1 || alg == 3);
@@ -1693,6 +1755,8 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                 hist16Q (32768);
                 hist16Q.clear();
             }
+
+            float sum = 0.f;
 
 #ifdef _OPENMP
             const int numThreads = min(max(width * height / 65536, 1), omp_get_max_threads());
@@ -1788,96 +1852,21 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                     CAMBrightCurveJ.dirty = false;
                 }
 
-                float jli = params->colorappearance.jlight;
-                float contra = params->colorappearance.contrast;
-                Ciecam02::curveJfloat (jli, contra, hist16J, CAMBrightCurveJ);//lightness and contrast J
+                Ciecam02::curveJfloat (params->colorappearance.jlight, params->colorappearance.contrast, hist16J, CAMBrightCurveJ);//lightness and contrast J
+                CAMBrightCurveJ /= 327.68f;
             }
 
             if (needQ) {
                 if (!CAMBrightCurveQ) {
                     CAMBrightCurveQ(32768, LUT_CLIP_ABOVE);
-                    CAMBrightCurveQ.clear();
                     CAMBrightCurveQ.dirty = false;
                 }
 
-                float qbri = params->colorappearance.qbright;
-                float qcontra = params->colorappearance.qcontrast;
-                Ciecam02::curveJfloat (qbri, qcontra, hist16Q, CAMBrightCurveQ);//brightness and contrast Q
+                Ciecam02::curveJfloat (params->colorappearance.qbright, params->colorappearance.qcontrast, hist16Q, CAMBrightCurveQ);//brightness and contrast Q
+                CAMBrightCurveQ /= coefQ;
             }
         }
 
-        if(settings->viewinggreySc == 0) { //auto
-            if     (mean < 15.f) {
-                yb = 3.0f;
-            } else if(mean < 30.f) {
-                yb = 5.0f;
-            } else if(mean < 40.f) {
-                yb = 10.0f;
-            } else if(mean < 45.f) {
-                yb = 15.0f;
-            } else if(mean < 50.f) {
-                yb = 18.0f;
-            } else if(mean < 55.f) {
-                yb = 23.0f;
-            } else if(mean < 60.f) {
-                yb = 30.0f;
-            } else if(mean < 70.f) {
-                yb = 40.0f;
-            } else if(mean < 80.f) {
-                yb = 60.0f;
-            } else if(mean < 90.f) {
-                yb = 80.0f;
-            } else {
-                yb = 90.0f;
-            }
-        } else if(settings->viewinggreySc == 1) {
-            yb = 18.0f;    //fixed
-        }
-
-
-        const bool highlight = params->toneCurve.hrenabled; //Get the value if "highlight reconstruction" is activated
-
-        const int gamu = (params->colorappearance.gamut == true) ? 1 : 0;
-        xw = 100.0f * Xw;
-        yw = 100.0f * Yw;
-        zw = 100.0f * Zw;
-        float xw1, yw1, zw1, xw2, yw2, zw2;
-
-        // settings of WB: scene and viewing
-        if(params->colorappearance.wbmodel == "RawT") {
-            xw1 = 96.46f;    //use RT WB; CAT 02 is used for output device (see prefreneces)
-            yw1 = 100.0f;
-            zw1 = 82.445f;
-            xw2 = xwd;
-            yw2 = ywd;
-            zw2 = zwd;
-        } else if(params->colorappearance.wbmodel == "RawTCAT02") {
-            xw1 = xw;    // Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
-            yw1 = yw;
-            zw1 = zw;
-            xw2 = xwd;
-            yw2 = ywd;
-            zw2 = zwd;
-        }
-
-        float cz, wh, pfl;
-        Ciecam02::initcam1float(gamu, yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
-        const float pow1 = pow_F( 1.64f - pow_F( 0.29f, n ), 0.73f );
-        float nj, dj, nbbj, ncbj, czj, awj, flj;
-        Ciecam02::initcam2float(gamu, yb2, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
-        const float reccmcz = 1.f / (c2 * czj);
-        const float pow1n = pow_F( 1.64f - pow_F( 0.29f, nj ), 0.73f );
-
-        const float epsil = 0.0001f;
-        const float w_h = wh + epsil;
-        const float a_w = aw;
-        const float c_ = c;
-        const float f_l = fl;
-        const float coe = pow_F(fl, 0.25f);
-        const float QproFactor = ( 0.4f / c ) * ( aw + 4.0f ) ;
-        const bool LabPassOne = !((params->colorappearance.tonecie && (epdEnabled)) || (params->sharpening.enabled && settings->autocielab && execsharp)
-                                  || (params->dirpyrequalizer.enabled && settings->autocielab) || (params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)
-                                  || (params->impulseDenoise.enabled && settings->autocielab) ||  (params->colorappearance.badpixsl > 0 && settings->autocielab));
 
         //matrix for current working space
         TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
@@ -2001,18 +1990,16 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
                     // we cannot have all algorithms with all chroma curves
                     if(alg == 0) {
-                        Jpro = CAMBrightCurveJ[Jpro * 327.68f] / 327.68f; //lightness CIECAM02 + contrast
+                        Jpro = CAMBrightCurveJ[Jpro * 327.68f]; //lightness CIECAM02 + contrast
                         Qpro = QproFactor * sqrtf(Jpro);
                         float Cp = (spro * spro * Qpro) / (1000000.f);
                         Cpro = Cp * 100.f;
                         float sres;
                         Ciecam02::curvecolorfloat(chr, Cp , sres, 1.8f);
                         Color::skinredfloat(Jpro, hpro, sres, Cp, 55.f, 30.f, 1, rstprotection, 100.f, Cpro);
-                    }
-
-                    if(alg == 1)  {
+                    } else if(alg == 1)  {
                         // Lightness saturation
-                        Jpro = CAMBrightCurveJ[Jpro * 327.68f] / 327.68f; //lightness CIECAM02 + contrast
+                        Jpro = CAMBrightCurveJ[Jpro * 327.68f]; //lightness CIECAM02 + contrast
                         float sres;
                         float Sp = spro / 100.0f;
                         float parsat = 1.5f; //parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation)
@@ -2025,8 +2012,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         Qpro = QproFactor * sqrtf(Jpro);
                         Cpro = (spro * spro * Qpro) / (10000.0f);
                     } else if(alg == 2) {
-                        float coef = 32767.f / wh;
-                        Qpro = (CAMBrightCurveQ[(float)(Qpro * coef)]) / coef; //brightness and contrast
+                        Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)]; //brightness and contrast
                         float Mp, sres;
                         Mp = Mpro / 100.0f;
                         Ciecam02::curvecolorfloat(mchr, Mp , sres, 2.5f);
@@ -2039,14 +2025,8 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         Cpro = Mpro / coe;
                         Qpro = (Qpro == 0.f ? epsil : Qpro); // avoid division by zero
                         spro = 100.0f * sqrtf( Mpro / Qpro );
-                    } else if(alg == 3) {
-                        float coef = 32760.f / wh;
-
-                        if(Qpro * coef >= 32767.0f) {
-                            Qpro = (CAMBrightCurveQ[32767]) / coef;    //brightness and contrast
-                        } else {
-                            Qpro = (CAMBrightCurveQ[(float)(Qpro * coef)]) / coef;    //brightness and contrast
-                        }
+                    } else { /*if(alg == 3) */
+                        Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)];    //brightness and contrast
 
                         float Mp, sres;
                         Mp = Mpro / 100.0f;
@@ -2065,7 +2045,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             Jpro = 99.9f;
                         }
 
-                        Jpro = (CAMBrightCurveJ[(float)(Jpro * 327.68f)]) / 327.68f; //lightness CIECAM02 + contrast
+                        Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)]; //lightness CIECAM02 + contrast
                         float Sp = spro / 100.0f;
                         Ciecam02::curvecolorfloat(schr, Sp , sres, 1.5f);
                         dred = 100.f; // in C mode
@@ -2284,7 +2264,6 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             Color::skinredfloat(Jpro, hpro, Ss, Sold, dred, protect_red, sk, rstprotection, ko, spro);
                             Qpro = ( 4.0f / c ) * sqrtf( Jpro / 100.0f ) * ( aw + 4.0f ) ;
                             Cpro = (spro * spro * Qpro) / (10000.0f);
-
                         } else if (curveMode3 == ColorAppearanceParams::TC_MODE_COLORF) { //
                             float parsat = 0.8f; //0.68;
                             float coef = 327.68f / parsat;
@@ -2299,7 +2278,6 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             int sk = 0;
                             float ko = 1.f / coef;
                             Color::skinredfloat(Jpro, hpro, Mm, Mold, dred, protect_red, sk, rstprotection, ko, Mpro);
-                            Cpro = Mpro / coe;
 
                             if(Jpro < 1.f && Mpro > 12.f * coe) {
                                 Mpro = 12.f * coe;    //reduce artifacts by "pseudo gamut control CIECAM"
@@ -2310,20 +2288,13 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             } else if(Jpro < 7.f && Mpro > 50.f * coe) {
                                 Mpro = 50.f * coe;
                             }
+
+                            Cpro = Mpro / coe;
                         }
                     }
 
                     //to retrieve the correct values of variables
 
-                    if(c1s) {
-                        Qpro = ( 4.0f / c ) * sqrtf( Jpro / 100.0f ) * ( aw + 4.0f ) ; //for saturation curve
-                        Cpro = (spro * spro * Qpro) / (10000.0f);
-                    }
-
-                    if(c1co) {
-                        float coe = pow_F(fl, 0.25f);
-                        Cpro = Mpro / coe;
-                    }  // for colorfullness curve
 
                     //retrieve values C,J...s
                     C = Cpro;
@@ -2405,9 +2376,9 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                                                              xw2, yw2,  zw2,
                                                              f2,  c2, nc2, gamu, pow1n, nbbj, ncbj, flj, czj, dj, awj);
                             float x, y, z;
-                            x = (float)xx * 655.35f;
-                            y = (float)yy * 655.35f;
-                            z = (float)zz * 655.35f;
+                            x = xx * 655.35f;
+                            y = yy * 655.35f;
+                            z = zz * 655.35f;
                             float Ll, aa, bb;
                             //convert xyz=>lab
                             Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
@@ -2677,14 +2648,8 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             //EPDToneMapCIE adated to CIECAM
 
 
-            const float eps = 0.0001f;
+            constexpr float eps = 0.0001f;
             const float co_e = (pow_F(f_l, 0.25f)) + eps;
-            TMatrix wiprofa = iccStore->workingSpaceInverseMatrix (params->icm.working);
-            const float wipa[3][3] = {
-                {float(wiprofa[0][0]), float(wiprofa[0][1]), float(wiprofa[0][2])},
-                {float(wiprofa[1][0]), float(wiprofa[1][1]), float(wiprofa[1][2])},
-                {float(wiprofa[2][0]), float(wiprofa[2][1]), float(wiprofa[2][2])}
-            };
 
 #ifndef _DEBUG
             #pragma omp parallel
@@ -2788,10 +2753,10 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             bool neg = false;
                             bool more_rgb = false;
                             //gamut control : Lab values are in gamut
-                            Color::gamutLchonly(sincosval, Lprov1, Chprov1, wipa, highlight, 0.15f, 0.96f, neg, more_rgb);
+                            Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
 #else
                             //gamut control : Lab values are in gamut
-                            Color::gamutLchonly(sincosval, Lprov1, Chprov1, wipa, highlight, 0.15f, 0.96f);
+                            Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.96f);
 #endif
 
                             lab->L[i][j] = Lprov1 * 327.68f;
@@ -2850,10 +2815,10 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             bool neg = false;
                             bool more_rgb = false;
                             //gamut control : Lab values are in gamut
-                            Color::gamutLchonly(sincosval, Lprov1, Chprov1, wipa, highlight, 0.15f, 0.96f, neg, more_rgb);
+                            Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
 #else
                             //gamut control : Lab values are in gamut
-                            Color::gamutLchonly(sincosval, Lprov1, Chprov1, wipa, highlight, 0.15f, 0.96f);
+                            Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.96f);
 #endif
                             lab->L[i][j] = Lprov1 * 327.68f;
                             lab->a[i][j] = 327.68f * Chprov1 * sincosval.y;
@@ -2989,12 +2954,12 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit , float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clToningcurve, LUTf & cl2Toningcurve,
                                const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,  const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh, DCPProfile *dcpProf)
 {
-    Imagefloat *tmpImage = NULL;
+    Imagefloat *tmpImage = nullptr;
 
     // NOTE: We're getting all 3 pointers here, but this function may not need them all, so one could optimize this
-    Imagefloat* editImgFloat = NULL;
-    LabImage* editLab = NULL;
-    PlanarWhateverData<float>* editWhatever = NULL;
+    Imagefloat* editImgFloat = nullptr;
+    LabImage* editLab = nullptr;
+    PlanarWhateverData<float>* editWhatever = nullptr;
     EditUniqueID editID = pipetteBuffer ? pipetteBuffer->getEditID() : EUID_None;
 
     if (editID != EUID_None) {
@@ -3020,8 +2985,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         s_th = params->sh.stonalwidth * (shmap->avg - shmap->min_f) / 100;
     }
 
-    bool processSH  = params->sh.enabled && shmap != NULL && (params->sh.highlights > 0 || params->sh.shadows > 0);
-    bool processLCE = params->sh.enabled && shmap != NULL && params->sh.localcontrast > 0;
+    bool processSH  = params->sh.enabled && shmap && (params->sh.highlights > 0 || params->sh.shadows > 0);
+    bool processLCE = params->sh.enabled && shmap && params->sh.localcontrast > 0;
     double lceamount = params->sh.localcontrast / 200.0;
 
     TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
@@ -3081,7 +3046,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
         if (hCurve->isIdentity()) {
             delete hCurve;
-            hCurve = NULL;
+            hCurve = nullptr;
             hCurveEnabled = false;
         }
     }
@@ -3091,7 +3056,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
         if (sCurve->isIdentity()) {
             delete sCurve;
-            sCurve = NULL;
+            sCurve = nullptr;
             sCurveEnabled = false;
         }
     }
@@ -3101,7 +3066,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
         if (vCurve->isIdentity()) {
             delete vCurve;
-            vCurve = NULL;
+            vCurve = nullptr;
             vCurveEnabled = false;
         }
     }
@@ -3111,7 +3076,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
         if (bwlCurve->isIdentity()) {
             delete bwlCurve;
-            bwlCurve = NULL;
+            bwlCurve = nullptr;
             bwlCurveEnabled = false;
         }
     }
@@ -3296,8 +3261,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 #endif
     {
         char *buffer;
-        char *editIFloatBuffer = NULL;
-        char *editWhateverBuffer = NULL;
+        char *editIFloatBuffer = nullptr;
+        char *editWhateverBuffer = nullptr;
 
         buffer = (char *) malloc(3 * sizeof(float) * TS * TS + 20 * 64 + 63);
         char *data;
@@ -3439,7 +3404,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                     }
                 }
 
-                if (dcpProf != NULL) {
+                if (dcpProf) {
                     dcpProf->step2ApplyTile(rtemp, gtemp, btemp, tW - jstart, tH - istart, TS);
                 }
 
@@ -5426,9 +5391,9 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
     //init Flatcurve for C=f(H)
 
     // NOTE: We're getting all 3 pointers here, but this function may not need them all, so one could optimize this
-    Imagefloat* editImgFloat = NULL;
-    LabImage* editLab = NULL;
-    PlanarWhateverData<float>* editWhatever = NULL;
+    Imagefloat* editImgFloat = nullptr;
+    LabImage* editLab = nullptr;
+    PlanarWhateverData<float>* editWhatever = nullptr;
     EditUniqueID editID = EUID_None;
     bool editPipette = false;
 
@@ -5454,7 +5419,7 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
         }
     }
 
-    FlatCurve* chCurve = NULL;// curve C=f(H)
+    FlatCurve* chCurve = nullptr;// curve C=f(H)
     bool chutili = false;
 
     if (params->labCurve.chromaticity > -100) {
@@ -5463,7 +5428,7 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
         if (!chCurve || chCurve->isIdentity()) {
             if (chCurve) {
                 delete chCurve;
-                chCurve = NULL;
+                chCurve = nullptr;
             }
         }//do not use "Munsell" if Chcurve not used
         else {
@@ -5471,7 +5436,7 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
         }
     }
 
-    FlatCurve* lhCurve = NULL;//curve L=f(H)
+    FlatCurve* lhCurve = nullptr;//curve L=f(H)
     bool lhutili = false;
 
     if (params->labCurve.chromaticity > -100) {
@@ -5480,7 +5445,7 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
         if (!lhCurve || lhCurve->isIdentity()) {
             if (lhCurve) {
                 delete lhCurve;
-                lhCurve = NULL;
+                lhCurve = nullptr;
             }
         }//do not use "Munsell" if Chcurve not used
         else {
@@ -5488,7 +5453,7 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
         }
     }
 
-    FlatCurve* hhCurve = NULL;//curve H=f(H)
+    FlatCurve* hhCurve = nullptr;//curve H=f(H)
     bool hhutili = false;
 
     if (params->labCurve.chromaticity > -100) {
@@ -5497,7 +5462,7 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
         if (!hhCurve || hhCurve->isIdentity()) {
             if (hhCurve) {
                 delete hhCurve;
-                hhCurve = NULL;
+                hhCurve = nullptr;
             }
         }//do not use "Munsell" if Chcurve not used
         else {
@@ -6884,13 +6849,13 @@ double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_si
 
         Thumbnail* thumb = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, w_thumb, h_thumb, 1, FALSE);
 
-        if (thumb == NULL) {
+        if (!thumb) {
             return 0.0;
         }
 
         Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw      (fname, ri, w_raw, h_raw, 1, 1.0, FALSE);
 
-        if (raw == NULL) {
+        if (!raw) {
             delete thumb;
             return 0.0;
         }
@@ -6914,7 +6879,7 @@ double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_si
         thumbGray = thumb->getGrayscaleHistEQ (width);
         rawGray = raw->getGrayscaleHistEQ (width);
 
-        if (thumbGray == NULL || rawGray == NULL) {
+        if (!thumbGray || !rawGray) {
             if (thumbGray) {
                 delete thumbGray;
             }

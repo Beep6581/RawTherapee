@@ -261,6 +261,22 @@ public:
         return *this;
     }
 
+    // divide all elements of LUT<float> by a constant float value
+    template<typename U = T, typename = typename std::enable_if<std::is_same<U, float>::value>::type>
+    LUT<float> & operator/=(float divisor)
+    {
+#ifdef _OPENMP
+        #pragma omp simd
+#endif
+
+        for(unsigned int i = 0; i < this->size; i++) {
+            data[i] /= divisor;
+        }
+
+        return *this;
+    }
+
+
     // use with integer indices
     T& operator[](int index) const
     {

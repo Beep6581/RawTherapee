@@ -843,7 +843,7 @@ void Ciecam02::xyz2jchqms_ciecam02( double &J, double &C, double &h, double &Q, 
     h = myh;
 }
 
-void Ciecam02::xyz2jchqms_ciecam02float( float &J, float &C, float &h, float &Q, float &M, float &s, float &aw, float &fl, float &wh,
+void Ciecam02::xyz2jchqms_ciecam02float( float &J, float &C, float &h, float &Q, float &M, float &s, float aw, float fl, float wh,
         float x, float y, float z, float xw, float yw, float zw,
         float c, float nc, int gamu, float pow1, float nbb, float ncb, float pfl, float cz, float d)
 
