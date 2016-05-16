@@ -1844,21 +1844,13 @@ void Color::transitred (const float HH, float const Chprov1, const float dred, c
     if(HH >= 0.15f && HH < 1.3f) {
         if (Chprov1 < dred) {
             factor = factorskin;
-        } else if(Chprov1 < (dred + protect_red))
-            // factor = (factorsat-factorskin)/protect_red*Chprov1+factorsat-(dred+protect_red)*(factorsat-factorskin)/protect_red;
-            // optimized formula
-        {
+        } else if(Chprov1 < (dred + protect_red)) {
             factor = ((factorsat - factorskin) * Chprov1 + factorsat * protect_red - (dred + protect_red) * (factorsat - factorskin)) / protect_red;
         }
-    }
-    // then test if chroma is in the extanded range
-    else if ( HH > (0.15f - deltaHH) || HH < (1.3f + deltaHH) ) {
+    } else if ( HH > (0.15f - deltaHH) && HH < (1.3f + deltaHH) ) { // test if chroma is in the extended range
         if (Chprov1 < dred) {
             factor = factorskinext;    // C=dred=55 => real max of skin tones
-        } else if (Chprov1 < (dred + protect_red)) // transition
-            // factor = (factorsat-factorskinext)/protect_red*Chprov1+factorsat-(dred+protect_red)*(factorsat-factorskinext)/protect_red;
-            // optimized formula
-        {
+        } else if (Chprov1 < (dred + protect_red)) {// transition
             factor = ((factorsat - factorskinext) * Chprov1 + factorsat * protect_red - (dred + protect_red) * (factorsat - factorskinext)) / protect_red;
         }
     }
