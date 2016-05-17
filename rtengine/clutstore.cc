@@ -283,11 +283,16 @@ void rtengine::HaldCLUT::splitClutFilename(
 
     profile_name = "sRGB";
 
-    for (const auto& working_profile : rtengine::getWorkingProfiles()) {
-        if (std::search(name.rbegin(), name.rend(), working_profile.rbegin(), working_profile.rend()) == name.rbegin()) {
-            profile_name = working_profile;
-            name.erase(name.size() - working_profile.size());
-            break;
+    if (!name.empty()) {
+        for (const auto& working_profile : rtengine::getWorkingProfiles()) {
+            if (
+                !working_profile.empty() // This isn't strictly needed, but an empty wp name should be skipped anyway
+                && std::search(name.rbegin(), name.rend(), working_profile.rbegin(), working_profile.rend()) == name.rbegin()
+            ) {
+                profile_name = working_profile;
+                name.erase(name.size() - working_profile.size());
+                break;
+            }
         }
     }
 }
