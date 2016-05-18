@@ -32,6 +32,8 @@
 
 
 /* Expanded data source object for stdio input */
+namespace
+{
 
 typedef struct {
     struct jpeg_source_mgr pub;   /* public fields */
@@ -43,6 +45,8 @@ typedef struct {
 } my_source_mgr;
 
 typedef my_source_mgr * my_src_ptr;
+
+}
 
 #define INPUT_BUF_SIZE  4096    /* choose an efficiently fread'able size */
 
