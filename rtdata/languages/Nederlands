@@ -1979,8 +1979,10 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_436;Retinex - M - Radius
 !HISTORY_MSG_437;Retinex - M - Method
 !HISTORY_MSG_438;Retinex - M - Equalizer
-!HISTORY_MSG_439;Retinex - Preview
+!HISTORY_MSG_439;Retinex - Process
 !HISTORY_MSG_440;CbDL - Method
+!HISTORY_MSG_441;Retinex - Gain transmission
+!HISTORY_MSG_442;Retinex - Scale
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
 !MONITOR_PROFILE_SYSTEM;System default
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
@@ -2004,13 +2006,18 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_RETINEX_CONTEDIT_MAP;Mask equalizer
 !TP_RETINEX_CURVEEDITOR_MAP;L=f(L)
 !TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gaussian mask or wavelet mask.\nBeware of artifacts!
+!TP_RETINEX_EQUAL;Equalizer
 !TP_RETINEX_FREEGAMMA;Free gamma
+!TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
+!TP_RETINEX_GAINTRANSMISSION;Gain transmission
+!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
 !TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
 !TP_RETINEX_GRAD;Transmission gradient
 !TP_RETINEX_GRADS;Strength gradient
 !TP_RETINEX_GRADS_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Strength is reduced when iterations increase, and conversely.
 !TP_RETINEX_GRAD_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Variance and Threshold are reduced when iterations increase, and conversely.
 !TP_RETINEX_ITER;Iterations (Tone-mapping)
+!TP_RETINEX_ITERF;Tone mapping
 !TP_RETINEX_ITER_TOOLTIP;Simulate a tone-mapping operator.\nHigh values increase the processing time.
 !TP_RETINEX_LABEL_MASK;Mask
 !TP_RETINEX_MAP;Mask method
@@ -2023,6 +2030,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
 !TP_RETINEX_SCALES;Gaussian gradient
 !TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Scale and radius are reduced when iterations increase, and conversely.
+!TP_RETINEX_SKAL;Scale
+!TP_RETINEX_TRANF;Transmission
 !TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
 !TP_RETINEX_VIEW;Process
 !TP_RETINEX_VIEW_MASK;Mask

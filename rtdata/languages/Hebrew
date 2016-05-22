@@ -921,14 +921,14 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !HISTORY_MSG_407;Retinex - Method
 !HISTORY_MSG_408;Retinex - Radius
 !HISTORY_MSG_409;Retinex - Contrast
-!HISTORY_MSG_410;Retinex - Brightness
+!HISTORY_MSG_410;Retinex - Offset
 !HISTORY_MSG_411;Retinex - Strength
 !HISTORY_MSG_412;Retinex - Gaussian Gradient
-!HISTORY_MSG_413;Retinex - Variance
+!HISTORY_MSG_413;Retinex - Contrast
 !HISTORY_MSG_414;Retinex - Histogram - Lab
 !HISTORY_MSG_415;Retinex - Transmission
 !HISTORY_MSG_416;Retinex
-!HISTORY_MSG_417;Retinex - Transmission median
+!HISTORY_MSG_417;Retinex - Transmission Median
 !HISTORY_MSG_418;Retinex - Threshold
 !HISTORY_MSG_419;Retinex - Color space
 !HISTORY_MSG_420;Retinex - Histogram - HSL
@@ -950,8 +950,10 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !HISTORY_MSG_436;Retinex - M - Radius
 !HISTORY_MSG_437;Retinex - M - Method
 !HISTORY_MSG_438;Retinex - M - Equalizer
-!HISTORY_MSG_439;Retinex - Preview
+!HISTORY_MSG_439;Retinex - Process
 !HISTORY_MSG_440;CbDL - Method
+!HISTORY_MSG_441;Retinex - Gain transmission
+!HISTORY_MSG_442;Retinex - Scale
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
@@ -1713,8 +1715,12 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Strength according to hue Strength=f(H)\nThis curve also acts on chroma when using the "Highlight" retinex method.
 !TP_RETINEX_CURVEEDITOR_MAP;L=f(L)
 !TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gaussian mask or wavelet mask.\nBeware of artifacts!
+!TP_RETINEX_EQUAL;Equalizer
 !TP_RETINEX_FREEGAMMA;Free gamma
 !TP_RETINEX_GAIN;Gain
+!TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
+!TP_RETINEX_GAINTRANSMISSION;Gain transmission
+!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
 !TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA;Gamma
 !TP_RETINEX_GAMMA_FREE;Free
@@ -1734,6 +1740,7 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !TP_RETINEX_HSLSPACE_LIN;HSL-Linear
 !TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
 !TP_RETINEX_ITER;Iterations (Tone-mapping)
+!TP_RETINEX_ITERF;Tone mapping
 !TP_RETINEX_ITER_TOOLTIP;Simulate a tone-mapping operator.\nHigh values increase the processing time.
 !TP_RETINEX_LABEL;Retinex
 !TP_RETINEX_LABEL_MASK;Mask
@@ -1753,10 +1760,11 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !TP_RETINEX_NEIGHBOR;Radius
 !TP_RETINEX_NEUTRAL;Reset
 !TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
-!TP_RETINEX_OFFSET;Brightness
+!TP_RETINEX_OFFSET;Offset (brightness)
 !TP_RETINEX_SCALES;Gaussian gradient
 !TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Scale and radius are reduced when iterations increase, and conversely.
 !TP_RETINEX_SETTINGS;Settings
+!TP_RETINEX_SKAL;Scale
 !TP_RETINEX_SLOPE;Free gamma slope
 !TP_RETINEX_STRENGTH;Strength
 !TP_RETINEX_THRESHOLD;Threshold
@@ -1764,6 +1772,7 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
 !TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
 !TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nMean and Sigma.\nTm=Min TM=Max of transmission map.
+!TP_RETINEX_TRANF;Transmission
 !TP_RETINEX_TRANSMISSION;Transmission map
 !TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
 !TP_RETINEX_UNIFORM;Uniform

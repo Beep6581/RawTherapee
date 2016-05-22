@@ -2043,3 +2043,16 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_441;Retinex - Gain transmission
+!HISTORY_MSG_442;Retinex - Scale
+!TP_RETINEX_EQUAL;Equalizer
+!TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
+!TP_RETINEX_GAINTRANSMISSION;Gain transmission
+!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
+!TP_RETINEX_ITERF;Tone mapping
+!TP_RETINEX_SKAL;Scale
+!TP_RETINEX_TRANF;Transmission
