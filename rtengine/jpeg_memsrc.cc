@@ -26,6 +26,8 @@
 
 
 /* Expanded data source object for memory input */
+namespace
+{
 
 typedef struct {
     struct jpeg_source_mgr pub; /* public fields */
@@ -36,6 +38,7 @@ typedef struct {
 
 typedef my_source_mgr * my_src_ptr;
 
+}
 
 /*
  * Initialize source --- called by jpeg_read_header

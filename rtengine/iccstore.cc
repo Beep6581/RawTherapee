@@ -263,7 +263,7 @@ cmsHPROFILE ICCStore::makeStdGammaProfile (cmsHPROFILE iprof)
                 tags[i].sig == 0x6B545243) { // kTRC
             if (gamma_offset == 0) {
                 gamma_offset = offset;
-                uint32_t pcurve[] = { htonl (0x63757276), htonl (0), htonl (gamma_size == 12 ? 0 : 1) };
+                uint32_t pcurve[] = { htonl(0x63757276), htonl(0), htonl(gamma_size == 12 ? 0U : 1U) };
                 memcpy (&nd[offset], pcurve, 12);
 
                 if (gamma_size == 14) {
