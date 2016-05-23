@@ -108,8 +108,8 @@ EXPORT_BYPASS_SHARPENMICRO;Mikrokontrast überspringen
 EXPORT_BYPASS_SH_HQ;Schatten/Lichter überspringen\n(Schärfemaske)
 EXPORT_FASTEXPORTOPTIONS;<b>Schnell-Export - Einstellungen</b>
 EXPORT_INSTRUCTIONS;Die Einstellungen zum schnellen Export\nerlauben es, zeit- und ressourcenintensive\nEntwicklungsschritte zu überspringen und dafür\ndie Warteschlangenverarbeitung mit\nschnellen Export-Einstellungen auszuführen.\nDieses Vorgehen wird zur schnelleren\nGenerierung von gering aufgelösten Bildern\nempfohlen, falls es auf die Geschwindigkeit\nankommt oder für ein oder mehrere Bilder\nandere Ausgabegrößen gewünscht werden,\nohne Änderungen an deren gespeicherten\nParameter vornehmen zu müssen.
-EXPORT_MAXHEIGHT;Maximale Höhe: 
-EXPORT_MAXWIDTH;Maximale Breite:  
+EXPORT_MAXHEIGHT;Maximale Höhe:
+EXPORT_MAXWIDTH;Maximale Breite:
 EXPORT_PUTTOQUEUEFAST; Zur Warteschlange “Schneller Export“ hinzufügen
 EXPORT_RAW_DMETHOD;Demosaikmethode
 EXTPROGTARGET_1;RAW
@@ -226,7 +226,7 @@ FILECHOOSER_FILTER_TIFF;TIFF-Dateien
 GENERAL_ABOUT;Über
 GENERAL_AFTER;Nachher
 GENERAL_APPLY;Anwenden
-GENERAL_ASIMAGE;Als Bild
+GENERAL_ASIMAGE;Wie Bild
 GENERAL_AUTO;Automatisch
 GENERAL_BEFORE;Vorher
 GENERAL_CANCEL;Abbrechen
@@ -235,7 +235,7 @@ GENERAL_DISABLE;Deaktivieren
 GENERAL_DISABLED;Deaktiviert
 GENERAL_ENABLE;Aktivieren
 GENERAL_ENABLED;Aktiviert
-GENERAL_FILE;Datei: 
+GENERAL_FILE;Datei:
 GENERAL_LANDSCAPE;Quer
 GENERAL_NA;n/a
 GENERAL_NO;Nein
@@ -1209,7 +1209,7 @@ TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%  Gesamt: %4%%
 TP_BWMIX_RGBLABEL_HINT;RGB-Faktoren\n\nGesamt: Summe aller RGB-Werte.\n- immer 100% im Modus Relativ\n- höher (heller), oder niedriger (dunkler) 100% im Modus Absolut
 TP_BWMIX_RGB_TOOLTIP;Mischen Sie die Kanäle. Verwenden Sie die Vorgaben zur Orientierung.\nNegative Werte können zu Artefakten führen.
 TP_BWMIX_SETTING;Voreinstellung
-TP_BWMIX_SETTING_TOOLTIP;Voreinstellungen für den Kanalmixer (Film, Landschaft, ...). 
+TP_BWMIX_SETTING_TOOLTIP;Voreinstellungen für den Kanalmixer (Film, Landschaft, ...).
 TP_BWMIX_SET_HIGHCONTAST;Hoher Kontrast
 TP_BWMIX_SET_HIGHSENSIT;Hohe Empfindlichkeit
 TP_BWMIX_SET_HYPERPANCHRO;Hyper-Panchromatisch
