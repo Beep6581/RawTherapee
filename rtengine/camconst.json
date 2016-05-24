@@ -1686,7 +1686,6 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "dcraw_matrix": [ 10686,-4042,-1052,-3595,13238,276,-464,1259,5931 ], // DNG_v8.7 D65
       // "dcraw_matrix": [ 13298,-6099,-296,-5243,16153,-1235,-508,1220,7758 ], // DNG_v8.7 Standard Light A
       //  "dcraw_matrix": [ 9598,-3268,-634,-5678,14795,824,-1255,2675,4523 ], // SAMSUNG DNG CONVERTER v1.0
-        "raw_crop": [ 1200, 500, 1600, 3600 ],// TRIAL CROP
         "ranges": {
            "white": [
               { "iso": 100, "levels": 16000 }, // 16000 typical 16084, LE 16120 and 16383, LENR 16280
