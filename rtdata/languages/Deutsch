@@ -27,6 +27,7 @@
 #26 2015-12-22 Korrekturen (TooWaBoo) RT4.2.536
 #27 2016-02-12 Retinexübersetzung (TooWaBoo) RT4.2.730
 #28 2016-03-19 Erweiterung/Korrekturen (TooWaBoo) RT4.2.880
+#29 2016-05-24 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1005
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -45,7 +46,7 @@ CURVEEDITOR_CURVE;Kurve
 CURVEEDITOR_CURVES;Kurven
 CURVEEDITOR_CUSTOM;Angepasst
 CURVEEDITOR_DARKS;Tiefen
-CURVEEDITOR_EDITPOINT_HINT;Bearbeitung der Kurvenpunkte über Zahlenwerte.\n\nRechtsklick auf einen Kurvenpunkt um ihn auszuwählen. Rechtsklick in einen leeren Bereich um ihn abzuwählen.
+CURVEEDITOR_EDITPOINT_HINT;Bearbeitung der Kurvenpunkte über Zahlenwerte.\n\nRechtsklick auf einen Kurvenpunkt um ihn auszuwählen.\nRechtsklick in einen leeren Bereich um ihn abzuwählen.
 CURVEEDITOR_HIGHLIGHTS;Spitzlichter
 CURVEEDITOR_LIGHTS;Lichter
 CURVEEDITOR_LINEAR;Linear
@@ -109,7 +110,7 @@ EXPORT_BYPASS_SH_HQ;Schatten/Lichter überspringen\n(Schärfemaske)
 EXPORT_FASTEXPORTOPTIONS;<b>Schnell-Export - Einstellungen</b>
 EXPORT_INSTRUCTIONS;Die Einstellungen zum schnellen Export\nerlauben es, zeit- und ressourcenintensive\nEntwicklungsschritte zu überspringen und dafür\ndie Warteschlangenverarbeitung mit\nschnellen Export-Einstellungen auszuführen.\nDieses Vorgehen wird zur schnelleren\nGenerierung von gering aufgelösten Bildern\nempfohlen, falls es auf die Geschwindigkeit\nankommt oder für ein oder mehrere Bilder\nandere Ausgabegrößen gewünscht werden,\nohne Änderungen an deren gespeicherten\nParameter vornehmen zu müssen.
 EXPORT_MAXHEIGHT;Maximale Höhe: 
-EXPORT_MAXWIDTH;Maximale Breite: 
+EXPORT_MAXWIDTH;Maximale Breite:  
 EXPORT_PUTTOQUEUEFAST; Zur Warteschlange “Schneller Export“ hinzufügen
 EXPORT_RAW_DMETHOD;Demosaikmethode
 EXTPROGTARGET_1;RAW
@@ -226,7 +227,7 @@ FILECHOOSER_FILTER_TIFF;TIFF-Dateien
 GENERAL_ABOUT;Über
 GENERAL_AFTER;Nachher
 GENERAL_APPLY;Anwenden
-GENERAL_ASIMAGE;Wie Bild
+GENERAL_ASIMAGE;Als Bild
 GENERAL_AUTO;Automatisch
 GENERAL_BEFORE;Vorher
 GENERAL_CANCEL;Abbrechen
@@ -367,7 +368,7 @@ HISTORY_MSG_105;(Farbsaum entfernen)
 HISTORY_MSG_106;(Farbsaum entfernen)\nRadius
 HISTORY_MSG_107;(Farbsaum entfernen)\nSchwellenwert
 HISTORY_MSG_108;(Belichtung)\nLichterkompression\nSchwellenwert
-HISTORY_MSG_109;(Skalieren) - Breite &amp; Höhe
+HISTORY_MSG_109;(Skalieren) - Begrenzungsrahmen
 HISTORY_MSG_110;(Skalieren) - Anwenden auf:
 HISTORY_MSG_111;(L*a*b*) - Farbverschiebung\nvermeiden
 HISTORY_MSG_112;--unused--
@@ -667,28 +668,28 @@ HISTORY_MSG_406;(Wavelet)\nKantenschärfung\nBenachbarte Pixel
 HISTORY_MSG_407;(Retinex) - Methode
 HISTORY_MSG_408;(Retinex) - Radius
 HISTORY_MSG_409;(Retinex) - Einstellungen\nKontrast
-HISTORY_MSG_410;(Retinex) - Einstellungen\nHelligkeit
+HISTORY_MSG_410;(Retinex) - Einstellungen\nVerstärkung und Ausgleich\nAusgleich
 HISTORY_MSG_411;(Retinex) - Intensität
-HISTORY_MSG_412;(Retinex)\nGaußscher Gradient
+HISTORY_MSG_412;(Retinex) - Einstellungen\nDynamikkompression\nGaußscher Gradient
 HISTORY_MSG_413;(Retinex) - Kontrast
-HISTORY_MSG_414;(Retinex) - Einstellungen\nLuminanz(L) - L*a*b*
-HISTORY_MSG_415;(Retinex) - Einstellungen\nTransmissionskurve
+HISTORY_MSG_414;(Retinex) - Einstellungen\nKorrekturen\nLuminanz(L) - L*a*b*
+HISTORY_MSG_415;(Retinex) - Einstellungen\nTransmission\nTransmissionskurve
 HISTORY_MSG_416;(Retinex)
-HISTORY_MSG_417;(Retinex) - Einstellungen\nTransmission Median-\nfilter
+HISTORY_MSG_417;(Retinex) - Einstellungen\nTransmission\nMedianfilter
 HISTORY_MSG_418;(Retinex) - Einstellungen\nTransmission\nSchwellenwert
 HISTORY_MSG_419;(Retinex) - Farbraum
 HISTORY_MSG_420;(Retinex) - Einstellungen\nHSL-Kurve
-HISTORY_MSG_421;(Retinex) - Einstellungen\nGammakorrektur
+HISTORY_MSG_421;(Retinex) - Einstellungen\nKorrekturen\nGammakorrektur
 HISTORY_MSG_422;(Retinex) - Einstellungen\nGamma
 HISTORY_MSG_423;(Retinex) - Einstellungen\nGammasteigung
 HISTORY_MSG_424;(Retinex) - Einstellungen\nHL-Schwellenwert
 HISTORY_MSG_425;(Retinex) - Einstellungen\nBasis-Logarithmus
-HISTORY_MSG_426;(Retinex) - Einstellungen\nFarbton (H)
+HISTORY_MSG_426;(Retinex) - Einstellungen\nKorrekturen - Farbton (H)
 HISTORY_MSG_427;Ausgabe-Rendering-Intent
 HISTORY_MSG_428;Monitor-Rendering-Intent
-HISTORY_MSG_429;(Retinex) - Einstellungen\nIterationen
-HISTORY_MSG_430;(Retinex) - Einstellungen\nTransmission Gradient
-HISTORY_MSG_431;(Retinex) - Einstellungen\nIntensität Gradient
+HISTORY_MSG_429;(Retinex) - Einstellungen\nDynamikkompression\nIterationen
+HISTORY_MSG_430;(Retinex) - Einstellungen\nDynamikkompression\nTransmission Gradient
+HISTORY_MSG_431;(Retinex) - Einstellungen\nDynamikkompression\nIntensität Gradient
 HISTORY_MSG_432;(Retinex) - Maske\nLichter
 HISTORY_MSG_433;(Retinex) - Maske\nTonwertbreite Lichter
 HISTORY_MSG_434;(Retinex) - Maske\nSchatten
@@ -698,6 +699,8 @@ HISTORY_MSG_437;(Retinex) - Maske\nMethode
 HISTORY_MSG_438;(Retinex) - Maske\nKurve
 HISTORY_MSG_439;(Retinex) - Vorschau
 HISTORY_MSG_440;(Detailebenenkontrast)\nProzessreihenfolge
+HISTORY_MSG_441;(Retinex) - Einstellungen\nVerstärkung und Ausgleich\nTransmissionsverstärkung
+HISTORY_MSG_442;(Retinex) - Einstellungen\nTransmission - Skalierung
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -1674,7 +1677,7 @@ TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;Mit “3-pass“ erzielt man die besten Erg
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor mit X-Trans-Matrix
 TP_RESIZE_APPLIESTO;Anwenden auf:
 TP_RESIZE_CROPPEDAREA;Ausschnitt
-TP_RESIZE_FITBOX;Breite & Höhe
+TP_RESIZE_FITBOX;Begrenzungsrahmen
 TP_RESIZE_FULLIMAGE;Ganzes Bild
 TP_RESIZE_H;Höhe:
 TP_RESIZE_HEIGHT;Höhe
@@ -1696,8 +1699,12 @@ TP_RETINEX_CURVEEDITOR_LH;Intensität=f(H)
 TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Intensität in Abhängigkeit des Farbtons (H)\nBei der Retinex-Methode "Spitzlichter" wirken sich die Änderungen auch auf die Chromakorrektur aus.
 TP_RETINEX_CURVEEDITOR_MAP;L=f(L)
 TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;Die Kurve kann entweder alleine, oder mit der Gaußschen- oder Waveletmaske angewendet werden.\nArtefakte beachten!
+TP_RETINEX_EQUAL;Korrekturen
 TP_RETINEX_FREEGAMMA;Gamma
 TP_RETINEX_GAIN;Kontrast
+TP_RETINEX_GAINOFFS;Verstärkung und Ausgleich (Helligkeit)
+TP_RETINEX_GAINTRANSMISSION;Transmissionsverstärkung
+TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Ändert die Helligkeit durch Verstärken oder\nReduzieren der Transmissionskarte.
 TP_RETINEX_GAIN_TOOLTIP;Wirkt sich auf das verarbeitete Bild aus. Wird für schwarze oder weiße Pixel verwendet und hilft das Histogramm auszugleichen.
 TP_RETINEX_GAMMA;Gammakorrektur
 TP_RETINEX_GAMMA_FREE;Benutzerdefiniert
@@ -1716,7 +1723,8 @@ TP_RETINEX_HIGHLIGHT;Spitzlichter Schwellenwert
 TP_RETINEX_HIGHLIGHT_TOOLTIP;Benötigt unter Umständen Korrekturen der Einstellungen "Benachbarte Pixel" und "Weißpunkt" unter dem Reiter "RAW".
 TP_RETINEX_HSLSPACE_LIN;HSL-Linear
 TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmisch
-TP_RETINEX_ITER;Iterationen (Dynamikkompression)
+TP_RETINEX_ITER;Iterationen
+TP_RETINEX_ITERF;Dynamikkompression
 TP_RETINEX_ITER_TOOLTIP;Simuliert eine Dynamikkompression.\nHöhere Werte erhöhen die Prozessorzeit.
 TP_RETINEX_LABEL;Retinex (Bildschleier entfernen)
 TP_RETINEX_LABEL_MASK;Maske
@@ -1728,7 +1736,7 @@ TP_RETINEX_MAP_MAPP;Schärfemaske (Teil-Wavelet)
 TP_RETINEX_MAP_MAPT;Schärfemaske (Wavelet)
 TP_RETINEX_MAP_METHOD_TOOLTIP;Keine: Wendet die Maske, die mit der gaußschen Funktion (Radius, Methode) erstellt wurde an, um Halos und Artefakte zu reduzieren.\n\nNur Kurve: Wendet eine diagonale Kontrastkurve auf die Maske an.\nArtefakte beachten.\n\nGaußschenmaske: Wendet eine gaußsche Unschärfe auf die originale Maske an.\n(Schnell)\n\nSchärfemaske: Wendet ein Wavelet auf die originale Maske an.\n(Langsam)
 TP_RETINEX_MAP_NONE;Keine
-TP_RETINEX_MEDIAN;Transmission Medianfilter
+TP_RETINEX_MEDIAN;Medianfilter
 TP_RETINEX_METHOD;Methode
 TP_RETINEX_METHOD_TOOLTIP;"Schatten" wirkt sich auf dunkle Bereiche aus.\n"Schatten &amp; Lichter" wirkt sich auf dunkle und helle Bereiche aus.\n"Lichter" wirkt sich auf helle Bereiche aus.\n"Spitzlichter" wirkt sich auf sehr helle Bereiche aus und reduziert Magenta-Falschfarben.
 TP_RETINEX_MLABEL;Schleierreduzierung: Min=%1 Max=%2
@@ -1736,17 +1744,19 @@ TP_RETINEX_MLABEL_TOOLTIP;Sollte nahe bei Min=0 und Max=32768 sein
 TP_RETINEX_NEIGHBOR;Radius
 TP_RETINEX_NEUTRAL;Zurücksetzen
 TP_RETINEX_NEUTRAL_TIP;Setzt alle Regler und Kurven auf ihre Standardwerte zurück.
-TP_RETINEX_OFFSET;Helligkeit
+TP_RETINEX_OFFSET;Ausgleich (Helligkeit)
 TP_RETINEX_SCALES;Gaußscher Gradient
 TP_RETINEX_SCALES_TOOLTIP;Steht der Regler auf 0 sind alle Iterationen identisch.\nBei > 0 werden Skalierung und Radius reduziert und umgekehrt.
 TP_RETINEX_SETTINGS;Einstellungen
+TP_RETINEX_SKAL;Skalierung
 TP_RETINEX_SLOPE;Gammasteigung
 TP_RETINEX_STRENGTH;Intensität
-TP_RETINEX_THRESHOLD;Transmission Schwellenwert
+TP_RETINEX_THRESHOLD;Schwellenwert
 TP_RETINEX_THRESHOLD_TOOLTIP;Limitiert den Bereich der Transmissionskurve.
 TP_RETINEX_TLABEL;T: Min=%1 Max=%2 Mittel=%3 Sigma=%4
 TP_RETINEX_TLABEL2;T: Tmin=%1 Tmax=%2
 TP_RETINEX_TLABEL_TOOLTIP;Ergebnis der Transmissionskurve: Min, Max, Mittel und Sigma\nMin und Max hat Einfluss auf die Abweichung.\n\nTmin = Kleinster Wert der Transmissionskurve\nTmax = Größter Wert der Transmissionskurve
+TP_RETINEX_TRANF;Transmission
 TP_RETINEX_TRANSMISSION;Transmissionskurve
 TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission in Abhängigkeit der Transmission.\nx-Achse: Transmission negativer Werte (Min), Mittel und positiver Werte (Max).\ny-Achse: Verstärkung oder Reduzierung.
 TP_RETINEX_UNIFORM;Schatten & Lichter
@@ -2043,16 +2053,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_441;Retinex - Gain transmission
-!HISTORY_MSG_442;Retinex - Scale
-!TP_RETINEX_EQUAL;Equalizer
-!TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
-!TP_RETINEX_GAINTRANSMISSION;Gain transmission
-!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
-!TP_RETINEX_ITERF;Tone mapping
-!TP_RETINEX_SKAL;Scale
-!TP_RETINEX_TRANF;Transmission
