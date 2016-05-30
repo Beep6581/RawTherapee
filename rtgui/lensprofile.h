@@ -22,6 +22,7 @@
 #include <gtkmm.h>
 #include "toolpanel.h"
 #include "guiutils.h"
+#include "lensgeom.h"
 
 class LensProfilePanel : public ToolParamBlock, public FoldableToolPanel
 {
@@ -38,6 +39,7 @@ protected:
     void updateDisabled(bool enable);
     bool allowFocusDep;
     bool isRaw;
+    LensGeometry *lensgeomLcpFill;
 
 public:
 
@@ -52,6 +54,7 @@ public:
     void onUseDistChanged();
     void onUseVignChanged();
     void onUseCAChanged();
+    void setLensGeomRef( LensGeometry *foo) { lensgeomLcpFill = foo ;};
 };
 
 #endif

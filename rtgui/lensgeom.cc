@@ -113,3 +113,19 @@ void LensGeometry::setBatchMode (bool batchMode)
     ToolPanel::setBatchMode (batchMode);
     removeIfThere (this, autoCrop);
 }
+
+void LensGeometry::disableAutoFillIfActive ()
+{
+
+    if (!batchMode) {
+        if (fill->get_active()) {
+            fillConn.block (true);
+            fill->set_active(false);
+            if (listener) {
+                listener->panelChanged (EvTransAutoFill, M("GENERAL_DISABLED"));
+            }
+            fillConn.block (false);
+        }
+    }
+
+}

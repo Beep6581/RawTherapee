@@ -53,6 +53,7 @@ public:
     {
         rlistener = l;
     }
+    void disableAutoFillIfActive ();
 };
 
 #endif
