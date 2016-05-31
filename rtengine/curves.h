@@ -278,9 +278,7 @@ public:
 public:
     static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
                               procparams::ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints, procparams::ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
-
-                              LUTu & histogram, LUTu & histogramCropped,
-                              LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2,
+                              LUTu & histogram, LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2,
 
                               int skip = 1);
     static void curveBW (const std::vector<double>& curvePointsbw, const std::vector<double>& curvePointsbw2, const LUTu & histogrambw, LUTu & outBeforeCCurveHistogrambw,
@@ -294,9 +292,8 @@ public:
 
     static void curveToning ( const std::vector<double>& curvePoints, LUTf & ToningCurve, int skip);
 
-    static void complexsgnCurve ( float adjustr, bool & autili,  bool & butili, bool & ccutili, bool & clcutili, double saturation, double rstprotection, const std::vector<double>& acurvePoints,
+    static void complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, bool & clcutili, const std::vector<double>& acurvePoints,
                                   const std::vector<double>& bcurvePoints, const std::vector<double>& cccurvePoints, const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve,
-                                  const LUTu & histogramC, const LUTu & histogramLC, LUTu & outBeforeCCurveHistogram, LUTu & outBeforeLCurveHistogram, ///for chroma
                                   int skip = 1);
     static void complexLCurve (double br, double contr, const std::vector<double>& curvePoints, const LUTu & histogram, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip, bool & utili);
 
@@ -465,7 +462,7 @@ public:
     virtual ~ToneCurve() {};
 
     void Reset();
-    void Set(const Curve &pCurve, float gamma = 0, float start = 0, float slope = 0, float mul = 0, float add = 0);
+    void Set(const Curve &pCurve, float gamma = 0);
     operator bool (void) const
     {
         return lutToneCurve;

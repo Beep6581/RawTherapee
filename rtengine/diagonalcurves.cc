@@ -340,7 +340,7 @@ double DiagonalCurve::getVal (double t) const
         // get the hash table entry by rounding the value (previously multiplied by "hashSize")
         unsigned short int i = (unsigned short int)(t * hashSize);
 
-        if (i > (hashSize + 1)) {
+        if (UNLIKELY(i > (hashSize + 1))) {
             //printf("\nOVERFLOW: hash #%d is used while seeking for value %.8f, corresponding polygon's point #%d (out of %d point) x value: %.8f\n\n", i, t, hash.at(i), poly_x.size(), poly_x[hash.at(i)]);
             printf("\nOVERFLOW: hash #%d is used while seeking for value %.8f\n\n", i, t);
             return t;

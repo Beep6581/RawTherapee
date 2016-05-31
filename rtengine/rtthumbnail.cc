@@ -1001,7 +1001,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
                                 params.toneCurve.shcompr, bright, contr,
                                 params.toneCurve.curveMode, params.toneCurve.curve,
                                 params.toneCurve.curveMode2, params.toneCurve.curve2,
-                                hist16, dummy, curve1, curve2, curve, dummy, customToneCurve1, customToneCurve2, 16);
+                                hist16, curve1, curve2, curve, dummy, customToneCurve1, customToneCurve2, 16);
 
     LUTf rCurve;
     LUTf gCurve;
@@ -1100,23 +1100,18 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     // luminance processing
 //  ipf.EPDToneMap(labView,0,6);
 
-    bool utili = false;
+    bool utili;
     CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve,
                                  hist16, lumacurve, dummy, 16, utili);
 
-    bool clcutili = false;
+    bool clcutili;
     CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, 16);
 
-    bool autili = false;
-    bool butili = false;
-    bool ccutili = false;
-    bool cclutili = false;
-    CurveFactory::complexsgnCurve (1.f, autili, butili, ccutili, cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
-                                   params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve, params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve,
-                                   dummy, dummy, dummy, dummy,
-                                   16);
+    bool autili, butili, ccutili, cclutili;
+    CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
+                                   params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 16);
 
-    ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy, dummy);
+    ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
     ipf.vibrance(labView);
 

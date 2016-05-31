@@ -57,9 +57,7 @@ ImProcCoordinator::ImProcCoordinator ()
       lhist16CAM(65536),
       lhist16CCAM(65536),
       lhist16RETI(65536),
-      histCropped(65536),
-      lhist16Clad(65536),
-      lhist16LClad(65536), lhist16LLClad(65536),
+      lhist16LClad(65536),
       histRed(256), histRedRaw(256),
       histGreen(256), histGreenRaw(256),
       histBlue(256), histBlueRaw(256),
@@ -443,7 +441,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                     params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh,
                                     params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast,
                                     params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,
-                                    vhist16, histCropped, hltonecurve, shtonecurve, tonecurve, histToneCurve, customToneCurve1, customToneCurve2, scale == 1 ? 1 : 1);
+                                    vhist16, hltonecurve, shtonecurve, tonecurve, histToneCurve, customToneCurve1, customToneCurve2, scale == 1 ? 1 : 1);
 
         CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, scale == 1 ? 1 : 1);
         CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, scale == 1 ? 1 : 1);
@@ -591,35 +589,15 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 #endif
             lhist16 += lhist16thr;
         }
-        utili = false;
         CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lumacurve, histLCurve, scale == 1 ? 1 : 16, utili);
     }
 
     if (todo & M_LUMACURVE) {
-        autili = false;
-        butili = false;
-        ccutili = false;
-        cclutili = false;
-        clcutili = false;
 
         CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, scale == 1 ? 1 : 16);
-        float adjustr = 1.0f;
 
-
-        /*      if      (params.icm.working=="ProPhoto")   {adjustr =       adjustbg = 1.2f;}// 1.2 instead 1.0 because it's very rare to have C>170..
-                else if (params.icm.working=="Adobe RGB")  {adjustr = 1.8f; adjustbg = 1.4f;}
-                else if (params.icm.working=="sRGB")       {adjustr = 2.0f; adjustbg = 1.7f;}
-                else if (params.icm.working=="WideGamut")  {adjustr =       adjustbg = 1.2f;}
-                else if (params.icm.working=="Beta RGB")   {adjustr =       adjustbg = 1.4f;}
-                else if (params.icm.working=="BestRGB")    {adjustr =       adjustbg = 1.4f;}
-                else if (params.icm.working=="BruceRGB")   {adjustr = 1.8f; adjustbg = 1.5f;}
-        */
-
-        lhist16LLClad.clear();
-        lhist16Clad.clear();
-        CurveFactory::complexsgnCurve (adjustr, autili, butili, ccutili, cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
-                                       params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve, params.labCurve.lccurve, chroma_acurve, chroma_bcurve, satcurve, lhskcurve,
-                                       lhist16Clad, lhist16LLClad, histCCurve, histLLCurve, scale == 1 ? 1 : 16);
+        CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
+                                       params.labCurve.lccurve, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, scale == 1 ? 1 : 16);
     }
 
     if (todo & (M_LUMINANCE + M_COLOR) ) {
@@ -627,7 +605,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         progress ("Applying Color Boost...", 100 * readyphase / numofphases);
         //   ipf.MSR(nprevl, nprevl->W, nprevl->H, 1);
-        ipf.chromiLuminanceCurve (NULL, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLLCurve, histLCurve);
+        histCCurve.clear();
+        histLCurve.clear();
+        ipf.chromiLuminanceCurve (NULL, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLCurve);
         ipf.vibrance(nprevl);
 
         if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) {
