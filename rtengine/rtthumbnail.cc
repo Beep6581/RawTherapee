@@ -37,7 +37,7 @@
 #include "../rtgui/ppversion.h"
 #include "improccoordinator.h"
 #include <locale.h>
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 
 
@@ -721,7 +721,6 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
 void Thumbnail::init ()
 {
-
     RawImageSource::inverse33 (colorMatrix, iColorMatrix);
     //colorMatrix is rgb_cam
     memset (cam2xyz, 0, sizeof(cam2xyz));
@@ -831,24 +830,16 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     gm = camwbGreen / gm;
     bm = camwbBlue / bm;
     double mul_lum = 0.299 * rm + 0.587 * gm + 0.114 * bm;
-    double logDefGain = log(defGain) / log(2.0);
-    int rmi, gmi, bmi;
-    // Since HL recovery is not rendered in thumbs
-//    if (!isRaw || !params.toneCurve.hrenabled) {
-    logDefGain = 0.0;
-    rmi = 1024.0 * rm * defGain / mul_lum;
-    gmi = 1024.0 * gm * defGain / mul_lum;
-    bmi = 1024.0 * bm * defGain / mul_lum;
-    /*    }
-        else {
-            rmi = 1024.0 * rm / mul_lum;
-            gmi = 1024.0 * gm / mul_lum;
-            bmi = 1024.0 * bm / mul_lum;
-        }*/
+    double logDefGain = 0.0;
+    float rmi, gmi, bmi;
+
+    rmi = rm * defGain / mul_lum;
+    gmi = gm * defGain / mul_lum;
+    bmi = bm * defGain / mul_lum;
 
     // The RAW exposure is not reflected since it's done in preprocessing. If we only have e.g. the chached thumb,
     // that is already preprocessed. So we simulate the effect here roughly my modifying the exposure accordingly
-    if (isRaw && fabs(1.0 - params.raw.expos) > 0.001) {
+    if (isRaw) {
         rmi *= params.raw.expos;
         gmi *= params.raw.expos;
         bmi *= params.raw.expos;
@@ -863,6 +854,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     } else {
         rwidth = int(size_t(thumbImg->width) * size_t(rheight) / size_t(thumbImg->height));
     }
+
 
     Imagefloat* baseImg = resizeTo<Imagefloat>(rwidth, rheight, interp, thumbImg);
 
@@ -880,51 +872,34 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         baseImg->vflip ();
     }
 
+
     // apply white balance and raw white point (simulated)
-    int val;
-    unsigned short val_;
-
-    for (int i = 0; i < rheight; i++)
+    for (int i = 0; i < rheight; i++) {
+#ifdef _OPENMP
+        #pragma omp simd
+#endif
         for (int j = 0; j < rwidth; j++) {
+            float red = baseImg->r(i, j) * rmi;
+            baseImg->r(i, j) = CLIP(red);
+            float green = baseImg->g(i, j) * gmi;
+            baseImg->g(i, j) = CLIP(green);
+            float blue = baseImg->b(i, j) * bmi;
+            baseImg->b(i, j) = CLIP(blue);
 
-            baseImg->convertTo(baseImg->r(i, j), val_);
-            val = static_cast<int>(val_) * rmi >> 10;
-            baseImg->r(i, j) = CLIP(val);
-
-            baseImg->convertTo(baseImg->g(i, j), val_);
-            val = static_cast<int>(val_) * gmi >> 10;
-            baseImg->g(i, j) = CLIP(val);
-
-            baseImg->convertTo(baseImg->b(i, j), val_);
-            val = static_cast<int>(val_) * bmi >> 10;
-            baseImg->b(i, j) = CLIP(val);
         }
-
-    /*
-        // apply highlight recovery, if needed      -- CURRENTLY BROKEN DUE TO INCOMPATIBLE DATA TYPES, BUT HL RECOVERY AREN'T COMPUTED FOR THUMBNAILS ANYWAY...
-        if (isRaw && params.toneCurve.hrenabled) {
-            int maxval = 65535 / defGain;
-            if (params.toneCurve.method=="Luminance" || params.toneCurve.method=="Color")
-                for (int i=0; i<rheight; i++)
-                    RawImageSource::HLRecovery_Luminance (baseImg->r[i], baseImg->g[i], baseImg->b[i], baseImg->r[i], baseImg->g[i], baseImg->b[i], rwidth, maxval);
-            else if (params.toneCurve.method=="CIELab blending") {
-                double icamToD50[3][3];
-                RawImageSource::inverse33 (cam2xyz, icamToD50);
-                for (int i=0; i<rheight; i++)
-                    RawImageSource::HLRecovery_CIELab (baseImg->r[i], baseImg->g[i], baseImg->b[i], baseImg->r[i], baseImg->g[i], baseImg->b[i], rwidth, maxval, cam2xyz, icamToD50);
-            }
-        }
-    */
+    }
 
     // if luma denoise has to be done for thumbnails, it should be right here
 
     // perform color space transformation
+
     if (isRaw) {
         double pre_mul[3] = { redMultiplier, greenMultiplier, blueMultiplier };
         RawImageSource::colorSpaceConversion (baseImg, params.icm, currWB, pre_mul, embProfile, camProfile, cam2xyz, camName );
     } else {
         StdImageSource::colorSpaceConversion (baseImg, params.icm, embProfile, thumbImg->getSampleFormat());
     }
+
     int fw = baseImg->width;
     int fh = baseImg->height;
     //ColorTemp::CAT02 (baseImg, &params)   ;//perhaps not good!
