@@ -91,6 +91,7 @@ public:
         delete this;
     }
 
+    bool writeThumbnail (const Glib::ustring& fname) override;
 };
 
 }

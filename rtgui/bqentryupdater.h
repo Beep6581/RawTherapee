@@ -29,14 +29,14 @@ class BQEntryUpdateListener
 
 public:
     virtual ~BQEntryUpdateListener () {}
-    virtual void updateImage (guint8* img, int w, int h, int origw, int origh, guint8* newOPreview) {}
+    virtual void updateImage (rtengine::IImage8* img, int w, int h, int origw, int origh) {}
 };
 
 class BatchQueueEntryUpdater
 {
 
     struct Job {
-        guint8* oimg;
+        rtengine::IImage8* oimg;
         int ow, oh, newh;
         BQEntryUpdateListener* listener;
         rtengine::ProcParams* pparams;
@@ -53,7 +53,7 @@ protected:
 public:
     BatchQueueEntryUpdater ();
 
-    void process    (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::ProcParams* pparams = NULL, Thumbnail* thumbnail = NULL);
+    void process    (rtengine::IImage8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::ProcParams* pparams = NULL, Thumbnail* thumbnail = NULL);
     void removeJobs (BQEntryUpdateListener* listener);
     void terminate  ();
 

@@ -36,6 +36,9 @@
 #endif
 
 #include "imageio.h"
+#include "image8.h"
+#include "image16.h"
+#include "imagefloat.h"
 #include "iptcpairs.h"
 #include "iccjpeg.h"
 #include "color.h"
@@ -49,6 +52,20 @@ using namespace rtengine::procparams;
 namespace
 {
 
+Glib::ustring to_utf8 (const std::string& str)
+{
+    try {
+        return Glib::locale_to_utf8 (str);
+    } catch (Glib::Error&) {
+        return Glib::convert_with_fallback (str, "UTF-8", "ISO-8859-1", "?");
+    }
+}
+
+std::unique_ptr< wchar_t, GFreeFunc > to_utf16 (const Glib::ustring& str)
+{
+    return { reinterpret_cast< wchar_t* > (g_utf8_to_utf16 (str.c_str (), -1, nullptr, nullptr, nullptr)), g_free };
+}
+
 // Opens a file for binary writing and request exclusive lock (cases were you need "wb" mode plus locking)
 FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
 {
@@ -58,9 +75,7 @@ FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
 
     // Use native function to disallow sharing, i.e. lock the file for exclusive access.
     // This is important to e.g. prevent Windows Explorer from crashing RT due to concurrently scanning an image file.
-    std::unique_ptr<wchar_t, GFreeFunc> wfname (reinterpret_cast<wchar_t*>(g_utf8_to_utf16 (fname.c_str (), -1, NULL, NULL, NULL)), g_free);
-
-    HANDLE hFile = CreateFileW ( wfname.get (), GENERIC_READ | GENERIC_WRITE, 0 /* no sharing allowed */, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    HANDLE hFile = CreateFileW (to_utf16 (fname).get (), GENERIC_READ | GENERIC_WRITE, 0 /* no sharing allowed */, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile != INVALID_HANDLE_VALUE) {
         f = _fdopen (_open_osfhandle ((intptr_t)hFile, 0), "wb");
     }
@@ -74,13 +89,40 @@ FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
     return f;
 }
 
-Glib::ustring to_utf8 (const std::string& str)
+class TIFFMessageHandler
 {
-    try {
-        return Glib::locale_to_utf8 (str);
-    } catch (Glib::Error&) {
-        return Glib::convert_with_fallback (str, "UTF-8", "ISO-8859-1", "?");
+    static void printIfVerbose (const char* module, const char* format, va_list ap)
+    {
+        if (!options.rtSettings.verbose) {
+            return;
+        }
+
+        if (module) {
+            fprintf (stderr, "%s: ", module);
+        }
+
+        vfprintf (stderr, format, ap);
+        fprintf (stderr, ".\n");
     }
+
+public:
+    TIFFMessageHandler()
+    {
+        TIFFSetErrorHandler (&TIFFMessageHandler::printIfVerbose);
+        TIFFSetWarningHandler (&TIFFMessageHandler::printIfVerbose);
+    }
+
+};
+
+TIFF* TIFFOpenU (const Glib::ustring& fname, const char* mode)
+{
+    static TIFFMessageHandler messageHandler;
+
+#ifdef WIN32
+    return TIFFOpenW (to_utf16 (fname).get (), mode);
+#else
+    return TIFFOpen (fname.c_str (), mode);
+#endif
 }
 
 }
@@ -615,9 +657,7 @@ int ImageIO::loadJPEG (Glib::ustring fname)
 int ImageIO::getTIFFSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement)
 {
 #ifdef WIN32
-    wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
-    TIFF* in = TIFFOpenW (wfilename, "r");
-    g_free (wfilename);
+    TIFF* in = TIFFOpenW (to_utf16 (fname).get (), "r");
 #else
     TIFF* in = TIFFOpen(fname.c_str(), "r");
 #endif
@@ -724,9 +764,7 @@ int ImageIO::loadTIFF (Glib::ustring fname)
     }
 
 #ifdef WIN32
-    wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
-    TIFF* in = TIFFOpenW (wfilename, "r");
-    g_free (wfilename);
+    TIFF* in = TIFFOpenW (to_utf16 (fname).get (), "r");
 #else
     TIFF* in = TIFFOpen(fname.c_str(), "r");
 #endif
@@ -1285,9 +1323,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
         // little hack to get libTiff to use proper byte order (see TIFFClienOpen()):
         const char *mode = !exifRoot ? "w" : (exifRoot->getOrder() == rtexif::INTEL ? "wl" : "wb");
 #ifdef WIN32
-        wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
-        TIFF* out = TIFFOpenW (wfilename, mode);
-        g_free (wfilename);
+        TIFF* out = TIFFOpenW (to_utf16 (fname).get (), mode);
 #else
         TIFF* out = TIFFOpen(fname.c_str(), mode);
 #endif
@@ -1484,4 +1520,213 @@ int ImageIO::save (Glib::ustring fname)
     } else {
         return IMIO_FILETYPENOTSUPPORTED;
     }
+}
+
+namespace rtengine
+{
+
+namespace
+{
+
+bool readScanlines (TIFF* tiff, guint8* data, const int count, const int sample, const gsize rowStride)
+{
+    for (int row = 0; row < count; ++row) {
+        if (TIFFReadScanline (tiff, data, row, sample) < 0) {
+            return false;
+        }
+        data += rowStride;
+    }
+    return true;
+}
+
+bool writeScanlines (TIFF* tiff, guint8* data, const int count, const int sample, const gsize rowStride)
+{
+    for (int row = 0; row < count; ++row) {
+        if (TIFFWriteScanline (tiff, data, row, sample) < 0) {
+            return false;
+        }
+        data += rowStride;
+    }
+    return true;
+}
+
+Image8* readImage8 (TIFF* tiff, const uint32 length, const uint32 width)
+{
+    std::unique_ptr< Image8 > image (new Image8 (width, length));
+
+    const auto data = reinterpret_cast< guint8* > (image->data);
+    const auto rowStride = 3 * sizeof (unsigned char) * width;
+
+    const auto ok = readScanlines (tiff, data, length, 0, rowStride);
+
+    return ok ? image.release () : nullptr;
+}
+
+Image16* readImage16 (TIFF* tiff, const uint32 length, const uint32 width)
+{
+    std::unique_ptr< Image16 > image (new Image16 (width, length));
+
+    auto data = reinterpret_cast< guint8* > (image->data);
+    const auto rowStride = image->getRowStride ();
+    const auto planeStride = image->getPlaneStride ();
+
+    auto ok = readScanlines (tiff, data, length, 0, rowStride);
+    data += planeStride;
+    ok = ok && readScanlines (tiff, data, length, 1, rowStride);
+    data += planeStride;
+    ok = ok && readScanlines (tiff, data, length, 2, rowStride);
+
+    return ok ? image.release () : nullptr;
+}
+
+Imagefloat* readImagefloat (TIFF* tiff, const uint32 length, const uint32 width)
+{
+    std::unique_ptr< Imagefloat > image (new Imagefloat (width, length));
+
+    auto data = reinterpret_cast< guint8* > (image->data);
+    const auto rowStride = image->getRowStride ();
+    const auto planeStride = image->getPlaneStride ();
+
+    auto ok = readScanlines (tiff, data, length, 0, rowStride);
+    data += planeStride;
+    ok = ok && readScanlines (tiff, data, length, 1, rowStride);
+    data += planeStride;
+    ok = ok && readScanlines (tiff, data, length, 2, rowStride);
+
+    return ok ? image.release() : nullptr;
+}
+
+}
+
+ImageIO* ImageIO::readThumbnail (const Glib::ustring& fname)
+{
+    const auto tiff = TIFFOpenU (fname, "r");
+    if (!tiff) {
+        return nullptr;
+    }
+
+    uint32 length, width;
+    uint16 planarconfig, sampleformat;
+    if (TIFFGetField (tiff, TIFFTAG_IMAGELENGTH, &length) == 0
+     || TIFFGetField (tiff, TIFFTAG_IMAGEWIDTH, &width) == 0
+     || TIFFGetField (tiff, TIFFTAG_PLANARCONFIG, &planarconfig) == 0
+     || TIFFGetField (tiff, TIFFTAG_SAMPLEFORMAT, &sampleformat) == 0) {
+        return nullptr;
+    }
+
+    ImageIO* image = nullptr;
+
+    if (planarconfig == PLANARCONFIG_CONTIG && sampleformat == SAMPLEFORMAT_UINT) {
+        image = readImage8 (tiff, length, width);
+    }
+    else if (planarconfig == PLANARCONFIG_SEPARATE && sampleformat == SAMPLEFORMAT_UINT) {
+        image = readImage16 (tiff, length, width);
+    }
+    else if (planarconfig == PLANARCONFIG_SEPARATE && sampleformat == SAMPLEFORMAT_IEEEFP) {
+        image = readImagefloat (tiff, length, width);
+    }
+
+    TIFFClose (tiff);
+    return image;
+}
+
+bool ImageIO::writeThumbnail (const Glib::ustring& /* fname */)
+{
+    return false;
+}
+
+bool Image8::writeThumbnail (const Glib::ustring& fname)
+{
+    const auto tiff = TIFFOpenU (fname, "w");
+    if (!tiff) {
+        return false;
+    }
+
+    TIFFSetField (tiff, TIFFTAG_IMAGELENGTH, height);
+    TIFFSetField (tiff, TIFFTAG_IMAGEWIDTH, width);
+    TIFFSetField (tiff, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
+    TIFFSetField (tiff, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+    TIFFSetField (tiff, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
+    TIFFSetField (tiff, TIFFTAG_SAMPLESPERPIXEL, 3);
+    TIFFSetField (tiff, TIFFTAG_BITSPERSAMPLE, 8);
+    TIFFSetField (tiff, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+    TIFFSetField (tiff, TIFFTAG_COMPRESSION, COMPRESSION_DEFLATE);
+    TIFFSetField (tiff, TIFFTAG_PREDICTOR, PREDICTOR_HORIZONTAL);
+
+    auto data = reinterpret_cast< guint8* > (this->data);
+    const auto rowStride = 3 * sizeof (unsigned char) * width;
+
+    auto ok = writeScanlines (tiff, data, height, 0, rowStride);
+
+    ok = ok && TIFFFlush (tiff);
+    TIFFClose (tiff);
+    return ok;
+}
+
+bool Image16::writeThumbnail (const Glib::ustring& fname)
+{
+    const auto tiff = TIFFOpenU (fname, "w");
+    if (!tiff) {
+        return false;
+    }
+
+    TIFFSetField (tiff, TIFFTAG_IMAGELENGTH, height);
+    TIFFSetField (tiff, TIFFTAG_IMAGEWIDTH, width);
+    TIFFSetField (tiff, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
+    TIFFSetField (tiff, TIFFTAG_PLANARCONFIG, PLANARCONFIG_SEPARATE);
+    TIFFSetField (tiff, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
+    TIFFSetField (tiff, TIFFTAG_SAMPLESPERPIXEL, 3);
+    TIFFSetField (tiff, TIFFTAG_BITSPERSAMPLE, 16);
+    TIFFSetField (tiff, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+    TIFFSetField (tiff, TIFFTAG_COMPRESSION, COMPRESSION_DEFLATE);
+    TIFFSetField (tiff, TIFFTAG_PREDICTOR, PREDICTOR_HORIZONTAL);
+
+    auto data = reinterpret_cast< guint8* > (this->data);
+    const auto rowStride = getRowStride ();
+    const auto planeStride = getPlaneStride ();
+
+    auto ok = writeScanlines (tiff, data, height, 0, rowStride);
+    data += planeStride;
+    ok = ok && writeScanlines (tiff, data, height, 1, rowStride);
+    data += planeStride;
+    ok = ok && writeScanlines (tiff, data, height, 2, rowStride);
+
+    ok = ok && TIFFFlush (tiff);
+    TIFFClose (tiff);
+    return ok;
+}
+
+bool Imagefloat::writeThumbnail (const Glib::ustring& fname)
+{
+    const auto tiff = TIFFOpenU (fname, "w");
+    if (!tiff) {
+        return false;
+    }
+
+    TIFFSetField (tiff, TIFFTAG_IMAGELENGTH, height);
+    TIFFSetField (tiff, TIFFTAG_IMAGEWIDTH, width);
+    TIFFSetField (tiff, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
+    TIFFSetField (tiff, TIFFTAG_PLANARCONFIG, PLANARCONFIG_SEPARATE);
+    TIFFSetField (tiff, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_IEEEFP);
+    TIFFSetField (tiff, TIFFTAG_SAMPLESPERPIXEL, 3);
+    TIFFSetField (tiff, TIFFTAG_BITSPERSAMPLE, 32);
+    TIFFSetField (tiff, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+    TIFFSetField (tiff, TIFFTAG_COMPRESSION, COMPRESSION_DEFLATE);
+    TIFFSetField (tiff, TIFFTAG_PREDICTOR, PREDICTOR_FLOATINGPOINT);
+
+    auto data = reinterpret_cast< guint8* > (this->data);
+    const auto rowStride = getRowStride ();
+    const auto planeStride = getPlaneStride ();
+
+    auto ok = writeScanlines (tiff, data, height, 0, rowStride);
+    data += planeStride;
+    ok = ok && writeScanlines (tiff, data, height, 1, rowStride);
+    data += planeStride;
+    ok = ok && writeScanlines (tiff, data, height, 2, rowStride);
+
+    ok = ok && TIFFFlush (tiff);
+    TIFFClose (tiff);
+    return ok;
+}
+
 }

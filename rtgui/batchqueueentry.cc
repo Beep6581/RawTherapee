@@ -62,10 +62,10 @@ BatchQueueEntry::~BatchQueueEntry ()
     batchQueueEntryUpdater.removeJobs (this);
 
     if (opreview) {
-        delete [] opreview;
+        opreview->free ();
+        opreview = nullptr;
     }
 
-    opreview = NULL;
 
     if (thumbnail) {
         thumbnail->decreaseRef ();
@@ -192,44 +192,8 @@ Glib::ustring BatchQueueEntry::getToolTip (int x, int y)
 
 }
 
-struct BQUpdateParam {
-    BatchQueueEntryIdleHelper* bqih;
-    guint8* img;
-    int w, h;
-};
-
-int updateImageUIThread (void* data)
-{
-
-    BQUpdateParam* params = static_cast<BQUpdateParam*>(data);
-
-    BatchQueueEntryIdleHelper* bqih = params->bqih;
-
-    GThreadLock tLock; // Acquire the GUI
-
-    // If the BQEntry was destroyed meanwhile, remove all the IdleHelper if all entries came through
-    if (bqih->destroyed) {
-        if (bqih->pending == 1) {
-            delete bqih;
-        } else {
-            bqih->pending--;
-        }
-
-        delete [] params->img;
-        delete params;
-
-        return 0;
-    }
-
-    bqih->bqentry->_updateImage (params->img, params->w, params->h);
-    bqih->pending--;
-
-    delete params;
-    return 0;
-}
-
 // Starts a copy of img->preview via GTK thread
-void BatchQueueEntry::updateImage (guint8* img, int w, int h, int origw, int origh, guint8* newOPreview)
+void BatchQueueEntry::updateImage (rtengine::IImage8* img, int w, int h, int origw, int origh)
 {
 
     // since the update itself is already called in an async thread and there are problem with accessing opreview in thumbbrowserbase,
@@ -241,7 +205,7 @@ void BatchQueueEntry::updateImage (guint8* img, int w, int h, int origw, int ori
     }
 }
 
-void BatchQueueEntry::_updateImage (guint8* img, int w, int h)
+void BatchQueueEntry::_updateImage (rtengine::IImage8* img, int w, int h)
 {
 
     if (preh == h) {
@@ -249,14 +213,13 @@ void BatchQueueEntry::_updateImage (guint8* img, int w, int h)
 
         prew = w;
         assert (preview == NULL);
-        preview = new guint8 [prew * preh * 3];
-        memcpy (preview, img, prew * preh * 3);
+        preview = img;
 
         if (parent) {
             parent->redrawNeeded (this);
         }
+    } else {
+        img->free ();
     }
-
-    delete [] img;
 }
 

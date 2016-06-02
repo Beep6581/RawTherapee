@@ -27,7 +27,7 @@ BatchQueueEntryUpdater::BatchQueueEntryUpdater ()
 {
 }
 
-void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::ProcParams* pparams, Thumbnail* thumbnail)
+void BatchQueueEntryUpdater::process (rtengine::IImage8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::ProcParams* pparams, Thumbnail* thumbnail)
 {
     if (!oimg && (!pparams || !thumbnail)) {
         //printf("WARNING! !oimg && (!pparams || !thumbnail)\n");
@@ -107,7 +107,6 @@ void BatchQueueEntryUpdater::processThread ()
         }
 
         rtengine::IImage8* img = NULL;
-        bool newBuffer = false;
 
         if (current.thumbnail && current.pparams) {
             // the thumbnail and the pparams are provided, it means that we have to build the original preview image
@@ -128,27 +127,20 @@ void BatchQueueEntryUpdater::processThread ()
 #endif
                 current.ow = prevw;
                 current.oh = prevh;
-
-                if (!current.oimg) {
-                    current.oimg = new guint8[prevw * prevh * 3];
-                    newBuffer = true;
-                }
-
-                memcpy(current.oimg, img->getData(), prevw * prevh * 3);
-                img->free();
             }
         }
 
-        if (current.oimg && !isEmpty && current.listener) {
+        if (img && !isEmpty && current.listener) {
             int neww = current.newh * current.ow / current.oh;
-            guint8* img = new guint8 [current.newh * neww * 3];
-            thumbInterp (current.oimg, current.ow, current.oh, img, neww, current.newh);
-            current.listener->updateImage (img, neww, current.newh, current.ow, current.oh, newBuffer ? current.oimg : NULL);
+            if (!current.oimg) {
+                current.oimg = new rtengine::Image8 (neww, current.newh);
+            }
+            thumbInterp (img->data, current.ow, current.oh, current.oimg->data, neww, current.newh);
+            current.listener->updateImage (current.oimg, neww, current.newh, current.ow, current.oh);
         }
 
-        if(current.oimg) {
-            delete[] current.oimg;
-            current.oimg = NULL;
+        if (img) {
+            img->free ();
         }
     }
 

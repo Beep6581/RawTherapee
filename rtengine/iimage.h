@@ -78,11 +78,6 @@ public:
     virtual void hflip () {}
     virtual void vflip () {}
 
-    // Read the raw dump of the data
-    void readData  (FILE *fh) {}
-    // Write a raw dump of the data
-    void writeData (FILE *fh) {}
-
     virtual void normalizeInt (int srcMinVal, int srcMaxVal) {};
     virtual void normalizeFloat (float srcMinVal, float srcMaxVal) {};
     virtual void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, int compression) {}
@@ -558,20 +553,6 @@ public:
         value = n ? T(accumulator / float(n)) : T(0);
     }
 
-    void readData   (FILE *f)
-    {
-        for (int i = 0; i < height; i++) {
-            fread (v(i), sizeof(T), width, f);
-        }
-    }
-
-    void writeData  (FILE *f)
-    {
-        for (int i = 0; i < height; i++) {
-            fwrite (v(i), sizeof(T), width, f);
-        }
-    }
-
 };
 
 
@@ -584,10 +565,8 @@ private:
 
     int rowstride;    // Plan size, in bytes (all padding bytes included)
     int planestride;  // Row length, in bytes (padding bytes included)
-protected:
-    T* data;
-
 public:
+    T* data;
     PlanarPtr<T> r;
     PlanarPtr<T> g;
     PlanarPtr<T> b;
@@ -599,12 +578,12 @@ public:
     }
 
     // Send back the row stride. WARNING: unit = byte, not element!
-    int getRowStride ()
+    int getRowStride () const
     {
         return rowstride;
     }
     // Send back the plane stride. WARNING: unit = byte, not element!
-    int getPlaneStride ()
+    int getPlaneStride () const
     {
         return planestride;
     }
@@ -624,6 +603,8 @@ public:
         int tmpHeight = other.height;
         other.height = height;
         height = tmpHeight;
+        std::swap (rowstride, other.rowstride);
+        std::swap (planestride, other.planestride);
 #if CHECK_BOUNDS
         r.width_ = width;
         r.height_ = height;
@@ -1128,36 +1109,6 @@ public:
         valueR = n ? T(accumulatorR / float(n)) : T(0);
         valueG = n ? T(accumulatorG / float(n)) : T(0);
         valueB = n ? T(accumulatorB / float(n)) : T(0);
-    }
-
-    void readData   (FILE *f)
-    {
-        for (int i = 0; i < height; i++) {
-            fread (r(i), sizeof(T), width, f);
-        }
-
-        for (int i = 0; i < height; i++) {
-            fread (g(i), sizeof(T), width, f);
-        }
-
-        for (int i = 0; i < height; i++) {
-            fread (b(i), sizeof(T), width, f);
-        }
-    }
-
-    void writeData  (FILE *f)
-    {
-        for (int i = 0; i < height; i++) {
-            fwrite (r(i), sizeof(T), width, f);
-        }
-
-        for (int i = 0; i < height; i++) {
-            fwrite (g(i), sizeof(T), width, f);
-        }
-
-        for (int i = 0; i < height; i++) {
-            fwrite (b(i), sizeof(T), width, f);
-        }
     }
 
 };
@@ -1706,20 +1657,6 @@ public:
                 blues += double(v);
                 bn++;
             }
-        }
-    }
-
-    void readData   (FILE *f)
-    {
-        for (int i = 0; i < height; i++) {
-            fread (r(i), sizeof(T), 3 * width, f);
-        }
-    }
-
-    void writeData  (FILE *f)
-    {
-        for (int i = 0; i < height; i++) {
-            fwrite (r(i), sizeof(T), 3 * width, f);
         }
     }
 

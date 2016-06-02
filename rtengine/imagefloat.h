@@ -106,6 +106,8 @@ public:
     void                 calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist);
 
     void                 ExecCMSTransform(cmsHTRANSFORM hTransform);
+
+    bool writeThumbnail (const Glib::ustring& fname) override;
 };
 
 }

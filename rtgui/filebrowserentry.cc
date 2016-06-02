@@ -254,18 +254,16 @@ void FileBrowserEntry::_updateImage (rtengine::IImage8* img, double s, rtengine:
         // Check if image has been rotated since last time
         rotated = preview != NULL && newLandscape != landscape;
 
-        guint8* temp = preview;
-        preview = NULL;
-        delete [] temp;
-        temp = new guint8 [prew * preh * 3];
-        memcpy (temp, img->getData(), prew * preh * 3);
-        preview = temp;
+        if (preview) {
+            preview->free ();
+        }
+        preview = img;
         updateBackBuffer ();
+    } else {
+        img->free ();
     }
 
     landscape = newLandscape;
-
-    img->free ();
 
     if (parent != NULL) {
         if (rotated) {

@@ -35,7 +35,8 @@ ThumbBrowserEntryBase::~ThumbBrowserEntryBase ()
 {
 
     if (preview) {
-        delete [] preview;
+        preview->free ();
+        preview = nullptr;
     }
 
     delete buttonSet;
@@ -107,7 +108,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
     if (preview) {
         prex = borderWidth + (exp_width - prew) / 2;
         prey = upperMargin + bsHeight + borderWidth;
-        backBuffer->draw_rgb_image (gc_, prex, prey, prew, preh, Gdk::RGB_DITHER_NONE, preview, prew * 3);
+        backBuffer->draw_rgb_image (gc_, prex, prey, prew, preh, Gdk::RGB_DITHER_NONE, preview->data, prew * 3);
     }
 
     customBackBufferUpdate (cr);
@@ -387,8 +388,10 @@ void ThumbBrowserEntryBase::resize (int h)
     }
 
     if ( preh != old_preh || width != old_width ) {
-        delete [] preview;
-        preview = NULL;
+        if (preview) {
+            preview->free ();
+            preview = nullptr;
+        }
         refreshThumbnailImage ();
     } else {
         backBuffer.clear();    // This will force a backBuffer update on queue_draw
