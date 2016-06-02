@@ -821,6 +821,15 @@ void Color::rgbxyz (float r, float g, float b, float &x, float &y, float &z, con
     z = ((xyz_rgb[2][0] * r + xyz_rgb[2][1] * g + xyz_rgb[2][2] * b)) ;
 }
 
+#ifdef __SSE2__
+void Color::rgbxyz (vfloat r, vfloat g, vfloat b, vfloat &x, vfloat &y, vfloat &z, const vfloat xyz_rgb[3][3])
+{
+    x = ((xyz_rgb[0][0] * r + xyz_rgb[0][1] * g + xyz_rgb[0][2] * b)) ;
+    y = ((xyz_rgb[1][0] * r + xyz_rgb[1][1] * g + xyz_rgb[1][2] * b)) ;
+    z = ((xyz_rgb[2][0] * r + xyz_rgb[2][1] * g + xyz_rgb[2][2] * b)) ;
+}
+#endif
+
 void Color::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const double rgb_xyz[3][3])
 {
     //Transform to output color.  Standard sRGB is D65, but internal representation is D50
@@ -1837,21 +1846,13 @@ void Color::transitred (const float HH, float const Chprov1, const float dred, c
     if(HH >= 0.15f && HH < 1.3f) {
         if (Chprov1 < dred) {
             factor = factorskin;
-        } else if(Chprov1 < (dred + protect_red))
-            // factor = (factorsat-factorskin)/protect_red*Chprov1+factorsat-(dred+protect_red)*(factorsat-factorskin)/protect_red;
-            // optimized formula
-        {
+        } else if(Chprov1 < (dred + protect_red)) {
             factor = ((factorsat - factorskin) * Chprov1 + factorsat * protect_red - (dred + protect_red) * (factorsat - factorskin)) / protect_red;
         }
-    }
-    // then test if chroma is in the extanded range
-    else if ( HH > (0.15f - deltaHH) || HH < (1.3f + deltaHH) ) {
+    } else if ( HH > (0.15f - deltaHH) && HH < (1.3f + deltaHH) ) { // test if chroma is in the extended range
         if (Chprov1 < dred) {
             factor = factorskinext;    // C=dred=55 => real max of skin tones
-        } else if (Chprov1 < (dred + protect_red)) // transition
-            // factor = (factorsat-factorskinext)/protect_red*Chprov1+factorsat-(dred+protect_red)*(factorsat-factorskinext)/protect_red;
-            // optimized formula
-        {
+        } else if (Chprov1 < (dred + protect_red)) {// transition
             factor = ((factorsat - factorskinext) * Chprov1 + factorsat * protect_red - (dred + protect_red) * (factorsat - factorskinext)) / protect_red;
         }
     }

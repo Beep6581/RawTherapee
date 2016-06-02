@@ -234,7 +234,7 @@ public:
     LUT<T> & operator+=(LUT<T> &rhs)
     {
         if (rhs.size == this->size) {
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP // temporary solution to fix Issue #3324
             #pragma omp simd
 #endif
 

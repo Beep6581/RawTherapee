@@ -129,15 +129,16 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         LUTf mapcurve (65536, 0);
         LUTu dummy;
         RetinextransmissionCurve dehatransmissionCurve;
+        RetinexgaintransmissionCurve dehagaintransmissionCurve;
         bool dehacontlutili = false;
         bool mapcontlutili = false;
         bool useHsl = false;
 //        multi_array2D<float, 3> conversionBuffer(1, 1);
         multi_array2D<float, 4> conversionBuffer(1, 1);
         imgsrc->retinexPrepareBuffers(params.icm, params.retinex, conversionBuffer, dummy);
-        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, mapcurve, dehatransmissionCurve, dehacontlutili, mapcontlutili, useHsl, dummy, dummy );
+        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, mapcurve, dehatransmissionCurve, dehagaintransmissionCurve, dehacontlutili, mapcontlutili, useHsl, dummy, dummy );
         float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-        imgsrc->retinex( params.icm, params.retinex, params.toneCurve, cdcurve, mapcurve, dehatransmissionCurve, conversionBuffer, dehacontlutili, mapcontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, dummy);
+        imgsrc->retinex( params.icm, params.retinex, params.toneCurve, cdcurve, mapcurve, dehatransmissionCurve, dehagaintransmissionCurve, conversionBuffer, dehacontlutili, mapcontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, dummy);
     }
 
     if (pl) {
@@ -292,6 +293,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                         } else if (params.icm.working == "sRGB")       {
                             adjustr = 1.f / 1.3f;
                         } else if (params.icm.working == "WideGamut")  {
+                            adjustr = 1.f / 1.1f;
+                        } else if (params.icm.working == "Rec2020")  {
                             adjustr = 1.f / 1.1f;
                         } else if (params.icm.working == "Beta RGB")   {
                             adjustr = 1.f / 1.2f;
@@ -531,6 +534,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             } else if (params.icm.working == "sRGB")       {
                 adjustr = 1.f / 1.3f;
             } else if (params.icm.working == "WideGamut")  {
+                adjustr = 1.f / 1.1f;
+            } else if (params.icm.working == "Rec2020")  {
                 adjustr = 1.f / 1.1f;
             } else if (params.icm.working == "Beta RGB")   {
                 adjustr = 1.f / 1.2f;
@@ -857,7 +862,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     // if clut was used and size of clut cache == 1 we free the memory used by the clutstore (default clut cache size = 1 for 32 bit OS)
     if ( params.filmSimulation.enabled && !params.filmSimulation.clutFilename.empty() && options.clutCacheSize == 1) {
-        clutStore.clearCache();
+        CLUTStore::getInstance().clearCache();
     }
 
     // freeing up some memory
@@ -1165,11 +1170,11 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         useLCMS = false;
         bool pro = false;
         Glib::ustring chpro, outProfile;
-        bool present_space[9] = {false, false, false, false, false, false, false, false, false};
+        bool present_space[10] = {false, false, false, false, false, false, false, false, false, false};
         std::vector<Glib::ustring> opnames = iccStore->getProfiles ();
 
         //test if files are in system
-        for (int j = 0; j < 9; j++) {
+        for (int j = 0; j < 10; j++) {
             // one can modify "option" [Color Management] to adapt the profile's name if they are different for windows, MacOS, Linux ??
             // some of them are actually provided by RT, thanks to Jacques Desmis
             if     (j == 0) {
@@ -1190,6 +1195,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                 chpro = options.rtSettings.srgb10;    //gamma 1.0
             } else if(j == 8) {
                 chpro = options.rtSettings.prophoto10;    //gamma 1.0
+            } else if(j == 9) {
+                chpro = options.rtSettings.rec2020;
             }
 
             for (unsigned int i = 0; i < opnames.size(); i++) {
@@ -1229,6 +1236,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             outProfile = options.rtSettings.srgb10;
         } else if (params.icm.working == "ProPhoto"  && present_space[8] &&  pro) {
             outProfile = options.rtSettings.prophoto10;
+        } else if (params.icm.working == "Rec2020"  && present_space[9]) {
+            outProfile = options.rtSettings.rec2020;
         } else {
             // Should not occurs
             if (settings->verbose) {

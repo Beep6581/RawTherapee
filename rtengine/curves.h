@@ -452,6 +452,30 @@ public:
     }
 };
 
+class RetinexgaintransmissionCurve
+{
+private:
+    LUTf lutgaintransmission;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    virtual ~RetinexgaintransmissionCurve() {};
+    RetinexgaintransmissionCurve();
+
+    void Reset();
+    void Set(const Curve *pCurve);
+    void Set(const std::vector<double> &curvePoints);
+    float operator[](float index) const
+    {
+        return lutgaintransmission[index];
+    }
+
+    operator bool (void) const
+    {
+        return lutgaintransmission;
+    }
+};
+
 
 
 class ToneCurve

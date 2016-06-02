@@ -644,6 +644,7 @@ void Options::setDefaults ()
     rtSettings.bruce = "Bruce";
     rtSettings.beta = "BetaRGB";
     rtSettings.best = "BestRGB";
+    rtSettings.rec2020 = "Rec2020";
     rtSettings.verbose = false;
     rtSettings.gamutICC = true;
     rtSettings.gamutLch = true;
@@ -1542,6 +1543,10 @@ int Options::readFromFile (Glib::ustring fname)
                     rtSettings.best                 = keyFile.get_string("Color Management", "Best");
                 }
 
+                if( keyFile.has_key ("Color Management", "Rec2020")) {
+                    rtSettings.rec2020                 = keyFile.get_string("Color Management", "Rec2020");
+                }
+
                 if( keyFile.has_key ("Color Management", "Bruce")) {
                     rtSettings.bruce                = keyFile.get_string("Color Management", "Bruce");
                 }
@@ -1776,11 +1781,13 @@ int Options::readFromFile (Glib::ustring fname)
         if (options.rtSettings.verbose) {
             printf("Options::readFromFile / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
+
         setDefaults ();
     } catch (...) {
         if (options.rtSettings.verbose) {
             printf("Options::readFromFile / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
         }
+
         setDefaults ();
     }
 
@@ -1810,309 +1817,310 @@ int Options::saveToFile (Glib::ustring fname)
 
     try {
 
-    Glib::KeyFile keyFile;
+        Glib::KeyFile keyFile;
 
-    keyFile.set_boolean ("General", "TabbedEditor", tabbedUI);
-    keyFile.set_boolean ("General", "StoreLastProfile", savesParamsAtExit);
+        keyFile.set_boolean ("General", "TabbedEditor", tabbedUI);
+        keyFile.set_boolean ("General", "StoreLastProfile", savesParamsAtExit);
 
-    if (startupDir == STARTUPDIR_HOME) {
-        keyFile.set_string ("General", "StartupDirectory", "home");
-    } else if (startupDir == STARTUPDIR_CURRENT) {
-        keyFile.set_string ("General", "StartupDirectory", "current");
-    } else if (startupDir == STARTUPDIR_CUSTOM) {
-        keyFile.set_string ("General", "StartupDirectory", "custom");
-    } else if (startupDir == STARTUPDIR_LAST) {
-        keyFile.set_string ("General", "StartupDirectory", "last");
-    }
-
-    keyFile.set_string  ("General", "StartupPath", startupPath);
-    keyFile.set_string  ("General", "DateFormat", dateFormat);
-    keyFile.set_integer ("General", "AdjusterMinDelay", adjusterMinDelay);
-    keyFile.set_integer ("General", "AdjusterMaxDelay", adjusterMaxDelay);
-    keyFile.set_boolean ("General", "MultiUser", multiUser);
-    keyFile.set_string  ("General", "Language", language);
-    keyFile.set_boolean ("General", "LanguageAutoDetect", languageAutoDetect);
-    keyFile.set_string  ("General", "Theme", theme);
-    keyFile.set_boolean ("General", "SlimUI", slimUI);
-    keyFile.set_boolean ("General", "UseSystemTheme", useSystemTheme);
-    keyFile.set_string  ("General", "Version", VERSION);
-    keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
-    keyFile.set_string  ("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
-    keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
-    keyFile.set_double ("General", "BotLeft", rtSettings.bot_left);
-    keyFile.set_double ("General", "TopLeft", rtSettings.top_left);
-    keyFile.set_double ("General", "TopRight", rtSettings.top_right);
-    keyFile.set_double ("General", "BotRight", rtSettings.bot_right);
-    keyFile.set_double ("General", "EDdetec", rtSettings.ed_detec);
-    keyFile.set_double ("General", "EDdetecStr", rtSettings.ed_detecStr);
-    keyFile.set_double ("General", "EDLow", rtSettings.ed_low);
-    keyFile.set_double ("General", "EDLipinfl", rtSettings.ed_lipinfl);
-    keyFile.set_double ("General", "EDLipampl", rtSettings.ed_lipampl);
-
-
-    keyFile.set_integer ("External Editor", "EditorKind", editorToSendTo);
-    keyFile.set_string  ("External Editor", "GimpDir", gimpDir);
-    keyFile.set_string  ("External Editor", "PhotoshopDir", psDir);
-    keyFile.set_string  ("External Editor", "CustomEditor", customEditorProg);
-
-    keyFile.set_boolean ("File Browser", "BrowseOnlyRaw", fbOnlyRaw);
-    keyFile.set_boolean ("File Browser", "BrowserShowsDate", fbShowDateTime);
-    keyFile.set_boolean ("File Browser", "BrowserShowsExif", fbShowBasicExif);
-    keyFile.set_boolean ("File Browser", "BrowserShowsExpComp", fbShowExpComp);
-    keyFile.set_boolean ("File Browser", "BrowserShowsHidden", fbShowHidden);
-    keyFile.set_integer ("File Browser", "ThumbnailSize", thumbSize);
-    keyFile.set_integer ("File Browser", "ThumbnailSizeTab", thumbSizeTab);
-    keyFile.set_integer ("File Browser", "ThumbnailSizeQueue", thumbSizeQueue);
-    keyFile.set_integer ("File Browser", "SameThumbSize", sameThumbSize);
-    keyFile.set_integer ("File Browser", "MaxPreviewHeight", maxThumbnailHeight);
-    keyFile.set_integer ("File Browser", "MaxCacheEntries", maxCacheEntries);
-    Glib::ArrayHandle<Glib::ustring> pext = parseExtensions;
-    keyFile.set_string_list ("File Browser", "ParseExtensions", pext);
-    Glib::ArrayHandle<int> pextena = parseExtensionsEnabled;
-    keyFile.set_integer_list ("File Browser", "ParseExtensionsEnabled", pextena);
-    keyFile.set_integer ("File Browser", "ThumbnailArrangement", fbArrangement);
-    keyFile.set_integer ("File Browser", "ThumbnailInterpolation", thumbInterp);
-    keyFile.set_boolean ("File Browser", "LiveThumbnails", liveThumbnails);
-    Glib::ArrayHandle<Glib::ustring> pfav = favoriteDirs;
-    keyFile.set_string_list ("File Browser", "FavoriteDirs", pfav);
-    Glib::ArrayHandle<Glib::ustring> pren = renameTemplates;
-    keyFile.set_string_list ("File Browser", "RenameTemplates", pren);
-    keyFile.set_boolean ("File Browser", "RenameUseTemplates", renameUseTemplates);
-    Glib::ArrayHandle<double> ptzoom = thumbnailZoomRatios;
-    keyFile.set_double_list ("File Browser", "ThumbnailZoomRatios", ptzoom);
-    keyFile.set_boolean ("File Browser", "OverlayedFileNames", overlayedFileNames);
-    keyFile.set_boolean ("File Browser", "FilmStripOverlayedFileNames", filmStripOverlayedFileNames);
-    keyFile.set_boolean ("File Browser", "ShowFileNames", showFileNames );
-    keyFile.set_boolean ("File Browser", "FilmStripShowFileNames", filmStripShowFileNames );
-    keyFile.set_boolean ("File Browser", "InternalThumbIfUntouched", internalThumbIfUntouched );
-    keyFile.set_boolean ("File Browser", "menuGroupRank", menuGroupRank);
-    keyFile.set_boolean ("File Browser", "menuGroupLabel", menuGroupLabel);
-    keyFile.set_boolean ("File Browser", "menuGroupFileOperations", menuGroupFileOperations);
-    keyFile.set_boolean ("File Browser", "menuGroupProfileOperations", menuGroupProfileOperations);
-    keyFile.set_boolean ("File Browser", "menuGroupExtProg", menuGroupExtProg);
-    keyFile.set_integer ("File Browser", "MaxRecentFolders", maxRecentFolders);
-    {
-        std::vector<Glib::ustring> temp;
-        temp.reserve(maxRecentFolders);
-
-        for(unsigned int i = 0; i < std::min(recentFolders.size(), maxRecentFolders); i++) {
-            temp.push_back(recentFolders[i]);
+        if (startupDir == STARTUPDIR_HOME) {
+            keyFile.set_string ("General", "StartupDirectory", "home");
+        } else if (startupDir == STARTUPDIR_CURRENT) {
+            keyFile.set_string ("General", "StartupDirectory", "current");
+        } else if (startupDir == STARTUPDIR_CUSTOM) {
+            keyFile.set_string ("General", "StartupDirectory", "custom");
+        } else if (startupDir == STARTUPDIR_LAST) {
+            keyFile.set_string ("General", "StartupDirectory", "last");
         }
 
-        keyFile.set_string_list ("File Browser", "RecentFolders", temp);
-    }
-    keyFile.set_integer ("Clipping Indication", "HighlightThreshold", highlightThreshold);
-    keyFile.set_integer ("Clipping Indication", "ShadowThreshold", shadowThreshold);
-    keyFile.set_boolean ("Clipping Indication", "BlinkClipped", blinkClipped);
+        keyFile.set_string  ("General", "StartupPath", startupPath);
+        keyFile.set_string  ("General", "DateFormat", dateFormat);
+        keyFile.set_integer ("General", "AdjusterMinDelay", adjusterMinDelay);
+        keyFile.set_integer ("General", "AdjusterMaxDelay", adjusterMaxDelay);
+        keyFile.set_boolean ("General", "MultiUser", multiUser);
+        keyFile.set_string  ("General", "Language", language);
+        keyFile.set_boolean ("General", "LanguageAutoDetect", languageAutoDetect);
+        keyFile.set_string  ("General", "Theme", theme);
+        keyFile.set_boolean ("General", "SlimUI", slimUI);
+        keyFile.set_boolean ("General", "UseSystemTheme", useSystemTheme);
+        keyFile.set_string  ("General", "Version", VERSION);
+        keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
+        keyFile.set_string  ("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
+        keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
+        keyFile.set_double ("General", "BotLeft", rtSettings.bot_left);
+        keyFile.set_double ("General", "TopLeft", rtSettings.top_left);
+        keyFile.set_double ("General", "TopRight", rtSettings.top_right);
+        keyFile.set_double ("General", "BotRight", rtSettings.bot_right);
+        keyFile.set_double ("General", "EDdetec", rtSettings.ed_detec);
+        keyFile.set_double ("General", "EDdetecStr", rtSettings.ed_detecStr);
+        keyFile.set_double ("General", "EDLow", rtSettings.ed_low);
+        keyFile.set_double ("General", "EDLipinfl", rtSettings.ed_lipinfl);
+        keyFile.set_double ("General", "EDLipampl", rtSettings.ed_lipampl);
 
-    keyFile.set_integer ("Performance", "RgbDenoiseThreadLimit", rgbDenoiseThreadLimit);
-    keyFile.set_double  ("Performance", "NRauto", rtSettings.nrauto);
-    keyFile.set_double  ("Performance", "NRautomax", rtSettings.nrautomax);
-    keyFile.set_double  ("Performance", "NRhigh", rtSettings.nrhigh);
-    keyFile.set_integer ("Performance", "NRWavlevel", rtSettings.nrwavlevel);
-    keyFile.set_integer ("Performance", "LevNR", rtSettings.leveldnv);
-    keyFile.set_integer ("Performance", "LevNRTI", rtSettings.leveldnti);
-    keyFile.set_integer ("Performance", "LevNRAUT", rtSettings.leveldnaut);
-    keyFile.set_integer ("Performance", "LevNRLISS", rtSettings.leveldnliss);
-    keyFile.set_integer ("Performance", "SIMPLNRAUT", rtSettings.leveldnautsimpl);
-    keyFile.set_integer ("Performance", "ClutCacheSize", clutCacheSize);
-    keyFile.set_integer ("Performance", "MaxInspectorBuffers", maxInspectorBuffers);
-    keyFile.set_integer ("Performance", "PreviewDemosaicFromSidecar", prevdemo);
-    keyFile.set_boolean ("Performance", "Daubechies", rtSettings.daubech);
-    keyFile.set_boolean ("Performance", "SerializeTiffRead", serializeTiffRead);
 
-    keyFile.set_string  ("Output", "Format", saveFormat.format);
-    keyFile.set_integer ("Output", "JpegQuality", saveFormat.jpegQuality);
-    keyFile.set_integer ("Output", "JpegSubSamp", saveFormat.jpegSubSamp);
-    keyFile.set_integer ("Output", "PngCompression", saveFormat.pngCompression);
-    keyFile.set_integer ("Output", "PngBps", saveFormat.pngBits);
-    keyFile.set_integer ("Output", "TiffBps", saveFormat.tiffBits);
-    keyFile.set_boolean ("Output", "TiffUncompressed", saveFormat.tiffUncompressed);
-    keyFile.set_boolean ("Output", "SaveProcParams", saveFormat.saveParams);
+        keyFile.set_integer ("External Editor", "EditorKind", editorToSendTo);
+        keyFile.set_string  ("External Editor", "GimpDir", gimpDir);
+        keyFile.set_string  ("External Editor", "PhotoshopDir", psDir);
+        keyFile.set_string  ("External Editor", "CustomEditor", customEditorProg);
 
-    keyFile.set_string  ("Output", "FormatBatch", saveFormatBatch.format);
-    keyFile.set_integer ("Output", "JpegQualityBatch", saveFormatBatch.jpegQuality);
-    keyFile.set_integer ("Output", "JpegSubSampBatch", saveFormatBatch.jpegSubSamp);
-    keyFile.set_integer ("Output", "PngCompressionBatch", saveFormatBatch.pngCompression);
-    keyFile.set_integer ("Output", "PngBpsBatch", saveFormatBatch.pngBits);
-    keyFile.set_integer ("Output", "TiffBpsBatch", saveFormatBatch.tiffBits);
-    keyFile.set_boolean ("Output", "TiffUncompressedBatch", saveFormatBatch.tiffUncompressed);
-    keyFile.set_boolean ("Output", "SaveProcParamsBatch", saveFormatBatch.saveParams);
+        keyFile.set_boolean ("File Browser", "BrowseOnlyRaw", fbOnlyRaw);
+        keyFile.set_boolean ("File Browser", "BrowserShowsDate", fbShowDateTime);
+        keyFile.set_boolean ("File Browser", "BrowserShowsExif", fbShowBasicExif);
+        keyFile.set_boolean ("File Browser", "BrowserShowsExpComp", fbShowExpComp);
+        keyFile.set_boolean ("File Browser", "BrowserShowsHidden", fbShowHidden);
+        keyFile.set_integer ("File Browser", "ThumbnailSize", thumbSize);
+        keyFile.set_integer ("File Browser", "ThumbnailSizeTab", thumbSizeTab);
+        keyFile.set_integer ("File Browser", "ThumbnailSizeQueue", thumbSizeQueue);
+        keyFile.set_integer ("File Browser", "SameThumbSize", sameThumbSize);
+        keyFile.set_integer ("File Browser", "MaxPreviewHeight", maxThumbnailHeight);
+        keyFile.set_integer ("File Browser", "MaxCacheEntries", maxCacheEntries);
+        Glib::ArrayHandle<Glib::ustring> pext = parseExtensions;
+        keyFile.set_string_list ("File Browser", "ParseExtensions", pext);
+        Glib::ArrayHandle<int> pextena = parseExtensionsEnabled;
+        keyFile.set_integer_list ("File Browser", "ParseExtensionsEnabled", pextena);
+        keyFile.set_integer ("File Browser", "ThumbnailArrangement", fbArrangement);
+        keyFile.set_integer ("File Browser", "ThumbnailInterpolation", thumbInterp);
+        keyFile.set_boolean ("File Browser", "LiveThumbnails", liveThumbnails);
+        Glib::ArrayHandle<Glib::ustring> pfav = favoriteDirs;
+        keyFile.set_string_list ("File Browser", "FavoriteDirs", pfav);
+        Glib::ArrayHandle<Glib::ustring> pren = renameTemplates;
+        keyFile.set_string_list ("File Browser", "RenameTemplates", pren);
+        keyFile.set_boolean ("File Browser", "RenameUseTemplates", renameUseTemplates);
+        Glib::ArrayHandle<double> ptzoom = thumbnailZoomRatios;
+        keyFile.set_double_list ("File Browser", "ThumbnailZoomRatios", ptzoom);
+        keyFile.set_boolean ("File Browser", "OverlayedFileNames", overlayedFileNames);
+        keyFile.set_boolean ("File Browser", "FilmStripOverlayedFileNames", filmStripOverlayedFileNames);
+        keyFile.set_boolean ("File Browser", "ShowFileNames", showFileNames );
+        keyFile.set_boolean ("File Browser", "FilmStripShowFileNames", filmStripShowFileNames );
+        keyFile.set_boolean ("File Browser", "InternalThumbIfUntouched", internalThumbIfUntouched );
+        keyFile.set_boolean ("File Browser", "menuGroupRank", menuGroupRank);
+        keyFile.set_boolean ("File Browser", "menuGroupLabel", menuGroupLabel);
+        keyFile.set_boolean ("File Browser", "menuGroupFileOperations", menuGroupFileOperations);
+        keyFile.set_boolean ("File Browser", "menuGroupProfileOperations", menuGroupProfileOperations);
+        keyFile.set_boolean ("File Browser", "menuGroupExtProg", menuGroupExtProg);
+        keyFile.set_integer ("File Browser", "MaxRecentFolders", maxRecentFolders);
+        {
+            std::vector<Glib::ustring> temp;
+            temp.reserve(maxRecentFolders);
 
-    keyFile.set_string  ("Output", "PathTemplate", savePathTemplate);
-    keyFile.set_string  ("Output", "PathFolder", savePathFolder);
-    keyFile.set_boolean ("Output", "AutoSuffix", autoSuffix);
-    keyFile.set_boolean ("Output", "ForceFormatOpts", forceFormatOpts);
-    keyFile.set_integer ("Output", "SaveMethodNum", saveMethodNum);
-    keyFile.set_boolean ("Output", "UsePathTemplate", saveUsePathTemplate);
-    keyFile.set_string  ("Output", "LastSaveAsPath", lastSaveAsPath);
-    keyFile.set_boolean ("Output", "OverwriteOutputFile", overwriteOutputFile);
-    keyFile.set_boolean ("Output", "TunnelMetaData", tunnelMetaData);
+            for(unsigned int i = 0; i < std::min(recentFolders.size(), maxRecentFolders); i++) {
+                temp.push_back(recentFolders[i]);
+            }
 
-    keyFile.set_string  ("Profiles", "Directory", profilePath);
-    keyFile.set_boolean ("Profiles", "UseBundledProfiles", useBundledProfiles);
-    keyFile.set_string  ("Profiles", "LoadSaveProfilePath", loadSaveProfilePath);
-    keyFile.set_string  ("Profiles", "RawDefault", defProfRaw);
-    keyFile.set_string  ("Profiles", "ImgDefault", defProfImg);
-    keyFile.set_boolean ("Profiles", "FilledProfile", filledProfile);
-    keyFile.set_boolean ("Profiles", "SaveParamsWithFile", saveParamsFile);
-    keyFile.set_boolean ("Profiles", "SaveParamsToCache", saveParamsCache);
-    keyFile.set_integer ("Profiles", "LoadParamsFromLocation", paramsLoadLocation);
-    keyFile.set_string  ("Profiles", "CustomProfileBuilderPath", CPBPath);
-    keyFile.set_integer ("Profiles", "CustomProfileBuilderKeys", CPBKeys);
+            keyFile.set_string_list ("File Browser", "RecentFolders", temp);
+        }
+        keyFile.set_integer ("Clipping Indication", "HighlightThreshold", highlightThreshold);
+        keyFile.set_integer ("Clipping Indication", "ShadowThreshold", shadowThreshold);
+        keyFile.set_boolean ("Clipping Indication", "BlinkClipped", blinkClipped);
 
-    keyFile.set_string  ("GUI", "Font", font);
-    keyFile.set_integer ("GUI", "WindowWidth", windowWidth);
-    keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
-    keyFile.set_integer ("GUI", "WindowX", windowX);
-    keyFile.set_integer ("GUI", "WindowY", windowY);
-    keyFile.set_boolean ("GUI", "WindowMaximized", windowMaximized);
-    keyFile.set_integer ("GUI", "DetailWindowWidth", detailWindowWidth);
-    keyFile.set_integer ("GUI", "DetailWindowHeight", detailWindowHeight);
-    keyFile.set_integer ("GUI", "DirBrowserWidth", dirBrowserWidth);
-    keyFile.set_integer ("GUI", "DirBrowserHeight", dirBrowserHeight);
-    keyFile.set_integer ("GUI", "SortType", dirBrowserSortType);
-    keyFile.set_integer ("GUI", "PreferencesWidth", preferencesWidth);
-    keyFile.set_integer ("GUI", "PreferencesHeight", preferencesHeight);
-    keyFile.set_integer ("GUI", "SaveAsDialogWidth", saveAsDialogWidth);
-    keyFile.set_integer ("GUI", "SaveAsDialogHeight", saveAsDialogHeight);
-    keyFile.set_integer ("GUI", "ToolPanelWidth", toolPanelWidth);
-    keyFile.set_integer ("GUI", "BrowserToolPanelWidth", browserToolPanelWidth);
-    keyFile.set_integer ("GUI", "BrowserToolPanelHeight", browserToolPanelHeight);
-    keyFile.set_boolean ("GUI", "BrowserToolPanelOpened", browserToolPanelOpened);
-    keyFile.set_boolean ("GUI", "EditorFilmStripOpened", editorFilmStripOpened);
-    keyFile.set_boolean ("GUI", "BrowserDirPanelOpened", browserDirPanelOpened);
-    keyFile.set_integer ("GUI", "HistoryPanelWidth", historyPanelWidth);
-    keyFile.set_integer ("GUI", "LastPreviewScale", lastScale);
-    keyFile.set_integer ("GUI", "PanAccelFactor", panAccelFactor);
-    keyFile.set_boolean ("GUI", "RememberZoomAndPan", rememberZoomAndPan);
-    keyFile.set_integer ("GUI", "LastCropSize", lastCropSize);
-    keyFile.set_boolean ("GUI", "ShowHistory", showHistory);
-    keyFile.set_integer ("GUI", "ShowFilePanelState", showFilePanelState);
-    keyFile.set_boolean ("GUI", "ShowInfo", showInfo);
-    keyFile.set_boolean ("GUI", "MainNBVertical", mainNBVertical);
-    keyFile.set_boolean ("GUI", "ShowClippedHighlights", showClippedHighlights);
-    keyFile.set_boolean ("GUI", "ShowClippedShadows", showClippedShadows);
-    keyFile.set_integer ("GUI", "FrameColor", bgcolor);
-    keyFile.set_boolean ("GUI", "ProcessingQueueEnbled", procQueueEnabled);
-    Glib::ArrayHandle<int> tpopen = tpOpen;
-    keyFile.set_integer_list ("GUI", "ToolPanelsExpanded", tpopen);
-    keyFile.set_integer ("GUI", "MultiDisplayMode", multiDisplayMode);
-    keyFile.set_double_list ("GUI", "CutOverlayBrush", cutOverlayBrush);
-    keyFile.set_double_list ("GUI", "NavGuideBrush", navGuideBrush);
-    keyFile.set_integer ("GUI", "HistogramPosition", histogramPosition);
-    keyFile.set_boolean ("GUI", "HistogramBar", histogramBar);
-    keyFile.set_boolean ("GUI", "HistogramFullMode", histogramFullMode);
-    keyFile.set_boolean ("GUI", "ShowFilmStripToolBar", showFilmStripToolBar);
-    keyFile.set_boolean ("GUI", "FileBrowserToolbarSingleRow", FileBrowserToolbarSingleRow);
-    keyFile.set_boolean ("GUI", "HideTPVScrollbar", hideTPVScrollbar);
-    keyFile.set_boolean ("GUI", "UseIconNoText", UseIconNoText);
-    keyFile.set_boolean ("GUI", "HistogramWorking", rtSettings.HistogramWorking);
-    keyFile.set_integer ("GUI", "CurveBBoxPosition", curvebboxpos);
+        keyFile.set_integer ("Performance", "RgbDenoiseThreadLimit", rgbDenoiseThreadLimit);
+        keyFile.set_double  ("Performance", "NRauto", rtSettings.nrauto);
+        keyFile.set_double  ("Performance", "NRautomax", rtSettings.nrautomax);
+        keyFile.set_double  ("Performance", "NRhigh", rtSettings.nrhigh);
+        keyFile.set_integer ("Performance", "NRWavlevel", rtSettings.nrwavlevel);
+        keyFile.set_integer ("Performance", "LevNR", rtSettings.leveldnv);
+        keyFile.set_integer ("Performance", "LevNRTI", rtSettings.leveldnti);
+        keyFile.set_integer ("Performance", "LevNRAUT", rtSettings.leveldnaut);
+        keyFile.set_integer ("Performance", "LevNRLISS", rtSettings.leveldnliss);
+        keyFile.set_integer ("Performance", "SIMPLNRAUT", rtSettings.leveldnautsimpl);
+        keyFile.set_integer ("Performance", "ClutCacheSize", clutCacheSize);
+        keyFile.set_integer ("Performance", "MaxInspectorBuffers", maxInspectorBuffers);
+        keyFile.set_integer ("Performance", "PreviewDemosaicFromSidecar", prevdemo);
+        keyFile.set_boolean ("Performance", "Daubechies", rtSettings.daubech);
+        keyFile.set_boolean ("Performance", "SerializeTiffRead", serializeTiffRead);
 
-    //Glib::ArrayHandle<int> crvopen = crvOpen;
-    //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
+        keyFile.set_string  ("Output", "Format", saveFormat.format);
+        keyFile.set_integer ("Output", "JpegQuality", saveFormat.jpegQuality);
+        keyFile.set_integer ("Output", "JpegSubSamp", saveFormat.jpegSubSamp);
+        keyFile.set_integer ("Output", "PngCompression", saveFormat.pngCompression);
+        keyFile.set_integer ("Output", "PngBps", saveFormat.pngBits);
+        keyFile.set_integer ("Output", "TiffBps", saveFormat.tiffBits);
+        keyFile.set_boolean ("Output", "TiffUncompressed", saveFormat.tiffUncompressed);
+        keyFile.set_boolean ("Output", "SaveProcParams", saveFormat.saveParams);
 
-    keyFile.set_integer ("Crop Settings", "PPI", cropPPI);
+        keyFile.set_string  ("Output", "FormatBatch", saveFormatBatch.format);
+        keyFile.set_integer ("Output", "JpegQualityBatch", saveFormatBatch.jpegQuality);
+        keyFile.set_integer ("Output", "JpegSubSampBatch", saveFormatBatch.jpegSubSamp);
+        keyFile.set_integer ("Output", "PngCompressionBatch", saveFormatBatch.pngCompression);
+        keyFile.set_integer ("Output", "PngBpsBatch", saveFormatBatch.pngBits);
+        keyFile.set_integer ("Output", "TiffBpsBatch", saveFormatBatch.tiffBits);
+        keyFile.set_boolean ("Output", "TiffUncompressedBatch", saveFormatBatch.tiffUncompressed);
+        keyFile.set_boolean ("Output", "SaveProcParamsBatch", saveFormatBatch.saveParams);
 
-    keyFile.set_string  ("Color Management", "ICCDirectory", rtSettings.iccDirectory);
-    keyFile.set_string  ("Color Management", "MonitorProfile", rtSettings.monitorProfile);
-    keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
-    keyFile.set_boolean ("Color Management", "Autocielab", rtSettings.autocielab);
-    keyFile.set_boolean ("Color Management", "RGBcurvesLumamode_Gamut", rtSettings.rgbcurveslumamode_gamut);
-    keyFile.set_integer ("Color Management", "Intent", rtSettings.monitorIntent);
-    keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);
-    keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);
-    keyFile.set_integer ("Color Management", "greySc", rtSettings.viewinggreySc);
+        keyFile.set_string  ("Output", "PathTemplate", savePathTemplate);
+        keyFile.set_string  ("Output", "PathFolder", savePathFolder);
+        keyFile.set_boolean ("Output", "AutoSuffix", autoSuffix);
+        keyFile.set_boolean ("Output", "ForceFormatOpts", forceFormatOpts);
+        keyFile.set_integer ("Output", "SaveMethodNum", saveMethodNum);
+        keyFile.set_boolean ("Output", "UsePathTemplate", saveUsePathTemplate);
+        keyFile.set_string  ("Output", "LastSaveAsPath", lastSaveAsPath);
+        keyFile.set_boolean ("Output", "OverwriteOutputFile", overwriteOutputFile);
+        keyFile.set_boolean ("Output", "TunnelMetaData", tunnelMetaData);
 
-    keyFile.set_string  ("Color Management", "AdobeRGB", rtSettings.adobe);
-    keyFile.set_string  ("Color Management", "ProPhoto", rtSettings.prophoto);
-    keyFile.set_string  ("Color Management", "ProPhoto10", rtSettings.prophoto10);
-    keyFile.set_string  ("Color Management", "WideGamut", rtSettings.widegamut);
-    keyFile.set_string  ("Color Management", "sRGB", rtSettings.srgb);
-    keyFile.set_string  ("Color Management", "sRGB10", rtSettings.srgb10);
-    keyFile.set_string  ("Color Management", "Beta", rtSettings.beta);
-    keyFile.set_string  ("Color Management", "Best", rtSettings.best);
-    keyFile.set_string  ("Color Management", "Bruce", rtSettings.bruce);
-    keyFile.set_integer ("Color Management", "WhiteBalanceSpotSize", whiteBalanceSpotSize);
-    keyFile.set_boolean ("Color Management", "GamutICC", rtSettings.gamutICC);
+        keyFile.set_string  ("Profiles", "Directory", profilePath);
+        keyFile.set_boolean ("Profiles", "UseBundledProfiles", useBundledProfiles);
+        keyFile.set_string  ("Profiles", "LoadSaveProfilePath", loadSaveProfilePath);
+        keyFile.set_string  ("Profiles", "RawDefault", defProfRaw);
+        keyFile.set_string  ("Profiles", "ImgDefault", defProfImg);
+        keyFile.set_boolean ("Profiles", "FilledProfile", filledProfile);
+        keyFile.set_boolean ("Profiles", "SaveParamsWithFile", saveParamsFile);
+        keyFile.set_boolean ("Profiles", "SaveParamsToCache", saveParamsCache);
+        keyFile.set_integer ("Profiles", "LoadParamsFromLocation", paramsLoadLocation);
+        keyFile.set_string  ("Profiles", "CustomProfileBuilderPath", CPBPath);
+        keyFile.set_integer ("Profiles", "CustomProfileBuilderKeys", CPBKeys);
+
+        keyFile.set_string  ("GUI", "Font", font);
+        keyFile.set_integer ("GUI", "WindowWidth", windowWidth);
+        keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
+        keyFile.set_integer ("GUI", "WindowX", windowX);
+        keyFile.set_integer ("GUI", "WindowY", windowY);
+        keyFile.set_boolean ("GUI", "WindowMaximized", windowMaximized);
+        keyFile.set_integer ("GUI", "DetailWindowWidth", detailWindowWidth);
+        keyFile.set_integer ("GUI", "DetailWindowHeight", detailWindowHeight);
+        keyFile.set_integer ("GUI", "DirBrowserWidth", dirBrowserWidth);
+        keyFile.set_integer ("GUI", "DirBrowserHeight", dirBrowserHeight);
+        keyFile.set_integer ("GUI", "SortType", dirBrowserSortType);
+        keyFile.set_integer ("GUI", "PreferencesWidth", preferencesWidth);
+        keyFile.set_integer ("GUI", "PreferencesHeight", preferencesHeight);
+        keyFile.set_integer ("GUI", "SaveAsDialogWidth", saveAsDialogWidth);
+        keyFile.set_integer ("GUI", "SaveAsDialogHeight", saveAsDialogHeight);
+        keyFile.set_integer ("GUI", "ToolPanelWidth", toolPanelWidth);
+        keyFile.set_integer ("GUI", "BrowserToolPanelWidth", browserToolPanelWidth);
+        keyFile.set_integer ("GUI", "BrowserToolPanelHeight", browserToolPanelHeight);
+        keyFile.set_boolean ("GUI", "BrowserToolPanelOpened", browserToolPanelOpened);
+        keyFile.set_boolean ("GUI", "EditorFilmStripOpened", editorFilmStripOpened);
+        keyFile.set_boolean ("GUI", "BrowserDirPanelOpened", browserDirPanelOpened);
+        keyFile.set_integer ("GUI", "HistoryPanelWidth", historyPanelWidth);
+        keyFile.set_integer ("GUI", "LastPreviewScale", lastScale);
+        keyFile.set_integer ("GUI", "PanAccelFactor", panAccelFactor);
+        keyFile.set_boolean ("GUI", "RememberZoomAndPan", rememberZoomAndPan);
+        keyFile.set_integer ("GUI", "LastCropSize", lastCropSize);
+        keyFile.set_boolean ("GUI", "ShowHistory", showHistory);
+        keyFile.set_integer ("GUI", "ShowFilePanelState", showFilePanelState);
+        keyFile.set_boolean ("GUI", "ShowInfo", showInfo);
+        keyFile.set_boolean ("GUI", "MainNBVertical", mainNBVertical);
+        keyFile.set_boolean ("GUI", "ShowClippedHighlights", showClippedHighlights);
+        keyFile.set_boolean ("GUI", "ShowClippedShadows", showClippedShadows);
+        keyFile.set_integer ("GUI", "FrameColor", bgcolor);
+        keyFile.set_boolean ("GUI", "ProcessingQueueEnbled", procQueueEnabled);
+        Glib::ArrayHandle<int> tpopen = tpOpen;
+        keyFile.set_integer_list ("GUI", "ToolPanelsExpanded", tpopen);
+        keyFile.set_integer ("GUI", "MultiDisplayMode", multiDisplayMode);
+        keyFile.set_double_list ("GUI", "CutOverlayBrush", cutOverlayBrush);
+        keyFile.set_double_list ("GUI", "NavGuideBrush", navGuideBrush);
+        keyFile.set_integer ("GUI", "HistogramPosition", histogramPosition);
+        keyFile.set_boolean ("GUI", "HistogramBar", histogramBar);
+        keyFile.set_boolean ("GUI", "HistogramFullMode", histogramFullMode);
+        keyFile.set_boolean ("GUI", "ShowFilmStripToolBar", showFilmStripToolBar);
+        keyFile.set_boolean ("GUI", "FileBrowserToolbarSingleRow", FileBrowserToolbarSingleRow);
+        keyFile.set_boolean ("GUI", "HideTPVScrollbar", hideTPVScrollbar);
+        keyFile.set_boolean ("GUI", "UseIconNoText", UseIconNoText);
+        keyFile.set_boolean ("GUI", "HistogramWorking", rtSettings.HistogramWorking);
+        keyFile.set_integer ("GUI", "CurveBBoxPosition", curvebboxpos);
+
+        //Glib::ArrayHandle<int> crvopen = crvOpen;
+        //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
+
+        keyFile.set_integer ("Crop Settings", "PPI", cropPPI);
+
+        keyFile.set_string  ("Color Management", "ICCDirectory", rtSettings.iccDirectory);
+        keyFile.set_string  ("Color Management", "MonitorProfile", rtSettings.monitorProfile);
+        keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
+        keyFile.set_boolean ("Color Management", "Autocielab", rtSettings.autocielab);
+        keyFile.set_boolean ("Color Management", "RGBcurvesLumamode_Gamut", rtSettings.rgbcurveslumamode_gamut);
+        keyFile.set_integer ("Color Management", "Intent", rtSettings.monitorIntent);
+        keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);
+        keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);
+        keyFile.set_integer ("Color Management", "greySc", rtSettings.viewinggreySc);
+
+        keyFile.set_string  ("Color Management", "AdobeRGB", rtSettings.adobe);
+        keyFile.set_string  ("Color Management", "ProPhoto", rtSettings.prophoto);
+        keyFile.set_string  ("Color Management", "ProPhoto10", rtSettings.prophoto10);
+        keyFile.set_string  ("Color Management", "WideGamut", rtSettings.widegamut);
+        keyFile.set_string  ("Color Management", "sRGB", rtSettings.srgb);
+        keyFile.set_string  ("Color Management", "sRGB10", rtSettings.srgb10);
+        keyFile.set_string  ("Color Management", "Beta", rtSettings.beta);
+        keyFile.set_string  ("Color Management", "Best", rtSettings.best);
+        keyFile.set_string  ("Color Management", "Rec2020", rtSettings.rec2020);
+        keyFile.set_string  ("Color Management", "Bruce", rtSettings.bruce);
+        keyFile.set_integer ("Color Management", "WhiteBalanceSpotSize", whiteBalanceSpotSize);
+        keyFile.set_boolean ("Color Management", "GamutICC", rtSettings.gamutICC);
 //   keyFile.set_boolean ("Color Management", "BWcomplement", rtSettings.bw_complementary);
-    keyFile.set_boolean ("Color Management", "Ciecamfloat", rtSettings.ciecamfloat);
-    keyFile.set_boolean ("Color Management", "GamutLch", rtSettings.gamutLch);
-    keyFile.set_integer ("Color Management", "ProtectRed", rtSettings.protectred);
-    keyFile.set_integer ("Color Management", "Amountchroma", rtSettings.amchroma);
-    keyFile.set_double  ("Color Management", "ProtectRedH", rtSettings.protectredh);
-    keyFile.set_integer ("Color Management", "CRI", rtSettings.CRI_color);
-    keyFile.set_integer ("Color Management", "DenoiseLabgamma", rtSettings.denoiselabgamma);
+        keyFile.set_boolean ("Color Management", "Ciecamfloat", rtSettings.ciecamfloat);
+        keyFile.set_boolean ("Color Management", "GamutLch", rtSettings.gamutLch);
+        keyFile.set_integer ("Color Management", "ProtectRed", rtSettings.protectred);
+        keyFile.set_integer ("Color Management", "Amountchroma", rtSettings.amchroma);
+        keyFile.set_double  ("Color Management", "ProtectRedH", rtSettings.protectredh);
+        keyFile.set_integer ("Color Management", "CRI", rtSettings.CRI_color);
+        keyFile.set_integer ("Color Management", "DenoiseLabgamma", rtSettings.denoiselabgamma);
 //    keyFile.set_boolean ("Color Management", "Ciebadpixgauss", rtSettings.ciebadpixgauss);
-    keyFile.set_double ("Color Management", "CBDLArtif", rtSettings.artifact_cbdl);
-    keyFile.set_double ("Color Management", "CBDLlevel0", rtSettings.level0_cbdl);
-    keyFile.set_double ("Color Management", "CBDLlevel123", rtSettings.level123_cbdl);
+        keyFile.set_double ("Color Management", "CBDLArtif", rtSettings.artifact_cbdl);
+        keyFile.set_double ("Color Management", "CBDLlevel0", rtSettings.level0_cbdl);
+        keyFile.set_double ("Color Management", "CBDLlevel123", rtSettings.level123_cbdl);
 //   keyFile.set_double ("Color Management", "Colortoningab", rtSettings.colortoningab);
 //    keyFile.set_double ("Color Management", "Decaction", rtSettings.decaction);
-    keyFile.set_string ("Color Management", "ClutsDirectory", clutsDir);
+        keyFile.set_string ("Color Management", "ClutsDirectory", clutsDir);
 
 
-    Glib::ArrayHandle<int> bab = baBehav;
-    keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);
+        Glib::ArrayHandle<int> bab = baBehav;
+        keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);
 
-    keyFile.set_boolean ("Sounds", "Enable", sndEnable);
-    keyFile.set_string  ("Sounds", "BatchQueueDone", sndBatchQueueDone);
-    keyFile.set_string  ("Sounds", "LngEditProcDone", sndLngEditProcDone);
-    keyFile.set_double  ("Sounds", "LngEditProcDoneSecs", sndLngEditProcDoneSecs);
+        keyFile.set_boolean ("Sounds", "Enable", sndEnable);
+        keyFile.set_string  ("Sounds", "BatchQueueDone", sndBatchQueueDone);
+        keyFile.set_string  ("Sounds", "LngEditProcDone", sndLngEditProcDone);
+        keyFile.set_double  ("Sounds", "LngEditProcDoneSecs", sndLngEditProcDoneSecs);
 
 
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpening"         , fastexport_bypass_sharpening        );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpenEdge"        , fastexport_bypass_sharpenEdge       );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpenMicro"       , fastexport_bypass_sharpenMicro      );
-    //keyFile.set_boolean ("Fast Export", "fastexport_bypass_lumaDenoise"      , fastexport_bypass_lumaDenoise       );
-    //keyFile.set_boolean ("Fast Export", "fastexport_bypass_colorDenoise"     , fastexport_bypass_colorDenoise      );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_defringe"           , fastexport_bypass_defringe          );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_dirpyrDenoise"      , fastexport_bypass_dirpyrDenoise     );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_sh_hq"              , fastexport_bypass_sh_hq             );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_dirpyrequalizer"    , fastexport_bypass_dirpyrequalizer   );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_wavelet"    , fastexport_bypass_wavelet   );
-    keyFile.set_string  ("Fast Export", "fastexport_raw_bayer_method"          , fastexport_raw_bayer_method         );
-    //keyFile.set_boolean ("Fast Export", "fastexport_bypass_bayer_raw_all_enhance"   , fastexport_bypass_raw_bayer_all_enhance     );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_dcb_iterations"  , fastexport_bypass_raw_bayer_dcb_iterations  );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_dcb_enhance"     , fastexport_bypass_raw_bayer_dcb_enhance     );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_lmmse_iterations", fastexport_bypass_raw_bayer_lmmse_iterations);
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_linenoise"       , fastexport_bypass_raw_bayer_linenoise       );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_greenthresh"     , fastexport_bypass_raw_bayer_greenthresh     );
-    keyFile.set_string  ("Fast Export", "fastexport_raw_xtrans_method"         , fastexport_raw_xtrans_method        );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_ccSteps"        , fastexport_bypass_raw_ccSteps       );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_ca"             , fastexport_bypass_raw_ca            );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_df"             , fastexport_bypass_raw_df            );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_ff"             , fastexport_bypass_raw_ff            );
-    keyFile.set_string  ("Fast Export", "fastexport_icm_input"                 , fastexport_icm_input                );
-    keyFile.set_string  ("Fast Export", "fastexport_icm_working"               , fastexport_icm_working              );
-    keyFile.set_string  ("Fast Export", "fastexport_icm_output"                , fastexport_icm_output               );
-    keyFile.set_integer ("Fast Export", "fastexport_icm_output_intent"         , fastexport_icm_outputIntent         );
-    keyFile.set_string  ("Fast Export", "fastexport_icm_gamma"                 , fastexport_icm_gamma                );
-    keyFile.set_boolean ("Fast Export", "fastexport_resize_enabled"            , fastexport_resize_enabled           );
-    keyFile.set_double  ("Fast Export", "fastexport_resize_scale"              , fastexport_resize_scale             );
-    keyFile.set_string  ("Fast Export", "fastexport_resize_appliesTo"          , fastexport_resize_appliesTo         );
-    keyFile.set_string  ("Fast Export", "fastexport_resize_method"             , fastexport_resize_method            );
-    keyFile.set_integer ("Fast Export", "fastexport_resize_dataspec"           , fastexport_resize_dataspec          );
-    keyFile.set_integer ("Fast Export", "fastexport_resize_width"              , fastexport_resize_width             );
-    keyFile.set_integer ("Fast Export", "fastexport_resize_height"             , fastexport_resize_height            );
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpening"         , fastexport_bypass_sharpening        );
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpenEdge"        , fastexport_bypass_sharpenEdge       );
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpenMicro"       , fastexport_bypass_sharpenMicro      );
+        //keyFile.set_boolean ("Fast Export", "fastexport_bypass_lumaDenoise"      , fastexport_bypass_lumaDenoise       );
+        //keyFile.set_boolean ("Fast Export", "fastexport_bypass_colorDenoise"     , fastexport_bypass_colorDenoise      );
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_defringe"           , fastexport_bypass_defringe          );
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_dirpyrDenoise"      , fastexport_bypass_dirpyrDenoise     );
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_sh_hq"              , fastexport_bypass_sh_hq             );
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_dirpyrequalizer"    , fastexport_bypass_dirpyrequalizer   );
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_wavelet"    , fastexport_bypass_wavelet   );
+        keyFile.set_string  ("Fast Export", "fastexport_raw_bayer_method"          , fastexport_raw_bayer_method         );
+        //keyFile.set_boolean ("Fast Export", "fastexport_bypass_bayer_raw_all_enhance"   , fastexport_bypass_raw_bayer_all_enhance     );
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_dcb_iterations"  , fastexport_bypass_raw_bayer_dcb_iterations  );
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_dcb_enhance"     , fastexport_bypass_raw_bayer_dcb_enhance     );
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_lmmse_iterations", fastexport_bypass_raw_bayer_lmmse_iterations);
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_linenoise"       , fastexport_bypass_raw_bayer_linenoise       );
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_greenthresh"     , fastexport_bypass_raw_bayer_greenthresh     );
+        keyFile.set_string  ("Fast Export", "fastexport_raw_xtrans_method"         , fastexport_raw_xtrans_method        );
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_ccSteps"        , fastexport_bypass_raw_ccSteps       );
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_ca"             , fastexport_bypass_raw_ca            );
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_df"             , fastexport_bypass_raw_df            );
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_ff"             , fastexport_bypass_raw_ff            );
+        keyFile.set_string  ("Fast Export", "fastexport_icm_input"                 , fastexport_icm_input                );
+        keyFile.set_string  ("Fast Export", "fastexport_icm_working"               , fastexport_icm_working              );
+        keyFile.set_string  ("Fast Export", "fastexport_icm_output"                , fastexport_icm_output               );
+        keyFile.set_integer ("Fast Export", "fastexport_icm_output_intent"         , fastexport_icm_outputIntent         );
+        keyFile.set_string  ("Fast Export", "fastexport_icm_gamma"                 , fastexport_icm_gamma                );
+        keyFile.set_boolean ("Fast Export", "fastexport_resize_enabled"            , fastexport_resize_enabled           );
+        keyFile.set_double  ("Fast Export", "fastexport_resize_scale"              , fastexport_resize_scale             );
+        keyFile.set_string  ("Fast Export", "fastexport_resize_appliesTo"          , fastexport_resize_appliesTo         );
+        keyFile.set_string  ("Fast Export", "fastexport_resize_method"             , fastexport_resize_method            );
+        keyFile.set_integer ("Fast Export", "fastexport_resize_dataspec"           , fastexport_resize_dataspec          );
+        keyFile.set_integer ("Fast Export", "fastexport_resize_width"              , fastexport_resize_width             );
+        keyFile.set_integer ("Fast Export", "fastexport_resize_height"             , fastexport_resize_height            );
 
-    keyFile.set_string ("Dialogs", "LastIccDir", lastIccDir);
-    keyFile.set_string ("Dialogs", "LastDarkframeDir", lastDarkframeDir);
-    keyFile.set_string ("Dialogs", "LastFlatfieldDir", lastFlatfieldDir);
-    keyFile.set_string ("Dialogs", "LastRgbCurvesDir", lastRgbCurvesDir);
-    keyFile.set_string ("Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
-    keyFile.set_string ("Dialogs", "LastRetinexDir", lastRetinexDir);
-    keyFile.set_string ("Dialogs", "LastDenoiseCurvesDir", lastDenoiseCurvesDir);
-    keyFile.set_string ("Dialogs", "LastWaveletCurvesDir", lastWaveletCurvesDir);
-    keyFile.set_string ("Dialogs", "LastPFCurvesDir", lastPFCurvesDir);
-    keyFile.set_string ("Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
-    keyFile.set_string ("Dialogs", "LastBWCurvesDir", lastBWCurvesDir);
-    keyFile.set_string ("Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
-    keyFile.set_string ("Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
-    keyFile.set_string ("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
+        keyFile.set_string ("Dialogs", "LastIccDir", lastIccDir);
+        keyFile.set_string ("Dialogs", "LastDarkframeDir", lastDarkframeDir);
+        keyFile.set_string ("Dialogs", "LastFlatfieldDir", lastFlatfieldDir);
+        keyFile.set_string ("Dialogs", "LastRgbCurvesDir", lastRgbCurvesDir);
+        keyFile.set_string ("Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
+        keyFile.set_string ("Dialogs", "LastRetinexDir", lastRetinexDir);
+        keyFile.set_string ("Dialogs", "LastDenoiseCurvesDir", lastDenoiseCurvesDir);
+        keyFile.set_string ("Dialogs", "LastWaveletCurvesDir", lastWaveletCurvesDir);
+        keyFile.set_string ("Dialogs", "LastPFCurvesDir", lastPFCurvesDir);
+        keyFile.set_string ("Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
+        keyFile.set_string ("Dialogs", "LastBWCurvesDir", lastBWCurvesDir);
+        keyFile.set_string ("Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
+        keyFile.set_string ("Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
+        keyFile.set_string ("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
 
-    keyData = keyFile.to_data ();
+        keyData = keyFile.to_data ();
 
     } catch (Glib::KeyFileError&) {}
 

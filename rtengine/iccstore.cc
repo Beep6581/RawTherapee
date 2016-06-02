@@ -41,8 +41,9 @@ void loadProfiles (const Glib::ustring& dirName,
                    std::map<Glib::ustring, Glib::ustring>* profileNames,
                    bool nameUpper, bool onlyRgb)
 {
-    if (dirName.empty ())
+    if (dirName.empty ()) {
         return;
+    }
 
     try {
 
@@ -52,23 +53,27 @@ void loadProfiles (const Glib::ustring& dirName,
 
             const Glib::ustring fileName = *entry;
 
-            if (fileName.size () < 4)
+            if (fileName.size () < 4) {
                 continue;
+            }
 
             const Glib::ustring extension = fileName.substr (fileName.size () - 4).casefold ();
 
-            if (extension.compare (".icc") != 0 && extension.compare (".icm") != 0)
+            if (extension.compare (".icc") != 0 && extension.compare (".icm") != 0) {
                 continue;
+            }
 
             const Glib::ustring filePath = Glib::build_filename (dirName, fileName);
 
-            if (!Glib::file_test (filePath, Glib::FILE_TEST_IS_REGULAR))
+            if (!Glib::file_test (filePath, Glib::FILE_TEST_IS_REGULAR)) {
                 continue;
+            }
 
             Glib::ustring name = fileName.substr (0, fileName.size() - 4);
 
-            if (nameUpper)
+            if (nameUpper) {
                 name = name.uppercase ();
+            }
 
             if (profiles) {
                 const rtengine::ProfileContent content (filePath);
@@ -77,28 +82,31 @@ void loadProfiles (const Glib::ustring& dirName,
                 if (profile && (!onlyRgb || cmsGetColorSpace (profile) == cmsSigRgbData)) {
                     profiles->insert (std::make_pair (name, profile));
 
-                    if (profileContents)
+                    if (profileContents) {
                         profileContents->insert (std::make_pair (name, content));
+                    }
                 }
             }
 
-            if (profileNames)
+            if (profileNames) {
                 profileNames->insert (std::make_pair (name, filePath));
+            }
         }
-    }
-    catch (Glib::Exception&) {}
+    } catch (Glib::Exception&) {}
 }
 
 inline void getSupportedIntent (cmsHPROFILE profile, cmsUInt32Number intent, cmsUInt32Number direction, std::uint8_t& result)
 {
-    if (cmsIsIntentSupported (profile, intent, direction))
+    if (cmsIsIntentSupported (profile, intent, direction)) {
         result |= 1 << intent;
+    }
 }
 
 inline std::uint8_t getSupportedIntents (cmsHPROFILE profile, cmsUInt32Number direction)
 {
-    if (!profile)
+    if (!profile) {
         return 0;
+    }
 
     std::uint8_t result = 0;
 
@@ -116,9 +124,9 @@ inline cmsHPROFILE createXYZProfile ()
     return rtengine::ICCStore::createFromMatrix (mat, false, "XYZ");
 }
 
-const double (*wprofiles[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best};
-const double (*iwprofiles[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz};
-const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB"};
+const double (*wprofiles[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best, xyz_rec2020};
+const double (*iwprofiles[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz, rec2020_xyz};
+const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB", "Rec2020"};
 const char* wpgamma[] = {"default", "BT709_g2.2_s4.5", "sRGB_g2.4_s12.92", "linear_g1.0", "standard_g2.2", "standard_g1.8", "High_g1.3_s3.35", "Low_g2.6_s6.9"}; //gamma free
 //default = gamma inside profile
 //BT709 g=2.22 s=4.5  sRGB g=2.4 s=12.92
@@ -163,8 +171,9 @@ std::vector<Glib::ustring> ICCStore::getProfiles () const
 
     std::vector<Glib::ustring> res;
 
-    for (ProfileMap::const_iterator profile = fileProfiles.begin (); profile != fileProfiles.end (); ++profile)
+    for (ProfileMap::const_iterator profile = fileProfiles.begin (); profile != fileProfiles.end (); ++profile) {
         res.push_back (profile->first);
+    }
 
     return res;
 }
@@ -181,8 +190,9 @@ std::vector<Glib::ustring> ICCStore::getProfilesFromDir (const Glib::ustring& di
     loadProfiles (profilesDir, &profiles, NULL, NULL, false, true);
     loadProfiles (dirName, &profiles, NULL, NULL, false, true);
 
-    for (ProfileMap::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile)
+    for (ProfileMap::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile) {
         res.push_back (profile->first);
+    }
 
     return res;
 }
@@ -253,7 +263,7 @@ cmsHPROFILE ICCStore::makeStdGammaProfile (cmsHPROFILE iprof)
                 tags[i].sig == 0x6B545243) { // kTRC
             if (gamma_offset == 0) {
                 gamma_offset = offset;
-                uint32_t pcurve[] = { htonl(0x63757276), htonl(0), htonl(gamma_size == 12 ? 0 : 1) };
+                uint32_t pcurve[] = { htonl(0x63757276), htonl(0), htonl(gamma_size == 12 ? 0U : 1U) };
                 memcpy(&nd[offset], pcurve, 12);
 
                 if (gamma_size == 14) {
@@ -388,22 +398,25 @@ cmsHPROFILE ICCStore::getStdProfile (const Glib::ustring& name) const
     const ProfileMap::const_iterator r = fileStdProfiles.find (nameUpper);
 
     // return profile from store
-    if (r != fileStdProfiles.end ())
+    if (r != fileStdProfiles.end ()) {
         return r->second;
+    }
 
     // profile is not yet in store
     const NameMap::const_iterator f = fileStdProfilesFileNames.find (nameUpper);
 
     // profile does not exist
-    if (f == fileStdProfilesFileNames.end ())
+    if (f == fileStdProfilesFileNames.end ()) {
         return NULL;
+    }
 
     // but there exists one => load it
     const ProfileContent content (f->second);
     const cmsHPROFILE profile = content.toProfile ();
 
-    if (profile)
+    if (profile) {
         const_cast<ProfileMap&>(fileStdProfiles).insert (std::make_pair (f->first, profile));
+    }
 
     // profile is not valid or it is now stored => remove entry from fileStdProfilesFileNames
     const_cast<NameMap&>(fileStdProfilesFileNames).erase (f);
@@ -481,6 +494,7 @@ void ICCStore::findDefaultMonitorProfile ()
                 defaultMonitorProfile = Glib::ustring(profileName);
                 defaultMonitorProfile = Glib::path_get_basename(defaultMonitorProfile);
                 size_t pos = defaultMonitorProfile.rfind(".");
+
                 if (pos != Glib::ustring::npos) {
                     defaultMonitorProfile = defaultMonitorProfile.substr(0, pos);
                 }

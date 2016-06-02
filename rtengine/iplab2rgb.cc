@@ -202,7 +202,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         }
     } else {
 
-        const auto rgb_xyz = iccStore->workingSpaceMatrix (profile);
+        const auto xyz_rgb = iccStore->workingSpaceInverseMatrix (profile);
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -227,7 +227,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
                 float z_ = 65535.0 * Color::f2xyz(fz) * Color::D50z;
                 float y_ = (LL > Color::epskap) ? 65535.0 * fy * fy * fy : 65535.0 * LL / Color::kappa;
 
-                Color::xyz2rgb(x_, y_, z_, R, G, B, rgb_xyz);
+                Color::xyz2rgb(x_, y_, z_, R, G, B, xyz_rgb);
 
                 image->data[ix++] = (int)Color::gamma2curve[R] >> 8;
                 image->data[ix++] = (int)Color::gamma2curve[G] >> 8;
@@ -429,6 +429,14 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
         p5 = 0.1300;
         p6 = 0.0350;
         select_temp = 1;
+    } else if (profi == "Rec2020") {
+        p1 = 0.7080;    // Rec2020 primaries
+        p2 = 0.2920;
+        p3 = 0.1700;
+        p4 = 0.7970;
+        p5 = 0.1310;
+        p6 = 0.0460;
+        select_temp = 2;
     } else {
         p1 = 0.7347;    //ProPhoto and default primaries
         p2 = 0.2653;
@@ -511,7 +519,7 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
     if(select_temp == 1) {
         t50 = 5003;    // for Widegamut, Prophoto Best, Beta   D50
     } else if (select_temp == 2) {
-        t50 = 6504;    // for sRGB, AdobeRGB, Bruce  D65
+        t50 = 6504;    // for sRGB, AdobeRGB, Bruce Rec2020 D65
     }
 
     cmsCIExyY       xyD;
