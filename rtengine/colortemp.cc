@@ -70,7 +70,7 @@ static const double cie_colour_match_jd[97][3] = {//350nm to 830nm   5 nm J.Desm
     {0.000001251141, 0.00000045181, 0.000000}
 };
 
-ColorTemp::ColorTemp (double t, double g, double e, Glib::ustring m) : temp(t), green(g), equal(e), method(m)
+ColorTemp::ColorTemp (double t, double g, double e, const Glib::ustring &m) : temp(t), green(g), equal(e), method(m)
 {
 
     clip (temp, green, equal);
@@ -120,7 +120,7 @@ ColorTemp::ColorTemp (double mulr, double mulg, double mulb, double e) : equal(e
     mul2temp (mulr, mulg, mulb, equal, temp, green);
 }
 
-void ColorTemp::mul2temp (const double rmul, const double gmul, const double bmul, const double equal, double& temp, double& green)
+void ColorTemp::mul2temp (const double rmul, const double gmul, const double bmul, const double equal, double& temp, double& green) const
 {
 
     double maxtemp = double(MAXTEMP), mintemp = double(MINTEMP);
@@ -849,7 +849,7 @@ const double ColorTemp::ColabSky42_0_m24_spect[97] = {
 
 /* LERP(a,b,c) = linear interpolation macro, is 'a' when c == 0.0 and 'b' when c == 1.0 */
 #define LERP(a,b,c)     (((b) - (a)) * (c) + (a))
-int ColorTemp::XYZtoCorColorTemp(double x0, double y0, double z0, double &temp)
+int ColorTemp::XYZtoCorColorTemp(double x0, double y0, double z0, double &temp) const
 {
 
     typedef struct UVT {
@@ -1128,7 +1128,7 @@ void ColorTemp::temp2mulxyz (double tem, double gree, std::string method , doubl
     //printf("Xxyz=%f Zxyz=%f\n",Xxyz,Zxyz);
 }
 
-void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul, double& gmul, double& bmul)
+void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul, double& gmul, double& bmul) const
 {
 
     clip (temp, green, equal);

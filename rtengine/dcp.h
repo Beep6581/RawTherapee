@@ -26,7 +26,7 @@
 #include "../rtgui/threadutils.h"
 #include <glibmm.h>
 #include <map>
-#include <string>
+//#include <string>
 
 namespace rtengine
 {
@@ -71,39 +71,39 @@ class DCPProfile
     void dngref_XYCoord2Temperature(const double whiteXY[2], double *temp, double *tint) const;
     void dngref_FindXYZtoCamera(const double whiteXY[2], int preferredIlluminant, double (*xyzToCamera)[3]) const;
     void dngref_NeutralToXY(double neutral[3], int preferredIlluminant, double XY[2]) const;
-    void MakeXYZCAM(ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], int preferredIlluminant, double (*mXYZCAM)[3]) const;
-    const HSBModify* MakeHueSatMap(ColorTemp &wb, int preferredIlluminant, HSBModify **deleteHandle) const;
+    void MakeXYZCAM(const ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], int preferredIlluminant, double (*mXYZCAM)[3]) const;
+    const HSBModify* MakeHueSatMap(const ColorTemp &wb, int preferredIlluminant, HSBModify **deleteHandle) const;
     void HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, float &h, float &s, float &v) const;
 
 public:
-    DCPProfile(Glib::ustring fname);
+    DCPProfile(const Glib::ustring &fname);
     ~DCPProfile();
 
-    bool getHasToneCurve()
+    bool getHasToneCurve() const
     {
         return hasToneCurve;
     }
-    bool getHasLookTable()
+    bool getHasLookTable() const
     {
         return !!aLookTable;
     }
-    bool getHasHueSatMap()
+    bool getHasHueSatMap() const
     {
         return !!aDeltas1;
     }
-    bool getHasBaselineExposureOffset()
+    bool getHasBaselineExposureOffset() const
     {
         return hasBaselineExposureOffset;
     }
-    void getIlluminants(int &i1, double &temp1, int &i2, double &temp2, bool &willInterpolate_)
+    void getIlluminants(int &i1, double &temp1, int &i2, double &temp2, bool &willInterpolate_) const
     {
         i1 = iLightSource1;
         i2 = iLightSource2;
         temp1 = temperature1, temp2 = temperature2;
         willInterpolate_ = willInterpolate;
     };
-    void Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, double pre_mul[3], double camMatrix[3][3], bool useToneCurve = false, bool applyHueSatMap = true, bool applyLookTable = false) const;
-    void setStep2ApplyState(Glib::ustring workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure);
+    void Apply(Imagefloat *pImg, int preferredIlluminant, const Glib::ustring &workingSpace, const ColorTemp &wb, double pre_mul[3], double camMatrix[3][3], bool useToneCurve = false, bool applyHueSatMap = true, bool applyLookTable = false) const;
+    void setStep2ApplyState(const Glib::ustring &workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure);
     void step2ApplyTile(float *r, float *g, float *b, int width, int height, int tileWidth) const;
 };
 
@@ -118,12 +118,12 @@ class DCPStore
     std::map<Glib::ustring, DCPProfile*> profileCache;
 
 public:
-    void init(Glib::ustring rtProfileDir);
+    void init(const Glib::ustring &rtProfileDir);
 
-    bool isValidDCPFileName(Glib::ustring filename) const;
+    bool isValidDCPFileName(const Glib::ustring &filename) const;
 
-    DCPProfile* getProfile(Glib::ustring filename);
-    DCPProfile* getStdProfile(Glib::ustring camShortName);
+    DCPProfile* getProfile(const Glib::ustring &filename);
+    DCPProfile* getStdProfile(const Glib::ustring &camShortName);
 
     static DCPStore* getInstance();
 };

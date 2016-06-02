@@ -66,7 +66,7 @@ public:
         embProfile(NULL), idata(NULL), dirpyrdenoiseExpComp(INFINITY) {}
 
     virtual ~ImageSource            () {}
-    virtual int         load        (Glib::ustring fname, bool batch = false) = 0;
+    virtual int         load        (const Glib::ustring &fname, bool batch = false) = 0;
     virtual void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse) {};
     virtual void        demosaic    (const RAWParams &raw) {};
     virtual void        retinex       (ColorManagementParams cmp, RetinexParams  deh, ToneCurveParams Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) {};
@@ -78,10 +78,10 @@ public:
     virtual void        HLRecovery_inpaint (float** red, float** green, float** blue) {};
     virtual void        MSR(LabImage* lab, LUTf & mapcurve, bool &mapcontlutili, int width, int height, int skip, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax) {};
 
-    virtual bool        IsrgbSourceModified() = 0; // tracks whether cached rgb output of demosaic has been modified
+    virtual bool        IsrgbSourceModified() const = 0; // tracks whether cached rgb output of demosaic has been modified
 
     // use right after demosaicing image, add coarse transformation and put the result in the provided Imagefloat*
-    virtual void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, ToneCurveParams hlp, ColorManagementParams cmp, RAWParams raw) {}
+    virtual void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hlp, const ColorManagementParams &cmp, const RAWParams &raw) = 0;
     virtual eSensorType getSensorType ()
     {
         return ST_NONE;
@@ -89,12 +89,12 @@ public:
     // true is ready to provide the AutoWB, i.e. when the image has been demosaiced for RawImageSource
     virtual bool        isWBProviderReady () = 0;
 
-    virtual void        convertColorSpace    (Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb) = 0; // DIRTY HACK: this method is derived in rawimagesource and strimagesource, but (...,RAWParams raw) will be used ONLY for raw images
+    virtual void        convertColorSpace    (Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb) = 0; // DIRTY HACK: this method is derived in rawimagesource and strimagesource, but (...,RAWParams raw) will be used ONLY for raw images
     virtual void        getAutoWBMultipliers (double &rm, double &gm, double &bm) = 0;
-    virtual ColorTemp   getWB       () = 0;
+    virtual ColorTemp   getWB       () const = 0;
     virtual ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal) = 0;
 
-    virtual double      getDefGain  ()
+    virtual double      getDefGain  () const
     {
         return 1.0;
     }

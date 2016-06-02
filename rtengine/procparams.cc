@@ -19,7 +19,7 @@
 #include <glib/gstdio.h>
 #include "procparams.h"
 #include "rt_math.h"
-#include "dcp.h"
+#include "curves.h"
 #include "../rtgui/multilangmgr.h"
 #include "../rtgui/version.h"
 #include "../rtgui/ppversion.h"
@@ -1271,7 +1271,7 @@ void ProcParams::setDefaults ()
     ppVersion = PPVERSION;
 }
 
-static Glib::ustring expandRelativePath(Glib::ustring procparams_fname, Glib::ustring prefix, Glib::ustring embedded_fname)
+static Glib::ustring expandRelativePath(const Glib::ustring &procparams_fname, const Glib::ustring &prefix, Glib::ustring embedded_fname)
 {
     if (embedded_fname == "" || !Glib::path_is_absolute(procparams_fname)) {
         return embedded_fname;
@@ -1293,7 +1293,7 @@ static Glib::ustring expandRelativePath(Glib::ustring procparams_fname, Glib::us
     return absPath;
 }
 
-static Glib::ustring relativePathIfInside(Glib::ustring procparams_fname, bool fnameAbsolute, Glib::ustring embedded_fname)
+static Glib::ustring relativePathIfInside(const Glib::ustring &procparams_fname, bool fnameAbsolute, Glib::ustring embedded_fname)
 {
     if (fnameAbsolute || embedded_fname == "" || !Glib::path_is_absolute(procparams_fname)) {
         return embedded_fname;
@@ -1321,7 +1321,7 @@ static Glib::ustring relativePathIfInside(Glib::ustring procparams_fname, bool f
     return prefix + embedded_fname.substr(dir1.length());
 }
 
-int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsolute, ParamsEdited* pedited)
+int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, bool fnameAbsolute, ParamsEdited* pedited)
 {
 
     if (fname.empty () && fname2.empty ()) {
@@ -3422,7 +3422,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     }
 }
 
-int ProcParams::write (Glib::ustring &fname, Glib::ustring &content) const
+int ProcParams::write (const Glib::ustring &fname, const Glib::ustring &content) const
 {
 
     int error = 0;
@@ -3442,7 +3442,7 @@ int ProcParams::write (Glib::ustring &fname, Glib::ustring &content) const
     return error;
 }
 
-int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited)
+int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 {
     setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
 
@@ -8041,7 +8041,7 @@ PartialProfile::PartialProfile(const ProcParams* pp, const ParamsEdited* pe)
     }
 }
 
-int PartialProfile::load (Glib::ustring fName)
+int PartialProfile::load (const Glib::ustring &fName)
 {
     if (!pparams) {
         pparams = new ProcParams();

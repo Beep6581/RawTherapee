@@ -75,7 +75,6 @@ class ImProcFunctions
     void sharpenHaloCtrl    (float** luminance, float** blurmap, float** base, int W, int H, const SharpeningParams &sharpenParam);
     void sharpenHaloCtrl    (LabImage* lab, float** blurmap, float** base, int W, int H, SharpeningParams &sharpenParam);
     void sharpenHaloCtrlcam (CieImage* ncie, float** blurmap, float** base, int W, int H);
-    void firstAnalysisThread(Imagefloat* original, Glib::ustring wprofile, unsigned int* histogram, int row_from, int row_to);
     void dcdamping          (float** aI, float** aO, float damping, int W, int H);
 
     bool needsCA            ();
@@ -229,7 +228,7 @@ public:
     bool needsTransform   ();
     bool needsPCVignetting ();
 
-    void firstAnalysis    (Imagefloat* working, const ProcParams* params, LUTu & vhist16);
+    void firstAnalysis    (const Imagefloat* const working, const ProcParams &params, LUTu & vhist16);
     void updateColorProfiles (const ColorManagementParams& icm, const Glib::ustring& monitorProfile, RenderingIntent monitorIntent);
     void rgbProc          (Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                            SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit , float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clcurve, LUTf & cl2curve, const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,
@@ -255,7 +254,7 @@ public:
     void ciecam_02        (CieImage* ncie, double adap, int begh, int endh,  int pW, int pwb, LabImage* lab, const ProcParams* params,
                            const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3,
                            LUTu &histLCAM, LUTu &histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, double &d, int scalecd, int rtt);
-    void chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve, LUTf & satclcurve, LUTf &clcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histCLurve, LUTu &histLCurve, LUTu &histLurve);
+    void chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve, LUTf & satclcurve, LUTf &clcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histLurve);
     void vibrance         (LabImage* lab);//Jacques' vibrance
     void colorCurve       (LabImage* lold, LabImage* lnew);
     void sharpening       (LabImage* lab, float** buffer, SharpeningParams &sharpenParam);
@@ -377,7 +376,7 @@ public:
 
     bool transCoord       (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1, const LCPMapper *pLCPMap = NULL);
     bool transCoord       (int W, int H, const std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1, const LCPMapper *pLCPMap = NULL);
-    static void getAutoExp       (LUTu & histogram, int histcompr, double defgain, double clip, double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh);
+    static void getAutoExp       (const LUTu & histogram, int histcompr, double defgain, double clip, double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh);
     static double getAutoDistor  (const Glib::ustring& fname, int thumb_size);
     double getTransformAutoFill (int oW, int oH, const LCPMapper *pLCPMap = NULL);
     void rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::ustring &workingSpace);
