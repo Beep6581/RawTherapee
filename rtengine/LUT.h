@@ -250,7 +250,7 @@ public:
     template<typename U = T, typename = typename std::enable_if<std::is_same<U, float>::value>::type>
     LUT<float> & operator*=(float factor)
     {
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP // temporary solution to fix Issue #3324
         #pragma omp simd
 #endif
 
@@ -265,7 +265,7 @@ public:
     template<typename U = T, typename = typename std::enable_if<std::is_same<U, float>::value>::type>
     LUT<float> & operator/=(float divisor)
     {
-#ifdef _OPENMP
+#ifdef _RT_NESTED_OPENMP // temporary solution to fix Issue #3324
         #pragma omp simd
 #endif
 
