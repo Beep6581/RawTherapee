@@ -42,6 +42,9 @@
 #include "ciecam02.h"
 #define BENCHMARK
 #include "StopWatch.h"
+#include "../rtgui/ppversion.h"
+#include "../rtgui/guiutils.h"
+
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
 
@@ -3102,6 +3105,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 clut2xyz = iccStore->workingSpaceMatrix( hald_clut->getProfile() );
 
 #ifdef __SSE2__
+
                 for (int i = 0; i < 3; ++i) {
                     for (int j = 0; j < 3; ++j) {
                         v_work2xyz[i][j] = F2V(wprof[i][j]);
@@ -3110,6 +3114,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         v_clut2xyz[i][j] = F2V(clut2xyz[i][j]);
                     }
                 }
+
 #endif
 
             }
@@ -4221,6 +4226,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                             int tj = 0;
 
 #ifdef __SSE2__
+
                             for (; j < tW - 3; j += 4, tj += 4) {
                                 vfloat sourceR = LVF(rtemp[ti * TS + tj]);
                                 vfloat sourceG = LVF(gtemp[ti * TS + tj]);
@@ -4236,6 +4242,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 STVF(gtemp[ti * TS + tj], sourceG);
                                 STVF(btemp[ti * TS + tj], sourceB);
                             }
+
 #endif
 
                             for (; j < tW; j++, tj++) {
@@ -4287,6 +4294,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                             int tj = 0;
 
 #ifdef __SSE2__
+
                             for (; j < tW - 3; j += 4, tj += 4) {
                                 vfloat sourceR = LVF(rtemp[ti * TS + tj]);
                                 vfloat sourceG = LVF(gtemp[ti * TS + tj]);
@@ -4302,6 +4310,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 STVF(gtemp[ti * TS + tj], sourceG);
                                 STVF(btemp[ti * TS + tj], sourceB);
                             }
+
 #endif
 
                             for (; j < tW; j++, tj++) {
@@ -5598,7 +5607,10 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
     const int chromaticity = params->labCurve.chromaticity;
     const float chromapro = (chromaticity + 100.0f) / 100.0f;
     const bool bwonly = params->blackwhite.enabled && !params->colorToning.enabled;
-    const bool bwToning = params->labCurve.chromaticity == - 100  /*|| params->blackwhite.method=="Ch" || params->blackwhite.enabled */ || bwonly;
+    bool bwq = false;
+//  if(params->ppVersion > 300  && params->labCurve.chromaticity == - 100) bwq = true;
+    // const bool bwToning = params->labCurve.chromaticity == - 100  /*|| params->blackwhite.method=="Ch" || params->blackwhite.enabled */ || bwonly;
+    const bool bwToning = bwq  /*|| params->blackwhite.method=="Ch" || params->blackwhite.enabled */ || bwonly;
     //if(chromaticity==-100) chromaticity==-99;
     const bool LCredsk = params->labCurve.lcredsk;
     const bool ccut = ccutili;
