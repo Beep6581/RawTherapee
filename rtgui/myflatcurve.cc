@@ -1807,6 +1807,7 @@ void MyFlatCurve::setPoints (const std::vector<double>& p)
     stopNumericalAdjustment();
     FlatCurveType t = (FlatCurveType)p[ix++];
     curve.type = t;
+    lit_point = -1;
 
     if (t == FCT_MinMaxCPoints) {
         curve.x.clear ();
