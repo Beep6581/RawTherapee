@@ -32,11 +32,12 @@ protected:
     Gtk::CheckButton*   fill;
     bool                lastFill;
     sigc::connection    fillConn;
-    ToolParamBlock*           packBox;
+    ToolParamBlock*     packBox;
 
 public:
 
     LensGeometry ();
+    ~LensGeometry ();
 
     Gtk::Box* getPackBox ()
     {
@@ -54,6 +55,10 @@ public:
         rlistener = l;
     }
     void disableAutoFillIfActive ();
+
+private:
+    static int doDisableAutoFillIfActive (void* data);
+
 };
 
 #endif
