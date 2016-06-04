@@ -773,11 +773,13 @@ void Crop::update (int todo)
 
     if (todo & M_RGBCURVE) {
         double rrm, ggm, bbm;
-        DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, parent->currWB);
+        DCPProfile::dcpApplyState as;
+        DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, parent->currWB, as);
+
         parent->ipf.rgbProc (baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
                              params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, satLimit , satLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve, parent->cl2Toningcurve,
                              parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW, rrm, ggm, bbm,
-                             parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf);
+                             parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf, as);
     }
 
     /*xref=000;yref=000;

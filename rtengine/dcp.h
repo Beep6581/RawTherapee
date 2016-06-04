@@ -59,14 +59,6 @@ class DCPProfile
     short iLightSource1, iLightSource2;
 
     AdobeToneCurve toneCurve;
-    struct {
-        double m2ProPhoto[3][3];
-        double m2Work[3][3];
-        bool alreadyProPhoto;
-        bool useToneCurve;
-        bool applyLookTable;
-        float blScale;
-    } applyState;
 
     void dngref_XYCoord2Temperature(const double whiteXY[2], double *temp, double *tint) const;
     void dngref_FindXYZtoCamera(const double whiteXY[2], int preferredIlluminant, double (*xyzToCamera)[3]) const;
@@ -76,6 +68,15 @@ class DCPProfile
     void HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, float &h, float &s, float &v) const;
 
 public:
+    struct dcpApplyState{
+        double m2ProPhoto[3][3];
+        double m2Work[3][3];
+        bool alreadyProPhoto;
+        bool useToneCurve;
+        bool applyLookTable;
+        float blScale;
+    };
+
     DCPProfile(const Glib::ustring &fname);
     ~DCPProfile();
 
@@ -103,8 +104,8 @@ public:
         willInterpolate_ = willInterpolate;
     };
     void Apply(Imagefloat *pImg, int preferredIlluminant, const Glib::ustring &workingSpace, const ColorTemp &wb, double pre_mul[3], double camMatrix[3][3], bool useToneCurve = false, bool applyHueSatMap = true, bool applyLookTable = false) const;
-    void setStep2ApplyState(const Glib::ustring &workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure);
-    void step2ApplyTile(float *r, float *g, float *b, int width, int height, int tileWidth) const;
+    void setStep2ApplyState(const Glib::ustring &workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure, dcpApplyState &asOut);
+    void step2ApplyTile(float *r, float *g, float *b, int width, int height, int tileWidth, const dcpApplyState &asIn) const;
 };
 
 class DCPStore

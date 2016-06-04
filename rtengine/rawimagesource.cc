@@ -889,7 +889,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     }
 }
 
-DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &wb)
+DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &wb,DCPProfile::dcpApplyState &as)
 {
     DCPProfile *dcpProf = NULL;
     cmsHPROFILE dummy;
@@ -898,8 +898,8 @@ DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &
     if (dcpProf == NULL) {
         return NULL;
     }
-
-    dcpProf->setStep2ApplyState(cmp.working, cmp.toneCurve, cmp.applyLookTable, cmp.applyBaselineExposureOffset);
+    
+    dcpProf->setStep2ApplyState(cmp.working, cmp.toneCurve, cmp.applyLookTable, cmp.applyBaselineExposureOffset, as);
     return dcpProf;
 }
 

@@ -1551,61 +1551,61 @@ void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, const Glib::us
     }
 }
 
-void DCPProfile::setStep2ApplyState(const Glib::ustring &workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure)
+void DCPProfile::setStep2ApplyState(const Glib::ustring &workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure, dcpApplyState &asOut)
 {
 
-    applyState.useToneCurve = useToneCurve;
-    applyState.applyLookTable = applyLookTable;
-    applyState.blScale = 1.0;
+    asOut.useToneCurve = useToneCurve;
+    asOut.applyLookTable = applyLookTable;
+    asOut.blScale = 1.0;
 
     if (!aLookTable) {
-        applyState.applyLookTable = false;
+        asOut.applyLookTable = false;
     }
 
     if (!hasToneCurve) {
-        applyState.useToneCurve = false;
+        asOut.useToneCurve = false;
     }
 
     if (hasBaselineExposureOffset && applyBaselineExposure) {
-        applyState.blScale = powf(2, baselineExposureOffset);
+        asOut.blScale = powf(2, baselineExposureOffset);
     }
 
     if (workingSpace == "ProPhoto") {
-        applyState.alreadyProPhoto = true;
+        asOut.alreadyProPhoto = true;
     } else {
-        applyState.alreadyProPhoto = false;
+        asOut.alreadyProPhoto = false;
         TMatrix mWork;
 
         mWork = iccStore->workingSpaceMatrix (workingSpace);
-        memset(applyState.m2ProPhoto, 0, sizeof(applyState.m2ProPhoto));
+        memset(asOut.m2ProPhoto, 0, sizeof(asOut.m2ProPhoto));
 
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++)
                 for (int k = 0; k < 3; k++) {
-                    applyState.m2ProPhoto[i][j] += prophoto_xyz[i][k] * mWork[k][j];
+                    asOut.m2ProPhoto[i][j] += prophoto_xyz[i][k] * mWork[k][j];
                 }
 
         mWork = iccStore->workingSpaceInverseMatrix (workingSpace);
-        memset(applyState.m2Work, 0, sizeof(applyState.m2Work));
+        memset(asOut.m2Work, 0, sizeof(asOut.m2Work));
 
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++)
                 for (int k = 0; k < 3; k++) {
-                    applyState.m2Work[i][j] += mWork[i][k] * xyz_prophoto[k][j];
+                    asOut.m2Work[i][j] += mWork[i][k] * xyz_prophoto[k][j];
                 }
     }
 }
 
-void DCPProfile::step2ApplyTile(float *rc, float *gc, float *bc, int width, int height, int tileWidth) const
+void DCPProfile::step2ApplyTile(float *rc, float *gc, float *bc, int width, int height, int tileWidth, const dcpApplyState &asIn) const
 {
 
 #define FCLIP(a) ((a)>0.0?((a)<65535.5?(a):65535.5):0.0)
 #define CLIP01(a) ((a)>0?((a)<1?(a):1):0)
 
     float exp_scale = 1.0;
-    exp_scale *= applyState.blScale;
+    exp_scale *= asIn.blScale;
 
-    if (!applyState.useToneCurve && !applyState.applyLookTable) {
+    if (!asIn.useToneCurve && !asIn.applyLookTable) {
         if (exp_scale == 1.0) {
             return;
         }
@@ -1632,14 +1632,14 @@ void DCPProfile::step2ApplyTile(float *rc, float *gc, float *bc, int width, int 
 
                 float newr, newg, newb;
 
-                if (applyState.alreadyProPhoto) {
+                if (asIn.alreadyProPhoto) {
                     newr = r;
                     newg = g;
                     newb = b;
                 } else {
-                    newr = applyState.m2ProPhoto[0][0] * r + applyState.m2ProPhoto[0][1] * g + applyState.m2ProPhoto[0][2] * b;
-                    newg = applyState.m2ProPhoto[1][0] * r + applyState.m2ProPhoto[1][1] * g + applyState.m2ProPhoto[1][2] * b;
-                    newb = applyState.m2ProPhoto[2][0] * r + applyState.m2ProPhoto[2][1] * g + applyState.m2ProPhoto[2][2] * b;
+                    newr = asIn.m2ProPhoto[0][0] * r + asIn.m2ProPhoto[0][1] * g + asIn.m2ProPhoto[0][2] * b;
+                    newg = asIn.m2ProPhoto[1][0] * r + asIn.m2ProPhoto[1][1] * g + asIn.m2ProPhoto[1][2] * b;
+                    newb = asIn.m2ProPhoto[2][0] * r + asIn.m2ProPhoto[2][1] * g + asIn.m2ProPhoto[2][2] * b;
                 }
 
                 // with looktable and tonecurve we need to clip
@@ -1647,7 +1647,7 @@ void DCPProfile::step2ApplyTile(float *rc, float *gc, float *bc, int width, int 
                 newg = FCLIP(newg);
                 newb = FCLIP(newb);
 
-                if (applyState.applyLookTable) {
+                if (asIn.applyLookTable) {
                     float h, s, v;
                     Color::rgb2hsv(newr, newg, newb, h, s, v);
                     h *= 6.f; // RT calculates in [0,1]
@@ -1669,18 +1669,18 @@ void DCPProfile::step2ApplyTile(float *rc, float *gc, float *bc, int width, int 
                     Color::hsv2rgb( h, s, v, newr, newg, newb);
                 }
 
-                if (applyState.useToneCurve) {
+                if (asIn.useToneCurve) {
                     toneCurve.Apply(newr, newg, newb);
                 }
 
-                if (applyState.alreadyProPhoto) {
+                if (asIn.alreadyProPhoto) {
                     rc[y * tileWidth + x] = newr;
                     gc[y * tileWidth + x] = newg;
                     bc[y * tileWidth + x] = newb;
                 } else {
-                    rc[y * tileWidth + x] = applyState.m2Work[0][0] * newr + applyState.m2Work[0][1] * newg + applyState.m2Work[0][2] * newb;
-                    gc[y * tileWidth + x] = applyState.m2Work[1][0] * newr + applyState.m2Work[1][1] * newg + applyState.m2Work[1][2] * newb;
-                    bc[y * tileWidth + x] = applyState.m2Work[2][0] * newr + applyState.m2Work[2][1] * newg + applyState.m2Work[2][2] * newb;
+                    rc[y * tileWidth + x] = asIn.m2Work[0][0] * newr + asIn.m2Work[0][1] * newg + asIn.m2Work[0][2] * newb;
+                    gc[y * tileWidth + x] = asIn.m2Work[1][0] * newr + asIn.m2Work[1][1] * newg + asIn.m2Work[1][2] * newb;
+                    bc[y * tileWidth + x] = asIn.m2Work[2][0] * newr + asIn.m2Work[2][1] * newg + asIn.m2Work[2][2] * newb;
                 }
             }
         }
