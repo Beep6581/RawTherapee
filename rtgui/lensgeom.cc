@@ -140,4 +140,6 @@ int LensGeometry::doDisableAutoFillIfActive (void* data)
             instance->fillConn.block (false);
         }
     }
+
+    return 0;
 }
