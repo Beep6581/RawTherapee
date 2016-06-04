@@ -16,6 +16,7 @@
 *  You should have received a copy of the GNU General Public License
 *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include <memory>
 #include <cstring>
 
 #include "dcp.h"
@@ -28,6 +29,9 @@
 using namespace std;
 using namespace rtengine;
 using namespace rtexif;
+
+namespace
+{
 
 static const float adobe_camera_raw_default_curve[] = {
     0.00000f, 0.00078f, 0.00160f, 0.00242f,
@@ -289,41 +293,81 @@ static const float adobe_camera_raw_default_curve[] = {
     1.00000f
 };
 
+struct ruvt {
+    double r;
+    double u;
+    double v;
+    double t;
+};
+
+static const ruvt kTempTable [] = {
+    {   0, 0.18006, 0.26352, -0.24341 },
+    {  10, 0.18066, 0.26589, -0.25479 },
+    {  20, 0.18133, 0.26846, -0.26876 },
+    {  30, 0.18208, 0.27119, -0.28539 },
+    {  40, 0.18293, 0.27407, -0.30470 },
+    {  50, 0.18388, 0.27709, -0.32675 },
+    {  60, 0.18494, 0.28021, -0.35156 },
+    {  70, 0.18611, 0.28342, -0.37915 },
+    {  80, 0.18740, 0.28668, -0.40955 },
+    {  90, 0.18880, 0.28997, -0.44278 },
+    { 100, 0.19032, 0.29326, -0.47888 },
+    { 125, 0.19462, 0.30141, -0.58204 },
+    { 150, 0.19962, 0.30921, -0.70471 },
+    { 175, 0.20525, 0.31647, -0.84901 },
+    { 200, 0.21142, 0.32312, -1.0182 },
+    { 225, 0.21807, 0.32909, -1.2168 },
+    { 250, 0.22511, 0.33439, -1.4512 },
+    { 275, 0.23247, 0.33904, -1.7298 },
+    { 300, 0.24010, 0.34308, -2.0637 },
+    { 325, 0.24702, 0.34655, -2.4681 },
+    { 350, 0.25591, 0.34951, -2.9641 },
+    { 375, 0.26400, 0.35200, -3.5814 },
+    { 400, 0.27218, 0.35407, -4.3633 },
+    { 425, 0.28039, 0.35577, -5.3762 },
+    { 450, 0.28863, 0.35714, -6.7262 },
+    { 475, 0.29685, 0.35823, -8.5955 },
+    { 500, 0.30505, 0.35907, -11.324 },
+    { 525, 0.31320, 0.35968, -15.628 },
+    { 550, 0.32129, 0.36011, -23.325 },
+    { 575, 0.32931, 0.36038, -40.770 },
+    { 600, 0.33724, 0.36051, -116.45 }
+};
+
 // This sRGB gamma is taken from DNG reference code, with the added linear extension past 1.0, as we run clipless here
-static float sRGBGammaForward (const float x)
+float sRGBGammaForward(float x)
 {
-    if (x <= 0.0031308) {
-        return x * 12.92;
-    } else if (x > 1.0) {
-        return 1.0 + (x - 1.0) * (1.055 * (1.0 / 2.4));    // linear extension
-    } else {
-        return 1.055 * pow (x, 1.0 / 2.4) - 0.055;
-    }
-}
-static float sRGBGammaInverse (const float y)
-{
-    if (y <= 0.0031308 * 12.92) {
-        return y * (1.0 / 12.92);
-    } else if (y > 1.0) {
-        return 1.0 + (y - 1.0) / (1.055 * (1.0 / 2.4));
-    } else {
-        return pow ((y + 0.055) * (1.0 / 1.055), 2.4);
-    }
+    return
+        x <= 0.0031308f
+            ? x * 12.92f
+            : x > 1.0f
+                ? 1.0f + (x - 1.0f) * (1.055f * (1.0f / 2.4f)) // Linear extension
+                : 1.055f * pow(x, 1.0f / 2.4f) - 0.055f;
 }
 
-static void Invert3x3(const double (*A)[3], double (*B)[3])
+float sRGBGammaInverse(float y)
 {
+    return
+        y <= 0.0031308f * 12.92f
+            ? y * (1.0f / 12.92f)
+            : y > 1.0f
+                ? 1.0f + (y - 1.0f) / (1.055f * (1.0f / 2.4f))
+                : pow ((y + 0.055f) * (1.0f / 1.055f), 2.4f);
+}
 
-    double a00 = A[0][0];
-    double a01 = A[0][1];
-    double a02 = A[0][2];
-    double a10 = A[1][0];
-    double a11 = A[1][1];
-    double a12 = A[1][2];
-    double a20 = A[2][0];
-    double a21 = A[2][1];
-    double a22 = A[2][2];
-    double temp [3][3];
+void invert3x3(const double (*A)[3], double (*B)[3])
+{
+    const double& a00 = A[0][0];
+    const double& a01 = A[0][1];
+    const double& a02 = A[0][2];
+    const double& a10 = A[1][0];
+    const double& a11 = A[1][1];
+    const double& a12 = A[1][2];
+    const double& a20 = A[2][0];
+    const double& a21 = A[2][1];
+    const double& a22 = A[2][2];
+
+    double temp[3][3];
 
     temp[0][0] = a11 * a22 - a21 * a12;
     temp[0][1] = a21 * a02 - a01 * a22;
@@ -335,30 +379,29 @@ static void Invert3x3(const double (*A)[3], double (*B)[3])
     temp[2][1] = a20 * a01 - a00 * a21;
     temp[2][2] = a00 * a11 - a10 * a01;
 
-    double det = a00 * temp[0][0] + a01 * temp[1][0] + a02 * temp[2][0];
+    const double det = a00 * temp[0][0] + a01 * temp[1][0] + a02 * temp[2][0];
 
     if (fabs(det) < 1.0E-10) {
-        abort(); // can't be inverted, we shouldn't be dealing with such matrices
+        abort(); // Can't be inverted, we shouldn't be dealing with such matrices
     }
 
-    for (int j = 0; j < 3; j++) {
-        for (int k = 0; k < 3; k++) {
+    for (int j = 0; j < 3; ++j) {
+        for (int k = 0; k < 3; ++k) {
             B[j][k] = temp[j][k] / det;
         }
     }
 }
 
-static void Multiply3x3(const double (*A)[3], const double (*B)[3], double (*C)[3])
+void multiply3x3(const double (*A)[3], const double (*B)[3], double (*C)[3])
 {
-
-    // use temp to support having output same as input
+    // Use temp to support having output same as input
     double M[3][3];
 
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
             M[i][j] = 0;
 
-            for (int k = 0; k < 3; k++) {
+            for (int k = 0; k < 3; ++k) {
                 M[i][j] += A[i][k] * B[k][j];
             }
         }
@@ -367,14 +410,13 @@ static void Multiply3x3(const double (*A)[3], const double (*B)[3], double (*C)[
     memcpy(C, M, 3 * 3 * sizeof(double));
 }
 
-static void Multiply3x3_v3(const double (*A)[3], const double B[3], double C[3])
+void multiply3x3_v3(const double (*A)[3], const double B[3], double C[3])
 {
+    // Use temp to support having output same as input
+    double M[3] = {};
 
-    // use temp to support having output same as input
-    double M[3] = { 0, 0, 0 };
-
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
             M[i] += A[i][j] * B[j];
         }
     }
@@ -382,13 +424,12 @@ static void Multiply3x3_v3(const double (*A)[3], const double B[3], double C[3])
     memcpy(C, M, 3 * sizeof(double));
 }
 
-static void Mix3x3(const double (*A)[3], double mulA, const double (*B)[3], double mulB, double (*C)[3])
+void mix3x3(const double (*A)[3], double mulA, const double (*B)[3], double mulB, double (*C)[3])
 {
-
     double M[3][3];
 
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
             M[i][j] = A[i][j] * mulA + B[i][j] * mulB;
         }
     }
@@ -396,18 +437,21 @@ static void Mix3x3(const double (*A)[3], double mulA, const double (*B)[3], doub
     memcpy(C, M, 3 * 3 * sizeof(double));
 }
 
-static void MapWhiteMatrix(const double white1[3], const double white2[3], double (*B)[3])
+void mapWhiteMatrix(const double white1[3], const double white2[3], double (*B)[3])
 {
+    // Code adapted from dng_color_spec::MapWhiteMatrix
 
-    // code adapted from dng_color_spec::MapWhiteMatrix
-
-    // Use the linearized Bradford adaptation matrix.
-    double Mb[3][3] = { { 0.8951,  0.2664, -0.1614 }, { -0.7502,  1.7135,  0.0367 }, { 0.0389, -0.0685,  1.0296 }};
+    // Use the linearized Bradford adaptation matrix
+    const double Mb[3][3] = {
+        { 0.8951,  0.2664, -0.1614 },
+        { -0.7502, 1.7135,  0.0367 },
+        { 0.0389, -0.0685,  1.0296 }
+    };
 
     double w1[3];
-    Multiply3x3_v3(Mb, white1, w1);
+    multiply3x3_v3(Mb, white1, w1);
     double w2[3];
-    Multiply3x3_v3(Mb, white2, w2);
+    multiply3x3_v3(Mb, white2, w2);
 
     // Negative white coordinates are kind of meaningless.
     w1[0] = std::max(w1[0], 0.0);
@@ -418,23 +462,24 @@ static void MapWhiteMatrix(const double white1[3], const double white2[3], doubl
     w2[2] = std::max(w2[2], 0.0);
 
     // Limit scaling to something reasonable.
-    double A[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+    double A[3][3] = {};
     A[0][0] = std::max(0.1, std::min(w1[0] > 0.0 ? w2[0] / w1[0] : 10.0, 10.0));
     A[1][1] = std::max(0.1, std::min(w1[1] > 0.0 ? w2[1] / w1[1] : 10.0, 10.0));
     A[2][2] = std::max(0.1, std::min(w1[2] > 0.0 ? w2[2] / w1[2] : 10.0, 10.0));
 
     double temp[3][3];
-    Invert3x3(Mb, temp);
-    Multiply3x3(temp, A, temp);
-    Multiply3x3(temp, Mb, B);
+    invert3x3(Mb, temp);
+    multiply3x3(temp, A, temp);
+    multiply3x3(temp, Mb, B);
 }
 
-static void XYZtoXY(const double XYZ[3], double XY[2])
+void XYZtoXY(const double XYZ[3], double XY[2])
 {
-    double X = XYZ[0];
-    double Y = XYZ[1];
-    double Z = XYZ[2];
-    double total = X + Y + Z;
+    const double& X = XYZ[0];
+    const double& Y = XYZ[1];
+    const double& Z = XYZ[2];
+
+    const double total = X + Y + Z;
 
     if (total > 0.0) {
         XY[0] = X / total;
@@ -445,9 +490,10 @@ static void XYZtoXY(const double XYZ[3], double XY[2])
     }
 }
 
-static void XYtoXYZ(const double XY[2], double XYZ[3])
+void XYtoXYZ(const double XY[2], double XYZ[3])
 {
     double temp[2] = { XY[0], XY[1] };
+
     // Restrict xy coord to someplace inside the range of real xy coordinates.
     // This prevents math from doing strange things when users specify
     // extreme temperature/tint coordinates.
@@ -465,352 +511,94 @@ static void XYtoXYZ(const double XY[2], double XYZ[3])
     XYZ[2] = (1.0 - temp[0] - temp[1]) / temp[1];
 }
 
-enum dngCalibrationIlluminant {
-    lsUnknown = 0,
-    lsDaylight = 1,
-    lsFluorescent = 2,
-    lsTungsten = 3,
-    lsFlash = 4,
-    lsFineWeather = 9,
-    lsCloudyWeather = 10,
-    lsShade = 11,
-    lsDaylightFluorescent = 12, // D  5700 - 7100K
-    lsDayWhiteFluorescent = 13, // N  4600 - 5500K
-    lsCoolWhiteFluorescent = 14, // W  3800 - 4500K
-    lsWhiteFluorescent = 15, // WW 3250 - 3800K
-    lsWarmWhiteFluorescent = 16, // L  2600 - 3250K
-    lsStandardLightA = 17,
-    lsStandardLightB = 18,
-    lsStandardLightC = 19,
-    lsD55 = 20,
-    lsD65 = 21,
-    lsD75 = 22,
-    lsD50 = 23,
-    lsISOStudioTungsten = 24,
-    lsOther = 255
-};
-
-// should probably be moved to colortemp.cc
-static double calibrationIlluminantToTemperature(int light)
+double calibrationIlluminantToTemperature(int light)
 {
+    enum class LightSource {
+        UNKNOWN = 0,
+        DAYLIGHT = 1,
+        FLUORESCENT = 2,
+        TUNGSTEN = 3,
+        FLASH = 4,
+        FINE_WEATHER = 9,
+        CLOUDY_WEATHER = 10,
+        SHADE = 11,
+        DAYLIGHT_FLUORESCENT = 12, // D  5700 - 7100K
+        DAYWHITE_FLUORESCENT = 13, // N  4600 - 5500K
+        COOL_WHITE_FLUORESCENT = 14, // W  3800 - 4500K
+        WHITE_FLUORESCENT = 15, // WW 3250 - 3800K
+        WARM_WHITE_FLUORESCENT = 16, // L  2600 - 3250K
+        STANDARD_LIGHT_A = 17,
+        STANDARD_LIGHT_B = 18,
+        STANDARD_LIGHT_C = 19,
+        D55 = 20,
+        D65 = 21,
+        D75 = 22,
+        D50 = 23,
+        ISO_STUDIO_TUNGSTEN = 24,
+        OTHER = 255
+    };
 
-    // these temperatures are those found in DNG SDK reference code.
-    switch (light) {
-    case lsStandardLightA:
-    case lsTungsten:
-        return 2850.0;
-
-    case lsISOStudioTungsten:
-        return 3200.0;
-
-    case lsD50:
-        return 5000.0;
-
-    case lsD55:
-    case lsDaylight:
-    case lsFineWeather:
-    case lsFlash:
-    case lsStandardLightB:
-        return 5500.0;
-
-    case lsD65:
-    case lsStandardLightC:
-    case lsCloudyWeather:
-        return 6500.0;
-
-    case lsD75:
-    case lsShade:
-        return 7500.0;
-
-    case lsDaylightFluorescent:
-        return (5700.0 + 7100.0) * 0.5;
-
-    case lsDayWhiteFluorescent:
-        return (4600.0 + 5500.0) * 0.5;
-
-    case lsCoolWhiteFluorescent:
-    case lsFluorescent:
-        return (3800.0 + 4500.0) * 0.5;
-
-    case lsWhiteFluorescent:
-        return (3250.0 + 3800.0) * 0.5;
-
-    case lsWarmWhiteFluorescent:
-        return (2600.0 + 3250.0) * 0.5;
-
-    default:
-        return 0.0;
-    }
-}
-void DCPProfile::MakeXYZCAM(const ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], int preferredIlluminant, double (*mXYZCAM)[3]) const
-{
-    // code adapted from dng_color_spec::FindXYZtoCamera
-    // note that we do not support monochrome or colorplanes > 3 (no reductionMatrix support)
-    // we do not support cameracalibration either
-
-    double neutral[3]; // same as the DNG "AsShotNeutral" tag if white balance is Camera's own
-    {
-        /* A bit messy matrixing and conversions to get the neutral[] array from RT's own white balance which is stored in
-           sRGB space, while the DCP code needs multipliers in CameraRGB space */
-        double r, g, b;
-        wb.getMultipliers(r, g, b);
-
-        // camWbMatrix == imatrices.xyz_cam
-        double cam_xyz[3][3];
-        Invert3x3(camWbMatrix, cam_xyz);
-        double cam_rgb[3][3];
-        Multiply3x3(cam_xyz, xyz_sRGB, cam_rgb);
-        double camwb_red   = cam_rgb[0][0] * r + cam_rgb[0][1] * g + cam_rgb[0][2] * b;
-        double camwb_green = cam_rgb[1][0] * r + cam_rgb[1][1] * g + cam_rgb[1][2] * b;
-        double camwb_blue  = cam_rgb[2][0] * r + cam_rgb[2][1] * g + cam_rgb[2][2] * b;
-        neutral[0] = camwb_red / pre_mul[0];
-        neutral[1] = camwb_green / pre_mul[1];
-        neutral[2] = camwb_blue / pre_mul[2];
-        double maxentry = 0;
-
-        for (int i = 0; i < 3; i++) {
-            if (neutral[i] > maxentry) {
-                maxentry = neutral[i];
-            }
+    // These temperatures are those found in DNG SDK reference code
+    switch (LightSource(light)) {
+        case LightSource::STANDARD_LIGHT_A:
+        case LightSource::TUNGSTEN: {
+            return 2850.0;
         }
 
-        for (int i = 0; i < 3; i++) {
-            neutral[i] /= maxentry;
-        }
-    }
-
-    /* Calculate what the RGB multipliers corresponds to as a white XY coordinate, based on the
-       DCP ColorMatrix or ColorMatrices if dual-illuminant. This is the DNG reference code way to
-       do it, which is a bit different from RT's own white balance model at the time of writing.
-       When RT's white balance can make use of the DCP color matrices we could use that instead. */
-    double white_xy[2];
-    dngref_NeutralToXY(neutral, preferredIlluminant, white_xy);
-
-    bool hasFwd1 = hasForwardMatrix1;
-    bool hasFwd2 = hasForwardMatrix2;
-    bool hasCol1 = hasColorMatrix1;
-    bool hasCol2 = hasColorMatrix2;
-
-    if (preferredIlluminant == 1) {
-        if (hasFwd1) {
-            hasFwd2 = false;
+        case LightSource::ISO_STUDIO_TUNGSTEN: {
+            return 3200.0;
         }
 
-        if (hasCol1) {
-            hasCol2 = false;
-        }
-    } else if (preferredIlluminant == 2) {
-        if (hasFwd2) {
-            hasFwd1 = false;
+        case LightSource::D50: {
+            return 5000.0;
         }
 
-        if (hasCol2) {
-            hasCol1 = false;
-        }
-    }
-
-    // mix if we have two matrices
-    double mix = 1.0;
-
-    if ((hasCol1 && hasCol2) || (hasFwd1 && hasFwd2)) {
-        double wbtemp;
-        /* DNG ref way to convert XY to temperature, which affect matrix mixing. A different model here
-           typically does not affect the result too much, ie it's probably not strictly necessary to
-           use the DNG reference code here, but we do it for now. */
-        dngref_XYCoord2Temperature(white_xy, &wbtemp, NULL);
-
-        if (wbtemp <= temperature1) {
-            mix = 1.0;
-        } else if (wbtemp >= temperature2) {
-            mix = 0.0;
-        } else {
-            double invT = 1.0 / wbtemp;
-            mix = (invT - (1.0 / temperature2)) / ((1.0 / temperature1) - (1.0 / temperature2));
-        }
-    }
-
-    // Colormatrix
-    double mCol[3][3];
-
-    if (hasCol1 && hasCol2) {
-        // interpolate
-        if (mix >= 1.0) {
-            memcpy(mCol, mColorMatrix1, sizeof(mCol));
-        } else if (mix <= 0.0) {
-            memcpy(mCol, mColorMatrix2, sizeof(mCol));
-        } else {
-            Mix3x3(mColorMatrix1, mix, mColorMatrix2, 1.0 - mix, mCol);
-        }
-    } else if (hasCol1) {
-        memcpy(mCol, mColorMatrix1, sizeof(mCol));
-    } else {
-        memcpy(mCol, mColorMatrix2, sizeof(mCol));
-    }
-
-    /*
-      The exact position of the white XY coordinate affects the result very much, thus
-      it's important that the result is very similar or the same as DNG reference code.
-      Especially important is it that the raw-embedded "AsShot" multipliers is translated
-      to the same white XY coordinate as the DNG reference code, or else third party DCPs
-      will show incorrect color.
-    */
-
-    double white_xyz[3];
-    XYtoXYZ(white_xy, white_xyz);
-
-    double cam_xyz[3][3];
-
-    if (hasFwd1 || hasFwd2) {
-        // always prefer ForwardMatrix ahead of ColorMatrix
-        double mFwd[3][3];
-
-        if (hasFwd1 && hasFwd2) {
-            // interpolate
-            if (mix >= 1.0) {
-                memcpy(mFwd, mForwardMatrix1, sizeof(mFwd));
-            } else if (mix <= 0.0) {
-                memcpy(mFwd, mForwardMatrix2, sizeof(mFwd));
-            } else {
-                Mix3x3(mForwardMatrix1, mix, mForwardMatrix2, 1.0 - mix, mFwd);
-            }
-        } else if (hasFwd1) {
-            memcpy(mFwd, mForwardMatrix1, sizeof(mFwd));
-        } else {
-            memcpy(mFwd, mForwardMatrix2, sizeof(mFwd));
+        case LightSource::D55:
+        case LightSource::DAYLIGHT:
+        case LightSource::FINE_WEATHER:
+        case LightSource::FLASH:
+        case LightSource::STANDARD_LIGHT_B: {
+            return 5500.0;
         }
 
-        // adapted from dng_color_spec::SetWhiteXY
-        double CameraWhite[3];
-        Multiply3x3_v3(mCol, white_xyz, CameraWhite);
-
-        double whiteDiag[3][3] = {{CameraWhite[0], 0, 0}, {0, CameraWhite[1], 0}, {0, 0, CameraWhite[2]}};
-        double whiteDiagInv[3][3];
-        Invert3x3(whiteDiag, whiteDiagInv);
-
-        double xyz_cam[3][3];
-        Multiply3x3(mFwd, whiteDiagInv, xyz_cam);
-        Invert3x3(xyz_cam, cam_xyz);
-    } else {
-        double whiteMatrix[3][3];
-        const double white_d50[3] = { 0.3457, 0.3585, 0.2958 }; // D50
-        MapWhiteMatrix(white_d50, white_xyz, whiteMatrix);
-        Multiply3x3(mCol, whiteMatrix, cam_xyz);
-    }
-
-    // convert cam_xyz (XYZ D50 to CameraRGB, "PCS to Camera" in DNG terminology) to mXYZCAM
-
-    {
-        // This block can probably be simplified, seems unnecessary to pass through the sRGB matrix
-        // (probably dcraw legacy), it does no harm though as we don't clip anything.
-        int i, j, k;
-
-        // Multiply out XYZ colorspace
-        double cam_rgb[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-
-        for (i = 0; i < 3; i++)
-            for (j = 0; j < 3; j++)
-                for (k = 0; k < 3; k++) {
-                    cam_rgb[i][j] += cam_xyz[i][k] * xyz_sRGB[k][j];
-                }
-
-        // Normalize cam_rgb so that:  cam_rgb * (1,1,1) is (1,1,1,1)
-        double num;
-
-        for (i = 0; i < 3; i++) {
-            for (num = j = 0; j < 3; j++) {
-                num += cam_rgb[i][j];
-            }
-
-            for (j = 0; j < 3; j++) {
-                cam_rgb[i][j] /= num;
-            }
+        case LightSource::D65:
+        case LightSource::STANDARD_LIGHT_C:
+        case LightSource::CLOUDY_WEATHER: {
+            return 6500.0;
         }
 
-        double rgb_cam[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-        RawImageSource::inverse33 (cam_rgb, rgb_cam);
+        case LightSource::D75:
+        case LightSource::SHADE: {
+            return 7500.0;
+        }
 
-        for (i = 0; i < 3; i++)
-            for (j = 0; j < 3; j++) {
-                mXYZCAM[i][j] = 0;
-            }
+        case LightSource::DAYLIGHT_FLUORESCENT: {
+            return (5700.0 + 7100.0) * 0.5;
+        }
 
-        for (i = 0; i < 3; i++)
-            for (j = 0; j < 3; j++)
-                for (k = 0; k < 3; k++) {
-                    mXYZCAM[i][j] += xyz_sRGB[i][k] * rgb_cam[k][j];
-                }
+        case LightSource::DAYWHITE_FLUORESCENT: {
+            return (4600.0 + 5500.0) * 0.5;
+        }
+
+        case LightSource::COOL_WHITE_FLUORESCENT:
+        case LightSource::FLUORESCENT: {
+            return (3800.0 + 4500.0) * 0.5;
+        }
+
+        case LightSource::WHITE_FLUORESCENT: {
+            return (3250.0 + 3800.0) * 0.5;
+        }
+
+        case LightSource::WARM_WHITE_FLUORESCENT: {
+            return (2600.0 + 3250.0) * 0.5;
+        }
+
+        default: {
+            return 0.0;
+        }
     }
 }
 
-const DCPProfile::HSBModify* DCPProfile::MakeHueSatMap(const ColorTemp &wb, int preferredIlluminant, HSBModify **deleteHandle) const
-{
-
-    *deleteHandle = NULL;
-
-    if (!aDeltas1) {
-        return NULL;
-    }
-
-    if (!aDeltas2) {
-        return aDeltas1;
-    }
-
-    if (preferredIlluminant == 1) {
-        return aDeltas1;
-    } else if (preferredIlluminant == 2) {
-        return aDeltas2;
-    }
-
-    // Interpolate based on color temperature.
-    if (temperature1 <= 0.0 || temperature2 <= 0.0 || temperature1 == temperature2) {
-        return aDeltas1;
-    }
-
-    bool reverseOrder = temperature1 > temperature2;
-    double t1, t2;
-
-    if (reverseOrder) {
-        t1 = temperature2;
-        t2 = temperature1;
-    } else {
-        t1 = temperature1;
-        t2 = temperature2;
-    }
-
-    double mix;
-
-    if (wb.getTemp() <= t1) {
-        mix = 1.0;
-    } else if (wb.getTemp() >= t2) {
-        mix = 0.0;
-    } else {
-        double invT = 1.0 / wb.getTemp();
-        mix = (invT - (1.0 / t2)) / ((1.0 / t1) - (1.0 / t2));
-    }
-
-    if (reverseOrder) {
-        mix = 1.0 - mix;
-    }
-
-    if (mix >= 1.0) {
-        return aDeltas1;
-    } else if (mix <= 0.0) {
-        return aDeltas2;
-    }
-
-    // Interpolate between the tables.
-    HSBModify *aDeltas = new HSBModify[DeltaInfo.iArrayCount];
-    *deleteHandle = aDeltas;
-    float w1 = (float)mix;
-    float w2 = 1.0f - (float)mix;
-
-    for (int i = 0; i < DeltaInfo.iArrayCount; i++) {
-        aDeltas[i].fHueShift = w1 * aDeltas1[i].fHueShift + w2 * aDeltas2[i].fHueShift;
-        aDeltas[i].fSatScale = w1 * aDeltas1[i].fSatScale + w2 * aDeltas2[i].fSatScale;
-        aDeltas[i].fValScale = w1 * aDeltas1[i].fValScale + w2 * aDeltas2[i].fValScale;
-    }
-
-    return aDeltas;
 }
 
 DCPProfile::DCPProfile(const Glib::ustring &fname)
@@ -825,20 +613,20 @@ DCPProfile::DCPProfile(const Glib::ustring &fname)
     const int TagProfileToneCurve = 50940, TagBaselineExposureOffset = 51109;
     const int TagProfileCopyright = 50942;
 
-    aDeltas1 = aDeltas2 = aLookTable = NULL;
+    aDeltas1 = aDeltas2 = aLookTable = nullptr;
 
     FILE *pFile = g_fopen(fname.c_str (), "rb");
 
     TagDirectory *tagDir = ExifManager::parseTIFF(pFile, false);
 
     Tag* tag = tagDir->getTag(TagCalibrationIlluminant1);
-    iLightSource1 = (tag != NULL ? tag->toInt(0, rtexif::SHORT) : -1);
+    iLightSource1 = (tag != nullptr ? tag->toInt(0, rtexif::SHORT) : -1);
     tag = tagDir->getTag(TagCalibrationIlluminant2);
-    iLightSource2 = (tag != NULL ? tag->toInt(0, rtexif::SHORT) : -1);
+    iLightSource2 = (tag != nullptr ? tag->toInt(0, rtexif::SHORT) : -1);
     temperature1 = calibrationIlluminantToTemperature(iLightSource1);
     temperature2 = calibrationIlluminantToTemperature(iLightSource2);
 
-    bool hasSecondHueSat = tagDir->getTag(TagProfileHueSatMapData2) != NULL; // some profiles have two matrices, but just one huesat
+    bool hasSecondHueSat = tagDir->getTag(TagProfileHueSatMapData2) != nullptr; // some profiles have two matrices, but just one huesat
 
     // Fetch Forward Matrices, if any
     hasForwardMatrix1 = false;
@@ -891,13 +679,13 @@ DCPProfile::DCPProfile(const Glib::ustring &fname)
 
     tag = tagDir->getTag(TagProfileLookTableDims);
 
-    if (tag != NULL) {
+    if (tag != nullptr) {
         LookInfo.iHueDivisions = tag->toInt(0);
         LookInfo.iSatDivisions = tag->toInt(4);
         LookInfo.iValDivisions = tag->toInt(8);
 
         tag = tagDir->getTag(TagProfileLookTableEncoding);
-        LookInfo.sRGBGamma = tag != NULL && tag->toInt(0);
+        LookInfo.sRGBGamma = tag != nullptr && tag->toInt(0);
 
         tag = tagDir->getTag(TagProfileLookTableData);
         LookInfo.iArrayCount = tag->getCount() / 3;
@@ -923,13 +711,13 @@ DCPProfile::DCPProfile(const Glib::ustring &fname)
 
     tag = tagDir->getTag(TagProfileHueSatMapDims);
 
-    if (tag != NULL) {
+    if (tag != nullptr) {
         DeltaInfo.iHueDivisions = tag->toInt(0);
         DeltaInfo.iSatDivisions = tag->toInt(4);
         DeltaInfo.iValDivisions = tag->toInt(8);
 
         tag = tagDir->getTag(TagProfileHueSatMapEncoding);
-        DeltaInfo.sRGBGamma = tag != NULL && tag->toInt(0);
+        DeltaInfo.sRGBGamma = tag != nullptr && tag->toInt(0);
 
         tag = tagDir->getTag(TagProfileHueSatMapData1);
         DeltaInfo.iArrayCount = tag->getCount() / 3;
@@ -959,7 +747,7 @@ DCPProfile::DCPProfile(const Glib::ustring &fname)
 
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
-                mColorMatrix2[row][col] = (tag != NULL ? (float)tag->toDouble((col + row * 3) * 8) : mColorMatrix1[row][col]);
+                mColorMatrix2[row][col] = (tag != nullptr ? (float)tag->toDouble((col + row * 3) * 8) : mColorMatrix1[row][col]);
             }
         }
 
@@ -988,7 +776,7 @@ DCPProfile::DCPProfile(const Glib::ustring &fname)
     // Read tone curve points, if any, but disable to RTs own profiles
     tag = tagDir->getTag(TagProfileToneCurve);
 
-    if (tag != NULL) {
+    if (tag != nullptr) {
         std::vector<double> cPoints;
         cPoints.push_back(double(DCT_Spline));  // The first value is the curve type
 
@@ -1014,10 +802,10 @@ DCPProfile::DCPProfile(const Glib::ustring &fname)
             toneCurve.Set(rawCurve);
             hasToneCurve = true;
         }
-    } else if (tag == NULL) {
+    } else if (tag == nullptr) {
         tag = tagDir->getTag(TagProfileCopyright);
 
-        if (tag != NULL && tag->valueToString().find("Adobe Systems") != std::string::npos) {
+        if (tag != nullptr && tag->valueToString().find("Adobe Systems") != std::string::npos) {
             // an Adobe profile without tone curve is expected to have the Adobe Default Curve, we add that
             std::vector<double> cPoints;
             cPoints.push_back(double(DCT_Spline));
@@ -1062,7 +850,7 @@ DCPProfile::DCPProfile(const Glib::ustring &fname)
         }
     }
 
-    if (pFile != NULL) {
+    if (pFile != nullptr) {
         fclose(pFile);
     }
 
@@ -1076,362 +864,29 @@ DCPProfile::~DCPProfile()
     delete[] aLookTable;
 }
 
-void DCPProfile::HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, float &h, float &s, float &v) const
+bool DCPProfile::getHasToneCurve() const
 {
-
-    // Apply the HueSatMap. Ported from Adobes reference implementation
-    float hueShift, satScale, valScale;
-    float vEncoded = v;
-
-    if (ti.iValDivisions < 2) { // Optimize most common case of "2.5D" table.
-        float hScaled = h * ti.pc.hScale;
-        float sScaled = s * ti.pc.sScale;
-
-        int hIndex0 = max((int)hScaled, 0);
-        int sIndex0 = max(min((int)sScaled, ti.pc.maxSatIndex0), 0);
-
-        int hIndex1 = hIndex0 + 1;
-
-        if (hIndex0 >= ti.pc.maxHueIndex0) {
-            hIndex0 = ti.pc.maxHueIndex0;
-            hIndex1 = 0;
-        }
-
-        float hFract1 = hScaled - (float) hIndex0;
-        float sFract1 = sScaled - (float) sIndex0;
-
-        float hFract0 = 1.0f - hFract1;
-        float sFract0 = 1.0f - sFract1;
-
-        const HSBModify *entry00 = tableBase + hIndex0 * ti.pc.hueStep + sIndex0;
-        const HSBModify *entry01 = entry00 + (hIndex1 - hIndex0) * ti.pc.hueStep;
-
-        float hueShift0 = hFract0 * entry00->fHueShift + hFract1 * entry01->fHueShift;
-        float satScale0 = hFract0 * entry00->fSatScale + hFract1 * entry01->fSatScale;
-        float valScale0 = hFract0 * entry00->fValScale + hFract1 * entry01->fValScale;
-
-        entry00++;
-        entry01++;
-
-        float hueShift1 = hFract0 * entry00->fHueShift +
-                          hFract1 * entry01->fHueShift;
-
-        float satScale1 = hFract0 * entry00->fSatScale +
-                          hFract1 * entry01->fSatScale;
-
-        float valScale1 = hFract0 * entry00->fValScale +
-                          hFract1 * entry01->fValScale;
-
-        hueShift = sFract0 * hueShift0 + sFract1 * hueShift1;
-        satScale = sFract0 * satScale0 + sFract1 * satScale1;
-        valScale = sFract0 * valScale0 + sFract1 * valScale1;
-
-    } else {
-
-        float hScaled = h * ti.pc.hScale;
-        float sScaled = s * ti.pc.sScale;
-
-        if (ti.sRGBGamma) {
-            vEncoded = sRGBGammaForward(v);
-        }
-
-        float vScaled = vEncoded * ti.pc.vScale;
-
-        int hIndex0 = (int) hScaled;
-        int sIndex0 = max(min((int)sScaled, ti.pc.maxSatIndex0), 0);
-        int vIndex0 = max(min((int)vScaled, ti.pc.maxValIndex0), 0);
-
-        int hIndex1 = hIndex0 + 1;
-
-        if (hIndex0 >= ti.pc.maxHueIndex0) {
-            hIndex0 = ti.pc.maxHueIndex0;
-            hIndex1 = 0;
-        }
-
-        float hFract1 = hScaled - (float) hIndex0;
-        float sFract1 = sScaled - (float) sIndex0;
-        float vFract1 = vScaled - (float) vIndex0;
-
-        float hFract0 = 1.0f - hFract1;
-        float sFract0 = 1.0f - sFract1;
-        float vFract0 = 1.0f - vFract1;
-
-        const HSBModify *entry00 = tableBase + vIndex0 * ti.pc.valStep + hIndex0 * ti.pc.hueStep + sIndex0;
-
-        const HSBModify *entry01 = entry00 + (hIndex1 - hIndex0) * ti.pc.hueStep;
-
-        const HSBModify *entry10 = entry00 + ti.pc.valStep;
-        const HSBModify *entry11 = entry01 + ti.pc.valStep;
-
-        float hueShift0 = vFract0 * (hFract0 * entry00->fHueShift +
-                                     hFract1 * entry01->fHueShift) +
-                          vFract1 * (hFract0 * entry10->fHueShift +
-                                     hFract1 * entry11->fHueShift);
-
-        float satScale0 = vFract0 * (hFract0 * entry00->fSatScale +
-                                     hFract1 * entry01->fSatScale) +
-                          vFract1 * (hFract0 * entry10->fSatScale +
-                                     hFract1 * entry11->fSatScale);
-
-        float valScale0 = vFract0 * (hFract0 * entry00->fValScale +
-                                     hFract1 * entry01->fValScale) +
-                          vFract1 * (hFract0 * entry10->fValScale +
-                                     hFract1 * entry11->fValScale);
-
-        entry00++;
-        entry01++;
-        entry10++;
-        entry11++;
-
-        float hueShift1 = vFract0 * (hFract0 * entry00->fHueShift +
-                                     hFract1 * entry01->fHueShift) +
-                          vFract1 * (hFract0 * entry10->fHueShift +
-                                     hFract1 * entry11->fHueShift);
-
-        float satScale1 = vFract0 * (hFract0 * entry00->fSatScale +
-                                     hFract1 * entry01->fSatScale) +
-                          vFract1 * (hFract0 * entry10->fSatScale +
-                                     hFract1 * entry11->fSatScale);
-
-        float valScale1 = vFract0 * (hFract0 * entry00->fValScale +
-                                     hFract1 * entry01->fValScale) +
-                          vFract1 * (hFract0 * entry10->fValScale +
-                                     hFract1 * entry11->fValScale);
-
-        hueShift = sFract0 * hueShift0 + sFract1 * hueShift1;
-        satScale = sFract0 * satScale0 + sFract1 * satScale1;
-        valScale = sFract0 * valScale0 + sFract1 * valScale1;
-    }
-
-    hueShift *= (6.0f / 360.0f);    // Convert to internal hue range.
-
-    h += hueShift;
-    s *= satScale;  // no clipping here, we are RT float :-)
-
-    if (ti.sRGBGamma) {
-        v = sRGBGammaInverse(vEncoded * valScale);
-    } else {
-        v *= valScale;
-    }
+    return hasToneCurve;
 }
-
-struct ruvt {
-    double r;
-    double u;
-    double v;
-    double t;
+bool DCPProfile::getHasLookTable() const
+{
+    return !!aLookTable;
+}
+bool DCPProfile::getHasHueSatMap() const
+{
+    return !!aDeltas1;
+}
+bool DCPProfile::getHasBaselineExposureOffset() const
+{
+    return hasBaselineExposureOffset;
+}
+void DCPProfile::getIlluminants(int &i1, double &temp1, int &i2, double &temp2, bool &willInterpolate_) const
+{
+    i1 = iLightSource1;
+    i2 = iLightSource2;
+    temp1 = temperature1, temp2 = temperature2;
+    willInterpolate_ = willInterpolate;
 };
-
-static const double kTintScale = -3000.0;
-static const ruvt kTempTable [] = {
-    {   0, 0.18006, 0.26352, -0.24341 },
-    {  10, 0.18066, 0.26589, -0.25479 },
-    {  20, 0.18133, 0.26846, -0.26876 },
-    {  30, 0.18208, 0.27119, -0.28539 },
-    {  40, 0.18293, 0.27407, -0.30470 },
-    {  50, 0.18388, 0.27709, -0.32675 },
-    {  60, 0.18494, 0.28021, -0.35156 },
-    {  70, 0.18611, 0.28342, -0.37915 },
-    {  80, 0.18740, 0.28668, -0.40955 },
-    {  90, 0.18880, 0.28997, -0.44278 },
-    { 100, 0.19032, 0.29326, -0.47888 },
-    { 125, 0.19462, 0.30141, -0.58204 },
-    { 150, 0.19962, 0.30921, -0.70471 },
-    { 175, 0.20525, 0.31647, -0.84901 },
-    { 200, 0.21142, 0.32312, -1.0182 },
-    { 225, 0.21807, 0.32909, -1.2168 },
-    { 250, 0.22511, 0.33439, -1.4512 },
-    { 275, 0.23247, 0.33904, -1.7298 },
-    { 300, 0.24010, 0.34308, -2.0637 },
-    { 325, 0.24702, 0.34655, -2.4681 },
-    { 350, 0.25591, 0.34951, -2.9641 },
-    { 375, 0.26400, 0.35200, -3.5814 },
-    { 400, 0.27218, 0.35407, -4.3633 },
-    { 425, 0.28039, 0.35577, -5.3762 },
-    { 450, 0.28863, 0.35714, -6.7262 },
-    { 475, 0.29685, 0.35823, -8.5955 },
-    { 500, 0.30505, 0.35907, -11.324 },
-    { 525, 0.31320, 0.35968, -15.628 },
-    { 550, 0.32129, 0.36011, -23.325 },
-    { 575, 0.32931, 0.36038, -40.770 },
-    { 600, 0.33724, 0.36051, -116.45 }
-};
-
-void DCPProfile::dngref_XYCoord2Temperature(const double whiteXY[2], double *temp, double *tint) const
-{
-    double fTemperature = 0;
-    double fTint = 0;
-
-    // Convert to uv space.
-    double u = 2.0 * whiteXY[0] / (1.5 - whiteXY[0] + 6.0 * whiteXY[1]);
-    double v = 3.0 * whiteXY[1] / (1.5 - whiteXY[0] + 6.0 * whiteXY[1]);
-
-    // Search for line pair coordinate is between.
-    double last_dt = 0.0;
-    double last_dv = 0.0;
-    double last_du = 0.0;
-
-    for (uint32_t index = 1; index <= 30; index++) {
-        // Convert slope to delta-u and delta-v, with length 1.
-        double du = 1.0;
-        double dv = kTempTable [index] . t;
-        double len = sqrt (1.0 + dv * dv);
-        du /= len;
-        dv /= len;
-
-        // Find delta from black body point to test coordinate.
-        double uu = u - kTempTable [index] . u;
-        double vv = v - kTempTable [index] . v;
-
-        // Find distance above or below line.
-        double dt = - uu * dv + vv * du;
-
-        // If below line, we have found line pair.
-        if (dt <= 0.0 || index == 30) {
-            // Find fractional weight of two lines.
-            if (dt > 0.0) {
-                dt = 0.0;
-            }
-
-            dt = -dt;
-            double f;
-
-            if (index == 1) {
-                f = 0.0;
-            } else {
-                f = dt / (last_dt + dt);
-            }
-
-            // Interpolate the temperature.
-            fTemperature = 1.0E6 / (kTempTable [index - 1] . r * f +
-                                    kTempTable [index    ] . r * (1.0 - f));
-
-            // Find delta from black body point to test coordinate.
-            uu = u - (kTempTable [index - 1] . u * f +
-                      kTempTable [index    ] . u * (1.0 - f));
-            vv = v - (kTempTable [index - 1] . v * f +
-                      kTempTable [index    ] . v * (1.0 - f));
-            // Interpolate vectors along slope.
-            du = du * (1.0 - f) + last_du * f;
-            dv = dv * (1.0 - f) + last_dv * f;
-            len = sqrt (du * du + dv * dv);
-            du /= len;
-            dv /= len;
-
-            // Find distance along slope.
-            fTint = (uu * du + vv * dv) * kTintScale;
-            break;
-        }
-
-        // Try next line pair.
-        last_dt = dt;
-        last_du = du;
-        last_dv = dv;
-    }
-
-    if (temp != NULL) {
-        *temp = fTemperature;
-    }
-
-    if (tint != NULL) {
-        *tint = fTint;
-    }
-}
-
-void DCPProfile::dngref_FindXYZtoCamera(const double whiteXY[2], int preferredIlluminant, double (*xyzToCamera)[3]) const
-{
-
-    bool hasCol1 = hasColorMatrix1;
-    bool hasCol2 = hasColorMatrix2;
-
-    if (preferredIlluminant == 1) {
-        if (hasCol1) {
-            hasCol2 = false;
-        }
-    } else if (preferredIlluminant == 2) {
-        if (hasCol2) {
-            hasCol1 = false;
-        }
-    }
-
-    // mix if we have two matrices
-    double mix;
-
-    if (hasCol1 && hasCol2) {
-        double wbtemp;
-        /*
-          Note: we're using DNG SDK reference code for XY to temperature translation to get the exact same mix as
-          the reference code does.
-        */
-        dngref_XYCoord2Temperature(whiteXY, &wbtemp, NULL);
-
-        if (wbtemp <= temperature1) {
-            mix = 1.0;
-        } else if (wbtemp >= temperature2) {
-            mix = 0.0;
-        } else {
-            double invT = 1.0 / wbtemp;
-            mix = (invT - (1.0 / temperature2)) / ((1.0 / temperature1) - (1.0 / temperature2));
-        }
-    }
-
-    // Interpolate the color matrix.
-    double mCol[3][3];
-
-    if (hasCol1 && hasCol2) {
-        // interpolate
-        if (mix >= 1.0) {
-            memcpy(mCol, mColorMatrix1, sizeof(mCol));
-        } else if (mix <= 0.0) {
-            memcpy(mCol, mColorMatrix2, sizeof(mCol));
-        } else {
-            Mix3x3(mColorMatrix1, mix, mColorMatrix2, 1.0 - mix, mCol);
-        }
-    } else if (hasCol1) {
-        memcpy(mCol, mColorMatrix1, sizeof(mCol));
-    } else {
-        memcpy(mCol, mColorMatrix2, sizeof(mCol));
-    }
-
-    memcpy(xyzToCamera, mCol, sizeof(mCol));
-}
-
-void DCPProfile::dngref_NeutralToXY(double neutral[3], int preferredIlluminant, double XY[2]) const
-{
-    const int kMaxPasses = 30;
-    double lastXY[2] = { 0.3457, 0.3585 }; // D50
-
-    for (int pass = 0; pass < kMaxPasses; pass++) {
-        double xyzToCamera[3][3];
-        dngref_FindXYZtoCamera(lastXY, preferredIlluminant, xyzToCamera);
-
-        double invM[3][3], nextXYZ[3], nextXY[2];
-        Invert3x3(xyzToCamera, invM);
-        Multiply3x3_v3(invM, neutral, nextXYZ);
-        XYZtoXY(nextXYZ, nextXY);
-
-        if (fabs(nextXY[0] - lastXY[0]) +
-                fabs(nextXY[1] - lastXY[1]) < 0.0000001) {
-            XY[0] = nextXY[0];
-            XY[1] = nextXY[1];
-            return;
-        }
-
-        // If we reach the limit without converging, we are most likely
-        // in a two value oscillation.  So take the average of the last
-        // two estimates and give up.
-        if (pass == kMaxPasses - 1) {
-            nextXY[0] = (lastXY[0] + nextXY[0]) * 0.5;
-            nextXY[1] = (lastXY[1] + nextXY[1]) * 0.5;
-        }
-
-        lastXY[0] = nextXY[0];
-        lastXY[1] = nextXY[1];
-    }
-
-    XY[0] = lastXY[0];
-    XY[1] = lastXY[1];
-}
 
 void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, const Glib::ustring &workingSpace, const ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], bool useToneCurve, bool applyHueSatMap, bool applyLookTable) const
 {
@@ -1687,101 +1142,696 @@ void DCPProfile::step2ApplyTile(float *rc, float *gc, float *bc, int width, int 
     }
 }
 
-// Generates as singleton
-DCPStore* DCPStore::getInstance()
+void DCPProfile::dngref_XYCoord2Temperature(const double whiteXY[2], double *temp, double *tint) const
 {
-    static DCPStore instance_;
-    return &instance_;
+    constexpr double kTintScale = -3000.0;
+
+    double fTemperature = 0;
+    double fTint = 0;
+
+    // Convert to uv space.
+    double u = 2.0 * whiteXY[0] / (1.5 - whiteXY[0] + 6.0 * whiteXY[1]);
+    double v = 3.0 * whiteXY[1] / (1.5 - whiteXY[0] + 6.0 * whiteXY[1]);
+
+    // Search for line pair coordinate is between.
+    double last_dt = 0.0;
+    double last_dv = 0.0;
+    double last_du = 0.0;
+
+    for (uint32_t index = 1; index <= 30; index++) {
+        // Convert slope to delta-u and delta-v, with length 1.
+        double du = 1.0;
+        double dv = kTempTable [index] . t;
+        double len = sqrt (1.0 + dv * dv);
+        du /= len;
+        dv /= len;
+
+        // Find delta from black body point to test coordinate.
+        double uu = u - kTempTable [index] . u;
+        double vv = v - kTempTable [index] . v;
+
+        // Find distance above or below line.
+        double dt = - uu * dv + vv * du;
+
+        // If below line, we have found line pair.
+        if (dt <= 0.0 || index == 30) {
+            // Find fractional weight of two lines.
+            if (dt > 0.0) {
+                dt = 0.0;
+            }
+
+            dt = -dt;
+            double f;
+
+            if (index == 1) {
+                f = 0.0;
+            } else {
+                f = dt / (last_dt + dt);
+            }
+
+            // Interpolate the temperature.
+            fTemperature = 1.0E6 / (kTempTable [index - 1] . r * f +
+                                    kTempTable [index    ] . r * (1.0 - f));
+
+            // Find delta from black body point to test coordinate.
+            uu = u - (kTempTable [index - 1] . u * f +
+                      kTempTable [index    ] . u * (1.0 - f));
+            vv = v - (kTempTable [index - 1] . v * f +
+                      kTempTable [index    ] . v * (1.0 - f));
+            // Interpolate vectors along slope.
+            du = du * (1.0 - f) + last_du * f;
+            dv = dv * (1.0 - f) + last_dv * f;
+            len = sqrt (du * du + dv * dv);
+            du /= len;
+            dv /= len;
+
+            // Find distance along slope.
+            fTint = (uu * du + vv * dv) * kTintScale;
+            break;
+        }
+
+        // Try next line pair.
+        last_dt = dt;
+        last_du = du;
+        last_dv = dv;
+    }
+
+    if (temp != nullptr) {
+        *temp = fTemperature;
+    }
+
+    if (tint != nullptr) {
+        *tint = fTint;
+    }
 }
 
-// Reads all profiles from the given profiles dir
-void DCPStore::init (const Glib::ustring &rtProfileDir)
+void DCPProfile::dngref_FindXYZtoCamera(const double whiteXY[2], int preferredIlluminant, double (*xyzToCamera)[3]) const
 {
-    MyMutex::MyLock lock(mtx);
 
-    fileStdProfiles.clear();
+    bool hasCol1 = hasColorMatrix1;
+    bool hasCol2 = hasColorMatrix2;
 
-    if (rtProfileDir != "") {
-        std::deque<Glib::ustring> qDirs;
+    if (preferredIlluminant == 1) {
+        if (hasCol1) {
+            hasCol2 = false;
+        }
+    } else if (preferredIlluminant == 2) {
+        if (hasCol2) {
+            hasCol1 = false;
+        }
+    }
 
-        qDirs.push_front(rtProfileDir);
+    // mix if we have two matrices
+    double mix;
 
-        while (!qDirs.empty()) {
-            // process directory
-            Glib::ustring dirname = qDirs.back();
-            qDirs.pop_back();
+    if (hasCol1 && hasCol2) {
+        double wbtemp;
+        /*
+          Note: we're using DNG SDK reference code for XY to temperature translation to get the exact same mix as
+          the reference code does.
+        */
+        dngref_XYCoord2Temperature(whiteXY, &wbtemp, nullptr);
 
-            Glib::Dir* dir = NULL;
+        if (wbtemp <= temperature1) {
+            mix = 1.0;
+        } else if (wbtemp >= temperature2) {
+            mix = 0.0;
+        } else {
+            double invT = 1.0 / wbtemp;
+            mix = (invT - (1.0 / temperature2)) / ((1.0 / temperature1) - (1.0 / temperature2));
+        }
+    }
+
+    // Interpolate the color matrix.
+    double mCol[3][3];
+
+    if (hasCol1 && hasCol2) {
+        // interpolate
+        if (mix >= 1.0) {
+            memcpy(mCol, mColorMatrix1, sizeof(mCol));
+        } else if (mix <= 0.0) {
+            memcpy(mCol, mColorMatrix2, sizeof(mCol));
+        } else {
+            mix3x3(mColorMatrix1, mix, mColorMatrix2, 1.0 - mix, mCol);
+        }
+    } else if (hasCol1) {
+        memcpy(mCol, mColorMatrix1, sizeof(mCol));
+    } else {
+        memcpy(mCol, mColorMatrix2, sizeof(mCol));
+    }
+
+    memcpy(xyzToCamera, mCol, sizeof(mCol));
+}
+
+void DCPProfile::dngref_NeutralToXY(double neutral[3], int preferredIlluminant, double XY[2]) const
+{
+    const int kMaxPasses = 30;
+    double lastXY[2] = { 0.3457, 0.3585 }; // D50
+
+    for (int pass = 0; pass < kMaxPasses; pass++) {
+        double xyzToCamera[3][3];
+        dngref_FindXYZtoCamera(lastXY, preferredIlluminant, xyzToCamera);
+
+        double invM[3][3], nextXYZ[3], nextXY[2];
+        invert3x3(xyzToCamera, invM);
+        multiply3x3_v3(invM, neutral, nextXYZ);
+        XYZtoXY(nextXYZ, nextXY);
+
+        if (fabs(nextXY[0] - lastXY[0]) +
+                fabs(nextXY[1] - lastXY[1]) < 0.0000001) {
+            XY[0] = nextXY[0];
+            XY[1] = nextXY[1];
+            return;
+        }
+
+        // If we reach the limit without converging, we are most likely
+        // in a two value oscillation.  So take the average of the last
+        // two estimates and give up.
+        if (pass == kMaxPasses - 1) {
+            nextXY[0] = (lastXY[0] + nextXY[0]) * 0.5;
+            nextXY[1] = (lastXY[1] + nextXY[1]) * 0.5;
+        }
+
+        lastXY[0] = nextXY[0];
+        lastXY[1] = nextXY[1];
+    }
+
+    XY[0] = lastXY[0];
+    XY[1] = lastXY[1];
+}
+
+void DCPProfile::MakeXYZCAM(const ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], int preferredIlluminant, double (*mXYZCAM)[3]) const
+{
+    // code adapted from dng_color_spec::FindXYZtoCamera
+    // note that we do not support monochrome or colorplanes > 3 (no reductionMatrix support)
+    // we do not support cameracalibration either
+
+    double neutral[3]; // same as the DNG "AsShotNeutral" tag if white balance is Camera's own
+    {
+        /* A bit messy matrixing and conversions to get the neutral[] array from RT's own white balance which is stored in
+           sRGB space, while the DCP code needs multipliers in CameraRGB space */
+        double r, g, b;
+        wb.getMultipliers(r, g, b);
+
+        // camWbMatrix == imatrices.xyz_cam
+        double cam_xyz[3][3];
+        invert3x3(camWbMatrix, cam_xyz);
+        double cam_rgb[3][3];
+        multiply3x3(cam_xyz, xyz_sRGB, cam_rgb);
+        double camwb_red   = cam_rgb[0][0] * r + cam_rgb[0][1] * g + cam_rgb[0][2] * b;
+        double camwb_green = cam_rgb[1][0] * r + cam_rgb[1][1] * g + cam_rgb[1][2] * b;
+        double camwb_blue  = cam_rgb[2][0] * r + cam_rgb[2][1] * g + cam_rgb[2][2] * b;
+        neutral[0] = camwb_red / pre_mul[0];
+        neutral[1] = camwb_green / pre_mul[1];
+        neutral[2] = camwb_blue / pre_mul[2];
+        double maxentry = 0;
+
+        for (int i = 0; i < 3; i++) {
+            if (neutral[i] > maxentry) {
+                maxentry = neutral[i];
+            }
+        }
+
+        for (int i = 0; i < 3; i++) {
+            neutral[i] /= maxentry;
+        }
+    }
+
+    /* Calculate what the RGB multipliers corresponds to as a white XY coordinate, based on the
+       DCP ColorMatrix or ColorMatrices if dual-illuminant. This is the DNG reference code way to
+       do it, which is a bit different from RT's own white balance model at the time of writing.
+       When RT's white balance can make use of the DCP color matrices we could use that instead. */
+    double white_xy[2];
+    dngref_NeutralToXY(neutral, preferredIlluminant, white_xy);
+
+    bool hasFwd1 = hasForwardMatrix1;
+    bool hasFwd2 = hasForwardMatrix2;
+    bool hasCol1 = hasColorMatrix1;
+    bool hasCol2 = hasColorMatrix2;
+
+    if (preferredIlluminant == 1) {
+        if (hasFwd1) {
+            hasFwd2 = false;
+        }
+
+        if (hasCol1) {
+            hasCol2 = false;
+        }
+    } else if (preferredIlluminant == 2) {
+        if (hasFwd2) {
+            hasFwd1 = false;
+        }
+
+        if (hasCol2) {
+            hasCol1 = false;
+        }
+    }
+
+    // mix if we have two matrices
+    double mix = 1.0;
+
+    if ((hasCol1 && hasCol2) || (hasFwd1 && hasFwd2)) {
+        double wbtemp;
+        /* DNG ref way to convert XY to temperature, which affect matrix mixing. A different model here
+           typically does not affect the result too much, ie it's probably not strictly necessary to
+           use the DNG reference code here, but we do it for now. */
+        dngref_XYCoord2Temperature(white_xy, &wbtemp, nullptr);
+
+        if (wbtemp <= temperature1) {
+            mix = 1.0;
+        } else if (wbtemp >= temperature2) {
+            mix = 0.0;
+        } else {
+            double invT = 1.0 / wbtemp;
+            mix = (invT - (1.0 / temperature2)) / ((1.0 / temperature1) - (1.0 / temperature2));
+        }
+    }
+
+    // Colormatrix
+    double mCol[3][3];
+
+    if (hasCol1 && hasCol2) {
+        // interpolate
+        if (mix >= 1.0) {
+            memcpy(mCol, mColorMatrix1, sizeof(mCol));
+        } else if (mix <= 0.0) {
+            memcpy(mCol, mColorMatrix2, sizeof(mCol));
+        } else {
+            mix3x3(mColorMatrix1, mix, mColorMatrix2, 1.0 - mix, mCol);
+        }
+    } else if (hasCol1) {
+        memcpy(mCol, mColorMatrix1, sizeof(mCol));
+    } else {
+        memcpy(mCol, mColorMatrix2, sizeof(mCol));
+    }
+
+    /*
+      The exact position of the white XY coordinate affects the result very much, thus
+      it's important that the result is very similar or the same as DNG reference code.
+      Especially important is it that the raw-embedded "AsShot" multipliers is translated
+      to the same white XY coordinate as the DNG reference code, or else third party DCPs
+      will show incorrect color.
+    */
+
+    double white_xyz[3];
+    XYtoXYZ(white_xy, white_xyz);
+
+    double cam_xyz[3][3];
+
+    if (hasFwd1 || hasFwd2) {
+        // always prefer ForwardMatrix ahead of ColorMatrix
+        double mFwd[3][3];
+
+        if (hasFwd1 && hasFwd2) {
+            // interpolate
+            if (mix >= 1.0) {
+                memcpy(mFwd, mForwardMatrix1, sizeof(mFwd));
+            } else if (mix <= 0.0) {
+                memcpy(mFwd, mForwardMatrix2, sizeof(mFwd));
+            } else {
+                mix3x3(mForwardMatrix1, mix, mForwardMatrix2, 1.0 - mix, mFwd);
+            }
+        } else if (hasFwd1) {
+            memcpy(mFwd, mForwardMatrix1, sizeof(mFwd));
+        } else {
+            memcpy(mFwd, mForwardMatrix2, sizeof(mFwd));
+        }
+
+        // adapted from dng_color_spec::SetWhiteXY
+        double CameraWhite[3];
+        multiply3x3_v3(mCol, white_xyz, CameraWhite);
+
+        double whiteDiag[3][3] = {{CameraWhite[0], 0, 0}, {0, CameraWhite[1], 0}, {0, 0, CameraWhite[2]}};
+        double whiteDiagInv[3][3];
+        invert3x3(whiteDiag, whiteDiagInv);
+
+        double xyz_cam[3][3];
+        multiply3x3(mFwd, whiteDiagInv, xyz_cam);
+        invert3x3(xyz_cam, cam_xyz);
+    } else {
+        double whiteMatrix[3][3];
+        const double white_d50[3] = { 0.3457, 0.3585, 0.2958 }; // D50
+        mapWhiteMatrix(white_d50, white_xyz, whiteMatrix);
+        multiply3x3(mCol, whiteMatrix, cam_xyz);
+    }
+
+    // convert cam_xyz (XYZ D50 to CameraRGB, "PCS to Camera" in DNG terminology) to mXYZCAM
+
+    {
+        // This block can probably be simplified, seems unnecessary to pass through the sRGB matrix
+        // (probably dcraw legacy), it does no harm though as we don't clip anything.
+        int i, j, k;
+
+        // Multiply out XYZ colorspace
+        double cam_rgb[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+
+        for (i = 0; i < 3; i++)
+            for (j = 0; j < 3; j++)
+                for (k = 0; k < 3; k++) {
+                    cam_rgb[i][j] += cam_xyz[i][k] * xyz_sRGB[k][j];
+                }
+
+        // Normalize cam_rgb so that:  cam_rgb * (1,1,1) is (1,1,1,1)
+        double num;
+
+        for (i = 0; i < 3; i++) {
+            for (num = j = 0; j < 3; j++) {
+                num += cam_rgb[i][j];
+            }
+
+            for (j = 0; j < 3; j++) {
+                cam_rgb[i][j] /= num;
+            }
+        }
+
+        double rgb_cam[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+        RawImageSource::inverse33 (cam_rgb, rgb_cam);
+
+        for (i = 0; i < 3; i++)
+            for (j = 0; j < 3; j++) {
+                mXYZCAM[i][j] = 0;
+            }
+
+        for (i = 0; i < 3; i++)
+            for (j = 0; j < 3; j++)
+                for (k = 0; k < 3; k++) {
+                    mXYZCAM[i][j] += xyz_sRGB[i][k] * rgb_cam[k][j];
+                }
+    }
+}
+
+const DCPProfile::HSBModify* DCPProfile::MakeHueSatMap(const ColorTemp &wb, int preferredIlluminant, HSBModify **deleteHandle) const
+{
+
+    *deleteHandle = nullptr;
+
+    if (!aDeltas1) {
+        return nullptr;
+    }
+
+    if (!aDeltas2) {
+        return aDeltas1;
+    }
+
+    if (preferredIlluminant == 1) {
+        return aDeltas1;
+    } else if (preferredIlluminant == 2) {
+        return aDeltas2;
+    }
+
+    // Interpolate based on color temperature.
+    if (temperature1 <= 0.0 || temperature2 <= 0.0 || temperature1 == temperature2) {
+        return aDeltas1;
+    }
+
+    bool reverseOrder = temperature1 > temperature2;
+    double t1, t2;
+
+    if (reverseOrder) {
+        t1 = temperature2;
+        t2 = temperature1;
+    } else {
+        t1 = temperature1;
+        t2 = temperature2;
+    }
+
+    double mix;
+
+    if (wb.getTemp() <= t1) {
+        mix = 1.0;
+    } else if (wb.getTemp() >= t2) {
+        mix = 0.0;
+    } else {
+        double invT = 1.0 / wb.getTemp();
+        mix = (invT - (1.0 / t2)) / ((1.0 / t1) - (1.0 / t2));
+    }
+
+    if (reverseOrder) {
+        mix = 1.0 - mix;
+    }
+
+    if (mix >= 1.0) {
+        return aDeltas1;
+    } else if (mix <= 0.0) {
+        return aDeltas2;
+    }
+
+    // Interpolate between the tables.
+    HSBModify *aDeltas = new HSBModify[DeltaInfo.iArrayCount];
+    *deleteHandle = aDeltas;
+    float w1 = (float)mix;
+    float w2 = 1.0f - (float)mix;
+
+    for (int i = 0; i < DeltaInfo.iArrayCount; i++) {
+        aDeltas[i].fHueShift = w1 * aDeltas1[i].fHueShift + w2 * aDeltas2[i].fHueShift;
+        aDeltas[i].fSatScale = w1 * aDeltas1[i].fSatScale + w2 * aDeltas2[i].fSatScale;
+        aDeltas[i].fValScale = w1 * aDeltas1[i].fValScale + w2 * aDeltas2[i].fValScale;
+    }
+
+    return aDeltas;
+}
+
+void DCPProfile::HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, float &h, float &s, float &v) const
+{
+
+    // Apply the HueSatMap. Ported from Adobes reference implementation
+    float hueShift, satScale, valScale;
+    float vEncoded = v;
+
+    if (ti.iValDivisions < 2) { // Optimize most common case of "2.5D" table.
+        float hScaled = h * ti.pc.hScale;
+        float sScaled = s * ti.pc.sScale;
+
+        int hIndex0 = max((int)hScaled, 0);
+        int sIndex0 = max(min((int)sScaled, ti.pc.maxSatIndex0), 0);
+
+        int hIndex1 = hIndex0 + 1;
+
+        if (hIndex0 >= ti.pc.maxHueIndex0) {
+            hIndex0 = ti.pc.maxHueIndex0;
+            hIndex1 = 0;
+        }
+
+        float hFract1 = hScaled - (float) hIndex0;
+        float sFract1 = sScaled - (float) sIndex0;
+
+        float hFract0 = 1.0f - hFract1;
+        float sFract0 = 1.0f - sFract1;
+
+        const HSBModify *entry00 = tableBase + hIndex0 * ti.pc.hueStep + sIndex0;
+        const HSBModify *entry01 = entry00 + (hIndex1 - hIndex0) * ti.pc.hueStep;
+
+        float hueShift0 = hFract0 * entry00->fHueShift + hFract1 * entry01->fHueShift;
+        float satScale0 = hFract0 * entry00->fSatScale + hFract1 * entry01->fSatScale;
+        float valScale0 = hFract0 * entry00->fValScale + hFract1 * entry01->fValScale;
+
+        entry00++;
+        entry01++;
+
+        float hueShift1 = hFract0 * entry00->fHueShift +
+                          hFract1 * entry01->fHueShift;
+
+        float satScale1 = hFract0 * entry00->fSatScale +
+                          hFract1 * entry01->fSatScale;
+
+        float valScale1 = hFract0 * entry00->fValScale +
+                          hFract1 * entry01->fValScale;
+
+        hueShift = sFract0 * hueShift0 + sFract1 * hueShift1;
+        satScale = sFract0 * satScale0 + sFract1 * satScale1;
+        valScale = sFract0 * valScale0 + sFract1 * valScale1;
+
+    } else {
+
+        float hScaled = h * ti.pc.hScale;
+        float sScaled = s * ti.pc.sScale;
+
+        if (ti.sRGBGamma) {
+            vEncoded = sRGBGammaForward(v);
+        }
+
+        float vScaled = vEncoded * ti.pc.vScale;
+
+        int hIndex0 = (int) hScaled;
+        int sIndex0 = max(min((int)sScaled, ti.pc.maxSatIndex0), 0);
+        int vIndex0 = max(min((int)vScaled, ti.pc.maxValIndex0), 0);
+
+        int hIndex1 = hIndex0 + 1;
+
+        if (hIndex0 >= ti.pc.maxHueIndex0) {
+            hIndex0 = ti.pc.maxHueIndex0;
+            hIndex1 = 0;
+        }
+
+        float hFract1 = hScaled - (float) hIndex0;
+        float sFract1 = sScaled - (float) sIndex0;
+        float vFract1 = vScaled - (float) vIndex0;
+
+        float hFract0 = 1.0f - hFract1;
+        float sFract0 = 1.0f - sFract1;
+        float vFract0 = 1.0f - vFract1;
+
+        const HSBModify *entry00 = tableBase + vIndex0 * ti.pc.valStep + hIndex0 * ti.pc.hueStep + sIndex0;
+
+        const HSBModify *entry01 = entry00 + (hIndex1 - hIndex0) * ti.pc.hueStep;
+
+        const HSBModify *entry10 = entry00 + ti.pc.valStep;
+        const HSBModify *entry11 = entry01 + ti.pc.valStep;
+
+        float hueShift0 = vFract0 * (hFract0 * entry00->fHueShift +
+                                     hFract1 * entry01->fHueShift) +
+                          vFract1 * (hFract0 * entry10->fHueShift +
+                                     hFract1 * entry11->fHueShift);
+
+        float satScale0 = vFract0 * (hFract0 * entry00->fSatScale +
+                                     hFract1 * entry01->fSatScale) +
+                          vFract1 * (hFract0 * entry10->fSatScale +
+                                     hFract1 * entry11->fSatScale);
+
+        float valScale0 = vFract0 * (hFract0 * entry00->fValScale +
+                                     hFract1 * entry01->fValScale) +
+                          vFract1 * (hFract0 * entry10->fValScale +
+                                     hFract1 * entry11->fValScale);
+
+        entry00++;
+        entry01++;
+        entry10++;
+        entry11++;
+
+        float hueShift1 = vFract0 * (hFract0 * entry00->fHueShift +
+                                     hFract1 * entry01->fHueShift) +
+                          vFract1 * (hFract0 * entry10->fHueShift +
+                                     hFract1 * entry11->fHueShift);
+
+        float satScale1 = vFract0 * (hFract0 * entry00->fSatScale +
+                                     hFract1 * entry01->fSatScale) +
+                          vFract1 * (hFract0 * entry10->fSatScale +
+                                     hFract1 * entry11->fSatScale);
+
+        float valScale1 = vFract0 * (hFract0 * entry00->fValScale +
+                                     hFract1 * entry01->fValScale) +
+                          vFract1 * (hFract0 * entry10->fValScale +
+                                     hFract1 * entry11->fValScale);
+
+        hueShift = sFract0 * hueShift0 + sFract1 * hueShift1;
+        satScale = sFract0 * satScale0 + sFract1 * satScale1;
+        valScale = sFract0 * valScale0 + sFract1 * valScale1;
+    }
+
+    hueShift *= (6.0f / 360.0f);    // Convert to internal hue range.
+
+    h += hueShift;
+    s *= satScale;  // no clipping here, we are RT float :-)
+
+    if (ti.sRGBGamma) {
+        v = sRGBGammaInverse(vEncoded * valScale);
+    } else {
+        v *= valScale;
+    }
+}
+
+DCPStore* DCPStore::getInstance()
+{
+    static DCPStore instance;
+    return &instance;
+}
+
+void DCPStore::init(const Glib::ustring& rt_profile_dir)
+{
+    MyMutex::MyLock lock(mutex);
+
+    file_std_profiles.clear();
+
+    if (!rt_profile_dir.empty()) {
+        std::deque<Glib::ustring> dirs = {
+            rt_profile_dir
+        };
+
+        while (!dirs.empty()) {
+            // Process directory
+            Glib::ustring dirname = dirs.back();
+            dirs.pop_back();
+
+            std::unique_ptr<Glib::Dir> dir;
 
             try {
-                if (!Glib::file_test (dirname, Glib::FILE_TEST_IS_DIR)) {
+                if (!Glib::file_test(dirname, Glib::FILE_TEST_IS_DIR)) {
                     return;
                 }
 
-                dir = new Glib::Dir (dirname);
-            } catch (Glib::Exception& fe) {
+                dir.reset(new Glib::Dir(dirname));
+            } catch (Glib::Exception& exception) {
                 return;
             }
 
-            dirname = dirname + "/";
+            dirname += '/';
 
-            for (Glib::DirIterator i = dir->begin(); i != dir->end(); ++i) {
-                Glib::ustring fname = dirname + *i;
-                Glib::ustring sname = *i;
+            for (const Glib::ustring& sname : *dir) {
+                const Glib::ustring fname = dirname + sname;
 
-                // ignore directories
-                if (!Glib::file_test (fname, Glib::FILE_TEST_IS_DIR)) {
-                    size_t lastdot = sname.find_last_of ('.');
+                if (!Glib::file_test(fname, Glib::FILE_TEST_IS_DIR)) {
+                    // File
+                    const auto lastdot = sname.rfind('.');
 
-                    if (lastdot != Glib::ustring::npos && lastdot <= sname.size() - 4 && (!sname.casefold().compare (lastdot, 4, ".dcp"))) {
-                        Glib::ustring camShortName = sname.substr(0, lastdot).uppercase();
-                        fileStdProfiles[camShortName] = fname; // they will be loaded and cached on demand
+                    if (
+                        lastdot != Glib::ustring::npos
+                        && lastdot <= sname.size() - 4
+                        && !sname.casefold().compare(lastdot, 4, ".dcp")
+                    ) {
+                        const Glib::ustring cam_short_name = sname.substr(0, lastdot).uppercase();
+                        file_std_profiles[cam_short_name] = fname; // They will be loaded and cached on demand
                     }
                 } else {
-                    qDirs.push_front(fname);    // for later scanning
+                    // Directory
+                    dirs.push_front(fname);
                 }
             }
-
-            delete dir;
         }
     }
 }
 
-DCPProfile* DCPStore::getProfile (const Glib::ustring &filename)
+bool DCPStore::isValidDCPFileName(const Glib::ustring& filename) const
 {
-    MyMutex::MyLock lock(mtx);
-
-    std::map<Glib::ustring, DCPProfile*>::iterator r = profileCache.find (filename);
-
-    if (r != profileCache.end()) {
-        return r->second;
-    }
-
-    // Add profile
-    profileCache[filename] = new DCPProfile(filename);
-
-    return profileCache[filename];
-}
-
-DCPProfile* DCPStore::getStdProfile(const Glib::ustring &camShortName)
-{
-    Glib::ustring name2 = camShortName.uppercase();
-
-    // Warning: do NOT use map.find(), since it does not seem to work reliably here
-    for (std::map<Glib::ustring, Glib::ustring>::iterator i = fileStdProfiles.begin(); i != fileStdProfiles.end(); i++)
-        if (name2 == (*i).first) {
-            return getProfile((*i).second);
-        }
-
-    return NULL;
-}
-
-bool DCPStore::isValidDCPFileName(const Glib::ustring &filename) const
-{
-    if (!Glib::file_test (filename, Glib::FILE_TEST_EXISTS) || Glib::file_test (filename, Glib::FILE_TEST_IS_DIR)) {
+    if (!Glib::file_test(filename, Glib::FILE_TEST_EXISTS) || Glib::file_test(filename, Glib::FILE_TEST_IS_DIR)) {
         return false;
     }
 
-    size_t pos = filename.find_last_of ('.');
-    return pos > 0 && (!filename.casefold().compare (pos, 4, ".dcp") || !filename.casefold().compare (pos, 4, ".dng"));
+    const auto pos = filename.rfind('.');
+    return
+        pos > 0
+        && (
+            !filename.casefold().compare(pos, 4, ".dcp")
+            || !filename.casefold().compare(pos, 4, ".dng")
+        );
+}
+
+DCPProfile* DCPStore::getProfile(const Glib::ustring& filename) const
+{
+    MyMutex::MyLock lock(mutex);
+
+    const std::map<Glib::ustring, DCPProfile*>::iterator r = profile_cache.find(filename);
+
+    if (r != profile_cache.end()) {
+        return r->second;
+    }
+
+    DCPProfile* const res = new DCPProfile(filename);
+
+    // Add profile
+    profile_cache[filename] = res;
+
+    return res;
+}
+
+DCPProfile* DCPStore::getStdProfile(const Glib::ustring& cam_short_name) const
+{
+    const Glib::ustring name = cam_short_name.uppercase();
+
+    // Warning: do NOT use map.find(), since it does not seem to work reliably here
+    for (const auto& file_std_profile : file_std_profiles)
+        if (file_std_profile.first == name) {
+            return getProfile(file_std_profile.second);
+        }
+
+    return nullptr;
 }

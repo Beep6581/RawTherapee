@@ -898,7 +898,7 @@ DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &
     if (dcpProf == NULL) {
         return NULL;
     }
-    
+
     dcpProf->setStep2ApplyState(cmp.working, cmp.toneCurve, cmp.applyLookTable, cmp.applyBaselineExposureOffset, as);
     return dcpProf;
 }
@@ -4085,7 +4085,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
         in = embedded;
     } else if (inProfile == "(cameraICC)") {
         // DCPs have higher quality, so use them first
-        *dcpProf = dcpStore->getStdProfile(camName);
+        *dcpProf = DCPStore::getInstance()->getStdProfile(camName);
 
         if (*dcpProf == NULL) {
             in = iccStore->getStdProfile(camName);
@@ -4097,8 +4097,8 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
             normalName = inProfile.substr(5);
         }
 
-        if (dcpStore->isValidDCPFileName(normalName)) {
-            *dcpProf = dcpStore->getProfile(normalName);
+        if (DCPStore::getInstance()->isValidDCPFileName(normalName)) {
+            *dcpProf = DCPStore::getInstance()->getProfile(normalName);
         }
 
         if (*dcpProf == NULL) {
