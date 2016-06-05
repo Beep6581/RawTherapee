@@ -35,7 +35,7 @@ namespace rtengine
 class DCPProfile final
 {
 public:
-    struct dcpApplyState{
+    struct ApplyState {
         double m2ProPhoto[3][3];
         double m2Work[3][3];
         bool alreadyProPhoto;
@@ -44,33 +44,44 @@ public:
         float blScale;
     };
 
-    DCPProfile(const Glib::ustring &fname);
+    DCPProfile(const Glib::ustring& filename);
     ~DCPProfile();
 
     bool getHasToneCurve() const;
     bool getHasLookTable() const;
     bool getHasHueSatMap() const;
     bool getHasBaselineExposureOffset() const;
+
     void getIlluminants(int &i1, double &temp1, int &i2, double &temp2, bool &willInterpolate_) const;
 
     void Apply(Imagefloat *pImg, int preferredIlluminant, const Glib::ustring &workingSpace, const ColorTemp &wb, double pre_mul[3], double camMatrix[3][3], bool useToneCurve = false, bool applyHueSatMap = true, bool applyLookTable = false) const;
-    void setStep2ApplyState(const Glib::ustring &workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure, dcpApplyState &asOut);
-    void step2ApplyTile(float *r, float *g, float *b, int width, int height, int tileWidth, const dcpApplyState &asIn) const;
+    void setStep2ApplyState(const Glib::ustring &workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure, ApplyState &asOut);
+    void step2ApplyTile(float *r, float *g, float *b, int width, int height, int tileWidth, const ApplyState &asIn) const;
 
 private:
     struct HSBModify {
-        float fHueShift;
-        float fSatScale;
-        float fValScale;
+        float hue_shift;
+        float sat_scale;
+        float val_scale;
     };
+
     struct HSDTableInfo {
-        int iHueDivisions, iSatDivisions, iValDivisions;
-        int iHueStep, iValStep, iArrayCount;
-        bool sRGBGamma;
+        int hue_divisions;
+        int sat_divisions;
+        int val_divisions;
+        int iHueStep;
+        int iValStep;
+        int array_count;
+        bool srgb_gamma;
         struct {
-            float hScale, sScale, vScale;
-            int maxHueIndex0, maxSatIndex0, maxValIndex0;
-            int hueStep, valStep;
+            float h_scale;
+            float s_scale;
+            float v_scale;
+            int maxHueIndex0;
+            int maxSatIndex0;
+            int maxValIndex0;
+            int hueStep;
+            int valStep;
         } pc;
     };
 
@@ -81,16 +92,29 @@ private:
     const HSBModify* MakeHueSatMap(const ColorTemp &wb, int preferredIlluminant, HSBModify **deleteHandle) const;
     void HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, float &h, float &s, float &v) const;
 
-    double mColorMatrix1[3][3], mColorMatrix2[3][3];
-    bool hasColorMatrix1, hasColorMatrix2, hasForwardMatrix1, hasForwardMatrix2, hasToneCurve, hasBaselineExposureOffset, willInterpolate;
-    double mForwardMatrix1[3][3], mForwardMatrix2[3][3];
-    double temperature1, temperature2;
-    double baselineExposureOffset;
-    HSBModify *aDeltas1, *aDeltas2, *aLookTable;
-    HSDTableInfo DeltaInfo, LookInfo;
-    short iLightSource1, iLightSource2;
+    double color_matrix_1[3][3];
+    double color_matrix_2[3][3];
+    bool has_color_matrix_1;
+    bool has_color_matrix_2;
+    bool has_forward_matrix_1;
+    bool has_forward_matrix_2;
+    bool has_tone_curve;
+    bool has_baseline_exposure_offset;
+    bool will_interpolate;
+    double forward_matrix_1[3][3];
+    double forward_matrix_2[3][3];
+    double temperature_1;
+    double temperature_2;
+    double baseline_exposure_offset;
+    HSBModify* deltas_1;
+    HSBModify* deltas_2;
+    HSBModify* look_table;
+    HSDTableInfo delta_info;
+    HSDTableInfo look_info;
+    short light_source_1;
+    short light_source_2;
 
-    AdobeToneCurve toneCurve;
+    AdobeToneCurve tone_curve;
 };
 
 class DCPStore final

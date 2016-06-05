@@ -535,7 +535,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             double ggm = 33.;
             double bbm = 33.;
 
-            DCPProfile::dcpApplyState as;
+            DCPProfile::ApplyState as;
             DCPProfile *dcpProf = imgsrc->getDCP(params.icm, currWB, as);
 
             ipf.rgbProc (oprevi, oprevl, NULL, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,

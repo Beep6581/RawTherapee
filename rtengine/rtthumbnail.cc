@@ -1041,7 +1041,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     LabImage* labView = new LabImage (fw, fh);
     DCPProfile *dcpProf = nullptr;
-    DCPProfile::dcpApplyState as;
+    DCPProfile::ApplyState as;
     if (isRaw) {
         cmsHPROFILE dummy;
         RawImageSource::findInputProfile(params.icm.input, nullptr, camName, &dcpProf, dummy);

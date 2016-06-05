@@ -184,7 +184,7 @@ public:
     }
     void        getAutoExpHistogram (LUTu & histogram, int& histcompr);
     void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
-    DCPProfile *getDCP(const ColorManagementParams &cmp, ColorTemp &wb, DCPProfile::dcpApplyState &as);
+    DCPProfile *getDCP(const ColorManagementParams &cmp, ColorTemp &wb, DCPProfile::ApplyState &as);
 
     void convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb);
     static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in);

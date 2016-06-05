@@ -889,7 +889,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     }
 }
 
-DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &wb,DCPProfile::dcpApplyState &as)
+DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &wb,DCPProfile::ApplyState &as)
 {
     DCPProfile *dcpProf = NULL;
     cmsHPROFILE dummy;

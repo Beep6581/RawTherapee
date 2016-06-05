@@ -601,67 +601,86 @@ double calibrationIlluminantToTemperature(int light)
 
 }
 
-DCPProfile::DCPProfile(const Glib::ustring &fname)
+DCPProfile::DCPProfile(const Glib::ustring& filename) :
+    has_color_matrix_1(false),
+    has_color_matrix_2(false),
+    has_forward_matrix_1(false),
+    has_forward_matrix_2(false),
+    has_tone_curve(false),
+    has_baseline_exposure_offset(false),
+    will_interpolate(false),
+    baseline_exposure_offset(0.0),
+    deltas_1(nullptr),
+    deltas_2(nullptr),
+    look_table(nullptr)
 {
-    const int TIFFFloatSize = 4;
-    const int TagColorMatrix1 = 50721, TagColorMatrix2 = 50722, TagProfileHueSatMapDims = 50937;
-    const int TagForwardMatrix1 = 50964, TagForwardMatrix2 = 50965;
-    const int TagProfileHueSatMapData1 = 50938, TagProfileHueSatMapData2 = 50939;
-    const int TagCalibrationIlluminant1 = 50778, TagCalibrationIlluminant2 = 50779;
-    const int TagProfileLookTableData = 50982, TagProfileLookTableDims = 50981; // ProfileLookup is the low quality variant
-    const int TagProfileHueSatMapEncoding = 51107, TagProfileLookTableEncoding = 51108;
-    const int TagProfileToneCurve = 50940, TagBaselineExposureOffset = 51109;
-    const int TagProfileCopyright = 50942;
+    constexpr int tiff_float_size = 4;
 
-    aDeltas1 = aDeltas2 = aLookTable = nullptr;
+    enum class TagKey : int {
+        COLOR_MATRIX_1 = 50721,
+        COLOR_MATRIX_2 = 50722,
+        PROFILE_HUE_SAT_MAP_DIMS = 50937,
+        PROFILE_HUE_SAT_MAP_DATA_1 = 50938,
+        PROFILE_HUE_SAT_MAP_DATA_2 = 50939,
+        PROFILE_TONE_CURVE = 50940,
+        PROFILE_TONE_COPYRIGHT = 50942,
+        CALIBRATION_ILLUMINANT_1 = 50778,
+        CALIBRATION_ILLUMINANT_2 = 50779,
+        FORWARD_MATRIX_1 = 50964,
+        FORWARD_MATRIX_2 = 50965,
+        PROFILE_LOOK_TABLE_DIMS = 50981, // ProfileLookup is the low quality variant
+        PROFILE_LOOK_TABLE_DATA = 50982,
+        PROFILE_HUE_SAT_MAP_ENCODING = 51107,
+        PROFILE_LOOK_TABLE_ENCODING = 51108,
+        BASELINE_EXPOSURE_OFFSET = 51109
+    };
 
-    FILE *pFile = g_fopen(fname.c_str (), "rb");
+    FILE* const file = g_fopen(filename.c_str(), "rb");
 
-    TagDirectory *tagDir = ExifManager::parseTIFF(pFile, false);
+    std::unique_ptr<TagDirectory> tagDir(ExifManager::parseTIFF(file, false));
 
-    Tag* tag = tagDir->getTag(TagCalibrationIlluminant1);
-    iLightSource1 = (tag != nullptr ? tag->toInt(0, rtexif::SHORT) : -1);
-    tag = tagDir->getTag(TagCalibrationIlluminant2);
-    iLightSource2 = (tag != nullptr ? tag->toInt(0, rtexif::SHORT) : -1);
-    temperature1 = calibrationIlluminantToTemperature(iLightSource1);
-    temperature2 = calibrationIlluminantToTemperature(iLightSource2);
+    Tag* tag = tagDir->getTag(toUnderlying(TagKey::CALIBRATION_ILLUMINANT_1));
+    light_source_1 =
+        tag
+            ? tag->toInt(0, rtexif::SHORT)
+            : -1;
+    tag = tagDir->getTag(toUnderlying(TagKey::CALIBRATION_ILLUMINANT_2));
+    light_source_2 =
+        tag
+            ? tag->toInt(0, rtexif::SHORT)
+            : -1;
+    temperature_1 = calibrationIlluminantToTemperature(light_source_1);
+    temperature_2 = calibrationIlluminantToTemperature(light_source_2);
 
-    bool hasSecondHueSat = tagDir->getTag(TagProfileHueSatMapData2) != nullptr; // some profiles have two matrices, but just one huesat
+    const bool has_second_hue_sat = tagDir->getTag(toUnderlying(TagKey::PROFILE_HUE_SAT_MAP_DATA_2)); // Some profiles have two matrices, but just one huesat
 
     // Fetch Forward Matrices, if any
-    hasForwardMatrix1 = false;
-    hasForwardMatrix2 = false;
-    hasColorMatrix1 = false;
-    hasColorMatrix2 = false;
-    hasToneCurve = false;
-    hasBaselineExposureOffset = false;
-    baselineExposureOffset = 0;
-    tag = tagDir->getTag(TagForwardMatrix1);
+    tag = tagDir->getTag(toUnderlying(TagKey::FORWARD_MATRIX_1));
 
     if (tag) {
-        hasForwardMatrix1 = true;
+        has_forward_matrix_1 = true;
 
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 3; col++) {
-                mForwardMatrix1[row][col] = (float)tag->toDouble((col + row * 3) * 8);
+        for (int row = 0; row < 3; ++row) {
+            for (int col = 0; col < 3; ++col) {
+                forward_matrix_1[row][col] = tag->toDouble((col + row * 3) * 8);
             }
         }
     }
 
-    tag = tagDir->getTag(TagForwardMatrix2);
+    tag = tagDir->getTag(toUnderlying(TagKey::FORWARD_MATRIX_2));
 
     if (tag) {
-        hasForwardMatrix2 = true;
+        has_forward_matrix_2 = true;
 
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 3; col++) {
-                mForwardMatrix2[row][col] = (float)tag->toDouble((col + row * 3) * 8);
+        for (int row = 0; row < 3; ++row) {
+            for (int col = 0; col < 3; ++col) {
+                forward_matrix_2[row][col] = tag->toDouble((col + row * 3) * 8);
             }
         }
     }
 
-    // Color Matrix (1 is always there)
-    tag = tagDir->getTag(TagColorMatrix1);
+    // Color Matrix (one is always there)
+    tag = tagDir->getTag(toUnderlying(TagKey::COLOR_MATRIX_1));
 
     if (!tag) {
         // FIXME: better error handling
@@ -669,223 +688,235 @@ DCPProfile::DCPProfile(const Glib::ustring &fname)
         abort();
     }
 
-    hasColorMatrix1 = true;
+    has_color_matrix_1 = true;
 
-    for (int row = 0; row < 3; row++) {
-        for (int col = 0; col < 3; col++) {
-            mColorMatrix1[row][col] = (float)tag->toDouble((col + row * 3) * 8);
+    for (int row = 0; row < 3; ++row) {
+        for (int col = 0; col < 3; ++col) {
+            color_matrix_1[row][col] = tag->toDouble((col + row * 3) * 8);
         }
     }
 
-    tag = tagDir->getTag(TagProfileLookTableDims);
+    tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_LOOK_TABLE_DIMS));
 
-    if (tag != nullptr) {
-        LookInfo.iHueDivisions = tag->toInt(0);
-        LookInfo.iSatDivisions = tag->toInt(4);
-        LookInfo.iValDivisions = tag->toInt(8);
+    if (tag) {
+        look_info.hue_divisions = tag->toInt(0);
+        look_info.sat_divisions = tag->toInt(4);
+        look_info.val_divisions = tag->toInt(8);
 
-        tag = tagDir->getTag(TagProfileLookTableEncoding);
-        LookInfo.sRGBGamma = tag != nullptr && tag->toInt(0);
+        tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_LOOK_TABLE_ENCODING));
+        look_info.srgb_gamma = tag && tag->toInt(0);
 
-        tag = tagDir->getTag(TagProfileLookTableData);
-        LookInfo.iArrayCount = tag->getCount() / 3;
+        tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_LOOK_TABLE_DATA));
+        look_info.array_count = tag->getCount() / 3;
 
-        aLookTable = new HSBModify[LookInfo.iArrayCount];
+        look_table = new HSBModify[look_info.array_count];
 
-        for (int i = 0; i < LookInfo.iArrayCount; i++) {
-            aLookTable[i].fHueShift = tag->toDouble((i * 3) * TIFFFloatSize);
-            aLookTable[i].fSatScale = tag->toDouble((i * 3 + 1) * TIFFFloatSize);
-            aLookTable[i].fValScale = tag->toDouble((i * 3 + 2) * TIFFFloatSize);
+        for (int i = 0; i < look_info.array_count; i++) {
+            look_table[i].hue_shift = tag->toDouble((i * 3) * tiff_float_size);
+            look_table[i].sat_scale = tag->toDouble((i * 3 + 1) * tiff_float_size);
+            look_table[i].val_scale = tag->toDouble((i * 3 + 2) * tiff_float_size);
         }
 
-        // precalculated constants for table application
-        LookInfo.pc.hScale = (LookInfo.iHueDivisions < 2) ? 0.0f : (LookInfo.iHueDivisions * (1.0f / 6.0f));
-        LookInfo.pc.sScale = (float) (LookInfo.iSatDivisions - 1);
-        LookInfo.pc.vScale = (float) (LookInfo.iValDivisions - 1);
-        LookInfo.pc.maxHueIndex0 = LookInfo.iHueDivisions - 1;
-        LookInfo.pc.maxSatIndex0 = LookInfo.iSatDivisions - 2;
-        LookInfo.pc.maxValIndex0 = LookInfo.iValDivisions - 2;
-        LookInfo.pc.hueStep = LookInfo.iSatDivisions;
-        LookInfo.pc.valStep = LookInfo.iHueDivisions * LookInfo.pc.hueStep;
+        // Precalculated constants for table application
+        look_info.pc.h_scale =
+            look_info.hue_divisions < 2
+                ? 0.0f
+                : static_cast<float>(look_info.hue_divisions) / 6.0f;
+        look_info.pc.s_scale = look_info.sat_divisions - 1;
+        look_info.pc.v_scale = look_info.val_divisions - 1;
+        look_info.pc.maxHueIndex0 = look_info.hue_divisions - 1;
+        look_info.pc.maxSatIndex0 = look_info.sat_divisions - 2;
+        look_info.pc.maxValIndex0 = look_info.val_divisions - 2;
+        look_info.pc.hueStep = look_info.sat_divisions;
+        look_info.pc.valStep = look_info.hue_divisions * look_info.pc.hueStep;
     }
 
-    tag = tagDir->getTag(TagProfileHueSatMapDims);
+    tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_HUE_SAT_MAP_DIMS));
 
-    if (tag != nullptr) {
-        DeltaInfo.iHueDivisions = tag->toInt(0);
-        DeltaInfo.iSatDivisions = tag->toInt(4);
-        DeltaInfo.iValDivisions = tag->toInt(8);
+    if (tag) {
+        delta_info.hue_divisions = tag->toInt(0);
+        delta_info.sat_divisions = tag->toInt(4);
+        delta_info.val_divisions = tag->toInt(8);
 
-        tag = tagDir->getTag(TagProfileHueSatMapEncoding);
-        DeltaInfo.sRGBGamma = tag != nullptr && tag->toInt(0);
+        tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_HUE_SAT_MAP_ENCODING));
+        delta_info.srgb_gamma = tag && tag->toInt(0);
 
-        tag = tagDir->getTag(TagProfileHueSatMapData1);
-        DeltaInfo.iArrayCount = tag->getCount() / 3;
+        tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_HUE_SAT_MAP_DATA_1));
+        delta_info.array_count = tag->getCount() / 3;
 
-        aDeltas1 = new HSBModify[DeltaInfo.iArrayCount];
+        deltas_1 = new HSBModify[delta_info.array_count];
 
-        for (int i = 0; i < DeltaInfo.iArrayCount; i++) {
-            aDeltas1[i].fHueShift = tag->toDouble((i * 3) * TIFFFloatSize);
-            aDeltas1[i].fSatScale = tag->toDouble((i * 3 + 1) * TIFFFloatSize);
-            aDeltas1[i].fValScale = tag->toDouble((i * 3 + 2) * TIFFFloatSize);
+        for (int i = 0; i < delta_info.array_count; ++i) {
+            deltas_1[i].hue_shift = tag->toDouble((i * 3) * tiff_float_size);
+            deltas_1[i].sat_scale = tag->toDouble((i * 3 + 1) * tiff_float_size);
+            deltas_1[i].val_scale = tag->toDouble((i * 3 + 2) * tiff_float_size);
         }
 
-        DeltaInfo.pc.hScale = (DeltaInfo.iHueDivisions < 2) ? 0.0f : (DeltaInfo.iHueDivisions * (1.0f / 6.0f));
-        DeltaInfo.pc.sScale = (float) (DeltaInfo.iSatDivisions - 1);
-        DeltaInfo.pc.vScale = (float) (DeltaInfo.iValDivisions - 1);
-        DeltaInfo.pc.maxHueIndex0 = DeltaInfo.iHueDivisions - 1;
-        DeltaInfo.pc.maxSatIndex0 = DeltaInfo.iSatDivisions - 2;
-        DeltaInfo.pc.maxValIndex0 = DeltaInfo.iValDivisions - 2;
-        DeltaInfo.pc.hueStep = DeltaInfo.iSatDivisions;
-        DeltaInfo.pc.valStep = DeltaInfo.iHueDivisions * DeltaInfo.pc.hueStep;
+        delta_info.pc.h_scale =
+            delta_info.hue_divisions < 2
+                ? 0.0f
+                : static_cast<float>(delta_info.hue_divisions) / 6.0f;
+        delta_info.pc.s_scale = delta_info.sat_divisions - 1;
+        delta_info.pc.v_scale = delta_info.val_divisions - 1;
+        delta_info.pc.maxHueIndex0 = delta_info.hue_divisions - 1;
+        delta_info.pc.maxSatIndex0 = delta_info.sat_divisions - 2;
+        delta_info.pc.maxValIndex0 = delta_info.val_divisions - 2;
+        delta_info.pc.hueStep = delta_info.sat_divisions;
+        delta_info.pc.valStep = delta_info.hue_divisions * delta_info.pc.hueStep;
     }
 
-    if (iLightSource2 != -1) {
+    if (light_source_2 != -1) {
         // Second matrix
-        tag = tagDir->getTag(TagColorMatrix2);
-        hasColorMatrix2 = true;
+        has_color_matrix_2 = true;
 
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 3; col++) {
-                mColorMatrix2[row][col] = (tag != nullptr ? (float)tag->toDouble((col + row * 3) * 8) : mColorMatrix1[row][col]);
+        tag = tagDir->getTag(toUnderlying(TagKey::COLOR_MATRIX_2));
+
+        for (int row = 0; row < 3; ++row) {
+            for (int col = 0; col < 3; ++col) {
+                color_matrix_2[row][col] =
+                    tag
+                        ? tag->toDouble((col + row * 3) * 8)
+                        : color_matrix_1[row][col];
             }
         }
 
         // Second huesatmap
-        if (hasSecondHueSat) {
-            aDeltas2 = new HSBModify[DeltaInfo.iArrayCount];
+        if (has_second_hue_sat) {
+            deltas_2 = new HSBModify[delta_info.array_count];
 
             // Saturation maps. Need to be unwinded.
-            tag = tagDir->getTag(TagProfileHueSatMapData2);
+            tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_HUE_SAT_MAP_DATA_2));
 
-            for (int i = 0; i < DeltaInfo.iArrayCount; i++) {
-                aDeltas2[i].fHueShift = tag->toDouble((i * 3) * TIFFFloatSize);
-                aDeltas2[i].fSatScale = tag->toDouble((i * 3 + 1) * TIFFFloatSize);
-                aDeltas2[i].fValScale = tag->toDouble((i * 3 + 2) * TIFFFloatSize);
+            for (int i = 0; i < delta_info.array_count; ++i) {
+                deltas_2[i].hue_shift = tag->toDouble((i * 3) * tiff_float_size);
+                deltas_2[i].sat_scale = tag->toDouble((i * 3 + 1) * tiff_float_size);
+                deltas_2[i].val_scale = tag->toDouble((i * 3 + 2) * tiff_float_size);
             }
         }
     }
 
-    tag = tagDir->getTag(TagBaselineExposureOffset);
+    tag = tagDir->getTag(toUnderlying(TagKey::BASELINE_EXPOSURE_OFFSET));
 
     if (tag) {
-        hasBaselineExposureOffset = true;
-        baselineExposureOffset = tag->toDouble();
+        has_baseline_exposure_offset = true;
+        baseline_exposure_offset = tag->toDouble();
     }
 
     // Read tone curve points, if any, but disable to RTs own profiles
-    tag = tagDir->getTag(TagProfileToneCurve);
+    tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_TONE_CURVE));
 
-    if (tag != nullptr) {
-        std::vector<double> cPoints;
-        cPoints.push_back(double(DCT_Spline));  // The first value is the curve type
+    if (tag) {
+        std::vector<double> curve_points = {
+            static_cast<double>(DCT_Spline) // The first value is the curve type
+        };
 
-        // push back each X/Y coordinates in a loop
+        // Push back each X/Y coordinates in a loop
         bool curve_is_linear = true;
 
         for (int i = 0; i < tag->getCount(); i += 2) {
-            double x = tag->toDouble((i + 0) * TIFFFloatSize);
-            double y = tag->toDouble((i + 1) * TIFFFloatSize);
+            const double x = tag->toDouble((i + 0) * tiff_float_size);
+            const double y = tag->toDouble((i + 1) * tiff_float_size);
 
             if (x != y) {
                 curve_is_linear = false;
             }
 
-            cPoints.push_back( x );
-            cPoints.push_back( y );
+            curve_points.push_back(x);
+            curve_points.push_back(y);
         }
 
         if (!curve_is_linear) {
             // Create the curve
-            DiagonalCurve rawCurve(cPoints, CURVES_MIN_POLY_POINTS);
-
-            toneCurve.Set(rawCurve);
-            hasToneCurve = true;
+            has_tone_curve = true;
+            tone_curve.Set(DiagonalCurve(curve_points, CURVES_MIN_POLY_POINTS));
         }
-    } else if (tag == nullptr) {
-        tag = tagDir->getTag(TagProfileCopyright);
+    } else {
+        tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_TONE_COPYRIGHT));
 
-        if (tag != nullptr && tag->valueToString().find("Adobe Systems") != std::string::npos) {
-            // an Adobe profile without tone curve is expected to have the Adobe Default Curve, we add that
-            std::vector<double> cPoints;
-            cPoints.push_back(double(DCT_Spline));
-            const size_t tc_len = sizeof(adobe_camera_raw_default_curve) / sizeof(adobe_camera_raw_default_curve[0]);
+        if (tag && tag->valueToString().find("Adobe Systems") != std::string::npos) {
+            // An Adobe profile without tone curve is expected to have the Adobe Default Curve, we add that
+            std::vector<double> curve_points = {
+                static_cast<double>(DCT_Spline)
+            };
 
-            for (size_t i = 0; i < tc_len; i++) {
-                double x = (double)i / (tc_len - 1);
-                double y = (double)adobe_camera_raw_default_curve[i];
-                cPoints.push_back( x );
-                cPoints.push_back( y );
+            constexpr size_t tc_len = sizeof(adobe_camera_raw_default_curve) / sizeof(adobe_camera_raw_default_curve[0]);
+
+            for (size_t i = 0; i < tc_len; ++i) {
+                const double x = static_cast<double>(i) / (tc_len - 1);
+                const double y = adobe_camera_raw_default_curve[i];
+                curve_points.push_back(x);
+                curve_points.push_back(y);
             }
 
-            DiagonalCurve rawCurve(cPoints, CURVES_MIN_POLY_POINTS);
-            toneCurve.Set(rawCurve);
-            hasToneCurve = true;
+            has_tone_curve = true;
+            tone_curve.Set(DiagonalCurve(curve_points, CURVES_MIN_POLY_POINTS));
         }
     }
 
-    willInterpolate = false;
+    will_interpolate = false;
 
-    if (hasForwardMatrix1) {
-        if (hasForwardMatrix2) {
-            if (memcmp(mForwardMatrix1, mForwardMatrix2, sizeof(mForwardMatrix1)) != 0) {
-                // common that forward matrices are the same!
-                willInterpolate = true;
+    if (has_forward_matrix_1) {
+        if (has_forward_matrix_2) {
+            if (memcmp(forward_matrix_1, forward_matrix_2, sizeof(forward_matrix_1)) != 0) {
+                // Common that forward matrices are the same!
+                will_interpolate = true;
             }
 
-            if (aDeltas1 && aDeltas2) {
-                // we assume tables are different
-                willInterpolate = true;
+            if (deltas_1 && deltas_2) {
+                // We assume tables are different
+                will_interpolate = true;
             }
         }
     }
 
-    if (hasColorMatrix1 && hasColorMatrix2) {
-        if (memcmp(mColorMatrix1, mColorMatrix2, sizeof(mColorMatrix1)) != 0) {
-            willInterpolate = true;
+    if (has_color_matrix_1 && has_color_matrix_2) {
+        if (memcmp(color_matrix_1, color_matrix_2, sizeof(color_matrix_1)) != 0) {
+            will_interpolate = true;
         }
 
-        if (aDeltas1 && aDeltas2) {
-            willInterpolate = true;
+        if (deltas_1 && deltas_2) {
+            will_interpolate = true;
         }
     }
 
-    if (pFile != nullptr) {
-        fclose(pFile);
+    if (file) {
+        fclose(file);
     }
-
-    delete tagDir;
 }
 
 DCPProfile::~DCPProfile()
 {
-    delete[] aDeltas1;
-    delete[] aDeltas2;
-    delete[] aLookTable;
+    delete[] deltas_1;
+    delete[] deltas_2;
+    delete[] look_table;
 }
 
 bool DCPProfile::getHasToneCurve() const
 {
-    return hasToneCurve;
+    return has_tone_curve;
 }
+
 bool DCPProfile::getHasLookTable() const
 {
-    return !!aLookTable;
+    return look_table;
 }
+
 bool DCPProfile::getHasHueSatMap() const
 {
-    return !!aDeltas1;
+    return deltas_1;
 }
+
 bool DCPProfile::getHasBaselineExposureOffset() const
 {
-    return hasBaselineExposureOffset;
+    return has_baseline_exposure_offset;
 }
+
 void DCPProfile::getIlluminants(int &i1, double &temp1, int &i2, double &temp2, bool &willInterpolate_) const
 {
-    i1 = iLightSource1;
-    i2 = iLightSource2;
-    temp1 = temperature1, temp2 = temperature2;
-    willInterpolate_ = willInterpolate;
+    i1 = light_source_1;
+    i2 = light_source_2;
+    temp1 = temperature_1, temp2 = temperature_2;
+    willInterpolate_ = will_interpolate;
 };
 
 void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, const Glib::ustring &workingSpace, const ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], bool useToneCurve, bool applyHueSatMap, bool applyLookTable) const
@@ -902,11 +933,11 @@ void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, const Glib::us
         applyHueSatMap = false;
     }
 
-    if (!aLookTable) {
+    if (!look_table) {
         applyLookTable = false;
     }
 
-    useToneCurve &= toneCurve;
+    useToneCurve &= tone_curve;
 
     if (!applyHueSatMap && !applyLookTable && !useToneCurve) {
         //===== The fast path: no LUT and not tone curve- Calculate matrix for direct conversion raw>working space
@@ -969,11 +1000,11 @@ void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, const Glib::us
                     h *= 6.f; // RT calculates in [0,1]
 
                     if (applyHueSatMap) {
-                        HSDApply(DeltaInfo, deltaBase, h, s, v);
+                        HSDApply(delta_info, deltaBase, h, s, v);
                     }
 
                     if (applyLookTable) {
-                        HSDApply(LookInfo, aLookTable, h, s, v);
+                        HSDApply(look_info, look_table, h, s, v);
                     }
 
                     // RT range correction
@@ -991,7 +1022,7 @@ void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, const Glib::us
 
                 // tone curve
                 if (useToneCurve) {
-                    toneCurve.Apply(newr, newg, newb);
+                    tone_curve.Apply(newr, newg, newb);
                 }
 
                 pImg->r(y, x) = m2Work[0][0] * newr + m2Work[0][1] * newg + m2Work[0][2] * newb;
@@ -1006,23 +1037,23 @@ void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, const Glib::us
     }
 }
 
-void DCPProfile::setStep2ApplyState(const Glib::ustring &workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure, dcpApplyState &asOut)
+void DCPProfile::setStep2ApplyState(const Glib::ustring &workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure, ApplyState &asOut)
 {
 
     asOut.useToneCurve = useToneCurve;
     asOut.applyLookTable = applyLookTable;
     asOut.blScale = 1.0;
 
-    if (!aLookTable) {
+    if (!look_table) {
         asOut.applyLookTable = false;
     }
 
-    if (!hasToneCurve) {
+    if (!has_tone_curve) {
         asOut.useToneCurve = false;
     }
 
-    if (hasBaselineExposureOffset && applyBaselineExposure) {
-        asOut.blScale = powf(2, baselineExposureOffset);
+    if (has_baseline_exposure_offset && applyBaselineExposure) {
+        asOut.blScale = powf(2, baseline_exposure_offset);
     }
 
     if (workingSpace == "ProPhoto") {
@@ -1051,7 +1082,7 @@ void DCPProfile::setStep2ApplyState(const Glib::ustring &workingSpace, bool useT
     }
 }
 
-void DCPProfile::step2ApplyTile(float *rc, float *gc, float *bc, int width, int height, int tileWidth, const dcpApplyState &asIn) const
+void DCPProfile::step2ApplyTile(float *rc, float *gc, float *bc, int width, int height, int tileWidth, const ApplyState &asIn) const
 {
 
 #define FCLIP(a) ((a)>0.0?((a)<65535.5?(a):65535.5):0.0)
@@ -1107,7 +1138,7 @@ void DCPProfile::step2ApplyTile(float *rc, float *gc, float *bc, int width, int 
                     Color::rgb2hsv(newr, newg, newb, h, s, v);
                     h *= 6.f; // RT calculates in [0,1]
 
-                    HSDApply(LookInfo, aLookTable, h, s, v);
+                    HSDApply(look_info, look_table, h, s, v);
                     s = CLIP01(s);
                     v = CLIP01(v);
 
@@ -1125,7 +1156,7 @@ void DCPProfile::step2ApplyTile(float *rc, float *gc, float *bc, int width, int 
                 }
 
                 if (asIn.useToneCurve) {
-                    toneCurve.Apply(newr, newg, newb);
+                    tone_curve.Apply(newr, newg, newb);
                 }
 
                 if (asIn.alreadyProPhoto) {
@@ -1228,8 +1259,8 @@ void DCPProfile::dngref_XYCoord2Temperature(const double whiteXY[2], double *tem
 void DCPProfile::dngref_FindXYZtoCamera(const double whiteXY[2], int preferredIlluminant, double (*xyzToCamera)[3]) const
 {
 
-    bool hasCol1 = hasColorMatrix1;
-    bool hasCol2 = hasColorMatrix2;
+    bool hasCol1 = has_color_matrix_1;
+    bool hasCol2 = has_color_matrix_2;
 
     if (preferredIlluminant == 1) {
         if (hasCol1) {
@@ -1252,13 +1283,13 @@ void DCPProfile::dngref_FindXYZtoCamera(const double whiteXY[2], int preferredIl
         */
         dngref_XYCoord2Temperature(whiteXY, &wbtemp, nullptr);
 
-        if (wbtemp <= temperature1) {
+        if (wbtemp <= temperature_1) {
             mix = 1.0;
-        } else if (wbtemp >= temperature2) {
+        } else if (wbtemp >= temperature_2) {
             mix = 0.0;
         } else {
             double invT = 1.0 / wbtemp;
-            mix = (invT - (1.0 / temperature2)) / ((1.0 / temperature1) - (1.0 / temperature2));
+            mix = (invT - (1.0 / temperature_2)) / ((1.0 / temperature_1) - (1.0 / temperature_2));
         }
     }
 
@@ -1268,16 +1299,16 @@ void DCPProfile::dngref_FindXYZtoCamera(const double whiteXY[2], int preferredIl
     if (hasCol1 && hasCol2) {
         // interpolate
         if (mix >= 1.0) {
-            memcpy(mCol, mColorMatrix1, sizeof(mCol));
+            memcpy(mCol, color_matrix_1, sizeof(mCol));
         } else if (mix <= 0.0) {
-            memcpy(mCol, mColorMatrix2, sizeof(mCol));
+            memcpy(mCol, color_matrix_2, sizeof(mCol));
         } else {
-            mix3x3(mColorMatrix1, mix, mColorMatrix2, 1.0 - mix, mCol);
+            mix3x3(color_matrix_1, mix, color_matrix_2, 1.0 - mix, mCol);
         }
     } else if (hasCol1) {
-        memcpy(mCol, mColorMatrix1, sizeof(mCol));
+        memcpy(mCol, color_matrix_1, sizeof(mCol));
     } else {
-        memcpy(mCol, mColorMatrix2, sizeof(mCol));
+        memcpy(mCol, color_matrix_2, sizeof(mCol));
     }
 
     memcpy(xyzToCamera, mCol, sizeof(mCol));
@@ -1364,10 +1395,10 @@ void DCPProfile::MakeXYZCAM(const ColorTemp &wb, double pre_mul[3], double camWb
     double white_xy[2];
     dngref_NeutralToXY(neutral, preferredIlluminant, white_xy);
 
-    bool hasFwd1 = hasForwardMatrix1;
-    bool hasFwd2 = hasForwardMatrix2;
-    bool hasCol1 = hasColorMatrix1;
-    bool hasCol2 = hasColorMatrix2;
+    bool hasFwd1 = has_forward_matrix_1;
+    bool hasFwd2 = has_forward_matrix_2;
+    bool hasCol1 = has_color_matrix_1;
+    bool hasCol2 = has_color_matrix_2;
 
     if (preferredIlluminant == 1) {
         if (hasFwd1) {
@@ -1397,13 +1428,13 @@ void DCPProfile::MakeXYZCAM(const ColorTemp &wb, double pre_mul[3], double camWb
            use the DNG reference code here, but we do it for now. */
         dngref_XYCoord2Temperature(white_xy, &wbtemp, nullptr);
 
-        if (wbtemp <= temperature1) {
+        if (wbtemp <= temperature_1) {
             mix = 1.0;
-        } else if (wbtemp >= temperature2) {
+        } else if (wbtemp >= temperature_2) {
             mix = 0.0;
         } else {
             double invT = 1.0 / wbtemp;
-            mix = (invT - (1.0 / temperature2)) / ((1.0 / temperature1) - (1.0 / temperature2));
+            mix = (invT - (1.0 / temperature_2)) / ((1.0 / temperature_1) - (1.0 / temperature_2));
         }
     }
 
@@ -1413,16 +1444,16 @@ void DCPProfile::MakeXYZCAM(const ColorTemp &wb, double pre_mul[3], double camWb
     if (hasCol1 && hasCol2) {
         // interpolate
         if (mix >= 1.0) {
-            memcpy(mCol, mColorMatrix1, sizeof(mCol));
+            memcpy(mCol, color_matrix_1, sizeof(mCol));
         } else if (mix <= 0.0) {
-            memcpy(mCol, mColorMatrix2, sizeof(mCol));
+            memcpy(mCol, color_matrix_2, sizeof(mCol));
         } else {
-            mix3x3(mColorMatrix1, mix, mColorMatrix2, 1.0 - mix, mCol);
+            mix3x3(color_matrix_1, mix, color_matrix_2, 1.0 - mix, mCol);
         }
     } else if (hasCol1) {
-        memcpy(mCol, mColorMatrix1, sizeof(mCol));
+        memcpy(mCol, color_matrix_1, sizeof(mCol));
     } else {
-        memcpy(mCol, mColorMatrix2, sizeof(mCol));
+        memcpy(mCol, color_matrix_2, sizeof(mCol));
     }
 
     /*
@@ -1445,16 +1476,16 @@ void DCPProfile::MakeXYZCAM(const ColorTemp &wb, double pre_mul[3], double camWb
         if (hasFwd1 && hasFwd2) {
             // interpolate
             if (mix >= 1.0) {
-                memcpy(mFwd, mForwardMatrix1, sizeof(mFwd));
+                memcpy(mFwd, forward_matrix_1, sizeof(mFwd));
             } else if (mix <= 0.0) {
-                memcpy(mFwd, mForwardMatrix2, sizeof(mFwd));
+                memcpy(mFwd, forward_matrix_2, sizeof(mFwd));
             } else {
-                mix3x3(mForwardMatrix1, mix, mForwardMatrix2, 1.0 - mix, mFwd);
+                mix3x3(forward_matrix_1, mix, forward_matrix_2, 1.0 - mix, mFwd);
             }
         } else if (hasFwd1) {
-            memcpy(mFwd, mForwardMatrix1, sizeof(mFwd));
+            memcpy(mFwd, forward_matrix_1, sizeof(mFwd));
         } else {
-            memcpy(mFwd, mForwardMatrix2, sizeof(mFwd));
+            memcpy(mFwd, forward_matrix_2, sizeof(mFwd));
         }
 
         // adapted from dng_color_spec::SetWhiteXY
@@ -1525,34 +1556,34 @@ const DCPProfile::HSBModify* DCPProfile::MakeHueSatMap(const ColorTemp &wb, int 
 
     *deleteHandle = nullptr;
 
-    if (!aDeltas1) {
+    if (!deltas_1) {
         return nullptr;
     }
 
-    if (!aDeltas2) {
-        return aDeltas1;
+    if (!deltas_2) {
+        return deltas_1;
     }
 
     if (preferredIlluminant == 1) {
-        return aDeltas1;
+        return deltas_1;
     } else if (preferredIlluminant == 2) {
-        return aDeltas2;
+        return deltas_2;
     }
 
     // Interpolate based on color temperature.
-    if (temperature1 <= 0.0 || temperature2 <= 0.0 || temperature1 == temperature2) {
-        return aDeltas1;
+    if (temperature_1 <= 0.0 || temperature_2 <= 0.0 || temperature_1 == temperature_2) {
+        return deltas_1;
     }
 
-    bool reverseOrder = temperature1 > temperature2;
+    bool reverseOrder = temperature_1 > temperature_2;
     double t1, t2;
 
     if (reverseOrder) {
-        t1 = temperature2;
-        t2 = temperature1;
+        t1 = temperature_2;
+        t2 = temperature_1;
     } else {
-        t1 = temperature1;
-        t2 = temperature2;
+        t1 = temperature_1;
+        t2 = temperature_2;
     }
 
     double mix;
@@ -1571,21 +1602,21 @@ const DCPProfile::HSBModify* DCPProfile::MakeHueSatMap(const ColorTemp &wb, int 
     }
 
     if (mix >= 1.0) {
-        return aDeltas1;
+        return deltas_1;
     } else if (mix <= 0.0) {
-        return aDeltas2;
+        return deltas_2;
     }
 
     // Interpolate between the tables.
-    HSBModify *aDeltas = new HSBModify[DeltaInfo.iArrayCount];
+    HSBModify *aDeltas = new HSBModify[delta_info.array_count];
     *deleteHandle = aDeltas;
     float w1 = (float)mix;
     float w2 = 1.0f - (float)mix;
 
-    for (int i = 0; i < DeltaInfo.iArrayCount; i++) {
-        aDeltas[i].fHueShift = w1 * aDeltas1[i].fHueShift + w2 * aDeltas2[i].fHueShift;
-        aDeltas[i].fSatScale = w1 * aDeltas1[i].fSatScale + w2 * aDeltas2[i].fSatScale;
-        aDeltas[i].fValScale = w1 * aDeltas1[i].fValScale + w2 * aDeltas2[i].fValScale;
+    for (int i = 0; i < delta_info.array_count; i++) {
+        aDeltas[i].hue_shift = w1 * deltas_1[i].hue_shift + w2 * deltas_2[i].hue_shift;
+        aDeltas[i].sat_scale = w1 * deltas_1[i].sat_scale + w2 * deltas_2[i].sat_scale;
+        aDeltas[i].val_scale = w1 * deltas_1[i].val_scale + w2 * deltas_2[i].val_scale;
     }
 
     return aDeltas;
@@ -1598,9 +1629,9 @@ void DCPProfile::HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, fl
     float hueShift, satScale, valScale;
     float vEncoded = v;
 
-    if (ti.iValDivisions < 2) { // Optimize most common case of "2.5D" table.
-        float hScaled = h * ti.pc.hScale;
-        float sScaled = s * ti.pc.sScale;
+    if (ti.val_divisions < 2) { // Optimize most common case of "2.5D" table.
+        float hScaled = h * ti.pc.h_scale;
+        float sScaled = s * ti.pc.s_scale;
 
         int hIndex0 = max((int)hScaled, 0);
         int sIndex0 = max(min((int)sScaled, ti.pc.maxSatIndex0), 0);
@@ -1621,21 +1652,21 @@ void DCPProfile::HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, fl
         const HSBModify *entry00 = tableBase + hIndex0 * ti.pc.hueStep + sIndex0;
         const HSBModify *entry01 = entry00 + (hIndex1 - hIndex0) * ti.pc.hueStep;
 
-        float hueShift0 = hFract0 * entry00->fHueShift + hFract1 * entry01->fHueShift;
-        float satScale0 = hFract0 * entry00->fSatScale + hFract1 * entry01->fSatScale;
-        float valScale0 = hFract0 * entry00->fValScale + hFract1 * entry01->fValScale;
+        float hueShift0 = hFract0 * entry00->hue_shift + hFract1 * entry01->hue_shift;
+        float satScale0 = hFract0 * entry00->sat_scale + hFract1 * entry01->sat_scale;
+        float valScale0 = hFract0 * entry00->val_scale + hFract1 * entry01->val_scale;
 
         entry00++;
         entry01++;
 
-        float hueShift1 = hFract0 * entry00->fHueShift +
-                          hFract1 * entry01->fHueShift;
+        float hueShift1 = hFract0 * entry00->hue_shift +
+                          hFract1 * entry01->hue_shift;
 
-        float satScale1 = hFract0 * entry00->fSatScale +
-                          hFract1 * entry01->fSatScale;
+        float satScale1 = hFract0 * entry00->sat_scale +
+                          hFract1 * entry01->sat_scale;
 
-        float valScale1 = hFract0 * entry00->fValScale +
-                          hFract1 * entry01->fValScale;
+        float valScale1 = hFract0 * entry00->val_scale +
+                          hFract1 * entry01->val_scale;
 
         hueShift = sFract0 * hueShift0 + sFract1 * hueShift1;
         satScale = sFract0 * satScale0 + sFract1 * satScale1;
@@ -1643,14 +1674,14 @@ void DCPProfile::HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, fl
 
     } else {
 
-        float hScaled = h * ti.pc.hScale;
-        float sScaled = s * ti.pc.sScale;
+        float hScaled = h * ti.pc.h_scale;
+        float sScaled = s * ti.pc.s_scale;
 
-        if (ti.sRGBGamma) {
+        if (ti.srgb_gamma) {
             vEncoded = sRGBGammaForward(v);
         }
 
-        float vScaled = vEncoded * ti.pc.vScale;
+        float vScaled = vEncoded * ti.pc.v_scale;
 
         int hIndex0 = (int) hScaled;
         int sIndex0 = max(min((int)sScaled, ti.pc.maxSatIndex0), 0);
@@ -1678,40 +1709,40 @@ void DCPProfile::HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, fl
         const HSBModify *entry10 = entry00 + ti.pc.valStep;
         const HSBModify *entry11 = entry01 + ti.pc.valStep;
 
-        float hueShift0 = vFract0 * (hFract0 * entry00->fHueShift +
-                                     hFract1 * entry01->fHueShift) +
-                          vFract1 * (hFract0 * entry10->fHueShift +
-                                     hFract1 * entry11->fHueShift);
+        float hueShift0 = vFract0 * (hFract0 * entry00->hue_shift +
+                                     hFract1 * entry01->hue_shift) +
+                          vFract1 * (hFract0 * entry10->hue_shift +
+                                     hFract1 * entry11->hue_shift);
 
-        float satScale0 = vFract0 * (hFract0 * entry00->fSatScale +
-                                     hFract1 * entry01->fSatScale) +
-                          vFract1 * (hFract0 * entry10->fSatScale +
-                                     hFract1 * entry11->fSatScale);
+        float satScale0 = vFract0 * (hFract0 * entry00->sat_scale +
+                                     hFract1 * entry01->sat_scale) +
+                          vFract1 * (hFract0 * entry10->sat_scale +
+                                     hFract1 * entry11->sat_scale);
 
-        float valScale0 = vFract0 * (hFract0 * entry00->fValScale +
-                                     hFract1 * entry01->fValScale) +
-                          vFract1 * (hFract0 * entry10->fValScale +
-                                     hFract1 * entry11->fValScale);
+        float valScale0 = vFract0 * (hFract0 * entry00->val_scale +
+                                     hFract1 * entry01->val_scale) +
+                          vFract1 * (hFract0 * entry10->val_scale +
+                                     hFract1 * entry11->val_scale);
 
         entry00++;
         entry01++;
         entry10++;
         entry11++;
 
-        float hueShift1 = vFract0 * (hFract0 * entry00->fHueShift +
-                                     hFract1 * entry01->fHueShift) +
-                          vFract1 * (hFract0 * entry10->fHueShift +
-                                     hFract1 * entry11->fHueShift);
+        float hueShift1 = vFract0 * (hFract0 * entry00->hue_shift +
+                                     hFract1 * entry01->hue_shift) +
+                          vFract1 * (hFract0 * entry10->hue_shift +
+                                     hFract1 * entry11->hue_shift);
 
-        float satScale1 = vFract0 * (hFract0 * entry00->fSatScale +
-                                     hFract1 * entry01->fSatScale) +
-                          vFract1 * (hFract0 * entry10->fSatScale +
-                                     hFract1 * entry11->fSatScale);
+        float satScale1 = vFract0 * (hFract0 * entry00->sat_scale +
+                                     hFract1 * entry01->sat_scale) +
+                          vFract1 * (hFract0 * entry10->sat_scale +
+                                     hFract1 * entry11->sat_scale);
 
-        float valScale1 = vFract0 * (hFract0 * entry00->fValScale +
-                                     hFract1 * entry01->fValScale) +
-                          vFract1 * (hFract0 * entry10->fValScale +
-                                     hFract1 * entry11->fValScale);
+        float valScale1 = vFract0 * (hFract0 * entry00->val_scale +
+                                     hFract1 * entry01->val_scale) +
+                          vFract1 * (hFract0 * entry10->val_scale +
+                                     hFract1 * entry11->val_scale);
 
         hueShift = sFract0 * hueShift0 + sFract1 * hueShift1;
         satScale = sFract0 * satScale0 + sFract1 * satScale1;
@@ -1723,7 +1754,7 @@ void DCPProfile::HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, fl
     h += hueShift;
     s *= satScale;  // no clipping here, we are RT float :-)
 
-    if (ti.sRGBGamma) {
+    if (ti.srgb_gamma) {
         v = sRGBGammaInverse(vEncoded * valScale);
     } else {
         v *= valScale;

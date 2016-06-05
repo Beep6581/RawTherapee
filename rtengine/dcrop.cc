@@ -773,7 +773,7 @@ void Crop::update (int todo)
 
     if (todo & M_RGBCURVE) {
         double rrm, ggm, bbm;
-        DCPProfile::dcpApplyState as;
+        DCPProfile::ApplyState as;
         DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, parent->currWB, as);
 
         parent->ipf.rgbProc (baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
