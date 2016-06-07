@@ -3727,7 +3727,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
 
     if (dcpProf != NULL) {
         // DCP processing
-        dcpProf->Apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul, camMatrix, false, cmp.applyHueSatMap, false);
+        dcpProf->apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul, camMatrix, false, cmp.applyHueSatMap, false);
         return;
     }
 

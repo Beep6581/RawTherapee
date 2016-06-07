@@ -20,6 +20,7 @@
 #pragma once
 
 #include <map>
+#include <vector>
 
 #include <glibmm.h>
 
@@ -44,6 +45,14 @@ public:
         float blScale;
     };
 
+    struct Illuminants {
+        short light_source_1;
+        short light_source_2;
+        double temperature_1;
+        double temperature_2;
+        bool will_interpolate;
+    };
+
     DCPProfile(const Glib::ustring& filename);
     ~DCPProfile();
 
@@ -52,9 +61,19 @@ public:
     bool getHasHueSatMap() const;
     bool getHasBaselineExposureOffset() const;
 
-    void getIlluminants(int &i1, double &temp1, int &i2, double &temp2, bool &willInterpolate_) const;
+    Illuminants getIlluminants() const;
 
-    void Apply(Imagefloat *pImg, int preferredIlluminant, const Glib::ustring &workingSpace, const ColorTemp &wb, double pre_mul[3], double camMatrix[3][3], bool useToneCurve = false, bool applyHueSatMap = true, bool applyLookTable = false) const;
+    void apply(
+        Imagefloat* img,
+        int preferred_illuminant,
+        const Glib::ustring& working_space,
+        const ColorTemp& white_balance,
+        double pre_mul[3],
+        double cam_matrix[3][3],
+        bool use_tone_curve = false,
+        bool apply_hue_sat_map = true,
+        bool apply_look_table = false
+    ) const;
     void setStep2ApplyState(const Glib::ustring &workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure, ApplyState &asOut);
     void step2ApplyTile(float *r, float *g, float *b, int width, int height, int tileWidth, const ApplyState &asIn) const;
 
@@ -69,28 +88,28 @@ private:
         int hue_divisions;
         int sat_divisions;
         int val_divisions;
-        int iHueStep;
-        int iValStep;
-        int array_count;
+        int hue_step;
+        int val_step;
+        unsigned int array_count;
         bool srgb_gamma;
         struct {
             float h_scale;
             float s_scale;
             float v_scale;
-            int maxHueIndex0;
-            int maxSatIndex0;
-            int maxValIndex0;
-            int hueStep;
-            int valStep;
+            int max_hue_index0;
+            int max_sat_index0;
+            int max_val_index0;
+            int hue_step;
+            int val_step;
         } pc;
     };
 
     void dngref_XYCoord2Temperature(const double whiteXY[2], double *temp, double *tint) const;
     void dngref_FindXYZtoCamera(const double whiteXY[2], int preferredIlluminant, double (*xyzToCamera)[3]) const;
     void dngref_NeutralToXY(double neutral[3], int preferredIlluminant, double XY[2]) const;
-    void MakeXYZCAM(const ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], int preferredIlluminant, double (*mXYZCAM)[3]) const;
-    const HSBModify* MakeHueSatMap(const ColorTemp &wb, int preferredIlluminant, HSBModify **deleteHandle) const;
-    void HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, float &h, float &s, float &v) const;
+    void makeXyzCam(const ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], int preferredIlluminant, double (*mXYZCAM)[3]) const;
+    std::vector<HSBModify> makeHueSatMap(const ColorTemp& white_balance, int preferred_illuminant) const;
+    void hsdApply(const HSDTableInfo& table_info, const std::vector<HSBModify>& table_base, float& h, float& s, float& v) const;
 
     double color_matrix_1[3][3];
     double color_matrix_2[3][3];
@@ -106,9 +125,9 @@ private:
     double temperature_1;
     double temperature_2;
     double baseline_exposure_offset;
-    HSBModify* deltas_1;
-    HSBModify* deltas_2;
-    HSBModify* look_table;
+    std::vector<HSBModify> deltas_1;
+    std::vector<HSBModify> deltas_2;
+    std::vector<HSBModify> look_table;
     HSDTableInfo delta_info;
     HSDTableInfo look_info;
     short light_source_1;

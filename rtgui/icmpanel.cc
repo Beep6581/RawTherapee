@@ -385,24 +385,21 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
             ckbApplyHueSatMap->set_sensitive (true);
         }
 
-        int i1, i2;
-        double temp1, temp2;
-        bool willInterpolate;
-        dcp->getIlluminants(i1, temp1, i2, temp2, willInterpolate);
+        const DCPProfile::Illuminants illuminants = dcp->getIlluminants();
 
-        if (willInterpolate) {
-            if (dcpTemperatures[0] != temp1 || dcpTemperatures[1] != temp2) {
+        if (illuminants.will_interpolate) {
+            if (dcpTemperatures[0] != illuminants.temperature_1 || dcpTemperatures[1] != illuminants.temperature_2) {
                 char tempstr1[64], tempstr2[64];
-                sprintf(tempstr1, "%.0fK", temp1);
-                sprintf(tempstr2, "%.0fK", temp2);
+                sprintf(tempstr1, "%.0fK", illuminants.temperature_1);
+                sprintf(tempstr2, "%.0fK", illuminants.temperature_2);
                 int curr_active = dcpIll->get_active_row_number();
                 ignoreDcpSignal = true;
                 dcpIll->clear_items ();
                 dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
                 dcpIll->append_text (tempstr1);
                 dcpIll->append_text (tempstr2);
-                dcpTemperatures[0] = temp1;
-                dcpTemperatures[1] = temp2;
+                dcpTemperatures[0] = illuminants.temperature_1;
+                dcpTemperatures[1] = illuminants.temperature_2;
                 dcpIll->set_active (curr_active);
                 ignoreDcpSignal = false;
             }
