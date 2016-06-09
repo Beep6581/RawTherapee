@@ -420,8 +420,8 @@ void xyCoordToTemperature(const double white_xy[2], double* temp, double* tint)
 }
 
 struct DCPProfile::ApplyState::Data {
-    double pro_photo[3][3];
-    double work[3][3];
+    float pro_photo[3][3];
+    float work[3][3];
     bool already_pro_photo;
     bool use_tone_curve;
     bool apply_look_table;
@@ -1200,11 +1200,9 @@ void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int 
                 float g = gc[y * tile_width + x];
                 float b = bc[y * tile_width + x];
 
-                if (exp_scale != 1.0) {
-                    r *= exp_scale;
-                    g *= exp_scale;
-                    b *= exp_scale;
-                }
+                r *= exp_scale;
+                g *= exp_scale;
+                b *= exp_scale;
 
                 float newr, newg, newb;
 
@@ -1225,8 +1223,7 @@ void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int 
 
                 if (as_in.data->apply_look_table) {
                     float h, s, v;
-                    Color::rgb2hsv(newr, newg, newb, h, s, v);
-                    h *= 6.f; // RT calculates in [0,1]
+                    Color::rgb2hsvdcp(newr, newg, newb, h, s, v);
 
                     hsdApply(look_info, look_table, h, s, v);
                     s = CLIP01(s);
@@ -1235,14 +1232,11 @@ void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int 
                     // RT range correction
                     if (h < 0.0f) {
                         h += 6.0f;
-                    }
-
-                    if (h >= 6.0f) {
+                    } else if (h >= 6.0f) {
                         h -= 6.0f;
                     }
 
-                    h /= 6.f;
-                    Color::hsv2rgb( h, s, v, newr, newg, newb);
+                    Color::hsv2rgbdcp( h, s, v, newr, newg, newb);
                 }
 
                 if (as_in.data->use_tone_curve) {
