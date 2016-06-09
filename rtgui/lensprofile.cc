@@ -67,7 +67,7 @@ LensProfilePanel::LensProfilePanel () : FoldableToolPanel(this, "lensprof", M("T
 
     conLCPFile = fcbLCPFile->signal_file_set().connect( sigc::mem_fun(*this, &LensProfilePanel::onLCPFileChanged), true);
     btnReset->signal_clicked().connect( sigc::mem_fun(*this, &LensProfilePanel::onLCPFileReset), true);
-    ckbUseDist->signal_toggled().connect( sigc::mem_fun(*this, &LensProfilePanel::onUseDistChanged) );
+    conUseDist = ckbUseDist->signal_toggled().connect( sigc::mem_fun(*this, &LensProfilePanel::onUseDistChanged) );
     ckbUseVign->signal_toggled().connect( sigc::mem_fun(*this, &LensProfilePanel::onUseVignChanged) );
     ckbUseCA->signal_toggled().connect( sigc::mem_fun(*this, &LensProfilePanel::onUseCAChanged) );
 
@@ -77,6 +77,7 @@ LensProfilePanel::LensProfilePanel () : FoldableToolPanel(this, "lensprof", M("T
 void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
     disableListener ();
+    conUseDist.block(true);
 
     if (!pp->lensProf.lcpFile.empty() && lcpStore->isValidLCPFileName(pp->lensProf.lcpFile)) {
         fcbLCPFile->set_filename (pp->lensProf.lcpFile);
@@ -102,6 +103,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     lcpFileChanged = useDistChanged = useVignChanged = useCAChanged = false;
 
     enableListener ();
+    conUseDist.block(false);
 }
 
 void LensProfilePanel::setRawMeta(bool raw, const rtengine::ImageMetaData* pMeta)
@@ -142,6 +144,10 @@ void LensProfilePanel::write( rtengine::procparams::ProcParams* pp, ParamsEdited
 
 void LensProfilePanel::onLCPFileChanged()
 {
+
+    // Disable Auto-Fill when enabling LCP Distortion Correction, #1791
+    lensgeomLcpFill->disableAutoFillIfActive();
+
     lcpFileChanged = true;
     updateDisabled(lcpStore->isValidLCPFileName(fcbLCPFile->get_filename()));
 
@@ -164,6 +170,12 @@ void LensProfilePanel::onLCPFileReset()
 
 void LensProfilePanel::onUseDistChanged()
 {
+
+    // Disable Auto-Fill when enabling LCP Distortion Correction, #1791
+    if (ckbUseDist->get_active()) {
+        lensgeomLcpFill->disableAutoFillIfActive();
+    }
+
     useDistChanged = true;
 
     if (listener) {

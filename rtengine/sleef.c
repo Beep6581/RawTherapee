@@ -58,7 +58,9 @@ __inline double ldexpk(double x, int q) {
   m = (((m + q) >> 9) - m) << 7;
   q = q - (m << 2);
   u = longBitsToDouble(((int64_t)(m + 0x3ff)) << 52);
-  x = x * u * u * u * u;
+  double u2 = u*u;
+  u2 = u2 * u2;
+  x = x * u2;
   u = longBitsToDouble(((int64_t)(q + 0x3ff)) << 52);
   return x * u;
 }
@@ -1197,7 +1199,7 @@ __inline float xexpf(float d) {
 
   int q = (int)xrintf(d * R_LN2f);
   float s, u;
-	
+
   s = mlaf(q, -L2Uf, d);
   s = mlaf(q, -L2Lf, s);
 
@@ -1246,7 +1248,7 @@ __inline float xdivf( float d, int n){
 		uflint.intval -= n << 23; // add n to the exponent
 		}
 	return uflint.floatval;
-}	
+}
 
 
 
