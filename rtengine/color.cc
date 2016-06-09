@@ -139,7 +139,6 @@ void Color::init ()
     constexpr auto maxindex = 65536;
 
     cachef(maxindex, LUT_CLIP_BELOW);
-    gamma2curve(maxindex, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
     gammatab(maxindex, 0);
     gammatabThumb(maxindex, 0);
 
@@ -185,11 +184,14 @@ void Color::init ()
 #ifdef _OPENMP
         #pragma omp section
 #endif
+        {
+            for (int i = 0; i < maxindex; i++)
+            {
+                gammatab_srgb[i] = 65535.0 * gamma2(i / 65535.0);
+            }
 
-        for (int i = 0; i < maxindex; i++) {
-            gammatab_srgb[i] = gamma2curve[i] = 65535.0 * gamma2(i / 65535.0); // two lookup tables with same content but one clips and one does not clip
+            gamma2curve.share(gammatab_srgb, LUT_CLIP_BELOW | LUT_CLIP_ABOVE); // shares the buffer with gammatab_srgb but has different clip flags
         }
-
 #ifdef _OPENMP
         #pragma omp section
 #endif

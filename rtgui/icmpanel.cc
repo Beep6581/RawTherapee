@@ -372,9 +372,9 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
     DCPProfile* dcp = NULL;
 
     if(dcp_name == "(cameraICC)") {
-        dcp = dcpStore->getStdProfile(camName);
-    } else if (ifromfile->get_active() && dcpStore->isValidDCPFileName(dcp_name)) {
-        dcp = dcpStore->getProfile(dcp_name);
+        dcp = DCPStore::getInstance()->getStdProfile(camName);
+    } else if (ifromfile->get_active() && DCPStore::getInstance()->isValidDCPFileName(dcp_name)) {
+        dcp = DCPStore::getInstance()->getProfile(dcp_name);
     }
 
     if (dcp) {
@@ -396,24 +396,21 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
             ckbApplyHueSatMap->set_sensitive (true);
         }
 
-        int i1, i2;
-        double temp1, temp2;
-        bool willInterpolate;
-        dcp->getIlluminants(i1, temp1, i2, temp2, willInterpolate);
+        const DCPProfile::Illuminants illuminants = dcp->getIlluminants();
 
-        if (willInterpolate) {
-            if (dcpTemperatures[0] != temp1 || dcpTemperatures[1] != temp2) {
+        if (illuminants.will_interpolate) {
+            if (dcpTemperatures[0] != illuminants.temperature_1 || dcpTemperatures[1] != illuminants.temperature_2) {
                 char tempstr1[64], tempstr2[64];
-                sprintf(tempstr1, "%.0fK", temp1);
-                sprintf(tempstr2, "%.0fK", temp2);
+                sprintf(tempstr1, "%.0fK", illuminants.temperature_1);
+                sprintf(tempstr2, "%.0fK", illuminants.temperature_2);
                 int curr_active = dcpIll->get_active_row_number();
                 ignoreDcpSignal = true;
                 dcpIll->remove_all ();
                 dcpIll->append (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
                 dcpIll->append (tempstr1);
                 dcpIll->append (tempstr2);
-                dcpTemperatures[0] = temp1;
-                dcpTemperatures[1] = temp2;
+                dcpTemperatures[0] = illuminants.temperature_1;
+                dcpTemperatures[1] = illuminants.temperature_2;
                 dcpIll->set_active (curr_active);
                 ignoreDcpSignal = false;
             }
@@ -642,10 +639,10 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
 
     DCPProfile* dcp = NULL;
 
-    if (ifromfile->get_active() && pp->icm.input.substr(0, 5) == "file:" && dcpStore->isValidDCPFileName(pp->icm.input.substr(5))) {
-        dcp = dcpStore->getProfile(pp->icm.input.substr(5));
+    if (ifromfile->get_active() && pp->icm.input.substr(0, 5) == "file:" && DCPStore::getInstance()->isValidDCPFileName(pp->icm.input.substr(5))) {
+        dcp = DCPStore::getInstance()->getProfile(pp->icm.input.substr(5));
     } else if(icameraICC->get_active()) {
-        dcp = dcpStore->getStdProfile(camName);
+        dcp = DCPStore::getInstance()->getStdProfile(camName);
     }
 
     if (dcp) {
@@ -931,7 +928,7 @@ void ICMPanel::setRawMeta (bool raw, const rtengine::ImageData* pMeta)
     iembedded->set_active (!raw);
     icamera->set_sensitive (raw);
     camName = pMeta->getCamera();
-    icameraICC->set_sensitive (raw && (iccStore->getStdProfile(pMeta->getCamera()) != NULL || dcpStore->getStdProfile(pMeta->getCamera()) != NULL));
+    icameraICC->set_sensitive (raw && (iccStore->getStdProfile(pMeta->getCamera()) != NULL || DCPStore::getInstance()->getStdProfile(pMeta->getCamera()) != NULL));
     iembedded->set_sensitive (!raw);
 
     enableListener ();

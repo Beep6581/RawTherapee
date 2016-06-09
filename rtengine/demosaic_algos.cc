@@ -1414,10 +1414,7 @@ SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int i
         gamtab = &(Color::gammatab_24_17a);
     } else {
         gamtab = new LUTf(65536, LUT_CLIP_ABOVE | LUT_CLIP_BELOW);
-
-        for(int i = 0; i < 65536; i++) {
-            (*gamtab)[i] = (float)i / 65535.f;
-        }
+        gamtab->makeIdentity(65535.f);
     }
 
 
