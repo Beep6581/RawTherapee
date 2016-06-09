@@ -535,9 +535,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             double ggm = 33.;
             double bbm = 33.;
 
-            DCPProfile *dcpProf = imgsrc->getDCP(params.icm, currWB);
+            DCPProfile::ApplyState as;
+            DCPProfile *dcpProf = imgsrc->getDCP(params.icm, currWB, as);
+
             ipf.rgbProc (oprevi, oprevl, NULL, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
-                         rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, dcpProf);
+                         rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, dcpProf, as);
 
             if(params.blackwhite.enabled && params.blackwhite.autoc && abwListener) {
                 if (settings->verbose) {

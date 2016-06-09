@@ -1041,15 +1041,16 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     LabImage* labView = new LabImage (fw, fh);
     DCPProfile *dcpProf = nullptr;
+    DCPProfile::ApplyState as;
     if (isRaw) {
         cmsHPROFILE dummy;
         RawImageSource::findInputProfile(params.icm.input, nullptr, camName, &dcpProf, dummy);
 
         if (dcpProf) {
-            dcpProf->setStep2ApplyState(params.icm.working, params.icm.toneCurve, params.icm.applyLookTable, params.icm.applyBaselineExposureOffset);
+            dcpProf->setStep2ApplyState(params.icm.working, params.icm.toneCurve, params.icm.applyLookTable, params.icm.applyBaselineExposureOffset, as);
         }
     }
-    ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf);
+    ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as);
 
     // freeing up some memory
     customToneCurve1.Reset();
