@@ -25,6 +25,8 @@
 #include "rawimagesource.h"
 #include "improcfun.h"
 #include "rt_math.h"
+#define BENCHMARK
+#include "StopWatch.h"
 
 using namespace rtengine;
 using namespace rtexif;
@@ -1022,6 +1024,7 @@ void DCPProfile::apply(
     bool apply_look_table
 ) const
 {
+    BENCHFUN
     const TMatrix work_matrix = iccStore->workingSpaceInverseMatrix(working_space);
 
     Matrix xyz_cam; // Camera RGB to XYZ D50 matrix
@@ -1715,7 +1718,7 @@ void DCPProfile::hsdApply(const HsdTableInfo& table_info, const std::vector<HsbM
         const float s_scaled = s * table_info.pc.s_scale;
 
         if (table_info.srgb_gamma) {
-            v_encoded = srgbGammaForward(v);
+            v_encoded = Color::gammatab_srgb1[v * 65535.f];
         }
 
         const float v_scaled = v_encoded * table_info.pc.v_scale;
@@ -1780,7 +1783,7 @@ void DCPProfile::hsdApply(const HsdTableInfo& table_info, const std::vector<HsbM
     s *= sat_scale; // No clipping here, we are RT float :-)
 
     if (table_info.srgb_gamma) {
-        v = srgbGammaInverse(v_encoded * val_scale);
+        v = Color::igammatab_srgb1[v_encoded * val_scale * 65535.f];
     } else {
         v *= val_scale;
     }
